@@ -156,5 +156,17 @@
       "claim": "p3"
     }
   ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "move": true,
+      "word": "Slow"
+    },
+    {
+      "phase": "Drive up",
+      "move": true,
+      "word": "Slow"
+    }
+  ],
   "topFault": "bounce"
 }

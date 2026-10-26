@@ -151,5 +151,15 @@
       "claim": "b7"
     }
   ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "move": true
+    },
+    {
+      "phase": "Drive up",
+      "move": true
+    }
+  ],
   "topFault": "heels"
 }

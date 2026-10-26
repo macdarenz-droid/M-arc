@@ -4,7 +4,7 @@
 // heel lift (b4) and the hips-back descent (b3) are sagittal.
 // Sources: research card docs/research/howto/cards/bodyweight_squat.json (research head 3812989f): callouts =
 //  plate.checkpoints (b3 Hips back, b6 Shin parallel torso, b7 Heels down); Mistake = plate.mistake (b4, drawable).
-//  Tempo: none (the card gives no seconds; held under D-LIB14-NOSECS, so the spec carries no tempo).
+//  Tempo: the card's, tempoOf(strip/rows.json fallbackA) (D-STRIP-AFALL: both phases blank; no seconds).
 // Clone source: barbell_back_squat (the 8, main) for the feet and the squat key poses; single_leg_romanian_deadlift
 //  (#109 @ ff7c5c4f) for the whole-body balance (Winter 2009 segment masses) and its bracketed root finder; the
 //  heel-lift convention from reverse_lunge (#109, :17-22) as pistol_squat uses it; copied, never imported (D-LIB9-CLONE).
@@ -121,6 +121,7 @@ export default {
     { key: 'shin', text: 'Shin parallel<br>torso', anchor: 'knee.r', box: { left: 244, top: 286 }, cue: 'At the bottom, keep your shins and torso parallel.' },
     { key: 'heels', text: 'Heels down', anchor: 'heel.r', cue: 'Keep your heels flat, down and up.' },
   ],
+  tempo: [{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true }],
   mistake: {
     pose: mistakePose,
     guides: [

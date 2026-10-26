@@ -8,6 +8,7 @@
     { "id": "medicine_ball_slam", "ruling": "D-LIB22-SECS NOSECS (plateFacts, no tempo); F-STRIP-2, LIB-22's own map" },
     { "id": "renegade_row", "ruling": "LB7 NOSECS (D-LIB14-NOSECS) (plateFacts, no tempo); strip rows.json card" },
     { "id": "sled_pull", "ruling": "D-LIB22-SECS NOSECS (plateFacts, no tempo); strip rows.json card" },
-    { "id": "sled_push", "ruling": "D-LIB22-SECS NOSECS (plateFacts, no tempo); F-STRIP-2, LIB-22's own map" }
+    { "id": "sled_push", "ruling": "D-LIB22-SECS NOSECS (plateFacts, no tempo); F-STRIP-2, LIB-22's own map" },
+    { "id": "step_up", "ruling": "D-LIB14-STEPUP (LIB-14 #289: D-LIB14-NOSECS released by LIB-STRIP, but held until reverse_lunge is redrawn and pinned) (plateFacts, no tempo); strip rows.json card" }
   ]
 }

@@ -5,8 +5,8 @@
 // Sources: research card docs/research/howto/cards/pistol_squat.json (research head 3812989f): callouts =
 //  plate.checkpoints (p1 Arms forward, p5 Free leg straight, p3 Heel down); Mistake = plate.mistake (p8, drawable
 //  false: the top fault, bouncing out of the bottom, is seen only as speed; the knee cave needs a front view; the plate
-//  draws the next listed fault the side view shows, the standing heel lifting). Tempo: none (the card gives no seconds;
-//  held under D-LIB14-NOSECS, so the spec carries no tempo).
+//  draws the next listed fault the side view shows, the standing heel lifting). Tempo: the card's, tempoOf(strip/rows.json)
+//  (D-STRIP-B; p8 'Slow and controlled' on both phases; no seconds).
 // Clone source: single_leg_romanian_deadlift (#109 @ ff7c5c4f) for the single-leg balance solve (Winter 2009 segment
 //  masses; the root SOLVED so the centre of mass sits over the stance mid-foot) and its bracketed root finder, copied,
 //  never imported (D-LIB9-CLONE).
@@ -112,6 +112,7 @@ export default {
     { key: 'leg', text: 'Free leg<br>straight', anchor: 'knee.l', box: { left: 236, top: 254 }, cue: 'Hold the free leg out in front, knee straight.' },
     { key: 'heel', text: 'Heel down', anchor: 'heel.r', cue: 'Keep the whole standing foot flat on the floor.' },
   ],
+  tempo: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Drive up', move: true, word: 'Slow' }],
   mistake: {
     pose: mistakePose,
     // Dashed guides only (drawn over the solid figure, never hidden): the lifted sole, heel to ball, and a plumb from

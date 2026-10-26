@@ -9,8 +9,9 @@ imported or merged; LB3 patterns from #274 @ `a6f4bd07`. Base: main `5158609c` (
 
 Nothing here ships (D-LIB14-AHEAD): every LB4 row stays at stage `drawing` or `review` in `lb4/rows.json`, outside
 `batches/`; `tests/howto/lb4-plates.test.ts` A9 enforces it. rows.json holds only drawn, non-held ids (A5). Until the
-no-seconds strip lands (D-LIB14-NOSECS), that is wall_sit alone; the other five are drawn, unit-tested and held
-(section 13).
+no-seconds strip landed (D-LIB14-NOSECS) it was wall_sit alone. LIB-STRIP (#309) is on main `bec24ebd` and merged in
+('LIB-14 resume'), so rows.json holds front_squat, goblet_squat, bodyweight_squat, wall_sit and pistol_squat; step_up
+is drawn, unit-tested and still held under D-LIB14-STEPUP (section 13).
 
 ## 1. Engine and modes
 
@@ -130,6 +131,19 @@ string. No Rest.
 |---|---|---|---|
 | wall_sit | null/null/null (w6) | Hold: w6 "2-5 sets of 30-60-second holds" (cat-wallsit, Programming) | `[{ phase: 'Hold', s: '30-60' }]` |
 | front_squat, goblet_squat, bodyweight_squat, step_up, pistol_squat | null/null/null (c21, g7, b7, c2, p8) | none | **no row** until D-LIB14-NOSECS's release; never seconds |
+
+**Released ('LIB-14 resume', LIB-STRIP on main `bec24ebd`, D-STRIP-B).** A no-seconds card's tempo is
+`tempoOf(rows)` from LIB-STRIP's verified `tools/plates/library/strip/rows.json` (its `cards`, or `fallbackA` under
+D-STRIP-AFALL), never a row of `lb4/tempo.json`, which keeps wall_sit's timed Hold only. Card `tempo` and spec `tempo`
+are byte-equal to it; no seconds are added.
+
+| id | strip rows (claim, `says`) | card and spec tempo |
+|---|---|---|
+| front_squat | Lower: Controlled (c21, "Controlled descent"); Drive up: blank (c21) | `[{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true }]` |
+| goblet_squat | Lower and Drive up: Controlled (g9, "Smooth and controlled") | `[{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true, word: 'Controlled' }]` |
+| bodyweight_squat | fallbackA (D-STRIP-AFALL): both blank (b7) | `[{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true }]` |
+| pistol_squat | Lower and Drive up: Slow (p8, "Slow and controlled") | `[{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Drive up', move: true, word: 'Slow' }]` |
+| step_up | strip row exists (Rise blank; Lower: Controlled, c2) | **none**: still held under D-LIB14-STEPUP; listed in `tests/howto/fixtures/held-pairing.json` (D-PLATEFACTS-HELD) |
 
 - wall_sit: one Hold row in the form of plank's (pilot-a/tempo.json:17 @ `ff7c5c4f`): `{ "phase": "Hold",
   "constant": "30-60", "claim": "w6", "quote": "<w6's quote>" }`. The constant is the quote's string byte for byte:
@@ -266,8 +280,10 @@ drawn-item tests only. A9 and every mutation red then restored.
 
 | id | held under | release condition |
 |---|---|---|
-| front_squat, goblet_squat, bodyweight_squat, pistol_squat | D-LIB14-NOSECS | the owner's strip design built by its own card, on main and merged in; then 'LIB-14 resume' |
-| step_up | D-LIB14-NOSECS and D-LIB14-STEPUP | as above, and reverse_lunge redrawn, owner-approved and pinned before any sheet |
+| step_up | D-LIB14-NOSECS and D-LIB14-STEPUP | NOSECS is released (LIB-STRIP on main `bec24ebd`), but reverse_lunge is still held on main (pilot-a/plates.json: "held": the strip follow-up; not redrawn or pinned), so step_up stays held and rolls (plan 3.5:376) |
+
+Released on 'LIB-14 resume' (main `bec24ebd`): front_squat, goblet_squat, bodyweight_squat and pistol_squat (section 8's
+released table). They are in rows.json, on the plates page, through QA and to the critic.
 
 Held specs build, carry no `tempo`, pass their drawn-item tests, and are in no rows file and on no committed or QA'd
 page (A8).

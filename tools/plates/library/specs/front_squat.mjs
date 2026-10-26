@@ -4,7 +4,7 @@
 // (c1, c17) and the bar's height on the shoulders read from the side.
 // Sources: research card docs/research/howto/cards/front_squat.json (research head 3812989f): callouts =
 //  plate.checkpoints (c7 Elbows high, c12 Chest tall, c10 Whole foot); Mistake = plate.mistake (c7, drawable). Tempo:
-//  none (the card gives no seconds; held under D-LIB14-NOSECS, so the spec carries no tempo).
+//  the card's, tempoOf(strip/rows.json) (D-STRIP-B; c21 'Controlled descent' on Lower, Drive up blank; no seconds).
 // Clone source: barbell_back_squat (tools/plates/vendor/exercises/barbell_back_squat.mjs on main 5158609c): the feet,
 //  the bar spot moving rigidly with the thorax (an affine combination of three thorax landmarks), the key() solve that
 //  keeps the bar over mid-foot, the plate outline behind the body with the sleeve dot in front, and the dashed start bar
@@ -200,6 +200,7 @@ export default {
     { key: 'chest', text: 'Chest tall', anchor: 'backUpper', cue: 'Keep your torso upright on the way down and up.' },
     { key: 'foot', text: 'Whole foot', anchor: 'heel.r', cue: 'Stay balanced over the whole foot, knees in line with your feet.' },
   ],
+  tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true }],
   mistake: {
     pose: mistakePose,
     guides: [

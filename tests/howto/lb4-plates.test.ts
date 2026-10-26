@@ -15,8 +15,11 @@ const LB4 = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'wall_sit', 'ste
 const IDS = LB4.map(i => `lib_${i}`);
 // The 8 LB4 ids not drawn here (DESIGN.md section 2): never in lb4/rows.json.
 const NOT_HERE = ['reverse_lunge', 'bulgarian_split_squat', 'walking_lunge', 'forward_lunge', 'bodyweight_lunge', 'bodyweight_split_squat', 'box_jump', 'jump_squat'];
-// Held under D-LIB14-NOSECS (and step_up under D-LIB14-STEPUP): drawn and tested, no row (DESIGN.md section 13).
-const HELD = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'step_up', 'pistol_squat'];
+// Held: drawn and tested, no row (DESIGN.md section 13). LIB-STRIP (#309, main bec24ebd) released the other four of
+// D-LIB14-NOSECS ('LIB-14 resume'); step_up stays held under D-LIB14-STEPUP (reverse_lunge is still held on main).
+const HELD = ['step_up'];
+// The released no-seconds ids: their tempo is tempoOf(LIB-STRIP's verified rows), D-STRIP-B / D-STRIP-AFALL.
+const RELEASED = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'pistol_squat'];
 const ROWS = 'tools/plates/library/lb4/rows.json';
 const RESEARCH_HEAD = '3812989f59c000705731f7944d7a1a275e86045d';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -69,7 +72,7 @@ describe('LIB-14 A5: lb4/rows.json holds exactly the drawn, non-held LB4 ids, al
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H (D-LIB14-MODES)', () => {
-    expect(want()).toEqual(['lib_wall_sit']);
+    expect(want()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_pistol_squat']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('none of the 8 LB4 ids not drawn here is in any lb4/ file as a row', () => {
@@ -80,7 +83,7 @@ describe('LIB-14 A5: lb4/rows.json holds exactly the drawn, non-held LB4 ids, al
   });
   it('each held id is in DESIGN.md\'s held table with its ruling and in no rows file', () => {
     const design = readFileSync('tools/plates/library/lb4/DESIGN.md', 'utf8'), table = design.slice(design.indexOf('## 13. Held ids'));
-    const lines = table.split('\n').filter(l => l.startsWith('| ') && /D-LIB14-NOSECS/.test(l));
+    const lines = table.split('\n').filter(l => l.startsWith('| ') && /D-LIB14-(NOSECS|STEPUP)/.test(l));
     for (const id of HELD) {
       expect(lines.some(l => l.split('|')[1]!.split(',').map(x => x.trim()).includes(id)), id).toBe(true);
       expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
@@ -360,9 +363,9 @@ describe('LIB-14 pistol_squat (H; single leg; drawable false): drawn facts', { t
     const sunk = { ...s, mistake: { ...s.mistake, pose: { ...s.mistake.pose, plant: { r: { ...r, at: [r.at[0], 0, r.at[2]], normal: [0, Math.cos(a), Math.sin(a)], toe: [0, -Math.sin(a), Math.cos(a)] } } } } };
     expect(footSink(sunk)).toBeGreaterThan(0.5);
   });
-  it('drawable false: the spec names the drawable-fault convention (F7 expected); no tempo (D-LIB14-NOSECS)', () => {
+  it('drawable false: the spec names the drawable-fault convention (F7 expected); tempo is the strip\'s word tempo, no seconds (D-STRIP-B)', () => {
     expect(S.pistol_squat.pilot.drawableFault).toMatch(/bouncing/);
-    expect(S.pistol_squat.tempo).toBeUndefined();
+    expect(S.pistol_squat.tempo).toEqual([{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Drive up', move: true, word: 'Slow' }]);
   });
 });
 
@@ -433,8 +436,8 @@ describe('LIB-14 front_squat (H; the 8\'s squat clone, the rack): drawn facts', 
     expect(ph('end').length).toBe(1);
     expect(ph('start').length + ph('mistake').length).toBe(0);
   });
-  it('no tempo (D-LIB14-NOSECS)', () => {
-    expect(S.front_squat.tempo).toBeUndefined();
+  it('tempo is the strip\'s word tempo, no seconds (D-STRIP-B; released from D-LIB14-NOSECS)', () => {
+    expect(S.front_squat.tempo).toEqual([{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true }]);
   });
 });
 
@@ -520,7 +523,7 @@ describe('LIB-14 bulk (LB4 BULK GO, 6341498444): bodyweight_squat, goblet_squat,
   });
 });
 
-describe('LIB-14 A8: the D-LIB14-NOSECS hold', { timeout: T }, () => {
+describe('LIB-14 A8: the hold (D-LIB14-STEPUP; D-LIB14-NOSECS released for the other four)', { timeout: T }, () => {
   it('each held spec that exists builds, carries no tempo, and is in no rows file', () => {
     const held = HELD.filter(id => S[id]);
     expect(held).toEqual(HELD);
@@ -532,14 +535,14 @@ describe('LIB-14 A8: the D-LIB14-NOSECS hold', { timeout: T }, () => {
   });
   it('mutation: a held row on the page makes candidateOf throw for every id (the extractor, golden.mjs:116)', async () => {
     const [build, cand, golden] = await Promise.all(['lb4/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
-    const data = readJson(ROWS), withHeld = { ...data, rows: { ...data.rows, lib_pistol_squat: { src: 'library/specs/pistol_squat.mjs', slug: 'pistol-squat', prefix: 'pistol-squat', chromeId: 'pistol-squat', mode: 'H', stage: 'drawing', view: 'side' } } };
+    const data = readJson(ROWS), withHeld = { ...data, rows: { ...data.rows, lib_step_up: { src: 'library/specs/step_up.mjs', slug: 'step-up', prefix: 'step-up', chromeId: 'step-up', mode: 'H', stage: 'drawing', view: 'side' } } };
     const d = build.lb4Data(undefined, withHeld), all = build.lb4All(undefined, d);
     const { html } = await build.buildLb4Page({ all, ids: Object.keys(withHeld.rows) });
     const mirror = golden.makeMirror(), E = await qaEng.loadEngine(mirror);
     try {
       for (const id of Object.keys(withHeld.rows)) await expect(cand.candidateOf(id, { all, platesHtml: html.toString('utf8'), engine: E, authoring: true }), id).rejects.toThrow();
-      const clean = await build.buildLb4Page({ all: build.lb4All(), ids: ['lib_wall_sit'] });
-      await expect(cand.candidateOf('lib_wall_sit', { all: build.lb4All(), platesHtml: clean.html.toString('utf8'), engine: E, authoring: true })).resolves.toBeTruthy();
+      const ids = Object.keys(data.rows), clean = await build.buildLb4Page({ all: build.lb4All(), ids });
+      for (const id of ids) await expect(cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean.html.toString('utf8'), engine: E, authoring: true }), id).resolves.toBeTruthy();
     } finally { qaEng.dropMirror(mirror); }
   });
 });
@@ -560,10 +563,11 @@ describe('LIB-14 slice Mistakes, tells, cues, callouts and tempo (DESIGN.md sect
     const s = S.wall_sit;
     expect(guideProblems({ ...s, mistake: { ...s.mistake, guides: [...s.mistake.guides, { kind: 'line', pts: s.mistake.guides[0].pts }] } })).toEqual(['wall_sit: line']);
   });
-  it('tempo: wall_sit carries the one Hold row \'30-60\' (w6, ASCII hyphen); every held spec carries none', () => {
+  it('tempo: wall_sit carries the one Hold row \'30-60\' (w6, ASCII hyphen); every held spec carries none; no released spec carries seconds', () => {
     expect(S.wall_sit.tempo).toEqual([{ phase: 'Hold', s: '30-60' }]);
     expect(S.wall_sit.tempo[0].s).toBe('30-60');
     for (const id of HELD.filter(i => S[i])) expect(S[id].tempo, id).toBeUndefined();
+    for (const id of RELEASED) { expect(S[id].tempo.length, id).toBe(2); for (const t of S[id].tempo) expect('s' in t, id).toBe(false); }
     const q = readJson('docs/research/howto/quotes/wall_sit.json').quotes.filter((x: any) => x.claim === 'w6').map((x: any) => x.text).join(' ');
     expect(q).toContain(`${S.wall_sit.tempo[0].s}-second holds`);
   });
@@ -758,7 +762,7 @@ describe('LIB-14 A3: spec and composer closures are pure and drawn by the vendor
 describe('LIB-14 A10: the LB4 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
   it('two builds of the LB4 rows are byte-identical', async () => {
     const build = await import(/* @vite-ignore */ lib('lb4/build.mjs'));
-    expect(build.drawnIds()).toEqual(['lib_wall_sit']);
+    expect(build.drawnIds()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_pistol_squat']);
     const a = await build.buildLb4Page(), b = await build.buildLb4Page();
     expect(sha(a.html)).toBe(sha(b.html));
   });
@@ -789,6 +793,18 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
       return { ...(await candOf(h.toString('utf8'))), spec };
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
+  it('A4: pistol_squat (in rows.json since the strip release) raises F7 on its node half; its topFault set to its drawn key drops F7, so the ruled expected set fails', async () => {
+    const lb4qa = await import(/* @vite-ignore */ lib('lb4/qa.mjs'));
+    const P = 'lib_pistol_squat', ph = (await build.buildLb4Page({ all, ids: [P] })).html.toString('utf8');
+    const c = await cand.candidateOf(P, { all, platesHtml: ph, engine: E, authoring: true });
+    const asReport = (r: any) => ({ id: P, flags: { ...r.flags, F2: { raised: false }, F5: { raised: true, value: 3.57 } } });
+    const clean = await qa(c);
+    expect([node(clean), clean.flags.F7.raised]).toEqual([[], true]);
+    expect(lb4qa.flagProblems([asReport(clean)])).toEqual([]);
+    const bad = await qa({ ...c, research: { ...c.research, topFault: 'heel' } });
+    expect(bad.flags.F7.raised).toBe(false);
+    expect(lb4qa.flagProblems([asReport(bad)])).toEqual(['lib_pistol_squat: flags F5 != expected F5,F7']);
+  });
   it('clean: no node-half problem, and the only raised flags wait on the browser half (F2, F5)', async () => {
     const r = await qa(await candOf());
     expect(node(r)).toEqual([]);
@@ -849,9 +865,16 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
 
 describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the pose map and the plate facts', { timeout: T }, () => {
   // The ruled tempo table (D-LIB14-TEMPO, #289 6338977366; DESIGN.md section 8), copied from the ruling, never read from
-  // tempo.json or a spec: wall_sit's one Hold row is w6's quote string; the five no-seconds cards have no tempo key until
-  // D-LIB14-NOSECS's release.
+  // tempo.json or a spec: wall_sit's one Hold row is w6's quote string. The four released no-seconds cards take
+  // tempoOf(LIB-STRIP's verified rows) (D-STRIP-B, -AFALL; DESIGN.md section 8's released table), copied here from those
+  // rows at main bec24ebd and also checked against them; step_up (held, D-LIB14-STEPUP) has no tempo key.
   const RULED_CONST = { wall_sit: { phase: 'Hold', constant: '30-60', claim: 'w6' } };
+  const RULED_STRIP: Record<string, any[]> = {
+    front_squat: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true }],
+    goblet_squat: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true, word: 'Controlled' }],
+    bodyweight_squat: [{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true }],
+    pistol_squat: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Drive up', move: true, word: 'Slow' }],
+  };
   // The ruled pose map (D-LIB14-STEPUP-POSE; DESIGN.md section 9): the spec pose each card pose is drawn as.
   const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB4.map(id => [id, id === 'step_up' ? { start: 'end', end: 'start' } : { start: 'start', end: 'end' }]));
   const KEYS = ['plateFacts', 'tempo', 'topFault'];
@@ -872,7 +895,9 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
       if (id === 'wall_sit') {
         const want = (t?.rows ?? []).map((x: any) => ({ phase: x.phase, s: x.constant }));
         if (JSON.stringify(c.tempo) !== JSON.stringify(want)) bad.push('wall_sit: card tempo != the ruled row');
-      } else if ('tempo' in c) bad.push(`${id}: a tempo key before D-LIB14-NOSECS's release`);
+      } else if (RULED_STRIP[id]) {
+        if (JSON.stringify(c.tempo) !== JSON.stringify(RULED_STRIP[id])) bad.push(`${id}: card tempo != the strip's ruled word tempo`);
+      } else if ('tempo' in c) bad.push(`${id}: a tempo key while held`);
       if ((c.tempo ?? []).some((p: any) => ['Rest', 'Set'].includes(p.phase))) bad.push(`${id}: Set or Rest`);
       if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(c.tempo)) bad.push(`${id}: spec tempo != card tempo`);
     }
@@ -884,6 +909,13 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     const { tj, cards, specs } = clean();
     expect(tempoProblems(tj, cards, specs)).toEqual([]);
   });
+  it('the released word tempos are tempoOf(strip/rows.json) for each id (cards, or fallbackA for bodyweight_squat), and each validates', async () => {
+    const [strip, V] = await Promise.all(['strip/tempo-strip.mjs', 'research/validate.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    const R = readJson('tools/plates/library/strip/rows.json'), rowsOf = (id: string) => [...R.cards, ...R.fallbackA].find((c: any) => c.id === id)?.rows;
+    for (const id of RELEASED) expect(strip.tempoOf(rowsOf(id)), id).toEqual(RULED_STRIP[id]);
+    expect(R.fallbackA.map((c: any) => c.id)).toContain('bodyweight_squat');
+    for (const id of LB4) expect(V.validateCardFile(`${id}.json`), id).toEqual(id === 'step_up' ? [`cards/${id}.json: plateFacts and tempo go in together or not at all`] : []);
+  });
   it('mutations: a Set or a Rest phase added to wall_sit (card and spec), the Hold constant as \'30–60\' (en dash), and seconds added to a no-seconds card and spec are each red', () => {
     const red = (f: (s: any) => void) => { const s: any = copy({ tj: clean().tj, cards: clean().cards }); s.specs = { ...clean().specs }; f(s); return tempoProblems(s.tj, s.cards, s.specs).length > 0; };
     const both = (s: any, id: string, tempo: any[]) => { s.cards[id].tempo = tempo; if (s.specs[id]) s.specs[id] = { ...s.specs[id], tempo }; };
@@ -892,13 +924,17 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     expect(red(s => { s.tj.ids.wall_sit.rows[0].constant = '30–60'; both(s, 'wall_sit', [{ phase: 'Hold', s: '30–60' }]); }), 'en dash').toBe(true);
     expect(red(s => both(s, 'pistol_squat', [{ phase: 'Lower', s: 3, move: true }, { phase: 'Stand', s: 1, move: true }])), 'seconds on a no-seconds card').toBe(true);
     expect(red(s => { s.specs.front_squat = { ...s.specs.front_squat, tempo: [{ phase: 'Lower', s: 2, move: true }] }; }), 'seconds on a no-seconds spec').toBe(true);
+    expect(red(s => both(s, 'front_squat', [{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true, word: 'Controlled' }])), 'word moved to the other phase').toBe(true);
+    expect(red(s => both(s, 'goblet_squat', [{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true }])), 'words dropped').toBe(true);
+    expect(red(s => both(s, 'step_up', [{ phase: 'Rise', move: true }, { phase: 'Lower', move: true, word: 'Controlled' }])), 'a tempo on the held step_up').toBe(true);
+    expect(red(s => { s.specs.pistol_squat = { ...s.specs.pistol_squat, tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true, word: 'Slow' }] }; }), 'spec word != card word').toBe(true);
   });
   const cardsSha = readJson('tools/plates/library/lb4/cards.sha.json');
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
-  it('each card differs from its research-head copy only in the three keys, written last (tempo on wall_sit only)', () => {
+  it('each card differs from its research-head copy only in the three keys, written last (no tempo on the held step_up)', () => {
     for (const id of LB4) {
       expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
-      expect(Object.keys(cardOf(id)).slice(id === 'wall_sit' ? -3 : -2), id).toEqual(id === 'wall_sit' ? KEYS : ['plateFacts', 'topFault']);
+      expect(Object.keys(cardOf(id)).slice(id !== 'step_up' ? -3 : -2), id).toEqual(id !== 'step_up' ? KEYS : ['plateFacts', 'topFault']);
     }
   });
   const DRAWN: Record<string, string> = { front_squat: 'elbows', goblet_squat: 'lean', bodyweight_squat: 'heels', wall_sit: 'feet', step_up: 'lean', pistol_squat: 'heel' };
@@ -955,7 +991,10 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
     return qaNode.h6({ spec, research }, { engine: Eng(), pins: pins() }, R).map((p: any) => p.key);
   };
-  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault }; };
+  // The card's research keys as QA reads them: candidate.mjs researchOf (with LIB-STRIP's tempoText / tempoFallbackA).
+  let researchOf: any;
+  beforeAll(async () => { ({ researchOf } = await import(/* @vite-ignore */ lib('candidate.mjs'))); }, T);
+  const research = (id: string) => researchOf({ research: { card: `docs/research/howto/cards/${id}.json` } });
   it('A6: PQ-H6 is green on every drawn spec against its card (held specs included, read off the page)', () => {
     for (const id of specsDrawn()) expect(h6(S[id], research(id)), id).toEqual([]);
   });

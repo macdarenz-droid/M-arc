@@ -217,5 +217,17 @@
       "claim": "g4"
     }
   ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "move": true,
+      "word": "Controlled"
+    },
+    {
+      "phase": "Drive up",
+      "move": true,
+      "word": "Controlled"
+    }
+  ],
   "topFault": "lean"
 }

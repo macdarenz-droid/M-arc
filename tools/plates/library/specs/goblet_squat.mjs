@@ -4,7 +4,7 @@
 // (g6) and the depth (g4) read from the side.
 // Sources: research card docs/research/howto/cards/goblet_squat.json (research head 3812989f): callouts =
 //  plate.checkpoints (g5 Weight at chest, g8 Chest up, g4 Thighs parallel); Mistake = plate.mistake (g6, drawable).
-//  Tempo: none (the card gives no seconds; held under D-LIB14-NOSECS, so the spec carries no tempo). variantLine:
+//  Tempo: the card's, tempoOf(strip/rows.json) (D-STRIP-B; g9 'Smooth and controlled', no seconds). variantLine:
 //  exercises.json lists Dumbbell / Kettlebell; the plate draws the dumbbell held upright (the card's line).
 // Clone source: barbell_back_squat (the 8, main) for the feet and the thorax-fixed load spot; single_leg_romanian_deadlift
 //  (#109 @ ff7c5c4f) for the whole-body balance with a load (Winter 2009 masses) and its bracketed root finder;
@@ -158,6 +158,7 @@ export default {
     { key: 'chest', text: 'Chest up', anchor: 'backUpper', box: { left: 30, top: 196 }, cue: 'Keep your torso upright, with no extra forward lean.' },
     { key: 'thighs', text: 'Thighs<br>parallel', anchor: 'hip.r', box: { left: 30, top: 300 }, cue: 'Squat until your thighs are parallel, or deeper if you can.' },
   ],
+  tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true, word: 'Controlled' }],
   mistake: {
     pose: mistakePose,
     guides: [
