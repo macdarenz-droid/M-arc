@@ -48,15 +48,6 @@
    "stage": "drawing",
    "view": "side"
   },
-  "lib_hip_thrust": {
-   "src": "library/specs/hip_thrust.mjs",
-   "slug": "hip-thrust",
-   "prefix": "hip-thrust",
-   "chromeId": "hip-thrust",
-   "mode": "H",
-   "stage": "drawing",
-   "view": "side"
-  },
   "lib_cable_kickback": {
    "src": "library/specs/cable_kickback.mjs",
    "slug": "cable-kickback",

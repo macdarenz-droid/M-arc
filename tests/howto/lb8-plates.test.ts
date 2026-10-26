@@ -33,10 +33,10 @@ const NOT_HERE = ['seated_leg_curl'];
 // D-LIB18-LEGCURL: drawn only after pilot B is on main and 'LIB-18 resume'.
 const LEGCURLS = ['lying_leg_curl', 'standing_leg_curl'];
 // DESIGN.md section 15: every held id, with its ruling there.
-const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'glute_bridge', 'resisted_hip_flexion'];
+const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'glute_bridge', 'resisted_hip_flexion'];
 // The ids on lb8/rows.json now: drawn and not held (A5).
 // 'LIB-18 resume': the leg curls, and the rows released with a LIB-ZOOM circle (D-LIBZOOM-EXTEND; D-LIB18-ZOOMPLACE).
-const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'hip_thrust', 'cable_kickback'];
+const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'cable_kickback'];
 // Card facts the held plates' drawings miss (CARD FIELDS fix round, #306 6356303497): recorded with their holds, never hidden.
 const FACT_MISSES: Record<string, string[]> = { seated_calf_raise: ['check:start:toe.l:4.2cm', 'check:start:toe.r:4.2cm'], standing_calf_raise: ['check:start:toe.l:2.3cm', 'check:start:toe.r:2.3cm'], bodyweight_calf_raise: ['check:end:toe.l:4.6cm', 'check:end:toe.r:4.6cm'] };
 // Measured values inside PQ-H6's 1 cm that are past A2's 0.5 cm, or a back landmark under 1 cm into the floor (no
@@ -4758,7 +4758,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
 // ---- D-LIBZOOM-EXTEND ('LIB-18 resume'): the rows released with a Mistake-view LIB-ZOOM circle ----
 describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main)', { timeout: T }, () => {
   // k: the smallest of the ladder whose tell-anchor move reaches deviationMin at the zoom's scale (DESIGN.md section 18)
-  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, hip_thrust: 3, cable_kickback: 3 };
+  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, cable_kickback: 3 };
   const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], BAR = 11.39;
   let Z: any;
   beforeAll(async () => { Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); }, T);
@@ -4780,11 +4780,41 @@ describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main
     for (const id of Object.keys(ZOOMED)) for (const mistake of [false, true])
       expect(plate.renderPlate(S[id], { id: 'x', mistake }).svg, `${id} ${mistake}`).toBe(plate.renderPlate({ ...S[id], zoom: undefined }, { id: 'x', mistake }).svg);
   });
-  it('mutations: hip_thrust at k 2 (under the bar), leg_extension at k 2 (a smaller k reaches it) and the lying zoom removed are red', () => {
-    expect(zoomProblems('hip_thrust', { ...S.hip_thrust, zoom: { view: 'mistake', k: 2 } })).toEqual([
-      'hip_thrust: zoom {"view":"mistake","k":2}', expect.stringMatching(/^hip_thrust: 8\.\d px at k 2 < 11\.39$/)]);
+  it('mutations: cable_kickback at k 2 (under the bar), leg_extension at k 2 (a smaller k reaches it) and the lying zoom removed are red', () => {
+    expect(zoomProblems('cable_kickback', { ...S.cable_kickback, zoom: { view: 'mistake', k: 2 } })).toEqual([
+      'cable_kickback: zoom {"view":"mistake","k":2}', expect.stringMatching(/^cable_kickback: 8\.\d px at k 2 < 11\.39$/)]);
     expect(zoomProblems('leg_extension', { ...S.leg_extension, zoom: { view: 'mistake', k: 2 } })).toEqual(['leg_extension: zoom {"view":"mistake","k":2}', 'leg_extension: a smaller k reaches the bar']);
     expect(zoomProblems('lying_leg_curl', { ...S.lying_leg_curl, zoom: undefined }).length).toBeGreaterThan(0);
+  });
+  it('D-LIB18-RINGKEEP: hip_thrust is held: with its `arch` leader on the underside lumbar arch (R4), no tell reaches 11.39 px at k 4 (arch, ribs); mutation: the old front-line anchor does', () => {
+    const at4 = (spec: any) => spec.mistake.tells.map((t: any) => { const z = Z.zoomOf({ ...spec, zoom: { view: 'mistake', k: 4, tell: t.key } }); return [t.key, +(z.fault.d * 4).toFixed(2)]; });
+    const r = at4(S.hip_thrust);
+    console.log(`LIB-18 hip_thrust tells at k 4: ${JSON.stringify(r)}`);
+    expect(r.map((x: any) => x[0])).toEqual(['arch', 'ribs']);
+    expect(r.every((x: any) => x[1] < BAR)).toBe(true);
+    expect(S.hip_thrust.mistake.tells[0].anchor).toEqual({ along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' });
+    const old = { ...S.hip_thrust, mistake: { ...S.hip_thrust.mistake, tells: S.hip_thrust.mistake.tells.map((t: any, i: number) => (i ? t : { ...t, anchor: { along: ['navel', 'hips'], t: -0.15, pose: 'mistake' } })) } };
+    expect(at4(old).some((x: any) => x[1] >= BAR)).toBe(true);
+  });
+  // panel lb8q (#325 6410306586) and D-LIB18-RINGKEEP: one red dashed back curve, the ring on the measured arch, no leader in the zoom
+  const strokeProblems = (spec: any) => [
+    ...((spec.mistake.parts ?? []).includes('torso') ? ['the Mistake torso outline doubles the dashed back guide'] : []),
+    ...(spec.mistake.guides.filter((g: any) => g.kind === 'dashed').length !== 1 ? ['not exactly one dashed back guide'] : []),
+  ];
+  const ringProblems = (spec: any) => { const z = Z.zoomOf(spec), m = z.fault.mistake;
+    return Math.hypot(m[0] - z.src.c[0], m[1] - z.src.c[1]) <= z.src.r ? [] : ['the ring does not hold the arch\'s Mistake point']; };
+  const leaderInZoom = (svg: string) => (/class="leader|class="plate-callout|<text\b/.test(svg) ? ['a leader or label in the zoom render'] : []);
+  it('the leg curls draw the arch as one red dashed curve; every zoom ring holds its measured arch point; no zoom render holds a leader', () => {
+    for (const id of ['lying_leg_curl', 'standing_leg_curl']) expect(strokeProblems(S[id]), id).toEqual([]);
+    for (const id of Object.keys(ZOOMED)) { expect(ringProblems(S[id]), id).toEqual([]); expect(leaderInZoom(Z.zoomOf(S[id]).svg), id).toEqual([]); }
+  });
+  it('mutations: the Mistake torso outline added back (a doubled stroke), the ring moved off the arch (zoom on a far tell point) and a leader in the zoom render are red', () => {
+    const l = S.lying_leg_curl;
+    expect(strokeProblems({ ...l, mistake: { ...l.mistake, parts: ['torso', 'head'] } })).toEqual(['the Mistake torso outline doubles the dashed back guide']);
+    const far = { ...l, mistake: { ...l.mistake, tells: [{ ...l.mistake.tells[0], anchor: { at: 'backMid', pose: 'mistake', off: [0, -40] } }] } };
+    const z = Z.zoomOf(l), m = Z.zoomOf(far).fault.mistake;
+    expect(Math.hypot(m[0] - z.src.c[0], m[1] - z.src.c[1]) > z.src.r).toBe(true);
+    expect(leaderInZoom(Z.zoomOf(l).svg.replace('</g></g>', '<path class="leader" d="M0 0L1 1"/></g></g>'))).toEqual(['a leader or label in the zoom render']);
   });
   it('every held row is on no rows file and carries no zoom (the rows pending Q1, the zoom per view or the named list)', () => {
     for (const id of HELD) expect(S[id].zoom, id).toBeUndefined();

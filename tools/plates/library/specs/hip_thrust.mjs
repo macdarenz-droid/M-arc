@@ -218,16 +218,13 @@ export default {
     { key: 'shins', text: 'Shins<br>vertical', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5 }, cue: 'At the top your shins are vertical and your torso is flat.' },
   ],
   tempo: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
-  // LIB-ZOOM's inline zoom circle (D-LIBZOOM-EXTEND, #325 6405116791): the Mistake's fault drawn again at k 3, the smallest of
-  // 1.5-4 whose tell-anchor move reaches deviationMin 11.39 px at the zoom's own scale (12.5 px); zoom/inline.mjs places it.
-  zoom: { view: 'mistake', k: 3 },
   mistake: {
     pose: mistakePose,
     guides: [
       { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
     ],
     tells: [
-      { key: 'arch', text: 'Back<br>arched', anchor: { along: ['navel', 'hips'], t: -0.15, pose: 'mistake' }, box: { left: 150, top: 150 }, cue: 'The lower back arches as the hips lock out.' },
+      { key: 'arch', text: 'Back<br>arched', anchor: { along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' }, box: { left: 150, top: 170 }, cue: 'The lower back arches as the hips lock out.' },
       { key: 'ribs', text: 'Ribs up', anchor: { along: ['chest', 'navel'], t: 0.4, pose: 'mistake' }, box: { left: 50, top: 180 }, cue: 'The ribs flare up instead of staying down.' },
     ],
   },

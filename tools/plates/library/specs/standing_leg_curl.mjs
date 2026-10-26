@@ -183,7 +183,7 @@ export default {
       { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
     ],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 40, top: 120 }, cue: 'Your lower back arches as your leg curls.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 100, top: 90 }, cue: 'Your lower back arches as your leg curls.' },
     ],
   },
   alt: 'Standing leg curl, side view. Leaning on the machine with the thighs on the support pad, the hands on the handles and the left foot planted, the lifter curls the right heel toward the glutes until the foot is above the knee.',
