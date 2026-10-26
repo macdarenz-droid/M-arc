@@ -1,0 +1,52 @@
+{
+ "note": "LB7 H build-ahead rows (LIB-17, D-LIB17-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids with tempo seconds (A5; D-LIB17-SECS keeps cable_rear_delt_fly and renegade_row off); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
+ "batch": "LB7",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_cable_lateral_raise": {
+   "src": "library/specs/cable_lateral_raise.mjs",
+   "slug": "cable-lateral-raise",
+   "prefix": "cable-lateral-raise",
+   "chromeId": "cable-lateral-raise",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_dumbbell_front_raise": {
+   "src": "library/specs/dumbbell_front_raise.mjs",
+   "slug": "dumbbell-front-raise",
+   "prefix": "dumbbell-front-raise",
+   "chromeId": "dumbbell-front-raise",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_face_pull": {
+   "src": "library/specs/face_pull.mjs",
+   "slug": "face-pull",
+   "prefix": "face-pull",
+   "chromeId": "face-pull",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_cable_external_rotation": {
+   "src": "library/specs/cable_external_rotation.mjs",
+   "slug": "cable-external-rotation",
+   "prefix": "cable-external-rotation",
+   "chromeId": "cable-external-rotation",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_weighted_dip": {
+   "src": "library/specs/weighted_dip.mjs",
+   "slug": "weighted-dip",
+   "prefix": "weighted-dip",
+   "chromeId": "weighted-dip",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}

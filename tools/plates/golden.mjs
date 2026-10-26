@@ -143,13 +143,24 @@ export const fragmentsOf = p => ({
   alt: sha256(p.alt), mistakeAlt: sha256(p.mistakeAlt),
 });
 
-/** Hash chain and supersede rules of GOLDEN.json entries (plan 2.8). Returns the problems. */
-export function verifyChain(entries) {
+const APPROVAL = /^https:\/\/github\.com\/macdarenz-droid\/M-arc\/(pull|issues)\/\d+#issuecomment-\d+ @ [0-9a-f]{40}$/;
+
+/** Hash chain and supersede rules of GOLDEN.json entries (plan 2.8). Returns the problems. With `batch` (a per-batch
+ *  golden file, D-LIB8M-CHAIN), approvedBy may also be 'supervisor': only on a first plate or page entry, or on a
+ *  layers-page entry that is first or supersedes a 'supervisor' entry, and always with a decision and an approval. */
+export function verifyChain(entries, { batch = false } = {}) {
   const bad = [], latest = new Map();
   entries.forEach((e, i) => {
     const key = e.kind === 'plate' ? `plate:${e.id}` : e.kind;
     if (e.prev !== sha256(JSON.stringify(entries.slice(0, i)))) bad.push(`entry ${i} (${key}): prev does not match the entries before it (an older entry was edited)`);
-    if (e.approvedBy !== 'owner') bad.push(`entry ${i} (${key}): approvedBy is not owner`);
+    if (!batch || e.approvedBy !== 'supervisor') { if (e.approvedBy !== 'owner') bad.push(`entry ${i} (${key}): approvedBy is not owner${batch ? ' or supervisor' : ''}`); }
+    else {
+      const first = e.supersedes == null;
+      if (!(first && (e.kind === 'plate' || e.kind === 'page')) && !(e.kind === 'layers-page' && (first || entries[e.supersedes]?.approvedBy === 'supervisor')))
+        bad.push(`entry ${i} (${key}): approvedBy supervisor is allowed only on a first plate or page entry, or a layers-page entry that is first or supersedes a supervisor entry`);
+      if (typeof e.decision !== 'string' || !e.decision.trim()) bad.push(`entry ${i} (${key}): a supervisor entry needs a decision`);
+      if (typeof e.approval !== 'string' || !APPROVAL.test(e.approval)) bad.push(`entry ${i} (${key}): a supervisor entry needs an approval "<comment url> @ <40-hex sha>"`);
+    }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(e.date ?? '')) bad.push(`entry ${i} (${key}): bad date`);
     if (e.supersedes == null) { if (latest.has(key)) bad.push(`entry ${i} (${key}): a second entry for ${key} must supersede entry ${latest.get(key)}`); }
     else {
@@ -175,7 +186,7 @@ export function verifyBatchChain(file, goldenEntries) {
   if (!b || !Number.isInteger(b.index) || typeof b.hash !== 'string') bad.push('batch file: base needs { index, hash }');
   else if (b.index < 0 || b.index >= goldenEntries.length) bad.push(`batch file: base.index ${b.index} is not a GOLDEN.json entry (0..${goldenEntries.length - 1})`);
   else if (prefixHash(goldenEntries, b.index) !== b.hash) bad.push(`batch file: base.hash does not match GOLDEN.json entries 0..${b.index} (an older GOLDEN entry was edited, or base points at the wrong entry)`);
-  return [...bad, ...verifyChain(file.entries)];
+  return [...bad, ...verifyChain(file.entries, { batch: true })];
 }
 
 /** The latest entry per kind/id. */
@@ -214,7 +225,7 @@ for (const p of plates) {
   for (const k of p.normalKeys) out.fixtures[p.chromeId + '.n.' + k] = render(src, { id: p.prefix + '-n', selected: k });
   for (const k of p.mistakeKeys) out.fixtures[p.chromeId + '.m.' + k] = render(src, { id: p.prefix + '-m', mistake: true, selected: k });
 }
-for (const t of tests ? ['_test_front', '_test_side', '_test_poly', '_test_flat'] : []) {
+for (const t of tests ? ['_test_front', '_test_side', '_test_poly', '_test_flat', '_test_er5', '_test_pitch'] : []) {
   const spec = specs['exercises/' + t + '.mjs'];
   out.fixtures[t + '.n'] = render({ spec }, { id: t + '-n' });
   if (spec.mistake) out.fixtures[t + '.m'] = render({ spec }, { id: t + '-m', mistake: true });

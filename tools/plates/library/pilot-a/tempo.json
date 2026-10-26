@@ -1,0 +1,20 @@
+{
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16 @ 1e85584a): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase, and a cycle plate's Work and Rest, is a constant only with a quote that states its seconds; a range is the quote's string. Phase names, order and move flags are labels.",
+ "research": "claude/libht-research f57e7944ebb366a71f812146287ff0c4a6d2edef",
+ "rows": {
+  "dumbbell_bench_press": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Press", "from": "up", "move": true }],
+  "incline_dumbbell_press": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Press", "from": "up", "move": true }],
+  "dumbbell_shoulder_press": [{ "phase": "Press", "from": "up", "move": true }, { "phase": "Lower", "from": "down", "move": true }],
+  "barbell_overhead_press": [{ "phase": "Press", "from": "up", "move": true }, { "phase": "Hold", "from": "pause" }, { "phase": "Lower", "from": "down", "move": true }],
+  "barbell_row": [{ "phase": "Pull", "from": "up", "move": true }, { "phase": "Lower", "from": "down", "move": true }],
+  "romanian_deadlift": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Stand", "from": "up", "move": true }],
+  "single_leg_romanian_deadlift": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Stand", "from": "up", "move": true }, { "phase": "Balance", "from": "pause" }],
+  "dumbbell_biceps_curl": [{ "phase": "Curl", "from": "up", "move": true }, { "phase": "Lower", "from": "down", "move": true }],
+  "upright_row": [{ "phase": "Pull", "from": "up", "move": true }, { "phase": "Lower", "from": "down", "move": true }],
+  "triceps_pushdown": [{ "phase": "Press", "from": "up", "move": true }, { "phase": "Hold", "from": "pause" }, { "phase": "Return", "from": "down", "move": true }],
+  "rope_triceps_pushdown": [{ "phase": "Press", "from": "up", "move": true }, { "phase": "Hold", "from": "pause" }, { "phase": "Return", "from": "down", "move": true }],
+  "pec_fly": [{ "phase": "Close", "from": "up", "move": true }, { "phase": "Hold", "from": "pause" }, { "phase": "Open", "from": "down", "move": true }],
+  "plank": [{ "phase": "Hold", "constant": "10–60", "claim": "c12", "quote": "Front plank Reps: 1–6 Sets: 1 Hold: 10–60 seconds Rest: 30–60 seconds between reps" }],
+  "mountain_climbers": [{ "phase": "Work", "constant": 15, "move": true, "claim": "c13", "quote": "Mountain climbers are usually programmed by time rather than reps. Beginners should start with 2 to 3 sets of 15 seconds of work and 15 seconds of rest, which totals about 1 to 2 minutes." }, { "phase": "Rest", "constant": 15, "claim": "c13", "quote": "Mountain climbers are usually programmed by time rather than reps. Beginners should start with 2 to 3 sets of 15 seconds of work and 15 seconds of rest, which totals about 1 to 2 minutes." }]
+ }
+}

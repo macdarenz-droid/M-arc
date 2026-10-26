@@ -1,0 +1,25 @@
+{
+ "note": "LB9 H build-ahead rows (LIB-21, D-LIB21-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids with a tempo strip (A5; held ids are in DESIGN.md's held table); all H (DESIGN.md section 1). The 3 (b) ids join only after LIB-20 is on main (D-LIB21-ER5). censusRef: the census commit (claude/howto-options).",
+ "batch": "LB9",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_ab_wheel_rollout": {
+   "src": "library/specs/ab_wheel_rollout.mjs",
+   "slug": "ab-wheel-rollout",
+   "prefix": "ab-wheel-rollout",
+   "chromeId": "ab-wheel-rollout",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_bird_dog": {
+   "src": "library/specs/bird_dog.mjs",
+   "slug": "bird-dog",
+   "prefix": "bird-dog",
+   "chromeId": "bird-dog",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}

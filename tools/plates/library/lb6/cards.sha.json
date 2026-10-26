@@ -1,0 +1,14 @@
+{
+ "note": "sha256 per LB6 H card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\" (the research files own form); and sha256 of each quotes file, a byte copy from the same head.",
+ "researchHead": "a8e66f32e34e1746075ffa4da35ea18c80dd4776",
+ "cards": {
+  "cable_chest_press": "00196a45ff1cb392e54078010cfe7a3ed58f45b5667c3d988fc0927b65382d3f",
+  "machine_pullover": "26fe17ae3a7c6b72d425680a131ce4de3746da06aa47f9a8b58061f5c7c6a4c8",
+  "machine_crunch": "87e211ca848918ff5a90360d6b3d7e80974f846c11459ae966a34e15276464b2"
+ },
+ "quotes": {
+  "cable_chest_press": "d2d3bc711e95c7b83743dc45bea079c6984539066162981a3e39adf89c603bb2",
+  "machine_pullover": "4eecbd20e9a564f30dbee8d15fd151d9fed730d711dfa12560f72cce2c908439",
+  "machine_crunch": "faea91c469ee82bc2dc4a3a2f857bfe5eef13342cda4e945a24e37a07d841938"
+ }
+}

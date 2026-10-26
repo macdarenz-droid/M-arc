@@ -1,0 +1,61 @@
+{
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. No Rest. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 9 pose map). Proposed: D-LIB16-TEMPO (lib-16-card ruling 12), for 'LB6 NOTE RULED'.",
+ "research": "claude/libht-research a8e66f32e34e1746075ffa4da35ea18c80dd4776",
+ "constants": {},
+ "ids": {
+  "cable_chest_press": {
+   "claim": [
+    "c15",
+    "c16"
+   ],
+   "rows": [
+    {
+     "phase": "Press",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Return",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "machine_pullover": {
+   "claim": "c14",
+   "rows": [
+    {
+     "phase": "Pull",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Return",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "machine_crunch": {
+   "claim": [
+    "c15"
+   ],
+   "rows": [
+    {
+     "phase": "Crunch",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Return",
+     "from": "down",
+     "move": true
+    }
+   ]
+  }
+ }
+}

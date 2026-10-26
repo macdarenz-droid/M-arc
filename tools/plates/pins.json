@@ -13,7 +13,8 @@
     { "commit": "7859292", "why": "golden update, LIB-25 poly" },
     { "commit": "de00174", "why": "golden update, LIB-25 poly" },
     { "commit": "48153c4", "why": "golden update, LIB-25 poly" },
-    { "commit": "f214700", "why": "golden update, LIB-26 flat palm" }
+    { "commit": "f214700", "why": "golden update, LIB-26 flat palm" },
+    { "commit": "c35e0a4", "why": "golden update, LIB-20 E-R5" }
   ],
-  "vendorSourceMessage": "is not a bc0f378 blob, the ref-src commit or a golden update (7859292, de00174, 48153c4: LIB-25 poly; f214700: LIB-26 flat palm)"
+  "vendorSourceMessage": "is not a bc0f378 blob, the ref-src commit or a golden update (7859292, de00174, 48153c4: LIB-25 poly; f214700: LIB-26 flat palm; c35e0a4: LIB-20 E-R5)"
 }

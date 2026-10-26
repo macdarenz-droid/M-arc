@@ -1,13 +1,13 @@
 // LIB-7b shared-key scratch tree (card Do 6, 7b-A3; D-LIB-SCRATCHIDS). Never merged; the supervisor pushes the ref
 // claude/lib-7b-scratch. Run inside a worktree of this branch's head, with node_modules installed:
-//   node tests/library/fixtures/lib7b/scratch.mjs build      stage lib_barbell_row + lib_t_bar_row on curl-dumbbell-under,
+//   node tests/library/fixtures/lib7b/scratch.mjs build      stage lib_scratch_pull_row + lib_t_bar_row on curl-dumbbell-under,
 //                                                            build the page, pin, real loader + scratch IDS lines, stamps,
 //                                                            generate, vite build, budgets, pages file, generate --check,
 //                                                            one commit "[do not merge] LIB-7b scratch …"
 // Then, in the same tree:
-//   MARC_CHROMIUM=… node tools/plates/library/fidelity.mjs --ids lib_barbell_row,lib_t_bar_row --families HT6 \
+//   MARC_CHROMIUM=… node tools/plates/library/fidelity.mjs --ids lib_scratch_pull_row,lib_t_bar_row --families HT6 \
 //     --pages tests/howto/fixtures/lib4b/pages.json --json lib7b-ht6.json
-//   MARC_CHROMIUM=… node tests/library/fixtures/lib7b/app-probe.mjs lib_barbell_row lib_t_bar_row
+//   MARC_CHROMIUM=… node tests/library/fixtures/lib7b/app-probe.mjs lib_scratch_pull_row lib_t_bar_row
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -33,6 +33,6 @@ if (process.argv[2] === 'build') {
   sh(process.execPath, ['node_modules/vite/bin/vite.js', 'build', '--logLevel', 'error']);
   console.log(sh(process.execPath, ['tools/plates/generate.mjs', '--check']).trim().split('\n').pop());
   sh('git', ['add', '-A']);
-  sh('git', ['commit', '-q', '-m', '[do not merge] LIB-7b scratch: lib_barbell_row + lib_t_bar_row on curl-dumbbell-under (7b-A3, scratch-only IDS lines)']);
+  sh('git', ['commit', '-q', '-m', '[do not merge] LIB-7b scratch: lib_scratch_pull_row + lib_t_bar_row on curl-dumbbell-under (7b-A3, scratch-only IDS lines)']);
   console.log('scratch head', sh('git', ['rev-parse', 'HEAD']).trim());
 } else throw new Error('usage: scratch.mjs build');

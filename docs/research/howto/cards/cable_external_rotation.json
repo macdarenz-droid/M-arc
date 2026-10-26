@@ -1,0 +1,769 @@
+{
+  "id": "cable_external_rotation",
+  "libId": "lib_cable_external_rotation",
+  "name": "Cable External Rotation",
+  "family": "Rear delt and cuff",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the cable pulley at about elbow height (ACE: about waist height) with a single handle attached.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er",
+        "sl-cable-er",
+        "ace-cuff-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Stand sideways to a cable machine with the pulley at elbow height and a single handle attached.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-cable-er",
+          "text": "Fasten a handle at elbow height in a cable pulley.",
+          "where": "How to do Cable External Shoulder Rotation, step 1"
+        },
+        {
+          "source": "ace-cuff-er",
+          "text": "Place a cable pulley at about waist-height and attach a single handle, holding it in the left hand so that the right side of the body is closest to the machine.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Stand side-on to the pulley and hold the handle in the far hand, the arm on the side away from the machine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er",
+        "sl-cable-er",
+        "ace-cuff-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Grip the handle with the far hand, elbow bent at 90 degrees and tucked to your side, forearm across your body.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-cable-er",
+          "text": "Stand with your side to the pulley, grasping the handle in the opposite arm.",
+          "where": "How to do Cable External Shoulder Rotation, step 1"
+        },
+        {
+          "source": "ace-cuff-er",
+          "text": "Place a cable pulley at about waist-height and attach a single handle, holding it in the left hand so that the right side of the body is closest to the machine.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Hold the upper arm and elbow against the side, the elbow bent to 90 degrees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-er",
+        "mo-cable-er",
+        "ace-cuff-er"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-er",
+          "text": "Hold your upper arm and elbow against your side, and bend your elbow to 90 degrees.",
+          "where": "How to do Cable External Shoulder Rotation, step 2"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Grip the handle with the far hand, elbow bent at 90 degrees and tucked to your side, forearm across your body.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "ace-cuff-er",
+          "text": "Keep the left elbow tucked in to the body, and turn the shoulder back away from the body to move the left hand to the outside of the body (the cable should pass in front of the stomach).",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The rep starts with the forearm across the body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Rotate from forearm across the body to perpendicular away, with elbow fixed at side and no torso movement.",
+          "where": "Coaching Tips, Range of Motion"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Breathe out and rotate the upper arm outward, turning the handle away from the body, without moving the elbow from the side.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er",
+        "sl-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Exhale and rotate your shoulder to pull the handle outward, keeping your elbow fixed at your side.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-cable-er",
+          "text": "Rotate your upper arm outward, without moving your elbow from your side.",
+          "where": "How to do Cable External Shoulder Rotation, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The turn ends with the hand outside the body line, the cable passing in front of the stomach (ACE); Motra's range ends with the forearm perpendicular to the body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-cuff-er",
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "ace-cuff-er",
+          "text": "Keep the left elbow tucked in to the body, and turn the shoulder back away from the body to move the left hand to the outside of the body (the cable should pass in front of the stomach).",
+          "where": "Instructions"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Rotate from forearm across the body to perpendicular away, with elbow fixed at side and no torso movement.",
+          "where": "Coaching Tips, Range of Motion"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Breathe in and return the handle slowly across the body to the start, under control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er",
+        "sl-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Inhale and slowly return the handle across your body to the start position.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-cable-er",
+          "text": "Return the weight under control.",
+          "where": "How to do Cable External Shoulder Rotation, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Brace and keep the torso stable, rotating from the shoulder only; a twisting torso is on Motra's common-mistakes list.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Engage your core and keep your torso stable.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Rotate from shoulder only",
+          "where": "Coaching Tips, Form Cues"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Twisting torso",
+          "where": "Safety, Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Keep the elbow against the side through the whole rep; letting the elbow flare out is on Motra's common-mistakes list.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er",
+        "sl-cuff-article"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Elbow glued to side",
+          "where": "Coaching Tips, Form Cues"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Allowing elbow to flare out",
+          "where": "Safety, Common Mistakes"
+        },
+        {
+          "source": "sl-cuff-article",
+          "text": "The important thing to note is that you should keep your upper arm steady against your side, and make sure that you are rotating your arm against the direction of resistance.",
+          "where": "4. External Shoulder Rotation"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Keep the forearm parallel to the ground as it turns.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Keep forearm parallel to ground",
+          "where": "Coaching Tips, Form Cues"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Don't shrug; shrugging the shoulders is on Motra's common-mistakes list.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "No shrugging",
+          "where": "Coaching Tips, Form Cues"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Shrugging shoulders",
+          "where": "Safety, Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Using momentum to swing the handle is first on Motra's common-mistakes list.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Using momentum to swing",
+          "where": "Safety, Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Use only a very light weight, with full control and strict form; Motra says strict form is to prevent strain.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-er",
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-er",
+          "text": "Only a very light weight should be used in this exercise, with full control.",
+          "where": "Commentary"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Use light weight only",
+          "where": "Safety, Safety Notes"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Maintain strict form to prevent strain",
+          "where": "Safety, Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "The exercise trains the rotator cuff, primarily the infraspinatus, and also the supraspinatus and teres minor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-er",
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-er",
+          "text": "This exercise trains some of the muscles of the rotator cuff: primarily infraspinatus, but also supraspinatus and teres minor.",
+          "where": "Commentary"
+        },
+        {
+          "source": "sl-cable-er",
+          "text": "Rotator Cuff",
+          "where": "Muscles Worked, Primary muscles worked"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Cable external shoulder rotation isolates the rotator cuff to build shoulder stability and prevent injuries; commonly used in rehab, warm-ups, and shoulder health programs.",
+          "where": "About"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The infraspinatus and teres minor, rotator cuff muscles on the back of the shoulder blade, turn the arm outward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cuff-article"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cuff-article",
+          "text": "Infraspinatus adducts and externally rotates your arm.",
+          "where": "When You Push, Your Rotator Cuff Pulls"
+        },
+        {
+          "source": "sl-cuff-article",
+          "text": "Teres minor, similar to infraspinatus, adducts and externally rotates your arm.",
+          "where": "When You Push, Your Rotator Cuff Pulls"
+        },
+        {
+          "source": "sl-cuff-article",
+          "text": "Infraspinatus sits below the spine of your shoulder blade and inserts on the back of your humeral head.",
+          "where": "Rotator Cuff Anatomy"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Motra's muscle breakdown lists the rear deltoids under the shoulders for this exercise.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Rear Delts",
+          "where": "Muscle Breakdown, Shoulders 10/10"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Stop if shoulder pain occurs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "Stop if shoulder pain occurs",
+          "where": "Safety, Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Tempo: pause for one second at the end of the outward turn, before slowly lowering back to the start (ACE gives the 1 s; Motra asks for a brief pause there).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-cuff-er",
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "ace-cuff-er",
+          "text": "Pause for one second before slowly lowering the weight to the starting position.",
+          "where": "Instructions"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Pause briefly when your forearm is perpendicular to your body.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Tempo: Motra lists 2-1-2 for this lift and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the return, a 1 s pause at the start position and 2 s for the outward turn.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-er",
+          "text": "2-1-2",
+          "where": "Coaching Tips, Tempo"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip (served HTML)"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mo-cable-er",
+      "url": "https://motra.com/exercises/cableExternalShoulderRotation",
+      "title": "Cable External Shoulder Rotation: Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-cable-er",
+      "url": "https://www.strengthlog.com/cable-external-shoulder-rotation/",
+      "title": "How to Do Cable External Shoulder Rotation: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "ace-cuff-er",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/352/rotator-cuff-external-rotation/",
+      "title": "Rotator Cuff External Rotation (ACE exercise library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-cuff-article",
+      "url": "https://www.strengthlog.com/rotator-cuff-exercises-workout/",
+      "title": "Rotator Cuff Exercises and Workout (StrengthLog, Daniel Richter)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "census: front. The forearm sweeps outward about the upper arm (c5, c6) while the elbow stays against the side (c3, c9); the drawn fault, the elbow flaring away from the side (c9), shows from the front.",
+    "equipment": "Cable column with the pulley at about elbow height and a single handle (c1); the lifter stands side-on, the far hand on the handle (c2); the cable passes in front of the stomach (c6). Floor line.",
+    "start": "Standing side-on, torso braced and still (c8); upper arm and elbow against the side, elbow bent 90 degrees (c3); forearm across the body (c4), parallel to the ground (c10).",
+    "end": "Forearm turned out until the hand is outside the body line (c6), still parallel to the ground (c10); elbow still against the side (c3, c9); torso not twisted (c8); shoulder not shrugged (c11).",
+    "checkpoints": [
+      {
+        "label": "Elbow at side",
+        "what": "Upper arm against your side, elbow bent 90 degrees, all rep.",
+        "claim": [
+          "c3",
+          "c9"
+        ]
+      },
+      {
+        "label": "Forearm level",
+        "what": "Forearm stays parallel to the ground as it turns.",
+        "claim": "c10"
+      },
+      {
+        "label": "Turn only",
+        "what": "Rotate from the shoulder. Torso stays still.",
+        "claim": "c8"
+      }
+    ],
+    "mistake": {
+      "what": "Elbow flaring out, away from the side, as the handle turns.",
+      "why": "Motra's common-mistakes list puts \"Using momentum to swing\" first (c12); it shows only as speed, so it cannot be drawn. \"Allowing elbow to flare out\" is the next fault on the same list (c9) and reads from the front as the elbow leaving the side. How often it happens is not measured.",
+      "claim": "c9",
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: using momentum to swing (c12), first on Motra's common-mistakes list, the only list and one written for this exercise (\"Using momentum to swing\", \"Allowing elbow to flare out\", \"Twisting torso\", \"Shrugging shoulders\", \"Incomplete range\"). Step 1: no frequency word for a fault. Set aside: Motra's \"commonly used in rehab, warm-ups, and shoulder health programs\" (c14) is about the exercise's use, \"Typical Rep Range\" is programming and \"Spotting not required\" is spotting; the StrengthLog rotator-cuff article's \"often easy to do at home\", \"you usually want to train light but often initially\" and \"common movement patterns\" are about exercise choice and programming. Step 2: no named fault is tied to harm. Set aside: Motra's \"Maintain strict form to prevent strain\" (c13) names no fault; \"Stop if shoulder pain occurs\" (c17) and \"Avoid if acute rotator cuff injury\" name none; the StrengthLog article's \"That might in turn increase your shoulder injury risk, instead of lowering it.\" is about doing rotator-cuff isolation work before heavy lifts (exercise order), not a fault in the set. Step 3 picks the swing; no other list ties with it. The swing shows only as speed (no source names a still sign for it), so drawable is false and plate.mistake names the next fault by the same steps: step 3, the next fault on Motra's list, \"Allowing elbow to flare out\" (c9), which the front view shows as the elbow leaving the side. handlingMistakes[0] stays the swing. Further scan (2026-10-22, fetcher pages included): the StrengthLog rotator-cuff article's \"That way, you don’t run the risk of tiring out your rotator cuffs before your more demanding exercises, which could make them unable to stabilize your shoulder properly, and thus increase your injury risk instead of lowering it.\" is exercise order (programming), not a fault in the set; its \"If they are pain-free and maintain good technique\", \"The injured athlete that is rehabbing a shoulder injury\" and \"If you are currently rehabbing an injury\" are about who trains and how, no fault. Motra's \"isolates the rotator cuff to build shoulder stability and prevent injuries\" is a benefit claim, no fault."
+    },
+    "tells": [
+      {
+        "text": "Elbow stays against your side",
+        "claim": [
+          "c3",
+          "c9"
+        ]
+      },
+      {
+        "text": "Forearm stays level with the floor",
+        "claim": "c10"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": [
+        "c18",
+        "c19"
+      ],
+      "text": "Up 2 (the outward turn) and down 2 (the return) are Motra's 2-1-2 (c19, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause; the page shows three numbers, read as the first three, with no top pause. Its 1 s pause at the start position sits between the return and the turn, so it is named here and not written in pause (LR-33). Pause 1 is sourced: ACE's \"Pause for one second before slowly lowering the weight to the starting position.\" (c18), right after the outward turn, where Motra also asks for a brief pause."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "One single handle held in the far hand (c2).",
+    "width": "One arm; upper arm against the side, elbow at 90 degrees (c3).",
+    "thumb": "Not given by any source read; the natural grip of a single D-handle is drawn (LR-4, notes).",
+    "handContact": "Not given by any source read.",
+    "wrist": "Not given by any source read.",
+    "claims": [
+      "c2",
+      "c3"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the pulley at elbow height with a single handle.",
+      "claim": "c1"
+    },
+    {
+      "step": "Stand side-on to the machine. Hold the handle in your far hand.",
+      "claim": "c2"
+    },
+    {
+      "step": "Upper arm against your side, elbow bent to 90 degrees.",
+      "claim": "c3"
+    },
+    {
+      "step": "Start with your forearm across your body.",
+      "claim": "c4"
+    },
+    {
+      "step": "Pick a very light weight.",
+      "claim": "c13"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Brace and keep your torso still. Turn from the shoulder only.",
+      "claim": "c8"
+    },
+    {
+      "point": "Breathe out and turn the handle out, away from your body.",
+      "claim": "c5"
+    },
+    {
+      "point": "Keep your elbow against your side the whole rep.",
+      "claim": [
+        "c9",
+        "c5"
+      ]
+    },
+    {
+      "point": "Keep your forearm parallel to the floor.",
+      "claim": "c10"
+    },
+    {
+      "point": "Pause for one second at the end of the turn.",
+      "claim": "c18"
+    },
+    {
+      "point": "Breathe in and slowly return the handle across your body.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging with momentum.",
+      "fix": "Go very light and turn with full control.",
+      "claim": [
+        "c12",
+        "c13"
+      ]
+    },
+    {
+      "mistake": "Elbow flaring out.",
+      "fix": "Keep your elbow against your side.",
+      "claim": "c9"
+    },
+    {
+      "mistake": "Twisting the torso.",
+      "fix": "Keep your torso still. Turn from the shoulder only.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [],
+    "secondary": [
+      {
+        "muscleId": "rotator_cuff",
+        "claim": [
+          "c14",
+          "c15"
+        ]
+      },
+      {
+        "muscleId": "rear_delts",
+        "claim": "c16"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Back of the shoulder",
+        "means": "The rotator cuff muscles that turn the arm out are working.",
+        "fix": "",
+        "claim": [
+          "c14",
+          "c15"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Top of the shoulder and neck",
+        "means": "Fault: shrugging the shoulder.",
+        "fix": "Keep your shoulder down. Don't shrug.",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Shoulder pain",
+        "means": "",
+        "fix": "Stop the set.",
+        "claim": "c17",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder: use only a very light weight. Keep strict form to avoid strain.",
+      "claim": "c13"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "cer-elbow",
+      "kind": "posture",
+      "right": "Upper arm against your side, elbow bent 90 degrees.",
+      "wrong": "Elbow drifting out, away from the side.",
+      "claim": [
+        "c3",
+        "c9"
+      ]
+    },
+    {
+      "key": "cer-turn",
+      "kind": "posture",
+      "right": "Hand turned out past the body, torso still.",
+      "wrong": "Torso twisting to move the handle.",
+      "claim": [
+        "c6",
+        "c8"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "rotator_cuff primary stands in the library: the coach pages say the exercise trains the rotator cuff, mainly the infraspinatus (c14), the muscle that turns the arm out (c15). It is text-only (LR-35), so in feel it is in secondary, and feel.primary is empty (see notes). rear_delts secondary stands, flagged weak: one coach page lists it (c16). Motra also lists the mid traps (4 of 10) and obliques (3 of 10); not added, one coach page and no claim on the card."
+  },
+  "anchorSource": "mo-cable-er",
+  "notes": [
+    "feel.primary is empty: the census primary rotator_cuff is text-only and LR-35 bars it from feel.primary, and no drawable muscle is sourced as the main mover (rear_delts rests on one coach page, c16, WEAK). C2 allows an empty primary. Promoting rear_delts to primary would misstate the target; left for the supervisor.",
+    "Grip: no read source names a palm direction, thumb, hand contact or wrist position. LR-4: the plate draws the natural grip of a single D-handle (neutral). Drawing convention, not a claim.",
+    "Pulley height: Motra and StrengthLog say elbow height, ACE about waist height (c1); standing with the elbow at the side these are close. The plate draws elbow height.",
+    "End position: ACE moves the hand to the outside of the body (c6); Motra's range ends with the forearm perpendicular to the body (c6). The plate draws ACE's end, hand just outside the body line.",
+    "Not used: a towel roll under the arm and other external rotation set-ups (side-lying, prone, 90 degrees of abduction) belong to other exercises or rehab protocols. Reinold 2004 (abstract) and Alizadehkhaiyat 2015 (full text) were read: both are EMG studies of external rotation positions in lab protocols (Alizadehkhaiyat with a 1 kg weight in the hand, including standing at 0 degrees), not this cable exercise, so neither is cited.",
+    "Not sourced, so left out: a rep count for beginners, how far to stand from the column, and a way to get the handle on and off the pulley."
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "angle",
+      "joint": "elbow.l",
+      "pose": "start",
+      "cardPose": "start",
+      "deg": 90,
+      "claim": "c3"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Turn out",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "swing"
+}

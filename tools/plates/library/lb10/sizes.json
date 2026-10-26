@@ -1,0 +1,872 @@
+{
+ "rule": "D-LIB22-SIZE (lib-22-card ruling 19): every number a card does not give, each Mistake's magnitude, each stride and each 'slightly bent' or 'soft' joint included, fixed here before PQ-H3 is measured, each with its basis: a claim id, an approved plate's value (file:line) used as a convention, or a stated reason in numbers. PQ-H3 is never a basis. A spec's exported SIZES table equals its row here and every row is used (A17, both ways); a composer's exported constants equal theirs; `trace` is the spec's trace point (D-LIB22-TRACE). Values marked 'solved' are computed by the spec from the rule in their basis. Rows for the other slice ids and the bulk are the note's proposals in DESIGN.md section 11, written here when drawn.",
+ "ids": {
+  "kettlebell_swing": {
+   "FOOT_X": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ dcac4a38):44, the widest stance the engine's rigid foot allows with every sole contact within 0.5 cm (mid-soles 36 cm apart), for c1 'about shoulder-width'; the side view does not show the width"
+   },
+   "TOE_OUT": {
+    "value": 17,
+    "unit": "deg",
+    "basis": "convention: upright_row.mjs (#109 @ dcac4a38):56, the toe direction [0.3, 0, 1] (17 deg) that goes with FOOT_X, for c1 Human Kinetics 'toes pointed slightly outward'"
+   },
+   "KNEE": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: romanian_deadlift.mjs (#109 @ dcac4a38) KNEE 15, pilot A's approved hinge ('about 15 deg'), for c6 'knees only slightly bent'"
+   },
+   "START_INCL": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "claim: c6 Muscle & Fitness 'hinging your torso until it is parallel with the floor' (a segment angle to the floor, held by a check, D-LIB22-FACTS); spine neutral (trunk 0, c13), so the pelvis tilt carries it"
+   },
+   "GRIP_T": {
+    "value": 0.35,
+    "unit": "fraction",
+    "basis": "stated reason: c5 'high into the groin, keeping forearms close to thighs': the straight arms aim at the near thigh's axis a third of the way (0.35) from the hip joint to the knee"
+   },
+   "GRIP_X": {
+    "value": 0.045,
+    "unit": "m",
+    "basis": "stated reason: c2 'both hands next to each other on the handle': hand centres 9 cm apart, about one hand breadth"
+   },
+   "VIA1_INCL": {
+    "value": 55,
+    "unit": "deg",
+    "basis": "claim: c5 BarBend 'sweep the kettlebell back between your legs': the via pose with the bell passing between the knees (drawn 12.8 cm below them), the trunk half risen from the hike (a ghost, never solid, D-LIB22-CYCLE); re-cited per #305 6356835486 3b (Human Kinetics' 'small triangle above your knees' is the target as the bell starts down, not this frame)"
+   },
+   "VIA1_KNEE": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "claim: c5 BarBend 'Your knees can bend slightly': the via pose's knee, between the hike's 15 and the top's 0"
+   },
+   "VIA1_PHI": {
+    "value": -5,
+    "unit": "deg",
+    "basis": "claim: c5 (between the knees): the straight arms 5 deg behind plumb, the bell just under the hands between the knees"
+   },
+   "VIA2_INCL": {
+    "value": 22,
+    "unit": "deg",
+    "basis": "claim: c7 'Explosively drive hips forward ... to propel the bell forward': the via pose with the hips still flexed as the bell passes hip height in front"
+   },
+   "VIA2_KNEE": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "claim: c7 (the hip drive): the knees almost straight as the hips extend"
+   },
+   "VIA2_PHI": {
+    "value": 45,
+    "unit": "deg",
+    "basis": "claim: c7, c9: the arms half way from plumb to the top's chest height"
+   },
+   "M_TILT": {
+    "value": -14,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (the 8's approved arch, pelvis tilt -14), for c14 'leaning backward at the top'"
+   },
+   "M_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (the 8's approved lumbar arch, trunk -12; LB6 M_ARCH 12), for c14 BarBend 'hyperextending your low back'"
+   },
+   "BODY_KG": {
+    "value": 75,
+    "unit": "kg",
+    "basis": "convention: lb7/sizes.json weighted_dip BODY_KG 75 (#299 @ 5a9f004c), the 1.75 m figure's mass for the balance"
+   },
+   "END_PHI": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c9 'swing the kettlebell to about chest height': the straight arms' angle that puts the bell centre at the chest landmark's height (solved; the value is in the spec's END_PHI export)"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "plate.frames 'the bell arc can be traced': the bell's handle in the fists (the bell centre is not a landmark; it hangs 19 cm on along the same arm line, eq/kettlebell.mjs)"
+   },
+   "BELL_KG": {
+    "value": "solved",
+    "unit": "kg",
+    "basis": "the drawn bell's mass (NOTE RULED 7, #305 6355155831): eq/kettlebell.mjs bellMass, the drawn body, horns and handle in cast iron (7.2 kg/L): 16.04 kg, sized to c25's 16 kg study bell"
+   },
+   "TOP_KNEE": {
+    "value": 1,
+    "unit": "deg",
+    "basis": "claim: c8 Human Kinetics 'pulling your kneecaps up strongly' (knees straight): 1 deg short of full extension, where the engine's two-bone leg is singular"
+   }
+  },
+  "kettlebell": {
+   "bodyD": {
+    "value": 0.162,
+    "unit": "m",
+    "basis": "stated reason: the body of a solid cast-iron bell of c25's 16 kg (with bellMass's horns and handle): a 16.2 cm sphere with its base cut flat"
+   },
+   "reach": {
+    "value": 0.151,
+    "unit": "m",
+    "basis": "stated reason: the handle centre 7 cm beyond the body's surface (the horns' height above the body, about two handle thicknesses)"
+   },
+   "hornT": {
+    "value": 0.033,
+    "unit": "m",
+    "basis": "stated reason: a 33 mm handle and horns (a common kettlebell handle thickness)"
+   },
+   "neckW": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "stated reason: seen from the side the horns flare to about 7 cm where they meet the body"
+   },
+   "baseFlat": {
+    "value": 0.6,
+    "unit": "fraction",
+    "basis": "stated reason: the flat base cuts the body circle at 0.6 of its radius (a 13 cm flat on a 16.2 cm body), so the bell can stand"
+   },
+   "handleW": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "claim: c2 'both hands next to each other on the handle': a handle 10 cm wide holds two hands side by side"
+   },
+   "density": {
+    "value": 7200,
+    "unit": "kg/m3",
+    "basis": "stated reason: grey cast iron, about 7.2 kg per litre (bellMass)"
+   }
+  },
+  "medicine_ball_slam": {
+   "PX_PER_M": {
+    "value": 134,
+    "unit": "px/m",
+    "basis": "stated reason (framing): the largest whole scale at which the start's ball overhead (its top 2.33 m up) stays under the plate's top margin with the floor at y 339; inside F1's 123.9-146.29 px/m"
+   },
+   "FOOT_X": {
+    "value": 0.13,
+    "unit": "m",
+    "basis": "claim: c1 'feet about shoulder-width apart' (ACE: hip-width), held at the widest stance the engine's rigid foot allows with every plant contact within 0.5 cm (0.13 m: 0.5 cm on the toes; 0.135 m: 0.6 cm) (D-LIB22-STANCE amended, #305 6357040314); the side view does not show the width"
+   },
+   "TOE_OUT": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "convention: a natural toe-out between kettlebell_swing's 17 and romanian_deadlift's 5 (#109), keeping the contacts within 0.5 cm; the card gives none"
+   },
+   "HEEL_UP": {
+    "value": 45,
+    "unit": "deg",
+    "basis": "convention: reverse_lunge.mjs:52 REAR_HEEL 45 (#109 @ dcac4a38), the rigid foot on its ball, for c2 'on your toes'"
+   },
+   "START_KNEE": {
+    "value": 2,
+    "unit": "deg",
+    "basis": "claim: c2 SL 'Extend your knees ... as tall as possible': knees 2 deg short of straight (extended, not hyper-extended)"
+   },
+   "END_ARM": {
+    "value": 0.97,
+    "unit": "fraction",
+    "basis": "claim: c3, c4 BodBot 'follow the slam down': the hands just over the ball's top, the arms 97 % of their straight length (not locked)"
+   },
+   "M_INCL": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "stated reason: c4 'arms only ... without bending the hips and knees': the trunk 10 deg forward over straight legs (a slam with no hip hinge)"
+   },
+   "M_FLEX": {
+    "value": 30,
+    "unit": "deg",
+    "basis": "stated reason: c4: the arms flung 30 deg in front of the trunk line at the end of an arms-only slam"
+   },
+   "END_INCL": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c5 ACE 'the spine and shin angles remain parallel': the trunk's inclination equals the shin's, solved with the balance and END_ARM"
+   },
+   "END_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "balance (D-LIB22-BALANCE): the end pose's root z that puts the Winter centre of mass over mid-foot"
+   },
+   "trace": {
+    "value": "grips",
+    "unit": "point",
+    "basis": "claim: c3 'slam the medicine ball straight down between your feet': the hands on the ball (NOTE RULED 6)"
+   },
+   "VIA_N": {
+    "value": 5,
+    "unit": "count",
+    "basis": "claim: c3 ACE 'Explosively bring the ball down over your head to throw it directly downwards into the floor': five via keys on one arc about the shoulder, so the hands' path follows the arc in front (the middle one is the ghost; D-LIB22-CYCLE)"
+   },
+   "BALL_KG": {
+    "value": 4.5,
+    "unit": "kg",
+    "basis": "claim: c11 'start with the 10-pound ball' (4.5 kg), for the start's balance with the ball overhead"
+   },
+   "BODY_KG": {
+    "value": 75,
+    "unit": "kg",
+    "basis": "convention: lb7/sizes.json weighted_dip BODY_KG 75 (#299 @ 5a9f004c), the 1.75 m figure's mass"
+   },
+   "START_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c2 'hips slightly forward, and on your toes' with D-LIB22-BALANCE: the hips' offset in front of the ankles that puts the centre of mass (the 4.5 kg ball overhead included) over the forefoot (between the balls and the toes)"
+   },
+   "BALL_DZ": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "claim: c3 'straight down between your feet': the ball's centre 7 cm in front of mid-foot, between heel (-0.12 m) and toe (+0.13 m), where in 3D it clears both feet and shanks (end +1.1/+0.8 cm, Mistake +1.2/+4.3 cm; #305 6357040314 option (c))"
+   }
+  },
+  "medBall": {
+   "d": {
+    "value": 0.23,
+    "unit": "m",
+    "basis": "claim: c11 'start with the 10-pound ball': a 4.5 kg slam ball is about 23 cm (9 in) across (stated, not on the card)"
+   },
+   "seam": {
+    "value": 0.12,
+    "unit": "fraction",
+    "basis": "stated reason: the seam lens's half-height, 12 % of the radius, so the ball reads as a ball, not a disc"
+   },
+   "seamTilt": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated reason: the seam turned 20 deg off level so it reads as a moulded seam and not as a horizon line"
+   }
+  },
+  "sled_push": {
+   "PX_PER_M": {
+    "value": 126,
+    "unit": "px/m",
+    "basis": "stated reason (framing, D-LIB22-SIZE): the largest whole scale at which the scene, from the driving foot's heel to the sled's front (about 2.6 m), fits the 358 px plate inside its 16 px margins; inside F1's 123.9-146.29 px/m"
+   },
+   "TRUNK_INCL": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "claim: c3 BarBend 'lean forward so that your spine is parallel to the ground' (a segment angle to the floor, held by a check, D-LIB22-FACTS)"
+   },
+   "HIP_Y": {
+    "value": 0.8,
+    "unit": "m",
+    "basis": "stated reason: the hip joints 0.80 m up, a stride stance with the stance knee bent (about 84 deg at the start) under a level trunk; with straight level arms it puts the hands 0.80 m up, the posts' middle"
+   },
+   "HEEL_UP": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "claim: c8 'only the balls of your feet make contact with the ground', 'Your heel should never touch the ground': the largest heel-up of the engine's rigid foot (no toe joint) whose ball stays within the 1 cm contact tolerance (0.9 cm), the heel then 5.7 cm up (reverse_lunge.mjs:52's method)"
+   },
+   "FAR_DZ": {
+    "value": -0.12,
+    "unit": "m",
+    "basis": "claim: c12 'Start with your feet underneath or just behind your hips' (a choice; the plate draws 'just behind'): the stance foot's ball 12 cm behind the hip joints"
+   },
+   "REAR_KNEE": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "claim: c12 'drive one foot into the ground': the driving leg extended back, the knee 10 deg short of straight (not locked)"
+   },
+   "FRONT_DZ": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "claim: c10 'short, powerful steps' and plate.end 'the rear foot driven through to the front': the ball lands 10 cm in front of the hips (a short step, about 0.65 m of travel)"
+   },
+   "POST_X": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "stated reason: the push sled's posts 50 cm apart, outside the shoulders (the hands on the posts, c1)"
+   },
+   "M_ROLL": {
+    "value": 25,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:87 M_ROLL 25 (the 8's approved rounding), for c7 'a rounded back'"
+   },
+   "FOOT_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: reverse_lunge.mjs:48 FOOT_X 0.10 (#109), the stride's hip-width; the side view does not show it"
+   },
+   "HUMP": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: romanian_deadlift.mjs's HUMP guide (#109 @ dcac4a38): a dashed arc for the rounded back, its control point twice HUMP above the sacrum-neck chord (the curve's apex HUMP above it)"
+   },
+   "VIA_LIFT": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "claim: c8 GGR 'focus on driving the knees higher': the swinging foot's ball 12 cm up as it comes through (the ghost only)"
+   },
+   "M_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "the Mistake's root z: the straight arms still reach the hands on the posts after the rounding (the hands do not move)"
+   },
+   "trace": {
+    "value": "ball.r",
+    "unit": "point",
+    "basis": "claim: plate.end 'the rear foot driven through to the front on the ball of the foot' (c8, c10)"
+   }
+  },
+  "sled": {
+   "len": {
+    "value": 0.8,
+    "unit": "m",
+    "basis": "stated reason: a push sled about 80 cm long"
+   },
+   "bodyT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: the skid body's 6 cm steel tube"
+   },
+   "bodyY": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the body's centre 10 cm off the floor on the runners"
+   },
+   "runnerT": {
+    "value": 0.04,
+    "unit": "m",
+    "basis": "stated reason: 4 cm runners on the floor"
+   },
+   "strutT": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: 3 cm struts from the runners up to the body"
+   },
+   "strutIn": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: the struts 6 cm in from each end of the body"
+   },
+   "postT": {
+    "value": 0.035,
+    "unit": "m",
+    "basis": "stated reason: 35 mm posts, a hand's grip"
+   },
+   "hornH": {
+    "value": 0.36,
+    "unit": "m",
+    "basis": "stated reason: a 36 cm loading horn"
+   },
+   "hornT": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason: a 50 mm horn (bumper plates fit it)"
+   },
+   "plateD": {
+    "value": 0.45,
+    "unit": "m",
+    "basis": "convention: equipment.mjs:261, the vendor barbell's 45 cm plate"
+   },
+   "plateT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: a 6 cm bumper plate"
+   },
+   "plates": {
+    "value": 2,
+    "unit": "count",
+    "basis": "claim: c17 'Load the sled': two plates"
+   },
+   "bracket": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "D-LIB22-FRAME: each post joined to the body by a 12 cm gusset (no free-floating handle)"
+   },
+   "hitchW": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "stated reason (pull form): an 8 cm bracket on the body's front edge for the rope hitch (D-LIB22-FRAME: the hitch joined to the sled)"
+   },
+   "hitchH": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason (pull form): the bracket 6 cm tall"
+   },
+   "ringR": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "stated reason (pull form): a 5 cm ring on the bracket, where the rope starts"
+   }
+  },
+  "jump_rope": {
+   "FOOT_X": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "claim: c4 'your feet together': mid-soles 10 cm apart, the feet's inner edges touching (the foot is 9.6 cm wide)"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c10 'Keep your knees slightly bent'"
+   },
+   "HOP": {
+    "value": 0.038,
+    "unit": "m",
+    "basis": "claim: c9 'roughly 1-2 inches off the ground': the midpoint, 1.5 in (the range is 1 in wide: a size, not a fact, PANELS.md 7)"
+   },
+   "M_HOP": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: c9 'you aren't in a high jump competition': a jump about four times c9's 2 in top, the height of a tuck-free vertical hop (NOTE RULED 5)"
+   },
+   "HAND_OUT": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "claim: c8 'only slightly away from your body': the grip centres 12 cm outside the hip joints (about 2 cm off the thigh's outline)"
+   },
+   "HAND_FWD": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "claim: c5 Elevate 'the hands sit a little in front of the hips': 5 cm in front of the hip joints"
+   },
+   "OVER_CLEAR": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "claim: plate.frames 'the rope overhead' with c4 'Swing the rope overhead': the rope's apex 10 cm over the head"
+   },
+   "UNDER_W": {
+    "value": 0.32,
+    "unit": "m",
+    "basis": "stated reason: under the feet the rope's loop bows 32 cm out from the midline, outside the legs and the hands (the loop turns out of the frontal plane, so its drawn arc is shorter than the rope)"
+   },
+   "FLOOR_GAP": {
+    "value": 0.004,
+    "unit": "m",
+    "basis": "claim: c9 'just enough for the jump rope to pass gracefully under your feet': the rope's centre line 4 mm up, its 5 mm strand just over the floor"
+   },
+   "ROPE_LEN": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c1 'If the ends of the handles touch your armpits, the rope is the right size': twice the armpit's height (the shoulder joint less the upper arm's proximal radius) less a handle, plus the feet's width"
+   },
+   "OVER_W": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c1 (the rope's length): the overhead arc's width that makes the drawn arc the rope's length"
+   },
+   "trace": {
+    "value": "sole.r",
+    "unit": "point",
+    "basis": "claim: c9 'just enough for the jump rope to pass gracefully under your feet' (plate.frames 'the turn is not traced')"
+   }
+  },
+  "jumpRope": {
+   "handleLen": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: a 15 cm skipping-rope handle"
+   },
+   "handleT": {
+    "value": 0.026,
+    "unit": "m",
+    "basis": "stated reason: a 2.6 cm handle, inside the fist"
+   },
+   "ropeT": {
+    "value": 0.005,
+    "unit": "m",
+    "basis": "stated reason: a 5 mm speed rope"
+   }
+  },
+  "sled_pull": {
+   "PX_PER_M": {
+    "value": 126,
+    "unit": "px/m",
+    "basis": "convention: sled_push's scale (sizes.json sled_push PX_PER_M), the same `sled` at the same scale on the one sheet; inside F1's 123.9-146.29"
+   },
+   "FOOT_X": {
+    "value": 0.145,
+    "unit": "m",
+    "basis": "claim: c2 'Plant your feet shoulder-width apart', held at the widest flat stance whose rigid-foot plant keeps every contact within 0.5 cm in start, end and Mistake (0.145: 0.5 cm; 0.150: 0.6 cm in the Mistake) (D-LIB22-STANCE amended, #305 6357040314)"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout', D-LIB16-LOCK) for c2 'keeping your knees soft': the straightest knee of the step (the stepped-back knee in the end and the Mistake)"
+   },
+   "ELBOW_BEND": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention: machine_chest_press.mjs:45 (18 deg short of straight) for c1 'arms slightly bent'"
+   },
+   "GRIP_GAP": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "claim: c1 'one stacked over the other': the two drawn fists touching (2 x RADII.fist 0.02 H, body.mjs:27)"
+   },
+   "SLED_Z": {
+    "value": 0.9,
+    "unit": "m",
+    "basis": "stated reason (framing): the sled's rear edge 0.9 m ahead of the start soles, clear of the coil and the step, with room for the labels on the left; the Trace does not depend on it"
+   },
+   "FOOT_CLEAR": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "convention: mountain_climbers.mjs:49 @ dcac4a38 (the gliding foot) for c3 'short, quick, and controlled' steps; via ghost only"
+   },
+   "COIL_D": {
+    "value": 0.266,
+    "unit": "m",
+    "basis": "stated reason: plate.equipment 'a short coil': one foot length across (WINTER.foot x H)"
+   },
+   "COIL_TURNS": {
+    "value": 3,
+    "unit": "turns",
+    "basis": "stated reason: plate.equipment 'a short coil': a short pile, three turns high"
+   },
+   "ROPE_T": {
+    "value": 0.028,
+    "unit": "m",
+    "basis": "convention: main's eq/rope.mjs default `thick` (rope_triceps_pushdown's rope, the `rope` rig's anchor)"
+   },
+   "ROPE_SAG": {
+    "value": 0.006,
+    "unit": "m",
+    "basis": "convention: main's eq/rope.mjs default `sag`"
+   },
+   "M_TILT": {
+    "value": -14,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (the 8's approved lean) for c8 'pitch your torso back and let your lower back take the load'"
+   },
+   "M_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (the 8's approved arch) for c8 'let your lower back take the load'"
+   },
+   "STEP": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c3 'short' steps: the stepping toe at the stance heel, the shortest step that sets the foot wholly behind ((REF.toe - (REF.heel + 0.008)) H, body.mjs:25, :155-156)"
+   },
+   "HIP_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c2 'quarter squat ... knees soft': the hips' one height through the step (hands and rope keep theirs, Q9) at which the end's stepped-back knee is KNEE_SOFT; the start knees come out at 29.4 deg"
+   },
+   "DRAG": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "ruling Q9 (#305 6355155831): the sled moves by the hips' z change, start to end"
+   },
+   "ROPE_RUN": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "ruling Q9: the hitch-to-upper-fist run at the start, kept in every pose (the rope's length and light tension, c1)"
+   },
+   "M_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "the Mistake's root z: the upper fist on ROPE_RUN from the end's hitch (the sled does not move in the Mistake)"
+   },
+   "M_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "the Mistake's root height: the stepped-back knee at KNEE_SOFT"
+   },
+   "trace": {
+    "value": "ball.r",
+    "unit": "point",
+    "basis": "claim: plate.frames 'the rear foot stepped back' / ruling Q9 'Trace the stepping foot'"
+   }
+  },
+  "farmer_s_carry": {
+   "FOOT_X": {
+    "value": 0.0875,
+    "unit": "m",
+    "basis": "claim: c3 fv-farmers 'Stand between the weights with your feet about hip-width apart': the ankles under the engine's hip-joint centres (body.mjs REF.hjcX 0.05 H = 0.0875 m), every foot contact 0.0 cm; the side view does not show the width"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c6 ggr-farmers 'locking out your knees'"
+   },
+   "SCAP_ELEV": {
+    "value": -1,
+    "unit": "cm",
+    "basis": "convention: dumbbell_biceps_curl.mjs:57 (#109 @ dcac4a38) SCAP elev -1 'shoulders set down', for c5 bb-farmers 'keep your shoulders back and down' (c5 fv-farmers: 'Avoid forcing ... an exaggerated shoulders-back position', so the convention's small set)"
+   },
+   "SCAP_PRO": {
+    "value": -1,
+    "unit": "cm",
+    "basis": "convention: dumbbell_biceps_curl.mjs:57 (#109 @ dcac4a38) SCAP pro -1 'slightly back', for c5 bb-farmers 'back and down'"
+   },
+   "STRIDE": {
+    "value": 0.35,
+    "unit": "m",
+    "basis": "stated reason: c8 ggr-farmers 'taking short, deliberate steps': half of M_STRIDE's regular step (DESIGN section 11, accepted 6355155831 item 5)"
+   },
+   "M_STRIDE": {
+    "value": 0.7,
+    "unit": "m",
+    "basis": "stated reason: c25 bb-farmers 'regular-sized steps': an adult's normal walking step, about 0.7 m for the 1.75 m figure (normal stride about 1.4 m, two steps)"
+   },
+   "VIA_LIFT": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "convention: mountain_climbers.mjs:49 @ dcac4a38 (FOOT_CLEAR 0.025, the approved gliding foot's clearance), for the ghost's swinging foot at mid-swing (the Trace passes through it; #305 6359365488 item 1)"
+   },
+   "BODY_KG": {
+    "value": 75,
+    "unit": "kg",
+    "basis": "convention: lb7/sizes.json weighted_dip BODY_KG 75 (#299 @ 5a9f004c), the 1.75 m figure's mass for the balance"
+   },
+   "DB_SHARE": {
+    "value": 0.25,
+    "unit": "fraction",
+    "basis": "claim: c18 ggr-farmers 'Dumbbells that are approximately 25% of your body weight in each hand are a great place to start'"
+   },
+   "DB_KG": {
+    "value": "solved",
+    "unit": "kg",
+    "basis": "DB_SHARE x BODY_KG = 18.75 kg in each hand, at the grips in the centre of mass (A18)"
+   },
+   "trace": {
+    "value": "ball.r",
+    "unit": "point",
+    "basis": "claim: c8 ggr-farmers 'taking short, deliberate steps': the stepping (near) foot (DESIGN section 12; D-LIB22-SIDES: the card names no side)"
+   },
+   "DB_SCALE": {
+    "value": "solved",
+    "unit": "factor",
+    "basis": "#305 6359365488 item 5: the engine dumbbell's heads scaled so the drawn cast-iron mass (7200 kg/m3, as eq/kettlebell.mjs) equals DB_KG, the mass the balance uses"
+   }
+  },
+  "burpee": {
+   "FOOT_X": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "claim: c1 pg-burpee 'Stand tall with feet shoulder width apart' (one source hip-width, one feet together): the widest stance at which the rigid foot's plant contacts stay within 0.5 cm (0.15 m: 0.5 cm; 0.16 m: 0.6 cm), as kettlebell_swing 0.18 and medicine_ball_slam 0.12; the side view does not show the width"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c11 fv-burpee 'Always land on slightly bent knees'"
+   },
+   "M_KNEE": {
+    "value": 1,
+    "unit": "deg",
+    "basis": "claim: c11 (the hard landing 'without the knees slightly bent', motra-burpee 'Hard landing on jump'): the knees straight, 1 deg short of full extension where the engine's two-bone leg is singular (kettlebell_swing TOP_KNEE 1, lb10/sizes.json)"
+   },
+   "VIA_DROP": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "claim: c14 'Your hips should be below the level of your knees when you put your hands on the floor': the via's hip joints 2 cm below the knee joints (just below; a ghost only, D-LIB22-CYCLE)"
+   },
+   "trace": {
+    "value": "ball.r",
+    "unit": "point",
+    "basis": "claim: c5 fv-burpee 'Jump your feet in and under your body' (the feet, NOTE RULED 6355155831 item 6)"
+   }
+  },
+  "bear_crawl": {
+   "KNEE_HOVER": {
+    "value": 0.0508,
+    "unit": "m",
+    "basis": "claim: c3 ace-bc-shape 'lift knees 2 inches off the ground' (2 in = 5.08 cm, the kneecap's lowest point: the knee joint RADII.kneeCap x H + 5.08 cm up, mountain_climbers' kneecap check)"
+   },
+   "STEP": {
+    "value": 0.0508,
+    "unit": "m",
+    "basis": "claim: c4 'move right arm and left leg forward 2 inches' (2 in = 5.08 cm)"
+   },
+   "M_TILT": {
+    "value": 18.8,
+    "unit": "deg",
+    "basis": "convention: mountain_climbers @ dcac4a38, the pelvis turn its HIKE_HIP 30 produces as drawn (18.8 deg, measured), the approved hip hike with hands and feet planted; DESIGN section 11's M_HIP 30 cannot be reached as hip flexion here (peaks at 25.7 deg); ruled #305 6359365488 item 3"
+   },
+   "END_ELBOW": {
+    "value": 1,
+    "unit": "deg",
+    "basis": "stated reason: the arms straight as at the start (c11 ace-bc-shape 'a lot like a moving high plank'), 1 deg short of full extension where the engine's two-bone arm is singular (kettlebell_swing TOP_KNEE 1, lb10/sizes.json)"
+   },
+   "trace": {
+    "value": "wrist.r",
+    "unit": "point",
+    "basis": "plate.frames 'Trace follows the stepping hand' (c4's right arm, the near side)"
+   }
+  },
+  "high_knees": {
+   "FOOT_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "claim: c4 'Place your feet hip-width apart' with reverse_lunge.mjs:48 @ dcac4a38 (FOOT_X 0.10, feet hip width); every foot contact 0.1 cm"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c4 'Maintain soft knees'"
+   },
+   "HEEL_UP": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "stated reason: c4 'spring between the ball of each foot': the largest whole-degree heel-up whose ball stays within the 1 cm contact limit (15 deg 0.94 cm, 16 deg 1.04 cm)"
+   },
+   "ELBOW": {
+    "value": 4,
+    "unit": "deg",
+    "basis": "convention: reverse_lunge.mjs:55 @ dcac4a38 (ELBOW 4, arms hanging), for c1 'your arms at your sides'"
+   },
+   "ARM_ELBOW": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "stated reason: c2 'move your left hand up in a pumping motion', ACE c2 'pumping your arms': a running arm carriage, the elbow at a right angle [proposed]"
+   },
+   "M_TILT": {
+    "value": -14,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (tilt -14), for c5 'so high that you arch into your back'"
+   },
+   "M_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (trunk -12), for c5 'so high that you arch into your back'"
+   },
+   "START_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c4 'slowly shift towards the balls of your feet': the start's centre of mass over the balls"
+   },
+   "END_HIP": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c2 'slightly above waist level': the knee joint at the navel's height, the kneecap's top above it; c3 'at least 90 degrees' held by a check"
+   },
+   "ARM_FLEX": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "stated reason: c2 'move your left hand up': the left grip at the shoulder's height, the right upper arm extended as far (ACE c2 'pumping your arms') [proposed]"
+   },
+   "END_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c4 'spring between the ball of each foot': the end's centre of mass over the stance ball"
+   },
+   "M_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c4: the Mistake's centre of mass over the stance ball"
+   },
+   "trace": {
+    "value": "knee.r",
+    "unit": "point",
+    "basis": "claim: plate.frames 'Trace follows the driving knee' (c2 the right knee)"
+   }
+  },
+  "jumping_jacks": {
+   "FOOT_X_IN": {
+    "value": 0.055,
+    "unit": "m",
+    "basis": "claim: c1 'Stand with feet together': the narrowest stance whose leg solids pass no more than 1 cm into each other (shanks -0.6 cm, feet 0.9 cm apart; 0.05 gives -1.6 cm)"
+   },
+   "FOOT_X_OUT": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "claim: c2 'land with feet hip-width apart' to c4 'a little wider than shoulder width': the widest flat, toes-forward stance whose foot contacts stay within 0.5 cm (0.15: 0.5 cm, 0.16: 0.6 cm)"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c5 'Keep a slight bend in your knees'"
+   },
+   "ARM_UP": {
+    "value": 180,
+    "unit": "deg",
+    "basis": "claim: c2 nasm 'raising your arms overhead' and c4 el-jj 'bringing your arms over your head': the straight arms vertical over the shoulder joints, hands meeting overhead (stated reason, #305 6359365488 item 1; the Trace's hand path depends on it)"
+   },
+   "M_ROT": {
+    "value": 30,
+    "unit": "deg",
+    "basis": "stated reason: c12 'twisting your toes outward' against c12 'toes pointed forward': 30 deg out past forward [proposed]"
+   },
+   "START_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "stated reason: c1 a quiet stance: the centre of mass over mid-foot"
+   },
+   "END_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "stated reason: c2 the landing on both feet: the centre of mass over mid-foot"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "claim: c2 'raising your arms overhead' (the hands rising overhead)"
+   }
+  },
+  "battle_ropes": {
+   "FOOT_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "claim: c1 'Start with your feet hip-width apart' with reverse_lunge.mjs:48 @ dcac4a38 (FOOT_X 0.10, feet hip width); foot contacts 0.1 cm"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c2 'Bend your knees slightly' and c4 'knees slightly bent'"
+   },
+   "LEAN": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: lat_pulldown.mjs:146 (the 8's slight lean, expect 15, for :148 'Lean back slightly'), for c4 'a slight forward lean of the torso' [proposed]"
+   },
+   "SCAP_DOWN": {
+    "value": -3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36 (scap elev -3, pro -3, depressed and retracted), for c6 'keep your shoulder blades down, gently sliding them down and back'"
+   },
+   "M_ELEV": {
+    "value": 3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36's -3 reversed, for c6 'let your shoulder blades elevate or hunch forward'"
+   },
+   "M_PRO": {
+    "value": 3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36's -3 reversed, for c6 'hunch forward'"
+   },
+   "WAVE_LEN": {
+    "value": 1.0,
+    "unit": "m",
+    "basis": "stated reason: c3 ACE 'Waves - alternating, asymmetrical pattern ... toward the anchor': about one wave between the hands and the plate edge [proposed]"
+   },
+   "ROOT_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c13 'feet to be planted on the floor', c1: the centre of mass over mid-foot"
+   },
+   "PHI_UP": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c5 'until the battle rope handles were approximately shoulder height': the grip at the shoulder joint's height"
+   },
+   "PHI_DOWN": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c5 'until the handles were even with the waist': the grip at the navel's height"
+   },
+   "EDGE_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: plate.equipment 'two rope ends running forward to an anchor off-plate': the plate's right edge, (SIZE - x0) / px per m"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "claim: plate.frames 'Trace follows the near hand'"
+   }
+  },
+  "battleRope": {
+   "ropeT": {
+    "value": 0.038,
+    "unit": "m",
+    "basis": "claim: c8 '1.5 inches (3.8 cm) thick'"
+   },
+   "n": {
+    "value": 64,
+    "unit": "samples",
+    "basis": "stated reason: drawing resolution, 64 segments over at most 1.3 m (under 2.1 cm each)"
+   }
+  }
+ }
+}

@@ -5,9 +5,10 @@ import { gzipSync } from 'node:zlib';
 import { BANNED } from '../../layers/artifact/copy-lint.mjs';
 import { moduleText, viewOf } from '../../gen/plates.mjs';
 import { pathLength, pathsOf, tags, unesc, vocabularyOf, words } from './markup.mjs';
-import { REF_CHROME, equipmentItems, poseLandmarks, cameraOf, resolvePoint, specIdOf } from './engine.mjs';
+import { REF_CHROME, anchorInPose, equipmentItems, poseLandmarks, cameraOf, resolvePoint, specIdOf } from './engine.mjs';
 import { PARAMS, paramProblems } from '../derive.mjs';
 import { fragmentsOf } from '../../golden.mjs';
+import { isUntimed, wordProblems } from '../strip/tempo-strip.mjs';   // LIB-STRIP
 
 /** Medical-claim bans for new plate copy (content.md 4, "Medical-claim bans"). */
 export const MEDICAL = [
@@ -112,16 +113,8 @@ export function nodeMetrics(c, ctx, R) {
   return m;
 }
 
-/** A tell anchor re-pinned to one pose: every pose it names (`pose:`, a "pose:landmark" string) becomes `pose`, so the
- *  same body point is resolved in each pose. Fixed points (arrays) stay fixed. */
-export function anchorInPose(ref, pose) {
-  if (Array.isArray(ref)) return ref;
-  if (typeof ref === 'string') return `${pose}:${ref.includes(':') ? ref.split(':')[1] : ref}`;
-  const out = { ...ref, pose };
-  if (ref.at != null) out.at = anchorInPose(ref.at, pose);
-  if (ref.along) out.along = ref.along.map(r => anchorInPose(r, pose));
-  return out;
-}
+// anchorInPose moved to engine.mjs (LIB-ZOOM: zoom/inline.mjs uses it without importing this file's closure)
+export { anchorInPose };
 
 /** Largest move (px) of a tell anchor's body point from the end pose to the mistake pose. */
 export function deviation(c, E, R, { inPose = anchorInPose } = {}) {
@@ -137,11 +130,13 @@ export function deviation(c, E, R, { inPose = anchorInPose } = {}) {
 
 export function h3(c, ctx, R, M) {
   const out = [], p = c.plate, env = ctx.envelope;
-  if (!(M.traceLen >= env.traceLenMin)) out.push(P('H3.trace', `Trace ${M.traceLen.toFixed(1)} px < the shortest approved ${env.traceLenMin.toFixed(1)} px`));
+  // LIB-ZOOM: a view with a zoom circle meets its bar inside the circle instead (qa/zoom.mjs zoomRows), same bars
+  const zoomed = c.spec?.zoom?.view;
+  if (zoomed !== 'normal' && !(M.traceLen >= env.traceLenMin)) out.push(P('H3.trace', `Trace ${M.traceLen.toFixed(1)} px < the shortest approved ${env.traceLenMin.toFixed(1)} px`));
   if (!/<g class="pose-start"><g/.test(p.normal.svg)) out.push(P('H3.start-is-end', 'start = end: nothing moves (empty pose-start layer)'));
   if (!/<g class="m-pose" mask="url\(#[\w-]+\)"><g class="u-stroke"><use /.test(p.mistake.svg)) out.push(P('H3.mistake-outline', 'Mistake outline is empty'));
   if (!R) out.push(P('H3.deviation:not-engine', 'no tell-anchor deviation: the plate is not drawn by the engine'));
-  else if (!(M.deviation >= env.deviationMin)) out.push(P('H3.deviation', `largest tell-anchor deviation ${M.deviation.toFixed(1)} px < the smallest approved ${env.deviationMin.toFixed(1)} px`));
+  else if (zoomed !== 'mistake' && !(M.deviation >= env.deviationMin)) out.push(P('H3.deviation', `largest tell-anchor deviation ${M.deviation.toFixed(1)} px < the smallest approved ${env.deviationMin.toFixed(1)} px`));
   return out;
 }
 
@@ -174,6 +169,7 @@ export function h6(c, ctx, R) {
     } else out.push(P(tag, `unknown plate fact kind ${f.kind}`));
   }
   if (JSON.stringify(r.tempo) !== JSON.stringify(c.spec.tempo)) out.push(P('H6.tempo', `tempo ${JSON.stringify(c.spec.tempo)} != the card's ${JSON.stringify(r.tempo)}`));
+  if (isUntimed(c.spec.tempo)) for (const k of wordProblems(c.spec.tempo, r.tempoText, { allBlank: r.tempoFallbackA === true })) out.push(P(`H6.tempo-${k}`, `tempo ${k}: ${JSON.stringify(c.spec.tempo)} against the card's plate.tempo.text ${JSON.stringify(r.tempoText ?? null)}`));   // LIB-STRIP (D-STRIP-H6)
   return out;
 }
 
@@ -237,6 +233,7 @@ export function plateStrings(p) {
   const arc = p.normal.overlay.match(/<span class="plate-arc-label"[^>]*><b>([^<]*)<\/b><span>([^<]*)<\/span><\/span>/);
   if (arc) { out.push({ where: 'arc.title', text: unesc(arc[1]) }); out.push({ where: 'arc.value', text: unesc(arc[2]) }); }
   for (const m of p.tempo.matchAll(/<div class="tempo-label"><b>([^<]*)<\/b>/g)) out.push({ where: `tempo.${m[1]}`, text: unesc(m[1]) });
+  for (const m of p.tempo.matchAll(/<div class="tempo-label"><b>([^<]*)<\/b><span>([^<]*)<\/span>/g)) if (m[2] !== '&nbsp;') out.push({ where: `tempo.${m[1]}.value`, text: unesc(m[2]), label: true });   // LIB-STRIP (D-STRIP-H8)
   out.push({ where: 'alt', text: p.alt }, { where: 'mistakeAlt', text: p.mistakeAlt });
   return out;
 }

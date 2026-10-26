@@ -1,0 +1,78 @@
+{
+ "note": "Pilot B (library plan 6.1, card LIB-11), as pilot A's plates.json. tier: content.md appendix B; closest: the pilot A anchor the plate depends on (depends_on), or the census closest approved plate where it has none (seated_leg_curl: golden leg_press); view: census view; class: the pose class, rule or rig the plate anchors; rig: a new composer, with its later users (plan 2.1). held: a plate kept off the page and the rows by a supervisor ruling, one line on the sheet.",
+ "plates": [
+  {
+   "id": "smith_machine_bench_press",
+   "tier": "A",
+   "closest": "dumbbell_bench_press",
+   "view": "side",
+   "class": "supine bench on the Smith rails (smith anchor)",
+   "rig": "smith: new rig. Later users: smith_machine_incline_press, smith_machine_shoulder_press, smith_machine_squat, smith_machine_shrug (LB6)"
+  },
+  {
+   "id": "seated_leg_curl",
+   "tier": "C",
+   "closest": "leg_press",
+   "view": "side",
+   "class": "seated leg-curl machine (legCurlMachine anchor)",
+   "rig": "legCurlMachine: new rig. Later users: lying_leg_curl, standing_leg_curl (LB8)"
+  },
+  {
+   "id": "crunch",
+   "tier": "B",
+   "closest": "plank",
+   "view": "side",
+   "class": "supine floor core (SUPCORE parent)",
+   "held": "Card-true motion too small for PQ-H3 (trace 9.4 px, deviation 7.6 px); held with the shrugs and t_bar_row under LIB-ZOOM (D-LIB11-SMALL). SUPCORE has no anchor; LB9 re-plans"
+  },
+  {
+   "id": "cable_fly",
+   "tier": "B",
+   "closest": "upright_row",
+   "view": "front",
+   "class": "standing two-column cable fly, front view (CFLY parent)"
+  },
+  {
+   "id": "push_up",
+   "tier": "C",
+   "closest": "plank",
+   "view": "side",
+   "class": "plank-class floor press (PUSHUP parent; D-LIB8-floor)"
+  }
+ ],
+ "cards": "docs/research/howto/cards/ = the 5 verified research cards, byte copies from the pilot B research head with the three-key block (cards.sha.json; CARD FIELDS VERIFIED @ 0d97059)",
+ "handsNote": "hands: LIB-12 hand renders shown on the sheet only (never on the plates page). renderPair(id, { fault }) from tools/plates/library/hands/pairs.mjs on main 1edb3c66 (LIB-12 #191 and LIB-12-FIX merged), each pair alone on hands/page.mjs's pageHtml at 390 px, deviceScaleFactor 2, full page, in Silent Black and Paper (sheet.mjs --hands). Approved kinds and gaps: D-LIB12FIX-R8-GAPS (#191 6274835211) and E-R5 SCOPE RULED (#278 6276882489).",
+ "hands": [
+  {
+   "key": "palm-flat",
+   "id": "push_up",
+   "fault": "cupped-palm",
+   "name": "Palm flat · palm cupped",
+   "images": ["evidence/lib12-palm-flat-silent-black.png", "evidence/lib12-palm-flat-paper.png"],
+   "flags": ["R8 PASS, round 2 @ 6b6e5ab (D-LIB12FIX-R8-GAPS: approved)"]
+  },
+  {
+   "key": "palm-flat",
+   "id": "push_up",
+   "fault": "hand-ahead",
+   "name": "Palm flat · hand ahead",
+   "images": ["evidence/lib12-palm-flat-hand-ahead-silent-black.png", "evidence/lib12-palm-flat-hand-ahead-paper.png"],
+   "flags": ["R8 PASS, round 2 @ 6b6e5ab (D-LIB12FIX-R8-GAPS: approved)"]
+  },
+  {
+   "key": "battle-rope",
+   "id": "battle_ropes",
+   "fault": "death-grip",
+   "name": "Battle rope",
+   "images": ["evidence/lib12-battle-rope-silent-black.png", "evidence/lib12-battle-rope-paper.png"],
+   "flags": ["R8 PASS, round 1 (D-LIB12FIX-R8-GAPS: approved); drawn seen from above (forearm 180)"]
+  },
+  { "key": "ball-contact", "id": "wall_ball", "name": "Ball contact", "images": [], "flags": ["No drawing yet: moved to GAPS after the R8 panel (C3 [3,2,3]; D-LIB12FIX-R8-GAPS). Redraw: F-LIB12-R8B"] },
+  { "key": "front-rack", "id": "front_squat", "name": "Front rack", "images": [], "flags": ["No drawing yet: GAPS (D-LIB12FIX-R8-GAPS). Redraw: F-LIB12-R8B"] },
+  { "key": "cupped", "id": "goblet_squat", "name": "Cupped hold (goblet)", "images": [], "flags": ["No drawing yet: GAPS (D-LIB12FIX-R8-GAPS). Redraw: F-LIB12-R8B"] },
+  { "key": "dip-bar", "name": "Dip bar", "images": [], "flags": ["No drawing yet (D-LIB11-HANDS)"] },
+  { "key": "kettlebell", "name": "Kettlebell", "images": [], "flags": ["No drawing yet (D-LIB11-HANDS)"] },
+  { "key": "ab-wheel", "name": "Ab wheel", "images": [], "flags": ["No drawing yet (D-LIB11-HANDS)"] },
+  { "key": "implement", "name": "Implements", "images": [], "flags": ["No drawing yet (D-LIB11-HANDS)"] }
+ ]
+}

@@ -84,6 +84,8 @@ const boxOf = (flag, shared, extraBoxes) => (RED_FLAG_BLOCKS[flag] ? shared[RED_
 export function sheetWords(M, shared, extraBoxes = {}) {
   const H = M.default ?? M, out = [];
   let total = lintHowto(M, shared).words.total;
+  const line = variantLineOf(M);
+  if (typeof line === 'string' && line) total += words(line);   // LIB-5v: the shown variant line (D-LIB5v-FIELD)
   for (const f of H.riskFlags ?? ['wrist']) {
     if (RED_FLAG_BLOCKS[f]) continue;
     const B = extraBoxes[f];
@@ -97,7 +99,11 @@ export function sheetWords(M, shared, extraBoxes = {}) {
 /** D-LIB5-VARIANT: the caption-class variant line. `line` comes from one accessor (undefined until the field card). */
 export function variantLine({ id, equipment, line, names = [] }) {
   const out = [], slash = String(equipment ?? '').includes('/'), t = typeof line === 'string' ? plain(line) : '', n = t ? words(t) : 0;
-  if (VARIANT_LINE_EXEMPT.includes(id)) return { violations: out, words: n };
+  if (VARIANT_LINE_EXEMPT.includes(id)) {
+    // D-LIB5v-EXEMPT: an exempt id carries no line, so no shown line skips the scans below
+    if (n > 0) v(out, 'variantLine', 'variant line on an exempt golden-B id (D-LIB5-VARIANT8)', String(equipment));
+    return { violations: out, words: n };
+  }
   if (slash && n === 0) v(out, 'variantLine', 'variant line required: equipment names two kinds', String(equipment));
   if (!slash && n > 0) v(out, 'variantLine', 'variant line on a row whose equipment names one kind', String(equipment));
   if (n > CAPTION_MAX_WORDS) v(out, 'variantLine', `caption > ${CAPTION_MAX_WORDS} words`, `${n} words`);
@@ -111,8 +117,14 @@ export function variantLine({ id, equipment, line, names = [] }) {
   }
   return { violations: out, words: n };
 }
-/** The one accessor for a row's variant line: no shown field exists yet (D-LIB5-VARIANT 4). */
-export const variantLineOf = () => undefined;
+/** The one accessor for a row's variant line, `copy.variantLine` (D-LIB5-VARIANT 4, D-LIB5v-FIELD), from a module
+ *  namespace or loadContent's content. */
+export const variantLineOf = H => (H?.default ?? H)?.copy?.variantLine;
+/** Golden B's copyFields plus the shown variant line, a caption (D-LIB5v-FIELD): copyFields lists copy.* by name. */
+export function shownCopyFields(H) {
+  const text = variantLineOf(H);
+  return [...copyFields(H), ...(typeof text === 'string' && text ? [{ path: 'copy.variantLine', text, kind: 'caption' }] : [])];
+}
 /** The ids among `eightIds` whose exercises.json equipment contains '/' (D-LIB5-VARIANT8). */
 export const eightWithSlash = (eightIds, exercises) => eightIds.filter(id => String(exercises.find(e => e.id === id)?.equipment ?? '').includes('/')).sort();
 

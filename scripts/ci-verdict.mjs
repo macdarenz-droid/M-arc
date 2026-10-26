@@ -60,7 +60,7 @@ export function verdict({ gate, ht10 = [], gateSrc, times, sha, event, arrangeme
       for (const a of ALWAYS) { const n = m.rows.filter(r => r.check === 'gate' && r.id === a).length; if (n !== 1) problems.push(`${tz} job ${m.meta?.job?.k}: ALWAYS group ${a} proven ${n} times, expected once per job`); }
       const s = m.meta?.gateSeconds;
       if (!(s >= 0)) problems.push(`${tz} job ${m.meta?.job?.k}: no gateSeconds`);
-      // the 30 min goal is for split shards; the serial arrangement (E8's reference, today's layout) keeps its 60 min timeout
+      // the 30 min goal is for split shards; the serial arrangement (E8's reference, today's layout) keeps its job's runaway timeout (D-SUP-CI-1, D-SUP-CI-2)
       else if (K > 1 && s > JOB_BUDGET_S) problems.push(`${tz} job ${m.meta?.job?.k}: gate step ${s} s, over the ${JOB_BUDGET_S} s budget (D-GATESPLIT-BUDGET)`);
       else if (K > 1 && s > SHARD_TARGET_S) notes.push(`${tz} job ${m.meta?.job?.k}: ${s} s, over the ${SHARD_TARGET_S} s target: re-pick K (design 2.2)`);
       if (!m.meta?.www) problems.push(`${tz} job ${m.meta?.job?.k}: no www hash`);
