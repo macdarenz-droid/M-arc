@@ -4437,3 +4437,22 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **F-LB10-STRIDE** (#331): farmer_s_carry's M_STRIDE 0.70 m has no basis (no quote, approved plate or measured convention). It is held and routed to research, batched with F-PALLOF-ARCH. jump_rope is held at kMax 4 (21.3 < 22.11 px), with F-ZOOM-2.
 - **D-LIB17-ZOOMPAIR → F-ZOOM-2** (#332 6409786985): renegade_row's fault is a rotation about a fixed tell anchor, so `faultOf` reads 0 px. F-ZOOM-2, written after #327 merges, adds an opt-in `zoom.pair: [flat, turned]` of drawn vertices to `faultOf`, together with F-ZOOM-TRIM (superman). Every other spec stays byte-identical. Mutations: an equal pair; a pair outside the ring; a pair point off a drawn vertex. renegade_row is held until then.
 - **New resumes started** (WAITING builders hold no slot, D-LIB-LANE-ACTIVE): LIB-17 resume #332 (session_019M2mv3xosDU1LUQNcDVLZ3) and LIB-22 resume #331 (session_013S59n44XV6LVWqpoL6WppU).
+
+## 45. Rulings and holds, 10-26 (supervisor, ~06:40-13:40 UTC)
+- **Trains:** 43 (#333 → `7ba94367`) merged LB9's resume (#326). 44 (#335 → `c7bdad7a`) merged F-CI-4 (#334) and LB6's resume (#327).
+- **D-SUP-CI-3 (F-CI-4):** source-gate hit its 90-min runaway cap on #289 (88.4 / 90.6 min) with every step green. test:tz moved to its own parallel job `unit-tz` with the same command, and android-gate needs it. source-gate now takes about 38 min.
+- **Panel rulings:**
+  - D-LIB18-RINGKEEP (#325 6412694847): the zoom rings stay on the measured tells, because H3.zoom refuses the lumbar dip. hip_thrust is held: no tell reaches 11.39 px at k ≤ 4.
+  - D-LIB16-AXIS (#327 6414524293): cable_chest_press's solid red axis line, with an A15 exemption scoped to that one guide.
+  - D-LIB22-AXIS (#331 6415932628): burpee gets the same form.
+  - D-LIB22-RINGFIT (#331 6415452903): a source ring must close inside the frame, at the smallest ladder k that fits.
+  - D-LIB22-STRIPROWS (#331 6410069703): sled_push and medicine_ball_slam move from leftOut to fallbackA in strip/rows.json. Only LIB-STRIP's LABELS literals and ROWS_PIN are edited, and A11 stays at 25.
+  - D-LIB17-RDFHOLD (#332 6410506295): cable_rear_delt_fly is held, because no zoom place exists.
+  - D-LIB17-BDIPBOX (#332 6416670899): bench_dip's label box moves, not an F3 name.
+  - D-LIB13-PANEL2 second rounds: goblet_squat R3 and pistol_squat R5 (#289 6414220426).
+  - Golden-B follow-up 27: lat_pulldown's SHRUG leader (PANELS.md @ `7d73a8e6`).
+- **F-ZOOM-2 card** (docs/supervisor/verify/f-zoom-2-card.md): measured on main `c7bdad7a`.
+  - (a) builds an opt-in `zoom.pair`. It releases renegade_row: 16.92 px at k 3. LIB-17 still owes two rows: H4.overlap feet and H8.words.
+  - (b) F-ZOOM-TRIM is not a units correction, so nothing is built. superman's route is in its own lane: trim [0, 0] and a moved `low` label give 23.47 px at k 2.5, in the next LB9 resume.
+  - (c) cable_rear_delt_fly stays held: only an r 30 circle fits, and no readability bar exists for it.
+  - jump_rope stays held: it needs k ≥ 4.15, outside the ladder.
