@@ -23,10 +23,11 @@
 //   lists the torso angle as unsourced), the free leg straight and hovering forward, its heel FREE_CLEAR above the
 //   floor (the free hip flexion SOLVED, bracket; checks).
 //  Mistake (p8, heel lift): at the bottom the standing heel rises HEEL_RISE about the ball of the foot (plant ref
-//   'ball', sole plane pitched HEEL_UP, solved; the toe pad on the floor, reverse_lunge's convention); hips, trunk, arms and free leg as at the bottom, so the knee travels forward over the
+//   'ball', sole plane pitched HEEL_UP, solved; the toe pad on the floor, reverse_lunge's convention; the ball kept where
+//   the flat foot's ball is, so the lifted heel sits over the solid heel, panel lb4p item 5); hips, trunk, arms and free leg as at the bottom, so the knee travels forward over the
 //   toes.
 // Unsourced numbers: STANCE_X 0.09, START (knee 5, trunk 3, free hip 30), END_KNEE 140, END_INCL 40, FREE_CLEAR
-//  0.05 m, VIA (knee 75, trunk 20), HEEL_RISE 0.035 m (the Mistake size: p8's heel "may try and creep up", the onset of a lift,
+//  0.05 m, VIA (knee 75, trunk 20, free hip 64), HEEL_RISE 0.035 m (the Mistake size: p8's heel "may try and creep up", the onset of a lift,
 //  drawn at DESIGN.md section 11's 3-4 cm midpoint, where the heel clears the floor line by about 5 px; never sized to
 //  pass PQ-H3), arms level.
 import { landmarksOf, normPose, resolve } from '../engine.mjs';
@@ -39,8 +40,8 @@ const STANCE_X = 0.09, END_KNEE = 140, END_INCL = 40, FREE_CLEAR = 0.05, HEEL_RI
 // through it (the real toe joint lets the toes lie flat). A check keeps toe.r above the floor in the Mistake, and a drawn-item test puts
 // the foot outline's lowest point on the floor line (±0.5 px).
 const toeLift = a => -Math.min(...[[0.112, -0.036], [0.120, -0.028], [0.100, -0.038]].map(([z, y]) => ((z - 0.080) * -Math.sin(a * R) + (y + 0.039) * Math.cos(a * R)) * H));
-const stance = (heelUp = 0) => ({ r: heelUp
-  ? { at: [-STANCE_X, toeLift(heelUp), 0], ref: 'ball', normal: [0, Math.cos(heelUp * R), Math.sin(heelUp * R)], toe: [0, -Math.sin(heelUp * R), Math.cos(heelUp * R)] }
+const stance = (heelUp = 0, ballZ = 0) => ({ r: heelUp
+  ? { at: [-STANCE_X, toeLift(heelUp), ballZ], ref: 'ball', normal: [0, Math.cos(heelUp * R), Math.sin(heelUp * R)], toe: [0, -Math.sin(heelUp * R), Math.cos(heelUp * R)] }
   : { at: [-STANCE_X, 0, 0], toe: [0, 0, 1] } });
 // Whole-body centre of mass (Winter 2009 Table 4.1; copied from single_leg_romanian_deadlift).
 const L3 = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
@@ -63,9 +64,9 @@ export const solve = (f, a, b) => {
   return (a + b) / 2;
 };
 const kneeR = p => resolve(normPose(p, B), B).q.knee.r;
-function key({ incl, knee, freeHip, zr = [-0.6, 0.4], heelUp = 0, comZ = 0 }) {
+function key({ incl, knee, freeHip, zr = [-0.6, 0.4], heelUp = 0, comZ = 0, ballZ = 0 }) {
   const body = (y, z) => ({ root: { at: [0, y, z], tilt: incl }, trunk: 0, neck: -incl / 2,
-    hip: { l: freeHip, r: 0 }, knee: { l: 0, r: 0 }, ankle: { l: 10, r: 0 }, shoulder: { flex: 90 + incl }, elbow: 0, plant: stance(heelUp) });
+    hip: { l: freeHip, r: 0 }, knee: { l: 0, r: 0 }, ankle: { l: 10, r: 0 }, shoulder: { flex: 90 + incl }, elbow: 0, plant: stance(heelUp, ballZ) });
   const hipY = z => solve(y => kneeR(body(y, z)) - knee, 0.2, 0.935);
   const z = solve(z => com(landmarksOf(body(hipY(z), z), H))[2] - comZ, ...zr);
   return body(hipY(z), z);
@@ -73,14 +74,15 @@ function key({ incl, knee, freeHip, zr = [-0.6, 0.4], heelUp = 0, comZ = 0 }) {
 // The root z bracket at the bottom: the hip must stay within the bent leg's reach of the ankle.
 const END_ZR = [-0.335, 0.05];
 const start = key({ incl: 3, knee: 5, freeHip: 30 });
-const via = [key({ incl: 20, knee: 75, freeHip: 55 })];
+// VIA free hip 64 (was 55; panel lb4p item 4): the descent ghosts' free feet clear the floor by >= 4 px (a drawn-item test).
+const via = [key({ incl: 20, knee: 75, freeHip: 64 })];
 // End: the free hip flexion SOLVED (bracket 60..130 deg) so the free heel hovers FREE_CLEAR above the floor (p5).
 export const FREE_HIP = solve(fh => landmarksOf(key({ incl: END_INCL, knee: END_KNEE, freeHip: fh, zr: END_ZR }), H)['heel.l'][1] - FREE_CLEAR, 60, 130);
 const end = key({ incl: END_INCL, knee: END_KNEE, freeHip: FREE_HIP, zr: END_ZR });
 // Mistake: the heel rises HEEL_RISE (pitch HEEL_UP) about the ball; the knee stays END_KNEE and the root is re-solved so the centre of
 // mass sits over the ball of the foot (the weight rolls forward onto the toes), so hips and knee travel forward.
 const BALL_Z = landmarksOf(end, H)['ball.r'][2];
-const misAt = a => key({ incl: END_INCL, knee: END_KNEE, freeHip: FREE_HIP, zr: [-0.25, 0.05], heelUp: a, comZ: BALL_Z });
+const misAt = a => key({ incl: END_INCL, knee: END_KNEE, freeHip: FREE_HIP, zr: [-0.25, 0.05], heelUp: a, comZ: BALL_Z, ballZ: BALL_Z });
 // The pitch is SOLVED (bracket 2..25 deg) so the heel rises HEEL_RISE off the floor.
 export const HEEL_UP = solve(a => landmarksOf(misAt(a), H)['heel.r'][1] - HEEL_RISE, 2, 25);
 const MIS = misAt(HEEL_UP);
@@ -126,6 +128,8 @@ export default {
       { key: 'knee', text: 'Knee forward', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 246, top: 246 }, cue: 'The knee drives forward as the weight rolls onto the toes.' },
     ],
   },
+  // No zoom (panel lb4p item 5 asked for one): the knee tell moves 12.9 px at plate scale, so H3 passes there and
+  // QA forbids a Mistake zoom on it (H3.zoom:not-needed:mistake, qa/zoom.mjs:97). Conflict posted on #289.
   pilot: { drawableFault: 'Top fault: bouncing out of the bottom (p8), seen only as speed; the knee cave needs a front view; the plate draws the next listed fault, the standing heel lifting (p8).' },
   alt: 'Pistol squat, side view. Standing on one leg with the arms reaching forward and the other leg lifted in front, the lifter sits the hips back and bends the standing knee fully, the standing foot flat and the free leg straight and hovering forward.',
 };

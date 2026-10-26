@@ -275,6 +275,42 @@ the LIB-ZOOM route.
   clear of the box, the centre of mass with the dumbbells over the lead mid-foot. Mistake (c1): thorax 40° with the
   hips held (the sternum 23 cm forward), and the trailing heel 3.5 cm up on its toe pad (the push).
 
+## 11b. Panel lb4p fix round (#289 6410190090)
+
+wall_sit approved at bbe2a488 and unchanged (its card section is byte-identical). Segment lengths are kept everywhere,
+and no card changes. One test with its mutation per item is in `tests/howto/lb4-plates.test.ts`, under "panel lb4p fix
+round".
+
+1. front_squat R4: CHEST TALL ends on `chest`, the chest front under the rack arm. Its label is under ELBOWS HIGH
+   (box 222, 242). `sternum`, the point the panel gave, sits on the spotter arm's line, where the leader would touch
+   the arm (A15's 6 px leader gap); `chest` is the nearest chest-front point clear of the arm.
+2. front_squat R5: the dropped arm is drawn as a dashed copy of the plate's own arm outlines.
+   - The copy takes the upper arm, elbow cap, forearm and hand outlines at the end pose, so every drawn length is the
+     plate's (upper arm 27.7 px).
+   - It is moved to the faulty shoulder and rotated 74.3° in the picture plane about it, until the upper arm points
+     at the Mistake pose's elbow. The forearm keeps its fold.
+   - It has a dashed elbow joint circle (r 2.25 px).
+   - The red arrow runs along the drop, 12 px in front of the elbow's path. Starting at the solid elbow would put
+     solid red inside A15's 6 px clearance of the end figure.
+   - The ELBOWS DROP tell stays on the Mistake pose's elbow. H3 measures the drop there (44.6 px); a fixed point would
+     give it 0.
+3. goblet_squat R4: CHEST UP ends on the chest front between the chin and the dumbbell top (along sternum to chin,
+   t 0.6). Its label sits above WEIGHT AT CHEST (box 252, 176). At 192, the two 44 px hit boxes overlapped at 340 px
+   width (H4).
+4. pistol_squat R3: the via free hip goes from 55 to 64. The descent ghosts' free feet now clear the floor by 8.2 and
+   5.0 px (they were 0.4 above and 5.9 below).
+5. pistol_squat R5: the lifted foot pitches about the flat foot's ball (the plant keeps the ball where it was), so the
+   dashed heel sits over the solid heel (0.4 px) at the foot's own length. The lift stays 3.5 cm.
+   - **No zoom.** The knee tell now moves 12.9 px at plate scale, which meets H3's 11.39 px, so QA forbids a Mistake
+     zoom (H3.zoom:not-needed:mistake, qa/zoom.mjs:97). This conflict is posted on #289.
+6. bodyweight_squat R4: WEIGHT ON TOES ends on the forefoot (`ball.r`, Mistake pose). Its label is right of the foot
+   (box 232, 301). The knee plumb is kept.
+7. bodyweight_squat R5: the heel pitches about the ball as in item 5 (dashed heel 0.5 px over the solid heel).
+   - A Mistake zoom on the heels, `{ view: 'mistake', k: 2.5, tell: 'heels' }`. There is no written k ladder, so I
+     took steps of 0.5 from kMin 1.5. k 2.5 is the smallest step that reaches 11.39 px (12.8 px; 10.3 at k 2). The
+     zoom places itself top right.
+   - HEELS LIFT moves to box (70, 300), clear of the source ring (H1.ink).
+
 ## 12. H slice (Do 2; D-LIB14-SLICE)
 
 wall_sit with eq/wall.mjs, pistol_squat, front_squat. Posted as 'LB4 SLICE READY @ <sha>' with 390 px renders in Paper

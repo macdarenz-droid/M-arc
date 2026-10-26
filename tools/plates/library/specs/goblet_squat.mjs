@@ -153,9 +153,11 @@ export default {
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r', 'db'] },
   trace: { point: 'grip.r', trim: [10, 12] },
   datum: [{ x: [0, 0, 0], from: 349, to: 60 }],
+  // panel lb4p item 3: CHEST UP's leader ends on the chest front between the chin and the dumbbell's top head, the label
+  // above WEIGHT AT CHEST.
   callouts: [
     { key: 'weight', text: 'Weight at<br>chest', anchor: 'grip.r', box: { left: 252, top: 232 }, cue: 'Keep the dumbbell upright against your chest the whole rep.' },
-    { key: 'chest', text: 'Chest up', anchor: 'backUpper', box: { left: 30, top: 196 }, cue: 'Keep your torso upright, with no extra forward lean.' },
+    { key: 'chest', text: 'Chest up', anchor: { along: ['sternum', 'chin'], t: 0.6 }, box: { left: 252, top: 176 }, cue: 'Keep your torso upright, with no extra forward lean.' },
     { key: 'thighs', text: 'Thighs<br>parallel', anchor: 'hip.r', box: { left: 30, top: 300 }, cue: 'Squat until your thighs are parallel, or deeper if you can.' },
   ],
   tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true, word: 'Controlled' }],

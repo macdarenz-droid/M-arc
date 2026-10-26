@@ -20,7 +20,8 @@
 //   shin (b6: the hip-to-shoulder line at the shin's angle from vertical, SOLVED by fixed-point steps), lumbar near
 //   neutral (b6 "the low back should appear flat"), heels down.
 //  Mistake (b4, heel lift): at the bottom both heels rise HEEL_RISE about the balls of the feet (pitch SOLVED, the toe
-//   pads on the floor: pistol_squat's convention) and the root is re-solved so the centre of mass is over the balls
+//   pads on the floor, the balls kept where the flat feet's balls are so the lifted heels sit over the solid heels:
+//   pistol_squat's convention, panel lb4p item 7) and the root is re-solved so the centre of mass is over the balls
 //   (b4 "weight rolling onto the toes"); knees and hips travel forward; thorax and depth as at the bottom.
 // Unsourced numbers: FOOT_X 0.13 m, TOE_OUT 10, START (knee 5, trunk 3), SPINE 5 (lumbar share of the inclination),
 //  the arms forward and level at the bottom, the datum runs (22 cm past the knee, 16 cm past the shoulder), HEEL_RISE 0.035 m (the onset of a lift, b4 "stop earlier if the heels start to lift": DESIGN.md
@@ -33,8 +34,8 @@ const toe = s => [s * Math.sin(TOE_OUT * R), 0, Math.cos(TOE_OUT * R)];
 // The heel lift (reverse_lunge.mjs:17-22 @ ff7c5c4f, copied as pistol_squat): the rigid foot pitched heel-up about the
 // ball, the ball lifted so the toe pad just touches the floor.
 const toeLift = a => -Math.min(...[[0.112, -0.036], [0.120, -0.028], [0.100, -0.038]].map(([z, y]) => ((z - 0.080) * -Math.sin(a * R) + (y + 0.039) * Math.cos(a * R)) * H));
-const feet = (heelUp = 0) => Object.fromEntries([['l', 1], ['r', -1]].map(([s, k]) => [s, heelUp
-  ? { at: [k * FOOT_X, toeLift(heelUp), 0], ref: 'ball', normal: [0, Math.cos(heelUp * R), Math.sin(heelUp * R)], toe: [k * Math.sin(TOE_OUT * R) * Math.cos(heelUp * R), -Math.sin(heelUp * R), Math.cos(TOE_OUT * R) * Math.cos(heelUp * R)] }
+const feet = (heelUp = 0, ballZ = 0) => Object.fromEntries([['l', 1], ['r', -1]].map(([s, k]) => [s, heelUp
+  ? { at: [k * FOOT_X, toeLift(heelUp), ballZ], ref: 'ball', normal: [0, Math.cos(heelUp * R), Math.sin(heelUp * R)], toe: [k * Math.sin(TOE_OUT * R) * Math.cos(heelUp * R), -Math.sin(heelUp * R), Math.cos(TOE_OUT * R) * Math.cos(heelUp * R)] }
   : { at: [k * FOOT_X, 0, 0], toe: toe(k) }]));
 
 // Whole-body centre of mass (Winter 2009 Table 4.1; copied from single_leg_romanian_deadlift).
@@ -58,13 +59,13 @@ export const solve = (f, a, b) => {
   return (a + b) / 2;
 };
 const kneeR = p => resolve(normPose(p, B), B).q.knee.r;
-const body = (y, z, incl, spine, heelUp = 0, arms = 0) => ({ root: { at: [0, y, z], tilt: incl - spine }, trunk: spine, neck: -incl / 2,
-  shoulder: { flex: incl + arms }, elbow: 5, plant: feet(heelUp) });
+const body = (y, z, incl, spine, heelUp = 0, arms = 0, ballZ = 0) => ({ root: { at: [0, y, z], tilt: incl - spine }, trunk: spine, neck: -incl / 2,
+  shoulder: { flex: incl + arms }, elbow: 5, plant: feet(heelUp, ballZ) });
 /** A key pose: thorax `incl`, the root height from `depth(y, z)` = 0 (bracket ys), the root z for the centre of mass over comZ. */
-function key({ incl, spine = 0, depth, ys, zr = [-0.5, 0.3], heelUp = 0, comZ = 0, arms = 0 }) {
-  const yAt = z => solve(y => depth(body(y, z, incl, spine, heelUp, arms)), ...ys);
-  const z = solve(z => com(landmarksOf(body(yAt(z), z, incl, spine, heelUp, arms), H))[2] - comZ, ...zr);
-  return body(yAt(z), z, incl, spine, heelUp, arms);
+function key({ incl, spine = 0, depth, ys, zr = [-0.5, 0.3], heelUp = 0, comZ = 0, arms = 0, ballZ = 0 }) {
+  const yAt = z => solve(y => depth(body(y, z, incl, spine, heelUp, arms, ballZ)), ...ys);
+  const z = solve(z => com(landmarksOf(body(yAt(z), z, incl, spine, heelUp, arms, ballZ), H))[2] - comZ, ...zr);
+  return body(yAt(z), z, incl, spine, heelUp, arms, ballZ);
 }
 const kneeAt = k => p => kneeR(p) - k;
 const parallel = p => { const l = landmarksOf(p, H); return l['hip.r'][1] - l['knee.r'][1]; };
@@ -86,7 +87,7 @@ const via = [key({ incl: END_INCL * 0.45, spine: SPINE / 2, depth: kneeAt(55), y
 // Mistake: both heels rise HEEL_RISE (pitch SOLVED, bracket 2..25 deg), the weight over the balls of the feet, the
 // knee angle and thorax as at the bottom.
 const END_KNEE = kneeR(end), BALL_Z = landmarksOf(end, H)['ball.r'][2];
-const misAt = a => key({ incl: END_INCL, spine: SPINE, depth: kneeAt(END_KNEE), ys: [0.3, 0.7], zr: [-0.3, -0.1], heelUp: a, comZ: BALL_Z, arms: 90 });
+const misAt = a => key({ incl: END_INCL, spine: SPINE, depth: kneeAt(END_KNEE), ys: [0.3, 0.7], zr: [-0.3, -0.1], heelUp: a, comZ: BALL_Z, arms: 90, ballZ: BALL_Z });
 export const HEEL_UP = solve(a => landmarksOf(misAt(a), H)['heel.r'][1] - HEEL_RISE, 2, 25);
 const MIS = misAt(HEEL_UP);
 const mistakePose = { root: MIS.root, plant: MIS.plant };
@@ -129,9 +130,13 @@ export default {
       { kind: 'dashed', pts: [{ at: 'knee.r', pose: 'mistake' }, [0, 0, LM['knee.r'][2]]] },
     ],
     tells: [
-      { key: 'heels', text: 'Heels lift', anchor: { at: 'heel.r', pose: 'mistake' }, cue: 'The heels come off the floor at the bottom.' },
-      { key: 'toes', text: 'Weight on<br>toes', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The weight rolls forward onto the toes.' },
+      { key: 'heels', text: 'Heels lift', anchor: { at: 'heel.r', pose: 'mistake' }, box: { left: 70, top: 300 }, cue: 'The heels come off the floor at the bottom.' },
+      // panel lb4p item 6: the leader ends on the forefoot (the dashed sole's ball), the label in the clear area right of the foot.
+      { key: 'toes', text: 'Weight on<br>toes', anchor: { at: 'ball.r', pose: 'mistake' }, box: { left: 232, top: 301 }, cue: 'The weight rolls forward onto the toes.' },
     ],
   },
+  // The heel lift is a few px at plate scale: a Mistake zoom on the heels (D-LIBZOOM-EXTEND; panel lb4p item 7), at the
+  // smallest step of 0.5 from kMin 1.5 at which the heel's move reaches H3's 11.39 px inside the circle.
+  zoom: { view: 'mistake', k: 2.5, tell: 'heels' },
   alt: 'Bodyweight squat, side view. Standing with the feet slightly wider than the hips and the arms by the sides, the lifter moves the hips back and down until the thighs are about parallel, shins and torso parallel, heels flat.',
 };

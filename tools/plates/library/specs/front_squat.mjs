@@ -132,7 +132,11 @@ const mistakePose = { root: mistakeFull.root, trunk: mistakeFull.trunk, neck: mi
 const CAM = { view: 'side', near: 'r', facing: 'right', pxm: PXM, P: w => [X0 + w[2] * PXM, 339 - w[1] * PXM] };
 const toW = ([x, y]) => [0, (339 - y) / PXM, (x - X0) / PXM];
 const inPoly = (poly, [x, y]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
-const ARM_KEYS = ['head', 'torso', 'shcap.r', 'upper.r', 'elbowcap.r', 'fore.r', 'fist.r'];
+// Panel lb4p item 2: only head, torso and shoulder cap are traced as one union outline; the dropped near arm is drawn
+// as its own capsules (upper arm, elbow cap, forearm, hand: the plate's own arm outlines in the Mistake pose, so its
+// segment lengths are the plate's), with a dashed elbow joint circle and an arrow from the solid elbow to the dropped one.
+const ARM_KEYS = ['head', 'torso', 'shcap.r'];
+const DROP_KEYS = ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'];
 export const MIST_ARM = (() => {
   const pose = { ...end, ...mistakePose };
   const shapes = bodyShapes(fk(resolve(normPose(pose, B), B).q, B), CAM).filter(x => ARM_KEYS.includes(x.key) && x.poly);
@@ -147,6 +151,18 @@ export const MIST_ARM = (() => {
   }
   return runs.filter(r => r.length > 1).map(r => r.map(toW));
 })();
+// The copy is the end pose's drawn arm (its outlines at the plate's camera, so every drawn length is the plate's),
+// moved to the faulty shoulder and rotated in the picture plane about it until the upper arm points at the Mistake
+// pose's elbow (the ruled drop); the forearm and hand keep their fold.
+const LEp = landmarksOf(end, H), LMp = landmarksOf({ ...end, ...mistakePose }, H);
+const [ES, EE, MS, MEl] = [LEp['shoulder.r'], LEp['elbow.r'], LMp['shoulder.r'], LMp['elbow.r']].map(CAM.P);
+export const DROP_ANGLE = Math.atan2(MEl[1] - MS[1], MEl[0] - MS[0]) - Math.atan2(EE[1] - ES[1], EE[0] - ES[0]);
+const rot = ([x, y]) => { const u = x - ES[0], v = y - ES[1], c = Math.cos(DROP_ANGLE), s = Math.sin(DROP_ANGLE); return [MS[0] + u * c - v * s, MS[1] + u * s + v * c]; };
+export const DROP_ARM = bodyShapes(fk(resolve(normPose(end, B), B).q, B), CAM).filter(x => DROP_KEYS.includes(x.key) && x.poly).map(x => [...x.poly, x.poly[0]].map(rot).map(toW));
+export const DROP_ELBOW = rot(EE);                                  // the dropped elbow, px
+export const ARROW_OFF = [12, 3];                                   // px: the arrow runs beside the drop, clear of the end figure
+const JOINT_R = 2.25;                                               // the engine's joint mark radius, px
+export const DROP_JOINT = Array.from({ length: 13 }, (_, k) => toW([DROP_ELBOW[0] + JOINT_R * Math.cos(k * Math.PI / 6), DROP_ELBOW[1] + JOINT_R * Math.sin(k * Math.PI / 6)]));
 const LE = landmarksOf(end, H), END_BAR = barOf(LE);
 const SAFETY_Y = SAFETY_TOP - RACK.t / 2;
 // The plate is an outline behind the body; the sleeve dot is drawn on top (as the 8's squat).
@@ -197,7 +213,8 @@ export default {
   datum: [{ x: [0, 0, 0], from: 349, to: 60 }],
   callouts: [
     { key: 'elbows', text: 'Elbows high', anchor: 'elbow.r', box: { left: 222, top: 190 }, cue: 'Keep your elbows up so your shoulders hold the bar.' },
-    { key: 'chest', text: 'Chest tall', anchor: 'backUpper', cue: 'Keep your torso upright on the way down and up.' },
+    // panel lb4p item 1: the leader ends on the chest front just under the rack arm; the label under ELBOWS HIGH.
+    { key: 'chest', text: 'Chest tall', anchor: 'chest', box: { left: 222, top: 242 }, cue: 'Keep your torso upright on the way down and up.' },
     { key: 'foot', text: 'Whole foot', anchor: 'heel.r', cue: 'Stay balanced over the whole foot, knees in line with your feet.' },
   ],
   tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true }],
@@ -205,7 +222,12 @@ export default {
     pose: mistakePose,
     guides: [
       ...MIST_ARM.map(pts => ({ kind: 'dashed', pts })),
+      ...DROP_ARM.map(pts => ({ kind: 'dashed', pts })),
+      { kind: 'dashed', pts: DROP_JOINT },
+      // the drop arrow runs beside the elbow's path, 12 px in front of it, so the solid red clears the end figure by 6 px (A15)
+      { kind: 'arrow', from: toW([EE[0] + ARROW_OFF[0], EE[1] + ARROW_OFF[1]]), to: toW([DROP_ELBOW[0] + ARROW_OFF[0], DROP_ELBOW[1] + ARROW_OFF[1] - 4]) },
     ],
+    // the elbows tell stays on the Mistake pose's elbow (H3 measures the drop there: 44.6 px); the dashed copy points at it
     tells: [
       { key: 'elbows', text: 'Elbows drop', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 218, top: 288 }, cue: 'The elbows drop and the bar starts to slip.' },
       { key: 'chest', text: 'Chest falls<br>forward', anchor: { at: 'chest', pose: 'mistake' }, box: { left: 218, top: 236 }, cue: 'The chest falls and the torso tips forward.' },

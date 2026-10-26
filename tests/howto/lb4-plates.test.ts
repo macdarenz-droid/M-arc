@@ -656,8 +656,10 @@ describe('LIB-14 A15: Mistake clearance, leaders clear of the wall and the Trace
     const [lo, hi] = pins().envelope.F3;
     for (const id of specsDrawn()) { const v = leaderMax(S[id]); expect(v >= lo && v <= hi, `${id} ${v.toFixed(1)}`).toBe(true); }
   });
-  it('mutation: pistol_squat\'s "Free leg straight" label placed automatically, as at the slice (84 px leader), is red', () => {
-    const s = S.pistol_squat, moved = { ...s, callouts: s.callouts.map((c: any) => (c.key === 'leg' ? { ...c, box: undefined } : c)) };
+  it('mutation: pistol_squat\'s "Free leg straight" label moved to the far top left (a leader past the 8\'s longest) is red', () => {
+    // (At the slice, auto placement gave 84 px; after panel lb4p's via change auto placement lands inside the range, so the
+    // mutation now moves the box itself.)
+    const s = S.pistol_squat, moved = { ...s, callouts: s.callouts.map((c: any) => (c.key === 'leg' ? { ...c, box: { left: 20, top: 60 } } : c)) };
     expect(leaderMax(moved)).toBeGreaterThan(pins().envelope.F3[1]);
   });
 
@@ -1026,4 +1028,104 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any) => (f.joint === 'knee.r' ? { ...f, deg: 93 } : f)) })).toEqual(['H6.fact:0:angle:knee.r']);
     expect(h6(s, null)).toEqual(['H6:no-card']);
   });
+});
+
+describe('LIB-14 panel lb4p fix round (#289 6410190090): items 1-7 on drawn items', { timeout: T }, () => {
+  const b = { height: 1.75 };
+  const camOf = (spec: any) => { const c = rep(spec).camera; return { view: 'side', near: 'r', pxm: c.pxPerM, y0: c.y0, P: (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM] }; };
+  const qOf = (pose: any) => body.resolve(body.normPose(pose, b), b).q;
+  const shapes = (spec: any, q: any) => body.bodyShapes(body.fk(q, b), camOf(spec));
+  const px = (spec: any, pose: string, k: string) => camOf(spec).P(lmOf(spec, pose)[k]);
+  const misPose = (spec: any) => ({ ...spec.poses.end, ...spec.mistake.pose });
+  /** Items 5 and 7: the lifted heel sits over the solid heel (±1.5 px) and the foot outline keeps its length (±1.5 px). */
+  const heelOver = (spec: any) => {
+    const e = shapes(spec, qOf(spec.poses.end)).find((x: any) => x.key === 'foot.r').poly, m = shapes(spec, qOf(misPose(spec))).find((x: any) => x.key === 'foot.r').poly;
+    const len = (p: number[][]) => Math.max(...p.map(q => q[0]!)) - Math.min(...p.map(q => q[0]!));
+    const he = camOf(spec).P(body.landmarks(body.fk(qOf(spec.poses.end), b))['heel.r']), hm = camOf(spec).P(body.landmarks(body.fk(qOf(misPose(spec)), b))['heel.r']);
+    return { dx: Math.abs(hm[0]! - he[0]!), dLen: Math.abs(len(m) - len(e)) };
+  };
+  const unpinned = (spec: any) => { const p = spec.mistake.pose.plant, sh = (f: any) => ({ ...f, at: [f.at[0], f.at[1], 0] });
+    return { ...spec, mistake: { ...spec.mistake, pose: { ...spec.mistake.pose, plant: Object.fromEntries(Object.entries(p).map(([k, f]) => [k, sh(f)])) } } }; };
+  it('items 5 and 7: pistol_squat and bodyweight_squat lift the heel about the flat foot\'s ball: the dashed heel over the solid heel, the foot its own length; mutation: the ball back at mid-sole (the old plant) is red', () => {
+    for (const id of ['pistol_squat', 'bodyweight_squat']) {
+      const h = heelOver(S[id]);
+      expect(h.dx, id).toBeLessThanOrEqual(1.5);
+      expect(h.dLen, id).toBeLessThanOrEqual(1.5);
+      expect(heelOver(unpinned(S[id])).dx, `${id} mutation`).toBeGreaterThan(5);
+      expect(lmOf(S[id], 'mistake')['heel.r'][1], id).toBeCloseTo(0.035, 4);   // the lift stays the same
+    }
+  });
+  /** Item 4: the lowest point of the free foot in each descent ghost, px above the floor (positive = clear). */
+  const ghostClear = (spec: any) => {
+    const keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, b)), n = spec.ghosts.count;
+    return Array.from({ length: n }, (_, i) => { const poly = shapes(spec, body.poseAt(keys, (i + 1) / (n + 1), b).q).find((x: any) => x.key === 'foot.l').poly;
+      return camOf(spec).y0 - Math.max(...poly.map((q: number[]) => q[1]!)); });
+  };
+  it('item 4: pistol_squat\'s descent ghosts hold the free foot at least 4 px above the floor; mutation: the via free hip back at 55 is red', () => {
+    for (const g of ghostClear(S.pistol_squat)) expect(g).toBeGreaterThanOrEqual(4);
+    const s = S.pistol_squat, v = s.poses.via[0], low = { ...s, poses: { ...s.poses, via: [{ ...v, hip: { ...v.hip, l: 55 } }] } };
+    expect(Math.min(...ghostClear(low))).toBeLessThan(4);
+  });
+  it('item 6: bodyweight_squat\'s WEIGHT ON TOES leader ends on the forefoot of the lifted foot, its label right of the foot; mutation: the knee anchor is red', () => {
+    const s = S.bodyweight_squat, t = s.mistake.tells.find((x: any) => x.key === 'toes');
+    const end = (spec: any) => { const tt = spec.mistake.tells.find((x: any) => x.key === 'toes'); return px(spec, 'mistake', tt.anchor.at); };
+    const ball = px(s, 'mistake', 'ball.r'), toe = px(s, 'mistake', 'toe.r');
+    expect(Math.hypot(end(s)[0]! - ball[0]!, end(s)[1]! - ball[1]!)).toBeLessThanOrEqual(1);
+    expect(t.box.left).toBeGreaterThan(toe[0]!);
+    const bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => (x.key === 'toes' ? { ...x, anchor: { at: 'knee.r', pose: 'mistake' } } : x)) } };
+    expect(Math.hypot(end(bad)[0]! - ball[0]!, end(bad)[1]! - ball[1]!)).toBeGreaterThan(20);
+  });
+  it('item 7: bodyweight_squat carries a Mistake zoom on the heels at the smallest 0.5 step that reaches H3\'s deviation bar; pistol_squat none (its knee tell already passes H3, H3.zoom:not-needed)', async () => {
+    const z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')), bar = pins().envelope.deviationMin, s = S.bodyweight_squat;
+    expect(s.zoom).toEqual({ view: 'mistake', k: 2.5, tell: 'heels' });
+    const d = z.zoomOf(s).fault.d;
+    expect(d * s.zoom.k).toBeGreaterThanOrEqual(bar);
+    expect(d * (s.zoom.k - 0.5)).toBeLessThan(bar);
+    expect(S.pistol_squat.zoom).toBeUndefined();
+  });
+  /** Items 1 and 3: a callout's anchor point (end pose, px) and whether it lies on the chest front: forward of the shoulder joint. */
+  const anchorPx = (spec: any, key: string) => { const c = spec.callouts.find((x: any) => x.key === key), L = lmOf(spec, 'end'), a = c.anchor;
+    const w = typeof a === 'string' ? L[a] : L[a.along[0]].map((v: number, i: number) => v + (L[a.along[1]][i] - v) * a.t);
+    return camOf(spec).P(w); };
+  it('items 1 and 3: CHEST TALL and CHEST UP end on the chest front (forward of the shoulder joint, below the chin), the labels on the right; mutation: the old backUpper anchor is red', () => {
+    for (const [id, top] of [['front_squat', 'shoulder.r'], ['goblet_squat', 'chin']] as const) {
+      const s = S[id], a = anchorPx(s, 'chest'), sh = px(s, 'end', 'shoulder.r'), lim = px(s, 'end', top);
+      expect(a[0]!, id).toBeGreaterThan(sh[0]!);
+      expect(a[1]!, id).toBeGreaterThan(lim[1]!);
+      expect(s.callouts.find((x: any) => x.key === 'chest').box.left, id).toBeGreaterThanOrEqual(220);
+      const bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'chest' ? { ...x, anchor: 'backUpper' } : x)) };
+      expect(anchorPx(bad, 'chest')[0]!, `${id} mutation`).toBeLessThan(sh[0]!);
+    }
+    // goblet: between the chin and the dumbbell's top head
+    const g = anchorPx(S.goblet_squat, 'chest'), db = itemsIn(S.goblet_squat, 'end').items, dbTop = Math.min(...db.filter((i: any) => i.part === 'db' || /dumbbell/.test(i.type)).flatMap((i: any) => [].concat(i.at ? [camOf(S.goblet_squat).P(i.at)[1]] : [])));
+    if (Number.isFinite(dbTop)) expect(g[1]!).toBeLessThan(dbTop);
+  });
+  it('item 2: front_squat\'s dropped arm is the drawn arm (its end outlines, every drawn length kept) rotated about the faulty shoulder to the Mistake elbow\'s direction, with a dashed elbow joint circle and a red arrow along the drop; mutations: the arrow or the joint circle removed, or the copy not rotated, are red', () => {
+    const s = S.front_squat, cam = camOf(s), mod = M.front_squat;
+    const perim = (p: number[][]) => p.slice(1).reduce((a, q, i) => a + Math.hypot(q[0]! - p[i]![0]!, q[1]! - p[i]![1]!), 0);
+    const problems = (spec: any, arm = mod.DROP_ARM) => {
+      const out: string[] = [], g = spec.mistake.guides, de = mod.DROP_ELBOW;
+      const ends = shapes(spec, qOf(spec.poses.end)).filter((x: any) => ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'].includes(x.key)).map((x: any) => perim([...x.poly, x.poly[0]]));
+      const drawn = g.filter((x: any) => x.kind === 'dashed' && arm.includes(x.pts)).map((x: any) => perim(x.pts.map(cam.P)));
+      if (drawn.length !== 4 || drawn.some((v: number, i: number) => Math.abs(v - ends[i]!) > 0.5)) out.push('arm outlines are not the drawn arm\'s');
+      const ms = px(spec, 'mistake', 'shoulder.r'), me = px(spec, 'mistake', 'elbow.r'), es = px(spec, 'end', 'shoulder.r'), ee = px(spec, 'end', 'elbow.r');
+      const dir = (a: number[], b: number[]) => Math.atan2(b[1]! - a[1]!, b[0]! - a[0]!);
+      if (Math.abs(Math.hypot(de[0] - ms[0]!, de[1] - ms[1]!) - Math.hypot(ee[0]! - es[0]!, ee[1]! - es[1]!)) > 0.5) out.push('upper arm length');
+      if (Math.abs(dir(ms, de) - dir(ms, me)) > 0.01) out.push('not rotated to the drop');
+      const circle = g.find((x: any) => x.kind === 'dashed' && x.pts.length === 13 && x.pts.every((p: number[]) => Math.abs(Math.hypot(...cam.P(p).map((v: number, i: number) => v - de[i])) - 2.25) < 0.05));
+      if (!circle) out.push('no joint circle at the dropped elbow');
+      const arrow = g.find((x: any) => x.kind === 'arrow');
+      if (!arrow) out.push('no drop arrow');
+      else { const a = cam.P(arrow.from), z = cam.P(arrow.to), d = [de[0] - ee[0]!, de[1] - ee[1]!], v = [z[0]! - a[0]!, z[1]! - a[1]!];
+        if ((d[0]! * v[0]! + d[1]! * v[1]!) / (Math.hypot(d[0]!, d[1]!) * Math.hypot(v[0]!, v[1]!)) < 0.98) out.push('arrow not along the drop'); }
+      return out;
+    };
+    expect(problems(s)).toEqual([]);
+    expect(problems({ ...s, mistake: { ...s.mistake, guides: s.mistake.guides.filter((x: any) => x.kind !== 'arrow') } })).toContain('no drop arrow');
+    expect(problems({ ...s, mistake: { ...s.mistake, guides: s.mistake.guides.filter((x: any) => x.pts?.length !== 13) } })).toContain('no joint circle at the dropped elbow');
+    const unrot = shapes(s, qOf(s.poses.end)).filter((x: any) => ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'].includes(x.key)).map((x: any) => [...x.poly, x.poly[0]].map((q: number[]) => [0, (cam.y0 - q[1]!) / cam.pxm, (q[0]! - rep(s).camera.x0) / cam.pxm]));
+    expect(problems({ ...s, mistake: { ...s.mistake, guides: [...s.mistake.guides.filter((x: any) => !mod.DROP_ARM.includes(x.pts)), ...unrot.map((pts: any) => ({ kind: 'dashed', pts }))] } }, unrot)).toEqual([]);
+    expect(unrot.map((p: any) => cam.P(p[0])).some((q: number[], i: number) => Math.hypot(q[0]! - cam.P(mod.DROP_ARM[i][0])[0]!, q[1]! - cam.P(mod.DROP_ARM[i][0])[1]!) > 5)).toBe(true);
+  });
+
 });
