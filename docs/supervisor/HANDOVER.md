@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-26 ~01:45 UTC · main `bec24ebd` · **8.0r: trains 38-41 merged (LB2-LB10 build-ahead, pilot B, HT-11, LIB-20, LIB-STRIP); 4 resume builders; usage 0.87; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-26 ~04:10 UTC · main `bec24ebd` (train 42 F-ZOOM-INK running) · **8.0r: trains 38-41 merged (LB2-LB10 build-ahead, pilot B, HT-11, LIB-20, LIB-STRIP); 4 resume builders; usage status allowed_warning; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -826,6 +826,16 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | #278 LIB-11 pilot B | session_01UHomn1uKNdA1g3v5Pjdii4 | main catch-up, Do 10 'PILOT B SHEET READY' for the supervisor's decision (owner delegation), then the pin |
   | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
   | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
+
+**Update 04:10 UTC (10-26)** (usage: every session reports seven_day status `allowed_warning`; the last number read was 0.87 at 00:57):
+- **F-ZOOM-INK #329:** REVIEW PASS 6407021937 @ `fce1dfcb` (2 Medium, 1 Low). The fixes @ `9e2c1fdf` passed a supervisor diff-check (6407346146):
+  - the `drawn` probe now hits render ink inside r 52;
+  - the gate block `F-ZOOM-INK` was added (gate-split count 110);
+  - a HANDOFF was added.
+  All checks are green on `9e2c1fdf`, which contains main `bec24ebd`. **Train 42** = #329 alone, ahead of the resumes.
+- LB8 #325 and LB9 #326 were told to merge `claude/fix-zoom-ink` before READY. #327 already merged it (head `9ea4e270`).
+- **LIB-14 #289:** D-LIB14-F2 is applied, and CI is green on `bbe2a488`. The local gate has been re-running since 02:47 (its container died at 02:17); READY follows.
+- **LIB-18 #325:** CI is green on `295ae5aa`. The builder held its push "until a 04:26 window". No rule asks for that, so the supervisor asked for the reason or a push.
 
 **Update 01:45 UTC (10-26)** (usage 7-day 0.87 at 00:57; at about 0.5 %/h the limit is reached around 10-27, before the 10-29 02:00 reset, which the owner accepted: "until maxxed out"):
 - **Train 41 merged** (#328) → main `bec24ebd`: #305 LB10, #323 F-PLATEFACTS, #309 LIB-STRIP. Nothing visible changes, so no APK.
