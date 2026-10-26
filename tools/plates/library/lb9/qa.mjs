@@ -47,7 +47,7 @@ export const tableOf = reports => [
  *  (D-LIB21-F7); F1 on each D-LIB21-FLOOR plate at its measured px/m (named, D-LIB18-F3KICK's form). */
 export const F7_IDS = ['lib_side_plank', 'lib_russian_twist', 'lib_bicycle_crunch'];
 /** F1 named per D-LIB21-FLOOR plate: its px/m from the width-filling scale (D-LIB8-floor), fixed before H3. */
-export const F1_NAMED = { lib_bird_dog: 151.49 };
+export const F1_NAMED = { lib_bird_dog: 151.49, lib_side_plank: 150.31, lib_russian_twist: 197.49 };   // the (b) two asked with the E-R5 slice (#326)
 /** F3 named on bird_dog (D-LIB21-F3DOG, 'LB9 NOTE RULED' Q2, #312 6382248634): its longest leader, px, short of the
  *  envelope's minimum because the labels sit in open space beside their parts; never cleared by lengthening a leader. */
 export const F3_NAMED = { lib_bird_dog: 33.5, lib_cable_crunch: 26.05 };
