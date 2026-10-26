@@ -434,3 +434,16 @@ Measured on main (node, `zoom/inline.mjs` zoomOf; spec unchanged):
   normal plate has no place for a circle that clears ink, labels and leaders (zoomOf throws at k 2 and k 3).
 - LIB-ZOOM's field is one `{ view, k }` per spec (`zoomFieldProblems` rejects a list; qa/zoom.mjs raises
   `H3.zoom:unexpected` on a second view). One zoom therefore cannot clear both bars: the ruling asked on the resume PR.
+
+Slice item 3, built (spec `specs/cable_chest_press.mjs`):
+- Camera x0 170 → 190: the column, its base and the floor's back end sit 8 px or more inside the plate (they were cut
+  at x -12). Boxes: stance 266/262, spine 74/174, lock 166/40; "Handles at nipples" 262/188, anchored on the handle bar's
+  lower end (grip.r + 9 px), so its leader drops clear of the vertical bar (6 px rule) and the top right stays free.
+- "Spine neutral" leaves the back down and to the left: 9.0 px from the figure beyond its first 12 px (it ran 2.7 px
+  along the low back).
+- D-LIB10-SKULL1 per id: cable_chest_press has one tell, `lock`. Fault: the elbows locked straight at the front (c17,
+  c5). Claims read: c17 ("Locking elbows at extension", "keep a slight bend") and c5 ("without fully locking the
+  elbows"). No second visible sign is stated; "No bend left" showed the same straight elbow, so it is dropped.
+- Tests: tests/howto/lb6-plates.test.ts "LIB-16 resume: cable_chest_press slice item 3", each with its mutation.
+- Zoom fit after the re-layout (zoomOf): Mistake k 4 at (270, 232), 11.91 px; a normal zoom fits at k 3 or 3.5 at
+  (298, 96) (source ring 17.3 or 14.9 px, Trace span 28.8 px), but not at k 1.5 to 2.5.

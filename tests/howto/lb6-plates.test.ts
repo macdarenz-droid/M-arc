@@ -565,8 +565,14 @@ describe('LIB-16 machine_crunch (H; crunchMachine anchor): drawn facts', { timeo
 describe('LIB-16 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { cable_chest_press: 'lock', machine_pullover: 'arch', machine_crunch: 'arms' };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
-  it('each drawn plate draws its Mistake with 2-3 tells, the first carrying the proposed key', () => {
-    for (const id of specsDrawn()) { expect(keyProblems(S[id])).toEqual([]); expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3); }
+  // One tell only where a D-LIB10-SKULL1 per-id record rules it (slice look #297 6346404542 item 3; DESIGN.md section 18).
+  const ONE_TELL = ['cable_chest_press'];
+  it('each drawn plate draws its Mistake with 2-3 tells (1 for a SKULL1 per-id record), the first carrying the proposed key', () => {
+    for (const id of specsDrawn()) {
+      expect(keyProblems(S[id])).toEqual([]);
+      if (ONE_TELL.includes(id)) { expect(S[id].mistake.tells.length, id).toBe(1); continue; }
+      expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3);
+    }
   });
   it('mutation: the first tell key swapped is red', () => {
     const s = S.machine_crunch;
@@ -1149,5 +1155,59 @@ describe('LIB-16 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any) => (f.joint === 'elbow.r' ? { ...f, deg: 88 } : f)) })).toEqual([`H6.fact:${r.plateFacts.findIndex((f: any) => f.joint === 'elbow.r')}:angle:elbow.r`]);
     expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any) => (f.joint === 'elbow.r' ? { ...f, deg: 94 } : f)) })).toEqual([`H6.fact:${r.plateFacts.findIndex((f: any) => f.joint === 'elbow.r')}:angle:elbow.r`]);
     expect(h6(s, null)).toEqual(['H6:no-card']);
+  });
+});
+
+describe('LIB-16 resume: cable_chest_press slice item 3 (#297 6346404542)', { timeout: T }, () => {
+  /** Every equipment item (the floor included) in every pose sits at least 8 px inside the plate's left and right edges
+   *  (358 px; the zoom margin): nothing is cut off at the edge. */
+  const edgeProblems = (spec: any) => {
+    const cam = camOf(spec), out: string[] = [];
+    for (const pose of posesOf(spec)) for (const it of itemsIn(spec, pose).items) for (const p of eng.PRIMITIVES[it.type](it, cam))
+      for (const q of (p.poly ?? p.line ?? [])) if (q[0] < 8 || q[0] > 350) { out.push(`${spec.id} ${pose} ${it.type} x ${q[0].toFixed(1)}`); break; }
+    return [...new Set(out)];
+  };
+  it('every drawn plate: the equipment and the floor sit 8 px inside the plate edges in every pose', () => {
+    for (const id of specsDrawn()) expect(edgeProblems(S[id]), id).toEqual([]);
+  });
+  it('mutation: cable_chest_press at the slice\'s camera (x0 170: the column and the floor\'s back end cut off) is red', () => {
+    const s = S.cable_chest_press;
+    expect(edgeProblems({ ...s, camera: { ...s.camera, x0: 170 } }).length).toBeGreaterThan(0);
+  });
+  /** Away from its anchor (its first 12 px), a leader keeps at least 4 px from the solid end figure: it never runs along
+   *  the body's outline. The approved plates measure 4.7 px and more. */
+  const hugProblems = (spec: any, min = 4) => {
+    const out: string[] = [], polys = shapesIn(spec, 'end').map((x: any) => x.poly);
+    for (const mistake of [false, true]) {
+      const list = mistake ? spec.mistake.tells : spec.callouts;
+      leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
+        let g = Infinity;
+        for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
+          const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 12) g = Math.min(g, outside(polys, q));
+        }
+        if (g < min) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: ${g.toFixed(1)} px from the figure`);
+      });
+    }
+    return out;
+  };
+  it('every drawn plate: no leader runs along the figure (4 px); cable_chest_press keeps 6 px', () => {
+    expect(specsDrawn().flatMap(id => hugProblems(S[id]))).toEqual([]);
+    expect(hugProblems(S.cable_chest_press, 6)).toEqual([]);
+  });
+  it('mutation: the slice\'s "Spine neutral" box (left 68, top 176 at x0 170: the leader 2.7 px along the low back) is red', () => {
+    const s = S.cable_chest_press, bad = { ...s, camera: { ...s.camera, x0: 170 }, callouts: s.callouts.map((x: any) => (x.key === 'spine' ? { ...x, box: { left: 68, top: 176 } } : x)) };
+    expect(hugProblems(bad)).toEqual(['cable_chest_press normal spine: 2.7 px from the figure']);
+  });
+  /** D-LIB10-SKULL1 per id: c17 and c5 name one sign of the fault (the elbow locked straight) and no second one, so the
+   *  plate has one tell, `lock`, recorded in DESIGN.md section 18. */
+  const tellProblems = (spec: any) => (JSON.stringify(spec.mistake.tells.map((t: any) => t.key)) === '["lock"]' ? [] : [`tells ${spec.mistake.tells.map((t: any) => t.key)}`]);
+  it('cable_chest_press has one tell, lock, with its per-id record', () => {
+    expect(tellProblems(S.cable_chest_press)).toEqual([]);
+    expect(readFileSync('tools/plates/library/lb6/DESIGN.md', 'utf8')).toMatch(/D-LIB10-SKULL1 per id: cable_chest_press/);
+  });
+  it('mutation: the slice\'s second tell (line, "No bend left") added back is red', () => {
+    const s = S.cable_chest_press, line = { key: 'line', text: 'No bend<br>left', anchor: { along: ['mistake:elbow.r', 'mistake:wrist.r'], t: 0.5, pose: 'mistake' }, box: { left: 276, top: 72 }, cue: 'x' };
+    expect(tellProblems({ ...s, mistake: { ...s.mistake, tells: [...s.mistake.tells, line] } })).toEqual(['tells lock,line']);
   });
 });

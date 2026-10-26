@@ -92,7 +92,7 @@ const WS = { r: LS['wrist.r'], l: LS['wrist.l'] };
 export const CCP = { pulley: PULLEY, colZ: COL_Z, z: Z, gripY: GRIP_Y, handleOf };
 export default {
   id: 'cable_chest_press', name: 'Cable Chest Press', view: 'side', facing: 'right',
-  camera: { x0: 170, y0: 339 },
+  camera: { x0: 190, y0: 339 },
   poses: { start, via, end },
   equipment: [
     { type: 'floor', from: COL_Z - FLOOR_BACK, to: Z.mistake + FLOOR_FRONT },
@@ -109,17 +109,16 @@ export default {
   ghosts: { count: 2, parts: ['arm.r', 'handle'] },
   trace: { point: 'grip.r', trim: [10, 12] },
   callouts: [
-    { key: 'stance', text: 'Staggered<br>stance', anchor: 'toe.r', box: { left: 262, top: 296 }, cue: 'Stand with one foot in front of the other, feet planted.' },
-    { key: 'height', text: 'Handles at<br>nipples', anchor: 'grip.r', box: { left: 266, top: 140 }, cue: 'Bring the handles back to about nipple height, not the collarbone.' },
-    { key: 'spine', text: 'Spine<br>neutral', anchor: 'backMid', box: { left: 68, top: 176 }, cue: 'Brace your abs and glutes and keep your back from arching.' },
+    { key: 'stance', text: 'Staggered<br>stance', anchor: 'toe.r', box: { left: 266, top: 262 }, cue: 'Stand with one foot in front of the other, feet planted.' },
+    { key: 'height', text: 'Handles at<br>nipples', anchor: { at: 'grip.r', off: [0, 9] }, box: { left: 262, top: 188 }, cue: 'Bring the handles back to about nipple height, not the collarbone.' },
+    { key: 'spine', text: 'Spine<br>neutral', anchor: 'backMid', box: { left: 74, top: 174 }, cue: 'Brace your abs and glutes and keep your back from arching.' },
   ],
   tempo: [{ phase: 'Press', s: 2, move: true }, { phase: 'Return', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
     guides: [],
     tells: [
-      { key: 'lock', text: 'Locked<br>elbows', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 146, top: 40 }, cue: 'The elbows lock straight at the front of the press.' },
-      { key: 'line', text: 'No bend<br>left', anchor: { along: ['mistake:elbow.r', 'mistake:wrist.r'], t: 0.5, pose: 'mistake' }, box: { left: 256, top: 72 }, cue: 'The arm ends in one straight line, with no bend at the elbow.' },
+      { key: 'lock', text: 'Locked<br>elbows', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 166, top: 40 }, cue: 'The elbows lock straight at the front of the press.' },
     ],
   },
   alt: 'Cable chest press, side view. Standing in a staggered stance in front of a cable column, the lifter presses single handles from the nipple line straight ahead until the elbows are almost straight, body still.',
