@@ -805,6 +805,15 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
     expect(bad.flags.F7.raised).toBe(false);
     expect(lb4qa.flagProblems([asReport(bad)])).toEqual(['lib_pistol_squat: flags F5 != expected F5,F7']);
   });
+  it('D-LIB14-F2: F2 is expected only on front_squat (0.141) and goblet_squat (0.174), at exactly those values', async () => {
+    const lb4qa = await import(/* @vite-ignore */ lib('lb4/qa.mjs'));
+    const r = (id: string, f2: number | null, f7 = false) => ({ id, flags: Object.fromEntries(qaIdx.FLAGS.map((f: string) => [f, { raised: false }])) as any, f2, f7 });
+    const rep = (id: string, f2: number | null) => { const x = r(id, f2); x.flags.F5 = { raised: true, value: 3.57 }; if (f2 != null) x.flags.F2 = { raised: true, value: f2 }; return x; };
+    expect(lb4qa.flagProblems([rep('lib_front_squat', 0.1408), rep('lib_goblet_squat', 0.1741), rep('lib_wall_sit', null)])).toEqual([]);
+    expect(lb4qa.flagProblems([rep('lib_front_squat', null)])).toEqual(['lib_front_squat: flags F5 != expected F2,F5']);
+    expect(lb4qa.flagProblems([rep('lib_wall_sit', 0.15)])).toEqual(['lib_wall_sit: flags F2,F5 != expected F5']);
+    expect(lb4qa.flagProblems([rep('lib_goblet_squat', 0.16)])).toEqual(['lib_goblet_squat: F2 0.160 != the named 0.174']);
+  });
   it('clean: no node-half problem, and the only raised flags wait on the browser half (F2, F5)', async () => {
     const r = await qa(await candOf());
     expect(node(r)).toEqual([]);

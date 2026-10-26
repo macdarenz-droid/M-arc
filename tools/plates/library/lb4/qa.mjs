@@ -43,14 +43,17 @@ export const tableOf = reports => [
 ];
 
 /** The ruled expected flags (DESIGN.md section 6; #289 6338977366): F5 on every id at exactly the approved
- *  chrome's 3.57:1 (D-LIB9-F5), F7 on pistol_squat (drawable false, D-LIB14-PISTOL). */
-export const EXPECTED = id => ['F5', ...(id === 'lib_pistol_squat' ? ['F7'] : [])].sort();
+ *  chrome's 3.57:1 (D-LIB9-F5), F7 on pistol_squat (drawable false, D-LIB14-PISTOL), and F2 named on front_squat and
+ *  goblet_squat at their measured coverage (D-LIB14-F2, #289 6406605229; the 0.191-0.549 range stays for every other id). */
+export const F2_NAMED = { lib_front_squat: 0.141, lib_goblet_squat: 0.174 };
+export const EXPECTED = id => ['F5', ...(id === 'lib_pistol_squat' ? ['F7'] : []), ...(id in F2_NAMED ? ['F2'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the expected set: a missing or extra flag, or F5 at any value other than 3.57. */
 export const flagProblems = reports => reports.flatMap(r => {
   const raised = FLAGS.filter(f => r.flags[f].raised).sort(), want = EXPECTED(r.id), out = [];
   if (JSON.stringify(raised) !== JSON.stringify(want)) out.push(`${r.id}: flags ${raised.join(',') || 'none'} != expected ${want.join(',')}`);
   if (r.flags.F5.raised && +r.flags.F5.value.toFixed(2) !== F5_EXEMPT) out.push(`${r.id}: F5 ${r.flags.F5.value.toFixed(2)}:1 != the exempt ${F5_EXEMPT}:1`);
+  if (r.flags.F2.raised && r.id in F2_NAMED && +r.flags.F2.value.toFixed(3) !== F2_NAMED[r.id]) out.push(`${r.id}: F2 ${r.flags.F2.value.toFixed(3)} != the named ${F2_NAMED[r.id]}`);
   return out;
 });
 
@@ -60,6 +63,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   console.log(`LB4 plates page sha256 ${sha}`);
   for (const line of tableOf(reports)) console.log(line);
   const bad = flagProblems(reports);
-  console.log(bad.length ? `flag set DIFFERS from the expected set:\n${bad.join('\n')}` : 'flag set: equal to the expected set (F5 3.57 on all; F7 pistol_squat)');
+  console.log(bad.length ? `flag set DIFFERS from the expected set:\n${bad.join('\n')}` : 'flag set: equal to the expected set (F5 3.57 on all; F7 pistol_squat; F2 named on front_squat 0.141, goblet_squat 0.174)');
   if (bad.length || reports.some(r => HARD.some(h => !r.hard[h].pass))) process.exit(1);
 }

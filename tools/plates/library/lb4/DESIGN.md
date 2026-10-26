@@ -110,6 +110,13 @@ None. No family is proposed T here (the SPLIT children are not on this card).
 - **Before Do 6 b** every drawn id also shows `H6:no-card` and F7 'no card top fault'. Expected (Do 2).
 - No other flag is planned. F2 (coverage) is the one to watch on wall_sit: the wall slab adds ink beside the figure
   [unverified until drawn]. Any other raised flag is posted with its value and range and ruled before READY.
+- **F2 named on front_squat (0.141) and goblet_squat (0.174)** (D-LIB14-F2, #289 6406605229; as pendlay_row
+  D-LIB13-SHEET-4 and cable_chest_press D-LIB16-F2CCP). The 8's range 0.191-0.549 stays for every other id. Measured
+  figure boxes (union of start, ghost and end layers, 390 px, getBBox): barbell_back_squat 97.8 x 254.1 px at 146.3
+  px/m (0.194); front_squat 80.6 x 223.6 px at 128 px/m (0.141; 92.1 x 255.6 px, 0.184, if scaled to 146.3);
+  goblet_squat 87.0 x 255.8 px at 146.3 px/m (0.174). The heights match the back squat's; the boxes are narrower
+  (front_squat 6 % at equal scale, goblet_squat 11 %), and front_squat's 128 px/m (labels beside the rack upright)
+  takes the rest. No figure is padded and no fact moved. qa.mjs pins both values (`F2_NAMED`).
 
 ## 7. R10 items (tier A: front_squat, goblet_squat, pistol_squat)
 
