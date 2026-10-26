@@ -27,9 +27,11 @@ const LB10 = ['sled_push', 'sled_pull', 'farmer_s_carry', 'burpee', 'jumping_jac
 // LB10's thirteenth row: pilot A's plate (pA), never in an LB10 file.
 const NOT_HERE = ['mountain_climbers'];
 // D-LIB22-SECS: no tempo seconds on six cards. 'LIB-22 resume' lifts the three with a strip/rows.json card row (STRIP;
-// D-STRIP-NOTSCOPE, F-STRIP-2); the three in its leftOut (S3) stay NOSECS: drawn and tested, never on rows.json.
+// D-STRIP-NOTSCOPE, F-STRIP-2) and the two released to its fallbackA, every phase blank (AFALL; D-LIB22-AFALL,
+// D-LIB22-STRIPROWS); wall_ball (strip leftOut, S3) stays NOSECS: drawn and tested, never on rows.json.
 const STRIP = ['sled_pull', 'farmer_s_carry', 'burpee'];
-const NOSECS = ['sled_push', 'medicine_ball_slam', 'wall_ball'];
+const AFALL = ['sled_push', 'medicine_ball_slam'];
+const NOSECS = ['wall_ball'];
 /** A tempo.json row as its card and spec phase: timed from the card's plate.tempo (`from`) or a quoted constant; an
  *  untimed row (D-STRIP-B, -ROWS) as strip tempoOf builds it, { phase, move?, word? }. */
 const phaseOf = (plateTempo: any, r: any) => ('from' in r || 'constant' in r
@@ -193,16 +195,16 @@ describe('LIB-22 A7 (proposed, D-LIB22-SECS, -TEMPO): lb10/tempo.json', () => {
   });
   /** D-STRIP-B, -ROWS, F-STRIP-2: a lifted id's rows are strip/rows.json's card rows byte for byte (word or blank, claim,
    *  says, quote), its card's plate.tempo.text is the strip card's text, and strip's own wordProblems finds nothing. */
-  const strip = readJson('tools/plates/library/strip/rows.json');
-  const stripProblems = async (tt: any) => {
+  const stripRows = readJson('tools/plates/library/strip/rows.json');
+  const stripProblems = async (tt: any, strip = stripRows) => {
     const ts = await import(/* @vite-ignore */ lib('strip/tempo-strip.mjs'));
-    return STRIP.flatMap(id => {
-      const sc = strip.cards.find((c: any) => c.id === id), rows = tt.rows[id], text = cardOf(id).plate.tempo.text, out: string[] = [];
-      if (!sc) return [`${id}: no strip card`];
+    return [...STRIP, ...AFALL].flatMap(id => {
+      const fa = AFALL.includes(id), sc = (fa ? strip.fallbackA : strip.cards).find((c: any) => c.id === id), rows = tt.rows[id], text = cardOf(id).plate.tempo.text, out: string[] = [];
+      if (!sc) return [`${id}: no strip ${fa ? 'fallbackA' : 'card'} entry`];
       if (JSON.stringify(rows) !== JSON.stringify(sc.rows)) out.push(`${id}: rows differ from strip/rows.json`);
       if (text !== sc.text) out.push(`${id}: card text differs from strip/rows.json`);
       if (!rows || rows.some((r: any) => 'from' in r || 'constant' in r)) out.push(`${id}: no rows or a timed row`);
-      const w = rows ? ts.wordProblems(ts.tempoOf(rows), text) : [];
+      const w = rows ? ts.wordProblems(ts.tempoOf(rows), text, { allBlank: fa }) : [];
       if (w.length) out.push(`${id}: words ${w.join(',')}`);
       return out;
     });
@@ -221,6 +223,20 @@ describe('LIB-22 A7 (proposed, D-LIB22-SECS, -TEMPO): lb10/tempo.json', () => {
     expect(await stripProblems(drop)).toEqual(['burpee: rows differ from strip/rows.json']);
     const timed = structuredClone(t); timed.rows.farmer_s_carry = [{ phase: 'Walk', constant: 30, move: true, claim: 'c8', quote: 'x' }];
     expect(await stripProblems(timed)).toEqual(['farmer_s_carry: rows differ from strip/rows.json', 'farmer_s_carry: no rows or a timed row', 'farmer_s_carry: words noword']);
+  });
+  it('D-LIB22-AFALL: sled_push and medicine_ball_slam carry their strip fallbackA rows byte for byte, every phase blank', async () => {
+    expect(build('sled_push')).toEqual([{ phase: 'Walk', move: true }]);
+    expect(build('medicine_ball_slam')).toEqual([{ phase: 'Slam', move: true }]);
+    for (const id of AFALL) expect(t.rows[id].every((r: any) => r.blank === true && !('word' in r)), id).toBe(true);
+  });
+  it('mutations (D-LIB22-STRIPROWS): a word added to a blank row, and either id moved back to strip leftOut, are red', async () => {
+    const word = structuredClone(t); word.rows.sled_push[0] = { phase: 'Walk', move: true, word: 'Quick', claim: 'c10' };
+    expect(await stripProblems(word)).toEqual(['sled_push: rows differ from strip/rows.json', 'sled_push: words word:0:fallback']);
+    for (const id of AFALL) {
+      const back = structuredClone(stripRows), e = back.fallbackA.find((c: any) => c.id === id);
+      back.fallbackA = back.fallbackA.filter((c: any) => c.id !== id); back.leftOut.push({ id, lane: e.lane, why: 'moved back' });
+      expect(await stripProblems(t, back), id).toEqual([`${id}: no strip fallbackA entry`]);
+    }
   });
   it('every constant is stated by its claim\'s verbatim quote, and every from-row reads a positive card number', () => {
     expect(problems(t)).toEqual([]);
@@ -303,7 +319,7 @@ const ROWS = 'tools/plates/library/lb10/rows.json';
 const FRONT = ['jumping_jacks', 'jump_rope'];
 // DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; farmer_s_carry's open M_STRIDE basis; jump_rope's
 // Trace, short of the bar at kMax; jumping_jacks under D-LIB22-JJ until F-H6-TEMPO).
-const HELD = [...NOSECS, 'farmer_s_carry', 'jump_rope', 'jumping_jacks'];
+const HELD = [...NOSECS, 'farmer_s_carry', 'jump_rope', 'jumping_jacks'];   // wall_ball: no spec yet
 // The ids drawn on this branch: the slice, then the bulk as each plate is integrated (BULK GO, #305 6356763967).
 const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl', 'high_knees', 'jumping_jacks', 'battle_ropes'];
 const COMPOSERS = ['kettlebell', 'medBall', 'sled', 'jumpRope', 'battleRope'];
@@ -670,7 +686,7 @@ describe('LIB-22 A2 / A18: medicine_ball_slam and `medBall` (tier A; NOSECS; the
     expect(q.knee.r).toBeLessThanOrEqual(2);
     expect(staticProblems(s(), 'ball').filter(p => p.startsWith('mistake'))).toEqual([]);
   });
-  it('the spec carries no tempo (D-LIB22-SECS)', () => { expect(s().tempo).toBeUndefined(); });
+  it('the spec carries D-LIB22-AFALL\'s blank Slam phase, no word, no seconds (released from D-LIB22-SECS)', () => { expect(s().tempo).toEqual([{ phase: 'Slam', move: true }]); });
 });
 
 describe('LIB-22 A2 / A18: sled_push and `sled` (NOSECS; the slice)', { timeout: T }, () => {
@@ -765,7 +781,7 @@ describe('LIB-22 A2 / A18: sled_push and `sled` (NOSECS; the slice)', { timeout:
       expect(Math.abs(l['shoulder.r'][1] - l['grip.r'][1]), pose).toBeLessThanOrEqual(0.01);
     }
   });
-  it('the spec carries no tempo (D-LIB22-SECS)', () => { expect(s().tempo).toBeUndefined(); });
+  it('the spec carries D-LIB22-AFALL\'s blank Walk phase, no word, no seconds (released from D-LIB22-SECS)', () => { expect(s().tempo).toEqual([{ phase: 'Walk', move: true }]); });
 });
 
 describe('LIB-22 A2 / A18: burpee (NOSECS; held; bulk)', { timeout: T }, () => {
@@ -936,7 +952,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H (D-LIB22-B1)', () => {
-    expect(want()).toEqual(['lib_sled_pull', 'lib_burpee', 'lib_high_knees', 'lib_battle_ropes', 'lib_bear_crawl', 'lib_kettlebell_swing']);
+    expect(want()).toEqual(['lib_sled_push', 'lib_sled_pull', 'lib_burpee', 'lib_high_knees', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_bear_crawl', 'lib_kettlebell_swing']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('mountain_climbers (pA) and wall_ball (no spec before its resume) are in no lb10/ file as a row', () => {
@@ -1053,7 +1069,7 @@ describe('LIB-22 A7 (spec half): each spec\'s tempo follows lb10/tempo.json and 
   it('every drawn spec\'s tempo is its ruled row built from the card (or none, NOSECS)', () => {
     for (const id of specsDrawn()) expect(tempoProblems(id, S[id])).toEqual([]);
   });
-  it('mutations: a Hold added to kettlebell_swing, its drive set to 2 s, a Rest added, a tempo on a NOSECS spec are red', () => {
+  it('mutations: a Hold added to kettlebell_swing, its drive set to 2 s, a Rest added, a timed tempo on sled_push\'s blank row are red', () => {
     const k = S.kettlebell_swing;
     expect(tempoProblems('kettlebell_swing', { ...k, tempo: [k.tempo[0], { phase: 'Hold', s: 1 }, k.tempo[1]] }).length).toBe(1);
     expect(tempoProblems('kettlebell_swing', { ...k, tempo: [{ ...k.tempo[0], s: 2 }, k.tempo[1]] }).length).toBe(1);

@@ -463,6 +463,36 @@
     }
    ],
    "why": "D-STRIP-AFALL: \"Controlled descent\" (b7) has no claim whose quote names a controlled descent (b8 is shin travel), so every phase stays blank (option A)"
+  },
+  {
+   "id": "sled_push",
+   "lane": "LIB-22 #305",
+   "text": "Walk: short, powerful steps (c10). No sled-push source gives a step rate, a phase time or a pause, so no seconds are drawn (LR-33; R-LB2-1).",
+   "claim": "c10",
+   "rows": [
+    {
+     "phase": "Walk",
+     "move": true,
+     "blank": true,
+     "claim": "c10"
+    }
+   ],
+   "why": "D-LIB22-AFALL (#331 6409745507)"
+  },
+  {
+   "id": "medicine_ball_slam",
+   "lane": "LIB-22 #305",
+   "text": "Ballistic and continuous: no read source gives seconds for any phase, so up, down and pause stay null (LR-33). BarBend's power sets are 3-4 sets of 3-5 reps with rest at 1:4 to 1:10 (c12). No quote asks for a pause right after the lift overhead or after the slam; Iron Man's \"taking a deep breath in between repetitions\" (c7) is a breath between reps with no seconds.",
+   "claim": "c12",
+   "rows": [
+    {
+     "phase": "Slam",
+     "move": true,
+     "blank": true,
+     "claim": "c12"
+    }
+   ],
+   "why": "D-LIB22-AFALL (#331 6409745507)"
   }
  ],
  "timedAtHead": [
@@ -480,16 +510,6 @@
   }
  ],
  "leftOut": [
-  {
-   "id": "sled_push",
-   "lane": "LIB-22 #305",
-   "why": "S3: \"short, powerful steps\" (c10); \"powerful\" is not a FORMS form and the text names no other cadence"
-  },
-  {
-   "id": "medicine_ball_slam",
-   "lane": "LIB-22 #305",
-   "why": "S3: \"Ballistic and continuous\"; no FORMS form in the text"
-  },
   {
    "id": "wall_ball",
    "lane": "LIB-22 #305",

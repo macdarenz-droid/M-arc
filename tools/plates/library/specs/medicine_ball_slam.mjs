@@ -1,11 +1,11 @@
-// Medicine ball slam (overhead slam), side view, figure facing screen right. LIB-22 (LB10, H; NOSECS: no tempo).
+// Medicine ball slam (overhead slam), side view, figure facing screen right. LIB-22 (LB10, H; NOSECS lifted at 'LIB-22 resume': D-STRIP-AFALL).
 // View: side (card plate.view = census): the ball overhead, the hips pressed back, the knees bent and the flat back,
 //  and the fault (hips and knees straight) are sagittal.
 // Sources: research card docs/research/howto/cards/medicine_ball_slam.json (research head 596dbe07): c2 tall, the ball
 //  overhead, arms straight, hips slightly forward, on the toes, no lean back; c3 the slam straight down between the
 //  feet, hips back, knees bent; c4 the whole body, not the arms only (the Mistake); c5 back flat, ACE "the spine and shin
 //  angles remain parallel"; c9 a soft slam ball; c10 the ball clear of the toes; c11 a 10-pound ball; c15 both hands.
-//  Tempo: none (null/null/null, D-LIB22-SECS): the spec carries no `tempo`, the row waits for the strip card.
+//  Tempo: Slam, blank (D-LIB22-AFALL; strip/rows.json fallbackA, c12).
 // Clone (D-LIB22-CLONE): barbell_back_squat (the 8: the squat), barbell_overhead_press (#109 @ dcac4a38: straight arms
 //  overhead), reverse_lunge (#109: the rigid foot on its ball and toe pad); copied, never imported.
 // Geometry (confirmed by the report's contacts and checks, and by tests on the drawn items):
@@ -158,7 +158,7 @@ export default {
   callouts: [
     { key: 'overhead', text: 'Ball overhead', anchor: { at: 'grip.r', pose: 'start', off: [-15.41, 0] }, box: { left: 30, top: 44 }, cue: 'Tall on your toes, arms straight, ball overhead.' },
     { key: 'hips', text: 'Hips and knees', anchor: 'buttock', box: { left: 28, top: 192 }, cue: 'Press the hips back and bend the knees as you slam.' },
-    { key: 'flat', text: 'Flat back', anchor: 'backUpper', box: { left: 40, top: 168 }, cue: 'Back flat as you slam.' },
+    { key: 'flat', text: 'Flat back', anchor: 'backUpper', box: { left: 56, top: 136 }, cue: 'Back flat as you slam.' },
   ],
   mistake: {
     pose: mistake,
@@ -166,9 +166,10 @@ export default {
     guides: [{ kind: 'dashed', pts: [{ at: 'shoulder.r', pose: 'mistake' }, { at: 'elbow.r', pose: 'mistake' }, { at: 'grip.r', pose: 'mistake' }] }],
     tells: [
       { key: 'arms', text: 'Arms only', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'The arms slam the ball on their own.' },
-      { key: 'legs', text: 'Hips and knees<br>straight', anchor: { at: 'buttock', pose: 'mistake' }, cue: 'The hips and knees stay straight instead of bending.' },
+      { key: 'legs', text: 'Legs straight', anchor: { at: 'buttock', pose: 'mistake' }, cue: 'The hips and knees stay straight instead of bending.' },
     ],
   },
+  tempo: [{ phase: 'Slam', move: true }],   // D-STRIP-AFALL (D-LIB22-AFALL): blank, strip/rows.json fallbackA (lb10/tempo.json)
   alt: 'Medicine ball slam, side view. Tall on the toes with the ball overhead in straight arms, then the ball slammed to the floor between the feet with the hips pressed back, the knees bent and the back flat.',
 };
 export const info = { END_INCL, END_Z, LIFT, startToe: LSTART['toe.r'], startCom: com(LSTART), endCom: com(landmarksOf(end, H)) };

@@ -473,11 +473,11 @@ kettlebell_swing has a strip from the start; the other three render only from `l
 
 ## 15. Held ids and NOSECS rows
 
-As of 'LIB-22 resume' (section 21). Lifted there: sled_pull and burpee (strip rows; zoom), bear_crawl (zoom).
+As of 'LIB-22 resume' (section 21). Lifted there: sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
+medicine_ball_slam (D-LIB22-AFALL: every phase blank, strip/rows.json fallbackA under D-LIB22-STRIPROWS).
 
 | id | ruling | why | route |
 |---|---|---|---|
-| sled_push, medicine_ball_slam | D-LIB22-SECS (D-LIB14-NOSECS) | tempo null; strip/rows.json leftOut (S3): no FORMS form in the text | a ruling (a FORMS form or D-STRIP-AFALL; #331 6409735295), then the lift |
 | wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); strip leftOut (S3) | #289 on main, then a resume |
 | farmer_s_carry | #305 6360164495 item 2 (open M_STRIDE basis) | tempo lifted (strip row); M_STRIDE 0.70 m feeds the Mistake deviation with no quote, approved plate or measured convention behind the number | a basis ruled (#331 6409735295) |
 | jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px**; a normal zoom at kMax 4 gives 21.3 px < 22.11 (trim [0, 0]) | a route the zoom rules do not hold (as F-PALLOF-ARCH) |
@@ -641,14 +641,13 @@ k rule: the smallest k in steps of 0.5 from 1.5 whose zoom-scale value clears it
 | burpee | NOSECS; S2 Mistake 7.1 px | strip row (Squat down: Controlled; 3 blank, c24); LIB-ZOOM | tempo, fixture lift, zoom, QA, row | Mistake view, k 2: the `landing` tell (`knee.r`, end → mistake); 14.2 px ≥ 11.39 |
 | bear_crawl | S2 Trace 10 px | LIB-ZOOM | zoom, QA, row | normal view, k 4: the hand's step (`wrist.r`); 29.3 px ≥ 22.11 (k 3.5 gives 24.1, under the 10 % margin) |
 | farmer_s_carry | NOSECS | strip row (Walk: Controlled, c4) | tempo, fixture lift; the plate stays held (below) | none (H3 passes: 51.2 / 28.0 px) |
+| sled_push, medicine_ball_slam | NOSECS (strip leftOut, S3) | D-LIB22-AFALL (#331 6409745507), D-LIB22-STRIPROWS (6410069703): moved to strip fallbackA, `Walk` (c10) / `Slam` (c12) blank | tempo, fixture lift, QA, row | none (H3 passes) |
 
 **Still held:**
 
 | id | waits for |
 |---|---|
-| sled_push | a ruling: strip `leftOut` (S3, "short, powerful steps", c10; "powerful" is not a FORMS form). FORMS grows only by a ruling (D-STRIP-FORMS); D-STRIP-AFALL (all phases blank) is the other ruled form |
-| medicine_ball_slam | the same ruling: strip `leftOut` (S3, "Ballistic and continuous") |
-| farmer_s_carry | a basis for M_STRIDE 0.70 m (6360164495 item 2: a quote, an approved plate's file:line or a measured convention). No quote on the card or the research head, and no approved plate on main, gives a regular step length |
+| farmer_s_carry | F-LB10-STRIDE (research; #331 6409745507 item 2): a basis for M_STRIDE 0.70 m (6360164495 item 2: a quote, an approved plate's file:line or a measured convention). No quote on the card or the research head, and no approved plate on main, gives a regular step length |
 | jumping_jacks | F-H6-TEMPO (D-LIB22-JJ); not on main. Its Mistake zoom (k 1.5, `toes`, 14.4 px) is drawn at its own resume: drawn now, its source ring crossed the `toes` label (H1.ink) on a row that cannot ship |
 | jump_rope | no allowed k reaches the bar: the Trace (`sole.r`, trim [0, 0]) is 21.3 px at k 4 (kMax) < 22.11; a raised kMax or another route needs a ruling (as F-PALLOF-ARCH) |
 | wall_ball | LB4 #289 (`wall`) on main (D-LIB22-WALL); also strip `leftOut` (S3) |
@@ -661,3 +660,7 @@ Layout fixes made for it (labels only; no body part, equipment item, fault or fa
 - burpee: "Straight plank" box top 120 → 168 (F3: leader 113.5 → 66.8 px, inside 49.3-82.3).
 - bear_crawl: Mistake "Hips above shoulders" box top 120 → 96 (F3: leaderMax 31.9 → 55.9 px); alt semicolon (H8).
 - jumping_jacks (held): alt semicolon (H8).
+- sled_push: alt semicolon → full stop (H8).
+- medicine_ball_slam: Mistake "Hips and knees straight" → "Legs straight" (H8: 1-3 words; the cue keeps hips and knees);
+  "Flat back" box {40, 168} → {56, 136} (H4.overlap with "Hips and knees"; at {40, 136} its leader was 86.2 px, past F3's
+  82.3, so it moved in to 78.4 px).

@@ -1,5 +1,5 @@
 {
- "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase, and a cycle plate's Work and Rest, is a constant only with a quote that states its seconds; a range is the quote's string. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 8 pose map). Ruled: D-LIB22-TEMPO (lib-22-card ruling 25), 'LB10 NOTE RULED' Q1 (#305 6355155831). No row for the D-LIB22-SECS NOSECS ids still held (sled_push, medicine_ball_slam, wall_ball: strip rows.json leftOut, S3): their tempo is null and no quote states seconds of a drawn phase. sled_pull, farmer_s_carry and burpee are lifted at 'LIB-22 resume' (D-STRIP-NOTSCOPE; F-STRIP-2): their untimed rows are strip/rows.json's card rows byte for byte (D-STRIP-B, -ROWS: { phase, move?, word? | blank, claim, says?, quote? }); only { phase, move?, word? } goes on the card and the spec (tempoOf). Constant rows carry their claim and quote verbatim, as pilot-a/tempo.json @ dcac4a38 does.",
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase, and a cycle plate's Work and Rest, is a constant only with a quote that states its seconds; a range is the quote's string. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 8 pose map). Ruled: D-LIB22-TEMPO (lib-22-card ruling 25), 'LB10 NOTE RULED' Q1 (#305 6355155831). No row for wall_ball (D-LIB22-WALL; strip rows.json leftOut, S3). sled_push and medicine_ball_slam take D-STRIP-AFALL's all-blank rows (D-LIB22-AFALL, #331 6409745507), byte-equal to their strip/rows.json fallbackA rows (D-LIB22-STRIPROWS, #331 6410069703). sled_pull, farmer_s_carry and burpee are lifted at 'LIB-22 resume' (D-STRIP-NOTSCOPE; F-STRIP-2): their untimed rows are strip/rows.json's card rows byte for byte (D-STRIP-B, -ROWS: { phase, move?, word? | blank, claim, says?, quote? }); only { phase, move?, word? } goes on the card and the spec (tempoOf). Constant rows carry their claim and quote verbatim, as pilot-a/tempo.json @ dcac4a38 does.",
  "research": "claude/libht-research 596dbe0748f11d13b431ee11d38d1742771925f1",
  "poseMap": {
   "burpee": {
@@ -130,6 +130,22 @@
     "move": true,
     "blank": true,
     "claim": "c24"
+   }
+  ],
+  "sled_push": [
+   {
+    "phase": "Walk",
+    "move": true,
+    "blank": true,
+    "claim": "c10"
+   }
+  ],
+  "medicine_ball_slam": [
+   {
+    "phase": "Slam",
+    "move": true,
+    "blank": true,
+    "claim": "c12"
    }
   ]
  }

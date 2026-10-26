@@ -56,6 +56,24 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_sled_push": {
+   "src": "library/specs/sled_push.mjs",
+   "slug": "sled-push",
+   "prefix": "sled-push",
+   "chromeId": "sled-push",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_medicine_ball_slam": {
+   "src": "library/specs/medicine_ball_slam.mjs",
+   "slug": "medicine-ball-slam",
+   "prefix": "medicine-ball-slam",
+   "chromeId": "medicine-ball-slam",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }

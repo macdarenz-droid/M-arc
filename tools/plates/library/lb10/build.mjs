@@ -64,10 +64,10 @@ export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mis
   return out;
 }
 
-/** The ids drawn but held off rows.json (DESIGN.md held table, as of 'LIB-22 resume'): the NOSECS ids still held
- *  (strip leftOut, S3), farmer_s_carry (open M_STRIDE basis), jump_rope (Trace under the bar at kMax) and jumping_jacks
- *  (D-LIB22-JJ). Each with its census view. */
-export const HELD = { sled_push: 'side', farmer_s_carry: 'side', medicine_ball_slam: 'side', wall_ball: 'side',
+/** The ids held off rows.json (DESIGN.md held table, as of 'LIB-22 resume'): wall_ball (D-LIB22-WALL; no spec yet),
+ *  farmer_s_carry (open M_STRIDE basis), jump_rope (Trace under the bar at kMax) and jumping_jacks (D-LIB22-JJ). Each
+ *  with its census view. */
+export const HELD = { farmer_s_carry: 'side', wall_ball: 'side',
   jump_rope: 'front', jumping_jacks: 'front' };
 const slugOf = id => id.replace(/_/g, '-');
 /** The held rows, in memory only (never written to rows.json or any file under the repo), for the held ids whose spec exists. */
