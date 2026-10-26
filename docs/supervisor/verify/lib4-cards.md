@@ -4403,3 +4403,15 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 **Rejected:**
 - Writing word tempos onto the cards now, because that would lift held lines outside their lanes (D-STRIP-NOTSCOPE).
 - Having the validator accept "no tempo" for strip ids, because that would turn the lb7/lb10 hold pins red.
+
+## 43. Resume rulings, continued (2026-10-26 ~00:55 UTC)
+- **D-LIB16-F2CCP** (#327 6405365741): F2 0.580 on cable_chest_press is a named flag, for card-true width. The extra QA edits are accepted:
+  - qa/node.mjs: H3 per listed view;
+  - qa/browser.mjs: the H1 clip fix, with two mutations;
+  - a `[golden update]` for zoom/inline.mjs.
+- **D-LIB18-ZOOMPLACE** (#325 6405497420): one Mistake label box and its leader may move to free a zoom's place. No body part, equipment item or fact moves; the leader still ends on the named part.
+- **D-ZOOM-INK** (#325 6405592304): QA's H1.ink counted a zoom's clipped geometry as ink, because isPointInFill ignores clip-path. One fix, split from #327 into its own PR **F-ZOOM-INK** (`claude/fix-zoom-ink`), which merges ahead of the resumes. The resumes merge that branch in and never edit qa/** themselves.
+- **D-LIB-A16-REGISTRY** (#326): the A16 `OTHER_CARDS` lists move into one data file, `tests/howto/fixtures/eq-composers.json`, with each name under exactly one card. The A16 blocks of lb6, lb7, lb8, lb9 and lb10 each change one line to read it; this ruling authorizes those edits in other cards' blocks. A lane that adds a composer adds it there. The assertions are unchanged, and there are new mutations: a name listed twice, and a registry entry removed while its file exists.
+- **superman held (F-ZOOM-TRIM):** the zoom re-renders the plate-scale trim, so k ≤ 4 cannot reach 22.11 px.
+- **pallof_press held (F-PALLOF-ARCH):** a 12° arch at 1.03 px cannot reach 11.39 px at any allowed k.
+- **LB9 named front entries approved:** side_plank "Hips sink" and russian_twist "Knees swing" (D-LIB18-LIFT form).
