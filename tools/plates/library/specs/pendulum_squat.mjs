@@ -235,7 +235,7 @@ export default {
     ],
     tells: [
       // c9 "Heels rising", c15 "Lifting heels off the platform": on the raised heel
-      { key: 'heels', text: 'Heels<br>lift', anchor: { at: 'heel.r', pose: 'mistake' }, box: { left: 280, top: 280 }, cue: 'Heels lift off the platform at the bottom.' },
+      { key: 'heels', text: 'Heels<br>lift', anchor: { at: 'heel.r', pose: 'mistake' }, box: { left: 126, top: 280 }, cue: 'Heels lift off the platform at the bottom.' },
     ],
   },
   pilot: { drawableFault: 'Top fault: losing control and dropping into the bottom (c20, c10), seen only as speed; the plate draws the next fault by the same steps, the heels lifting off the platform (c9, c15).' },

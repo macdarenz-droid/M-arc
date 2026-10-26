@@ -778,7 +778,7 @@ zoom's scale; the plate is otherwise unchanged): lying_leg_curl k 3.5 (3.4 → 1
 so the zoom's link clears it), standing_leg_curl k 3.5 (3.4 → 12.0 px), hip_thrust k 3 (4.16 → 12.5 px), leg_extension
 k 1.5 (7.8 → 11.7 px); and under D-LIB18-ZOOMPLACE (#325 6405497420: one Mistake label box and its leader may move to
 free the zoom's place; no body part, item or fact moves) cable_kickback k 3 (4.3 → 12.8 px; its `arch` box placed at
-60,160) and pendulum_squat k 2.5 (5.7 → 14.2 px; its `heels` box moved from 156,284 to 280,280). They are on rows.json.
+60,160) and pendulum_squat k 2.5 (5.7 → 14.2 px; its `heels` box moved from 156,284 to 126,280). They are on rows.json.
 Open on #325: F-ZOOM-INK (PQ-H1's ink test
 reads the zoom's clipped re-render outside the circle: lying_leg_curl, hip_thrust and leg_extension red on H1.ink only),
 glute_bridge (one zoom per view, D-LIB16-ZOOMVIEWS, LIB-16's resume).
