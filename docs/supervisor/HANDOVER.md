@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-26 ~10:00 UTC · main `be796240` (train 42) · **8.0r: lb4p and lb8q panels VALID (4 plates approved); combined set mx1 building; LB6/LB8 fixes running; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-26 ~13:05 UTC · main `7ba94367` (train 43: LB9 resume) · **8.0r: train 44 (F-CI-4 + LB6 resume) in CI; mx3 recheck set building; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -826,6 +826,32 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | #278 LIB-11 pilot B | session_01UHomn1uKNdA1g3v5Pjdii4 | main catch-up, Do 10 'PILOT B SHEET READY' for the supervisor's decision (owner delegation), then the pin |
   | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
   | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
+
+**Update 13:05 UTC (10-26):**
+- **Train 43 merged** (#333) → main `7ba94367`: #326 LB9 resume (side_plank approved in mx1; review PASS 6414441240). Follow-up F-LB9-DOC holds the 3 Lows. The LIB-21 session is archived.
+- **Train 44** (#335 @ `05d77b6b`, CI running): #334 **F-CI-4** (D-SUP-CI-3) and #327 LB6 resume (cable_chest_press approved in mx2; review PASS 6415740840; F-LB6-DOC holds the Lows).
+  - F-CI-4 exists because source-gate hit its 90-min cap on #289 (88.4 and 90.6 min) with every step green. test:tz now runs as its own parallel job `unit-tz`, and android-gate needs it.
+  - The fix was reviewed PASS (6416154206).
+- **Panels:**
+  - **mx1** (VALID; golden-B follow-up 27 is new, lat_pulldown's SHRUG leader, PANELS @ `7d73a8e6`):
+    - approved: front_squat, bodyweight_squat, side_plank, resistance_band_pull_apart;
+    - second round (D-LIB13-PANEL2): goblet_squat R3 (draw order), pistol_squat R5 (heel shown plus an arrow, no zoom);
+    - fix round: bench_dip R4.
+  - **mx2** (VALID):
+    - approved: sled_push, bear_crawl, cable_chest_press;
+    - fix round: sled_pull (R2/R4/R5/R11, plus D-LIB22-RINGFIT), burpee R5 (D-LIB22-AXIS), medicine_ball_slam R7 (a smooth Trace);
+    - one half was withdrawn: sled_pull's "Quarter squat" stays, because only 1 of 3 critics flagged it.
+  - **mx3** (builder running): the LB8 curls @ `504c6d4b` and LB7 bench_dip @ `0b8ad195`. LB4 round 2 and the LB10 fixes are added when they post.
+- **CARD FIELDS cfmx1** (VALID, PASS): the new tempo keys on 5 LB10 cards and 2 held LB7 cards.
+- **Holds this session:**
+  - hip_thrust (LB8; no tell passes H3.zoom at k ≤ 4);
+  - cable_rear_delt_fly and renegade_row (F-ZOOM-2);
+  - russian_twist (F-RTWIST-TELL);
+  - bicycle_crunch (F-ENGINE-PITCHDEPTH);
+  - farmer_s_carry (F-LB10-STRIDE);
+  - jump_rope (kMax).
+- **Slots:** LIB-14 (round 2) and LIB-22 (fix) are active. LIB-16, LIB-17 and LIB-18 are WAITING.
+- **Next:** F-ZOOM-2's card after #327 merges; then the research batch; then the pilot A resume.
 
 **Update 10:00 UTC (10-26):**
 - **lb4p VALID** (#289 6410190090, #327 6410191598). pull_up's R2 = follow-ups 22 and 26; both plants caught.
