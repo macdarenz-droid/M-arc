@@ -385,8 +385,8 @@ the bulk proposals.
 | dumbbell_front_raise | **measured 18.0 px** | **measured 97.9 px** |
 | face_pull | **measured 61.3 px** | **measured 67.1 px** |
 | cable_rear_delt_fly | the shoulder line 3 cm up: about 4-5 px [est]: **measured 4.4 px at the bulk, held** (section 14) | the handles, about 0.8 m: over 100 px [est]; measured 93.5 px |
-| resistance_band_pull_apart | the shrug at 5 cm: about 7.3 px [est] (LB5's shrug measured 7.3 px, #290 6340849204): **measured 7.3 px, held** (section 14) | **measured 57.6 px** |
-| bench_dip | **measured 16.6 px** (the hips' underside, tell `low`; M_FLEX 20°) | **measured 10.2 px** (the shoulder, trim [10, 12]; 32.6 px untrimmed at 146.29 px/m): **below traceLenMin**, held (section 14) |
+| resistance_band_pull_apart | the shrug at 5 cm: about 7.3 px [est] (LB5's shrug measured 7.3 px, #290 6340849204): **measured 7.3 px**; resume: Mistake zoom k 2, **14.6 px** in the circle | **measured 57.6 px** |
+| bench_dip | **measured 16.6 px** (the hips' underside, tell `low`; M_FLEX 20°) | **measured 10.2 px** (the shoulder, trim [10, 12]; 32.6 px untrimmed at 146.29 px/m): **below traceLenMin**; resume: normal zoom k 3, the whole Trace in the source ring, **74.1 px** clipped to the circle (QA's clippedTrace; the zoom re-renders the plate's trim in plate px, so the magnified path keeps more of the motion) |
 
 A too-small fault is reported with its card-true size and held under D-LIB8-shrug (D-LIB17-SIZE, S2), route LIB-ZOOM;
 never enlarged, widened, cropped or re-scaled.
@@ -399,12 +399,14 @@ post. renegade_row's renders come only from `lb7/build.mjs --held`.
 
 ## 14. Held ids
 
+At 'LIB-17 resume' (section 17) the strip card (LIB-STRIP #309) released D-LIB17-SECS: both no-seconds ids carry their
+untimed tempo. resistance_band_pull_apart and bench_dip joined rows.json with a LIB-ZOOM circle (D-LIBZOOM-EXTEND).
+Still held:
+
 | id | ruling | why | route |
 |---|---|---|---|
-| cable_rear_delt_fly | D-LIB17-SECS (D-LIB14-NOSECS); and D-LIB8-shrug (D-LIB17-SIZE, S2) | tempo null (c9: slow and controlled, no seconds; LR-33, R-LB7-6); the card-true shoulder roll (scapulae 3 cm up, 3 cm forward) measures 4.4 px < 11.39 px (section 12) | the strip card, then 'LIB-17 resume'; LIB-ZOOM (#279) on main for the zoom circle |
-| bench_dip | D-LIB8-shrug (D-LIB17-SIZE, S2; the builder's hold, posted for the supervisor) | the Trace at the ruled point (the shoulder, D-LIB17-TRACE) measures 10.2 px < 22.11 px (section 12; 11.2 px before HIP_CLEAR was set from the drawn outline); never enlarged, re-trimmed or moved to another point | LIB-ZOOM (#279) on main |
-| renegade_row | D-LIB17-SECS (D-LIB14-NOSECS); and D-LIB8-shrug (D-LIB17-SIZE, S2) | tempo null (LR-33); the card-true corner landing moves 4.9 px < 11.39 px (section 12) | the strip card, then 'LIB-17 resume'; LIB-ZOOM (#279) on main for the zoom circle |
-| resistance_band_pull_apart | D-LIB8-shrug (D-LIB17-SIZE, S2) | the card-true shrug at M_SHRUG 5 cm (ref-src/plate.mjs:147) measures 7.3 px < 11.39 px (engine deviation; section 12's estimate held); the Trace is 57.6 px | LIB-ZOOM (#279) on main for the zoom circle |
+| cable_rear_delt_fly | D-LIB8-shrug (D-LIB17-SIZE, S2); no zoom place | the card-true shoulder roll (scapulae 3 cm up, 3 cm forward) measures 4.4 px < 11.39 px (section 12); a Mistake circle (r 52 + 6 px gap) fits nowhere on the plate at any k from 1.5 to 4: the two cable columns stand at the plate's edges and leave about 93 px between a column and the body | a ruling (section 17); never re-scaled, cropped or moved |
+| renegade_row | D-LIB8-shrug (D-LIB17-SIZE, S2); zoom needs a ruling | the card-true corner landing moves 4.9 px < 11.39 px (section 12); the tell anchor is a fixed point, so the zoom's deviation is 0 px at any k | the ruling asked on #332 (section 17) |
 
 Held rows are in no rows file; their specs, tests and card keys stay.
 
@@ -447,9 +449,9 @@ Held rows (section 14) and their blockers on main:
 
 | id | held under | blocker | on main? | resume plan |
 |---|---|---|---|---|
-| cable_rear_delt_fly | D-LIB17-SECS; D-LIB8-shrug (roll 4.4 px) | LIB-STRIP (#309); LIB-ZOOM (#279) | both | **build**: tempo `tempoOf(strip rows)` (Open Slow, Return Slow) on card and spec, lifted from held-pairing.json; zoom `{ view: 'mistake', k: 3 }`, source ring on the near shoulder (the tell `roll`/`up` anchors, 4.4 px → 13.2 px) |
+| cable_rear_delt_fly | D-LIB17-SECS; D-LIB8-shrug (roll 4.4 px) | LIB-STRIP (#309); LIB-ZOOM (#279) | both | **tempo built** (Open Slow, Return Slow), lifted from held-pairing.json; **zoom still held**: planned `{ view: 'mistake', k: 3 }` on the shoulder (4.4 → 13.2 px), but zoomOf finds no place at any k (section 14) |
 | resistance_band_pull_apart | D-LIB8-shrug (shrug 7.3 px) | LIB-ZOOM (#279) | yes | **build**: zoom `{ view: 'mistake', k: 2 }`, source ring on the left shoulder (tell `shrug`, 7.3 → 14.6 px) |
-| bench_dip | D-LIB8-shrug (Trace 10.2 px) | LIB-ZOOM (#279) | yes | **build**: zoom `{ view: 'normal', k: 3 }`, source ring on the shoulder's whole trimmed Trace (10.2 → about 30 px) |
+| bench_dip | D-LIB8-shrug (Trace 10.2 px) | LIB-ZOOM (#279) | yes | **build**: zoom `{ view: 'normal', k: 3 }`, source ring on the shoulder's whole Trace (10.2 → 74.1 px in the circle) |
 | renegade_row | D-LIB17-SECS; D-LIB8-shrug (corner 4.9 px) | LIB-STRIP (#309); LIB-ZOOM (#279) | both | **tempo built** (Row blank, Lower Controlled), lifted from held-pairing.json; **zoom still held**: needs a ruling (below) |
 
 Merge-only conditions (pins of push_up, one_arm_dumbbell_row, resistance_band_row; the F7 named yes) stay with the ship card.
@@ -466,3 +468,22 @@ top), not the fault: never used. Options:
   byte-identical; mutations: pair equal (0 px) red, pair outside the source ring red. renegade_row then takes
   `{ view: 'mistake', k: 3, pair: [flat vertex, turned vertex] }` (4.9 → 14.7 px).
 - **B:** renegade_row stays held on H3.deviation (as pallof_press, F-PALLOF-ARCH) and goes on the named list.
+
+**As built (resume).**
+- Tempo: card key `tempo` = `tempoOf(strip/rows.json rows)` written between plateFacts and topFault (Do 6 b order); the
+  spec carries the same; both ids removed from tests/howto/fixtures/held-pairing.json in the card commit
+  (D-PLATEFACTS-HELD). validateCardFile gives [] on all 9 cards. The cards' research bytes are unchanged
+  (cards.sha.json).
+- Zooms: resistance_band_pull_apart `{ view: 'mistake', k: 2 }` (7.3 → 14.6 px); bench_dip `{ view: 'normal', k: 3 }`
+  (Trace 10.2 → 74.1 px in the circle). k is the convention's own factor (LIB-ZOOM), not a size: no card size, pose or
+  trim changed.
+- Label boxes moved for F3 (leaders over 82.26 px, flags these held plates had before the zoom; D-LIB18-ZOOMPLACE's
+  kind of move, no body part, item or fact moved): resistance_band_pull_apart "Shoulders shrug up" top 24 → 62;
+  bench_dip "Elbows at 90" (96, 74) → (54, 92), its "Elbow about 90°" measure box top 112 → 150, "Legs out" top 198 →
+  226, "Below parallel" top 112 → 128.
+- **cable_rear_delt_fly's zoom: no place (a second ruling asked).** With the zoom on, zoomOf throws "no place on the
+  mistake plate" at every k from 1.5 to 4 (test). The front view's two cable columns (card-true, D-LIB17-CABLE) leave
+  about 93 px between a column's inner post and the body, under the circle's 104 px plus 2 × 6 px. Options: **A** hold
+  it on H3.deviation (named list), as pallof_press; **B** a fix card lets a zoom circle sit over the columns'
+  stack/frame ink in the empty top corners (a placement rule change in zoom/inline.mjs and qa/zoom.mjs H4.zoom:ink).
+  Recommended: A (B weakens a placement rule for one plate).
