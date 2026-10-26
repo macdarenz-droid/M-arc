@@ -340,6 +340,9 @@ A held id is drawn as its card says, passes its drawn-item tests, and is in no r
 
 machine_pullover may join it (its arch, section 12) once drawn.
 
+**Released ('LIB-16 resume', #327):** cable_chest_press carries one zoom per view (D-LIB16-ZOOMVIEWS, #327
+6405117790) and joins rows.json (section 18). No LB6 id is held now.
+
 ## 16. Risks and mitigations
 
 1. cable_chest_press's lock and Trace are below the PQ-H3 minimums at the card's sizes: held, zoom route (section 12).
@@ -415,3 +418,54 @@ DRAWING-GUIDE section 2's handle grip as a trace point; Q10 F2 0.161 a named fla
   to the back pad's back face at the middle of its two contact points. The figure is unchanged. Test: the seat pad
   reaches the floor beam without the back pad, and the back pad without the seat pad; red with the post or the
   bracket removed. Page 2668c838…e84e; QA unchanged (all 10 pass, F5 only).
+
+## 18. LIB-16 resume (D-LIB-ORDER-3; base main `9c3287cd`)
+
+Held rows of this card and their blockers on main:
+
+| row | held under | blocker | on main? |
+|---|---|---|---|
+| cable_chest_press zoom plate | D-LIB8-shrug (D-LIB16-SIZE, -LOCK, -CCP-START) | LIB-ZOOM #279 | yes |
+| cable_chest_press slice item 3 (#297 6346404542: column and floor clipped at the left edge; "Spine neutral" leader along the low back; `lock` and `line` show one sign) | slice look | none (waited for this resume) | n/a |
+| F-LB6-6 (which claim sets the bottom) | research follow-up | claude/libht-research | not yet; the card is unchanged, so the plate is drawn from today's card and redrawn only if F-LB6-6 changes it |
+| cable_chest_press sheet (reverse_lunge anchor) | D-LIB16-SPLIT | reverse_lunge pinned | ship card, not this resume |
+
+Measured on main (node, `zoom/inline.mjs` zoomOf; spec unchanged):
+- Mistake: the `lock` tell moves 2.98 px at plate scale. A Mistake zoom at k 4 (the maximum) gives 11.91 px against
+  deviationMin 11.39; at k 3.8 it gives 11.31 (red).
+- Normal: the Trace is 6.6 px after the trims, under traceLenMin 22.11, so the normal view fails PQ-H3 too. Today's
+  normal plate has no place for a circle that clears ink, labels and leaders (zoomOf throws at k 2 and k 3).
+- LIB-ZOOM's field is one `{ view, k }` per spec (`zoomFieldProblems` rejects a list; qa/zoom.mjs raises
+  `H3.zoom:unexpected` on a second view). One zoom therefore cannot clear both bars: the ruling asked on the resume PR.
+
+Slice item 3, built (spec `specs/cable_chest_press.mjs`):
+- Camera x0 170 → 190: the column, its base and the floor's back end sit 8 px or more inside the plate (they were cut
+  at x -12). Boxes: stance 266/262, spine 74/174, lock 166/40; "Handles at nipples" 262/188, anchored on the handle bar's
+  lower end (grip.r + 9 px), so its leader drops clear of the vertical bar (6 px rule) and the top right stays free.
+- "Spine neutral" leaves the back down and to the left: 9.0 px from the figure beyond its first 12 px (it ran 2.7 px
+  along the low back).
+- D-LIB10-SKULL1 per id: cable_chest_press has one tell, `lock`. Fault: the elbows locked straight at the front (c17,
+  c5). Claims read: c17 ("Locking elbows at extension", "keep a slight bend") and c5 ("without fully locking the
+  elbows"). No second visible sign is stated; "No bend left" showed the same straight elbow, so it is dropped.
+- Tests: tests/howto/lb6-plates.test.ts "LIB-16 resume: cable_chest_press slice item 3", each with its mutation.
+- Zoom fit after the re-layout (zoomOf): Mistake k 4 at (270, 232), 11.91 px; a normal zoom fits at k 3 or 3.5 at
+  (298, 96) (source ring 17.3 or 14.9 px, Trace span 28.8 px), but not at k 1.5 to 2.5.
+
+Zooms, built (D-LIB16-ZOOMVIEWS, #327 6405117790; `zoom: [{ view: 'normal', k: 3 }, { view: 'mistake', k: 4 }]`):
+- The convention takes a list of at most one zoom per view (`zoom/inline.mjs` zoomList, zoomFor; a single { view, k }
+  is unchanged). qa/zoom.mjs and qa/node.mjs check each view against its own entry. qa/browser.mjs counts a zoom's
+  clipped render as ink only inside its circle (H1; the clip is not seen by isPointInFill).
+- Authoring QA (`lb6/qa.mjs lib_cable_chest_press`): all 10 hard checks pass. Normal zoom at (298, 96), Trace 63.0 px
+  in the circle; Mistake zoom at (270, 232), deviation 11.91 px. Raised flags F5 3.57 (ruled) and F2 0.580 against
+  0.191-0.549: a named flag (D-LIB16-F2CCP, #327 6405365741; card-true width, the 53 cm stagger c2 and the column
+  46 cm behind the rear heel c1), in `lb6/qa.mjs` EXPECTED for cable_chest_press only.
+- The approved machine_pullover and machine_crunch fragments equal main's page 2668c838 (test pins them).
+- H1 mutations (browser, one label stepped 1 px at a time on the built page): "Handles at nipples" as one line, from
+  (284, 14) down onto the normal zoom circle: clean at 0 px, red at 1 px (ink at 290,44, the ring); inside the circle
+  the ring and its disc count as ink, so any label there is red. "Spine neutral" from (74, 186) left onto the column,
+  outside both circles: clean at 13 px, red at 14 px (ink at 67,194). With the clip disc widened to r 400 the clipped
+  render counts again: H1.ink on normal meta, normal spine and mistake meta (the fix reverted gives the same three).
+- Panel lb4p (#327 6410191598) R5 fix: one solid red line along the locked arm's axis, Mistake shoulder to Mistake
+  handle centre (a `line` guide, drawn as `m-arrow`), in the plate and through the Mistake zoom; the dashed outline
+  stays and no segment changes. A15's dashed-or-arrow and 6 px clearance rules exempt exactly this guide (`AXIS` in
+  lb6-plates.test.ts). Page e4260472…6848; QA as before (all 10 pass; F2 0.58, F5 3.57).

@@ -1,5 +1,5 @@
 {
- "note": "LB9 H build-ahead rows (LIB-21, D-LIB21-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids with a tempo strip (A5; held ids are in DESIGN.md's held table); all H (DESIGN.md section 1). The 3 (b) ids join only after LIB-20 is on main (D-LIB21-ER5). censusRef: the census commit (claude/howto-options).",
+ "note": "LB9 H build-ahead rows (LIB-21, D-LIB21-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids with a tempo strip (A5; held ids are in DESIGN.md's held table); all H (DESIGN.md section 1). The (b) ids join after LIB-20 is on main and their keys are verified (D-LIB21-ER5): side_plank at the resume (#326). censusRef: the census commit (claude/howto-options).",
  "batch": "LB9",
  "censusRef": "4a9fd86",
  "rows": {
@@ -20,6 +20,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_side_plank": {
+   "src": "library/specs/side_plank.mjs",
+   "slug": "side-plank",
+   "prefix": "side-plank",
+   "chromeId": "side-plank",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
   }
  }
 }

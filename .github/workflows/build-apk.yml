@@ -29,6 +29,9 @@ jobs:
     # head; the HT lane, COPY-2 and BUG-37 add more. Every block still runs; this is a runaway limit, not a check.
     # D-SUP-CI-2 (10-25): 60 -> 90. This job runs vitest four times (npm test twice, then test:tz in two zones) plus the
     # build and gate shard 1. It took about 59.5 min on #265's 36d0baa and hit the 60-min cap on 31d0bfcf.
+    # D-SUP-CI-3 (10-26, F-CI-4): test:tz (two more zones) moved out to job unit-tz, which runs in parallel; this job hit
+    # its 90-min cap on #289 (88.4 min on 66c21034, 90.6 on 0bc29a84) with every step green. Nothing is dropped:
+    # android-gate needs unit-tz, so nothing ships unless it passes.
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v6
@@ -45,8 +48,6 @@ jobs:
         run: npm run check
       - name: Library back-box bundle scan (D-LIB5-BUNDLE)
         run: node tools/plates/library/shared/check-bundle.mjs
-      - name: Unit tests in two more time zones
-        run: npm run test:tz
       - name: Validate built web source
         shell: bash
         run: |
@@ -81,6 +82,20 @@ jobs:
           name: MARC-www
           path: www/
           retention-days: 7
+
+  # F-CI-4 (D-SUP-CI-3): the unit tests in two more time zones, the same command source-gate ran as a step until 10-26.
+  unit-tz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75  # runaway limit, not a check; test:tz took about 48 min as a step of source-gate
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Unit tests in two more time zones
+        run: npm run test:tz
 
   # RG-14's second visual gate (Pacific/Auckland) runs as its own job, in parallel with
   # source-gate, instead of as a step after the first gate. Same command, same TZ, same
@@ -317,7 +332,7 @@ jobs:
         run: node scripts/ci-verdict.mjs proofs/
 
   android-gate:
-    needs: [source-gate, visual-gate-tz, ht10-gate, gate-shard, gate-verdict]
+    needs: [source-gate, unit-tz, visual-gate-tz, ht10-gate, gate-shard, gate-verdict]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:

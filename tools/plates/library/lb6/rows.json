@@ -3,6 +3,15 @@
  "batch": "LB6",
  "censusRef": "4a9fd86",
  "rows": {
+  "lib_cable_chest_press": {
+   "src": "library/specs/cable_chest_press.mjs",
+   "slug": "cable-chest-press",
+   "prefix": "cable-chest-press",
+   "chromeId": "cable-chest-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
   "lib_machine_pullover": {
    "src": "library/specs/machine_pullover.mjs",
    "slug": "machine-pullover",
