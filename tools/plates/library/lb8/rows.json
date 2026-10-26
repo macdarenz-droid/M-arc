@@ -12,6 +12,15 @@
    "stage": "drawing",
    "view": "side"
   },
+  "lib_pendulum_squat": {
+   "src": "library/specs/pendulum_squat.mjs",
+   "slug": "pendulum-squat",
+   "prefix": "pendulum-squat",
+   "chromeId": "pendulum-squat",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
   "lib_leg_extension": {
    "src": "library/specs/leg_extension.mjs",
    "slug": "leg-extension",
@@ -44,6 +53,15 @@
    "slug": "hip-thrust",
    "prefix": "hip-thrust",
    "chromeId": "hip-thrust",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_cable_kickback": {
+   "src": "library/specs/cable_kickback.mjs",
+   "slug": "cable-kickback",
+   "prefix": "cable-kickback",
+   "chromeId": "cable-kickback",
    "mode": "H",
    "stage": "drawing",
    "view": "side"

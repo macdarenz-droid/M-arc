@@ -665,9 +665,7 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 
 | id | ruling | why (measured at the ruled sizes) | route |
 |---|---|---|---|
-| cable_kickback | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch measures 4.3 px < 11.39 px (the braced upper body holds the back still); the Trace passes (54.1 px) | a Mistake LIB-ZOOM circle (D-LIBZOOM-EXTEND), pending Q1 on #325 (no zoom place as drawn) |
 | seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°); the c1 fact "toes ... on the foot support" (CARD FIELDS fix 2) is missed at the drawn stretch: the toe 4.2 cm off the platform's top | the named list (D-LIB18-CALF-S4, #325 6405116791): S4 arose, so the row is left out with the toe-through-platform reason and its renders, decided at the release candidate |
-| pendulum_squat | D-LIB8-shrug (D-LIB18-SIZE, S2) | the heel lift at 12° about the ball (leg_press.mjs:95) moves the heel 4.39 cm: 5.7 px < 11.39 px at 128.43 px/m; the Trace passes (29.5 px, knee.r, [6, 8]); S3 does not stop (back on pad and upright torso hold in every pose) | a Mistake LIB-ZOOM circle (D-LIBZOOM-EXTEND), pending Q1 on #325 (no zoom place as drawn) |
 | standing_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 5.1 px < 22.11 px (trim [10, 12], barbell_back_squat.mjs:117); the locked-knee Mistake 7.4 px < 11.39 px; the rigid toe is 4.85 cm inside the platform at the card's top; the c1 toe fact misses by 2.3 cm at the start | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
 | bodyweight_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace measures 5.8 px < 22.11 px (trim [10, 12]); the Mistake passes (13.6 px); the rigid toe is 4.56 cm inside the step at the top, so the c4 toe fact misses by 4.6 cm | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
 | glute_bridge | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch (hanging_leg_raise.mjs:69) measures 6.8 px < 11.39 px (tell on the trunk's front outline at the lumbar level, as hip_thrust); the hip Trace measures 12.0 px < 22.11 px (26.2 px of motion less the [6, 8] trim, leg_press.mjs:132); the c2 tuck has no solve within the ruled 25° ceiling (sacrum on the floor at 30.9°): drawn at 25°, the sacrum 0.65 cm up (inside PQ-H6's 1 cm) | LIB-ZOOM circles on both views (D-LIBZOOM-EXTEND), after D-LIB16-ZOOMVIEWS (LIB-16's resume) is on main |
@@ -778,8 +776,10 @@ Released at the resume with a Mistake-view LIB-ZOOM circle (D-LIBZOOM-EXTEND, #3
 qa/zoom.mjs unchanged; k is the smallest of 1.5 / 2 / 2.5 / 3 / 3.5 / 4 whose tell-anchor move reaches 11.39 px at the
 zoom's scale; the plate is otherwise unchanged): lying_leg_curl k 3.5 (3.4 → 12.0 px; its new tell box moved to 150,180
 so the zoom's link clears it), standing_leg_curl k 3.5 (3.4 → 12.0 px), hip_thrust k 3 (4.16 → 12.5 px), leg_extension
-k 1.5 (7.8 → 11.7 px). They are on rows.json. Open on #325: Q1 (one label move each to free the zoom place on
-cable_kickback, resisted_hip_flexion and pendulum_squat, which find no place as drawn), F-ZOOM-INK (PQ-H1's ink test
+k 1.5 (7.8 → 11.7 px); and under D-LIB18-ZOOMPLACE (#325 6405497420: one Mistake label box and its leader may move to
+free the zoom's place; no body part, item or fact moves) cable_kickback k 3 (4.3 → 12.8 px; its `arch` box placed at
+60,160) and pendulum_squat k 2.5 (5.7 → 14.2 px; its `heels` box moved from 156,284 to 280,280). They are on rows.json.
+Open on #325: F-ZOOM-INK (PQ-H1's ink test
 reads the zoom's clipped re-render outside the circle: lying_leg_curl, hip_thrust and leg_extension red on H1.ink only),
 glute_bridge (one zoom per view, D-LIB16-ZOOMVIEWS, LIB-16's resume).
 

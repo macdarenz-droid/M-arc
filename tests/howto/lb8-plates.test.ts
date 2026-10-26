@@ -33,10 +33,10 @@ const NOT_HERE = ['seated_leg_curl'];
 // D-LIB18-LEGCURL: drawn only after pilot B is on main and 'LIB-18 resume'.
 const LEGCURLS = ['lying_leg_curl', 'standing_leg_curl'];
 // DESIGN.md section 15: every held id, with its ruling there.
-const HELD = ['pendulum_squat', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
+const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'glute_bridge', 'resisted_hip_flexion'];
 // The ids on lb8/rows.json now: drawn and not held (A5).
-// 'LIB-18 resume': the leg curls, and leg_extension and hip_thrust with a LIB-ZOOM circle (D-LIBZOOM-EXTEND).
-const ON_ROWS = ['hack_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'hip_thrust'];
+// 'LIB-18 resume': the leg curls, and the rows released with a LIB-ZOOM circle (D-LIBZOOM-EXTEND; D-LIB18-ZOOMPLACE).
+const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'hip_thrust', 'cable_kickback'];
 // Card facts the held plates' drawings miss (CARD FIELDS fix round, #306 6356303497): recorded with their holds, never hidden.
 const FACT_MISSES: Record<string, string[]> = { seated_calf_raise: ['check:start:toe.l:4.2cm', 'check:start:toe.r:4.2cm'], standing_calf_raise: ['check:start:toe.l:2.3cm', 'check:start:toe.r:2.3cm'], bodyweight_calf_raise: ['check:end:toe.l:4.6cm', 'check:end:toe.r:4.6cm'] };
 // Measured values inside PQ-H6's 1 cm that are past A2's 0.5 cm, or a back landmark under 1 cm into the floor (no
@@ -171,7 +171,7 @@ describe('LIB-18 A5: lb8/rows.json holds exactly the drawn, non-held LB8 H ids, 
     expect(a5(dup, w)).toEqual([`${w[0]} x2`]);
     expect(a5(add(`lib_${HELD[0]}`), w), 'a held id').toEqual([`extra lib_${HELD[0]}`]);
     expect(a5(add('lib_seated_leg_curl'), w)).toEqual(['extra lib_seated_leg_curl']);
-    expect(a5(add('lib_lying_leg_curl'), w), 'lying_leg_curl with no spec').toEqual(['extra lib_lying_leg_curl']);
+    expect(a5(text, w.filter(id => id !== 'lib_lying_leg_curl')), 'lying_leg_curl with no spec').toEqual(['extra lib_lying_leg_curl']);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
   });
   it('every row points at its own spec file and carries the census view; batch LB8, censusRef 4a9fd86', () => {
@@ -673,17 +673,23 @@ const a = await b.buildLb8Page(), c = await b.buildLb8Page(); console.log(JSON.s
  *  the posted values, and checks that the held page built now (an awaited child process) is the page it was measured
  *  on: any drawing change turns it red until the flags are measured again. */
 describe('LIB-18 A4: the named flags on the held plates (F2: cable_kickback 0.645, glute_bridge 0.134, bodyweight_calf_raise 0.103; F3: cable_kickback 37.8 px)', { timeout: T }, () => {
-  let qaMod: any, rec: any, sha: string, sha2: string;
+  let qaMod: any, rec: any, sha: string, sha2: string, rowsSha: string;
   beforeAll(async () => {
     qaMod = await import(/* @vite-ignore */ lib('lb8/qa.mjs'));
     rec = JSON.parse(readFileSync(qaMod.HELD_FLAGS, 'utf8'));
     const script = `const b = await import(${JSON.stringify(lib('lb8/build.mjs'))});
-const p = await b.buildHeldPage(undefined, ['lib_glute_bridge', 'lib_bodyweight_calf_raise', 'lib_cable_kickback']);
-const p2 = await b.buildHeldPage(undefined, ['lib_glute_bridge', 'lib_cable_kickback']);
-process.stdout.write(b.sha256(p.html) + ' ' + b.sha256(p2.html));`;
-    [sha, sha2] = (await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 })).stdout.trim().split(' ') as [string, string];
+const p = await b.buildHeldPage(undefined, ['lib_glute_bridge', 'lib_bodyweight_calf_raise']);
+const p2 = await b.buildHeldPage(undefined, ['lib_glute_bridge']);
+const r = await b.buildLb8Page({ ids: ['lib_cable_kickback'] });
+process.stdout.write(b.sha256(p.html) + ' ' + b.sha256(p2.html) + ' ' + b.sha256(r.html));`;
+    [sha, sha2, rowsSha] = (await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 })).stdout.trim().split(' ') as [string, string, string];
   }, T);
-  it('the recording was measured on the held page as it builds now', () => { expect(rec.pageSha).toBe(sha); });
+  // 'LIB-18 resume': cable_kickback is on rows.json with its zoom (D-LIBZOOM-EXTEND), so it is measured on the LB8 page of
+  // that row alone; glute_bridge and bodyweight_calf_raise stay on the held page.
+  it('the recording was measured on the held page and on cable_kickback\'s rows page as they build now', () => {
+    expect(qaMod.namedSplit()).toEqual({ held: ['lib_glute_bridge', 'lib_bodyweight_calf_raise'], rows: ['lib_cable_kickback'] });
+    expect(rec.pageSha).toBe(sha); expect(rec.rowsPageSha).toBe(rowsSha);
+  });
   it('each named plate raises exactly its ruled flags, F2 at its posted value (±0.001), cable_kickback\'s F3 at 37.8 px (±0.1)', () => {
     expect(rec.reports.map((r: any) => r.id).sort()).toEqual(Object.keys(qaMod.F2_NAMED).sort());
     for (const r of rec.reports) console.log(`LIB-18 F2 ${r.id}: ${r.flags.F2.value} (named ${qaMod.F2_NAMED[r.id]})`);
@@ -4743,7 +4749,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
 // ---- D-LIBZOOM-EXTEND ('LIB-18 resume'): the rows released with a Mistake-view LIB-ZOOM circle ----
 describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main)', { timeout: T }, () => {
   // k: the smallest of the ladder whose tell-anchor move reaches deviationMin at the zoom's scale (DESIGN.md section 18)
-  const ZOOMED: Record<string, number> = { leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, hip_thrust: 3 };
+  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, hip_thrust: 3, cable_kickback: 3 };
   const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], BAR = 11.39;
   let Z: any;
   beforeAll(async () => { Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); }, T);

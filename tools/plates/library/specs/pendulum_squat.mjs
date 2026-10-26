@@ -223,6 +223,9 @@ export default {
     { key: 'knees', text: 'Knees<br>over toes', anchor: { at: 'knee.r', off: [7, -3] }, box: { left: 272, top: 140 }, cue: 'Knees track over the toes, never caving in.' },
   ],
   tempo: [{ phase: 'Lower', s: 3, move: true }, { phase: 'Push', s: 1, move: true }],
+  // LIB-ZOOM's inline zoom circle (D-LIBZOOM-EXTEND, #325 6405116791): the Mistake's fault drawn again at k 2.5, the smallest of
+  // 1.5-4 whose tell-anchor move reaches deviationMin 11.39 px at the zoom's own scale (14.2 px); zoom/inline.mjs places it.
+  zoom: { view: 'mistake', k: 2.5 },
   mistake: {
     pose: mistakePose,
     parts: ['leg.r', 'leg.l'],
@@ -232,7 +235,7 @@ export default {
     ],
     tells: [
       // c9 "Heels rising", c15 "Lifting heels off the platform": on the raised heel
-      { key: 'heels', text: 'Heels<br>lift', anchor: { at: 'heel.r', pose: 'mistake' }, box: { left: 156, top: 284 }, cue: 'Heels lift off the platform at the bottom.' },
+      { key: 'heels', text: 'Heels<br>lift', anchor: { at: 'heel.r', pose: 'mistake' }, box: { left: 280, top: 280 }, cue: 'Heels lift off the platform at the bottom.' },
     ],
   },
   pilot: { drawableFault: 'Top fault: losing control and dropping into the bottom (c20, c10), seen only as speed; the plate draws the next fault by the same steps, the heels lifting off the platform (c9, c15).' },
