@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-26 ~04:10 UTC · main `bec24ebd` (train 42 F-ZOOM-INK running) · **8.0r: trains 38-41 merged (LB2-LB10 build-ahead, pilot B, HT-11, LIB-20, LIB-STRIP); 4 resume builders; usage status allowed_warning; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-26 ~07:00 UTC · main `be796240` (train 42) · **8.0r: trains 38-42 merged; 6 LIB lanes open (3 WAITING on panels, 3 building); usage status allowed_warning; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -826,6 +826,32 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | #278 LIB-11 pilot B | session_01UHomn1uKNdA1g3v5Pjdii4 | main catch-up, Do 10 'PILOT B SHEET READY' for the supervisor's decision (owner delegation), then the pin |
   | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
   | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
+
+**Update 07:00 UTC (10-26)** (rulings in lib4-cards §44 @ `348de1d0`):
+- **Train 42 merged** (#330) → main `be796240`: F-ZOOM-INK #329. No APK.
+- **Panels:**
+  - **lb4p** (#289's 5 LB4 rows and #327's cable_chest_press; anchors pull_up and lat_pulldown; plants R1 front_squat heels and R4 wall_sit arc): 3 critics, results in `critic-lb4p-results/`. Tally next.
+  - **lb8q** (#325's 6 rows; plants R11 pendulum ring and R2 kickback pulley): 3 critics running.
+- **CARD FIELDS (focused):**
+  - LB8 leg curls: VALID. standing PASS; lying fixed under D-LIB18-LLCFACTS @ `a69bf542` (diff-checked).
+  - LB9 side_plank: VALID. Fix asked under D-LIB21-SPFACTS (the bottom foot and hip contacts).
+- **Lanes:**
+
+  | lane | PR | state |
+  |---|---|---|
+  | LIB-14 resume (LB4) | #289 @ `bbe2a488` | WAITING: panel lb4p |
+  | LIB-16 resume (LB6) | #327 @ `fea0f0da` | WAITING: panel lb4p (cable_chest_press) |
+  | LIB-18 resume (LB8) | #325 @ `a69bf542` | WAITING: panel lb8q |
+  | LIB-21 resume (LB9) | #326 | side_plank facts fix, then READY. russian_twist held (F-RTWIST-TELL); bicycle_crunch held (F-ENGINE-PITCHDEPTH + LIB-SPINE) |
+  | LIB-17 resume (LB7) | #332 (session_019M2mv3xosDU1LUQNcDVLZ3) | building cable_rear_delt_fly, resistance_band_pull_apart and bench_dip. renegade_row held (F-ZOOM-2) |
+  | LIB-22 resume (LB10) | #331 (session_013S59n44XV6LVWqpoL6WppU) | building. sled_push and medicine_ball_slam released (D-LIB22-AFALL, D-LIB22-STRIPROWS). farmer_s_carry held (F-LB10-STRIDE). jump_rope held (zoom kMax) |
+
+- **New follow-up cards to write:**
+  - **F-ZOOM-2** (after #327 merges): F-ZOOM-TRIM plus `zoom.pair`. It releases superman and renegade_row, and perhaps jump_rope.
+  - **Research batch**: F-PALLOF-ARCH plus F-LB10-STRIDE.
+  - **F-ENGINE-PITCHDEPTH**, with LIB-SPINE: bicycle_crunch and cable_crunch.
+  - **F-RTWIST-TELL**: a design note in the next LB9 resume.
+- **Not started:** pilot A's box_jump and reverse_lunge (needs the owner's sheet and a pilot A re-pin; step_up waits on reverse_lunge).
 
 **Update 04:10 UTC (10-26)** (usage: every session reports seven_day status `allowed_warning`; the last number read was 0.87 at 00:57):
 - **F-ZOOM-INK #329:** REVIEW PASS 6407021937 @ `fce1dfcb` (2 Medium, 1 Low). The fixes @ `9e2c1fdf` passed a supervisor diff-check (6407346146):
