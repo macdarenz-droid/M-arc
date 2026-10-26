@@ -39,7 +39,7 @@ const MEASURE = ([id, joints, mode, geo]) => {
     if (skip(el) || !shown(el)) continue;
     const cs = getComputedStyle(el), sw = cs.stroke !== 'none' ? parseFloat(cs.strokeWidth) || 0 : 0, fill = cs.fill !== 'none';
     const g = el.tagName === 'use' ? document.getElementById(el.getAttribute('href').slice(1)) : el;   // by id: part ids carry dots (thigh.l, eq1.dumbbell.0-0)
-    // LIB-ZOOM (D-LIB16-ZOOMVIEWS): a zoom's magnified render is clipped to its circle, so its geometry is ink only
+    // LIB-ZOOM (D-ZOOM-INK, F-ZOOM-INK): a zoom's magnified render is clipped to its circle, so its geometry is ink only
     // inside that circle (its ring); outside, nothing of it is drawn
     const zr = el.closest('.pz-in')?.closest('.plate-zoom')?.querySelector('.pz-ring');
     const clip = zr ? { cx: +zr.getAttribute('cx'), cy: +zr.getAttribute('cy'), r: +zr.getAttribute('r') } : null;
