@@ -1169,7 +1169,11 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     for (const id of specsDrawn().filter(i => S[i].mistake.tells.length === 1)) expect(recordProblems(id)).toEqual([]);
     expect(recordProblems('kettlebell_swing')).toEqual(['kettlebell_swing: no one-tell record']);
   });
-  const guideProblems = (spec: any) => (spec.mistake.guides ?? []).filter((g: any) => !['dashed', 'arrow', 'arc-arrow'].includes(g.kind)).map((g: any) => `${spec.id}: ${g.kind}`);
+  /** D-LIB22-AXIS (#331, panel mx2 item 5): exactly one solid guide is allowed, burpee's locked-leg axis hip.r -> knee.r ->
+   *  ankle.r in the Mistake pose; every other guide is dashed or an arrow. */
+  const AXIS = { id: 'burpee', kind: 'line', pts: ['hip.r', 'knee.r', 'ankle.r'].map(at => ({ at, pose: 'mistake' })) };
+  const isAxis = (spec: any, g: any) => spec.id === AXIS.id && g.kind === AXIS.kind && JSON.stringify(g.pts) === JSON.stringify(AXIS.pts);
+  const guideProblems = (spec: any) => (spec.mistake.guides ?? []).filter((g: any) => !['dashed', 'arrow', 'arc-arrow'].includes(g.kind) && !isAxis(spec, g)).map((g: any) => `${spec.id}: ${g.kind}`);
   it('every Mistake guide is dashed or an arrow; mutation: a solid line guide is red', () => {
     for (const id of specsDrawn()) expect(guideProblems(S[id])).toEqual([]);
     const s = S.sled_push;
@@ -1227,10 +1231,19 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     expect(anchorProblems({ ...s, mistake: { ...s.mistake, tells } }).length).toBe(1);
   });
   /** 13.1, 13.4 must-fix 1: every solid red arrow clears the solid end figure by 6 px. */
+  /** The drawn D-LIB22-AXIS line of `spec` (its m-arrow path's points), or null: ends within 0.5 px of the Mistake hip.r
+   *  and ankle.r. It lies along the leg by design, so the 6 px clearance below skips exactly it. */
+  const axisPt = (spec: any, at: string) => qaEng.resolvePoint(qaEng.anchorInPose({ at, pose: 'mistake' }, 'mistake'), 'mistake', qaEng.poseLandmarks(Eng(), spec).lm, qaEng.cameraOf(spec, rep(spec)));
+  const isAxisPath = (spec: any, pts: number[][]) => {
+    if (spec.id !== AXIS.id || !(spec.mistake.guides ?? []).some((g: any) => isAxis(spec, g))) return false;
+    const [a, b] = [axisPt(spec, 'hip.r'), axisPt(spec, 'ankle.r')], f = pts[0]!, l = pts[pts.length - 1]!;
+    return Math.hypot(f[0]! - a[0], f[1]! - a[1]) <= 0.5 && Math.hypot(l[0]! - b[0], l[1]! - b[1]) <= 0.5;
+  };
   const clearance = (spec: any) => {
     const polys = shapesIn(spec, 'end').map((x: any) => x.poly), svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
     return [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].flatMap(m => {
       const pts = xy(m[1]!), samp: number[][] = [];
+      if (isAxisPath(spec, pts)) return [];
       for (let i = 0; i + 1 < pts.length; i++) for (let k = 0; k <= 20; k++) samp.push(pts[i]!.map((v, j) => v + (pts[i + 1]![j]! - v) * k / 20));
       const min = Math.min(...samp.map(p => outside(polys, p)));
       return min >= 6 ? [] : [`${spec.id}: arrow ${min.toFixed(1)} px from the end figure`];
@@ -1238,6 +1251,22 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   };
   it('every drawn plate: no solid red arrow comes within 6 px of the solid end figure', async () => {
     for (const id of specsDrawn()) { expect(clearance(S[id]), id).toEqual([]); await yieldNow(); }
+  });
+  it('D-LIB22-AXIS: burpee draws its axis line, hip.r to ankle.r within 0.5 px, in the plate and inside the Mistake zoom', async () => {
+    const svg = plate.renderPlate(S.burpee, { id: 'x', mistake: true }).svg, paths = [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].map(m => xy(m[1]!));
+    expect(paths.filter(p => isAxisPath(S.burpee, p)).length).toBe(1);
+    const z = (await import(/* @vite-ignore */ lib('zoom/inline.mjs'))).zoomOf(S.burpee), inner = z.svg.split('class="pz-in"')[1] ?? '';
+    expect(/<path class="m-arrow"/.test(inner)).toBe(true);
+  });
+  it('D-LIB22-AXIS mutations: the axis removed, the same axis on sled_push, and an axis to the knee only are red', () => {
+    const b = S.burpee, none = { ...b, mistake: { ...b.mistake, guides: [] } };
+    const svg = plate.renderPlate(none, { id: 'x', mistake: true }).svg;
+    expect([...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].filter(m => isAxisPath(b, xy(m[1]!))).length).toBe(0);
+    const s = S.sled_push;
+    expect(guideProblems({ ...s, mistake: { ...s.mistake, guides: [...(s.mistake.guides ?? []), { kind: 'line', pts: AXIS.pts }] } })).toEqual(['sled_push: line']);
+    const short = { ...b, mistake: { ...b.mistake, guides: [{ kind: 'line', pts: AXIS.pts.slice(0, 2) }] } };
+    expect(guideProblems(short)).toEqual(['burpee: line']);
+    expect(clearance(short).length).toBe(1);
   });
   it('mutation: an arrow from the end hip to the Mistake hip on sled_push (inside the 6 px clearance) is red', () => {
     const s = S.sled_push, guides = [...s.mistake.guides, { kind: 'arrow', from: { at: 'hips', pose: 'end' }, to: { at: 'hips', pose: 'mistake' } }];

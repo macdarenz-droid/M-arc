@@ -669,9 +669,10 @@ Panel mx2 fix round (#331 6415452903):
 - sled_pull item 1: the Mistake keeps the end's sled, rope, coil and fists; only the body pitches back (M_TILT, M_ARCH),
   the near shoulder REACH from its fist (M_Z, M_Y solved again); no red rope.
 - sled_pull item 2: "Torso pitched back" ends on the Mistake back (backUpper + [-5, -12] px), box {8, 136}, three lines;
-  "Shoulders behind hips" box {24, 176} → {8, 208}. "Quarter squat" on the front knee: held for a ruling (#331 6415925685 B); it stays on the near knee until then.
+  "Shoulders behind hips" box {24, 176} → {8, 208}. "Quarter squat" stays on the near knee (ruling B (b), #331: that half withdrawn).
 - sled_pull item 3: the tail hangs with TAIL_SAG onto COIL_TURNS flattened loops (COIL_D by LOOP_H, LOOP_DZ apart).
 - sled_pull item 4: zoom k 1.5 → 3 (D-LIB22-RINGFIT).
-- burpee item 5: held for a ruling (#331 6415925685 A).
+- burpee item 5 (ruling A (a), D-LIB22-AXIS): the engine's leg outline stays; one solid red axis line hip.r -> knee.r ->
+  ankle.r (Mistake), in the plate and the zoom; A15 exempts exactly that guide.
 - medicine_ball_slam item 6: VIA_N 5 → 23 on the same arc; the ghost at t 0.5 is the same pose, and the hand's path is one
   smooth curve (every drawn sample turn under 8 deg).

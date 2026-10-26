@@ -147,6 +147,10 @@ export default {
   ],
   mistake: {
     pose: mistake,
+    // the locked leg's axis, hip joint -> knee -> ankle (panel mx2 item 5; D-LIB22-AXIS, #331): the capsule outline keeps
+    // its knee taper and reads bent; one straight solid line shows the leg straight, in the plate and the Mistake zoom
+    // (the D-LIB16-AXIS form of cable_chest_press)
+    guides: [{ kind: 'line', pts: ['hip.r', 'knee.r', 'ankle.r'].map(at => ({ at, pose: 'mistake' })) }],
     tells: [
       { key: 'landing', text: 'Stiff landing', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 64, top: 228 }, cue: 'A hard landing, without the knees slightly bent.' },
     ],
