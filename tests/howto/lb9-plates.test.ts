@@ -22,6 +22,7 @@ afterAll(() => { loopDelay.disable(); console.log(`LIB-21 A19 event-loop: max bl
 
 const LB9 = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', 'side_plank', 'russian_twist', 'bicycle_crunch'];
 // LB9's other rows: pilot A's plate (pA), pilot B's plate (pB) and the SUPCORE T children; never in an LB9 file.
+const ER5 = ['side_plank', 'russian_twist', 'bicycle_crunch'];
 const NOT_HERE = ['plank', 'crunch', 'reverse_crunch', 'dead_bug', 'v_up', 'flutter_kicks', 'hollow_body_hold'];
 const RESEARCH_HEAD = 'f574bb4b761ded9010a61b59881b6eae125b58e0';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -60,20 +61,34 @@ describe('LIB-21 A11 (Do 6 a): the 8 cards and quotes are byte copies of the LB9
 
 describe('LIB-21 A5 (first push): rows.json holds no row before a spec is drawn; tempo.json is the proposed map', () => {
   const rows = readJson('tools/plates/library/lb9/rows.json'), t = readJson('tools/plates/library/lb9/tempo.json');
-  it('batch LB9, censusRef 4a9fd86; no plank, crunch, T or (b) id in any LB9 rows or tempo file', () => {
+  it('batch LB9, censusRef 4a9fd86; no plank, crunch, T or (b) id in any LB9 rows file; no plank, crunch, T id or bicycle_crunch (before \'LB9 ER5 GO\') in tempo.json', () => {
     expect(rows.batch).toBe('LB9');
     expect(rows.censusRef).toBe('4a9fd86');
-    for (const id of [...NOT_HERE, 'side_plank', 'russian_twist', 'bicycle_crunch']) {
-      expect(Object.keys(rows.rows), id).not.toContain(`lib_${id}`);
-      expect(Object.keys(t.rows), id).not.toContain(id);
-    }
+    for (const id of [...NOT_HERE, ...ER5]) expect(Object.keys(rows.rows), id).not.toContain(`lib_${id}`);
+    for (const id of [...NOT_HERE, 'bicycle_crunch']) expect(Object.keys(t.rows), id).not.toContain(id);
   });
-  it('A7: each (a) tempo row reads only from plate.tempo (no constants), with Hold only where pause > 0', () => {
-    for (const [id, phases] of Object.entries<any[]>(t.rows)) {
-      const pt = readJson(`docs/research/howto/cards/${id}.json`).plate.tempo;
-      for (const p of phases) expect(['up', 'down', 'pause'], `${id} ${p.phase}`).toContain(p.from);
-      expect(phases.some(p => p.from === 'pause'), id).toBe(pt.pause > 0);
+  /** A7 (D-LIB8M-TEMPO): a phase reads from plate.tempo (up, down, pause), Hold only where pause > 0; or it is a constant
+   *  that carries its claim and a quote found verbatim in the card's quotes file under that claim, its string the quote's
+   *  own seconds (D-LIB21-SECS: side_plank, ruled on #326). */
+  const a7 = (id: string, phases: any[], quotes = readJson(`docs/research/howto/quotes/${id}.json`).quotes) => {
+    const pt = readJson(`docs/research/howto/cards/${id}.json`).plate.tempo, out: string[] = [];
+    for (const p of phases) {
+      if ('constant' in p) {
+        if (!quotes.some((q: any) => q.claim === p.claim && q.text === p.quote)) out.push(`${id} ${p.phase}: quote not in ${p.claim}`);
+        const [a, b] = String(p.constant).split('–').map(Number), nums = [...String(p.quote).matchAll(/\d+/g)].map(m => +m[0]);
+        if (!(nums.includes(a!) && nums.includes(b!))) out.push(`${id} ${p.phase}: ${p.constant} not the quote's seconds`);
+      } else if (!['up', 'down', 'pause'].includes(p.from)) out.push(`${id} ${p.phase}: from ${p.from}`);
     }
+    if (pt && 'pause' in pt && phases.some(p => p.from === 'pause') !== pt.pause > 0) out.push(`${id}: Hold against pause ${pt.pause}`);
+    return out;
+  };
+  it('A7: each tempo row reads only from plate.tempo, with Hold only where pause > 0, or is a constant with its verbatim quote', () => {
+    for (const [id, phases] of Object.entries<any[]>(t.rows)) expect(a7(id, phases), id).toEqual([]);
+  });
+  it('A7 mutations: side_plank\'s constant with a quote from another claim, or a range that is not the quote\'s seconds, is red', () => {
+    const sp = t.rows.side_plank;
+    expect(a7('side_plank', [{ ...sp[0], claim: 'c2' }]).length).toBe(1);
+    expect(a7('side_plank', [{ ...sp[0], constant: '5–15' }]).length).toBe(1);
   });
 });
 
@@ -85,10 +100,15 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 // DESIGN.md section 15: the held ids ('LB9 NOTE RULED', #312 6382248634: none; ab_wheel_rollout is drawn at the plank
 // class's -30 deg sag, D-LIB21-ABSAG, and joins rows.json).
 // DESIGN.md section 15: cable_crunch held by D-LIB21-CCHOLD (#312) for a LIB-SPINE engine card (F-SPINE-1).
-const HELD: string[] = ['cable_crunch', 'superman', 'pallof_press'];   // superman: D-LIB21-SIZE (S2); pallof_press: D-LIB21-PALLOFHOLD
-// The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn.
-const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press'];
-const COMPOSERS = ['abWheel'];
+// The (b) rows drawn at 'LIB-21 resume' (D-LIB21-ER5, Do 7b): off rows.json until their card keys are verified.
+const ER5_DRAWN = ['side_plank', 'russian_twist'];
+// The front entries asked with the E-R5 slice (#326), measured (px inside the figure past the leader's first 8 px).
+const FE_SINK = 9.64, FE_KNEE_END = 18.17, FE_KNEE_MIS = 14.53;
+const HELD: string[] = ['cable_crunch', 'superman', 'pallof_press', ...ER5_DRAWN];   // superman: D-LIB21-SIZE (S2); pallof_press: D-LIB21-PALLOFHOLD
+// The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
+// the E-R5 slice at the resume.
+const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', ...ER5_DRAWN];
+const COMPOSERS = ['abWheel', 'medBallOptional'];
 const yieldNow = () => new Promise<void>(r => setImmediate(r));
 let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, markup: any;
 const M: Record<string, any> = {}, S: Record<string, any> = {}, EQ: Record<string, any> = {};
@@ -158,7 +178,10 @@ const camOf = (spec: any) => {
   const c = rep(spec).camera, side = spec.view === 'side';
   // facing follows the spec (plate.mjs makeCamera: facing 'left' mirrors z and makes the left side near)
   const left = side && spec.facing === 'left';
-  return { view: side ? 'side' : 'front', near: side ? (left ? 'l' : 'r') : null, facing: left ? 'left' : 'right', pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? (left ? -w[2]! : w[2]!) : w[0]!) * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
+  // front view: LIB-20's camera.pitch (SPEC.md 1: screen-up = y cos p - z sin p; 0 = the level projection)
+  const p = side ? 0 : ((spec.camera?.pitch ?? 0) * Math.PI) / 180, up = (w: number[]) => (p ? w[1]! * Math.cos(p) - w[2]! * Math.sin(p) : w[1]!);
+  return { view: side ? 'side' : 'front', near: side ? (left ? 'l' : 'r') : null, facing: left ? 'left' : 'right', pxm: c.pxPerM, pitch: side ? 0 : spec.camera?.pitch ?? 0,
+    P: (w: number[]) => [c.x0 + (side ? (left ? -w[2]! : w[2]!) : w[0]!) * c.pxPerM, c.y0 - up(w) * c.pxPerM] };
 };
 const mergeDeep = (a: any, b: any): any => {
   if (b === undefined) return a;
@@ -728,7 +751,18 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     for (const id of Object.keys(TOP)) for (const f of cardOf(id).plateFacts) expect(f.pose, `${id} ${f.landmark}`).toBe(f.cardPose);
   });
   it('drawable-true: topFault is the drawn spec\'s first tell key (F7 not raised)', () => {
-    for (const id of specsDrawn()) { const [top, drawnKey] = TOP[id]!; expect(S[id].mistake.tells[0].key, id).toBe(drawnKey); expect(top, id).toBe(drawnKey); }
+    for (const id of specsDrawn().filter(i => i in TOP)) { const [top, drawnKey] = TOP[id]!; expect(S[id].mistake.tells[0].key, id).toBe(drawnKey); expect(top, id).toBe(drawnKey); }
+  });
+  // DESIGN.md section 8 for the (b) rows (D-LIB21-F7): [the planned topFault, the drawn first tell key]; they differ.
+  const TOP_B: Record<string, [string, string]> = { side_plank: ['breath', 'sink'], russian_twist: ['control', 'hips'], bicycle_crunch: ['neck', 'hips'] };
+  it('drawable-false (b) rows: the drawn first tell key is the plate.mistake key, not the planned topFault, and the spec carries pilot.drawableFault (F7)', () => {
+    for (const id of specsDrawn().filter(i => !(i in TOP))) {
+      const [top, drawnKey] = TOP_B[id]!;
+      expect(cardOf(id).plate.mistake.drawable, id).toBe(false);
+      expect(S[id].mistake.tells[0].key, id).toBe(drawnKey);
+      expect(top, id).not.toBe(drawnKey);
+      expect(typeof S[id].pilot?.drawableFault, id).toBe('string');
+    }
   });
   it('every fact on a drawn spec has a rendered check in its pose within qa/node.mjs LIMITS.cm (H6\'s own rule)', async () => {
     for (const id of specsDrawn()) {
@@ -797,16 +831,16 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog']);   // cable_crunch held (D-LIB21-CCHOLD)
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
-  it('plank, crunch, the 5 T ids and the 3 (b) ids (no spec before their resume) are in no lb9/ file as a row', () => {
+  it('plank, crunch, the 5 T ids and the 3 (b) ids (off rows until their keys are verified) are in no lb9/ file as a row; bicycle_crunch has no spec before \'LB9 ER5 GO\'', () => {
     for (const f of readdirSync('tools/plates/library/lb9').filter(n => n.endsWith('.json'))) {
       const text = readFileSync(join('tools/plates/library/lb9', f), 'utf8');
-      for (const id of [...NOT_HERE, 'side_plank', 'russian_twist', 'bicycle_crunch']) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
+      for (const id of [...NOT_HERE, ...ER5]) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
     }
-    for (const id of ['side_plank', 'russian_twist', 'bicycle_crunch']) expect(existsSync(`${SPECS_DIR}/${id}.mjs`), id).toBe(false);
+    expect(existsSync(`${SPECS_DIR}/bicycle_crunch.mjs`)).toBe(false);
   });
   it('the held ids (cable_crunch D-LIB21-CCHOLD; superman D-LIB21-SIZE; pallof_press D-LIB21-PALLOFHOLD) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
-    expect(build.HELD).toEqual({ cable_crunch: 'side', superman: 'side', pallof_press: 'side' });
+    expect(build.HELD).toEqual({ cable_crunch: 'side', superman: 'side', pallof_press: 'side', side_plank: 'front', russian_twist: 'front' });
     const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
     for (const id of HELD) expect(new RegExp(`\\| ${id} \\| D-LIB21-[A-Z]+`).test(design), id).toBe(true);
     for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
@@ -925,7 +959,7 @@ describe('LIB-21 A9 (D-LIB21-AHEAD): the rows never ship; generate is unchanged'
   it('generate --check is green, and no generated file reads lb9/, the LB9 specs, composers or How-to sources (awaited child process)', async () => {
     const script = `const gen = await import(${JSON.stringify(new URL('../../tools/plates/generate.mjs', import.meta.url).href)});
 const ids = ${JSON.stringify(LB9)}, out = await gen.render(), bad = [];
-for (const [p, { text }] of out) { if (/library\\/lb9\\/|eq\\/abWheel\\.mjs/.test(text)) bad.push(p + ': lb9/ or an LB9 composer');
+for (const [p, { text }] of out) { if (/library\\/lb9\\/|eq\\/(abWheel|medBallOptional)\\.mjs/.test(text)) bad.push(p + ': lb9/ or an LB9 composer');
   for (const id of ids) if (new RegExp('library/(specs|howto)/(lib_)?' + id + '\\\\b').test(text)) bad.push(p + ': ' + id); }
 console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;
     const t0 = Date.now(), { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 });
@@ -954,7 +988,7 @@ console.log(JSON.stringify({ ids: b.drawnIds(), a: sha(a.html), c: sha(c.html) }
 describe('LIB-21 A7 (spec half): each spec\'s tempo follows lb9/tempo.json and its card', () => {
   const t = readJson('tools/plates/library/lb9/tempo.json');
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
-  const build = (id: string) => t.rows[id].map((r: any) => ({ phase: r.phase, s: cardOf(id).plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
+  const build = (id: string) => t.rows[id].map((r: any) => ({ phase: r.phase, s: 'constant' in r ? r.constant : cardOf(id).plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
   const tempoProblems = (id: string, spec: any) => (JSON.stringify(spec.tempo) === JSON.stringify(build(id)) ? [] : [`${id}: ${JSON.stringify(spec.tempo)} != ${JSON.stringify(build(id))}`]);
   it('every drawn spec\'s tempo is its ruled row built from the card', () => {
     for (const id of specsDrawn()) expect(tempoProblems(id, S[id])).toEqual([]);
@@ -1007,7 +1041,7 @@ describe('LIB-21 A16: no other card\'s composer is copied, forked or imported (D
   // at the (b) resume), and the composers the other build-ahead cards own, by exact name (this card's names dropped).
   const EQ_DIR = 'tools/plates/library/eq';
   const MAIN_EQ = ['assistMachine', 'band', 'chestRowMachine', 'dHandle', 'declineBench', 'inclineBench', 'landmine', 'legCurlMachine',
-    'parts', 'pecDeck', 'polybar', 'romanChair', 'rope', 'safetyArms', 'smith'].map(n => `${n}.mjs`), OURS = ['abWheel.mjs'];
+    'parts', 'pecDeck', 'polybar', 'romanChair', 'rope', 'safetyArms', 'smith'].map(n => `${n}.mjs`), OURS = ['abWheel.mjs', 'medBallOptional.mjs'];
   const OTHER_CARDS: Record<string, string[]> = {
     'LIB-14': ['wall'], 'LIB-15': ['preacherPad'], 'LIB-16': ['crunchMachine', 'pulloverMachine'], 'LIB-17': ['dipBars'],
     'LIB-18': ['ankleCuff', 'calfMachine', 'hackSled', 'legExtMachine', 'pendulum'],
@@ -1049,8 +1083,8 @@ describe('LIB-21 test camera (supervisor, bulk rulings on #312): camOf follows t
    *  on a facing-left plate. Returns the worst miss in px. */
   const markMiss = (spec: any, cam: any) => {
     const marks = [...plate.renderPlate(spec, { id: 'x' }).svg.matchAll(/<circle class="joint" cx="(-?[\d.]+)" cy="(-?[\d.]+)"/g)].map(m => [+m[1]!, +m[2]!]);
-    const l = lmOf(spec, 'end'), keys = ['shoulder', 'elbow', 'hip', 'knee'].map(k => `${k}.${cam.near}`);
-    return Math.max(...keys.map((k, i) => Math.hypot(cam.P(l[k])[0] - marks[i]![0]!, cam.P(l[k])[1] - marks[i]![1]!)));
+    const l = lmOf(spec, 'end'), keys = spec.marks ?? (cam.view === 'front' ? ['shoulder.l', 'shoulder.r', 'elbow.l', 'elbow.r'] : ['shoulder', 'elbow', 'hip', 'knee'].map(k => `${k}.${cam.near}`));   // plate.mjs:160
+    return Math.max(...keys.map((k: string, i: number) => Math.hypot(cam.P(l[k])[0] - marks[i]![0]!, cam.P(l[k])[1] - marks[i]![1]!)));
   };
   const blind = (spec: any) => { const c = rep(spec).camera; return { near: 'r', P: (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM] }; };
   it('camOf puts every drawn spec\'s near joints on the engine\'s joint marks (±0.1 px), pallof_press (facing left) included', async () => {
@@ -1060,11 +1094,15 @@ describe('LIB-21 test camera (supervisor, bulk rulings on #312): camOf follows t
   it('mutation: the facing-blind camera misplaces pallof_press\'s joints by many px (red)', () => {
     expect(markMiss(S.pallof_press, blind(S.pallof_press))).toBeGreaterThan(20);
   });
+  it('mutation: a pitch-blind front camera (the level projection) misplaces russian_twist\'s joint marks (camera.pitch 20, LIB-20) by many px (red)', () => {
+    const c = camOf(S.russian_twist);
+    expect(markMiss(S.russian_twist, { ...c, P: (w: number[]) => [c.P(w)[0]!, rep(S.russian_twist).camera.y0 - w[1]! * c.pxm] })).toBeGreaterThan(10);
+  });
 });
 
 describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and soft bends (DESIGN.md sections 6-12)', { timeout: T }, () => {
-  const KEYS: Record<string, string> = { cable_crunch: 'hips', ab_wheel_rollout: 'arch', bird_dog: 'arch', superman: 'head', pallof_press: 'arch' };
-  const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch', 'pallof_press'];
+  const KEYS: Record<string, string> = { cable_crunch: 'hips', ab_wheel_rollout: 'arch', bird_dog: 'arch', superman: 'head', pallof_press: 'arch', side_plank: 'sink', russian_twist: 'hips' };
+  const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch', 'pallof_press', 'side_plank', 'russian_twist'];
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells (or one, with its record), the first carrying the ruled key', () => {
     for (const id of specsDrawn()) {
@@ -1194,24 +1232,46 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
     expect(minGap(bad).min).toBeLessThan(6);
   });
   /** No leader crosses a figure: normal leaders stay outside the solid end figure; Mistake leaders outside both the
-   *  solid end figure and the Mistake figure, away from their first 8 px. No front entry is named in LB9. */
-  const crossProblems = (spec: any) => {
+   *  solid end figure and the Mistake figure, away from their first 8 px. The (a) rows name no front entry. The E-R5
+   *  slice asks two (D-LIB18-LIFT's named-nit form, D-LIB15-NIT1; #326, the scans in the 'LB9 ER5 SLICE READY' post),
+   *  each pinned at its measured length inside the figure (px, past the first 8 px, ±0.5): side_plank's "Hips sink"
+   *  enters the solid end figure once from above to the red top outline of the sunk pelvis (the fault lies under the
+   *  solid figure, D-LIB21-FRONT); russian_twist's "Knees swing" enters from the left to the red right knee, which
+   *  swings behind the solid right knee and arm. An entry the supervisor does not sign is redrawn or its row is held. */
+  const FRONT_ENTRY: Record<string, number> = { 'side_plank mistake sink end': FE_SINK, 'russian_twist mistake hips end': FE_KNEE_END, 'russian_twist mistake hips Mistake': FE_KNEE_MIS };
+  const insideLen = (p: number[][], polys: number[][][]) => {
+    let len = 0;
+    for (const [a, b] of segs(p)) { const L = Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!); for (let k = 0; k < 40; k++) {
+      const q = [a![0]! + (b![0]! - a![0]!) * (k + 0.5) / 40, a![1]! + (b![1]! - a![1]!) * (k + 0.5) / 40];
+      if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) len += L / 40;
+    } }
+    return len;
+  };
+  const crossProblems = (spec: any, entries: Record<string, number> = FRONT_ENTRY) => {
     const out: string[] = [];
     for (const mistake of [false, true]) {
       const list = listOf(spec, mistake), figs = [shapesIn(spec, 'end').map((x: any) => x.poly), ...(mistake ? [shapesIn(spec, 'mistake').map((x: any) => x.poly)] : [])];
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
         figs.forEach((polys, f) => {
-          let inside = 0;
-          for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
-            const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
-            if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) inside++;
-          }
-          if (inside) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the ${f ? 'Mistake' : 'end'} figure`);
+          const len = insideLen(p, polys), name = `${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key} ${f ? 'Mistake' : 'end'}`;
+          if (name in entries) { if (Math.abs(len - entries[name]!) > 0.5) out.push(`${name}: named entry ${len.toFixed(1)} px != ${entries[name]}`); }
+          else if (len > 0) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the ${f ? 'Mistake' : 'end'} figure`);
         });
       });
     }
     return out;
   };
+  it('the named entries (asked with the E-R5 slice) are logged at their measured length', () => {
+    for (const id of ['side_plank', 'russian_twist']) for (const mistake of [true]) {
+      const list = listOf(S[id], mistake), figs = [shapesIn(S[id], 'end').map((x: any) => x.poly), shapesIn(S[id], 'mistake').map((x: any) => x.poly)];
+      leadersOf(plate.renderPlate(S[id], { id: 'x', mistake }).svg).forEach((p, i) => figs.forEach((polys, f) => { const l = insideLen(p, polys); if (l > 0) console.log(`LIB-21 front entry ${id} ${list[i]?.key} ${f ? 'Mistake' : 'end'}: ${l.toFixed(2)} px`); }));
+    }
+  });
+  it('mutations: a named entry with no pin, or a named entry grown by moving its box, is red', () => {
+    expect(crossProblems(S.side_plank, {}).some(p => p.startsWith('side_plank mistake sink: crosses the end'))).toBe(true);
+    const s = S.side_plank, bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => ({ ...x, box: { left: 150, top: 180 } })) } };
+    expect(crossProblems(bad).some(p => p.startsWith('side_plank mistake sink'))).toBe(true);
+  });
   it('no leader crosses the solid figure, and no Mistake leader crosses the Mistake figure', async () => {
     const out: string[] = [];
     for (const id of specsDrawn()) { out.push(...crossProblems(S[id])); await yieldNow(); }
@@ -1383,5 +1443,162 @@ describe('LIB-21 A17: sizes and trace points are fixed in lb9/sizes.json and nev
     expect(sizeProblems({ ...m, default: { ...m.default, trace: { ...m.default.trace, point: 'knee.r' } } }, t)).toEqual(['trace: spec knee.r [10,12] != sizes.json grip.r [10,12]']);
     expect(sizeProblems({ ...m, default: { ...m.default, trace: { ...m.default.trace, trim: [8, 12] } } }, t)).toEqual(['trace: spec grip.r [8,12] != sizes.json grip.r [10,12]']);
     expect(sizeProblems({ SIZES: { ...EQ.abWheel.AB_WHEEL, r: 0.1 } }, sizes.composers.abWheel)).toEqual(['r: spec 0.1 != sizes.json 0.09']);
+  });
+});
+
+// ---------------------------------------------------------------- the E-R5 slice ('LIB-21 resume', Do 7b) ----
+/** A pose's drawn outlines in world metres (front view, y up): bodyShapes on IDF. */
+const shapesW = (spec: any, q: any) => body.bodyShapes(body.fk(q, B175), IDF, { hand: spec.hand }).filter((x: any) => x.poly);
+const qOf = (spec: any, pose: string) => (pose === 'mistake' ? body.resolve(body.normPose(fullPose(spec, pose), B175), B175).q : qaEng.poseLandmarks(Eng(), spec).q[pose]);
+const lowOf = (shapes: any[], re: RegExp, x0 = -Infinity, x1 = Infinity) => { let m = Infinity; for (const s of shapes) if (re.test(s.key)) for (const v of s.poly) if (v[0] >= x0 && v[0] <= x1) m = Math.min(m, v[1]); return m; };
+const matOf = (spec: any, pose: string) => { const it = itemsIn(spec, pose).items.find((i: any) => i.part === 'mat'); return { top: it.at[1] + it.h / 2, x0: it.at[0] - it.w / 2, x1: it.at[0] + it.w / 2 }; };
+
+describe('LIB-21 A2 / A18: side_plank (the E-R5 slice; `root.roll`, `trunk.lat`)', { timeout: T }, () => {
+  const s = () => S.side_plank;
+  /** The bottom arm (upper arm, forearm, fist) on the drawn mat top and the bottom foot on the floor, in every pose with
+   *  a drawn body (cm: + above, - into); nothing drawn below the mat top over the mat or below the floor beyond it. */
+  const contacts = (spec: any) => posesOf(spec).map(p => {
+    const sh = shapesW(spec, qOf(spec, p)), m = matOf(spec, p), surf = (x: number) => (x >= m.x0 && x <= m.x1 ? m.top : 0);
+    let below = Infinity; for (const x of sh) for (const v of x.poly) below = Math.min(below, v[1] - surf(v[0]));
+    let foot = Infinity; for (const x of sh) if (/^foot\.r/.test(x.key)) for (const v of x.poly) foot = Math.min(foot, v[1] - surf(v[0]));
+    return { p, arm: (lowOf(sh, /^(upper|fore|fist)\.r/) - m.top) * 100, foot: foot * 100, below: below * 100 };
+  });
+  it('the bottom arm rests on the mat top and the bottom foot on the floor (0 to 0.5 cm into them) in every pose; nothing is drawn below them (values logged)', () => {
+    const c = contacts(s());
+    console.log(`LIB-21 side_plank contacts: ${c.map(x => `${x.p} arm ${x.arm.toFixed(2)} foot ${x.foot.toFixed(2)} below ${x.below.toFixed(2)}`).join('; ')} cm`);
+    for (const x of c) { expect(x.arm, x.p).toBeLessThanOrEqual(0.05); expect(x.arm, x.p).toBeGreaterThanOrEqual(-0.5); expect(x.foot, x.p).toBeLessThanOrEqual(0.05); expect(x.foot, x.p).toBeGreaterThanOrEqual(-0.5); expect(x.below, x.p).toBeGreaterThanOrEqual(-0.5); }
+  });
+  it('mutation: the mat raised 1 cm (the arm 1 cm into it) is red', () => {
+    const bad = { ...s(), equipment: s().equipment.map((e: any) => (e.part === 'mat' ? { ...e, at: [e.at[0], e.at[1] + 0.01, e.at[2]], h: e.h } : e)) };
+    expect(contacts(bad).some(x => x.arm < -0.5)).toBe(true);
+  });
+  it('the entry (c1, c2): the drawn pelvis rests on the mat top (0 to 0.5 cm into it); the held pose lifts it', () => {
+    const st = shapesW(s(), qOf(s(), 'start')), en = shapesW(s(), qOf(s(), 'end')), m = matOf(s(), 'start');
+    const h = lmOf(s(), 'start')['hip.r'][0]!;
+    const low = lowOf(st, /^torso/, h - 0.12, h + 0.12) - m.top;
+    expect(low * 100).toBeLessThanOrEqual(0.05); expect(low * 100).toBeGreaterThanOrEqual(-0.5);
+    expect((lowOf(en, /^torso/, h - 0.12, h + 0.12) - m.top) * 100).toBeGreaterThan(15);
+  });
+  /** c2: one straight line from the head to the feet: the trunk's axis (hips to shoulders midpoints), the head's (the
+   *  shoulders' midpoint to the head) and the bottom leg's (hip to ankle) within LINE_DEG of one direction, held pose. */
+  const LINE_DEG = 2;
+  const lineMiss = (lm: any) => { const dir = (a: number[], b: number[]) => { const d = b.map((v, i) => v - a[i]!), n = Math.hypot(...d); return d.map(v => v / n); };
+    const t = dir(lm.hips, lm.shoulders), h = dir(lm.shoulders, lm.head), l = dir(lm['ankle.r'], lm['hip.r']);
+    const ang = (u: number[], v: number[]) => Math.acos(Math.min(1, u.reduce((x, w, i) => x + w * v[i]!, 0))) * 180 / Math.PI;
+    return Math.max(ang(t, h), ang(t, l)); };
+  it('c2: the held pose is one line: the bottom leg, the trunk and the head within 2 deg of one direction', () => {
+    expect(lineMiss(lmOf(s(), 'end'))).toBeLessThanOrEqual(LINE_DEG);
+  });
+  it('mutation: a held pose with a 10 deg side bend (trunk.lat) leaves the line: red', () => {
+    const e = s().poses.end, bad = { ...e, trunk: { lat: 10 } };
+    expect(lineMiss(body.landmarks(body.fk(body.resolve(body.normPose(bad, B175), B175).q, B175)))).toBeGreaterThan(LINE_DEG);
+  });
+  it('c1, c5: the Mistake keeps the elbow and the shoulder (±0.5 cm) and sinks the hips M_SINK of the hold\'s rise (±0.5 cm)', () => {
+    const st = lmOf(s(), 'start'), en = lmOf(s(), 'end'), mi = lmOf(s(), 'mistake');
+    for (const k of ['elbow.r', 'shoulder.r']) expect(d3(en[k], mi[k]) * 100, k).toBeLessThanOrEqual(0.5);
+    const want = en.hips[1] - M.side_plank.SIZES.M_SINK * (en.hips[1] - st.hips[1]);
+    expect(Math.abs(mi.hips[1] - want) * 100).toBeLessThanOrEqual(0.5);
+    expect(en.hips[1] - mi.hips[1]).toBeGreaterThan(0.05);
+  });
+  it('mutation: a Mistake that lifts the hips instead (hiked) is red', () => {
+    const en = lmOf(s(), 'end'), st = lmOf(s(), 'start');
+    const want = en.hips[1] - M.side_plank.SIZES.M_SINK * (en.hips[1] - st.hips[1]);
+    expect(Math.abs((en.hips[1] + 0.05) - want) * 100).toBeGreaterThan(0.5);
+  });
+  it('c3: the top fist rests on the top hip in every pose (the drawn fist within 1 cm of the drawn pelvis outline)', () => {
+    for (const p of posesOf(s())) {
+      const sh = shapesW(s(), qOf(s(), p)), fist = sh.find((x: any) => x.key === 'fist.l'), torso = sh.filter((x: any) => x.key === 'torso').map((x: any) => x.poly);
+      const d = Math.min(...fist.poly.map((v: number[]) => outside(torso, v)));
+      expect(d * 100, p).toBeLessThanOrEqual(1);
+    }
+  });
+  it('A18 balance (D-LIB21-BALANCE, c2): the centre of mass lies between the forearm\'s and the bottom foot\'s contacts (side to side) and over the forearm-to-foot support front to back (within 2 cm), in every pose and ghost (logged)', () => {
+    const out: string[] = [];
+    for (const [p, q] of allQs(s())) {
+      const lm = lmQ(q), c = comOf(lm), x0 = Math.min(lm['grip.r'][0], lm['elbow.r'][0]), x1 = lm['toe.r'][0]!;
+      const zs = [lm['elbow.r'][2], lm['grip.r'][2], lm['heel.r'][2], lm['toe.r'][2]], zmin = Math.min(...zs), zmax = Math.max(...zs);
+      out.push(`${p} x ${(c[0]! * 100).toFixed(1)} in [${(x0 * 100).toFixed(1)}, ${(x1 * 100).toFixed(1)}], z ${(c[2]! * 100).toFixed(1)} in [${(zmin * 100).toFixed(1)}, ${(zmax * 100).toFixed(1)}]`);
+      expect(c[0]! > x0 && c[0]! < x1, p).toBe(true);
+      expect(c[2]! >= zmin - 0.02 && c[2]! <= zmax + 0.02, p).toBe(true);
+    }
+    console.log(`LIB-21 side_plank balance (cm): ${out.join('; ')}`);
+  });
+  it('the start draws the torso? no: the start phantom is the legs only (startParts), the ghosts the bottom leg', () => {
+    expect(s().startParts).toEqual(['leg.l', 'leg.r']);
+    expect(s().ghosts).toEqual({ count: 2, parts: ['leg.r'] });
+  });
+});
+
+describe('LIB-21 A2 / A18: russian_twist and `medBallOptional` (the E-R5 slice; `trunk.yaw`, `root.yaw`, `camera.pitch`)', { timeout: T }, () => {
+  const s = () => S.russian_twist, R = () => EQ.medBallOptional.MED_BALL_OPT.d / 2;
+  const ballOf = (spec: any, p: string, lm: any, q: any) => itemsAt(spec, p, lm, lmOf(spec, 'start'), p === 'mistake', q).find((i: any) => i.part === 'ball' && i.curve);
+  it('the ball is a closed curved `poly` of 24 points in every pose and ghost (never the vendor `pulley`), with its seam', () => {
+    for (const [p, q] of allQs(s())) {
+      const its = itemsAt(s(), p, lmQ(q), lmOf(s(), 'start'), p === 'mistake', q).filter((i: any) => i.part === 'ball');
+      expect(its.map((i: any) => i.type), p).toEqual(['poly', 'poly']);
+      expect(its[0].pts.length, p).toBe(24);
+    }
+  });
+  /** The ball drawn round on the plate: its projected radius the same in every direction (px, the spec's camera). */
+  const roundness = (spec: any) => { const cam = camOf(spec); return posesOf(spec).map(p => { const b = ballOf(spec, p, lmOf(spec, p), null), P = b.pts.map((w: number[]) => cam.P(w)), c = centre(P.map((v: number[]) => [v[0]!, v[1]!, 0]));
+    const r = P.map((v: number[]) => Math.hypot(v[0]! - c[0]!, v[1]! - c[1]!)); return Math.max(...r) - Math.min(...r); }); };
+  it('the ball is drawn round on the pitched plate (radius spread under 0.5 px) in start, end and Mistake', () => {
+    for (const d of roundness(s())) expect(d).toBeLessThan(0.5);
+  });
+  it('mutation: the ball drawn in the level plane (pitch 0) under the 20 deg camera is an ellipse: red', () => {
+    const bad = { ...s(), equipment: s().equipment.map((e: any, i: number) => (i === 0 ? e : (lm: any, ctx: any) => { const k = s().equipment.indexOf(e) - 1; return EQ.medBallOptional.medBallOptional({ at: [0, 1, 2].map(j => (lm['grip.l'][j] + lm['grip.r'][j]) / 2), pitch: 0, z: 'front' })[k]; })) };
+    expect(Math.max(...roundness(bad))).toBeGreaterThan(0.5);
+  });
+  /** c2: the ball held in both hands: each grip centre GRIP_IN of the radius from the ball's centre (±1 cm), in every
+   *  pose and ghost. */
+  const holdMiss = (spec: any) => allQs(spec).map(([p, q]) => { const lm = lmQ(q), b = ballOf(spec, p, lm, q), c = centre(b.pts);
+    return Math.max(...['l', 'r'].map(sd => Math.abs(d3(lm[`grip.${sd}`], c) - M.russian_twist.SIZES.GRIP_IN * R()))); });
+  it('c2: both hands hold the ball (each grip within 1 cm of its side) in every pose and ghost', () => {
+    for (const m of holdMiss(s())) expect(m * 100).toBeLessThanOrEqual(1);
+  });
+  it('mutation: the ball drawn 5 cm off the hands at the end is red', () => {
+    const bad = mapItems(s(), (it, ctx) => (it.part === 'ball' && ctx.pose === 'end' ? shiftPts(it, [0.05, 0, 0]) : it));
+    expect(Math.max(...holdMiss(bad))).toBeGreaterThan(0.01);
+  });
+  /** D-LIB21-FRAME 3D: the ball (a sphere) 0 cm or more from the body solids other than the holding forearms, in every
+   *  pose and ghost. */
+  const ball3D = (spec: any) => allQs(spec).map(([p, q]) => { const lm = lmQ(q), b = ballOf(spec, p, lm, q), c = centre(b.pts), solids = solidsOf(q);
+    const [v, at] = clearOf(solids, [c], R(), ['fore.l', 'fore.r']); return { p, v, at }; });
+  it('A18 3D: the ball clears the torso, head, upper arms, thighs and shins in every pose and ghost (values logged)', () => {
+    const r = ball3D(s());
+    console.log(`LIB-21 russian_twist ball 3D: ${r.map(x => `${x.p} ${(x.v * 100).toFixed(1)} (${x.at})`).join('; ')} cm`);
+    for (const x of r) expect(x.v, `${x.p} ${x.at}`).toBeGreaterThanOrEqual(0);
+  });
+  it('A18 3D mutation: the end ball moved 8 cm in toward the hip is red', () => {
+    const bad = mapItems(s(), (it, ctx) => (it.part === 'ball' && ctx.pose === 'end' ? shiftPts(it, [-0.08, 0, 0]) : it));
+    expect(ball3D(bad).find(x => x.p === 'end')!.v).toBeLessThan(0);
+  });
+  it('c1, c5: the buttocks stay on the floor and the feet on their spots at start and end; c4: the chest faces the ball at the end (±2 deg)', () => {
+    const st = lmOf(s(), 'start'), en = lmOf(s(), 'end');
+    for (const L of [st, en]) expect(Math.abs(L.seat[1]) * 100).toBeLessThanOrEqual(0.5);
+    for (const k of ['sole.l', 'sole.r']) expect(d3(st[k], en[k]) * 100, k).toBeLessThanOrEqual(0.5);
+    const b = centre(ballOf(s(), 'end', en, null).pts), f = [en.sternum[0] - en.shoulders[0], en.sternum[2] - en.shoulders[2]], g = [b[0]! - en.sternum[0], b[2]! - en.sternum[2]];
+    expect(Math.abs(Math.atan2(f[0]!, f[1]!) - Math.atan2(g[0]!, g[1]!)) * 180 / Math.PI).toBeLessThanOrEqual(2);
+  });
+  it('the Mistake (plate.mistake): the knees swing toward the turn (each knee over 5 cm) while the shoulders stay (±2 cm)', () => {
+    const en = lmOf(s(), 'end'), mi = lmOf(s(), 'mistake');
+    for (const k of ['knee.l', 'knee.r']) expect(mi[k][0] - en[k][0], k).toBeGreaterThan(0.05);
+    expect(d3(en.shoulders, mi.shoulders) * 100).toBeLessThanOrEqual(2);   // least squares: the leaned pivot moves with the pelvis turn (1.54 cm)
+  });
+  it('mutation: a Mistake with the hips still (root.yaw 0) moves no knee: red', () => {
+    const bad = { ...s().mistake.pose, root: { ...s().mistake.pose.root, yaw: 0 } };
+    const mi = body.landmarks(body.fk(body.resolve(body.normPose(mergeDeep(s().poses.end, bad), B175), B175).q, B175)), en = lmOf(s(), 'end');
+    expect(mi['knee.l'][0] - en['knee.l'][0]).toBeLessThan(0.05);
+  });
+  it('A18 balance (D-LIB21-BALANCE, c1, c5): the centre of mass (with the ball, BALL_KG at its centre) lies over the seat-to-heels base front to back and inside the hips side to side, in every pose and ghost (logged)', () => {
+    const out: string[] = [];
+    for (const [p, q] of allQs(s())) {
+      const lm = lmQ(q), b = centre(ballOf(s(), p, lm, q).pts), c = comOf(lm), k = M.russian_twist.BALL_KG / 75, cm = c.map((v, i) => (v + k * b[i]!) / (1 + k));
+      const z0 = lm.seat[2] - 0.05, z1 = Math.max(lm['heel.l'][2], lm['heel.r'][2]);
+      out.push(`${p} z ${(cm[2]! * 100).toFixed(1)} in [${(z0 * 100).toFixed(1)}, ${(z1 * 100).toFixed(1)}], x ${(cm[0]! * 100).toFixed(1)}`);
+      expect(cm[2]! > z0 && cm[2]! < z1, p).toBe(true);
+      expect(Math.abs(cm[0]!), p).toBeLessThan(M.russian_twist.SIZES.HIP_HALF);
+    }
+    console.log(`LIB-21 russian_twist balance (cm): ${out.join('; ')}`);
   });
 });

@@ -27,6 +27,18 @@
     "unit": "m",
     "basis": "stated reason: each handle runs 6 cm past the grip centre, so the whole drawn fist (7 cm across, RADII.fist 0.02 H) sits on it"
    }
+  },
+  "medBallOptional": {
+   "d": {
+    "value": 0.23,
+    "unit": "m",
+    "basis": "stated reason: c2 names a medicine ball and gives no size; a common medicine ball is about 23 cm (9 in) across, the same stated size as LB10's medBall (#305 lb10/sizes.json, read as a pattern only)"
+   },
+   "seam": {
+    "value": 0.1,
+    "unit": "ratio",
+    "basis": "stated reason: the seam band's half-width a tenth of the ball's radius (1.2 cm), so the ball reads as a ball and not as a disc; no source gives it"
+   }
   }
  },
  "ids": {
@@ -213,6 +225,111 @@
      12
     ],
     "basis": "D-LIB21-TRACE candidate 'the handle pressed straight out (c5, c6)': c5 Motra 'Press the handle straight out to full arm extension', c6 BarBend 'pressing your fists in a straight line from start to finish': the handle's centre, the grips' midpoint; trim = the clone source's, seated_cable_row.mjs:82 trace.trim [10, 12] (D-LIB18-TRIM)"
+   }
+  },
+  "side_plank": {
+   "MAT_T": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "convention: bird_dog.mjs MAT_T (this batch, approved @ 276029ae), one exercise mat for c7's 'a soft yoga mat or exercise mat under your elbow and forearm'"
+   },
+   "MAT_LEN": {
+    "value": 1.73,
+    "unit": "m",
+    "basis": "convention: bird_dog.mjs MAT_LEN (approved @ 276029ae), the same mat"
+   },
+   "STACK": {
+    "value": 6,
+    "unit": "deg",
+    "basis": "stated reason: c1 'your top leg stacked over your bottom leg': the top hip adducts 6 deg so its foot rests on the bottom foot (the hips 17.5 cm apart, a leg 0.86 m long: the ankles about 8 cm apart, one ankle's width)"
+   },
+   "FORE": {
+    "value": 45,
+    "unit": "deg",
+    "basis": "stated reason: c1 and c8 put the elbow under the shoulder and the forearm on the floor and give no direction; a forearm pointing straight forward lies end-on behind the elbow in the front view, so the plate turns it 45 deg toward the head, where it shows on the mat"
+   },
+   "TOP_HAND": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "claim: c3 'Your top arm can rest on your hip or side': the grip centre 12 cm straight above the top hip joint, so the fist rests on the hip (the drawn fist on the drawn hip's top edge, checked in the test)"
+   },
+   "M_SINK": {
+    "value": 0.5,
+    "unit": "ratio",
+    "basis": "stated reason: c5 'When your hips start to sink' gives no size: the hips drawn half way from the held height back down toward the entry's height on the floor (c1, c2), the midpoint of the hold's own range"
+   },
+   "FLOOR_RUN": {
+    "value": 0.4,
+    "unit": "m",
+    "basis": "stated reason (framing, D-LIB8-floor): the floor line runs 40 cm on past the mat's head end, so the two labels of the bottom arm (c1, c7) fit beside it in the plate's left margin; the width-filling scale follows from it (F1 at its measured px/m)"
+   },
+   "trace": {
+    "point": "hip.r",
+    "trim": [
+     4,
+     6
+    ],
+    "basis": "D-LIB21-TRACE: the hips rising into the hold (c2 'Raise your hips'), the hold convention's Trace; trim plank.mjs:135 [4, 6] (D-LIB18-TRIM: the class's source, pilot A's plank)"
+   }
+  },
+  "russian_twist": {
+   "CAM_PITCH": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "convention: plan 2.4's E-R5 spike for russian_twist (REPORT.md:44) used camera.pitch 20 so the seated legs and the turn read in depth"
+   },
+   "LEAN": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated reason: c3 'Lean slightly back' gives no angle: the pelvis tilted back 20 deg from upright, under a quarter of the way from sitting up (0) to lying (90), with the spine straight (c3 'with a straight back')"
+   },
+   "FOOT_Z": {
+    "value": 0.55,
+    "unit": "m",
+    "basis": "stated reason: c1 'knees bent and your feet ... on the ground': the soles 55 cm in front of the hip joints, the nearest the rigid foot lies flat with the ankle inside its range (at 62 cm and more the plant misses by 1 cm)"
+   },
+   "BALL_Z": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "claim: c2 'Hold ... with both hands in front of your chest': the ball's centre 15 cm in front of the chest landmark, so it sits between the chest and the raised knees (0 cm or more from the thighs, shins and torso, measured in the 3D test)"
+   },
+   "BALL_DROP": {
+    "value": -0.03,
+    "unit": "m",
+    "basis": "claim: c2 'at chest level': the ball's centre 3 cm above the chest landmark, inside the chest's height, so its bottom clears the thighs"
+   },
+   "GRIP_IN": {
+    "value": 0.9,
+    "unit": "ratio",
+    "basis": "stated reason: each grip centre 0.9 of the ball's radius out from its centre, so each fist sits on the ball's side"
+   },
+   "HIP_HALF": {
+    "value": 0.17,
+    "unit": "m",
+    "basis": "stated reason: the pelvis's half-width at the hip, 0.17 m (the engine torso's hip half-width), so the ball's inner edge touches the hip's outer side (c4 'bring the weight toward your hip')"
+   },
+   "BALL_LIFT": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: c4 brings the weight toward the hip, not to the floor: the ball's bottom 3 cm above the floor"
+   },
+   "BALL_GAP": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason: c4 brings the weight toward the hip, not into it: the ball's inner edge 2 cm out from the pelvis's side, so the hands hold it clear of the thigh in the end pose and the Mistake (measured in the 3D test)"
+   },
+   "M_YAW_SHARE": {
+    "value": 0.5,
+    "unit": "ratio",
+    "basis": "stated reason: plate.mistake 'Hips and knees swinging with the trunk' gives no size: the pelvis turns half of the solved trunk turn, the midpoint between hips still (0) and the whole turn taken at the hips (1)"
+   },
+   "trace": {
+    "point": "grips",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE: the ball toward the hip (c4), the grips' midpoint holds the ball; trim hanging_leg_raise.mjs:124 [10, 12] (D-LIB18-TRIM: the census closest)"
    }
   }
  }
