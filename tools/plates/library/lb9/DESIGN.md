@@ -199,6 +199,16 @@ starts at the hidden start ankle.
   the solid end figure (the Mistake's straight back is 2-4 px inside it), so no leader can reach it without crossing the
   figure; it is drawn as the red dashed back line inside the torso and named in the one tell's cue ("The hips move back
   to pull while the spine stays straight."). So one tell.
+- side_plank: fault c5 (plate.mistake; the top fault c6, holding the breath, has no drawable sign: F7); claim ids read:
+  c5 ("Keeping your hips up ... is critical for an effective side plank. When your hips start to sink, your core
+  muscles become much less involved in the movement."), c2 (the straight line from the ribs through the hips and bottom
+  leg), c6, c7. One stated sign: the hips sinking; the line breaking at the hips is the same sign seen against the
+  line (drawn as the datum), not a second one. So one tell.
+- russian_twist: fault c4, c5 (plate.mistake; the top fault c8, fast twists, shows only as speed: F7); claim ids read:
+  c4 ("Twist your torso to one side and bring the weight toward your hip, keeping your hips stable."), c5 ("keep the
+  buttocks firmly planted on the floor to minimize leaning or loss of balance"), c6, c8. One stated sign: the hips
+  moving with the trunk (c4; c5's buttocks are the same contact); the knees swinging is that sign's geometry, the part
+  the front view shows (plate.mistake "Hips and knees swinging"). So one tell.
 - ab_wheel_rollout: fault c3 (and c13); claim ids read: c3 ("Extend your hips toward the floor and let your chest sink
   forward toward the ground. Avoid arching your lower back as you extend your arms above your head."), c13 (lumbar
   extension or torso rotation), c5 (rolling too fast: speed), c2 (the right line). The one stated sign is the low back
@@ -299,6 +309,7 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 | cable_crunch | D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
 | superman | D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
 | pallof_press | D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
+| russian_twist | D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
 
 ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG; it and bird_dog are approved (slice panel and recheck).
 
@@ -371,3 +382,83 @@ Later rulings:
     `#card` 45e60298… at 27215fba and at the head; bird_dog ecddc7e1… at 276029ae and at the head).
   - Item 4: the camOf fix accepted (the camera follows facing), named in the A-table with a mutation that keeps the
     facing-right assumption red on pallof_press.
+
+## 19. Resume plan ('LIB-21 resume', on main `9c3287cd`)
+
+Every row the build-ahead PR (#312) held, with its blocker and that blocker's state on main `9c3287cd`.
+
+| id | held by | blocker | on main? | this resume |
+|---|---|---|---|---|
+| side_plank | D-LIB21-ER5 | LIB-20 (#311) | yes | build: E-R5 slice (Do 7b); hold constant per D-LIB21-SECS (proposed below; NOSECS if none) |
+| russian_twist | D-LIB21-ER5, then D-LIB21-RTWIST | F-RTWIST-TELL | no | drawn, held on its tell (#326 6409862229) |
+| bicycle_crunch | D-LIB21-BICYCLE (#326 6409862229) | F-ENGINE-PITCHDEPTH and LIB-SPINE | no | held; no spec |
+| superman | D-LIB21-SIZE (S2) | LIB-ZOOM (#279), extended (D-LIB21-SUPERMANZOOM); a zoom-scale trim rule | LIB-ZOOM yes; F-ZOOM-2 no | held (#326 6405804435 item 2): the ruled zoom cannot reach 22.11 px at k ≤ 4 (section 21); rolls with F-ZOOM-2 (was F-ZOOM-TRIM) |
+| pallof_press | D-LIB21-PALLOFHOLD (S2, S4) | another stated tell or a sourced arch size | F-PALLOF-ARCH no | held (#326 6405804435 item 3); section 20 is the design record |
+| cable_crunch | D-LIB21-CCHOLD | LIB-SPINE (F-SPINE-1) | no | held |
+
+- side_plank: D-LIB21-SECS ruled `30–60` (#326 6405118542), c9's own string ("If you can, aim to hold the side plank
+  for 30 to 60 seconds per side."), so it is not NOSECS.
+- russian_twist: the card's 1/1/0 is verified at the research head and F-LB9-2 has not changed it. If research nulls
+  it, the row turns NOSECS and waits for LIB-STRIP (D-LIB21-SECS).
+- Approved bytes stay: ab_wheel_rollout `#card` 45e60298…, bird_dog ecddc7e1…, LB9 page `12163664…f24f9` until a
+  (b) row joins rows.json; C0 `[]`, pilot A L1 `5d0e562f…5ba8`, pilot B `ff3e017c…`.
+
+## 20. pallof_press: the turned-view note (D-LIB21-PALLOFHOLD's resume step; no build)
+
+The ruling asks, after LIB-20, for one note on a turned view that shows both the cable and the press, with LIB-ZOOM for
+the arch. Main's SPEC.md (LIB-20) has `root.yaw` and `camera.pitch` (front view only); it has no camera yaw.
+
+- **A turned side view.** With no camera yaw, the spec turns the whole scene by Y about the vertical: `root.yaw` Y for
+  the body, the soles' `plant` targets and toe hints turned with it, and every equipment point (column, stack, pulley,
+  handle, cable) rotated by the same Y in the spec (equipment is world points, so this needs no engine change).
+  Screen run of a horizontal world vector (dx side, dz forward) in the side view: dz cos Y + dx sin Y.
+  - The press (grips 0 → 0.461 m forward, `info`): 0.461 cos Y; at Y 30°, 0.40 m (58 px at 146.29 px/m).
+  - The start cable (pulley to grips: 0.949 m to the figure's right, 0.045 m forward): 0.045 cos Y + 0.949 sin Y; at Y 30°,
+    0.51 m (75 px), where the side view shows 0.045 m (7 px, end-on). Both read.
+- **The arch in that view, with LIB-ZOOM.** The 12° lumbar arch (hanging_leg_raise.mjs:69) moves the low-back tell
+  anchor 1.03 px in the side view (#312 bulk post); turned, the sagittal move shrinks by cos Y (0.89 px at 30°).
+  LIB-ZOOM allows k from 1.5 to 4 (zoom/DESIGN.md, `H3.zoom:k`), so its best is 4.1 px in the side view and 3.6 px
+  turned, against deviationMin 11.39 px. **LIB-ZOOM cannot carry this arch in any view** (it would need k ≥ 11.1).
+- **Ruled (#326 6405804435 item 3):** pallof_press stays held under D-LIB21-PALLOFHOLD; F-PALLOF-ARCH (another stated
+  tell or a sourced arch size, its own card). This note stays as the design record; no turned-view spec is built.
+
+## 21. superman: the zoom measured (D-LIB21-SUPERMANZOOM, #326 6405118542; no build)
+
+Measured with main's `zoom/inline.mjs` `zoomOf` and `qa/zoom.mjs` `clippedTrace` on the held spec plus
+`zoom: { view: 'normal', k }` (in memory only):
+- The zoom re-renders the plate at k x the camera, and the engine trims the Trace by its trim in plate px (superman
+  `trim: [10, 12]`, D-LIB18-TRIM) at the zoom's scale too. The ankle moves 9.8 px at plate scale, so the drawn Trace
+  inside the circle is about 9.8 k - 22 px: k 3 gives 6.7 px and k 4 (the largest LIB-ZOOM allows) 16.3 px, against
+  traceLenMin 22.11 px. It would need k of about 4.5.
+- With the plate's three labels in place, `zoomOf` finds no spot for the 104 px circle that clears ink, labels and
+  leaders at any k (it throws); with the labels removed it lands at (68, 254).
+- So the ruled zoom cannot reach H3's bar inside k's range. superman stays held (D-LIB21-SIZE; #326 6405804435 item 2,
+  F-ZOOM-TRIM: a zoom-scale trim rule, designed once #327 merges); nothing is enlarged, and no trim or k bound is changed.
+
+## 22. Resume rulings (#326)
+
+- D-LIB21-SECS (6405118542): side_plank holds `30–60` (c9's own string).
+- D-LIB21-SUPERMANZOOM (6405118542), then held (6405804435 item 2, F-ZOOM-TRIM; section 21).
+- pallof_press held (6405804435 item 3, F-PALLOF-ARCH; section 20).
+- The two named front entries approved (6405804435 item 4), pinned in lb9-plates.test.ts: side_plank "Hips sink"
+  9.64 px; russian_twist "Knees swing" 18.17 px (end figure) and 14.53 px (Mistake figure), then 15.94 and 13.95 px
+  after its box moved 2 px right and 10 up so its leader is 79.7 px (it was 84.4, over F3's 81.9); re-sign asked.
+- russian_twist's lean back (c3) not reading from the front goes to the panel as drawn (item 5).
+- D-LIB-A16-REGISTRY (6405804435 item 1): tests/howto/fixtures/eq-composers.json is the one list of the build-ahead
+  cards' composers; the A16 blocks of lb6, lb7, lb8 and lb9 read OTHER_CARDS from it (lb10 is not on main).
+- ER5 slice look (6409707279): side_plank passes. D-LIB21-F1: F1 named on side_plank (150.31 px/m: 326 px across the
+  2.1688 m floor span) and russian_twist (197.49 px/m, the x1.35 cap). Reason, corrected: at 146.29 px/m russian_twist's
+  cover is 0.124 (0.117 unfitted), under F2's lower bound 0.191 (envelope.json), so F2 is raised at or below the
+  reference scale and F1 above it. russian_twist fix round: the right arm was inside the body (pole [-1, -1, 0]); now
+  pole [0, 1, 0.5] and the end ball raised (BALL_LIFT 0.25), with the limbClearance test; the "Knees swing" anchor waits
+  for a ruling (6409797574).
+- russian_twist held on its tell (6409862229, F-RTWIST-TELL); the arm fix, BALL_LIFT, limbClearance, the box move and
+  the F1 reason are kept. bicycle_crunch held (D-LIB21-BICYCLE): the front draw order sorts depth by world z
+  (body.mjs:297-298, :366-367), so a top-down view draws the bent knee under the trunk, and the single lumbar pivot keeps
+  the elbow 0.21 m or more from the opposite knee; route F-ENGINE-PITCHDEPTH with LIB-SPINE. superman's route is now
+  F-ZOOM-2. The resume takes side_plank to READY.
+- D-LIB21-SPFACTS (6410127641, foot (a) by message): side_plank's plateFacts are elbow.r start and end, hip.r start,
+  and heel.r and ball.r start and end (c2). Convention for a side-lying foot: it rests on its edge, so no foot landmark
+  lies on the surface (heel, ball and sole 5.4-5.9 cm, toe 6.0 cm above the mat); each foot fact is an `at` check at
+  its solved spot, and a drawn-item test pins the foot outline's lowest point on the surface (0.00 cm, within H6's
+  1 cm) at the start and the end, as D-LIB18-LLCFACTS does for a pelvis front.

@@ -10,7 +10,7 @@
 // The browser half (label and hit boxes at 390/360/340 px, ring contrast) is browser.mjs.
 import { tags } from './markup.mjs';
 import { cameraOf, poseLandmarks } from './engine.mjs';
-import { ZOOM, faultOf, labelBoxes, leadersOf, polyHitsCircle, tracePath, zoomFieldProblems } from '../zoom/inline.mjs';
+import { ZOOM, faultOf, labelBoxes, leadersOf, polyHitsCircle, tracePath, zoomFieldProblems, zoomFor } from '../zoom/inline.mjs';
 
 const P = (key, text) => ({ key, text });
 export const ANGLE = /°|&deg;|&#176;|&#x[bB]0;|\bdeg(?:rees?)?\b/;
@@ -74,10 +74,10 @@ const rectHits = (b, c, r) => Math.hypot(Math.max(b.x0 - c[0], 0, c[0] - b.x1), 
 /** The node zoom rows: { H2, H3, H4 } problem lists. `M`: nodeMetrics (plate scale) with M.zoom. */
 export function zoomRows(c, ctx, R, M) {
   const H2 = [], H3 = [], H4 = [], env = ctx.envelope, spec = c.spec, Z = M.zoom ?? {};
-  const want = spec?.zoom ?? null;
-  for (const t of zoomFieldProblems(want)) H3.push(P('H3.zoom:field', t));
+  for (const t of zoomFieldProblems(spec?.zoom ?? null)) H3.push(P('H3.zoom:field', t));
   for (const view of ['normal', 'mistake']) {
-    const z = c.plate.zoom?.[view], asked = want?.view === view;
+    // D-LIB16-ZOOMVIEWS: each view against its own entry (a single { view, k } is the one entry)
+    const want = zoomFor(spec, view), z = c.plate.zoom?.[view], asked = !!want;
     if (!z && !asked) continue;
     if (z && !asked) { H3.push(P(`H3.zoom:unexpected:${view}`, `a zoom circle on the ${view} plate that the spec does not ask for`)); continue; }
     if (!z) { H3.push(P(`H3.zoom:missing:${view}`, `the spec asks for a ${view} zoom; the page has none`)); continue; }
