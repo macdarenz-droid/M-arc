@@ -440,3 +440,29 @@ Held rows are in no rows file; their specs, tests and card keys stay.
    (c8), face_pull the rope at the hands (c5), resistance_band_pull_apart the hands (c4), cable_rear_delt_fly the
    handles (c6).
 7. renegade_row: held under D-LIB8-shrug as well as D-LIB17-SECS (section 14).
+
+## 17. Resume ('LIB-17 resume', 2026-10-26; base main `be796240`)
+
+Held rows (section 14) and their blockers on main:
+
+| id | held under | blocker | on main? | resume plan |
+|---|---|---|---|---|
+| cable_rear_delt_fly | D-LIB17-SECS; D-LIB8-shrug (roll 4.4 px) | LIB-STRIP (#309); LIB-ZOOM (#279) | both | **build**: tempo `tempoOf(strip rows)` (Open Slow, Return Slow) on card and spec, lifted from held-pairing.json; zoom `{ view: 'mistake', k: 3 }`, source ring on the near shoulder (the tell `roll`/`up` anchors, 4.4 px → 13.2 px) |
+| resistance_band_pull_apart | D-LIB8-shrug (shrug 7.3 px) | LIB-ZOOM (#279) | yes | **build**: zoom `{ view: 'mistake', k: 2 }`, source ring on the left shoulder (tell `shrug`, 7.3 → 14.6 px) |
+| bench_dip | D-LIB8-shrug (Trace 10.2 px) | LIB-ZOOM (#279) | yes | **build**: zoom `{ view: 'normal', k: 3 }`, source ring on the shoulder's whole trimmed Trace (10.2 → about 30 px) |
+| renegade_row | D-LIB17-SECS; D-LIB8-shrug (corner 4.9 px) | LIB-STRIP (#309); LIB-ZOOM (#279) | both | **tempo built** (Row blank, Lower Controlled), lifted from held-pairing.json; **zoom still held**: needs a ruling (below) |
+
+Merge-only conditions (pins of push_up, one_arm_dumbbell_row, resistance_band_row; the F7 named yes) stay with the ship card.
+No row needs LB4, LB6, LB8 or LB9's resume.
+
+**renegade_row zoom (design note, D-LIBZOOM-EXTEND).** QA's zoom deviation is `faultOf`: the tell anchor's move from the
+end pose to the Mistake, times k (zoom/inline.mjs:33, qa/zoom.mjs). renegade_row's sign is a still one: the near dumbbell
+turned 30° onto a corner, against the far dumbbell flat in the same side-view place (pose map, section 9). Its tell
+anchor is the fixed point M_HEX[0], so the move is 0 px at any k. The 4.9 px is the turned vertex against the flat
+vertex, which no tell anchor expresses. A landmark anchor (grip.r) would measure the row's own travel (end = the row
+top), not the fault: never used. Options:
+- **A (recommended):** a fix card in qa/** and zoom/inline.mjs adds an opt-in `zoom.pair: [flat, turned]` (two 3D
+  points, projected) that `faultOf` uses in place of the tell anchors when set; every other spec unchanged and
+  byte-identical; mutations: pair equal (0 px) red, pair outside the source ring red. renegade_row then takes
+  `{ view: 'mistake', k: 3, pair: [flat vertex, turned vertex] }` (4.9 → 14.7 px).
+- **B:** renegade_row stays held on H3.deviation (as pallof_press, F-PALLOF-ARCH) and goes on the named list.
