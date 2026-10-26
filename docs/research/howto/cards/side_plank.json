@@ -563,5 +563,28 @@
   "Census pose 'roll' is R5 (not expressible): the plate waits on the engine (tracker), the text card is complete.",
   "Fetcher check 2026-10-02: ace-sideplank-mod title set to the page's own title (no ' | ACE' suffix); no claim changed.",
   "W1 fixer round 2026-10-03: F11: risks[0] keeps ACE's hedge ('may stress'). F17: c12 text starts 'In general,' as the abstract does."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "elbow.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "elbow.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c2"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Hold",
+   "s": "30–60"
+  }
+ ],
+ "topFault": "breath"
 }

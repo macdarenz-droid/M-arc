@@ -730,22 +730,34 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     bird_dog: [...both('wrist', 'start', 'c2'), ...both('knee', 'start', 'c1')],
     superman: [F('navel', 'start', 'c1'), F('navel', 'end', 'c2')],
     pallof_press: [...both('wrist', 'start', 'c3'), ...both('sole', 'start', 'c2')],
+    // the (b) row at the resume (D-LIB21-FACTS, D-LIB18-PUSHTHROUGH): c2 "Press your elbow, your hips, and your bottom
+    // foot into the ground" holds the elbow down in the entry and, cited by plate.end, in the held pose; the hips lift
+    // off ("Raise your hips"), and the rolled foot's edge has no engine landmark on the floor (not facts)
+    side_plank: [F('elbow.r', 'start', 'c2'), F('elbow.r', 'end', 'c2')],
   };
-  // The ruled fault→key map (DESIGN.md section 8): [topFault, the drawn first tell key]; all 5 drawable-true.
+  // The ruled fault→key map (DESIGN.md section 8): [topFault, the drawn first tell key]; all 5 drawable-true. The (b)
+  // rows' planned topFault (D-LIB21-F7), which differs from the drawn key.
+  const TOP_B0: Record<string, [string, string]> = { side_plank: ['breath', 'sink'], russian_twist: ['control', 'hips'], bicycle_crunch: ['neck', 'hips'] };
   const TOP: Record<string, [string, string]> = { ab_wheel_rollout: ['arch', 'arch'], cable_crunch: ['hips', 'hips'], bird_dog: ['arch', 'arch'], superman: ['head', 'head'], pallof_press: ['arch', 'arch'] };
-  const tempoOf = (id: string) => t.rows[id].map((r: any) => ({ phase: r.phase, s: cardOf(id).plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
+  const tempoOf = (id: string) => t.rows[id].map((r: any) => ({ phase: r.phase, s: 'constant' in r ? r.constant : cardOf(id).plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
   const keyProblems = (id: string, c: any) => {
     const out: string[] = [], want = FACTS[id]!.map(([landmark, pose, cardPose, claim]) => ({ kind: 'contact', landmark, pose, cardPose, claim }));
     if (JSON.stringify(c.plateFacts) !== JSON.stringify(want)) out.push(`${id}: plateFacts ${JSON.stringify(c.plateFacts)}`);
     if (JSON.stringify(c.tempo) !== JSON.stringify(tempoOf(id))) out.push(`${id}: tempo ${JSON.stringify(c.tempo)}`);
-    if (c.topFault !== TOP[id]![0]) out.push(`${id}: topFault ${c.topFault}`);
+    if (c.topFault !== (TOP[id] ?? TOP_B0[id])![0]) out.push(`${id}: topFault ${c.topFault}`);
     const known = new Set(c.claims.map((x: any) => x.id));
     for (const f of c.plateFacts ?? []) if (!known.has(f.claim)) out.push(`${id}: fact claim ${f.claim} unknown`);
     return out;
   };
-  it('the 5 (a) cards carry the ruled facts, tempo and topFault; the 3 (b) cards carry none yet (D-LIB21-ER5)', () => {
-    for (const id of Object.keys(TOP)) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
-    for (const id of ['side_plank', 'russian_twist', 'bicycle_crunch']) for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in cardOf(id), `${id} ${k}`).toBe(false);
+  it('the 5 (a) cards and side_plank carry the ruled facts, tempo and topFault; russian_twist and bicycle_crunch (held) carry none yet', () => {
+    for (const id of [...Object.keys(TOP), 'side_plank']) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
+    for (const id of ['russian_twist', 'bicycle_crunch']) for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in cardOf(id), `${id} ${k}`).toBe(false);
+  });
+  it('mutations on side_plank\'s keys: a hip fact added, its Hold changed to 5–15, and topFault set to the drawn key (sink) are red', () => {
+    const c = cardOf('side_plank');
+    expect(keyProblems('side_plank', { ...c, plateFacts: [...c.plateFacts, { kind: 'contact', landmark: 'hip.r', pose: 'start', cardPose: 'start', claim: 'c2' }] }).length).toBe(1);
+    expect(keyProblems('side_plank', { ...c, tempo: [{ phase: 'Hold', s: '5–15' }] }).length).toBe(1);
+    expect(keyProblems('side_plank', { ...c, topFault: 'sink' }).length).toBe(1);
   });
   it('each fact\'s pose is the pose map\'s image of its card pose: identity for all 8 (D-LIB21-POSEMAP)', () => {
     expect(t.poseMap).toEqual({});
