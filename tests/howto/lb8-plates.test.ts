@@ -10,7 +10,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { otherCards } from './fixtures/eq-composers';
+import { otherCards } from './eq-composers';
 
 // D-LIB18-TESTS (VITEST-RPC; #299 6351689010, 6352726951): most tests here render plates synchronously, and vitest runs
 // back-to-back synchronous tests without returning to the event loop, so the worker cannot answer its RPC. One

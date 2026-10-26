@@ -10,7 +10,7 @@ import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { otherCards } from './fixtures/eq-composers';
+import { otherCards } from './eq-composers';
 
 // Most tests here render plates synchronously, and vitest runs back-to-back synchronous tests without returning to the
 // event loop, so the worker could not answer its RPC for 40 s locally (over vitest's 60 s limit on CI: the source-gate's

@@ -11,7 +11,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { otherCards, registryProblems, EQ_COMPOSERS_PATH } from './fixtures/eq-composers';
+import { otherCards, registryProblems, EQ_COMPOSERS_PATH } from './eq-composers';
 
 // D-LIB21-TESTS (lessons #299 6351689010, 6352726951): one macrotask after every test lets the vitest worker answer
 // its RPC; every per-spec loop yields once per spec, and whole-page renders run in a child process.

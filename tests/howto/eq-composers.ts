@@ -1,5 +1,5 @@
 // D-LIB-A16-REGISTRY (#326 6405804435): the shared registry of the build-ahead cards' eq/ composers
-// (eq-composers.json), read by every lane's A16 block in place of a hand-copied OTHER_CARDS list.
+// (tests/howto/fixtures/eq-composers.json, read as data, never imported), read by every lane's A16 block in place of a hand-copied OTHER_CARDS list.
 import { readFileSync } from 'node:fs';
 
 export const EQ_COMPOSERS_PATH = 'tests/howto/fixtures/eq-composers.json';
