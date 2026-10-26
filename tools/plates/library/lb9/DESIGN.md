@@ -309,7 +309,6 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 | cable_crunch | D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
 | superman | D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
 | pallof_press | D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
-| side_plank | D-LIB21-ER5 (Do 7b): drawn at the resume on LIB-20's `root.roll` and `trunk.lat`; off rows.json until its card keys are written and verified; its Hold `30–60` ruled (D-LIB21-SECS, #326 6405118542) | 'LB9 ER5 GO', card keys, a focused CARD FIELDS verify |
 | russian_twist | D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
 
 ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG; it and bird_dog are approved (slice panel and recheck).
@@ -458,3 +457,8 @@ Measured with main's `zoom/inline.mjs` `zoomOf` and `qa/zoom.mjs` `clippedTrace`
   (body.mjs:297-298, :366-367), so a top-down view draws the bent knee under the trunk, and the single lumbar pivot keeps
   the elbow 0.21 m or more from the opposite knee; route F-ENGINE-PITCHDEPTH with LIB-SPINE. superman's route is now
   F-ZOOM-2. The resume takes side_plank to READY.
+- D-LIB21-SPFACTS (6410127641, foot (a) by message): side_plank's plateFacts are elbow.r start and end, hip.r start,
+  and heel.r and ball.r start and end (c2). Convention for a side-lying foot: it rests on its edge, so no foot landmark
+  lies on the surface (heel, ball and sole 5.4-5.9 cm, toe 6.0 cm above the mat); each foot fact is an `at` check at
+  its solved spot, and a drawn-item test pins the foot outline's lowest point on the surface (0.00 cm, within H6's
+  1 cm) at the start and the end, as D-LIB18-LLCFACTS does for a pelvis front.

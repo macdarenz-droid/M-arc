@@ -109,6 +109,7 @@ const withHand = pose => { const L = landmarksOf(pose, H); return { ...pose, rea
 // Held pose (c2, c7).
 export const QE = heldOf(ARM);
 export const end = withHand(bodyAt(QE, ARM));
+const LEND = landmarksOf(end, H);
 // Entry (c1, c2): the pelvis on the mat, the bend shared by the spine and the hips (d = lat).
 export const QS = solve({ x: -0.15, y: 0.18, roll: 64, lat: -27 }, q => bodyAt({ ...q, d: q.lat }, ARM),
   pose => [...shoulderRes(pose, ARM), gap(pose, /^foot\.r/), gap(pose, /^torso/)], 'the entry');
@@ -162,6 +163,9 @@ export default {
     // c2 "Press your elbow, your hips ... into the ground" (D-LIB21-SPFACTS, as D-LIB18-LLCFACTS): the bottom hip stays
     // where the entry's pelvis rests on the mat (its drawn side outline on the mat top, the drawn-item test), start only
     { landmark: 'hip.r', at: LSTART['hip.r'], pose: 'start', tol: 0.5 },
+    // c2 "your bottom foot into the ground" (D-LIB21-SPFACTS (a)): the foot rests on its edge, so no foot landmark lies on
+    // the surface; heel and ball are held at their solved spots, start and end (the drawn outline on the mat: the test)
+    ...['start', 'end'].flatMap(pose => ['heel.r', 'ball.r'].map(landmark => ({ landmark, at: (pose === 'start' ? LSTART : LEND)[landmark], pose, tol: 0.5 }))),
   ],
   startParts: ['leg.l', 'leg.r'],
   ghosts: { count: 2, parts: ['leg.r'] },

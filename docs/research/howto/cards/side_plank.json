@@ -585,6 +585,34 @@
    "pose": "start",
    "cardPose": "start",
    "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c2"
   }
  ],
  "tempo": [

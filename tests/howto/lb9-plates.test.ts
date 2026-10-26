@@ -65,7 +65,7 @@ describe('LIB-21 A5 (first push): rows.json holds no row before a spec is drawn;
   it('batch LB9, censusRef 4a9fd86; no plank, crunch, T or (b) id in any LB9 rows file; no plank, crunch, T id or bicycle_crunch (before \'LB9 ER5 GO\') in tempo.json', () => {
     expect(rows.batch).toBe('LB9');
     expect(rows.censusRef).toBe('4a9fd86');
-    for (const id of [...NOT_HERE, ...ER5]) expect(Object.keys(rows.rows), id).not.toContain(`lib_${id}`);
+    for (const id of [...NOT_HERE, 'russian_twist', 'bicycle_crunch']) expect(Object.keys(rows.rows), id).not.toContain(`lib_${id}`);
     for (const id of [...NOT_HERE, 'bicycle_crunch']) expect(Object.keys(t.rows), id).not.toContain(id);
   });
   /** A7 (D-LIB8M-TEMPO): a phase reads from plate.tempo (up, down, pause), Hold only where pause > 0; or it is a constant
@@ -105,7 +105,7 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 const ER5_DRAWN = ['side_plank', 'russian_twist'];
 // The front entries asked with the E-R5 slice (#326), measured (px inside the figure past the leader's first 8 px).
 const FE_SINK = 9.64;
-const HELD: string[] = ['cable_crunch', 'superman', 'pallof_press', ...ER5_DRAWN];   // superman: D-LIB21-SIZE (S2); pallof_press: D-LIB21-PALLOFHOLD
+const HELD: string[] = ['cable_crunch', 'superman', 'pallof_press', 'russian_twist'];   // russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume   // superman: D-LIB21-SIZE (S2); pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
 const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', ...ER5_DRAWN];
@@ -733,7 +733,8 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     // the (b) row at the resume (D-LIB21-FACTS, D-LIB18-PUSHTHROUGH): c2 "Press your elbow, your hips, and your bottom
     // foot into the ground" holds the elbow down in the entry and, cited by plate.end, in the held pose; the hips lift
     // off ("Raise your hips"), and the rolled foot's edge has no engine landmark on the floor (not facts)
-    side_plank: [F('elbow.r', 'start', 'c2'), F('elbow.r', 'end', 'c2'), F('hip.r', 'start', 'c2')],   // D-LIB21-SPFACTS (#326 6410127641); the foot: asked
+    side_plank: [F('elbow.r', 'start', 'c2'), F('elbow.r', 'end', 'c2'), F('hip.r', 'start', 'c2'),
+      F('heel.r', 'start', 'c2'), F('ball.r', 'start', 'c2'), F('heel.r', 'end', 'c2'), F('ball.r', 'end', 'c2')],   // D-LIB21-SPFACTS (#326 6410127641), the foot (a)
   };
   // The ruled fault→key map (DESIGN.md section 8): [topFault, the drawn first tell key]; all 5 drawable-true. The (b)
   // rows' planned topFault (D-LIB21-F7), which differs from the drawn key.
@@ -841,19 +842,19 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog']);   // cable_crunch held (D-LIB21-CCHOLD)
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_side_plank']);   // cable_crunch held (D-LIB21-CCHOLD); side_plank at the resume
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
-  it('plank, crunch, the 5 T ids and the 3 (b) ids (off rows until their keys are verified) are in no lb9/ file as a row; bicycle_crunch has no spec before \'LB9 ER5 GO\'', () => {
+  it('plank, crunch, the 5 T ids, russian_twist and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
     for (const f of readdirSync('tools/plates/library/lb9').filter(n => n.endsWith('.json'))) {
       const text = readFileSync(join('tools/plates/library/lb9', f), 'utf8');
-      for (const id of [...NOT_HERE, ...ER5]) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
+      for (const id of [...NOT_HERE, 'russian_twist', 'bicycle_crunch']) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
     }
     expect(existsSync(`${SPECS_DIR}/bicycle_crunch.mjs`)).toBe(false);
   });
   it('the held ids (cable_crunch D-LIB21-CCHOLD; superman D-LIB21-SIZE; pallof_press D-LIB21-PALLOFHOLD) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
-    expect(build.HELD).toEqual({ cable_crunch: 'side', superman: 'side', pallof_press: 'side', side_plank: 'front', russian_twist: 'front' });
+    expect(build.HELD).toEqual({ cable_crunch: 'side', superman: 'side', pallof_press: 'side', russian_twist: 'front' });
     const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
     for (const id of HELD) expect(new RegExp(`\\| ${id} \\| D-LIB21-[A-Z]+`).test(design), id).toBe(true);
     for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
@@ -867,7 +868,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
     // a held id: superman, held until drawn (no spec), stands for any held id
     expect(a5(add('lib_superman'), w), 'a held id').toEqual(['extra lib_superman']);
-    for (const id of ['plank', 'crunch', 'flutter_kicks', 'side_plank']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);
+    for (const id of ['plank', 'crunch', 'flutter_kicks', 'bicycle_crunch']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
   });
   it('every row points at its own spec file and carries the census view; batch LB9, censusRef 4a9fd86', () => {
@@ -875,7 +876,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     for (const [id, r] of Object.entries<any>(j.rows)) {
       expect(r.src).toBe(`library/specs/${id.slice(4)}.mjs`);
       expect(r.chromeId).toBe(id.slice(4).replace(/_/g, '-'));
-      expect(r.view, id).toBe('side');
+      expect(r.view, id).toBe(id === 'lib_side_plank' ? 'front' : 'side');   // the census view (side_plank: front)
       expect(readJson(`docs/research/howto/cards/${id.slice(4)}.json`).plate.view, id).toBe(r.view);
       expect([r.mode, r.parent, r.template, r.params], id).toEqual(['H', undefined, undefined, undefined]);
     }
@@ -1527,6 +1528,16 @@ describe('LIB-21 A2 / A18: side_plank (the E-R5 slice; `root.roll`, `trunk.lat`)
     return (lowOf(st, /^torso/, h - 0.12, h + 0.12) - m.top) * 100; };
   it('D-LIB21-SPFACTS: the drawn pelvis under the bottom hip sits 0.00 cm (±0.05) over the mat top at the start, inside H6\'s 1 cm (the hip.r fact)', () => {
     expect(Math.abs(pelvisGap(s()))).toBeLessThanOrEqual(0.05);
+  });
+  /** D-LIB21-SPFACTS (a): the drawn bottom foot outline's lowest point over the surface under it (mat top or floor), cm. */
+  const footGap = (spec: any, pose: string) => { const sh = shapesW(spec, qOf(spec, pose)), m = matOf(spec, pose), surf = (x: number) => (x >= m.x0 && x <= m.x1 ? m.top : 0);
+    let g = Infinity; for (const x of sh) if (/^foot\.r/.test(x.key)) for (const v of x.poly) g = Math.min(g, v[1] - surf(v[0])); return g * 100; };
+  it('D-LIB21-SPFACTS (a): the drawn bottom foot reaches the surface at the start and the end (0.00 cm ±0.05, inside H6\'s 1 cm; the heel.r and ball.r facts)', () => {
+    for (const p of ['start', 'end']) expect(Math.abs(footGap(s(), p)), p).toBeLessThanOrEqual(0.05);
+  });
+  it('D-LIB21-SPFACTS (a) mutation: the held body lifted 2 cm at the end (the foot off the mat) is red', () => {
+    const e = s().poses.end, bad = { ...s(), poses: { ...s().poses, end: { ...e, root: { ...e.root, at: [e.root.at[0], e.root.at[1] + 0.02, e.root.at[2]] } } } };
+    expect(Math.abs(footGap(bad, 'end'))).toBeGreaterThan(1);
   });
   it('D-LIB21-SPFACTS mutation: the entry hips 2 cm up (root raised) is red', () => {
     const st = s().poses.start, bad = { ...s(), poses: { ...s().poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1] + 0.02, st.root.at[2]] } } } };
