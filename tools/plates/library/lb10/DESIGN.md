@@ -628,3 +628,32 @@ WAVE_LEN none (Trace on the hand, tells on the body); jumping_jacks ARM_UP feeds
 c2 and c4 ("arms overhead", "over your head"); farmer_s_carry M_STRIDE feeds the Mistake deviation (51.2 px; c25 "regular-sized steps" names the fault but not
 the 0.7 m: an open basis to settle at 'LIB-22 resume', #305 6360164495) and VIA_LIFT the Trace, so VIA_LIFT moved to mountain_climbers.mjs:49's
 FOOT_CLEAR 0.025 (Trace 28.0 px); high_knees' arm pose and BACK_EXT none (Trace on the knee, tells on the back and knee).
+
+## 21. Resume plan ('LIB-22 resume', on main `be796240`)
+
+Blockers read on main `be796240`: LIB-STRIP #309 (strip/rows.json; D-STRIP-*), LIB-ZOOM #279 with D-LIBZOOM-EXTEND
+(lib4-cards §41; zoom/inline.mjs, qa/zoom.mjs, one zoom per plate), F-PLATEFACTS #323, D-PLATEFACTS-HELD (§42;
+tests/howto/fixtures/held-pairing.json), F-ZOOM-INK #329. Not on main: LB4 #289 (`wall`), F-H6-TEMPO (D-LIB22-JJ).
+Zoom numbers are the probe's (zoomOf on each spec with the zoom added; clippedTrace and faultOf × k, the QA measures).
+k rule: the smallest k in steps of 0.5 from 1.5 whose zoom-scale value clears its bar by at least 10 %.
+
+**Built now** (blocker on main):
+
+| id | blocker | on main | work | zoom region |
+|---|---|---|---|---|
+| sled_pull | NOSECS; S2 Trace 10.1 px | strip row (Walk: Quick, c3); LIB-ZOOM | tempo onto card and spec (tempoOf), fixture lift, zoom, QA, row | normal view, k 1.5: the stepping foot's path (`ball.r`), whole trace in the source ring (16.0 ≤ 33.7 px); 26.3 px ≥ 22.11 |
+| burpee | NOSECS; S2 Mistake 7.1 px | strip row (Squat down: Controlled; 3 blank, c24); LIB-ZOOM | tempo, fixture lift, zoom, QA, row | Mistake view, k 2: the `landing` tell (`knee.r`, end → mistake); 14.2 px ≥ 11.39 |
+| bear_crawl | S2 Trace 10 px | LIB-ZOOM | zoom, QA, row | normal view, k 4: the hand's step (`wrist.r`); 29.3 px ≥ 22.11 (k 3.5 gives 24.1, under the 10 % margin) |
+| farmer_s_carry | NOSECS | strip row (Walk: Controlled, c4) | tempo, fixture lift; the plate stays held (below) | none (H3 passes: 51.2 / 28.0 px) |
+| jumping_jacks | S2 Mistake 9.6 px | LIB-ZOOM | zoom drawn; the row stays held (below) | Mistake view, k 1.5: the `toes` tell (`toe.r`); 14.4 px ≥ 11.39 |
+
+**Still held:**
+
+| id | waits for |
+|---|---|
+| sled_push | a ruling: strip `leftOut` (S3, "short, powerful steps", c10; "powerful" is not a FORMS form). FORMS grows only by a ruling (D-STRIP-FORMS); D-STRIP-AFALL (all phases blank) is the other ruled form |
+| medicine_ball_slam | the same ruling: strip `leftOut` (S3, "Ballistic and continuous") |
+| farmer_s_carry | a basis for M_STRIDE 0.70 m (6360164495 item 2: a quote, an approved plate's file:line or a measured convention). No quote on the card or the research head, and no approved plate on main, gives a regular step length |
+| jumping_jacks | F-H6-TEMPO (D-LIB22-JJ); not on main |
+| jump_rope | no allowed k reaches the bar: the Trace (`sole.r`, trim [0, 0]) is 21.3 px at k 4 (kMax) < 22.11; a raised kMax or another route needs a ruling (as F-PALLOF-ARCH) |
+| wall_ball | LB4 #289 (`wall`) on main (D-LIB22-WALL); also strip `leftOut` (S3) |
