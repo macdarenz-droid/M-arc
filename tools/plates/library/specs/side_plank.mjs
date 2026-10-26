@@ -166,7 +166,7 @@ export default {
   callouts: [
     { key: 'elbow', text: 'Elbow under<br>shoulder', anchor: { at: 'elbow.r', off: [-9, -8] }, box: { left: 8, top: 285 }, cue: 'Bottom elbow sits under the shoulder.' },
     { key: 'hips', text: 'Hips up', anchor: { at: 'hip.l', off: [16, -5.5] }, box: { left: 200, top: 170 }, cue: 'Hips lifted into one line with the ribs and legs.' },
-    { key: 'shoulder', text: 'Shoulder<br>down', anchor: 'shoulderTop.r', box: { left: 8, top: 242 }, cue: 'Bottom shoulder stays away from the ear.' },
+    { key: 'shoulder', text: 'Shoulder<br>down', anchor: 'shoulderTop.r', box: { left: 8, top: 237 }, cue: 'Bottom shoulder stays away from the ear.' },
   ],
   mistake: {
     pose: mistake,

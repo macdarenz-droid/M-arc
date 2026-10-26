@@ -104,7 +104,7 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 // The (b) rows drawn at 'LIB-21 resume' (D-LIB21-ER5, Do 7b): off rows.json until their card keys are verified.
 const ER5_DRAWN = ['side_plank', 'russian_twist'];
 // The front entries asked with the E-R5 slice (#326), measured (px inside the figure past the leader's first 8 px).
-const FE_SINK = 9.64, FE_KNEE_END = 18.17, FE_KNEE_MIS = 14.53;
+const FE_SINK = 9.64, FE_KNEE_END = 15.94, FE_KNEE_MIS = 13.95;   // russian_twist re-measured after its box moved for F3 (the leader 84.4 → 79.7 px)
 const HELD: string[] = ['cable_crunch', 'superman', 'pallof_press', ...ER5_DRAWN];   // superman: D-LIB21-SIZE (S2); pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
@@ -792,7 +792,7 @@ describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and
   const dog = (o: Record<string, number> = {}) => report('lib_bird_dog', { F1: 151.49, F3: 33.5, F5: 3.57, ...o });
   const cc = (o: Record<string, number> = {}) => report('lib_cable_crunch', { F2: 0.622, F3: 26.05, F5: 3.57, ...o });
   it('the named sets: F1 151.49 and F3 33.5 on bird_dog, F2 0.622 and F3 26.05 on cable_crunch; EXPECTED gives F5 alone on ab_wheel_rollout', () => {
-    expect(qa.F1_NAMED).toEqual({ lib_bird_dog: 151.49 });
+    expect(qa.F1_NAMED).toEqual({ lib_bird_dog: 151.49, lib_side_plank: 150.31, lib_russian_twist: 197.49 });   // the (b) two asked with the E-R5 slice (#326)
     expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 33.5, lib_cable_crunch: 26.05 });
     expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.622 });
     expect(qa.EXPECTED('lib_bird_dog')).toEqual(['F1', 'F3', 'F5']);

@@ -123,14 +123,14 @@ export default {
   ghosts: { count: 2, parts: ['ball', 'arm.l'] },
   trace: { point: 'grips', trim: [10, 12] },
   callouts: [
-    { key: 'back', text: 'Straight back', anchor: { at: 'shoulderTop.r', off: [0, 5] }, cue: 'Lean back slightly with a straight back.' },
-    { key: 'hips', text: 'Hips still', anchor: { at: 'hip.r', off: [-14, 0] }, cue: 'Hips and buttocks stay planted as you turn.' },
+    { key: 'back', text: 'Straight back', anchor: { at: 'shoulderTop.r', off: [0, 5] }, box: { left: 34, top: 141 }, cue: 'Lean back slightly with a straight back.' },
+    { key: 'hips', text: 'Hips still', anchor: { at: 'hip.r', off: [-14, 0] }, box: { left: 64, top: 261 }, cue: 'Hips and buttocks stay planted as you turn.' },
     { key: 'ball', text: 'Ball to hip', anchor: { at: 'grips', off: [0, 22.5] }, cue: 'The ball travels toward each hip.' },
   ],
   mistake: {
     pose: mistake,
     tells: [
-      { key: 'hips', text: 'Knees swing', anchor: { at: 'knee.r', pose: 'mistake', off: [-8.5, -5] }, box: { left: 4, top: 222 }, cue: 'The hips and knees swing with the trunk.' },
+      { key: 'hips', text: 'Knees swing', anchor: { at: 'knee.r', pose: 'mistake', off: [-8.5, -5] }, box: { left: 6, top: 212 }, cue: 'The hips and knees swing with the trunk.' },
     ],
   },
   tempo: [{ phase: 'Turn', s: 1, move: true }, { phase: 'Return', s: 1, move: true }],

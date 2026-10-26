@@ -442,7 +442,8 @@ Measured with main's `zoom/inline.mjs` `zoomOf` and `qa/zoom.mjs` `clippedTrace`
 - D-LIB21-SUPERMANZOOM (6405118542), then held (6405804435 item 2, F-ZOOM-TRIM; section 21).
 - pallof_press held (6405804435 item 3, F-PALLOF-ARCH; section 20).
 - The two named front entries approved (6405804435 item 4), pinned in lb9-plates.test.ts: side_plank "Hips sink"
-  9.64 px; russian_twist "Knees swing" 18.17 px (end figure) and 14.53 px (Mistake figure).
+  9.64 px; russian_twist "Knees swing" 18.17 px (end figure) and 14.53 px (Mistake figure), then 15.94 and 13.95 px
+  after its box moved 2 px right and 10 up so its leader is 79.7 px (it was 84.4, over F3's 81.9); re-sign asked.
 - russian_twist's lean back (c3) not reading from the front goes to the panel as drawn (item 5).
 - D-LIB-A16-REGISTRY (6405804435 item 1): tests/howto/fixtures/eq-composers.json is the one list of the build-ahead
   cards' composers; the A16 blocks of lb6, lb7, lb8 and lb9 read OTHER_CARDS from it (lb10 is not on main).
