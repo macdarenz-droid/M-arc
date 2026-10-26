@@ -19,6 +19,8 @@
 //   end (c4, c5: the hips stay still).
 //  Legs (c1): feet flat on the floor (plant), FOOT_Z in front of the hip joints and the hips' width apart, knees up and
 //   forward; the same in start and end.
+//  Arms: the left elbow out and down; the right elbow forward and up (R_POLE), so the right arm crossing to the ball
+//   passes over the left thigh (both arms 0 cm or more from the torso, head and legs in every pose: limbClearance).
 //  Start (c2): the ball's centre BALL_Z in front of the chest landmark and BALL_DROP under it (-3 cm: above), between
 //   the chest and the raised knees, a hand on each side of it (grip centres GRIP_IN of its radius out from its centre,
 //   elbows out and down).
@@ -42,7 +44,7 @@ import { medBallOptional, MED_BALL_OPT, MED_BALL_OPT_ITEMS } from '../eq/medBall
 import { perItem } from '../eq/parts.mjs';
 
 const H = 1.75, D = Math.PI / 180;
-export const SIZES = Object.freeze({ CAM_PITCH: 20, LEAN: 20, FOOT_Z: 0.55, BALL_Z: 0.15, BALL_DROP: -0.03, BALL_GAP: 0.02, GRIP_IN: 0.9, HIP_HALF: 0.17, BALL_LIFT: 0.03, M_YAW_SHARE: 0.5 });
+export const SIZES = Object.freeze({ CAM_PITCH: 20, LEAN: 20, FOOT_Z: 0.55, BALL_Z: 0.15, BALL_DROP: -0.03, BALL_GAP: 0.02, GRIP_IN: 0.9, HIP_HALF: 0.17, BALL_LIFT: 0.25, M_YAW_SHARE: 0.5 });
 const { CAM_PITCH, LEAN, FOOT_Z, BALL_Z, BALL_DROP, BALL_GAP, GRIP_IN, HIP_HALF, BALL_LIFT, M_YAW_SHARE } = SIZES;
 const R = MED_BALL_OPT.d / 2, FX = REF.hjcX * H;
 const rotY = (v, a) => { const c = Math.cos(a * D), s = Math.sin(a * D); return [c * v[0] + s * v[2], v[1], -s * v[0] + c * v[2]]; };
@@ -51,7 +53,8 @@ const feet = { l: { at: [FX, 0, FOOT_Z], pole: [0, 1, 1] }, r: { at: [-FX, 0, FO
 const base = { root: { at: rootOnSeat(SEAT, -LEAN, H), tilt: -LEAN }, neck: 0, plant: feet };
 const L0 = landmarksOf({ ...base, trunk: { flex: 0, yaw: 0 } }, H);
 // A hand on each side of the ball, across the ball along the thorax's side-to-side axis turned `a` deg.
-const hands = (b, a) => { const d = rotY([R * GRIP_IN, 0, 0], a); return { l: { at: [b[0] + d[0], b[1], b[2] + d[2]], pole: [1, -1, 0] }, r: { at: [b[0] - d[0], b[1], b[2] - d[2]], pole: [-1, -1, 0] } }; };
+const R_POLE = [0, 1, 0.5];   // the right elbow forward and up, so the arm crossing to the ball passes over the left thigh (#326 6409707279)
+const hands = (b, a) => { const d = rotY([R * GRIP_IN, 0, 0], a); return { l: { at: [b[0] + d[0], b[1], b[2] + d[2]], pole: [1, -1, 0] }, r: { at: [b[0] - d[0], b[1], b[2] - d[2]], pole: R_POLE } }; };
 export const B0 = [0, L0.chest[1] - BALL_DROP, L0.chest[2] + BALL_Z];
 export const start = { ...base, trunk: { flex: 0, yaw: 0 }, reach: hands(B0, 0) };
 export const B1 = [HIP_HALF + BALL_GAP + R, BALL_LIFT + R, L0['hip.l'][2]];
@@ -123,14 +126,14 @@ export default {
   ghosts: { count: 2, parts: ['ball', 'arm.l'] },
   trace: { point: 'grips', trim: [10, 12] },
   callouts: [
-    { key: 'back', text: 'Straight back', anchor: { at: 'shoulderTop.r', off: [0, 5] }, box: { left: 34, top: 141 }, cue: 'Lean back slightly with a straight back.' },
+    { key: 'back', text: 'Straight back', anchor: { at: 'shoulderTop.r', off: [0, 5] }, box: { left: 14, top: 130 }, cue: 'Lean back slightly with a straight back.' },
     { key: 'hips', text: 'Hips still', anchor: { at: 'hip.r', off: [-14, 0] }, box: { left: 64, top: 261 }, cue: 'Hips and buttocks stay planted as you turn.' },
     { key: 'ball', text: 'Ball to hip', anchor: { at: 'grips', off: [0, 22.5] }, cue: 'The ball travels toward each hip.' },
   ],
   mistake: {
     pose: mistake,
     tells: [
-      { key: 'hips', text: 'Knees swing', anchor: { at: 'knee.r', pose: 'mistake', off: [-8.5, -5] }, box: { left: 6, top: 212 }, cue: 'The hips and knees swing with the trunk.' },
+      { key: 'hips', text: 'Knees swing', anchor: { at: 'knee.l', pose: 'mistake', off: [19, 36] }, box: { left: 252, top: 256 }, cue: 'The hips and knees swing with the trunk.' },
     ],
   },
   tempo: [{ phase: 'Turn', s: 1, move: true }, { phase: 'Return', s: 1, move: true }],

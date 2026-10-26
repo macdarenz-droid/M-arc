@@ -447,3 +447,9 @@ Measured with main's `zoom/inline.mjs` `zoomOf` and `qa/zoom.mjs` `clippedTrace`
 - russian_twist's lean back (c3) not reading from the front goes to the panel as drawn (item 5).
 - D-LIB-A16-REGISTRY (6405804435 item 1): tests/howto/fixtures/eq-composers.json is the one list of the build-ahead
   cards' composers; the A16 blocks of lb6, lb7, lb8 and lb9 read OTHER_CARDS from it (lb10 is not on main).
+- ER5 slice look (6409707279): side_plank passes. D-LIB21-F1: F1 named on side_plank (150.31 px/m: 326 px across the
+  2.1688 m floor span) and russian_twist (197.49 px/m, the x1.35 cap). Reason, corrected: at 146.29 px/m russian_twist's
+  cover is 0.124 (0.117 unfitted), under F2's lower bound 0.191 (envelope.json), so F2 is raised at or below the
+  reference scale and F1 above it. russian_twist fix round: the right arm was inside the body (pole [-1, -1, 0]); now
+  pole [0, 1, 0.5] and the end ball raised (BALL_LIFT 0.25), with the limbClearance test; the "Knees swing" anchor waits
+  for a ruling (6409797574).

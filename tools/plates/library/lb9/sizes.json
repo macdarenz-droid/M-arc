@@ -309,9 +309,9 @@
     "basis": "stated reason: the pelvis's half-width at the hip, 0.17 m (the engine torso's hip half-width), so the ball's inner edge touches the hip's outer side (c4 'bring the weight toward your hip')"
    },
    "BALL_LIFT": {
-    "value": 0.03,
+    "value": 0.25,
     "unit": "m",
-    "basis": "stated reason: c4 brings the weight toward the hip, not to the floor: the ball's bottom 3 cm above the floor"
+    "basis": "claim: c4 'bring the weight toward your hip': the ball beside the left hip, its bottom 25 cm above the floor (at waist height), the lowest at which both arms clear the thighs and shins in every pose, ghost and via (limbClearance; at 3 cm the right forearm went 2-8 cm into the left thigh, #326 6409707279)"
    },
    "BALL_GAP": {
     "value": 0.02,

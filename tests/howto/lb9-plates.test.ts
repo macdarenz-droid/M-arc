@@ -1469,6 +1469,27 @@ const qOf = (spec: any, pose: string) => (pose === 'mistake' ? body.resolve(body
 const lowOf = (shapes: any[], re: RegExp, x0 = -Infinity, x1 = Infinity) => { let m = Infinity; for (const s of shapes) if (re.test(s.key)) for (const v of s.poly) if (v[0] >= x0 && v[0] <= x1) m = Math.min(m, v[1]); return m; };
 const matOf = (spec: any, pose: string) => { const it = itemsIn(spec, pose).items.find((i: any) => i.part === 'mat'); return { top: it.at[1] + it.h / 2, x0: it.at[0] - it.w / 2, x1: it.at[0] + it.w / 2 }; };
 
+/** D-LIB21-ER5 FIX (#326 6409707279): every upper arm and forearm, left and right, clears the torso, the head, the thighs
+ *  and the shins, and the other arm, by 0 cm or more in every drawn pose (start, end, Mistake, ghosts, vias). Points
+ *  along each segment at its own tapered radius; the upper arm from 35 % of its length (it meets the torso at the
+ *  shoulder), the forearm whole; its own limb and the joint it shares are skipped. Returns [pose, part, solid, cm]. */
+const limbClearance = (spec: any) => {
+  const out: [string, string, string, number][] = [];
+  for (const [p, q] of allQs(spec)) {
+    const so = solidsOf(q), lm = so.lm;
+    for (const sd of ['l', 'r']) for (const [k, a, b, t0] of [['upper', 'shoulder', 'elbow', 0.35], ['fore', 'elbow', 'wrist', 0]] as [string, string, string, number][]) {
+      const R = (body.RADII as any)[k], skip = [`upper.${sd}`, `fore.${sd}`];
+      let best = Infinity, at = '';
+      for (let i = 0; i <= 20; i++) {
+        const t = t0 + (1 - t0) * i / 20, pt = lm[`${a}.${sd}`].map((v: number, j: number) => v + (lm[`${b}.${sd}`][j] - v) * t), rad = (R[0] + (R[2] - R[0]) * t) * H3D;
+        for (const [name, v] of Object.entries<number>(so.sd(pt, skip))) if (v - rad < best) { best = v - rad; at = name; }
+      }
+      out.push([p, `${k}.${sd}`, at, best * 100]);
+    }
+  }
+  return out;
+};
+
 describe('LIB-21 A2 / A18: side_plank (the E-R5 slice; `root.roll`, `trunk.lat`)', { timeout: T }, () => {
   const s = () => S.side_plank;
   /** The bottom arm (upper arm, forearm, fist) on the drawn mat top and the bottom foot on the floor, in every pose with
@@ -1584,6 +1605,16 @@ describe('LIB-21 A2 / A18: russian_twist and `medBallOptional` (the E-R5 slice; 
     const r = ball3D(s());
     console.log(`LIB-21 russian_twist ball 3D: ${r.map(x => `${x.p} ${(x.v * 100).toFixed(1)} (${x.at})`).join('; ')} cm`);
     for (const x of r) expect(x.v, `${x.p} ${x.at}`).toBeGreaterThanOrEqual(0);
+  });
+  it('A18 3D (#326 6409707279): both arms clear the torso, head, legs and each other (0 cm or more) in every drawn pose, via and ghost (logged)', () => {
+    const r = limbClearance(s());
+    console.log(`LIB-21 russian_twist arms 3D: ${r.map(([p, k, at, v]) => `${p} ${k} ${v.toFixed(1)} (${at})`).join('; ')} cm`);
+    for (const [p, k, at, v] of r) expect(v, `${p} ${k} into ${at}`).toBeGreaterThanOrEqual(0);
+  });
+  it('A18 3D mutation: the slice\'s right-arm pole [-1, -1, 0] (the elbow hanging at the hip) puts the right arm into the body: red', () => {
+    const pole = (pose: any) => (pose?.reach?.r ? { ...pose, reach: { ...pose.reach, r: { ...pose.reach.r, pole: [-1, -1, 0] } } } : pose);
+    const bad = { ...s(), poses: { start: pole(s().poses.start), end: pole(s().poses.end), ...(s().poses.via ? { via: s().poses.via.map(pole) } : {}) } };
+    expect(limbClearance(bad).some(([, k, , v]) => k.endsWith('.r') && v < 0)).toBe(true);
   });
   it('A18 3D mutation: the end ball moved 8 cm in toward the hip is red', () => {
     const bad = mapItems(s(), (it, ctx) => (it.part === 'ball' && ctx.pose === 'end' ? shiftPts(it, [-0.08, 0, 0]) : it));
