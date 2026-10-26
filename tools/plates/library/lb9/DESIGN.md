@@ -310,7 +310,7 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 | superman | D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
 | pallof_press | D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
 | side_plank | D-LIB21-ER5 (Do 7b): drawn at the resume on LIB-20's `root.roll` and `trunk.lat`; off rows.json until its card keys are written and verified; its Hold `30–60` ruled (D-LIB21-SECS, #326 6405118542) | 'LB9 ER5 GO', card keys, a focused CARD FIELDS verify |
-| russian_twist | D-LIB21-ER5 (Do 7b): drawn at the resume on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; off rows.json until its card keys are written and verified | 'LB9 ER5 GO', card keys, a focused CARD FIELDS verify |
+| russian_twist | D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
 
 ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG; it and bird_dog are approved (slice panel and recheck).
 
@@ -391,9 +391,9 @@ Every row the build-ahead PR (#312) held, with its blocker and that blocker's st
 | id | held by | blocker | on main? | this resume |
 |---|---|---|---|---|
 | side_plank | D-LIB21-ER5 | LIB-20 (#311) | yes | build: E-R5 slice (Do 7b); hold constant per D-LIB21-SECS (proposed below; NOSECS if none) |
-| russian_twist | D-LIB21-ER5 | LIB-20 (#311); `medBallOptional` | yes | build: `medBallOptional` and the E-R5 slice (Do 7b); tempo 1/1/0 as the card holds it (F-LB9-2 open) |
-| bicycle_crunch | D-LIB21-ER5 | LIB-20 (#311), then 'LB9 ER5 GO' | LIB-20 yes; GO no | build after 'LB9 ER5 GO' (Do 7b) |
-| superman | D-LIB21-SIZE (S2) | LIB-ZOOM (#279), extended (D-LIB21-SUPERMANZOOM); a zoom-scale trim rule | LIB-ZOOM yes; F-ZOOM-TRIM no | held (#326 6405804435 item 2): the ruled zoom cannot reach 22.11 px at k ≤ 4 (section 21); rolls with F-ZOOM-TRIM |
+| russian_twist | D-LIB21-ER5, then D-LIB21-RTWIST | F-RTWIST-TELL | no | drawn, held on its tell (#326 6409862229) |
+| bicycle_crunch | D-LIB21-BICYCLE (#326 6409862229) | F-ENGINE-PITCHDEPTH and LIB-SPINE | no | held; no spec |
+| superman | D-LIB21-SIZE (S2) | LIB-ZOOM (#279), extended (D-LIB21-SUPERMANZOOM); a zoom-scale trim rule | LIB-ZOOM yes; F-ZOOM-2 no | held (#326 6405804435 item 2): the ruled zoom cannot reach 22.11 px at k ≤ 4 (section 21); rolls with F-ZOOM-2 (was F-ZOOM-TRIM) |
 | pallof_press | D-LIB21-PALLOFHOLD (S2, S4) | another stated tell or a sourced arch size | F-PALLOF-ARCH no | held (#326 6405804435 item 3); section 20 is the design record |
 | cable_crunch | D-LIB21-CCHOLD | LIB-SPINE (F-SPINE-1) | no | held |
 
@@ -453,3 +453,8 @@ Measured with main's `zoom/inline.mjs` `zoomOf` and `qa/zoom.mjs` `clippedTrace`
   reference scale and F1 above it. russian_twist fix round: the right arm was inside the body (pole [-1, -1, 0]); now
   pole [0, 1, 0.5] and the end ball raised (BALL_LIFT 0.25), with the limbClearance test; the "Knees swing" anchor waits
   for a ruling (6409797574).
+- russian_twist held on its tell (6409862229, F-RTWIST-TELL); the arm fix, BALL_LIFT, limbClearance, the box move and
+  the F1 reason are kept. bicycle_crunch held (D-LIB21-BICYCLE): the front draw order sorts depth by world z
+  (body.mjs:297-298, :366-367), so a top-down view draws the bent knee under the trunk, and the single lumbar pivot keeps
+  the elbow 0.21 m or more from the opposite knee; route F-ENGINE-PITCHDEPTH with LIB-SPINE. superman's route is now
+  F-ZOOM-2. The resume takes side_plank to READY.

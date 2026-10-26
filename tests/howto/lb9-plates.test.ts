@@ -104,7 +104,7 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 // The (b) rows drawn at 'LIB-21 resume' (D-LIB21-ER5, Do 7b): off rows.json until their card keys are verified.
 const ER5_DRAWN = ['side_plank', 'russian_twist'];
 // The front entries asked with the E-R5 slice (#326), measured (px inside the figure past the leader's first 8 px).
-const FE_SINK = 9.64, FE_KNEE_END = 15.94, FE_KNEE_MIS = 13.95;   // russian_twist re-measured after its box moved for F3 (the leader 84.4 → 79.7 px)
+const FE_SINK = 9.64;
 const HELD: string[] = ['cable_crunch', 'superman', 'pallof_press', ...ER5_DRAWN];   // superman: D-LIB21-SIZE (S2); pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
@@ -1254,7 +1254,7 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
    *  enters the solid end figure once from above to the red top outline of the sunk pelvis (the fault lies under the
    *  solid figure, D-LIB21-FRONT); russian_twist's "Knees swing" enters from the left to the red right knee, which
    *  swings behind the solid right knee and arm. An entry the supervisor does not sign is redrawn or its row is held. */
-  const FRONT_ENTRY: Record<string, number> = { 'side_plank mistake sink end': FE_SINK, 'russian_twist mistake hips end': FE_KNEE_END, 'russian_twist mistake hips Mistake': FE_KNEE_MIS };
+  const FRONT_ENTRY: Record<string, number> = { 'side_plank mistake sink end': FE_SINK };   // russian_twist: held on its tell (F-RTWIST-TELL, #326 6409862229); its shin anchor enters no figure
   const insideLen = (p: number[][], polys: number[][][]) => {
     let len = 0;
     for (const [a, b] of segs(p)) { const L = Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!); for (let k = 0; k < 40; k++) {
