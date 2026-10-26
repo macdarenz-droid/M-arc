@@ -113,6 +113,7 @@ export const end = withHand(bodyAt(QE, ARM));
 export const QS = solve({ x: -0.15, y: 0.18, roll: 64, lat: -27 }, q => bodyAt({ ...q, d: q.lat }, ARM),
   pose => [...shoulderRes(pose, ARM), gap(pose, /^foot\.r/), gap(pose, /^torso/)], 'the entry');
 export const start = withHand(bodyAt({ ...QS, d: QS.lat }, ARM));
+const LSTART = landmarksOf(start, H);
 // Mistake (c5): the hips sink M_SINK of the way down to the entry height.
 export const QM = solve({ x: QE.x, y: QE.y - 0.1, roll: QE.roll + 5, lat: -10 }, q => bodyAt({ ...q, d: q.lat }, ARM),
   pose => [...shoulderRes(pose, ARM), gap(pose, /^foot\.r/), pose.root.at[1] - (QE.y - M_SINK * (QE.y - QS.y))], 'the sag');
@@ -158,6 +159,9 @@ export default {
     { landmark: 'elbow.r', plane: { point: [0, ELBOW_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },          // c1: forearm down
     { landmark: 'elbow.r', plane: { point: [XE, 0, 0], normal: [1, 0, 0] }, pose: 'all', tol: 0.5 },              // c1: elbow under the shoulder
     { landmark: 'shoulder.r', plane: { point: [XE, 0, 0], normal: [1, 0, 0] }, pose: 'all', tol: 0.5 },
+    // c2 "Press your elbow, your hips ... into the ground" (D-LIB21-SPFACTS, as D-LIB18-LLCFACTS): the bottom hip stays
+    // where the entry's pelvis rests on the mat (its drawn side outline on the mat top, the drawn-item test), start only
+    { landmark: 'hip.r', at: LSTART['hip.r'], pose: 'start', tol: 0.5 },
   ],
   startParts: ['leg.l', 'leg.r'],
   ghosts: { count: 2, parts: ['leg.r'] },

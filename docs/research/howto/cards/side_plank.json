@@ -578,6 +578,13 @@
    "pose": "end",
    "cardPose": "end",
    "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "hip.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
   }
  ],
  "tempo": [

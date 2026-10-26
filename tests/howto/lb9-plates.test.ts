@@ -733,7 +733,7 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     // the (b) row at the resume (D-LIB21-FACTS, D-LIB18-PUSHTHROUGH): c2 "Press your elbow, your hips, and your bottom
     // foot into the ground" holds the elbow down in the entry and, cited by plate.end, in the held pose; the hips lift
     // off ("Raise your hips"), and the rolled foot's edge has no engine landmark on the floor (not facts)
-    side_plank: [F('elbow.r', 'start', 'c2'), F('elbow.r', 'end', 'c2')],
+    side_plank: [F('elbow.r', 'start', 'c2'), F('elbow.r', 'end', 'c2'), F('hip.r', 'start', 'c2')],   // D-LIB21-SPFACTS (#326 6410127641); the foot: asked
   };
   // The ruled fault→key map (DESIGN.md section 8): [topFault, the drawn first tell key]; all 5 drawable-true. The (b)
   // rows' planned topFault (D-LIB21-F7), which differs from the drawn key.
@@ -1520,6 +1520,17 @@ describe('LIB-21 A2 / A18: side_plank (the E-R5 slice; `root.roll`, `trunk.lat`)
   it('mutation: the mat raised 1 cm (the arm 1 cm into it) is red', () => {
     const bad = { ...s(), equipment: s().equipment.map((e: any) => (e.part === 'mat' ? { ...e, at: [e.at[0], e.at[1] + 0.01, e.at[2]], h: e.h } : e)) };
     expect(contacts(bad).some(x => x.arm < -0.5)).toBe(true);
+  });
+  /** D-LIB21-SPFACTS: the drawn pelvis side outline under the bottom hip (within 12 cm of hip.r along the body) over the mat
+   *  top, cm, at the start. */
+  const pelvisGap = (spec: any) => { const st = shapesW(spec, qOf(spec, 'start')), m = matOf(spec, 'start'), h = lmOf(spec, 'start')['hip.r'][0]!;
+    return (lowOf(st, /^torso/, h - 0.12, h + 0.12) - m.top) * 100; };
+  it('D-LIB21-SPFACTS: the drawn pelvis under the bottom hip sits 0.00 cm (±0.05) over the mat top at the start, inside H6\'s 1 cm (the hip.r fact)', () => {
+    expect(Math.abs(pelvisGap(s()))).toBeLessThanOrEqual(0.05);
+  });
+  it('D-LIB21-SPFACTS mutation: the entry hips 2 cm up (root raised) is red', () => {
+    const st = s().poses.start, bad = { ...s(), poses: { ...s().poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1] + 0.02, st.root.at[2]] } } } };
+    expect(Math.abs(pelvisGap(bad))).toBeGreaterThan(1);
   });
   it('the entry (c1, c2): the drawn pelvis rests on the mat top (0 to 0.5 cm into it); the held pose lifts it', () => {
     const st = shapesW(s(), qOf(s(), 'start')), en = shapesW(s(), qOf(s(), 'end')), m = matOf(s(), 'start');
