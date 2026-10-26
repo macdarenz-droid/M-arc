@@ -11,6 +11,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { otherCards, registryProblems, EQ_COMPOSERS_PATH } from './fixtures/eq-composers';
 
 // D-LIB21-TESTS (lessons #299 6351689010, 6352726951): one macrotask after every test lets the vitest worker answer
 // its RPC; every per-spec loop yields once per spec, and whole-page renders run in a child process.
@@ -1037,16 +1038,13 @@ describe('LIB-21 A3: spec and composer closures are pure and drawn by the vendor
 });
 
 describe('LIB-21 A16: no other card\'s composer is copied, forked or imported (D-LIB21-COMPOSERS, -ROPE, D-LIB-A16-COMPOSE)', () => {
-  // D-LIB-A16-COMPOSE (lib4-cards section 39): main's eq/ at 40f9ea93, this card's own composers (and medBallOptional
-  // at the (b) resume), and the composers the other build-ahead cards own, by exact name (this card's names dropped).
+  // D-LIB-A16-COMPOSE (lib4-cards section 39): main's eq/ at 40f9ea93, this card's own composers (abWheel, and
+  // medBallOptional from the (b) resume), and the composers the other build-ahead cards own, by exact name, read from
+  // the shared registry (D-LIB-A16-REGISTRY; this card's names dropped).
   const EQ_DIR = 'tools/plates/library/eq';
   const MAIN_EQ = ['assistMachine', 'band', 'chestRowMachine', 'dHandle', 'declineBench', 'inclineBench', 'landmine', 'legCurlMachine',
     'parts', 'pecDeck', 'polybar', 'romanChair', 'rope', 'safetyArms', 'smith'].map(n => `${n}.mjs`), OURS = ['abWheel.mjs', 'medBallOptional.mjs'];
-  const OTHER_CARDS: Record<string, string[]> = {
-    'LIB-14': ['wall'], 'LIB-15': ['preacherPad'], 'LIB-16': ['crunchMachine', 'pulloverMachine'], 'LIB-17': ['dipBars'],
-    'LIB-18': ['ankleCuff', 'calfMachine', 'hackSled', 'legExtMachine', 'pendulum'],
-    'LIB-22': ['battleRope', 'jumpRope', 'kettlebell', 'medBall', 'sled'],
-  };
+  const OTHER_CARDS: Record<string, string[]> = otherCards('LIB-21');   // D-LIB-A16-REGISTRY (#326): the shared registry
   const OTHER = Object.values(OTHER_CARDS).flat().map(n => `${n}.mjs`);
   /** eq/ as name → bytes; a test passes its own map to show a mutation. */
   const eqDir = (): Map<string, Buffer> => new Map(readdirSync(EQ_DIR).map(n => [n, readFileSync(join(EQ_DIR, n))]));
@@ -1061,7 +1059,7 @@ describe('LIB-21 A16: no other card\'s composer is copied, forked or imported (D
   };
   const withFile = (name: string, bytes: Buffer) => new Map([...eqDir(), [name, bytes]]);
   const without = (name: string) => { const m = eqDir(); m.delete(name); return m; };
-  it('tools/plates/library/eq/ holds main\'s files and abWheel, and every other file is another card\'s composer by name', () => {
+  it('tools/plates/library/eq/ holds main\'s files, abWheel and medBallOptional, and every other file is another card\'s composer by name', () => {
     expect(OTHER).not.toContain('abWheel.mjs');
     expect(eqProblems(eqDir())).toEqual([]);
   });
@@ -1074,6 +1072,24 @@ describe('LIB-21 A16: no other card\'s composer is copied, forked or imported (D
   it('mutation: a missing main file or a missing own composer is red', () => {
     expect(eqProblems(without('smith.mjs'))).toEqual(['missing smith.mjs']);
     expect(eqProblems(without('abWheel.mjs'))).toEqual(['missing abWheel.mjs']);
+    expect(eqProblems(without('medBallOptional.mjs'))).toEqual(['missing medBallOptional.mjs']);
+  });
+  // D-LIB-A16-REGISTRY (#326 6405804435): the shared registry's shape, and every eq/ file outside main's is in it.
+  const reg = () => readJson(EQ_COMPOSERS_PATH);
+  const coverage = (eq: Map<string, Buffer>, cards: Record<string, string[]>) => {
+    const all = Object.values(cards).flat().map(n => `${n}.mjs`);
+    return [...eq.keys()].filter(n => !MAIN_EQ.includes(n) && !all.includes(n)).map(n => `unregistered ${n}`);
+  };
+  it('the registry has the 7 cards, each name under exactly one card, and names every eq/ file outside main\'s; LIB-21 owns abWheel and medBallOptional', () => {
+    expect(registryProblems(reg())).toEqual([]);
+    expect(coverage(eqDir(), reg().cards)).toEqual([]);
+    expect(reg().cards['LIB-21']).toEqual(['abWheel', 'medBallOptional']);
+  });
+  it('registry mutations: an unknown name in eq/, a name under two cards, medBallOptional dropped from the registry while its file exists, and a byte copy of medBallOptional under another card\'s name are red', () => {
+    expect(coverage(withFile('wedge.mjs', Buffer.from('export const wedge = () => [];\n')), reg().cards)).toEqual(['unregistered wedge.mjs']);
+    expect(registryProblems({ cards: { ...reg().cards, 'LIB-14': ['wall', 'abWheel'] } })).toEqual(['abWheel under LIB-14 and LIB-21']);
+    expect(coverage(eqDir(), { ...reg().cards, 'LIB-21': ['abWheel'] })).toEqual(['unregistered medBallOptional.mjs']);
+    expect(eqProblems(withFile('sled.mjs', readFileSync(join(EQ_DIR, 'medBallOptional.mjs'))))).toEqual(['sled.mjs copies medBallOptional.mjs']);
   });
 });
 

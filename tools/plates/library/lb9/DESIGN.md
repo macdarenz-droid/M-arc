@@ -393,8 +393,8 @@ Every row the build-ahead PR (#312) held, with its blocker and that blocker's st
 | side_plank | D-LIB21-ER5 | LIB-20 (#311) | yes | build: E-R5 slice (Do 7b); hold constant per D-LIB21-SECS (proposed below; NOSECS if none) |
 | russian_twist | D-LIB21-ER5 | LIB-20 (#311); `medBallOptional` | yes | build: `medBallOptional` and the E-R5 slice (Do 7b); tempo 1/1/0 as the card holds it (F-LB9-2 open) |
 | bicycle_crunch | D-LIB21-ER5 | LIB-20 (#311), then 'LB9 ER5 GO' | LIB-20 yes; GO no | build after 'LB9 ER5 GO' (Do 7b) |
-| superman | D-LIB21-SIZE (S2) | LIB-ZOOM (#279), extended to the motion (D-LIB21-SUPERMANZOOM, ruled) | yes | held: measured, the ruled zoom cannot reach 22.11 px at k ≤ 4 (section 21); ruling asked |
-| pallof_press | D-LIB21-PALLOFHOLD (S2, S4) | LIB-ZOOM (#279); a ruled turned-view route | LIB-ZOOM yes; route no | the turned-view note (section 20): LIB-ZOOM cannot carry the 12° arch; ruling asked |
+| superman | D-LIB21-SIZE (S2) | LIB-ZOOM (#279), extended (D-LIB21-SUPERMANZOOM); a zoom-scale trim rule | LIB-ZOOM yes; F-ZOOM-TRIM no | held (#326 6405804435 item 2): the ruled zoom cannot reach 22.11 px at k ≤ 4 (section 21); rolls with F-ZOOM-TRIM |
+| pallof_press | D-LIB21-PALLOFHOLD (S2, S4) | another stated tell or a sourced arch size | F-PALLOF-ARCH no | held (#326 6405804435 item 3); section 20 is the design record |
 | cable_crunch | D-LIB21-CCHOLD | LIB-SPINE (F-SPINE-1) | no | held |
 
 - side_plank: D-LIB21-SECS ruled `30–60` (#326 6405118542), c9's own string ("If you can, aim to hold the side plank
@@ -420,9 +420,8 @@ the arch. Main's SPEC.md (LIB-20) has `root.yaw` and `camera.pitch` (front view 
   anchor 1.03 px in the side view (#312 bulk post); turned, the sagittal move shrinks by cos Y (0.89 px at 30°).
   LIB-ZOOM allows k from 1.5 to 4 (zoom/DESIGN.md, `H3.zoom:k`), so its best is 4.1 px in the side view and 3.6 px
   turned, against deviationMin 11.39 px. **LIB-ZOOM cannot carry this arch in any view** (it would need k ≥ 11.1).
-- **So the route needs a ruling the card does not settle** (asked on #326): keep pallof_press held (D-LIB21-SIZE, no
-  zoom route at 12°), or name another basis for the arch's size or another tell the claims state. Nothing is enlarged
-  and no turned-view spec is built until then.
+- **Ruled (#326 6405804435 item 3):** pallof_press stays held under D-LIB21-PALLOFHOLD; F-PALLOF-ARCH (another stated
+  tell or a sourced arch size, its own card). This note stays as the design record; no turned-view spec is built.
 
 ## 21. superman: the zoom measured (D-LIB21-SUPERMANZOOM, #326 6405118542; no build)
 
@@ -434,5 +433,16 @@ Measured with main's `zoom/inline.mjs` `zoomOf` and `qa/zoom.mjs` `clippedTrace`
   traceLenMin 22.11 px. It would need k of about 4.5.
 - With the plate's three labels in place, `zoomOf` finds no spot for the 104 px circle that clears ink, labels and
   leaders at any k (it throws); with the labels removed it lands at (68, 254).
-- So the ruled zoom cannot reach H3's bar inside k's range. superman stays held (D-LIB21-SIZE) until a ruling
-  (asked on #326); nothing is enlarged, and no trim or k bound is changed here.
+- So the ruled zoom cannot reach H3's bar inside k's range. superman stays held (D-LIB21-SIZE; #326 6405804435 item 2,
+  F-ZOOM-TRIM: a zoom-scale trim rule, designed once #327 merges); nothing is enlarged, and no trim or k bound is changed.
+
+## 22. Resume rulings (#326)
+
+- D-LIB21-SECS (6405118542): side_plank holds `30–60` (c9's own string).
+- D-LIB21-SUPERMANZOOM (6405118542), then held (6405804435 item 2, F-ZOOM-TRIM; section 21).
+- pallof_press held (6405804435 item 3, F-PALLOF-ARCH; section 20).
+- The two named front entries approved (6405804435 item 4), pinned in lb9-plates.test.ts: side_plank "Hips sink"
+  9.64 px; russian_twist "Knees swing" 18.17 px (end figure) and 14.53 px (Mistake figure).
+- russian_twist's lean back (c3) not reading from the front goes to the panel as drawn (item 5).
+- D-LIB-A16-REGISTRY (6405804435 item 1): tests/howto/fixtures/eq-composers.json is the one list of the build-ahead
+  cards' composers; the A16 blocks of lb6, lb7, lb8 and lb9 read OTHER_CARDS from it (lb10 is not on main).
