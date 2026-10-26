@@ -1723,7 +1723,7 @@ describe('LIB-22 panel fix (mx2, #331 6415452903): sled_pull items 1-4, medicine
     const items = itemsIn(sp(), 'end').items;
     expect(coilProblems(items, { ...z, TAIL_SAG: 0.2 })[0]).toMatch(/^tail bow/);
     let k = 0;
-    const spread = items.map((i: any) => (i.part === 'coil' ? { ...i, pts: i.pts.map((p: number[]) => [p[0], p[1], p[2] + k * z.COIL_D]), _: k++ } : i));
+    const spread = items.map((i: any) => (i.part === 'coil' ? { ...i, pts: i.pts.map((p: number[]) => [p[0], p[1], p[2]! + k * z.COIL_D]), _: k++ } : i));
     expect(coilProblems(spread).some(p => /does not overlap/.test(p))).toBe(true);
   });
   /** Item 6: the medicine ball slam Trace is one smooth curve: no turn between consecutive samples of the hand's path
