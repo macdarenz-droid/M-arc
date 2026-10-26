@@ -311,6 +311,22 @@ round".
      zoom places itself top right.
    - HEELS LIFT moves to box (70, 300), clear of the source ring (H1.ink).
 
+## 11c. Panel mx1 second round (#289 6414220426, D-LIB13-PANEL2)
+
+front_squat and bodyweight_squat are approved at 66c21034. wall_sit's approval stands. All three card sections are
+byte-identical.
+
+1. goblet_squat R3: the dumbbell moves from z 'front' to 'mid'. This is draw order only: the dumbbell now sits over
+   the trunk and the far arm and under the near arm, so the near hand cupping the top head and the near forearm show
+   over the handle. No joint moves.
+2. pistol_squat R5:
+   - The lifted foot's whole outline is drawn as a dashed guide over the solid foot, so the gap under the heel shows.
+     Before, the engine masked the faulty outline inside the end figure.
+   - A short red arrow runs from the floor up to the lifted heel's height. It stands 11 px behind the heel, not under
+     it: the gap lies inside the solid foot, and solid red must clear the end figure by 6 px (A15; it clears by
+     6.6 px).
+   - The lift stays at 3.5 cm, with no zoom (H3.zoom:not-needed).
+
 ## 12. H slice (Do 2; D-LIB14-SLICE)
 
 wall_sit with eq/wall.mjs, pistol_squat, front_squat. Posted as 'LB4 SLICE READY @ <sha>' with 390 px renders in Paper

@@ -30,7 +30,7 @@
 //  0.05 m, VIA (knee 75, trunk 20, free hip 64), HEEL_RISE 0.035 m (the Mistake size: p8's heel "may try and creep up", the onset of a lift,
 //  drawn at DESIGN.md section 11's 3-4 cm midpoint, where the heel clears the floor line by about 5 px; never sized to
 //  pass PQ-H3), arms level.
-import { landmarksOf, normPose, resolve } from '../engine.mjs';
+import { bodyShapes, fk, landmarksOf, normPose, resolve } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180, B = { height: H };
 const STANCE_X = 0.09, END_KNEE = 140, END_INCL = 40, FREE_CLEAR = 0.05, HEEL_RISE = 0.035;
@@ -89,6 +89,16 @@ const MIS = misAt(HEEL_UP);
 const mistakePose = { root: MIS.root, plant: MIS.plant };
 const LE = landmarksOf(end, H), LM = landmarksOf({ ...end, ...mistakePose }, H);
 const KNEE_M = LM['knee.r'];
+// Panel mx1 item 2: the lifted foot's whole outline, dashed, drawn over the solid foot (the engine masks the faulty
+// outline where it runs inside the end figure, which hid the gap under the heel).
+const PXM = 146.28571428571428, X0 = 170, CAM = { view: 'side', near: 'r', facing: 'right', pxm: PXM, P: w => [X0 + w[2] * PXM, 339 - w[1] * PXM] };
+const toW = ([x, y]) => [0, (339 - y) / PXM, (x - X0) / PXM];
+// A short red arrow for the heel's rise (the approved small-motion device), floor level up to the lifted heel's
+// height. It stands 11 px behind the heel: solid red must clear the solid end figure by 6 px (A15), and the gap under
+// the heel lies inside the solid foot.
+const HEEL_PX = CAM.P(LM['heel.r']);
+export const HEEL_ARROW_X = HEEL_PX[0] - 11;   // px: its head clears the heel outline's back edge by 6 px (A15)
+export const MIST_FOOT = (() => { const p = bodyShapes(fk(resolve(normPose({ ...end, ...mistakePose }, B), B).q, B), CAM).find(x => x.key === 'foot.r').poly; return [...p, p[0]].map(toW); })();
 export const psInfo = { freeHip: FREE_HIP, end: end.root, heelUpCm: (LM['heel.r'][1] - LE['heel.r'][1]) * 100, kneeFwdCm: (LM['knee.r'][2] - LE['knee.r'][2]) * 100, kneePastToeCm: (LM['knee.r'][2] - LM['toe.r'][2]) * 100, freeHeel: LE['heel.l'][1] };
 
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
@@ -121,6 +131,8 @@ export default {
     // the faulty knee to the floor, which lands past the toes.
     guides: [
       { kind: 'dashed', pts: [{ at: 'heel.r', pose: 'mistake' }, { at: 'ball.r', pose: 'mistake' }] },
+      { kind: 'dashed', pts: MIST_FOOT },
+      { kind: 'arrow', from: toW([HEEL_ARROW_X, 339]), to: toW([HEEL_ARROW_X, HEEL_PX[1]]) },
       { kind: 'dashed', pts: [{ at: 'knee.r', pose: 'mistake' }, [0, 0, KNEE_M[2]]] },
     ],
     tells: [

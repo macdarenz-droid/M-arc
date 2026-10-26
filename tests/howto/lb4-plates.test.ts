@@ -1130,3 +1130,44 @@ describe('LIB-14 panel lb4p fix round (#289 6410190090): items 1-7 on drawn item
   });
 
 });
+
+describe('LIB-14 panel mx1 second round (#289 6414220426, D-LIB13-PANEL2): goblet_squat draw order, pistol_squat heel', { timeout: T }, () => {
+  /** goblet_squat item 1: in the end layer the near hand (fist.r) is drawn after the dumbbell's discs, so it shows over them. */
+  const handOverDb = (spec: any) => { const v = plate.renderPlate(spec, { id: 'x' }).svg; return v.lastIndexOf('<use href="#x-e-fist.r"/>') > v.lastIndexOf('class="disc"'); };
+  it('item 1: goblet_squat draws the near hand and forearm over the dumbbell (draw order only: no joint moves); mutation: the dumbbell back at z front is red', () => {
+    const s = S.goblet_squat;
+    expect(handOverDb(s)).toBe(true);
+    const front = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && r.part === 'db' ? { ...r, z: 'front' } : r; } : e)) };
+    expect(handOverDb(front)).toBe(false);
+  });
+  /** pistol_squat item 2: the lifted foot's whole outline as a dashed guide (over the solid foot), and a red arrow from
+   *  the floor up to the lifted heel's height, standing behind the heel. */
+  const heelProblems = (spec: any) => {
+    const c = rep(spec).camera, P = (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM], b = { height: 1.75 };
+    const cam = { view: 'side', near: 'r', pxm: c.pxPerM, P };
+    const foot = body.bodyShapes(body.fk(body.resolve(body.normPose({ ...spec.poses.end, ...spec.mistake.pose }, b), b).q, b), cam).find((x: any) => x.key === 'foot.r').poly;
+    const g = spec.mistake.guides, out: string[] = [];
+    const dashedFoot = g.find((x: any) => x.kind === 'dashed' && Array.isArray(x.pts) && x.pts.length === foot.length + 1
+      && x.pts.slice(0, -1).every((p: any, i: number) => Math.hypot(P(p)[0]! - foot[i][0], P(p)[1]! - foot[i][1]) < 0.1));
+    if (!dashedFoot) out.push('no dashed outline of the lifted foot');
+    const heel = P(lmOf(spec, 'mistake')['heel.r']), a = g.find((x: any) => x.kind === 'arrow');
+    if (!a) out.push('no heel arrow');
+    else {
+      const f = P(a.from), t = P(a.to);
+      if (Math.abs(f[1]! - c.y0) > 0.5) out.push('the arrow does not start at the floor');
+      if (Math.abs(t[1]! - heel[1]!) > 0.5) out.push('the arrow does not end at the lifted heel\'s height');
+      if (Math.abs(f[0]! - t[0]!) > 0.5 || !(heel[0]! - f[0]! > 0 && heel[0]! - f[0]! < 15)) out.push('the arrow is not upright just behind the heel');
+    }
+    if (Math.abs(lmOf(spec, 'mistake')['heel.r'][1] - 0.035) > 1e-4) out.push('the lift is not 3.5 cm');
+    return out;
+  };
+  it('item 2: pistol_squat draws the lifted foot dashed over the solid foot and a red arrow from the floor up to the lifted heel; the lift stays 3.5 cm and there is no zoom; mutations: the dashed foot removed, or the arrow pointing down, are red', () => {
+    const s = S.pistol_squat;
+    expect(heelProblems(s)).toEqual([]);
+    expect(s.zoom).toBeUndefined();
+    const noFoot = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.filter((x: any) => !(x.kind === 'dashed' && x.pts.length > 3)) } };
+    expect(heelProblems(noFoot)).toContain('no dashed outline of the lifted foot');
+    const down = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.map((x: any) => (x.kind === 'arrow' ? { ...x, from: x.to, to: x.from } : x)) } };
+    expect(heelProblems(down)).toContain('the arrow does not start at the floor');
+  });
+});

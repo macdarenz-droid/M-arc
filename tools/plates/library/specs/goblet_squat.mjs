@@ -139,7 +139,9 @@ export default {
   poses: { start, via, end },
   equipment: [
     { type: 'floor', from: -0.75, to: 0.75 },
-    (lm, ctx) => ({ type: 'dumbbell', at: dbAt(lm, ctx), axis: [0, 1, 0], part: 'db', z: 'front' }),
+    // z 'mid' (panel mx1 item 1, draw order only): the dumbbell sits over the trunk and far arm and under the near arm,
+    // so the near hand cupping the top head and the near forearm show over the handle.
+    (lm, ctx) => ({ type: 'dumbbell', at: dbAt(lm, ctx), axis: [0, 1, 0], part: 'db', z: 'mid' }),
     ...START_DB.map(pts => (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-cable m-line', pts, z: 'front', part: 'startdb' } : null)),
   ],
   checks: [
