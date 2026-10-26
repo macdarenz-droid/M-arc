@@ -27,6 +27,8 @@ import { cardIdOf, groupsConfig, specIdOf } from './plates-page.mjs';
 import { LIBRARY_GOLDEN_DIR, rows, sourceOf } from './registry.mjs';
 import { pinOf } from './batch-golden.mjs';
 import { plateZooms } from './zoom/inline.mjs';
+import { isUntimed } from './strip/tempo-strip.mjs';   // LIB-STRIP
+import { fallbackAIds } from './research/validate.mjs';   // LIB-STRIP
 
 const fail = (row, why) => { throw new Error(`candidate: ${row.id}${row.batchFile ? ` (${row.batchFile})` : ''}: ${why}`); };
 
@@ -71,7 +73,10 @@ export function researchOf(howto, root = ROOT) {
   const card = howto.research?.card;
   if (typeof card !== 'string' || !existsSync(join(root, card))) return null;
   const c = JSON.parse(readFileSync(join(root, card), 'utf8'));
-  return Object.fromEntries(['plateFacts', 'tempo', 'topFault'].filter(k => k in c).map(k => [k, c[k]]));
+  const r = Object.fromEntries(['plateFacts', 'tempo', 'topFault'].filter(k => k in c).map(k => [k, c[k]]));
+  if (isUntimed(c.tempo)) r.tempoText = c.plate?.tempo?.text ?? null;   // LIB-STRIP (D-STRIP-H6): untimed cards only
+  if (isUntimed(c.tempo) && fallbackAIds().has(c.id)) r.tempoFallbackA = true;   // LIB-STRIP (D-STRIP-AFALL)
+  return r;
 }
 
 /** D-LIB9-AUTHORQA: authoring-time QA of a row still in drawing or review. `authoring: true` returns the same candidate
