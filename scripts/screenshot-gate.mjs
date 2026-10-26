@@ -9529,6 +9529,20 @@ if (gate.runs('LIB-ZOOM'))
   } finally { dropMirror(mirror); }
 }
 
+// F-ZOOM-INK (D-ZOOM-INK, #329): PQ-H1 counts a zoom's clipped render as ink only inside its circle. On the LIB-ZOOM
+// page (horizontal_leg_press, Mistake zoom) at 390 px, the Mistake tell moved in the built HTML
+// (tools/plates/library/zoom/ink-check.mjs PROBES): clean over clipped-away render only; 1 px apart, clean then red on
+// render ink inside the circle (zoom background and ring off), on the ring, and on plate ink outside the circle.
+if (gate.runs('F-ZOOM-INK'))
+{
+  const tag = 'F-ZOOM-INK';
+  const { zoomInk, PROBES } = await import('../tools/plates/library/zoom/ink-check.mjs');
+  const r = await zoomInk(browser);
+  if (r.rows.length !== PROBES.length) errors.push(`${tag}: ${r.rows.length} probe rows, want ${PROBES.length}`);
+  for (const p of r.problems) errors.push(`${tag}: ${p}`);
+  if (!errors.some(e => e.startsWith(`${tag}: `))) console.log(`${tag}: H1 clean as built; ${r.rows.length} probes as wanted (clipped render clean; drawn render ${r.rows.find(x => x.want === 'in').d} px, ring, plate ink red)`);
+}
+
 // LIB-7: the radial hand pairs (card LIB-7; tools/plates/library/hands/DESIGN.md §4 A5). Every drawn library hand page,
 // rendered through hands/zoom.mjs with golden B's own zoom CSS, in 5 themes at 390, 360 and 340 px: no overflow (H4), each
 // ink class's contrast >= golden B's on its 8 hands in the same job (H5), bend values off the outline (G9, real boxes),
