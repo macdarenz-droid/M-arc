@@ -39,11 +39,15 @@ const MEASURE = ([id, joints, mode, geo]) => {
     if (skip(el) || !shown(el)) continue;
     const cs = getComputedStyle(el), sw = cs.stroke !== 'none' ? parseFloat(cs.strokeWidth) || 0 : 0, fill = cs.fill !== 'none';
     const g = el.tagName === 'use' ? document.getElementById(el.getAttribute('href').slice(1)) : el;   // by id: part ids carry dots (thigh.l, eq1.dumbbell.0-0)
-    if (g) geoms.push({ g, sw, fill });
+    // LIB-ZOOM (D-ZOOM-INK, F-ZOOM-INK): a zoom's magnified render is clipped to its circle, so its geometry is ink only
+    // inside that circle (its ring); outside, nothing of it is drawn
+    const zr = el.closest('.pz-in')?.closest('.plate-zoom')?.querySelector('.pz-ring');
+    const clip = zr ? { cx: +zr.getAttribute('cx'), cy: +zr.getAttribute('cy'), r: +zr.getAttribute('r') } : null;
+    if (g) geoms.push({ g, sw, fill, clip });
   }
   const pt = svg.createSVGPoint();
   const onInk = b => { for (let y = Math.ceil(b.y0); y <= b.y1; y++) for (let x = Math.ceil(b.x0); x <= b.x1; x++) { pt.x = x; pt.y = y;
-    for (const { g, sw, fill } of geoms) { if (fill && g.isPointInFill(pt)) return [x, y]; if (sw > 0) { const old = g.style.strokeWidth; g.style.strokeWidth = sw; const hit = g.isPointInStroke(pt); g.style.strokeWidth = old; if (hit) return [x, y]; } } } return null; };
+    for (const { g, sw, fill, clip } of geoms) { if (clip && Math.hypot(x - clip.cx, y - clip.cy) > clip.r) continue; if (fill && g.isPointInFill(pt)) return [x, y]; if (sw > 0) { const old = g.style.strokeWidth; g.style.strokeWidth = sw; const hit = g.isPointInStroke(pt); g.style.strokeWidth = old; if (hit) return [x, y]; } } } return null; };
   const jointPts = joints ?? [...svg.querySelectorAll('.pose-end circle.joint')].map(c => ({ k: 'mark', p: [+c.getAttribute('cx'), +c.getAttribute('cy')] }));
   if (geo) for (const l of labels) { l.ink = onInk(l.text); l.joints = jointPts.filter(j => j.p[0] > l.text.x0 - 3 && j.p[0] < l.text.x1 + 3 && j.p[1] > l.text.y0 - 3 && j.p[1] < l.text.y1 + 3).map(j => j.k); }
   // figure coverage (normal figure only): union bbox of the start, ghost and end layers
