@@ -52,7 +52,9 @@ async function mutated(fn: string, arg: any = null) {
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
 const withPair = (pair: any, extra: any = {}) => ({ ...rr.default, tempo: TEMPO, zoom: { view: 'mistake', k: 3, pair, ...extra } });
-const pairKeys = (spec: any) => qz.pairProblems(spec, E, E.renderPlate(spec, { id: 'x', mistake: false }).report).map((p: any) => p.key);
+const pairOf = (spec: any) => qz.pairProblems(spec, E, E.renderPlate(spec, { id: 'x', mistake: false }).report);
+const pairKeys = (spec: any) => pairOf(spec).map((p: any) => p.key);
+const pairTexts = (spec: any) => pairOf(spec).map((p: any) => p.text);
 
 describe('F-ZOOM-2 A1: the pair field', () => {
   const p = [1, 2, 3], q = [1, 2, 4];
@@ -130,10 +132,17 @@ describe('F-ZOOM-2 A5, A7: the pair row and the not-needed line', { timeout: T }
   });
   it('A5 red: flat at the hex centre, flat moved 1 mm, flat a Mistake-only vertex, turned a vertex that is not the anchor', () => {
     const [flat, turned] = PAIR, row = ['H3.zoom:pair:mistake'];
+    const FLAT = ['zoom.pair flat is not a drawn vertex of the end pose'], ANCHOR = ['zoom.pair turned is not the Mistake anchor of a Mistake tell'];
     expect(pairKeys(withPair([rr.DB.l, turned]))).toEqual(row);
-    expect(pairKeys(withPair([[flat[0], flat[1], flat[2] + 0.001], turned]))).toEqual(row);
-    expect(pairKeys(withPair([rr.M_HEX[3], turned]))).toEqual(row);
-    expect(pairKeys(withPair([flat, rr.M_HEX[1]]))).toEqual(row);   // drawn in the Mistake pose, not the tell's anchor
+    expect(pairTexts(withPair([rr.DB.l, turned]))).toEqual(FLAT);
+    expect(pairTexts(withPair([[flat[0], flat[1], flat[2] + 0.001], turned]))).toEqual(FLAT);
+    expect(pairTexts(withPair([rr.M_HEX[3], turned]))).toEqual(FLAT);
+    expect(pairTexts(withPair([flat, rr.M_HEX[1]]))).toEqual(ANCHOR);   // drawn in the Mistake pose, not the tell's anchor
+    expect(pairTexts(withPair([flat, rr.M_HEX[1]], { tell: 'corner' }))).toEqual(['zoom.pair turned is not the Mistake anchor of the tell corner']);
+    // turned on the tell's anchor, with that anchor moved 1 mm off the drawn hex: only the drawn-vertex rule catches it
+    const off = [turned[0], turned[1], turned[2] + 0.001];
+    const offTell = { ...withPair([flat, off]), mistake: { ...rr.default.mistake, tells: rr.default.mistake.tells.map((t: any) => ({ ...t, anchor: off })) } };
+    expect(pairTexts(offTell)).toEqual(['zoom.pair turned is not a drawn vertex of the Mistake pose']);
     expect(qz.pairProblems(withPair(PAIR), E, null).map((p: any) => p.key)).toEqual(row);   // no render: red, never skipped
   });
   it('A5 red in the full QA: a pair point off a drawn vertex', async () => {
