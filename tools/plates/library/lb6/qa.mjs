@@ -61,6 +61,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   console.log(`LB6 plates page sha256 ${sha}`);
   for (const line of tableOf(reports)) console.log(line);
   const bad = flagProblems(reports);
-  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the ruled set (F5 3.57 on all; F2 machine_crunch)');
+  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the ruled set (F5 3.57 on all; F2 machine_crunch and cable_chest_press)');
   if (bad.length || reports.some(r => HARD.some(h => !r.hard[h].pass))) process.exit(1);
 }
