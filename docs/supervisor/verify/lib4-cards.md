@@ -4387,3 +4387,19 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 **D-LIB21-SECS** (#326 6405118542): side_plank holds `30–60`, c9's own string and the target its tempo.text names.
 
 **D-LIB21-SUPERMANZOOM** (#326): superman gets one normal-view zoom whose source ring holds the whole Trace, with k in 1.5–4 so that the clipped Trace reaches 22.11 px at zoom scale.
+
+## 42. Held pairing markers (D-PLATEFACTS-HELD, 2026-10-26 ~00:10 UTC; #309 6405234751)
+**Found.** On main `9c3287cd` with LB10 #305 and #323 added, validate.mjs's "plateFacts and tempo go in together or not at all" fires for 8 cards: burpee, cable_rear_delt_fly, farmer_s_carry, renegade_row, sled_pull, medicine_ball_slam, sled_push and jumping_jacks. These are ruled hold markers (NOSECS: D-LIB14-NOSECS, D-LIB22-SECS; D-LIB22-JJ), and lb7:265 and lb10:58 pin them as expected. The over-broad claim "every card validates" in #323's test and #309's A6 cannot hold.
+
+**Ruling.**
+- Both tests pin the markers exactly, from a shared data fixture `tests/howto/fixtures/held-pairing.json` that lists the 8 ids with their rulings:
+  - a listed id gives exactly the one pairing message;
+  - every other card gives `[]`;
+  - a listed id missing on a tree is skipped;
+  - a lane that lifts an id removes it from the fixture in the same commit.
+- Mutations are red: an extra tempo, a timed card losing its tempo, a listed id with a second problem, a fixture id dropped, and a ruling string missing.
+- Nothing else changes: validate.mjs, the cards, rows.json and the lb7/lb10 blocks stay as they are.
+
+**Rejected:**
+- Writing word tempos onto the cards now, because that would lift held lines outside their lanes (D-STRIP-NOTSCOPE).
+- Having the validator accept "no tempo" for strip ids, because that would turn the lb7/lb10 hold pins red.
