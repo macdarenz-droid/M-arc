@@ -4379,7 +4379,8 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
         let cm: number;
         if (it.pts && it.pts.every((p: number[]) => Math.abs(p[0]!) > 1e-9)) { O ??= outlinesOf(q); cm = Math.max(0, -padClearance(sk, O, it.pts) * 100); }
         else {
-          const polys = eng.PRIMITIVES[it.type](it, cam).filter((x: any) => x.poly).map((x: any) => x.poly as number[][]);
+          // a roller pad's bracket to its pivot (kneePad postTo, drawn first) is a frame tube, so only the roller bears
+          const polys = eng.PRIMITIVES[it.type](it, cam).filter((x: any, j: number) => x.poly && !(it.type === 'kneePad' && it.postTo && j === 0)).map((x: any) => x.poly as number[][]);
           const a = polys.flatMap(dens).reduce((m: number, p: number[]) => Math.max(m, -outside(shapes, p)), 0);
           const b = shapes.flatMap(dens).reduce((m: number, p: number[]) => Math.max(m, -outside(polys, p)), 0);
           cm = Math.max(a, b) * 100 / cam.pxm;
@@ -4496,6 +4497,19 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
         expect(rig.map(kindOf)).toEqual(RULED_KEEP[id]!.map(k => (['post', 'handle', 'beam'].includes(k) ? 'bar' : k)));
       }
     });
+    it('D-LIB18-LEGCURL-A condition 3: the placeholders draw nothing: a second, different placeholder seat/back leaves every kept item byte-identical; mutation: keeping the seat post (it reads the placeholder) is red', async () => {
+      const LC = await import(/* @vite-ignore */ lib('eq/legCurlMachine.mjs'));
+      const keptWith = (id: string, keep: number[], seat: number[], back: any) => {
+        const lm = lmOf(S[id], 'end'), ap = M[id].anklePadOf(lm);   // the spec's own pivot and ankle pad; the other inputs fixed
+        const all = LC.legCurlMachine({ pivot: M[id].PIVOT, ankle: ap.at, ankleN: ap.normal, thigh: id === 'standing_leg_curl' ? [0, 0.6, 0.06] : null, thighN: [0, 0, 1], seat, back, handle: [0, 0.5, 0.5], base: [-0.5, 0.5] });
+        return JSON.stringify(keep.map(k => all[k]));
+      };
+      const A = [[0, 0.43, 0.2], null] as const, B = [[0, 0.9, -1.3], [[0, 1.2, -0.4], [0, 0.6, -0.5]]] as const;
+      for (const id of IDS2) {
+        expect(keptWith(id, M[id].KEEP, [...A[0]], A[1]), id).toBe(keptWith(id, M[id].KEEP, [...B[0]], B[1]));
+        expect(keptWith(id, [...M[id].KEEP, 5], [...A[0]], A[1]), `${id} + seat post`).not.toBe(keptWith(id, [...M[id].KEEP, 5], [...B[0]], B[1]));
+      }
+    });
     it('mutations: KEEP with the seat slot added, and a spec that draws the composer\'s seat, are red', () => {
       expect(keepProblems('lying_leg_curl', [0, 1, 2, 4, 7, 8, 9], [])).toEqual(['lying_leg_curl: KEEP lever,anklePad,boss,seat,post,handle,beam']);
       expect(keepProblems('standing_leg_curl', CFG.standing_leg_curl!.keep, ['bar', 'seat'])).toEqual(['standing_leg_curl: draws a seat']);
@@ -4592,7 +4606,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
         });
         it('the thighs bear on the drawn thigh pad (c2): the pad touches both thighs\' outline (gap within ±0.5 cm) in every pose', () => {
           const cam = camOf(s()), cm = CM(s());
-          const ok = (sp: any) => POSES.every(p => { const pad = polysOf(sp, p, E.thigh!, cam, { mistake: p === 'mistake' }), th = shapesIn(sp, p).filter((x: any) => /^thigh\./.test(x.key)).map((x: any) => x.poly);
+          const ok = (sp: any) => POSES.every(p => { const pad = polysOf(sp, p, E.thigh!, cam, { mistake: p === 'mistake' }).slice(1, 2), th = shapesIn(sp, p).filter((x: any) => /^thigh\./.test(x.key)).map((x: any) => x.poly);
             return pad.length > 0 && Math.abs(gapOf(pad, th)) <= 0.5 * cm; });
           expect(ok(s())).toBe(true);
           expect(ok(shifted(s(), E.thigh!, [0, 0, 0.03]))).toBe(false);          // mutation: the pad 3 cm forward off the thighs -> red
