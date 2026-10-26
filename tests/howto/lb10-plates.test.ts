@@ -1576,28 +1576,32 @@ describe('LIB-22 resume: the zoom circles (D-LIBZOOM-EXTEND, lib4-cards §41; DE
   // drawn circle; the tell deviation x k). k rule (section 21): the smallest k in steps of 0.5 from 1.5 whose
   // zoom-scale value clears its bar by at least 10 %.
   const ZOOMS: Record<string, { view: string; k: number }> = {
-    sled_pull: { view: 'normal', k: 1.5 }, burpee: { view: 'mistake', k: 2 }, bear_crawl: { view: 'normal', k: 4 },
+    sled_pull: { view: 'normal', k: 3 }, burpee: { view: 'mistake', k: 2 }, bear_crawl: { view: 'normal', k: 4 },
   };
   let zi: any, qz: any, env: any;
   beforeAll(async () => {
     [zi, qz] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     env = pins().envelope;
   });
-  /** { value, bar, holds }: the zoom-scale measure of `spec` at its zoom, its bar, and whether the source ring holds
-   *  the whole trace (normal) or the tell anchor in both poses (Mistake), as qa/zoom.mjs H3.zoom:content asks. */
+  /** { value, bar, holds, fits }: the zoom-scale measure of `spec` at its zoom, its bar, whether the source ring holds
+   *  the whole trace (normal) or the tell anchor in both poses (Mistake), as qa/zoom.mjs H3.zoom:content asks, and
+   *  whether the source ring closes inside the plate frame (D-LIB22-RINGFIT, #331 6415452903 item 4). */
   const measure = (spec: any) => {
     const z = zi.zoomOf(spec), ring = { c: z.circle.c, r: z.circle.r }, src = z.src;
     const inSrc = (p: number[]) => Math.hypot(p[0]! - src.c[0], p[1]! - src.c[1]) <= src.r - 1;
+    const fits = [0, 1].every(i => src.c[i] - src.r >= 0 && src.c[i] + src.r <= zi.ZOOM.size);
     return z.view === 'normal'
-      ? { value: qz.clippedTrace(z.svg, ring), bar: env.traceLenMin, holds: z.trace.every(inSrc) }
-      : { value: z.fault.d * z.k, bar: env.deviationMin, holds: [z.fault.end, z.fault.mistake].every(inSrc) };
+      ? { value: qz.clippedTrace(z.svg, ring), bar: env.traceLenMin, holds: z.trace.every(inSrc), fits }
+      : { value: z.fault.d * z.k, bar: env.deviationMin, holds: [z.fault.end, z.fault.mistake].every(inSrc), fits };
   };
+  const ok = (m: any) => m.value >= 1.1 * m.bar && m.holds && m.fits;
   const ruleProblems = (id: string, spec: any) => {
     const out: string[] = [], m = measure(spec);
     if (JSON.stringify(spec.zoom) !== JSON.stringify(ZOOMS[id])) out.push(`${id}: zoom ${JSON.stringify(spec.zoom)}`);
     if (!(m.value >= 1.1 * m.bar)) out.push(`${id}: ${m.value.toFixed(1)} px under the bar + 10 %`);
     if (!m.holds) out.push(`${id}: the source ring does not hold the motion`);
-    if (spec.zoom.k > zi.ZOOM.kMin) { const lower = measure({ ...spec, zoom: { ...spec.zoom, k: spec.zoom.k - 0.5 } }); if (lower.value >= 1.1 * lower.bar) out.push(`${id}: k ${spec.zoom.k - 0.5} already clears`); }
+    if (!m.fits) out.push(`${id}: the source ring is clipped by the plate frame`);
+    for (let k = zi.ZOOM.kMin; k < spec.zoom.k; k += 0.5) if (ok(measure({ ...spec, zoom: { ...spec.zoom, k } }))) { out.push(`${id}: k ${k} already clears`); break; }
     return out;
   };
   it('each lifted row carries its ruled zoom, clears its bar by 10 % at the smallest such k, and holds its motion in the source ring', async () => {
@@ -1621,11 +1625,96 @@ describe('LIB-22 resume: the zoom circles (D-LIBZOOM-EXTEND, lib4-cards §41; DE
     const m = measure({ ...S.jump_rope, zoom: { view: 'normal', k: zi.ZOOM.kMax } });
     expect(m.value).toBeLessThan(env.traceLenMin);
   });
+  it('D-LIB22-RINGFIT mutation: sled_pull at k 1.5 and 2.5 (its source ring runs past the plate\'s bottom edge) is red', () => {
+    for (const k of [1.5, 2.5]) expect(ruleProblems('sled_pull', { ...S.sled_pull, zoom: { view: 'normal', k } }), String(k)).toContain('sled_pull: the source ring is clipped by the plate frame');
+  });
   it('mutations: bear_crawl at k 3.5 (under the margin), sled_pull at k 1 (field), burpee at k 2.5 (not the smallest), a zoom on the wrong view are red', async () => {
     expect(ruleProblems('bear_crawl', { ...S.bear_crawl, zoom: { view: 'normal', k: 3.5 } })).toEqual(['bear_crawl: zoom {"view":"normal","k":3.5}', 'bear_crawl: 24.1 px under the bar + 10 %']);
     expect(zi.zoomFieldProblems({ view: 'normal', k: 1 })).toEqual(['zoom.k 1 is outside 1.5-4']);
     expect(ruleProblems('burpee', { ...S.burpee, zoom: { view: 'mistake', k: 2.5 } })).toEqual(['burpee: zoom {"view":"mistake","k":2.5}', 'burpee: k 2 already clears']);
     await yieldNow();
     expect(ruleProblems('sled_pull', { ...S.sled_pull, zoom: { view: 'mistake', k: 1.5 } })[0]).toBe('sled_pull: zoom {"view":"mistake","k":1.5}');
+  });
+});
+
+describe('LIB-22 panel fix (mx2, #331 6415452903): sled_pull items 1-4, medicine_ball_slam item 6', { timeout: T }, () => {
+  const sp = () => S.sled_pull, K = () => M.sled_pull;
+  const eqKeys = (spec: any, pose: string, parts: string[]) => itemsIn(spec, pose).items.filter((i: any) => parts.includes(i.part)).map((i: any) => JSON.stringify(i.pts ?? i.surface ?? i));
+  /** Item 1: in the Mistake the sled, the rope, the coil and both fists are where the end has them; only the body pitches
+   *  back (hips forward, shoulders back), the near shoulder REACH from its fist (the end's elbow bend). */
+  const stayProblems = (spec: any) => {
+    const out: string[] = [], e = lmOf(spec, 'end'), m = lmOf(spec, 'mistake');
+    for (const part of ['sled', 'rope', 'coil']) if (JSON.stringify(eqKeys(spec, 'mistake', [part])) !== JSON.stringify(eqKeys(spec, 'end', [part]))) out.push(`${part} moves`);
+    for (const g of ['grip.l', 'grip.r']) if (d3(e[g], m[g]) > 0.005) out.push(`${g} moves ${(d3(e[g], m[g]) * 100).toFixed(1)} cm`);
+    if (!(m.hips[2] > e.hips[2] && m.shoulders[2] < e.shoulders[2])) out.push('the body does not pitch back (hips forward, shoulders back)');
+    if (Math.abs(d3(m['shoulder.r'], e['grip.r']) - K().info.REACH) > 0.005) out.push('the near shoulder is not REACH from its fist');
+    return out;
+  };
+  it('item 1: sled, rope, coil and fists stay put in the Mistake; the body pitches back; no red rope (the rope items are byte-equal)', () => {
+    expect(stayProblems(sp())).toEqual([]);
+  });
+  it('item 1 mutation: the Mistake arms keeping their end joint angles (no reach), so the fists move with the body, is red', () => {
+    const s = sp(), bad = { ...s, mistake: { ...s.mistake, pose: { ...s.mistake.pose, reach: { l: null, r: null } } } };
+    expect(stayProblems(bad).some(p => /grip\.(l|r) moves/.test(p))).toBe(true);
+  });
+  /** Item 2: "Torso pitched back" ends on the Mistake figure's back outline (within 3 px of the Mistake torso); "Quarter
+   *  squat" ends on the front (far, l) knee. */
+  const anchorAt = (spec: any, a: any, pose: string) => qaEng.resolvePoint(qaEng.anchorInPose(a, pose), pose, qaEng.poseLandmarks(Eng(), spec).lm, qaEng.cameraOf(spec, rep(spec)));
+  const leanProblems = (spec: any) => {
+    const t = spec.mistake.tells.find((x: any) => x.key === 'lean'), p = anchorAt(spec, t.anchor, 'mistake');
+    const torso = shapesIn(spec, 'mistake').filter((x: any) => x.key === 'torso').map((x: any) => x.poly);
+    return Math.abs(outside(torso, p)) <= 3 ? [] : [`lean ends ${outside(torso, p).toFixed(1)} px from the Mistake torso outline`];
+  };
+  it('item 2: "Torso pitched back" ends on the Mistake back; mutation: anchored on the Mistake head is red', () => {
+    expect(leanProblems(sp())).toEqual([]);
+    const s = sp(), bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => (x.key === 'lean' ? { ...x, anchor: { at: 'head', pose: 'mistake' } } : x)) } };
+    expect(leanProblems(bad).length).toBe(1);
+  });
+  /** Item 3: the tail hangs in a soft curve (its centre line at least TAIL_SAG / 2 off its chord); the coil is
+   *  COIL_TURNS flattened loops on the floor, each COIL_D long and LOOP_H high, overlapping. */
+  const coilProblems = (items: any[], sz = K().SIZES) => {
+    const out: string[] = [], tail = items.filter((i: any) => i.part === 'rope')[2].pts as number[][];
+    const n = tail.length, a = tail[0]!, b = tail[Math.floor(n / 2) - 1]!, mid = tail[Math.floor(n / 4)]!;
+    const u = [0, b[1]! - a[1]!, b[2]! - a[2]!], L = Math.hypot(u[1]!, u[2]!), off = Math.abs((mid[1]! - a[1]!) * u[2]! - (mid[2]! - a[2]!) * u[1]!) / L;
+    if (!(off >= sz.TAIL_SAG / 2)) out.push(`tail bow ${(off * 100).toFixed(1)} cm < ${sz.TAIL_SAG * 50} cm`);
+    const loops = items.filter((i: any) => i.part === 'coil');
+    if (loops.length !== sz.COIL_TURNS) out.push(`${loops.length} loops`);
+    const ext = loops.map((l: any) => { const zs = l.pts.map((p: number[]) => p[2]), ys = l.pts.map((p: number[]) => p[1]); return { z0: Math.min(...zs), z1: Math.max(...zs), y0: Math.min(...ys), y1: Math.max(...ys) }; });
+    for (const [i, e] of ext.entries()) {
+      if (Math.abs(e.z1 - e.z0 - sz.COIL_D) > 1e-6 || Math.abs(e.y1 - e.y0 - sz.LOOP_H) > 1e-6 || Math.abs(e.y0) > 1e-6) out.push(`loop ${i}: ${JSON.stringify(e)}`);
+      if (i && !(ext[i - 1]!.z1 > e.z0 && e.z1 > ext[i - 1]!.z0)) out.push(`loop ${i} does not overlap loop ${i - 1}`);
+    }
+    return out;
+  };
+  it('item 3: the tail hangs in a soft curve onto three flattened, overlapping loops on the floor', () => {
+    expect(coilProblems(itemsIn(sp(), 'end').items)).toEqual([]);
+  });
+  it('item 3 mutations: a straight tail (sag 0) and loops a full COIL_D apart are red', () => {
+    const z = K().SIZES;
+    const items = itemsIn(sp(), 'end').items;
+    expect(coilProblems(items, { ...z, TAIL_SAG: 0.2 })[0]).toMatch(/^tail bow/);
+    let k = 0;
+    const spread = items.map((i: any) => (i.part === 'coil' ? { ...i, pts: i.pts.map((p: number[]) => [p[0], p[1], p[2] + k * z.COIL_D]), _: k++ } : i));
+    expect(coilProblems(spread).some(p => /does not overlap/.test(p))).toBe(true);
+  });
+  /** Item 6: the medicine ball slam Trace is one smooth curve: no turn between consecutive samples of the hand's path
+   *  above SMOOTH deg. The old 5-key path (the same t as now: via keys 3, 7, 11, 15, 19) has corners. */
+  const SMOOTH = 8;
+  const turnMax = (spec: any) => {
+    // the drawn path: the engine's samples with its end trims (plate.mjs, spec.trace.trim) removed
+    const z = (globalThis as any).__zi, cam = qaEng.cameraOf(spec, rep(spec)), all = z.tracePath(spec, cam), [t0, t1] = spec.trace.trim ?? [8, 12];
+    const g0 = all[0], g1 = all[all.length - 1], dd = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!);
+    const p = all.filter((q: number[]) => dd(q, g0) > t0 && dd(q, g1) > t1), ang = (a: number[], b: number[]) => Math.atan2(b[1]! - a[1]!, b[0]! - a[0]!);
+    let m = 0; for (let i = 2; i < p.length; i++) { let d = Math.abs(ang(p[i - 1], p[i]) - ang(p[i - 2], p[i - 1])) * 180 / Math.PI % 360; if (d > 180) d = 360 - d; m = Math.max(m, d); }
+    return m;
+  };
+  beforeAll(async () => { (globalThis as any).__zi = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); });
+  it('item 6: the Trace turns smoothly (every sample turn under 8 deg); mutation: the old five via keys give a corner', () => {
+    const s = S.medicine_ball_slam, t = turnMax(s);
+    console.log(`LIB-22 item 6: medicine_ball_slam Trace max turn ${t.toFixed(1)} deg`);
+    expect(t).toBeLessThan(SMOOTH);
+    const v = s.poses.via, five = { ...s, poses: { ...s.poses, via: [3, 7, 11, 15, 19].map(i => v[i]) } };
+    expect(turnMax(five)).toBeGreaterThanOrEqual(SMOOTH);
+    expect(five.poses.via[2]).toBe(v[11]);   // the ghost (t 0.5) is the same pose
   });
 });

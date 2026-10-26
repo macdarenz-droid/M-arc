@@ -637,7 +637,7 @@ k rule: the smallest k in steps of 0.5 from 1.5 whose zoom-scale value clears it
 
 | id | blocker | on main | work | zoom region |
 |---|---|---|---|---|
-| sled_pull | NOSECS; S2 Trace 10.1 px | strip row (Walk: Quick, c3); LIB-ZOOM | tempo onto card and spec (tempoOf), fixture lift, zoom, QA, row | normal view, k 1.5: the stepping foot's path (`ball.r`), whole trace in the source ring (16.0 ≤ 33.7 px); 26.3 px ≥ 22.11 |
+| sled_pull | NOSECS; S2 Trace 10.1 px | strip row (Walk: Quick, c3); LIB-ZOOM | tempo onto card and spec (tempoOf), fixture lift, zoom, QA, row | normal view, k 3 (D-LIB22-RINGFIT, panel mx2 item 4: k 1.5-2.5 run the source ring past the plate's bottom edge): the stepping foot's path (`ball.r`), whole trace in the source ring (16.0 ≤ 16.3 px); 74.9 px ≥ 22.11 |
 | burpee | NOSECS; S2 Mistake 7.1 px | strip row (Squat down: Controlled; 3 blank, c24); LIB-ZOOM | tempo, fixture lift, zoom, QA, row | Mistake view, k 2: the `landing` tell (`knee.r`, end → mistake); 14.2 px ≥ 11.39 |
 | bear_crawl | S2 Trace 10 px | LIB-ZOOM | zoom, QA, row | normal view, k 4: the hand's step (`wrist.r`); 29.3 px ≥ 22.11 (k 3.5 gives 24.1, under the 10 % margin) |
 | farmer_s_carry | NOSECS | strip row (Walk: Controlled, c4) | tempo, fixture lift; the plate stays held (below) | none (H3 passes: 51.2 / 28.0 px) |
@@ -664,3 +664,14 @@ Layout fixes made for it (labels only; no body part, equipment item, fault or fa
 - medicine_ball_slam: Mistake "Hips and knees straight" → "Legs straight" (H8: 1-3 words; the cue keeps hips and knees);
   "Flat back" box {40, 168} → {56, 136} (H4.overlap with "Hips and knees"; at {40, 136} its leader was 86.2 px, past F3's
   82.3, so it moved in to 78.4 px).
+
+Panel mx2 fix round (#331 6415452903):
+- sled_pull item 1: the Mistake keeps the end's sled, rope, coil and fists; only the body pitches back (M_TILT, M_ARCH),
+  the near shoulder REACH from its fist (M_Z, M_Y solved again); no red rope.
+- sled_pull item 2: "Torso pitched back" ends on the Mistake back (backUpper + [-5, -12] px), box {8, 136}, three lines;
+  "Shoulders behind hips" box {24, 176} → {8, 208}. "Quarter squat" on the front knee: held for a ruling (#331 6415925685 B); it stays on the near knee until then.
+- sled_pull item 3: the tail hangs with TAIL_SAG onto COIL_TURNS flattened loops (COIL_D by LOOP_H, LOOP_DZ apart).
+- sled_pull item 4: zoom k 1.5 → 3 (D-LIB22-RINGFIT).
+- burpee item 5: held for a ruling (#331 6415925685 A).
+- medicine_ball_slam item 6: VIA_N 5 → 23 on the same arc; the ghost at t 0.5 is the same pose, and the hand's path is one
+  smooth curve (every drawn sample turn under 8 deg).

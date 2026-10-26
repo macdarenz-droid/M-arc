@@ -28,7 +28,7 @@ import { medBall, MED_BALL, MED_BALL_ITEMS } from '../eq/medBall.mjs';
 
 const H = 1.75, R = Math.PI / 180;
 export const SIZES = Object.freeze({ PX_PER_M: 134, FOOT_X: 0.13, TOE_OUT: 10, HEEL_UP: 45, START_KNEE: 2, BALL_KG: 4.5, BODY_KG: 75, END_ARM: 0.97,
-  VIA_N: 5, M_INCL: 10, M_FLEX: 30, BALL_DZ: 0.07 });
+  VIA_N: 23, M_INCL: 10, M_FLEX: 30, BALL_DZ: 0.07 });
 const { FOOT_X, TOE_OUT, HEEL_UP, START_KNEE, BALL_KG, BODY_KG, END_ARM, VIA_N, M_INCL, M_FLEX, BALL_DZ } = SIZES;
 const ARM = (WINTER.upperArm + WINTER.forearm + REF.gripOff) * H;
 const BALL_R = MED_BALL.d / 2, GRIP_X = BALL_R;
