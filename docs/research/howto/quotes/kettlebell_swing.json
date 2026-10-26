@@ -1,0 +1,623 @@
+{
+  "id": "kettlebell_swing",
+  "checked": "2026-10-22",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "mo-kb-swing",
+      "text": "Stand with feet slightly wider than shoulder-width, kettlebell on the floor about a foot in front of you. Hinge at the hips to grip the handle with both hands, tilting the bell toward you.",
+      "status": "verbatim",
+      "closest": "Stand with feet slightly wider than shoulder-width, kettlebell on the floor about a foot in front of you. Hinge at the hips to grip the handle with both hands, tilting the bell toward you.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "hk-kb-swing",
+      "text": "Place your feet about a foot (0.3 m) behind the kettlebell. Take a shoulder-width stance behind the kettlebell with your toes pointed slightly outward.",
+      "status": "verbatim",
+      "closest": "Place your feet about a foot (0.3 m) behind the kettlebell. Take a shoulder-width stance behind the kettlebell with your toes pointed slightly outward.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "bb-kb-swing",
+      "text": "Start with your feet slightly wider than hip-width apart. Keep your toes forward. Place the kettlebell on the floor 12 to 18 inches in front of you. Hinge down toward the bell.",
+      "status": "verbatim",
+      "closest": "Start with your feet slightly wider than hip-width apart. Keep your toes forward. Place the kettlebell on the floor 12 to 18 inches in front of you. Hinge down toward the bell.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "hk-kb-swing",
+      "text": "Hand spacing: Place both hands next to each other on the handle of the kettlebell.",
+      "status": "verbatim",
+      "closest": "Hand spacing: Place both hands next to each other on the handle of the kettlebell.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "hk-kb-swing",
+      "text": "Grip: Use a double overhand grip (pronate both hands).",
+      "status": "verbatim",
+      "closest": "Grip: Use a double overhand grip (pronate both hands).",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "nike-kb-swing",
+      "text": "Hinge at your hips and grip the kettlebell with both hands, palms facing down.",
+      "status": "verbatim",
+      "closest": "Hinge at your hips and grip the kettlebell with both hands, palms facing down.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "mo-kb-swing",
+      "text": "Hinge at the hips to grip the handle with both hands, tilting the bell toward you.",
+      "status": "verbatim",
+      "closest": "Hinge at the hips to grip the handle with both hands, tilting the bell toward you.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "hk-kb-swing",
+      "text": "Tilt the handle toward you, allowing it to become an extension of your arms.",
+      "status": "verbatim",
+      "closest": "Tilt the handle toward you, allowing it to become an extension of your arms.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "nike-kb-swing",
+      "text": "Have an easy hook grip as opposed to a crush grip so you don't overgrip, which can cause stress on the wrists and forearms.",
+      "status": "verbatim",
+      "closest": "Have an easy hook grip as opposed to a crush grip so you don't overgrip, which can cause stress on the wrists and forearms.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "pg-kb-swing",
+      "text": "Your grip should be firm, but not overly tight, to prevent unnecessary tension in the shoulders and neck.",
+      "status": "verbatim",
+      "closest": "Your grip should be firm, but not overly tight, to prevent unnecessary tension in the shoulders and neck.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "mo-kb-swing",
+      "text": "Hike the kettlebell back between your legs high into the groin, keeping forearms close to thighs.",
+      "status": "verbatim",
+      "closest": "Hike the kettlebell back between your legs high into the groin, keeping forearms close to thighs.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "hk-kb-swing",
+      "text": "Target the kettlebell to the small triangle above your knees.",
+      "status": "verbatim",
+      "closest": "Target the kettlebell to the small triangle above your knees.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-kb-swing",
+      "text": "From the set up position, contract your lats and sweep the kettlebell back between your legs. Your knees can bend slightly. Keep the weight in your hips and load your hamstrings.",
+      "status": "verbatim",
+      "closest": "From the set up position, contract your lats and sweep the kettlebell back between your legs. Your knees can bend slightly. Keep the weight in your hips and load your hamstrings.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "sl-kb-swing",
+      "text": "The kettlebell swing is primarily an exercise for your glutes, back, and posterior thighs, and therefore you shouldn’t bend your knees more than just slightly.",
+      "status": "verbatim",
+      "closest": "The kettlebell swing is primarily an exercise for your glutes, back, and posterior thighs, and therefore you shouldn’t bend your knees more than just slightly.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "nike-kb-swing",
+      "text": "In a hip hinge, as when doing a kettlebell swing, the knees only bend a little bit — the majority of the movement happens in the hips.",
+      "status": "verbatim",
+      "closest": "In a hip hinge, as when doing a kettlebell swing, the knees only bend a little bit — the majority of the movement happens in the hips.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "mf-kb-swing",
+      "text": "Bend your knees slightly while pushing your hips backward, keeping chest lifted, and hinging your torso until it is parallel with the floor.",
+      "status": "verbatim",
+      "closest": "Bend your knees slightly while pushing your hips backward, keeping chest lifted, and hinging your torso until it is parallel with the floor.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "mf-kb-swing",
+      "text": "Avoid bending forward at the torso. Instead, move by hinging at the hips.",
+      "status": "verbatim",
+      "closest": "Avoid bending forward at the torso. Instead, move by hinging at the hips.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "mo-kb-swing",
+      "text": "Squatting instead of hinging",
+      "status": "verbatim",
+      "closest": "Squatting instead of hinging",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "mo-kb-swing",
+      "text": "Explosively drive hips forward and squeeze glutes to propel the bell forward to chest height.",
+      "status": "verbatim",
+      "closest": "Explosively drive hips forward and squeeze glutes to propel the bell forward to chest height.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "mo-kb-swing",
+      "text": "Keep arms straight and loose; let the momentum of the hips move the weight.",
+      "status": "verbatim",
+      "closest": "Keep arms straight and loose; let the momentum of the hips move the weight.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "sl-kb-swing",
+      "text": "Remember that it is the power from your hip and back that lifts the kettlebell, not your arms.",
+      "status": "verbatim",
+      "closest": "Remember that it is the power from your hip and back that lifts the kettlebell, not your arms.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "bb-kb-swing",
+      "text": "When the kettlebell reaches its apex, your body should be vertically stacked with your ankles, knees, hips, and shoulders all in alignment. Focus on bracing your core at the top.",
+      "status": "verbatim",
+      "closest": "When the kettlebell reaches its apex, your body should be vertically stacked with your ankles, knees, hips, and shoulders all in alignment. Focus on bracing your core at the top.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "mo-kb-swing",
+      "text": "Bell travels from behind the hips to roughly chest height; hips reach full extension (standing plank) at the top.",
+      "status": "verbatim",
+      "closest": "Bell travels from behind the hips to roughly chest height; hips reach full extension (standing plank) at the top.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "hk-kb-swing",
+      "text": "Stand up with the kettlebell until you are fully erect, squeezing your gluteal muscles hard, pulling your kneecaps up strongly, and bracing your abdominal muscles hard.",
+      "status": "verbatim",
+      "closest": "Stand up with the kettlebell until you are fully erect, squeezing your gluteal muscles hard, pulling your kneecaps up strongly, and bracing your abdominal muscles hard.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "sl-kb-swing",
+      "text": "Try to swing the kettlebell to about chest height.",
+      "status": "verbatim",
+      "closest": "Try to swing the kettlebell to about chest height.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "hk-kb-swing",
+      "text": "The kettlebell will swing up to approximately your chest level.",
+      "status": "verbatim",
+      "closest": "The kettlebell will swing up to approximately your chest level.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "nike-kb-swing",
+      "text": "When starting, stick with the traditional Russian technique of swinging up to shoulder height instead of overhead.",
+      "status": "verbatim",
+      "closest": "When starting, stick with the traditional Russian technique of swinging up to shoulder height instead of overhead.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "mo-kb-swing",
+      "text": "Let gravity pull the bell down, waiting until the last moment to hinge hips back.",
+      "status": "verbatim",
+      "closest": "Let gravity pull the bell down, waiting until the last moment to hinge hips back.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "hk-kb-swing",
+      "text": "Keep your vertical plank position until the last moment, and then suddenly perform a hip hinge, continuing to bring the kettlebell between your legs near the top of the small triangle.",
+      "status": "verbatim",
+      "closest": "Keep your vertical plank position until the last moment, and then suddenly perform a hip hinge, continuing to bring the kettlebell between your legs near the top of the small triangle.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "bb-kb-swing",
+      "text": "To reload and perform another rep, allow the kettlebell to fall naturally while sweeping it back between your legs with your lats. Keep your arms loose throughout.",
+      "status": "verbatim",
+      "closest": "To reload and perform another rep, allow the kettlebell to fall naturally while sweeping it back between your legs with your lats. Keep your arms loose throughout.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "nike-kb-swing",
+      "text": "Don't bring the kettlebell all the way back to the ground; it should be at about knee level before starting the next swing.",
+      "status": "verbatim",
+      "closest": "Don't bring the kettlebell all the way back to the ground; it should be at about knee level before starting the next swing.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-kb-swing",
+      "text": "If you’re not keeping your back neutral, you may scrape the bottom of the bell just above the ground at the bottom of your swing. This too-low-swing can hurt your low back, and also may be a result not adequately engaging your lats throughout the lift.",
+      "status": "verbatim",
+      "closest": "If you’re not keeping your back neutral, you may scrape the bottom of the bell just above the ground at the bottom of your swing. This too-low-swing can hurt your low back, and also may be a result not adequately engaging your lats throughout the lift.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "nike-kb-swing",
+      "text": "Rounding the lower back: This often happens when trying to swing a weight that’s too heavy, straining the lower back.",
+      "status": "verbatim",
+      "closest": "Rounding the lower back: This often happens when trying to swing a weight that’s too heavy, straining the lower back.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "mo-kb-swing",
+      "text": "Rounding the lower back",
+      "status": "verbatim",
+      "closest": "Rounding the lower back",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "ggr-kb-swing",
+      "text": "Just be sure to mind your form and avoid letting your lower back round too much as you get tired, as you won’t want to injure yourself.",
+      "status": "verbatim",
+      "closest": "Just be sure to mind your form and avoid letting your lower back round too much as you get tired, as you won’t want to injure yourself.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "mf-kb-swing",
+      "text": "Keep your back flat during the exercise to avoid injury.",
+      "status": "verbatim",
+      "closest": "Keep your back flat during the exercise to avoid injury.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "ggr-kb-swing",
+      "text": "From lifting your kettlebell to hinging forward to lockout, your back must always stay straight. Period.",
+      "status": "verbatim",
+      "closest": "From lifting your kettlebell to hinging forward to lockout, your back must always stay straight. Period.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "ggr-kb-swing",
+      "text": "Not only is this the best way to protect your posterior chain from nasty injuries, it also guarantees you get the most bang for buck during each rep.",
+      "status": "verbatim",
+      "closest": "Not only is this the best way to protect your posterior chain from nasty injuries, it also guarantees you get the most bang for buck during each rep.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "mo-kb-swing",
+      "text": "Maintain a neutral spine throughout",
+      "status": "verbatim",
+      "closest": "Maintain a neutral spine throughout",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "bb-kb-swing",
+      "text": "Hinge down toward the bell. Keep your back flat.",
+      "status": "verbatim",
+      "closest": "Hinge down toward the bell. Keep your back flat.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "bb-kb-swing",
+      "text": "Whether you’re performing high reps or using heavier weights, you may increase your injury risk by ending your swing with your low back instead of your glutes. To avoid inappropriately hyperextending your low back, focus on squeezing your glutes at the top of your swing.",
+      "status": "verbatim",
+      "closest": "Whether you’re performing high reps or using heavier weights, you may increase your injury risk by ending your swing with your low back instead of your glutes. To avoid inappropriately hyperextending your low back, focus on squeezing your glutes at the top of your swing.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "nike-kb-swing",
+      "text": "Standing too tall at the top: Overextending or leaning backward at the top of the swing puts increased pressure on the lower back.",
+      "status": "verbatim",
+      "closest": "Standing too tall at the top: Overextending or leaning backward at the top of the swing puts increased pressure on the lower back.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "hk-kb-swing",
+      "text": "Do not overextend your spine.",
+      "status": "verbatim",
+      "closest": "Do not overextend your spine.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "mo-kb-swing",
+      "text": "Hyperextending hips at the top",
+      "status": "verbatim",
+      "closest": "Hyperextending hips at the top",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "mf-kb-swing",
+      "text": "Be sure to completely finish the rep and squeeze your glutes at the top of the movement.",
+      "status": "verbatim",
+      "closest": "Be sure to completely finish the rep and squeeze your glutes at the top of the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "ggr-kb-swing",
+      "text": "As such, it’s important to ensure you don’t arch the back at the lockout position. Doing so can place strain on your lower back and potentially lead to injuries like a herniated disc.",
+      "status": "verbatim",
+      "closest": "As such, it’s important to ensure you don’t arch the back at the lockout position. Doing so can place strain on your lower back and potentially lead to injuries like a herniated disc.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "ggr-kb-swing",
+      "text": "You thrust the kettlebell forward, guiding it along its path, until it reaches that overhead position, and you overextend your back.",
+      "status": "verbatim",
+      "closest": "You thrust the kettlebell forward, guiding it along its path, until it reaches that overhead position, and you overextend your back.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "ggr-kb-swing",
+      "text": "Keep your back flat and straight from start to finish, and try not to exaggerate your end position, even if you do feel amazing in the moment.",
+      "status": "verbatim",
+      "closest": "Keep your back flat and straight from start to finish, and try not to exaggerate your end position, even if you do feel amazing in the moment.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "nike-kb-swing",
+      "text": "Lifting with arms instead of hips: This turns the kettlebell swing into an upper-body exercise, which is tough on the arms and shoulders and limits how much power you can generate.",
+      "status": "verbatim",
+      "closest": "Lifting with arms instead of hips: This turns the kettlebell swing into an upper-body exercise, which is tough on the arms and shoulders and limits how much power you can generate.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "bb-kb-swing",
+      "text": "This happens when people don’t use sufficient hip drive to snap up to standing. To compensate, you might tug the weight upward with your arms.",
+      "status": "verbatim",
+      "closest": "This happens when people don’t use sufficient hip drive to snap up to standing. To compensate, you might tug the weight upward with your arms.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "mo-kb-swing",
+      "text": "Lifting with the shoulders",
+      "status": "verbatim",
+      "closest": "Lifting with the shoulders",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "nike-kb-swing",
+      "text": "Keep feet planted firmly on the ground and weight evenly distributed; don't let the return of the swing pull your heels or toes up.",
+      "status": "verbatim",
+      "closest": "Keep feet planted firmly on the ground and weight evenly distributed; don't let the return of the swing pull your heels or toes up.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "ggr-kb-swing",
+      "text": "You want your feet planted firmly on the ground with the weight back on your heels so you don’t tip forward as the kettlebell swings.",
+      "status": "verbatim",
+      "closest": "You want your feet planted firmly on the ground with the weight back on your heels so you don’t tip forward as the kettlebell swings.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "ggr-kb-swing",
+      "text": "If you find yourself rocking forward with the momentum of the kettlebell and it’s hurting your balance, you should go lighter.",
+      "status": "verbatim",
+      "closest": "If you find yourself rocking forward with the momentum of the kettlebell and it’s hurting your balance, you should go lighter.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "nike-kb-swing",
+      "text": "Keep the chin tucked and the neck neutral by looking down at the horizon — don't \"follow\" the kettlebell's trajectory with your head by looking up and down.",
+      "status": "verbatim",
+      "closest": "Keep the chin tucked and the neck neutral by looking down at the horizon — don't \"follow\" the kettlebell's trajectory with your head by looking up and down.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "bb-kb-swing",
+      "text": "Keep your head neutral while reloading your swing — don’t attempt to look forward, as it may strain your neck.",
+      "status": "verbatim",
+      "closest": "Keep your head neutral while reloading your swing — don’t attempt to look forward, as it may strain your neck.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "nike-kb-swing",
+      "text": "Don’t hold your breath during the kettlebell swing. Exhale as you swing up, inhale as the kettlebell comes down and engage your abs as if preparing for a punch, Vance said.",
+      "status": "verbatim",
+      "closest": "Don’t hold your breath during the kettlebell swing. Exhale as you swing up, inhale as the kettlebell comes down and engage your abs as if preparing for a punch, Vance said.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "mo-kb-swing",
+      "text": "Inhale sharply as the bell swings back between legs; exhale forcefully (hiss) as you snap the hips forward.",
+      "status": "verbatim",
+      "closest": "Inhale sharply as the bell swings back between legs; exhale forcefully (hiss) as you snap the hips forward.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "sl-kb-swing",
+      "text": "Brace your core slightly, and swing the kettlebell back between your legs, while inhaling.",
+      "status": "verbatim",
+      "closest": "Brace your core slightly, and swing the kettlebell back between your legs, while inhaling.",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "nike-kb-swing",
+      "text": "Stop or reset anytime you feel your form breaking down. Watch for tension in your arms, discomfort in your lower back, or rounding in your shoulders and back, Vance said.",
+      "status": "verbatim",
+      "closest": "Stop or reset anytime you feel your form breaking down. Watch for tension in your arms, discomfort in your lower back, or rounding in your shoulders and back, Vance said.",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "mo-kb-swing",
+      "text": "Stop if form degrades due to fatigue",
+      "status": "verbatim",
+      "closest": "Stop if form degrades due to fatigue",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "sl-kb-swing",
+      "text": "Repeat for reps and put the kettlebell back on the ground when you’re finished.",
+      "status": "verbatim",
+      "closest": "Repeat for reps and put the kettlebell back on the ground when you’re finished.",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "nike-kb-swing",
+      "text": "Regardless, start with the lightest weight available, especially if you're still perfecting your form.",
+      "status": "verbatim",
+      "closest": "Regardless, start with the lightest weight available, especially if you're still perfecting your form.",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "nike-kb-swing",
+      "text": "One indication that you're ready to grab a heavier kettlebell is being able to perform 10 sets of 10 swings without feeling completely wiped out",
+      "status": "verbatim",
+      "closest": "One indication that you're ready to grab a heavier kettlebell is being able to perform 10 sets of 10 swings without feeling completely wiped out",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "bb-kb-swing",
+      "text": "For Technique: Perform three sets of 10 to 15 reps with light to moderate weight to lock in your form.",
+      "status": "verbatim",
+      "closest": "For Technique: Perform three sets of 10 to 15 reps with light to moderate weight to lock in your form.",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "bb-kb-swing",
+      "text": "Once you can do 15 reps with perfect form, consider moving up in load.",
+      "status": "verbatim",
+      "closest": "Once you can do 15 reps with perfect form, consider moving up in load.",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "nike-kb-swing",
+      "text": "If you’ve never done a kettlebell swing, practice the hip hinge movement pattern with body weight first.",
+      "status": "verbatim",
+      "closest": "If you’ve never done a kettlebell swing, practice the hip hinge movement pattern with body weight first.",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "pg-kb-swing",
+      "text": "Spend some time perfecting the hip hinge technique before working on kettlebell swings, as this is a key element.",
+      "status": "verbatim",
+      "closest": "Spend some time perfecting the hip hinge technique before working on kettlebell swings, as this is a key element.",
+      "note": ""
+    },
+    {
+      "claim": "c24",
+      "source": "ggr-kb-swing",
+      "text": "A loose grip could result in the kettlebell slipping, being dropped, or inadvertently getting launched across the room.",
+      "status": "verbatim",
+      "closest": "A loose grip could result in the kettlebell slipping, being dropped, or inadvertently getting launched across the room.",
+      "note": ""
+    },
+    {
+      "claim": "c24",
+      "source": "ggr-kb-swing",
+      "text": "Be sure to keep a full grip on that handle to control the movement throughout the full range of motion.",
+      "status": "verbatim",
+      "closest": "Be sure to keep a full grip on that handle to control the movement throughout the full range of motion.",
+      "note": ""
+    },
+    {
+      "claim": "c25",
+      "source": "mo-kb-swing",
+      "text": "Ballistic hip hinge with a kettlebell that targets glutes and hamstrings to build explosive power and conditioning; commonly used in functional fitness contexts.",
+      "status": "verbatim",
+      "closest": "Ballistic hip hinge with a kettlebell that targets glutes and hamstrings to build explosive power and conditioning; commonly used in functional fitness contexts.",
+      "note": ""
+    },
+    {
+      "claim": "c25",
+      "source": "sl-kb-swing",
+      "text": "The kettlebell swing is primarily an exercise for your glutes, back, and posterior thighs",
+      "status": "verbatim",
+      "closest": "The kettlebell swing is primarily an exercise for your glutes, back, and posterior thighs",
+      "note": ""
+    },
+    {
+      "claim": "c25",
+      "source": "mcgill-2012",
+      "text": "It was found that kettlebell swings create a hip-hinge squat pattern characterized by rapid muscle activation-relaxation cycles of substantial magnitudes (∼50% of a maximal voluntary contraction [MVC] for the low back extensors and 80% MVC for the gluteal muscles with a 16-kg kettlebell)",
+      "status": "verbatim",
+      "closest": "It was found that kettlebell swings create a hip-hinge squat pattern characterized by rapid muscle activation-relaxation cycles of substantial magnitudes (∼50% of a maximal voluntary contraction [MVC] for the low back extensors and 80% MVC for the gluteal muscles with a 16-kg kettlebell)",
+      "note": ""
+    },
+    {
+      "claim": "c26",
+      "source": "mo-kb-swing",
+      "text": "1-0-1",
+      "status": "verbatim",
+      "closest": "1-0-1",
+      "note": ""
+    },
+    {
+      "claim": "c26",
+      "source": "mo-kb-swing",
+      "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "note": "served HTML only"
+    },
+    {
+      "claim": "c26",
+      "source": "hk-kb-swing",
+      "text": "This is a ballistic exercise. Immediately go into the next repetition.",
+      "status": "verbatim",
+      "closest": "This is a ballistic exercise. Immediately go into the next repetition.",
+      "note": ""
+    },
+    {
+      "claim": "c27",
+      "source": "ggr-kb-swing",
+      "text": "Don’t get us wrong; you shouldn’t be using your lower back to do the heavy lifting here, especially with a high-velocity movement like a kettlebell swing. However, you’ll be hinging at the hips, which means your lower back is going to get some indirect work as it stabilizes your core.",
+      "status": "verbatim",
+      "closest": "Don’t get us wrong; you shouldn’t be using your lower back to do the heavy lifting here, especially with a high-velocity movement like a kettlebell swing. However, you’ll be hinging at the hips, which means your lower back is going to get some indirect work as it stabilizes your core.",
+      "note": ""
+    }
+  ]
+}

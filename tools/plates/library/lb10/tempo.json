@@ -1,0 +1,88 @@
+{
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase, and a cycle plate's Work and Rest, is a constant only with a quote that states its seconds; a range is the quote's string. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 8 pose map). Ruled: D-LIB22-TEMPO (lib-22-card ruling 25), 'LB10 NOTE RULED' Q1 (#305 6355155831). No row for the D-LIB22-SECS NOSECS ids (sled_push, sled_pull, farmer_s_carry, burpee, medicine_ball_slam, wall_ball): their tempo is null and no quote states seconds of a drawn phase. Constant rows carry their claim and quote verbatim, as pilot-a/tempo.json @ dcac4a38 does.",
+ "research": "claude/libht-research 596dbe0748f11d13b431ee11d38d1742771925f1",
+ "poseMap": {
+  "burpee": {
+   "start": "plate.end",
+   "end": "plate.start"
+  }
+ },
+ "rows": {
+  "kettlebell_swing": [
+   {
+    "phase": "Drive",
+    "from": "up",
+    "move": true
+   },
+   {
+    "phase": "Swing down",
+    "from": "down",
+    "move": true
+   }
+  ],
+  "high_knees": [
+   {
+    "phase": "Work",
+    "constant": 30,
+    "move": true,
+    "claim": "c8",
+    "quote": "To start, aim for 30 seconds, with a 30-second rest between each set."
+   },
+   {
+    "phase": "Rest",
+    "constant": 30,
+    "claim": "c8",
+    "quote": "To start, aim for 30 seconds, with a 30-second rest between each set."
+   }
+  ],
+  "battle_ropes": [
+   {
+    "phase": "Work",
+    "constant": 30,
+    "move": true,
+    "claim": "c9",
+    "quote": "Continue this movement for 30 seconds. Take a 30-second break and repeat for 3–4 reps or move on to the next exercise."
+   },
+   {
+    "phase": "Rest",
+    "constant": 30,
+    "claim": "c9",
+    "quote": "Continue this movement for 30 seconds. Take a 30-second break and repeat for 3–4 reps or move on to the next exercise."
+   }
+  ],
+  "jumping_jacks": [
+   {
+    "phase": "Work",
+    "constant": "30–60",
+    "move": true,
+    "claim": "c9",
+    "quote": "Perform jumping jacks in intervals: 30-60 seconds of work followed by brief rest periods."
+   }
+  ],
+  "bear_crawl": [
+   {
+    "phase": "Work",
+    "constant": "15–30",
+    "move": true,
+    "claim": "c10",
+    "quote": "It can be beneficial to crawl for 15 to 30 seconds at a time until you can build up to more."
+   }
+  ],
+  "jump_rope": [
+   {
+    "phase": "Work",
+    "constant": 30,
+    "move": true,
+    "claim": "c16",
+    "quote": "Spend 30 seconds practicing jumping rope, followed by 1 minute of rest."
+   },
+   {
+    "phase": "Rest",
+    "constant": 60,
+    "claim": "c16",
+    "quote": "Spend 30 seconds practicing jumping rope, followed by 1 minute of rest.",
+    "note": "ruled (Q1, #305 6355155831): Rest 60, because the quote states '1 minute' of rest after the work"
+   }
+  ]
+ }
+}
