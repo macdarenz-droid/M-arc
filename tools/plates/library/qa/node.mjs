@@ -8,6 +8,7 @@ import { pathLength, pathsOf, tags, unesc, vocabularyOf, words } from './markup.
 import { REF_CHROME, anchorInPose, equipmentItems, poseLandmarks, cameraOf, resolvePoint, specIdOf } from './engine.mjs';
 import { PARAMS, paramProblems } from '../derive.mjs';
 import { fragmentsOf } from '../../golden.mjs';
+import { isUntimed, wordProblems } from '../strip/tempo-strip.mjs';   // LIB-STRIP
 
 /** Medical-claim bans for new plate copy (content.md 4, "Medical-claim bans"). */
 export const MEDICAL = [
@@ -169,6 +170,7 @@ export function h6(c, ctx, R) {
     } else out.push(P(tag, `unknown plate fact kind ${f.kind}`));
   }
   if (JSON.stringify(r.tempo) !== JSON.stringify(c.spec.tempo)) out.push(P('H6.tempo', `tempo ${JSON.stringify(c.spec.tempo)} != the card's ${JSON.stringify(r.tempo)}`));
+  if (isUntimed(c.spec.tempo)) for (const k of wordProblems(c.spec.tempo, r.tempoText, { allBlank: r.tempoFallbackA === true })) out.push(P(`H6.tempo-${k}`, `tempo ${k}: ${JSON.stringify(c.spec.tempo)} against the card's plate.tempo.text ${JSON.stringify(r.tempoText ?? null)}`));   // LIB-STRIP (D-STRIP-H6)
   return out;
 }
 
@@ -232,6 +234,7 @@ export function plateStrings(p) {
   const arc = p.normal.overlay.match(/<span class="plate-arc-label"[^>]*><b>([^<]*)<\/b><span>([^<]*)<\/span><\/span>/);
   if (arc) { out.push({ where: 'arc.title', text: unesc(arc[1]) }); out.push({ where: 'arc.value', text: unesc(arc[2]) }); }
   for (const m of p.tempo.matchAll(/<div class="tempo-label"><b>([^<]*)<\/b>/g)) out.push({ where: `tempo.${m[1]}`, text: unesc(m[1]) });
+  for (const m of p.tempo.matchAll(/<div class="tempo-label"><b>([^<]*)<\/b><span>([^<]*)<\/span>/g)) if (m[2] !== '&nbsp;') out.push({ where: `tempo.${m[1]}.value`, text: unesc(m[2]), label: true });   // LIB-STRIP (D-STRIP-H8)
   out.push({ where: 'alt', text: p.alt }, { where: 'mistakeAlt', text: p.mistakeAlt });
   return out;
 }

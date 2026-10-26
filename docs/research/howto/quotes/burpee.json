@@ -1,0 +1,575 @@
+{
+ "id": "burpee",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "pg-burpee",
+   "text": "Stand tall with feet shoulder width apart.",
+   "status": "verbatim",
+   "closest": "Stand tall with feet shoulder width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "hl-burpee",
+   "text": "Start in a squat position with your knees bent, back straight, and your feet about shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Start in a squat position with your knees bent, back straight, and your feet about shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "motra-burpee",
+   "text": "Stand with feet hip-width apart, arms at sides, core braced, shoulders relaxed.",
+   "status": "verbatim",
+   "closest": "Stand with feet hip-width apart, arms at sides, core braced, shoulders relaxed.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "fv-burpee",
+   "text": "Stand with your feet together and your hands by your sides.",
+   "status": "verbatim",
+   "closest": "Stand with your feet together and your hands by your sides.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fv-burpee",
+   "text": "Squat down and place your hands flat on the floor in front of your feet shoulder-width apart.",
+   "status": "verbatim",
+   "closest": "Squat down and place your hands flat on the floor in front of your feet shoulder-width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "motra-burpee",
+   "text": "Squat down and place hands on floor in front of feet.",
+   "status": "verbatim",
+   "closest": "Squat down and place hands on floor in front of feet.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-burpee",
+   "text": "From a standing position, descend into a crouch/squat. As you get low enough, plant your arms in front of you.",
+   "status": "verbatim",
+   "closest": "From a standing position, descend into a crouch/squat. As you get low enough, plant your arms in front of you.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "pg-burpee",
+   "text": "Place hands on the floor first, before pushing your legs out into plank position.",
+   "status": "verbatim",
+   "closest": "Place hands on the floor first, before pushing your legs out into plank position.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-burpee",
+   "text": "Once you have stable contact with the ground, kick your legs out behind so you end up in a straight-arm plank position.",
+   "status": "verbatim",
+   "closest": "Once you have stable contact with the ground, kick your legs out behind so you end up in a straight-arm plank position.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "motra-burpee",
+   "text": "Kick feet back to high plank position.",
+   "status": "verbatim",
+   "closest": "Kick feet back to high plank position.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-burpee",
+   "text": "From the straight-arm plank position, take a breath, brace your core, and lower your torso to the floor like you would for a standard push-up.",
+   "status": "verbatim",
+   "closest": "From the straight-arm plank position, take a breath, brace your core, and lower your torso to the floor like you would for a standard push-up.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fv-burpee",
+   "text": "Bend your arms and lower your chest to lightly touch the floor.",
+   "status": "verbatim",
+   "closest": "Bend your arms and lower your chest to lightly touch the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fv-burpee",
+   "text": "Push back up to full arm extension.",
+   "status": "verbatim",
+   "closest": "Push back up to full arm extension.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-burpee",
+   "text": "As you press your body off the floor, “jump” your legs back underneath your body and release your grip, such that you return to the crouching position you began with. In one fluid motion, drive upwards with the legs and perform a small vertical jump.",
+   "status": "verbatim",
+   "closest": "As you press your body off the floor, “jump” your legs back underneath your body and release your grip, such that you return to the crouching position you began with. In one fluid motion, drive upwards with the legs and perform a small vertical jump.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "fv-burpee",
+   "text": "Jump your feet in and under your body, knees close to your elbows.",
+   "status": "verbatim",
+   "closest": "Jump your feet in and under your body, knees close to your elbows.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "motra-burpee",
+   "text": "Explode upward into jump, arms overhead.",
+   "status": "verbatim",
+   "closest": "Explode upward into jump, arms overhead.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "hl-burpee",
+   "text": "Keeping your body straight from head to heels, do one pushup. Remember not to let your back sag or to stick your butt in the air.",
+   "status": "verbatim",
+   "closest": "Keeping your body straight from head to heels, do one pushup. Remember not to let your back sag or to stick your butt in the air.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-burpee",
+   "text": "During both stages of the movement, strive to ensure you properly brace your core and keep your spine in a neutral position. Don’t allow your lower back to dip or sag along the way.",
+   "status": "verbatim",
+   "closest": "During both stages of the movement, strive to ensure you properly brace your core and keep your spine in a neutral position. Don’t allow your lower back to dip or sag along the way.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "motra-burpee",
+   "text": "Lower to full squat with thighs parallel; plank from head to heels straight; push-up chest to 1-2 inches from ground; full extension on jump.",
+   "status": "verbatim",
+   "closest": "Lower to full squat with thighs parallel; plank from head to heels straight; push-up chest to 1-2 inches from ground; full extension on jump.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "fv-burpee",
+   "text": "Keep your core tight; do not let your hips drop out of proper alignment.",
+   "status": "verbatim",
+   "closest": "Keep your core tight; do not let your hips drop out of proper alignment.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-burpee",
+   "text": "Steer clear of these common mistakes next time you go to perform some burpees",
+   "status": "verbatim",
+   "closest": "Steer clear of these common mistakes next time you go to perform some burpees",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-burpee",
+   "text": "Lower Back Sagging",
+   "status": "verbatim",
+   "closest": "Lower Back Sagging",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-burpee",
+   "text": "Jumping Too High",
+   "status": "verbatim",
+   "closest": "Jumping Too High",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "motra-burpee",
+   "text": "Hips sagging in plank",
+   "status": "verbatim",
+   "closest": "Hips sagging in plank",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "motra-burpee",
+   "text": "Rushing transitions",
+   "status": "verbatim",
+   "closest": "Rushing transitions",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "motra-burpee",
+   "text": "Arched lower back",
+   "status": "verbatim",
+   "closest": "Arched lower back",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "motra-burpee",
+   "text": "Knees caving inward",
+   "status": "verbatim",
+   "closest": "Knees caving inward",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "motra-burpee",
+   "text": "Hard landing on jump",
+   "status": "verbatim",
+   "closest": "Hard landing on jump",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "motra-burpee",
+   "text": "Rushing transitions",
+   "status": "verbatim",
+   "closest": "Rushing transitions",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "motra-burpee",
+   "text": "Control movements to prevent joint stress",
+   "status": "verbatim",
+   "closest": "Control movements to prevent joint stress",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-burpee",
+   "text": "Descend quickly but under control. Do not just drop into a low squat, or your knees will suffer.",
+   "status": "verbatim",
+   "closest": "Descend quickly but under control. Do not just drop into a low squat, or your knees will suffer.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "fv-burpee",
+   "text": "Always land on slightly bent knees to absorb the impact that could otherwise hurt your feet, ankles, knees, hips, or back.",
+   "status": "verbatim",
+   "closest": "Always land on slightly bent knees to absorb the impact that could otherwise hurt your feet, ankles, knees, hips, or back.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "fv-burpee",
+   "text": "Land on slightly bent knees and then repeat, repeat, REPEAT!",
+   "status": "verbatim",
+   "closest": "Land on slightly bent knees and then repeat, repeat, REPEAT!",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "motra-burpee",
+   "text": "Land softly with bent knees.",
+   "status": "verbatim",
+   "closest": "Land softly with bent knees.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "motra-burpee",
+   "text": "Hard landing on jump",
+   "status": "verbatim",
+   "closest": "Hard landing on jump",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "hl-burpee",
+   "text": "As soon as you land with knees bent, get into a squat position and do another repetition.",
+   "status": "verbatim",
+   "closest": "As soon as you land with knees bent, get into a squat position and do another repetition.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "fv-burpee",
+   "text": "Avoid diving onto your hands for the push-up as you may hurt your wrists.",
+   "status": "verbatim",
+   "closest": "Avoid diving onto your hands for the push-up as you may hurt your wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "hl-burpee",
+   "text": "Because you need to drop to a pushup, burpees can put extra stress on your wrists and shoulders. Be careful not to go so fast that you twist your wrist when you land.",
+   "status": "verbatim",
+   "closest": "Because you need to drop to a pushup, burpees can put extra stress on your wrists and shoulders. Be careful not to go so fast that you twist your wrist when you land.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "fv-burpee",
+   "text": "When you drop into the first squat, try to keep your feet flat on the floor.",
+   "status": "verbatim",
+   "closest": "When you drop into the first squat, try to keep your feet flat on the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "fv-burpee",
+   "text": "Leap into the air off of flat feet if possible to reduce the strain on your knees.",
+   "status": "verbatim",
+   "closest": "Leap into the air off of flat feet if possible to reduce the strain on your knees.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "fv-burpee",
+   "text": "Squat all the way down – don’t just bend over from your waist. Your hips should be below the level of your knees when you put your hands on the floor for the push-up.",
+   "status": "verbatim",
+   "closest": "Squat all the way down – don’t just bend over from your waist. Your hips should be below the level of your knees when you put your hands on the floor for the push-up.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "fv-burpee",
+   "text": "Try not to round your lower back.",
+   "status": "verbatim",
+   "closest": "Try not to round your lower back.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "fv-burpee",
+   "text": "Keep your neck neutral as you do the push-up. Do not lower your head toward the floor.",
+   "status": "verbatim",
+   "closest": "Keep your neck neutral as you do the push-up. Do not lower your head toward the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "fv-burpee",
+   "text": "Don’t bounce your chest off the floor. Touch down lightly and without letting your hips drop.",
+   "status": "verbatim",
+   "closest": "Don’t bounce your chest off the floor. Touch down lightly and without letting your hips drop.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "motra-burpee",
+   "text": "Knees track over toes",
+   "status": "verbatim",
+   "closest": "Knees track over toes",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "motra-burpee",
+   "text": "Knees caving inward",
+   "status": "verbatim",
+   "closest": "Knees caving inward",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "bb-burpee",
+   "text": "When you ascend from the squatting position into a vertical jump, don’t obsess over leaping as high as you can. You’ll waste energy and may risk taking a nasty fall.",
+   "status": "verbatim",
+   "closest": "When you ascend from the squatting position into a vertical jump, don’t obsess over leaping as high as you can. You’ll waste energy and may risk taking a nasty fall.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "bb-burpee",
+   "text": "You should leave the ground, but don’t try to catch as much air as you can. As long as you fully extend your legs, you’re good.",
+   "status": "verbatim",
+   "closest": "You should leave the ground, but don’t try to catch as much air as you can. As long as you fully extend your legs, you’re good.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "fv-burpee",
+   "text": "Leap up into the air as high as you can.",
+   "status": "verbatim",
+   "closest": "Leap up into the air as high as you can.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "pg-burpee",
+   "text": "Swing your arms up and jump as high as you so your feet leave the ground.",
+   "status": "verbatim",
+   "closest": "Swing your arms up and jump as high as you so your feet leave the ground.",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "motra-burpee",
+   "text": "Core tight throughout",
+   "status": "verbatim",
+   "closest": "Core tight throughout",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "bb-burpee",
+   "text": "From the straight-arm plank position, take a breath, brace your core, and lower your torso to the floor like you would for a standard push-up.",
+   "status": "verbatim",
+   "closest": "From the straight-arm plank position, take a breath, brace your core, and lower your torso to the floor like you would for a standard push-up.",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "pg-burpee",
+   "text": "Don't hold your breathe - keep breathing!",
+   "status": "verbatim",
+   "closest": "Don't hold your breathe - keep breathing!",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "motra-burpee",
+   "text": "Inhale during squat and push-up descent; exhale forcefully during push-up ascent and jump.",
+   "status": "verbatim",
+   "closest": "Inhale during squat and push-up descent; exhale forcefully during push-up ascent and jump.",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "bb-burpee",
+   "text": "It is common knowledge that the push-up is a fantastic exercise for the chest, shoulders, and triceps, so dedicating one-half of the burpee to that movement will obviously reap the same benefits.",
+   "status": "verbatim",
+   "closest": "It is common knowledge that the push-up is a fantastic exercise for the chest, shoulders, and triceps, so dedicating one-half of the burpee to that movement will obviously reap the same benefits.",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "motra-burpee",
+   "text": "Quads, Glutes, Chest",
+   "status": "verbatim",
+   "closest": "Quads, Glutes, Chest",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "motra-burpee",
+   "text": "Anterior Delts",
+   "status": "verbatim",
+   "closest": "Anterior Delts",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "motra-burpee",
+   "text": "Lateral Head, Medial Head",
+   "status": "verbatim",
+   "closest": "Lateral Head, Medial Head",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "fv-burpee",
+   "text": "All three work together during burpees, but the anterior or front deltoid is the most active.",
+   "status": "verbatim",
+   "closest": "All three work together during burpees, but the anterior or front deltoid is the most active.",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "bb-burpee",
+   "text": "The dynamic power output required to launch the body into the air from an ass-to-grass squat position is more than enough to fry your quads, hamstrings, and glutes.",
+   "status": "verbatim",
+   "closest": "The dynamic power output required to launch the body into the air from an ass-to-grass squat position is more than enough to fry your quads, hamstrings, and glutes.",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "motra-burpee",
+   "text": "Quads, Glutes, Chest",
+   "status": "verbatim",
+   "closest": "Quads, Glutes, Chest",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "motra-burpee",
+   "text": "Hamstrings, Calves",
+   "status": "verbatim",
+   "closest": "Hamstrings, Calves",
+   "note": ""
+  },
+  {
+   "claim": "c22",
+   "source": "motra-burpee",
+   "text": "Stop if pain in knees or back occurs",
+   "status": "verbatim",
+   "closest": "Stop if pain in knees or back occurs",
+   "note": ""
+  },
+  {
+   "claim": "c22",
+   "source": "pg-burpee",
+   "text": "To some people it can be stressful on the shoulders, wrist and knees. If you experience pain or don't feel comfortable when performing this exercise, please stop and seek advice from a personal trainer or qualified medical professional.",
+   "status": "verbatim",
+   "closest": "To some people it can be stressful on the shoulders, wrist and knees. If you experience pain or don't feel comfortable when performing this exercise, please stop and seek advice from a personal trainer or qualified medical professional.",
+   "note": ""
+  },
+  {
+   "claim": "c23",
+   "source": "hl-burpee",
+   "text": "Start slowly and just do a few reps at first. Once you get used to the move and can do it easily with no pain, try adding more reps.",
+   "status": "verbatim",
+   "closest": "Start slowly and just do a few reps at first. Once you get used to the move and can do it easily with no pain, try adding more reps.",
+   "note": ""
+  },
+  {
+   "claim": "c23",
+   "source": "hl-burpee",
+   "text": "Skip the jump. Instead of jumping into the air after the pushup, just return to the squat position.",
+   "status": "verbatim",
+   "closest": "Skip the jump. Instead of jumping into the air after the pushup, just return to the squat position.",
+   "note": ""
+  },
+  {
+   "claim": "c23",
+   "source": "hl-burpee",
+   "text": "Skip the pushup. If your chest muscles or shoulders aren’t ready for pushups, hold a plank position for a couple of seconds instead of doing a pushup.",
+   "status": "verbatim",
+   "closest": "Skip the pushup. If your chest muscles or shoulders aren’t ready for pushups, hold a plank position for a couple of seconds instead of doing a pushup.",
+   "note": ""
+  },
+  {
+   "claim": "c23",
+   "source": "bb-burpee",
+   "text": "For General Fitness: Perform 3-4 sets without a timed interval or repetition target. Listen to your body and stop just before your technique starts to degrade.",
+   "status": "verbatim",
+   "closest": "For General Fitness: Perform 3-4 sets without a timed interval or repetition target. Listen to your body and stop just before your technique starts to degrade.",
+   "note": ""
+  },
+  {
+   "claim": "c24",
+   "source": "motra-burpee",
+   "text": "2-0-1",
+   "status": "verbatim",
+   "closest": "2-0-1",
+   "note": ""
+  },
+  {
+   "claim": "c24",
+   "source": "motra-burpee",
+   "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+   "status": "verbatim",
+   "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+   "note": "served HTML only"
+  },
+  {
+   "claim": "c24",
+   "source": "fv-burpee",
+   "text": "Descend quickly but under control. Do not just drop into a low squat, or your knees will suffer.",
+   "status": "verbatim",
+   "closest": "Descend quickly but under control. Do not just drop into a low squat, or your knees will suffer.",
+   "note": ""
+  }
+ ]
+}

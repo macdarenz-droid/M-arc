@@ -1,0 +1,773 @@
+{
+ "id": "jump_rope",
+ "libId": "lib_jump_rope",
+ "name": "Jump Rope",
+ "family": "Conditioning and carries (jumps)",
+ "tier": "B",
+ "tierNote": "Safety tier B (content.md appendix B); census.json difficulty tier 3.",
+ "archetype": {
+  "hand": "implement",
+  "contact": [
+   "standing-feet"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Size the rope by standing on its middle and pulling the handles up: one source says the handle ends touch the armpits; another says the handles fall between the collarbone and chin, with the end of the rope close to armpit height.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-jumprope",
+    "ggr-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "fv-jumprope",
+     "text": "Stand on the middle of your rope with your feet together and your legs straight. Pull the handles up towards your armpits. If the ends of the handles touch your armpits, the rope is the right size.",
+     "where": "Sizing Up Your Jump Rope"
+    },
+    {
+     "source": "ggr-jumprope",
+     "text": "To size your rope correctly, stand with both feet on the rope and pull the rope taut. The handles, pointed upward, should fall between your collarbone and chin, with the end of the rope hitting close to your armpit height.",
+     "where": "2. Find the Right Rope Length"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Hold the handles with a relaxed grip toward their ends, not where the rope meets the handle, and only firm enough that they will not fly out of the hand.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-jumprope",
+    "elevate-wrist"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-jumprope",
+     "text": "Grab the handles with a relaxed grip toward the end of the handles, not toward where the rope meets the handle.",
+     "where": "3. Hold the Rope Correctly"
+    },
+    {
+     "source": "elevate-wrist",
+     "text": "Hold the handle firmly enough that it will not fly out of your hand and no firmer.",
+     "where": "Grip pressure"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "One rope maker says most people hold the handles far too tight; a hard grip locks the wrist so it cannot flick, and white knuckles mean the grip is too tight.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "elevate-wrist"
+   ],
+   "quotes": [
+    {
+     "source": "elevate-wrist",
+     "text": "Most people hold the handles far too tight. A hard grip locks the wrist, and a locked wrist cannot flick.",
+     "where": "Grip pressure"
+    },
+    {
+     "source": "elevate-wrist",
+     "text": "If your knuckles are white, that is your answer.",
+     "where": "Grip pressure"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Start with the hands by the sides, the rope behind the feet and the feet together; swing the rope overhead and jump over it as it reaches the feet.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-jumprope",
+    "fv-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-jumprope",
+     "text": "Hold your hands by your sides with the jump rope behind your feet.",
+     "where": "3. Hold the Rope Correctly"
+    },
+    {
+     "source": "fv-jumprope",
+     "text": "Start with the rope behind you and your feet together. Swing the rope overhead and jump over as it approaches your feet.",
+     "where": "Jump Rope Technique Basics"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Turn the rope with the wrists, not the elbows or shoulders: keep the elbows in, close to the ribs, without flaring them out, so the arms barely move.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-jumprope",
+    "crossrope-howto",
+    "elevate-wrist"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-jumprope",
+     "text": "Keep your elbows in. Don’t flare your elbows out while rotating the rope. Most of the movement should come from your wrists, not your elbows or shoulders.",
+     "where": "3. Hold the Rope Correctly"
+    },
+    {
+     "source": "crossrope-howto",
+     "text": "Use your wrists to turn the rope (not your elbows or shoulders)",
+     "where": "Your First Jump Rope Exercise, guidelines"
+    },
+    {
+     "source": "crossrope-howto",
+     "text": "Movement: you want to make sure there is minimal movement of the elbows and shoulders. Your wrists should generate the jump rope rotation.",
+     "where": "How to Hold a Jump Rope"
+    },
+    {
+     "source": "elevate-wrist",
+     "text": "Watch someone who has been skipping for years and their arms barely move. The elbows stay close to the ribs, the hands sit a little in front of the hips, and the rope goes round on a small flick of the wrist.",
+     "where": "Where the turn is supposed to come from"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "One rope maker says wrists hurt from jumping rope usually because the arms, not the wrists, turn the rope: in beginners the shoulders swing and the elbows come out wide, and the wrist absorbing that movement is where the ache comes from.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "elevate-wrist"
+   ],
+   "quotes": [
+    {
+     "source": "elevate-wrist",
+     "text": "Jumping rope hurts your wrists for three reasons: your arms are turning the rope instead of your wrists, your handles are heavier or longer than the job needs, or you added volume faster than your forearms adapted to it.",
+     "where": "Intro"
+    },
+    {
+     "source": "elevate-wrist",
+     "text": "Beginners do the opposite. The shoulders swing, the elbows come out wide, and the wrist ends up absorbing a movement it did not start. That is where the ache comes from.",
+     "where": "Where the turn is supposed to come from"
+    },
+    {
+     "source": "elevate-wrist",
+     "text": "Usually because your arms are turning the rope instead of your wrists.",
+     "where": "FAQ: Why do my wrists hurt after jumping rope?"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "One rope maker's test: if you feel the turn in the shoulders, it is starting in the wrong place.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "elevate-wrist"
+   ],
+   "quotes": [
+    {
+     "source": "elevate-wrist",
+     "text": "Turn the rope with your eyes closed and pay attention to which part of you is working. If you feel it in the shoulders, the turn is starting in the wrong place.",
+     "where": "Where the turn is supposed to come from"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Keep the hands down at about hip height, only slightly away from the body; raising them much higher shortens the rope and makes tripping more likely.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-jumprope",
+    "ggr-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "fv-jumprope",
+     "text": "Keep your hands down at around hip height and only slightly away from your body. If you raise your hands much higher than this, you effectively shorten the rope and increase your likelihood of tripping.",
+     "where": "Jump Rope Technique Basics"
+    },
+    {
+     "source": "ggr-jumprope",
+     "text": "Keep your arms down by your sides and your wrists loose as you turn the rope.",
+     "where": "3. Hold the Rope Correctly"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Jump just high enough for the rope to pass under the feet: Garage Gym Reviews and Crossrope say about 1 to 2 inches; Crossrope's guideline list says ½ to 1 inch; staying close to the floor lets you jump faster.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-jumprope",
+    "crossrope-howto",
+    "fv-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-jumprope",
+     "text": "Your body weight moves no more than 1 to 2 inches off the ground; just enough for the jump rope to pass gracefully under your feet.",
+     "where": "4. Use Proper Jumping Form"
+    },
+    {
+     "source": "crossrope-howto",
+     "text": "Your jumps should be roughly 1-2 inches off the ground.",
+     "where": "Proper Bounding"
+    },
+    {
+     "source": "crossrope-howto",
+     "text": "Keep your jumping height low (½” - 1” off the ground)",
+     "where": "Your First Jump Rope Exercise, guidelines"
+    },
+    {
+     "source": "fv-jumprope",
+     "text": "Remember to just clear it; you aren’t in a high jump competition, you know! Instead, see how close you can stay to the floor. This will allow you to jump faster and also reduces the impact on your feet and joints.",
+     "where": "Jump Rope Technique Basics"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Keep a slight bend in the knees on the way up and down, without tucking them up, and land softly on the balls of the feet; one source says this dissipates the stresses from jumping.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-jumprope",
+    "crossrope-howto"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-jumprope",
+     "text": "Keep your knees slightly bent on the way up and down, but don’t bring them up like a frog hop.",
+     "where": "4. Use Proper Jumping Form"
+    },
+    {
+     "source": "ggr-jumprope",
+     "text": "A basic jump comes from the ankles with only a very slight bend in the knees. Keeping the knees bent means the jump produces less impact on the lower body, making it more suitable for beginners.",
+     "where": "4. Use Proper Jumping Form"
+    },
+    {
+     "source": "crossrope-howto",
+     "text": "Another important note - make sure there is always a slight bend in your knees and that you are landing softly on the balls of your feet every jump. This will ensure the stresses from jumping are nicely dissipated through your body.",
+     "where": "Proper Bounding"
+    },
+    {
+     "source": "crossrope-howto",
+     "text": "You also don't want to pull your feet back or tuck your knees in.",
+     "where": "Proper Bounding"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "The basic jump comes from the ankles and calves, and the knees and quads act as cushions for the landing.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-jumprope",
+     "text": "Think ankles and calves, with knees and quads as pillows to help land.",
+     "where": "4. Use Proper Jumping Form"
+    },
+    {
+     "source": "ggr-jumprope",
+     "text": "A basic jump comes from the ankles with only a very slight bend in the knees. Keeping the knees bent means the jump produces less impact on the lower body, making it more suitable for beginners.",
+     "where": "4. Use Proper Jumping Form"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Do one jump per rope turn rather than a double bounce between turns.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "fv-jumprope",
+     "text": "Try to stick to one jump per rope turn and avoid the temptation to “double bounce” between revolutions. Double jumps make it harder to establish a smooth rhythm.",
+     "where": "Jump Rope Technique Basics"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Build up gradually and avoid too much too soon: long jump rope workouts can leave the feet and shins sore; start with short workouts.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "fv-jumprope",
+     "text": "Build up gradually – because of the impact of jumping rope, you should rein in your enthusiasm and avoid doing too much too soon. Long jump rope workouts can leave you with sore feet and shins and could even cause stress fractures.",
+     "where": "Jump rope considerations"
+    },
+    {
+     "source": "fv-jumprope",
+     "text": "Start with short workouts and increase gradually as you become accustomed to the demands of jumping rope.",
+     "where": "Jump rope considerations"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Check overhead before jumping: hitting a light fixture or ceiling fan with the rope could cause serious injury.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "fv-jumprope",
+     "text": "Don’t forget to check overhead; hitting a light fixture or ceiling fan will bring your workout to an abrupt halt and could cause serious injury.",
+     "where": "Jump rope considerations"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Avoid hard surfaces such as concrete or tarmac where possible; sprung wooden or matted floors are better.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "fv-jumprope",
+     "text": "If possible, avoid doing jump rope workouts on unforgiving surfaces like concrete or tarmac. Sprung wooden floors are best, and matted floors work well too.",
+     "where": "Jump rope considerations"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Progression: practise the arm movement by stepping over the rope at first; start with 30 seconds of jumping and 1 minute of rest, then add work and cut rest, working toward 10 minutes straight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-jumprope",
+     "text": "You can practice the arm movement by stepping over the rope, instead of jumping over it, for your first few reps.",
+     "where": "4. Use Proper Jumping Form"
+    },
+    {
+     "source": "ggr-jumprope",
+     "text": "Spend 30 seconds practicing jumping rope, followed by 1 minute of rest.",
+     "where": "Beginner Jump Rope Workout"
+    },
+    {
+     "source": "ggr-jumprope",
+     "text": "As you improve, you can progress by increasing your work and decreasing your rest, like so:",
+     "where": "Beginner Jump Rope Workout"
+    },
+    {
+     "source": "ggr-jumprope",
+     "text": "Eventually, you should feel comfortable skipping rope for 10 minutes straight without rest.",
+     "where": "Beginner Jump Rope Workout"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "Cadence, not seconds per phase: one source practises little bounds to a 90 beats-per-minute metronome; another says 140-160 beats per minute is usually about right for its music workout.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-jumprope",
+    "fv-jumprope"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-jumprope",
+     "text": "If you are still struggling, put the rope down and set a metronome (or click-track for anyone below 50) to 90 beats per minute and do little bounds to the beat.",
+     "where": "5. Practice"
+    },
+    {
+     "source": "fv-jumprope",
+     "text": "140-160 beats per minute (BPM) is usually about right.",
+     "where": "Jump Rope Workouts: 7. Big tunes workout"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "ggr-jumprope",
+   "url": "https://www.garagegymreviews.com/how-to-jump-rope",
+   "title": "How to Jump Rope: 5 Easy Steps From an Expert (Garage Gym Reviews)",
+   "kind": "coach",
+   "year": 2023,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-jumprope",
+   "url": "https://fitnessvolt.com/jump-rope/",
+   "title": "Jump Rope: The Ultimate Guide – Fitness Volt",
+   "kind": "coach",
+   "year": 2021,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "elevate-wrist",
+   "url": "https://www.elevaterope.com/blogs/articles/jump-rope-wrist-pain",
+   "title": "Why Does Jumping Rope Hurt My Wrists? | Elevate Rope",
+   "kind": "manufacturer",
+   "year": 2026,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "crossrope-howto",
+   "url": "https://www.crossrope.com/blogs/blog/how-to-jump-rope",
+   "title": "How to Jump Rope: The Complete Beginner’s Guide | Crossrope",
+   "kind": "manufacturer",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "front",
+  "viewWhy": "Census view is front; the elbows close to the ribs or out wide (c5, c6), the hands at hip height just in front of the body (c8) and the feet together, just clearing the rope (c4, c9), all read from the front. The top fault, jumping too high (c9), shows from the front: the feet well above the rope.",
+  "equipment": "Jump rope (census jumpRope, missing: new equipment drawing) and floor line. Rope sized so the handle ends reach about the armpits when standing on its middle (c1); the rope is drawn under the feet in the airborne pose.",
+  "frames": "Two-pose plate (census poses stand and airborne): feet on the floor with the rope overhead, and the low hop with the rope passing under the feet. Cyclic; the turn is not traced.",
+  "start": "Standing tall, feet together (c4); elbows in, close to the ribs (c5); hands at about hip height, slightly away from the body and a little in front of the hips (c5, c8); relaxed grip near the handle ends (c2); knees slightly bent (c10).",
+  "end": "Low hop: feet about 1 to 2 inches off the floor, just clearing the rope (c9); knees slightly bent, not tucked up (c10); elbows still close to the ribs, the rope turned by the wrists (c5).",
+  "checkpoints": [
+   {
+    "label": "Elbows in",
+    "what": "Elbows stay close to your ribs.",
+    "claim": "c5"
+   },
+   {
+    "label": "Hands by hips",
+    "what": "Hands at about hip height, slightly away from your body.",
+    "claim": "c8"
+   },
+   {
+    "label": "Low hop",
+    "what": "Feet just clear the rope, about 1 to 2 inches.",
+    "claim": "c9"
+   }
+  ],
+  "mistake": {
+   "what": "Jumping too high over the rope.",
+   "why": "LR-31 step 2: jumping too high and the arms turning the rope are each tied to harm by one source (D-SUP-STRAIN counts \"impact\" on named body parts). Fitness Volt says staying close to the floor reduces the impact on the feet and joints (c9), directly; the arms line (c6) is one rope maker's (WEAK), so the sourced-directly tie-break picks jumping too high. The front view shows the feet far above the rope.",
+   "claim": "c9",
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: jumping too high over the rope (c9). Step 1 finds no frequency word for a candidate fault of this exercise. Set aside: Elevate's \"Most people hold the handles far too tight.\" (c3) is about a grip, which LR-31 lists as not a frequency statement; its \"Usually because your arms are turning the rope instead of your wrists.\" (c6) says how often wrist pain has that cause, not how often the fault happens (read as renegade_row's \"Often a symptom of going too heavy\", lb7); counted, it would make the arms turning the rope the top fault; its \"Beginners do the opposite.\" (c6) has no frequency word (counted as \"beginners make it\", it would make the arms turning the rope the top fault); \"The rope is rarely the whole cause\", \"Handle weight matters more than most people expect\" and \"Most speed ropes on the market run bearings in the handle\" are about the equipment. Fitness Volt's \"a lot of people struggle initially\" names no fault; \"Many exercisers think that jumping rope is too old-school\" is an opinion; its \"usually\" lines are about ropes (\"usually very cheap\", \"usually don’t have handles\", \"usually made of thick metal wire\"), the jogging step (\"usually means you can spin the rope faster\") and cadence (\"140-160 beats per minute (BPM) is usually about right\", c17). Crossrope's \"Most training injuries come about from doing exercises with poor form.\" is about all training (R-LB7-3); \"We commonly see new jumpers start with an inexpensive, plastic (PVC) rope\" and \"Light jump ropes are generally the culprit for common jump rope mistakes\" are about the rope, an equipment choice; \"This is a question we often get\" and \"Another common question\" name no fault. Garage Gym Reviews' \"Most jump ropes come in a few different sizes\" and \"many wire ropes can’t be cut with regular scissors\" are about the equipment, and \"Most of the movement should come from your wrists\" (c5) is a position cue. Step 2: no read source has a common-mistakes list for this exercise. Two named faults are tied to harm. Jumping too high (handlingMistakes[0]): Fitness Volt's \"Remember to just clear it; you aren’t in a high jump competition, you know! Instead, see how close you can stay to the floor. This will allow you to jump faster and also reduces the impact on your feet and joints.\" (c9, CONSENSUS): the cue that corrects it reduces impact on named body parts, and \"impact\" counts as harm under D-SUP-STRAIN; 1 source, direct. The arms turning the rope: Elevate's \"Jumping rope hurts your wrists for three reasons: your arms are turning the rope instead of your wrists, ...\" and \"That is where the ache comes from.\" (c6, WEAK: one rope maker); 1 source. Garage Gym Reviews' \"Don’t flare your elbows out while rotating the rope.\" (c5) states no harm. Neither is on a common-mistakes list and each has one harm source, so the next tie-break, the one sourced directly (not MECH/WEAK), picks jumping too high. Not counted: Garage Gym Reviews' \"Keeping the knees bent means the jump produces less impact on the lower body\" (c10, c11) and Crossrope's \"This will ensure the stresses from jumping are nicely dissipated through your body.\" (c10) correct straight-knee landings, which no read source names as a fault and the card does not list; Fitness Volt's \"Keep your footfalls low and light to minimize impact.\" (the running-in-place style) names no body part; gripping too tight has no harm quote (Elevate's \"Most people hold the handles far too tight.\" stays set aside as a grip). Fitness Volt's \"Long jump rope workouts can leave you with sore feet and shins and could even cause stress fractures.\" (c13) is about volume, a training choice, not a body position; its \"hitting a light fixture or ceiling fan ... could cause serious injury\" (c14) is about the space; its \"Jumping rope can make your shoulders ache, especially if you are new to this form of exercise or are training for long periods.\" names no fault; its weighted rope \"really hurts if you hit yourself\" is about the equipment. Fitness Volt's hands raised too high (\"increase your likelihood of tripping\", c8) states no LR-31 harm word. Elevate's \"A 10mm cable puts genuine pressure through the wrist\" and \"If your wrists hurt and you are training on a heavy rope daily\" are about the equipment, and its \"Pain that is sharp rather than achy ...\" paragraph names symptoms, not a fault. The census view (front) shows the feet far above the rope, so drawable is true. Pick changed in the LB10 fix round (R-LB10-5): the arms turning the rope moves to handlingMistakes[1]. Scan completion (fetcher scan 2026-10-22, every read source): set aside at step 1 as about the equipment, programming, the exercise or all training, naming no fault: Garage Gym Reviews' \"Finding the right length jump rope may be the most important step when making a purchase.\", \"There are many reasons you might take up jumping rope\" and \"My two most-used warmups incorporate the jump rope.\"; Fitness Volt's \"Whether you are in a typical playground or a Mixed Martial Arts (MMA) gym, you’ll see people jumping rope\", \"jumping rope is often more practical\", \"There are several different styles and many manufacturers of jump ropes.\", \"rope ropes ... tend to twist because they usually don’t have handles\", \"leather ropes tend to be very hardwearing but are also often more expensive than most of the other alternatives\", \"The handles are light and typically have carbon or nylon washers\", \"They’re usually very hardwearing.\", \"most speed ropes are not adjustable\", \"they’re usually low quality\", \"wire ropes are not usually recommended for outdoor use\", \"(just a couple of pounds at most)\", \"One of the most important factors in jump rope training is making sure your rope is the correct length.\", \"Inspired by the length of a typical round of boxing\", \"in many ways, the hardest\", \"Most music streaming platforms have mixed playlists\" and \"if it’s good enough for most boxers and MMA fighters\"; Crossrope's \"one of the most effective exercises\" lines, \"With the jump rope, if you use a poor technique, you'll end up tripping more often, but you'll be less susceptible to injuries that can happen from poor form.\" (poor technique in general, no named fault), \"we’ve seen the story play out countless times at our past workshops ... (most often our 1/2 LB rope)\", \"There are many different jump ropes available\", \"updated regularly\" and \"(and many other) exercises\". Harm quotes set aside at step 2 as no named fault of the movement: Fitness Volt's \"Moving around ... makes sure you do not overload one particular part of your foot, which is an important consideration for preventing injury.\" (travelling, a session choice), \"shock-absorbing shoes can take a lot of the pain out of jumping rope\" (footwear, equipment), \"Periodically crossing your arms can help to alleviate this discomfort.\" (the shoulder ache of new or long sessions, no fault) and \"to ensure that your workouts are as safe and enjoyable as possible\" (general); Garage Gym Reviews' \"to avoid the posture of homo erectus\" (rope length, an equipment choice); Elevate's \"correcting is extra work for the joint that was already sore\" (bearings, equipment); Crossrope's \"it can be a pain to find time to get a workout in\" (scheduling). No source has a common-mistakes list for this exercise. No pause, hold or squeeze word asks for a pause. Reading applied: LR-31 literal; a grip statement and a cause statement are not step-1 hits; \"impact\" on named body parts counts as harm (D-SUP-STRAIN, #295 6343824010; 6344717493); step 2's sourced-directly tie-break picks jumping too high, drawable true (R-LB10-5)."
+  },
+  "tells": [
+   {
+    "text": "Arms barely move",
+    "claim": "c5"
+   },
+   {
+    "text": "Feet just clear the rope",
+    "claim": "c9"
+   }
+  ],
+  "tempo": {
+   "up": null,
+   "down": null,
+   "pause": null,
+   "claim": "c17",
+   "text": "Cyclic: no source gives seconds for a phase. Garage Gym Reviews practises little bounds to a 90 beats-per-minute metronome, and Fitness Volt says 140-160 beats per minute is usually about right for its music workout (c17); those are cadences, not phase seconds, so up, down and pause stay null (LR-33: a card with no tempo seconds keeps null). No quote asks for a pause."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Rope handles held loosely (implement hand archetype) (c2).",
+  "width": "Hands at about hip height, slightly away from the body (c8).",
+  "thumb": "",
+  "handContact": "Relaxed grip toward the end of the handles, not where the rope meets the handle (c2).",
+  "wrist": "The wrists turn the rope with a small flick; the arms barely move (c5).",
+  "claims": [
+   "c2",
+   "c5",
+   "c8"
+  ],
+  "note": "No read source on this card gives a thumb position. The implement-jump-rope shared card's thumb rule (thumb and index fingers) rests on the JMU cue sheets, which did not answer today (TLS certificate error), so it is not used here."
+ },
+ "setup": [
+  {
+   "step": "Stand on the rope's middle; the handles should reach your armpits.",
+   "claim": "c1"
+  },
+  {
+   "step": "Hold the handles loosely, toward their ends.",
+   "claim": "c2"
+  },
+  {
+   "step": "Feet together, rope behind your feet, hands by your sides.",
+   "claim": "c4"
+  },
+  {
+   "step": "Swing the rope overhead and jump as it reaches your feet.",
+   "claim": "c4"
+  },
+  {
+   "step": "If possible, avoid concrete; a sprung wooden or matted floor is better.",
+   "claim": "c15"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Elbows in, close to your ribs.",
+   "claim": "c5"
+  },
+  {
+   "point": "Turn the rope with your wrists, not your elbows or shoulders.",
+   "claim": "c5"
+  },
+  {
+   "point": "Hands at about hip height, slightly away from your body.",
+   "claim": "c8"
+  },
+  {
+   "point": "Jump only about 1 to 2 inches off the floor.",
+   "claim": "c9"
+  },
+  {
+   "point": "Knees slightly bent; land softly on the balls of your feet.",
+   "claim": "c10"
+  },
+  {
+   "point": "One jump per turn of the rope.",
+   "claim": "c12"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Jumping too high.",
+   "fix": "Just clear the rope, about 1 to 2 inches.",
+   "claim": "c9"
+  },
+  {
+   "mistake": "Turning the rope with your arms.",
+   "fix": "Keep your elbows in. Turn the rope with your wrists.",
+   "claim": [
+    "c6",
+    "c5"
+   ]
+  },
+  {
+   "mistake": "Gripping the handles too tight.",
+   "fix": "Hold just firm enough that the handles won't fly out.",
+   "claim": [
+    "c3",
+    "c2"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "calves",
+    "claim": "c11"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "quads",
+    "claim": "c11"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Calves",
+    "means": "The jump comes from your ankles and calves.",
+    "fix": "",
+    "claim": "c11",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the thighs",
+    "means": "Your quads help you land, with the knees slightly bent.",
+    "fix": "",
+    "claim": [
+     "c11",
+     "c10"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Shoulders",
+    "means": "Feeling the turn here means it starts in the wrong place.",
+    "fix": "Turn the rope with your wrists, elbows in.",
+    "claim": [
+     "c7",
+     "c5"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Wrists",
+    "means": "An ache here usually comes from the arms turning the rope.",
+    "fix": "Keep your elbows close to your ribs. Turn the rope with your wrists.",
+    "claim": [
+     "c6",
+     "c5"
+    ],
+    "redFlag": "wrist"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Turning the rope with your arms, not your wrists, can make your wrists hurt.",
+   "claim": "c6"
+  },
+  {
+   "risk": "Too much too soon can leave your feet and shins sore.",
+   "claim": "c13"
+  },
+  {
+   "risk": "Check overhead: hitting a light or ceiling fan could cause serious injury.",
+   "claim": "c14"
+  }
+ ],
+ "redFlags": [
+  "wrist"
+ ],
+ "zooms": [
+  {
+   "key": "grip",
+   "kind": "hand",
+   "right": "Relaxed grip toward the end of the handle.",
+   "wrong": "Gripped far too tight, knuckles white.",
+   "claim": [
+    "c2",
+    "c3"
+   ]
+  },
+  {
+   "key": "elbows",
+   "kind": "posture",
+   "right": "Elbows close to the ribs, hands by the hips.",
+   "wrong": "Shoulders swinging, elbows out wide.",
+   "claim": [
+    "c5",
+    "c6",
+    "c8"
+   ]
+  },
+  {
+   "key": "hop",
+   "kind": "posture",
+   "right": "Low hop, knees slightly bent.",
+   "wrong": "High jump, knees tucked in.",
+   "claim": [
+    "c9",
+    "c10"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "Library: calves primary; quads secondary. Garage Gym Reviews says the jump comes from the ankles and calves, with the knees and quads as pillows for the landing (c11). Matches; no change. Fitness Volt says jumping rope strengthens the ankles, legs and shoulders, with no muscle named, so nothing is added."
+ },
+ "anchorSource": "ggr-jumprope",
+ "loadProgression": {
+  "text": "Practise the arm turn by stepping over the rope first. Start with 30 seconds on, 1 minute rest. Then work longer and rest less, toward 10 minutes straight. Build up gradually; start with short workouts.",
+  "claim": [
+   "c16",
+   "c13"
+  ]
+ },
+ "gaps": [
+  "Thumb position: no read source on this card gives one (see grip.note)."
+ ],
+ "notes": [
+  "Anchor: Garage Gym Reviews' how-to (rope choice, length, grip, jumping form, practice, beginner workout), read in full. Fitness Volt's guide, Elevate Rope's wrist page and Crossrope's beginner guide were read in full too. Elevate and Crossrope are rope makers: their product advice (handle weights, bearings, wristbands, weighted ropes) is left out, and the one-source Elevate claims are WEAK (as in shared/implement-jump-rope.json).",
+  "Shared card: shared/implement-jump-rope.json lists jump_rope. Its Elevate quotes (c1, c3, c5, c6 there) were re-read in today's fetch of the same page and are used here through this card's own claims (c2, c3, c5, c6). Its JMU cue sheets (cisat.jmu.edu) gave a TLS certificate error to curl on 2026-10-22, so its thumb-and-index-finger rule and the JMU cues are not used; no shared line is copied.",
+  "Jump-height conflict: Garage Gym Reviews and Crossrope's main text say about 1 to 2 inches, and Crossrope's guideline list says ½ to 1 inch (c9). The card says about 1 to 2 inches.",
+  "Rope-length conflict: Fitness Volt has the handle ends at the armpits; Garage Gym Reviews has the handles between the collarbone and chin with the rope's end near armpit height (c1). setup[0] follows Fitness Volt.",
+  "The wrist row keeps Elevate's \"Usually because ...\" (c6) as its \"usually\"; it is LR-6 shape (place, the source's fault, fix) with no stop line, and links the shared wrist box. Elevate's referral paragraph (\"That is worth showing to a physiotherapist or a doctor.\") is not quoted or shown (LR-27).",
+  "Tried and not usable: NASM exercise library, BarBend, Healthline, Motra, PureGym, WebMD, Men's Health and NASM blog jump-rope URLs (404), StrengthLog (429), Verywell Fit (402)."
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c10"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c10"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Work",
+   "s": 30,
+   "move": true
+  },
+  {
+   "phase": "Rest",
+   "s": 60
+  }
+ ],
+ "topFault": "high"
+}
