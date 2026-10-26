@@ -487,3 +487,10 @@ top), not the fault: never used. Options:
   it on H3.deviation (named list), as pallof_press; **B** a fix card lets a zoom circle sit over the columns'
   stack/frame ink in the empty top corners (a placement rule change in zoom/inline.mjs and qa/zoom.mjs H4.zoom:ink).
   Recommended: A (B weakens a placement rule for one plate).
+
+**Panel mx1 (#332 6414222882; page `378dbc55…`).** resistance_band_pull_apart approved at `bfac98f3`. bench_dip R4 fix:
+the "Below parallel" tell's anchor moves from the end shoulder + 26 px (in front of the chest) to the Mistake upper arm
+at t 0.8 from the elbow (`{ along: ['mistake:elbow.r', 'mistake:shoulder.r'], t: 0.8 }`), so its leader ends on the
+dashed fault upper arm near the shoulder; the label box stays at (200, 128), as ruled. The leader is now 108.5 px, so
+F3 is raised on bench_dip (range up to 82.26): a consequence of keeping the label where the ruling puts it, posted
+for a ruling. No pose, size or fact changed.

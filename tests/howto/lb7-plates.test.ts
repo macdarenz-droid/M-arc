@@ -924,6 +924,23 @@ describe('LIB-17 bench_dip (H; tier B; the support class, the bench; the normal-
     const torso = shapesP(s(), p).find((x: any) => x.key === 'torso');
     expect(Math.max(...torso.poly.map((q: number[]) => q[1]!))).toBeGreaterThan(fy + 0.5);
   });
+  // PANEL mx1 R4 fix (#332 6414222882): the "Below parallel" leader ends on the dashed fault upper arm, near its shoulder end
+  const parallelEnd = (spec: any) => {
+    const svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, i = listOf(spec, true).findIndex((x: any) => x.key === 'parallel');
+    const end = leadersOf(svg)[i]![0]!, L = lmOf(spec, 'mistake'), cam = camOf(spec), [el, sh] = [cam.P(L['elbow.r']), cam.P(L['shoulder.r'])];
+    const t = ((end[0]! - el[0]!) * (sh[0]! - el[0]!) + (end[1]! - el[1]!) * (sh[1]! - el[1]!)) / ((sh[0]! - el[0]!) ** 2 + (sh[1]! - el[1]!) ** 2);
+    return { d: segD(end, el, sh), t };
+  };
+  it('panel R4 fix: the "Below parallel" leader ends on the Mistake upper arm (within 1 px), in its shoulder half; the label box stays at (200, 128)', () => {
+    const { d, t } = parallelEnd(s());
+    expect(d).toBeLessThanOrEqual(1);
+    expect(t).toBeGreaterThanOrEqual(0.5);
+    expect(s().mistake.tells.find((x: any) => x.key === 'parallel').box).toEqual({ left: 200, top: 128 });
+  });
+  it('panel R4 mutation: the old leader end (the end shoulder + 26 px, in front of the chest) is red', () => {
+    const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'parallel' ? { ...x, anchor: { at: 'shoulder.r', pose: 'end', off: [26, 0] } } : x)) } };
+    expect(parallelEnd(bad).d).toBeGreaterThan(1);
+  });
   it('at plate scale (D-LIB8-shrug, D-LIB17-SIZE, S2; zoomed at the resume): the Trace at the ruled shoulder point is under traceLenMin; the Mistake deviation passes', () => {
     const env = pins().envelope, R = { normal: plate.renderPlate(s(), { id: 'x' }), mistake: plate.renderPlate(s(), { id: 'x', mistake: true }) };
     const dev = qaNode.deviation({ spec: s() }, Eng(), R), tr = markup.pathsOf(R.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0);

@@ -160,7 +160,7 @@ export default {
       // c8: the red hips' underside, below the end figure's, near the floor
       { key: 'low', text: 'Dropping<br>too low', anchor: { at: 'seat', pose: 'mistake', off: [10, 0] }, box: { left: 160, top: 308 }, cue: 'Dropping too low puts too much stress on the shoulders.' },
       // c8: the level line through the elbow (the datum), which the red upper arm sinks below
-      { key: 'parallel', text: 'Below<br>parallel', anchor: { at: 'shoulder.r', pose: 'end', off: [26, 0] }, box: { left: 200, top: 128 }, cue: 'The upper arms sink well below level with the floor.' },
+      { key: 'parallel', text: 'Below<br>parallel', anchor: { along: ['mistake:elbow.r', 'mistake:shoulder.r'], t: 0.8, pose: 'mistake' }, box: { left: 200, top: 128 }, cue: 'The upper arms sink well below level with the floor.' },
     ],
   },
   pilot: { drawableFault: 'Top fault: the elbows flaring out (c7), sideways, which the side view cannot show; the plate draws the next fault on the same list, dropping too low (c8).' },
