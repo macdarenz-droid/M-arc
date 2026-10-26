@@ -75,6 +75,26 @@ const segs = (p: number[][]) => p.slice(1).map((q, i) => [p[i]!, q]);
 /** Every leader in a render as its polyline (plate px), starting at its anchor. */
 const leadersOf = (svg: string) => [...svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(([, d]) => { const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]); return p; });
 
+/** The one ruled solid red line (panel lb4p R5, #327 6410191598): cable_chest_press's locked-arm axis, the Mistake
+ *  shoulder to the Mistake handle centre. Only this exact guide is exempt from the dashed-or-arrow and the 6 px
+ *  clearance rules (A15). */
+const AXIS: Record<string, string[]> = { cable_chest_press: ['shoulder.r', 'grip.r'] };
+const isAxisGuide = (spec: any, g: any) => {
+  const a = AXIS[spec.id];
+  return !!a && g.kind === 'line' && g.pts.length === 2 && g.pts.every((p: any, i: number) => p.at === a[i] && p.pose === 'mistake');
+};
+/** The ruled axis line as drawn in the Mistake svg (an m-arrow path from the Mistake shoulder to the Mistake handle
+ *  centre, each end within 0.5 px), or null. */
+const axisPath = (spec: any, svg: string) => {
+  const a = AXIS[spec.id];
+  if (!a) return null;
+  const cam = camOf(spec), lm = lmOf(spec, 'mistake'), A = cam.P(lm[a[0]!]), B = cam.P(lm[a[1]!]);
+  return [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].map(m => m[1]!).find(d => {
+    const p = xy(d);
+    return p.length === 2 && Math.hypot(p[0]![0]! - A[0]!, p[0]![1]! - A[1]!) <= 0.5 && Math.hypot(p[1]![0]! - B[0]!, p[1]![1]! - B[1]!) <= 0.5;
+  }) ?? null;
+};
+
 describe('LIB-16 A5: lb6/rows.json holds exactly the drawn, non-held LB6 H ids, all mode H', () => {
   const rowKeys = (text: string) => [...text.matchAll(/^ {2}"(lib_[a-z0-9_]+)": \{/gm)].map(m => m[1]);
   const a5 = (text: string, want: string[]) => {
@@ -579,7 +599,7 @@ describe('LIB-16 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', 
     const s = S.machine_crunch;
     expect(keyProblems({ ...s, mistake: { ...s.mistake, tells: [...s.mistake.tells].reverse() } })).toEqual(['machine_crunch: first tell upright']);
   });
-  const guideProblems = (spec: any) => spec.mistake.guides.filter((g: any) => !['dashed', 'arrow', 'arc-arrow'].includes(g.kind)).map((g: any) => `${spec.id}: ${g.kind}`);
+  const guideProblems = (spec: any) => spec.mistake.guides.filter((g: any) => !['dashed', 'arrow', 'arc-arrow'].includes(g.kind) && !isAxisGuide(spec, g)).map((g: any) => `${spec.id}: ${g.kind}`);
   it('A15: every Mistake guide is dashed or an arrow; mutation: a solid line guide is red', () => {
     for (const id of specsDrawn()) expect(guideProblems(S[id])).toEqual([]);
     const s = S.machine_crunch;
@@ -632,8 +652,8 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   /** 13.1, 13.4 must-fix 1: every solid red part (a Mistake arrow, as drawn in the Mistake svg) clears the solid end
    *  figure by at least 6 px; the Mistake figure and the other guides are dashed. */
   const clearance = (spec: any) => {
-    const polys = shapesIn(spec, 'end').map((x: any) => x.poly), svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
-    return [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].flatMap(m => {
+    const polys = shapesIn(spec, 'end').map((x: any) => x.poly), svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, axis = axisPath(spec, svg);
+    return [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].filter(m => m[1] !== axis).flatMap(m => {
       const pts = xy(m[1]!), samp: number[][] = [];
       for (let i = 0; i + 1 < pts.length; i++) for (let k = 0; k <= 20; k++) samp.push(pts[i]!.map((v, j) => v + (pts[i + 1]![j]! - v) * k / 20));
       const min = Math.min(...samp.map(p => outside(polys, p)));
@@ -1318,5 +1338,32 @@ describe('LIB-16 resume: the approved LB6 plates stay byte-identical (page 2668c
   it("mutation: one byte changed in machine_crunch's Mistake alt is red", async () => {
     const html = (await build.buildLb6Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'machine-crunch');
     expect(fragProblems(html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E')))).toContain('machine-crunch mistakeAlt');
+  });
+});
+
+describe('LIB-16 resume: cable_chest_press panel lb4p R5, the locked-arm axis line (#327 6410191598)', { timeout: T }, () => {
+  it('the Mistake plate draws one solid red line along the locked arm, Mistake shoulder to handle centre', () => {
+    const s = S.cable_chest_press;
+    expect(s.mistake.guides.filter((g: any) => isAxisGuide(s, g)).length).toBe(1);
+    expect(axisPath(s, plate.renderPlate(s, { id: 'x', mistake: true }).svg)).not.toBeNull();
+  });
+  it('the line runs through the Mistake zoom: the zoom render draws it inside the circle', async () => {
+    const zoom = await import(/* @vite-ignore */ lib('zoom/inline.mjs'));
+    const z = zoom.zoomOf(S.cable_chest_press, { prefix: 'x', view: 'mistake' }), C = z.circle.c, r = z.circle.r;
+    const ins = [...z.svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].map(m => xy(m[1]!)).filter(p => p.length === 2);
+    // the magnified axis crosses the circle: some point of it lies inside
+    const hit = ins.some(([a, b]) => [...Array(41)].some((_, k) => Math.hypot(a![0]! + (b![0]! - a![0]!) * k / 40 - C[0], a![1]! + (b![1]! - a![1]!) * k / 40 - C[1]) < r));
+    expect(hit).toBe(true);
+  });
+  it('mutation: the line removed is red', () => {
+    const s = S.cable_chest_press, bad = { ...s, mistake: { ...s.mistake, guides: [] } };
+    expect(bad.mistake.guides.filter((g: any) => isAxisGuide(bad, g)).length).toBe(0);
+    expect(axisPath(bad, plate.renderPlate(bad, { id: 'x', mistake: true }).svg)).toBeNull();
+  });
+  it('mutation: the exemption is exact: an elbow-to-handle solid line, or the axis on machine_crunch, is still red under A15', () => {
+    const s = S.cable_chest_press, other = { kind: 'line', pts: [{ at: 'elbow.r', pose: 'mistake' }, { at: 'grip.r', pose: 'mistake' }] };
+    expect(isAxisGuide(s, other)).toBe(false);
+    const c = S.machine_crunch;
+    expect(isAxisGuide(c, { kind: 'line', pts: [{ at: 'shoulder.r', pose: 'mistake' }, { at: 'grip.r', pose: 'mistake' }] })).toBe(false);
   });
 });

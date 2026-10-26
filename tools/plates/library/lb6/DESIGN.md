@@ -465,3 +465,7 @@ Zooms, built (D-LIB16-ZOOMVIEWS, #327 6405117790; `zoom: [{ view: 'normal', k: 3
   the ring and its disc count as ink, so any label there is red. "Spine neutral" from (74, 186) left onto the column,
   outside both circles: clean at 13 px, red at 14 px (ink at 67,194). With the clip disc widened to r 400 the clipped
   render counts again: H1.ink on normal meta, normal spine and mistake meta (the fix reverted gives the same three).
+- Panel lb4p (#327 6410191598) R5 fix: one solid red line along the locked arm's axis, Mistake shoulder to Mistake
+  handle centre (a `line` guide, drawn as `m-arrow`), in the plate and through the Mistake zoom; the dashed outline
+  stays and no segment changes. A15's dashed-or-arrow and 6 px clearance rules exempt exactly this guide (`AXIS` in
+  lb6-plates.test.ts). Page e4260472…6848; QA as before (all 10 pass; F2 0.58, F5 3.57).

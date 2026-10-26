@@ -119,7 +119,10 @@ export default {
   tempo: [{ phase: 'Press', s: 2, move: true }, { phase: 'Return', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    guides: [],
+    // the locked arm's axis, shoulder -> handle centre (panel lb4p R5, #327 6410191598): the capsule outline keeps its
+    // elbow taper and reads as "arm higher"; one straight line shows the arm straight, in the plate and the Mistake zoom
+    // (as the approved horizontal_leg_press Mistake along its locked leg)
+    guides: [{ kind: 'line', pts: [{ at: 'shoulder.r', pose: 'mistake' }, { at: 'grip.r', pose: 'mistake' }] }],
     tells: [
       { key: 'lock', text: 'Locked<br>elbows', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 166, top: 40 }, cue: 'The elbows lock straight at the front of the press.' },
     ],
