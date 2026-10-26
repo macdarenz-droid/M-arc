@@ -16,6 +16,7 @@ import { allThemesCss } from '../layers/engine/themes.mjs';   // LIB-7b
 import { PLATE_CSS } from '../layers/engine/index.mjs';   // LIB-7b
 import { HAND_CSS } from '../layers/engine/hand.mjs';   // LIB-7b
 import { FEEL_CSS } from '../layers/engine/feelmap.mjs';   // LIB-7b
+import { VENDOR_STRIP, NOSECS_STRIP } from './strip/tempo-strip.mjs';   // LIB-STRIP
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const RENDERER_URL = pathToFileURL(join(HERE, 'render', 'closeups.mjs')).href;
@@ -118,6 +119,7 @@ export function patchBuildPage(src, spec) {
     `const __lib = await import(${JSON.stringify(RENDERER_URL)}), __layersPlate = renderPlate;   // LIB-6-PM: D-LIB6PM-PLATE\n`
     + PLATE_ENGINE_ANCHOR.replace("  const pre = id.replace(/_/g, '-');\n",
       "  const pre = id.replace(/_/g, '-'), renderPlate = await __lib.plateEngine(id, join(root, 'exercises', `${id}.mjs`), { root, layers: { name: 'layers', renderPlate: __layersPlate } });\n"));
+  src = patchOnce(src, 'tempo strip', VENDOR_STRIP, NOSECS_STRIP);   // LIB-STRIP: D-STRIP-PATCH
   if (spec.jump !== undefined) src = patchOnce(src, 'jump link', GOLDEN_B_JUMP, spec.jump ?? '');
   return src;
 }

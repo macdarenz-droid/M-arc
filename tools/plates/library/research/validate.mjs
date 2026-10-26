@@ -7,6 +7,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { boxCapOf } from '../lint/box-caps.mjs';
 import { CONTACT_RE, RED_FLAG_BOX_MAX_WORDS, SAFETY_LINE_RE, SOURCE_CS_RE, SOURCE_RE, words } from '../../layers/artifact/copy-lint.mjs';
+import { FORMS, isUntimed, tempoOf, wordProblems } from '../strip/tempo-strip.mjs';   // LIB-STRIP
 
 export const ROOT = resolve(fileURLToPath(new URL('../../../..', import.meta.url)));
 export const HOWTO = 'docs/research/howto';
@@ -199,7 +200,7 @@ export function factFormProblems(facts) {
  *  when present (plateFacts a list, [] = verified with no numeric quote for a drawn pose (D-LIB8M-NOFACTS, D-PLATEFACTS-EMPTY),
  *  each fact naming a known claim, one form per fact; tempo entries in H6's shape
  *  with no claim key; topFault a key). `file` is the card's file name (<id>.json). */
-export function validateCard(card, quotes, { file } = {}) {
+export function validateCard(card, quotes, { file, untimed = untimedRows(), fallbackA = fallbackAIds() } = {}) {
   const tag = `cards/${file ?? `${card?.id}.json`}`, bad = [];
   if (file && file !== `${card.id}.json`) bad.push(`${tag}: id ${card.id} does not match the file name`);
   if (quotes?.id !== card.id) bad.push(`${tag}: quotes file id ${JSON.stringify(quotes?.id)}, want ${card.id}`);
@@ -221,11 +222,39 @@ export function validateCard(card, quotes, { file } = {}) {
     if (!Array.isArray(card.tempo) || !card.tempo.length) bad.push(`${tag}: tempo is empty or not a list`);
     for (const [i, t] of (card.tempo ?? []).entries()) {
       const keys = Object.keys(t).join();
-      if (keys !== 'phase,s,move' && keys !== 'phase,s') bad.push(`${tag}: tempo[${i}] keys ${keys}, want phase,s[,move]`);
+      if (!('s' in t) && Array.isArray(card.tempo) && untimed.has(card.id)) { if (!UNTIMED_KEYS.includes(keys)) bad.push(`${tag}: tempo[${i}] keys ${keys}, want phase[,move][,word]`); }   // LIB-STRIP
+      else if (keys !== 'phase,s,move' && keys !== 'phase,s') bad.push(`${tag}: tempo[${i}] keys ${keys}, want phase,s[,move]`);
       if ('move' in t && t.move !== true) bad.push(`${tag}: tempo[${i}].move is ${JSON.stringify(t.move)}`);
     }
+    if (isUntimed(card.tempo) && untimed.has(card.id)) bad.push(...untimedProblems(card, untimed.get(card.id), fallbackA.has(card.id)).map(x => `${tag}: ${x}`));   // LIB-STRIP
   }
   if ('topFault' in card && (typeof card.topFault !== 'string' || !card.topFault)) bad.push(`${tag}: topFault is not a key`);
+  return bad;
+}
+
+// ---- LIB-STRIP (D-STRIP-SHAPE): an untimed tempo entry (no `s`) is valid only on a card listed as untimed in
+// strip/rows.json, when the card's tempo is exactly tempoOf(its rows) (so each entry's row carries a claim, and either a
+// word with its `says` or the explicit `blank: true` marker), and every word passes wordProblems on plate.tempo.text.
+// A timed entry still needs phase,s[,move]; every shape rejected before is still rejected.
+const UNTIMED_KEYS = ['phase', 'phase,move', 'phase,word', 'phase,move,word'];
+/** The untimed cards: id -> tempo-map rows, from strip/rows.json. */
+let stripCache = null;
+const stripRows = () => (stripCache ??= JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/strip/rows.json'), 'utf8')));
+/** The untimed cards (rows.json cards and fallbackA): id -> tempo-map rows. */
+export const untimedRows = () => new Map([...stripRows().cards, ...(stripRows().fallbackA ?? [])].map(c => [c.id, c.rows]));
+/** D-STRIP-AFALL: the cards that use option A's fallback (every phase blank). */
+export const fallbackAIds = () => new Set((stripRows().fallbackA ?? []).map(c => c.id));
+function untimedProblems(card, rows, allBlank = false) {
+  const bad = [];
+  for (const [i, r] of rows.entries()) {
+    if (typeof r.claim !== 'string' || !r.claim) bad.push(`strip row ${i} (${r.phase}) carries no claim`);
+    if (('word' in r) === (r.blank === true)) bad.push(`strip row ${i} (${r.phase}) needs a word or blank: true, not both`);
+  }
+  let want = null;
+  try { want = tempoOf(rows); } catch (e) { bad.push(e.message); }
+  if (want && JSON.stringify(card.tempo) !== JSON.stringify(want)) bad.push(`tempo ${JSON.stringify(card.tempo)} != tempoOf(strip rows) ${JSON.stringify(want)}`);
+  for (const [i, t] of card.tempo.entries()) if ('word' in t && !Object.hasOwn(FORMS, t.word)) bad.push(`tempo[${i}].word ${JSON.stringify(t.word)} is not a FORMS word`);
+  for (const p of wordProblems(card.tempo, card.plate?.tempo?.text, { allBlank })) bad.push(`tempo words: ${p} (plate.tempo.text)`);
   return bad;
 }
 
