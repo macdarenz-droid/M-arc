@@ -130,12 +130,13 @@ export function deviation(c, E, R, { inPose = anchorInPose } = {}) {
 export function h3(c, ctx, R, M) {
   const out = [], p = c.plate, env = ctx.envelope;
   // LIB-ZOOM: a view with a zoom circle meets its bar inside the circle instead (qa/zoom.mjs zoomRows), same bars
-  const zoomed = c.spec?.zoom?.view;
-  if (zoomed !== 'normal' && !(M.traceLen >= env.traceLenMin)) out.push(P('H3.trace', `Trace ${M.traceLen.toFixed(1)} px < the shortest approved ${env.traceLenMin.toFixed(1)} px`));
+  // (D-LIB16-ZOOMVIEWS: the field may list one entry per view)
+  const zoomed = new Set([].concat(c.spec?.zoom ?? []).map(z => z?.view));
+  if (!zoomed.has('normal') && !(M.traceLen >= env.traceLenMin)) out.push(P('H3.trace', `Trace ${M.traceLen.toFixed(1)} px < the shortest approved ${env.traceLenMin.toFixed(1)} px`));
   if (!/<g class="pose-start"><g/.test(p.normal.svg)) out.push(P('H3.start-is-end', 'start = end: nothing moves (empty pose-start layer)'));
   if (!/<g class="m-pose" mask="url\(#[\w-]+\)"><g class="u-stroke"><use /.test(p.mistake.svg)) out.push(P('H3.mistake-outline', 'Mistake outline is empty'));
   if (!R) out.push(P('H3.deviation:not-engine', 'no tell-anchor deviation: the plate is not drawn by the engine'));
-  else if (zoomed !== 'mistake' && !(M.deviation >= env.deviationMin)) out.push(P('H3.deviation', `largest tell-anchor deviation ${M.deviation.toFixed(1)} px < the smallest approved ${env.deviationMin.toFixed(1)} px`));
+  else if (!zoomed.has('mistake') && !(M.deviation >= env.deviationMin)) out.push(P('H3.deviation', `largest tell-anchor deviation ${M.deviation.toFixed(1)} px < the smallest approved ${env.deviationMin.toFixed(1)} px`));
   return out;
 }
 

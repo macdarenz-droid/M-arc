@@ -17,11 +17,25 @@ export const VIEWS = ['normal', 'mistake'];
 const ENGINE = { renderPlate, body };
 const f = v => (Math.round(v * 100) / 100).toFixed(2).replace(/\.?0+$/, '');
 
-/** The zoom field's own errors (shape and k range), [] when valid. */
+/** The zoom entries of a spec's field as a list: [] (none), [z] (one { view, k }) or the list itself
+ *  (D-LIB16-ZOOMVIEWS: at most one zoom per view). */
+export const zoomList = z => (z == null ? [] : Array.isArray(z) ? z : [z]);
+/** The spec's zoom entry for `view`, or null. */
+export const zoomFor = (spec, view) => zoomList(spec?.zoom).find(z => z?.view === view) ?? null;
+
+/** The zoom field's own errors (shape and k range), [] when valid. A single { view, k } is checked as before; a list
+ *  (D-LIB16-ZOOMVIEWS) holds 1 or 2 such entries with different views, each checked the same way. */
 export function zoomFieldProblems(z) {
   if (z == null) return [];
+  if (!Array.isArray(z)) return entryProblems(z);
+  if (z.length < 1 || z.length > 2) return [`zoom: a list holds 1 or 2 entries, not ${z.length}`];
+  const out = z.flatMap((e, i) => entryProblems(e).map(t => `zoom[${i}]: ${t}`));
+  for (const v of VIEWS) if (z.filter(e => e?.view === v).length > 1) out.push(`zoom: two entries for the ${v} view`);
+  return out;
+}
+function entryProblems(z) {
   const out = [];
-  if (typeof z !== 'object' || Array.isArray(z)) return ['zoom must be { view, k }'];
+  if (typeof z !== 'object' || z === null || Array.isArray(z)) return ['zoom must be { view, k }'];
   for (const k of Object.keys(z)) if (!['view', 'k', 'tell'].includes(k)) out.push(`zoom: unknown key ${k}`);
   if (!VIEWS.includes(z.view)) out.push(`zoom.view ${JSON.stringify(z.view)} is not 'normal' or 'mistake'`);
   if (!(typeof z.k === 'number' && z.k >= ZOOM.kMin && z.k <= ZOOM.kMax)) out.push(`zoom.k ${JSON.stringify(z.k)} is outside ${ZOOM.kMin}-${ZOOM.kMax}`);
@@ -32,8 +46,9 @@ export function zoomFieldProblems(z) {
  *  points in plate px. The same measure as PQ-H3's deviation(). */
 export function faultOf(spec, cam, L) {
   let best = null;
+  const tell = zoomFor(spec, 'mistake')?.tell;
   for (const t of spec.mistake?.tells ?? []) {
-    if (spec.zoom?.tell && t.key !== spec.zoom.tell) continue;
+    if (tell && t.key !== tell) continue;
     const a = resolvePoint(anchorInPose(t.anchor, 'end'), 'end', L.lm, cam), b = resolvePoint(anchorInPose(t.anchor, 'mistake'), 'mistake', L.lm, cam);
     const d = Math.hypot(b[0] - a[0], b[1] - a[1]);
     if (!best || d > best.d) best = { key: t.key, end: a, mistake: b, d };
@@ -96,10 +111,12 @@ function discFree(occ, c, r) {
  * The zoom of `spec` (its `zoom` field), placed and drawn. Returns { view, k, focus, circle: { c, r }, src: { c, r },
  * fault?, trace?, svg } or throws when no place passes the placement rules. `prefix`: the card's svg id prefix.
  */
-export function zoomOf(spec, { prefix = 'p', E = ENGINE } = {}) {
+export function zoomOf(spec, { prefix = 'p', E = ENGINE, view: which = null } = {}) {
   const bad = zoomFieldProblems(spec.zoom);
   if (bad.length) throw new Error(`${spec.id}: ${bad.join('; ')}`);
-  const { view, k } = spec.zoom, m = view === 'mistake', vid = `${prefix}-${m ? 'm' : 'n'}`;
+  const entry = which ? zoomFor(spec, which) : Array.isArray(spec.zoom) ? null : spec.zoom;
+  if (!entry) throw new Error(`${spec.id}: no zoom entry${which ? ` for the ${which} view` : '; a zoom list needs a view'}`);
+  const { view, k } = entry, m = view === 'mistake', vid = `${prefix}-${m ? 'm' : 'n'}`;
   const plate = E.renderPlate(spec, { id: vid, mistake: m }), c = plate.report.camera, cam = cameraOf(spec, plate.report);
   const fault = m ? faultOf(spec, cam, poseLandmarks(E, spec)) : null, trace = m ? null : tracePath(spec, cam, E);
   if (m && !fault) throw new Error(`${spec.id}: a Mistake zoom needs a tell`);
@@ -151,8 +168,8 @@ export async function applyZooms(html, specs = {}) {
   }
   if (!zoomed.length) return html;
   let s = html.toString('utf8');
-  for (const [chrome, spec] of zoomed) {
-    const z = zoomOf(spec, { prefix: chrome });
+  for (const [chrome, spec] of zoomed) for (const { view } of zoomList(spec.zoom)) {
+    const z = zoomOf(spec, { prefix: chrome, view });
     const fit = s.indexOf(`<div class="plate-fit" id="${chrome}-plate">`);
     const fig = s.indexOf(`<figure class="plate" data-mode="${z.view}"`, fit), end = s.indexOf('</svg>', fig);
     if (fit < 0 || fig < 0 || end < 0) throw new Error(`zoom: ${chrome}: no ${z.view} plate on the page`);

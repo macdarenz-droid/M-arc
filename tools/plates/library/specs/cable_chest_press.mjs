@@ -108,6 +108,9 @@ export default {
   startParts: ['arm.r', 'handle'],
   ghosts: { count: 2, parts: ['arm.r', 'handle'] },
   trace: { point: 'grip.r', trim: [10, 12] },
+  // LIB-ZOOM, one zoom per view (D-LIB16-ZOOMVIEWS, #327 6405117790): the Trace is 6.6 px and the lock 2.98 px at plate
+  // scale (card-true, D-LIB16-SIZE). Normal k 3: the handle's path; Mistake k 4: the elbow, 11.91 px (k 3.8 is red).
+  zoom: [{ view: 'normal', k: 3 }, { view: 'mistake', k: 4 }],
   callouts: [
     { key: 'stance', text: 'Staggered<br>stance', anchor: 'toe.r', box: { left: 266, top: 262 }, cue: 'Stand with one foot in front of the other, feet planted.' },
     { key: 'height', text: 'Handles at<br>nipples', anchor: { at: 'grip.r', off: [0, 9] }, box: { left: 262, top: 188 }, cue: 'Bring the handles back to about nipple height, not the collarbone.' },
