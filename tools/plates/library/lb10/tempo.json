@@ -1,5 +1,5 @@
 {
- "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase, and a cycle plate's Work and Rest, is a constant only with a quote that states its seconds; a range is the quote's string. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 8 pose map). Ruled: D-LIB22-TEMPO (lib-22-card ruling 25), 'LB10 NOTE RULED' Q1 (#305 6355155831). No row for the D-LIB22-SECS NOSECS ids (sled_push, sled_pull, farmer_s_carry, burpee, medicine_ball_slam, wall_ball): their tempo is null and no quote states seconds of a drawn phase. Constant rows carry their claim and quote verbatim, as pilot-a/tempo.json @ dcac4a38 does.",
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase, and a cycle plate's Work and Rest, is a constant only with a quote that states its seconds; a range is the quote's string. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 8 pose map). Ruled: D-LIB22-TEMPO (lib-22-card ruling 25), 'LB10 NOTE RULED' Q1 (#305 6355155831). No row for the D-LIB22-SECS NOSECS ids still held (sled_push, medicine_ball_slam, wall_ball: strip rows.json leftOut, S3): their tempo is null and no quote states seconds of a drawn phase. sled_pull, farmer_s_carry and burpee are lifted at 'LIB-22 resume' (D-STRIP-NOTSCOPE; F-STRIP-2): their untimed rows are strip/rows.json's card rows byte for byte (D-STRIP-B, -ROWS: { phase, move?, word? | blank, claim, says?, quote? }); only { phase, move?, word? } goes on the card and the spec (tempoOf). Constant rows carry their claim and quote verbatim, as pilot-a/tempo.json @ dcac4a38 does.",
  "research": "claude/libht-research 596dbe0748f11d13b431ee11d38d1742771925f1",
  "poseMap": {
   "burpee": {
@@ -82,6 +82,54 @@
     "claim": "c16",
     "quote": "Spend 30 seconds practicing jumping rope, followed by 1 minute of rest.",
     "note": "ruled (Q1, #305 6355155831): Rest 60, because the quote states '1 minute' of rest after the work"
+   }
+  ],
+  "sled_pull": [
+   {
+    "phase": "Walk",
+    "move": true,
+    "word": "Quick",
+    "claim": "c3",
+    "says": "short, quick, controlled steps",
+    "quote": "To pull, step back one foot at a time, dragging the sled toward you. Each step should be short, quick, and controlled-think of driving through your midfoot while keeping the rope close to your body."
+   }
+  ],
+  "farmer_s_carry": [
+   {
+    "phase": "Walk",
+    "move": true,
+    "word": "Controlled",
+    "claim": "c4",
+    "says": "with control",
+    "quote": "Keep your arms long, your torso upright, and your gaze ahead. Walk with controlled steps."
+   }
+  ],
+  "burpee": [
+   {
+    "phase": "Squat down",
+    "move": true,
+    "word": "Controlled",
+    "claim": "c24",
+    "says": "Descend quickly but under control",
+    "quote": "Descend quickly but under control. Do not just drop into a low squat, or your knees will suffer."
+   },
+   {
+    "phase": "Kick back",
+    "move": true,
+    "blank": true,
+    "claim": "c24"
+   },
+   {
+    "phase": "Jump in",
+    "move": true,
+    "blank": true,
+    "claim": "c24"
+   },
+   {
+    "phase": "Jump up",
+    "move": true,
+    "blank": true,
+    "claim": "c24"
    }
   ]
  }

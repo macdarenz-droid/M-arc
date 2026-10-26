@@ -473,19 +473,15 @@ kettlebell_swing has a strip from the start; the other three render only from `l
 
 ## 15. Held ids and NOSECS rows
 
+As of 'LIB-22 resume' (section 21). Lifted there: sled_pull and burpee (strip rows; zoom), bear_crawl (zoom).
+
 | id | ruling | why | route |
 |---|---|---|---|
-| sled_push, sled_pull, farmer_s_carry, burpee, medicine_ball_slam | D-LIB22-SECS (D-LIB14-NOSECS) | tempo null, no quote states seconds of a drawn phase | the strip card on main, then 'LIB-22 resume' |
-| wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); tempo null | #289 on main, then 'LIB-22 resume' (drawn); the strip card for its row |
-| any cycle row whose constant is not ruled | D-LIB22-SECS | | the ruling or the strip card |
-| jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px** < 22.11 px (measured); its Mistake passes (16.4 px) | LIB-ZOOM (#279) on main, extended to the motion |
-| burpee | D-LIB8-shrug (S2); also NOSECS | measured: Mistake deviation **7.1 px** < 11.39 (c11's stiff landing against KNEE_SOFT 15°); Trace 149.7 px passes | LIB-ZOOM |
-| bear_crawl | D-LIB8-shrug (S2) | measured: Trace **10 px** < 22.11 (the 5.08 cm step, all inside the trims); Mistake 32.7 px passes | LIB-ZOOM |
-| sled_pull | D-LIB8-shrug (S2); also NOSECS | measured: Trace **10.1 px** < 22.11 (the heel-to-toe "short" step, c3); Mistake 23.3 px passes | LIB-ZOOM |
-| jumping_jacks | D-LIB8-shrug (S2) | measured: Mistake deviation **9.6 px** < 11.39 (c12's toes turned out in the front view; S1/S4 asked); Trace 242.0 px passes | LIB-ZOOM |
-
-battle_ropes and high_knees were expected held [est] but measure above both limits (battle_ropes 12.4 / 23.8 px,
-high_knees 13.6 / 100.4 px), so they are on rows.json.
+| sled_push, medicine_ball_slam | D-LIB22-SECS (D-LIB14-NOSECS) | tempo null; strip/rows.json leftOut (S3): no FORMS form in the text | a ruling (a FORMS form or D-STRIP-AFALL; #331 6409735295), then the lift |
+| wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); strip leftOut (S3) | #289 on main, then a resume |
+| farmer_s_carry | #305 6360164495 item 2 (open M_STRIDE basis) | tempo lifted (strip row); M_STRIDE 0.70 m feeds the Mistake deviation with no quote, approved plate or measured convention behind the number | a basis ruled (#331 6409735295) |
+| jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px**; a normal zoom at kMax 4 gives 21.3 px < 22.11 (trim [0, 0]) | a route the zoom rules do not hold (as F-PALLOF-ARCH) |
+| jumping_jacks | D-LIB22-JJ | H6:no-card until F-H6-TEMPO; also S2 (Mistake **9.6 px**; a Mistake zoom at k 1.5 reaches 14.4 px, drawn at its own resume) | F-H6-TEMPO on main |
 
 Held rows are in no rows file; their specs, tests and card keys stay. Each is confirmed or cleared by measurement.
 
@@ -645,7 +641,6 @@ k rule: the smallest k in steps of 0.5 from 1.5 whose zoom-scale value clears it
 | burpee | NOSECS; S2 Mistake 7.1 px | strip row (Squat down: Controlled; 3 blank, c24); LIB-ZOOM | tempo, fixture lift, zoom, QA, row | Mistake view, k 2: the `landing` tell (`knee.r`, end → mistake); 14.2 px ≥ 11.39 |
 | bear_crawl | S2 Trace 10 px | LIB-ZOOM | zoom, QA, row | normal view, k 4: the hand's step (`wrist.r`); 29.3 px ≥ 22.11 (k 3.5 gives 24.1, under the 10 % margin) |
 | farmer_s_carry | NOSECS | strip row (Walk: Controlled, c4) | tempo, fixture lift; the plate stays held (below) | none (H3 passes: 51.2 / 28.0 px) |
-| jumping_jacks | S2 Mistake 9.6 px | LIB-ZOOM | zoom drawn; the row stays held (below) | Mistake view, k 1.5: the `toes` tell (`toe.r`); 14.4 px ≥ 11.39 |
 
 **Still held:**
 
@@ -654,6 +649,15 @@ k rule: the smallest k in steps of 0.5 from 1.5 whose zoom-scale value clears it
 | sled_push | a ruling: strip `leftOut` (S3, "short, powerful steps", c10; "powerful" is not a FORMS form). FORMS grows only by a ruling (D-STRIP-FORMS); D-STRIP-AFALL (all phases blank) is the other ruled form |
 | medicine_ball_slam | the same ruling: strip `leftOut` (S3, "Ballistic and continuous") |
 | farmer_s_carry | a basis for M_STRIDE 0.70 m (6360164495 item 2: a quote, an approved plate's file:line or a measured convention). No quote on the card or the research head, and no approved plate on main, gives a regular step length |
-| jumping_jacks | F-H6-TEMPO (D-LIB22-JJ); not on main |
+| jumping_jacks | F-H6-TEMPO (D-LIB22-JJ); not on main. Its Mistake zoom (k 1.5, `toes`, 14.4 px) is drawn at its own resume: drawn now, its source ring crossed the `toes` label (H1.ink) on a row that cannot ship |
 | jump_rope | no allowed k reaches the bar: the Trace (`sole.r`, trim [0, 0]) is 21.3 px at k 4 (kMax) < 22.11; a raised kMax or another route needs a ruling (as F-PALLOF-ARCH) |
 | wall_ball | LB4 #289 (`wall`) on main (D-LIB22-WALL); also strip `leftOut` (S3) |
+
+QA at 'LIB-22 resume' (lb10/qa.mjs): sled_pull, burpee and bear_crawl pass all 10 hard checks with the ruled flags.
+Layout fixes made for it (labels only; no body part, equipment item, fault or fact moved):
+- sled_pull: "Short steps back" box {16, 276} → {8, 288} (H4.overlap with "Quarter squat"; moving "Quarter squat" up
+  instead put its leader across the end figure, A15); cue "core engaged" → "core
+  braced" (H8 ban `engage`; c8 "keep your torso braced"); alt semicolon → full stop (H8).
+- burpee: "Straight plank" box top 120 → 168 (F3: leader 113.5 → 66.8 px, inside 49.3-82.3).
+- bear_crawl: Mistake "Hips above shoulders" box top 120 → 96 (F3: leaderMax 31.9 → 55.9 px); alt semicolon (H8).
+- jumping_jacks (held): alt semicolon (H8).

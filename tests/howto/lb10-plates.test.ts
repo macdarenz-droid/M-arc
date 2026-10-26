@@ -26,8 +26,15 @@ const LB10 = ['sled_push', 'sled_pull', 'farmer_s_carry', 'burpee', 'jumping_jac
   'medicine_ball_slam', 'wall_ball', 'bear_crawl', 'kettlebell_swing'];
 // LB10's thirteenth row: pilot A's plate (pA), never in an LB10 file.
 const NOT_HERE = ['mountain_climbers'];
-// D-LIB22-SECS: no tempo seconds on these six cards; drawn and tested, never on rows.json until the strip card.
-const NOSECS = ['sled_push', 'sled_pull', 'farmer_s_carry', 'burpee', 'medicine_ball_slam', 'wall_ball'];
+// D-LIB22-SECS: no tempo seconds on six cards. 'LIB-22 resume' lifts the three with a strip/rows.json card row (STRIP;
+// D-STRIP-NOTSCOPE, F-STRIP-2); the three in its leftOut (S3) stay NOSECS: drawn and tested, never on rows.json.
+const STRIP = ['sled_pull', 'farmer_s_carry', 'burpee'];
+const NOSECS = ['sled_push', 'medicine_ball_slam', 'wall_ball'];
+/** A tempo.json row as its card and spec phase: timed from the card's plate.tempo (`from`) or a quoted constant; an
+ *  untimed row (D-STRIP-B, -ROWS) as strip tempoOf builds it, { phase, move?, word? }. */
+const phaseOf = (plateTempo: any, r: any) => ('from' in r || 'constant' in r
+  ? { phase: r.phase, s: r.from ? plateTempo[r.from] : r.constant, ...(r.move ? { move: true } : {}) }
+  : { phase: r.phase, ...(r.move ? { move: true } : {}), ...('word' in r ? { word: r.word } : {}) });
 const RESEARCH_HEAD = '596dbe0748f11d13b431ee11d38d1742771925f1';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -109,7 +116,7 @@ describe('LIB-22 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     sled_pull: ['lean', 'lean'], farmer_s_carry: ['rush', 'long'], burpee: ['rush', 'landing'], high_knees: ['arch', 'arch'],
     battle_ropes: ['shrug', 'shrug'], bear_crawl: ['hips', 'hips'], jumping_jacks: ['jerky', 'toes'],
   };
-  const tempoOf = (id: string) => (t.rows[id] ? t.rows[id].map((r: any) => ({ phase: r.phase, s: r.from ? cardOf(id).plate.tempo[r.from] : r.constant, ...(r.move ? { move: true } : {}) })) : undefined);
+  const tempoOf = (id: string) => (t.rows[id] ? t.rows[id].map((r: any) => phaseOf(cardOf(id).plate.tempo, r)) : undefined);
   const keyProblems = (id: string, c: any) => {
     const out: string[] = [], facts = FACTS[id];
     const want = facts ? facts.map(([landmark, pose, cardPose, claim]) => ({ kind: 'contact', landmark, pose, cardPose, claim })) : undefined;
@@ -168,7 +175,7 @@ describe('LIB-22 A7 (proposed, D-LIB22-SECS, -TEMPO): lb10/tempo.json', () => {
     ...readJson(`docs/research/howto/quotes/${id}.json`).quotes.filter((q: any) => q.claim === claim).map((q: any) => q.text),
   ];
   /** The phase array a tempo.json row gives with the card's plate.tempo: from up/down/pause, or a quoted constant. */
-  const build = (id: string, rows = t.rows[id]) => rows.map((r: any) => ({ phase: r.phase, s: r.from ? cardOf(id).plate.tempo[r.from] : r.constant, ...(r.move ? { move: true } : {}) }));
+  const build = (id: string, rows = t.rows[id]) => rows.map((r: any) => phaseOf(cardOf(id).plate.tempo, r));
   const problems = (tt: any) => Object.entries<any>(tt.rows).flatMap(([id, rows]) => rows.flatMap((r: any) => {
     const out: string[] = [];
     if (r.from && !(typeof cardOf(id).plate.tempo[r.from] === 'number' && cardOf(id).plate.tempo[r.from] > 0)) out.push(`${id} ${r.phase}: card ${r.from} is not a positive number`);
@@ -183,6 +190,37 @@ describe('LIB-22 A7 (proposed, D-LIB22-SECS, -TEMPO): lb10/tempo.json', () => {
     for (const id of NOSECS) expect(t.rows[id], id).toBeUndefined();
     expect(build('kettlebell_swing')).toEqual([{ phase: 'Drive', s: 1, move: true }, { phase: 'Swing down', s: 1, move: true }]);
     expect(cardOf('kettlebell_swing').plate.tempo.pause).toBe(0);
+  });
+  /** D-STRIP-B, -ROWS, F-STRIP-2: a lifted id's rows are strip/rows.json's card rows byte for byte (word or blank, claim,
+   *  says, quote), its card's plate.tempo.text is the strip card's text, and strip's own wordProblems finds nothing. */
+  const strip = readJson('tools/plates/library/strip/rows.json');
+  const stripProblems = async (tt: any) => {
+    const ts = await import(/* @vite-ignore */ lib('strip/tempo-strip.mjs'));
+    return STRIP.flatMap(id => {
+      const sc = strip.cards.find((c: any) => c.id === id), rows = tt.rows[id], text = cardOf(id).plate.tempo.text, out: string[] = [];
+      if (!sc) return [`${id}: no strip card`];
+      if (JSON.stringify(rows) !== JSON.stringify(sc.rows)) out.push(`${id}: rows differ from strip/rows.json`);
+      if (text !== sc.text) out.push(`${id}: card text differs from strip/rows.json`);
+      if (!rows || rows.some((r: any) => 'from' in r || 'constant' in r)) out.push(`${id}: no rows or a timed row`);
+      const w = rows ? ts.wordProblems(ts.tempoOf(rows), text) : [];
+      if (w.length) out.push(`${id}: words ${w.join(',')}`);
+      return out;
+    });
+  };
+  it('the lifted ids (sled_pull, farmer_s_carry, burpee) carry strip/rows.json\'s rows byte for byte, each word in the card text', async () => {
+    expect(await stripProblems(t)).toEqual([]);
+    expect(build('sled_pull')).toEqual([{ phase: 'Walk', move: true, word: 'Quick' }]);
+    expect(build('burpee')).toEqual([{ phase: 'Squat down', move: true, word: 'Controlled' }, { phase: 'Kick back', move: true }, { phase: 'Jump in', move: true }, { phase: 'Jump up', move: true }]);
+  });
+  it('mutations: a word changed (Quick to Slow), a says edited, a row dropped, a constant on a lifted id are red', async () => {
+    const word = structuredClone(t); word.rows.sled_pull[0].word = 'Slow';
+    expect(await stripProblems(word)).toEqual(['sled_pull: rows differ from strip/rows.json', 'sled_pull: words word:0']);
+    const says = structuredClone(t); says.rows.farmer_s_carry[0].says = 'with more control';
+    expect(await stripProblems(says)).toEqual(['farmer_s_carry: rows differ from strip/rows.json']);
+    const drop = structuredClone(t); drop.rows.burpee.pop();
+    expect(await stripProblems(drop)).toEqual(['burpee: rows differ from strip/rows.json']);
+    const timed = structuredClone(t); timed.rows.farmer_s_carry = [{ phase: 'Walk', constant: 30, move: true, claim: 'c8', quote: 'x' }];
+    expect(await stripProblems(timed)).toEqual(['farmer_s_carry: rows differ from strip/rows.json', 'farmer_s_carry: no rows or a timed row', 'farmer_s_carry: words noword']);
   });
   it('every constant is stated by its claim\'s verbatim quote, and every from-row reads a positive card number', () => {
     expect(problems(t)).toEqual([]);
@@ -263,8 +301,9 @@ const T = 600_000;
 const SPECS_DIR = 'tools/plates/library/specs';
 const ROWS = 'tools/plates/library/lb10/rows.json';
 const FRONT = ['jumping_jacks', 'jump_rope'];
-// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; D-LIB8-shrug holds, measured).
-const HELD = [...NOSECS, 'jump_rope', 'bear_crawl', 'jumping_jacks'];
+// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; farmer_s_carry's open M_STRIDE basis; jump_rope's
+// Trace, short of the bar at kMax; jumping_jacks under D-LIB22-JJ until F-H6-TEMPO).
+const HELD = [...NOSECS, 'farmer_s_carry', 'jump_rope', 'jumping_jacks'];
 // The ids drawn on this branch: the slice, then the bulk as each plate is integrated (BULK GO, #305 6356763967).
 const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl', 'high_knees', 'jumping_jacks', 'battle_ropes'];
 const COMPOSERS = ['kettlebell', 'medBall', 'sled', 'jumpRope', 'battleRope'];
@@ -897,7 +936,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H (D-LIB22-B1)', () => {
-    expect(want()).toEqual(['lib_high_knees', 'lib_battle_ropes', 'lib_kettlebell_swing']);
+    expect(want()).toEqual(['lib_sled_pull', 'lib_burpee', 'lib_high_knees', 'lib_battle_ropes', 'lib_bear_crawl', 'lib_kettlebell_swing']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('mountain_climbers (pA) and wall_ball (no spec before its resume) are in no lb10/ file as a row', () => {
@@ -913,7 +952,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
     const table = design.split(head)[1]!.split('\n## ')[0]!;
     for (const id of NOSECS) expect(HELD, id).toContain(id);
     for (const id of HELD) {
-      expect(table.split('\n').some(l => l.startsWith('| ') && l.split('|')[1]!.includes(id) && /D-LIB22-SECS|D-LIB8-shrug|D-LIB22-WALL/.test(l)), id).toBe(true);
+      expect(table.split('\n').some(l => l.startsWith('| ') && l.split('|')[1]!.includes(id) && /D-LIB22-SECS|D-LIB8-shrug|D-LIB22-WALL|D-LIB22-JJ|6360164495/.test(l)), id).toBe(true);
       for (const f of reg.batchFiles()) expect(readFileSync(f, 'utf8').includes(`lib_${id}`), `${f}: ${id}`).toBe(false);
       expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
     }
@@ -1009,7 +1048,7 @@ console.log(JSON.stringify({ ids: b.drawnIds(), a: sha(a.html), c: sha(c.html) }
 describe('LIB-22 A7 (spec half): each spec\'s tempo follows lb10/tempo.json and its card; NOSECS specs carry none', () => {
   const t = readJson('tools/plates/library/lb10/tempo.json');
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
-  const build = (id: string) => (t.rows[id] ? t.rows[id].map((r: any) => ({ phase: r.phase, s: r.from ? cardOf(id).plate.tempo[r.from] : r.constant, ...(r.move ? { move: true } : {}) })) : undefined);
+  const build = (id: string) => (t.rows[id] ? t.rows[id].map((r: any) => phaseOf(cardOf(id).plate.tempo, r)) : undefined);
   const tempoProblems = (id: string, spec: any) => (JSON.stringify(spec.tempo) === JSON.stringify(build(id)) ? [] : [`${id}: ${JSON.stringify(spec.tempo)} != ${JSON.stringify(build(id))}`]);
   it('every drawn spec\'s tempo is its ruled row built from the card (or none, NOSECS)', () => {
     for (const id of specsDrawn()) expect(tempoProblems(id, S[id])).toEqual([]);
@@ -1513,5 +1552,64 @@ describe('LIB-22 A17: sizes and trace points are fixed in lb10/sizes.json and ne
     expect(sizeProblems(m, { ...t, M_ARCH: { ...t.M_ARCH, basis: 'above deviationMin' } })).toEqual(['M_ARCH: basis names PQ-H3']);
     expect(sizeProblems({ ...m, SIZES: { ...m.SIZES, NEW_ANGLE: 5 } }, t)).toEqual(['NEW_ANGLE: not in sizes.json']);
     expect(sizeProblems({ ...m, default: { ...m.default, trace: { ...m.default.trace, point: 'knee.r' } } }, t)).toEqual(['trace: spec knee.r != sizes.json grip.r']);
+  });
+});
+
+describe('LIB-22 resume: the zoom circles (D-LIBZOOM-EXTEND, lib4-cards §41; DESIGN.md section 21)', { timeout: T }, () => {
+  // Each held S2 row the zoom lifts: its view, k, and the measure at the zoom's own scale (QA's: clippedTrace on the
+  // drawn circle; the tell deviation x k). k rule (section 21): the smallest k in steps of 0.5 from 1.5 whose
+  // zoom-scale value clears its bar by at least 10 %.
+  const ZOOMS: Record<string, { view: string; k: number }> = {
+    sled_pull: { view: 'normal', k: 1.5 }, burpee: { view: 'mistake', k: 2 }, bear_crawl: { view: 'normal', k: 4 },
+  };
+  let zi: any, qz: any, env: any;
+  beforeAll(async () => {
+    [zi, qz] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    env = pins().envelope;
+  });
+  /** { value, bar, holds }: the zoom-scale measure of `spec` at its zoom, its bar, and whether the source ring holds
+   *  the whole trace (normal) or the tell anchor in both poses (Mistake), as qa/zoom.mjs H3.zoom:content asks. */
+  const measure = (spec: any) => {
+    const z = zi.zoomOf(spec), ring = { c: z.circle.c, r: z.circle.r }, src = z.src;
+    const inSrc = (p: number[]) => Math.hypot(p[0]! - src.c[0], p[1]! - src.c[1]) <= src.r - 1;
+    return z.view === 'normal'
+      ? { value: qz.clippedTrace(z.svg, ring), bar: env.traceLenMin, holds: z.trace.every(inSrc) }
+      : { value: z.fault.d * z.k, bar: env.deviationMin, holds: [z.fault.end, z.fault.mistake].every(inSrc) };
+  };
+  const ruleProblems = (id: string, spec: any) => {
+    const out: string[] = [], m = measure(spec);
+    if (JSON.stringify(spec.zoom) !== JSON.stringify(ZOOMS[id])) out.push(`${id}: zoom ${JSON.stringify(spec.zoom)}`);
+    if (!(m.value >= 1.1 * m.bar)) out.push(`${id}: ${m.value.toFixed(1)} px under the bar + 10 %`);
+    if (!m.holds) out.push(`${id}: the source ring does not hold the motion`);
+    if (spec.zoom.k > zi.ZOOM.kMin) { const lower = measure({ ...spec, zoom: { ...spec.zoom, k: spec.zoom.k - 0.5 } }); if (lower.value >= 1.1 * lower.bar) out.push(`${id}: k ${spec.zoom.k - 0.5} already clears`); }
+    return out;
+  };
+  it('each lifted row carries its ruled zoom, clears its bar by 10 % at the smallest such k, and holds its motion in the source ring', async () => {
+    for (const id of Object.keys(ZOOMS)) {
+      expect(zi.zoomFieldProblems(S[id].zoom), id).toEqual([]);
+      expect(ruleProblems(id, S[id]), id).toEqual([]);
+      console.log(`LIB-22 zoom ${id}: ${S[id].zoom.view} k ${S[id].zoom.k}, ${measure(S[id]).value.toFixed(1)} px`);
+      await yieldNow();
+    }
+    for (const id of specsDrawn().filter(i => !(i in ZOOMS))) expect(S[id].zoom, id).toBeUndefined();
+  });
+  it('at plate scale each lifted row still fails its bar (the zoom is allowed only there; never enlarged)', async () => {
+    for (const id of Object.keys(ZOOMS)) {
+      const R = { normal: plate.renderPlate(S[id], { id: 'x' }), mistake: plate.renderPlate(S[id], { id: 'x', mistake: true }) };
+      const v = S[id].zoom.view === 'normal' ? markup.pathsOf(R.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0) : qaNode.deviation({ spec: S[id] }, Eng(), R);
+      expect(v, id).toBeLessThan(S[id].zoom.view === 'normal' ? env.traceLenMin : env.deviationMin);
+      await yieldNow();
+    }
+  });
+  it('jump_rope stays held: a normal zoom at kMax 4 is under traceLenMin', () => {
+    const m = measure({ ...S.jump_rope, zoom: { view: 'normal', k: zi.ZOOM.kMax } });
+    expect(m.value).toBeLessThan(env.traceLenMin);
+  });
+  it('mutations: bear_crawl at k 3.5 (under the margin), sled_pull at k 1 (field), burpee at k 2.5 (not the smallest), a zoom on the wrong view are red', async () => {
+    expect(ruleProblems('bear_crawl', { ...S.bear_crawl, zoom: { view: 'normal', k: 3.5 } })).toEqual(['bear_crawl: zoom {"view":"normal","k":3.5}', 'bear_crawl: 24.1 px under the bar + 10 %']);
+    expect(zi.zoomFieldProblems({ view: 'normal', k: 1 })).toEqual(['zoom.k 1 is outside 1.5-4']);
+    expect(ruleProblems('burpee', { ...S.burpee, zoom: { view: 'mistake', k: 2.5 } })).toEqual(['burpee: zoom {"view":"mistake","k":2.5}', 'burpee: k 2 already clears']);
+    await yieldNow();
+    expect(ruleProblems('sled_pull', { ...S.sled_pull, zoom: { view: 'mistake', k: 1.5 } })[0]).toBe('sled_pull: zoom {"view":"mistake","k":1.5}');
   });
 });

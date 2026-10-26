@@ -1,5 +1,5 @@
 // Sled pull (backward drag with a rope), side view, figure facing screen right, the sled in front. LIB-22 (LB10, H;
-// NOSECS: no tempo).
+// NOSECS lifted at 'LIB-22 resume': the strip word tempo).
 // View: side (card plate.view = census): the quarter squat, the shoulders over the hips, the step back and the torso
 //  pitching back are sagittal (plate.viewWhy).
 // Sources: research card docs/research/howto/cards/sled_pull.json (research head 596dbe07): c1 facing the sled, the rope
@@ -8,7 +8,7 @@
 //  controlled steps, driving through the midfoot, the rope close to the body; c4 feed the rope through the hands,
 //  elbows tucked; c5 the rope piles up near the feet; c8 the torso pitched back, the lower back taking the load (the
 //  Mistake). plate.frames: one step, "the rear foot stepped back with the sled a little closer; Trace follows the
-//  stepping foot". Tempo: none (D-LIB22-SECS).
+//  stepping foot". Tempo: Walk "Quick" (D-STRIP-B; strip/rows.json, c3).
 // Clone (D-LIB22-CLONE): seated_cable_row (the 8: the rope line to the hands; the rock-back Mistake), romanian_deadlift
 //  and barbell_row (#109: the hinge, KNEE 15), mountain_climbers (#109: one step of the cycle, the via ghost,
 //  FOOT_CLEAR), single_leg_romanian_deadlift (#109: the Winter centre of mass); copied, never imported.
@@ -179,9 +179,9 @@ export default {
   ghosts: { count: 1, parts: ['leg.r'] },
   trace: { point: 'ball.r', trim: [10, 12] },
   callouts: [
-    { key: 'squat', text: 'Quarter<br>squat', anchor: 'knee.r', box: { left: 24, top: 240 }, cue: 'Knees soft in a quarter squat, chest up, core engaged.' },
+    { key: 'squat', text: 'Quarter<br>squat', anchor: 'knee.r', box: { left: 24, top: 240 }, cue: 'Knees soft in a quarter squat, chest up, core braced.' },
     { key: 'stack', text: 'Shoulders<br>over hips', anchor: 'backUpper', box: { left: 24, top: 144 }, cue: 'Keep your shoulders over your hips, not leaning far back.' },
-    { key: 'steps', text: 'Short<br>steps<br>back', anchor: 'heel.r', box: { left: 16, top: 276 }, cue: 'Short, quick steps back, driving through the midfoot.' },
+    { key: 'steps', text: 'Short<br>steps<br>back', anchor: 'heel.r', box: { left: 8, top: 288 }, cue: 'Short, quick steps back, driving through the midfoot.' },
   ],
   mistake: {
     pose: mistake,
@@ -193,7 +193,9 @@ export default {
       { key: 'stack', text: 'Shoulders<br>behind<br>hips', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 24, top: 176 }, cue: 'The shoulders are no longer over the hips, leaning too far back.' },
     ],
   },
-  alt: 'Sled pull, side view. Facing the sled in a quarter squat, shoulders over the hips, both hands one behind the other on the rope from the sled. One foot steps straight back and the sled follows by the same distance; a short coil of rope lies at the feet.',
+  tempo: [{ phase: 'Walk', move: true, word: 'Quick' }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)
+  zoom: { view: 'normal', k: 1.5 },   // D-LIBZOOM-EXTEND (lib4-cards §41; DESIGN.md §21): the stepping foot's path (ball.r), 26.3 px at k 1.5 (bar at the zoom's scale)
+  alt: 'Sled pull, side view. Facing the sled in a quarter squat, shoulders over the hips, both hands one behind the other on the rope from the sled. One foot steps straight back and the sled follows by the same distance. A short coil of rope lies at the feet.',
 };
 export const info = { START_Z, END_Z, HIP_Y, DRAG, ROPE_RUN, STEP, M_Z, M_Y, REACH,
   pose: Object.fromEntries([['start', start], ['via', via[0]], ['end', end], ['mistake', { ...end, ...mistake }]].map(([k, p]) => { const l = landmarksOf(p, H);

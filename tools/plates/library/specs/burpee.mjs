@@ -1,4 +1,4 @@
-// Burpee, side view, figure facing screen right. LIB-22 (LB10, H; NOSECS: no tempo; one tell).
+// Burpee, side view, figure facing screen right. LIB-22 (LB10, H; NOSECS lifted at 'LIB-22 resume'; one tell).
 // View: side (card plate.view = census): the straight plank from head to heels (c6), the neutral neck (c15) and the
 //  knee bend at the landing (c11) are sagittal.
 // Pose map (D-LIB22-POSEMAP; lb10/tempo.json poseMap): spec start = card plate.end (the straight-arm plank), spec end
@@ -8,7 +8,7 @@
 //  c3 hands first, then the feet kicked back to a straight-arm plank; c5 jump the feet in and under the body, knees
 //  close to the elbows; c6 body straight from head to heels; c11 land softly on slightly bent knees (the Mistake: a
 //  hard landing); c13 feet flat in the squat; c14 hips below the knees as the hands go down; c15 neck neutral.
-//  Tempo: none (D-LIB22-SECS; D-SUP-LB10-BURPEE).
+//  Tempo: the strip row (D-STRIP-B; strip/rows.json, c24): Squat down "Controlled", then three blank phases.
 // Clone (D-LIB22-CLONE): barbell_back_squat (the 8: the standing side view), plank and mountain_climbers (#109 @
 //  dcac4a38: the straight-arm plank solve, the flat palm, the via ghost), kettlebell_swing (KNEE / TOP_KNEE, the
 //  Winter centre of mass); copied, never imported.
@@ -141,7 +141,7 @@ export default {
   ghosts: { count: 1, parts: ['leg.l', 'leg.r', 'trunk', 'arm.r'] },
   trace: { point: 'ball.r', trim: [10, 12] },
   callouts: [
-    { key: 'plank', text: 'Straight plank', anchor: 'start:backMid', box: { left: 76, top: 120 }, cue: 'Body straight from head to heels, lower back not sagging.' },
+    { key: 'plank', text: 'Straight plank', anchor: 'start:backMid', box: { left: 76, top: 168 }, cue: 'Body straight from head to heels, lower back not sagging.' },
     { key: 'neck', text: 'Neck neutral', anchor: 'start:head', box: { left: 248, top: 152 }, cue: 'Neck neutral, head not lowered toward the floor.' },
     { key: 'soft', text: 'Soft landing', anchor: { at: 'knee.r', off: [-6, 0] }, box: { left: 96, top: 216 }, cue: 'Land softly on slightly bent knees.' },
   ],
@@ -151,6 +151,8 @@ export default {
       { key: 'landing', text: 'Stiff landing', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 64, top: 228 }, cue: 'A hard landing, without the knees slightly bent.' },
     ],
   },
+  tempo: [{ phase: 'Squat down', move: true, word: 'Controlled' }, { phase: 'Kick back', move: true }, { phase: 'Jump in', move: true }, { phase: 'Jump up', move: true }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)
+  zoom: { view: 'mistake', k: 2 },   // D-LIBZOOM-EXTEND (lib4-cards §41; DESIGN.md §21): the landing tell (knee.r), 14.2 px at k 2 (bar at the zoom's scale)
   alt: 'Burpee, side view. From a straight-arm plank, hands flat under the shoulders and the body in one line, the feet jump in under the body and the lifter stands tall, landing softly on slightly bent knees.',
 };
 export const info = { QP, QV, FOOT_Z, pose: Object.fromEntries([['start', start], ['via', via[0]], ['end', end], ['mistake', mistakeFull]].map(([k, p]) => { const lm = landmarksOf(p, H);
