@@ -33,20 +33,35 @@ export function zoomFieldProblems(z) {
   for (const v of VIEWS) if (z.filter(e => e?.view === v).length > 1) out.push(`zoom: two entries for the ${v} view`);
   return out;
 }
+// F-ZOOM-2 (D-LIB17-ZOOMPAIR): a Mistake entry may carry `pair: [flat, turned]`, the same drawn vertex in world metres in
+// the end pose and in the Mistake pose, for a fault that turns about a fixed tell anchor (the anchor itself never moves).
+const isPoint = p => Array.isArray(p) && p.length === 3 && p.every(Number.isFinite);
 function entryProblems(z) {
   const out = [];
   if (typeof z !== 'object' || z === null || Array.isArray(z)) return ['zoom must be { view, k }'];
-  for (const k of Object.keys(z)) if (!['view', 'k', 'tell'].includes(k)) out.push(`zoom: unknown key ${k}`);
+  for (const k of Object.keys(z)) if (!['view', 'k', 'tell', 'pair'].includes(k)) out.push(`zoom: unknown key ${k}`);
   if (!VIEWS.includes(z.view)) out.push(`zoom.view ${JSON.stringify(z.view)} is not 'normal' or 'mistake'`);
   if (!(typeof z.k === 'number' && z.k >= ZOOM.kMin && z.k <= ZOOM.kMax)) out.push(`zoom.k ${JSON.stringify(z.k)} is outside ${ZOOM.kMin}-${ZOOM.kMax}`);
+  if ('pair' in z) {
+    const p = z.pair;
+    if (z.view !== 'mistake') out.push(`zoom.pair is for a Mistake entry, not the ${z.view} view`);
+    if (!(Array.isArray(p) && p.length === 2 && p.every(isPoint))) out.push('zoom.pair must be two points [x, y, z] of finite numbers');
+    else if (p[0].every((v, i) => v === p[1][i])) out.push('zoom.pair: the two points are equal');
+  }
   return out;
 }
 
 /** The fault the Mistake zoom shows: the tell (zoom.tell, else the one with the largest move) and its end and mistake
- *  points in plate px. The same measure as PQ-H3's deviation(). */
+ *  points in plate px. The same measure as PQ-H3's deviation(). F-ZOOM-2: an entry with `pair` measures its two
+ *  points instead (key zoom.tell, else 'pair') and reads no tell; with no pair the tell loop runs as before. */
 export function faultOf(spec, cam, L) {
+  const z = zoomFor(spec, 'mistake');
+  if (z?.pair) {
+    const a = cam.P(z.pair[0]), b = cam.P(z.pair[1]);
+    return { key: z.tell ?? 'pair', end: a, mistake: b, d: Math.hypot(b[0] - a[0], b[1] - a[1]) };
+  }
   let best = null;
-  const tell = zoomFor(spec, 'mistake')?.tell;
+  const tell = z?.tell;
   for (const t of spec.mistake?.tells ?? []) {
     if (tell && t.key !== tell) continue;
     const a = resolvePoint(anchorInPose(t.anchor, 'end'), 'end', L.lm, cam), b = resolvePoint(anchorInPose(t.anchor, 'mistake'), 'mistake', L.lm, cam);

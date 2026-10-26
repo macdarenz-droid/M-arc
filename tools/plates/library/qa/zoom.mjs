@@ -4,12 +4,13 @@
 // (c.plate.zoom), never from the renderer's own numbers:
 //   H2.zoom:text / H2.zoom:angle   no text in a zoom, and no angle (owner rule, 2026-10-18)
 //   H3.zoom:*                      field shape and k range; present where the spec asks, nowhere else; allowed only on
-//                                  a view that fails at plate scale; the bar at k; the source ring holds the fault/trace
+//                                  a view that fails at plate scale; the bar at k; the source ring holds the fault/trace;
+//                                  F-ZOOM-2: a pair's points are drawn vertices, turned the tell's own anchor (pairProblems)
 //   H4.zoom:*                      node placement: 8 px margin and the meta band; 6 px gap to the figure and equipment;
 //                                  no leader or label crossing; the source ring apart from the circle
 // The browser half (label and hit boxes at 390/360/340 px, ring contrast) is browser.mjs.
 import { tags } from './markup.mjs';
-import { cameraOf, poseLandmarks } from './engine.mjs';
+import { anchorInPose, cameraOf, equipmentItems, poseLandmarks, resolvePoint } from './engine.mjs';
 import { ZOOM, faultOf, labelBoxes, leadersOf, polyHitsCircle, tracePath, zoomFieldProblems, zoomFor } from '../zoom/inline.mjs';
 
 const P = (key, text) => ({ key, text });
@@ -68,6 +69,30 @@ export function zoomMetrics(c, ctx, R) {
   return out;
 }
 
+/**
+ * F-ZOOM-2 (D-LIB17-ZOOMPAIR, D-LIB18-RINGKEEP): the Mistake entry's `pair: [flat, turned]` checked against the drawn
+ * plate, in plate px on the normal render's camera. Red (H3.zoom:pair:mistake) when flat is more than 0.01 px from every
+ * poly vertex of an end-pose equipment item, when turned is from every poly vertex of a Mistake-pose item, or when
+ * turned is not the Mistake-pose anchor of the spec's tell (zoom.tell's, when set), resolved as faultOf resolves it.
+ * [] for a spec with no pair.
+ */
+export function pairProblems(spec, E, report) {
+  const z = zoomFor(spec, 'mistake'), out = [], TOL = 0.01;
+  if (!z?.pair) return out;
+  const bad = text => out.push(P('H3.zoom:pair:mistake', text));
+  if (!report) { bad('no normal render to check the pair against'); return out; }
+  const cam = cameraOf(spec, report), items = equipmentItems(E, spec, report, ['end', 'mistake']), L = poseLandmarks(E, spec);
+  const [flat, turned] = z.pair.map(w => cam.P(w));
+  const near = (q, ps) => ps.some(v => Math.hypot(v[0] - q[0], v[1] - q[1]) <= TOL);
+  const verts = pose => [...(items[pose]?.values() ?? [])].flatMap(it => it.poly ?? []);
+  if (!near(flat, verts('end'))) bad('zoom.pair flat is not a drawn vertex of the end pose');
+  if (!near(turned, verts('mistake'))) bad('zoom.pair turned is not a drawn vertex of the Mistake pose');
+  const tells = (spec.mistake?.tells ?? []).filter(t => !z.tell || t.key === z.tell);
+  if (!near(turned, tells.map(t => resolvePoint(anchorInPose(t.anchor, 'mistake'), 'mistake', L.lm, cam))))
+    bad(`zoom.pair turned is not the Mistake anchor of ${z.tell ? `the tell ${z.tell}` : 'a Mistake tell'}`);
+  return out;
+}
+
 const ink = (occ, c, r) => { let n = 0; for (let y = -r; y <= r; y += 2) { const w = Math.sqrt(Math.max(0, r * r - y * y)); n += occ.count(c[0] - w, c[1] + y - 1, c[0] + w, c[1] + y + 1); } return n; };
 const rectHits = (b, c, r) => Math.hypot(Math.max(b.x0 - c[0], 0, c[0] - b.x1), Math.max(b.y0 - c[1], 0, c[1] - b.y1)) < r;
 
@@ -95,6 +120,8 @@ export function zoomRows(c, ctx, R, M) {
       if (!tp.length || tp.some(p => Math.hypot(p[0] - m.src.c[0], p[1] - m.src.c[1]) > m.src.r - 1)) H3.push(P('H3.zoom:content:normal', 'the source ring does not hold the whole trace'));
     } else {
       if (M.deviation >= env.deviationMin) H3.push(P('H3.zoom:not-needed:mistake', `the Mistake already moves ${M.deviation.toFixed(1)} px at plate scale`));
+      else if (want.pair && m.fault?.d >= env.deviationMin) H3.push(P('H3.zoom:not-needed:mistake', `the pair already moves ${m.fault.d.toFixed(1)} px at plate scale`));
+      if (want.pair) H3.push(...pairProblems(spec, ctx.engine, R?.normal?.report));
       if (!(m.deviation >= env.deviationMin)) H3.push(P('H3.zoom:deviation', `tell-anchor deviation inside the zoom ${(m.deviation ?? 0).toFixed(1)} px < the smallest approved ${env.deviationMin.toFixed(1)} px`));
       if (!m.fault || [m.fault.end, m.fault.mistake].some(p => Math.hypot(p[0] - m.src.c[0], p[1] - m.src.c[1]) > m.src.r - 1)) H3.push(P('H3.zoom:content:mistake', 'the source ring does not hold the tell anchor in both poses'));
     }
