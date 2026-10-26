@@ -18,8 +18,9 @@ const IDS = LB6.map(i => `lib_${i}`);
 // The 13 LB6 ids not in this card (DESIGN.md section 2): never in lb6/rows.json.
 const NOT_HERE = ['smith_machine_bench_press', 'smith_machine_incline_press', 'smith_machine_shoulder_press', 'smith_machine_shrug', 'smith_machine_squat',
   'cable_fly', 'low_to_high_cable_fly', 'high_to_low_cable_fly', 'pec_fly', 'machine_lateral_raise', 'rear_delt_fly', 'hip_abduction', 'hip_adduction'];
-// Held ids (DESIGN.md section 15): drawn and tested, no row. cable_chest_press: D-LIB8-shrug (D-LIB16-SIZE, -LOCK).
-const HELD = ['cable_chest_press'];
+// Held ids (DESIGN.md section 15): drawn and tested, no row. cable_chest_press was held under D-LIB8-shrug (D-LIB16-SIZE,
+// -LOCK) until 'LIB-16 resume' drew its zooms (D-LIB16-ZOOMVIEWS); none is held now.
+const HELD: string[] = [];
 const ROWS = 'tools/plates/library/lb6/rows.json';
 const RESEARCH_HEAD = 'a8e66f32e34e1746075ffa4da35ea18c80dd4776';
 const COMPOSERS = ['crunchMachine', 'pulloverMachine'];
@@ -75,6 +76,26 @@ const segs = (p: number[][]) => p.slice(1).map((q, i) => [p[i]!, q]);
 /** Every leader in a render as its polyline (plate px), starting at its anchor. */
 const leadersOf = (svg: string) => [...svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(([, d]) => { const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]); return p; });
 
+/** The one ruled solid red line (panel lb4p R5, #327 6410191598): cable_chest_press's locked-arm axis, the Mistake
+ *  shoulder to the Mistake handle centre. Only this exact guide is exempt from the dashed-or-arrow and the 6 px
+ *  clearance rules (A15). */
+const AXIS: Record<string, string[]> = { cable_chest_press: ['shoulder.r', 'grip.r'] };
+const isAxisGuide = (spec: any, g: any) => {
+  const a = AXIS[spec.id];
+  return !!a && g.kind === 'line' && g.pts.length === 2 && g.pts.every((p: any, i: number) => p.at === a[i] && p.pose === 'mistake');
+};
+/** The ruled axis line as drawn in the Mistake svg (an m-arrow path from the Mistake shoulder to the Mistake handle
+ *  centre, each end within 0.5 px), or null. */
+const axisPath = (spec: any, svg: string) => {
+  const a = AXIS[spec.id];
+  if (!a) return null;
+  const cam = camOf(spec), lm = lmOf(spec, 'mistake'), A = cam.P(lm[a[0]!]), B = cam.P(lm[a[1]!]);
+  return [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].map(m => m[1]!).find(d => {
+    const p = xy(d);
+    return p.length === 2 && Math.hypot(p[0]![0]! - A[0]!, p[0]![1]! - A[1]!) <= 0.5 && Math.hypot(p[1]![0]! - B[0]!, p[1]![1]! - B[1]!) <= 0.5;
+  }) ?? null;
+};
+
 describe('LIB-16 A5: lb6/rows.json holds exactly the drawn, non-held LB6 H ids, all mode H', () => {
   const rowKeys = (text: string) => [...text.matchAll(/^ {2}"(lib_[a-z0-9_]+)": \{/gm)].map(m => m[1]);
   const a5 = (text: string, want: string[]) => {
@@ -86,7 +107,7 @@ describe('LIB-16 A5: lb6/rows.json holds exactly the drawn, non-held LB6 H ids, 
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H (D-LIB16-B1)', () => {
-    expect(want()).toEqual(['lib_machine_pullover', 'lib_machine_crunch']);
+    expect(want()).toEqual(['lib_cable_chest_press', 'lib_machine_pullover', 'lib_machine_crunch']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('none of the 13 LB6 ids not in this card is in any lb6/ file as a row', () => {
@@ -566,14 +587,20 @@ describe('LIB-16 machine_crunch (H; crunchMachine anchor): drawn facts', { timeo
 describe('LIB-16 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { cable_chest_press: 'lock', machine_pullover: 'arch', machine_crunch: 'arms' };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
-  it('each drawn plate draws its Mistake with 2-3 tells, the first carrying the proposed key', () => {
-    for (const id of specsDrawn()) { expect(keyProblems(S[id])).toEqual([]); expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3); }
+  // One tell only where a D-LIB10-SKULL1 per-id record rules it (slice look #297 6346404542 item 3; DESIGN.md section 18).
+  const ONE_TELL = ['cable_chest_press'];
+  it('each drawn plate draws its Mistake with 2-3 tells (1 for a SKULL1 per-id record), the first carrying the proposed key', () => {
+    for (const id of specsDrawn()) {
+      expect(keyProblems(S[id])).toEqual([]);
+      if (ONE_TELL.includes(id)) { expect(S[id].mistake.tells.length, id).toBe(1); continue; }
+      expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3);
+    }
   });
   it('mutation: the first tell key swapped is red', () => {
     const s = S.machine_crunch;
     expect(keyProblems({ ...s, mistake: { ...s.mistake, tells: [...s.mistake.tells].reverse() } })).toEqual(['machine_crunch: first tell upright']);
   });
-  const guideProblems = (spec: any) => spec.mistake.guides.filter((g: any) => !['dashed', 'arrow', 'arc-arrow'].includes(g.kind)).map((g: any) => `${spec.id}: ${g.kind}`);
+  const guideProblems = (spec: any) => spec.mistake.guides.filter((g: any) => !['dashed', 'arrow', 'arc-arrow'].includes(g.kind) && !isAxisGuide(spec, g)).map((g: any) => `${spec.id}: ${g.kind}`);
   it('A15: every Mistake guide is dashed or an arrow; mutation: a solid line guide is red', () => {
     for (const id of specsDrawn()) expect(guideProblems(S[id])).toEqual([]);
     const s = S.machine_crunch;
@@ -626,8 +653,8 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   /** 13.1, 13.4 must-fix 1: every solid red part (a Mistake arrow, as drawn in the Mistake svg) clears the solid end
    *  figure by at least 6 px; the Mistake figure and the other guides are dashed. */
   const clearance = (spec: any) => {
-    const polys = shapesIn(spec, 'end').map((x: any) => x.poly), svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
-    return [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].flatMap(m => {
+    const polys = shapesIn(spec, 'end').map((x: any) => x.poly), svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, axis = axisPath(spec, svg);
+    return [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].filter(m => m[1] !== axis).flatMap(m => {
       const pts = xy(m[1]!), samp: number[][] = [];
       for (let i = 0; i + 1 < pts.length; i++) for (let k = 0; k <= 20; k++) samp.push(pts[i]!.map((v, j) => v + (pts[i + 1]![j]! - v) * k / 20));
       const min = Math.min(...samp.map(p => outside(polys, p)));
@@ -792,10 +819,11 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     const s = S.cable_chest_press;
     expect(lockProblems({ ...s, poses: { ...s.poses, end: { ...s.poses.end, ...s.mistake.pose } } }).length).toBe(1);
   });
-  it('held (D-LIB8-shrug, D-LIB16-SIZE, -LOCK): cable_chest_press at its ruled sizes is below PQ-H3 (Trace and tell-anchor move), measured node-side', () => {
+  it('card-true sizes (D-LIB8-shrug, D-LIB16-SIZE, -LOCK): cable_chest_press is below both PQ-H3 bars at plate scale, so each view carries a zoom (D-LIB16-ZOOMVIEWS)', () => {
     const s = S.cable_chest_press, R = { normal: plate.renderPlate(s, { id: 'x' }), mistake: plate.renderPlate(s, { id: 'x', mistake: true }) };
     const m = qaNode.nodeMetrics({ spec: s, plate: { normal: R.normal, mistake: R.mistake, alt: s.alt, mistakeAlt: '' } }, { engine: Eng() }, R), env = pins().envelope;
-    console.log(`LIB-16 cable_chest_press held: traceLen ${m.traceLen.toFixed(1)} px, deviation ${m.deviation.toFixed(1)} px`);
+    expect(s.zoom.map((z: any) => z.view)).toEqual(['normal', 'mistake']);
+    console.log(`LIB-16 cable_chest_press at plate scale: traceLen ${m.traceLen.toFixed(1)} px, deviation ${m.deviation.toFixed(1)} px`);
     expect(m.traceLen).toBeLessThan(env.traceLenMin);
     expect(m.deviation).toBeLessThan(env.deviationMin);
   });
@@ -1146,5 +1174,193 @@ describe('LIB-16 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any) => (f.joint === 'elbow.r' ? { ...f, deg: 88 } : f)) })).toEqual([`H6.fact:${r.plateFacts.findIndex((f: any) => f.joint === 'elbow.r')}:angle:elbow.r`]);
     expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any) => (f.joint === 'elbow.r' ? { ...f, deg: 94 } : f)) })).toEqual([`H6.fact:${r.plateFacts.findIndex((f: any) => f.joint === 'elbow.r')}:angle:elbow.r`]);
     expect(h6(s, null)).toEqual(['H6:no-card']);
+  });
+});
+
+describe('LIB-16 resume: cable_chest_press slice item 3 (#297 6346404542)', { timeout: T }, () => {
+  /** Every equipment item (the floor included) in every pose sits at least 8 px inside the plate's left and right edges
+   *  (358 px; the zoom margin): nothing is cut off at the edge. */
+  const edgeProblems = (spec: any) => {
+    const cam = camOf(spec), out: string[] = [];
+    for (const pose of posesOf(spec)) for (const it of itemsIn(spec, pose).items) for (const p of eng.PRIMITIVES[it.type](it, cam))
+      for (const q of (p.poly ?? p.line ?? [])) if (q[0] < 8 || q[0] > 350) { out.push(`${spec.id} ${pose} ${it.type} x ${q[0].toFixed(1)}`); break; }
+    return [...new Set(out)];
+  };
+  it('every drawn plate: the equipment and the floor sit 8 px inside the plate edges in every pose', () => {
+    for (const id of specsDrawn()) expect(edgeProblems(S[id]), id).toEqual([]);
+  });
+  it('mutation: cable_chest_press at the slice\'s camera (x0 170: the column and the floor\'s back end cut off) is red', () => {
+    const s = S.cable_chest_press;
+    expect(edgeProblems({ ...s, camera: { ...s.camera, x0: 170 } }).length).toBeGreaterThan(0);
+  });
+  /** Away from its anchor (its first 12 px), a leader keeps at least 4 px from the solid end figure: it never runs along
+   *  the body's outline. The approved plates measure 4.7 px and more. */
+  const hugProblems = (spec: any, min = 4) => {
+    const out: string[] = [], polys = shapesIn(spec, 'end').map((x: any) => x.poly);
+    for (const mistake of [false, true]) {
+      const list = mistake ? spec.mistake.tells : spec.callouts;
+      leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
+        let g = Infinity;
+        for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
+          const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 12) g = Math.min(g, outside(polys, q));
+        }
+        if (g < min) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: ${g.toFixed(1)} px from the figure`);
+      });
+    }
+    return out;
+  };
+  it('every drawn plate: no leader runs along the figure (4 px); cable_chest_press keeps 6 px', () => {
+    expect(specsDrawn().flatMap(id => hugProblems(S[id]))).toEqual([]);
+    expect(hugProblems(S.cable_chest_press, 6)).toEqual([]);
+  });
+  it('mutation: the slice\'s "Spine neutral" box (left 68, top 176 at x0 170: the leader 2.7 px along the low back) is red', () => {
+    const s = S.cable_chest_press, bad = { ...s, camera: { ...s.camera, x0: 170 }, callouts: s.callouts.map((x: any) => (x.key === 'spine' ? { ...x, box: { left: 68, top: 176 } } : x)) };
+    expect(hugProblems(bad)).toEqual(['cable_chest_press normal spine: 2.7 px from the figure']);
+  });
+  /** D-LIB10-SKULL1 per id: c17 and c5 name one sign of the fault (the elbow locked straight) and no second one, so the
+   *  plate has one tell, `lock`, recorded in DESIGN.md section 18. */
+  const tellProblems = (spec: any) => (JSON.stringify(spec.mistake.tells.map((t: any) => t.key)) === '["lock"]' ? [] : [`tells ${spec.mistake.tells.map((t: any) => t.key)}`]);
+  it('cable_chest_press has one tell, lock, with its per-id record', () => {
+    expect(tellProblems(S.cable_chest_press)).toEqual([]);
+    expect(readFileSync('tools/plates/library/lb6/DESIGN.md', 'utf8')).toMatch(/D-LIB10-SKULL1 per id: cable_chest_press/);
+  });
+  it('mutation: the slice\'s second tell (line, "No bend left") added back is red', () => {
+    const s = S.cable_chest_press, line = { key: 'line', text: 'No bend<br>left', anchor: { along: ['mistake:elbow.r', 'mistake:wrist.r'], t: 0.5, pose: 'mistake' }, box: { left: 276, top: 72 }, cue: 'x' };
+    expect(tellProblems({ ...s, mistake: { ...s.mistake, tells: [...s.mistake.tells, line] } })).toEqual(['tells lock,line']);
+  });
+});
+
+describe('LIB-16 resume: one zoom per view (D-LIB16-ZOOMVIEWS, #327 6405117790), runQa node half on lib_cable_chest_press', { timeout: T }, () => {
+  const ID = 'lib_cable_chest_press';
+  let build: any, cand: any, golden: any, zoom: any, mirror: any, E: any, all: any, html: string;
+  beforeAll(async () => {
+    [build, cand, golden, zoom] = await Promise.all(['lb6/build.mjs', 'candidate.mjs', '../golden.mjs', 'zoom/inline.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb6All();
+    html = (await build.buildLb6Page({ all, ids: [ID] })).html.toString('utf8');
+    return () => qaEng.dropMirror(mirror);
+  }, T);
+  const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
+  const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
+  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  // The spec with a different zoom field, built the way the page builds it (a scratch module importing the real spec).
+  const withZoom = async (z: any) => {
+    const dir = mkdtempSync(join(tmpdir(), 'lb6-zoom-')), file = join(dir, 'cable_chest_press.mjs');
+    writeFileSync(file, `import s from ${JSON.stringify(lib('specs/cable_chest_press.mjs'))};\nexport default { ...s, zoom: ${JSON.stringify(z)} };\n`);
+    try {
+      const spec = (await import(/* @vite-ignore */ `file://${file}`)).default;
+      const cid = (await import(/* @vite-ignore */ lib('plates-page.mjs'))).cardIdOf(all.find((r: any) => r.id === ID));
+      const { html: h } = await (await import(/* @vite-ignore */ lib('build-page.mjs'))).buildPlatesPage({
+        groups: [{ id: 'lb6', title: 'LB6', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: file } });
+      return { ...(await candOf(h.toString('utf8'))), spec };
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  };
+  it('clean: both views carry their zoom, each meets its own bar at its own k (Trace at k 3, deviation at k 4: 11.91 px), no node-half problem', async () => {
+    const c = await candOf(), r = await qa(c), z = r.metrics.zoom, env = pins().envelope;
+    expect(node(r)).toEqual([]);
+    expect(Object.keys(c.plate.zoom).filter(v => c.plate.zoom[v])).toEqual(['normal', 'mistake']);
+    expect([z.normal.k, z.mistake.k]).toEqual([3, 4]);
+    expect(z.normal.trace).toBeGreaterThanOrEqual(env.traceLenMin);
+    expect(z.mistake.deviation).toBeGreaterThanOrEqual(env.deviationMin);
+    expect(+z.mistake.deviation.toFixed(2)).toBe(11.91);
+  });
+  it('no angle text and no text at all in either zoom (lib-zoom-card rules)', async () => {
+    const c = await candOf();
+    for (const v of ['normal', 'mistake']) { expect(c.plate.zoom[v]).not.toMatch(/<(text|foreignObject|tspan)\b/); expect(c.plate.zoom[v]).not.toMatch(/\d\s*°|degree/i); }
+  });
+  it('mutation: a list with one entry below its view\'s bar (Mistake k 3.8: 11.31 px) is red on H3.zoom:deviation only', async () => {
+    const r = await qa(await withZoom([{ view: 'normal', k: 3 }, { view: 'mistake', k: 3.8 }]));
+    expect(node(r)).toEqual(['H3.zoom:deviation']);
+  });
+  it('mutation: only the Mistake zoom listed leaves the normal view at plate scale: H3.trace is red', async () => {
+    const r = await qa(await withZoom([{ view: 'mistake', k: 4 }]));
+    expect(node(r)).toContain('H3.trace');
+    expect(node(r)).not.toContain('H3.deviation');
+  });
+  it('mutations: two zooms on the same view, three entries and an unknown view name are each red (field)', () => {
+    expect(zoom.zoomFieldProblems([{ view: 'normal', k: 3 }, { view: 'normal', k: 2 }])).toEqual(['zoom: two entries for the normal view']);
+    expect(zoom.zoomFieldProblems([{ view: 'normal', k: 3 }, { view: 'mistake', k: 4 }, { view: 'mistake', k: 2 }])).toEqual(['zoom: a list holds 1 or 2 entries, not 3']);
+    expect(zoom.zoomFieldProblems([{ view: 'normal', k: 3 }, { view: 'side', k: 4 }])).toEqual(["zoom[1]: zoom.view \"side\" is not 'normal' or 'mistake'"]);
+    expect(zoom.zoomFieldProblems([])).toEqual(['zoom: a list holds 1 or 2 entries, not 0']);
+    expect(zoom.zoomFieldProblems([{ view: 'normal', k: 3 }, { view: 'mistake', k: 4 }])).toEqual([]);
+  });
+  it('mutation: the same two field errors in the page build are red in QA (H3.zoom:field), and the build refuses them', async () => {
+    await expect(withZoom([{ view: 'normal', k: 3 }, { view: 'normal', k: 2 }])).rejects.toThrow(/two entries for the normal view/);
+    const c = await candOf(), r = await qa({ ...c, spec: { ...c.spec, zoom: [{ view: 'normal', k: 3 }, { view: 'side', k: 4 }] } });
+    expect(node(r)).toContain('H3.zoom:field');
+  });
+  it('a single { view, k } behaves exactly as before: the same field messages and the same one-entry list', () => {
+    expect(zoom.zoomFieldProblems({ view: 'mistake', k: 4.5 })).toEqual(['zoom.k 4.5 is outside 1.5-4']);
+    expect(zoom.zoomFieldProblems('x')).toEqual(['zoom must be { view, k }']);
+    expect(zoom.zoomList({ view: 'mistake', k: 2 })).toEqual([{ view: 'mistake', k: 2 }]);
+    expect(zoom.zoomList(undefined)).toEqual([]);
+  });
+});
+
+describe('LIB-16 resume: the approved LB6 plates stay byte-identical (page 2668c838 on main 9c3287cd)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of machine_pullover and machine_crunch on main's LB6 page 2668c838…e84e (both approved, #297).
+  const APPROVED: Record<string, Record<string, string>> = {
+    "machine-pullover": {
+      "normalSvg": "90b18786547aede0c06fa694bbf48a91868721bf17f37625fea5b04760a867a6",
+      "normalOverlay": "9716f8050db626def56b9342914e5d38fefa2a6fe7978f29066605dc62cfcc80",
+      "mistakeSvg": "a452764ab7f5f89dfa7dc223c9ee4397f08313358d0407549f1151f529d65d11",
+      "mistakeOverlay": "742c20ff35b94de8f842dc7e2aa0d8ddc32bbb1c1bb35e6ec18ae7fcf47175ca",
+      "tells": "491dfaa9fec824f16a2290510510b6fa5d9a4f4c9ea8f38a9e4d3f0a0359ed3a",
+      "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
+      "cues": "59c4002969a558f75c224b1af3682a555fbc0c6c73ee981e9640354810010be3",
+      "alt": "11812bcb66d9aca001d755e1aca82d34992fcd313475948ba06c316ec1de2ea3",
+      "mistakeAlt": "085e0256b6100a80433467822c8a375eb546239d5f548ba74126c05d54a056ac"
+    },
+    "machine-crunch": {
+      "normalSvg": "84f40fef5f3bf085d60ac7783d5314c8286373b611ed756e3eac89392a9df853",
+      "normalOverlay": "73d7918d7860536593f5104b1ad8b7645b795f039959695a294183afda8410b9",
+      "mistakeSvg": "00cde1d6d101b079604b9d8e86ddbf2062b933a31f9c71eea88e87052b514b33",
+      "mistakeOverlay": "e7629c1233f50b12af83b27868f6064432e59763ddc48b2354448e98a3fbd1fa",
+      "tells": "8723fbfb79cd1a8c214a9cecebd4e51b75d69daecf44efa14b59dacf522be00e",
+      "tempo": "930c82bc67ced3119730716a7e154f7bfa89efeaf93786a7c00424619b4b2e6e",
+      "cues": "01a21499b2a008b2d5f575ba3c9861549abc5410760404cd1b9135e3e6229841",
+      "alt": "d5726f6f297755b1e91f223a9dfff432675cbb654a727b1b46c3943d5586a9f4",
+      "mistakeAlt": "303808b6a230987ae4b78692056f7bc35cdf255012ebd4a4b9b8236c336ac54f"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb6/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it("machine_pullover and machine_crunch fragments on this head equal main's approved ones", async () => {
+    expect(fragProblems((await build.buildLb6Page()).html.toString('utf8'))).toEqual([]);
+  });
+  it("mutation: one byte changed in machine_crunch's Mistake alt is red", async () => {
+    const html = (await build.buildLb6Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'machine-crunch');
+    expect(fragProblems(html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E')))).toContain('machine-crunch mistakeAlt');
+  });
+});
+
+describe('LIB-16 resume: cable_chest_press panel lb4p R5, the locked-arm axis line (#327 6410191598)', { timeout: T }, () => {
+  it('the Mistake plate draws one solid red line along the locked arm, Mistake shoulder to handle centre', () => {
+    const s = S.cable_chest_press;
+    expect(s.mistake.guides.filter((g: any) => isAxisGuide(s, g)).length).toBe(1);
+    expect(axisPath(s, plate.renderPlate(s, { id: 'x', mistake: true }).svg)).not.toBeNull();
+  });
+  it('the line runs through the Mistake zoom: the zoom render draws it inside the circle', async () => {
+    const zoom = await import(/* @vite-ignore */ lib('zoom/inline.mjs'));
+    const z = zoom.zoomOf(S.cable_chest_press, { prefix: 'x', view: 'mistake' }), C = z.circle.c, r = z.circle.r;
+    const ins = [...z.svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].map(m => xy(m[1]!)).filter(p => p.length === 2);
+    // the magnified axis crosses the circle: some point of it lies inside
+    const hit = ins.some(([a, b]) => [...Array(41)].some((_, k) => Math.hypot(a![0]! + (b![0]! - a![0]!) * k / 40 - C[0], a![1]! + (b![1]! - a![1]!) * k / 40 - C[1]) < r));
+    expect(hit).toBe(true);
+  });
+  it('mutation: the line removed is red', () => {
+    const s = S.cable_chest_press, bad = { ...s, mistake: { ...s.mistake, guides: [] } };
+    expect(bad.mistake.guides.filter((g: any) => isAxisGuide(bad, g)).length).toBe(0);
+    expect(axisPath(bad, plate.renderPlate(bad, { id: 'x', mistake: true }).svg)).toBeNull();
+  });
+  it('mutation: the exemption is exact: an elbow-to-handle solid line, or the axis on machine_crunch, is still red under A15', () => {
+    const s = S.cable_chest_press, other = { kind: 'line', pts: [{ at: 'elbow.r', pose: 'mistake' }, { at: 'grip.r', pose: 'mistake' }] };
+    expect(isAxisGuide(s, other)).toBe(false);
+    const c = S.machine_crunch;
+    expect(isAxisGuide(c, { kind: 'line', pts: [{ at: 'shoulder.r', pose: 'mistake' }, { at: 'grip.r', pose: 'mistake' }] })).toBe(false);
   });
 });
