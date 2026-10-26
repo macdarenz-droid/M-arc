@@ -340,6 +340,9 @@ A held id is drawn as its card says, passes its drawn-item tests, and is in no r
 
 machine_pullover may join it (its arch, section 12) once drawn.
 
+**Released ('LIB-16 resume', #327):** cable_chest_press carries one zoom per view (D-LIB16-ZOOMVIEWS, #327
+6405117790) and joins rows.json (section 18). No LB6 id is held now.
+
 ## 16. Risks and mitigations
 
 1. cable_chest_press's lock and Trace are below the PQ-H3 minimums at the card's sizes: held, zoom route (section 12).
@@ -447,3 +450,12 @@ Slice item 3, built (spec `specs/cable_chest_press.mjs`):
 - Tests: tests/howto/lb6-plates.test.ts "LIB-16 resume: cable_chest_press slice item 3", each with its mutation.
 - Zoom fit after the re-layout (zoomOf): Mistake k 4 at (270, 232), 11.91 px; a normal zoom fits at k 3 or 3.5 at
   (298, 96) (source ring 17.3 or 14.9 px, Trace span 28.8 px), but not at k 1.5 to 2.5.
+
+Zooms, built (D-LIB16-ZOOMVIEWS, #327 6405117790; `zoom: [{ view: 'normal', k: 3 }, { view: 'mistake', k: 4 }]`):
+- The convention takes a list of at most one zoom per view (`zoom/inline.mjs` zoomList, zoomFor; a single { view, k }
+  is unchanged). qa/zoom.mjs and qa/node.mjs check each view against its own entry. qa/browser.mjs counts a zoom's
+  clipped render as ink only inside its circle (H1; the clip is not seen by isPointInFill).
+- Authoring QA (`lb6/qa.mjs lib_cable_chest_press`): all 10 hard checks pass. Normal zoom at (298, 96), Trace 63.0 px
+  in the circle; Mistake zoom at (270, 232), deviation 11.91 px. Raised flags F5 3.57 (ruled) and F2 0.580 against
+  0.191-0.549 (ruling asked, #327 6405361295).
+- The approved machine_pullover and machine_crunch fragments equal main's page 2668c838 (test pins them).
