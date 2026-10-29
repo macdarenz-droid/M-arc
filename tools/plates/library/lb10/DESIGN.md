@@ -676,3 +676,7 @@ Panel mx2 fix round (#331 6415452903):
   ankle.r (Mistake), in the plate and the zoom; A15 exempts exactly that guide.
 - medicine_ball_slam item 6: VIA_N 5 → 23 on the same arc; the ghost at t 0.5 is the same pose, and the hand's path is one
   smooth curve (every drawn sample turn under 8 deg).
+
+Panel mx3 fix round 2 (#331 6486669489; D-LIB13-PANEL2), burpee leader ends only:
+- "Neck neutral": start:head (the crown) → the plank nape, start neck + [5, -6] px, on the dashed plank top edge.
+- "Straight plank": start:backMid (three outlines met) → start thighUnder.r, the plank's back line behind its hips, only the plank drawn.
