@@ -1457,6 +1457,10 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     for (const id of specsDrawn()) { out.push(...labelProblems(S[id])); await yieldNow(); }
     expect(out).toEqual([]);
   });
+  it('D-LIB22-PLANKBOX mutation: burpee\'s "Straight plank" box back at {76, 168} sends its leader through the "Soft landing" text: red', () => {
+    const b = S.burpee, old = { ...b, callouts: b.callouts.map((x: any) => (x.key === 'plank' ? { ...x, text: 'Straight plank', box: { left: 76, top: 168 } } : x)) };
+    expect(labelProblems(old)).toContain('burpee normal: leader plank through the text of soft');
+  });
   it('mutations: medicine_ball_slam\'s "Flat back" box back at {40, 212} (its leader crosses "Hips and knees"), and a box whose leader runs through another label\'s text, are red', () => {
     const s = S.medicine_ball_slam, at = (key: string, box: any) => ({ ...s, callouts: s.callouts.map((x: any) => (x.key === key ? { ...x, box } : x)) });
     expect(labelProblems(at('flat', { left: 40, top: 212 }))).toContain('medicine_ball_slam normal: leaders hips and flat cross');
@@ -1769,8 +1773,20 @@ describe('LIB-22 panel fix 2 (mx3, #331 6486669489; D-LIB13-PANEL2): burpee "Nec
     const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'neck' ? { ...c, anchor: 'start:head' } : c)) };
     expect(neckProblems(old)).toEqual(['neck end not at the nape']);
   });
-  it('item 2 fallback (D-LIB22-SOFTBOX (b), #331): "Straight plank" keeps its end at start:backMid; no "Soft landing" box placement passes A15 and F3', () => {
-    expect(S.burpee.callouts.find((c: any) => c.key === 'plank').anchor).toBe('start:backMid');
-    expect(S.burpee.callouts.find((c: any) => c.key === 'soft').box).toEqual({ left: 96, top: 216 });
+  /** D-LIB22-PLANKBOX (#331): "Straight plank" ends on the plank's back line behind its hips (within 2 px of its outline),
+   *  where only the plank is drawn (at least 6 px outside the standing figure and the squat ghost). Its box moved to
+   *  {8, 248} so the leader crosses no label text. */
+  const plankProblems = (spec: any) => {
+    const p = endOf(spec, 'plank'), out: string[] = [], d = Math.abs(outside(polys(spec, 'start'), p));
+    if (d > 2) out.push(`plank end ${d.toFixed(1)} px off the plank outline`);
+    if (outside(polys(spec, 'end'), p) < 6) out.push('plank end within 6 px of the standing figure');
+    const ghost = { ...spec, poses: { ...spec.poses, start: spec.poses.via[0] } };
+    if (outside(polys(ghost, 'start'), p) < 6) out.push('plank end within 6 px of the squat ghost');
+    return out;
+  };
+  it('item 2 (D-LIB22-PLANKBOX): "Straight plank" ends on the plank back behind the hips; mutation: the old three-outline end (start:backMid) is red', () => {
+    expect(plankProblems(S.burpee)).toEqual([]);
+    const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'plank' ? { ...c, anchor: 'start:backMid' } : c)) };
+    expect(plankProblems(old).length).toBeGreaterThan(0);
   });
 });
