@@ -113,7 +113,7 @@ merge_prerequisites: a fresh Opus review PASS against this card; every check gre
 - D-LIB18-RINGKEEP (#325 6412694847): the zoom magnifies what its own tell names; H3.zoom refuses a motion too small to see. This is the basis for A5's tell-anchor condition.
 - D-LIB22-RINGFIT (#331 6415452903 item 4): a source ring closes inside the plate frame. renegade_row's does (346.0 < 358).
 - New, proposed for the supervisor:
-  - D-FZOOM2-TRIM: the zoom's screen-px trim is the units-consistent reading, and is kept. A smaller zoom trim is a rule change. superman stays held for LB9's own ruling (spec trim and the `low` box).
+  - D-FZOOM2-TRIM: the zoom keeps its screen-px trim (t/k plate px; main's behaviour). Neither reading is a units bug (line 48 names t·k zoom px the units-consistent one), so nothing changes. A smaller zoom trim is a rule change. superman stays held for LB9's own ruling (spec trim and the `low` box).
   - D-FZOOM2-RDF: there is no rule-keeping circle for cable_rear_delt_fly at r 52, and no readability bar exists for r 30. It stays held.
 
 ## Risks and mitigations
