@@ -4456,3 +4456,11 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - (b) F-ZOOM-TRIM is not a units correction, so nothing is built. superman's route is in its own lane: trim [0, 0] and a moved `low` label give 23.47 px at k 2.5, in the next LB9 resume.
   - (c) cable_rear_delt_fly stays held: only an r 30 circle fits, and no readability bar exists for it.
   - jump_rope stays held: it needs k ≥ 4.15, outside the ladder.
+
+## 46. Resume after the weekly reset, 10-29 (supervisor, ~02:15-03:00 UTC)
+- Every session stopped on the weekly limit from about 14:50 UTC on 10-26 to the reset at 02:00 UTC on 10-29. LIB-14, LIB-22 and F-ZOOM-2 were resumed by message; LIB-17 and LIB-18 stay WAITING for panel mx3.
+- **Panel mx3** (combined, 10 T): LB8 lying_leg_curl and standing_leg_curl @ `504c6d4b` (page `f8753967…`), LB7 bench_dip @ `97eb5d9e` (page `270d1b4b…`), LB10 sled_pull, burpee and medicine_ball_slam @ `4a0d7008` (page `55c3431a…`), with the hidden anchors pull_up and lat_pulldown. LB4 round 2 (#289) was not posted in time and goes to the next set.
+- **F-ZOOM-2 review PASS** (#336 6486453034, 0/0/0/1). The Low was the card's own wording: D-FZOOM2-TRIM called the screen-px trim "the units-consistent reading", while item (b) gives that name to t·k zoom px. The card line is corrected (`1c5cae15`); zoom/DESIGN.md:163 repeats the old words and is fixed by **F-ZOOM2-DOC**, batched with F-LB9-DOC and F-LB6-DOC.
+- **F-RESEARCH-2** (card `docs/supervisor/verify/f-research-2-card.md`): research for F-PALLOF-ARCH and F-LB10-STRIDE, run by session_01EQuYNh4cCnPkeQne6yfnpn on `claude/libht-research-f-research-2`. It holds no lane slot.
+- **D-LIB21-SUPERMAN:** in LB9's lane, superman's Trace trim may go to [0, 0] (superman.mjs:164), and its `low` label box (superman.mjs:168) may move under D-LIB18-ZOOMPLACE. The F-ZOOM-2 card measured 23.47 px at k 2.5 with the box out of the way. The plate's own untrimmed Trace must still pass every plate check, or superman stays held. Why: the trim is the spec's own number, not a house bar, and moving one label box is already ruled; no check moves.
+- **LIB-21 resume 2** (LB9: superman, and russian_twist under F-RTWIST-TELL) starts now; bicycle_crunch and cable_crunch wait for F-ENGINE-PITCHDEPTH + LIB-SPINE, and pallof_press for F-RESEARCH-2.
