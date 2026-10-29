@@ -140,6 +140,8 @@ export default {
     { landmark: 'ball.r', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'heel.l', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'ball.l', plane: floor, pose: 'all', tol: 0.5 },
+    // c1 'Hold a pair of dumbbells' (plate fact): the hands on the dumbbells at the start (as dumbbell_overhead_triceps_extension.mjs:69)
+    ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: landmarksOf(start, H)[landmark], pose: 'start', tol: 0.5 })),
   ],
   startParts: ['arm.r'],
   ghosts: { count: 2, parts: ['arm.r', 'db'] },

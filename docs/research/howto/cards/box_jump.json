@@ -645,7 +645,7 @@
     "W1 lows round 2026-10-03: low 5: c14 leaves out one NHS ankle-pain GP trigger, 'you have diabetes and foot pain' (re-read 2026-10-03), because GA 8 bans condition names in shown lines; every other NHS trigger stays (LR-27 R3).",
     "LB4 research 2026-10-22 (D-SUP-LB4-PACOPY): LR-22: c10 (janikov-2023, box landing cut peak impact force against a floor jump) was cited by no line and no shown line uses it, so the claim and its source are dropped. Shown-copy changes for the owner's re-approval sheet are listed on PR #285."
   ],
-  "plateFacts": [],
+  "plateFacts": [{"kind":"contact","landmark":"sole.l","pose":"end","cardPose":"end","claim":"c4","note":"c4 \"land on it with both feet\": both feet on the box top at the landing; mid-sole, the quote names no foot part (#305 whole-foot rule)"},{"kind":"contact","landmark":"sole.r","pose":"end","cardPose":"end","claim":"c4","note":"c4 \"land on it with both feet\": both feet on the box top at the landing; mid-sole, the quote names no foot part (#305 whole-foot rule)"}],
   "tempo": [{"phase":"Take-off","move":true,"word":"Explosive"},{"phase":"Step down","move":true}],
   "topFault": "straight"
 }

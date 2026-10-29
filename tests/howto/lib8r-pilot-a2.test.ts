@@ -71,6 +71,14 @@ describe('LIB-8R A6: the cards, the tempo map and the strip rows', () => {
   const cardsSha = readJson('tools/plates/library/pilot-a2/cards.sha.json');
   const BLOCK = /,\n( +)"plateFacts": [^\n]*,\n\1"tempo": [^\n]*,\n\1"topFault": [^\n]*\n}\n$/;
   const unkeyed = (text: string) => (BLOCK.test(text) ? text.replace(BLOCK, '\n}\n') : null);
+  // D-LIB8R-FACTS2 (CARD FIELDS cfpa2, #340): every contact a quote states for a drawn pose is a contact fact.
+  const FACTS: Record<string, string[]> = {
+    box_jump: ['contact sole.l end end c4', 'contact sole.r end end c4'],
+    reverse_lunge: ['contact toe.l end end c4'],
+    dumbbell_fly: ['contact backUpper start start c2', 'contact buttock start start c2', 'contact backUpper end end c2', 'contact buttock end end c2',
+      'contact backUpper start start c1', 'contact buttock start start c1', 'contact wrist.r start start c3', 'contact wrist.l start start c3'],
+    bent_over_dumbbell_rear_delt_fly: ['contact wrist.r start start c1', 'contact wrist.l start start c1'],
+  };
   it('each card differs from its research copy (0d832e18) only in the three-key block; quotes are byte copies; validateCardFile []', () => {
     expect(cardsSha.researchHead).toBe('0d832e18a2c52ec091a37b654572db5f0468913b');
     for (const id of IDS) {
@@ -78,7 +86,7 @@ describe('LIB-8R A6: the cards, the tempo map and the strip rows', () => {
       expect(sha(unkeyed(text) ?? ''), id).toBe(cardsSha.cards[id]);
       expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
       expect(validate.validateCardFile(`${id}.json`), id).toEqual([]);
-      expect(JSON.parse(text).plateFacts, id).toEqual([]);   // D-LIB8M-NOFACTS: no number with a claim in plate.start or plate.end
+      expect(JSON.parse(text).plateFacts.map((f: any) => `${f.kind} ${f.landmark} ${f.pose} ${f.cardPose} ${f.claim}`), id).toEqual(FACTS[id]);
     }
   });
   it('mutation: another card key edited is red', () => {
@@ -257,6 +265,12 @@ describe('LIB-8R A5, A10: runQa node half on each PILOT-A2 plate, the zooms, LIB
     const r = await qa(await candOf(id));
     expect(node(r)).toEqual([]);
     expect(ruledProblems(id, r)).toEqual([]);
+  });
+  it("A6 mutations: box_jump's sole.l fact moved to the start pose, and reverse_lunge's fact as sole.l (8 cm off the floor), turn PQ-H6 red", async () => {
+    const bj = await candOf('box_jump'), rl = await candOf('reverse_lunge');
+    const f = (c: any, g: (x: any) => any) => ({ ...c, research: { ...c.research, plateFacts: c.research.plateFacts.map(g) } });
+    expect(node(await qa(f(bj, (x: any) => (x.landmark === 'sole.l' ? { ...x, pose: 'start' } : x)))).some((k: string) => k.startsWith('H6.fact:'))).toBe(true);
+    expect(node(await qa(f(rl, (x: any) => ({ ...x, landmark: 'sole.l' }))))).toContain('H6.fact:0:contact:sole.l');
   });
   it('A5 mutation: the rear-delt card with topFault set to the drawn key turns the expected set red', async () => {
     const c = await candOf('bent_over_dumbbell_rear_delt_fly'), r = await qa({ ...c, research: { ...c.research, topFault: 'shrug' } });

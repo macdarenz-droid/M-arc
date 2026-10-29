@@ -147,6 +147,8 @@ export default {
     { landmark: 'ball.r', plane: TOP, pose: 'end', tol: 0.5 },
     { landmark: 'heel.l', plane: TOP, pose: 'end', tol: 0.5 },                              // both feet flat on the box
     { landmark: 'ball.l', plane: TOP, pose: 'end', tol: 0.5 },
+    { landmark: 'sole.r', plane: TOP, pose: 'end', tol: 0.5 },                              // c4 'land on it with both feet' (plate fact)
+    { landmark: 'sole.l', plane: TOP, pose: 'end', tol: 0.5 },
     // whole feet on the top, well back from the front edge, heels never hanging off (verified card, plate.end)
     { landmark: 'heel.r', above: { point: [0, 0, BOX_Z0 + HEEL_BACK], normal: [0, 0, 1] }, pose: 'end' },
     { landmark: 'heel.r', above: { point: [0, 0, BOX_Z0 + HEEL_BACK], normal: [0, 0, 1] }, pose: 'mistake' },

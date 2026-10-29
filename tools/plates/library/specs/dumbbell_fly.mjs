@@ -148,6 +148,8 @@ const CHECKS = [
   { landmark: 'head', above: { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] }, pose: 'all' },               // head never inside it
   { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },            // feet ON the floor
   { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
+  // c3 'Grasp each dumbbell' (plate fact): the hands on the dumbbells at the start (as dumbbell_overhead_triceps_extension.mjs:69)
+  ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: lmStart[landmark], pose: 'start', tol: 0.5 })),
 ];
 
 function sideFly(id) {
