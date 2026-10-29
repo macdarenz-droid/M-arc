@@ -806,12 +806,20 @@ describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and
   const cc = (o: Record<string, number> = {}) => report('lib_cable_crunch', { F2: 0.622, F3: 26.05, F5: 3.57, ...o });
   it('the named sets: F1 151.49 and F3 33.5 on bird_dog, F2 0.622 and F3 26.05 on cable_crunch; EXPECTED gives F5 alone on ab_wheel_rollout', () => {
     expect(qa.F1_NAMED).toEqual({ lib_bird_dog: 151.49, lib_side_plank: 150.31, lib_russian_twist: 197.49 });   // the (b) two asked with the E-R5 slice (#326)
-    expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 33.5, lib_cable_crunch: 26.05 });
-    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.622 });
+    expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 33.5, lib_cable_crunch: 26.05, lib_superman: 44.9 });   // superman: D-LIB21-SUPFLAGS (#337)
+    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.622, lib_superman: 0.128 });
+    expect(qa.EXPECTED('lib_superman')).toEqual(['F2', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_bird_dog')).toEqual(['F1', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_cable_crunch')).toEqual(['F2', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_ab_wheel_rollout')).toEqual(['F5']);
     expect(qa.flagProblems([dog(), cc(), report('lib_ab_wheel_rollout', { F5: 3.57 })])).toEqual([]);
+  });
+  const sm = (o: Record<string, number> = {}) => report('lib_superman', { F2: 0.128, F3: 44.9, F5: 3.57, ...o });
+  it('D-LIB21-SUPFLAGS: superman\'s F2 0.128 and F3 44.9 are the ruled set; mutations: F2 at 0.135, F3 at 53.6 (the longer-leader box), F2 or F3 not raised are red', () => {
+    expect(qa.flagProblems([sm()])).toEqual([]);
+    expect(qa.flagProblems([sm({ F2: 0.135 })]).length).toBe(1);
+    expect(qa.flagProblems([sm({ F3: 53.6 })]).length).toBe(1);
+    for (const f of ['F2', 'F3']) { const r = sm(); r.flags[f] = { raised: false, value: null }; expect(qa.flagProblems([r]).length, f).toBeGreaterThanOrEqual(1); }
   });
   it('mutations: bird_dog\'s F3 at 27.0, F3 raised on another id, F1 off its px/m, F3 missing on bird_dog, cable_crunch\'s F2 at 0.645 and F3 at 27.0 are red', () => {
     expect(qa.flagProblems([cc({ F2: 0.645 })]).length).toBe(1);
@@ -828,6 +836,9 @@ describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and
     expect(Math.abs(max - qa.F3_NAMED.lib_bird_dog)).toBeLessThanOrEqual(0.1);
     const maxCc = Math.max(...[false, true].flatMap(m => leadersOf(plate.renderPlate(S.cable_crunch, { id: 'x', mistake: m }).svg).map(len)));
     expect(Math.abs(maxCc - qa.F3_NAMED.lib_cable_crunch)).toBeLessThanOrEqual(0.1);
+    const maxSm = Math.max(...[false, true].flatMap(m => leadersOf(plate.renderPlate(S.superman, { id: 'x', mistake: m }).svg).map(len)));
+    console.log(`LIB-21 superman longest leader ${maxSm.toFixed(2)} px`);
+    expect(Math.abs(maxSm - qa.F3_NAMED.lib_superman)).toBeLessThanOrEqual(0.1);
   });
 });
 

@@ -122,6 +122,7 @@ All are sheet or merge gates, not drawing gates, except LIB-20 for the (b) rows.
 - **No small-motion F1** (D-LIB21-SIZE).
 - **Before Do 6 b** every drawn id shows `H6:no-card` and F7 'no card top fault' (qa/node.mjs:360). Expected.
 - qa.mjs holds the ruled set (`F7_IDS`, `F1_NAMED` bird_dog 151.49, `F3_NAMED` bird_dog 26.5).
+- **Named F2 and F3 on superman (D-LIB21-SUPFLAGS, #337):** F2 0.128 (the cover of a prone figure at the D-LIB21-FLOOR camera; F2's lower bound 0.191) and F3 44.9 px (the longest leader, under 49.33), both raised on the held plate before its zoom and unchanged by the `low` box move; pinned in qa.mjs with red mutations, never cleared by lengthening a leader.
 
 ## 6. R10 items (tier A: ab_wheel_rollout)
 
