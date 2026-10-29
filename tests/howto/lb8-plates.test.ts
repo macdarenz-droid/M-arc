@@ -954,7 +954,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
   const lmsAll = (spec: any) => [...POSES.map(p => lmOf(spec, p)), ...ghostLms(spec)];
   const mutEnd = (spec: any, patch: any) => ({ ...spec, poses: { ...spec.poses, end: { ...spec.poses.end, ...patch } } });
 
-  describe('cable_kickback: A2 ankleCuff and the cable column per pose', () => {
+  describe('cable_kickback: A2 ankleCuff and the cable column per pose', { timeout: T }, () => {
     it('ankleCuff emits PRIMITIVES types only, every part a poly, in every pose', () => {
       const cuff = (s: any, p: string) => itemsIn(s, p).items.filter((it: any) => it.part === 'cuff');
       for (const p of POSES) { const c = cuff(S[CK], p); expect(c).toHaveLength(3); for (const it of c) { expect(eng.PRIMITIVES[it.type]).toBeTypeOf('function'); expect(it.type).toBe('poly'); } }
@@ -962,7 +962,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
       const bad = withEq(S[CK], 2, (f: any) => (lm: any, ctx: any) => ({ ...f(lm, ctx), type: 'line' }));
       expect(cuff(bad, 'mistake').every((it: any) => it.type === 'poly')).toBe(false);
     });
-    it('the column frame and pulley sit at one fixed place (±1 px) in start, end and Mistake; the stack keeps the end lift in the Mistake', () => {
+    it('the column frame and pulley sit at one fixed place (±1 px) in start, end and Mistake; the stack keeps the end lift in the Mistake', async () => {   // async: one yield per comparison (A19)
       const drawn = (s: any, p: string) => eng.PRIMITIVES.cableColumn(colIn(s, p, { mistake: p === 'mistake' }), camOf(s));
       const frame = (s: any, p: string) => drawn(s, p).filter((it: any) => it.cls !== 'eq-cable').map((it: any) => it.d);
       const xyOf = (d: string) => [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
@@ -970,7 +970,9 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
       // the stack is part of the frame list: it moves start -> end, so compare frame-only items start/end, and all of them end/Mistake
       const stat = (s: any, p: string) => frame(s, p).filter((_: any, i: number) => i < 3 || i >= frame(s, p).length - 4);
       expect(near(stat(S[CK], 'start'), stat(S[CK], 'end'))).toBe(true);
+      await tick();
       expect(near(frame(S[CK], 'end'), frame(S[CK], 'mistake'))).toBe(true);
+      await tick();
       // mutation: the column moved 2 cm in the Mistake -> red
       const bad = withEq(S[CK], 1, (f: any) => (lm: any, ctx: any) => { const it = f(lm, ctx); return ctx.pose === 'mistake' ? { ...it, base: [0, 0, it.base[2] + 0.02] } : it; });
       expect(near(frame(bad, 'end'), frame(bad, 'mistake'))).toBe(false);
@@ -1011,7 +1013,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     });
   });
 
-  describe('cable_kickback: A18 physics on drawn items', () => {
+  describe('cable_kickback: A18 physics on drawn items', { timeout: T }, () => {
     it('every heel, ball and toe is on or above the floor line in start, end, Mistake and the ghosts', () => {
       const ok = (s: any) => lmsAll(s).every(lm => ['heel', 'ball', 'toe'].every(k => ['l', 'r'].every(sd => lm[`${k}.${sd}`][1] >= -0.0005)));
       expect(ok(S[CK])).toBe(true);
@@ -1035,7 +1037,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     });
   });
 
-  describe('cable_kickback: card facts and sized numbers on the drawn body', () => {
+  describe('cable_kickback: card facts and sized numbers on the drawn body', { timeout: T }, () => {
     it('hinge about 45 degrees (c2, PureGym; a choice): thorax (pelvis tilt + lumbar) 45 ±2 from vertical in start and end, the torso unchanged (c7, c8, c10)', () => {
       const inc = (s: any, p: string) => { const a = rep(s).angles[p]; return a.tilt + a.trunk; };
       expect(Math.abs(inc(S[CK], 'start') - 45)).toBeLessThanOrEqual(2); expect(Math.abs(inc(S[CK], 'end') - 45)).toBeLessThanOrEqual(2);
@@ -1070,7 +1072,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     });
   });
 
-  describe('cable_kickback: A15 drawing lessons (each check run on the real spec and on a mutated spec)', () => {
+  describe('cable_kickback: A15 drawing lessons (each check run on the real spec and on a mutated spec)', { timeout: T }, () => {
     /** The dashed Mistake cable: unbroken from the pulley rim to the drawn Mistake D-ring, in the Mistake layer above the
      *  end figure. Reads the drawn svg (the guide's path) and the drawn ring. */
     const cableProblems = (spec: any) => {
@@ -2371,13 +2373,13 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
   const knee = (lm: any, sd: string) => 180 - angle3(lm[`hip.${sd}`], lm[`knee.${sd}`], lm[`ankle.${sd}`]);
   const angle3 = (a: number[], v: number[], b: number[]) => { const u = a.map((x, i) => x - v[i]!), w = b.map((x, i) => x - v[i]!); return Math.acos(Math.max(-1, Math.min(1, u.reduce((q, x, i) => q + x * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w)))) * 180 / Math.PI; };
 
-  describe('resisted_hip_flexion: A2 ankleCuff and the cable column per pose', () => {
+  describe('resisted_hip_flexion: A2 ankleCuff and the cable column per pose', { timeout: T }, () => {
     it('ankleCuff emits PRIMITIVES types only, every part a poly, in every pose; mutation: the strap as a `line` is red', () => {
       for (const p of POSES) { const c = cuffIn(s(), p); expect(c).toHaveLength(3); for (const it of c) { expect(eng.PRIMITIVES[it.type]).toBeTypeOf('function'); expect(it.type).toBe('poly'); } }
       const bad = withEq(s(), 2, (f: any) => (lm: any, ctx: any) => ({ ...f(lm, ctx), type: 'line' }));
       expect(cuffIn(bad, 'mistake').every((it: any) => it.type === 'poly')).toBe(false);
     });
-    it('the column frame and pulley sit at one fixed place (±1 px) in start, end and Mistake; the stack keeps the end lift in the Mistake', () => {
+    it('the column frame and pulley sit at one fixed place (±1 px) in start, end and Mistake; the stack keeps the end lift in the Mistake', async () => {   // async: one yield per comparison (A19)
       const frame = (sp: any, p: string) => eng.PRIMITIVES.cableColumn(colIn(sp, p, { mistake: p === 'mistake' }), camOf(sp)).filter((it: any) => it.cls !== 'eq-cable').map((it: any) => it.d);
       const near = (a: string[], b: string[]) => a.length === b.length && a.every((d, i) => xy(d).every((q, k) => Math.hypot(q[0]! - xy(b[i]!)[k]![0]!, q[1]! - xy(b[i]!)[k]![1]!) <= 1));
       const stat = (sp: any, p: string) => frame(sp, p).filter((_: any, i: number) => i < 3 || i >= frame(sp, p).length - 4);
@@ -2420,7 +2422,7 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
     });
   });
 
-  describe('resisted_hip_flexion: A18 physics on drawn items', () => {
+  describe('resisted_hip_flexion: A18 physics on drawn items', { timeout: T }, () => {
     it('every heel, ball and toe is on or above the floor line in start, end, Mistake and the ghosts; mutation: the standing heel 1 px down is red', () => {
       const ok = (sp: any) => lmsAll(sp).every(lm => ['heel', 'ball', 'toe'].every(k => ['l', 'r'].every(sd => lm[`${k}.${sd}`][1] >= -0.0005)));
       expect(ok(s())).toBe(true);
@@ -2452,7 +2454,7 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
     });
   });
 
-  describe('resisted_hip_flexion: card facts and sized numbers on the drawn body', () => {
+  describe('resisted_hip_flexion: card facts and sized numbers on the drawn body', { timeout: T }, () => {
     const card = () => readJson(CARD);
     const h6 = (sp: any) => qaNode.h6({ spec: sp, research: card() }, { engine: Eng() }, { normal: plate.renderPlate(sp, { id: 'x' }) }).map((p: any) => p.key);
     it('PQ-H6: the card facts (ankle.r and wrist.r contacts at the start, c2) and the card tempo hold; mutations: the wrist check removed, the tempo changed', () => {
@@ -2505,7 +2507,7 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
     });
   });
 
-  describe('resisted_hip_flexion: A15 drawing lessons (each check run on the real spec and on a mutated spec)', () => {
+  describe('resisted_hip_flexion: A15 drawing lessons (each check run on the real spec and on a mutated spec)', { timeout: T }, () => {
     /** The dashed Mistake cable: unbroken from the pulley rim to the drawn Mistake D-ring, in the Mistake layer above the end figure. */
     const cableProblems = (spec: any) => {
       const cam = camOf(spec), svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, out: string[] = [];
