@@ -634,5 +634,8 @@
     "W1 fix round 2026-10-03: F23/R-W1-3 feel.rows[1].means no longer says \"usually means\"; it states the fault and its effect in c8's terms (EMG, WEAK).",
     "W1 lows round 2026-10-03: low 4: feel.rows[1].means keeps c8's hedge ('can make'; c8 is DATA and WEAK).",
     "LB4 research 2026-10-22 (D-SUP-LB4-PACOPY; D-SUP-LB4-REVLUNGE corrected to reading A under D-SUP-PROTECT): the top fault and the drawn fault are the flared ribcage (c18, new; both quotes fetched by curl from pel-revlunge). LR-22: c10 (goulette-2021, backward vs forward lunge kneecap loading) was cited by no line and no shown line uses it, so the claim and its source are dropped. Tempo unchanged (R-W1-1). Shown-copy changes for the owner's re-approval sheet are listed on PR #285."
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [{"phase":"Lower","move":true,"word":"Slow"},{"phase":"Rise","move":true,"word":"Quicker"}],
+  "topFault": "flare"
 }

@@ -522,5 +522,8 @@
   "anchorSource": "ace-lying-fly",
   "gaps": [
     "over-the-face line: no read source of this card says the dumbbells travel over the face or chest; the shared over-face line is linked at stamp (content.md 5.1, LR-16)"
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [{"phase":"Lower","s":2,"move":true},{"phase":"Raise","s":2,"move":true}],
+  "topFault": "wrists"
 }

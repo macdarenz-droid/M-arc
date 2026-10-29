@@ -25,9 +25,11 @@
 //   extension ghost's straight knee), c5 soft knees (the landing checkpoint).
 //  Mistake = plate.mistake (c5, drawable): landing on the box with straight, stiff knees (MISTAKE_HIP, same feet).
 //   Tells: the card's plate.tells are cues of good form ("Both feet land together, knees bent", "You step down, never
-//   jump down"), so the tells restate the fault: knees straight, stiff landing (c5). Flagged on PR #109.
+//   jump down"), so the one tell names the fault: knees straight (c5), key 'straight' = the card's topFault. The second
+//   tell, stiff landing, named the same fault twice and is dropped (D-LIB8R-BJTELL, LIB-8R PLAN RULED #340).
 //  Measure: none. The card gives no knee angle; an arc would only repeat the "Soft knees" callout.
-//  Tempo: left out. The card gives no seconds ("explosive take-off; step down; full rest", c11).
+//  Tempo: no seconds in the card ("explosive take-off; step down; full rest", c11): the strip without seconds, exactly
+//   tempoOf(strip/rows.json box_jump) (D-STRIP-ROWS, D-LIB8R-AIR).
 // CARD (checked against card v2): from the card: BOX_H 45 cm (inside the beginner 30-45 cm, c8), knees and hips bent
 //  with the arms back at take-off (c2), both feet on the box with the knees bent (c4, c5), FOOT_X (hip width, c1).
 //  Not in the card, left flagged: TAKEOFF_HIP / TAKEOFF_TRUNK / ARMS_BACK, the EXT_* extension angles and LAND_HIP / LAND_TRUNK (how deep: no
@@ -161,9 +163,8 @@ export default {
     ],
     tells: [
       { key: 'straight', text: 'Knees straight', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The knees stay straight as the feet land on the box.' },
-      { key: 'stiff', text: 'Stiff landing', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 12, top: 106 }, cue: 'The legs don\'t bend to absorb the landing.' },
     ],
   },
-  pilot: { note: 'No tempo strip: no sourced seconds (explosive take-off, step down, full rest; c11).' },
+  tempo: [{ phase: 'Take-off', move: true, word: 'Explosive' }, { phase: 'Step down', move: true }],   // tempoOf(strip/rows.json box_jump) (D-STRIP-ROWS; c3, c11)
   alt: 'Box jump, side view. Take-off frame: feet hip width, knees and hips bent, arms swung back. The hips arc up and forward onto a knee-high box. Landing frame: both feet flat on the box, knees and hips bent to absorb the landing, arms forward.',
 };

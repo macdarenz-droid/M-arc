@@ -520,5 +520,8 @@
   "anchorSource": "sl-reverse-fly",
   "notes": [
     "LR-31/LR-33 pass 2026-10-22: rankNote added (step 2), pick unchanged; tempo.text added (values unchanged). feel.rows[1] rewritten in LR-6 shape (place + the source's fault + fix): no quote links a feeling at the top of the shoulders and neck to shrugging, so \"Top of the shoulders and neck\" / \"Usually means you are shrugging.\" became \"Top of the shoulders\" / \"Shrugging the shoulders.\" handlingMistakes[0] and feel.rows[2] cite [\"c5\",\"c4\"] because \"Go lighter\" is c4's words."
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [{"phase":"Raise","s":1,"move":true},{"phase":"Lower","s":2,"move":true}],
+  "topFault": "swing"
 }
