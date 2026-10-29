@@ -78,6 +78,18 @@ No number with a claim in any of the 4 cards' plate.start or plate.end: box_jump
 ("hip to shoulder width", "roughly vertical"), dumbbell_fly ("shoulder-width", "level with the shoulders or chest"), rear-delt
 ("level with the body"). box_jump's 30-45 cm (c8) is plate.equipment with no measure callout. So `plateFacts` is [] on all 4.
 
+Amended by CARD FIELDS (D-LIB8R-FACTS2, cfpa2 and cfpa2r on #340): contacts a quote states for a drawn pose are facts;
+the facts written are in the cards (box_jump soles at start c2 and end c4; reverse_lunge toe.l at the end c4; dumbbell_fly
+backUpper and buttock c1, c2, wrists c3; rear-delt fly wrists c1).
+
+Not facts:
+- reverse_lunge c15 "Bend both knees to 90°": c15 is the tempo reverse lunge, a progression; plate.end does not cite it,
+  and the drawn exercise is the plain reverse lunge (D-LIB8R-PROGFACT). The knees stay as drawn.
+- dumbbell_fly c2 head and shoulders: no back-of-head landmark (`head` is the crown, 9.0 cm above the pad); `shoulder.*`
+  are joint centres (9.1 cm), so the shoulders are carried by `backUpper`. c2's feet "floor/riser" is an or-choice
+  (D-LIB17-ORCHOICE).
+- box_jump c8 30-45 cm: plate.equipment, no measure callout.
+
 ## 4. Tempo (`tempo.json`)
 - box_jump (untimed): exactly tempoOf(strip/rows.json): `[{ Take-off, move, Explosive }, { Step down, move }]`.
 - reverse_lunge (untimed): `[{ Lower, move, Slow }, { Rise, move, Quicker }]`.

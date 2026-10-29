@@ -143,6 +143,8 @@ export default {
   checks: [
     { landmark: 'heel.r', plane: FLOOR, pose: 'start', tol: 0.5 },                          // take-off: feet flat
     { landmark: 'ball.r', plane: FLOOR, pose: 'start', tol: 0.5 },
+    { landmark: 'sole.r', plane: FLOOR, pose: 'start', tol: 0.5 },                         // c2 'push ... against the ground' (plate fact)
+    { landmark: 'sole.l', plane: FLOOR, pose: 'start', tol: 0.5 },
     { landmark: 'heel.r', plane: TOP, pose: 'end', tol: 0.5 },                              // landing: feet flat on the box
     { landmark: 'ball.r', plane: TOP, pose: 'end', tol: 0.5 },
     { landmark: 'heel.l', plane: TOP, pose: 'end', tol: 0.5 },                              // both feet flat on the box
