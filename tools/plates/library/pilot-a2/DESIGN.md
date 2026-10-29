@@ -95,3 +95,33 @@ No number with a claim in any of the 4 cards' plate.start or plate.end: box_jump
   goes to the blind pass as drawn (Do 3 changes only the note and tempo).
 - M_WRIST 30° is a stated reason under D-LIB17-SIZE (no source or approved plate gives a wrist-bend size); fixed here before
   any PQ-H3 run on the drawn plate.
+
+## 7. Drawn (Do 3, Do 4; after 'LIB-8R PLAN RULED' and 'LIB-8 resume')
+
+Rulings applied: D-LIB8R-BJTELL (box_jump's `stiff` dropped), M_WRIST 30°, the rear-delt route (front first, then the
+side fallback). Page: two builds `90ab915182ea6c2a04604475e0839e7b0128da79836c14991c2d2f2129696181` (711639 B).
+qa.mjs (node and browser, `candidateOf(id, { all, authoring: true })`, zero exemptions): all 10 hard checks pass on all 4.
+
+| id | view fields | zoom | trace px | deviation px (zoom) | raised flags | held |
+|---|---|---|---|---|---|---|
+| box_jump | side | none | 176.9 | 27.4 | F2 0.72, F3 125.6, F4 0, F5 3.57 | no |
+| reverse_lunge | side | Mistake, k 1.5 (the smallest; 13.5 px) | 69.7 | 9.0 (13.5) | F3 47.9, F4 0, F5 3.57 | no |
+| dumbbell_fly | front, pitch 45, volume trunk | Mistake, k 2 (1.5 gives 9.9 px) | 85.5 | 6.6 (13.1) | F3 106.8, F5 3.57 | no |
+| rear-delt fly | side (fallback); front alt at pitch 15, volume | Mistake, k 2 (1.5 gives 11.1 px) | 53.5 | 7.4 (14.8) | F2 0.17, F3 98.1, F5 3.57, F6 side, F7 shrug | front view held (S3) |
+
+F5 cell (scratch, D-LIB8M-QA): 3.569 in midnight at 340 px, Mistake view, on the selected Mistake tell of each plate:
+`button.plate-callout.m[straight|flare|wrists][pressed]`, `button.plate-callout.two.m[shrug][pressed]`.
+
+Notes:
+- **rear-delt front run (S3):** at pitch 15 with the volume trunk the shrug's tell-anchor deviation is 1.3 px; inside the
+  zoom it is 1.9, 2.5, 3.8 and 5.1 px at k 1.5, 2, 3 and 4, all below 11.39 px. Its card chunk is 180.3 KB (> H7's
+  150 KB). So the front view is held, never enlarged. The side view carries the card's plate.mistake unchanged (the same
+  `scap { elev 5, pro -3 }`), F6 named. The front view stays as `__alt.mjs`, a sheet extra.
+- **dumbbell_fly's ghosts:** one. With the volume trunk, H7's card chunk is 152.4 KB with 1 ghost, 159.2 KB with 2 and
+  165.9 KB with 3 (limit 153.6 KB). The floor line runs under the feet at the approved y 339 (`y0` set from FOOT_Z and the
+  pitch). It spans ±0.5 m, so the zoom finds room in the lower left. The tell and two callouts have placed boxes (H1/H4).
+- **A7 and the zoom key:** reverse_lunge's export minus `mistake`, `tempo`, `pilot` and `zoom` keeps main's sha256
+  `026964f9…`. The zoom is Mistake-view only. The test also pins the normal render's svg and overlay bytes, measured
+  from main's spec: svg `0744dcf3…`, overlay `cbf84381…`.
+- `push.negotiate true` in the container's git config made pushes send no objects (GitHub: "missing necessary objects").
+  `git -c push.negotiate=false push` works.

@@ -44,10 +44,28 @@ export const tableOf = reports => [
   }),
 ];
 
+/** The raised flags per id at the drawn head (LIB-8R Do 4): F5 3.57 on all (D-LIB9-F5); F6 and F7 on the rear-delt fly only
+ *  (its side fallback, D-LIB8R-FLIES, and its drawable-false card, decision 9); F2, F3 and F4 as measured, named on the sheet. */
+export const EXPECTED = {
+  lib_box_jump: ['F2', 'F3', 'F4', 'F5'], lib_reverse_lunge: ['F3', 'F4', 'F5'], lib_dumbbell_fly: ['F3', 'F5'],
+  lib_bent_over_dumbbell_rear_delt_fly: ['F2', 'F3', 'F5', 'F6', 'F7'],
+};
+export const F5_EXEMPT = 3.57;
+/** Differences between the raised flags and EXPECTED, and an F5 value other than the exempt 3.57. */
+export const flagProblems = reports => reports.flatMap(r => {
+  const raised = FLAGS.filter(f => r.flags[f].raised).sort(), want = EXPECTED[r.id] ?? [], out = [];
+  if (JSON.stringify(raised) !== JSON.stringify(want)) out.push(`${r.id}: flags ${raised.join(',') || 'none'} != expected ${want.join(',')}`);
+  if (r.flags.F5.raised && +r.flags.F5.value.toFixed(2) !== F5_EXEMPT) out.push(`${r.id}: F5 ${r.flags.F5.value.toFixed(2)}:1 != the exempt ${F5_EXEMPT}:1`);
+  return out;
+});
+
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const args = process.argv.slice(2), j = args.indexOf('--json'), out = j >= 0 ? args.splice(j, 2)[1] : null;
   const { sha, reports } = await qaPa2(args.length ? { ids: args } : {});
   console.log(`PILOT-A2 plates page sha256 ${sha}`);
   for (const line of tableOf(reports)) console.log(line);
   if (out) writeFileSync(out, JSON.stringify({ sha, reports }, null, 1) + '\n');
+  const bad = flagProblems(reports);
+  console.log(bad.length ? `flag set DIFFERS from the expected set:\n${bad.join('\n')}` : 'flag set: equal to the expected set');
+  if (bad.length || reports.some(r => HARD.some(h => !r.hard[h].pass))) process.exit(1);
 }
