@@ -405,8 +405,8 @@ Still held:
 
 | id | ruling | why | route |
 |---|---|---|---|
-| cable_rear_delt_fly | D-LIB8-shrug (D-LIB17-SIZE, S2); no zoom place | the card-true shoulder roll (scapulae 3 cm up, 3 cm forward) measures 4.4 px < 11.39 px (section 12); a Mistake circle (r 52 + 6 px gap) fits nowhere on the plate at any k from 1.5 to 4: the two cable columns stand at the plate's edges and leave about 93 px between a column and the body | a ruling (section 17); never re-scaled, cropped or moved |
-| renegade_row | D-LIB8-shrug (D-LIB17-SIZE, S2); D-LIB17-ZOOMPAIR | H3.zoom deviation 0 px: rotation fault (F-ZOOM-2). The card-true corner landing moves 4.9 px < 11.39 px (section 12); the tell anchor is a fixed point, so the zoom's deviation is 0 px at any k | F-ZOOM-2 (an opt-in `zoom.pair`, batched with F-ZOOM-TRIM after #327; #332 6409786985), then a resume; rolls |
+| cable_rear_delt_fly | D-LIB8-shrug (D-LIB17-SIZE, S2); no zoom place | the card-true shoulder roll (scapulae 3 cm up, 3 cm forward) measures 4.4 px < 11.39 px (section 12); a Mistake circle (r 52 + 6 px gap) fits nowhere on the plate at any k from 1.5 to 4: the two cable columns stand at the plate's edges and leave about 93 px between a column and the body | held: D-LIB17-RDFHOLD (#332 6410506295; F-ZOOM-2 item c); never re-scaled, cropped or moved |
+| renegade_row | D-LIB8-shrug (D-LIB17-SIZE, S2); D-LIB17-ZOOMPAIR | H3.zoom deviation 0 px: rotation fault (F-ZOOM-2). The card-true corner landing moves 4.9 px < 11.39 px (section 12); the tell anchor is a fixed point, so the zoom's deviation is 0 px at any k | F-ZOOM-2 (an opt-in `zoom.pair`; #332 6409786985), then LIB-17 resume 2 (D-LIB17-SPLIT, #332 6486667474) |
 
 Held rows are in no rows file; their specs, tests and card keys stay.
 
@@ -481,7 +481,7 @@ top), not the fault: never used. Options:
   kind of move, no body part, item or fact moved): resistance_band_pull_apart "Shoulders shrug up" top 24 → 62;
   bench_dip "Elbows at 90" (96, 74) → (54, 92), its "Elbow about 90°" measure box top 112 → 150, "Legs out" top 198 →
   226, "Below parallel" top 112 → 128.
-- **cable_rear_delt_fly's zoom: no place (a second ruling asked).** With the zoom on, zoomOf throws "no place on the
+- **cable_rear_delt_fly's zoom: no place (ruled D-LIB17-RDFHOLD, #332 6410506295: held on H3; F-ZOOM-2 item c).** With the zoom on, zoomOf throws "no place on the
   mistake plate" at every k from 1.5 to 4 (test). The front view's two cable columns (card-true, D-LIB17-CABLE) leave
   about 93 px between a column's inner post and the body, under the circle's 104 px plus 2 × 6 px. Options: **A** hold
   it on H3.deviation (named list), as pallof_press; **B** a fix card lets a zoom circle sit over the columns'
@@ -501,3 +501,8 @@ to the old rule, and two mutations (the entry removed; the label moved so the le
 **D-LIB17-BDIPBOX (#332).** F3 is not named: only the "Below parallel" box moves, (200, 128) → (176, 160), so the
 leader (70.8 px) falls inside F3's range; its end stays on the dashed fault upper arm. Pinned by a test, with the old
 box as a red mutation. QA: all 10 hard checks pass; flags F5 3.57 and F7, the ruled set.
+
+**D-LIB17-SPLIT (#332 6486667474).** This PR carries only approved rows (resistance_band_pull_apart, mx1; bench_dip,
+mx3). renegade_row (zoom.pair, now on main with F-ZOOM-2) and its owed rows (H4.overlap feet, H8.words) go to LIB-17
+resume 2; cable_rear_delt_fly stays held (D-LIB17-RDFHOLD). D-FZOOM2-A3SYNC: f-zoom-2.test.ts A3's expected QA keys for
+renegade_row follow this branch's card and spec (only H8.words remains).

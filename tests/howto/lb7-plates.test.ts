@@ -28,7 +28,8 @@ const NOT_HERE = ['push_up', 'incline_push_up', 'pike_push_up', 'diamond_push_up
 // untimed strip, tempoOf(their strip/rows.json rows), on card and spec (D-STRIP-ROWS).
 const NOSECS = ['cable_rear_delt_fly', 'renegade_row'];
 // DESIGN.md sections 14 and 17: every held id. Both under D-LIB8-shrug with no LIB-ZOOM circle yet: cable_rear_delt_fly has
-// no place for one; renegade_row's still sign has no tell move (its ruling is asked on #332).
+// no place for one (D-LIB17-RDFHOLD, #332 6410506295); renegade_row's still sign has no tell move (D-LIB17-ZOOMPAIR,
+// #332 6409786985: F-ZOOM-2's zoom.pair, built in LIB-17 resume 2 under D-LIB17-SPLIT, 6486667474).
 const HELD = ['cable_rear_delt_fly', 'renegade_row'];
 // 'LIB-17 resume' (D-LIBZOOM-EXTEND): the rows held under D-LIB8-shrug that joined rows.json with a LIB-ZOOM circle.
 const ZOOMED: Record<string, { view: string, k: number }> = { resistance_band_pull_apart: { view: 'mistake', k: 2 }, bench_dip: { view: 'normal', k: 3 } };
@@ -39,12 +40,12 @@ const COMPOSERS = ['dipBars'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 
-let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, dipEq: any, markup: any;
+let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, dipEq: any, markup: any, strip: any;
 const M: Record<string, any> = {}, S: Record<string, any> = {};
 beforeAll(async () => {
-  [reg, eng, body, qaNode, qaEng, qaIdx, plate, closure, dipEq, markup] = await Promise.all([
+  [reg, eng, body, qaNode, qaEng, qaIdx, plate, closure, dipEq, markup, strip] = await Promise.all([
     'registry.mjs', 'engine.mjs', '../vendor/engine/body.mjs', 'qa/node.mjs', 'qa/engine.mjs', 'qa/index.mjs', '../vendor/engine/plate.mjs',
-    'inputs-closure.mjs', 'eq/dipBars.mjs', 'qa/markup.mjs',
+    'inputs-closure.mjs', 'eq/dipBars.mjs', 'qa/markup.mjs', 'strip/tempo-strip.mjs',
   ].map(f => import(/* @vite-ignore */ lib(f))));
   for (const id of LB7.filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`))) { M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); S[id] = M[id].default; }
 }, T);
@@ -94,10 +95,9 @@ const listOf = (spec: any, mistake: boolean) => (mistake ? spec.mistake.tells : 
 /** Every leader in a render as its polyline (plate px), starting at its anchor. */
 const leadersOf = (svg: string) => [...svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(([, d]) => { const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]); return p; });
 const angle3 = (a: number[], v: number[], b: number[]) => { const u = a.map((x, i) => x - v[i]!), w = b.map((x, i) => x - v[i]!); return Math.acos(Math.max(-1, Math.min(1, u.reduce((s, x, i) => s + x * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w)))) * 180 / Math.PI; };
-/** A no-seconds card's tempo-map rows in strip/rows.json (D-STRIP-ROWS), and tempoOf as LIB-STRIP builds it (strip/tempo-strip.mjs),
- *  copied here: { phase, move?, word? } in that order. */
+/** A no-seconds card's tempo-map rows in strip/rows.json (D-STRIP-ROWS), and LIB-STRIP's own tempoOf (strip/tempo-strip.mjs). */
 const stripRows = (id: string) => readJson('tools/plates/library/strip/rows.json').cards.find((c: any) => c.id === id).rows;
-const tempoOfStrip = (rows: any[]) => rows.map(r => ({ phase: r.phase, ...(r.move ? { move: true } : {}), ...('word' in r ? { word: r.word } : {}) }));
+const tempoOfStrip = (rows: any[]) => strip.tempoOf(rows);
 const withEq = (spec: any, k: number, f: (e: any) => any) => ({ ...spec, equipment: spec.equipment.map((e: any, i: number) => (i === k ? f(e) : e)) });
 
 describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids, all mode H', () => {
