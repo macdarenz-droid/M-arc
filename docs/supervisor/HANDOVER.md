@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-29 ~02:25 UTC · main `c7bdad7a` (train 44: F-CI-4 + LB6 resume) · **8.0r: resumed after the weekly reset; mx3 recheck set building; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-29 ~04:05 UTC · main `6cf4ea2a` (train 45: F-ZOOM-2) · **8.0r: LB7 sync, LB8 READY and panel mx4 next; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -826,6 +826,18 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | #278 LIB-11 pilot B | session_01UHomn1uKNdA1g3v5Pjdii4 | main catch-up, Do 10 'PILOT B SHEET READY' for the supervisor's decision (owner delegation), then the pin |
   | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
   | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
+
+**Update 04:05 UTC (10-29):**
+- **Train 45 merged** (#339) → main `6cf4ea2a`: F-ZOOM-2 (#336, opt-in `zoom.pair`; review PASS 6486453034, Low → F-ZOOM2-DOC). The F-ZOOM-2 session is archived. No APK (nothing visible changed).
+- A train 46 (F-ZOOM-2 + LB7 #332) was built and **not pushed**. One test failed: f-zoom-2.test.ts:109 pins renegade_row's QA keys as main had them, and LB7's resume legitimately changes them. Ruling **D-FZOOM2-A3SYNC** (#332 6487271215): LIB-17 merges main and updates only that expected array, then a delta review.
+- **Panel mx3: VALID.** Approved: lying_leg_curl and standing_leg_curl (LB8), bench_dip (LB7), sled_pull and medicine_ball_slam (LB10). burpee goes to a second round (R4 leader ends; D-LIB22-PLANKBOX).
+- **Reviews:** LIB-17 resume #332 PASS 6486838638 (3 doc Lows). LIB-18 #325 is merging main before its READY.
+- **Started:**
+  - LIB-21 resume 2 #337 (superman; D-LIB21-SUPERMAN and D-LIB21-SUPFLAGS; russian_twist stays held);
+  - LIB-8R #340, the pilot A held rows as batch PILOT-A2 (card lib-8r-card.md; plan ruled; CARD FIELDS cfpa2 VALID, plateFacts fix under D-LIB8R-FACTS2);
+  - F-RESEARCH-2 #338, which is done: A7 VALID and the fix check PASSES. It merges into claude/libht-research when CI is green. pallof_press stays held. F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume.
+- **Panel mx4** is building. LB4 round 2 (#289 @ `143b7cd6`, page `9a2b7881…`) is ready in it, and LB10's burpee fix 2 is still to be added.
+- **Slots:** LIB-14, LIB-18 and LIB-17 are WAITING or finishing; active: LIB-21 resume 2, LIB-22 (fix 2) and LIB-8R. Usage: 7-day 0.05 at 03:57.
 
 **Update 02:25 UTC (10-29):**
 - The weekly limit stopped every session from about 14:50 UTC on 10-26 until the reset at 02:00 UTC on 10-29. **Usage after the reset: 7-day 0.00** (next reset Thu 11-05 02:00 UTC). The 80 % pause rule applies again from now (PANELS §9).
