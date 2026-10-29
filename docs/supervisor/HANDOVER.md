@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-29 ~04:05 UTC · main `6cf4ea2a` (train 45: F-ZOOM-2) · **8.0r: LB7 sync, LB8 READY and panel mx4 next; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-29 ~04:57 UTC · main `6cf4ea2a` · **8.0s: PAUSED by the owner; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -808,6 +808,22 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0s PAUSE 10-29 ~04:57 UTC (owner: "Whatever current task, pause when finish after that and stop all task. Dont do anything after that."; read first, then 8.0r)
+- **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
+- **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
+- **Lanes at the pause:**
+  | lane | PR · session | state | next on resume |
+  |---|---|---|---|
+  | LIB-17 LB7 | #332 · session_019M2mv3xosDU1LUQNcDVLZ3 | review PASS 6486838638; sync @ `e7f4600a` diff-checked (6488240760) | train 46 with LB8 |
+  | LIB-18 LB8 | #325 · session_01QaJzHJZn4XgtwKWXFjdYMo | lying and standing leg curls approved (mx3); finishing 'LIB-18 RESUME READY' on `bb628ef7` | fresh Opus review, then train 46 |
+  | LIB-22 LB10 | #331 · session_013S59n44XV6LVWqpoL6WppU | sled_pull and medicine_ball_slam approved (mx3); burpee fix 2 (D-LIB22-PLANKBOX) in progress | add burpee to mx4 |
+  | LIB-14 LB4 | #289 · session_01SNxaznkCpy4yFu7BMvVyuR | round 2 @ `143b7cd6`, page `9a2b7881…` | mx4 |
+  | LIB-8R PILOT-A2 | #340 · session_01EQuYNjCqcXNx2oAh5UaU2K | plates @ `2e4aa3ff`, page `90ab9151…`; CARD FIELDS done (cfpa2, cfpa2r, diff-check) | mx4 round 1 |
+  | LIB-21 resume 2 LB9 | #337 · session_01EQuYNkEys4xSHTTKPBNkcD | superman (D-LIB21-SUPERMAN, -SUPFLAGS, D-FZOOM2-A8PIN); russian_twist held | its PLATES READY, then a panel |
+- **Panel mx4** (not shuffled; nothing has run): the builder's files are in the old supervisor's scratchpad (`critic-mx4-private`). They will not exist for a new session. A new supervisor rebuilds mx4 from PANELS §1 with LB4 round 2, PILOT-A2's 4 plates, LB10's burpee and, if ready, LB9's superman.
+- **Train 46** (LB7 #332 @ `e7f4600a` + LB8 #325) is not built. Build it on the latest main per 6.8 after LB8's review passes.
+- Rulings of this window are in lib4-cards §46 and on the PRs. Not yet copied into §46: D-LIB22-SOFTBOX and D-LIB22-PLANKBOX (#331), D-FZOOM2-A3SYNC (#332), D-FZOOM2-A8PIN (#337), D-LIB8R-BJTELL, -FACTS2 and -PROGFACT (#340), and D-R2-SCOPEFIX and F-R2-PALLOF-5 (#338).
 
 ### 8.0r RESUMED 10-25 ~00:23 UTC (owner: "Continue now"; read first, then 8.0q)
 - The hourly tick is **re-enabled**. **Usage: 7-day 0.76 at 00:23 UTC** (the 0.75 warning is passed; reset Thu 10-29 02:00 UTC). With about 4 % left before the owner's 80 % pause, only merges of already-reviewed work run now; no new builders start before the reset.
