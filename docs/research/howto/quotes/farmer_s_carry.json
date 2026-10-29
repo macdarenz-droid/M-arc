@@ -666,6 +666,70 @@
    "status": "verbatim",
    "closest": "",
    "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c32",
+   "source": "winwood2014",
+   "text": "Stride length (m) 0.85 ± 0.19†0.023 1.33 ± 0.11 1.04 ± 0.12†0.002 1.43 ± 0.11",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c32",
+   "source": "winwood2014",
+   "text": "Stride length (m): Horizontal distance from heel strike of the first foot contact to the next heel strike contact of the same foot.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c32",
+   "source": "winwood2014",
+   "text": "Six experienced male strongman athletes performed farmers’ walks and deadlifts at 70% of their 1RM deadlift.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c32",
+   "source": "winwood2014",
+   "text": "For the farmers walk participants were instructed to pick up the bars in each hand and walk forward at their typical training pace.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c32",
+   "source": "winwood2014",
+   "text": "participant’s unloaded walk data (at their typical walking speed) was also recorded",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c33",
+   "source": "hindle2019",
+   "text": "Stride length (m) 1.04 ± 0.12* (MVP) 1.43 ± 0.11 (MVP) − 3.40 1.83 ± 0.04 † (MVP ˟ ) 1.40 ± 0.17 (SVP ˟ ) 3.48 1.67 ± 0.10 ☼ (MVP) 0.85 ± 0.19* (AP) 1.33 ± 0.11 (AP) − 3.10 1.38 ± 0.16 (AP) 1.33 ± 0.09 (AP) 0.39 1.32 ± 0.12 (AP)",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c33",
+   "source": "hindle2019",
+   "text": "AP acceleration phase, ave average, GRF ground reaction force, MVP maximum velocity phase, SVP sub-maximal velocity phase",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c33",
+   "source": "hindle2019",
+   "text": "Statistically greater stride rate, and reduced stride length and ground contact time have been reported in the farmer’s walk when compared with unloaded walking [ 7 ].",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
   }
  ]
 }
