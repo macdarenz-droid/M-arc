@@ -307,7 +307,7 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 | id | ruling | route |
 |---|---|---|
 | cable_crunch | D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
-| superman | D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
+| ~~superman~~ released at resume 2 (#337, D-LIB21-SUPERMAN): D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
 | pallof_press | D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
 | russian_twist | D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
 
@@ -392,7 +392,7 @@ Every row the build-ahead PR (#312) held, with its blocker and that blocker's st
 | side_plank | D-LIB21-ER5 | LIB-20 (#311) | yes | build: E-R5 slice (Do 7b); hold constant per D-LIB21-SECS (proposed below; NOSECS if none) |
 | russian_twist | D-LIB21-ER5, then D-LIB21-RTWIST | F-RTWIST-TELL | no | drawn, held on its tell (#326 6409862229) |
 | bicycle_crunch | D-LIB21-BICYCLE (#326 6409862229) | F-ENGINE-PITCHDEPTH and LIB-SPINE | no | held; no spec |
-| superman | D-LIB21-SIZE (S2) | LIB-ZOOM (#279), extended (D-LIB21-SUPERMANZOOM); a zoom-scale trim rule | LIB-ZOOM yes; F-ZOOM-2 no | held (#326 6405804435 item 2): the ruled zoom cannot reach 22.11 px at k ≤ 4 (section 21); rolls with F-ZOOM-2 (was F-ZOOM-TRIM) |
+| superman | D-LIB21-SIZE (S2) | LIB-ZOOM (#279), extended (D-LIB21-SUPERMANZOOM); a zoom-scale trim rule | LIB-ZOOM yes; F-ZOOM-2 no | released at resume 2 (section 23): trim [0, 0], normal zoom k 2.5 |
 | pallof_press | D-LIB21-PALLOFHOLD (S2, S4) | another stated tell or a sourced arch size | F-PALLOF-ARCH no | held (#326 6405804435 item 3); section 20 is the design record |
 | cable_crunch | D-LIB21-CCHOLD | LIB-SPINE (F-SPINE-1) | no | held |
 
@@ -472,3 +472,15 @@ Measured with main's `zoom/inline.mjs` `zoomOf` and `qa/zoom.mjs` `clippedTrace`
 | bicycle_crunch | D-LIB21-BICYCLE | F-ENGINE-PITCHDEPTH + LIB-SPINE: no | held |
 | cable_crunch | D-LIB21-CCHOLD | LIB-SPINE: no | held |
 | pallof_press | D-LIB21-PALLOFHOLD | F-RESEARCH-2 (F-PALLOF-ARCH): running | held |
+
+Results (scratch, then built; main `c7bdad7a`):
+- **superman, built.**
+  - The spec trim is [0, 0] (D-LIB21-SUPERMAN). The plate's own Trace path is 9.80 px (9.40 px drawn). It passes every plate check, and the plate-scale H3.trace bar is skipped on the zoomed view.
+  - `zoom: { view: 'normal', k: 2.5 }`: the clipped Trace is **23.47 px** (k 2 is under 22.11). The circle sits at (126, 216), r 52. The source ring sits at (46.44, 327.51), r 20.8, and holds the whole Trace.
+  - The `low` box moved from {22, 266} to {4, 240}. It was the nearest spot on a 6 px grid that frees a circle near the fault without lengthening the leader. {4, 228} would clear F3 only by a longer leader, so it was not used.
+  - QA: all 10 hard checks pass. Raised: F2 0.128 and F3 44.9 (both already raised on the held plate; named, asked on #337), plus F5 3.57.
+  - The approved fragments are byte-identical: ab-wheel-rollout `e0e6d3b9aaeaa902`, bird-dog `4ae4f8913f726103`, side-plank `18e0fb027e416a05`.
+- **russian_twist, still held (F-RTWIST-TELL).**
+  - (1) A Mistake zoom on the red `knee.l` (tell on its top, k 2): QA gives `H3.zoom:not-needed:mistake`, because the knee moves 20.2 px at plate scale, over 11.39. The zoom holds no text, so the plate leader would still enter the figure by 52.21 / 41.22 px (#326 6409797574).
+  - (2) A larger pelvis turn: the Mistake spine solve has no solution above M_YAW_SHARE 0.8. The red `knee.l` x goes 216.5 (0.5), 219.7 (0.6), 224.0 (0.75), 225.2 (0.8). The ball spans x 216.5-261.9 and y 206-251.5, so the knee stays behind the ball. At 0.8 the red right knee shows only in a pocket closed by the torso, forearm, ball and red shins.
+  - Neither option passes without a new rule.
