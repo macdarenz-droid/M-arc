@@ -1,0 +1,12 @@
+{
+ "rule": "D-LIB-A16-REGISTRY (#326 6405804435; lib4-cards section 39, D-LIB-A16-COMPOSE): each build-ahead card's own eq/ composers, by exact name. Each A16 block reads OTHER_CARDS from here and drops its own card. A lane that adds a composer adds it here in its own PR.",
+ "cards": {
+  "LIB-14": ["wall"],
+  "LIB-15": ["preacherPad"],
+  "LIB-16": ["crunchMachine", "pulloverMachine"],
+  "LIB-17": ["dipBars"],
+  "LIB-18": ["ankleCuff", "calfMachine", "hackSled", "legExtMachine", "pendulum"],
+  "LIB-21": ["abWheel", "medBallOptional"],
+  "LIB-22": ["battleRope", "jumpRope", "kettlebell", "medBall", "sled"]
+ }
+}

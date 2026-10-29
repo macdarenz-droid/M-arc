@@ -11,6 +11,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { otherCards } from './eq-composers';
 
 // D-LIB22-TESTS (lessons #299 6351689010, 6352726951): vitest runs back-to-back synchronous tests without returning to
 // the event loop, so the worker cannot answer its RPC ("Timeout calling onTaskUpdate"). One macrotask after every test
@@ -1062,8 +1063,7 @@ describe('LIB-22 A16: no other card\'s composer is copied, forked or imported (D
   // D-LIB-A16-COMPOSE (lib4-cards section 39): main's eq/ at 40f9ea93, this card's five composers, and the composers other build-ahead cards own by exact name.
   const MAIN_EQ = ['assistMachine', 'band', 'chestRowMachine', 'dHandle', 'declineBench', 'inclineBench', 'landmine', 'legCurlMachine', 'parts', 'pecDeck', 'polybar', 'romanChair', 'rope', 'safetyArms', 'smith'].map(n => `${n}.mjs`);
   const OURS = ['kettlebell.mjs', 'medBall.mjs', 'sled.mjs', 'jumpRope.mjs', 'battleRope.mjs'];
-  const OTHER_CARDS: Record<string, string[]> = { 'LIB-14': ['wall'], 'LIB-15': ['preacherPad'], 'LIB-16': ['crunchMachine', 'pulloverMachine'], 'LIB-17': ['dipBars'],
-    'LIB-18': ['ankleCuff', 'calfMachine', 'hackSled', 'legExtMachine', 'pendulum'], 'LIB-21': ['abWheel'] };
+  const OTHER_CARDS: Record<string, string[]> = otherCards('LIB-22');   // D-LIB-A16-REGISTRY (#326): the shared registry
   const OTHER = Object.values(OTHER_CARDS).flat().map(n => `${n}.mjs`);
   const EQ = 'tools/plates/library/eq';
   const eqFiles = () => readdirSync(EQ).map(name => ({ name, bytes: readFileSync(join(EQ, name), 'utf8') }));
