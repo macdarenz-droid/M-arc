@@ -1748,7 +1748,7 @@ describe('LIB-22 panel fix (mx2, #331 6415452903): sled_pull items 1-4, medicine
   });
 });
 
-describe('LIB-22 panel fix 2 (mx3, #331 6486669489; D-LIB13-PANEL2): burpee leader ends on their named parts', { timeout: T }, () => {
+describe('LIB-22 panel fix 2 (mx3, #331 6486669489; D-LIB13-PANEL2): burpee "Neck neutral" leader end', { timeout: T }, () => {
   const endOf = (spec: any, key: string) => {
     const c = spec.callouts.find((x: any) => x.key === key);   // the anchor's own pose (start: the dashed plank), as the engine resolves it
     return qaEng.resolvePoint(c.anchor, 'end', qaEng.poseLandmarks(Eng(), spec).lm, qaEng.cameraOf(spec, rep(spec)));
@@ -1764,23 +1764,13 @@ describe('LIB-22 panel fix 2 (mx3, #331 6486669489; D-LIB13-PANEL2): burpee lead
     if (Math.hypot(p[0] - n[0], p[1] - n[1]) > 12 || Math.hypot(p[0] - h[0], p[1] - h[1]) < 20) out.push('neck end not at the nape');
     return out;
   };
-  /** "Straight plank" ends on the plank's back line (within 2 px of its outline) where only the plank is drawn: at least
-   *  6 px outside the standing figure and the squat ghost. */
-  const plankProblems = (spec: any) => {
-    const p = endOf(spec, 'plank'), out: string[] = [], d = Math.abs(outside(polys(spec, 'start'), p));
-    if (d > 2) out.push(`plank end ${d.toFixed(1)} px off the plank outline`);
-    for (const pose of ['end', 'via']) { const P = pose === 'via' ? (() => { const s = { ...spec, poses: { ...spec.poses, start: spec.poses.via[0] } }; return polys(s, 'start'); })() : polys(spec, pose);
-      if (outside(P, p) < 6) out.push(`plank end within 6 px of the ${pose === 'via' ? 'squat ghost' : 'standing figure'}`); }
-    return out;
-  };
   it('item 1: "Neck neutral" ends on the plank nape; mutation: the old crown end (start:head) is red', () => {
     expect(neckProblems(S.burpee)).toEqual([]);
     const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'neck' ? { ...c, anchor: 'start:head' } : c)) };
     expect(neckProblems(old)).toEqual(['neck end not at the nape']);
   });
-  it('item 2: "Straight plank" ends on the plank back where only the plank is drawn; mutation: the old three-outline end (start:backMid) is red', () => {
-    expect(plankProblems(S.burpee)).toEqual([]);
-    const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'plank' ? { ...c, anchor: 'start:backMid' } : c)) };
-    expect(plankProblems(old).length).toBeGreaterThan(0);
+  it('item 2 fallback (D-LIB22-SOFTBOX (b), #331): "Straight plank" keeps its end at start:backMid; no "Soft landing" box placement passes A15 and F3', () => {
+    expect(S.burpee.callouts.find((c: any) => c.key === 'plank').anchor).toBe('start:backMid');
+    expect(S.burpee.callouts.find((c: any) => c.key === 'soft').box).toEqual({ left: 96, top: 216 });
   });
 });

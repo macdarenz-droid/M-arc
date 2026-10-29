@@ -141,7 +141,7 @@ export default {
   ghosts: { count: 1, parts: ['leg.l', 'leg.r', 'trunk', 'arm.r'] },
   trace: { point: 'ball.r', trim: [10, 12] },
   callouts: [
-    { key: 'plank', text: 'Straight plank', anchor: { at: 'thighUnder.r', pose: 'start' }, box: { left: 76, top: 168 }, cue: 'Body straight from head to heels, lower back not sagging.' },
+    { key: 'plank', text: 'Straight plank', anchor: 'start:backMid', box: { left: 76, top: 168 }, cue: 'Body straight from head to heels, lower back not sagging.' },
     { key: 'neck', text: 'Neck neutral', anchor: { at: 'neck', pose: 'start', off: [5, -6] }, box: { left: 248, top: 152 }, cue: 'Neck neutral, head not lowered toward the floor.' },
     { key: 'soft', text: 'Soft landing', anchor: { at: 'knee.r', off: [-6, 0] }, box: { left: 96, top: 216 }, cue: 'Land softly on slightly bent knees.' },
   ],

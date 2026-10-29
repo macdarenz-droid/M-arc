@@ -679,4 +679,6 @@ Panel mx2 fix round (#331 6415452903):
 
 Panel mx3 fix round 2 (#331 6486669489; D-LIB13-PANEL2), burpee leader ends only:
 - "Neck neutral": start:head (the crown) → the plank nape, start neck + [5, -6] px, on the dashed plank top edge.
-- "Straight plank": start:backMid (three outlines met) → start thighUnder.r, the plank's back line behind its hips, only the plank drawn.
+- "Straight plank": kept at start:backMid (D-LIB22-SOFTBOX fallback (b), #331). The panel's end (start thighUnder.r) drops its
+  leader through the "Soft landing" text, and no "Soft landing" box tried ({16,236}, {16,196}, {40,200}, {150,300},
+  {252,280}) passes A15 and F3 (its leader to the end knee crosses the plank leader or the figure, or exceeds 82.3 px).
