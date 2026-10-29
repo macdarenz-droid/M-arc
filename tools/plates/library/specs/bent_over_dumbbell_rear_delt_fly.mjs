@@ -1,5 +1,6 @@
-// Bent-over dumbbell rear delt fly, SIDE view (figure facing screen right). Recommended view; the front view is
-// bent_over_dumbbell_rear_delt_fly__alt.mjs (same poses) and is a NO-GO with this engine.
+// Bent-over dumbbell rear delt fly, SIDE view (figure facing screen right): the plate (LIB-8R, D-LIB8R-FLIES fallback,
+// F6). The census front view, drawn with LIB-20's camera.pitch 15 and volume trunk, is bent_over_dumbbell_rear_delt_fly__alt.mjs
+// (a sheet extra only): it reads, but its shrug Mistake is below H3's bar at every zoom k (S3; see Mistake below).
 // View decision (go/no-go): the census asks for the front view, because the exercise is an arm sweep across the
 // body (horizontal abduction). Rendered both ways:
 //  - Front view, trunk 80 deg (the textbook pose): the engine draws a flexed trunk as a foreshortened FRONTAL
@@ -41,10 +42,8 @@
 //  Its "out to the sides" is carried by the Level arms cue.
 // CARD numbers: the card gives none for the trunk angle, the knee bend, the elbow bend or the top arm height
 //  ("about level with the body", c3). INCL 80, KNEE 20, ELBOW 20 and the 75/90 deg top stay unsourced (flagged).
-// Front view, exact engine limit (critic run 2 asked for it; SPEC 8): the engine draws a flexed trunk in front view
-//  as a foreshortened frontal outline, not a 3D silhouette, and draws the legs over it. At INCL 80 the torso is a
-//  band at shoulder height with no head; at 60 a small head appears but the figure reads as a standing T; at 45 as
-//  an upright lateral raise (lead's probe). The arm sweep and its arc Trace read well there (__alt).
+// Front view (history): before LIB-20 the engine drew a flexed trunk in front view as a foreshortened frontal outline
+//  (SPEC 8). LIB-20's pitch and volume trunk fix that (D-SPIKE-hinge, __alt), not the size of the front-view shrug.
 import { landmarksOf } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
@@ -106,15 +105,16 @@ const TOP = 75;
 export const posesAt = top => ({ start: pose(ROOT_Y, ROOT_Z, 0), via: [pose(ROOT_Y, ROOT_Z, top / 3), pose(ROOT_Y, ROOT_Z, 2 * top / 3)], end: pose(ROOT_Y, ROOT_Z, top) });
 const { via, end } = posesAt(TOP);
 
-// Mistake. The card's top fault is swinging the torso to throw the weights up (c4, c5, handlingMistakes[0]); the
-// card marks it not drawable only because its plate view is the front, and names shrugging (c3) for that view.
-// This plate is the side view (F6), where the swing is the clearest thing it can show, and a shrug in a hinged
-// side view moves the shoulder under 1 cm on screen (tried: it does not read). So the side view draws the card's
-// top fault: the trunk swings up from the hips as the dumbbells reach the top, feet planted, hands still out at
-// shoulder level. The alt (front) file keeps the card's shrug. M_INCL is illustrative (the card gives no number).
-const M_INCL = 55;
-const mist0 = { ...body(ROOT_Y, ROOT_Z, PRO_END), root: { at: [0, ROOT_Y, ROOT_Z], tilt: M_INCL - SPINE } };
-const mistakePose = { root: mist0.root, reach: hands(landmarksOf(mist0, H), TOP) };
+// Mistake (card plate.mistake, c3; LIB-8R, D-LIB8R-FLIES): the shoulders shrug up toward the ears as the dumbbells rise.
+// The end pose with the shoulder blades raised M_SHRUG (golden A's lateral-raise shrug, ref-src/plate.mjs:147) and
+// still squeezed. The card's top fault, the torso swing (c5, c4), is not drawable on the card (drawable false), so F7 is
+// named (decision 9). The census front view was drawn first (pitch 15, volume trunk): its shrug moves along the trunk
+// axis, which points almost at the camera, 1.3 px at plate scale and 5.1 px at k 4, below H3's 11.39 px at every k on
+// the ladder (S3), so this side view carries the card's own Mistake unchanged, F6 named; the front view is the alt.
+const M_SHRUG = 5;                                       // cm, scap elevation
+const mistakePose = { scap: { elev: M_SHRUG, pro: PRO_END } };
+/** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
+export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG };
 
 const G0 = landmarksOf(start, H)['grip.r'], HZ = 0.135, HY = 0.119 * 0.866 / 2;
 const HH = 0.065, HR = 0.008;                          // handle half-length, half-thickness (m)
@@ -157,13 +157,14 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'arc-arrow', center: 'hip.r', r: 100, a0: -12, a1: -36 },
+      { kind: 'arrow', from: { at: 'shoulderTop.r', pose: 'end' }, to: { at: 'shoulderTop.r', pose: 'mistake' } },
     ],
     tells: [
-      { key: 'swing', text: 'Torso<br>swings up', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'The torso swings up to throw the dumbbells.' },          // c4, c5
-      { key: 'hips', text: 'Hips drive', anchor: 'buttock', cue: 'The hips and lower back add momentum to the lift.' },                                 // c4
+      { key: 'shrug', text: 'Shoulders<br>shrug', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, cue: 'The shoulders hike up toward the ears as the dumbbells rise.' },   // c3
     ],
   },
-  pilot: { note: 'View: side (card and census: front, F6). Front render (__alt) is no-go: headless torso band, and its shrug Mistake does not show.' },
+  zoom: { view: 'mistake', k: 2 },   // the smallest k on the ladder that reaches H3's bar (1.5 gives 11.1 px)
+  // Drawable fault (decision 9): the card's top fault, the torso swing (c4, c5; topFault 'swing'), is drawable false on
+  // the card, so the plate draws its drawable fault, the shrug (c3), and F7 is named on the sheet.
   alt: 'Bent-over dumbbell rear delt fly, side view. Hinged forward at the hips with a straight spine, the lifter raises two dumbbells from hanging under the chest out to the sides until the arms are about level with the body, elbows slightly bent.',
 };

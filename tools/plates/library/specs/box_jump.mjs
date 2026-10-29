@@ -127,6 +127,11 @@ const MISTAKE = grounded(BOX_H, LAND_Z, MISTAKE_HIP, { tilt: MISTAKE_TRUNK - 6, 
 
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] }, TOP = { point: [0, BOX_H, 0], normal: [0, 1, 0] };
 
+/** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
+export const SIZES = { BOX_H, BOX_D, BOX_Z0, FOOT_X, HEEL_BACK, TOE_CLEAR, TAKEOFF_HIP, TAKEOFF_TRUNK, ARMS_BACK,
+  LAND_HIP_ABOVE_TOP: +(LAND_HIP - BOX_H).toFixed(3), LAND_TRUNK, ARMS_FWD, EXT_HEEL, EXT_KNEE, EXT_LEAN, EXT_ARMS, APEX,
+  MISTAKE_HIP_ABOVE_TOP: +(MISTAKE_HIP - BOX_H).toFixed(3), MISTAKE_TRUNK };
+
 export default {
   id: 'box_jump', name: 'Box Jump', view: 'side', facing: 'right',
   camera: { x0: 122, y0: 339 },
