@@ -342,3 +342,5 @@ Card: docs/supervisor/verify/f-research-2-card.md on claude/sup-lib4-cards. Bran
 - the quotes file matches the card one for one;
 - there are no orphan sources;
 - only `claims`, `sources` and `gaps` differ from `0d832e18`, so no shown line changed and the LR-27, copy-lint and C8 results are unchanged.
+
+Main's tests on main `c7bdad7a` were run with the two cards and quotes files copied in: library-research, content (C7 and C8), no-contacts-parity, library-lint (copy lint) and library-ci all pass, 479 of 481 tests. The 2 failures are the byte-copy pins, LIB-21 A11 (lb9-plates, research head f574bb4b) and LIB-22 A11 (lb10-plates, research head 596dbe07). They pass on main's own copies and fail only because the cards gained claims, which is expected. The lane updates them when it re-copies the cards (the card's "after the merge" step). This PR does not touch main.
