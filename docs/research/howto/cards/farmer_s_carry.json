@@ -396,7 +396,7 @@
   },
   {
    "id": "c18",
-   "text": "Load progression: start with a manageable load and a short route, about 25% of body weight in each hand for a beginner; repeat it until the pickup, walk, turns and set-down stay controlled, then add a little load or distance, not both, and scale gradually.",
+   "text": "Load progression: start with a manageable load and a short route, about 25% of body weight in each hand (beginners no more than 25%); repeat it until the pickup, walk, turns and set-down stay controlled, then add a little load or distance, not both, and scale gradually.",
    "tags": [
     "CONSENSUS"
    ],
@@ -424,6 +424,11 @@
      "source": "ggr-farmers",
      "text": "You may progress to lifting 50%, 75%, or even 100% of your body weight later on, but make sure you scale gradually.",
      "where": "Common Farmer’s Carry Mistakes: Choosing the Wrong Weight"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "beginners should start with no more than 25% of their bodyweight held in each hand",
+     "where": "FAQs, How heavy should farmer’s carries be?"
     }
    ]
   },
@@ -601,7 +606,7 @@
   },
   {
    "id": "c25",
-   "text": "One source lists stride length as a mistake: regular-sized steps can throw a beginner off balance.",
+   "text": "One source lists stride length as a mistake: trying to take regular-sized steps as a beginner might throw you off balance.",
    "tags": [
     "CONSENSUS"
    ],
@@ -618,7 +623,7 @@
   },
   {
    "id": "c26",
-   "text": "Said of strongman farmer's handles, for the novice to intermediate trainee: after picking up the handles, the stride should be about heel to toe, opening up further down the course; with a lighter weight, more advanced athletes may take larger steps.",
+   "text": "Said of strongman farmer's handles, for the novice to intermediate trainee: after picking up the handles, the stride should be about heel to toe, opening up further down the course (still striking in a heel to toe manner); with a lighter weight, more advanced athletes may choose to take larger steps.",
    "tags": [
     "WEAK"
    ],
@@ -640,7 +645,7 @@
   },
   {
    "id": "c27",
-   "text": "A loaded walk, not a hand-held carry: 30 young adults (15 men, 15 women, aged 20-30) walking level on a treadmill at 5 km/h had a step length of 78.6 ± 4.1 cm unloaded, 79.3 ± 4.3 cm with a backpack and 76.6 ± 4.3 cm with a front pack (15% of body weight); stride length 157.2 ± 8.2, 158.5 ± 8.7 and 153.2 ± 8.5 cm.",
+   "text": "A loaded walk, not a hand-held carry: 30 young adults (15 men, 15 women, aged 20-30) walking level on a treadmill at 5 km/h had a step length of 78.6 ± 4.1 cm unloaded, 79.3 ± 4.3 cm with a backpack and 76.6 ± 4.3 cm with a suspended front pack (each 15% of body weight); stride length 157.2 ± 8.2, 158.5 ± 8.7 and 153.2 ± 8.5 cm.",
    "tags": [
     "DATA",
     "WEAK"
@@ -668,12 +673,22 @@
      "source": "mexi2023",
      "text": "young adults (15 males and 15 females) aged 20–30 years",
      "where": "2.1. Study Sample"
+    },
+    {
+     "source": "mexi2023",
+     "text": "Postural control was assessed in 30 asymptomatic individuals",
+     "where": "Abstract"
+    },
+    {
+     "source": "mexi2023",
+     "text": "The testing protocol required each participant to walk for 10 min at a speed of 5 km h −1 on a treadmill",
+     "where": "2.3. Testing Procedure"
     }
    ]
   },
   {
    "id": "c28",
-   "text": "A loaded walk, not a hand-held carry: 34 special forces operators (height 180.39 ± 5.72 cm) walked on a treadmill at 5.5 km/h under four load conditions (0, 7, 20 and 27 kg); stride length was 156.79 ± 4.70 cm in athletic attire alone and 156.28 ± 4.55 cm with full load.",
+   "text": "A loaded walk, not a hand-held carry: 34 special forces operators (height 180.39 ± 5.72 cm) walked on a treadmill at 5.5 km/h under four load conditions (0, 7, 20 and 27 kg); stride length was 156.79 ± 4.70 cm in athletic attire alone, 155.68 ± 5.05 cm with a bulletproof vest and helmet, 155.98 ± 4.78 cm with a backpack alone and 156.28 ± 4.55 cm with full load.",
    "tags": [
     "DATA",
     "WEAK"
@@ -696,6 +711,16 @@
      "source": "pasko2026",
      "text": "The study included 34 active Special Forces Operators (age: 36.47 ± 5.63 years; height: 180.39 ± 5.72 cm; body mass: 85.92 ± 8.54 kg).",
      "where": "Abstract, Methods"
+    },
+    {
+     "source": "pasko2026",
+     "text": "The measurements were conducted at an imposed gait speed of 5.5 km/h and a treadmill elevation of 0 degrees.",
+     "where": "2.2.1. Study Design"
+    },
+    {
+     "source": "pasko2026",
+     "text": "Similar results for stride length were also obtained for walking with a bulletproof vest and helmet ( 155.68 ± 5.05 cm) and walking with a backpack alone ( 155.98 ± 4.78 cm).",
+     "where": "3. Results"
     }
    ]
   },
@@ -789,12 +814,12 @@
     {
      "source": "lau2020",
      "text": "A total of 507 community-dwelling adults, aged 21–90 years were recruited into the study through random sampling",
-     "where": "Methods"
+     "where": "Abstract, Methods"
     },
     {
      "source": "lau2020",
      "text": "The participants completed three trials at a habitual walking pace, barefooted",
-     "where": "Methods, gait assessment"
+     "where": "Methods, Gait Measurements"
     }
    ]
   }
@@ -916,13 +941,13 @@
   ],
   "mistake": {
    "what": "Steps too long for a beginner.",
-   "why": "The top fault, rushing (c7), is speed only, so the plate draws the next fault: BarBend's list, the anchor's, names stride length after a load choice (c25), and two sources say short steps (c8).",
+   "why": "The top fault, rushing (c7), is speed only, so the plate draws the next fault: BarBend's list, the anchor's, names stride length after a load choice (c25), and three sources say short steps (c8).",
    "claim": [
     "c25",
     "c8"
    ],
    "drawable": false,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 2: rushing (c7). Reading applied: D-SUP-LB10-MAY (#296, comment 6343484589). Step 1 finds no hit. Set aside: BarBend's \"Many lifters may try to compensate for fatigue by shrugging their shoulders high.\" ('may', D-SUP-LB10-MAY); Garage Gym Reviews' \"These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.\" (c6) says what the tension faults point to, the load, a cause, not how often they happen (renegade_row, R-LB7); the list headings and intros (BarBend's \"Common Farmer’s Carry Mistakes\" and \"Be sure you’re not falling prey to these common flaws in farmer’s carry training.\", Garage Gym Reviews' \"Here are some of the most common mistakes associated with the farmer’s carry.\" and \"common mistakes to avoid\") are list headings and list sentences; BarBend's \"which is usually lacking in beginners\" (balance in beginners), \"there are often advantages to taking it more accessible\" (load), \"Strongman competitions typically use special handles\", \"athletes typically perform heavy carries\", \"Using a dumbbell will likely be the easiest implement for most beginners\", \"Use about 60 to 65 percent of your typical weight\", \"the most notable benefits\", \"commonly referred to\", \"most commonly known\", \"most notably\", \"many disciplines\", \"many variations\" and \"the most beneficial to maximal output\"; Garage Gym Reviews' \"many farmers have strength\", \"Sets of farmer’s carries often consist of just one walk\", \"most lifters can move more weight on a barbell bench press ... trap-bar carries often allow you to carry more weight\" and \"everyone can benefit\"; and the op-ed's \"a common strongman event\", \"most likely causing you to drop\" (hand placement on strongman handles, a grip) and \"you will most likely feel more comfortable with an even stance\" are about implements, loads, muscles, benefits, programming, another exercise or the article, not how often a fault happens. Step 2, named faults (plate.mistake, handlingMistakes or a mistakes list) tied to harm: only rushing, Garage Gym Reviews' \"Rushing through the movement is a recipe for disaster, as a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee, or experience any of many injuries\" (c7); its \"take your time on these to reap the most benefit from each carry and minimize your risk of injury\" is the same item's advice. Not tied to harm: the shrug (BarBend's \"to maximize your upper back activation\" and \"It will also help prevent you from resting the weights on your sides.\"); stride length (BarBend's \"might throw you off balance\", c25); Garage Gym Reviews' tensing item (\"may produce adverse effects\": no load and no injury, D-SUP-STRAIN); the lean (c9, no harm). Not named faults, so not counted: not bracing (c10 \"can wreak havoc on your lower back\", and \"abdominal bracing stabilizes the spine, which may reduce your risk of injury\", a tips section); the op-ed's walking before standing tall, \"it will put more strain on your lower back\" (c24, WEAK; 'strain' counts under D-SUP-STRAIN, but the fault is a strongman-handle technique on no list and not on the card's faults), and its \"the weight can start to swing forward and back\" and turning line \"to avoid momentum twisting the farmers in front of you causing it impede your steps or even drop the handles\" (strongman handles, no harm word); the loose grip (c14, a grip, no LR-31 harm word). Not faults: BarBend's \"a large amount of strain is placed on the shoulder joint\" (holding a load, muscles section) and \"without all that pressure on your elbows\" (front-rack variation); BarBend's benefit lines (\"the prevention and reduction of low back pain\", \"aiding in injury prevention\", \"the protection of the spine\", \"can help alleviate lower back pain\", \"protecting the spine\"); Garage Gym Reviews' trap-bar \"reduce the strain on the lower back\" (equipment); load lines (\"Struggling to move weights that are too heavy may cause our form to deteriorate, leaving us susceptible to injury\", \"if you’re dropping the weights left and right\", BarBend's \"Going Too Light\"; LR-31); Fitness Volt's \"not a guarantee against injury\", \"an injury-free load for every reader\", \"or prevent injury\" and \"Do not judge a carry by how much discomfort you can tolerate\" (disclaimers and programming) and \"Stop if you feel pain.\" (a stop line, c15). Rushing is speed only, so drawable is false and handlingMistakes[0] is rushing. plate.mistake by the same steps: step 1 none, step 2 none left, so step 3. Two lists are written for this exercise (BarBend's, Garage Gym Reviews'); the anchor's comes first (anchorSource bb-farmers). Its item 1, \"Going Too Light\", is a load choice, not a candidate; item 2, \"Stride Length\": \"Trying to take regular-sized steps as a beginner might throw you off balance.\" (c25). Steps too long are a still sign the side view shows, so plate.mistake is steps too long for a beginner."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: rushing (c7). Reading applied: D-SUP-LB10-MAY (#296, comment 6343484589). Step 1 finds no hit. Set aside: BarBend's \"Many lifters may try to compensate for fatigue by shrugging their shoulders high.\" ('may', D-SUP-LB10-MAY); Garage Gym Reviews' \"These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.\" (c6) says what the tension faults point to, the load, a cause, not how often they happen (renegade_row, R-LB7); the list headings and intros (BarBend's \"Common Farmer’s Carry Mistakes\" and \"Be sure you’re not falling prey to these common flaws in farmer’s carry training.\", Garage Gym Reviews' \"Here are some of the most common mistakes associated with the farmer’s carry.\" and \"common mistakes to avoid\") are list headings and list sentences; BarBend's \"which is usually lacking in beginners\" (balance in beginners), \"there are often advantages to taking it more accessible\" (load), \"Strongman competitions typically use special handles\", \"athletes typically perform heavy carries\", \"Using a dumbbell will likely be the easiest implement for most beginners\", \"Use about 60 to 65 percent of your typical weight\", \"the most notable benefits\", \"commonly referred to\", \"most commonly known\", \"most notably\", \"many disciplines\", \"many variations\" and \"the most beneficial to maximal output\"; Garage Gym Reviews' \"many farmers have strength\", \"Sets of farmer’s carries often consist of just one walk\", \"most lifters can move more weight on a barbell bench press ... trap-bar carries often allow you to carry more weight\" and \"everyone can benefit\"; and the op-ed's \"a common strongman event\", \"most likely causing you to drop\" (hand placement on strongman handles, a grip) and \"you will most likely feel more comfortable with an even stance\" are about implements, loads, muscles, benefits, programming, another exercise or the article, not how often a fault happens. Step 2, named faults (plate.mistake, handlingMistakes or a mistakes list) tied to harm: only rushing, Garage Gym Reviews' \"Rushing through the movement is a recipe for disaster, as a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee, or experience any of many injuries\" (c7); its \"take your time on these to reap the most benefit from each carry and minimize your risk of injury\" is the same item's advice. Not tied to harm: the shrug (BarBend's \"to maximize your upper back activation\" and \"It will also help prevent you from resting the weights on your sides.\"); stride length (BarBend's \"might throw you off balance\", c25); Garage Gym Reviews' tensing item (\"may produce adverse effects\": no load and no injury, D-SUP-STRAIN); the lean (c9, no harm). Not named faults, so not counted: not bracing (c10 \"can wreak havoc on your lower back\", and \"abdominal bracing stabilizes the spine, which may reduce your risk of injury\", a tips section); the op-ed's walking before standing tall, \"it will put more strain on your lower back\" (c24, WEAK; 'strain' counts under D-SUP-STRAIN, but the fault is a strongman-handle technique on no list and not on the card's faults), and its \"the weight can start to swing forward and back\" and turning line \"to avoid momentum twisting the farmers in front of you causing it impede your steps or even drop the handles\" (strongman handles, no harm word); the loose grip (c14, a grip, no LR-31 harm word). Not faults: BarBend's \"a large amount of strain is placed on the shoulder joint\" (holding a load, muscles section) and \"without all that pressure on your elbows\" (front-rack variation); BarBend's benefit lines (\"the prevention and reduction of low back pain\", \"aiding in injury prevention\", \"the protection of the spine\", \"can help alleviate lower back pain\", \"protecting the spine\"); Garage Gym Reviews' trap-bar \"reduce the strain on the lower back\" (equipment); load lines (\"Struggling to move weights that are too heavy may cause our form to deteriorate, leaving us susceptible to injury\", \"if you’re dropping the weights left and right\", BarBend's \"Going Too Light\"; LR-31); Fitness Volt's \"not a guarantee against injury\", \"an injury-free load for every reader\", \"or prevent injury\" and \"Do not judge a carry by how much discomfort you can tolerate\" (disclaimers and programming) and \"Stop if you feel pain.\" (a stop line, c15). Rushing is speed only, so drawable is false and handlingMistakes[0] is rushing. plate.mistake by the same steps: step 1 none, step 2 none left, so step 3. Two lists are written for this exercise (BarBend's, Garage Gym Reviews'); the anchor's comes first (anchorSource bb-farmers). Its item 1, \"Going Too Light\", is a load choice, not a candidate; item 2, \"Stride Length\": \"Trying to take regular-sized steps as a beginner might throw you off balance.\" (c25). Steps too long are a still sign the side view shows, so plate.mistake is steps too long for a beginner. F-RESEARCH-2 claims c26-c31 (step and stride sizes) were scanned for LR-31 frequency and harm words: none ties a fault of this exercise to how often it happens or to harm, so the steps above are unchanged."
   },
   "tells": [
    {
@@ -1027,7 +1052,7 @@
    "claim": "c7"
   },
   {
-   "mistake": "Steps too long for your level.",
+   "mistake": "Steps too long for a beginner.",
    "fix": "Take short, deliberate steps.",
    "claim": [
     "c25",

@@ -426,6 +426,38 @@
    "status": "verbatim",
    "closest": "",
    "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c12",
+   "source": "fv-pallof",
+   "text": "Pause for one to three seconds while keeping your ribs, pelvis, and head still.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c24",
+   "source": "fv-pallof",
+   "text": "Your shoulder blades should move naturally around the rib cage as your arms reach. Do not force them into hard retraction throughout the repetition.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c24",
+   "source": "fv-pallof",
+   "text": "Keep the shoulders away from the ears and let the blades protract without rounding the whole trunk.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c25",
+   "source": "fv-pallof",
+   "text": "The inward phase still exposes you to rotational force. Pull the handle back on the same straight path and maintain the brace until your hands reach your chest.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
   }
  ]
 }

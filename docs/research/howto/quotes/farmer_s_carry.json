@@ -626,6 +626,46 @@
    "status": "verbatim",
    "closest": "",
    "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c27",
+   "source": "mexi2023",
+   "text": "Postural control was assessed in 30 asymptomatic individuals",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c27",
+   "source": "mexi2023",
+   "text": "The testing protocol required each participant to walk for 10 min at a speed of 5 km h −1 on a treadmill",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c28",
+   "source": "pasko2026",
+   "text": "The measurements were conducted at an imposed gait speed of 5.5 km/h and a treadmill elevation of 0 degrees.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c28",
+   "source": "pasko2026",
+   "text": "Similar results for stride length were also obtained for walking with a bulletproof vest and helmet ( 155.68 ± 5.05 cm) and walking with a backpack alone ( 155.98 ± 4.78 cm).",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c18",
+   "source": "ggr-farmers",
+   "text": "beginners should start with no more than 25% of their bodyweight held in each hand",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
   }
  ]
 }
