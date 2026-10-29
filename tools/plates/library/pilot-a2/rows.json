@@ -1,0 +1,43 @@
+{
+ "note": "PILOT-A2 build-ahead rows (LIB-8R, D-LIB8R-BATCH): pilot A's held rows, stage drawing or review only, never in batches/ before the pin (Do 7). All H, census view. censusRef: the census commit (claude/howto-options), as pilot A's.",
+ "batch": "PILOT-A2",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_box_jump": {
+   "src": "library/specs/box_jump.mjs",
+   "slug": "box-jump",
+   "prefix": "box-jump",
+   "chromeId": "box-jump",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_reverse_lunge": {
+   "src": "library/specs/reverse_lunge.mjs",
+   "slug": "reverse-lunge",
+   "prefix": "reverse-lunge",
+   "chromeId": "reverse-lunge",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_dumbbell_fly": {
+   "src": "library/specs/dumbbell_fly.mjs",
+   "slug": "dumbbell-fly",
+   "prefix": "dumbbell-fly",
+   "chromeId": "dumbbell-fly",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_bent_over_dumbbell_rear_delt_fly": {
+   "src": "library/specs/bent_over_dumbbell_rear_delt_fly.mjs",
+   "slug": "bent-over-dumbbell-rear-delt-fly",
+   "prefix": "bent-over-dumbbell-rear-delt-fly",
+   "chromeId": "bent-over-dumbbell-rear-delt-fly",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  }
+ }
+}
