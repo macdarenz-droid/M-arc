@@ -462,3 +462,13 @@ Measured with main's `zoom/inline.mjs` `zoomOf` and `qa/zoom.mjs` `clippedTrace`
   lies on the surface (heel, ball and sole 5.4-5.9 cm, toe 6.0 cm above the mat); each foot fact is an `at` check at
   its solved spot, and a drawn-item test pins the foot outline's lowest point on the surface (0.00 cm, within H6's
   1 cm) at the start and the end, as D-LIB18-LLCFACTS does for a pelvis front.
+
+## 23. Resume 2 plan ('LIB-21 resume 2', on main `c7bdad7a`)
+
+| row | blocker | on main | this resume |
+|---|---|---|---|
+| superman | F-ZOOM-TRIM; ruled D-LIB21-SUPERMAN (lib4-cards §46) | LIB-ZOOM, F-ZOOM-INK yes; no trim rule needed | build: spec trim [0, 0], one normal-view zoom (source ring on the whole ankle.r Trace, k on the ladder), the `low` box moved under D-LIB18-ZOOMPLACE |
+| russian_twist | F-RTWIST-TELL (D-LIB21-RTWIST-TELL, #326 6409808767) | LIB-20, LIB-ZOOM yes | design both options in a scratch run (a Mistake zoom on the red knee; a turned pelvis that clears the knee), pick the one that passes every check with no new rule, then its card fields (Do 7b) |
+| bicycle_crunch | D-LIB21-BICYCLE | F-ENGINE-PITCHDEPTH + LIB-SPINE: no | held |
+| cable_crunch | D-LIB21-CCHOLD | LIB-SPINE: no | held |
+| pallof_press | D-LIB21-PALLOFHOLD | F-RESEARCH-2 (F-PALLOF-ARCH): running | held |
