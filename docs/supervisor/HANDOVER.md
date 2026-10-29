@@ -817,7 +817,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   |---|---|---|---|
   | LIB-17 LB7 | #332 · session_019M2mv3xosDU1LUQNcDVLZ3 | review PASS 6486838638; sync @ `e7f4600a` diff-checked (6488240760) | train 46 with LB8 |
   | LIB-18 LB8 | #325 · session_01QaJzHJZn4XgtwKWXFjdYMo | lying and standing leg curls approved (mx3); finishing 'LIB-18 RESUME READY' on `bb628ef7` | fresh Opus review, then train 46 |
-  | LIB-22 LB10 | #331 · session_013S59n44XV6LVWqpoL6WppU | sled_pull and medicine_ball_slam approved (mx3); burpee fix 2 (D-LIB22-PLANKBOX) in progress | add burpee to mx4 |
+  | LIB-22 LB10 | #331 · session_013S59n44XV6LVWqpoL6WppU | sled_pull and medicine_ball_slam approved (mx3); LB10 PANEL FIX 2 (burpee) posted @ `eecb54fd`, page `5e02f6aa…`; paused | add burpee to mx4 |
   | LIB-14 LB4 | #289 · session_01SNxaznkCpy4yFu7BMvVyuR | round 2 @ `143b7cd6`, page `9a2b7881…` | mx4 |
   | LIB-8R PILOT-A2 | #340 · session_01EQuYNjCqcXNx2oAh5UaU2K | plates @ `2e4aa3ff`, page `90ab9151…`; CARD FIELDS done (cfpa2, cfpa2r, diff-check) | mx4 round 1 |
   | LIB-21 resume 2 LB9 | #337 · session_01EQuYNkEys4xSHTTKPBNkcD | superman (D-LIB21-SUPERMAN, -SUPFLAGS, D-FZOOM2-A8PIN); russian_twist held | its PLATES READY, then a panel |
