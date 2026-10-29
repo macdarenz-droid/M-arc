@@ -279,3 +279,96 @@ The full record is docs/supervisor/verify/lb9-research-verify.md @ `56bcb7dc` (c
 | v_up-2 | zooms[1].wrong "Legs flopping around." |
 
 P1-P8 above carry the verify's routed ids (plank-R1 to plank-R7), so no plank shown line changed here.
+
+## F-RESEARCH-2 (F-PALLOF-ARCH): pallof_press
+
+Card: docs/supervisor/verify/f-research-2-card.md on claude/sup-lib4-cards. Branch claude/libht-research-f-research-2 from `0d832e18`. One Opus writer and one Sonnet fetcher, curl only. Checked 2026-10-29. New claims c20-c23 and source fv-pallof. No other card field changed.
+
+**Search log**
+- PubMed (E-utilities esearch, db=pubmed). Each term with its hit count:
+  - "pallof press" 3 (42346761, 40005429, 39000910);
+  - "anti-rotation press" 1 (42811247, a prosthesis paper, not relevant);
+  - "pallof AND lumbar" 1 (39000910);
+  - "anti-rotation AND core AND lumbar extension" 0;
+  - "pallof press electromyography" 0;
+  - "anti-rotation exercise electromyography" 0;
+  - "Pallof" AND trunk 2 (40005429, 39000910);
+  - "cable anti-rotation AND lumbar" 0.
+  The writer re-ran the first three terms on 2026-10-29 and got the same counts.
+- Abstracts read (access abstract):
+  - 40005429 (Juan-Recio 2025) measures pelvis acceleration in m/s², not a lumbar angle or a rotation angle;
+  - 39000910 (Franco-Lopez 2024) stops its test at a "deviation from the initial position" and gives no size;
+  - 42346761 (Saeterbakken 2026) uses the press only as a strength test.
+- Pages read in full (200, checked 2026-10-29):
+  - https://barbend.com/pallof-press/
+  - https://www.garagegymreviews.com/pallof-press-exercise
+  - https://www.garagegymreviews.com/anti-rotation-exercises
+  - https://www.motra.com/exercises/cablePallofPress
+  - https://breakingmuscle.com/pallof-press/
+  - https://fitnessvolt.com/pallof-press/ (new source fv-pallof)
+  - https://fitnessvolt.com/pallof-press-vs-plank/
+  - https://fitnessvolt.com/rotation-anti-rotation-exercises/
+  - https://fitnessvolt.com/cable-vertical-pallof-press-obliques/
+  - https://www.muscleandfitness.com/exercises/abs/pallof-press/
+- Unreachable:
+  - ACE standing anti-rotation press and StrengthLog pallof-press: 403 to the first fetcher. In the fix round both were re-read in full (200, 2026-10-29); StrengthLog answered 403 and 200 at different times that day. Neither names the arch, the ribs, a rotation direction, hand drift or the shoulder blades, and neither has a mistakes list (ACE: "hold for 2-3 seconds", already c12; StrengthLog: "Hold briefly", no seconds);
+  - Verywell Fit (402); Muscle & Strength, T-Nation, Physiopedia and ExRx (403);
+  - Healthline, Men's Health, NASM and others: 404 on guessed slugs.
+  - DuckDuckGo and Bing gave no results, so URLs were guessed.
+
+**Result per part**
+| Part | Result |
+|---|---|
+| Q1(a) arch size | **NO SOURCE.** Gap: "F-RESEARCH-2 Q1(a), 2026-10-29: no source read gives a size (degrees, distance or stated comparison) for the over-arched lower back. …" |
+| Q1(b) another tell | **ANSWERED, c20, with no size.** FitnessVolt: "Pressing the hands forward can tempt you to lift the chest and extend the lumbar spine. Exhale, bring the lower ribs over the pelvis, and use a shorter reach until you can keep that position." (full, 2026-10-29). Size: NO SOURCE (gap). No page names the hips pushing forward. |
+| Q1(c) rotation | **Direction ANSWERED, c22, from one source.** "Watch for the near shoulder rotating toward the anchor, the hips shifting sideways, or the feet gripping the floor to stop a loss of balance." BarBend, Garage Gym Reviews and Motra state no direction (c7). Size: NO SOURCE. |
+| Q1(c) hand drift | **Direction ANSWERED: c6 (BarBend, already on the card) and c21 (FitnessVolt).** "Do not let the cable drag your hands toward the anchor." Size: NO SOURCE. |
+| Q1(c) new fault | **c23, Motra "Leaning toward cable" (direction toward the anchor).** It was named in the rankNote and is now a claim. The hips shifting sideways (c22) has no stated side. Size: NO SOURCE. |
+
+**Findings for the supervisor (not made on the card)**
+- F-R2-PALLOF-1. Q1(b) is answered with a tell but no size. That fits "another stated tell" (lb9/DESIGN.md:422-423), but the size of the drawn chest lift or rib flare would still be unsourced. Q1(a) gives no arch size, so the 33° bar is not met. This is for the LB9 lane under the card's fates.
+- F-R2-PALLOF-2. c22 is the only quote that gives torso rotation a direction (near shoulder toward the anchor). It may bear on the turned-view ruling (lb9/DESIGN.md §20). No change was made.
+- F-R2-PALLOF-3. FitnessVolt's "Common Pallof Press Errors" adds a read source to D-SUP-LB6-CCP's counts:
+  - rotation and leaning (c22);
+  - hand drift (c21);
+  - ribs and arch (c20).
+  The page ties none of these faults to harm. Its "pain, or injury outcomes" lines say research does not establish them. So LR-31 step 2 is unchanged (only Motra's arch is tied to harm), and the pick stands. The rankNote's step-3 "reading not taken" counts would change; the supervisor decides whether to update the rankNote.
+- F-R2-PALLOF-4. ACE and StrengthLog: superseded in the fix round. Both were re-read on 2026-10-29 and their `checked` dates were updated.
+
+**Pre-push check (A6).** Main's `tools/plates/library/research/validate.mjs` `validateCardFile` was run on main `c7bdad7a` with the card copied in. It returned 0 problems. A plant (an orphan source plus an edited quote) was caught, so the check bites. The writer's own script confirmed:
+- every new quote was re-fetched by curl and is verbatim;
+- words() is at most 50 on every quote;
+- the quotes file matches the card one for one;
+- there are no orphan sources;
+- only `claims`, `sources` and `gaps` differ from `0d832e18`, so no shown line changed and the LR-27, copy-lint and C8 results are unchanged.
+
+Main's tests on main `c7bdad7a` were run with the two cards and quotes files copied in: library-research, content (C7 and C8), no-contacts-parity, library-lint (copy lint) and library-ci all pass, 479 of 481 tests. The 2 failures are the byte-copy pins, LIB-21 A11 (lb9-plates, research head f574bb4b) and LIB-22 A11 (lb10-plates, research head 596dbe07). They pass on main's own copies and fail only because the cards gained claims, which is expected. The lane updates them when it re-copies the cards (the card's "after the merge" step). This PR does not touch main.
+
+### F-RESEARCH-2 fix round (verify on #338, ruling D-R2-SCOPEFIX)
+
+| Item | Fix |
+|---|---|
+| 1 | The rankNote adds FitnessVolt's "Common Pallof Press Errors" list (6 items; "Training Only One Direction" is set aside as a programming choice). Its "usually" line is set aside as a cause. Three more lines are quoted, each with its reading: "If your arms strain while your torso twists, reduce the resistance.", read as effort (F-R2-PALLOF-5); the breathing-strain line, not a candidate under D-SUP-LB10-BREATH; and "does not establish back-pain or injury outcomes", which says harm is not shown. The counts become rotation 4, arch 3, not pressing straight 2, rushing 2 and others 1, with FitnessVolt in each source list, and the "next by the same count" is now 3. |
+| 2 | c12 gains FitnessVolt's "Pause for one to three seconds while keeping your ribs, pelvis, and head still.", and its text names three ranges. tempo.text quotes all three ranges; the overlap is 2 s, so the pause value is unchanged. FitnessVolt's table pauses by goal and its 10-30 s isometric hold are set aside. |
+| 3 | New c24 (shoulder blades locked back: "Do not force them into hard retraction throughout the repetition.") and c25 (Rushing the Return). A notes line records the conflict with BarBend's "squeezed together" and "retracted" (c10, c11) and Motra's Form Cue "Squeeze shoulder blades". The gaps line for Q1(c) names both: no size for either, and the direction for c24 is retraction. |
+| 4 | Each of the three F-RESEARCH-2 gaps lines now names every page and PubMed term read, with hit counts. The notes line "Read and not cited" lists the pages and abstracts that gaps[-3] names. |
+| 5 | ACE and StrengthLog were re-read in full on 2026-10-29. Neither gives an arch, rib, rotation-direction, drift or shoulder-blade line, or a mistakes list. Their `checked` dates are 2026-10-29. The 403 statements are replaced (search log above, gaps, F-R2-PALLOF-4). |
+
+**Changed fields on pallof_press** (for the lane's CARD FIELDS re-verify):
+- plate.mistake.rankNote;
+- plate.tempo.text;
+- claim c12 (text and a third quote);
+- new claims c24 and c25;
+- gaps[-3], gaps[-2] and gaps[-1];
+- notes: "Read and not cited" replaced, and the shoulder-blade line added;
+- sources ace-antirotation and sl-pallof (`checked`).
+
+The pick, drawable, view, topFault, tempo values, plateFacts and shown lines are unchanged.
+
+- F-R2-PALLOF-5. On FitnessVolt's "If your arms strain while your torso twists, reduce the resistance." (the muscles paragraph), the writer reads "strain" as effort: the same paragraph says the arms "should not become the limiting factor". So step 2 is unchanged. Under D-SUP-STRAIN the other reading (strain on a named body part, the arms) would tie rotation to harm and tie it with the arch at step 2. Per the verify's instruction this reading is for the supervisor to rule on; the writer did not choose it.
+
+**A6 on the fix head:**
+- main `c7bdad7a` `validateCardFile`: 0 problems;
+- library-research, content (C7/C8), no-contacts-parity and library-lint (copy lint): 119/119 pass;
+- every new or changed quote was re-fetched by curl and is verbatim, with words() at most 50;
+- the quotes file matches the card one for one (57 quotes), and there are no orphan sources.
