@@ -125,8 +125,8 @@ function frontFly(id) {
     measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'slight bend, held' },
     datum: [{ y: 'grip.r', from: { at: 'grip.r', off: [-14, 0] }, to: { at: 'grip.l', off: [14, 0] }, mistake: false }],   // the stop line: dumbbells level with the chest top (c4)
     callouts: [
-      { key: 'elbows', text: 'Soft<br>elbows', anchor: 'elbow.l', cue: 'Keep a slight elbow bend that stays the same all the way.' },
-      { key: 'stop', text: 'Stop at<br>chest', anchor: 'grip.l', cue: 'Lower until the dumbbells are level with your chest, no deeper.' },
+      { key: 'elbows', text: 'Soft<br>elbows', anchor: 'elbow.l', box: { left: 236, top: 276 }, cue: 'Keep a slight elbow bend that stays the same all the way.' },
+      { key: 'stop', text: 'Stop at<br>chest', anchor: 'grip.l', box: { left: 282, top: 206 }, cue: 'Lower until the dumbbells are level with your chest, no deeper.' },
       { key: 'parallel', text: 'Dumbbells<br>parallel', anchor: 'start:grip.l', cue: 'Keep both dumbbells parallel, palms facing, through the whole arc.' },
     ],
     tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Raise', s: 2, move: true }],
