@@ -136,3 +136,33 @@ trace sits inside its circle; the build clips it to the circle.
   node and browser halves.
 - **Approval:** the recheck panel approved the plate @ `9fbdfb5`. Its 9 fragment sha256s are pinned in
   `zoom/approved.json`, and `lib-zoom.test.ts` checks them on the zoom page.
+
+## F-ZOOM-2
+
+Card `docs/supervisor/verify/f-zoom-2-card.md`, ruling D-LIB17-ZOOMPAIR (#332 6409786985). Numbers measured on main
+`c7bdad7a`.
+
+- **Field:** a Mistake entry may carry `pair: [flat, turned]`: one drawn vertex, in world metres, in the end pose
+  (`flat`) and in the Mistake pose (`turned`). It is for a fault that turns about a fixed tell anchor, where the anchor
+  itself reads 0 px.
+- **Field rules** (`entryProblems`, so `zoomOf` throws and QA reports `H3.zoom:field`): only on a `view: 'mistake'`
+  entry; exactly two points of three finite numbers; the two points differ.
+- **`faultOf`:** with a pair it measures the pair, key `zoom.tell` or `'pair'`, and reads no tell. With no pair the
+  tell loop runs as before; horizontal_leg_press and cable_chest_press are pinned equal to main's.
+- **Rows** (`qa/zoom.mjs`, only for an entry with a pair):
+  - `H3.zoom:pair:mistake` (`pairProblems`): `flat` within 0.01 px of a poly vertex of an end-pose equipment item;
+    `turned` within 0.01 px of a poly vertex of a Mistake-pose item, and of the Mistake anchor of the spec's tell
+    (`zoom.tell`'s, when set), resolved as `faultOf` resolves a tell (D-LIB18-RINGKEEP).
+  - `H3.zoom:not-needed:mistake` also fires when the pair's plate-scale distance reaches deviationMin.
+  - The bar (`d × k`), the source ring holding both points and the placement rows are the existing ones, unedited.
+- **renegade_row** (the case it was built for), pair `[[DB.l[0], apothem, gz + circum], M_HEX[0]]` (the far hex's
+  vertex 0, which is the tell's vertex before the 30° turn): 5.640 px at plate scale. × k: 1.5 → 8.46, 2 → 11.28,
+  2.5 → 14.10, 3 → 16.92, 4 → 22.56. Circle (126, 188) at every k; source ring (236.4, 328.7), r 17.33 at k 3,
+  closing at y 346.0 < 358. At k 3 the node QA has no H2, H3 or H4 key. Its `zoom` field is LIB-17's to add.
+- **Not built:**
+  - F-ZOOM-TRIM: the zoom keeps the plate's trim in screen px, the units-consistent reading. A smaller zoom trim is a
+    new drawing rule and would change cable_chest_press's approved zoom (63.04 px at k 3). Pinned: superman (`low`
+    dropped) k 4 16.33 px; jump_rope k 4 21.30 px (< 22.11).
+  - cable_rear_delt_fly: no place for an r 52 circle at any k in 1.5-4; the first place is at r 30, and no
+    readability bar exists for a circle under r 52. It stays held.
+- **Tests:** `tests/howto/f-zoom-2.test.ts` (A1-A8).
