@@ -370,6 +370,62 @@
    "status": "verbatim",
    "closest": "",
    "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "fv-pallof",
+   "text": "Pressing the hands forward can tempt you to lift the chest and extend the lumbar spine. Exhale, bring the lower ribs over the pelvis, and use a shorter reach until you can keep that position.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c20",
+   "source": "fv-pallof",
+   "text": "Helps prevent the ribs from flaring and the lower back from extending as the hands move away from the chest.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c21",
+   "source": "fv-pallof",
+   "text": "Press your hands straight forward until your elbows are extended. Do not let the cable drag your hands toward the anchor.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c21",
+   "source": "fv-pallof",
+   "text": "The handle should travel straight out from the sternum. A diagonal path shortens the lever and reduces the anti-rotation demand.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c22",
+   "source": "fv-pallof",
+   "text": "A heavy cable can turn the exercise into a leaning contest. Watch for the near shoulder rotating toward the anchor, the hips shifting sideways, or the feet gripping the floor to stop a loss of balance.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c22",
+   "source": "fv-pallof",
+   "text": "Lower the weight until you can pause at full reach without changing your alignment.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c23",
+   "source": "mo-pallof",
+   "text": "Leaning toward cable",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
   }
  ]
 }

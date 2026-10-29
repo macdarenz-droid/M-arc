@@ -615,6 +615,188 @@
      "where": "Common Farmer’s Carry Mistakes: Stride Length"
     }
    ]
+  },
+  {
+   "id": "c26",
+   "text": "Said of strongman farmer's handles, for the novice to intermediate trainee: after picking up the handles, the stride should be about heel to toe, opening up further down the course; with a lighter weight, more advanced athletes may take larger steps.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "bb-fwbreak"
+   ],
+   "quotes": [
+    {
+     "source": "bb-fwbreak",
+     "text": "The length of your stride after picking up the farmers should be approximately heel to toe, then as you progress down the course you can open up your stride (still striking in a heel to toe manner).",
+     "where": "Set up/Footwork, step 7"
+    },
+    {
+     "source": "bb-fwbreak",
+     "text": "Again it’s important to note this suggestions are for the novice to intermediate trainee, with a lighter weight more advanced athletes may choose to take larger steps.",
+     "where": "Set up/Footwork, step 9"
+    }
+   ]
+  },
+  {
+   "id": "c27",
+   "text": "A loaded walk, not a hand-held carry: 30 young adults (15 men, 15 women, aged 20-30) walking level on a treadmill at 5 km/h had a step length of 78.6 ± 4.1 cm unloaded, 79.3 ± 4.3 cm with a backpack and 76.6 ± 4.3 cm with a front pack (15% of body weight); stride length 157.2 ± 8.2, 158.5 ± 8.7 and 153.2 ± 8.5 cm.",
+   "tags": [
+    "DATA",
+    "WEAK"
+   ],
+   "sources": [
+    "mexi2023"
+   ],
+   "quotes": [
+    {
+     "source": "mexi2023",
+     "text": "Step length (cm) 0% 78.6 ± 4.1 a 79.3 ± 4.3 A 76.6 ± 4.3 b, B",
+     "where": "Table 2 (columns UL, BL, FL), step length, 0% (level) row"
+    },
+    {
+     "source": "mexi2023",
+     "text": "Stride length (cm) 0% 157.2 ± 8.2 a 158.5 ± 8.7 A 153.2 ± 8.5 b, B",
+     "where": "Table 2 (columns UL, BL, FL), stride length, 0% (level) row"
+    },
+    {
+     "source": "mexi2023",
+     "text": "Measurements were performed during level (0%) and uphill (5, 10, and 15%) walking at a speed of 5 km h −1 without and with a suspended front pack or a backpack weighing 15% of each participant’s body weight.",
+     "where": "Abstract"
+    },
+    {
+     "source": "mexi2023",
+     "text": "young adults (15 males and 15 females) aged 20–30 years",
+     "where": "2.1. Study Sample"
+    }
+   ]
+  },
+  {
+   "id": "c28",
+   "text": "A loaded walk, not a hand-held carry: 34 special forces operators (height 180.39 ± 5.72 cm) walked on a treadmill at 5.5 km/h under four load conditions (0, 7, 20 and 27 kg); stride length was 156.79 ± 4.70 cm in athletic attire alone and 156.28 ± 4.55 cm with full load.",
+   "tags": [
+    "DATA",
+    "WEAK"
+   ],
+   "sources": [
+    "pasko2026"
+   ],
+   "quotes": [
+    {
+     "source": "pasko2026",
+     "text": "For stride length, similar values were found during gait in athletic attire alone and with full load ( 156.79 ± 4.70 cm and 156.28 ± 4.55 cm, respectively).",
+     "where": "3. Results"
+    },
+    {
+     "source": "pasko2026",
+     "text": "Participants performed gait trials at a speed of 5.5 km/h under four load conditions: 0 kg, 7 kg, 20 kg, and 27 kg.",
+     "where": "Abstract, Methods"
+    },
+    {
+     "source": "pasko2026",
+     "text": "The study included 34 active Special Forces Operators (age: 36.47 ± 5.63 years; height: 180.39 ± 5.72 cm; body mass: 85.92 ± 8.54 kg).",
+     "where": "Abstract, Methods"
+    }
+   ]
+  },
+  {
+   "id": "c29",
+   "text": "Unloaded walking, not the carry: adults walking 50 m over flat ground at a comfortable pace had a mean step length (m, mean then SD) of 0.70 0.12 at 18-20, 0.73 0.14 at 21-30, 0.72 0.17 at 31-40, 0.72 0.14 at 41-50, 0.71 0.17 at 51-60, 0.67 0.15 at 61-70 and 0.60 0.19 at 71-80; the text gives 0.69 ± 0.12 m at 18-20.",
+   "tags": [
+    "DATA",
+    "MECH"
+   ],
+   "sources": [
+    "mobbs2025"
+   ],
+   "quotes": [
+    {
+     "source": "mobbs2025",
+     "text": "Step length 0.70 0.12 0.73 0.14 0.72 0.17 0.72 0.14 0.71 0.17 0.67 0.15 0.60 0.19",
+     "where": "Table 3, Spatiotemporal metric trends by age (columns 18–20 to 71–80, mean then SD), step length row"
+    },
+    {
+     "source": "mobbs2025",
+     "text": "Mean step length starts at 0.69 ± 0.12 m in the 18–20 age bracket and increases to 0.73 ± 0.14 m in the 21–30 age group",
+     "where": "4. Results"
+    },
+    {
+     "source": "mobbs2025",
+     "text": "The IMU was placed at the sternal angle for optimal data capture during a 50 m walk on a flat, unobstructed pathway.",
+     "where": "2. Materials and Methods"
+    },
+    {
+     "source": "mobbs2025",
+     "text": "their comfortable walking pace, which is the manner of gait speed assessed in this study",
+     "where": "5.1. Changes with Age"
+    }
+   ]
+  },
+  {
+   "id": "c30",
+   "text": "Unloaded walking, not the carry: in the same study, by height, mean step length (m, mean then SD) was 0.62 0.06 at 141-150 cm, 0.64 0.15 at 151-160, 0.67 0.15 at 161-170, 0.77 0.12 at 171-180, 0.79 0.17 at 181-190 and 0.91 0.05 at 191-200.",
+   "tags": [
+    "DATA",
+    "MECH"
+   ],
+   "sources": [
+    "mobbs2025"
+   ],
+   "quotes": [
+    {
+     "source": "mobbs2025",
+     "text": "Step length 0.62 0.06 0.64 0.15 0.67 0.15 0.77 0.12 0.79 0.17 0.91 0.05",
+     "where": "Table 6, Spatiotemporal metric trends by height (columns 141–150 to 191–200 cm, mean then SD), step length row"
+    },
+    {
+     "source": "mobbs2025",
+     "text": "Gait speed and step length increase consistently with height, with the tallest group (191–200 cm) walking at an average speed of 1.49 ± 0.12 m / s , with an average step length of 0.91 ± 0.05 m .",
+     "where": "Abstract"
+    }
+   ]
+  },
+  {
+   "id": "c31",
+   "text": "Unloaded walking, not the carry: 507 adults aged 21-90 walking barefoot at a habitual pace had a step length (heel to heel of the opposite footprint) of 57.60 (9.31) cm for men and 55.39 (7.14) cm for women, mean (SD); mean heights 166.81 (6.97) and 155.26 (6.41) cm; height-adjusted step length 0.34 (0.05) and 0.36 (0.04).",
+   "tags": [
+    "DATA",
+    "MECH"
+   ],
+   "sources": [
+    "lau2020"
+   ],
+   "quotes": [
+    {
+     "source": "lau2020",
+     "text": "Step length (cm) 57.60(9.31) 55.39(7.14)",
+     "where": "Table 2, Comparison of Gait Parameters Between Men and Women (columns Men (n=221), Women (n=286))"
+    },
+    {
+     "source": "lau2020",
+     "text": "Height-adjusted step length 0.34(0.05) 0.36(0.04)",
+     "where": "Table 2, Comparison of Gait Parameters Between Men and Women"
+    },
+    {
+     "source": "lau2020",
+     "text": "Height (cm) 166.81(6.97) 155.26(6.41)",
+     "where": "Table 1, participants (men, then women)"
+    },
+    {
+     "source": "lau2020",
+     "text": "Step length was the anterior-posterior distance from the heel of one footprint to the heel of the opposite footprint",
+     "where": "Methods, Data Analysis"
+    },
+    {
+     "source": "lau2020",
+     "text": "A total of 507 community-dwelling adults, aged 21–90 years were recruited into the study through random sampling",
+     "where": "Methods"
+    },
+    {
+     "source": "lau2020",
+     "text": "The participants completed three trials at a habitual walking pace, barefooted",
+     "where": "Methods, gait assessment"
+    }
+   ]
   }
  ],
  "sources": [
@@ -667,6 +849,46 @@
    "pmid": null,
    "access": "full",
    "checked": "2026-10-22"
+  },
+  {
+   "id": "mexi2023",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9863443/fullTextXML",
+   "title": "Mexi A et al. (2023) Effects of Load Carriage on Postural Control and Spatiotemporal Gait Parameters during Level and Uphill Walking. Sensors (Basel) (Europe PMC full text, PMC9863443)",
+   "kind": "peer-reviewed",
+   "year": 2023,
+   "pmid": "36679405",
+   "access": "full",
+   "checked": "2026-10-29"
+  },
+  {
+   "id": "pasko2026",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13029918/fullTextXML",
+   "title": "Paśko W et al. (2026) Changes in Spatiotemporal Parameters During Gait of Special Forces Operators with Additional External Load. Sensors (Basel) (Europe PMC full text, PMC13029918)",
+   "kind": "peer-reviewed",
+   "year": 2026,
+   "pmid": "41902126",
+   "access": "full",
+   "checked": "2026-10-29"
+  },
+  {
+   "id": "mobbs2025",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11768510/fullTextXML",
+   "title": "Mobbs L et al. (2025) Normative Database of Spatiotemporal Gait Metrics Across Age Groups: An Observational Case-Control Study. Sensors (Basel) (Europe PMC full text, PMC11768510)",
+   "kind": "peer-reviewed",
+   "year": 2025,
+   "pmid": "39860951",
+   "access": "full",
+   "checked": "2026-10-29"
+  },
+  {
+   "id": "lau2020",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7522423/fullTextXML",
+   "title": "Lau LK et al. (2020) Reference Values of Gait Speed and Gait Spatiotemporal Parameters for a South East Asian Population: The Yishun Study. Clin Interv Aging (Europe PMC full text, PMC7522423)",
+   "kind": "peer-reviewed",
+   "year": 2020,
+   "pmid": "33061327",
+   "access": "full",
+   "checked": "2026-10-29"
   }
  ],
  "plate": {
@@ -943,7 +1165,9 @@
  },
  "gaps": [
   "Breathing (content.md 5.2): no source read gives the squat's blood-pressure breath-holding line. StrengthLog holds the breath to lift (c11) and BarBend's strongman section says keep breathing (c12, WEAK); the card shows only that. Left out, not invented.",
-  "Way out: letting go of the weights in a fall or stumble (dropping them away from the feet) has no source. The sourced way out is ending the carry and the controlled set-down (c15, c16)."
+  "Way out: letting go of the weights in a fall or stumble (dropping them away from the feet) has no source. The sourced way out is ending the carry and the controlled set-down (c15, c16).",
+  "F-RESEARCH-2 Q2(a), 2026-10-29: no source read gives a step or stride length in numbers for a hand-held carry (farmer's, suitcase). The only carry size is BarBend's 'approximately heel to toe' for strongman handles (c26); the measured loaded-walk lengths are for trunk-borne loads on a treadmill (c27, c28). PubMed 'hand-held load AND walking AND stride length' returned 0 (log: verify/lb10.md, F-RESEARCH-2).",
+  "F-RESEARCH-2 Q2(c): no plate on main sets a walking step from a measured source, and no readable copy of Winter (2009) was reached (archive.org holds only the 1990 and 2005 editions, access-restricted; Google Books returned 429; Wiley returned 403)."
  ],
  "tierA": {
   "wayOut": {

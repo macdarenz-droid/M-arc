@@ -490,6 +490,89 @@
      "where": "Safety, Safety Notes"
     }
    ]
+  },
+  {
+   "id": "c20",
+   "text": "Under the heading 'Flaring the Ribs or Arching the Lower Back': pressing the hands forward can tempt you to lift the chest and extend the lumbar spine; exhale, bring the lower ribs over the pelvis, and use a shorter reach until you can keep that position. The rectus abdominis helps prevent the ribs from flaring and the lower back from extending as the hands move away from the chest.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pallof",
+     "text": "Pressing the hands forward can tempt you to lift the chest and extend the lumbar spine. Exhale, bring the lower ribs over the pelvis, and use a shorter reach until you can keep that position.",
+     "where": "Common Pallof Press Errors, Flaring the Ribs or Arching the Lower Back"
+    },
+    {
+     "source": "fv-pallof",
+     "text": "Helps prevent the ribs from flaring and the lower back from extending as the hands move away from the chest.",
+     "where": "Pallof Press Muscles Worked, table, Rectus abdominis row"
+    }
+   ]
+  },
+  {
+   "id": "c21",
+   "text": "Press the hands straight forward and do not let the cable drag them toward the anchor; the handle should travel straight out from the sternum, and a diagonal path shortens the lever and reduces the anti-rotation demand.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pallof",
+     "text": "Press your hands straight forward until your elbows are extended. Do not let the cable drag your hands toward the anchor.",
+     "where": "How to Do the Standard Press-Out"
+    },
+    {
+     "source": "fv-pallof",
+     "text": "The handle should travel straight out from the sternum. A diagonal path shortens the lever and reduces the anti-rotation demand.",
+     "where": "Common Pallof Press Errors, Letting the Hands Drift Sideways"
+    }
+   ]
+  },
+  {
+   "id": "c22",
+   "text": "With too heavy a cable, watch for the near shoulder rotating toward the anchor, the hips shifting sideways, or the feet gripping the floor; lower the weight until you can pause at full reach without changing your alignment.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pallof",
+     "text": "A heavy cable can turn the exercise into a leaning contest. Watch for the near shoulder rotating toward the anchor, the hips shifting sideways, or the feet gripping the floor to stop a loss of balance.",
+     "where": "Common Pallof Press Errors, Using Too Much Resistance"
+    },
+    {
+     "source": "fv-pallof",
+     "text": "Lower the weight until you can pause at full reach without changing your alignment.",
+     "where": "Common Pallof Press Errors, Using Too Much Resistance"
+    }
+   ]
+  },
+  {
+   "id": "c23",
+   "text": "One common-mistakes list names leaning toward the cable.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "mo-pallof",
+     "text": "Leaning toward cable",
+     "where": "Common Mistakes"
+    }
+   ]
   }
  ],
  "sources": [
@@ -542,6 +625,16 @@
    "pmid": null,
    "access": "full",
    "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-pallof",
+   "url": "https://fitnessvolt.com/pallof-press/",
+   "title": "Pallof Press: Muscles Worked, Form, and Variations – FitnessVolt",
+   "kind": "coach",
+   "year": 2026,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-29"
   }
  ],
  "plate": {
@@ -800,7 +893,11 @@
   "why": "Library: core and obliques primary, no secondary. obliques stay primary (c14). core stays in the library primary and in no feel role (LR-35). abs is proposed as a drawn primary and glutes as secondary, from the claims named. A proposal for the LIB data card."
  },
  "anchorSource": "ace-antirotation",
- "gaps": [],
+ "gaps": [
+  "F-RESEARCH-2 Q1(a), 2026-10-29: no source read gives a size (degrees, distance or stated comparison) for the over-arched lower back. Read: BarBend, Garage Gym Reviews (2 pages), Motra, Breaking Muscle, FitnessVolt (4 pages), Muscle & Fitness, and the PubMed abstracts of 40005429, 39000910 and 42346761; ACE and StrengthLog answered 403 (log: verify/lb9.md, F-RESEARCH-2).",
+  "F-RESEARCH-2 Q1(b): the only other stated sign of the arch is the chest lifting with the ribs flaring (c20, one source); no source gives its size, and no page read names the hips pushing forward.",
+  "F-RESEARCH-2 Q1(c): no source gives a size for torso rotation, hand drift, leaning or the hips shifting. Direction is quoted only toward the anchor: the hands (c6, c21), the near shoulder rotating (c22, one source) and leaning (c23). BarBend, Garage Gym Reviews and Motra name torso rotation with no direction (c7)."
+ ],
  "notes": [
   "Shared card: selector-pin.json (appliesTo lists pallof_press) covers setting the weight on the stack. No line is copied here; the sheet links the shared steps.",
   "Stance width: ACE, StrengthLog and Motra say hip-width (c1, c2); Garage Gym Reviews says shoulder-width. The card shows hip-width.",
