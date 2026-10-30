@@ -10,7 +10,7 @@ import { candidateOf } from '../candidate.mjs';
 import { browserResults, launch } from '../qa/browser.mjs';
 import { dropMirror, loadEngine } from '../qa/engine.mjs';
 import { FLAGS, HARD, loadPins, runQa } from '../qa/index.mjs';
-import { buildHeldPage, buildLb8Page, drawnIds, lb8All, sha256 } from './build.mjs';
+import { HELD, buildHeldPage, buildLb8Page, drawnIds, lb8All, sha256 } from './build.mjs';
 
 /** { sha, reports: [runQa report] } for `ids` (default: every drawn LB8 id). */
 export async function qaLb8({ ids = drawnIds(), all = lb8All(), browser: given = null, page = null } = {}) {
@@ -63,8 +63,9 @@ export const flagProblems = reports => reports.flatMap(r => {
   if (r.id in F3_NAMED && !(Math.abs(r.flags.F3.value - F3_NAMED[r.id]) <= 0.1)) out.push(`${r.id}: F3 ${r.flags.F3.value} != the named ${F3_NAMED[r.id]}`);
   return out;
 });
-/** The named flags' browser-measured values on the held page, recorded by `qa.mjs --held --record` (the unit run has
- *  no browser): the page sha256 they were measured on and each named plate's flags. lb8-plates.test.ts checks the
+/** The named flags' browser-measured values, recorded by `qa.mjs --held --record` (the unit run has no browser): the
+ *  held page's sha256 (the named plates still held), the sha256 of the LB8 page of the named plates on rows.json, and
+ *  each named plate's flags. lb8-plates.test.ts checks the
  *  recording against the ruled set and against the held page built now, so any drawing change needs a new recording. */
 export const HELD_FLAGS = fileURLToPath(new URL('./held-flags.json', import.meta.url));
 /** runQa on held ids (in memory, the held page; never evidence for rows.json). */
@@ -73,14 +74,19 @@ export async function qaHeld(ids, opts = {}) {
   return qaLb8({ ids: page.ids, all: page.all, page: page.html, ...opts });
 }
 
+/** The named plates split by where they are drawn: still held (the held page) or on rows.json ('LIB-18 resume': the LB8
+ *  page of those rows alone). */
+export const namedSplit = (held = Object.keys(HELD).map(id => `lib_${id}`)) => ({ held: Object.keys(F2_NAMED).filter(id => held.includes(id)), rows: Object.keys(F2_NAMED).filter(id => !held.includes(id)) });
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const held = process.argv[2] === '--held', record = held && process.argv[3] === '--record';
-  const ids = record ? Object.keys(F2_NAMED) : process.argv.slice(held ? 3 : 2);
-  const { sha, reports } = held ? await qaHeld(ids.length ? ids : null) : await qaLb8(ids.length ? { ids } : {});
+  const ids = process.argv.slice(held ? 3 : 2);
+  let sha, reports;
   if (record) {
-    writeFileSync(HELD_FLAGS, `${JSON.stringify({ pageSha: sha, reports: reports.map(r => ({ id: r.id, flags: Object.fromEntries(FLAGS.map(f => [f, { raised: r.flags[f].raised, value: r.flags[f].value ?? null }])) })) }, null, 1)}\n`);
-    console.log(`recorded ${HELD_FLAGS}`);
-  }
+    const sp = namedSplit(), h = await qaHeld(sp.held), r = sp.rows.length ? await qaLb8({ ids: sp.rows, page: (await buildLb8Page({ ids: sp.rows })).html }) : { sha: null, reports: [] };
+    sha = h.sha; reports = [...h.reports, ...r.reports];
+    writeFileSync(HELD_FLAGS, `${JSON.stringify({ pageSha: h.sha, rowsPageSha: r.sha, reports: reports.map(x => ({ id: x.id, flags: Object.fromEntries(FLAGS.map(f => [f, { raised: x.flags[f].raised, value: x.flags[f].value ?? null }])) })) }, null, 1)}\n`);
+    console.log(`recorded ${HELD_FLAGS} (held page ${h.sha}; rows page of ${sp.rows.join(', ') || 'none'} ${r.sha})`);
+  } else ({ sha, reports } = held ? await qaHeld(ids.length ? ids : null) : await qaLb8(ids.length ? { ids } : {}));
   console.log(`LB8 plates page sha256 ${sha}`);
   for (const line of tableOf(reports)) console.log(line);
   const bad = flagProblems(reports);
