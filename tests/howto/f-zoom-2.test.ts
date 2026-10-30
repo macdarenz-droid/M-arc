@@ -31,9 +31,8 @@ beforeAll(async () => {
   pins = qaIdx.loadPins();
   mirror = golden.makeMirror();
   E = await qaEng.loadEngine(mirror);
-  // renegade_row's registry row in memory, as lb7/build.mjs heldData/buildHeldPage give it (never written to a file)
-  const held = lb7.lb7Data(process.cwd(), lb7.heldData(process.cwd(), [LID]));
-  all = reg.rows(process.cwd(), { batches: [...reg.batchFiles(process.cwd()).map((p: string) => [p, JSON.parse(readFileSync(join(process.cwd(), p), 'utf8'))]), ['tools/plates/library/lb7/held (memory)', held]] });
+  // renegade_row's registry row: lb7/rows.json since 'LIB-17 resume 2' (it left lb7/build.mjs HELD; D-LIB17-SPLIT)
+  all = lb7.lb7All(process.cwd());
   c0 = await mutated(`(s, a) => ({ ...s, zoom: { view: 'mistake', k: 3, pair: a } })`, PAIR);
   r0 = await qa(c0);
 }, T);
@@ -104,9 +103,9 @@ describe('F-ZOOM-2 A2-A4: renegade_row released at k 3', { timeout: T }, () => {
     expect(keys(r0).filter((k: string) => /^H\d\.zoom/.test(k))).toEqual([]);
     expect(r0.hard['PQ-H3'].problems).toEqual([]);
     expect(keys(r0).filter((k: string) => /^H[234]\./.test(k))).toEqual([]);
-    // what stays red is not this card's: H8.words (LIB-17's, card table), and the in-memory fixture's own H6 (main's
-    // research card has no tempo text) and H7 (the fresh rebuild reads the real spec file, which has no zoom or tempo)
-    expect(keys(r0)).toEqual(['H8.words:mistake.corner.label']);
+    // nothing stays red since 'LIB-17 resume 2' (D-FZOOM2-ROWSYNC): the card carries its tempo, the spec its zoom and tempo,
+    // and the corner label has 2 words
+    expect(keys(r0)).toEqual([]);
   });
   it('A3 red: k 2 (11.28 px) and k 1.5 (8.46 px) are under the 11.39 px bar', async () => {
     for (const k of [2, 1.5]) {
