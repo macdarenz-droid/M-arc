@@ -1,5 +1,5 @@
 {
- "note": "LB7 H build-ahead rows (LIB-17, D-LIB17-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids with tempo seconds (A5; D-LIB17-SECS keeps cable_rear_delt_fly and renegade_row off); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
+ "note": "LB7 H build-ahead rows (LIB-17, D-LIB17-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5): cable_rear_delt_fly and renegade_row stay off (DESIGN.md sections 14 and 17: no zoom yet); resistance_band_pull_apart and bench_dip joined at 'LIB-17 resume' with their LIB-ZOOM circles (D-LIBZOOM-EXTEND); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
  "batch": "LB7",
  "censusRef": "4a9fd86",
  "rows": {
@@ -39,11 +39,29 @@
    "stage": "drawing",
    "view": "front"
   },
+  "lib_resistance_band_pull_apart": {
+   "src": "library/specs/resistance_band_pull_apart.mjs",
+   "slug": "resistance-band-pull-apart",
+   "prefix": "resistance-band-pull-apart",
+   "chromeId": "resistance-band-pull-apart",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
   "lib_weighted_dip": {
    "src": "library/specs/weighted_dip.mjs",
    "slug": "weighted-dip",
    "prefix": "weighted-dip",
    "chromeId": "weighted-dip",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_bench_dip": {
+   "src": "library/specs/bench_dip.mjs",
+   "slug": "bench-dip",
+   "prefix": "bench-dip",
+   "chromeId": "bench-dip",
    "mode": "H",
    "stage": "drawing",
    "view": "side"

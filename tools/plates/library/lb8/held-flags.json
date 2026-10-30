@@ -1,5 +1,6 @@
 {
- "pageSha": "347b82a5df343a91fc18f6007c75ff2e7f7285ca2579db982c889e2decbb6be2",
+ "pageSha": "d3c1e4ae15348104d1576dbd890e6af542dce313099323fce03e84344d605251",
+ "rowsPageSha": "8a9afd2a89a1dfd906595f1d2006c51c7fb9d6de3481eeea717f35dea4255781",
  "reports": [
   {
    "id": "lib_bodyweight_calf_raise",
@@ -35,39 +36,6 @@
    }
   },
   {
-   "id": "lib_cable_kickback",
-   "flags": {
-    "F1": {
-     "raised": false,
-     "value": 146.29
-    },
-    "F2": {
-     "raised": true,
-     "value": 0.6454
-    },
-    "F3": {
-     "raised": true,
-     "value": 37.773944624413716
-    },
-    "F4": {
-     "raised": false,
-     "value": 3
-    },
-    "F5": {
-     "raised": true,
-     "value": 3.57
-    },
-    "F6": {
-     "raised": false,
-     "value": "side"
-    },
-    "F7": {
-     "raised": false,
-     "value": "arch"
-    }
-   }
-  },
-  {
    "id": "lib_glute_bridge",
    "flags": {
     "F1": {
@@ -85,6 +53,39 @@
     "F4": {
      "raised": false,
      "value": 5
+    },
+    "F5": {
+     "raised": true,
+     "value": 3.57
+    },
+    "F6": {
+     "raised": false,
+     "value": "side"
+    },
+    "F7": {
+     "raised": false,
+     "value": "arch"
+    }
+   }
+  },
+  {
+   "id": "lib_cable_kickback",
+   "flags": {
+    "F1": {
+     "raised": false,
+     "value": 146.29
+    },
+    "F2": {
+     "raised": true,
+     "value": 0.6454
+    },
+    "F3": {
+     "raised": true,
+     "value": 37.773944624413716
+    },
+    "F4": {
+     "raised": false,
+     "value": 4
     },
     "F5": {
      "raised": true,
