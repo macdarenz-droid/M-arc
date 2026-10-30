@@ -506,3 +506,19 @@ box as a red mutation. QA: all 10 hard checks pass; flags F5 3.57 and F7, the ru
 mx3). renegade_row (zoom.pair, now on main with F-ZOOM-2) and its owed rows (H4.overlap feet, H8.words) go to LIB-17
 resume 2; cable_rear_delt_fly stays held (D-LIB17-RDFHOLD). D-FZOOM2-A3SYNC: f-zoom-2.test.ts A3's expected QA keys for
 renegade_row follow this branch's card and spec (only H8.words remains).
+
+## 18. Resume 2 ('LIB-17 resume 2', D-LIB17-SPLIT; base main `93c14262`)
+
+| id | blocker | on main? | result |
+|---|---|---|---|
+| renegade_row | F-ZOOM-2's `zoom.pair` (D-LIB17-ZOOMPAIR) | yes (train 45) | `zoom: { view: 'mistake', k: 3, pair: [[DB.l[0], APOTHEM, GZ + CIRCUM], M_HEX[0]] }`: the far flat hex's drawn vertex 0 against the turned tell vertex; 5.64 px at plate scale, **16.92 px** in the circle (bar 11.39). Joins rows.json |
+| cable_rear_delt_fly | D-LIB17-RDFHOLD | — | still held (no place for a circle) |
+
+The two owed rows on renegade_row (D-LIB17-SPLIT):
+- **H4.overlap feet** ("Feet wide" against "Straight line", 44 px hit boxes): only the "Straight line" box moves,
+  (76, 206) → (40, 160), above the back; its leader (80.2 px) stays inside F3's range and off the figure. No body part,
+  item or fact moved.
+- **H8.words** ("Lands on a corner", 4 words; labels take 1-3): the tell's label is now "Corner landing" (2 words); its
+  cue, key and anchor are unchanged.
+
+QA on renegade_row: all 10 hard checks pass; flags F5 3.57 only (the ruled set).

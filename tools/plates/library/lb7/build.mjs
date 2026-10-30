@@ -64,9 +64,9 @@ export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mis
   return out;
 }
 
-/** The ids drawn but held off rows.json (DESIGN.md held table, sections 14 and 17): after 'LIB-17 resume', the two
- *  ids whose fault no LIB-ZOOM circle can show yet. Each with its census view. */
-export const HELD = { cable_rear_delt_fly: 'front', renegade_row: 'side' };
+/** The ids drawn but held off rows.json (DESIGN.md held table, sections 14, 17 and 18): after 'LIB-17 resume 2', the
+ *  one id whose fault no LIB-ZOOM circle can show (D-LIB17-RDFHOLD). Each with its census view. */
+export const HELD = { cable_rear_delt_fly: 'front' };
 const slugOf = id => id.replace(/_/g, '-');
 /** The held rows, in memory only (never written to rows.json or any file under the repo), for the held ids whose spec exists. */
 export function heldData(root = ROOT, only = null) {

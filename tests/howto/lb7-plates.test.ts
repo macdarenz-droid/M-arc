@@ -27,12 +27,13 @@ const NOT_HERE = ['push_up', 'incline_push_up', 'pike_push_up', 'diamond_push_up
 // D-LIB17-SECS: no tempo seconds on these two cards. Since 'LIB-17 resume' (LIB-STRIP #309 on main) their tempo is the
 // untimed strip, tempoOf(their strip/rows.json rows), on card and spec (D-STRIP-ROWS).
 const NOSECS = ['cable_rear_delt_fly', 'renegade_row'];
-// DESIGN.md sections 14 and 17: every held id. Both under D-LIB8-shrug with no LIB-ZOOM circle yet: cable_rear_delt_fly has
-// no place for one (D-LIB17-RDFHOLD, #332 6410506295); renegade_row's still sign has no tell move (D-LIB17-ZOOMPAIR,
-// #332 6409786985: F-ZOOM-2's zoom.pair, built in LIB-17 resume 2 under D-LIB17-SPLIT, 6486667474).
-const HELD = ['cable_rear_delt_fly', 'renegade_row'];
-// 'LIB-17 resume' (D-LIBZOOM-EXTEND): the rows held under D-LIB8-shrug that joined rows.json with a LIB-ZOOM circle.
-const ZOOMED: Record<string, { view: string, k: number }> = { resistance_band_pull_apart: { view: 'mistake', k: 2 }, bench_dip: { view: 'normal', k: 3 } };
+// DESIGN.md sections 14, 17 and 18: every held id. cable_rear_delt_fly, under D-LIB8-shrug, has no place for a LIB-ZOOM
+// circle (D-LIB17-RDFHOLD, #332 6410506295). renegade_row left the list at 'LIB-17 resume 2' with F-ZOOM-2's zoom.pair
+// (D-LIB17-ZOOMPAIR, #332 6409786985; D-LIB17-SPLIT, 6486667474).
+const HELD = ['cable_rear_delt_fly'];
+// 'LIB-17 resume' and 'resume 2' (D-LIBZOOM-EXTEND): the rows held under D-LIB8-shrug that joined rows.json with a LIB-ZOOM
+// circle (view and k; renegade_row's pair is pinned on its own).
+const ZOOMED: Record<string, { view: string, k: number }> = { resistance_band_pull_apart: { view: 'mistake', k: 2 }, renegade_row: { view: 'mistake', k: 3 }, bench_dip: { view: 'normal', k: 3 } };
 const FRONT = ['cable_lateral_raise', 'cable_rear_delt_fly', 'cable_external_rotation', 'resistance_band_pull_apart'];
 const ROWS = 'tools/plates/library/lb7/rows.json';
 const RESEARCH_HEAD = 'e5ed66ca1c7c7c2f6418001d262d053431b4c67f';
@@ -112,7 +113,7 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids, 
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H (D-LIB17-B1)', () => {
     expect(want()).toEqual(['lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_cable_external_rotation', 'lib_resistance_band_pull_apart',
-      'lib_weighted_dip', 'lib_bench_dip']);
+      'lib_renegade_row', 'lib_weighted_dip', 'lib_bench_dip']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('none of the 5 LB7 ids not in this card is in any lb7/ file as a row', () => {
@@ -133,7 +134,7 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids, 
     }
     for (const id of HELD) expect(table.split('\n').some(l => l.startsWith(`| ${id} |`) && /D-LIB8-shrug/.test(l)), id).toBe(true);
   });
-  it('mutations: a dropped row, a duplicated row, a held id, renegade_row, push_up and bent_over_dumbbell_rear_delt_fly added, and one mode set to D are red', () => {
+  it('mutations: a dropped row, a duplicated row, renegade_row dropped, a held id, push_up and bent_over_dumbbell_rear_delt_fly added, and one mode set to D are red', () => {
     const row = { src: 'library/specs/x.mjs', mode: 'H', stage: 'drawing', view: 'side' };
     const w = want(), j = { batch: 'LB7', rows: Object.fromEntries(w.map(id => [id, row])) };
     const text = JSON.stringify(j, null, 1), add = (id: string) => JSON.stringify({ ...j, rows: { ...j.rows, [id]: row } }, null, 1);
@@ -142,7 +143,7 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids, 
     const dup = text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`);
     expect(a5(dup, w)).toEqual([`${w[0]} x2`]);
     expect(a5(add('lib_cable_rear_delt_fly'), w), 'a held id').toEqual(['extra lib_cable_rear_delt_fly']);
-    expect(a5(add('lib_renegade_row'), w)).toEqual(['extra lib_renegade_row']);
+    expect(a5(JSON.stringify({ ...j, rows: Object.fromEntries(w.filter(id => id !== 'lib_renegade_row').map(id => [id, row])) }, null, 1), w), 'renegade_row dropped').toEqual(['lib_renegade_row x0']);
     expect(a5(add('lib_push_up'), w)).toEqual(['extra lib_push_up']);
     expect(a5(add('lib_bent_over_dumbbell_rear_delt_fly'), w)).toEqual(['extra lib_bent_over_dumbbell_rear_delt_fly']);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
@@ -160,7 +161,7 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids, 
   });
   it('the build\'s held list is this test\'s (D-LIB17-SECS), each with its census view', async () => {
     const build = await import(/* @vite-ignore */ lib('lb7/build.mjs'));
-    expect(build.HELD).toEqual({ cable_rear_delt_fly: 'front', renegade_row: 'side' });
+    expect(build.HELD).toEqual({ cable_rear_delt_fly: 'front' });
   });
 });
 
@@ -1845,7 +1846,8 @@ describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md secti
   };
   it('each zoomed spec asks for its ruled zoom, and its plate fails PQ-H3 on that view at plate scale (why the zoom exists)', async () => {
     for (const [id, z] of Object.entries(ZOOMED)) {
-      expect(S[id].zoom, id).toEqual(z);
+      expect({ view: S[id].zoom.view, k: S[id].zoom.k }, id).toEqual(z);
+      expect(Object.keys(S[id].zoom).sort(), id).toEqual(id === 'renegade_row' ? ['k', 'pair', 'view'] : ['k', 'view']);
       const r = await qa(C[id]), env = pins().envelope;
       if (z.view === 'mistake') expect(r.metrics.deviation, id).toBeLessThan(env.deviationMin);
       else expect(r.metrics.traceLen, id).toBeLessThan(env.traceLenMin);
@@ -1857,7 +1859,8 @@ describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md secti
       const r = await qa(C[id]), m = r.metrics.zoom[z.view];
       expect(keys(r), id).toEqual([]);
       expect([m.k, m.ring.r], id).toEqual([z.k, 52]);
-      if (z.view === 'mistake') { expect(m.deviation, id).toBeCloseTo(r.metrics.deviation * z.k, 6); expect(m.deviation, id).toBeGreaterThanOrEqual(env.deviationMin); }
+      // renegade_row's zoom measures its pair (5.640 px at plate scale, F-ZOOM-2), the others their tell anchor (r.metrics.deviation)
+      if (z.view === 'mistake') { expect(m.deviation, id).toBeCloseTo((id === 'renegade_row' ? m.fault.d : r.metrics.deviation) * z.k, 6); expect(m.deviation, id).toBeGreaterThanOrEqual(env.deviationMin); }
       else expect(m.trace, id).toBeGreaterThanOrEqual(env.traceLenMin);
       console.log(`LIB-17 resume zoom ${id}: ${z.view} k ${z.k}: ${z.view === 'mistake' ? `deviation ${r.metrics.deviation.toFixed(1)} -> ${m.deviation.toFixed(1)}` : `Trace ${r.metrics.traceLen.toFixed(1)} -> ${m.trace.toFixed(1)}`} px`);
       expect(C[id].plate.zoom[z.view === 'mistake' ? 'normal' : 'mistake'], id).toBeNull();
@@ -1871,11 +1874,21 @@ describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md secti
     // still heel instead: the circle then shows no motion
     expect(keys(await qa(await mutated('bench_dip', "s => ({ ...s, trace: { ...s.trace, point: 'heel.r' } })")))).toContain('H3.zoom:trace');
   });
-  it('held: cable_rear_delt_fly\'s Mistake has no place for a circle at any k (the cable columns fill the plate); renegade_row\'s still sign has no tell move', () => {
+  it('held: cable_rear_delt_fly\'s Mistake has no place for a circle at any k (the cable columns fill the plate)', () => {
     for (const k of [1.5, 2, 2.6, 3, 3.5, 4]) expect(() => zoom.zoomOf({ ...S.cable_rear_delt_fly, zoom: { view: 'mistake', k } }, { E }), `k ${k}`).toThrow(/no place on the mistake plate/);
-    const rr = S.renegade_row, cam = qaEng.cameraOf(rr, E.renderPlate(rr, { id: 'x' }).report), f = zoom.faultOf(rr, cam, qaEng.poseLandmarks(E, rr));
-    expect(f.d).toBe(0);
     expect(S.cable_rear_delt_fly.zoom).toBeUndefined();
-    expect(S.renegade_row.zoom).toBeUndefined();
+  });
+  it('renegade_row (D-LIB17-ZOOMPAIR): the pair is the far flat hex\'s vertex 0 and the turned tell vertex M_HEX[0]; it measures 5.64 px at plate scale, 16.92 px at k 3; without the pair the tell reads 0 px', () => {
+    const m = M.renegade_row, rr = S.renegade_row, cam = qaEng.cameraOf(rr, E.renderPlate(rr, { id: 'x' }).report), L = qaEng.poseLandmarks(E, rr);
+    expect(rr.zoom.pair).toEqual([[m.DB.l[0], m.RR.apothem, m.RR.gz + m.RR.circum], m.M_HEX[0]]);
+    const f = zoom.faultOf(rr, cam, L);
+    expect(f.d).toBeCloseTo(5.640, 2);
+    expect(f.d * rr.zoom.k).toBeGreaterThanOrEqual(pins().envelope.deviationMin);
+    expect(zoom.faultOf({ ...rr, zoom: { view: 'mistake', k: 3 } }, cam, L).d).toBe(0);
+  });
+  it('renegade_row mutations: the pair removed is red at the zoom; k 2 (11.28 px) is red; the zoom removed is red at plate scale', async () => {
+    expect(keys(await qa(await mutated('renegade_row', "s => ({ ...s, zoom: { view: 'mistake', k: 3 } })")))).toContain('H3.zoom:deviation');
+    expect(keys(await qa(await mutated('renegade_row', "s => ({ ...s, zoom: { ...s.zoom, k: 2 } })")))).toContain('H3.zoom:deviation');
+    expect(keys(await qa(await mutated('renegade_row', 's => ({ ...s, zoom: undefined })')))).toEqual(['H3.deviation']);
   });
 });

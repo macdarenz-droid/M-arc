@@ -118,7 +118,7 @@ export default {
   trace: { point: 'grip.r', trim: [10, 12] },
   datum: [{ x: 0, from: 0, to: 0, line: LINE }],
   callouts: [
-    { key: 'line', text: 'Straight<br>line', anchor: 'buttock', box: { left: 76, top: 206 }, cue: 'Keep one straight line from your head to your heels.' },
+    { key: 'line', text: 'Straight<br>line', anchor: 'buttock', box: { left: 40, top: 160 }, cue: 'Keep one straight line from your head to your heels.' },
     { key: 'feet', text: 'Feet wide', anchor: 'heel.r', cue: 'Set your feet wider than hip-width for a steady base.' },
     { key: 'row', text: 'Row to<br>ribs', anchor: { at: 'grip.r', off: [0, -7] }, box: { left: 120, top: 160 }, cue: 'Row the dumbbell to your ribcage, elbow close to your body.' },
   ],
@@ -128,8 +128,10 @@ export default {
     guides: [],
     tells: [
       // one tell (D-LIB10-SKULL1 record, DESIGN.md section 9): c9 states the corner landing and no second sign
-      { key: 'corner', text: 'Lands on<br>a corner', anchor: M_HEX[0], box: { left: 256, top: 286 }, cue: 'The dumbbell comes down too fast and lands on a corner.' },
+      { key: 'corner', text: 'Corner<br>landing', anchor: M_HEX[0], box: { left: 256, top: 286 }, cue: 'The dumbbell comes down too fast and lands on a corner.' },
     ],
   },
+  // D-LIB17-ZOOMPAIR (F-ZOOM-2): the far (flat) hex's drawn vertex 0 against the turned tell vertex M_HEX[0]
+  zoom: { view: 'mistake', k: 3, pair: [[DB.l[0], APOTHEM, GZ + CIRCUM], M_HEX[0]] },
   alt: 'Renegade row, side view. In a high plank on two hex dumbbells, hands under the shoulders, body straight from head to heels, the lifter rows one dumbbell to the ribcage, elbow close to the body, and sets it back down flat.',
 };
