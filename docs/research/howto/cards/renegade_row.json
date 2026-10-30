@@ -672,5 +672,16 @@
       "claim": "c1"
     }
   ],
+  "tempo": [
+    {
+      "phase": "Row",
+      "move": true
+    },
+    {
+      "phase": "Lower",
+      "move": true,
+      "word": "Controlled"
+    }
+  ],
   "topFault": "corner"
 }

@@ -149,6 +149,7 @@ export default {
     { key: 'soft', text: 'Soft<br>elbows', anchor: { at: 'elbow.l', off: [0, 6] }, box: { left: 240, top: 170 }, cue: 'Keep the same slight elbow bend from start to finish.' },
     { key: 'body', text: 'Arms<br>to body', anchor: { along: ['shoulder.r', 'elbow.r'], t: 0.7, off: [0, 7] }, box: { left: 70, top: 200 }, cue: 'Pull back until your arms are about parallel to your body.' },
   ],
+  tempo: [{ phase: 'Open', move: true, word: 'Slow' }, { phase: 'Return', move: true, word: 'Slow' }],
   mistake: {
     pose: mistakePose,
     guides: M_CABLES.map(pts => ({ kind: 'dashed', pts })),

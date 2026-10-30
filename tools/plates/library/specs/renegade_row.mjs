@@ -122,6 +122,7 @@ export default {
     { key: 'feet', text: 'Feet wide', anchor: 'heel.r', cue: 'Set your feet wider than hip-width for a steady base.' },
     { key: 'row', text: 'Row to<br>ribs', anchor: { at: 'grip.r', off: [0, -7] }, box: { left: 120, top: 160 }, cue: 'Row the dumbbell to your ribcage, elbow close to your body.' },
   ],
+  tempo: [{ phase: 'Row', move: true }, { phase: 'Lower', move: true, word: 'Controlled' }],
   mistake: {
     pose: mistakePose,
     guides: [],
