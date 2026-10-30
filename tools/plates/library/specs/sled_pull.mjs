@@ -200,7 +200,7 @@ export default {
     ],
   },
   tempo: [{ phase: 'Walk', move: true, word: 'Quick' }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)
-  zoom: { view: 'normal', k: 3 },   // D-LIBZOOM-EXTEND (lib4-cards §41; DESIGN.md §21): the stepping foot's path (ball.r), 26.3 px at k 1.5 (bar at the zoom's scale)
+  zoom: { view: 'normal', k: 3 },   // D-LIBZOOM-EXTEND (lib4-cards §41; DESIGN.md §21): the stepping foot's path (ball.r), 74.9 px at k 3, the smallest k whose source ring fits the plate (D-LIB22-RINGFIT)
   alt: 'Sled pull, side view. Facing the sled in a quarter squat, shoulders over the hips, both hands one behind the other on the rope from the sled. One foot steps straight back and the sled follows by the same distance. A short coil of rope lies at the feet.',
 };
 export const info = { START_Z, END_Z, HIP_Y, DRAG, ROPE_RUN, STEP, M_Z, M_Y, REACH,

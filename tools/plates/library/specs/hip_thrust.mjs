@@ -224,7 +224,7 @@ export default {
       { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
     ],
     tells: [
-      { key: 'arch', text: 'Back<br>arched', anchor: { along: ['navel', 'hips'], t: -0.15, pose: 'mistake' }, box: { left: 150, top: 150 }, cue: 'The lower back arches as the hips lock out.' },
+      { key: 'arch', text: 'Back<br>arched', anchor: { along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' }, box: { left: 150, top: 170 }, cue: 'The lower back arches as the hips lock out.' },
       { key: 'ribs', text: 'Ribs up', anchor: { along: ['chest', 'navel'], t: 0.4, pose: 'mistake' }, box: { left: 50, top: 180 }, cue: 'The ribs flare up instead of staying down.' },
     ],
   },

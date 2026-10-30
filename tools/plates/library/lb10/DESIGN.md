@@ -479,7 +479,7 @@ medicine_ball_slam (D-LIB22-AFALL: every phase blank, strip/rows.json fallbackA 
 | id | ruling | why | route |
 |---|---|---|---|
 | wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); strip leftOut (S3) | #289 on main, then a resume |
-| farmer_s_carry | #305 6360164495 item 2 (open M_STRIDE basis) | tempo lifted (strip row); M_STRIDE 0.70 m feeds the Mistake deviation with no quote, approved plate or measured convention behind the number | a basis ruled (#331 6409735295) |
+| farmer_s_carry | #305 6360164495 item 2 (open M_STRIDE basis) | tempo lifted (strip row); M_STRIDE 0.70 m feeds the Mistake deviation with no quote, approved plate or measured convention behind the number | F-LB10-STRIDE (research; #331 6409745507 item 2) |
 | jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px**; a normal zoom at kMax 4 gives 21.3 px < 22.11 (trim [0, 0]) | a route the zoom rules do not hold (as F-PALLOF-ARCH) |
 | jumping_jacks | D-LIB22-JJ | H6:no-card until F-H6-TEMPO; also S2 (Mistake **9.6 px**; a Mistake zoom at k 1.5 reaches 14.4 px, drawn at its own resume) | F-H6-TEMPO on main |
 
@@ -682,3 +682,8 @@ Panel mx3 fix round 2 (#331 6486669489; D-LIB13-PANEL2), burpee leader ends only
 - "Straight plank" (D-LIB22-PLANKBOX, #331): ends on start thighUnder.r, the plank's back line behind its hips, only the
   plank drawn; its box moved {76, 168} → {8, 248} and set in two lines, so the leader crosses no text (at {76, 168} it ran
   through "Soft landing"; moving "Soft landing" instead failed A15 or F3 everywhere tried). leaderMax 74.7 px.
+  Spots tried for "Straight plank" (end on start thighUnder.r): {16, 262} one line (H1: the box on the dashed plank),
+  {8, 250} one line (H4: hit box over "Soft landing"'s), {160, 290} (H1: on the figure), {24, 196} (A15: leader through
+  "Soft landing" text; H4), {8, 248} two lines (passes; kept). Spots tried for "Soft landing" with the plank box at
+  {76, 168} (#331 6487058628): {16, 236}, {16, 196}, {40, 200} (A15 leader crossing, F3 over 82.3 px), {150, 300} and
+  {252, 280} (A15: crosses the figure; engine issue).

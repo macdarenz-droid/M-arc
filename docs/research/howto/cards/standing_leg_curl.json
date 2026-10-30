@@ -1,661 +1,729 @@
 {
- "id": "standing_leg_curl",
- "libId": "lib_standing_leg_curl",
- "name": "Standing Leg Curl",
- "family": "Knee machines (extension, curl)",
- "tier": "C",
- "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
- "archetype": {
-  "hand": "balance",
-  "contact": [
-   "pivot-pad"
-  ]
- },
- "parent": "lying_leg_curl",
- "inherit": [],
- "claims": [
-  {
-   "id": "c1",
-   "text": "Set the machine's pad just above the heel of the working leg, right above the Achilles tendon, and start with a lighter weight to get a feel for the movement.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "sl-stlc",
-    "hevy-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "sl-stlc",
-     "text": "Adjust the standing leg curl machine so that the pad rests just above the heel of the working leg.",
-     "where": "How to Do Standing Leg Curls"
-    },
-    {
-     "source": "hevy-stlc",
-     "text": "Adjust the pad of the machine to be right above your Achilles tendon. Start with a lighter weight to get a good feel for the movement.",
-     "where": "How to do Standing Leg Curls"
-    }
-   ]
-  },
-  {
-   "id": "c2",
-   "text": "Lean on the machine with the thighs against the support pad, hold the handles for balance and keep the back of the leg against the lower pad; one source says lean forward, the other says keep an upright posture.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "hevy-stlc",
-    "sl-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "hevy-stlc",
-     "text": "Lean forward on the machine by placing your thighs against the supportive pad, grab the handles, and have the back of your legs against the lower pad.",
-     "where": "How to do Standing Leg Curls"
-    },
-    {
-     "source": "sl-stlc",
-     "text": "Grip the handles for balance and maintain an upright posture.",
-     "where": "How to Do Standing Leg Curls"
-    }
-   ]
-  },
-  {
-   "id": "c3",
-   "text": "Take a breath and plant the standing foot firmly on the floor, then curl the weight up with the other leg by pulling the heel toward the glutes, keeping the upper body still.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "hevy-stlc",
-    "sl-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "hevy-stlc",
-     "text": "Take a deep breath and plant your left foot firmly on the floor.",
-     "where": "How to do Standing Leg Curls"
-    },
-    {
-     "source": "hevy-stlc",
-     "text": "Curl the weight up with your right leg by contracting your hamstring muscle.",
-     "where": "How to do Standing Leg Curls"
-    },
-    {
-     "source": "sl-stlc",
-     "text": "Flex your leg by pulling your heel up toward your glutes while keeping your upper body still.",
-     "where": "How to Do Standing Leg Curls"
-    }
-   ]
-  },
-  {
-   "id": "c4",
-   "text": "Use a full range: curl until the ankle or foot is higher than the knee and squeeze the hamstring, then extend the knee fully.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "hevy-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "hevy-stlc",
-     "text": "Go up until your foot becomes higher than your knee, and you feel a strong contraction in the back of your thighs.",
-     "where": "How to do Standing Leg Curls"
-    },
-    {
-     "source": "hevy-stlc",
-     "text": "The first tip to keep in mind for standing leg curls is to perform each repetition with a full range of motion.",
-     "where": "Tips When Performing a Standing Leg Curl"
-    },
-    {
-     "source": "hevy-stlc",
-     "text": "Meaning, you should flex your leg until your ankle is higher than your knee and squeeze the hamstring. You then have to extend your knee fully, stretching the hamstring.",
-     "where": "Tips When Performing a Standing Leg Curl"
-    }
-   ]
-  },
-  {
-   "id": "c5",
-   "text": "Pause at the top: hold the position for a second (one source) or briefly (another), then lower the leg slowly, breathing out.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "hevy-stlc",
-    "sl-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "hevy-stlc",
-     "text": "Hold the position for a second and exhale as you slowly lower the weight and extend your leg.",
-     "where": "How to do Standing Leg Curls"
-    },
-    {
-     "source": "sl-stlc",
-     "text": "Pause briefly at the top position, then slowly lower your leg back to the starting position.",
-     "where": "How to Do Standing Leg Curls"
-    }
-   ]
-  },
-  {
-   "id": "c6",
-   "text": "Keep the knee steady as it bends and straightens; letting it travel forward as the leg extends and back as it flexes can rob the hamstrings of tension.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "hevy-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "hevy-stlc",
-     "text": "Similarly, it’s important to keep your knee steady as you flex and extend it. Avoid having your knee travel forward as you extend it and back as you flex because that can rob your hamstrings of the tension they need to grow.",
-     "where": "Tips When Performing a Standing Leg Curl"
-    }
-   ]
-  },
-  {
-   "id": "c7",
-   "text": "Not controlling the weight on the way down is a listed mistake: many trainees lift the weight with the hamstrings and then drop it to the start.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "hevy-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "hevy-stlc",
-     "text": "The third mistake to avoid is not controlling the weight on the way down. Many trainees lift the weight through their hamstrings but then drop it to the starting position.",
-     "where": "Mistakes to Avoid"
-    }
-   ]
-  },
-  {
-   "id": "c8",
-   "text": "Shortening the range of motion is a listed mistake, often resulting from too much load; flex until the ankle is higher than the knee, then straighten fully.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "hevy-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "hevy-stlc",
-     "text": "Another mistake to look out for with leg curls is shortening the range of motion, often resulting from excessive loading. The goal is to flex your leg until the ankle is higher than your knee, then straighten it fully.",
-     "where": "Mistakes to Avoid"
-    }
-   ]
-  },
-  {
-   "id": "c9",
-   "text": "Using too much weight is called the most common mistake: it stops you controlling each rep, so you resort to momentum and body swinging; move with control and avoid swinging the leg.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "hevy-stlc",
-    "sl-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "hevy-stlc",
-     "text": "The most common mistake with standing leg curls is using too much weight, which doesn’t benefit you in any way. Using too much weight prevents you from loading your hamstrings effectively and controlling each repetition.",
-     "where": "Mistakes to Avoid"
-    },
-    {
-     "source": "hevy-stlc",
-     "text": "Instead, you have to resort to momentum and body swinging to move the weight from point A to B, defeating the exercise’s purpose.",
-     "where": "Mistakes to Avoid"
-    },
-    {
-     "source": "sl-stlc",
-     "text": "Perform the movement in a controlled manner and avoid swinging your leg to maximize hamstring activation.",
-     "where": "Commentary"
-    }
-   ]
-  },
-  {
-   "id": "c10",
-   "text": "The standing curl needs more balance than the seated or lying versions, and machine design varies; staying balanced matters for safety, and you need to hold on as the weight goes up.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "sl-stlc",
-    "fv-llc",
-    "hevy-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "sl-stlc",
-     "text": "The standing leg curl isolates the hamstrings and requires a bit more balance than the seated or lying variations.",
-     "where": "Commentary"
-    },
-    {
-     "source": "fv-llc",
-     "text": "Useful for unilateral loading, but balance and machine design vary.",
-     "where": "Lying vs. Seated Leg Curl table, Standing leg curl row"
-    },
-    {
-     "source": "hevy-stlc",
-     "text": "Remaining balanced during the exercise is also vital for the safety and effectiveness of the activity. Many people start doing the leg curl unsupported while using lighter weights. But it becomes necessary to hold onto something as you start curling more weight.",
-     "where": "Tips When Performing a Standing Leg Curl"
-    }
-   ]
-  },
-  {
-   "id": "c11",
-   "text": "Finish the reps on one leg, then switch legs.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "sl-stlc",
-    "hevy-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "sl-stlc",
-     "text": "Repeat for the desired number of repetitions, then switch legs.",
-     "where": "How to Do Standing Leg Curls"
-    },
-    {
-     "source": "hevy-stlc",
-     "text": "Once you’re done, plant your right foot and curl the weight with your left leg.",
-     "where": "How to do Standing Leg Curls"
-    }
-   ]
-  },
-  {
-   "id": "c12",
-   "text": "The hamstrings are the primary muscles; the gastrocnemius (calf) assists them in bending the knee.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "hevy-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "hevy-stlc",
-     "text": "The primary muscles that work during standing leg curls are our hamstrings, the posterior thigh muscles (1, 2).",
-     "where": "Standing Leg Curls Muscles Worked"
-    },
-    {
-     "source": "hevy-stlc",
-     "text": "Gastrocnemius, one of the muscles in the lower leg, assists our hamstrings in causing knee flexion.",
-     "where": "Standing Leg Curls Muscles Worked"
-    }
-   ]
-  },
-  {
-   "id": "c13",
-   "text": "One source written for hamstring curls in general (its standing version is a bodyweight curl, not the machine) says arching the lower back stops the hamstrings working properly and can cause back pain and discomfort; contract the abs to avoid arching.",
-   "tags": [
-    "CONSENSUS",
-    "WEAK"
-   ],
-   "sources": [
-    "hl-hc"
-   ],
-   "quotes": [
-    {
-     "source": "hl-hc",
-     "text": "It’s important to keep your back neutral during hamstring curls. If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.",
-     "where": "Things to keep in mind"
-    },
-    {
-     "source": "hl-hc",
-     "text": "To avoid arching your back, contract your abs during the exercise.",
-     "where": "Things to keep in mind"
-    }
-   ]
-  },
-  {
-   "id": "c14",
-   "text": "The same general hamstring-curl source says to move slowly, because sudden, jerking movements can lead to injury, and to stop hamstring curls if you feel pain in your knees, hips or back.",
-   "tags": [
-    "CONSENSUS",
-    "WEAK"
-   ],
-   "sources": [
-    "hl-hc"
-   ],
-   "quotes": [
-    {
-     "source": "hl-hc",
-     "text": "It’s also best to move slowly. Sudden, jerking movements can lead to injury, so your movements should be controlled.",
-     "where": "Things to keep in mind"
-    },
-    {
-     "source": "hl-hc",
-     "text": "Stop doing hamstring curls if you feel pain in your knees, hips, or back.",
-     "where": "Things to keep in mind"
-    }
-   ]
-  },
-  {
-   "id": "c15",
-   "text": "Tempo: the sources ask for a slow lowering and give no seconds for the lowering or the lifting, so the plate's 2 s down and 1 s up is a drawing convention.",
-   "tags": [
-    "CONSENSUS",
-    "WEAK"
-   ],
-   "sources": [
-    "sl-stlc",
-    "hevy-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "sl-stlc",
-     "text": "Pause briefly at the top position, then slowly lower your leg back to the starting position.",
-     "where": "How to Do Standing Leg Curls"
-    },
-    {
-     "source": "hevy-stlc",
-     "text": "Doing controlled repetition is the fourth crucial tip to keep in mind for standing leg curls. The goal is to use your hamstrings to overcome the resistance and control the weight as you extend your leg.",
-     "where": "Tips When Performing a Standing Leg Curl"
-    }
-   ]
-  },
-  {
-   "id": "c16",
-   "text": "Tempo: hold the top position, right after the curl, for a second.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "hevy-stlc"
-   ],
-   "quotes": [
-    {
-     "source": "hevy-stlc",
-     "text": "Hold the position for a second and exhale as you slowly lower the weight and extend your leg.",
-     "where": "How to do Standing Leg Curls"
-    }
-   ]
-  }
- ],
- "sources": [
-  {
-   "id": "hevy-stlc",
-   "url": "https://www.hevyapp.com/exercises/how-to-standing-leg-curl/",
-   "title": "Standing Leg Curls: How-to, Tips, Alternatives & More (Hevy)",
-   "kind": "coach",
-   "year": null,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "sl-stlc",
-   "url": "https://www.strengthlog.com/standing-leg-curl/",
-   "title": "How to Do Standing Leg Curl: Muscles Worked & Proper Form – StrengthLog",
-   "kind": "coach",
-   "year": null,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "fv-llc",
-   "url": "https://fitnessvolt.com/24561/lying-leg-curl/",
-   "title": "Lying Leg Curl: Muscles Worked, Form, and Variations (Fitness Volt)",
-   "kind": "coach",
-   "year": 2026,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "hl-hc",
-   "url": "https://www.healthline.com/health/hamstring-curls",
-   "title": "5 Types of Hamstring Curls for Stronger Thighs (Healthline)",
-   "kind": "coach",
-   "year": 2019,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  }
- ],
- "plate": {
-  "view": "side",
-  "viewWhy": "Census view is side (poses stand and single: one leg planted, one curling). The pad just above the heel (c1), the thighs on the support pad (c2), the knee staying steady (c6), the foot rising above the knee (c4) and the low back (c13) read from the side, and so does the drawn fault, the lower back arching (c13).",
-  "equipment": "Standing leg curl machine composed from a thigh support pad, a roller pad on a lever and handles (census 'legCurlMachine', compose; 'kneePad'): thigh support pad at the front of the thighs (c2), lower pad just above the heel of the working leg (c1), handles at the front (c2), standing foot flat on the floor (c3). Balance and machine design vary (c10).",
-  "start": "Standing, thighs against the support pad, hands on the handles (c2), standing foot planted (c3), working leg straight with the pad just above its heel (c1, c4), upper body still (c3).",
-  "end": "Working knee bent until the foot is higher than the knee (c4); knee in the same place (c6); upper body and low back unchanged (c3, c13).",
-  "checkpoints": [
-   {
-    "label": "Knee steady",
-    "what": "Working knee stays in place as it bends and straightens.",
-    "claim": "c6"
-   },
-   {
-    "label": "Upper body still",
-    "what": "Thighs on the pad, upper body still.",
-    "claim": [
-     "c3",
-     "c2"
+  "id": "standing_leg_curl",
+  "libId": "lib_standing_leg_curl",
+  "name": "Standing Leg Curl",
+  "family": "Knee machines (extension, curl)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "pivot-pad"
     ]
-   },
-   {
-    "label": "Foot above knee",
-    "what": "Curl until your foot is higher than your knee.",
-    "claim": "c4"
-   }
-  ],
-  "mistake": {
-   "what": "Lower back arching as the leg curls.",
-   "why": "The top fault, dropping the weight on the way down (c7), is seen only as speed, so the plate draws the next fault by the same steps: a source written for hamstring curls in general says arching the lower back can cause back pain and discomfort (c13).",
-   "claim": "c13",
-   "drawable": false,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 1: not controlling the weight on the way down, dropping it to the start (c7). Step 1 hit: Hevy's \"Many trainees lift the weight through their hamstrings but then drop it to the starting position.\" (c7), a 'many' sentence about this exercise's own fault (D-SUP-LB7-DIPREPS), under its 'The third mistake to avoid is not controlling the weight on the way down.' It is the only step-1 hit, so step 2's order is not needed. Set aside at step 1: Hevy's \"The most common mistake with standing leg curls is using too much weight\" (c9) is the load, which LR-31 excludes; its \"shortening the range of motion, often resulting from excessive loading\" (c8) says what often causes a short range, not how often lifters cut it short (a cause statement, as renegade_row's \"Often a symptom of going too heavy\"); its \"Many people start doing the leg curl unsupported while using lighter weights.\" (c10) is about holding on with light loads and names no fault; its \"Lying leg curls are another popular variation\" is about another exercise; Healthline's \"Typically, the exercise is done on a leg curl machine.\" is the equipment; Fitness Volt's lying-leg-curl page (cited only for its standing row, c10) has \"often introduces lower-back movement\" and \"Most lifters can place curls after squats\", about the lying curl and programming. Headings ('Mistakes to Avoid') are not counted. drawable false: the fault's only sign is speed (dropping the weight), so it is never drawable (LR-31). plate.mistake names the next fault by the same steps. Step 2: two named faults are tied to harm, both by Healthline's general hamstring-curl section (WEAK, c13, c14): arching the lower back (\"If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.\") and sudden, jerking movements (\"Sudden, jerking movements can lead to injury\"). Neither is on a common-mistakes list for this exercise, each has one harm source, neither is sourced directly and no list names both, so step 3's count decides (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: arching 1 (Healthline, c13); jerking 1 (Healthline, c14), or 2 if StrengthLog's \"avoid swinging your leg\" (c9) is read as the same fault. Lines that only give the right position are not counted (StrengthLog's \"maintain an upright posture\" and \"keeping your upper body still\"). Either way the jerking is seen only as speed and is never drawable, so the plate draws the arch: a still sign the side view shows. Set aside at step 2: Hevy's \"Avoid having your knee travel forward as you extend it and back as you flex because that can rob your hamstrings of the tension they need to grow.\" (c6) names lost tension, not harm; Hevy's \"Remaining balanced during the exercise is also vital for the safety and effectiveness of the activity.\" (c10) names no fault and 'safety' is not an LR-31 harm word; Hevy's \"momentum and body swinging\" (c9) carries no harm word. Further scan (fetcher, 2026-10-22), set aside: Hevy's \"Avoid the mistake because not controlling the eccentric contraction (muscle lengthening against resistance) robs your muscles of a robust hypertrophic stimulus.\" (the top fault) names lost stimulus, not harm or frequency; Hevy's \"Plus, similar to standing leg curls, you work one hamstring at a time, which reduces the risk of muscle imbalances.\" is about another exercise and names no fault; Hevy's privacy text \"cannot usually be used to identify you\" is site boilerplate; Fitness Volt's lying-page lines (\"do not force them into a painful locked position\", \"Sharp pain behind the knee ... reasons to stop and reassess\", \"one exercise cannot prevent injury by itself\", \"Persistent pain or symptoms following an injury warrant guidance from a qualified clinician\", \"Beginners can learn the action with a light stack\") are about the lying curl, another exercise (R-LB7-5); Healthline's \"When you have strong hamstrings, you’re less prone to injury and pain.\", \"can help relieve quad tightness and back pain\", \"which can reduce your risk of injury\" and \"they might recommend safer alternatives\" are benefits or advice, not a fault. Read, not cited, Fitbod (a kneeling-pad machine): \"Because a vast majority of lower body exercises tend to be compound movements\" (exercise choice), \"is often used as a metric for tracking strength\" (the deadlift) and \"you prevent the risk of compensating for strength discrepancies between sides\" (a benefit) name no fault. The step-1 and cause readings are settled by the lead (renegade_row precedent, lb7-research-verify reading 4). handlingMistakes keeps three: the drop (top fault), the arch (plate) and the short range (Hevy's next list item, c8). Swinging stays in posture and risks."
   },
-  "tells": [
-   {
-    "text": "Foot rises higher than your knee",
-    "claim": "c4"
-   },
-   {
-    "text": "Knee stays in one place",
-    "claim": "c6"
-   }
-  ],
-  "tempo": {
-   "up": 1,
-   "down": 2,
-   "pause": 1,
-   "claim": [
-    "c15",
-    "c16"
-   ],
-   "text": "Drawing convention: the sources ask for a slow lowering (c5, c15) and give no seconds for the lowering or the lifting; 2 s down and 1 s up shows that (c15, WEAK; R-LB7-6). Pause 1 is sourced: Hevy says to hold the top position, right after the curl, for a second (c16); StrengthLog's \"Pause briefly at the top position\" (c5) agrees."
-  },
-  "variantLine": null
- },
- "grip": {
-  "type": "Hands on the handles for balance (c2).",
-  "width": "Handles fixed on the machine (c2).",
-  "thumb": "",
-  "handContact": "",
-  "wrist": "",
+  "parent": "lying_leg_curl",
+  "inherit": [],
   "claims": [
-   "c2"
+    {
+      "id": "c1",
+      "text": "Set the machine's pad just above the heel of the working leg, right above the Achilles tendon, and start with a lighter weight to get a feel for the movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-stlc",
+        "hevy-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "sl-stlc",
+          "text": "Adjust the standing leg curl machine so that the pad rests just above the heel of the working leg.",
+          "where": "How to Do Standing Leg Curls"
+        },
+        {
+          "source": "hevy-stlc",
+          "text": "Adjust the pad of the machine to be right above your Achilles tendon. Start with a lighter weight to get a good feel for the movement.",
+          "where": "How to do Standing Leg Curls"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Lean on the machine with the thighs against the support pad, hold the handles for balance and keep the back of the leg against the lower pad; one source says lean forward, the other says keep an upright posture.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-stlc",
+        "sl-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-stlc",
+          "text": "Lean forward on the machine by placing your thighs against the supportive pad, grab the handles, and have the back of your legs against the lower pad.",
+          "where": "How to do Standing Leg Curls"
+        },
+        {
+          "source": "sl-stlc",
+          "text": "Grip the handles for balance and maintain an upright posture.",
+          "where": "How to Do Standing Leg Curls"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Take a breath and plant the standing foot firmly on the floor, then curl the weight up with the other leg by pulling the heel toward the glutes, keeping the upper body still.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-stlc",
+        "sl-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-stlc",
+          "text": "Take a deep breath and plant your left foot firmly on the floor.",
+          "where": "How to do Standing Leg Curls"
+        },
+        {
+          "source": "hevy-stlc",
+          "text": "Curl the weight up with your right leg by contracting your hamstring muscle.",
+          "where": "How to do Standing Leg Curls"
+        },
+        {
+          "source": "sl-stlc",
+          "text": "Flex your leg by pulling your heel up toward your glutes while keeping your upper body still.",
+          "where": "How to Do Standing Leg Curls"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Use a full range: curl until the ankle or foot is higher than the knee and squeeze the hamstring, then extend the knee fully.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-stlc",
+          "text": "Go up until your foot becomes higher than your knee, and you feel a strong contraction in the back of your thighs.",
+          "where": "How to do Standing Leg Curls"
+        },
+        {
+          "source": "hevy-stlc",
+          "text": "The first tip to keep in mind for standing leg curls is to perform each repetition with a full range of motion.",
+          "where": "Tips When Performing a Standing Leg Curl"
+        },
+        {
+          "source": "hevy-stlc",
+          "text": "Meaning, you should flex your leg until your ankle is higher than your knee and squeeze the hamstring. You then have to extend your knee fully, stretching the hamstring.",
+          "where": "Tips When Performing a Standing Leg Curl"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Pause at the top: hold the position for a second (one source) or briefly (another), then lower the leg slowly, breathing out.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-stlc",
+        "sl-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-stlc",
+          "text": "Hold the position for a second and exhale as you slowly lower the weight and extend your leg.",
+          "where": "How to do Standing Leg Curls"
+        },
+        {
+          "source": "sl-stlc",
+          "text": "Pause briefly at the top position, then slowly lower your leg back to the starting position.",
+          "where": "How to Do Standing Leg Curls"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep the knee steady as it bends and straightens; letting it travel forward as the leg extends and back as it flexes can rob the hamstrings of tension.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-stlc",
+          "text": "Similarly, it’s important to keep your knee steady as you flex and extend it. Avoid having your knee travel forward as you extend it and back as you flex because that can rob your hamstrings of the tension they need to grow.",
+          "where": "Tips When Performing a Standing Leg Curl"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Not controlling the weight on the way down is a listed mistake: many trainees lift the weight with the hamstrings and then drop it to the start.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-stlc",
+          "text": "The third mistake to avoid is not controlling the weight on the way down. Many trainees lift the weight through their hamstrings but then drop it to the starting position.",
+          "where": "Mistakes to Avoid"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Shortening the range of motion is a listed mistake, often resulting from too much load; flex until the ankle is higher than the knee, then straighten fully.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-stlc",
+          "text": "Another mistake to look out for with leg curls is shortening the range of motion, often resulting from excessive loading. The goal is to flex your leg until the ankle is higher than your knee, then straighten it fully.",
+          "where": "Mistakes to Avoid"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Using too much weight is called the most common mistake: it stops you controlling each rep, so you resort to momentum and body swinging; move with control and avoid swinging the leg.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-stlc",
+        "sl-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-stlc",
+          "text": "The most common mistake with standing leg curls is using too much weight, which doesn’t benefit you in any way. Using too much weight prevents you from loading your hamstrings effectively and controlling each repetition.",
+          "where": "Mistakes to Avoid"
+        },
+        {
+          "source": "hevy-stlc",
+          "text": "Instead, you have to resort to momentum and body swinging to move the weight from point A to B, defeating the exercise’s purpose.",
+          "where": "Mistakes to Avoid"
+        },
+        {
+          "source": "sl-stlc",
+          "text": "Perform the movement in a controlled manner and avoid swinging your leg to maximize hamstring activation.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The standing curl needs more balance than the seated or lying versions, and machine design varies; staying balanced matters for safety, and you need to hold on as the weight goes up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-stlc",
+        "fv-llc",
+        "hevy-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "sl-stlc",
+          "text": "The standing leg curl isolates the hamstrings and requires a bit more balance than the seated or lying variations.",
+          "where": "Commentary"
+        },
+        {
+          "source": "fv-llc",
+          "text": "Useful for unilateral loading, but balance and machine design vary.",
+          "where": "Lying vs. Seated Leg Curl table, Standing leg curl row"
+        },
+        {
+          "source": "hevy-stlc",
+          "text": "Remaining balanced during the exercise is also vital for the safety and effectiveness of the activity. Many people start doing the leg curl unsupported while using lighter weights. But it becomes necessary to hold onto something as you start curling more weight.",
+          "where": "Tips When Performing a Standing Leg Curl"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Finish the reps on one leg, then switch legs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-stlc",
+        "hevy-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "sl-stlc",
+          "text": "Repeat for the desired number of repetitions, then switch legs.",
+          "where": "How to Do Standing Leg Curls"
+        },
+        {
+          "source": "hevy-stlc",
+          "text": "Once you’re done, plant your right foot and curl the weight with your left leg.",
+          "where": "How to do Standing Leg Curls"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The hamstrings are the primary muscles; the gastrocnemius (calf) assists them in bending the knee.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-stlc",
+          "text": "The primary muscles that work during standing leg curls are our hamstrings, the posterior thigh muscles (1, 2).",
+          "where": "Standing Leg Curls Muscles Worked"
+        },
+        {
+          "source": "hevy-stlc",
+          "text": "Gastrocnemius, one of the muscles in the lower leg, assists our hamstrings in causing knee flexion.",
+          "where": "Standing Leg Curls Muscles Worked"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "One source written for hamstring curls in general (its standing version is a bodyweight curl, not the machine) says arching the lower back stops the hamstrings working properly and can cause back pain and discomfort; contract the abs to avoid arching.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "hl-hc"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hc",
+          "text": "It’s important to keep your back neutral during hamstring curls. If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.",
+          "where": "Things to keep in mind"
+        },
+        {
+          "source": "hl-hc",
+          "text": "To avoid arching your back, contract your abs during the exercise.",
+          "where": "Things to keep in mind"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "The same general hamstring-curl source says to move slowly, because sudden, jerking movements can lead to injury, and to stop hamstring curls if you feel pain in your knees, hips or back.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "hl-hc"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hc",
+          "text": "It’s also best to move slowly. Sudden, jerking movements can lead to injury, so your movements should be controlled.",
+          "where": "Things to keep in mind"
+        },
+        {
+          "source": "hl-hc",
+          "text": "Stop doing hamstring curls if you feel pain in your knees, hips, or back.",
+          "where": "Things to keep in mind"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Tempo: the sources ask for a slow lowering and give no seconds for the lowering or the lifting, so the plate's 2 s down and 1 s up is a drawing convention.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "sl-stlc",
+        "hevy-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "sl-stlc",
+          "text": "Pause briefly at the top position, then slowly lower your leg back to the starting position.",
+          "where": "How to Do Standing Leg Curls"
+        },
+        {
+          "source": "hevy-stlc",
+          "text": "Doing controlled repetition is the fourth crucial tip to keep in mind for standing leg curls. The goal is to use your hamstrings to overcome the resistance and control the weight as you extend your leg.",
+          "where": "Tips When Performing a Standing Leg Curl"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Tempo: hold the top position, right after the curl, for a second.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hevy-stlc"
+      ],
+      "quotes": [
+        {
+          "source": "hevy-stlc",
+          "text": "Hold the position for a second and exhale as you slowly lower the weight and extend your leg.",
+          "where": "How to do Standing Leg Curls"
+        }
+      ]
+    }
   ],
-  "note": "Hand archetype balance: the hands steady the body, no hand zoom needed."
- },
- "setup": [
-  {
-   "step": "Set the pad just above the heel of your working leg.",
-   "claim": "c1"
-  },
-  {
-   "step": "Start with a lighter weight.",
-   "claim": "c1"
-  },
-  {
-   "step": "Thighs against the support pad. Hold the handles.",
-   "claim": "c2"
-  },
-  {
-   "step": "Plant your other foot firmly on the floor.",
-   "claim": "c3"
-  }
- ],
- "posture": [
-  {
-   "point": "Keep your upper body still.",
-   "claim": "c3"
-  },
-  {
-   "point": "Keep your knee steady as you curl and lower.",
-   "claim": "c6"
-  },
-  {
-   "point": "Curl until your foot is higher than your knee.",
-   "claim": "c4"
-  },
-  {
-   "point": "Hold the top for a second.",
-   "claim": "c16"
-  },
-  {
-   "point": "Lower slowly and straighten the leg fully.",
-   "claim": [
-    "c5",
-    "c4"
-   ]
-  },
-  {
-   "point": "Control the weight. Don't swing your leg.",
-   "claim": "c9"
-  }
- ],
- "handlingMistakes": [
-  {
-   "mistake": "Dropping the weight down.",
-   "fix": "Lower it slowly, with control.",
-   "claim": [
-    "c7",
-    "c5"
-   ]
-  },
-  {
-   "mistake": "Arching your lower back.",
-   "fix": "Contract your abs.",
-   "claim": "c13"
-  },
-  {
-   "mistake": "Cutting the range short.",
-   "fix": "Curl until your ankle is higher than your knee, then straighten fully.",
-   "claim": "c8"
-  }
- ],
- "feel": {
-  "primary": [
-   {
-    "muscleId": "hamstrings",
-    "claim": "c12"
-   }
+  "sources": [
+    {
+      "id": "hevy-stlc",
+      "url": "https://www.hevyapp.com/exercises/how-to-standing-leg-curl/",
+      "title": "Standing Leg Curls: How-to, Tips, Alternatives & More (Hevy)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-stlc",
+      "url": "https://www.strengthlog.com/standing-leg-curl/",
+      "title": "How to Do Standing Leg Curl: Muscles Worked & Proper Form – StrengthLog",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "fv-llc",
+      "url": "https://fitnessvolt.com/24561/lying-leg-curl/",
+      "title": "Lying Leg Curl: Muscles Worked, Form, and Variations (Fitness Volt)",
+      "kind": "coach",
+      "year": 2026,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "hl-hc",
+      "url": "https://www.healthline.com/health/hamstring-curls",
+      "title": "5 Types of Hamstring Curls for Stronger Thighs (Healthline)",
+      "kind": "coach",
+      "year": 2019,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
   ],
-  "secondary": [
-   {
-    "muscleId": "calves",
-    "claim": "c12"
-   }
-  ],
-  "watch": [],
-  "rows": [
-   {
-    "where": "Back of the thigh",
-    "means": "A strong contraction here at the top: the hamstrings are working.",
-    "fix": "",
-    "claim": [
-     "c4",
-     "c12"
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side (poses stand and single: one leg planted, one curling). The pad just above the heel (c1), the thighs on the support pad (c2), the knee staying steady (c6), the foot rising above the knee (c4) and the low back (c13) read from the side, and so does the drawn fault, the lower back arching (c13).",
+    "equipment": "Standing leg curl machine composed from a thigh support pad, a roller pad on a lever and handles (census 'legCurlMachine', compose; 'kneePad'): thigh support pad at the front of the thighs (c2), lower pad just above the heel of the working leg (c1), handles at the front (c2), standing foot flat on the floor (c3). Balance and machine design vary (c10).",
+    "start": "Standing, thighs against the support pad, hands on the handles (c2), standing foot planted (c3), working leg straight with the pad just above its heel (c1, c4), upper body still (c3).",
+    "end": "Working knee bent until the foot is higher than the knee (c4); knee in the same place (c6); upper body and low back unchanged (c3, c13).",
+    "checkpoints": [
+      {
+        "label": "Knee steady",
+        "what": "Working knee stays in place as it bends and straightens.",
+        "claim": "c6"
+      },
+      {
+        "label": "Upper body still",
+        "what": "Thighs on the pad, upper body still.",
+        "claim": [
+          "c3",
+          "c2"
+        ]
+      },
+      {
+        "label": "Foot above knee",
+        "what": "Curl until your foot is higher than your knee.",
+        "claim": "c4"
+      }
     ],
-    "redFlag": null
-   },
-   {
-    "where": "Lower back",
-    "means": "Fault: arching the lower back can cause back pain and discomfort.",
-    "fix": "Avoid arching: contract your abs.",
-    "claim": "c13",
-    "redFlag": "back"
-   },
-   {
-    "where": "Knee",
-    "means": "Pain here is a reason to stop.",
-    "fix": "Stop the set.",
-    "claim": "c14",
-    "redFlag": "knee"
-   }
-  ]
- },
- "risks": [
-  {
-   "risk": "Arching your lower back can cause back pain and discomfort.",
-   "claim": "c13"
+    "mistake": {
+      "what": "Lower back arching as the leg curls.",
+      "why": "The top fault, dropping the weight on the way down (c7), is seen only as speed, so the plate draws the next fault by the same steps: a source written for hamstring curls in general says arching the lower back can cause back pain and discomfort (c13).",
+      "claim": "c13",
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: not controlling the weight on the way down, dropping it to the start (c7). Step 1 hit: Hevy's \"Many trainees lift the weight through their hamstrings but then drop it to the starting position.\" (c7), a 'many' sentence about this exercise's own fault (D-SUP-LB7-DIPREPS), under its 'The third mistake to avoid is not controlling the weight on the way down.' It is the only step-1 hit, so step 2's order is not needed. Set aside at step 1: Hevy's \"The most common mistake with standing leg curls is using too much weight\" (c9) is the load, which LR-31 excludes; its \"shortening the range of motion, often resulting from excessive loading\" (c8) says what often causes a short range, not how often lifters cut it short (a cause statement, as renegade_row's \"Often a symptom of going too heavy\"); its \"Many people start doing the leg curl unsupported while using lighter weights.\" (c10) is about holding on with light loads and names no fault; its \"Lying leg curls are another popular variation\" is about another exercise; Healthline's \"Typically, the exercise is done on a leg curl machine.\" is the equipment; Fitness Volt's lying-leg-curl page (cited only for its standing row, c10) has \"often introduces lower-back movement\" and \"Most lifters can place curls after squats\", about the lying curl and programming. Headings ('Mistakes to Avoid') are not counted. drawable false: the fault's only sign is speed (dropping the weight), so it is never drawable (LR-31). plate.mistake names the next fault by the same steps. Step 2: two named faults are tied to harm, both by Healthline's general hamstring-curl section (WEAK, c13, c14): arching the lower back (\"If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.\") and sudden, jerking movements (\"Sudden, jerking movements can lead to injury\"). Neither is on a common-mistakes list for this exercise, each has one harm source, neither is sourced directly and no list names both, so step 3's count decides (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: arching 1 (Healthline, c13); jerking 1 (Healthline, c14), or 2 if StrengthLog's \"avoid swinging your leg\" (c9) is read as the same fault. Lines that only give the right position are not counted (StrengthLog's \"maintain an upright posture\" and \"keeping your upper body still\"). Either way the jerking is seen only as speed and is never drawable, so the plate draws the arch: a still sign the side view shows. Set aside at step 2: Hevy's \"Avoid having your knee travel forward as you extend it and back as you flex because that can rob your hamstrings of the tension they need to grow.\" (c6) names lost tension, not harm; Hevy's \"Remaining balanced during the exercise is also vital for the safety and effectiveness of the activity.\" (c10) names no fault and 'safety' is not an LR-31 harm word; Hevy's \"momentum and body swinging\" (c9) carries no harm word. Further scan (fetcher, 2026-10-22), set aside: Hevy's \"Avoid the mistake because not controlling the eccentric contraction (muscle lengthening against resistance) robs your muscles of a robust hypertrophic stimulus.\" (the top fault) names lost stimulus, not harm or frequency; Hevy's \"Plus, similar to standing leg curls, you work one hamstring at a time, which reduces the risk of muscle imbalances.\" is about another exercise and names no fault; Hevy's privacy text \"cannot usually be used to identify you\" is site boilerplate; Fitness Volt's lying-page lines (\"do not force them into a painful locked position\", \"Sharp pain behind the knee ... reasons to stop and reassess\", \"one exercise cannot prevent injury by itself\", \"Persistent pain or symptoms following an injury warrant guidance from a qualified clinician\", \"Beginners can learn the action with a light stack\") are about the lying curl, another exercise (R-LB7-5); Healthline's \"When you have strong hamstrings, you’re less prone to injury and pain.\", \"can help relieve quad tightness and back pain\", \"which can reduce your risk of injury\" and \"they might recommend safer alternatives\" are benefits or advice, not a fault. Read, not cited, Fitbod (a kneeling-pad machine): \"Because a vast majority of lower body exercises tend to be compound movements\" (exercise choice), \"is often used as a metric for tracking strength\" (the deadlift) and \"you prevent the risk of compensating for strength discrepancies between sides\" (a benefit) name no fault. The step-1 and cause readings are settled by the lead (renegade_row precedent, lb7-research-verify reading 4). handlingMistakes keeps three: the drop (top fault), the arch (plate) and the short range (Hevy's next list item, c8). Swinging stays in posture and risks."
+    },
+    "tells": [
+      {
+        "text": "Foot rises higher than your knee",
+        "claim": "c4"
+      },
+      {
+        "text": "Knee stays in one place",
+        "claim": "c6"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": [
+        "c15",
+        "c16"
+      ],
+      "text": "Drawing convention: the sources ask for a slow lowering (c5, c15) and give no seconds for the lowering or the lifting; 2 s down and 1 s up shows that (c15, WEAK; R-LB7-6). Pause 1 is sourced: Hevy says to hold the top position, right after the curl, for a second (c16); StrengthLog's \"Pause briefly at the top position\" (c5) agrees."
+    },
+    "variantLine": null
   },
-  {
-   "risk": "Sudden, jerking movements can lead to injury.",
-   "claim": "c14"
+  "grip": {
+    "type": "Hands on the handles for balance (c2).",
+    "width": "Handles fixed on the machine (c2).",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c2"
+    ],
+    "note": "Hand archetype balance: the hands steady the body, no hand zoom needed."
   },
-  {
-   "risk": "Too much weight makes you use momentum and body swinging.",
-   "claim": "c9"
-  }
- ],
- "redFlags": [
-  "knee",
-  "back"
- ],
- "zooms": [
-  {
-   "key": "pad-heel",
-   "kind": "posture",
-   "right": "Pad just above the heel.",
-   "wrong": null,
-   "claim": "c1"
+  "setup": [
+    {
+      "step": "Set the pad just above the heel of your working leg.",
+      "claim": "c1"
+    },
+    {
+      "step": "Start with a lighter weight.",
+      "claim": "c1"
+    },
+    {
+      "step": "Thighs against the support pad. Hold the handles.",
+      "claim": "c2"
+    },
+    {
+      "step": "Plant your other foot firmly on the floor.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Keep your upper body still.",
+      "claim": "c3"
+    },
+    {
+      "point": "Keep your knee steady as you curl and lower.",
+      "claim": "c6"
+    },
+    {
+      "point": "Curl until your foot is higher than your knee.",
+      "claim": "c4"
+    },
+    {
+      "point": "Hold the top for a second.",
+      "claim": "c16"
+    },
+    {
+      "point": "Lower slowly and straighten the leg fully.",
+      "claim": [
+        "c5",
+        "c4"
+      ]
+    },
+    {
+      "point": "Control the weight. Don't swing your leg.",
+      "claim": "c9"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Dropping the weight down.",
+      "fix": "Lower it slowly, with control.",
+      "claim": [
+        "c7",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Arching your lower back.",
+      "fix": "Contract your abs.",
+      "claim": "c13"
+    },
+    {
+      "mistake": "Cutting the range short.",
+      "fix": "Curl until your ankle is higher than your knee, then straighten fully.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "calves",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Back of the thigh",
+        "means": "A strong contraction here at the top: the hamstrings are working.",
+        "fix": "",
+        "claim": [
+          "c4",
+          "c12"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Fault: arching the lower back can cause back pain and discomfort.",
+        "fix": "Avoid arching: contract your abs.",
+        "claim": "c13",
+        "redFlag": "back"
+      },
+      {
+        "where": "Knee",
+        "means": "Pain here is a reason to stop.",
+        "fix": "Stop the set.",
+        "claim": "c14",
+        "redFlag": "knee"
+      }
+    ]
   },
-  {
-   "key": "knee-steady",
-   "kind": "posture",
-   "right": "Knee stays in place as the leg curls.",
-   "wrong": "Knee travelling forward and back each rep.",
-   "claim": "c6"
+  "risks": [
+    {
+      "risk": "Arching your lower back can cause back pain and discomfort.",
+      "claim": "c13"
+    },
+    {
+      "risk": "Sudden, jerking movements can lead to injury.",
+      "claim": "c14"
+    },
+    {
+      "risk": "Too much weight makes you use momentum and body swinging.",
+      "claim": "c9"
+    }
+  ],
+  "redFlags": [
+    "knee",
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "pad-heel",
+      "kind": "posture",
+      "right": "Pad just above the heel.",
+      "wrong": null,
+      "claim": "c1"
+    },
+    {
+      "key": "knee-steady",
+      "kind": "posture",
+      "right": "Knee stays in place as the leg curls.",
+      "wrong": "Knee travelling forward and back each rep.",
+      "claim": "c6"
+    },
+    {
+      "key": "top",
+      "kind": "posture",
+      "right": "Foot higher than the knee at the top.",
+      "wrong": "Range cut short.",
+      "claim": [
+        "c4",
+        "c8"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "hamstrings primary and calves secondary match exercises.json: the hamstrings are the primary muscles and the gastrocnemius assists in bending the knee (c12)."
   },
-  {
-   "key": "top",
-   "kind": "posture",
-   "right": "Foot higher than the knee at the top.",
-   "wrong": "Range cut short.",
-   "claim": [
-    "c4",
-    "c8"
-   ]
-  }
- ],
- "libraryDiff": {
-  "add": [],
-  "remove": [],
-  "why": "hamstrings primary and calves secondary match exercises.json: the hamstrings are the primary muscles and the gastrocnemius assists in bending the knee (c12)."
- },
- "anchorSource": "hevy-stlc",
- "gaps": [
-  "No read source describes getting on or off the standing leg curl machine (shared get-in-out leaves standing_leg_curl out).",
-  "No read source gives seconds for the lowering or the lifting; the plate's 2 s down and 1 s up is a drawing convention (c15)."
- ],
- "notes": [
-  "Written on claude/libht-research-lb8 from head 6d253b9e. Child of lying_leg_curl (content.md Appendix A), written in the same batch. The parent card is new in this batch and is verified in the same LR-29 run; with no inherit entries, LR-34 has nothing to check on this card. No inherit entries (LR-34 way (1)): every line rests on this card's own claims, with quotes fetched by curl on 2026-10-22 from standing-leg-curl pages (Hevy, StrengthLog), the standing row of Fitness Volt's lying-leg-curl page (c10), and Healthline's general hamstring-curl page (WEAK, c13, c14). Parent lines that do not hold here: lying face down, hips on the pad, the roller just above the heel on both legs and the bench edge (lying c1, c3, c5, c8); the parent's 3-1-1 tempo (lying c18) is Motra's lying page and is not used.",
-  "Shared cards: get-in-out and selector-pin leave standing_leg_curl out of appliesTo (no source read shows a stack version), and prone-checkpoints does not apply (standing). None is cited.",
-  "Anchor: Hevy's standing-leg-curl page, read in full (steps, muscles, tips, a mistakes list, variations). StrengthLog's standing-leg-curl page is short and read in full.",
-  "Trunk: Hevy says lean forward with the thighs on the support pad; StrengthLog says keep an upright posture (c2). Both keep the upper body still (c3). The plate draws the thighs on the pad with the trunk still, leaning only as the pad sets it.",
-  "Breathing: Hevy breathes in before the curl and out while lowering (c3, c5); no other read source gives breathing for this machine, so no breathing line is shown.",
-  "The knee row's stop rests on Healthline's verbatim stop quote (c14, WEAK, written for hamstring curls in general; R-LB3-4, R-LB6-6). The lower-back row is place + the source's fault + fix (LR-6), with the back box carrying the stop.",
-  "Not reachable: Fitness Volt, Garage Gym Reviews, BarBend, Inspire US, PureGym, NASM standing-leg-curl URLs (404); Liftosaur and Motra standing slugs (404); Muscle & Strength and MuscleWiki (403); ACE (WAF block). Read but not cited: Fitbod's standing-leg-curl page (a kneeling-pad machine: 'Position your left knee onto the pad'), a different machine from the census pose; it has no frequency or harm line about a fault."
- ]
+  "anchorSource": "hevy-stlc",
+  "gaps": [
+    "No read source describes getting on or off the standing leg curl machine (shared get-in-out leaves standing_leg_curl out).",
+    "No read source gives seconds for the lowering or the lifting; the plate's 2 s down and 1 s up is a drawing convention (c15)."
+  ],
+  "notes": [
+    "Written on claude/libht-research-lb8 from head 6d253b9e. Child of lying_leg_curl (content.md Appendix A), written in the same batch. The parent card is new in this batch and is verified in the same LR-29 run; with no inherit entries, LR-34 has nothing to check on this card. No inherit entries (LR-34 way (1)): every line rests on this card's own claims, with quotes fetched by curl on 2026-10-22 from standing-leg-curl pages (Hevy, StrengthLog), the standing row of Fitness Volt's lying-leg-curl page (c10), and Healthline's general hamstring-curl page (WEAK, c13, c14). Parent lines that do not hold here: lying face down, hips on the pad, the roller just above the heel on both legs and the bench edge (lying c1, c3, c5, c8); the parent's 3-1-1 tempo (lying c18) is Motra's lying page and is not used.",
+    "Shared cards: get-in-out and selector-pin leave standing_leg_curl out of appliesTo (no source read shows a stack version), and prone-checkpoints does not apply (standing). None is cited.",
+    "Anchor: Hevy's standing-leg-curl page, read in full (steps, muscles, tips, a mistakes list, variations). StrengthLog's standing-leg-curl page is short and read in full.",
+    "Trunk: Hevy says lean forward with the thighs on the support pad; StrengthLog says keep an upright posture (c2). Both keep the upper body still (c3). The plate draws the thighs on the pad with the trunk still, leaning only as the pad sets it.",
+    "Breathing: Hevy breathes in before the curl and out while lowering (c3, c5); no other read source gives breathing for this machine, so no breathing line is shown.",
+    "The knee row's stop rests on Healthline's verbatim stop quote (c14, WEAK, written for hamstring curls in general; R-LB3-4, R-LB6-6). The lower-back row is place + the source's fault + fix (LR-6), with the back box carrying the stop.",
+    "Not reachable: Fitness Volt, Garage Gym Reviews, BarBend, Inspire US, PureGym, NASM standing-leg-curl URLs (404); Liftosaur and Motra standing slugs (404); Muscle & Strength and MuscleWiki (403); ACE (WAF block). Read but not cited: Fitbod's standing-leg-curl page (a kneeling-pad machine: 'Position your left knee onto the pad'), a different machine from the census pose; it has no frequency or harm line about a fault."
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "thighTop.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "thighTop.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ankle.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Curl",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "drop"
 }

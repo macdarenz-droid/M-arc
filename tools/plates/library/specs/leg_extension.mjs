@@ -1,9 +1,10 @@
 // Leg extension (selectorised machine), side view, figure facing screen right. LIB-18 (LB8, mode H, bulk; tier C;
 // census closest leg_press, closeness N: D-LIB18-CLONE; composer `legExtMachine`, single use, its own anchor: plan
 // 2.1:141, D-LIB18-COMPOSERS).
-// HELD (S2; D-LIB8-shrug, D-LIB18-SIZE): drawn card-true, measured, never enlarged or moved: the Mistake's largest tell
-//  deviation (the upper back, carried off the pad by the 12 deg arch) measures 7.8 px at 146.29 px/m, under
-//  deviationMin 11.39 px; the Trace (the ankle) measures 75.9 px and passes.
+// Held at #306 (S2; D-LIB8-shrug, D-LIB18-SIZE): drawn card-true, measured, never enlarged or moved: the Mistake's
+//  largest tell deviation (the upper back, carried off the pad by the 12 deg arch) measures 7.8 px at 146.29 px/m, under
+//  deviationMin 11.39 px; the Trace (the ankle) measures 75.9 px and passes. Released at 'LIB-18 resume' with a Mistake
+//  zoom at k 1.5 (D-LIBZOOM-EXTEND): 11.7 px at the zoom's scale.
 // View: side (card plate.view = census view). The knee at the pivot (c1), the roller on the lower shins (c2), the knee
 //  range from 90 to straight but not locked (c3, c7, c8), the back on the pad (c4) and the fault, the back arching off
 //  the pad as the legs extend (c5, c6), all read side-on.
@@ -226,6 +227,9 @@ export default {
     { key: 'soft', text: 'Knees<br>unlocked', anchor: { along: ['knee.r', 'ankle.r'], t: 0.25, off: [0, -8] }, box: { left: 250, top: 172 }, cue: 'Straighten without locking your knees.' },
   ],
   tempo: [{ phase: 'Extend', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
+  // LIB-ZOOM's inline zoom circle (D-LIBZOOM-EXTEND, #325 6405116791): the Mistake's fault drawn again at k 1.5, the smallest of
+  // 1.5-4 whose tell-anchor move reaches deviationMin 11.39 px at the zoom's own scale (11.7 px); zoom/inline.mjs places it.
+  zoom: { view: 'mistake', k: 1.5 },
   mistake: {
     pose: mistakePose,
     parts: ['torso', 'head'],

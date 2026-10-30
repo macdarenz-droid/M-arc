@@ -1247,6 +1247,175 @@
     "unit": "m",
     "basis": "stated reason: a 3 cm lever, the bracket size"
    }
+  },
+  "lying_leg_curl": {
+   "BENCH_TOP": {
+    "value": 0.43,
+    "unit": "m",
+    "basis": "convention: equipment.mjs:157 (the vendor flat bench, pad top 0.43 m) for plate.equipment \"a flat bench\" (census flatBench)"
+   },
+   "KNEE_OUT": {
+    "value": 0.04,
+    "unit": "m",
+    "basis": "claim: c1 \"place your knees close to the edge of the bench\": the knee joint 4 cm past the bench end, so the kneecap clears the edge (DESIGN.md section 12)"
+   },
+   "BENCH_LEN": {
+    "value": 1.2,
+    "unit": "m",
+    "basis": "convention: equipment.mjs:158 (the vendor flat bench length) under the chest, hips and thighs (c1, c5)"
+   },
+   "START_KNEE": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "claim: c6 \"nearly straight, but do not force them into a painful locked position\" = the slight-bend rule, leg_press.mjs:13 (#306 6355447835 Q10 1)"
+   },
+   "END_KNEE": {
+    "value": 100,
+    "unit": "deg",
+    "basis": "claim: c7 \"until your knees are bent more than 90 degrees\" (one of its three or-options, D-LIB17-ORCHOICE): 10 deg past 90 (DESIGN.md section 12)"
+   },
+   "ANKLE_T": {
+    "value": 0.85,
+    "unit": "fraction",
+    "basis": "claim: c3 \"just above the heel rather than directly on the Achilles tendon\", c4 \"the lowest comfortable position on the calf\": the pad contact at 0.85 of the shank from the knee, 6.5 cm above the ankle joint, as pilot B's anchor spec (#278, specs/ :44) ANKLE_T (\"just above the shoes\")"
+   },
+   "M_ARCH": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (trunk -12 lumbar arch) for c9, c10 \"arching your lower back\""
+   },
+   "HANDLE": {
+    "value": [
+     0.22,
+     -0.12,
+     0.3
+    ],
+    "unit": "m",
+    "basis": "stated reason: c5 \"Hold the handles\" (plate.equipment: handles at the front of the bench): the grips 22 cm to each side (outside the shoulders), 12 cm under the bench top and 30 cm ahead of the shoulders, so the elbows bend out and the hands reach them"
+   },
+   "BEAM_BACK": {
+    "value": 0.3,
+    "unit": "m",
+    "basis": "convention: pilot B's anchor spec (#278, specs/ :68) (base from z -0.30, the floor beam 30 cm behind the pivot) for the beam that carries the pivot post"
+   },
+   "UPRIGHT_T": {
+    "value": 0.04,
+    "unit": "m",
+    "basis": "convention: eq/legCurlMachine.mjs:20 (the lever 4 cm tube) for the handle upright"
+   },
+   "TILT": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "physical: superman.mjs:76-86, the drawn chest and pelvis (the torso lowest points head-side and foot-side of the navel) at one height, the bench top (c1 \"Lie on your stomach\")"
+   },
+   "ROOT_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "physical: the drawn torso lowest point on the bench top at TILT (c1, c5)"
+   },
+   "HIP": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "physical: the drawn thigh lowest point on the bench top at the start (superman.mjs:105), the thighs resting on the pad"
+   },
+   "TRACE_TRIM": {
+    "value": [
+     6,
+     8
+    ],
+    "unit": "px",
+    "basis": "convention: leg_press.mjs:132, the clone source's Trace trim (D-LIB18-TRIM)"
+   },
+   "trace": {
+    "value": "heel.r",
+    "basis": "D-LIB18-TRACE: c7 \"curl your heels toward your glutes\" (Motra), \"moving the resistance pad\" (ACE); trim [6, 8]: the clone source's trim, leg_press.mjs:132 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     6,
+     8
+    ]
+   }
+  },
+  "standing_leg_curl": {
+   "LEAN": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "claim: c2 \"Lean forward on the machine by placing your thighs against the supportive pad\" (Hevy; #306 6355447835 Q10 5): pelvis and trunk 10 deg forward with both hips flexed 10, so the thighs hang plumb on the pad (DESIGN.md section 12)"
+   },
+   "STANCE_KNEE": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: barbell_back_squat.mjs:30 (the standing soft knee 5 deg; no lock the card does not ask for)"
+   },
+   "START_KNEE": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "claim: c4 \"extend your knee fully\" = the straight rule, barbell_back_squat.mjs:30 (#306 6355447835 Q10 1)"
+   },
+   "END_KNEE": {
+    "value": 110,
+    "unit": "deg",
+    "basis": "claim: c4 \"Go up until your foot becomes higher than your knee\": the thigh plumb and the knee 110, the ankle 14.7 cm above the knee (DESIGN.md section 12)"
+   },
+   "ANKLE_T": {
+    "value": 0.85,
+    "unit": "fraction",
+    "basis": "claim: c1 \"the pad rests just above the heel of the working leg\", \"right above your Achilles tendon\": the pad contact at 0.85 of the shank from the knee, as pilot B's anchor spec (#278, specs/ :44) ANKLE_T"
+   },
+   "M_ARCH": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (trunk -12 lumbar arch) for c13 \"If you arch your lower back\""
+   },
+   "HANDLE": {
+    "value": [
+     0.22,
+     0.1,
+     0.3
+    ],
+    "unit": "m",
+    "basis": "stated reason: c2 \"grab the handles\" (plate.equipment: handles at the front): the grips 22 cm to each side, 10 cm above and 30 cm ahead of the hips, so the elbows bend"
+   },
+   "BEAM_BACK": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the floor beam reaches 10 cm behind the heels so it carries the pivot post and the standing foot stands on it"
+   },
+   "BEAM_FRONT": {
+    "value": 0.16,
+    "unit": "m",
+    "basis": "convention: pilot B's anchor spec (#278, specs/ :68) (base to PIVOT z + 0.16, the floor beam's reach past the pivot)"
+   },
+   "UPRIGHT_T": {
+    "value": 0.04,
+    "unit": "m",
+    "basis": "convention: eq/legCurlMachine.mjs:20 (the lever 4 cm tube) for the handle strut"
+   },
+   "ANKLE_L": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "physical: the standing foot flat (heel and ball level) at STANCE_KNEE (c3 \"plant your left foot firmly on the floor\")"
+   },
+   "ROOT_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "physical: the standing foot lowest drawn point on the floor (c3)"
+   },
+   "TRACE_TRIM": {
+    "value": [
+     6,
+     8
+    ],
+    "unit": "px",
+    "basis": "convention: leg_press.mjs:132, the clone source's Trace trim (D-LIB18-TRIM)"
+   },
+   "trace": {
+    "value": "heel.r",
+    "basis": "D-LIB18-TRACE: c3 \"pulling your heel up toward your glutes\", c4; trim [6, 8]: the clone source's trim, leg_press.mjs:132 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     6,
+     8
+    ]
+   }
   }
  }
 }
