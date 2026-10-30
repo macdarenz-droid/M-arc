@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-29 ~04:57 UTC · main `6cf4ea2a` · **8.0s: PAUSED by the owner; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-30 ~22:00 UTC · main `6cf4ea2a` · **8.0s: resumed after the owner pause; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -810,6 +810,10 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
 
 ### 8.0s PAUSE 10-29 ~04:57 UTC (owner: "Whatever current task, pause when finish after that and stop all task. Dont do anything after that."; read first, then 8.0r)
+- **RESUMED 10-30 ~21:56 UTC** (owner: "Continue again"). The hourly tick is re-enabled. Usage: 7-day 0.42 (the 80 % rule applies; reset Thu 11-05 02:00 UTC).
+  - LIB-21 resume 2 resumed (active LIB builders 1 of 4). The other lanes are WAITING on the supervisor.
+  - Panel mx4 is resumed, with burpee added (#331 @ `eecb54fd`, page `5e02f6aa…`). Its set is LB4 round 2, PILOT-A2 round 1 and burpee round 2.
+  - A fresh Opus reviewer is on LIB-18 #325 @ `63e8c7be`. Then train 46: LB7 #332 @ `e7f4600a` and LB8 #325.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
