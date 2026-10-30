@@ -180,6 +180,41 @@
     "value": 30,
     "unit": "deg",
     "basis": "stated reason: a bend that reads as the hand off the forearm's line; no card claim or approved plate gives a wrist-bend size (LIB-8R PLAN RULED: M_WRIST 30 stands under D-LIB17-SIZE); c13 'avoid flexion/extension at the wrist joint'"
+   },
+   "HAND_W": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason: the hand drawn as a segment from the wrist to the handle (panel mx4 R5), 4 cm wide, narrower than the fist so the fist and handle stay visible; c13 'neutral wrist'"
+   },
+   "PAD_W": {
+    "value": 0.145,
+    "unit": "m",
+    "basis": "convention: the engine bench primitive's default (vendor/engine/equipment.mjs:158-177), the bench of dumbbell_bench_press (pilot A); drawn as pitched world polys (panel mx4 R2): width 0.29, half"
+   },
+   "PAD_T": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: the engine bench primitive's default (vendor/engine/equipment.mjs:158-177), the bench of dumbbell_bench_press (pilot A); drawn as pitched world polys (panel mx4 R2): pad"
+   },
+   "LEG_IN": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "convention: the engine bench primitive's default (vendor/engine/equipment.mjs:158-177), the bench of dumbbell_bench_press (pilot A); drawn as pitched world polys (panel mx4 R2): legInset"
+   },
+   "POST": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "convention: the engine bench primitive's default (vendor/engine/equipment.mjs:158-177), the bench of dumbbell_bench_press (pilot A); drawn as pitched world polys (panel mx4 R2): post half width"
+   },
+   "FOOT_HALF": {
+    "value": 0.22,
+    "unit": "m",
+    "basis": "convention: the engine bench primitive's default (vendor/engine/equipment.mjs:158-177), the bench of dumbbell_bench_press (pilot A); drawn as pitched world polys (panel mx4 R2): front-view foot ±0.22"
+   },
+   "FOOT_T": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "convention: the engine bench primitive's default (vendor/engine/equipment.mjs:158-177), the bench of dumbbell_bench_press (pilot A); drawn as pitched world polys (panel mx4 R2): the foot bar 1.5 cm half height, so 3 cm"
    }
   },
   "bent_over_dumbbell_rear_delt_fly": {

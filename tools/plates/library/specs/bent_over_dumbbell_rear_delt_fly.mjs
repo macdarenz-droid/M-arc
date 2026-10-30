@@ -151,8 +151,10 @@ export default {
   // describes (c2: tilt at the hips, spine straight). No card number: a worded value, as machine_chest_press.
   measure: { vertex: 'hip.r', from: 'knee.r', to: 'shoulder.r', radius: 24, title: 'Hip', value: 'hinged, spine straight', box: { left: 8, top: 250 } },
   callouts: [
+    // Soft elbows: the elbow points at the camera and projects onto the shoulder, so the leader ends a third of the way
+    // down the forearm, where the bend shows (panel mx4 R4).
     { key: 'back', text: 'Flat back', anchor: 'backUpper', cue: 'Hinge at the hips with a straight spine and a braced core.' },              // c2
-    { key: 'elbows', text: 'Soft elbows', anchor: 'elbow.r', prefer: 'above', cue: 'Keep the same slight elbow bend from bottom to top.' },                    // c2
+    { key: 'elbows', text: 'Soft elbows', anchor: { along: ['elbow.r', 'wrist.r'], t: 0.33 }, prefer: 'above', cue: 'Keep the same slight elbow bend from bottom to top.' },                    // c2
     { key: 'level', text: 'Level arms', anchor: 'grip.r', prefer: 'below', cue: 'Raise the arms out to the sides to about body level, no higher.' },          // c3
   ],
   tempo: [{ phase: 'Raise', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],                                                        // c10

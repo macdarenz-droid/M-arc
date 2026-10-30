@@ -133,10 +133,10 @@ export default {
       { kind: 'arrow', from: { at: 'chest', pose: 'end' }, to: { at: 'chest', pose: 'mistake' } },
     ],
     tells: [
-      { key: 'flare', text: 'Ribs flare', anchor: { at: 'chest', pose: 'mistake' }, cue: 'The ribcage flares up and the low back arches as you step back.' },   // c18
+      { key: 'flare', text: 'Ribs flare', anchor: { along: ['chest', 'backMid'], t: 0.5, pose: 'mistake' }, cue: 'The ribcage flares up and the low back arches as you step back.' },   // c18
     ],
   },
-  zoom: { view: 'mistake', k: 1.5 },   // the smallest k on the ladder that reaches H3's bar (LIB-8R PLAN RULED)
+  zoom: { view: 'mistake', k: 2.5 },   // the ring on the lower ribs and low back (panel mx4 R11); 2.5 is the smallest k of 2 or more that passes (2 gives 11.0 px)
   // Tempo: no seconds in the card (c7, c16; 3 s down is a progression only, c15): the strip without seconds, exactly
   // tempoOf(strip/rows.json reverse_lunge) (D-STRIP-ROWS).
   tempo: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Rise', move: true, word: 'Quicker' }],

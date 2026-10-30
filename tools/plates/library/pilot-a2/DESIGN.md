@@ -137,3 +137,22 @@ Notes:
   from main's spec: svg `0744dcf3…`, overlay `cbf84381…`.
 - `push.negotiate true` in the container's git config made pushes send no objects (GitHub: "missing necessary objects").
   `git -c push.negotiate=false push` works.
+
+## 8. Panel mx4, round 1 fixes (#340 6534832450)
+
+box_jump is approved and byte-identical: its 9 fragment sha256 values are unchanged from `2e4aa3ff`. The page is now
+`ecb8966f97668936f5fb5235f1bede7c79e93b7a79eb65ad02f3ed908184660a` (built twice). qa.mjs: all 10 hard checks pass on all 4
+with zero exemptions, and the flags equal the expected set.
+- **reverse_lunge R11:** the `flare` tell anchor is now the mid-point of `chest` and `backMid` in the Mistake pose, so the
+  ring sits on the lower ribs and low back: centre (181.8, 218.7), r 20.8, at k 2.5. 2.5 is the smallest k of 2 or more
+  that passes; k 2 gives 11.0 px. Zoom deviation is 13.8 px. The normal plate is unchanged (A7).
+- **dumbbell_fly R2:** the pitched bench is drawn as world `poly` items: the pad (top face and foot-end face), and at each
+  end an upright with a cross foot. The sizes are the engine bench primitive's defaults, so it is dumbbell_bench_press's
+  bench. The figure does not move.
+- **dumbbell_fly R5:** the hand is a 4 cm wide segment from the wrist to the handle (HAND_W). It is redrawn dashed at the
+  card's 30°.
+- **dumbbell_fly R11:** waits on a zoom/QA tool fix. `zoom/inline.mjs:153` drops `camera.pitch`, and `qa/engine.mjs:36-40`
+  `cameraOf` projects with no pitch; evidence is in #340 6534849228. With the true projection the fly's tell deviation is
+  4.97 px, so its k will be 2.5, not 2, once the tool is fixed.
+- **rear-delt R4:** the Soft elbows leader ends a third of the way down the forearm (`along elbow.r → wrist.r, t 0.33`),
+  at (198.2, 198.1). The elbow itself projects onto the shoulder. No pose changes.

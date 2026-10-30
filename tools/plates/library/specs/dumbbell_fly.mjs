@@ -92,8 +92,35 @@ const PX_M = 256 / 1.75;                              // the engine's reference 
 const M_WRIST = 30;                                   // wrist bend (deg): a stated reason, pilot-a2/sizes.json
 const qEnd = resolve(normPose(end, BODY), BODY).q;
 const wristPose = { reach: { l: null, r: null }, shoulder: qEnd.sh, elbow: qEnd.elbow, wrist: { l: -M_WRIST, r: -M_WRIST } };
+// The bench in the pitched view (panel mx4 R2): the engine's `bench` primitive draws a front-view cross-section only
+// (vendor/engine/equipment.mjs:158-177), two tabs beside the hips, so the pitched view draws the bench's own parts as
+// world-space `poly` items, projected by the engine's pitched camera: the pad (top face and its foot-end face), and at
+// each end an upright from the pad to the floor with a cross foot. Sizes are the primitive's defaults (width 0.29, pad
+// 0.06, legInset 0.12, beam 0.025 under the pad, foot ±0.22), so it is the same bench as dumbbell_bench_press's.
+const PAD_W = 0.29 / 2, PAD_T = 0.06, LEG_IN = 0.12, POST = 0.025, FOOT_HALF = 0.22, FOOT_T = 0.03;
+const zH = BENCH_Z - BENCH_LEN / 2, zF = BENCH_Z + BENCH_LEN / 2, beamY = BENCH_TOP - PAD_T - 0.025;
+const rect = (x0, x1, y0, y1, z) => [[x0, y0, z], [x1, y0, z], [x1, y1, z], [x0, y1, z]];
+const PITCHED_BENCH = [
+  ...[zH + LEG_IN, zF - LEG_IN].flatMap(z => [
+    { type: 'poly', pts: rect(-POST, POST, FOOT_T, beamY, z), cls: 'eq', z: 'back', part: 'bench' },              // upright
+    { type: 'poly', pts: rect(-FOOT_HALF, FOOT_HALF, 0, FOOT_T, z), cls: 'eq', z: 'back', part: 'bench' },         // its foot
+  ]),
+  { type: 'poly', pts: [[-PAD_W, BENCH_TOP, zH], [PAD_W, BENCH_TOP, zH], [PAD_W, BENCH_TOP, zF], [PAD_W, BENCH_TOP - PAD_T, zF],
+    [-PAD_W, BENCH_TOP - PAD_T, zF], [-PAD_W, BENCH_TOP, zF]], cls: 'eq', z: 'back', part: 'bench' },              // the pad
+];
+
+// The hand as a short segment from the wrist to the handle (panel mx4 R5), so the wrist bend reads as an angle: a world
+// `poly` HAND_W wide along wrist -> grip, in the body's own fill. In the Mistake it is redrawn bent M_WRIST about the wrist,
+// with the dumbbell, at the card's true size.
+const HAND_W = 0.02;                                  // half width (m): a stated reason, pilot-a2/sizes.json
+const handPoly = (W, G, part) => {
+  const d = [G[0] - W[0], G[1] - W[1]], L = Math.hypot(...d), n = [-d[1] / L * HAND_W, d[0] / L * HAND_W];
+  return { type: 'poly', pts: [[W[0] + n[0], W[1] + n[1], W[2]], [G[0] + n[0], G[1] + n[1], G[2]], [G[0] - n[0], G[1] - n[1], G[2]], [W[0] - n[0], W[1] - n[1], W[2]]], cls: 'eq-solid', z: 'front', part };
+};
+const HANDS = lm => ['l', 'r'].map(s => handPoly(lm[`wrist.${s}`], lm[`grip.${s}`], `hand.${s}`));
+
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
-export const SIZES = { BENCH_TOP, FOOT_Z, FOOT_X, ELBOW, SHOULDER_W, ARC_DZ, PITCH, M_WRIST };
+export const SIZES = { BENCH_TOP, FOOT_Z, FOOT_X, ELBOW, SHOULDER_W, ARC_DZ, PITCH, M_WRIST, HAND_W, PAD_W, PAD_T, LEG_IN, POST, FOOT_HALF, FOOT_T };
 
 /** The fly plate in `view` ('front' = the card, 'side' = the former view, kept as the alternate); `id` for the file. */
 export function makeFly(view, id) {
@@ -112,8 +139,9 @@ function frontFly(id) {
     poses: { start, end, via },
     equipment: [
       { type: 'floor', from: [-0.5, 0, FOOT_Z], to: [0.5, 0, FOOT_Z] },   // the floor line under the feet, clear of the zoom corners
-      { type: 'bench', at: [0, BENCH_TOP, BENCH_Z], len: BENCH_LEN },
+      ...PITCHED_BENCH,
       (lm, ctx) => (ctx.pose === 'end' ? phantom : null),
+      lm => HANDS(lm),
       lm => [{ type: 'dumbbell', at: lm['grip.l'], axis: [0, 0, 1], z: 'front', part: 'db.l' },
         { type: 'dumbbell', at: lm['grip.r'], axis: [0, 0, 1], z: 'front', part: 'db.r' }],
     ],

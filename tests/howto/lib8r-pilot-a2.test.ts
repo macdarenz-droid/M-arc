@@ -158,7 +158,7 @@ describe('LIB-8R A7, D-LIB8R-BJTELL: card truth, one tell per Mistake', () => {
   it("reverse_lunge's normal plate is main's: export sha, a Mistake-view zoom only, and the normal render bytes", () => {
     const s = spec('reverse_lunge');
     expect(exportSha(s)).toBe('026964f91f030268d49bc52cf1adf46c265d9fcd27349e01e30c6f3bc87cc0dd');
-    expect(s.zoom).toEqual({ view: 'mistake', k: 1.5 });
+    expect(s.zoom).toEqual({ view: 'mistake', k: 2.5 });
     const n = plate.renderPlate(s, { id: 'x-n' });
     expect({ svg: sha(n.svg), overlay: sha(n.overlay) }).toEqual(NORMAL);
   });
@@ -277,14 +277,14 @@ describe('LIB-8R A5, A10: runQa node half on each PILOT-A2 plate, the zooms, LIB
     expect(ruledProblems('bent_over_dumbbell_rear_delt_fly', r).length).toBeGreaterThan(0);
   });
   it('A10: each zoom is the planned Mistake-view zoom, at the smallest passing k', () => {
-    expect(spec('reverse_lunge').zoom).toEqual({ view: 'mistake', k: 1.5 });
+    expect(spec('reverse_lunge').zoom).toEqual({ view: 'mistake', k: 2.5 });
     expect(spec('dumbbell_fly').zoom).toEqual({ view: 'mistake', k: 2 });
     expect(spec('bent_over_dumbbell_rear_delt_fly').zoom).toEqual({ view: 'mistake', k: 2 });
     expect(spec('box_jump').zoom).toBeUndefined();
   });
-  it('A10 mutations: k below the bar on dumbbell_fly and the rear-delt fly turns H3 red', async () => {
-    for (const id of ['dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly']) {
-      const c = await mutated(id, 's => ({ ...s, zoom: { ...s.zoom, k: 1.5 } })');
+  it('A10 mutations: the next k down on dumbbell_fly, the rear-delt fly and reverse_lunge turns H3 red', async () => {
+    for (const [id, k] of [['dumbbell_fly', 1.5], ['bent_over_dumbbell_rear_delt_fly', 1.5], ['reverse_lunge', 2]] as const) {
+      const c = await mutated(id, `s => ({ ...s, zoom: { ...s.zoom, k: ${k} } })`);
       expect(node(await qa(c)), id).toContain('H3.zoom:deviation');
     }
   });
