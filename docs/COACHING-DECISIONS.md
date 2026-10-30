@@ -2911,3 +2911,7 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   - The pair must be two distinct points on a Mistake entry, both drawn vertices, with `turned` the tell's own Mistake anchor (D-LIB18-RINGKEEP), inside the source ring, and under the bar at plate scale. The bars, k range and circle are unchanged.
   - renegade_row reads 5.640 px at plate scale, 16.92 px at k 3. Its `zoom` field, H4 and H8 rows stay LIB-17's.
   - Not built, proposed: D-FZOOM2-TRIM (the zoom's screen-px trim is kept; superman stays held for LB9's own ruling) and D-FZOOM2-RDF (no rule-keeping r 52 circle for cable_rear_delt_fly; it stays held).
+- **D-ZOOM-PITCH, built (F-ZOOM-PITCH; card docs/supervisor/verify/f-zoom-pitch-card.md; diagnosis #340 6534849228).** The zoom circle and every QA projection (`cameraOf`) use the plate's own camera, `camera.pitch` included.
+  - A plate with no pitch is unchanged, byte for byte. A pitched plate's measures are now the drawn ones, so its zoom k may change; its lane re-measures and never enlarges a fault.
+  - The circle keeps the pitch but not `fit`/`maxScale`, which would replace its k × scale.
+  - dumbbell_fly (pitch 45): `wrists` deviation 4.97 px (was 6.57), smallest ladder k 2.5. russian_twist (held, pitch 20, no zoom) is the one main spec with a pitch.
