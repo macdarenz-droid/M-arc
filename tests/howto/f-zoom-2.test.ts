@@ -106,7 +106,7 @@ describe('F-ZOOM-2 A2-A4: renegade_row released at k 3', { timeout: T }, () => {
     expect(keys(r0).filter((k: string) => /^H[234]\./.test(k))).toEqual([]);
     // what stays red is not this card's: H8.words (LIB-17's, card table), and the in-memory fixture's own H6 (main's
     // research card has no tempo text) and H7 (the fresh rebuild reads the real spec file, which has no zoom or tempo)
-    expect(keys(r0)).toEqual(['H6.tempo', 'H6.tempo-text', 'H6.tempo-word:1', 'H7.determinism:fresh-threw', 'H8.words:mistake.corner.label']);
+    expect(keys(r0)).toEqual(['H8.words:mistake.corner.label']);
   });
   it('A3 red: k 2 (11.28 px) and k 1.5 (8.46 px) are under the 11.39 px bar', async () => {
     for (const k of [2, 1.5]) {

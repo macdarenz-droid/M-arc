@@ -143,14 +143,14 @@ export default {
   trace: { point: 'shoulder.r', trim: [10, 12] },
   // The level line (c5, c8): through the end elbow; the upper arm lies on it at the bottom, and below it in the Mistake.
   datum: [{ y: 'elbow.r', from: { at: 'elbow.r', off: [-14, 0] }, to: { at: 'shoulder.r', off: [30, 0] } }],
-  measure: { vertex: 'elbow.r', from: { dir: UA }, to: 'wrist.r', radius: 18, title: 'Elbow', value: 'about 90°', expect: 90, box: { left: 12, top: 112 } },
+  measure: { vertex: 'elbow.r', from: { dir: UA }, to: 'wrist.r', radius: 18, title: 'Elbow', value: 'about 90°', expect: 90, box: { left: 12, top: 150 } },
   callouts: [
     // c5, c8: on the elbow's upper edge, from the open space above the arm
-    { key: 'elbows', text: 'Elbows<br>at 90', anchor: { at: 'elbow.r', off: [4, -6] }, box: { left: 96, top: 74 }, cue: 'Lower until your elbows reach about 90 degrees, upper arms level with the floor.' },
+    { key: 'elbows', text: 'Elbows<br>at 90', anchor: { at: 'elbow.r', off: [4, -6] }, box: { left: 54, top: 92 }, cue: 'Lower until your elbows reach about 90 degrees, upper arms level with the floor.' },
     // c4: on the hips' underside (the seat point), from below the floor line, clear of the bench's foot
     { key: 'hips', text: 'Hips close', anchor: { at: 'seat', off: [10, 0] }, box: { left: 160, top: 308 }, cue: 'Keep your hips close to the bench.' },
     // c3: on the shin's upper edge, from the open space above the legs
-    { key: 'legs', text: 'Legs out', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 284, top: 198 }, cue: 'Keep your legs straight out, heels on the floor.' },
+    { key: 'legs', text: 'Legs out', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 284, top: 226 }, cue: 'Keep your legs straight out, heels on the floor.' },
   ],
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }],
   mistake: {
@@ -160,9 +160,10 @@ export default {
       // c8: the red hips' underside, below the end figure's, near the floor
       { key: 'low', text: 'Dropping<br>too low', anchor: { at: 'seat', pose: 'mistake', off: [10, 0] }, box: { left: 160, top: 308 }, cue: 'Dropping too low puts too much stress on the shoulders.' },
       // c8: the level line through the elbow (the datum), which the red upper arm sinks below
-      { key: 'parallel', text: 'Below<br>parallel', anchor: { at: 'shoulder.r', pose: 'end', off: [26, 0] }, box: { left: 200, top: 112 }, cue: 'The upper arms sink well below level with the floor.' },
+      { key: 'parallel', text: 'Below<br>parallel', anchor: { along: ['mistake:elbow.r', 'mistake:shoulder.r'], t: 0.8, pose: 'mistake' }, box: { left: 176, top: 160 }, cue: 'The upper arms sink well below level with the floor.' },
     ],
   },
   pilot: { drawableFault: 'Top fault: the elbows flaring out (c7), sideways, which the side view cannot show; the plate draws the next fault on the same list, dropping too low (c8).' },
+  zoom: { view: 'normal', k: 3 },
   alt: 'Bench dip, side view. Hands flat on the edge of a bench behind the hips, legs straight out with the heels on the floor, the lifter lowers from straight arms until the elbows are bent about 90 degrees with the upper arms level, hips close to the bench.',
 };
