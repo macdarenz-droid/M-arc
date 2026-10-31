@@ -486,3 +486,154 @@ Results (scratch, then built; main `c7bdad7a`):
   - (2) A larger pelvis turn: the Mistake spine solve has no solution above M_YAW_SHARE 0.8. The red `knee.l` x goes 216.5 (0.5), 219.7 (0.6), 224.0 (0.75), 225.2 (0.8). The ball spans x 216.5-261.9 and y 206-251.5, so the knee stays behind the ball. At 0.8 the red right knee shows only in a pocket closed by the torso, forearm, ball and red shins.
   - Neither option passes without a new rule.
 - **superman approved** in panel mx7 (#337 6540319980) at `1273e4f6`; its fragment `2ed02b364e72c3a4` is pinned in A10 beside the other three.
+
+## 24. Resume 3 plan ('LIB-21 resume 3', card LIB-21R3; cable_crunch on LIB-SPINE's spine segments)
+
+Base: measured on #348's head `bf4b8d4d` (LIB-SPINE). Main `f7ab6751` (train 54) is byte-equal to it on tools/plates/**,
+lb9-plates.test.ts and COACHING-DECISIONS.md (`git diff --stat` empty), so every number holds on the branch's base. Scripts in the builder's scratchpad (never committed); every number below is from a run.
+
+**Sources (D-LB9R3-SPLIT amendment, fetched with curl on 10-31, numbers confirmed verbatim):**
+- Pearcy M, Portek I, Shepherd J, "Three-dimensional x-ray analysis of normal movement in the lumbar spine", Spine
+  1984;9(3):294-7 (PMID 6374922). Quoted in research protocol NL63033.096.18 v2.0 §5.5 (clinicaltrials.gov NCT03737227,
+  `cdn.clinicaltrials.gov/large-docs/27/NCT03737227/Prot_SAP_000.pdf`, its reference 13): "Mean range of flexion for
+  healthy participants (n=11) was 8º for L1-L2, 10º for L2-L3, 12º for L3-L4, 13º for L4-L5 and 9º for L5-S1". The
+  primary's PubMed abstract gives no per-level numbers ("approximately 14 degrees" flexion plus extension per joint,
+  "the lower levels moving slightly more"), so the levels rest on the verbatim secondary quote.
+- Hajibozorgi M, Arjmand N, "Sagittal range of motion of the thoracic spine using inertial tracking device and effect
+  of measurement errors on model predictions", J Biomech 2016;49(6):913-918 (PMID 26422120; abstract via PubMed
+  eutils; the Sharif repository host reset every connection): "118.4 ± 13.9° ... 20.5 ± 6.5° ... thoracic ROM ...
+  lumbar ROM (50.2 ± 7.0°) and pelvis (47.8 ± 6.9°) ... (14.8 ± 5.4° versus 5.8 ± 3.1°)". The card's "authors and title
+  unverified" is now verified; its lower thoracic is T5-T12, upper T1-T5.
+
+**Split rule [est mapping, sourced numbers]:** each engine pivot carries the motion segments between it and the pivot
+below. L5/S1 (.60 H): L5-S1 9°; L3 (.62): L4-L5 + L3-L4 25°; T12 (.68): L2-L3 + L1-L2 18°; T7 (.75): the thoracic 20.5°
+(the thorax above T7 is rigid in the engine). The Pearcy levels (L1-S1 52°) scale to the 50.2° lumbar total: 8.69 /
+24.13 / 17.38, + 20.5 = 70.7°. **SPLIT 0.123 / 0.341 / 0.246 / 0.290.**
+
+**sizes.json rows (builder decision D-LB9R3-SPLITROWS, for this ruling):** four number rows `SPLIT_L5S1` 0.123,
+`SPLIT_L3` 0.341, `SPLIT_T12` 0.246, `SPLIT_T7` 0.290 (unit `fraction`), each with the shared basis (both sources, the
+rule, the four scaled angles) and its own level line. Why four, not one array row: A17's `sizeProblems`
+(lb9-plates.test.ts:1476) compares `table[k].value !== spec[k]`, so an array row is never equal and A17 would need an
+edit outside this card's blocks. Four numbers keep A17 byte for byte, and a SPLIT edited in the spec only turns it red
+(A3's mutation in A17's form). The spec builds `SPLIT = [SPLIT_L5S1, SPLIT_L3, SPLIT_T12, SPLIT_T7]` and
+`spine(t) = { flex: SPLIT × t }`. ELBOW_GAP's and VIA_N's bases: 99.9° → 102.3°, 11.1° → 11.4° per key.
+
+**Splits measured** (146.29 px/m; bars Trace 22.11, deviation 11.39 px). Back curve: the back line (z −0.062 H) through
+`fk`'s skin map every 0.005 H from .55 to .80 H at the end; the turn at each step; the largest share of the total
+(sum of absolute turns) in any 0.02 H window (4 turns). Every row equals the card's table.
+
+| split | TRUNK_END | chord end/start | Trace px | deviation px | window max (at H) | counter-turns | rope min / frames cm | Mistake QM th / tilt |
+|---|---|---|---|---|---|---|---|---|
+| single pivot (main) | 99.92° | 0.488 | 58.3 [card] | 28.1 [card] | 42.2 % (.615) | 4.0° | 0.30 / 0.23 | 41.40 / 88.37 |
+| **0.123/0.341/0.246/0.290** | **102.33°** | **0.569** | **33.6** | **30.0** | **22.2 % (.610)** | 37.8° | 0.30 / 0.25 | 43.62 / 77.86 |
+| 0.15/0.2/0.3/0.35 | 100.73° | 0.588 | 28.0 [card] | 30.9 [card] | 22.9 % | 36.2° | 0.30 / 0.25 | 44.82 / 74.63 |
+| 0.25 ×4 | 103.67° | 0.564 | 37.2 [card] | 29.2 [card] | 17.9 % | 35.4° | 0.30 / 0.24 | 42.65 / 80.16 |
+| 0.35/0.3/0.2/0.15 | 104.87° | 0.546 | 47.7 [card] | 27.9 [card] | 24.9 % | 32.4° | 0.30 / 0.23 | 40.93 / 85.10 |
+| [0, 1, 0, 0] (A4 mutation) | 99.92° | 0.488 | — | — | 69.2 % | 18.8° | 0.30 / 0.23 | 41.40 / 88.37 |
+
+[card]: QA was run here only on the sourced split; the other Trace and deviation cells are the card's.
+
+**QA on the sourced split** (lb9/qa.mjs, node and browser, zero exemptions, scratch rows file with lib_cable_crunch):
+- Box on main {200, 246}: all 10 pass; F2 0.622, **F3 32.9** (≠ the named 26.05), F5. lb9-plates.test.ts: the leader
+  gap 4.78 px (< 6).
+- **Box {200, 234} (D-LB9R3-ROPEBOX):** all 10 pass on every LB9 row; F2 0.622, **F3 26.0** (26.05 ± 0.1), F5 3.57;
+  "flag set: equal to the expected set". Trace 33.6, deviation 30.0, pxPerM 146.3, cover 0.622. lb9/qa.mjs unchanged.
+- lb9-plates.test.ts on that head (169 tests): 6 red, each in this card's scope: A5 ×2, A9 and A10 (HELD still lists
+  cable_crunch, :108, :856, :868), A17 (the SPLIT rows not yet in sizes.json) and the D-LIB21-ROPENIT mutation at
+  {200, 232} (now 6.57 px, replaced by {200, 246}). :856's expected id list is the same HELD assert one block up and
+  is edited with :868.
+
+**D-LB9R3-ANGLE:** the end keeps the ELBOW_GAP solve, 102.33° (1.45 × the sourced 70.7°). A cap at 70.7° gives an
+elbow gap of 20.55 cm and a Trace of 17.9 px, H3.trace red [card; re-run in A5's mutation]. Named on the sheet as a
+card-truth limit for R1.
+
+**Balance and the Mistake:** the end's centre of mass z −0.040 m, inside the base −0.630 to 0.049 m; the Mistake
+(`trunk: { flex: [0, 0, 0, 0] }`) re-solves to th 43.62°, tilt 77.86° with the same centre of mass.
+
+**Expected flags:** F2 0.622, F3 26.05, F5 (D-LIB21-CCFLAGS unchanged; qa.mjs untouched).
+
+**Tests (wave 1, each with its red mutation):** A3 the array trunk in every pose and the Mistake (a number trunk in the
+Mistake throws D-SPINE-MIX), SPLIT = the sizes rows (spec-only edit red in A17); A4 the 30 % window (SPLIT [0, 1, 0, 0]
+69 % red); A5 the end card-true (TRUNK_END 70.7° red); A6 the box and the flags ({200, 246} 4.78 px red); A7 the cable
+and the ferrule ≥ 2 px from every body outline in every drawn pose. Measured (scratch test): start 15.80 px (the
+card's number), vias 16.42-18.18, end 16.32, **Mistake 11.76 px** (its dashed cable guide and the rope's ferrule; the
+card's 15.80 counted no Mistake cable). The card's designed mutation (the ferrule 13 px onto the head) leaves 7.44 px
+and 20 px leaves 4.75 px, so the mutation centres the ferrule on the ear landmark with the cable's end: 0.00 px, red.
+All seven new tests pass on the scratch head and each mutation is red (A4 69.4 %; A5 20.55 cm and Trace 17.89 px).
+
+**Risks:** the blend-zone counter-turns (37.8° in total, about 1.3 px a step) are the engine's SPINE_HW blend; a critic
+finding goes to the supervisor as S2, never a lane edit. R1 may still fail on magnitude (102°, named). The Trace
+shortens 58.3 → 33.6 px, still 11.5 px over the bar.
+
+## 25. F-BICYCLE-REACH (D-SPINE-BICYCLE; no spec, nothing drawn)
+
+Measured in scratch on `bf4b8d4d` (throwaway scripts in the builder's scratchpad, never committed). bicycle_crunch stays
+held (D-LB9R3-BICYCLE) until the supervisor rules what c5's "nears" means and a new card follows.
+
+**Card** (docs/research/howto/cards/bicycle_crunch.json; `plate.view` "front", :534):
+- c1: "Lie face up with your lower back on the ground." "Bend your knees at a 90-degree angle, slightly above your
+  hips." (ggr) "Lie on your back with your hands behind your head and your legs raised, knees bent at 90 degrees." (sl)
+- c4: "Extend your right leg while simultaneously rotating your torso to bring your right elbow toward your left knee."
+  (sl) "Extend your left leg and bring your left elbow to the inside of your right knee." (ggr)
+- c5: "Lift shoulders until elbow nears opposite knee; extend leg to 6-12 inches above floor without touching down." (motra)
+- c6: "Keep lower back pressed into the floor throughout." (motra)
+- c8: "Your upper body and core should do all the rotation, not your hips. [...] your hips should stay still." (ggr)
+  "Aim to keep the lower back pressed against the floor and hips in a neutral position during the move, with only the
+  torso rotating." (pg)
+- plate.end: "Trunk turned so one elbow nears the opposite knee, that knee bent toward the chest (c4, c5); the other leg
+  extended about 15-30 cm above the floor, not touching down (c5); lower back still pressed down and hips still (c6,
+  c8); elbows still wide (c2)."
+
+**Method:**
+- Pair elbow.r to the bent knee.l (c4, sl). Base: crunch.mjs's `supine()` class (crunch.mjs:58-66): pelvis tilt −90,
+  root y 0.14 m, trunk −3.56°, neck −1.93°.
+- Reach in 3D, A18's capsules: the elbow-cap sphere (RADII.elbowCap × H, 3.85 cm, body.mjs:29) to the bent leg's
+  surface, the least of the kneecap sphere (RADII.kneeCap × H, 4.90 cm), the thigh capsule (cable_crunch's `thighR`
+  taper, RADII.thigh) and the shank capsule (the same taper, RADII.shank). Joint-centre distances in brackets.
+- Screen gap: the same model in 2D through the front view's pitch (plate.mjs:57, screen-up = y cos p − z sin p) at
+  146.29 px/m; px scale linearly with the plate's px/m. A negative gap means the drawn cap overlaps the drawn leg.
+  `depth: 'view'` changes only the draw order (SPEC.md:126), not where anything lands, so the gaps hold with or without it.
+- Curl: `trunk.flex` = this card's SPLIT × the curl. Yaw uses the same split [est; the card fixes only flex].
+- Hands behind the head [est]: grips at head-frame [±0.05, 0.93, −0.05] H, the IK pole the thorax lateral, so the elbows
+  are as wide as they go (c2).
+- Lower back down and hips still (c6, c8): the pelvis (root, tilt) is the base's, no root yaw, roll or bow (sacrum and
+  buttock move 0.00 cm); the L3 `lumbar` landmark rises at most 1 cm (crunch.mjs:18's floor tolerance) [est mapping;
+  not binding: 0.53 cm at curl 70.7°].
+- Limits: curl ≤ 70.7° (this card's sourced total); bent hip 90-120° (leg_press.mjs:21 "~120 deg" normal passive hip
+  flexion); bent knee 90° (c1); hip abduction 0; trunk yaw: no sourced limit found in the repo [unverified], searched 0-90°.
+- The other leg: knee 0°, hip flexion 3.2-12.5° puts heel.r 0.15-0.30 m up (c5); it does not change the gap.
+
+**Grid** (best over yaw 0-90° and hip 90-120° at 1° steps):
+
+| case | 3D gap (centres) | at | nearest | screen px at pitch 75 / 80 / 88 |
+|---|---|---|---|---|
+| every limit held | **6.8 cm** (20.9) | curl 70.7, yaw 89, hip 120 | shank | −5.5 / −6.1 / −6.7 |
+| curl 70.7 → 80 | 2.4 (22.8) | yaw 85 | shank | −10.7 / −11.4 / −12.7 |
+| hip 120 → 130 | 4.4 (26.6) | yaw 90 | shank | −5.5 / −5.9 / −7.1 |
+| L3 rise 1 → 2 cm, or free | 6.8 | same | — | same |
+| yaw to 100 | 6.8 (yaw 89-90 is the interior minimum) | — | — | — |
+| hip abduction ±10 / ±20 | 6.7 / 9.2 / 10.7 / 12.3 | — | shank | — |
+| yaw capped at 30 / 45 / 60 / 70 | 35.0 / 26.9 / 18.0 / 12.5 | curl 70.7, hip 120 | — | at 45: 34.6 / 33.8 / 32.8 |
+| kneecap only, held | 9.1 | yaw 89, hip 108 | kneecap | — |
+
+**Binding limits:** the curl total (70.7°) and the bent hip's flexion (120°); relaxing either one step closes the gap,
+relaxing the L3 rise or the yaw does not. 2 cm needs curl ≥ 80.7° or hip ≥ 137°; contact needs curl ≥ 84.7° or hip ≥
+142°. The held minimum needs about 89° of trunk yaw, which no source in the repo bounds, and its nearest part is the
+shank, not the knee.
+
+**Options for the "nears" ruling:**
+
+| option | basis | gap | reachable with every limit held |
+|---|---|---|---|
+| A. ELBOW_GAP 2 cm, surface to surface | cable_crunch's convention (lb9/sizes.json ELBOW_GAP) | 2.0 cm | no: curl 80.7° or hip 137° |
+| B. Contact, 0 cm | ggr c4 "to the inside of your right knee" | 0 | no: curl 84.7° or hip 142° |
+| C. The least gap the limits allow | "nears" as near as the limits allow | 6.8 cm (kneecap 9.1) | yes, only at yaw 89° [unverified range]; the screen shows −5.5 to −6.7 px overlap |
+| D. A drawn touch | "nears" as it reads on the plate | screen ≤ 0 px; 3D 10.3 / 10.8 / 11.0 cm | yes, from yaw 74.5 / 73.5 / 73° at pitch 75 / 80 / 88 |
+| E. A sourced trunk-yaw cap | none in the repo; research needed | yaw 45° → 26.9 cm | yes; reads as far (about 34 px) |
+
+**Notes for the ruling:** the arms decide the result. Elbows as wide as they go (c2) give 6.8 cm; LIB-SPINE's
+`_test_spine` arm angles (vendor/exercises/_test_spine.mjs:5-6) give 1.7 cm at yaw 30° but put the hands beside the
+shoulders, not behind the head. A sourced trunk-rotation limit would decide C against E. **Cross-check:**
+lib-spine-card.md:115's 0.366 / 0.377 m and 0.183 / 0.181 m (joint centres) were not reproduced; on `_test_spine`'s base
+and arms the centres read 0.254 / 0.268 m (curl ≤ 40, yaw ≤ 45, hip ≤ 120) and 0.128 / 0.099 m (curl ≤ 70, yaw ≤ 70,
+hip ≤ 140). LIB-SPINE's scratch script is not in the repo, so the difference is unexplained [unverified].
