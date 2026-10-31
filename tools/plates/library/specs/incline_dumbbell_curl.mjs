@@ -133,9 +133,9 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 3, parts: ['arm.r'] },
   trace: { point: 'grip.r', trim: [12, 14] },
-  measure: { vertex: 'elbow.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 20, title: 'Elbow', value: 'full range' },   // radius 20 (dumbbell_biceps_curl's): with the Trace on its arc, its label leader clears it by 8.5 px
+  measure: { vertex: 'elbow.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 20, title: 'Elbow', value: 'full range', box: { left: 45, top: 295 } },   // box: its leader clears the Trace (9.4 px) at 78 px long; radius 20 (dumbbell_biceps_curl's): with the Trace on its arc, its label leader clears it by 8.5 px
   callouts: [
-    { key: 'bench', text: 'Bench<br>45-65°', anchor: onPadBack(0.5), cue: 'Set the bench high but not upright, about 45 to 65 degrees.' },
+    { key: 'bench', text: 'Bench<br>45-65°', anchor: onPadBack(0.5), box: { left: 40, top: 180 }, cue: 'Set the bench high but not upright, about 45 to 65 degrees.' },
     { key: 'arms', text: 'Arms<br>hang down', anchor: 'shoulder.r', cue: 'Start with the arms straight down, square to the floor.' },
     { key: 'elbows', text: 'Elbows<br>back', anchor: 'elbow.r', cue: 'Keep the elbows pinned back. Stop before they drift forward.' },
   ],

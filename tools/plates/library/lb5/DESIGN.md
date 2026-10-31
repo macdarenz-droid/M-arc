@@ -674,3 +674,15 @@ then the T rows; their QA counts only after the family rows merge). Stops S1-S5 
   `checks` do not reach the 9 fragments, so both parent proofs still pass. Facts-set boxes on the T rows keep their
   leaders 6 px clear: barbell_curl `still` {96, 60} and `elbows` {80, 140}, ez_bar_curl and reverse_curl `elbows`
   {80, 100}, straight_bar_triceps_pushdown `wrists` {40, 250}. All 8 cards carry the 3 keys.
+- Panel mx9 fix round (#349 6541830086), on alternating_dumbbell_curl, barbell_curl and incline_dumbbell_curl:
+  - alternating_dumbbell_curl R4: the resting forearm is drawn dashed again (the hidden start forearm, which is where
+    the far arm hangs), holding the dashed start dumbbell. The 'Other arm still' leader ends on that forearm
+    (`wrist.l` −5, −5 px), and the `elbows` label is boxed at {80, 110} so both leaders clear the dashed lines by 6 px.
+  - barbell_curl R1: the CURL `elbows` dir 'back' builder also draws the load, dashed, at the faulty hand. The faulty
+    forearm is the engine's own outline at the drawn length (the extents are equal, 47.1 px), which a test pins within
+    1 px. The forward builder and the parent proof are byte-identical.
+  - incline_dumbbell_curl R2/R3/R6: the Trace follows the arc about the elbow (48 key poses), so the ghosts sit on it.
+    The pad's face, hidden behind the arm and back, is drawn dashed from the seat's rear edge (the hinge) up the back.
+    The pad stays at 55° from the floor, and the back and buttocks rest on it (0 cm). The measure is radius 20 with its
+    label boxed at {45, 295}, and the `bench` label is boxed at {40, 180}. QA: all 10 hard checks pass; F3 and F4 are
+    no longer raised on incline.
