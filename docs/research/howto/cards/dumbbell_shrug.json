@@ -1,0 +1,713 @@
+{
+  "id": "dumbbell_shrug",
+  "libId": "lib_dumbbell_shrug",
+  "name": "Dumbbell Shrug",
+  "family": "SHRUG",
+  "tier": "B",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "barbell_shrug",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the Baechle and Earle rule covers all grips (see the thumb claim)."
+    },
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because it is the same hold archetype with the load hanging from straight arms; same O’Driscoll 1992 cue (see the wrist claim)."
+    },
+    {
+      "field": "risks[breath]",
+      "why": "true for this child because heavy shrugs are also heavy lifts; same MacDougall 1985 line."
+    },
+    {
+      "field": "redFlags",
+      "why": "true for this child because the shoulder is loaded the same way; same shoulder box (Kolber 2010). Neck rows link no box (content.md 5.3)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hold a dumbbell in each hand at your sides.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "Hold a pair of dumbbells at your sides.",
+          "where": "How to Do Dumbbell Shrugs, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Lift the shoulders straight up as high as possible, then lower them.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "Lift your shoulders straight up as high as possible.",
+          "where": "How to Do Dumbbell Shrugs, step 2"
+        },
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "Lower your shoulders again.",
+          "where": "How to Do Dumbbell Shrugs, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The shoulders do the lifting, not the arms or wrists; the arms stay straight while the shoulders rise toward the ears.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "The movement should come from your shoulders, not your arms or wrists. Your arms should remain straight while you lift your shoulders up towards your ears.",
+          "where": "Proper Form & Technique: Movement"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Stand with good posture and a braced trunk for the whole set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "Stand with the dumbbells in your hands, and make sure to keep a good posture and tension in your core during the entire movement.",
+          "where": "Proper Form & Technique: Movement"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The range is short, so move slowly with a short pause at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "The range of motion in this exercise is quite short, so do the movement slow and controlled, preferably with a short pause in the top position to get a longer time under tension.",
+          "where": "Proper Form & Technique: Movement"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "A common mistake: arms not straight and passive, or shoulders moving forward or back instead of straight up and down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "Your arms should be straight and passive; the lifting motion should come entirely from your shoulders and traps. The shoulders should go straight up and down and not move forward/backward.",
+          "where": "Common Mistakes: Not maintaining correct form"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Too heavy a weight makes good form hard to keep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "This is an exercise where it’s easy to pick both a weight that’s too heavy, which can lead to difficulties with keeping a proper form, and a weight that is too light.",
+          "where": "Common Mistakes: Picking the wrong weight"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Lifting straps are fine when the grip limits the load.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "If you feel like the grip strength is what’s holding you back from picking a heavier weight, don’t hesitate to use lifting straps.",
+          "where": "Common Mistakes: Picking the wrong weight"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The dumbbell shrug works the upper trapezius, and the grip muscles too when no straps are used.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "The dumbbel shrug works your upper trapezius muscle. If you are not using lifting straps to hold on to the dumbbells, you will also work your grip muscles.",
+          "where": "Which Muscles Does Dumbbell Shrugs Work?"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The dumbbell version allows a slightly longer range than the barbell shrug.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "The dumbbell version allows for a slighter longer range of motion, while most lifters find it easier to lift heavier in the barbell version.",
+          "where": "Dumbbell Shrugs vs Barbell Shrugs"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, with a short pause at the top. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention; no source gives the top pause's seconds, so its 1 s is a drawing convention too.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "acsm2009",
+        "sl-dumbbell-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "sl-dumbbell-shrug",
+          "text": "preferably with a short pause in the top position",
+          "where": "Proper Form & Technique: Movement"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Only raise and lower the shoulders; do not roll them (ACE barbell shrug page; same shoulder movement with dumbbells).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shrug",
+          "text": "focus on only raising/lowering the shoulders - DO NOT roll the shoulders.",
+          "where": "exercise description, tip"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Wrap the thumbs around the handle (a barbell grip drill, applied to the dumbbell handle).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Grip is strongest with the wrist in its natural extended (bent-back) position, about 35 degrees, and weakens when the wrist moves away from it, even to 15 degrees of extension (measured on grip, applied here as a wrist cue).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "With the wrist in only 15 degrees of extension or in neutral radio-ulnar deviation, grip strength was reduced to two thirds to three fourths of normal.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Add load in small steps (2-10%) only once the target reps are exceeded by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "The shoulder is one of the most common injury sites in resistance training (up to 36% of documented injuries), and poor technique is a named risk factor.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "In EMG studies the shrug gives very high upper-trapezius activity: the one-arm shrug was the highest of ten exercises in healthy adults, and the shrug the highest of five in women with neck muscle pain (implement not stated in either abstract).",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "ekstrom2003",
+        "andersen2008"
+      ],
+      "quotes": [
+        {
+          "source": "ekstrom2003",
+          "text": "The unilateral shoulder shrug exercise was found to produce the greatest EMG activity in the upper trapezius.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "andersen2008",
+          "text": "For the trapezius muscle, the highest level of muscle activation was found during the shrug (102+/-11% of MVC), lateral raise (97+/-6% of MVC), and upright row (85+/-5% of MVC) exercises",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "The NHS advises people with shoulder pain not to do things that seem to make it worse, or to use heavy gym equipment (NHS shoulder-pain self-care advice, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-shoulder-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-shoulder-pain",
+          "text": "do not do things that seem to make it worse",
+          "where": "How to ease shoulder pain yourself: Don’t"
+        },
+        {
+          "source": "nhs-shoulder-pain",
+          "text": "do not make up your own strenuous exercises or use heavy gym equipment",
+          "where": "How to ease shoulder pain yourself: Don’t"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "sl-dumbbell-shrug",
+      "url": "https://www.strengthlog.com/dumbbell-shrug/",
+      "title": "How to Do Dumbbell Shrugs: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "ace-shrug",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/72/shrug/",
+      "title": "ACE Exercise Library: Shrug",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "odriscoll1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength.",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": 1538102,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review.",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": 20508476,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "ekstrom2003",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12774999/",
+      "title": "Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles.",
+      "kind": "peer-reviewed",
+      "year": 2003,
+      "pmid": 12774999,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "andersen2008",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18339796/",
+      "title": "Muscle activation during selected strength exercises in women with chronic neck muscle pain.",
+      "kind": "peer-reviewed",
+      "year": 2008,
+      "pmid": 18339796,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "nhs-shoulder-pain",
+      "url": "https://www.nhs.uk/conditions/shoulder-pain/",
+      "title": "Shoulder pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "With a dumbbell at each side the weights hide behind the thighs side-on; front-on shows both shoulders rising level toward the ears and both arms staying straight (c1, c3), so it shows the top fault, bent working arms (c6). The census draws it front.",
+    "equipment": "Two dumbbells hanging at the sides from straight arms; floor line (c1).",
+    "start": "Standing tall, trunk braced (c4), arms straight at the sides holding the dumbbells, shoulders relaxed down (c1, c3).",
+    "end": "Same body; both shoulders lifted straight up toward the ears (c2, c3), arms still straight (c3).",
+    "checkpoints": [
+      {
+        "label": "Straight arms",
+        "what": "Arms hang straight and passive. The shoulders do the lifting.",
+        "claim": [
+          "c3",
+          "c6"
+        ]
+      },
+      {
+        "label": "Straight up",
+        "what": "Shoulders go straight up and down, not forward or back.",
+        "claim": "c6"
+      },
+      {
+        "label": "Stand tall",
+        "what": "Good posture, trunk braced the whole set.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows bend to pull the dumbbells up instead of the shoulders lifting them.",
+      "why": "First in the common-mistakes list: the arms should be straight and passive, with the lift coming entirely from the shoulders and traps (c6). Bent, working arms show front-on as the dumbbells rise with the forearms.",
+      "claim": "c6",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: bent, working arms (c6), the first fault in StrengthLog's \"Common Mistakes in Dumbbell Shrugs\" (\"Your arms should be straight and passive\"). Step 1: no frequency word counts for a fault. Set aside: \"most lifters find it easier to lift heavier in the barbell version\" (the load, another exercise), \"very accessible for most lifters\" (the equipment) and \"typically lends itself best to the medium rep range of 6–15 reps\" (the load); Kolber's \"the most prevalent regions of injury\" (where injuries happen, no fault) and \"A majority of the available research was retrospective\" (the research); \"it’s easy to pick both a weight that’s too heavy\" uses \"easy to\" and is a load choice. Step 2: no quote ties a named fault to harm. Kolber's \"improper attention to exercise technique\" (c17) names no fault; ACE's \"DO NOT roll the shoulders\" (c12) and StrengthLog's list state no harm; Andersen's neck-pain lines (c18) describe the study group. Step 3: StrengthLog's list, written for this exercise, opens with \"Not maintaining correct form\", whose first named fault is arms that are not straight and passive, before \"The shoulders should go straight up and down and not move forward/backward.\" drawable changes to true: plate.viewWhy says the front view shows both arms staying straight, so it shows the bent arms; the head's false came from taking shoulder rolling, which no step picks, as the top fault. Pick unchanged."
+    },
+    "tells": [
+      {
+        "text": "Shoulders rise toward your ears",
+        "claim": "c3"
+      },
+      {
+        "text": "Arms stay straight throughout",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c11",
+      "text": "StrengthLog asks for \"a short pause in the top position\" (c5, c11), right after the lift, and no source gives its seconds, so the 1 s pause is a drawing convention (c11, WEAK; LR-33). Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c11, WEAK; LR-15)."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "One dumbbell in each hand at the sides. No source read states the palm direction, so the sheet makes no palm claim.",
+    "width": "Hands at the sides.",
+    "thumb": "Wrapped around the handle.",
+    "handContact": "Handle across the middle of the palm, fingers wrapped (hold archetype); straps allowed when the grip limits the load.",
+    "wrist": "Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.",
+    "claims": [
+      "c1",
+      "c8",
+      "c13",
+      "c14"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Pick up a dumbbell in each hand, thumbs around the handles.",
+      "claim": [
+        "c1",
+        "c13"
+      ]
+    },
+    {
+      "step": "Stand tall with the dumbbells at your sides.",
+      "claim": "c1"
+    },
+    {
+      "step": "Brace your trunk. Arms straight and passive.",
+      "claim": [
+        "c4",
+        "c6"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Good posture, trunk braced.",
+      "claim": "c4"
+    },
+    {
+      "point": "Arms straight. The shoulders do the lifting.",
+      "claim": "c3"
+    },
+    {
+      "point": "Straight up and down, no rolling.",
+      "claim": "c12"
+    },
+    {
+      "point": "Short pause at the top, then lower slowly.",
+      "claim": "c5"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Bending the arms to pull.",
+      "fix": "Keep the arms straight and passive.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Rolling or shifting the shoulders.",
+      "fix": "Straight up, straight down.",
+      "claim": [
+        "c12",
+        "c6"
+      ]
+    },
+    {
+      "mistake": "Going too heavy.",
+      "fix": "Use lighter dumbbells, or straps if the grip is the limit.",
+      "claim": [
+        "c7",
+        "c8"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "forearms",
+        "claim": "c9"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Top of shoulders, beside the neck",
+        "means": "The upper traps do the lifting.",
+        "fix": null,
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Forearms and grip tiring first",
+        "means": "Your grip is holding back the load.",
+        "fix": "Use lifting straps.",
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Pain in your shoulder",
+        "means": "Is it getting worse?",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c19",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
+      "claim": "c16"
+    },
+    {
+      "risk": "The shoulder is a common injury site in weight training. Poor technique adds risk.",
+      "claim": "c17"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "dshrug-grip",
+      "kind": "hand",
+      "right": "Wrist bent back, in its natural grip position.",
+      "wrong": "Wrist curled forward.",
+      "claim": "c14"
+    },
+    {
+      "key": "dshrug-top",
+      "kind": "posture",
+      "right": "Both shoulders up toward the ears, arms straight.",
+      "wrong": "Elbows bent, pulling the dumbbells up with the arms.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "forearms"
+    ],
+    "remove": [],
+    "why": "Library primary upper_traps matches (c9, c18). Add forearms as secondary: the anchor says the grip muscles work when no straps are used (c9)."
+  },
+  "anchorSource": "sl-dumbbell-shrug",
+  "notes": [
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Handle across the middle of the palm, fingers wrapped (hold archetype); straps allowed when the grip limits the load.\") and the drawn palm direction (the dumbbell primitive's natural grip; no source states it, grip.type) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3).",
+    "The NHS shoulder \"Don't\" list also says \"do not completely stop using your shoulder\". The shown row stops only the set, so it does not conflict; a later writer must not widen it to stopping all shoulder use."
+  ]
+}
