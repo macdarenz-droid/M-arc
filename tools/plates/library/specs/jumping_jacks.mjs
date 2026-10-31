@@ -88,16 +88,31 @@ const mistake = { plant: feetAt(FOOT_X_OUT, M_ROT) };
 // The engine draws the front-view foot as its mid-foot cross-section (body.mjs:55, :314), so the turned foot hardly
 // changes outline: a dashed Mistake guide draws each turned foot's axis, heel to toe, on top (the sign c12 names).
 const LM = landmarksOf({ ...end, ...mistake }, H);
-const TOE_GUIDES = ['l', 'r'].map(s => ({ kind: 'dashed', pts: [LM[`heel.${s}`], LM[`toe.${s}`]] }));
-// Panel mx13 R5 (#358 6547089227): each faulty foot also as a closed dashed outline in its own turned sagittal plane
-// (heel to toe along the turned axis, a side-view foot profile up from the sole), so in the front view its toe end
-// projects sideways past the solid foot by the turn M_ROT gives. FOOT_PROFILE: (along the foot, fraction of the
-// heel-to-toe length; up, m), a drawing shape only (no size claim).
-const FOOT_PROFILE = [[0, 0], [0.72, 0], [1, 0.012], [1, 0.025], [0.72, 0.035], [0.45, 0.06], [0.2, 0.085], [0, 0.075], [-0.06, 0.04], [0, 0]];
-const FOOT_OUTLINES = ['l', 'r'].map(s => {
-  const h = LM[`heel.${s}`], t = LM[`toe.${s}`], L = Math.hypot(t[0] - h[0], t[2] - h[2]), d = [(t[0] - h[0]) / L, 0, (t[2] - h[2]) / L];
-  return { kind: 'dashed', pts: FOOT_PROFILE.map(([u, v]) => [h[0] + d[0] * u * L, v, h[2] + d[2] * u * L]) };
-});
+
+// D-SMALL-JJTURN (panel mx15, #358 6547988428): each faulty foot is drawn as the solid end foot's own outline at the
+// same size (FOOT_W wide and FOOT_TOP tall, as the engine draws the end foot in this view: 15.1 by 14.8 px; the end foot's
+// heel-to-toe length), turned out M_ROT about a vertical axis through the end heel, so the turned toe lies outside the
+// solid toe. A turn about a vertical axis keeps the sole on the floor (its sole points at y 0: contact 0.0 cm). The
+// engine's Mistake legs keep the mid-foot turn (feetAt): about the heel the rigid feet miss the floor by 1 cm.
+// FOOT_PROFILE: (along the foot, fraction of its length; up, fraction of FOOT_TOP), a drawing shape only.
+const FOOT_W = 0.103, FOOT_TOP = 0.101;
+const FOOT_PROFILE = [[0, 0], [1, 0], [1, 0.25], [0.72, 0.4], [0.45, 0.64], [0.2, 1], [0, 0.89]];
+const LE0 = landmarksOf(end, H);
+const hull = pts => { const p = [...pts].sort((a, b) => a[0] - b[0] || a[1] - b[1]), cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lo = [], up = []; for (const q of p) { while (lo.length > 1 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+  for (const q of [...p].reverse()) { while (up.length > 1 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+  return [...lo.slice(0, -1), ...up.slice(0, -1)]; };
+/** The turned foot (3D points) and its front-view outline (closed, at the heel's depth). */
+export const turnedFoot = (sd, rot = M_ROT) => {
+  const sg = sd === 'l' ? 1 : -1, h = LE0[`heel.${sd}`], t = LE0[`toe.${sd}`], L = Math.hypot(t[0] - h[0], t[2] - h[2]);
+  const d = [sg * Math.sin(rot * R), 0, Math.cos(rot * R)], n = [Math.cos(rot * R), 0, -sg * Math.sin(rot * R)];
+  const pts = FOOT_PROFILE.flatMap(([u, v]) => [-1, 1].flatMap(w => [0, v].map(y => [h[0] + d[0] * u * L + n[0] * w * FOOT_W / 2, y * FOOT_TOP, h[2] + d[2] * u * L + n[2] * w * FOOT_W / 2])));
+  const out = hull(pts.map(p => [p[0], p[1]])).map(([x, y]) => [x, y, h[2]]);
+  return { pts, outline: [...out, out[0]], toe: [h[0] + d[0] * L, 0.004, h[2] + d[2] * L], heel: [h[0], 0.004, h[2]] };
+};
+const FOOT_OUTLINES = ['l', 'r'].map(sd => ({ kind: 'dashed', pts: turnedFoot(sd).outline }));
+// The turned foot's heel-to-toe axis, dashed (it shows in the plate and the zoom).
+const TOE_GUIDES = ['l', 'r'].map(sd => { const f = turnedFoot(sd); return { kind: 'dashed', pts: [f.heel, f.toe] }; });
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   id: 'jumping_jacks', name: 'Jumping Jacks', view: 'front',

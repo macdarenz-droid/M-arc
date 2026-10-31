@@ -477,3 +477,16 @@ are set at the draw (labels only).
 - R4: the `extend` leader ends on the extension ghost's raised forearm (EXT_ARM_PT, midway from elbow to wrist), clear
   of the landing figure. Its box moves {244, 214} → {262, 84}. Before, the leader ended on the ghost knee, which lies
   inside the solid landing thigh. QA: all 10 hard checks pass; F5 3.57 only; leaderMax 81.6 px.
+
+### 16.3 Panel mx15 second round and CARD FIELDS cfsmall (#358 6547988428): jump_squat
+
+- R1 (j10 "hold the hands loosely at the chest"): in every key (crouch, rise, ghost, flight, landing, Mistake) the hands
+  rest HAND_FWD 0.10 m in front of the sternum along the thorax normal, at HAND_X 0.75 of the shoulder's lateral offset,
+  elbows down (reach, pole down). Arm lengths in the side view (plate px): upper arm 45.1-47.4, forearm to grip
+  44.3-48.5, which is the panel's 93-94 / 99-100 at its 2x scale. The ARMS_BACK, ARMS_FWD and EXT_ARMS sizes are gone.
+  The alt says "hands loosely at the chest".
+- R4 follow-on: the ghost forearm now lies in front of the landing head, so the FULL EXTENSION leader ends on the
+  ghost's head, clear of the landing figure.
+- CARD FIELDS: the `sole.l` end fact is deleted. j4 names one mid-foot, so it gives the near side only. heel.l and
+  heel.r (start, j2) and sole.r (end, j4) stay.
+- QA: all 10 hard checks pass; F5 3.57 only; deviation 34.5 px, Trace 172.8 px, leaderMax 82.2 px.

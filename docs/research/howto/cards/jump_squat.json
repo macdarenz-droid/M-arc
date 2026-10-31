@@ -182,13 +182,6 @@
     },
     {
       "kind": "contact",
-      "landmark": "sole.l",
-      "pose": "end",
-      "cardPose": "end",
-      "claim": "j4"
-    },
-    {
-      "kind": "contact",
       "landmark": "sole.r",
       "pose": "end",
       "cardPose": "end",

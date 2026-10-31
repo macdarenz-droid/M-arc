@@ -852,3 +852,17 @@ draft raises H4.overlap (distance|depth), F3 126.5 and F4 0: label boxes are set
 - R11: the k 2.5 source ring (centre at the Mistake toe, r 20.8 px) holds the whole outline (the heel is 13 px from the
   centre). RINGFIT is unchanged.
 - QA: all 10 hard checks pass; flags F5 3.57 and F7 only; cover 0.513; leaderMax 73.2 px; Trace 279.6 px.
+
+### 23.4 Panel mx15 second round (#358 6547988428, D-SMALL-JJTURN): jumping_jacks
+
+- R5: each faulty foot is now the solid end foot's own outline at the same size (FOOT_W 0.103 m by FOOT_TOP 0.101 m:
+  the engine's front-view end foot, 15.1 by 14.8 px), with the end heel-to-toe length. It is turned out M_ROT 30 about a
+  vertical axis through the end heel, and its front-view outline is the convex hull of that turned 3D foot. A dashed
+  heel-to-toe axis runs from the end heel to the turned toe, at the floor. Measured: the toe end lies **16.4 px**
+  outside the solid toe (unturned, the same outline lies inside it: -1.1 px). The outline's lowest point is on the floor
+  (**0.00 cm**; every sole point is at y 0). The turn is the data's 30 deg, nothing is enlarged, and the ring, circle
+  and label are unchanged.
+- The engine's Mistake legs keep the mid-foot turn: about the heel the rigid feet miss the floor by 1 cm (23.3).
+- No neutral forward axis is drawn on the correct foot: in the front view a forward (z) axis projects to a point (the
+  end heel-to-toe line is 2.8 px tall). The solid foot itself shows forward.
+- QA: all 10 hard checks pass; flags F5 3.57 and F7 only.

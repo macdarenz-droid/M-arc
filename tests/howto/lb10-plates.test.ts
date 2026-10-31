@@ -1953,6 +1953,7 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
 });
 
 describe('LIB-SMALL panel mx13 fix (#358 6547089227): jumping_jacks\' ghost arms and faulty-foot outline', { timeout: T }, () => {
+  const CMf = (v: number) => Math.abs(v) * 100;
   /** R1: each ghost key's arms, seen from the front (x, y), reach as far from the shoulder as the end's straight arms. */
   const reachPx = (pose: any, s: string) => { const l = lmP(pose); return Math.hypot(l[`grip.${s}`][0] - l[`shoulder.${s}`][0], l[`grip.${s}`][1] - l[`shoulder.${s}`][1]) * 146.29; };
   const armProblems = (spec: any) => {
@@ -1970,28 +1971,35 @@ describe('LIB-SMALL panel mx13 fix (#358 6547089227): jumping_jacks\' ghost arms
     const bent = { ...s, poses: { ...s.poses, via: [{ ...s.poses.via[0], elbow: 40 }, s.poses.via[1]] } };
     expect(armProblems(bent).some(x => x.startsWith('via 0'))).toBe(true);
   });
-  /** R5: a closed dashed outline per faulty foot from the Mistake heel to the Mistake toe; `past` is how far its toe end
-   *  projects past the solid end foot's outer side (front view; measured 0.8 px at M_ROT 30 about mid-foot, lb10/DESIGN.md
-   *  23.3, escalated on #358). */
+  /** R5 (D-SMALL-JJTURN, #358 6547988428): per faulty foot a closed dashed outline the size of the solid end foot (its
+   *  front-view height within 1 px), turned about the end heel, its toe end past the solid foot's outer side by more than
+   *  2 px, its lowest point on the floor (within 0.5 cm); plus a dashed heel-to-toe axis from the end heel. */
   const footProblems = (spec: any) => {
-    const out: string[] = [], m = lmP(fullPose(spec, 'mistake')), cam = camOf(spec);
+    const out: string[] = [], e = lmP(spec.poses.end), cam = camOf(spec);
     const solid = shapesIn(spec, 'end').filter((x: any) => /^foot\./.test(x.key));
+    const closed = spec.mistake.guides.filter((x: any) => x.kind === 'dashed' && x.pts.length > 3 && d3(x.pts[0], x.pts[x.pts.length - 1]) < 1e-9);
     for (const s of ['l', 'r']) {
-      const g = spec.mistake.guides.find((x: any) => x.kind === 'dashed' && x.pts.length > 3 && Math.hypot(x.pts[0][0] - m[`heel.${s}`][0], x.pts[0][2] - m[`heel.${s}`][2]) < 1e-9);
+      const sx = solid.find((x: any) => x.key === `foot.${s}`).poly, sxs = sx.map((p: number[]) => p[0]!), sys = sx.map((p: number[]) => p[1]!);
+      const g = closed.find((x: any) => { const px = x.pts.map((p: number[]) => cam.P(p)[0]!); return s === 'r' ? Math.max(...px) < 179 : Math.min(...px) > 179; });
       if (!g) { out.push(`no outline for foot.${s}`); continue; }
-      if (d3(g.pts[0], g.pts[g.pts.length - 1]) > 1e-9) out.push(`foot.${s} outline not closed`);
-      const px = g.pts.map((p: number[]) => cam.P(p)[0]!), sx = solid.find((x: any) => x.key === `foot.${s}`).poly.map((p: number[]) => p[0]!);
-      const past = s === 'r' ? Math.min(...sx) - Math.min(...px) : Math.max(...px) - Math.max(...sx);
-      if (!(past > 0)) out.push(`foot.${s} outline ${past.toFixed(1)} px past the solid foot`);
-      console.log(`LIB-SMALL jumping_jacks foot.${s} outline: ${past.toFixed(1)} px past the solid foot`);
+      const px = g.pts.map((p: number[]) => cam.P(p)[0]!), py = g.pts.map((p: number[]) => cam.P(p)[1]!);
+      const past = s === 'r' ? Math.min(...sxs) - Math.min(...px) : Math.max(...px) - Math.max(...sxs);
+      if (!(past > 2)) out.push(`foot.${s} outline ${past.toFixed(1)} px past the solid foot`);
+      if (Math.abs((Math.max(...py) - Math.min(...py)) - (Math.max(...sys) - Math.min(...sys))) > 1) out.push(`foot.${s} outline not the solid foot's height`);
+      if (CMf(Math.min(...g.pts.map((p: number[]) => p[1]!))) > 0.5) out.push(`foot.${s} outline off the floor`);
+      const axis = spec.mistake.guides.find((x: any) => x.kind === 'dashed' && x.pts.length === 2 && Math.hypot(x.pts[0][0] - e[`heel.${s}`][0], x.pts[0][2] - e[`heel.${s}`][2]) < 1e-9);
+      if (!axis) out.push(`no heel-to-toe axis on foot.${s}`);
+      console.log(`LIB-SMALL jumping_jacks foot.${s} outline: ${past.toFixed(1)} px past the solid foot; lowest point ${CMf(Math.min(...g.pts.map((p: number[]) => p[1]!))).toFixed(2)} cm`);
     }
     return out;
   };
-  it('R5: each faulty foot has a closed dashed outline whose toe end projects past the solid foot (> 0 px)', () => {
+  it('R5: each faulty foot has a closed dashed outline, turned about the heel, whose toe end projects past the solid foot', () => {
     expect(footProblems(S.jumping_jacks)).toEqual([]);
   });
-  it('R5 mutation: the outlines removed are red', () => {
+  it('R5 mutations: the outlines removed, or drawn unturned, are red', () => {
     const s = S.jumping_jacks, bare = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.filter((x: any) => x.pts.length <= 3) } };
     expect(footProblems(bare)).toEqual(['no outline for foot.l', 'no outline for foot.r']);
+    const flat = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.map((x: any) => (x.pts.length > 3 ? { ...x, pts: M.jumping_jacks.turnedFoot(x.pts[0][0] > 0 ? 'l' : 'r', 0).outline } : x)) } };
+    expect(footProblems(flat).filter(x => /px past/.test(x)).length).toBe(2);
   });
 });

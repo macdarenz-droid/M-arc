@@ -989,7 +989,7 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
       ...C(['backUpper', 'buttock'], 'start', 'start', 'w5'), ...C(['backUpper', 'buttock'], 'end', 'end', 'w5')],
     step_up: [...C(['heel.r', 'ball.r'], 'end', 'start', 'c6'), ...C(['heel.l', 'ball.l'], 'end', 'start', 'c1'), ...C(['wrist.r', 'wrist.l'], 'end', 'start', 'c5'), ...C(['heel.r', 'ball.r'], 'start', 'end', 'c1')],
     pistol_squat: C(['heel.r', 'ball.r'], 'end', 'end', 'p3'),
-    jump_squat: [...C(['heel.l', 'heel.r'], 'start', 'start', 'j2'), ...C(['sole.l', 'sole.r'], 'end', 'end', 'j4')],   // LIB-SMALL PLAN (lb4/DESIGN.md 16)
+    jump_squat: [...C(['heel.l', 'heel.r'], 'start', 'start', 'j2'), ...C(['sole.r'], 'end', 'end', 'j4')],   // LIB-SMALL PLAN (lb4/DESIGN.md 16); cfsmall: j4 names one mid-foot, so the near side only (#358 6547988428)
   };
   it('every card\'s plateFacts is the ruled set (D-LIB14-FACTS)', () => {
     for (const id of LB4) { expect(cardOf(id).plateFacts, id).toEqual(FACTS[id]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
@@ -1287,6 +1287,12 @@ describe('LIB-SMALL A4 and A6: jump_squat\'s drawn poses are card-true and airbo
     if (!(kneeOf(L.end) > 45)) out.push(`end knee ${kneeOf(L.end).toFixed(1)}`);
     if (!(L.end['hip.r'][2] < L.end['ankle.r'][2])) out.push('end hips not back');
     if (!(leanOf(L.end) > 5 && leanOf(L.end) < 45)) out.push(`end lean ${leanOf(L.end).toFixed(1)}`);
+    // j10 (panel mx15 R1): the hands loosely at the chest in the crouch, the ghost and the landing: each grip within 15 cm
+    // of the sternum and in front of the chest (beyond the sternum along the back-to-sternum direction)
+    for (const k of ['start', 'ghost', 'end']) for (const sd of ['l', 'r']) {
+      const l = L[k], g = l[`grip.${sd}`], n = [0, 1, 2].map(i => l.sternum[i] - l.backUpper[i]), d = [0, 1, 2].map(i => g[i] - l.sternum[i]);
+      if (!(Math.hypot(d[1]!, d[2]!) < 0.15 && d[1]! * n[1]! + d[2]! * n[2]! > 0)) out.push(`${k} grip.${sd} not at the chest`);
+    }
     // Mistake (j5): knees near locked, the same feet as the end
     if (!(kneeOf(L.mistake) < 15)) out.push(`Mistake knee ${kneeOf(L.mistake).toFixed(1)}`);
     for (const f of FEET) if (cm(Math.hypot(...[0, 1, 2].map(i => L.mistake[f][i] - L.end[f][i]))) > 0.5) out.push(`Mistake ${f} moved`);
@@ -1298,7 +1304,7 @@ describe('LIB-SMALL A4 and A6: jump_squat\'s drawn poses are card-true and airbo
     const L = eng.landmarksOf(drawn(S.jump_squat).ghost, H);
     console.log(`LIB-SMALL jump_squat: ghost balls ${cm(L['ball.l'][1]).toFixed(3)} / ${cm(L['ball.r'][1]).toFixed(3)} cm`);
   });
-  it('mutations: the ghost root raised 2 cm, the start heels 2 cm up, the landing knees straight and a rounded start back are red', () => {
+  it('mutations: the ghost root raised 2 cm, the start heels 2 cm up, the landing knees straight, a rounded start back and the arms swung back (no j10) are red', () => {
     const s = S.jump_squat, mid = (s.poses.via.length - 1) / 2;
     const ghostUp = { ...s, poses: { ...s.poses, via: s.poses.via.map((p: any, i: number) => (i === mid ? { ...p, plant: undefined, root: { ...p.root, at: p.root.at.map((x: number, k: number) => x + (k === 1 ? 0.02 : 0)) } } : p)) } };
     expect(problems(ghostUp).some(x => x.startsWith('ghost ball'))).toBe(true);
@@ -1306,6 +1312,8 @@ describe('LIB-SMALL A4 and A6: jump_squat\'s drawn poses are card-true and airbo
     expect(problems(startUp).some(x => x.startsWith('start heel'))).toBe(true);
     const stiff = { ...s, poses: { ...s.poses, end: { ...s.poses.end, ...s.mistake.pose } } };
     expect(problems(stiff).some(x => x.startsWith('end knee'))).toBe(true);
+    const swing = { ...s, poses: { ...s.poses, start: { ...s.poses.start, reach: undefined, shoulder: { ext: 25 }, elbow: 5 } } };
+    expect(problems(swing)).toContain('start grip.r not at the chest');
     const round = { ...s, poses: { ...s.poses, start: { ...s.poses.start, trunk: 30 } } };
     expect(problems(round)).toContain('start back bend 30');
   });
