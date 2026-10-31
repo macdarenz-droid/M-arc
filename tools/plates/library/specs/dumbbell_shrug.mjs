@@ -74,10 +74,9 @@ export default {
   ],
   startParts: ['arm.r'],
   ghosts: { count: 0 },
-  trace: { point: 'shoulderTop.r', trim: [0, 0] },
+  trace: { point: 'shoulderTop.l', trim: [0, 0] },   // mx19 R11: the viewer's-right shoulder, beside the zoom
   zoom: { view: 'normal', k: 3.5 },   // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.r), the parent's ladder k
-  datum: [{ y: 'start:shoulderTop.r', from: 12, to: 'start:shoulderTop.r' }, { y: 'shoulderTop.r', from: 12, to: 'shoulderTop.r', mistake: false }],
-  measure: { vertex: 'elbow.l', from: 'shoulder.l', to: 'wrist.l', radius: 18, title: 'Elbow', value: 'straight' },
+  datum: [{ y: 'start:shoulderTop.l', from: 346, to: 'start:shoulderTop.l' }, { y: 'shoulderTop.l', from: 346, to: 'shoulderTop.l', mistake: false }],
   callouts: [
     // c3, c6
     { key: 'arms', text: 'Straight arms', anchor: { along: ['elbow.r', 'wrist.r'], t: 0.5, off: [-8, 0] }, cue: 'Let your arms hang straight. Only the shoulders lift.' },

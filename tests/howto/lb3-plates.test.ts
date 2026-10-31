@@ -1283,6 +1283,46 @@ describe('LIB-13s: barbell_shrug stays byte-identical to its approval (panel mx1
   });
 });
 
+describe('LIB-13s: t_bar_row and cable_shrug stay byte-identical to their approval (panel mx19 @ fe9219bf, page ff1885dd)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf on the LB3 page ff1885dd…2467 (both APPROVED in mx19, #359 6549892683)
+  const WANT: Record<string, Record<string, string>> = {
+    "t-bar-row": {
+      "normalSvg": "55033f287c6452884c321a351bd22fc80fcd6427d882b116ff4adbec10adab62",
+      "normalOverlay": "8ef5dee012db1a6350170a7dcff6cf7c0b618be232c20c080cec3e85350da3eb",
+      "mistakeSvg": "58ef7ff6c0da83be29daf5c34576055181b37048af96031b5337812577d6f19e",
+      "mistakeOverlay": "e3415d48b64ba51d4e57bdbff5f3fe91eb09cbee61f664fdd8dbcf06bf1c6979",
+      "tells": "0f124fe0f85ad2f33973d731c7ff12b56828ef8c91914c83ec9e0a435ee41d74",
+      "tempo": "1abe99bb41e11a9299d678e9f35bf3bc56e5914201313343974af433de126912",
+      "cues": "4b4f147dac10cd4bff49b55377ac9293e8b4af978f79dc9d2e6af8ff9d43fcc3",
+      "alt": "85abbeb013abf88c2602c783245d74ba2016084897e233562fa60bd7ff725b63",
+      "mistakeAlt": "6eea18cf9ec0b7692427b8066dd69f0df01dc88a94d51cda657797510b69e884"
+    },
+    "cable-shrug": {
+      "normalSvg": "3368eb4b27523618e65e83222f402016ab3c03ac26b97a9fdebb85a57ff84fc8",
+      "normalOverlay": "5d967c3e5e5ac58e732291abdff84e7446026c769a13d4020e95dfe20f18dd9d",
+      "mistakeSvg": "60f8c3a1b2c058e0dfac1710e09e68d52cfde317b05845cda46c99b0602c7b88",
+      "mistakeOverlay": "7e7ea27a3295af5b89dfd83671b02f736fdf612b9c103448d04a30dddd362d2e",
+      "tells": "f37a3668fadfc962b51cc69828608cbe51fc16803a072dd7f33843088ff0c2a9",
+      "tempo": "8c1a840e14fab09fb3181eebe48a482e98b8fab8f7e035855cb47ccee90d0474",
+      "cues": "3ce71672c772458d93046ac84313639d0600a93d29ee5df4628d778df5bb81f6",
+      "alt": "7af90ce3fe791c078e03008c9f21939a6ca77d66f9cf6e2bbf84713dbbaebb11",
+      "mistakeAlt": "1e758bea4bc223e3b79ea6eb5aa5beb3a1809755fb7f9fe3ac8c6b0d32973a7f"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb3/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const diff = (html: string) => Object.entries(WANT).flatMap(([c, want]) => { const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`); });
+  it('their 18 fragments on this head equal the approved ones', async () => {
+    expect(Object.values(WANT).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(18);
+    expect(diff((await build.buildLb3Page()).html.toString('utf8'))).toEqual([]);
+  });
+  it("mutation: one byte in cable_shrug's alt is red", async () => {
+    const html = (await build.buildLb3Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'cable-shrug');
+    expect(diff(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['cable-shrug alt']);
+  });
+});
+
 describe('LIB-13s A1: the released rows are H with no parent, template or params; held shrugs have no row', () => {
   const rowProblems = (rows: Record<string, any>) => Object.entries(rows).flatMap(([id, r]) =>
     [r.mode !== 'H' ? `${id}: mode ${r.mode}` : null, ...['parent', 'template', 'params'].filter(k => k in r).map(k => `${id}: ${k}`)].filter(Boolean));
@@ -1454,7 +1494,8 @@ describe('LIB-13s wave 1: zooms, card-true poses and the 2 px clearance (A3, A4,
 
   // ---- A3: the zooms ----
   const SH35 = { view: 'normal', k: 3.5 };
-  const WANT: Record<string, any> = { barbell_shrug: SH35, t_bar_row: { view: 'normal', k: 1.5 }, cable_shrug: SH35, dumbbell_shrug: SH35, smith_machine_shrug: SH35 };
+  const WANT: Record<string, any> = { barbell_shrug: SH35, t_bar_row: { view: 'normal', k: 1.5 }, cable_shrug: SH35, dumbbell_shrug: SH35,
+    smith_machine_shrug: SH35 };
   const PIN: Record<string, number> = { barbell_shrug: 24.54, t_bar_row: 35.69, cable_shrug: 24.54, dumbbell_shrug: 24.54, smith_machine_shrug: 24.54 };   // t_bar_row: mx16 fix round (handle hooked under the bar), k 1.5
   const noZoom = (s: any) => ({ ...s, zoom: undefined });
   // async with a yield before each zoom render: a long synchronous loop starves vitest's worker RPC (D-LIB8M-RPC)
@@ -1465,7 +1506,7 @@ describe('LIB-13s wave 1: zooms, card-true poses and the 2 px clearance (A3, A4,
     const L: Record<number, number> = {};
     for (const x of LADDER) { await new Promise(r => setImmediate(r)); const w = Z.zoomOf({ ...s, zoom: { view: 'normal', k: x } }, { view: 'normal' }); L[x] = QZ.clippedTrace(w.svg, w.circle); }
     const len = (x: number) => L[x]!;
-    const k = s.zoom.k, z = Z.zoomOf(s, { view: 'normal' });
+    const k = Z.zoomFor(s, 'normal').k, z = Z.zoomOf(s, { view: 'normal' });
     if (/<(text|foreignObject|tspan)\b|°/.test(z.svg)) out.push('text in the zoom');
     if (!(len(k) >= TRACE)) out.push(`Trace ${len(k).toFixed(2)} px at k ${k} < ${TRACE}`);
     if (LADDER.some(x => x < k && len(x) >= TRACE)) out.push('a smaller k reaches the bar');
@@ -1698,7 +1739,9 @@ describe('LIB-13s wave 2: cable, dumbbell and smith_machine shrugs, card-true po
   });
   const bend = (lm: any) => { const u = [0, 1, 2].map(i => lm['shoulder.r'][i] - lm['elbow.r'][i]), w = [0, 1, 2].map(i => lm['wrist.r'][i] - lm['elbow.r'][i]);
     return 180 - Math.acos(u.reduce((a, v, i) => a + v * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w)) * 180 / Math.PI; };
-  const ELBOW: Record<string, [number, number]> = { cable_shrug: [0, 5], dumbbell_shrug: [0, 5], smith_machine_shrug: [10, 15] };   // c5, c3 straight; smith c1 "slight bend" (DESIGN.md 16.4)
+  // c5, c3 straight. smith: c1 "slight elbow bend" gives no degrees; 12 deg is a drawing number (DESIGN.md 16.4), and
+  // 10-15 deg is this lane's own guard, not a sourced range (supervisor, #359 6549511226)
+  const ELBOW: Record<string, [number, number]> = { cable_shrug: [0, 5], dumbbell_shrug: [0, 5], smith_machine_shrug: [10, 15] };
   const poseProblems = (id: string, s: any) => {
     const L = qaEng.poseLandmarks(Eng(), s).lm, out: string[] = [], rise = (L.end['shoulder.r'][1] - L.start['shoulder.r'][1]) * 100;
     if (Math.abs(rise - 5) > 0.2) out.push(`shoulder rise ${rise.toFixed(2)} cm`);
@@ -1721,5 +1764,58 @@ describe('LIB-13s wave 2: cable, dumbbell and smith_machine shrugs, card-true po
   it("A4 mutations: dumbbell_shrug's rise at 7 cm and smith_machine_shrug's elbows straight are red", async () => {
     expect(poseProblems('dumbbell_shrug', await variant('dumbbell_shrug', [['const SHRUG = 5;', 'const SHRUG = 7;']]))).toEqual([expect.stringMatching(/^shoulder rise 7\.0\d cm$/)]);
     expect(poseProblems('smith_machine_shrug', await variant('smith_machine_shrug', [['ELBOW_BEND = 12,', 'ELBOW_BEND = 0,']]))).toEqual(['start: elbow 2.0 deg', 'end: elbow 2.0 deg'].map(t => expect.stringMatching(new RegExp(`^${t.split(' 2.0')[0]} \\d\\.\\d deg$`))));
+  });
+});
+
+describe('LIB-13s panel mx19 fix: dumbbell_shrug\'s ring beside the viewer\'s-right shoulder; smith_machine_shrug\'s full dashed head and Mistake zoom', { timeout: T }, () => {
+  const S3: Record<string, any> = {};
+  /** Distance (px) from point q to the closed polyline P. */
+  const segNear = (q: number[], P: number[][]) => Math.min(...P.map((a, i) => { const b = P[(i + 1) % P.length]!, d = [b[0]! - a[0]!, b[1]! - a[1]!] as [number, number], L2 = d[0] ** 2 + d[1] ** 2 || 1;
+    const t = Math.max(0, Math.min(1, ((q[0]! - a[0]!) * d[0] + (q[1]! - a[1]!) * d[1]) / L2)); return Math.hypot(q[0]! - a[0]! - d[0] * t, q[1]! - a[1]! - d[1] * t); }));
+  let Z: any;
+  beforeAll(async () => { Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); for (const id of ['dumbbell_shrug', 'smith_machine_shrug']) S3[id] = (await import(/* @vite-ignore */ lib(`specs/${id}.mjs`))).default; }, T);
+  const inP = (P: number[][], q: number[]) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const a = P[j]!, b = P[i]!;
+    if ((b[1]! > q[1]!) !== (a[1]! > q[1]!) && q[0]! < a[0]! + (b[0]! - a[0]!) * (q[1]! - a[1]!) / (b[1]! - a[1]!)) c = !c; } return c; };
+  /** What the zoom's connector (pz-link) crosses on its plate: body outlines (engine bodyShapes in plate px) and label or arc boxes. */
+  const linkHits = (s: any, view: string) => {
+    const z = Z.zoomOf(s, { view }), R = plate.renderPlate(s, { id: 'x', mistake: view === 'mistake' }), cam = qaEng.cameraOf(s, R.report);
+    const pose = view === 'mistake' ? { ...s.poses.end, ...s.mistake.pose } : s.poses.end, b = { height: 1.75 };
+    const shapes = body.bodyShapes(body.fk(body.resolve(body.normPose(pose, b), b).q, b), cam);
+    const m = (z.link.match(/M([\d.-]+) ([\d.-]+)L([\d.-]+) ([\d.-]+)/) as string[]).slice(1).map(Number) as [number, number, number, number], hits = new Set<string>();
+    for (let t = 0; t <= 1; t += 0.01) { const q = [m[0] + (m[2] - m[0]) * t, m[1] + (m[3] - m[1]) * t];
+      for (const sh of shapes) if (inP(sh.poly, q)) hits.add(sh.key);
+      for (const l of R.report.labels) if (q[0]! > l.ink.x0 - 2 && q[0]! < l.ink.x1 + 2 && q[1]! > l.ink.y0 - 2 && q[1]! < l.ink.y1 + 2) hits.add(`label:${l.key}`); }
+    return { hits: [...hits], z, len: Math.hypot(m[2] - m[0], m[3] - m[1]) };
+  };
+  it('dumbbell_shrug: the Trace and ring on the viewer\'s-right shoulder (shoulderTop.l), the circle beside it, its connector short and crossing no outline, arc or label', () => {
+    const s = S3.dumbbell_shrug, { hits, z, len } = linkHits(s, 'normal');
+    expect(s.trace.point).toBe('shoulderTop.l');
+    const cam = qaEng.cameraOf(s, plate.renderPlate(s, { id: 'x' }).report), L = qaEng.poseLandmarks(Eng(), s).lm, sh = cam.P(L.end['shoulderTop.l']), other = cam.P(L.end['shoulderTop.r']);
+    expect(Math.hypot(z.src.c[0] - sh[0], z.src.c[1] - sh[1])).toBeLessThan(Math.hypot(z.src.c[0] - other[0], z.src.c[1] - other[1]));
+    expect(Math.sign(z.circle.c[0] - other[0])).toBe(Math.sign(sh[0] - other[0]));   // the circle on the same side as the ring
+    expect(hits).toEqual([]);
+    expect(len).toBeLessThan(40);
+  });
+  it('mutation: the mx19 placement (the ring on shoulderTop.r) puts the connector across the body', () => {
+    const s = S3.dumbbell_shrug, m = { ...s, trace: { ...s.trace, point: 'shoulderTop.r' } };
+    expect(linkHits(m, 'normal').hits.length).toBeGreaterThan(0);
+  });
+  /** The head outline (spline points, plate px) in a pose. */
+  const headOf = (s: any, pose: any) => { const b = { height: 1.75 }, cam = qaEng.cameraOf(s, plate.renderPlate(s, { id: 'x' }).report);
+    return body.bodyShapes(body.fk(body.resolve(body.normPose(pose, b), b).q, b), cam).find((x: any) => x.key === 'head').poly; };
+  it('smith_machine_shrug: the faulty head is one closed dashed guide on the Mistake head outline (the same size as the solid head); the chin tell ends on that outline', () => {
+    const s = S3.smith_machine_shrug, g = s.mistake.guides.find((x: any) => x.kind === 'dashed');
+    expect(dist(g.pts[0], g.pts.at(-1))).toBe(0);   // closed
+    const cam = qaEng.cameraOf(s, plate.renderPlate(s, { id: 'x' }).report), H = headOf(s, { ...s.poses.end, ...s.mistake.pose });
+    const near = (q: number[]) => segNear(q, H);
+    expect(Math.max(...g.pts.map((w: number[]) => near(cam.P(w))))).toBeLessThan(1);
+    const t = s.mistake.tells.find((x: any) => x.key === 'chin'), L = qaEng.poseLandmarks(Eng(), s).lm.mistake, c = cam.P(L.chin), q = [c[0] + t.anchor.off[0], c[1] + t.anchor.off[1]];
+    expect(near(q)).toBeLessThan(1.5);   // the leader ends on the dashed outline
+    expect(Math.max(...H.map((p: number[]) => p[0]!)) - q[0]!).toBeLessThan(6);   // at the jaw's front (the chin), not under the head (the throat)
+  });
+  it('mutation: the chin tell back on the bare chin landmark sits under the head (the throat), 6 px or more behind its front', () => {
+    const s = S3.smith_machine_shrug, cam = qaEng.cameraOf(s, plate.renderPlate(s, { id: 'x' }).report), H = headOf(s, { ...s.poses.end, ...s.mistake.pose });
+    const c = cam.P(qaEng.poseLandmarks(Eng(), s).lm.mistake.chin);
+    expect(Math.max(...H.map((p: number[]) => p[0]!)) - c[0]).toBeGreaterThanOrEqual(6);
   });
 });

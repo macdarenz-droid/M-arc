@@ -93,6 +93,10 @@ const START_SHOULDERS = hiddenShoulders();
 
 // Mistake (c3): the head pushed forward as the shoulders rise: the end pose with the neck flexed M_NECK.
 const mistakePose = { neck: M_NECK };
+// Panel mx19 R5 (D-LIB13S-SMITHZOOM): the faulty head as one complete dashed outline, the same size as the solid head (the
+// engine's head shape in the Mistake pose, its own spline), so the forward head reads whole and not only where it leaves
+// the solid head; the fault keeps its drawn size.
+const M_HEAD = (() => { const pts = shapesOf({ ...end, ...mistakePose }).find(s => s.key === 'head').pts.map(([x, y]) => [0, -y / 1000, x / 1000]); return [...pts, pts[0]]; })();
 const HAND_R = 0.035, WRIST_R = 0.018;                // hand capsule radii at the bar and at the wrist (m)
 const CAMERA = { x0: 176, y0: 339 };                   // reference scale (146.29 px/m): whole figure, feet on the floor line
 // Closed hand (R3): the engine draws the fist as a circle on the grip centre, 8.7 cm past the wrist, so a gap opens
@@ -136,7 +140,9 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 0 },
   trace: { point: 'shoulderTop.r', trim: [0, 0] },
-  zoom: { view: 'normal', k: 3.5 },   // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.r), the smallest ladder k over the Trace bar
+  // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.r), the smallest ladder k over the Trace bar. No Mistake zoom yet: QA's
+  // H3.zoom:not-needed:mistake refuses one while the crown's 13.0 px move meets the 11.39 px bar (asked on #359)
+  zoom: { view: 'normal', k: 3.5 },
   // Two levels bracket the 5 cm rise: shoulder top at the start and at the top (R7: small at full-figure scale).
   datum: [{ y: 'start:shoulderTop.r', from: 130, to: 'start:shoulderTop.r' }, { y: 'shoulderTop.r', from: 130, to: 'shoulderTop.r', mistake: false }],   // from 130 (the parent's 60): the labels sit left
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'slight bend' },
@@ -153,13 +159,14 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
+      { kind: 'dashed', pts: M_HEAD, smooth: true },
       { kind: 'arrow', from: { at: 'head', pose: 'end', off: [4, -4] }, to: { at: 'head', pose: 'mistake', off: [4, -4] } },
     ],
     tells: [
       // c3 (plate.mistake.what)
       { key: 'head', text: 'Head forward', anchor: { at: 'head', pose: 'mistake' }, cue: 'The head pushes forward as the shoulders rise.' },
       // c3
-      { key: 'chin', text: 'Chin drops', anchor: { at: 'chin', pose: 'mistake' }, cue: 'The chin drops instead of the head staying level.' },
+      { key: 'chin', text: 'Chin drops', anchor: { at: 'chin', pose: 'mistake', off: [6, -5] }, cue: 'The chin drops instead of the head staying level.' },
     ],
   },
   alt: 'Smith machine shrug, side view. Standing tall with soft knees, the Smith bar hangs at mid-thigh on long arms with a slight elbow bend. Only the shoulders lift straight up the rails toward the ears and lower again. The head stays level.',

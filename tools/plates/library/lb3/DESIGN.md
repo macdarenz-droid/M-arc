@@ -506,8 +506,9 @@ dumbbell_shrug's grips beside the thighs (c1), cable_shrug's pulley ahead of the
 - cable_shrug: the pulley place (top 0.205 m, as cable_curl.mjs:74's 16 cm pulley; z 0.25-0.45 m, ahead of the toe tip
   at 0.210 m) [est until drawn].
 - dumbbell_shrug: grip half-width 0.26 m (the narrowest that clears 2 px, 16.5), the foot stance copied from upright_row.
-- smith_machine_shrug: the elbow bend (c1 "slight": proposed 10-15°, the drawn-item range in A4), the head angle (proposed
-  20° neck flexion, see 16.6), rail z ≥ 0.122 m.
+- smith_machine_shrug: ELBOW_BEND 12°, a drawing number: c1's "slight elbow bend" gives no degrees and the card has no
+  elbow fact; the 10-15° drawn-item test is this lane's own guard, not a sourced range (supervisor, #359 6549511226). The
+  head angle (M_NECK 20° neck flexion, see 16.6), RAIL_Z 0.13 m (≥ 0.122 m keeps 2 px).
 
 ### 16.5 Clearance (D-LIB13S-CLEAR; #354 6543628951 point 1; the BARSTART amendment)
 
@@ -607,3 +608,17 @@ left above the zoom, the datum lines start at x 130 (were 60) so they do not run
 is left off (no place for its label within F3's leader range; "Straight arms" carries c5). smith_machine_shrug's two
 head-level labels are boxed on the left, 48 px apart (the engine stacked them 22 px apart: H4.overlap), with the same
 datum change. The hit boxes need 44 css px between label rows (H4.overlap at 340 px).
+
+### 16.12 Panel mx19 (wave 1 recheck and wave 2 round 1 @ `fe9219bf`, #359 6549892683)
+
+t_bar_row and cable_shrug APPROVED; their 18 fragments are pinned (with barbell_shrug's 9 and the 7 on main). Fix round:
+- **dumbbell_shrug R11:** the Trace, its source ring and the datum move to the viewer's-right shoulder (shoulderTop.l; both
+  shoulders rise the same), and the circle sits beside it at (282, 188), its connector 28 px, crossing no outline, arc or
+  label (tested; the mx19 placement crossed the torso and forearm). The elbow measure is left off: with the circle beside
+  that shoulder its label had no place inside F3's leader range (98 px at best); "Straight arms" carries c3, as on
+  cable_shrug. k stays 3.5.
+- **smith_machine_shrug R5 (D-LIB13S-SMITHZOOM):** the faulty head is one complete dashed outline, the engine's Mistake
+  head shape at its own size (tested within 1 px), and the "Chin drops" leader ends on that outline at the jaw's front, not
+  under the head. The Mistake-view zoom is **not drawn yet**: QA's H3.zoom:not-needed:mistake (qa/zoom.mjs, outside this
+  card's write scope) refuses a Mistake zoom whenever a tell already moves 11.39 px at plate scale, and the crown moves
+  13.0 px. Asked on #359.
