@@ -493,6 +493,27 @@
     }
    ],
    "why": "D-LIB22-AFALL (#331 6409745507)"
+  },
+  {
+   "id": "wall_ball",
+   "lane": "LIB-SMALL",
+   "text": "Cyclic and continuous: no read source gives seconds for any phase, so up, down and pause stay null (LR-33). BarBend says to catch the ball and go directly into the next rep (c8); its endurance sets are four sets of 25 or five minutes for as many reps as possible (c16). No quote asks for a pause after the throw. Box Life's and BOXROX's arm rests (drop the arms while the ball is in the air) are rests between reps, with no seconds, not the pause field.",
+   "claim": "c16",
+   "rows": [
+    {
+     "phase": "Squat",
+     "move": true,
+     "blank": true,
+     "claim": "c16"
+    },
+    {
+     "phase": "Throw",
+     "move": true,
+     "blank": true,
+     "claim": "c16"
+    }
+   ],
+   "why": "D-SMALL-WBAFALL (D-STRIP-AFALL in the D-LIB22-AFALL form)"
   }
  ],
  "timedAtHead": [
@@ -510,11 +531,6 @@
   }
  ],
  "leftOut": [
-  {
-   "id": "wall_ball",
-   "lane": "LIB-22 #305",
-   "why": "S3: \"Cyclic and continuous\", \"go directly into the next rep\"; no FORMS form in the text"
-  },
   {
    "id": "diamond_push_up",
    "lane": "LB7",

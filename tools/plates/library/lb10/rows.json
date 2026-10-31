@@ -92,6 +92,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "front"
+  },
+  "lib_wall_ball": {
+   "src": "library/specs/wall_ball.mjs",
+   "slug": "wall-ball",
+   "prefix": "wall-ball",
+   "chromeId": "wall-ball",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }
