@@ -105,7 +105,7 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 const ER5_DRAWN = ['side_plank', 'russian_twist'];
 // The front entries asked with the E-R5 slice (#326), measured (px inside the figure past the leader's first 8 px).
 const FE_SINK = 9.64;
-const HELD: string[] = ['cable_crunch', 'pallof_press', 'russian_twist'];   // russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
+const HELD: string[] = ['pallof_press', 'russian_twist'];   // cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
 const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', ...ER5_DRAWN];
@@ -853,7 +853,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_side_plank', 'lib_superman']);   // cable_crunch held (D-LIB21-CCHOLD); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_side_plank', 'lib_superman']);   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('plank, crunch, the 5 T ids, russian_twist and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
@@ -863,9 +863,9 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     }
     expect(existsSync(`${SPECS_DIR}/bicycle_crunch.mjs`)).toBe(false);
   });
-  it('the held ids (cable_crunch D-LIB21-CCHOLD; pallof_press D-LIB21-PALLOFHOLD; russian_twist D-LIB21-RTWIST) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
+  it('the held ids (pallof_press D-LIB21-PALLOFHOLD; russian_twist D-LIB21-RTWIST) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
-    expect(build.HELD).toEqual({ cable_crunch: 'side', pallof_press: 'side', russian_twist: 'front' });
+    expect(build.HELD).toEqual({ pallof_press: 'side', russian_twist: 'front' });
     const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
     for (const id of HELD) expect(new RegExp(`\\| ${id} \\| D-LIB21-[A-Z]+`).test(design), id).toBe(true);
     for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
@@ -1275,8 +1275,10 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
     for (const id of specsDrawn()) { const g = minGap(S[id]); console.log(`LIB-21 leader gap ${id}: ${g.min.toFixed(1)} px (${g.at})`); expect(g.min, `${id} ${g.at}`).toBeGreaterThanOrEqual(6); await yieldNow(); }
   });
   // D-LIB21-ROPENIT is withdrawn: after the slice fix round the "Rope by head" leader clears the strand by 7.28 px.
-  it('mutation: cable_crunch\'s "Rope by head" box at 200/232 (its leader along the strand) is red', () => {
-    const s = S.cable_crunch, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'rope' ? { ...x, box: { left: 200, top: 232 } } : x)) };
+  // LIB-21R3 (D-LB9R3-ROPEBOX): on the spine-segment curl the box moved to {200, 234} (6.43 px); the mutation is the box
+  // back at main's {200, 246} (4.78 px), since {200, 232} now reads 6.57 px.
+  it('mutation: cable_crunch\'s "Rope by head" box back at 200/246 (its leader along the strand) is red', () => {
+    const s = S.cable_crunch, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'rope' ? { ...x, box: { left: 200, top: 246 } } : x)) };
     expect(minGap(bad).min).toBeLessThan(6);
   });
   it('mutation: ab_wheel_rollout\'s "Roll slowly" box moved down to the floor right of the wheel (its leader across the wheel and the floor line) is red', () => {
@@ -1754,5 +1756,155 @@ describe('LIB-21 resume 2: superman\'s normal-view zoom (D-LIB21-SUPERMAN, D-LIB
     const { z } = zTrace(s()), r = plate.renderPlate(s(), { id: 'x' }), C = z.src.c, R = z.circle.r;
     let ink = 0; for (let y = -R; y <= R; y += 2) { const w = Math.sqrt(Math.max(0, R * R - y * y)); ink += r.occ.count(C[0] - w, C[1] + y - 1, C[0] + w, C[1] + y + 1); }
     expect(ink).toBeGreaterThan(0);
+  });
+});
+
+describe('LIB-21R3 (LB9 resume 3): cable_crunch on LIB-SPINE\'s spine segments (D-LB9R3-SPLIT, -ANGLE, -ROPEBOX, -CURL, -CLEAR)', { timeout: T }, () => {
+  const s = () => S.cable_crunch, m = () => M.cable_crunch;
+  const SPLIT_KEYS = ['SPLIT_L5S1', 'SPLIT_L3', 'SPLIT_T12', 'SPLIT_T7'];
+  const sizesCC = () => readJson('tools/plates/library/lb9/sizes.json').ids.cable_crunch;
+  const skOf = (pose: any) => body.fk(body.resolve(body.normPose(pose, B175), B175).q, B175);
+  const total = (tr: any) => tr.flex.reduce((a: number, b: number) => a + b, 0);
+  const keyPoses = () => [s().poses.start, ...s().poses.via, s().poses.end];
+  it('A3: every key pose and the Mistake write { flex: [4 angles] }, each SPLIT x its total; SPLIT is the four sizes.json rows, sourced', () => {
+    const split = m().SPLIT;
+    expect(split).toEqual(SPLIT_KEYS.map(k => sizesCC()[k].value));
+    expect(Math.abs(split.reduce((a: number, b: number) => a + b, 0) - 1)).toBeLessThan(1e-9);
+    for (const k of SPLIT_KEYS) expect(/Pearcy/.test(sizesCC()[k].basis) && /Hajibozorgi/.test(sizesCC()[k].basis), k).toBe(true);
+    for (const p of [...keyPoses(), s().mistake.pose]) {
+      expect(Object.keys(p.trunk)).toEqual(['flex']);
+      expect(p.trunk.flex.length).toBe(4);
+      p.trunk.flex.forEach((a: number, i: number) => expect(Math.abs(a - split[i] * total(p.trunk))).toBeLessThan(1e-9));
+    }
+    expect(total(s().poses.end.trunk)).toBeCloseTo(m().TRUNK_END, 9);
+    expect(total(s().poses.start.trunk)).toBe(0);
+    expect(total(s().mistake.pose.trunk)).toBe(0);
+  });
+  it('A3 mutations: a number trunk in the Mistake throws D-SPINE-MIX; SPLIT edited in the spec only differs from its sizes.json row (A17 form)', () => {
+    const bad = { ...s(), mistake: { ...s().mistake, pose: { ...s().mistake.pose, trunk: 0 } } };
+    expect(() => plate.renderPlate(bad, { id: 'x', mistake: true })).toThrow(/D-SPINE-MIX/);
+    const differ = (SIZES: any) => SPLIT_KEYS.filter(k => SIZES[k] !== sizesCC()[k].value);
+    expect(differ(m().SIZES)).toEqual([]);
+    expect(differ({ ...m().SIZES, SPLIT_L3: 0.35 })).toEqual(['SPLIT_L3']);
+  });
+  /** The end pose's back curve (D-LB9R3-CURL): the back line (z -0.062 H, backMid's depth) through fk's skin map every
+   *  0.005 H from .55 to .80 H, side projection; the largest share of the total turn (sum of absolute turns) in a 0.02 H
+   *  window (4 turns). */
+  const curlShare = (pose: any) => {
+    const sk = skOf(pose), pts: number[][] = [];
+    for (let i = 0; i <= 50; i++) { const y = 0.55 + i * 0.005, w = sk.skin([0, y, -0.062]); pts.push([w[2], w[1], y]); }
+    const ang = pts.slice(1).map((q, i) => Math.atan2(q[1]! - pts[i]![1]!, q[0]! - pts[i]![0]!));
+    const turns = ang.slice(1).map((a, i) => [pts[i + 1]![2]!, Math.abs((((a - ang[i]!) * 180 / Math.PI + 540) % 360) - 180)]);
+    const tot = turns.reduce((a, t) => a + t[1]!, 0);
+    return Math.max(...turns.map(([y0]) => turns.filter(t => t[0]! >= y0! - 1e-9 && t[0]! < y0! + 0.02 - 1e-9).reduce((a, t) => a + t[1]!, 0))) / tot;
+  };
+  it('A4 (D-LB9R3-CURL): a curl, not a fold: no 0.02 H window of the end\'s back curve holds over 30 % of its total turn; mutation: SPLIT [0, 1, 0, 0] (all at L3) is red', () => {
+    const end = s().poses.end, share = curlShare(end), all = curlShare({ ...end, trunk: { flex: [0, m().TRUNK_END, 0, 0] } });
+    console.log(`LIB-21R3 A4 cable_crunch back curve: ${(share * 100).toFixed(1)} % (all at L3: ${(all * 100).toFixed(1)} %)`);
+    expect(share).toBeLessThanOrEqual(0.30);
+    expect(all).toBeGreaterThan(0.30);
+  });
+  it('A5 (D-LB9R3-ANGLE): the end is card-true: each elbow cap 2 cm from its thigh, the hips as at the start, Trace and Mistake deviation over the bars', () => {
+    const env = pins().envelope, lS = lmOf(s(), 'start'), lE = lmOf(s(), 'end');
+    expect(m().info.keys.at(-1).elbowGapCm).toBeCloseTo(2, 2);
+    for (const k of ['hip.l', 'hip.r', 'hips', 'knee.l', 'knee.r']) expect(d3(lS[k], lE[k]), k).toBeLessThan(1e-9);
+    expect(s().poses.end.root).toEqual(s().poses.start.root);
+    const R = { normal: plate.renderPlate(s(), { id: 'x' }), mistake: plate.renderPlate(s(), { id: 'x', mistake: true }) };
+    const dev = qaNode.deviation({ spec: s() }, Eng(), R), tr = markup.pathsOf(R.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0);
+    console.log(`LIB-21R3 A5 cable_crunch: TRUNK_END ${m().TRUNK_END.toFixed(2)} deg, Trace ${tr.toFixed(2)} px, deviation ${dev.toFixed(2)} px`);
+    expect(Math.abs(m().TRUNK_END - 102.33)).toBeLessThanOrEqual(0.01);
+    expect(Math.abs(tr - 33.6)).toBeLessThanOrEqual(0.1);
+    expect(Math.abs(dev - 29.95)).toBeLessThanOrEqual(0.1);
+    expect(tr).toBeGreaterThanOrEqual(env.traceLenMin);
+    expect(dev).toBeGreaterThanOrEqual(env.deviationMin);
+  });
+  it('A5 mutation: TRUNK_END fixed at the sourced 70.7 deg leaves the elbows 20.55 cm from the thighs and the Trace under traceLenMin (H3.trace)', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'lb9r3-angle-'));
+    try {
+      for (const d of ['tools/plates/library', 'tools/plates/vendor', 'tools/plates/layers', 'tools/plates/lib']) cpSync(d, join(root, d), { recursive: true });
+      const p = join(root, `${SPECS_DIR}/cable_crunch.mjs`), src = readFileSync(p, 'utf8'), line = 'export const TRUNK_END = trunkEnd(GY);';
+      expect(src.split(line).length).toBe(2);
+      writeFileSync(p, src.replace(line, 'export const TRUNK_END = 70.7;'));
+      const mod = await import(/* @vite-ignore */ `${new URL(`file://${p}`).href}`), R = { normal: plate.renderPlate(mod.default, { id: 'x' }) };
+      const tr = markup.pathsOf(R.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0), gap = mod.info.keys.at(-1).elbowGapCm;
+      console.log(`LIB-21R3 A5 mutation (TRUNK_END 70.7): elbow gap ${gap} cm, Trace ${tr.toFixed(2)} px`);
+      expect(gap).toBeGreaterThan(20);
+      expect(tr).toBeLessThan(pins().envelope.traceLenMin);
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+  it('A6 (D-LB9R3-ROPEBOX): the "Rope by head" box is {200, 234}, one moved box; F3 and F2 stay the named 26.05 and 0.622 (qa.mjs)', async () => {
+    expect(s().callouts.find((c: any) => c.key === 'rope').box).toEqual({ left: 200, top: 234 });
+    const qa = await import(/* @vite-ignore */ lib('lb9/qa.mjs'));
+    expect(qa.F3_NAMED.lib_cable_crunch).toBe(26.05);
+    expect(qa.F2_NAMED.lib_cable_crunch).toBe(0.622);
+  });
+  /** D-LB9R3-CLEAR: the cable (pulley tangent to ferrule) and the ferrule lie in the body's plane (x = 0); least screen
+   *  distance (px) from every body outline in the start, each via, the end and the Mistake. */
+  const inPoly = (p: number[], poly: number[][]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const a = poly[i]!, b = poly[j]!; if ((a[1]! > p[1]!) !== (b[1]! > p[1]!) && p[0]! < (b[0]! - a[0]!) * (p[1]! - a[1]!) / (b[1]! - a[1]!) + a[0]!) c = !c; } return c; };
+  const cableClear = (spec: any, { only = '', ferruleOnly = false } = {}) => {
+    const cam = camOf(spec), lS = eng.landmarksOf(spec.poses.start, 1.75);
+    const poses: [string, any, boolean][] = [['start', spec.poses.start, false], ...spec.poses.via.map((p: any, i: number) => [`via${i + 1}`, p, false] as [string, any, boolean]), ['end', spec.poses.end, false], ['mistake', spec.mistake.pose, true]];
+    let min = Infinity, at = '', near: number[][] = [];
+    for (const [name, pose, mis] of poses) {
+      if (only && name !== only) continue;
+      const lm = eng.landmarksOf(pose, 1.75), items = itemsAt(spec, name.startsWith('via') ? 'via' : name, lm, lS, mis);
+      const lines: number[][][] = [];
+      for (const it of items) {
+        if (it.type === 'cable' && !ferruleOnly) lines.push([cam.P(it.from), cam.P(it.to)]);
+        else if (it.type === 'poly' && it.part === 'rope' && !it.curve) lines.push([...it.pts, it.pts[0]].map((w: number[]) => cam.P(w)));
+      }
+      if (mis && !ferruleOnly) for (const g of spec.mistake.guides ?? []) if (g.kind === 'dashed') lines.push(g.pts.map((w: number[]) => cam.P(w)));   // the Mistake's cable
+      const outlines = body.bodyShapes(skOf(pose), cam).map((x: any) => x.poly as number[][]);
+      for (const ln of lines) for (const [a, b] of segs(ln)) for (let k = 0; k <= 40; k++) {
+        const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
+        for (const poly of outlines) {
+          if (inPoly(q, poly)) { if (0 < min) { min = 0; at = name; near = [q, q]; } continue; }
+          for (const [u, v] of segs([...poly, poly[0]!])) {
+            const d = segD(q, u!, v!);
+            if (d < min) { const dx = v![0]! - u![0]!, dy = v![1]! - u![1]!, t = Math.max(0, Math.min(1, ((q[0]! - u![0]!) * dx + (q[1]! - u![1]!) * dy) / (dx * dx + dy * dy || 1))); min = d; at = name; near = [q, [u![0]! + dx * t, u![1]! + dy * t]]; }
+          }
+        }
+      }
+    }
+    return { min, at, near };
+  };
+  it('A7 (D-LB9R3-CLEAR): the cable and the ferrule stay 2 px from every body outline in every drawn pose; the rope strands are listed with their 3D clearance', () => {
+    const c = cableClear(s());
+    console.log(`LIB-21R3 A7 cable_crunch: cable and ferrule ${c.min.toFixed(2)} px from the body (${c.at}); rope strands 3D ${m().info.ropeMinCm} cm (frames ${m().info.ropeFramesMinCm} cm)`);
+    expect(c.min).toBeGreaterThanOrEqual(2);
+    expect(m().info.ropeMinCm).toBeGreaterThanOrEqual(0.3);
+  });
+  // the card's designed 13 px shift leaves 7.44 px at the start, and 20 px leaves 4.75 px (measured), so the mutation
+  // puts the ferrule's centre on the ear landmark (in the body's plane), with the cable's end
+  it('A7 mutation: the ferrule and the cable end moved onto the head (the ferrule centred on the ear) is red', () => {
+    const eq = s().equipment.map((e: any) => (typeof e !== 'function' ? e : (lm: any, ctx: any) => {
+      const r = e(lm, ctx), list = [].concat(r ?? []) as any[], fer = list.find((o: any) => o && o.part === 'rope' && o.type === 'poly' && !o.curve);
+      if (!fer) return r;
+      const c = [0, 1, 2].map(k => fer.pts.reduce((a: number, w: number[]) => a + w[k]!, 0) / fer.pts.length), dv = [0, lm.ear[1] - c[1]!, lm.ear[2] - c[2]!];
+      const mv = (w: number[]) => w.map((v, k) => v + dv[k]!);
+      const one = (o: any) => (o && o.part === 'rope' && o.type === 'poly' && !o.curve ? { ...o, pts: o.pts.map(mv) } : o && o.type === 'cable' ? { ...o, to: mv(o.to) } : o);
+      return Array.isArray(r) ? r.map(one) : one(r);
+    }));
+    const c = cableClear({ ...s(), equipment: eq });
+    console.log(`LIB-21R3 A7 mutation (ferrule on the ear): ${c.min.toFixed(2)} px (${c.at})`);
+    expect(c.min).toBeLessThan(2);
+  });
+  /** The spec with the ferrule and the cable's end shifted by world dv in every pose. */
+  const shiftFerrule = (dv: number[]) => ({ ...s(), equipment: s().equipment.map((e: any) => (typeof e !== 'function' ? e : (lm: any, ctx: any) => {
+    const r = e(lm, ctx), mv = (w: number[]) => w.map((v, k) => v + dv[k]!);
+    const one = (o: any) => (o && o.part === 'rope' && o.type === 'poly' && !o.curve ? { ...o, pts: o.pts.map(mv) } : o && o.type === 'cable' ? { ...o, to: mv(o.to) } : o);
+    return Array.isArray(r) ? r.map(one) : one(r);
+  })) });
+  // D-LB9R3-CLEAR edge ('LIB-21 R3 PLAN RULED', #361 6548167828 point 2): the ferrule moved along its nearest-outline
+  // direction (the start pose, where its own gap is least) until the gap is 1.0-1.9 px: red at the 2 px bar's edge
+  it('A7 edge mutation: the ferrule moved toward its nearest outline until the gap is 1.0-1.9 px is red', () => {
+    const cam = camOf(s()), base = cableClear(s(), { only: 'start', ferruleOnly: true }), [q, o] = base.near as number[][];
+    const ux = (o![0]! - q![0]!) / base.min, uy = (o![1]! - q![1]!) / base.min;   // screen unit vector toward the outline
+    const at = (k: number) => cableClear(shiftFerrule([0, -uy * k / cam.pxm, ux * k / cam.pxm]));   // facing right: screen x = +z, screen y = -y
+    let lo = 0, hi = base.min, k = hi, c = at(hi);
+    for (let i = 0; i < 40 && !(c.min >= 1.0 && c.min <= 1.9); i++) { k = (lo + hi) / 2; c = at(k); if (c.min > 1.9) lo = k; else hi = k; }
+    console.log(`LIB-21R3 A7 edge mutation: the ferrule ${k.toFixed(2)} px toward the outline (its own start gap ${base.min.toFixed(2)} px): gap ${c.min.toFixed(2)} px (${c.at})`);
+    expect(c.min).toBeGreaterThanOrEqual(1.0);
+    expect(c.min).toBeLessThan(2);
   });
 });

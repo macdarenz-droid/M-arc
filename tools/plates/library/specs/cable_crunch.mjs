@@ -33,10 +33,12 @@
 //   pulley's lifter-side tangent. GY is the lowest grip height at which the rope clears the skinned head, neck and
 //   shoulder top by ROPE_MARGIN through the whole curl; every drawn pose is checked (info.ropeMinCm, a throw below).
 //  End (c3, c4, c5, c12): the hips unchanged (the start's root, tilt and hip angle, c3 'hips stationary'); only the
-//   spine curls: the trunk flexion solved so each elbow cap comes ELBOW_GAP from its own thigh's surface (c5 'elbows
-//   near thighs'; c4 'curling the spine as much as you can'), each elbow at the point of its circle about the
-//   shoulder-grip line nearest its thigh, no nearer the midline than the thigh's axis. Chin still tucked (NECK).
-//  Path: VIA_N - 1 via keys at even steps of the curl; the 2 ghosts land on keys 3 and 6.
+//   spine curls, spread over the four spine pivots by SPLIT (D-LB9R3-SPLIT: Pearcy 1984's lumbar levels scaled to
+//   Hajibozorgi 2016's lumbar total, plus its thoracic): the total trunk flexion solved so each elbow cap comes
+//   ELBOW_GAP from its own thigh's surface (c5 'elbows near thighs'; c4 'curling the spine as much as you can'), each
+//   elbow at the point of its circle about the shoulder-grip line nearest its thigh, no nearer the midline than the thigh's axis. Chin still tucked (NECK).
+//  Path: VIA_N - 1 via keys at even steps of the curl (each key the same SPLIT of its total); the 2 ghosts land on keys 3
+//   and 6.
 //  Mistake (c8, c3: the hips move to pull, the spine does not flex): the spine stays as at the start (trunk 0) and
 //   the arms keep the end's angles to the thorax (c9: the arms do not pull); the hips do the crunch: the thigh turns
 //   back about the fixed knee (the hips drop back toward the heels) and the pelvis tips forward, both solved so (1) the
@@ -49,13 +51,20 @@
 //   pulley is its top pulley (c1 'upper position').
 // Camera: hanging_leg_raise's fit margins (capped at the reference scale): the 2.1 m column sets the height.
 // Unsourced numbers (SIZES; lb9/sizes.json holds each with its basis): HINGE, NECK, ELBOW_GAP, COL_FRONT, VIA_N, ROPE_MARGIN.
+// Sourced numbers (SIZES; basis in lb9/sizes.json): SPLIT_L5S1, SPLIT_L3, SPLIT_T12, SPLIT_T7.
 import { landmarksOf, RADII, WINTER, REF, fk, resolve, normPose, bodyShapes, poseAt } from '../engine.mjs';
 import { rope, ropeGeometry, ROPE_ITEMS } from '../eq/rope.mjs';
 import { perItem } from '../eq/parts.mjs';
 
 const H = 1.75, R = Math.PI / 180, BODY = { height: H };
-export const SIZES = Object.freeze({ HINGE: 20, NECK: 12, ELBOW_GAP: 0.02, COL_FRONT: 0.9144, VIA_N: 9, ROPE_MARGIN: 0.003 });
+export const SIZES = Object.freeze({ HINGE: 20, NECK: 12, ELBOW_GAP: 0.02, COL_FRONT: 0.9144, VIA_N: 9, ROPE_MARGIN: 0.003,
+  SPLIT_L5S1: 0.123, SPLIT_L3: 0.341, SPLIT_T12: 0.246, SPLIT_T7: 0.290 });
 const { HINGE, NECK, ELBOW_GAP, COL_FRONT, VIA_N, ROPE_MARGIN } = SIZES;
+// The spine's flexion spread over the engine's four pivots, L5/S1, L3, T12 and T7 (SPINE_PIV; D-SPINE-SEGS), by the
+// sourced split (D-LB9R3-SPLIT): every pose writes the array form (D-SPINE-MIX).
+export const SPLIT = Object.freeze([SIZES.SPLIT_L5S1, SIZES.SPLIT_L3, SIZES.SPLIT_T12, SIZES.SPLIT_T7]);
+export const spine = t => ({ flex: SPLIT.map(f => f * t) });
+const flexOf = tr => tr.flex.reduce((a, b) => a + b, 0);
 // cableColumn's own defaults (vendor/engine/equipment.mjs:85, :98): 2.1 m frame, 34 cm wide, top pulley 9 cm under the
 // top, 3.5 cm radius. Named here only so the rope's cable leaves that pulley; the primitive draws them.
 const COL_H = 2.1, COL_W = 0.34, TOP_DROP = 0.09, TOP_R = 0.035;
@@ -177,7 +186,7 @@ export const ropeClearance = (sk, g) => geoClearance(sk, ropeOf(sk, g));
 const reachOf = (pose, poles) => { const g = gripsAt(skOf(pose)); return { ...pose, reach: { l: { at: g.l, pole: poles.l }, r: { at: g.r, pole: poles.r } } }; };
 
 // ---- start: kneeling tall, hips raised by the slight hinge, torso upright, chin tucked (c1, c3, c5) ----
-const upright = { ...legs(HINGE, 0), trunk: 0, neck: NECK };
+const upright = { ...legs(HINGE, 0), trunk: spine(0), neck: NECK };
 const FWD = [0, 0, 1];
 
 // ---- end: only the spine curls until the elbows are near the thighs (c3, c4, c5) ----
@@ -199,7 +208,7 @@ function nearestElbow(S, G, s) {
     const gp = capGap(E, hip, knee); if (!best || gp < best.gap) best = { gap: gp, pole: sub(E, C) }; }
   return best;
 }
-const curled = tr => ({ ...upright, trunk: tr });
+const curled = tr => ({ ...upright, trunk: spine(tr) });
 const elbowsAt = (tr, gy) => { const sk = skOf(curled(tr)), g = gripsAtY(sk, gy); return { l: nearestElbow(sk.S.l, g.l, 'l'), r: nearestElbow(sk.S.r, g.r, 'r') }; };
 const trunkEnd = gy => bisect(tr => { const e = elbowsAt(tr, gy); return Math.min(e.l.gap, e.r.gap) - ELBOW_GAP; }, 0, 115, 'the elbows near the thighs', 40);
 // The grip height: the lowest head-frame height from the ear up the side of the head (toward the temple) at which the
@@ -222,11 +231,11 @@ const LE = landmarksOf(end, H), RE = resolve(normPose(end, BODY), BODY).q;
 // the pull: the hands' midpoint distance from the pulley (smooth in the pose; the ferrule's wrap search is not)
 const ropeLenOf = pose => { const lm = landmarksOf(pose, H); return len(sub(lm.grips, PULLEY)); };
 const armsEnd = { shoulder: { l: RE.sh.l, r: RE.sh.r }, elbow: { l: RE.elbow.l, r: RE.elbow.r }, wrist: 0, reach: null };
-const misAt = q => ({ ...legs(q.th, q.tilt), trunk: 0, neck: NECK, ...armsEnd });
+const misAt = q => ({ ...legs(q.th, q.tilt), trunk: spine(0), neck: NECK, ...armsEnd });
 const LEN_E = ropeLenOf(end), COM_E = com(LE);
 export const QM = solve({ th: HINGE + 15, tilt: TRUNK_END * 0.8 }, misAt, p => [ropeLenOf(p) - LEN_E, com(landmarksOf(p, H))[2] - COM_E[2]], 'the hips pulling');
 const misFull = misAt(QM);
-const mistake = { root: misFull.root, trunk: 0, hip: misFull.hip, knee: misFull.knee, shoulder: armsEnd.shoulder, elbow: armsEnd.elbow, wrist: 0, reach: null };
+const mistake = { root: misFull.root, trunk: spine(0), hip: misFull.hip, knee: misFull.knee, shoulder: armsEnd.shoulder, elbow: armsEnd.elbow, wrist: 0, reach: null };
 
 // ---- equipment ----
 const LS = landmarksOf(start, H);
@@ -276,7 +285,7 @@ export default {
   callouts: [
     { key: 'hips', text: 'Hips still', anchor: { at: 'buttock', off: [5.5, 12] }, box: { left: 8, top: 286 }, cue: 'Keep the hips still and raised while only the spine bends.' },
     { key: 'curl', text: 'Curl the<br>spine', anchor: { at: 'sacrum', off: [0, -3] }, box: { left: 16, top: 240 }, cue: 'Curl your spine so the elbows move toward your thighs.' },
-    { key: 'rope', text: 'Rope by<br>head', anchor: { at: ROPE_PT, off: [2, 0] }, box: { left: 200, top: 246 }, cue: 'Hands hold the rope by your head, and the arms don\'t yank.' },
+    { key: 'rope', text: 'Rope by<br>head', anchor: { at: ROPE_PT, off: [2, 0] }, box: { left: 200, top: 234 }, cue: 'Hands hold the rope by your head, and the arms don\'t yank.' },
   ],
   tempo: [{ phase: 'Crunch', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 3, move: true }],
   mistake: {
@@ -299,7 +308,7 @@ export const info = {
   RISE, ANKLE, TRUNK_END, QM, kneeY: KNEE_Y, pulley: PULLEY, gripX: GX, gripY: GY, ropeMinCm: +(ROPE_MIN * 100).toFixed(2), ropeFramesMinCm: +(FRAMES_MIN * 100).toFixed(2),
   base: { front: r3(KNEE.r[2]), back: r3(LS['toe.r'][2]) },
   keys: keyPoses.map(p => { const sk = skOf(p), lm = landmarksOf(p, H);
-    return { trunk: r2(p.trunk), comZ: r3(com(lm)[2]), ropeClearCm: r2(ropeClearance(sk, gripsOf(lm)) * 100), elbowGapCm: r2(Math.min(...['l', 'r'].map(s => capGap(lm[`elbow.${s}`], lm[`hip.${s}`], lm[`knee.${s}`]))) * 100) }; }),
+    return { trunk: r2(flexOf(p.trunk)), comZ: r3(com(lm)[2]), ropeClearCm: r2(ropeClearance(sk, gripsOf(lm)) * 100), elbowGapCm: r2(Math.min(...['l', 'r'].map(s => capGap(lm[`elbow.${s}`], lm[`hip.${s}`], lm[`knee.${s}`]))) * 100) }; }),
   pose: Object.fromEntries([['start', start], ['end', end], ['mistake', misFull]].map(([k, p]) => { const lm = landmarksOf(p, H);
     return [k, { com: com(lm).map(r3), hip: lm['hip.r'].map(r3), knee: lm['knee.r'].map(r3), elbow: lm['elbow.r'].map(r3), grip: lm['grip.r'].map(r3), ropeLen: r3(ropeLenOf(p)), ropeClearCm: r2(ropeClearance(skOf(p), gripsOf(lm)) * 100) }]; })),
 };

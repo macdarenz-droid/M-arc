@@ -2977,3 +2977,19 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   F-ZOOM-PITCH, train 48). The container's `push.negotiate true` made pushes send no objects; `git -c
   push.negotiate=false push` works.
 - **Source:** PR #340; pilot-a2/DESIGN.md.
+## LIB-21R3: LB9 resume 3, cable_crunch on LIB-SPINE's spine segments (builder, 2026-10-31; card docs/supervisor/verify/lb9r3-card.md, rulings D-LB9R3-*)
+- **D-LB9R3-SPLIT.** cable_crunch's curl is spread over the engine's four spine pivots (L5/S1, L3, T12, T7) by 0.123 /
+  0.341 / 0.246 / 0.290: Pearcy 1984's per-level lumbar flexion (via the NCT03737227 protocol quote) scaled to
+  Hajibozorgi & Arjmand 2016's lumbar total, plus their thoracic 20.5 deg. **Why:** the single lumbar pivot drew a fold
+  (R1, D-LIB21-CCHOLD); both sources were fetched and the numbers confirmed verbatim before use. Four number rows in
+  lb9/sizes.json (D-LB9R3-SPLITROWS) keep A17 unchanged.
+- **D-LB9R3-ANGLE.** The end keeps the 2 cm elbow-to-thigh solve: 102.33 deg of spinal flexion, about 1.45 x the
+  sourced 70.7 deg, named as a card-truth limit. Capping at 70.7 deg leaves the elbows 20.55 cm away and the Trace
+  under its bar.
+- **D-LB9R3-ROPEBOX, -CURL, -CLEAR.** "Rope by head" moves 12 px up to {200, 234}; a new test keeps any 0.02 H window
+  of the back curve under 30 % of its total turn (22.2 %; 69.4 % all at L3); the cable and ferrule stay 2 px from the
+  body in every drawn pose (least 11.76 px, the Mistake).
+- **D-SPINE-BICYCLE-NEARS.** bicycle_crunch stays held: with every sourced limit held its elbow comes no nearer than
+  6.8 cm to the other leg, and only at a trunk turn no source bounds. "Nears" goes to research (trunk rotation range,
+  arm position); lb9/DESIGN.md section 25.
+- **Source:** PR #361; lb9/DESIGN.md sections 24-25.
