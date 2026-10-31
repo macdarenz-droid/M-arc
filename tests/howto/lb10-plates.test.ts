@@ -1825,3 +1825,129 @@ describe('LIB-22 panel fix 2 (mx3, #331 6486669489; D-LIB13-PANEL2): burpee "Nec
     expect(plankProblems(old).length).toBeGreaterThan(0);
   });
 });
+
+describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07ee8537 on main 6b32d576)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the 9 approved LB10 plates on main's LB10 page 07ee8537…6a070 (81 fragments; the form of
+  // lb6-plates.test.ts's LIB-16 resume block).
+  const APPROVED: Record<string, Record<string, string>> = {
+    "kettlebell-swing": {
+      "normalSvg": "f45ac5ddb5abf68a4b58a1266bd880d9a9df4f87424ca130c5f2685ce5853c61",
+      "normalOverlay": "00c67b81f9bf424900260b9298b152adfa492d76d8dea2473d58c07e8d140481",
+      "mistakeSvg": "421a69a6eff0981f6f4d7bc2c4f31fb91b0ccaec3d96e9da5000dc57326f2ff3",
+      "mistakeOverlay": "891a7afcd7cee38dd48997d95fc1940668d0fb0085d45d1631db6890f904104e",
+      "tells": "1e731a59fa1acc4eed0bf14ac84f50d00ce43433aa7e62fe2adaf5587477969f",
+      "tempo": "bbe2cd3af4828cddfb1dbb2af464b6585cc0a7ab7c2cb4370e86d62bc8cb69e8",
+      "cues": "a5f6ec4a61ef796a6fceeca28db548eeb411d0db2875ef0d34e056e73faaa092",
+      "alt": "8ea747e8df227a5858f51200bd240dfff1fc3c1ba85872374bacc788d769ed26",
+      "mistakeAlt": "1bde864791044f20b7415b21602da6329f98cfa9a304067e1c062853a4a985f0"
+    },
+    "high-knees": {
+      "normalSvg": "bacc38bbd015e14ca1242861a2b59153b7034a2dbe8441d3465f2b061834196a",
+      "normalOverlay": "ccd4a32137a4a358d025b7cf79c39ed06e62964d7f05ed6b44e099acee806207",
+      "mistakeSvg": "b6edc38dbbde9fd5d911b6f5e2920a67f56a5e996f9303e1ff5ddf58c8f2ed7b",
+      "mistakeOverlay": "401f995336e94a44d3192658fd8e13bd14911b8a9113018cab27626ebf2f1c9f",
+      "tells": "1abe7532fefd9981d4ad92ccdc90bcb1ec4aeb2cc14d842976c95515cbebdfd7",
+      "tempo": "5e6b30bd62d5477511099a7223e190982d6f2c365a411300e31fd5f75f1a8ebd",
+      "cues": "a81aeec88fa54afc6779e2a89254950df15abf80197e86a9e497c020419b61e7",
+      "alt": "bae68e9da3ceffe04455a1e07a66f9391e98127962fba70fe06013dacd0b16e1",
+      "mistakeAlt": "ae5f686adbcc72871bc4b68f69b149ebae772178cc8bba35dc77d97c40e2fca6"
+    },
+    "battle-ropes": {
+      "normalSvg": "5d80532aea0b1a54e6332a6457f30fe489d12126075c4b31b6e75de686e2442f",
+      "normalOverlay": "ce0371ecb73c87390bad8f008da2d76d650f10637499ac5308f6259c29e4f9d5",
+      "mistakeSvg": "09bc4fae7981d102014a143099afd0e8702137a30c48dca711177cb0a9c11ec9",
+      "mistakeOverlay": "1f02c23244d0ccc295723f4704f2f0d34e543a2e592bb03ce73dff8f67caca53",
+      "tells": "9d2e1aedb40099f42fa6bc2c85233ed3016e45c839667ff1c656f8fa7a8b3b9b",
+      "tempo": "5e6b30bd62d5477511099a7223e190982d6f2c365a411300e31fd5f75f1a8ebd",
+      "cues": "85cc9cbca910e94c536185410e5ff24243814f8c9232b367b5a0773b7a6889ad",
+      "alt": "da8d7f1b44ccff588145e2bb03ae939aa502c7581c51a967816c51e989c67271",
+      "mistakeAlt": "2e69b29b78f143b879610dca51a51496b5c280b56c434009ad2effa67b4e53de"
+    },
+    "sled-pull": {
+      "normalSvg": "8638526e2db679446f1450441f4965bde890f80115564732728e010dd2dde117",
+      "normalOverlay": "0ef9d6fd50ca07a21308b6285e88075c220254e8deec7e75f0db5c8d3a7be19f",
+      "mistakeSvg": "59508c62644c2c339d56a92b49ecf7594e0bda8a83673565e035bd025398745a",
+      "mistakeOverlay": "f488c63b0fa31e3e936d99f2f834dece424d62bee06595b56b14a89a09b8bd54",
+      "tells": "6a7d6e8c622a2a5df7035e2823688a13decbfcb9a4a203b54ce05909b257705d",
+      "tempo": "1551a4913b7c557d03dca51a61ca2c49605243ea59da71e831c285dc1b0cc523",
+      "cues": "5bb3d882981928ce56f4b69925a55a44792d986942da908c75f360ababa86bb1",
+      "alt": "26ef3b66ec5dbcb908718e4b129a89dcc6c49f648c8908799006bd64f8fc7a73",
+      "mistakeAlt": "be9ede9165e06339963ad1695d2003d48602984f4e55019246c8262815ad1649"
+    },
+    "burpee": {
+      "normalSvg": "b9e847afb39224dd693ea7f418027eb38afefee9cf25eb81c3f07bde3e990b45",
+      "normalOverlay": "e3c89090799ce76c2437b37779998651e7123e12997fde817963a0506b8f87d8",
+      "mistakeSvg": "91b2d48c2e1dbd1147be6e3cae1e258aacb5200b40b4391b7a38345eb66b1b89",
+      "mistakeOverlay": "107d2344980b1349a067ca514ee91586d1c3c16fa78eef07b8f1c067860947e2",
+      "tells": "134b6cfb952197c5af6282bf263e7de5a496a7466ab48314522369fa047fa345",
+      "tempo": "b2ed144340ec709250cf45c430226108bf62f134311680699505ad2efa4252eb",
+      "cues": "86348937574e88cb80d41487f536bda3a9fba8da5ef32839c21d0c6197782afc",
+      "alt": "4dffaba9946aaac6a273565b383dfc1a7d908f7ea4bdbe9544702e97a1b27054",
+      "mistakeAlt": "f628b0ddff27cf621158b6e7531e9b86e167ada7406f1efd9320a44981dd2208"
+    },
+    "bear-crawl": {
+      "normalSvg": "b2c765e12cdd2f1fa8959432b5efac5ecc2f232bd95b56e50c978868b5c9a368",
+      "normalOverlay": "01e03f63a87eecbef68a134974e104daea5abeba3d2f1c611b75238a412b0b9c",
+      "mistakeSvg": "e16ce47b8d1558f3ebf02ae0023c2ee9598b8b4f6d76128fe09656eef86dd432",
+      "mistakeOverlay": "0e9a20b4b37a327f27256bcf43f24e68648b4d48a9cedafe556c5e78a469df91",
+      "tells": "1926f25486ea53242d1a2399709eef46d4a5cfa7f379e44e2f2ad9219e0c2810",
+      "tempo": "3f37849803bf7128104acaaf52bfe0c1bde7b3188f01028b9eecd550863d3f62",
+      "cues": "5cfd106764593549f14b9a668b0d4d3c43d8a01f975400f2ad3b5cdd41c664f0",
+      "alt": "426feea878d3bcd687ac8c3a41b89cc0cd3c8ac3e336f52056f6568491b18e22",
+      "mistakeAlt": "50269cd4638336b3bf9ca42d295367b2550b23def0a25fcb1ac8dd2e1a850645"
+    },
+    "sled-push": {
+      "normalSvg": "dd1c313a4ee239eb350241341d3397d52810257b0ae977510cc3f213f16c12b1",
+      "normalOverlay": "1bf6d45de50013fa5d264022796d03e2b8d487bc57de076b1000de814b142747",
+      "mistakeSvg": "6a4fbca95cc0dec1176f57ec178c0a59776b8a2f13ff4f865fb5577f0bdc5283",
+      "mistakeOverlay": "0323055d65a65984b3e5cf66e52580315d0033e8a96bd5febabcf716d870c793",
+      "tells": "b15738990645ca616c5b830f76d6ad68bb0d3e117427be7a6032e206afcfd870",
+      "tempo": "6533410304498792976fccf8a39c58179f2cb5f8f07c32bd6e8d533d63105194",
+      "cues": "ae1fa474d7502e29259e63c3203f1d7ef17ef4c280022de825e534bb36a5f295",
+      "alt": "eae805f49d264fb27ddf03587cbfcfd32db61c1a65e3eafc5cb64fe9a0f57314",
+      "mistakeAlt": "2fe3851b61e27e779f00ffdba7072f9b50f052a7f0a8968e31e19195435c4964"
+    },
+    "medicine-ball-slam": {
+      "normalSvg": "7adcdfb87254ce693b45cf076a8cbf4501dcede47bd9a0178d092a7aa93d4653",
+      "normalOverlay": "d708bf9936d1801cf0f4412520104718a8ce496480cba2e815d32bcac0f72676",
+      "mistakeSvg": "16707d291467d6863472f21da61a2b820ca6b36fb65c8e3ff5ffafd210cc80e1",
+      "mistakeOverlay": "ded673cd50e6b26b208d8b9fa34546c2bc0234ab938e0f810cbb218e6a999a55",
+      "tells": "6d7fe0d2a7ab34e5c7ba0d8301eda5bf5403d27670d763c001749dfa6b6eb956",
+      "tempo": "0987dfcd3de6f01793dba9460a49cddcb74c04b868d613c2cc12905034999297",
+      "cues": "88d3570bc7d57fd1f3ab3614582efac0b6ec72639b0b8f95790ab81691926944",
+      "alt": "4ade452ed8bfc0bc7bc2578c474c5107c6300b91674e42ae59bd5a21bbcfe1cf",
+      "mistakeAlt": "85b667352ff14e2349303791443e92dcade7638e99534161347a3450442f409c"
+    },
+    "farmer-s-carry": {
+      "normalSvg": "a7ba22bc65f2902f298a0e03f9f36f429b73f73bea26d02e7036c1455ba507b8",
+      "normalOverlay": "47a61d310240b9ee1abc8832f4aeb2da57a00e1a6e9d7dc938a6e7bba9a71b8b",
+      "mistakeSvg": "9fb279b9c8a3ee45cf5501fba91041ddb664f25b7eb9112b373aca1b76c2223c",
+      "mistakeOverlay": "4f8ac80d0d3af7f36d0b6e73812249abe40bc77329e02d803b762b5e1bc41713",
+      "tells": "bca679445acb31251ccb25b9c6ed0e660a098775107b7a2680e3853ce47e05bd",
+      "tempo": "b58ebebbe455227a55ea306aec9d1c332cf92565622aa23bcd7b393922fd7cff",
+      "cues": "595acacf60a11834662cf06ce3705721b04a1c8948b1b945a7e74c0d5f940ff4",
+      "alt": "6982ec9e758712d1591a20ac2587f3523ca49b27555484835930f13a80b4b04d",
+      "mistakeAlt": "71dc9a470ffb390a3a5fd780d2b9ce8fbd2d488844cfb007cca9379ba75f6ce2"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb10/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  const pageOf = async () => {
+    const script = `const b = await import(${JSON.stringify(lib('lb10/build.mjs'))}); const { html } = await b.buildLb10Page(); process.stdout.write(html.toString('base64'));`;
+    const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });
+    return Buffer.from(stdout, 'base64').toString('utf8');
+  };
+  it('the 9 approved plates\' 81 fragments on this head equal main\'s', async () => {
+    expect(Object.values(APPROVED).reduce((a, f) => a + Object.keys(f).length, 0)).toBe(81);
+    expect(fragProblems(await pageOf())).toEqual([]);
+  });
+  it('mutation: one byte changed in kettlebell_swing\'s alt is red', async () => {
+    const html = await pageOf(), alt = S.kettlebell_swing.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, `${alt.slice(0, -1)}!`))).toContain('kettlebell-swing alt');
+  });
+});

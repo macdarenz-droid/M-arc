@@ -60,7 +60,7 @@ The 8 ids not drawn here and their blocks:
 | box_jump | pilot A plate, held (D-LIB8M-NOSTRIP, lib4-cards :3305-3311); card changed by D-SUP-LB4-PACOPY |
 | reverse_lunge | pilot A plate, held (D-LIB8M-NOSTRIP); pick now the flared ribcage (F-LB4-1), redrawn at re-approval (D-SUP-LB4-REVLUNGE) |
 | bulgarian_split_squat, walking_lunge, forward_lunge, bodyweight_lunge, bodyweight_split_squat | SPLIT template children: the byte proof needs reverse_lunge pinned (D-LIB10-TEMPLATES, lib4-cards :3161-3164) |
-| jump_squat | airborne convention open until the no-seconds strip exists (lib4-cards :3310); anchor box_jump held |
+| jump_squat | drawn at LIB-SMALL (section 16): D-LIB8R-AIR settled the convention; box_jump pinned by PILOT-A2 |
 
 ## 3. Templates
 
@@ -454,3 +454,20 @@ zoom. **Clearance:** no load or machine part (D-SMALL-9); supports are `checks`.
 
 **Expected flags.** F5 3.57 only. The draft raises H4.overlap (extend|land) and F4 0 with auto-placed labels: boxes
 are set at the draw (labels only).
+
+### 16.1 jump_squat drawn (after 'LIB-SMALL PLAN RULED', #358 6545874629)
+
+- Label boxes (labels only): `hips` {40, 296}, `extend` {244, 214}, `land` {250, 270}; Mistake `straight` {16, 306},
+  `hips` {40, 196}. lb4/qa.mjs (node and browser): **all 10 hard checks pass**; flags F5 3.57 only; leaderMax 81.6 px
+  (F3 range 49.33-82.26); deviation 34.6 px, Trace 172.0 px.
+- **Two tells, not one** (the PLAN said one): LB4's own test asks 2-3 tells on every drawn plate ("each drawn plate draws
+  its Mistake with 2-3 tells"). The second, `hips` "Hips high", is the same stiff landing's second visible sign: the hips
+  stay high instead of dropping back and down (j4 "push your hips backwards and drop them downwards to absorb"; j11
+  "The hip and knee muscles absorbed more energy in the soft landing").
+- **No knee arrow** (box_jump has one): it starts inside the solid end figure, and LB4's A15 asks every solid red part to
+  clear the end figure by 6 px. The red Mistake legs and the tells carry the fault.
+- Drawn-item tests (lb4-plates.test.ts, 'LIB-SMALL A4 and A6'): start heels and balls on the floor (≤ 0.5 cm), knee > 90,
+  lumbar ≤ 10 deg; ghost balls on the floor (0.001 cm), heels up, knee < 10, hip > 160 deg; end heels, balls and soles on
+  the floor, knee > 45, hips behind the ankles, thorax lean 5-45 deg; Mistake knee < 15 on the same feet; no drawn pose
+  off every support. Mutations red: the ghost root 2 cm up, the start 2 cm up, the landing knees straight, the start
+  lumbar 30 deg.
