@@ -1530,7 +1530,7 @@ describe('LIB-16R2 A17: sizes fixed in lb6/sizes.json r2, never sized by PQ-H3',
   });
   it('mutations: a Mistake size changed in the spec only, an empty basis and a PQ-H3 basis are red', () => {
     const s = { ...R2M.high_to_low_cable_fly.SIZES }, t = table().high_to_low_cable_fly;
-    expect(problems({ ...s, MIS_CROSS: 0.12 }, t)).toEqual(['MIS_CROSS: spec 0.12 != sizes.json 0.08']);
+    expect(problems({ ...s, MIS_CROSS: 0.12 }, t)).toEqual(['MIS_CROSS: spec 0.12 != sizes.json 0.11']);
     expect(problems(s, { ...t, MIS_CROSS: { ...t.MIS_CROSS, basis: ' ' } })).toEqual(['MIS_CROSS: empty basis']);
     expect(problems(s, { ...t, MIS_CROSS: { ...t.MIS_CROSS, basis: 'sized to clear deviationMin' } })).toEqual(['MIS_CROSS: basis names PQ-H3']);
   });
