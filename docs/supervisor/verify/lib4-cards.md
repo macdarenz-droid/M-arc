@@ -4572,3 +4572,7 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - LB7 R3 has all 3 rows approved and goes to READY, review and a train.
   - LIB-SMALL builds wall_ball after #356 merges.
 - **PANEL mx18** (cable_crunch @ `d9e8085d`; PILOT-A3 reverse_lunge and dumbbell_fly @ `2edabdf0`): the critics are running.
+- **PANEL mx18** (round 1: cable_crunch @ `d9e8085d`; reverse_lunge and dumbbell_fly @ `2edabdf0`) is **VALID**. Plants were caught at dumbbell_fly R2 [3,3,3] and cable_crunch R1 [3,3,3]. pull_up R1 is follow-up 23 and R2 is follow-up 22.
+  - **All three are APPROVED.**
+  - **PILOT-A3 PIN GO @ `2edabdf0`** (#362 6548838657): page `bebd7730…a7878`, no exemptions, D-LIB-PILOTA3.
+  - LB9 R3 goes to READY (#361 6548839577).
