@@ -4543,3 +4543,13 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **D-LIB17R3-PIKEARROW:** there is no A15 exception, which keeps 6547666297. The arrow sits on the head axis above the crown, along the dashed neck, and ends where the axis is still 6 px clear of the solid figure. Its shaft is at least as long as the shortest solid red arrow on an approved LB7 plate. If that cannot be met, the plate has no arrow, only the neck and the dashed head.
   - **D-CFSMALL-PIKE:** pike_push_up keeps `[]` with a reason recorded in 19.3. sh.elev at the bottom is 104.6° as drawn, and the lowest it reaches with the hands planted is 88°. So c3's 45° is the elbow flare, which no fact joint holds without a conversion.
   - incline_push_up was re-posed to sh.elev 45.0 (it was 49.7) and goes back to a focused recheck.
+- **Train 54 merged** (#360 → main `f7ab6751`): LIB-SPINE #348. All 17 checks were green. Only src/ generated-header comments changed, so there is no APK.
+- **#361 6548167828: LIB-21 R3 PLAN RULED @ `bf2b8f54`.**
+  - D-LB9R3-SPLITROWS is accepted: four number rows, with A17 unchanged.
+  - A7 uses the ear-centred mutation plus an edge mutation at a 1.0-1.9 px gap.
+  - The rest of §24 stands as proposed.
+- **D-SPINE-BICYCLE-NEARS:** bicycle_crunch stays HELD and goes to the next research batch.
+  - The research asks for (a) a sourced trunk axial rotation range with the pelvis still, and (b) the arm or shoulder-girdle position for hands-behind-head.
+  - A and B need loosened limits. C and D rest on an unbounded yaw, and C draws a false screen touch.
+  - After the research, "nears" is the least 3D gap under the sourced caps, provided the screen gap is ≥ 0 px.
+  - **F-SPINE-REACHXCHK:** lib-spine-card :115's table was not reproduced and is not a basis for anything.
