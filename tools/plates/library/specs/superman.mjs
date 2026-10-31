@@ -40,9 +40,12 @@
 //   landmarks) inside it: start 25.3 cm, end 4.2 cm, Mistake 4.5 cm from its nearer end (baseOf).
 //  Ghosts: none (count 0): the lift is 3 in, so in-between poses would lie on the solid figure and the start phantom.
 //  Trace (D-LIB21-TRACE, DESIGN.md section 12): the near foot lifting, ankle.r (c2 "raise both legs ... a few inches
-//   off the floor", the checkpoint 'Arms, legs up'), trim [10, 12] (hanging_leg_raise.mjs:124). The ankle moves 6.95 cm
-//   (9.8 px at 140.91 px/m), less than the trim, so no Trace is drawn: below traceLenMin at its ruled size, held under
-//   D-LIB21-SIZE (S2); never enlarged.
+//   off the floor", the checkpoint 'Arms, legs up'), trim [0, 0] (D-LIB21-SUPERMAN, lib4-cards section 46;
+//   jump_rope.mjs:85's precedent). The ankle moves 6.95 cm, 9.4 px of drawn Trace at 140.91 px/m (under traceLenMin at
+//   its card-true size, never enlarged), so the normal view carries one zoom (D-LIB21-SUPERMANZOOM, D-LIBZOOM-EXTEND):
+//   its source ring holds the whole Trace, k 2.5 (the smallest ladder k whose clipped Trace reaches 22.11 px: 23.47 px).
+//   The `low` label box moved from {22, 266} to {4, 240} to free the circle's place (D-LIB18-ZOOMPLACE's form, allowed
+//   for this normal-view label by D-LIB21-SUPERMAN); its anchor and text are unchanged.
 // Camera: D-LIB21-FLOOR / D-LIB8-floor: floor at y 339, the width-filling scale capped at x1.35 (140.91 px/m; inside
 //  the 8's 123.9-146.3 px/m, so no F1 is raised).
 // Unsourced numbers (SIZES; lb9/sizes.json holds each with its basis): MAT_T, MAT_LEN, LIFT, END_ARCH, M_NECK.
@@ -161,11 +164,12 @@ export default {
     { landmark: 'navel', plane: TOP, pose: 'end', tol: 0.5 },     // c2: the core stays on the ground
   ],
   ghosts: { count: 0 },
-  trace: { point: 'ankle.r', trim: [10, 12] },
+  trace: { point: 'ankle.r', trim: [0, 0] },
+  zoom: { view: 'normal', k: 2.5 },
   callouts: [
     { key: 'neck', text: 'Neck in line', anchor: { at: 'neck', off: [3, -6] }, box: { left: 180, top: 240 }, cue: 'Head and neck neutral, eyes down.' },
     { key: 'up', text: 'Arms,<br>legs up', anchor: { at: 'wrist.r', off: [0, -5] }, box: { left: 282, top: 254 }, cue: 'Arms and legs straight, a few inches off the floor.' },
-    { key: 'low', text: 'Low lift', anchor: { at: 'ankle.r', off: [0, -8] }, box: { left: 22, top: 266 }, cue: 'Lift 3-6 inches, without hyperextending the back.' },
+    { key: 'low', text: 'Low lift', anchor: { at: 'ankle.r', off: [0, -8] }, box: { left: 4, top: 240 }, cue: 'Lift 3-6 inches, without hyperextending the back.' },
   ],
   mistake: {
     pose: mistake,

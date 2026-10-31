@@ -393,7 +393,7 @@ ids' rows are written with the slice, and the bulk rows below are proposals [pro
 | bear_crawl | M_HIP | 30° | mountain_climbers.mjs:88 HIKE_HIP 30 (#109) [proposed] |
 | battle_ropes | M_ELEV, M_PRO | 3 cm, 3 cm | pull_up.mjs:36's ±3 cm reversed (as LB7 cable_rear_delt_fly) [proposed]; ROPE_T 0.038 m (c8, 1.5 in) |
 | high_knees | END thigh | 90° hip flexion (the bound) | c3 "at least 90 degrees of flexion" [proposed] |
-| farmer_s_carry | STRIDE, M_STRIDE | 0.35 m, 0.70 m | stated: c8 "short, deliberate steps" vs c25 "regular-sized steps" [proposed] |
+| farmer_s_carry | STRIDE, M_STRIDE | 0.385 m, 0.77 m | M_STRIDE: c30 mean step length 0.77 m at 171-180 cm for c25 "regular-sized steps" (F-R2-FARMER-5, section 22); STRIDE: half of it, c8 "short, deliberate steps" |
 | jumping_jacks | M_ROT | 30° external hip rotation | stated: c12 "twisting your toes outward": past the start's toes forward [proposed] |
 | wall_ball | STAND_DIST | 0.57 m (22.5 in, the toes to the wall) | c2 Box Life "20-25 inches" midpoint (5 in wide ≥ 4: a size) [proposed] |
 
@@ -473,13 +473,12 @@ kettlebell_swing has a strip from the start; the other three render only from `l
 
 ## 15. Held ids and NOSECS rows
 
-As of 'LIB-22 resume' (section 21). Lifted there: sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
+As of 'LIB-22 resume 2' (section 22; farmer_s_carry lifted there). Lifted at 'LIB-22 resume' (section 21): sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
 medicine_ball_slam (D-LIB22-AFALL: every phase blank, strip/rows.json fallbackA under D-LIB22-STRIPROWS).
 
 | id | ruling | why | route |
 |---|---|---|---|
 | wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); strip leftOut (S3) | #289 on main, then a resume |
-| farmer_s_carry | #305 6360164495 item 2 (open M_STRIDE basis) | tempo lifted (strip row); M_STRIDE 0.70 m feeds the Mistake deviation with no quote, approved plate or measured convention behind the number | F-LB10-STRIDE (research; #331 6409745507 item 2) |
 | jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px**; a normal zoom at kMax 4 gives 21.3 px < 22.11 (trim [0, 0]) | a route the zoom rules do not hold (as F-PALLOF-ARCH) |
 | jumping_jacks | D-LIB22-JJ | H6:no-card until F-H6-TEMPO; also S2 (Mistake **9.6 px**; a Mistake zoom at k 1.5 reaches 14.4 px, drawn at its own resume) | F-H6-TEMPO on main |
 
@@ -687,3 +686,33 @@ Panel mx3 fix round 2 (#331 6486669489; D-LIB13-PANEL2), burpee leader ends only
   "Soft landing" text; H4), {8, 248} two lines (passes; kept). Spots tried for "Soft landing" with the plank box at
   {76, 168} (#331 6487058628): {16, 236}, {16, 196}, {40, 200} (A15 leader crossing, F3 over 82.3 px), {150, 300} and
   {252, 280} (A15: crosses the figure; engine issue).
+
+## 22. Resume 2 ('LIB-22 resume 2', on main `151de0b8`)
+
+farmer_s_carry is built; jump_rope stays held (kMax: its Trace needs k ≥ 4.15, outside the ladder; section 21).
+
+**Card.** farmer_s_carry's card and quotes are re-copied from the research head `a48b0594` (F-RESEARCH-2, #338): a byte
+copy with the `tempo` key inserted before `topFault` (D-LIB8M-CARDS); plateFacts and topFault are the research file's,
+unchanged. New there: c26-c33, c18 and c25 re-worded, handlingMistakes[1] "Steps too long for a beginner.", two gaps.
+cards.sha.json records it under `recopied` (as lb1); the other 11 cards stay at `596dbe07`.
+
+**M_STRIDE** (F-R2-FARMER-5, #338 6487471465): a *step*, one foot to the other, never a stride (two steps). Basis c30
+(Mobbs 2025, Table 6): mean step length 0.77 m (SD 0.12) at 171-180 cm, the height bin holding the 1.75 m figure.
+Cross-checks: the line between c30's bin centres gives 0.765 m at 1.75 m; c29 (adults 18-50 by age, no height)
+0.70-0.73 m; c31's height-adjusted 0.34-0.36 × 1.75 m = 0.60-0.63 m comes from a barefoot population aged 21-90 with
+mean height 1.55-1.67 m, so it is not the figure's step. c32-c33 (strongman strides, WEAK) are not used. The size was
+fixed before H3 was measured; H3 is never its basis. **STRIDE** moves with it: half, 0.385 m (c8, section 11).
+The spec measures the step as the near foot's distance ahead of the far foot's start spot (both flat side by side at
+the start), so it is a step length. The Mistake's solve needed a new start guess at 0.77 m (same solution from two
+guesses); no constraint changed.
+
+| id | H3 deviation / Trace (px) | was (0.70 / 0.35 m) | flags | hard checks |
+|---|---|---|---|---|
+| farmer_s_carry | 56.3 / 33.1 (bars 11.39 / 22.11) | 51.2 / 28.0 | F5 3.57 (all), F7 `long` (D-LIB22-F7) | all 10 pass |
+
+Poses (spec `info`): end far heel 14 deg up, near knee 20.5 deg; Mistake far heel 27 deg up, hips 5.2 cm below the
+start, near knee 24.1 deg. pxPerM 146.3, leaderMax 68.5 px.
+
+**Page.** Two builds identical at `07ee85377e2b0334afefa2ed0c59cff9d225cc419928f77abee6deaf33ca6070` (9 rows,
+farmer_s_carry last). The 8 approved cards' markup is byte-identical to main's page `5e02f6aa…` (each `#card-*`
+article compared; medicine_ball_slam up to the new card). C0 `manifestProblems()` is `[]`.
