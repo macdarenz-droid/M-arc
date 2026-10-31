@@ -24,11 +24,13 @@
 //    to grip across the chest top.
 //  - Elbow pole: out and a little down, so the bend is in the arc plane with the elbows pointing out (c5).
 //  - Dumbbells: `dumbbell` primitive, axis [0,0,1] (palms facing, handles along the body, c3/c4 "parallel"): end-on
-//    hexes in front view. The start layer never draws equipment, so the start dumbbells are dashed phantom hexes.
+//    hexes in front view. The start layer never draws equipment, so the start dumbbells are dashed side-on silhouettes
+//    (PILOT-A3, F-FLY-START R2: the pitched view sees them side-on, so a hex ring was the wrong shape).
 // Plate labels (verified card): callouts = plate.checkpoints c5 (Soft elbows, on the end elbow), c4 (Stop at chest,
 //   on the end dumbbell), c4 (Dumbbells parallel, on the start dumbbell); measure = the held elbow bend (c5);
 //   Mistake (front) = plate.mistake c13: at the end pose both wrists bend back M_WRIST out of neutral (arms, elbows and
-//   shoulders unchanged; the dumbbells follow the hands), one tell 'wrists' (the card's topFault), in a Mistake zoom
+//   shoulders unchanged; the dumbbells follow the hands; the faulty hands are also dashed guides, PILOT-A3 F-FLY-START
+//   R5), one tell 'wrists' (the card's topFault), in a Mistake zoom
 //   (D-LIBZOOM-EXTEND); the side alt keeps its former depth Mistake (c4). Tempo = plate.tempo c10 (2 s down, 2 s up,
 //   no pause). Trace = the grip: the arc (a press would trace a vertical line).
 // CARD: ELBOW (slight bend), SHOULDER_W (start width), END_LEVEL (stop height), ARC_DZ (arc plane over the chest).
@@ -76,7 +78,6 @@ const chestLine = [[0, lmEnd['grip.r'][1], lmEnd['grip.r'][2] - 0.16], [0, lmEnd
 
 // start dumbbell phantoms (dashed), in metres, per view
 const DB = { head: 0.119, headLen: 0.07, handle: 0.13 };
-const hexRing = (c, r) => { const pts = []; for (let i = 0; i <= 6; i++) { const a = 60 * i * R; pts.push([c[0] + r * Math.cos(a), c[1] - r * Math.sin(a), c[2]]); } return pts; };
 const sideDb = c => {   // side view, axis z: handle bar and two heads as outlines (primitive sizes)
   const hh = DB.head * 0.866 / 2, rect = (z0, z1, h) => [[0, c[1] - h, c[2] + z0], [0, c[1] - h, c[2] + z1], [0, c[1] + h, c[2] + z1], [0, c[1] + h, c[2] + z0], [0, c[1] - h, c[2] + z0]];
   return [rect(-DB.handle / 2 - DB.headLen, -DB.handle / 2, hh), rect(DB.handle / 2, DB.handle / 2 + DB.headLen, hh), [[0, c[1], c[2] - DB.handle / 2], [0, c[1], c[2] + DB.handle / 2]]];
@@ -118,6 +119,21 @@ const handPoly = (W, G, part) => {
   return { type: 'poly', pts: [[W[0] + n[0], W[1] + n[1], W[2]], [G[0] + n[0], G[1] + n[1], G[2]], [G[0] - n[0], G[1] - n[1], G[2]], [W[0] - n[0], W[1] - n[1], W[2]]], cls: 'eq-solid', z: 'front', part };
 };
 const HANDS = lm => ['l', 'r'].map(s => handPoly(lm[`wrist.${s}`], lm[`grip.${s}`], `hand.${s}`));
+// Start dumbbells (PILOT-A3, F-FLY-START R2): one dashed closed side-on silhouette per dumbbell in the x-z plane at the
+// start grip, from the primitive's sizes (heads DB.head * 0.866 across, DB.headLen long; handle 1.6 cm thick), so the
+// pitched view shows the same shape as the drawn end dumbbells, not a hex ring. 13 points, the last closing the outline.
+const startDb = c => {
+  const hx = DB.head * 0.866 / 2, bx = 0.008, zo = DB.handle / 2 + DB.headLen, zi = DB.handle / 2;
+  return [[-hx, -zo], [hx, -zo], [hx, -zi], [bx, -zi], [bx, zi], [hx, zi], [hx, zo], [-hx, zo], [-hx, zi], [-bx, zi], [-bx, -zi], [-hx, -zi], [-hx, -zo]]
+    .map(([x, z]) => [c[0] + x, c[1], c[2] + z]);
+};
+// The faulty hands (PILOT-A3, F-FLY-START R5): the Mistake pose's own hand polys (wrist -> grip, bent M_WRIST), closed,
+// as Mistake `dashed` guides, drawn on top of the masked pose so the bend reads at its true size. The Mistake pose is
+// the end pose merged with wristPose, as the engine merges it (vendor/engine/plate.mjs:20-26, :48).
+const merge = (a, b) => (b === undefined ? a : a && b && typeof a === 'object' && typeof b === 'object' && !Array.isArray(a) && !Array.isArray(b)
+  ? Object.fromEntries([...new Set([...Object.keys(a), ...Object.keys(b)])].map(k => [k, merge(a[k], b[k])])) : b);
+const lmMis = landmarksOf(merge(end, wristPose), H);
+const MISTAKE_HANDS = HANDS(lmMis).map(h => ({ kind: 'dashed', pts: [...h.pts, h.pts[0]] }));
 
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
 export const SIZES = { BENCH_TOP, FOOT_Z, FOOT_X, ELBOW, SHOULDER_W, ARC_DZ, PITCH, M_WRIST, HAND_W, PAD_W, PAD_T, LEG_IN, POST, FOOT_HALF, FOOT_T };
@@ -130,7 +146,7 @@ export function makeFly(view, id) {
 const ALT = 'Dumbbell fly, front view from the feet. Lying on a flat bench, feet flat, the lifter lowers the dumbbells out to the sides in a wide arc, elbows slightly bent and fixed, until level with the chest, then raises them back. Mistake: dumbbells sinking below the bench.';
 
 function frontFly(id) {
-  const phantom = ['l', 'r'].map(s => ({ type: 'line', pts: hexRing(lmStart[`grip.${s}`], DB.head / 2), cls: 'eq-line m-line', z: 'front' }));
+  const phantom = ['l', 'r'].map(s => ({ type: 'line', pts: startDb(lmStart[`grip.${s}`]), cls: 'eq-line m-line', z: 'front' }));
   return {
     id, name: 'Dumbbell Fly', view: 'front',
     // y0: the floor under the feet (world y 0, z FOOT_Z) at the approved floor y 339 once pitched (D-LIB8-floor)
@@ -160,7 +176,7 @@ function frontFly(id) {
     tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Raise', s: 2, move: true }],
     mistake: {
       pose: wristPose,
-      guides: [],
+      guides: MISTAKE_HANDS,   // the faulty hands, dashed on top of the masked pose (F-FLY-START R5)
       tells: [
         { key: 'wrists', text: 'Wrists bend', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 12, top: 70 }, cue: 'Your wrists bend back out of line with the forearms as the dumbbells arc.' },   // c13
       ],

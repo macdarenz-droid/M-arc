@@ -25,8 +25,8 @@ Held (5), each with `held` in plates.json, no batch row, no chain entry, never e
 | Id | Reason | Follow-up list entry |
 |---|---|---|
 | barbell_shrug | the small-motion zoom (D-LIB8-shrug) | the shrug zoom |
-| dumbbell_fly | drawn at camera pitch 45 by LIB-8R; held after panel mx7 R2 and R5 (#340 6540319537; D-LIB8M-CARDTRUE) | F-FLY-START (PILOT-A3) |
-| reverse_lunge | the Mistake arch reads as a trunk shift, not a lumbar arch (panel mx6 on #340, third round; D-LIB8M-CARDTRUE). The strip is now drawn (#309) | F-REVLUNGE-ARCH |
+| dumbbell_fly | moved: pinned in PILOT-A3 after panel mx18 (batches/pilot-a3.json, tests/howto/golden/library/pilot-a3.json; #362 6548838657) | F-FLY-START, done |
+| reverse_lunge | moved: pinned in PILOT-A3 after panel mx18, the Mistake redrawn with trunk.bow (batches/pilot-a3.json, tests/howto/golden/library/pilot-a3.json; #362 6548838657) | F-REVLUNGE-ARCH, done |
 
 box_jump and bent_over_dumbbell_rear_delt_fly left this table when LIB-8R pinned them in PILOT-A2 (batches/pilot-a2.json; #340).
 

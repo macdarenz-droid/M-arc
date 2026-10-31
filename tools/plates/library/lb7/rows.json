@@ -74,6 +74,33 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_incline_push_up": {
+   "src": "library/specs/incline_push_up.mjs",
+   "slug": "incline-push-up",
+   "prefix": "incline-push-up",
+   "chromeId": "incline-push-up",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_diamond_push_up": {
+   "src": "library/specs/diamond_push_up.mjs",
+   "slug": "diamond-push-up",
+   "prefix": "diamond-push-up",
+   "chromeId": "diamond-push-up",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_pike_push_up": {
+   "src": "library/specs/pike_push_up.mjs",
+   "slug": "pike-push-up",
+   "prefix": "pike-push-up",
+   "chromeId": "pike-push-up",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }

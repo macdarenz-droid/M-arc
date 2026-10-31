@@ -1,0 +1,81 @@
+{
+  "base": {
+    "index": 8,
+    "hash": "e48d731d176c5e3994cab5e2de5ea2db938cbdf6c249600679588daa58b22361"
+  },
+  "entries": [
+    {
+      "kind": "page",
+      "pageSha256": "bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878",
+      "bytes": 465732,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA3",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/362#issuecomment-6548838657 @ 2edabdf0e5c01968c96aa2eb2a68c68daa50e675",
+      "date": "2026-10-31",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); PILOT-A3 PIN GO (supervisor, 2026-10-31) after PANEL mx18 (#362 6548838657): reverse_lunge (trunk.bow, F-REVLUNGE-ARCH) and dumbbell_fly (F-FLY-START) approved, every median >= 4; TOPFAULT flare (#362 6548354010); bytes unchanged since 2edabdf0.",
+      "supersedes": null,
+      "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_reverse_lunge",
+      "src": "library/specs/reverse_lunge.mjs",
+      "slug": "reverse-lunge",
+      "prefix": "reverse-lunge",
+      "chromeId": "reverse-lunge",
+      "fragments": {
+        "normalSvg": "daef9d1853ad591429e164b58b585ded30d033815d2fdf325808142f098612be",
+        "normalOverlay": "3b599ebe6e277dd51d416b48bd1de11a06156c1031562baa50b65b87012d94be",
+        "mistakeSvg": "9039aeb35baf41a2fa9b2589742ac8c372b73425aeb354a6e714811f877a74b8",
+        "mistakeOverlay": "01c52680c60e3b7acbf1c3302769f785f9ff03a8612dc410d6e6b9338e3afa53",
+        "tells": "fb484f8dc4e92779e042573514722db9fd576d76e64fa9f745febc181177507e",
+        "tempo": "eb4dd9849731669ac1cb004437fd08e1f8ebe026741d9ab8e909cefe1963e5eb",
+        "cues": "1bc812fa06ecf4f020fd8041dfb15bb182dfb872b59b628979141bab5c728740",
+        "alt": "048b6025b008cb5c9ce9192c2afa6b38c6c9ed17a05fa9b19c6fb54d17cc821b",
+        "mistakeAlt": "60290a011cf514287cd031deed5e9bd4b56cca18acd412b81c551576e06a70c0"
+      },
+      "exemptions": [
+        "F3",
+        "F4",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA3",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/362#issuecomment-6548838657 @ 2edabdf0e5c01968c96aa2eb2a68c68daa50e675",
+      "date": "2026-10-31",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); PILOT-A3 PIN GO (supervisor, 2026-10-31) after PANEL mx18 (#362 6548838657): reverse_lunge (trunk.bow, F-REVLUNGE-ARCH) and dumbbell_fly (F-FLY-START) approved, every median >= 4; TOPFAULT flare (#362 6548354010); bytes unchanged since 2edabdf0. Named exemptions: the raised flags of the QA table (pilot-a3/DESIGN.md section 6): F3 leader 46.9 px, F4 0, F5 3.57:1 (D-LIB9-F5).",
+      "supersedes": null,
+      "prev": "1fb82fe2bfcf3a273c73e8ae6b361769f5d61d7fe7fadef7a5c941227cfbca1c"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_dumbbell_fly",
+      "src": "library/specs/dumbbell_fly.mjs",
+      "slug": "dumbbell-fly",
+      "prefix": "dumbbell-fly",
+      "chromeId": "dumbbell-fly",
+      "fragments": {
+        "normalSvg": "c3a420c1295211b0acd2414742301abddd38a5be3968a247ff1798cdf1f71b14",
+        "normalOverlay": "dadc494a76933872c833c0038c3dadde0ad6f6cc990a7cff7ce87e1dd2a85102",
+        "mistakeSvg": "b223436c741d459358b99059abdd70dc1eff3a2dcf267327f2250fbb1a662035",
+        "mistakeOverlay": "eef0d8304521e5e051823d8e7586a93321134bf4f4313a01f97dcd285cb74012",
+        "tells": "303f982e855c2d57e3ae65dcaa5373bbcfa3602ebb32ab20afa0bad8ccd99057",
+        "tempo": "068b430b9f93540419c35cfda571eec309fa309590c663464f12ba0ef540d72c",
+        "cues": "48b33bc83e9836febc01b1ddd6d9cfc7a0d9438f1b71bd4e570101d8b1d5eb71",
+        "alt": "e140bcf8c1c9df67088b08c8acb87e03b2204df337d5acc30da8b0b175bc508d",
+        "mistakeAlt": "b0e6a27253bf73061f153fdf8da1749854812c9b028b90e4528060e048600fb1"
+      },
+      "exemptions": [
+        "F3",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA3",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/362#issuecomment-6548838657 @ 2edabdf0e5c01968c96aa2eb2a68c68daa50e675",
+      "date": "2026-10-31",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); PILOT-A3 PIN GO (supervisor, 2026-10-31) after PANEL mx18 (#362 6548838657): reverse_lunge (trunk.bow, F-REVLUNGE-ARCH) and dumbbell_fly (F-FLY-START) approved, every median >= 4; TOPFAULT flare (#362 6548354010); bytes unchanged since 2edabdf0. Named exemptions: the raised flags of the QA table (pilot-a3/DESIGN.md section 6): F3 leader 115.0 px, F5 3.57:1 (D-LIB9-F5).",
+      "supersedes": null,
+      "prev": "156ff5fca9aa370b879852d4f6ecec8fd457cc3bdf2ae77c91c176bfe260625f"
+    }
+  ]
+}
