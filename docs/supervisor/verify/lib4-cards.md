@@ -4582,3 +4582,8 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - The "Soft knees" box is accepted (F4 5).
 - **PILOT-A3** pin `053d7650` DIFF-CHECK PASS (#362 6548950811).
 - **mx19** (building): hip_abduction (LB6 fix 3 @ `1b62aa9f`, page `8c7ede8a…58db`) and t_bar_row, plus wave 2 if it is ready.
+- **PANEL mx19** (hip_abduction @ `1b62aa9f`; LIB-13s @ `fe9219bf`, with t_bar_row's recheck and wave 2's round 1) is **VALID**. Plants were caught at hip_abduction R2 [3,3,3] and t_bar_row R1 [3,3,3]. pull_up R2 is follow-up 22.
+  - **hip_abduction APPROVED, so LB6 has 9 of 9** and goes to READY.
+  - **t_bar_row and cable_shrug: APPROVED.**
+  - **dumbbell_shrug** fails R11 [3,3,3]: the ring and the circle sit on opposite sides. The ring moves to the near shoulder, with a short connector.
+  - **smith_machine_shrug** fails R5 [3,3,3]: the head-forward fault is lost among the rails. **D-LIB13S-SMITHZOOM:** a full dashed head, plus a Mistake-view zoom for readability, never enlarged (#359 6549892683).
