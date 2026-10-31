@@ -4589,3 +4589,7 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **smith_machine_shrug** fails R5 [3,3,3]: the head-forward fault is lost among the rails. **D-LIB13S-SMITHZOOM:** a full dashed head, plus a Mistake-view zoom for readability, never enlarged (#359 6549892683).
 - **#359 6550141845:** D-LIB13S-SMITHZOOM is **withdrawn**. H3.zoom:not-needed:mistake is a hard check, the crown move of 13.0 px is at least 11.39, and a qa/** exception would be a loosening. smith_machine_shrug is re-panelled with the full dashed head and the chin leader, plus the faulty head drawn on top of the rails (a z-order change only, tested).
 - **READY:** LB7 #356 @ `f4e74abd` (6550004879) and LB9 R3 #361 @ `d9e8085d` (6550090174). Fresh Opus reviewers are running on both.
+- **Reviews:** #356 got PASS 6550170614 (0/0/0/2) and #361 got PASS 6550164960 (0/0/0/1).
+  - **F-LIB17R3-LOWS:** A5 (lb7-plates :2194) exempts whole forearm and foot outlines, which is wider than 19.5's "forearms at the wrist"; today the gap measures 3.2 px or more. DESIGN :616 and :634 still give the pre-re-pose 44.2° flare and elbow pole.
+  - **F-LIB21R3-LOWS:** the PR body's HANDOFF block is stale.
+- **Train 55** (#363, head `08c25c1d`) carries #356 @ `f4e74abd` and #361 @ `d9e8085d`.
