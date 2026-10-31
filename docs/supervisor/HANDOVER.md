@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-31 ~08:45 UTC · main `11791f67` (train 50: param-ranges) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-31 ~11:00 UTC · main `6d34542c` (train 51: LB8 resume 2) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -839,6 +839,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Panel **mx7:** superman APPROVED @ `1273e4f6` (#337). dumbbell_fly HELD after its second focused round (F-FLY-START → PILOT-A3 with reverse_lunge). PILOT-A2 pins box_jump and the rear-delt fly.
   - **Slot queue:** LIB-21 resume 2 READY (superman) and the LIB-8R pin wait for free slots. They get 'LIB-21 RESUME 2 READY GO' and 'LIB-8R PIN GO' as LIB-18 resume 2 (local gate rerun, then READY) and LIB-22 resume 2 (farmer_s_carry) go WAITING.
   - Active LIB builders 4 of 4: LIB-18 resume 2, LIB-22 resume 2, LIB-SPINE (#348), LIB-15 resume 2. Usage: 7-day 0.59 at 07:58.
+- **Update 11:00 UTC (10-31):**
+  - **Train 51 merged** (#353) → main `6d34542c`: LB8 resume 2 #345 @ `b267266b` (review PASS 6541617251; F-LIB18-LOWS). No src/ change, so no APK. The LIB-18 session is archived.
+  - **LB5 resume 2 (#349):** 12 of 15 LB5 rows are approved (7 earlier plus mx8's 3, mx9's 5 and mx10's 2: alternating_dumbbell_curl, incline_dumbbell_curl). barbell_curl failed R3 in mx10: its start bar sits inside the thigh. Ruling **D-LIB15R2-BARSTART** (6542437139) turns the barbell start arm forward. barbell_curl, ez_bar_curl and reverse_curl then get one focused recheck (mx11). overhead_cable_triceps_extension stays held. Rulings TPARENT, TEMPLDIR and BARSTART are in lib4-cards §48.
+  - **LB10 (#346):** farmer_s_carry APPROVED in mx10 @ `8c4d3264`. READY follows its tracked checks; jump_rope stays held.
+  - **LB9 (#337):** superman approved. Its READY run hit a source-gate hang (90-min cap, no test failed); the builder used the one re-run.
+  - **PILOT-A2 (#340):** LIB-8R is pinning box_jump and the rear-delt fly (PIN GO). **LIB-SPINE (#348):** A1-A8 done; READY after its gate and a main merge.
+  - Active LIB builders 4 of 4: LIB-8R, LIB-21 resume 2, LIB-SPINE, LIB-15 resume 2. LIB-22 resume 2 is WAITING. Usage: 7-day 0.64 at 10:57; pause at 0.80.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
