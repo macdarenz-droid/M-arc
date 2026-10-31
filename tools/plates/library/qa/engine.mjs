@@ -32,12 +32,16 @@ const mergeDeep = (a, b) => {   // plate.mjs:22-28, verbatim logic
   return b;
 };
 
-/** The camera of a render, from its report (plate.mjs makeCamera). */
+/**
+ * The camera of a render, from its report (plate.mjs makeCamera). The report's camera (plate.mjs:313) has no pitch, so
+ * the pitch is the spec's own `camera.pitch` (plate.mjs:43: front view only, default 0); at 0 the unpitched projection.
+ */
 export function cameraOf(spec, report) {
   const side = report.view === 'side', facing = spec.facing ?? 'right', c = report.camera;
   const sx = side ? (w => (facing === 'left' ? -w[2] : w[2])) : (w => w[0]);
-  return { view: report.view, facing, near: side ? (facing === 'left' ? 'l' : 'r') : null, pxm: c.pxPerM, pxPerM: c.pxPerM, x0: c.x0, y0: c.y0,
-    P: w => [c.x0 + sx(w) * c.pxPerM, c.y0 - w[1] * c.pxPerM] };
+  const pitch = side ? 0 : (spec.camera?.pitch ?? 0), pc = Math.cos(pitch * Math.PI / 180), ps = Math.sin(pitch * Math.PI / 180);
+  return { view: report.view, facing, near: side ? (facing === 'left' ? 'l' : 'r') : null, pxm: c.pxPerM, pxPerM: c.pxPerM, x0: c.x0, y0: c.y0, pitch,
+    P: pitch ? (w => [c.x0 + sx(w) * c.pxPerM, c.y0 - (w[1] * pc - w[2] * ps) * c.pxPerM]) : (w => [c.x0 + sx(w) * c.pxPerM, c.y0 - w[1] * c.pxPerM]) };
 }
 
 /** Landmarks (world) of the start, end and mistake poses, as plate.mjs resolves them. */

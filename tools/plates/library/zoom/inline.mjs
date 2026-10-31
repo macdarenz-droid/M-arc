@@ -150,7 +150,8 @@ export function zoomOf(spec, { prefix = 'p', E = ENGINE, view: which = null } = 
   if (!C) throw new Error(`${spec.id}: no place on the ${view} plate keeps the zoom clear of ink, labels and leaders`);
   // the magnified render: the same spec at k x the camera, the focus mapped to the circle centre; no labels, guides of
   // the plate's own layout (callouts, datum, measure) or checks; ghosts kept in the normal view (the motion)
-  const zs = { ...spec, camera: { pxPerM: c.pxPerM * k, x0: C[0] - k * (focus[0] - c.x0), y0: C[1] - k * (focus[1] - c.y0) },
+  // (F-ZOOM-PITCH) the camera keeps the plate's pitch; its fit/maxScale stay out, since a fit would replace k x pxPerM
+  const zs = { ...spec, camera: { ...(cam.pitch ? { pitch: cam.pitch } : {}), pxPerM: c.pxPerM * k, x0: C[0] - k * (focus[0] - c.x0), y0: C[1] - k * (focus[1] - c.y0) },
     callouts: [], datum: [], measure: undefined, checks: [], zoom: undefined,
     ...(m ? { ghosts: { count: 0 } } : {}), ...(spec.mistake ? { mistake: { ...spec.mistake, tells: [] } } : {}) };
   const inner = E.renderPlate(zs, { id: `${vid}-z`, mistake: m }).svg

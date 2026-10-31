@@ -1,0 +1,18 @@
+{
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. No Rest. The five no-seconds cards get no row until D-LIB14-NOSECS's release. Ruled: D-LIB14-TEMPO, #289 comment 6338977366.",
+ "research": "claude/libht-research 3812989f59c000705731f7944d7a1a275e86045d",
+ "constants": {},
+ "ids": {
+  "wall_sit": {
+   "claim": "w6",
+   "rows": [
+    {
+     "phase": "Hold",
+     "constant": "30-60",
+     "claim": "w6",
+     "quote": "The wall sit can be done for 2-5 sets of 30-60-second holds. If the athlete is able to hold for 60 seconds comfortably, variations to increase difficulty can be introduced, such as lifting one foot at a time, single-leg holds, or holding weight on the thighs."
+    }
+   ]
+  }
+ }
+}
