@@ -1,26 +1,10 @@
 // Dumbbell Fly (flat bench, palms facing), FRONT view from the feet: the census and card view (no F6). SUPINE class
 // child. makeFly('front') is the plate; makeFly('side') is the former side plate, kept as the alternate
-// (dumbbell_fly__alt.mjs): it cannot show the arc width or the elbow bend (critic R1/R4-R7 = 3).
-// Front-view construction (the engine limit and how it is met without touching the engine):
-//  - The engine's front torso and head are frontal outlines (vendor/engine/body.mjs:36-44 HEAD_FRONT/torsoHalf, drawn
-//    at z = 0 and skinned at :295-305), so with the pelvis tilted -90 they project to a zero-height band (SPEC 8). The
-//    torso is supplied as one `poly` (TORSO): its outline is derived from the engine's own two torso outlines (front
-//    width, side depth, per trunk level) skinned onto this lying skeleton, and the union of those sections is what the
-//    camera at the feet sees: a dome on the pad 49 cm wide (the shoulders) and 68.5 cm high (the chest top, = the
-//    `chest` landmark). Class 'eq-solid' is the body's fill and line colour; its 1 px stroke equals the body's visible
-//    line (the body union strokes 2 px and paints its fill over the inner half; pixel-checked in both themes).
-//    z 'center' puts it over the body group (the arms, whose roots are truly behind the chest) and under the legs
-//    (truly in front of it).
-//  - The head is truly hidden behind the chest from the feet (face top 0.64 m by the engine's side head outline, chest
-//    0.685 m), and the thighs hide the lower dome: both are drawn as light x-ray outlines ('eq-line', XRAY) over the legs.
-//  - Feet FOOT_X apart, toes slightly out (c1 sets no width): the knees then clear the pad, so the bench pad and post
-//    show between the shins and the shoulders beside the knees. The camera has no pitch (orthographic, horizontal), so
-//    the thighs hide the lower torso; a raised foot-end camera would show the chest and head (engine change, not made).
-//    Critic 10-02 R1 ("shorten the shins, knee tops at y 890-895 of the 780 px shot") is not met, by that limit: the
-//    rounded tops at y ~852 are the thigh roots (hip joints y 878, thigh hip-end radius 0.048 H = 24 px), not the
-//    knees (knee joints y 899, already over the feet: 346/434 vs ankles 347/433). The hips rest on the 43 cm pad, so
-//    no foot or knee placement lowers them (feet 18 cm further out drops the knees 16 px, tops unchanged); segment
-//    lengths and the camera pitch live in the locked engine (vendor/engine/body.mjs WINTER/RADII, plate.mjs makeCamera).
+// (dumbbell_fly__alt.mjs, a sheet extra only, D-LIB8R-FLIES): it cannot show the arc width or the elbow bend.
+// Front view (LIB-8R, D-SPIKE-pitch, D-SPIKE-hinge): the engine camera is raised on the feet's side and tilted down
+// PITCH deg (`camera.pitch`, vendor/engine/plate.mjs makeCamera), and the trunk and head are the engine's volume trunk
+// (`torso: 'volume'`), so the lying chest, the head, the arc and the knees show together. The hand-built torso dome and
+// x-ray head of the unpitched view (pilot A #109) are gone.
 // Sources: research card docs/research/howto/cards/dumbbell_fly.json (pilot-a/cards, verified), claims c1 (flat
 // bench, feet flat), c2 (blades down and back, five-point contact), c3 (start: dumbbells pressed up to shoulder width,
 // palms facing, slight elbow bend, neutral wrists), c4 (lower in a wide arc until the dumbbells are level with the
@@ -43,9 +27,10 @@
 //    hexes in front view. The start layer never draws equipment, so the start dumbbells are dashed phantom hexes.
 // Plate labels (verified card): callouts = plate.checkpoints c5 (Soft elbows, on the end elbow), c4 (Stop at chest,
 //   on the end dumbbell), c4 (Dumbbells parallel, on the start dumbbell); measure = the held elbow bend (c5);
-//   Mistake = plate.mistake c4 (grips MIS_BELOW under the shoulder joint: dumbbells 5 cm under the pad top),
-//   guides = the chest-level stop line and the drop arrow, tells on the faulty dumbbell and elbow; tempo = plate.tempo
-//   c10 (2 s down, 2 s up, no pause). Trace = the grip: the arc (a press would trace a vertical line).
+//   Mistake (front) = plate.mistake c13: at the end pose both wrists bend back M_WRIST out of neutral (arms, elbows and
+//   shoulders unchanged; the dumbbells follow the hands), one tell 'wrists' (the card's topFault), in a Mistake zoom
+//   (D-LIBZOOM-EXTEND); the side alt keeps its former depth Mistake (c4). Tempo = plate.tempo c10 (2 s down, 2 s up,
+//   no pause). Trace = the grip: the arc (a press would trace a vertical line).
 // CARD: ELBOW (slight bend), SHOULDER_W (start width), END_LEVEL (stop height), ARC_DZ (arc plane over the chest).
 import { landmarksOf, fk, resolve, normPose, bodyShapes, WINTER, REF } from '../engine.mjs';
 import { supine } from './dumbbell_bench_press.mjs';
@@ -99,45 +84,43 @@ const sideDb = c => {   // side view, axis z: handle bar and two heads as outlin
 const lmStart = landmarksOf(start, H);
 
 
-// ---- front view: the lying torso seen end-on from the feet (the engine's front torso is a frontal outline) ----
-// Built from the engine's own two torso outlines (bodyShapes of the standing figure): at every level of the trunk the
-// half-width comes from the front outline and the back/front depth from the side outline; each level is skinned onto
-// the lying skeleton (sk0.skin), giving a section flat on its back and rounded (elliptic) across the front. What the
-// camera at the feet sees is the union of those sections: a dome on the pad, as wide as the shoulders and as high as
-// the chest. The head is truthfully hidden behind it (face top 0.64 m, chest top 0.685 m).
-const skStand = fk(resolve(normPose({}, BODY), BODY).q, BODY);
-const outline = view => bodyShapes(skStand, { view, P: w => [view === 'front' ? w[0] : w[2], w[1]], pxm: 1, near: 'r' }).find(s => s.key === 'torso').poly;
-const TF = outline('front'), TS = outline('side');
-const cross = (pts, y, pick) => { let best = null; for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length];
-  if ((a[1] - y) * (b[1] - y) > 0 || a[1] === b[1]) continue; const u = a[0] + (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]); best = best == null ? u : pick(best, u); } return best; };
-const SECTIONS = [];
-for (let Y = 0.86; Y <= 1.47; Y += 0.015) {
-  const w = cross(TF, Y, Math.max), zb = cross(TS.filter(p => p[0] < 0.01), Y, Math.min), zf = cross(TS.filter(p => p[0] > -0.01), Y, Math.max);
-  if (w == null || zb == null || zf == null) continue;
-  const b = sk0.skin([0, Y / H, zb / H]), t = sk0.skin([0, Y / H, zf / H]);
-  SECTIONS.push({ w, b: b[1], t: t[1], z: (b[2] + t[2]) / 2 });
-}
-const W = Math.max(...SECTIONS.map(s => s.w)), Y0 = Math.min(...SECTIONS.map(s => s.b));
-const domeTop = x => Math.max(Y0, ...SECTIONS.filter(s => Math.abs(x) < s.w).map(s => s.b + (s.t - s.b) * Math.sqrt(1 - (x / s.w) ** 2)));
-const DOME = [[-W, Y0]];
-for (let k = 1; k < 48; k++) { const x = -W * Math.cos(Math.PI * k / 48); DOME.push([x, domeTop(x)]); }
-DOME.push([W, Y0]);
-export const torsoInfo = { widthCm: +(2 * W * 100).toFixed(1), topCm: +(Math.max(...DOME.map(p => p[1])) * 100).toFixed(1), bottomCm: +(Y0 * 100).toFixed(1) };
-// 'eq-solid' = the body's own fill and line colour. Its 1 px stroke matches the body's visible line: the body union
-// strokes 2 px and paints its fill over the inner half, so 1 px of line shows outside every body outline.
-const TORSO = { type: 'poly', pts: DOME.map(([x, y]) => [x, y, -0.3]), cls: 'eq-solid', z: 'center', part: 'torso' };
-// Hidden body, x-ray (as the barbell's near plate in side view): the full dome and the head, end-on, as light
-// 'eq-line' outlines over the legs (z 'mid'), so the body reads behind the bent knees. The head is where it truly is:
-// resting on the pad, face up, inside the dome outline (engine head: 16 cm wide, back of head on the pad, face top
-// HEAD_TOP by the side head outline).
-const skEnd = fk(resolve(normPose(end, BODY), BODY).q, BODY);
-const headSide = bodyShapes(skEnd, { view: 'side', P: w => [w[2], w[1]], pxm: 1, near: 'r' }).find(s => s.key === 'head').poly;
-const HEAD_TOP = Math.max(...headSide.map(p => p[1])), HEAD_BOT = Math.min(...headSide.map(p => p[1])), HEAD_HW = 0.046 * H;
-const ring = (cx, cy, rx, ry) => Array.from({ length: 37 }, (_, k) => [cx + rx * Math.cos(k * 10 * R), cy + ry * Math.sin(k * 10 * R), -0.8]);
-const XRAY = [
-  { type: 'line', pts: [...DOME, DOME[0]].map(([x, y]) => [x, y, -0.3]), cls: 'eq-line', z: 'mid' },
-  { type: 'line', pts: ring(0, (HEAD_TOP + HEAD_BOT) / 2, HEAD_HW, (HEAD_TOP - HEAD_BOT) / 2), cls: 'eq-line', z: 'mid' },
+// ---- front view (LIB-8R) ----
+const PITCH = 45;                                     // camera pitch (deg), D-SPIKE-pitch
+const PX_M = 256 / 1.75;                              // the engine's reference scale (px/m), REF_CAMERA (vendor/engine/plate.mjs:11)
+// Mistake (card plate.mistake, c13): the end pose's own joint angles (the reach released), with both wrists bent back
+// M_WRIST out of neutral; the arm does not move, only the hand and its dumbbell.
+const M_WRIST = 30;                                   // wrist bend (deg): a stated reason, pilot-a2/sizes.json
+const qEnd = resolve(normPose(end, BODY), BODY).q;
+const wristPose = { reach: { l: null, r: null }, shoulder: qEnd.sh, elbow: qEnd.elbow, wrist: { l: -M_WRIST, r: -M_WRIST } };
+// The bench in the pitched view (panel mx4 R2): the engine's `bench` primitive draws a front-view cross-section only
+// (vendor/engine/equipment.mjs:158-177), two tabs beside the hips, so the pitched view draws the bench's own parts as
+// world-space `poly` items, projected by the engine's pitched camera: the pad (top face and its foot-end face), and at
+// each end an upright from the pad to the floor with a cross foot. Sizes are the primitive's defaults (width 0.29, pad
+// 0.06, legInset 0.12, beam 0.025 under the pad, foot ±0.22), so it is the same bench as dumbbell_bench_press's.
+const PAD_W = 0.29 / 2, PAD_T = 0.06, LEG_IN = 0.12, POST = 0.025, FOOT_HALF = 0.22, FOOT_T = 0.03;
+const zH = BENCH_Z - BENCH_LEN / 2, zF = BENCH_Z + BENCH_LEN / 2, beamY = BENCH_TOP - PAD_T - 0.025;
+const rect = (x0, x1, y0, y1, z) => [[x0, y0, z], [x1, y0, z], [x1, y1, z], [x0, y1, z]];
+const PITCHED_BENCH = [
+  ...[zH + LEG_IN, zF - LEG_IN].flatMap(z => [
+    { type: 'poly', pts: rect(-POST, POST, FOOT_T, beamY, z), cls: 'eq', z: 'back', part: 'bench' },              // upright
+    { type: 'poly', pts: rect(-FOOT_HALF, FOOT_HALF, 0, FOOT_T, z), cls: 'eq', z: 'back', part: 'bench' },         // its foot
+  ]),
+  { type: 'poly', pts: [[-PAD_W, BENCH_TOP, zH], [PAD_W, BENCH_TOP, zH], [PAD_W, BENCH_TOP, zF], [PAD_W, BENCH_TOP - PAD_T, zF],
+    [-PAD_W, BENCH_TOP - PAD_T, zF], [-PAD_W, BENCH_TOP, zF]], cls: 'eq', z: 'back', part: 'bench' },              // the pad
 ];
+
+// The hand as a short segment from the wrist to the handle (panel mx4 R5), so the wrist bend reads as an angle: a world
+// `poly` HAND_W wide along wrist -> grip, in the body's own fill. In the Mistake it is redrawn bent M_WRIST about the wrist,
+// with the dumbbell, at the card's true size.
+const HAND_W = 0.02;                                  // half width (m): a stated reason, pilot-a2/sizes.json
+const handPoly = (W, G, part) => {
+  const d = [G[0] - W[0], G[1] - W[1]], L = Math.hypot(...d), n = [-d[1] / L * HAND_W, d[0] / L * HAND_W];
+  return { type: 'poly', pts: [[W[0] + n[0], W[1] + n[1], W[2]], [G[0] + n[0], G[1] + n[1], G[2]], [G[0] - n[0], G[1] - n[1], G[2]], [W[0] - n[0], W[1] - n[1], W[2]]], cls: 'eq-solid', z: 'front', part };
+};
+const HANDS = lm => ['l', 'r'].map(s => handPoly(lm[`wrist.${s}`], lm[`grip.${s}`], `hand.${s}`));
+
+/** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
+export const SIZES = { BENCH_TOP, FOOT_Z, FOOT_X, ELBOW, SHOULDER_W, ARC_DZ, PITCH, M_WRIST, HAND_W, PAD_W, PAD_T, LEG_IN, POST, FOOT_HALF, FOOT_T };
 
 /** The fly plate in `view` ('front' = the card, 'side' = the former view, kept as the alternate); `id` for the file. */
 export function makeFly(view, id) {
@@ -150,40 +133,39 @@ function frontFly(id) {
   const phantom = ['l', 'r'].map(s => ({ type: 'line', pts: hexRing(lmStart[`grip.${s}`], DB.head / 2), cls: 'eq-line m-line', z: 'front' }));
   return {
     id, name: 'Dumbbell Fly', view: 'front',
-    camera: { x0: 179, y0: 339 },
+    // y0: the floor under the feet (world y 0, z FOOT_Z) at the approved floor y 339 once pitched (D-LIB8-floor)
+    camera: { x0: 179, y0: +(339 - FOOT_Z * Math.sin(PITCH * R) * PX_M).toFixed(2), pitch: PITCH },
+    torso: 'volume',
     poses: { start, end, via },
     equipment: [
-      { type: 'floor', from: -1.05, to: 1.05 },
-      { type: 'bench', at: [0, BENCH_TOP, BENCH_Z], len: BENCH_LEN },
-      TORSO, ...XRAY,
+      { type: 'floor', from: [-0.5, 0, FOOT_Z], to: [0.5, 0, FOOT_Z] },   // the floor line under the feet, clear of the zoom corners
+      ...PITCHED_BENCH,
       (lm, ctx) => (ctx.pose === 'end' ? phantom : null),
+      lm => HANDS(lm),
       lm => [{ type: 'dumbbell', at: lm['grip.l'], axis: [0, 0, 1], z: 'front', part: 'db.l' },
         { type: 'dumbbell', at: lm['grip.r'], axis: [0, 0, 1], z: 'front', part: 'db.r' }],
     ],
     checks: CHECKS,
     marks: ['elbow.l', 'elbow.r'],
     startParts: ['arm.l', 'arm.r'],
-    ghosts: { count: 3, parts: ['arm.r', 'db.r'] },
+    ghosts: { count: 1, parts: ['arm.r', 'db.r'] },   // one: with the volume trunk, 2 ghosts make the card chunk 159.2 KB > H7's 150 KB (1: 152.4 KB)
     trace: { point: 'grip.l', trim: [12, 12] },
     measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'slight bend, held' },
     datum: [{ y: 'grip.r', from: { at: 'grip.r', off: [-14, 0] }, to: { at: 'grip.l', off: [14, 0] }, mistake: false }],   // the stop line: dumbbells level with the chest top (c4)
     callouts: [
-      { key: 'elbows', text: 'Soft<br>elbows', anchor: 'elbow.l', box: { left: 224, top: 268 }, cue: 'Keep a slight elbow bend that stays the same all the way.' },
-      { key: 'stop', text: 'Stop at<br>chest', anchor: 'grip.l', box: { left: 290, top: 262 }, cue: 'Lower until the dumbbells are level with your chest, no deeper.' },
+      { key: 'elbows', text: 'Soft<br>elbows', anchor: 'elbow.l', box: { left: 236, top: 276 }, cue: 'Keep a slight elbow bend that stays the same all the way.' },
+      { key: 'stop', text: 'Stop at<br>chest', anchor: 'grip.l', box: { left: 282, top: 206 }, cue: 'Lower until the dumbbells are level with your chest, no deeper.' },
       { key: 'parallel', text: 'Dumbbells<br>parallel', anchor: 'start:grip.l', cue: 'Keep both dumbbells parallel, palms facing, through the whole arc.' },
     ],
     tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Raise', s: 2, move: true }],
     mistake: {
-      pose: mistakePose,
-      guides: [
-        { kind: 'dashed', pts: [[-W - 0.08, lmEnd['grip.r'][1], 0], [W + 0.08, lmEnd['grip.r'][1], 0]] },   // where it should stop
-        { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [0, 12] }, to: { at: 'grip.r', pose: 'mistake', off: [0, -12] } },
-      ],
+      pose: wristPose,
+      guides: [],
       tells: [
-        { key: 'deep', text: 'Below<br>the chest', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'Your dumbbells sink below chest and shoulder level at the bottom.' },
-        { key: 'elbow', text: 'Elbows<br>too low', anchor: { at: 'elbow.l', pose: 'mistake' }, cue: 'Your elbows drop below the bench line and strain the shoulder front.' },
+        { key: 'wrists', text: 'Wrists bend', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 12, top: 70 }, cue: 'Your wrists bend back out of line with the forearms as the dumbbells arc.' },   // c13
       ],
     },
+    zoom: { view: 'mistake', k: 2.5 },   // the smallest k on the ladder that reaches H3's bar at the pitched projection (F-ZOOM-PITCH; 2 gives 9.9 px)
     alt: ALT,
   };
 }
@@ -194,6 +176,8 @@ const CHECKS = [
   { landmark: 'head', above: { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] }, pose: 'all' },               // head never inside it
   { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },            // feet ON the floor
   { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
+  // c3 'Grasp each dumbbell' (plate fact): the hands on the dumbbells at the start (as dumbbell_overhead_triceps_extension.mjs:69)
+  ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: lmStart[landmark], pose: 'start', tol: 0.5 })),
 ];
 
 function sideFly(id) {

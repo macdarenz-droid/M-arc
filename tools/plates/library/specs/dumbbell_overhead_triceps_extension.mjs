@@ -74,6 +74,7 @@ export default {
   ],
   ghosts: { count: 3, parts: ['arm.r', 'db'] },
   trace: { point: 'grip.r', trim: [10, 12] },
+  zoom: { view: 'mistake', k: 1.5 },   // D-LIB15R2-ZOOM (lib4-cards §48): the `arch` tell, 15.85 px at k 1.5 (bar 11.39 at the zoom's scale)
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: { at: 'wrist.r', pose: 'start' }, radius: 24, title: 'Elbow', value: 'about 90°', expect: 90 },
   callouts: [
     { key: 'vertical', text: 'Arms<br>vertical', anchor: 'elbow.r', cue: 'Keep the upper arms vertical and still. Only the elbows bend.' },

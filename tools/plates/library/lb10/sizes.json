@@ -606,14 +606,14 @@
     "basis": "convention: dumbbell_biceps_curl.mjs:57 (#109 @ dcac4a38) SCAP pro -1 'slightly back', for c5 bb-farmers 'back and down'"
    },
    "STRIDE": {
-    "value": 0.35,
+    "value": 0.385,
     "unit": "m",
-    "basis": "stated reason: c8 ggr-farmers 'taking short, deliberate steps': half of M_STRIDE's regular step (DESIGN section 11, accepted 6355155831 item 5)"
+    "basis": "stated reason: c8 ggr-farmers 'taking short, deliberate steps': half of M_STRIDE's regular step (DESIGN section 11, accepted 6355155831 item 5; moves with M_STRIDE, F-R2-FARMER-5)"
    },
    "M_STRIDE": {
-    "value": 0.7,
+    "value": 0.77,
     "unit": "m",
-    "basis": "stated reason: c25 bb-farmers 'regular-sized steps': an adult's normal walking step, about 0.7 m for the 1.75 m figure (normal stride about 1.4 m, two steps)"
+    "basis": "claim: c30 mobbs2025 Table 6, mean step length 0.77 m (SD 0.12) at 171-180 cm, the bin holding the 1.75 m figure, for c25 bb-farmers 'regular-sized steps' (F-R2-FARMER-5, #338 6487471465): a step, one foot to the other, never a stride (two steps); the trend between c30's bin centres gives 0.765 m at 1.75 m; c29 (adults 18-50, no height) 0.70-0.73 m; c31's height-adjusted 0.34-0.36 x 1.75 m = 0.60-0.63 m is barefoot, aged 21-90, mean height 1.55-1.67 m, so not the figure's step"
    },
    "VIA_LIFT": {
     "value": 0.025,

@@ -20,7 +20,7 @@ const ALL = PLATES_JSON.plates;
 const HANDS = PLATES_JSON.hands ?? [];   // LIB-12 hand renders: shown on the sheet only (evidence images), never on the plates page
 const PILOT = ALL.filter(p => !p.held);   // held plates stay off both pages (supervisor ruling), one line each on the sheet
 const HELD = ALL.filter(p => p.held);
-const CARDS = join(ROOT, 'docs', 'research', 'howto', 'cards');   // verified research cards, byte copies from claude/libht-research f57e794 (D-LIB8M-CARDS)
+const CARDS = join(ROOT, 'docs', 'research', 'howto', 'cards');   // verified research cards, byte copies from claude/libht-research f57e7944; plank and mountain_climbers f574bb4b; barbell_row and romanian_deadlift 2dd60ae0 (D-LIB8M-CARDS; F-LIB8M-PROV)
 
 // Flag envelope (plan 3.3), measured on the 7 engine-drawn approved plates by report.mjs `measures` (the lateral
 // raise is hand-drawn, at the reference 146.29 px/m). Kept for this sheet and page order only (D-LIB8FIX-ENV): F2 and F3 here are other measures than LIB-3's; LIB-3's qa flags (qa/envelope.json) gate the merge.

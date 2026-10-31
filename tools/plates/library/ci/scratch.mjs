@@ -33,6 +33,8 @@ export const TAKEN = ['lib_cable_lateral_raise', 'lib_underhand_lat_pulldown', '
 /** D-LIB11-SCRATCHIDS (a) and D-LIB11-SCRATCHA: pinned batches' ids (pilot B's held crunch included), never a scratch target. */
 export const PILOT_A = ['barbell_row', 'dumbbell_bench_press', 'dumbbell_shoulder_press', 'barbell_overhead_press', 'romanian_deadlift', 'single_leg_romanian_deadlift', 'upright_row', 'pec_fly', 'dumbbell_biceps_curl', 'rope_triceps_pushdown', 'plank', 'mountain_climbers', 'triceps_pushdown'];
 export const PILOT_B = ['smith_machine_bench_press', 'seated_leg_curl', 'cable_fly', 'push_up', 'crunch'];
+/** LIB-8R (D-LIB8R-PINLINES, D-LIB11-SCRATCHIDS): PILOT-A2's pinned ids, never a scratch target. */
+export const PILOT_A2 = ['box_jump', 'bent_over_dumbbell_rear_delt_fly'];
 
 /** Refuses a scratch set that targets an LB1/LB2 id, a taken id, a shared key or an id outside exercises.json. */
 export function setProblems(set, root = ROOT) {
@@ -42,6 +44,7 @@ export function setProblems(set, root = ROOT) {
     if (LB1.includes(name) || LB2.includes(name)) out.push(`${s.id} is an ${LB1.includes(name) ? 'LB1' : 'LB2'} id (D-LIB-SCRATCHIDS)`);
     if (TAKEN.includes(s.id)) out.push(`${s.id} is another fixture's id`);
     if (PILOT_A.includes(name) || PILOT_B.includes(name)) out.push(`${s.id} is a pilot ${PILOT_A.includes(name) ? 'A' : 'B'} id (D-LIB11-SCRATCHIDS)`);
+    if (PILOT_A2.includes(name)) out.push(`${s.id} is a PILOT-A2 id (D-LIB11-SCRATCHIDS)`);
     if (!known.has(s.id)) out.push(`${s.id} is not in src/data/exercises.json`);
   }
   if (new Set(set.map(s => s.id)).size !== set.length) out.push('an id is listed twice');

@@ -74,6 +74,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_farmer_s_carry": {
+   "src": "library/specs/farmer_s_carry.mjs",
+   "slug": "farmer-s-carry",
+   "prefix": "farmer-s-carry",
+   "chromeId": "farmer-s-carry",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }
