@@ -678,3 +678,29 @@ card fields come at Do 5); these are drawing work, not plan risks.
   them in full (D-LIB15R2-TPARENT does not apply: no T child), and A11's hash loop reads the 3 from `resume3` (the 9
   keep `researchHead` e5ed66ca). Edits in existing LB7 blocks: the `LB7` list, `NOT_HERE`, A5, A9, A11's loop and its
   "9 cards" titles. No other lane's block changes.
+
+### 19.9 As built ('LB7 R3 PLAN RULED', #356 6543661102)
+
+- Specs: `specs/{incline,diamond,pike}_push_up.mjs`. lb7/sizes.json lists every number with its basis. lb7/tempo.json has
+  incline_push_up's row (Press up, Lower down). strip/rows.json moves diamond_push_up and pike_push_up to fallbackA.
+  lb7/qa.mjs F7_IDS gains `lib_pike_push_up`.
+- pike_push_up's top: the drawn foot outline sits on the floor, not the toe landmark. At the top's foot angle the sole
+  between toe and ball is 0.5 cm lower than the toe tip. So the toe tip is 0.5 cm up at the top, and on the floor at the
+  bottom and in the Mistake. The spec's toe check binds the bottom.
+- Cameras: all three draw at push_up's 144.5 px/m (`maxScale: 0.988`). diamond_push_up's floor is at y 300 and
+  pike_push_up's at y 305 (push_up's is 339). Their callouts and tells sit in the band under the floor line, because every
+  place above the figure would put a leader across the solid body (A15). This is a camera choice only; no pose, size or
+  fact moves.
+- Anchors on the drawn outline (A15 within 3 px):
+  - incline "Shoulders down": trap.r with off [0, −13];
+  - incline "Shoulders shrug": the Mistake shoulder's front, shoulder.r with off [12, 2];
+  - pike "Head forward": the head's front, head with off [7, −10];
+  - diamond "Elbows tucked": the start (bottom) elbow;
+  - diamond "Low back arches": the Mistake's lumbar point (the arched low back drops below the solid figure).
+- Mistake arrows clear the solid end figure by 6 px:
+  - incline: toe to toe, 8 px right of and 12 px above the toe tips;
+  - diamond: navel to navel, 8 px below;
+  - pike: crown to crown, 14 px under the floor line.
+- QA (lb7/qa.mjs, page `58d79da8…6898`, built twice, equal): all 10 hard checks pass on the 3 rows.
+  - Flags: F5 3.57 on each; F7 on pike_push_up only.
+  - The F2 on cable_lateral_raise and face_pull is the same on main `6d34542c` (not this lane's).

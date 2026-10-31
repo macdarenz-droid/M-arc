@@ -706,5 +706,17 @@
   "Lockout: NASM says avoid locking the elbows at the top; Fitness Volt says push up until the arms are straight (c4). The plate draws straight arms with soft elbows.",
   "Elbows: NASM gives about 45 degrees from the body; Fitness Volt and Garage Gym Reviews say tuck them in (c3, c7). The plate draws about 45 degrees.",
   "Read but not usable: StrengthLog and BarBend pike push-up URLs (429/404), Healthline, PureGym, Muscle & Fitness, Nerd Fitness, Bodybuilding.com, Hevy and Built With Science (404), Verywell Fit (402), Muscle & Strength (403), Men's Health (bot page). PubMed has no pike push-up technique study (one 'pike' hit is a Swiss-ball core study, PMID 20436242, not cited). Every page read in full is cited."
- ]
+ ],
+ "plateFacts": [],
+ "tempo": [
+  {
+   "phase": "Lower",
+   "move": true
+  },
+  {
+   "phase": "Press",
+   "move": true
+  }
+ ],
+ "topFault": "flare"
 }

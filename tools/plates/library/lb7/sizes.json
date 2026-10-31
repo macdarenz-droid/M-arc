@@ -770,6 +770,172 @@
     "unit": "point",
     "basis": "claim: c5, the lowering cue (the elbow bend, whose moving end is the shoulder; DESIGN.md section 16 item 6; D-LIB17-TRACE)"
    }
+  },
+  "incline_push_up": {
+   "BENCH_W": {
+    "value": 0.29,
+    "unit": "m",
+    "basis": "convention: the vendor bench's pad width (equipment.mjs:158 width 0.29), seen end-on (bench_dip's BENCH_W)"
+   },
+   "HAND_IN": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason: c1 'Place both hands on top of the incline': the wrist (the heel of the hand) 2 cm in from the bench's near edge, the palm on the top (DESIGN.md section 19.4)"
+   },
+   "CHEST_GAP": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "claim: c3 'until your chest is an inch away from the box': the chest landmark 2.5 cm over the bench top at the bottom"
+   },
+   "CHEST_IN": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason: c3 (plate.end 'chest about an inch above the bench edge'): the chest landmark 2 cm past the near edge, over it; with the hands on the edge the chest then clears the pad's near corner (DESIGN.md section 19.1, D-LIB17R3-BENCH)"
+   },
+   "BODY_DEG": {
+    "value": 45,
+    "unit": "deg",
+    "basis": "claim: c1 'walk your feet back until your body is at a 45-degree angle with the floor': the top's toe-to-shoulder line"
+   },
+   "BENCH_TOP": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "D-LIB17R3-BENCH: the bench top height (0.4232 m) solved by bisection on [0.30, 0.55] so the top's toe-to-shoulder line is BODY_DEG; c1 'sturdy platform, bench, or box' and c14 fix no height"
+   },
+   "TOE_Z_SOLVED": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "the toe spot (-1.1867 m) solved from the bottom pose (straight body, chest at CHEST_GAP and CHEST_IN, toe tips on the floor)"
+   },
+   "M_FEET_IN": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "claim: c10 'Feet too close to the box': the Mistake's toe spot 20 cm nearer the bench than the right one; a stated size, never the shrug (D-LIB8-shrug), the visible cause c10 names"
+   },
+   "M_SHRUG": {
+    "value": 4,
+    "unit": "cm",
+    "basis": "claim: c10 'leave the scapula elevated': the Mistake's scapular elevation, 4 cm (the engine's scap.elev, body.mjs:143)"
+   },
+   "FLOOR_BACK": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "convention: bench_dip's FLOOR_BACK 0.15, the floor run behind the toes"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "stated reason: the floor run past the bench's far edge, under the bench's foot (0.22 m half-length, equipment.mjs:176)"
+   },
+   "LINE_RUN": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "convention: push_up.mjs LINE_RUN 0.18, the plank line's run past each end"
+   },
+   "trace": {
+    "value": "sternum",
+    "unit": "landmark",
+    "basis": "convention: push_up's trace point (push_up.mjs trace.point), the chest's path to the bench (c3)"
+   }
+  },
+  "diamond_push_up": {
+   "TOE_Z": {
+    "value": -1.05,
+    "unit": "m",
+    "basis": "convention: push_up.mjs TOE_Z -1.05, the toe tips' floor spot"
+   },
+   "HAND_X": {
+    "value": 0.04,
+    "unit": "m",
+    "basis": "claim: c1 'Use your thumbs and first fingers to form a diamond shape': each grip 4 cm from the midline, the hands touching at the thumbs"
+   },
+   "GRIP_FWD": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "claim: c1 'your hands are below your upper chest': the grip (the palm's centre) 3 cm in front of the bottom pose's chest landmark, between the chest and shoulder landmarks along the body"
+   },
+   "GRIP_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "the grips' floor spot (0.2657 m): the bottom pose's chest landmark z plus GRIP_FWD"
+   },
+   "CHEST_GAP": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "claim: c3 'lower your chest down to the back of your hands': the chest landmark 1 cm over the hands' backs (twice the forearm's distal radius over the floor)"
+   },
+   "SAG_HIP": {
+    "value": -20,
+    "unit": "deg",
+    "basis": "convention: push_up.mjs SAG_HIP -20 (pilot B, approved), the sag Mistake (c6, c7)"
+   },
+   "FLOOR_BACK": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the floor run behind the toe tips"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.42,
+    "unit": "m",
+    "basis": "stated reason: the floor run in front of the grips, under the bottom pose's head"
+   },
+   "LINE_RUN": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "convention: push_up.mjs LINE_RUN 0.18"
+   },
+   "trace": {
+    "value": "sternum",
+    "unit": "landmark",
+    "basis": "convention: push_up's trace point, the chest's path to the hands (c3)"
+   }
+  },
+  "pike_push_up": {
+   "GRIP_Z": {
+    "value": 0,
+    "unit": "m",
+    "basis": "stated reason: the grips' floor spot, the world origin"
+   },
+   "SH_TOP": {
+    "value": 170,
+    "unit": "deg",
+    "basis": "claim: c2 'lift your hips up and back to form an upside down V with your body' (c1 'downward dog'): the arms in line with the trunk at the top, shoulder flexion 170"
+   },
+   "HIP_TOP": {
+    "value": 110,
+    "unit": "deg",
+    "basis": "claim: c2 'Keeping your legs straight, lift your butt into the air so your body resembles an inverted V': the hips flexed 110 at the top (at 95 the bottom elbow sits 1 px over the floor, DESIGN.md section 19.4)"
+   },
+   "TOE_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "the toe spot (-0.9534 m) solved from the top pose"
+   },
+   "HEAD_GAP": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "claim: c3 'lower your head to within an inch of the floor': the drawn head outline 2 cm over the floor at the bottom"
+   },
+   "HEAD_FWD": {
+    "value": 0.16,
+    "unit": "m",
+    "basis": "claim: c5 'move your head forward and down as you bend your elbows': the head landmark 16 cm in front of the grips at the bottom; the Mistake (c6) lands it at the grips' z"
+   },
+   "FLOOR_BACK": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "convention: bench_dip's FLOOR_BACK 0.15"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.4,
+    "unit": "m",
+    "basis": "stated reason: the floor run in front of the grips, under the bottom pose's head"
+   },
+   "trace": {
+    "value": "head",
+    "unit": "landmark",
+    "basis": "claim: c5: the head's path forward and down (card checkpoint 'Head forward')"
+   }
   }
  }
 }

@@ -628,5 +628,32 @@
   "BarBend says 'place your feet together about hip-width apart', which contradicts itself; no foot-width line is carried.",
   "c11 is WEAK: it is Fitness Volt's option for a different variation (neutral close-grip push-ups on dumbbells or handles), offered to people whose wrists the diamond bothers.",
   "Read but not usable: StrengthLog diamond-push-up URL (429, then 404), NASM diamond-push-up (404), Healthline (404), Men's Health (404), Built With Science (404). Every page read in full is cited."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "end",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "end",
+   "cardPose": "start",
+   "claim": "c1"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Press",
+   "move": true
+  },
+  {
+   "phase": "Lower",
+   "move": true
+  }
+ ],
+ "topFault": "sag"
 }

@@ -711,5 +711,34 @@
   "Lockout: NASM says avoid locking out at the top; BarBend and StrengthLog say straighten the arms (c7). The plate draws straight arms with soft elbows.",
   "The low-back feel row ends the set from BarBend's stop words (\"doesn’t mean you should continue\", c12); no source names pain there, so the row names none (R-LB3-4).",
   "Read but not cited: the ACE exercise-library index page (no incline push-up entry found there). Not reachable: Healthline and Fitness Volt incline push-up URLs (404), Verywell Fit (402), Muscle & Strength (403)."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "end",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "end",
+   "cardPose": "start",
+   "claim": "c1"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Press",
+   "s": 3,
+   "move": true
+  },
+  {
+   "phase": "Lower",
+   "s": 3,
+   "move": true
+  }
+ ],
+ "topFault": "feet"
 }
