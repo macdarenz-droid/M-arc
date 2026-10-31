@@ -887,6 +887,26 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
     - mx17: LIB-SMALL fix 2 @ `0a335a9d`, waiting for LB7's fix 2 (pike, incline);
     - the CARD FIELDS verifier on cf13s (LIB-13s' 4 shrug cards @ `91a4fae6`).
   - Main holds 106 of 153 drawings; diamond_push_up waits for LB7's merge.
+- **Update 22:25 UTC (10-31):** main is `f7ab6751`, with 106 of 153 drawings. The verdicts are in §48.
+  - **Panels, all VALID:**
+    - mx16: hip_adduction and barbell_shrug approved;
+    - mx17: pike, incline, jumping_jacks and jump_squat approved;
+    - mx18: cable_crunch, reverse_lunge and dumbbell_fly approved;
+    - mx19: hip_abduction, t_bar_row and cable_shrug approved.
+  - **Lanes:**
+
+    | lane | PR · session | state |
+    |---|---|---|
+    | LB6 (LIB-16R2) | #354 · session_01EQuYNiQhTrfP6PuNG5qo8o | 9 of 9 approved; READY (check, test:tz, gate) running |
+    | LB7 (LIB-17R3) | #356 · session_01EQuYNkAdg1sbZrgdN7w1UN | 3 of 3 approved; main merged (`f4e74abd`); gate running, then READY |
+    | LIB-SMALL | #358 · session_01EQuYNmQGFHuymcHkwUzaft | jumping_jacks and jump_squat approved; wall_ball after #356 merges |
+    | LIB-13s | #359 · session_01EQuYNjsRaVUx3RM4ccYhCj | barbell_shrug, t_bar_row and cable_shrug approved; FIX 2 for dumbbell_shrug (R11) and smith_machine_shrug (R5, D-LIB13S-SMITHZOOM) |
+    | LB9 R3 | #361 · session_01EQuYNkmgaWV2v7tp2Z9Rci | cable_crunch approved; READY running; bicycle_crunch held (D-SPINE-BICYCLE-NEARS, to research) |
+    | PILOT-A3 | #362 · LIB-8R session_01EQuYNjCqcXNx2oAh5UaU2K | pinned `053d7650` (DIFF-CHECK PASS); step 7 READY next |
+
+  - **Next:** a fresh Opus reviewer per READY, then trains 55 and up in plan order (LB6 #354, LB7 #356, LB9 R3 #361, PILOT-A3 #362). After #356 merges, LIB-SMALL builds wall_ball. LIB-13s then gets a focused recheck of its FIX 2.
+  - **Research owed:** F-BICYCLE-REACH (trunk axial rotation, and the hands-behind-head arm position).
+  - **Usage:** the 7-day status reads "allowed_warning"; no exact figure was readable this tick (the last read was 0.78 at 18:57). No pause this week.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
