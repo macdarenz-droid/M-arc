@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-31 ~16:00 UTC · main `6b32d576` (train 53: PILOT-A2 + LB10 + LB5) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-31 ~19:00 UTC · main `6b32d576` (train 53; train 54 building) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -862,6 +862,22 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Card drafts are running for LIB-13s and for the small rows (jumping_jacks, wall_ball, jump_squat).
   - Follow-ups: F-LIB8R-LOWS, F-LIB22-LOWS, F-LIB15R2-LOWS (one is a CI test for the template parent proof; it rides the next template card with D-TEMPLDIR-LIST), and F-SPINE-BOW0.
   - Owner, 10-31 ~15:30: the Play "Apply for access to production" form was drafted in chat. The closed test runs 37.1.0.55, which predates the OLD-ANDROID-1 fix, so production needs a newer bundle. The owner was told this.
+- **Update 19:00 UTC (10-31):**
+  - **Train 54 building** (#360, head `fd15e249`): LIB-SPINE #348 @ `bf4b8d4d` (review PASS, re-pin DIFF-CHECK PASS 6547113887).
+  - **Lanes:**
+
+    | lane | PR · session | state |
+    |---|---|---|
+    | LB6 (LIB-16R2) | #354 · session_01EQuYNiQhTrfP6PuNG5qo8o | 7 of 9 approved (mx12, mx14); fixing hip_abduction (R4, R5) and hip_adduction (R4) |
+    | LB7 (LIB-17R3) | #356 · session_01EQuYNkAdg1sbZrgdN7w1UN | incline_push_up approved (mx13); diamond and pike in recheck mx15 |
+    | LIB-SMALL | #358 · session_01EQuYNmQGFHuymcHkwUzaft | jumping_jacks and jump_squat in recheck mx15 (R5 ruled: drawn true size); wall_ball waits for #356 |
+    | LIB-13s | #359 · session_01EQuYNjsRaVUx3RM4ccYhCj | PLAN RULED 6547276467; wave 1 building |
+    | PILOT-A3 | LIB-8R session_01EQuYNjCqcXNx2oAh5UaU2K | started (card `verify/pilot-a3-card.md`); branches after train 54 |
+    | LB9 R3 | session_01EQuYNkmgaWV2v7tp2Z9Rci | started (card `verify/lb9r3-card.md`); branches after train 54 |
+
+  - **Running:** panel mx15 (critics) and the CARD FIELDS set cfsmall (LB7's 3 cards and LIB-SMALL's 2).
+  - **Process note:** builders now post each READY or FIX line in a comment of its own. The watch prints only a comment's first line, and LB6's PANEL FIX and PLATES READY 2 were missed for about 2.5 h.
+  - Usage: 7-day 0.78 at 18:57, about 0.02 an hour. No pause this week (owner 15:05).
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
