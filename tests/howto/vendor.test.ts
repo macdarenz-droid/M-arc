@@ -29,11 +29,11 @@ describe('HT1-A1 vendor lock (L0)', () => {
     expect(g.verifyVendor()).toEqual([]);
   });
 
-  it('the MANIFEST lists the engine, tokens.css, SPEC.md, the 7 specs, the 6 test specs, ref-src and build-page, and nothing else', () => {
+  it('the MANIFEST lists the engine, tokens.css, SPEC.md, the 7 specs, the 7 test specs, ref-src and build-page, and nothing else', () => {
     const m = g.readManifest();
     const paths = Object.keys(m.files).sort();
     const engine = ['body', 'equipment', 'gallery', 'geom', 'index', 'layout', 'measure-chars', 'plate', 'render', 'sheet', 'themes', 'zoom'].map(f => `engine/${f}.mjs`);
-    const specs = ['_test_er5', '_test_flat', '_test_front', '_test_pitch', '_test_poly', '_test_side', 'barbell_back_squat', 'hanging_leg_raise', 'lat_pulldown', 'leg_press', 'machine_chest_press', 'pull_up', 'seated_cable_row'].map(f => `exercises/${f}.mjs`);
+    const specs = ['_test_er5', '_test_flat', '_test_front', '_test_pitch', '_test_poly', '_test_side', '_test_spine', 'barbell_back_squat', 'hanging_leg_raise', 'lat_pulldown', 'leg_press', 'machine_chest_press', 'pull_up', 'seated_cable_row'].map(f => `exercises/${f}.mjs`);
     expect(paths).toEqual([...engine, 'engine/SPEC.md', 'engine/tokens.css', ...specs, 'ref-src/plate.mjs', 'ref-src/themes.mjs', 'artifact/build-page.mjs'].sort());
     for (const [p, e] of Object.entries(m.files) as [string, { source: string; md5?: string }][]) {
       if (p.startsWith('ref-src/')) {
@@ -43,8 +43,10 @@ describe('HT1-A1 vendor lock (L0)', () => {
         // LIB-25 [golden update]: the additive poly primitive (7859292, its input checks 48153c4) and its engine test
         // (de00174), claude/howto-options. LIB-26 [golden update]: the flat-palm hand option (body, plate) and its engine
         // test, f214700; SPEC.md at 48153c4 documents both. LIB-20 [golden update]: the E-R5 fields (body, plate, SPEC.md)
-        // and their two engine tests, c35e0a4.
-        const ref = ['engine/body.mjs', 'engine/plate.mjs', 'engine/SPEC.md', 'exercises/_test_er5.mjs', 'exercises/_test_pitch.mjs'].includes(p) ? 'c35e0a4'
+        // and their two engine tests, c35e0a4. LIB-SPINE [golden update]: the spine fields (body, plate, SPEC.md) and
+        // their engine test, 80be674; body.mjs at d8d4b2e (the bow keeps the leg IK's pelvis frame).
+        const ref = p === 'engine/body.mjs' ? 'd8d4b2e' : ['engine/plate.mjs', 'engine/SPEC.md', 'exercises/_test_spine.mjs'].includes(p) ? '80be674'
+          : ['exercises/_test_er5.mjs', 'exercises/_test_pitch.mjs'].includes(p) ? 'c35e0a4'
           : p === 'exercises/_test_flat.mjs' ? 'f214700'
           : p === 'engine/equipment.mjs' ? '48153c4' : p === 'exercises/_test_poly.mjs' ? 'de00174' : 'bc0f378';
         expect(e.source).toBe(`${ref}:docs/howto/technical-plate/${p === 'artifact/build-page.mjs' ? 'build-page.mjs' : p}`);
@@ -91,7 +93,7 @@ describe('HT1-A1 vendor lock (L0)', () => {
   // with its MANIFEST entry still fails here and shows up as a visible change to this test.
   it('HT-2: the sorted path:sha256 list of MANIFEST.json hashes to its pinned literal', () => {
     const list = Object.entries(g.readManifest().files as Record<string, { sha256: string }>).map(([p, e]) => `${p}:${e.sha256}`).sort().join('\n');
-    expect(g.sha256(list)).toBe('aeb50641285676541715a875639ae518a946189c85f3dfe29525fed24bc23fba');
+    expect(g.sha256(list)).toBe('09068fa617c917a3ff8404119bf2d230ca9b8dd26903680a1403a4d2a68c6b91');
   });
 });
 

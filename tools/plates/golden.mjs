@@ -225,7 +225,7 @@ for (const p of plates) {
   for (const k of p.normalKeys) out.fixtures[p.chromeId + '.n.' + k] = render(src, { id: p.prefix + '-n', selected: k });
   for (const k of p.mistakeKeys) out.fixtures[p.chromeId + '.m.' + k] = render(src, { id: p.prefix + '-m', mistake: true, selected: k });
 }
-for (const t of tests ? ['_test_front', '_test_side', '_test_poly', '_test_flat', '_test_er5', '_test_pitch'] : []) {
+for (const t of tests ? ['_test_front', '_test_side', '_test_poly', '_test_flat', '_test_er5', '_test_pitch', '_test_spine'] : []) {
   const spec = specs['exercises/' + t + '.mjs'];
   out.fixtures[t + '.n'] = render({ spec }, { id: t + '-n' });
   if (spec.mistake) out.fixtures[t + '.m'] = render({ spec }, { id: t + '-m', mistake: true });
