@@ -28,6 +28,19 @@ const mergeDeep = (a, b) => {
 // D-LIB20-TRUNK: the Mistake merge never drops a trunk field. A numeric trunk merged with an object one (either way round)
 // would lose the flex or the yaw and lat, so it throws; write both as { flex, yaw, lat }.
 const isObj = v => v && typeof v === 'object';
+// D-SPINE-MIX (LIB-SPINE): the array form (flex, yaw or lat per spine pivot) in one of start, via, end and the merged
+// Mistake needs it in all of them, or the interpolation would meet an array and a number; a `bow` needs the object
+// form wherever a trunk is written. Checked before D-LIB20-TRUNK, so the message names the spine rule.
+const isArr = t => isObj(t) && ['flex', 'yaw', 'lat'].some(k => Array.isArray(t[k]));
+function spineMix(spec) {
+  const keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end], mp = spec.mistake?.pose;
+  const tks = [...keys.map(p => p.trunk), ...(mp ? [mp.trunk] : [])];
+  const forms = [...keys.map(p => isArr(p.trunk)), ...(mp ? [isArr(mergeDeep(spec.poses.end, mp).trunk)] : [])];
+  if (forms.some(Boolean) && !forms.every(Boolean))
+    throw new Error(`${spec.id}: the trunk mixes the array form (flex, yaw or lat per spine pivot) and the number form across start, via, end and the Mistake; write every one as arrays (D-SPINE-MIX)`);
+  if (tks.some(t => isObj(t) && t.bow != null) && tks.some(t => typeof t === 'number'))
+    throw new Error(`${spec.id}: trunk.bow needs the object form { flex, yaw, lat, bow } in every pose that writes a trunk (D-SPINE-MIX)`);
+}
 function mistakePose(spec) {
   const e = spec.poses.end.trunk, m = spec.mistake.pose.trunk;
   if ((typeof e === 'number' && isObj(m)) || (isObj(e) && typeof m === 'number'))
@@ -49,7 +62,7 @@ function makeCamera(spec, cam) {
 // Everything drawn for one pose: body shapes + equipment items, in plate px.
 function drawPose(spec, body, q, cam, ctx) {
   const sk = fk(q, body), lm = landmarks(sk);
-  const shapes = bodyShapes(sk, cam, { armsFront: spec.armsFront, hand: spec.hand, torso: spec.torso }).map(s => ({ ...s, part: partOf(s.key) }));
+  const shapes = bodyShapes(sk, cam, { armsFront: spec.armsFront, hand: spec.hand, torso: spec.torso, ...(spec.depth ? { depth: spec.depth, pitch: spec.camera?.pitch ?? 0 } : {}) }).map(s => ({ ...s, part: partOf(s.key) }));
   const eq = [];
   (spec.equipment ?? []).forEach((e, i) => {
     let ent = typeof e === 'function' ? e(lm, { ...ctx, q }) : e;
@@ -81,6 +94,7 @@ const WORLD_DIRS = { up: [0, 1, 0], down: [0, -1, 0], forward: [0, 0, 1], back: 
 /** Render one plate. */
 export function renderPlate(spec, { id = 'p', mistake = false, selected = null } = {}) {
   const body = { height: spec.body?.height ?? 1.75 };
+  spineMix(spec);
   const keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map(p => normPose(p, body));
   const nG = spec.ghosts?.count ?? 3;
   const ghostT = Array.from({ length: nG }, (_, i) => (i + 1) / (nG + 1));

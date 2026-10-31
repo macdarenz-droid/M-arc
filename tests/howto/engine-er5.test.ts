@@ -89,7 +89,8 @@ const BONES = [['hip.l', 'knee.l'], ['knee.l', 'ankle.l'], ['hip.r', 'knee.r'], 
 
 describe('20-A5 defaults keep today\'s output', () => {
   it('each of the 11 vendored specs renders byte-identical with every field set to 0 / off and absent (normal and Mistake)', () => {
-    const ids = Object.keys(facts.defaults).filter(k => !['_test_er5', '_test_pitch'].includes(k));
+    // LIB-SPINE: _test_spine is another engine test (array trunk, so not in the E-R5 number form); the 11 are unchanged
+    const ids = Object.keys(facts.defaults).filter(k => !['_test_er5', '_test_pitch', '_test_spine'].includes(k));
     expect(ids).toHaveLength(11);
     for (const k of ids) expect({ k, ...facts.defaults[k] }).toEqual({ k, n: true, m: true, mistake: facts.defaults[k].mistake });
     expect(facts.defaults._test_er5.n).toBe(true);
