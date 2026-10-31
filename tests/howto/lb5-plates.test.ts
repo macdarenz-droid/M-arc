@@ -798,7 +798,7 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
       ...['start', 'end'].flatMap(p => ['heel.r', 'heel.l', 'ball.r', 'ball.l'].map(l => C(l, p, p, 'c5'))), C('wrist.r', 'start', 'start', 'c1')],   // D-LIB15-MIRROR, c14
     wrist_curl: [C('wrist.r', 'start', 'start', 'c1')],
     // LIB-15R2 (DESIGN.md 17.8; incline's elbow-on-pad c4 is no fact: the arm lies beside the pad, which no side-view plane measures)
-    incline_dumbbell_curl: [...W2('start', 'start', 'c1'), C('seat', 'start', 'start', 'c1'), C('backUpper', 'start', 'start', 'c2')],
+    incline_dumbbell_curl: [...W2('start', 'start', 'c1'), C('seat', 'start', 'start', 'c1'), C('backUpper', 'start', 'start', 'c2'), C('buttock', 'start', 'start', 'c2')],   // + buttock: CARD FIELDS fix (D-LIB11-SACRUM)
     single_arm_triceps_pushdown: [C('wrist.r', 'start', 'start', 'c2')],
     alternating_dumbbell_curl: W2('start', 'start', 'c2'),
     hammer_curl: W2('start', 'start', 'c1'),
