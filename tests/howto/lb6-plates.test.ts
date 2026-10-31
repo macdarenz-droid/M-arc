@@ -1396,8 +1396,12 @@ const R2_HEAD = 'a48b059400a74d5c9e3aceed21cf1aa67ab6f118';
 const R2M: Record<string, any> = {}, R2S: Record<string, any> = {};
 const r2Drawn = () => R2_ALL.filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`));
 /** The plate camera in either view, from the engine's own report. */
-const r2Cam = (spec: any) => { const c = plate.renderPlate(spec, { id: 'x' }).report.camera, side = spec.view === 'side';
-  return { view: side ? 'side' : 'front', near: side ? 'r' : null, pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? w[2]! : w[0]!) * c.pxPerM, c.y0 - w[1]! * c.pxPerM] }; };
+// memoised per spec object: renderPlate is costly, and long synchronous loops starve vitest's worker RPC
+const R2_CAMS = new WeakMap<object, any>();
+const r2Cam = (spec: any) => { if (R2_CAMS.has(spec)) return R2_CAMS.get(spec);
+  const c = plate.renderPlate(spec, { id: 'x' }).report.camera, side = spec.view === 'side';
+  const cam = { view: side ? 'side' : 'front', near: side ? 'r' : null, pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? w[2]! : w[0]!) * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
+  R2_CAMS.set(spec, cam); return cam; };
 const r2Shapes = (spec: any, pose: string) => {
   const b = { height: 1.75 }, p = pose === 'mistake' ? (() => { const m: any = JSON.parse(JSON.stringify(spec.poses.end)); for (const [k, v] of Object.entries<any>(spec.mistake.pose)) m[k] = (v && typeof v === 'object' && !Array.isArray(v) && m[k] && typeof m[k] === 'object') ? { ...m[k], ...v } : v; return m; })() : spec.poses[pose];
   return body.bodyShapes(body.fk(body.resolve(body.normPose(p, b), b).q, b), r2Cam(spec)).filter((x: any) => x.poly);
