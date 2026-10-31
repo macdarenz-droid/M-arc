@@ -393,7 +393,7 @@ ids' rows are written with the slice, and the bulk rows below are proposals [pro
 | bear_crawl | M_HIP | 30° | mountain_climbers.mjs:88 HIKE_HIP 30 (#109) [proposed] |
 | battle_ropes | M_ELEV, M_PRO | 3 cm, 3 cm | pull_up.mjs:36's ±3 cm reversed (as LB7 cable_rear_delt_fly) [proposed]; ROPE_T 0.038 m (c8, 1.5 in) |
 | high_knees | END thigh | 90° hip flexion (the bound) | c3 "at least 90 degrees of flexion" [proposed] |
-| farmer_s_carry | STRIDE, M_STRIDE | 0.35 m, 0.70 m | stated: c8 "short, deliberate steps" vs c25 "regular-sized steps" [proposed] |
+| farmer_s_carry | STRIDE, M_STRIDE | 0.385 m, 0.77 m | M_STRIDE: c30 mean step length 0.77 m at 171-180 cm for c25 "regular-sized steps" (F-R2-FARMER-5, section 22); STRIDE: half of it, c8 "short, deliberate steps" |
 | jumping_jacks | M_ROT | 30° external hip rotation | stated: c12 "twisting your toes outward": past the start's toes forward [proposed] |
 | wall_ball | STAND_DIST | 0.57 m (22.5 in, the toes to the wall) | c2 Box Life "20-25 inches" midpoint (5 in wide ≥ 4: a size) [proposed] |
 
@@ -473,13 +473,12 @@ kettlebell_swing has a strip from the start; the other three render only from `l
 
 ## 15. Held ids and NOSECS rows
 
-As of 'LIB-22 resume' (section 21). Lifted there: sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
+As of 'LIB-22 resume 2' (section 22; farmer_s_carry lifted there). Lifted at 'LIB-22 resume' (section 21): sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
 medicine_ball_slam (D-LIB22-AFALL: every phase blank, strip/rows.json fallbackA under D-LIB22-STRIPROWS).
 
 | id | ruling | why | route |
 |---|---|---|---|
 | wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); strip leftOut (S3) | #289 on main, then a resume |
-| farmer_s_carry | #305 6360164495 item 2 (open M_STRIDE basis) | tempo lifted (strip row); M_STRIDE 0.70 m feeds the Mistake deviation with no quote, approved plate or measured convention behind the number | F-LB10-STRIDE (research; #331 6409745507 item 2) |
 | jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px**; a normal zoom at kMax 4 gives 21.3 px < 22.11 (trim [0, 0]) | a route the zoom rules do not hold (as F-PALLOF-ARCH) |
 | jumping_jacks | D-LIB22-JJ | H6:no-card until F-H6-TEMPO; also S2 (Mistake **9.6 px**; a Mistake zoom at k 1.5 reaches 14.4 px, drawn at its own resume) | F-H6-TEMPO on main |
 

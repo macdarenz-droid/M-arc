@@ -325,9 +325,9 @@ const T = 600_000;
 const SPECS_DIR = 'tools/plates/library/specs';
 const ROWS = 'tools/plates/library/lb10/rows.json';
 const FRONT = ['jumping_jacks', 'jump_rope'];
-// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; farmer_s_carry's open M_STRIDE basis; jump_rope's
-// Trace, short of the bar at kMax; jumping_jacks under D-LIB22-JJ until F-H6-TEMPO).
-const HELD = [...NOSECS, 'farmer_s_carry', 'jump_rope', 'jumping_jacks'];   // wall_ball: no spec yet
+// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; jump_rope's Trace, short of the bar at kMax;
+// jumping_jacks under D-LIB22-JJ until F-H6-TEMPO). farmer_s_carry left at 'LIB-22 resume 2' (F-R2-FARMER-5).
+const HELD = [...NOSECS, 'jump_rope', 'jumping_jacks'];   // wall_ball: no spec yet
 // The ids drawn on this branch: the slice, then the bulk as each plate is integrated (BULK GO, #305 6356763967).
 const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl', 'high_knees', 'jumping_jacks', 'battle_ropes'];
 const COMPOSERS = ['kettlebell', 'medBall', 'sled', 'jumpRope', 'battleRope'];
@@ -840,6 +840,29 @@ describe('LIB-22 A2 / A18: farmer_s_carry (NOSECS; bulk)', { timeout: T }, () =>
   it('mutation: the engine\'s default dumbbell (11.9 cm heads, 7 cm long) is red', () => {
     expect(massProblems(0.119, 0.07).length).toBe(1);
   });
+  /** F-R2-FARMER-5 (#338 6487471465): M_STRIDE is a step (one foot to the other), c30's quoted mean at 171-180 cm, the
+   *  bin holding the 1.75 m figure; STRIDE, c8's short step, is half of it. H3 is never the basis. */
+  const strideProblems = (sz: any, card: any) => {
+    const out: string[] = [], c30 = card.claims.find((c: any) => c.id === 'c30');
+    const row = c30?.quotes.find((q: any) => /Table 6/.test(q.where))?.text.split(' ').slice(2).map(Number) ?? [];
+    if (!c30?.tags.includes('MECH') || !/171.180/.test(c30.text)) out.push('c30 missing');
+    if (sz.M_STRIDE !== row[6]) out.push(`M_STRIDE ${sz.M_STRIDE} != c30 171-180 cm ${row[6]}`);
+    if (sz.STRIDE !== sz.M_STRIDE / 2) out.push(`STRIDE ${sz.STRIDE} != M_STRIDE / 2`);
+    return out;
+  };
+  const FARM_SIZES = () => readJson('tools/plates/library/lb10/sizes.json').ids.farmer_s_carry;
+  it('M_STRIDE is c30\'s step at 171-180 cm and STRIDE half of it; sizes.json cites c30 and names a step', () => {
+    const card = readJson('docs/research/howto/cards/farmer_s_carry.json');
+    expect(strideProblems(K().SIZES, card)).toEqual([]);
+    expect(FARM_SIZES().M_STRIDE.basis).toMatch(/^claim: c30 .*a step, one foot to the other, never a stride/);
+    expect(FARM_SIZES().M_STRIDE.basis).not.toMatch(/PQ-H3|deviationMin/);
+  });
+  it('mutations: the old 0.70 m, a stride (two steps, 1.54 m) and STRIDE left at 0.35 m are red', () => {
+    const card = readJson('docs/research/howto/cards/farmer_s_carry.json'), sz = K().SIZES;
+    expect(strideProblems({ ...sz, M_STRIDE: 0.70, STRIDE: 0.35 }, card)).toEqual(['M_STRIDE 0.7 != c30 171-180 cm 0.77']);
+    expect(strideProblems({ ...sz, M_STRIDE: 1.54, STRIDE: 0.77 }, card)).toEqual(['M_STRIDE 1.54 != c30 171-180 cm 0.77']);
+    expect(strideProblems({ ...sz, STRIDE: 0.35 }, card)).toEqual(['STRIDE 0.35 != M_STRIDE / 2']);
+  });
   /** 3D: each dumbbell head (a cylinder of the hex's half-flats) clears each thigh and shank (tapered capsules, RADII x H). */
   const headClear = (spec: any) => {
     const R = body.RADII, out: string[] = [];
@@ -960,7 +983,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H (D-LIB22-B1)', () => {
-    expect(want()).toEqual(['lib_sled_push', 'lib_sled_pull', 'lib_burpee', 'lib_high_knees', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_bear_crawl', 'lib_kettlebell_swing']);
+    expect(want()).toEqual(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry', 'lib_burpee', 'lib_high_knees', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_bear_crawl', 'lib_kettlebell_swing']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('mountain_climbers (pA) and wall_ball (no spec before its resume) are in no lb10/ file as a row', () => {
@@ -981,7 +1004,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
       expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
     }
   });
-  it('mutations: a dropped row, a duplicated row, a held id, a NOSECS id (farmer_s_carry), mountain_climbers, wall_ball and one mode set to D are red', () => {
+  it('mutations: a dropped row, a duplicated row, a held id (jump_rope, jumping_jacks), mountain_climbers, wall_ball and one mode set to D are red', () => {
     const row = { src: 'library/specs/x.mjs', mode: 'H', stage: 'drawing', view: 'side' };
     const w = want(), j = { batch: 'LB10', rows: Object.fromEntries(w.map(id => [id, row])) };
     const text = JSON.stringify(j, null, 1), add = (id: string) => JSON.stringify({ ...j, rows: { ...j.rows, [id]: row } }, null, 1);
@@ -989,7 +1012,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
     expect(a5(JSON.stringify({ ...j, rows: {} }, null, 1), w)).toEqual(w.map(x => `${x} x0`));
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
     expect(a5(add('lib_jump_rope'), w), 'a held id').toEqual(['extra lib_jump_rope']);
-    expect(a5(add('lib_farmer_s_carry'), w)).toEqual(['extra lib_farmer_s_carry']);
+    expect(a5(add('lib_jumping_jacks'), w), 'a held id').toEqual(['extra lib_jumping_jacks']);
     expect(a5(add('lib_mountain_climbers'), w)).toEqual(['extra lib_mountain_climbers']);
     expect(a5(add('lib_wall_ball'), w)).toEqual(['extra lib_wall_ball']);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
