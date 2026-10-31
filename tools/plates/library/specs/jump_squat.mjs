@@ -72,7 +72,9 @@ const ext = (() => {
   for (let i = 0; i < 50; i++) { const m = (lo + hi) / 2; if (kneeAngle(landmarksOf(pose(m), H)) > EXT_KNEE) lo = m; else hi = m; }
   return pose((lo + hi) / 2);
 })();
-const EXT_KNEE_PT = landmarksOf(ext, H)['knee.r'];
+// Panel mx13 R4 (#358 6547089227): the FULL EXTENSION leader ends on the ghost's raised forearm (mid elbow to wrist), a
+// line of the extension ghost clear of the landing figure (its knee lay inside the solid landing thigh).
+const EXT_ARM_PT = (() => { const l = landmarksOf(ext, H); return [0, 1, 2].map(i => (l['elbow.r'][i] + l['wrist.r'][i]) / 2); })();
 
 // Flight (box_jump's parabola): the hip from the extension up APEX above it and down to the landing hip in place.
 const APEX = 0.25;
@@ -115,7 +117,7 @@ export default {
   trace: { point: 'hip.r', trim: [10, 12] },
   callouts: [
     { key: 'hips', text: 'Hips back', anchor: { at: 'hip.r', pose: 'start' }, box: { left: 40, top: 296 }, cue: 'Send the hips back, then down, keeping the back flat.' },
-    { key: 'extend', text: 'Full<br>extension', anchor: EXT_KNEE_PT, box: { left: 244, top: 214 }, cue: 'Jump by extending ankles, knees and hips together.' },
+    { key: 'extend', text: 'Full<br>extension', anchor: EXT_ARM_PT, box: { left: 262, top: 84 }, cue: 'Jump by extending ankles, knees and hips together.' },
     { key: 'land', text: 'Soft landing', anchor: 'knee.r', box: { left: 250, top: 270 }, cue: 'Land quietly on the mid-foot, hips back and down, knees bent.' },
   ],
   mistake: {

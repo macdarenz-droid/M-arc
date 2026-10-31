@@ -1951,3 +1951,47 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
     expect(fragProblems(html.replace(alt, `${alt.slice(0, -1)}!`))).toContain('kettlebell-swing alt');
   });
 });
+
+describe('LIB-SMALL panel mx13 fix (#358 6547089227): jumping_jacks\' ghost arms and faulty-foot outline', { timeout: T }, () => {
+  /** R1: each ghost key's arms, seen from the front (x, y), reach as far from the shoulder as the end's straight arms. */
+  const reachPx = (pose: any, s: string) => { const l = lmP(pose); return Math.hypot(l[`grip.${s}`][0] - l[`shoulder.${s}`][0], l[`grip.${s}`][1] - l[`shoulder.${s}`][1]) * 146.29; };
+  const armProblems = (spec: any) => {
+    const out: string[] = [], vias = spec.poses.via ?? [];
+    if (vias.length !== spec.ghosts.count) out.push(`${vias.length} ghost keys for ${spec.ghosts.count} ghosts`);
+    for (const [i, v] of vias.entries()) for (const s of ['l', 'r']) if (Math.abs(reachPx(v, s) - reachPx(spec.poses.end, s)) > 1) out.push(`via ${i} arm.${s} ${reachPx(v, s).toFixed(1)} px`);
+    return out;
+  };
+  it('R1: two ghost keys, each arm drawn at the end arm\'s length (front view, within 1 px)', () => {
+    expect(armProblems(S.jumping_jacks)).toEqual([]);
+  });
+  it('R1 mutations: the ghost keys removed, or one ghost elbow bent 40 deg, are red', () => {
+    const s = S.jumping_jacks;
+    expect(armProblems({ ...s, poses: { start: s.poses.start, end: s.poses.end } }).length).toBeGreaterThan(0);
+    const bent = { ...s, poses: { ...s.poses, via: [{ ...s.poses.via[0], elbow: 40 }, s.poses.via[1]] } };
+    expect(armProblems(bent).some(x => x.startsWith('via 0'))).toBe(true);
+  });
+  /** R5: a closed dashed outline per faulty foot from the Mistake heel to the Mistake toe; `past` is how far its toe end
+   *  projects past the solid end foot's outer side (front view; measured 0.8 px at M_ROT 30 about mid-foot, lb10/DESIGN.md
+   *  23.3, escalated on #358). */
+  const footProblems = (spec: any) => {
+    const out: string[] = [], m = lmP(fullPose(spec, 'mistake')), cam = camOf(spec);
+    const solid = shapesIn(spec, 'end').filter((x: any) => /^foot\./.test(x.key));
+    for (const s of ['l', 'r']) {
+      const g = spec.mistake.guides.find((x: any) => x.kind === 'dashed' && x.pts.length > 3 && Math.hypot(x.pts[0][0] - m[`heel.${s}`][0], x.pts[0][2] - m[`heel.${s}`][2]) < 1e-9);
+      if (!g) { out.push(`no outline for foot.${s}`); continue; }
+      if (d3(g.pts[0], g.pts[g.pts.length - 1]) > 1e-9) out.push(`foot.${s} outline not closed`);
+      const px = g.pts.map((p: number[]) => cam.P(p)[0]!), sx = solid.find((x: any) => x.key === `foot.${s}`).poly.map((p: number[]) => p[0]!);
+      const past = s === 'r' ? Math.min(...sx) - Math.min(...px) : Math.max(...px) - Math.max(...sx);
+      if (!(past > 0)) out.push(`foot.${s} outline ${past.toFixed(1)} px past the solid foot`);
+      console.log(`LIB-SMALL jumping_jacks foot.${s} outline: ${past.toFixed(1)} px past the solid foot`);
+    }
+    return out;
+  };
+  it('R5: each faulty foot has a closed dashed outline whose toe end projects past the solid foot (> 0 px)', () => {
+    expect(footProblems(S.jumping_jacks)).toEqual([]);
+  });
+  it('R5 mutation: the outlines removed are red', () => {
+    const s = S.jumping_jacks, bare = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.filter((x: any) => x.pts.length <= 3) } };
+    expect(footProblems(bare)).toEqual(['no outline for foot.l', 'no outline for foot.r']);
+  });
+});

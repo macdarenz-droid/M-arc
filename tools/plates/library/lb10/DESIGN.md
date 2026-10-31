@@ -832,3 +832,23 @@ draft raises H4.overlap (distance|depth), F3 126.5 and F4 0: label boxes are set
   this file's zoom test). Zoom deviation **24.0 px** (bar 11.39). The ring sits at (266, 280), r 52.
 - lb10/qa.mjs (node and browser): **all 10 hard checks pass**; flags F5 3.57 and F7 `toes` (the ruled set); leaderMax
   73.2 px (F3 range 49.33-82.26); plate deviation 9.6 px.
+
+### 23.3 Panel mx13 fix round (#358 6547089227): jumping_jacks
+
+- R1: two `via` keys (t 1/3, 2/3) hold the straight arms in the frontal plane, so each ghost arm is drawn at its full
+  length. Before, interpolating the hanging start arm to the end's abduction 180 turned the arm out of the frontal
+  plane. The keys sit at GHOST_ABD 0.25 and 0.75 of the abduction (45 and 135 deg), not 1/3 and 2/3. With 1/3 and 2/3,
+  F2's coverage goes to 0.587 (range 0.191-0.549); 0.3 gives 0.561; 0.25 gives 0.513. The feet sit a third and two
+  thirds of the way out, and each key's root is solved by `stand`. The `stack` box moves {240, 120} → {256, 104}: the
+  135 deg ghost arm crossed the label (H1 ink).
+- R5: each faulty foot is also drawn as a closed dashed outline in its turned plane: the heel to the toe of the Mistake
+  pose, with a side-view foot profile (FOOT_PROFILE, a drawing shape) up from the sole. It sits under the heel-to-toe
+  axis guides. The turn stays M_ROT 30 about mid-foot. Turning about the heel, as the panel asked, moves the toe out
+  6.8 cm more, but the rigid feet then miss the floor by 1 cm, past the 0.5 cm contact limit. Every pivot nearer the heel
+  than mid-foot measured 0.6-1.0 cm.
+- R5 limit (measured, lb10-plates.test.ts): the outline's toe end is only **0.8 px** past the solid end foot's outer
+  side in the front view. At M_ROT 30 about mid-foot the toe moves out 6.5 cm, and the solid foot's cross-section is
+  about as wide. About the heel it would be 10.8 px, but the feet miss the floor by 1 cm. This is escalated on #358.
+- R11: the k 2.5 source ring (centre at the Mistake toe, r 20.8 px) holds the whole outline (the heel is 13 px from the
+  centre). RINGFIT is unchanged.
+- QA: all 10 hard checks pass; flags F5 3.57 and F7 only; cover 0.513; leaderMax 73.2 px; Trace 279.6 px.

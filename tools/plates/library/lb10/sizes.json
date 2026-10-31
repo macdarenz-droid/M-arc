@@ -807,6 +807,11 @@
     "value": "grip.r",
     "unit": "point",
     "basis": "claim: c2 'raising your arms overhead' (the hands rising overhead)"
+   },
+   "GHOST_ABD": {
+    "value": 0.25,
+    "unit": "fraction of ARM_UP",
+    "basis": "stated reason (framing, panel mx13 R1, #358 6547089227): the two ghost keys hold the straight arms in the frontal plane at 0.25 and 0.75 of the abduction (45 and 135 deg), so every ghost arm is drawn at its full length and the ghosts' union stays inside F2's coverage range 0.191-0.549 (even thirds give 0.587, 0.3 gives 0.561)"
    }
   },
   "battle_ropes": {

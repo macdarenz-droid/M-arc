@@ -471,3 +471,9 @@ are set at the draw (labels only).
   the floor, knee > 45, hips behind the ankles, thorax lean 5-45 deg; Mistake knee < 15 on the same feet; no drawn pose
   off every support. Mutations red: the ghost root 2 cm up, the start 2 cm up, the landing knees straight, the start
   lumbar 30 deg.
+
+### 16.2 Panel mx13 fix round (#358 6547089227): jump_squat
+
+- R4: the `extend` leader ends on the extension ghost's raised forearm (EXT_ARM_PT, midway from elbow to wrist), clear
+  of the landing figure. Its box moves {244, 214} → {262, 84}. Before, the leader ended on the ghost knee, which lies
+  inside the solid landing thigh. QA: all 10 hard checks pass; F5 3.57 only; leaderMax 81.6 px.
