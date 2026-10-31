@@ -74,6 +74,42 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_hip_abduction": {
+   "src": "library/specs/hip_abduction.mjs",
+   "slug": "hip-abduction",
+   "prefix": "hip-abduction",
+   "chromeId": "hip-abduction",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_hip_adduction": {
+   "src": "library/specs/hip_adduction.mjs",
+   "slug": "hip-adduction",
+   "prefix": "hip-adduction",
+   "chromeId": "hip-adduction",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_machine_lateral_raise": {
+   "src": "library/specs/machine_lateral_raise.mjs",
+   "slug": "machine-lateral-raise",
+   "prefix": "machine-lateral-raise",
+   "chromeId": "machine-lateral-raise",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_rear_delt_fly": {
+   "src": "library/specs/rear_delt_fly.mjs",
+   "slug": "rear-delt-fly",
+   "prefix": "rear-delt-fly",
+   "chromeId": "rear-delt-fly",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
   }
  }
 }

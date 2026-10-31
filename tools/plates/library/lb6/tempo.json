@@ -153,6 +153,92 @@
       "move": true
      }
     ]
+   },
+   "machine_lateral_raise": {
+    "claim": [
+     "c13",
+     "c16"
+    ],
+    "rows": [
+     {
+      "phase": "Raise",
+      "from": "up",
+      "move": true
+     },
+     {
+      "phase": "Hold",
+      "from": "pause"
+     },
+     {
+      "phase": "Lower",
+      "from": "down",
+      "move": true
+     }
+    ]
+   },
+   "rear_delt_fly": {
+    "claim": [
+     "c14",
+     "c18"
+    ],
+    "rows": [
+     {
+      "phase": "Pull",
+      "from": "up",
+      "move": true
+     },
+     {
+      "phase": "Hold",
+      "from": "pause"
+     },
+     {
+      "phase": "Return",
+      "from": "down",
+      "move": true
+     }
+    ]
+   },
+   "hip_abduction": {
+    "claim": [
+     "c10"
+    ],
+    "rows": [
+     {
+      "phase": "Push out",
+      "from": "up",
+      "move": true
+     },
+     {
+      "phase": "Hold",
+      "from": "pause"
+     },
+     {
+      "phase": "Return",
+      "from": "down",
+      "move": true
+     }
+    ]
+   },
+   "hip_adduction": {
+    "claim": [
+     "c9"
+    ],
+    "rows": [
+     {
+      "phase": "Squeeze",
+      "from": "up",
+      "move": true
+     },
+     {
+      "phase": "Hold",
+      "from": "pause"
+     },
+     {
+      "phase": "Return",
+      "from": "down",
+      "move": true
+     }
+    ]
    }
   }
  }

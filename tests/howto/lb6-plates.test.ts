@@ -22,7 +22,7 @@ const NOT_HERE = ['smith_machine_bench_press', 'smith_machine_shrug', 'cable_fly
 const HELD: string[] = [];
 const ROWS = 'tools/plates/library/lb6/rows.json';
 const RESEARCH_HEAD = 'a8e66f32e34e1746075ffa4da35ea18c80dd4776';
-const COMPOSERS = ['crunchMachine', 'pulloverMachine'];
+const COMPOSERS = ['crunchMachine', 'pulloverMachine', 'hipAbdAddMachine', 'latRaiseMachine'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const PX = 146.29;
@@ -105,12 +105,14 @@ describe('LIB-16 A5: lb6/rows.json holds exactly the drawn, non-held LB6 H ids, 
     return bad;
   };
   // LIB-16R2 (lib-16r2-card A1): the resume 2 rows join once drawn and not held (DESIGN.md section 19).
-  const R2_ROWS = ['low_to_high_cable_fly', 'high_to_low_cable_fly', 'smith_machine_squat', 'smith_machine_shoulder_press', 'smith_machine_incline_press'];
+  const R2_ROWS = ['low_to_high_cable_fly', 'high_to_low_cable_fly', 'smith_machine_squat', 'smith_machine_shoulder_press', 'smith_machine_incline_press',
+    'hip_abduction', 'hip_adduction', 'machine_lateral_raise', 'rear_delt_fly'];
   const R2_HELD: string[] = [];
   const want = () => [...drawn(), ...R2_ROWS.filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`) && !R2_HELD.includes(i))].map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H (D-LIB16-B1)', () => {
     expect(want()).toEqual(['lib_cable_chest_press', 'lib_machine_pullover', 'lib_machine_crunch', 'lib_low_to_high_cable_fly', 'lib_high_to_low_cable_fly',
-      'lib_smith_machine_squat', 'lib_smith_machine_shoulder_press', 'lib_smith_machine_incline_press']);
+      'lib_smith_machine_squat', 'lib_smith_machine_shoulder_press', 'lib_smith_machine_incline_press', 'lib_hip_abduction', 'lib_hip_adduction',
+      'lib_machine_lateral_raise', 'lib_rear_delt_fly']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('none of the LB6 ids drawn by no LB6 card is in any lb6/ file as a row', () => {
@@ -900,6 +902,8 @@ describe('LIB-16 A16: no other card\'s composer is copied, forked or imported (D
       ...names.filter(n => !MAIN_EQ.includes(n) && !OURS.includes(n) && !OTHER.includes(n)).map(n => `extra ${n}`),
       ...files.filter(([n, b]) => OTHER.includes(n) && ours.includes(b)).map(([n]) => `copy of ours ${n}`),
       ...[...MAIN_EQ, ...OURS].filter(n => !names.includes(n)).map(n => `missing ${n}`),
+      // LIB-16R2 A3: each of our composers is its own file, never a byte copy of another eq/ file
+      ...files.filter(([n, b]) => OURS.includes(n) && files.some(([m, c]) => m !== n && (OURS.includes(m) || MAIN_EQ.includes(m)) && c === b)).map(([n]) => `copy ${n}`),
     ];
   };
   it('tools/plates/library/eq/ holds main\'s files, this card\'s composers, and only named composers of other build-ahead cards', () => {
@@ -913,6 +917,10 @@ describe('LIB-16 A16: no other card\'s composer is copied, forked or imported (D
   it('mutation: a file named as another card\'s composer holding a byte copy of one of ours is red', () => {
     const files = eqFiles(), c = files.find(([n]) => n === 'crunchMachine.mjs')![1];
     expect(eqProblems([...files, ['dipBars.mjs', c]])).toEqual(['copy of ours dipBars.mjs']);
+  });
+  it('mutation (LIB-16R2 A3): a copy of crunchMachine saved as latRaiseMachine is red', () => {
+    const files = eqFiles(), c = files.find(([n]) => n === 'crunchMachine.mjs')![1];
+    expect(eqProblems(files.map(([n, b]) => [n, n === 'latRaiseMachine.mjs' ? c : b] as [string, string]))).toEqual(['copy crunchMachine.mjs', 'copy latRaiseMachine.mjs']);
   });
   it('mutation: a missing main file or own composer is red', () => {
     expect(eqProblems(eqFiles().filter(([n]) => n !== 'smith.mjs' && n !== 'pulloverMachine.mjs'))).toEqual(['missing smith.mjs', 'missing pulloverMachine.mjs']);
@@ -1478,6 +1486,10 @@ describe('LIB-16R2 A7: tempo strips follow the cards (tempo.json r2, D-LIB8M-TEM
     smith_machine_squat: [['Lower', 'down', true], ['Drive up', 'up', true]],
     smith_machine_shoulder_press: [['Lower', 'down', true], ['Press', 'up', true]],
     smith_machine_incline_press: [['Lower', 'down', true], ['Press', 'up', true]],
+    machine_lateral_raise: [['Raise', 'up', true], ['Hold', 'pause', false], ['Lower', 'down', true]],
+    rear_delt_fly: [['Pull', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
+    hip_abduction: [['Push out', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
+    hip_adduction: [['Squeeze', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
   };
   const build = (rows: any[], t: any) => rows.map(r => ({ phase: r.phase, s: t[r.from], ...(r.move ? { move: true } : {}) }));
   const problems = (tj: any, specs: Record<string, any>) => Object.keys(RULED).flatMap(id => {
@@ -1700,5 +1712,150 @@ describe('LIB-16R2 A8 (Do 4): the card fields on the 9 cards', { timeout: T }, (
     expect(problems('smith_machine_squat', c)).toEqual(['plateFacts']);
     const d = cardOf('smith_machine_squat'); d.tempo[0].s = 2;
     expect(problems('smith_machine_squat', d, R2S.smith_machine_squat)).toEqual(['tempo != spec']);
+  });
+});
+
+describe('LIB-16R2 wave 2 A3: the two new composers (D-LIB16R2-COMPOSERS)', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  const USERS: Record<string, string[]> = { hipAbdAddMachine: ['hip_abduction', 'hip_adduction'], latRaiseMachine: ['machine_lateral_raise'] };
+  const PRIM = () => Object.keys(eng.PRIMITIVES);
+  /** Items of one spec in one pose: [static, moving] by `part`. */
+  const split = (spec: any, pose: string) => { const it = itemsIn(spec, pose, { mistake: pose === 'mistake' }).items.filter((x: any) => x.type !== 'floor');
+    return [it.filter((x: any) => !x.part), it.filter((x: any) => x.part)]; };
+  const strip = (x: any) => { const { entry, ...rest } = x; void entry; return JSON.stringify(rest); };
+  const problems = (spec: any) => { const out: string[] = [], [s0] = split(spec, 'start');
+    for (const p of posesOf(spec)) { const [st, mv] = split(spec, p);
+      if (st.map(strip).join() !== s0.map(strip).join()) out.push(`${p}: a static part moved`);
+      for (const x of [...st, ...mv]) if (!PRIM().includes(x.type)) out.push(`${p}: ${x.type} is not a primitive`);
+      for (const x of mv) if (x.type !== 'poly') out.push(`${p}: moving ${x.type} without poly`); }
+    return out; };
+  it('both return PRIMITIVES items only; static parts at one place in every drawn pose; every moving part a poly; PQ-H9 clean', () => {
+    for (const [c, users] of Object.entries(USERS)) for (const id of users) { expect(problems(R2S[id]), `${c} ${id}`).toEqual([]); expect(h9(R2S[id]), id).toEqual([]); }
+  });
+  it('each composer reads no file and imports only parts.mjs; listed under LIB-16 in eq-composers.json', () => {
+    for (const c of Object.keys(USERS)) {
+      expect(closure.closureOf([`tools/plates/library/eq/${c}.mjs`]).filter((f: string) => f.startsWith('tools/plates/library/eq/')).sort(), c).toEqual([`tools/plates/library/eq/${c}.mjs`, 'tools/plates/library/eq/parts.mjs'].sort());
+      expect(readJson('tests/howto/fixtures/eq-composers.json').cards['LIB-16'], c).toContain(c);
+    }
+  });
+  it('mutations: a moving pad without poly is red; a static part moved between poses is red', () => {
+    const s = R2S.hip_abduction, bad = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const x = e(lm, ctx); return x?.part === 'leg' && x.z === 'front' ? { type: 'box', at: x.pts[0], w: 0.06, h: 0.2, z: 'front', part: 'leg' } : x; } : e)) };
+    expect(problems(bad).some(p => /without poly/.test(p))).toBe(true);
+    const moved = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const x = e(lm, ctx); return x?.type === 'seat' && ctx.pose === 'end' ? { ...x, at: [x.at[0], x.at[1] + 0.02, x.at[2]] } : x; } : e)) };
+    expect(problems(moved)).toContain('end: a static part moved');
+  });
+  /** The pad's face against its limb's drawn outline (px): the hip pads at the knee band, the arm pads at 70-95 % of the upper arm. */
+  const padGap = (spec: any, pose: string, s: string, shift = [0, 0]) => {
+    const cam = r2Cam(spec), sh = r2Shapes(spec, pose), items = itemsIn(spec, pose, { mistake: pose === 'mistake' }).items;
+    const pads = items.filter((x: any) => x.type === 'poly' && x.z === 'front' && (x.part === 'leg' || x.part === 'arm'));
+    const lm = lmOf(spec, pose), sg = s === 'l' ? 1 : -1, pad = pads.find((x: any) => Math.sign(x.pts[0][0]) === sg)!;
+    const limb = spec.id === 'machine_lateral_raise' ? [`upper.${s}`] : [`thigh.${s}`, `kneecap.${s}`];
+    const polys = sh.filter((x: any) => limb.includes(x.key)).map((x: any) => x.poly);
+    const pts = pad.pts.map((q: number[]) => cam.P([q[0]! + shift[0]!, q[1]! + shift[1]!, q[2]!]));
+    return r2Clear(pts, polys.map((poly: number[][]) => ({ key: 'limb', poly })), /limb/); };
+  it('the pads rest on their limbs (within 1 px) in every drawn pose: outer thighs (hip_abduction c1), inner thighs (hip_adduction c1), just above the elbows (machine_lateral_raise c3)', () => {
+    for (const id of ['hip_abduction', 'hip_adduction', 'machine_lateral_raise']) for (const p of posesOf(R2S[id])) for (const s of ['l', 'r']) { const g = padGap(R2S[id], p, s); expect(g, `${id} ${p} ${s}`).toBeLessThanOrEqual(1); expect(g, `${id} ${p} ${s}`).toBeGreaterThanOrEqual(-1); }
+  });
+  it('mutation: a pad 2 cm off its limb is red', () => {
+    expect(padGap(R2S.hip_abduction, 'end', 'r', [-0.02, 0])).toBeGreaterThan(1);       // out, away from the right thigh
+    expect(padGap(R2S.machine_lateral_raise, 'end', 'l', [0, 0.02])).toBeGreaterThan(1);  // up, off the level upper arm
+  });
+});
+
+describe('LIB-16R2 wave 2 A4: card-true poses on the drawn items', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  const levelDeg = (lm: any, s: string) => Math.atan2(lm[`elbow.${s}`][1] - lm[`shoulder.${s}`][1], Math.abs(lm[`elbow.${s}`][0] - lm[`shoulder.${s}`][0])) * 180 / Math.PI;
+  const lateral = (lm: any) => ['l', 'r'].filter(s => Math.abs(levelDeg(lm, s)) > 5).map(s => `upper arm ${s} ${levelDeg(lm, s).toFixed(1)} deg from level`);
+  it('machine_lateral_raise ends with the upper arms horizontal within 5° (c5); its Mistake is above (c5)', () => {
+    expect(lateral(lmOf(R2S.machine_lateral_raise, 'end'))).toEqual([]);
+    expect(levelDeg(lmOf(R2S.machine_lateral_raise, 'mistake'), 'r')).toBeGreaterThan(5);
+  });
+  it('mutation: the lateral raise ended at 100° is red', () => {
+    const s = R2S.machine_lateral_raise, e = { ...s.poses.end, shoulder: { ...s.poses.end.shoulder, elev: 100 } };
+    expect(lateral(body.landmarksOf(e, 1.75)).length).toBeGreaterThan(0);
+  });
+  it('rear_delt_fly: the end arms in line with the shoulders (elevation 90 ± 2, plane 0 ± 5) and the chest on the pad in world coordinates in every pose (c1, c5, c6)', () => {
+    const s = R2S.rear_delt_fly, a = plate.renderPlate(s).report.angles.end['sh.r'], m = /elev (-?[\d.]+) plane (-?[\d.]+)/.exec(a)!;
+    expect(Math.abs(+m[1]! - 90)).toBeLessThanOrEqual(2); expect(Math.abs(+m[2]!)).toBeLessThanOrEqual(5);
+    const padZ = itemsIn(s, 'start').items.find((x: any) => x.type === 'backPad' && x.len === R2M.rear_delt_fly.SIZES.PAD_LEN).at[2];
+    for (const p of posesOf(s)) expect(padZ - lmOf(s, p).chest[2], p).toBeCloseTo(0.035, 3);
+  });
+  /** The two legs' drawn outlines' gap at the knees (px): hip_abduction's start. */
+  const legGap = (spec: any, pose: string) => { const sh = r2Shapes(spec, pose), L = sh.filter((x: any) => /^(thigh|kneecap|shank)\.l$/.test(x.key)).flatMap((x: any) => x.poly), Rr = sh.filter((x: any) => /^(thigh|kneecap|shank)\.r$/.test(x.key)).flatMap((x: any) => x.poly);
+    return Math.min(...L.map((q: number[]) => q[0]!)) - Math.max(...Rr.map((q: number[]) => q[0]!)); };
+  it('hip_abduction starts with the knees together (outlines within 1 px, c4); hip_adduction ends with the pads at most 2.5 cm apart (c3)', () => {
+    expect(Math.abs(legGap(R2S.hip_abduction, 'start'))).toBeLessThanOrEqual(1);
+    const gap = R2M.hip_adduction.info().padGapEnd; expect(gap).toBeGreaterThan(0); expect(gap).toBeLessThanOrEqual(0.025);
+  });
+  it('mutation: hip_abduction started at 0° abduction (knees apart) is red', () => {
+    const s = R2S.hip_abduction, st = { ...s.poses.start, hip: { ...s.poses.start.hip, abd: 0 } };
+    expect(Math.abs(legGap({ ...s, poses: { ...s.poses, start: st } }, 'start'))).toBeGreaterThan(1);
+  });
+});
+
+describe('LIB-16R2 wave 2 A5: machine parts clear the body by 2 px (D-LIB16R2-CLEAR)', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  // Listed, not tested (PLAN RULED point 1): the seat, back pad, columns, housing, uprights and bosses behind the body
+  // (z 'back', depth). Contacts excepted: each pad on its own limb, the handles in the hands, the footrests under the feet.
+  /** Each moving item as a screen polyline: poly outlines; pecDeck's chestPress levers as their pivot→handle segment. */
+  const moving = (spec: any, pose: string) => { const cam = r2Cam(spec);
+    return itemsIn(spec, pose, { mistake: pose === 'mistake' }).items.filter((x: any) => x.part && x.type !== 'cable').map((x: any) => ({ x,
+      pts: x.type === 'poly' ? x.pts.map((q: number[]) => cam.P(q)) : x.type === 'chestPress' ? [cam.P(x.pivot), cam.P(x.handle)] : [] })).filter((m: any) => m.pts.length); };
+  /** [label, px] per pose: the levers and pads against the head (all rows), the trunk (arm rows) and the other leg (hip rows). */
+  const rows = (id: string) => { const s = R2S[id], out: [string, number][] = [];
+    for (const p of posesOf(s)) { const sh = r2Shapes(s, p);
+      for (const { x, pts } of moving(s, p)) {
+        const side = Math.sign(pts.reduce((a: number, q: number[]) => a + q[0]!, 0) / pts.length - r2Cam(s).P([0, 0, 0])[0]!) > 0 ? 'l' : 'r', other = side === 'l' ? 'r' : 'l';
+        out.push([`${p} ${x.type} head`, r2Clear(pts, sh, /^head$/)]);
+        if (id.startsWith('hip_')) out.push([`${p} ${x.type} other leg`, r2Clear(pts, sh, new RegExp(`^(thigh|kneecap|shank|foot)\\.${other}$`))]);
+        if (id === 'machine_lateral_raise' && x.type === 'poly') out.push([`${p} ${x.type} torso`, r2Clear(pts, sh, /^torso$/)]);
+      } }
+    return out; };
+  it('every lever, pad, arm and handle clears the head (and the trunk or the other leg) by 2 px in every pose', () => {
+    for (const id of ['hip_abduction', 'hip_adduction', 'machine_lateral_raise', 'rear_delt_fly']) { const r = rows(id); expect(r.length, id).toBeGreaterThan(0); for (const [k, d] of r) expect(d, `${id} ${k}`).toBeGreaterThanOrEqual(2); }
+  });
+  it('mutation (the clearance value at 0): hip_adduction\'s end pads crossed onto the other knee are red', () => {
+    const s = R2S.hip_adduction, cam = r2Cam(s), sh = r2Shapes(s, 'end'), lm = lmOf(s, 'end'), k = cam.P(lm['knee.l']);
+    expect(r2Clear([[k[0]! - 2, k[1]!], [k[0]! + 2, k[1]!]], sh, /^(thigh|kneecap|shank|foot)\.l$/)).toBeLessThan(2);
+  });
+});
+
+describe('LIB-16R2 A6: rear_delt_fly\'s Mistake zoom (D-LIBZOOM-EXTEND; PLAN RULED k 1.5), runQa node half', { timeout: T }, () => {
+  const ID = 'lib_rear_delt_fly';
+  let build: any, cand: any, golden: any, mirror: any, E: any, all: any, html: string;
+  beforeAll(async () => {
+    [build, cand, golden] = await Promise.all(['lb6/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb6All();
+    html = (await build.buildLb6Page({ all, ids: [ID] })).html.toString('utf8');
+    return () => qaEng.dropMirror(mirror);
+  }, T);
+  const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
+  const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
+  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  const withZoom = async (z: any) => {
+    const dir = mkdtempSync(join(tmpdir(), 'lb6r2-zoom-')), file = join(dir, 'rear_delt_fly.mjs');
+    writeFileSync(file, `import s from ${JSON.stringify(lib('specs/rear_delt_fly.mjs'))};\nconst z = ${JSON.stringify(z)};\nconst { zoom, ...rest } = s;\nexport default z ? { ...rest, zoom: z } : rest;\n`);
+    try {
+      const spec = (await import(/* @vite-ignore */ `file://${file}`)).default;
+      const cid = (await import(/* @vite-ignore */ lib('plates-page.mjs'))).cardIdOf(all.find((r: any) => r.id === ID));
+      const { html: h } = await (await import(/* @vite-ignore */ lib('build-page.mjs'))).buildPlatesPage({
+        groups: [{ id: 'lb6', title: 'LB6', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: file } });
+      return { ...(await candOf(h.toString('utf8'))), spec };
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  };
+  it('clean: the Mistake zoom at k 1.5 (the ladder\'s lowest rung) meets the deviation bar (12.07 px; 8.0 px at plate scale), no node-half problem, no text or angle in it', async () => {
+    const c = await candOf(), r = await qa(c), z = r.metrics.zoom.mistake, env = pins().envelope;
+    expect(node(r)).toEqual([]);
+    expect(z.k).toBe(1.5);
+    expect(r.metrics.deviation).toBeLessThan(env.deviationMin);
+    expect(z.deviation).toBeGreaterThanOrEqual(env.deviationMin);
+    expect(+z.deviation.toFixed(2)).toBe(12.07);
+    expect(c.plate.zoom.mistake).not.toMatch(/<(text|foreignObject|tspan)\b/);
+  });
+  it('mutation: the zoom removed is red on H3.deviation', async () => {
+    expect(node(await qa(await withZoom(null)))).toContain('H3.deviation');
+  });
+  it('mutation: a rung below the ladder (k 1.25) is refused', async () => {
+    await expect(withZoom({ view: 'mistake', k: 1.25 })).rejects.toThrow(/outside 1\.5-4/);
   });
 });

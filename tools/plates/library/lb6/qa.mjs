@@ -48,10 +48,11 @@ export const tableOf = reports => [
 export const EXPECTED = id => ['F5', ...(['lib_machine_crunch', 'lib_cable_chest_press'].includes(id) ? ['F2'] : []), ...(R2_EXPECTED[id] ?? [])].sort();
 /** LIB-16R2 (PLAN RULED, #354 6543628951): F7 on the drawable-false rows (D-LIB16R2-F7), F2 named on both cable flies
  *  (0.6) and the squat (0.177); F3 named on both cable flies (low_to_high 46.3, high_to_low 90.3: the leaders' lengths,
- *  proposed at PLATES READY 1, LB5's 17.3 form). */
+ *  proposed at PLATES READY 1, LB5's 17.3 form) and on rear_delt_fly (118.5, proposed at PLATES READY 2). */
 export const R2_EXPECTED = {
   lib_low_to_high_cable_fly: ['F2', 'F3', 'F7'], lib_high_to_low_cable_fly: ['F2', 'F3', 'F7'], lib_smith_machine_squat: ['F2'],
   lib_smith_machine_shoulder_press: [], lib_smith_machine_incline_press: [],
+  lib_hip_abduction: ['F7'], lib_hip_adduction: ['F7'], lib_machine_lateral_raise: ['F7'], lib_rear_delt_fly: ['F3', 'F7'],
 };
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, or F5 at any value other than 3.57. */
