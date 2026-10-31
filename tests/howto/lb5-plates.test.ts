@@ -14,9 +14,11 @@ const T = 600_000;
 const LB5 = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cross_body_hammer_curl', 'cable_curl', 'bayesian_cable_curl',
   'preacher_curl', 'incline_dumbbell_curl', 'concentration_curl', 'wrist_curl'];
 const IDS = LB5.map(i => `lib_${i}`);
-// The 10 LB5 ids not in this card (plan 6.2 :739-743): never an LB5 row here.
-const OTHER = ['triceps_pushdown', 'rope_triceps_pushdown', 'straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'dumbbell_biceps_curl',
-  'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'reverse_curl'];
+// The 3 pilot A LB5 ids (pinned in batches/pilot-a.json): never an LB5 row here (LIB-15R2 A1; the 7 others are R2 below).
+const OTHER = ['triceps_pushdown', 'rope_triceps_pushdown', 'dumbbell_biceps_curl'];
+// LIB-15R2: the 7 new cards, byte copies from research a48b0594 (cards.sha.json r2Head)
+const R2 = ['straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'reverse_curl'];
+const R2_HEAD = 'a48b059400a74d5c9e3aceed21cf1aa67ab6f118';
 const ROWS = 'tools/plates/library/lb5/rows.json';
 const RESEARCH_HEAD = 'baf2ff09cf2e91232f536cfc6c766fdf68925217';   // F-LB5-2 (#302): concentration_curl's c14 and notes
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -24,8 +26,9 @@ const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex')
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
 const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl'];
 const F2_IDS = ['concentration_curl', 'wrist_curl'];
-// Held ids (DESIGN.md section 13; #290 6340022161, 6340075388): drawn as is, in no rows file and on no QA'd page.
-const HELD = ['wrist_curl', 'cross_body_hammer_curl', 'overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension'];
+// Held ids (DESIGN.md section 13; D-LIB15R2-ZOOM): drawn as is, in no rows file and on no QA'd page. The other three
+// earlier holds are released with a zoom (section 17).
+const HELD = ['overhead_cable_triceps_extension'];
 /** The LB5 ids whose spec file exists (drawn or held). */
 const specced = () => LB5.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`));
 /** The LB5 ids whose spec file exists and that are not held (drawn), in LB5 order. */
@@ -207,9 +210,10 @@ describe('LIB-15 A11 (Do 6 a): the 9 cards and quotes are byte copies of the LB5
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
   it(`cards.sha.json names research head ${RESEARCH_HEAD.slice(0, 8)} and the 9 ids; each card (without the three keys) and each quotes file matches`, () => {
     expect(cardsSha.researchHead).toBe(RESEARCH_HEAD);
-    expect(Object.keys(cardsSha.cards)).toEqual(LB5);
-    expect(Object.keys(cardsSha.quotes)).toEqual(LB5);
-    for (const id of LB5) {
+    expect(cardsSha.r2Head).toBe(R2_HEAD);
+    expect(Object.keys(cardsSha.cards)).toEqual([...LB5, ...R2]);
+    expect(Object.keys(cardsSha.quotes)).toEqual([...LB5, ...R2]);
+    for (const id of [...LB5, ...R2]) {
       expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
       expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
     }
@@ -219,7 +223,7 @@ describe('LIB-15 A11 (Do 6 a): the 9 cards and quotes are byte copies of the LB5
     expect(sha(canon(c))).not.toBe(cardsSha.cards.preacher_curl);
   });
   it('the How-to source of each LB5 id holds only its id and research card (D-LIB9a-HOWTOID)', async () => {
-    for (const id of LB5) {
+    for (const id of [...LB5, ...R2]) {
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
       expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }

@@ -110,7 +110,7 @@ export default {
   callouts: [
     { key: 'palms', text: 'Palms face<br>body', anchor: 'wrist.r', cue: 'Keep a neutral grip, palms toward you, with no wrist twist.' },
     { key: 'arc', text: 'Arc across', anchor: 'grip.r', cue: 'Bring the dumbbell across toward the opposite shoulder, not straight up.' },
-    { key: 'shoulders', text: 'Shoulders<br>down', anchor: 'shoulderTop.l', cue: 'Keep the shoulders down. Do not shrug as the dumbbell rises.' },
+    { key: 'shoulders', text: 'Shoulders<br>down', anchor: 'shoulderTop.l', box: { left: 204, top: 66 }, cue: 'Keep the shoulders down. Do not shrug as the dumbbell rises.' },
   ],
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
@@ -122,7 +122,7 @@ export default {
     ],
     tells: [
       { key: 'shrug', text: 'Shoulder<br>shrugs', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, cue: 'Your working shoulder hikes up toward your ear as the dumbbell rises.' },
-      { key: 'ear', text: 'Shoulder<br>near ear', anchor: { at: 'trap.r', pose: 'mistake' }, cue: 'The gap between your shoulder and ear closes.' },
+      { key: 'ear', text: 'Shoulder<br>near ear', anchor: { at: 'trap.r', pose: 'mistake' }, box: { left: 84, top: 58 }, cue: 'The gap between your shoulder and ear closes.' },
     ],
   },
   pilot: { drawableFault: 'top fault: the arm fully straight at the bottom (c15), a small elbow bend toward the camera the front view cannot show; drawn: the next fault, the working shoulder shrugging (c5, c6)' },

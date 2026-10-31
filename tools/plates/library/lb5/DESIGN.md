@@ -329,13 +329,13 @@ GO'; incline_dumbbell_curl after pilot A is on main.
 
 | id | held under | release condition |
 |---|---|---|
-| wrist_curl | D-LIB8-shrug pattern, F-LIB15-1 (#290 6340075388): no frame holding the whole figure, bench and dumbbell passes PQ-H3's Trace card-true (5.2 px at 146.29 px/m, 10.4 px at 195.0 px/m) | LIB-ZOOM (#279) on main and merged in; then the zoom circle on the wrist and grip under LIB-ZOOM's convention |
-| cross_body_hammer_curl | D-LIB15-TWIST, F-LB5-1 (#290 6340022161, 6340075388); then the new pick, the shrug (research a8e66f32, #290 6340713424): a 5 cm drawn shrug gives H3 deviation 7.3 px, and passing needs ≥ 7.8 cm, which c5/c6 do not give (reported #290 6340838685); held under D-LIB8-shrug (#290 6340849204), the 5 cm a drawn value | LIB-ZOOM (#279) on main and merged in; then a zoom circle on the working shoulder under LIB-ZOOM's convention (F-LIB15-1's route), or a sourced shrug size if research finds one |
-| overhead_cable_triceps_extension | D-LIB8-shrug (#290 6343211054 item 1): at the approved arch size (LB3 dumbbell_romanian_deadlift.mjs:109, M_ARCH 25) the tell-anchor deviation is 9.98 px < 11.39; the arch is never sized to pass H3. dumbbell_overhead_triceps_extension copies this arch | LIB-ZOOM (#279) on main and merged in, then its zoom route, or a sourced arch size |
-| dumbbell_overhead_triceps_extension | D-LIB8-shrug (#290 6343237796): released into the bulk at M_ARCH 25 with one `arch` tell and the dashed guide; the tell-anchor deviation is 10.56 px < 11.39 at 141.6 px/m, so held the same way as overhead_cable_triceps_extension; never sized to pass H3 | as overhead_cable_triceps_extension |
+| overhead_cable_triceps_extension | D-LIB8-shrug (#290 6343211054 item 1): at the approved arch size (M_ARCH 25) the tell-anchor deviation is 9.98 px < 11.39; the arch is never sized to pass H3. Then D-LIB15R2-ZOOM (lib4-cards §48, the D-LIB17-RDFHOLD form): no r 52 zoom place at any k 1.5-4, because figure and equipment ink alone blocks every place (labels and leaders switched off) | a new placement convention ruled by the supervisor, or a sourced arch size; never a smaller circle or a loosened check |
+
+Released in resume 2 (D-LIB15R2-ZOOM, section 17): dumbbell_overhead_triceps_extension (Mistake zoom k 1.5),
+cross_body_hammer_curl (Mistake zoom k 2) and wrist_curl (normal zoom k 3, D-LIB15R2-WRISTBOX). Their earlier holds
+(D-LIB8-shrug, D-LIB15-TWIST, F-LIB15-1) named LIB-ZOOM as the route; it is on main (D-LIBZOOM-EXTEND).
 
 A held spec stays drawn as is, builds and is in no rows file and on no QA'd page (D-LIB8M-PAGESET).
-incline_dumbbell_curl is not held: it is not drawn yet (D-LIB15-INCLINE).
 
 ## 14. Risks and mitigations
 
@@ -438,3 +438,202 @@ approved at page 921cb1d5. Scan of every move of that box, its leader or the ELB
 | ELBOW label above the "Slow lowering" box | leader 96-115 px (F3) and over the face |
 | ELBOW label left | collides with the head and neck or the left callouts |
 
+
+## 17. Resume 2 (LIB-15R2): PLAN
+
+Card: `docs/supervisor/verify/lib-15r2-card.md` on claude/sup-lib4-cards @ `167f273e`, rulings D-LIB15R2-1 to -9
+(lib4-cards §48). Base: main `a72b52b5` (train 48: F-ZOOM-PITCH and LB4). Research: `a48b0594` (claude/libht-research);
+the 7 new cards and quotes are byte copies from it (cards.sha.json `r2Head`); incline_dumbbell_curl's card is the same
+blob there as on main. Nothing ships (D-LIB15-AHEAD).
+
+### 17.1 Zoom rows (wave 1), re-measured on `a72b52b5`
+
+Bars 22.11 px (Trace) and 11.39 px (deviation), qa/envelope.json; ladder 1.5-4. Numbers equal the card's scratch
+measures (`1f024b1f`, `151de0b8`), except where 17.2's re-key changes the wrist_curl ladder (marked).
+
+| id | region (view) | k | value at k (bar) | circle; source ring | smaller k |
+|---|---|---|---|---|---|
+| dumbbell_overhead_triceps_extension | the `arch` tell, end → Mistake (Mistake) | 1.5 | 15.85 px (11.39) | (260, 192); (167.16, 191.76) r 34.67 | none on the ladder |
+| cross_body_hammer_curl | the `shrug` tell (Mistake) | 2 | 14.63 px (11.39) | CBH_CIRCLE | k 1.5: 10.97 px < 11.39 |
+| wrist_curl | the grip's path (normal) | 3 | 34.97 px (22.11) | (178, 140); (288.75, 251.62) r 17.33 | k 2.5: 25.26 px* meets the bar, but its ring (r 20.8) lies under the measure-arc label (H1.ink:normal:arc, the card's measure); k 1.5 11.65*, k 2 20.20* |
+
+\* with the wrist_curl Trace at 20 samples (17.2); the card's 48-sample ladder was 12.63 / 20.06 / 28.32 / 34.97.
+overhead_cable_triceps_extension stays held (section 13).
+
+### 17.2 Ruled moves and Trace re-keys (A4, A10)
+
+- wrist_curl: the normal-view "Forearm supported" box {254, 200} → {112, 200} (D-LIB15R2-WRISTBOX). Its leader still
+  ends on its anchor (`elbow.r` +6 px), the forearm.
+- cross_body_hammer_curl: CBH_BOXES
+- Trace re-keys (lb5-plates.test.ts Trace test, #290 6349640307 R7: no turn over 6° or 2.5× the median):
+  - cross_body_hammer_curl: SEG 8 → 48 key poses on the same arc (concentration_curl's fix). The turns at the 7 key
+    joins (9.2-10.8°) were the chords between 8 keys; now max 2.19°, median 1.67°. start and end are unchanged (the
+    same `gripAt(0)` and `gripAt(1)`); only `poses.via` changes. Zoom unchanged (14.63 px at k 2).
+  - wrist_curl: `trace.samples` 48 (engine default) → 20. Only the wrist moves, so `poses` has no `via`; the plate
+    Trace is 5.2 px long and its 48-sample chords are 0.31 px, where the svg's 0.01 px rounding makes turns of 0-3.95°
+    (median 1.02). At 20 samples the chords are about 0.78 px: max 3.95°, median 3.09° (passes). 16 also passes
+    (4.49 / 4.46); 10-14 fail or leave too few points. Poses, trim and the drawn path's ends are unchanged.
+- A4's pin: each zoom row's export, JSON-serialised without `zoom`, the ruled boxes and the re-keyed field
+  (cross_body_hammer_curl `poses.via`, wrist_curl `trace.samples`), equals its sha256 at `151de0b8`.
+
+### 17.3 Flags on the zoom rows (fix or name)
+
+Flags inform the owner and never gate (D-LIB8FIX-ENV); each named one goes on the sheet with its value and range.
+
+| id | flag (value, range) | proposal | why |
+|---|---|---|---|
+| dumbbell_overhead_triceps_extension | F3 47.3 (49.33-82.26) | name | the longest leader is short because every label sits close to its part; lengthening a leader to reach the range would be layout for a flag |
+| dumbbell_overhead_triceps_extension | F4 0 (2-6) | name | the engine's own layout passes every hard check; hand-boxing labels at their auto places changes nothing drawn |
+| cross_body_hammer_curl | F2 0.164 (0.191-) | name | front view of a standing figure with two dumbbells (concentration_curl's D-LIB15-F2 form) |
+| cross_body_hammer_curl | F4 | CBH_F4 |  |
+| wrist_curl | F3 94.8 (49.33-82.26) | name | a Mistake tell's leader (the lean, to the upper back); moving it would be a second box move (S2 names it for the zoom; kept out here too) |
+| wrist_curl | F2, F5, F7 | as ruled | D-LIB15-F2, D-LIB9-F5, D-LIB15-F7 |
+
+### 17.4 Modes (D-LIB15R2-MODES)
+
+T: straight_bar_triceps_pushdown (PUSHDOWN); barbell_curl, ez_bar_curl, reverse_curl (CURL). H: single_arm_triceps_
+pushdown (torso vertical c16, one arm, single handle c2), alternating_dumbbell_curl (split stance c3, one arm curled
+c1), hammer_curl (split stance c2, neutral grip c1), incline_dumbbell_curl (no parent; inclineBench). A pose or stance
+outside PARAMS makes a row H (plan 3.1:272, D-LIB10-FACTS). The plan marks become P2 T4 H13 (a supervisor docs action;
+rope_triceps_pushdown is pinned H in batches/pilot-a.json).
+
+### 17.5 Templates (D-LIB10-TEMPLATES, -CHILDPROOF, -FACTS)
+
+Each template is a new file `tools/plates/library/templates/<NAME>.mjs` that copies its parent spec's code (D-LIB9-CLONE),
+reads `params` only through the PARAMS paths below, and exports `make(params, facts)`, `parentParams`, `parentFacts`,
+`FACTS` (the closed schema) and `BUILDERS`. A missing param takes the parent's value. `make` throws on an unknown param,
+an unknown facts key (for example `poses`, `equipment`, `camera`, `trace`, `measure`, `checks`, `ghosts`, `view`), an
+unknown builder or a magnitude outside the builder's list. The parent proof, `make(parentParams, parentFacts)` rebuilt
+alone, must equal the parent's 9 pinned fragments (pilot-a.json:261 and :383) before any child is drawn (S3).
+
+**CURL** (parent lib_dumbbell_biceps_curl, H, batches/pilot-a.json:160; pinned entry pilot-a.json:261)
+- PARAMS read: `load.primitive` ('dumbbell' | 'barbell'), `stance.width` (m, mid-sole to mid-sole; FOOT_X = width / 2).
+- parentParams `{ 'load.primitive': 'dumbbell', 'stance.width': 0.28 }` (0.28 / 2 === 0.14 exactly, the parent's FOOT_X).
+- Load: 'dumbbell' is the parent's end-on hex and its dashed start hex. 'barbell' is the vendor `barbell` end-on at
+  `grip.r`, plateD 0.23 and plates [0.03] (the template's own plate size, D-LIB15R2-EZ; preacher_curl's drawn EZ plate),
+  with a dashed start plate circle instead of the hex; the hidden start forearm is cut by that circle.
+- Facts schema (closed): `id`, `name`, `callouts` ([{ key, text, anchor, box?, cue }], 3), `tempo`, `mistake`
+  ({ builder, dir?, tells: [{ key, text, anchor, cue }], 1-3 }), `alt`, `mistakeAlt?`, `pilot?` ({ drawableFault }).
+- Builders and bounded magnitudes (all drawn; no card gives a size, Q-D5-3):
+  - `elbows`, dir 'forward': the parent's builder byte for byte (MIS_FLEX 45, MIS_ELBOW 120, MIS_MARGIN 0.10 in front
+    of the shoulder plane; its faulty-arm guides, side line and arrow).
+  - `elbows`, dir 'back': shoulder extension 30 (MIS_FLEX −30), MIS_ELBOW 120, the elbow at least 0.10 m behind the
+    shoulder plane (the mirrored check); same guides.
+  - `swing` (reverse_curl c5): the trunk rocks back from the hips (pelvis tilt −12, trunk −6) while the upper arms swing
+    forward 30 (MIS_FLEX 30) at MIS_ELBOW 120; guides: the faulty torso and arm outlines dashed, an arc arrow at the hips.
+- parentFacts: the parent's callouts, tempo, Mistake (`elbows` forward with its two tells) and alt, byte for byte.
+
+**PUSHDOWN** (parent lib_triceps_pushdown, H, batches/pilot-a.json:224; pinned entry pilot-a.json:383)
+- PARAMS read: `bar.kind` ('straight' only: the parent's latBar, triceps_pushdown.mjs:167).
+- parentParams `{ 'bar.kind': 'straight' }`.
+- Facts schema (closed): `id`, `name`, `callouts` (3), `tempo`, `mistake` ({ builder: 'lean', tells }), `alt`,
+  `mistakeAlt?`, `pilot?`. Builder `lean`: the parent's (MIS_TILT 42, MIS_ARCH 14, MIS_SHOULDER 25, MIS_ELBOW 75,
+  MIS_HIPS 0.07, MIS_DROP 0.008) byte for byte; no other magnitude.
+- Eligibility stays plan 3.1:275's 4 members, though only one child is T.
+
+**Proposed family rows** (for claude/sup-param-ranges, D-LIB15R2-RANGES; D-LIB10-RANGES 3: each bound or value with its
+basis, a pinned plate or a verified claim):
+
+```json
+"CURL": { "ruling": "D-LIB15R2-RANGES", "params": {
+  "load.primitive": { "range": ["dumbbell", "barbell"], "basis": [
+    "the pinned parent lib_dumbbell_biceps_curl draws the dumbbell (tests/howto/golden/library/pilot-a.json:261; dumbbell_biceps_curl.mjs:123)",
+    "barbell_curl c1, ez_bar_curl c1 and reverse_curl c1 hold a bar in both hands (research a48b0594); the EZ bar is the vendor barbell end-on (D-LIB15R2-EZ)"] },
+  "stance.width": { "range": [0.22, 0.28], "basis": [
+    "0.22 m, feet hip width: barbell_curl c2; the value is the pinned lib_triceps_pushdown's hip-width stance (triceps_pushdown.mjs:38, feet at +-0.11 m; pilot-a.json:383)",
+    "0.28 m, feet shoulder width: the pinned parent lib_dumbbell_biceps_curl (dumbbell_biceps_curl.mjs:48, FOOT_X 0.14; pilot-a.json:261)"] } } },
+"PUSHDOWN": { "ruling": "D-LIB15R2-RANGES", "params": {
+  "bar.kind": { "range": ["straight"], "basis": [
+    "the pinned parent lib_triceps_pushdown draws the straight bar (triceps_pushdown.mjs:167; pilot-a.json:383); straight_bar_triceps_pushdown c1"] } } }
+```
+
+### 17.6 Per row
+
+| id | mode | params (claim) or clone source |
+|---|---|---|
+| straight_bar_triceps_pushdown | T PUSHDOWN | `bar.kind: 'straight'` (c1); poses, rig and builder the parent's (c3, c4, c11 = the parent's) |
+| barbell_curl | T CURL | `load.primitive: 'barbell'` (c1), `stance.width: 0.22` (c2 hip width); builder `elbows` back (c4 "never back", c5) |
+| ez_bar_curl | T CURL | `load.primitive: 'barbell'` (c1, D-LIB15R2-EZ); stance the parent's (c3 hip- to shoulder-width); builder `elbows` forward (c4, c5) |
+| reverse_curl | T CURL (registry parent dumbbell_biceps_curl, D-LIB10-PARENTS) | `load.primitive: 'barbell'` (c1 overhand bar); stance the parent's (c2); builder `swing` (c5) |
+| single_arm_triceps_pushdown | H | clone triceps_pushdown: TILT/TRUNK 0 (c16 torso vertical), the working arm on eq/dHandle.mjs (c2, imported), the free arm hanging |
+| alternating_dumbbell_curl | H | clone dumbbell_biceps_curl with bayesian_cable_curl's split stance (c3); the near arm curls, the far arm stays at the start (c1) |
+| hammer_curl | H | clone dumbbell_biceps_curl, split stance (c2), dumbbell side-on (vendor `dumbbell` `axis`, as dumbbell_overhead_triceps_extension; c1, c5) |
+| incline_dumbbell_curl | H | clone dumbbell_biceps_curl on `../eq/inclineBench.mjs` (imported), seated, back on the pad (c2), arms behind the torso line (c2, c3) |
+
+### 17.7 Tempo, pose and fault→key maps (8 new cards)
+
+Tempo (D-LIB8M-TEMPO; section 8's rule): straight_bar_triceps_pushdown 1/2/1 (c12) Press 1, Hold 1, Return 2;
+barbell_curl 1/2/0 (c13) Curl 1, Lower 2; ez_bar_curl 1/2/1 (c14) Curl 1, Hold 1, Lower 2; reverse_curl 1/2/0 (c15)
+Curl 1, Lower 2; single_arm_triceps_pushdown 1/2/1 (c10) Press 1, Hold 1, Return 2; alternating_dumbbell_curl 1/2/0
+(c10), hammer_curl 1/2/0 (c12), incline_dumbbell_curl 1/2/0 (c12) Curl 1, Lower 2. No Rest.
+
+Pose map: identity on all 8 (spec start = card start, spec end = card end); each fault happens at the card's end
+(the top of the curl, the bottom of the press).
+
+| id | plate.mistake (claim) | drawable | first tell key | topFault |
+|---|---|---|---|---|
+| straight_bar_triceps_pushdown | leaning over the bar or arching (c11) | true | `lean` | `lean` |
+| barbell_curl | elbows moving back (c5, c4) | false | `elbows` | `wrists` (hm0 c8) |
+| ez_bar_curl | elbows drifting forward at the top (c4, c5) | false | `elbows` | `wrists` (hm0 c8) |
+| reverse_curl | swinging the arms (c5) | true | `swing` | `swing` |
+| single_arm_triceps_pushdown | leaning or arching (c17) | true | `lean` | `lean` |
+| alternating_dumbbell_curl | working elbow swinging (c5, c4) | false | `elbows` | `wrist` (hm0 c7) |
+| hammer_curl | elbows moving forward (c6, c4) | true | `elbows` | `elbows` |
+| incline_dumbbell_curl | elbows drifting forward (c4, c3) | false | `elbows` | `wrists` (hm0 c11) |
+
+### 17.8 Facts plan and unsourced numbers
+
+Every number and every contact a start/end quote gives for a drawn pose (quotes read on the copied quotes files;
+section 10's rules: D-LIB9-FACTPOSE, D-LIB17-ORCHOICE, the hands on the implement checked at the wrist, each side of a
+plural paired part). Written as the 3 keys at Do 4; incline_dumbbell_curl's once drawn.
+
+| id | number or contact in a start/end quote | proposed plateFacts | reason |
+|---|---|---|---|
+| straight_bar_triceps_pushdown | c1 "grip the bar firmly in both hands" (setup) | `contact wrist.r`, `contact wrist.l`, pose `start`, c1 | hands on the implement, both sides |
+| straight_bar_triceps_pushdown | c10 "the bar did not touch the body during full extension" | none (a clearance): the parent's `checks` plane in front of the thigh, end | not a contact |
+| barbell_curl | c1 "Grip a bar ... hands about shoulder-width apart" (setup) | `contact wrist.r`, `contact wrist.l`, `start`, c1 | both hands |
+| barbell_curl | c1 "wrists, elbows, and shoulders are in a straight line" | none (an alignment): a drawn-item test, start | no fact kind measures it |
+| ez_bar_curl | c1 "Hold an EZ bar with an underhand grip on the angled sections" (setup) | `contact wrist.r`, `start`, c1 | no plural hands (preacher_curl c1's precedent) |
+| reverse_curl | c1 "Grip a bar with an overhand (pronated) grip", "hands in a straight line with shoulders and elbows" (setup) | `contact wrist.r`, `contact wrist.l`, `start`, c1 | plural hands |
+| single_arm_triceps_pushdown | c2 "grasp it firmly with a full grip" (setup) | `contact wrist.r`, `start`, c2 | one hand on the handle; "handle or rope" is the attachment, not the grasp |
+| single_arm_triceps_pushdown | c16 "keeping your torso aligned vertically with the floor" | none (a direction): drawn-item test, torso within ±2° of vertical, both poses (A8) | no fact kind measures it |
+| alternating_dumbbell_curl | c2 "Hold a pair of dumbbells ... arms hanging by your sides" (setup) | `contact wrist.r`, `contact wrist.l`, `start`, c2 | a pair |
+| hammer_curl | c1 "Stand holding dumbbells in your hands ... elbows fully extended" (setup) | `contact wrist.r`, `contact wrist.l`, `start`, c1 | plural; "fully extended" is no number |
+| incline_dumbbell_curl | c1 "Grab a pair of dumbbells, and sit down on an inclined bench" (setup) | `contact wrist.r`, `contact wrist.l`, `contact seat`, `start`, c1 | concentration_curl's seat precedent |
+| incline_dumbbell_curl | c2 "Lean back against the pad" (setup) | `contact backUpper`, `start`, c2 | section 10's row |
+| incline_dumbbell_curl | c2 "hang down at your sides, perpendicular to the floor" | none (a direction): drawn-item test, start | |
+| incline_dumbbell_curl | c4 "Keep your elbows pinned back and tucked against the bench for the duration of the set" | `contact elbow.r`, `contact elbow.l`, start and end, c4, on the pad's edge [unverified until drawn: if the geometry cannot hold it, reported at drawing] | not setup; "for the duration" covers both poses |
+| incline_dumbbell_curl | c1 "between 45 and 65 degrees" | none (an equipment range; section 10) | |
+
+Not facts: c4 "at your side or ... slightly forward" (barbell_curl, reverse_curl), stance "hip or shoulder-width" and
+"or in a staggered stance", "one or both elbows" (D-LIB17-ORCHOICE); "close", "by the sides", "alongside" (no number,
+no contact; cable_curl's precedent); the resting hand of alternating_dumbbell_curl at the end (c1 is setup); incline
+c11 (ACE's seated curl, MECH, not the drawn exercise); reverse_curl c10 (an isokinetic lab number); no card says "feet
+flat", so no heel or ball contacts. Card-text note for research: alternating_dumbbell_curl's second c3 quote says
+"neutral grip (palms facing your body)" against its c2 "palms forward"; the plate draws c2.
+
+Unsourced numbers (each spec or template header lists its own): the pushdown station, bar and lean (the parent's);
+the 0.22 m stance's value (triceps_pushdown's); the CURL bar (vendor barbell, plateD 0.23, plates [0.03]); hand width;
+elbow 0°/140° (the parent's); the soft knees; the D-handle (dHandle.mjs) and free-arm pose; the split-stance length
+(bayesian_cable_curl's); the incline bench angle within 45-65°, seat and pad; every Mistake magnitude (17.5).
+
+### 17.9 PQ-H3 estimates [est, unverified until drawn] and expected flags
+
+| id | deviation (end → Mistake) | Trace |
+|---|---|---|
+| barbell_curl | elbow 30° back, about 0.17 m → ~25 px | grip arc about the elbow, ~0.3 m × 2.4 rad → ~100 px |
+| ez_bar_curl, hammer_curl, alternating_dumbbell_curl | elbow 45° forward (the parent's 37 px) | as the parent (~100 px) |
+| reverse_curl | upper back rocks ~0.13 m → ~19 px | ~100 px |
+| straight_bar_triceps_pushdown | the parent's lean (pinned, passes) | the parent's |
+| single_arm_triceps_pushdown | lean from vertical, ~0.2 m at the upper back → ~28 px | as the parent |
+| incline_dumbbell_curl | elbow forward ~0.15 m → ~22 px | ~0.6 m |
+
+Expected flags: F5 on every id (3.57:1, D-LIB9-F5); F7 on alternating_dumbbell_curl, barbell_curl, ez_bar_curl
+(D-LIB15R2-F7) and on cross_body_hammer_curl, incline_dumbbell_curl, wrist_curl (D-LIB15-F7); F2 as ruled
+(concentration_curl, wrist_curl) plus cross_body_hammer_curl if 17.3 is accepted; the CURL children inherit the
+parent's F2 and F4 [unverified until drawn]; every other flag measured is named at the sheet (predicted / measured).
+
+### 17.10 Order and stops
+
+Wave 1 (zoom rows) → PLATES READY 1; card fields after RULED; wave 2a (H rows); wave 2b (templates, parent proofs,
+then the T rows; their QA counts only after the family rows merge). Stops S1-S5 as the card.
