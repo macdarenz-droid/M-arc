@@ -162,6 +162,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_incline_dumbbell_curl": {
+   "src": "library/specs/incline_dumbbell_curl.mjs",
+   "slug": "incline-dumbbell-curl",
+   "prefix": "incline-dumbbell-curl",
+   "chromeId": "incline-dumbbell-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }
