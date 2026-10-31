@@ -112,6 +112,11 @@ describe('LIB-SPINE A3 the bow holds the thorax', () => {
     for (const k of held) expect({ k, d: dist(a[k], c[k]) < 1e-9 }).toEqual({ k, d: true });
     for (const k of ['sacrum', 'buttock', 'navel', 'lumbar']) expect(dist(a[k], c[k])).toBeGreaterThan(0.01);
   });
+  it('with planted feet (IK through the pelvis frame) the knees and feet stay too', () => {
+    const feet = { plant: { l: { at: [0.1, 0, 0.35] }, r: { at: [-0.1, 0, -0.45] } } }, root = { root: { at: [0, 0.62, -0.05], tilt: 15 } };
+    const a = lmOf({ ...root, ...feet, trunk: { flex: 0 } }), c = lmOf({ ...root, ...feet, trunk: { flex: 0, bow: 12 } });
+    for (const k of ['hips', 'knee.l', 'knee.r', 'ankle.l', 'ankle.r', 'toe.l', 'toe.r', 'head', 'chest']) expect({ k, d: dist(a[k], c[k]) < 1e-9 }).toEqual({ k, d: true });
+  });
   it('the sacrum and buttock turn b about the hip axis', () => {
     const a = lmOf(p0), c = lmOf(p1), h = a.hips;
     const ang = (p: number[], q: number[]) => { const u = [p[1]! - h[1], p[2]! - h[2]], v = [q[1]! - h[1], q[2]! - h[2]];
