@@ -1,0 +1,632 @@
+{
+ "id": "diamond_push_up",
+ "libId": "lib_diamond_push_up",
+ "name": "Diamond Push-Up",
+ "family": "Push-up (child of push_up)",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists).",
+ "archetype": {
+  "hand": "palm-flat",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": "push_up",
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Kneel and put the hands flat on the floor close together, thumbs and first fingers forming a diamond (or triangle), with the hands below the upper chest and the elbows straight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-diamond",
+    "fv-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "bb-diamond",
+     "text": "Position your hands close together with open fingers. Use your thumbs and first fingers to form a diamond shape.",
+     "where": "Step 1, Set Your Start Position"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "Make sure that your hands are below your upper chest with straight elbows.",
+     "where": "Step 1, Set Your Start Position"
+    },
+    {
+     "source": "fv-diamond",
+     "text": "Kneel down and place your hands flat on the floor, so your thumbs and first fingers form a triangle.",
+     "where": "How to Do Diamond Push-Ups, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "With the arms straight, walk the feet back until the body is straight; brace the core, tuck the chin and lengthen the neck, pull the shoulders down and back, and keep the spine neutral with torso and legs rigid.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-diamond",
+    "bb-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "fv-diamond",
+     "text": "With your arms extended, move your feet out and back until your body is straight. Brace your core, tuck your chin in, and lengthen your neck. Pull your shoulders down and back.",
+     "where": "How to Do Diamond Push-Ups, step 2"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "Assume a neutral spine with a braced core. Make sure your torso and legs are rigid.",
+     "where": "Step 1, Set Your Start Position"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Lower the chest toward the hands (to the back of the hands), breathing in, with the elbows tucked close to the torso and the body rigid: the low back and hips neither drop nor arch up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-diamond",
+    "fv-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "bb-diamond",
+     "text": "Initiate the eccentric portion of the diamond push-up by lowering your chest toward your hands. Inhale as you go down. Keep your elbows tucked close to your torso.",
+     "where": "Step 2, Lower Yourself To The Ground"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "Make sure your posture remains rigid when you lower yourself. Do not allow your lower back and hips to flop down or arch up.",
+     "where": "Step 2, Lower Yourself To The Ground"
+    },
+    {
+     "source": "fv-diamond",
+     "text": "Keeping your body straight, bend your arms and lower your chest down to the back of your hands. Keep your elbows close to your sides.",
+     "where": "How to Do Diamond Push-Ups, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Let the shoulder blades pinch back on the way down; otherwise the shoulders may roll forward, which may cause joint discomfort.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "bb-diamond",
+     "text": "It is important to allow your shoulder blades to pinch back as you lower yourself to the ground. Otherwise, you may find your shoulders rolling forward, which may cause joint discomfort.",
+     "where": "Step 2, Coach's Tip"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Breathe out and push back up forcefully with the torso rigid, so the whole body rises as one unit; at the top let the shoulder blades spread fully, reaching the upper back toward the ceiling.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "bb-diamond",
+     "text": "Exhale as you forcefully push yourself back up. Keep your torso and posture rigid as you push up so that your whole body comes up as one whole unit.",
+     "where": "Step 3, Press Yourself Back Up"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "Allow your shoulder blades to fully protract, as this activates your serratus anterior. Cue yourself to reach your upper back towards the ceiling at the top of the push.",
+     "where": "Step 3, Coach's Tip"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Overextending the low back (the low back and hips sagging toward the floor) is a listed diamond push-up mistake; it makes it harder for the shoulder blades to move when pushing up. Fix it with a slight knee bend, hips a little higher, and abs and glutes engaged.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "bb-diamond",
+     "text": "When your lower back and hips sag toward the ground, it will make it harder for your shoulder blades to protract when you push up.",
+     "where": "Common mistakes, Overextending Your Lower Back"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "When you find yourself doing this, allow a subtle bend in your knees and bring your hips closer to the sky. This will help you keep your back a bit flatter. You may also find it useful to engage your abdominals and glutes.",
+     "where": "Common mistakes, Overextending Your Lower Back"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "You may find it helpful to slightly unlock your knees if you tend to overextend your lower back.",
+     "where": "Step 1, Coach's Tip"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Do not arch the back during the exercise, to keep the work on the target muscles and to protect the low back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "fv-diamond",
+     "text": "Do not arch your back during the exercise to keep all the resistance on the target muscles, and to protect your lower back.",
+     "where": "Variations & Tips"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Not keeping the body rigid lets the hips and legs reach the floor before the chest, cutting the range of motion; pressing the heels against the bottom of a wall helps keep the body stiff.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "bb-diamond",
+     "text": "If your hips and legs aren’t in line with the rest of your body, they may lower to the ground sooner than your chest. This is one sure way to reduce your range of motion and reduce the stimulus for your chest, shoulder, and triceps muscles.",
+     "where": "Common mistakes, Not Keeping Your Body Rigid"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "One solution that can help you with this is to position yourself by the wall and press your heels against the bottom of the wall.",
+     "where": "Common mistakes, Not Keeping Your Body Rigid"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Not letting the shoulder blades move freely is a listed mistake: pinch them together on the way down and round the shoulders forward on the way up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "bb-diamond",
+     "text": "You need to allow your shoulder blades to move freely to maximize how much you activate certain key muscle groups — like your pectoralis minor and serratus anterior — for shoulder health and maximum gains.",
+     "where": "Common mistakes, Not Allowing Your Shoulder Blades To Freely Move"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "When you descend, think about pinching your shoulders together behind you. Then, when you ascend, allow yourself to round your shoulders forward toward the ground.",
+     "where": "Common mistakes, Not Allowing Your Shoulder Blades To Freely Move"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "The close hand position can lead to elbow, shoulder or wrist pain for some people; if it does, move the hands a little further apart.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "fv-diamond",
+     "text": "diamond push-ups put your hands and arms in a potentially awkward position. This could lead to elbow, shoulder, or wrist pain for some exercisers. If diamond push-ups cause joint pain, move your hands a little further apart for a more comfortable workout.",
+     "where": "Benefits and Drawbacks, Joint pain"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "If diamond push-ups bother the wrists, hands on dumbbells or push-up handles (a neutral close-grip push-up) keep the wrists straight and remove most of the joint stress.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "fv-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "fv-diamond",
+     "text": "If diamond push-ups bother your wrists, this variation could be the solution. Placing your hands on dumbbells or push-up handles means you can keep your wrists straight, eliminating most of the joint stress.",
+     "where": "Variations, 7. Neutral close-grip push-ups"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "The triceps and chest are the main movers, with the front shoulders helping; the exercise is felt most in the upper arms.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-diamond",
+    "fv-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "bb-diamond",
+     "text": "Your chest and triceps are certainly the primary drivers here, but there are other other muscles involved.",
+     "where": "Muscles Worked"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "The deltoids, particularly the front deltoids, are located by the shoulders and the top of the upper arms. They help contribute to raising your arm upward to the front of your body.",
+     "where": "Muscles Worked, Deltoids"
+    },
+    {
+     "source": "fv-diamond",
+     "text": "diamond push-ups emphasize your triceps. Your pecs and delts are still involved, but you’ll definitely feel this exercise more in your upper arms.",
+     "where": "Benefits, Bigger, stronger triceps"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "In 40 adults doing one push-up from each of three hand widths, chest and triceps muscle activity was higher with a narrow base than a wide base (the abstract does not say the narrow base was a diamond).",
+   "tags": [
+    "DATA",
+    "MECH"
+   ],
+   "sources": [
+    "cogley-2005"
+   ],
+   "quotes": [
+    {
+     "source": "cogley-2005",
+     "text": "The EMG activity was greater in both muscle groups during push-ups performed from the narrow base hand position compared with the wide base position (p < 0.05).",
+     "where": "abstract"
+    },
+    {
+     "source": "cogley-2005",
+     "text": "Forty subjects, 11 men and 29 women, performed 1 repetition of each push-up.",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Beginners start with 3-4 sets of 5-10 clean reps; once more than 20 reps come easily, a weight plate on the back adds load. Kneeling or wall versions make it easier.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-diamond",
+    "fv-diamond"
+   ],
+   "quotes": [
+    {
+     "source": "bb-diamond",
+     "text": "Aim for three to four sets of five to 10 clean reps.",
+     "where": "Sets and Reps, For Beginners"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "Once you get very experienced with diamond push-ups, you may hit a point where you can perform more than 20 repetitions without any trouble.",
+     "where": "Variations, Weighted Diamond Push-Up"
+    },
+    {
+     "source": "bb-diamond",
+     "text": "A good way of doing this is loading it up with a weight plate on your back.",
+     "where": "Variations, Weighted Diamond Push-Up"
+    },
+    {
+     "source": "fv-diamond",
+     "text": "If this variation is too difficult for you, try it on your knees or by pushing off from a wall.",
+     "where": "Variations & Tips"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-diamond",
+   "url": "https://barbend.com/diamond-push-up/",
+   "title": "BarBend: How to Do the Diamond Push-Up (Norman Cheung)",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-diamond",
+   "url": "https://fitnessvolt.com/diamond-push-ups/",
+   "title": "Diamond Push-Ups: Tone Your Chest, Arms, and Shoulders! – Fitness Volt",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "cogley-2005",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16095413/",
+   "title": "Comparison of muscle activation using various hand positions during the push-up exercise.",
+   "kind": "peer-reviewed",
+   "year": 2005,
+   "pmid": 16095413,
+   "access": "abstract",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the body line and the sagging low back of the top fault (c3, c6), the tucked elbows (c3) and the hands under the upper chest (c1) read from the side. The diamond itself is not visible from the side, so the hand zoom carries it (census note).",
+  "equipment": "Floor line only (census need 'floor'). BarBend's step 1 rolls out a mat; it is not needed for the drawing.",
+  "start": "Top: arms straight (c1), hands close together under the upper chest (c1), thumbs and first fingers forming a diamond (hand zoom, c1); body straight, torso and legs rigid, chin tucked, shoulders down and back (c2).",
+  "end": "Bottom: chest near the back of the hands (c3); elbows bent and tucked close to the torso (c3); shoulder blades pinched back (c4); body still in one line (c3).",
+  "checkpoints": [
+   {
+    "label": "Body in line",
+    "what": "Torso and legs rigid, low back and hips not sagging.",
+    "claim": [
+     "c2",
+     "c3"
+    ]
+   },
+   {
+    "label": "Hands under chest",
+    "what": "Hands close together under the upper chest.",
+    "claim": "c1"
+   },
+   {
+    "label": "Elbows tucked",
+    "what": "Elbows stay close to the torso on the way down.",
+    "claim": "c3"
+   }
+  ],
+  "mistake": {
+   "what": "Low back and hips sag toward the floor and the low back overextends.",
+   "why": "BarBend lists overextending the lower back first among diamond push-up mistakes (c6); Fitness Volt says do not arch your back, to protect your lower back (c7).",
+   "claim": [
+    "c6",
+    "c7"
+   ],
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the low back overextending, with the low back and hips sagging toward the floor (c6, c7). Step 1 finds no frequency word for a fault of this exercise. Set aside: BarBend's \"The diamond push-up is a very popular variation\", \"Even though most strength athletes have done push-ups before\", \"The diamond push-up is a staple push-up progression that many athletes use\" and \"The diamond push-up is often used as a variation to activate the triceps more\" are about the exercise; \"Many lifters may think that the diamond push-ups just work your chest and triceps\" is about muscles; \"Newcomers to the gym will often not have a great deal of skill of managing their posture and coordination\" is about beginners in general and names no fault of this exercise; \"Here are the questions we see most often\" is a heading line; \"if you tend to overextend your lower back\" (c6) uses 'tend'. Fitness Volt's \"triceps development is why most people do this exercise\", \"most people eventually progress to doing 20, 30, or even 50 reps\", \"most people can pick up very quickly\", \"more people do push-ups\", \"many exercisers dislike the Smith machine\", \"many exercisers view push-ups as a beginner exercise\" and \"is usually viewed as a chest exercise\" are about the exercise, training or other exercises. Step 2: two named faults are tied to harm. The low back arching (BarBend's common-mistakes item 1, 'Overextending Your Lower Back'): Fitness Volt's \"Do not arch your back during the exercise to keep all the resistance on the target muscles, and to protect your lower back.\" (c7; D-SUP-PROTECT). The shoulders rolling forward because the blades do not pinch back (BarBend's item 3, 'Not Allowing Your Shoulder Blades To Freely Move'): \"Otherwise, you may find your shoulders rolling forward, which may cause joint discomfort.\" (c4) and \"for shoulder health and maximum gains\" (c9, the same source). Tie order: both are on BarBend's list, one source each ties them to harm, both direct, so the earlier on the list that names both wins: the low back (item 1) over the shoulder blades (item 3). Set aside: BarBend's \"Making certain types of mistakes can cause you discomfort and make this move less effective at targeting certain muscle groups.\" is a list sentence; under the literal reading it is not read onto one item. Fitness Volt's \"Joint pain – diamond push-ups put your hands and arms in a potentially awkward position. This could lead to elbow, shoulder, or wrist pain for some exercisers. If diamond push-ups cause joint pain, move your hands a little further apart for a more comfortable workout.\" (c10) and \"If diamond push-ups bother your wrists\" (c11) are not about a fault. They are about the close hand placement that defines the exercise, which is a grip choice made at setup, and LR-31 does not count statements about a grip. Doing the exercise as described is not a fault, so they stay as risk and feel lines. Fitness Volt's \"keeping your risk of injury to a minimum by following these guidelines\" introduces its whole how-to list and is not read onto one item. Not about a fault: BarBend's \"without adding quite as much stress to your shoulders\" (a benefit of the exercise); Fitness Volt's \"diamond push-ups put a lot of stress on the triceps\" (muscle load), \"Most people do bench presses to develop their pecs\" (another exercise) and \"it’s easy to dismiss and undervalue them\" ('easy' is not a frequency word). 'Not Keeping Your Body Rigid' (c8) states no harm. drawable true: the side view shows the hips and low back sagging below the body line."
+  },
+  "tells": [
+   {
+    "text": "Whole body rises as one unit",
+    "claim": "c5"
+   },
+   {
+    "text": "Elbows stay close to your torso",
+    "claim": "c3"
+   }
+  ],
+  "tempo": {
+   "up": null,
+   "down": null,
+   "pause": null,
+   "claim": "c5",
+   "text": "No source on the card gives seconds or a slow phase for the diamond push-up; BarBend asks to push back up forcefully (c5). Up, down and pause stay null (LR-33: a card with no tempo seconds keeps null). The parent's 2 s down, 1 s up is a push-up drawing convention (push_up c13) and is not inherited. BarBend's isometric diamond push-up (a hold at the bottom) is a variation, not this exercise. No quote on the card asks for a pause or squeeze right after the press. BarBend's 'Cue yourself to reach your upper back towards the ceiling at the top' (c5) is a position cue and holds no pause."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Palms flat on the floor, close together, thumbs and first fingers forming a diamond (palm-flat hand pair; shared card docs/research/howto/shared/palm-flat.json, which lists this id by inference only).",
+  "width": "Hands touching at the thumbs and first fingers (c1); Fitness Volt says move them a little further apart if the joints hurt (c10).",
+  "thumb": "Thumbs touch to form the bottom of the diamond (c1).",
+  "handContact": "Hands flat on the floor with open fingers (c1).",
+  "wrist": "Hands below the upper chest (c1). Sore wrists: dumbbells or push-up handles keep the wrists straight (c11); the palm-flat shared card also gives knuckle push-ups.",
+  "claims": [
+   "c1",
+   "c10",
+   "c11"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Kneel with your hands flat under your upper chest.",
+   "claim": "c1"
+  },
+  {
+   "step": "Touch thumbs and first fingers to make a diamond.",
+   "claim": "c1"
+  },
+  {
+   "step": "Walk your feet back until your body is straight.",
+   "claim": "c2"
+  },
+  {
+   "step": "Brace, tuck your chin, pull your shoulders down and back.",
+   "claim": "c2"
+  },
+  {
+   "step": "Keep your torso and legs rigid.",
+   "claim": "c2"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Elbows tucked close to your sides.",
+   "claim": "c3"
+  },
+  {
+   "point": "Low back and hips don’t sag or arch up.",
+   "claim": "c3"
+  },
+  {
+   "point": "Shoulder blades pinch back as you lower.",
+   "claim": [
+    "c4",
+    "c9"
+   ]
+  },
+  {
+   "point": "At the top, reach your upper back to the ceiling.",
+   "claim": "c5"
+  },
+  {
+   "point": "Breathe in going down, out going up.",
+   "claim": [
+    "c3",
+    "c5"
+   ]
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Low back sagging.",
+   "fix": "Bend your knees slightly and squeeze your abs and glutes.",
+   "claim": "c6"
+  },
+  {
+   "mistake": "Shoulders rolling forward.",
+   "fix": "Pinch your shoulder blades back as you lower.",
+   "claim": [
+    "c4",
+    "c9"
+   ]
+  },
+  {
+   "mistake": "Hips dropping before the chest.",
+   "fix": "Press your heels against a wall to stay rigid.",
+   "claim": "c8"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "triceps",
+    "claim": [
+     "c12",
+     "c13"
+    ]
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "chest",
+    "claim": [
+     "c12",
+     "c13"
+    ]
+   },
+   {
+    "muscleId": "front_delts",
+    "claim": "c12"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Back of the arms and chest",
+    "means": "Your triceps and chest are doing the pressing.",
+    "fix": "",
+    "claim": "c12",
+    "redFlag": null
+   },
+   {
+    "where": "Shoulder",
+    "means": "Shoulders rolling forward may cause joint discomfort.",
+    "fix": "Pull your shoulder blades back as you lower.",
+    "claim": "c4",
+    "redFlag": "shoulder"
+   },
+   {
+    "where": "Wrists",
+    "means": "The diamond hand position can bother your wrists.",
+    "fix": "Use push-up handles or dumbbells to keep wrists straight.",
+    "claim": "c11",
+    "redFlag": "wrist"
+   },
+   {
+    "where": "Elbows",
+    "means": "Hands this close can hurt some people’s elbows.",
+    "fix": "Move your hands a little further apart.",
+    "claim": "c10",
+    "redFlag": "elbow"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "The close hand position can cause elbow, shoulder or wrist pain for some.",
+   "claim": "c10"
+  },
+  {
+   "risk": "Shoulders rolling forward on the way down may cause joint discomfort.",
+   "claim": "c4"
+  },
+  {
+   "risk": "Don’t let your back arch, to protect your low back.",
+   "claim": "c7"
+  }
+ ],
+ "redFlags": [
+  "shoulder",
+  "wrist",
+  "elbow"
+ ],
+ "zooms": [
+  {
+   "key": "hand",
+   "kind": "hand",
+   "right": "Thumbs and first fingers touch to make a diamond.",
+   "wrong": null,
+   "claim": "c1"
+  },
+  {
+   "key": "hip-line",
+   "kind": "posture",
+   "right": "Torso and legs rigid in one line.",
+   "wrong": "Low back and hips sagging toward the floor.",
+   "claim": [
+    "c2",
+    "c6"
+   ]
+  },
+  {
+   "key": "shoulder-blades",
+   "kind": "posture",
+   "right": "Shoulder blades pinched back at the bottom.",
+   "wrong": "Shoulders rolled forward at the bottom.",
+   "claim": "c4"
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "front_delts"
+  ],
+  "remove": [],
+  "why": "exercises.json lists triceps primary and chest secondary. Keep both (c12, c13). Add front_delts as secondary: BarBend says the front deltoids help, and Fitness Volt says the pecs and delts are still involved (c12)."
+ },
+ "anchorSource": "bb-diamond",
+ "loadProgression": {
+  "text": "Start with 3 to 4 sets of 5 to 10 clean reps. Once 20 come easily, add a plate on your back.",
+  "claim": "c14"
+ },
+ "notes": [
+  "LR-34 check against cards/push_up.json on head 3812989f: no inherit entry is kept. Every line uses this card's own diamond-specific claims (way 1). Parent lines that do not hold whole: c1 and c6 (hands shoulder-width, shoulders over the hands; here the hands are together under the upper chest, c1), c7 (ACE lets the elbows flare; here they are tucked, c3), c13 (the tempo convention), c14 (heel and outer edge of the palm), c15 (floor clutter: no diamond source says it). The parent's sagging-hip fault (c5) matches this card's own pick, sourced here by c6 and c7.",
+  "Shared cards: palm-flat (shared/palm-flat.json) lists diamond_push_up in appliesTo and byRule.inferenceOnly; its soreWrist rule (knuckle push-ups) lists this id and is cited, not copied. Its 'fingers facing forward, hands under the shoulders' rules do not fit the diamond hand position. floor-body (shared/floor-body.json) lists this id by inference for 'Body in line' and 'Head in line'; this card's own c2 and c3 confirm the body line and the tucked chin.",
+  "Fitness Volt's muscle text has errors that are not used (it calls the triceps 'your main elbow flexor' and speaks of 'decline push-ups' in the diamond section). Its other lines used here are plain technique.",
+  "BarBend says 'place your feet together about hip-width apart', which contradicts itself; no foot-width line is carried.",
+  "c11 is WEAK: it is Fitness Volt's option for a different variation (neutral close-grip push-ups on dumbbells or handles), offered to people whose wrists the diamond bothers.",
+  "Read but not usable: StrengthLog diamond-push-up URL (429, then 404), NASM diamond-push-up (404), Healthline (404), Men's Health (404), Built With Science (404). Every page read in full is cited."
+ ]
+}
