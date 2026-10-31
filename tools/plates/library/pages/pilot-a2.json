@@ -1,0 +1,12 @@
+{
+ "groups": [
+  {
+   "id": "pilot-a2",
+   "title": "Pilot A2",
+   "ids": [
+    "lib_box_jump",
+    "lib_bent_over_dumbbell_rear_delt_fly"
+   ]
+  }
+ ]
+}

@@ -2,7 +2,7 @@
 // PILOT-A2. Node only: the browser half of the plate QA runs in tools/plates/library/pilot-a2/qa.mjs. Every test reads
 // what is drawn (the spec, the engine's landmarks and renders, runQa's own report), never a helper's own maths.
 import { createHash } from 'node:crypto';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -11,7 +11,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
 const IDS = ['box_jump', 'reverse_lunge', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly'];   // the 4 drawn specs and cards
-const ROWS = ['box_jump', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly'];   // PILOT-A2 rows: reverse_lunge is held (panel mx6, F-REVLUNGE-ARCH)
+const ROWS = ['box_jump', 'bent_over_dumbbell_rear_delt_fly'];   // PILOT-A2's pinned rows: reverse_lunge (F-REVLUNGE-ARCH) and dumbbell_fly (F-FLY-START) are held (#340 6540319537)
+const HELD_HERE = ['reverse_lunge', 'dumbbell_fly'];
 const STILL_HELD = ['barbell_shrug', 'incline_dumbbell_press'];   // D-LIB8R-SCOPE: routed to LIB-13s and LB2
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -26,7 +27,7 @@ beforeAll(async () => {
 }, T);
 const spec = (id: string) => mods[id].default;
 const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
-const rowsPath = () => `tools/plates/library/pilot-a2/rows.json`;
+const rowsPath = () => `tools/plates/library/batches/pilot-a2.json`;   // the pin (Do 7) deleted pilot-a2/rows.json
 /** A scratch copy of a spec's source with `edit` applied, imported from the specs folder so its imports resolve. */
 const variant = async (id: string, edit: (src: string) => string) => {
   const src = readFileSync(`tools/plates/library/specs/${id}.mjs`, 'utf8'), out = edit(src);
@@ -41,32 +42,36 @@ describe('LIB-8R A1: the PILOT-A2 rows hold exactly the drawn, unheld ids (D-LIB
     const j = JSON.parse(text), bad: string[] = [], ids = Object.keys(j.rows);
     if (JSON.stringify(ids) !== JSON.stringify(ROWS.map(i => `lib_${i}`))) bad.push(`ids ${ids.join(',')}`);
     for (const id of ROWS) if (text.split(`"lib_${id}"`).length !== 2) bad.push(`${id} not exactly once`);
-    for (const id of STILL_HELD) if (text.includes(id)) bad.push(`${id} is still held`);
+    for (const id of [...STILL_HELD, ...HELD_HERE]) if (new RegExp(`\\b${id}\\b`).test(text)) bad.push(`${id} is still held`);
     for (const [id, r] of Object.entries<any>(j.rows)) {
       if (r.mode !== 'H') bad.push(`${id}: mode ${r.mode}`);
       if (r.src !== `library/specs/${id.slice(4)}.mjs`) bad.push(`${id}: src ${r.src}`);
       if (IDS.includes(id.slice(4)) && r.view !== cardOf(id.slice(4)).plate.view) bad.push(`${id}: view ${r.view} is not the census view`);
-      if (!['drawing', 'review'].includes(r.stage)) bad.push(`${id}: stage ${r.stage} before the pin`);
+      if (r.stage !== 'approved-plate') bad.push(`${id}: stage ${r.stage}, not approved-plate after the pin`);
     }
     if (j.batch !== 'PILOT-A2' || j.censusRef !== '4a9fd86') bad.push('batch/censusRef');
     return bad;
   };
   const text = () => readFileSync(rowsPath(), 'utf8');
-  it('rows.json: the 4 ids once each, mode H, census view, stage drawing or review; no still-held id in any PILOT-A2 file', () => {
+  it('batches/pilot-a2.json: the 2 pinned ids once each, mode H, census view, approved-plate; no still-held id in any PILOT-A2 file', () => {
     expect(problems(text())).toEqual([]);
-    for (const f of ['rows.json', 'tempo.json', 'sizes.json', 'cards.sha.json']) for (const id of STILL_HELD) expect(readFileSync(`tools/plates/library/pilot-a2/${f}`, 'utf8'), `${f} ${id}`).not.toContain(id);
+    for (const f of ['tempo.json', 'sizes.json', 'cards.sha.json']) for (const id of STILL_HELD) expect(readFileSync(`tools/plates/library/pilot-a2/${f}`, 'utf8'), `${f} ${id}`).not.toContain(id);
+    expect(existsSync('tools/plates/library/pilot-a2/rows.json')).toBe(false);
   });
   it('each still-held id keeps its held line in pilot-a/plates.json with its route; reverse_lunge names F-REVLUNGE-ARCH', () => {
     const p = readJson('tools/plates/library/pilot-a/plates.json').plates;
     for (const id of STILL_HELD) expect(p.find((x: any) => x.id === id)?.held, id).toBeTruthy();
     expect(p.find((x: any) => x.id === 'reverse_lunge')?.held).toMatch(/F-REVLUNGE-ARCH/);
+    expect(p.find((x: any) => x.id === 'dumbbell_fly')?.held).toMatch(/F-FLY-START/);
+    for (const id of ROWS) expect(p.find((x: any) => x.id === id)?.held, id).toMatch(/^moved: pinned in PILOT-A2/);
   });
   it('mutations: barbell_shrug added, incline_dumbbell_press added and a duplicated row are red', () => {
     const add = (id: string) => { const j = JSON.parse(text()); j.rows[`lib_${id}`] = { ...j.rows.lib_box_jump, src: `library/specs/${id}.mjs` }; return JSON.stringify(j, null, 1); };
     expect(problems(add('barbell_shrug')).length).toBeGreaterThan(0);
     expect(problems(add('incline_dumbbell_press')).length).toBeGreaterThan(0);
-    expect(problems(text().replace('"lib_dumbbell_fly": {', '"lib_box_jump_dup": { "x": "lib_box_jump" },\n  "lib_dumbbell_fly": {')).length).toBeGreaterThan(0);
+    expect(problems(text().replace('"lib_bent_over_dumbbell_rear_delt_fly": {', '"lib_box_jump_dup": { "x": "lib_box_jump" },\n  "lib_bent_over_dumbbell_rear_delt_fly": {')).length).toBeGreaterThan(0);
     expect(problems(add('reverse_lunge')).length, 'the held reverse_lunge added').toBeGreaterThan(0);
+    expect(problems(add('dumbbell_fly')).length, 'the held dumbbell_fly added').toBeGreaterThan(0);
   });
 });
 
@@ -286,7 +291,8 @@ describe('LIB-8R A5, A10: runQa node half on each PILOT-A2 plate, the zooms, LIB
     return () => qaEng.dropMirror(mirror);
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
-  const candOf = (id: string) => cand.candidateOf(`lib_${id}`, { all, platesHtml: html, engine: E, authoring: true });
+  // after the pin (Do 7) the default path: no authoring flag, the pinned exemptions apply (A5)
+  const candOf = (id: string) => cand.candidateOf(`lib_${id}`, { all, platesHtml: html, engine: E });
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
   // A spec mutation built the way the page builds it (lb7-plates.test.ts's pattern): a scratch module that imports the
   // real spec and applies fn, drawn on its own page, so the candidate's plate and zoom come from the mutated spec.
@@ -297,16 +303,18 @@ describe('LIB-8R A5, A10: runQa node half on each PILOT-A2 plate, the zooms, LIB
       const cid = (await import(/* @vite-ignore */ lib('plates-page.mjs'))).cardIdOf(all.find((r: any) => r.id === `lib_${id}`));
       const { html: h } = await (await import(/* @vite-ignore */ lib('build-page.mjs'))).buildPlatesPage({
         groups: [{ id: 'pilot-a2', title: 'Pilot A2', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: file } });
-      return { ...(await cand.candidateOf(`lib_${id}`, { all, platesHtml: h.toString('utf8'), engine: E, authoring: true })), spec: (await import(/* @vite-ignore */ `file://${file}`)).default };
+      return { ...(await cand.candidateOf(`lib_${id}`, { all, platesHtml: h.toString('utf8'), engine: E })), spec: (await import(/* @vite-ignore */ `file://${file}`)).default };
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
   // F7 is raised only on the drawable-false rear-delt fly (decision 9); F6 only on its side fallback (D-LIB8R-FLIES).
-  const RULED_NODE: Record<string, string[]> = { box_jump: [], dumbbell_fly: [], bent_over_dumbbell_rear_delt_fly: ['F6', 'F7'] };
+  const RULED_NODE: Record<string, string[]> = { box_jump: [], bent_over_dumbbell_rear_delt_fly: ['F6', 'F7'] };
   const ruledProblems = (id: string, r: any) => ['F6', 'F7'].filter(f => r.flags[f].raised !== RULED_NODE[id]!.includes(f)).map(f => `${id}: ${f}`);
   it.each(ROWS)('%s: every node hard check passes with zero exemptions; F6 and F7 are the ruled set', async id => {
     const r = await qa(await candOf(id));
     expect(node(r)).toEqual([]);
     expect(ruledProblems(id, r)).toEqual([]);
+    // the pinned exemptions cover every raised flag (the browser half, run in pilot-a2/qa.mjs's default path, gives ok)
+    expect(qaIdx.FLAGS.filter((f: string) => r.flags[f].blocks)).toEqual([]);
   });
   it("A6 mutations: box_jump's end sole.l fact moved to the Mistake pose (no check there), and the rear-delt fly's wrist facts moved to the end pose, turn PQ-H6 red", async () => {
     const bj = await candOf('box_jump'), rd = await candOf('bent_over_dumbbell_rear_delt_fly');
@@ -324,8 +332,8 @@ describe('LIB-8R A5, A10: runQa node half on each PILOT-A2 plate, the zooms, LIB
     expect(spec('bent_over_dumbbell_rear_delt_fly').zoom).toEqual({ view: 'mistake', k: 2 });
     expect(spec('box_jump').zoom).toBeUndefined();
   });
-  it('A10 mutations: the next k down on dumbbell_fly and the rear-delt fly turns H3 red', async () => {
-    for (const [id, k] of [['dumbbell_fly', 2], ['bent_over_dumbbell_rear_delt_fly', 1.5]] as const) {
+  it('A10 mutations: the next k down on the rear-delt fly turns H3 red', async () => {
+    for (const [id, k] of [['bent_over_dumbbell_rear_delt_fly', 1.5]] as const) {
       const c = await mutated(id, `s => ({ ...s, zoom: { ...s.zoom, k: ${k} } })`);
       expect(node(await qa(c)), id).toContain('H3.zoom:deviation');
     }
@@ -343,3 +351,71 @@ describe('LIB-8R A3 (pre-pin part): the PILOT-A2 page is deterministic (PQ-H7)',
   });
 });
 void body; void copy;
+
+describe('LIB-8R A2, A3, A12, A13: the PILOT-A2 pin (Do 7) and the untouched pilot A and pilot B pins', { timeout: T }, () => {
+  let G: any, BG: any, reg: any, scratch: any, all: any;
+  beforeAll(async () => {
+    [G, BG, reg, scratch] = await Promise.all(['../golden.mjs', 'batch-golden.mjs', 'registry.mjs', 'ci/scratch.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    all = reg.rows();
+  }, T);
+  const GOLDEN = () => JSON.parse(readFileSync('tests/howto/golden/GOLDEN.json', 'utf8')).entries;
+  const file = () => readJson('tests/howto/golden/library/pilot-a2.json');
+  /** A3: chain, the page entry equal to the built page, each plate entry's 9 fragments equal to extractPlates of it. */
+  const chainProblems = async (f: any) => {
+    const bad = [...G.verifyBatchChain(f, GOLDEN())];
+    const pages = f.entries.filter((e: any) => e.kind === 'page'), html = (await build.buildPa2Page()).html;
+    if (pages.length !== 1 || pages[0].pageSha256 !== sha(html) || pages[0].bytes !== html.length) bad.push('page entry != the built page');
+    if (f.entries.some((e: any) => e.kind === 'layers-page')) bad.push('a layers-page entry');
+    const plates = G.extractPlates(html.toString('utf8'));
+    for (const e of f.entries.filter((x: any) => x.kind === 'plate')) {
+      const p = plates.find((x: any) => x.chromeId === e.chromeId);
+      if (!p || JSON.stringify(G.fragmentsOf(p)) !== JSON.stringify(e.fragments)) bad.push(`${e.id}: fragments`);
+      if (e.approvedBy !== 'supervisor' || e.decision !== 'D-LIB-PILOTA2' || e.supersedes !== null) bad.push(`${e.id}: approval`);
+    }
+    if (JSON.stringify(f.entries.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)) !== JSON.stringify(ROWS.map(i => `lib_${i}`))) bad.push('plate ids');
+    const text = JSON.stringify(f) + readFileSync(rowsPath(), 'utf8') + readFileSync('tools/plates/library/pages/pilot-a2.json', 'utf8');
+    // other batches' ids, their held ones (pilot B's crunch) included
+    for (const id of [...all.filter((r: any) => r.batchFile && !r.batchFile.endsWith('/pilot-a2.json')).map((r: any) => r.id),
+      ...[...scratch.PILOT_A, ...scratch.PILOT_B].map((n: string) => `lib_${n}`)]) if (new RegExp(`\\b${id}\\b`).test(text)) bad.push(`names ${id}`);
+    return bad;
+  };
+  it('A3: the chain is valid, the page entry is the two-build page, each plate entry equals its fragments, no layers entry or file', async () => {
+    expect(await chainProblems(file())).toEqual([]);
+    expect(existsSync('tests/howto/golden/library/pilot-a2.layers.html')).toBe(false);
+    expect(existsSync('tools/plates/library/pages/pilot-a2.layers.json')).toBe(false);
+  });
+  it('A3 mutations: a second page entry superseding 0 by the supervisor, one fragment edited, a layers-page entry and "lib_crunch" are red', async () => {
+    const f0 = file();
+    const sup = { ...f0, entries: G.appendEntry(f0.entries, { ...f0.entries[0], prev: undefined, supersedes: 0 }) };
+    expect(G.verifyBatchChain(sup, GOLDEN()).length).toBeGreaterThan(0);
+    const frag = copy(f0); frag.entries[1].fragments.normalSvg = '0'.repeat(64);
+    expect((await chainProblems(frag)).length).toBeGreaterThan(0);
+    const lay = copy(f0); lay.entries.push({ kind: 'layers-page' });
+    expect((await chainProblems(lay)).length).toBeGreaterThan(0);
+    const named = copy(f0); named.entries[1].why += ' "lib_crunch"';
+    expect((await chainProblems(named)).some((p: string) => /lib_crunch/.test(p))).toBe(true);
+  });
+  it('A2: pilot A and pilot B rebuild to their pinned pages, and each pinned plate equals its golden fragments (153 equalities)', async () => {
+    let n = 0;
+    for (const b of ['pilot-a', 'pilot-b']) {
+      const row = all.find((r: any) => r.batchFile === `tools/plates/library/batches/${b}.json`), html = await BG.platesPage(row, all);
+      const plates = G.extractPlates(html), g = readJson(`tests/howto/golden/library/${b}.json`);
+      for (const e of g.entries.filter((x: any) => x.kind === 'plate')) {
+        const p = plates.find((x: any) => x.chromeId === e.chromeId);
+        for (const [k, v] of Object.entries(G.fragmentsOf(p))) { expect(v, `${e.id} ${k}`).toBe(e.fragments[k]); n++; }
+      }
+    }
+    expect(n).toBe(153);
+  });
+  it('A12: no PILOT-A2 row is shipped; mutation: one row set to shipped is caught', () => {
+    const rowsOf = (t: any) => Object.values(t.rows).map((r: any) => r.stage);
+    expect(rowsOf(readJson(rowsPath()))).toEqual(['approved-plate', 'approved-plate']);
+    const m = readJson(rowsPath()); m.rows.lib_box_jump.stage = 'shipped';
+    expect(rowsOf(m).includes('shipped')).toBe(true);
+  });
+  it('A13: the scratch set refuses PILOT-A2 ids (mutation: target lib_box_jump)', () => {
+    expect(scratch.setProblems(scratch.SCRATCH_4C)).toEqual([]);
+    const set = scratch.SCRATCH_4C.map((s: any) => (s.key === 'lib4c-scratch-a' ? { ...s, id: 'lib_box_jump' } : s));
+    expect(scratch.setProblems(set)).toEqual(['lib_box_jump is a PILOT-A2 id (D-LIB11-SCRATCHIDS)']);
+  });
+});

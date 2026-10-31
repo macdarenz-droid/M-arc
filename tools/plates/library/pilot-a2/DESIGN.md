@@ -178,3 +178,25 @@ pilot-a2/rows.json. Its held line in pilot-a/plates.json and MERGE.md section a 
 lumbar bow from the sacrum, drawn with the engine's spine segments, with the head and upper back on the solid outline,
 then the ring at the waist's back edge. Its spec, card, quotes, tempo and size rows stay as drawn, for that card.
 PILOT-A2 now pins box_jump and the rear-delt fly, plus dumbbell_fly once it passes after F-ZOOM-PITCH.
+
+## 11. The pin (Do 7; LIB-8R PIN GO, #340 6540319537)
+
+- Main `11791f67` is merged in. PILOT-A2 pins its two approved rows, box_jump (panel mx4) and the rear-delt fly (panel
+  mx5), as first entries: approvedBy 'supervisor', decision D-LIB-PILOTA2. dumbbell_fly (F-FLY-START) and reverse_lunge
+  (F-REVLUNGE-ARCH) are held for PILOT-A3. Their held lines are in pilot-a/plates.json and MERGE.md section a.
+- `batches/pilot-a2.json`: the 2 rows at approved-plate. Its pages are `pages/pilot-a2.json`, plus layers paths that
+  name no file, as pilot A and pilot B have. `pilot-a2/rows.json` is deleted, so build.mjs reads the registry.
+- `tests/howto/golden/library/pilot-a2.json`: base {8, e48d731d...}, the page entry `3e225bc1...` (280533 B, two
+  identical builds), and one plate entry per row. Their fragments equal the approved panel heads.
+- Exemptions are each row's raised flags, named on the sheet table (sections 7-8). box_jump: F2, F3, F4, F5. The rear-delt
+  fly: F2, F3, F5, F6, F7. The default runQa path, with the browser half and these exemptions, gives ok true on both.
+- MANIFEST.json gains exactly the 2 rows; the 13 pilot A and 4 pilot B rows are unchanged, and C0 is [].
+  `generate.mjs` changed only coverage.ts's two stage lines and line 1 of ids.ts, loaders.ts and ids-node.mjs.
+- D-LIB8R-PINLINES:
+  - library-ci gains the page entry and library-manifest the rows.
+  - lib8-pin's HELD splits into STILL_HELD and MOVED, with A13 mutations. Its regex now also matches the `lib_` form,
+    which the old check missed, so it is stricter.
+  - ci/scratch.mjs refuses PILOT-A2 ids.
+  - lib7-fix's fixture id is v_up, guarded against any batches/ file.
+- F-LIB8M-PROV: the provenance text in pilot-a/plates.json `cards`, pilot-a/build.mjs:23 and MERGE.md is corrected.
+  build.mjs:181 is sheet text outside this card's write_scope (`:23: a comment only`), so it is left for the supervisor.

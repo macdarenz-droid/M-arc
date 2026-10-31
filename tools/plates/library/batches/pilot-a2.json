@@ -1,0 +1,43 @@
+{
+ "batch": "PILOT-A2",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/pilot-a2.json",
+  "layers": "tests/howto/golden/library/pilot-a2.layers.html",
+  "layersConfig": "tools/plates/library/pages/pilot-a2.layers.json"
+ },
+ "rows": {
+  "lib_box_jump": {
+   "src": "library/specs/box_jump.mjs",
+   "slug": "box-jump",
+   "prefix": "box-jump",
+   "chromeId": "box-jump",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Box Jumps (NASM Exercise Library). https://www.nasm.org/resource-center/exercise-library/box-jumps",
+    "Box Jump (Exercise Library). https://www.catalystathletics.com/exercise/548/Box-Jump/",
+    "Does Box Height Matter? A Comparative Analysis of Box Height on Box Jump Performance in Men and Women (2024). https://pmc.ncbi.nlm.nih.gov/articles/PMC11166134/ PMID 38863787",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/",
+    "Ankle pain (NHS, page last reviewed 20 November 2025) (2025). https://www.nhs.uk/symptoms/foot-pain/ankle-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_bent_over_dumbbell_rear_delt_fly": {
+   "src": "library/specs/bent_over_dumbbell_rear_delt_fly.mjs",
+   "slug": "bent-over-dumbbell-rear-delt-fly",
+   "prefix": "bent-over-dumbbell-rear-delt-fly",
+   "chromeId": "bent-over-dumbbell-rear-delt-fly",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "How to Do Reverse Dumbbell Flyes: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/reverse-dumbbell-flyes/",
+    "Effect of hand position on EMG activity of the posterior shoulder musculature during a horizontal abduction exercise. (2013). https://pubmed.ncbi.nlm.nih.gov/23302754/ PMID 23302754",
+    "Biomechanical evaluation of posterior deltoid exercises and kinematic trajectory modeling. (2025). https://pubmed.ncbi.nlm.nih.gov/41964926/ PMID 41964926",
+    "ACE Exercise Library: Incline Reverse Fly. https://www.acefitness.org/resources/everyone/exercise-library/34/incline-reverse-fly/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}

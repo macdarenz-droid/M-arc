@@ -32,7 +32,11 @@ const BLOBS: Record<string, [string, string]> = {
 // incline_dumbbell_press is held after its last critic run (D-LIB8M-CARDTRUE, lib4-cards 21.6): its card copy and keys stay as verified
 const CARDS = Object.keys(BLOBS);
 const PINNED = CARDS.filter(id => id !== 'incline_dumbbell_press');
-const HELD = ['barbell_shrug', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly', 'box_jump', 'reverse_lunge', 'incline_dumbbell_press'];
+// LIB-8R (D-LIB8R-PINLINES, A13): the six held ids split. STILL_HELD are in no batch or golden file; MOVED are pinned in
+// PILOT-A2, in exactly batches/pilot-a2.json and golden/library/pilot-a2.json (dumbbell_fly and reverse_lunge were held there
+// after their panels, routes F-FLY-START and F-REVLUNGE-ARCH, #340 6540319537).
+const STILL_HELD = ['barbell_shrug', 'dumbbell_fly', 'reverse_lunge', 'incline_dumbbell_press'];
+const MOVED = ['box_jump', 'bent_over_dumbbell_rear_delt_fly'];
 // census views (claude/howto-options 4a9fd86, docs/howto/library/inputs/census.json blob 70553d5d)
 const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id === 'upright_row' || id === 'pec_fly' ? 'front' : 'side']));
 // the pilot A page the registry builds (build.mjs's page at the Do 6 head); the pin's page entry must equal it
@@ -111,10 +115,20 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     const chain = ROOT + 'tests/howto/golden/library/pilot-a.json';
     if (existsSync(chain)) expect(JSON.parse(readFileSync(chain, 'utf8')).entries.some((e: any) => e.kind === 'layers-page')).toBe(false);
   });
-  it('the six held ids appear in no batch or library golden file', () => {
-    const files = [...readdirSync(ROOT + 'tools/plates/library/batches').filter(f => f.endsWith('.json')).map(f => `tools/plates/library/batches/${f}`),
-      ...(existsSync(ROOT + 'tests/howto/golden/library') ? readdirSync(ROOT + 'tests/howto/golden/library').map(f => `tests/howto/golden/library/${f}`) : [])];
-    for (const f of files) for (const id of HELD) expect(new RegExp(`\\b${id}\\b`).test(read(f)), `${id} in ${f}`).toBe(false);
+  const heldFiles = () => [...readdirSync(ROOT + 'tools/plates/library/batches').filter(f => f.endsWith('.json')).map(f => `tools/plates/library/batches/${f}`),
+    ...(existsSync(ROOT + 'tests/howto/golden/library') ? readdirSync(ROOT + 'tests/howto/golden/library').map(f => `tests/howto/golden/library/${f}`) : [])];
+  const MOVED_TO = ['tools/plates/library/batches/pilot-a2.json', 'tests/howto/golden/library/pilot-a2.json'];
+  /** A13: a still-held id in any batch or golden file, or a moved id anywhere but exactly the two PILOT-A2 files. */
+  const heldProblems = (text: (f: string) => string) => heldFiles().flatMap(f => [
+    ...STILL_HELD.filter(id => new RegExp(`\\b(lib_)?${id}\\b`).test(text(f))).map(id => `${id} (held) in ${f}`),
+    ...MOVED.filter(id => new RegExp(`\\b(lib_)?${id}\\b`).test(text(f)) !== MOVED_TO.includes(f)).map(id => `${id} (moved) ${MOVED_TO.includes(f) ? 'missing from' : 'in'} ${f}`),
+  ]);
+  it('the still-held ids appear in no batch or library golden file; the moved ids are in exactly PILOT-A2\'s two files', () => {
+    expect(heldProblems(read)).toEqual([]);
+  });
+  it('A13 mutations: a moved id added to batches/pilot-a.json, and a still-held id added to golden/library/pilot-a2.json, are red', () => {
+    expect(heldProblems(f => (f.endsWith('batches/pilot-a.json') ? `${read(f)} lib_box_jump` : read(f))).length).toBeGreaterThan(0);
+    expect(heldProblems(f => (f.endsWith('golden/library/pilot-a2.json') ? `${read(f)} lib_reverse_lunge` : read(f))).length).toBeGreaterThan(0);
   });
   it('the page config lists the 13 ids once each, as registry ids', () => {
     const ids = JSON.parse(read('tools/plates/library/pages/pilot-a.json')).groups.flatMap((g: any) => g.ids);

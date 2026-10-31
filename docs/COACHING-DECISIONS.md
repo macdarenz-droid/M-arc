@@ -2937,3 +2937,16 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   Record: DESIGN.md sections 11b and 11c.
 - **D-LIB17-B13 ('LIB-17 resume 2', F-ZOOM-2 on main).** renegade_row joins lb7/rows.json with its Mistake zoom at k 3 and the opt-in `zoom.pair` (the far flat hex's vertex 0 against the turned tell vertex: 5.64 → 16.92 px). Its owed rows: the "Straight line" box moves to (40, 160) so no hit box overlaps "Feet wide" (H4), and the corner tell's label becomes "Corner landing" (H8, 1-3 words). cable_rear_delt_fly stays held (D-LIB17-RDFHOLD).
 - **D-LIB17-B14 (renegade_row panel mx5 R1, #343 6538121846).** The end dumbbell sits 0.16 m below the shoulder joint beside the lower ribs with the elbow led up and back, so the upper arm stands 53.9 deg from the trunk axis (was 94); the near arm keeps the row's pole from the start so no ghost bends the elbow toward the head; "Row to ribs" anchors at the hex's lower edge with its box below the body. zoom.pair unchanged; the f-zoom-2 circle pin moves to [228, 152].
+## LIB-8R: pilot A's held rows as PILOT-A2 (builder, 2026-10-31; card docs/supervisor/verify/lib-8r-card.md, rulings D-LIB8R-*)
+- **D-LIB8R-BATCH.** Pilot A's held rows are pinned in a new batch, PILOT-A2 (batches/pilot-a2.json, its own page and
+  chain), so pilot A's page (5d0e562f...) and every pilot A and pilot B pin stay byte-identical. **Why:** re-pinning pilot
+  A's page would need the owner's own approval (a superseding page entry), and adding rows to its batch moved all 13
+  rows' input hashes.
+- **Pinned:** box_jump (panel mx4) and bent_over_dumbbell_rear_delt_fly (panel mx5; side view, card shrug, F6 and F7
+  named), page 3e225bc1... **Held:** reverse_lunge (F-REVLUNGE-ARCH; the arch read as a trunk shift after 3 rounds) and
+  dumbbell_fly (F-FLY-START; start dumbbells end-on and a wrist bend read as a slip, panel mx7). Both go to PILOT-A3.
+  barbell_shrug stays with LIB-13s, incline_dumbbell_press with LB2.
+- **Found on the way:** LIB-20's camera.pitch was lost in the zoom circle and in QA's projection (fixed by
+  F-ZOOM-PITCH, train 48). The container's `push.negotiate true` made pushes send no objects; `git -c
+  push.negotiate=false push` works.
+- **Source:** PR #340; pilot-a2/DESIGN.md.
