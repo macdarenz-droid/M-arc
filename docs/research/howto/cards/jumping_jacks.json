@@ -597,6 +597,7 @@
     "Fix round 2026-10-02 (verify w0): A14 glutes proposed as primary, as NASM lists them.",
     "LR-31/LR-33 pass 2026-10-22 (LB10): rankNote added (step 2). The top fault changed from landing with straight knees to jerky or uncontrolled landings (c6, c14), so handlingMistakes is reordered with a new [0]; plate.mistake (toes twisted outward, c12) is unchanged and drawable is now false (CARD-V2:36); the non-CARD-V2 field plate.mistake.topFault is removed (its content is in the rankNote and handlingMistakes[1]). The dropped handlingMistakes item \"Toes twist outward.\" / \"Keep your toes pointing forward.\" (c12) stays in posture[2], zooms[1] and plate.mistake. New claims c14 (Experience Life's control cue) and c15 (WebMD's speed line); c12 gains WebMD's \"toes pointed forward\" start line, which the posture and zoom words need. Shown-line fixes (CARD-V2:68): risks[1] \"concrete\" -> \"cement\" (c11's word); zooms[1].right \"Toes pointing forward on landing.\" -> \"Toes pointed forward.\"; feel.rows[1].means \"They push you up off the floor.\" -> \"They power the jump.\" (c7's words); handlingMistakes rushing fix \"Slow down and keep your form.\" -> \"Don't sacrifice form for speed.\" (c6's words). Tempo values unchanged (null); tempo.text names LR-33."
   ],
+  "plateFacts": [],
   "tempo": [
     {
       "phase": "Work",

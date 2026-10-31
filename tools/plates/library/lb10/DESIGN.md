@@ -473,14 +473,13 @@ kettlebell_swing has a strip from the start; the other three render only from `l
 
 ## 15. Held ids and NOSECS rows
 
-As of 'LIB-22 resume 2' (section 22; farmer_s_carry lifted there). Lifted at 'LIB-22 resume' (section 21): sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
+As of 'LIB-22 resume 3' (section 23, LIB-SMALL; jumping_jacks lifted there). 'LIB-22 resume 2' (section 22) lifted farmer_s_carry. Lifted at 'LIB-22 resume' (section 21): sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
 medicine_ball_slam (D-LIB22-AFALL: every phase blank, strip/rows.json fallbackA under D-LIB22-STRIPROWS).
 
 | id | ruling | why | route |
 |---|---|---|---|
 | wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); strip leftOut (S3) | #289 on main, then a resume |
 | jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px**; a normal zoom at kMax 4 gives 21.3 px < 22.11 (trim [0, 0]) | a route the zoom rules do not hold (as F-PALLOF-ARCH) |
-| jumping_jacks | D-LIB22-JJ | H6:no-card until F-H6-TEMPO; also S2 (Mistake **9.6 px**; a Mistake zoom at k 1.5 reaches 14.4 px, drawn at its own resume) | F-H6-TEMPO on main |
 
 Held rows are in no rows file; their specs, tests and card keys stay. Each is confirmed or cleared by measurement.
 
@@ -647,7 +646,6 @@ k rule: the smallest k in steps of 0.5 from 1.5 whose zoom-scale value clears it
 | id | waits for |
 |---|---|
 | farmer_s_carry | F-LB10-STRIDE (research; #331 6409745507 item 2): a basis for M_STRIDE 0.70 m (6360164495 item 2: a quote, an approved plate's file:line or a measured convention). No quote on the card or the research head, and no approved plate on main, gives a regular step length |
-| jumping_jacks | F-H6-TEMPO (D-LIB22-JJ); not on main. Its Mistake zoom (k 1.5, `toes`, 14.4 px) is drawn at its own resume: drawn now, its source ring crossed the `toes` label (H1.ink) on a row that cannot ship |
 | jump_rope | no allowed k reaches the bar: the Trace (`sole.r`, trim [0, 0]) is 21.3 px at k 4 (kMax) < 22.11; a raised kMax or another route needs a ruling (as F-PALLOF-ARCH) |
 | wall_ball | LB4 #289 (`wall`) on main (D-LIB22-WALL); also strip `leftOut` (S3) |
 
@@ -716,3 +714,121 @@ start, near knee 24.1 deg. pxPerM 146.3, leaderMax 68.5 px.
 **Page.** Two builds identical at `07ee85377e2b0334afefa2ed0c59cff9d225cc419928f77abee6deaf33ca6070` (9 rows,
 farmer_s_carry last). The 8 approved cards' markup is byte-identical to main's page `5e02f6aa…` (each `#card-*`
 article compared; medicine_ball_slam up to the new card). C0 `manifestProblems()` is `[]`.
+
+## 23. Resume 3 (LIB-SMALL; RESUME PLAN, on main `6b32d576`)
+
+Card `docs/supervisor/verify/lib-small-card.md` on `claude/sup-lib4-cards` @ `0cf7244a` (D-SMALL-1 to -11 confirmed;
+wall_ball's strip lines land only after #356). One lane with LB4's jump_squat (lb4/DESIGN.md section 16). Values marked
+**measured** were run on this branch's base with the drafts below (lb10/qa.mjs, node and browser; scratch clearance
+script on `bodyShapes`); nothing is committed as drawn before 'LIB-SMALL PLAN RULED'.
+
+**Modes (re-checked on `6b32d576`, derive.mjs:4-12 PARAMS).** Both rows H (D-SMALL-MODES):
+- jumping_jacks: card parent null; no engine parent; front-view airborne pose. Spec unchanged but the `toes` box and one
+  `zoom` line (D-SMALL-JJZOOM).
+- wall_ball: card parent null; `load.primitive` has no ball value; the wall, its distance and the hands under the ball
+  are no PARAMS key. No template, no family row (D-SMALL-MODES).
+
+**Clone sources (copied, never imported; D-LIB9-CLONE).** wall_ball copies from goblet_squat (D-SMALL-WBCLONE): the
+feet (FOOT_X 0.17, TOE_OUT 20, the start knee pole 17 deg), the thorax-rigid load spot (REFP's affine combination of
+neck, backUpper and sternum), the Winter 2009 `com` with a point load, `solve` (Illinois, throws on a bracket with no
+root), `key`, `kneeAt`, `below` (DEPTH 0.02 m), and goblet's Mistake method (the thorax folds about the same hips; no
+balance solve). From medicine_ball_slam: `perItem(medBall, MED_BALL_ITEMS)` and the dashed start ball. From wall_sit:
+the `wall()` call. Copied brackets and their **measured** solutions:
+
+| bracket | pose | solves to |
+|---|---|---|
+| root y [0.8, 0.935] (knee 5) | start | 0.924 m |
+| root z [-0.4, 0.3] (centre of mass over mid-foot) | start | -0.031 m |
+| root y [0.25, 0.6] (hip 2 cm below knee) | end | 0.346 m |
+| root z [-0.45, -0.15] | end | -0.177 m |
+| root y [0.4, 0.935] (knee 60) | via | solved (no throw) |
+
+**wall_ball pose map:** identity (spec start = plate.start, spec end = plate.end). Mistake drawn against the spec end
+(the bottom; D-SMALL-WBMIS): c3's first quote, "how you start is how you may finish", carries the start distance
+through the rep.
+
+**wall_ball geometry (draft, measured).**
+- Ball: eq/medBall.mjs at 23 cm; centre BALL_OFF **0.126 m** in front of the sternum square to the thorax (goblet's
+  thorax frame: REFP sternum + BALL_OFF / H forward). 0.126 is the first 1 mm step that clears the torso by 2 px in
+  every drawn pose with this frame (0.125 gives 1.89 px at the end). Ball top at the start 1.498 m, under the chin
+  (1.520 m), c1.
+- Hands: each grip on the ball's underside, HAND_X 0.075 m either side (c9 "wrists about six inches apart"), elbows
+  pole down and in (c1 "elbows tucked in"); `checks` hold each wrist at its cup at start and end.
+- Wall: the near face STAND_DIST 0.57 m in front of the start toe tips (c2, lb10/sizes.json); `wall({ face: near +
+  WALL.t, h: WALL_H })`, unedited (eq/wall.mjs:16-19). WALL_H 2.25 m (the frame fits 2.26 m). Target: a 3 cm box on the
+  face, 1.95-2.20 m ("a target above head height", plate.equipment) [proposed sizes].
+- Start: knee 5, thorax 3 deg. End: hip joint 2.0 cm below the knee (c6), thorax 28 deg (goblet's END_INCL; c5, c6
+  chest up), heels down.
+- Mistake: the bottom moved back rigidly so the toe tips are M_DIST **1.00 m** from the wall (past c2's widest
+  sourced 2-3 ft = 0.91 m; D-SMALL-WBMIS), thorax M_INCL **40 deg** (c3 "your body tilts forward"); 45 put the ball
+  0.9 px from the shins. The wall is static; a dashed floor guide spans the toe-to-wall gap (wall_sit's floor-gap
+  guide form).
+- BALL_MASS 0.048 of body mass (c12's 6-10 lb midpoint, 8 lb = 3.6 kg of 75 kg) in the balance.
+
+**Clearance (D-SMALL-9; measured px at 146.29 px/m; hands excepted as the card contact).**
+
+| pose | ball→torso | ball→head | ball→thigh / knee / shank | ball→upper arm | ball→forearm | wall face→body / ball |
+|---|---|---|---|---|---|---|
+| start | 2.14 | 14.16 | 49.2 / 111.9 / 111.8 | 10.26 | 1.32 | 61.3 / 49.6 |
+| end | 2.04 | 17.57 | 17.6 / 17.3 / 17.0 | 6.86 | overlaps | 60.7 / 49.0 |
+| Mistake | 2.05 | 19.35 | 6.4 / 5.5 / 5.5 | 3.93 | overlaps | 115.8 / 104.1 |
+
+The target mark sits above the head in every pose (head top ≤ 1.75 m < 1.95 m: ≥ 29 px). The forearms run up to the
+hands under the ball and lie beside it in depth (x ±0.075 m); proposed: the fist and forearm are the hand-contact
+exception (c9 "hands underneath the ball"), listed, not tested. Ball-to-chest gap ≤ 6 px in every pose (c9 "as close
+to your body as possible"): 2.14 / 2.04 / 2.05.
+
+**Fault→key.** `far` "Too far" (c3) on the Mistake near toe; second tell `tilt` "Body tilts forward" (c3's third
+quote) on the Mistake backUpper. topFault `far` = handlingMistakes[0] (drawable true).
+
+**Tempo (D-SMALL-WBAFALL).** strip/rows.json: wall_ball from leftOut to fallbackA, rows `Squat` (c6 "Squat down"),
+`Throw` (c7), each `blank: true`, claim c16; card and spec tempo = tempoOf(rows) =
+`[{ phase: 'Squat', move: true }, { phase: 'Throw', move: true }]`. Lands only after #356 (supervisor rule); merge main
+first and keep both sides; only the LABELS literal and ROWS_PIN in lib-strip.test.ts change.
+
+**Facts plan (D-LIB8M-FACTS, D-LIB13-FACTS2, D-LIB9-FACTPOSE).**
+
+| quote (claim) | proposed plateFacts | pose (cardPose) |
+|---|---|---|
+| "a medicine ball held at chest height with both hands" (c1, setup; the drawn start is the setup) | `contact wrist.l`, `wrist.r` | start (start) |
+| "Squat down, keeping weight in heels" (c6; plate.end cites c6) | `contact heel.l`, `heel.r` | end (end) |
+| "keeping your feet on the floor" (c17; cited by no plate pose, so the spec end, the burpee rule) | `contact sole.l`, `sole.r` | end (end) |
+
+Not facts: c2 distances (sizes: STAND_DIST); c6 "parallel ... or deeper", "at least 90 degrees" (bounds held by a
+check and a drawn-item test; "or" choice); c9 "about six inches" (a size: HAND_X); c5 "upright" (no number).
+
+**Unsourced numbers (lb10/sizes.json at the draw).** FOOT_X, TOE_OUT, BALL_OFF (solved by clearance), HAND_X (c9's
+"about six inches", a size), BALL_MASS, DEPTH, END_INCL, M_DIST, M_INCL, WALL_H, the target's height and size. Sourced:
+STAND_DIST (c2 midpoint).
+
+**jumping_jacks (D-SMALL-JJFACTS, -JJZOOM; measured on this branch).** `toes` box {64, 300} → {16, 300}; `zoom:
+{ view: 'mistake', k: 1.5 }`; card `plateFacts: []`; held-pairing.json's entry removed in the same commit; its row on
+rows.json. lb10/qa.mjs: **all 10 hard checks pass**; flags F5 3.57 and F7 `toes` only (the ruled set); leaderMax 65.0
+px; plate deviation 9.6 px, zoom 14.40 px (card measure) ≥ 11.39. validateCardFile [] (H6 compares the tempo).
+Facts: `[]` proposed. Read: c2 "land with feet hip-width apart" (a width, no fact kind; the landing is drawn and
+checked), c12 "Stand ... with your feet together" (setup width). The CF verify decides `[]` against contact facts; if
+it rules contacts, they are written and the spec's heel and ball `checks` already hold them (jumping_jacks.mjs:86-88).
+
+**PQ-H3 (bars 11.39 / 22.11 px; measured).**
+
+| id | deviation | Trace | zoom |
+|---|---|---|---|
+| jumping_jacks | 9.6 (plate) → 14.40 (zoom, `toes`, k 1.5) | 242.0 | mistake, k 1.5 |
+| wall_ball | 62.9 | 63.6 (`hip.r`, trim [10, 12]) | none |
+
+**Expected flags.** F5 3.57 on both (D-LIB9-F5); F7 on jumping_jacks only (topFault `jerky` ≠ drawn `toes`). wall_ball's
+draft raises H4.overlap (distance|depth), F3 126.5 and F4 0: label boxes are set at the draw (labels only).
+
+### 23.1 jumping_jacks drawn (after 'LIB-SMALL PLAN RULED', #358 6545874629)
+
+- Card: `plateFacts: []` inserted before `tempo` (D-SMALL-JJFACTS); held-pairing.json's entry removed in the same
+  commit; validateCardFile [] (H6 now compares the tempo).
+- `toes` box {64, 300} → **{16, 280}**, not the ruled {16, 300}: at {16, 300} the tell's leader runs 5.46 px from the
+  floor line, under A15's 6 px (this file's "no leader comes within 6 px" test). {16, 280} is one of the card's measured
+  passing spots (lib-small-card.md:39); still one moved box.
+- Zoom **k 2.5**, not the ruled 1.5: D-LIB22-RINGFIT (the source ring closes inside the plate frame) fails at k 1.5
+  (source ring centre y 336.2, r 34.7: bottom 370.8 > the frame's 358) and at k 2 (r 26: 362.2). k 2.5 (r 20.8: 357.0)
+  is the smallest ladder k that clears the bar by 10 %, holds the tell in both poses and fits (the section 21 k rule,
+  this file's zoom test). Zoom deviation **24.0 px** (bar 11.39). The ring sits at (266, 280), r 52.
+- lb10/qa.mjs (node and browser): **all 10 hard checks pass**; flags F5 3.57 and F7 `toes` (the ruled set); leaderMax
+  73.2 px (F3 range 49.33-82.26); plate deviation 9.6 px.
