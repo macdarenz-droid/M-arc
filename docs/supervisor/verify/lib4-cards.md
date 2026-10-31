@@ -4576,3 +4576,9 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **All three are APPROVED.**
   - **PILOT-A3 PIN GO @ `2edabdf0`** (#362 6548838657): page `bebd7730…a7878`, no exemptions, D-LIB-PILOTA3.
   - LB9 R3 goes to READY (#361 6548839577).
+- **#359 6549004756** (LIB-13s PANEL FIX @ `f55678c9`, page `f04d6f63…f015a`):
+  - **D-LIB13S-TBARWRIST:** the 35° extension of the neutral grip (c6) bends out of the side plane, so the side view draws the wrist straight with the fist on the forearm axis.
+  - t_bar_row's zoom moves to k 1.5, the smallest k whose ring holds the 35.69 px Trace (this amends D-LIB13S-ZOOM).
+  - The "Soft knees" box is accepted (F4 5).
+- **PILOT-A3** pin `053d7650` DIFF-CHECK PASS (#362 6548950811).
+- **mx19** (building): hip_abduction (LB6 fix 3 @ `1b62aa9f`, page `8c7ede8a…58db`) and t_bar_row, plus wave 2 if it is ready.
