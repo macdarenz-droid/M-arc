@@ -1,11 +1,11 @@
-// Farmer's carry (dumbbells), side view, figure facing screen right. LIB-22 (LB10, H; NOSECS: no tempo).
+// Farmer's carry (dumbbells), side view, figure facing screen right. LIB-22 (LB10, H; NOSECS lifted at 'LIB-22 resume': the strip word tempo).
 // View: side (card plate.view = census): the tall torso, the long arms at the sides, the shoulders back and down and
 //  the step length are sagittal.
 // Sources: research card docs/research/howto/cards/farmer_s_carry.json (research head 596dbe07): c3 feet about
 //  hip-width, grab each dumbbell (neutral grip); c4 arms fully extended at the sides, tall chest, neutral neck and
 //  spine, torso upright, gaze ahead; c5 shoulders back and down; c6 knees not locked out; c8 short, deliberate steps;
 //  c9 steady and upright, the weights level; c13 thumb wrapped; c18 about 25 % of body weight in each hand; c25
-//  regular-sized steps (the Mistake). Tempo: none (D-LIB22-SECS, NOSECS).
+//  regular-sized steps (the Mistake). Tempo: Walk "Controlled" (D-STRIP-B; strip/rows.json, c4).
 // Clone (D-LIB22-CLONE): barbell_back_squat (the 8: the standing side view), dumbbell_biceps_curl (#109 @ dcac4a38:
 //  the engine dumbbell, SCAP), reverse_lunge (#109: the neutral-grip dumbbells front-to-back, one entry each),
 //  mountain_climbers (#109: one stride of the cycle, the via ghost), kettlebell_swing (the Winter centre of mass with
@@ -160,6 +160,7 @@ export default {
       { key: 'short', text: 'Long stride', anchor: { at: 'knee.r', pose: 'mistake', off: [7, 0] }, box: { left: 224, top: 232 }, cue: 'The stride reaches past a short, deliberate step.' },
     ],
   },
+  tempo: [{ phase: 'Walk', move: true, word: 'Controlled' }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)
   alt: "Farmer's carry, side view. Standing tall with a dumbbell in each hand, arms long at the sides and shoulders back and down, the near foot takes one short step forward.",
 };
 export const info = { QS, QE, QM, DB_KG, pose: Object.fromEntries([['start', start], ['end', end], ['mistake', mistake]].map(([k, p]) => { const lm = landmarksOf(p, H);

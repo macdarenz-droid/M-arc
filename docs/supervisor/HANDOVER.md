@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-30 ~22:00 UTC · main `6cf4ea2a` · **8.0s: resumed after the owner pause; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-30 ~23:30 UTC · main `93c14262` (train 46: LB7 + LB8 resumes) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -814,6 +814,14 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - LIB-21 resume 2 resumed (active LIB builders 1 of 4). The other lanes are WAITING on the supervisor.
   - Panel mx4 is resumed, with burpee added (#331 @ `eecb54fd`, page `5e02f6aa…`). Its set is LB4 round 2, PILOT-A2 round 1 and burpee round 2.
   - A fresh Opus reviewer is on LIB-18 #325 @ `63e8c7be`. Then train 46: LB7 #332 @ `e7f4600a` and LB8 #325.
+- **Update 23:30 UTC (10-30):**
+  - **Train 46 merged** (#341) → main `93c14262`: LB7 resume (#332) and LB8 resume (#325; review PASS 6534550971). No APK.
+  - **Panel mx4: VALID.** Approved: goblet_squat and pistol_squat (LB4), burpee (LB10) and box_jump (PILOT-A2). The PILOT-A2 fix round covers reverse_lunge R11, the rear-delt fly R4 and dumbbell_fly R2/R5/R11.
+  - dumbbell_fly's R11 is a zoom-tool bug: `camera.pitch` is dropped at zoom/inline.mjs:153 and in qa/engine.mjs `cameraOf`. Card **F-ZOOM-PITCH** (D-ZOOM-PITCH) is building in session_01EQuYNkzrLasbikHwrDuKWN.
+  - LB4 (#289) and LB10 (#331) are READY. A reviewer is on #331; #289 is merging main.
+  - LIB-17 resume 2 has started (renegade_row with zoom.pair). The LIB-18 session is archived; glute_bridge is next for LB8 when a slot frees.
+  - The next panel, mx5, takes reverse_lunge and the rear-delt fly (LIB-8R @ `048e153b`, page `ecb8966f…`) plus LB9's superman once it posts.
+  - Usage: 7-day 0.44 at 22:57.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
