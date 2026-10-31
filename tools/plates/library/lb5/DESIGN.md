@@ -686,3 +686,10 @@ then the T rows; their QA counts only after the family rows merge). Stops S1-S5 
     The pad stays at 55° from the floor, and the back and buttocks rest on it (0 cm). The measure is radius 20 with its
     label boxed at {45, 295}, and the `bench` label is boxed at {40, 180}. QA: all 10 hard checks pass; F3 and F4 are
     no longer raised on incline.
+- D-LIB15R2-BARSTART (panel mx10, #349): for `load.primitive: 'barbell'` the CURL template turns the straight start arm
+  forward by the smallest 0.5° step that puts the bar shaft at least 2 plate px in front of the near thigh's outline.
+  That is 11° for all three bar rows. The arm stays straight, the lengths do not change, and the dumbbell start (and so
+  the parent proof) is byte for byte the parent's. The start elbow-pinned check binds the dumbbell start only. ez_bar_curl and reverse_curl's grip
+  boxes move to {270, 130} so their leaders stay 6 px clear of the new start forearm lines. A test pins the smallest
+  step and the 2 px clearance; the parent's flex 0 is red. alternating_dumbbell_curl and incline_dumbbell_curl
+  (approved by mx10 at cf43547c) are pinned in A2; ez_bar_curl and reverse_curl leave the pins for their recheck.

@@ -82,7 +82,24 @@ export function make(params, facts) {
 
   const feet = { l: { at: [FOOT_X, 0, FOOT_Z] }, r: { at: [-FOOT_X, 0, FOOT_Z] } };
   const base = { root: { at: [0, ROOT_Y, 0], tilt: 0 }, trunk: 0, neck: 0, scap: SCAP, wrist: 0, plant: feet };
-  const start = { ...base, shoulder: { flex: SHOULDER_FLEX_START, rot: 0 }, elbow: ELBOW_START };
+  // (template, D-LIB15R2-BARSTART) a bar at the thighs: the straight start arm turns forward by the smallest angle (0.5 deg
+  // steps) that puts the bar shaft at least BAR_CLEAR_PX in front of the near thigh's outline on the plate (the dumbbell
+  // start is the parent's, flex 0)
+  const BAR_CLEAR_PX = 2, PLATE_PXM = 146.29, SHAFT_R = 0.014;
+  const startFlex = (() => {
+    if (!bar) return SHOULDER_FLEX_START;
+    const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
+    const inPoly = (p, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
+    const segD = (p, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], L2 = dx * dx + dy * dy, t = L2 ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L2)) : 0; return Math.hypot(p[0] - a[0] - dx * t, p[1] - a[1] - dy * t); };
+    for (let f = 0; f <= 30; f += 0.5) {
+      const sk = fk(resolve(normPose({ ...base, shoulder: { flex: f, rot: 0 }, elbow: ELBOW_START }, bd), bd).q, bd);
+      const thigh = bodyShapes(sk, probe).find(x => x.key === 'thigh.r').poly, g = probe.P(sk.G.r);
+      const d = inPoly(g, thigh) ? -1 : Math.min(...thigh.map((q, i) => segD(g, q, thigh[(i + 1) % thigh.length])));
+      if (d / 1000 - SHAFT_R >= BAR_CLEAR_PX / PLATE_PXM) return f;
+    }
+    throw new Error('CURL: no start flex up to 30 deg clears the bar from the thigh');
+  })();
+  const start = { ...base, shoulder: { flex: startFlex, rot: 0 }, elbow: ELBOW_START };
   const end = { ...base, shoulder: { flex: SHOULDER_FLEX_END, rot: 0 }, elbow: ELBOW_END };
   const mistakePose = { shoulder: { flex: MIS_FLEX, rot: 0 }, elbow: MIS_ELBOW,   // merged over the end pose: only the arms change
     ...(swing ? { root: { at: [0, ROOT_Y, 0], tilt: drift.tilt }, trunk: drift.trunk } : {}) };   // (swing) and the body rocks back
@@ -154,7 +171,7 @@ export function make(params, facts) {
       { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // feet flat
       { landmark: 'ball.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
       // the elbow stays pinned: on the vertical plane through the shoulder joint (set 1 cm back), start and end
-      ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', plane: { point: [0, 0, SCAP.pro / 100], normal: [0, 0, 1] }, pose, tol: 0.5 })),
+      ...(bar ? ['end'] : ['start', 'end']).map(pose => ({ landmark: 'elbow.r', plane: { point: [0, 0, SCAP.pro / 100], normal: [0, 0, 1] }, pose, tol: 0.5 })),   // (bar) the start arm is turned forward (D-LIB15R2-BARSTART)
       // top: the load centre stays in front of the sternum (hex radius 6 cm + chest line), never inside the chest
       { landmark: 'grip.r', above: { point: [0, 0, 0.072 * H + 0.06], normal: [0, 0, 1] }, pose: 'end' },
       // fault: the elbow drifts at least MIS_MARGIN past the shoulder plane (+z = figure forward; back: -z)

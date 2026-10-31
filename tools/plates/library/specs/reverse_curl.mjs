@@ -11,7 +11,7 @@ import { make } from '../templates/CURL.mjs';
 export const facts = {
   id: 'reverse_curl', name: 'Reverse Curl',
   callouts: [
-    { key: 'palms', text: 'Palms<br>down', anchor: 'grip.r', box: { left: 240, top: 140 }, cue: 'Hold the bar overhand about shoulder-width and keep that grip all the way up.' },
+    { key: 'palms', text: 'Palms<br>down', anchor: 'grip.r', box: { left: 270, top: 130 }, cue: 'Hold the bar overhand about shoulder-width and keep that grip all the way up.' },
     { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', cue: 'Keep a straight line from the hands to the elbows.' },
     { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', box: { left: 80, top: 100 }, cue: 'Keep the upper arms still and the elbows close to the ribs.' },
   ],

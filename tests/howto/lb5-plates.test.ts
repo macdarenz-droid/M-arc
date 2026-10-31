@@ -1058,28 +1058,6 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
       mistakeAlt: 'b095c218eb661c2be5bea019bb13d03272bc67eb37ac38c8fe75652922314da6'
     },
     // LIB-15R2 wave 2, APPROVED by panel mx9 at a87370d2 (page ac6d0cb2640cdb7c24181c9ad872556144b4cbed0152694178a1523b0e90e6ed)
-    'ez-bar-curl': {
-      normalSvg: '27059726cc0dabe1fcf3d817eaeefb20d412efab4b245e32588f88ef07b04a20',
-      normalOverlay: 'c55ace9b63f85b1ab5684acc52a502b2bff7d8c63cf06245f8453853db49e6de',
-      mistakeSvg: 'db43195431a80154520c88ae83341309db1181985ca3e978c4f5a53f6e428147',
-      mistakeOverlay: '0e3c2d2e3d82156e047c905784dd708e71db3b1d358aa2c0fbb7ec9b3c8e0b99',
-      tells: 'd8b33c7cbc1e5591e97757d3beba1169c8a7fbb5ba230a0c9b7cc7e705fcc032',
-      tempo: 'ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3',
-      cues: 'ac87dab96140867517ddbb6112dab313322132ddd9ea26f259800d7b662ca3b2',
-      alt: 'd5fd95d6531dfcb504bf2c0c281c6611c46fa49a9ab315bcc2ba3a10aeecfa2d',
-      mistakeAlt: 'ff94b03c97c4453f05e5429e3a810e1a05353098367ff6da45cbe5a461fc340c'
-    },
-    'reverse-curl': {
-      normalSvg: '2ae338623f5840c1b116d48c2d493b0a6fe607831631bda5b887c39b551cd389',
-      normalOverlay: 'eefeee77fa45eec89af1ab6b3dd62e92a60b1d4eef7c4612cf8a0429478f6acf',
-      mistakeSvg: '442fdcc3df7b71180cc13c77de2fa9571acca3fab9b3be13cb0cc5ed9ce892d5',
-      mistakeOverlay: '9d86cfaa4a9b67290d6b82712c78a771c673f70102b1a4ed49c03e918f792989',
-      tells: '3018d51dec8660e139b1bf1f9f07568d3c846fb69a75bf7880a3daf0ebb74273',
-      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
-      cues: '0d37a623e6d7ecffb85332d585b06a728147a08619bec93f890074434778ec8e',
-      alt: '948a1bf8624c73c992558f0a37832d0eb85b3d01ffb6f0baf7db73b13cb9793a',
-      mistakeAlt: '23a13495de627f011f9883a17261c34a6cb859a3ee302467ed96246d1cad0be5'
-    },
     'hammer-curl': {
       normalSvg: '1a744d520ac1bdc2eb6fbefc867e85d2bb61c87028a3b3d75e63d122a2ea1352',
       normalOverlay: 'ff47dfc80cdd750c537abf66907c93ae68d8da5d28418ce00aa919fc79d37684',
@@ -1112,6 +1090,29 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
       cues: '5379a17449f8b1d598dd217fecf7f2551f156f695f5010f4b5c07e8b8c412c2b',
       alt: '04faf7cfcd5c816a28a39cf2cabdf3e6f9631fec0f760d95a11c60bcfd8be158',
       mistakeAlt: '5b089cc6a36294ff32bbbd044e595a2f7517d3f0f7f7c9449f48379afca69a81'
+    },
+    // LIB-15R2 wave 2 fix round, APPROVED by panel mx10 at cf43547c (page ce1863240c6e870a0c22aa0aa7f35cc7a03808e4d0363577e5ae2bf764713f0d); ez_bar_curl and reverse_curl are re-checked after D-LIB15R2-BARSTART
+    'alternating-dumbbell-curl': {
+      normalSvg: '26293b6330844acff056413532390ddc86a91e25decb029b065b9039bfc5e2c5',
+      normalOverlay: '72411d16285c2a66754e2db12cea9f93407b413f6423733735a17cda8886c97d',
+      mistakeSvg: '25aa8f30490d72ce88fc6cbfda54750756235176506a5ffc8c7217bcf93e0c7d',
+      mistakeOverlay: '2ff439291fdda79175965ff1d97d07dc28acf593ed26e7e5d1dfe50e1bb73317',
+      tells: 'ea56696b83f72f546d09001c36e25c809370369bc7a3b8cc28624b4ac96db41f',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '80a30808f95555ec83bfdf2d76526d6df7047abec262b9688a2bb773eec0ec23',
+      alt: 'eb4f43f3446fef05d8157b10793e37117b4ee6ac08b3c169b671f0b52427927a',
+      mistakeAlt: '54506b31379e27f7e430dde847bf93cba5c2e9ffad3511e58bfc4635a0b52fae',
+    },
+    'incline-dumbbell-curl': {
+      normalSvg: '3122a8bffd0092fbf1e42be2b2ab731059033d357ee2c7dd2786ae44ded8fe73',
+      normalOverlay: '2c704fb41c4d7fa4332fbe70a06630cf0b6a1a81402576d44ea038a9831bfc69',
+      mistakeSvg: '54cbb3268626f3f898485ec40f640b9fca9b4f1cdee641a9ea0ec0cd99a1af98',
+      mistakeOverlay: '56a48242ea7b9c1e8a21faf4b07374fd80b27bfcf83a44e84ff3062260d36cac',
+      tells: 'a58526543420596675a545008be5d76506f615cab701d0edc7b2152a5e43a956',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '662b115e46a9b91f02e3d64a5e6c4f338aea14d3bb68f28911407e907d506242',
+      alt: '99779b441c4a4a8384a9981c45b31a8ffcafe3206ef0d304718d38afbec3c221',
+      mistakeAlt: '8acc3ab2335fa6c010e74e13ec8d48b35eb4ea0930ad8363f2030820f5c22d8e',
     }
   };
   it('each of the 4 approved plates\' 9 fragments on today\'s LB5 page equals its value on page 921cb1d5; mutation: one byte in preacher_curl\'s alt is red', async () => {
@@ -1210,5 +1211,26 @@ describe('LIB-15R2 panel mx9 R1: the CURL elbows-back builder draws the faulty f
     const g = s.mistake.guides, k = g.findIndex((x: any) => x.kind === 'dashed') + 2, a = g[k].pts[0];
     const stretched = { ...s, mistake: { ...s.mistake, guides: g.map((x: any, i: number) => (i === k ? { ...x, pts: x.pts.map((p: number[]) => p.map((v, j) => a[j] + (v - a[j]) * 1.4)) } : x)) } };
     expect(foreGap(stretched)).toBeGreaterThan(1);
+  });
+});
+
+describe('LIB-15R2 D-LIB15R2-BARSTART: a CURL bar starts in front of the thigh', { timeout: T }, () => {
+  /** The bar shaft's clearance in front of the near thigh's outline at the start, in plate px (146.29 px/m). */
+  const clearPx = (spec: any, flex: number) => {
+    const b = { height: 1.75 }, probe = { view: 'side', near: 'r', pxm: 1000, P: (w: number[]) => [w[2]! * 1000, -w[1]! * 1000] };
+    const sk = body.fk(body.resolve(body.normPose({ ...spec.poses.start, shoulder: { ...spec.poses.start.shoulder, flex } }, b), b).q, b);
+    const thigh = body.bodyShapes(sk, probe).find((x: any) => x.key === 'thigh.r').poly, g = probe.P(sk.G.r);
+    const d = inPoly(thigh, g) ? -1 : Math.min(...thigh.map((q: number[], i: number) => segD(g, q, thigh[(i + 1) % thigh.length])));
+    return (d / 1000 - 0.014) * 146.29;
+  };
+  it('each bar row turns its straight start arm forward by the smallest 0.5 deg step that clears the shaft 2 px in front of the thigh; mutation: the parent\'s flex 0 is red', () => {
+    for (const id of ['barbell_curl', 'ez_bar_curl', 'reverse_curl']) {
+      const f = S[id].poses.start.shoulder.flex;
+      expect(f, id).toBeGreaterThan(0);
+      expect(clearPx(S[id], f), id).toBeGreaterThanOrEqual(2);
+      expect(clearPx(S[id], f - 0.5), id).toBeLessThan(2);
+      expect(S[id].poses.start.elbow, id).toBe(0);   // the arm stays straight
+    }
+    expect(clearPx(S.barbell_curl, 0)).toBeLessThan(2);
   });
 });
