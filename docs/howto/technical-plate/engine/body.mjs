@@ -137,7 +137,7 @@ export function fk(q, body) {
   if (q.roll) Rp = mm(rotZ(q.roll), Rp);
   if (q.yaw) Rp = mm(rotY(q.yaw), Rp);
   const hjc = [0, REF.hjcY, 0];
-  let Rt, Lw, thorax, pelvis, Rl = Rp, spine = null;
+  let Rt, Lw, thorax, pelvis, spine = null;
   if (q.spine == null && q.bow == null) {
   const Rt0 = mm(Rp, q.lat ? mm(rotZ(q.lat), rotX(q.trunk)) : rotX(q.trunk));
   Rt = q.trunkYaw ? mm(Rt0, rotY(q.trunkYaw)) : Rt0;
@@ -145,12 +145,12 @@ export function fk(q, body) {
   Lw = pelvis(REF.lumbar);
   thorax = r => add(Lw, mv(Rt, k(sub(r, REF.lumbar))));
   } else {
-    // LIB-SPINE: the hips, legs and thorax hang on the unbowed pelvis frame Rl; `pelvis` (sacrum, buttock, seat and the
-    // outline below the bow zone) is tipped by rotX(bow) about the hip axis. Segments: rotations about the SPINE_PIV
-    // pivots, composed from the top pivot down, so thorax(r) = L + Rt·H·(r - REF.lumbar) still holds.
-    const pelvisL = r => add(q.root, mv(Rl, k(sub(r, hjc))));
-    if (q.bow) Rp = mm(Rl, rotX(q.bow));
-    pelvis = q.bow ? (r => add(q.root, mv(Rp, k(sub(r, hjc))))) : pelvisL;
+    // LIB-SPINE: the hips, legs and thorax hang on the unbowed pelvis frame Rp (the leg IK works in it); `pelvis` (sacrum,
+    // buttock, seat and the outline below the bow zone) is tipped by Rb = Rp·rotX(bow) about the hip axis. Segments:
+    // rotations about the SPINE_PIV pivots, composed from the top pivot down, so thorax(r) = L + Rt·H·(r - REF.lumbar).
+    const pelvisL = r => add(q.root, mv(Rp, k(sub(r, hjc))));
+    const Rb = q.bow ? mm(Rp, rotX(q.bow)) : Rp;
+    pelvis = q.bow ? (r => add(q.root, mv(Rb, k(sub(r, hjc))))) : pelvisL;
     let seg = null;
     if (q.spine) {
       const sp = q.spine, n = SPINE_PIV.length;
@@ -159,11 +159,11 @@ export function fk(q, body) {
         const w = full ? 1 : clamp((r[1] - (SPINE_PIV[i] - SPINE_HW)) / (2 * SPINE_HW), 0, 1);
         if (w > 0) { const pv = [0, SPINE_PIV[i], REF.lumbar[2]]; x = add(pv, mv(segR(i, w), sub(x, pv))); } } return x; };
       let Rs = segR(0, 1); for (let i = 1; i < n; i++) Rs = mm(Rs, segR(i, 1));
-      Rt = mm(Rl, Rs);
+      Rt = mm(Rp, Rs);
       thorax = r => pelvisL(bend(r, true));
       seg = r => pelvisL(bend(r, false));
     } else {
-      const Rt0 = mm(Rl, q.lat ? mm(rotZ(q.lat), rotX(q.trunk)) : rotX(q.trunk));
+      const Rt0 = mm(Rp, q.lat ? mm(rotZ(q.lat), rotX(q.trunk)) : rotX(q.trunk));
       Rt = q.trunkYaw ? mm(Rt0, rotY(q.trunkYaw)) : Rt0;
       const L0 = pelvisL(REF.lumbar);
       thorax = r => add(L0, mv(Rt, k(sub(r, REF.lumbar))));
@@ -197,7 +197,7 @@ export function fk(q, body) {
     Wr[side] = add(E[side], mv(Fa, [0, -WINTER.forearm * H, 0]));
     G[side] = add(Wr[side], mv(Hd, [0, -REF.gripOff * H, 0]));
     Hp[side] = pelvis([s * REF.hjcX, REF.hjcY, 0]);
-    const Th = mm(Rl, thighFrame(s, q.hip[side])), Sk = mm(Th, rotX(q.knee[side])), Ft = mm(Sk, rotX(-q.ankle[side]));
+    const Th = mm(Rp, thighFrame(s, q.hip[side])), Sk = mm(Th, rotX(q.knee[side])), Ft = mm(Sk, rotX(-q.ankle[side]));
     K[side] = add(Hp[side], mv(Th, [0, -WINTER.thigh * H, 0]));
     A[side] = add(K[side], mv(Sk, [0, -WINTER.shank * H, 0]));
     Object.assign(fr.ua, { [side]: Ua }); fr.fa[side] = Fa; fr.hd[side] = Hd; fr.th[side] = Th; fr.sk[side] = Sk; fr.ft[side] = Ft;
