@@ -4527,3 +4527,15 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - dumbbell_fly: the start dumbbells are drawn side-on, and the 30° wrist bend shows as a dashed hand at k 2.5.
   - cable_crunch: the Trace is 33.6 px and the Mistake 29.95 px; the end curl is 102°, kept as card-truth (D-LB9R3-ANGLE).
   - bicycle_crunch stays held (F-BICYCLE-REACH).
+- **PANEL mx15** (focused recheck of LB7 #356 @ `feec1c3c` and LIB-SMALL #358 @ `31863115`) is **VALID**. Both plants were caught: jump_squat R4 [2,2,3] and jumping_jacks R1 [2,2,2]. Every anchor item below 4 is a golden-B follow-up: pull_up R2 is 22 and 26, and lat_pulldown R2 is 21. Verdicts are posted on #356 (6547986860) and #358 (6547988428).
+  - **diamond_push_up: APPROVED.**
+  - Three rows get a second and last focused round (D-LIB13-PANEL2):
+    - pike_push_up R5 [3,3,4]: the arrow goes on the red head's axis, joined by a dashed neck;
+    - jump_squat R1 [4,3,3]: the hands go loosely at the chest (j10) at the drawn arm lengths;
+    - jumping_jacks R5 [4,2,3].
+  - **D-SMALL-JJTURN** (the call 6547258509 sent back): the faulty foot is the solid foot's own outline at the same size, turned about a vertical axis through the heel by the data's angle, with a heel-to-toe axis in the zoom. If that breaks the 0.5 cm contact limit or needs a larger angle, the row is HELD under S2, routed to a fault or view re-pick. Nothing is enlarged.
+- **CARD FIELDS cfsmall** (LB7's 3 cards and LIB-SMALL's 2) is **VALID**. The plant, a body-on-body chest contact on diamond_push_up, was caught. Two findings are real:
+  - **D-CFSMALL-ELEV:** NASM's "elbows at approximately 45 degrees from your body" gives `sh.l.elev` and `sh.r.elev` 45 on incline_push_up (c4; pose start, cardPose end) and on pike_push_up (c3; end/end). This follows D-LIB10-CF1 (incline_barbell_bench_press `sh.r.elev 60`) and the plural rule. H6 decides whether either plate is re-posed. incline's 19.4 value of 44.2° is measured "from the sagittal plane", which is not sh.elev. A re-posed incline_push_up goes back to a focused recheck.
+  - **jump_squat:** delete sole.l (j4). "The mid-foot" is singular, so it gives the near side only (D-LIB22-SIDES).
+- **CARD FIELDS cf13s** (LIB-13s' 4 shrug cards @ `91a4fae6`): the set is building.
+- **mx16** adds LB6 R2 PANEL FIX 2 @ `a74d3a4e` (hip_abduction and hip_adduction; page `8fbab57b…901e`) to LIB-13s wave 1, then shuffles. The LB7 and LIB-SMALL fix-2 rows go to the next set.
