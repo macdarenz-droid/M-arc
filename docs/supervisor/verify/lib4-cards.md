@@ -4562,3 +4562,8 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **#362 6548179400: PILOT-A3 PLAN RULED @ `62450b03`.**
   - The plan stands as proposed.
   - One mutation is added: a trunk that is not exactly `{flex: x}` must change the export hash (it guards the D-A3-REVEXPORT normaliser).
+- **PANEL mx16** (LIB-13s wave 1 round 1 @ `01b66192`, plus LB6 R2 focused round 2 @ `a74d3a4e`) is **VALID**. Plants were caught at hip_adduction R4 [2,2,2] and barbell_shrug R1 [2,2,2]. pull_up R2 [3,3,3] is follow-up 22.
+  - **hip_adduction and barbell_shrug: APPROVED.** LB6 has 8 of 9.
+  - **t_bar_row** fails R1 [3,4,3] (the end reads as a mid-pull because the V grip hangs about 65 px under the bar) and R3 [3,3,4] (the grip runs parallel to the forearm). It gets a fix round: hook the handle under the bar, re-pose the end arm at the drawn lengths with the elbow bent about 85°, and turn the grip perpendicular to the forearm (#359 6548509170).
+  - **hip_abduction** fails R2 [4,3,3]: no pivot is drawn for "Knees at pivot". **D-LIB16R2-PIVOT** (D-LIB13-PANEL3 precedent): one last mechanical round adds the house pivot axle at knee height on each pad arm, with no pose change, then a focused R2 recheck; a fail means HELD (#354 6548507385).
+- **TOPFAULT @ `2edabdf0`** (#362 6548354010): reverse_lunge's blind pass answered `flare`, so the tell stands.
