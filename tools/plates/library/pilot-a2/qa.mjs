@@ -47,7 +47,7 @@ export const tableOf = reports => [
 /** The raised flags per id at the drawn head (LIB-8R Do 4): F5 3.57 on all (D-LIB9-F5); F6 and F7 on the rear-delt fly only
  *  (its side fallback, D-LIB8R-FLIES, and its drawable-false card, decision 9); F2, F3 and F4 as measured, named on the sheet. */
 export const EXPECTED = {
-  lib_box_jump: ['F2', 'F3', 'F4', 'F5'], lib_reverse_lunge: ['F3', 'F4', 'F5'], lib_dumbbell_fly: ['F3', 'F5'],
+  lib_box_jump: ['F2', 'F3', 'F4', 'F5'], lib_dumbbell_fly: ['F3', 'F5'],
   lib_bent_over_dumbbell_rear_delt_fly: ['F2', 'F3', 'F5', 'F6', 'F7'],
 };
 export const F5_EXEMPT = 3.57;

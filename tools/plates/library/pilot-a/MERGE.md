@@ -28,7 +28,7 @@ Held (5), each with `held` in plates.json, no batch row, no chain entry, never e
 | dumbbell_fly | needs a raised foot-end camera (plan 2.8) | dumbbell_fly (LIB-20 pitch) |
 | bent_over_dumbbell_rear_delt_fly | needs a front-view bent-over torso | the rear-delt fly front view |
 | box_jump | no tempo strip without sourced seconds (D-LIB8M-NOSTRIP) | a tempo strip for plates with no sourced seconds |
-| reverse_lunge | the same (D-LIB8M-NOSTRIP) | the same |
+| reverse_lunge | the Mistake arch reads as a trunk shift, not a lumbar arch (panel mx6 on #340, third round; D-LIB8M-CARDTRUE). The strip is now drawn (#309) | F-REVLUNGE-ARCH |
 
 ## b. Tempo (tempo.json)
 

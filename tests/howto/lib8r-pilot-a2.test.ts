@@ -10,7 +10,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
-const IDS = ['box_jump', 'reverse_lunge', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly'];
+const IDS = ['box_jump', 'reverse_lunge', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly'];   // the 4 drawn specs and cards
+const ROWS = ['box_jump', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly'];   // PILOT-A2 rows: reverse_lunge is held (panel mx6, F-REVLUNGE-ARCH)
 const STILL_HELD = ['barbell_shrug', 'incline_dumbbell_press'];   // D-LIB8R-SCOPE: routed to LIB-13s and LB2
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -38,8 +39,8 @@ const variant = async (id: string, edit: (src: string) => string) => {
 describe('LIB-8R A1: the PILOT-A2 rows hold exactly the drawn, unheld ids (D-LIB8R-SCOPE)', () => {
   const problems = (text: string) => {
     const j = JSON.parse(text), bad: string[] = [], ids = Object.keys(j.rows);
-    if (JSON.stringify(ids) !== JSON.stringify(IDS.map(i => `lib_${i}`))) bad.push(`ids ${ids.join(',')}`);
-    for (const id of IDS) if (text.split(`"lib_${id}"`).length !== 2) bad.push(`${id} not exactly once`);
+    if (JSON.stringify(ids) !== JSON.stringify(ROWS.map(i => `lib_${i}`))) bad.push(`ids ${ids.join(',')}`);
+    for (const id of ROWS) if (text.split(`"lib_${id}"`).length !== 2) bad.push(`${id} not exactly once`);
     for (const id of STILL_HELD) if (text.includes(id)) bad.push(`${id} is still held`);
     for (const [id, r] of Object.entries<any>(j.rows)) {
       if (r.mode !== 'H') bad.push(`${id}: mode ${r.mode}`);
@@ -55,15 +56,17 @@ describe('LIB-8R A1: the PILOT-A2 rows hold exactly the drawn, unheld ids (D-LIB
     expect(problems(text())).toEqual([]);
     for (const f of ['rows.json', 'tempo.json', 'sizes.json', 'cards.sha.json']) for (const id of STILL_HELD) expect(readFileSync(`tools/plates/library/pilot-a2/${f}`, 'utf8'), `${f} ${id}`).not.toContain(id);
   });
-  it('each still-held id keeps its held line in pilot-a/plates.json with its route', () => {
+  it('each still-held id keeps its held line in pilot-a/plates.json with its route; reverse_lunge names F-REVLUNGE-ARCH', () => {
     const p = readJson('tools/plates/library/pilot-a/plates.json').plates;
     for (const id of STILL_HELD) expect(p.find((x: any) => x.id === id)?.held, id).toBeTruthy();
+    expect(p.find((x: any) => x.id === 'reverse_lunge')?.held).toMatch(/F-REVLUNGE-ARCH/);
   });
   it('mutations: barbell_shrug added, incline_dumbbell_press added and a duplicated row are red', () => {
     const add = (id: string) => { const j = JSON.parse(text()); j.rows[`lib_${id}`] = { ...j.rows.lib_box_jump, src: `library/specs/${id}.mjs` }; return JSON.stringify(j, null, 1); };
     expect(problems(add('barbell_shrug')).length).toBeGreaterThan(0);
     expect(problems(add('incline_dumbbell_press')).length).toBeGreaterThan(0);
-    expect(problems(text().replace('"lib_reverse_lunge": {', '"lib_box_jump_dup": { "x": "lib_box_jump" },\n  "lib_reverse_lunge": {')).length).toBeGreaterThan(0);
+    expect(problems(text().replace('"lib_dumbbell_fly": {', '"lib_box_jump_dup": { "x": "lib_box_jump" },\n  "lib_dumbbell_fly": {')).length).toBeGreaterThan(0);
+    expect(problems(add('reverse_lunge')).length, 'the held reverse_lunge added').toBeGreaterThan(0);
   });
 });
 
@@ -298,18 +301,18 @@ describe('LIB-8R A5, A10: runQa node half on each PILOT-A2 plate, the zooms, LIB
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
   // F7 is raised only on the drawable-false rear-delt fly (decision 9); F6 only on its side fallback (D-LIB8R-FLIES).
-  const RULED_NODE: Record<string, string[]> = { box_jump: [], reverse_lunge: [], dumbbell_fly: [], bent_over_dumbbell_rear_delt_fly: ['F6', 'F7'] };
+  const RULED_NODE: Record<string, string[]> = { box_jump: [], dumbbell_fly: [], bent_over_dumbbell_rear_delt_fly: ['F6', 'F7'] };
   const ruledProblems = (id: string, r: any) => ['F6', 'F7'].filter(f => r.flags[f].raised !== RULED_NODE[id]!.includes(f)).map(f => `${id}: ${f}`);
-  it.each(IDS)('%s: every node hard check passes with zero exemptions; F6 and F7 are the ruled set', async id => {
+  it.each(ROWS)('%s: every node hard check passes with zero exemptions; F6 and F7 are the ruled set', async id => {
     const r = await qa(await candOf(id));
     expect(node(r)).toEqual([]);
     expect(ruledProblems(id, r)).toEqual([]);
   });
-  it("A6 mutations: box_jump's end sole.l fact moved to the Mistake pose (no check there), and reverse_lunge's fact as sole.l (8 cm off the floor), turn PQ-H6 red", async () => {
-    const bj = await candOf('box_jump'), rl = await candOf('reverse_lunge');
+  it("A6 mutations: box_jump's end sole.l fact moved to the Mistake pose (no check there), and the rear-delt fly's wrist facts moved to the end pose, turn PQ-H6 red", async () => {
+    const bj = await candOf('box_jump'), rd = await candOf('bent_over_dumbbell_rear_delt_fly');
     const f = (c: any, g: (x: any) => any) => ({ ...c, research: { ...c.research, plateFacts: c.research.plateFacts.map(g) } });
     expect(node(await qa(f(bj, (x: any) => (x.landmark === 'sole.l' && x.pose === 'end' ? { ...x, pose: 'mistake' } : x)))).some((k: string) => k.startsWith('H6.fact:'))).toBe(true);
-    expect(node(await qa(f(rl, (x: any) => ({ ...x, landmark: 'sole.l' }))))).toContain('H6.fact:0:contact:sole.l');
+    expect(node(await qa(f(rd, (x: any) => ({ ...x, pose: 'end' })))).some((k: string) => k.startsWith('H6.fact:'))).toBe(true);
   });
   it('A5 mutation: the rear-delt card with topFault set to the drawn key turns the expected set red', async () => {
     const c = await candOf('bent_over_dumbbell_rear_delt_fly'), r = await qa({ ...c, research: { ...c.research, topFault: 'shrug' } });
@@ -321,14 +324,14 @@ describe('LIB-8R A5, A10: runQa node half on each PILOT-A2 plate, the zooms, LIB
     expect(spec('bent_over_dumbbell_rear_delt_fly').zoom).toEqual({ view: 'mistake', k: 2 });
     expect(spec('box_jump').zoom).toBeUndefined();
   });
-  it('A10 mutations: the next k down on dumbbell_fly, the rear-delt fly and reverse_lunge turns H3 red', async () => {
-    for (const [id, k] of [['dumbbell_fly', 1.5], ['bent_over_dumbbell_rear_delt_fly', 1.5], ['reverse_lunge', 2]] as const) {
+  it('A10 mutations: the next k down on dumbbell_fly and the rear-delt fly turns H3 red', async () => {
+    for (const [id, k] of [['dumbbell_fly', 1.5], ['bent_over_dumbbell_rear_delt_fly', 1.5]] as const) {
       const c = await mutated(id, `s => ({ ...s, zoom: { ...s.zoom, k: ${k} } })`);
       expect(node(await qa(c)), id).toContain('H3.zoom:deviation');
     }
   });
-  it('A5 M4 the Mistake equal to the end pose, and M5 the start equal to the end, turn PQ-H3 red (reverse_lunge, box_jump)', async () => {
-    expect(node(await qa(await mutated('reverse_lunge', 's => ({ ...s, mistake: { ...s.mistake, pose: {}, guides: [] }, zoom: undefined })')))).toContain('H3.mistake-outline');
+  it('A5 M4 the Mistake equal to the end pose, and M5 the start equal to the end, turn PQ-H3 red (box_jump)', async () => {
+    expect(node(await qa(await mutated('box_jump', 's => ({ ...s, mistake: { ...s.mistake, pose: {}, guides: [] } })')))).toContain('H3.mistake-outline');
     expect(node(await qa(await mutated('box_jump', 's => ({ ...s, poses: { ...s.poses, start: s.poses.end, via: [] }, checks: s.checks.filter(k => k.pose !== "start") })')))).toContain('H3.start-is-end');
   });
 });

@@ -170,3 +170,11 @@ with zero exemptions, and the flags equal the expected set.
 - The page is `14c8e3585d8ab1c94445aa00cf7a8dedf21011d5b3cbd29190d7214c18e5d3bf`. Only reverse_lunge's Mistake fragments
   changed: box_jump, dumbbell_fly and the rear-delt fly are byte-identical to `048e153b`. reverse_lunge's normal plate is
   unchanged (A7).
+
+## 10. reverse_lunge held (panel mx6, #340 6539264024)
+
+Round 3 failed: R5 [3,3,3] and R11 [3,4,3] @ `531213f7`. reverse_lunge is held under D-LIB8M-CARDTRUE and has left
+pilot-a2/rows.json. Its held line in pilot-a/plates.json and MERGE.md section a names the route, F-REVLUNGE-ARCH: a local
+lumbar bow from the sacrum, drawn with the engine's spine segments, with the head and upper back on the solid outline,
+then the ring at the waist's back edge. Its spec, card, quotes, tempo and size rows stay as drawn, for that card.
+PILOT-A2 now pins box_jump and the rear-delt fly, plus dumbbell_fly once it passes after F-ZOOM-PITCH.

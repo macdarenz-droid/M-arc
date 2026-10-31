@@ -1,5 +1,5 @@
 {
- "note": "PILOT-A2 build-ahead rows (LIB-8R, D-LIB8R-BATCH): pilot A's held rows, stage drawing or review only, never in batches/ before the pin (Do 7). All H, census view. censusRef: the census commit (claude/howto-options), as pilot A's.",
+ "note": "PILOT-A2 build-ahead rows (LIB-8R, D-LIB8R-BATCH): pilot A's held rows, stage drawing or review only, never in batches/ before the pin (Do 7). All H, census view. censusRef: the census commit (claude/howto-options), as pilot A's. reverse_lunge is held after panel mx6 (its held line is in pilot-a/plates.json; route F-REVLUNGE-ARCH) and is not a PILOT-A2 row.",
  "batch": "PILOT-A2",
  "censusRef": "4a9fd86",
  "rows": {
@@ -8,15 +8,6 @@
    "slug": "box-jump",
    "prefix": "box-jump",
    "chromeId": "box-jump",
-   "mode": "H",
-   "stage": "drawing",
-   "view": "side"
-  },
-  "lib_reverse_lunge": {
-   "src": "library/specs/reverse_lunge.mjs",
-   "slug": "reverse-lunge",
-   "prefix": "reverse-lunge",
-   "chromeId": "reverse-lunge",
    "mode": "H",
    "stage": "drawing",
    "view": "side"
