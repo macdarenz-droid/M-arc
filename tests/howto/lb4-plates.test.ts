@@ -1133,12 +1133,16 @@ describe('LIB-14 panel lb4p fix round (#289 6410190090): items 1-7 on drawn item
 
 describe('LIB-14 panel mx1 second round (#289 6414220426, D-LIB13-PANEL2): goblet_squat draw order, pistol_squat heel', { timeout: T }, () => {
   /** goblet_squat item 1: in the end layer the near hand (fist.r) is drawn after the dumbbell's discs, so it shows over them. */
-  const handOverDb = (spec: any) => { const v = plate.renderPlate(spec, { id: 'x' }).svg; return v.lastIndexOf('<use href="#x-e-fist.r"/>') > v.lastIndexOf('class="disc"'); };
-  it('item 1: goblet_squat draws the near hand and forearm over the dumbbell (draw order only: no joint moves); mutation: the dumbbell back at z front is red', () => {
+  // The end layer's order: the dumbbell's discs come after the trunk and the far hand, and before the near hand (z 'mid').
+  const handOverDb = (spec: any) => { const v = plate.renderPlate(spec, { id: 'x' }).svg, disc = v.lastIndexOf('class="disc"');
+    return disc > v.lastIndexOf('<use href="#x-e-torso"/>') && disc > v.lastIndexOf('<use href="#x-e-fist.l"/>') && v.lastIndexOf('<use href="#x-e-fist.r"/>') > disc; };
+  it('item 1: goblet_squat draws the near hand and forearm over the dumbbell (draw order only: no joint moves); mutations: the dumbbell at z front, or at z back, is red', () => {
     const s = S.goblet_squat;
     expect(handOverDb(s)).toBe(true);
     const front = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && r.part === 'db' ? { ...r, z: 'front' } : r; } : e)) };
     expect(handOverDb(front)).toBe(false);
+    const back = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && r.part === 'db' ? { ...r, z: 'back' } : r; } : e)) };
+    expect(handOverDb(back)).toBe(false);   // review Low (6537218246): the dumbbell behind the trunk is red
   });
   /** pistol_squat item 2: the lifted foot's whole outline as a dashed guide (over the solid foot), and a red arrow from
    *  the floor up to the lifted heel's height, standing behind the heel. */
