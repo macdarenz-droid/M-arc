@@ -1097,3 +1097,42 @@ describe('LIB-15R2 A8: the H modes are card-true (drawn items)', { timeout: T },
     expect(dbAxisX(endOn, 'end')).toBe(1);
   });
 });
+
+describe('LIB-15R2 A5, A6: the templates and the T rows\' params', { timeout: T }, () => {
+  let CURL: any, PUSH: any, ranges: any, derive: any;
+  beforeAll(async () => {
+    [CURL, PUSH, ranges, derive] = await Promise.all(['templates/CURL.mjs', 'templates/PUSHDOWN.mjs', 'qa/param-ranges.mjs', 'derive.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+  }, T);
+  const tplOf = (name: string) => (name === 'CURL' ? CURL : PUSH);
+  it('each facts schema is closed: a poses, equipment or checks key, or an unknown builder, throws; the parent facts build', () => {
+    for (const t of [CURL, PUSH]) {
+      expect(() => t.make(t.parentParams, t.parentFacts)).not.toThrow();
+      for (const k of ['poses', 'equipment', 'checks', 'camera']) expect(() => t.make(t.parentParams, { ...t.parentFacts, [k]: {} }), k).toThrow(/facts schema/);
+      expect(() => t.make(t.parentParams, { ...t.parentFacts, mistake: { ...t.parentFacts.mistake, builder: 'kick' } })).toThrow(/builder/);
+      expect(() => t.make({ ...t.parentParams, 'grip.width': 0.4 }, t.parentFacts)).toThrow(/not read/);
+    }
+  });
+  it('each T spec is make(row.params, facts) with its row\'s template; mutation: a T spec built with other params differs', () => {
+    for (const [id, r] of Object.entries(T_ROWS)) {
+      const m = M[id], t = tplOf(r.template);
+      expect(JSON.stringify(m.default), id).toBe(JSON.stringify(t.make(r.params, m.facts)));
+    }
+    const b = M.barbell_curl;
+    expect(JSON.stringify(CURL.make({ 'load.primitive': 'barbell' }, b.facts))).not.toBe(JSON.stringify(b.default));
+  });
+  it('A6: every T row param lies in its family row on main, with its own card claim; mutations: bar.kind rope, a param with no claim and params {} are red', () => {
+    const fam = ranges.loadRanges();
+    const problems = (id: string, r: any) => {
+      const out: string[] = [], card = readJson(`docs/research/howto/cards/${id}.json`), claimIds = card.claims.map((c: any) => c.id);
+      const bad = derive.paramProblems(r.params, fam[r.template]); out.push(...bad.map((b: string) => `${id}: ${b}`));
+      for (const k of Object.keys(r.params ?? {})) if (!claimIds.includes(r.paramClaims?.[k])) out.push(`${id}: ${k} has no claim`);
+      return out;
+    };
+    const rows = readJson('tools/plates/library/lb5/rows.json').rows;
+    for (const id of Object.keys(T_ROWS)) expect(problems(id, rows[`lib_${id}`]), id).toEqual([]);
+    const sb = rows.lib_straight_bar_triceps_pushdown;
+    expect(problems('straight_bar_triceps_pushdown', { ...sb, params: { 'bar.kind': 'rope' } })).toEqual(['straight_bar_triceps_pushdown: bar.kind: rope is not an allowed value']);
+    expect(problems('barbell_curl', { ...rows.lib_barbell_curl, paramClaims: { 'load.primitive': 'c1' } })).toEqual(['barbell_curl: stance.width has no claim']);
+    expect(problems('ez_bar_curl', { ...rows.lib_ez_bar_curl, params: {} })[0]).toMatch(/none given/);
+  });
+});
