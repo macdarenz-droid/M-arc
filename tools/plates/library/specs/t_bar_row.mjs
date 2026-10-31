@@ -11,7 +11,9 @@
 //  straddling the bar; a vendor vHandle hooked under the bar 9 in (22.9 cm, the midpoint of c1's 8-10 in) from the
 //  plates, behind them (c24), hanging under the bar to the hands.
 // Geometry decisions (confirmed by the engine report `angles` and `checks`):
-//  Feet: mid-soles 45 cm apart (about shoulder width, c2: this body's shoulder width), toes out 5 deg.
+//  Feet (LIB-13s D-LIB13S-TBARFEET): mid-soles 38 cm apart, toes out 17 deg: the widest stance the engine plants within
+//   0.5 cm (0.4 cm; upright_row's form). c2's "about shoulder width" is 45 cm on this body, but 45 cm with toes out 5 deg
+//   lifts the foot 1.0 cm (H1.engine). The side view drops x (plate.mjs:44-45), so the width does not show.
 //  Trunk and legs are one held hinge in start and end: thorax TRUNK_INCL 80 deg from vertical (chest parallel, c3;
 //   "near parallel", c24) = pelvis 77 + lumbar 3 (back straight); knees KNEE 20 deg (slightly bent, c2); the root
 //   ROOT_Z 15 cm behind mid-foot, its height SOLVED for the knee angle (bracket 0.5-0.935).
@@ -28,17 +30,19 @@
 //  Plate: one 10 lb iron plate per side, 228 mm by 31 mm, the same drawing convention as landmine_row (card gaps; c23:
 //   smaller plates give more range; Rogue Machined Olympic Plates "10LB: 228MM"; D-LIB13-LANDMINE-2 2).
 //  Mistake (c7): the back rounds over the bar: the pelvis tucks M_TUCK and the lumbar spine flexes M_SPINE
-//   (illustrative; the card gives no number), the hips and feet held; the bar comes up on its circle until the plate
-//   meets the rounded torso (the same rule). A dashed hump guide shows the round (romanian_deadlift's method).
-// Unsourced numbers: TOE_OUT 5, TRUNK_INCL 80, SPINE 3, KNEE 20, ROOT_Z -0.15, ARM_BACK 10, HOOK 9 in (c1's midpoint),
-//  HANDLE_L 0.22 (the vendor vHandle), CLEAR 5 mm, PRO_START 2 / PRO_END -4 cm, WRIST -35 (convention), M_TUCK 30,
+//   (illustrative; the card gives no number), the hips and feet held; the bar comes up on its circle until the bar,
+//   hook ring, a grip or a plate corner comes within 2 px of the rounded torso and head (LIB-13s D-LIB13S-CLEAR: c23
+//   names the plates at the end, not the bar over a rounded back). A dashed hump guide shows the round (romanian_deadlift's method).
+//  Zoom (LIB-13s D-LIB13S-ZOOM): a normal-view circle at k 3 on the handle's Trace with the spec's own trim (27.23 px).
+// Unsourced numbers: FOOT_X 0.19, TOE_OUT 17, TRUNK_INCL 80, SPINE 3, KNEE 20, ROOT_Z -0.15, ARM_BACK 10, HOOK 9 in (c1's midpoint),
+//  HANDLE_L 0.22 (the vendor vHandle), CLEAR 5 mm, CLEAR_M 2 px, PRO_START 2 / PRO_END -4 cm, WRIST -35 (convention), M_TUCK 30,
 //  M_SPINE 40, HUMP 8 cm; the landmine sizes (eq/landmine.mjs header); the plate (convention above).
 import { bodyShapes, fk, landmarksOf, normPose, resolve } from '../engine.mjs';
 import { LANDMINE, LANDMINE_ITEMS, alongBar, barFrame, hingeAt, landmine } from '../eq/landmine.mjs';
 import { perItem } from '../eq/parts.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-const FOOT_X = 0.2266, TOE_OUT = 5;
+const FOOT_X = 0.19, TOE_OUT = 17;   // D-LIB13S-TBARFEET: the widest stance the engine plants within 0.5 cm (0.4 cm)
 const TRUNK_INCL = 80, SPINE = 3, KNEE = 20, ROOT_Z = -0.15;
 const ARM_BACK = 10, CLEAR = 0.005, WRIST = -35;
 // Shoulder to grip centre at full reach as the engine's IK measures it with the wrist bent back WRIST deg (body.mjs
@@ -104,9 +108,9 @@ export const plateCorners = hook => {
 };
 // The bar's surface from the hook to its free end (every 2 cm, the sleeve's radius), the plate's corners, the hook ring
 // and the grips: everything that rises with the handle must stay CLEAR off the drawn outline.
-const risingPts = a => {
+const risingPts = (a, step = 0.02) => {
   const h = hookAt(a), { n } = barFrame(PIVOT, h), out = [...plateCorners(h), gripAt(a), [0, h[1] - RING_DROP - 0.02, h[2]]];
-  for (let s = S_HOOK - 0.1; s <= LANDMINE.barLen; s += 0.02) for (const sg of [1, -1]) out.push(alongBar(PIVOT, h, s).map((v, i) => v + sg * n[i] * LANDMINE.sleeveD / 2));
+  for (let s = S_HOOK - 0.1; s <= LANDMINE.barLen; s += step) for (const sg of [1, -1]) out.push(alongBar(PIVOT, h, s).map((v, i) => v + sg * n[i] * LANDMINE.sleeveD / 2));
   return out;
 };
 const clearAt = (polys, a) => Math.min(...risingPts(a).map(p => outside(polys, p))) - CLEAR;
@@ -125,8 +129,22 @@ const end = { ...end0, reach: hands(END_GRIP, POLE_UP()) };
 const via = [{ ...body(ROOT_Y, (PRO_START + PRO_END) / 2), reach: hands(gripAt((A0 + END_A) / 2), [-0.4, -0.3, -1]) }];
 
 const M_TUCK = 30, M_SPINE = 40;
-const mist0 = body(ROOT_Y, PRO_END, TRUNK_INCL - SPINE - M_TUCK, M_SPINE), LM0 = landmarksOf(mist0, H), OM0 = outlineOf(mist0);
-const MIST_A = firstContact(a => clearAt(OM0, a));
+// The Mistake stops when the bar, hook ring, grips or plate come within 2 px (D-LIB13S-CLEAR: c23's contact names the
+// plates at the card's end, not the bar over a rounded back), measured on the drawn outline: the engine's Catmull-Rom
+// spline through the torso and head polygons, sampled 8 times per span, the bar every 1 mm.
+const CLEAR_M = 2 / 146.29;
+const cr = (ps, k = 8) => {
+  const n = ps.length, g = i => ps[(i + n) % n], out = [];
+  for (let i = 0; i < n; i++) {
+    const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    for (let j = 0; j < k; j++) { const t = j / k, u = 1 - t;
+      out.push([0, 1].map(d => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d])); }
+  }
+  return out;
+};
+const mist0 = body(ROOT_Y, PRO_END, TRUNK_INCL - SPINE - M_TUCK, M_SPINE), LM0 = landmarksOf(mist0, H), OM0 = outlineOf(mist0).map(P => cr(P));
+const MIST_A = firstContact(a => Math.min(...risingPts(a, 0.001).map(p => outside(OM0, p))) - CLEAR_M);
 const mistakePose = { root: mist0.root, trunk: M_SPINE, reach: hands(gripAt(MIST_A), POLE_UP()) };
 
 const HUMP = 0.08;
@@ -177,6 +195,7 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 2, parts: ['arm.r'] },
   trace: { point: 'grip.r', trim: [10, 12] },
+  zoom: { view: 'normal', k: 3 },   // D-LIB13S-ZOOM: the handle's path (grip.r) with the spec's own trim
   callouts: [
     { key: 'chest', text: 'Chest<br>parallel', anchor: 'backUpper', box: { left: 258, top: 116 }, cue: 'Keep your back straight and your chest level with the floor.' },
     { key: 'knees', text: 'Soft knees', anchor: 'knee.r', cue: 'Keep your knees slightly bent and your hips hinged back.' },
@@ -195,5 +214,5 @@ export default {
     ],
   },
   pilot: { note: 'plate size: drawing convention (228 mm)' },
-  alt: 'T-bar row, side view. Standing over a bar pinned at a floor pivot behind, a V-handle hooked under it near the plates, hinged with the chest level and the knees soft, the lifter pulls the handle from straight arms toward the lower chest until the plates meet the torso, driving the elbows back.',
+  alt: 'T-bar row, side view. Standing over a bar pinned at a floor pivot behind, a V-handle hooked under it near the plates, hinged with the chest level and knees soft, the lifter pulls the handle from straight arms toward the lower chest, elbows driving back, until the plates meet the torso.',
 };

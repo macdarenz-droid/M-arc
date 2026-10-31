@@ -134,5 +134,84 @@
     }
    ]
   }
+ },
+ "lib13s": {
+  "note": "LIB-13s (DESIGN.md 16.2): the same rule (D-LIB8M-TEMPO); research a48b059400a74d5c9e3aceed21cf1aa67ab6f118. smith_machine_shrug: the card's 1 s bottom pause (c11) sits between the lowering and the shrug, outside pause; it is named here and not drawn.",
+  "constants": {},
+  "ids": {
+   "barbell_shrug": {
+    "claim": "c7",
+    "rows": [
+     {
+      "phase": "Lift",
+      "from": "up",
+      "move": true
+     },
+     {
+      "phase": "Lower",
+      "from": "down",
+      "move": true
+     }
+    ]
+   },
+   "dumbbell_shrug": {
+    "claim": "c11",
+    "rows": [
+     {
+      "phase": "Lift",
+      "from": "up",
+      "move": true
+     },
+     {
+      "phase": "Hold",
+      "from": "pause"
+     },
+     {
+      "phase": "Lower",
+      "from": "down",
+      "move": true
+     }
+    ]
+   },
+   "cable_shrug": {
+    "claim": [
+     "c7",
+     "c16"
+    ],
+    "rows": [
+     {
+      "phase": "Lift",
+      "from": "up",
+      "move": true
+     },
+     {
+      "phase": "Hold",
+      "from": "pause"
+     },
+     {
+      "phase": "Lower",
+      "from": "down",
+      "move": true
+     }
+    ]
+   },
+   "smith_machine_shrug": {
+    "claim": [
+     "c11"
+    ],
+    "rows": [
+     {
+      "phase": "Lift",
+      "from": "up",
+      "move": true
+     },
+     {
+      "phase": "Lower",
+      "from": "down",
+      "move": true
+     }
+    ]
+   }
+  }
  }
 }

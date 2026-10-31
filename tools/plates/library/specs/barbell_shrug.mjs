@@ -19,8 +19,9 @@
 //  Grip (c1): hands 50 cm apart (GRIP_X, about shoulder width, outside the thighs). Arms straight (c4): IK reach at
 //   full arm length less 0.1 mm (elbow 2 deg), elbow pole back; measure at the elbow, value 'straight' (the card
 //   gives no angle, so no expect).
-//  Bar in front of the thighs (c4): bar centre on the front surface of the drawn thigh (engine body shape, sampled at
-//   the bar's height) plus the 14 mm shaft radius plus 3 mm, solved per pose, so the bar rests on the thighs at the
+//  Bar in front of the thighs (c4): bar centre on the front of the drawn body (both thighs and the torso, engine body
+//   shapes, sampled at the bar's height) plus the 14 mm shaft radius plus BAR_GAP 15 mm (2 px at plate scale,
+//   LIB-13s D-LIB13S-CLEAR; was 3 mm on the near thigh alone), solved per pose, so the bar hangs in front of the thighs at the
 //   start and slides up them at the top (the hand `contacts` prove the grips are on it). ~2 cm in front of mid-foot.
 //  Camera (round 3, R7): reference scale 146.29 px/m (x0 176, y0 339), the approved plates' scale, so head, feet
 //   and floor line all fit; flag F1 (the earlier 250 px/m zoom that cut the legs at the knees) is dropped. The 5 cm
@@ -39,12 +40,13 @@
 //   arrow runs from the correct bar up to it.
 //  Mistake: the card's top fault, rolling the shoulders (c3), is a rotation the engine cannot draw (card
 //   drawable: false, flag F7). Drawn: the card's drawable fault, bent arms pulling the bar up (c4): the elbows bend
-//   and the bar rides M_PULL = 15 cm higher up the thighs (still on the thigh surface, hands on it by IK). M_PULL is
+//   and the bar rides M_PULL = 15 cm higher up the thighs (15 mm in front of the drawn body, hands on it by IK). M_PULL is
 //   illustrative: the card gives no number. Guides: an arrow on the bar (end -> faulty height) and a dashed line
 //   along the bent arm (shoulder -> elbow -> wrist), because the engine masks the faulty forearm where it crosses the
 //   torso and only the elbow poking out behind the back would show (an arc-arrow at the elbow was tried: clutter).
 //   The construction lines (start contour, start bar dot) are left off the Mistake plate.
-// CARD: GRIP_X (c1, about shoulder width), tempo (c7). Unsourced numbers: SHRUG (card: "as high as possible"),
+// Zoom (LIB-13s D-LIB13S-ZOOM): a normal-view circle at k 3.5 on the Trace (24.54 px; k 3 gives 21.02, under 22.11).
+// CARD: GRIP_X (c1, about shoulder width), tempo (c7). Unsourced numbers: SHRUG (card: "as high as possible"), BAR_GAP,
 //  KNEE_SOFT (card: "slightly bent", no angle), FOOT_X (card gives no stance), M_PULL (illustrative fault size).
 import { WINTER, REF, landmarksOf, bodyShapes, fk, resolve, normPose } from '../engine.mjs';
 
@@ -53,7 +55,7 @@ const FOOT_X = 0.10;                                   // mid-sole lateral offse
 const KNEE_SOFT = 5;                                   // deg: knees slightly flexed
 const GRIP_X = 0.25;                                   // hand centre lateral offset: slightly wider than shoulder width
 const SHRUG = 5;                                       // cm shoulder-girdle elevation at the top (CARD)
-const BAR_R = 0.014, BAR_GAP = 0.003;                  // 28 mm shaft; bar surface 3 mm off the drawn thigh line
+const BAR_R = 0.014, BAR_GAP = 0.015;                  // 28 mm shaft; bar surface 15 mm off the drawn body front (2 px, D-LIB13S-CLEAR)
 const ARM = (WINTER.upperArm + WINTER.forearm + REF.gripOff) * H - 0.0001;  // arms straight (elbow 2 deg)
 
 const FOOT_Z = REF.mid * H;
@@ -76,19 +78,22 @@ const cr = (ps, k = 8) => {
 };
 const shapesOf = pose => bodyShapes(fk(resolve(normPose(pose, bd), bd).q, bd), probe)
   .map(s => ({ key: s.key, pts: s.key.includes('cap') ? s.poly : cr(s.poly) }));
-// Front (max z) of the drawn near thigh at height y (m).
-function thighFront(pose, y) {
-  const th = shapesOf(pose).find(s => s.key === 'thigh.r').pts, py = -y * 1000;
+// Front (max z) of the drawn body at height y (m): both thighs and the torso (LIB-13s D-LIB13S-CLEAR; the near thigh
+// alone let the Mistake bar sit inside the belly).
+const FRONT_KEYS = ['thigh.r', 'thigh.l', 'torso'];
+function bodyFront(pose, y) {
+  const py = -y * 1000;
   let z = -Infinity;
-  th.forEach((a, i) => { const b = th[(i + 1) % th.length];
-    if ((a[1] - py) * (b[1] - py) <= 0 && a[1] !== b[1]) z = Math.max(z, a[0] + (b[0] - a[0]) * (py - a[1]) / (b[1] - a[1])); });
+  for (const th of shapesOf(pose).filter(s => FRONT_KEYS.includes(s.key)).map(s => s.pts))
+    th.forEach((a, i) => { const b = th[(i + 1) % th.length];
+      if ((a[1] - py) * (b[1] - py) <= 0 && a[1] !== b[1]) z = Math.max(z, a[0] + (b[0] - a[0]) * (py - a[1]) / (b[1] - a[1])); });
   return z / 1000;
 }
 // Key pose for a shrug height: bar on the thighs, arms straight (fixed point: bar height depends on its z).
 function key(elev) {
   const p = { ...base, scap: { elev, pro: 0 } }, S = landmarksOf(p, H)['shoulder.r'], dx = GRIP_X - Math.abs(S[0]);
   let z = 0.10, y = 0;
-  for (let i = 0; i < 6; i++) { y = S[1] - Math.sqrt(ARM * ARM - dx * dx - (z - S[2]) ** 2); z = thighFront(p, y) + BAR_R + BAR_GAP; }
+  for (let i = 0; i < 6; i++) { y = S[1] - Math.sqrt(ARM * ARM - dx * dx - (z - S[2]) ** 2); z = bodyFront(p, y) + BAR_R + BAR_GAP; }
   y = S[1] - Math.sqrt(ARM * ARM - dx * dx - (z - S[2]) ** 2);
   const pole = s => [s * 0.3, 0, -1];
   return { ...p, reach: { l: { at: [GRIP_X, y, z], pole: pole(1) }, r: { at: [-GRIP_X, y, z], pole: pole(-1) } } };
@@ -123,7 +128,7 @@ const START_SHOULDERS = hiddenShoulders();
 // Mistake (card plate.mistake, c4): elbows bend to pull the bar M_PULL higher up the thighs (bar kept on the thigh).
 const M_PULL = 0.15;                                   // m, illustrative: the card gives no number
 const mistakePose = (() => {
-  const p = { ...end }, y = end.reach.r.at[1] + M_PULL, z = thighFront(p, y) + BAR_R + BAR_GAP, pole = s => [s * 0.3, 0, -1];
+  const p = { ...end }, y = end.reach.r.at[1] + M_PULL, z = bodyFront(p, y) + BAR_R + BAR_GAP, pole = s => [s * 0.3, 0, -1];
   return { reach: { l: { at: [GRIP_X, y, z], pole: pole(1) }, r: { at: [-GRIP_X, y, z], pole: pole(-1) } } };
 })();
 
@@ -170,6 +175,7 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 0 },
   trace: { point: 'shoulderTop.r', trim: [0, 0] },
+  zoom: { view: 'normal', k: 3.5 },   // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.r), the smallest ladder k over the Trace bar
   // Two levels bracket the 5 cm rise: shoulder top at the start and at the top (R7: small at full-figure scale).
   datum: [{ y: 'start:shoulderTop.r', from: 60, to: 'start:shoulderTop.r' }, { y: 'shoulderTop.r', from: 60, to: 'shoulderTop.r', mistake: false }],
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'straight' },

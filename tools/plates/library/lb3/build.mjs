@@ -84,12 +84,20 @@ export const SHEET = {
   lib_back_extension: { tier: 'A', class: 'Roman chair, 45° (romanChair, single use); support class', anchor: 'romanian_deadlift',
     critic: 'approved, recheck @ 423acc1 (D-LIB13-PANEL1); bytes unchanged at 8781ed0 and a6f4bd0',
     notes: ['Support anchor: one_arm_dumbbell_row, shown above (D-LIB13-SUPPORT). Redrawn if that anchor is rejected'] },
+  // LIB-13s wave 1 (lib-13s-card; DESIGN.md section 16)
+  lib_t_bar_row: { tier: 'A', class: 'landmine rig, second user (H; D-LIB13S-MODES)', anchor: 'barbell_row',
+    critic: 'LIB-13s wave 1: not yet reviewed',
+    notes: ['Plate size: drawing convention (228 mm), the 10 lb plate (D-LIB13-TBAR)', 'Zoom: normal view, k 3, on the handle path (D-LIB13S-ZOOM)',
+      'Feet 38 cm apart, toes out 17°: the widest stance the engine plants within 0.5 cm; the side view does not show width (D-LIB13S-TBARFEET)'] },
+  lib_barbell_shrug: { tier: 'A', class: 'shrug, standing (H; SHRUG not built, D-LIB13S-MODES)', anchor: 'upright_row',
+    critic: 'LIB-13s wave 1: not yet reviewed',
+    notes: ['Zoom: normal view, k 3.5, on the 5 cm shrug (D-LIB13S-ZOOM)', 'Bar 15 mm in front of the body: the 2 px clearance (D-LIB13S-CLEAR)',
+      'Mistake drawn as bent arms (c4): rolling (c3) cannot be drawn (D-LIB13S-TOPFAULT)'] },
 };
 export const SHEET_HELD = [
-  ['t_bar_row', 'the bar end moves too little to read side-on at plate scale; waits for the LIB-ZOOM convention (D-LIB13-TBAR; F-LB3-6)'],
-  ['dumbbell_shrug', 'the shrug zoom (D-LIB8-shrug; LIB-13s)'],
-  ['cable_shrug', 'the shrug zoom (D-LIB8-shrug; LIB-13s)'],
-  ['barbell_shrug', 'held on pilot A; moves with the shrugs (D-LIB13-PA; LIB-13s)'],
+  ['dumbbell_shrug', 'LIB-13s wave 2: drawn from barbell_shrug\'s approved bytes (D-LIB13S-WAVES)'],
+  ['cable_shrug', 'LIB-13s wave 2: drawn from barbell_shrug\'s approved bytes (D-LIB13S-WAVES)'],
+  ['smith_machine_shrug', 'LIB-13s wave 2: drawn from barbell_shrug\'s approved bytes (D-LIB13S-WAVES)'],
 ];
 /** Each open choice with its recommended option (owner delegation of 10-24: the supervisor decides). */
 export const SHEET_DECISIONS = [
@@ -102,7 +110,9 @@ export const SHEET_DECISIONS = [
   { name: 'Landmine anchor', state: 'landmine_row anchors the new landmine rig; its later user t_bar_row is held (D-LIB13-LANDMINE). Options: (i) approve the anchor; (ii) reject it. Recommended: (i): approved in the panel at 59d3d78, bytes unchanged since. Supervisor decides.' },
 ];
 const QA_LINE = {
-  F2: f => `Figure cover ${+f.value.toFixed(3)}, approved ${f.range.map(v => +v.toFixed(3)).join('-')}. Named flag (#274 6267110489)`,
+  F2: f => `Figure cover ${+f.value.toFixed(3)}, approved ${f.range.map(v => +v.toFixed(3)).join('-')}. Named flag (#274 6267110489; D-LIB13S-FLAGS)`,
+  F3: f => `Longest leader ${+f.value.toFixed(2)} px, approved ${f.range.map(v => +v.toFixed(2)).join('-')}. Named flag (D-LIB13S-FLAGS)`,
+  F4: f => `Hand-placed label boxes ${f.value}, approved ${f.range.join('-')}: every label is placed by the engine. Named flag (D-LIB13S-FLAGS)`,
   F5: f => `Tell contrast ${f.value}, minimum ${f.min} (the selected Mistake tell in Midnight, D-LIB9-F5)`,
   F7: f => `Mistake draws '${f.value}'; the card's top fault is '${f.expect}' (drawable-fault rule; needs a named yes)`,
 };

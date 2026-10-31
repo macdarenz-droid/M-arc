@@ -393,10 +393,12 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
 
 | id | held by | ruling | until |
 |---|---|---|---|
-| dumbbell_shrug | LIB-13s | D-LIB8-shrug; D-LIB13-SHRUG (ruling 6) | LIB-ZOOM's convention is ruled and extended to the shrugs |
-| cable_shrug | LIB-13s | D-LIB8-shrug; D-LIB13-SHRUG | as above |
-| t_bar_row | LIB-13s (LIB-ZOOM small-motion question) | D-LIB13-TBAR; D-LIB13-LANDMINE-2 route 3; D-LIB8M-CARDTRUE | the LIB-ZOOM convention is ruled (F-LB3-6) |
-| barbell_shrug | pilot A held (pilot-a/plates.json @ `48d49bb`), then LIB-13s | D-LIB8-shrug; D-LIB13-PA | as above |
+| dumbbell_shrug | LIB-13s wave 2 | D-LIB8-shrug; D-LIB13S-WAVES (ruling 9) | barbell_shrug's wave-1 approval; drawn from its approved bytes (section 16) |
+| cable_shrug | LIB-13s wave 2 | D-LIB8-shrug; D-LIB13S-WAVES | as above |
+| smith_machine_shrug | LIB-13s wave 2 (an LB6 id drawn with its parent) | D-LIB13S-LANE; D-LIB13S-WAVES | as above |
+
+t_bar_row and barbell_shrug left this table in LIB-13s wave 1: both are released with normal-view zooms (D-LIB13S-ZOOM,
+section 16) and are rows in `lb3/rows.json`.
 
 ## 14. Risks and mitigations
 
@@ -513,8 +515,8 @@ bodyShapes, arms and fists left out), 2 px = 1.37 cm at 146.29 px/m, in every dr
 | id | part | start | end | Mistake | status |
 |---|---|---|---|---|---|
 | barbell_shrug | bar shaft (r 14 mm) | 2.19 px (thigh.l) | 2.19 px (thigh.l) | 2.17 px (torso) | tested; main had 0.44 / 0.44 / −3.26 |
-| t_bar_row | bar surface, hook ring, grips (torso and head) | 28.14 | 5.96 | 2.01 (bar, at the head) | tested; main's Mistake 0.47 |
-| t_bar_row | plate corners | 19.75 | 0.46 | 3.24 | tested except the end: c23's contact, the one exception |
+| t_bar_row | bar surface from the hook out, hook ring, grips (torso and head) | 28.14 | 5.96 | 2.00 (bar, at the head) | tested; main's Mistake 0.47 |
+| t_bar_row | plate | 19.75 | 0.46 | 3.24 | tested except the end: c23's contact, the one exception |
 | dumbbell_shrug | end-on hex (11.9 cm) to the thigh, front view | 2.57 [est] | 3.07 [est] | 4.07 [est] | tested, hands at ±0.26 m (±0.25: 1.10) |
 | cable_shrug | bar shaft | 2.19 [est] | 2.19 [est] | 2.17 [est] | tested |
 | smith_machine_shrug | bar end (r 2.5 cm) to the thighs | ≥ 2 [est] | ≥ 2 [est] | ≥ 2 [est] | tested, rail z ≥ 0.122 m |
@@ -524,7 +526,7 @@ pivot to the hook, which runs between the straddled legs (c24; −7.4 to −9.7 
 cable and column (the cable passes in front of the legs in depth); smith_machine_shrug's rails, hook rail, carriage,
 stops, frame and base.
 
-t_bar_row's Mistake rule: the rise stops at the first angle where the bar surface (every 5 mm), the hook ring, the
+t_bar_row's Mistake rule: the rise stops at the first angle where the bar surface (every 1 mm), the hook ring, the
 grips or a plate corner comes within 2 px of the drawn torso and head outline (spline). The end keeps c23's first
 contact at CLEAR 5 mm on the raw outline (unchanged).
 

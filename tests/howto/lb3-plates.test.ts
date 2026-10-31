@@ -14,7 +14,12 @@ const LB3 = ['pendlay_row', 't_bar_row', 'landmine_row', 'one_arm_dumbbell_row',
   'sumo_deadlift', 'back_extension'];
 const IDS = LB3.map(i => `lib_${i}`);
 const REUSED = ['barbell_row', 'romanian_deadlift', 'single_leg_romanian_deadlift', 'upright_row'];
-const SHRUGS = ['dumbbell_shrug', 'cable_shrug', 'barbell_shrug'];
+const SHRUGS = ['dumbbell_shrug', 'cable_shrug', 'barbell_shrug', 'smith_machine_shrug'];
+// LIB-13s (lib-13s-card A1; D-LIB13S-MODES): the ids it releases into lb3/rows.json (all H, wave 1), and the shrugs it
+// still holds. LIB-13's own blocks keep reading drawn() (its 7 approved ids).
+const RELEASED = ['t_bar_row', 'barbell_shrug'];
+const HELD_SHRUGS = SHRUGS.filter(id => !RELEASED.includes(id));
+const VIEW13S: Record<string, string> = { dumbbell_shrug: 'front' };
 const ROWS = 'tools/plates/library/lb3/rows.json';
 const RESEARCH_HEAD = '892d6516c4dcd88f7b7e22b8cbbf19dc762a8342';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -60,10 +65,10 @@ const pathLm = (spec: any, t: number) => {
 const tenths = Array.from({ length: 11 }, (_, k) => k / 10);
 const deg = (a: number[], b: number[]) => Math.atan2(Math.abs(b[2]! - a[2]!), Math.abs(b[1]! - a[1]!)) * 180 / Math.PI;   // from vertical, side plane
 
-// Held (D-LIB13-TBAR, #274 comment 6265616772: t_bar_row cannot pass PQ-H3 card-true at any real plate size): its spec
-// exists for LIB-13s; it has no row (D-LIB8M-PAGESET).
+// Held by LIB-13 (D-LIB13-TBAR, #274 comment 6265616772: t_bar_row could not pass PQ-H3 card-true at plate scale). LIB-13s
+// releases it with a zoom (D-LIB13S-ZOOM, RELEASED above); LIB-13's blocks below still exclude it from drawn().
 const HELD = ['t_bar_row'];
-/** The LB3 ids whose spec file exists and that are not held (drawn), in LB3 order. */
+/** LIB-13's drawn ids: the LB3 ids whose spec file exists and that LIB-13 did not hold, in LB3 order. */
 const drawn = () => LB3.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`) && !HELD.includes(id));
 
 describe('LIB-13 A5: lb3/rows.json holds exactly the drawn, non-held LB3 ids', () => {
@@ -74,18 +79,18 @@ describe('LIB-13 A5: lb3/rows.json holds exactly the drawn, non-held LB3 ids', (
     for (const k of keys) if (!want.includes(k!)) bad.push(`extra ${k}`);
     return bad;
   };
-  const want = () => drawn().map(i => `lib_${i}`);
+  const want = () => [...drawn(), ...RELEASED].map(i => `lib_${i}`);
   it('each drawn id exactly once in the raw text, nothing else; no reused id or shrug in any LB3 file', () => {
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
     for (const f of readdirSync('tools/plates/library/lb3')) {
       const text = readFileSync(join('tools/plates/library/lb3', f), 'utf8');
-      for (const id of [...REUSED, ...SHRUGS]) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id} as a row`).toBe(false);
+      for (const id of [...REUSED, ...HELD_SHRUGS]) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id} as a row`).toBe(false);
     }
-    for (const id of SHRUGS) expect(new RegExp(`\\b(lib_)?${id}\\b`).test(readFileSync(ROWS, 'utf8')), id).toBe(false);
+    for (const id of HELD_SHRUGS) expect(new RegExp(`\\b(lib_)?${id}\\b`).test(readFileSync(ROWS, 'utf8')), id).toBe(false);
   });
   it('each held id is in DESIGN.md\'s held table with its ruling and in no rows file', () => {
     const design = readFileSync('tools/plates/library/lb3/DESIGN.md', 'utf8'), table = design.slice(design.indexOf('## 13. Held ids'));
-    for (const id of [...HELD, 'dumbbell_shrug', 'cable_shrug', 'barbell_shrug']) {
+    for (const id of HELD_SHRUGS) {
       expect(new RegExp(`^\\| ${id} \\| [^|]+ \\| [^|]*D-LIB[^|]+ \\|`, 'm').test(table), id).toBe(true);
       expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
     }
@@ -107,7 +112,7 @@ describe('LIB-13 A5: lb3/rows.json holds exactly the drawn, non-held LB3 ids', (
     for (const [id, r] of Object.entries<any>(j.rows)) {
       expect(r.src).toBe(`library/specs/${id.slice(4)}.mjs`);
       expect(r.chromeId).toBe(id.slice(4).replace(/_/g, '-'));
-      expect(r.view).toBe('side');
+      expect(r.view).toBe(VIEW13S[id.slice(4)] ?? 'side');
       expect([r.mode, r.parent, r.template, r.params], id).toEqual(['H', undefined, undefined, undefined]);
     }
     expect(j).toMatchObject({ batch: 'LB3', censusRef: '4a9fd86' });
@@ -128,7 +133,7 @@ describe('LIB-13 A9: nothing ships (D-LIB13-AHEAD)', { timeout: T }, () => {
   });
   it('no LB3 drawn id or shrug is shipped, even with lb3/rows.json read as a batch file', () => {
     const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
+    expect(rows.filter((r: any) => [...IDS, ...RELEASED.map(i => `lib_${i}`)].includes(r.id)).length).toBe(drawn().length + RELEASED.length);
     expect(reg.shippedIds(rows).filter((i: string) => [...IDS, ...SHRUGS.map(s => `lib_${s}`)].includes(i))).toEqual([]);
   });
   /** An id or its slug as a whole token in a file's name or text. */
@@ -1148,4 +1153,391 @@ describe('LIB-13 A15: the Mistake clears the solid end figure, and every tier-A 
   it('mutation: one tier-A R10 item removed is red', () => {
     expect(r10Problems({ ...R10, sumo_deadlift: R10.sumo_deadlift!.slice(1) })).toEqual(['sumo_deadlift: 2 checks for 3 items']);
   });
+});
+
+// ---- LIB-13s (lib-13s-card @ dd30aa1a; rulings D-LIB13S-1 to -10, lib4-cards §48; DESIGN.md section 16): the shrugs and
+// t_bar_row, all H with normal-view zooms. Wave 1: barbell_shrug and t_bar_row. ----
+describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d4c on main 6b32d576)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the 7 approved plates on main's LB3 page 6ff09d4c…08c6 (D-LIB13-PANEL1-3): 63 fragments.
+  const APPROVED: Record<string, Record<string, string>> = {
+    "pendlay-row": {
+      "normalSvg": "c47a5e46c6cae0a308d786196e2c007f9fda8b03bb5af327742ca57d46bc1c3c",
+      "normalOverlay": "4b424626b2dbd508f85db62cbd0ffe21506a6be8f3ff4fd7427ebd382bc002b5",
+      "mistakeSvg": "b1531ffe142c04e198a690964c24bc9af0a77dd7f69a4279e048137e300c4e62",
+      "mistakeOverlay": "f028d20677d7709f71e6a1d48424ebcb3aae1bce911bdcaaea288117da0c80d0",
+      "tells": "1396470914bdfa0d3abc107be8a103ad4916548fd82c07bbacdbd4a6d4f3972f",
+      "tempo": "6d54e989adeb68a11dee835225371ccc6f605797fdeff858e574210cc4f2b219",
+      "cues": "2d6c7cf3e8dd390c9f5a05a56684f2d7d36c12ae3821d2234dc458dccd29b894",
+      "alt": "65412e50ffc46f0b4f78265a953cffe5566e1c9a7c9211d0aecee422ee0d2e9a",
+      "mistakeAlt": "59f9b9bb1f39f85536bd306f831b8030b67732d7a828f973c14ce36475dc4590"
+    },
+    "landmine-row": {
+      "normalSvg": "ba794202e2211ec4a599581485245d65a2cc2e4ea8a6511b0afe98f1cf297677",
+      "normalOverlay": "07e549d3a9a686b545af202dd7f05db135135cc2c3dd82ed317a1eb1dc682ca3",
+      "mistakeSvg": "37780c55527471d5eb3e0f98a5275746489889d4ea99ae045b9b749fdf7d6494",
+      "mistakeOverlay": "e3e5a35f79d607204f35992daff2656e2e708e518b8051a06e91b161aa25ef37",
+      "tells": "f515ae721b28b8a4edd93baf6e89e3146c49ae7ce3b3e8ee9135ee1a3e6d9df7",
+      "tempo": "85464aff27287f56375923a2ea166aab9e5aab3fac8821ace0063acb9b3a3e0f",
+      "cues": "acfbd56978554b4a72ff3d67e4e7372ddac090560d0d297be0f9aa1ec684210e",
+      "alt": "62ecca60452f962b3e4e5234186a67162a6608024a0d56e401e50ebb3da33a47",
+      "mistakeAlt": "8d7f941c7ea660773b1572dc4884e058b13437dc191c91f6144ebac444c3e158"
+    },
+    "one-arm-dumbbell-row": {
+      "normalSvg": "4bb20c3d141733f389b2c100c1b4fe7df1fd5c28d787015a04adbff91dff3466",
+      "normalOverlay": "880027edac5bd42c9e3efb28b5173fff83681732e860b0d89235d2ee2402acdf",
+      "mistakeSvg": "2dc08147f5865e93d2075ba11648b5370f8aef7e6c457df7e5e21fb85ce2ebc2",
+      "mistakeOverlay": "175a7442fe23358b7ae59138ed6b260c24015d04f4216375e072dc2b0f621410",
+      "tells": "b666789c21305b66eee9157ce009a2cece7b27dedfb58a236d843b968a0cfe99",
+      "tempo": "20977979ba2d5b41227e085fd7f83ef86468ab3e175170f6b056cd3dad40b579",
+      "cues": "cc9a1ddf74bf2d8efae0769f36c548c9b95db75331d15a650c29d6902ae38872",
+      "alt": "db9324702c44f4f7937d8380891ebfa4d54ab883770ecc1427edc28f2f9a33c4",
+      "mistakeAlt": "d771c0785ceebae45ea330788f553fb08a7b6cc5525d06ce4b52be9d9378f0be"
+    },
+    "dumbbell-romanian-deadlift": {
+      "normalSvg": "27c5aed23d94529cd082c51faea8d6d2fda1bafd1769196984b9c0cf62680273",
+      "normalOverlay": "5a34f3ad897d0d21dde658b7bb409c10b122ae9c1d37382dd84897fbce50793e",
+      "mistakeSvg": "6a98456d2836e5f0503f7bfdb144d5217c22489596f40d86bd5c2a6d53d8329a",
+      "mistakeOverlay": "69bf07d50cd124b6839053092065a397af4dfac338fe4d67791aadce0ade120f",
+      "tells": "c62dec6cd8c7d223ca7c7d063358b69c16172c0081907d7ddf498de319d66c83",
+      "tempo": "d779228da386025e8d7f2ba40e2cd2eeb7440d2dcd29882ce9633f0e2d38d8ee",
+      "cues": "fc56926595fb2b9aa778a32581768352af833e3a7c7264de2780fedfec001cbe",
+      "alt": "cc9662d04e98944b44097c31b7e112601e0bdbd432a8c061a3368bc431232026",
+      "mistakeAlt": "c37ad885da61232cf876b5e6fd9c9c9dea577166bd97a88a8eeae36fa83720d5"
+    },
+    "conventional-deadlift": {
+      "normalSvg": "d74f187edf5266561e372bcfeaa5c4e70063b9c30d27cce2b6f8c25a1436cb13",
+      "normalOverlay": "f935bc9ef0e0f27c74b7cdbd0c8b8fdb77926d3d543808d98683adc8de367bda",
+      "mistakeSvg": "e32b06f7e0cfb951da7b388c136d482cbd15c5be6d59d2a22bea737143d5d6c3",
+      "mistakeOverlay": "07786e0e182eba798fc0eb8f6dbb5e03cbfbce8f623ee504798d62456be38d41",
+      "tells": "76d338722edb81af2e914ad09e4cf07f6f5f3a0bfbe4e9404b63e1042163ce44",
+      "tempo": "37010198d446f18f117df876fee4dc108ccbdbe147775b8c915f627e8611d468",
+      "cues": "a453740cfa767b5d5a3227b8834009eb63aa6bd402e85a5e73d630d341957018",
+      "alt": "efa5eafa680cfb7607ff314efa56b0d76bb35acf30cd3364523727824523c7d6",
+      "mistakeAlt": "2d6d1d4c634533ebdd4a6c0802a3f797f56479abd0b4a516ac3c92904fca2a05"
+    },
+    "sumo-deadlift": {
+      "normalSvg": "9a2f2b0e2a325dc698d0acdff5a59c203cef3013f9b230610601bf686f50868a",
+      "normalOverlay": "87101be011d94c7212ea7a710cf4b05ab97eabab45dcef76680296d025b777bb",
+      "mistakeSvg": "da50e75c5094ff2476f3be0685b24f9cdb1c1c3c6a83b9c0137b2b5586a3acc4",
+      "mistakeOverlay": "bbb6d492d7107a6d080b9f51da800e55678069b25cef2777cc5169b4f1e478b5",
+      "tells": "09075a3625dea0c893795e6b758e8992ab92e904971970a35676b82c49288095",
+      "tempo": "37010198d446f18f117df876fee4dc108ccbdbe147775b8c915f627e8611d468",
+      "cues": "52ed45d9aa7ced257552fba1deffd42f417ccd25191d0c1be311f5d71c8577c3",
+      "alt": "5c36d71989166b93a4710d9b40f731139745478b97447cb53cb256b2bb51b285",
+      "mistakeAlt": "895f31a0b03531fc67e465902ca503c30d508eb1f10ff57f7fbb3d6b16ee33ac"
+    },
+    "back-extension": {
+      "normalSvg": "6635c051ae842d46dcde7119c6c33316bce1e5e1effac15c01b7a982196ce074",
+      "normalOverlay": "c2cdee31297c4503157fa82a234bbeaaa2aece737c63f0d394e831dc148bfc6f",
+      "mistakeSvg": "1a2de143b2123d7a4dfaaddb6b5bcf2905e099cf10916aedaa84da8543145163",
+      "mistakeOverlay": "7de203341dba44d0b708b33ac3ed43823235c71205d422d561651653bdce90a5",
+      "tells": "0be502a8c45b495594a60aac16a604e4ba58f6cff133693abe26e96c393e9fb5",
+      "tempo": "b76e5404da881272ff155a64336f76dc60a8e1d99d60e3abac0b3c3cd27ab2e6",
+      "cues": "d4031709c54c6ee7ea7e49ad7fbe10810e51a10ece2a4fcad5143f903323f311",
+      "alt": "bbffa4ff5cc2132e7ca48c9ce849e8d02925af71104155374e3322ca6fa1b9fb",
+      "mistakeAlt": "f611081c93f0cf420ae8067963c4431623bacf7e7f7288cb4c851e345b5064b5"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb3/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('63 fragments of the 7 approved plates on this head equal main\'s, and the 7 alone still build page 6ff09d4c', async () => {
+    expect(Object.values(APPROVED).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(63);
+    expect(fragProblems((await build.buildLb3Page()).html.toString('utf8'))).toEqual([]);
+    const seven = (await build.buildLb3Page({ ids: drawn().map(i => `lib_${i}`) })).html;
+    expect(build.sha256(seven)).toBe('6ff09d4c144f90d7210f951eb23fe81b42f55d20478bc4b8bb1d2b3980d008c6');
+  });
+  it("mutation: one byte changed in landmine_row's alt is red", async () => {
+    const html = (await build.buildLb3Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'landmine-row');
+    expect(fragProblems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('landmine-row alt');
+  });
+});
+
+describe('LIB-13s A1: the released rows are H with no parent, template or params; held shrugs have no row', () => {
+  const rowProblems = (rows: Record<string, any>) => Object.entries(rows).flatMap(([id, r]) =>
+    [r.mode !== 'H' ? `${id}: mode ${r.mode}` : null, ...['parent', 'template', 'params'].filter(k => k in r).map(k => `${id}: ${k}`)].filter(Boolean));
+  it('every LB3 row is H, the released ids are rows, and no held shrug is', () => {
+    const rows = readJson(ROWS).rows;
+    expect(rowProblems(rows)).toEqual([]);
+    for (const id of RELEASED) expect(rows[`lib_${id}`]?.src, id).toBe(`library/specs/${id}.mjs`);
+    for (const id of HELD_SHRUGS) expect(rows[`lib_${id}`], id).toBeUndefined();
+  });
+  it("mutations: a row set to 'T', and a row given a parent, are red", () => {
+    const rows = readJson(ROWS).rows;
+    expect(rowProblems({ ...rows, lib_barbell_shrug: { ...rows.lib_barbell_shrug, mode: 'T' } })).toEqual(['lib_barbell_shrug: mode T']);
+    expect(rowProblems({ ...rows, lib_t_bar_row: { ...rows.lib_t_bar_row, parent: 'lib_landmine_row' } })).toEqual(['lib_t_bar_row: parent']);
+  });
+});
+
+describe('LIB-13s wave 1: zooms, card-true poses and the 2 px clearance (A3, A4, A5)', { timeout: T }, () => {
+  const PX = 146.29, CLEAR_PX = 2, LADDER = [1.5, 2, 2.5, 3, 3.5, 4], TRACE = 22.11;
+  const W: Record<string, any> = {}, MOD: Record<string, any> = {};
+  let Z: any, QZ: any;
+  beforeAll(async () => {
+    Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); QZ = await import(/* @vite-ignore */ lib('qa/zoom.mjs'));
+    for (const id of RELEASED) { MOD[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); W[id] = MOD[id].default; }
+  }, T);
+  /** The spec rebuilt from its own source with each [from, to] replaced once (a constant mutation), imports made absolute. */
+  const variant = async (id: string, pairs: [string, string][]) => {
+    let src = readFileSync(`tools/plates/library/specs/${id}.mjs`, 'utf8');
+    for (const [a, b] of pairs) { expect(src.split(a).length - 1, a).toBe(1); src = src.replace(a, b); }
+    src = src.replace(/from '\.\.\/([^']+)'/g, (_m, f) => `from '${lib(f)}'`);
+    const dir = mkdtempSync(join(tmpdir(), 'lb3s-var-')), file = join(dir, `${id}.mjs`);
+    writeFileSync(file, src);
+    try { return await import(/* @vite-ignore */ `file://${file}`); } finally { rmSync(dir, { recursive: true, force: true }); }
+  };
+  // ---- the drawn body outline: the engine's Catmull-Rom spline through bodyShapes (8 samples a span), in metres ----
+  const cr = (ps: number[][], k = 8) => { const n = ps.length, g = (i: number) => ps[(i + n) % n]!, out: number[][] = [];
+    for (let i = 0; i < n; i++) { const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+      const c1 = [p1[0]! + (p2[0]! - p0[0]!) / 6, p1[1]! + (p2[1]! - p0[1]!) / 6], c2 = [p2[0]! - (p3[0]! - p1[0]!) / 6, p2[1]! - (p3[1]! - p1[1]!) / 6];
+      for (let j = 0; j < k; j++) { const t = j / k, u = 1 - t; out.push([0, 1].map(d => u * u * u * p1[d]! + 3 * u * u * t * c1[d]! + 3 * u * t * t * c2[d]! + t * t * t * p2[d]!)); } }
+    return out; };
+  const ARMS = /^(upper|elbowcap|fore|fist|shcap)\./;
+  const outline = (pose: any, keep: (k: string) => boolean) => { const b = { height: 1.75 }, cam = { view: 'side', near: 'r', pxm: 1, P: (w: number[]) => [w[2]!, w[1]!] };
+    return body.bodyShapes(body.fk(body.resolve(body.normPose(pose, b), b).q, b), cam).filter((s: any) => keep(s.key)).map((s: any) => (s.key.includes('cap') ? s.poly : cr(s.poly))); };
+  const inP = (P: number[][], q: number[]) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const a = P[j]!, b = P[i]!;
+    if ((b[1]! > q[1]!) !== (a[1]! > q[1]!) && q[0]! < a[0]! + (b[0]! - a[0]!) * (q[1]! - a[1]!) / (b[1]! - a[1]!)) c = !c; } return c; };
+  const sd = (q: number[], a: number[], b: number[]) => { const d = [b[0]! - a[0]!, b[1]! - a[1]!], L2 = d[0]! ** 2 + d[1]! ** 2 || 1;
+    const t = Math.max(0, Math.min(1, ((q[0]! - a[0]!) * d[0]! + (q[1]! - a[1]!) * d[1]!) / L2)); return Math.hypot(q[0]! - a[0]! - d[0]! * t, q[1]! - a[1]! - d[1]! * t); };
+  /** Signed clearance in plate px of the side-plane point w (world) less radius r from the polys: negative inside. */
+  const clearPx = (polys: number[][][], w: number[], r = 0) => { const q = [w[2]!, w[1]!];
+    let best = Infinity, ins = false;
+    for (const P of polys) { if (inP(P, q)) ins = true; for (let i = 0; i < P.length; i++) best = Math.min(best, sd(q, P[i]!, P[(i + 1) % P.length]!)); }
+    return ((ins ? -best : best) - r) * PX; };
+  const poseOf = (s: any, p: string) => (p === 'mistake' ? { ...s.poses.end, ...s.mistake.pose } : s.poses[p]);
+  /** Densely sampled points along a drawn poly's edges (every 5 mm). */
+  const edgePts = (pts: number[][]) => pts.flatMap((a, i) => { const b = pts[(i + 1) % pts.length]!, n = Math.max(1, Math.ceil(dist(a, b) / 0.005));
+    return Array.from({ length: n }, (_, k) => a.map((v, j) => v + (b[j]! - v) * k / n)); });
+
+  // ---- A5: barbell_shrug's bar shaft against both thighs and the torso ----
+  const shrugBar = (s: any) => Object.fromEntries(['start', 'end', 'mistake'].map(p => {
+    const bar = itemsIn(s, p, { mistake: p === 'mistake' }).items.find((x: any) => x.type === 'pulley' && x.part === 'bar');
+    return [p, +clearPx(outline(poseOf(s, p), k => !ARMS.test(k)), bar.at, bar.r).toFixed(2)];
+  }));
+  it('A5 barbell_shrug: the drawn bar shaft clears the body outline by 2 px in every drawn pose (2.19 / 2.19 / 2.17)', () => {
+    const c = shrugBar(W.barbell_shrug);
+    expect(c).toEqual({ start: 2.19, end: 2.19, mistake: 2.17 });
+    for (const v of Object.values(c)) expect(v).toBeGreaterThanOrEqual(CLEAR_PX);
+  });
+  it("A5 mutations: barbell_shrug's BAR_GAP back to 3 mm (0.44 px), and its bar solved on the near thigh alone (the Mistake inside the torso), are red", async () => {
+    const gap = shrugBar((await variant('barbell_shrug', [['BAR_GAP = 0.015', 'BAR_GAP = 0.003']])).default);
+    expect(gap.start).toBeCloseTo(0.44, 1); expect(gap.start).toBeLessThan(CLEAR_PX);
+    const thigh = shrugBar((await variant('barbell_shrug', [["const FRONT_KEYS = ['thigh.r', 'thigh.l', 'torso'];", "const FRONT_KEYS = ['thigh.r'];"], ['BAR_GAP = 0.015', 'BAR_GAP = 0.003']])).default);
+    expect(thigh.mistake).toBeLessThan(0);
+  });
+
+  // ---- A5: t_bar_row: the bar from the hook out, the hook ring, the grips and the plate against the torso and head ----
+  const tbarClear = (m: any) => {
+    const s = m.default, out: Record<string, any> = {};
+    for (const p of ['start', 'end', 'mistake']) {
+      const { items, lm } = itemsIn(s, p, { mistake: p === 'mistake' }), polys = items.filter((x: any) => x.type === 'poly' && !x.part);
+      const handle = items.find((x: any) => x.type === 'vHandle'), ring = [0, handle.at[1] + handle.length, handle.at[2]];
+      const sh = outline(poseOf(s, p), k => k === 'torso' || k === 'head'), P0 = m.TBAR.pivot;
+      const bar = [...edgePts(polys[0].pts), ...edgePts(polys[1].pts)].filter((w: number[]) => dist(w, P0) >= m.TBAR.sHook - 0.1);
+      const min = (ws: number[][]) => Math.min(...ws.map(w => clearPx(sh, w)));
+      out[p] = { bar: min(bar), ring: min([ring]), grips: min([lm.grips]), plate: min(edgePts(polys[2].pts)) };
+    }
+    return out;
+  };
+  it('A5 t_bar_row: every rising part clears the torso and head by 2 px in every drawn pose, except the end plate (c23: first contact)', () => {
+    const c = tbarClear(MOD.t_bar_row);
+    console.log(`LIB-13s t_bar_row clearance px: ${JSON.stringify(c)}`);
+    for (const p of ['start', 'end', 'mistake']) for (const k of ['bar', 'ring', 'grips', 'plate']) {
+      if (p === 'end' && k === 'plate') { expect(c.end.plate).toBeGreaterThanOrEqual(0); expect(c.end.plate).toBeLessThan(1); continue; }
+      expect(c[p][k], `${p} ${k}`).toBeGreaterThanOrEqual(CLEAR_PX);
+    }
+    expect(c.mistake.bar).toBeLessThan(2.1);   // the Mistake stops at the first 2 px, not later
+  });
+  it("A5 mutation: t_bar_row's Mistake back to CLEAR 5 mm on the raw outline (0.47 px) is red", async () => {
+    const m = await variant('t_bar_row', [['const MIST_A = firstContact(a => Math.min(...risingPts(a, 0.001).map(p => outside(OM0, p))) - CLEAR_M);', 'const MIST_A = firstContact(a => clearAt(outlineOf(mist0), a));']]);
+    expect(tbarClear(m).mistake.bar).toBeLessThan(CLEAR_PX);
+  });
+
+  // ---- A4: card-true poses ----
+  const elbowBend = (lm: any) => { const u = [0, 1, 2].map(i => lm['shoulder.r'][i] - lm['elbow.r'][i]), w = [0, 1, 2].map(i => lm['wrist.r'][i] - lm['elbow.r'][i]);
+    return 180 - Math.acos(u.reduce((a, v, i) => a + v * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w)) * 180 / Math.PI; };
+  const shrugProblems = (s: any) => {
+    const L = qaEng.poseLandmarks(Eng(), s).lm, out: string[] = [], rise = (L.end['shoulder.r'][1] - L.start['shoulder.r'][1]) * 100;
+    if (Math.abs(rise - 5) > 0.2) out.push(`shoulder rise ${rise.toFixed(2)} cm`);
+    for (const p of ['start', 'end']) if (elbowBend(L[p]) > 5) out.push(`${p}: elbow bent ${elbowBend(L[p]).toFixed(1)} deg`);
+    return out;
+  };
+  it('A4 barbell_shrug: the shoulder joint rises 5 cm (±0.2), and the arms stay straight (elbow 5 deg or less) at the start and end (c2, c4)', () => {
+    expect(shrugProblems(W.barbell_shrug)).toEqual([]);
+  });
+  it('A4 mutation: the shrug set to 7 cm is red', async () => {
+    expect(shrugProblems((await variant('barbell_shrug', [['const SHRUG = 5;', 'const SHRUG = 7;']])).default)).toEqual([expect.stringMatching(/^shoulder rise 7\.0\d cm$/)]);
+  });
+  const tbarProblems = (m: any) => {
+    const s = m.default, out: string[] = [], pivots: number[][] = [];
+    for (const p of ['start', 'end', 'mistake']) {
+      const { items } = itemsIn(s, p, { mistake: p === 'mistake' });
+      pivots.push(items.find((x: any) => x.type === 'pulley').at);
+      const handle = items.find((x: any) => x.type === 'vHandle'), ring = [0, handle.at[1] + handle.length, handle.at[2]];
+      const bar = items.filter((x: any) => x.type === 'poly' && !x.part), plate = bar[2].pts, P0 = m.TBAR.pivot;
+      const u = [0, 1, 2].map(i => (bar[1].pts[1][i] - bar[0].pts[0][i])), uL = Math.hypot(...u), along = (w: number[]) => [0, 1, 2].reduce((a, i) => a + (w[i]! - P0[i]!) * u[i]! / uL, 0);
+      const toPlate = Math.min(...plate.map(along)) - along(ring), inch = toPlate / 0.0254;
+      if (!(inch >= 8 && inch <= 10)) out.push(`${p}: hook ${inch.toFixed(2)} in from the plates`);
+    }
+    if (pivots.some(q => dist(q, pivots[0]!) * PX > 1)) out.push('pivot moves');
+    if (Math.abs(pivots[0]![1]! - 0.07) > 1e-9) out.push('pivot off the hinge height');
+    const L = qaEng.poseLandmarks(Eng(), s).lm;
+    for (const p of ['start', 'end']) { const a = deg(L[p].sacrum, L[p].neck); if (!(a >= 75 && a <= 90)) out.push(`${p}: back ${a.toFixed(1)} deg from vertical`); }
+    const r = plate.renderPlate(s, { id: 'x' }).report;
+    for (const [p, cs] of Object.entries<any>(r.contacts)) for (const c of cs) if (c.kind === 'foot' && c.errCm > 0.5) out.push(`${p}: foot.${c.side} plant ${c.errCm} cm`);
+    return out;
+  };
+  it('A4 t_bar_row: one pivot (±1 px) on the hinge in every pose, the hook 8-10 in from the plates (c1), the chest-parallel back (c3), feet planted within 0.5 cm', () => {
+    expect(tbarProblems(MOD.t_bar_row)).toEqual([]);
+  });
+  it("A4 mutations: the hook at 6 in, and the feet back at 0.2266 m with toes out 5 deg (1.0 cm), are red", async () => {
+    expect((tbarProblems(await variant('t_bar_row', [['const HOOK = 0.229,', 'const HOOK = 0.1524,']]))).some(p => /hook 6\.\d+ in/.test(p))).toBe(true);
+    expect(tbarProblems(await variant('t_bar_row', [['const FOOT_X = 0.19, TOE_OUT = 17;', 'const FOOT_X = 0.2266, TOE_OUT = 5;']]))).toContain('start: foot.l plant 1 cm');
+  });
+
+  // ---- A3: the zooms ----
+  const WANT: Record<string, any> = { barbell_shrug: { view: 'normal', k: 3.5 }, t_bar_row: { view: 'normal', k: 3 } };
+  const PIN: Record<string, number> = { barbell_shrug: 24.54, t_bar_row: 27.23 };
+  const noZoom = (s: any) => ({ ...s, zoom: undefined });
+  const zoomProblems = (id: string, s: any) => {
+    const out: string[] = [...Z.zoomFieldProblems(s.zoom)];
+    if (JSON.stringify(s.zoom) !== JSON.stringify(WANT[id])) out.push(`zoom ${JSON.stringify(s.zoom)}`);
+    if (!s.zoom) return out;
+    const len = (k: number) => { const w = Z.zoomOf({ ...s, zoom: { view: 'normal', k } }, { view: 'normal' }); return QZ.clippedTrace(w.svg, w.circle); };
+    const k = s.zoom.k, z = Z.zoomOf(s, { view: 'normal' });
+    if (/<(text|foreignObject|tspan)\b|°/.test(z.svg)) out.push('text in the zoom');
+    if (!(len(k) >= TRACE)) out.push(`Trace ${len(k).toFixed(2)} px at k ${k} < ${TRACE}`);
+    if (LADDER.some(x => x < k && len(x) >= TRACE)) out.push('a smaller k reaches the bar');
+    const tp = Z.tracePath(s, qaEng.cameraOf(s, plate.renderPlate(noZoom(s), { id: 'x' }).report));
+    if (!tp.length || tp.some((p: number[]) => Math.hypot(p[0]! - z.src.c[0], p[1]! - z.src.c[1]) > z.src.r - 1)) out.push('the ring does not hold the whole Trace');
+    if (Math.abs(len(k) - PIN[id]!) > 0.01) out.push(`Trace ${len(k).toFixed(2)} != pinned ${PIN[id]}`);
+    return out;
+  };
+  it('A3: each zoom is the PLAN\'s view and k, meets 22.11 px at k (barbell_shrug 24.54 at 3.5, t_bar_row 27.23 at 3), no smaller ladder k does, and the ring holds the Trace', () => {
+    for (const id of RELEASED) expect(zoomProblems(id, W[id]), id).toEqual([]);
+  });
+  it('A3: the plate is byte-identical outside the zoom (each view renders the same svg with and without the field)', () => {
+    for (const id of RELEASED) for (const mistake of [false, true]) expect(plate.renderPlate(W[id], { id: 'x', mistake }).svg, id).toBe(plate.renderPlate(noZoom(W[id]), { id: 'x', mistake }).svg);
+  });
+  it("A3 mutations: barbell_shrug at k 3 (21.02 px), t_bar_row's zoom removed, and t_bar_row's trim set to [0, 0] (k 1.5 then reaches the bar) are red", () => {
+    expect(zoomProblems('barbell_shrug', { ...W.barbell_shrug, zoom: { view: 'normal', k: 3 } })).toEqual(expect.arrayContaining([expect.stringMatching(/^Trace 21\.02 px at k 3 < 22\.11$/)]));
+    expect(zoomProblems('t_bar_row', noZoom(W.t_bar_row))).toEqual(['zoom undefined']);
+    expect(zoomProblems('t_bar_row', { ...W.t_bar_row, trace: { ...W.t_bar_row.trace, trim: [0, 0] } })).toContain('a smaller k reaches the bar');
+  });
+});
+
+describe('LIB-13s A6: runQa node half on the wave-1 plates (zoom keys, H1 feet, H2 alt, named flags)', { timeout: T }, () => {
+  let build: any, cand: any, golden: any, mirror: any, E: any, all: any, html: string, tbar: any;
+  const W1 = () => tbar;
+  beforeAll(async () => {
+    [build, cand, golden] = await Promise.all(['lb3/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    tbar = (await import(/* @vite-ignore */ lib('specs/t_bar_row.mjs'))).default;
+    mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb3All();
+    html = (await build.buildLb3Page({ all, ids: RELEASED.map(i => `lib_${i}`) })).html.toString('utf8');
+    return () => qaEng.dropMirror(mirror);
+  }, T);
+  const keys = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
+  const candOf = (id: string, page = html) => cand.candidateOf(id, { all, platesHtml: page, engine: E, authoring: true });
+  const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
+  // H6 reads the card's three keys; until CARD FIELDS lands on barbell_shrug's card it reports H6:no-card (DESIGN.md 16.8)
+  const keyed = (id: string) => 'plateFacts' in readJson(`docs/research/howto/cards/${id}.json`);
+  it('clean: no node-half hard problem on either plate; barbell_shrug raises F3 45.79 and F4 0 (named, D-LIB13S-FLAGS)', async () => {
+    for (const id of RELEASED) {
+      const r = await qa(await candOf(`lib_${id}`));
+      expect(keys(r), id).toEqual(id === 'barbell_shrug' && !keyed(id) ? ['H6:no-card'] : []);
+      if (id === 'barbell_shrug') { expect(+r.flags.F3.value.toFixed(2)).toBe(45.79); expect(r.flags.F4.value).toBe(0); }
+      else { expect(r.flags.F3.raised, id).toBe(false); expect(r.flags.F4.raised, id).toBe(false); }
+    }
+  });
+  it('mutations: a planted "15°" in t_bar_row\'s zoom (H2.zoom:angle), its zoom removed (H3.trace), and the 53-word alt (H2.alt) are red', async () => {
+    const c0 = await candOf('lib_t_bar_row'), z = c0.plate.zoom.normal, end = z.lastIndexOf('</g>');
+    const planted = { ...c0, plate: { ...c0.plate, zoom: { ...c0.plate.zoom, normal: `${z.slice(0, end)}<path class="x" d="M0 0" data-v="15°"/>${z.slice(end)}` } } };
+    expect(keys(await qa(planted))).toContain('H2.zoom:angle');
+    const unz = { ...c0, spec: { ...c0.spec, zoom: undefined }, plate: { ...c0.plate, zoom: undefined } };
+    expect(keys(await qa(unz))).toContain('H3.trace');
+    const alt53 = 'T-bar row, side view. Standing over a bar pinned at a floor pivot behind, a V-handle hooked under it near the plates, hinged with the chest level and the knees soft, the lifter pulls the handle from straight arms toward the lower chest until the plates meet the torso, driving the elbows back.';
+    expect(keys(await qa({ ...c0, plate: { ...c0.plate, alt: alt53 } }))).toContain('H2.alt:alt');
+  });
+  // LIB-3's M1-M7 on the new plate t_bar_row (the LIB-13 A4 block's forms, copied): a spec mutation built the way the page builds it
+  const mutated = async (fn: string, arg: any = null) => {
+    const dir = mkdtempSync(join(tmpdir(), 'lb3s-mut-')), file = join(dir, 't_bar_row.mjs'), ID = 'lib_t_bar_row';
+    writeFileSync(file, `import s from ${JSON.stringify(lib('specs/t_bar_row.mjs'))};\nconst fn = ${fn};\nexport default fn(s, ${JSON.stringify(arg)});\n`);
+    try {
+      const spec = (await import(/* @vite-ignore */ `file://${file}`)).default;
+      const cid = (await import(/* @vite-ignore */ lib('plates-page.mjs'))).cardIdOf(all.find((r: any) => r.id === ID));
+      const { html: h } = await (await import(/* @vite-ignore */ lib('build-page.mjs'))).buildPlatesPage({
+        groups: [{ id: 'lb3', title: 'LB3', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: file } });
+      return { ...(await candOf(ID, h.toString('utf8'))), spec };
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  };
+  it('A6 M1-M7 on t_bar_row: label on the figure (H1), contact 1.1 cm off (H1), Trace under the bar with no zoom (H3), Mistake = end (H3), start = end (H3), a moving rackUpright and an unknown type (H9) are red', async () => {
+    const s = W1(), c0 = s.callouts.find((x: any) => x.key === 'chest'), at = (box: any) => ({ ...s, callouts: s.callouts.map((x: any) => (x.key === 'chest' ? { ...x, box } : x)) });
+    let hit: any = null;
+    for (const [dx, dy] of [[0, 1], [-1, 0], [1, 0], [0, -1]]) {
+      for (let d = 1; d <= 120 && !hit; d++) {
+        const box = { left: c0.box.left + dx! * d, top: c0.box.top + dy! * d }, is = plate.renderPlate(at(box), { id: 'm' }).report.issues;
+        if (is.some((i: string) => !i.startsWith('figure:'))) break;
+        if (is.length) hit = box;
+      }
+      if (hit) break;
+    }
+    expect(hit).toBeTruthy();
+    expect(keys(await qa({ ...(await candOf('lib_t_bar_row')), spec: at(hit) })).some((k: string) => /^H1\.engine:normal:figure:/.test(k))).toBe(true);
+    const shift = { ...s, checks: s.checks.map((k: any) => (k.landmark === 'heel.r' ? { ...k, plane: { ...k.plane, point: [0, 0.011, 0] } } : k)) };
+    expect(keys(await qa({ ...(await candOf('lib_t_bar_row')), spec: shift })).some((k: string) => /^H1\.engine:normal:check:/.test(k))).toBe(true);
+    expect(keys(await qa(await mutated("s => ({ ...s, zoom: undefined, trace: { ...s.trace, trim: [30, 30] } })")))).toContain('H3.trace');
+    expect(keys(await qa(await mutated('s => ({ ...s, mistake: { ...s.mistake, pose: { reach: s.poses.end.reach, root: s.poses.end.root, trunk: s.poses.end.trunk } } })')))).toContain('H3.mistake-outline');
+    expect(keys(await qa(await mutated('s => ({ ...s, poses: { ...s.poses, start: s.poses.end, via: [] } })')))).toContain('H3.start-is-end');
+    const extra = (lm: any, ctx: any) => ({ type: 'rackUpright', at: [0.5, 0, ctx.pose === 'mistake' ? -1.3 : -1.22], h: 0.5 });
+    expect(keys(await qa({ ...(await candOf('lib_t_bar_row')), spec: { ...s, equipment: [...s.equipment, extra] } })).some((k: string) => k.startsWith(`H9.moving-line:eq${s.equipment.length}.rackUpright.`))).toBe(true);
+    expect(keys(await qa({ ...(await candOf('lib_t_bar_row')), spec: { ...s, equipment: [...s.equipment, { type: 'rope3d', at: [0, 0, 0] }] } })).some((k: string) => k.startsWith('H9.type:'))).toBe(true);
+  });
+  it('the ruled flag set (qa.mjs EXPECTED): F5 on both, and barbell_shrug\'s named F2, F3, F4 and F7', async () => {
+    const q = await import(/* @vite-ignore */ lib('lb3/qa.mjs'));
+    expect(q.EXPECTED('lib_barbell_shrug')).toEqual(['F2', 'F3', 'F4', 'F5', 'F7']);
+    expect(q.EXPECTED('lib_t_bar_row')).toEqual(['F5']);
+  });
+});
+
+describe('LIB-13s A7: the 4 shrug cards and quotes are research a48b0594 copies (keys apart); t_bar_row\'s card is main\'s; the tempo map', { timeout: T }, () => {
+  const KEYS = ['plateFacts', 'tempo', 'topFault'], SH = ['barbell_shrug', 'dumbbell_shrug', 'cable_shrug', 'smith_machine_shrug'];
+  const cs = () => readJson('tools/plates/library/lb3/cards.sha.json');
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
+  const blob = (b: Buffer) => createHash('sha1').update(`blob ${b.length}\0`).update(b).digest('hex');
+  const cardProblems = (cards: Record<string, any>) => SH.filter(id => sha(canon(cards[id])) !== cs().lib13s.cards[id]);
+  it('the LIB-13s section names a48b0594 and the 4 shrugs; each card (without the three keys) and quotes file matches; LIB-13\'s 8 entries are unchanged', () => {
+    const j = cs();
+    expect(j.researchHead).toBe(RESEARCH_HEAD);
+    expect(Object.keys(j.cards)).toEqual(LB3);
+    expect(j.lib13s.researchHead).toBe('a48b059400a74d5c9e3aceed21cf1aa67ab6f118');
+    expect(Object.keys(j.lib13s.cards)).toEqual(SH);
+    expect(cardProblems(Object.fromEntries(SH.map(id => [id, cardOf(id)])))).toEqual([]);
+    for (const id of SH) expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(j.lib13s.quotes[id]);
+    for (const id of SH) expect(V.validateCardFile(`${id}.json`), id).toEqual([]);
+  });
+  it("t_bar_row's card is byte-identical to main's (blob 2142a7b6, its 3 keys as LIB-13 set them)", () => {
+    expect(blob(readFileSync('docs/research/howto/cards/t_bar_row.json'))).toBe('2142a7b6c849f772eb1d06804aad866ac778978c');
+  });
+  it('mutation: another card key edited is red', () => {
+    const c = cardOf('cable_shrug'); c.plate.view = 'front';
+    expect(cardProblems({ ...Object.fromEntries(SH.map(id => [id, cardOf(id)])), cable_shrug: c })).toEqual(['cable_shrug']);
+  });
+  it('tempo.json\'s LIB-13s section is DESIGN.md 16.2\'s map; each released spec\'s tempo is its rows with the card\'s seconds', () => {
+    const t = readJson('tools/plates/library/lb3/tempo.json').lib13s, RULED: Record<string, string[][]> = {
+      barbell_shrug: [['Lift', 'up'], ['Lower', 'down']], dumbbell_shrug: [['Lift', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
+      cable_shrug: [['Lift', 'up'], ['Hold', 'pause'], ['Lower', 'down']], smith_machine_shrug: [['Lift', 'up'], ['Lower', 'down']] };
+    expect(t.constants).toEqual({});
+    for (const id of SH) expect(t.ids[id].rows.map((r: any) => [r.phase, r.from]), id).toEqual(RULED[id]);
+    const want = (id: string, card: any) => t.ids[id].rows.map((r: any) => ({ phase: r.phase, s: card.plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
+    expect(S13.barbell_shrug.tempo).toEqual(want('barbell_shrug', cardOf('barbell_shrug')));
+    const c = cardOf('barbell_shrug'); c.plate.tempo.down = 1;
+    expect(S13.barbell_shrug.tempo).not.toEqual(want('barbell_shrug', c));   // mutation: one second changed on the card
+  });
+  let V: any;
+  const S13: Record<string, any> = {};
+  beforeAll(async () => { V = await import(/* @vite-ignore */ lib('research/validate.mjs')); S13.barbell_shrug = (await import(/* @vite-ignore */ lib('specs/barbell_shrug.mjs'))).default; }, T);
 });

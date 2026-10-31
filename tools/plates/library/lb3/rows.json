@@ -65,6 +65,24 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_t_bar_row": {
+   "src": "library/specs/t_bar_row.mjs",
+   "slug": "t-bar-row",
+   "prefix": "t-bar-row",
+   "chromeId": "t-bar-row",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_barbell_shrug": {
+   "src": "library/specs/barbell_shrug.mjs",
+   "slug": "barbell-shrug",
+   "prefix": "barbell-shrug",
+   "chromeId": "barbell-shrug",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }
