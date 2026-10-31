@@ -144,6 +144,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_alternating_dumbbell_curl": {
+   "src": "library/specs/alternating_dumbbell_curl.mjs",
+   "slug": "alternating-dumbbell-curl",
+   "prefix": "alternating-dumbbell-curl",
+   "chromeId": "alternating-dumbbell-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }
