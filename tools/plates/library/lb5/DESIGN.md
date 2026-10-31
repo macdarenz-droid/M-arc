@@ -650,3 +650,15 @@ parent's F2 and F4 [unverified until drawn]; every other flag measured is named 
 
 Wave 1 (zoom rows) → PLATES READY 1; card fields after RULED; wave 2a (H rows); wave 2b (templates, parent proofs,
 then the T rows; their QA counts only after the family rows merge). Stops S1-S5 as the card.
+
+### 17.11 Build-ahead status (wave 2)
+
+- Templates: CURL and PUSHDOWN pass their parent proofs (all 9 fragments equal; one template byte changed moves 3).
+- H rows drawn and in rows.json: hammer_curl, alternating_dumbbell_curl, single_arm_triceps_pushdown,
+  incline_dumbbell_curl. Their LB5 A15 fixes against the clone sources: single_arm_triceps_pushdown re-keyed to 48
+  and its faulty upper arm dashed, no arc arrow; hammer_curl and alternating_dumbbell_curl drop the elbow measure arc
+  and the Mistake arrow, and alternating drops the hidden start forearm (each leader or arrow sat on the Trace or the
+  solid end figure); incline_dumbbell_curl's measure radius 28 and no arrow. Authoring QA: only H6:no-card (Do 4).
+- T rows: stopped (#349 6540834642). The pinned parents' Trace keys, Mistake arrows and measure leader fail LB5's A15
+  drawn-item tests, and a template cannot change them (D-LIB10-FACTS). The 4 T specs are out of the branch until
+  ruled (drawn at 20431f58).
