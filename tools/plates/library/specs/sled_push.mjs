@@ -1,4 +1,4 @@
-// Sled push, side view, figure facing screen right, the sled in front. LIB-22 (LB10, H; NOSECS: no tempo).
+// Sled push, side view, figure facing screen right, the sled in front. LIB-22 (LB10, H; NOSECS lifted at 'LIB-22 resume': D-STRIP-AFALL).
 // View: side (card plate.view = census): the lean, the straight head-to-hip line, the straight arms to the posts and
 //  the heels off the floor are sagittal.
 // Sources: research card docs/research/howto/cards/sled_push.json (research head 596dbe07): c1 both hands on the
@@ -6,7 +6,7 @@
 //  behind the hands, BarBend "your spine is parallel to the ground"; c4 arms straight (BarBend, Fitness Volt "locked");
 //  c6 spine neutral, eyes just ahead; c7 a rounded back (the Mistake); c8 only the balls of the feet touch, the heel
 //  never; c9, c11 the same body angle and arms throughout; c10 short, powerful steps; c12 feet under or just behind
-//  the hips, one foot driving. Tempo: none (D-LIB22-SECS).
+//  the hips, one foot driving. Tempo: Walk, blank (D-LIB22-AFALL; strip/rows.json fallbackA, c10).
 // Clone (D-LIB22-CLONE): leg_press (the 8: M_ROLL, the rounding), mountain_climbers (#109 @ dcac4a38: one stride of
 //  the cycle, the via ghost), reverse_lunge (#109: the rigid foot on its ball); copied, never imported.
 // Geometry (confirmed by the report's contacts and checks, and by tests on the drawn items):
@@ -113,6 +113,7 @@ export default {
       { key: 'line', text: 'Line breaks', anchor: { at: 'head', pose: 'mistake' }, cue: 'Head to hips is no longer one straight line.' },
     ],
   },
-  alt: 'Sled push, side view. Leaning forward in one straight line from head to hips, arms straight, hands halfway down the sled posts; on the balls of the feet, the rear foot drives through to the front.',
+  tempo: [{ phase: 'Walk', move: true }],   // D-STRIP-AFALL (D-LIB22-AFALL): blank, strip/rows.json fallbackA (lb10/tempo.json)
+  alt: 'Sled push, side view. Leaning forward in one straight line from head to hips, arms straight, hands halfway down the sled posts. On the balls of the feet, the rear foot drives through to the front.',
 };
 export const info = { GRIP_Y, POST_TOP, REAR_Z, rearZ, HIP_Z };
