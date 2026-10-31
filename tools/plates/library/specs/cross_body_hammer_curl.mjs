@@ -37,7 +37,7 @@ const FOOT_X = 0.14;                                   // mid-sole lateral offse
 const KNEE_SOFT = 5;
 const GRIP0 = { x: 0.13, y: 0.80, z: 0.13 };          // start grips: in front of the thighs, elbows soft (c1, c14)
 const END_FWD = 0.10;                                  // end target: this far in front of the opposite shoulder joint
-const SEG = 8;
+const SEG = 48;
 
 const FOOT_Z = REF.mid * H;
 const LEG = (() => { const a = WINTER.thigh * H, b = WINTER.shank * H, k = KNEE_SOFT * R; return Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(k)); })();
@@ -106,6 +106,7 @@ export default {
   ],
   ghosts: { count: 3, parts: ['arm.r', 'db'] },
   trace: { point: 'grip.r', trim: [10, 12] },
+  zoom: { view: 'mistake', k: 2 },   // D-LIB15R2-ZOOM (lib4-cards §48): the `shrug` tell, 14.63 px at k 2 (bar 11.39 at the zoom's scale)
   callouts: [
     { key: 'palms', text: 'Palms face<br>body', anchor: 'wrist.r', cue: 'Keep a neutral grip, palms toward you, with no wrist twist.' },
     { key: 'arc', text: 'Arc across', anchor: 'grip.r', cue: 'Bring the dumbbell across toward the opposite shoulder, not straight up.' },

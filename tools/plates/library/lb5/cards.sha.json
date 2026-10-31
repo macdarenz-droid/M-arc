@@ -1,6 +1,7 @@
 {
- "note": "sha256 per LB5 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\"; and sha256 of each quotes file, a byte copy from the same head. Research head a8e66f32 (F-LB5-1, #291): only cross_body_hammer_curl changed from 3812989f; the other 8 cards and all 9 quotes are byte-identical. Research head baf2ff09 (F-LB5-2, #302): only concentration_curl changed (claim c14, notes, quotes).",
+ "note": "sha256 per LB5 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\"; and sha256 of each quotes file, a byte copy from the same head. Research head a8e66f32 (F-LB5-1, #291): only cross_body_hammer_curl changed from 3812989f; the other 8 cards and all 9 quotes are byte-identical. Research head baf2ff09 (F-LB5-2, #302): only concentration_curl changed (claim c14, notes, quotes). Resume 2 (LIB-15R2): the 7 T/H cards are byte copies from research head r2Head (a48b0594); incline_dumbbell_curl is unchanged there.",
  "researchHead": "baf2ff09cf2e91232f536cfc6c766fdf68925217",
+ "r2Head": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
  "cards": {
   "overhead_cable_triceps_extension": "bd3c9ed2970945e7531e9e968669329a6c418c5b059b66c3eebf5e42697bcd31",
   "dumbbell_overhead_triceps_extension": "8b871081ec46d494788a11a93964980fb2280a41eef3ad19cd1589d9a245df50",
@@ -10,7 +11,14 @@
   "preacher_curl": "862b79ead56714058c26c76e4840c3eaea5c7da6a040a6361f80cba758ca4fc1",
   "incline_dumbbell_curl": "a5eeed889b7789070b66ea22821cac19045ccc30e3f57669ce33c94da1f74917",
   "concentration_curl": "640e1d3dd0219d914b8b5f05d94dbf824aead885fd945cf5f69a06da6ec7660a",
-  "wrist_curl": "a803a2ca0768f4f589bab57f8eeca428dab9789fed76e525752e98e6b5a4f1ba"
+  "wrist_curl": "a803a2ca0768f4f589bab57f8eeca428dab9789fed76e525752e98e6b5a4f1ba",
+  "straight_bar_triceps_pushdown": "b1c33c8c3ab988198cd3dd0cd1cdeaad49888e3e2948a102aee4d0539be14c27",
+  "single_arm_triceps_pushdown": "77476ac1b1651b203b15f613b1dc512c21189dd7ee328d1576b3dadd875750a0",
+  "alternating_dumbbell_curl": "f47476bf9a0e22932fa6c2ad5c72169db6e9cb71ade707708e73e8229b6ad44d",
+  "barbell_curl": "f160a68a84b0161c5bc8619d69c2b2d26c4f886bb555339c5a784ebec86bffdd",
+  "ez_bar_curl": "5f8008c4835e71855f5892fd0eaabb55531cad2afe2e4d402a0a95cacec334db",
+  "hammer_curl": "7706d45a2b58d64571ef6e5d90f9aa2d5ff653bdbb2fe0cb34d173ab79d2c044",
+  "reverse_curl": "9afc14fa3be6b70fe028d0145755b3ab0342486433f21ceb73908a868c5133a2"
  },
  "quotes": {
   "overhead_cable_triceps_extension": "e7c5d6560426e1e94d88dc6cbce4d1e85d669aaeacca8c33e152f516b6aef018",
@@ -21,6 +29,13 @@
   "preacher_curl": "75fc3442260cde1c3ed614ff9c0eadb66574eb4ada8f0fe8979313457e37067c",
   "incline_dumbbell_curl": "7220e2390d689e307654202ff96b05e12f852c98ca5ba859d4b15fd3d8e04a2c",
   "concentration_curl": "a82bd8f5211cded32323d4308b9fecb67ff1f2a11a728d64b13605e781641d5f",
-  "wrist_curl": "e6090e2870c278995c5fae9457e4bbb047100972685ea369a959c94a65d65758"
+  "wrist_curl": "e6090e2870c278995c5fae9457e4bbb047100972685ea369a959c94a65d65758",
+  "straight_bar_triceps_pushdown": "d077584f8a06b9df8a25eef1e6723678d9958fac66bab8c968f0761248ac1d74",
+  "single_arm_triceps_pushdown": "6520431b0280a842eee08db53d77d10d29803571f882206b014b2468acfca9eb",
+  "alternating_dumbbell_curl": "93f7dba4bb0aabf3b24f4d1346237ac11ba70b8d5d3798b3511a8b8091e566c0",
+  "barbell_curl": "a00cb1b2ef2db68b9776c3e97ba125052a39afe3346a1afa9bcf2a5f46ce5d90",
+  "ez_bar_curl": "082e2f08d900a785cbd3e48e35c2d5ff94d98b199308990a704588d351f5e0bb",
+  "hammer_curl": "7676a976a84b4766a6024b4842f0242a87cfaa0d9e5f2cff914f9362b4d154fc",
+  "reverse_curl": "b22572e51b770696b25944c502c56aa7efd83da07ba10e50fbc6528bd0477f6b"
  }
 }
