@@ -193,7 +193,7 @@ describe('LIB-8R reverse_lunge panel mx5: a true rib flare at true size, and a r
   });
   // The ring (R11): zoomOf's own source ring holds the end pose's elbow dot, the lower back and the rib front.
   const ringProblems = async (s: any) => {
-    const Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')), z = Z.zoomOf(s, { prefix: 'x' }), P = (w: number[]) => [s.camera.x0 + w[2] * 146.29, s.camera.y0 - w[1] * 146.29];
+    const Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')), z = Z.zoomOf(s, { prefix: 'x' }), P = (w: number[]) => [s.camera.x0 + w[2]! * 146.29, s.camera.y0 - w[1]! * 146.29];
     const lm = eng.landmarksOf(s.poses.end, H), bad: string[] = [];
     const ribFront = lm.chest.map((v: number, i: number) => v + (lm.navel[i] - v) * 0.5);   // the lower-rib front, between the chest and the navel
     for (const [k, w] of [['elbow.r', lm['elbow.r']], ['backMid', lm.backMid], ['lower-rib front', ribFront]] as const) { const p = P(w as number[]); if (Math.hypot(p[0] - z.src.c[0], p[1] - z.src.c[1]) > z.src.r) bad.push(`${k} outside the ring`); }
