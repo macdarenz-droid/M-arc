@@ -821,12 +821,24 @@ describe('LIB-13 A3: spec and composer closures are pure and drawn by the vendor
   });
 });
 
+// LIB-13s (D-LIB8M-RPC form): the LB3 page with its zooms is long synchronous work, so every whole-page build runs in an
+// awaited child process (no in-worker build starves vitest's worker RPC). pageHtml(ids) builds once per id list (null:
+// every drawn row) and returns the page text; buildTwice proves PQ-H7 on two separate child builds.
+const pageCache: Record<string, Promise<string>> = {};
+const childPage = async (ids: string[] | null) => {
+  const { execFile } = await import('node:child_process'), { promisify } = await import('node:util');
+  const script = `const b = await import(${JSON.stringify(lib('lb3/build.mjs'))}); const { html } = await b.buildLb3Page(${ids ? `{ ids: ${JSON.stringify(ids)} }` : ''}); process.stdout.write(Buffer.from(html).toString('base64'));`;
+  const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 28 });
+  return Buffer.from(stdout.trim(), 'base64').toString('utf8');
+};
+const pageHtml = (ids: string[] | null = null) => (pageCache[JSON.stringify(ids)] ??= childPage(ids));
+
 describe('LIB-13 A10: the LB3 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
   it('two builds of the drawn LB3 ids are byte-identical', async () => {
     const build = await import(/* @vite-ignore */ lib('lb3/build.mjs'));
     expect(build.drawnIds().length).toBeGreaterThanOrEqual(3);
-    const a = await build.buildLb3Page(), b = await build.buildLb3Page();
-    expect(sha(a.html)).toBe(sha(b.html));
+    const [a, b] = await Promise.all([childPage(null), childPage(null)]);   // LIB-13s: two separate child builds (D-LIB8M-RPC form)
+    expect(sha(a)).toBe(sha(b));
   });
 });
 
@@ -1246,12 +1258,12 @@ describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d
   });
   it('63 fragments of the 7 approved plates on this head equal main\'s, and the 7 alone still build page 6ff09d4c', async () => {
     expect(Object.values(APPROVED).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(63);
-    expect(fragProblems((await build.buildLb3Page()).html.toString('utf8'))).toEqual([]);
-    const seven = (await build.buildLb3Page({ ids: drawn().map(i => `lib_${i}`) })).html;
-    expect(build.sha256(seven)).toBe('6ff09d4c144f90d7210f951eb23fe81b42f55d20478bc4b8bb1d2b3980d008c6');
+    expect(fragProblems(await pageHtml())).toEqual([]);
+    const seven = await pageHtml(drawn().map(i => `lib_${i}`));
+    expect(sha(seven)).toBe('6ff09d4c144f90d7210f951eb23fe81b42f55d20478bc4b8bb1d2b3980d008c6');
   });
   it("mutation: one byte changed in landmine_row's alt is red", async () => {
-    const html = (await build.buildLb3Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'landmine-row');
+    const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'landmine-row');
     expect(fragProblems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('landmine-row alt');
   });
 });
@@ -1275,10 +1287,10 @@ describe('LIB-13s: barbell_shrug stays byte-identical to its approval (panel mx1
     return Object.keys(WANT).filter(k => got[k] !== WANT[k]); };
   it('its 9 fragments on this head equal the approved ones', async () => {
     expect(Object.keys(WANT).length).toBe(9);
-    expect(diff((await build.buildLb3Page()).html.toString('utf8'))).toEqual([]);
+    expect(diff(await pageHtml())).toEqual([]);
   });
   it('mutation: one byte in its alt is red', async () => {
-    const html = (await build.buildLb3Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'barbell-shrug');
+    const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'barbell-shrug');
     expect(diff(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['alt']);
   });
 });
@@ -1315,10 +1327,10 @@ describe('LIB-13s: t_bar_row and cable_shrug stay byte-identical to their approv
     return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`); });
   it('their 18 fragments on this head equal the approved ones', async () => {
     expect(Object.values(WANT).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(18);
-    expect(diff((await build.buildLb3Page()).html.toString('utf8'))).toEqual([]);
+    expect(diff(await pageHtml())).toEqual([]);
   });
   it("mutation: one byte in cable_shrug's alt is red", async () => {
-    const html = (await build.buildLb3Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'cable-shrug');
+    const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'cable-shrug');
     expect(diff(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['cable-shrug alt']);
   });
 });
@@ -1535,7 +1547,7 @@ describe('LIB-13s A6: runQa node half on the wave-1 plates (zoom keys, H1 feet, 
     [build, cand, golden] = await Promise.all(['lb3/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     tbar = (await import(/* @vite-ignore */ lib('specs/t_bar_row.mjs'))).default;
     mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb3All();
-    html = (await build.buildLb3Page({ all, ids: RELEASED.map(i => `lib_${i}`) })).html.toString('utf8');
+    html = await pageHtml(RELEASED.map(i => `lib_${i}`));
     return () => qaEng.dropMirror(mirror);
   }, T);
   const keys = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
