@@ -105,7 +105,7 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 const ER5_DRAWN = ['side_plank', 'russian_twist'];
 // The front entries asked with the E-R5 slice (#326), measured (px inside the figure past the leader's first 8 px).
 const FE_SINK = 9.64;
-const HELD: string[] = ['cable_crunch', 'superman', 'pallof_press', 'russian_twist'];   // russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume   // superman: D-LIB21-SIZE (S2); pallof_press: D-LIB21-PALLOFHOLD
+const HELD: string[] = ['cable_crunch', 'pallof_press', 'russian_twist'];   // russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
 const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', ...ER5_DRAWN];
@@ -806,12 +806,20 @@ describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and
   const cc = (o: Record<string, number> = {}) => report('lib_cable_crunch', { F2: 0.622, F3: 26.05, F5: 3.57, ...o });
   it('the named sets: F1 151.49 and F3 33.5 on bird_dog, F2 0.622 and F3 26.05 on cable_crunch; EXPECTED gives F5 alone on ab_wheel_rollout', () => {
     expect(qa.F1_NAMED).toEqual({ lib_bird_dog: 151.49, lib_side_plank: 150.31, lib_russian_twist: 197.49 });   // the (b) two asked with the E-R5 slice (#326)
-    expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 33.5, lib_cable_crunch: 26.05 });
-    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.622 });
+    expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 33.5, lib_cable_crunch: 26.05, lib_superman: 44.9 });   // superman: D-LIB21-SUPFLAGS (#337)
+    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.622, lib_superman: 0.128 });
+    expect(qa.EXPECTED('lib_superman')).toEqual(['F2', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_bird_dog')).toEqual(['F1', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_cable_crunch')).toEqual(['F2', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_ab_wheel_rollout')).toEqual(['F5']);
     expect(qa.flagProblems([dog(), cc(), report('lib_ab_wheel_rollout', { F5: 3.57 })])).toEqual([]);
+  });
+  const sm = (o: Record<string, number> = {}) => report('lib_superman', { F2: 0.128, F3: 44.9, F5: 3.57, ...o });
+  it('D-LIB21-SUPFLAGS: superman\'s F2 0.128 and F3 44.9 are the ruled set; mutations: F2 at 0.135, F3 at 53.6 (the longer-leader box), F2 or F3 not raised are red', () => {
+    expect(qa.flagProblems([sm()])).toEqual([]);
+    expect(qa.flagProblems([sm({ F2: 0.135 })]).length).toBe(1);
+    expect(qa.flagProblems([sm({ F3: 53.6 })]).length).toBe(1);
+    for (const f of ['F2', 'F3']) { const r = sm(); r.flags[f] = { raised: false, value: null }; expect(qa.flagProblems([r]).length, f).toBeGreaterThanOrEqual(1); }
   });
   it('mutations: bird_dog\'s F3 at 27.0, F3 raised on another id, F1 off its px/m, F3 missing on bird_dog, cable_crunch\'s F2 at 0.645 and F3 at 27.0 are red', () => {
     expect(qa.flagProblems([cc({ F2: 0.645 })]).length).toBe(1);
@@ -828,6 +836,9 @@ describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and
     expect(Math.abs(max - qa.F3_NAMED.lib_bird_dog)).toBeLessThanOrEqual(0.1);
     const maxCc = Math.max(...[false, true].flatMap(m => leadersOf(plate.renderPlate(S.cable_crunch, { id: 'x', mistake: m }).svg).map(len)));
     expect(Math.abs(maxCc - qa.F3_NAMED.lib_cable_crunch)).toBeLessThanOrEqual(0.1);
+    const maxSm = Math.max(...[false, true].flatMap(m => leadersOf(plate.renderPlate(S.superman, { id: 'x', mistake: m }).svg).map(len)));
+    console.log(`LIB-21 superman longest leader ${maxSm.toFixed(2)} px`);
+    expect(Math.abs(maxSm - qa.F3_NAMED.lib_superman)).toBeLessThanOrEqual(0.1);
   });
 });
 
@@ -842,7 +853,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_side_plank']);   // cable_crunch held (D-LIB21-CCHOLD); side_plank at the resume
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_side_plank', 'lib_superman']);   // cable_crunch held (D-LIB21-CCHOLD); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('plank, crunch, the 5 T ids, russian_twist and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
@@ -852,9 +863,9 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     }
     expect(existsSync(`${SPECS_DIR}/bicycle_crunch.mjs`)).toBe(false);
   });
-  it('the held ids (cable_crunch D-LIB21-CCHOLD; superman D-LIB21-SIZE; pallof_press D-LIB21-PALLOFHOLD) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
+  it('the held ids (cable_crunch D-LIB21-CCHOLD; pallof_press D-LIB21-PALLOFHOLD; russian_twist D-LIB21-RTWIST) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
-    expect(build.HELD).toEqual({ cable_crunch: 'side', superman: 'side', pallof_press: 'side', russian_twist: 'front' });
+    expect(build.HELD).toEqual({ cable_crunch: 'side', pallof_press: 'side', russian_twist: 'front' });
     const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
     for (const id of HELD) expect(new RegExp(`\\| ${id} \\| D-LIB21-[A-Z]+`).test(design), id).toBe(true);
     for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
@@ -866,8 +877,8 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     expect(a5(text, w)).toEqual([]);
     expect(a5(JSON.stringify({ ...j, rows: {} }, null, 1), w)).toEqual(w.map(x => `${x} x0`));
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
-    // a held id: superman, held until drawn (no spec), stands for any held id
-    expect(a5(add('lib_superman'), w), 'a held id').toEqual(['extra lib_superman']);
+    // a held id: pallof_press (D-LIB21-PALLOFHOLD) stands for any held id
+    expect(a5(add('lib_pallof_press'), w), 'a held id').toEqual(['extra lib_pallof_press']);
     for (const id of ['plank', 'crunch', 'flutter_kicks', 'bicycle_crunch']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
   });
@@ -985,17 +996,29 @@ console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;
   });
 });
 
+/** The approved LB9 plates' card fragments (`<article ... id="card-<slug>">` ... `</article>`), sha256 first 16 hex:
+ *  ab_wheel_rollout and bird_dog from the LB9 slice and bulk panels, side_plank from mx1 (#326 6414221457), superman
+ *  from mx7 (#337 6540319980, at 1273e4f6). */
+const APPROVED_FRAGS: Record<string, string> = { 'ab-wheel-rollout': 'e0e6d3b9aaeaa902', 'bird-dog': '4ae4f8913f726103', 'side-plank': '18e0fb027e416a05', superman: '2ed02b364e72c3a4' };
+const FRAG_RE = '/<article [^>]*id="card-([a-z-]+)"[\\s\\S]*?<\\/article>/g';
+const fragProblems = (frags: Record<string, string>) => Object.entries(APPROVED_FRAGS).flatMap(([k, v]) => ((frags[k] ?? '').slice(0, 16) === v ? [] : [`${k}: ${(frags[k] ?? 'missing').slice(0, 16)} != approved ${v}`]));
 describe('LIB-21 A10: the LB9 plates page is deterministic (PQ-H7; built in an awaited child process)', { timeout: T }, () => {
   it('two builds of the LB9 rows are byte-identical', async () => {
     const script = `const b = await import(${JSON.stringify(lib('lb9/build.mjs'))}), { createHash } = await import('node:crypto');
 const sha = x => createHash('sha256').update(x).digest('hex');
 const a = await b.buildLb9Page(), c = await b.buildLb9Page();
-console.log(JSON.stringify({ ids: b.drawnIds(), a: sha(a.html), c: sha(c.html) }));`;
+console.log(JSON.stringify({ ids: b.drawnIds(), a: sha(a.html), c: sha(c.html), frags: Object.fromEntries([...a.html.toString('utf8').matchAll(${FRAG_RE})].map(m => [m[1], sha(m[0])])) }));`;
     const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 });
     const r = JSON.parse(stdout.trim().split('\n').pop()!);
     expect([...r.ids].sort()).toEqual(drawn().map(i => `lib_${i}`).sort());
     expect(r.a).toBe(r.c);
     console.log(`LIB-21 A10: plates page sha256 ${r.a}`);
+    // resume 2 (#337): the approved plates stay byte-identical as rows join the page
+    expect(fragProblems(r.frags)).toEqual([]);
+  });
+  it('mutation: one byte changed in an approved card fragment is red', () => {
+    const f = { 'ab-wheel-rollout': 'x', 'bird-dog': 'x', 'side-plank': 'x', superman: 'x' };
+    expect(fragProblems(f).length).toBe(4);
   });
 });
 
@@ -1681,5 +1704,55 @@ describe('LIB-21 A2 / A18: russian_twist and `medBallOptional` (the E-R5 slice; 
       expect(Math.abs(cm[0]!), p).toBeLessThan(M.russian_twist.SIZES.HIP_HALF);
     }
     console.log(`LIB-21 russian_twist balance (cm): ${out.join('; ')}`);
+  });
+});
+
+describe('LIB-21 resume 2: superman\'s normal-view zoom (D-LIB21-SUPERMAN, D-LIB21-SUPERMANZOOM; #337)', { timeout: T }, () => {
+  let zoom: any, qz: any, envMin: number;
+  beforeAll(async () => {
+    [zoom, qz] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    envMin = pins().envelope.traceLenMin;
+  });
+  const s = () => S.superman;
+  const withLow = (spec: any, box: any) => ({ ...spec, callouts: spec.callouts.map((c: any) => (c.key === 'low' ? { ...c, box } : c)) });
+  /** The Trace drawn inside the circle (px at the zoom's scale), as QA's H3.zoom:trace measures it. */
+  const zTrace = (spec: any) => { const z = zoom.zoomOf(spec, { prefix: 'x', view: 'normal' }); return { z, len: qz.clippedTrace(z.svg, z.circle) }; };
+  it('the ruled fields: trim [0, 0], one normal zoom at k 2.5; the `low` box at {4, 240} with its anchor and text unchanged', () => {
+    expect(s().trace).toEqual({ point: 'ankle.r', trim: [0, 0] });
+    expect(s().zoom).toEqual({ view: 'normal', k: 2.5 });
+    expect(s().callouts.find((c: any) => c.key === 'low')).toEqual({ key: 'low', text: 'Low lift', anchor: { at: 'ankle.r', off: [0, -8] }, box: { left: 4, top: 240 }, cue: 'Lift 3-6 inches, without hyperextending the back.' });
+  });
+  it('the zoom is needed: the plate\'s own untrimmed Trace path (9.80 px; 9.40 px drawn, QA traceLen) is under traceLenMin', () => {
+    const tp = zoom.tracePath(s(), qaEng.cameraOf(s(), plate.renderPlate(s(), { id: 'x' }).report), Eng());
+    const len = tp.slice(1).reduce((a: number, p: number[], i: number) => a + Math.hypot(p[0]! - tp[i]![0]!, p[1]! - tp[i]![1]!), 0);
+    console.log(`LIB-21 superman plate Trace path ${len.toFixed(2)} px`);
+    expect(len).toBeLessThan(envMin);
+  });
+  it('H3.zoom: the clipped Trace inside the circle is 23.47 px (±0.05), over traceLenMin; the source ring holds the whole Trace', () => {
+    const { z, len } = zTrace(s());
+    console.log(`LIB-21 superman zoom: circle ${z.circle.c} r ${z.circle.r}; source ${z.src.c.map((v: number) => v.toFixed(2))} r ${z.src.r.toFixed(2)}; Trace ${len.toFixed(2)} px`);
+    expect(len).toBeGreaterThanOrEqual(envMin);
+    expect(Math.abs(len - 23.47)).toBeLessThanOrEqual(0.05);
+    for (const p of z.trace) expect(Math.hypot(p[0] - z.src.c[0], p[1] - z.src.c[1])).toBeLessThanOrEqual(z.src.r - 1);
+  });
+  it('H4.zoom: the circle keeps 6 px from all plate ink, every label box and every leader', () => {
+    const { z } = zTrace(s()), r = plate.renderPlate(s(), { id: 'x' }), C = z.circle.c, R = z.circle.r + zoom.ZOOM.gap;
+    let ink = 0; for (let y = -R; y <= R; y += 2) { const w = Math.sqrt(Math.max(0, R * R - y * y)); ink += r.occ.count(C[0] - w, C[1] + y - 1, C[0] + w, C[1] + y + 1); }
+    expect(ink).toBe(0);
+    expect(Math.hypot(C[0] - z.src.c[0], C[1] - z.src.c[1])).toBeGreaterThanOrEqual(z.circle.r + z.src.r + zoom.ZOOM.gap);
+  });
+  it('mutation: k 2 (the ladder step below) gives a clipped Trace under traceLenMin, so 2.5 is the smallest k (red)', () => {
+    expect(zTrace({ ...s(), zoom: { view: 'normal', k: 2 } }).len).toBeLessThan(envMin);
+  });
+  it('mutation: the old trim [10, 12] gives a clipped Trace under traceLenMin (red)', () => {
+    expect(zTrace({ ...s(), trace: { ...s().trace, trim: [10, 12] } }).len).toBeLessThan(envMin);
+  });
+  it('mutation: the `low` box back at {22, 266} leaves no place for the circle (zoomOf throws)', () => {
+    expect(() => zoom.zoomOf(withLow(s(), { left: 22, top: 266 }), { prefix: 'x', view: 'normal' })).toThrow(/no place/);
+  });
+  it('mutation: the ink measure bites: a circle at the source ring\'s centre sits on the figure', () => {
+    const { z } = zTrace(s()), r = plate.renderPlate(s(), { id: 'x' }), C = z.src.c, R = z.circle.r;
+    let ink = 0; for (let y = -R; y <= R; y += 2) { const w = Math.sqrt(Math.max(0, R * R - y * y)); ink += r.occ.count(C[0] - w, C[1] + y - 1, C[0] + w, C[1] + y + 1); }
+    expect(ink).toBeGreaterThan(0);
   });
 });
