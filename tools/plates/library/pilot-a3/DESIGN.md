@@ -99,3 +99,29 @@ The hands on the handles are card contacts.
 - barbell_shrug: LIB-13s.
 - incline_dumbbell_press: LB2.
 - box_jump and the rear-delt fly: pinned in PILOT-A2 and byte-identical (A2).
+
+## 6. Built (Wave 1)
+
+- Page built twice: `bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878` (465,732 B), identical.
+- QA, node and browser, zero exemptions: all 10 hard checks pass on both. Flags equal EXPECTED:
+  - reverse_lunge F3 46.9, F4 0, F5 3.57 (label text 3.6:1); trace 69.7, deviation 4.10 px, 12.31 in the k 3 zoom;
+    chunk 126,448 B.
+  - dumbbell_fly F3 115, F5 3.57; trace 85.5, deviation 4.97 px, 12.42 in the k 2.5 zoom; chunk 153,494 B, as planned,
+    so the open-path fallback is not used.
+- Measured on the drawn fly: the start silhouettes are 15.08 × 27.93 px; the end dumbbell is 15.07 × 27.93. They sit
+  3.43 px from the pad and 8.04 px from the trimmed Trace. The hand guides turn 23.00° on screen (30.00° in 3D).
+- reverse_lunge's dumbbell-to-thigh 3D listing, from the test's model: the head as its circumscribed cylinder and the
+  thigh with the engine's limbR profile. Values in cm, l / r:
+  - start 1.47 / 1.47;
+  - via 1 0.27 / 0.36;
+  - via 2 0.23 / 3.72;
+  - end 0.11 / 9.70.
+  These agree with the card's to within 0.08 cm; the card's script is not in the repo.
+- Left as they were: the dumbbell_fly.mjs comments at :93, :116 and :138, and the reverse_lunge.mjs SIZES comment at
+  :90. They still say "pilot-a2/sizes.json", but they sit outside the card's write_scope lines.
+- lib8r-pilot-a2.test.ts: these lines changed outside the map, because the map's own moves force them:
+  - :45, the HELD_HERE use, which goes with :15;
+  - the titles of the tempo and tell mutation tests, which named the moved ids;
+  - the A9 view and sizes mutations, which now run on the PILOT-A2 rows (the rear-delt pitch; BOX_H and HEEL_BACK).
+  In lib8r-pilot-a3.test.ts, M5 runs on the fly: reverse_lunge's selected shin guide cannot be spliced into a page
+  whose start equals its end (vendor build-page.mjs guideFor).
