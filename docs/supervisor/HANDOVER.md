@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-31 ~06:00 UTC · main `a72b52b5` (train 48: F-ZOOM-PITCH + LB4) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-31 ~08:45 UTC · main `11791f67` (train 50: param-ranges) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -833,6 +833,12 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Held-row inventory (lib4-cards §48): 84 approved on main, 9 approved in open PRs, 3 in open PRs, 25 held, 32 not started. Next cards: LIB-SPINE, then the LB5 resume (card drafting), then the LB6 + LB7 T/D card.
   - **LIB-SPINE started** (card `verify/lib-spine-card.md` @ `6f38c440`; session_01EQuYNhxZqKdUyXTdU8Gopd; branch claude/lib-spine). LIB-8R got 'FIX 3 GO' (dumbbell_fly zoom with pitch, then a focused recheck).
   - Active LIB builders 4 of 4: LIB-18 resume 2 (#345), LIB-22 resume 2 (#346, farmer_s_carry), LIB-8R (#340), LIB-SPINE. Waiting: LIB-21 resume 2 (#337, superman for mx7), LIB-17 resume 2 (#343, train 49). Usage: 7-day 0.55 at 05:55.
+- **Update 08:45 UTC (10-31):**
+  - **Train 49 merged** (#350) → main `5352b676`: LB7 resume 2 #343 @ `037b02a4`. **Train 50 merged** (#352) → main `11791f67`: param-ranges #351 @ `940e2871` (the CURL and PUSHDOWN family rows, D-LIB15R2-RANGES; review PASS 6540344968). No src/ change in either, so no APK. The LIB-17 and LIB-14 sessions are archived.
+  - **LB5 resume 2 started** (LIB-15R2, #349, session_01EQuYNjAzUoWs77p36jFXTq; card `verify/lib-15r2-card.md`). PLAN RULED (6540168874). Panel **mx8** approved dumbbell_overhead_triceps_extension, cross_body_hammer_curl and wrist_curl @ `29ca5ce5`. Rulings D-LIB15R2-TPARENT (6540842602: A15 binds a T child's facts-set parts only) and D-LIB15R2-TEMPLDIR (6540882818: the two "no templates folder" asserts become a ruled-list assert). overhead_cable_triceps_extension stays held.
+  - Panel **mx7:** superman APPROVED @ `1273e4f6` (#337). dumbbell_fly HELD after its second focused round (F-FLY-START → PILOT-A3 with reverse_lunge). PILOT-A2 pins box_jump and the rear-delt fly.
+  - **Slot queue:** LIB-21 resume 2 READY (superman) and the LIB-8R pin wait for free slots. They get 'LIB-21 RESUME 2 READY GO' and 'LIB-8R PIN GO' as LIB-18 resume 2 (local gate rerun, then READY) and LIB-22 resume 2 (farmer_s_carry) go WAITING.
+  - Active LIB builders 4 of 4: LIB-18 resume 2, LIB-22 resume 2, LIB-SPINE (#348), LIB-15 resume 2. Usage: 7-day 0.59 at 07:58.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
