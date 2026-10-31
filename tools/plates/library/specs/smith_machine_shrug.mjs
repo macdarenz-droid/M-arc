@@ -140,8 +140,8 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 0 },
   trace: { point: 'shoulderTop.r', trim: [0, 0] },
-  // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.r), the smallest ladder k over the Trace bar. No Mistake zoom yet: QA's
-  // H3.zoom:not-needed:mistake refuses one while the crown's 13.0 px move meets the 11.39 px bar (asked on #359)
+  // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.r), the smallest ladder k over the Trace bar. No Mistake zoom (ruled,
+  // #359 option 1): the crown's 13.0 px move meets the 11.39 px bar, so QA refuses one (H3.zoom:not-needed:mistake)
   zoom: { view: 'normal', k: 3.5 },
   // Two levels bracket the 5 cm rise: shoulder top at the start and at the top (R7: small at full-figure scale).
   datum: [{ y: 'start:shoulderTop.r', from: 130, to: 'start:shoulderTop.r' }, { y: 'shoulderTop.r', from: 130, to: 'shoulderTop.r', mistake: false }],   // from 130 (the parent's 60): the labels sit left

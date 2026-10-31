@@ -1825,6 +1825,24 @@ describe('LIB-13s panel mx19 fix: dumbbell_shrug\'s ring beside the viewer\'s-ri
     expect(near(q)).toBeLessThan(1.5);   // the leader ends on the dashed outline
     expect(Math.max(...H.map((p: number[]) => p[0]!)) - q[0]!).toBeLessThan(6);   // at the jaw's front (the chin), not under the head (the throat)
   });
+  /** Mistake svg draw order: the head guide (m-line) and its arrow lie in the mistake layer, after every body and equipment
+   *  element (the Smith rails included), so they paint on top. [] when so. */
+  const orderProblems = (svg: string) => {
+    const layer = svg.indexOf('<g class="mistake-layer">'), out: string[] = [];
+    if (layer < 0) return ['no mistake layer'];
+    const after = svg.slice(layer);
+    if (!/<path class="m-line"/.test(after)) out.push('head guide not in the mistake layer');
+    if (!/<path class="m-arrow"/.test(after)) out.push('arrow not in the mistake layer');
+    if (/<use |class="eq|class="u-(stroke|fill)"/.test(after)) out.push('body or equipment drawn after the mistake layer');
+    return out;
+  };
+  it('smith_machine_shrug (#359 ruling, option 1): the red dashed head and its arrow draw on top of the rails', () => {
+    expect(orderProblems(plate.renderPlate(S3.smith_machine_shrug, { id: 'x', mistake: true }).svg)).toEqual([]);
+  });
+  it('mutation: an equipment element painted after the mistake layer is red', () => {
+    const svg = plate.renderPlate(S3.smith_machine_shrug, { id: 'x', mistake: true }).svg;
+    expect(orderProblems(svg.replace(/<\/svg>$/, '<path class="eq" d="M0 0"/></svg>'))).toEqual(['body or equipment drawn after the mistake layer']);
+  });
   it('mutation: the chin tell back on the bare chin landmark sits under the head (the throat), 6 px or more behind its front', () => {
     const s = S3.smith_machine_shrug, cam = qaEng.cameraOf(s, plate.renderPlate(s, { id: 'x' }).report), H = headOf(s, { ...s.poses.end, ...s.mistake.pose });
     const c = cam.P(qaEng.poseLandmarks(Eng(), s).lm.mistake.chin);

@@ -619,6 +619,6 @@ t_bar_row and cable_shrug APPROVED; their 18 fragments are pinned (with barbell_
   cable_shrug. k stays 3.5.
 - **smith_machine_shrug R5 (D-LIB13S-SMITHZOOM):** the faulty head is one complete dashed outline, the engine's Mistake
   head shape at its own size (tested within 1 px), and the "Chin drops" leader ends on that outline at the jaw's front, not
-  under the head. The Mistake-view zoom is **not drawn yet**: QA's H3.zoom:not-needed:mistake (qa/zoom.mjs, outside this
-  card's write scope) refuses a Mistake zoom whenever a tell already moves 11.39 px at plate scale, and the crown moves
-  13.0 px. Asked on #359.
+  under the head. No Mistake-view zoom (ruled, #359, option 1): QA's H3.zoom:not-needed:mistake refuses one whenever a
+  tell already moves 11.39 px at plate scale, and the crown moves 13.0 px. The dashed head and its arrow paint in the
+  Mistake layer, after every body and equipment element, so they draw over the rails (tested).
