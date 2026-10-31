@@ -13,7 +13,7 @@ export const facts = {
   callouts: [
     { key: 'palms', text: 'Palms<br>down', anchor: 'grip.r', box: { left: 240, top: 140 }, cue: 'Hold the bar overhand about shoulder-width and keep that grip all the way up.' },
     { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', cue: 'Keep a straight line from the hands to the elbows.' },
-    { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', cue: 'Keep the upper arms still and the elbows close to the ribs.' },
+    { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', box: { left: 80, top: 100 }, cue: 'Keep the upper arms still and the elbows close to the ribs.' },
   ],
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {

@@ -150,6 +150,7 @@ export function make(params, facts) {
   })();
   const lmM = landmarksOf({ ...end, ...mistakePose }, H), MIS_BAR = barOf(lmM);
 
+  const START_W = (() => { const bd = { height: H }, sk = fk(resolve(normPose(start, bd), bd).q, bd); return { 'wrist.r': sk.W.r, 'wrist.l': sk.W.l }; })();
   return {
     id: facts.id, name: facts.name, view: 'side', facing: 'right',
     camera: { fit: true },
@@ -181,6 +182,8 @@ export function make(params, facts) {
       },
     ],
     checks: [
+      // (template) the hands on the bar at the start, for the hand-contact facts (D-LIB13-FACTS2; cross_body_hammer_curl's form)
+      ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: START_W[landmark], pose: 'start', tol: 0.5 })),
       { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // feet flat ON the floor
       { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
       ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', at: E, pose, tol: 0.5 })),                 // elbow pinned (start and end)

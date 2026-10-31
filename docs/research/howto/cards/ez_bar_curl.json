@@ -583,5 +583,31 @@
     "remove": [],
     "why": "biceps primary and forearms (forearm flexors) secondary match exercises.json (c11). StrengthLog also names the brachialis, which is text-only."
   },
-  "anchorSource": "sl-ez"
+  "anchorSource": "sl-ez",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Curl",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "wrists"
 }

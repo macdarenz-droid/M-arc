@@ -766,8 +766,8 @@ describe('LIB-15 A4: runQa node half on an LB5 plate (lib_preacher_curl), LIB-3 
 
 describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the plate facts (#290 6340022161)', { timeout: T }, () => {
   // The cards whose fields are written now: the 9 (incline_dumbbell_curl once drawn) and, after LB5 R2 PLAN RULED, the
-  // 3 drawn R2 H rows; the 4 R2 T cards wait for the T-row ruling (#349 6540834642).
-  const R2_FIELDED = ['single_arm_triceps_pushdown', 'alternating_dumbbell_curl', 'hammer_curl'];
+  // 7 R2 cards (the T rows' after D-LIB15R2-TPARENT, #349 6540842602).
+  const R2_FIELDED = R2;
   const FIELDED = [...LB5, ...R2_FIELDED];
   const KEYS = ['plateFacts', 'tempo', 'topFault'];
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
@@ -778,8 +778,9 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
   // cross_body_hammer_curl: the shrug after F-LB5-1 (research a8e66f32, #290 6340713424); its top fault, the straight arm, keys `straight`.
   const DRAWN: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cross_body_hammer_curl: 'shrug',
     cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', concentration_curl: 'knee', wrist_curl: 'lean',
-    incline_dumbbell_curl: 'elbows', single_arm_triceps_pushdown: 'lean', alternating_dumbbell_curl: 'elbows', hammer_curl: 'elbows' };   // + LIB-15R2 (DESIGN.md 17.7)
-  const TOP: Record<string, string> = { ...DRAWN, wrist_curl: 'grip', cross_body_hammer_curl: 'straight', incline_dumbbell_curl: 'wrists', alternating_dumbbell_curl: 'wrist' };
+    incline_dumbbell_curl: 'elbows', single_arm_triceps_pushdown: 'lean', alternating_dumbbell_curl: 'elbows', hammer_curl: 'elbows',
+    straight_bar_triceps_pushdown: 'lean', barbell_curl: 'elbows', ez_bar_curl: 'elbows', reverse_curl: 'swing' };   // + LIB-15R2 (DESIGN.md 17.7)
+  const TOP: Record<string, string> = { ...DRAWN, wrist_curl: 'grip', cross_body_hammer_curl: 'straight', incline_dumbbell_curl: 'wrists', alternating_dumbbell_curl: 'wrist', barbell_curl: 'wrists', ez_bar_curl: 'wrists' };
   // The ruled facts (D-LIB15-FACTS), copied from the ruling, never read from a card or a spec.
   const C = (landmark: string, pose: string, cardPose: string, claim: string) => ({ kind: 'contact', landmark, pose, cardPose, claim });
   // The plate-fact fix round (#290 6349063103): each side of a plural paired part, the hands on the implement at the
@@ -801,6 +802,10 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
     single_arm_triceps_pushdown: [C('wrist.r', 'start', 'start', 'c2')],
     alternating_dumbbell_curl: W2('start', 'start', 'c2'),
     hammer_curl: W2('start', 'start', 'c1'),
+    straight_bar_triceps_pushdown: W2('start', 'start', 'c1'),
+    barbell_curl: W2('start', 'start', 'c1'),
+    ez_bar_curl: [C('wrist.r', 'start', 'start', 'c1')],
+    reverse_curl: W2('start', 'start', 'c1'),
   };
   const tj = () => readJson('tools/plates/library/lb5/tempo.json');
   const built = (rows: any[], pt: any) => rows.flatMap((r: any) => (r.from === 'pause' ? (pt.pause > 0 ? [{ phase: r.phase, s: pt.pause }] : []) : [{ phase: r.phase, s: pt[r.from], move: true }]));

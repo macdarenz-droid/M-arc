@@ -669,3 +669,8 @@ then the T rows; their QA counts only after the family rows merge). Stops S1-S5 
   curl's precedent). Authoring QA on the 4: all 10 hard checks pass, node and browser. Named flags (17.3's form):
   F3 47.1 on alternating_dumbbell_curl (short leaders), and F4 0 on alternating_dumbbell_curl and incline_dumbbell_curl
   (no hand-placed labels).
+- After D-LIB15R2-TPARENT and -TEMPLDIR (#349 6540842602, 6540882818): CURL, PUSHDOWN and the 4 T rows are restored.
+  Each template gains `checks` for both wrists at their start place, for the hand-contact facts (the H rows' form).
+  `checks` do not reach the 9 fragments, so both parent proofs still pass. Facts-set boxes on the T rows keep their
+  leaders 6 px clear: barbell_curl `still` {96, 60} and `elbows` {80, 140}, ez_bar_curl and reverse_curl `elbows`
+  {80, 100}, straight_bar_triceps_pushdown `wrists` {40, 250}. All 8 cards carry the 3 keys.

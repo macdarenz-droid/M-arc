@@ -630,5 +630,34 @@
   ],
   "why": "exercises.json has forearms and brachialis primary, biceps secondary. EMG shows the biceps stays very active with the palms down (c10), and StrengthLog lists the biceps as primary (c12), so biceps moves to primary. Forearms stay primary (c12, coaching emphasis on the brachioradialis). brachialis is text-only. Coratella 2023 (c11) found less brachioradialis activity palms-down than palms-up, so the 'forearms primary' emphasis rests on coaching sources, not EMG."
  },
- "anchorSource": "sl-revcurl"
+ "anchorSource": "sl-revcurl",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Curl",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "swing"
 }

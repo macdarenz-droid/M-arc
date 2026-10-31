@@ -12,7 +12,7 @@ export const facts = {
   callouts: [
     { key: 'elbows', text: 'Elbows<br>pinned', anchor: 'elbow.r', cue: 'Keep the upper arms close to your sides. Only the forearms move.' },
     { key: 'hips', text: 'Hip lean<br>only', anchor: 'backUpper', box: { left: 56, top: 124 }, cue: 'Keep the back straight, or tilt slightly from the hips without arching.' },
-    { key: 'wrists', text: 'Neutral<br>wrists', anchor: 'wrist.r', cue: 'Keep the hands in line with the forearms from top to bottom.' },
+    { key: 'wrists', text: 'Neutral<br>wrists', anchor: 'wrist.r', box: { left: 40, top: 250 }, cue: 'Keep the hands in line with the forearms from top to bottom.' },
   ],
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
   mistake: {

@@ -136,6 +136,7 @@ export function make(params, facts) {
   // (swing) the upper back rocks at least 5 cm behind the end pose's (the check proves the body moved, c5)
   const SWING_BACK = swing ? landmarksOf(end, H).backUpper[2] - 0.05 : null;
 
+  const START_W = (() => { const bd = { height: H }, sk = fk(resolve(normPose(start, bd), bd).q, bd); return { 'wrist.r': sk.W.r, 'wrist.l': sk.W.l }; })();
   return {
     id: facts.id, name: facts.name, view: 'side', facing: 'right',
     camera: { x0: 168, y0: 339 },                  // reference scale; figure + curl arc centred on the plate
@@ -147,6 +148,8 @@ export function make(params, facts) {
       (lm, ctx) => (ctx.pose === 'end' ? [...START_FORE, { type: 'line', cls: 'eq-cable m-line', pts: startLoad(ctx.start['grip.r']), z: 'front', part: 'startdb' }] : null),
     ],
     checks: [
+      // (template) the hands on the load at the start, for the hand-contact facts (D-LIB13-FACTS2; cross_body_hammer_curl's form)
+      ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: START_W[landmark], pose: 'start', tol: 0.5 })),
       { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // feet flat
       { landmark: 'ball.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
       // the elbow stays pinned: on the vertical plane through the shoulder joint (set 1 cm back), start and end

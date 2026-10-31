@@ -780,5 +780,38 @@
     "why": "triceps primary is sourced (c15). exercises.json lists forearms as secondary; StrengthLog's bar-pushdown page lists only the triceps and no other source read names the forearms, so it is kept unchanged and flagged unsourced (same finding as the parent card)."
   },
   "anchorSource": "sl-pushdown",
-  "familyNote": "Family is PUSHDOWN (straight bar) to match the parent pushdown template; census.json files it under 'Triceps extension'."
+  "familyNote": "Family is PUSHDOWN (straight bar) to match the parent pushdown template; census.json files it under 'Triceps extension'.",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Press",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "lean"
 }

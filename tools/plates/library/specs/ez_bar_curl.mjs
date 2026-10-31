@@ -11,7 +11,7 @@ import { make } from '../templates/CURL.mjs';
 export const facts = {
   id: 'ez_bar_curl', name: 'EZ-Bar Curl',
   callouts: [
-    { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', cue: 'Keep the elbows close to your body. Do not let them drift forward on top.' },
+    { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', box: { left: 80, top: 100 }, cue: 'Keep the elbows close to your body. Do not let them drift forward on top.' },
     { key: 'grip', text: 'Angled<br>grip', anchor: 'grip.r', box: { left: 240, top: 140 }, cue: 'Hold the bar underhand on its angled sections.' },
     { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', cue: 'Keep the hands in line with the forearms.' },
   ],

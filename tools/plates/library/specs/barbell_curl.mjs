@@ -12,9 +12,9 @@ import { make } from '../templates/CURL.mjs';
 export const facts = {
   id: 'barbell_curl', name: 'Barbell Curl',
   callouts: [
-    { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', cue: 'Keep the upper arms by your body. Never let them travel back.' },
+    { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', box: { left: 80, top: 140 }, cue: 'Keep the upper arms by your body. Never let them travel back.' },
     { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', cue: 'Keep the hands in line with the forearms, not bent up or down.' },
-    { key: 'still', text: 'Still<br>body', anchor: 'backUpper', box: { left: 96, top: 108 }, cue: 'Keep the chest and body still, so only the arms move.' },
+    { key: 'still', text: 'Still<br>body', anchor: 'backUpper', box: { left: 96, top: 60 }, cue: 'Keep the chest and body still, so only the arms move.' },
   ],
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
