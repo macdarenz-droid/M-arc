@@ -83,6 +83,33 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_cable_shrug": {
+   "src": "library/specs/cable_shrug.mjs",
+   "slug": "cable-shrug",
+   "prefix": "cable-shrug",
+   "chromeId": "cable-shrug",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_dumbbell_shrug": {
+   "src": "library/specs/dumbbell_shrug.mjs",
+   "slug": "dumbbell-shrug",
+   "prefix": "dumbbell-shrug",
+   "chromeId": "dumbbell-shrug",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_smith_machine_shrug": {
+   "src": "library/specs/smith_machine_shrug.mjs",
+   "slug": "smith-machine-shrug",
+   "prefix": "smith-machine-shrug",
+   "chromeId": "smith-machine-shrug",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }

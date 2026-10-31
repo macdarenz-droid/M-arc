@@ -15,9 +15,9 @@ const LB3 = ['pendlay_row', 't_bar_row', 'landmine_row', 'one_arm_dumbbell_row',
 const IDS = LB3.map(i => `lib_${i}`);
 const REUSED = ['barbell_row', 'romanian_deadlift', 'single_leg_romanian_deadlift', 'upright_row'];
 const SHRUGS = ['dumbbell_shrug', 'cable_shrug', 'barbell_shrug', 'smith_machine_shrug'];
-// LIB-13s (lib-13s-card A1; D-LIB13S-MODES): the ids it releases into lb3/rows.json (all H, wave 1), and the shrugs it
-// still holds. LIB-13's own blocks keep reading drawn() (its 7 approved ids).
-const RELEASED = ['t_bar_row', 'barbell_shrug'];
+// LIB-13s (lib-13s-card A1; D-LIB13S-MODES): the ids it releases into lb3/rows.json (all H; wave 1, then wave 2), and the
+// shrugs it still holds. LIB-13's own blocks keep reading drawn() (its 7 approved ids).
+const RELEASED = ['t_bar_row', 'barbell_shrug', 'cable_shrug', 'dumbbell_shrug', 'smith_machine_shrug'];
 const HELD_SHRUGS = SHRUGS.filter(id => !RELEASED.includes(id));
 const VIEW13S: Record<string, string> = { dumbbell_shrug: 'front' };
 const ROWS = 'tools/plates/library/lb3/rows.json';
@@ -1453,14 +1453,18 @@ describe('LIB-13s wave 1: zooms, card-true poses and the 2 px clearance (A3, A4,
   });
 
   // ---- A3: the zooms ----
-  const WANT: Record<string, any> = { barbell_shrug: { view: 'normal', k: 3.5 }, t_bar_row: { view: 'normal', k: 1.5 } };
-  const PIN: Record<string, number> = { barbell_shrug: 24.54, t_bar_row: 35.69 };   // t_bar_row: mx16 fix round (handle hooked under the bar), k 1.5
+  const SH35 = { view: 'normal', k: 3.5 };
+  const WANT: Record<string, any> = { barbell_shrug: SH35, t_bar_row: { view: 'normal', k: 1.5 }, cable_shrug: SH35, dumbbell_shrug: SH35, smith_machine_shrug: SH35 };
+  const PIN: Record<string, number> = { barbell_shrug: 24.54, t_bar_row: 35.69, cable_shrug: 24.54, dumbbell_shrug: 24.54, smith_machine_shrug: 24.54 };   // t_bar_row: mx16 fix round (handle hooked under the bar), k 1.5
   const noZoom = (s: any) => ({ ...s, zoom: undefined });
-  const zoomProblems = (id: string, s: any) => {
+  // async with a yield before each zoom render: a long synchronous loop starves vitest's worker RPC (D-LIB8M-RPC)
+  const zoomProblems = async (id: string, s: any) => {
     const out: string[] = [...Z.zoomFieldProblems(s.zoom)];
     if (JSON.stringify(s.zoom) !== JSON.stringify(WANT[id])) out.push(`zoom ${JSON.stringify(s.zoom)}`);
     if (!s.zoom) return out;
-    const len = (k: number) => { const w = Z.zoomOf({ ...s, zoom: { view: 'normal', k } }, { view: 'normal' }); return QZ.clippedTrace(w.svg, w.circle); };
+    const L: Record<number, number> = {};
+    for (const x of LADDER) { await new Promise(r => setImmediate(r)); const w = Z.zoomOf({ ...s, zoom: { view: 'normal', k: x } }, { view: 'normal' }); L[x] = QZ.clippedTrace(w.svg, w.circle); }
+    const len = (x: number) => L[x]!;
     const k = s.zoom.k, z = Z.zoomOf(s, { view: 'normal' });
     if (/<(text|foreignObject|tspan)\b|°/.test(z.svg)) out.push('text in the zoom');
     if (!(len(k) >= TRACE)) out.push(`Trace ${len(k).toFixed(2)} px at k ${k} < ${TRACE}`);
@@ -1470,16 +1474,16 @@ describe('LIB-13s wave 1: zooms, card-true poses and the 2 px clearance (A3, A4,
     if (Math.abs(len(k) - PIN[id]!) > 0.01) out.push(`Trace ${len(k).toFixed(2)} != pinned ${PIN[id]}`);
     return out;
   };
-  it('A3: each zoom is the PLAN\'s view and k, meets 22.11 px at k (barbell_shrug 24.54 at 3.5, t_bar_row 35.69 at 1.5), no smaller ladder k does, and the ring holds the Trace', () => {
-    for (const id of RELEASED) expect(zoomProblems(id, W[id]), id).toEqual([]);
+  it('A3: each zoom is the PLAN\'s view and k, meets 22.11 px at k (the shrugs 24.54 at 3.5, t_bar_row 35.69 at 1.5), no smaller ladder k does, and the ring holds the Trace', async () => {
+    for (const id of RELEASED) expect(await zoomProblems(id, W[id]), id).toEqual([]);
   });
   it('A3: the plate is byte-identical outside the zoom (each view renders the same svg with and without the field)', () => {
     for (const id of RELEASED) for (const mistake of [false, true]) expect(plate.renderPlate(W[id], { id: 'x', mistake }).svg, id).toBe(plate.renderPlate(noZoom(W[id]), { id: 'x', mistake }).svg);
   });
-  it("A3 mutations: barbell_shrug at k 3 (21.02 px), t_bar_row's zoom removed, and t_bar_row at k 2 (k 1.5 already reaches the bar) are red", () => {
-    expect(zoomProblems('barbell_shrug', { ...W.barbell_shrug, zoom: { view: 'normal', k: 3 } })).toEqual(expect.arrayContaining([expect.stringMatching(/^Trace 21\.02 px at k 3 < 22\.11$/)]));
-    expect(zoomProblems('t_bar_row', noZoom(W.t_bar_row))).toEqual(['zoom undefined']);
-    expect(zoomProblems('t_bar_row', { ...W.t_bar_row, zoom: { view: 'normal', k: 2 } })).toContain('a smaller k reaches the bar');
+  it("A3 mutations: barbell_shrug at k 3 (21.02 px), t_bar_row's zoom removed, and t_bar_row at k 2 (k 1.5 already reaches the bar) are red", async () => {
+    expect(await zoomProblems('barbell_shrug', { ...W.barbell_shrug, zoom: { view: 'normal', k: 3 } })).toEqual(expect.arrayContaining([expect.stringMatching(/^Trace 21\.02 px at k 3 < 22\.11$/)]));
+    expect(await zoomProblems('t_bar_row', noZoom(W.t_bar_row))).toEqual(['zoom undefined']);
+    expect(await zoomProblems('t_bar_row', { ...W.t_bar_row, zoom: { view: 'normal', k: 2 } })).toContain('a smaller k reaches the bar');
   });
 });
 
@@ -1498,12 +1502,13 @@ describe('LIB-13s A6: runQa node half on the wave-1 plates (zoom keys, H1 feet, 
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
   // H6 reads the card's three keys; until CARD FIELDS lands on barbell_shrug's card it reports H6:no-card (DESIGN.md 16.8)
   const keyed = (id: string) => 'plateFacts' in readJson(`docs/research/howto/cards/${id}.json`);
-  it('clean: no node-half hard problem on either plate; barbell_shrug raises F3 45.79 and F4 0 (named, D-LIB13S-FLAGS)', async () => {
+  it('clean: no node-half hard problem on any released plate; the node flags F3 and F4 are the ruled set (qa.mjs EXPECTED)', async () => {
+    const q = await import(/* @vite-ignore */ lib('lb3/qa.mjs'));
     for (const id of RELEASED) {
-      const r = await qa(await candOf(`lib_${id}`));
-      expect(keys(r), id).toEqual(id === 'barbell_shrug' && !keyed(id) ? ['H6:no-card'] : []);
+      const r = await qa(await candOf(`lib_${id}`)), want = q.EXPECTED(`lib_${id}`);
+      expect(keys(r), id).toEqual(keyed(id) ? [] : ['H6:no-card']);
+      for (const f of ['F3', 'F4']) expect(r.flags[f].raised, `${id} ${f}`).toBe(want.includes(f));
       if (id === 'barbell_shrug') { expect(+r.flags.F3.value.toFixed(2)).toBe(45.79); expect(r.flags.F4.value).toBe(0); }
-      else { expect(r.flags.F3.raised, id).toBe(false); expect(r.flags.F4.raised, id).toBe(false); }
     }
   });
   it('mutations: a planted "15°" in t_bar_row\'s zoom (H2.zoom:angle), its zoom removed (H3.trace), and the 53-word alt (H2.alt) are red', async () => {
@@ -1532,6 +1537,7 @@ describe('LIB-13s A6: runQa node half on the wave-1 plates (zoom keys, H1 feet, 
     let hit: any = null;
     for (const [dx, dy] of [[0, 1], [-1, 0], [1, 0], [0, -1]]) {
       for (let d = 1; d <= 120 && !hit; d++) {
+        await new Promise(r => setImmediate(r));   // yield: a long synchronous search starves vitest's worker RPC (D-LIB8M-RPC)
         const box = { left: c0.box.left + dx! * d, top: c0.box.top + dy! * d }, is = plate.renderPlate(at(box), { id: 'm' }).report.issues;
         if (is.some((i: string) => !i.startsWith('figure:'))) break;
         if (is.length) hit = box;
@@ -1569,6 +1575,9 @@ describe('LIB-13s A6: runQa node half on the wave-1 plates (zoom keys, H1 feet, 
     const q = await import(/* @vite-ignore */ lib('lb3/qa.mjs'));
     expect(q.EXPECTED('lib_barbell_shrug')).toEqual(['F2', 'F3', 'F4', 'F5', 'F7']);
     expect(q.EXPECTED('lib_t_bar_row')).toEqual(['F5']);
+    expect(q.EXPECTED('lib_cable_shrug')).toEqual(['F5']);
+    expect(q.EXPECTED('lib_dumbbell_shrug')).toEqual(['F2', 'F4', 'F5']);
+    expect(q.EXPECTED('lib_smith_machine_shrug')).toEqual(['F2', 'F5']);
   });
 });
 
@@ -1623,7 +1632,7 @@ describe('LIB-13s A7: the 4 shrug cards and quotes are research a48b0594 copies 
   };
   it('CARD FIELDS: each shrug card carries the ruled three keys; barbell_shrug\'s spec tempo equals its card\'s', () => {
     for (const id of SH) expect(fieldProblems(id, cardOf(id)), id).toEqual([]);
-    expect(S13.barbell_shrug.tempo).toEqual(cardOf('barbell_shrug').tempo);
+    for (const id of SH) expect(S13[id].tempo, id).toEqual(cardOf(id).tempo);
   });
   it('CARD FIELDS mutations: one second changed on a card, a fact added, and another topFault are red', () => {
     const a = cardOf('dumbbell_shrug'); a.tempo[1].s = 2;
@@ -1635,5 +1644,82 @@ describe('LIB-13s A7: the 4 shrug cards and quotes are research a48b0594 copies 
   });
   let V: any;
   const S13: Record<string, any> = {};
-  beforeAll(async () => { V = await import(/* @vite-ignore */ lib('research/validate.mjs')); S13.barbell_shrug = (await import(/* @vite-ignore */ lib('specs/barbell_shrug.mjs'))).default; }, T);
+  beforeAll(async () => { V = await import(/* @vite-ignore */ lib('research/validate.mjs')); for (const id of SH) S13[id] = (await import(/* @vite-ignore */ lib(`specs/${id}.mjs`))).default; }, T);
+});
+
+describe('LIB-13s wave 2: cable, dumbbell and smith_machine shrugs, card-true poses and the 2 px clearance (A4, A5)', { timeout: T }, () => {
+  const PX = 146.29, W2 = ['cable_shrug', 'dumbbell_shrug', 'smith_machine_shrug'], S2: Record<string, any> = {};
+  beforeAll(async () => { for (const id of W2) S2[id] = (await import(/* @vite-ignore */ lib(`specs/${id}.mjs`))).default; }, T);
+  const variant = async (id: string, pairs: [string, string][]) => {
+    let src = readFileSync(`tools/plates/library/specs/${id}.mjs`, 'utf8');
+    for (const [a, b] of pairs) { expect(src.split(a).length - 1, a).toBe(1); src = src.replace(a, b); }
+    src = src.replace(/from '\.\.\/([^']+)'/g, (_m, f) => `from '${lib(f)}'`);
+    const dir = mkdtempSync(join(tmpdir(), 'lb3s-w2-')), file = join(dir, `${id}.mjs`);
+    writeFileSync(file, src);
+    try { return (await import(/* @vite-ignore */ `file://${file}`)).default; } finally { rmSync(dir, { recursive: true, force: true }); }
+  };
+  const cr = (ps: number[][], k = 8) => { const n = ps.length, g = (i: number) => ps[(i + n) % n]!, out: number[][] = [];
+    for (let i = 0; i < n; i++) { const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+      const c1 = [p1[0]! + (p2[0]! - p0[0]!) / 6, p1[1]! + (p2[1]! - p0[1]!) / 6], c2 = [p2[0]! - (p3[0]! - p1[0]!) / 6, p2[1]! - (p3[1]! - p1[1]!) / 6];
+      for (let j = 0; j < k; j++) { const t = j / k, u = 1 - t; out.push([0, 1].map(d => u * u * u * p1[d]! + 3 * u * u * t * c1[d]! + 3 * u * t * t * c2[d]! + t * t * t * p2[d]!)); } }
+    return out; };
+  const ARMS = /^(upper|elbowcap|fore|fist|shcap)\./;
+  /** The drawn body outline less the arms, in metres: side (z, y) or front (x, y). */
+  const outline = (pose: any, view: string) => { const b = { height: 1.75 }, cam = { view, near: 'r', pxm: 1, P: (w: number[]) => (view === 'side' ? [w[2]!, w[1]!] : [w[0]!, w[1]!]) };
+    return body.bodyShapes(body.fk(body.resolve(body.normPose(pose, b), b).q, b), cam).filter((s: any) => !ARMS.test(s.key)).map((s: any) => (s.key.includes('cap') ? s.poly : cr(s.poly))); };
+  const inP = (P: number[][], q: number[]) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const a = P[j]!, b = P[i]!;
+    if ((b[1]! > q[1]!) !== (a[1]! > q[1]!) && q[0]! < a[0]! + (b[0]! - a[0]!) * (q[1]! - a[1]!) / (b[1]! - a[1]!)) c = !c; } return c; };
+  const sd = (q: number[], a: number[], b: number[]) => { const d = [b[0]! - a[0]!, b[1]! - a[1]!], L2 = d[0]! ** 2 + d[1]! ** 2 || 1;
+    const t = Math.max(0, Math.min(1, ((q[0]! - a[0]!) * d[0]! + (q[1]! - a[1]!) * d[1]!) / L2)); return Math.hypot(q[0]! - a[0]! - d[0]! * t, q[1]! - a[1]! - d[1]! * t); };
+  const clearPx = (polys: number[][][], q: number[], r = 0) => { let best = Infinity, ins = false;
+    for (const P of polys) { if (inP(P, q)) ins = true; for (let i = 0; i < P.length; i++) best = Math.min(best, sd(q, P[i]!, P[(i + 1) % P.length]!)); }
+    return ((ins ? -best : best) - r) * PX; };
+  const poseOf = (s: any, p: string) => (p === 'mistake' ? { ...s.poses.end, ...s.mistake.pose } : s.poses[p]);
+  /** The load part's least clearance per drawn pose: the bar end (side) or each end-on hex's corners and edges (front). */
+  const loadClear = (s: any) => Object.fromEntries(['start', 'end', 'mistake'].map(p => {
+    const { items } = itemsIn(s, p, { mistake: p === 'mistake' }), polys = outline(poseOf(s, p), s.view);
+    if (s.view === 'front') {
+      // the hex itself: 6 corners at 0.0595 m, edges sampled every 10 deg of the hex perimeter
+      const hexPts = items.filter((x: any) => x.type === 'dumbbell').flatMap((x: any) => { const c = Array.from({ length: 6 }, (_, k) => [x.at[0] + 0.0595 * Math.cos(k * Math.PI / 3), x.at[1] + 0.0595 * Math.sin(k * Math.PI / 3)]);
+        return c.flatMap((a, i) => { const b = c[(i + 1) % 6]!; return Array.from({ length: 10 }, (_, j) => [a[0]! + (b[0]! - a[0]!) * j / 10, a[1]! + (b[1]! - a[1]!) * j / 10]); }); });
+      return [p, +Math.min(...hexPts.map((q: number[]) => clearPx(polys, q))).toFixed(2)];
+    }
+    const bar = items.find((x: any) => x.type === 'pulley' && x.part === 'bar');
+    return [p, +clearPx(polys, [bar.at[2], bar.at[1]], bar.r).toFixed(2)];
+  }));
+  it('A5: every load part clears the drawn body by 2 px in every drawn pose (cable bar, dumbbell hexes, Smith bar end)', () => {
+    const c = Object.fromEntries(W2.map(id => [id, loadClear(S2[id])]));
+    console.log(`LIB-13s wave 2 clearance px: ${JSON.stringify(c)}`);
+    for (const id of W2) for (const v of Object.values<number>(c[id])) expect(v, id).toBeGreaterThanOrEqual(2);
+  });
+  it('A5 mutation: the dumbbell grips at 0.25 m (under 2 px) are red', async () => {
+    const c = loadClear(await variant('dumbbell_shrug', [['const GRIP_X = 0.26;', 'const GRIP_X = 0.25;']]));
+    expect(Math.min(...Object.values<number>(c))).toBeLessThan(2);
+  });
+  const bend = (lm: any) => { const u = [0, 1, 2].map(i => lm['shoulder.r'][i] - lm['elbow.r'][i]), w = [0, 1, 2].map(i => lm['wrist.r'][i] - lm['elbow.r'][i]);
+    return 180 - Math.acos(u.reduce((a, v, i) => a + v * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w)) * 180 / Math.PI; };
+  const ELBOW: Record<string, [number, number]> = { cable_shrug: [0, 5], dumbbell_shrug: [0, 5], smith_machine_shrug: [10, 15] };   // c5, c3 straight; smith c1 "slight bend" (DESIGN.md 16.4)
+  const poseProblems = (id: string, s: any) => {
+    const L = qaEng.poseLandmarks(Eng(), s).lm, out: string[] = [], rise = (L.end['shoulder.r'][1] - L.start['shoulder.r'][1]) * 100;
+    if (Math.abs(rise - 5) > 0.2) out.push(`shoulder rise ${rise.toFixed(2)} cm`);
+    for (const p of ['start', 'end']) { const b = bend(L[p]), [lo, hi] = ELBOW[id]!; if (b < lo || b > hi) out.push(`${p}: elbow ${b.toFixed(1)} deg`); }
+    if (id === 'smith_machine_shrug') {
+      for (const p of ['start', 'end', 'mistake']) { const bar = itemsIn(s, p, { mistake: p === 'mistake' }).items.find((x: any) => x.part === 'bar'); if (Math.abs(bar.at[2] - 0.13) > 1e-9) out.push(`${p}: bar off the rail`); }
+      const g = L.start.grips[1]; if (!(g < L.start['hip.r'][1] && g > L.start['knee.r'][1])) out.push('start bar not at mid-thigh');
+    }
+    if (id === 'dumbbell_shrug') for (const sd2 of ['l', 'r']) if (Math.abs(L.start[`grip.${sd2}`][0]) <= Math.abs(L.start[`hip.${sd2}`][0])) out.push(`grip.${sd2} not beside the thigh`);
+    if (id === 'cable_shrug') {
+      const { items, lm } = itemsIn(s, 'start'), col = items.find((x: any) => x.type === 'cableColumn');
+      if (!(col.pulley.at[2] - col.pulley.r > lm['toe.r'][2])) out.push('pulley not ahead of the toes');
+      if (dist(col.to, [0, lm.grips[1], lm.grips[2]]) > 1e-9) out.push('cable not to the bar');
+    }
+    return out;
+  };
+  it('A4: each shoulder joint rises 5 cm (±0.2); straight arms (cable, dumbbell) or a 10-15 deg bend (smith); the Smith bar on its rail and at mid-thigh; the dumbbells beside the thighs; the pulley ahead of the toes with the cable to the bar', () => {
+    for (const id of W2) expect(poseProblems(id, S2[id]), id).toEqual([]);
+  });
+  it("A4 mutations: dumbbell_shrug's rise at 7 cm and smith_machine_shrug's elbows straight are red", async () => {
+    expect(poseProblems('dumbbell_shrug', await variant('dumbbell_shrug', [['const SHRUG = 5;', 'const SHRUG = 7;']]))).toEqual([expect.stringMatching(/^shoulder rise 7\.0\d cm$/)]);
+    expect(poseProblems('smith_machine_shrug', await variant('smith_machine_shrug', [['ELBOW_BEND = 12,', 'ELBOW_BEND = 0,']]))).toEqual(['start: elbow 2.0 deg', 'end: elbow 2.0 deg'].map(t => expect.stringMatching(new RegExp(`^${t.split(' 2.0')[0]} \\d\\.\\d deg$`))));
+  });
 });

@@ -393,12 +393,8 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
 
 | id | held by | ruling | until |
 |---|---|---|---|
-| dumbbell_shrug | LIB-13s wave 2 | D-LIB8-shrug; D-LIB13S-WAVES (ruling 9) | barbell_shrug's wave-1 approval; drawn from its approved bytes (section 16) |
-| cable_shrug | LIB-13s wave 2 | D-LIB8-shrug; D-LIB13S-WAVES | as above |
-| smith_machine_shrug | LIB-13s wave 2 (an LB6 id drawn with its parent) | D-LIB13S-LANE; D-LIB13S-WAVES | as above |
-
-t_bar_row and barbell_shrug left this table in LIB-13s wave 1: both are released with normal-view zooms (D-LIB13S-ZOOM,
-section 16) and are rows in `lb3/rows.json`.
+None. LIB-13s released every row this table held: t_bar_row and barbell_shrug in wave 1, then cable_shrug,
+dumbbell_shrug and smith_machine_shrug in wave 2 (section 16), each a row in `lb3/rows.json`.
 
 ## 14. Risks and mitigations
 
@@ -593,3 +589,20 @@ barbell_shrug APPROVED. t_bar_row's fix round (R1 [3,4,3], R3 [3,3,4]):
   k 3's ring no longer does). The larger source ring crossed the auto-placed "Soft knees" label (H1.ink), so that label
   gets a box under the ring (F4 counts 5 boxes, inside 2-6). Every rising part still clears 2 px; the Mistake bar
   stops at 2.00 px; the feet stay 0.19 m with toes out 17°.
+
+### 16.11 Wave 2 (cable_shrug, dumbbell_shrug, smith_machine_shrug)
+
+Cloned from barbell_shrug's bytes as approved in mx16 (@ `01b66192`; byte-equal at `2e2ff417` and pinned), copied, never
+imported. All H, all with the parent's normal zoom at k 3.5 (24.54 px; k 3 gives 21.02).
+
+| id | drawn | measured | flags (value, range) |
+|---|---|---|---|
+| cable_shrug | the parent's body, bar and Mistake; the vendor cableColumn with its low pulley (centre 16 cm up, 6 cm ahead of the toe tip, c2); the cable to the bar's centre | bar shaft 2.19 / 2.19 / 2.17 px | F5 only |
+| dumbbell_shrug | front view: upright_row's stance; straight arms at the sides, grips 26 cm out; the vendor dumbbell end-on; Mistake: the elbows bend out and pull the dumbbells 15 cm up (dashed hexes, one arrow per hand) | hexes 2.57 / 3.07 / 4.07 px (0.25 m gives under 2) | F2 0.187 (0.191-0.549), F4 0 (2-6): named, the parent's reasons (a standing figure whose only move is 5 cm; every label engine-placed) |
+| smith_machine_shrug | eq/smith.mjs unedited: rail at z 0.13 m, stops 2 cm under the start bar's underside (drawn in front), floor beam under the rails; elbows bent 12° (c1 "slight", 10-15° tested); the bar at 0.748 m, between the knee (0.498) and the hip (0.927); Mistake: the neck flexed 20°, the tell on the crown | bar end 3.20 / 3.28 / 3.28 px; the crown moves 13.0 px (over 11.39: no Mistake zoom) | F2 0.145 (0.191-0.549): named, the parent's reason |
+
+Layout changes from the parent, each measured: cable_shrug's column fills the right, so its three labels are boxed on the
+left above the zoom, the datum lines start at x 130 (were 60) so they do not run under those labels, and the elbow measure
+is left off (no place for its label within F3's leader range; "Straight arms" carries c5). smith_machine_shrug's two
+head-level labels are boxed on the left, 48 px apart (the engine stacked them 22 px apart: H4.overlap), with the same
+datum change. The hit boxes need 44 css px between label rows (H4.overlap at 340 px).
