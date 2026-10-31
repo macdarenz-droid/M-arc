@@ -830,5 +830,62 @@
     "remove": [],
     "why": "exercises.json: quads primary; glutes and hamstrings secondary. Both technique guides (c15) list glutes with quads as main movers, so glutes are moved from secondary to primary (listed in add as a role change, not a new muscle). Adductors and lower back are listed by both guides (main or helper), so they are added as secondary. Hamstrings stay secondary (Motra helper; c16 measured them). c4 shows foot position moves load between knee and hip."
   },
-  "anchorSource": "golds-smith-squat"
+  "anchorSource": "golds-smith-squat",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "trap.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "trap.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 3,
+      "move": true
+    },
+    {
+      "phase": "Drive up",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "under"
 }

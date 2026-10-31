@@ -849,3 +849,13 @@ Authoring QA (`lb6/qa.mjs`, node and browser, page `13de1bad…9b1ca1`, two equa
 
 F3 on both cable flies is proposed as a named flag (the leaders' lengths, LB5 17.3's form; F3's range 49.33-82.26).
 The smith rows' F7 and every row's H6:no-card clear at CARD FIELDS (topFault `under`, `flare`, `flare`).
+
+### 19.13 Card fields (Do 4; after 'LB6 R2 PLAN RULED')
+
+The 3 keys appended last on all 9 cards (each card's other keys unchanged: cards.sha.json `r2` still matches):
+`plateFacts` as 19.3 with the ruled calls, `tempo` the 19.2 strip from each card's plate.tempo, `topFault` the key of
+handlingMistakes[0]: low_to_high_cable_fly `lean`, high_to_low_cable_fly `lean`, machine_lateral_raise `swing`,
+rear_delt_fly `rush`, hip_abduction `jerk`, hip_adduction `swing` (F7, each differs from the drawn key), and
+smith_machine_squat `under`, smith_machine_shoulder_press `flare`, smith_machine_incline_press `flare` (the drawn keys).
+validateCardFile gives [] on all 9. Authoring QA on wave 1 with the fields: all 10 hard checks pass on all 5; flags equal
+the ruled set (`lb6/qa.mjs`). The wave 2 rows' contact facts are met by their specs' checks when drawn.

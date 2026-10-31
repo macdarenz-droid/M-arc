@@ -562,5 +562,38 @@
       "access": "abstract",
       "checked": "2026-10-22"
     }
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Close",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Open",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "lean"
 }

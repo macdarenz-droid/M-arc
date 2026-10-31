@@ -674,5 +674,81 @@
   "anchorSource": "motra-smith-incline",
   "notes": [
     "LIB-TOPRANK (LB6): LR-31 step 3 picks the flared elbows, as R-LB2-20 expected; see plate.mistake.rankNote."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "seat",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sternum",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3",
+      "note": "the upper chest"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.r.elev",
+      "deg": 60,
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3",
+      "note": "c3 \"elbows at 45-75 degrees\": the midpoint"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.l.elev",
+      "deg": 60,
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3",
+      "note": "c3 \"elbows at 45-75 degrees\": the midpoint"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 3,
+      "move": true
+    },
+    {
+      "phase": "Press",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "flare"
 }

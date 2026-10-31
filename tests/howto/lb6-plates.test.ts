@@ -1661,3 +1661,44 @@ describe('LIB-16R2 A3: the resume 2 spec closures are pure (D-LIB9-CLONE: copied
     try { expect(problems(f, closure.closureOf([f], root))).toContain('tools/plates/library/specs/incline_dumbbell_press.mjs'); } finally { rmSync(root, { recursive: true, force: true }); }
   });
 });
+
+describe('LIB-16R2 A8 (Do 4): the card fields on the 9 cards', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  // [facts count, sha256 of JSON.stringify(plateFacts), topFault]: the facts plan as ruled (PLAN RULED point 4, DESIGN.md 19.3).
+  const RULED: Record<string, [number, string, string]> = {
+    low_to_high_cable_fly: [2, '85aa7d0633405dd91e27d311689ae517aac537253dc175a95d03443cc6cb878c', 'lean'],
+    high_to_low_cable_fly: [2, '85aa7d0633405dd91e27d311689ae517aac537253dc175a95d03443cc6cb878c', 'lean'],
+    machine_lateral_raise: [15, 'd826aa0b0e971c26b5e268470748fccd9e2d14a14717595bab94ba07d7e6c2ef', 'swing'],
+    rear_delt_fly: [9, '009cda001da75117280461b147fa259b3c584d0a0e340187a9539f97a1f531c6', 'rush'],
+    hip_abduction: [17, '5304f24f6eec6889a2dc6917fbbb0182c48eb49a704004b3962e074ad30c72c1', 'jerk'],
+    hip_adduction: [11, '10ceb9889497a4b097529bfa02dca5dd69e99955b1ff465ee7ad6ceed16edf8d', 'swing'],
+    smith_machine_squat: [6, 'd0745b69ea03d7e60c71f526e5f07b8124d22019e9a696c1a2825dbaba0056d7', 'under'],
+    smith_machine_shoulder_press: [11, 'f2dd656ba28471b2baac08b651b4885d8fe023beba19ef3f71d8bb04247634e4', 'flare'],
+    smith_machine_incline_press: [8, '233c2da374b0527c82ad6529cadac10a6b645b91e74d4796f1ba9b7d73e42e01', 'flare'],
+  };
+  // The drawn Mistake key per row (DESIGN.md 19.2); F7 rows (D-LIB16R2-F7) have a topFault that differs from it.
+  const DRAWN: Record<string, string> = { low_to_high_cable_fly: 'press', high_to_low_cable_fly: 'cross', machine_lateral_raise: 'high', rear_delt_fly: 'shrug',
+    hip_abduction: 'short', hip_adduction: 'wide', smith_machine_squat: 'under', smith_machine_shoulder_press: 'flare', smith_machine_incline_press: 'flare' };
+  const F7 = ['low_to_high_cable_fly', 'high_to_low_cable_fly', 'machine_lateral_raise', 'rear_delt_fly', 'hip_abduction', 'hip_adduction'];
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  const problems = (id: string, c: any, spec?: any) => {
+    const bad: string[] = [], [n, h, top] = RULED[id]!;
+    if (c.plateFacts.length !== n || sha(JSON.stringify(c.plateFacts)) !== h) bad.push('plateFacts');
+    if (c.topFault !== top) bad.push('topFault');
+    if ((c.topFault !== DRAWN[id]) !== F7.includes(id)) bad.push('F7 set');
+    if (spec && JSON.stringify(c.tempo) !== JSON.stringify(spec.tempo)) bad.push('tempo != spec');
+    if (spec && spec.mistake.tells[0].key !== DRAWN[id]) bad.push('drawn key');
+    return bad;
+  };
+  it('each card carries the ruled facts, tempo and topFault, validateCardFile gives [], and the drawn specs use its tempo', async () => {
+    const { validateCardFile } = await import(/* @vite-ignore */ lib('research/validate.mjs'));
+    for (const id of R2_ALL) { expect(validateCardFile(`${id}.json`), id).toEqual([]); expect(problems(id, cardOf(id), R2S[id]), id).toEqual([]); }
+  });
+  it('mutations: the topFault of one F7 row set to its drawn key, one fact removed and one second changed on a card are red', () => {
+    expect(problems('rear_delt_fly', { ...cardOf('rear_delt_fly'), topFault: 'shrug' })).toEqual(['topFault', 'F7 set']);
+    const c = cardOf('smith_machine_squat'); c.plateFacts.pop();
+    expect(problems('smith_machine_squat', c)).toEqual(['plateFacts']);
+    const d = cardOf('smith_machine_squat'); d.tempo[0].s = 2;
+    expect(problems('smith_machine_squat', d, R2S.smith_machine_squat)).toEqual(['tempo != spec']);
+  });
+});

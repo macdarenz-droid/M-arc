@@ -842,5 +842,97 @@
   "notes": [
     "LIB-TOPRANK (LB6): R-LB6-4 picks the flared elbows at step 2 (Fitness Volt's protect-the-shoulder cue, Motra's list order); see plate.mistake.rankNote.",
     "Removed from handlingMistakes under R-LB6-4 (a setting, R-LB2-12; setup[0] keeps the cue): \"Bench set too far back.\" / \"Move the bench until the bar just clears your nose.\" (c3, c2)."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "seat",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c5"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Press",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "flare"
 }

@@ -724,5 +724,95 @@
   ],
   "notes": [
     "Removed from handlingMistakes under R-LB6-5 to keep 3 (R-LB2-2; posture[1] keeps the cue): \"Hunching the back.\" / \"Sit upright for the whole set.\" (c7)."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "seat",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "chest",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "chest",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.r.elev",
+      "deg": 90,
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2",
+      "note": "arms forward at shoulder height"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.l.elev",
+      "deg": 90,
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2",
+      "note": "arms forward at shoulder height"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.r.elev",
+      "deg": 90,
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4",
+      "note": "arms in line with the shoulders"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.l.elev",
+      "deg": 90,
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4",
+      "note": "arms in line with the shoulders"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Pull",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 3,
+      "move": true
+    }
+  ],
+  "topFault": "rush"
 }

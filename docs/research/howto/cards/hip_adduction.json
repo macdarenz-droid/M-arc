@@ -478,5 +478,101 @@
   ],
   "notes": [
     "feel.rows[1] removed in the LB6 recheck (no cited quote names the groin for this fault); momentum stays at handlingMistakes[0]: Groin / Fast, swinging reps risk strain. / Keep the movements slow."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "seat",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "knee.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "knee.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Squeeze",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "swing"
 }

@@ -628,5 +628,38 @@
   "notes": [
     "LIB-TOPRANK (LB6): LR-31 step 1 keeps the lean as the top fault; drawable false because the front view cannot show it (not speed); see plate.mistake.rankNote.",
     "Trunk conflict: PureGym's low-to-high steps say \"Hinge very slightly forward at the hips.\" and StrengthLog suggests \"a slight forward lean\", while ACE (the anchor) keeps the trunk vertical and names leaning forward as the frequent fault (c7). The card follows ACE."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Close",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Open",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "lean"
 }
