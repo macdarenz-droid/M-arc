@@ -1113,6 +1113,40 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
       cues: '662b115e46a9b91f02e3d64a5e6c4f338aea14d3bb68f28911407e907d506242',
       alt: '99779b441c4a4a8384a9981c45b31a8ffcafe3206ef0d304718d38afbec3c221',
       mistakeAlt: '8acc3ab2335fa6c010e74e13ec8d48b35eb4ea0930ad8363f2030820f5c22d8e',
+    },
+    // LIB-15R2 BARSTART recheck, APPROVED by panel mx11 at 20761ed9 (page cd0fb26764f0c716f94448ee84a76b109b206fc05c2612b32baa0b730b165346)
+    'barbell-curl': {
+      normalSvg: 'df97e798a2376f4a22da44f1c56d55f2f05dad681d287b98e01cfd4082a3a071',
+      normalOverlay: '7c92d522df5d0bfd61122b966f447ca342126458a4637418a16f28fee7570ab1',
+      mistakeSvg: '157ae287507180b1ddda6a5ef5e96e8f1fb2e77ad588364fa656153c0cf60c21',
+      mistakeOverlay: '6e59ab572f896c1b8083a9d51e38a10dacfc9bb251553408e11c7da085295792',
+      tells: '50f76b875cf2f8a4dc149de2671db207476d2d087f15337c315be2585f738baa',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '2eb20f7a1fe18f6943fc8561bca8f250e2d68631c3d32050045d640a2e530cdd',
+      alt: '11734c6e5b3d47080eefabbd993fbdb2c6aa556b207aa024b3c80d8da23839b3',
+      mistakeAlt: 'dbe093ebdfe13b31a23f0e453e361e5db50b5f7d7111d226ae12626ae80282ce',
+    },
+    'ez-bar-curl': {
+      normalSvg: '4102938a8745f0297492a92eac19418c62e1b45923a31925190a357e65fccb84',
+      normalOverlay: '6deaf43a81f90c85e3217061a9d3b323f765e57666851567915b3c018cc6d821',
+      mistakeSvg: '459d64fe67231bd55b4f3a6588ff30681fec286b0356018026d3e6bb3abe870a',
+      mistakeOverlay: '8efc57047537a50d3cb6d4cfb2e33400a8f7695816786e836ab092d4c64b018d',
+      tells: 'd8b33c7cbc1e5591e97757d3beba1169c8a7fbb5ba230a0c9b7cc7e705fcc032',
+      tempo: 'ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3',
+      cues: 'ac87dab96140867517ddbb6112dab313322132ddd9ea26f259800d7b662ca3b2',
+      alt: 'd5fd95d6531dfcb504bf2c0c281c6611c46fa49a9ab315bcc2ba3a10aeecfa2d',
+      mistakeAlt: 'ff94b03c97c4453f05e5429e3a810e1a05353098367ff6da45cbe5a461fc340c',
+    },
+    'reverse-curl': {
+      normalSvg: 'c969b63b4f3856c9e52d7316241566ef863c0c559bdbd307df3fb470f6f13447',
+      normalOverlay: '565ace55fb59e9bce08056683d62b0cbb84221ad35ca62b8dbc5bd157dec72a3',
+      mistakeSvg: '043aa678d50aa47695705c7202de0847561768d0fa6aad0aa8db0d60f33218c6',
+      mistakeOverlay: '9d86cfaa4a9b67290d6b82712c78a771c673f70102b1a4ed49c03e918f792989',
+      tells: '3018d51dec8660e139b1bf1f9f07568d3c846fb69a75bf7880a3daf0ebb74273',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '0d37a623e6d7ecffb85332d585b06a728147a08619bec93f890074434778ec8e',
+      alt: '948a1bf8624c73c992558f0a37832d0eb85b3d01ffb6f0baf7db73b13cb9793a',
+      mistakeAlt: '23a13495de627f011f9883a17261c34a6cb859a3ee302467ed96246d1cad0be5',
     }
   };
   it('each of the 4 approved plates\' 9 fragments on today\'s LB5 page equals its value on page 921cb1d5; mutation: one byte in preacher_curl\'s alt is red', async () => {
@@ -1120,7 +1154,7 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
     const plates = extractPlates((await buildLb5Page()).html.toString('utf8'));
     const diff = (ps: any[]) => Object.entries(APPROVED_FRAGS).flatMap(([cid, want]) => { const p = ps.find((x: any) => x.chromeId === cid), got: any = p ? fragmentsOf(p) : {};
       return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${cid}.${k}`); });
-    expect(Object.values(APPROVED_FRAGS).flatMap(Object.keys)).toHaveLength(108);
+    expect(Object.values(APPROVED_FRAGS).flatMap(Object.keys)).toHaveLength(135);
     expect(diff(plates)).toEqual([]);
     const bent = plates.map((p: any) => (p.chromeId === 'preacher-curl' ? { ...p, alt: `${p.alt}x` } : p));
     expect(diff(bent)).toEqual(['preacher-curl.alt']);
