@@ -55,6 +55,21 @@ Side view: far limbs first in a lighter stroke (`.far`), then torso + head + nea
                                    // + toward the figure's right. Thorax Rp·rotZ(lat)·rotX(flex)·rotY(yaw) (LIB-20).
                                    // Mistake merge: poses.end.trunk and mistake.pose.trunk must both be numbers or
                                    // both objects; a mix throws (it would drop the flex or the yaw and lat)
+  trunk: { flex: [a, b, c, d] },   // opt-in, both views (LIB-SPINE, D-SPINE-SEGS): flex, yaw and lat as arrays, one angle per
+                                   // spine pivot SPINE_PIV .60 / .62 / .68 / .75 H (L5/S1, L3 = REF.lumbar, T12 = backMid,
+                                   // T7 = backUpper) on the line z = REF.lumbar[2]; absent arrays are zeros. Each segment
+                                   // turns like the single pivot (rotZ(lat)·rotX(flex)·rotY(yaw)), composed from the top
+                                   // pivot down; the outline turns over ±SPINE_HW .015 H at each pivot [est: half the .03 H
+                                   // between the .60 and .62 pivots' blend edges]. The thorax stays rigid, so
+                                   // thorax(r) = L + Rt·H·(r - REF.lumbar). The split is the spec's. Numbers keep the single
+                                   // pivot. Every key pose and the merged Mistake use the same form, or it throws (D-SPINE-MIX)
+  trunk: { bow },                  // opt-in, both views (D-SPINE-BOW): deg, + tips the pelvis forward (the low-back arch)
+                                   // under a held thorax; hips, legs and thorax keep the unbowed frame, the sacrum, buttock,
+                                   // seat and the outline below .585 H turn. The outline blends smoothly (smoothstep) from
+                                   // the tipped pelvis to the thorax over BOW_ZONE .585-.70 H [est: the sacrum landmark to
+                                   // just above backMid]. A key pose without bow interpolates as 0. Needs the object form
+                                   // wherever a trunk is written (D-SPINE-MIX). With either field set, the lumbar, chest,
+                                   // backUpper, backMid and navel landmarks follow the outline map (fk's `spine`)
   neck: 0,                         // head flexion relative to the thorax, + chin down
   scap: { elev, pro },             // shoulder girdle offset in cm: elev + shrug, pro + protract / - retract
   shoulder: { elev, plane, rot },  // elev from hanging; plane 0 = abduction plane, 90 = flexion plane; rot + external
@@ -108,6 +123,7 @@ Helpers (`import { ... } from '../engine/index.mjs'`):
 | `marks` | landmarks that get a joint circle (default: shoulders + elbows in front view; near shoulder, elbow, hip, knee in side view) |
 | `armsFront` | front view: always draw the arms over the torso |
 | `hand` | `'flat'` (both hands) or `{ l, r }`: an open hand, palm flat, instead of the fist. One outline from the wrist to the fingertips, joined to the forearm (no gap); its palm side (screen-down) is straight at the forearm's distal radius (`RADII.fore[2]`), so a wrist placed that far above a surface lays the palm flat on it (`exercises/_test_flat.mjs`). Unset: the fist |
+| `depth` | `'view'` (opt-in, front view only, LIB-SPINE D-SPINE-VIEW): depth is measured toward the pitched camera, `z cos p + y sin p` (p = `camera.pitch`), for the leg rule (a knee nearer than its hip by .12 m goes in `legs`), and a `torso: 'volume'` trunk is `chest` only when it is nearer than the nearest knee. The arm rule keeps world z. Unset: world z, as before (`exercises/_test_spine.mjs`) |
 | `torso` | `'volume'`: the trunk and head as closed hulls of stacked elliptic sections (`torso.<n>`, `head.<n>`), so a trunk seen end-on or from a pitched camera keeps its depth. Front view: a trunk nearer the camera than the knees goes in group `chest`, drawn over the legs, and its head in `headF` over that (`exercises/_test_pitch.mjs`). Unset: the flat outline, groups `body` / `trunk` (LIB-20) |
 | `callouts` | up to 3 `{ key, text (1-3 words, `<br>` for 2 lines), anchor, cue (one sentence), box?: { left, top } (button px), prefer?: 'left'|'right'|'above'|'below', guide?: [points] (accent dashed line when selected) }` |
 | `tempo` | `[{ phase, s, move? }]`, phase names that suit the lift (e.g. Pull / Hold / Return / Rest) |
