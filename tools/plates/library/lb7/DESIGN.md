@@ -704,3 +704,19 @@ card fields come at Do 5); these are drawing work, not plan risks.
 - QA (lb7/qa.mjs, page `58d79da8…6898`, built twice, equal): all 10 hard checks pass on the 3 rows.
   - Flags: F5 3.57 on each; F7 on pike_push_up only.
   - The F2 on cable_lateral_raise and face_pull is the same on main `6d34542c` (not this lane's).
+
+### 19.10 Panel mx13 fix round (#356 6547087962)
+
+- incline_push_up is APPROVED at `29a48852`. Its 9 fragment shas are pinned (A2 block), with a red mutation.
+- R3 (diamond_push_up, pike_push_up): the ghosts' hands slid through the floor, because the engine blends a reach key
+  with a straight-arm key. Each spec now carries two in-between keys (`via`) at the ghosts' times (t 1/3 and 2/3), so
+  each ghost is drawn from a key. In each key, the tilt (and pike's hip flexion) is the blend of the two end keys. The
+  root is solved so the toe tips stay on their spot, and the hands stay on their grips with the palm level. Test: every
+  ghost palm lies within 1 px of the floor line. Mutation: the via keys removed (round 1) is red on both rows.
+- R5 (pike_push_up): the faulty head is now a complete dashed outline drawn over the fill. It is the engine's own head
+  shape in the Mistake pose, straight under the shoulders' line (at the grips' z). The arrow under the floor is gone.
+  The one down arrow sits 9 px left of the outline, above the floor. That is the nearest place where an arrow clears
+  the solid figure by A15's 6 px: every vertical arrow ending on the outline itself lies on the solid forearms or head
+  (searched 150-260 × 240-300 px). An arrow onto the head itself would need an A15 exception, so it is the
+  supervisor's call.
+- Page `cd080c57…1624`, built twice with the same sha. QA: all 10 hard checks pass on the 3 rows; flags are the ruled set.

@@ -93,7 +93,19 @@ const bottom = withBent(BQ, ELBOW_POLE);
 // Mistake (c6): only the head goes down, straight under the hands' line.
 const MQ = headOnGap({ y: BQ.y, z: BQ.z - 0.05, tilt: BQ.tilt, hip: BQ.hip }, lm => lm.head[2] - GRIP_Z);
 const MISTAKE = withBent(MQ, ELBOW_POLE);
+// PANEL mx13 R5 (#356 6547087962): the faulty head as a complete dashed outline drawn over the fill (the engine's own
+// side-view head shape in the Mistake pose, as world points), straight under the shoulders' line (the grips' z).
+export const FAULT_HEAD = bodyShapes(fk(resolve(normPose(MISTAKE, B1), B1).q, B1), CAM1, { hand: 'flat' }).find(s => s.key === 'head').poly.map(([z, y]) => [0, -y, z]);
 
+// The in-between keys (PANEL mx13 R3, #356 6547087962): at the ghosts' times, t 1/3 and 2/3 of the way from the top to
+// the bottom, the tilt and hip flexion are the keys' blend and the root is solved so the toe tips stay on their spot;
+// the hands stay on their spots (withBent). The two ghosts sit on these keys, so no ghost hand leaves the floor.
+const viaAt = t => {
+  const tilt = TQ.tilt + (BQ.tilt - TQ.tilt) * t, hip = HIP_TOP + (BQ.hip - HIP_TOP) * t, toeY = (1 - t) * lmT['toe.r'][1];
+  const q = solve({ y: TQ.y + (BQ.y - TQ.y) * t, z: TQ.z + (BQ.z - TQ.z) * t }, p => body({ ...p, tilt, hip }), lm => [lm['toe.r'][1] - toeY, lm['toe.r'][2] - TOE_Z]);
+  return withBent({ ...q, tilt, hip }, ELBOW_POLE);
+};
+const via = [1 / 3, 2 / 3].map(viaAt);
 const start = top, end = bottom;
 const lmB = landmarksOf(bottom, H), lmM = landmarksOf(MISTAKE, H);
 const R2D = 180 / Math.PI;
@@ -108,7 +120,7 @@ export default {
   hand: 'flat',
   id: 'pike_push_up', name: 'Pike Push-Up', view: 'side', facing: 'right',
   camera: { fit: { right: 76 }, maxScale: 0.988, y0: 305 },   // push_up's floor camera (D-LIB8-floor) at push_up's 144.5 px/m, the floor raised to y 305 so the head labels sit under it
-  poses: { start, end },
+  poses: { start, via, end },
   equipment: [{ type: 'floor', from: TOE_Z - FLOOR_BACK, to: GRIP_Z + FLOOR_FRONT }],
   checks: [
     ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, plane: { point: [0, WRIST_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 })),   // palms flat (c1)
@@ -125,7 +137,11 @@ export default {
   mistake: {
     pose: MISTAKE,
     guides: [
-      { kind: 'arrow', from: { at: 'head', pose: 'end', off: [0, 14] }, to: { at: 'head', pose: 'mistake', off: [0, 14] } },   // under the floor line: the head's landing spot, clear of the solid hands
+      // PANEL mx13 R5: the faulty head as a complete dashed outline over the fill, and one short down arrow above the
+      // floor beside it (the nearest place where the arrow clears the solid figure by A15's 6 px: 9 px left of the
+      // faulty head's outline; every place over it lies on the solid forearms or head).
+      { kind: 'dashed', pts: [...FAULT_HEAD, FAULT_HEAD[0]] },
+      { kind: 'arrow', from: { at: 'head', pose: 'mistake', off: [-37, -39] }, to: { at: 'head', pose: 'mistake', off: [-37, -21] } },
     ],
     tells: [
       { key: 'head', text: 'Head straight<br>down', anchor: { at: 'head', pose: 'mistake' }, box: { left: 230, top: 308 }, cue: 'Only your head drops toward the floor, straight down.' },

@@ -84,6 +84,17 @@ const MA = solve({ elev: TQ.elev, plane: TQ.plane, w: TQ.w }, a => straight({ ..
   lm['grip.r'][2] - GRIP_Z]);
 const MISTAKE = straight({ ...MQ, ...MA });
 
+// The in-between keys (PANEL mx13 R3, #356 6547087962): at the ghosts' times, t 1/3 and 2/3 of the way from the bottom
+// to the top, the straight body's tilt is the keys' blend and its root is solved so the toe tips stay on their spot;
+// the hands stay on their grips (the reach) with the palm level (the wrist solved). The ghosts are these keys (two
+// ghosts at t 1/3 and 2/3 sit on keys 1 and 2 of [start, ...via, end]), so no ghost hand leaves the floor.
+const viaAt = t => {
+  const tilt = BQ.tilt + (TQ.tilt - BQ.tilt) * t;
+  const q = solve({ y: BQ.y + (TQ.y - BQ.y) * t, z: BQ.z + (TQ.z - BQ.z) * t }, p => body({ ...p, tilt }), lm => [lm['toe.r'][1], lm['toe.r'][2] - TOE_Z]);
+  const w = solve({ w: BW.w + (TQ.w - BW.w) * t }, p => withArms({ ...q, tilt, ...p }), lm => [lm['wrist.r'][1] - WRIST_Y]);
+  return withArms({ ...q, tilt, ...w });
+};
+const via = [1 / 3, 2 / 3].map(viaAt);
 const start = bottom, end = top;
 const LINE = (() => { const a = lmT['shoulder.r'], b = lmT['heel.r'], d = b.map((v, i) => v - a[i]), n = Math.hypot(...d);
   return [a.map((v, i) => v - d[i] / n * LINE_RUN), b.map((v, i) => v + d[i] / n * LINE_RUN)]; })();
@@ -102,7 +113,7 @@ export default {
   hand: 'flat',
   id: 'diamond_push_up', name: 'Diamond Push-Up', view: 'side', facing: 'right',
   camera: { fit: { right: 76 }, maxScale: 0.988, y0: 300 },   // push_up's floor camera (D-LIB8-floor) at push_up's 144.5 px/m, the floor raised to y 300 so the hand and elbow labels sit clear under it
-  poses: { start, end },
+  poses: { start, via, end },
   equipment: [{ type: 'floor', from: TOE_Z - FLOOR_BACK, to: GRIP_Z + FLOOR_FRONT }],
   checks: [
     ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, plane: { point: [0, WRIST_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 })),   // palms flat (c1)

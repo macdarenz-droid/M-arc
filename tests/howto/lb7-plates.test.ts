@@ -2055,6 +2055,45 @@ describe('LIB-17 resume 3 A2: the 8 approved LB7 plates stay byte-identical (pag
   it("mutation: one byte changed in bench_dip's alt is red", async () => {
     const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'bench-dip');
     expect(fragProblems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['bench-dip alt']);
+  });  // PANEL mx13 (#356 6547087962): incline_push_up APPROVED at 29a48852; its 9 fragments pinned from that head's page
+  // (58d79da8…6898) so the fix round cannot move them.
+  const INCLINE: Record<string, string> = {
+    "normalSvg": "00ff74944dd335c888fc88b34077255682b6dcd1df27bfb078b909d03856c7fe",
+    "normalOverlay": "13d1db3ca056f6eab233ed2c18d963f4b9bd78644e3e44fe36bed14c5882a119",
+    "mistakeSvg": "1b13fa265869760391a4ca0bb3c348f6e831148375969fef383d60500523b34e",
+    "mistakeOverlay": "e19269d70221aa6d38a7273e284ffefeebfdf2f01dea5b24c635a4be8fcaf2bb",
+    "tells": "10f9f12eb9cdca0b90e773b09d43a32d110991bb27e659cbf6b35c26299a5f57",
+    "tempo": "abc6725e7c67daeed47a9e1c42e1389b60e70d2562ea62f9f8888447c2878ef7",
+    "cues": "16b9b21a8b8b6bafdffa37e887e6060f4b881c7282c6ec10e5debce5ab2039fc",
+    "alt": "d76bf0381f0ea2e13c2127776fc5d824c294453cbfd0fb88a3100a2ab9251a96",
+    "mistakeAlt": "22230b16a7d48e4b32743caf921a294f8f71d7911090ba7f5d4d775b913a92d6"
+  };
+  const incProblems = (html: string) => { const p = golden.extractPlates(html).find((x: any) => x.chromeId === 'incline-push-up'), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(INCLINE).filter(k => got[k] !== INCLINE[k]); };
+  it('incline_push_up (approved, mx13) keeps its 9 fragment shas; mutation: one byte in its Mistake alt is red', async () => {
+    const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'incline-push-up');
+    expect(Object.keys(INCLINE).length).toBe(9);
+    expect(incProblems(html)).toEqual([]);
+    expect(incProblems(html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E')))).toEqual(['mistakeAlt']);
+  });
+});
+
+describe('LIB-17 resume 3 PANEL mx13 R3: every ghost hand stays on the floor (diamond_push_up, pike_push_up)', { timeout: T }, () => {
+  /** The palms of the in-between ghosts (the engine's ghost times and its key blend) against the floor line, px. */
+  const ghostProblems = (spec: any) => {
+    const B = { height: 1.75 }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, B));
+    const n = spec.ghosts?.count ?? 3, cam = camOf(spec), fy = cam.P([0, 0, 0])[1], out: string[] = [];
+    for (let i = 1; i <= n; i++) {
+      const r = body.poseAt(keys, i / (n + 1), B), shapes = body.bodyShapes(body.fk(r.q, B), cam, { armsFront: spec.armsFront, hand: spec.hand });
+      for (const x of shapes.filter((y: any) => y.poly && /^palm\./.test(y.key))) { const low = Math.max(...x.poly.map((p: number[]) => p[1]!)); if (Math.abs(low - fy) > 1) out.push(`ghost ${i}: ${x.key} ${(low - fy).toFixed(1)} px from the floor`); }
+    }
+    return out;
+  };
+  it('each ghost palm lies within 1 px of the floor line', () => {
+    for (const id of ['diamond_push_up', 'pike_push_up']) expect(ghostProblems(S[id]), id).toEqual([]);
+  });
+  it('mutation: the in-between keys removed (the round-1 ghosts) is red on both', () => {
+    for (const id of ['diamond_push_up', 'pike_push_up']) { const s = S[id]; expect(ghostProblems({ ...s, poses: { start: s.poses.start, end: s.poses.end } }).length, id).toBeGreaterThan(0); }
   });
 });
 
