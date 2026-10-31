@@ -14,6 +14,9 @@
 //  - Working (near, right) arm: the parent's pinned elbow and grip arc. The free (far, left) arm hangs at the side,
 //    the hand by the thigh (FREE), in every pose.
 //  - Handle (c2): the D-handle grip in the near hand, its ring REACH toward the head pulley along the cable.
+// Mistake guides: the parent's dashed faulty arm, torso and cable; no solid upper arm and no arc arrow, since from the
+//  vertical end figure both would sit on it (a solid red part must clear the end figure by 6 px). Trace keys every 1/48
+//  of the sweep (the parent's 1/12 kinks 11 deg at each key, LB5 R7).
 // Unsourced numbers (13.3 must-fix 14): the parent's (station, stack, E, START_ELBOW's chest target, END_ELBOW 4), the
 //  D-handle's sizes (dHandle.mjs), FREE, every Mistake magnitude (the parent's MIS_*; drawn).
 // Callouts, Mistake, tempo: checkpoints c5, c4, c9 are the callouts; plate.mistake c17 (drawable), the parent's lean
@@ -73,7 +76,7 @@ const armsAt = phi => {
 const lmB = landmarksOf({ ...body, shoulder: { flex: 0 } }, H);
 const TOP_BAR_Y = lmB.chest[1] + (lmB.sternum[1] - lmB.chest[1]) * TOP_BAR_T;
 const START_ELBOW = (() => { let lo = 60, hi = 160; for (let i = 0; i < 50; i++) { const m = (lo + hi) / 2; if (gripAt(m)[1] < TOP_BAR_Y) lo = m; else hi = m; } return +((lo + hi) / 2).toFixed(1); })();
-const SEG = 12;                                        // key poses every 1/12 of the sweep (~10 deg of forearm)
+const SEG = 48;                                        // key poses every 1/48 of the sweep: the Trace a smooth arc (LB5 R7)
 const PHIS = Array.from({ length: SEG + 1 }, (_, i) => i / SEG).map(t => START_ELBOW + (END_ELBOW - START_ELBOW) * t);
 const [start, ...rest] = PHIS.map(phi => ({ ...body, reach: armsAt(phi) }));
 const end = rest.pop(), via = rest;
@@ -167,10 +170,9 @@ export default {
     pose: mistakePose,
     parts: ['torso', 'head', 'bar'],   // the near arm is drawn as guides (R5); far arm doubles it; the stack's travel is not the fault
     guides: [
-      { kind: 'line', pts: misArm.upper },                                          // the faulty upper arm, solid (R5)
+      { kind: 'dashed', pts: misArm.upper },                                        // the faulty upper arm (dashed: a solid red part must clear the end figure by 6 px)
       ...misArm.rest.map(pts => ({ kind: 'dashed', pts })),
       { kind: 'dashed', pts: [MIS_BAR, headTangent(MIS_BAR)] },
-      { kind: 'arc-arrow', center: 'hips', r: 108, a0: -84, a1: -56 },   // the trunk tipping forward from the hips
     ],
     tells: [
       { key: 'lean', text: 'Leaning<br>over', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'You lean over the handle or arch your back to push it down.' },

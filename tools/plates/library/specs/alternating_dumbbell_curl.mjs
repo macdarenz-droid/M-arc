@@ -97,7 +97,7 @@ export default {
     // near dumbbell, end-on (hex face): moves with the near arm, so it ghosts and dashes with it
     lm => ({ type: 'dumbbell', at: lm['grip.l'], z: 'back' }),   // far dumbbell: hanging at the thigh, still (c1)
     lm => ({ type: 'dumbbell', at: lm['grip.r'], part: 'arm.r' }),
-    (lm, ctx) => (ctx.pose === 'end' ? [...START_FORE, { type: 'line', cls: 'eq-cable m-line', pts: startHex(ctx.start['grip.r']), z: 'front', part: 'startdb' }] : null),
+    (lm, ctx) => (ctx.pose === 'end' ? [{ type: 'line', cls: 'eq-cable m-line', pts: startHex(ctx.start['grip.r']), z: 'front', part: 'startdb' }] : null),
   ],
   checks: [
     ...['heel.r', 'ball.r', 'heel.l', 'ball.l'].map(landmark => ({ landmark, plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 })),   // both feet flat
