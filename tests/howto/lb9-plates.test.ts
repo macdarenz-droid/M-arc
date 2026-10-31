@@ -997,8 +997,9 @@ console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;
 });
 
 /** The approved LB9 plates' card fragments (`<article ... id="card-<slug>">` ... `</article>`), sha256 first 16 hex:
- *  ab_wheel_rollout and bird_dog from the LB9 slice and bulk panels, side_plank from mx1 (#326 6414221457). */
-const APPROVED_FRAGS: Record<string, string> = { 'ab-wheel-rollout': 'e0e6d3b9aaeaa902', 'bird-dog': '4ae4f8913f726103', 'side-plank': '18e0fb027e416a05' };
+ *  ab_wheel_rollout and bird_dog from the LB9 slice and bulk panels, side_plank from mx1 (#326 6414221457), superman
+ *  from mx7 (#337 6540319980, at 1273e4f6). */
+const APPROVED_FRAGS: Record<string, string> = { 'ab-wheel-rollout': 'e0e6d3b9aaeaa902', 'bird-dog': '4ae4f8913f726103', 'side-plank': '18e0fb027e416a05', superman: '2ed02b364e72c3a4' };
 const FRAG_RE = '/<article [^>]*id="card-([a-z-]+)"[\\s\\S]*?<\\/article>/g';
 const fragProblems = (frags: Record<string, string>) => Object.entries(APPROVED_FRAGS).flatMap(([k, v]) => ((frags[k] ?? '').slice(0, 16) === v ? [] : [`${k}: ${(frags[k] ?? 'missing').slice(0, 16)} != approved ${v}`]));
 describe('LIB-21 A10: the LB9 plates page is deterministic (PQ-H7; built in an awaited child process)', { timeout: T }, () => {
@@ -1016,8 +1017,8 @@ console.log(JSON.stringify({ ids: b.drawnIds(), a: sha(a.html), c: sha(c.html), 
     expect(fragProblems(r.frags)).toEqual([]);
   });
   it('mutation: one byte changed in an approved card fragment is red', () => {
-    const f = { 'ab-wheel-rollout': 'x', 'bird-dog': 'x', 'side-plank': 'x' };
-    expect(fragProblems(f).length).toBe(3);
+    const f = { 'ab-wheel-rollout': 'x', 'bird-dog': 'x', 'side-plank': 'x', superman: 'x' };
+    expect(fragProblems(f).length).toBe(4);
   });
 });
 

@@ -485,3 +485,4 @@ Results (scratch, then built; main `c7bdad7a`):
   - (1) A Mistake zoom on the red `knee.l` (tell on its top, k 2): QA gives `H3.zoom:not-needed:mistake`, because the knee moves 20.2 px at plate scale, over 11.39. The zoom holds no text, so the plate leader would still enter the figure by 52.21 / 41.22 px (#326 6409797574).
   - (2) A larger pelvis turn: the Mistake spine solve has no solution above M_YAW_SHARE 0.8. The red `knee.l` x goes 216.5 (0.5), 219.7 (0.6), 224.0 (0.75), 225.2 (0.8). The ball spans x 216.5-261.9 and y 206-251.5, so the knee stays behind the ball. At 0.8 the red right knee shows only in a pocket closed by the torso, forearm, ball and red shins.
   - Neither option passes without a new rule.
+- **superman approved** in panel mx7 (#337 6540319980) at `1273e4f6`; its fragment `2ed02b364e72c3a4` is pinned in A10 beside the other three.
