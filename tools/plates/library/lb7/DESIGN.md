@@ -719,4 +719,4 @@ card fields come at Do 5); these are drawing work, not plan risks.
   the solid figure by A15's 6 px: every vertical arrow ending on the outline itself lies on the solid forearms or head
   (searched 150-260 × 240-300 px). An arrow onto the head itself would need an A15 exception, so it is the
   supervisor's call.
-- Page `cd080c57…1624`, built twice with the same sha. QA: all 10 hard checks pass on the 3 rows; flags are the ruled set.
+- Page `a3818806…bb20` (all 11 rows), built twice with the same sha. QA on the 3 rows (their page, `cd080c57…1624`): all 10 hard checks pass; flags are the ruled set.
