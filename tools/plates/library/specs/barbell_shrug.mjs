@@ -100,6 +100,8 @@ function key(elev) {
 }
 const start = key(0);
 const end = key(SHRUG);
+// The drawn start wrists (engine IK), for the card's c1 hand contacts (LIB-13s CARD FIELDS FIX: the grip quote states the start).
+const START_W = (() => { const bd = { height: H }, sk = fk(resolve(normPose(start, bd), bd).q, bd); return { 'wrist.r': sk.W.r, 'wrist.l': sk.W.l }; })();
 const barOf = pose => [0, pose.reach.r.at[1], pose.reach.r.at[2]];
 // Start bar dot, dashed (engine limit: the start layer never draws moving equipment; barbell_back_squat's workaround).
 // The bar end-on is the 28 mm shaft inside the fist (as golden lat_pulldown), not the 50 mm sleeve: at this 1.7x zoom a
@@ -171,6 +173,7 @@ export default {
     { landmark: 'ball.r', plane: floor, pose: 'all', tol: 0.5 },
     // shoulder rise: the end shoulder joint is SHRUG cm above the start one
     { landmark: 'shoulder.r', plane: { point: [0, landmarksOf(start, H)['shoulder.r'][1] + SHRUG / 100, 0], normal: [0, 1, 0] }, pose: 'end', tol: 0.2 },
+    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: START_W[landmark], pose: 'start', tol: 0.5 })),   // c1 facts: the hands on the bar
   ],
   startParts: ['arm.r'],
   ghosts: { count: 0 },

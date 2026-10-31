@@ -527,7 +527,15 @@
     "why": "exercises.json: upper_traps primary, no secondary. Motra (c5) rates upper and mid traps as the main movers and forearm flexors low; mid_back and forearms not added, as no second Smith-shrug source supports them."
   },
   "anchorSource": "motra-smith-shrug",
-  "plateFacts": [],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    }
+  ],
   "tempo": [
     {
       "phase": "Lift",

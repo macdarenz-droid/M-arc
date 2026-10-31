@@ -466,7 +466,22 @@
     "why": "Library primary upper_traps matches (c5); no source prose read supports another muscle."
   },
   "anchorSource": "ace-shrug",
-  "plateFacts": [],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    }
+  ],
   "tempo": [
     {
       "phase": "Lift",

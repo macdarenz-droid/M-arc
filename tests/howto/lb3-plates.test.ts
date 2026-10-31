@@ -1502,6 +1502,14 @@ describe('LIB-13s A6: runQa node half on the wave-1 plates (zoom keys, H1 feet, 
     expect(await raised(c)).toEqual(['F7']);
     expect(await raised({ ...c, research: { ...c.research, topFault: 'elbows' } })).toEqual([]);
   });
+  it("H6 on barbell_shrug: the c1 start hand contacts hold (wrist checks 0 cm); mutation: the start body moved 2 cm forward turns exactly both facts red", async () => {
+    const c = await candOf('lib_barbell_shrug');
+    expect((await qa(c)).hard['PQ-H6'].problems).toEqual([]);
+    const s = c.spec, st = s.poses.start, moved = { ...s, poses: { ...s.poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1], st.root.at[2] + 0.02] },
+      reach: Object.fromEntries(Object.entries<any>(st.reach).map(([k, v]) => [k, { ...v, at: [v.at[0], v.at[1], v.at[2] + 0.02] }])),
+      plant: Object.fromEntries(Object.entries<any>(st.plant).map(([k, v]) => [k, { ...v, at: [v.at[0], v.at[1], v.at[2] + 0.02] }])) } } };
+    expect((await qa({ ...c, spec: moved })).hard['PQ-H6'].problems.map((p: any) => p.key).sort()).toEqual(['H6.fact:0:contact:wrist.l', 'H6.fact:1:contact:wrist.r']);
+  });
   it('the ruled flag set (qa.mjs EXPECTED): F5 on both, and barbell_shrug\'s named F2, F3, F4 and F7', async () => {
     const q = await import(/* @vite-ignore */ lib('lb3/qa.mjs'));
     expect(q.EXPECTED('lib_barbell_shrug')).toEqual(['F2', 'F3', 'F4', 'F5', 'F7']);
@@ -1544,13 +1552,16 @@ describe('LIB-13s A7: the 4 shrug cards and quotes are research a48b0594 copies 
     const c = cardOf('barbell_shrug'); c.plate.tempo.down = 1;
     expect(S13.barbell_shrug.tempo).not.toEqual(want('barbell_shrug', c));   // mutation: one second changed on the card
   });
-  // CARD FIELDS (DESIGN.md 16.2, 16.3; D-LIB13S-TOPFAULT): plateFacts [] on all 4; tempo = the tempo.json rows with the
+  // CARD FIELDS (DESIGN.md 16.2, 16.3; D-LIB13S-TOPFAULT): plateFacts the start hand contacts; tempo = the tempo.json rows with the
   // card's own seconds; topFault the drawn first tell key, or 'roll' on barbell_shrug (drawable false)
+  // the start hand contacts from each setup grip quote (CARD FIELDS cf13s fix, supervisor 10-31)
+  const hands = (claim: string, sides = ['l', 'r']) => sides.map(sd => ({ kind: 'contact', landmark: `wrist.${sd}`, pose: 'start', cardPose: 'start', claim }));
+  const FACTS13S: Record<string, any[]> = { barbell_shrug: hands('c1'), dumbbell_shrug: hands('c4'), cable_shrug: hands('c1'), smith_machine_shrug: hands('c1', ['r']) };
   const TOPFAULT: Record<string, string> = { barbell_shrug: 'roll', dumbbell_shrug: 'elbows', cable_shrug: 'elbows', smith_machine_shrug: 'head' };
   const fieldProblems = (id: string, c: any) => {
     const t = readJson('tools/plates/library/lb3/tempo.json').lib13s.ids[id], out: string[] = [];
     const want = t.rows.map((r: any) => ({ phase: r.phase, s: c.plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
-    if (JSON.stringify(c.plateFacts) !== '[]') out.push(`${id}: plateFacts`);
+    if (JSON.stringify(c.plateFacts) !== JSON.stringify(FACTS13S[id])) out.push(`${id}: plateFacts`);
     if (JSON.stringify(c.tempo) !== JSON.stringify(want)) out.push(`${id}: tempo`);
     if (c.topFault !== TOPFAULT[id]) out.push(`${id}: topFault`);
     return out;
@@ -1562,7 +1573,7 @@ describe('LIB-13s A7: the 4 shrug cards and quotes are research a48b0594 copies 
   it('CARD FIELDS mutations: one second changed on a card, a fact added, and another topFault are red', () => {
     const a = cardOf('dumbbell_shrug'); a.tempo[1].s = 2;
     expect(fieldProblems('dumbbell_shrug', a)).toEqual(['dumbbell_shrug: tempo']);
-    const b = cardOf('cable_shrug'); b.plateFacts = [{ kind: 'contact', landmark: 'grip.r', pose: 'start', claim: 'c2' }];
+    const b = cardOf('cable_shrug'); b.plateFacts = [...b.plateFacts, { kind: 'contact', landmark: 'grip.r', pose: 'start', claim: 'c2' }];
     expect(fieldProblems('cable_shrug', b)).toEqual(['cable_shrug: plateFacts']);
     const c = cardOf('barbell_shrug'); c.topFault = 'elbows';
     expect(fieldProblems('barbell_shrug', c)).toEqual(['barbell_shrug: topFault']);

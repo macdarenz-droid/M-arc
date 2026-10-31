@@ -491,6 +491,12 @@ a segment; a seat contact needs a "sit on" quote (none here: every shrug stands)
 | smith_machine_shrug | c1, c2 | "mid-thigh height" names no metres (a height fact needs `m`); "shoulder-width" shows no width side-on | none | `[]` |
 | t_bar_row | on main | unchanged | unchanged | on main, unchanged |
 
+**CARD FIELDS fix (cf13s VALID, supervisor 10-31):** each setup grip quote states the start pose's hand contact, so the
+start hand contacts are facts: barbell_shrug wrist.l and wrist.r (c1), dumbbell_shrug wrist.l and wrist.r (c4),
+cable_shrug wrist.l and wrist.r (c1), smith_machine_shrug wrist.r (c1). Each has a spec `checks` entry at the drawn start
+wrist (the CURL template's form); barbell_shrug's read 0 cm. The table above is the PLAN as ruled; this fix replaces its
+`[]` column.
+
 Placed items that are not facts get drawn-item tests (A4): smith's start bar between the hip and knee heights (c1),
 dumbbell_shrug's grips beside the thighs (c1), cable_shrug's pulley ahead of the toes (c2).
 
