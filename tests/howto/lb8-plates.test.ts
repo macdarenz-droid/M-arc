@@ -34,10 +34,11 @@ const NOT_HERE = ['seated_leg_curl'];
 // D-LIB18-LEGCURL: drawn only after pilot B is on main and 'LIB-18 resume'.
 const LEGCURLS = ['lying_leg_curl', 'standing_leg_curl'];
 // DESIGN.md section 15: every held id, with its ruling there.
-const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'glute_bridge', 'resisted_hip_flexion'];
+// 'LIB-18 resume 2': glute_bridge released with one zoom per view (D-LIBZOOM-EXTEND, D-LIB16-ZOOMVIEWS).
+const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'resisted_hip_flexion'];
 // The ids on lb8/rows.json now: drawn and not held (A5).
 // 'LIB-18 resume': the leg curls, and the rows released with a LIB-ZOOM circle (D-LIBZOOM-EXTEND; D-LIB18-ZOOMPLACE).
-const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'cable_kickback'];
+const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'glute_bridge', 'cable_kickback'];
 // Card facts the held plates' drawings miss (CARD FIELDS fix round, #306 6356303497): recorded with their holds, never hidden.
 const FACT_MISSES: Record<string, string[]> = { seated_calf_raise: ['check:start:toe.l:4.2cm', 'check:start:toe.r:4.2cm'], standing_calf_raise: ['check:start:toe.l:2.3cm', 'check:start:toe.r:2.3cm'], bodyweight_calf_raise: ['check:end:toe.l:4.6cm', 'check:end:toe.r:4.6cm'] };
 // Measured values inside PQ-H6's 1 cm that are past A2's 0.5 cm, or a back landmark under 1 cm into the floor (no
@@ -676,16 +677,17 @@ describe('LIB-18 A4: the named flags on the held plates (F2: cable_kickback 0.64
     qaMod = await import(/* @vite-ignore */ lib('lb8/qa.mjs'));
     rec = JSON.parse(readFileSync(qaMod.HELD_FLAGS, 'utf8'));
     const script = `const b = await import(${JSON.stringify(lib('lb8/build.mjs'))});
-const p = await b.buildHeldPage(undefined, ['lib_glute_bridge', 'lib_bodyweight_calf_raise']);
-const p2 = await b.buildHeldPage(undefined, ['lib_glute_bridge']);
-const r = await b.buildLb8Page({ ids: ['lib_cable_kickback'] });
+const p = await b.buildHeldPage(undefined, ['lib_bodyweight_calf_raise']);
+const p2 = await b.buildHeldPage(undefined, ['lib_hip_thrust']);
+const r = await b.buildLb8Page({ ids: ['lib_glute_bridge', 'lib_cable_kickback'] });
 process.stdout.write(b.sha256(p.html) + ' ' + b.sha256(p2.html) + ' ' + b.sha256(r.html));`;
     [sha, sha2, rowsSha] = (await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 })).stdout.trim().split(' ') as [string, string, string];
   }, T);
-  // 'LIB-18 resume': cable_kickback is on rows.json with its zoom (D-LIBZOOM-EXTEND), so it is measured on the LB8 page of
-  // that row alone; glute_bridge and bodyweight_calf_raise stay on the held page.
-  it('the recording was measured on the held page and on cable_kickback\'s rows page as they build now', () => {
-    expect(qaMod.namedSplit()).toEqual({ held: ['lib_glute_bridge', 'lib_bodyweight_calf_raise'], rows: ['lib_cable_kickback'] });
+  // 'LIB-18 resume': cable_kickback is on rows.json with its zoom (D-LIBZOOM-EXTEND); 'LIB-18 resume 2': glute_bridge
+  // joins it with its two zooms. Both are measured on the LB8 page of those rows alone; bodyweight_calf_raise stays on the
+  // held page.
+  it('the recording was measured on the held page and on the rows page of glute_bridge and cable_kickback as they build now', () => {
+    expect(qaMod.namedSplit()).toEqual({ held: ['lib_bodyweight_calf_raise'], rows: ['lib_glute_bridge', 'lib_cable_kickback'] });
     expect(rec.pageSha).toBe(sha); expect(rec.rowsPageSha).toBe(rowsSha);
   });
   it('each named plate raises exactly its ruled flags, F2 at its posted value (±0.001), cable_kickback\'s F3 at 37.8 px (±0.1)', () => {
@@ -699,7 +701,7 @@ process.stdout.write(b.sha256(p.html) + ' ' + b.sha256(p2.html) + ' ' + b.sha256
     expect(qaMod.flagProblems(set('lib_glute_bridge', 'F2', { value: rec.reports.find((r: any) => r.id === 'lib_glute_bridge').flags.F2.value + 0.002 }))).toEqual([expect.stringMatching(/^lib_glute_bridge: F2 /)]);
     expect(qaMod.flagProblems(set('lib_cable_kickback', 'F2', { raised: false })).some((p: string) => /^lib_cable_kickback: flags /.test(p))).toBe(true);
     expect(qaMod.flagProblems(set('lib_cable_kickback', 'F3', { value: 38.0 }))).toEqual([expect.stringMatching(/^lib_cable_kickback: F3 /)]);
-    expect(sha2).not.toBe(rec.pageSha);   // the held page drawn differently (bodyweight_calf_raise's card left out)
+    expect(sha2).not.toBe(rec.pageSha);   // the held page drawn differently (another held plate in bodyweight_calf_raise's place)
   });
 });
 
@@ -2624,7 +2626,7 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
   });
 }
 
-describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18, facts, balance, A15', { timeout: T }, () => {
+describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 with one zoom per view): A2, A18, facts, balance, A15', { timeout: T }, () => {
   const s = () => S.glute_bridge, GB = () => M.glute_bridge.GB;
   const POSES3 = ['start', 'end', 'mistake'];
   const W = 1.75;
@@ -4818,5 +4820,65 @@ describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main
   });
   it('every held row is on no rows file and carries no zoom (the rows pending Q1, the zoom per view or the named list)', () => {
     for (const id of HELD) expect(S[id].zoom, id).toBeUndefined();
+  });
+});
+
+// ---- 'LIB-18 resume 2': glute_bridge released with one zoom per view (D-LIBZOOM-EXTEND "the arch and its Trace";
+// D-LIB16-ZOOMVIEWS) ----
+describe('LIB-18 resume 2: glute_bridge, a normal-view zoom on the hip Trace and a Mistake-view zoom on the arch', { timeout: T }, () => {
+  const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], DEV = 11.39, TRACE = 22.11;
+  const WANT = [{ view: 'normal', k: 1.5 }, { view: 'mistake', k: 2 }];
+  let Z: any, QZ: any;
+  beforeAll(async () => { Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); QZ = await import(/* @vite-ignore */ lib('qa/zoom.mjs')); }, T);
+  const noZoom = (spec: any) => ({ ...spec, zoom: undefined });
+  /** Each view's zoom against its bar at k, with no smaller ladder k reaching it; the source ring holds what it magnifies. */
+  const gbZoomProblems = (spec: any) => {
+    const out: string[] = [], list = Z.zoomList(spec.zoom);
+    out.push(...Z.zoomFieldProblems(spec.zoom));
+    if (JSON.stringify(spec.zoom) !== JSON.stringify(WANT)) out.push(`zoom ${JSON.stringify(spec.zoom)}`);
+    for (const view of ['normal', 'mistake']) {
+      const e = list.find((x: any) => x?.view === view);
+      if (!e) { out.push(`no ${view} zoom`); continue; }
+      let z: any;
+      try { z = Z.zoomOf(spec, { view }); } catch (err: any) { out.push(`${view}: ${err.message}`); continue; }
+      if (/<(text|foreignObject|tspan)\b|°/.test(z.svg)) out.push(`${view}: text in the zoom`);
+      if (/class="leader|class="plate-callout/.test(z.svg)) out.push(`${view}: a leader or label in the zoom render`);
+      if (view === 'mistake') {
+        const d = z.fault.d;
+        if (z.fault.key !== 'arch') out.push(`mistake: the zoom shows ${z.fault.key}, not arch`);
+        if (!(d * e.k >= DEV)) out.push(`mistake: ${(d * e.k).toFixed(1)} px at k ${e.k} < ${DEV}`);
+        if (LADDER.some(k => k < e.k && d * k >= DEV)) out.push('mistake: a smaller k reaches the bar');
+        if ([z.fault.end, z.fault.mistake].some((p: number[]) => Math.hypot(p[0]! - z.src.c[0], p[1]! - z.src.c[1]) > z.src.r - 1)) out.push('mistake: the ring does not hold the arch in both poses');
+      } else {
+        const len = (k: number) => { const w = Z.zoomOf({ ...spec, zoom: [{ view: 'normal', k }] }, { view: 'normal' }); return QZ.clippedTrace(w.svg, w.circle); };
+        if (!(len(e.k) >= TRACE)) out.push(`normal: Trace ${len(e.k).toFixed(1)} px at k ${e.k} < ${TRACE}`);
+        if (LADDER.some(k => k < e.k && len(k) >= TRACE)) out.push('normal: a smaller k reaches the bar');
+        const tp = Z.tracePath(spec, qaEng.cameraOf(spec, plate.renderPlate(noZoom(spec), { id: 'x' }).report));
+        if (!tp.length || tp.some((p: number[]) => Math.hypot(p[0]! - z.src.c[0], p[1]! - z.src.c[1]) > z.src.r - 1)) out.push('normal: the ring does not hold the whole Trace');
+      }
+    }
+    return out;
+  };
+  it('the zooms: normal k 1.5 (the clipped hip Trace >= 22.11 px), Mistake k 2 (the arch >= 11.39 px), each the smallest ladder k; rings hold the Trace and the arch; no text or leader', () => {
+    const s = S.glute_bridge, z = Z.zoomOf(s, { view: 'mistake' }), n = Z.zoomOf(s, { view: 'normal' });
+    console.log(`LIB-18 glute_bridge zooms: Mistake arch ${z.fault.d.toFixed(2)} px -> ${(z.fault.d * 2).toFixed(2)} px at k 2; normal Trace ${QZ.clippedTrace(n.svg, n.circle).toFixed(2)} px at k 1.5; rings ${JSON.stringify([n.circle, z.circle])}`);
+    expect(gbZoomProblems(s)).toEqual([]);
+  });
+  it('both views fail PQ-H3 at plate scale (a zoom only where needed): Trace 12.0 px, arch 6.0 px, card-true and never enlarged', () => {
+    const c = { spec: S.glute_bridge }, R = { normal: plate.renderPlate(noZoom(S.glute_bridge), { id: 'x' }) };
+    const cam = qaEng.cameraOf(S.glute_bridge, R.normal.report), f = Z.faultOf(S.glute_bridge, cam, qaEng.poseLandmarks(Eng(), S.glute_bridge));
+    expect(f.d).toBeLessThan(DEV); expect(f.d).toBeCloseTo(5.98, 1);
+    expect(c.spec.trace).toEqual({ point: 'hip.r', trim: [6, 8] });
+  });
+  it('the plate is byte-identical outside the zoom: each view renders the same svg with and without the zoom field', () => {
+    for (const mistake of [false, true]) expect(plate.renderPlate(S.glute_bridge, { id: 'x', mistake }).svg, `${mistake}`).toBe(plate.renderPlate(noZoom(S.glute_bridge), { id: 'x', mistake }).svg);
+  });
+  it('mutations: the Mistake at k 1.5 (under the bar), the normal at k 2 (a smaller k reaches it), a third entry, two Mistake entries and the normal zoom removed are red', () => {
+    const s = S.glute_bridge, w = (zoom: any) => gbZoomProblems({ ...s, zoom });
+    expect(w([WANT[0], { view: 'mistake', k: 1.5 }])).toEqual([expect.stringMatching(/^zoom /), expect.stringMatching(/^mistake: [89]\.\d px at k 1\.5 < 11\.39$/)]);
+    expect(w([{ view: 'normal', k: 2 }, WANT[1]])).toEqual([expect.stringMatching(/^zoom /), 'normal: a smaller k reaches the bar']);
+    expect(w([...WANT, { view: 'normal', k: 3 }]).some((p: string) => /a list holds 1 or 2 entries/.test(p))).toBe(true);
+    expect(w([{ view: 'mistake', k: 2 }, { view: 'mistake', k: 2.5 }]).some((p: string) => /two entries for the mistake view/.test(p))).toBe(true);
+    expect(w([WANT[1]])).toContain('no normal zoom');
   });
 });
