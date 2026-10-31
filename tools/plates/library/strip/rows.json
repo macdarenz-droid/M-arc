@@ -493,6 +493,48 @@
     }
    ],
    "why": "D-LIB22-AFALL (#331 6409745507)"
+  },
+  {
+   "id": "diamond_push_up",
+   "lane": "LIB-17 #356",
+   "text": "No source on the card gives seconds or a slow phase for the diamond push-up; BarBend asks to push back up forcefully (c5). Up, down and pause stay null (LR-33: a card with no tempo seconds keeps null). The parent's 2 s down, 1 s up is a push-up drawing convention (push_up c13) and is not inherited. BarBend's isometric diamond push-up (a hold at the bottom) is a variation, not this exercise. No quote on the card asks for a pause or squeeze right after the press. BarBend's 'Cue yourself to reach your upper back towards the ceiling at the top' (c5) is a position cue and holds no pause.",
+   "claim": "c5",
+   "rows": [
+    {
+     "phase": "Press",
+     "move": true,
+     "blank": true,
+     "claim": "c5"
+    },
+    {
+     "phase": "Lower",
+     "move": true,
+     "blank": true,
+     "claim": "c5"
+    }
+   ],
+   "why": "D-LIB17R3-AFALL (lib4-cards §48)"
+  },
+  {
+   "id": "pike_push_up",
+   "lane": "LIB-17 #356",
+   "text": "No source on the card gives seconds for any phase, so up, down and pause stay null (LR-33). NASM names 'Moving too quickly without controlling both concentric and eccentric phases' as a mistake (c9) with no seconds. Garage Gym Reviews has a pause at the bottom with the elbows fully bent (c14); it is not after the press, so it is named here and not in pause. Two read lines belong to other exercises and do not count under LR-33: Garage Gym Reviews' \"Squeeze your glutes, traps, and delts in the end position.\" is in its push press section, and it has no pause words anyway; Fitness Volt's \"Pause for 1-2 seconds\" is in its shoulder press machine section. Pause stays null.",
+   "claim": "c14",
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "blank": true,
+     "claim": "c14"
+    },
+    {
+     "phase": "Press",
+     "move": true,
+     "blank": true,
+     "claim": "c14"
+    }
+   ],
+   "why": "D-LIB17R3-AFALL (lib4-cards §48)"
   }
  ],
  "timedAtHead": [
@@ -514,16 +556,6 @@
    "id": "wall_ball",
    "lane": "LIB-22 #305",
    "why": "S3: \"Cyclic and continuous\", \"go directly into the next rep\"; no FORMS form in the text"
-  },
-  {
-   "id": "diamond_push_up",
-   "lane": "LB7",
-   "why": "S3: \"push back up forcefully\" (c5); \"forcefully\" is not a FORMS form"
-  },
-  {
-   "id": "pike_push_up",
-   "lane": "LB7",
-   "why": "S3: \"Moving too quickly without controlling\" (c9) is a named mistake, and \"quickly\", \"controlling\" are not FORMS forms"
   }
  ]
 }
