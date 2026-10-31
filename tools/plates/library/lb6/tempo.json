@@ -57,5 +57,103 @@
     }
    ]
   }
+ },
+ "r2": {
+  "note": "LIB-16R2 (lib-16r2-card; DESIGN.md section 19.2): the same rule; the cards bottom pauses that Motra gives in a 3-number tempo are named, not drawn.",
+  "research": "claude/libht-research a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
+  "ids": {
+   "low_to_high_cable_fly": {
+    "claim": [
+     "c12",
+     "c15"
+    ],
+    "rows": [
+     {
+      "phase": "Close",
+      "from": "up",
+      "move": true
+     },
+     {
+      "phase": "Hold",
+      "from": "pause"
+     },
+     {
+      "phase": "Open",
+      "from": "down",
+      "move": true
+     }
+    ]
+   },
+   "high_to_low_cable_fly": {
+    "claim": "c12",
+    "rows": [
+     {
+      "phase": "Close",
+      "from": "up",
+      "move": true
+     },
+     {
+      "phase": "Hold",
+      "from": "pause"
+     },
+     {
+      "phase": "Open",
+      "from": "down",
+      "move": true
+     }
+    ]
+   },
+   "smith_machine_squat": {
+    "claim": [
+     "c22"
+    ],
+    "rows": [
+     {
+      "phase": "Lower",
+      "from": "down",
+      "move": true
+     },
+     {
+      "phase": "Drive up",
+      "from": "up",
+      "move": true
+     }
+    ]
+   },
+   "smith_machine_shoulder_press": {
+    "claim": [
+     "c19"
+    ],
+    "rows": [
+     {
+      "phase": "Lower",
+      "from": "down",
+      "move": true
+     },
+     {
+      "phase": "Press",
+      "from": "up",
+      "move": true
+     }
+    ]
+   },
+   "smith_machine_incline_press": {
+    "claim": [
+     "c14"
+    ],
+    "rows": [
+     {
+      "phase": "Lower",
+      "from": "down",
+      "move": true
+     },
+     {
+      "phase": "Press",
+      "from": "up",
+      "move": true
+     }
+    ]
+   }
+  }
  }
 }

@@ -817,3 +817,35 @@ smith_machine_squat, smith_machine_shoulder_press, smith_machine_incline_press: 
 3. The F2 values in 19.8 named (cable flies over the range, squat under it).
 4. The facts calls in 19.3 (hands at the end not facts; hip_adduction knee-only pads; `sole` on footrests; the
    incline's `sternum`).
+
+### 19.12 Wave 1, built (after 'LB6 R2 PLAN RULED', #354 6543628951)
+
+Specs: `specs/{low_to_high_cable_fly, high_to_low_cable_fly, smith_machine_squat, smith_machine_shoulder_press,
+smith_machine_incline_press}.mjs`, each with its header (clone sources, claims, geometry, labels) and an exported
+`SIZES` equal to `lb6/sizes.json` `r2`; tempo rows in `lb6/tempo.json` `r2`; rows appended to `lb6/rows.json` (mode H,
+stage drawing). Changes from the PLAN drafts:
+- high_to_low_cable_fly: the tell `cross` sits on the crossing hand (ruled), one arrow under the hand; no zoom.
+- smith_machine_squat: the Mistake feet keep the start's knee pole, so they sit flat (0.2 cm; without it 0.8 cm, over
+  the engine's 0.5 cm); a second tell `knees` (the knees far past the toes, the card's own consequence, c3).
+- smith_machine_shoulder_press: the end upper arm 10° below level (c6 "or slightly below"), where the bar reaches
+  nose height (1.167 m against the nose tip at 1.172 m), so the bar passes the nose (c3); the stop is the composer's
+  default 6 × 4 cm collar, so it stays off the face (the bench press anchor's 25 cm catch would cross the chin).
+- smith_machine_incline_press: the touch on the upper chest solved from the elbows at 60° (c3) with a plumb forearm
+  (LB2's), thorax height 0.777 H; the rail at the touch's z.
+
+Clearance (A5, plate px, min over poses; the shoulder press and incline along the bar's whole path in 1 cm steps):
+cable to head 11.9 (low_to_high) and 32.2 (high_to_low); cable to legs 45.6 and 28.6; squat bar shaft to neck 5.06,
+to head 12.8; shoulder press bar shaft to head 2.20, to neck 8.3; incline bar shaft to head 24.2, to neck 22.7.
+
+Authoring QA (`lb6/qa.mjs`, node and browser, page `13de1bad…9b1ca1`, two equal builds):
+
+| id | hard checks | raised flags | pxPerM | leaderMax | traceLen | deviation |
+|---|---|---|---|---|---|---|
+| low_to_high_cable_fly | all pass but H6:no-card (before CARD FIELDS) | F2 0.628, F3 46.3, F5 3.57, F7 | 124 | 46.3 | 80.6 | 20.0 |
+| high_to_low_cable_fly | as above | F2 0.628, F3 90.3, F5 3.57, F7 | 124 | 90.3 | 85.5 | 16.1 |
+| smith_machine_squat | as above | F2 0.177, F5 3.57, F7 (no card topFault yet) | 146.3 | 70.8 | 50.1 | 15.9 |
+| smith_machine_shoulder_press | as above | F5 3.57, F7 (no card topFault yet) | 146.3 | 75.7 | 42.2 | 14.9 |
+| smith_machine_incline_press | as above | F5 3.57, F7 (no card topFault yet) | 146.3 | 75.0 | 49.6 | 23.8 |
+
+F3 on both cable flies is proposed as a named flag (the leaders' lengths, LB5 17.3's form; F3's range 49.33-82.26).
+The smith rows' F7 and every row's H6:no-card clear at CARD FIELDS (topFault `under`, `flare`, `flare`).

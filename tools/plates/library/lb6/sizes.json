@@ -338,5 +338,380 @@
     "basis": "convention: the vendor pulley radius (equipment.mjs:300)"
    }
   }
+ },
+ "r2": {
+  "note": "LIB-16R2 (lib-16r2-card): the same rule (D-LIB16-SIZE) for the resume 2 rows; each spec's SIZES equals its row (r2 A17 block).",
+  "ids": {
+   "low_to_high_cable_fly": {
+    "FOOT_X": {
+     "value": 0.12,
+     "unit": "m",
+     "basis": "stated reason: mid-soles 24 cm apart, the narrowest base at which both staggered feet sit within 0.3 cm (engine contact check, 0.5 cm)"
+    },
+    "STAGGER": {
+     "value": 0.2,
+     "unit": "m",
+     "basis": "claim: c3 staggered (walking) stance; stated reason: mid-soles 20 cm apart front to back, a short walking step"
+    },
+    "KNEE_SOFT": {
+     "value": 5,
+     "unit": "deg",
+     "basis": "convention: cable_fly.mjs:39 (pilot B) and upright_row, knees 5 deg soft"
+    },
+    "ELBOW": {
+     "value": 20,
+     "unit": "deg",
+     "basis": "convention: cable_fly.mjs:40 (pilot B), the fixed slight elbow bend (c4, c6 / c3)"
+    },
+    "OPEN_ANGLE": {
+     "value": 10,
+     "unit": "deg",
+     "basis": "convention: cable_fly.mjs:41 (pilot B), the hands 10 deg ahead of the side line, never back past the armpit (c4)"
+    },
+    "OPEN_DOWN": {
+     "value": 40,
+     "unit": "deg",
+     "basis": "stated reason: the start arms 40 deg below level, pointing down and out toward the pulleys at the knee-hip midpoint (c1, c4)"
+    },
+    "CLOSE_GAP": {
+     "value": 0.05,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:42 (pilot B), grip centres +-5 cm: the hands meet (c5)"
+    },
+    "COL_X": {
+     "value": 1.24,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:43 (pilot B)"
+    },
+    "COL_W": {
+     "value": 0.24,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:43 (pilot B)"
+    },
+    "COL_H": {
+     "value": 2.1,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:43 (pilot B), the cableColumn default"
+    },
+    "COL_Z": {
+     "value": -0.35,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:44 (pilot B), the column line 35 cm behind the shoulders"
+    },
+    "MIS_ELBOW": {
+     "value": 90,
+     "unit": "deg",
+     "basis": "convention: cable_fly.mjs:46 (pilot B), the press Mistake elbow at 90 deg (c11 \"bending the elbows more than slightly\")"
+    },
+    "HANDLE": {
+     "value": 0.12,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:94 (pilot B), the D-handle grip bar"
+    },
+    "CAM_PXM": {
+     "value": 124,
+     "unit": "px/m",
+     "basis": "convention: cable_fly.mjs:49 (pilot B), 124 px/m so the columns fit the plate"
+    }
+   },
+   "high_to_low_cable_fly": {
+    "FOOT_X": {
+     "value": 0.12,
+     "unit": "m",
+     "basis": "stated reason: mid-soles 24 cm apart, the narrowest base at which both staggered feet sit within 0.3 cm (engine contact check, 0.5 cm)"
+    },
+    "STAGGER": {
+     "value": 0.2,
+     "unit": "m",
+     "basis": "claim: c3 staggered (walking) stance; stated reason: mid-soles 20 cm apart front to back, a short walking step"
+    },
+    "KNEE_SOFT": {
+     "value": 5,
+     "unit": "deg",
+     "basis": "convention: cable_fly.mjs:39 (pilot B) and upright_row, knees 5 deg soft"
+    },
+    "ELBOW": {
+     "value": 20,
+     "unit": "deg",
+     "basis": "convention: cable_fly.mjs:40 (pilot B), the fixed slight elbow bend (c4, c6 / c3)"
+    },
+    "OPEN_ANGLE": {
+     "value": 10,
+     "unit": "deg",
+     "basis": "convention: cable_fly.mjs:41 (pilot B), the hands 10 deg ahead of the side line, never back past the armpit (c4)"
+    },
+    "OPEN_UP": {
+     "value": 30,
+     "unit": "deg",
+     "basis": "stated reason: the start arms 30 deg above level, so the hands stay under the pulleys at the crown (c1, c4)"
+    },
+    "CLOSE_GAP": {
+     "value": 0.05,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:42 (pilot B), grip centres +-5 cm: the hands meet (c5)"
+    },
+    "END_DROP": {
+     "value": 0.1,
+     "unit": "m",
+     "basis": "claim: c5 \"until your hands meet below the level of your chest\"; stated reason: 10 cm below the chest landmark"
+    },
+    "COL_X": {
+     "value": 1.24,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:43 (pilot B)"
+    },
+    "COL_W": {
+     "value": 0.24,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:43 (pilot B)"
+    },
+    "COL_H": {
+     "value": 2.1,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:43 (pilot B), the cableColumn default"
+    },
+    "COL_Z": {
+     "value": -0.35,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:44 (pilot B), the column line 35 cm behind the shoulders"
+    },
+    "MIS_CROSS": {
+     "value": 0.08,
+     "unit": "m",
+     "basis": "claim: c8 crossing the handles past the midline; stated reason: each hand 8 cm past the midline, about one hand width (no source gives a size)"
+    },
+    "MIS_DZ": {
+     "value": 0.06,
+     "unit": "m",
+     "basis": "stated reason: the right hand passes 6 cm in front of the left, about a fist depth, so the hands do not meet in one place"
+    },
+    "HANDLE": {
+     "value": 0.12,
+     "unit": "m",
+     "basis": "convention: cable_fly.mjs:94 (pilot B), the D-handle grip bar"
+    },
+    "CAM_PXM": {
+     "value": 124,
+     "unit": "px/m",
+     "basis": "convention: cable_fly.mjs:49 (pilot B), 124 px/m so the columns fit the plate"
+    }
+   },
+   "smith_machine_squat": {
+    "FOOT_X": {
+     "value": 0.19,
+     "unit": "m",
+     "basis": "convention: vendor barbell_back_squat.mjs (the 8), FOOT_X 0.19"
+    },
+    "TOE_OUT": {
+     "value": 20,
+     "unit": "deg",
+     "basis": "convention: vendor barbell_back_squat.mjs (the 8)"
+    },
+    "GRIP_X": {
+     "value": 0.36,
+     "unit": "m",
+     "basis": "convention: vendor barbell_back_squat.mjs (the 8); c5 just outside the shoulders"
+    },
+    "BAR_TY": {
+     "value": 0.85,
+     "unit": "H",
+     "basis": "convention: vendor barbell_back_squat.mjs BAR_T (the 8), the bar on the upper traps (c1)"
+    },
+    "BAR_TZ": {
+     "value": -0.058,
+     "unit": "H",
+     "basis": "convention: vendor barbell_back_squat.mjs BAR_T (the 8)"
+    },
+    "FEET_AHEAD": {
+     "value": 0.11,
+     "unit": "m",
+     "basis": "claim: c2 a few inches in front of the bar (Motra 3-6 in = 7.6-15.2 cm); 11 cm, the middle"
+    },
+    "END_HIP_Y": {
+     "value": 0.43,
+     "unit": "m",
+     "basis": "claim: c6 thighs at least parallel; stated reason: the hip height that sets the thigh 1.1 deg below level"
+    },
+    "END_INCL": {
+     "value": 28,
+     "unit": "deg",
+     "basis": "stated reason: the pelvis-trunk incline that keeps the chest up with the feet ahead of the bar (c6); more upright than the free squat's 40 (the 8)"
+    },
+    "END_SPINE": {
+     "value": 6,
+     "unit": "deg",
+     "basis": "stated reason: a neutral spine with the small lumbar share of the incline (the 8's end, 10, scaled to the upright trunk)"
+    },
+    "BAR_R": {
+     "value": 0.025,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs BAR_R (pilot B), the drawn bar end"
+    },
+    "PLATE_D": {
+     "value": 0.45,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs PLATE_D (pilot B)"
+    },
+    "STOP_BELOW": {
+     "value": 0.02,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs STOP_BELOW (pilot B); c8 just below squat depth"
+    },
+    "STOP_W": {
+     "value": 0.25,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs STOP_SIZE (pilot B, D-LIB11-PANEL1)"
+    },
+    "STOP_H": {
+     "value": 0.05,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs STOP_SIZE (pilot B, D-LIB11-PANEL1)"
+    }
+   },
+   "smith_machine_shoulder_press": {
+    "BACK": {
+     "value": 20,
+     "unit": "deg",
+     "basis": "claim: c1 a high incline, roughly 70 degrees from the floor: 20 from vertical"
+    },
+    "SEAT_TILT": {
+     "value": 10,
+     "unit": "deg",
+     "basis": "convention: dumbbell_shoulder_press.mjs SEAT_TILT (pilot A)"
+    },
+    "SEAT_TOP": {
+     "value": 0.45,
+     "unit": "m",
+     "basis": "convention: dumbbell_shoulder_press.mjs SEAT_TOP (pilot A)"
+    },
+    "BACK_LEN": {
+     "value": 0.86,
+     "unit": "m",
+     "basis": "convention: dumbbell_shoulder_press.mjs BACK_LEN (pilot A)"
+    },
+    "FOOT_Z": {
+     "value": 0.5,
+     "unit": "m",
+     "basis": "convention: dumbbell_shoulder_press.mjs FOOT_Z (pilot A)"
+    },
+    "GRIP_X": {
+     "value": 0.3,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs GRIP_X (pilot B); c5 wider than the shoulders"
+    },
+    "TOP_ELBOW": {
+     "value": 10,
+     "unit": "deg",
+     "basis": "claim: c6 press to just short of full lockout; stated reason: 10 deg short of straight"
+    },
+    "END_DIP": {
+     "value": 10,
+     "unit": "deg",
+     "basis": "claim: c6 upper arms about parallel to the floor or slightly below; stated reason: 10 deg below level, where the bar reaches nose height (c3)"
+    },
+    "END_FWD": {
+     "value": 0.3,
+     "unit": "fraction",
+     "basis": "claim: c5 elbows in front of the shoulders but not straight out in front; stated reason: 0.3 of the upper arm's level reach forward (9.6 cm)"
+    },
+    "NOSE_GAP": {
+     "value": 0.015,
+     "unit": "m",
+     "basis": "claim: c3 the bar just misses the nose; stated reason: 1.5 cm, just over the 2 px clearance at 146.29 px/m"
+    },
+    "BAR_R": {
+     "value": 0.025,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs BAR_R (pilot B)"
+    },
+    "PLATE_D": {
+     "value": 0.45,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs PLATE_D (pilot B)"
+    },
+    "STOP_BELOW": {
+     "value": 0.02,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs STOP_BELOW (pilot B); c7 just below the lowest bar position"
+    },
+    "STOP_W": {
+     "value": 0.06,
+     "unit": "m",
+     "basis": "convention: eq/smith.mjs STOP (the composer default collar), so the stop stays clear of the face"
+    },
+    "STOP_H": {
+     "value": 0.04,
+     "unit": "m",
+     "basis": "convention: eq/smith.mjs STOP (the composer default collar)"
+    }
+   },
+   "smith_machine_incline_press": {
+    "BACK": {
+     "value": 60,
+     "unit": "deg",
+     "basis": "claim: card plate.equipment 30 degrees, inside c1 30-45: 60 from vertical"
+    },
+    "SEAT_TILT": {
+     "value": 12,
+     "unit": "deg",
+     "basis": "convention: incline_barbell_bench_press.mjs SEAT_TILT (LB2)"
+    },
+    "SEAT_TOP": {
+     "value": 0.45,
+     "unit": "m",
+     "basis": "convention: incline_barbell_bench_press.mjs SEAT_TOP (LB2)"
+    },
+    "BACK_LEN": {
+     "value": 0.84,
+     "unit": "m",
+     "basis": "convention: incline_barbell_bench_press.mjs BACK_LEN (LB2)"
+    },
+    "FOOT_Z": {
+     "value": 0.5,
+     "unit": "m",
+     "basis": "convention: incline_barbell_bench_press.mjs FOOT_Z (LB2)"
+    },
+    "TOP_ELBOW": {
+     "value": 4,
+     "unit": "deg",
+     "basis": "convention: incline_barbell_bench_press.mjs TOP_ELBOW (LB2), arms straight"
+    },
+    "GRIP_X": {
+     "value": 0.3,
+     "unit": "m",
+     "basis": "convention: incline_barbell_bench_press.mjs GRIP_X (LB2); c2 slightly wider than shoulder width"
+    },
+    "ELBOW_DEG": {
+     "value": 60,
+     "unit": "deg",
+     "basis": "claim: c3 elbows at about 45-75 degrees; the midpoint (incline_barbell_bench_press.mjs ELBOW_DEG, LB2)"
+    },
+    "BAR_R": {
+     "value": 0.025,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs BAR_R (pilot B)"
+    },
+    "PLATE_D": {
+     "value": 0.45,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs PLATE_D (pilot B)"
+    },
+    "STOP_BELOW": {
+     "value": 0.02,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs STOP_BELOW (pilot B); c5 just below the touch"
+    },
+    "STOP_W": {
+     "value": 0.25,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs STOP_SIZE (pilot B, D-LIB11-PANEL1)"
+    },
+    "STOP_H": {
+     "value": 0.05,
+     "unit": "m",
+     "basis": "convention: smith_machine_bench_press.mjs STOP_SIZE (pilot B, D-LIB11-PANEL1)"
+    }
+   }
+  }
  }
 }
