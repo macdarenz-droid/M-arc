@@ -1,5 +1,5 @@
 // Sled pull (backward drag with a rope), side view, figure facing screen right, the sled in front. LIB-22 (LB10, H;
-// NOSECS: no tempo).
+// NOSECS lifted at 'LIB-22 resume': the strip word tempo).
 // View: side (card plate.view = census): the quarter squat, the shoulders over the hips, the step back and the torso
 //  pitching back are sagittal (plate.viewWhy).
 // Sources: research card docs/research/howto/cards/sled_pull.json (research head 596dbe07): c1 facing the sled, the rope
@@ -8,7 +8,7 @@
 //  controlled steps, driving through the midfoot, the rope close to the body; c4 feed the rope through the hands,
 //  elbows tucked; c5 the rope piles up near the feet; c8 the torso pitched back, the lower back taking the load (the
 //  Mistake). plate.frames: one step, "the rear foot stepped back with the sled a little closer; Trace follows the
-//  stepping foot". Tempo: none (D-LIB22-SECS).
+//  stepping foot". Tempo: Walk "Quick" (D-STRIP-B; strip/rows.json, c3).
 // Clone (D-LIB22-CLONE): seated_cable_row (the 8: the rope line to the hands; the rock-back Mistake), romanian_deadlift
 //  and barbell_row (#109: the hinge, KNEE 15), mountain_climbers (#109: one step of the cycle, the via ghost,
 //  FOOT_CLEAR), single_leg_romanian_deadlift (#109: the Winter centre of mass); copied, never imported.
@@ -39,15 +39,15 @@
 // Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): PX_PER_M, FOOT_X, KNEE_SOFT, ELBOW_BEND,
 //  GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH; solved: STEP, HIP_Y, DRAG,
 //  ROPE_RUN, M_Z, M_Y.
-import { landmarksOf, normPose, resolve, WINTER, REF } from '../engine.mjs';
+import { landmarksOf, WINTER, REF } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
 import { sled, SLED, SLED_ITEMS } from '../eq/sled.mjs';
 import { strandOutline } from '../eq/rope.mjs';
 
 const H = 1.75, R = Math.PI / 180;
 export const SIZES = Object.freeze({ PX_PER_M: 126, FOOT_X: 0.145, KNEE_SOFT: 15, ELBOW_BEND: 18, GRIP_GAP: 0.07, SLED_Z: 0.9, FOOT_CLEAR: 0.025,
-  COIL_D: 0.266, COIL_TURNS: 3, ROPE_T: 0.028, ROPE_SAG: 0.006, M_TILT: -14, M_ARCH: -12 });
-const { FOOT_X, KNEE_SOFT, ELBOW_BEND, GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH } = SIZES;
+  COIL_D: 0.266, COIL_TURNS: 3, ROPE_T: 0.028, ROPE_SAG: 0.006, M_TILT: -14, M_ARCH: -12, LOOP_H: 0.044, LOOP_DZ: 0.05, TAIL_SAG: 0.04 });
+const { FOOT_X, KNEE_SOFT, ELBOW_BEND, GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH, LOOP_H, LOOP_DZ, TAIL_SAG } = SIZES;
 
 export const bisect = (f, a, b, what) => {
   let fa = f(a), fb = f(b), side = 0;
@@ -116,37 +116,43 @@ const end = withHands(bodyAt(HIP_Y, END_Z, FEET.end));
 export const DRAG = END_Z - START_Z;
 // The Mistake is drawn against the end, with the sled where the end left it (static from the end on).
 const sledZ = (lm, ctx) => SLED_Z + ((ctx.pose === 'mistake' ? END_Z : lm.hips[2]) - ctx.start.hips[2]);
+// The rope's landmarks: the Mistake keeps the end's (its fists hold the end's grips; the rope does not move).
+const ropeLm = (lm, ctx) => (ctx.pose === 'mistake' ? landmarksOf(end, H) : lm);
 // Via (a ghost): halfway, the stepping foot flat and FOOT_CLEAR off the floor (mountain_climbers.mjs:49).
 const via = [withHands(bodyAt(HIP_Y, (START_Z + END_Z) / 2, { l: FEET.start.l, r: flat(-FOOT_X, -STEP / 2, FOOT_CLEAR) }))];
 // The rope's run, hitch to the upper fist (constant by the drag).
 export const runOf = (lm, rearZ) => Math.hypot(...v3.sub(lm['grip.r'], hitchOf(lm['grip.r'], rearZ)));
 export const ROPE_RUN = runOf(landmarksOf(start, H), SLED_Z);
-// Mistake (c8): pelvis M_TILT, lumbar M_ARCH. The heavy sled stays where it is at the end (c8 "When the pull becomes
-// too heavy"), the taut rope keeps its run, and the arms keep their end joint angles (they pitch back with the torso,
-// so the elbows stay clear of the waist); so the hips sag forward and down (c8 "don't let your hips sag": M_Z and M_Y,
-// solved) until the upper fist is back on the rope's run, the stepped-back knee kept at KNEE_SOFT.
-const QE = resolve(normPose(end, { height: H }), { height: H }).q, EZ = SLED_Z + DRAG;
-const ARMS = { shoulder: { l: { ...QE.sh.l }, r: { ...QE.sh.r } }, elbow: { ...QE.elbow }, reach: null };
-const mBody = (y, z) => ({ root: { at: [0, y, z], tilt: M_TILT }, trunk: M_ARCH, neck: 0, ...ARMS });
+// Mistake (c8; #331 panel mx2 item 1): only the body pitches back, pelvis M_TILT and lumbar M_ARCH. The sled, the rope,
+// the coil and both fists stay exactly where the end has them (the heavy sled holds; c8 "When the pull becomes too
+// heavy"), so the fists keep the end's grips by reach, each arm ELBOW_BEND short of straight as in the end (the near
+// shoulder REACH from its fist). The hips go forward and down (c8 "don't let your hips sag": M_Z and M_Y, solved) and
+// the shoulders back, the stepped-back knee kept at KNEE_SOFT.
+const EZ = SLED_Z + DRAG;
+const mBody = (y, z) => ({ root: { at: [0, y, z], tilt: M_TILT }, trunk: M_ARCH, neck: 0 });
 const mLm = (y, z) => landmarksOf({ ...end, ...mBody(y, z) }, H);
 const mY = z => bisect(y => kneeOf(mLm(y, z), 'r') - KNEE_SOFT, 0.5, HIP_Y + 0.05, 'the Mistake height');
-const mFront = z => mLm(mY(z), z)['grip.r'];
-export const M_Z = bisect(z => Math.hypot(...v3.sub(mFront(z), hitchOf(mFront(z), EZ))) - ROPE_RUN, END_Z - 0.1, END_Z + 0.3, 'the Mistake root');
+const LE0 = landmarksOf(end, H);
+export const M_Z = bisect(z => Math.hypot(...v3.sub(mLm(mY(z), z)['shoulder.r'], LE0['grip.r'])) - REACH, END_Z - 0.1, END_Z + 0.3, 'the Mistake root');
 export const M_Y = mY(M_Z);
-const mistake = mBody(M_Y, M_Z);
+const mistake = { ...mBody(M_Y, M_Z), reach: end.reach };
 
 // Rope items (main's eq/rope.mjs strandOutline, unedited): the run from the hitch into the upper fist, the short link
-// down to the lower fist, and the tail from it to the coil; the coil a flat pile of COIL_TURNS turns on the floor
-// (plate.equipment "a short coil of rope at the feet", c5 "the rope piles up near your feet"), centred under the start's
-// lower fist, so the start tail hangs plumb onto it; the pile lies still while the lifter steps back.
-const COIL_Z = landmarksOf(start, H)['grip.l'][2], COIL_TOP = [0, COIL_TURNS * ROPE_T, COIL_Z];
-const strand = (from, to) => strandOutline({ from, grip: to, dir: unit(v3.sub(to, from)), below: 0, thick: ROPE_T, knob: ROPE_T, knobLen: 0.002, sag: ROPE_SAG, view: 'side' });
-const ropeItems = (lm, rearZ) => [[hitchOf(lm['grip.r'], rearZ), lm['grip.r']], [lm['grip.r'], lm['grip.l']], [lm['grip.l'], COIL_TOP]]
-  .map(([a, b]) => ({ type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'rope', pts: strand(a, b) }));
+// down to the lower fist, and the slack tail from it, hanging in a soft curve (TAIL_SAG) onto the coil; the coil is
+// COIL_TURNS flattened rope loops lying on the floor, overlapping (plate.equipment "a short coil of rope at the feet", c5
+// "the rope piles up near your feet"; #331 panel mx2 item 3), centred under the start's lower fist, so the start tail
+// hangs onto it; the pile lies still while the lifter steps back.
+const COIL_Z = landmarksOf(start, H)['grip.l'][2], COIL_TOP = [0, LOOP_H, COIL_Z];
+const strand = (from, to, sag = ROPE_SAG) => strandOutline({ from, grip: to, dir: unit(v3.sub(to, from)), below: 0, thick: ROPE_T, knob: ROPE_T, knobLen: 0.002, sag, view: 'side' });
+const ropeItems = (lm, rearZ) => [[hitchOf(lm['grip.r'], rearZ), lm['grip.r']], [lm['grip.r'], lm['grip.l']], [lm['grip.l'], COIL_TOP, TAIL_SAG]]
+  .map(([a, b, sag]) => ({ type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'rope', pts: strand(a, b, sag) }));
+// One loop: a flattened ring of rope (outer ellipse COIL_D by LOOP_H, the band ROPE_T wide at its ends and half that at
+// its top and bottom, as a loop lying on the floor reads from a low side view), one closed outline: the outer ellipse,
+// then the inner one back the other way, joined at the loop's far end.
 const coil = () => Array.from({ length: COIL_TURNS }, (_, k) => {
-  const y0 = k * ROPE_T, y1 = y0 + ROPE_T, z0 = COIL_Z - COIL_D / 2, z1 = COIL_Z + COIL_D / 2, r = ROPE_T / 2;
-  const cap = (zc, s) => Array.from({ length: 5 }, (_, i) => { const a = (-90 + i * 45) * R; return [0, (y0 + y1) / 2 + r * Math.sin(a) * -s, zc + s * r * Math.cos(a)]; });
-  return { type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'coil', pts: [...cap(z1 - r, 1), ...cap(z0 + r, -1)] };
+  const zc = COIL_Z + (k - (COIL_TURNS - 1) / 2) * LOOP_DZ, a = COIL_D / 2, b = LOOP_H / 2, n = 32;
+  const ell = (ea, eb, rev) => Array.from({ length: n + 1 }, (_, i) => { const t = (rev ? n - i : i) / n * 2 * Math.PI; return [0, b + eb * Math.sin(t), zc + ea * Math.cos(t)]; });
+  return { type: 'poly', cls: 'eq-solid', z: 'mid', part: 'coil', pts: [...ell(a, b, false), ...ell(a - ROPE_T, b - ROPE_T / 2, true)] };
 });
 // The start sled and rope, redrawn dashed in the end pose (D-LIB22-DRAW): each part's closed outline. Not in the
 // Mistake view, where a dashed red outline marks the fault.
@@ -165,7 +171,7 @@ export default {
   poses: { start, via, end },
   equipment: [{ type: 'floor', from: -1.0, to: SLED_Z + SLED.len + 0.1 },   // the floor runs on under the whole start sled
     ...perItem((lm, ctx) => sled({ rearZ: sledZ(lm, ctx), form: 'pull' }), SLED_ITEMS),
-    ...perItem((lm, ctx) => ropeItems(lm, sledZ(lm, ctx)), 3),
+    ...perItem((lm, ctx) => ropeItems(ropeLm(lm, ctx), sledZ(lm, ctx)), 3),
     ...perItem(() => coil(), COIL_TURNS),
     ...perItem((lm, ctx) => (ctx.pose === 'end' && !ctx.mistake ? [...START_SLED, ...START_ROPE] : null), START_SLED.length + START_ROPE.length)],
   checks: [
@@ -179,9 +185,9 @@ export default {
   ghosts: { count: 1, parts: ['leg.r'] },
   trace: { point: 'ball.r', trim: [10, 12] },
   callouts: [
-    { key: 'squat', text: 'Quarter<br>squat', anchor: 'knee.r', box: { left: 24, top: 240 }, cue: 'Knees soft in a quarter squat, chest up, core engaged.' },
+    { key: 'squat', text: 'Quarter<br>squat', anchor: 'knee.r', box: { left: 24, top: 240 }, cue: 'Knees soft in a quarter squat, chest up, core braced.' },
     { key: 'stack', text: 'Shoulders<br>over hips', anchor: 'backUpper', box: { left: 24, top: 144 }, cue: 'Keep your shoulders over your hips, not leaning far back.' },
-    { key: 'steps', text: 'Short<br>steps<br>back', anchor: 'heel.r', box: { left: 16, top: 276 }, cue: 'Short, quick steps back, driving through the midfoot.' },
+    { key: 'steps', text: 'Short<br>steps<br>back', anchor: 'heel.r', box: { left: 8, top: 288 }, cue: 'Short, quick steps back, driving through the midfoot.' },
   ],
   mistake: {
     pose: mistake,
@@ -189,11 +195,13 @@ export default {
     // arrow between the two heads cannot clear the solid head by 6 px; the red outline carries the lean
     guides: [],
     tells: [
-      { key: 'lean', text: 'Torso pitched<br>back', anchor: { at: 'head', pose: 'mistake' }, box: { left: 16, top: 56 }, cue: 'The torso pitches back and the lower back takes the load.' },
-      { key: 'stack', text: 'Shoulders<br>behind<br>hips', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 24, top: 176 }, cue: 'The shoulders are no longer over the hips, leaning too far back.' },
+      { key: 'lean', text: 'Torso<br>pitched<br>back', anchor: { at: 'backUpper', pose: 'mistake', off: [-5, -12] }, box: { left: 8, top: 136 }, cue: 'The torso pitches back and the lower back takes the load.' },
+      { key: 'stack', text: 'Shoulders<br>behind<br>hips', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 8, top: 208 }, cue: 'The shoulders are no longer over the hips, leaning too far back.' },
     ],
   },
-  alt: 'Sled pull, side view. Facing the sled in a quarter squat, shoulders over the hips, both hands one behind the other on the rope from the sled. One foot steps straight back and the sled follows by the same distance; a short coil of rope lies at the feet.',
+  tempo: [{ phase: 'Walk', move: true, word: 'Quick' }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)
+  zoom: { view: 'normal', k: 3 },   // D-LIBZOOM-EXTEND (lib4-cards §41; DESIGN.md §21): the stepping foot's path (ball.r), 74.9 px at k 3, the smallest k whose source ring fits the plate (D-LIB22-RINGFIT)
+  alt: 'Sled pull, side view. Facing the sled in a quarter squat, shoulders over the hips, both hands one behind the other on the rope from the sled. One foot steps straight back and the sled follows by the same distance. A short coil of rope lies at the feet.',
 };
 export const info = { START_Z, END_Z, HIP_Y, DRAG, ROPE_RUN, STEP, M_Z, M_Y, REACH,
   pose: Object.fromEntries([['start', start], ['via', via[0]], ['end', end], ['mistake', { ...end, ...mistake }]].map(([k, p]) => { const l = landmarksOf(p, H);
