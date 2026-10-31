@@ -787,3 +787,19 @@ glute_bridge (one zoom per view, D-LIB16-ZOOMVIEWS, LIB-16's resume).
 Named list (D-LIB18-CALF-S4): seated_calf_raise, standing_calf_raise and bodyweight_calf_raise. Renders:
 `MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb8/build.mjs --held paper|silent-black
 lib_<id>` (the held page, never evidence); reasons in section 15.
+
+## 19. Resume plan ('LIB-18 resume 2', 2026-10-31; base main `93c14262`)
+
+| id | blocker | on main |
+|---|---|---|
+| glute_bridge | one zoom per view (D-LIB16-ZOOMVIEWS, LIB-16's resume) | yes (#327, train 44 `c7bdad7a`; zoom/inline.mjs:21-27, qa/zoom.mjs:104) |
+| seated_calf_raise, standing_calf_raise, bodyweight_calf_raise | S4 arose: the named list, decided at the release candidate (D-LIB18-CALF-S4) | not a code blocker; stays held |
+| hip_thrust | D-LIB18-RINGKEEP: no tell reaches 11.39 px at k ≤ 4 (2.3 px → 9.2 px) | no route ruled; stays held |
+| resisted_hip_flexion | no box placement clears the only free zoom disc (#325 6406106149); a new route needs a ruling | no route ruled; stays held |
+
+Built now: glute_bridge, with one LIB-ZOOM circle per view (D-LIBZOOM-EXTEND "the arch and its Trace"):
+- normal view: the source ring holds the whole hip.r Trace (12.0 px at plate scale, trim [6, 8]); k the smallest of
+  1.5-4 whose clipped Trace reaches 22.11 px, the ring closing inside the frame (D-LIB22-RINGFIT);
+- Mistake view: the source ring holds the `arch` tell anchor (the sacrum) in the end and Mistake poses (6.8 px at plate
+  scale); k the smallest of 1.5-4 whose move reaches 11.39 px.
+Nothing else on the plate moves; a label box moves only under D-LIB18-ZOOMPLACE. No card key changes.
