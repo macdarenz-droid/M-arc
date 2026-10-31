@@ -34,7 +34,7 @@
 //  c6 PureGym "ensuring the glutes power the hip extension, rather than the lower back"), the upper back on the floor
 //  and the feet planted: the pelvis tilt is SOLVED for those, so the hips rise 3.1 cm with the arch (DESIGN.md 12
 //  M_HIGH: no separate number). One tell (record in the notes); `high` is not a tell (ruled).
-// Camera: fit (capped at the reference 146.29 px/m).
+// Camera: fit (capped at the reference 146.29 px/m). Zooms: normal k 1.5 (the hip Trace), Mistake k 2 (the arch), below.
 // Unsourced numbers (SIZES below; lb8/sizes.json holds each with its basis): FOOT_X, START_TUCK (the
 //  ceiling), M_ARCH, FLOOR_BACK, FLOOR_FRONT; END_TILT, END_HIP, START_TILT, M_TILT solved.
 import { REF, RADII, WINTER, normPose, resolve, fk, landmarks } from '../engine.mjs';
@@ -153,6 +153,10 @@ export default {
   ],
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r'] },
   trace: { point: 'hip.r', trim: [6, 8] },
+  // LIB-ZOOM, one zoom per view (D-LIBZOOM-EXTEND "the arch and its Trace"; D-LIB16-ZOOMVIEWS; 'LIB-18 resume 2'): the
+  // Trace is 12.0 px and the arch 5.98 px at plate scale (card-true, D-LIB8-shrug). Each k is the smallest of 1.5-4 that
+  // reaches its bar at the zoom's own scale: normal k 1.5, the hip's path 24.6 px; Mistake k 2, the sacrum 11.97 px.
+  zoom: [{ view: 'normal', k: 1.5 }, { view: 'mistake', k: 2 }],
   measure: { vertex: 'knee.r', from: { dir: THIGH_DIR }, to: 'ankle.r', radius: 20, title: 'Knee', value: 'about 90°', expect: 90, box: { left: 285, top: 262 } },
   callouts: [
     // c2, c6, c12: on the pelvis (ruling PR #306 6357883031 item 2c): the torso's front outline straight above the hip

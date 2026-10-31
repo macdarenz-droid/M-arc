@@ -669,10 +669,10 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 | standing_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 5.1 px < 22.11 px (trim [10, 12], barbell_back_squat.mjs:117); the locked-knee Mistake 7.4 px < 11.39 px; the rigid toe is 4.85 cm inside the platform at the card's top; the c1 toe fact misses by 2.3 cm at the start | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
 | bodyweight_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace measures 5.8 px < 22.11 px (trim [10, 12]); the Mistake passes (13.6 px); the rigid toe is 4.56 cm inside the step at the top, so the c4 toe fact misses by 4.6 cm | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
 | hip_thrust | D-LIB8-shrug (D-LIB18-SIZE, S2); D-LIB18-RINGKEEP (#325) | the card-true 12° arch moves its tells 4.16 px at most; after the panel's R4 fix (lb8q, #325 6410306586: the `arch` leader on the underside lumbar arch, backMid→sacrum ½) the largest tell move is 2.3 px (`arch`; `ribs` 1.38 px), under 11.39 px even at the zoom's k 4 | held: no tell passes H3.zoom at k ≤ 4 (D-LIB18-RINGKEEP) |
-| glute_bridge | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch (hanging_leg_raise.mjs:69) measures 6.8 px < 11.39 px (tell on the trunk's front outline at the lumbar level, as hip_thrust); the hip Trace measures 12.0 px < 22.11 px (26.2 px of motion less the [6, 8] trim, leg_press.mjs:132); the c2 tuck has no solve within the ruled 25° ceiling (sacrum on the floor at 30.9°): drawn at 25°, the sacrum 0.65 cm up (inside PQ-H6's 1 cm) | LIB-ZOOM circles on both views (D-LIBZOOM-EXTEND), after D-LIB16-ZOOMVIEWS (LIB-16's resume) is on main |
 | resisted_hip_flexion | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lean/arch measures 5.1 px (`arch`; `lean` 2.7 px) < 11.39 px; the Trace passes (82.7 px) | held: with the Mistake zoom at its only free disc (288,138), no placement of its two boxes passes (D-LIB18-ZOOMPLACE scan, #325); a new route needs a ruling |
 
-Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys stay.
+Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys stay. glute_bridge left this table at
+'LIB-18 resume 2' (section 19).
 
 **Bulk rulings (LB8 BULK DRAWN RULED, #306 6357883031).** Named nits: hack_squat's "Back on pad" (39 px) and
 resisted_hip_flexion's "No back arch" (63 px), each entering the end figure once from the front, no equipment, at most
@@ -787,3 +787,28 @@ glute_bridge (one zoom per view, D-LIB16-ZOOMVIEWS, LIB-16's resume).
 Named list (D-LIB18-CALF-S4): seated_calf_raise, standing_calf_raise and bodyweight_calf_raise. Renders:
 `MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb8/build.mjs --held paper|silent-black
 lib_<id>` (the held page, never evidence); reasons in section 15.
+
+## 19. Resume plan ('LIB-18 resume 2', 2026-10-31; base main `93c14262`)
+
+| id | blocker | on main |
+|---|---|---|
+| glute_bridge | one zoom per view (D-LIB16-ZOOMVIEWS, LIB-16's resume) | yes (#327, train 44 `c7bdad7a`; zoom/inline.mjs:21-27, qa/zoom.mjs:104) |
+| seated_calf_raise, standing_calf_raise, bodyweight_calf_raise | S4 arose: the named list, decided at the release candidate (D-LIB18-CALF-S4) | not a code blocker; stays held |
+| hip_thrust | D-LIB18-RINGKEEP: no tell reaches 11.39 px at k ≤ 4 (2.3 px → 9.2 px) | no route ruled; stays held |
+| resisted_hip_flexion | no box placement clears the only free zoom disc (#325 6406106149); a new route needs a ruling | no route ruled; stays held |
+
+Built now: glute_bridge, with one LIB-ZOOM circle per view (D-LIBZOOM-EXTEND "the arch and its Trace"):
+- normal view: the source ring holds the whole hip.r Trace (12.0 px at plate scale, trim [6, 8]); k the smallest of
+  1.5-4 whose clipped Trace reaches 22.11 px, the ring closing inside the frame (D-LIB22-RINGFIT);
+- Mistake view: the source ring holds the `arch` tell anchor (the sacrum) in the end and Mistake poses (6.8 px at plate
+  scale); k the smallest of 1.5-4 whose move reaches 11.39 px.
+Nothing else on the plate moves; a label box moves only under D-LIB18-ZOOMPLACE. No card key changes.
+
+Measured at this head (lb8-plates.test.ts 'LIB-18 resume 2'; runQa node and browser halves, all 10 hard checks pass):
+- normal zoom k 1.5: the clipped hip Trace 24.59 px ≥ 22.11 (12.0 px at plate scale); ring c (146, 158) r 52, source
+  ring r 34.67 holding the whole Trace. k 1.5 is the ladder's first step.
+- Mistake zoom k 2: the `arch` anchor (the sacrum) 5.98 → 11.97 px ≥ 11.39 (k 1.5 gives 8.98, red); ring c (108, 232)
+  r 52, source ring r 26 holding the anchor in the end and Mistake poses.
+- Flags: F2 0.134 (the named flag, unchanged) and F5 3.57, the ruled set. No label box moved; no card key changed.
+- The LB8 page of main's rows builds `f8753967…` on this branch (the approved page, byte-identical); the page with
+  glute_bridge is `3ffdc5ce…`.
