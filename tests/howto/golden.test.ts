@@ -133,10 +133,10 @@ describe('HT1-A3 per-exercise golden entries', () => {
 });
 
 describe('HT1-A4 reference fixtures', () => {
-  it('_test_front, _test_side, _test_poly, _test_flat, _test_er5, _test_pitch and every selected key of the 8 are committed, byte-equal to the vendored engine\'s render', () => {
+  it('_test_front, _test_side, _test_poly, _test_flat, _test_er5, _test_pitch, _test_spine and every selected key of the 8 are committed, byte-equal to the vendored engine\'s render', () => {
     const committed = g.readCommittedFixtures();
     expect(Object.keys(committed).sort()).toEqual(Object.keys(run.probe.fixtures).sort());
-    for (const t of ['_test_front.n', '_test_side.n', '_test_poly.n', '_test_poly.m', '_test_flat.n', '_test_flat.m', '_test_er5.n', '_test_er5.m', '_test_pitch.n', '_test_pitch.m']) expect(committed[t]).toBeDefined();
+    for (const t of ['_test_front.n', '_test_side.n', '_test_poly.n', '_test_poly.m', '_test_flat.n', '_test_flat.m', '_test_er5.n', '_test_er5.m', '_test_pitch.n', '_test_pitch.m', '_test_spine.n', '_test_spine.m']) expect(committed[t]).toBeDefined();
     for (const p of run.plates) {
       for (const c of p.normal.cues) expect(committed[`${p.chromeId}.n.${c.key}`]).toBeDefined();
       for (const c of p.mistake.cues) expect(committed[`${p.chromeId}.m.${c.key}`]).toBeDefined();

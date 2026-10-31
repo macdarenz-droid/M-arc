@@ -33,9 +33,11 @@ describe('C0: L0-lib on this tree', { timeout: 300_000 }, () => {   // F-C0-TIME
     'pec_fly', 'plank', 'romanian_deadlift', 'rope_triceps_pushdown', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'upright_row'].map(id => `lib_${id}`);
   // LIB-11 Do 11 (supervisor ruling 1, #278 6393188049): pilot B's pin adds exactly its 4 rows (crunch is held)
   const PILOT_B = ['cable_fly', 'push_up', 'seated_leg_curl', 'smith_machine_bench_press'].map(id => `lib_${id}`);
-  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13 and pilot B\'s 4 here, and no problem', async () => {
+  // LIB-8R Do 7 (D-LIB8R-PINLINES): PILOT-A2's pin adds exactly its 2 rows (dumbbell_fly and reverse_lunge are held)
+  const PILOT_A2 = ['bent_over_dumbbell_rear_delt_fly', 'box_jump'].map(id => `lib_${id}`);
+  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4 and PILOT-A2\'s 2 here, and no problem', async () => {
     const file = JSON.parse(readFileSync(join(ROOT, MANIFEST), 'utf8'));
-    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B].sort());
+    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2].sort());
     expect(await manifestOf(ROOT)).toEqual(file);
     expect(await manifestProblems(ROOT)).toEqual([]);
   });

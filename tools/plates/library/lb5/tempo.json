@@ -1,6 +1,6 @@
 {
  "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. No Rest. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 9 pose map). Ruled: D-LIB15-TEMPO, #290 comment 6340022161.",
- "research": "claude/libht-research 3812989f59c000705731f7944d7a1a275e86045d",
+ "research": "claude/libht-research 3812989f59c000705731f7944d7a1a275e86045d; resume 2 (LIB-15R2): the 7 new ids from claude/libht-research a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
  "constants": {},
  "ids": {
   "overhead_cable_triceps_extension": {
@@ -144,6 +144,123 @@
   },
   "wrist_curl": {
    "claim": "c10",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "straight_bar_triceps_pushdown": {
+   "claim": "c12",
+   "rows": [
+    {
+     "phase": "Press",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Return",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "single_arm_triceps_pushdown": {
+   "claim": "c10",
+   "rows": [
+    {
+     "phase": "Press",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Return",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "alternating_dumbbell_curl": {
+   "claim": "c10",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "barbell_curl": {
+   "claim": "c13",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "ez_bar_curl": {
+   "claim": "c14",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "hammer_curl": {
+   "claim": "c12",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "reverse_curl": {
+   "claim": "c15",
    "rows": [
     {
      "phase": "Curl",

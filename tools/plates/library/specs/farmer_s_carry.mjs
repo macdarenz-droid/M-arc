@@ -1,11 +1,12 @@
 // Farmer's carry (dumbbells), side view, figure facing screen right. LIB-22 (LB10, H; NOSECS lifted at 'LIB-22 resume': the strip word tempo).
 // View: side (card plate.view = census): the tall torso, the long arms at the sides, the shoulders back and down and
 //  the step length are sagittal.
-// Sources: research card docs/research/howto/cards/farmer_s_carry.json (research head 596dbe07): c3 feet about
+// Sources: research card docs/research/howto/cards/farmer_s_carry.json (research head a48b0594, F-R2-FARMER-5): c3 feet about
 //  hip-width, grab each dumbbell (neutral grip); c4 arms fully extended at the sides, tall chest, neutral neck and
 //  spine, torso upright, gaze ahead; c5 shoulders back and down; c6 knees not locked out; c8 short, deliberate steps;
 //  c9 steady and upright, the weights level; c13 thumb wrapped; c18 about 25 % of body weight in each hand; c25
-//  regular-sized steps (the Mistake). Tempo: Walk "Controlled" (D-STRIP-B; strip/rows.json, c4).
+//  regular-sized steps (the Mistake); c30 the measured step length at 171-180 cm, M_STRIDE's basis (F-R2-FARMER-5).
+//  Tempo: Walk "Controlled" (D-STRIP-B; strip/rows.json, c4).
 // Clone (D-LIB22-CLONE): barbell_back_squat (the 8: the standing side view), dumbbell_biceps_curl (#109 @ dcac4a38:
 //  the engine dumbbell, SCAP), reverse_lunge (#109: the neutral-grip dumbbells front-to-back, one entry each),
 //  mountain_climbers (#109: one stride of the cycle, the via ghost), kettlebell_swing (the Winter centre of mass with
@@ -18,10 +19,10 @@
 //   its ball stays on one spot in every pose; the near (right) foot steps (D-LIB22-SIDES: no side named, near picked).
 //  Start: feet flat side by side (c3), knees KNEE_SOFT (c6); root solved so the centre of mass (the body and both
 //   dumbbells) lies over the mid-soles. End: the near foot flat STRIDE ahead (c8); the far leg keeps its start knee and
-//   ankle and rolls onto its ball (heel-up solved, 13 deg); the centre of mass midway between the near mid-sole and the
-//   far ball (root solved; the near knee follows, 20 deg). Via (one ghost): the near foot half way, its sole VIA_LIFT up.
+//   ankle and rolls onto its ball (heel-up solved, 14 deg); the centre of mass midway between the near mid-sole and the
+//   far ball (root solved; the near knee follows, 20.5 deg). Via (one ghost): the near foot half way, its sole VIA_LIFT up.
 //  Mistake (c25, c8; drawable false, F7): the near foot M_STRIDE ahead (a regular-sized step), solved the same way (the
-//   far heel 24 deg up, the hips 3.7 cm lower, the near knee 23.6 deg). The near dumbbell, inside the Mistake outline,
+//   far heel 27 deg up, the hips 5.2 cm below the start, the near knee 24.1 deg). The near dumbbell, inside the Mistake outline,
 //   is redrawn as a red dashed guide. Tells: `long` at the Mistake toe (c25), `short` at the Mistake knee (c8).
 //  The start dumbbells are redrawn dashed in the end view (the start layer drops moving equipment, D-LIB22-DRAW).
 // Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): FOOT_X, KNEE_SOFT, SCAP_ELEV, SCAP_PRO,
@@ -29,7 +30,7 @@
 import { landmarksOf, resolve, normPose } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.0875, KNEE_SOFT: 15, SCAP_ELEV: -1, SCAP_PRO: -1, STRIDE: 0.35, M_STRIDE: 0.70, VIA_LIFT: 0.025, BODY_KG: 75, DB_SHARE: 0.25 });
+export const SIZES = Object.freeze({ FOOT_X: 0.0875, KNEE_SOFT: 15, SCAP_ELEV: -1, SCAP_PRO: -1, STRIDE: 0.385, M_STRIDE: 0.77, VIA_LIFT: 0.025, BODY_KG: 75, DB_SHARE: 0.25 });
 const { FOOT_X, KNEE_SOFT, SCAP_ELEV, SCAP_PRO, STRIDE, M_STRIDE, VIA_LIFT, BODY_KG, DB_SHARE } = SIZES;
 // c18 'approximately 25% of your body weight in each hand', on the BODY_KG figure.
 export const DB_KG = DB_SHARE * BODY_KG;
@@ -95,7 +96,7 @@ const ANK0 = ankleOf(body(QS, 0), 'l');
 // of mass midway between the near mid-sole and the far ball (the two contacts). The near knee follows (tested soft).
 const stepAt = (d, guess) => solve(guess, q => body(q, d), (lm, p) => [kneeOf(lm, 'l') - KNEE_SOFT, ankleOf(p, 'l') - ANK0, comWith(lm) - (d + BALL_Z) / 2], `the step ${d}`);
 const QE = stepAt(STRIDE, { y: QS.y - 0.01, z: QS.z + STRIDE / 2, th: 15 });
-const QM = stepAt(M_STRIDE, { y: QS.y - 0.04, z: QS.z + M_STRIDE / 2, th: 22 });
+const QM = stepAt(M_STRIDE, { y: QS.y - 0.05, z: QS.z + M_STRIDE / 2, th: 26 });
 const start = body(QS, 0), end = body(QE, STRIDE);
 const mistake = body(QM, M_STRIDE);
 // Via (the one ghost): mid-swing, the near foot half way and VIA_LIFT up, the root and the far heel half way.

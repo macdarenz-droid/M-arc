@@ -1,5 +1,5 @@
 {
- "note": "LB5 build-ahead rows (LIB-15, D-LIB15-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
+ "note": "LB5 build-ahead rows (LIB-15, D-LIB15-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); H rows (DESIGN.md section 1) and, from resume 2, T rows with parent, template, params and each param's own card claim (paramClaims; DESIGN.md 17.6). censusRef: the census commit (claude/howto-options).",
  "batch": "LB5",
  "censusRef": "4a9fd86",
  "rows": {
@@ -36,6 +36,139 @@
    "prefix": "concentration-curl",
    "chromeId": "concentration-curl",
    "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_dumbbell_overhead_triceps_extension": {
+   "src": "library/specs/dumbbell_overhead_triceps_extension.mjs",
+   "slug": "dumbbell-overhead-triceps-extension",
+   "prefix": "dumbbell-overhead-triceps-extension",
+   "chromeId": "dumbbell-overhead-triceps-extension",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_cross_body_hammer_curl": {
+   "src": "library/specs/cross_body_hammer_curl.mjs",
+   "slug": "cross-body-hammer-curl",
+   "prefix": "cross-body-hammer-curl",
+   "chromeId": "cross-body-hammer-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_wrist_curl": {
+   "src": "library/specs/wrist_curl.mjs",
+   "slug": "wrist-curl",
+   "prefix": "wrist-curl",
+   "chromeId": "wrist-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_hammer_curl": {
+   "src": "library/specs/hammer_curl.mjs",
+   "slug": "hammer-curl",
+   "prefix": "hammer-curl",
+   "chromeId": "hammer-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_alternating_dumbbell_curl": {
+   "src": "library/specs/alternating_dumbbell_curl.mjs",
+   "slug": "alternating-dumbbell-curl",
+   "prefix": "alternating-dumbbell-curl",
+   "chromeId": "alternating-dumbbell-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_single_arm_triceps_pushdown": {
+   "src": "library/specs/single_arm_triceps_pushdown.mjs",
+   "slug": "single-arm-triceps-pushdown",
+   "prefix": "single-arm-triceps-pushdown",
+   "chromeId": "single-arm-triceps-pushdown",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_incline_dumbbell_curl": {
+   "src": "library/specs/incline_dumbbell_curl.mjs",
+   "slug": "incline-dumbbell-curl",
+   "prefix": "incline-dumbbell-curl",
+   "chromeId": "incline-dumbbell-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_straight_bar_triceps_pushdown": {
+   "src": "library/specs/straight_bar_triceps_pushdown.mjs",
+   "slug": "straight-bar-triceps-pushdown",
+   "prefix": "straight-bar-triceps-pushdown",
+   "chromeId": "straight-bar-triceps-pushdown",
+   "mode": "T",
+   "parent": "lib_triceps_pushdown",
+   "template": "PUSHDOWN",
+   "params": {
+    "bar.kind": "straight"
+   },
+   "paramClaims": {
+    "bar.kind": "c1"
+   },
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_barbell_curl": {
+   "src": "library/specs/barbell_curl.mjs",
+   "slug": "barbell-curl",
+   "prefix": "barbell-curl",
+   "chromeId": "barbell-curl",
+   "mode": "T",
+   "parent": "lib_dumbbell_biceps_curl",
+   "template": "CURL",
+   "params": {
+    "load.primitive": "barbell",
+    "stance.width": 0.22
+   },
+   "paramClaims": {
+    "load.primitive": "c1",
+    "stance.width": "c2"
+   },
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_ez_bar_curl": {
+   "src": "library/specs/ez_bar_curl.mjs",
+   "slug": "ez-bar-curl",
+   "prefix": "ez-bar-curl",
+   "chromeId": "ez-bar-curl",
+   "mode": "T",
+   "parent": "lib_dumbbell_biceps_curl",
+   "template": "CURL",
+   "params": {
+    "load.primitive": "barbell"
+   },
+   "paramClaims": {
+    "load.primitive": "c1"
+   },
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_reverse_curl": {
+   "src": "library/specs/reverse_curl.mjs",
+   "slug": "reverse-curl",
+   "prefix": "reverse-curl",
+   "chromeId": "reverse-curl",
+   "mode": "T",
+   "parent": "lib_dumbbell_biceps_curl",
+   "template": "CURL",
+   "params": {
+    "load.primitive": "barbell"
+   },
+   "paramClaims": {
+    "load.primitive": "c1"
+   },
    "stage": "drawing",
    "view": "side"
   }

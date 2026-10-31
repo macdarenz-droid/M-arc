@@ -28,15 +28,11 @@
 // Plate text (card reverse_lunge plate, verified: claude/libht-research e2a70bc):
 //  Callouts = the 3 plate.checkpoints (c2 front shin vertical, with a plumb guide through the front ankle; c3 chest
 //   up; c3 weight even, pointing at the hips with a plumb guide to the floor midway between the feet).
-//  Mistake = plate.mistake (c6, drawable): the trunk pitches forward over the front thigh (MISTAKE_LEAN). Tells: the
-//   card's plate.tells are signs of good form ("Back knee lowers toward the floor", "Front shin stays about
-//   vertical"), and the engine's Mistake tells are signs of the fault, so the verified tell has no slot on the plate
-//   (it belongs to the app layer, as in the other families); the plate shows it as the trace and the rear knee
-//   hovering over the floor. The Mistake tells restate the fault: the trunk pitches forward (c6), the weight tips
-//   onto the front foot (balance between the feet lost, c6), shown by a plumb from the pitched chest that lands on
-//   the front foot.
+//  Mistake = plate.mistake (c18, drawable; LIB-8R redraw, F-LB4-1): the ribcage flares as the foot steps back (M_ARCH
+//   lumbar extension with the pelvis tipped forward M_TILT), one tell 'flare' (the card's topFault) on the lower ribs,
+//   shown in a Mistake zoom on the waist and lower ribs (D-LIBZOOM-EXTEND).
 //  Measure: none. The card gives no angle ("roughly vertical"); the shin plumb guide shows the checkpoint instead.
-//  Tempo: left out. The card gives no seconds ("controlled, slow descent", c7); the engine strip needs seconds.
+//  Tempo: the strip without seconds (D-STRIP-ROWS): Lower slow, Rise quicker (c16).
 // CARD (checked against card v2): from the card: FRONT_SHIN 6 deg ("roughly vertical", c2), TRUNK_LEAN 3 deg
 //  (upright, c3), weight about even (c3, centre of mass check above), full-length step (c7), FOOT_X (hip width, c1).
 //  Not in the card, left flagged: FRONT_THIGH (depth: the card says only "toward the floor", c4), REAR_KNEE_Y (how
@@ -84,11 +80,16 @@ const via = [
   pose([0, 0.68, -0.40], TRUNK_LEAN, REAR),
 ];
 const end = pose(HIP, TRUNK_LEAN, REAR);
-// Mistake (card plate.mistake, c6): the trunk pitches forward over the front thigh at the bottom. Legs, feet and hips
-// are the end pose's; only the pelvis/trunk lean changes to MISTAKE_LEAN deg, arms still plumb. How far it pitches is
-// a drawing choice (the card gives no number): enough to read in 2 seconds at 390 px.
-const MISTAKE_LEAN = 38;
-const MISTAKE = pose(HIP, MISTAKE_LEAN, REAR);
+// Mistake (card plate.mistake, c18; LIB-8R, D-LIB8R-REVLUNGE): the ribcage flares as the back foot steps back,
+// instead of the pelvis tucking under. Legs, feet and the hip joints are the end pose's. The lumbar spine extends M_ARCH
+// (the 8's lumbar arch, hanging_leg_raise.mjs:69 trunk -12) and the untucked pelvis tips forward M_TILT, so the thorax
+// keeps the end pose's upright angle (c3): the low back curves concave between the pelvis and the ribs, and the rib front
+// pushes forward past the end pose's chest (panel mx5 R5: a flare, not a lean-back). Arms stay plumb (shoulder flexion =
+// the thorax angle).
+const M_ARCH = 12, M_TILT = 12;
+const MISTAKE = { ...pose(HIP, TRUNK_LEAN + M_TILT, REAR), trunk: -M_ARCH, shoulder: { flex: TRUNK_LEAN + M_TILT - M_ARCH } };
+/** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
+export const SIZES = { FOOT_X, FRONT_SHIN, FRONT_THIGH, REAR_KNEE_Y, REAR_HEEL, TRUNK_LEAN, ELBOW, M_ARCH, M_TILT };
 // Front shin plumb (c2), the shin callout's guide: a vertical through the front ankle, from the floor to SHIN_TOP m
 // above the knee, drawn when the callout is selected (a datum would sit under the dashed start figure, unseen).
 const SHIN_TOP = 0.12;
@@ -97,10 +98,6 @@ const SHIN_PLUMB = [[0, 0, ankF[2]], [0, kneeF[1] + SHIN_TOP, ankF[2]]];
 // at the back of the hips (open side); its guide is a plumb from the hips to the floor midway between the front
 // mid-foot and the rear ball.
 const MIDWAY = [0, 0, REAR_BALL[2] / 2 - MID / 2];
-// Mistake plumb (guide): straight down from the pitched chest; it lands over the front foot, not between the feet.
-const M_STERNUM = landmarksOf(MISTAKE, H).sternum;
-const M_PLUMB = [[0, M_STERNUM[1] - 0.06, M_STERNUM[2]], [0, 0, M_STERNUM[2]]];
-
 // Dumbbells in both hands, neutral grip (handle front-to-back). Far one behind the body, near one in front.
 const bells = lm => [
   { type: 'dumbbell', at: lm['grip.l'], axis: [0, 0, 1], z: 'back', part: 'db' },
@@ -136,16 +133,15 @@ export default {
   mistake: {
     pose: MISTAKE,
     guides: [
-      { kind: 'arc-arrow', center: 'hip.r', r: 70, a0: -86, a1: -56 },
-      { kind: 'dashed', pts: M_PLUMB },
+      { kind: 'arrow', from: { at: 'chest', pose: 'end' }, to: { at: 'chest', pose: 'mistake' } },
     ],
     tells: [
-      { key: 'pitch', text: 'Trunk pitches<br>forward', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'The trunk pitches forward over the front thigh.' },
-      { key: 'weight', text: 'Weight tips<br>forward', anchor: { along: M_PLUMB, t: 0.3 }, cue: 'The weight tips onto the front foot instead of both.' },
+      { key: 'flare', text: 'Ribs flare', anchor: { along: ['sternum', 'lumbar'], t: 0.7, pose: 'mistake' }, cue: 'The ribcage flares up and the low back arches as you step back.' },   // c18
     ],
   },
-  // Tempo (ruling R-W1-1): the default is "Lower slowly, rise a little quicker" (c7, c16), with no seconds; "3 s down"
-  // is a progression only (c15). The locked strip needs seconds for every phase, so no strip is drawn (never invented).
-  pilot: { note: 'No tempo strip: ruling R-W1-1, the default is "lower slowly, rise a little quicker" (c7, c16) with no seconds; 3 s down is a progression (c15).' },
+  zoom: { view: 'mistake', k: 2.5 },   // the ring on the waist and lower ribs, holding the elbow dot (panel mx5 R11); 2.5 is the smallest k that passes (2 gives 10.5 px)
+  // Tempo: no seconds in the card (c7, c16; 3 s down is a progression only, c15): the strip without seconds, exactly
+  // tempoOf(strip/rows.json reverse_lunge) (D-STRIP-ROWS).
+  tempo: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Rise', move: true, word: 'Quicker' }],
   alt: 'Reverse lunge with dumbbells, side view. From standing tall, one leg steps back and the body lowers until the front thigh is parallel and the rear knee hovers just above the floor, front shin near vertical, front foot flat, rear foot on the ball, trunk upright, dumbbells hanging at the sides.',
 };

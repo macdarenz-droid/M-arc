@@ -45,9 +45,14 @@ export const tableOf = reports => [
 /** The expected flags (DESIGN.md section 6): F5 on every id at exactly the approved chrome's 3.57:1 (D-LIB9-F5), F7 on
  *  the drawable-fault ids (D-LIB15-F7), F2 on the low-cover ids ruled named flags (D-LIB15-F2: #290 6345185694,
  *  6340022161). */
-export const F7_IDS = ['lib_cross_body_hammer_curl', 'lib_incline_dumbbell_curl', 'lib_wrist_curl'];
-export const F2_IDS = ['lib_concentration_curl', 'lib_wrist_curl'];
-export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(F2_IDS.includes(id) ? ['F2'] : [])].sort();
+export const F7_IDS = ['lib_cross_body_hammer_curl', 'lib_incline_dumbbell_curl', 'lib_wrist_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl'];   // + D-LIB15R2-F7
+export const F2_IDS = ['lib_concentration_curl', 'lib_wrist_curl', 'lib_cross_body_hammer_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];   // + the CURL T rows: the parent's cover (DESIGN.md 17.9)
+/** LIB-15R2 (DESIGN.md 17.3, proposed named flags on the zoom rows): F3 (the longest leader outside 49.33-82.26) and F4
+ *  (hand-boxed labels outside 2-6). */
+export const F3_IDS = ['lib_dumbbell_overhead_triceps_extension', 'lib_wrist_curl'];
+export const F4_IDS = ['lib_dumbbell_overhead_triceps_extension', 'lib_alternating_dumbbell_curl'];
+export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(F2_IDS.includes(id) ? ['F2'] : []),
+  ...(F3_IDS.includes(id) ? ['F3'] : []), ...(F4_IDS.includes(id) ? ['F4'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, or F5 at any value other than 3.57. */
 export const flagProblems = reports => reports.flatMap(r => {

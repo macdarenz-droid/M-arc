@@ -65,7 +65,7 @@
    "closest": "barbell_back_squat",
    "view": "side",
    "class": "airborne",
-   "held": "a tempo strip for plates with no sourced seconds (D-LIB8M-NOSTRIP; follow-up card)"
+   "held": "moved: pinned in PILOT-A2 (batches/pilot-a2.json, tests/howto/golden/library/pilot-a2.json; LIB-8R, #340)"
   },
   {
    "id": "dumbbell_fly",
@@ -79,7 +79,7 @@
      "caption": "Side view (the previous plate), for comparison"
     }
    ],
-   "held": "needs a raised foot-end camera (engine follow-up card, plan 2.8)"
+   "held": "front view at camera pitch 45 drawn (LIB-8R); held after panel mx7 R2 (start dumbbells end-on) and R5 (the wrist bend reads as a slip), #340 6540319537 (D-LIB8M-CARDTRUE); route F-FLY-START, PILOT-A3"
   },
   {
    "id": "dumbbell_biceps_curl",
@@ -137,7 +137,7 @@
      "caption": "Front view (census view): no-go"
     }
    ],
-   "held": "needs a front-view bent-over torso (follow-up card)"
+   "held": "moved: pinned in PILOT-A2 (batches/pilot-a2.json, tests/howto/golden/library/pilot-a2.json; LIB-8R, #340)"
   },
   {
    "id": "reverse_lunge",
@@ -145,7 +145,7 @@
    "closest": "barbell_back_squat",
    "view": "side",
    "class": "split stance (SPLIT parent)",
-   "held": "a tempo strip for plates with no sourced seconds (D-LIB8M-NOSTRIP; follow-up card)"
+   "held": "Mistake arch reads as a trunk shift, not a lumbar arch: panel mx6 R5 [3,3,3], R11 [3,4,3] @ 531213f7 on #340, its third round (D-LIB8M-CARDTRUE); route F-REVLUNGE-ARCH (a local lumbar bow from the sacrum with the engine spine segments, as LIB-SPINE; then the ring at the waist's back edge)"
   },
   {
    "id": "plank",
@@ -168,7 +168,7 @@
    }
   }
  ],
- "cards": "docs/research/howto/cards/ = verified research cards, byte copies from claude/libht-research f57e7944ebb366a71f812146287ff0c4a6d2edef",
+ "cards": "docs/research/howto/cards/ = verified research cards, byte copies from claude/libht-research f57e7944; plank and mountain_climbers f574bb4b; barbell_row and romanian_deadlift 2dd60ae0 (F-LIB8M-PROV). PILOT-A2's four cards: 0d832e18 (pilot-a2/cards.sha.json)",
  "handsNote": "hands: LIB-12 hand renders shown on the sheet only (not plates), renderPair(id) from tools/plates/library/hands/pairs.mjs on claude/lib-12-hand-views 06519f9 (LIB-7 loader aacebf5 merged), Silent Black and Paper at 390 px; flags as the LIB-12 note on PR #109 (2026-10-02 14:10). LIB-7 curl, rope and EZ: renderPair(id) from main 5158609 (#193), same method (D-LIB8M-SHEET, Do 12). Cupped and front-rack: GAPS (D-LIB12FIX-R8-GAPS).",
  "hands": [
   {

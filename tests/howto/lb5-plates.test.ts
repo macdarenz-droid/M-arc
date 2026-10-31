@@ -13,23 +13,43 @@ const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.met
 const T = 600_000;
 const LB5 = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cross_body_hammer_curl', 'cable_curl', 'bayesian_cable_curl',
   'preacher_curl', 'incline_dumbbell_curl', 'concentration_curl', 'wrist_curl'];
-const IDS = LB5.map(i => `lib_${i}`);
-// The 10 LB5 ids not in this card (plan 6.2 :739-743): never an LB5 row here.
-const OTHER = ['triceps_pushdown', 'rope_triceps_pushdown', 'straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'dumbbell_biceps_curl',
-  'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'reverse_curl'];
+const IDS = [...LB5, 'straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'reverse_curl'].map(i => `lib_${i}`);
+// The 3 pilot A LB5 ids (pinned in batches/pilot-a.json): never an LB5 row here (LIB-15R2 A1; the 7 others are R2 below).
+const OTHER = ['triceps_pushdown', 'rope_triceps_pushdown', 'dumbbell_biceps_curl'];
+// LIB-15R2: the 7 new cards, byte copies from research a48b0594 (cards.sha.json r2Head)
+const R2 = ['straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'reverse_curl'];
+const R2_HEAD = 'a48b059400a74d5c9e3aceed21cf1aa67ab6f118';
+// LIB-15R2: every LB5 id this lane draws (the 9 and the 7), and the ruled modes (D-LIB15R2-MODES); T rows' derivation
+const ALL = [...LB5, ...R2];
+const T_ROWS: Record<string, { parent: string, template: string, params: Record<string, unknown>, paramClaims: Record<string, string> }> = {
+  straight_bar_triceps_pushdown: { parent: 'lib_triceps_pushdown', template: 'PUSHDOWN', params: { 'bar.kind': 'straight' }, paramClaims: { 'bar.kind': 'c1' } },
+  barbell_curl: { parent: 'lib_dumbbell_biceps_curl', template: 'CURL', params: { 'load.primitive': 'barbell', 'stance.width': 0.22 }, paramClaims: { 'load.primitive': 'c1', 'stance.width': 'c2' } },
+  ez_bar_curl: { parent: 'lib_dumbbell_biceps_curl', template: 'CURL', params: { 'load.primitive': 'barbell' }, paramClaims: { 'load.primitive': 'c1' } },
+  reverse_curl: { parent: 'lib_dumbbell_biceps_curl', template: 'CURL', params: { 'load.primitive': 'barbell' }, paramClaims: { 'load.primitive': 'c1' } },
+};
+const modeOf = (id: string) => (id.replace(/^lib_/, '') in T_ROWS ? 'T' : 'H');
+/** D-LIB15R2-TPARENT (#349 6540842602): A15's drawn-item tests bind an H row in full and a T child only in the parts its
+ *  facts set (callouts, tells, cues, boxes); the template-fixed parts (Trace keys, Mistake guides and arrows, the measure
+ *  arc and leader) are the pinned parent's. The scope is the row's mode in rows.json, which A5 holds to the ruled mode. */
+const rowMode = (id: string, rows = readJson('tools/plates/library/lb5/rows.json').rows) => rows[`lib_${id}`]?.mode ?? 'H';
+const fullScope = (id: string, rows?: any) => rowMode(id, rows) !== 'T';
 const ROWS = 'tools/plates/library/lb5/rows.json';
 const RESEARCH_HEAD = 'baf2ff09cf2e91232f536cfc6c766fdf68925217';   // F-LB5-2 (#302): concentration_curl's c14 and notes
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
-const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl'];
-const F2_IDS = ['concentration_curl', 'wrist_curl'];
-// Held ids (DESIGN.md section 13; #290 6340022161, 6340075388): drawn as is, in no rows file and on no QA'd page.
-const HELD = ['wrist_curl', 'cross_body_hammer_curl', 'overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension'];
+const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl'];   // + D-LIB15R2-F7
+const F2_IDS = ['concentration_curl', 'wrist_curl', 'cross_body_hammer_curl', 'barbell_curl', 'ez_bar_curl', 'reverse_curl'];   // + cross_body_hammer_curl: LIB-15R2 DESIGN.md 17.3 (proposed)
+// LIB-15R2 DESIGN.md 17.3 (proposed named flags on the zoom rows)
+const F3_IDS = ['dumbbell_overhead_triceps_extension', 'wrist_curl'];
+const F4_IDS = ['dumbbell_overhead_triceps_extension', 'alternating_dumbbell_curl'];
+// Held ids (DESIGN.md section 13; D-LIB15R2-ZOOM): drawn as is, in no rows file and on no QA'd page. The other three
+// earlier holds are released with a zoom (section 17).
+const HELD = ['overhead_cable_triceps_extension'];
 /** The LB5 ids whose spec file exists (drawn or held). */
-const specced = () => LB5.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`));
+const specced = () => ALL.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`));
 /** The LB5 ids whose spec file exists and that are not held (drawn), in LB5 order. */
-const drawn = () => LB5.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`) && !HELD.includes(id));
+const drawn = () => ALL.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`) && !HELD.includes(id));
 const pilotAOnMain = () => existsSync('tools/plates/library/eq/inclineBench.mjs');
 
 let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, pad: any;
@@ -82,7 +102,7 @@ describe('LIB-15 A5: lb5/rows.json holds exactly the drawn, non-held LB5 ids', (
     for (const id of want) if (keys.filter(k => k === id).length !== 1) bad.push(`${id} x${keys.filter(k => k === id).length}`);
     for (const k of keys) if (!want.includes(k!)) bad.push(`extra ${k}`);
     const j = JSON.parse(text);
-    for (const [id, r] of Object.entries<any>(j.rows)) if (r.mode !== 'H') bad.push(`${id}: mode ${r.mode}`);
+    for (const [id, r] of Object.entries<any>(j.rows)) if (r.mode !== modeOf(id)) bad.push(`${id}: mode ${r.mode}`);
     if (!pilotAOnMain() && keys.includes('lib_incline_dumbbell_curl')) bad.push('incline_dumbbell_curl before pilot A is on main');
     return bad;
   };
@@ -116,7 +136,8 @@ describe('LIB-15 A5: lb5/rows.json holds exactly the drawn, non-held LB5 ids', (
       expect(r.src).toBe(`library/specs/${id.slice(4)}.mjs`);
       expect(r.chromeId).toBe(id.slice(4).replace(/_/g, '-'));
       expect(r.view).toBe(id === 'lib_cross_body_hammer_curl' ? 'front' : 'side');
-      expect([r.parent, r.template, r.params], id).toEqual([undefined, undefined, undefined]);
+      const t = T_ROWS[id.slice(4)];
+      expect([r.parent, r.template, r.params, r.paramClaims], id).toEqual(t ? [t.parent, t.template, t.params, t.paramClaims] : [undefined, undefined, undefined, undefined]);
     }
     expect(j).toMatchObject({ batch: 'LB5', censusRef: '4a9fd86' });
   });
@@ -207,9 +228,10 @@ describe('LIB-15 A11 (Do 6 a): the 9 cards and quotes are byte copies of the LB5
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
   it(`cards.sha.json names research head ${RESEARCH_HEAD.slice(0, 8)} and the 9 ids; each card (without the three keys) and each quotes file matches`, () => {
     expect(cardsSha.researchHead).toBe(RESEARCH_HEAD);
-    expect(Object.keys(cardsSha.cards)).toEqual(LB5);
-    expect(Object.keys(cardsSha.quotes)).toEqual(LB5);
-    for (const id of LB5) {
+    expect(cardsSha.r2Head).toBe(R2_HEAD);
+    expect(Object.keys(cardsSha.cards)).toEqual([...LB5, ...R2]);
+    expect(Object.keys(cardsSha.quotes)).toEqual([...LB5, ...R2]);
+    for (const id of [...LB5, ...R2]) {
       expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
       expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
     }
@@ -219,7 +241,7 @@ describe('LIB-15 A11 (Do 6 a): the 9 cards and quotes are byte copies of the LB5
     expect(sha(canon(c))).not.toBe(cardsSha.cards.preacher_curl);
   });
   it('the How-to source of each LB5 id holds only its id and research card (D-LIB9a-HOWTOID)', async () => {
-    for (const id of LB5) {
+    for (const id of [...LB5, ...R2]) {
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
       expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
@@ -303,11 +325,13 @@ describe('LIB-15 A2: the preacherPad on preacher_curl, per drawn pose (13.1, D-L
 
 describe('LIB-15 A3: spec and composer closures are pure and drawn by the vendor engine', { timeout: T }, () => {
   const files = () => specced().map(i => `tools/plates/library/specs/${i}.mjs`);
+  const tplOf = (f: string) => { const t = T_ROWS[f.replace(/^.*\/specs\/|\.mjs$/g, '')]; return t ? `tools/plates/library/templates/${t.template}.mjs` : null; };
   const problems = (f: string, c: string[]) => [
     ...(c.includes('tools/plates/vendor/MANIFEST.json') ? [] : ['no vendor MANIFEST']),
     ...c.filter(p => p.startsWith('tools/plates/layers/')),
     ...c.filter(p => p.startsWith('tools/plates/library/specs/') && p !== f),
-    ...c.filter(p => p.startsWith('tools/plates/library/templates/')),
+    // a T spec imports exactly its own template (LIB-15R2, D-LIB10-CHILDPROOF: export default make(row.params, facts)); no other spec imports one
+    ...c.filter(p => p.startsWith('tools/plates/library/templates/') && p !== tplOf(f)),
   ];
   it('every drawn LB5 spec passes', () => {
     expect(files().length).toBeGreaterThanOrEqual(2);
@@ -327,6 +351,12 @@ describe('LIB-15 A3: spec and composer closures are pure and drawn by the vendor
   it('mutation: a spec importing tools/plates/layers/engine/body.mjs is red', () => {
     const root = scratch(r => { const p = join(r, F); writeFileSync(p, `import '../../layers/engine/body.mjs';\n${readFileSync(p, 'utf8')}`); });
     try { expect(problems(F, closure.closureOf([F], root)).some(p => p.startsWith('tools/plates/layers/'))).toBe(true); } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+  it('LIB-15R2 mutations: an H spec importing a template, and a T spec importing the other template, are red', () => {
+    expect(problems(F, [...closure.closureOf([F]), 'tools/plates/library/templates/CURL.mjs'])).toEqual(['tools/plates/library/templates/CURL.mjs']);
+    const B = 'tools/plates/library/specs/barbell_curl.mjs', base = ['tools/plates/vendor/MANIFEST.json', 'tools/plates/library/templates/CURL.mjs'];
+    expect(problems(B, base)).toEqual([]);
+    expect(problems(B, [...base, 'tools/plates/library/templates/PUSHDOWN.mjs'])).toEqual(['tools/plates/library/templates/PUSHDOWN.mjs']);
   });
   it('mutation: a spec importing a pilot A spec (another specs/ file) is red', () => {
     const root = scratch(r => {
@@ -384,14 +414,22 @@ describe('LIB-15 A7: the tempo strips follow the cards (D-LIB15-SECS; DESIGN.md 
     incline_dumbbell_curl: [['Curl', 'up'], ['Lower', 'down']],
     concentration_curl: [['Curl', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
     wrist_curl: [['Curl', 'up'], ['Lower', 'down']],
+    // LIB-15R2 (DESIGN.md 17.7)
+    straight_bar_triceps_pushdown: [['Press', 'up'], ['Hold', 'pause'], ['Return', 'down']],
+    single_arm_triceps_pushdown: [['Press', 'up'], ['Hold', 'pause'], ['Return', 'down']],
+    alternating_dumbbell_curl: [['Curl', 'up'], ['Lower', 'down']],
+    barbell_curl: [['Curl', 'up'], ['Lower', 'down']],
+    ez_bar_curl: [['Curl', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
+    hammer_curl: [['Curl', 'up'], ['Lower', 'down']],
+    reverse_curl: [['Curl', 'up'], ['Lower', 'down']],
   };
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
   const built = (rows: [string, string][], pt: any) => rows.flatMap(([phase, from]) => (from === 'pause' ? (pt.pause > 0 ? [{ phase, s: pt.pause }] : []) : [{ phase, s: pt[from], move: true }]));
   const problems = (tj: any, specs: Record<string, any>, table = TABLE) => {
     const bad: string[] = [];
     if (Object.keys(tj.constants).length) bad.push('constants: not empty');
-    if (JSON.stringify(Object.keys(tj.ids).sort()) !== JSON.stringify([...LB5].sort())) bad.push('ids: not the 9');
-    for (const id of LB5) {
+    if (JSON.stringify(Object.keys(tj.ids).sort()) !== JSON.stringify([...ALL].sort())) bad.push('ids: not the 16');
+    for (const id of ALL) {
       const t = tj.ids[id], pt = cardOf(id).plate.tempo;
       if (JSON.stringify(t?.rows?.map((r: any) => [r.phase, r.from])) !== JSON.stringify(table[id])) bad.push(`${id}: tempo.json rows != the table`);
       if (JSON.stringify(t?.claim) !== JSON.stringify(pt.claim)) bad.push(`${id}: claim`);
@@ -405,7 +443,7 @@ describe('LIB-15 A7: the tempo strips follow the cards (D-LIB15-SECS; DESIGN.md 
   };
   const tj = () => readJson('tools/plates/library/lb5/tempo.json');
   it('every card gives up and down in seconds (D-LIB15-SECS); tempo.json and every drawn spec follow the table', () => {
-    for (const id of LB5) { const pt = cardOf(id).plate.tempo; expect([typeof pt.up, typeof pt.down, typeof pt.pause], id).toEqual(['number', 'number', 'number']); }
+    for (const id of ALL) { const pt = cardOf(id).plate.tempo; expect([typeof pt.up, typeof pt.down, typeof pt.pause], id).toEqual(['number', 'number', 'number']); }
     expect(problems(tj(), { ...S })).toEqual([]);
   });
   it('mutations: a Hold added to a pause-0 card, overhead_cable_triceps_extension\'s Hold removed, wrist_curl\'s up set to 1 and a Rest phase are each red', () => {
@@ -422,7 +460,8 @@ describe('LIB-15 A8: the drawable-fault ids (D-LIB15-F7)', { timeout: T }, () =>
     const qa = await import(/* @vite-ignore */ lib('lb5/qa.mjs'));
     for (const id of specced()) {
       expect(typeof S[id].pilot?.drawableFault === 'string', id).toBe(F7_IDS.includes(id));
-      expect(qa.EXPECTED(`lib_${id}`), id).toEqual(['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(F2_IDS.includes(id) ? ['F2'] : [])].sort());
+      expect(qa.EXPECTED(`lib_${id}`), id).toEqual(['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(F2_IDS.includes(id) ? ['F2'] : []),
+        ...(F3_IDS.includes(id) ? ['F3'] : []), ...(F4_IDS.includes(id) ? ['F4'] : [])].sort());
     }
   });
   it('D-LIB15-F2: F2 is expected on exactly concentration_curl and wrist_curl (#290 6345185694, 6340022161); mutation: F2 raised on an id without the ruling (cable_curl) is red', async () => {
@@ -431,15 +470,20 @@ describe('LIB-15 A8: the drawable-fault ids (D-LIB15-F7)', { timeout: T }, () =>
     const report = (id: string, raised: string[]) => ({ id, flags: Object.fromEntries(['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7'].map(f => [f, { raised: raised.includes(f), value: f === 'F5' ? 3.57 : 0 }])) });
     expect(qa.flagProblems([report('lib_concentration_curl', ['F2', 'F5'])])).toEqual([]);
     expect(qa.flagProblems([report('lib_cable_curl', ['F2', 'F5'])])).toEqual(['lib_cable_curl: flags F2,F5 != ruled F5']);
+    expect([qa.F3_IDS, qa.F4_IDS]).toEqual([F3_IDS, F4_IDS].map(l => l.map(i => `lib_${i}`)));
+    expect(qa.flagProblems([report('lib_dumbbell_overhead_triceps_extension', ['F3', 'F4', 'F5'])])).toEqual([]);
+    expect(qa.flagProblems([report('lib_dumbbell_overhead_triceps_extension', ['F3', 'F5'])])).toEqual(['lib_dumbbell_overhead_triceps_extension: flags F3,F5 != ruled F3,F4,F5']);
   });
 });
 
 describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn items (DESIGN.md sections 7, 9)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cross_body_hammer_curl: 'shrug',
-    cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', incline_dumbbell_curl: 'elbows', concentration_curl: 'knee', wrist_curl: 'lean' };
+    cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', incline_dumbbell_curl: 'elbows', concentration_curl: 'knee', wrist_curl: 'lean',
+    straight_bar_triceps_pushdown: 'lean', single_arm_triceps_pushdown: 'lean', alternating_dumbbell_curl: 'elbows', barbell_curl: 'elbows', ez_bar_curl: 'elbows', hammer_curl: 'elbows', reverse_curl: 'swing' };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   // One-tell plates: a second tell is drawn only if a claim states it (#290 6343211054 item 2); per-id ruling asked on #290.
-  const ONE_TELL = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cable_curl', 'bayesian_cable_curl', 'concentration_curl'];
+  const ONE_TELL = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cable_curl', 'bayesian_cable_curl', 'concentration_curl',
+    'straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'barbell_curl', 'ez_bar_curl', 'reverse_curl', 'alternating_dumbbell_curl'];   // + LIB-15R2
   /** #290 6349640307 R7: the Trace is one smooth arc: no turn between its consecutive sample chords over 6 deg or 2.5x their median. */
   const traceKinks = (spec: any) => {
     const d = /<path class="trace"[^>]* d="([^"]+)"/.exec(plate.renderPlate(spec, { id: 'x' }).svg)![1]!, n = [...d.matchAll(/-?[\d.]+/g)].map(m => +m[0]);
@@ -449,9 +493,15 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     return max <= 6 && max <= 2.5 * med ? [] : [`${spec.id}: Trace turn ${max.toFixed(1)} deg (median ${med.toFixed(1)})`];
   };
   it('every Trace on a row is a smooth arc, no kinks (#290 6349640307 R7); mutation: concentration_curl\'s grip keys cut to 6 chords is red', () => {
-    for (const id of drawn()) expect(traceKinks(S[id]), id).toEqual([]);   // rows only: held cross_body_hammer_curl's Trace (10.8 deg) is redrawn when it resumes
+    for (const id of drawn().filter(i => fullScope(i))) expect(traceKinks(S[id]), id).toEqual([]);   // rows only (T: the parent's keys, D-LIB15R2-TPARENT): held cross_body_hammer_curl's Trace (10.8 deg) is redrawn when it resumes
     const s = S.concentration_curl, v = s.poses.via, six = [8, 16, 24, 32, 40].map(i => v[i - 1]);
     expect(traceKinks({ ...s, poses: { ...s.poses, via: six } })).toHaveLength(1);
+  });
+  it('LIB-15R2 A10: cross_body_hammer_curl and wrist_curl are re-keyed smooth; mutations: cross_body_hammer_curl back on 8 keys (10.8 deg) and wrist_curl back on 48 samples are red', () => {
+    for (const id of ['cross_body_hammer_curl', 'wrist_curl']) expect(traceKinks(S[id]), id).toEqual([]);
+    const c = S.cross_body_hammer_curl, v = c.poses.via, eight = [6, 12, 18, 24, 30, 36, 42].map(i => v[i - 1]);
+    expect(traceKinks({ ...c, poses: { ...c.poses, via: eight } })).toEqual([expect.stringMatching(/Trace turn 10\.8 deg/)]);
+    expect(traceKinks({ ...S.wrist_curl, trace: { ...S.wrist_curl.trace, samples: undefined } })).toHaveLength(1);
   });
   it('each ONE_TELL id has its D-LIB10-SKULL1 record in DESIGN.md section 9: fault, claim ids, "no second sign stated" (#290 6345185694)', () => {
     const sec = readFileSync('tools/plates/library/lb5/DESIGN.md', 'utf8').split('## 9.')[1]!.split('\n## ')[0]!;
@@ -491,7 +541,7 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     });
   };
   it('every Mistake arrow stays at least 6 px clear of the solid end figure; other Mistake guides are dashed', () => {
-    for (const id of specced()) {
+    for (const id of specced().filter(i => fullScope(i))) {   // T: the guides are the parent's (D-LIB15R2-TPARENT)
       expect(clearance(S[id]), id).toEqual([]);
       expect(S[id].mistake.guides.filter((g: any) => !['dashed', 'arrow'].includes(g.kind)).map((g: any) => g.kind), id).toEqual([]);
     }
@@ -503,14 +553,23 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
   // Leaders: no leader comes within 6 px of the Trace, a cable or the pad, away from its anchor end (8 px).
   const xy = (d: string) => [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
   const segs = (p: number[][]) => p.slice(1).map((q, i) => [p[i]!, q]);
-  const leaderGap = (spec: any) => {
+  /** The screen points of the anchors a spec's facts set: callouts in the normal view, tells in the Mistake. */
+  const factAnchors = (spec: any, mistake: boolean, cam: any) => {
+    const L = qaEng.poseLandmarks(Eng(), spec).lm;
+    return (mistake ? spec.mistake.tells : spec.callouts).map((c: any) => {
+      const a = c.anchor, at = typeof a === 'string' ? a : a.at, pose = a.pose ?? (mistake ? 'mistake' : 'end'), off = a.off ?? [0, 0];
+      const q = cam.P(Array.isArray(at) ? at : L[pose][at]); return [q[0] + off[0], q[1] + off[1]];
+    });
+  };
+  const leaderGap = (spec: any, { factsOnly = false } = {}) => {
     let min = Infinity;
     for (const mistake of [false, true]) {
-      const r = plate.renderPlate(spec, { id: 'x', mistake }), svg: string = r.svg, cam = camOf(spec);
+      const r = plate.renderPlate(spec, { id: 'x', mistake }), svg: string = r.svg, cam = camOf(spec), anchors = factsOnly ? factAnchors(spec, mistake, cam) : [];
       const avoid = [...svg.matchAll(/<path class="(?:trace|eq-cable)[^"]*"[^>]*? d="([^"]+)"/g)].flatMap(m => segs(xy(m[1]!)));
       if (spec.id === 'preacher_curl') { const p = itemsIn(spec, mistake ? 'mistake' : 'end').items.find((it: any) => it.type === 'poly' && it.z === 'mid'); const q = p.pts.map(cam.P); avoid.push(...segs([...q, q[0]])); }
       for (const [, d] of svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)) {
         const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]);
+        if (factsOnly && !anchors.some((q: number[]) => Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) <= 1.5)) continue;   // a template-fixed leader (the measure)
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
           if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) for (const [g0, g1] of avoid) min = Math.min(min, segD(q, g0!, g1!));
@@ -520,10 +579,22 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     return min;
   };
   it('no leader comes within 6 px of the Trace, a cable or the pad; mutation: a leader boxed across the pad is red', () => {
-    for (const id of drawn()) expect(leaderGap(S[id]), id).toBeGreaterThanOrEqual(6);
+    for (const id of drawn()) expect(leaderGap(S[id], { factsOnly: !fullScope(id) }), id).toBeGreaterThanOrEqual(6);
     const s = S.preacher_curl, cam = camOf(s), p = itemsIn(s, 'end').items.find((it: any) => it.type === 'poly' && it.z === 'mid'), c = cam.P(p.pts[2]);
     const bad = { ...s, callouts: [{ ...s.callouts[0], anchor: 'heel.r', box: { left: Math.round(c[0]! + 10), top: Math.round(c[1]! - 40) } }, ...s.callouts.slice(1)] };
     expect(leaderGap(bad)).toBeLessThan(6);
+  });
+  it('D-LIB15R2-TPARENT mutations: an H row given the T scope is red (its rows.json mode must be the ruled one), and a T child\'s own callout moved onto the figure is red', () => {
+    const rows = readJson('tools/plates/library/lb5/rows.json').rows;
+    const modeMismatch = (r: any) => ALL.filter(id => r[`lib_${id}`] && r[`lib_${id}`].mode !== modeOf(id));
+    expect(modeMismatch(rows)).toEqual([]);
+    const flipped = { ...rows, lib_hammer_curl: { ...rows.lib_hammer_curl, mode: 'T' } };
+    expect([fullScope('hammer_curl', flipped), modeMismatch(flipped)]).toEqual([false, ['hammer_curl']]);
+    const h = S.hammer_curl, onFigure = { ...h, mistake: { ...h.mistake, guides: [...h.mistake.guides, { kind: 'arrow', from: { at: 'elbow.r', pose: 'end' }, to: { at: 'shoulder.r', pose: 'end' } }] } };
+    expect(clearance(onFigure).length).toBeGreaterThan(0);   // what the H scope still catches on hammer_curl
+    const b = S.barbell_curl, moved = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'elbows' ? { ...c, box: { left: 150, top: 200 } } : c)) };
+    expect(plate.renderPlate(moved, { id: 'x' }).report.issues.length).toBeGreaterThan(0);
+    expect(leaderGap(S.barbell_curl, { factsOnly: true })).toBeGreaterThanOrEqual(6);
   });
   /** The cable from the low pulley to the rope's ferrule: its min px gap to the torso and head outline in each pose (side view). */
   const cableGap = (spec: any) => Object.fromEntries(posesOf(spec).map(pose => {
@@ -694,18 +765,22 @@ describe('LIB-15 A4: runQa node half on an LB5 plate (lib_preacher_curl), LIB-3 
 });
 
 describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the plate facts (#290 6340022161)', { timeout: T }, () => {
-  // The cards whose fields are written now: the 9 less incline_dumbbell_curl (written when drawn).
-  const FIELDED = LB5.filter(id => id !== 'incline_dumbbell_curl');
+  // The cards whose fields are written now: the 9 (incline_dumbbell_curl once drawn) and, after LB5 R2 PLAN RULED, the
+  // 7 R2 cards (the T rows' after D-LIB15R2-TPARENT, #349 6540842602).
+  const R2_FIELDED = R2;
+  const FIELDED = [...LB5, ...R2_FIELDED];
   const KEYS = ['plateFacts', 'tempo', 'topFault'];
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
   // The ruled pose map (D-LIB15-POSE; DESIGN.md section 9): the spec pose each card pose is drawn as.
-  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB5.map(id => [id,
+  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(ALL.map(id => [id,
     ['dumbbell_overhead_triceps_extension', 'cable_curl'].includes(id) ? { start: 'end', end: 'start' } : { start: 'start', end: 'end' }]));
   // The ruled fault->key map (D-LIB15-FAULTKEY): the drawn key and topFault.
   // cross_body_hammer_curl: the shrug after F-LB5-1 (research a8e66f32, #290 6340713424); its top fault, the straight arm, keys `straight`.
   const DRAWN: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cross_body_hammer_curl: 'shrug',
-    cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', concentration_curl: 'knee', wrist_curl: 'lean' };
-  const TOP: Record<string, string> = { ...DRAWN, wrist_curl: 'grip', cross_body_hammer_curl: 'straight' };
+    cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', concentration_curl: 'knee', wrist_curl: 'lean',
+    incline_dumbbell_curl: 'elbows', single_arm_triceps_pushdown: 'lean', alternating_dumbbell_curl: 'elbows', hammer_curl: 'elbows',
+    straight_bar_triceps_pushdown: 'lean', barbell_curl: 'elbows', ez_bar_curl: 'elbows', reverse_curl: 'swing' };   // + LIB-15R2 (DESIGN.md 17.7)
+  const TOP: Record<string, string> = { ...DRAWN, wrist_curl: 'grip', cross_body_hammer_curl: 'straight', incline_dumbbell_curl: 'wrists', alternating_dumbbell_curl: 'wrist', barbell_curl: 'wrists', ez_bar_curl: 'wrists' };
   // The ruled facts (D-LIB15-FACTS), copied from the ruling, never read from a card or a spec.
   const C = (landmark: string, pose: string, cardPose: string, claim: string) => ({ kind: 'contact', landmark, pose, cardPose, claim });
   // The plate-fact fix round (#290 6349063103): each side of a plural paired part, the hands on the implement at the
@@ -722,13 +797,22 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
     concentration_curl: [C('elbow.r', 'start', 'start', 'c1'), C('seat', 'start', 'start', 'c1'),
       ...['start', 'end'].flatMap(p => ['heel.r', 'heel.l', 'ball.r', 'ball.l'].map(l => C(l, p, p, 'c5'))), C('wrist.r', 'start', 'start', 'c1')],   // D-LIB15-MIRROR, c14
     wrist_curl: [C('wrist.r', 'start', 'start', 'c1')],
+    // LIB-15R2 (DESIGN.md 17.8; incline's elbow-on-pad c4 is no fact: the arm lies beside the pad, which no side-view plane measures)
+    incline_dumbbell_curl: [...W2('start', 'start', 'c1'), C('seat', 'start', 'start', 'c1'), C('backUpper', 'start', 'start', 'c2'), C('buttock', 'start', 'start', 'c2')],   // + buttock: CARD FIELDS fix (D-LIB11-SACRUM)
+    single_arm_triceps_pushdown: [C('wrist.r', 'start', 'start', 'c2')],
+    alternating_dumbbell_curl: W2('start', 'start', 'c2'),
+    hammer_curl: W2('start', 'start', 'c1'),
+    straight_bar_triceps_pushdown: W2('start', 'start', 'c1'),
+    barbell_curl: W2('start', 'start', 'c1'),
+    ez_bar_curl: [C('wrist.r', 'start', 'start', 'c1')],
+    reverse_curl: W2('start', 'start', 'c1'),
   };
   const tj = () => readJson('tools/plates/library/lb5/tempo.json');
   const built = (rows: any[], pt: any) => rows.flatMap((r: any) => (r.from === 'pause' ? (pt.pause > 0 ? [{ phase: r.phase, s: pt.pause }] : []) : [{ phase: r.phase, s: pt[r.from], move: true }]));
   const cardsSha = readJson('tools/plates/library/lb5/cards.sha.json');
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
   it('each fielded card differs from its research-head copy only in the three keys, written last; the others carry none', () => {
-    for (const id of LB5) {
+    for (const id of ALL) {
       expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
       if (FIELDED.includes(id)) expect(Object.keys(cardOf(id)).slice(-3), id).toEqual(KEYS);
       else for (const k of KEYS) expect(k in cardOf(id), `${id} ${k}`).toBe(false);
@@ -804,5 +888,383 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
   it('D-LIB13-FACTS2 mutation: preacher_curl\'s end upper arm lifted 2 cm off the pad turns its end elbow contact red', () => {
     const s = S.preacher_curl, end = { ...s.poses.end, shoulder: { ...s.poses.end.shoulder, flex: s.poses.end.shoulder.flex + 3.5 } };
     expect(h6({ ...s, poses: { ...s.poses, end } }, research('preacher_curl'))).toEqual(['H6.fact:8:contact:elbow.r', 'H6.fact:9:contact:elbow.l']);
+  });
+});
+
+// ---- LIB-15R2 wave 1 (D-LIB15R2-ZOOM, -WRISTBOX; DESIGN.md 17.1-17.2): the three zoom rows ----
+describe('LIB-15R2 A3, A4: the zoom rows', { timeout: T }, () => {
+  const ZOOMED: Record<string, { view: string, k: number, value: number }> = {
+    dumbbell_overhead_triceps_extension: { view: 'mistake', k: 1.5, value: 15.85 },
+    cross_body_hammer_curl: { view: 'mistake', k: 2, value: 14.63 },
+    wrist_curl: { view: 'normal', k: 3, value: 34.97 },
+  };
+  const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], DEV = 11.39, TRACE = 22.11;
+  let Z: any, QZ: any;
+  beforeAll(async () => { [Z, QZ] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  /** The zoom's measure at k: the tell-anchor move (Mistake) or the Trace inside the circle (normal), in zoom px. */
+  const valueAt = (spec: any, view: string, k: number) => {
+    const z = Z.zoomOf({ ...spec, zoom: { view, k } });
+    return view === 'mistake' ? z.fault.d * k : QZ.clippedTrace(z.svg, z.circle);
+  };
+  const ringFits = (z: any) => z.src.c[0] - z.src.r >= 0 && z.src.c[1] - z.src.r >= 0 && z.src.c[0] + z.src.r <= 358 && z.src.c[1] + z.src.r <= 358;
+  const zoomProblems = (id: string, spec: any, plant = (svg: string) => svg) => {
+    const want = ZOOMED[id]!, out: string[] = [];
+    if (JSON.stringify(spec.zoom) !== JSON.stringify({ view: want.view, k: want.k })) out.push(`${id}: zoom ${JSON.stringify(spec.zoom)}`);
+    let z: any;
+    try { z = Z.zoomOf(spec); } catch (e: any) { return [...out, `${id}: ${e.message}`]; }
+    const v = valueAt(spec, spec.zoom.view, spec.zoom.k), bar = spec.zoom.view === 'mistake' ? DEV : TRACE;
+    if (Math.abs(v - want.value) > 0.01) out.push(`${id}: ${v.toFixed(2)} px != ${want.value}`);
+    if (!(v >= bar)) out.push(`${id}: ${v.toFixed(2)} px < ${bar}`);
+    if (!ringFits(z)) out.push(`${id}: the source ring leaves the frame`);
+    if (/<(text|foreignObject|tspan)\b|°/.test(plant(z.svg))) out.push(`${id}: text in the zoom`);
+    return out;
+  };
+  it('each zoom row carries the PLAN\'s region and k, its pinned value (±0.01) over the bar, its source ring inside the frame, no text', () => {
+    for (const id of Object.keys(ZOOMED)) expect(zoomProblems(id, S[id]), id).toEqual([]);
+  });
+  it('no smaller ladder k reaches the bar on the Mistake rows; on wrist_curl, k 2.5 reaches it but has no clean place (H1.ink:normal:arc, QA) and k 1.5, 2 do not', () => {
+    for (const id of ['dumbbell_overhead_triceps_extension', 'cross_body_hammer_curl'])
+      for (const k of LADDER.filter(k => k < ZOOMED[id]!.k)) expect(valueAt(S[id], 'mistake', k), `${id} k ${k}`).toBeLessThan(DEV);
+    for (const k of [1.5, 2]) expect(valueAt(S.wrist_curl, 'normal', k)).toBeLessThan(TRACE);
+  });
+  it('the plate is byte-identical outside the zoom: each view renders the same svg with and without the zoom field', () => {
+    for (const id of Object.keys(ZOOMED)) for (const mistake of [false, true])
+      expect(plate.renderPlate(S[id], { id: 'x', mistake }).svg, `${id} ${mistake}`).toBe(plate.renderPlate({ ...S[id], zoom: undefined }, { id: 'x', mistake }).svg);
+  });
+  it('mutations: cross_body_hammer_curl at k 1.5, wrist_curl at k 2, the dumbbell extension\'s zoom removed (H3.deviation 10.56), "15°" in a zoom and wrist_curl\'s box back at {254, 200} are red', () => {
+    expect(zoomProblems('cross_body_hammer_curl', { ...S.cross_body_hammer_curl, zoom: { view: 'mistake', k: 1.5 } })).toEqual([
+      'cross_body_hammer_curl: zoom {"view":"mistake","k":1.5}', expect.stringMatching(/^cross_body_hammer_curl: 10\.97 px != 14\.63$/), 'cross_body_hammer_curl: 10.97 px < 11.39']);
+    expect(zoomProblems('wrist_curl', { ...S.wrist_curl, zoom: { view: 'normal', k: 2 } })).toContain('wrist_curl: 20.20 px < 22.11');
+    expect(zoomProblems('dumbbell_overhead_triceps_extension', { ...S.dumbbell_overhead_triceps_extension, zoom: undefined }).length).toBeGreaterThan(0);
+    expect(zoomProblems('dumbbell_overhead_triceps_extension', S.dumbbell_overhead_triceps_extension, svg => svg.replace('</g>', '<text>15°</text></g>')))
+      .toEqual(['dumbbell_overhead_triceps_extension: text in the zoom']);
+    const back = { ...S.wrist_curl, callouts: S.wrist_curl.callouts.map((c: any) => (c.key === 'forearm' ? { ...c, box: { left: 254, top: 200 } } : c)) };
+    expect(() => Z.zoomOf(back)).toThrow(/no place on the normal plate/);
+  });
+  // A4: each zoom row's export without `zoom`, its ruled boxes and its re-keyed field equals its sha256 at 151de0b8
+  const RULED: Record<string, { boxes: string[], drop: string[], sha: string }> = {
+    dumbbell_overhead_triceps_extension: { boxes: [], drop: [], sha: '70e215671161f875e53da823646e0a599a2477ef9ce48dea9e42e91799eface0' },
+    cross_body_hammer_curl: { boxes: ['shoulders', 'ear'], drop: ['via'], sha: '8c2443f5d268ab4965bf44d0bd8135e8d0fbd31da1bc652be075c931e6a5cc04' },
+    wrist_curl: { boxes: ['forearm'], drop: ['samples'], sha: '2e2338f16f303debb7e3d1288f396828483a327fefab713c78c109304b364f77' },
+  };
+  const canon = (id: string, spec: any) => {
+    const r = RULED[id]!, s: any = { ...spec, zoom: undefined, poses: { ...spec.poses }, trace: { ...spec.trace } };
+    if (r.drop.includes('via')) delete s.poses.via;
+    if (r.drop.includes('samples')) delete s.trace.samples;
+    const nb = (c: any) => { if (!r.boxes.includes(c.key)) return c; const { box, ...x } = c; void box; return x; };
+    s.callouts = s.callouts.map(nb); s.mistake = { ...s.mistake, tells: s.mistake.tells.map(nb) };
+    return sha(JSON.stringify(s));
+  };
+  it('A4: only the ruled moves: each zoom row\'s export minus zoom, the ruled boxes and the re-keyed field equals its 151de0b8 sha256', () => {
+    for (const id of Object.keys(RULED)) expect(canon(id, S[id]), id).toBe(RULED[id]!.sha);
+  });
+  it('A4: each moved box\'s leader still ends on its named part (the anchor, ±1 px)', () => {
+    const camP = (spec: any) => camOf(spec);
+    for (const [id, keys] of [['wrist_curl', ['forearm']], ['cross_body_hammer_curl', ['shoulders']]] as const) {
+      const r = plate.renderPlate(S[id], { id: 'x' }), ends = [...r.svg.matchAll(/<path class="leader[^"]*" d="M(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
+      const L = qaEng.poseLandmarks(Eng(), S[id]).lm.end, P = camP(S[id]).P;
+      for (const k of keys) {
+        const c = S[id].callouts.find((x: any) => x.key === k), a = typeof c.anchor === 'string' ? c.anchor : c.anchor.at, off = c.anchor.off ?? [0, 0], q = P(L[a]);
+        expect(ends.some(e => Math.hypot(e[0]! - q[0]! - off[0], e[1]! - q[1]! - off[1]) <= 1), `${id} ${k}`).toBe(true);
+      }
+    }
+  });
+  it('A4 mutations: a second box moved and a pose value changed by 1 deg are red', () => {
+    const s = S.wrist_curl, moved = { ...s, callouts: s.callouts.map((c: any) => (c.key === 'palms' ? { ...c, box: { left: 270, top: 150 } } : c)) };
+    expect(canon('wrist_curl', moved)).not.toBe(RULED.wrist_curl!.sha);
+    expect(canon('wrist_curl', { ...s, poses: { ...s.poses, end: { ...s.poses.end, wrist: s.poses.end.wrist + 1 } } })).not.toBe(RULED.wrist_curl!.sha);
+  });
+});
+
+describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8, 29ca5ce5) and the 5 approved wave-2 plates (mx9, a87370d2) do not move', { timeout: T }, () => {
+  // A2: the 4 approved LB5 plates' 9 fragment sha256 on page 921cb1d5 (main a72b52b5), 36 equalities
+  const APPROVED_FRAGS: Record<string, Record<string, string>> = {
+    'preacher-curl': {
+      normalSvg: '620189f07eea7c50ebb2e867349a2ca1a0639fe5d836ba2393d13f3ddbbdc2fe',
+      normalOverlay: 'd902add040f2d05e3f4e42439872f61d9fc6346edae00180d06d75d6e6bef743',
+      mistakeSvg: 'f81922c3f42edd6a1ccd76865433a5849f38f76a3e50a0cf37c9dd8f57cf055c',
+      mistakeOverlay: '0834ebbb6c1c70a193e71acf77facbf987d2b65819181c5d510f8d61579beb25',
+      tells: '987e47c2bd8be14009602feb04b76fbd576d197c14ae5419008850d5e82fc892',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '02c81cfcc095ed1460b08dcbe6320971881f549b7f8ebd62f95df0e0bb807667',
+      alt: 'bbbc4cfbd1fe48fa06fcc7548dac21fe547e35a321f9d16911223004c0f34cbf',
+      mistakeAlt: 'beb1eff4e8d2d51ac40fbbc8568522c442ec2270297c697ec0bc8da429c8737a'
+    },
+    'cable-curl': {
+      normalSvg: '6b9f1d4a3e28c34124fff69c9e2995205fed21c40fda3b2cfa792c79f21754e2',
+      normalOverlay: '5bdf60a30bfadea64e1b4f1b3e01c8418ed585ef3904814fcf9efdc022c53f0d',
+      mistakeSvg: 'b479dcca4aa4d74f37dec4170f92c0495e0f66a37e26f32ad0da4a72e2a66420',
+      mistakeOverlay: 'dca9ffb85af31565b5c48a4d7efb0c4dbadc0c947837bf960c579ac509a2cf02',
+      tells: '5ca2dca05a483d50450554fda1874c76ad12597445482884932e1c0a9a5e023c',
+      tempo: '73dd8f8f94901608bf64b800d986bfb05e0019ffdec860438d9058b37cbd7634',
+      cues: '9e5bcb0a7b89a6fab5ee22e2eae925159f18e31e6421245760cf5dbd0a78d761',
+      alt: '471270d65cdec303b31fa126c20a0e521961174b58c1495e5fc11cb55f1c9963',
+      mistakeAlt: '37772e1fc5273a70c86482d6aca38cd019cd21ffcf690f5f5b48bdbf3f4e48bc'
+    },
+    'bayesian-cable-curl': {
+      normalSvg: '0b88777b6b7e7b1393630f16f3e0dde44520c4fd224be13ae309935c058f9b7b',
+      normalOverlay: 'cd62cecbdf2d3748286585dcf09afe4adfd8a38950cc21be3b9ca24dac2ce42d',
+      mistakeSvg: '86707fc1501da15ccabf5afb7dc4128bd34dbb5e8d247a04b8220d4018d56940',
+      mistakeOverlay: 'df26cd83e17c00e96d7a46168f09f0a0d8db7f7007cf1b74c942115deb5e8b30',
+      tells: '049e70c9576dbd8bf121c231342e360bb44562a4fd34b26eedff595bb2ee7ebe',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: 'af41815b56c9d5d42a77f724f9ca6500662a9bb32adcbf4879dd2048ff6851fa',
+      alt: 'e48ce076340174754c8ac7892b763ddda0ada59de08ff368153d8f0a526d31ed',
+      mistakeAlt: '8327f4b7bf45d8350d96ab63fd3ff6d85d91486d25848896fcf96413c2583dbe'
+    },
+    'concentration-curl': {
+      normalSvg: '1f36dfba1fbb50eb18c94bab72120ba6a6ee9c0bc20fa64f900b8778c5d54ec8',
+      normalOverlay: 'd96d6d50970499f645e6aa98c65f91078ff0dc9fd8e78e60efbbf271dcc24f77',
+      mistakeSvg: '3156f23aeacb31616af65b63ab735550ab112635a7a266f501f1a9359dd9d452',
+      mistakeOverlay: '56b5827782cccc28d4d42031666a3425e13403d52ca4a86abe01cd8d7f6c8091',
+      tells: '8c800d010d31652700efda78a1fd45c0298c96048d2db8ceb06667ead410202f',
+      tempo: 'ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3',
+      cues: 'fb997e4a7b910f3ac5ae478ee153bd1b54f670e04ff349d58d3660818c88e9cd',
+      alt: 'd06474b2d54ab103d1491de27c3d1ac022f4b895351571cd8705990fb1b1ef87',
+      mistakeAlt: '7f8791a9c5992375c9b0143c6aab8eafed47547287cb8a3479bde52df254f95d'
+    },
+    // LIB-15R2 wave 1, APPROVED by panel mx8 at 29ca5ce5 (page e8a5236d4cba72a91a3dc99f3b0e34ea8a8c812545a1e6185cf34d1719483043)
+    'dumbbell-overhead-triceps-extension': {
+      normalSvg: 'aaa4a21044e5f6da578a4ad3721c19e1327c6cf4b4789683170d6d429b855838',
+      normalOverlay: '7e6866805c0a8435321715979fd92584b8285834f416e60eb125e70c7023f8c8',
+      mistakeSvg: '0109f6b1d8c3bdc87232bcfd040a27d7033e8fe31c9d6be93df0a176ad77f4c1',
+      mistakeOverlay: '1dbcff201458b650dd3e272101176fd2ed0322a28c0041150d7c717e178162da',
+      tells: 'f54952f77e3a16cf7b46700de9555151b0c02cf5250e4b872ae6fea4f54f5cd9',
+      tempo: 'dddad8d714b29d378423e6eb0693413e83f20772a2de9912c4f7870f59dab928',
+      cues: '409b12c2b15b8f2ef81d1db2b335ce3b842c65f8916e64bad295f61bdd096a29',
+      alt: '884a56a0a6ccda91b5994267d6fbca95a4332ca4b9c00205941858b26a8108f1',
+      mistakeAlt: 'fdfe9527be13af9721760bfc9299ca60e093e132356abcd3381168800463eca0'
+    },
+    'cross-body-hammer-curl': {
+      normalSvg: 'e9069c14f985afec228af963a1ded8a185de2abb27af91640ae60866a8827542',
+      normalOverlay: '512e7dee8dbfadd02c28c0132d9a89f5b9c8cb588e17332f4d8c615b8883594a',
+      mistakeSvg: '6e87968c617c4c6771f671080e80201d428dd1a44eb594c1ebdc934608e61685',
+      mistakeOverlay: 'c946d1b1504c3a43453c7288e31e005c08c306c6f0fce3da163256c71dd00c50',
+      tells: '1baa27129c58a73264a0b47e2777f505ccd5f70fe91076ae9345b22a97580227',
+      tempo: 'ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3',
+      cues: '5f6eb027f4dbfa4a075a048afb2b75a829a9baa6dc93bdae906a68e7990712f0',
+      alt: 'fe90f6133c93e0353074af741c2c8676db617c16f35efa18cec13ff1c655ab54',
+      mistakeAlt: '29d08724988ebf854bd30392d28668f63230bd0e1b1a929fd8244853c2686b6a'
+    },
+    'wrist-curl': {
+      normalSvg: '5374b1b2377ac1d01d71e06c6f82e42cc94102dc49a179bdd06aba39036a3516',
+      normalOverlay: '96c12f5da1af961a00350549d96ed179a507ae73d900c294ed26b553a960ac93',
+      mistakeSvg: 'e669918207a1d63c2d807afe782d7fc36ef477c754680fe39c221e1996f2b1a8',
+      mistakeOverlay: '3cf0a364b4d4fccec56d3e58c6089a190e3fd7792208d0053d284ff4e9aebb75',
+      tells: '900471d3941942cbfc18a5d035a9088492e1319d31605895728e869a28dfa3dc',
+      tempo: 'a692026584d07c1cb5fdf5b9ca7092085a453f5c28767acac890cddb7cad1424',
+      cues: '72247370ccd2edf407912c0e2c72a306c279143aa71c00f92c8b8a55ba730787',
+      alt: '72e1cccad2cca490e43113c4e84b7bb132fdecba23b4cda8262d0feb2d5f3970',
+      mistakeAlt: 'b095c218eb661c2be5bea019bb13d03272bc67eb37ac38c8fe75652922314da6'
+    },
+    // LIB-15R2 wave 2, APPROVED by panel mx9 at a87370d2 (page ac6d0cb2640cdb7c24181c9ad872556144b4cbed0152694178a1523b0e90e6ed)
+    'hammer-curl': {
+      normalSvg: '1a744d520ac1bdc2eb6fbefc867e85d2bb61c87028a3b3d75e63d122a2ea1352',
+      normalOverlay: 'ff47dfc80cdd750c537abf66907c93ae68d8da5d28418ce00aa919fc79d37684',
+      mistakeSvg: 'd68b04ab5324cf30c4bfa7a17cb950244a309b30ef45cd34764b2b50695ab412',
+      mistakeOverlay: '9973a3cdfbab073bdf1db109d51d99115a1adc8290e572697bdf778332013ea9',
+      tells: 'ac85f3291c87ad7a1fe7e48a2956a116b28c2ef5696de8d975828f39d61cfe27',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: 'e08123db310548fd4fb539a0f0fb5f3bd3c7d56126f8200554838cb55ae5abe7',
+      alt: '0838755df47be3aae4627d39aca76ad0f862590cc73acb7109df712c24cde612',
+      mistakeAlt: 'c4ac4d33607fba851367392cca92efcb31611dc72a7252ee0c528acd93ee07ad'
+    },
+    'straight-bar-triceps-pushdown': {
+      normalSvg: '974810e88b4efdd3b2fa78aae43bd63650455e6713e652f7ddc766a83e4785d3',
+      normalOverlay: '8e26093aee02817e6aec5fcea7094680bfab1dbfde9af51c20df39e35c2a451e',
+      mistakeSvg: 'beb402385ba777d83fd10d4daa8e8cd8192344b21660f498409acd3573bed3fe',
+      mistakeOverlay: 'b17f9dc167bd2587f28096b16bbd2fdf9f716aff82842dca4aff5751246ab8f9',
+      tells: '688f33d35e39d203028c60fb0b8d8badd38e7ce4789fdf5538fde8c736e501d4',
+      tempo: 'f0dc1b6cd544cc25b341b91f9c3276eaa45d732be8524bdb125f54ff1c3badd9',
+      cues: '7908c3bf36c9744913691ccabf64630f7e794a684210dcc6bc4082cb3fa4c5b2',
+      alt: '6e8f857d45ceeb6eebe0df34b404fdb3a31713fad32d523627f4fccb599cd5c0',
+      mistakeAlt: 'b0db19742b1cf041cc068337d303d66780decb5cd97b19c443e014844737facc'
+    },
+    'single-arm-triceps-pushdown': {
+      normalSvg: 'cd7a9d59eafc4bbc7217db02b49050f95896735979b7bf3ce3be41a3c4e6379a',
+      normalOverlay: '1dee64304815f48fc8baaed76938964b1b7a88aae2242cf5e0565f233adf6e2d',
+      mistakeSvg: 'fce0c5008196ed93eecf57cd42bb449761930a5550122a3bbe072991245d3d33',
+      mistakeOverlay: '026157e7ca22482da4a2b18aa4282513bd7dedded2835a0f9b4b02b4428e4d98',
+      tells: 'fd0817b3e74a701bbccd7f7654b3570eea3772169118ca379d0cca628da0c337',
+      tempo: 'f0dc1b6cd544cc25b341b91f9c3276eaa45d732be8524bdb125f54ff1c3badd9',
+      cues: '5379a17449f8b1d598dd217fecf7f2551f156f695f5010f4b5c07e8b8c412c2b',
+      alt: '04faf7cfcd5c816a28a39cf2cabdf3e6f9631fec0f760d95a11c60bcfd8be158',
+      mistakeAlt: '5b089cc6a36294ff32bbbd044e595a2f7517d3f0f7f7c9449f48379afca69a81'
+    },
+    // LIB-15R2 wave 2 fix round, APPROVED by panel mx10 at cf43547c (page ce1863240c6e870a0c22aa0aa7f35cc7a03808e4d0363577e5ae2bf764713f0d); ez_bar_curl and reverse_curl are re-checked after D-LIB15R2-BARSTART
+    'alternating-dumbbell-curl': {
+      normalSvg: '26293b6330844acff056413532390ddc86a91e25decb029b065b9039bfc5e2c5',
+      normalOverlay: '72411d16285c2a66754e2db12cea9f93407b413f6423733735a17cda8886c97d',
+      mistakeSvg: '25aa8f30490d72ce88fc6cbfda54750756235176506a5ffc8c7217bcf93e0c7d',
+      mistakeOverlay: '2ff439291fdda79175965ff1d97d07dc28acf593ed26e7e5d1dfe50e1bb73317',
+      tells: 'ea56696b83f72f546d09001c36e25c809370369bc7a3b8cc28624b4ac96db41f',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '80a30808f95555ec83bfdf2d76526d6df7047abec262b9688a2bb773eec0ec23',
+      alt: 'eb4f43f3446fef05d8157b10793e37117b4ee6ac08b3c169b671f0b52427927a',
+      mistakeAlt: '54506b31379e27f7e430dde847bf93cba5c2e9ffad3511e58bfc4635a0b52fae',
+    },
+    'incline-dumbbell-curl': {
+      normalSvg: '3122a8bffd0092fbf1e42be2b2ab731059033d357ee2c7dd2786ae44ded8fe73',
+      normalOverlay: '2c704fb41c4d7fa4332fbe70a06630cf0b6a1a81402576d44ea038a9831bfc69',
+      mistakeSvg: '54cbb3268626f3f898485ec40f640b9fca9b4f1cdee641a9ea0ec0cd99a1af98',
+      mistakeOverlay: '56a48242ea7b9c1e8a21faf4b07374fd80b27bfcf83a44e84ff3062260d36cac',
+      tells: 'a58526543420596675a545008be5d76506f615cab701d0edc7b2152a5e43a956',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '662b115e46a9b91f02e3d64a5e6c4f338aea14d3bb68f28911407e907d506242',
+      alt: '99779b441c4a4a8384a9981c45b31a8ffcafe3206ef0d304718d38afbec3c221',
+      mistakeAlt: '8acc3ab2335fa6c010e74e13ec8d48b35eb4ea0930ad8363f2030820f5c22d8e',
+    },
+    // LIB-15R2 BARSTART recheck, APPROVED by panel mx11 at 20761ed9 (page cd0fb26764f0c716f94448ee84a76b109b206fc05c2612b32baa0b730b165346)
+    'barbell-curl': {
+      normalSvg: 'df97e798a2376f4a22da44f1c56d55f2f05dad681d287b98e01cfd4082a3a071',
+      normalOverlay: '7c92d522df5d0bfd61122b966f447ca342126458a4637418a16f28fee7570ab1',
+      mistakeSvg: '157ae287507180b1ddda6a5ef5e96e8f1fb2e77ad588364fa656153c0cf60c21',
+      mistakeOverlay: '6e59ab572f896c1b8083a9d51e38a10dacfc9bb251553408e11c7da085295792',
+      tells: '50f76b875cf2f8a4dc149de2671db207476d2d087f15337c315be2585f738baa',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '2eb20f7a1fe18f6943fc8561bca8f250e2d68631c3d32050045d640a2e530cdd',
+      alt: '11734c6e5b3d47080eefabbd993fbdb2c6aa556b207aa024b3c80d8da23839b3',
+      mistakeAlt: 'dbe093ebdfe13b31a23f0e453e361e5db50b5f7d7111d226ae12626ae80282ce',
+    },
+    'ez-bar-curl': {
+      normalSvg: '4102938a8745f0297492a92eac19418c62e1b45923a31925190a357e65fccb84',
+      normalOverlay: '6deaf43a81f90c85e3217061a9d3b323f765e57666851567915b3c018cc6d821',
+      mistakeSvg: '459d64fe67231bd55b4f3a6588ff30681fec286b0356018026d3e6bb3abe870a',
+      mistakeOverlay: '8efc57047537a50d3cb6d4cfb2e33400a8f7695816786e836ab092d4c64b018d',
+      tells: 'd8b33c7cbc1e5591e97757d3beba1169c8a7fbb5ba230a0c9b7cc7e705fcc032',
+      tempo: 'ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3',
+      cues: 'ac87dab96140867517ddbb6112dab313322132ddd9ea26f259800d7b662ca3b2',
+      alt: 'd5fd95d6531dfcb504bf2c0c281c6611c46fa49a9ab315bcc2ba3a10aeecfa2d',
+      mistakeAlt: 'ff94b03c97c4453f05e5429e3a810e1a05353098367ff6da45cbe5a461fc340c',
+    },
+    'reverse-curl': {
+      normalSvg: 'c969b63b4f3856c9e52d7316241566ef863c0c559bdbd307df3fb470f6f13447',
+      normalOverlay: '565ace55fb59e9bce08056683d62b0cbb84221ad35ca62b8dbc5bd157dec72a3',
+      mistakeSvg: '043aa678d50aa47695705c7202de0847561768d0fa6aad0aa8db0d60f33218c6',
+      mistakeOverlay: '9d86cfaa4a9b67290d6b82712c78a771c673f70102b1a4ed49c03e918f792989',
+      tells: '3018d51dec8660e139b1bf1f9f07568d3c846fb69a75bf7880a3daf0ebb74273',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '0d37a623e6d7ecffb85332d585b06a728147a08619bec93f890074434778ec8e',
+      alt: '948a1bf8624c73c992558f0a37832d0eb85b3d01ffb6f0baf7db73b13cb9793a',
+      mistakeAlt: '23a13495de627f011f9883a17261c34a6cb859a3ee302467ed96246d1cad0be5',
+    }
+  };
+  it('each of the 4 approved plates\' 9 fragments on today\'s LB5 page equals its value on page 921cb1d5; mutation: one byte in preacher_curl\'s alt is red', async () => {
+    const [{ buildLb5Page }, { extractPlates, fragmentsOf }] = await Promise.all([import(/* @vite-ignore */ lib('lb5/build.mjs')), import(/* @vite-ignore */ new URL('../../tools/plates/golden.mjs', import.meta.url).href)]);
+    const plates = extractPlates((await buildLb5Page()).html.toString('utf8'));
+    const diff = (ps: any[]) => Object.entries(APPROVED_FRAGS).flatMap(([cid, want]) => { const p = ps.find((x: any) => x.chromeId === cid), got: any = p ? fragmentsOf(p) : {};
+      return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${cid}.${k}`); });
+    expect(Object.values(APPROVED_FRAGS).flatMap(Object.keys)).toHaveLength(135);
+    expect(diff(plates)).toEqual([]);
+    const bent = plates.map((p: any) => (p.chromeId === 'preacher-curl' ? { ...p, alt: `${p.alt}x` } : p));
+    expect(diff(bent)).toEqual(['preacher-curl.alt']);
+  });
+});
+
+describe('LIB-15R2 A8: the H modes are card-true (drawn items)', { timeout: T }, () => {
+  const lmOf = (spec: any, pose: string) => qaEng.poseLandmarks(Eng(), spec).lm[pose];
+  /** single_arm_triceps_pushdown c16: the torso (hip-joint midpoint to shoulder midpoint, side plane) within 2 deg of vertical. */
+  const torsoDeg = (spec: any, pose: string) => { const L = lmOf(spec, pose), mid = (a: string, b: string) => [0, (L[a][1] + L[b][1]) / 2, (L[a][2] + L[b][2]) / 2];
+    const h = mid('hip.l', 'hip.r'), s = mid('shoulder.l', 'shoulder.r'); return Math.abs(Math.atan2(s[2]! - h[2]!, s[1]! - h[1]!) * 180 / Math.PI); };
+  /** alternating_dumbbell_curl c3, hammer_curl c2: the feet split front to back (heels at least 30 cm apart along z). */
+  const split = (spec: any, pose: string) => { const L = lmOf(spec, pose); return Math.abs(L['heel.l'][2] - L['heel.r'][2]); };
+  /** hammer_curl c1: the near dumbbell's axis lies in the sagittal plane (x = 0), so it is drawn side-on. */
+  const dbAxisX = (spec: any, pose: string) => { const it = itemsIn(spec, pose).items.find((x: any) => x.type === 'dumbbell' && x.part === 'arm.r'); return Math.abs(it?.axis?.[0] ?? 1); };
+  it('single_arm_triceps_pushdown\'s torso is within 2 deg of vertical in start and end; mutation: the parent\'s 11 deg lean is red', () => {
+    const s = S.single_arm_triceps_pushdown;
+    for (const pose of ['start', 'end']) expect(torsoDeg(s, pose), pose).toBeLessThanOrEqual(2);
+    const lean = (p: any) => ({ ...p, root: { ...p.root, tilt: 8 }, trunk: 3 });
+    expect(torsoDeg({ ...s, poses: { ...s.poses, end: lean(s.poses.end) } }, 'end')).toBeGreaterThan(2);
+  });
+  it('alternating_dumbbell_curl and hammer_curl stand split, feet at least 30 cm apart front to back; mutation: feet side by side is red', () => {
+    for (const id of ['alternating_dumbbell_curl', 'hammer_curl']) for (const pose of ['start', 'end']) expect(split(S[id], pose), `${id} ${pose}`).toBeGreaterThanOrEqual(0.3);
+    const s = S.hammer_curl, together = { ...s.poses.end, plant: { l: { at: [0.10, 0, 0.08] }, r: { at: [-0.10, 0, 0.08] } } };
+    expect(split({ ...s, poses: { ...s.poses, end: together } }, 'end')).toBeLessThan(0.3);
+  });
+  it('hammer_curl\'s near dumbbell axis is sagittal (side-on) in start and end; mutation: the dumbbell end-on is red', () => {
+    for (const pose of ['start', 'end']) expect(dbAxisX(S.hammer_curl, pose), pose).toBeLessThan(1e-9);
+    const s = S.hammer_curl, k = itemsIn(s, 'end').items.find((x: any) => x.type === 'dumbbell' && x.part === 'arm.r').entry;
+    const endOn = { ...s, equipment: s.equipment.map((e: any, i: number) => (i === k ? (lm: any) => ({ type: 'dumbbell', at: lm['grip.r'], axis: [1, 0, 0], part: 'arm.r' }) : e)) };
+    expect(dbAxisX(endOn, 'end')).toBe(1);
+  });
+});
+
+describe('LIB-15R2 A5, A6: the templates and the T rows\' params', { timeout: T }, () => {
+  let CURL: any, PUSH: any, ranges: any, derive: any;
+  beforeAll(async () => {
+    [CURL, PUSH, ranges, derive] = await Promise.all(['templates/CURL.mjs', 'templates/PUSHDOWN.mjs', 'qa/param-ranges.mjs', 'derive.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+  }, T);
+  const tplOf = (name: string) => (name === 'CURL' ? CURL : PUSH);
+  it('each facts schema is closed: a poses, equipment or checks key, or an unknown builder, throws; the parent facts build', () => {
+    for (const t of [CURL, PUSH]) {
+      expect(() => t.make(t.parentParams, t.parentFacts)).not.toThrow();
+      for (const k of ['poses', 'equipment', 'checks', 'camera']) expect(() => t.make(t.parentParams, { ...t.parentFacts, [k]: {} }), k).toThrow(/facts schema/);
+      expect(() => t.make(t.parentParams, { ...t.parentFacts, mistake: { ...t.parentFacts.mistake, builder: 'kick' } })).toThrow(/builder/);
+      expect(() => t.make({ ...t.parentParams, 'grip.width': 0.4 }, t.parentFacts)).toThrow(/not read/);
+    }
+  });
+  it('each T spec is make(row.params, facts) with its row\'s template; mutation: a T spec built with other params differs', () => {
+    for (const [id, r] of Object.entries(T_ROWS)) {
+      const m = M[id], t = tplOf(r.template);
+      expect(JSON.stringify(m.default), id).toBe(JSON.stringify(t.make(r.params, m.facts)));
+    }
+    const b = M.barbell_curl;
+    expect(JSON.stringify(CURL.make({ 'load.primitive': 'barbell' }, b.facts))).not.toBe(JSON.stringify(b.default));
+  });
+  it('A6: every T row param lies in its family row on main, with its own card claim; mutations: bar.kind rope, a param with no claim and params {} are red', () => {
+    const fam = ranges.loadRanges();
+    const problems = (id: string, r: any) => {
+      const out: string[] = [], card = readJson(`docs/research/howto/cards/${id}.json`), claimIds = card.claims.map((c: any) => c.id);
+      const bad = derive.paramProblems(r.params, fam[r.template]); out.push(...bad.map((b: string) => `${id}: ${b}`));
+      for (const k of Object.keys(r.params ?? {})) if (!claimIds.includes(r.paramClaims?.[k])) out.push(`${id}: ${k} has no claim`);
+      return out;
+    };
+    const rows = readJson('tools/plates/library/lb5/rows.json').rows;
+    for (const id of Object.keys(T_ROWS)) expect(problems(id, rows[`lib_${id}`]), id).toEqual([]);
+    const sb = rows.lib_straight_bar_triceps_pushdown;
+    expect(problems('straight_bar_triceps_pushdown', { ...sb, params: { 'bar.kind': 'rope' } })).toEqual(['straight_bar_triceps_pushdown: bar.kind: rope is not an allowed value']);
+    expect(problems('barbell_curl', { ...rows.lib_barbell_curl, paramClaims: { 'load.primitive': 'c1' } })).toEqual(['barbell_curl: stance.width has no claim']);
+    expect(problems('ez_bar_curl', { ...rows.lib_ez_bar_curl, params: {} })[0]).toMatch(/none given/);
+  });
+});
+
+describe('LIB-15R2 panel mx9 R1: the CURL elbows-back builder draws the faulty forearm at the drawn length', { timeout: T }, () => {
+  /** The longest chord of a closed outline, in plate px on the plate camera. */
+  const extent = (pts: number[][], cam: any) => { const q = pts.map((w: number[]) => cam.P(w)); let m = 0; for (const a of q) for (const b of q) m = Math.max(m, Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!)); return m; };
+  const foreOf = (spec: any, pose: any, cam: any) => { const b = { height: 1.75 }; return body.bodyShapes(body.fk(body.resolve(body.normPose(pose, b), b).q, b), cam).find((x: any) => x.key === 'fore.r').poly; };
+  /** The dashed faulty forearm guide (the third of the faulty-arm outlines: upper, elbow cap, forearm, fist) against the end forearm, px. */
+  const foreGap = (spec: any) => { const cam = camOf(spec), g = spec.mistake.guides.filter((x: any) => x.kind === 'dashed')[2].pts;
+    const endL = extent(foreOf(spec, spec.poses.end, cam).map((p: number[]) => [0, -(p[1]! - cam.P([0, 0, 0])[1]!) / cam.pxm, (p[0]! - cam.P([0, 0, 0])[0]!) / cam.pxm]), cam);
+    return Math.abs(extent(g, cam) - endL); };
+  it('barbell_curl\'s faulty forearm is within 1 px of the end forearm, and the dashed bar sits on the faulty hand; mutation: the forearm guide stretched 1.4x is red', () => {
+    const s = S.barbell_curl;
+    expect(foreGap(s)).toBeLessThanOrEqual(1);
+    const L = qaEng.poseLandmarks(Eng(), s).lm.mistake, bar = s.mistake.guides.filter((x: any) => x.kind === 'dashed').at(-1).pts;
+    const c = [0, 1, 2].map(i => bar.slice(0, -1).reduce((a: number, p: number[]) => a + p[i]!, 0) / (bar.length - 1));
+    expect(Math.hypot(c[1]! - L['grip.r'][1], c[2]! - L['grip.r'][2])).toBeLessThan(0.001);
+    const g = s.mistake.guides, k = g.findIndex((x: any) => x.kind === 'dashed') + 2, a = g[k].pts[0];
+    const stretched = { ...s, mistake: { ...s.mistake, guides: g.map((x: any, i: number) => (i === k ? { ...x, pts: x.pts.map((p: number[]) => p.map((v, j) => a[j] + (v - a[j]) * 1.4)) } : x)) } };
+    expect(foreGap(stretched)).toBeGreaterThan(1);
+  });
+});
+
+describe('LIB-15R2 D-LIB15R2-BARSTART: a CURL bar starts in front of the thigh', { timeout: T }, () => {
+  /** The bar shaft's clearance in front of the near thigh's outline at the start, in plate px (146.29 px/m). */
+  const clearPx = (spec: any, flex: number) => {
+    const b = { height: 1.75 }, probe = { view: 'side', near: 'r', pxm: 1000, P: (w: number[]) => [w[2]! * 1000, -w[1]! * 1000] };
+    const sk = body.fk(body.resolve(body.normPose({ ...spec.poses.start, shoulder: { ...spec.poses.start.shoulder, flex } }, b), b).q, b);
+    const thigh = body.bodyShapes(sk, probe).find((x: any) => x.key === 'thigh.r').poly, g = probe.P(sk.G.r);
+    const d = inPoly(thigh, g) ? -1 : Math.min(...thigh.map((q: number[], i: number) => segD(g, q, thigh[(i + 1) % thigh.length])));
+    return (d / 1000 - 0.014) * 146.29;
+  };
+  it('each bar row turns its straight start arm forward by the smallest 0.5 deg step that clears the shaft 2 px in front of the thigh; mutation: the parent\'s flex 0 is red', () => {
+    for (const id of ['barbell_curl', 'ez_bar_curl', 'reverse_curl']) {
+      const f = S[id].poses.start.shoulder.flex;
+      expect(f, id).toBeGreaterThan(0);
+      expect(clearPx(S[id], f), id).toBeGreaterThanOrEqual(2);
+      expect(clearPx(S[id], f - 0.5), id).toBeLessThan(2);
+      expect(S[id].poses.start.elbow, id).toBe(0);   // the arm stays straight
+    }
+    expect(clearPx(S.barbell_curl, 0)).toBeLessThan(2);
   });
 });
