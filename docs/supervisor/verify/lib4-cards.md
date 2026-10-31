@@ -4470,3 +4470,34 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **D-LIB17-SPLIT** (#332 6486667474): LB7's PR goes to review with only its approved rows. renegade_row (F-ZOOM-2's `zoom.pair`, plus its owed H4.overlap feet and H8.words rows) moves to a LIB-17 resume 2 after train 45. cable_rear_delt_fly stays held.
 - **LIB-8R, the pilot A resume** (card `docs/supervisor/verify/lib-8r-card.md`; rulings D-LIB8R-SCOPE, -BATCH, -AIR, -FLIES, -REVLUNGE, -ZOOM, -PINLINES, -IDPSPEC and -PROV confirmed as written). It builds box_jump, reverse_lunge, dumbbell_fly and bent_over_dumbbell_rear_delt_fly as a new batch, PILOT-A2. Pilot A's page and every pilot A and pilot B golden stay byte-identical. barbell_shrug stays reserved for LIB-13s, and incline_dumbbell_press ships with LB2. Merge order: LIB-8R is pilot A's lane, so it merges as soon as it is approved and reviewed, ahead of step_up and of any row whose sheet anchors on its ids.
   - Why PILOT-A2 rather than a pilot A re-pin: a second pilot A page entry needs approvedBy 'owner' (golden.mjs:156-160). Adding the rows to pilot A's batch gave 117 C0 problems, while a separate batch gave [].
+
+## 47. Rulings and verdicts, 10-29 to 10-31 (supervisor)
+- **Pause and resume:** the owner paused at 10-29 ~04:57 UTC ("pause when finish … stop all task") and resumed at 10-30 ~21:56 ("Continue again"). HANDOVER 8.0s has the record.
+- **Merge trains:**
+  - 45: F-ZOOM-2 → `6cf4ea2a`;
+  - 46: LB7 resume #332 + LB8 resume #325 → `93c14262`;
+  - 47: LB10 resume #331 → `151de0b8`;
+  - 48: F-ZOOM-PITCH #342 + LB4 #289, building.
+- **Panels:**
+  - mx4: approved goblet_squat, pistol_squat, burpee and box_jump.
+  - mx5: approved the rear-delt fly.
+  - mx6: approved glute_bridge and renegade_row.
+  - All three were VALID. Every anchor item below 4 is golden-B follow-up 20, 21 or 22.
+- **Held:**
+  - **reverse_lunge**, after three rounds (D-LIB8M-CARDTRUE). The 12° arch draws as an upper-trunk shift. Route **F-REVLUNGE-ARCH**: a local lumbar bow on the engine's spine segments, together with LIB-SPINE. step_up (LB4) stays held behind it.
+  - russian_twist (#337; neither option passes).
+  - pallof_press (F-RESEARCH-2: no sourced size).
+- **F-RESEARCH-2** (#338, merged into research `a48b0594`): **D-R2-SCOPEFIX** (a fix round may edit research-only text) and **F-R2-PALLOF-5** ("arms strain" is effort, not harm). **F-R2-FARMER-5:** M_STRIDE is re-based on c29-c31 as a step (LIB-22 resume 2, #346).
+- **F-ZOOM-PITCH** (card f-zoom-pitch-card.md; **D-ZOOM-PITCH**): the zoom circle and QA's `cameraOf` keep `camera.pitch`; review PASS 6538987819. Lows go to **F-ZOOM-PITCH-DOC**: inline.mjs copies only `pitch` (a future camera field would be lost), engine.mjs is 1 ulp off, and the PR body's russian_twist note is wrong.
+- **Syncs of F-ZOOM-2's tests against lane changes:** **D-FZOOM2-A3SYNC** (#332), **-A8PIN** (#337), **-ROWSYNC** and **-CIRCLESYNC** (#343). Follow-up **F-ZOOM2-DECOUPLE**: move renegade_row's and superman's live pins out of F-ZOOM-2's block onto a frozen fixture.
+- **LB10:**
+  - **D-LIB22-SOFTBOX** became **D-LIB22-PLANKBOX** (#331): only the "Straight plank" box moved, to {8,248}, in two lines.
+- **LB9:**
+  - **D-LIB21-SUPERMAN** (trim [0,0] and the `low` box moved);
+  - **D-LIB21-SUPFLAGS** (F2_NAMED 0.128, F3_NAMED 44.9).
+- **LB7:** **D-LIB17-SPLIT**.
+- **PILOT-A2 (LIB-8R):**
+  - **D-LIB8R-BJTELL** (one tell on box_jump);
+  - **D-LIB8R-FACTS2** (contacts are facts, as in FACTS2);
+  - **D-LIB8R-PROGFACT** (c15 is a progression, so not a fact).
+- **LB4:** **D-LIB14-B7END** (bodyweight_squat's b7 floor facts at the bottom stand). **F-LB4-B7CITE** adds b7 to plate.end in a later research batch. cflb4s VALID, and front_squat gains its `.l` facts.
