@@ -1690,7 +1690,7 @@ describe('LIB-13s wave 2: cable, dumbbell and smith_machine shrugs, card-true po
   it('A5: every load part clears the drawn body by 2 px in every drawn pose (cable bar, dumbbell hexes, Smith bar end)', () => {
     const c = Object.fromEntries(W2.map(id => [id, loadClear(S2[id])]));
     console.log(`LIB-13s wave 2 clearance px: ${JSON.stringify(c)}`);
-    for (const id of W2) for (const v of Object.values<number>(c[id])) expect(v, id).toBeGreaterThanOrEqual(2);
+    for (const id of W2) for (const v of Object.values<number>(c[id]!)) expect(v, id).toBeGreaterThanOrEqual(2);
   });
   it('A5 mutation: the dumbbell grips at 0.25 m (under 2 px) are red', async () => {
     const c = loadClear(await variant('dumbbell_shrug', [['const GRIP_X = 0.26;', 'const GRIP_X = 0.25;']]));

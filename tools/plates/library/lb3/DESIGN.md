@@ -584,7 +584,8 @@ barbell_shrug APPROVED. t_bar_row's fix round (R1 [3,4,3], R3 [3,3,4]):
 - **R3:** the handle is drawn from poly parts: a shaft from the grip up to a 2 cm ring round the bar at the hook, and a
   12 cm grip turned square to the forearm in the side plane, through the fist. The card's 35° wrist (R-LB3-5) is an
   extension of a neutral (palms-facing) grip, which bends out of the side plane, so the side view draws the wrist straight
-  and the fist sits on the forearm's axis (tested within 0.5 px). Asked of the supervisor with the PANEL FIX post.
+  and the fist sits on the forearm's axis (tested within 0.5 px). Ruled **D-LIB13S-TBARWRIST** (#359, supervisor 10-31): the
+  straight wrist in the side view is accepted; so are the k 1.5 zoom and the Soft knees box.
 - **Knock-ons:** the end grip's 24.5 cm rise makes k 1.5 the smallest ladder k (35.69 px; the ring holds the Trace, which
   k 3's ring no longer does). The larger source ring crossed the auto-placed "Soft knees" label (H1.ink), so that label
   gets a box under the ring (F4 counts 5 boxes, inside 2-6). Every rising part still clears 2 px; the Mistake bar
