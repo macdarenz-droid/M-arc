@@ -524,7 +524,7 @@ alone, must equal the parent's 9 pinned fragments (pilot-a.json:261 and :383) be
 - Builders and bounded magnitudes (all drawn; no card gives a size, Q-D5-3):
   - `elbows`, dir 'forward': the parent's builder byte for byte (MIS_FLEX 45, MIS_ELBOW 120, MIS_MARGIN 0.10 in front
     of the shoulder plane; its faulty-arm guides, side line and arrow).
-  - `elbows`, dir 'back': shoulder extension 30 (MIS_FLEX −30), MIS_ELBOW 120, the elbow at least 0.10 m behind the
+  - `elbows`, dir 'back': shoulder extension 30 (MIS_FLEX −30), MIS_ELBOW 140 (the end pose's, so the forearm stays near the top of the curl), the elbow at least 0.10 m behind the
     shoulder plane (the mirrored check); same guides.
   - `swing` (reverse_curl c5): the trunk rocks back from the hips (pelvis tilt −12, trunk −6) while the upper arms swing
     forward 30 (MIS_FLEX 30) at MIS_ELBOW 120; guides: the faulty torso and arm outlines dashed, an arc arrow at the hips.

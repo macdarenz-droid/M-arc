@@ -11,14 +11,17 @@
 //    mistakeAlt, pilot. Unknown params or facts keys throw (D-LIB10-FACTS).
 // Unsourced numbers: the parent's (its header), PLATE_D and the plate width (drawn), every builder magnitude (drawn,
 //  never enlarged to pass a check, Q-D5-3).
-import { WINTER, REF, bodyShapes, fk, resolve, normPose } from '../engine.mjs';
+import { WINTER, REF, bodyShapes, fk, resolve, normPose, landmarksOf } from '../engine.mjs';
 
 export const PARAMS_READ = Object.freeze({ 'load.primitive': ['dumbbell', 'barbell'], 'stance.width': 'number' });
 export const PLATE_D = 0.23;
 /** Fault builders (D-LIB10-FACTS 7): each with its named, bounded magnitudes. */
 export const BUILDERS = Object.freeze({
   // the elbows drift off the sides near the top of the curl: the parent's builder (forward, c4) and its mirror (back)
-  elbows: Object.freeze({ forward: Object.freeze({ flex: 45, elbow: 120 }), back: Object.freeze({ flex: -30, elbow: 120 }) }),
+  elbows: Object.freeze({ forward: Object.freeze({ flex: 45, elbow: 120 }), back: Object.freeze({ flex: -30, elbow: 140 }) }),
+  // reverse_curl c5: the body swings the bar up: the pelvis rocks back from the hips, the lumbar extends and the upper
+  // arms swing forward (the momentum cheat), near the top of the curl
+  swing: Object.freeze({ body: Object.freeze({ flex: 30, elbow: 120, tilt: -12, trunk: -6 }) }),
 });
 export const FACTS = Object.freeze(['id', 'name', 'callouts', 'tempo', 'mistake', 'alt', 'mistakeAlt', 'pilot']);
 const MISTAKE_KEYS = ['builder', 'dir', 'tells'];
@@ -55,7 +58,7 @@ export function make(params, facts) {
   if (typeof width !== 'number' || !Number.isFinite(width)) bad(`stance.width ${JSON.stringify(width)}`);
   const bar = p['load.primitive'] === 'barbell';
   const drift = BUILDERS[facts.mistake.builder]?.[facts.mistake.dir] ?? bad(`builder ${facts.mistake.builder} ${facts.mistake.dir}`);
-  const back = facts.mistake.dir === 'back';
+  const back = facts.mistake.dir === 'back', swing = facts.mistake.builder === 'swing';
 
   const H = 1.75;
   const KNEE_SOFT = 6;                             // knees slightly bent (c2)
@@ -81,7 +84,8 @@ export function make(params, facts) {
   const base = { root: { at: [0, ROOT_Y, 0], tilt: 0 }, trunk: 0, neck: 0, scap: SCAP, wrist: 0, plant: feet };
   const start = { ...base, shoulder: { flex: SHOULDER_FLEX_START, rot: 0 }, elbow: ELBOW_START };
   const end = { ...base, shoulder: { flex: SHOULDER_FLEX_END, rot: 0 }, elbow: ELBOW_END };
-  const mistakePose = { shoulder: { flex: MIS_FLEX, rot: 0 }, elbow: MIS_ELBOW };   // merged over the end pose: only the arms change
+  const mistakePose = { shoulder: { flex: MIS_FLEX, rot: 0 }, elbow: MIS_ELBOW,   // merged over the end pose: only the arms change
+    ...(swing ? { root: { at: [0, ROOT_Y, 0], tilt: drift.tilt }, trunk: drift.trunk } : {}) };   // (swing) and the body rocks back
   // Dashed start dumbbell (hex face, the primitive's orientation: a corner points screen-right = +z).
   const startHexOf = g => Array.from({ length: 7 }, (_, k) => [g[0], g[1] - HEX_R * Math.sin(k * Math.PI / 3), g[2] + HEX_R * Math.cos(k * Math.PI / 3)]);
   // (template) the barbell's dashed start plate: the end-on plate circle, 24 sides, closed (D-LIB15R2-EZ: PLATE_D)
@@ -129,6 +133,8 @@ export function make(params, facts) {
       .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
   }
   const MIS_ARM = misArm();
+  // (swing) the upper back rocks at least 5 cm behind the end pose's (the check proves the body moved, c5)
+  const SWING_BACK = swing ? landmarksOf(end, H).backUpper[2] - 0.05 : null;
 
   return {
     id: facts.id, name: facts.name, view: 'side', facing: 'right',
@@ -148,7 +154,8 @@ export function make(params, facts) {
       // top: the load centre stays in front of the sternum (hex radius 6 cm + chest line), never inside the chest
       { landmark: 'grip.r', above: { point: [0, 0, 0.072 * H + 0.06], normal: [0, 0, 1] }, pose: 'end' },
       // fault: the elbow drifts at least MIS_MARGIN past the shoulder plane (+z = figure forward; back: -z)
-      back ? { landmark: 'elbow.r', above: { point: [0, 0, MIS_SIDE - MIS_MARGIN], normal: [0, 0, -1] }, pose: 'mistake' }
+      swing ? { landmark: 'backUpper', above: { point: [0, 0, SWING_BACK], normal: [0, 0, -1] }, pose: 'mistake' }
+        : back ? { landmark: 'elbow.r', above: { point: [0, 0, MIS_SIDE - MIS_MARGIN], normal: [0, 0, -1] }, pose: 'mistake' }
         : { landmark: 'elbow.r', above: { point: [0, 0, MIS_SIDE + MIS_MARGIN], normal: [0, 0, 1] }, pose: 'mistake' },
     ],
     startParts: ['arm.r'],
@@ -159,10 +166,11 @@ export function make(params, facts) {
     tempo: facts.tempo,
     mistake: {
       pose: mistakePose,
-      parts: ['arm.r'],
+      parts: swing ? ['torso', 'head', 'arm.r'] : ['arm.r'],
       guides: [
         ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the faulty arm, swung off the side
         { kind: 'dashed', pts: [[0, 1.42, MIS_SIDE], [0, 0.98, MIS_SIDE]] },   // the side line through the shoulder joint
+        ...(swing ? [{ kind: 'arc-arrow', center: 'hips', r: 108, a0: -96, a1: -124 }] : []),   // (swing) the trunk rocking back
         back ? { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [-3, 0] }, to: { at: 'elbow.r', pose: 'mistake', off: [6, 2] } }
           : { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [3, 0] }, to: { at: 'elbow.r', pose: 'mistake', off: [-6, 2] } },
       ],
