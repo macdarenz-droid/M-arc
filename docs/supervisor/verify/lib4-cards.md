@@ -4553,3 +4553,12 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - A and B need loosened limits. C and D rest on an unbounded yaw, and C draws a false screen touch.
   - After the research, "nears" is the least 3D gap under the sourced caps, provided the screen gap is ≥ 0 px.
   - **F-SPINE-REACHXCHK:** lib-spine-card :115's table was not reproduced and is not a basis for anything.
+- **CARD FIELDS cf13s** (LIB-13s' 4 shrug cards @ `91a4fae6`) is **VALID**. The plant, smith elbow angles of 12.5° that no quote states, was caught. Fixes are on #359 (6548175151): start-pose hand contacts from the setup grip quotes:
+  - barbell_shrug: wrist.l and wrist.r, c1;
+  - dumbbell_shrug: wrist.l and wrist.r, **c4**, because c1 names no body part;
+  - cable_shrug: wrist.l and wrist.r, c1;
+  - smith_machine_shrug: wrist.r only, c1 ("grip the bar" names no part, so the near-side rule gives one hand).
+  - There is no end hand fact, since no quote says "throughout". barbell_shrug's H6 values are to be posted.
+- **#362 6548179400: PILOT-A3 PLAN RULED @ `62450b03`.**
+  - The plan stands as proposed.
+  - One mutation is added: a trunk that is not exactly `{flex: x}` must change the export hash (it guards the D-A3-REVEXPORT normaliser).
