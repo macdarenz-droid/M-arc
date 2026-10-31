@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-30 ~23:30 UTC · main `93c14262` (train 46: LB7 + LB8 resumes) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-31 ~02:00 UTC · main `151de0b8` (train 47: LB10 resume) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -822,6 +822,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - LIB-17 resume 2 has started (renegade_row with zoom.pair). The LIB-18 session is archived; glute_bridge is next for LB8 when a slot frees.
   - The next panel, mx5, takes reverse_lunge and the rear-delt fly (LIB-8R @ `048e153b`, page `ecb8966f…`) plus LB9's superman once it posts.
   - Usage: 7-day 0.44 at 22:57.
+- **Update 02:00 UTC (10-31):**
+  - **Train 47 merged** (#344) → main `151de0b8`: LB10 resume (#331; review PASS 6535703868, sync diff-checked). The LB10 lane is done; farmer_s_carry (F-R2-FARMER-5) and jump_rope go to a later LB10 resume.
+  - LB4 #289: review PASS 6537218246. Its sync with main (held-pairing.json) is in progress, and a focused tempo CARD FIELDS set, cflb4s, is building for the review's Medium.
+  - LIB-17 resume 2 #343 (renegade_row) is in panel mx5, with LIB-8R's reverse_lunge and rear-delt fly. LB9's superman and LB8's glute_bridge (#345, LIB-18 resume 2, session_01EQuYNhE1zxvZ6YA2EwcR4U) are added if they post in time.
+  - Active LIB builders 4 of 4: LIB-21 resume 2, LIB-8R, F-ZOOM-PITCH and LIB-18 resume 2. Usage: 7-day 0.48 at 00:57.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
