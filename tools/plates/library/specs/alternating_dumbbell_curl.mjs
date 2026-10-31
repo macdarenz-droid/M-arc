@@ -14,6 +14,9 @@
 //  - The near (right) arm curls as dumbbell_biceps_curl's; the far (left) arm hangs straight in both poses and in the
 //    Mistake (c1), its dumbbell end-on at the thigh behind the body.
 //  - Mistake (c5, c4): the working elbow swings forward, dumbbell_biceps_curl's builder on the near arm only.
+// Drawn differences from dumbbell_biceps_curl (LB5 A15 rules): no elbow measure arc (its label leader would cross the
+//  Trace within 6 px) and no Mistake arrow (from the end elbow it would sit on the solid end figure); the dashed faulty
+//  arm and the tells show the fault.
 // Unsourced numbers (13.3 must-fix 14): STEP and ROOT (bayesian_cable_curl's), ELBOW_END, the dumbbells (the
 //  parent's hex), every Mistake magnitude (dumbbell_biceps_curl's; drawn).
 // Callouts, Mistake, tempo: checkpoints c1, c5, c7 are the callouts; plate.mistake c5/c4, drawable false: the top
@@ -113,7 +116,6 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 3, parts: ['arm.r'] },
   trace: { point: 'grip.r', trim: [12, 14] },
-  measure: { vertex: 'elbow.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 20, title: 'Elbow', value: 'full range' },
   callouts: [
     { key: 'other', text: 'Other arm<br>still', anchor: 'wrist.l', cue: 'Keep the resting arm hanging in the start position.' },
     { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', cue: 'Keep the working upper arm close to the torso, not forward or back.' },
@@ -126,7 +128,6 @@ export default {
     guides: [
       ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the faulty arm, swung forward off the side
       { kind: 'dashed', pts: [[0, 1.42, MIS_SIDE], [0, 0.98, MIS_SIDE]] },   // the side line through the shoulder joint
-      { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [3, 0] }, to: { at: 'elbow.r', pose: 'mistake', off: [-6, 2] } },
     ],
     tells: [
       { key: 'elbows', text: 'Elbow<br>swings', anchor: { at: 'elbow.r', pose: 'mistake', off: [0, 7] }, cue: 'Your working elbow swings forward off your side.' },

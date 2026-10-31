@@ -349,9 +349,9 @@ describe('LIB-15 A3: spec and composer closures are pure and drawn by the vendor
   });
   it('LIB-15R2 mutations: an H spec importing a template, and a T spec importing the other template, are red', () => {
     expect(problems(F, [...closure.closureOf([F]), 'tools/plates/library/templates/CURL.mjs'])).toEqual(['tools/plates/library/templates/CURL.mjs']);
-    const B = 'tools/plates/library/specs/barbell_curl.mjs';
-    expect(problems(B, closure.closureOf([B]))).toEqual([]);
-    expect(problems(B, [...closure.closureOf([B]), 'tools/plates/library/templates/PUSHDOWN.mjs'])).toEqual(['tools/plates/library/templates/PUSHDOWN.mjs']);
+    const B = 'tools/plates/library/specs/barbell_curl.mjs', base = ['tools/plates/vendor/MANIFEST.json', 'tools/plates/library/templates/CURL.mjs'];
+    expect(problems(B, base)).toEqual([]);
+    expect(problems(B, [...base, 'tools/plates/library/templates/PUSHDOWN.mjs'])).toEqual(['tools/plates/library/templates/PUSHDOWN.mjs']);
   });
   it('mutation: a spec importing a pilot A spec (another specs/ file) is red', () => {
     const root = scratch(r => {
@@ -994,5 +994,33 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates do not move', { timeout: T }, (
     expect(diff(plates)).toEqual([]);
     const bent = plates.map((p: any) => (p.chromeId === 'preacher-curl' ? { ...p, alt: `${p.alt}x` } : p));
     expect(diff(bent)).toEqual(['preacher-curl.alt']);
+  });
+});
+
+describe('LIB-15R2 A8: the H modes are card-true (drawn items)', { timeout: T }, () => {
+  const lmOf = (spec: any, pose: string) => qaEng.poseLandmarks(Eng(), spec).lm[pose];
+  /** single_arm_triceps_pushdown c16: the torso (hip-joint midpoint to shoulder midpoint, side plane) within 2 deg of vertical. */
+  const torsoDeg = (spec: any, pose: string) => { const L = lmOf(spec, pose), mid = (a: string, b: string) => [0, (L[a][1] + L[b][1]) / 2, (L[a][2] + L[b][2]) / 2];
+    const h = mid('hip.l', 'hip.r'), s = mid('shoulder.l', 'shoulder.r'); return Math.abs(Math.atan2(s[2]! - h[2]!, s[1]! - h[1]!) * 180 / Math.PI); };
+  /** alternating_dumbbell_curl c3, hammer_curl c2: the feet split front to back (heels at least 30 cm apart along z). */
+  const split = (spec: any, pose: string) => { const L = lmOf(spec, pose); return Math.abs(L['heel.l'][2] - L['heel.r'][2]); };
+  /** hammer_curl c1: the near dumbbell's axis lies in the sagittal plane (x = 0), so it is drawn side-on. */
+  const dbAxisX = (spec: any, pose: string) => { const it = itemsIn(spec, pose).items.find((x: any) => x.type === 'dumbbell' && x.part === 'arm.r'); return Math.abs(it?.axis?.[0] ?? 1); };
+  it('single_arm_triceps_pushdown\'s torso is within 2 deg of vertical in start and end; mutation: the parent\'s 11 deg lean is red', () => {
+    const s = S.single_arm_triceps_pushdown;
+    for (const pose of ['start', 'end']) expect(torsoDeg(s, pose), pose).toBeLessThanOrEqual(2);
+    const lean = (p: any) => ({ ...p, root: { ...p.root, tilt: 8 }, trunk: 3 });
+    expect(torsoDeg({ ...s, poses: { ...s.poses, end: lean(s.poses.end) } }, 'end')).toBeGreaterThan(2);
+  });
+  it('alternating_dumbbell_curl and hammer_curl stand split, feet at least 30 cm apart front to back; mutation: feet side by side is red', () => {
+    for (const id of ['alternating_dumbbell_curl', 'hammer_curl']) for (const pose of ['start', 'end']) expect(split(S[id], pose), `${id} ${pose}`).toBeGreaterThanOrEqual(0.3);
+    const s = S.hammer_curl, together = { ...s.poses.end, plant: { l: { at: [0.10, 0, 0.08] }, r: { at: [-0.10, 0, 0.08] } } };
+    expect(split({ ...s, poses: { ...s.poses, end: together } }, 'end')).toBeLessThan(0.3);
+  });
+  it('hammer_curl\'s near dumbbell axis is sagittal (side-on) in start and end; mutation: the dumbbell end-on is red', () => {
+    for (const pose of ['start', 'end']) expect(dbAxisX(S.hammer_curl, pose), pose).toBeLessThan(1e-9);
+    const s = S.hammer_curl, k = itemsIn(s, 'end').items.find((x: any) => x.type === 'dumbbell' && x.part === 'arm.r').entry;
+    const endOn = { ...s, equipment: s.equipment.map((e: any, i: number) => (i === k ? (lm: any) => ({ type: 'dumbbell', at: lm['grip.r'], axis: [1, 0, 0], part: 'arm.r' }) : e)) };
+    expect(dbAxisX(endOn, 'end')).toBe(1);
   });
 });

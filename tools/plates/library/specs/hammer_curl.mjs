@@ -14,6 +14,9 @@
 //    sagittal plane, and the dumbbell shows side-on (its heads and handle). It turns with the forearm.
 //  - The elbow, the curl and the Mistake are dumbbell_biceps_curl's (ELBOW_END 140, MIS_FLEX 45, MIS_ELBOW 120): c6 and
 //    c4 name the same fault, the elbows moving forward.
+// Drawn differences from dumbbell_biceps_curl (LB5 A15 rules): no elbow measure arc (its label leader would cross the
+//  Trace within 6 px) and no Mistake arrow (from the end elbow it would sit on the solid end figure); the dashed faulty
+//  arm and the tells show the fault.
 // Unsourced numbers (13.3 must-fix 14): STEP and ROOT (bayesian_cable_curl's), the dumbbell (the vendor default; the
 //  dashed start outline at its sizes), ELBOW_END, every Mistake magnitude (dumbbell_biceps_curl's; drawn).
 // Callouts, Mistake, tempo: checkpoints c5, c4, c4 are the callouts; plate.mistake c6/c4, drawable true; tempo up 1,
@@ -112,10 +115,9 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 3, parts: ['arm.r'] },
   trace: { point: 'grip.r', trim: [12, 14] },
-  measure: { vertex: 'elbow.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 20, title: 'Elbow', value: 'full range' },
   callouts: [
     { key: 'grip', text: 'Neutral<br>grip', anchor: 'grip.r', cue: 'Keep the palms facing your body from bottom to top. No wrist twist.' },
-    { key: 'elbows', text: 'Elbows<br>still', anchor: 'elbow.r', cue: 'Keep the elbows by your body. Do not move them forward.' },
+    { key: 'elbows', text: 'Elbows<br>still', anchor: 'elbow.r', box: { left: 90, top: 160 }, cue: 'Keep the elbows by your body. Do not move them forward.' },
     { key: 'torso', text: 'Upright<br>torso', anchor: 'backUpper', box: { left: 86, top: 108 }, cue: 'Stand tall with the lower back not arched and the shoulders not shrugged.' },
   ],
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
@@ -125,7 +127,6 @@ export default {
     guides: [
       ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the faulty arm, swung forward off the side
       { kind: 'dashed', pts: [[0, 1.42, MIS_SIDE], [0, 0.98, MIS_SIDE]] },   // the side line through the shoulder joint
-      { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [3, 0] }, to: { at: 'elbow.r', pose: 'mistake', off: [-6, 2] } },
     ],
     tells: [
       { key: 'elbows', text: 'Elbows<br>forward', anchor: { at: 'elbow.r', pose: 'mistake', off: [0, 7] }, cue: 'Your elbows move forward as the dumbbells come up.' },

@@ -66,59 +66,6 @@
    "stage": "drawing",
    "view": "side"
   },
-  "lib_barbell_curl": {
-   "src": "library/specs/barbell_curl.mjs",
-   "slug": "barbell-curl",
-   "prefix": "barbell-curl",
-   "chromeId": "barbell-curl",
-   "mode": "T",
-   "parent": "lib_dumbbell_biceps_curl",
-   "template": "CURL",
-   "params": {
-    "load.primitive": "barbell",
-    "stance.width": 0.22
-   },
-   "paramClaims": {
-    "load.primitive": "c1",
-    "stance.width": "c2"
-   },
-   "stage": "drawing",
-   "view": "side"
-  },
-  "lib_ez_bar_curl": {
-   "src": "library/specs/ez_bar_curl.mjs",
-   "slug": "ez-bar-curl",
-   "prefix": "ez-bar-curl",
-   "chromeId": "ez-bar-curl",
-   "mode": "T",
-   "parent": "lib_dumbbell_biceps_curl",
-   "template": "CURL",
-   "params": {
-    "load.primitive": "barbell"
-   },
-   "paramClaims": {
-    "load.primitive": "c1"
-   },
-   "stage": "drawing",
-   "view": "side"
-  },
-  "lib_reverse_curl": {
-   "src": "library/specs/reverse_curl.mjs",
-   "slug": "reverse-curl",
-   "prefix": "reverse-curl",
-   "chromeId": "reverse-curl",
-   "mode": "T",
-   "parent": "lib_dumbbell_biceps_curl",
-   "template": "CURL",
-   "params": {
-    "load.primitive": "barbell"
-   },
-   "paramClaims": {
-    "load.primitive": "c1"
-   },
-   "stage": "drawing",
-   "view": "side"
-  },
   "lib_hammer_curl": {
    "src": "library/specs/hammer_curl.mjs",
    "slug": "hammer-curl",
