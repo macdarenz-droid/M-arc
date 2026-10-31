@@ -79,7 +79,7 @@
      "caption": "Side view (the previous plate), for comparison"
     }
    ],
-   "held": "front view at camera pitch 45 drawn (LIB-8R); held after panel mx7 R2 (start dumbbells end-on) and R5 (the wrist bend reads as a slip), #340 6540319537 (D-LIB8M-CARDTRUE); route F-FLY-START, PILOT-A3"
+   "held": "moved: pinned in PILOT-A3 (batches/pilot-a3.json, tests/howto/golden/library/pilot-a3.json; PILOT-A3, #362)"
   },
   {
    "id": "dumbbell_biceps_curl",
@@ -145,7 +145,7 @@
    "closest": "barbell_back_squat",
    "view": "side",
    "class": "split stance (SPLIT parent)",
-   "held": "Mistake arch reads as a trunk shift, not a lumbar arch: panel mx6 R5 [3,3,3], R11 [3,4,3] @ 531213f7 on #340, its third round (D-LIB8M-CARDTRUE); route F-REVLUNGE-ARCH (a local lumbar bow from the sacrum with the engine spine segments, as LIB-SPINE; then the ring at the waist's back edge)"
+   "held": "moved: pinned in PILOT-A3 (batches/pilot-a3.json, tests/howto/golden/library/pilot-a3.json; PILOT-A3, #362)"
   },
   {
    "id": "plank",
