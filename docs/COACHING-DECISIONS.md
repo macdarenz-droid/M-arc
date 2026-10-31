@@ -2969,3 +2969,20 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   F-ZOOM-PITCH, train 48). The container's `push.negotiate true` made pushes send no objects; `git -c
   push.negotiate=false push` works.
 - **Source:** PR #340; pilot-a2/DESIGN.md.
+## LIB-13s: the shrugs and t_bar_row with zooms (builder, 2026-10-31; card docs/supervisor/verify/lib-13s-card.md, rulings D-LIB13S-*)
+- **All 5 H, all approved, nothing ships.** barbell_shrug (mx16), t_bar_row and cable_shrug (mx19), dumbbell_shrug and
+  smith_machine_shrug (mx20) are LB3 rows; SHRUG is not built (2 qualifying members of 3). Their fragments are pinned in
+  tests/howto/lb3-plates.test.ts, with the 7 approved LB3 plates (page 6ff09d4c... built alone).
+- **Zooms (D-LIB13S-ZOOM).** A normal-view circle at k 3.5 on each shrug's 5 cm Trace (24.54 px; k 3 gives 21.02), never
+  enlarged; t_bar_row's at k 1.5 (35.69 px) once its handle hangs under the bar. dumbbell_shrug's ring sits on the
+  viewer's-right shoulder so its connector is short (mx19). smith_machine_shrug has no Mistake zoom: its crown's 13.0 px
+  move meets the bar, and QA refuses a zoom there (#359, option 1).
+- **Clearance (D-LIB13S-CLEAR).** Every load part clears the drawn body by 2 px: barbell_shrug's bar 15 mm in front of both
+  thighs and the torso; t_bar_row's Mistake stops at 2 px; dumbbell grips 26 cm out; the Smith rail at z 0.13 m.
+- **t_bar_row (mx16 fix).** The V-handle hangs 9 cm under the bar with its grip square to the forearm; the end elbow bends
+  84 deg; feet 0.19 m with toes out 17 deg (D-LIB13S-TBARFEET); the neutral grip's 35 deg wrist bends out of the side
+  plane, so the side view draws it straight (D-LIB13S-TBARWRIST).
+- **D-LIB13S-RPC.** The 12-plate LB3 page with its zooms is long synchronous work, so whole-page builds in
+  lb3-plates.test.ts run in awaited child processes, LIB-13 A10's two builds included (same assertion); long searches
+  yield. This fixed vitest's worker RPC timeout ("onTaskUpdate").
+- **Source:** PR #359; lb3/DESIGN.md section 16.
