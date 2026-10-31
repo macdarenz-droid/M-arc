@@ -473,14 +473,13 @@ kettlebell_swing has a strip from the start; the other three render only from `l
 
 ## 15. Held ids and NOSECS rows
 
-As of 'LIB-22 resume 2' (section 22; farmer_s_carry lifted there). Lifted at 'LIB-22 resume' (section 21): sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
+As of 'LIB-22 resume 3' (section 23, LIB-SMALL; jumping_jacks lifted there). 'LIB-22 resume 2' (section 22) lifted farmer_s_carry. Lifted at 'LIB-22 resume' (section 21): sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
 medicine_ball_slam (D-LIB22-AFALL: every phase blank, strip/rows.json fallbackA under D-LIB22-STRIPROWS).
 
 | id | ruling | why | route |
 |---|---|---|---|
 | wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); strip leftOut (S3) | #289 on main, then a resume |
 | jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px**; a normal zoom at kMax 4 gives 21.3 px < 22.11 (trim [0, 0]) | a route the zoom rules do not hold (as F-PALLOF-ARCH) |
-| jumping_jacks | D-LIB22-JJ | H6:no-card until F-H6-TEMPO; also S2 (Mistake **9.6 px**; a Mistake zoom at k 1.5 reaches 14.4 px, drawn at its own resume) | F-H6-TEMPO on main |
 
 Held rows are in no rows file; their specs, tests and card keys stay. Each is confirmed or cleared by measurement.
 
@@ -647,7 +646,6 @@ k rule: the smallest k in steps of 0.5 from 1.5 whose zoom-scale value clears it
 | id | waits for |
 |---|---|
 | farmer_s_carry | F-LB10-STRIDE (research; #331 6409745507 item 2): a basis for M_STRIDE 0.70 m (6360164495 item 2: a quote, an approved plate's file:line or a measured convention). No quote on the card or the research head, and no approved plate on main, gives a regular step length |
-| jumping_jacks | F-H6-TEMPO (D-LIB22-JJ); not on main. Its Mistake zoom (k 1.5, `toes`, 14.4 px) is drawn at its own resume: drawn now, its source ring crossed the `toes` label (H1.ink) on a row that cannot ship |
 | jump_rope | no allowed k reaches the bar: the Trace (`sole.r`, trim [0, 0]) is 21.3 px at k 4 (kMax) < 22.11; a raised kMax or another route needs a ruling (as F-PALLOF-ARCH) |
 | wall_ball | LB4 #289 (`wall`) on main (D-LIB22-WALL); also strip `leftOut` (S3) |
 
@@ -820,3 +818,17 @@ it rules contacts, they are written and the spec's heel and ball `checks` alread
 
 **Expected flags.** F5 3.57 on both (D-LIB9-F5); F7 on jumping_jacks only (topFault `jerky` ≠ drawn `toes`). wall_ball's
 draft raises H4.overlap (distance|depth), F3 126.5 and F4 0: label boxes are set at the draw (labels only).
+
+### 23.1 jumping_jacks drawn (after 'LIB-SMALL PLAN RULED', #358 6545874629)
+
+- Card: `plateFacts: []` inserted before `tempo` (D-SMALL-JJFACTS); held-pairing.json's entry removed in the same
+  commit; validateCardFile [] (H6 now compares the tempo).
+- `toes` box {64, 300} → **{16, 280}**, not the ruled {16, 300}: at {16, 300} the tell's leader runs 5.46 px from the
+  floor line, under A15's 6 px (this file's "no leader comes within 6 px" test). {16, 280} is one of the card's measured
+  passing spots (lib-small-card.md:39); still one moved box.
+- Zoom **k 2.5**, not the ruled 1.5: D-LIB22-RINGFIT (the source ring closes inside the plate frame) fails at k 1.5
+  (source ring centre y 336.2, r 34.7: bottom 370.8 > the frame's 358) and at k 2 (r 26: 362.2). k 2.5 (r 20.8: 357.0)
+  is the smallest ladder k that clears the bar by 10 %, holds the tell in both poses and fits (the section 21 k rule,
+  this file's zoom test). Zoom deviation **24.0 px** (bar 11.39). The ring sits at (266, 280), r 52.
+- lb10/qa.mjs (node and browser): **all 10 hard checks pass**; flags F5 3.57 and F7 `toes` (the ruled set); leaderMax
+  73.2 px (F3 range 49.33-82.26); plate deviation 9.6 px.

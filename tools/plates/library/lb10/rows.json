@@ -83,6 +83,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_jumping_jacks": {
+   "src": "library/specs/jumping_jacks.mjs",
+   "slug": "jumping-jacks",
+   "prefix": "jumping-jacks",
+   "chromeId": "jumping-jacks",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
   }
  }
 }

@@ -71,19 +71,21 @@ describe('LIB-22 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
     expect(Object.keys(cardsSha.cards)).not.toContain('mountain_climbers');
   });
   /** A11 after Do 6 b: no problem for a card with plateFacts and tempo (or with no keys: wall_ball, D-LIB22-WALL);
-   *  exactly the :216 problem for a card with one of the two (the NOSECS cards; jumping_jacks, which has no fact). */
+   *  exactly the :216 problem for a card with one of the two (the NOSECS cards). jumping_jacks carries `plateFacts: []`
+   *  since LIB-SMALL (D-SMALL-JJFACTS, D-PLATEFACTS-EMPTY), so it validates with no problem. */
   const PAIR = 'plateFacts and tempo go in together or not at all';
   const valProblems = (v: any, id: string, dir?: string) => {
     const got = v.validateCardFile(`${id}.json`, dir), c = dir ? JSON.parse(readFileSync(join(dir, `docs/research/howto/cards/${id}.json`), 'utf8')) : cardOf(id);
     const want = ('plateFacts' in c) === ('tempo' in c) ? [] : [`cards/${id}.json: ${PAIR}`];
     return JSON.stringify(got) === JSON.stringify(want) ? [] : [`${id}: ${JSON.stringify(got)}`];
   };
-  it('research/validate.mjs validateCardFile: no problem with both keys or none; exactly the pair problem for a NOSECS card and jumping_jacks', async () => {
+  it('research/validate.mjs validateCardFile: no problem with both keys or none; exactly the pair problem for a NOSECS card', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
     for (const id of LB10) expect(valProblems(v, id), id).toEqual([]);
-    for (const id of [...NOSECS.filter(i => i !== 'wall_ball'), 'jumping_jacks']) expect(v.validateCardFile(`${id}.json`), id).toEqual([`cards/${id}.json: ${PAIR}`]);
+    for (const id of NOSECS.filter(i => i !== 'wall_ball')) expect(v.validateCardFile(`${id}.json`), id).toEqual([`cards/${id}.json: ${PAIR}`]);
+    expect(v.validateCardFile('jumping_jacks.json'), 'jumping_jacks (D-SMALL-JJFACTS)').toEqual([]);
   });
-  it('A11 mutations: plateFacts removed from kettlebell_swing, a bad fact claim on sled_push, and a fact added to jumping_jacks (D-LIB22-JJ) change validateCardFile', async () => {
+  it('A11 mutations: plateFacts removed from kettlebell_swing, a bad fact claim on sled_push, and jumping_jacks\' empty plateFacts removed (D-SMALL-JJFACTS) change validateCardFile', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
     const dir = mkdtempSync(join(tmpdir(), 'lb10-val-'));
     try {
@@ -93,10 +95,10 @@ describe('LIB-22 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
       expect(v.validateCardFile('kettlebell_swing.json', dir)).toContain(`cards/kettlebell_swing.json: ${PAIR}`);
       edit('sled_push', c => { c.plateFacts[0].claim = 'c99'; });
       expect(v.validateCardFile('sled_push.json', dir).join()).toContain('unknown claim c99');
-      // D-LIB22-JJ (#305): jumping_jacks is held at the pair problem; a fact written onto it clears that problem (red here)
-      edit('jumping_jacks', c => { c.plateFacts = [{ kind: 'contact', landmark: 'ball.l', pose: 'end', cardPose: 'end', claim: 'c2' }]; });
-      expect(v.validateCardFile('jumping_jacks.json', dir)).not.toContain(`cards/jumping_jacks.json: ${PAIR}`);
-      expect(valProblems(v, 'jumping_jacks', dir)).toEqual([]);
+      // D-SMALL-JJFACTS (LIB-SMALL A3): jumping_jacks' `plateFacts: []` removed brings back the pair problem (red here)
+      expect(v.validateCardFile('jumping_jacks.json', dir)).toEqual([]);
+      edit('jumping_jacks', c => { delete c.plateFacts; });
+      expect(v.validateCardFile('jumping_jacks.json', dir)).toEqual([`cards/jumping_jacks.json: ${PAIR}`]);
     } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });
@@ -118,7 +120,7 @@ describe('LIB-22 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     high_knees: [...both('ball', 'start', 'c4'), F('ball.l', 'end', 'c4')],
     battle_ropes: [...both('wrist', 'start', 'c1'), ...both('sole', 'end', 'c13')],
     bear_crawl: both('wrist', 'start', 'c3'),
-    jumping_jacks: null,
+    jumping_jacks: [],   // D-SMALL-JJFACTS (LIB-SMALL): verified none, D-PLATEFACTS-EMPTY
   };
   // The ruled fault→key map (DESIGN.md section 8; Q3): drawable-false ids carry the F7 key, never the drawn one.
   const TOP: Record<string, [string, string]> = {
@@ -325,9 +327,10 @@ const T = 600_000;
 const SPECS_DIR = 'tools/plates/library/specs';
 const ROWS = 'tools/plates/library/lb10/rows.json';
 const FRONT = ['jumping_jacks', 'jump_rope'];
-// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; jump_rope's Trace, short of the bar at kMax;
-// jumping_jacks under D-LIB22-JJ until F-H6-TEMPO). farmer_s_carry left at 'LIB-22 resume 2' (F-R2-FARMER-5).
-const HELD = [...NOSECS, 'jump_rope', 'jumping_jacks'];   // wall_ball: no spec yet
+// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; jump_rope's Trace, short of the bar at kMax).
+// farmer_s_carry left at 'LIB-22 resume 2' (F-R2-FARMER-5); jumping_jacks at 'LIB-22 resume 3' (LIB-SMALL:
+// D-SMALL-JJFACTS, -JJZOOM).
+const HELD = [...NOSECS, 'jump_rope'];   // wall_ball: no spec yet
 // The ids drawn on this branch: the slice, then the bulk as each plate is integrated (BULK GO, #305 6356763967).
 const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl', 'high_knees', 'jumping_jacks', 'battle_ropes'];
 const COMPOSERS = ['kettlebell', 'medBall', 'sled', 'jumpRope', 'battleRope'];
@@ -983,7 +986,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H (D-LIB22-B1)', () => {
-    expect(want()).toEqual(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry', 'lib_burpee', 'lib_high_knees', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_bear_crawl', 'lib_kettlebell_swing']);
+    expect(want()).toEqual(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry', 'lib_burpee', 'lib_jumping_jacks', 'lib_high_knees', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_bear_crawl', 'lib_kettlebell_swing']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('mountain_climbers (pA) and wall_ball (no spec before its resume) are in no lb10/ file as a row', () => {
@@ -1004,7 +1007,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
       expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
     }
   });
-  it('mutations: a dropped row, a duplicated row, a held id (jump_rope, jumping_jacks), mountain_climbers, wall_ball and one mode set to D are red', () => {
+  it('mutations: a dropped row, a duplicated row, a held id (jump_rope), jumping_jacks dropped (LIB-SMALL A1), mountain_climbers, wall_ball and one mode set to D are red', () => {
     const row = { src: 'library/specs/x.mjs', mode: 'H', stage: 'drawing', view: 'side' };
     const w = want(), j = { batch: 'LB10', rows: Object.fromEntries(w.map(id => [id, row])) };
     const text = JSON.stringify(j, null, 1), add = (id: string) => JSON.stringify({ ...j, rows: { ...j.rows, [id]: row } }, null, 1);
@@ -1012,7 +1015,8 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
     expect(a5(JSON.stringify({ ...j, rows: {} }, null, 1), w)).toEqual(w.map(x => `${x} x0`));
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
     expect(a5(add('lib_jump_rope'), w), 'a held id').toEqual(['extra lib_jump_rope']);
-    expect(a5(add('lib_jumping_jacks'), w), 'a held id').toEqual(['extra lib_jumping_jacks']);
+    const { lib_jumping_jacks: _jj, ...noJj } = j.rows;
+    expect(a5(JSON.stringify({ ...j, rows: noJj }, null, 1), w), 'jumping_jacks dropped').toEqual(['lib_jumping_jacks x0']);
     expect(a5(add('lib_mountain_climbers'), w)).toEqual(['extra lib_mountain_climbers']);
     expect(a5(add('lib_wall_ball'), w)).toEqual(['extra lib_wall_ball']);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
@@ -1640,6 +1644,7 @@ describe('LIB-22 resume: the zoom circles (D-LIBZOOM-EXTEND, lib4-cards §41; DE
   // zoom-scale value clears its bar by at least 10 %.
   const ZOOMS: Record<string, { view: string; k: number }> = {
     sled_pull: { view: 'normal', k: 3 }, burpee: { view: 'mistake', k: 2 }, bear_crawl: { view: 'normal', k: 4 },
+    jumping_jacks: { view: 'mistake', k: 2.5 },   // LIB-SMALL (D-SMALL-JJZOOM; D-LIB22-RINGFIT: at k 1.5 and 2 the source ring around the toes crosses the frame's bottom): the `toes` tell, 24.0 px
   };
   let zi: any, qz: any, env: any;
   beforeAll(async () => {

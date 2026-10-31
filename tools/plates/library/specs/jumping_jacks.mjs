@@ -89,6 +89,7 @@ export default {
   ghosts: { count: 2, parts: ['arm.l', 'arm.r'] },
   tempo: [{ phase: 'Work', s: '30–60', move: true }],
   trace: { point: 'grip.r', trim: [10, 12] },
+  zoom: { view: 'mistake', k: 2.5 },
   callouts: [
     { key: 'knees', text: 'Soft knees', anchor: 'knee.r', box: { left: 52, top: 240 }, cue: 'Land with a slight bend in the knees, never locked.' },
     { key: 'arms', text: 'Arms overhead', anchor: 'grip.l', box: { left: 232, top: 24 }, cue: 'Arms rise overhead as the feet jump apart.' },
@@ -97,7 +98,7 @@ export default {
   mistake: {
     pose: mistake,
     guides: TOE_GUIDES,
-    tells: [{ key: 'toes', text: 'Toes out', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 64, top: 300 }, cue: 'The toes twist outward instead of pointing forward.' }],
+    tells: [{ key: 'toes', text: 'Toes out', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 16, top: 280 }, cue: 'The toes twist outward instead of pointing forward.' }],
   },
   alt: 'Jumping jacks, front view. From standing with the feet together and the arms at the sides, the feet land apart with soft knees and the straight arms overhead. Toes point forward.',
 };
