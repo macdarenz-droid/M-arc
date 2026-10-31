@@ -45,7 +45,7 @@ export const tableOf = reports => [
 /** The expected flags (DESIGN.md section 6): F5 on every id at exactly the approved chrome's 3.57:1 (D-LIB9-F5), F7 on
  *  the drawable-fault ids (D-LIB15-F7), F2 on the low-cover ids ruled named flags (D-LIB15-F2: #290 6345185694,
  *  6340022161). */
-export const F7_IDS = ['lib_cross_body_hammer_curl', 'lib_incline_dumbbell_curl', 'lib_wrist_curl'];
+export const F7_IDS = ['lib_cross_body_hammer_curl', 'lib_incline_dumbbell_curl', 'lib_wrist_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl'];   // + D-LIB15R2-F7
 export const F2_IDS = ['lib_concentration_curl', 'lib_wrist_curl', 'lib_cross_body_hammer_curl'];
 /** LIB-15R2 (DESIGN.md 17.3, proposed named flags on the zoom rows): F3 (the longest leader outside 49.33-82.26) and F4
  *  (hand-boxed labels outside 2-6). */

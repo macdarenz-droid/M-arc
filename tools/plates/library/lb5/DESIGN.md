@@ -230,6 +230,12 @@ of the one fault. Claims read on the copied quotes files:
 | concentration_curl | the elbow wedged into the knee crease | c3 (both quotes), c4 (both quotes) | no second sign stated ("leverage" is a cause, not a visible sign) |
 | overhead_cable_triceps_extension (held) | the lower back arching | c9 (both quotes) | no second sign stated |
 | dumbbell_overhead_triceps_extension (held) | the back arching | c9, c12 ("Arching lower back"; its other three lines are other faults) | no second sign stated |
+| straight_bar_triceps_pushdown | leaning over the bar or arching the back (one tell names both, the parent's) | c11 | no second sign stated |
+| single_arm_triceps_pushdown | leaning or arching to press the handle down | c17 | no second sign stated |
+| barbell_curl | the elbows moving back to cheat the bar up | c5, c4 | no second sign stated |
+| ez_bar_curl | the elbows drifting forward at the top | c4, c5 | no second sign stated |
+| reverse_curl | swinging the bar up with momentum | c5 | no second sign stated |
+| alternating_dumbbell_curl | the working elbow swinging forward | c5, c4 | no second sign stated |
 
 ## 10. Facts plan (D-LIB8M-FACTS, 22's scope; D-LIB13-FACTS2) and unsourced numbers
 

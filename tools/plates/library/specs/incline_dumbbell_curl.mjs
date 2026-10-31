@@ -16,7 +16,8 @@
 //  - ELBOW_END 130: the curl stops before the forearm passes the upper arm's line forward (c3 "stops where the elbows
 //    would start drifting forward").
 //  - Mistake (c4, c3): the upper arm swings MIS_FLEX forward off the vertical, elbow MIS_ELBOW, near the top
-//    (dumbbell_biceps_curl's 45 and 120).
+//    (dumbbell_biceps_curl's 45 and 120), drawn as the dashed faulty arm; no arrow: from the end elbow it would cross
+//    the solid end figure (the 6 px clearance rule).
 // Unsourced numbers (13.3 must-fix 14): BACK within c1's range, SEAT_TOP, FOOT_Z, the bench sizes (the composer's),
 //  ELBOW_END, the dumbbells (the vendor hex), MIS_FLEX and MIS_ELBOW (drawn).
 // Callouts, Mistake, tempo: checkpoints c1/c5, c2, c4/c3 are the callouts; plate.mistake c4/c3, drawable false: the top
@@ -124,7 +125,7 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 3, parts: ['arm.r'] },
   trace: { point: 'grip.r', trim: [12, 14] },
-  measure: { vertex: 'elbow.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 20, title: 'Elbow', value: 'full range' },
+  measure: { vertex: 'elbow.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 28, title: 'Elbow', value: 'full range' },   // radius 28 (incline_dumbbell_press's): its label leader clears the Trace by 6 px
   callouts: [
     { key: 'bench', text: 'Bench<br>45-65°', anchor: onPadBack(0.5), cue: 'Set the bench high but not upright, about 45 to 65 degrees.' },
     { key: 'arms', text: 'Arms<br>hang down', anchor: 'shoulder.r', cue: 'Start with the arms straight down, square to the floor.' },
@@ -136,7 +137,6 @@ export default {
     parts: ['arm.r'],
     guides: [
       ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the faulty arm, swung forward
-      { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [3, 0] }, to: { at: 'elbow.r', pose: 'mistake', off: [-6, 2] } },
     ],
     tells: [
       { key: 'elbows', text: 'Elbows<br>forward', anchor: { at: 'elbow.r', pose: 'mistake', off: [0, 7] }, cue: 'Your elbows drift forward as the dumbbells rise.' },

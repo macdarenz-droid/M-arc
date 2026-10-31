@@ -13,18 +13,27 @@ const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.met
 const T = 600_000;
 const LB5 = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cross_body_hammer_curl', 'cable_curl', 'bayesian_cable_curl',
   'preacher_curl', 'incline_dumbbell_curl', 'concentration_curl', 'wrist_curl'];
-const IDS = LB5.map(i => `lib_${i}`);
+const IDS = [...LB5, 'straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'reverse_curl'].map(i => `lib_${i}`);
 // The 3 pilot A LB5 ids (pinned in batches/pilot-a.json): never an LB5 row here (LIB-15R2 A1; the 7 others are R2 below).
 const OTHER = ['triceps_pushdown', 'rope_triceps_pushdown', 'dumbbell_biceps_curl'];
 // LIB-15R2: the 7 new cards, byte copies from research a48b0594 (cards.sha.json r2Head)
 const R2 = ['straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'reverse_curl'];
 const R2_HEAD = 'a48b059400a74d5c9e3aceed21cf1aa67ab6f118';
+// LIB-15R2: every LB5 id this lane draws (the 9 and the 7), and the ruled modes (D-LIB15R2-MODES); T rows' derivation
+const ALL = [...LB5, ...R2];
+const T_ROWS: Record<string, { parent: string, template: string, params: Record<string, unknown>, paramClaims: Record<string, string> }> = {
+  straight_bar_triceps_pushdown: { parent: 'lib_triceps_pushdown', template: 'PUSHDOWN', params: { 'bar.kind': 'straight' }, paramClaims: { 'bar.kind': 'c1' } },
+  barbell_curl: { parent: 'lib_dumbbell_biceps_curl', template: 'CURL', params: { 'load.primitive': 'barbell', 'stance.width': 0.22 }, paramClaims: { 'load.primitive': 'c1', 'stance.width': 'c2' } },
+  ez_bar_curl: { parent: 'lib_dumbbell_biceps_curl', template: 'CURL', params: { 'load.primitive': 'barbell' }, paramClaims: { 'load.primitive': 'c1' } },
+  reverse_curl: { parent: 'lib_dumbbell_biceps_curl', template: 'CURL', params: { 'load.primitive': 'barbell' }, paramClaims: { 'load.primitive': 'c1' } },
+};
+const modeOf = (id: string) => (id.replace(/^lib_/, '') in T_ROWS ? 'T' : 'H');
 const ROWS = 'tools/plates/library/lb5/rows.json';
 const RESEARCH_HEAD = 'baf2ff09cf2e91232f536cfc6c766fdf68925217';   // F-LB5-2 (#302): concentration_curl's c14 and notes
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
-const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl'];
+const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl'];   // + D-LIB15R2-F7
 const F2_IDS = ['concentration_curl', 'wrist_curl', 'cross_body_hammer_curl'];   // + cross_body_hammer_curl: LIB-15R2 DESIGN.md 17.3 (proposed)
 // LIB-15R2 DESIGN.md 17.3 (proposed named flags on the zoom rows)
 const F3_IDS = ['dumbbell_overhead_triceps_extension', 'wrist_curl'];
@@ -33,9 +42,9 @@ const F4_IDS = ['dumbbell_overhead_triceps_extension'];
 // earlier holds are released with a zoom (section 17).
 const HELD = ['overhead_cable_triceps_extension'];
 /** The LB5 ids whose spec file exists (drawn or held). */
-const specced = () => LB5.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`));
+const specced = () => ALL.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`));
 /** The LB5 ids whose spec file exists and that are not held (drawn), in LB5 order. */
-const drawn = () => LB5.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`) && !HELD.includes(id));
+const drawn = () => ALL.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`) && !HELD.includes(id));
 const pilotAOnMain = () => existsSync('tools/plates/library/eq/inclineBench.mjs');
 
 let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, pad: any;
@@ -88,7 +97,7 @@ describe('LIB-15 A5: lb5/rows.json holds exactly the drawn, non-held LB5 ids', (
     for (const id of want) if (keys.filter(k => k === id).length !== 1) bad.push(`${id} x${keys.filter(k => k === id).length}`);
     for (const k of keys) if (!want.includes(k!)) bad.push(`extra ${k}`);
     const j = JSON.parse(text);
-    for (const [id, r] of Object.entries<any>(j.rows)) if (r.mode !== 'H') bad.push(`${id}: mode ${r.mode}`);
+    for (const [id, r] of Object.entries<any>(j.rows)) if (r.mode !== modeOf(id)) bad.push(`${id}: mode ${r.mode}`);
     if (!pilotAOnMain() && keys.includes('lib_incline_dumbbell_curl')) bad.push('incline_dumbbell_curl before pilot A is on main');
     return bad;
   };
@@ -122,7 +131,8 @@ describe('LIB-15 A5: lb5/rows.json holds exactly the drawn, non-held LB5 ids', (
       expect(r.src).toBe(`library/specs/${id.slice(4)}.mjs`);
       expect(r.chromeId).toBe(id.slice(4).replace(/_/g, '-'));
       expect(r.view).toBe(id === 'lib_cross_body_hammer_curl' ? 'front' : 'side');
-      expect([r.parent, r.template, r.params], id).toEqual([undefined, undefined, undefined]);
+      const t = T_ROWS[id.slice(4)];
+      expect([r.parent, r.template, r.params, r.paramClaims], id).toEqual(t ? [t.parent, t.template, t.params, t.paramClaims] : [undefined, undefined, undefined, undefined]);
     }
     expect(j).toMatchObject({ batch: 'LB5', censusRef: '4a9fd86' });
   });
@@ -310,11 +320,13 @@ describe('LIB-15 A2: the preacherPad on preacher_curl, per drawn pose (13.1, D-L
 
 describe('LIB-15 A3: spec and composer closures are pure and drawn by the vendor engine', { timeout: T }, () => {
   const files = () => specced().map(i => `tools/plates/library/specs/${i}.mjs`);
+  const tplOf = (f: string) => { const t = T_ROWS[f.replace(/^.*\/specs\/|\.mjs$/g, '')]; return t ? `tools/plates/library/templates/${t.template}.mjs` : null; };
   const problems = (f: string, c: string[]) => [
     ...(c.includes('tools/plates/vendor/MANIFEST.json') ? [] : ['no vendor MANIFEST']),
     ...c.filter(p => p.startsWith('tools/plates/layers/')),
     ...c.filter(p => p.startsWith('tools/plates/library/specs/') && p !== f),
-    ...c.filter(p => p.startsWith('tools/plates/library/templates/')),
+    // a T spec imports exactly its own template (LIB-15R2, D-LIB10-CHILDPROOF: export default make(row.params, facts)); no other spec imports one
+    ...c.filter(p => p.startsWith('tools/plates/library/templates/') && p !== tplOf(f)),
   ];
   it('every drawn LB5 spec passes', () => {
     expect(files().length).toBeGreaterThanOrEqual(2);
@@ -334,6 +346,12 @@ describe('LIB-15 A3: spec and composer closures are pure and drawn by the vendor
   it('mutation: a spec importing tools/plates/layers/engine/body.mjs is red', () => {
     const root = scratch(r => { const p = join(r, F); writeFileSync(p, `import '../../layers/engine/body.mjs';\n${readFileSync(p, 'utf8')}`); });
     try { expect(problems(F, closure.closureOf([F], root)).some(p => p.startsWith('tools/plates/layers/'))).toBe(true); } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+  it('LIB-15R2 mutations: an H spec importing a template, and a T spec importing the other template, are red', () => {
+    expect(problems(F, [...closure.closureOf([F]), 'tools/plates/library/templates/CURL.mjs'])).toEqual(['tools/plates/library/templates/CURL.mjs']);
+    const B = 'tools/plates/library/specs/barbell_curl.mjs';
+    expect(problems(B, closure.closureOf([B]))).toEqual([]);
+    expect(problems(B, [...closure.closureOf([B]), 'tools/plates/library/templates/PUSHDOWN.mjs'])).toEqual(['tools/plates/library/templates/PUSHDOWN.mjs']);
   });
   it('mutation: a spec importing a pilot A spec (another specs/ file) is red', () => {
     const root = scratch(r => {
@@ -391,14 +409,22 @@ describe('LIB-15 A7: the tempo strips follow the cards (D-LIB15-SECS; DESIGN.md 
     incline_dumbbell_curl: [['Curl', 'up'], ['Lower', 'down']],
     concentration_curl: [['Curl', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
     wrist_curl: [['Curl', 'up'], ['Lower', 'down']],
+    // LIB-15R2 (DESIGN.md 17.7)
+    straight_bar_triceps_pushdown: [['Press', 'up'], ['Hold', 'pause'], ['Return', 'down']],
+    single_arm_triceps_pushdown: [['Press', 'up'], ['Hold', 'pause'], ['Return', 'down']],
+    alternating_dumbbell_curl: [['Curl', 'up'], ['Lower', 'down']],
+    barbell_curl: [['Curl', 'up'], ['Lower', 'down']],
+    ez_bar_curl: [['Curl', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
+    hammer_curl: [['Curl', 'up'], ['Lower', 'down']],
+    reverse_curl: [['Curl', 'up'], ['Lower', 'down']],
   };
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
   const built = (rows: [string, string][], pt: any) => rows.flatMap(([phase, from]) => (from === 'pause' ? (pt.pause > 0 ? [{ phase, s: pt.pause }] : []) : [{ phase, s: pt[from], move: true }]));
   const problems = (tj: any, specs: Record<string, any>, table = TABLE) => {
     const bad: string[] = [];
     if (Object.keys(tj.constants).length) bad.push('constants: not empty');
-    if (JSON.stringify(Object.keys(tj.ids).sort()) !== JSON.stringify([...LB5].sort())) bad.push('ids: not the 9');
-    for (const id of LB5) {
+    if (JSON.stringify(Object.keys(tj.ids).sort()) !== JSON.stringify([...ALL].sort())) bad.push('ids: not the 16');
+    for (const id of ALL) {
       const t = tj.ids[id], pt = cardOf(id).plate.tempo;
       if (JSON.stringify(t?.rows?.map((r: any) => [r.phase, r.from])) !== JSON.stringify(table[id])) bad.push(`${id}: tempo.json rows != the table`);
       if (JSON.stringify(t?.claim) !== JSON.stringify(pt.claim)) bad.push(`${id}: claim`);
@@ -412,7 +438,7 @@ describe('LIB-15 A7: the tempo strips follow the cards (D-LIB15-SECS; DESIGN.md 
   };
   const tj = () => readJson('tools/plates/library/lb5/tempo.json');
   it('every card gives up and down in seconds (D-LIB15-SECS); tempo.json and every drawn spec follow the table', () => {
-    for (const id of LB5) { const pt = cardOf(id).plate.tempo; expect([typeof pt.up, typeof pt.down, typeof pt.pause], id).toEqual(['number', 'number', 'number']); }
+    for (const id of ALL) { const pt = cardOf(id).plate.tempo; expect([typeof pt.up, typeof pt.down, typeof pt.pause], id).toEqual(['number', 'number', 'number']); }
     expect(problems(tj(), { ...S })).toEqual([]);
   });
   it('mutations: a Hold added to a pause-0 card, overhead_cable_triceps_extension\'s Hold removed, wrist_curl\'s up set to 1 and a Rest phase are each red', () => {
@@ -447,10 +473,12 @@ describe('LIB-15 A8: the drawable-fault ids (D-LIB15-F7)', { timeout: T }, () =>
 
 describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn items (DESIGN.md sections 7, 9)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cross_body_hammer_curl: 'shrug',
-    cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', incline_dumbbell_curl: 'elbows', concentration_curl: 'knee', wrist_curl: 'lean' };
+    cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', incline_dumbbell_curl: 'elbows', concentration_curl: 'knee', wrist_curl: 'lean',
+    straight_bar_triceps_pushdown: 'lean', single_arm_triceps_pushdown: 'lean', alternating_dumbbell_curl: 'elbows', barbell_curl: 'elbows', ez_bar_curl: 'elbows', hammer_curl: 'elbows', reverse_curl: 'swing' };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   // One-tell plates: a second tell is drawn only if a claim states it (#290 6343211054 item 2); per-id ruling asked on #290.
-  const ONE_TELL = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cable_curl', 'bayesian_cable_curl', 'concentration_curl'];
+  const ONE_TELL = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cable_curl', 'bayesian_cable_curl', 'concentration_curl',
+    'straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'barbell_curl', 'ez_bar_curl', 'reverse_curl', 'alternating_dumbbell_curl'];   // + LIB-15R2
   /** #290 6349640307 R7: the Trace is one smooth arc: no turn between its consecutive sample chords over 6 deg or 2.5x their median. */
   const traceKinks = (spec: any) => {
     const d = /<path class="trace"[^>]* d="([^"]+)"/.exec(plate.renderPlate(spec, { id: 'x' }).svg)![1]!, n = [...d.matchAll(/-?[\d.]+/g)].map(m => +m[0]);
