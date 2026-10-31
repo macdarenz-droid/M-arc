@@ -25,10 +25,10 @@ Held (5), each with `held` in plates.json, no batch row, no chain entry, never e
 | Id | Reason | Follow-up list entry |
 |---|---|---|
 | barbell_shrug | the small-motion zoom (D-LIB8-shrug) | the shrug zoom |
-| dumbbell_fly | needs a raised foot-end camera (plan 2.8) | dumbbell_fly (LIB-20 pitch) |
-| bent_over_dumbbell_rear_delt_fly | needs a front-view bent-over torso | the rear-delt fly front view |
-| box_jump | no tempo strip without sourced seconds (D-LIB8M-NOSTRIP) | a tempo strip for plates with no sourced seconds |
-| reverse_lunge | the same (D-LIB8M-NOSTRIP) | the same |
+| dumbbell_fly | drawn at camera pitch 45 by LIB-8R; held after panel mx7 R2 and R5 (#340 6540319537; D-LIB8M-CARDTRUE) | F-FLY-START (PILOT-A3) |
+| reverse_lunge | the Mistake arch reads as a trunk shift, not a lumbar arch (panel mx6 on #340, third round; D-LIB8M-CARDTRUE). The strip is now drawn (#309) | F-REVLUNGE-ARCH |
+
+box_jump and bent_over_dumbbell_rear_delt_fly left this table when LIB-8R pinned them in PILOT-A2 (batches/pilot-a2.json; #340).
 
 ## b. Tempo (tempo.json)
 
@@ -141,7 +141,7 @@ I report any difference before any other step.
   - The curl is the fifth redraw. Its Mistake: the elbows drift forward near the top. Tells: 'elbows' (first), then 'shoulder'.
   - Its Mistake-pose check needs the elbow 10 cm in front of the shoulder joint's plane; the correct pose is 10 cm short of it.
   - Expected flags gain F7 on dumbbell_biceps_curl: the drawn fault (elbows) is not the card's top fault (the bent wrist). It stays raised for the owner's named exemption (section 13 Q1, drawable false).
-- Research head for all 14 cards: f57e7944. Only the curl card differs from 7d7c52e1.
+- Research head for the 14 cards: f57e7944; plank and mountain_climbers f574bb4b; barbell_row and romanian_deadlift 2dd60ae0 (F-LIB8M-PROV). Only the curl card differs from 7d7c52e1.
 - Critic panel and TOPFAULT (D-LIB8M-CRIT1, D-LIB8M-TF1; lib4-cards.md section 21 @ 47ade203; #109 6258287101, 6258289883):
   - fix round: the incline press arch is a dashed back outline off the pad, with its tells byte-identical. The bench tells are reordered so 'arch' is first.
   - triceps_pushdown, rope_triceps_pushdown, upright_row, pec_fly and plank now have one tell, which names the card's one fault: 'lean', 'lean', 'chin', 'short', 'sag'.

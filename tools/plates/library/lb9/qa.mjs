@@ -50,11 +50,11 @@ export const F7_IDS = ['lib_side_plank', 'lib_russian_twist', 'lib_bicycle_crunc
 export const F1_NAMED = { lib_bird_dog: 151.49, lib_side_plank: 150.31, lib_russian_twist: 197.49 };   // the (b) two asked with the E-R5 slice (#326)
 /** F3 named on bird_dog (D-LIB21-F3DOG, 'LB9 NOTE RULED' Q2, #312 6382248634): its longest leader, px, short of the
  *  envelope's minimum because the labels sit in open space beside their parts; never cleared by lengthening a leader. */
-export const F3_NAMED = { lib_bird_dog: 33.5, lib_cable_crunch: 26.05 };
+export const F3_NAMED = { lib_bird_dog: 33.5, lib_cable_crunch: 26.05, lib_superman: 44.9 };   // superman: D-LIB21-SUPFLAGS (#337), raised before the zoom and unchanged by the `low` box move
 /** F2 named on cable_crunch (D-LIB21-CCFLAGS, #312 after 6382642897): ink coverage, the high-pulley cable and the column
  *  spanning the plate (as LB8's cable_kickback 0.645); its F3 above likewise. Values re-measured after the slice fix round
  *  (#312 6383060997: bird_dog's "Leg too high" box raised, its leader 33.5 px; cable_crunch's rope redrawn). Nothing moved to clear either. */
-export const F2_NAMED = { lib_cable_crunch: 0.622 };
+export const F2_NAMED = { lib_cable_crunch: 0.622, lib_superman: 0.128 };   // superman: D-LIB21-SUPFLAGS (#337), a prone figure at the D-LIB21-FLOOR camera
 export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(id in F1_NAMED ? ['F1'] : []), ...(id in F3_NAMED ? ['F3'] : []), ...(id in F2_NAMED ? ['F2'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, F5 at any value other than 3.57, or a named

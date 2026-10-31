@@ -4,7 +4,7 @@
  "cards": {
   "sled_push": "1af989e0f9db1511bd68737f7f43c2cc4250108cdde9ce70e0ffa361b3284e6c",
   "sled_pull": "3ab998c054e381278f516ac263100f891182cf08ee4ddabd437de7c11532eaa5",
-  "farmer_s_carry": "6c2a26256a9a0795fae035144ebdebebb2b1f2c0479f2ea02a71ac7ed334b936",
+  "farmer_s_carry": "03ce80cd84eab50a56f241ffa2f2d2280db11b056dd35bfa8a1c08c4ce725809",
   "burpee": "2bf516c29133360666bd942bb0d9612a83158fa61f5d2d68788c9ae5c6cd509c",
   "jumping_jacks": "e7676f2ce73b2fffa7ba890bf7da5a2427c6f565cc0cca2db1bdcd78f6e653b3",
   "high_knees": "897c20779b3819c2f3797e76973d9e3824779118385b4b4495e6bba819f020c4",
@@ -18,7 +18,7 @@
  "quotes": {
   "sled_push": "fdeaa8da624bf3a76372909cd93751247b8cd31c8cb5ea610695c05b3b6f1d6c",
   "sled_pull": "c73b90b523398793805e6fc1ceb1dc1550282e98f5a85aacbf9136ac72f73ee8",
-  "farmer_s_carry": "2b50318d8f1e777a1f80decfd32a6edb0b6d06de07b8aa34cd82e8193b48ccfb",
+  "farmer_s_carry": "d57a9f5742f73004bf43d5379195e27eb44eb8947438028d79582c742d3232e1",
   "burpee": "4a49730bac5d565c8b5039e3ecc27c2fed81d1f3b6fa6961b11f34d683cc3f4d",
   "jumping_jacks": "1b608a04daa4e8919b7a4d36a3955552a6bdc0c2a380bbad434513d1437875c8",
   "high_knees": "66a692d72f067cdabacba55d2180f62de34f77f413cfba072956c8bc625c4c4c",
@@ -28,5 +28,11 @@
   "wall_ball": "61a867eda6a2e04a261c7b3760104ed0af3b2b836949a78a3a8a7e149278e604",
   "bear_crawl": "4e64117aebc36ecb64513c7c1d47769f7d89b6cb836cdb3079a36413e0e7b850",
   "kettlebell_swing": "dc9a7f43ce4d8098eba64c9cde0f7eeb7b4f13bf1826655195b2ab2f3690512f"
+ },
+ "recopied": {
+  "farmer_s_carry": {
+   "researchHead": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
+   "why": "F-R2-FARMER-5 (#338 6487471465): F-RESEARCH-2 adds c26-c33 (the step and stride lengths M_STRIDE is re-based on), re-words c18, c25 and handlingMistakes[1], and adds two gaps; the card is a byte copy from that head with its tempo key inserted before topFault (D-LIB8M-CARDS), and the quotes file is a byte copy. The other 11 cards and quotes stay at researchHead (approved plates, byte-identical)."
+  }
  }
 }

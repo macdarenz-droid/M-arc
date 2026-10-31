@@ -181,10 +181,10 @@
    "trace": {
     "point": "ankle.r",
     "trim": [
-     10,
-     12
+     0,
+     0
     ],
-    "basis": "D-LIB21-TRACE (DRAWING-GUIDE.md:29; DESIGN.md section 12 'superman the feet lifting (c2)'): the near foot, c2 'extend both hips (raise both legs) a few inches off the floor' and the checkpoint 'Arms, legs up' (c2, c4); trim [10, 12] = hanging_leg_raise.mjs:124 (D-LIB18-TRIM)."
+    "basis": "D-LIB21-TRACE (DRAWING-GUIDE.md:29; DESIGN.md section 12 'superman the feet lifting (c2)'): the near foot, c2 'extend both hips (raise both legs) a few inches off the floor' and the checkpoint 'Arms, legs up' (c2, c4); trim [0, 0]: D-LIB21-SUPERMAN (lib4-cards section 46), the spec's own number, as jump_rope.mjs:85; the ankle moves 6.95 cm, 9.4 px drawn at 140.91 px/m, shown in the normal view's zoom (k 2.5)."
    }
   },
   "pallof_press": {

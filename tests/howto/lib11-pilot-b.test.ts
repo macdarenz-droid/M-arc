@@ -271,7 +271,7 @@ describe('LIB-11 A5: batches/pilot-b.json holds exactly the drawn ids that are n
       expect([r.mode, r.parent, r.template, r.params], id).toEqual(['H', undefined, undefined, undefined]);
     }
     expect(j).toMatchObject({ batch: 'PILOT-B', censusRef: '4a9fd86' });
-    expect(existsSync('tools/plates/library/templates')).toBe(false);
+    expect((existsSync('tools/plates/library/templates') ? readdirSync('tools/plates/library/templates') : []).filter(f => !['CURL.mjs', 'PUSHDOWN.mjs'].includes(f))).toEqual([]);   // D-LIB15R2-TEMPLDIR (#349): only the ruled templates exist
   });
 });
 
