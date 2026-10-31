@@ -187,7 +187,7 @@
   "lib_bent_over_dumbbell_rear_delt_fly": {
    "entry": "cdc14419f1c51b3e47fb926a192e78deea8d03160ff9a127ffb9108bcd964845",
    "files": {
-    "tools/plates/golden.mjs": "79ac837ddde0345dc2ab5e68369380207baec597590c394bcd1d0f993caefab4",
+    "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
     "tools/plates/layers/artifact/copy-lint.mjs": "f568f938e0ac9d7555e8565848c1d5e7d9a6d3b78fb6f1d85cb7dabb4f6aeafe",
@@ -237,21 +237,21 @@
     "tools/plates/library/specs/box_jump.mjs": "d7ef839819411c3bf3fa43ee3d3b4948caf6d3abf08ea61f34ff400fecbe8483",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
     "tools/plates/library/zoom/inline.mjs": "9940b7d9806f2d8a0417c9ee303e88d8e9f14decf4b071b86a4cb1224d981ec7",
-    "tools/plates/pins.json": "b7f22e8ed9d59d7db6cdaccc9adb613eee7b42d30bdd4fa9550e3d179f2f9a3d",
+    "tools/plates/pins.json": "ceb807eaff19c3f03dcc4ef91a283f996a8bc850d652d614a6029ccebfcd65f9",
     "tools/plates/plates.json": "67cd52e236e6b92d71b9ddb98c806b43b133100eba9bec7c274baf031cf1f877",
-    "tools/plates/vendor/MANIFEST.json": "dbf205d47eba7f8cbdcdb692b65eb47e5564b022eeca359b8c6f44acf6474138",
-    "tools/plates/vendor/engine/body.mjs": "bdf6dc6ef726e3c03914b66508a0d53c6386ed13f61602c14427382ee7348163",
+    "tools/plates/vendor/MANIFEST.json": "688abbdd4b7a49995c226242bedd268bb01aaa77fc7f0d647305cd32c4090c8d",
+    "tools/plates/vendor/engine/body.mjs": "ef1d36236dd4e925f29b2154459c9d402a565507c2f1c15579cd5e474a8e7e2d",
     "tools/plates/vendor/engine/equipment.mjs": "d1f7d82a8962e411525ab29138a1b36eb444d10b04e1e75a14e9475b15eaa638",
     "tools/plates/vendor/engine/geom.mjs": "c2783668faaac66f6843d1bac7cd44f193a881d792b20809590255cc79f088fb",
     "tools/plates/vendor/engine/layout.mjs": "d89d3c589047d40dc52f2bd803db9e6ee7a9b4b7f978efcd90afd5a37da0ae26",
-    "tools/plates/vendor/engine/plate.mjs": "5cd7c88994b0be818ef00cd655d29b5105533e961cba6f4b7580e21ebc2ce532",
+    "tools/plates/vendor/engine/plate.mjs": "b08d1d38371024359b14686935b8fff54694b52e1780a24c1be25ccc0f96855c",
     "tools/plates/vendor/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52"
    }
   },
   "lib_box_jump": {
    "entry": "3ae1f31d30d022d04f98cd8bee552868992cdbdb62253638ccd263cc24a0dc59",
    "files": {
-    "tools/plates/golden.mjs": "79ac837ddde0345dc2ab5e68369380207baec597590c394bcd1d0f993caefab4",
+    "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
     "tools/plates/layers/artifact/copy-lint.mjs": "f568f938e0ac9d7555e8565848c1d5e7d9a6d3b78fb6f1d85cb7dabb4f6aeafe",
@@ -301,14 +301,14 @@
     "tools/plates/library/specs/box_jump.mjs": "d7ef839819411c3bf3fa43ee3d3b4948caf6d3abf08ea61f34ff400fecbe8483",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
     "tools/plates/library/zoom/inline.mjs": "9940b7d9806f2d8a0417c9ee303e88d8e9f14decf4b071b86a4cb1224d981ec7",
-    "tools/plates/pins.json": "b7f22e8ed9d59d7db6cdaccc9adb613eee7b42d30bdd4fa9550e3d179f2f9a3d",
+    "tools/plates/pins.json": "ceb807eaff19c3f03dcc4ef91a283f996a8bc850d652d614a6029ccebfcd65f9",
     "tools/plates/plates.json": "67cd52e236e6b92d71b9ddb98c806b43b133100eba9bec7c274baf031cf1f877",
-    "tools/plates/vendor/MANIFEST.json": "dbf205d47eba7f8cbdcdb692b65eb47e5564b022eeca359b8c6f44acf6474138",
-    "tools/plates/vendor/engine/body.mjs": "bdf6dc6ef726e3c03914b66508a0d53c6386ed13f61602c14427382ee7348163",
+    "tools/plates/vendor/MANIFEST.json": "688abbdd4b7a49995c226242bedd268bb01aaa77fc7f0d647305cd32c4090c8d",
+    "tools/plates/vendor/engine/body.mjs": "ef1d36236dd4e925f29b2154459c9d402a565507c2f1c15579cd5e474a8e7e2d",
     "tools/plates/vendor/engine/equipment.mjs": "d1f7d82a8962e411525ab29138a1b36eb444d10b04e1e75a14e9475b15eaa638",
     "tools/plates/vendor/engine/geom.mjs": "c2783668faaac66f6843d1bac7cd44f193a881d792b20809590255cc79f088fb",
     "tools/plates/vendor/engine/layout.mjs": "d89d3c589047d40dc52f2bd803db9e6ee7a9b4b7f978efcd90afd5a37da0ae26",
-    "tools/plates/vendor/engine/plate.mjs": "5cd7c88994b0be818ef00cd655d29b5105533e961cba6f4b7580e21ebc2ce532",
+    "tools/plates/vendor/engine/plate.mjs": "b08d1d38371024359b14686935b8fff54694b52e1780a24c1be25ccc0f96855c",
     "tools/plates/vendor/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52"
    }
   },
