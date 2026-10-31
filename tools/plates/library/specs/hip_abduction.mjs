@@ -28,11 +28,11 @@
 // Unsourced numbers: SIZES below and the composer's HIP_ABD_ADD, each with its basis in lb6/sizes.json (r2).
 import { landmarksOf, rootOnSeat, REF_CAMERA, fk, resolve, normPose, bodyShapes } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
-import { hipAbdAddMachine, HIP_ABD_ADD_ITEMS } from '../eq/hipAbdAddMachine.mjs';
+import { hipAbdAddMachine, HIP_ABD_ADD_ITEMS, HIP_ABD_ADD } from '../eq/hipAbdAddMachine.mjs';
 
-export const SIZES = { SEAT_TOP: 0.45, TILT: -3, HIP_FLEX: 90, KNEE: 90, START_ABD: -4, END_ABD: 30, MIS_ABD: 10, HANDLE_X: 0.3, HANDLE_Y: 0.5, HANDLE_Z: 0.05 };
+export const SIZES = { SEAT_TOP: 0.45, TILT: -3, HIP_FLEX: 90, KNEE: 90, START_ABD: -4, END_ABD: 30, MIS_ABD: 10, HANDLE_X: 0.3, HANDLE_Y: 0.5, HANDLE_Z: 0.05, AXLE_R: 0.03 };
 const H = 1.75, BODY = { height: H };
-const { SEAT_TOP, TILT, HIP_FLEX, KNEE, START_ABD, END_ABD, MIS_ABD, HANDLE_X, HANDLE_Y, HANDLE_Z } = SIZES;
+const { SEAT_TOP, TILT, HIP_FLEX, KNEE, START_ABD, END_ABD, MIS_ABD, HANDLE_X, HANDLE_Y, HANDLE_Z, AXLE_R } = SIZES;
 const SEG = 6;
 const SEAT = [0, SEAT_TOP, 0];
 const HANDLES = { l: [HANDLE_X, HANDLE_Y, HANDLE_Z], r: [-HANDLE_X, HANDLE_Y, HANDLE_Z] };
@@ -70,6 +70,12 @@ const isLegArm = it => { if (!it || it.part !== 'leg' || it.z !== 'back') return
 const mistakeArmsOff = (items, ctx) => (ctx?.pose === 'mistake' ? items.map(it => (isLegArm(it) ? null : it)) : items);
 const rig = legs => hipAbdAddMachine({ side: 'outer', seat: [0, SEAT_TOP, 0.02], back: { at: [0, PAD.bottom + PAD.len / 2, padU[2] - 0.035], len: PAD.len },
   legs, handles: HANDLES, beam: [-0.4, 0.4], pxPerM: REF_CAMERA.pxPerM });
+// Panel mx16 R2 (D-LIB16R2-PIVOT): the house pivot axle (leg_extension's boss, r 3 cm) at knee height on each pad arm,
+// a closed `poly` circle centred on the arm's line (the pad's mid-thickness), moving with the leg; the Mistake pose,
+// which drops its leg arms (mx14 R5), drops the axles too.
+export const axleAt = (L, s) => [L.face + (s === 'l' ? 1 : -1) * HIP_ABD_ADD.PAD_T / 2, L.y, L.z];
+const axle = (c) => ({ type: 'poly', pts: Array.from({ length: 25 }, (_, k) => [c[0] + AXLE_R * Math.cos(k * Math.PI / 12), c[1] + AXLE_R * Math.sin(k * Math.PI / 12), c[2]]), cls: 'eq', z: 'front', part: 'leg' });
+const axles = (lm, ctx) => (ctx?.pose === 'mistake' ? [null, null] : ['l', 'r'].map(s => axle(axleAt(legsAtKnee(lm, s), s))));
 export const info = () => { const s = landmarksOf(start, H), e = landmarksOf(end, H), m = landmarksOf(POSES.mistake, H);
   return { kneeGapStart: +(s['knee.l'][0] - s['knee.r'][0]).toFixed(3), kneeXEnd: +e['knee.r'][0].toFixed(3), kneeXMis: +m['knee.r'][0].toFixed(3), faces: LEGS.start.r.face }; };
 
@@ -80,6 +86,7 @@ export default {
   equipment: [
     { type: 'floor', from: -0.62, to: 0.62 },
     ...perItem((lm, ctx) => mistakeArmsOff(rig({ l: legsAtKnee(lm, 'l'), r: legsAtKnee(lm, 'r') }), ctx), HIP_ABD_ADD_ITEMS),
+    ...perItem(axles, 2),
   ],
   checks: [
     { landmark: 'seat', plane: { point: SEAT, normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },          // c1 seated

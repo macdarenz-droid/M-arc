@@ -777,6 +777,11 @@
      "value": 0.05,
      "unit": "m",
      "basis": "stated reason: see HANDLE_X"
+    },
+    "AXLE_R": {
+     "value": 0.03,
+     "unit": "m",
+     "basis": "convention: eq/legExtMachine.mjs LEG_EXT.bossR, the house pivot boss (panel mx16 R2, D-LIB16R2-PIVOT)"
     }
    },
    "hip_adduction": {

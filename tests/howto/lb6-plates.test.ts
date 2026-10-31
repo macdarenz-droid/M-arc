@@ -1933,3 +1933,40 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
     expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('rear-delt-fly alt');
   });
 });
+
+describe('LIB-16R2: hip_abduction panel mx16 R2, the pivot axle at knee height on each pad arm (D-LIB16R2-PIVOT)', { timeout: T }, () => {
+  let S: any;
+  beforeAll(async () => { S = (await import(/* @vite-ignore */ lib('specs/hip_abduction.mjs'))).default; }, T);
+  /** The axles a spec draws in one pose: closed `leg` polys whose points all sit 3 cm (±1 mm) from their centroid. */
+  const axles = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((x: any) => x?.type === 'poly' && x.part === 'leg').filter((x: any) => {
+    const c = [0, 1].map(i => x.pts.slice(0, -1).reduce((a: number, p: number[]) => a + p[i]!, 0) / (x.pts.length - 1));
+    return x.pts.every((p: number[]) => Math.abs(Math.hypot(p[0]! - c[0]!, p[1]! - c[1]!) - 0.03) <= 0.001); })
+    .map((x: any) => [0, 1].map(i => x.pts.slice(0, -1).reduce((a: number, p: number[]) => a + p[i]!, 0) / (x.pts.length - 1)));
+  /** Problems: each knee in start and end has one axle at its height (±1 cm), on its outer side, inside its pad. */
+  const problems = (spec: any) => ['start', 'end'].flatMap(pose => {
+    const lm = lmOf(spec, pose), A = axles(spec, pose), pads = itemsIn(spec, pose).items.filter((x: any) => x?.type === 'poly' && x.part === 'leg' && x.z === 'front' && x.pts.length === 5);
+    if (A.length !== 2) return [`${pose}: ${A.length} axles`];
+    return ['l', 'r'].flatMap(s => { const k = lm[`knee.${s}`], sg = s === 'l' ? 1 : -1, a = A.find((c: number[]) => sg * c[0]! > 0);
+      if (!a) return [`${pose} ${s}: no axle`];
+      const inPad = pads.some((p: any) => { const xs = p.pts.map((q: number[]) => q[0]), ys = p.pts.map((q: number[]) => q[1]);
+        return a[0]! > Math.min(...xs) && a[0]! < Math.max(...xs) && a[1]! > Math.min(...ys) && a[1]! < Math.max(...ys); });
+      const out = sg * (a[0]! - k[0]);
+      return [...(Math.abs(a[1]! - k[1]) > 0.01 ? [`${pose} ${s}: axle ${((a[1]! - k[1]) * 100).toFixed(1)} cm off knee height`] : []),
+        ...(out <= 0 ? [`${pose} ${s}: axle ${(out * 100).toFixed(1)} cm inside the knee`] : []), ...(inPad ? [] : [`${pose} ${s}: axle not on its pad`])]; });
+  });
+  it('start and end: one axle per knee, at its height, on its pad arm; the Mistake (arms dropped, mx14 R5) draws none', () => {
+    expect(problems(S)).toEqual([]);
+    expect(axles(S, 'mistake')).toEqual([]);
+  });
+  it('the leader stays on the end knee beside the axle; the poses are unchanged (mx16: no pose change)', () => {
+    expect(S.callouts.find((c: any) => c.key === 'pivot').anchor).toEqual({ at: 'knee.l', pose: 'end' });
+    expect([S.poses.start.hip, S.poses.end.hip, S.mistake.pose.hip]).toEqual([{ flex: 90, abd: -4 }, { flex: 90, abd: 30 }, { flex: 90, abd: 10 }]);
+  });
+  it('mutation: the axles removed, or raised 3 cm, are red', () => {
+    const n = S.equipment.length, none = { ...S, equipment: S.equipment.slice(0, n - 2) };
+    expect(problems(none).length).toBeGreaterThan(0);
+    const up = { ...S, equipment: [...S.equipment.slice(0, n - 2), ...S.equipment.slice(n - 2).map((f: any) => (lm: any, ctx: any) => {
+      const it = f(lm, ctx); return it && { ...it, pts: it.pts.map((p: number[]) => [p[0], p[1]! + 0.03, p[2]]) }; })] };
+    expect(problems(up).join()).toMatch(/off knee height/);
+  });
+});

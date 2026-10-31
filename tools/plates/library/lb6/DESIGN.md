@@ -913,3 +913,10 @@ the ruled set (`lb6/qa.mjs`). The wave 2 rows' contact facts are met by their sp
   height and depth), level with its label (box 252, 234); 78 px, inside the F3 envelope (82.3 px).
 - Page sha256 8fbab57b909c06f64adb930600dce61508ffa02b41214b233835746bb88b901e, built twice; QA all 10 hard checks on
   all 12 rows, flag set equal to the ruled set.
+
+### 19.17 Panel mx16 fix round (#354 6548507385, D-LIB16R2-PIVOT)
+
+- hip_adduction is approved (8 of 9). hip_abduction (R2, "Knees at pivot" had no pivot): the house pivot axle
+  (leg_extension's boss, r 3 cm, SIZES.AXLE_R) is drawn at knee height on each pad arm, a closed `poly` circle at the
+  pad's mid-thickness, moving with the leg (`part: 'leg'`, PQ-H9). The Mistake pose drops it with its leg arms (mx14 R5).
+  The leader stays on the end knee beside the axle; no pose, composer or other spec changes.
