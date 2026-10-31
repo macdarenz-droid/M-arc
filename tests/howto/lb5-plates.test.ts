@@ -976,7 +976,7 @@ describe('LIB-15R2 A3, A4: the zoom rows', { timeout: T }, () => {
   });
 });
 
-describe('LIB-15R2 A2: the 4 approved LB5 plates and the 3 approved zoom rows (mx8, 29ca5ce5) do not move', { timeout: T }, () => {
+describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8, 29ca5ce5) and the 5 approved wave-2 plates (mx9, a87370d2) do not move', { timeout: T }, () => {
   // A2: the 4 approved LB5 plates' 9 fragment sha256 on page 921cb1d5 (main a72b52b5), 36 equalities
   const APPROVED_FRAGS: Record<string, Record<string, string>> = {
     'preacher-curl': {
@@ -1056,6 +1056,62 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates and the 3 approved zoom rows (m
       cues: '72247370ccd2edf407912c0e2c72a306c279143aa71c00f92c8b8a55ba730787',
       alt: '72e1cccad2cca490e43113c4e84b7bb132fdecba23b4cda8262d0feb2d5f3970',
       mistakeAlt: 'b095c218eb661c2be5bea019bb13d03272bc67eb37ac38c8fe75652922314da6'
+    },
+    // LIB-15R2 wave 2, APPROVED by panel mx9 at a87370d2 (page ac6d0cb2640cdb7c24181c9ad872556144b4cbed0152694178a1523b0e90e6ed)
+    'ez-bar-curl': {
+      normalSvg: '27059726cc0dabe1fcf3d817eaeefb20d412efab4b245e32588f88ef07b04a20',
+      normalOverlay: 'c55ace9b63f85b1ab5684acc52a502b2bff7d8c63cf06245f8453853db49e6de',
+      mistakeSvg: 'db43195431a80154520c88ae83341309db1181985ca3e978c4f5a53f6e428147',
+      mistakeOverlay: '0e3c2d2e3d82156e047c905784dd708e71db3b1d358aa2c0fbb7ec9b3c8e0b99',
+      tells: 'd8b33c7cbc1e5591e97757d3beba1169c8a7fbb5ba230a0c9b7cc7e705fcc032',
+      tempo: 'ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3',
+      cues: 'ac87dab96140867517ddbb6112dab313322132ddd9ea26f259800d7b662ca3b2',
+      alt: 'd5fd95d6531dfcb504bf2c0c281c6611c46fa49a9ab315bcc2ba3a10aeecfa2d',
+      mistakeAlt: 'ff94b03c97c4453f05e5429e3a810e1a05353098367ff6da45cbe5a461fc340c'
+    },
+    'reverse-curl': {
+      normalSvg: '2ae338623f5840c1b116d48c2d493b0a6fe607831631bda5b887c39b551cd389',
+      normalOverlay: 'eefeee77fa45eec89af1ab6b3dd62e92a60b1d4eef7c4612cf8a0429478f6acf',
+      mistakeSvg: '442fdcc3df7b71180cc13c77de2fa9571acca3fab9b3be13cb0cc5ed9ce892d5',
+      mistakeOverlay: '9d86cfaa4a9b67290d6b82712c78a771c673f70102b1a4ed49c03e918f792989',
+      tells: '3018d51dec8660e139b1bf1f9f07568d3c846fb69a75bf7880a3daf0ebb74273',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '0d37a623e6d7ecffb85332d585b06a728147a08619bec93f890074434778ec8e',
+      alt: '948a1bf8624c73c992558f0a37832d0eb85b3d01ffb6f0baf7db73b13cb9793a',
+      mistakeAlt: '23a13495de627f011f9883a17261c34a6cb859a3ee302467ed96246d1cad0be5'
+    },
+    'hammer-curl': {
+      normalSvg: '1a744d520ac1bdc2eb6fbefc867e85d2bb61c87028a3b3d75e63d122a2ea1352',
+      normalOverlay: 'ff47dfc80cdd750c537abf66907c93ae68d8da5d28418ce00aa919fc79d37684',
+      mistakeSvg: 'd68b04ab5324cf30c4bfa7a17cb950244a309b30ef45cd34764b2b50695ab412',
+      mistakeOverlay: '9973a3cdfbab073bdf1db109d51d99115a1adc8290e572697bdf778332013ea9',
+      tells: 'ac85f3291c87ad7a1fe7e48a2956a116b28c2ef5696de8d975828f39d61cfe27',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: 'e08123db310548fd4fb539a0f0fb5f3bd3c7d56126f8200554838cb55ae5abe7',
+      alt: '0838755df47be3aae4627d39aca76ad0f862590cc73acb7109df712c24cde612',
+      mistakeAlt: 'c4ac4d33607fba851367392cca92efcb31611dc72a7252ee0c528acd93ee07ad'
+    },
+    'straight-bar-triceps-pushdown': {
+      normalSvg: '974810e88b4efdd3b2fa78aae43bd63650455e6713e652f7ddc766a83e4785d3',
+      normalOverlay: '8e26093aee02817e6aec5fcea7094680bfab1dbfde9af51c20df39e35c2a451e',
+      mistakeSvg: 'beb402385ba777d83fd10d4daa8e8cd8192344b21660f498409acd3573bed3fe',
+      mistakeOverlay: 'b17f9dc167bd2587f28096b16bbd2fdf9f716aff82842dca4aff5751246ab8f9',
+      tells: '688f33d35e39d203028c60fb0b8d8badd38e7ce4789fdf5538fde8c736e501d4',
+      tempo: 'f0dc1b6cd544cc25b341b91f9c3276eaa45d732be8524bdb125f54ff1c3badd9',
+      cues: '7908c3bf36c9744913691ccabf64630f7e794a684210dcc6bc4082cb3fa4c5b2',
+      alt: '6e8f857d45ceeb6eebe0df34b404fdb3a31713fad32d523627f4fccb599cd5c0',
+      mistakeAlt: 'b0db19742b1cf041cc068337d303d66780decb5cd97b19c443e014844737facc'
+    },
+    'single-arm-triceps-pushdown': {
+      normalSvg: 'cd7a9d59eafc4bbc7217db02b49050f95896735979b7bf3ce3be41a3c4e6379a',
+      normalOverlay: '1dee64304815f48fc8baaed76938964b1b7a88aae2242cf5e0565f233adf6e2d',
+      mistakeSvg: 'fce0c5008196ed93eecf57cd42bb449761930a5550122a3bbe072991245d3d33',
+      mistakeOverlay: '026157e7ca22482da4a2b18aa4282513bd7dedded2835a0f9b4b02b4428e4d98',
+      tells: 'fd0817b3e74a701bbccd7f7654b3570eea3772169118ca379d0cca628da0c337',
+      tempo: 'f0dc1b6cd544cc25b341b91f9c3276eaa45d732be8524bdb125f54ff1c3badd9',
+      cues: '5379a17449f8b1d598dd217fecf7f2551f156f695f5010f4b5c07e8b8c412c2b',
+      alt: '04faf7cfcd5c816a28a39cf2cabdf3e6f9631fec0f760d95a11c60bcfd8be158',
+      mistakeAlt: '5b089cc6a36294ff32bbbd044e595a2f7517d3f0f7f7c9449f48379afca69a81'
     }
   };
   it('each of the 4 approved plates\' 9 fragments on today\'s LB5 page equals its value on page 921cb1d5; mutation: one byte in preacher_curl\'s alt is red', async () => {
@@ -1063,7 +1119,7 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates and the 3 approved zoom rows (m
     const plates = extractPlates((await buildLb5Page()).html.toString('utf8'));
     const diff = (ps: any[]) => Object.entries(APPROVED_FRAGS).flatMap(([cid, want]) => { const p = ps.find((x: any) => x.chromeId === cid), got: any = p ? fragmentsOf(p) : {};
       return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${cid}.${k}`); });
-    expect(Object.values(APPROVED_FRAGS).flatMap(Object.keys)).toHaveLength(63);
+    expect(Object.values(APPROVED_FRAGS).flatMap(Object.keys)).toHaveLength(108);
     expect(diff(plates)).toEqual([]);
     const bent = plates.map((p: any) => (p.chromeId === 'preacher-curl' ? { ...p, alt: `${p.alt}x` } : p));
     expect(diff(bent)).toEqual(['preacher-curl.alt']);
@@ -1134,5 +1190,25 @@ describe('LIB-15R2 A5, A6: the templates and the T rows\' params', { timeout: T 
     expect(problems('straight_bar_triceps_pushdown', { ...sb, params: { 'bar.kind': 'rope' } })).toEqual(['straight_bar_triceps_pushdown: bar.kind: rope is not an allowed value']);
     expect(problems('barbell_curl', { ...rows.lib_barbell_curl, paramClaims: { 'load.primitive': 'c1' } })).toEqual(['barbell_curl: stance.width has no claim']);
     expect(problems('ez_bar_curl', { ...rows.lib_ez_bar_curl, params: {} })[0]).toMatch(/none given/);
+  });
+});
+
+describe('LIB-15R2 panel mx9 R1: the CURL elbows-back builder draws the faulty forearm at the drawn length', { timeout: T }, () => {
+  /** The longest chord of a closed outline, in plate px on the plate camera. */
+  const extent = (pts: number[][], cam: any) => { const q = pts.map((w: number[]) => cam.P(w)); let m = 0; for (const a of q) for (const b of q) m = Math.max(m, Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!)); return m; };
+  const foreOf = (spec: any, pose: any, cam: any) => { const b = { height: 1.75 }; return body.bodyShapes(body.fk(body.resolve(body.normPose(pose, b), b).q, b), cam).find((x: any) => x.key === 'fore.r').poly; };
+  /** The dashed faulty forearm guide (the third of the faulty-arm outlines: upper, elbow cap, forearm, fist) against the end forearm, px. */
+  const foreGap = (spec: any) => { const cam = camOf(spec), g = spec.mistake.guides.filter((x: any) => x.kind === 'dashed')[2].pts;
+    const endL = extent(foreOf(spec, spec.poses.end, cam).map((p: number[]) => [0, -(p[1]! - cam.P([0, 0, 0])[1]!) / cam.pxm, (p[0]! - cam.P([0, 0, 0])[0]!) / cam.pxm]), cam);
+    return Math.abs(extent(g, cam) - endL); };
+  it('barbell_curl\'s faulty forearm is within 1 px of the end forearm, and the dashed bar sits on the faulty hand; mutation: the forearm guide stretched 1.4x is red', () => {
+    const s = S.barbell_curl;
+    expect(foreGap(s)).toBeLessThanOrEqual(1);
+    const L = qaEng.poseLandmarks(Eng(), s).lm.mistake, bar = s.mistake.guides.filter((x: any) => x.kind === 'dashed').at(-1).pts;
+    const c = [0, 1, 2].map(i => bar.slice(0, -1).reduce((a: number, p: number[]) => a + p[i]!, 0) / (bar.length - 1));
+    expect(Math.hypot(c[1]! - L['grip.r'][1], c[2]! - L['grip.r'][2])).toBeLessThan(0.001);
+    const g = s.mistake.guides, k = g.findIndex((x: any) => x.kind === 'dashed') + 2, a = g[k].pts[0];
+    const stretched = { ...s, mistake: { ...s.mistake, guides: g.map((x: any, i: number) => (i === k ? { ...x, pts: x.pts.map((p: number[]) => p.map((v, j) => a[j] + (v - a[j]) * 1.4)) } : x)) } };
+    expect(foreGap(stretched)).toBeGreaterThan(1);
   });
 });

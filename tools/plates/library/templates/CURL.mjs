@@ -133,6 +133,7 @@ export function make(params, facts) {
       .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
   }
   const MIS_ARM = misArm();
+  const MIS_GRIP = landmarksOf({ ...end, ...mistakePose }, H)['grip.r'];   // the faulty hand's grip (the drawn forearm length)
   // (swing) the upper back rocks at least 5 cm behind the end pose's (the check proves the body moved, c5)
   const SWING_BACK = swing ? landmarksOf(end, H).backUpper[2] - 0.05 : null;
 
@@ -174,6 +175,7 @@ export function make(params, facts) {
         ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the faulty arm, swung off the side
         { kind: 'dashed', pts: [[0, 1.42, MIS_SIDE], [0, 0.98, MIS_SIDE]] },   // the side line through the shoulder joint
         ...(swing ? [{ kind: 'arc-arrow', center: 'hips', r: 108, a0: -96, a1: -124 }] : []),   // (swing) the trunk rocking back
+        ...(back ? [{ kind: 'dashed', pts: (bar ? startPlate : startHexOf)(MIS_GRIP) }] : []),   // (back) the load where the faulty hand holds it (panel mx9 R1)
         back ? { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [-3, 0] }, to: { at: 'elbow.r', pose: 'mistake', off: [6, 2] } }
           : { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [3, 0] }, to: { at: 'elbow.r', pose: 'mistake', off: [-6, 2] } },
       ],

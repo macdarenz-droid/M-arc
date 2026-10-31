@@ -75,6 +75,9 @@ const gripAt = (side, flex) => [E[side][0], E[side][1] - L2 * Math.cos(flex * R)
 const reachAt = flex => ({ l: { at: gripAt('l', flex), pole: [0, 0, -1] }, r: { at: gripAt('r', flex), pole: [0, 0, -1] } });
 const start = { ...base, reach: reachAt(0.5) };
 const end = { ...base, reach: reachAt(ELBOW_END) };
+// key poses every 1/48 of the curl, so the grip (and the Trace and ghosts) follows the arc about the elbow (panel mx9 R6)
+const SEG = 48;
+const via = Array.from({ length: SEG - 1 }, (_, i) => ({ ...base, reach: reachAt(0.5 + (ELBOW_END - 0.5) * (i + 1) / SEG) }));
 // Mistake: the upper arm forward MIS_FLEX off the vertical, elbow MIS_ELBOW (forward-up arc)
 const misGrip = side => { const s = lm0[`shoulder.${side}`], e = [s[0], s[1] - L1 * Math.cos(MIS_FLEX * R), s[2] + L1 * Math.sin(MIS_FLEX * R)], t = (MIS_FLEX + MIS_ELBOW) * R;
   return [e[0], e[1] - L2 * Math.cos(t), e[2] + L2 * Math.sin(t)]; };   // the forearm MIS_FLEX + MIS_ELBOW from straight down
@@ -107,10 +110,13 @@ const onPadBack = u => [0, HINGE[1] + UP[1] * u - NB[1] * PAD, HINGE[2] + UP[2] 
 export default {
   id: 'incline_dumbbell_curl', name: 'Incline Dumbbell Curl', view: 'side', facing: 'right',
   camera: { fit: true },
-  poses: { start, end },
+  poses: { start, end, via },
   equipment: [
     { type: 'floor', from: -1.0, to: 0.8 },
     ...inclineBench({ hinge: HINGE, back: BACK, seatTilt: SEAT_TILT, backLen: BACK_LEN, beamZ: BEAM_Z }),
+    // the back pad's face where the figure covers it, dashed (the house rule for hidden parts): it runs from the seat's rear
+    // edge up the back, so the pad reads as hinged at the seat (panel mx9 R2, R3)
+    { type: 'line', cls: 'eq-cable m-line', pts: [HINGE, [0, HINGE[1] + F.back.up[1] * 0.5, HINGE[2] + F.back.up[2] * 0.5]], z: 'front', part: 'padface' },
     lm => ({ type: 'dumbbell', at: lm['grip.r'], part: 'arm.r' }),
     (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-cable m-line', pts: startHex(ctx.start['grip.r']), z: 'front', part: 'startdb' } : null),
   ],
@@ -127,7 +133,7 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 3, parts: ['arm.r'] },
   trace: { point: 'grip.r', trim: [12, 14] },
-  measure: { vertex: 'elbow.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 28, title: 'Elbow', value: 'full range' },   // radius 28 (incline_dumbbell_press's): its label leader clears the Trace by 6 px
+  measure: { vertex: 'elbow.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 20, title: 'Elbow', value: 'full range' },   // radius 20 (dumbbell_biceps_curl's): with the Trace on its arc, its label leader clears it by 8.5 px
   callouts: [
     { key: 'bench', text: 'Bench<br>45-65°', anchor: onPadBack(0.5), cue: 'Set the bench high but not upright, about 45 to 65 degrees.' },
     { key: 'arms', text: 'Arms<br>hang down', anchor: 'shoulder.r', cue: 'Start with the arms straight down, square to the floor.' },

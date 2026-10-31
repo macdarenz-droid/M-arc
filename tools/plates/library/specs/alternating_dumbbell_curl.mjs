@@ -101,7 +101,7 @@ export default {
     // near dumbbell, end-on (hex face): moves with the near arm, so it ghosts and dashes with it
     lm => ({ type: 'dumbbell', at: lm['grip.l'], z: 'back' }),   // far dumbbell: hanging at the thigh, still (c1)
     lm => ({ type: 'dumbbell', at: lm['grip.r'], part: 'arm.r' }),
-    (lm, ctx) => (ctx.pose === 'end' ? [{ type: 'line', cls: 'eq-cable m-line', pts: startHex(ctx.start['grip.r']), z: 'front', part: 'startdb' }] : null),
+    (lm, ctx) => (ctx.pose === 'end' ? [...START_FORE, { type: 'line', cls: 'eq-cable m-line', pts: startHex(ctx.start['grip.r']), z: 'front', part: 'startdb' }] : null),
   ],
   checks: [
     ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: START_LM[landmark], pose: 'start', tol: 0.5 })),   // a dumbbell in each hand (c2)
@@ -119,8 +119,8 @@ export default {
   ghosts: { count: 3, parts: ['arm.r'] },
   trace: { point: 'grip.r', trim: [12, 14] },
   callouts: [
-    { key: 'other', text: 'Other arm<br>still', anchor: 'wrist.l', cue: 'Keep the resting arm hanging in the start position.' },
-    { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', cue: 'Keep the working upper arm close to the torso, not forward or back.' },
+    { key: 'other', text: 'Other arm<br>still', anchor: { at: 'wrist.l', off: [-5, -5] }, cue: 'Keep the resting arm hanging in the start position.' },
+    { key: 'elbows', text: 'Elbows<br>at sides', anchor: 'elbow.r', box: { left: 80, top: 110 }, cue: 'Keep the working upper arm close to the torso, not forward or back.' },
     { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', cue: 'Keep the hand in line with the forearm, not bent up or down.' },
   ],
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
