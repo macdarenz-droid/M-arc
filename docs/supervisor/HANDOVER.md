@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-31 ~14:40 UTC · main `de3f503c` (train 52: LB9 resume 2) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-31 ~16:00 UTC · main `6b32d576` (train 53: PILOT-A2 + LB10 + LB5) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -855,6 +855,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Cards ready and confirmed: lib-16r2, lib-17r3 and D-TEMPLDIR-LIST (lib4-cards §48). No new lane starts before the weekly pause.
   - Active LIB builders 2: LIB-16 resume 2, LIB-17 resume 3. Usage: 7-day 0.70 at 14:39.
 - **Owner 10-31 ~15:05 UTC: "Dont pause. Just continue until maxxed out".** There is no 80 % pause this week. Work goes on until the weekly limit stops it, and the reset is Thu 11-05 02:00 UTC. The hourly tick's USAGE line was updated the same way. Section 8 is kept current so that a stop at the limit loses nothing. After the reset, the 10-19 rule (pause at 80 %) applies again unless the owner says otherwise. Free LIB slots are filled again: new cards for LIB-13s (shrugs, t_bar_row) and the small LB10/LB4 rows.
+- **Update 16:00 UTC (10-31):**
+  - **Train 53 merged** (#357) → main `6b32d576`, adding 14 drawings: PILOT-A2 #340 (box_jump and the rear-delt fly, pinned), LB10 #346 (farmer_s_carry) and LB5 #349 (11 rows, with the first templates CURL and PUSHDOWN). That makes 106 of 153 drawings on main. No src/ change, so no APK. The LIB-22 and LIB-15 sessions are archived. The LIB-8R session is kept for PILOT-A3.
+  - **LIB-SPINE (#348):** REPIN GO was sent. Next: a DIFF-CHECK, then train 54. After that, PILOT-A3 (reverse_lunge with `bow`, dumbbell_fly F-FLY-START) and an LB9 resume for cable_crunch.
+  - **LB6 (#354):** CARD FIELDS done (DIFF-CHECK 6545054717). The mx12 fixes and wave 2 are building, and a test-only CI fix is at 2b128090. **LB7 (#356):** PLATES READY @ 29a48852; it goes to the next panel with LB6's recheck.
+  - Card drafts are running for LIB-13s and for the small rows (jumping_jacks, wall_ball, jump_squat).
+  - Follow-ups: F-LIB8R-LOWS, F-LIB22-LOWS, F-LIB15R2-LOWS (one is a CI test for the template parent proof; it rides the next template card with D-TEMPLDIR-LIST), and F-SPINE-BOW0.
+  - Owner, 10-31 ~15:30: the Play "Apply for access to production" form was drafted in chat. The closed test runs 37.1.0.55, which predates the OLD-ANDROID-1 fix, so production needs a newer bundle. The owner was told this.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
