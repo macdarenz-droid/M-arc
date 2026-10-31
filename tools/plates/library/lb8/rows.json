@@ -1,5 +1,5 @@
 {
- "note": "LB8 H build-ahead rows (LIB-18, D-LIB18-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (DESIGN.md section 1). lying_leg_curl and standing_leg_curl join only after 'LIB-18 resume' (D-LIB18-LEGCURL). censusRef: the census commit (claude/howto-options).",
+ "note": "LB8 H build-ahead rows (LIB-18, D-LIB18-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (DESIGN.md section 1). lying_leg_curl and standing_leg_curl joined at 'LIB-18 resume' (D-LIB18-LEGCURL); rows held for PQ-H3 join with a LIB-ZOOM circle (D-LIBZOOM-EXTEND). censusRef: the census commit (claude/howto-options).",
  "batch": "LB8",
  "censusRef": "4a9fd86",
  "rows": {
@@ -8,6 +8,51 @@
    "slug": "hack-squat",
    "prefix": "hack-squat",
    "chromeId": "hack-squat",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_pendulum_squat": {
+   "src": "library/specs/pendulum_squat.mjs",
+   "slug": "pendulum-squat",
+   "prefix": "pendulum-squat",
+   "chromeId": "pendulum-squat",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_leg_extension": {
+   "src": "library/specs/leg_extension.mjs",
+   "slug": "leg-extension",
+   "prefix": "leg-extension",
+   "chromeId": "leg-extension",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_lying_leg_curl": {
+   "src": "library/specs/lying_leg_curl.mjs",
+   "slug": "lying-leg-curl",
+   "prefix": "lying-leg-curl",
+   "chromeId": "lying-leg-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_standing_leg_curl": {
+   "src": "library/specs/standing_leg_curl.mjs",
+   "slug": "standing-leg-curl",
+   "prefix": "standing-leg-curl",
+   "chromeId": "standing-leg-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_cable_kickback": {
+   "src": "library/specs/cable_kickback.mjs",
+   "slug": "cable-kickback",
+   "prefix": "cable-kickback",
+   "chromeId": "cable-kickback",
    "mode": "H",
    "stage": "drawing",
    "view": "side"

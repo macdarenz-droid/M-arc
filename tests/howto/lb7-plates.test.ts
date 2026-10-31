@@ -9,7 +9,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { otherCards } from './eq-composers';
 
 // Most tests here render plates synchronously, and vitest runs back-to-back synchronous tests without returning to the
@@ -24,11 +24,15 @@ const LB7 = ['cable_lateral_raise', 'dumbbell_front_raise', 'cable_rear_delt_fly
 const IDS = LB7.map(i => `lib_${i}`);
 // The 5 LB7 ids not in this card (lib-17-card "LB7 ids").
 const NOT_HERE = ['push_up', 'incline_push_up', 'pike_push_up', 'diamond_push_up', 'bent_over_dumbbell_rear_delt_fly'];
-// D-LIB17-SECS: no tempo seconds on these two cards; drawn, never on rows.json until released.
+// D-LIB17-SECS: no tempo seconds on these two cards. Since 'LIB-17 resume' (LIB-STRIP #309 on main) their tempo is the
+// untimed strip, tempoOf(their strip/rows.json rows), on card and spec (D-STRIP-ROWS).
 const NOSECS = ['cable_rear_delt_fly', 'renegade_row'];
-// DESIGN.md section 14: every held id (the two no-seconds ids; renegade_row also under D-LIB8-shrug; resistance_band_pull_apart
-// and bench_dip under D-LIB8-shrug, D-LIB17-SIZE).
-const HELD = ['cable_rear_delt_fly', 'renegade_row', 'resistance_band_pull_apart', 'bench_dip'];
+// DESIGN.md sections 14 and 17: every held id. Both under D-LIB8-shrug with no LIB-ZOOM circle yet: cable_rear_delt_fly has
+// no place for one (D-LIB17-RDFHOLD, #332 6410506295); renegade_row's still sign has no tell move (D-LIB17-ZOOMPAIR,
+// #332 6409786985: F-ZOOM-2's zoom.pair, built in LIB-17 resume 2 under D-LIB17-SPLIT, 6486667474).
+const HELD = ['cable_rear_delt_fly', 'renegade_row'];
+// 'LIB-17 resume' (D-LIBZOOM-EXTEND): the rows held under D-LIB8-shrug that joined rows.json with a LIB-ZOOM circle.
+const ZOOMED: Record<string, { view: string, k: number }> = { resistance_band_pull_apart: { view: 'mistake', k: 2 }, bench_dip: { view: 'normal', k: 3 } };
 const FRONT = ['cable_lateral_raise', 'cable_rear_delt_fly', 'cable_external_rotation', 'resistance_band_pull_apart'];
 const ROWS = 'tools/plates/library/lb7/rows.json';
 const RESEARCH_HEAD = 'e5ed66ca1c7c7c2f6418001d262d053431b4c67f';
@@ -36,12 +40,12 @@ const COMPOSERS = ['dipBars'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 
-let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, dipEq: any, markup: any;
+let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, dipEq: any, markup: any, strip: any;
 const M: Record<string, any> = {}, S: Record<string, any> = {};
 beforeAll(async () => {
-  [reg, eng, body, qaNode, qaEng, qaIdx, plate, closure, dipEq, markup] = await Promise.all([
+  [reg, eng, body, qaNode, qaEng, qaIdx, plate, closure, dipEq, markup, strip] = await Promise.all([
     'registry.mjs', 'engine.mjs', '../vendor/engine/body.mjs', 'qa/node.mjs', 'qa/engine.mjs', 'qa/index.mjs', '../vendor/engine/plate.mjs',
-    'inputs-closure.mjs', 'eq/dipBars.mjs', 'qa/markup.mjs',
+    'inputs-closure.mjs', 'eq/dipBars.mjs', 'qa/markup.mjs', 'strip/tempo-strip.mjs',
   ].map(f => import(/* @vite-ignore */ lib(f))));
   for (const id of LB7.filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`))) { M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); S[id] = M[id].default; }
 }, T);
@@ -91,9 +95,12 @@ const listOf = (spec: any, mistake: boolean) => (mistake ? spec.mistake.tells : 
 /** Every leader in a render as its polyline (plate px), starting at its anchor. */
 const leadersOf = (svg: string) => [...svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(([, d]) => { const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]); return p; });
 const angle3 = (a: number[], v: number[], b: number[]) => { const u = a.map((x, i) => x - v[i]!), w = b.map((x, i) => x - v[i]!); return Math.acos(Math.max(-1, Math.min(1, u.reduce((s, x, i) => s + x * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w)))) * 180 / Math.PI; };
+/** A no-seconds card's tempo-map rows in strip/rows.json (D-STRIP-ROWS), and LIB-STRIP's own tempoOf (strip/tempo-strip.mjs). */
+const stripRows = (id: string) => readJson('tools/plates/library/strip/rows.json').cards.find((c: any) => c.id === id).rows;
+const tempoOfStrip = (rows: any[]) => strip.tempoOf(rows);
 const withEq = (spec: any, k: number, f: (e: any) => any) => ({ ...spec, equipment: spec.equipment.map((e: any, i: number) => (i === k ? f(e) : e)) });
 
-describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids with tempo seconds, all mode H', () => {
+describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids, all mode H', () => {
   const rowKeys = (text: string) => [...text.matchAll(/^ {2}"(lib_[a-z0-9_]+)": \{/gm)].map(m => m[1]);
   const a5 = (text: string, want: string[]) => {
     const keys = rowKeys(text), bad: string[] = [];
@@ -103,8 +110,9 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids w
     return bad;
   };
   const want = () => drawn().map(i => `lib_${i}`);
-  it('each drawn, non-held id with seconds exactly once in the raw text, nothing else, every mode H (D-LIB17-B1)', () => {
-    expect(want()).toEqual(['lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_cable_external_rotation', 'lib_weighted_dip']);
+  it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H (D-LIB17-B1)', () => {
+    expect(want()).toEqual(['lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_cable_external_rotation', 'lib_resistance_band_pull_apart',
+      'lib_weighted_dip', 'lib_bench_dip']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('none of the 5 LB7 ids not in this card is in any lb7/ file as a row', () => {
@@ -113,17 +121,17 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids w
       for (const id of NOT_HERE) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
     }
   });
-  it('each held id is in DESIGN.md\'s held table with its ruling and in no rows file; the no-seconds ids are held', () => {
+  it('each held id is in DESIGN.md\'s held table with its ruling and in no rows file; the zoomed ids are not held', () => {
     const design = readFileSync('tools/plates/library/lb7/DESIGN.md', 'utf8');
     expect(design).toContain('## 14. Held ids');
     const table = design.split('## 14. Held ids')[1]!.split('\n## ')[0]!;
-    for (const id of NOSECS) expect(HELD, id).toContain(id);
+    for (const id of Object.keys(ZOOMED)) expect(HELD, id).not.toContain(id);
     for (const id of HELD) {
       expect(table.split('\n').some(l => l.startsWith(`| ${id} |`) && /D-LIB17-SECS|D-LIB8-shrug/.test(l)), id).toBe(true);
       for (const f of reg.batchFiles()) expect(readFileSync(f, 'utf8').includes(`lib_${id}`), `${f}: ${id}`).toBe(false);
       expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
     }
-    expect(table.split('\n').some(l => l.startsWith('| renegade_row |') && /D-LIB8-shrug/.test(l))).toBe(true);
+    for (const id of HELD) expect(table.split('\n').some(l => l.startsWith(`| ${id} |`) && /D-LIB8-shrug/.test(l)), id).toBe(true);
   });
   it('mutations: a dropped row, a duplicated row, a held id, renegade_row, push_up and bent_over_dumbbell_rear_delt_fly added, and one mode set to D are red', () => {
     const row = { src: 'library/specs/x.mjs', mode: 'H', stage: 'drawing', view: 'side' };
@@ -152,7 +160,7 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids w
   });
   it('the build\'s held list is this test\'s (D-LIB17-SECS), each with its census view', async () => {
     const build = await import(/* @vite-ignore */ lib('lb7/build.mjs'));
-    expect(build.HELD).toEqual({ cable_rear_delt_fly: 'front', renegade_row: 'side', resistance_band_pull_apart: 'front', bench_dip: 'side' });
+    expect(build.HELD).toEqual({ cable_rear_delt_fly: 'front', renegade_row: 'side' });
   });
 });
 
@@ -261,20 +269,24 @@ describe('LIB-17 A11 (Do 6 a): the 9 cards and quotes are byte copies of the LB7
       expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
   });
-  it('research/validate.mjs validateCardFile: no problem on the 7 cards with seconds, exactly the :216 problem on the two no-seconds cards (D-LIB17-SECS)', async () => {
+  it('research/validate.mjs validateCardFile: no problem on any of the 9 cards (the two no-seconds cards carry their strip tempo; D-STRIP-SHAPE), and neither is a held-pairing marker', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
-    for (const id of LB7) expect(v.validateCardFile(`${id}.json`), id).toEqual(NOSECS.includes(id) ? [`cards/${id}.json: plateFacts and tempo go in together or not at all`] : []);
+    for (const id of LB7) expect(v.validateCardFile(`${id}.json`), id).toEqual([]);
+    const held = readJson('tests/howto/fixtures/held-pairing.json').held.map((h: any) => h.id);
+    for (const id of NOSECS) expect(held, id).not.toContain(id);
   });
-  it('A11 mutations: one fact\'s claim id removed, and a tempo key added to renegade_row\'s card, are red in validateCardFile', async () => {
+  it('A11 mutations: one fact\'s claim id removed, renegade_row\'s tempo removed, and cable_rear_delt_fly\'s word changed, are red in validateCardFile', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
     const dir = mkdtempSync(join(tmpdir(), 'lb7-val-'));
     try {
       for (const d of ['cards', 'quotes']) cpSync(`docs/research/howto/${d}`, join(dir, 'docs/research/howto', d), { recursive: true });
       const w = (id: string, f: (c: any) => void) => { const p = join(dir, 'docs/research/howto/cards', `${id}.json`), c = JSON.parse(readFileSync(p, 'utf8')); f(c); writeFileSync(p, JSON.stringify(c, null, 2)); };
       w('weighted_dip', c => { delete c.plateFacts[0].claim; });
-      w('renegade_row', c => { c.tempo = [{ phase: 'Row', s: 1, move: true }]; });
+      w('renegade_row', c => { delete c.tempo; });
+      w('cable_rear_delt_fly', c => { c.tempo[0].word = 'Controlled'; });
       expect(v.validateCardFile('weighted_dip.json', dir).length).toBeGreaterThan(0);
-      expect(v.validateCardFile('renegade_row.json', dir)).not.toContain('cards/renegade_row.json: plateFacts and tempo go in together or not at all');
+      expect(v.validateCardFile('renegade_row.json', dir)).toEqual(['cards/renegade_row.json: plateFacts and tempo go in together or not at all']);
+      expect(v.validateCardFile('cable_rear_delt_fly.json', dir).length).toBeGreaterThan(0);
     } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });
@@ -653,7 +665,7 @@ describe('LIB-17 cables (D-LIB17-CABLE): pulley to handle in every pose, above t
   });
 });
 
-describe('LIB-17 renegade_row (H; tier A; the plank class; held: D-LIB17-SECS, D-LIB8-shrug): drawn facts and R10', { timeout: T }, () => {
+describe('LIB-17 renegade_row (H; tier A; the plank class; held: D-LIB8-shrug): drawn facts and R10', { timeout: T }, () => {
   const s = () => S.renegade_row;
   const R = () => M.renegade_row.RR;
   it('c1, c2, c6: both hex dumbbells flat on the floor under the shoulders at the start; the far one in every pose', () => {
@@ -726,12 +738,12 @@ describe('LIB-17 renegade_row (H; tier A; the plank class; held: D-LIB17-SECS, D
     expect(d).toMatch(/One-tell record[^\n]*\n?[^\n]*renegade_row: fault c9/);
     expect(d).toMatch(/no second visible sign stated/);
   });
-  it('the spec carries no tempo (D-LIB17-SECS)', () => {
-    expect('tempo' in s()).toBe(false);
+  it('the spec\'s tempo is its card\'s untimed strip, tempoOf(its strip/rows.json rows) (D-LIB17-SECS, D-STRIP-ROWS)', () => {
+    expect(s().tempo).toEqual([{ phase: 'Row', move: true }, { phase: 'Lower', move: true, word: 'Controlled' }]);
   });
 });
 
-describe('LIB-17 cable_rear_delt_fly (H; front view; held: D-LIB17-SECS and D-LIB8-shrug): drawn facts', { timeout: T }, () => {
+describe('LIB-17 cable_rear_delt_fly (H; front view; held: D-LIB8-shrug): drawn facts', { timeout: T }, () => {
   const s = () => S.cable_rear_delt_fly;
   const C = () => M.cable_rear_delt_fly.CRDF;
   /** The two drawn cables (the cableColumns' handle runs, plate px) in one pose, by column side. */
@@ -795,14 +807,14 @@ describe('LIB-17 cable_rear_delt_fly (H; front view; held: D-LIB17-SECS and D-LI
     const dev = qaNode.deviation({ spec: s() }, Eng(), Rr);
     console.log(`LIB-17 cable_rear_delt_fly held: engine deviation ${dev.toFixed(1)} px (min ${env.deviationMin})`);
     expect(dev).toBeLessThan(env.deviationMin);
-    expect(readFileSync('tools/plates/library/lb7/DESIGN.md', 'utf8')).toMatch(/\| cable_rear_delt_fly \| D-LIB17-SECS \(D-LIB14-NOSECS\); and D-LIB8-shrug/);
+    expect(readFileSync('tools/plates/library/lb7/DESIGN.md', 'utf8')).toMatch(/\| cable_rear_delt_fly \| D-LIB8-shrug \(D-LIB17-SIZE, S2\); no zoom place/);
   });
-  it('the spec carries no tempo (D-LIB17-SECS)', () => {
-    expect(s().tempo).toBeUndefined();
+  it('the spec\'s tempo is its card\'s untimed strip, tempoOf(its strip/rows.json rows) (D-LIB17-SECS, D-STRIP-ROWS)', () => {
+    expect(s().tempo).toEqual([{ phase: 'Open', move: true, word: 'Slow' }, { phase: 'Return', move: true, word: 'Slow' }]);
   });
 });
 
-describe('LIB-17 bench_dip (H; tier B; the support class, the bench; held: D-LIB8-shrug, S2): drawn facts', { timeout: T }, () => {
+describe('LIB-17 bench_dip (H; tier B; the support class, the bench; the normal-view zoom): drawn facts', { timeout: T }, () => {
   const s = () => S.bench_dip;
   const B = { height: 1.75 };
   /** Every drawn pose of a spec, by name (start, both via poses, end, the Mistake), as full poses. */
@@ -913,10 +925,41 @@ describe('LIB-17 bench_dip (H; tier B; the support class, the bench; held: D-LIB
     const torso = shapesP(s(), p).find((x: any) => x.key === 'torso');
     expect(Math.max(...torso.poly.map((q: number[]) => q[1]!))).toBeGreaterThan(fy + 0.5);
   });
-  it('held (D-LIB8-shrug, D-LIB17-SIZE, S2): the Trace at the ruled shoulder point is under traceLenMin; the Mistake deviation passes', () => {
+  // PANEL mx1 R4 fix (#332 6414222882): the "Below parallel" leader ends on the dashed fault upper arm, near its shoulder end
+  const parallelEnd = (spec: any) => {
+    const svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, i = listOf(spec, true).findIndex((x: any) => x.key === 'parallel');
+    const end = leadersOf(svg)[i]![0]!, L = lmOf(spec, 'mistake'), cam = camOf(spec), [el, sh] = [cam.P(L['elbow.r']), cam.P(L['shoulder.r'])];
+    const t = ((end[0]! - el[0]!) * (sh[0]! - el[0]!) + (end[1]! - el[1]!) * (sh[1]! - el[1]!)) / ((sh[0]! - el[0]!) ** 2 + (sh[1]! - el[1]!) ** 2);
+    return { d: segD(end, el, sh), t };
+  };
+  it('panel R4 fix: the "Below parallel" leader ends on the Mistake upper arm (within 1 px), in its shoulder half', () => {
+    const { d, t } = parallelEnd(s());
+    expect(d).toBeLessThanOrEqual(1);
+    expect(t).toBeGreaterThanOrEqual(0.5);
+  });
+  // D-LIB17-BDIPBOX (#332): only the "Below parallel" box moves, so its leader falls inside F3's range (envelope F3)
+  const parallelLen = (spec: any) => {
+    const svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, i = listOf(spec, true).findIndex((x: any) => x.key === 'parallel');
+    return segs(leadersOf(svg)[i]!).reduce((a, [p, q]) => a + Math.hypot(q![0]! - p![0]!, q![1]! - p![1]!), 0);
+  };
+  it('D-LIB17-BDIPBOX: the "Below parallel" box sits at (176, 160) and its leader is inside F3\'s range', () => {
+    const [lo, hi] = pins().envelope.F3;
+    expect(s().mistake.tells.find((x: any) => x.key === 'parallel').box).toEqual({ left: 176, top: 160 });
+    expect(parallelLen(s())).toBeGreaterThanOrEqual(lo);
+    expect(parallelLen(s())).toBeLessThanOrEqual(hi);
+  });
+  it('D-LIB17-BDIPBOX mutation: the box back at the panel\'s (200, 128) puts the leader over F3\'s range (red)', () => {
+    const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'parallel' ? { ...x, box: { left: 200, top: 128 } } : x)) } };
+    expect(parallelLen(bad)).toBeGreaterThan(pins().envelope.F3[1]);
+  });
+  it('panel R4 mutation: the old leader end (the end shoulder + 26 px, in front of the chest) is red', () => {
+    const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'parallel' ? { ...x, anchor: { at: 'shoulder.r', pose: 'end', off: [26, 0] } } : x)) } };
+    expect(parallelEnd(bad).d).toBeGreaterThan(1);
+  });
+  it('at plate scale (D-LIB8-shrug, D-LIB17-SIZE, S2; zoomed at the resume): the Trace at the ruled shoulder point is under traceLenMin; the Mistake deviation passes', () => {
     const env = pins().envelope, R = { normal: plate.renderPlate(s(), { id: 'x' }), mistake: plate.renderPlate(s(), { id: 'x', mistake: true }) };
     const dev = qaNode.deviation({ spec: s() }, Eng(), R), tr = markup.pathsOf(R.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0);
-    console.log(`LIB-17 bench_dip held: Trace ${tr.toFixed(1)} px (min ${env.traceLenMin}), deviation ${dev.toFixed(1)} px (min ${env.deviationMin})`);
+    console.log(`LIB-17 bench_dip plate scale: Trace ${tr.toFixed(1)} px (min ${env.traceLenMin}), deviation ${dev.toFixed(1)} px (min ${env.deviationMin})`);
     expect(s().trace).toEqual({ point: 'shoulder.r', trim: [10, 12] });
     expect(tr).toBeLessThan(env.traceLenMin);
     expect(dev).toBeGreaterThanOrEqual(env.deviationMin);
@@ -1052,24 +1095,33 @@ describe('LIB-17 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     expect(minGap(bad).min).toBeLessThan(6);
   });
   /** No leader runs across the solid figure: away from its first 8 px at the anchor, a leader stays outside the solid
-   *  end figure, on the normal and the Mistake plate. */
-  const crossProblems = (spec: any) => {
+   *  end figure, on the normal and the Mistake plate. ENTERS_ONCE: a leader ruled to end on a part drawn over the solid
+   *  figure may enter it once and stay in to its anchor (one inside run, touching the anchor's 8 px); nothing else. */
+  const ENTERS_ONCE: Record<string, string> = { 'bench_dip mistake parallel': 'PANEL mx1 R4, #332 6414222882: "It may enter the solid figure once"' };
+  const crossProblems = (spec: any, once: Record<string, string> = ENTERS_ONCE) => {
     const polys = shapesIn(spec, 'end').map((x: any) => x.poly), out: string[] = [];
     for (const mistake of [false, true]) {
       const list = listOf(spec, mistake);
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
-        let inside = 0;
+        const marks: boolean[] = [];   // from the anchor outwards, samples past its first 8 px: inside the figure?
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
-          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) inside++;
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) marks.push(outside(polys, q) < 0);
         }
-        if (inside) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the figure`);
+        const name = `${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}`, runs = marks.filter((m, j) => m && !marks[j - 1]).length;
+        const ok = marks.every(m => !m) || (name in once && runs === 1 && marks[0] === true);
+        if (!ok) out.push(`${name}: crosses the figure`);
       });
     }
     return out;
   };
   it('no leader crosses the solid figure\'s outline', () => {
     expect(specsDrawn().flatMap(id => crossProblems(S[id]))).toEqual([]);
+  });
+  it('ENTERS_ONCE mutations: bench_dip\'s ruled leader red without its entry; its label moved below the figure (the leader enters, leaves and enters) red', () => {
+    expect(crossProblems(S.bench_dip, {})).toEqual(['bench_dip mistake parallel: crosses the figure']);
+    const s = S.bench_dip, bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => (x.key === 'parallel' ? { ...x, box: { left: 40, top: 300 } } : x)) } };
+    expect(crossProblems(bad)).toContain('bench_dip mistake parallel: crosses the figure');
   });
   it('mutation: weighted_dip\'s "Depth to parallel" box placed behind the figure, so its leader crosses the body, is red', () => {
     const s = S.weighted_dip, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'depth' ? { ...x, box: { left: 30, top: 200 } } : x)) };
@@ -1326,24 +1378,28 @@ describe('LIB-17 A7: the tempo strip follows the card (D-LIB17-SECS, -TEMPO)', {
     }
     for (const id of NOSECS) {
       if (tj.ids[id]) bad.push(`${id}: a tempo.json row`);
-      if (specs[id] && 'tempo' in specs[id]) bad.push(`${id}: the spec carries a tempo`);
+      const want = tempoOfStrip(stripRows(id));
+      if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(want)) bad.push(`${id}: spec tempo != tempoOf(strip rows)`);
+      if (specs[id]?.tempo?.some((e: any) => 's' in e)) bad.push(`${id}: the spec tempo has seconds`);
       const t = cardOf(id).plate.tempo;
       if (t.up != null || t.down != null) bad.push(`${id}: the card has seconds`);
     }
     return bad;
   };
   const copy = (x: any) => JSON.parse(JSON.stringify(x));
-  it('tempo.json follows the ruled table, every drawn spec\'s tempo is built from it and the card\'s plate.tempo, and the two no-seconds specs carry none', () => {
+  it('tempo.json follows the ruled table, every drawn spec\'s tempo is built from it and the card\'s plate.tempo, and the two no-seconds specs carry their untimed strip', () => {
     expect(tempoProblems(readJson('tools/plates/library/lb7/tempo.json'), { ...S })).toEqual([]);
     expect(S.cable_external_rotation.tempo).toEqual([{ phase: 'Turn out', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }]);
   });
-  it('mutations: cable_external_rotation\'s Hold removed, a Hold added to weighted_dip, Motra\'s 1 s bottom pause added to cable_lateral_raise, a Rest, and a tempo on renegade_row\'s spec are each red', () => {
+  it('mutations: cable_external_rotation\'s Hold removed, a Hold added to weighted_dip, Motra\'s 1 s bottom pause added to cable_lateral_raise, a Rest, seconds on renegade_row\'s spec, no tempo on cable_rear_delt_fly\'s, and renegade_row\'s phases swapped are each red', () => {
     const red = (f: (tj: any, specs: any) => void) => { const tj = copy(readJson('tools/plates/library/lb7/tempo.json')), specs: any = { ...S }; f(tj, specs); return tempoProblems(tj, specs).length > 0; };
     expect(red(tj => { tj.ids.cable_external_rotation.rows.splice(1, 1); }), 'no Hold on cable_external_rotation').toBe(true);
     expect(red(tj => { tj.ids.weighted_dip.rows.splice(1, 0, { phase: 'Hold', from: 'pause' }); }), 'Hold on weighted_dip').toBe(true);
     expect(red((tj, specs) => { specs.cable_lateral_raise = { ...specs.cable_lateral_raise, tempo: [...specs.cable_lateral_raise.tempo, { phase: 'Pause', s: 1 }] }; }), 'bottom pause').toBe(true);
     expect(red(tj => { tj.ids.weighted_dip.rows.push({ phase: 'Rest', from: 'pause' }); }), 'Rest').toBe(true);
-    expect(red((tj, specs) => { specs.renegade_row = { ...specs.renegade_row, tempo: [{ phase: 'Row', s: 1, move: true }] }; }), 'tempo on renegade_row').toBe(true);
+    expect(red((tj, specs) => { specs.renegade_row = { ...specs.renegade_row, tempo: [{ phase: 'Row', s: 1, move: true }] }; }), 'seconds on renegade_row').toBe(true);
+    expect(red((tj, specs) => { specs.cable_rear_delt_fly = { ...specs.cable_rear_delt_fly, tempo: undefined }; }), 'no tempo on cable_rear_delt_fly').toBe(true);
+    expect(red((tj, specs) => { specs.renegade_row = { ...specs.renegade_row, tempo: [specs.renegade_row.tempo[1], specs.renegade_row.tempo[0]] }; }), 'renegade_row phases swapped').toBe(true);
     expect(red((tj, specs) => { specs.weighted_dip = { ...specs.weighted_dip, tempo: [{ ...specs.weighted_dip.tempo[0], s: 3 }, specs.weighted_dip.tempo[1]] }; }), 'one value off by 1 s').toBe(true);
   });
   it('A6 mutation: the card path removed gives H6:no-card', () => {
@@ -1392,17 +1448,17 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
   // The ruled pose map (DESIGN.md section 9): identity for all 9.
   const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB7.map(id => [id, { start: 'start', end: 'end' }]));
-  it('each card differs from its research-head copy only in the three keys, written last (the two no-seconds cards: plateFacts and topFault)', () => {
+  it('each card differs from its research-head copy only in the three keys, written last', () => {
     for (const id of LB7) {
       expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
-      expect(Object.keys(cardOf(id)).slice(NOSECS.includes(id) ? -2 : -3), id).toEqual(NOSECS.includes(id) ? ['plateFacts', 'topFault'] : KEYS);
+      expect(Object.keys(cardOf(id)).slice(-3), id).toEqual(KEYS);
     }
   });
-  it('each card\'s tempo is the strip built from lb7/tempo.json and its plate.tempo, and equals its drawn spec\'s; none on the no-seconds cards', () => {
+  it('each card\'s tempo is the strip built from lb7/tempo.json and its plate.tempo (the no-seconds cards: tempoOf their strip rows), and equals its drawn spec\'s', () => {
     const tj = readJson('tools/plates/library/lb7/tempo.json');
     for (const id of LB7) {
       const c = cardOf(id);
-      if (NOSECS.includes(id)) { expect('tempo' in c, id).toBe(false); continue; }
+      if (NOSECS.includes(id)) { expect(c.tempo, id).toEqual(tempoOfStrip(stripRows(id))); expect(S[id].tempo, id).toEqual(c.tempo); continue; }
       const want = tj.ids[id].rows.filter((r: any) => c.plate.tempo[r.from] > 0).map((r: any) => ({ phase: r.phase, s: c.plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
       expect(c.tempo, id).toEqual(want);
       if (S[id]) expect(S[id].tempo, id).toEqual(c.tempo);
@@ -1477,8 +1533,9 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
     return qaNode.h6({ spec, research }, { engine: Eng(), pins: pins() }, R).map((p: any) => p.key);
   };
-  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault }; };
-  it('A6: PQ-H6 is green on every drawn spec with seconds against its card; the two no-seconds specs pass every fact (their tempo waits)', () => {
+  // as candidate.mjs:77 builds it: an untimed card also gives its plate.tempo.text (D-STRIP-H6)
+  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault, ...(NOSECS.includes(id) ? { tempoText: c.plate.tempo.text } : {}) }; };
+  it('A6: PQ-H6 is green on every drawn spec against its card, the two untimed strips included', () => {
     for (const id of specsDrawn()) {
       const keys = h6(S[id], research(id));
       expect(keys, id).toEqual([]);
@@ -1511,7 +1568,7 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
   });
 });
 
-describe('LIB-17 resistance_band_pull_apart (H; the band from poly, D-LIB17-BAND; held: D-LIB8-shrug, D-LIB17-SIZE): drawn facts', { timeout: T }, () => {
+describe('LIB-17 resistance_band_pull_apart (H; the band from poly, D-LIB17-BAND; the Mistake zoom): drawn facts', { timeout: T }, () => {
   const s = () => S.resistance_band_pull_apart;
   const elev = (a: any, pose: string, sd: string) => +/elev (-?[\d.]+)/.exec(a[pose][`sh.${sd}`])![1]!;
   it('c5, c4: both upper arms at shoulder elevation 90 (+-2) at start and end; c1, c7: the fists at shoulder height (+-1 cm); c1: hands wider than the shoulders at the start', () => {
@@ -1575,10 +1632,10 @@ describe('LIB-17 resistance_band_pull_apart (H; the band from poly, D-LIB17-BAND
     const g = s().mistake.guides[0];
     expect([g.kind, g.from.pose, g.to.pose]).toEqual(['arrow', 'end', 'mistake']);
   });
-  it('held (D-LIB8-shrug, D-LIB17-SIZE, S2): the card-true shrug at M_SHRUG moves the figure under deviationMin; the Trace passes traceLenMin', () => {
+  it('at plate scale (D-LIB8-shrug, D-LIB17-SIZE, S2; zoomed at the resume): the card-true shrug at M_SHRUG moves the figure under deviationMin; the Trace passes traceLenMin', () => {
     const env = pins().envelope, Rr = { normal: plate.renderPlate(s(), { id: 'x' }), mistake: plate.renderPlate(s(), { id: 'x', mistake: true }) };
     const dev = qaNode.deviation({ spec: s() }, Eng(), Rr), tr = markup.pathsOf(Rr.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0);
-    console.log(`LIB-17 resistance_band_pull_apart held: engine deviation ${dev.toFixed(1)} px (min ${env.deviationMin}), Trace ${tr.toFixed(1)} px (min ${env.traceLenMin})`);
+    console.log(`LIB-17 resistance_band_pull_apart plate scale: engine deviation ${dev.toFixed(1)} px (min ${env.deviationMin}), Trace ${tr.toFixed(1)} px (min ${env.traceLenMin})`);
     expect(M.resistance_band_pull_apart.SIZES.M_SHRUG).toBe(5);
     expect(dev).toBeLessThan(env.deviationMin);
     expect(tr).toBeGreaterThanOrEqual(env.traceLenMin);
@@ -1758,5 +1815,67 @@ describe('LIB-17 face_pull (H; the rope on main\'s eq/rope.mjs, the eye-height p
   it('phantom (Q2 (c)): the start rope (dropped from the start layer) is redrawn dashed in the end layer only', () => {
     expect(itemsIn(s(), 'end').items.filter((i: any) => i.part === 'startRope' && i.cls === 'eq-line m-line').length).toBe(1);
     expect(itemsIn(s(), 'mistake').items.some((i: any) => i.part === 'startRope')).toBe(false);
+  });
+});
+
+describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md section 17)', { timeout: T }, () => {
+  let golden: any, cand: any, bp: any, build: any, zoom: any, E: any, mirror = '', all: any, html = '';
+  const C: Record<string, any> = {};
+  beforeAll(async () => {
+    [cand, bp, build, zoom] = await Promise.all(['candidate.mjs', 'build-page.mjs', 'lb7/build.mjs', 'zoom/inline.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    golden = await import(/* @vite-ignore */ new URL('../../tools/plates/golden.mjs', import.meta.url).href);
+    mirror = golden.makeMirror();
+    E = await qaEng.loadEngine(mirror);
+    all = build.lb7All();
+    html = (await build.buildLb7Page({ all })).html.toString('utf8');
+    for (const id of Object.keys(ZOOMED)) C[id] = await cand.candidateOf(`lib_${id}`, { all, platesHtml: html, engine: E, authoring: true });
+  }, T);
+  afterAll(() => { if (mirror) qaEng.dropMirror(mirror); });
+  const keys = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
+  const qa = (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
+  // a spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn (lib-zoom.test.ts)
+  const mutated = async (id: string, fn: string) => {
+    const dir = mkdtempSync(join(tmpdir(), 'lb7-zoom-mut-')), file = join(dir, `${id}.mjs`);
+    writeFileSync(file, `import s from ${JSON.stringify(new URL(`../../tools/plates/library/specs/${id}.mjs`, import.meta.url).href)};\nexport default (${fn})(s);\n`);
+    try {
+      const { html: h } = await bp.buildPlatesPage({ groups: [{ id: 'z', title: 'Z', ids: [id] }], sources: { [id]: ['mutation'] }, specs: { [id]: file } });
+      const spec = (await import(/* @vite-ignore */ new URL(`file://${file}`).href)).default;
+      return { ...(await cand.candidateOf(`lib_${id}`, { all, platesHtml: h.toString('utf8'), engine: E, authoring: true })), spec };
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  };
+  it('each zoomed spec asks for its ruled zoom, and its plate fails PQ-H3 on that view at plate scale (why the zoom exists)', async () => {
+    for (const [id, z] of Object.entries(ZOOMED)) {
+      expect(S[id].zoom, id).toEqual(z);
+      const r = await qa(C[id]), env = pins().envelope;
+      if (z.view === 'mistake') expect(r.metrics.deviation, id).toBeLessThan(env.deviationMin);
+      else expect(r.metrics.traceLen, id).toBeLessThan(env.traceLenMin);
+    }
+  });
+  it('the node half has no problem on either zoomed plate; the bar is met inside the circle at k, never lowered', async () => {
+    const env = pins().envelope;
+    for (const [id, z] of Object.entries(ZOOMED)) {
+      const r = await qa(C[id]), m = r.metrics.zoom[z.view];
+      expect(keys(r), id).toEqual([]);
+      expect([m.k, m.ring.r], id).toEqual([z.k, 52]);
+      if (z.view === 'mistake') { expect(m.deviation, id).toBeCloseTo(r.metrics.deviation * z.k, 6); expect(m.deviation, id).toBeGreaterThanOrEqual(env.deviationMin); }
+      else expect(m.trace, id).toBeGreaterThanOrEqual(env.traceLenMin);
+      console.log(`LIB-17 resume zoom ${id}: ${z.view} k ${z.k}: ${z.view === 'mistake' ? `deviation ${r.metrics.deviation.toFixed(1)} -> ${m.deviation.toFixed(1)}` : `Trace ${r.metrics.traceLen.toFixed(1)} -> ${m.trace.toFixed(1)}`} px`);
+      expect(C[id].plate.zoom[z.view === 'mistake' ? 'normal' : 'mistake'], id).toBeNull();
+    }
+  });
+  it('mutations: each zoom removed is red on the plate-scale bar; resistance_band_pull_apart at k 1.5 and bench_dip\'s trace on the still heel are red at the zoom', async () => {
+    expect(keys(await qa(await mutated('resistance_band_pull_apart', 's => ({ ...s, zoom: undefined })')))).toEqual(['H3.deviation']);
+    expect(keys(await qa(await mutated('bench_dip', 's => ({ ...s, zoom: undefined })')))).toEqual(['H3.trace']);
+    expect(keys(await qa(await mutated('resistance_band_pull_apart', "s => ({ ...s, zoom: { view: 'mistake', k: 1.5 } })")))).toContain('H3.zoom:deviation');
+    // bench_dip clears the bar at every k in 1.5-4 (74.1 px at k 3), so its zoom mutation moves the trace point onto the
+    // still heel instead: the circle then shows no motion
+    expect(keys(await qa(await mutated('bench_dip', "s => ({ ...s, trace: { ...s.trace, point: 'heel.r' } })")))).toContain('H3.zoom:trace');
+  });
+  it('held: cable_rear_delt_fly\'s Mistake has no place for a circle at any k (the cable columns fill the plate); renegade_row\'s still sign has no tell move', () => {
+    for (const k of [1.5, 2, 2.6, 3, 3.5, 4]) expect(() => zoom.zoomOf({ ...S.cable_rear_delt_fly, zoom: { view: 'mistake', k } }, { E }), `k ${k}`).toThrow(/no place on the mistake plate/);
+    const rr = S.renegade_row, cam = qaEng.cameraOf(rr, E.renderPlate(rr, { id: 'x' }).report), f = zoom.faultOf(rr, cam, qaEng.poseLandmarks(E, rr));
+    expect(f.d).toBe(0);
+    expect(S.cable_rear_delt_fly.zoom).toBeUndefined();
+    expect(S.renegade_row.zoom).toBeUndefined();
   });
 });
