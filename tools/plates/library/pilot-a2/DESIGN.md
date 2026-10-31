@@ -156,3 +156,17 @@ with zero exemptions, and the flags equal the expected set.
   4.97 px, so its k will be 2.5, not 2, once the tool is fixed.
 - **rear-delt R4:** the Soft elbows leader ends a third of the way down the forearm (`along elbow.r → wrist.r, t 0.33`),
   at (198.2, 198.1). The elbow itself projects onto the shoulder. No pose changes.
+
+## 9. Panel mx5: rear-delt approved; reverse_lunge round 2 (#340 6538120823)
+
+- **R5:** the Mistake keeps the true 12° lumbar arch (M_ARCH). The untucked pelvis now tips forward M_TILT 12 (c18 names
+  the pelvis), so the thorax keeps the end pose's angle. The ghost's low back curves concave between the pelvis and the
+  ribs, and the rib front moves forward of the end pose's (chest +3.6 cm, backMid +3.6 cm). The hip joints and legs do
+  not move (≤ 1e-6 m). Before this, the thorax leaned back 12° and the rib front ran inside the solid chest.
+- **R11:** the `flare` anchor is `along sternum → lumbar, t 0.7` in the Mistake pose. zoomOf's ring is centred at
+  (183.3, 228.8) with r 20.8 at k 2.5, and holds the elbow dot (184.2, 245.0), the low back (backMid) and the lower-rib
+  front (between chest and navel). 2.5 is the smallest k that passes: k 2 gives 10.5 px, k 2.5 gives 13.2 px.
+  H4.zoom:ink is green. The tell box did not need to move.
+- The page is `14c8e3585d8ab1c94445aa00cf7a8dedf21011d5b3cbd29190d7214c18e5d3bf`. Only reverse_lunge's Mistake fragments
+  changed: box_jump, dumbbell_fly and the rear-delt fly are byte-identical to `048e153b`. reverse_lunge's normal plate is
+  unchanged (A7).

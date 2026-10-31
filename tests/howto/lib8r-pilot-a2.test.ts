@@ -169,6 +169,45 @@ describe('LIB-8R A7, D-LIB8R-BJTELL: card truth, one tell per Mistake', () => {
   });
 });
 
+describe('LIB-8R reverse_lunge panel mx5: a true rib flare at true size, and a ring on the waist and lower ribs', () => {
+  const H = 1.75;
+  // The flare (R5): the lumbar extension is exactly M_ARCH (12°, true size), the thorax keeps the end pose's angle, the
+  // rib front (chest) and the lower back (backMid) move forward of the end pose's (the low back concave, the ribs out).
+  const flareProblems = (s: any, S: any) => {
+    const bad: string[] = [], e = s.poses.end, m = { ...e, ...s.mistake.pose };
+    if (m.trunk !== -S.M_ARCH || S.M_ARCH !== 12) bad.push(`lumbar extension ${-m.trunk} is not the true 12°`);
+    if (Math.abs((m.root.tilt + m.trunk) - (e.root.tilt + e.trunk)) > 1e-9) bad.push('the thorax angle moved (a lean, not a flare)');
+    const a = eng.landmarksOf(e, H), b = eng.landmarksOf(m, H);
+    for (const k of ['chest', 'backMid']) if (!(b[k][2] - a[k][2] >= 0.02)) bad.push(`${k} is not 2 cm or more forward of the end pose (${((b[k][2] - a[k][2]) * 100).toFixed(1)} cm)`);
+    for (const k of ['hip.r', 'hip.l', 'knee.r', 'knee.l', 'ankle.r', 'ankle.l']) if (Math.hypot(...b[k].map((v: number, i: number) => v - a[k][i])) > 1e-6) bad.push(`${k} moved`);
+    return bad;
+  };
+  it('R5: lumbar arch 12°, thorax angle kept, rib front and low back forward, hips and legs unmoved', () => {
+    expect(flareProblems(spec('reverse_lunge'), mods.reverse_lunge.SIZES)).toEqual([]);
+  });
+  it('R5 mutations: the old lean-back (pelvis not tipped) and an enlarged arch (16°) are red', () => {
+    const s = spec('reverse_lunge'), m = s.mistake.pose;
+    const lean = { ...m, root: { ...m.root, tilt: s.poses.end.root.tilt }, shoulder: { flex: s.poses.end.root.tilt - 12 } };
+    expect(flareProblems({ ...s, mistake: { ...s.mistake, pose: lean } }, mods.reverse_lunge.SIZES).length).toBeGreaterThan(0);
+    expect(flareProblems({ ...s, mistake: { ...s.mistake, pose: { ...m, trunk: -16 } } }, { ...mods.reverse_lunge.SIZES, M_ARCH: 16 }).length).toBeGreaterThan(0);
+  });
+  // The ring (R11): zoomOf's own source ring holds the end pose's elbow dot, the lower back and the rib front.
+  const ringProblems = async (s: any) => {
+    const Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')), z = Z.zoomOf(s, { prefix: 'x' }), P = (w: number[]) => [s.camera.x0 + w[2] * 146.29, s.camera.y0 - w[1] * 146.29];
+    const lm = eng.landmarksOf(s.poses.end, H), bad: string[] = [];
+    const ribFront = lm.chest.map((v: number, i: number) => v + (lm.navel[i] - v) * 0.5);   // the lower-rib front, between the chest and the navel
+    for (const [k, w] of [['elbow.r', lm['elbow.r']], ['backMid', lm.backMid], ['lower-rib front', ribFront]] as const) { const p = P(w as number[]); if (Math.hypot(p[0] - z.src.c[0], p[1] - z.src.c[1]) > z.src.r) bad.push(`${k} outside the ring`); }
+    return bad;
+  };
+  it('R11: the ring holds the elbow dot, the low back and the rib front', async () => {
+    expect(await ringProblems(spec('reverse_lunge'))).toEqual([]);
+  });
+  it("R11 mutation: round 1's ring (the chest-backMid anchor) is red", async () => {
+    const s = spec('reverse_lunge');
+    expect((await ringProblems({ ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((t: any) => ({ ...t, anchor: { along: ['chest', 'backMid'], t: 0.5, pose: 'mistake' } })) } })).length).toBeGreaterThan(0);
+  });
+});
+
 describe('LIB-8R A8: the airborne convention on box_jump (D-LIB8R-AIR)', () => {
   const H = 1.75, BOX_H = 0.45;
   const supported = (lm: any, side: string) => ['heel', 'ball'].some(p => Math.abs(lm[`${p}.${side}`][1]) < 0.005 || Math.abs(lm[`${p}.${side}`][1] - BOX_H) < 0.005);

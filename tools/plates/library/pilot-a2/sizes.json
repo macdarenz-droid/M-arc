@@ -138,6 +138,11 @@
     "value": 12,
     "unit": "deg",
     "basis": "convention: hanging_leg_raise.mjs:69 (the 8) trunk -12, 'lower back arches (lumbar extension 12 deg)'; lb8/sizes.json:118 and :620 use it for the same sign; c18 'flaring the ribcage'"
+   },
+   "M_TILT": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "claim: c18 'tuck the pelvis under' names the untucked pelvis as the fault's site: the pelvis tips forward by the arch, so the thorax keeps its upright angle (c3) and M_ARCH shows as a concave low back with the rib front forward (panel mx5 R5); M_ARCH stays the true 12 deg"
    }
   },
   "dumbbell_fly": {
