@@ -16,8 +16,12 @@
 //    END_ABD (c3, c4); `via` keys every 1/SEG of the arc, so the knees move on their circles.
 //  - Pads (c1): each pad's face on the outer edge of the drawn thigh at the knee (read from the engine's front-view
 //    outline of the thigh and kneecap in that pose); the leg arm down to a footrest under the sole.
-//  - Mistake (c12): the legs open only to MIS_ABD and come back.
-// Plate labels: callouts = plate.checkpoints c1 (Knees at pivot), c4 (Full range), c5 (Upper body still); Mistake =
+//  - Mistake (c12): the legs open only to MIS_ABD and come back. Panel mx14 R5: in the Mistake pose the two leg arms
+//    (the tall bars from each pad down to its footrest) are not drawn (`mistakeArmsOff`), so the red dashed shins read
+//    on their own; the pads and footrests stay. The shared composer is unchanged (hip_adduction uses it). The arrows
+//    show the short travel itself: from the knees-together start knee to the Mistake knee, one per side.
+// Plate labels (panel mx14 R4: the pivot leader ends on the end-pose knee where the pad presses, short and level):
+//   callouts = plate.checkpoints c1 (Knees at pivot), c4 (Full range), c5 (Upper body still); Mistake =
 //   plate.mistake c12 (key `short`, drawable false: the top fault, jerking the weight, shows only as speed; F7 named,
 //   D-LIB16R2-F7); tempo = plate.tempo (up 2, down 2, pause 1): Push out 2, Hold 1, Return 2 (Motra's 1 s bottom
 //   pause, c10, is named, not drawn).
@@ -59,6 +63,11 @@ export const padFace = (pose, s) => {
 const legsOf = pose => ({ l: padFace(pose, 'l'), r: padFace(pose, 'r') });
 const POSES = { start, end, mistake: { ...end, ...mistakePose } };
 const LEGS = Object.fromEntries(Object.entries(POSES).map(([k, p]) => [k, legsOf(p)]));
+// The leg arms: part 'leg', z 'back', taller than wide (the footrests are wider than tall, the pads are z 'front').
+const isLegArm = it => { if (!it || it.part !== 'leg' || it.z !== 'back') return false;
+  const xs = it.pts.map(p => p[0]), ys = it.pts.map(p => p[1]); return Math.max(...ys) - Math.min(...ys) > Math.max(...xs) - Math.min(...xs); };
+// Panel mx14 R5: the Mistake pose drops its leg arms (null keeps every perItem entry key in place).
+const mistakeArmsOff = (items, ctx) => (ctx?.pose === 'mistake' ? items.map(it => (isLegArm(it) ? null : it)) : items);
 const rig = legs => hipAbdAddMachine({ side: 'outer', seat: [0, SEAT_TOP, 0.02], back: { at: [0, PAD.bottom + PAD.len / 2, padU[2] - 0.035], len: PAD.len },
   legs, handles: HANDLES, beam: [-0.4, 0.4], pxPerM: REF_CAMERA.pxPerM });
 export const info = () => { const s = landmarksOf(start, H), e = landmarksOf(end, H), m = landmarksOf(POSES.mistake, H);
@@ -70,7 +79,7 @@ export default {
   poses: { start, end, via },
   equipment: [
     { type: 'floor', from: -0.62, to: 0.62 },
-    ...perItem(lm => rig({ l: legsAtKnee(lm, 'l'), r: legsAtKnee(lm, 'r') }), HIP_ABD_ADD_ITEMS),
+    ...perItem((lm, ctx) => mistakeArmsOff(rig({ l: legsAtKnee(lm, 'l'), r: legsAtKnee(lm, 'r') }), ctx), HIP_ABD_ADD_ITEMS),
   ],
   checks: [
     { landmark: 'seat', plane: { point: SEAT, normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },          // c1 seated
@@ -87,7 +96,7 @@ export default {
   ghosts: { count: 2, parts: ['leg.r', 'leg.l', 'leg'] },
   trace: { point: 'knee.r', trim: [3, 3] },
   callouts: [
-    { key: 'pivot', text: 'Knees at<br>pivot', anchor: { at: 'knee.l', pose: 'start' }, box: { left: 262, top: 236 }, cue: 'Set the seat so your knees line up with the machine\'s pivot.' },
+    { key: 'pivot', text: 'Knees at<br>pivot', anchor: { at: 'knee.l', pose: 'end' }, box: { left: 262, top: 235 }, cue: 'Set the seat so your knees line up with the machine\'s pivot.' },
     { key: 'range', text: 'Full<br>range', anchor: { at: 'knee.r', pose: 'end' }, box: { left: 40, top: 236 }, cue: 'Move from knees together to comfortably wide.' },
     { key: 'still', text: 'Upper body<br>still', anchor: 'sternum', box: { left: 236, top: 150 }, cue: 'Keep your back flat on the pad, with no rocking.' },
   ],
@@ -95,8 +104,8 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'arrow', from: { at: 'knee.r', pose: 'mistake', off: [0, 14] }, to: { at: 'knee.r', pose: 'end', off: [0, 14] } },   // the range left unused
-      { kind: 'arrow', from: { at: 'knee.l', pose: 'mistake', off: [0, 14] }, to: { at: 'knee.l', pose: 'end', off: [0, 14] } },
+      { kind: 'arrow', from: { at: 'knee.r', pose: 'start', off: [0, 14] }, to: { at: 'knee.r', pose: 'mistake', off: [0, 14] } },   // the short travel (panel mx14 R5)
+      { kind: 'arrow', from: { at: 'knee.l', pose: 'start', off: [0, 14] }, to: { at: 'knee.l', pose: 'mistake', off: [0, 14] } },
     ],
     tells: [{ key: 'short', text: 'Short<br>range', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 40, top: 236 }, cue: 'Your knees open only a little before the legs come back.' }],
   },

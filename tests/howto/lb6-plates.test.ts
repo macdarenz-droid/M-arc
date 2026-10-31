@@ -1890,3 +1890,46 @@ describe('LIB-16R2: the approved R2 plates stay byte-identical (panel mx12, APPR
     expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('smith-machine-shoulder-press alt');
   });
 });
+
+describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED at 2b128090, page 5d51f182…bbff30d)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the five plates approved by panel mx14, computed from buildLb6Page() at 2b128090; their
+  // specs and composers are unchanged since then.
+  const APPROVED: Record<string, Record<string, string>> = {
+    'low-to-high-cable-fly': { normalSvg: '57eb29aeb02e58342a999ae4a7a1bdf2acd55c644ac8041855342159d56429b9', normalOverlay: '11ae46b8a9bcee9faac4f0ac0c11db8f9f2bcb1ae13280cdf00ca5c0b941cb6a',
+      mistakeSvg: '4d5243c528601e5a445356e7ca6fa5c49b2d4275f3cf806645f4b7221fc1b631', mistakeOverlay: '82ce4b5b905fdbd1b2bbfa1057946658c81beee880bcda835361a60dd8994f4e',
+      tells: '974fd5d7ae64e02e87f859bccdabbb824add81f8cc501ed38abe50e0a29b6b25', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
+      cues: 'e57bcb073136e623bc0c4c7fe2a2c2743dd31dabd42ec1e7451ec62f46699c01', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
+      mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
+    'high-to-low-cable-fly': { normalSvg: '9b35cfa8ac033cf03223f5aa482b2c4efa341f8e6c4dfac4b00c781ecdfd487b', normalOverlay: '1f0d451386e2e12cc6b8e8c4fd6db326ccc0b6dc981d383312e41bbcce5ef6e1',
+      mistakeSvg: '9eb229e0544fb487f59e4910d293c6da9c05ba0d1cf6242be3104ab7d975e402', mistakeOverlay: 'e954e9ff44fd970595ba91dcbb8f18038510a7bbcc73aee5d3fee8ce056b2e85',
+      tells: '60d21de24772caa0dc87995218a1b8517e433b1e7927fc0b358aa4c869e34eb5', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
+      cues: 'acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2', alt: '8776483a58ccce47ccf95121cf10720cb66e845ee4937aeb58497a071cfc8f30',
+      mistakeAlt: 'ea2b604a94dd9d4bc75eb13615124126151b487f2dc7d4d674576c173dd7bdfe' },
+    'smith-machine-squat': { normalSvg: 'e28a7ef099a60aca269a5239828dd4d3e6ceca3ca638250fcbb5f605969b6530', normalOverlay: 'c50a52e7cf6c3d6bcd744619888c859b920b707b1ed59d9c10bf68b4e16ae881',
+      mistakeSvg: 'fa64b6806adc834a53ff43e128ea52cfa694389ddd82ec27d99a1e17694273a0', mistakeOverlay: 'c3206135bcbe197bc7e0e143f609acd2cbed988619a9b99d89e4ac4ba072f585',
+      tells: '73ff3249de7184e3fb37bb728c933043d1f686c3b413e71c4cd8fbaaca73a9dc', tempo: 'f886198ba7e406367703d407e46cd3f5178dc9b2b21e53921aaeb03899df9faf',
+      cues: 'fe51224cbe5e669a6cf6562164cacff337ed44eaa011307f5edfdd426c5c4244', alt: '727ac3352572b1cdb5596b3420ef9effb4e7b77bf2d25ada54e49e4a675fd5c8',
+      mistakeAlt: '73dd0a9bd8699833121d3a342e1343db9270ef4331a5d92ef81df0a500fad4b8' },
+    'machine-lateral-raise': { normalSvg: '740a132c3606d27e2ee332dbe3ea92d4248d3e09efa2395b5716ab13b3b8b604', normalOverlay: '3bc5f556d7b8e27bca45e7b69ac33c2731256195438076cfeb929ea6485aa784',
+      mistakeSvg: '4c1de8ec1371858e94f294757084de37ae124d9343cd08a57521c84e0d2fc846', mistakeOverlay: 'fd411a91ade4f941e202d4e3ccc96940b5ee4a9d833a0cf7dca1954456832a89',
+      tells: '687f416bd5dcdd39848f1dc1f9235c29f119151695de3723096f95497b30b92e', tempo: '0c3cfc803ccdd653f9beff83d552c129a8c4ce03a4f119808d72520aff159fbc',
+      cues: '6220387ee2b29600bbd9b45e643e5193056ddda986ddc15b6d018bddbff05d07', alt: '74f3769e116308b416bf6d9b55d70d3579b21d3abcac3bf70ca79a82483fdd34',
+      mistakeAlt: 'dadbe7b7bf2003b5b4312403ff066b86b940daa384e6d372ee6fd5548c38c2f7' },
+    'rear-delt-fly': { normalSvg: '386cba4a876bbdf5d69c930c8207d8e5d6350c64ebd7fb9ac2c0645bfff054c8', normalOverlay: '1b8f37bc2cabd0a02acffe75dfd7ef6a15423878044d49cf576854d6e7dd0b64',
+      mistakeSvg: '51a69e4ca2a27c0eea6ac484e6efed62709c6396009c2c7e5b2f78f5b266acca', mistakeOverlay: '66398edde3c915b54979bc6f9db8c88847674a3e38f767db5934d42fa55919ba',
+      tells: '9a2df2d60b2c5ee135a32b5694de1574f7cd55188fa9d77e146044b06c7569e4', tempo: '4fea38d8fe037c637a77ae44b4191a339e8fd1215cc41789124a37fcb95730ad',
+      cues: 'cffb083b22876cc09fff21e99a198a14e75ccdf1334e12a0a70e7eea4f4ae435', alt: 'f54a914422b3e1be44f3991a289859a7b089c5c3b520f2407df73ec1d71c8d1b',
+      mistakeAlt: '8025a402e572b5643fe4d0a851f73e5ac4d7de82c2544a4d4310038d05c31c01' },
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb6/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const problems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('their 9 fragments each equal the approved ones', async () => { expect(problems((await build.buildLb6Page()).html.toString('utf8'))).toEqual([]); });
+  it('mutation: one byte in the rear delt fly alt is red', async () => {
+    const html = (await build.buildLb6Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'rear-delt-fly');
+    expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('rear-delt-fly alt');
+  });
+});

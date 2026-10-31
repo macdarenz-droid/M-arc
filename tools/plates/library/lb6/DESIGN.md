@@ -898,3 +898,18 @@ the ruled set (`lb6/qa.mjs`). The wave 2 rows' contact facts are met by their sp
   feet (a frame part beside the body, PLAN RULED point 1). No body change.
 - CARD FIELDS: machine_lateral_raise loses the end backUpper and buttock and the seat contact; rear_delt_fly loses the
   seat contact; smith_machine_shoulder_press loses the end backUpper and buttock, and its seat contact cites c6.
+
+### 19.16 Panel mx14 fix round (#354 6547733230)
+
+- low_to_high_cable_fly, high_to_low_cable_fly, smith_machine_squat, machine_lateral_raise and rear_delt_fly APPROVED at
+  2b128090 (page 5d51f182…bbff30d); their 45 fragments are pinned. With mx12's two, 7 of 9 rows are approved.
+- hip_abduction (R4): the "Knees at pivot" leader ends on the end-pose knee.l (the viewer's right knee, where the shin
+  hangs and the pad presses), level with its label (box top 235), 44 px long, clear of the Trace.
+- hip_abduction (R5): the Mistake pose drops its two leg arms (the spec nulls the composer's tall `leg` bars when
+  ctx.pose is 'mistake'; eq/hipAbdAddMachine.mjs is unchanged, so hip_adduction does not move); the pads, footrests and
+  red dashed shins stay. The arrows run from the knees-together start knee to the Mistake knee, one per side. MIS_ABD
+  and every pose are unchanged.
+- hip_adduction (R4): the "Pads meet" leader ends in the gap where the end pads meet (the midline at the end knees'
+  height and depth), level with its label (box 252, 234); 78 px, inside the F3 envelope (82.3 px).
+- Page sha256 8fbab57b909c06f64adb930600dce61508ffa02b41214b233835746bb88b901e, built twice; QA all 10 hard checks on
+  all 12 rows, flag set equal to the ruled set.

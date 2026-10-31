@@ -68,6 +68,10 @@ const POSES = { start, end, mistake: { ...end, ...mistakePose } };
 const LEGS = Object.fromEntries(Object.entries(POSES).map(([k, p]) => [k, legsOf(p)]));
 const rig = legs => hipAbdAddMachine({ side: 'inner', seat: [0, SEAT_TOP, 0.02], back: { at: [0, PAD.bottom + PAD.len / 2, padU[2] - 0.035], len: PAD.len },
   legs, handles: HANDLES, beam: [-0.4, 0.4], pxPerM: REF_CAMERA.pxPerM });
+// Panel mx14 R4: the 'meet' leader ends in the gap where the end pads meet (the midline, at the end knees' height and
+// depth), level with its label (box top 234: the label's mid-height on the anchor); the box at left 252 keeps the
+// leader (78 px) inside the approved F3 range (envelope max 82.3 px).
+const MEET = (() => { const e = landmarksOf(end, H), kl = e['knee.l'], kr = e['knee.r']; return [0, (kl[1] + kr[1]) / 2, (kl[2] + kr[2]) / 2]; })();
 export const info = () => { const s = landmarksOf(start, H), e = landmarksOf(end, H), m = landmarksOf(POSES.mistake, H);
   return { endAbd: +END_ABD.toFixed(2), padGapEnd: +(LEGS.end.l.face - LEGS.end.r.face - 2 * HIP_ABD_ADD.PAD_T).toFixed(4), kneeXStart: +s['knee.r'][0].toFixed(3), kneeXMis: +m['knee.r'][0].toFixed(3) }; };
 
@@ -95,7 +99,7 @@ export default {
   trace: { point: 'knee.r', trim: [0, 0] },
   callouts: [
     { key: 'stretch', text: 'Light<br>stretch', anchor: { at: 'knee.r', pose: 'start' }, box: { left: 30, top: 236 }, cue: 'Start only as wide as a light stretch in the inner thighs.' },
-    { key: 'meet', text: 'Pads<br>meet', anchor: 'knee.l', box: { left: 262, top: 236 }, cue: 'Squeeze until the pads nearly touch.' },
+    { key: 'meet', text: 'Pads<br>meet', anchor: MEET, box: { left: 252, top: 234 }, cue: 'Squeeze until the pads nearly touch.' },
     { key: 'back', text: 'Back<br>on pad', anchor: 'sternum', box: { left: 236, top: 150 }, cue: 'Keep your back flat against the pad, spine neutral.' },
   ],
   tempo: [{ phase: 'Squeeze', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
