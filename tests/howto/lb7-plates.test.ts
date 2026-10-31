@@ -2073,6 +2073,25 @@ describe('LIB-17 resume 3 A2: the 8 approved LB7 plates stay byte-identical (pag
   };
   const incProblems = (html: string) => { const p = golden.extractPlates(html).find((x: any) => x.chromeId === 'incline-push-up'), got = p ? golden.fragmentsOf(p) : {};
     return Object.keys(INCLINE).filter(k => got[k] !== INCLINE[k]); };
+  // PANEL mx15 (#356 6547986860): diamond_push_up APPROVED at feec1c3c (page a3818806…bb20); its 9 fragments pinned.
+  const DIAMOND: Record<string, string> = {
+    "normalSvg": "cba3698cdf11b11be0f6431936f7f88b21e3c34f7d67f189c3f175f2b3671207",
+    "normalOverlay": "640a611234f1b9b15ff1d043ae6732e2af91834c4bcf9ad4802233707212aa78",
+    "mistakeSvg": "379a734cdd54c16f4be7c5a5e6b953d088a634a362d5267b14b4b7f03a7ec010",
+    "mistakeOverlay": "998f0055cad1b294415fb3b96a74903965df113aa923559cd24a01d86f2f0711",
+    "tells": "f2f6bd0eb3ebd5cb200717b51b2562221eea8411e113ce8f393c6810ad9bba39",
+    "tempo": "17001403e53ef44c98706c622b729156e79184b8404516c13e781d51b5f5e8b1",
+    "cues": "667fb80622adb1531f6dc4db004d032406fd5ffdd708cd4d1af7604e72ff2f31",
+    "alt": "424c364c21d8e1a1b3539865a581fd60b2f8a65bf971b56e1feb110b779aa2f5",
+    "mistakeAlt": "8b67c2897c2f9a4f3ad369bc5a5a35fee90215d89eba6d64064e4658e23b4f4e"
+  };
+  it('diamond_push_up (approved, mx15) keeps its 9 fragment shas; mutation: one byte in its alt is red', async () => {
+    const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'diamond-push-up');
+    const probs = (h: string) => { const q = golden.extractPlates(h).find((x: any) => x.chromeId === 'diamond-push-up'), got = q ? golden.fragmentsOf(q) : {}; return Object.keys(DIAMOND).filter(k => got[k] !== DIAMOND[k]); };
+    expect(Object.keys(DIAMOND).length).toBe(9);
+    expect(probs(html)).toEqual([]);
+    expect(probs(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['alt']);
+  });
   it('incline_push_up (approved, mx13) keeps its 9 fragment shas; mutation: one byte in its Mistake alt is red', async () => {
     const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'incline-push-up');
     expect(Object.keys(INCLINE).length).toBe(9);

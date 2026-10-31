@@ -596,6 +596,14 @@ show (card mistake.why), so the plate has one tell.
 | diamond_push_up | "place your hands flat on the floor" (c1, setup) | `contact wrist.l`, `wrist.r` | end (start) |
 | pike_push_up | none: no c1 quote names a contact ("Adopt the push-up position with your hands ...", "Start from a high plank position ...", "Start in a downward dog ...") | `[]` (plank's form) | — |
 
+**D-CFSMALL-ELEV / -PIKE (#356 6547986860, the ruling on 6548018514).** incline_push_up gains `angle sh.l.elev 45`
+and `sh.r.elev 45` (start, card end, c4 "Keep your elbows at approximately 45 degrees from your body"). Its bottom read
+49.7°, so it was re-posed: ELBOW_BACK is solved so the bottom reads 45.0°, and the sagittal flare goes 44.2° → 41.0°.
+pike_push_up keeps `[]` under D-CFSMALL-PIKE. Its bottom reads sh.elev 104.6°, and the lowest the engine reaches with
+the hands planted is 88° (elbow aimed straight back in the sagittal plane). At 45° the elbow would sit about 0.23 m above
+the shoulder, and the 0.26 m forearm could not reach the floor, so c3's 45° (NASM) cannot be an elevation fact on the
+inverted trunk.
+
 Not facts: the toes (no quote on the three cards names the toes or the balls of the feet on the floor; push_up's card
 has no toe fact either); "straight elbows" / "until your arms are straight" (no degrees; push_up's card has no
 straight-arm fact); "chest an inch away", "chest down to the back of your hands", "head to within an inch of the floor"
@@ -720,3 +728,17 @@ card fields come at Do 5); these are drawing work, not plan risks.
   (searched 150-260 × 240-300 px). An arrow onto the head itself would need an A15 exception, so it is the
   supervisor's call.
 - Page `a3818806…bb20` (all 11 rows), built twice with the same sha. QA on the 3 rows (their page, `cd080c57…1624`): all 10 hard checks pass; flags are the ruled set.
+
+### 19.11 Panel mx15 fix 2 and CARD FIELDS fix (#356 6547986860; rulings 6548018514 and after)
+
+- diamond_push_up is APPROVED at `feec1c3c`.
+- incline_push_up is re-posed to sh.elev 45.0 (D-CFSMALL-ELEV). In its 29a48852 pin, only normalSvg and mistakeSvg
+  moved, and they are re-pinned; the other 7 fragments keep their values. It returns for a focused recheck.
+- pike_push_up R5:
+  - A dashed red neck joins the Mistake's neck point to the top of the dashed faulty-head outline.
+  - The free arrow at x 168 is removed.
+  - It has no arrow (option B). Option C was an arrow on the head axis above the crown, along the dashed neck, ending
+    where the axis is still 6 px clear of the solid figure. Its clearance samples along the axis from the crown, every
+    4 px, are 2.8, 2.5, 1.6, 0.8, 0.5, 1.5, 1.6 px, then −0.6 to −15.3 px (inside the solid figure) up to t 120.
+    The first 6 px clearance is at t ≈ 129 px, above the solid trunk, about 130 px from the head.
+  - The neck itself (t 26-37) lies 0.6-2.5 px inside the solid figure, so no arrow fits along it.
