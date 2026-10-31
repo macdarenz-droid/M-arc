@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-31 ~11:00 UTC · main `6d34542c` (train 51: LB8 resume 2) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-31 ~14:40 UTC · main `de3f503c` (train 52: LB9 resume 2) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -846,6 +846,14 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - **LB9 (#337):** superman approved. Its READY run hit a source-gate hang (90-min cap, no test failed); the builder used the one re-run.
   - **PILOT-A2 (#340):** LIB-8R is pinning box_jump and the rear-delt fly (PIN GO). **LIB-SPINE (#348):** A1-A8 done; READY after its gate and a main merge.
   - Active LIB builders 4 of 4: LIB-8R, LIB-21 resume 2, LIB-SPINE, LIB-15 resume 2. LIB-22 resume 2 is WAITING. Usage: 7-day 0.64 at 10:57; pause at 0.80.
+- **Update 14:40 UTC (10-31):**
+  - **Train 52 merged** (#355) → main `de3f503c`: LB9 resume 2 #337 @ `13049ba4` (superman; review PASS 6543306066; F-LIB21-LOWS). visual-gate-tz failed once with a CDP `Page.captureScreenshot` protocol error in BUG-34's launch block. No assertion failed, and the gate and bundle were byte for byte main's. One re-run of the failed jobs passed, and the root cause is on #355 (6543981183). If it recurs, it gets a GATE-FLAKE card. The LIB-21 session is archived.
+  - **Train 53 building** (#357, head `542210fe`): PILOT-A2 #340, LB10 #346 and LB5 #349, each review PASS. Local checks: 270 files, 5353 tests.
+  - **LIB-SPINE (#348):** review PASS 6543706242. It waits for train 53, then merges main and re-pins (PILOT-A2's closure includes the vendored engine). Then a DIFF-CHECK and train 54. After that come PILOT-A3 (reverse_lunge with `bow`, dumbbell_fly F-FLY-START) and an LB9 resume for cable_crunch.
+  - **LB6 resume 2 (#354, session_01EQuYNiQhTrfP6PuNG5qo8o):** mx12 approved smith_machine_shoulder_press and smith_machine_incline_press. Fix round: both cable flies (R5) and smith_machine_squat (R2). CARD FIELDS cflb6r2 is VALID, with 5 plateFacts fixes owed. Wave 2 (the machines and rear_delt_fly) is building.
+  - **LB7 resume 3 (#356, session_01EQuYNkAdg1sbZrgdN7w1UN):** PLAN RULED; PLATES READY @ 29a48852. It goes to the next panel with LB6's recheck.
+  - Cards ready and confirmed: lib-16r2, lib-17r3 and D-TEMPLDIR-LIST (lib4-cards §48). No new lane starts before the weekly pause.
+  - Active LIB builders 2: LIB-16 resume 2, LIB-17 resume 3. Usage: 7-day 0.70 at 14:39. Pause at 0.80 (PANELS §9), expected about 17:30-18:00 UTC [est, from about 0.03 an hour].
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
