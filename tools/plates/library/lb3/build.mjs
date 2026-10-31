@@ -86,11 +86,12 @@ export const SHEET = {
     notes: ['Support anchor: one_arm_dumbbell_row, shown above (D-LIB13-SUPPORT). Redrawn if that anchor is rejected'] },
   // LIB-13s wave 1 (lib-13s-card; DESIGN.md section 16)
   lib_t_bar_row: { tier: 'A', class: 'landmine rig, second user (H; D-LIB13S-MODES)', anchor: 'barbell_row',
-    critic: 'LIB-13s wave 1: not yet reviewed',
-    notes: ['Plate size: drawing convention (228 mm), the 10 lb plate (D-LIB13-TBAR)', 'Zoom: normal view, k 3, on the handle path (D-LIB13S-ZOOM)',
+    critic: 'panel mx16 @ 01b66192: R1 and R3 below 4; fix round (handle under the bar, grip square to the forearm), focused recheck next',
+    notes: ['Plate size: drawing convention (228 mm), the 10 lb plate (D-LIB13-TBAR)', 'Zoom: normal view, k 1.5, on the handle path (D-LIB13S-ZOOM)',
+      'Wrist drawn straight: the card\'s 35° extension of a neutral grip bends out of the side plane (mx16 R3)',
       'Feet 38 cm apart, toes out 17°: the widest stance the engine plants within 0.5 cm; the side view does not show width (D-LIB13S-TBARFEET)'] },
   lib_barbell_shrug: { tier: 'A', class: 'shrug, standing (H; SHRUG not built, D-LIB13S-MODES)', anchor: 'upright_row',
-    critic: 'LIB-13s wave 1: not yet reviewed',
+    critic: 'approved, panel mx16 @ 01b66192 (#359 6548509170): every median 4 or more',
     notes: ['Zoom: normal view, k 3.5, on the 5 cm shrug (D-LIB13S-ZOOM)', 'Bar 15 mm in front of the body: the 2 px clearance (D-LIB13S-CLEAR)',
       'Mistake drawn as bent arms (c4): rolling (c3) cannot be drawn (D-LIB13S-TOPFAULT)'] },
 };

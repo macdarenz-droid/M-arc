@@ -576,3 +576,20 @@ the full page.
 PLAN → RULED; cards at start (copies done; cards.sha.json LIB-13s section, tempo.json); wave 1 (barbell_shrug CLEAR +
 zoom; t_bar_row feet + Mistake stop + alt + zoom) with tests A1-A6 for those two → PLATES READY 1; CARD FIELDS for the 4
 shrug cards; wave 2 from barbell_shrug's approved bytes → PLATES READY 2; merge main, READY.
+
+### 16.10 Panel mx16 (wave 1 round 1 @ `01b66192`, #359 6548509170)
+
+barbell_shrug APPROVED. t_bar_row's fix round (R1 [3,4,3], R3 [3,3,4]):
+- **R1:** the V-handle hangs HANDLE_L 9 cm from the hook ring to the grip (was the vendor vHandle's 22 cm; the panel's
+  bound "a V of at most about 30 px at 2x" is 15 px, 10.3 cm). The floor pivot, the end bar and the plates stay where mx16
+  saw them (the pivot SOLVED from the mx16 start; END_A unchanged, end grip z 0.161 m). The start bar angle is SOLVED so
+  the handle meets straight arms. The end grip rises to 0.585 m, so the end elbow bends 84° (80-90° tested), level with
+  the torso's underside, the upper arm along the torso.
+- **R3:** the handle is drawn from poly parts: a shaft from the grip up to a 2 cm ring round the bar at the hook, and a
+  12 cm grip turned square to the forearm in the side plane, through the fist. The card's 35° wrist (R-LB3-5) is an
+  extension of a neutral (palms-facing) grip, which bends out of the side plane, so the side view draws the wrist straight
+  and the fist sits on the forearm's axis (tested within 0.5 px). Asked of the supervisor with the PANEL FIX post.
+- **Knock-ons:** the end grip's 24.5 cm rise makes k 1.5 the smallest ladder k (35.69 px; the ring holds the Trace, which
+  k 3's ring no longer does). The larger source ring crossed the auto-placed "Soft knees" label (H1.ink), so that label
+  gets a box under the ring (F4 counts 5 boxes, inside 2-6). Every rising part still clears 2 px; the Mistake bar
+  stops at 2.00 px; the feet stay 0.19 m with toes out 17°.

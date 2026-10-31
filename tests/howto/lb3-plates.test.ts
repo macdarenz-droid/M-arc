@@ -1256,6 +1256,33 @@ describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d
   });
 });
 
+describe('LIB-13s: barbell_shrug stays byte-identical to its approval (panel mx16 @ 01b66192, page c8854782)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of barbell-shrug on the LB3 page c8854782…28a5 (APPROVED in mx16, #359 6548509170)
+  const WANT: Record<string, string> = {
+    "normalSvg": "5f1fe8abe186bef16f0f0721052cfc59c0d46adce7d63c5eeac391bdfce560c3",
+    "normalOverlay": "39ae0531c1467137f5b9219be4889e0427935054de184f554366bd8aac813b7d",
+    "mistakeSvg": "d13fb13d689b97c63548facfd9bfd6cae9c31bce6ff3cd669098a8dbd9ab4da7",
+    "mistakeOverlay": "2116ee95ef7ecfc595c4d3f3581545d19be6a847fa144292972045651beb8527",
+    "tells": "62fe5129a6ea13ec01e392041626a6d679404d0fad9916c4ef23c3da4232c128",
+    "tempo": "16fa92968d867844b0523f60f380e5bb4bc57a89d2543adcd24c7a35816a1e11",
+    "cues": "2124f85f22a111c0ff46a73940153eb17873ff8ddf446ac532f640464f0f0d53",
+    "alt": "4a903ff68dc6f01198c4a46cb12ce3f2db9e998787ac9d71a904a6218d7a467c",
+    "mistakeAlt": "04e3c794510433dda67db495922070a5b792b78421301ffbb4fddbf3b2d96deb"
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb3/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const diff = (html: string) => { const p = golden.extractPlates(html).find((x: any) => x.chromeId === 'barbell-shrug'), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(WANT).filter(k => got[k] !== WANT[k]); };
+  it('its 9 fragments on this head equal the approved ones', async () => {
+    expect(Object.keys(WANT).length).toBe(9);
+    expect(diff((await build.buildLb3Page()).html.toString('utf8'))).toEqual([]);
+  });
+  it('mutation: one byte in its alt is red', async () => {
+    const html = (await build.buildLb3Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'barbell-shrug');
+    expect(diff(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['alt']);
+  });
+});
+
 describe('LIB-13s A1: the released rows are H with no parent, template or params; held shrugs have no row', () => {
   const rowProblems = (rows: Record<string, any>) => Object.entries(rows).flatMap(([id, r]) =>
     [r.mode !== 'H' ? `${id}: mode ${r.mode}` : null, ...['parent', 'template', 'params'].filter(k => k in r).map(k => `${id}: ${k}`)].filter(Boolean));
@@ -1334,11 +1361,11 @@ describe('LIB-13s wave 1: zooms, card-true poses and the 2 px clearance (A3, A4,
     const s = m.default, out: Record<string, any> = {};
     for (const p of ['start', 'end', 'mistake']) {
       const { items, lm } = itemsIn(s, p, { mistake: p === 'mistake' }), polys = items.filter((x: any) => x.type === 'poly' && !x.part);
-      const handle = items.find((x: any) => x.type === 'vHandle'), ring = [0, handle.at[1] + handle.length, handle.at[2]];
+      const part = (k: string) => items.find((x: any) => x.part === k).pts, ring = edgePts(part('handlering'));
       const sh = outline(poseOf(s, p), k => k === 'torso' || k === 'head'), P0 = m.TBAR.pivot;
       const bar = [...edgePts(polys[0].pts), ...edgePts(polys[1].pts)].filter((w: number[]) => dist(w, P0) >= m.TBAR.sHook - 0.1);
       const min = (ws: number[][]) => Math.min(...ws.map(w => clearPx(sh, w)));
-      out[p] = { bar: min(bar), ring: min([ring]), grips: min([lm.grips]), plate: min(edgePts(polys[2].pts)) };
+      out[p] = { bar: min(bar), ring: min(ring), grips: min([lm.grips, ...edgePts(part('handlegrip')), ...edgePts(part('handle'))]), plate: min(edgePts(polys[2].pts)) };
     }
     return out;
   };
@@ -1376,7 +1403,7 @@ describe('LIB-13s wave 1: zooms, card-true poses and the 2 px clearance (A3, A4,
     for (const p of ['start', 'end', 'mistake']) {
       const { items } = itemsIn(s, p, { mistake: p === 'mistake' });
       pivots.push(items.find((x: any) => x.type === 'pulley').at);
-      const handle = items.find((x: any) => x.type === 'vHandle'), ring = [0, handle.at[1] + handle.length, handle.at[2]];
+      const rp = items.find((x: any) => x.part === 'handlering').pts, ring = [0, 1, 2].map(i => rp.reduce((a: number, q: number[]) => a + q[i]!, 0) / rp.length);
       const bar = items.filter((x: any) => x.type === 'poly' && !x.part), plate = bar[2].pts, P0 = m.TBAR.pivot;
       const u = [0, 1, 2].map(i => (bar[1].pts[1][i] - bar[0].pts[0][i])), uL = Math.hypot(...u), along = (w: number[]) => [0, 1, 2].reduce((a, i) => a + (w[i]! - P0[i]!) * u[i]! / uL, 0);
       const toPlate = Math.min(...plate.map(along)) - along(ring), inch = toPlate / 0.0254;
@@ -1394,13 +1421,40 @@ describe('LIB-13s wave 1: zooms, card-true poses and the 2 px clearance (A3, A4,
     expect(tbarProblems(MOD.t_bar_row)).toEqual([]);
   });
   it("A4 mutations: the hook at 6 in, and the feet back at 0.2266 m with toes out 5 deg (1.0 cm), are red", async () => {
-    expect((tbarProblems(await variant('t_bar_row', [['const HOOK = 0.229,', 'const HOOK = 0.1524,']]))).some(p => /hook 6\.\d+ in/.test(p))).toBe(true);
+    expect(tbarProblems(await variant('t_bar_row', [['const HOOK = 0.229,', 'const HOOK = 0.1524,']])).filter(p => /: hook 5\.9\d in from the plates$/.test(p)).length).toBe(3);
     expect(tbarProblems(await variant('t_bar_row', [['const FOOT_X = 0.19, TOE_OUT = 17;', 'const FOOT_X = 0.2266, TOE_OUT = 5;']]))).toContain('start: foot.l plant 1 cm');
   });
 
+  // ---- panel mx16 fix round (R1, R3): the handle hooked right under the bar, the end arm bent about 85 deg, the grip
+  // perpendicular to the forearm through a fist on the forearm's axis ----
+  const handleProblems = (m: any) => {
+    const s = m.default, out: string[] = [], L = qaEng.poseLandmarks(Eng(), s).lm;
+    for (const p of ['start', 'end', 'mistake']) {
+      const { items, lm } = itemsIn(s, p, { mistake: p === 'mistake' }), part = (k: string) => items.find((x: any) => x.part === k).pts;
+      const rp = part('handlering'), ring = [0, 1, 2].map(i => rp.reduce((a: number, q: number[]) => a + q[i]!, 0) / rp.length);
+      const v = (ring[1]! - lm.grips[1]) * PX;
+      if (v > 15) out.push(`${p}: the handle hangs ${v.toFixed(1)} px under the bar`);
+      const g = part('handlegrip'), gd = [g[1][1] - g[0][1], g[1][2] - g[0][2]], E = L[p]['elbow.r'], W = L[p]['wrist.r'], f = [W[1] - E[1], W[2] - E[2]];
+      const cos = Math.abs(gd[0]! * f[0]! + gd[1]! * f[1]!) / Math.hypot(...gd) / Math.hypot(...f);
+      if (cos > Math.cos(89 * Math.PI / 180)) out.push(`${p}: the grip is ${(Math.acos(cos) * 180 / Math.PI).toFixed(1)} deg off the forearm`);
+      const G = L[p]['grip.r'], off = Math.abs((G[1] - E[1]) * f[1]! - (G[2] - E[2]) * f[0]!) / Math.hypot(...f) * PX;
+      if (off > 0.5) out.push(`${p}: the fist ${off.toFixed(1)} px off the forearm axis`);
+    }
+    const bend = elbowBend(L.end);
+    if (!(bend >= 80 && bend <= 90)) out.push(`end: elbow bent ${bend.toFixed(1)} deg`);
+    return out;
+  };
+  it('mx16 fix: the handle hangs 15 px or less under the bar, the grip turns square to the forearm through a fist on its axis, and the end elbow bends 80-90 deg', () => {
+    expect(handleProblems(MOD.t_bar_row)).toEqual([]);
+  });
+  it("mx16 fix mutations: the mx16 handle (0.22 m) and the wrist bent back 35 deg are red", async () => {
+    expect((handleProblems(await variant('t_bar_row', [['HANDLE_L = 0.09,', 'HANDLE_L = 0.22,']]))).some(p => /hangs/.test(p))).toBe(true);
+    expect((handleProblems(await variant('t_bar_row', [['WRIST = 0;', 'WRIST = -35;']]))).some(p => /fist .* off the forearm axis/.test(p))).toBe(true);
+  });
+
   // ---- A3: the zooms ----
-  const WANT: Record<string, any> = { barbell_shrug: { view: 'normal', k: 3.5 }, t_bar_row: { view: 'normal', k: 3 } };
-  const PIN: Record<string, number> = { barbell_shrug: 24.54, t_bar_row: 27.23 };
+  const WANT: Record<string, any> = { barbell_shrug: { view: 'normal', k: 3.5 }, t_bar_row: { view: 'normal', k: 1.5 } };
+  const PIN: Record<string, number> = { barbell_shrug: 24.54, t_bar_row: 35.69 };   // t_bar_row: mx16 fix round (handle hooked under the bar), k 1.5
   const noZoom = (s: any) => ({ ...s, zoom: undefined });
   const zoomProblems = (id: string, s: any) => {
     const out: string[] = [...Z.zoomFieldProblems(s.zoom)];
@@ -1416,16 +1470,16 @@ describe('LIB-13s wave 1: zooms, card-true poses and the 2 px clearance (A3, A4,
     if (Math.abs(len(k) - PIN[id]!) > 0.01) out.push(`Trace ${len(k).toFixed(2)} != pinned ${PIN[id]}`);
     return out;
   };
-  it('A3: each zoom is the PLAN\'s view and k, meets 22.11 px at k (barbell_shrug 24.54 at 3.5, t_bar_row 27.23 at 3), no smaller ladder k does, and the ring holds the Trace', () => {
+  it('A3: each zoom is the PLAN\'s view and k, meets 22.11 px at k (barbell_shrug 24.54 at 3.5, t_bar_row 35.69 at 1.5), no smaller ladder k does, and the ring holds the Trace', () => {
     for (const id of RELEASED) expect(zoomProblems(id, W[id]), id).toEqual([]);
   });
   it('A3: the plate is byte-identical outside the zoom (each view renders the same svg with and without the field)', () => {
     for (const id of RELEASED) for (const mistake of [false, true]) expect(plate.renderPlate(W[id], { id: 'x', mistake }).svg, id).toBe(plate.renderPlate(noZoom(W[id]), { id: 'x', mistake }).svg);
   });
-  it("A3 mutations: barbell_shrug at k 3 (21.02 px), t_bar_row's zoom removed, and t_bar_row's trim set to [0, 0] (k 1.5 then reaches the bar) are red", () => {
+  it("A3 mutations: barbell_shrug at k 3 (21.02 px), t_bar_row's zoom removed, and t_bar_row at k 2 (k 1.5 already reaches the bar) are red", () => {
     expect(zoomProblems('barbell_shrug', { ...W.barbell_shrug, zoom: { view: 'normal', k: 3 } })).toEqual(expect.arrayContaining([expect.stringMatching(/^Trace 21\.02 px at k 3 < 22\.11$/)]));
     expect(zoomProblems('t_bar_row', noZoom(W.t_bar_row))).toEqual(['zoom undefined']);
-    expect(zoomProblems('t_bar_row', { ...W.t_bar_row, trace: { ...W.t_bar_row.trace, trim: [0, 0] } })).toContain('a smaller k reaches the bar');
+    expect(zoomProblems('t_bar_row', { ...W.t_bar_row, zoom: { view: 'normal', k: 2 } })).toContain('a smaller k reaches the bar');
   });
 });
 
@@ -1489,7 +1543,8 @@ describe('LIB-13s A6: runQa node half on the wave-1 plates (zoom keys, H1 feet, 
     const shift = { ...s, checks: s.checks.map((k: any) => (k.landmark === 'heel.r' ? { ...k, plane: { ...k.plane, point: [0, 0.011, 0] } } : k)) };
     expect(keys(await qa({ ...(await candOf('lib_t_bar_row')), spec: shift })).some((k: string) => /^H1\.engine:normal:check:/.test(k))).toBe(true);
     expect(keys(await qa(await mutated("s => ({ ...s, zoom: undefined, trace: { ...s.trace, trim: [30, 30] } })")))).toContain('H3.trace');
-    expect(keys(await qa(await mutated('s => ({ ...s, mistake: { ...s.mistake, pose: { reach: s.poses.end.reach, root: s.poses.end.root, trunk: s.poses.end.trunk } } })')))).toContain('H3.mistake-outline');
+    // the handle polys are moving parts, drawn in every Mistake; M4 drops them with the Mistake pose (the LIB-13 A4 M4 form)
+    expect(keys(await qa(await mutated("s => ({ ...s, equipment: s.equipment.filter(e => !String(e).includes('handleItems')), mistake: { ...s.mistake, pose: { reach: s.poses.end.reach, root: s.poses.end.root, trunk: s.poses.end.trunk } } })")))).toContain('H3.mistake-outline');
     expect(keys(await qa(await mutated('s => ({ ...s, poses: { ...s.poses, start: s.poses.end, via: [] } })')))).toContain('H3.start-is-end');
     const extra = (lm: any, ctx: any) => ({ type: 'rackUpright', at: [0.5, 0, ctx.pose === 'mistake' ? -1.3 : -1.22], h: 0.5 });
     expect(keys(await qa({ ...(await candOf('lib_t_bar_row')), spec: { ...s, equipment: [...s.equipment, extra] } })).some((k: string) => k.startsWith(`H9.moving-line:eq${s.equipment.length}.rackUpright.`))).toBe(true);

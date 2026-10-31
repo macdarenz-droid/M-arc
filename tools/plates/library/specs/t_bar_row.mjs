@@ -8,8 +8,10 @@
 // Clone source: landmine_row (this branch; its rig, solver and clearance rule copied, never imported) and barbell_row
 //  (#109 @ 48d49bb) for the held hinge (D-LIB9-CLONE).
 // Rig (eq/landmine.mjs; c1, c24): the bar pinned at a floor pivot behind the lifter, plates on the free end, the lifter
-//  straddling the bar; a vendor vHandle hooked under the bar 9 in (22.9 cm, the midpoint of c1's 8-10 in) from the
-//  plates, behind them (c24), hanging under the bar to the hands.
+//  straddling the bar; a V-handle hooked right under the bar 9 in (22.9 cm, the midpoint of c1's 8-10 in) from the
+//  plates, behind them (c24). Panel mx16 fix (R1, R3): the handle hangs HANDLE_L 9 cm from the hook ring to the grip (the
+//  vendor vHandle's 22 cm put the hands level with the knees at the end), drawn from poly parts with its grip square to
+//  the forearm.
 // Geometry decisions (confirmed by the engine report `angles` and `checks`):
 //  Feet (LIB-13s D-LIB13S-TBARFEET): mid-soles 38 cm apart, toes out 17 deg: the widest stance the engine plants within
 //   0.5 cm (0.4 cm; upright_row's form). c2's "about shoulder width" is 45 cm on this body, but 45 cm with toes out 5 deg
@@ -17,11 +19,15 @@
 //  Trunk and legs are one held hinge in start and end: thorax TRUNK_INCL 80 deg from vertical (chest parallel, c3;
 //   "near parallel", c24) = pelvis 77 + lumbar 3 (back straight); knees KNEE 20 deg (slightly bent, c2); the root
 //   ROOT_Z 15 cm behind mid-foot, its height SOLVED for the knee angle (bracket 0.5-0.935).
-//  Hands: both on the V-handle's grips (15 cm apart, the vendor vHandle), neutral (c6's palms facing). Wrists bent back
-//   35 deg into the pull grip (the card's recorded convention, R-LB3-5).
-//  Start: the arms hang straight, ARM_BACK 10 deg behind vertical; the handle hangs straight down from the hook, so the
-//   hook sits HANDLE_L above the grips; the pivot is SOLVED onto the floor so the bar runs through the hook.
-//  End (c4, c23): elbows driven back, shoulder blades pulled back (4 cm); the bar turns up about the pivot until the
+//  Hands: both on the V-handle's grips (15 cm apart), neutral (c6's palms facing). The card's 35 deg wrist extension
+//   (R-LB3-5) bends a neutral-grip hand toward the back of the hand, out of the side plane, so the side view draws the
+//   wrist straight (WRIST 0): the fist sits on the forearm's axis (panel mx16 R3).
+//  Pivot: the floor pivot as panel mx16 reviewed it (kept so the end bar and plates do not move): SOLVED from the mx16
+//   start (straight arms ARM_BACK 10 deg behind vertical, the 35 deg wrist's reach, the hook HANDLE_L0 22 cm above).
+//  Start: the arms hang straight; the bar angle START_A is SOLVED so the handle, hanging straight down from the hook,
+//   meets the hands at full reach (bracket -0.2 to 0.6 rad; the arms then hang about 6 deg behind vertical).
+//  End (c4, c23): elbows driven back (bent about 84 deg, level with the torso's underside), shoulder blades pulled back
+//   (4 cm); the bar turns up about the pivot until the
 //   plates meet the torso: the arc angle is SOLVED at the first contact (scanned up from the start angle in 0.01 rad steps) so the nearest plate
 //   corner, the bar's surface from the hook out, the hook ring or a hand sits CLEAR 5 mm off the drawn torso and head outline
 //   (the engine's bodyShapes): "as far as possible before the plates make contact with your torso" (c23). One
@@ -33,9 +39,11 @@
 //   (illustrative; the card gives no number), the hips and feet held; the bar comes up on its circle until the bar,
 //   hook ring, a grip or a plate corner comes within 2 px of the rounded torso and head (LIB-13s D-LIB13S-CLEAR: c23
 //   names the plates at the end, not the bar over a rounded back). A dashed hump guide shows the round (romanian_deadlift's method).
-//  Zoom (LIB-13s D-LIB13S-ZOOM): a normal-view circle at k 3 on the handle's Trace with the spec's own trim (27.23 px).
+//  Zoom (LIB-13s D-LIB13S-ZOOM): a normal-view circle on the handle's Trace with the spec's own trim: k 1.5 (35.69 px)
+//   after the mx16 fix (the shorter handle lifts the end grip, a 24.5 cm rise); k 3 (27.23 px) before it.
 // Unsourced numbers: FOOT_X 0.19, TOE_OUT 17, TRUNK_INCL 80, SPINE 3, KNEE 20, ROOT_Z -0.15, ARM_BACK 10, HOOK 9 in (c1's midpoint),
-//  HANDLE_L 0.22 (the vendor vHandle), CLEAR 5 mm, CLEAR_M 2 px, PRO_START 2 / PRO_END -4 cm, WRIST -35 (convention), M_TUCK 30,
+//  HANDLE_L 0.09 (mx16: the panel's 30 px at 2x), HANDLE_L0 0.22 (the mx16 pivot), the handle's grip 12 cm and ring 2 cm,
+//  CLEAR 5 mm, CLEAR_M 2 px, PRO_START 2 / PRO_END -4 cm, WRIST 0 (side view of the neutral grip), M_TUCK 30,
 //  M_SPINE 40, HUMP 8 cm; the landmine sizes (eq/landmine.mjs header); the plate (convention above).
 import { bodyShapes, fk, landmarksOf, normPose, resolve } from '../engine.mjs';
 import { LANDMINE, LANDMINE_ITEMS, alongBar, barFrame, hingeAt, landmine } from '../eq/landmine.mjs';
@@ -44,14 +52,15 @@ import { perItem } from '../eq/parts.mjs';
 const H = 1.75, R = Math.PI / 180;
 const FOOT_X = 0.19, TOE_OUT = 17;   // D-LIB13S-TBARFEET: the widest stance the engine plants within 0.5 cm (0.4 cm)
 const TRUNK_INCL = 80, SPINE = 3, KNEE = 20, ROOT_Z = -0.15;
-const ARM_BACK = 10, CLEAR = 0.005, WRIST = -35;
+const ARM_BACK = 10, CLEAR = 0.005, WRIST = 0;
 // Shoulder to grip centre at full reach as the engine's IK measures it with the wrist bent back WRIST deg (body.mjs
 // solveReach: upper arm + the forearm-and-hand chord), at 99.98%: the IK then turns the forearm only by the hand's
 // bend (about 9 deg), so the arm reads straight.
-const REACH = (() => { const g = 0.46 * 0.108 * H, w = WRIST * Math.PI / 180; return (0.186 * H + Math.hypot(0.146 * H + g * Math.cos(w), g * Math.sin(w))) * 0.9998; })();
+const reachOf = wd => { const g = 0.46 * 0.108 * H, w = wd * Math.PI / 180; return (0.186 * H + Math.hypot(0.146 * H + g * Math.cos(w), g * Math.sin(w))) * 0.9998; };
+const REACH = reachOf(WRIST);
 const PRO_START = 2, PRO_END = -4;
 export const PLATE_D = 0.228, PLATE_T = 0.031;
-const HOOK = 0.229, HANDLE_L = 0.22, RING_DROP = 0.006, GRIP_SEP = 0.15;
+const HOOK = 0.229, HANDLE_L = 0.09, HANDLE_L0 = 0.22, RING_DROP = 0.006, GRIP_SEP = 0.15, GRIP_HALF = 0.06, RING_R = 0.02;
 const S_HOOK = LANDMINE.barLen - LANDMINE.collarFromEnd + 0.01 - HOOK;   // the hook's distance from the pivot
 
 const toe = s => [s * Math.sin(TOE_OUT * R), 0, Math.cos(TOE_OUT * R)];
@@ -76,13 +85,18 @@ const ROOT_Y = solve(y => kneeOf(landmarksOf(body(y, PRO_START), H)) - KNEE, 0.5
 // Start: the grips (handle centre) ARM_BACK behind vertical below the shoulders, at the handle's 15 cm grip spacing.
 const S0 = landmarksOf(body(ROOT_Y, PRO_START), H)['shoulder.r'];
 const drop = Math.sqrt(REACH ** 2 - (Math.abs(S0[0]) - GRIP_SEP / 2) ** 2);
-const START_GRIP = [0, S0[1] - drop * Math.cos(ARM_BACK * R), S0[2] - drop * Math.sin(ARM_BACK * R)];
-const hookOfGrip = g => [0, g[1] + HANDLE_L + RING_DROP, g[2]];
-const H0 = hookOfGrip(START_GRIP);
-const PIVOT = hingeAt(H0[2] - Math.sqrt(S_HOOK ** 2 - (H0[1] - LANDMINE.hingeH) ** 2));
+// The floor pivot as panel mx16 reviewed it (the bar and plates stay where they were): the hook HANDLE_L0 above grips held
+// on straight arms ARM_BACK behind vertical.
+const drop16 = Math.sqrt(reachOf(-35) ** 2 - (Math.abs(S0[0]) - GRIP_SEP / 2) ** 2);
+const GRIP_MX16 = [0, S0[1] - drop16 * Math.cos(ARM_BACK * R), S0[2] - drop16 * Math.sin(ARM_BACK * R)];
+const PIVOT = (() => { const h = [0, GRIP_MX16[1] + HANDLE_L0 + RING_DROP, GRIP_MX16[2]]; return hingeAt(h[2] - Math.sqrt(S_HOOK ** 2 - (h[1] - LANDMINE.hingeH) ** 2)); })();
 const angOf = p => Math.atan2(p[1] - PIVOT[1], p[2] - PIVOT[2]);
 const hookAt = a => [0, PIVOT[1] + S_HOOK * Math.sin(a), PIVOT[2] + S_HOOK * Math.cos(a)];
 const gripAt = a => { const h = hookAt(a); return [0, h[1] - HANDLE_L - RING_DROP, h[2]]; };
+// Start: the bar angle SOLVED so the handle, hooked right under the bar (HANDLE_L), meets the hands on straight arms.
+const START_A = solve(a => Math.hypot(gripAt(a)[1] - S0[1], gripAt(a)[2] - S0[2]) - drop, -0.2, 0.6);
+const START_GRIP = gripAt(START_A);
+const H0 = hookAt(START_A);
 const hands = (g, pole) => ({ r: { at: [-GRIP_SEP / 2, g[1], g[2]], pole }, l: { at: [GRIP_SEP / 2, g[1], g[2]], pole: [-pole[0], pole[1], pole[2]] } });
 const start = { ...body(ROOT_Y, PRO_START), reach: hands(START_GRIP, [-0.2, 0, -1]) };
 
@@ -173,6 +187,22 @@ const phantom = [
   (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-line m-line', pts: [PIVOT, START_FRAME.end], z: 'center', part: 'startbar' } : null),
   (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-line m-line', pts: [START_PLATE[0], START_PLATE[2], START_PLATE[3], START_PLATE[1], START_PLATE[0]], z: 'center', part: 'startplate' } : null),
 ];
+// The V-handle (panel mx16 R3): a shaft from the grip straight up to the ring round the bar at the hook, and the
+// grip itself turned perpendicular to the forearm in the side plane (front to back for a near-vertical forearm), through
+// the fist on the grip point. Drawn from primitives (poly) so the grip can turn; the vendor vHandle's grip is fixed upright.
+const rectPts = (a, b, half) => { const d = [b[1] - a[1], b[2] - a[2]], L = Math.hypot(...d) || 1, n = [-d[1] / L * half, d[0] / L * half];
+  return [[0, a[1] + n[0], a[2] + n[1]], [0, b[1] + n[0], b[2] + n[1]], [0, b[1] - n[0], b[2] - n[1]], [0, a[1] - n[0], a[2] - n[1]]]; };
+function handleItems(lm) {
+  const G = lm.grips, hook = [0, G[1] + HANDLE_L + RING_DROP, G[2]], E = lm['elbow.r'], W = lm['wrist.r'];
+  const f = [W[1] - E[1], W[2] - E[2]], fl = Math.hypot(...f), d = [f[1] / fl * GRIP_HALF, -f[0] / fl * GRIP_HALF];
+  const a = [0, G[1] - d[0], G[2] - d[1]], b = [0, G[1] + d[0], G[2] + d[1]];
+  const circ = Array.from({ length: 16 }, (_, k) => [0, hook[1] + RING_R * Math.sin(k * Math.PI / 8), hook[2] + RING_R * Math.cos(k * Math.PI / 8)]);
+  return [
+    { type: 'poly', pts: rectPts(G, [0, hook[1] - RING_R, hook[2]], 0.007), cls: 'eq-solid', z: 'mid', part: 'handle' },
+    { type: 'poly', pts: rectPts(a, b, 0.015), cls: 'eq-solid', z: 'mid', part: 'handlegrip' },
+    { type: 'poly', pts: circ, curve: true, cls: 'eq', z: 'mid', part: 'handlering' },
+  ];
+}
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   id: 't_bar_row', name: 'T-Bar Row', view: 'side', facing: 'right',
@@ -181,7 +211,7 @@ export default {
   equipment: [
     { type: 'floor', from: PIVOT[2] - 0.2, to: 0.75 },
     ...perItem(rig, LANDMINE_ITEMS),
-    lm => ({ type: 'vHandle', at: [0, lm.grips[1], lm.grips[2]], toward: [0, 1, 0], length: HANDLE_L, z: 'mid', part: 'handle' }),
+    lm => handleItems(lm),
     ...phantom,
   ],
   checks: [
@@ -195,10 +225,10 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 2, parts: ['arm.r'] },
   trace: { point: 'grip.r', trim: [10, 12] },
-  zoom: { view: 'normal', k: 3 },   // D-LIB13S-ZOOM: the handle's path (grip.r) with the spec's own trim
+  zoom: { view: 'normal', k: 1.5 },   // D-LIB13S-ZOOM: the handle's path (grip.r) with the spec's own trim
   callouts: [
     { key: 'chest', text: 'Chest<br>parallel', anchor: 'backUpper', box: { left: 258, top: 116 }, cue: 'Keep your back straight and your chest level with the floor.' },
-    { key: 'knees', text: 'Soft knees', anchor: 'knee.r', cue: 'Keep your knees slightly bent and your hips hinged back.' },
+    { key: 'knees', text: 'Soft knees', anchor: 'knee.r', box: { left: 248, top: 304 }, cue: 'Keep your knees slightly bent and your hips hinged back.' },   // mx16 fix: under the zoom's source ring
     { key: 'elbows', text: 'Elbows<br>back', anchor: 'elbow.r', box: { left: 138, top: 214 }, cue: 'Drive your elbows back and pull the handle to your lower chest.' },
   ],
   tempo: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
