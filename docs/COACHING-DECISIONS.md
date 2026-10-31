@@ -2937,3 +2937,11 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   Record: DESIGN.md sections 11b and 11c.
 - **D-LIB17-B13 ('LIB-17 resume 2', F-ZOOM-2 on main).** renegade_row joins lb7/rows.json with its Mistake zoom at k 3 and the opt-in `zoom.pair` (the far flat hex's vertex 0 against the turned tell vertex: 5.64 → 16.92 px). Its owed rows: the "Straight line" box moves to (40, 160) so no hit box overlaps "Feet wide" (H4), and the corner tell's label becomes "Corner landing" (H8, 1-3 words). cable_rear_delt_fly stays held (D-LIB17-RDFHOLD).
 - **D-LIB17-B14 (renegade_row panel mx5 R1, #343 6538121846).** The end dumbbell sits 0.16 m below the shoulder joint beside the lower ribs with the elbow led up and back, so the upper arm stands 53.9 deg from the trunk axis (was 94); the near arm keeps the row's pole from the start so no ghost bends the elbow toward the head; "Row to ribs" anchors at the hex's lower edge with its box below the body. zoom.pair unchanged; the f-zoom-2 circle pin moves to [228, 152].
+
+## LIB-17 resume 3: LB7 push-up rows (LIB-17 builder, 2026-10-31)
+
+- **D-LIB17R3-MODES.** incline_push_up, diamond_push_up and pike_push_up are drawn H. No PARAMS key covers a hand surface, a body angle, where the hands sit along the body, the elbow's aim, or a hip pike. PUSHUP gets no template. Record: tools/plates/library/lb7/DESIGN.md section 19.
+- **D-LIB17R3-BENCH, as measured.** The incline bench top is 0.4232 m, solved for c1's 45 degrees. The chest sits over the bench edge (c3), and the top arms lean 22 degrees from plumb. Plumb arms would put the belly through the pad's near corner.
+- **D-LIB17R3-AFALL, -STRIPROWS.** diamond_push_up and pike_push_up move from leftOut to fallbackA in strip/rows.json, with every phase blank and the card's claim. Only the two LABELS literals and ROWS_PIN change in lib-strip.test.ts.
+- **D-LIB17R3-F7.** pike_push_up's card has drawable false: the elbow flare cannot be seen from the side. Its topFault is `flare` and F7 is named for it. The plate draws the head-only path (c6).
+- **D-LIB17R3-CLEAR.** Each row has a 2 px clearance test with a 0-value mutation. The card contacts (palms, the forearm at the wrist, the toes) and the diamond chest over the hands are excepted by name.

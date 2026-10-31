@@ -1,5 +1,5 @@
 {
- "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. No Rest. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 9 pose map). Proposed: D-LIB17-TEMPO (lib-17-card ruling 18), for 'LB7 NOTE RULED'. No row for cable_rear_delt_fly or renegade_row (D-LIB17-SECS: their tempo seconds are null; since 'LIB-17 resume' their untimed tempo is tempoOf(their strip/rows.json rows), D-STRIP-ROWS). Motra's and the other versions' bottom pauses are named in tempo.text only and not drawn (LR-33).",
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. No Rest. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 9 pose map). Proposed: D-LIB17-TEMPO (lib-17-card ruling 18), for 'LB7 NOTE RULED'. No row for cable_rear_delt_fly or renegade_row (D-LIB17-SECS: their tempo seconds are null; since 'LIB-17 resume' their untimed tempo is tempoOf(their strip/rows.json rows), D-STRIP-ROWS). Resume 3 (D-LIB17R3-AFALL): no row for diamond_push_up or pike_push_up either (null seconds; their strip is tempoOf(their strip/rows.json fallbackA rows)); incline_push_up's row follows its drawn order (bottom first, DESIGN.md section 19.2). Motra's and the other versions' bottom pauses are named in tempo.text only and not drawn (LR-33).",
  "research": "claude/libht-research 8d750bfe0dd9863862da88761268505d0089f5b2",
  "constants": {},
  "ids": {
@@ -150,6 +150,21 @@
     {
      "phase": "Hold",
      "from": "pause"
+    }
+   ]
+  },
+  "incline_push_up": {
+   "claim": "c9",
+   "rows": [
+    {
+     "phase": "Press",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
     }
    ]
   }

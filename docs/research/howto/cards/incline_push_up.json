@@ -1,0 +1,744 @@
+{
+ "id": "incline_push_up",
+ "libId": "lib_incline_push_up",
+ "name": "Incline Push-Up",
+ "family": "Push-up (child of push_up)",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists).",
+ "archetype": {
+  "hand": "palm-flat",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": "push_up",
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Put both hands on top of a sturdy bench, box or platform, shoulder-width apart (two sources say slightly wider), and walk the feet back until the body is at about 45 degrees to the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline",
+    "nasm-incline",
+    "sl-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "Find a sturdy platform, bench, or box at your desired incline. Place both hands on top of the incline shoulder-width apart and walk your feet back until your body is at a 45-degree angle with the floor. This is the starting position.",
+     "where": "Step 1, The Set Up"
+    },
+    {
+     "source": "nasm-incline",
+     "text": "Place your hands on an elevated surface such as a bench or wall, positioned slightly wider than shoulder-width apart. Position your feet away from the bench to create an incline angle.",
+     "where": "Step 1: Setup"
+    },
+    {
+     "source": "sl-incline",
+     "text": "Assume the starting position, with hands slightly wider than shoulder width apart.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Brace the trunk and hold the body in one straight line from head to heels, shoulders back and down, spine neutral.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nasm-incline",
+    "sl-incline"
+   ],
+   "quotes": [
+    {
+     "source": "nasm-incline",
+     "text": "Engage your core and create a straight line from your head to heels. Keep your shoulders back and down and maintain a neutral spine.",
+     "where": "Step 2: Brace/Position"
+    },
+    {
+     "source": "sl-incline",
+     "text": "Try to form a straight line from head to feet, and brace your abdomen slightly.",
+     "where": "How to, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Keeping the back straight with the shoulders in line with the hips, lower slowly until the chest nearly touches the bench (about an inch away; one source says touch it).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline",
+    "nasm-incline",
+    "sl-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "Keeping your back straight — your shoulders in line with your hips — slowly lower your body towards the box until your chest is an inch away from the box.",
+     "where": "Step 2, The Descent"
+    },
+    {
+     "source": "nasm-incline",
+     "text": "Lower your body toward the bench by bending your elbows, descending until your chest nearly touches the bench.",
+     "where": "Step 3: Execute/Drive"
+    },
+    {
+     "source": "sl-incline",
+     "text": "Reverse the motion when you’ve touched the elevation, and push yourself up to straight arms again while exhaling.",
+     "where": "How to, step 4"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Keep the elbows at about 45 degrees from the body; a slight flare out is okay.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nasm-incline",
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "nasm-incline",
+     "text": "Keep your elbows at approximately 45 degrees from your body.",
+     "where": "Step 3: Execute/Drive"
+    },
+    {
+     "source": "bb-incline",
+     "text": "Aim to keep your elbows in line with your shoulders, although it’s okay for them to flare out slightly.",
+     "where": "Step 2, The Descent"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Keep the gaze straight ahead; looking up may strain the neck.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "Keep your gaze straight ahead, as looking up may strain your neck.",
+     "where": "Step 2, The Descent"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Press back up by straightening the arms without moving the hands or feet or rounding the back, keeping hips and shoulders in line with the core engaged and the glutes and thighs squeezed.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "Exhale as you straighten your arms, pushing your body back up towards the starting position. Don’t alter your foot or hand placement or round your back towards or away from the floor.",
+     "where": "Step 3, The Push"
+    },
+    {
+     "source": "bb-incline",
+     "text": "Keep your hips and shoulders in alignment as much as possible. To help with this, keep your core engaged while squeezing your glutes and quads.",
+     "where": "Step 3, The Push"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "At the top, one source says not to lock the elbows, to keep the muscles under tension; another says straighten the arms.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nasm-incline",
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "nasm-incline",
+     "text": "Press your body upward by extending your elbows, returning to the starting position. Avoid locking out your elbows at the top to maintain continuous tension.",
+     "where": "Step 4: Return/Descent"
+    },
+    {
+     "source": "bb-incline",
+     "text": "Exhale as you straighten your arms, pushing your body back up towards the starting position.",
+     "where": "Step 3, The Push"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Breathe in on the way down and out on the way up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-incline",
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "sl-incline",
+     "text": "Lower yourself as deep as you can, while inhaling.",
+     "where": "How to, step 3"
+    },
+    {
+     "source": "bb-incline",
+     "text": "Exhale as you straighten your arms",
+     "where": "Step 3, The Push"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Do incline push-ups slowly: at least 3 seconds to lower and 3 seconds to rise.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "Incline push-ups are best done slowly. Take at least three seconds to lower and three seconds to raise yourself.",
+     "where": "Step 3, Coach's Tip"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Feet too close to the bench leave the shoulder blades raised (a shrug), which may raise the risk of shoulder impingement; walk the feet back so the blades sit down, and keep the shoulders down and away from the ears, even at the top.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "If your feet are too close to the box, then you’re going to be doing the incline push-ups while the scapula is elevated, which might expose you to a greater risk of shoulder impingement.",
+     "where": "Common mistakes, Feet Too Close to Platform"
+    },
+    {
+     "source": "bb-incline",
+     "text": "Moving your feet away so the shoulder blades are down will prevent you from doing the push-ups while in a shrugging position. Another cue you can use is keeping your shoulders down and away from your ears, even in the top position of the push-up.",
+     "where": "Common mistakes, Feet Too Close to Platform"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Elbows flaring too wide is a listed incline push-up mistake that increases shoulder stress.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nasm-incline"
+   ],
+   "quotes": [
+    {
+     "source": "nasm-incline",
+     "text": "Elbows flaring too wide, which increases shoulder stress",
+     "where": "Common Mistakes, item 3"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "If the low back drops toward the floor while the chest stays up, the set has gone on long enough and should not continue; avoid it by keeping the core tight and the hips in line with the shoulders. Sagging hips are a listed mistake.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline",
+    "nasm-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "If your lower back starts to drop toward the floor while your chest is still up (think: cobra pose), you’ve done more than enough reps.",
+     "where": "Common mistakes, Excessive Lumbar Extension"
+    },
+    {
+     "source": "bb-incline",
+     "text": "Just because your arms can still push you up and down, doesn’t mean you should continue.",
+     "where": "Common mistakes, Excessive Lumbar Extension"
+    },
+    {
+     "source": "bb-incline",
+     "text": "To avoid this, keep your core tight and focus on keeping your hips in line with your shoulders.",
+     "where": "Common mistakes, Excessive Lumbar Extension"
+    },
+    {
+     "source": "nasm-incline",
+     "text": "Allowing hips to sag, which indicates core disengagement",
+     "where": "Common Mistakes, item 1"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "The other listed incline push-up mistakes are jerky or momentum-driven reps, too short a range, and leaning too far forward, which shifts work to the shoulders and triceps.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nasm-incline"
+   ],
+   "quotes": [
+    {
+     "source": "nasm-incline",
+     "text": "Jerky movements or excessive momentum, which compromises form",
+     "where": "Common Mistakes, item 2"
+    },
+    {
+     "source": "nasm-incline",
+     "text": "Not achieving adequate range of motion due to elevated hand position",
+     "where": "Common Mistakes, item 4"
+    },
+    {
+     "source": "nasm-incline",
+     "text": "Excessive forward lean, which shifts emphasis to shoulders and triceps",
+     "where": "Common Mistakes, item 5"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Use a surface that can hold your weight, such as a sturdy desk, step platform or bench.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-incline"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "Couches, sturdy work desks, aerobics step platforms, park benches, and anything that can support your weight is fair game.",
+     "where": "Benefits, Convenience"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Raising the hands lowers the load: the higher the bench, the less body weight is pressed; in 23 recreationally fit adults, hands-elevated push-ups gave a lower peak floor force than regular push-ups.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "bb-incline",
+    "sl-incline",
+    "ebben-2011"
+   ],
+   "quotes": [
+    {
+     "source": "bb-incline",
+     "text": "The higher the box or platform, the less of your body weight you’ll be pressing. The lower the incline (the more horizontal your body is), the more challenging this move will be.",
+     "where": "Step 1, Coach's Tip"
+    },
+    {
+     "source": "sl-incline",
+     "text": "This version of the push-up decreases the load since your hands are elevated to the sofa, chair, bench or whatever you are using.",
+     "where": "Commentary"
+    },
+    {
+     "source": "ebben-2011",
+     "text": "Push-ups with hands elevated and push-ups from the flexed knee position produced a lower GRF than all other push-up variations (p ≤ 0.05).",
+     "where": "abstract"
+    },
+    {
+     "source": "ebben-2011",
+     "text": "Twenty-three recreationally fit individuals (14 men, 9 women) performed each of the 6 push-up variations in a randomized order.",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Progression: do 3 sets of 8-15 reps; lower the bench gradually as strength improves, and move to full push-ups once 12-15 incline reps are easy with good form.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nasm-incline"
+   ],
+   "quotes": [
+    {
+     "source": "nasm-incline",
+     "text": "Perform 3 sets of 8-15 repetitions, adjusting based on fitness level and bench height.",
+     "where": "FAQ, repetitions"
+    },
+    {
+     "source": "nasm-incline",
+     "text": "Progress to full push-ups when you can perform 12-15 incline push-ups with perfect form without excessive fatigue. Reduce bench height gradually to increase difficulty progressively.",
+     "where": "FAQ, progression"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "The chest, front shoulders and triceps do the pressing; the core holds the body straight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nasm-incline",
+    "bb-incline",
+    "sl-incline"
+   ],
+   "quotes": [
+    {
+     "source": "nasm-incline",
+     "text": "Pectoralis Major – primary mover for horizontal adduction during push-up",
+     "where": "Muscles Worked, primary"
+    },
+    {
+     "source": "bb-incline",
+     "text": "The primary movers during the incline push-up are the pectoralis major, triceps brachii, deltoids, and serratus anterior.",
+     "where": "FAQ"
+    },
+    {
+     "source": "sl-incline",
+     "text": "A hidden bonus with push-ups is that you also get some static training of your core, similar to that of the plank exercise.",
+     "where": "Commentary"
+    },
+    {
+     "source": "nasm-incline",
+     "text": "Anterior Deltoid",
+     "where": "Muscles Worked, Secondary Muscles"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-incline",
+   "url": "https://barbend.com/incline-push-up/",
+   "title": "How To Do the Incline Push-Up for No-Equipment Chest Building | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "nasm-incline",
+   "url": "https://www.nasm.org/resource-center/exercise-library/incline-push-up",
+   "title": "Incline Push-Up (NASM exercise library)",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-incline",
+   "url": "https://www.strengthlog.com/incline-push-up/",
+   "title": "How to Do Incline Push-Up: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ebben-2011",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21873902/",
+   "title": "Kinetic analysis of several variations of push-ups.",
+   "kind": "peer-reviewed",
+   "year": 2011,
+   "pmid": 21873902,
+   "access": "abstract",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the body line (c2, c3), the body angle set by the feet (c1) and the shrugged shoulders of the top fault (c10) all read from the side.",
+  "equipment": "Flat bench (census need 'flatBench') with the hands on its top edge, and the floor line under the feet. BarBend allows any sturdy bench, box or platform (c1, c14).",
+  "start": "Top: hands on the bench edge about shoulder-width (c1); arms straight, elbows not locked (c7); feet walked back so the body is about 45 degrees to the floor (c1); body straight from head to heels, shoulders down away from the ears (c2, c10); gaze ahead (c5).",
+  "end": "Bottom: chest about an inch above the bench edge (c3); elbows bent about 45 degrees from the body (c4); shoulders still in line with the hips (c3).",
+  "checkpoints": [
+   {
+    "label": "Straight line",
+    "what": "Head, hips and heels stay in one line.",
+    "claim": [
+     "c2",
+     "c3"
+    ]
+   },
+   {
+    "label": "Shoulders down",
+    "what": "Feet far enough back that the shoulders stay away from the ears.",
+    "claim": "c10"
+   },
+   {
+    "label": "Chest to bench",
+    "what": "Lower until the chest is just short of the bench.",
+    "claim": "c3"
+   }
+  ],
+  "mistake": {
+   "what": "Feet too close to the bench, so the shoulder blades stay raised in a shrug.",
+   "why": "BarBend's common-mistakes list says feet too close to the box leave the scapula elevated, which might expose you to a greater risk of shoulder impingement (c10).",
+   "claim": "c10",
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: feet too close to the bench, so the shoulder blades stay raised in a shrug (c10). Step 1 finds no frequency word for a fault of this exercise: BarBend's \"here are some of the most common you’ll come across\" is about push-up variations, \"The incline push-up is often associated with beginners\" and \"let’s say you usually like to finish your strength or bodybuilding workout\" are about the exercise and training, \"For the average gymgoer\" is not a frequency word, and \"Common Incline Push-Up Mistakes\" and NASM's \"Common Mistakes\" are headings; Ebben's \"Push-ups are a common and practical exercise\" is about the exercise. BarBend's \"Sometimes, it’s easiest to make mistakes during the simplest movements simply because you’re breezing through reps without thinking about it.\" is a list sentence about mistakes in general ('easiest' is not a frequency word) and is not read onto one item; \"This error occurs with regular push-ups, too.\" (the lumbar fault) says where the fault occurs, not how often. Not about a fault: NASM's \"injury prevention\" and BarBend's \"minimal injury risk from loading\", \"without as much strain, effort, or skill\" and \"not adding too much fatigue and mechanical strain\" are about the exercise or training. Step 2: three named faults are tied to harm. Feet too close (BarBend's list): \"which might expose you to a greater risk of shoulder impingement\" (c10). Elbows flaring too wide (NASM's list): \"Elbows flaring too wide, which increases shoulder stress\" (c11). Looking up: \"Keep your gaze straight ahead, as looking up may strain your neck.\" (c5), a third harm-tied fault. Tie order: looking up is on no common-mistakes list, so it loses the first tie-break. Feet too close and elbow flare are each on a list, each tied to harm by one source, both direct, and no list names both, so step 3's count decides. Step 3's count (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: feet too close 1 (BarBend's list, c10); elbows flaring too wide 1 (NASM's list, c11). Lines that only give the right position are not counted (NASM's \"Position your feet away from the bench to create an incline angle.\" and BarBend's \"Aim to keep your elbows in line with your shoulders, although it’s okay for them to flare out slightly.\"); counted, both are 2. Still tied, so the first of them on the earliest common-mistakes list written for this exercise, in source order (bb-incline), decides: feet too close. Set aside, no harm word: BarBend's lumbar line \"Excessive hyperextension in the lumbar spine (lower back) isn’t something you want to court during your push-ups.\" (c12) and NASM's \"Allowing hips to sag, which indicates core disengagement\" (c12); \"Jerky movements or excessive momentum, which compromises form\" (c13) is a speed-only fault and names no harm. 'compromises form' is not harm. BarBend's \"Lack of a Warm-Up\" (\"Otherwise, you might be setting your shoulders up for failure.\") is preparation, not a position during the set, so not a candidate, and 'setting your shoulders up for failure' names no injury, pain, stress or discomfort. Candidate: ruled by D-SUP-LB7-FEET (#288, 6340738518): the feet stay where they are for the whole set, so their position is a body position, not a setup choice. drawable true: the side view shows the feet close to the bench, a steep body and the shoulders up toward the ears."
+  },
+  "tells": [
+   {
+    "text": "Shoulders stay away from your ears",
+    "claim": "c10"
+   },
+   {
+    "text": "Chest stops just short of the bench",
+    "claim": "c3"
+   }
+  ],
+  "tempo": {
+   "up": 3,
+   "down": 3,
+   "pause": 0,
+   "claim": "c9",
+   "text": "BarBend: \"Take at least three seconds to lower and three seconds to raise yourself.\" (c9), an exercise-specific source that fixes each phase (R-LB2-1); drawn at the minimum, 3 down and 3 up. Pause 0: no quote on the card asks for a pause right after the press (LR-33); NASM's \"Avoid locking out your elbows at the top to maintain continuous tension\" (c7) asks no pause. BarBend's \"keep your core engaged while squeezing your glutes and quads\" (c6) is a bracing cue for the whole press, not a pause at the top, and its \"squeeze your shoulder blades together\" belongs to the standard push-up section, another exercise."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Palms flat on top of the bench (palm-flat hand pair; shared card docs/research/howto/shared/palm-flat.json, which lists this id by inference only).",
+  "width": "Shoulder-width (BarBend); NASM and StrengthLog say slightly wider (c1).",
+  "thumb": "",
+  "handContact": "Both hands on top of the incline (c1). No incline source gives finger or palm-pressure rules; the palm-flat shared card's rules apply by inference.",
+  "wrist": "",
+  "claims": [
+   "c1"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Use a sturdy bench or box that holds your weight.",
+   "claim": [
+    "c1",
+    "c14"
+   ]
+  },
+  {
+   "step": "Hands on top, shoulder-width or a little wider.",
+   "claim": "c1"
+  },
+  {
+   "step": "Walk your feet back until your body slopes at 45 degrees.",
+   "claim": "c1"
+  },
+  {
+   "step": "Brace and make one straight line from head to heels.",
+   "claim": "c2"
+  },
+  {
+   "step": "Shoulders back and down, away from your ears.",
+   "claim": [
+    "c2",
+    "c10"
+   ]
+  }
+ ],
+ "posture": [
+  {
+   "point": "Shoulders stay in line with your hips.",
+   "claim": [
+    "c3",
+    "c6"
+   ]
+  },
+  {
+   "point": "Elbows about 45 degrees from your body.",
+   "claim": "c4"
+  },
+  {
+   "point": "Look straight ahead, not up.",
+   "claim": "c5"
+  },
+  {
+   "point": "Squeeze your glutes and thighs.",
+   "claim": "c6"
+  },
+  {
+   "point": "Breathe in going down, out going up.",
+   "claim": "c8"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Feet too close, shoulders shrugged.",
+   "fix": "Walk your feet back so your shoulders sit down.",
+   "claim": "c10"
+  },
+  {
+   "mistake": "Elbows flaring too wide.",
+   "fix": "Keep your elbows about 45 degrees from your body.",
+   "claim": [
+    "c11",
+    "c4"
+   ]
+  },
+  {
+   "mistake": "Low back dropping.",
+   "fix": "Keep your hips in line with your shoulders.",
+   "claim": "c12"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "chest",
+    "claim": "c17"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "triceps",
+    "claim": "c17"
+   },
+   {
+    "muscleId": "front_delts",
+    "claim": "c17"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Chest, shoulders, back of the arms",
+    "means": "The pressing muscles are working.",
+    "fix": "",
+    "claim": "c17",
+    "redFlag": null
+   },
+   {
+    "where": "Shoulder",
+    "means": "Shrugged shoulders or wide elbows load the shoulder more.",
+    "fix": "Walk your feet back and keep your elbows at 45 degrees.",
+    "claim": [
+     "c10",
+     "c11",
+     "c4"
+    ],
+    "redFlag": "shoulder"
+   },
+   {
+    "where": "Lower back",
+    "means": "Your low back dropping means the set has gone on long enough.",
+    "fix": "End the set when your low back starts to drop.",
+    "claim": "c12",
+    "redFlag": null
+   },
+   {
+    "where": "Neck",
+    "means": "Looking up can strain your neck.",
+    "fix": "Keep your gaze straight ahead.",
+    "claim": "c5",
+    "redFlag": null
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Feet too close shrugs the shoulders and may raise shoulder injury risk.",
+   "claim": "c10"
+  },
+  {
+   "risk": "Elbows flared wide add stress to the shoulder.",
+   "claim": "c11"
+  }
+ ],
+ "redFlags": [
+  "shoulder"
+ ],
+ "zooms": [
+  {
+   "key": "shoulders",
+   "kind": "posture",
+   "right": "Feet back, shoulders down away from the ears.",
+   "wrong": "Feet close to the bench, shoulders shrugged.",
+   "claim": "c10"
+  },
+  {
+   "key": "hip-line",
+   "kind": "posture",
+   "right": "Head, hips and heels in one line.",
+   "wrong": "Low back dropped, chest still up.",
+   "claim": [
+    "c2",
+    "c12"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "exercises.json lists chest primary with triceps and front_delts secondary; NASM lists pec major (and triceps) primary with the anterior deltoid secondary, BarBend names pec major, triceps, deltoids and serratus as movers (c17). The library split is kept."
+ },
+ "anchorSource": "bb-incline",
+ "loadProgression": {
+  "text": "Do 3 sets of 8 to 15. Lower the bench bit by bit as you get stronger.",
+  "claim": [
+   "c16",
+   "c15"
+  ]
+ },
+ "notes": [
+  "LR-34 check against cards/push_up.json on head 3812989f: no inherit entry is kept. Every line uses this card's own incline-specific claims (way 1). Parent lines that do not hold whole: c1 (palms on the floor, kneel first), c13 and its tempo convention (replaced by BarBend's sourced 3 s down, 3 s up, c9), c14 ('squeeze' the floor) and c15 (floor clutter); the hands are on a bench here. Parent c4 (press until the elbows are fully extended) conflicts with NASM's 'Avoid locking out your elbows' (c7).",
+  "Shared cards: palm-flat (docs/research/howto/shared/palm-flat.json) lists incline_push_up in appliesTo and byRule.inferenceOnly; its hand rules (whole hand flat, fingers spread, sore-wrist options) are cited, not copied. floor-body (shared/floor-body.json) lists incline_push_up by inference for 'Body in line' and 'Head in line'; this card's own c2, c3 and c12 confirm the body line. Head: this card uses BarBend's gaze-ahead cue (c5).",
+  "Anchor: BarBend (bb-incline) is read in full and covers setup, each phase, tempo and a mistakes section; NASM's page (also read in full) is shorter. The anchor choice decides LR-31's step-3 count (rankNote).",
+  "Elbows: NASM gives about 45 degrees from the body; BarBend says keep the elbows in line with the shoulders but a slight flare is okay (c4). The plate draws 45 degrees.",
+  "Depth: BarBend stops about an inch from the box and NASM nearly touching; StrengthLog touches the elevation (c3). The plate draws just short of the bench.",
+  "Lockout: NASM says avoid locking out at the top; BarBend and StrengthLog say straighten the arms (c7). The plate draws straight arms with soft elbows.",
+  "The low-back feel row ends the set from BarBend's stop words (\"doesn’t mean you should continue\", c12); no source names pain there, so the row names none (R-LB3-4).",
+  "Read but not cited: the ACE exercise-library index page (no incline push-up entry found there). Not reachable: Healthline and Fitness Volt incline push-up URLs (404), Verywell Fit (402), Muscle & Strength (403)."
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "end",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "end",
+   "cardPose": "start",
+   "claim": "c1"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Press",
+   "s": 3,
+   "move": true
+  },
+  {
+   "phase": "Lower",
+   "s": 3,
+   "move": true
+  }
+ ],
+ "topFault": "feet"
+}
