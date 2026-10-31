@@ -85,7 +85,7 @@ describe('F-ZOOM-2 A2-A4: renegade_row released at k 3', { timeout: T }, () => {
     expect(z.fault.d).toBeCloseTo(5.640, 2);
     expect(Math.abs(z.fault.d - 5.640)).toBeLessThan(0.005);
     expect(zoom.zoomOf(withPair(PAIR, { tell: 'corner' })).fault.key).toBe('corner');
-    expect(z.circle.c).toEqual([126, 188]);
+    expect(z.circle.c).toEqual([228, 152]);   // LIB-17 resume 2 panel R1 (D-FZOOM2-ROWSYNC form): the end arm moved, so the circle's free spot moved from [126, 188]
     expect(z.src.c[1] + z.src.r).toBeLessThan(358);   // D-LIB22-RINGFIT: the source ring closes inside the frame (346.0)
     // with no pair the tell anchor is the fault, and it does not move: why the pair exists
     const L = qaEng.poseLandmarks(E, rr.default), cam = qaEng.cameraOf(rr.default, E.renderPlate(rr.default, { id: 'x', mistake: false }).report);

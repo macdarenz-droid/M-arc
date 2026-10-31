@@ -522,3 +522,17 @@ The two owed rows on renegade_row (D-LIB17-SPLIT):
   cue, key and anchor are unchanged.
 
 QA on renegade_row: all 10 hard checks pass; flags F5 3.57 only (the ruled set).
+
+**Panel mx5 R1 fix (#343 6538121846).** The end arm was past the shoulder's range (94° from the trunk axis, the elbow
+far above the back) and the lower ghost bent the elbow toward the head.
+- End: the dumbbell now sits END_DROP 0.16 m below the shoulder joint (still END_BACK 0.21 m behind it, beside the
+  lower ribs, c4), with the elbow led up and back (pole [0, 0.5, -1], close to the body, c5): **53.9°** from the trunk
+  axis (≤ 55°; 0.15 m gives 55.6°). No card quote fixes the height (plateFacts hold only the start contacts), so no
+  card truth is moved. sizes.json END_DROP carries the basis.
+- Ghosts: the near arm's pole is the row's own from the start (ROW_POLE), so both in-between ghosts bend the elbow
+  toward the hips. The straight start arm draws the same either way.
+- "Row to ribs": the end dumbbell now overlaps the trunk in the side view, so its anchor moves to the hex's lower edge
+  (grip + 9 px, outside the trunk) and the box to (150, 300), below the body; the leader no longer crosses the figure.
+- Tests: the angle (≤ 55°) and the ghost bend, each with a red mutation (the round-1 end; the round-1 start pole).
+- The zoom.pair numbers are unchanged (5.640 px, 16.92 px at k 3). The circle's free spot moved from [126, 188] to
+  [228, 152] (f-zoom-2.test.ts:88, reported).

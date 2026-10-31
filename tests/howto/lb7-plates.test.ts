@@ -684,11 +684,37 @@ describe('LIB-17 renegade_row (H; tier A; the plank class; held: D-LIB8-shrug): 
       for (const k of ['hip.r', 'knee.r']) { const p = L[k], t = ((p[1] - a[1]) * (b[1] - a[1]) + (p[2] - a[2]) * (b[2] - a[2])) / ((b[1] - a[1]) ** 2 + (b[2] - a[2]) ** 2); expect(Math.hypot(p[1] - a[1] - t * (b[1] - a[1]), p[2] - a[2] - t * (b[2] - a[2])) * 100, `${pose} ${k}`).toBeLessThanOrEqual(1.5); }
     }
   });
-  it('c4, c5: the row ends with the near dumbbell beside the lower ribs, the elbow above the back', () => {
+  it('c4, c5: the row ends with the near dumbbell beside the lower ribs (END_DROP below the shoulder joint), the elbow above the back', () => {
     const E = lmOf(s(), 'end');
     expect(E['grip.r'][2]).toBeLessThan(E['shoulder.r'][2] - 0.15);
-    expect(Math.abs(E['grip.r'][1] - E['shoulder.r'][1])).toBeLessThan(0.02);
+    expect(Math.abs(E['grip.r'][1] - (E['shoulder.r'][1] - M.renegade_row.SIZES.END_DROP))).toBeLessThan(0.02);
     expect(E['elbow.r'][1]).toBeGreaterThan(E.backUpper[1]);
+  });
+  // PANEL mx5 R1 (#343 6538121846): the end upper arm within the shoulder's range, and every in-between ghost bends the
+  // elbow toward the hips (behind the shoulder-to-grip line), as the end pose does
+  const v3 = (p: number[], q: number[]) => p.map((x, i) => x - q[i]!);
+  const armAngle = (spec: any) => { const E = lmOf(spec, 'end'); return angle3(E['elbow.r'], E['shoulder.r'], E['hip.r']); };
+  const ghostFlips = (spec: any) => {
+    const b = { height: 1.75 }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, b)), n = spec.ghosts.count, out: string[] = [];
+    for (let i = 1; i <= n; i++) {
+      const l = body.landmarks(body.fk(body.poseAt(keys, i / (n + 1), b).q, b)), sh = l['shoulder.r'], g = l['grip.r'], e = l['elbow.r'];
+      // side view (y, z): the elbow's side of the shoulder->grip line; + is toward the hips (-z) for a line pointing down
+      const cross = (g[2] - sh[2]) * (e[1] - sh[1]) - (g[1] - sh[1]) * (e[2] - sh[2]);
+      if (!(cross < 0 || Math.hypot(...v3(e, sh).slice(1)) < 1e-6)) out.push(`ghost ${i}: elbow ${cross.toFixed(4)} toward the head`);
+    }
+    return out;
+  };
+  it('panel R1: the end upper arm is at most 55 deg from the trunk axis (shoulder to hip); both ghosts bend the elbow toward the hips', () => {
+    console.log(`LIB-17 renegade_row end upper arm ${armAngle(s()).toFixed(1)} deg from the trunk axis`);
+    expect(armAngle(s())).toBeLessThanOrEqual(55);
+    expect(ghostFlips(s())).toEqual([]);
+  });
+  it('panel R1 mutations: the round-1 end (dumbbell at shoulder height, pole [0, 1, -0.4]) is red on the angle; the round-1 start pole [0, 0, 1] flips a ghost (red)', () => {
+    const e = s().poses.end, st = s().poses.start, g = e.reach.r.at, lb = lmOf(s(), 'start');
+    const r1 = { ...s(), poses: { ...s().poses, end: { ...e, reach: { ...e.reach, r: { at: [g[0], lb['shoulder.r'][1], g[2]], pole: [0, 1, -0.4] } } } } };
+    expect(armAngle(r1)).toBeGreaterThan(55);
+    const flip = { ...s(), poses: { ...s().poses, start: { ...st, reach: { ...st.reach, r: { ...st.reach.r, pole: [0, 0, 1] } } } } };
+    expect(ghostFlips(flip).length).toBeGreaterThan(0);
   });
   it('c9 Mistake: the near dumbbell lands on a corner (a hex vertex on the floor, turned M_TURN from the flat far one)', () => {
     const items = itemsIn(s(), 'mistake').items, hex = items.find((i: any) => i.type === 'poly' && i.cls === 'disc');
