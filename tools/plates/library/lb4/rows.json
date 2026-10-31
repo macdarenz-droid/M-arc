@@ -1,0 +1,52 @@
+{
+ "note": "LB4 build-ahead rows (LIB-14, D-LIB14-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (D-LIB14-MODES). front_squat, goblet_squat, bodyweight_squat and pistol_squat were released from D-LIB14-NOSECS by LIB-STRIP (#309, main bec24ebd; 'LIB-14 resume'); step_up stays held (D-LIB14-STEPUP: reverse_lunge is still held on main) and gets no row. censusRef: the census commit (claude/howto-options).",
+ "batch": "LB4",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_front_squat": {
+   "src": "library/specs/front_squat.mjs",
+   "slug": "front-squat",
+   "prefix": "front-squat",
+   "chromeId": "front-squat",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_goblet_squat": {
+   "src": "library/specs/goblet_squat.mjs",
+   "slug": "goblet-squat",
+   "prefix": "goblet-squat",
+   "chromeId": "goblet-squat",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_bodyweight_squat": {
+   "src": "library/specs/bodyweight_squat.mjs",
+   "slug": "bodyweight-squat",
+   "prefix": "bodyweight-squat",
+   "chromeId": "bodyweight-squat",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_wall_sit": {
+   "src": "library/specs/wall_sit.mjs",
+   "slug": "wall-sit",
+   "prefix": "wall-sit",
+   "chromeId": "wall-sit",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_pistol_squat": {
+   "src": "library/specs/pistol_squat.mjs",
+   "slug": "pistol-squat",
+   "prefix": "pistol-squat",
+   "chromeId": "pistol-squat",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}

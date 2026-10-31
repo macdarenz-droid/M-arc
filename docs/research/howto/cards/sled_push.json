@@ -855,5 +855,11 @@
    "claim": "c9"
   }
  ],
+ "tempo": [
+  {
+   "phase": "Walk",
+   "move": true
+  }
+ ],
  "topFault": "round"
 }

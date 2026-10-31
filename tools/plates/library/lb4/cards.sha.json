@@ -1,0 +1,20 @@
+{
+ "note": "sha256 per LB4 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\"; and sha256 of each quotes file, a byte copy from the same head.",
+ "researchHead": "3812989f59c000705731f7944d7a1a275e86045d",
+ "cards": {
+  "front_squat": "fa7498d5b7208d53071b6f2eb384694a837ff643325fa7b1e1224ec6ba5f8071",
+  "goblet_squat": "1c5e23749753c8864abdd71ec0ac73800753f89ef82c8e2e8bf3b6e53274042c",
+  "bodyweight_squat": "ce851976ceace13070cc4882f3eb0283418b31fde0d0c081a858b98e6e65764f",
+  "wall_sit": "49ce8fe900fd181d1a8d9bc3f87ff17624da71eb31e09c503d2b15a1eda8cd35",
+  "step_up": "9e4f43a0a0a20ee1ecf020e7a549b72808261fa116b9d01db1898075befc53b3",
+  "pistol_squat": "625b3039b37c6cb955329b29d376338d9e4ec68a55a5d13320bb5ec478acae11"
+ },
+ "quotes": {
+  "front_squat": "409372925ac018c2e2e7af7124b771a3b00cf5f6dda2745a85df1380c1d7b434",
+  "goblet_squat": "e9e65a03617b8f675b4c179f3daff45dc3352a8830cdbb0ee7d4784001b5e108",
+  "bodyweight_squat": "f9a6754224819feeb6719ddc1358882da8e0259cf855648eaf377cd8c7c07dfd",
+  "wall_sit": "95837c440642aaf4913e329a85574259d9a289b8659d7a4b2bdf528f781202e2",
+  "step_up": "9f8f922a3865854d949df7f2455f2b1010f1481538a8f50e6cf4957d6d524577",
+  "pistol_squat": "b4bdf5c179d1513ce8f1db9c4864716a594c472cfb136df760c24cef7afc7b06"
+ }
+}

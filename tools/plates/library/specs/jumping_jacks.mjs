@@ -99,6 +99,6 @@ export default {
     guides: TOE_GUIDES,
     tells: [{ key: 'toes', text: 'Toes out', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 64, top: 300 }, cue: 'The toes twist outward instead of pointing forward.' }],
   },
-  alt: 'Jumping jacks, front view. From standing with the feet together and the arms at the sides, the feet land apart with soft knees and the straight arms overhead; toes point forward.',
+  alt: 'Jumping jacks, front view. From standing with the feet together and the arms at the sides, the feet land apart with soft knees and the straight arms overhead. Toes point forward.',
 };
 export const info = { pose: Object.fromEntries([['start', start], ['end', end], ['mistake', { ...end, ...mistake }]].map(([k, p]) => { const lm = landmarksOf(p, H); return [k, { com: com(lm).map(v => +v.toFixed(3)), heel: +lm['heel.l'][2].toFixed(3), toe: +lm['toe.l'][2].toFixed(3), feetX: [+lm['sole.r'][0].toFixed(3), +lm['sole.l'][0].toFixed(3)] }]; })) };
