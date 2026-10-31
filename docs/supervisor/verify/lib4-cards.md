@@ -4597,3 +4597,6 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **Train 55** is rebuilt to include #362: head `5be28542`, which adds a merge commit on top of `08c25c1d` (no force push). Main moves from 106 to 112 of 153.
 - **D-LIB13S-RPC** (#359 6550232146): whole-page LB3 builds run in awaited child processes, because the vitest worker's RPC timed out on two heads. LIB-13's A10 moves only where its builds run, and its assertion is unchanged.
 - **mx20** (building): a focused recheck of dumbbell_shrug (R11) and smith_machine_shrug (R5) @ `86c0202f`, page `be50e4d1…6529`.
+- **PANEL mx20** (LIB-13s focused recheck @ `86c0202f`) is **VALID**. Plants were caught at smith R5 [3,2,3] and dumbbell R11 [3,3,3]. The anchor items below 4 are follow-ups 19, 21 and 22.
+  - **dumbbell_shrug and smith_machine_shrug: APPROVED.** LIB-13s has 5 of 5 and goes to READY (#359 6550765744).
+- **#362** advanced to `0ab56be3`, a docs-only §6 note (DIFF-CHECK PASS 6550712097). It rides the next train after train 55.
