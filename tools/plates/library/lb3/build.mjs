@@ -86,7 +86,7 @@ export const SHEET = {
     notes: ['Support anchor: one_arm_dumbbell_row, shown above (D-LIB13-SUPPORT). Redrawn if that anchor is rejected'] },
   // LIB-13s wave 1 (lib-13s-card; DESIGN.md section 16)
   lib_t_bar_row: { tier: 'A', class: 'landmine rig, second user (H; D-LIB13S-MODES)', anchor: 'barbell_row',
-    critic: 'panel mx16 @ 01b66192: R1 and R3 below 4; fix round (handle under the bar, grip square to the forearm), focused recheck next',
+    critic: 'approved, panel mx19 @ fe9219bf (#359 6549892683), after the mx16 fix round',
     notes: ['Plate size: drawing convention (228 mm), the 10 lb plate (D-LIB13-TBAR)', 'Zoom: normal view, k 1.5, on the handle path (D-LIB13S-ZOOM)',
       'Wrist drawn straight: the card\'s 35° extension of a neutral grip bends out of the side plane (mx16 R3)',
       'Feet 38 cm apart, toes out 17°: the widest stance the engine plants within 0.5 cm; the side view does not show width (D-LIB13S-TBARFEET)'] },
@@ -96,13 +96,13 @@ export const SHEET = {
       'Mistake drawn as bent arms (c4): rolling (c3) cannot be drawn (D-LIB13S-TOPFAULT)'] },
   // LIB-13s wave 2 (DESIGN.md section 16.11): barbell_shrug's approved bytes, cloned
   lib_cable_shrug: { tier: 'B', class: 'shrug, low cable (H; SHRUG not built)', anchor: 'barbell_shrug',
-    critic: 'LIB-13s wave 2: not yet reviewed',
+    critic: 'approved, panel mx19 @ fe9219bf (#359 6549892683)',
     notes: ['Zoom: normal view, k 3.5, on the 5 cm shrug (D-LIB13S-ZOOM)', 'Labels boxed on the left (the column fills the right); no elbow measure'] },
   lib_dumbbell_shrug: { tier: 'B', class: 'shrug, dumbbells, front view (H)', anchor: 'barbell_shrug',
-    critic: 'LIB-13s wave 2: not yet reviewed',
-    notes: ['Zoom: normal view, k 3.5, on the 5 cm shrug (D-LIB13S-ZOOM)', 'Grips 26 cm out: the narrowest that keeps the hexes 2 px off the thighs (D-LIB13S-CLEAR)'] },
+    critic: 'approved, panel mx20 @ 86c0202f, after the mx19 fix round',
+    notes: ['Zoom: normal view, k 3.5, beside the viewer\'s-right shoulder (D-LIB13S-ZOOM; mx19)', 'Grips 26 cm out: the narrowest that keeps the hexes 2 px off the thighs (D-LIB13S-CLEAR)'] },
   lib_smith_machine_shrug: { tier: 'B', class: 'shrug, Smith machine (H; an LB6 id drawn with its parent)', anchor: 'barbell_shrug',
-    critic: 'LIB-13s wave 2: not yet reviewed',
+    critic: 'approved, panel mx20 @ 86c0202f, after the mx19 fix round (no Mistake zoom, #359 option 1)',
     notes: ['Zoom: normal view, k 3.5, on the 5 cm shrug (D-LIB13S-ZOOM)', 'Head forward drawn as a tipped head (20°): the engine neck only flexes',
       'Rails, hooks, stops, frame and plates stand beside the body in depth (D-LIB13S-CLEAR)'] },
 };

@@ -1335,6 +1335,46 @@ describe('LIB-13s: t_bar_row and cable_shrug stay byte-identical to their approv
   });
 });
 
+describe('LIB-13s: dumbbell_shrug and smith_machine_shrug stay byte-identical to their approval (panel mx20 @ 86c0202f, page be50e4d1)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf on the LB3 page be50e4d1…6529 (both APPROVED in mx20)
+  const WANT: Record<string, Record<string, string>> = {
+    "dumbbell-shrug": {
+      "normalSvg": "acacdbacf5bcd9a9c7a397b10c85b4b9a84347a56ecfcfc8d841fbedaece04b4",
+      "normalOverlay": "24172c405359fbd18ce66773d76bcf898c1debb56a7326624dcc310636b1c977",
+      "mistakeSvg": "8a5dc3ef00453ea377b7fed2aa65fcaefcf4bb4ef3691ef106ed779b1d6854d7",
+      "mistakeOverlay": "73e17339e57607e0db54a4c94378222b418d9168406661e209aaccc1fa7cdbe1",
+      "tells": "e77b3d5f135c83265ef5ea6dbc9b0e3ef4886776ac78f99b26cddd00883dfcb4",
+      "tempo": "8c1a840e14fab09fb3181eebe48a482e98b8fab8f7e035855cb47ccee90d0474",
+      "cues": "5b4da2fc6d0eabef7735308e17ccf9e5e26864b54686146fdce7040d210ddf85",
+      "alt": "9c048668ecd3eee4c2c72ea897eed338fd081071680be8637e25f5f9439a4839",
+      "mistakeAlt": "97e01716226b9f875c18a35b1ab0ee239d357e8c3dc51556d0861b4260c992f2"
+    },
+    "smith-machine-shrug": {
+      "normalSvg": "c992d625e0326d01fd5259d52be376f84106652f24158620b5645ea18e3e50e5",
+      "normalOverlay": "351b295d1934570614854b84c276a05c4694636361936a8e3cadae86207e5276",
+      "mistakeSvg": "e6e436083944f3e63b7c931cf9772b5e7d433eb0b4d9043a634d43a9d26f0e73",
+      "mistakeOverlay": "1b9dc3b3f0ebb734a363cbdc707744368682405c2327296cdcde383f4c06d5ef",
+      "tells": "38462db5023058bcbeff4229212930b944f53a8741d596a08a4152c0af7f82fd",
+      "tempo": "9dddaf8a1a7ac621957def9a5b63268a33a0c8f1e54fe49a8e69b7ed5e12d0ea",
+      "cues": "5312985a5fe57a54e51272373c456fab67fb3109769833cedc04ca2af92f883b",
+      "alt": "fe1572ff1c232f7851280e9af6dabdb90cc5ed4f2eba82728a50cfb41045290e",
+      "mistakeAlt": "249c7ff4ca7f963b3eb821c974e46575af6049c16902021ec50bf68856b15b47"
+    }
+  };
+  let golden: any;
+  beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
+  const diff = (html: string) => Object.entries(WANT).flatMap(([c, want]) => { const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`); });
+  it('their 18 fragments on this head equal the approved ones', async () => {
+    expect(Object.values(WANT).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(18);
+    expect(diff(await pageHtml())).toEqual([]);
+  });
+  it("mutation: one byte in smith_machine_shrug's Mistake alt is red", async () => {
+    const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'smith-machine-shrug');
+    expect(diff(html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E')))).toEqual(['smith-machine-shrug mistakeAlt']);
+  });
+});
+
 describe('LIB-13s A1: the released rows are H with no parent, template or params; held shrugs have no row', () => {
   const rowProblems = (rows: Record<string, any>) => Object.entries(rows).flatMap(([id, r]) =>
     [r.mode !== 'H' ? `${id}: mode ${r.mode}` : null, ...['parent', 'template', 'params'].filter(k => k in r).map(k => `${id}: ${k}`)].filter(Boolean));
