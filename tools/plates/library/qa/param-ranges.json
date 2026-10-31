@@ -1,4 +1,43 @@
 {
   "$comment": "LIB-3c (D-LIB10-RANGES): approved PARAMS ranges per family (a T row's template name, or D:<parent id>). Only the supervisor adds rows, each by a ruling quoted byte for byte. Read only by PQ-H10 (qa/param-ranges.mjs).",
-  "families": {}
+  "families": {
+    "CURL": {
+      "ruling": "D-LIB15R2-RANGES",
+      "params": {
+        "load.primitive": {
+          "range": [
+            "dumbbell",
+            "barbell"
+          ],
+          "basis": [
+            "the pinned parent lib_dumbbell_biceps_curl draws the dumbbell (tests/howto/golden/library/pilot-a.json:261; dumbbell_biceps_curl.mjs:123)",
+            "barbell_curl c1, ez_bar_curl c1 and reverse_curl c1 hold a bar in both hands (research a48b0594); the EZ bar is the vendor barbell end-on (D-LIB15R2-EZ)"
+          ]
+        },
+        "stance.width": {
+          "range": [
+            0.22,
+            0.28
+          ],
+          "basis": [
+            "0.22 m, feet hip width: barbell_curl c2; the value is the pinned lib_triceps_pushdown's hip-width stance (triceps_pushdown.mjs:38, feet at +-0.11 m; pilot-a.json:383)",
+            "0.28 m, feet shoulder width: the pinned parent lib_dumbbell_biceps_curl (dumbbell_biceps_curl.mjs:48, FOOT_X 0.14; pilot-a.json:261)"
+          ]
+        }
+      }
+    },
+    "PUSHDOWN": {
+      "ruling": "D-LIB15R2-RANGES",
+      "params": {
+        "bar.kind": {
+          "range": [
+            "straight"
+          ],
+          "basis": [
+            "the pinned parent lib_triceps_pushdown draws the straight bar (triceps_pushdown.mjs:167; pilot-a.json:383); straight_bar_triceps_pushdown c1"
+          ]
+        }
+      }
+    }
+  }
 }
