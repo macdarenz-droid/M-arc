@@ -26,7 +26,7 @@
 //  Plank: arms straight and plumb (shoulder joint ARM over the grip), the body one straight line shoulders to heels
 //   (trunk, hip, knee 0, neck 0: c2, c3), toes tucked on the floor (ankle ANKLE, the toe tip on the floor at TOE_Z);
 //   root and pelvis tilt SOLVED (plank's Newton solve) so the shoulder sits over the grip and the toe tip on the floor.
-//  Row (c4, c5): the near grip END_BACK behind the shoulder joint along the body and at the shoulder joints' height,
+//  Row (c4, c5): the near grip END_BACK behind the shoulder joint along the body and END_DROP below the shoulder joints' height,
 //   beside the lower ribs; the elbow IK pole up and back (the elbow close to the body, driven back).
 //  Mistake (c9): the near grip back on the floor line under the shoulder, the dumbbell turned M_TURN onto a corner (the
 //   axis CIRCUM above the floor, the corner on it).
@@ -35,8 +35,8 @@
 import { WINTER, REF, landmarksOf } from '../engine.mjs';
 
 const H = 1.75;
-export const SIZES = Object.freeze({ DB_X: 0.2266, ANKLE: 0, TOE_Z: -1.25, END_BACK: 0.21, END_OUT: 0.08, M_TURN: 30, FLOOR_BACK: 0.12, FLOOR_FRONT: 0.30, LINE_RUN: 0.22 });
-const { DB_X, ANKLE, TOE_Z, END_BACK, END_OUT, M_TURN, FLOOR_BACK, FLOOR_FRONT, LINE_RUN } = SIZES;
+export const SIZES = Object.freeze({ DB_X: 0.2266, ANKLE: 0, TOE_Z: -1.25, END_BACK: 0.21, END_DROP: 0.16, END_OUT: 0.08, M_TURN: 30, FLOOR_BACK: 0.12, FLOOR_FRONT: 0.30, LINE_RUN: 0.22 });
+const { DB_X, ANKLE, TOE_Z, END_BACK, END_DROP, END_OUT, M_TURN, FLOOR_BACK, FLOOR_FRONT, LINE_RUN } = SIZES;
 const HEAD = 0.119;                                     // vendor dumbbell head across the corners (equipment.mjs:30)
 const CIRCUM = HEAD / 2, APOTHEM = CIRCUM * Math.cos(Math.PI / 6);
 const ARM = (WINTER.upperArm + WINTER.forearm + REF.gripOff) * H - 0.0001;   // straight arm, shoulder to grip centre
@@ -70,12 +70,16 @@ const SH = landmarksOf(BODY, H)['shoulder.r'];
 const GZ = SH[2];
 export const DB = { l: [DB_X, GRIP_Y, GZ], r: [-DB_X, GRIP_Y, GZ] };
 const down = [0, -1, 0];
-const start = { ...BODY, reach: { l: { at: DB.l, pole: [0, 0, 1] }, r: { at: DB.r, pole: [0, 0, 1] } } };
+// The near arm's pole is the row's own (up and back) from the start, so every in-between ghost bends the elbow toward the
+// hips (PANEL mx5 R1); the straight start arm draws the same either way.
+export const ROW_POLE = [0, 0.5, -1];
+const start = { ...BODY, reach: { l: { at: DB.l, pole: [0, 0, 1] }, r: { at: DB.r, pole: ROW_POLE } } };
 // End (c4, c5): the near dumbbell beside the lower ribs, END_BACK behind the shoulder joint (the trunk is level, so
-// along z), at the shoulder joints' height, END_OUT outside the shoulder joint so the inner head clears the ribs.
+// along z), END_DROP below the shoulder joints' height, END_OUT outside the shoulder joint so the inner head clears the
+// ribs; the elbow led up and back toward the hip (pole), close to the body (PANEL mx5 R1: about 55 deg from the trunk).
 const LB = landmarksOf(start, H);
-const END_GRIP = [-(DB_X + END_OUT), LB['shoulder.r'][1], GZ - END_BACK];
-const end = { ...start, reach: { l: start.reach.l, r: { at: END_GRIP, pole: [0, 1, -0.4] } } };
+const END_GRIP = [-(DB_X + END_OUT), LB['shoulder.r'][1] - END_DROP, GZ - END_BACK];
+const end = { ...start, reach: { l: start.reach.l, r: { at: END_GRIP, pole: ROW_POLE } } };
 // Mistake (c9): the near dumbbell landing on a corner, its axis CIRCUM above the floor straight under the shoulder.
 const M_GRIP = [-DB_X, CIRCUM, GZ];
 const mistakePose = { reach: { l: start.reach.l, r: { at: M_GRIP, pole: [0, 0, 1] } } };
@@ -118,9 +122,9 @@ export default {
   trace: { point: 'grip.r', trim: [10, 12] },
   datum: [{ x: 0, from: 0, to: 0, line: LINE }],
   callouts: [
-    { key: 'line', text: 'Straight<br>line', anchor: 'buttock', box: { left: 76, top: 206 }, cue: 'Keep one straight line from your head to your heels.' },
+    { key: 'line', text: 'Straight<br>line', anchor: 'buttock', box: { left: 40, top: 160 }, cue: 'Keep one straight line from your head to your heels.' },
     { key: 'feet', text: 'Feet wide', anchor: 'heel.r', cue: 'Set your feet wider than hip-width for a steady base.' },
-    { key: 'row', text: 'Row to<br>ribs', anchor: { at: 'grip.r', off: [0, -7] }, box: { left: 120, top: 160 }, cue: 'Row the dumbbell to your ribcage, elbow close to your body.' },
+    { key: 'row', text: 'Row to<br>ribs', anchor: { at: 'grip.r', off: [0, 9] }, box: { left: 150, top: 300 }, cue: 'Row the dumbbell to your ribcage, elbow close to your body.' },
   ],
   tempo: [{ phase: 'Row', move: true }, { phase: 'Lower', move: true, word: 'Controlled' }],
   mistake: {
@@ -128,8 +132,10 @@ export default {
     guides: [],
     tells: [
       // one tell (D-LIB10-SKULL1 record, DESIGN.md section 9): c9 states the corner landing and no second sign
-      { key: 'corner', text: 'Lands on<br>a corner', anchor: M_HEX[0], box: { left: 256, top: 286 }, cue: 'The dumbbell comes down too fast and lands on a corner.' },
+      { key: 'corner', text: 'Corner<br>landing', anchor: M_HEX[0], box: { left: 256, top: 286 }, cue: 'The dumbbell comes down too fast and lands on a corner.' },
     ],
   },
+  // D-LIB17-ZOOMPAIR (F-ZOOM-2): the far (flat) hex's drawn vertex 0 against the turned tell vertex M_HEX[0]
+  zoom: { view: 'mistake', k: 3, pair: [[DB.l[0], APOTHEM, GZ + CIRCUM], M_HEX[0]] },
   alt: 'Renegade row, side view. In a high plank on two hex dumbbells, hands under the shoulders, body straight from head to heels, the lifter rows one dumbbell to the ribcage, elbow close to the body, and sets it back down flat.',
 };

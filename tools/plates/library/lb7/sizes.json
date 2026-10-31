@@ -360,6 +360,11 @@
     "unit": "m",
     "basis": "claim: c4 'row toward the same-side hip until it brushes the ribcage': the dumbbell centre 12% of the body height behind the shoulder joint, at the lower ribs"
    },
+   "END_DROP": {
+    "value": 0.16,
+    "unit": "m",
+    "basis": "stated reason: PANEL mx5 R1 (#343 6538121846; normal shoulder extension about 50-60 deg, the approved one_arm_dumbbell_row about 25): the dumbbell centre this far below the shoulder joints' height beside the lower ribs (c4 'brushes the ribcage'), so the elbow led up and back (c5 'elbow close to the body') stands about 54 deg from the trunk axis; the least whole cm under 55 deg"
+   },
    "END_OUT": {
     "value": 0.08,
     "unit": "m",
