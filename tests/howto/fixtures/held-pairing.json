@@ -1,14 +1,7 @@
 {
   "rule": "D-PLATEFACTS-HELD (#309 6405234751, supervisor approval 2026-10-26): each id here is held by its ruling, and validateCardFile gives it exactly the pairing problem 'plateFacts and tempo go in together or not at all' (the hold marker lb7-plates :265 and lb10-plates :58 pin); every other card gives []. A lane that lifts an id removes it here in its card commit.",
   "held": [
-    { "id": "burpee", "ruling": "D-LIB22-SECS NOSECS (plateFacts, no tempo); strip rows.json card" },
-    { "id": "cable_rear_delt_fly", "ruling": "LB7 NOSECS (D-LIB14-NOSECS; F-STRIP-2, LIB-17) (plateFacts, no tempo); strip rows.json card" },
-    { "id": "farmer_s_carry", "ruling": "D-LIB22-SECS NOSECS (plateFacts, no tempo); strip rows.json card" },
     { "id": "jumping_jacks", "ruling": "D-LIB22-JJ (#305 option 1: held at H6:no-card; timed tempo, no plateFacts)" },
-    { "id": "medicine_ball_slam", "ruling": "D-LIB22-SECS NOSECS (plateFacts, no tempo); F-STRIP-2, LIB-22's own map" },
-    { "id": "renegade_row", "ruling": "LB7 NOSECS (D-LIB14-NOSECS) (plateFacts, no tempo); strip rows.json card" },
-    { "id": "sled_pull", "ruling": "D-LIB22-SECS NOSECS (plateFacts, no tempo); strip rows.json card" },
-    { "id": "sled_push", "ruling": "D-LIB22-SECS NOSECS (plateFacts, no tempo); F-STRIP-2, LIB-22's own map" },
     { "id": "step_up", "ruling": "D-LIB14-STEPUP (LIB-14 #289: D-LIB14-NOSECS released by LIB-STRIP, but held until reverse_lunge is redrawn and pinned) (plateFacts, no tempo); strip rows.json card" }
   ]
 }

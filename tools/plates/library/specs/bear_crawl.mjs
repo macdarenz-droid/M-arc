@@ -142,11 +142,12 @@ export default {
     pose: mistake,
     tells: [
       { key: 'hips', text: 'Hips rise', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 64, top: 152 }, cue: 'The hips rise above the line of the back as the knees lift.' },
-      { key: 'level', text: 'Hips above<br>shoulders', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 192, top: 120 }, cue: 'The hips sit higher than the shoulders.' },
+      { key: 'level', text: 'Hips above<br>shoulders', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 192, top: 96 }, cue: 'The hips sit higher than the shoulders.' },
     ],
   },
   tempo: [{ phase: 'Work', s: '15–30', move: true }],
-  alt: 'Bear crawl, side view. On hands and toes with the hands under the shoulders and the knees under the hips, hovering just off the floor, back flat; one hand and the opposite foot move forward a small step.',
+  zoom: { view: 'normal', k: 4 },   // D-LIBZOOM-EXTEND (lib4-cards §41; DESIGN.md §21): the hand's step (wrist.r), 29.3 px at k 4 (bar at the zoom's scale)
+  alt: 'Bear crawl, side view. On hands and toes with the hands under the shoulders and the knees under the hips, hovering just off the floor, back flat. One hand and the opposite foot move forward a small step.',
 };
 export const info = { QS, QE, QM, hip0: HIP0, hipM: hipFlexOf(landmarksOf(mAt(QM), H)), pose: Object.fromEntries([['start', start], ['end', end], ['mistake', mAt(QM)]].map(([k, p]) => { const lm = landmarksOf(p, H);
   return [k, { com: com(lm).map(v => +v.toFixed(3)), hipY: +lm['hip.r'][1].toFixed(3), shY: +lm['shoulder.r'][1].toFixed(3), kneeL: lm['knee.l'].map(v => +v.toFixed(3)), kneeR: lm['knee.r'].map(v => +v.toFixed(3)), toeL: lm['toe.l'].map(v => +v.toFixed(3)), toeR: lm['toe.r'].map(v => +v.toFixed(3)), wristR: lm['wrist.r'].map(v => +v.toFixed(3)), gripR: lm['grip.r'].map(v => +v.toFixed(3)) }]; })) };
