@@ -1020,5 +1020,24 @@
    "claim": "c2"
   }
  ],
+ "tempo": [
+  {
+   "phase": "Squat down",
+   "move": true,
+   "word": "Controlled"
+  },
+  {
+   "phase": "Kick back",
+   "move": true
+  },
+  {
+   "phase": "Jump in",
+   "move": true
+  },
+  {
+   "phase": "Jump up",
+   "move": true
+  }
+ ],
  "topFault": "rush"
 }

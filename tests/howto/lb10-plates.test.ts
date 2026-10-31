@@ -27,8 +27,17 @@ const LB10 = ['sled_push', 'sled_pull', 'farmer_s_carry', 'burpee', 'jumping_jac
   'medicine_ball_slam', 'wall_ball', 'bear_crawl', 'kettlebell_swing'];
 // LB10's thirteenth row: pilot A's plate (pA), never in an LB10 file.
 const NOT_HERE = ['mountain_climbers'];
-// D-LIB22-SECS: no tempo seconds on these six cards; drawn and tested, never on rows.json until the strip card.
-const NOSECS = ['sled_push', 'sled_pull', 'farmer_s_carry', 'burpee', 'medicine_ball_slam', 'wall_ball'];
+// D-LIB22-SECS: no tempo seconds on six cards. 'LIB-22 resume' lifts the three with a strip/rows.json card row (STRIP;
+// D-STRIP-NOTSCOPE, F-STRIP-2) and the two released to its fallbackA, every phase blank (AFALL; D-LIB22-AFALL,
+// D-LIB22-STRIPROWS); wall_ball (strip leftOut, S3) stays NOSECS: drawn and tested, never on rows.json.
+const STRIP = ['sled_pull', 'farmer_s_carry', 'burpee'];
+const AFALL = ['sled_push', 'medicine_ball_slam'];
+const NOSECS = ['wall_ball'];
+/** A tempo.json row as its card and spec phase: timed from the card's plate.tempo (`from`) or a quoted constant; an
+ *  untimed row (D-STRIP-B, -ROWS) as strip tempoOf builds it, { phase, move?, word? }. */
+const phaseOf = (plateTempo: any, r: any) => ('from' in r || 'constant' in r
+  ? { phase: r.phase, s: r.from ? plateTempo[r.from] : r.constant, ...(r.move ? { move: true } : {}) }
+  : { phase: r.phase, ...(r.move ? { move: true } : {}), ...('word' in r ? { word: r.word } : {}) });
 const RESEARCH_HEAD = '596dbe0748f11d13b431ee11d38d1742771925f1';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -110,7 +119,7 @@ describe('LIB-22 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     sled_pull: ['lean', 'lean'], farmer_s_carry: ['rush', 'long'], burpee: ['rush', 'landing'], high_knees: ['arch', 'arch'],
     battle_ropes: ['shrug', 'shrug'], bear_crawl: ['hips', 'hips'], jumping_jacks: ['jerky', 'toes'],
   };
-  const tempoOf = (id: string) => (t.rows[id] ? t.rows[id].map((r: any) => ({ phase: r.phase, s: r.from ? cardOf(id).plate.tempo[r.from] : r.constant, ...(r.move ? { move: true } : {}) })) : undefined);
+  const tempoOf = (id: string) => (t.rows[id] ? t.rows[id].map((r: any) => phaseOf(cardOf(id).plate.tempo, r)) : undefined);
   const keyProblems = (id: string, c: any) => {
     const out: string[] = [], facts = FACTS[id];
     const want = facts ? facts.map(([landmark, pose, cardPose, claim]) => ({ kind: 'contact', landmark, pose, cardPose, claim })) : undefined;
@@ -169,7 +178,7 @@ describe('LIB-22 A7 (proposed, D-LIB22-SECS, -TEMPO): lb10/tempo.json', () => {
     ...readJson(`docs/research/howto/quotes/${id}.json`).quotes.filter((q: any) => q.claim === claim).map((q: any) => q.text),
   ];
   /** The phase array a tempo.json row gives with the card's plate.tempo: from up/down/pause, or a quoted constant. */
-  const build = (id: string, rows = t.rows[id]) => rows.map((r: any) => ({ phase: r.phase, s: r.from ? cardOf(id).plate.tempo[r.from] : r.constant, ...(r.move ? { move: true } : {}) }));
+  const build = (id: string, rows = t.rows[id]) => rows.map((r: any) => phaseOf(cardOf(id).plate.tempo, r));
   const problems = (tt: any) => Object.entries<any>(tt.rows).flatMap(([id, rows]) => rows.flatMap((r: any) => {
     const out: string[] = [];
     if (r.from && !(typeof cardOf(id).plate.tempo[r.from] === 'number' && cardOf(id).plate.tempo[r.from] > 0)) out.push(`${id} ${r.phase}: card ${r.from} is not a positive number`);
@@ -184,6 +193,51 @@ describe('LIB-22 A7 (proposed, D-LIB22-SECS, -TEMPO): lb10/tempo.json', () => {
     for (const id of NOSECS) expect(t.rows[id], id).toBeUndefined();
     expect(build('kettlebell_swing')).toEqual([{ phase: 'Drive', s: 1, move: true }, { phase: 'Swing down', s: 1, move: true }]);
     expect(cardOf('kettlebell_swing').plate.tempo.pause).toBe(0);
+  });
+  /** D-STRIP-B, -ROWS, F-STRIP-2: a lifted id's rows are strip/rows.json's card rows byte for byte (word or blank, claim,
+   *  says, quote), its card's plate.tempo.text is the strip card's text, and strip's own wordProblems finds nothing. */
+  const stripRows = readJson('tools/plates/library/strip/rows.json');
+  const stripProblems = async (tt: any, strip = stripRows) => {
+    const ts = await import(/* @vite-ignore */ lib('strip/tempo-strip.mjs'));
+    return [...STRIP, ...AFALL].flatMap(id => {
+      const fa = AFALL.includes(id), sc = (fa ? strip.fallbackA : strip.cards).find((c: any) => c.id === id), rows = tt.rows[id], text = cardOf(id).plate.tempo.text, out: string[] = [];
+      if (!sc) return [`${id}: no strip ${fa ? 'fallbackA' : 'card'} entry`];
+      if (JSON.stringify(rows) !== JSON.stringify(sc.rows)) out.push(`${id}: rows differ from strip/rows.json`);
+      if (text !== sc.text) out.push(`${id}: card text differs from strip/rows.json`);
+      if (!rows || rows.some((r: any) => 'from' in r || 'constant' in r)) out.push(`${id}: no rows or a timed row`);
+      const w = rows ? ts.wordProblems(ts.tempoOf(rows), text, { allBlank: fa }) : [];
+      if (w.length) out.push(`${id}: words ${w.join(',')}`);
+      return out;
+    });
+  };
+  it('the lifted ids (sled_pull, farmer_s_carry, burpee) carry strip/rows.json\'s rows byte for byte, each word in the card text', async () => {
+    expect(await stripProblems(t)).toEqual([]);
+    expect(build('sled_pull')).toEqual([{ phase: 'Walk', move: true, word: 'Quick' }]);
+    expect(build('burpee')).toEqual([{ phase: 'Squat down', move: true, word: 'Controlled' }, { phase: 'Kick back', move: true }, { phase: 'Jump in', move: true }, { phase: 'Jump up', move: true }]);
+  });
+  it('mutations: a word changed (Quick to Slow), a says edited, a row dropped, a constant on a lifted id are red', async () => {
+    const word = structuredClone(t); word.rows.sled_pull[0].word = 'Slow';
+    expect(await stripProblems(word)).toEqual(['sled_pull: rows differ from strip/rows.json', 'sled_pull: words word:0']);
+    const says = structuredClone(t); says.rows.farmer_s_carry[0].says = 'with more control';
+    expect(await stripProblems(says)).toEqual(['farmer_s_carry: rows differ from strip/rows.json']);
+    const drop = structuredClone(t); drop.rows.burpee.pop();
+    expect(await stripProblems(drop)).toEqual(['burpee: rows differ from strip/rows.json']);
+    const timed = structuredClone(t); timed.rows.farmer_s_carry = [{ phase: 'Walk', constant: 30, move: true, claim: 'c8', quote: 'x' }];
+    expect(await stripProblems(timed)).toEqual(['farmer_s_carry: rows differ from strip/rows.json', 'farmer_s_carry: no rows or a timed row', 'farmer_s_carry: words noword']);
+  });
+  it('D-LIB22-AFALL: sled_push and medicine_ball_slam carry their strip fallbackA rows byte for byte, every phase blank', async () => {
+    expect(build('sled_push')).toEqual([{ phase: 'Walk', move: true }]);
+    expect(build('medicine_ball_slam')).toEqual([{ phase: 'Slam', move: true }]);
+    for (const id of AFALL) expect(t.rows[id].every((r: any) => r.blank === true && !('word' in r)), id).toBe(true);
+  });
+  it('mutations (D-LIB22-STRIPROWS): a word added to a blank row, and either id moved back to strip leftOut, are red', async () => {
+    const word = structuredClone(t); word.rows.sled_push[0] = { phase: 'Walk', move: true, word: 'Quick', claim: 'c10' };
+    expect(await stripProblems(word)).toEqual(['sled_push: rows differ from strip/rows.json', 'sled_push: words word:0:fallback']);
+    for (const id of AFALL) {
+      const back = structuredClone(stripRows), e = back.fallbackA.find((c: any) => c.id === id);
+      back.fallbackA = back.fallbackA.filter((c: any) => c.id !== id); back.leftOut.push({ id, lane: e.lane, why: 'moved back' });
+      expect(await stripProblems(t, back), id).toEqual([`${id}: no strip fallbackA entry`]);
+    }
   });
   it('every constant is stated by its claim\'s verbatim quote, and every from-row reads a positive card number', () => {
     expect(problems(t)).toEqual([]);
@@ -264,8 +318,9 @@ const T = 600_000;
 const SPECS_DIR = 'tools/plates/library/specs';
 const ROWS = 'tools/plates/library/lb10/rows.json';
 const FRONT = ['jumping_jacks', 'jump_rope'];
-// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; D-LIB8-shrug holds, measured).
-const HELD = [...NOSECS, 'jump_rope', 'bear_crawl', 'jumping_jacks'];
+// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; farmer_s_carry's open M_STRIDE basis; jump_rope's
+// Trace, short of the bar at kMax; jumping_jacks under D-LIB22-JJ until F-H6-TEMPO).
+const HELD = [...NOSECS, 'farmer_s_carry', 'jump_rope', 'jumping_jacks'];   // wall_ball: no spec yet
 // The ids drawn on this branch: the slice, then the bulk as each plate is integrated (BULK GO, #305 6356763967).
 const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl', 'high_knees', 'jumping_jacks', 'battle_ropes'];
 const COMPOSERS = ['kettlebell', 'medBall', 'sled', 'jumpRope', 'battleRope'];
@@ -632,7 +687,7 @@ describe('LIB-22 A2 / A18: medicine_ball_slam and `medBall` (tier A; NOSECS; the
     expect(q.knee.r).toBeLessThanOrEqual(2);
     expect(staticProblems(s(), 'ball').filter(p => p.startsWith('mistake'))).toEqual([]);
   });
-  it('the spec carries no tempo (D-LIB22-SECS)', () => { expect(s().tempo).toBeUndefined(); });
+  it('the spec carries D-LIB22-AFALL\'s blank Slam phase, no word, no seconds (released from D-LIB22-SECS)', () => { expect(s().tempo).toEqual([{ phase: 'Slam', move: true }]); });
 });
 
 describe('LIB-22 A2 / A18: sled_push and `sled` (NOSECS; the slice)', { timeout: T }, () => {
@@ -727,7 +782,7 @@ describe('LIB-22 A2 / A18: sled_push and `sled` (NOSECS; the slice)', { timeout:
       expect(Math.abs(l['shoulder.r'][1] - l['grip.r'][1]), pose).toBeLessThanOrEqual(0.01);
     }
   });
-  it('the spec carries no tempo (D-LIB22-SECS)', () => { expect(s().tempo).toBeUndefined(); });
+  it('the spec carries D-LIB22-AFALL\'s blank Walk phase, no word, no seconds (released from D-LIB22-SECS)', () => { expect(s().tempo).toEqual([{ phase: 'Walk', move: true }]); });
 });
 
 describe('LIB-22 A2 / A18: burpee (NOSECS; held; bulk)', { timeout: T }, () => {
@@ -898,7 +953,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H (D-LIB22-B1)', () => {
-    expect(want()).toEqual(['lib_high_knees', 'lib_battle_ropes', 'lib_kettlebell_swing']);
+    expect(want()).toEqual(['lib_sled_push', 'lib_sled_pull', 'lib_burpee', 'lib_high_knees', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_bear_crawl', 'lib_kettlebell_swing']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('mountain_climbers (pA) and wall_ball (no spec before its resume) are in no lb10/ file as a row', () => {
@@ -914,7 +969,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
     const table = design.split(head)[1]!.split('\n## ')[0]!;
     for (const id of NOSECS) expect(HELD, id).toContain(id);
     for (const id of HELD) {
-      expect(table.split('\n').some(l => l.startsWith('| ') && l.split('|')[1]!.includes(id) && /D-LIB22-SECS|D-LIB8-shrug|D-LIB22-WALL/.test(l)), id).toBe(true);
+      expect(table.split('\n').some(l => l.startsWith('| ') && l.split('|')[1]!.includes(id) && /D-LIB22-SECS|D-LIB8-shrug|D-LIB22-WALL|D-LIB22-JJ|6360164495/.test(l)), id).toBe(true);
       for (const f of reg.batchFiles()) expect(readFileSync(f, 'utf8').includes(`lib_${id}`), `${f}: ${id}`).toBe(false);
       expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
     }
@@ -1010,12 +1065,12 @@ console.log(JSON.stringify({ ids: b.drawnIds(), a: sha(a.html), c: sha(c.html) }
 describe('LIB-22 A7 (spec half): each spec\'s tempo follows lb10/tempo.json and its card; NOSECS specs carry none', () => {
   const t = readJson('tools/plates/library/lb10/tempo.json');
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
-  const build = (id: string) => (t.rows[id] ? t.rows[id].map((r: any) => ({ phase: r.phase, s: r.from ? cardOf(id).plate.tempo[r.from] : r.constant, ...(r.move ? { move: true } : {}) })) : undefined);
+  const build = (id: string) => (t.rows[id] ? t.rows[id].map((r: any) => phaseOf(cardOf(id).plate.tempo, r)) : undefined);
   const tempoProblems = (id: string, spec: any) => (JSON.stringify(spec.tempo) === JSON.stringify(build(id)) ? [] : [`${id}: ${JSON.stringify(spec.tempo)} != ${JSON.stringify(build(id))}`]);
   it('every drawn spec\'s tempo is its ruled row built from the card (or none, NOSECS)', () => {
     for (const id of specsDrawn()) expect(tempoProblems(id, S[id])).toEqual([]);
   });
-  it('mutations: a Hold added to kettlebell_swing, its drive set to 2 s, a Rest added, a tempo on a NOSECS spec are red', () => {
+  it('mutations: a Hold added to kettlebell_swing, its drive set to 2 s, a Rest added, a timed tempo on sled_push\'s blank row are red', () => {
     const k = S.kettlebell_swing;
     expect(tempoProblems('kettlebell_swing', { ...k, tempo: [k.tempo[0], { phase: 'Hold', s: 1 }, k.tempo[1]] }).length).toBe(1);
     expect(tempoProblems('kettlebell_swing', { ...k, tempo: [{ ...k.tempo[0], s: 2 }, k.tempo[1]] }).length).toBe(1);
@@ -1114,7 +1169,11 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     for (const id of specsDrawn().filter(i => S[i].mistake.tells.length === 1)) expect(recordProblems(id)).toEqual([]);
     expect(recordProblems('kettlebell_swing')).toEqual(['kettlebell_swing: no one-tell record']);
   });
-  const guideProblems = (spec: any) => (spec.mistake.guides ?? []).filter((g: any) => !['dashed', 'arrow', 'arc-arrow'].includes(g.kind)).map((g: any) => `${spec.id}: ${g.kind}`);
+  /** D-LIB22-AXIS (#331, panel mx2 item 5): exactly one solid guide is allowed, burpee's locked-leg axis hip.r -> knee.r ->
+   *  ankle.r in the Mistake pose; every other guide is dashed or an arrow. */
+  const AXIS = { id: 'burpee', kind: 'line', pts: ['hip.r', 'knee.r', 'ankle.r'].map(at => ({ at, pose: 'mistake' })) };
+  const isAxis = (spec: any, g: any) => spec.id === AXIS.id && g.kind === AXIS.kind && JSON.stringify(g.pts) === JSON.stringify(AXIS.pts);
+  const guideProblems = (spec: any) => (spec.mistake.guides ?? []).filter((g: any) => !['dashed', 'arrow', 'arc-arrow'].includes(g.kind) && !isAxis(spec, g)).map((g: any) => `${spec.id}: ${g.kind}`);
   it('every Mistake guide is dashed or an arrow; mutation: a solid line guide is red', () => {
     for (const id of specsDrawn()) expect(guideProblems(S[id])).toEqual([]);
     const s = S.sled_push;
@@ -1172,10 +1231,19 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     expect(anchorProblems({ ...s, mistake: { ...s.mistake, tells } }).length).toBe(1);
   });
   /** 13.1, 13.4 must-fix 1: every solid red arrow clears the solid end figure by 6 px. */
+  /** The drawn D-LIB22-AXIS line of `spec` (its m-arrow path's points), or null: ends within 0.5 px of the Mistake hip.r
+   *  and ankle.r. It lies along the leg by design, so the 6 px clearance below skips exactly it. */
+  const axisPt = (spec: any, at: string) => qaEng.resolvePoint(qaEng.anchorInPose({ at, pose: 'mistake' }, 'mistake'), 'mistake', qaEng.poseLandmarks(Eng(), spec).lm, qaEng.cameraOf(spec, rep(spec)));
+  const isAxisPath = (spec: any, pts: number[][]) => {
+    if (spec.id !== AXIS.id || !(spec.mistake.guides ?? []).some((g: any) => isAxis(spec, g))) return false;
+    const [a, b] = [axisPt(spec, 'hip.r'), axisPt(spec, 'ankle.r')], f = pts[0]!, l = pts[pts.length - 1]!;
+    return Math.hypot(f[0]! - a[0], f[1]! - a[1]) <= 0.5 && Math.hypot(l[0]! - b[0], l[1]! - b[1]) <= 0.5;
+  };
   const clearance = (spec: any) => {
     const polys = shapesIn(spec, 'end').map((x: any) => x.poly), svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
     return [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].flatMap(m => {
       const pts = xy(m[1]!), samp: number[][] = [];
+      if (isAxisPath(spec, pts)) return [];
       for (let i = 0; i + 1 < pts.length; i++) for (let k = 0; k <= 20; k++) samp.push(pts[i]!.map((v, j) => v + (pts[i + 1]![j]! - v) * k / 20));
       const min = Math.min(...samp.map(p => outside(polys, p)));
       return min >= 6 ? [] : [`${spec.id}: arrow ${min.toFixed(1)} px from the end figure`];
@@ -1183,6 +1251,22 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   };
   it('every drawn plate: no solid red arrow comes within 6 px of the solid end figure', async () => {
     for (const id of specsDrawn()) { expect(clearance(S[id]), id).toEqual([]); await yieldNow(); }
+  });
+  it('D-LIB22-AXIS: burpee draws its axis line, hip.r to ankle.r within 0.5 px, in the plate and inside the Mistake zoom', async () => {
+    const svg = plate.renderPlate(S.burpee, { id: 'x', mistake: true }).svg, paths = [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].map(m => xy(m[1]!));
+    expect(paths.filter(p => isAxisPath(S.burpee, p)).length).toBe(1);
+    const z = (await import(/* @vite-ignore */ lib('zoom/inline.mjs'))).zoomOf(S.burpee), inner = z.svg.split('class="pz-in"')[1] ?? '';
+    expect(/<path class="m-arrow"/.test(inner)).toBe(true);
+  });
+  it('D-LIB22-AXIS mutations: the axis removed, the same axis on sled_push, and an axis to the knee only are red', () => {
+    const b = S.burpee, none = { ...b, mistake: { ...b.mistake, guides: [] } };
+    const svg = plate.renderPlate(none, { id: 'x', mistake: true }).svg;
+    expect([...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].filter(m => isAxisPath(b, xy(m[1]!))).length).toBe(0);
+    const s = S.sled_push;
+    expect(guideProblems({ ...s, mistake: { ...s.mistake, guides: [...(s.mistake.guides ?? []), { kind: 'line', pts: AXIS.pts }] } })).toEqual(['sled_push: line']);
+    const short = { ...b, mistake: { ...b.mistake, guides: [{ kind: 'line', pts: AXIS.pts.slice(0, 2) }] } };
+    expect(guideProblems(short)).toEqual(['burpee: line']);
+    expect(clearance(short).length).toBe(1);
   });
   it('mutation: an arrow from the end hip to the Mistake hip on sled_push (inside the 6 px clearance) is red', () => {
     const s = S.sled_push, guides = [...s.mistake.guides, { kind: 'arrow', from: { at: 'hips', pose: 'end' }, to: { at: 'hips', pose: 'mistake' } }];
@@ -1373,6 +1457,10 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     for (const id of specsDrawn()) { out.push(...labelProblems(S[id])); await yieldNow(); }
     expect(out).toEqual([]);
   });
+  it('D-LIB22-PLANKBOX mutation: burpee\'s "Straight plank" box back at {76, 168} sends its leader through the "Soft landing" text: red', () => {
+    const b = S.burpee, old = { ...b, callouts: b.callouts.map((x: any) => (x.key === 'plank' ? { ...x, text: 'Straight plank', box: { left: 76, top: 168 } } : x)) };
+    expect(labelProblems(old)).toContain('burpee normal: leader plank through the text of soft');
+  });
   it('mutations: medicine_ball_slam\'s "Flat back" box back at {40, 212} (its leader crosses "Hips and knees"), and a box whose leader runs through another label\'s text, are red', () => {
     const s = S.medicine_ball_slam, at = (key: string, box: any) => ({ ...s, callouts: s.callouts.map((x: any) => (x.key === key ? { ...x, box } : x)) });
     expect(labelProblems(at('flat', { left: 40, top: 212 }))).toContain('medicine_ball_slam normal: leaders hips and flat cross');
@@ -1513,5 +1601,192 @@ describe('LIB-22 A17: sizes and trace points are fixed in lb10/sizes.json and ne
     expect(sizeProblems(m, { ...t, M_ARCH: { ...t.M_ARCH, basis: 'above deviationMin' } })).toEqual(['M_ARCH: basis names PQ-H3']);
     expect(sizeProblems({ ...m, SIZES: { ...m.SIZES, NEW_ANGLE: 5 } }, t)).toEqual(['NEW_ANGLE: not in sizes.json']);
     expect(sizeProblems({ ...m, default: { ...m.default, trace: { ...m.default.trace, point: 'knee.r' } } }, t)).toEqual(['trace: spec knee.r != sizes.json grip.r']);
+  });
+});
+
+describe('LIB-22 resume: the zoom circles (D-LIBZOOM-EXTEND, lib4-cards §41; DESIGN.md section 21)', { timeout: T }, () => {
+  // Each held S2 row the zoom lifts: its view, k, and the measure at the zoom's own scale (QA's: clippedTrace on the
+  // drawn circle; the tell deviation x k). k rule (section 21): the smallest k in steps of 0.5 from 1.5 whose
+  // zoom-scale value clears its bar by at least 10 %.
+  const ZOOMS: Record<string, { view: string; k: number }> = {
+    sled_pull: { view: 'normal', k: 3 }, burpee: { view: 'mistake', k: 2 }, bear_crawl: { view: 'normal', k: 4 },
+  };
+  let zi: any, qz: any, env: any;
+  beforeAll(async () => {
+    [zi, qz] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    env = pins().envelope;
+  });
+  /** { value, bar, holds, fits }: the zoom-scale measure of `spec` at its zoom, its bar, whether the source ring holds
+   *  the whole trace (normal) or the tell anchor in both poses (Mistake), as qa/zoom.mjs H3.zoom:content asks, and
+   *  whether the source ring closes inside the plate frame (D-LIB22-RINGFIT, #331 6415452903 item 4). */
+  const measure = (spec: any) => {
+    const z = zi.zoomOf(spec), ring = { c: z.circle.c, r: z.circle.r }, src = z.src;
+    const inSrc = (p: number[]) => Math.hypot(p[0]! - src.c[0], p[1]! - src.c[1]) <= src.r - 1;
+    const fits = [0, 1].every(i => src.c[i] - src.r >= 0 && src.c[i] + src.r <= zi.ZOOM.size);
+    return z.view === 'normal'
+      ? { value: qz.clippedTrace(z.svg, ring), bar: env.traceLenMin, holds: z.trace.every(inSrc), fits }
+      : { value: z.fault.d * z.k, bar: env.deviationMin, holds: [z.fault.end, z.fault.mistake].every(inSrc), fits };
+  };
+  const ok = (m: any) => m.value >= 1.1 * m.bar && m.holds && m.fits;
+  const ruleProblems = (id: string, spec: any) => {
+    const out: string[] = [], m = measure(spec);
+    if (JSON.stringify(spec.zoom) !== JSON.stringify(ZOOMS[id])) out.push(`${id}: zoom ${JSON.stringify(spec.zoom)}`);
+    if (!(m.value >= 1.1 * m.bar)) out.push(`${id}: ${m.value.toFixed(1)} px under the bar + 10 %`);
+    if (!m.holds) out.push(`${id}: the source ring does not hold the motion`);
+    if (!m.fits) out.push(`${id}: the source ring is clipped by the plate frame`);
+    for (let k = zi.ZOOM.kMin; k < spec.zoom.k; k += 0.5) if (ok(measure({ ...spec, zoom: { ...spec.zoom, k } }))) { out.push(`${id}: k ${k} already clears`); break; }
+    return out;
+  };
+  it('each lifted row carries its ruled zoom, clears its bar by 10 % at the smallest such k, and holds its motion in the source ring', async () => {
+    for (const id of Object.keys(ZOOMS)) {
+      expect(zi.zoomFieldProblems(S[id].zoom), id).toEqual([]);
+      expect(ruleProblems(id, S[id]), id).toEqual([]);
+      console.log(`LIB-22 zoom ${id}: ${S[id].zoom.view} k ${S[id].zoom.k}, ${measure(S[id]).value.toFixed(1)} px`);
+      await yieldNow();
+    }
+    for (const id of specsDrawn().filter(i => !(i in ZOOMS))) expect(S[id].zoom, id).toBeUndefined();
+  });
+  it('at plate scale each lifted row still fails its bar (the zoom is allowed only there; never enlarged)', async () => {
+    for (const id of Object.keys(ZOOMS)) {
+      const R = { normal: plate.renderPlate(S[id], { id: 'x' }), mistake: plate.renderPlate(S[id], { id: 'x', mistake: true }) };
+      const v = S[id].zoom.view === 'normal' ? markup.pathsOf(R.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0) : qaNode.deviation({ spec: S[id] }, Eng(), R);
+      expect(v, id).toBeLessThan(S[id].zoom.view === 'normal' ? env.traceLenMin : env.deviationMin);
+      await yieldNow();
+    }
+  });
+  it('jump_rope stays held: a normal zoom at kMax 4 is under traceLenMin', () => {
+    const m = measure({ ...S.jump_rope, zoom: { view: 'normal', k: zi.ZOOM.kMax } });
+    expect(m.value).toBeLessThan(env.traceLenMin);
+  });
+  it('D-LIB22-RINGFIT mutation: sled_pull at k 1.5 and 2.5 (its source ring runs past the plate\'s bottom edge) is red', () => {
+    for (const k of [1.5, 2.5]) expect(ruleProblems('sled_pull', { ...S.sled_pull, zoom: { view: 'normal', k } }), String(k)).toContain('sled_pull: the source ring is clipped by the plate frame');
+  });
+  it('mutations: bear_crawl at k 3.5 (under the margin), sled_pull at k 1 (field), burpee at k 2.5 (not the smallest), a zoom on the wrong view are red', async () => {
+    expect(ruleProblems('bear_crawl', { ...S.bear_crawl, zoom: { view: 'normal', k: 3.5 } })).toEqual(['bear_crawl: zoom {"view":"normal","k":3.5}', 'bear_crawl: 24.1 px under the bar + 10 %']);
+    expect(zi.zoomFieldProblems({ view: 'normal', k: 1 })).toEqual(['zoom.k 1 is outside 1.5-4']);
+    expect(ruleProblems('burpee', { ...S.burpee, zoom: { view: 'mistake', k: 2.5 } })).toEqual(['burpee: zoom {"view":"mistake","k":2.5}', 'burpee: k 2 already clears']);
+    await yieldNow();
+    expect(ruleProblems('sled_pull', { ...S.sled_pull, zoom: { view: 'mistake', k: 1.5 } })[0]).toBe('sled_pull: zoom {"view":"mistake","k":1.5}');
+  });
+});
+
+describe('LIB-22 panel fix (mx2, #331 6415452903): sled_pull items 1-4, medicine_ball_slam item 6', { timeout: T }, () => {
+  const sp = () => S.sled_pull, K = () => M.sled_pull;
+  const eqKeys = (spec: any, pose: string, parts: string[]) => itemsIn(spec, pose).items.filter((i: any) => parts.includes(i.part)).map((i: any) => JSON.stringify(i.pts ?? i.surface ?? i));
+  /** Item 1: in the Mistake the sled, the rope, the coil and both fists are where the end has them; only the body pitches
+   *  back (hips forward, shoulders back), the near shoulder REACH from its fist (the end's elbow bend). */
+  const stayProblems = (spec: any) => {
+    const out: string[] = [], e = lmOf(spec, 'end'), m = lmOf(spec, 'mistake');
+    for (const part of ['sled', 'rope', 'coil']) if (JSON.stringify(eqKeys(spec, 'mistake', [part])) !== JSON.stringify(eqKeys(spec, 'end', [part]))) out.push(`${part} moves`);
+    for (const g of ['grip.l', 'grip.r']) if (d3(e[g], m[g]) > 0.005) out.push(`${g} moves ${(d3(e[g], m[g]) * 100).toFixed(1)} cm`);
+    if (!(m.hips[2] > e.hips[2] && m.shoulders[2] < e.shoulders[2])) out.push('the body does not pitch back (hips forward, shoulders back)');
+    if (Math.abs(d3(m['shoulder.r'], e['grip.r']) - K().info.REACH) > 0.005) out.push('the near shoulder is not REACH from its fist');
+    return out;
+  };
+  it('item 1: sled, rope, coil and fists stay put in the Mistake; the body pitches back; no red rope (the rope items are byte-equal)', () => {
+    expect(stayProblems(sp())).toEqual([]);
+  });
+  it('item 1 mutation: the Mistake arms keeping their end joint angles (no reach), so the fists move with the body, is red', () => {
+    const s = sp(), bad = { ...s, mistake: { ...s.mistake, pose: { ...s.mistake.pose, reach: { l: null, r: null } } } };
+    expect(stayProblems(bad).some(p => /grip\.(l|r) moves/.test(p))).toBe(true);
+  });
+  /** Item 2: "Torso pitched back" ends on the Mistake figure's back outline (within 3 px of the Mistake torso); "Quarter
+   *  squat" ends on the front (far, l) knee. */
+  const anchorAt = (spec: any, a: any, pose: string) => qaEng.resolvePoint(qaEng.anchorInPose(a, pose), pose, qaEng.poseLandmarks(Eng(), spec).lm, qaEng.cameraOf(spec, rep(spec)));
+  const leanProblems = (spec: any) => {
+    const t = spec.mistake.tells.find((x: any) => x.key === 'lean'), p = anchorAt(spec, t.anchor, 'mistake');
+    const torso = shapesIn(spec, 'mistake').filter((x: any) => x.key === 'torso').map((x: any) => x.poly);
+    return Math.abs(outside(torso, p)) <= 3 ? [] : [`lean ends ${outside(torso, p).toFixed(1)} px from the Mistake torso outline`];
+  };
+  it('item 2: "Torso pitched back" ends on the Mistake back; mutation: anchored on the Mistake head is red', () => {
+    expect(leanProblems(sp())).toEqual([]);
+    const s = sp(), bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => (x.key === 'lean' ? { ...x, anchor: { at: 'head', pose: 'mistake' } } : x)) } };
+    expect(leanProblems(bad).length).toBe(1);
+  });
+  /** Item 3: the tail hangs in a soft curve (its centre line at least TAIL_SAG / 2 off its chord); the coil is
+   *  COIL_TURNS flattened loops on the floor, each COIL_D long and LOOP_H high, overlapping. */
+  const coilProblems = (items: any[], sz = K().SIZES) => {
+    const out: string[] = [], tail = items.filter((i: any) => i.part === 'rope')[2].pts as number[][];
+    const n = tail.length, a = tail[0]!, b = tail[Math.floor(n / 2) - 1]!, mid = tail[Math.floor(n / 4)]!;
+    const u = [0, b[1]! - a[1]!, b[2]! - a[2]!], L = Math.hypot(u[1]!, u[2]!), off = Math.abs((mid[1]! - a[1]!) * u[2]! - (mid[2]! - a[2]!) * u[1]!) / L;
+    if (!(off >= sz.TAIL_SAG / 2)) out.push(`tail bow ${(off * 100).toFixed(1)} cm < ${sz.TAIL_SAG * 50} cm`);
+    const loops = items.filter((i: any) => i.part === 'coil');
+    if (loops.length !== sz.COIL_TURNS) out.push(`${loops.length} loops`);
+    const ext = loops.map((l: any) => { const zs = l.pts.map((p: number[]) => p[2]), ys = l.pts.map((p: number[]) => p[1]); return { z0: Math.min(...zs), z1: Math.max(...zs), y0: Math.min(...ys), y1: Math.max(...ys) }; });
+    for (const [i, e] of ext.entries()) {
+      if (Math.abs(e.z1 - e.z0 - sz.COIL_D) > 1e-6 || Math.abs(e.y1 - e.y0 - sz.LOOP_H) > 1e-6 || Math.abs(e.y0) > 1e-6) out.push(`loop ${i}: ${JSON.stringify(e)}`);
+      if (i && !(ext[i - 1]!.z1 > e.z0 && e.z1 > ext[i - 1]!.z0)) out.push(`loop ${i} does not overlap loop ${i - 1}`);
+    }
+    return out;
+  };
+  it('item 3: the tail hangs in a soft curve onto three flattened, overlapping loops on the floor', () => {
+    expect(coilProblems(itemsIn(sp(), 'end').items)).toEqual([]);
+  });
+  it('item 3 mutations: a straight tail (sag 0) and loops a full COIL_D apart are red', () => {
+    const z = K().SIZES;
+    const items = itemsIn(sp(), 'end').items;
+    expect(coilProblems(items, { ...z, TAIL_SAG: 0.2 })[0]).toMatch(/^tail bow/);
+    let k = 0;
+    const spread = items.map((i: any) => (i.part === 'coil' ? { ...i, pts: i.pts.map((p: number[]) => [p[0], p[1], p[2]! + k * z.COIL_D]), _: k++ } : i));
+    expect(coilProblems(spread).some(p => /does not overlap/.test(p))).toBe(true);
+  });
+  /** Item 6: the medicine ball slam Trace is one smooth curve: no turn between consecutive samples of the hand's path
+   *  above SMOOTH deg. The old 5-key path (the same t as now: via keys 3, 7, 11, 15, 19) has corners. */
+  const SMOOTH = 8;
+  const turnMax = (spec: any) => {
+    // the drawn path: the engine's samples with its end trims (plate.mjs, spec.trace.trim) removed
+    const z = (globalThis as any).__zi, cam = qaEng.cameraOf(spec, rep(spec)), all = z.tracePath(spec, cam), [t0, t1] = spec.trace.trim ?? [8, 12];
+    const g0 = all[0], g1 = all[all.length - 1], dd = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!);
+    const p = all.filter((q: number[]) => dd(q, g0) > t0 && dd(q, g1) > t1), ang = (a: number[], b: number[]) => Math.atan2(b[1]! - a[1]!, b[0]! - a[0]!);
+    let m = 0; for (let i = 2; i < p.length; i++) { let d = Math.abs(ang(p[i - 1], p[i]) - ang(p[i - 2], p[i - 1])) * 180 / Math.PI % 360; if (d > 180) d = 360 - d; m = Math.max(m, d); }
+    return m;
+  };
+  beforeAll(async () => { (globalThis as any).__zi = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); });
+  it('item 6: the Trace turns smoothly (every sample turn under 8 deg); mutation: the old five via keys give a corner', () => {
+    const s = S.medicine_ball_slam, t = turnMax(s);
+    console.log(`LIB-22 item 6: medicine_ball_slam Trace max turn ${t.toFixed(1)} deg`);
+    expect(t).toBeLessThan(SMOOTH);
+    const v = s.poses.via, five = { ...s, poses: { ...s.poses, via: [3, 7, 11, 15, 19].map(i => v[i]) } };
+    expect(turnMax(five)).toBeGreaterThanOrEqual(SMOOTH);
+    expect(five.poses.via[2]).toBe(v[11]);   // the ghost (t 0.5) is the same pose
+  });
+});
+
+describe('LIB-22 panel fix 2 (mx3, #331 6486669489; D-LIB13-PANEL2): burpee "Neck neutral" leader end', { timeout: T }, () => {
+  const endOf = (spec: any, key: string) => {
+    const c = spec.callouts.find((x: any) => x.key === key);   // the anchor's own pose (start: the dashed plank), as the engine resolves it
+    return qaEng.resolvePoint(c.anchor, 'end', qaEng.poseLandmarks(Eng(), spec).lm, qaEng.cameraOf(spec, rep(spec)));
+  };
+  const at = (spec: any, pose: string, lm: string) => qaEng.resolvePoint(`${pose}:${lm}`, pose, qaEng.poseLandmarks(Eng(), spec).lm, qaEng.cameraOf(spec, rep(spec)));
+  const polys = (spec: any, pose: string) => shapesIn(spec, pose).map((x: any) => x.poly);
+  /** "Neck neutral" ends on the dashed plank's outline (within 2 px) at the nape: within 12 px of the plank neck, at least
+   *  20 px from the head landmark (the crown end, where it ended before). */
+  const neckProblems = (spec: any) => {
+    const p = endOf(spec, 'neck'), out: string[] = [], d = Math.abs(outside(polys(spec, 'start'), p));
+    if (d > 2) out.push(`neck end ${d.toFixed(1)} px off the plank outline`);
+    const n = at(spec, 'start', 'neck'), h = at(spec, 'start', 'head');
+    if (Math.hypot(p[0] - n[0], p[1] - n[1]) > 12 || Math.hypot(p[0] - h[0], p[1] - h[1]) < 20) out.push('neck end not at the nape');
+    return out;
+  };
+  it('item 1: "Neck neutral" ends on the plank nape; mutation: the old crown end (start:head) is red', () => {
+    expect(neckProblems(S.burpee)).toEqual([]);
+    const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'neck' ? { ...c, anchor: 'start:head' } : c)) };
+    expect(neckProblems(old)).toEqual(['neck end not at the nape']);
+  });
+  /** D-LIB22-PLANKBOX (#331): "Straight plank" ends on the plank's back line behind its hips (within 2 px of its outline),
+   *  where only the plank is drawn (at least 6 px outside the standing figure and the squat ghost). Its box moved to
+   *  {8, 248} so the leader crosses no label text. */
+  const plankProblems = (spec: any) => {
+    const p = endOf(spec, 'plank'), out: string[] = [], d = Math.abs(outside(polys(spec, 'start'), p));
+    if (d > 2) out.push(`plank end ${d.toFixed(1)} px off the plank outline`);
+    if (outside(polys(spec, 'end'), p) < 6) out.push('plank end within 6 px of the standing figure');
+    const ghost = { ...spec, poses: { ...spec.poses, start: spec.poses.via[0] } };
+    if (outside(polys(ghost, 'start'), p) < 6) out.push('plank end within 6 px of the squat ghost');
+    return out;
+  };
+  it('item 2 (D-LIB22-PLANKBOX): "Straight plank" ends on the plank back behind the hips; mutation: the old three-outline end (start:backMid) is red', () => {
+    expect(plankProblems(S.burpee)).toEqual([]);
+    const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'plank' ? { ...c, anchor: 'start:backMid' } : c)) };
+    expect(plankProblems(old).length).toBeGreaterThan(0);
   });
 });
