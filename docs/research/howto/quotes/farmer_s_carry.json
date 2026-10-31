@@ -458,6 +458,278 @@
    "status": "verbatim",
    "closest": "Trying to take regular-sized steps as a beginner might throw you off balance.",
    "note": "Under h3 'Stride Length'. Visible text and served HTML both match."
+  },
+  {
+   "claim": "c26",
+   "source": "bb-fwbreak",
+   "text": "The length of your stride after picking up the farmers should be approximately heel to toe, then as you progress down the course you can open up your stride (still striking in a heel to toe manner).",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c26",
+   "source": "bb-fwbreak",
+   "text": "Again it’s important to note this suggestions are for the novice to intermediate trainee, with a lighter weight more advanced athletes may choose to take larger steps.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c27",
+   "source": "mexi2023",
+   "text": "Step length (cm) 0% 78.6 ± 4.1 a 79.3 ± 4.3 A 76.6 ± 4.3 b, B",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c27",
+   "source": "mexi2023",
+   "text": "Stride length (cm) 0% 157.2 ± 8.2 a 158.5 ± 8.7 A 153.2 ± 8.5 b, B",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c27",
+   "source": "mexi2023",
+   "text": "Measurements were performed during level (0%) and uphill (5, 10, and 15%) walking at a speed of 5 km h −1 without and with a suspended front pack or a backpack weighing 15% of each participant’s body weight.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c27",
+   "source": "mexi2023",
+   "text": "young adults (15 males and 15 females) aged 20–30 years",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c28",
+   "source": "pasko2026",
+   "text": "For stride length, similar values were found during gait in athletic attire alone and with full load ( 156.79 ± 4.70 cm and 156.28 ± 4.55 cm, respectively).",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c28",
+   "source": "pasko2026",
+   "text": "Participants performed gait trials at a speed of 5.5 km/h under four load conditions: 0 kg, 7 kg, 20 kg, and 27 kg.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c28",
+   "source": "pasko2026",
+   "text": "The study included 34 active Special Forces Operators (age: 36.47 ± 5.63 years; height: 180.39 ± 5.72 cm; body mass: 85.92 ± 8.54 kg).",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c29",
+   "source": "mobbs2025",
+   "text": "Step length 0.70 0.12 0.73 0.14 0.72 0.17 0.72 0.14 0.71 0.17 0.67 0.15 0.60 0.19",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c29",
+   "source": "mobbs2025",
+   "text": "Mean step length starts at 0.69 ± 0.12 m in the 18–20 age bracket and increases to 0.73 ± 0.14 m in the 21–30 age group",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c29",
+   "source": "mobbs2025",
+   "text": "The IMU was placed at the sternal angle for optimal data capture during a 50 m walk on a flat, unobstructed pathway.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c29",
+   "source": "mobbs2025",
+   "text": "their comfortable walking pace, which is the manner of gait speed assessed in this study",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c30",
+   "source": "mobbs2025",
+   "text": "Step length 0.62 0.06 0.64 0.15 0.67 0.15 0.77 0.12 0.79 0.17 0.91 0.05",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c30",
+   "source": "mobbs2025",
+   "text": "Gait speed and step length increase consistently with height, with the tallest group (191–200 cm) walking at an average speed of 1.49 ± 0.12 m / s , with an average step length of 0.91 ± 0.05 m .",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c31",
+   "source": "lau2020",
+   "text": "Step length (cm) 57.60(9.31) 55.39(7.14)",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c31",
+   "source": "lau2020",
+   "text": "Height-adjusted step length 0.34(0.05) 0.36(0.04)",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c31",
+   "source": "lau2020",
+   "text": "Height (cm) 166.81(6.97) 155.26(6.41)",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c31",
+   "source": "lau2020",
+   "text": "Step length was the anterior-posterior distance from the heel of one footprint to the heel of the opposite footprint",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c31",
+   "source": "lau2020",
+   "text": "A total of 507 community-dwelling adults, aged 21–90 years were recruited into the study through random sampling",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c31",
+   "source": "lau2020",
+   "text": "The participants completed three trials at a habitual walking pace, barefooted",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2, checked 2026-10-29"
+  },
+  {
+   "claim": "c27",
+   "source": "mexi2023",
+   "text": "Postural control was assessed in 30 asymptomatic individuals",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c27",
+   "source": "mexi2023",
+   "text": "The testing protocol required each participant to walk for 10 min at a speed of 5 km h −1 on a treadmill",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c28",
+   "source": "pasko2026",
+   "text": "The measurements were conducted at an imposed gait speed of 5.5 km/h and a treadmill elevation of 0 degrees.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c28",
+   "source": "pasko2026",
+   "text": "Similar results for stride length were also obtained for walking with a bulletproof vest and helmet ( 155.68 ± 5.05 cm) and walking with a backpack alone ( 155.98 ± 4.78 cm).",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c18",
+   "source": "ggr-farmers",
+   "text": "beginners should start with no more than 25% of their bodyweight held in each hand",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c32",
+   "source": "winwood2014",
+   "text": "Stride length (m) 0.85 ± 0.19†0.023 1.33 ± 0.11 1.04 ± 0.12†0.002 1.43 ± 0.11",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c32",
+   "source": "winwood2014",
+   "text": "Stride length (m): Horizontal distance from heel strike of the first foot contact to the next heel strike contact of the same foot.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c32",
+   "source": "winwood2014",
+   "text": "Six experienced male strongman athletes performed farmers’ walks and deadlifts at 70% of their 1RM deadlift.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c32",
+   "source": "winwood2014",
+   "text": "For the farmers walk participants were instructed to pick up the bars in each hand and walk forward at their typical training pace.",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c32",
+   "source": "winwood2014",
+   "text": "participant’s unloaded walk data (at their typical walking speed) was also recorded",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c33",
+   "source": "hindle2019",
+   "text": "Stride length (m) 1.04 ± 0.12* (MVP) 1.43 ± 0.11 (MVP) − 3.40 1.83 ± 0.04 † (MVP ˟ ) 1.40 ± 0.17 (SVP ˟ ) 3.48 1.67 ± 0.10 ☼ (MVP) 0.85 ± 0.19* (AP) 1.33 ± 0.11 (AP) − 3.10 1.38 ± 0.16 (AP) 1.33 ± 0.09 (AP) 0.39 1.32 ± 0.12 (AP)",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c33",
+   "source": "hindle2019",
+   "text": "AP acceleration phase, ave average, GRF ground reaction force, MVP maximum velocity phase, SVP sub-maximal velocity phase",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
+  },
+  {
+   "claim": "c33",
+   "source": "hindle2019",
+   "text": "Statistically greater stride rate, and reduced stride length and ground contact time have been reported in the farmer’s walk when compared with unloaded walking [ 7 ].",
+   "status": "verbatim",
+   "closest": "",
+   "note": "F-RESEARCH-2 fix round, checked 2026-10-29"
   }
  ]
 }
