@@ -1,0 +1,85 @@
+{
+  "base": {
+    "index": 8,
+    "hash": "e48d731d176c5e3994cab5e2de5ea2db938cbdf6c249600679588daa58b22361"
+  },
+  "entries": [
+    {
+      "kind": "page",
+      "pageSha256": "3e225bc12531e6c395e5a532a77736ebaeb9cdc276c55709d8ac4c73ef78bb0b",
+      "bytes": 280533,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA2",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/340#issuecomment-6540319537 @ 5bdef44b8bcaa58423af1bcf7d746b4fc71823bd",
+      "date": "2026-10-31",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); LIB-8R PIN GO (supervisor, 2026-10-31) after PANEL mx7 (#340 6540319537): box_jump approved in panel mx4 (#340 6534832450), the rear-delt fly in panel mx5 (#340 6538120823), bytes unchanged since.",
+      "supersedes": null,
+      "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_box_jump",
+      "src": "library/specs/box_jump.mjs",
+      "slug": "box-jump",
+      "prefix": "box-jump",
+      "chromeId": "box-jump",
+      "fragments": {
+        "normalSvg": "cc93e354b69c86835b3ebbce7434c39dcfa99a30cafce6c193291e848d45d5cf",
+        "normalOverlay": "dfeed1dcbdf0337c3713bbb23eba1d0c5d66dbc08ff66f9b29f70fd238bbb541",
+        "mistakeSvg": "8740aef164d618c6cf3c8b1d22d8b927ffabb4c49519d89724bf0a1e85fb22a4",
+        "mistakeOverlay": "4dfe72f17c9feff55b0207da2e3d4d37c07cafaa9eab4d54d6175748cd601377",
+        "tells": "79e01908d70c7701efe266148cfa43c64dc22c21349a95edcf7caf8edef3403b",
+        "tempo": "d2e0cbb59e9dde7d4fe16232e9bfa30edd519768ff996d3b2f4030498a4bc082",
+        "cues": "534591e327151b49816a18854beab041a1aeb5f718415105fac4e8f76a3cdecd",
+        "alt": "207c2b8ab43801113eb6bc2da0b255fc6444f80d9a5a110561582eacbd591050",
+        "mistakeAlt": "a0b3498d367ef8ff1367493e349119e5f01daba8631eead75e8a2e1d117e66fc"
+      },
+      "exemptions": [
+        "F2",
+        "F3",
+        "F4",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA2",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/340#issuecomment-6540319537 @ 5bdef44b8bcaa58423af1bcf7d746b4fc71823bd",
+      "date": "2026-10-31",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); LIB-8R PIN GO (supervisor, 2026-10-31) after PANEL mx7 (#340 6540319537): box_jump approved in panel mx4 (#340 6534832450), the rear-delt fly in panel mx5 (#340 6538120823), bytes unchanged since. Named exemptions: the raised flags of the QA table (pilot-a2/DESIGN.md sections 7-8): F2 cover 0.72, F3 leader 125.6 px, F4 0, F5 3.57:1 (the selected Mistake tell in Midnight, D-LIB9-F5).",
+      "supersedes": null,
+      "prev": "5247fd1aa57ca416cecd086c03816ddd96d872b15475fb5e5a56fd7a58468779"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_bent_over_dumbbell_rear_delt_fly",
+      "src": "library/specs/bent_over_dumbbell_rear_delt_fly.mjs",
+      "slug": "bent-over-dumbbell-rear-delt-fly",
+      "prefix": "bent-over-dumbbell-rear-delt-fly",
+      "chromeId": "bent-over-dumbbell-rear-delt-fly",
+      "fragments": {
+        "normalSvg": "22555cd5e0c7cb7dfddf1969e5dafd4ee874b15aa0b4f2f2c9303c436f71637e",
+        "normalOverlay": "3bf38347fe729da4e74a900a8886831279ed462b38587ac211cd5ab2352c8f05",
+        "mistakeSvg": "ecff9a99ad15b29e4e6883541bf7b2dad8f1355beb832498978cd6f27724a826",
+        "mistakeOverlay": "c9f86ecbc263cb7e09aa039ca58ad8f359c2bd836e2af9fb6a30f7c63a2f75b8",
+        "tells": "e8f330432702293485d15eb9234dfdba5b6af42ed0da611523e9bef27618d2ea",
+        "tempo": "1f4326d59e224114f65bf350ebdb1d48d731421724258a4c170f62c04e2bcc7f",
+        "cues": "22d70cce5e713c55d02ef7f33f3768d94117d1800e4ca0cc4f3a3963add12f6b",
+        "alt": "3ea87e2f2b1f0698796f987beffd3f31c3d07f76b34ce745ab2f3af191d44678",
+        "mistakeAlt": "ad77b88331da466ccfd58e7a055ad5585eb08f1c8905e252bc326da698a4467c"
+      },
+      "exemptions": [
+        "F2",
+        "F3",
+        "F5",
+        "F6",
+        "F7"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA2",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/340#issuecomment-6540319537 @ 5bdef44b8bcaa58423af1bcf7d746b4fc71823bd",
+      "date": "2026-10-31",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); LIB-8R PIN GO (supervisor, 2026-10-31) after PANEL mx7 (#340 6540319537): box_jump approved in panel mx4 (#340 6534832450), the rear-delt fly in panel mx5 (#340 6538120823), bytes unchanged since. Named exemptions: the raised flags of the QA table (pilot-a2/DESIGN.md sections 7-8): F2 cover 0.17, F3 leader 98.1 px, F5 3.57:1 (D-LIB9-F5), F6 side view (the census front view held under S3, D-LIB8R-FLIES), F7 shrug (the card is drawable false; topFault swing, decision 9).",
+      "supersedes": null,
+      "prev": "c453ef365dda5c7f1b3a14269d9928a3d500b1839c03827405f92e7bee124436"
+    }
+  ]
+}

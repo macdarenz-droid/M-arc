@@ -1,0 +1,16 @@
+{
+ "note": "sha256 of each PILOT-A2 card and quotes file as copied byte for byte from the research head (LIB-8R Do 2, D-LIB8M-CARDS). The cards gain only the three machine keys (plateFacts, tempo, topFault) in one block before the final brace; tests/howto/lib8r-pilot-a2.test.ts removes that block and compares these bytes.",
+ "researchHead": "0d832e18a2c52ec091a37b654572db5f0468913b",
+ "cards": {
+  "box_jump": "80ec8c7ce4052d7eb7394ec1f52c5102219cf4157824ff31032f79b767b105a5",
+  "reverse_lunge": "d006a0ad66a065f8e5aa12cf87e8ddfb830d6c1ecc006ee17b41def73be8e1ec",
+  "dumbbell_fly": "74ef0d776747c6ea3413c73caf8056f611266a0394a052973aafb1152f64739d",
+  "bent_over_dumbbell_rear_delt_fly": "30ec5b8b962c793537a8f9269d4ea5d955a7b27668a5d9eb257a11c23d7e8631"
+ },
+ "quotes": {
+  "box_jump": "33ee5103f52330a2fb95080ccfb9616f3db7a5f6c3638ca3c76b5b4fe10ce359",
+  "reverse_lunge": "d48f314d9082872d84c45d4a86fb86319a7e6990f1625237940eab231b46d948",
+  "dumbbell_fly": "da7c5b25ea33b864c46c8b75efe40dbc59fe4a76c4532894523174290e9c5f80",
+  "bent_over_dumbbell_rear_delt_fly": "9b707a6873128d04bab63f33a6cbf3381010c882e050e4418d4b791f82d8c5ea"
+ }
+}

@@ -295,11 +295,11 @@ const wordsInputProblems = (k: string, list: string[], files = true) => {
   return bad;
 };
 // a key module with its own declarations (literals; THUMB_SIDE's words written out), drawing one id outside LB1/LB2, in no
-// module and not a pinned row (D-LIB-SCRATCHIDS)
+// module and not a pinned row (D-LIB-SCRATCHIDS). LIB-8R (D-LIB8R-PINLINES): was box_jump until PILOT-A2 pinned it.
 const fixtureModule = (KEY: string, decl: any = { CONVENTIONS: { 'ga:zz': 'fixture convention: base of the fingers' }, ORIENTATIONS: { zz: 'side' }, CAMERA_TEXT: { zz: 'Seen from the thumb side' } }) => {
   const dh = P.MODULES.find((m: any) => m.KEY === 'd-handle'), pull = structuredClone(dh.VARIANTS.pull);
   pull.claims.contact = ['ga:zz'];
-  return { ...dh, KEY, OWNER: 'LIB-7-FIX-FIXTURE', FILE: `fixture/${KEY}`, ...decl, VARIANTS: { pull }, GAPS: {}, IDS: { box_jump: { variant: 'pull', orientation: 'zz', faults: ['curled'], claims: [] } } };
+  return { ...dh, KEY, OWNER: 'LIB-7-FIX-FIXTURE', FILE: `fixture/${KEY}`, ...decl, VARIANTS: { pull }, GAPS: {}, IDS: { v_up: { variant: 'pull', orientation: 'zz', faults: ['curled'], claims: [] } } };
 };
 const KINDS = ['CONVENTIONS', 'ORIENTATIONS', 'CAMERA_TEXT'];
 /** Apply declarationsOf(mods) onto pairs.mjs's exported objects for `f`, then remove what it added (hand-pairs.test.ts:94-97). */
@@ -375,10 +375,10 @@ describe('LIB-7-FIX PK3: declarations per module', () => {
   it('a fixture module\'s own convention, orientation and camera words are read by indexOf, pairSpec, the sheet and G8', async () => {
     const fx = fixtureModule('zz-fix');
     await withDeclared([...P.MODULES, fx], async () => {
-      const idx = P.indexOf([...P.MODULES, fx]), s = P.pairSpec('box_jump', idx);
+      const idx = P.indexOf([...P.MODULES, fx]), s = P.pairSpec('v_up', idx);
       expect([s.orientation, s.camera, s.extras.cameraText]).toEqual(['zz', 'side', 'Seen from the thumb side']);
       expect((await S.buildSheet({ mods: [fx] })).body).toContain('ga:zz (convention: fixture convention: base of the fingers)');
-      const { spec, pages } = C.renderedPages('box_jump', idx);
+      const { spec, pages } = C.renderedPages('v_up', idx);
       expect(C.problemsOf(spec, pages).filter((p: string) => /G8 camera/.test(p))).toEqual([]);
       const keep = P.CAMERA_TEXT.zz;
       try { P.CAMERA_TEXT.zz = 'Seen from elsewhere'; expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G8 camera "Seen from the thumb side", want "Seen from elsewhere"/); } finally { P.CAMERA_TEXT.zz = keep; }
@@ -389,7 +389,7 @@ describe('LIB-7-FIX PK3: declarations per module', () => {
     expect(() => P.declarationsOf([...P.MODULES, fixtureModule('zz-a', { CONVENTIONS: { 'ga:pull-base': 'x' } })])).toThrow('hand pairs: zz-a declares CONVENTIONS.ga:pull-base, already defined by pairs.mjs');
     expect(() => P.declarationsOf([fixtureModule('zz-a'), fixtureModule('zz-b')])).toThrow('hand pairs: zz-b declares CONVENTIONS.ga:zz, already defined by zz-a');
     expect(() => P.declarationsOf([fixtureModule('zz-a'), fixtureModule('zz-b', {})])).toThrow('hand pairs: zz-b uses ORIENTATIONS.zz, declared by zz-a');
-    const convUser = { ...fixtureModule('zz-b', { ORIENTATIONS: { yy: 'side' } }) }; convUser.IDS = { box_jump: { ...convUser.IDS.box_jump, orientation: 'yy' } };
+    const convUser = { ...fixtureModule('zz-b', { ORIENTATIONS: { yy: 'side' } }) }; convUser.IDS = { v_up: { ...convUser.IDS.v_up, orientation: 'yy' } };
     expect(() => P.declarationsOf([fixtureModule('zz-a'), convUser])).toThrow('hand pairs: zz-b uses CONVENTIONS.ga:zz, declared by zz-a');
     expect(() => P.declarationsOf([fixtureModule('zz-a', { CONVENTIONS: { 'ga:zz': 'x' }, ORIENTATIONS: { zz: 'side' }, CAMERA_TEXT: { qq: 'Seen from q' } })])).toThrow('hand pairs: zz-a declares CAMERA_TEXT.qq for an orientation no module or pairs.mjs holds');
   });
@@ -408,9 +408,20 @@ export const HANDLE = { profile: 'd-handle', diameterMm: 30 };
 export const ORIENTATIONS = { zz: 'side' };
 export const CAMERA_TEXT = { zz: 'Seen from the thumb side' };
 export const VARIANTS = { pull: pullVariant({ thumbClaims: [], wristClaims: [], curledClaims: [] }) };
-export const IDS = { box_jump: { variant: 'pull', orientation: 'zz', faults: ['curled'], claims: [] } };
+export const IDS = { v_up: { variant: 'pull', orientation: 'zz', faults: ['curled'], claims: [] } };
 export const GAPS = {};
 `;
+
+describe('LIB-8R D-LIB8R-PINLINES: the fixture id is not a pinned row', () => {
+  const dir = 'tools/plates/library/batches';
+  const inBatch = (id: string) => readdirSync(dir).filter(n => n.endsWith('.json')).some(f => new RegExp(`"lib_${id}"`).test(readFileSync(`${dir}/${f}`, 'utf8')));
+  it('the fixture module draws ids in no batches/ file (box_jump left it when PILOT-A2 pinned box_jump)', () => {
+    for (const id of Object.keys(fixtureModule('zz-g').IDS)) expect(inBatch(id), id).toBe(false);
+  });
+  it('mutation: the fixture id set back to box_jump is red (box_jump is in batches/pilot-a2.json)', () => {
+    expect(inBatch('box_jump')).toBe(true);
+  });
+});
 
 describe('LIB-7-FIX PK4: adding a key moves no existing key\'s files', () => {
   it('(a) in memory: with a declaring fixture key added, every existing key\'s inputsFor and panel are equal', async () => {
@@ -433,7 +444,7 @@ describe('LIB-7-FIX PK4: adding a key moves no existing key\'s files', () => {
       writeFileSync(join(wt, 'tools/plates/library/hands/hand-zz-dummy.mjs'), DUMMY_MODULE);
       writeFileSync(join(wt, 'tools/plates/library/hands/words/zz-dummy-pull-zz.json'), JSON.stringify(PN.allWords().keys['d-handle-pull-unstated'], null, 1));
       const W = await import(/* @vite-ignore */ pathToFileURL(join(wt, 'tools/plates/library/hands/pairs.mjs')).href);
-      expect(W.HAND_OF_ID.lib_box_jump).toBe('zz-dummy-pull-zz');
+      expect(W.HAND_OF_ID.lib_v_up).toBe('zz-dummy-pull-zz');
       expect(W.keysOf().filter((k: string) => k !== 'zz-dummy-pull-zz')).toEqual(P.keysOf());
       for (const k of P.keysOf()) {
         expect([k, W.inputsFor(k)]).toEqual([k, P.inputsFor(k)]);
