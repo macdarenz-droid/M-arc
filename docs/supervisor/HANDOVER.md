@@ -878,6 +878,15 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - **Running:** panel mx15 (critics) and the CARD FIELDS set cfsmall (LB7's 3 cards and LIB-SMALL's 2).
   - **Process note:** builders now post each READY or FIX line in a comment of its own. The watch prints only a comment's first line, and LB6's PANEL FIX and PLATES READY 2 were missed for about 2.5 h.
   - Usage: 7-day 0.78 at 18:57, about 0.02 an hour. No pause this week (owner 15:05).
+- **Update 19:40 UTC (10-31):**
+  - **Train 54 merged** (#360 → main `f7ab6751`): LIB-SPINE #348. All 17 checks were green on `fd15e249`. Only generated-header comments changed in src/, so there is no APK. The LIB-SPINE builder is archived. PILOT-A3 and LB9 R3 were told to branch from `f7ab6751`.
+  - **mx15 VALID** (#356 6547986860, #358 6547988428): diamond_push_up is APPROVED. pike_push_up, jump_squat and jumping_jacks are on their second and last focused round. Rulings D-SMALL-JJTURN, D-LIB17R3-PIKEARROW (no A15 exception), D-CFSMALL-ELEV and D-CFSMALL-PIKE are in §48.
+  - **cfsmall VALID.** incline_push_up gains sh.elev 45 on both sides and was re-posed (49.7 → 45.0), so it goes back for a recheck. pike_push_up keeps `[]` with a reason. jump_squat drops sole.l; DIFF-CHECK PASS 6548073246.
+  - **Running:**
+    - mx16: LIB-13s wave 1 plus LB6 R2 fix 2 @ `a74d3a4e` (hip_abduction, hip_adduction), shuffling;
+    - mx17: LIB-SMALL fix 2 @ `0a335a9d`, waiting for LB7's fix 2 (pike, incline);
+    - the CARD FIELDS verifier on cf13s (LIB-13s' 4 shrug cards @ `91a4fae6`).
+  - Main holds 106 of 153 drawings; diamond_push_up waits for LB7's merge.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
