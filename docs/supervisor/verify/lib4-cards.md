@@ -4593,3 +4593,7 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **F-LIB17R3-LOWS:** A5 (lb7-plates :2194) exempts whole forearm and foot outlines, which is wider than 19.5's "forearms at the wrist"; today the gap measures 3.2 px or more. DESIGN :616 and :634 still give the pre-re-pose 44.2° flare and elbow pole.
   - **F-LIB21R3-LOWS:** the PR body's HANDOFF block is stale.
 - **Train 55** (#363, head `08c25c1d`) carries #356 @ `f4e74abd` and #361 @ `d9e8085d`.
+- **#362 review PASS** 6550343299 (0/0/0/2). **F-PA3-LOWS:** dumbbell_fly.mjs :122-136 adds helpers outside the card's listed lines (it needs a scope note in DESIGN §6), and the PR body is stale.
+- **Train 55** is rebuilt to include #362: head `5be28542`, which adds a merge commit on top of `08c25c1d` (no force push). Main moves from 106 to 112 of 153.
+- **D-LIB13S-RPC** (#359 6550232146): whole-page LB3 builds run in awaited child processes, because the vitest worker's RPC timed out on two heads. LIB-13's A10 moves only where its builds run, and its assertion is unchanged.
+- **mx20** (building): a focused recheck of dumbbell_shrug (R11) and smith_machine_shrug (R5) @ `86c0202f`, page `be50e4d1…6529`.
