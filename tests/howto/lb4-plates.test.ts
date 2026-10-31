@@ -1318,3 +1318,36 @@ describe('LIB-SMALL A4 and A6: jump_squat\'s drawn poses are card-true and airbo
     expect(problems(round)).toContain('start back bend 30');
   });
 });
+
+describe('LIB-SMALL: jump-squat as approved in panel mx17 (#358, head c176723d) stays byte-identical', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the approved plate (9 fragments) on its lb4 page at c176723d.
+  const APPROVED: Record<string, Record<string, string>> = {
+    "jump-squat": {
+      "normalSvg": "261fdd1fc5dae187d4b23675e6b3036ad4c5a6e298c1dcc80c56fdccfae11d27",
+      "normalOverlay": "bb63e83356ad6d587f14cae6bd8c7c1c29de2770af6825474913d5c6a6e386eb",
+      "mistakeSvg": "1ea9bbb067b48cf8ea9f8eab43555bf289c5f22b7b126f806ae09c4fb44a5fcc",
+      "mistakeOverlay": "e32160ac1318bee2bffcce5cb95c16b187bb89d54866b7539a4b01e0d3d91762",
+      "tells": "e2b1b056c56b5416c8e119610e95cd7ae522c05efbe265ca5b87150fdcba0a87",
+      "tempo": "23b25a80e39f1ca89dfc529fddc2a9c0ea19947ecd0b2237521e26b15592f452",
+      "cues": "703146d98c5acf26e14a51cd93c3f774a83de22a4e1433b8e2af743ea3991f0f",
+      "alt": "c68932b65e7726c17b92fdfd8d853cc7a1af86e8e9dcc54c1a70b3db17a7c5f1",
+      "mistakeAlt": "c1a9d7a7c34aa82a265ead272d52372f300b2fdf079249332705458f10c59351"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb4/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const pageOf = async () => (await build.buildLb4Page()).html.toString('utf8');
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('its 9 fragments on this head equal the approved ones', async () => {
+    expect(Object.keys(APPROVED['jump-squat']!).length).toBe(9);
+    expect(fragProblems(await pageOf())).toEqual([]);
+  });
+  it('mutation: one byte changed in its alt is red', async () => {
+    const html = await pageOf(), alt = S.jump_squat.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, `${alt.slice(0, -1)}!`))).toContain('jump-squat alt');
+  });
+});

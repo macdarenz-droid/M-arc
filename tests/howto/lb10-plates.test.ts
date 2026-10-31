@@ -2003,3 +2003,40 @@ describe('LIB-SMALL panel mx13 fix (#358 6547089227): jumping_jacks\' ghost arms
     expect(footProblems(flat).filter(x => /px past/.test(x)).length).toBe(2);
   });
 });
+
+describe('LIB-SMALL: jumping-jacks as approved in panel mx17 (#358, head c176723d) stays byte-identical', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the approved plate (9 fragments) on its lb10 page at c176723d.
+  const APPROVED: Record<string, Record<string, string>> = {
+    "jumping-jacks": {
+      "normalSvg": "8ccb9f6ad175e11187b3d9336b92408ca519a265a752af983fbac0b1147dfae5",
+      "normalOverlay": "74c1a11ecabc57ac7ed86b23190ab46e854385f05fbae834f24a7b22b5be0208",
+      "mistakeSvg": "da4638d19877ba1400df1fa3654fd6affcbaf82ca9d525c96328bf3ddaad95eb",
+      "mistakeOverlay": "17370d6ea08b19d4551a5b320f62c91f1dbeac6663c571dc4d57e9c1246f6b2a",
+      "tells": "32467983547407e7a870bab352c1652ad0cda944bcb21b1fc7f181171763b45a",
+      "tempo": "6b11c62b33f4a09541c36e439f65256ff2cf34ead4524fc684cdd95aec76cd02",
+      "cues": "4aae7c55b96b7ee37cb0924fe0a2d4cc96dd1e51c626d3f75a1f51dce01b09c0",
+      "alt": "af79768d515788fa0fd9cae1d7769d5983dc15ad0c124be2682678913494325e",
+      "mistakeAlt": "e7570b92d5ab27a249ad7a79e442a3d77001233d6ba8df6d56d3ee311acb02fe"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb10/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const pageOf = async () => {
+    const script = `const b = await import(${JSON.stringify(lib('lb10/build.mjs'))}); const { html } = await b.buildLb10Page(); process.stdout.write(html.toString('base64'));`;
+    const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });
+    return Buffer.from(stdout, 'base64').toString('utf8');
+  };
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('its 9 fragments on this head equal the approved ones', async () => {
+    expect(Object.keys(APPROVED['jumping-jacks']!).length).toBe(9);
+    expect(fragProblems(await pageOf())).toEqual([]);
+  });
+  it('mutation: one byte changed in its alt is red', async () => {
+    const html = await pageOf(), alt = S.jumping_jacks.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, `${alt.slice(0, -1)}!`))).toContain('jumping-jacks alt');
+  });
+});
