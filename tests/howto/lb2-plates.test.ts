@@ -701,7 +701,7 @@ describe('LIB-10 A5: lb2/rows.json holds exactly the 7 LB2 ids drawn here and in
       expect([r.mode, r.parent, r.template, r.params], id).toEqual(['H', undefined, undefined, undefined]);
     }
     expect(j).toMatchObject({ batch: 'LB2', censusRef: '4a9fd86' });
-    expect(existsSync('tools/plates/library/templates')).toBe(false);   // BENCH is not built in LB2
+    expect((existsSync('tools/plates/library/templates') ? readdirSync('tools/plates/library/templates') : []).filter(f => !['CURL.mjs', 'PUSHDOWN.mjs'].includes(f))).toEqual([]);   // BENCH is not built in LB2; D-LIB15R2-TEMPLDIR (#349): only the ruled templates exist
   });
 });
 
