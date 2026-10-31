@@ -15,14 +15,14 @@
       "gitBlob": "fa7c6645385a0b10102ef51a7fae25287676a9df"
     },
     "engine/SPEC.md": {
-      "sha256": "18ea53fda33b5dff4f817051bcca475183f7eeb48327ed8b2e59ba70d5aca0b6",
-      "source": "c35e0a4:docs/howto/technical-plate/engine/SPEC.md",
-      "gitBlob": "0bf9d4a68fdc73670544d352f0d37fd5181133ba"
+      "sha256": "3d1ae152b8e6705f2e66ee63941d8a5a1024492ef0f180fd5f0cb9cacccb5d37",
+      "source": "80be674:docs/howto/technical-plate/engine/SPEC.md",
+      "gitBlob": "e3c737309e2b7d8d0d604e84c12ebe13ef89bd4f"
     },
     "engine/body.mjs": {
-      "sha256": "bdf6dc6ef726e3c03914b66508a0d53c6386ed13f61602c14427382ee7348163",
-      "source": "c35e0a4:docs/howto/technical-plate/engine/body.mjs",
-      "gitBlob": "bbd2d1a2d48fda94f5749be9147389e64f25d08b"
+      "sha256": "64e9d3a7f8e96d1014ce4f340d632b77d2204d929853632f5b28e16ef01c8a7e",
+      "source": "80be674:docs/howto/technical-plate/engine/body.mjs",
+      "gitBlob": "099c76577ff8aa8a37cd6f489fafd789155cd05c"
     },
     "engine/equipment.mjs": {
       "sha256": "d1f7d82a8962e411525ab29138a1b36eb444d10b04e1e75a14e9475b15eaa638",
@@ -55,9 +55,9 @@
       "gitBlob": "769d3d8b2617be918a054ede241b69f42a51770f"
     },
     "engine/plate.mjs": {
-      "sha256": "5cd7c88994b0be818ef00cd655d29b5105533e961cba6f4b7580e21ebc2ce532",
-      "source": "c35e0a4:docs/howto/technical-plate/engine/plate.mjs",
-      "gitBlob": "fadbec8d78899194d5e5ef1a23a7507c4600a915"
+      "sha256": "b08d1d38371024359b14686935b8fff54694b52e1780a24c1be25ccc0f96855c",
+      "source": "80be674:docs/howto/technical-plate/engine/plate.mjs",
+      "gitBlob": "354773ab19c54f18d12e331ee9a5990c87dfd0a0"
     },
     "engine/render.mjs": {
       "sha256": "eee26ec10e398a16afedc45b0ff763a088f4fb8efc5b90a161f57ca5a85ace47",
@@ -113,6 +113,11 @@
       "sha256": "1432618d996055ba18d781d1594c53d354824fef01a6696a24c4e89da67175f5",
       "source": "c35e0a4:docs/howto/technical-plate/exercises/_test_pitch.mjs",
       "gitBlob": "40da3811b17ab9fca8d7f5e378cec4707aa6c1c6"
+    },
+    "exercises/_test_spine.mjs": {
+      "sha256": "95060e0626c4dbe1b0e03cb750afbdebf899e642bb044427a9fd15f506ed2b81",
+      "source": "80be674:docs/howto/technical-plate/exercises/_test_spine.mjs",
+      "gitBlob": "26db81da3689bd6a3a5e82e1ff8d3745d67d2e62"
     },
     "exercises/barbell_back_squat.mjs": {
       "sha256": "4edd909a013bf3d0209eadaf094610ba3ed6871fe47a47539b2af2c1dee6769c",

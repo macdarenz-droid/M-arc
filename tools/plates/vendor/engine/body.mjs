@@ -28,6 +28,10 @@ export const REF = {
 export const RADII = { upper: [0.03, 0.031, 0.022, 0.3], fore: [0.023, 0.026, 0.015, 0.28], thigh: [0.048, 0.044, 0.027, 0.3], shank: [0.029, 0.033, 0.016, 0.3],
   shoulderCap: 0.03, elbowCap: 0.022, kneeCap: 0.028, fist: 0.02 };
 export const SIDES = ['l', 'r'];
+// LIB-SPINE (D-SPINE-SEGS, D-SPINE-BOW): spine pivots (H) on the spine line z = REF.lumbar[2]: the default blend's start
+// (.60, about L5/S1), REF.lumbar (.62, L3), backMid (.68, T12), backUpper (.75, T7); the outline turns over +-SPINE_HW
+// at each. BOW_ZONE: the bow's outline blend, from the sacrum landmark (.585) to just above T12 (.70).
+export const SPINE_PIV = [0.60, 0.62, 0.68, 0.75], SPINE_HW = 0.015, BOW_ZONE = [0.585, 0.70];
 export const SGN = { l: 1, r: -1 };
 
 // ---------- outlines (ref coordinates) ----------
@@ -84,6 +88,17 @@ const scapN = o => typeof o === 'number' ? { elev: o, pro: 0 } : { elev: o?.elev
 
 // Trunk: a number (the flex) or { flex, yaw, lat }; absent, null and 0 all mean 0 (LIB-20, D-LIB20-TRUNK).
 const trunkN = t => (t && typeof t === 'object' ? t : { flex: t });
+// LIB-SPINE (D-SPINE-OPTIN, D-SPINE-MIX): array flex / yaw / lat (one entry per SPINE_PIV) give the per-pivot angles;
+// absent fields are zeros. A number next to an array, or an array of another length, throws.
+function spineN(tk) {
+  const ks = ['flex', 'yaw', 'lat'];
+  if (!ks.some(k => Array.isArray(tk[k]))) return null;
+  const n = SPINE_PIV.length;
+  for (const k of ks) if (tk[k] != null && !(Array.isArray(tk[k]) && tk[k].length === n))
+    throw new Error(`trunk.${k}: with the array form every one of flex, yaw and lat is absent or an array of ${n} angles, one per spine pivot (D-SPINE-MIX)`);
+  return Object.fromEntries(ks.map(k => [k, tk[k] ? tk[k].map(v => v ?? 0) : SPINE_PIV.map(() => 0)]));
+}
+const sum = a => a.reduce((x, y) => x + y, 0);
 
 /** Normalise an authored pose into the full angle form (degrees; scapula offsets in cm). */
 export function normPose(p, body) {
@@ -91,10 +106,11 @@ export function normPose(p, body) {
   const root = p.root ?? {};
   const at = Array.isArray(root) ? root : (root.at ?? [0, REF.hjcY * H, 0]);
   const map = (v, fn, def) => { const q = perSide(v, def); return { l: fn(q.l), r: fn(q.r) }; };
-  const tk = trunkN(p.trunk);
+  const tk = trunkN(p.trunk), sp = spineN(tk);
   return {
-    root: at, tilt: root.tilt ?? p.tilt ?? 0, trunk: tk.flex ?? 0, neck: p.neck ?? 0,
-    roll: root.roll ?? 0, yaw: root.yaw ?? 0, trunkYaw: tk.yaw ?? 0, lat: tk.lat ?? 0,
+    root: at, tilt: root.tilt ?? p.tilt ?? 0, trunk: sp ? sum(sp.flex) : (tk.flex ?? 0), neck: p.neck ?? 0,
+    roll: root.roll ?? 0, yaw: root.yaw ?? 0, trunkYaw: sp ? sum(sp.yaw) : (tk.yaw ?? 0), lat: sp ? sum(sp.lat) : (tk.lat ?? 0),
+    ...(sp ? { spine: sp } : {}), ...(tk.bow != null ? { bow: tk.bow } : {}),
     scap: map(p.scap, scapN, 0), sh: map(p.shoulder, shoulderN, null),
     elbow: perSide(p.elbow, 0), wrist: perSide(p.wrist, 0),
     hip: map(p.hip, hipN, 0), knee: perSide(p.knee, 0), ankle: perSide(p.ankle, 0),
@@ -120,17 +136,52 @@ export function fk(q, body) {
   let Rp = rotX(q.tilt);
   if (q.roll) Rp = mm(rotZ(q.roll), Rp);
   if (q.yaw) Rp = mm(rotY(q.yaw), Rp);
-  const Rt0 = mm(Rp, q.lat ? mm(rotZ(q.lat), rotX(q.trunk)) : rotX(q.trunk));
-  const Rt = q.trunkYaw ? mm(Rt0, rotY(q.trunkYaw)) : Rt0, Rh = mm(Rt, rotX(q.neck));
   const hjc = [0, REF.hjcY, 0];
-  const pelvis = r => add(q.root, mv(Rp, k(sub(r, hjc))));
-  const Lw = pelvis(REF.lumbar);
-  const thorax = r => add(Lw, mv(Rt, k(sub(r, REF.lumbar))));
+  let Rt, Lw, thorax, pelvis, Rl = Rp, spine = null;
+  if (q.spine == null && q.bow == null) {
+  const Rt0 = mm(Rp, q.lat ? mm(rotZ(q.lat), rotX(q.trunk)) : rotX(q.trunk));
+  Rt = q.trunkYaw ? mm(Rt0, rotY(q.trunkYaw)) : Rt0;
+  pelvis = r => add(q.root, mv(Rp, k(sub(r, hjc))));
+  Lw = pelvis(REF.lumbar);
+  thorax = r => add(Lw, mv(Rt, k(sub(r, REF.lumbar))));
+  } else {
+    // LIB-SPINE: the hips, legs and thorax hang on the unbowed pelvis frame Rl; `pelvis` (sacrum, buttock, seat and the
+    // outline below the bow zone) is tipped by rotX(bow) about the hip axis. Segments: rotations about the SPINE_PIV
+    // pivots, composed from the top pivot down, so thorax(r) = L + Rt·H·(r - REF.lumbar) still holds.
+    const pelvisL = r => add(q.root, mv(Rl, k(sub(r, hjc))));
+    if (q.bow) Rp = mm(Rl, rotX(q.bow));
+    pelvis = q.bow ? (r => add(q.root, mv(Rp, k(sub(r, hjc))))) : pelvisL;
+    let seg = null;
+    if (q.spine) {
+      const sp = q.spine, n = SPINE_PIV.length;
+      const segR = (i, w) => { let M = rotX(sp.flex[i] * w); if (sp.lat[i]) M = mm(rotZ(sp.lat[i] * w), M); if (sp.yaw[i]) M = mm(M, rotY(sp.yaw[i] * w)); return M; };
+      const bend = (r, full) => { let x = r; for (let i = n - 1; i >= 0; i--) {
+        const w = full ? 1 : clamp((r[1] - (SPINE_PIV[i] - SPINE_HW)) / (2 * SPINE_HW), 0, 1);
+        if (w > 0) { const pv = [0, SPINE_PIV[i], REF.lumbar[2]]; x = add(pv, mv(segR(i, w), sub(x, pv))); } } return x; };
+      let Rs = segR(0, 1); for (let i = 1; i < n; i++) Rs = mm(Rs, segR(i, 1));
+      Rt = mm(Rl, Rs);
+      thorax = r => pelvisL(bend(r, true));
+      seg = r => pelvisL(bend(r, false));
+    } else {
+      const Rt0 = mm(Rl, q.lat ? mm(rotZ(q.lat), rotX(q.trunk)) : rotX(q.trunk));
+      Rt = q.trunkYaw ? mm(Rt0, rotY(q.trunkYaw)) : Rt0;
+      const L0 = pelvisL(REF.lumbar);
+      thorax = r => add(L0, mv(Rt, k(sub(r, REF.lumbar))));
+    }
+    Lw = thorax(REF.lumbar);
+    const upper = seg ?? thorax, sm = t => t * t * (3 - 2 * t);
+    spine = q.bow == null ? upper : (r => { const y = r[1];
+      if (y <= BOW_ZONE[0]) return pelvis(r);
+      if (y >= BOW_ZONE[1]) return upper(r);
+      return lerp3(pelvis(r), upper(r), sm((y - BOW_ZONE[0]) / (BOW_ZONE[1] - BOW_ZONE[0]))); });
+  }
+  const Rh = mm(Rt, rotX(q.neck));
   const Nw = thorax(REF.neck);
   const head = r => add(Nw, mv(Rh, k(sub(r, REF.neck))));
   // skinning for the one-piece torso outline: pelvis below .60, thorax .66-.845, head above .875, linear blends between
   const skin = r => {
     const y = r[1];
+    if (spine && y <= 0.845) return spine(r);
     if (y <= 0.60) return pelvis(r);
     if (y < 0.66) return lerp3(pelvis(r), thorax(r), (y - 0.60) / 0.06);
     if (y <= 0.845) return thorax(r);
@@ -146,13 +197,13 @@ export function fk(q, body) {
     Wr[side] = add(E[side], mv(Fa, [0, -WINTER.forearm * H, 0]));
     G[side] = add(Wr[side], mv(Hd, [0, -REF.gripOff * H, 0]));
     Hp[side] = pelvis([s * REF.hjcX, REF.hjcY, 0]);
-    const Th = mm(Rp, thighFrame(s, q.hip[side])), Sk = mm(Th, rotX(q.knee[side])), Ft = mm(Sk, rotX(-q.ankle[side]));
+    const Th = mm(Rl, thighFrame(s, q.hip[side])), Sk = mm(Th, rotX(q.knee[side])), Ft = mm(Sk, rotX(-q.ankle[side]));
     K[side] = add(Hp[side], mv(Th, [0, -WINTER.thigh * H, 0]));
     A[side] = add(K[side], mv(Sk, [0, -WINTER.shank * H, 0]));
     Object.assign(fr.ua, { [side]: Ua }); fr.fa[side] = Fa; fr.hd[side] = Hd; fr.th[side] = Th; fr.sk[side] = Sk; fr.ft[side] = Ft;
   }
   const foot = (side, r) => add(A[side], mv(fr.ft[side], k(r)));   // r = foot-local (x lateral*s applied by caller, y, z)
-  return { q, H, Rp, Rt, Rh, pelvis, thorax, head, skin, L: Lw, N: Nw, S, E, W: Wr, G, hip: Hp, K, A, fr, foot };
+  return { q, H, Rp, Rt, Rh, pelvis, thorax, head, skin, L: Lw, N: Nw, S, E, W: Wr, G, hip: Hp, K, A, fr, foot, ...(spine ? { spine } : {}) };
 }
 
 /** Named landmarks (world metres). Side-specific names end in .l / .r. */
@@ -172,11 +223,12 @@ export function landmarks(sk) {
     });
   }
   const mid = (a, b) => lerp3(a, b, 0.5);
+  const tx = sk.spine ?? sk.thorax, pv = sk.spine ?? sk.pelvis;   // LIB-SPINE: with a field set these follow the outline map
   Object.assign(out, {
-    hips: sk.q.root, lumbar: sk.L, neck: sk.N, shoulders: mid(sk.S.l, sk.S.r), grips: mid(sk.G.l, sk.G.r),
+    hips: sk.q.root, lumbar: sk.spine ? sk.spine(REF.lumbar) : sk.L, neck: sk.N, shoulders: mid(sk.S.l, sk.S.r), grips: mid(sk.G.l, sk.G.r),
     head: sk.head([0, 1.0, 0]), ear: sk.head([0, 0.93, -0.005]), chin: sk.head([0, 0.872, 0.047]),
-    chest: sk.thorax([0, 0.745, 0.072]), sternum: sk.thorax([0, 0.80, 0.07]), navel: sk.pelvis([0, 0.62, 0.066]),
-    backUpper: sk.thorax([0, 0.75, -0.072]), backMid: sk.thorax([0, 0.68, -0.062]), sacrum: sk.pelvis([0, 0.585, -0.058]),
+    chest: tx([0, 0.745, 0.072]), sternum: sk.thorax([0, 0.80, 0.07]), navel: pv([0, 0.62, 0.066]),
+    backUpper: tx([0, 0.75, -0.072]), backMid: tx([0, 0.68, -0.062]), sacrum: sk.pelvis([0, 0.585, -0.058]),
     buttock: sk.pelvis([0, 0.522, -0.080]), seat: sk.pelvis([0, 0.478, -0.025]),
     trap: { l: sk.thorax([0.078, 0.834, 0]), r: sk.thorax([-0.078, 0.834, 0]) },
   });
@@ -274,6 +326,7 @@ function lerpDeep(a, b, t) {
 export function lerpPose(a, b, t, body) {
   const ra = resolve(a, body).q, rb = resolve(b, body).q, out = lerpDeep({ ...ra, reach: { l: null, r: null }, plant: { l: null, r: null } }, { ...rb, reach: { l: null, r: null }, plant: { l: null, r: null } }, t);
   for (const k of ['reach', 'plant']) for (const side of SIDES) if (a[k][side] && b[k][side]) out[k][side] = lerpDeep(a[k][side], b[k][side], t);
+  if (ra.bow != null || rb.bow != null) out.bow = lerp(ra.bow ?? 0, rb.bow ?? 0, t);   // LIB-SPINE: a key without a bow is 0
   return out;
 }
 /** Pose at t in [0, 1] along keyframes [start, ...via, end] (evenly spaced), resolved. */
@@ -293,9 +346,13 @@ export function bodyShapes(sk, cam, opts = {}) {
   // front view: a limb that points toward the camera (knee or hand well in front of its root joint) is drawn as
   // its own group over the torso, so its outline shows; everything else merges into one silhouette (reference look)
   const ahead = { arm: {}, leg: {} };
+  // LIB-SPINE (D-SPINE-VIEW): opts.depth 'view' (front view) measures depth toward the pitched camera, z cos p + y sin p,
+  // for the leg rule and the volume trunk; the arm rule keeps world z
+  const view = opts.depth === 'view' && !side, vp = (opts.pitch ?? 0) * R, dc = Math.cos(vp), ds = Math.sin(vp);
+  const D = view ? (w => w[2] * dc + w[1] * ds) : null;
   for (const sd of SIDES) {
     ahead.arm[sd] = opts.armsFront || (sk.G[sd][2] - sk.S[sd][2] > 0.12 && sk.G[sd][1] < sk.S[sd][1] + 0.25) || sk.E[sd][2] - sk.S[sd][2] > 0.12;
-    ahead.leg[sd] = sk.K[sd][2] - sk.hip[sd][2] > 0.12;
+    ahead.leg[sd] = view ? D(sk.K[sd]) - D(sk.hip[sd]) > 0.12 : sk.K[sd][2] - sk.hip[sd][2] > 0.12;
   }
   const grp = (part, s) => {
     if (!side) return ahead[part][s] ? (part === 'arm' ? 'arms' : 'legs') : 'body';
@@ -304,7 +361,7 @@ export function bodyShapes(sk, cam, opts = {}) {
   };
   const push = (key, group, shp) => out.push({ key, group, ...shp });
   // head + torso (opts.torso 'volume': the trunk and head as closed hulls, volumeTrunk below)
-  if (opts.torso === 'volume') volumeTrunk(sk, P, side, push);
+  if (opts.torso === 'volume') volumeTrunk(sk, P, side, push, D);
   else {
   const headPts = side ? HEAD_SIDE.map(([z, y]) => [0, y, z]) : HEAD_FRONT.map(([x, y]) => [x, y, 0]);
   push('head', side ? 'trunk' : 'body', { d: spline(headPts.map(r => P(sk.head(r)))), poly: headPts.map(r => P(sk.head(r))) });
@@ -362,8 +419,9 @@ function hull(pts) {   // monotone chain
   for (const q of [...p].reverse()) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
   return [...lo.slice(0, -1), ...up.slice(0, -1)];
 }
-function volumeTrunk(sk, P, side, push) {
-  const zS = (sk.S.l[2] + sk.S.r[2]) / 2, zK = (sk.K.l[2] + sk.K.r[2]) / 2;
+function volumeTrunk(sk, P, side, push, D = null) {
+  const zS = D ? (D(sk.S.l) + D(sk.S.r)) / 2 : (sk.S.l[2] + sk.S.r[2]) / 2;
+  const zK = D ? Math.max(D(sk.K.l), D(sk.K.r)) : (sk.K.l[2] + sk.K.r[2]) / 2;   // view depth: nearer than the nearest knee
   const grp = side ? 'trunk' : (zS > zK ? 'chest' : 'body');
   const sh = (sk.q.scap.l.elev + sk.q.scap.r.elev) / 2 / 100 / sk.H;
   const half = torsoHalf(sh), front = [...half, ...[...half].reverse().map(([x, y]) => [-x, y])], sideO = torsoSide(sh);
