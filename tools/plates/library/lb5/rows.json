@@ -153,6 +153,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_single_arm_triceps_pushdown": {
+   "src": "library/specs/single_arm_triceps_pushdown.mjs",
+   "slug": "single-arm-triceps-pushdown",
+   "prefix": "single-arm-triceps-pushdown",
+   "chromeId": "single-arm-triceps-pushdown",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }
