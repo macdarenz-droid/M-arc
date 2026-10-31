@@ -89,6 +89,7 @@ function misArm() {
     .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
 }
 const MIS_ARM = misArm();
+const START_LM = (() => { const b = { height: H }, sk = fk(resolve(normPose(start, b), b).q, b); return { 'wrist.r': sk.W.r, 'wrist.l': sk.W.l }; })();
 const START_WRIST_L = fk(resolve(normPose(start, { height: H }), { height: H }).q, { height: H }).W.l;
 
 export default {
@@ -103,6 +104,7 @@ export default {
     (lm, ctx) => (ctx.pose === 'end' ? [{ type: 'line', cls: 'eq-cable m-line', pts: startHex(ctx.start['grip.r']), z: 'front', part: 'startdb' }] : null),
   ],
   checks: [
+    ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: START_LM[landmark], pose: 'start', tol: 0.5 })),   // a dumbbell in each hand (c2)
     ...['heel.r', 'ball.r', 'heel.l', 'ball.l'].map(landmark => ({ landmark, plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 })),   // both feet flat
     // the far arm stays in the start position (c1): its wrist where it starts, in every pose
     ...['end', 'mistake'].map(pose => ({ landmark: 'wrist.l', at: START_WRIST_L, pose, tol: 0.5 })),

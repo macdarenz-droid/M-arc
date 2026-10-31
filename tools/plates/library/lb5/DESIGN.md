@@ -662,3 +662,10 @@ then the T rows; their QA counts only after the family rows merge). Stops S1-S5 
 - T rows: stopped (#349 6540834642). The pinned parents' Trace keys, Mistake arrows and measure leader fail LB5's A15
   drawn-item tests, and a template cannot change them (D-LIB10-FACTS). The 4 T specs are out of the branch until
   ruled (drawn at 20431f58).
+- Card fields (Do 4, after RULED): the 3 keys on incline_dumbbell_curl, single_arm_triceps_pushdown,
+  alternating_dumbbell_curl and hammer_curl, as 17.7 and 17.8. One change from 17.8: incline's c4 elbow contact is no
+  fact. The arm hangs beside the pad (7.3 cm from the pad face's plane in the side view), and no side-view plane
+  measures a contact with the pad's side. It stays drawn. The hands get `checks` at their start place (cross_body_hammer_
+  curl's precedent). Authoring QA on the 4: all 10 hard checks pass, node and browser. Named flags (17.3's form):
+  F3 47.1 on alternating_dumbbell_curl (short leaders), and F4 0 on alternating_dumbbell_curl and incline_dumbbell_curl
+  (no hand-placed labels).

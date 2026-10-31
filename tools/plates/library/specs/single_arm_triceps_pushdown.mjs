@@ -151,6 +151,7 @@ export default {
     lm => ({ type: 'cable', from: barOf(lm), to: headTangent(barOf(lm)), z: 'mid', part: 'bar' }),
   ],
   checks: [
+    { landmark: 'wrist.r', at: landmarksOf(start, H)['wrist.r'], pose: 'start', tol: 0.5 },   // the hand on the handle (c2)
     { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // feet flat ON the floor
     { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', at: E, pose, tol: 0.5 })),                 // elbow pinned (start and end)

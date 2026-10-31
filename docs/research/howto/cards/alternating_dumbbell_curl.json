@@ -607,5 +607,34 @@
     "remove": [],
     "why": "biceps primary and forearms secondary (brachioradialis, a forearm elbow flexor) both match exercises.json (c9)."
   },
-  "anchorSource": "nielasher-alt"
+  "anchorSource": "nielasher-alt",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Curl",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "wrist"
 }

@@ -36,8 +36,8 @@ const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl'
 const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl'];   // + D-LIB15R2-F7
 const F2_IDS = ['concentration_curl', 'wrist_curl', 'cross_body_hammer_curl'];   // + cross_body_hammer_curl: LIB-15R2 DESIGN.md 17.3 (proposed)
 // LIB-15R2 DESIGN.md 17.3 (proposed named flags on the zoom rows)
-const F3_IDS = ['dumbbell_overhead_triceps_extension', 'wrist_curl'];
-const F4_IDS = ['dumbbell_overhead_triceps_extension'];
+const F3_IDS = ['dumbbell_overhead_triceps_extension', 'wrist_curl', 'alternating_dumbbell_curl'];
+const F4_IDS = ['dumbbell_overhead_triceps_extension', 'alternating_dumbbell_curl', 'incline_dumbbell_curl'];
 // Held ids (DESIGN.md section 13; D-LIB15R2-ZOOM): drawn as is, in no rows file and on no QA'd page. The other three
 // earlier holds are released with a zoom (section 17).
 const HELD = ['overhead_cable_triceps_extension'];
@@ -739,18 +739,21 @@ describe('LIB-15 A4: runQa node half on an LB5 plate (lib_preacher_curl), LIB-3 
 });
 
 describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the plate facts (#290 6340022161)', { timeout: T }, () => {
-  // The cards whose fields are written now: the 9 less incline_dumbbell_curl (written when drawn).
-  const FIELDED = LB5.filter(id => id !== 'incline_dumbbell_curl');
+  // The cards whose fields are written now: the 9 (incline_dumbbell_curl once drawn) and, after LB5 R2 PLAN RULED, the
+  // 3 drawn R2 H rows; the 4 R2 T cards wait for the T-row ruling (#349 6540834642).
+  const R2_FIELDED = ['single_arm_triceps_pushdown', 'alternating_dumbbell_curl', 'hammer_curl'];
+  const FIELDED = [...LB5, ...R2_FIELDED];
   const KEYS = ['plateFacts', 'tempo', 'topFault'];
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
   // The ruled pose map (D-LIB15-POSE; DESIGN.md section 9): the spec pose each card pose is drawn as.
-  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB5.map(id => [id,
+  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(ALL.map(id => [id,
     ['dumbbell_overhead_triceps_extension', 'cable_curl'].includes(id) ? { start: 'end', end: 'start' } : { start: 'start', end: 'end' }]));
   // The ruled fault->key map (D-LIB15-FAULTKEY): the drawn key and topFault.
   // cross_body_hammer_curl: the shrug after F-LB5-1 (research a8e66f32, #290 6340713424); its top fault, the straight arm, keys `straight`.
   const DRAWN: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cross_body_hammer_curl: 'shrug',
-    cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', concentration_curl: 'knee', wrist_curl: 'lean' };
-  const TOP: Record<string, string> = { ...DRAWN, wrist_curl: 'grip', cross_body_hammer_curl: 'straight' };
+    cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', concentration_curl: 'knee', wrist_curl: 'lean',
+    incline_dumbbell_curl: 'elbows', single_arm_triceps_pushdown: 'lean', alternating_dumbbell_curl: 'elbows', hammer_curl: 'elbows' };   // + LIB-15R2 (DESIGN.md 17.7)
+  const TOP: Record<string, string> = { ...DRAWN, wrist_curl: 'grip', cross_body_hammer_curl: 'straight', incline_dumbbell_curl: 'wrists', alternating_dumbbell_curl: 'wrist' };
   // The ruled facts (D-LIB15-FACTS), copied from the ruling, never read from a card or a spec.
   const C = (landmark: string, pose: string, cardPose: string, claim: string) => ({ kind: 'contact', landmark, pose, cardPose, claim });
   // The plate-fact fix round (#290 6349063103): each side of a plural paired part, the hands on the implement at the
@@ -767,13 +770,18 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
     concentration_curl: [C('elbow.r', 'start', 'start', 'c1'), C('seat', 'start', 'start', 'c1'),
       ...['start', 'end'].flatMap(p => ['heel.r', 'heel.l', 'ball.r', 'ball.l'].map(l => C(l, p, p, 'c5'))), C('wrist.r', 'start', 'start', 'c1')],   // D-LIB15-MIRROR, c14
     wrist_curl: [C('wrist.r', 'start', 'start', 'c1')],
+    // LIB-15R2 (DESIGN.md 17.8; incline's elbow-on-pad c4 is no fact: the arm lies beside the pad, which no side-view plane measures)
+    incline_dumbbell_curl: [...W2('start', 'start', 'c1'), C('seat', 'start', 'start', 'c1'), C('backUpper', 'start', 'start', 'c2')],
+    single_arm_triceps_pushdown: [C('wrist.r', 'start', 'start', 'c2')],
+    alternating_dumbbell_curl: W2('start', 'start', 'c2'),
+    hammer_curl: W2('start', 'start', 'c1'),
   };
   const tj = () => readJson('tools/plates/library/lb5/tempo.json');
   const built = (rows: any[], pt: any) => rows.flatMap((r: any) => (r.from === 'pause' ? (pt.pause > 0 ? [{ phase: r.phase, s: pt.pause }] : []) : [{ phase: r.phase, s: pt[r.from], move: true }]));
   const cardsSha = readJson('tools/plates/library/lb5/cards.sha.json');
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
   it('each fielded card differs from its research-head copy only in the three keys, written last; the others carry none', () => {
-    for (const id of LB5) {
+    for (const id of ALL) {
       expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
       if (FIELDED.includes(id)) expect(Object.keys(cardOf(id)).slice(-3), id).toEqual(KEYS);
       else for (const k of KEYS) expect(k in cardOf(id), `${id} ${k}`).toBe(false);

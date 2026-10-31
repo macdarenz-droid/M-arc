@@ -684,5 +684,31 @@
     "why": "triceps primary is sourced (c15). exercises.json lists forearms as secondary; no source read for this exercise names the forearms, so it is kept unchanged and flagged unsourced (as on the parent card)."
   },
   "anchorSource": "ace-pushdown",
-  "anchorNote": "ace-pushdown is ACE's general pushdown page (it says the exercise can be done one arm at a time, c3); the only one-arm-specific source read is Centr's short form-tips page. Thin but acceptable."
+  "anchorNote": "ace-pushdown is ACE's general pushdown page (it says the exercise can be done one arm at a time, c3); the only one-arm-specific source read is Centr's short form-tips page. Thin but acceptable.",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Press",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "lean"
 }

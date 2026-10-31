@@ -572,5 +572,34 @@
     "remove": [],
     "why": "exercises.json lists brachialis and biceps as primary and forearms as secondary; StrengthLog says the same (c8). Brachialis is text-only. Kept unchanged, but the common claim that the neutral grip works the brachioradialis more is not supported by the measured data read (c9, cable curls in bodybuilders), so the sheet should not say it."
   },
-  "anchorSource": "ace-hammer"
+  "anchorSource": "ace-hammer",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Curl",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "elbows"
 }
