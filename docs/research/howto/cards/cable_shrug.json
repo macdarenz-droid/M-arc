@@ -691,5 +691,23 @@
     "c7 is split (2026-10-18, W2-45). The ACE barbell-shrug slow lowering is now c16 [CONSENSUS, MECH], and c7 keeps the top hold plus the ACSM seconds as a drawing convention [CONSENSUS, WEAK] (LR-15, D-W2-TEMPO). Each tag set now matches one the 8 use (CARD-V2). plate.tempo and posture[3] cite both.",
     "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the middle of the palm, fingers wrapped (hold archetype).\") and the drawn palm direction (palms down, as grip.type states from c1) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3). The straight bar is a drawing convention too: c1's quote says only \"cable bar attachment\".",
     "The NHS shoulder \"Don't\" list also says \"do not completely stop using your shoulder\". The shown row stops only the set, so it does not conflict; a later writer must not widen it to stopping all shoulder use."
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [
+    {
+      "phase": "Lift",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "elbows"
 }

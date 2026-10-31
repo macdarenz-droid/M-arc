@@ -1495,6 +1495,13 @@ describe('LIB-13s A6: runQa node half on the wave-1 plates (zoom keys, H1 feet, 
     expect(keys(await qa({ ...(await candOf('lib_t_bar_row')), spec: { ...s, equipment: [...s.equipment, extra] } })).some((k: string) => k.startsWith(`H9.moving-line:eq${s.equipment.length}.rackUpright.`))).toBe(true);
     expect(keys(await qa({ ...(await candOf('lib_t_bar_row')), spec: { ...s, equipment: [...s.equipment, { type: 'rope3d', at: [0, 0, 0] }] } })).some((k: string) => k.startsWith('H9.type:'))).toBe(true);
   });
+  it("A6/A7 F7 on barbell_shrug (drawable false): raised with the card topFault 'roll'; with topFault 'elbows' it is not, so the ruled expectation is red", async () => {
+    const c = await candOf('lib_barbell_shrug');
+    const raised = async (cc: any) => { const r = await qa(cc); return qaIdx.FLAGS.filter((f: string) => ['F7'].includes(f) && r.flags[f].raised); };
+    expect(c.research.topFault).toBe('roll');
+    expect(await raised(c)).toEqual(['F7']);
+    expect(await raised({ ...c, research: { ...c.research, topFault: 'elbows' } })).toEqual([]);
+  });
   it('the ruled flag set (qa.mjs EXPECTED): F5 on both, and barbell_shrug\'s named F2, F3, F4 and F7', async () => {
     const q = await import(/* @vite-ignore */ lib('lb3/qa.mjs'));
     expect(q.EXPECTED('lib_barbell_shrug')).toEqual(['F2', 'F3', 'F4', 'F5', 'F7']);
@@ -1536,6 +1543,29 @@ describe('LIB-13s A7: the 4 shrug cards and quotes are research a48b0594 copies 
     expect(S13.barbell_shrug.tempo).toEqual(want('barbell_shrug', cardOf('barbell_shrug')));
     const c = cardOf('barbell_shrug'); c.plate.tempo.down = 1;
     expect(S13.barbell_shrug.tempo).not.toEqual(want('barbell_shrug', c));   // mutation: one second changed on the card
+  });
+  // CARD FIELDS (DESIGN.md 16.2, 16.3; D-LIB13S-TOPFAULT): plateFacts [] on all 4; tempo = the tempo.json rows with the
+  // card's own seconds; topFault the drawn first tell key, or 'roll' on barbell_shrug (drawable false)
+  const TOPFAULT: Record<string, string> = { barbell_shrug: 'roll', dumbbell_shrug: 'elbows', cable_shrug: 'elbows', smith_machine_shrug: 'head' };
+  const fieldProblems = (id: string, c: any) => {
+    const t = readJson('tools/plates/library/lb3/tempo.json').lib13s.ids[id], out: string[] = [];
+    const want = t.rows.map((r: any) => ({ phase: r.phase, s: c.plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
+    if (JSON.stringify(c.plateFacts) !== '[]') out.push(`${id}: plateFacts`);
+    if (JSON.stringify(c.tempo) !== JSON.stringify(want)) out.push(`${id}: tempo`);
+    if (c.topFault !== TOPFAULT[id]) out.push(`${id}: topFault`);
+    return out;
+  };
+  it('CARD FIELDS: each shrug card carries the ruled three keys; barbell_shrug\'s spec tempo equals its card\'s', () => {
+    for (const id of SH) expect(fieldProblems(id, cardOf(id)), id).toEqual([]);
+    expect(S13.barbell_shrug.tempo).toEqual(cardOf('barbell_shrug').tempo);
+  });
+  it('CARD FIELDS mutations: one second changed on a card, a fact added, and another topFault are red', () => {
+    const a = cardOf('dumbbell_shrug'); a.tempo[1].s = 2;
+    expect(fieldProblems('dumbbell_shrug', a)).toEqual(['dumbbell_shrug: tempo']);
+    const b = cardOf('cable_shrug'); b.plateFacts = [{ kind: 'contact', landmark: 'grip.r', pose: 'start', claim: 'c2' }];
+    expect(fieldProblems('cable_shrug', b)).toEqual(['cable_shrug: plateFacts']);
+    const c = cardOf('barbell_shrug'); c.topFault = 'elbows';
+    expect(fieldProblems('barbell_shrug', c)).toEqual(['barbell_shrug: topFault']);
   });
   let V: any;
   const S13: Record<string, any> = {};

@@ -465,5 +465,19 @@
     "remove": [],
     "why": "Library primary upper_traps matches (c5); no source prose read supports another muscle."
   },
-  "anchorSource": "ace-shrug"
+  "anchorSource": "ace-shrug",
+  "plateFacts": [],
+  "tempo": [
+    {
+      "phase": "Lift",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "roll"
 }
