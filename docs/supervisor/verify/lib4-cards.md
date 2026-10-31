@@ -4567,3 +4567,8 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **t_bar_row** fails R1 [3,4,3] (the end reads as a mid-pull because the V grip hangs about 65 px under the bar) and R3 [3,3,4] (the grip runs parallel to the forearm). It gets a fix round: hook the handle under the bar, re-pose the end arm at the drawn lengths with the elbow bent about 85°, and turn the grip perpendicular to the forearm (#359 6548509170).
   - **hip_abduction** fails R2 [4,3,3]: no pivot is drawn for "Knees at pivot". **D-LIB16R2-PIVOT** (D-LIB13-PANEL3 precedent): one last mechanical round adds the house pivot axle at knee height on each pad arm, with no pose change, then a focused R2 recheck; a fail means HELD (#354 6548507385).
 - **TOPFAULT @ `2edabdf0`** (#362 6548354010): reverse_lunge's blind pass answered `flare`, so the tell stands.
+- **PANEL mx17** (focused round 2: LB7 @ `9007a965`, LIB-SMALL @ `0a335a9d`) is **VALID**. Plants were caught at jumping_jacks R5 [2,2,2] and jump_squat R1 [3,3,3]. The anchor items below 4 are follow-ups 21 and 22.
+  - **pike_push_up** (option B), **incline_push_up** (re-posed to sh.elev 45), **jumping_jacks** (heel turn) and **jump_squat** (j10 hands) are **APPROVED**.
+  - LB7 R3 has all 3 rows approved and goes to READY, review and a train.
+  - LIB-SMALL builds wall_ball after #356 merges.
+- **PANEL mx18** (cable_crunch @ `d9e8085d`; PILOT-A3 reverse_lunge and dumbbell_fly @ `2edabdf0`): the critics are running.
