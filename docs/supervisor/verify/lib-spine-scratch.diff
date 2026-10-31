@@ -1,0 +1,143 @@
+diff --git a/tools/plates/vendor/engine/body.mjs b/tools/plates/vendor/engine/body.mjs
+index bbd2d1a2..a513335b 100644
+--- a/tools/plates/vendor/engine/body.mjs
++++ b/tools/plates/vendor/engine/body.mjs
+@@ -28,6 +28,9 @@ export const REF = {
+ export const RADII = { upper: [0.03, 0.031, 0.022, 0.3], fore: [0.023, 0.026, 0.015, 0.28], thigh: [0.048, 0.044, 0.027, 0.3], shank: [0.029, 0.033, 0.016, 0.3],
+   shoulderCap: 0.03, elbowCap: 0.022, kneeCap: 0.028, fist: 0.02 };
+ export const SIDES = ['l', 'r'];
++// scratch LIB-SPINE: spine pivots (H) on the spine line z = REF.lumbar[2]: L5/S1, L3, T12, T7; each turns over +-SPINE_HW
++export const SPINE_PIV = [0.60, 0.62, 0.68, 0.75], SPINE_HW = 0.015;
++export const BOW_ZONE = [0.585, 0.70];   // scratch: sacrum landmark level to T12 (backMid .68 + .02)
+ export const SGN = { l: 1, r: -1 };
+ 
+ // ---------- outlines (ref coordinates) ----------
+@@ -92,9 +95,13 @@ export function normPose(p, body) {
+   const at = Array.isArray(root) ? root : (root.at ?? [0, REF.hjcY * H, 0]);
+   const map = (v, fn, def) => { const q = perSide(v, def); return { l: fn(q.l), r: fn(q.r) }; };
+   const tk = trunkN(p.trunk);
++  const arr = Array.isArray(tk.flex) || Array.isArray(tk.yaw) || Array.isArray(tk.lat);
++  const sp = arr ? Object.fromEntries(['flex', 'yaw', 'lat'].map(k => [k, Array.isArray(tk[k]) ? tk[k] : SPINE_PIV.map((_, i) => i === SPINE_PIV.length - 1 ? (tk[k] ?? 0) : 0)])) : null;
++  const sum = a => a.reduce((x, y) => x + y, 0);
+   return {
+-    root: at, tilt: root.tilt ?? p.tilt ?? 0, trunk: tk.flex ?? 0, neck: p.neck ?? 0,
+-    roll: root.roll ?? 0, yaw: root.yaw ?? 0, trunkYaw: tk.yaw ?? 0, lat: tk.lat ?? 0,
++    root: at, tilt: root.tilt ?? p.tilt ?? 0, trunk: sp ? sum(sp.flex) : (tk.flex ?? 0), neck: p.neck ?? 0,
++    roll: root.roll ?? 0, yaw: root.yaw ?? 0, trunkYaw: sp ? sum(sp.yaw) : (tk.yaw ?? 0), lat: sp ? sum(sp.lat) : (tk.lat ?? 0),
++    ...(sp ? { spine: sp } : {}), ...(tk.bow ? { bow: tk.bow } : {}),
+     scap: map(p.scap, scapN, 0), sh: map(p.shoulder, shoulderN, null),
+     elbow: perSide(p.elbow, 0), wrist: perSide(p.wrist, 0),
+     hip: map(p.hip, hipN, 0), knee: perSide(p.knee, 0), ankle: perSide(p.ankle, 0),
+@@ -120,17 +127,37 @@ export function fk(q, body) {
+   let Rp = rotX(q.tilt);
+   if (q.roll) Rp = mm(rotZ(q.roll), Rp);
+   if (q.yaw) Rp = mm(rotY(q.yaw), Rp);
+-  const Rt0 = mm(Rp, q.lat ? mm(rotZ(q.lat), rotX(q.trunk)) : rotX(q.trunk));
+-  const Rt = q.trunkYaw ? mm(Rt0, rotY(q.trunkYaw)) : Rt0, Rh = mm(Rt, rotX(q.neck));
+   const hjc = [0, REF.hjcY, 0];
++  const RpU = Rp;   // the thorax's pelvis frame (no bow)
++  const pelvisU = r => add(q.root, mv(RpU, k(sub(r, hjc))));
++  if (q.bow) Rp = mm(Rp, rotX(q.bow));
+   const pelvis = r => add(q.root, mv(Rp, k(sub(r, hjc))));
+-  const Lw = pelvis(REF.lumbar);
+-  const thorax = r => add(Lw, mv(Rt, k(sub(r, REF.lumbar))));
++  let Rt, Lw, thorax, spinePt = null;
++  if (q.spine) {
++    const sp = q.spine, n = SPINE_PIV.length;
++    const segR = (i, w) => { let M = rotX(sp.flex[i] * w); if (sp.lat[i]) M = mm(rotZ(sp.lat[i] * w), M); if (sp.yaw[i]) M = mm(M, rotY(sp.yaw[i] * w)); return M; };
++    const bend = (r, full) => { let x = r; for (let i = n - 1; i >= 0; i--) { const w = full ? 1 : clamp((r[1] - (SPINE_PIV[i] - SPINE_HW)) / (2 * SPINE_HW), 0, 1);
++      if (w > 0) { const pv = [0, SPINE_PIV[i], REF.lumbar[2]]; x = add(pv, mv(segR(i, w), sub(x, pv))); } } return x; };
++    let Rprod = segR(0, 1); for (let i = 1; i < n; i++) Rprod = mm(Rprod, segR(i, 1));
++    Rt = mm(Rp, Rprod);
++    thorax = r => pelvis(bend(r, true));
++    Lw = thorax(REF.lumbar);
++    spinePt = r => pelvis(bend(r, false));
++  } else {
++  const Rt0 = mm(RpU, q.lat ? mm(rotZ(q.lat), rotX(q.trunk)) : rotX(q.trunk));
++  Rt = q.trunkYaw ? mm(Rt0, rotY(q.trunkYaw)) : Rt0;
++  Lw = pelvisU(REF.lumbar);
++  thorax = r => add(Lw, mv(Rt, k(sub(r, REF.lumbar))));
++  }
++  if (q.bow) { const sm = t => t * t * (3 - 2 * t); spinePt = r => { const y = r[1];
++    if (y <= BOW_ZONE[0]) return pelvis(r); if (y >= BOW_ZONE[1]) return thorax(r); return lerp3(pelvis(r), thorax(r), sm((y - BOW_ZONE[0]) / (BOW_ZONE[1] - BOW_ZONE[0]))); }; }
++  const Rh = mm(Rt, rotX(q.neck));
+   const Nw = thorax(REF.neck);
+   const head = r => add(Nw, mv(Rh, k(sub(r, REF.neck))));
+   // skinning for the one-piece torso outline: pelvis below .60, thorax .66-.845, head above .875, linear blends between
+   const skin = r => {
+     const y = r[1];
++    if (spinePt && y <= 0.845) return spinePt(r);
+     if (y <= 0.60) return pelvis(r);
+     if (y < 0.66) return lerp3(pelvis(r), thorax(r), (y - 0.60) / 0.06);
+     if (y <= 0.845) return thorax(r);
+@@ -152,7 +179,7 @@ export function fk(q, body) {
+     Object.assign(fr.ua, { [side]: Ua }); fr.fa[side] = Fa; fr.hd[side] = Hd; fr.th[side] = Th; fr.sk[side] = Sk; fr.ft[side] = Ft;
+   }
+   const foot = (side, r) => add(A[side], mv(fr.ft[side], k(r)));   // r = foot-local (x lateral*s applied by caller, y, z)
+-  return { q, H, Rp, Rt, Rh, pelvis, thorax, head, skin, L: Lw, N: Nw, S, E, W: Wr, G, hip: Hp, K, A, fr, foot };
++  return { q, H, Rp, Rt, Rh, pelvis, thorax, head, skin, L: Lw, N: Nw, S, E, W: Wr, G, hip: Hp, K, A, fr, foot, spine: spinePt };
+ }
+ 
+ /** Named landmarks (world metres). Side-specific names end in .l / .r. */
+@@ -172,11 +199,12 @@ export function landmarks(sk) {
+     });
+   }
+   const mid = (a, b) => lerp3(a, b, 0.5);
++  const tx = sk.spine ?? sk.thorax, pv = sk.spine ?? sk.pelvis;
+   Object.assign(out, {
+-    hips: sk.q.root, lumbar: sk.L, neck: sk.N, shoulders: mid(sk.S.l, sk.S.r), grips: mid(sk.G.l, sk.G.r),
++    hips: sk.q.root, lumbar: sk.spine ? sk.spine(REF.lumbar) : sk.L, neck: sk.N, shoulders: mid(sk.S.l, sk.S.r), grips: mid(sk.G.l, sk.G.r),
+     head: sk.head([0, 1.0, 0]), ear: sk.head([0, 0.93, -0.005]), chin: sk.head([0, 0.872, 0.047]),
+-    chest: sk.thorax([0, 0.745, 0.072]), sternum: sk.thorax([0, 0.80, 0.07]), navel: sk.pelvis([0, 0.62, 0.066]),
+-    backUpper: sk.thorax([0, 0.75, -0.072]), backMid: sk.thorax([0, 0.68, -0.062]), sacrum: sk.pelvis([0, 0.585, -0.058]),
++    chest: tx([0, 0.745, 0.072]), sternum: sk.thorax([0, 0.80, 0.07]), navel: pv([0, 0.62, 0.066]),
++    backUpper: tx([0, 0.75, -0.072]), backMid: tx([0, 0.68, -0.062]), sacrum: sk.pelvis([0, 0.585, -0.058]),
+     buttock: sk.pelvis([0, 0.522, -0.080]), seat: sk.pelvis([0, 0.478, -0.025]),
+     trap: { l: sk.thorax([0.078, 0.834, 0]), r: sk.thorax([-0.078, 0.834, 0]) },
+   });
+@@ -293,9 +321,11 @@ export function bodyShapes(sk, cam, opts = {}) {
+   // front view: a limb that points toward the camera (knee or hand well in front of its root joint) is drawn as
+   // its own group over the torso, so its outline shows; everything else merges into one silhouette (reference look)
+   const ahead = { arm: {}, leg: {} };
++  const vp = (opts.depth === 'view' && !side ? (opts.pitch ?? 0) : 0) * Math.PI / 180, dc = Math.cos(vp), ds = Math.sin(vp);
++  const D = opts.depth === 'view' && !side ? Object.assign(w => w[2] * dc + w[1] * ds, { view: true }) : (w => w[2]);
+   for (const sd of SIDES) {
+     ahead.arm[sd] = opts.armsFront || (sk.G[sd][2] - sk.S[sd][2] > 0.12 && sk.G[sd][1] < sk.S[sd][1] + 0.25) || sk.E[sd][2] - sk.S[sd][2] > 0.12;
+-    ahead.leg[sd] = sk.K[sd][2] - sk.hip[sd][2] > 0.12;
++    ahead.leg[sd] = D(sk.K[sd]) - D(sk.hip[sd]) > 0.12;
+   }
+   const grp = (part, s) => {
+     if (!side) return ahead[part][s] ? (part === 'arm' ? 'arms' : 'legs') : 'body';
+@@ -304,7 +334,7 @@ export function bodyShapes(sk, cam, opts = {}) {
+   };
+   const push = (key, group, shp) => out.push({ key, group, ...shp });
+   // head + torso (opts.torso 'volume': the trunk and head as closed hulls, volumeTrunk below)
+-  if (opts.torso === 'volume') volumeTrunk(sk, P, side, push);
++  if (opts.torso === 'volume') volumeTrunk(sk, P, side, push, D);
+   else {
+   const headPts = side ? HEAD_SIDE.map(([z, y]) => [0, y, z]) : HEAD_FRONT.map(([x, y]) => [x, y, 0]);
+   push('head', side ? 'trunk' : 'body', { d: spline(headPts.map(r => P(sk.head(r)))), poly: headPts.map(r => P(sk.head(r))) });
+@@ -362,8 +392,8 @@ function hull(pts) {   // monotone chain
+   for (const q of [...p].reverse()) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+   return [...lo.slice(0, -1), ...up.slice(0, -1)];
+ }
+-function volumeTrunk(sk, P, side, push) {
+-  const zS = (sk.S.l[2] + sk.S.r[2]) / 2, zK = (sk.K.l[2] + sk.K.r[2]) / 2;
++function volumeTrunk(sk, P, side, push, D = w => w[2]) {
++  const zS = (D(sk.S.l) + D(sk.S.r)) / 2, zK = D.view ? Math.max(D(sk.K.l), D(sk.K.r)) : (D(sk.K.l) + D(sk.K.r)) / 2;
+   const grp = side ? 'trunk' : (zS > zK ? 'chest' : 'body');
+   const sh = (sk.q.scap.l.elev + sk.q.scap.r.elev) / 2 / 100 / sk.H;
+   const half = torsoHalf(sh), front = [...half, ...[...half].reverse().map(([x, y]) => [-x, y])], sideO = torsoSide(sh);
+diff --git a/tools/plates/vendor/engine/plate.mjs b/tools/plates/vendor/engine/plate.mjs
+index fadbec8d..4a7954a0 100644
+--- a/tools/plates/vendor/engine/plate.mjs
++++ b/tools/plates/vendor/engine/plate.mjs
+@@ -49,7 +49,7 @@ function makeCamera(spec, cam) {
+ // Everything drawn for one pose: body shapes + equipment items, in plate px.
+ function drawPose(spec, body, q, cam, ctx) {
+   const sk = fk(q, body), lm = landmarks(sk);
+-  const shapes = bodyShapes(sk, cam, { armsFront: spec.armsFront, hand: spec.hand, torso: spec.torso }).map(s => ({ ...s, part: partOf(s.key) }));
++  const shapes = bodyShapes(sk, cam, { armsFront: spec.armsFront, hand: spec.hand, torso: spec.torso, depth: spec.depth, pitch: spec.view === 'side' ? 0 : (spec.camera?.pitch ?? 0) }).map(s => ({ ...s, part: partOf(s.key) }));
+   const eq = [];
+   (spec.equipment ?? []).forEach((e, i) => {
+     let ent = typeof e === 'function' ? e(lm, { ...ctx, q }) : e;

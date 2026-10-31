@@ -4501,3 +4501,8 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **D-LIB8R-FACTS2** (contacts are facts, as in FACTS2);
   - **D-LIB8R-PROGFACT** (c15 is a progression, so not a fact).
 - **LB4:** **D-LIB14-B7END** (bodyweight_squat's b7 floor facts at the bottom stand). **F-LB4-B7CITE** adds b7 to plate.end in a later research batch. cflb4s VALID, and front_squat gains its `.l` facts.
+
+## 48. Next cards after the held-row inventory, 10-31 (supervisor)
+- **Inventory** (main `151de0b8`): 84 approved on main, 9 approved in open PRs, 3 in open PRs not yet approved, 25 held, 32 not started (17 ready, 15 behind a held parent). Order of the next cards: LIB-SPINE first (the only route for its rows, and the longest), then the LB5 resume, then the LB6 + LB7 T/D card.
+- **LIB-SPINE** (`verify/lib-spine-card.md`, `ready`): the supervisor confirms **D-SPINE-VENDOR** (LIB-20's vendoring path; no approved byte moves, so plan 3.5 needs no owner session), **-OPTIN**, **-SEGS**, **-BOW**, **-MIX**, **-FIXTURE**, **-REVLUNGE-ROUTE** and **-BICYCLE** as written there. One LIB slot. It starts after train 48 merges and merges ahead of reverse_lunge's redraw and LB9's cable_crunch. Scratch on `1f024b1f`: reverse_lunge with `bow: 12` keeps the upper body at 0.00 px and needs zoom k 3 (12.3-13.2 px); cable_crunch's spread curl keeps its trace at 28.0-47.7 px (bar 22.11).
+- **bicycle_crunch** stays held: view depth fixes the overlap, but the spread spine does not close the elbow-to-knee reach (0.377 m against 0.366 m). Route **F-BICYCLE-REACH** (D-SPINE-BICYCLE).
