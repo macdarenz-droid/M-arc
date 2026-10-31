@@ -44,8 +44,8 @@ describe('HT1-A1 vendor lock (L0)', () => {
         // (de00174), claude/howto-options. LIB-26 [golden update]: the flat-palm hand option (body, plate) and its engine
         // test, f214700; SPEC.md at 48153c4 documents both. LIB-20 [golden update]: the E-R5 fields (body, plate, SPEC.md)
         // and their two engine tests, c35e0a4. LIB-SPINE [golden update]: the spine fields (body, plate, SPEC.md) and
-        // their engine test, 80be674.
-        const ref = ['engine/body.mjs', 'engine/plate.mjs', 'engine/SPEC.md', 'exercises/_test_spine.mjs'].includes(p) ? '80be674'
+        // their engine test, 80be674; body.mjs at d8d4b2e (the bow keeps the leg IK's pelvis frame).
+        const ref = p === 'engine/body.mjs' ? 'd8d4b2e' : ['engine/plate.mjs', 'engine/SPEC.md', 'exercises/_test_spine.mjs'].includes(p) ? '80be674'
           : ['exercises/_test_er5.mjs', 'exercises/_test_pitch.mjs'].includes(p) ? 'c35e0a4'
           : p === 'exercises/_test_flat.mjs' ? 'f214700'
           : p === 'engine/equipment.mjs' ? '48153c4' : p === 'exercises/_test_poly.mjs' ? 'de00174' : 'bc0f378';
@@ -93,7 +93,7 @@ describe('HT1-A1 vendor lock (L0)', () => {
   // with its MANIFEST entry still fails here and shows up as a visible change to this test.
   it('HT-2: the sorted path:sha256 list of MANIFEST.json hashes to its pinned literal', () => {
     const list = Object.entries(g.readManifest().files as Record<string, { sha256: string }>).map(([p, e]) => `${p}:${e.sha256}`).sort().join('\n');
-    expect(g.sha256(list)).toBe('257b4d8d3d6c099aa116543c386888d0b5cf8c87f7faa9d181a0f86d88c1bf83');
+    expect(g.sha256(list)).toBe('09068fa617c917a3ff8404119bf2d230ca9b8dd26903680a1403a4d2a68c6b91');
   });
 });
 

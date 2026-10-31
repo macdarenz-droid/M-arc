@@ -20,9 +20,9 @@
       "gitBlob": "e3c737309e2b7d8d0d604e84c12ebe13ef89bd4f"
     },
     "engine/body.mjs": {
-      "sha256": "64e9d3a7f8e96d1014ce4f340d632b77d2204d929853632f5b28e16ef01c8a7e",
-      "source": "80be674:docs/howto/technical-plate/engine/body.mjs",
-      "gitBlob": "099c76577ff8aa8a37cd6f489fafd789155cd05c"
+      "sha256": "ef1d36236dd4e925f29b2154459c9d402a565507c2f1c15579cd5e474a8e7e2d",
+      "source": "d8d4b2e:docs/howto/technical-plate/engine/body.mjs",
+      "gitBlob": "148a76427d0e0131dbfd3a4b7535bf37a577e7f5"
     },
     "engine/equipment.mjs": {
       "sha256": "d1f7d82a8962e411525ab29138a1b36eb444d10b04e1e75a14e9475b15eaa638",
