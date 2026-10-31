@@ -672,13 +672,6 @@
   "plateFacts": [
     {
       "kind": "contact",
-      "landmark": "seat",
-      "pose": "start",
-      "cardPose": "start",
-      "claim": "c2"
-    },
-    {
-      "kind": "contact",
       "landmark": "backUpper",
       "pose": "start",
       "cardPose": "start",
@@ -689,20 +682,6 @@
       "landmark": "buttock",
       "pose": "start",
       "cardPose": "start",
-      "claim": "c2"
-    },
-    {
-      "kind": "contact",
-      "landmark": "backUpper",
-      "pose": "end",
-      "cardPose": "end",
-      "claim": "c2"
-    },
-    {
-      "kind": "contact",
-      "landmark": "buttock",
-      "pose": "end",
-      "cardPose": "end",
       "claim": "c2"
     },
     {

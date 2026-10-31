@@ -728,13 +728,6 @@
   "plateFacts": [
     {
       "kind": "contact",
-      "landmark": "seat",
-      "pose": "start",
-      "cardPose": "start",
-      "claim": "c1"
-    },
-    {
-      "kind": "contact",
       "landmark": "chest",
       "pose": "start",
       "cardPose": "start",

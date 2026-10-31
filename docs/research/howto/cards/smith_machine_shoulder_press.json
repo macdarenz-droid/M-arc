@@ -849,7 +849,7 @@
       "landmark": "seat",
       "pose": "start",
       "cardPose": "start",
-      "claim": "c4"
+      "claim": "c6"
     },
     {
       "kind": "contact",
@@ -863,20 +863,6 @@
       "landmark": "buttock",
       "pose": "start",
       "cardPose": "start",
-      "claim": "c4"
-    },
-    {
-      "kind": "contact",
-      "landmark": "backUpper",
-      "pose": "end",
-      "cardPose": "end",
-      "claim": "c4"
-    },
-    {
-      "kind": "contact",
-      "landmark": "buttock",
-      "pose": "end",
-      "cardPose": "end",
       "claim": "c4"
     },
     {

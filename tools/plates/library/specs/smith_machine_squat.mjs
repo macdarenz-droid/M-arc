@@ -27,9 +27,9 @@ import { perItem } from '../eq/parts.mjs';
 import { smith, SMITH_ITEMS } from '../eq/smith.mjs';
 
 export const SIZES = { FOOT_X: 0.19, TOE_OUT: 20, GRIP_X: 0.36, BAR_TY: 0.85, BAR_TZ: -0.058, FEET_AHEAD: 0.11, END_HIP_Y: 0.43, END_INCL: 28,
-  END_SPINE: 6, BAR_R: 0.025, PLATE_D: 0.45, STOP_BELOW: 0.02, STOP_W: 0.25, STOP_H: 0.05 };
+  END_SPINE: 6, BAR_R: 0.025, PLATE_D: 0.45, STOP_BELOW: 0.02, STOP_W: 0.25, STOP_H: 0.05, BASE_BACK: 0.2, BASE_FRONT: 0.3 };
 const H = 1.75, R = Math.PI / 180;
-const { FOOT_X, TOE_OUT, GRIP_X, BAR_TY, BAR_TZ, FEET_AHEAD, END_HIP_Y, END_INCL, END_SPINE, BAR_R, PLATE_D, STOP_BELOW, STOP_W, STOP_H } = SIZES;
+const { FOOT_X, TOE_OUT, GRIP_X, BAR_TY, BAR_TZ, FEET_AHEAD, END_HIP_Y, END_INCL, END_SPINE, BAR_R, PLATE_D, STOP_BELOW, STOP_W, STOP_H, BASE_BACK, BASE_FRONT } = SIZES;
 const BAR_T = [0, BAR_TY, BAR_TZ];                        // the bar on the upper traps, in the standing thorax frame (H) (c1)
 export const RAIL_Z = -FEET_AHEAD;                        // mid-soles at z 0
 
@@ -68,7 +68,7 @@ const LS = landmarksOf(start, H), LE = landmarksOf(end, H);
 const barAt = lm => [0, lm.grips[1], RAIL_Z];
 export const BAR_LOW = barAt(LE)[1];
 export const STOP_Y = BAR_LOW - BAR_R - STOP_BELOW;      // the stop's top (c8)
-const rigOf = lm => smith({ railZ: RAIL_Z, bar: barAt(lm), stopY: STOP_Y, stop: { w: STOP_W, h: STOP_H }, stopZ: 'front', base: [RAIL_Z - 0.55, RAIL_Z - 0.25] });
+const rigOf = lm => smith({ railZ: RAIL_Z, bar: barAt(lm), stopY: STOP_Y, stop: { w: STOP_W, h: STOP_H }, stopZ: 'front', base: [RAIL_Z - BASE_BACK, RAIL_Z + BASE_FRONT] });   // the floor beam centred under the rails, behind and under the feet (a frame part beside the body; panel mx12 R2)
 const START_BAR = barAt(LS);
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, START_BAR[1] + BAR_R * Math.sin(k * Math.PI / 8), START_BAR[2] + BAR_R * Math.cos(k * Math.PI / 8)]);
 export const info = () => { const m = landmarksOf({ ...end, ...mistakePose }, H);

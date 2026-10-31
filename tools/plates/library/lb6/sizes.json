@@ -476,14 +476,19 @@
      "basis": "convention: cable_fly.mjs:44 (pilot B), the column line 35 cm behind the shoulders"
     },
     "MIS_CROSS": {
-     "value": 0.08,
+     "value": 0.11,
      "unit": "m",
-     "basis": "claim: c8 crossing the handles past the midline; stated reason: each hand 8 cm past the midline, about one hand width (no source gives a size)"
+     "basis": "claim: c8 crossing the handles past the midline; stated reason: each hand 11 cm past the midline, the hands' places the panel gave (mx12 R5, #354 6544652523: about 27 plate px apart), so the X reads at plate scale"
     },
-    "MIS_DZ": {
+    "MIS_DY": {
      "value": 0.06,
      "unit": "m",
-     "basis": "stated reason: the right hand passes 6 cm in front of the left, about a fist depth, so the hands do not meet in one place"
+     "basis": "stated reason: the right hand 6 cm above the left, so the two crossed forearms form an X (panel mx12 R5, #354 6544652523)"
+    },
+    "FIST_R": {
+     "value": 0.035,
+     "unit": "m",
+     "basis": "convention: the engine's fist radius (body.mjs RADII.fist 0.02 H at 1.75 m), the ring round each faulty hand"
     },
     "HANDLE": {
      "value": 0.12,
@@ -566,6 +571,16 @@
      "value": 0.05,
      "unit": "m",
      "basis": "convention: smith_machine_bench_press.mjs STOP_SIZE (pilot B, D-LIB11-PANEL1)"
+    },
+    "BASE_BACK": {
+     "value": 0.2,
+     "unit": "m",
+     "basis": "stated reason: the floor beam centred under the rails (panel mx12 R2, #354 6544652523), 20 cm behind the rod"
+    },
+    "BASE_FRONT": {
+     "value": 0.3,
+     "unit": "m",
+     "basis": "stated reason: see BASE_BACK; 30 cm in front of the rod, past the hook rail, under the feet (a frame part beside the body, PLAN RULED point 1)"
     }
    },
    "smith_machine_shoulder_press": {

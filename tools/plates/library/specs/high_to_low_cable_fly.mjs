@@ -16,8 +16,8 @@
 //    above level, OPEN_ANGLE ahead of the side line; the hands under the pulleys) to the end grip (CLOSE_GAP off the
 //    midline, END_DROP below the chest landmark).
 //  - Pulleys (c1): at the crown's height (the `head` landmark) of the start pose, at the columns' inner faces.
-//  - Mistake (c8): each grip goes on along its sphere, at the end height, to MIS_CROSS past the midline; the right
-//    hand MIS_DZ in front of the left (solved on the sphere, throws if none).
+//  - Mistake (c8): each grip goes on along its sphere to MIS_CROSS past the midline, the right hand MIS_DY above the
+//    left, so the forearms cross as an X (solved on the sphere, throws if none); a dashed ring at each faulty hand.
 //  - Scale: cable_fly's 124 px/m (the columns stand outside the open hands and fit the plate).
 // Plate labels: callouts = plate.checkpoints c7 (Trunk upright), c3 (Soft elbows), c5 (Below chest); Mistake =
 //   plate.mistake c8 (key `cross`, drawable false: the card's top fault is not drawable in this view; F7 named,
@@ -26,9 +26,9 @@
 import { WINTER, REF, REF_CAMERA, landmarksOf, resolve, normPose } from '../engine.mjs';
 
 export const SIZES = { FOOT_X: 0.12, STAGGER: 0.2, KNEE_SOFT: 5, ELBOW: 20, OPEN_ANGLE: 10, OPEN_UP: 30, CLOSE_GAP: 0.05, END_DROP: 0.1,
-  COL_X: 1.24, COL_W: 0.24, COL_H: 2.1, COL_Z: -0.35, MIS_CROSS: 0.08, MIS_DZ: 0.06, HANDLE: 0.12, CAM_PXM: 124 };
+  COL_X: 1.24, COL_W: 0.24, COL_H: 2.1, COL_Z: -0.35, MIS_CROSS: 0.11, MIS_DY: 0.06, FIST_R: 0.035, HANDLE: 0.12, CAM_PXM: 124 };
 const H = 1.75, R = Math.PI / 180;
-const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_UP, CLOSE_GAP, END_DROP, COL_X, COL_W, COL_H, COL_Z, MIS_CROSS, MIS_DZ, HANDLE, CAM_PXM } = SIZES;
+const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_UP, CLOSE_GAP, END_DROP, COL_X, COL_W, COL_H, COL_Z, MIS_CROSS, MIS_DY, FIST_R, HANDLE, CAM_PXM } = SIZES;
 const SEG = 12;
 
 // ---- standing base (copied from upright_row @ 94c551f via cable_fly), feet staggered (c3) ----
@@ -65,11 +65,11 @@ const TS = Array.from({ length: SEG + 1 }, (_, i) => i / SEG);
 const [start, ...rest] = TS.map(t => ({ ...base, reach: armsAt(t) }));
 const end = rest.pop(), via = rest;
 
-// Mistake (c8): the hands cross past each other at the front. Each grip stays on its sphere (the elbow keeps its
-// fixed bend) and goes on past the midline to MIS_CROSS on the other side, at the end height; the right hand passes
-// MIS_DZ in front of the left.
-const crossAt = x => { const dx = x - S[0], dy = END_Y - S[1], h2 = D * D - dx * dx - dy * dy; if (!(h2 > 0)) throw new Error('high_to_low_cable_fly: no crossed grip'); return [x, END_Y, S[2] + Math.sqrt(h2)]; };
-const misR = crossAt(MIS_CROSS), misL = [-misR[0], misR[1], misR[2] - MIS_DZ];
+// Mistake (c8): the hands cross past each other at the front. Each grip stays on its own sphere (the elbow keeps its
+// fixed bend) and goes on past the midline to MIS_CROSS on the other side; the right hand MIS_DY above the left, so
+// the two forearms cross as an X (panel mx12 R5, #354 6544652523).
+const crossAt = (x, y) => { const dx = x - S[0], dy = y - S[1], h2 = D * D - dx * dx - dy * dy; if (!(h2 > 0)) throw new Error('high_to_low_cable_fly: no crossed grip'); return [x, y, S[2] + Math.sqrt(h2)]; };
+const misR = crossAt(MIS_CROSS, END_Y + MIS_DY / 2), misL = (g => [-g[0], g[1], g[2]])(crossAt(MIS_CROSS, END_Y - MIS_DY / 2));
 const POLE1 = poleAt(1);
 const mistakePose = { reach: { r: { at: misR, pole: POLE1 }, l: { at: misL, pole: [-POLE1[0], POLE1[1], POLE1[2]] } } };
 const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
@@ -81,6 +81,7 @@ const capsule = (a, b, r, n = 8) => {
   for (let i = 0; i <= n; i++) { const t = au - Math.PI / 2 - Math.PI * i / n; pts.push([a[0] + r * Math.cos(t), a[1] + r * Math.sin(t)]); }
   return [...pts, pts[0]].map(([x, y]) => [x, y, b[2]]);
 };
+const ring = (c, r, n = 16) => Array.from({ length: n + 1 }, (_, k) => [c[0] + r * Math.cos(2 * Math.PI * k / n), c[1] + r * Math.sin(2 * Math.PI * k / n), c[2]]);
 const GHOSTS = ['l', 'r'].flatMap(sd => [capsule(lmMis[`shoulder.${sd}`], lmMis[`elbow.${sd}`], 0.046), capsule(lmMis[`elbow.${sd}`], lmMis[`grip.${sd}`], 0.036)]);
 
 // ---- equipment ----
@@ -143,7 +144,9 @@ export default {
     pose: mistakePose,
     guides: [
       ...GHOSTS.map(pts => ({ kind: 'dashed', pts })),                                               // the crossed arms (ghosts)
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [0, 10] }, to: { at: 'grip.r', pose: 'mistake', off: [0, 10] } },   // the right hand crosses over
+      ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: ring(lmMis[`grip.${sd}`], FIST_R) })),                       // each faulty hand's ring
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [0, -10] }, to: { at: 'grip.r', pose: 'mistake', off: [0, -10] } },   // each hand crosses over
+      { kind: 'arrow', from: { at: 'grip.l', pose: 'end', off: [0, 10] }, to: { at: 'grip.l', pose: 'mistake', off: [0, 10] } },
     ],
     tells: [
       { key: 'cross', text: 'Hands<br>cross', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'Your hands cross past each other at the front.' },

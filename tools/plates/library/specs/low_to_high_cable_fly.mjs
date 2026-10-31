@@ -27,7 +27,7 @@ export const SIZES = { FOOT_X: 0.12, STAGGER: 0.2, KNEE_SOFT: 5, ELBOW: 20, OPEN
   COL_X: 1.24, COL_W: 0.24, COL_H: 2.1, COL_Z: -0.35, MIS_ELBOW: 90, HANDLE: 0.12, CAM_PXM: 124 };
 const H = 1.75, R = Math.PI / 180;
 const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_DOWN, CLOSE_GAP, COL_X, COL_W, COL_H, COL_Z, MIS_ELBOW, HANDLE, CAM_PXM } = SIZES;
-const MIS_POLE = [-1, -0.7, 0];                        // Mistake: the right elbow's aim (cable_fly's)
+const MIS_POLE = [-0.3, -1, 0];                        // Mistake: the right elbow's aim, down and a little out, so the elbows drop under the hands off the shoulder-hand line (19 px; panel mx12 R5, #354 6544652523)
 const SEG = 12;
 
 // ---- standing base (copied from upright_row @ 94c551f via cable_fly), feet staggered (c3) ----

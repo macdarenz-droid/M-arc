@@ -92,7 +92,7 @@ export default {
     ...['l', 'r'].map(s => ({ landmark: `sole.${s}`, at: lmS[`sole.${s}`], pose: 'start', tol: 0.5 })),   // c1 feet on the footrests
   ],
   ghosts: { count: 2, parts: ['leg.r', 'leg.l', 'leg'] },
-  trace: { point: 'knee.r', trim: [1, 1] },
+  trace: { point: 'knee.r', trim: [0, 0] },
   callouts: [
     { key: 'stretch', text: 'Light<br>stretch', anchor: { at: 'knee.r', pose: 'start' }, box: { left: 30, top: 236 }, cue: 'Start only as wide as a light stretch in the inner thighs.' },
     { key: 'meet', text: 'Pads<br>meet', anchor: 'knee.l', box: { left: 262, top: 236 }, cue: 'Squeeze until the pads nearly touch.' },

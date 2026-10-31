@@ -714,7 +714,7 @@ Not facts:
 | id | numbers no claim gives (drawn value) |
 |---|---|
 | low_to_high_cable_fly | STAGGER 0.20 m and FOOT_X 0.12 m (the stagger needs a narrower base for both feet to sit within 0.3 cm); OPEN_DOWN 40°, OPEN_ANGLE 10°; the pulley at the knee-hip midpoint (0.706 m; c1 gives the band); the end at chin height (1.519 m); ELBOW 20°, CLOSE_GAP 0.05, MIS_ELBOW 90°, MIS_POLE (cable_fly's); COL_X/W/H, COL_Z, HANDLE (cable_fly's) |
-| high_to_low_cable_fly | as above, with OPEN_UP 30°, the pulley at the crown (1.743 m; c1 "about the top of the head"), END_DROP 0.10 m, MIS_CROSS 0.08 m, MIS_DZ 0.06 m |
+| high_to_low_cable_fly | as above, with OPEN_UP 30°, the pulley at the crown (1.743 m; c1 "about the top of the head"), END_DROP 0.10 m, MIS_CROSS 0.08 m, MIS_DZ 0.06 m (at the panel fix: MIS_CROSS 0.11 m, MIS_DY 0.06 m, FIST_R 0.035 m; 19.15) |
 | smith_machine_squat | FEET_AHEAD 0.11 m (inside c2's 7.6-15.2 cm); FOOT_X, TOE_OUT, GRIP_X, BAR_T (the 8's); the end hip height 0.43 m and trunk 28° (thighs parallel, drawn 1.1° below level); the rig's sizes (eq/smith.mjs); STOP_BELOW 0.02; PLATE_D 0.45 |
 | smith_machine_shoulder_press | back pad 20° from vertical (c1 "roughly 70 degrees" from the floor); GRIP_X 0.30; TOP_ELBOW; the bar's 1.4 cm (2 px) gap in front of the nose (c3 "just miss"); the end elbow 9.8 cm in front of the shoulder; the rig's sizes |
 | smith_machine_incline_press | back pad 60° from vertical (card equipment: 30°); GRIP_X 0.30; END_ELEV 60° (c3: 45-75°); the touch height on the upper chest (incline_barbell_bench_press's); the rig's sizes |
@@ -859,3 +859,42 @@ rear_delt_fly `rush`, hip_abduction `jerk`, hip_adduction `swing` (F7, each diff
 smith_machine_squat `under`, smith_machine_shoulder_press `flare`, smith_machine_incline_press `flare` (the drawn keys).
 validateCardFile gives [] on all 9. Authoring QA on wave 1 with the fields: all 10 hard checks pass on all 5; flags equal
 the ruled set (`lb6/qa.mjs`). The wave 2 rows' contact facts are met by their specs' checks when drawn.
+
+### 19.14 Wave 2, built (composers, the hip rows, the lateral raise and the rear delt fly)
+
+- **eq/hipAbdAddMachine.mjs** (anchor hip_abduction; `side: 'outer' | 'inner'`): static seat, back pad, centre column,
+  floor beam and two side handles (grip and post); moving with each leg (`part: 'leg'`, all `poly`): the pad against
+  the thigh, the leg arm down to the footrest, the footrest under the sole (stops 2 cm short of the midline). 14 items.
+- **eq/latRaiseMachine.mjs** (anchor machine_lateral_raise): static seat, back pad, centre column, housing and the
+  pivot bosses at the shoulder joints (c1); moving with each arm (`part: 'arm'`, all `poly`): the lever along the
+  outside of the upper arm (from a quarter of its length; its root behind the shoulder is depth), the pad from 70 to
+  95 % of the upper arm (just above the elbow, c3) and the handle at the hand. 12 items.
+- Both read no file, return PRIMITIVES only and are listed under LIB-16 in tests/howto/fixtures/eq-composers.json. Each
+  spec reads its pad faces from the engine's own front-view outline of the limb in that pose (the drawn pose is
+  rebuilt from its knee or elbow, since the limbs move by one angle).
+- hip_abduction: hips 90° flexed, knees 90°; abduction −4° (the legs' outlines meet: knees together, c4) → 30°;
+  Mistake 10°. hip_adduction: 30° (light stretch, c2) → the angle where the pads stand 2 cm apart (solved by bisection: 6.51°;
+  "nearly touch", c3; 2 cm is the closest at which each pad clears the other thigh by 2 px); Mistake 45°. Traces on the
+  knee (trims 3 and 0 px; adduction's knee travels 0.17 m).
+- machine_lateral_raise: shoulder elevation 12° → 90° in the frontal plane, elbows 20°; Mistake 110° (cable_lateral_
+  raise's 20° over). rear_delt_fly: pecDeck unedited, the chest pad at the chest's depth (world contact, c1, c6), the
+  elbow pole level so the upper arms stay at 90° elevation (c2, c5), end 10° ahead of the side line (upper arm in the
+  frontal plane); the shrug 5 cm (5.5 cm at shoulderTop) with the Mistake zoom at k 1.5 (12.07 px; the circle now at
+  (68, 96), top left, after the label boxes).
+- Clearance (A5 wave 2): every lever, pad, arm, footrest and handle clears the head, and the other leg (hip rows) or
+  the trunk (lateral raise pads and levers), by 2 px in every pose; the pads rest on their limbs within 1 px.
+- Flags: F7 on all four (named); F3 118.5 on rear_delt_fly (the chest leader from the sternum past the frame upright;
+  proposed named).
+
+### 19.15 Panel mx12 fix round and CARD FIELDS fix (#354 6544652523, 6544339239)
+
+- smith_machine_shoulder_press and smith_machine_incline_press APPROVED at 6c8a5c24; their 18 fragments are pinned.
+- high_to_low_cable_fly (R5): each faulty hand 11 cm past the midline (the panel's places), the right 6 cm above the
+  left, each on its own sphere, so the forearms cross as an X; a dashed ring at each faulty hand; one arrow per hand.
+  Deviation 20.2 px at plate scale, so no zoom (a zoom there would raise H3.zoom:not-needed).
+- low_to_high_cable_fly (R5): the faulty elbows aim down and a little out ([−0.3, −1, 0]), so each sits 19 px off its
+  shoulder-to-hand line, under the hand; the arm lengths are the engine's. Deviation 21.7 px; F3 clears (74.3 px).
+- smith_machine_squat (R2): the floor beam runs from 20 cm behind to 30 cm in front of the rod, under the rails and the
+  feet (a frame part beside the body, PLAN RULED point 1). No body change.
+- CARD FIELDS: machine_lateral_raise loses the end backUpper and buttock and the seat contact; rear_delt_fly loses the
+  seat contact; smith_machine_shoulder_press loses the end backUpper and buttock, and its seat contact cites c6.

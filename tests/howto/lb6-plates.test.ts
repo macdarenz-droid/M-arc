@@ -1680,12 +1680,12 @@ describe('LIB-16R2 A8 (Do 4): the card fields on the 9 cards', { timeout: T }, (
   const RULED: Record<string, [number, string, string]> = {
     low_to_high_cable_fly: [2, '85aa7d0633405dd91e27d311689ae517aac537253dc175a95d03443cc6cb878c', 'lean'],
     high_to_low_cable_fly: [2, '85aa7d0633405dd91e27d311689ae517aac537253dc175a95d03443cc6cb878c', 'lean'],
-    machine_lateral_raise: [15, 'd826aa0b0e971c26b5e268470748fccd9e2d14a14717595bab94ba07d7e6c2ef', 'swing'],
-    rear_delt_fly: [9, '009cda001da75117280461b147fa259b3c584d0a0e340187a9539f97a1f531c6', 'rush'],
+    machine_lateral_raise: [12, '0997b8066f74a3b55a0d6b07cc0e719abace6b7f70a51111c08c0d2e181733c0', 'swing'],
+    rear_delt_fly: [8, 'b58500b7552e9ef179df9b69a3556c79709c2406df05450499337283746eb612', 'rush'],
     hip_abduction: [17, '5304f24f6eec6889a2dc6917fbbb0182c48eb49a704004b3962e074ad30c72c1', 'jerk'],
     hip_adduction: [11, '10ceb9889497a4b097529bfa02dca5dd69e99955b1ff465ee7ad6ceed16edf8d', 'swing'],
     smith_machine_squat: [6, 'd0745b69ea03d7e60c71f526e5f07b8124d22019e9a696c1a2825dbaba0056d7', 'under'],
-    smith_machine_shoulder_press: [11, 'f2dd656ba28471b2baac08b651b4885d8fe023beba19ef3f71d8bb04247634e4', 'flare'],
+    smith_machine_shoulder_press: [9, 'ba567f53ac00a450a3f32ae3d6f3cecfb33a9304db48fce8bde5758b1f20b3b7', 'flare'],
     smith_machine_incline_press: [8, '233c2da374b0527c82ad6529cadac10a6b645b91e74d4796f1ba9b7d73e42e01', 'flare'],
   };
   // The drawn Mistake key per row (DESIGN.md 19.2); F7 rows (D-LIB16R2-F7) have a topFault that differs from it.
@@ -1721,7 +1721,7 @@ describe('LIB-16R2 wave 2 A3: the two new composers (D-LIB16R2-COMPOSERS)', { ti
   const PRIM = () => Object.keys(eng.PRIMITIVES);
   /** Items of one spec in one pose: [static, moving] by `part`. */
   const split = (spec: any, pose: string) => { const it = itemsIn(spec, pose, { mistake: pose === 'mistake' }).items.filter((x: any) => x.type !== 'floor');
-    return [it.filter((x: any) => !x.part), it.filter((x: any) => x.part)]; };
+    return [it.filter((x: any) => !x.part), it.filter((x: any) => x.part)] as [any[], any[]]; };
   const strip = (x: any) => { const { entry, ...rest } = x; void entry; return JSON.stringify(rest); };
   const problems = (spec: any) => { const out: string[] = [], [s0] = split(spec, 'start');
     for (const p of posesOf(spec)) { const [st, mv] = split(spec, p);
@@ -1857,5 +1857,32 @@ describe('LIB-16R2 A6: rear_delt_fly\'s Mistake zoom (D-LIBZOOM-EXTEND; PLAN RUL
   });
   it('mutation: a rung below the ladder (k 1.25) is refused', async () => {
     await expect(withZoom({ view: 'mistake', k: 1.25 })).rejects.toThrow(/outside 1\.5-4/);
+  });
+});
+
+describe('LIB-16R2: the approved R2 plates stay byte-identical (panel mx12, APPROVED at 6c8a5c24, page 13de1bad…9b1ca1)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the two approved plates; their specs and eq/smith.mjs are unchanged since 6c8a5c24.
+  const APPROVED: Record<string, Record<string, string>> = {
+    'smith-machine-shoulder-press': { normalSvg: '0e4f99e7809238dec0a0cd9cc10579aacda872d45fb2e8597469371e58f1eac0', normalOverlay: '7f76e341ec57e9aad8e57120f05276e0202e4c933ca279a54b27189a6d8741c7',
+      mistakeSvg: 'c841b2a275c5244917b967f9db6187514ac5b7648c8643adaa9f5edc20730435', mistakeOverlay: 'a7ea18fd0a1e6832b1fdfaeb97985faa348583461bb4d4a5601db645bbe081cd',
+      tells: '03299c424de452e5bad4549d6d76003f4d84a9a9aae0c30a56f457bb1c199191', tempo: '344c372b2c1c30ee75bfad08903bc697f19754a06a04a1559f87937fc1d17837',
+      cues: '10abd4a97c89cc3e8c9d4e0624ebe437239e5a1fd54e3d3698374587eca92f55', alt: '43677de5f3122cf69739b2948707371f4459c2dadea916618c4cf8e08fcac5f4',
+      mistakeAlt: '1ac11991b7ff60732cb7fa36ce29804c11128a3ed758df17c7aadd7edc6e309b' },
+    'smith-machine-incline-press': { normalSvg: '3fa4f9621d11d1596a25ea744d00963199c4acb6790c4b7920bcf45066319dce', normalOverlay: '0027beca4eed5639b77e9de735b1e42411055d4487330f5dba790735409fd570',
+      mistakeSvg: '35efd09cb3fc94d87c68e8482cdeb64c5afcefe36a5d2049f3c046bc7267087d', mistakeOverlay: 'ff795ad1b867a2d91f548c418cca3ec95f25d970841e27952d1e4e28d895a6b2',
+      tells: '2844f4b7376d9ee1793c3cae7fcc979080208b7d2849c417262211be6c5fd856', tempo: '485e1fec13b1f2f0142d48d554feb2cb8a0218a1ca0d8ecf0cd1040ddb45b73f',
+      cues: '1496dbc279412baf3214330f1038a79c504296589c12b6439afe8608e008948f', alt: '0369d7936fff7cc76871697b442c20ebcb059c919b4b96f2937e580f01296b61',
+      mistakeAlt: '5f5d05c8ad7e05e4cf367b0308ee0d3c4aa41895e645fe26299bf16a38280401' },
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb6/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const problems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('their 9 fragments each equal the approved ones', async () => { expect(problems((await build.buildLb6Page()).html.toString('utf8'))).toEqual([]); });
+  it('mutation: one byte in the shoulder press alt is red', async () => {
+    const html = (await build.buildLb6Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'smith-machine-shoulder-press');
+    expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('smith-machine-shoulder-press alt');
   });
 });
