@@ -4539,3 +4539,7 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **jump_squat:** delete sole.l (j4). "The mid-foot" is singular, so it gives the near side only (D-LIB22-SIDES).
 - **CARD FIELDS cf13s** (LIB-13s' 4 shrug cards @ `91a4fae6`): the set is building.
 - **mx16** adds LB6 R2 PANEL FIX 2 @ `a74d3a4e` (hip_abduction and hip_adduction; page `8fbab57b…901e`) to LIB-13s wave 1, then shuffles. The LB7 and LIB-SMALL fix-2 rows go to the next set.
+- **#356 6548027251** (answers 6548018514):
+  - **D-LIB17R3-PIKEARROW:** there is no A15 exception, which keeps 6547666297. The arrow sits on the head axis above the crown, along the dashed neck, and ends where the axis is still 6 px clear of the solid figure. Its shaft is at least as long as the shortest solid red arrow on an approved LB7 plate. If that cannot be met, the plate has no arrow, only the neck and the dashed head.
+  - **D-CFSMALL-PIKE:** pike_push_up keeps `[]` with a reason recorded in 19.3. sh.elev at the bottom is 104.6° as drawn, and the lowest it reaches with the hands planted is 88°. So c3's 45° is the elbow flare, which no fact joint holds without a conversion.
+  - incline_push_up was re-posed to sh.elev 45.0 (it was 49.7) and goes back to a focused recheck.
