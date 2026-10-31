@@ -135,6 +135,15 @@
    },
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_hammer_curl": {
+   "src": "library/specs/hammer_curl.mjs",
+   "slug": "hammer-curl",
+   "prefix": "hammer-curl",
+   "chromeId": "hammer-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }
