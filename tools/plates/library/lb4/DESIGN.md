@@ -275,6 +275,13 @@ the LIB-ZOOM route.
   clear of the box, the centre of mass with the dumbbells over the lead mid-foot. Mistake (c1): thorax 40° with the
   hips held (the sternum 23 cm forward), and the trailing heel 3.5 cm up on its toe pad (the push).
 
+## 10a. CARD FIELDS cflb4s fix (#289 6537412975)
+
+front_squat gains `shoulderTop.l` at start and end (c3) and `wrist.l` at start (c4), next to the `.r` facts. Ruling
+6342086947 item 3 applies: a plural for a paired part states each side. Each new fact has a matching spec `checks`
+entry on the far side (0 cm), and the per-fact 2 cm mutation covers it. The plates page bytes are unchanged.
+bodyweight_squat's b7 foot facts stand (D-LIB14-B7END).
+
 ## 11b. Panel lb4p fix round (#289 6410190090)
 
 wall_sit approved at bbe2a488 and unchanged (its card section is byte-identical). Segment lengths are kept everywhere,

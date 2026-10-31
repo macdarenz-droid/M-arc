@@ -177,17 +177,17 @@ export const fsInfo = { mIncl: M_INCL, mBarZ: M_BAR[2], endY: END_Y, bar: END_BA
 
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 // The shelf plane in one pose: through the bar's underside, its normal the thorax's up (shoulder joint to shoulder top).
-const shelf = pose => {
-  const l = landmarksOf(pose === 'start' ? start : end, H), b = barOf(l), u = [0, 1, 2].map(i => l['shoulderTop.r'][i] - l['shoulder.r'][i]);
+const shelf = (pose, s = 'r') => {
+  const l = landmarksOf(pose === 'start' ? start : end, H), b = barOf(l), u = [0, 1, 2].map(i => l[`shoulderTop.${s}`][i] - l[`shoulder.${s}`][i]);
   const L = Math.hypot(...u), n = u.map(v => v / L);
-  return { landmark: 'shoulderTop.r', plane: { point: b.map((v, i) => v - n[i] * BAR_R), normal: n }, pose, tol: 0.5 };
+  return { landmark: `shoulderTop.${s}`, plane: { point: b.map((v, i) => v - n[i] * BAR_R), normal: n }, pose, tol: 0.5 };
 };
 // The hand on the bar, checked at the wrist (c4): the plane square to the hand (wrist to grip) through the wrist spot
 // that puts the finger point FINGER of the way to the fingertips on the bar.
-const onBar = pose => {
-  const l = landmarksOf(pose === 'start' ? start : end, H), b = barOf(l), d = [0, 1, 2].map(i => l['grip.r'][i] - l['wrist.r'][i]);
-  const L = Math.hypot(...d), n = d.map(v => v / L), spot = [-GRIP_X, b[1], b[2]].map((v, i) => v - FINGER * K_TIP * d[i]);
-  return { landmark: 'wrist.r', plane: { point: spot, normal: n }, pose, tol: 0.5 };
+const onBar = (pose, s = 'r') => {
+  const l = landmarksOf(pose === 'start' ? start : end, H), b = barOf(l), d = [0, 1, 2].map(i => l[`grip.${s}`][i] - l[`wrist.${s}`][i]);
+  const L = Math.hypot(...d), n = d.map(v => v / L), spot = [s === 'r' ? -GRIP_X : GRIP_X, b[1], b[2]].map((v, i) => v - FINGER * K_TIP * d[i]);
+  return { landmark: `wrist.${s}`, plane: { point: spot, normal: n }, pose, tol: 0.5 };
 };
 export default {
   id: 'front_squat', name: 'Front Squat', view: 'side', facing: 'right',
@@ -206,6 +206,7 @@ export default {
     { landmark: 'ball.r', plane: floor, pose: 'all', tol: 0.5 },
     shelf('start'), shelf('end'),                        // c3: the bar on the shoulder shelf
     onBar('start'), onBar('end'),                        // c4: the hands on the bar (fingertip rack, checked at the wrist)
+    shelf('start', 'l'), shelf('end', 'l'), onBar('start', 'l'),   // the far side of the same (c3, c4; cflb4s, #289 6537412975)
   ],
   startParts: ['trunk', 'leg.r'],
   ghosts: { count: 2, parts: ['trunk', 'leg.r'] },

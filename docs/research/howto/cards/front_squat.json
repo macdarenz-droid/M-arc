@@ -234,6 +234,13 @@
     },
     {
       "kind": "contact",
+      "landmark": "shoulderTop.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
       "landmark": "shoulderTop.r",
       "pose": "end",
       "cardPose": "end",
@@ -241,7 +248,21 @@
     },
     {
       "kind": "contact",
+      "landmark": "shoulderTop.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
       "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
       "pose": "start",
       "cardPose": "start",
       "claim": "c4"

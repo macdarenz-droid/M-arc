@@ -981,7 +981,7 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
   // landmark, its pose the map's image.
   const C = (lms: string[], pose: string, cardPose: string, claim: string) => lms.map(landmark => ({ kind: 'contact', landmark, pose, cardPose, claim }));
   const FACTS: Record<string, any[]> = {
-    front_squat: [...C(['shoulderTop.r'], 'start', 'start', 'c3'), ...C(['shoulderTop.r'], 'end', 'end', 'c3'), ...C(['wrist.r'], 'start', 'start', 'c4')],
+    front_squat: [...C(['shoulderTop.r', 'shoulderTop.l'], 'start', 'start', 'c3'), ...C(['shoulderTop.r', 'shoulderTop.l'], 'end', 'end', 'c3'), ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c4')],   // .l: cflb4s fix (#289 6537412975)
     goblet_squat: [...C(['wrist.r', 'wrist.l'], 'start', 'start', 'g1'), ...C(['heel.r', 'ball.r', 'heel.l', 'ball.l'], 'end', 'end', 'g4')],
     bodyweight_squat: C(['heel.r', 'ball.r', 'heel.l', 'ball.l'], 'end', 'end', 'b7'),
     wall_sit: [{ kind: 'angle', joint: 'knee.r', pose: 'end', cardPose: 'end', deg: 90, claim: 'w2' }, { kind: 'angle', joint: 'hip.r.flex', pose: 'end', cardPose: 'end', deg: 90, claim: 'w2' },
