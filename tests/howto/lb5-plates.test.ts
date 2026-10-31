@@ -39,7 +39,7 @@ const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
 const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl'];   // + D-LIB15R2-F7
-const F2_IDS = ['concentration_curl', 'wrist_curl', 'cross_body_hammer_curl'];   // + cross_body_hammer_curl: LIB-15R2 DESIGN.md 17.3 (proposed)
+const F2_IDS = ['concentration_curl', 'wrist_curl', 'cross_body_hammer_curl', 'barbell_curl', 'ez_bar_curl', 'reverse_curl'];   // + cross_body_hammer_curl: LIB-15R2 DESIGN.md 17.3 (proposed)
 // LIB-15R2 DESIGN.md 17.3 (proposed named flags on the zoom rows)
 const F3_IDS = ['dumbbell_overhead_triceps_extension', 'wrist_curl', 'alternating_dumbbell_curl'];
 const F4_IDS = ['dumbbell_overhead_triceps_extension', 'alternating_dumbbell_curl', 'incline_dumbbell_curl'];
