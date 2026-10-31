@@ -396,7 +396,7 @@
   },
   {
    "id": "c18",
-   "text": "Load progression: start with a manageable load and a short route, about 25% of body weight in each hand for a beginner; repeat it until the pickup, walk, turns and set-down stay controlled, then add a little load or distance, not both, and scale gradually.",
+   "text": "Load progression: start with a manageable load and a short route, about 25% of body weight in each hand (beginners no more than 25%); repeat it until the pickup, walk, turns and set-down stay controlled, then add a little load or distance, not both, and scale gradually.",
    "tags": [
     "CONSENSUS"
    ],
@@ -424,6 +424,11 @@
      "source": "ggr-farmers",
      "text": "You may progress to lifting 50%, 75%, or even 100% of your body weight later on, but make sure you scale gradually.",
      "where": "Common Farmer’s Carry Mistakes: Choosing the Wrong Weight"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "beginners should start with no more than 25% of their bodyweight held in each hand",
+     "where": "FAQs, How heavy should farmer’s carries be?"
     }
    ]
   },
@@ -601,7 +606,7 @@
   },
   {
    "id": "c25",
-   "text": "One source lists stride length as a mistake: regular-sized steps can throw a beginner off balance.",
+   "text": "One source lists stride length as a mistake: trying to take regular-sized steps as a beginner might throw you off balance.",
    "tags": [
     "CONSENSUS"
    ],
@@ -613,6 +618,274 @@
      "source": "bb-farmers",
      "text": "Trying to take regular-sized steps as a beginner might throw you off balance.",
      "where": "Common Farmer’s Carry Mistakes: Stride Length"
+    }
+   ]
+  },
+  {
+   "id": "c26",
+   "text": "Said of strongman farmer's handles, for the novice to intermediate trainee: after picking up the handles, the stride should be about heel to toe, opening up further down the course (still striking in a heel to toe manner); with a lighter weight, more advanced athletes may choose to take larger steps.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "bb-fwbreak"
+   ],
+   "quotes": [
+    {
+     "source": "bb-fwbreak",
+     "text": "The length of your stride after picking up the farmers should be approximately heel to toe, then as you progress down the course you can open up your stride (still striking in a heel to toe manner).",
+     "where": "Set up/Footwork, step 7"
+    },
+    {
+     "source": "bb-fwbreak",
+     "text": "Again it’s important to note this suggestions are for the novice to intermediate trainee, with a lighter weight more advanced athletes may choose to take larger steps.",
+     "where": "Set up/Footwork, step 9"
+    }
+   ]
+  },
+  {
+   "id": "c27",
+   "text": "A loaded walk, not a hand-held carry: 30 young adults (15 men, 15 women, aged 20-30) walking level on a treadmill at 5 km/h had a step length of 78.6 ± 4.1 cm unloaded, 79.3 ± 4.3 cm with a backpack and 76.6 ± 4.3 cm with a suspended front pack (each 15% of body weight); stride length 157.2 ± 8.2, 158.5 ± 8.7 and 153.2 ± 8.5 cm.",
+   "tags": [
+    "DATA",
+    "WEAK"
+   ],
+   "sources": [
+    "mexi2023"
+   ],
+   "quotes": [
+    {
+     "source": "mexi2023",
+     "text": "Step length (cm) 0% 78.6 ± 4.1 a 79.3 ± 4.3 A 76.6 ± 4.3 b, B",
+     "where": "Table 2 (columns UL, BL, FL), step length, 0% (level) row"
+    },
+    {
+     "source": "mexi2023",
+     "text": "Stride length (cm) 0% 157.2 ± 8.2 a 158.5 ± 8.7 A 153.2 ± 8.5 b, B",
+     "where": "Table 2 (columns UL, BL, FL), stride length, 0% (level) row"
+    },
+    {
+     "source": "mexi2023",
+     "text": "Measurements were performed during level (0%) and uphill (5, 10, and 15%) walking at a speed of 5 km h −1 without and with a suspended front pack or a backpack weighing 15% of each participant’s body weight.",
+     "where": "Abstract"
+    },
+    {
+     "source": "mexi2023",
+     "text": "young adults (15 males and 15 females) aged 20–30 years",
+     "where": "2.1. Study Sample"
+    },
+    {
+     "source": "mexi2023",
+     "text": "Postural control was assessed in 30 asymptomatic individuals",
+     "where": "Abstract"
+    },
+    {
+     "source": "mexi2023",
+     "text": "The testing protocol required each participant to walk for 10 min at a speed of 5 km h −1 on a treadmill",
+     "where": "2.3. Testing Procedure"
+    }
+   ]
+  },
+  {
+   "id": "c28",
+   "text": "A loaded walk, not a hand-held carry: 34 special forces operators (height 180.39 ± 5.72 cm) walked on a treadmill at 5.5 km/h under four load conditions (0, 7, 20 and 27 kg); stride length was 156.79 ± 4.70 cm in athletic attire alone, 155.68 ± 5.05 cm with a bulletproof vest and helmet, 155.98 ± 4.78 cm with a backpack alone and 156.28 ± 4.55 cm with full load.",
+   "tags": [
+    "DATA",
+    "WEAK"
+   ],
+   "sources": [
+    "pasko2026"
+   ],
+   "quotes": [
+    {
+     "source": "pasko2026",
+     "text": "For stride length, similar values were found during gait in athletic attire alone and with full load ( 156.79 ± 4.70 cm and 156.28 ± 4.55 cm, respectively).",
+     "where": "3. Results"
+    },
+    {
+     "source": "pasko2026",
+     "text": "Participants performed gait trials at a speed of 5.5 km/h under four load conditions: 0 kg, 7 kg, 20 kg, and 27 kg.",
+     "where": "Abstract, Methods"
+    },
+    {
+     "source": "pasko2026",
+     "text": "The study included 34 active Special Forces Operators (age: 36.47 ± 5.63 years; height: 180.39 ± 5.72 cm; body mass: 85.92 ± 8.54 kg).",
+     "where": "Abstract, Methods"
+    },
+    {
+     "source": "pasko2026",
+     "text": "The measurements were conducted at an imposed gait speed of 5.5 km/h and a treadmill elevation of 0 degrees.",
+     "where": "2.2.1. Study Design"
+    },
+    {
+     "source": "pasko2026",
+     "text": "Similar results for stride length were also obtained for walking with a bulletproof vest and helmet ( 155.68 ± 5.05 cm) and walking with a backpack alone ( 155.98 ± 4.78 cm).",
+     "where": "3. Results"
+    }
+   ]
+  },
+  {
+   "id": "c29",
+   "text": "Unloaded walking, not the carry: adults walking 50 m over flat ground at a comfortable pace had a mean step length (m, mean then SD) of 0.70 0.12 at 18-20, 0.73 0.14 at 21-30, 0.72 0.17 at 31-40, 0.72 0.14 at 41-50, 0.71 0.17 at 51-60, 0.67 0.15 at 61-70 and 0.60 0.19 at 71-80; the text gives 0.69 ± 0.12 m at 18-20.",
+   "tags": [
+    "DATA",
+    "MECH"
+   ],
+   "sources": [
+    "mobbs2025"
+   ],
+   "quotes": [
+    {
+     "source": "mobbs2025",
+     "text": "Step length 0.70 0.12 0.73 0.14 0.72 0.17 0.72 0.14 0.71 0.17 0.67 0.15 0.60 0.19",
+     "where": "Table 3, Spatiotemporal metric trends by age (columns 18–20 to 71–80, mean then SD), step length row"
+    },
+    {
+     "source": "mobbs2025",
+     "text": "Mean step length starts at 0.69 ± 0.12 m in the 18–20 age bracket and increases to 0.73 ± 0.14 m in the 21–30 age group",
+     "where": "4. Results"
+    },
+    {
+     "source": "mobbs2025",
+     "text": "The IMU was placed at the sternal angle for optimal data capture during a 50 m walk on a flat, unobstructed pathway.",
+     "where": "2. Materials and Methods"
+    },
+    {
+     "source": "mobbs2025",
+     "text": "their comfortable walking pace, which is the manner of gait speed assessed in this study",
+     "where": "5.1. Changes with Age"
+    }
+   ]
+  },
+  {
+   "id": "c30",
+   "text": "Unloaded walking, not the carry: in the same study, by height, mean step length (m, mean then SD) was 0.62 0.06 at 141-150 cm, 0.64 0.15 at 151-160, 0.67 0.15 at 161-170, 0.77 0.12 at 171-180, 0.79 0.17 at 181-190 and 0.91 0.05 at 191-200.",
+   "tags": [
+    "DATA",
+    "MECH"
+   ],
+   "sources": [
+    "mobbs2025"
+   ],
+   "quotes": [
+    {
+     "source": "mobbs2025",
+     "text": "Step length 0.62 0.06 0.64 0.15 0.67 0.15 0.77 0.12 0.79 0.17 0.91 0.05",
+     "where": "Table 6, Spatiotemporal metric trends by height (columns 141–150 to 191–200 cm, mean then SD), step length row"
+    },
+    {
+     "source": "mobbs2025",
+     "text": "Gait speed and step length increase consistently with height, with the tallest group (191–200 cm) walking at an average speed of 1.49 ± 0.12 m / s , with an average step length of 0.91 ± 0.05 m .",
+     "where": "Abstract"
+    }
+   ]
+  },
+  {
+   "id": "c31",
+   "text": "Unloaded walking, not the carry: 507 adults aged 21-90 walking barefoot at a habitual pace had a step length (heel to heel of the opposite footprint) of 57.60 (9.31) cm for men and 55.39 (7.14) cm for women, mean (SD); mean heights 166.81 (6.97) and 155.26 (6.41) cm; height-adjusted step length 0.34 (0.05) and 0.36 (0.04).",
+   "tags": [
+    "DATA",
+    "MECH"
+   ],
+   "sources": [
+    "lau2020"
+   ],
+   "quotes": [
+    {
+     "source": "lau2020",
+     "text": "Step length (cm) 57.60(9.31) 55.39(7.14)",
+     "where": "Table 2, Comparison of Gait Parameters Between Men and Women (columns Men (n=221), Women (n=286))"
+    },
+    {
+     "source": "lau2020",
+     "text": "Height-adjusted step length 0.34(0.05) 0.36(0.04)",
+     "where": "Table 2, Comparison of Gait Parameters Between Men and Women"
+    },
+    {
+     "source": "lau2020",
+     "text": "Height (cm) 166.81(6.97) 155.26(6.41)",
+     "where": "Table 1, participants (men, then women)"
+    },
+    {
+     "source": "lau2020",
+     "text": "Step length was the anterior-posterior distance from the heel of one footprint to the heel of the opposite footprint",
+     "where": "Methods, Data Analysis"
+    },
+    {
+     "source": "lau2020",
+     "text": "A total of 507 community-dwelling adults, aged 21–90 years were recruited into the study through random sampling",
+     "where": "Abstract, Methods"
+    },
+    {
+     "source": "lau2020",
+     "text": "The participants completed three trials at a habitual walking pace, barefooted",
+     "where": "Methods, Gait Measurements"
+    }
+   ]
+  },
+  {
+   "id": "c32",
+   "text": "Strongman farmer's walk, not a gym carry: six experienced male strongman athletes carrying 70% of their 1RM deadlift in the bars at their typical training pace had a stride length (heel strike to the next heel strike of the same foot) of 0.85 ± 0.19 m at the 1st stride and 1.04 ± 0.12 m at 3-4 m, against 1.33 ± 0.11 m and 1.43 ± 0.11 m in their unloaded walk at their typical walking speed.",
+   "tags": [
+    "DATA",
+    "WEAK"
+   ],
+   "sources": [
+    "winwood2014"
+   ],
+   "quotes": [
+    {
+     "source": "winwood2014",
+     "text": "Stride length (m) 0.85 ± 0.19†0.023 1.33 ± 0.11 1.04 ± 0.12†0.002 1.43 ± 0.11",
+     "where": "Table 4, Differences in Gait Kinematic Between the Farmers Walk and Unloaded Walk (columns Farmers Walk 1st Stride, Unloaded Walk 1st Stride, Farmers Walk 3 – 4 m, Unloaded Walk 3 – 4 m), stride length row"
+    },
+    {
+     "source": "winwood2014",
+     "text": "Stride length (m): Horizontal distance from heel strike of the first foot contact to the next heel strike contact of the same foot.",
+     "where": "Data Analysis"
+    },
+    {
+     "source": "winwood2014",
+     "text": "Six experienced male strongman athletes performed farmers’ walks and deadlifts at 70% of their 1RM deadlift.",
+     "where": "Abstract"
+    },
+    {
+     "source": "winwood2014",
+     "text": "For the farmers walk participants were instructed to pick up the bars in each hand and walk forward at their typical training pace.",
+     "where": "Methods, Deadlift and Farmers Walk Testing"
+    },
+    {
+     "source": "winwood2014",
+     "text": "participant’s unloaded walk data (at their typical walking speed) was also recorded",
+     "where": "Methods, Deadlift and Farmers Walk Testing"
+    }
+   ]
+  },
+  {
+   "id": "c33",
+   "text": "A review's farmer's walk table gives stride lengths in m: Winwood et al. 1.04 ± 0.12 (maximum velocity phase) and 0.85 ± 0.19 (acceleration phase) against 1.43 ± 0.11 and 1.33 ± 0.11 unloaded; Keogh et al. 1.83 ± 0.04 for higher and 1.40 ± 0.17 for lower performers (maximum and sub-maximal velocity phases), 1.38 ± 0.16 and 1.33 ± 0.09 in the acceleration phase, group average 1.67 ± 0.10 and 1.32 ± 0.12.",
+   "tags": [
+    "DATA",
+    "WEAK"
+   ],
+   "sources": [
+    "hindle2019"
+   ],
+   "quotes": [
+    {
+     "source": "hindle2019",
+     "text": "Stride length (m) 1.04 ± 0.12* (MVP) 1.43 ± 0.11 (MVP) − 3.40 1.83 ± 0.04 † (MVP ˟ ) 1.40 ± 0.17 (SVP ˟ ) 3.48 1.67 ± 0.10 ☼ (MVP) 0.85 ± 0.19* (AP) 1.33 ± 0.11 (AP) − 3.10 1.38 ± 0.16 (AP) 1.33 ± 0.09 (AP) 0.39 1.32 ± 0.12 (AP)",
+     "where": "Table 2, Walking/carrying results comparisons—farmer’s walk (columns Winwood et al. [7] farmer’s walk, unloaded walk, effect size; Keogh et al. [34] higher performer, lower performer, effect size, group ave.), stride length row"
+    },
+    {
+     "source": "hindle2019",
+     "text": "AP acceleration phase, ave average, GRF ground reaction force, MVP maximum velocity phase, SVP sub-maximal velocity phase",
+     "where": "Table 2 footnote"
+    },
+    {
+     "source": "hindle2019",
+     "text": "Statistically greater stride rate, and reduced stride length and ground contact time have been reported in the farmer’s walk when compared with unloaded walking [ 7 ].",
+     "where": "Between Exercise Biomechanical Differences"
     }
    ]
   }
@@ -667,6 +940,66 @@
    "pmid": null,
    "access": "full",
    "checked": "2026-10-22"
+  },
+  {
+   "id": "mexi2023",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9863443/fullTextXML",
+   "title": "Mexi A et al. (2023) Effects of Load Carriage on Postural Control and Spatiotemporal Gait Parameters during Level and Uphill Walking. Sensors (Basel) (Europe PMC full text, PMC9863443)",
+   "kind": "peer-reviewed",
+   "year": 2023,
+   "pmid": "36679405",
+   "access": "full",
+   "checked": "2026-10-29"
+  },
+  {
+   "id": "pasko2026",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13029918/fullTextXML",
+   "title": "Paśko W et al. (2026) Changes in Spatiotemporal Parameters During Gait of Special Forces Operators with Additional External Load. Sensors (Basel) (Europe PMC full text, PMC13029918)",
+   "kind": "peer-reviewed",
+   "year": 2026,
+   "pmid": "41902126",
+   "access": "full",
+   "checked": "2026-10-29"
+  },
+  {
+   "id": "mobbs2025",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11768510/fullTextXML",
+   "title": "Mobbs L et al. (2025) Normative Database of Spatiotemporal Gait Metrics Across Age Groups: An Observational Case-Control Study. Sensors (Basel) (Europe PMC full text, PMC11768510)",
+   "kind": "peer-reviewed",
+   "year": 2025,
+   "pmid": "39860951",
+   "access": "full",
+   "checked": "2026-10-29"
+  },
+  {
+   "id": "lau2020",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7522423/fullTextXML",
+   "title": "Lau LK et al. (2020) Reference Values of Gait Speed and Gait Spatiotemporal Parameters for a South East Asian Population: The Yishun Study. Clin Interv Aging (Europe PMC full text, PMC7522423)",
+   "kind": "peer-reviewed",
+   "year": 2020,
+   "pmid": "33061327",
+   "access": "full",
+   "checked": "2026-10-29"
+  },
+  {
+   "id": "winwood2014",
+   "url": "https://pure.bond.edu.au/ws/files/9659702/A_biomechanical_analysis_of_the_farmers_walk_and_comparison_with_the_deadlift_and_unloaded_walk.pdf",
+   "title": "Winwood PW, Cronin JB, Brown SR, Keogh JWL (2014) A biomechanical analysis of the farmers walk, and comparison with the deadlift and unloaded walk. Int J Sports Sci Coach 9(5):1127-1143 (Bond University repository copy)",
+   "kind": "peer-reviewed",
+   "year": 2014,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-29"
+  },
+  {
+   "id": "hindle2019",
+   "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6901656/fullTextXML",
+   "title": "Hindle BR et al. (2019) The Biomechanics and Applications of Strongman Exercises: a Systematic Review. Sports Med Open (Europe PMC full text, PMC6901656)",
+   "kind": "peer-reviewed",
+   "year": 2019,
+   "pmid": "31820223",
+   "access": "full",
+   "checked": "2026-10-29"
   }
  ],
  "plate": {
@@ -694,13 +1027,13 @@
   ],
   "mistake": {
    "what": "Steps too long for a beginner.",
-   "why": "The top fault, rushing (c7), is speed only, so the plate draws the next fault: BarBend's list, the anchor's, names stride length after a load choice (c25), and two sources say short steps (c8).",
+   "why": "The top fault, rushing (c7), is speed only, so the plate draws the next fault: BarBend's list, the anchor's, names stride length after a load choice (c25), and three sources say short steps (c8).",
    "claim": [
     "c25",
     "c8"
    ],
    "drawable": false,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 2: rushing (c7). Reading applied: D-SUP-LB10-MAY (#296, comment 6343484589). Step 1 finds no hit. Set aside: BarBend's \"Many lifters may try to compensate for fatigue by shrugging their shoulders high.\" ('may', D-SUP-LB10-MAY); Garage Gym Reviews' \"These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.\" (c6) says what the tension faults point to, the load, a cause, not how often they happen (renegade_row, R-LB7); the list headings and intros (BarBend's \"Common Farmer’s Carry Mistakes\" and \"Be sure you’re not falling prey to these common flaws in farmer’s carry training.\", Garage Gym Reviews' \"Here are some of the most common mistakes associated with the farmer’s carry.\" and \"common mistakes to avoid\") are list headings and list sentences; BarBend's \"which is usually lacking in beginners\" (balance in beginners), \"there are often advantages to taking it more accessible\" (load), \"Strongman competitions typically use special handles\", \"athletes typically perform heavy carries\", \"Using a dumbbell will likely be the easiest implement for most beginners\", \"Use about 60 to 65 percent of your typical weight\", \"the most notable benefits\", \"commonly referred to\", \"most commonly known\", \"most notably\", \"many disciplines\", \"many variations\" and \"the most beneficial to maximal output\"; Garage Gym Reviews' \"many farmers have strength\", \"Sets of farmer’s carries often consist of just one walk\", \"most lifters can move more weight on a barbell bench press ... trap-bar carries often allow you to carry more weight\" and \"everyone can benefit\"; and the op-ed's \"a common strongman event\", \"most likely causing you to drop\" (hand placement on strongman handles, a grip) and \"you will most likely feel more comfortable with an even stance\" are about implements, loads, muscles, benefits, programming, another exercise or the article, not how often a fault happens. Step 2, named faults (plate.mistake, handlingMistakes or a mistakes list) tied to harm: only rushing, Garage Gym Reviews' \"Rushing through the movement is a recipe for disaster, as a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee, or experience any of many injuries\" (c7); its \"take your time on these to reap the most benefit from each carry and minimize your risk of injury\" is the same item's advice. Not tied to harm: the shrug (BarBend's \"to maximize your upper back activation\" and \"It will also help prevent you from resting the weights on your sides.\"); stride length (BarBend's \"might throw you off balance\", c25); Garage Gym Reviews' tensing item (\"may produce adverse effects\": no load and no injury, D-SUP-STRAIN); the lean (c9, no harm). Not named faults, so not counted: not bracing (c10 \"can wreak havoc on your lower back\", and \"abdominal bracing stabilizes the spine, which may reduce your risk of injury\", a tips section); the op-ed's walking before standing tall, \"it will put more strain on your lower back\" (c24, WEAK; 'strain' counts under D-SUP-STRAIN, but the fault is a strongman-handle technique on no list and not on the card's faults), and its \"the weight can start to swing forward and back\" and turning line \"to avoid momentum twisting the farmers in front of you causing it impede your steps or even drop the handles\" (strongman handles, no harm word); the loose grip (c14, a grip, no LR-31 harm word). Not faults: BarBend's \"a large amount of strain is placed on the shoulder joint\" (holding a load, muscles section) and \"without all that pressure on your elbows\" (front-rack variation); BarBend's benefit lines (\"the prevention and reduction of low back pain\", \"aiding in injury prevention\", \"the protection of the spine\", \"can help alleviate lower back pain\", \"protecting the spine\"); Garage Gym Reviews' trap-bar \"reduce the strain on the lower back\" (equipment); load lines (\"Struggling to move weights that are too heavy may cause our form to deteriorate, leaving us susceptible to injury\", \"if you’re dropping the weights left and right\", BarBend's \"Going Too Light\"; LR-31); Fitness Volt's \"not a guarantee against injury\", \"an injury-free load for every reader\", \"or prevent injury\" and \"Do not judge a carry by how much discomfort you can tolerate\" (disclaimers and programming) and \"Stop if you feel pain.\" (a stop line, c15). Rushing is speed only, so drawable is false and handlingMistakes[0] is rushing. plate.mistake by the same steps: step 1 none, step 2 none left, so step 3. Two lists are written for this exercise (BarBend's, Garage Gym Reviews'); the anchor's comes first (anchorSource bb-farmers). Its item 1, \"Going Too Light\", is a load choice, not a candidate; item 2, \"Stride Length\": \"Trying to take regular-sized steps as a beginner might throw you off balance.\" (c25). Steps too long are a still sign the side view shows, so plate.mistake is steps too long for a beginner."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: rushing (c7). Reading applied: D-SUP-LB10-MAY (#296, comment 6343484589). Step 1 finds no hit. Set aside: BarBend's \"Many lifters may try to compensate for fatigue by shrugging their shoulders high.\" ('may', D-SUP-LB10-MAY); Garage Gym Reviews' \"These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.\" (c6) says what the tension faults point to, the load, a cause, not how often they happen (renegade_row, R-LB7); the list headings and intros (BarBend's \"Common Farmer’s Carry Mistakes\" and \"Be sure you’re not falling prey to these common flaws in farmer’s carry training.\", Garage Gym Reviews' \"Here are some of the most common mistakes associated with the farmer’s carry.\" and \"common mistakes to avoid\") are list headings and list sentences; BarBend's \"which is usually lacking in beginners\" (balance in beginners), \"there are often advantages to taking it more accessible\" (load), \"Strongman competitions typically use special handles\", \"athletes typically perform heavy carries\", \"Using a dumbbell will likely be the easiest implement for most beginners\", \"Use about 60 to 65 percent of your typical weight\", \"the most notable benefits\", \"commonly referred to\", \"most commonly known\", \"most notably\", \"many disciplines\", \"many variations\" and \"the most beneficial to maximal output\"; Garage Gym Reviews' \"many farmers have strength\", \"Sets of farmer’s carries often consist of just one walk\", \"most lifters can move more weight on a barbell bench press ... trap-bar carries often allow you to carry more weight\" and \"everyone can benefit\"; and the op-ed's \"a common strongman event\", \"most likely causing you to drop\" (hand placement on strongman handles, a grip) and \"you will most likely feel more comfortable with an even stance\" are about implements, loads, muscles, benefits, programming, another exercise or the article, not how often a fault happens. Step 2, named faults (plate.mistake, handlingMistakes or a mistakes list) tied to harm: only rushing, Garage Gym Reviews' \"Rushing through the movement is a recipe for disaster, as a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee, or experience any of many injuries\" (c7); its \"take your time on these to reap the most benefit from each carry and minimize your risk of injury\" is the same item's advice. Not tied to harm: the shrug (BarBend's \"to maximize your upper back activation\" and \"It will also help prevent you from resting the weights on your sides.\"); stride length (BarBend's \"might throw you off balance\", c25); Garage Gym Reviews' tensing item (\"may produce adverse effects\": no load and no injury, D-SUP-STRAIN); the lean (c9, no harm). Not named faults, so not counted: not bracing (c10 \"can wreak havoc on your lower back\", and \"abdominal bracing stabilizes the spine, which may reduce your risk of injury\", a tips section); the op-ed's walking before standing tall, \"it will put more strain on your lower back\" (c24, WEAK; 'strain' counts under D-SUP-STRAIN, but the fault is a strongman-handle technique on no list and not on the card's faults), and its \"the weight can start to swing forward and back\" and turning line \"to avoid momentum twisting the farmers in front of you causing it impede your steps or even drop the handles\" (strongman handles, no harm word); the loose grip (c14, a grip, no LR-31 harm word). Not faults: BarBend's \"a large amount of strain is placed on the shoulder joint\" (holding a load, muscles section) and \"without all that pressure on your elbows\" (front-rack variation); BarBend's benefit lines (\"the prevention and reduction of low back pain\", \"aiding in injury prevention\", \"the protection of the spine\", \"can help alleviate lower back pain\", \"protecting the spine\"); Garage Gym Reviews' trap-bar \"reduce the strain on the lower back\" (equipment); load lines (\"Struggling to move weights that are too heavy may cause our form to deteriorate, leaving us susceptible to injury\", \"if you’re dropping the weights left and right\", BarBend's \"Going Too Light\"; LR-31); Fitness Volt's \"not a guarantee against injury\", \"an injury-free load for every reader\", \"or prevent injury\" and \"Do not judge a carry by how much discomfort you can tolerate\" (disclaimers and programming) and \"Stop if you feel pain.\" (a stop line, c15). Rushing is speed only, so drawable is false and handlingMistakes[0] is rushing. plate.mistake by the same steps: step 1 none, step 2 none left, so step 3. Two lists are written for this exercise (BarBend's, Garage Gym Reviews'); the anchor's comes first (anchorSource bb-farmers). Its item 1, \"Going Too Light\", is a load choice, not a candidate; item 2, \"Stride Length\": \"Trying to take regular-sized steps as a beginner might throw you off balance.\" (c25). Steps too long are a still sign the side view shows, so plate.mistake is steps too long for a beginner. F-RESEARCH-2 claims c26-c33 (step and stride sizes) were scanned for LR-31 frequency and harm words: none ties a fault of this exercise to how often it happens or to harm, so the steps above are unchanged."
   },
   "tells": [
    {
@@ -805,7 +1138,7 @@
    "claim": "c7"
   },
   {
-   "mistake": "Steps too long for your level.",
+   "mistake": "Steps too long for a beginner.",
    "fix": "Take short, deliberate steps.",
    "claim": [
     "c25",
@@ -943,7 +1276,9 @@
  },
  "gaps": [
   "Breathing (content.md 5.2): no source read gives the squat's blood-pressure breath-holding line. StrengthLog holds the breath to lift (c11) and BarBend's strongman section says keep breathing (c12, WEAK); the card shows only that. Left out, not invented.",
-  "Way out: letting go of the weights in a fall or stumble (dropping them away from the feet) has no source. The sourced way out is ending the carry and the controlled set-down (c15, c16)."
+  "Way out: letting go of the weights in a fall or stumble (dropping them away from the feet) has no source. The sourced way out is ending the carry and the controlled set-down (c15, c16).",
+  "F-RESEARCH-2 Q2(a), 2026-10-29: the only step or stride lengths in numbers for a hand-held carry are strongman farmer's walk strides (c32, Winwood 2014; c33, Hindle 2019's table with Keogh's data), from experienced strongman athletes with heavy loads; no source gives a stride or step length for a gym farmer's carry, a beginner or a suitcase carry. Coach pages read: BarBend (farmers-carry, farmers-walk-breakdown; c26 'approximately heel to toe'), Garage Gym Reviews (farmers-carry), FitnessVolt (farmers-walk) and Men's Health (a19546845/farmers-walk); StrengthLog answered 403. PubMed: 'farmer's walk' 322, 'farmers walk AND gait' 68, 'load carriage AND step length' 39 (trunk-borne loads: c27, c28), 'unilateral load AND gait' 194, 'hand-held load AND walking AND stride length' 0; Winwood 2014 is not in PubMed (log: verify/lb10.md, F-RESEARCH-2).",
+  "F-RESEARCH-2 Q2(c): no plate on main sets a walking step from a measured source, and no readable copy of Winter (2009) was reached (archive.org holds only the 1990 and 2005 editions, access-restricted; Google Books returned 429; Wiley returned 403)."
  ],
  "tierA": {
   "wayOut": {

@@ -56,6 +56,13 @@ describe('LIB-22 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
       expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
     }
   });
+  it('farmer_s_carry alone is re-copied, from F-RESEARCH-2\'s head (F-R2-FARMER-5, #338 6487471465); its card keeps c29-c31', () => {
+    expect(Object.keys(cardsSha.recopied)).toEqual(['farmer_s_carry']);
+    expect(cardsSha.recopied.farmer_s_carry.researchHead).toBe('a48b059400a74d5c9e3aceed21cf1aa67ab6f118');
+    const c = cardOf('farmer_s_carry');
+    for (const id of ['c29', 'c30', 'c31']) expect(c.claims.some((x: any) => x.id === id && x.tags.includes('MECH')), id).toBe(true);
+    expect(c.handlingMistakes[1].mistake).toBe('Steps too long for a beginner.');
+  });
   it('mutation: any other card key edited is red', () => {
     const c = cardOf('kettlebell_swing'); c.plate.view = 'front';
     expect(sha(canon(c))).not.toBe(cardsSha.cards.kettlebell_swing);
