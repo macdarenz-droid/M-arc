@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-31 ~02:00 UTC · main `151de0b8` (train 47: LB10 resume) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-31 ~06:00 UTC · main `a72b52b5` (train 48: F-ZOOM-PITCH + LB4) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -827,6 +827,12 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - LB4 #289: review PASS 6537218246. Its sync with main (held-pairing.json) is in progress, and a focused tempo CARD FIELDS set, cflb4s, is building for the review's Medium.
   - LIB-17 resume 2 #343 (renegade_row) is in panel mx5, with LIB-8R's reverse_lunge and rear-delt fly. LB9's superman and LB8's glute_bridge (#345, LIB-18 resume 2, session_01EQuYNhE1zxvZ6YA2EwcR4U) are added if they post in time.
   - Active LIB builders 4 of 4: LIB-21 resume 2, LIB-8R, F-ZOOM-PITCH and LIB-18 resume 2. Usage: 7-day 0.48 at 00:57.
+- **Update 06:00 UTC (10-31):**
+  - **Train 48 merged** (#347) → main `a72b52b5`: F-ZOOM-PITCH #342 @ `144fc11f` and LB4 #289 @ `47866862` (local: 269 files, 5275 tests; LB4 page `9a2b7881`; CI green on every leg). No src/ change, so no APK.
+  - LIB-17 resume 2 #343 @ `037b02a4`: review PASS 6539413101 (3 Lows, docs and test comments only); it goes in train 49 on `a72b52b5`. Panel mx6 approved glute_bridge and renegade_row; reverse_lunge held (F-REVLUNGE-ARCH).
+  - Held-row inventory (lib4-cards §48): 84 approved on main, 9 approved in open PRs, 3 in open PRs, 25 held, 32 not started. Next cards: LIB-SPINE, then the LB5 resume (card drafting), then the LB6 + LB7 T/D card.
+  - **LIB-SPINE started** (card `verify/lib-spine-card.md` @ `6f38c440`; session_01EQuYNhxZqKdUyXTdU8Gopd; branch claude/lib-spine). LIB-8R got 'FIX 3 GO' (dumbbell_fly zoom with pitch, then a focused recheck).
+  - Active LIB builders 4 of 4: LIB-18 resume 2 (#345), LIB-22 resume 2 (#346, farmer_s_carry), LIB-8R (#340), LIB-SPINE. Waiting: LIB-21 resume 2 (#337, superman for mx7), LIB-17 resume 2 (#343, train 49). Usage: 7-day 0.55 at 05:55.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
