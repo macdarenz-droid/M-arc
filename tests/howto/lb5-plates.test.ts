@@ -28,6 +28,11 @@ const T_ROWS: Record<string, { parent: string, template: string, params: Record<
   reverse_curl: { parent: 'lib_dumbbell_biceps_curl', template: 'CURL', params: { 'load.primitive': 'barbell' }, paramClaims: { 'load.primitive': 'c1' } },
 };
 const modeOf = (id: string) => (id.replace(/^lib_/, '') in T_ROWS ? 'T' : 'H');
+/** D-LIB15R2-TPARENT (#349 6540842602): A15's drawn-item tests bind an H row in full and a T child only in the parts its
+ *  facts set (callouts, tells, cues, boxes); the template-fixed parts (Trace keys, Mistake guides and arrows, the measure
+ *  arc and leader) are the pinned parent's. The scope is the row's mode in rows.json, which A5 holds to the ruled mode. */
+const rowMode = (id: string, rows = readJson('tools/plates/library/lb5/rows.json').rows) => rows[`lib_${id}`]?.mode ?? 'H';
+const fullScope = (id: string, rows?: any) => rowMode(id, rows) !== 'T';
 const ROWS = 'tools/plates/library/lb5/rows.json';
 const RESEARCH_HEAD = 'baf2ff09cf2e91232f536cfc6c766fdf68925217';   // F-LB5-2 (#302): concentration_curl's c14 and notes
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -488,7 +493,7 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     return max <= 6 && max <= 2.5 * med ? [] : [`${spec.id}: Trace turn ${max.toFixed(1)} deg (median ${med.toFixed(1)})`];
   };
   it('every Trace on a row is a smooth arc, no kinks (#290 6349640307 R7); mutation: concentration_curl\'s grip keys cut to 6 chords is red', () => {
-    for (const id of drawn()) expect(traceKinks(S[id]), id).toEqual([]);   // rows only: held cross_body_hammer_curl's Trace (10.8 deg) is redrawn when it resumes
+    for (const id of drawn().filter(i => fullScope(i))) expect(traceKinks(S[id]), id).toEqual([]);   // rows only (T: the parent's keys, D-LIB15R2-TPARENT): held cross_body_hammer_curl's Trace (10.8 deg) is redrawn when it resumes
     const s = S.concentration_curl, v = s.poses.via, six = [8, 16, 24, 32, 40].map(i => v[i - 1]);
     expect(traceKinks({ ...s, poses: { ...s.poses, via: six } })).toHaveLength(1);
   });
@@ -536,7 +541,7 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     });
   };
   it('every Mistake arrow stays at least 6 px clear of the solid end figure; other Mistake guides are dashed', () => {
-    for (const id of specced()) {
+    for (const id of specced().filter(i => fullScope(i))) {   // T: the guides are the parent's (D-LIB15R2-TPARENT)
       expect(clearance(S[id]), id).toEqual([]);
       expect(S[id].mistake.guides.filter((g: any) => !['dashed', 'arrow'].includes(g.kind)).map((g: any) => g.kind), id).toEqual([]);
     }
@@ -548,14 +553,23 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
   // Leaders: no leader comes within 6 px of the Trace, a cable or the pad, away from its anchor end (8 px).
   const xy = (d: string) => [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
   const segs = (p: number[][]) => p.slice(1).map((q, i) => [p[i]!, q]);
-  const leaderGap = (spec: any) => {
+  /** The screen points of the anchors a spec's facts set: callouts in the normal view, tells in the Mistake. */
+  const factAnchors = (spec: any, mistake: boolean, cam: any) => {
+    const L = qaEng.poseLandmarks(Eng(), spec).lm;
+    return (mistake ? spec.mistake.tells : spec.callouts).map((c: any) => {
+      const a = c.anchor, at = typeof a === 'string' ? a : a.at, pose = a.pose ?? (mistake ? 'mistake' : 'end'), off = a.off ?? [0, 0];
+      const q = cam.P(Array.isArray(at) ? at : L[pose][at]); return [q[0] + off[0], q[1] + off[1]];
+    });
+  };
+  const leaderGap = (spec: any, { factsOnly = false } = {}) => {
     let min = Infinity;
     for (const mistake of [false, true]) {
-      const r = plate.renderPlate(spec, { id: 'x', mistake }), svg: string = r.svg, cam = camOf(spec);
+      const r = plate.renderPlate(spec, { id: 'x', mistake }), svg: string = r.svg, cam = camOf(spec), anchors = factsOnly ? factAnchors(spec, mistake, cam) : [];
       const avoid = [...svg.matchAll(/<path class="(?:trace|eq-cable)[^"]*"[^>]*? d="([^"]+)"/g)].flatMap(m => segs(xy(m[1]!)));
       if (spec.id === 'preacher_curl') { const p = itemsIn(spec, mistake ? 'mistake' : 'end').items.find((it: any) => it.type === 'poly' && it.z === 'mid'); const q = p.pts.map(cam.P); avoid.push(...segs([...q, q[0]])); }
       for (const [, d] of svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)) {
         const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]);
+        if (factsOnly && !anchors.some((q: number[]) => Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) <= 1.5)) continue;   // a template-fixed leader (the measure)
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
           if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) for (const [g0, g1] of avoid) min = Math.min(min, segD(q, g0!, g1!));
@@ -565,10 +579,22 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     return min;
   };
   it('no leader comes within 6 px of the Trace, a cable or the pad; mutation: a leader boxed across the pad is red', () => {
-    for (const id of drawn()) expect(leaderGap(S[id]), id).toBeGreaterThanOrEqual(6);
+    for (const id of drawn()) expect(leaderGap(S[id], { factsOnly: !fullScope(id) }), id).toBeGreaterThanOrEqual(6);
     const s = S.preacher_curl, cam = camOf(s), p = itemsIn(s, 'end').items.find((it: any) => it.type === 'poly' && it.z === 'mid'), c = cam.P(p.pts[2]);
     const bad = { ...s, callouts: [{ ...s.callouts[0], anchor: 'heel.r', box: { left: Math.round(c[0]! + 10), top: Math.round(c[1]! - 40) } }, ...s.callouts.slice(1)] };
     expect(leaderGap(bad)).toBeLessThan(6);
+  });
+  it('D-LIB15R2-TPARENT mutations: an H row given the T scope is red (its rows.json mode must be the ruled one), and a T child\'s own callout moved onto the figure is red', () => {
+    const rows = readJson('tools/plates/library/lb5/rows.json').rows;
+    const modeMismatch = (r: any) => ALL.filter(id => r[`lib_${id}`] && r[`lib_${id}`].mode !== modeOf(id));
+    expect(modeMismatch(rows)).toEqual([]);
+    const flipped = { ...rows, lib_hammer_curl: { ...rows.lib_hammer_curl, mode: 'T' } };
+    expect([fullScope('hammer_curl', flipped), modeMismatch(flipped)]).toEqual([false, ['hammer_curl']]);
+    const h = S.hammer_curl, onFigure = { ...h, mistake: { ...h.mistake, guides: [...h.mistake.guides, { kind: 'arrow', from: { at: 'elbow.r', pose: 'end' }, to: { at: 'shoulder.r', pose: 'end' } }] } };
+    expect(clearance(onFigure).length).toBeGreaterThan(0);   // what the H scope still catches on hammer_curl
+    const b = S.barbell_curl, moved = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'elbows' ? { ...c, box: { left: 150, top: 200 } } : c)) };
+    expect(plate.renderPlate(moved, { id: 'x' }).report.issues.length).toBeGreaterThan(0);
+    expect(leaderGap(S.barbell_curl, { factsOnly: true })).toBeGreaterThanOrEqual(6);
   });
   /** The cable from the low pulley to the rope's ferrule: its min px gap to the torso and head outline in each pose (side view). */
   const cableGap = (spec: any) => Object.fromEntries(posesOf(spec).map(pose => {

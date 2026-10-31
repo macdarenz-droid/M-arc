@@ -111,7 +111,7 @@ describe('LIB-13 A5: lb3/rows.json holds exactly the drawn, non-held LB3 ids', (
       expect([r.mode, r.parent, r.template, r.params], id).toEqual(['H', undefined, undefined, undefined]);
     }
     expect(j).toMatchObject({ batch: 'LB3', censusRef: '4a9fd86' });
-    expect(existsSync('tools/plates/library/templates')).toBe(false);   // HROW and HINGE are not built (DESIGN.md 1)
+    expect((existsSync('tools/plates/library/templates') ? readdirSync('tools/plates/library/templates') : []).filter(f => !['CURL.mjs', 'PUSHDOWN.mjs'].includes(f))).toEqual([]);   // HROW and HINGE are not built (DESIGN.md 1); D-LIB15R2-TEMPLDIR (#349): only the ruled templates exist
   });
 });
 
