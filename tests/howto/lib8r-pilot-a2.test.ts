@@ -320,12 +320,12 @@ describe('LIB-8R A5, A10: runQa node half on each PILOT-A2 plate, the zooms, LIB
   });
   it('A10: each zoom is the planned Mistake-view zoom, at the smallest passing k', () => {
     expect(spec('reverse_lunge').zoom).toEqual({ view: 'mistake', k: 2.5 });
-    expect(spec('dumbbell_fly').zoom).toEqual({ view: 'mistake', k: 2 });
+    expect(spec('dumbbell_fly').zoom).toEqual({ view: 'mistake', k: 2.5 });
     expect(spec('bent_over_dumbbell_rear_delt_fly').zoom).toEqual({ view: 'mistake', k: 2 });
     expect(spec('box_jump').zoom).toBeUndefined();
   });
   it('A10 mutations: the next k down on dumbbell_fly and the rear-delt fly turns H3 red', async () => {
-    for (const [id, k] of [['dumbbell_fly', 1.5], ['bent_over_dumbbell_rear_delt_fly', 1.5]] as const) {
+    for (const [id, k] of [['dumbbell_fly', 2], ['bent_over_dumbbell_rear_delt_fly', 1.5]] as const) {
       const c = await mutated(id, `s => ({ ...s, zoom: { ...s.zoom, k: ${k} } })`);
       expect(node(await qa(c)), id).toContain('H3.zoom:deviation');
     }

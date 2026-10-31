@@ -165,7 +165,7 @@ function frontFly(id) {
         { key: 'wrists', text: 'Wrists bend', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 12, top: 70 }, cue: 'Your wrists bend back out of line with the forearms as the dumbbells arc.' },   // c13
       ],
     },
-    zoom: { view: 'mistake', k: 2 },   // the smallest k on the ladder that reaches H3's bar (1.5 gives 9.9 px)   // the smallest k on the ladder that reaches H3's bar (1.5 gives 9.9 px)
+    zoom: { view: 'mistake', k: 2.5 },   // the smallest k on the ladder that reaches H3's bar at the pitched projection (F-ZOOM-PITCH; 2 gives 9.9 px)
     alt: ALT,
   };
 }
