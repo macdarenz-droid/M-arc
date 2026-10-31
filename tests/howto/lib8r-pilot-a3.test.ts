@@ -548,6 +548,64 @@ describe('PILOT-A3 A2 (part), A3 (pre-pin part): PILOT-A2 rebuilds to its pin; t
   });
 });
 
+describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped', { timeout: T }, () => {
+  let G: any, reg: any, scratch: any, all: any;
+  beforeAll(async () => {
+    [G, reg, scratch] = await Promise.all(['../golden.mjs', 'registry.mjs', 'ci/scratch.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    all = reg.rows();
+  }, T);
+  const GOLDEN = () => JSON.parse(readFileSync('tests/howto/golden/GOLDEN.json', 'utf8')).entries;
+  const file = () => readJson('tests/howto/golden/library/pilot-a3.json');
+  /** A11: chain, the page entry equal to the built page, each plate entry's 9 fragments equal to extractPlates of it. */
+  const chainProblems = async (f: any) => {
+    const bad = [...G.verifyBatchChain(f, GOLDEN())];
+    const pages = f.entries.filter((e: any) => e.kind === 'page'), html = (await build.buildPa3Page()).html;
+    if (pages.length !== 1 || pages[0].pageSha256 !== sha(html) || pages[0].bytes !== html.length) bad.push('page entry != the built page');
+    if (f.entries.some((e: any) => e.kind === 'layers-page')) bad.push('a layers-page entry');
+    const plates = G.extractPlates(html.toString('utf8'));
+    for (const e of f.entries.filter((x: any) => x.kind === 'plate')) {
+      const p = plates.find((x: any) => x.chromeId === e.chromeId);
+      if (!p || JSON.stringify(G.fragmentsOf(p)) !== JSON.stringify(e.fragments)) bad.push(`${e.id}: fragments`);
+      if (e.approvedBy !== 'supervisor' || e.decision !== 'D-LIB-PILOTA3' || e.supersedes !== null) bad.push(`${e.id}: approval`);
+    }
+    if (JSON.stringify(f.entries.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)) !== JSON.stringify(IDS.map(i => `lib_${i}`))) bad.push('plate ids');
+    const text = JSON.stringify(f) + readFileSync(rowsPath(), 'utf8') + readFileSync('tools/plates/library/pages/pilot-a3.json', 'utf8');
+    for (const id of [...all.filter((r: any) => r.batchFile && !r.batchFile.endsWith('/pilot-a3.json')).map((r: any) => r.id),
+      ...[...scratch.PILOT_A, ...scratch.PILOT_B, ...scratch.PILOT_A2].map((n: string) => `lib_${n}`)]) if (new RegExp(`\\b${id}\\b`).test(text)) bad.push(`names ${id}`);
+    return bad;
+  };
+  it('A11: the chain is valid, the page entry is the two-build page (bebd7730, 465,732 B), each plate entry equals its fragments, no layers entry or file', async () => {
+    expect(pinned()).toBe(true);
+    expect(await chainProblems(file())).toEqual([]);
+    expect(file().entries[0].pageSha256).toBe('bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878');
+    expect(file().base).toEqual(readJson('tests/howto/golden/library/pilot-a2.json').base);
+    expect(existsSync('tests/howto/golden/library/pilot-a3.layers.html')).toBe(false);
+    expect(existsSync('tools/plates/library/pages/pilot-a3.layers.json')).toBe(false);
+  });
+  it('A11 mutations: a second page entry superseding 0 by the supervisor, one fragment edited, a layers-page entry and "lib_crunch" are red', async () => {
+    const f0 = file();
+    const sup = { ...f0, entries: G.appendEntry(f0.entries, { ...f0.entries[0], prev: undefined, supersedes: 0 }) };
+    expect(G.verifyBatchChain(sup, GOLDEN()).length).toBeGreaterThan(0);
+    const frag = copy(f0); frag.entries[1].fragments.normalSvg = '0'.repeat(64);
+    expect((await chainProblems(frag)).length).toBeGreaterThan(0);
+    const lay = copy(f0); lay.entries.push({ kind: 'layers-page' });
+    expect((await chainProblems(lay)).length).toBeGreaterThan(0);
+    const named = copy(f0); named.entries[1].why += ' "lib_crunch"';
+    expect((await chainProblems(named)).some((p: string) => /lib_crunch/.test(p))).toBe(true);
+  });
+  it('A12: the scratch set refuses PILOT-A3 ids (mutation: target lib_reverse_lunge)', () => {
+    expect(scratch.setProblems(scratch.SCRATCH_4C)).toEqual([]);
+    const set = scratch.SCRATCH_4C.map((s: any) => (s.key === 'lib4c-scratch-a' ? { ...s, id: 'lib_reverse_lunge' } : s));
+    expect(scratch.setProblems(set)).toEqual(['lib_reverse_lunge is a PILOT-A3 id (D-LIB11-SCRATCHIDS)']);
+  });
+  it('A14: no PILOT-A3 row is shipped; mutation: one row set to shipped is caught', () => {
+    const stages = (t: any) => Object.values(t.rows).map((r: any) => r.stage);
+    expect(stages(readJson(rowsPath()))).toEqual(['approved-plate', 'approved-plate']);
+    const m = readJson(rowsPath()); m.rows.lib_reverse_lunge.stage = 'shipped';
+    expect(stages(m).includes('shipped')).toBe(true);
+  });
+});
+
 describe('PILOT-A3 A13: the moved assertions (D-A3-TESTHOME map)', () => {
   // lib8r-pilot-a2.test.ts @ bf4b8d4d line(s) -> the test here that carries it (verbatim or the named stricter form)
   const MOVED: [string, string][] = [
@@ -586,4 +644,3 @@ describe('PILOT-A3 A13: the moved assertions (D-A3-TESTHOME map)', () => {
     for (const id of IDS) expect(new RegExp(`\\b(lib_)?${id}\\b`).test(a2), id).toBe(false);
   });
 });
-void copy;

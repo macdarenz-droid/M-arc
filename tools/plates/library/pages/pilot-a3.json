@@ -1,0 +1,12 @@
+{
+ "groups": [
+  {
+   "id": "pilot-a3",
+   "title": "Pilot A3",
+   "ids": [
+    "lib_reverse_lunge",
+    "lib_dumbbell_fly"
+   ]
+  }
+ ]
+}

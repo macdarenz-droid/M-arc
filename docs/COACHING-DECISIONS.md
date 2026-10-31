@@ -2969,3 +2969,15 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   F-ZOOM-PITCH, train 48). The container's `push.negotiate true` made pushes send no objects; `git -c
   push.negotiate=false push` works.
 - **Source:** PR #340; pilot-a2/DESIGN.md.
+## PILOT-A3: reverse_lunge on trunk.bow and dumbbell_fly F-FLY-START (builder, 2026-10-31; card docs/supervisor/verify/pilot-a3-card.md, rulings D-A3-*)
+- **D-A3-REVBOW.** reverse_lunge's Mistake is the end pose with `trunk: { flex: 0, bow: 12 }` (LIB-SPINE). The pelvis
+  tips 12° under the held thorax, so only the low back moves: lumbar 4.10 px and navel 4.65 px, while the chest and head
+  move 0 px. The tell 'Low back arches' sits on lumbar with a k 3 zoom, and the chest arrow is gone. **Why:** the
+  held round-3 Mistake moved the whole upper trunk 5.27 px, and the panel read it as a shift, not an arch.
+- **D-A3-FLYSTART, -FLYHAND.** dumbbell_fly's dashed start dumbbells are now side-on silhouettes, 15.1 × 28.0 px, the
+  same shape as the drawn end dumbbells. The faulty hands are dashed Mistake guides, the Mistake pose's own hand polys,
+  23° on screen. The chunk is 153,494 B (limit 153,600), so no fallback was needed.
+- **Pinned:** both ids, in PILOT-A3 (page bebd7730..., 465,732 B) after panel mx18 (#362 6548838657). Every median is ≥ 4,
+  and the blind TOPFAULT pass answered 'flare'. The two ids' rows and tests moved from pilot-a2/ to pilot-a3/
+  (D-A3-TESTHOME).
+- **Source:** PR #362; pilot-a3/DESIGN.md.
