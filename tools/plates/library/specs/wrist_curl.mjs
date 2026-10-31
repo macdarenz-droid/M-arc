@@ -97,10 +97,11 @@ export default {
     { landmark: 'wrist.r', above: { point: add(axisAt(0), mul(THIGH_N, 0.05)), normal: THIGH_N }, pose: 'mistake' },
   ],
   ghosts: { count: 3, parts: ['hand.r'] },
-  trace: { point: 'grip.r', trim: [4, 6] },
+  trace: { point: 'grip.r', trim: [4, 6], samples: 20 },
+  zoom: { view: 'normal', k: 3 },   // D-LIB15R2-ZOOM, -WRISTBOX (lib4-cards §48): the grip's path, 34.97 px at k 3 (bar 22.11), the smallest k that passes every check
   measure: { vertex: 'wrist.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 16, title: 'Wrist', value: 'curl up' },
   callouts: [
-    { key: 'forearm', text: 'Forearm<br>supported', anchor: { at: 'elbow.r', off: [6, 0] }, box: { left: 254, top: 200 }, cue: 'Rest the forearm on your thigh. Only the hand moves.' },
+    { key: 'forearm', text: 'Forearm<br>supported', anchor: { at: 'elbow.r', off: [6, 0] }, box: { left: 112, top: 200 }, cue: 'Rest the forearm on your thigh. Only the hand moves.' },
     { key: 'palms', text: 'Palms up', anchor: 'wrist.r', box: { left: 262, top: 150 }, cue: 'Hold the dumbbell underhand with the hand past the knee.' },
     { key: 'grip', text: 'Grip stays<br>closed', anchor: 'grip.r', box: { left: 272, top: 280 }, cue: 'Squeeze the handle both ways. Never let it roll to the fingers.' },
   ],
