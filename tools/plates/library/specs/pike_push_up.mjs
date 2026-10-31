@@ -96,6 +96,10 @@ const MISTAKE = withBent(MQ, ELBOW_POLE);
 // PANEL mx13 R5 (#356 6547087962): the faulty head as a complete dashed outline drawn over the fill (the engine's own
 // side-view head shape in the Mistake pose, as world points), straight under the shoulders' line (the grips' z).
 export const FAULT_HEAD = bodyShapes(fk(resolve(normPose(MISTAKE, B1), B1).q, B1), CAM1, { hand: 'flat' }).find(s => s.key === 'head').poly.map(([z, y]) => [0, -y, z]);
+// The dashed neck (PANEL mx15 R5): from the Mistake's neck point (the red back line's end) to the faulty head's top
+// outline point.
+const lmMis = landmarksOf(MISTAKE, H);
+export const FAULT_NECK = [[0, lmMis.neck[1], lmMis.neck[2]], FAULT_HEAD.reduce((a, p) => (p[1] > a[1] ? p : a))];
 
 // The in-between keys (PANEL mx13 R3, #356 6547087962): at the ghosts' times, t 1/3 and 2/3 of the way from the top to
 // the bottom, the tilt and hip flexion are the keys' blend and the root is solved so the toe tips stay on their spot;
@@ -137,11 +141,10 @@ export default {
   mistake: {
     pose: MISTAKE,
     guides: [
-      // PANEL mx13 R5: the faulty head as a complete dashed outline over the fill, and one short down arrow above the
-      // floor beside it (the nearest place where the arrow clears the solid figure by A15's 6 px: 9 px left of the
-      // faulty head's outline; every place over it lies on the solid forearms or head).
+      // PANEL mx13/mx15 R5: the faulty head as a complete dashed outline over the fill, joined to the red body by a
+      // dashed neck (the Mistake's neck point to the outline's top point).
       { kind: 'dashed', pts: [...FAULT_HEAD, FAULT_HEAD[0]] },
-      { kind: 'arrow', from: { at: 'head', pose: 'mistake', off: [-37, -39] }, to: { at: 'head', pose: 'mistake', off: [-37, -21] } },
+      { kind: 'dashed', pts: FAULT_NECK },
     ],
     tells: [
       { key: 'head', text: 'Head straight<br>down', anchor: { at: 'head', pose: 'mistake' }, box: { left: 230, top: 308 }, cue: 'Only your head drops toward the floor, straight down.' },

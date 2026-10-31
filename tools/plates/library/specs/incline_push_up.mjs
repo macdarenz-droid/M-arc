@@ -18,7 +18,7 @@
 //  - Bottom (spec start, c3, c4): the straight body (trunk, hip, knee 0) on the toe tips with the chest landmark
 //    CHEST_GAP over the bench top and CHEST_IN past its near edge (over the edge, c3's "chest about an inch above the
 //    bench edge"); the toe spot is solved from it. The hands stay on their bench spots (the wrist HAND_IN past the
-//    edge, palm flat and level, fingers forward); the elbows aim back and a little out (ELBOW_POLE, c4).
+//    edge, palm flat and level, fingers forward); the elbows aim out and back (ELBOW_BACK solved so sh.elev is 45 at the bottom, c4).
 //  - Top (spec end, c1, c7): the same toe spot, arms straight (elbow 0), the wrist on its spot and the palm level;
 //    root, tilt, shoulder flexion and wrist solved. The body angle (toe tip to shoulder) is an output of the bench
 //    height, and BENCH_TOP is SOLVED so it is c1's 45 degrees (D-LIB17R3-BENCH; bisection on a bracket, throws without
@@ -27,15 +27,17 @@
 //    straight, wrists on their spots, root solved. The body is steeper; the shrug alone is under the size bar, so the
 //    first tell is on the feet (the cause c10 names).
 // Unsourced numbers (no card claim gives them; listed in lb7/sizes.json with their basis): HAND_IN, CHEST_GAP's drawn
-//  value of "about an inch", CHEST_IN, ELBOW_POLE, M_FEET_IN, M_SHRUG, the floor run, LINE_RUN; BENCH_TOP is solved
+//  value of "about an inch", CHEST_IN, BOTTOM_ELEV (c4's 45 degrees), M_FEET_IN, M_SHRUG, the floor run, LINE_RUN; BENCH_TOP is solved
 //  (c1's 45 degrees; c1 "sturdy bench, box or platform" and c14 fix no height).
-import { landmarksOf, RADII } from '../engine.mjs';
+import { landmarksOf, RADII, normPose, resolve } from '../engine.mjs';
 
 const H = 1.75;
-export const SIZES = Object.freeze({ BENCH_W: 0.29, HAND_IN: 0.02, CHEST_GAP: 0.025, CHEST_IN: 0.02, BODY_DEG: 45, M_FEET_IN: 0.2, M_SHRUG: 4,
+export const SIZES = Object.freeze({ BENCH_W: 0.29, HAND_IN: 0.02, CHEST_GAP: 0.025, CHEST_IN: 0.02, BODY_DEG: 45, M_FEET_IN: 0.2, M_SHRUG: 4, BOTTOM_ELEV: 45,
   FLOOR_BACK: 0.15, FLOOR_FRONT: 0.12, LINE_RUN: 0.18 });
-const { BENCH_W, HAND_IN, CHEST_GAP, CHEST_IN, BODY_DEG, M_FEET_IN, M_SHRUG, FLOOR_BACK, FLOOR_FRONT, LINE_RUN } = SIZES;
-const ELBOW_POLE = [1, 0, -0.5];                // bottom: elbow aim (x outward per side): out and back, push_up's (c4: about 45 deg from the body)
+const { BENCH_W, HAND_IN, CHEST_GAP, CHEST_IN, BODY_DEG, M_FEET_IN, M_SHRUG, BOTTOM_ELEV, FLOOR_BACK, FLOOR_FRONT, LINE_RUN } = SIZES;
+// The bottom elbow aim (x outward per side): out and back, [1, 0, -ELBOW_BACK], ELBOW_BACK solved so the upper arm
+// stands 45 deg from the trunk (sh.elev, PANELS.md 7) at the bottom: c4 "Keep your elbows at approximately 45 degrees
+// from your body" (D-CFSMALL-ELEV, #356 6547986860).
 const WRIST_Y = RADII.fore[2] * H;            // flat palm (LIB-26): the wrist the forearm's distal radius over the pad
 const EDGE_Z = 0;                              // the bench's near top edge (world origin)
 const R2D = 180 / Math.PI;
@@ -84,9 +86,11 @@ const lmT = landmarksOf(top, H);
 const GRIP = lmT['grip.r'], WT = lmT['wrist.r'];
 // Bottom: the flared arm turns the forearm's bend plane, so the wrist is held on its spot and the hand level, solved
 // for the grip target and the wrist angle (push_up's method).
-const flared = p => ({ ...body({ ...BQ, w: p.w }), reach: { r: { at: [p.x, p.y, p.z], pole: [-ELBOW_POLE[0], ELBOW_POLE[1], ELBOW_POLE[2]] }, l: { at: [-p.x, p.y, p.z], pole: ELBOW_POLE } } });
-const FQ = solve({ x: GRIP[0], y: GRIP[1], z: GRIP[2], w: 30 }, flared, lm => [...lm['wrist.r'].map((v, i) => v - WT[i]), lm['grip.r'][1] - GRIP[1]]);
-const bottom = flared(FQ);
+const flaredWith = pole => p => ({ ...body({ ...BQ, w: p.w }), reach: { r: { at: [p.x, p.y, p.z], pole: [-pole[0], pole[1], pole[2]] }, l: { at: [-p.x, p.y, p.z], pole } } });
+const bottomWith = k => { const f = flaredWith([1, 0, -k]); return f(solve({ x: GRIP[0], y: GRIP[1], z: GRIP[2], w: 30 }, f, lm => [...lm['wrist.r'].map((v, i) => v - WT[i]), lm['grip.r'][1] - GRIP[1]])); };
+const elevOf = pose => resolve(normPose(pose, { height: H }), { height: H }).q.sh.r.elev;
+export const ELBOW_BACK = +bisect(k => elevOf(bottomWith(k)) - BOTTOM_ELEV, 0.3, 1.0).toFixed(4);
+const bottom = bottomWith(ELBOW_BACK);
 // Mistake (c10): the toe spot M_FEET_IN closer to the bench, the scapulae raised M_SHRUG cm; arms straight, wrists on
 // their spots.
 const MQ = straightArms(BENCH_TOP, TOE_Z + M_FEET_IN, M_SHRUG, TQ);
@@ -100,7 +104,7 @@ const LINE = (() => { const a = lmT['shoulder.r'], b = lmT['heel.r'], d = b.map(
 const ang3 = (a, v, b) => { const u = a.map((x, i) => x - v[i]), w = b.map((x, i) => x - v[i]); return Math.acos(u.reduce((s, x, i) => s + x * w[i], 0) / Math.hypot(...u) / Math.hypot(...w)) * R2D; };
 export const info = () => ({ benchTop: BENCH_TOP, toeZ: TOE_Z_SOLVED, topBodyDeg: +bodyDeg(lmT).toFixed(2), mistakeBodyDeg: +bodyDeg(lmM).toFixed(2),
   topArmFromPlumb: +(TQ.f - TQ.tilt).toFixed(1), chestOverTopCm: +((lmB.chest[1] - BENCH_TOP) * 100).toFixed(2), chestPastEdgeCm: +((lmB.chest[2] - EDGE_Z) * 100).toFixed(2),
-  bottomElbowToTrunk: +ang3(lmB['elbow.r'], lmB['shoulder.r'], lmB['hip.r']).toFixed(1), bottomWrist: +FQ.w.toFixed(1),
+  bottomElbowToTrunk: +ang3(lmB['elbow.r'], lmB['shoulder.r'], lmB['hip.r']).toFixed(1), bottomWrist: +bottom.wrist.toFixed(1),
   headOverTopCm: +((Math.min(lmB.head[1], lmB.chin[1]) - BENCH_TOP) * 100).toFixed(1) });
 
 export default {

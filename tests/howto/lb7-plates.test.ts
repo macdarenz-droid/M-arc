@@ -1568,7 +1568,9 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     weighted_dip: [...C(['wrist.l', 'wrist.r'], 'start', 'c2'), ...C(['navel'], 'start', 'c8')],   // F-LB7-1 (e5ed66ca): the elbow-90 facts dropped
     bench_dip: [...C(['wrist.l', 'wrist.r'], 'start', 'c2'), ...C(['heel.l', 'heel.r'], 'start', 'c3'), ...A(['elbow.l', 'elbow.r'], 'end', 'c5')],
     // DESIGN.md section 19.3 (resume 3): card start = spec end on the two push-up rows; pike_push_up's quotes name no contact
-    incline_push_up: ['wrist.l', 'wrist.r'].map(landmark => ({ kind: 'contact', landmark, pose: 'end', cardPose: 'start', claim: 'c1' })),
+    incline_push_up: [...['wrist.l', 'wrist.r'].map(landmark => ({ kind: 'contact', landmark, pose: 'end', cardPose: 'start', claim: 'c1' })),
+      // D-CFSMALL-ELEV (#356 6547986860): c4's "elbows at approximately 45 degrees from your body", both sides, at the bottom
+      ...['sh.l.elev', 'sh.r.elev'].map(joint => ({ kind: 'angle', joint, pose: 'start', cardPose: 'end', deg: 45, claim: 'c4' }))],
     diamond_push_up: ['wrist.l', 'wrist.r'].map(landmark => ({ kind: 'contact', landmark, pose: 'end', cardPose: 'start', claim: 'c1' })),
     pike_push_up: [],
   };
@@ -2056,11 +2058,12 @@ describe('LIB-17 resume 3 A2: the 8 approved LB7 plates stay byte-identical (pag
     const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'bench-dip');
     expect(fragProblems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['bench-dip alt']);
   });  // PANEL mx13 (#356 6547087962): incline_push_up APPROVED at 29a48852; its 9 fragments pinned from that head's page
-  // (58d79da8…6898) so the fix round cannot move them.
+  // (58d79da8…6898) so the fix round cannot move them. D-CFSMALL-ELEV (#356 6547986860) re-posed its bottom to sh.elev
+  // 45 (from 49.7): only normalSvg and mistakeSvg moved, re-pinned here; the other 7 keep their 29a48852 values.
   const INCLINE: Record<string, string> = {
-    "normalSvg": "00ff74944dd335c888fc88b34077255682b6dcd1df27bfb078b909d03856c7fe",
+    "normalSvg": "a7b87dc51d930cd510621bb0eea196eb3add57b1230541841beddaaf83d68744",
     "normalOverlay": "13d1db3ca056f6eab233ed2c18d963f4b9bd78644e3e44fe36bed14c5882a119",
-    "mistakeSvg": "1b13fa265869760391a4ca0bb3c348f6e831148375969fef383d60500523b34e",
+    "mistakeSvg": "7082167ddcc605a940a914104048b68465de44eb76319cb9932cdbfe491a9d4f",
     "mistakeOverlay": "e19269d70221aa6d38a7273e284ffefeebfdf2f01dea5b24c635a4be8fcaf2bb",
     "tells": "10f9f12eb9cdca0b90e773b09d43a32d110991bb27e659cbf6b35c26299a5f57",
     "tempo": "abc6725e7c67daeed47a9e1c42e1389b60e70d2562ea62f9f8888447c2878ef7",

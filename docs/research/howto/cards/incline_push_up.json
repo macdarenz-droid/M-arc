@@ -726,6 +726,22 @@
    "pose": "end",
    "cardPose": "start",
    "claim": "c1"
+  },
+  {
+   "kind": "angle",
+   "joint": "sh.l.elev",
+   "pose": "start",
+   "cardPose": "end",
+   "deg": 45,
+   "claim": "c4"
+  },
+  {
+   "kind": "angle",
+   "joint": "sh.r.elev",
+   "pose": "start",
+   "cardPose": "end",
+   "deg": 45,
+   "claim": "c4"
   }
  ],
  "tempo": [

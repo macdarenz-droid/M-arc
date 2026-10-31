@@ -836,6 +836,16 @@
     "value": "sternum",
     "unit": "landmark",
     "basis": "convention: push_up's trace point (push_up.mjs trace.point), the chest's path to the bench (c3)"
+   },
+   "BOTTOM_ELEV": {
+    "value": 45,
+    "unit": "deg",
+    "basis": "claim: c4 'Keep your elbows at approximately 45 degrees from your body' (NASM): the upper arm's elevation from the trunk at the bottom (sh.elev, PANELS.md 7), D-CFSMALL-ELEV (#356 6547986860)"
+   },
+   "ELBOW_BACK": {
+    "value": "solved",
+    "unit": "",
+    "basis": "the bottom elbow aim [1, 0, -ELBOW_BACK] (0.6536), solved by bisection on [0.3, 1.0] so the engine's sh.elev is BOTTOM_ELEV at the bottom"
    }
   },
   "diamond_push_up": {
