@@ -307,7 +307,7 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 
 | id | ruling | route |
 |---|---|---|
-| cable_crunch | D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
+| ~~cable_crunch~~ released at resume 3 (LIB-21R3, §24; on LIB-SPINE's spine segments): D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
 | ~~superman~~ released at resume 2 (#337, D-LIB21-SUPERMAN): D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
 | pallof_press | D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
 | russian_twist | D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
@@ -395,7 +395,7 @@ Every row the build-ahead PR (#312) held, with its blocker and that blocker's st
 | bicycle_crunch | D-LIB21-BICYCLE (#326 6409862229) | F-ENGINE-PITCHDEPTH and LIB-SPINE | no | held; no spec |
 | superman | D-LIB21-SIZE (S2) | LIB-ZOOM (#279), extended (D-LIB21-SUPERMANZOOM); a zoom-scale trim rule | LIB-ZOOM yes; F-ZOOM-2 no | released at resume 2 (section 23): trim [0, 0], normal zoom k 2.5 |
 | pallof_press | D-LIB21-PALLOFHOLD (S2, S4) | another stated tell or a sourced arch size | F-PALLOF-ARCH no | held (#326 6405804435 item 3); section 20 is the design record |
-| cable_crunch | D-LIB21-CCHOLD | LIB-SPINE (F-SPINE-1) | no | held |
+| cable_crunch | D-LIB21-CCHOLD | LIB-SPINE (F-SPINE-1) | no | held; released at resume 3 (§24) |
 
 - side_plank: D-LIB21-SECS ruled `30–60` (#326 6405118542), c9's own string ("If you can, aim to hold the side plank
   for 30 to 60 seconds per side."), so it is not NOSECS.
@@ -471,7 +471,7 @@ Measured with main's `zoom/inline.mjs` `zoomOf` and `qa/zoom.mjs` `clippedTrace`
 | superman | F-ZOOM-TRIM; ruled D-LIB21-SUPERMAN (lib4-cards §46) | LIB-ZOOM, F-ZOOM-INK yes; no trim rule needed | build: spec trim [0, 0], one normal-view zoom (source ring on the whole ankle.r Trace, k on the ladder), the `low` box moved under D-LIB18-ZOOMPLACE |
 | russian_twist | F-RTWIST-TELL (D-LIB21-RTWIST-TELL, #326 6409808767) | LIB-20, LIB-ZOOM yes | design both options in a scratch run (a Mistake zoom on the red knee; a turned pelvis that clears the knee), pick the one that passes every check with no new rule, then its card fields (Do 7b) |
 | bicycle_crunch | D-LIB21-BICYCLE | F-ENGINE-PITCHDEPTH + LIB-SPINE: no | held |
-| cable_crunch | D-LIB21-CCHOLD | LIB-SPINE: no | held |
+| cable_crunch | D-LIB21-CCHOLD | LIB-SPINE: no | held; released at resume 3 (§24) |
 | pallof_press | D-LIB21-PALLOFHOLD | F-RESEARCH-2 (F-PALLOF-ARCH): running | held |
 
 Results (scratch, then built; main `c7bdad7a`):
@@ -555,11 +555,16 @@ card-truth limit for R1.
 **Tests (wave 1, each with its red mutation):** A3 the array trunk in every pose and the Mistake (a number trunk in the
 Mistake throws D-SPINE-MIX), SPLIT = the sizes rows (spec-only edit red in A17); A4 the 30 % window (SPLIT [0, 1, 0, 0]
 69 % red); A5 the end card-true (TRUNK_END 70.7° red); A6 the box and the flags ({200, 246} 4.78 px red); A7 the cable
-and the ferrule ≥ 2 px from every body outline in every drawn pose. Measured (scratch test): start 15.80 px (the
+and the ferrule ≥ 2 px from every body outline in every drawn pose. Measured: start 15.80 px (the
 card's number), vias 16.42-18.18, end 16.32, **Mistake 11.76 px** (its dashed cable guide and the rope's ferrule; the
 card's 15.80 counted no Mistake cable). The card's designed mutation (the ferrule 13 px onto the head) leaves 7.44 px
 and 20 px leaves 4.75 px, so the mutation centres the ferrule on the ear landmark with the cable's end: 0.00 px, red.
+The ruled edge mutation moves the ferrule and the cable's end 12.84 px along the ferrule's nearest-outline direction
+(the start): gap 1.31 px (at the Mistake), red at the 2 px bar's edge.
 All seven new tests pass on the scratch head and each mutation is red (A4 69.4 %; A5 20.55 cm and Trace 17.89 px).
+
+**Ruled** ('LIB-21 R3 PLAN RULED', #361 6548167828): §24 as proposed. D-LB9R3-SPLITROWS accepted. A7: the ear mutation
+replaces the card's 13 px one, and an edge mutation (gap 1.0-1.9 px) is added. The Mistake's 11.76 px stands.
 
 **Risks:** the blend-zone counter-turns (37.8° in total, about 1.3 px a step) are the engine's SPINE_HW blend; a critic
 finding goes to the supervisor as S2, never a lane edit. R1 may still fail on magnitude (102°, named). The Trace
@@ -568,7 +573,10 @@ shortens 58.3 → 33.6 px, still 11.5 px over the bar.
 ## 25. F-BICYCLE-REACH (D-SPINE-BICYCLE; no spec, nothing drawn)
 
 Measured in scratch on `bf4b8d4d` (throwaway scripts in the builder's scratchpad, never committed). bicycle_crunch stays
-held (D-LB9R3-BICYCLE) until the supervisor rules what c5's "nears" means and a new card follows.
+held (D-LB9R3-BICYCLE). **Ruled D-SPINE-BICYCLE-NEARS** (#361 6548167828): no number for "nears" now; route E. Research
+asks (a) a sourced trunk axial rotation range with the pelvis still and (b) the hands-behind-head arm position during the
+twist; a later lane re-runs this grid under those caps (option C under a sourced yaw, only if the front view's screen gap
+is ≥ 0 px). F-SPINE-REACHXCHK records the unreproduced lib-spine-card.md:115 numbers, used as a basis for nothing.
 
 **Card** (docs/research/howto/cards/bicycle_crunch.json; `plate.view` "front", :534):
 - c1: "Lie face up with your lower back on the ground." "Bend your knees at a 90-degree angle, slightly above your

@@ -38,6 +38,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_cable_crunch": {
+   "src": "library/specs/cable_crunch.mjs",
+   "slug": "cable-crunch",
+   "prefix": "cable-crunch",
+   "chromeId": "cable-crunch",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }
