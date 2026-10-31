@@ -937,7 +937,7 @@ describe('LIB-15R2 A3, A4: the zoom rows', { timeout: T }, () => {
   });
 });
 
-describe('LIB-15R2 A2: the 4 approved LB5 plates do not move', { timeout: T }, () => {
+describe('LIB-15R2 A2: the 4 approved LB5 plates and the 3 approved zoom rows (mx8, 29ca5ce5) do not move', { timeout: T }, () => {
   // A2: the 4 approved LB5 plates' 9 fragment sha256 on page 921cb1d5 (main a72b52b5), 36 equalities
   const APPROVED_FRAGS: Record<string, Record<string, string>> = {
     'preacher-curl': {
@@ -983,6 +983,40 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates do not move', { timeout: T }, (
       cues: 'fb997e4a7b910f3ac5ae478ee153bd1b54f670e04ff349d58d3660818c88e9cd',
       alt: 'd06474b2d54ab103d1491de27c3d1ac022f4b895351571cd8705990fb1b1ef87',
       mistakeAlt: '7f8791a9c5992375c9b0143c6aab8eafed47547287cb8a3479bde52df254f95d'
+    },
+    // LIB-15R2 wave 1, APPROVED by panel mx8 at 29ca5ce5 (page e8a5236d4cba72a91a3dc99f3b0e34ea8a8c812545a1e6185cf34d1719483043)
+    'dumbbell-overhead-triceps-extension': {
+      normalSvg: 'aaa4a21044e5f6da578a4ad3721c19e1327c6cf4b4789683170d6d429b855838',
+      normalOverlay: '7e6866805c0a8435321715979fd92584b8285834f416e60eb125e70c7023f8c8',
+      mistakeSvg: '0109f6b1d8c3bdc87232bcfd040a27d7033e8fe31c9d6be93df0a176ad77f4c1',
+      mistakeOverlay: '1dbcff201458b650dd3e272101176fd2ed0322a28c0041150d7c717e178162da',
+      tells: 'f54952f77e3a16cf7b46700de9555151b0c02cf5250e4b872ae6fea4f54f5cd9',
+      tempo: 'dddad8d714b29d378423e6eb0693413e83f20772a2de9912c4f7870f59dab928',
+      cues: '409b12c2b15b8f2ef81d1db2b335ce3b842c65f8916e64bad295f61bdd096a29',
+      alt: '884a56a0a6ccda91b5994267d6fbca95a4332ca4b9c00205941858b26a8108f1',
+      mistakeAlt: 'fdfe9527be13af9721760bfc9299ca60e093e132356abcd3381168800463eca0'
+    },
+    'cross-body-hammer-curl': {
+      normalSvg: 'e9069c14f985afec228af963a1ded8a185de2abb27af91640ae60866a8827542',
+      normalOverlay: '512e7dee8dbfadd02c28c0132d9a89f5b9c8cb588e17332f4d8c615b8883594a',
+      mistakeSvg: '6e87968c617c4c6771f671080e80201d428dd1a44eb594c1ebdc934608e61685',
+      mistakeOverlay: 'c946d1b1504c3a43453c7288e31e005c08c306c6f0fce3da163256c71dd00c50',
+      tells: '1baa27129c58a73264a0b47e2777f505ccd5f70fe91076ae9345b22a97580227',
+      tempo: 'ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3',
+      cues: '5f6eb027f4dbfa4a075a048afb2b75a829a9baa6dc93bdae906a68e7990712f0',
+      alt: 'fe90f6133c93e0353074af741c2c8676db617c16f35efa18cec13ff1c655ab54',
+      mistakeAlt: '29d08724988ebf854bd30392d28668f63230bd0e1b1a929fd8244853c2686b6a'
+    },
+    'wrist-curl': {
+      normalSvg: '5374b1b2377ac1d01d71e06c6f82e42cc94102dc49a179bdd06aba39036a3516',
+      normalOverlay: '96c12f5da1af961a00350549d96ed179a507ae73d900c294ed26b553a960ac93',
+      mistakeSvg: 'e669918207a1d63c2d807afe782d7fc36ef477c754680fe39c221e1996f2b1a8',
+      mistakeOverlay: '3cf0a364b4d4fccec56d3e58c6089a190e3fd7792208d0053d284ff4e9aebb75',
+      tells: '900471d3941942cbfc18a5d035a9088492e1319d31605895728e869a28dfa3dc',
+      tempo: 'a692026584d07c1cb5fdf5b9ca7092085a453f5c28767acac890cddb7cad1424',
+      cues: '72247370ccd2edf407912c0e2c72a306c279143aa71c00f92c8b8a55ba730787',
+      alt: '72e1cccad2cca490e43113c4e84b7bb132fdecba23b4cda8262d0feb2d5f3970',
+      mistakeAlt: 'b095c218eb661c2be5bea019bb13d03272bc67eb37ac38c8fe75652922314da6'
     }
   };
   it('each of the 4 approved plates\' 9 fragments on today\'s LB5 page equals its value on page 921cb1d5; mutation: one byte in preacher_curl\'s alt is red', async () => {
@@ -990,7 +1024,7 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates do not move', { timeout: T }, (
     const plates = extractPlates((await buildLb5Page()).html.toString('utf8'));
     const diff = (ps: any[]) => Object.entries(APPROVED_FRAGS).flatMap(([cid, want]) => { const p = ps.find((x: any) => x.chromeId === cid), got: any = p ? fragmentsOf(p) : {};
       return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${cid}.${k}`); });
-    expect(Object.values(APPROVED_FRAGS).flatMap(Object.keys)).toHaveLength(36);
+    expect(Object.values(APPROVED_FRAGS).flatMap(Object.keys)).toHaveLength(63);
     expect(diff(plates)).toEqual([]);
     const bent = plates.map((p: any) => (p.chromeId === 'preacher-curl' ? { ...p, alt: `${p.alt}x` } : p));
     expect(diff(bent)).toEqual(['preacher-curl.alt']);
