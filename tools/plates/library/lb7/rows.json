@@ -1,5 +1,5 @@
 {
- "note": "LB7 H build-ahead rows (LIB-17, D-LIB17-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5): cable_rear_delt_fly and renegade_row stay off (DESIGN.md sections 14 and 17: no zoom yet); resistance_band_pull_apart and bench_dip joined at 'LIB-17 resume' with their LIB-ZOOM circles (D-LIBZOOM-EXTEND); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
+ "note": "LB7 H build-ahead rows (LIB-17, D-LIB17-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5): cable_rear_delt_fly stays off (D-LIB17-RDFHOLD, DESIGN.md section 14); resistance_band_pull_apart and bench_dip joined at 'LIB-17 resume' and renegade_row at 'LIB-17 resume 2', each with its LIB-ZOOM circle (D-LIBZOOM-EXTEND, D-LIB17-ZOOMPAIR); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
  "batch": "LB7",
  "censusRef": "4a9fd86",
  "rows": {
@@ -47,6 +47,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "front"
+  },
+  "lib_renegade_row": {
+   "src": "library/specs/renegade_row.mjs",
+   "slug": "renegade-row",
+   "prefix": "renegade-row",
+   "chromeId": "renegade-row",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   },
   "lib_weighted_dip": {
    "src": "library/specs/weighted_dip.mjs",
