@@ -5,7 +5,7 @@
 //   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb7/build.mjs --shots [theme] [lib_id ...]
 //     screenshots each drawn card (theme default paper, 390 px wide, normal and Mistake) into a temp directory
 //   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb7/build.mjs --held [theme] [lib_id ...]
-//     the held renders (Do 5): the ids held under D-LIB14-NOSECS (D-LIB17-SECS) or D-LIB17-SIZE, as rows added in
+//     the held renders (Do 5): the ids in HELD (DESIGN.md sections 14 and 17), as rows added in
 //     memory only, on a separate page in a temp directory (build-page.mjs draws no tempo strip for a spec with none),
 //     screenshotted at 390 px. That page is never passed to candidateOf, runQa or the critic, and is never evidence.
 import { createHash } from 'node:crypto';
@@ -64,9 +64,9 @@ export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mis
   return out;
 }
 
-/** The ids drawn but held off rows.json (DESIGN.md held table): D-LIB17-SECS's two no-seconds ids, then any held
- *  under D-LIB17-SIZE or -ER. Each with its census view. */
-export const HELD = { cable_rear_delt_fly: 'front', renegade_row: 'side', resistance_band_pull_apart: 'front', bench_dip: 'side' };
+/** The ids drawn but held off rows.json (DESIGN.md held table, sections 14 and 17): after 'LIB-17 resume', the two
+ *  ids whose fault no LIB-ZOOM circle can show yet. Each with its census view. */
+export const HELD = { cable_rear_delt_fly: 'front', renegade_row: 'side' };
 const slugOf = id => id.replace(/_/g, '-');
 /** The held rows, in memory only (never written to rows.json or any file under the repo), for the held ids whose spec exists. */
 export function heldData(root = ROOT, only = null) {

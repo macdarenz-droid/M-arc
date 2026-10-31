@@ -192,9 +192,9 @@
     "basis": "claim: c3 'slam the medicine ball straight down between your feet': the hands on the ball (NOTE RULED 6)"
    },
    "VIA_N": {
-    "value": 5,
+    "value": 23,
     "unit": "count",
-    "basis": "claim: c3 ACE 'Explosively bring the ball down over your head to throw it directly downwards into the floor': five via keys on one arc about the shoulder, so the hands' path follows the arc in front (the middle one is the ghost; D-LIB22-CYCLE)"
+    "basis": "claim: c3 ACE 'Explosively bring the ball down over your head to throw it directly downwards into the floor': via keys on one arc about the shoulder, so the hands' path follows the arc in front; 23 keys (24 equal steps, the middle key at t 0.5 is the ghost, the same pose as with 5) so the Trace is one smooth curve (#331 panel mx2 item 6; D-LIB22-CYCLE)"
    },
    "BALL_KG": {
     "value": 4.5,
@@ -510,8 +510,8 @@
    },
    "COIL_TURNS": {
     "value": 3,
-    "unit": "turns",
-    "basis": "stated reason: plate.equipment 'a short coil': a short pile, three turns high"
+    "unit": "loops",
+    "basis": "stated reason: plate.equipment 'a short coil': three loops on the floor (#331 panel mx2 item 3, '2-3 overlapping flattened rope loops')"
    },
    "ROPE_T": {
     "value": 0.028,
@@ -532,6 +532,21 @@
     "value": -12,
     "unit": "deg",
     "basis": "convention: hanging_leg_raise.mjs:69 (the 8's approved arch) for c8 'let your lower back take the load'"
+   },
+   "LOOP_H": {
+    "value": 0.044,
+    "unit": "m",
+    "basis": "stated reason: #331 panel mx2 item 3, flattened loops about 10-12 px high in the 780 px images (about 0.04-0.048 m at 126 px/m): a loop lying on the floor seen from a low side view"
+   },
+   "LOOP_DZ": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason: #331 panel mx2 item 3, 'overlapping' loops: each loop COIL_TURNS apart by under a fifth of COIL_D, so they overlap in the same place"
+   },
+   "TAIL_SAG": {
+    "value": 0.04,
+    "unit": "m",
+    "basis": "stated reason: #331 panel mx2 item 3, the slack tail 'hangs ... in a soft curve': a visible bow (about 5 px) on its about 0.3 m fall"
    },
    "STEP": {
     "value": "solved",
@@ -556,7 +571,7 @@
    "M_Z": {
     "value": "solved",
     "unit": "m",
-    "basis": "the Mistake's root z: the upper fist on ROPE_RUN from the end's hitch (the sled does not move in the Mistake)"
+    "basis": "the Mistake's root z: the near shoulder REACH (the end's elbow bend) from the end's upper fist, which stays put with the rope and the sled (#331 panel mx2 item 1)"
    },
    "M_Y": {
     "value": "solved",

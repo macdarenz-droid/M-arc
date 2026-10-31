@@ -135,8 +135,9 @@ export default {
       { kind: 'arrow', from: { at: 'shoulder.l', pose: 'end', off: [0, -14] }, to: { at: 'shoulder.l', pose: 'mistake', off: [0, -14] } },
     ],
     tells: [
-      { key: 'shrug', text: 'Shoulders<br>shrug up', anchor: { at: 'shoulder.l', pose: 'mistake', off: [0, -8] }, box: { left: 250, top: 24 }, cue: 'The shoulders shrug upward as the band pulls apart.' },
+      { key: 'shrug', text: 'Shoulders<br>shrug up', anchor: { at: 'shoulder.l', pose: 'mistake', off: [0, -8] }, box: { left: 250, top: 62 }, cue: 'The shoulders shrug upward as the band pulls apart.' },
     ],
   },
+  zoom: { view: 'mistake', k: 2 },
   alt: 'Resistance band pull-apart, front view. Standing tall with soft knees, a band held in both hands at shoulder height, the arms open from straight ahead out to the sides, elbows slightly bent, until the band is near the chest and the shoulders stay down.',
 };

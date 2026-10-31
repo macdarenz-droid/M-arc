@@ -1,0 +1,169 @@
+{
+  "id": "step_up",
+  "checked": "2026-09-30",
+  "fetcher": "source-fetcher (sonnet)",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "cat-stepup",
+      "status": "verbatim",
+      "text": "Place one foot on a box or bench with the other on the floor.",
+      "closest": null
+    },
+    {
+      "claim": "c1",
+      "source": "cat-stepup",
+      "status": "verbatim",
+      "text": "Using the raised leg with minimal assistance from the other foot or momentum from leaning the body forward, push through the whole foot to lift yourself up to a standing position on the box.",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "cat-stepup",
+      "status": "verbatim",
+      "text": "To maximize effectiveness, control the motion back down as much as possible instead of just dropping.",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "cat-stepup",
+      "status": "verbatim",
+      "text": "the foot closer and knee farther forward will emphasize the quads more; the foot farther forward and shin vertical will emphasize the glutes and hamstrings.",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "cat-stepup",
+      "status": "verbatim",
+      "text": "is unique in leg exercises by starting with the concentric motion.",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-stepup",
+      "status": "verbatim",
+      "text": "Stand with your feet parallel about hip width apart while holding dumbbells in your hands with palms facing inwards.",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "ace-stepup",
+      "status": "verbatim",
+      "text": "Slowly step to place your right foot on a platform, placing your foot firmly on the deck while keeping your torso upright and aligning your knee over your second toe.",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "ace-stepup",
+      "status": "verbatim",
+      "text": "During this transition, your torso and your right tibia (shinbone) will move slightly forward past vertical, but try to avoid excessive forward movement.",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "ace-stepup",
+      "status": "verbatim",
+      "text": "step backwards to place the trailing (left) foot on the floor in its starting position. Allow your body to lean slightly forward during the step-down movement.",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "ace-stepup",
+      "status": "verbatim",
+      "text": "Avoid movement of your foot and ankle (collapsing in or out), and always attempt to keep your knee aligned over your second toe.",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "ace-stepup",
+      "status": "verbatim",
+      "text": "Push off with the trailing (left) leg to raise your body onto the platform placing that foot alongside your leading (right) foot.",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "simenz-2012",
+      "status": "verbatim",
+      "text": "the step-up elicited greatest eccentric activation for the GMe and greatest activation for the GMx, BF, and ST in both concentric and eccentric phases.",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "simenz-2012",
+      "status": "verbatim",
+      "text": "The loaded step-up exercise allows strength and conditioning practitioners to incorporate a unilateral resistance for athletes while performing extension at the hip, knee, and plantar flexion at the ankle.",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "hatfield-2017",
+      "status": "verbatim",
+      "text": "Step-up was least demanding on the hip and would be a good starting task for hip strengthening protocols.",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "cat-stepup",
+      "status": "verbatim",
+      "text": "As a strength exercise with heavier loading, reps from 3-6 can be used; for an accessory or rehab exercise with limited or no weight, reps from 8-15 can be used.",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "cat-stepup",
+      "status": "verbatim",
+      "text": "legs can be repeated or alternated",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "cat-stepup",
+      "status": "verbatim",
+      "text": "The step-up can be loaded in a number of ways: barbell on the back, clean rack or Zercher position, one or two dumbbells or kettlebells on the shoulder(s) or hanging in the arm(s)",
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "Get advice from 111 now if:",
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "your knee is very painful",
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "nhs-knee",
+      "status": "verbatim",
+      "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+      "closest": null
+    }
+  ],
+  "sources": [
+    {
+      "id": "cat-stepup",
+      "access": "full"
+    },
+    {
+      "id": "ace-stepup",
+      "access": "full"
+    },
+    {
+      "id": "simenz-2012",
+      "access": "abstract"
+    },
+    {
+      "id": "hatfield-2017",
+      "access": "abstract"
+    },
+    {
+      "id": "nhs-knee",
+      "access": "full"
+    }
+  ]
+}

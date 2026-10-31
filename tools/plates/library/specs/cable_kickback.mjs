@@ -215,6 +215,9 @@ export default {
     { key: 'leg', text: 'Leg<br>long', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5 }, box: { left: 24, top: 200 }, cue: 'Keep the working leg long, with only a slight bend at the knee.' },
   ],
   tempo: [{ phase: 'Kick back', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
+  // LIB-ZOOM's inline zoom circle (D-LIBZOOM-EXTEND, #325 6405116791): the Mistake's fault drawn again at k 3, the smallest of
+  // 1.5-4 whose tell-anchor move reaches deviationMin 11.39 px at the zoom's own scale (12.8 px); zoom/inline.mjs places it.
+  zoom: { view: 'mistake', k: 3 },
   mistake: {
     pose: mistakePose,
     parts: ['leg.r', 'cuff'],
@@ -223,7 +226,7 @@ export default {
       { kind: 'dashed', pts: ARCH_PTS, smooth: true },
     ],
     tells: [
-      { key: 'arch', text: 'Lower back<br>arches', anchor: 'sacrum', cue: 'Your lower back arches as the leg kicks back.' },
+      { key: 'arch', text: 'Lower back<br>arches', anchor: 'sacrum', box: { left: 60, top: 160 }, cue: 'Your lower back arches as the leg kicks back.' },
     ],
   },
   alt: 'Cable kickback, side view. Hinged forward about 45 degrees and holding the cable column, with the ankle cuff on the right ankle, the lifter drives the long right leg back and up from just behind the standing leg, back flat and hips level.',

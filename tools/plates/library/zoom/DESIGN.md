@@ -166,3 +166,17 @@ Card `docs/supervisor/verify/f-zoom-2-card.md`, ruling D-LIB17-ZOOMPAIR (#332 64
   - cable_rear_delt_fly: no place for an r 52 circle at any k in 1.5-4; the first place is at r 30, and no
     readability bar exists for a circle under r 52. It stays held.
 - **Tests:** `tests/howto/f-zoom-2.test.ts` (A1-A8).
+
+## F-ZOOM-PITCH
+
+- **Why:** LIB-20's `camera.pitch` (front view) lifts screen-up to `y cos p − z sin p` (vendor plate.mjs:43-45). The
+  QA's `cameraOf` (qa/engine.mjs) projected unpitched, and the circle's camera replaced `spec.camera` whole, so on a
+  pitched plate the ring sat off the drawn tell and the circle rendered level.
+- **Built (D-ZOOM-PITCH):** `cameraOf` reads the pitch from the spec (the report's camera, plate.mjs:313, has none) and
+  applies the engine's projection; at pitch 0, or in a side view, it is the old formula. The circle's camera carries the
+  plate's pitch and overrides `pxPerM`, `x0`, `y0`. It does not copy `fit` or `maxScale`: a fit camera re-derives
+  `pxPerM` (plate.mjs:97-107) and would drop the k × scale.
+- **Effect:** no unpitched plate moves (every page, QA report and approved zoom equal before and after). The pitched
+  dumbbell_fly (LIB-8R, pitch 45) reads 4.97 px on its `wrists` tell (was 6.57); its smallest ladder k that meets the
+  bar is 2.5 (12.42 px), ring centre (52.88, 178.14).
+- **Tests:** `tests/howto/f-zoom-pitch.test.ts` (A1 projection, A2 circle on a pitched plate).

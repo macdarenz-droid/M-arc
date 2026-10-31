@@ -560,5 +560,17 @@
       "claim": "c2"
     }
   ],
+  "tempo": [
+    {
+      "phase": "Open",
+      "move": true,
+      "word": "Slow"
+    },
+    {
+      "phase": "Return",
+      "move": true,
+      "word": "Slow"
+    }
+  ],
   "topFault": "swing"
 }

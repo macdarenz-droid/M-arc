@@ -2734,6 +2734,12 @@ Card: `docs/supervisor/verify/lib-8-merge-card.md` (claude/sup-lib4-cards @ 1e85
   - Every other box stays at 30, and golden B's and c7's limits are unchanged.
 - **D-LIB5-RISKSTEST.** `tests/howto/sections-risks.test.ts` (HT-9's) gains exactly two lines, the `RED_FLAG_BACK` import and `back: RED_FLAG_BACK` in its typed FLAG map, because `RiskJoint` now has `'back'`. Every assertion stays. Without the entry, typecheck is red.
 
+## LIB-14: LB4 plates, build-ahead (LIB-14 builder, 2026-10-22)
+
+- **D-LIB14-MODES applied: all six drawn LB4 ids are H, no D row.** front_squat, goblet_squat and bodyweight_squat each need a tempo the parent barbell_back_squat does not carry (their cards give no seconds) and their own Mistake, so they cannot be the parent with only PARAMS paths set. Record: tools/plates/library/lb4/DESIGN.md section 1.
+- **D-LIB14-NOSECS applied.** Only wall_sit has quoted seconds (w6, "30-60-second holds": one Hold row, the quote's ASCII hyphen). The other five are drawn and tested but held off the rows file, the plates page, QA and the critic until the owner's strip design lands; no seconds are invented. Record: DESIGN.md sections 8 and 13.
+- **step_up pose map (proposed, DESIGN.md section 9 Q2).** The trunk lurch happens as the rise starts (c1), so the plate is proposed to draw standing-on-the-box first and the step position as the spec's end, the pose the Mistake is drawn against.
+
 ## LIB-16: LB6 H plates, build-ahead (LIB-16 builder, 2026-10-22)
 
 - **D-LIB16-B1 (modes): all three LB6 H ids are H, no D row** (plan 6.2 :715, :745-747). Each needs a pose, equipment and tempo its census closest does not have. Record: tools/plates/library/lb6/DESIGN.md section 1.
@@ -2906,8 +2912,26 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   - MANIFEST.json rows come from manifestOf (C0 []). A8c: runQa on candidateOf(id) (the default path, pinned exemptions) is ok on all 4, with no unused exemption.
   - D-LIB11-SCRATCHIDS (a) and D-LIB11-SCRATCHA: scratch-e is now lib_sled_push (was lib_smith_machine_bench_press) and scratch-a is now lib_jumping_jacks (was lib_barbell_row, pinned by pilot A). Both are LB10 ids with the same sources, keys and COPY_EDITS. setProblems refuses pilot A's 13 and pilot B's 5 ids.
   - The two LIB-4c tree-state tests (library-manifest.test.ts C0 and library-ci.test.ts's pinned-page list) now name exactly pilot A plus pilot B.
+- **D-LIB17-B11 ('LIB-17 resume', LIB-STRIP #309 and LIB-ZOOM #279 on main).** cable_rear_delt_fly and renegade_row get their untimed strip tempo (tempoOf their strip/rows.json rows: Open Slow, Return Slow; Row blank, Lower Controlled) on card and spec, and leave the held-pairing fixture. resistance_band_pull_apart (Mistake zoom k 2) and bench_dip (normal zoom k 3) join rows.json under D-LIBZOOM-EXTEND; their F3 leaders are shortened by label-box moves only. Still held: cable_rear_delt_fly (no place for a circle at any k) and renegade_row (a still sign the zoom's tell measure cannot express: ruled D-LIB17-ZOOMPAIR, fix card F-ZOOM-2, #332 6409786985; it rolls). cable_rear_delt_fly's ruling is asked on #332 (lb7/DESIGN.md section 17).
+- **D-LIB17-B12 (bench_dip panel mx1 R4 fix, #332 6414222882).** The "Below parallel" leader ends on the dashed Mistake upper arm near the shoulder (anchor at t 0.8 from the elbow), with the label kept in place as ruled; this lengthens the leader to 108.5 px, so F3 is raised and posted for a ruling.
+- **D-LIB17-BDIPBOX (#332).** bench_dip's "Below parallel" box moves to (176, 160) so its leader (70.8 px) falls inside F3's range, ending on the dashed fault upper arm; F3 is not named, and D-LIB17-B12's F3 note is superseded.
 - **D-LIB17-ZOOMPAIR, built (F-ZOOM-2; ruling #332 6409786985; card docs/supervisor/verify/f-zoom-2-card.md).** A Mistake zoom entry may carry an opt-in `pair: [flat, turned]`: one drawn vertex in the end pose and in the Mistake pose, for a fault that turns about a fixed tell anchor (renegade_row's hex turns 30° about its tell corner, so the anchor reads 0 px).
   - `faultOf` measures the pair only when it is present; every page and approved plate is byte-identical (zoom `a0ef8eab…`, LB1-LB10, pilots A and B), and only zoom/inline.mjs's MANIFEST hash is re-pinned (`[golden update]`, C0 `[]`).
   - The pair must be two distinct points on a Mistake entry, both drawn vertices, with `turned` the tell's own Mistake anchor (D-LIB18-RINGKEEP), inside the source ring, and under the bar at plate scale. The bars, k range and circle are unchanged.
   - renegade_row reads 5.640 px at plate scale, 16.92 px at k 3. Its `zoom` field, H4 and H8 rows stay LIB-17's.
   - Not built, proposed: D-FZOOM2-TRIM (the zoom's screen-px trim is kept; superman stays held for LB9's own ruling) and D-FZOOM2-RDF (no rule-keeping r 52 circle for cable_rear_delt_fly; it stays held).
+- **D-ZOOM-PITCH, built (F-ZOOM-PITCH; card docs/supervisor/verify/f-zoom-pitch-card.md; diagnosis #340 6534849228).** The zoom circle and every QA projection (`cameraOf`) use the plate's own camera, `camera.pitch` included.
+  - A plate with no pitch is unchanged, byte for byte. A pitched plate's measures are now the drawn ones, so its zoom k may change; its lane re-measures and never enlarges a fault.
+  - The circle keeps the pitch but not `fit`/`maxScale`, which would replace its k × scale.
+  - dumbbell_fly (pitch 45): `wrists` deviation 4.97 px (was 6.57), smallest ladder k 2.5. russian_twist (held, pitch 20, no zoom) is the one main spec with a pitch.
+- **D-LIB17-RDFHOLD and D-LIB17-SPLIT (#332 6410506295, 6486667474).** cable_rear_delt_fly stays held on H3 (no place for a zoom circle; F-ZOOM-2 item c). PR #332 carries only its approved rows (resistance_band_pull_apart, bench_dip); renegade_row and its owed rows (H4.overlap feet, H8.words) go to LIB-17 resume 2 on F-ZOOM-2's zoom.pair. D-FZOOM2-A3SYNC: f-zoom-2.test.ts A3 pins renegade_row's remaining key, H8.words, as this branch leaves it.
+
+## LIB-14 resume: LB4 release and panels (LIB-14 builder, 2026-10-31)
+
+- **D-LIB14-NOSECS released by LIB-STRIP (#309).** front_squat, goblet_squat, bodyweight_squat and pistol_squat take the strip's word tempo, tempoOf(strip/rows.json); bodyweight_squat uses fallbackA (both phases blank). No seconds are added. Record: tools/plates/library/lb4/DESIGN.md section 8.
+- **step_up stays held (D-LIB14-STEPUP).** reverse_lunge, its split anchor, is not redrawn or pinned. Its card keeps plateFacts with no tempo, so it is listed in tests/howto/fixtures/held-pairing.json (confirmed #289 6406605229). The step_up pose map was ruled as proposed (D-LIB14-STEPUP-POSE).
+- **D-LIB14-F2: F2 named on front_squat (0.141) and goblet_squat (0.174).** Both are upright squats with narrower figure boxes than the back squat's, and front_squat is drawn at 128 px/m. No figure is padded. Record: DESIGN.md section 6.
+- **Panel fixes (lb4p, mx1, mx4).** All five released plates are approved. Two fixes depart from the critics' literal ask because of hard checks:
+  - pistol_squat gets no heel zoom (H3.zoom:not-needed: its knee tell already passes H3);
+  - the red arrows sit beside the elbow's path and behind the heel, to clear A15's 6 px.
+  Record: DESIGN.md sections 11b and 11c.

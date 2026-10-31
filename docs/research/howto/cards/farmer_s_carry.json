@@ -990,5 +990,12 @@
    "claim": "c3"
   }
  ],
+ "tempo": [
+  {
+   "phase": "Walk",
+   "move": true,
+   "word": "Controlled"
+  }
+ ],
  "topFault": "rush"
 }

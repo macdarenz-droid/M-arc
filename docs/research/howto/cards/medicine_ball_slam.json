@@ -885,5 +885,11 @@
       "claim": "c2"
     }
   ],
+  "tempo": [
+    {
+      "phase": "Slam",
+      "move": true
+    }
+  ],
   "topFault": "soft"
 }
