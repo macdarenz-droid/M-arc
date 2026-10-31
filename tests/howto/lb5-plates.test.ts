@@ -25,7 +25,10 @@ const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
 const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl'];
-const F2_IDS = ['concentration_curl', 'wrist_curl'];
+const F2_IDS = ['concentration_curl', 'wrist_curl', 'cross_body_hammer_curl'];   // + cross_body_hammer_curl: LIB-15R2 DESIGN.md 17.3 (proposed)
+// LIB-15R2 DESIGN.md 17.3 (proposed named flags on the zoom rows)
+const F3_IDS = ['dumbbell_overhead_triceps_extension', 'wrist_curl'];
+const F4_IDS = ['dumbbell_overhead_triceps_extension'];
 // Held ids (DESIGN.md section 13; D-LIB15R2-ZOOM): drawn as is, in no rows file and on no QA'd page. The other three
 // earlier holds are released with a zoom (section 17).
 const HELD = ['overhead_cable_triceps_extension'];
@@ -426,7 +429,8 @@ describe('LIB-15 A8: the drawable-fault ids (D-LIB15-F7)', { timeout: T }, () =>
     const qa = await import(/* @vite-ignore */ lib('lb5/qa.mjs'));
     for (const id of specced()) {
       expect(typeof S[id].pilot?.drawableFault === 'string', id).toBe(F7_IDS.includes(id));
-      expect(qa.EXPECTED(`lib_${id}`), id).toEqual(['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(F2_IDS.includes(id) ? ['F2'] : [])].sort());
+      expect(qa.EXPECTED(`lib_${id}`), id).toEqual(['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(F2_IDS.includes(id) ? ['F2'] : []),
+        ...(F3_IDS.includes(id) ? ['F3'] : []), ...(F4_IDS.includes(id) ? ['F4'] : [])].sort());
     }
   });
   it('D-LIB15-F2: F2 is expected on exactly concentration_curl and wrist_curl (#290 6345185694, 6340022161); mutation: F2 raised on an id without the ruling (cable_curl) is red', async () => {
@@ -435,6 +439,9 @@ describe('LIB-15 A8: the drawable-fault ids (D-LIB15-F7)', { timeout: T }, () =>
     const report = (id: string, raised: string[]) => ({ id, flags: Object.fromEntries(['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7'].map(f => [f, { raised: raised.includes(f), value: f === 'F5' ? 3.57 : 0 }])) });
     expect(qa.flagProblems([report('lib_concentration_curl', ['F2', 'F5'])])).toEqual([]);
     expect(qa.flagProblems([report('lib_cable_curl', ['F2', 'F5'])])).toEqual(['lib_cable_curl: flags F2,F5 != ruled F5']);
+    expect([qa.F3_IDS, qa.F4_IDS]).toEqual([F3_IDS, F4_IDS].map(l => l.map(i => `lib_${i}`)));
+    expect(qa.flagProblems([report('lib_dumbbell_overhead_triceps_extension', ['F3', 'F4', 'F5'])])).toEqual([]);
+    expect(qa.flagProblems([report('lib_dumbbell_overhead_triceps_extension', ['F3', 'F5'])])).toEqual(['lib_dumbbell_overhead_triceps_extension: flags F3,F5 != ruled F3,F4,F5']);
   });
 });
 
@@ -456,6 +463,12 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     for (const id of drawn()) expect(traceKinks(S[id]), id).toEqual([]);   // rows only: held cross_body_hammer_curl's Trace (10.8 deg) is redrawn when it resumes
     const s = S.concentration_curl, v = s.poses.via, six = [8, 16, 24, 32, 40].map(i => v[i - 1]);
     expect(traceKinks({ ...s, poses: { ...s.poses, via: six } })).toHaveLength(1);
+  });
+  it('LIB-15R2 A10: cross_body_hammer_curl and wrist_curl are re-keyed smooth; mutations: cross_body_hammer_curl back on 8 keys (10.8 deg) and wrist_curl back on 48 samples are red', () => {
+    for (const id of ['cross_body_hammer_curl', 'wrist_curl']) expect(traceKinks(S[id]), id).toEqual([]);
+    const c = S.cross_body_hammer_curl, v = c.poses.via, eight = [6, 12, 18, 24, 30, 36, 42].map(i => v[i - 1]);
+    expect(traceKinks({ ...c, poses: { ...c.poses, via: eight } })).toEqual([expect.stringMatching(/Trace turn 10\.8 deg/)]);
+    expect(traceKinks({ ...S.wrist_curl, trace: { ...S.wrist_curl.trace, samples: undefined } })).toHaveLength(1);
   });
   it('each ONE_TELL id has its D-LIB10-SKULL1 record in DESIGN.md section 9: fault, claim ids, "no second sign stated" (#290 6345185694)', () => {
     const sec = readFileSync('tools/plates/library/lb5/DESIGN.md', 'utf8').split('## 9.')[1]!.split('\n## ')[0]!;
@@ -808,5 +821,150 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
   it('D-LIB13-FACTS2 mutation: preacher_curl\'s end upper arm lifted 2 cm off the pad turns its end elbow contact red', () => {
     const s = S.preacher_curl, end = { ...s.poses.end, shoulder: { ...s.poses.end.shoulder, flex: s.poses.end.shoulder.flex + 3.5 } };
     expect(h6({ ...s, poses: { ...s.poses, end } }, research('preacher_curl'))).toEqual(['H6.fact:8:contact:elbow.r', 'H6.fact:9:contact:elbow.l']);
+  });
+});
+
+// ---- LIB-15R2 wave 1 (D-LIB15R2-ZOOM, -WRISTBOX; DESIGN.md 17.1-17.2): the three zoom rows ----
+describe('LIB-15R2 A3, A4: the zoom rows', { timeout: T }, () => {
+  const ZOOMED: Record<string, { view: string, k: number, value: number }> = {
+    dumbbell_overhead_triceps_extension: { view: 'mistake', k: 1.5, value: 15.85 },
+    cross_body_hammer_curl: { view: 'mistake', k: 2, value: 14.63 },
+    wrist_curl: { view: 'normal', k: 3, value: 34.97 },
+  };
+  const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], DEV = 11.39, TRACE = 22.11;
+  let Z: any, QZ: any;
+  beforeAll(async () => { [Z, QZ] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  /** The zoom's measure at k: the tell-anchor move (Mistake) or the Trace inside the circle (normal), in zoom px. */
+  const valueAt = (spec: any, view: string, k: number) => {
+    const z = Z.zoomOf({ ...spec, zoom: { view, k } });
+    return view === 'mistake' ? z.fault.d * k : QZ.clippedTrace(z.svg, z.circle);
+  };
+  const ringFits = (z: any) => z.src.c[0] - z.src.r >= 0 && z.src.c[1] - z.src.r >= 0 && z.src.c[0] + z.src.r <= 358 && z.src.c[1] + z.src.r <= 358;
+  const zoomProblems = (id: string, spec: any, plant = (svg: string) => svg) => {
+    const want = ZOOMED[id]!, out: string[] = [];
+    if (JSON.stringify(spec.zoom) !== JSON.stringify({ view: want.view, k: want.k })) out.push(`${id}: zoom ${JSON.stringify(spec.zoom)}`);
+    let z: any;
+    try { z = Z.zoomOf(spec); } catch (e: any) { return [...out, `${id}: ${e.message}`]; }
+    const v = valueAt(spec, spec.zoom.view, spec.zoom.k), bar = spec.zoom.view === 'mistake' ? DEV : TRACE;
+    if (Math.abs(v - want.value) > 0.01) out.push(`${id}: ${v.toFixed(2)} px != ${want.value}`);
+    if (!(v >= bar)) out.push(`${id}: ${v.toFixed(2)} px < ${bar}`);
+    if (!ringFits(z)) out.push(`${id}: the source ring leaves the frame`);
+    if (/<(text|foreignObject|tspan)\b|°/.test(plant(z.svg))) out.push(`${id}: text in the zoom`);
+    return out;
+  };
+  it('each zoom row carries the PLAN\'s region and k, its pinned value (±0.01) over the bar, its source ring inside the frame, no text', () => {
+    for (const id of Object.keys(ZOOMED)) expect(zoomProblems(id, S[id]), id).toEqual([]);
+  });
+  it('no smaller ladder k reaches the bar on the Mistake rows; on wrist_curl, k 2.5 reaches it but has no clean place (H1.ink:normal:arc, QA) and k 1.5, 2 do not', () => {
+    for (const id of ['dumbbell_overhead_triceps_extension', 'cross_body_hammer_curl'])
+      for (const k of LADDER.filter(k => k < ZOOMED[id]!.k)) expect(valueAt(S[id], 'mistake', k), `${id} k ${k}`).toBeLessThan(DEV);
+    for (const k of [1.5, 2]) expect(valueAt(S.wrist_curl, 'normal', k)).toBeLessThan(TRACE);
+  });
+  it('the plate is byte-identical outside the zoom: each view renders the same svg with and without the zoom field', () => {
+    for (const id of Object.keys(ZOOMED)) for (const mistake of [false, true])
+      expect(plate.renderPlate(S[id], { id: 'x', mistake }).svg, `${id} ${mistake}`).toBe(plate.renderPlate({ ...S[id], zoom: undefined }, { id: 'x', mistake }).svg);
+  });
+  it('mutations: cross_body_hammer_curl at k 1.5, wrist_curl at k 2, the dumbbell extension\'s zoom removed (H3.deviation 10.56), "15°" in a zoom and wrist_curl\'s box back at {254, 200} are red', () => {
+    expect(zoomProblems('cross_body_hammer_curl', { ...S.cross_body_hammer_curl, zoom: { view: 'mistake', k: 1.5 } })).toEqual([
+      'cross_body_hammer_curl: zoom {"view":"mistake","k":1.5}', expect.stringMatching(/^cross_body_hammer_curl: 10\.97 px != 14\.63$/), 'cross_body_hammer_curl: 10.97 px < 11.39']);
+    expect(zoomProblems('wrist_curl', { ...S.wrist_curl, zoom: { view: 'normal', k: 2 } })).toContain('wrist_curl: 20.20 px < 22.11');
+    expect(zoomProblems('dumbbell_overhead_triceps_extension', { ...S.dumbbell_overhead_triceps_extension, zoom: undefined }).length).toBeGreaterThan(0);
+    expect(zoomProblems('dumbbell_overhead_triceps_extension', S.dumbbell_overhead_triceps_extension, svg => svg.replace('</g>', '<text>15°</text></g>')))
+      .toEqual(['dumbbell_overhead_triceps_extension: text in the zoom']);
+    const back = { ...S.wrist_curl, callouts: S.wrist_curl.callouts.map((c: any) => (c.key === 'forearm' ? { ...c, box: { left: 254, top: 200 } } : c)) };
+    expect(() => Z.zoomOf(back)).toThrow(/no place on the normal plate/);
+  });
+  // A4: each zoom row's export without `zoom`, its ruled boxes and its re-keyed field equals its sha256 at 151de0b8
+  const RULED: Record<string, { boxes: string[], drop: string[], sha: string }> = {
+    dumbbell_overhead_triceps_extension: { boxes: [], drop: [], sha: '70e215671161f875e53da823646e0a599a2477ef9ce48dea9e42e91799eface0' },
+    cross_body_hammer_curl: { boxes: ['shoulders', 'ear'], drop: ['via'], sha: '8c2443f5d268ab4965bf44d0bd8135e8d0fbd31da1bc652be075c931e6a5cc04' },
+    wrist_curl: { boxes: ['forearm'], drop: ['samples'], sha: '2e2338f16f303debb7e3d1288f396828483a327fefab713c78c109304b364f77' },
+  };
+  const canon = (id: string, spec: any) => {
+    const r = RULED[id]!, s: any = { ...spec, zoom: undefined, poses: { ...spec.poses }, trace: { ...spec.trace } };
+    if (r.drop.includes('via')) delete s.poses.via;
+    if (r.drop.includes('samples')) delete s.trace.samples;
+    const nb = (c: any) => { if (!r.boxes.includes(c.key)) return c; const { box, ...x } = c; void box; return x; };
+    s.callouts = s.callouts.map(nb); s.mistake = { ...s.mistake, tells: s.mistake.tells.map(nb) };
+    return sha(JSON.stringify(s));
+  };
+  it('A4: only the ruled moves: each zoom row\'s export minus zoom, the ruled boxes and the re-keyed field equals its 151de0b8 sha256', () => {
+    for (const id of Object.keys(RULED)) expect(canon(id, S[id]), id).toBe(RULED[id]!.sha);
+  });
+  it('A4: each moved box\'s leader still ends on its named part (the anchor, ±1 px)', () => {
+    const camP = (spec: any) => camOf(spec);
+    for (const [id, keys] of [['wrist_curl', ['forearm']], ['cross_body_hammer_curl', ['shoulders']]] as const) {
+      const r = plate.renderPlate(S[id], { id: 'x' }), ends = [...r.svg.matchAll(/<path class="leader[^"]*" d="M(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
+      const L = qaEng.poseLandmarks(Eng(), S[id]).lm.end, P = camP(S[id]).P;
+      for (const k of keys) {
+        const c = S[id].callouts.find((x: any) => x.key === k), a = typeof c.anchor === 'string' ? c.anchor : c.anchor.at, off = c.anchor.off ?? [0, 0], q = P(L[a]);
+        expect(ends.some(e => Math.hypot(e[0]! - q[0]! - off[0], e[1]! - q[1]! - off[1]) <= 1), `${id} ${k}`).toBe(true);
+      }
+    }
+  });
+  it('A4 mutations: a second box moved and a pose value changed by 1 deg are red', () => {
+    const s = S.wrist_curl, moved = { ...s, callouts: s.callouts.map((c: any) => (c.key === 'palms' ? { ...c, box: { left: 270, top: 150 } } : c)) };
+    expect(canon('wrist_curl', moved)).not.toBe(RULED.wrist_curl!.sha);
+    expect(canon('wrist_curl', { ...s, poses: { ...s.poses, end: { ...s.poses.end, wrist: s.poses.end.wrist + 1 } } })).not.toBe(RULED.wrist_curl!.sha);
+  });
+});
+
+describe('LIB-15R2 A2: the 4 approved LB5 plates do not move', { timeout: T }, () => {
+  // A2: the 4 approved LB5 plates' 9 fragment sha256 on page 921cb1d5 (main a72b52b5), 36 equalities
+  const APPROVED_FRAGS: Record<string, Record<string, string>> = {
+    'preacher-curl': {
+      normalSvg: '620189f07eea7c50ebb2e867349a2ca1a0639fe5d836ba2393d13f3ddbbdc2fe',
+      normalOverlay: 'd902add040f2d05e3f4e42439872f61d9fc6346edae00180d06d75d6e6bef743',
+      mistakeSvg: 'f81922c3f42edd6a1ccd76865433a5849f38f76a3e50a0cf37c9dd8f57cf055c',
+      mistakeOverlay: '0834ebbb6c1c70a193e71acf77facbf987d2b65819181c5d510f8d61579beb25',
+      tells: '987e47c2bd8be14009602feb04b76fbd576d197c14ae5419008850d5e82fc892',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: '02c81cfcc095ed1460b08dcbe6320971881f549b7f8ebd62f95df0e0bb807667',
+      alt: 'bbbc4cfbd1fe48fa06fcc7548dac21fe547e35a321f9d16911223004c0f34cbf',
+      mistakeAlt: 'beb1eff4e8d2d51ac40fbbc8568522c442ec2270297c697ec0bc8da429c8737a'
+    },
+    'cable-curl': {
+      normalSvg: '6b9f1d4a3e28c34124fff69c9e2995205fed21c40fda3b2cfa792c79f21754e2',
+      normalOverlay: '5bdf60a30bfadea64e1b4f1b3e01c8418ed585ef3904814fcf9efdc022c53f0d',
+      mistakeSvg: 'b479dcca4aa4d74f37dec4170f92c0495e0f66a37e26f32ad0da4a72e2a66420',
+      mistakeOverlay: 'dca9ffb85af31565b5c48a4d7efb0c4dbadc0c947837bf960c579ac509a2cf02',
+      tells: '5ca2dca05a483d50450554fda1874c76ad12597445482884932e1c0a9a5e023c',
+      tempo: '73dd8f8f94901608bf64b800d986bfb05e0019ffdec860438d9058b37cbd7634',
+      cues: '9e5bcb0a7b89a6fab5ee22e2eae925159f18e31e6421245760cf5dbd0a78d761',
+      alt: '471270d65cdec303b31fa126c20a0e521961174b58c1495e5fc11cb55f1c9963',
+      mistakeAlt: '37772e1fc5273a70c86482d6aca38cd019cd21ffcf690f5f5b48bdbf3f4e48bc'
+    },
+    'bayesian-cable-curl': {
+      normalSvg: '0b88777b6b7e7b1393630f16f3e0dde44520c4fd224be13ae309935c058f9b7b',
+      normalOverlay: 'cd62cecbdf2d3748286585dcf09afe4adfd8a38950cc21be3b9ca24dac2ce42d',
+      mistakeSvg: '86707fc1501da15ccabf5afb7dc4128bd34dbb5e8d247a04b8220d4018d56940',
+      mistakeOverlay: 'df26cd83e17c00e96d7a46168f09f0a0d8db7f7007cf1b74c942115deb5e8b30',
+      tells: '049e70c9576dbd8bf121c231342e360bb44562a4fd34b26eedff595bb2ee7ebe',
+      tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
+      cues: 'af41815b56c9d5d42a77f724f9ca6500662a9bb32adcbf4879dd2048ff6851fa',
+      alt: 'e48ce076340174754c8ac7892b763ddda0ada59de08ff368153d8f0a526d31ed',
+      mistakeAlt: '8327f4b7bf45d8350d96ab63fd3ff6d85d91486d25848896fcf96413c2583dbe'
+    },
+    'concentration-curl': {
+      normalSvg: '1f36dfba1fbb50eb18c94bab72120ba6a6ee9c0bc20fa64f900b8778c5d54ec8',
+      normalOverlay: 'd96d6d50970499f645e6aa98c65f91078ff0dc9fd8e78e60efbbf271dcc24f77',
+      mistakeSvg: '3156f23aeacb31616af65b63ab735550ab112635a7a266f501f1a9359dd9d452',
+      mistakeOverlay: '56b5827782cccc28d4d42031666a3425e13403d52ca4a86abe01cd8d7f6c8091',
+      tells: '8c800d010d31652700efda78a1fd45c0298c96048d2db8ceb06667ead410202f',
+      tempo: 'ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3',
+      cues: 'fb997e4a7b910f3ac5ae478ee153bd1b54f670e04ff349d58d3660818c88e9cd',
+      alt: 'd06474b2d54ab103d1491de27c3d1ac022f4b895351571cd8705990fb1b1ef87',
+      mistakeAlt: '7f8791a9c5992375c9b0143c6aab8eafed47547287cb8a3479bde52df254f95d'
+    }
+  };
+  it('each of the 4 approved plates\' 9 fragments on today\'s LB5 page equals its value on page 921cb1d5; mutation: one byte in preacher_curl\'s alt is red', async () => {
+    const [{ buildLb5Page }, { extractPlates, fragmentsOf }] = await Promise.all([import(/* @vite-ignore */ lib('lb5/build.mjs')), import(/* @vite-ignore */ new URL('../../tools/plates/golden.mjs', import.meta.url).href)]);
+    const plates = extractPlates((await buildLb5Page()).html.toString('utf8'));
+    const diff = (ps: any[]) => Object.entries(APPROVED_FRAGS).flatMap(([cid, want]) => { const p = ps.find((x: any) => x.chromeId === cid), got: any = p ? fragmentsOf(p) : {};
+      return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${cid}.${k}`); });
+    expect(Object.values(APPROVED_FRAGS).flatMap(Object.keys)).toHaveLength(36);
+    expect(diff(plates)).toEqual([]);
+    const bent = plates.map((p: any) => (p.chromeId === 'preacher-curl' ? { ...p, alt: `${p.alt}x` } : p));
+    expect(diff(bent)).toEqual(['preacher-curl.alt']);
   });
 });

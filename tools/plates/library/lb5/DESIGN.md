@@ -454,7 +454,7 @@ measures (`1f024b1f`, `151de0b8`), except where 17.2's re-key changes the wrist_
 | id | region (view) | k | value at k (bar) | circle; source ring | smaller k |
 |---|---|---|---|---|---|
 | dumbbell_overhead_triceps_extension | the `arch` tell, end → Mistake (Mistake) | 1.5 | 15.85 px (11.39) | (260, 192); (167.16, 191.76) r 34.67 | none on the ladder |
-| cross_body_hammer_curl | the `shrug` tell (Mistake) | 2 | 14.63 px (11.39) | CBH_CIRCLE | k 1.5: 10.97 px < 11.39 |
+| cross_body_hammer_curl | the `shrug` tell (Mistake) | 2 | 14.63 px (11.39) | (76, 172); (145.85, 124.67) r 26 | k 1.5: 10.97 px < 11.39 |
 | wrist_curl | the grip's path (normal) | 3 | 34.97 px (22.11) | (178, 140); (288.75, 251.62) r 17.33 | k 2.5: 25.26 px* meets the bar, but its ring (r 20.8) lies under the measure-arc label (H1.ink:normal:arc, the card's measure); k 1.5 11.65*, k 2 20.20* |
 
 \* with the wrist_curl Trace at 20 samples (17.2); the card's 48-sample ladder was 12.63 / 20.06 / 28.32 / 34.97.
@@ -464,7 +464,14 @@ overhead_cable_triceps_extension stays held (section 13).
 
 - wrist_curl: the normal-view "Forearm supported" box {254, 200} → {112, 200} (D-LIB15R2-WRISTBOX). Its leader still
   ends on its anchor (`elbow.r` +6 px), the forearm.
-- cross_body_hammer_curl: CBH_BOXES
+- cross_body_hammer_curl (the card's owed fixes, one box per view): the normal "Shoulders down" callout boxed at
+  {204, 66} (was auto-placed overlapping "Arc across": H4.overlap normal arc|shoulders) and the Mistake "Shoulder near
+  ear" tell boxed at {84, 58} (was overlapping "Shoulder shrugs": H4.overlap mistake shrug|ear; the auto layout then
+  moves "Shoulder shrugs" off the source ring: H1.ink:mistake:shrug clears). Found by a scan of every 8 px box place
+  per key (engine report clean, hit boxes apart, longest leader at most 82.26, the zoom placed with every label clear
+  of its ring and circle): 85 places for `shoulders`, 1 for `ear`, 4 for `shrug`; {84, 58} keeps the circle at (76,
+  172) and the 14.63 px. Leaders still end on their anchors (shoulderTop.l, trap.r). Authoring QA at this head: all 10
+  hard checks pass, node and browser; flags F2 0.164, F5 3.57, F7 shrug.
 - Trace re-keys (lb5-plates.test.ts Trace test, #290 6349640307 R7: no turn over 6° or 2.5× the median):
   - cross_body_hammer_curl: SEG 8 → 48 key poses on the same arc (concentration_curl's fix). The turns at the 7 key
     joins (9.2-10.8°) were the chords between 8 keys; now max 2.19°, median 1.67°. start and end are unchanged (the
@@ -485,7 +492,7 @@ Flags inform the owner and never gate (D-LIB8FIX-ENV); each named one goes on th
 | dumbbell_overhead_triceps_extension | F3 47.3 (49.33-82.26) | name | the longest leader is short because every label sits close to its part; lengthening a leader to reach the range would be layout for a flag |
 | dumbbell_overhead_triceps_extension | F4 0 (2-6) | name | the engine's own layout passes every hard check; hand-boxing labels at their auto places changes nothing drawn |
 | cross_body_hammer_curl | F2 0.164 (0.191-) | name | front view of a standing figure with two dumbbells (concentration_curl's D-LIB15-F2 form) |
-| cross_body_hammer_curl | F4 | CBH_F4 |  |
+| cross_body_hammer_curl | F4 | not raised | the two boxes above give 2 hand-boxed labels (range 2-6) |
 | wrist_curl | F3 94.8 (49.33-82.26) | name | a Mistake tell's leader (the lean, to the upper back); moving it would be a second box move (S2 names it for the zoom; kept out here too) |
 | wrist_curl | F2, F5, F7 | as ruled | D-LIB15-F2, D-LIB9-F5, D-LIB15-F7 |
 

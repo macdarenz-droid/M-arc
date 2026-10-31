@@ -2935,3 +2935,8 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   - pistol_squat gets no heel zoom (H3.zoom:not-needed: its knee tell already passes H3);
   - the red arrows sit beside the elbow's path and behind the heel, to clear A15's 6 px.
   Record: DESIGN.md sections 11b and 11c.
+
+## LIB-15 resume 2: LB5 zoom rows, T and H rows (LIB-15R2 builder, 2026-10-31)
+
+- **D-LIB15R2-ZOOM: three held LB5 plates released with a zoom circle.** dumbbell_overhead_triceps_extension (Mistake, k 1.5, 15.85 px on the arching back), cross_body_hammer_curl (Mistake, k 2, 14.63 px on the shrugging shoulder) and wrist_curl (normal, k 3, 34.97 px of grip path). No fault, pose or check moved: wrist_curl's "Forearm supported" label moved to make room (D-LIB15R2-WRISTBOX), and cross_body_hammer_curl gained one placed label per view to clear two label overlaps. overhead_cable_triceps_extension stays held: no circle fits anywhere. Record: tools/plates/library/lb5/DESIGN.md section 17.
+- **Trace re-keys.** cross_body_hammer_curl's curl path is drawn from 48 key poses instead of 8, and wrist_curl's short path from 20 samples instead of 48, so neither Trace shows a kink. Start and end poses are unchanged.

@@ -65,9 +65,10 @@ export const mistakeShots = opts => cardShots({ ...opts, mode: 'mistake' });
 
 /** The owner-visible notes per id on the LB5 sheet (DESIGN.md sections 6, 11, 13; rulings named). */
 export const SHEET_NOTES = {
-  lib_cross_body_hammer_curl: ['F7: drawable fault. The top fault, the arm fully straight at the bottom (c15), is a small elbow bend toward the camera that the front view cannot show; the plate draws the next fault, the working shoulder shrugging (c5, c6; F-LB5-1) (needs your named yes)'],
+  lib_cross_body_hammer_curl: ['F7: drawable fault. The top fault, the arm fully straight at the bottom (c15), is a small elbow bend toward the camera that the front view cannot show; the plate draws the next fault, the working shoulder shrugging (c5, c6; F-LB5-1) (needs your named yes)', 'zoom: the Mistake circle at 2x on the shrugging shoulder (D-LIB15R2-ZOOM)', 'F2: cover 0.164, under the approved 0.191 (front view, standing; named)'],
   lib_incline_dumbbell_curl: ['F7: drawable fault. The top fault, the wrists bending (c11), cannot be seen from the side; the plate draws the elbows drifting forward (needs your named yes)'],
-  lib_wrist_curl: ['F7: drawable fault. The top fault, the weight rolling to the fingertips (c5), needs open fingers, which the plate figure does not draw; the plate draws the lean and the arm straightening (needs your named yes)'],
+  lib_wrist_curl: ['F7: drawable fault. The top fault, the weight rolling to the fingertips (c5), needs open fingers, which the plate figure does not draw; the plate draws the lean and the arm straightening (needs your named yes)', 'zoom: the circle at 3x on the wrist and grip path; the "Forearm supported" label moved to make room (D-LIB15R2-ZOOM, -WRISTBOX)', 'F3: longest leader 94.8 px, over the approved 82.26 (named)'],
+  lib_dumbbell_overhead_triceps_extension: ['zoom: the Mistake circle at 1.5x on the arching back (D-LIB15R2-ZOOM)', 'F3: longest leader 47.3 px, under the approved 49.33-82.26 (named)', 'F4: no hand-placed labels, under the approved 2-6 (named)'],
   lib_preacher_curl: ['new rig: the preacherPad composer (D-LIB15-PREACHER; preacherPad anchor)', 'plate size: its own drawn value (0.23 m), not skull_crusher\'s'],
 };
 const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
