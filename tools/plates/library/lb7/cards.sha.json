@@ -22,5 +22,19 @@
   "renegade_row": "f6194d61df38f4d79efb1468b1f3077751829ec38e205e23d1b43af1948850d0",
   "weighted_dip": "88ba7cb4577f2bfef94efb27e311b84da945b974581a1ba4be0b5ae5e8751118",
   "bench_dip": "94fac184642b1f97edd36be44c57c182219ddc617ea9a0d33f0f50bd7e504cd1"
+ },
+ "resume3": {
+  "note": "LIB-17 resume 3 (D-LIB17R3-*): the 3 PUSHUP cards and quotes, byte copies from this research head (the same blobs as at the LB7 research head 8d750bfe); the card hash is of the same canonical form as above (the three machine keys removed).",
+  "researchHead": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
+  "cards": {
+   "incline_push_up": "6032635c25d8ce89933952dfb48266c1775202fe0165ee4f45fbfd1ccfd7b49a",
+   "diamond_push_up": "e9126c29241e2a9f76ed338b82a550620896bf974fbab35fe982c0aee0103787",
+   "pike_push_up": "c372697651ff201af281b95f632bad66882397f1b91a19d8658d9ef712140a21"
+  },
+  "quotes": {
+   "incline_push_up": "ac1d33d2485d59b05a5da408f89411a6d8493b6cde1cd767db2470da6005aa08",
+   "diamond_push_up": "a5cfec22476d3fac482624247022ccf40118c0e29abcad4f29567509dd6e7645",
+   "pike_push_up": "4a5bd9b7d84d0e9398d7eb13902f013345426f267436884ebb5403602f7facbd"
+  }
  }
 }

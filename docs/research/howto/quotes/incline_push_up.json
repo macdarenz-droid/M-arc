@@ -1,0 +1,319 @@
+{
+ "id": "incline_push_up",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "bb-incline",
+   "text": "Find a sturdy platform, bench, or box at your desired incline. Place both hands on top of the incline shoulder-width apart and walk your feet back until your body is at a 45-degree angle with the floor. This is the starting position.",
+   "status": "verbatim",
+   "closest": "Find a sturdy platform, bench, or box at your desired incline. Place both hands on top of the incline shoulder-width apart and walk your feet back until your body is at a 45-degree angle with the floor. This is the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nasm-incline",
+   "text": "Place your hands on an elevated surface such as a bench or wall, positioned slightly wider than shoulder-width apart. Position your feet away from the bench to create an incline angle.",
+   "status": "verbatim",
+   "closest": "Place your hands on an elevated surface such as a bench or wall, positioned slightly wider than shoulder-width apart. Position your feet away from the bench to create an incline angle.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-incline",
+   "text": "Assume the starting position, with hands slightly wider than shoulder width apart.",
+   "status": "verbatim",
+   "closest": "Assume the starting position, with hands slightly wider than shoulder width apart.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "nasm-incline",
+   "text": "Engage your core and create a straight line from your head to heels. Keep your shoulders back and down and maintain a neutral spine.",
+   "status": "verbatim",
+   "closest": "Engage your core and create a straight line from your head to heels. Keep your shoulders back and down and maintain a neutral spine.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-incline",
+   "text": "Try to form a straight line from head to feet, and brace your abdomen slightly.",
+   "status": "verbatim",
+   "closest": "Try to form a straight line from head to feet, and brace your abdomen slightly.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-incline",
+   "text": "Keeping your back straight — your shoulders in line with your hips — slowly lower your body towards the box until your chest is an inch away from the box.",
+   "status": "verbatim",
+   "closest": "Keeping your back straight — your shoulders in line with your hips — slowly lower your body towards the box until your chest is an inch away from the box.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "nasm-incline",
+   "text": "Lower your body toward the bench by bending your elbows, descending until your chest nearly touches the bench.",
+   "status": "verbatim",
+   "closest": "Lower your body toward the bench by bending your elbows, descending until your chest nearly touches the bench.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-incline",
+   "text": "Reverse the motion when you’ve touched the elevation, and push yourself up to straight arms again while exhaling.",
+   "status": "verbatim",
+   "closest": "Reverse the motion when you've touched the elevation, and push yourself up to straight arms again while exhaling.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "nasm-incline",
+   "text": "Keep your elbows at approximately 45 degrees from your body.",
+   "status": "verbatim",
+   "closest": "Keep your elbows at approximately 45 degrees from your body.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-incline",
+   "text": "Aim to keep your elbows in line with your shoulders, although it’s okay for them to flare out slightly.",
+   "status": "verbatim",
+   "closest": "Aim to keep your elbows in line with your shoulders, although it's okay for them to flare out slightly.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-incline",
+   "text": "Keep your gaze straight ahead, as looking up may strain your neck.",
+   "status": "verbatim",
+   "closest": "Keep your gaze straight ahead, as looking up may strain your neck.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-incline",
+   "text": "Exhale as you straighten your arms, pushing your body back up towards the starting position. Don’t alter your foot or hand placement or round your back towards or away from the floor.",
+   "status": "verbatim",
+   "closest": "Exhale as you straighten your arms, pushing your body back up towards the starting position. Don't alter your foot or hand placement or round your back towards or away from the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-incline",
+   "text": "Keep your hips and shoulders in alignment as much as possible. To help with this, keep your core engaged while squeezing your glutes and quads.",
+   "status": "verbatim",
+   "closest": "Keep your hips and shoulders in alignment as much as possible. To help with this, keep your core engaged while squeezing your glutes and quads.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "nasm-incline",
+   "text": "Press your body upward by extending your elbows, returning to the starting position. Avoid locking out your elbows at the top to maintain continuous tension.",
+   "status": "verbatim",
+   "closest": "Press your body upward by extending your elbows, returning to the starting position. Avoid locking out your elbows at the top to maintain continuous tension.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-incline",
+   "text": "Exhale as you straighten your arms, pushing your body back up towards the starting position.",
+   "status": "verbatim",
+   "closest": "Exhale as you straighten your arms, pushing your body back up towards the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "sl-incline",
+   "text": "Lower yourself as deep as you can, while inhaling.",
+   "status": "verbatim",
+   "closest": "Lower yourself as deep as you can, while inhaling.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-incline",
+   "text": "Exhale as you straighten your arms",
+   "status": "verbatim",
+   "closest": "Exhale as you straighten your arms",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-incline",
+   "text": "Incline push-ups are best done slowly. Take at least three seconds to lower and three seconds to raise yourself.",
+   "status": "verbatim",
+   "closest": "Incline push-ups are best done slowly. Take at least three seconds to lower and three seconds to raise yourself.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-incline",
+   "text": "If your feet are too close to the box, then you’re going to be doing the incline push-ups while the scapula is elevated, which might expose you to a greater risk of shoulder impingement.",
+   "status": "verbatim",
+   "closest": "If your feet are too close to the box, then you're going to be doing the incline push-ups while the scapula is elevated, which might expose you to a greater risk of shoulder impingement.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-incline",
+   "text": "Moving your feet away so the shoulder blades are down will prevent you from doing the push-ups while in a shrugging position. Another cue you can use is keeping your shoulders down and away from your ears, even in the top position of the push-up.",
+   "status": "verbatim",
+   "closest": "Moving your feet away so the shoulder blades are down will prevent you from doing the push-ups while in a shrugging position. Another cue you can use is keeping your shoulders down and away from your ears, even in the top position of the push-up.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "nasm-incline",
+   "text": "Elbows flaring too wide, which increases shoulder stress",
+   "status": "verbatim",
+   "closest": "Elbows flaring too wide, which increases shoulder stress",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-incline",
+   "text": "If your lower back starts to drop toward the floor while your chest is still up (think: cobra pose), you’ve done more than enough reps.",
+   "status": "verbatim",
+   "closest": "If your lower back starts to drop toward the floor while your chest is still up (think: cobra pose), you've done more than enough reps.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-incline",
+   "text": "Just because your arms can still push you up and down, doesn’t mean you should continue.",
+   "status": "verbatim",
+   "closest": "Just because your arms can still push you up and down, doesn't mean you should continue.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-incline",
+   "text": "To avoid this, keep your core tight and focus on keeping your hips in line with your shoulders.",
+   "status": "verbatim",
+   "closest": "To avoid this, keep your core tight and focus on keeping your hips in line with your shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "nasm-incline",
+   "text": "Allowing hips to sag, which indicates core disengagement",
+   "status": "verbatim",
+   "closest": "Allowing hips to sag, which indicates core disengagement",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "nasm-incline",
+   "text": "Jerky movements or excessive momentum, which compromises form",
+   "status": "verbatim",
+   "closest": "Jerky movements or excessive momentum, which compromises form",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "nasm-incline",
+   "text": "Not achieving adequate range of motion due to elevated hand position",
+   "status": "verbatim",
+   "closest": "Not achieving adequate range of motion due to elevated hand position",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "nasm-incline",
+   "text": "Excessive forward lean, which shifts emphasis to shoulders and triceps",
+   "status": "verbatim",
+   "closest": "Excessive forward lean, which shifts emphasis to shoulders and triceps",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-incline",
+   "text": "Couches, sturdy work desks, aerobics step platforms, park benches, and anything that can support your weight is fair game.",
+   "status": "verbatim",
+   "closest": "Couches, sturdy work desks, aerobics step platforms, park benches, and anything that can support your weight is fair game.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-incline",
+   "text": "The higher the box or platform, the less of your body weight you’ll be pressing. The lower the incline (the more horizontal your body is), the more challenging this move will be.",
+   "status": "verbatim",
+   "closest": "The higher the box or platform, the less of your body weight you'll be pressing. The lower the incline (the more horizontal your body is), the more challenging this move will be.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "sl-incline",
+   "text": "This version of the push-up decreases the load since your hands are elevated to the sofa, chair, bench or whatever you are using.",
+   "status": "verbatim",
+   "closest": "This version of the push-up decreases the load since your hands are elevated to the sofa, chair, bench or whatever you are using.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "ebben-2011",
+   "text": "Push-ups with hands elevated and push-ups from the flexed knee position produced a lower GRF than all other push-up variations (p ≤ 0.05).",
+   "status": "verbatim",
+   "closest": "Push-ups with hands elevated and push-ups from the flexed knee position produced a lower GRF than all other push-up variations (p ≤ 0.05).",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "ebben-2011",
+   "text": "Twenty-three recreationally fit individuals (14 men, 9 women) performed each of the 6 push-up variations in a randomized order.",
+   "status": "verbatim",
+   "closest": "Twenty-three recreationally fit individuals (14 men, 9 women) performed each of the 6 push-up variations in a randomized order.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "nasm-incline",
+   "text": "Perform 3 sets of 8-15 repetitions, adjusting based on fitness level and bench height.",
+   "status": "verbatim",
+   "closest": "Perform 3 sets of 8-15 repetitions, adjusting based on fitness level and bench height.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "nasm-incline",
+   "text": "Progress to full push-ups when you can perform 12-15 incline push-ups with perfect form without excessive fatigue. Reduce bench height gradually to increase difficulty progressively.",
+   "status": "verbatim",
+   "closest": "Progress to full push-ups when you can perform 12-15 incline push-ups with perfect form without excessive fatigue. Reduce bench height gradually to increase difficulty progressively.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "nasm-incline",
+   "text": "Pectoralis Major – primary mover for horizontal adduction during push-up",
+   "status": "verbatim",
+   "closest": "Pectoralis Major – primary mover for horizontal adduction during push-up",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "bb-incline",
+   "text": "The primary movers during the incline push-up are the pectoralis major, triceps brachii, deltoids, and serratus anterior.",
+   "status": "verbatim",
+   "closest": "The primary movers during the incline push-up are the pectoralis major, triceps brachii, deltoids, and serratus anterior.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "sl-incline",
+   "text": "A hidden bonus with push-ups is that you also get some static training of your core, similar to that of the plank exercise.",
+   "status": "verbatim",
+   "closest": "A hidden bonus with push-ups is that you also get some static training of your core, similar to that of the plank exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "nasm-incline",
+   "text": "Anterior Deltoid",
+   "status": "verbatim",
+   "closest": "Anterior Deltoid",
+   "note": "Added in the LB7 fix round; curl re-fetch 2026-10-22."
+  }
+ ]
+}

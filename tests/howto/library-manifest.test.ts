@@ -35,9 +35,11 @@ describe('C0: L0-lib on this tree', { timeout: 300_000 }, () => {   // F-C0-TIME
   const PILOT_B = ['cable_fly', 'push_up', 'seated_leg_curl', 'smith_machine_bench_press'].map(id => `lib_${id}`);
   // LIB-8R Do 7 (D-LIB8R-PINLINES): PILOT-A2's pin adds exactly its 2 rows (dumbbell_fly and reverse_lunge are held)
   const PILOT_A2 = ['bent_over_dumbbell_rear_delt_fly', 'box_jump'].map(id => `lib_${id}`);
-  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4 and PILOT-A2\'s 2 here, and no problem', async () => {
+  // PILOT-A3 step 6 (D-A3-PINLINES): PILOT-A3's pin adds exactly its 2 rows
+  const PILOT_A3 = ['dumbbell_fly', 'reverse_lunge'].map(id => `lib_${id}`);
+  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2 and PILOT-A3\'s 2 here, and no problem', async () => {
     const file = JSON.parse(readFileSync(join(ROOT, MANIFEST), 'utf8'));
-    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2].sort());
+    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3].sort());
     expect(await manifestOf(ROOT)).toEqual(file);
     expect(await manifestProblems(ROOT)).toEqual([]);
   });
