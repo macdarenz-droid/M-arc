@@ -110,20 +110,20 @@ describe('PILOT-B2 A3: crunch on spine segments, the curl at T12 only (D-SUPCORE
     if (!(L.lm.end.backUpper[1] > 0)) out.push('backUpper on the floor at the end');
     return out;
   };
-  it('every key pose and the Mistake write { flex: [4] }; the end is [0, arch, END_CURL 25, 0]; outline +0.94 cm; lumbar, sacrum, buttock still; blades up', () => {
+  it('every key pose and the Mistake write { flex: [4] }; the end is [0, arch, END_CURL 25, 0]; outline +0.93 cm; lumbar, sacrum, buttock still; blades up', () => {
     expect(mod.END_CURL).toBe(25);
     expect(mod.SPLIT).toEqual([0, 0, 1, 0]);
     expect(a3(spec())).toEqual([]);
     const u = under(spec());
-    expect(+(u.end - u.start).toFixed(2)).toBe(0.94);
-    expect(+(posesOf(spec()).L.lm.end.backUpper[1] * 100).toFixed(2)).toBe(5.62);
+    expect(+(u.end - u.start).toFixed(2)).toBe(0.93);
+    expect(+(posesOf(spec()).L.lm.end.backUpper[1] * 100).toFixed(2)).toBe(5.82);
   });
   it('SPLIT equals pilot-b2/DESIGN.md section 2', () => {
     expect(readFileSync('tools/plates/library/pilot-b2/DESIGN.md', 'utf8')).toContain('`trunk: { flex: [L5/S1, L3, T12, T7] }` (D-SPINE-MIX). SPLIT = [0, 0, 1, 0]:');
   });
-  it('mutations: SPLIT [0, 1, 0, 0] (main\'s L3 pivot) lifts the outline 4.58 cm; a number trunk in the Mistake throws (D-SPINE-MIX)', async () => {
+  it('mutations: SPLIT [0, 1, 0, 0] (main\'s L3 pivot) lifts the outline 4.84 cm; a number trunk in the Mistake throws (D-SPINE-MIX)', async () => {
     const l3 = await variant(src => src.replace('export const SPLIT = Object.freeze([0, 0, 1, 0]);', 'export const SPLIT = Object.freeze([0, 1, 0, 0]);'));
-    expect(a3(l3)).toContain('outline under start backMid +4.58 cm');
+    expect(a3(l3)).toContain('outline under start backMid +4.84 cm');
     expect(() => a3({ ...spec(), mistake: { ...spec().mistake, pose: { ...spec().mistake.pose, trunk: 7 } } })).toThrow(/D-SPINE-MIX/);
   });
 });
@@ -146,10 +146,10 @@ describe('PILOT-B2 A4: the two zooms (D-LIBZOOM-EXTEND, D-LIB16-ZOOMVIEWS)', { t
     }
     return out;
   };
-  it('[normal k 3, Mistake k 2]: 23.24 px and 15.11 px inside the circles, rings inside the frame, no smaller ladder k passes', () => {
+  it('[normal k 3, Mistake k 2]: 23.25 px and 16.79 px inside the circles, rings inside the frame, no smaller ladder k passes', () => {
     expect(a4(spec())).toEqual([]);
-    expect(+rung(spec(), 'normal', 3).v.toFixed(2)).toBe(23.24);
-    expect(+rung(spec(), 'mistake', 2).v.toFixed(2)).toBe(15.11);
+    expect(+rung(spec(), 'normal', 3).v.toFixed(2)).toBe(23.25);
+    expect(+rung(spec(), 'mistake', 2).v.toFixed(2)).toBe(16.79);
   });
   it('no angle in either zoom (qa/zoom.mjs ANGLE); mutation: a planted "15°" matches', () => {
     for (const { view, k } of spec().zoom) expect(QZ.ANGLE.test(rung(spec(), view, k).svg), view).toBe(false);
@@ -158,10 +158,10 @@ describe('PILOT-B2 A4: the two zooms (D-LIBZOOM-EXTEND, D-LIB16-ZOOMVIEWS)', { t
   it('the plate is byte-identical outside the zoom (each view, with and without the field)', () => {
     for (const mistake of [false, true]) expect(plate.renderPlate(spec(), { id: 'x', mistake }).svg).toBe(plate.renderPlate({ ...spec(), zoom: undefined }, { id: 'x', mistake }).svg);
   });
-  it('mutations: normal k 2.5 is 17.61 px; Mistake k 1.5 is 11.34 px with its ring outside the frame', () => {
+  it('mutations: normal k 2.5 is 17.61 px; Mistake k 1.5 is 12.59 px with its ring outside the frame', () => {
     expect(+rung(spec(), 'normal', 2.5).v.toFixed(2)).toBe(17.61);
     const m = rung(spec(), 'mistake', 1.5);
-    expect([+m.v.toFixed(2), m.fits]).toEqual([11.34, false]);
+    expect([+m.v.toFixed(2), m.fits]).toEqual([12.59, false]);
     expect(a4({ ...spec(), zoom: [{ view: 'normal', k: 2.5 }, { view: 'mistake', k: 2 }] }).length).toBeGreaterThan(0);
   });
 });
@@ -203,27 +203,27 @@ describe('PILOT-B2 A6: 2 px clearance (D-SUPCORE-CLEAR)', { timeout: T }, () => 
   it('floor: every non-contact part >= 2 px above y 339 in every drawn pose; the quoted contacts within 1 px of it', () => {
     expect(floorProblems(spec())).toEqual([]);
   });
-  it('in depth: the forearms (+0.19 / +0.09 / +0.09 cm), the thighs (0.70) and forearm|thigh pairs all >= 0 cm', () => {
+  it('in depth: the forearms (+0.47 / +0.35 / +0.35 cm), the thighs (0.70) and forearm|thigh pairs all >= 0 cm', () => {
     const g = depthGaps(spec());
     for (const k of ['start', 'end', 'mistake']) for (const v of Object.values<number>(g[k]!)) expect(v, k).toBeGreaterThanOrEqual(0);
-    expect(['start', 'end', 'mistake'].map(k => +g[k]!.fore.toFixed(2))).toEqual([0.19, 0.09, 0.09]);
+    expect(['start', 'end', 'mistake'].map(k => +g[k]!.fore.toFixed(2))).toEqual([0.47, 0.35, 0.35]);
     expect(mod.NEAR_OFF).toBe(0.12);
   });
-  it('mutations: the near hand back at 0.035 m passes the forearms through each other (-7.21 cm); the start head not a named contact is red', async () => {
+  it('mutations: the near hand back at 0.035 m passes the forearms through each other (-6.46 cm); the start head not a named contact is red', async () => {
     const v = await variant(src => src.replace('export const NEAR_OFF = 0.12;', 'export const NEAR_OFF = 0.035;'));
-    expect(+depthGaps(v).end!.fore.toFixed(2)).toBe(-7.21);
-    expect(floorProblems(spec(), { ...CONTACTS, start: ['torso', 'foot.l', 'foot.r'] })).toEqual(['start head -0.16 px']);
+    expect(+depthGaps(v).end!.fore.toFixed(2)).toBe(-6.46);
+    expect(floorProblems(spec(), { ...CONTACTS, start: ['torso', 'foot.l', 'foot.r'] })).toEqual(['start head -0.54 px']);
   });
 });
 
 describe('PILOT-B2 A9 (node half), A2 (part): runQa, the expected flags, the page builds (awaited child processes)', { timeout: T }, () => {
-  it('runQa node: every hard check passes with zero exemptions; node flags F1 191.76 and F3 161.2 (named); zooms k 3 / k 2', async () => {
+  it('runQa node: every hard check passes with zero exemptions; node flags F1 191.76 and F3 142.9 (named); zooms k 3 / k 2', async () => {
     const r = await qaNode();
     expect(r.keys).toEqual([]);
     // the node-computed flags (F2 and F5 are the browser half's: pilot-b2/qa.mjs EXPECTED)
     expect(Object.keys(r.flags).filter(f => ['F1', 'F3', 'F4', 'F6', 'F7'].includes(f)).sort()).toEqual(['F1', 'F3']);
-    expect([+r.flags.F1.toFixed(2), +r.flags.F3.toFixed(1)]).toEqual([191.76, 161.2]);
-    expect([r.zoom.normal.k, +r.zoom.normal.trace.toFixed(2), r.zoom.mistake.k, +r.zoom.mistake.deviation.toFixed(2)]).toEqual([3, 23.24, 2, 15.11]);
+    expect([+r.flags.F1.toFixed(2), +r.flags.F3.toFixed(1)]).toEqual([191.76, 142.9]);
+    expect([r.zoom.normal.k, +r.zoom.normal.trace.toFixed(2), r.zoom.mistake.k, +r.zoom.mistake.deviation.toFixed(2)]).toEqual([3, 23.25, 2, 16.79]);
   });
   // H4.small ("Chin<br>set") is the browser half's: its mutation runs through pilot-b2/qa.mjs (listed in the PR)
   it('mutation: the Mistake zoom removed gives H3.deviation', async () => {
@@ -333,5 +333,59 @@ describe('PILOT-B2 A12: the moved assertions (D-SUPCORE-TESTHOME map)', () => {
   it('lib11-pilot-b.test.ts no longer carries the moved crunch markers', () => {
     const old = readFileSync('tests/howto/lib11-pilot-b.test.ts', 'utf8');
     expect(/the held crunch|held table|id: 'lib_crunch'|for \(const id of HELD\) expect\(sha/.test(old)).toBe(false);
+  });
+});
+
+describe('PILOT-B2 panel fix (mx24): the low back flat, the start full length, the heel distance, the lumbar labels', { timeout: T }, () => {
+  /** The drawn torso underside, cm above the floor line, at each plate x from the buttock's floor contact to 52 px (27 cm) headward. */
+  const underside = (s: any, pose: string) => {
+    const { L, q } = posesOf(s), cam = camOf(s), bx = cam.P(L.lm[pose].buttock)[0];
+    const pts = QZ.pathPoints(body.bodyShapes(sk(q[pose]), cam).find((x: any) => x.key === 'torso').d).filter(Boolean), out: number[] = [];
+    for (let x = bx - 55; x <= bx - 3; x += 2) { let b = -Infinity; for (let i = 0; i < pts.length; i++) { const a = pts[i], c = pts[(i + 1) % pts.length]; if ((a[0] - x) * (c[0] - x) > 0 || a[0] === c[0]) continue; b = Math.max(b, a[1] + (c[1] - a[1]) * (x - a[0]) / (c[0] - a[0])); } out.push((FLOOR_Y - b) / cam.pxm * 100); }
+    return out;
+  };
+  const flatProblems = (s: any) => ['start', 'end'].flatMap(k => { const u = underside(s, k), hi = Math.max(...u), lo = Math.min(...u); return hi > 1 || lo < -0.5 ? [`${k}: underside ${lo.toFixed(2)}..${hi.toFixed(2)} cm`] : []; });
+  it('fix 1: in the start and end the lower-trunk underside lies on the floor line (-0.5..1 cm) for 27 cm headward of the buttock', () => {
+    expect(mod.PELVIS_TUCK).toBe(15);
+    expect(flatProblems(spec())).toEqual([]);
+  });
+  it('fix 1 mutation: PELVIS_TUCK 0 (the supine solve\'s hollow) is red', async () => {
+    const v = await variant(src => src.replace('export const PELVIS_TUCK = 15;', 'export const PELVIS_TUCK = 0;'));
+    expect(flatProblems(v).length).toBe(2);
+  });
+  /** Bone lengths (plate px, 3D) of the start and the end: thigh, shank, upper arm, forearm, shoulder to crown. */
+  const bones = (s: any, pose: string) => { const { L } = posesOf(s), l = L.lm[pose], d = (a: string, b: string) => Math.hypot(...[0, 1, 2].map(i => l[a][i] - l[b][i])) * camOf(s).pxm;
+    return [d('hip.r', 'knee.r'), d('knee.r', 'ankle.r'), d('shoulder.r', 'elbow.r'), d('elbow.r', 'wrist.r'), d('shoulders', 'head')]; };
+  it('fix 2: the start and end bones are equal (±1 px); the start head is drawn, its crown farther from the hip than the end\'s', () => {
+    const a = bones(spec(), 'start'), b = bones(spec(), 'end');
+    a.forEach((v, i) => expect(Math.abs(v - b[i]!), String(i)).toBeLessThanOrEqual(1));
+    expect(spec().startParts).toContain('head');
+    const { L } = posesOf(spec()), cam = camOf(spec()), hip = cam.P(L.lm.end['hip.r']), crown = (k: string) => Math.hypot(...[0, 1].map(i => cam.P(L.lm[k].head)[i]! - hip[i]!));
+    expect(crown('start')).toBeGreaterThan(crown('end'));
+  });
+  it('fix 2 mutation: a start pose with a longer forearm is red', () => {
+    const a = bones(spec(), 'start'), b = bones(spec(), 'end'); a[3]! += 2;
+    expect(a.some((v, i) => Math.abs(v - b[i]!) > 1)).toBe(true);
+  });
+  /** The drawn back of each heel to the buttock's floor contact, cm along the floor (plate px / px per m). */
+  const heel = (s: any) => { const { L, q } = posesOf(s), cam = camOf(s), sh = body.bodyShapes(sk(q.start), cam), bx = cam.P(L.lm.start.buttock)[0];
+    return ['r', 'l'].map(sd => +((Math.min(...sh.find((x: any) => x.key === `foot.${sd}`).poly.map((p: number[]) => p[0])) - bx) / cam.pxm * 100).toFixed(2)); };
+  it('fix 3: the drawn back of the heel is 37.5 cm from the tailbone\'s floor contact (c1, 30-45 cm), both feet', () => {
+    expect(heel(spec())).toEqual([37.5, 37.5]);
+  });
+  it('fix 3 mutation: the heel set from the sacrum landmark (the held draft) is outside 30-45 cm', async () => {
+    const v = await variant(src => src.replace('const Z0 = lmL.buttock[2] + HEEL_FROM_TAIL, HEEL_Z = Z0 + (Z0 - heelBack({ ...LYING, plant: plant(Z0) }));', 'const HEEL_Z = lmL.sacrum[2] + HEEL_FROM_TAIL;'));
+    expect(heel(v).every(x => x < 30)).toBe(true);
+  });
+  it('fixes 4-6: LOW BACK DOWN ends on the floor under the lumbar; the I-bar and the tell sit at the lumbar; the PELVIS TIPS arrow points headward', () => {
+    const s = spec(), { L } = posesOf(s), z = L.lm.end.lumbar[2];
+    expect(s.callouts.find((c: any) => c.key === 'lowback').anchor).toEqual([0, 0, z]);
+    const bar = s.mistake.guides[0];
+    expect([bar.pts[0][2], bar.pts[1][2], bar.pts[0][1]]).toEqual([mod.LOWBACK.z, mod.LOWBACK.z, 0]);
+    expect(mod.LOWBACK.z).toBe(L.lm.mistake.lumbar[2]);
+    expect([mod.LOWBACK.startUnderCm, mod.LOWBACK.endUnderCm, mod.LOWBACK.mistakeUnderCm]).toEqual([0.6, 0.6, 4.9]);
+    expect(s.mistake.tells.find((x: any) => x.key === 'lowback').anchor).toEqual({ at: 'lumbar', pose: 'mistake' });
+    const arc = s.mistake.guides.find((g: any) => g.kind === 'arc-arrow');
+    expect([arc.a0, arc.a1]).toEqual([75, 115]);
   });
 });

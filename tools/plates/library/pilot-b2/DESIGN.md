@@ -179,3 +179,25 @@ measured main-pivot fallback (zooms k 2 / k 2: 28.59 / 15.11 px). The builder ne
 - Small normal-zoom margin (§3).
 - The lifted near hand (12 cm off the chest) may read as floating; the alt names the arms crossed over the chest.
 - A label move shifts a zoom place: the ladders are re-run after every box change (A4).
+
+## 13. Panel fix (mx24, #366 6553900073; D-LIB13-PANEL2's one fix round)
+
+Measured on the fix head; the page is built twice and the builds are equal. Every number in §2-§7 that differs is superseded here.
+
+| fix | what changed | measured |
+|---|---|---|
+| 1 (R1, R3) low back on the mat | `flatLying()`: from the supine solve, the pelvis tucks `PELVIS_TUCK` 15° (posterior tilt); L3 takes it back (solved 23.1°) so the blades rest on the floor; the root and neck are re-solved as in `supine()` (exported and unchanged). The lumbar outline follows; joints and bone lengths are unchanged | underside from the buttock to 27 cm headward: start and end −0.42..+0.89 cm (was up to 5.27 cm). PELVIS_TUCK 14 gives 1.16 cm; 15 is the smallest whole degree within 1 cm |
+| 2 (R1) start full length | `startParts` gains `head`: the start's crown is drawn (the dashed start was the torso only, so the critic read its neck as the crown). The engine draws the start and end with the same bones | bones start = end (±1 px, test); start crown farther from the hip than the end's |
+| 3 (R1) heel distance | measured from the tailbone's floor contact (the buttock landmark) to the drawn back of the heel: **24.8 cm** before (the spec measured sacrum landmark → heel landmark). Now the foot slides to 37.5 cm (thigh and shin lengths kept; the knee is a hinge) | 37.5 / 37.5 cm (r / l, test). Start knee 117° (not a fact, D-SUPCORE-KNEE) |
+| 4 (R4) LOW BACK DOWN | anchor `[0, 0, lumbar z]`: the floor under the lumbar | |
+| 5 (R5) Mistake marker | I-bar, tell anchor (`lumbar`) and source ring at the lumbar | ring (182.1, 330.35) r 26; the underside under the lumbar: 0.6 cm (start, end), 4.9 cm (Mistake) |
+| 6 (R5) PELVIS TIPS | arc a0 75 → a1 115: the head on the head side (forward tilt) | |
+
+Knock-on, re-measured:
+- ELBOW_POLE [1, −0.6, 0.7] → [1, −0.3, 0.7] (unsourced). The tucked pelvis and the longer heel distance put the far forearm 3.04 cm into the far thigh at the end. The new pole clears it: fore.l|thigh.l 5.18 / 1.98 / 5.57 cm; forearms +0.47 / +0.35 / +0.35 cm.
+- Zooms (same rungs): normal k 3 23.25 px (k 2.5 17.61); Mistake k 2 16.79 px (k 1.5 12.59, ring outside).
+- Blades lift 5.8 cm; outline under the start backMid +0.93 cm; lumbar, sacrum and buttock move 0.00 cm.
+- QA: all 10 hard checks pass. Flags are F1 191.76, **F3 142.9** (named; was 161.2) and F5 3.57.
+- Floor contacts: torso −0.66 px and the start head −0.54 px; non-contact parts ≥ 7.86 px.
+- Card fields: no fact moves. The buttock and backUpper start contacts and the soles still hold (H6 passes). The heel distance is a drawn-item test, not a fact.
+- Renders: evidence/fix-mx24-paper-{normal,mistake}.png.

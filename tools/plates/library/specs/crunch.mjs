@@ -15,10 +15,12 @@
 // Geometry decisions:
 //  - Supine class (copied, top 0): pelvis tilt -90, the trunk angle that puts backUpper and buttock on the floor together
 //    (a 3.6 deg lumbar arch: a neutral spine), the neck angle that puts the back of the skull on the floor, then the
-//    root height that puts all three on it. Checks prove the floor contacts (plane, tol 1 cm).
-//  - Feet (c1): flat, heels HEEL_FROM_TAIL (37.5 cm, the midpoint of "about 30-45 cm") footward of the tailbone, read as
-//    the engine's sacrum landmark (the body model has no coccyx point); one foot under each hip joint (hip-width); the
-//    plant IK bends the knees up (pole up).
+//    root height that puts all three on it. Checks prove the floor contacts (plane, tol 1 cm). LIB-SUPCORE panel fix
+//    (mx24 R1, R3; flatLying): the pelvis then tucks PELVIS_TUCK deg and L3 takes it back, so the lower-trunk underside
+//    lies on the mat (c3 "feet, tailbone and low back stay on the mat") instead of the neutral spine's 5 cm hollow.
+//  - Feet (c1): flat, the drawn back of each heel HEEL_FROM_TAIL (37.5 cm, the midpoint of "about 30-45 cm") footward of
+//    the tailbone's floor contact, read as the buttock landmark (the body model has no coccyx point; panel mx24 R1 measured
+//    it there); one foot under each hip joint (hip-width); the plant IK bends the knees up (pole up).
 //  - Arms (c2): crossed over the chest, each hand in front of the opposite shoulder (the reach IK, solved per pose
 //    against that pose's thorax), elbows out to the side. The far (left) hand rests HAND[1] off the chest; the near
 //    (right) forearm lies over the far one, its hand NEAR_OFF off the chest, so the two forearms never pass through each
@@ -44,17 +46,19 @@
 // Unsourced numbers (no card claim gives them; 13.3 must-fix 14): END_CURL 25 deg (how far the trunk curls: "just off
 //   the floor", c4, gives no number), HAND (where the crossed hands rest on the chest), NEAR_OFF 0.12 m (the near hand
 //   off the chest, the smallest whole cm that keeps the forearms apart; D-SUPCORE-CROSS), ELBOW_POLE, KNEE_POLE, FLOOR
-//   (the floor line's length), MIS_TILT 14 deg (how far the pelvis tips forward in the Mistake).
-import { landmarksOf, fk, resolve, normPose } from '../engine.mjs';
+//   (the floor line's length), MIS_TILT 14 deg (how far the pelvis tips forward in the Mistake), PELVIS_TUCK 15 deg (the
+//   smallest whole degree whose underside stays within 1 cm of the mat with the contacts within 0.5 cm of it).
+import { landmarksOf, fk, resolve, normPose, bodyShapes } from '../engine.mjs';
 
 const H = 1.75, BODY = { height: H };
-export const HEEL_FROM_TAIL = 0.375;                   // heel to tailbone along the floor (m): midpoint of 30-45 cm (c1)
+export const HEEL_FROM_TAIL = 0.375;                   // back of the heel to the tailbone's floor contact (the buttock), along the floor (m): midpoint of 30-45 cm (c1)
 const HIP_W = 0.0875;                                  // foot under each hip joint (m): HJCs 17.5 cm apart (hip-width, c1)
 export const END_CURL = 25;                            // end: trunk curl at the spine pivot (deg)
 const HAND = [0.10, 0.035, 0.775];                     // crossed hand on the chest: x toward the opposite side (m), off the chest surface (m), thorax height (H)
 export const NEAR_OFF = 0.12;                          // the near (right) hand off the chest surface (m), D-SUPCORE-CROSS
-const ELBOW_POLE = [1, -0.6, 0.7];                     // elbow aim (x outward per side): out to the side, toward the hips, resting low by the ribs
+const ELBOW_POLE = [1, -0.3, 0.7];                     // elbow aim (x outward per side): out to the side, a little toward the hips (-0.3: the far forearm clears the far thigh in the end, panel fix)
 const KNEE_POLE = [0, 1, 0.25];                        // knees up
+export const PELVIS_TUCK = 15;                         // the pelvis tucked (posterior tilt, deg) so the low back lies flat on the mat (c3; panel mx24 R1, R3)
 export const MIS_TILT = 14;                            // Mistake: pelvis tips forward (deg, anterior tilt)
 const OCCIPUT = [0, 0.955, -0.056];                    // back of the skull on the side head outline (head frame, H)
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
@@ -71,10 +75,27 @@ export function supine(top, z = 0, { tilt = -90, height = H } = {}) {
   return { root: { at: [0, top - pad, z], tilt }, trunk, neck };
 }
 
-const LYING = supine(0, 0);
+// LIB-SUPCORE panel fix (mx24 R1, R3): the low back laid flat on the mat. From the supine solve, the pelvis tucks
+// PELVIS_TUCK deg (posterior tilt) and L3 takes the tilt back so the blades rest on the floor; then the root height puts
+// the buttock on the floor and the neck rests the skull, as supine() does (same bisect, same brackets but L3's, which
+// opens to 60 deg for the tucked pelvis).
+export function flatLying(s, height = H) {
+  const tilt = s.root.tilt - PELVIS_TUCK, at0 = { root: { at: [0, 0, s.root.at[2]], tilt } }, b = { height };
+  const lm = p => landmarksOf(p, height), occ = p => fk(resolve(normPose(p, b), b).q, b).head(OCCIPUT);
+  const pad = lm(at0).buttock[1];
+  const trunk = bisect(t => lm({ ...at0, trunk: t }).backUpper[1] - pad, -40, 60);
+  const neck = bisect(n => occ({ ...at0, trunk, neck: n })[1] - pad, -40, 60);
+  return { root: { at: [0, -pad, s.root.at[2]], tilt }, trunk, neck };
+}
+const LYING = flatLying(supine(0, 0));
 const lmL = landmarksOf(LYING, H);
-const HEEL_Z = lmL.sacrum[2] + HEEL_FROM_TAIL;
-const feet = { l: { at: [HIP_W, 0, HEEL_Z], ref: 'heel', pole: KNEE_POLE }, r: { at: [-HIP_W, 0, HEEL_Z], ref: 'heel', pole: KNEE_POLE } };
+// the drawn foot outline in world metres (z along the floor), to measure the back of the heel (panel mx24 R1)
+const SIDE = { view: 'side', near: 'r', pxm: 1, P: w => [w[2], -w[1]] };
+const heelBack = (p, sd = 'r') => Math.min(...bodyShapes(fk(resolve(normPose(p, BODY), BODY).q, BODY), SIDE).find(s => s.key === `foot.${sd}`).poly.map(q => q[0]));
+const plant = z => ({ l: { at: [HIP_W, 0, z], ref: 'heel', pole: KNEE_POLE }, r: { at: [-HIP_W, 0, z], ref: 'heel', pole: KNEE_POLE } });
+// the heel landmark sits a fixed distance ahead of the back of the flat foot: one provisional plant measures it
+const Z0 = lmL.buttock[2] + HEEL_FROM_TAIL, HEEL_Z = Z0 + (Z0 - heelBack({ ...LYING, plant: plant(Z0) }));
+const feet = plant(HEEL_Z);
 
 // arms crossed: each hand on the chest in front of the opposite shoulder, solved against the pose's own thorax
 const crossed = p => {
@@ -116,11 +137,17 @@ const mistakePose = withArms(misAt(MIS_ROOT));
 
 const lmS = landmarksOf(start, H), lmE = landmarksOf(end, H), lmM = landmarksOf(mistakePose, H);
 const cm = v => +(v * 100).toFixed(1);
-export const info = () => ({ heelFromTailCm: cm(lmS['heel.r'][2] - lmS.sacrum[2]), bladeLiftCm: cm(lmE.backUpper[1] - lmS.backUpper[1]), shoulderLiftCm: cm(lmE['shoulder.r'][1] - lmS['shoulder.r'][1]),
+export const info = () => ({ heelFromTailCm: cm(heelBack(start) - lmS.buttock[2]), heelFromTailLCm: cm(heelBack(start, 'l') - lmS.buttock[2]), bladeLiftCm: cm(lmE.backUpper[1] - lmS.backUpper[1]), shoulderLiftCm: cm(lmE['shoulder.r'][1] - lmS['shoulder.r'][1]),
   endLumbarCm: cm(lmE.lumbar[1]), misLumbarLiftCm: cm(lmM.lumbar[1] - lmE.lumbar[1]), misBackMidLiftCm: cm(lmM.backMid[1] - lmE.backMid[1]), misSacrumLiftCm: cm(lmM.sacrum[1] - lmE.sacrum[1]) });
 
-// low-back gap marker (21.6's lesson: a red dashed back line off the mat with a visible gap, never a dome over the belly)
-const gapTop = lmM.backMid, gapBot = [0, 0, gapTop[2]], TICK = 2 / 197.5;
+// the drawn torso underside (world y) at floor position z: the lowest crossing of the outline polygon
+const underside = (p, z) => { const pts = bodyShapes(fk(resolve(normPose(p, BODY), BODY).q, BODY), SIDE).find(s => s.key === 'torso').poly; let lo = -Infinity;
+  for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; if ((a[0] - z) * (b[0] - z) > 0 || a[0] === b[0]) continue; lo = Math.max(lo, a[1] + (b[1] - a[1]) * (z - a[0]) / (b[0] - a[0])); }
+  return -lo; };
+// low-back gap marker (21.6's lesson: a red dashed back line off the mat with a visible gap, never a dome over the belly),
+// at the lumbar (panel mx24 R5): from the floor to the Mistake's drawn underside under the lumbar landmark
+const LUMBAR_Z = lmM.lumbar[2], gapTop = [0, underside(mistakePose, LUMBAR_Z), LUMBAR_Z], gapBot = [0, 0, LUMBAR_Z], TICK = 2 / 197.5;
+export const LOWBACK = Object.freeze({ z: LUMBAR_Z, endUnderCm: cm(underside(end, LUMBAR_Z)), startUnderCm: cm(underside(start, LUMBAR_Z)), mistakeUnderCm: cm(gapTop[1]) });
 const tick = p => ({ kind: 'line', pts: [[0, p[1], p[2] - TICK], [0, p[1], p[2] + TICK]] });
 
 export default {
@@ -138,12 +165,13 @@ export default {
   ],
   // D-SUPCORE-CRUNCH: neither view reaches its PQ-H3 bar at plate scale; the smallest passing ladder k per view
   zoom: [{ view: 'normal', k: 3 }, { view: 'mistake', k: 2 }],
-  startParts: ['torso', 'arm.r', 'arm.l'],
+  startParts: ['torso', 'head', 'arm.r', 'arm.l'],   // the start head drawn too (panel mx24 R1: the start reads full length)
   ghosts: { count: 2, parts: ['torso', 'arm.r'] },
   trace: { point: 'backUpper', trim: [4, 6] },
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   callouts: [
-    { key: 'lowback', text: 'Low back<br>down', anchor: 'buttock', cue: 'Keep your feet, tailbone and low back on the mat.' },
+    { key: 'lowback', text: 'Low back<br>down', anchor: [0, 0, lmE.lumbar[2]],   // the lumbar underside on the mat (panel mx24 R4)
+      cue: 'Keep your feet, tailbone and low back on the mat.' },
     { key: 'blades', text: 'Shoulder<br>blades up', anchor: { at: 'backUpper', off: [-7, 0] }, box: { left: 56, top: 216 }, cue: 'Curl up only until your shoulder blades leave the floor.' },
     { key: 'chin', text: 'Chin set', anchor: 'chin', box: { left: 24, top: 160 }, cue: 'Tuck your chin slightly and hold it there without pulling your neck.' },
   ],
@@ -151,10 +179,10 @@ export default {
     pose: mistakePose,
     guides: [
       { kind: 'line', pts: [gapBot, gapTop] }, tick(gapBot), tick(gapTop),
-      { kind: 'arc-arrow', center: { at: 'hip.r', pose: 'mistake' }, r: 26, a0: 115, a1: 75 },
+      { kind: 'arc-arrow', center: { at: 'hip.r', pose: 'mistake' }, r: 26, a0: 75, a1: 115 },   // head on the head side: the forward tip (panel mx24 R5)
     ],
     tells: [
-      { key: 'lowback', text: 'Low back<br>lifts', anchor: { at: 'backMid', pose: 'mistake' }, cue: 'Your low back lifts off the mat as you jerk up.' },
+      { key: 'lowback', text: 'Low back<br>lifts', anchor: { at: 'lumbar', pose: 'mistake' }, cue: 'Your low back lifts off the mat as you jerk up.' },
       { key: 'pelvis', text: 'Pelvis<br>tips', anchor: { at: 'buttock', pose: 'mistake' }, cue: 'Your hip flexors pull and your pelvis tips forward.' },
     ],
   },
