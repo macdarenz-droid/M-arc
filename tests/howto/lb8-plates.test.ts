@@ -679,7 +679,7 @@ describe('LIB-18 A4: the named flags on the held plates (F2: cable_kickback 0.64
     rec = JSON.parse(readFileSync(qaMod.HELD_FLAGS, 'utf8'));
     const script = `const b = await import(${JSON.stringify(lib('lb8/build.mjs'))});
 const p = await b.buildHeldPage(undefined, ['lib_bodyweight_calf_raise']);
-const p2 = await b.buildHeldPage(undefined, ['lib_hip_thrust']);
+const p2 = await b.buildHeldPage(undefined, ['lib_seated_calf_raise']);
 const r = await b.buildLb8Page({ ids: ['lib_glute_bridge', 'lib_cable_kickback'] });
 process.stdout.write(b.sha256(p.html) + ' ' + b.sha256(p2.html) + ' ' + b.sha256(r.html));`;
     [sha, sha2, rowsSha] = (await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 })).stdout.trim().split(' ') as [string, string, string];
