@@ -96,7 +96,9 @@ const pole = (s, a) => [s * Math.sin(a * R), 0, Math.cos(a * R)];
 const feetStart = { l: { ...feet.l, pole: pole(1, 17) }, r: { ...feet.r, pole: pole(-1, 17) } };
 const start = key({ incl: 3, depth: kneeAt(5), ys: [0.8, 0.935], extra: { plant: feetStart } });
 const end = key({ incl: END_INCL, spine: 6, depth: below, ys: [0.25, 0.6], zr: [-0.45, -0.15] });
-const via = [key({ incl: END_INCL * 0.5, spine: 3, depth: kneeAt(60), ys: [0.4, 0.935] })];
+// Panel mx21 R3 (#358): the two ghosts sit exactly on two key poses (t 1/3, 2/3), each with the hands cupping its own
+// ball, and the ball is drawn in the ghosts (goblet_squat draws its dumbbell there), so no ghost hand floats.
+const via = [key({ incl: END_INCL / 3, spine: 2, depth: kneeAt(40), ys: [0.4, 0.935] }), key({ incl: END_INCL * 2 / 3, spine: 4, depth: kneeAt(85), ys: [0.3, 0.935] })];
 
 const LS = landmarksOf(start, H), LE = landmarksOf(end, H);
 const TOE_TIP = Math.max(LS['toe.r'][2], LS['toe.l'][2]);
@@ -166,7 +168,7 @@ export default {
     hand('start', 'r'), hand('start', 'l'), hand('end', 'r'), hand('end', 'l'),
   ],
   startParts: ['trunk', 'leg.r'],
-  ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r'] },
+  ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r', 'ball'] },
   trace: { point: 'hip.r', trim: [10, 12] },
   callouts: [
     // c2: the front of the start ball (arms out, the ball touches the wall: the dashed start ball faces the wall)

@@ -887,3 +887,15 @@ draft raises H4.overlap (distance|depth), F3 126.5 and F4 0: label boxes are set
   px, Trace 63.6 px.
 - Clearance (lb10-plates.test.ts 'LIB-SMALL A4 and A5'): every body shape but the fists and forearms (the card contact,
   listed) clears the ball and the wall by 2 px in the start, end and Mistake.
+
+### 23.6 Panel mx21 fix (#358): wall_ball R3
+
+- The ghost hands floated with no ball. Fix: the two ghosts now sit exactly on two key poses (t 1/3 and 2/3: thorax
+  9.3 deg at knee 40, and 18.7 deg at knee 85; each keeps goblet_squat's key solve). Each key's hands cup its own ball
+  (reach), and the ghosts now draw the ball (`ghosts.parts` gains `ball`, as goblet_squat draws its dumbbell). Measured:
+  each ghost grip is 0.00 cm from its ball's underside. This replaces the one via key at knee 60 and draws the ghost
+  ball, instead of rotating one ghost forearm under the start ball and dropping the other: every ghost hand then
+  holds a ball and none is removed.
+- Test (lb10-plates.test.ts, R3): no ghost hand floats. Mutations: the ball dropped from the ghosts, the keys removed,
+  and a ghost hand moved 5 cm off its ball.
+- QA: all 10 hard checks pass; F5 3.57 only; Trace 64.4 px, deviation 62.9 px.

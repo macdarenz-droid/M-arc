@@ -2102,6 +2102,34 @@ describe('LIB-SMALL A4 and A5: wall_ball\'s drawn poses are card-true, and the b
     }
     return out;
   };
+  /** Panel mx21 R3 (#358): no ghost hand floats. Each ghost sits on a key pose (ghost count = keys), the ghosts draw the
+   *  ball, and in each key each grip is on its ball's underside (within 1 cm in the side view). */
+  const ghostProblems = (spec: any) => {
+    const out: string[] = [], vias = spec.poses.via ?? [];
+    if (vias.length !== spec.ghosts.count) out.push(`${vias.length} keys for ${spec.ghosts.count} ghosts`);
+    if (!(spec.ghosts.parts ?? []).includes('ball')) out.push('no ball in the ghosts');
+    vias.forEach((v: any, i: number) => {
+      const l = lmP(v), ball = spec.equipment.flatMap((e: any) => (typeof e === 'function' ? [].concat(e(l, { pose: 'ghost' }) ?? []) : [])).find((x: any) => x && x.part === 'ball' && x.type === 'poly');
+      if (!ball) { out.push(`ghost ${i}: no ball`); return; }
+      const ys = ball.pts.map((p: number[]) => p[1]!), zs = ball.pts.map((p: number[]) => p[2]!), r = (Math.max(...ys) - Math.min(...ys)) / 2;
+      const cy = (Math.max(...ys) + Math.min(...ys)) / 2, cz = (Math.max(...zs) + Math.min(...zs)) / 2;
+      for (const sd of ['l', 'r']) {
+        const g = l[`grip.${sd}`], under = cy - Math.sqrt(Math.max(0, r * r - g[0] * g[0]));
+        if (Math.hypot(g[1] - under, g[2] - cz) > 0.01) out.push(`ghost ${i} grip.${sd} floats ${(Math.hypot(g[1] - under, g[2] - cz) * 100).toFixed(1)} cm`);
+      }
+    });
+    return out;
+  };
+  it('R3 (panel mx21): no ghost hand floats: each ghost is a key with its hands under its own drawn ball', () => {
+    expect(ghostProblems(S.wall_ball)).toEqual([]);
+  });
+  it('R3 mutations: the ball dropped from the ghosts, the ghost keys removed, and a ghost hand moved off its ball are red', () => {
+    const s = S.wall_ball;
+    expect(ghostProblems({ ...s, ghosts: { ...s.ghosts, parts: s.ghosts.parts.filter((p: string) => p !== 'ball') } })).toContain('no ball in the ghosts');
+    expect(ghostProblems({ ...s, poses: { ...s.poses, via: [] } })).toContain('0 keys for 2 ghosts');
+    const v0 = s.poses.via[0], off = { ...v0, reach: { ...v0.reach, r: { ...v0.reach.r, at: [v0.reach.r.at[0], v0.reach.r.at[1] - 0.05, v0.reach.r.at[2]] } } };
+    expect(ghostProblems({ ...s, poses: { ...s.poses, via: [off, s.poses.via[1]] } }).some(x => x.startsWith('ghost 0 grip.r floats'))).toBe(true);
+  });
   it('A4: start, end and Mistake hold the card facts (c1, c2, c3, c5, c6, c9, c17)', () => {
     expect(poseProblems(S.wall_ball)).toEqual([]);
   });
