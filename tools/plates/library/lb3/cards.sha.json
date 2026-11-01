@@ -20,5 +20,21 @@
   "conventional_deadlift": "499b67ea5bcb04e58d52e6ec2d0bb4d42f6ad370bfe32a479888423bdb390eb5",
   "sumo_deadlift": "c6b26c63101f56551a1fbd3cc8554caa6de2b37b0cad593b2eac211eb13fd358",
   "back_extension": "cb2f6e77872d468ed0df7a8ee4e2e6604cf8c38d9e6e203f492606c50d6ef254"
+ },
+ "lib13s": {
+  "note": "LIB-13s (lib-13s-card A7): the 4 shrug cards and quotes, byte copies from research a48b0594 in the same form as above; the 8 entries and researchHead above stay byte for byte.",
+  "researchHead": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
+  "cards": {
+   "barbell_shrug": "34099d4556655e52de5a21a92f2bdefabde22908343385ccfaab5f3e84f1b049",
+   "dumbbell_shrug": "3747deffe97e75ff7a80c87787b789ae607ffdb768b0a7043be0bc620f20e789",
+   "cable_shrug": "b93be608be8c6ae26303fc6e965b07e17ac9077bf0eac1ce1daa6805c2a6be1c",
+   "smith_machine_shrug": "ffc13c1e295670107259318b34404a4ba884ad3b01e1610d38e826d6ad0cb1e1"
+  },
+  "quotes": {
+   "barbell_shrug": "a2728755b408a74664be9ea0c3532246a9d7f09588bf17789a34cfd3374ffe2d",
+   "dumbbell_shrug": "3848bfa09613456f850b4e9f3f4f7ffa82911717abf5bb7c98780e759c4de2cc",
+   "cable_shrug": "38c97ca1de587f05e5c7de17efe9e547708c9abc34c29bcb9134c0a2340e3686",
+   "smith_machine_shrug": "41aa67e7dd98726d716bd3b190282c1944a98b28792bd038dcbae9111eaee695"
+  }
  }
 }
