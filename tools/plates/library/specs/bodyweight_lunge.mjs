@@ -107,9 +107,9 @@ export default {
   ghosts: { count: 2, parts: ['leg.r', 'leg.l', 'trunk', 'arm.r'] },
   trace: { point: 'hip.r', trim: [10, 12] },
   callouts: [
-    { key: 'hips', text: 'Hips drop<br>down', anchor: 'buttock', guide: HIP_PLUMB, cue: 'Drop the hips toward the floor rather than driving them forward.' },
-    { key: 'thigh', text: 'Thigh parallel', anchor: { along: ['hip.r', 'knee.r'], t: 0.6 }, guide: THIGH_LEVEL, cue: 'Lower until the front thigh is about parallel, or to a comfortable depth.' },
-    { key: 'back', text: 'Flat back', anchor: 'backUpper', cue: 'Bend forward at the hips with a flat back.' },
+    { key: 'hips', text: 'Hips drop<br>down', anchor: 'hips', guide: HIP_PLUMB, box: { left: 240, top: 204 }, cue: 'Drop the hips toward the floor rather than driving them forward.' },
+    { key: 'thigh', text: 'Thigh<br>parallel', anchor: { along: ['hip.r', 'knee.r'], t: 0.6 }, guide: THIGH_LEVEL, box: { left: 270, top: 290 }, cue: 'Lower until the front thigh is about parallel, or to a comfortable depth.' },
+    { key: 'back', text: 'Flat back', anchor: 'backUpper', box: { left: 236, top: 144 }, cue: 'Bend forward at the hips with a flat back.' },
   ],
   mistake: {
     pose: MISTAKE,
