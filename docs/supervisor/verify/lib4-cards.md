@@ -4617,3 +4617,9 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - The builder is session_01EQuYNjLq58WNngV59S9HzG, branch claude/lib-split. Active LIB builders: LB6, LIB-13s, LIB-SMALL, SPLIT.
 - **CARD FIELDS cfwb is NOT VALID.** The plant was missed: start heel and ball floor contacts were written for "Stand with your feet shoulder-width apart", a stance quote that names no support. The verifier passed them as "the plan's heel-and-ball form". The verifier's c9 finding (end wrist contacts, hands on the ball) was checked by the supervisor and stands, and the fix is ruled (#358 6551219584).
   - **The re-verify gets a new plant and a fresh verifier.** rules.md gains one general line: a stance or spacing quote names no support and gives no floor contact (the D-LIB22-FACTS reading of jumping_jacks c1/c12). The landmark plan line only says which landmark a stated contact uses.
+- **LIB-SUPCORE card `ready`** (`verify/lib-supcore-card.md`): D-SUPCORE-1 to -13 are confirmed, with notes in the card. It starts when a slot frees.
+- **#364 6551354216: LIB-SPLIT PLAN RULED @ `a7cab392`.**
+  - Q1: the A3 pivot holds x and z to 0.5 cm and y = REAR_LIFT ± 0.5 cm.
+  - Q2: the bulgarian Mistake is option (a), a 1 cm hip sink (unsourced) that tips the shin to 13.9°, with a Mistake zoom at k 1.5. Its fallback is a hold under F-SPLIT-BSSMIS.
+  - Q3: step_up's F4 is named at 1, with no extra box.
+- **cfwb fix** DIFF-CHECK PASS (#358 6551279190). The re-verify **cfwb2** is building. **mx21** (wall_ball round 1): the critics are running.
