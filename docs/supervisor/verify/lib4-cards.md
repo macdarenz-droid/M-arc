@@ -4623,3 +4623,6 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - Q2: the bulgarian Mistake is option (a), a 1 cm hip sink (unsourced) that tips the shin to 13.9°, with a Mistake zoom at k 1.5. Its fallback is a hold under F-SPLIT-BSSMIS.
   - Q3: step_up's F4 is named at 1, with no extra box.
 - **cfwb fix** DIFF-CHECK PASS (#358 6551279190). The re-verify **cfwb2** is building. **mx21** (wall_ball round 1): the critics are running.
+- **CARD FIELDS cfwb2** (wall_ball re-verify @ `2d5762dc`) is **VALID**. The plant, a chest contact read from "held at chest height", was caught, and there were no other findings (#358 6551411150).
+- **PANEL mx21** (wall_ball round 1) is **VALID**. Plants were caught at R2 [2,2,2] and R7 [2,3,3]. wall_ball fails R3 [3,3,5] because the ghost hands float with no ball. Fix round: the upper ghost's forearm is rotated so the hand sits under the ball, and the deeper ghost's forearm is dropped.
+- A draft is running on routes for the 6 rows with none (hip_thrust, jump_rope, pallof_press, cable_rear_delt_fly, resisted_hip_flexion, russian_twist).
