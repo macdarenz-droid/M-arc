@@ -1,0 +1,45 @@
+{
+ "batch": "PILOT-A3",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/pilot-a3.json",
+  "layers": "tests/howto/golden/library/pilot-a3.layers.html",
+  "layersConfig": "tools/plates/library/pages/pilot-a3.layers.json"
+ },
+ "rows": {
+  "lib_reverse_lunge": {
+   "src": "library/specs/reverse_lunge.mjs",
+   "slug": "reverse-lunge",
+   "prefix": "reverse-lunge",
+   "chromeId": "reverse-lunge",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Reverse Lunge (Exercise Library). https://www.catalystathletics.com/exercise/735/Reverse-Lunge/",
+    "Reverse Lunge (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/319/reverse-lunge/",
+    "Influence of Trunk Position during Three Lunge Exercises on Muscular Activation in Trained Women (2021). https://pubmed.ncbi.nlm.nih.gov/34055138/ PMID 34055138",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/",
+    "Five levels of reverse lunge (Fit&Well; Amber Woolcock, certified personal trainer). https://www.fitandwell.com/exercise/bodyweight-exercises/five-levels-of-reverse-lunge-to-build-more-strength-balance-and-power-without-weights",
+    "Reverse Lunge: How to Do It, Benefits, & Variations (Peloton; Rebecca Schumer, physical therapist). https://www.onepeloton.com/blog/reverse-lunge"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_dumbbell_fly": {
+   "src": "library/specs/dumbbell_fly.mjs",
+   "slug": "dumbbell-fly",
+   "prefix": "dumbbell-fly",
+   "chromeId": "dumbbell-fly",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Lying Chest Fly, ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/21/lying-chest-fly/",
+    "Electromyographic activity of the pectoralis major and anterior deltoid muscles during three upper-body lifts (2005). https://pubmed.ncbi.nlm.nih.gov/15903389/ PMID 15903389",
+    "A Comparison of Muscle Activation between Barbell Bench Press and Dumbbell Flyes in Resistance-Trained Males (2020). https://pubmed.ncbi.nlm.nih.gov/33239937/ PMID 33239937",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}

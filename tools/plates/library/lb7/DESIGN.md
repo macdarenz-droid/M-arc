@@ -536,3 +536,209 @@ far above the back) and the lower ghost bent the elbow toward the head.
 - Tests: the angle (≤ 55°) and the ghost bend, each with a red mutation (the round-1 end; the round-1 start pole).
 - The zoom.pair numbers are unchanged (5.640 px, 16.92 px at k 3). The circle's free spot moved from [126, 188] to
   [228, 152] (f-zoom-2.test.ts:88, reported).
+
+## 19. Resume 3 plan ('LIB-17 resume 3', card `verify/lib-17r3-card.md` @ `aa985b8b`; base main `6d34542c`)
+
+Rows: incline_push_up, diamond_push_up, pike_push_up. Rulings D-LIB17R3-1 to -7 (lib4-cards §48). Every number below
+is measured on this branch's draft specs (node, engine landmarks and drawn shapes, lb7/qa.mjs) unless marked [est].
+The drafts exist only to measure this plan; the drawing starts after 'LB7 R3 PLAN RULED'.
+
+### 19.1 Modes (re-checked on `6d34542c`)
+
+All three H, as the card's table: derive.mjs:4-12 PARAMS has no key for a hand surface or body angle (incline), the
+hands' place along the body or the elbow's aim (diamond), or a hip pike (pike_push_up; its card has `parent: null`).
+No template, family row or ranges change. Each spec copies push_up.mjs's Newton `solve` (push_up.mjs:52-70; throws when
+it does not converge) and its flat-palm and floor-camera conventions; nothing is imported from a spec.
+
+| id | clone source | copied code and its solved values |
+|---|---|---|
+| incline_push_up | push_up | `solve`; the straight body on the toe tips; the flared bottom arm solved for the wrist spot and a level hand (push_up.mjs:84-90); the plank-line datum, LINE_RUN 0.18. Solved: BENCH_TOP **0.4232 m** (bisection on [0.30, 0.55], throws without a root), toe spot z **−1.1867 m**, top arm 22.2° from plumb |
+| diamond_push_up | push_up | `solve`; the straight body on TOE_Z −1.05 (push_up's); the sag Mistake (SAG_HIP −20, solved with shoulder and toe still, refused unless the lumbar extends: −26.3°, hip **21.9 cm** below the line, the same as push_up's). Solved: grip z **0.2657 m** |
+| pike_push_up | push_up | `solve`; the flat palm and the bent arm solved for the wrist spot and a level hand. Solved: toe spot z **−0.9534 m**, bottom hip flexion 88.4°, Mistake hip flexion 101.4° |
+
+**D-LIB17R3-BENCH, measured.** The card's 0.39 m [est] holds the arms plumb at the top. Drawn that way, the bottom
+pose puts the chest landmark 25.4 cm past the bench's near edge (over the pad's middle), and the body line from the
+toes to the chest then passes about 6 cm under the pad's near top corner: the belly would go through the bench. c3
+puts the chest "an inch away from the box", c1 the hands "on top of the incline", so the plan draws the chest over the
+edge (CHEST_IN 2 cm past it, CHEST_GAP 2.5 cm over the top) and the hands on the edge (HAND_IN 2 cm), and lets the
+top arm lean as the body pivots on the toes (22.2° from plumb, shoulders behind the hands; no incline claim says the
+shoulders are over the hands). With that bottom, c1's 45° solves the bench top at **0.4232 m** (0.38 m gives 43.0°,
+0.43 m 45.3°). It stays an unsourced, solved number listed in the spec header and sizes.json, as the ruling says.
+
+### 19.2 Pose maps, tempo maps, Mistakes
+
+| id | spec `start` = card | spec `end` = card | Mistake (end + override) | tempo (drawn order) |
+|---|---|---|---|---|
+| incline_push_up | plate.end (bottom) | plate.start (top) | at the top: the toe spot M_FEET_IN 0.20 m toward the bench, the scapulae up M_SHRUG 4 cm; arms straight, wrists on their spots (c10, "even at the top") | `Press 3, Lower 3` (c9: 3 up, 3 down, pause 0) |
+| diamond_push_up | plate.end (bottom) | plate.start (top) | at the top: push_up's sag (c6, c7) | fallbackA: `Press` blank, `Lower` blank, claim c5 |
+| pike_push_up | plate.start (top) | plate.end (bottom) | at the bottom: the head outline lands HEAD_GAP over the floor straight under the grips (z 0) instead of 16 cm in front; toes and hands stay; root, tilt and hip solved; the elbows keep their aim (c6) | fallbackA: `Lower` blank, `Press` blank, claim c14 |
+
+pike_push_up's map is the identity because its fault happens at the bottom (c6: the head's path down); the two push-up
+rows follow push_up's map (their faults are drawn at the top).
+
+Fault→key (each spec's first tell carries the drawn key):
+
+| id | plate.mistake (claim; drawable) | drawn key (other tells) | handlingMistakes[0] | topFault |
+|---|---|---|---|---|
+| incline_push_up | feet too close, blades shrugged (c10; true) | `feet` (`shrug`) | the same (c10) | `feet` |
+| diamond_push_up | low back and hips sag, low back overextends (c6, c7; true) | `sag` (`arch`) | the same (c6) | `sag` |
+| pike_push_up | only the head moves toward the floor (c6, c5; false) | `head` (one tell, record below) | elbows flaring (c7) | `flare` (F7, D-LIB17R3-F7) |
+
+One-tell record (D-LIB10-SKULL1 form), pike_push_up: fault c6; claim ids read c5, c6, c7 and plate.mistake. c6's other
+signs ("elbow flaring, poor mechanics, injury risk") are a consequence and the top fault c7, which the side view cannot
+show (card mistake.why), so the plate has one tell.
+
+### 19.3 Facts plan (D-LIB8M-FACTS, D-LIB13-FACTS2; push_up's card is the pattern)
+
+| id | quote (claim) | plateFacts | pose (cardPose) |
+|---|---|---|---|
+| incline_push_up | "Place both hands on top of the incline shoulder-width apart" (c1, setup) | `contact wrist.l`, `wrist.r` | end (start) |
+| diamond_push_up | "place your hands flat on the floor" (c1, setup) | `contact wrist.l`, `wrist.r` | end (start) |
+| pike_push_up | none: no c1 quote names a contact ("Adopt the push-up position with your hands ...", "Start from a high plank position ...", "Start in a downward dog ...") | `[]` (plank's form) | — |
+
+**D-CFSMALL-ELEV / -PIKE (#356 6547986860, the ruling on 6548018514).** incline_push_up gains `angle sh.l.elev 45`
+and `sh.r.elev 45` (start, card end, c4 "Keep your elbows at approximately 45 degrees from your body"). Its bottom read
+49.7°, so it was re-posed: ELBOW_BACK is solved so the bottom reads 45.0°, and the sagittal flare goes 44.2° → 41.0°.
+pike_push_up keeps `[]` under D-CFSMALL-PIKE. Its bottom reads sh.elev 104.6°, and the lowest the engine reaches with
+the hands planted is 88° (elbow aimed straight back in the sagittal plane). At 45° the elbow would sit about 0.23 m above
+the shoulder, and the 0.26 m forearm could not reach the floor, so c3's 45° (NASM) cannot be an elevation fact on the
+inverted trunk.
+
+Not facts: the toes (no quote on the three cards names the toes or the balls of the feet on the floor; push_up's card
+has no toe fact either); "straight elbows" / "until your arms are straight" (no degrees; push_up's card has no
+straight-arm fact); "chest an inch away", "chest down to the back of your hands", "head to within an inch of the floor"
+(a place near something, D-LIB17-FACTS). Each contact gets its spec `checks` entry (H6).
+
+### 19.4 Unsourced numbers (lb7/sizes.json with their basis)
+
+- incline_push_up: HAND_IN 0.02 m (the wrist past the near edge, palm on the top), CHEST_GAP 0.025 m (c3 "an inch"),
+  CHEST_IN 0.02 m (the chest over the edge), BODY_DEG 45 (c1), BENCH_W 0.29 (vendor bench), ELBOW_POLE [1, 0, −0.5]
+  (c4: the upper arm 44.2° from the sagittal plane at the bottom), M_FEET_IN 0.20 m, M_SHRUG 4 cm, the floor run.
+  BENCH_TOP and the toe spot are solved.
+- diamond_push_up: TOE_Z −1.05 (push_up's), HAND_X 0.04 m (the hands touching at the thumbs, c1), GRIP_FWD 0.03 m (the
+  palm's centre this far in front of the chest landmark at the bottom: "below the upper chest"), HAND_BACK 2 × the
+  forearm's distal radius, CHEST_GAP 0.01 m (c3 "to the back of your hands"), ELBOW_POLE [0.15, 0, −1] (tucked: the
+  upper arm 2.5° inside the shoulder line, 17° from the trunk), SAG_HIP −20 (push_up's).
+- pike_push_up: GRIP_Z 0, SH_TOP 170 (the arms in line with the trunk at the top), HIP_TOP 110 (the V; at 95 the bottom
+  elbow sits 1 px over the floor), HEAD_GAP 0.02 m (the drawn head outline, c3 "within an inch"), HEAD_FWD 0.16 m (the
+  head in front of the grips, c5 "forward and down"), ELBOW_POLE [1, 0, −0.5] (c3: 41.7° from the sagittal plane).
+- All three: push_up's floor camera with `maxScale: 0.988`, so each plate draws at push_up's 144.5 px/m (the fit gave
+  150.6 and 168.4, over F1's 146.29).
+
+### 19.5 Card-true measures (A4) and clearance (A5, D-LIB17R3-CLEAR)
+
+| id | measure | value |
+|---|---|---|
+| incline_push_up | top toe-to-shoulder line | **45.00°** (A4: 45 ± 5) |
+| incline_push_up | bottom chest landmark over the bench top / past the edge | **2.50 cm** / 2.0 cm |
+| incline_push_up | bottom upper arm from the sagittal plane (c4 "about 45 degrees") | 44.2° |
+| incline_push_up | Mistake toe-to-shoulder line | 45.85° (the feet move, the arms swing; see 19.7) |
+| diamond_push_up | bottom: chest z 0.236 < grip z 0.266 < shoulder z 0.334 | hands under the upper chest |
+| diamond_push_up | bottom chest over the backs of the hands | 1.0 cm |
+| diamond_push_up | bottom elbows: 2.5° inside the shoulder line, upper arm 17° from the trunk | tucked |
+| pike_push_up | hips over shoulders: top 0.892 / 0.529 m, bottom 0.700 / 0.324 m | hips high |
+| pike_push_up | bottom head outline over the floor; head in front of the grips | **2.0 cm**; 16 cm |
+
+Clearance (drawn outlines at 144.5 px/m; hands, palms, forearms at the wrist and feet are the card contacts):
+
+| id | pose | nearest non-contact part | to | px |
+|---|---|---|---|---|
+| incline_push_up | bottom | torso | bench pad (the near corner) | 3.6 |
+| incline_push_up | bottom | head | bench pad | 18.4 |
+| incline_push_up | top, Mistake | elbow cap | bench pad | 34.0, 35.2 |
+| diamond_push_up | bottom | torso | floor | 9.0 |
+| diamond_push_up | top, Mistake | shank, torso | floor | 27.2, 21.3 |
+| pike_push_up | bottom, Mistake | head | floor | 2.9, 2.9 |
+| pike_push_up | top | shank | floor | 17.3 |
+
+The diamond chest over the hands (1 cm, 1.4 px) is the one card contact between body parts (c3), excepted by name.
+
+### 19.6 PQ-H3 and flags (lb7/qa.mjs on the drafts)
+
+| id | deviation (bar 11.39) | Trace (bar 22.11) | tell anchors |
+|---|---|---|---|
+| incline_push_up | **31.3 px** | 50.0 px (sternum) | `feet` heel.r (0.20 m); `shrug` shoulderTop.r (4 cm, 5.8 px: under the bar alone, so not the measured tell) |
+| diamond_push_up | **30.1 px** | 37.5 px (sternum) | `sag` buttock, `arch` backMid |
+| pike_push_up | **23.1 px** | 36.6 px (head) | `head` head (16 cm) |
+
+No zoom. Expected flags (qa.mjs): F5 3.57 on all (D-LIB9-F5); F7 on pike_push_up only (D-LIB17R3-F7, F7_IDS gains
+`lib_pike_push_up`). The drafts still raise F3 and H1/H4 label hits (label boxes not placed yet) and H6:no-card (the
+card fields come at Do 5); these are drawing work, not plan risks.
+
+### 19.7 Risks
+
+- incline_push_up's Mistake reads as the feet moving in with the shoulders forward over the hands (the shoulders pass
+  the hands, 45.0° → 45.85°): with straight arms on fixed hands, the toe move swings the arms, not the body angle. The
+  shrug tell rides on it. If the panel reads it as c13's "leaning too far forward", the route is the zoom on the
+  shrug (D-LIBZOOM-EXTEND, k 2: 11.6 px [est]), never a bigger shrug.
+- pike_push_up's right bottom and its Mistake differ only in where the head lands (16 cm); the hips and elbows move
+  with it. The arrow and the one tell carry it.
+- diamond_push_up's hand place is 3 cm in front of the chest landmark: subtle from the side; A4 pins it, the ship
+  card's hand zoom shows the diamond.
+
+### 19.8 Tests (lb7-plates.test.ts) and a question
+
+- New blocks: the 3 rows' drawn-item tests (A4), the clearance test with each row's 0-value mutation (A5), the
+  approved-fragments pin of the 8 approved plates (A2, lb6-plates.test.ts:1300 form), the strip rows (A3), the card
+  check against cards.sha.json's `resume3` section (A7).
+- **Q1 (for the ruling):** the file's `LB7` list drives every generic block (`drawn()`, `specsDrawn()`: primitives
+  only, closures, sizes, Mistake clearance and leaders, tells). Proposed: `LB7` gains the 3 ids, so those blocks bind
+  them in full (D-LIB15R2-TPARENT does not apply: no T child), and A11's hash loop reads the 3 from `resume3` (the 9
+  keep `researchHead` e5ed66ca). Edits in existing LB7 blocks: the `LB7` list, `NOT_HERE`, A5, A9, A11's loop and its
+  "9 cards" titles. No other lane's block changes.
+
+### 19.9 As built ('LB7 R3 PLAN RULED', #356 6543661102)
+
+- Specs: `specs/{incline,diamond,pike}_push_up.mjs`. lb7/sizes.json lists every number with its basis. lb7/tempo.json has
+  incline_push_up's row (Press up, Lower down). strip/rows.json moves diamond_push_up and pike_push_up to fallbackA.
+  lb7/qa.mjs F7_IDS gains `lib_pike_push_up`.
+- pike_push_up's top: the drawn foot outline sits on the floor, not the toe landmark. At the top's foot angle the sole
+  between toe and ball is 0.5 cm lower than the toe tip. So the toe tip is 0.5 cm up at the top, and on the floor at the
+  bottom and in the Mistake. The spec's toe check binds the bottom.
+- Cameras: all three draw at push_up's 144.5 px/m (`maxScale: 0.988`). diamond_push_up's floor is at y 300 and
+  pike_push_up's at y 305 (push_up's is 339). Their callouts and tells sit in the band under the floor line, because every
+  place above the figure would put a leader across the solid body (A15). This is a camera choice only; no pose, size or
+  fact moves.
+- Anchors on the drawn outline (A15 within 3 px):
+  - incline "Shoulders down": trap.r with off [0, −13];
+  - incline "Shoulders shrug": the Mistake shoulder's front, shoulder.r with off [12, 2];
+  - pike "Head forward": the head's front, head with off [7, −10];
+  - diamond "Elbows tucked": the start (bottom) elbow;
+  - diamond "Low back arches": the Mistake's lumbar point (the arched low back drops below the solid figure).
+- Mistake arrows clear the solid end figure by 6 px:
+  - incline: toe to toe, 8 px right of and 12 px above the toe tips;
+  - diamond: navel to navel, 8 px below;
+  - pike: crown to crown, 14 px under the floor line.
+- QA (lb7/qa.mjs, page `58d79da8…6898`, built twice, equal): all 10 hard checks pass on the 3 rows.
+  - Flags: F5 3.57 on each; F7 on pike_push_up only.
+  - The F2 on cable_lateral_raise and face_pull is the same on main `6d34542c` (not this lane's).
+
+### 19.10 Panel mx13 fix round (#356 6547087962)
+
+- incline_push_up is APPROVED at `29a48852`. Its 9 fragment shas are pinned (A2 block), with a red mutation.
+- R3 (diamond_push_up, pike_push_up): the ghosts' hands slid through the floor, because the engine blends a reach key
+  with a straight-arm key. Each spec now carries two in-between keys (`via`) at the ghosts' times (t 1/3 and 2/3), so
+  each ghost is drawn from a key. In each key, the tilt (and pike's hip flexion) is the blend of the two end keys. The
+  root is solved so the toe tips stay on their spot, and the hands stay on their grips with the palm level. Test: every
+  ghost palm lies within 1 px of the floor line. Mutation: the via keys removed (round 1) is red on both rows.
+- R5 (pike_push_up): the faulty head is now a complete dashed outline drawn over the fill. It is the engine's own head
+  shape in the Mistake pose, straight under the shoulders' line (at the grips' z). The arrow under the floor is gone.
+  The one down arrow sits 9 px left of the outline, above the floor. That is the nearest place where an arrow clears
+  the solid figure by A15's 6 px: every vertical arrow ending on the outline itself lies on the solid forearms or head
+  (searched 150-260 × 240-300 px). An arrow onto the head itself would need an A15 exception, so it is the
+  supervisor's call.
+- Page `a3818806…bb20` (all 11 rows), built twice with the same sha. QA on the 3 rows (their page, `cd080c57…1624`): all 10 hard checks pass; flags are the ruled set.
+
+### 19.11 Panel mx15 fix 2 and CARD FIELDS fix (#356 6547986860; rulings 6548018514 and after)
+
+- diamond_push_up is APPROVED at `feec1c3c`.
+- incline_push_up is re-posed to sh.elev 45.0 (D-CFSMALL-ELEV). In its 29a48852 pin, only normalSvg and mistakeSvg
+  moved, and they are re-pinned; the other 7 fragments keep their values. It returns for a focused recheck.
+- pike_push_up R5:
+  - A dashed red neck joins the Mistake's neck point to the top of the dashed faulty-head outline.
+  - The free arrow at x 168 is removed.
+  - It has no arrow (option B). Option C was an arrow on the head axis above the crown, along the dashed neck, ending
+    where the axis is still 6 px clear of the solid figure. Its clearance samples along the axis from the crown, every
+    4 px, are 2.8, 2.5, 1.6, 0.8, 0.5, 1.5, 1.6 px, then −0.6 to −15.3 px (inside the solid figure) up to t 120.
+    The first 6 px clearance is at t ≈ 129 px, above the solid trunk, about 130 px from the head.
+  - The neck itself (t 26-37) lies 0.6-2.5 px inside the solid figure, so no arrow fits along it.

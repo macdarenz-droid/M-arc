@@ -87,6 +87,8 @@ const LABELS: Record<string, string> = {
   farmer_s_carry: 'Tempo: walk controlled',
   sled_push: 'Tempo: walk',
   medicine_ball_slam: 'Tempo: slam',
+  diamond_push_up: 'Tempo: press, lower',
+  pike_push_up: 'Tempo: lower, press',
 };
 
 describe('A4: the strip, on NOSECS_STRIP with the vendored esc and plain', () => {
@@ -290,7 +292,7 @@ const SCOPE = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'step_up', 'pi
   'cable_rear_delt_fly', 'sled_push', 'farmer_s_carry', 'burpee', 'medicine_ball_slam', 'wall_ball', 'diamond_push_up', 'pike_push_up'];
 const SET_LEVEL_PHASE = /^(set|sets|rep|reps|rest)$/i, SET_LEVEL_SAYS = /(?<![A-Za-z])(set|sets|rep|reps|rest|round|rounds|failure)(?![A-Za-z])/i;
 /** sha256 of rows.json's canonical JSON (JSON.stringify of the parsed file), set at 'STRIP ROWS VERIFIED' (Do 6). */
-const ROWS_PIN = '88cf616b237dbd913e5c0d3433a5a89b6c6638b0efb79837e22a203ba8630066';   // the rows verified at 511ded30, plus D-STRIP-BURPEE's burpee row, re-synced to research 42cf542a; sled_push and medicine_ball_slam moved from leftOut to fallbackA (D-LIB22-STRIPROWS, #331 6410069703)
+const ROWS_PIN = '38d6f8c13807d8c02556b0e0172a53cef6c42bdbeb5b5b2ba08af35f1143c59f';   // the rows verified at 511ded30, plus D-STRIP-BURPEE's burpee row, re-synced to research 42cf542a; sled_push and medicine_ball_slam moved from leftOut to fallbackA (D-LIB22-STRIPROWS, #331 6410069703); diamond_push_up and pike_push_up moved from leftOut to fallbackA (D-LIB17R3-STRIPROWS, #356)
 
 /** A11's checks on a parsed rows.json; returns problems. */
 function rowProblems(R: any, V: any): string[] {

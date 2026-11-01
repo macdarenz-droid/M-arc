@@ -19,14 +19,17 @@ afterEach(() => new Promise<void>(r => setImmediate(r)));
 
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
+// 'LIB-17 resume 3' (D-LIB17R3-*, DESIGN.md section 19; Q1 ruled, #356 6543661102): the three PUSHUP rows, drawn H, in
+// LB7 so every generic block binds them in full; their cards and quotes are hashed under cards.sha.json `resume3`.
+const R3 = ['incline_push_up', 'diamond_push_up', 'pike_push_up'];
 const LB7 = ['cable_lateral_raise', 'dumbbell_front_raise', 'cable_rear_delt_fly', 'face_pull', 'cable_external_rotation', 'resistance_band_pull_apart',
-  'renegade_row', 'weighted_dip', 'bench_dip'];
+  'renegade_row', 'weighted_dip', 'bench_dip', ...R3];
 const IDS = LB7.map(i => `lib_${i}`);
-// The 5 LB7 ids not in this card (lib-17-card "LB7 ids").
-const NOT_HERE = ['push_up', 'incline_push_up', 'pike_push_up', 'diamond_push_up', 'bent_over_dumbbell_rear_delt_fly'];
+// The 2 LB7 ids not drawn here (lib-17-card "LB7 ids"; the three PUSHUP rows joined at 'LIB-17 resume 3').
+const NOT_HERE = ['push_up', 'bent_over_dumbbell_rear_delt_fly'];
 // D-LIB17-SECS: no tempo seconds on these two cards. Since 'LIB-17 resume' (LIB-STRIP #309 on main) their tempo is the
 // untimed strip, tempoOf(their strip/rows.json rows), on card and spec (D-STRIP-ROWS).
-const NOSECS = ['cable_rear_delt_fly', 'renegade_row'];
+const NOSECS = ['cable_rear_delt_fly', 'renegade_row', 'diamond_push_up', 'pike_push_up'];   // + the two fallbackA rows (D-LIB17R3-AFALL)
 // DESIGN.md sections 14, 17 and 18: every held id. cable_rear_delt_fly, under D-LIB8-shrug, has no place for a LIB-ZOOM
 // circle (D-LIB17-RDFHOLD, #332 6410506295). renegade_row left the list at 'LIB-17 resume 2' with F-ZOOM-2's zoom.pair
 // (D-LIB17-ZOOMPAIR, #332 6409786985; D-LIB17-SPLIT, 6486667474).
@@ -37,6 +40,7 @@ const ZOOMED: Record<string, { view: string, k: number }> = { resistance_band_pu
 const FRONT = ['cable_lateral_raise', 'cable_rear_delt_fly', 'cable_external_rotation', 'resistance_band_pull_apart'];
 const ROWS = 'tools/plates/library/lb7/rows.json';
 const RESEARCH_HEAD = 'e5ed66ca1c7c7c2f6418001d262d053431b4c67f';
+const RESEARCH_HEAD_R3 = 'a48b059400a74d5c9e3aceed21cf1aa67ab6f118';
 const COMPOSERS = ['dipBars'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -97,7 +101,7 @@ const listOf = (spec: any, mistake: boolean) => (mistake ? spec.mistake.tells : 
 const leadersOf = (svg: string) => [...svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(([, d]) => { const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]); return p; });
 const angle3 = (a: number[], v: number[], b: number[]) => { const u = a.map((x, i) => x - v[i]!), w = b.map((x, i) => x - v[i]!); return Math.acos(Math.max(-1, Math.min(1, u.reduce((s, x, i) => s + x * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w)))) * 180 / Math.PI; };
 /** A no-seconds card's tempo-map rows in strip/rows.json (D-STRIP-ROWS), and LIB-STRIP's own tempoOf (strip/tempo-strip.mjs). */
-const stripRows = (id: string) => readJson('tools/plates/library/strip/rows.json').cards.find((c: any) => c.id === id).rows;
+const stripRows = (id: string) => { const R = readJson('tools/plates/library/strip/rows.json'); return [...R.cards, ...R.fallbackA].find((c: any) => c.id === id).rows; };   // + fallbackA (D-LIB17R3-AFALL)
 const tempoOfStrip = (rows: any[]) => strip.tempoOf(rows);
 const withEq = (spec: any, k: number, f: (e: any) => any) => ({ ...spec, equipment: spec.equipment.map((e: any, i: number) => (i === k ? f(e) : e)) });
 
@@ -113,10 +117,10 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids, 
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H (D-LIB17-B1)', () => {
     expect(want()).toEqual(['lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_cable_external_rotation', 'lib_resistance_band_pull_apart',
-      'lib_renegade_row', 'lib_weighted_dip', 'lib_bench_dip']);
+      'lib_renegade_row', 'lib_weighted_dip', 'lib_bench_dip', 'lib_incline_push_up', 'lib_diamond_push_up', 'lib_pike_push_up']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
-  it('none of the 5 LB7 ids not in this card is in any lb7/ file as a row', () => {
+  it('neither LB7 id not drawn here (push_up, bent_over_dumbbell_rear_delt_fly) is in any lb7/ file as a row', () => {
     for (const f of readdirSync('tools/plates/library/lb7').filter(n => n.endsWith('.json'))) {
       const text = readFileSync(join('tools/plates/library/lb7', f), 'utf8');
       for (const id of NOT_HERE) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
@@ -147,6 +151,7 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids, 
     expect(a5(add('lib_push_up'), w)).toEqual(['extra lib_push_up']);
     expect(a5(add('lib_bent_over_dumbbell_rear_delt_fly'), w)).toEqual(['extra lib_bent_over_dumbbell_rear_delt_fly']);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
+    expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_incline_push_up: { ...row, mode: 'T' } } }, null, 1), w), 'resume 3: a PUSHUP row set to T').toEqual(['mode T']);
   });
   it('every row points at its own spec file and carries the census view; batch LB7, censusRef 4a9fd86', () => {
     const j = readJson(ROWS);
@@ -176,7 +181,7 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
     expect(stageProblems({ ...rows, lib_weighted_dip: { ...someRow, stage: 'shipped' } })).toEqual(['lib_weighted_dip: shipped']);
     expect(stageProblems({ ...rows, lib_weighted_dip: { ...someRow, stage: 'approved-plate' } })).toEqual(['lib_weighted_dip: approved-plate']);
   });
-  it('none of the 9 is shipped, even with lb7/rows.json read as a batch file', () => {
+  it('none of the 12 is shipped, even with lb7/rows.json read as a batch file', () => {
     const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
     expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
@@ -213,11 +218,12 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
     expect(tokenHits(LB7, 'p.json', '{"slug":"incline-bench-dip"}')).toEqual([]);
     expect(batchProblems([['p.json', '{"rows":{"lib_bench_dip_v2":{}}}']], substringHits)).toEqual(['p.json: bench_dip']);
   });
-  it('control: a file naming only lib_push_up, lib_incline_push_up and lib_bent_over_dumbbell_rear_delt_fly (LB7, not in this card) stays green', () => {
-    expect(tokenHits(LB7, 'p.json', '{"rows":{"lib_push_up":{},"lib_incline_push_up":{},"lib_bent_over_dumbbell_rear_delt_fly":{}}}')).toEqual([]);
+  it('control: a file naming only lib_push_up and lib_bent_over_dumbbell_rear_delt_fly (LB7, not drawn here) stays green; mutation: lib_incline_push_up (resume 3) is red', () => {
+    expect(tokenHits(LB7, 'p.json', '{"rows":{"lib_push_up":{},"lib_bent_over_dumbbell_rear_delt_fly":{}}}')).toEqual([]);
+    expect(tokenHits(LB7, 'p.json', '{"rows":{"lib_incline_push_up":{}}}')).toEqual(['p.json: incline_push_up']);
     expect(tokenHits(LB7, 'p.json', '{"rows":{"lib_face_pull":{}}}')).toEqual(['p.json: face_pull']);
   });
-  it('over src/data/exercises.json, no real id other than its own contains one of the 9 as a substring', () => {
+  it('over src/data/exercises.json, no real id other than its own contains one of the 12 as a substring', () => {
     const ex = readJson('src/data/exercises.json').map((e: any) => e.id as string);
     expect(ex.filter((e: string) => IDS.some(id => e !== id && e.includes(id.slice(4))))).toEqual([]);
     for (const id of IDS) expect(ex, id).toContain(id);
@@ -246,19 +252,29 @@ console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;
   });
 });
 
-describe('LIB-17 A11 (Do 6 a): the 9 cards and quotes are byte copies of the LB7 research head', () => {
+describe('LIB-17 A11 (Do 6 a): the 12 cards and quotes are byte copies of their research heads (the 9: LB7 research head; the 3: resume 3)', () => {
   const KEYS = ['plateFacts', 'tempo', 'topFault'];
   const cardsSha = readJson('tools/plates/library/lb7/cards.sha.json');
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
-  it(`cards.sha.json names research head ${RESEARCH_HEAD.slice(0, 8)} and the 9 ids; each card (without the three keys) and each quotes file matches`, () => {
+  const NINE = LB7.filter(id => !R3.includes(id));
+  /** The hashed card and quotes of an id: the 9 under the top level, the 3 under `resume3` (D-LIB17R3, Q1). */
+  const pinOf = (id: string) => (R3.includes(id) ? cardsSha.resume3 : cardsSha);
+  it(`cards.sha.json names research head ${RESEARCH_HEAD.slice(0, 8)} and the 9 ids, and resume3 ${RESEARCH_HEAD_R3.slice(0, 8)} and the 3; each card (without the three keys) and each quotes file matches`, () => {
     expect(cardsSha.researchHead).toBe(RESEARCH_HEAD);
-    expect(Object.keys(cardsSha.cards)).toEqual(LB7);
-    expect(Object.keys(cardsSha.quotes)).toEqual(LB7);
+    expect(Object.keys(cardsSha.cards)).toEqual(NINE);
+    expect(Object.keys(cardsSha.quotes)).toEqual(NINE);
+    expect(cardsSha.resume3.researchHead).toBe(RESEARCH_HEAD_R3);
+    expect(Object.keys(cardsSha.resume3.cards)).toEqual(R3);
+    expect(Object.keys(cardsSha.resume3.quotes)).toEqual(R3);
     for (const id of LB7) {
-      expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
-      expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
+      expect(sha(canon(cardOf(id))), id).toBe(pinOf(id).cards[id]);
+      expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(pinOf(id).quotes[id]);
     }
+  });
+  it('mutation: a resume-3 card with another key edited is red', () => {
+    const c = cardOf('pike_push_up'); c.plate.mistake.drawable = true;
+    expect(sha(canon(c))).not.toBe(cardsSha.resume3.cards.pike_push_up);
   });
   it('mutation: any other card key edited is red', () => {
     const c = cardOf('weighted_dip'); c.plate.view = 'front';
@@ -270,7 +286,7 @@ describe('LIB-17 A11 (Do 6 a): the 9 cards and quotes are byte copies of the LB7
       expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
   });
-  it('research/validate.mjs validateCardFile: no problem on any of the 9 cards (the two no-seconds cards carry their strip tempo; D-STRIP-SHAPE), and neither is a held-pairing marker', async () => {
+  it('research/validate.mjs validateCardFile: no problem on any of the 12 cards (the two no-seconds cards carry their strip tempo; D-STRIP-SHAPE), and neither is a held-pairing marker', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
     for (const id of LB7) expect(v.validateCardFile(`${id}.json`), id).toEqual([]);
     const held = readJson('tests/howto/fixtures/held-pairing.json').held.map((h: any) => h.id);
@@ -301,7 +317,8 @@ describe('LIB-17 A2 / Do 4: dipBars and the drawn plates draw PRIMITIVES only', 
     }
   });
   it('every item the drawn specs draw is a PRIMITIVES type, in every drawn pose', () => {
-    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'dumbbell_front_raise', 'cable_rear_delt_fly', 'face_pull', 'cable_external_rotation', 'resistance_band_pull_apart', 'renegade_row', 'weighted_dip', 'bench_dip']);
+    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'dumbbell_front_raise', 'cable_rear_delt_fly', 'face_pull', 'cable_external_rotation', 'resistance_band_pull_apart', 'renegade_row', 'weighted_dip', 'bench_dip',
+      'incline_push_up', 'diamond_push_up', 'pike_push_up']);
     for (const id of specsDrawn()) for (const pose of posesOf(S[id]))
       for (const it of itemsIn(S[id], pose).items) expect(Object.keys(eng.PRIMITIVES), `${id} ${pose}`).toContain(it.type);
   });
@@ -995,8 +1012,9 @@ describe('LIB-17 bench_dip (H; tier B; the support class, the bench; the normal-
 
 describe('LIB-17 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { cable_lateral_raise: 'above', dumbbell_front_raise: 'swing', cable_rear_delt_fly: 'roll', face_pull: 'drop', cable_external_rotation: 'flare',
-    resistance_band_pull_apart: 'shrug', renegade_row: 'corner', weighted_dip: 'short', bench_dip: 'low' };
-  const ONE_TELL = ['renegade_row', 'resistance_band_pull_apart'];
+    resistance_band_pull_apart: 'shrug', renegade_row: 'corner', weighted_dip: 'short', bench_dip: 'low',
+    incline_push_up: 'feet', diamond_push_up: 'sag', pike_push_up: 'head' };   // + DESIGN.md section 19.2 (resume 3)
+  const ONE_TELL = ['renegade_row', 'resistance_band_pull_apart', 'pike_push_up'];   // + pike_push_up's one-tell record (section 19.2)
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells (or one, with its record), the first carrying the proposed key', () => {
     for (const id of specsDrawn()) {
@@ -1386,6 +1404,7 @@ describe('LIB-17 A7: the tempo strip follows the card (D-LIB17-SECS, -TEMPO)', {
     resistance_band_pull_apart: [['Pull apart', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
     weighted_dip: [['Lower', 'down', true], ['Press', 'up', true]],
     bench_dip: [['Lower', 'down', true], ['Press', 'up', true], ['Hold', 'pause', false]],
+    incline_push_up: [['Press', 'up', true], ['Lower', 'down', true]],   // DESIGN.md section 19.2: the drawn start is the bottom
   };
   const WITH_SECS = LB7.filter(id => !NOSECS.includes(id));
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
@@ -1394,7 +1413,7 @@ describe('LIB-17 A7: the tempo strip follows the card (D-LIB17-SECS, -TEMPO)', {
   const tempoProblems = (tj: any, specs: Record<string, any>) => {
     const bad: string[] = [];
     if (Object.keys(tj.constants).length) bad.push('constants: not the ruled (empty) set');
-    if (JSON.stringify(Object.keys(tj.ids)) !== JSON.stringify(WITH_SECS)) bad.push('ids: not the 7 with seconds');
+    if (JSON.stringify(Object.keys(tj.ids)) !== JSON.stringify(WITH_SECS)) bad.push('ids: not the 8 with seconds');
     for (const id of WITH_SECS) {
       const rows = tj.ids[id]?.rows ?? [], t = cardOf(id).plate.tempo;
       if (JSON.stringify(rows.map((r: any) => [r.phase, r.from, !!r.move])) !== JSON.stringify(RULED[id])) bad.push(`${id}: tempo.json rows != the ruled table`);
@@ -1473,11 +1492,14 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
   const cardsSha = readJson('tools/plates/library/lb7/cards.sha.json');
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
-  // The ruled pose map (DESIGN.md section 9): identity for all 9.
-  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB7.map(id => [id, { start: 'start', end: 'end' }]));
+  // The ruled pose map (DESIGN.md section 9): identity for the 9; section 19.2 (LB7 R3 PLAN RULED, #356 6543661102):
+  // push_up's map for incline_push_up and diamond_push_up (card start = spec end), identity for pike_push_up.
+  const SWAP = ['incline_push_up', 'diamond_push_up'];
+  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB7.map(id => [id, SWAP.includes(id) ? { start: 'end', end: 'start' } : { start: 'start', end: 'end' }]));
+  const pinOf = (id: string) => (R3.includes(id) ? cardsSha.resume3 : cardsSha);
   it('each card differs from its research-head copy only in the three keys, written last', () => {
     for (const id of LB7) {
-      expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
+      expect(sha(canon(cardOf(id))), id).toBe(pinOf(id).cards[id]);
       expect(Object.keys(cardOf(id)).slice(-3), id).toEqual(KEYS);
     }
   });
@@ -1499,9 +1521,10 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
   });
   // The ruled fault->key map (DESIGN.md section 9; #299 6347885720 Q3): the drawn key, and topFault.
   const DRAWN: Record<string, string> = { cable_lateral_raise: 'above', dumbbell_front_raise: 'swing', cable_rear_delt_fly: 'roll', face_pull: 'drop', cable_external_rotation: 'flare',
-    resistance_band_pull_apart: 'shrug', renegade_row: 'corner', weighted_dip: 'short', bench_dip: 'low' };
-  const TOP: Record<string, string> = { ...DRAWN, cable_rear_delt_fly: 'swing', cable_external_rotation: 'swing', bench_dip: 'flare' };
-  const F7 = ['cable_rear_delt_fly', 'cable_external_rotation', 'bench_dip'];
+    resistance_band_pull_apart: 'shrug', renegade_row: 'corner', weighted_dip: 'short', bench_dip: 'low',
+    incline_push_up: 'feet', diamond_push_up: 'sag', pike_push_up: 'head' };   // + DESIGN.md section 19.2 (resume 3)
+  const TOP: Record<string, string> = { ...DRAWN, cable_rear_delt_fly: 'swing', cable_external_rotation: 'swing', bench_dip: 'flare', pike_push_up: 'flare' };
+  const F7 = ['cable_rear_delt_fly', 'cable_external_rotation', 'bench_dip', 'pike_push_up'];   // + pike_push_up (D-LIB17R3-F7)
   /** D-LIB9-CARDFIELDS, D-LIB17-F7: drawable true: topFault is the drawn key; drawable false: it is the ruled key of
    *  handlingMistakes[0] and differs from the drawn key. */
   const topFaultProblems = (id: string, card: any) => {
@@ -1544,6 +1567,12 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     renegade_row: C(['wrist.l', 'wrist.r'], 'start', 'c1'),
     weighted_dip: [...C(['wrist.l', 'wrist.r'], 'start', 'c2'), ...C(['navel'], 'start', 'c8')],   // F-LB7-1 (e5ed66ca): the elbow-90 facts dropped
     bench_dip: [...C(['wrist.l', 'wrist.r'], 'start', 'c2'), ...C(['heel.l', 'heel.r'], 'start', 'c3'), ...A(['elbow.l', 'elbow.r'], 'end', 'c5')],
+    // DESIGN.md section 19.3 (resume 3): card start = spec end on the two push-up rows; pike_push_up's quotes name no contact
+    incline_push_up: [...['wrist.l', 'wrist.r'].map(landmark => ({ kind: 'contact', landmark, pose: 'end', cardPose: 'start', claim: 'c1' })),
+      // D-CFSMALL-ELEV (#356 6547986860): c4's "elbows at approximately 45 degrees from your body", both sides, at the bottom
+      ...['sh.l.elev', 'sh.r.elev'].map(joint => ({ kind: 'angle', joint, pose: 'start', cardPose: 'end', deg: 45, claim: 'c4' }))],
+    diamond_push_up: ['wrist.l', 'wrist.r'].map(landmark => ({ kind: 'contact', landmark, pose: 'end', cardPose: 'start', claim: 'c1' })),
+    pike_push_up: [],
   };
   it('every card\'s plateFacts is the ruled set, each fact well formed', () => {
     for (const id of LB7) { expect(cardOf(id).plateFacts, id).toEqual(FACTS[id]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
@@ -1561,7 +1590,8 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     return qaNode.h6({ spec, research }, { engine: Eng(), pins: pins() }, R).map((p: any) => p.key);
   };
   // as candidate.mjs:77 builds it: an untimed card also gives its plate.tempo.text (D-STRIP-H6)
-  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault, ...(NOSECS.includes(id) ? { tempoText: c.plate.tempo.text } : {}) }; };
+  const FALLBACK_A = ['diamond_push_up', 'pike_push_up'];   // strip/rows.json fallbackA (D-LIB17R3-AFALL): candidate.mjs:78 marks them
+  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault, ...(NOSECS.includes(id) ? { tempoText: c.plate.tempo.text } : {}), ...(FALLBACK_A.includes(id) ? { tempoFallbackA: true } : {}) }; };
   it('A6: PQ-H6 is green on every drawn spec against its card, the two untimed strips included', () => {
     for (const id of specsDrawn()) {
       const keys = h6(S[id], research(id));
@@ -1916,5 +1946,298 @@ describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md secti
     expect(keys(await qa(await mutated('renegade_row', "s => ({ ...s, zoom: { view: 'mistake', k: 3 } })")))).toContain('H3.zoom:deviation');
     expect(keys(await qa(await mutated('renegade_row', "s => ({ ...s, zoom: { ...s.zoom, k: 2 } })")))).toContain('H3.zoom:deviation');
     expect(keys(await qa(await mutated('renegade_row', 's => ({ ...s, zoom: undefined })')))).toEqual(['H3.deviation']);
+  });
+});
+
+describe('LIB-17 resume 3 A2: the 8 approved LB7 plates stay byte-identical (page c457ee86 on main 6d34542c)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the 8 approved LB7 plates on main's LB7 page c457ee86…2194 (lib-17r3-card A2), 72 shas.
+  const APPROVED: Record<string, Record<string, string>> = {
+    "cable-lateral-raise": {
+      "normalSvg": "08c44e0b397bd05a3143450dc7a7c6b0dadb7830f506161d2e1e62438e9d571d",
+      "normalOverlay": "ee442ee9ff4e6fcf9209001f8511eda8447c0930889137bdd645cf9acf4bdf68",
+      "mistakeSvg": "492e1755bb9faee8884bf4611acbbb53f9256824c1e43489a22f30f02b4a207a",
+      "mistakeOverlay": "84210e615f396dc287c883891966e5f6a0fa159b27d0b112b072f7ecbb55a190",
+      "tells": "fc6ec9689b9d9b54d528ca502a395c5da94459ca7e1a87f522fa354130e3a771",
+      "tempo": "1505a47be0c8ba7d92c0a2f4f553d1a8fe7398a2c1a41886027965557c1757fa",
+      "cues": "b98311945090364f790d1ee84b0103736367bff2b6e07ad9d53cf02c950b937d",
+      "alt": "f8c371956f2aae84cf9df34a925bb8792452147e41c7b078e117f3f26d7de691",
+      "mistakeAlt": "4fdba69391641baf536b376c3de830165f628aab60452ad2d50332b0d5705452"
+    },
+    "dumbbell-front-raise": {
+      "normalSvg": "7ae3376a3d2d059bba0fbf3134410a59df3a5af788214e81d76fa1525425da02",
+      "normalOverlay": "c993362b59d59712baaff1eee379ab73250baf9e1b047fd7e8237f329daecc10",
+      "mistakeSvg": "ef910e5dfdbdc1bef1f37b9e1801a35ed03b0da4e3c40a57e7ba894c7ff6e2b8",
+      "mistakeOverlay": "99ff1597c4684ca61e4dde3b31e4b6ed6af65b21f8d9b6d02221e1612cd3dbf2",
+      "tells": "90a5ab53f9049a1a78d84e08384c5e22672128f3d347b18751bac66069e5ea16",
+      "tempo": "e82cf3c956a7d1ef1cc5acf46512b28143341810ed110f1cd52373fccca2b7d8",
+      "cues": "3312a6fdc5cdc4f96f12e691b9a7b69e52796d1c2ceaac28390248005518b945",
+      "alt": "ff3ab97eaf8546f54b0ba9766af410ffe69fd3904d7ed1d7ae2e08aa635b0f6b",
+      "mistakeAlt": "6798e9e233f75f6df9c1e41e6e1cb0184cb3a2e1df76e09006d1ae2918ec40f6"
+    },
+    "face-pull": {
+      "normalSvg": "277995f26f631f017ffc7900c214872851f2869428099ca3243d86ab9afdc085",
+      "normalOverlay": "932544e683c29769741ad97bd26d70a38bf25b2e1af3f8f5b5af3f2b54a01b6c",
+      "mistakeSvg": "aef592ae52100ba6659a7ccc5b1bcee24ddf07fa2279208a9cf37a18f5eb71d6",
+      "mistakeOverlay": "59c6811a3b69864e1ad943d12e6e17a28cc0f31d6102dc9079e3133c8382a47a",
+      "tells": "5af31bf157de6a15fd7f7b7259cd268400234cf3c5e4aa62b368fa478e77c3b0",
+      "tempo": "30df5fde2d33c5d8e4bb68496a1b8d451fd40d9956714968ee873c33895b1a00",
+      "cues": "883568570b223440e59498c497a67cb980f3c85aa9cc742a3c3ff761a0c72895",
+      "alt": "d0a43bbf5bc441526a206883c33e52f7eef9eb0ae0e77cdef200ca7901455c69",
+      "mistakeAlt": "e7b0ffc21a022fc7f0ef5181062fcce728e8b0c58a1448a44f62640140386c6d"
+    },
+    "cable-external-rotation": {
+      "normalSvg": "93c1a565468406d49394584b875b90a6064085e506cb46c0023c8e204098a1e3",
+      "normalOverlay": "b32ed7f0daefe5082011bc83af2a611103d334e67d91b73756a8fc790241511c",
+      "mistakeSvg": "db915cde284efd66cd286b10d54941c2a970470d9ab598916d6961277ad1071f",
+      "mistakeOverlay": "4c1d3685e8105ccb1a930ffbb3edc47a1eefc9cd8b4d3ac5fb9c17e9470da8f7",
+      "tells": "82cd164837f22e180e361f39b94fcf817e53ed869f79006c70278ee342e52f57",
+      "tempo": "fc1a718c703efe66a74707487fec99cfe4094f87c7e7e997b2413afc9a1440dd",
+      "cues": "56387bcf1f9687be87fb1400b69700c868eeb1eb34d0b069a7ea7d96f55caabe",
+      "alt": "77537822f6a7bab0785a6021e2ae2893662998cad62dd096a074c304a5a50c46",
+      "mistakeAlt": "5679f0b2210d8bd0705ea66f9f8e0c5fd219686d195568783d659e2e394cd691"
+    },
+    "resistance-band-pull-apart": {
+      "normalSvg": "7f1686e3296ee8074ff6a45fb4583acca3ef6f094e9fbd6c7408a110357f332a",
+      "normalOverlay": "b9e79b30c9df398130e6378c61177d6dbadd277e1ec37521589092bd38d768df",
+      "mistakeSvg": "64b60ac7d007f70da2e3497907eb3e51d6cb1153c70897dc8b58d62ca1e1d0ab",
+      "mistakeOverlay": "64f512b19d68f8d7996a9700852b772a3ea701bd79db96d95bfdafee14e6cabb",
+      "tells": "5f55c61c2ea73aaa6fc0567fe78280bd15704a7f75462247f6201a4445d6ee8f",
+      "tempo": "e61aff78f76b8b74f6ea534f04cfd02a8c7049e305537a06040d73945a9f5156",
+      "cues": "4d12b7e3c49dcf04236adce70d2f903f4e1987c159f6f15df25dc2a6905f3751",
+      "alt": "d4a91b043253ab0b5ff92437dc600833eccf776bb07881e72e4dbf9f6ac038bd",
+      "mistakeAlt": "1f4fb70d13abecbee24fbede75d3bf2ce085423e9fe0326d42b43bd6d0850015"
+    },
+    "renegade-row": {
+      "normalSvg": "8265f8ae6efa5c51b829aed8a11309021a590aff9750d575cb89cc8b84f9a8fb",
+      "normalOverlay": "03f2ca3bbb4d5b6d48bc044db4df9aae26a25493994d9d55e29a817830789262",
+      "mistakeSvg": "454d7183db6f24a9531314c934ccccd19a7cae687783672ba69c82039eedb2f0",
+      "mistakeOverlay": "f4627c345cd9f1555a5f9a7a7a2007c030d82b078707b757ef4ac2fc816a7adc",
+      "tells": "4bf872c261418fc9fc0b1ef43f40b780b239075f605438591f307a24d1c3f1ea",
+      "tempo": "83876873997c45c13d057b38c5e9b75f7e2ea918d1deb48ee8ef880d38fa45b4",
+      "cues": "03bfc36185bf5bef75290fef157bdfa58b40e13423269c3bd2232a10af8a38a5",
+      "alt": "3748316464afcf5b57713133bf8bd4e055448c173989cd3da27297f2e3d22098",
+      "mistakeAlt": "7816a2935d34a4584d546155cec9a1e40a63dc68372aab2ab7bf888123db6d83"
+    },
+    "weighted-dip": {
+      "normalSvg": "19e03eac4b0d2fdfca82e983005e5e9551e7b5b7d5693b528add5121c9f1e240",
+      "normalOverlay": "4729e437d93b1a1627db988cb58b3a4f7c85cb3df7c9da95976b803f59aa37ae",
+      "mistakeSvg": "c6c5d3625ba9b55c2c15fecdd1ed8d5f6e24b783f75da5876000fdcfa55e4894",
+      "mistakeOverlay": "187c947427a4cce3eb3fcd011c9922b5a05300c4dbdd80dc6f35846e2bcab1bd",
+      "tells": "e7b4a25dc00ec5f73e2c13708efa8ad9b57cfb0680737df23a87ba67b9e1aaf0",
+      "tempo": "9af9e6552a529e3708cf8dafa367dc90b5d5d8b5b1f51cedaf88fe48e65d10d8",
+      "cues": "323f03f8d999e5d6b432681db8a8fb37196c93953759796e1d7ad64ee73f4597",
+      "alt": "16ff1dbf72f9d7028d0e2192a3f3130f4bc410292b777660de747d7235be5c4c",
+      "mistakeAlt": "2e1edba19025461aad72897e8174a4425e5bfbf455778f51c229d75a65fd0241"
+    },
+    "bench-dip": {
+      "normalSvg": "48c20da267c35b7bfe5d6ee76ec184b19270078f6d75c8bf709b8cd956db1334",
+      "normalOverlay": "52003cc352940dc33720ac5cb6b9384380633858c942e4ec91864154870baf77",
+      "mistakeSvg": "54a713fcd0e247be7d6183a0f92b423ac7f03de0422d6bd937477d769fbe4880",
+      "mistakeOverlay": "47e2dd91760c1427b25767596915d43725817d3e20bf704fce41beeb6501bce7",
+      "tells": "2f31b68791b551a17803ba4dd44c698f856d46af0c85fc12c8c58dc3d89c205d",
+      "tempo": "cf63e40e037e0f8d1a9cf327745c129b5c27ce48afc4412b42ae8d2061e8f7db",
+      "cues": "7f7220085a9d3cfc191ce45917ba3317c5a5c334c05865fa299562250b50406b",
+      "alt": "effb65b4623df0a4a453374bdeb6594f4c6249dcba624f31a059ed85637b610c",
+      "mistakeAlt": "a99f280452f805b4b6e457a069776beb56d5ff9d321a2196c47ad501c68a8584"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb7/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('the pin holds 8 plates and 72 fragment shas', () => {
+    expect(Object.keys(APPROVED).length).toBe(8);
+    expect(Object.values(APPROVED).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(72);
+  });
+  it("the 8 approved plates' fragments on this head equal main's", async () => {
+    expect(fragProblems((await build.buildLb7Page()).html.toString('utf8'))).toEqual([]);
+  });
+  it("mutation: one byte changed in bench_dip's alt is red", async () => {
+    const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'bench-dip');
+    expect(fragProblems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['bench-dip alt']);
+  });  // PANEL mx13 (#356 6547087962): incline_push_up APPROVED at 29a48852; its 9 fragments pinned from that head's page
+  // (58d79da8…6898) so the fix round cannot move them. D-CFSMALL-ELEV (#356 6547986860) re-posed its bottom to sh.elev
+  // 45 (from 49.7): only normalSvg and mistakeSvg moved, re-pinned here; the other 7 keep their 29a48852 values.
+  const INCLINE: Record<string, string> = {
+    "normalSvg": "a7b87dc51d930cd510621bb0eea196eb3add57b1230541841beddaaf83d68744",
+    "normalOverlay": "13d1db3ca056f6eab233ed2c18d963f4b9bd78644e3e44fe36bed14c5882a119",
+    "mistakeSvg": "7082167ddcc605a940a914104048b68465de44eb76319cb9932cdbfe491a9d4f",
+    "mistakeOverlay": "e19269d70221aa6d38a7273e284ffefeebfdf2f01dea5b24c635a4be8fcaf2bb",
+    "tells": "10f9f12eb9cdca0b90e773b09d43a32d110991bb27e659cbf6b35c26299a5f57",
+    "tempo": "abc6725e7c67daeed47a9e1c42e1389b60e70d2562ea62f9f8888447c2878ef7",
+    "cues": "16b9b21a8b8b6bafdffa37e887e6060f4b881c7282c6ec10e5debce5ab2039fc",
+    "alt": "d76bf0381f0ea2e13c2127776fc5d824c294453cbfd0fb88a3100a2ab9251a96",
+    "mistakeAlt": "22230b16a7d48e4b32743caf921a294f8f71d7911090ba7f5d4d775b913a92d6"
+  };
+  const incProblems = (html: string) => { const p = golden.extractPlates(html).find((x: any) => x.chromeId === 'incline-push-up'), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(INCLINE).filter(k => got[k] !== INCLINE[k]); };
+  // PANEL mx15 (#356 6547986860): diamond_push_up APPROVED at feec1c3c (page a3818806…bb20); its 9 fragments pinned.
+  const DIAMOND: Record<string, string> = {
+    "normalSvg": "cba3698cdf11b11be0f6431936f7f88b21e3c34f7d67f189c3f175f2b3671207",
+    "normalOverlay": "640a611234f1b9b15ff1d043ae6732e2af91834c4bcf9ad4802233707212aa78",
+    "mistakeSvg": "379a734cdd54c16f4be7c5a5e6b953d088a634a362d5267b14b4b7f03a7ec010",
+    "mistakeOverlay": "998f0055cad1b294415fb3b96a74903965df113aa923559cd24a01d86f2f0711",
+    "tells": "f2f6bd0eb3ebd5cb200717b51b2562221eea8411e113ce8f393c6810ad9bba39",
+    "tempo": "17001403e53ef44c98706c622b729156e79184b8404516c13e781d51b5f5e8b1",
+    "cues": "667fb80622adb1531f6dc4db004d032406fd5ffdd708cd4d1af7604e72ff2f31",
+    "alt": "424c364c21d8e1a1b3539865a581fd60b2f8a65bf971b56e1feb110b779aa2f5",
+    "mistakeAlt": "8b67c2897c2f9a4f3ad369bc5a5a35fee90215d89eba6d64064e4658e23b4f4e"
+  };
+  it('diamond_push_up (approved, mx15) keeps its 9 fragment shas; mutation: one byte in its alt is red', async () => {
+    const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'diamond-push-up');
+    const probs = (h: string) => { const q = golden.extractPlates(h).find((x: any) => x.chromeId === 'diamond-push-up'), got = q ? golden.fragmentsOf(q) : {}; return Object.keys(DIAMOND).filter(k => got[k] !== DIAMOND[k]); };
+    expect(Object.keys(DIAMOND).length).toBe(9);
+    expect(probs(html)).toEqual([]);
+    expect(probs(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['alt']);
+  });
+  it('incline_push_up (approved, mx13) keeps its 9 fragment shas; mutation: one byte in its Mistake alt is red', async () => {
+    const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'incline-push-up');
+    expect(Object.keys(INCLINE).length).toBe(9);
+    expect(incProblems(html)).toEqual([]);
+    expect(incProblems(html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E')))).toEqual(['mistakeAlt']);
+  });
+});
+
+describe('LIB-17 resume 3 PANEL mx13 R3: every ghost hand stays on the floor (diamond_push_up, pike_push_up)', { timeout: T }, () => {
+  /** The palms of the in-between ghosts (the engine's ghost times and its key blend) against the floor line, px. */
+  const ghostProblems = (spec: any) => {
+    const B = { height: 1.75 }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, B));
+    const n = spec.ghosts?.count ?? 3, cam = camOf(spec), fy = cam.P([0, 0, 0])[1], out: string[] = [];
+    for (let i = 1; i <= n; i++) {
+      const r = body.poseAt(keys, i / (n + 1), B), shapes = body.bodyShapes(body.fk(r.q, B), cam, { armsFront: spec.armsFront, hand: spec.hand });
+      for (const x of shapes.filter((y: any) => y.poly && /^palm\./.test(y.key))) { const low = Math.max(...x.poly.map((p: number[]) => p[1]!)); if (Math.abs(low - fy) > 1) out.push(`ghost ${i}: ${x.key} ${(low - fy).toFixed(1)} px from the floor`); }
+    }
+    return out;
+  };
+  it('each ghost palm lies within 1 px of the floor line', () => {
+    for (const id of ['diamond_push_up', 'pike_push_up']) expect(ghostProblems(S[id]), id).toEqual([]);
+  });
+  it('mutation: the in-between keys removed (the round-1 ghosts) is red on both', () => {
+    for (const id of ['diamond_push_up', 'pike_push_up']) { const s = S[id]; expect(ghostProblems({ ...s, poses: { start: s.poses.start, end: s.poses.end } }).length, id).toBeGreaterThan(0); }
+  });
+});
+
+describe('LIB-17 resume 3 A4: card-true poses of the three PUSHUP rows (DESIGN.md section 19.5)', { timeout: T }, () => {
+  const R2D = 180 / Math.PI;
+  const lm = (spec: any, pose: string) => lmOf(spec, pose);
+  const lmPose = (p: any) => body.landmarks(body.fk(body.resolve(body.normPose(p, { height: 1.75 }), { height: 1.75 }).q, { height: 1.75 }));
+  /** The upper arm's angle from the sagittal plane (deg): c4/c3's "elbows about 45 degrees from the body". */
+  const flare = (l: any) => { const u = l['elbow.r'].map((v: number, i: number) => v - l['shoulder.r'][i]); return Math.asin(Math.abs(u[0]) / Math.hypot(...u)) * R2D * Math.sign(Math.abs(l['elbow.r'][0]) - Math.abs(l['shoulder.r'][0])); };
+  const bodyDeg = (l: any) => Math.atan2(l['shoulder.r'][1] - l['toe.r'][1], l['shoulder.r'][2] - l['toe.r'][2]) * R2D;
+  const incline = (top: any, bottom: any, m: any) => {
+    const out: string[] = [], d = bodyDeg(top);
+    if (Math.abs(d - 45) > 5) out.push(`top body ${d.toFixed(1)} deg`);
+    for (const s of ['l', 'r']) { const w = top[`wrist.${s}`]; if (Math.abs(w[1] - m.BENCH_TOP - 0.02625) > 0.005 || w[2] < 0 || w[2] > 0.05) out.push(`wrist.${s} not on the bench's top edge`); }
+    const hw = Math.abs(top['grip.l'][0] - top['grip.r'][0]) / Math.abs(top['shoulder.l'][0] - top['shoulder.r'][0]);
+    if (hw < 0.8 || hw > 1.2) out.push(`hands ${hw.toFixed(2)} x shoulder width`);
+    const gap = bottom.chest[1] - m.BENCH_TOP;
+    if (Math.abs(gap - 0.025) > 0.005) out.push(`chest ${(gap * 100).toFixed(1)} cm over the top`);
+    if (bottom.chest[2] < 0 || bottom.chest[2] > 0.05) out.push('chest not over the edge');
+    const f = flare(bottom); if (Math.abs(f - 45) > 10) out.push(`elbows ${f.toFixed(1)} deg`);
+    return out;
+  };
+  it('incline_push_up: hands on the edge about shoulder-width, top 45 +- 5 deg, chest 2.5 +- 0.5 cm over the edge, elbows about 45 deg (c1, c3, c4)', () => {
+    expect(incline(lm(S.incline_push_up, 'end'), lm(S.incline_push_up, 'start'), M.incline_push_up)).toEqual([]);
+  });
+  it('mutation: incline_push_up drawn at 30 deg (the top body turned 15 deg down about the toe) is red', () => {
+    const t = S.incline_push_up.poses.end, l = lm(S.incline_push_up, 'end'), toe = l['toe.r'], a = -15 / R2D;
+    const turn = (p: number[]) => [p[0]!, toe[1] + (p[1]! - toe[1]) * Math.cos(a) + (p[2]! - toe[2]) * Math.sin(a), toe[2] - (p[1]! - toe[1]) * Math.sin(a) + (p[2]! - toe[2]) * Math.cos(a)];
+    const low = Object.fromEntries(Object.entries(l).map(([k, p]: [string, any]) => [k, turn(p)]));
+    expect(incline(low, lm(S.incline_push_up, 'start'), M.incline_push_up)).toContain(`top body ${bodyDeg(low).toFixed(1)} deg`);
+    expect(t).toBeTruthy();
+  });
+  const diamond = (top: any, bottom: any, m: any) => {
+    const out: string[] = [];
+    for (const s of ['l', 'r']) { const g = bottom[`grip.${s}`][2]; if (!(g > bottom.chest[2] && g < bottom['shoulder.r'][2])) out.push(`grip.${s} not between the chest and shoulder`); }
+    if (Math.abs(top['grip.r'][2] - m.GRIP_Z) > 0.005) out.push('top grips moved');
+    const tuck = angle3(bottom['elbow.r'], bottom['shoulder.r'], bottom['hip.r']);   // the upper arm against the trunk line
+    if (tuck > 25 || Math.abs(bottom['elbow.r'][0]) > Math.abs(bottom['shoulder.r'][0]) + 0.02) out.push(`elbows ${tuck.toFixed(1)} deg from the trunk`);
+    const back = 2 * 0.015 * 1.75, gap = bottom.chest[1] - back;
+    if (gap < 0 || gap > 0.025) out.push(`chest ${(gap * 100).toFixed(1)} cm over the hands' backs`);
+    if (Math.abs(bottom.chest[2] - bottom['grip.r'][2]) > 0.06) out.push('chest not over the hands');
+    return out;
+  };
+  it('diamond_push_up: grips under the upper chest, elbows tucked, chest near the backs of the hands at the bottom (c1, c3)', () => {
+    expect(diamond(lm(S.diamond_push_up, 'end'), lm(S.diamond_push_up, 'start'), M.diamond_push_up)).toEqual([]);
+  });
+  it("mutation: diamond_push_up's bottom with push_up's ELBOW_POLE [1, 0, -1] is red", () => {
+    const st = S.diamond_push_up.poses.start, pole = [1, 0, -1];
+    const flared = { ...st, reach: { r: { ...st.reach.r, pole: [-pole[0]!, pole[1], pole[2]] }, l: { ...st.reach.l, pole } } };
+    expect(diamond(lm(S.diamond_push_up, 'end'), lmPose(flared), M.diamond_push_up).some(x => x.startsWith('elbows'))).toBe(true);
+  });
+  const pike = (top: any, bottom: any, headLowPx: number, pxm: number) => {
+    const out: string[] = [];
+    if (!(top['hip.r'][1] - top['shoulder.r'][1] > 0.2)) out.push('top hips not above the shoulders');
+    if (!(bottom['hip.r'][1] > bottom['shoulder.r'][1])) out.push('bottom hips not above the shoulders');
+    if (headLowPx < 2 || headLowPx > 0.025 * pxm) out.push(`head ${headLowPx.toFixed(1)} px over the floor`);
+    if (!(bottom.head[2] > bottom['grip.r'][2])) out.push('head not in front of the hands');
+    return out;
+  };
+  const headLow = (spec: any, pose: string) => { const cam = camOf(spec), h = shapesIn(spec, pose).find((x: any) => x.key === 'head'); return cam.P([0, 0, 0])[1] - Math.max(...h.poly.map((p: number[]) => p[1]!)); };
+  it('pike_push_up: hips above the shoulders with straight legs; at the bottom the head 2-3.6 px over the floor and in front of the hands (c2, c3, c5)', () => {
+    const s = S.pike_push_up;
+    expect([s.poses.start.knee, s.poses.end.knee]).toEqual([0, 0]);
+    expect(pike(lm(s, 'start'), lm(s, 'end'), headLow(s, 'end'), camOf(s).pxm)).toEqual([]);
+  });
+  it("mutation: pike_push_up's top with the hips at plank height (push_up's top, pilot B) is red", async () => {
+    const pu = (await import(/* @vite-ignore */ lib('specs/push_up.mjs'))).default, s = S.pike_push_up;
+    expect(pike(lmPose(pu.poses.end), lm(s, 'end'), headLow(s, 'end'), camOf(s).pxm)).toContain('top hips not above the shoulders');
+  });
+});
+
+describe('LIB-17 resume 3 A5: 2 px clearance, card contacts excepted (D-LIB17R3-CLEAR)', { timeout: T }, () => {
+  // The card contacts (DESIGN.md section 19.5): the flat palms with the forearm's distal end (LIB-26: the wrist a forearm
+  // radius over the surface) and the feet on their toes. diamond_push_up's chest over the backs of the hands is a
+  // body-to-body contact (c3), so only body-to-equipment gaps are measured.
+  const CONTACT = /^(palm|fore|foot)\./;
+  const gaps = (spec: any) => posesOf(spec).flatMap(pose => {
+    const cam = camOf(spec), fy = cam.P([0, 0, 0])[1], shapes = shapesIn(spec, pose).filter((x: any) => !CONTACT.test(x.key)), out: string[] = [];
+    const eq: number[][][] = []; for (const it of itemsIn(spec, pose).items) if (it.type === 'bench') for (const p of eng.PRIMITIVES.bench(it, cam)) if (p.poly) eq.push(p.poly);
+    for (const x of shapes) {
+      const floor = fy - Math.max(...x.poly.map((p: number[]) => p[1]!));
+      if (floor < 2) out.push(`${pose}: ${x.key} ${floor.toFixed(1)} px over the floor`);
+      if (eq.length) { const d = Math.min(...x.poly.map((p: number[]) => outside(eq, p))); if (d < 2) out.push(`${pose}: ${x.key} ${d.toFixed(1)} px from the bench`); }
+    }
+    return out;
+  });
+  it('every non-contact part clears the floor and the bench by 2 px in every drawn pose', () => {
+    for (const id of R3) expect(gaps(S[id]), id).toEqual([]);
+  });
+  // Each row's 0-value mutation: its closest gap closed by moving that pose's whole body down by the gap.
+  const shift = (p: any, v: number[]): any => Array.isArray(p) ? p.map(x => shift(x, v)) : p && typeof p === 'object'
+    ? Object.fromEntries(Object.entries(p).map(([k, x]: [string, any]) => [k, k === 'at' && Array.isArray(x) && x.length === 3 && x.every((n: any) => typeof n === 'number') ? x.map((n: number, i: number) => n + v[i]!) : shift(x, v)])) : p;
+  const down = (spec: any, pose: string, m: number) => ({ ...spec, poses: { ...spec.poses, [pose]: shift(spec.poses[pose], [0, -m, 0]) } });
+  it('mutations: the incline chest gap set to 0, the diamond bottom torso lowered to the floor, and the pike head lowered 2 cm are red', () => {
+    expect(gaps(down(S.incline_push_up, 'start', 0.025)).some(x => x.startsWith('start: torso') && x.endsWith('from the bench'))).toBe(true);
+    expect(gaps(down(S.diamond_push_up, 'start', 0.062)).some(x => x.startsWith('start: torso'))).toBe(true);
+    expect(gaps(down(S.pike_push_up, 'end', 0.02)).some(x => x.startsWith('end: head'))).toBe(true);
+  });
+});
+
+describe('LIB-17 resume 3 A3: diamond_push_up and pike_push_up are fallbackA strip rows (D-LIB17R3-AFALL, -STRIPROWS)', { timeout: T }, () => {
+  const R = () => readJson('tools/plates/library/strip/rows.json');
+  const stripProblems = (r: any) => ['diamond_push_up', 'pike_push_up'].flatMap(id => {
+    const c = r.fallbackA.find((x: any) => x.id === id), card = readJson(`docs/research/howto/cards/${id}.json`), out: string[] = [];
+    if (!c) return [`${id}: not in fallbackA`];
+    if (r.leftOut.some((x: any) => x.id === id)) out.push(`${id}: still in leftOut`);
+    if (c.rows.some((x: any) => !x.blank || 'word' in x || x.claim !== card.plate.tempo.claim)) out.push(`${id}: a phase not blank with the card's claim`);
+    if (c.text !== card.plate.tempo.text) out.push(`${id}: text is not the card's`);
+    if (JSON.stringify(tempoOfStrip(c.rows)) !== JSON.stringify(card.tempo)) out.push(`${id}: card tempo != tempoOf(rows)`);
+    return out;
+  });
+  it('both ids are in fallbackA, every phase blank with the card claim, out of leftOut; each card tempo is tempoOf(its rows)', () => {
+    expect(stripProblems(R())).toEqual([]);
+  });
+  it("mutations: diamond_push_up's Lower given the word 'Slow' (H6 red too), and pike_push_up in both leftOut and fallbackA, are red", () => {
+    const r1 = R(); r1.fallbackA.find((x: any) => x.id === 'diamond_push_up').rows[1] = { phase: 'Lower', move: true, word: 'Slow', claim: 'c5' };
+    expect(stripProblems(r1)).toContain("diamond_push_up: a phase not blank with the card's claim");
+    const s = S.diamond_push_up, c = readJson('docs/research/howto/cards/diamond_push_up.json');
+    const research = { plateFacts: c.plateFacts, tempo: [c.tempo[0], { ...c.tempo[1], word: 'Slow' }], topFault: c.topFault, tempoText: c.plate.tempo.text, tempoFallbackA: true };
+    const s2 = { ...s, tempo: research.tempo }, Rn = { normal: plate.renderPlate(s2, { id: 'x' }), mistake: plate.renderPlate(s2, { id: 'x', mistake: true }) };
+    expect(qaNode.h6({ spec: s2, research }, { engine: Eng(), pins: pins() }, Rn).map((p: any) => p.key)).toEqual(['H6.tempo-word:1:fallback']);
+    const r2 = R(); r2.leftOut.push({ id: 'pike_push_up', lane: 'LB7', why: 'x' });
+    expect(stripProblems(r2)).toContain('pike_push_up: still in leftOut');
   });
 });
