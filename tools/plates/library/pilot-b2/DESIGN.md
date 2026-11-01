@@ -80,7 +80,16 @@ No fact, check, cue or word changes: the chin label keeps its two words.
 
 ### 4.1 F3
 
-PENDING (box search running).
+Leaders measured with the §3 zooms and the two fixes above (plate px; F3's range 49.33-82.26, qa/envelope.json):
+normal: 'lowback' 81.7, 'blades' 72.2, 'chin' 104.6; Mistake: 'lowback' tell 161.2, 'pelvis' tell 99.9.
+
+- Boxing the 'lowback' tell alone cannot clear F3: the 'pelvis' tell (99.9) and the chin leader (104.6) stay over
+  82.26. A grid search of the 'lowback' tell box (left 8-300, top 150-300, 4 px steps; engine issues 0, the Mistake
+  zoom still placed) found no spot that brings the plate's longest leader into range.
+- Clearing F3 would need the 'lowback' and 'pelvis' tell boxes both moved on the Mistake plate, a second moved box on one
+  plate beyond the ruled fixes (S2).
+- **Proposed: F3 named at 161.2 px** (the Mistake 'lowback' tell's auto-placed leader; D-LIB13S-FLAGS form), for a
+  ruling. pilot-b2/qa.mjs EXPECTED holds F1, F3, F5.
 
 ## 5. Near hand (D-SUPCORE-CROSS)
 
@@ -120,8 +129,7 @@ No part lies in the body's own plane against another, so the in-plane rule has n
 Scratch QA on this tree (node and browser, zero exemptions; page built twice, equal):
 - Hard checks: all pass except H6:no-card, expected until CARD FIELDS (the card has no three keys yet; the lb9/DESIGN.md
   form).
-- Flags: F1 191.76 (D-LIB8-floor's ruled flag, crunch.mjs:31-33), F5 3.57 (D-LIB9-F5), F7 until CARD FIELDS. F3 per
-  §4.1.
+- Flags: F1 191.76 (D-LIB8-floor's ruled flag, crunch.mjs:31-33), F5 3.57 (D-LIB9-F5), F7 until CARD FIELDS. F3 161.2 named per §4.1 (for a ruling).
 
 ## 8. Card fields plan (Do 3) and unsourced numbers
 
@@ -153,7 +161,8 @@ measured main-pivot fallback (zooms k 2 / k 2: 28.59 / 15.11 px). The builder ne
 
 ## 12. Risks
 
-- The T12 curl reads as a kink (one pivot, SPINE_HW ±0.015). Renders below for R1; an engine change is S3.
+- The T12 curl reads as a kink (one pivot, SPINE_HW ±0.015). Renders for R1 (780 px, paper, the scratch tree of §2-§5):
+  evidence/plan-crunch-t12-paper-{normal,mistake}.png. An engine change is S3.
 - Small normal-zoom margin (§3).
 - The lifted near hand (12 cm off the chest) may read as floating; the alt names the arms crossed over the chest.
 - A label move shifts a zoom place: the ladders are re-run after every box change (A4).
