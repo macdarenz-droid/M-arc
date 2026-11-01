@@ -4636,3 +4636,12 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **LB6 R2 READY @ `148f07b3`** (#354 6552474828): 9 of 9 rows approved, and the D-LIB13S-RPC move is done (tests only, with a guard against worker page builds). A fresh Opus reviewer is running.
 - **LIB-SUPCORE started** (session_01EQuYNmKwoS6SHBgwKPzxFs, branch claude/lib-supcore) in LB6's freed slot. Active LIB builders: LIB-13s, LIB-SMALL, LIB-SPLIT, LIB-SUPCORE.
 - **#354 review FAIL** 6552589455 (0/1/0/1): hip_adduction and hip_abduction have no byte pins; a one-byte change to an alt stays green. The fix is tests only, adding the 18 pins. The Low is that the RPC guard checks text only. A delta review follows after 'LB6 R2 FIXED'.
+- **#354 delta review PASS** (6552635114): 18 pins equal the review's set, and the RPC guard is stricter. #354 rides train 56.
+- **#366 6552704443: LIB-SUPCORE PLAN RULED @ `72d1166d`.**
+  - F3 is named at 161.2 px, and the near hand sits at 0.12 m (drawn taper).
+  - Q1: reverse_crunch's arms are drawn on the floor, with no fact unless a quote states the contact.
+  - Q2: v_up's heels hover and its arms rest, the hover listed as unsourced.
+  - Q3: v_up's strip is fallbackA, after #358.
+  - Q4: the hollow hold is 'up to 30' (c12).
+  - Q5: the key `low` is confirmed.
+- **mx23** (wall_ball's last recheck): the critics are running.
