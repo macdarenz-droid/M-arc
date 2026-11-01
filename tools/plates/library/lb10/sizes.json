@@ -887,6 +887,67 @@
     "unit": "samples",
     "basis": "stated reason: drawing resolution, 64 segments over at most 1.3 m (under 2.1 cm each)"
    }
+  },
+  "wall_ball": {
+   "FOOT_X": {
+    "value": 0.17,
+    "unit": "m",
+    "basis": "convention: goblet_squat.mjs (LB4, approved mx4; D-SMALL-WBCLONE) FOOT_X 0.17 (hip to shoulder width), for c1 'feet shoulder-width apart'; the side view does not show the width"
+   },
+   "TOE_OUT": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "convention: goblet_squat.mjs (LB4, approved mx4; D-SMALL-WBCLONE) TOE_OUT 20, for c1 'toes slightly turned out'"
+   },
+   "STAND_DIST": {
+    "value": 0.57,
+    "unit": "m",
+    "basis": "claim: c2 Box Life '20-25 inches from the wall' midpoint (22.5 in), the toe tips to the wall's near face (DESIGN.md section 11)"
+   },
+   "BALL_OFF": {
+    "value": 0.126,
+    "unit": "m",
+    "basis": "stated reason (clearance, D-SMALL-9): the ball centre in front of the sternum square to the thorax, the first 1 mm step at which the ball clears the torso by 2 px in every drawn pose (0.125 m gives 1.89 px at the end), for c9 'as close to your body as possible'"
+   },
+   "HAND_X": {
+    "value": 0.075,
+    "unit": "m",
+    "basis": "claim: c9 'wrists about six inches apart' (0.15 m), half each side of the ball's centre"
+   },
+   "BALL_MASS": {
+    "value": 0.048,
+    "unit": "fraction of body mass",
+    "basis": "claim: c12 'six to 10 pounds' for beginners: the midpoint 8 lb (3.6 kg) of a 75 kg lifter, in the balance"
+   },
+   "DEPTH": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "convention: goblet_squat.mjs (LB4, approved mx4; D-SMALL-WBCLONE) DEPTH 0.02, for c6 'your hip crease must break the plane of the knee joint'"
+   },
+   "END_INCL": {
+    "value": 28,
+    "unit": "deg",
+    "basis": "convention: goblet_squat.mjs (LB4, approved mx4; D-SMALL-WBCLONE) END_INCL 28 (chest up at the bottom), for c5, c6 'chest up', 'torso upright'"
+   },
+   "M_DIST": {
+    "value": 1.0,
+    "unit": "m",
+    "basis": "stated reason (D-SMALL-WBMIS): the Mistake toe tips 1.00 m from the wall, past c2's widest sourced setup distance (Healthline '2 to 3 feet', 0.91 m), so no quote calls it right"
+   },
+   "M_INCL": {
+    "value": 40,
+    "unit": "deg",
+    "basis": "stated reason: c3 'your body tilts forward': the thorax 40 deg forward of vertical (12 deg past the bottom's 28); 45 deg puts the ball 0.9 px from the shins (D-SMALL-9 clearance)"
+   },
+   "WALL_H": {
+    "value": 2.25,
+    "unit": "m",
+    "basis": "stated reason (framing): the tallest wall the plate fits with the floor at y 339 (2.26 m with an 8 px top margin), above head height (plate.equipment); no claim gives a height, so no target mark is drawn (#358 6545874629 item 3)"
+   },
+   "trace": {
+    "value": "hip.r",
+    "basis": "DESIGN.md section 12: c6 the hips into the squat"
+   }
   }
  }
 }

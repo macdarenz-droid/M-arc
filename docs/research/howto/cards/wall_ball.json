@@ -859,5 +859,60 @@
     "Squat depth: BOXROX 2016 says \"You don’t need to super deep, ass to grass\"; BarBend says aim deeper if you can. The card shows parallel or lower (c6).",
     "Target height (not shown): Garage Gym Reviews gives the CrossFit standard of a 20-lb ball to 10 feet for men and 14 lb to 9 feet for women; PureGym gives Hyrox's 4-9 kg balls to 9 or 10 foot targets.",
     "LB10 fix round 2026-10-22 (lb10-research-verify.md): wall_ball-1: c2 gains BarBend's 8-12 inch and Healthline's 2-3 foot quotes (sources bb-wb, hl-wb added to c2); c14 gains BarBend's triceps-extend-the-elbows sentence. wall_ball-2: loadProgression keeps GGR's beginner condition. wall_ball-3: rankNote cites #296 ruling 8 for both former ruling-ask places."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c17"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c17"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Squat",
+      "move": true
+    },
+    {
+      "phase": "Throw",
+      "move": true
+    }
+  ],
+  "topFault": "far"
 }

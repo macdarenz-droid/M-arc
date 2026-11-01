@@ -147,6 +147,20 @@
     "blank": true,
     "claim": "c12"
    }
+  ],
+  "wall_ball": [
+   {
+    "phase": "Squat",
+    "move": true,
+    "blank": true,
+    "claim": "c16"
+   },
+   {
+    "phase": "Throw",
+    "move": true,
+    "blank": true,
+    "claim": "c16"
+   }
   ]
  }
 }

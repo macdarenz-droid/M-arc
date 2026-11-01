@@ -473,12 +473,11 @@ kettlebell_swing has a strip from the start; the other three render only from `l
 
 ## 15. Held ids and NOSECS rows
 
-As of 'LIB-22 resume 3' (section 23, LIB-SMALL; jumping_jacks lifted there). 'LIB-22 resume 2' (section 22) lifted farmer_s_carry. Lifted at 'LIB-22 resume' (section 21): sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
+As of 'LIB-22 resume 3' (section 23, LIB-SMALL; jumping_jacks and wall_ball lifted there). 'LIB-22 resume 2' (section 22) lifted farmer_s_carry. Lifted at 'LIB-22 resume' (section 21): sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
 medicine_ball_slam (D-LIB22-AFALL: every phase blank, strip/rows.json fallbackA under D-LIB22-STRIPROWS).
 
 | id | ruling | why | route |
 |---|---|---|---|
-| wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); strip leftOut (S3) | #289 on main, then a resume |
 | jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px**; a normal zoom at kMax 4 gives 21.3 px < 22.11 (trim [0, 0]) | a route the zoom rules do not hold (as F-PALLOF-ARCH) |
 
 Held rows are in no rows file; their specs, tests and card keys stay. Each is confirmed or cleared by measurement.
@@ -647,7 +646,6 @@ k rule: the smallest k in steps of 0.5 from 1.5 whose zoom-scale value clears it
 |---|---|
 | farmer_s_carry | F-LB10-STRIDE (research; #331 6409745507 item 2): a basis for M_STRIDE 0.70 m (6360164495 item 2: a quote, an approved plate's file:line or a measured convention). No quote on the card or the research head, and no approved plate on main, gives a regular step length |
 | jump_rope | no allowed k reaches the bar: the Trace (`sole.r`, trim [0, 0]) is 21.3 px at k 4 (kMax) < 22.11; a raised kMax or another route needs a ruling (as F-PALLOF-ARCH) |
-| wall_ball | LB4 #289 (`wall`) on main (D-LIB22-WALL); also strip `leftOut` (S3) |
 
 QA at 'LIB-22 resume' (lb10/qa.mjs): sled_pull, burpee and bear_crawl pass all 10 hard checks with the ruled flags.
 Layout fixes made for it (labels only; no body part, equipment item, fault or fact moved):
@@ -866,3 +864,23 @@ draft raises H4.overlap (distance|depth), F3 126.5 and F4 0: label boxes are set
 - No neutral forward axis is drawn on the correct foot: in the front view a forward (z) axis projects to a point (the
   end heel-to-toe line is 2.8 px tall). The solid foot itself shows forward.
 - QA: all 10 hard checks pass; flags F5 3.57 and F7 only.
+### 23.5 wall_ball drawn (after 'LIB-SMALL PLAN RULED', #358 6545874629)
+
+- Strip (D-SMALL-WBAFALL, -WBSTRIPROWS; after #356 on main): strip/rows.json moves wall_ball from leftOut to fallbackA,
+  rows `Squat`, `Throw`, each blank, claim c16, its text the card's plate.tempo.text (this file's stripProblems rule);
+  lb10/tempo.json carries the same rows; card and spec tempo `[{ Squat, move }, { Throw, move }]`. lib-strip.test.ts:
+  one LABELS literal (`wall_ball: 'Tempo: squat, throw'`) and ROWS_PIN only.
+- Card keys: plateFacts c1 wrists at the start, c6 heels and c17 soles at the end (the burpee rule for c17, ruled item 2);
+  tempo as above; topFault `far`.
+- No target mark (ruled item 3: no claim gives its height). WALL_H 2.25 m.
+- Callouts = the card's checkpoints in order: `distance` "Right distance" on the front of the dashed start ball (the
+  ball that touches the wall with the arms out; the start toe lies inside the end foot, so a leader to it crosses the
+  end figure), box {176, 40}; `depth` "Squat depth" on the end buttock, box {8, 240}; `catch` "Catch, then squat" on the
+  start ball's underside at the hands, box {32, 146}. Tells: `far` "Too far" on the Mistake heel, box {8, 300}; `tilt`
+  "Body tilts forward" on the Mistake backUpper, box {8, 150}.
+- Mistake guides: the faulty body's near-side outline and its ball traced dashed on top (goblet_squat's MIST_UPPER code,
+  copied, extended to the legs), and the dashed floor gap from the Mistake toe tip to the wall face.
+- lb10/qa.mjs (node and browser): **all 10 hard checks pass**; flags F5 3.57 only; leaderMax 70.0 px; deviation 62.9
+  px, Trace 63.6 px.
+- Clearance (lb10-plates.test.ts 'LIB-SMALL A4 and A5'): every body shape but the fists and forearms (the card contact,
+  listed) clears the ball and the wall by 2 px in the start, end and Mistake.
