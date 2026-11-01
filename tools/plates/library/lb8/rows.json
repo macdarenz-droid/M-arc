@@ -48,6 +48,15 @@
    "stage": "drawing",
    "view": "side"
   },
+  "lib_hip_thrust": {
+   "src": "library/specs/hip_thrust.mjs",
+   "slug": "hip-thrust",
+   "prefix": "hip-thrust",
+   "chromeId": "hip-thrust",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
   "lib_glute_bridge": {
    "src": "library/specs/glute_bridge.mjs",
    "slug": "glute-bridge",
@@ -62,6 +71,15 @@
    "slug": "cable-kickback",
    "prefix": "cable-kickback",
    "chromeId": "cable-kickback",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_resisted_hip_flexion": {
+   "src": "library/specs/resisted_hip_flexion.mjs",
+   "slug": "resisted-hip-flexion",
+   "prefix": "resisted-hip-flexion",
+   "chromeId": "resisted-hip-flexion",
    "mode": "H",
    "stage": "drawing",
    "view": "side"

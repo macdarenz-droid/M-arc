@@ -35,10 +35,11 @@ const NOT_HERE = ['seated_leg_curl'];
 const LEGCURLS = ['lying_leg_curl', 'standing_leg_curl'];
 // DESIGN.md section 15: every held id, with its ruling there.
 // 'LIB-18 resume 2': glute_bridge released with one zoom per view (D-LIBZOOM-EXTEND, D-LIB16-ZOOMVIEWS).
-const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'resisted_hip_flexion'];
+// 'HELD-A' (Held 6): hip_thrust and resisted_hip_flexion released (D-HELD6-HIPTHRUST, D-HELD6-RHF).
+const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise'];
 // The ids on lb8/rows.json now: drawn and not held (A5).
 // 'LIB-18 resume': the leg curls, and the rows released with a LIB-ZOOM circle (D-LIBZOOM-EXTEND; D-LIB18-ZOOMPLACE).
-const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'glute_bridge', 'cable_kickback'];
+const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'hip_thrust', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
 // Card facts the held plates' drawings miss (CARD FIELDS fix round, #306 6356303497): recorded with their holds, never hidden.
 const FACT_MISSES: Record<string, string[]> = { seated_calf_raise: ['check:start:toe.l:4.2cm', 'check:start:toe.r:4.2cm'], standing_calf_raise: ['check:start:toe.l:2.3cm', 'check:start:toe.r:2.3cm'], bodyweight_calf_raise: ['check:end:toe.l:4.6cm', 'check:end:toe.r:4.6cm'] };
 // Measured values inside PQ-H6's 1 cm that are past A2's 0.5 cm, or a back landmark under 1 cm into the floor (no
@@ -2242,7 +2243,10 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
       if (!b.some((it: any) => it.cls === 'eq')) out.push(`${p}: no pad round the bar`);
       for (const sd of ['l', 'r']) if (Math.hypot(l[`grip.${sd}`][1] - c[1]!, l[`grip.${sd}`][2] - c[2]!) > 0.005) out.push(`${p}: grip.${sd} off the bar`);
       if (Math.hypot(l.backUpper[1] - HT().edge[1], l.backUpper[2] - HT().edge[2]) > 0.005) out.push(`${p}: the upper back off the bench edge`);
-      const bar = HT().barOf(l); if (Math.hypot(bar[1] - c[1]!, bar[2] - c[2]!) > 0.005) out.push(`${p}: the bar off the hip crease`);
+      // the start and end bars sit in the crease read back from the drawn body; the Mistake's bar is the end's drawn bar
+      // (D-HELD6-HIPTHRUST: the bowed body holds the bar, hands and thorax), and the bearing test proves it rests on the body
+      const bar = p === 'mistake' ? centre(barItems(spec, 'end')[0]!.pts) : HT().barOf(l);
+      if (Math.hypot(bar[1]! - c[1]!, bar[2]! - c[2]!) > 0.005) out.push(p === 'mistake' ? 'mistake: the bar moved off the end\'s bar' : `${p}: the bar off the hip crease`);
     }
     return out;
   };
@@ -2252,6 +2256,32 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
   it('R10 mutation: the pad removed (one R10 item) is red', () => {
     const kp = s().equipment.findIndex((e: any) => typeof e === 'function' && barItems({ ...s(), equipment: [e] }, 'end')[0]?.cls === 'eq');
     expect(r10Problems(withEq(s(), kp, () => () => null)).length).toBeGreaterThan(0);
+  });
+  it('R10 mutation (D-HELD6-HIPTHRUST): the Mistake bar read back from the bowed body (0.78 cm off the end\'s) instead of held is red', () => {
+    const kb = s().equipment.flatMap((e: any, i: number) => (typeof e === 'function' && barItems({ ...s(), equipment: [e] }, 'end').length === 1 ? [i] : []));
+    const crease = { ...s(), equipment: s().equipment.map((e: any, i: number) => (kb.includes(i) ? (lm: any, ctx: any) => e(lm, { ...ctx, pose: ctx.pose === 'mistake' ? 'mistake-read' : ctx.pose }) : e)) };
+    expect(r10Problems(crease)).toContain('mistake: the bar moved off the end\'s bar');
+  });
+  // D-HELD6-HIPTHRUST (the D-A3-REVBOW form): the bow tips the pelvis under the held thorax; the thorax, bar, hands
+  // and feet stay at the end pose, and backUpper on the edge.
+  const HELD_STILL = ['backUpper', 'chest', 'shoulder.r', 'hips', 'hip.r', 'knee.r', 'ankle.r', 'heel.r', 'grip.l', 'grip.r', 'head'];
+  const bowProblems = (spec: any) => {
+    const e = lmOf(spec, 'end'), m = lmOf(spec, 'mistake'), out: string[] = [], mm = (n: string) => Math.hypot(...[0, 1, 2].map(i => m[n][i] - e[n][i])) * 1000;
+    for (const n of HELD_STILL) if (mm(n) > 0.5) out.push(`${n} moves ${mm(n).toFixed(1)} mm`);
+    if (!(mm('lumbar') > 20)) out.push(`lumbar moves only ${mm('lumbar').toFixed(1)} mm`);
+    const bar = (p: string) => centre(barItems(spec, p)[0]!.pts);
+    if (Math.hypot(...[1, 2].map(i => bar('mistake')[i]! - bar('end')[i]!)) > 0.0005) out.push('the bar moves');
+    return out;
+  };
+  it('the bowed Mistake: thorax, head, hips, legs, hands and bar move under 0.5 mm; the lumbar arch moves over 2 cm (values logged)', () => {
+    const e = lmOf(s(), 'end'), m = lmOf(s(), 'mistake');
+    console.log(`HELD-A hip_thrust bow (mm): ${['lumbar', 'sacrum', 'buttock', 'navel', 'backMid'].map(n => `${n} ${(Math.hypot(...[0, 1, 2].map(i => m[n][i] - e[n][i])) * 1000).toFixed(1)}`).join(', ')}`);
+    expect(bowProblems(s())).toEqual([]);
+  });
+  it('bow mutations: the main drawing\'s solved arch (trunk -12 with the pelvis re-tilted 6.5°) and no bow are red', () => {
+    const e = s().poses.end;
+    expect(bowProblems({ ...s(), mistake: { ...s().mistake, pose: { ...e, root: { ...e.root, tilt: e.root.tilt + 6.5 }, trunk: { flex: -12 } } } }).length).toBeGreaterThan(0);
+    expect(bowProblems({ ...s(), mistake: { ...s().mistake, pose: { ...e, trunk: { flex: 0 } } } })).toEqual(['lumbar moves only 0.0 mm']);
   });
   // Bearing (#306 6358957999 item 1): the bar rests in the hip crease (c3), so the drawn pad's outer surface sits on the
   // drawn body outline (at most 0.5 cm inside it, and at most 0.5 cm off it) in every pose and ghost; the bench at most
@@ -2284,9 +2314,9 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
     console.log(`LIB-18 hip_thrust bearing (cm in / off): ${Object.entries(r).map(([p, v]) => `${p} pad ${v.pad.toFixed(2)}/${v.gap.toFixed(2)} bench ${v.bench.toFixed(2)}`).join(', ')}`);
     expect(Object.keys(r)).toEqual(['start', 'ghost0', 'ghost1', 'end', 'mistake']);
     expect(htBearingProblems(s())).toEqual([]);
-    // pinned as measured (#306 6358957999 item 1 fix): the pad touches in every pose; the bench clears all but the
-    // Mistake's arched back (0.25 cm, inside the contact tolerance)
-    for (const [p, v] of Object.entries(r)) { expect(v.pad, p).toBeCloseTo(0, 1); expect(v.gap, p).toBeLessThan(0.05); expect(v.bench, p).toBeCloseTo(p === 'mistake' ? 0.25 : 0, 1); }
+    // pinned as measured (#306 6358957999 item 1 fix): the pad touches in every pose; the bench clears the back in
+    // every pose (Held 6: the bowed Mistake holds the thorax at the end pose, so its 0.25 cm is gone)
+    for (const [p, v] of Object.entries(r)) { expect(v.pad, p).toBeCloseTo(0, 1); expect(v.gap, p).toBeLessThan(0.05); expect(v.bench, p).toBeCloseTo(0, 1); }
   });
   it('bearing mutations: the pad PAD_R out along the pelvis\'s own crease normal (the old drawing), the ghosts drawn without the edge keys, and the bar lifted 2 cm off the hips at the start are red', async () => {
     await tick();
@@ -2551,17 +2581,27 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
       expect(phantomProblems(s())).toEqual([]);
       expect(phantomProblems(withEq(s(), 5, () => () => null))).toContain('no start phantom');
     });
-    /** Each tell's anchor sits on a drawn item: the dashed faulty-back guide (within 1 px); the first tell is the card's topFault. */
+    /** Each tell's anchor sits on a drawn item: `lean` on the dashed Mistake head (D-HELD6-RHF: c7 names the leaning
+     *  upper body, the kettlebell_swing form; within 0.5 px of the Mistake pose's head), `arch` on the dashed faulty-back
+     *  guide (within 1 px); the first tell is the card's topFault. */
     const tellProblems = (spec: any) => {
       const cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm, g = spec.mistake.guides[1].pts.map(cam.P), out: string[] = [];
-      for (const t of spec.mistake.tells) { const at = qaEng.resolvePoint(t.anchor, 'mistake', L, cam); if (Math.min(...g.slice(1).map((q: number[], i: number) => segD(at, g[i]!, q))) > 1) out.push(`${t.key} off the back guide`); }
+      const head = cam.P(L.mistake.head);
+      for (const t of spec.mistake.tells) {
+        const at = qaEng.resolvePoint(t.anchor, 'mistake', L, cam);
+        if (t.key === 'lean') { if (Math.hypot(at[0]! - head[0]!, at[1]! - head[1]!) > 0.5) out.push('lean off the Mistake head'); }
+        else if (Math.min(...g.slice(1).map((q: number[], i: number) => segD(at, g[i]!, q))) > 1) out.push(`${t.key} off the back guide`);
+      }
       if (spec.mistake.tells[0].key !== readJson(CARD).topFault) out.push('first tell is not the topFault');
       return out;
     };
-    it('both tells (lean, arch) sit on the drawn faulty back, lean first (topFault); mutations: the lean anchor 20 px off, the tells swapped', () => {
+    it('lean sits on the Mistake head and arch on the drawn faulty back, lean first (topFault); mutations: the lean anchor 20 px off, lean back on backMid, arch 20 px off, the tells swapped', () => {
       expect(tellProblems(s())).toEqual([]);
       const [t0, t1] = s().mistake.tells;
-      expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [{ ...t0, anchor: { at: 'backMid', pose: 'mistake', off: [20, 0] } }, t1] } })).toContain('lean off the back guide');
+      expect(t0.anchor).toEqual({ at: 'head', pose: 'mistake' });
+      expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [{ ...t0, anchor: { at: 'head', pose: 'mistake', off: [20, 0] } }, t1] } })).toEqual(['lean off the Mistake head']);
+      expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [{ ...t0, anchor: 'backMid' }, t1] } })).toEqual(['lean off the Mistake head']);
+      expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [t0, { ...t1, anchor: { at: 'sacrum', pose: 'mistake', off: [20, 0] } }] } })).toEqual(['arch off the back guide']);
       expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [t1, t0] } })).toContain('first tell is not the topFault');
     });
     /** Leaders: none within 6 px of a cable or the Trace (away from the anchor's first 8 px), none across the column; a
@@ -4760,7 +4800,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
 // ---- D-LIBZOOM-EXTEND ('LIB-18 resume'): the rows released with a Mistake-view LIB-ZOOM circle ----
 describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main)', { timeout: T }, () => {
   // k: the smallest of the ladder whose tell-anchor move reaches deviationMin at the zoom's scale (DESIGN.md section 18)
-  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, cable_kickback: 3 };
+  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, cable_kickback: 3, hip_thrust: 3 };   // hip_thrust: Held 6 (D-HELD6-HIPTHRUST)
   const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], BAR = 11.39;
   let Z: any;
   beforeAll(async () => { Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); }, T);
@@ -4788,15 +4828,18 @@ describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main
     expect(zoomProblems('leg_extension', { ...S.leg_extension, zoom: { view: 'mistake', k: 2 } })).toEqual(['leg_extension: zoom {"view":"mistake","k":2}', 'leg_extension: a smaller k reaches the bar']);
     expect(zoomProblems('lying_leg_curl', { ...S.lying_leg_curl, zoom: undefined }).length).toBeGreaterThan(0);
   });
-  it('D-LIB18-RINGKEEP: hip_thrust is held: with its `arch` leader on the underside lumbar arch (R4), no tell reaches 11.39 px at k 4 (arch, ribs); mutation: the old front-line anchor does', () => {
-    const at4 = (spec: any) => spec.mistake.tells.map((t: any) => { const z = Z.zoomOf({ ...spec, zoom: { view: 'mistake', k: 4, tell: t.key } }); return [t.key, +(z.fault.d * 4).toFixed(2)]; });
-    const r = at4(S.hip_thrust);
-    console.log(`LIB-18 hip_thrust tells at k 4: ${JSON.stringify(r)}`);
-    expect(r.map((x: any) => x[0])).toEqual(['arch', 'ribs']);
-    expect(r.every((x: any) => x[1] < BAR)).toBe(true);
-    expect(S.hip_thrust.mistake.tells[0].anchor).toEqual({ along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' });
-    const old = { ...S.hip_thrust, mistake: { ...S.hip_thrust.mistake, tells: S.hip_thrust.mistake.tells.map((t: any, i: number) => (i ? t : { ...t, anchor: { along: ['navel', 'hips'], t: -0.15, pose: 'mistake' } })) } };
-    expect(at4(old).some((x: any) => x[1] >= BAR)).toBe(true);
+  it('D-HELD6-HIPTHRUST: hip_thrust\'s Mistake is the end pose bowed 12 (trunk.bow), one tell `arch` on the lumbar landmark at 4.10 px (12.31 px at k 3); mutations: the main drawing\'s backMid-sacrum anchor and the number trunk are red', () => {
+    const h = S.hip_thrust, z = Z.zoomOf(h);
+    console.log(`HELD-A hip_thrust arch: ${z.fault.d.toFixed(3)} px -> ${(z.fault.d * 3).toFixed(2)} px at k 3; ring ${JSON.stringify(z.circle)}`);
+    expect(h.mistake.tells.map((t: any) => [t.key, t.anchor])).toEqual([['arch', { at: 'lumbar', pose: 'mistake' }]]);
+    expect(h.mistake.tells[0].cue).toMatch(/ribs/);
+    expect(h.mistake.pose.trunk).toEqual({ flex: 0, bow: 12 });
+    expect(z.fault.d).toBeCloseTo(4.104, 2);
+    const atK4 = (spec: any) => Z.zoomOf({ ...spec, zoom: { view: 'mistake', k: 4 } }).fault.d * 4;
+    const old = { ...h, mistake: { ...h.mistake, tells: [{ ...h.mistake.tells[0], anchor: { along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' } }] } };
+    expect(atK4(old)).toBeLessThan(BAR);   // the main anchor on the bowed back stays under the bar even at kMax
+    expect(zoomProblems('hip_thrust', old).length).toBeGreaterThan(0);
+    expect(() => plate.renderPlate({ ...h, poses: { ...h.poses, end: { ...h.poses.end, trunk: 0 } } }, { id: 'x', mistake: true })).toThrow(/D-SPINE-MIX/);
   });
   // panel lb8q (#325 6410306586) and D-LIB18-RINGKEEP: one red dashed back curve, the ring on the measured arch, no leader in the zoom
   const strokeProblems = (spec: any) => [
