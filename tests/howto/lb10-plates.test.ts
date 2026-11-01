@@ -29,10 +29,11 @@ const LB10 = ['sled_push', 'sled_pull', 'farmer_s_carry', 'burpee', 'jumping_jac
 const NOT_HERE = ['mountain_climbers'];
 // D-LIB22-SECS: no tempo seconds on six cards. 'LIB-22 resume' lifts the three with a strip/rows.json card row (STRIP;
 // D-STRIP-NOTSCOPE, F-STRIP-2) and the two released to its fallbackA, every phase blank (AFALL; D-LIB22-AFALL,
-// D-LIB22-STRIPROWS); wall_ball (strip leftOut, S3) stays NOSECS: drawn and tested, never on rows.json.
+// D-LIB22-STRIPROWS); wall_ball joins fallbackA at 'LIB-22 resume 3' (LIB-SMALL: D-SMALL-WBAFALL, -WBSTRIPROWS), so no
+// NOSECS id is left.
 const STRIP = ['sled_pull', 'farmer_s_carry', 'burpee'];
-const AFALL = ['sled_push', 'medicine_ball_slam'];
-const NOSECS = ['wall_ball'];
+const AFALL = ['sled_push', 'medicine_ball_slam', 'wall_ball'];
+const NOSECS: string[] = [];
 /** A tempo.json row as its card and spec phase: timed from the card's plate.tempo (`from`) or a quoted constant; an
  *  untimed row (D-STRIP-B, -ROWS) as strip tempoOf builds it, { phase, move?, word? }. */
 const phaseOf = (plateTempo: any, r: any) => ('from' in r || 'constant' in r
@@ -71,19 +72,21 @@ describe('LIB-22 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
     expect(Object.keys(cardsSha.cards)).not.toContain('mountain_climbers');
   });
   /** A11 after Do 6 b: no problem for a card with plateFacts and tempo (or with no keys: wall_ball, D-LIB22-WALL);
-   *  exactly the :216 problem for a card with one of the two (the NOSECS cards; jumping_jacks, which has no fact). */
+   *  exactly the :216 problem for a card with one of the two (the NOSECS cards). jumping_jacks carries `plateFacts: []`
+   *  since LIB-SMALL (D-SMALL-JJFACTS, D-PLATEFACTS-EMPTY), so it validates with no problem. */
   const PAIR = 'plateFacts and tempo go in together or not at all';
   const valProblems = (v: any, id: string, dir?: string) => {
     const got = v.validateCardFile(`${id}.json`, dir), c = dir ? JSON.parse(readFileSync(join(dir, `docs/research/howto/cards/${id}.json`), 'utf8')) : cardOf(id);
     const want = ('plateFacts' in c) === ('tempo' in c) ? [] : [`cards/${id}.json: ${PAIR}`];
     return JSON.stringify(got) === JSON.stringify(want) ? [] : [`${id}: ${JSON.stringify(got)}`];
   };
-  it('research/validate.mjs validateCardFile: no problem with both keys or none; exactly the pair problem for a NOSECS card and jumping_jacks', async () => {
+  it('research/validate.mjs validateCardFile: no problem with both keys or none; exactly the pair problem for a NOSECS card', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
     for (const id of LB10) expect(valProblems(v, id), id).toEqual([]);
-    for (const id of [...NOSECS.filter(i => i !== 'wall_ball'), 'jumping_jacks']) expect(v.validateCardFile(`${id}.json`), id).toEqual([`cards/${id}.json: ${PAIR}`]);
+    for (const id of NOSECS.filter(i => i !== 'wall_ball')) expect(v.validateCardFile(`${id}.json`), id).toEqual([`cards/${id}.json: ${PAIR}`]);
+    expect(v.validateCardFile('jumping_jacks.json'), 'jumping_jacks (D-SMALL-JJFACTS)').toEqual([]);
   });
-  it('A11 mutations: plateFacts removed from kettlebell_swing, a bad fact claim on sled_push, and a fact added to jumping_jacks (D-LIB22-JJ) change validateCardFile', async () => {
+  it('A11 mutations: plateFacts removed from kettlebell_swing, a bad fact claim on sled_push, and jumping_jacks\' empty plateFacts removed (D-SMALL-JJFACTS) change validateCardFile', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
     const dir = mkdtempSync(join(tmpdir(), 'lb10-val-'));
     try {
@@ -93,10 +96,10 @@ describe('LIB-22 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
       expect(v.validateCardFile('kettlebell_swing.json', dir)).toContain(`cards/kettlebell_swing.json: ${PAIR}`);
       edit('sled_push', c => { c.plateFacts[0].claim = 'c99'; });
       expect(v.validateCardFile('sled_push.json', dir).join()).toContain('unknown claim c99');
-      // D-LIB22-JJ (#305): jumping_jacks is held at the pair problem; a fact written onto it clears that problem (red here)
-      edit('jumping_jacks', c => { c.plateFacts = [{ kind: 'contact', landmark: 'ball.l', pose: 'end', cardPose: 'end', claim: 'c2' }]; });
-      expect(v.validateCardFile('jumping_jacks.json', dir)).not.toContain(`cards/jumping_jacks.json: ${PAIR}`);
-      expect(valProblems(v, 'jumping_jacks', dir)).toEqual([]);
+      // D-SMALL-JJFACTS (LIB-SMALL A3): jumping_jacks' `plateFacts: []` removed brings back the pair problem (red here)
+      expect(v.validateCardFile('jumping_jacks.json', dir)).toEqual([]);
+      edit('jumping_jacks', c => { delete c.plateFacts; });
+      expect(v.validateCardFile('jumping_jacks.json', dir)).toEqual([`cards/jumping_jacks.json: ${PAIR}`]);
     } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });
@@ -118,13 +121,15 @@ describe('LIB-22 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     high_knees: [...both('ball', 'start', 'c4'), F('ball.l', 'end', 'c4')],
     battle_ropes: [...both('wrist', 'start', 'c1'), ...both('sole', 'end', 'c13')],
     bear_crawl: both('wrist', 'start', 'c3'),
-    jumping_jacks: null,
+    jumping_jacks: [],   // D-SMALL-JJFACTS (LIB-SMALL): verified none, D-PLATEFACTS-EMPTY
+    wall_ball: [...both('wrist', 'start', 'c1'), ...both('wrist', 'end', 'c9'), ...both('heel', 'end', 'c6'), ...both('sole', 'end', 'c17')],   // LIB-SMALL PLAN (DESIGN.md 23); c9 hands on the ball at the end: cfwb (#358 6551219584)
   };
   // The ruled fault→key map (DESIGN.md section 8; Q3): drawable-false ids carry the F7 key, never the drawn one.
   const TOP: Record<string, [string, string]> = {
     kettlebell_swing: ['lean', 'lean'], medicine_ball_slam: ['soft', 'arms'], sled_push: ['round', 'round'], jump_rope: ['high', 'high'],
     sled_pull: ['lean', 'lean'], farmer_s_carry: ['rush', 'long'], burpee: ['rush', 'landing'], high_knees: ['arch', 'arch'],
     battle_ropes: ['shrug', 'shrug'], bear_crawl: ['hips', 'hips'], jumping_jacks: ['jerky', 'toes'],
+    wall_ball: ['far', 'far'],
   };
   const tempoOf = (id: string) => (t.rows[id] ? t.rows[id].map((r: any) => phaseOf(cardOf(id).plate.tempo, r)) : undefined);
   const keyProblems = (id: string, c: any) => {
@@ -138,9 +143,9 @@ describe('LIB-22 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     for (const f of c.plateFacts ?? []) if (!known.has(f.claim)) out.push(`${id}: fact claim ${f.claim} unknown`);
     return out;
   };
-  it('the 11 cards carry the ruled facts, tempo and topFault; wall_ball carries none (D-LIB22-WALL)', () => {
+  it('the 12 cards carry the ruled facts, tempo and topFault (wall_ball since LIB-SMALL)', () => {
+    expect(Object.keys(TOP).sort()).toEqual([...LB10].sort());
     for (const id of Object.keys(TOP)) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
-    const w = cardOf('wall_ball'); for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in w, k).toBe(false);
   });
   it('each fact\'s pose is the pose map\'s image of its card pose: identity for 10, burpee start ↔ plate.end', () => {
     for (const id of Object.keys(TOP)) for (const f of cardOf(id).plateFacts ?? []) {
@@ -232,14 +237,20 @@ describe('LIB-22 A7 (proposed, D-LIB22-SECS, -TEMPO): lb10/tempo.json', () => {
     const timed = structuredClone(t); timed.rows.farmer_s_carry = [{ phase: 'Walk', constant: 30, move: true, claim: 'c8', quote: 'x' }];
     expect(await stripProblems(timed)).toEqual(['farmer_s_carry: rows differ from strip/rows.json', 'farmer_s_carry: no rows or a timed row', 'farmer_s_carry: words noword']);
   });
-  it('D-LIB22-AFALL: sled_push and medicine_ball_slam carry their strip fallbackA rows byte for byte, every phase blank', async () => {
+  it('D-LIB22-AFALL: sled_push, medicine_ball_slam and wall_ball (D-SMALL-WBAFALL) carry their strip fallbackA rows byte for byte, every phase blank', async () => {
     expect(build('sled_push')).toEqual([{ phase: 'Walk', move: true }]);
     expect(build('medicine_ball_slam')).toEqual([{ phase: 'Slam', move: true }]);
+    expect(build('wall_ball')).toEqual([{ phase: 'Squat', move: true }, { phase: 'Throw', move: true }]);
     for (const id of AFALL) expect(t.rows[id].every((r: any) => r.blank === true && !('word' in r)), id).toBe(true);
   });
   it('mutations (D-LIB22-STRIPROWS): a word added to a blank row, and either id moved back to strip leftOut, are red', async () => {
     const word = structuredClone(t); word.rows.sled_push[0] = { phase: 'Walk', move: true, word: 'Quick', claim: 'c10' };
     expect(await stripProblems(word)).toEqual(['sled_push: rows differ from strip/rows.json', 'sled_push: words word:0:fallback']);
+    // LIB-SMALL A7: the word 'Controlled' on wall_ball's Squat row, in both files, is red (tempo-word fallback)
+    const wb = structuredClone(t), wbStrip = structuredClone(stripRows);
+    wb.rows.wall_ball[0] = { phase: 'Squat', move: true, word: 'Controlled', claim: 'c16' };
+    wbStrip.fallbackA.find((c: any) => c.id === 'wall_ball').rows[0] = wb.rows.wall_ball[0];
+    expect(await stripProblems(wb, wbStrip)).toEqual(['wall_ball: words word:0:fallback']);
     for (const id of AFALL) {
       const back = structuredClone(stripRows), e = back.fallbackA.find((c: any) => c.id === id);
       back.fallbackA = back.fallbackA.filter((c: any) => c.id !== id); back.leftOut.push({ id, lane: e.lane, why: 'moved back' });
@@ -325,11 +336,12 @@ const T = 600_000;
 const SPECS_DIR = 'tools/plates/library/specs';
 const ROWS = 'tools/plates/library/lb10/rows.json';
 const FRONT = ['jumping_jacks', 'jump_rope'];
-// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; jump_rope's Trace, short of the bar at kMax;
-// jumping_jacks under D-LIB22-JJ until F-H6-TEMPO). farmer_s_carry left at 'LIB-22 resume 2' (F-R2-FARMER-5).
-const HELD = [...NOSECS, 'jump_rope', 'jumping_jacks'];   // wall_ball: no spec yet
+// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; jump_rope's Trace, short of the bar at kMax).
+// farmer_s_carry left at 'LIB-22 resume 2' (F-R2-FARMER-5); jumping_jacks at 'LIB-22 resume 3' (LIB-SMALL:
+// D-SMALL-JJFACTS, -JJZOOM).
+const HELD = [...NOSECS, 'jump_rope'];
 // The ids drawn on this branch: the slice, then the bulk as each plate is integrated (BULK GO, #305 6356763967).
-const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl', 'high_knees', 'jumping_jacks', 'battle_ropes'];
+const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl', 'high_knees', 'jumping_jacks', 'battle_ropes', 'wall_ball'];
 const COMPOSERS = ['kettlebell', 'medBall', 'sled', 'jumpRope', 'battleRope'];
 const yieldNow = () => new Promise<void>(r => setImmediate(r));
 let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, markup: any;
@@ -983,15 +995,15 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H (D-LIB22-B1)', () => {
-    expect(want()).toEqual(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry', 'lib_burpee', 'lib_high_knees', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_bear_crawl', 'lib_kettlebell_swing']);
+    expect(want()).toEqual(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry', 'lib_burpee', 'lib_jumping_jacks', 'lib_high_knees', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_wall_ball', 'lib_bear_crawl', 'lib_kettlebell_swing']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
-  it('mountain_climbers (pA) and wall_ball (no spec before its resume) are in no lb10/ file as a row', () => {
+  it('mountain_climbers (pA) is in no lb10/ file as a row; wall_ball has its spec (LIB-SMALL)', () => {
     for (const f of readdirSync('tools/plates/library/lb10').filter(n => n.endsWith('.json'))) {
       const text = readFileSync(join('tools/plates/library/lb10', f), 'utf8');
-      for (const id of ['mountain_climbers', 'wall_ball']) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
+      expect(new RegExp(`"lib_mountain_climbers"\\s*:`).test(text), `${f}: mountain_climbers`).toBe(false);
     }
-    expect(existsSync(`${SPECS_DIR}/wall_ball.mjs`)).toBe(false);
+    expect(existsSync(`${SPECS_DIR}/wall_ball.mjs`)).toBe(true);
   });
   it('each held id is in DESIGN.md\'s held table with its ruling and in no rows file; the NOSECS ids are held', () => {
     const design = readFileSync('tools/plates/library/lb10/DESIGN.md', 'utf8'), head = '## 15. Held ids and NOSECS rows';
@@ -1004,7 +1016,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
       expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
     }
   });
-  it('mutations: a dropped row, a duplicated row, a held id (jump_rope, jumping_jacks), mountain_climbers, wall_ball and one mode set to D are red', () => {
+  it('mutations: a dropped row, a duplicated row, a held id (jump_rope), jumping_jacks and wall_ball dropped (LIB-SMALL A1), mountain_climbers and one mode set to D are red', () => {
     const row = { src: 'library/specs/x.mjs', mode: 'H', stage: 'drawing', view: 'side' };
     const w = want(), j = { batch: 'LB10', rows: Object.fromEntries(w.map(id => [id, row])) };
     const text = JSON.stringify(j, null, 1), add = (id: string) => JSON.stringify({ ...j, rows: { ...j.rows, [id]: row } }, null, 1);
@@ -1012,9 +1024,11 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
     expect(a5(JSON.stringify({ ...j, rows: {} }, null, 1), w)).toEqual(w.map(x => `${x} x0`));
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
     expect(a5(add('lib_jump_rope'), w), 'a held id').toEqual(['extra lib_jump_rope']);
-    expect(a5(add('lib_jumping_jacks'), w), 'a held id').toEqual(['extra lib_jumping_jacks']);
+    const { lib_jumping_jacks: _jj, ...noJj } = j.rows;
+    expect(a5(JSON.stringify({ ...j, rows: noJj }, null, 1), w), 'jumping_jacks dropped').toEqual(['lib_jumping_jacks x0']);
     expect(a5(add('lib_mountain_climbers'), w)).toEqual(['extra lib_mountain_climbers']);
-    expect(a5(add('lib_wall_ball'), w)).toEqual(['extra lib_wall_ball']);
+    const { lib_wall_ball: _wb, ...noWb } = j.rows;
+    expect(a5(JSON.stringify({ ...j, rows: noWb }, null, 1), w), 'wall_ball dropped').toEqual(['lib_wall_ball x0']);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
   });
   it('every row points at its own spec file and carries the census view; batch LB10, censusRef 4a9fd86', () => {
@@ -1305,11 +1319,11 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   /** Lines a leader keeps 6 px from (away from its first 8 px): the Trace and the equipment (rope, sled, ball, bell, floor).
    *  `rope` holds the jump rope's strand outline apart, for the named nit below. */
   const avoidOf = (spec: any, mistake: boolean, svg: string) => {
-    const cam = camOf(spec), out: number[][][] = [], rope: number[][][] = [];
+    const cam = camOf(spec), out: number[][][] = [], rope: number[][][] = [], wall: number[][][] = [], wallPolys: number[][][] = [];
     for (const m of svg.matchAll(/<path class="(?:trace|eq-cable|floorline)[^"]*"[^>]*? d="([^"]+)"/g)) out.push(...segs(xy(m[1]!.replace(/H(-?[\d.]+)/, (_, x) => `L${x} ${xy(m[1]!)[0]![1]}`))));
     for (const it of itemsIn(spec, mistake ? 'mistake' : 'end').items) if (['poly', 'backPad', 'line'].includes(it.type) && it.part !== 'startbell' && it.part !== 'startball' && it.part !== 'startrope')
-      for (const p of eng.PRIMITIVES[it.type](it, cam)) { const pts = p.poly ?? p.line; if (pts) (it.part === 'rope' && it.z === 'back' ? rope : out).push(...segs([...pts, pts[0]])); }
-    return { out, rope };
+      for (const p of eng.PRIMITIVES[it.type](it, cam)) { const pts = p.poly ?? p.line; if (pts) { (it.part === 'rope' && it.z === 'back' ? rope : it.part === 'wall' ? wall : out).push(...segs([...pts, pts[0]])); if (it.part === 'wall') wallPolys.push(pts); } }
+    return { out, rope, wall, wallPolys };
   };
   /** D-LIB22-HOPNIT (#305 6355887979): jump_rope's `hop` leader, end view only, may cross the rope strand, once and
    *  steeply; it keeps 6 px from everything else. */
@@ -1334,13 +1348,33 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     }
     return { runs, angle };
   };
-  const minGap = (spec: any, nits: any[] = HOPNIT) => {
+  /** D-SMALL-WBDISTNIT (#358, HOPNIT form): wall_ball's `distance` leader, normal view only, may cross the wall slab
+   *  exactly once (one run of samples inside the slab, away from its first 8 px), at 45 deg or more to the wall face;
+   *  it keeps 6 px from everything else, and the figure rules still bind it. */
+  const WBNIT = [{ id: 'wall_ball', key: 'distance', mistake: false, part: 'wall' }];
+  const isWallNit = (nits: any[], id: string, key: string, mistake: boolean) => nits.some(n => n.id === id && n.key === key && n.mistake === mistake && n.part === 'wall');
+  /** A leader's passes through the slab: runs of samples inside any wall polygon, and the smallest angle (deg) between a
+   *  crossing leader segment and the wall face (vertical). */
+  const slabCrossing = (lead: number[][], polys: number[][][]) => {
+    let runs = 0, inRun = false, angle = 90;
+    for (const [a, b] of segs(lead)) for (let k = 0; k <= 200; k++) {
+      const q = [a![0]! + (b![0]! - a![0]!) * k / 200, a![1]! + (b![1]! - a![1]!) * k / 200];
+      if (Math.hypot(q[0]! - lead[0]![0]!, q[1]! - lead[0]![1]!) < 8) continue;
+      const inside = polys.some(P => inPoly(P, q));
+      if (inside && !inRun) { runs++; angle = Math.min(angle, Math.atan2(Math.abs(b![0]! - a![0]!), Math.abs(b![1]! - a![1]!)) * 180 / Math.PI); }
+      inRun = inside;
+    }
+    return { runs, angle };
+  };
+  const minGap = (spec: any, nits: any[] = [...HOPNIT, ...WBNIT]) => {
     let min = Infinity, at = '';
     const crossings: string[] = [];
     for (const mistake of [false, true]) {
-      const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg, list = listOf(spec, mistake), { out, rope } = avoidOf(spec, mistake, svg);
+      const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg, list = listOf(spec, mistake), { out, rope, wall, wallPolys } = avoidOf(spec, mistake, svg);
       leadersOf(svg).forEach((p, i) => {
-        const nit = isNit(nits, spec.id, list[i]?.key, mistake), avoid = nit ? out : [...out, ...rope];
+        const wnit = isWallNit(nits, spec.id, list[i]?.key, mistake);
+        const nit = isNit(nits, spec.id, list[i]?.key, mistake), avoid = [...(nit ? out : [...out, ...rope]), ...(wnit ? [] : wall)];
+        if (wnit) { const c = slabCrossing(p, wallPolys); crossings.push(`${spec.id} ${list[i]?.key}: ${c.runs} wall crossing(s) at ${c.angle.toFixed(1)} deg`); if (c.runs !== 1 || c.angle < HOP_STEEP) { min = -1; at = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: ${c.runs} wall crossing(s) at ${c.angle.toFixed(1)} deg`; } }
         if (nit) { const c = ropeCrossing(p, rope); crossings.push(`${spec.id} ${list[i]?.key}: ${c.runs} crossing(s) at ${c.angle.toFixed(1)} deg`); if (c.runs !== 1 || c.angle < HOP_STEEP) { min = -1; at = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: ${c.runs} rope crossing(s) at ${c.angle.toFixed(1)} deg`; } }
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
@@ -1360,6 +1394,21 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     expect(minGap(S.jump_rope, [{ id: 'jump_rope', key: 'hands', mistake: false, part: 'rope' }]).min).toBeLessThan(6);
     expect(minGap(S.jump_rope, [{ id: 'sled_push', key: 'hop', mistake: false, part: 'rope' }]).min).toBeLessThan(6);
     expect(minGap(S.jump_rope, [{ id: 'jump_rope', key: 'hop', mistake: true, part: 'rope' }]).min).toBeLessThan(6);
+  });
+  it('D-SMALL-WBDISTNIT: wall_ball\'s "Right distance" leader crosses the wall slab exactly once, at 45 deg or more; mutations: the exception given to another key, view or id, a second crossing, a shallow angle and a crossed figure are red', () => {
+    const g = minGap(S.wall_ball);
+    console.log(`LIB-SMALL D-SMALL-WBDISTNIT ${g.crossings.filter(x => x.startsWith('wall_ball')).join('; ')}`);
+    expect(g.min).toBeGreaterThanOrEqual(6);
+    expect(g.crossings.filter(x => x.startsWith('wall_ball'))).toHaveLength(1);
+    expect(minGap(S.wall_ball, [...HOPNIT, { id: 'wall_ball', key: 'catch', mistake: false, part: 'wall' }]).min).toBeLessThan(6);
+    expect(minGap(S.wall_ball, [...HOPNIT, { id: 'wall_ball', key: 'distance', mistake: true, part: 'wall' }]).min).toBeLessThan(6);
+    expect(minGap(S.wall_ball, [...HOPNIT, { id: 'jump_rope', key: 'distance', mistake: false, part: 'wall' }]).min).toBeLessThan(6);
+    const slab = [[252, 50], [270, 50], [270, 339], [252, 339]];
+    expect(slabCrossing([[245, 330], [300, 280]], [slab])).toMatchObject({ runs: 1 });
+    expect(slabCrossing([[245, 330], [300, 280], [240, 230]], [slab]).runs).toBe(2);
+    expect(slabCrossing([[245, 330], [262, 200]], [slab]).angle).toBeLessThan(45);
+    const left = { ...S.wall_ball, callouts: S.wall_ball.callouts.map((c: any) => (c.key === 'distance' ? { ...c, box: { left: 16, top: 300 } } : c)) };
+    expect(crossProblems(left).some(x => x.startsWith('wall_ball normal distance'))).toBe(true);
   });
   it('mutation: medicine_ball_slam\'s "Hips and knees" box moved under the ball (its leader along the floor line) is red', () => {
     const s = S.medicine_ball_slam, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'hips' ? { ...x, box: { left: 200, top: 318 } } : x)) };
@@ -1640,6 +1689,7 @@ describe('LIB-22 resume: the zoom circles (D-LIBZOOM-EXTEND, lib4-cards §41; DE
   // zoom-scale value clears its bar by at least 10 %.
   const ZOOMS: Record<string, { view: string; k: number }> = {
     sled_pull: { view: 'normal', k: 3 }, burpee: { view: 'mistake', k: 2 }, bear_crawl: { view: 'normal', k: 4 },
+    jumping_jacks: { view: 'mistake', k: 2.5 },   // LIB-SMALL (D-SMALL-JJZOOM; D-LIB22-RINGFIT: at k 1.5 and 2 the source ring around the toes crosses the frame's bottom): the `toes` tell, 24.0 px
   };
   let zi: any, qz: any, env: any;
   beforeAll(async () => {
@@ -1818,5 +1868,358 @@ describe('LIB-22 panel fix 2 (mx3, #331 6486669489; D-LIB13-PANEL2): burpee "Nec
     expect(plankProblems(S.burpee)).toEqual([]);
     const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'plank' ? { ...c, anchor: 'start:backMid' } : c)) };
     expect(plankProblems(old).length).toBeGreaterThan(0);
+  });
+});
+
+describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07ee8537 on main 6b32d576)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the 9 approved LB10 plates on main's LB10 page 07ee8537…6a070 (81 fragments; the form of
+  // lb6-plates.test.ts's LIB-16 resume block).
+  const APPROVED: Record<string, Record<string, string>> = {
+    "kettlebell-swing": {
+      "normalSvg": "f45ac5ddb5abf68a4b58a1266bd880d9a9df4f87424ca130c5f2685ce5853c61",
+      "normalOverlay": "00c67b81f9bf424900260b9298b152adfa492d76d8dea2473d58c07e8d140481",
+      "mistakeSvg": "421a69a6eff0981f6f4d7bc2c4f31fb91b0ccaec3d96e9da5000dc57326f2ff3",
+      "mistakeOverlay": "891a7afcd7cee38dd48997d95fc1940668d0fb0085d45d1631db6890f904104e",
+      "tells": "1e731a59fa1acc4eed0bf14ac84f50d00ce43433aa7e62fe2adaf5587477969f",
+      "tempo": "bbe2cd3af4828cddfb1dbb2af464b6585cc0a7ab7c2cb4370e86d62bc8cb69e8",
+      "cues": "a5f6ec4a61ef796a6fceeca28db548eeb411d0db2875ef0d34e056e73faaa092",
+      "alt": "8ea747e8df227a5858f51200bd240dfff1fc3c1ba85872374bacc788d769ed26",
+      "mistakeAlt": "1bde864791044f20b7415b21602da6329f98cfa9a304067e1c062853a4a985f0"
+    },
+    "high-knees": {
+      "normalSvg": "bacc38bbd015e14ca1242861a2b59153b7034a2dbe8441d3465f2b061834196a",
+      "normalOverlay": "ccd4a32137a4a358d025b7cf79c39ed06e62964d7f05ed6b44e099acee806207",
+      "mistakeSvg": "b6edc38dbbde9fd5d911b6f5e2920a67f56a5e996f9303e1ff5ddf58c8f2ed7b",
+      "mistakeOverlay": "401f995336e94a44d3192658fd8e13bd14911b8a9113018cab27626ebf2f1c9f",
+      "tells": "1abe7532fefd9981d4ad92ccdc90bcb1ec4aeb2cc14d842976c95515cbebdfd7",
+      "tempo": "5e6b30bd62d5477511099a7223e190982d6f2c365a411300e31fd5f75f1a8ebd",
+      "cues": "a81aeec88fa54afc6779e2a89254950df15abf80197e86a9e497c020419b61e7",
+      "alt": "bae68e9da3ceffe04455a1e07a66f9391e98127962fba70fe06013dacd0b16e1",
+      "mistakeAlt": "ae5f686adbcc72871bc4b68f69b149ebae772178cc8bba35dc77d97c40e2fca6"
+    },
+    "battle-ropes": {
+      "normalSvg": "5d80532aea0b1a54e6332a6457f30fe489d12126075c4b31b6e75de686e2442f",
+      "normalOverlay": "ce0371ecb73c87390bad8f008da2d76d650f10637499ac5308f6259c29e4f9d5",
+      "mistakeSvg": "09bc4fae7981d102014a143099afd0e8702137a30c48dca711177cb0a9c11ec9",
+      "mistakeOverlay": "1f02c23244d0ccc295723f4704f2f0d34e543a2e592bb03ce73dff8f67caca53",
+      "tells": "9d2e1aedb40099f42fa6bc2c85233ed3016e45c839667ff1c656f8fa7a8b3b9b",
+      "tempo": "5e6b30bd62d5477511099a7223e190982d6f2c365a411300e31fd5f75f1a8ebd",
+      "cues": "85cc9cbca910e94c536185410e5ff24243814f8c9232b367b5a0773b7a6889ad",
+      "alt": "da8d7f1b44ccff588145e2bb03ae939aa502c7581c51a967816c51e989c67271",
+      "mistakeAlt": "2e69b29b78f143b879610dca51a51496b5c280b56c434009ad2effa67b4e53de"
+    },
+    "sled-pull": {
+      "normalSvg": "8638526e2db679446f1450441f4965bde890f80115564732728e010dd2dde117",
+      "normalOverlay": "0ef9d6fd50ca07a21308b6285e88075c220254e8deec7e75f0db5c8d3a7be19f",
+      "mistakeSvg": "59508c62644c2c339d56a92b49ecf7594e0bda8a83673565e035bd025398745a",
+      "mistakeOverlay": "f488c63b0fa31e3e936d99f2f834dece424d62bee06595b56b14a89a09b8bd54",
+      "tells": "6a7d6e8c622a2a5df7035e2823688a13decbfcb9a4a203b54ce05909b257705d",
+      "tempo": "1551a4913b7c557d03dca51a61ca2c49605243ea59da71e831c285dc1b0cc523",
+      "cues": "5bb3d882981928ce56f4b69925a55a44792d986942da908c75f360ababa86bb1",
+      "alt": "26ef3b66ec5dbcb908718e4b129a89dcc6c49f648c8908799006bd64f8fc7a73",
+      "mistakeAlt": "be9ede9165e06339963ad1695d2003d48602984f4e55019246c8262815ad1649"
+    },
+    "burpee": {
+      "normalSvg": "b9e847afb39224dd693ea7f418027eb38afefee9cf25eb81c3f07bde3e990b45",
+      "normalOverlay": "e3c89090799ce76c2437b37779998651e7123e12997fde817963a0506b8f87d8",
+      "mistakeSvg": "91b2d48c2e1dbd1147be6e3cae1e258aacb5200b40b4391b7a38345eb66b1b89",
+      "mistakeOverlay": "107d2344980b1349a067ca514ee91586d1c3c16fa78eef07b8f1c067860947e2",
+      "tells": "134b6cfb952197c5af6282bf263e7de5a496a7466ab48314522369fa047fa345",
+      "tempo": "b2ed144340ec709250cf45c430226108bf62f134311680699505ad2efa4252eb",
+      "cues": "86348937574e88cb80d41487f536bda3a9fba8da5ef32839c21d0c6197782afc",
+      "alt": "4dffaba9946aaac6a273565b383dfc1a7d908f7ea4bdbe9544702e97a1b27054",
+      "mistakeAlt": "f628b0ddff27cf621158b6e7531e9b86e167ada7406f1efd9320a44981dd2208"
+    },
+    "bear-crawl": {
+      "normalSvg": "b2c765e12cdd2f1fa8959432b5efac5ecc2f232bd95b56e50c978868b5c9a368",
+      "normalOverlay": "01e03f63a87eecbef68a134974e104daea5abeba3d2f1c611b75238a412b0b9c",
+      "mistakeSvg": "e16ce47b8d1558f3ebf02ae0023c2ee9598b8b4f6d76128fe09656eef86dd432",
+      "mistakeOverlay": "0e9a20b4b37a327f27256bcf43f24e68648b4d48a9cedafe556c5e78a469df91",
+      "tells": "1926f25486ea53242d1a2399709eef46d4a5cfa7f379e44e2f2ad9219e0c2810",
+      "tempo": "3f37849803bf7128104acaaf52bfe0c1bde7b3188f01028b9eecd550863d3f62",
+      "cues": "5cfd106764593549f14b9a668b0d4d3c43d8a01f975400f2ad3b5cdd41c664f0",
+      "alt": "426feea878d3bcd687ac8c3a41b89cc0cd3c8ac3e336f52056f6568491b18e22",
+      "mistakeAlt": "50269cd4638336b3bf9ca42d295367b2550b23def0a25fcb1ac8dd2e1a850645"
+    },
+    "sled-push": {
+      "normalSvg": "dd1c313a4ee239eb350241341d3397d52810257b0ae977510cc3f213f16c12b1",
+      "normalOverlay": "1bf6d45de50013fa5d264022796d03e2b8d487bc57de076b1000de814b142747",
+      "mistakeSvg": "6a4fbca95cc0dec1176f57ec178c0a59776b8a2f13ff4f865fb5577f0bdc5283",
+      "mistakeOverlay": "0323055d65a65984b3e5cf66e52580315d0033e8a96bd5febabcf716d870c793",
+      "tells": "b15738990645ca616c5b830f76d6ad68bb0d3e117427be7a6032e206afcfd870",
+      "tempo": "6533410304498792976fccf8a39c58179f2cb5f8f07c32bd6e8d533d63105194",
+      "cues": "ae1fa474d7502e29259e63c3203f1d7ef17ef4c280022de825e534bb36a5f295",
+      "alt": "eae805f49d264fb27ddf03587cbfcfd32db61c1a65e3eafc5cb64fe9a0f57314",
+      "mistakeAlt": "2fe3851b61e27e779f00ffdba7072f9b50f052a7f0a8968e31e19195435c4964"
+    },
+    "medicine-ball-slam": {
+      "normalSvg": "7adcdfb87254ce693b45cf076a8cbf4501dcede47bd9a0178d092a7aa93d4653",
+      "normalOverlay": "d708bf9936d1801cf0f4412520104718a8ce496480cba2e815d32bcac0f72676",
+      "mistakeSvg": "16707d291467d6863472f21da61a2b820ca6b36fb65c8e3ff5ffafd210cc80e1",
+      "mistakeOverlay": "ded673cd50e6b26b208d8b9fa34546c2bc0234ab938e0f810cbb218e6a999a55",
+      "tells": "6d7fe0d2a7ab34e5c7ba0d8301eda5bf5403d27670d763c001749dfa6b6eb956",
+      "tempo": "0987dfcd3de6f01793dba9460a49cddcb74c04b868d613c2cc12905034999297",
+      "cues": "88d3570bc7d57fd1f3ab3614582efac0b6ec72639b0b8f95790ab81691926944",
+      "alt": "4ade452ed8bfc0bc7bc2578c474c5107c6300b91674e42ae59bd5a21bbcfe1cf",
+      "mistakeAlt": "85b667352ff14e2349303791443e92dcade7638e99534161347a3450442f409c"
+    },
+    "farmer-s-carry": {
+      "normalSvg": "a7ba22bc65f2902f298a0e03f9f36f429b73f73bea26d02e7036c1455ba507b8",
+      "normalOverlay": "47a61d310240b9ee1abc8832f4aeb2da57a00e1a6e9d7dc938a6e7bba9a71b8b",
+      "mistakeSvg": "9fb279b9c8a3ee45cf5501fba91041ddb664f25b7eb9112b373aca1b76c2223c",
+      "mistakeOverlay": "4f8ac80d0d3af7f36d0b6e73812249abe40bc77329e02d803b762b5e1bc41713",
+      "tells": "bca679445acb31251ccb25b9c6ed0e660a098775107b7a2680e3853ce47e05bd",
+      "tempo": "b58ebebbe455227a55ea306aec9d1c332cf92565622aa23bcd7b393922fd7cff",
+      "cues": "595acacf60a11834662cf06ce3705721b04a1c8948b1b945a7e74c0d5f940ff4",
+      "alt": "6982ec9e758712d1591a20ac2587f3523ca49b27555484835930f13a80b4b04d",
+      "mistakeAlt": "71dc9a470ffb390a3a5fd780d2b9ce8fbd2d488844cfb007cca9379ba75f6ce2"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb10/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  const pageOf = async () => {
+    const script = `const b = await import(${JSON.stringify(lib('lb10/build.mjs'))}); const { html } = await b.buildLb10Page(); process.stdout.write(html.toString('base64'));`;
+    const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });
+    return Buffer.from(stdout, 'base64').toString('utf8');
+  };
+  it('the 9 approved plates\' 81 fragments on this head equal main\'s', async () => {
+    expect(Object.values(APPROVED).reduce((a, f) => a + Object.keys(f).length, 0)).toBe(81);
+    expect(fragProblems(await pageOf())).toEqual([]);
+  });
+  it('mutation: one byte changed in kettlebell_swing\'s alt is red', async () => {
+    const html = await pageOf(), alt = S.kettlebell_swing.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, `${alt.slice(0, -1)}!`))).toContain('kettlebell-swing alt');
+  });
+});
+
+describe('LIB-SMALL panel mx13 fix (#358 6547089227): jumping_jacks\' ghost arms and faulty-foot outline', { timeout: T }, () => {
+  const CMf = (v: number) => Math.abs(v) * 100;
+  /** R1: each ghost key's arms, seen from the front (x, y), reach as far from the shoulder as the end's straight arms. */
+  const reachPx = (pose: any, s: string) => { const l = lmP(pose); return Math.hypot(l[`grip.${s}`][0] - l[`shoulder.${s}`][0], l[`grip.${s}`][1] - l[`shoulder.${s}`][1]) * 146.29; };
+  const armProblems = (spec: any) => {
+    const out: string[] = [], vias = spec.poses.via ?? [];
+    if (vias.length !== spec.ghosts.count) out.push(`${vias.length} ghost keys for ${spec.ghosts.count} ghosts`);
+    for (const [i, v] of vias.entries()) for (const s of ['l', 'r']) if (Math.abs(reachPx(v, s) - reachPx(spec.poses.end, s)) > 1) out.push(`via ${i} arm.${s} ${reachPx(v, s).toFixed(1)} px`);
+    return out;
+  };
+  it('R1: two ghost keys, each arm drawn at the end arm\'s length (front view, within 1 px)', () => {
+    expect(armProblems(S.jumping_jacks)).toEqual([]);
+  });
+  it('R1 mutations: the ghost keys removed, or one ghost elbow bent 40 deg, are red', () => {
+    const s = S.jumping_jacks;
+    expect(armProblems({ ...s, poses: { start: s.poses.start, end: s.poses.end } }).length).toBeGreaterThan(0);
+    const bent = { ...s, poses: { ...s.poses, via: [{ ...s.poses.via[0], elbow: 40 }, s.poses.via[1]] } };
+    expect(armProblems(bent).some(x => x.startsWith('via 0'))).toBe(true);
+  });
+  /** R5 (D-SMALL-JJTURN, #358 6547988428): per faulty foot a closed dashed outline the size of the solid end foot (its
+   *  front-view height within 1 px), turned about the end heel, its toe end past the solid foot's outer side by more than
+   *  2 px, its lowest point on the floor (within 0.5 cm); plus a dashed heel-to-toe axis from the end heel. */
+  const footProblems = (spec: any) => {
+    const out: string[] = [], e = lmP(spec.poses.end), cam = camOf(spec);
+    const solid = shapesIn(spec, 'end').filter((x: any) => /^foot\./.test(x.key));
+    const closed = spec.mistake.guides.filter((x: any) => x.kind === 'dashed' && x.pts.length > 3 && d3(x.pts[0], x.pts[x.pts.length - 1]) < 1e-9);
+    for (const s of ['l', 'r']) {
+      const sx = solid.find((x: any) => x.key === `foot.${s}`).poly, sxs = sx.map((p: number[]) => p[0]!), sys = sx.map((p: number[]) => p[1]!);
+      const g = closed.find((x: any) => { const px = x.pts.map((p: number[]) => cam.P(p)[0]!); return s === 'r' ? Math.max(...px) < 179 : Math.min(...px) > 179; });
+      if (!g) { out.push(`no outline for foot.${s}`); continue; }
+      const px = g.pts.map((p: number[]) => cam.P(p)[0]!), py = g.pts.map((p: number[]) => cam.P(p)[1]!);
+      const past = s === 'r' ? Math.min(...sxs) - Math.min(...px) : Math.max(...px) - Math.max(...sxs);
+      if (!(past > 2)) out.push(`foot.${s} outline ${past.toFixed(1)} px past the solid foot`);
+      if (Math.abs((Math.max(...py) - Math.min(...py)) - (Math.max(...sys) - Math.min(...sys))) > 1) out.push(`foot.${s} outline not the solid foot's height`);
+      if (CMf(Math.min(...g.pts.map((p: number[]) => p[1]!))) > 0.5) out.push(`foot.${s} outline off the floor`);
+      const axis = spec.mistake.guides.find((x: any) => x.kind === 'dashed' && x.pts.length === 2 && Math.hypot(x.pts[0][0] - e[`heel.${s}`][0], x.pts[0][2] - e[`heel.${s}`][2]) < 1e-9);
+      if (!axis) out.push(`no heel-to-toe axis on foot.${s}`);
+      console.log(`LIB-SMALL jumping_jacks foot.${s} outline: ${past.toFixed(1)} px past the solid foot; lowest point ${CMf(Math.min(...g.pts.map((p: number[]) => p[1]!))).toFixed(2)} cm`);
+    }
+    return out;
+  };
+  it('R5: each faulty foot has a closed dashed outline, turned about the heel, whose toe end projects past the solid foot', () => {
+    expect(footProblems(S.jumping_jacks)).toEqual([]);
+  });
+  it('R5 mutations: the outlines removed, or drawn unturned, are red', () => {
+    const s = S.jumping_jacks, bare = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.filter((x: any) => x.pts.length <= 3) } };
+    expect(footProblems(bare)).toEqual(['no outline for foot.l', 'no outline for foot.r']);
+    const flat = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.map((x: any) => (x.pts.length > 3 ? { ...x, pts: M.jumping_jacks.turnedFoot(x.pts[0][0] > 0 ? 'l' : 'r', 0).outline } : x)) } };
+    expect(footProblems(flat).filter(x => /px past/.test(x)).length).toBe(2);
+  });
+});
+
+describe('LIB-SMALL: jumping-jacks as approved in panel mx17 (#358, head c176723d) stays byte-identical', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the approved plate (9 fragments) on its lb10 page at c176723d.
+  const APPROVED: Record<string, Record<string, string>> = {
+    "jumping-jacks": {
+      "normalSvg": "8ccb9f6ad175e11187b3d9336b92408ca519a265a752af983fbac0b1147dfae5",
+      "normalOverlay": "74c1a11ecabc57ac7ed86b23190ab46e854385f05fbae834f24a7b22b5be0208",
+      "mistakeSvg": "da4638d19877ba1400df1fa3654fd6affcbaf82ca9d525c96328bf3ddaad95eb",
+      "mistakeOverlay": "17370d6ea08b19d4551a5b320f62c91f1dbeac6663c571dc4d57e9c1246f6b2a",
+      "tells": "32467983547407e7a870bab352c1652ad0cda944bcb21b1fc7f181171763b45a",
+      "tempo": "6b11c62b33f4a09541c36e439f65256ff2cf34ead4524fc684cdd95aec76cd02",
+      "cues": "4aae7c55b96b7ee37cb0924fe0a2d4cc96dd1e51c626d3f75a1f51dce01b09c0",
+      "alt": "af79768d515788fa0fd9cae1d7769d5983dc15ad0c124be2682678913494325e",
+      "mistakeAlt": "e7570b92d5ab27a249ad7a79e442a3d77001233d6ba8df6d56d3ee311acb02fe"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb10/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const pageOf = async () => {
+    const script = `const b = await import(${JSON.stringify(lib('lb10/build.mjs'))}); const { html } = await b.buildLb10Page(); process.stdout.write(html.toString('base64'));`;
+    const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });
+    return Buffer.from(stdout, 'base64').toString('utf8');
+  };
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('its 9 fragments on this head equal the approved ones', async () => {
+    expect(Object.keys(APPROVED['jumping-jacks']!).length).toBe(9);
+    expect(fragProblems(await pageOf())).toEqual([]);
+  });
+  it('mutation: one byte changed in its alt is red', async () => {
+    const html = await pageOf(), alt = S.jumping_jacks.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, `${alt.slice(0, -1)}!`))).toContain('jumping-jacks alt');
+  });
+});
+
+describe('LIB-SMALL A4 and A5: wall_ball\'s drawn poses are card-true, and the ball and wall clear the body (D-SMALL-9)', { timeout: T }, () => {
+  const R = 180 / Math.PI, CM = (v: number) => Math.abs(v) * 100;
+  /** The wall's near face (world z) from the drawn wall item (the static backPad: surface z minus its thickness). */
+  const wallFaceOf = (spec: any) => { const w = itemsIn(spec, 'end').items.find((x: any) => x.type === 'backPad'); return w.surface[0][2] - w.t; };
+  const leanOf = (l: any) => Math.atan2(l.neck[2] - l.hips[2], l.neck[1] - l.hips[1]) * R;
+  const toeTip = (l: any) => Math.max(l['toe.r'][2], l['toe.l'][2]);
+  const poly = (spec: any, pose: string, part: string) => { const cam = camOf(spec); return itemsIn(spec, pose).items.filter((x: any) => x.part === part && x.type === 'poly').map((x: any) => x.pts.map(cam.P))[0]; };
+  /** Card-true poses (A4). */
+  const poseProblems = (spec: any) => {
+    const out: string[] = [], face = wallFaceOf(spec), L: Record<string, any> = Object.fromEntries(['start', 'end', 'mistake'].map(k => [k, lmP(fullPose(spec, k))]));
+    // start (c1, c2, c5, c17): toe tips STAND_DIST from the wall face, the ball's top under the chin and its centre at
+    // chest height (within 10 cm of the sternum), elbows below the shoulders and within 12 cm of them sideways, feet flat
+    if (Math.abs(face - toeTip(L.start) - M.wall_ball.SIZES.STAND_DIST) > 0.005) out.push(`start toe tips ${(face - toeTip(L.start)).toFixed(3)} m from the wall`);
+    const ballS = itemsIn(spec, 'start').items.find((x: any) => x.part === 'ball' && x.type === 'poly').pts, top = Math.max(...ballS.map((p: number[]) => p[1]!)), cy = (top + Math.min(...ballS.map((p: number[]) => p[1]!))) / 2;
+    if (!(top < L.start.chin[1])) out.push('start ball top not under the chin');
+    if (Math.abs(cy - L.start.sternum[1]) > 0.1) out.push('start ball not at chest height');
+    for (const k of ['start', 'end']) for (const s of ['l', 'r']) {
+      if (!(L[k][`shoulder.${s}`][1] - L[k][`elbow.${s}`][1] > 0.25)) out.push(`${k} elbow.${s} not down`);
+      if (!(Math.abs(L[k][`elbow.${s}`][0]) - Math.abs(L[k][`shoulder.${s}`][0]) <= 0.12)) out.push(`${k} elbow.${s} not tucked`);
+    }
+    for (const k of ['start', 'end', 'mistake']) for (const f of ['heel.l', 'heel.r', 'ball.l', 'ball.r']) if (CM(L[k][f][1]) > 0.5) out.push(`${k} ${f} off the floor`);
+    // end (c5, c6, c9): the hip joint below the knee, the trunk upright (lean under 30 deg), the ball 2-6 px off the chest
+    if (!(L.end['hip.r'][1] < L.end['knee.r'][1])) out.push('end hip not below the knee');
+    if (!(leanOf(L.end) < 30)) out.push(`end lean ${leanOf(L.end).toFixed(1)}`);
+    // Mistake (c3): the feet farther than every sourced setup distance (2-3 ft: 0.91 m) from the one static wall item,
+    // the trunk tipped forward of the end's
+    if (!(face - toeTip(L.mistake) > 0.9144)) out.push(`Mistake toe tips ${(face - toeTip(L.mistake)).toFixed(3)} m from the wall`);
+    if (!(leanOf(L.mistake) > leanOf(L.end) + 5)) out.push('Mistake trunk not tipped forward');
+    return out;
+  };
+  /** A5: every body shape clears the ball and the wall by 2 px in every drawn pose; the hands (fist, forearm) are the card
+   *  contact (c9) and are listed, not tested (D-SMALL-9, #358 6545874629 item 1). `ballDz` / `wallDz` move them (world z). */
+  const EXEMPT = /^(fist|fore)\./;
+  const clearProblems = (spec: any, { ballDz = 0, wallDz = 0 } = {}) => {
+    const out: string[] = [], cam = camOf(spec), pxm = cam.pxm;
+    for (const k of ['start', 'end', 'mistake']) {
+      const shapes = shapesIn(spec, k).filter((x: any) => !EXEMPT.test(x.key));
+      const b = poly(spec, k, 'ball').map((p: number[]) => [p[0]! + ballDz * pxm, p[1]!]);
+      const wall = itemsIn(spec, 'end').items.find((x: any) => x.type === 'backPad'), wx = cam.P([0, 0, wall.surface[0][2] - wall.t + wallDz])[0]!;
+      for (const s of shapes) {
+        let d = Infinity;
+        for (const p of b) { if (inPoly(s.poly, p)) d = -1; else for (let i = 0; i < s.poly.length; i++) d = Math.min(d, segD(p, s.poly[i], s.poly[(i + 1) % s.poly.length])); }
+        for (const p of s.poly) if (inPoly(b, p)) d = -1;
+        if (d < 2) out.push(`${k} ball-${s.key} ${d.toFixed(2)} px`);
+        const gap = wx - Math.max(...s.poly.map((p: number[]) => p[0]!));
+        if (gap < 2) out.push(`${k} wall-${s.key} ${gap.toFixed(2)} px`);
+      }
+      if (wx - Math.max(...b.map((p: number[]) => p[0]!)) < 2) out.push(`${k} wall-ball`);
+    }
+    return out;
+  };
+  /** Panel mx21 R3 (#358): no ghost hand floats. Each ghost sits on a key pose (ghost count = keys), the ghosts draw the
+   *  ball, and in each key each grip is on its ball's underside (within 1 cm in the side view). */
+  const ghostProblems = (spec: any) => {
+    const out: string[] = [], vias = spec.poses.via ?? [];
+    if (vias.length !== spec.ghosts.count) out.push(`${vias.length} keys for ${spec.ghosts.count} ghosts`);
+    if (!(spec.ghosts.parts ?? []).includes('ball')) out.push('no ball in the ghosts');
+    vias.forEach((v: any, i: number) => {
+      const l = lmP(v), ball = spec.equipment.flatMap((e: any) => (typeof e === 'function' ? [].concat(e(l, { pose: 'ghost' }) ?? []) : [])).find((x: any) => x && x.part === 'ball' && x.type === 'poly');
+      if (!ball) { out.push(`ghost ${i}: no ball`); return; }
+      const ys = ball.pts.map((p: number[]) => p[1]!), zs = ball.pts.map((p: number[]) => p[2]!), r = (Math.max(...ys) - Math.min(...ys)) / 2;
+      const cy = (Math.max(...ys) + Math.min(...ys)) / 2, cz = (Math.max(...zs) + Math.min(...zs)) / 2;
+      for (const sd of ['l', 'r']) {
+        const g = l[`grip.${sd}`], under = cy - Math.sqrt(Math.max(0, r * r - g[0] * g[0]));
+        if (Math.hypot(g[1] - under, g[2] - cz) > 0.01) out.push(`ghost ${i} grip.${sd} floats ${(Math.hypot(g[1] - under, g[2] - cz) * 100).toFixed(1)} cm`);
+      }
+    });
+    return out;
+  };
+  it('R3 (panel mx21): no ghost hand floats: each ghost is a key with its hands under its own drawn ball', () => {
+    expect(ghostProblems(S.wall_ball)).toEqual([]);
+  });
+  it('R3 mutations: the ball dropped from the ghosts, the ghost keys removed, and a ghost hand moved off its ball are red', () => {
+    const s = S.wall_ball;
+    expect(ghostProblems({ ...s, ghosts: { ...s.ghosts, parts: s.ghosts.parts.filter((p: string) => p !== 'ball') } })).toContain('no ball in the ghosts');
+    expect(ghostProblems({ ...s, poses: { ...s.poses, via: [] } })).toContain('0 keys for 2 ghosts');
+    const v0 = s.poses.via[0], off = { ...v0, reach: { ...v0.reach, r: { ...v0.reach.r, at: [v0.reach.r.at[0], v0.reach.r.at[1] - 0.05, v0.reach.r.at[2]] } } };
+    expect(ghostProblems({ ...s, poses: { ...s.poses, via: [off, s.poses.via[1]] } }).some(x => x.startsWith('ghost 0 grip.r floats'))).toBe(true);
+  });
+  it('A4: start, end and Mistake hold the card facts (c1, c2, c3, c5, c6, c9, c17)', () => {
+    expect(poseProblems(S.wall_ball)).toEqual([]);
+  });
+  it('A5: the ball and the wall clear every body shape by 2 px in every drawn pose (hands excepted, listed)', () => {
+    expect(clearProblems(S.wall_ball)).toEqual([]);
+  });
+  it('A4 mutations: the end hip above the knee, the Mistake feet at STAND_DIST, elbows flared out are red', () => {
+    const s = S.wall_ball;
+    const high = { ...s, poses: { ...s.poses, end: { ...s.poses.end, root: { ...s.poses.end.root, at: [0, s.poses.end.root.at[1] + 0.12, s.poses.end.root.at[2]] } } } };
+    expect(poseProblems(high)).toContain('end hip not below the knee');
+    const near = { ...s, mistake: { ...s.mistake, pose: { ...s.mistake.pose, root: s.poses.end.root, plant: s.poses.end.plant } } };
+    expect(poseProblems(near).some(x => x.startsWith('Mistake toe tips'))).toBe(true);
+    const flare = { ...s, poses: { ...s.poses, start: { ...s.poses.start, reach: { l: { ...s.poses.start.reach.l, pole: [1, 0, 0] }, r: { ...s.poses.start.reach.r, pole: [-1, 0, 0] } } } } };
+    expect(poseProblems(flare).some(x => /start elbow\.[lr] not (tucked|down)/.test(x))).toBe(true);
+  });
+  it('A5 mutations: the ball at the sternum (BALL_OFF 0) and the wall face at the toe tips are red', () => {
+    const s = S.wall_ball;
+    expect(clearProblems(s, { ballDz: -M.wall_ball.SIZES.BALL_OFF }).some(x => /ball-torso/.test(x))).toBe(true);
+    expect(clearProblems(s, { wallDz: -M.wall_ball.SIZES.STAND_DIST }).some(x => /wall-/.test(x))).toBe(true);
+  });
+});
+
+describe('LIB-SMALL: wall-ball as approved in panel mx23 (#358, head 29e788a9) stays byte-identical', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the approved plate (9 fragments) on its lb10 page at 29e788a9 (page ffc206ff).
+  const APPROVED: Record<string, Record<string, string>> = {
+    "wall-ball": {
+      "normalSvg": "bd69528577a2c8d9a6bc7d3bee1c41df142bfadd1eb5bf6539c979d903df3620",
+      "normalOverlay": "8b9455d4e538b3e1713070a4a3ab6811721f4b4459e2b4d276a6b4741de63406",
+      "mistakeSvg": "8a5db4260b8df3176254c81335a8fd8f8012fa46ebf3c55a149a8d2f732199cc",
+      "mistakeOverlay": "da1750ca7d9e04fe205d2c9d22555b62c93648f69a39d306c2bc2db1a4348a84",
+      "tells": "a8b2c1799b9fe64c47a7afac26ad63ab0c6cb21660e4b6ae4b73597abffd4314",
+      "tempo": "878f4472b6a601b60845a16ba47721ac7afbde027548f1a096c6a7597fd10b7c",
+      "cues": "cd88c6363ea94ed86f8713ff627b3fa2bced4d3001d9802fbf65c8a0e84cb1fc",
+      "alt": "7a07bbb31a104860eb82b5b2efdd2774712150e5642ad1ea9b1537c34ca25029",
+      "mistakeAlt": "2689ecd89eebd06ff4f70cdab18e2313da3fd0ef99c7f611045110f9e1c3d408"
+    }
+  };
+  let golden: any;
+  beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
+  const pageOf = async () => {
+    const script = `const b = await import(${JSON.stringify(lib('lb10/build.mjs'))}); const { html } = await b.buildLb10Page(); process.stdout.write(html.toString('base64'));`;
+    const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });
+    return Buffer.from(stdout, 'base64').toString('utf8');
+  };
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('its 9 fragments on this head equal the approved ones', async () => {
+    expect(Object.keys(APPROVED['wall-ball']!).length).toBe(9);
+    expect(fragProblems(await pageOf())).toEqual([]);
+  });
+  it('mutation: one byte changed in its alt is red', async () => {
+    const html = await pageOf(), alt = S.wall_ball.alt.split('.')[0]!;   // 'Wall ball, side view' (the alt's first sentence, no quote marks)
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, alt.replace('side view', 'side vieW')))).toContain('wall-ball alt');
   });
 });

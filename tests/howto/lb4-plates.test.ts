@@ -3,7 +3,9 @@
 // Patterns copied from tests/howto/lb3-plates.test.ts (#274 @ a6f4bd07). Every test reads what is drawn (the items a
 // spec emits, the engine's landmarks and report), never a helper's own maths.
 import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -11,15 +13,15 @@ import { beforeAll, describe, expect, it } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
-const LB4 = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'wall_sit', 'step_up', 'pistol_squat'];
+const LB4 = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'wall_sit', 'step_up', 'pistol_squat', 'jump_squat'];   // jump_squat: LIB-SMALL (LB4 resume 2)
 const IDS = LB4.map(i => `lib_${i}`);
-// The 8 LB4 ids not drawn here (DESIGN.md section 2): never in lb4/rows.json.
-const NOT_HERE = ['reverse_lunge', 'bulgarian_split_squat', 'walking_lunge', 'forward_lunge', 'bodyweight_lunge', 'bodyweight_split_squat', 'box_jump', 'jump_squat'];
+// The 7 LB4 ids not drawn here (DESIGN.md section 2; jump_squat left at LIB-SMALL, section 16): never in lb4/rows.json.
+const NOT_HERE = ['reverse_lunge', 'bulgarian_split_squat', 'walking_lunge', 'forward_lunge', 'bodyweight_lunge', 'bodyweight_split_squat', 'box_jump'];
 // Held: drawn and tested, no row (DESIGN.md section 13). LIB-STRIP (#309, main bec24ebd) released the other four of
 // D-LIB14-NOSECS ('LIB-14 resume'); step_up stays held under D-LIB14-STEPUP (reverse_lunge is still held on main).
 const HELD = ['step_up'];
 // The released no-seconds ids: their tempo is tempoOf(LIB-STRIP's verified rows), D-STRIP-B / D-STRIP-AFALL.
-const RELEASED = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'pistol_squat'];
+const RELEASED = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'pistol_squat', 'jump_squat'];   // jump_squat: LIB-SMALL (strip cards row, j9 and j7)
 const ROWS = 'tools/plates/library/lb4/rows.json';
 const RESEARCH_HEAD = '3812989f59c000705731f7944d7a1a275e86045d';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -72,7 +74,7 @@ describe('LIB-14 A5: lb4/rows.json holds exactly the drawn, non-held LB4 ids, al
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H (D-LIB14-MODES)', () => {
-    expect(want()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_pistol_squat']);
+    expect(want()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_pistol_squat', 'lib_jump_squat']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('none of the 8 LB4 ids not drawn here is in any lb4/ file as a row', () => {
@@ -537,18 +539,19 @@ describe('LIB-14 A8: the hold (D-LIB14-STEPUP; D-LIB14-NOSECS released for the o
     const [build, cand, golden] = await Promise.all(['lb4/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     const data = readJson(ROWS), withHeld = { ...data, rows: { ...data.rows, lib_step_up: { src: 'library/specs/step_up.mjs', slug: 'step-up', prefix: 'step-up', chromeId: 'step-up', mode: 'H', stage: 'drawing', view: 'side' } } };
     const d = build.lb4Data(undefined, withHeld), all = build.lb4All(undefined, d);
-    const { html } = await build.buildLb4Page({ all, ids: Object.keys(withHeld.rows) });
+    const html = await lb4BuildInChild(`const data = JSON.parse(fs.readFileSync(${JSON.stringify(ROWS)}, 'utf8')), withHeld = { ...data, rows: { ...data.rows, lib_step_up: ${JSON.stringify(withHeld.rows.lib_step_up)} } };
+      const all = b.lb4All(undefined, b.lb4Data(undefined, withHeld)); return (await b.buildLb4Page({ all, ids: Object.keys(withHeld.rows) })).html;`);
     const mirror = golden.makeMirror(), E = await qaEng.loadEngine(mirror);
     try {
-      for (const id of Object.keys(withHeld.rows)) await expect(cand.candidateOf(id, { all, platesHtml: html.toString('utf8'), engine: E, authoring: true }), id).rejects.toThrow();
-      const ids = Object.keys(data.rows), clean = await build.buildLb4Page({ all: build.lb4All(), ids });
-      for (const id of ids) await expect(cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean.html.toString('utf8'), engine: E, authoring: true }), id).resolves.toBeTruthy();
+      for (const id of Object.keys(withHeld.rows)) await expect(cand.candidateOf(id, { all, platesHtml: html, engine: E, authoring: true }), id).rejects.toThrow();
+      const ids = Object.keys(data.rows), clean = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: ${JSON.stringify(ids)} })).html;`);
+      for (const id of ids) await expect(cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean, engine: E, authoring: true }), id).resolves.toBeTruthy();
     } finally { qaEng.dropMirror(mirror); }
   });
 });
 
 describe('LIB-14 slice Mistakes, tells, cues, callouts and tempo (DESIGN.md sections 8-9)', { timeout: T }, () => {
-  const KEYS: Record<string, string> = { front_squat: 'elbows', goblet_squat: 'lean', bodyweight_squat: 'heels', wall_sit: 'feet', step_up: 'lean', pistol_squat: 'heel' };
+  const KEYS: Record<string, string> = { front_squat: 'elbows', goblet_squat: 'lean', bodyweight_squat: 'heels', wall_sit: 'feet', step_up: 'lean', pistol_squat: 'heel', jump_squat: 'straight' };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells, the first carrying the proposed key', () => {
     for (const id of specsDrawn()) { expect(keyProblems(S[id])).toEqual([]); expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3); }
@@ -764,9 +767,9 @@ describe('LIB-14 A3: spec and composer closures are pure and drawn by the vendor
 describe('LIB-14 A10: the LB4 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
   it('two builds of the LB4 rows are byte-identical', async () => {
     const build = await import(/* @vite-ignore */ lib('lb4/build.mjs'));
-    expect(build.drawnIds()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_pistol_squat']);
-    const a = await build.buildLb4Page(), b = await build.buildLb4Page();
-    expect(sha(a.html)).toBe(sha(b.html));
+    expect(build.drawnIds()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_pistol_squat', 'lib_jump_squat']);
+    const a = await lb4BuildInChild('return (await b.buildLb4Page()).html;'), b = await lb4BuildInChild('return (await b.buildLb4Page()).html;');
+    expect(sha(a)).toBe(sha(b));
   });
 });
 
@@ -776,7 +779,7 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
   beforeAll(async () => {
     [build, cand, muts, golden] = await Promise.all(['lb4/build.mjs', 'candidate.mjs', 'qa/mutations.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb4All();
-    html = (await build.buildLb4Page({ all, ids: [ID] })).html.toString('utf8');
+    html = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: [${JSON.stringify(ID)}] })).html;`);
     return () => qaEng.dropMirror(mirror);
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
@@ -790,14 +793,14 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
     try {
       const spec = (await import(/* @vite-ignore */ `file://${file}`)).default;
       const cid = (await import(/* @vite-ignore */ lib('plates-page.mjs'))).cardIdOf(all.find((r: any) => r.id === ID));
-      const { html: h } = await (await import(/* @vite-ignore */ lib('build-page.mjs'))).buildPlatesPage({
-        groups: [{ id: 'lb4', title: 'LB4', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: file } });
-      return { ...(await candOf(h.toString('utf8'))), spec };
+      const h = await lb4BuildInChild(`const bp = await import(lib('build-page.mjs')), cid = ${JSON.stringify(cid)};
+        return (await bp.buildPlatesPage({ groups: [{ id: 'lb4', title: 'LB4', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: ${JSON.stringify(file)} } })).html;`);
+      return { ...(await candOf(h)), spec };
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
   it('A4: pistol_squat (in rows.json since the strip release) raises F7 on its node half; its topFault set to its drawn key drops F7, so the ruled expected set fails', async () => {
     const lb4qa = await import(/* @vite-ignore */ lib('lb4/qa.mjs'));
-    const P = 'lib_pistol_squat', ph = (await build.buildLb4Page({ all, ids: [P] })).html.toString('utf8');
+    const P = 'lib_pistol_squat', ph = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: [${JSON.stringify(P)}] })).html;`);
     const c = await cand.candidateOf(P, { all, platesHtml: ph, engine: E, authoring: true });
     const asReport = (r: any) => ({ id: P, flags: { ...r.flags, F2: { raised: false }, F5: { raised: true, value: 3.57 } } });
     const clean = await qa(c);
@@ -885,6 +888,7 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     goblet_squat: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true, word: 'Controlled' }],
     bodyweight_squat: [{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true }],
     pistol_squat: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Drive up', move: true, word: 'Slow' }],
+    jump_squat: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Jump', move: true, word: 'Explosive' }],   // LIB-SMALL
   };
   // The ruled pose map (D-LIB14-STEPUP-POSE; DESIGN.md section 9): the spec pose each card pose is drawn as.
   const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB4.map(id => [id, id === 'step_up' ? { start: 'end', end: 'start' } : { start: 'start', end: 'end' }]));
@@ -948,7 +952,7 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
       expect(Object.keys(cardOf(id)).slice(id !== 'step_up' ? -3 : -2), id).toEqual(id !== 'step_up' ? KEYS : ['plateFacts', 'topFault']);
     }
   });
-  const DRAWN: Record<string, string> = { front_squat: 'elbows', goblet_squat: 'lean', bodyweight_squat: 'heels', wall_sit: 'feet', step_up: 'lean', pistol_squat: 'heel' };
+  const DRAWN: Record<string, string> = { front_squat: 'elbows', goblet_squat: 'lean', bodyweight_squat: 'heels', wall_sit: 'feet', step_up: 'lean', pistol_squat: 'heel', jump_squat: 'straight' };
   const topFaultProblems = (card: any, drawnKey: string) => (card.plate.mistake.drawable
     ? (card.topFault === drawnKey ? [] : ['drawable:true but topFault is not the drawn fault'])
     : (card.topFault !== drawnKey ? [] : ['drawable:false but topFault equals the drawn fault']));
@@ -988,6 +992,7 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
       ...C(['backUpper', 'buttock'], 'start', 'start', 'w5'), ...C(['backUpper', 'buttock'], 'end', 'end', 'w5')],
     step_up: [...C(['heel.r', 'ball.r'], 'end', 'start', 'c6'), ...C(['heel.l', 'ball.l'], 'end', 'start', 'c1'), ...C(['wrist.r', 'wrist.l'], 'end', 'start', 'c5'), ...C(['heel.r', 'ball.r'], 'start', 'end', 'c1')],
     pistol_squat: C(['heel.r', 'ball.r'], 'end', 'end', 'p3'),
+    jump_squat: [...C(['heel.l', 'heel.r'], 'start', 'start', 'j2'), ...C(['sole.r'], 'end', 'end', 'j4')],   // LIB-SMALL PLAN (lb4/DESIGN.md 16); cfsmall: j4 names one mid-foot, so the near side only (#358 6547988428)
   };
   it('every card\'s plateFacts is the ruled set (D-LIB14-FACTS)', () => {
     for (const id of LB4) { expect(cardOf(id).plateFacts, id).toEqual(FACTS[id]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
@@ -1173,5 +1178,195 @@ describe('LIB-14 panel mx1 second round (#289 6414220426, D-LIB13-PANEL2): goble
     expect(heelProblems(noFoot)).toContain('no dashed outline of the lifted foot');
     const down = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.map((x: any) => (x.kind === 'arrow' ? { ...x, from: x.to, to: x.from } : x)) } };
     expect(heelProblems(down)).toContain('the arrow does not start at the floor');
+  });
+});
+
+/** F-VITEST-RPC (#358 6552271304, the D-LIB13S-RPC form): the LIB-SMALL blocks build the whole LB4 page in an awaited
+ *  child process, never in the worker. */
+/** F-VITEST-RPC: any whole-page build in an awaited child process. `body` runs there with `b` (lb4/build.mjs), `lib`
+ *  (a path to a library file URL) and `fs`, and returns the page html (Buffer or string). */
+const lb4BuildInChild = async (body: string) => {
+  const script = `const b = await import(${JSON.stringify(lib('lb4/build.mjs'))}); const fs = await import('node:fs'); const lib = f => new URL(f, ${JSON.stringify(lib(''))}).href;
+const html = await (async () => { ${body} })(); process.stdout.write(Buffer.from(html).toString('base64'));`;
+  const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });
+  return Buffer.from(stdout, 'base64').toString('utf8');
+};
+const lb4PageInChild = async () => {
+  const script = `const b = await import(${JSON.stringify(lib('lb4/build.mjs'))}); const { html } = await b.buildLb4Page(); process.stdout.write(html.toString('base64'));`;
+  const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });
+  return Buffer.from(stdout, 'base64').toString('utf8');
+};
+
+describe('LIB-SMALL A2: the 5 approved LB4 plates stay byte-identical (page 9a2b7881 on main 6b32d576)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the 5 approved LB4 plates on main's LB4 page 9a2b7881…6a9e (45 fragments; the form of
+  // lb6-plates.test.ts's LIB-16 resume block).
+  const APPROVED: Record<string, Record<string, string>> = {
+    "front-squat": {
+      "normalSvg": "4ecab78ebaa9560defbf68bf50f199c83339b26196ad1715029b4ed672ac36cd",
+      "normalOverlay": "d4e84ee29a56ed2bd196631d50fd3728d6d3fedfddb72a60947eb0791f370f9a",
+      "mistakeSvg": "f5ffd80e96e5a57235ed766885753be6b027dfb88580c0117bd7b20c3c436ce2",
+      "mistakeOverlay": "b12ff6c71ac8e90aea48c4175c4d0be6d2da6cba7b5326100f562ef9a312c3c6",
+      "tells": "aaf021b59385c48e494f47a871038f0aa058d1514f6a8297f32a87357e7e0940",
+      "tempo": "ab0f21665e3f48d9501897698a06532e4abdd7a9e0744a6eda115cc9060e213f",
+      "cues": "f1a46945fe5d23311af32726d480f31fd1ee8b136277a624149b23d9b0c72992",
+      "alt": "82f041276be1d2d5045804f9d7433fe2ef937db6a690a678ea0e873f1e3a2225",
+      "mistakeAlt": "587f1ce3d22bea399a1923efedcdff97dce800fee6d75465a436d5a40e3c1c29"
+    },
+    "goblet-squat": {
+      "normalSvg": "54bb87d119a41a81d2f0426eb28b8e1fedaa5d0947b4f8f0b9ae2bc9695d7c69",
+      "normalOverlay": "e0e1e1045ee1765b0e05afcca6282124d7e9ee9d8f912a820c825f964359cc33",
+      "mistakeSvg": "d07a85f48199339a188e3c11d4dbe67620ab2dc3f758813e78831ab9770553bc",
+      "mistakeOverlay": "a20b880f96315a18317131314f56ac55308a0b6e91ec9e8387f7b0e9dfc7128b",
+      "tells": "2728938e9ef38aa6bda15c1d41e57180162907aeb213f2da6bf713e6fb830b10",
+      "tempo": "c7d316b8f804c6564a61dcb7ccf44290678345327b95b64fb5c7379ef09f6d18",
+      "cues": "020cfc2602fe9c32f85f8ff5a6ffce2fafdc4253ecffcfb8e9e663326ce6e54b",
+      "alt": "12087c14b3350ad6a6dd804e2f990c1bf4ce54d30cd795cf84caa910a731c7a3",
+      "mistakeAlt": "764a892b1231a24969f3e1f6bc0656a407709497c61bc28b04fe961bce165b48"
+    },
+    "bodyweight-squat": {
+      "normalSvg": "f5bd3ef7fb18ba31663063c1e6ced029486cf21552e33039d481d6385d4a8cac",
+      "normalOverlay": "80b017e1346e628f0ad0969759581f40549b4b5e4e5523f34aeae08d18a43641",
+      "mistakeSvg": "df91547d0cc5798ed76e995241a7dcd5604a252b3e6537ba2440871519f4a660",
+      "mistakeOverlay": "6186af86472fbf338cae0afd3036e247868e8f92674bec9981129b9f9f2001a2",
+      "tells": "e4006ed757a1deba831c97957576280a54eea493650da158da401adffda56d9d",
+      "tempo": "cbfe12f8d00e9f7f873f9ff54cb9761ab4c152e35bb37cc24173c902ed51031a",
+      "cues": "bdef5c5dd2ade929569f37945b396f97f9f6bac425e7fdc871dc75d01b6a8b00",
+      "alt": "5ed34d890682fe74f67c7fd47e92355062064b60affa7e5ebf5ebd7046e479a1",
+      "mistakeAlt": "4c1080c5d586575992fc5f2335502870ce17d710b6523f43201370aaae2b44ec"
+    },
+    "wall-sit": {
+      "normalSvg": "d6faa81fdefb536e723412e0603a74dc1032298138380e6b87e37bf7142046a1",
+      "normalOverlay": "852988543a8323793fe7f3e9012d8ee0e0549a93a181d51e282802d9e93f5914",
+      "mistakeSvg": "b404d79c3eceed9cf9f457142f5efbcfca5951cfd4f804102f9a0874a273c94e",
+      "mistakeOverlay": "3de65ebc6d6c6aaf5be2ea15ce77a0effe3d2cd967d0a05c6892491efe6ca52c",
+      "tells": "f0ad3f0505aac7d01987d6ca5c1ed1cdfa7de61e2da200efffbc9f12a6f14a55",
+      "tempo": "eebaf59717deecae2c30e72ce5b9cf8e30052b4ae3769e01b2ad37051e4ac315",
+      "cues": "36732e74c14311911917050d93b6ac99fb97d68b273550fc32fea433aa7e54f8",
+      "alt": "a9774fdedc11998fef452e9edf89a8abc55b90152306f7a14701417dd9e4e482",
+      "mistakeAlt": "ee942445316b3d6fa75f806b209d24fe20f5453ea5a4617d3f6055c141494a97"
+    },
+    "pistol-squat": {
+      "normalSvg": "51de53e3dfd2b0203eb326147fa442a580606073484564abce36ec60ac276d98",
+      "normalOverlay": "699fb9e05a0bbbbed8e456368ef7bc3bb8b9cacd7754f220ff7b88bbe41c1170",
+      "mistakeSvg": "c22880be11bb10c0411e4347449b5a5fb84e6af401dfb845c6c6e96a7fc3f48a",
+      "mistakeOverlay": "4a380d2cd466a1b10b02c5730ce331ada3f472ef06fb5b09e0a7735cc141c155",
+      "tells": "b40836900804079ba12aa800b24966a5200143226487d83a91bd2864cebcf034",
+      "tempo": "084d452f3c34dde94f33b3f5dab5818fabd0787de9efc3c137121848c1fb6473",
+      "cues": "1e3786aaa540f36af51990152086657abcb611c2b36737fa9dd678e6d3cbb69c",
+      "alt": "26daf096ae0c52b1e9f61c567c30ae3b8d4b6f238fa12855d0f22dca9065d4d9",
+      "mistakeAlt": "125a86e4557fcbb4f9b352bac40d3e99cc096883bcad8c54290441ff075dc2b3"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb4/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('the 5 approved plates\' 45 fragments on this head equal main\'s', async () => {
+    expect(Object.values(APPROVED).reduce((a, f) => a + Object.keys(f).length, 0)).toBe(45);
+    expect(fragProblems(await lb4PageInChild())).toEqual([]);
+  });
+  it('mutation: one byte changed in goblet_squat\'s alt is red', async () => {
+    const html = await lb4PageInChild(), alt = S.goblet_squat.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, alt.replace('Goblet squat', 'Goblet squaT')))).toContain('goblet-squat alt');
+  });
+});
+
+describe('LIB-SMALL A4 and A6: jump_squat\'s drawn poses are card-true and airborne-convention true (D-SMALL-JSAIR, D-LIB8R-AIR)', { timeout: T }, () => {
+  const H = 1.75, R = 180 / Math.PI;
+  const kneeOf = (l: any) => { const a = [0, 1, 2].map(i => l['hip.r'][i] - l['knee.r'][i]), b = [0, 1, 2].map(i => l['ankle.r'][i] - l['knee.r'][i]);
+    return 180 - Math.acos((a[0]! * b[0]! + a[1]! * b[1]! + a[2]! * b[2]!) / Math.hypot(...a) / Math.hypot(...b)) * R; };
+  const hipOf = (l: any) => { const a = [0, 1, 2].map(i => l['knee.r'][i] - l['hip.r'][i]), b = [0, 1, 2].map(i => l.shoulders[i] - l['hip.r'][i]);
+    return Math.acos((a[0]! * b[0]! + a[1]! * b[1]! + a[2]! * b[2]!) / Math.hypot(...a) / Math.hypot(...b)) * R; };
+  /** The thorax's lean from vertical (deg; + forward). "Back flat" (j2, j8): the resolved lumbar flexion the engine draws
+   *  (body.resolve q.trunk) is at most 10 deg; the engine's back outline barely bends with it, so the joint is the measure. */
+  const leanOf = (l: any) => Math.atan2(l.neck[2] - l.hips[2], l.neck[1] - l.hips[1]) * R;
+  const lumbarOf = (p: any) => body.resolve(body.normPose(p, { height: H }), { height: H }).q.trunk;
+  const cm = (v: number) => Math.abs(v) * 100;
+  const FEET = ['heel.l', 'heel.r', 'ball.l', 'ball.r'];
+  /** The drawn poses: start, the one ghost (the key pose at t 0.5, via's middle), end, and the Mistake over the end. */
+  const drawn = (s: any) => ({ start: s.poses.start, ghost: s.poses.via[(s.poses.via.length - 1) / 2], end: s.poses.end, mistake: { ...s.poses.end, ...s.mistake.pose } });
+  const problems = (s: any) => {
+    const D = drawn(s), L = Object.fromEntries(Object.entries(drawn(s)).map(([k, p]) => [k, eng.landmarksOf(p, H)])) as Record<string, any>, out: string[] = [];
+    // A6: no drawn pose has both feet off every support (the floor is the only support)
+    for (const [k, l] of Object.entries(L)) if (!FEET.some(f => cm(l[f][1]) <= 0.5)) out.push(`${k}: both feet off the floor`);
+    // start (j2): heels and balls on the floor at the take-off crouch, knees bent past 90, back flat
+    for (const f of FEET) if (cm(L.start[f][1]) > 0.5) out.push(`start ${f} ${cm(L.start[f][1]).toFixed(2)} cm off the floor`);
+    if (!(kneeOf(L.start) > 90)) out.push(`start knee ${kneeOf(L.start).toFixed(1)}`);
+    for (const k of ['start', 'end'] as const) if (!(Math.abs(lumbarOf(D[k])) <= 10)) out.push(`${k} back bend ${lumbarOf(D[k])}`);
+    // ghost (j3): on the balls (each within 0.5 cm), heels up, knees straight, hips extended
+    for (const f of ['ball.l', 'ball.r']) if (cm(L.ghost[f][1]) > 0.5) out.push(`ghost ${f} ${cm(L.ghost[f][1]).toFixed(2)} cm`);
+    for (const f of ['heel.l', 'heel.r']) if (!(L.ghost[f][1] > 0.03)) out.push(`ghost ${f} not up`);
+    if (!(kneeOf(L.ghost) < 10)) out.push(`ghost knee ${kneeOf(L.ghost).toFixed(1)}`);
+    if (!(hipOf(L.ghost) > 160)) out.push(`ghost hip ${hipOf(L.ghost).toFixed(1)}`);
+    // end (j4, j8): mid-foot (and heel, ball) on the floor, knees bent, hips back of the ankles, trunk slightly forward
+    for (const f of [...FEET, 'sole.l', 'sole.r']) if (cm(L.end[f][1]) > 0.5) out.push(`end ${f} off the floor`);
+    if (!(kneeOf(L.end) > 45)) out.push(`end knee ${kneeOf(L.end).toFixed(1)}`);
+    if (!(L.end['hip.r'][2] < L.end['ankle.r'][2])) out.push('end hips not back');
+    if (!(leanOf(L.end) > 5 && leanOf(L.end) < 45)) out.push(`end lean ${leanOf(L.end).toFixed(1)}`);
+    // j10 (panel mx15 R1): the hands loosely at the chest in the crouch, the ghost and the landing: each grip within 15 cm
+    // of the sternum and in front of the chest (beyond the sternum along the back-to-sternum direction)
+    for (const k of ['start', 'ghost', 'end']) for (const sd of ['l', 'r']) {
+      const l = L[k], g = l[`grip.${sd}`], n = [0, 1, 2].map(i => l.sternum[i] - l.backUpper[i]), d = [0, 1, 2].map(i => g[i] - l.sternum[i]);
+      if (!(Math.hypot(d[1]!, d[2]!) < 0.15 && d[1]! * n[1]! + d[2]! * n[2]! > 0)) out.push(`${k} grip.${sd} not at the chest`);
+    }
+    // Mistake (j5): knees near locked, the same feet as the end
+    if (!(kneeOf(L.mistake) < 15)) out.push(`Mistake knee ${kneeOf(L.mistake).toFixed(1)}`);
+    for (const f of FEET) if (cm(Math.hypot(...[0, 1, 2].map(i => L.mistake[f][i] - L.end[f][i]))) > 0.5) out.push(`Mistake ${f} moved`);
+    return out;
+  };
+  const shift = (p: any, v: number[]) => ({ ...p, root: { ...p.root, at: p.root.at.map((x: number, i: number) => x + v[i]!) } });
+  it('start, ghost, end and Mistake hold every card fact and the airborne rule', () => {
+    expect(problems(S.jump_squat)).toEqual([]);
+    const L = eng.landmarksOf(drawn(S.jump_squat).ghost, H);
+    console.log(`LIB-SMALL jump_squat: ghost balls ${cm(L['ball.l'][1]).toFixed(3)} / ${cm(L['ball.r'][1]).toFixed(3)} cm`);
+  });
+  it('mutations: the ghost root raised 2 cm, the start heels 2 cm up, the landing knees straight, a rounded start back and the arms swung back (no j10) are red', () => {
+    const s = S.jump_squat, mid = (s.poses.via.length - 1) / 2;
+    const ghostUp = { ...s, poses: { ...s.poses, via: s.poses.via.map((p: any, i: number) => (i === mid ? { ...p, plant: undefined, root: { ...p.root, at: p.root.at.map((x: number, k: number) => x + (k === 1 ? 0.02 : 0)) } } : p)) } };
+    expect(problems(ghostUp).some(x => x.startsWith('ghost ball'))).toBe(true);
+    const startUp = { ...s, poses: { ...s.poses, start: { ...shift(s.poses.start, [0, 0.02, 0]), plant: undefined } } };
+    expect(problems(startUp).some(x => x.startsWith('start heel'))).toBe(true);
+    const stiff = { ...s, poses: { ...s.poses, end: { ...s.poses.end, ...s.mistake.pose } } };
+    expect(problems(stiff).some(x => x.startsWith('end knee'))).toBe(true);
+    const swing = { ...s, poses: { ...s.poses, start: { ...s.poses.start, reach: undefined, shoulder: { ext: 25 }, elbow: 5 } } };
+    expect(problems(swing)).toContain('start grip.r not at the chest');
+    const round = { ...s, poses: { ...s.poses, start: { ...s.poses.start, trunk: 30 } } };
+    expect(problems(round)).toContain('start back bend 30');
+  });
+});
+
+describe('LIB-SMALL: jump-squat as approved in panel mx17 (#358, head c176723d) stays byte-identical', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the approved plate (9 fragments) on its lb4 page at c176723d.
+  const APPROVED: Record<string, Record<string, string>> = {
+    "jump-squat": {
+      "normalSvg": "261fdd1fc5dae187d4b23675e6b3036ad4c5a6e298c1dcc80c56fdccfae11d27",
+      "normalOverlay": "bb63e83356ad6d587f14cae6bd8c7c1c29de2770af6825474913d5c6a6e386eb",
+      "mistakeSvg": "1ea9bbb067b48cf8ea9f8eab43555bf289c5f22b7b126f806ae09c4fb44a5fcc",
+      "mistakeOverlay": "e32160ac1318bee2bffcce5cb95c16b187bb89d54866b7539a4b01e0d3d91762",
+      "tells": "e2b1b056c56b5416c8e119610e95cd7ae522c05efbe265ca5b87150fdcba0a87",
+      "tempo": "23b25a80e39f1ca89dfc529fddc2a9c0ea19947ecd0b2237521e26b15592f452",
+      "cues": "703146d98c5acf26e14a51cd93c3f774a83de22a4e1433b8e2af743ea3991f0f",
+      "alt": "c68932b65e7726c17b92fdfd8d853cc7a1af86e8e9dcc54c1a70b3db17a7c5f1",
+      "mistakeAlt": "c1a9d7a7c34aa82a265ead272d52372f300b2fdf079249332705458f10c59351"
+    }
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb4/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const pageOf = lb4PageInChild;
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('its 9 fragments on this head equal the approved ones', async () => {
+    expect(Object.keys(APPROVED['jump-squat']!).length).toBe(9);
+    expect(fragProblems(await pageOf())).toEqual([]);
+  });
+  it('mutation: one byte changed in its alt is red', async () => {
+    const html = await pageOf(), alt = S.jump_squat.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, `${alt.slice(0, -1)}!`))).toContain('jump-squat alt');
   });
 });
