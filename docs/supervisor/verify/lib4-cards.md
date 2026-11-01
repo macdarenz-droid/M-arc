@@ -4656,3 +4656,5 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **#359 delta PASS** (6553215638): A10 runs in one child process. #359 rides train 57.
 - **PILOT-B2 PLATES READY @ `473a6ad9`** (#366 6553470624): crunch is offered to mx24 if that set is not yet shuffled; otherwise it goes to the next set.
 - **#365 F-VITEST-RPC review FAIL** 6553479647 (0/1/0/1). The High: the child harness never checks the child's exit code, so a child failing in afterAll, or with an unhandled rejection, passes the parent. The fix throws on a non-zero exit, with helper-test mutations. The Low: show the moved tests' own mutations failing through the child.
+- **CARD FIELDS cfcrunch** (crunch @ `df215bda`) is **VALID**. The plant, a head contact read from "supine", was caught. **D-SUPCORE-KNEE:** c2's "knees bent to about 90 degrees" (a setup quote, so the start pose) becomes a 90° start knee fact for each knee. H6 decides whether to re-pose, with c1's heel-distance test kept; if both cannot hold, a ruling is needed (#366 6553676063).
+- **mx24** (hip_thrust, resisted_hip_flexion and crunch, round 1): the critics are running.
