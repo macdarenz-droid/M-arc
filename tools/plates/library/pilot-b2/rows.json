@@ -1,0 +1,20 @@
+{
+ "batch": "PILOT-B2",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/pilot-b2.json",
+  "layers": "tests/howto/golden/library/pilot-b2.layers.html",
+  "layersConfig": "tools/plates/library/pages/pilot-b2.layers.json"
+ },
+ "rows": {
+  "lib_crunch": {
+   "src": "library/specs/crunch.mjs",
+   "slug": "crunch",
+   "prefix": "crunch",
+   "chromeId": "crunch",
+   "mode": "H",
+   "view": "side",
+   "stage": "drawing"
+  }
+ }
+}
