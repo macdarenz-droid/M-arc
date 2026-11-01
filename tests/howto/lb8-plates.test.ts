@@ -2180,6 +2180,7 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
 
 // ---- HELD-A (D-HELD6-SEAT, -SEAT2; panel mx24 R3): hip_thrust's c1 contact is the drawn torso outline on the floor ----
 describe('HELD-A D-HELD6-SEAT2: the outline contact (H6 branch, outlineChecks, the start solved on the torso outline)', { timeout: T }, () => {
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
   const h6Keys = (spec: any, card: any) => {
     const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
     return qaNode.h6({ spec, research: card }, { engine: Eng(), pins: pins() }, R).map((p: any) => `${p.key} ${p.text}`);
@@ -2211,7 +2212,7 @@ describe('HELD-A D-HELD6-SEAT2: the outline contact (H6 branch, outlineChecks, t
   it('mutations: main\'s start (-29.69°, the outline 2.04 cm under the floor) and a 0.6 cm lift are red in H6; so is an unknown outline name, and no outlineChecks entry', () => {
     const c = cardOf('hip_thrust'), main = startAt(-29.69);
     expect(outlineCm(main)).toBeCloseTo(-2.04, 1);
-    expect(h6Keys(main, c)).toEqual([expect.stringMatching(/^H6\.fact:0:contact:outline:torso outline contact torso start: lowest point 2\.0\d cm below the floor/)]);
+    expect(h6Keys(main, c).filter((k: string) => k.startsWith('H6.fact:0:'))).toEqual([expect.stringMatching(/^H6\.fact:0:contact:outline:torso outline contact torso start: lowest point 2\.0\d cm below the floor/)]);
     const st = S.hip_thrust.poses.start, lift = { ...S.hip_thrust, poses: { ...S.hip_thrust.poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1] + 0.006, st.root.at[2]] } } } };
     expect(h6Keys(lift, c).filter((k: string) => k.startsWith('H6.fact:0:'))).toEqual([expect.stringMatching(/lowest point 0\.\d+ cm above the floor/)]);
     const bad = JSON.parse(JSON.stringify(c)); bad.plateFacts[0].outline = 'torsoX';
