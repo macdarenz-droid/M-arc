@@ -539,12 +539,13 @@ describe('LIB-14 A8: the hold (D-LIB14-STEPUP; D-LIB14-NOSECS released for the o
     const [build, cand, golden] = await Promise.all(['lb4/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     const data = readJson(ROWS), withHeld = { ...data, rows: { ...data.rows, lib_step_up: { src: 'library/specs/step_up.mjs', slug: 'step-up', prefix: 'step-up', chromeId: 'step-up', mode: 'H', stage: 'drawing', view: 'side' } } };
     const d = build.lb4Data(undefined, withHeld), all = build.lb4All(undefined, d);
-    const { html } = await build.buildLb4Page({ all, ids: Object.keys(withHeld.rows) });
+    const html = await lb4BuildInChild(`const data = JSON.parse(fs.readFileSync(${JSON.stringify(ROWS)}, 'utf8')), withHeld = { ...data, rows: { ...data.rows, lib_step_up: ${JSON.stringify(withHeld.rows.lib_step_up)} } };
+      const all = b.lb4All(undefined, b.lb4Data(undefined, withHeld)); return (await b.buildLb4Page({ all, ids: Object.keys(withHeld.rows) })).html;`);
     const mirror = golden.makeMirror(), E = await qaEng.loadEngine(mirror);
     try {
-      for (const id of Object.keys(withHeld.rows)) await expect(cand.candidateOf(id, { all, platesHtml: html.toString('utf8'), engine: E, authoring: true }), id).rejects.toThrow();
-      const ids = Object.keys(data.rows), clean = await build.buildLb4Page({ all: build.lb4All(), ids });
-      for (const id of ids) await expect(cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean.html.toString('utf8'), engine: E, authoring: true }), id).resolves.toBeTruthy();
+      for (const id of Object.keys(withHeld.rows)) await expect(cand.candidateOf(id, { all, platesHtml: html, engine: E, authoring: true }), id).rejects.toThrow();
+      const ids = Object.keys(data.rows), clean = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: ${JSON.stringify(ids)} })).html;`);
+      for (const id of ids) await expect(cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean, engine: E, authoring: true }), id).resolves.toBeTruthy();
     } finally { qaEng.dropMirror(mirror); }
   });
 });
@@ -767,8 +768,8 @@ describe('LIB-14 A10: the LB4 plates page is deterministic (PQ-H7)', { timeout: 
   it('two builds of the LB4 rows are byte-identical', async () => {
     const build = await import(/* @vite-ignore */ lib('lb4/build.mjs'));
     expect(build.drawnIds()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_pistol_squat', 'lib_jump_squat']);
-    const a = await build.buildLb4Page(), b = await build.buildLb4Page();
-    expect(sha(a.html)).toBe(sha(b.html));
+    const a = await lb4BuildInChild('return (await b.buildLb4Page()).html;'), b = await lb4BuildInChild('return (await b.buildLb4Page()).html;');
+    expect(sha(a)).toBe(sha(b));
   });
 });
 
@@ -778,7 +779,7 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
   beforeAll(async () => {
     [build, cand, muts, golden] = await Promise.all(['lb4/build.mjs', 'candidate.mjs', 'qa/mutations.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb4All();
-    html = (await build.buildLb4Page({ all, ids: [ID] })).html.toString('utf8');
+    html = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: [${JSON.stringify(ID)}] })).html;`);
     return () => qaEng.dropMirror(mirror);
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
@@ -792,14 +793,14 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
     try {
       const spec = (await import(/* @vite-ignore */ `file://${file}`)).default;
       const cid = (await import(/* @vite-ignore */ lib('plates-page.mjs'))).cardIdOf(all.find((r: any) => r.id === ID));
-      const { html: h } = await (await import(/* @vite-ignore */ lib('build-page.mjs'))).buildPlatesPage({
-        groups: [{ id: 'lb4', title: 'LB4', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: file } });
-      return { ...(await candOf(h.toString('utf8'))), spec };
+      const h = await lb4BuildInChild(`const bp = await import(lib('build-page.mjs')), cid = ${JSON.stringify(cid)};
+        return (await bp.buildPlatesPage({ groups: [{ id: 'lb4', title: 'LB4', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: ${JSON.stringify(file)} } })).html;`);
+      return { ...(await candOf(h)), spec };
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
   it('A4: pistol_squat (in rows.json since the strip release) raises F7 on its node half; its topFault set to its drawn key drops F7, so the ruled expected set fails', async () => {
     const lb4qa = await import(/* @vite-ignore */ lib('lb4/qa.mjs'));
-    const P = 'lib_pistol_squat', ph = (await build.buildLb4Page({ all, ids: [P] })).html.toString('utf8');
+    const P = 'lib_pistol_squat', ph = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: [${JSON.stringify(P)}] })).html;`);
     const c = await cand.candidateOf(P, { all, platesHtml: ph, engine: E, authoring: true });
     const asReport = (r: any) => ({ id: P, flags: { ...r.flags, F2: { raised: false }, F5: { raised: true, value: 3.57 } } });
     const clean = await qa(c);
@@ -1182,6 +1183,14 @@ describe('LIB-14 panel mx1 second round (#289 6414220426, D-LIB13-PANEL2): goble
 
 /** F-VITEST-RPC (#358 6552271304, the D-LIB13S-RPC form): the LIB-SMALL blocks build the whole LB4 page in an awaited
  *  child process, never in the worker. */
+/** F-VITEST-RPC: any whole-page build in an awaited child process. `body` runs there with `b` (lb4/build.mjs), `lib`
+ *  (a path to a library file URL) and `fs`, and returns the page html (Buffer or string). */
+const lb4BuildInChild = async (body: string) => {
+  const script = `const b = await import(${JSON.stringify(lib('lb4/build.mjs'))}); const fs = await import('node:fs'); const lib = f => new URL(f, ${JSON.stringify(lib(''))}).href;
+const html = await (async () => { ${body} })(); process.stdout.write(Buffer.from(html).toString('base64'));`;
+  const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });
+  return Buffer.from(stdout, 'base64').toString('utf8');
+};
 const lb4PageInChild = async () => {
   const script = `const b = await import(${JSON.stringify(lib('lb4/build.mjs'))}); const { html } = await b.buildLb4Page(); process.stdout.write(html.toString('base64'));`;
   const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });

@@ -2186,3 +2186,40 @@ describe('LIB-SMALL A4 and A5: wall_ball\'s drawn poses are card-true, and the b
     expect(clearProblems(s, { wallDz: -M.wall_ball.SIZES.STAND_DIST }).some(x => /wall-/.test(x))).toBe(true);
   });
 });
+
+describe('LIB-SMALL: wall-ball as approved in panel mx23 (#358, head 29e788a9) stays byte-identical', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the approved plate (9 fragments) on its lb10 page at 29e788a9 (page ffc206ff).
+  const APPROVED: Record<string, Record<string, string>> = {
+    "wall-ball": {
+      "normalSvg": "bd69528577a2c8d9a6bc7d3bee1c41df142bfadd1eb5bf6539c979d903df3620",
+      "normalOverlay": "8b9455d4e538b3e1713070a4a3ab6811721f4b4459e2b4d276a6b4741de63406",
+      "mistakeSvg": "8a5db4260b8df3176254c81335a8fd8f8012fa46ebf3c55a149a8d2f732199cc",
+      "mistakeOverlay": "da1750ca7d9e04fe205d2c9d22555b62c93648f69a39d306c2bc2db1a4348a84",
+      "tells": "a8b2c1799b9fe64c47a7afac26ad63ab0c6cb21660e4b6ae4b73597abffd4314",
+      "tempo": "878f4472b6a601b60845a16ba47721ac7afbde027548f1a096c6a7597fd10b7c",
+      "cues": "cd88c6363ea94ed86f8713ff627b3fa2bced4d3001d9802fbf65c8a0e84cb1fc",
+      "alt": "7a07bbb31a104860eb82b5b2efdd2774712150e5642ad1ea9b1537c34ca25029",
+      "mistakeAlt": "2689ecd89eebd06ff4f70cdab18e2313da3fd0ef99c7f611045110f9e1c3d408"
+    }
+  };
+  let golden: any;
+  beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
+  const pageOf = async () => {
+    const script = `const b = await import(${JSON.stringify(lib('lb10/build.mjs'))}); const { html } = await b.buildLb10Page(); process.stdout.write(html.toString('base64'));`;
+    const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });
+    return Buffer.from(stdout, 'base64').toString('utf8');
+  };
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('its 9 fragments on this head equal the approved ones', async () => {
+    expect(Object.keys(APPROVED['wall-ball']!).length).toBe(9);
+    expect(fragProblems(await pageOf())).toEqual([]);
+  });
+  it('mutation: one byte changed in its alt is red', async () => {
+    const html = await pageOf(), alt = S.wall_ball.alt.split('.')[0]!;   // 'Wall ball, side view' (the alt's first sentence, no quote marks)
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, alt.replace('side view', 'side vieW')))).toContain('wall-ball alt');
+  });
+});
