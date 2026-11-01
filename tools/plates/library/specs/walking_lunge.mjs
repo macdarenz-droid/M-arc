@@ -131,5 +131,5 @@ export default {
     ],
   },
   tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Rise', move: true }],
-  alt: 'Walking lunge with dumbbells, side view, one step. From standing tall, one leg steps forward and lands heel first, and the body lowers until the back knee lightly touches the floor, front shin near vertical, front foot flat, back foot on the ball, trunk upright, dumbbells hanging at the sides. The back foot then steps forward to meet the front foot for the next step.',
+  alt: 'Walking lunge with dumbbells, side view, one step. One leg steps forward and lands heel first; the body lowers until the back knee lightly touches the floor, front shin near vertical, trunk upright. The back foot then steps forward for the next step.',
 };

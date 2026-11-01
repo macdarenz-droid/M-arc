@@ -119,5 +119,5 @@ export default {
     ],
   },
   tempo: [{ phase: 'Step', move: true, word: 'Slow' }, { phase: 'Lower', move: true }, { phase: 'Rise', move: true }],
-  alt: 'Bodyweight lunge, side view. From standing with the feet together, one leg steps forward and lands heel first, and the body lowers until the front thigh is about parallel, the front shin leaning slightly forward, front foot flat, back foot on the ball, the trunk bent forward at the hips with a flat back.',
+  alt: 'Bodyweight lunge, side view. From standing with the feet together, one leg steps forward and lands heel first; the body lowers until the front thigh is about parallel, front shin leaning slightly forward, trunk bent forward at the hips with a flat back.',
 };

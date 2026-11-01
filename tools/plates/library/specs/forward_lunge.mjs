@@ -123,5 +123,5 @@ export default {
     ],
   },
   tempo: [{ phase: 'Step', move: true, word: 'Slow' }, { phase: 'Lower', move: true, word: 'Smooth' }, { phase: 'Rise', move: true }],
-  alt: 'Forward lunge with dumbbells, side view. From standing tall, one leg steps forward and lands heel first, and the body lowers until the front thigh is parallel and the back knee is just off the floor, front shin near vertical, front foot flat, back foot on the ball, back straight, dumbbells hanging at the sides.',
+  alt: 'Forward lunge with dumbbells, side view. From standing, one leg steps forward and lands heel first; the body lowers until the front thigh is parallel and the back knee is just off the floor, front shin near vertical, back foot on the ball, back straight.',
 };
