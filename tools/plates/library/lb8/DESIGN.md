@@ -866,3 +866,15 @@ pass on all 9 LB8 rows, flags equal the ruled set):
   on backMid in the spec file; plus the in-test mutations (the Mistake bar read back from the bowed crease, the main
   drawing's solved arch, no bow, the number trunk, the main backMid-sacrum anchor, `lean` 20 px off the head, `arch` 20
   px off the back guide).
+
+Panel mx24 fix round (#368 6553899958; resisted_hip_flexion APPROVED @ `6d31c473`, hip_thrust R4 and R3):
+- R4: the `arch` tell moves to `{ at: 'sacrum', pose: 'mistake' }`, a vertex of the red dashed lower-back line. The
+  leader ends there at (178.2, 274.7), 9.4 px from the elbow mark (it ended 3.3 px from it on the lumbar point). The
+  sacrum moves 4.278 px: 12.83 px at k 3 (10.70 at k 2.5, red), so k stays 3, and the source ring centres on the arch.
+- R3 (D-HELD6-SEAT, -SEAT2): the start is solved on the drawn torso outline's lowest point, −33.88° (it was −29.69°,
+  with the outline 2.04 cm under the floor); c1's contact is that outline (section 8, hip_thrust facts), checked by H6's
+  add-only outline branch. The ghosts and the start bar follow the solved tilt; bearing and A18 hold.
+- H6 over every library spec with a card (127), main `c2b48060` against this head: 0 report differences (hip_thrust
+  [] on both: main passes its landmark fact, this head its outline fact).
+- The LB8 page builds `5b703d65…8400` twice; resisted_hip_flexion's and glute_bridge's `<article>` are byte-identical
+  to the `6ce14c40` page; runQa all 10 hard checks pass on all 9 rows.
