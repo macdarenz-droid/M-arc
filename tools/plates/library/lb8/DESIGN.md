@@ -282,6 +282,10 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   drawn key `arch` (tell 1 "Back arched", c11 "arch the lower back"; c13 "overextending your back"), tell 2 `ribs`
   ("Ribs up", c12 Healthline "If your ribs are up and your lower back is arched"). handlingMistakes[0] "Arching the
   lower back." (c11, c12) = the same fault → topFault `arch`; F7 not raised.
+  - **One-tell record** (hip_thrust; Held 6, D-HELD6-HIPTHRUST, 2026-11-01): fault: the lower back arched with the ribs
+    up (plate.mistake, c11, c12, c13). Claim ids read: c11, c12, c13. The second sign, c12's ribs up, is kept in the
+    `arch` cue ("…and the ribs flare up…"), as reverse_lunge.mjs:136 does: on the bowed Mistake (the thorax held) the
+    `ribs` anchor moves 1.86 px, which does not read. The bullets below describe the drawing before Held 6 (section 20).
   - Both tells anchor on the Mistake torso's top outline (the waist and the lower ribs), met from the open space above.
     The lower back's underside is enclosed in every render: the bench edge, the end back and the start phantom's back
     meet at the pivot (c9), so a leader there would cross the start phantom; the arch reads on the torso's bend from
@@ -298,6 +302,13 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
 | "focus on pushing through the heels throughout the set" (c15) | `contact heel.l, heel.r` ("throughout": start and end) | start (start), end (end) |
 | "Your knees should form a ~90-degree angle at the top." (c8; plate.end cites c8) | `angle knee.l 90`, `knee.r 90` ("knees") | end (end) |
 
+- **c1 "Sit on the floor" (D-HELD6-SEAT, -SEAT2, #368 6553929561, 6553943662; panel mx24 R3):** the card's `contact
+  seat` (start) is replaced by `{ kind: 'contact', outline: 'torso', pose: 'start', claim: 'c1' }`: the drawn torso
+  outline's lowest point on the floor, 0 cm, 0.5 cm either way, bound by the spec's `outlineChecks` and H6's outline
+  branch (qa/node.mjs `outlineContactProblem`). The start tilt is solved on that outline: −33.88°. **Not a fact: the
+  seat landmark at the start, 2.34 cm above the floor**; c1's contact is the drawn outline. Measured (torso outline vs
+  the floor / seat landmark): −29.69° (main) −2.04 cm (−2.98 px) / 0.00; −30.62° −1.61 / 0.50; −31.12° −1.37 (−2.00
+  px) / 0.78; −31.52° −1.17 / 1.00; −33.88° 0.00 / 2.34.
 - **Not facts**: c1, c2 "shoulder-width" / "hip width": a width the side view cannot show. c3 "positioned in the crease
   of the hip": the model has no hip-crease landmark (PANELS.md 7's kinds); held by a check-free drawn-item test (the bar
   centre PAD_R clear of the drawn torso and thigh outlines at the visible crease, in every pose and ghost; bearing fix, #306 6358957999) and R10. c6 "your shins are
@@ -668,11 +679,9 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 | seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°); the c1 fact "toes ... on the foot support" (CARD FIELDS fix 2) is missed at the drawn stretch: the toe 4.2 cm off the platform's top | the named list (D-LIB18-CALF-S4, #325 6405116791): S4 arose, so the row is left out with the toe-through-platform reason and its renders, decided at the release candidate |
 | standing_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 5.1 px < 22.11 px (trim [10, 12], barbell_back_squat.mjs:117); the locked-knee Mistake 7.4 px < 11.39 px; the rigid toe is 4.85 cm inside the platform at the card's top; the c1 toe fact misses by 2.3 cm at the start | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
 | bodyweight_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace measures 5.8 px < 22.11 px (trim [10, 12]); the Mistake passes (13.6 px); the rigid toe is 4.56 cm inside the step at the top, so the c4 toe fact misses by 4.6 cm | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
-| hip_thrust | D-LIB8-shrug (D-LIB18-SIZE, S2); D-LIB18-RINGKEEP (#325) | the card-true 12° arch moves its tells 4.16 px at most; after the panel's R4 fix (lb8q, #325 6410306586: the `arch` leader on the underside lumbar arch, backMid→sacrum ½) the largest tell move is 2.3 px (`arch`; `ribs` 1.38 px), under 11.39 px even at the zoom's k 4 | held: no tell passes H3.zoom at k ≤ 4 (D-LIB18-RINGKEEP) |
-| resisted_hip_flexion | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lean/arch measures 5.1 px (`arch`; `lean` 2.7 px) < 11.39 px; the Trace passes (82.7 px) | held: with the Mistake zoom at its only free disc (288,138), no placement of its two boxes passes (D-LIB18-ZOOMPLACE scan, #325); a new route needs a ruling |
 
 Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys stay. glute_bridge left this table at
-'LIB-18 resume 2' (section 19).
+'LIB-18 resume 2' (section 19); hip_thrust and resisted_hip_flexion left it at 'HELD-A' (section 20).
 
 **Bulk rulings (LB8 BULK DRAWN RULED, #306 6357883031).** Named nits: hack_squat's "Back on pad" (39 px) and
 resisted_hip_flexion's "No back arch" (63 px), each entering the end figure once from the front, no equipment, at most
@@ -812,3 +821,60 @@ Measured at this head (lb8-plates.test.ts 'LIB-18 resume 2'; runQa node and brow
 - Flags: F2 0.134 (the named flag, unchanged) and F5 3.57, the ruled set. No label box moved; no card key changed.
 - The LB8 page of main's rows builds `f8753967…` on this branch (the approved page, byte-identical); the page with
   glute_bridge is `3ffdc5ce…`.
+
+## 20. Held 6 plan ('HELD-A', 2026-11-01; base main `5bcbddcf`; card `verify/held6-card.md` @ `ac886f82`)
+
+Rulings: D-HELD6-HIPTHRUST and D-HELD6-RHF (held6-card "Supervisor rulings"), on D-A3-REVBOW, D-SPINE-MIX and
+D-LIBZOOM-EXTEND. Both rows leave the section 15 table for rows.json, as glute_bridge did (section 19).
+
+Measured on main `5bcbddcf` (node and browser QA, the held page `3ad53f3b…0124`, authoring, no exemptions):
+
+| id | main | red rows on main |
+|---|---|---|
+| hip_thrust | `arch` (backMid→sacrum ½) 1.870 px, `ribs` 1.377 px: k 4 gives 7.48 px; Trace 46.5 px | H3.deviation (1.9 px) |
+| resisted_hip_flexion | `lean` (backMid) 2.744 px, `arch` (sacrum) 5.088 px; zoomOf finds no place at any k; Trace 82.7 px | H3.deviation (5.1 px) |
+
+Build (each number re-measured on this branch with the same scripts before it is pinned):
+
+| id | change | measured | evidence |
+|---|---|---|---|
+| hip_thrust | Mistake = the end pose with `trunk: { flex: 0, bow: 12 }` (M_ARCH 12, unsourced drawing size as reverse_lunge's bow); the thorax, bar, hands and feet held at the end pose, backUpper on the edge; every pose writes the object trunk (D-SPINE-MIX); barIn's cache key takes the object form; M_TILT's solve and sizes row go | `arch` on `{ at: 'lumbar', pose: 'mistake' }` 4.104 px; Mistake zoom k 3 gives 12.31 px (k 2.5 gives 10.26, red) | lb8-plates: the zoom block (k 3 the smallest ladder k, ring holds both poses, no text), the Mistake moves only the bow-zone landmarks (thorax, hips, legs, bar 0 mm), A2/A18/R10/bearing/balance re-run on the bowed Mistake, and runQa all 10 hard checks |
+| hip_thrust | `ribs` tell dropped; one-tell record; "ribs" kept in the `arch` cue (reverse_lunge.mjs:136 form) | one tell | the one-tell record and its test; the `ribs` checkpoint callout stays |
+| resisted_hip_flexion | `lean` on `{ at: 'head', pose: 'mistake' }`, box {236, 60} (kettlebell_swing's form); `arch` stays on the sacrum | `lean` 15.379 px at plate scale, no zoom | the tell pin, H3 at plate scale (no zoom, H3.zoom:not-needed never arises), leader clear of both figures, all 10 hard checks |
+
+Then: rows.json gains both rows, HELD loses them, the named flags are re-recorded (`qa.mjs --held --record`), the
+page is built twice (PQ-H7) and the LB8 page of main's rows stays byte-identical. No card key changes [checked at the
+build: tell keys are not card keys; topFault stays `arch` and `lean`].
+
+Risks: the bowed Mistake moves the hip crease 0.78 cm while the bar stays at the end's place, so the bearing test may
+read the pad off the body (mitigation: measured before pinning; if it fails, the bar follows the bowed crease and the
+hands follow the bar, recorded as a ruling question). lb8q's R4/R11 points (mitigation: the ring sits on the lumbar
+dip). The `lean` leader reads as chosen by H3 (mitigation: D-HELD6-RHF, the kettlebell_swing and chest_supported_row form).
+
+Measured at this head (HELD-A, both rows on rows.json; lb8-plates.test.ts and runQa node and browser, all 10 hard checks
+pass on all 9 LB8 rows, flags equal the ruled set):
+- hip_thrust: the bow moves lumbar 28.1 mm, sacrum 29.2, buttock 29.4, navel 31.8, backMid 4.8; the thorax, head, hips,
+  legs, hands and bar under 0.5 mm. `arch` on the lumbar landmark 4.104 px → 12.31 px at k 3 (k 2.5 gives 10.26, red);
+  ring c (90, 162) r 52. The bar held at the end's place still rests on the bowed body: pad 0.00 cm in / 0.01 cm off in
+  the Mistake, and the bench now clears the back in every pose (the old 0.25 cm in the Mistake is gone). Balance:
+  Mistake 36.2 cm ahead of the edge, 41.0 cm behind the heels. QA deviation 4.1 px with the zoom; Trace 46.5 px.
+- resisted_hip_flexion: `lean` on the Mistake head 15.379 px at plate scale (no zoom); `arch` stays on the sacrum and
+  the dashed back guide; leaderMax 63.2 px.
+- The LB8 page builds `6ce14c40…bc2c` twice (PQ-H7). The held page (the calf raises) and the named flags are unchanged
+  (`qa.mjs --held --record` re-wrote held-flags.json byte for byte).
+- Mutations (each red, then restored): hip_thrust's zoom at k 2.5 in the spec file; resisted_hip_flexion's `lean` back
+  on backMid in the spec file; plus the in-test mutations (the Mistake bar read back from the bowed crease, the main
+  drawing's solved arch, no bow, the number trunk, the main backMid-sacrum anchor, `lean` 20 px off the head, `arch` 20
+  px off the back guide).
+
+Panel mx24 fix round (#368 6553899958; resisted_hip_flexion APPROVED @ `6d31c473`, hip_thrust R4 and R3):
+- R4: the `arch` tell moves to `{ at: 'sacrum', pose: 'mistake' }`, a vertex of the red dashed lower-back line. The
+  leader ends there at (178.2, 274.7), 9.4 px from the elbow mark (it ended 3.3 px from it on the lumbar point). The
+  sacrum moves 4.278 px: 12.83 px at k 3 (10.70 at k 2.5, red), so k stays 3, and the source ring centres on the arch.
+- R3 (D-HELD6-SEAT, -SEAT2): the start is solved on the drawn torso outline's lowest point, −33.88° (it was −29.69°,
+  with the outline 2.04 cm under the floor); c1's contact is that outline (section 8, hip_thrust facts), checked by H6's
+  add-only outline branch. The ghosts and the start bar follow the solved tilt; bearing and A18 hold.
+- H6 over every library spec with a card (127), main `c2b48060` against this head: 0 report differences (hip_thrust
+  [] on both: main passes its landmark fact, this head its outline fact).
+- The LB8 page builds `5b703d65…8400` twice; resisted_hip_flexion's and glute_bridge's `<article>` are byte-identical
+  to the `6ce14c40` page; runQa all 10 hard checks pass on all 9 rows.

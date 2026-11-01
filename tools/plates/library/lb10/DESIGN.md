@@ -716,3 +716,20 @@ start, near knee 24.1 deg. pxPerM 146.3, leaderMax 68.5 px.
 **Page.** Two builds identical at `07ee85377e2b0334afefa2ed0c59cff9d225cc419928f77abee6deaf33ca6070` (9 rows,
 farmer_s_carry last). The 8 approved cards' markup is byte-identical to main's page `5e02f6aa…` (each `#card-*`
 article compared; medicine_ball_slam up to the new card). C0 `manifestProblems()` is `[]`.
+
+## 24. Held 6 plan: jump_rope ('HELD-A', 2026-11-01; base main `5bcbddcf`; card `verify/held6-card.md` @ `ac886f82`)
+
+Ruling D-HELD6-JUMPROPE. Built only after #358 (LIB-SMALL, which writes lb10) has merged and main is merged in.
+
+Measured on main `5bcbddcf` (node and browser QA, the held page `f229b0e2…b76f`, authoring, no exemptions): Trace 5.3 px
+(k 4 gives 21.30 px < 22.11), Mistake `high` 16.38 px; red rows H3.trace and H8.ban:alt:semicolon (jump_rope.mjs:97).
+
+| change | expected [card scratch, re-measured before pinning] | evidence |
+|---|---|---|
+| the airborne end ankle −10° (box_jump.mjs:118's flight ankle) under c10 and c11, a new lb10/sizes.json row (basis: the claims plus the approved plate); HOP 3.8 cm stays the lowest foot point, M_HOP 15 cm the Mistake's | sole.r Trace 9.37 px | the sizes row and its spec pin; the lowest point at HOP; the facts unchanged |
+| a normal-view zoom at k 2.5 | 23.41 px (k 2 gives 18.73, red); ring closes inside the frame (D-LIB22-RINGFIT) | the zoom block: smallest ladder k, ring holds the whole Trace, no text |
+| the alt loses its ";" | H8 green | runQa all 10 hard checks |
+
+Then rows.json gains the row, HELD loses it, the page is built twice. Risk: the pointed foot reads as a number added for
+H3 (mitigation: card claims plus an approved plate's value; HOP unchanged; if the panel finds it not card-true (R1),
+the row goes to the named list, S4).

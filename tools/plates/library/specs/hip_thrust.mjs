@@ -36,12 +36,14 @@
 //  Hands hold the bar either side of the hips (c3, c24 "just wider than hip width"): each grip on the bar at x =
 //   +-GRIP_X.
 // Mistake (c11, c12, c13; Contreras: "the lifter substitutes by arching the back" to lock the weight out, c12): the
-//  top reached with the lower back arched: the lumbar extended M_ARCH (hanging_leg_raise.mjs:69's trunk -12, the 8's
-//  lumbar arch), the bar at the top's height (the lockout reached), the upper back still on the bench edge (c9) and
-//  the feet planted: the root and the pelvis tilt are SOLVED for those three; the thorax turns ribs-up about the edge.
+//  top reached with the lower back arched (Held 6, D-HELD6-HIPTHRUST, the D-A3-REVBOW form on LIB-SPINE): the end pose
+//  with trunk.bow M_ARCH (12, the unsourced drawing size of reverse_lunge's approved bow): the pelvis tips under the
+//  held thorax. The thorax, the bar, the hands and the feet stay at the end pose, and the upper back stays on the
+//  bench edge (c9). One tell, `arch`, on the sacrum, the dashed lower-back line's vertex at the arch (panel mx24 R4: the
+//  lumbar point sat on the elbow's pivot circle), with a Mistake zoom at k 3; the ribs are in its cue.
 // Camera: the reference scale (fit, capped at 146.29 px/m).
 // Unsourced numbers (SIZES below; lb8/sizes.json holds each with its basis): PAD_R, GRIP_X, PLATE_D, SLEEVE_D,
-//  BENCH_W, M_ARCH, FLOOR_BACK, FLOOR_FRONT; BENCH_TOP, START_TILT, M_TILT solved.
+//  BENCH_W, M_ARCH, FLOOR_BACK, FLOOR_FRONT; BENCH_TOP, START_TILT solved.
 import { WINTER, REF, landmarksOf, normPose, resolve, fk, landmarks, bodyShapes } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
@@ -86,7 +88,7 @@ const hands = bar => ({ l: { at: [GRIP_X, bar[1], bar[2]], pole: [1, -0.6, 0] },
 
 // A body pivoted on the bench edge: pelvis tilt t, lumbar trunk k; the root placed so backUpper sits on the edge.
 const onEdge = (t, k = 0, extra = {}) => {
-  const p0 = { root: { at: [0, 0, 0], tilt: t }, trunk: k, neck: 0, plant, ...extra };
+  const p0 = { root: { at: [0, 0, 0], tilt: t }, trunk: { flex: k }, neck: 0, plant, ...extra };   // the object form in every pose (D-SPINE-MIX)
   const b = L(p0).backUpper;
   const root = [0, EDGE[1] - b[1], EDGE[2] - b[2]];
   return { ...p0, root: { at: root, tilt: t } };
@@ -118,7 +120,8 @@ const crossings = (A, B) => {      // every point where outline A's edges cross 
 };
 const barCache = new Map();
 const barIn = p => {
-  const key = JSON.stringify([p.root.at, p.root.tilt, p.trunk ?? 0].flat().map(v => +v.toFixed(9)));
+  const tk = p.trunk && typeof p.trunk === 'object' ? p.trunk : { flex: p.trunk ?? 0 };   // number or object trunk (D-SPINE-MIX)
+  const key = JSON.stringify([p.root.at, p.root.tilt, tk.flex ?? 0, tk.bow ?? 0].flat().map(v => +v.toFixed(9)));
   if (barCache.has(key)) return barCache.get(key);
   const b = { height: H }, sk = fk(resolve(normPose(p, b), b).q, b), shapes = bodyShapes(sk, SIDE_CAM).filter(x => x.poly && OUTLINE.test(x.key));
   const clear = clearOf(shapes.map(x => x.poly)), poly = k => shapes.find(x => x.key === k).poly;
@@ -150,17 +153,20 @@ const withBar = p => ({ ...p, reach: hands(barIn(p)) });
 
 const end = withBar(onEdge(TOP_TILT));
 export const BAR_TOP = barIn(end);
-// ---- bottom (start): lowered until the plates or the seat (c1 "Sit on the floor") or the buttock reach the floor ----
-const lowest = t => { const p = onEdge(t), l = L(p); return Math.min(barIn(p)[1] - PLATE_D / 2, l.seat[1], l.buttock[1]); };
+// ---- bottom (start): lowered until the plates or the drawn torso outline (c1 "Sit on the floor") reach the floor ----
+// (D-HELD6-SEAT, panel mx24 R3: the contact is where the drawn body meets the floor; the seat landmark lies inside the
+// buttock's soft tissue, 2.34 cm up, so solving on it put the drawn outline 2.04 cm under the floor)
+const torsoLow = p => { const b = { height: H }, sk = fk(resolve(normPose(p, b), b).q, b); return Math.min(...bodyShapes(sk, SIDE_CAM).filter(x => x.key === 'torso' && x.poly).flatMap(x => x.poly.map(q => q[1]))) / MM; };
+const lowest = t => { const p = onEdge(t); return Math.min(barIn(p)[1] - PLATE_D / 2, torsoLow(p)); };
 export const START_TILT = bisect(lowest, -89, -20);
 const start = withBar(onEdge(START_TILT));
 // ---- the in-between keys: the rep pivots on the bench edge (c9), so the two ghosts (plate.mjs ghostT 1/3, 2/3, which
 // fall exactly on these keys) are drawn on the edge too, at the tilts a third and two thirds of the way up ----
 const via = [1, 2].map(i => withBar(onEdge(START_TILT + (TOP_TILT - START_TILT) * i / 3)));
-// ---- Mistake: the arch at the top: lumbar extended M_ARCH, the bar at the top's height, backUpper on the edge ----
-export const M_TILT = bisect(t => barIn(onEdge(t, -M_ARCH))[1] - BAR_TOP[1], TOP_TILT - 20, TOP_TILT + 25);
-const mistakeBody = onEdge(M_TILT, -M_ARCH);
-const mistakePose = withBar(mistakeBody);
+// ---- Mistake (Held 6, D-HELD6-HIPTHRUST; the D-A3-REVBOW form): the end pose with the trunk bowed M_ARCH (LIB-SPINE
+// trunk.bow): the pelvis tips M_ARCH under the held thorax, which is the lumbar arch. The thorax, the bar, the hands
+// and the feet stay at the end pose, and backUpper stays on the edge ----
+const mistakePose = { ...end, trunk: { flex: 0, bow: M_ARCH } };
 
 const LE = L(end), LS = L(start), LM = L(mistakePose);
 // the barbell from poly: the 45 cm plate as an outline over the figure (the vendor barbell's x-ray look), its inner
@@ -181,7 +187,7 @@ const ang = (a, b) => Math.atan2(a[2] - b[2], a[1] - b[1]) / R;
 const tiltOf = lm => ang(lm.lumbar, lm.hips) - Math.atan2(LUMBAR_REF[2], LUMBAR_REF[1]) / R;
 const trunkOf = lm => ang(lm.backUpper, lm.lumbar) - Math.atan2(UPPER_REF[2], UPPER_REF[1]) / R - tiltOf(lm);
 const barOf = lm => barIn({ root: { at: lm.hips, tilt: tiltOf(lm) }, trunk: trunkOf(lm), neck: 0, plant });
-const BARS = { start: barIn(start), end: BAR_TOP, mistake: barIn(mistakePose) };
+const BARS = { start: barIn(start), end: BAR_TOP, mistake: BAR_TOP };   // the Mistake's bar is the end's (D-HELD6-HIPTHRUST)
 
 export const HT = { edge: EDGE, benchTop: BENCH_TOP, bars: BARS, barIn, barOf, creaseAt, tiltOf, onEdge, via, start, end, mistakePose };
 // The card's contact facts (lb8 DESIGN.md; D-LIB18-FACTS): each bound by a check on its landmark in its pose, at the
@@ -194,7 +200,7 @@ export default {
   equipment: [
     { type: 'floor', from: EDGE_Z - BENCH_W - FLOOR_BACK, to: SOLE(1)[2] + FLOOR_FRONT },
     { type: 'bench', at: [0, BENCH_TOP, EDGE_Z - BENCH_W / 2], axis: 'x', width: BENCH_W, z: 'back' },
-    ...Array.from({ length: BAR_ITEMS }, (_, k) => lm => barItems(barOf(lm))[k]),
+    ...Array.from({ length: BAR_ITEMS }, (_, k) => (lm, ctx) => barItems(ctx?.pose === 'mistake' ? BARS.mistake : barOf(lm))[k]),
     // the start bar's phantom (Q2 (c); DRAWING-GUIDE 4): the start layer drops moving equipment, so the start plate and
     // pad are redrawn as hidden lines in the end layer, where the Trace starts
     (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-line m-line', pts: [...ring(BARS.start, PLATE_D / 2), ring(BARS.start, PLATE_D / 2)[0]], z: 'front', part: 'phantom' } : null),
@@ -203,12 +209,13 @@ export default {
   checks: [
     ...factChecks('start', start, ['heel.l', 'heel.r', 'ball.l', 'ball.r', 'wrist.l', 'wrist.r']),
     ...factChecks('end', end, ['heel.l', 'heel.r', 'wrist.l', 'wrist.r']),
-    // c1 "Sit on the floor" (setup): the seat on the floor at the start (the bottom solve stops there: the seat lands
-    // before the plates, which stay above the floor with the pad resting in the crease)
-    { landmark: 'seat', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'start', tol: 0.5 },
     { landmark: 'backUpper', at: EDGE, pose: 'all', tol: 0.5 },                                  // c2, c9: the upper back on the bench edge
     ...['sole.l', 'sole.r'].map(landmark => ({ landmark, at: SOLE(landmark.endsWith('l') ? 1 : -1), pose: 'all', tol: 0.5 })),   // c1: feet flat
   ],
+  // c1 "Sit on the floor" (setup; D-HELD6-SEAT, -SEAT2): the drawn torso outline's lowest point on the floor at the
+  // start, 0.5 cm either way (the bottom solve stops there: the outline lands before the plates, which stay above the
+  // floor with the pad resting in the crease). Read by H6 (qa/node.mjs outlineContactProblem) and lb8-plates only.
+  outlineChecks: [{ outline: 'torso', pose: 'start', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, tol: 0.5 }],
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r'] },
   trace: { point: 'hip.r', trim: [6, 8] },
   measure: { vertex: 'knee.r', from: 'hip.r', to: 'ankle.r', radius: 20, title: 'Knee', value: 'about 90°', expect: 90, box: { left: 260, top: 200 } },
@@ -224,9 +231,10 @@ export default {
       { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
     ],
     tells: [
-      { key: 'arch', text: 'Back<br>arched', anchor: { along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' }, box: { left: 150, top: 170 }, cue: 'The lower back arches as the hips lock out.' },
-      { key: 'ribs', text: 'Ribs up', anchor: { along: ['chest', 'navel'], t: 0.4, pose: 'mistake' }, box: { left: 50, top: 180 }, cue: 'The ribs flare up instead of staying down.' },
+      // one tell (D-HELD6-HIPTHRUST): `ribs` is dropped (1.86 px does not read) and kept in the cue, as reverse_lunge's
+      { key: 'arch', text: 'Back<br>arched', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 150, top: 170 }, cue: 'The lower back arches and the ribs flare up as the hips lock out.' },
     ],
   },
+  zoom: { view: 'mistake', k: 3 },   // the ring on the arch; 3 is the smallest ladder k that passes (sacrum 4.28 px: 12.83 at k 3, 10.70 at k 2.5)
   alt: 'Hip thrust, side view. Upper back on a bench edge, feet flat, a padded barbell held in the hip crease: the hips drive up until shoulders, hips and knees form a level line with the shins vertical, then lower toward the floor.',
 };

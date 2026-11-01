@@ -30,7 +30,7 @@
    "M_ARCH": {
     "value": 12,
     "unit": "deg",
-    "basis": "convention: hanging_leg_raise.mjs:69 (the 8's lumbar arch, trunk -12; D-LIB18-SIZE names it for hip_thrust) for c11-c13 'arch the lower back', 'overextending'"
+    "basis": "convention: the unsourced bow size of reverse_lunge's approved Mistake (trunk.bow 12, D-A3-REVBOW; hanging_leg_raise.mjs:69's 12 deg lumbar arch), drawn as trunk.bow (D-HELD6-HIPTHRUST) for c11-c13 'arch the lower back', 'overextending'"
    },
    "FLOOR_BACK": {
     "value": 0.35,
@@ -51,11 +51,6 @@
     "value": "solved",
     "unit": "deg",
     "basis": "physical: c10 'slowly lowering back to the ground', c1 'Sit on the floor': lowered on the bench-edge pivot (c9), the padded bar resting in the drawn hip crease (c3, #306 6358957999 item 1), until the first of the 45 cm plates, the seat and the buttock reaches the floor (the seat first; the plates stay 11.4 cm up): solved -29.69 deg"
-   },
-   "M_TILT": {
-    "value": "solved",
-    "unit": "deg",
-    "basis": "claim: c12 (Contreras) 'substitutes by arching the back' to lock the weight out: with the lumbar at M_ARCH, the bar at the top's height (resting in the drawn hip crease), the upper back on the edge (c9) and the feet planted: solved -82.94 deg"
    },
    "trace": {
     "value": "hip.r",

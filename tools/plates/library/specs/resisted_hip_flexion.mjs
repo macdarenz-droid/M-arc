@@ -232,7 +232,7 @@ export default {
       { kind: 'dashed', pts: BACK_PTS, smooth: true },
     ],
     tells: [
-      { key: 'lean', text: 'Leans<br>back', anchor: 'backMid', box: { left: 232, top: 92 }, cue: 'You lean back to lift the leg higher.' },
+      { key: 'lean', text: 'Leans<br>back', anchor: { at: 'head', pose: 'mistake' }, box: { left: 236, top: 60 }, cue: 'You lean back to lift the leg higher.' },   // c7 names the leaning upper body: on the head (D-HELD6-RHF; kettlebell_swing's form)
       { key: 'arch', text: 'Lower back<br>arches', anchor: 'sacrum', box: { left: 232, top: 150 }, cue: 'Your lower back arches as the knee comes up.' },
     ],
   },

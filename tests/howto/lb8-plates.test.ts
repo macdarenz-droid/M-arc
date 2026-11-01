@@ -35,10 +35,11 @@ const NOT_HERE = ['seated_leg_curl'];
 const LEGCURLS = ['lying_leg_curl', 'standing_leg_curl'];
 // DESIGN.md section 15: every held id, with its ruling there.
 // 'LIB-18 resume 2': glute_bridge released with one zoom per view (D-LIBZOOM-EXTEND, D-LIB16-ZOOMVIEWS).
-const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'resisted_hip_flexion'];
+// 'HELD-A' (Held 6): hip_thrust and resisted_hip_flexion released (D-HELD6-HIPTHRUST, D-HELD6-RHF).
+const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise'];
 // The ids on lb8/rows.json now: drawn and not held (A5).
 // 'LIB-18 resume': the leg curls, and the rows released with a LIB-ZOOM circle (D-LIBZOOM-EXTEND; D-LIB18-ZOOMPLACE).
-const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'glute_bridge', 'cable_kickback'];
+const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'hip_thrust', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
 // Card facts the held plates' drawings miss (CARD FIELDS fix round, #306 6356303497): recorded with their holds, never hidden.
 const FACT_MISSES: Record<string, string[]> = { seated_calf_raise: ['check:start:toe.l:4.2cm', 'check:start:toe.r:4.2cm'], standing_calf_raise: ['check:start:toe.l:2.3cm', 'check:start:toe.r:2.3cm'], bodyweight_calf_raise: ['check:end:toe.l:4.6cm', 'check:end:toe.r:4.6cm'] };
 // Measured values inside PQ-H6's 1 cm that are past A2's 0.5 cm, or a back landmark under 1 cm into the floor (no
@@ -358,7 +359,7 @@ describe('LIB-18 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', 
   const KEYS: Record<string, string> = { hack_squat: 'lift', pendulum_squat: 'heels', leg_extension: 'arch', lying_leg_curl: 'arch', standing_leg_curl: 'arch',
     seated_calf_raise: 'range', standing_calf_raise: 'lock', bodyweight_calf_raise: 'part', hip_thrust: 'arch', glute_bridge: 'arch', cable_kickback: 'arch',
     resisted_hip_flexion: 'lean' };
-  const ONE_TELL = ['pendulum_squat', 'lying_leg_curl', 'standing_leg_curl', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'glute_bridge', 'cable_kickback'];
+  const ONE_TELL = ['pendulum_squat', 'lying_leg_curl', 'standing_leg_curl', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'glute_bridge', 'cable_kickback'];   // hip_thrust: Held 6
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells (or one, with its record in DESIGN.md), the first carrying the proposed key', () => {
     const design = readFileSync('tools/plates/library/lb8/DESIGN.md', 'utf8');
@@ -678,7 +679,7 @@ describe('LIB-18 A4: the named flags on the held plates (F2: cable_kickback 0.64
     rec = JSON.parse(readFileSync(qaMod.HELD_FLAGS, 'utf8'));
     const script = `const b = await import(${JSON.stringify(lib('lb8/build.mjs'))});
 const p = await b.buildHeldPage(undefined, ['lib_bodyweight_calf_raise']);
-const p2 = await b.buildHeldPage(undefined, ['lib_hip_thrust']);
+const p2 = await b.buildHeldPage(undefined, ['lib_seated_calf_raise']);
 const r = await b.buildLb8Page({ ids: ['lib_glute_bridge', 'lib_cable_kickback'] });
 process.stdout.write(b.sha256(p.html) + ' ' + b.sha256(p2.html) + ' ' + b.sha256(r.html));`;
     [sha, sha2, rowsSha] = (await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 })).stdout.trim().split(' ') as [string, string, string];
@@ -2081,7 +2082,7 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
       ...LRs('ball', 'end', 'c8'), ...KNs('end', 'c13')],
     standing_calf_raise: [...LRs('ball', 'start', 'c1'), ...LRs('toe', 'start', 'c1'), ...LRs('shoulderTop', 'start', 'c1'), ...LRs('wrist', 'start', 'c2'), ...LRs('ball', 'end', 'c7')],
     bodyweight_calf_raise: [...LRs('ball', 'start', 'c3'), ...LRs('ball', 'end', 'c4'), ...LRs('toe', 'end', 'c4')],
-    hip_thrust: [['seat', 'start', 'c1'], ...LRs('heel', 'start', 'c1'), ...LRs('ball', 'start', 'c1'), ['backUpper', 'start', 'c2'], ['backUpper', 'end', 'c9'], ...LRs('wrist', 'start', 'c3'),
+    hip_thrust: [['outline:torso', 'start', 'c1'], ...LRs('heel', 'start', 'c1'), ...LRs('ball', 'start', 'c1'), ['backUpper', 'start', 'c2'], ['backUpper', 'end', 'c9'], ...LRs('wrist', 'start', 'c3'),
       ...LRs('wrist', 'end', 'c3'), ...LRs('heel', 'end', 'c15'), ...KNs('end', 'c8')],
     glute_bridge: [['backUpper', 'start', 'c1'], ['buttock', 'start', 'c1'], ...LRs('heel', 'start', 'c1'), ...LRs('ball', 'start', 'c1'), ['sacrum', 'start', 'c2'],
       ...LRs('heel', 'end', 'c3'), ['knee.r', 'end', 'c4', 90]],
@@ -2097,10 +2098,10 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
   const DRAWN_KEY: Record<string, string> = { hack_squat: 'lift', pendulum_squat: 'heels', leg_extension: 'arch', lying_leg_curl: 'arch', standing_leg_curl: 'arch', seated_calf_raise: 'range', standing_calf_raise: 'lock',
     bodyweight_calf_raise: 'part', hip_thrust: 'arch', glute_bridge: 'arch', cable_kickback: 'arch', resisted_hip_flexion: 'lean' };
   const factProblems = (id: string, card: any) => {
-    const got = (card.plateFacts ?? []).map((f: any) => [f.joint ?? f.landmark, f.pose, f.claim, ...(f.kind === 'angle' ? [f.deg] : [])]), out: string[] = [];
+    const got = (card.plateFacts ?? []).map((f: any) => [f.joint ?? f.landmark ?? `outline:${f.outline}`, f.pose, f.claim, ...(f.kind === 'angle' ? [f.deg] : [])]), out: string[] = [];
     if (JSON.stringify(got) !== JSON.stringify(RULED[id])) out.push(`${id}: plateFacts != the ruled set`);
     for (const f of card.plateFacts ?? []) {
-      if (f.pose !== f.cardPose) out.push(`${id}: ${f.joint ?? f.landmark} pose ${f.pose} is not the pose map's image of ${f.cardPose}`);
+      if (f.pose !== f.cardPose) out.push(`${id}: ${f.joint ?? f.landmark ?? `outline:${f.outline}`} pose ${f.pose} is not the pose map's image of ${f.cardPose}`);
       if (!card.claims.some((c: any) => c.id === f.claim)) out.push(`${id}: ${f.claim} is no claim`);
     }
     return out;
@@ -2119,7 +2120,7 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     c.plateFacts[0].pose = 'end'; c.plateFacts[0].cardPose = 'end';
     expect(factProblems('cable_kickback', c).length).toBeGreaterThan(0);
     const d = JSON.parse(JSON.stringify(cardOf('hip_thrust'))); d.plateFacts[0].pose = 'end';
-    expect(factProblems('hip_thrust', d)).toContain('hip_thrust: seat pose end is not the pose map\'s image of start');
+    expect(factProblems('hip_thrust', d)).toContain('hip_thrust: outline:torso pose end is not the pose map\'s image of start');
   });
   it('each card\'s tempo is the strip built from lb8/tempo.json and its plate.tempo, and equals its drawn spec\'s', () => {
     const tj = readJson('tools/plates/library/lb8/tempo.json');
@@ -2174,6 +2175,63 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
       const keys = h6Of('hip_thrust', c, moved);
       expect(keys.some((x: string) => /H6\.fact:\d+:contact:/.test(x)), pose).toBe(true);
     }
+  });
+});
+
+// ---- HELD-A (D-HELD6-SEAT, -SEAT2; panel mx24 R3): hip_thrust's c1 contact is the drawn torso outline on the floor ----
+describe('HELD-A D-HELD6-SEAT2: the outline contact (H6 branch, outlineChecks, the start solved on the torso outline)', { timeout: T }, () => {
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  const h6Keys = (spec: any, card: any) => {
+    const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
+    return qaNode.h6({ spec, research: card }, { engine: Eng(), pins: pins() }, R).map((p: any) => `${p.key} ${p.text}`);
+  };
+  const HT = () => M.hip_thrust.HT, G = () => M.hip_thrust.SIZES.GRIP_X;
+  /** hip_thrust with its start at pelvis tilt t on the bench edge, the bar in the crease and the hands on it. */
+  const startAt = (t: number) => {
+    const p = HT().onEdge(t), b = HT().barIn(p);
+    return { ...S.hip_thrust, poses: { ...S.hip_thrust.poses, start: { ...p, reach: { l: { at: [G(), b[1], b[2]], pole: [1, -0.6, 0] }, r: { at: [-G(), b[1], b[2]], pole: [-1, -0.6, 0] } } } } };
+  };
+  const outlineCm = (spec: any) => {
+    const L = qaEng.poseLandmarks(Eng(), spec), R = plate.renderPlate(spec, { id: 'x' }), cam = qaEng.cameraOf(spec, R.report);
+    const low = Math.max(...body.bodyShapes(body.fk(L.q.start, L.body), cam).filter((x: any) => x.key === 'torso' && x.poly).flatMap((x: any) => x.poly.map((q: number[]) => q[1])));
+    return ((cam.y0 - low) / cam.pxPerM) * 100;
+  };
+  it('the card\'s c1 fact is the torso outline at the start; the spec binds it in outlineChecks at 0.5 cm and checks no seat landmark; the start tilt is solved on the outline (-33.88°), the seat landmark 2.34 cm up (a not-fact)', () => {
+    const c = cardOf('hip_thrust'), f = c.plateFacts[0];
+    expect(f).toEqual({ kind: 'contact', outline: 'torso', pose: 'start', cardPose: 'start', claim: 'c1' });
+    expect(c.plateFacts.some((x: any) => x.landmark === 'seat')).toBe(false);
+    expect(S.hip_thrust.outlineChecks).toEqual([{ outline: 'torso', pose: 'start', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, tol: 0.5 }]);
+    expect(S.hip_thrust.checks.some((k: any) => k.landmark === 'seat')).toBe(false);
+    expect(M.hip_thrust.START_TILT).toBeCloseTo(-33.88, 1);
+    const cm = outlineCm(S.hip_thrust), seat = lmOf(S.hip_thrust, 'start').seat[1] * 100;
+    console.log(`HELD-A hip_thrust start: tilt ${M.hip_thrust.START_TILT.toFixed(2)}°, torso outline ${cm.toFixed(2)} cm, seat landmark ${seat.toFixed(2)} cm`);
+    expect(Math.abs(cm)).toBeLessThanOrEqual(0.5);
+    expect(seat).toBeCloseTo(2.34, 1);
+    expect(h6Keys(S.hip_thrust, c)).toEqual([]);
+  });
+  it('mutations: main\'s start (-29.69°, the outline 2.04 cm under the floor) and a 0.6 cm lift are red in H6; so is an unknown outline name, and no outlineChecks entry', () => {
+    const c = cardOf('hip_thrust'), main = startAt(-29.69);
+    expect(outlineCm(main)).toBeCloseTo(-2.04, 1);
+    expect(h6Keys(main, c).filter((k: string) => k.startsWith('H6.fact:0:'))).toEqual([expect.stringMatching(/^H6\.fact:0:contact:outline:torso outline contact torso start: lowest point 2\.0\d cm below the floor/)]);
+    const st = S.hip_thrust.poses.start, lift = { ...S.hip_thrust, poses: { ...S.hip_thrust.poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1] + 0.006, st.root.at[2]] } } } };
+    expect(h6Keys(lift, c).filter((k: string) => k.startsWith('H6.fact:0:'))).toEqual([expect.stringMatching(/lowest point 0\.\d+ cm above the floor/)]);
+    const bad = JSON.parse(JSON.stringify(c)); bad.plateFacts[0].outline = 'torsoX';
+    expect(h6Keys(S.hip_thrust, bad)).toEqual(['H6.fact:0:contact:outline:torsoX outline contact torsoX: no outlineChecks entry for start']);
+    expect(qaNode.outlineContactProblem({ kind: 'contact', outline: 'torsoX', pose: 'start' }, { ...S.hip_thrust, outlineChecks: [{ ...S.hip_thrust.outlineChecks[0], outline: 'torsoX' }] }, Eng(), qaEng.poseLandmarks(Eng(), S.hip_thrust), plate.renderPlate(S.hip_thrust, { id: 'x' }).report)).toBe('outline contact torsoX: no drawn torsoX outline in start');
+    expect(h6Keys({ ...S.hip_thrust, outlineChecks: undefined }, c)).toEqual(['H6.fact:0:contact:outline:torso outline contact torso: no outlineChecks entry for start']);
+  });
+  it('mutation: qa/node.mjs with the outline branch removed fails the fact (it falls to the landmark branch and finds no check), never passes', async () => {
+    const src = readFileSync('tools/plates/library/qa/node.mjs', 'utf8'), at = src.indexOf("    if (f.kind === 'contact' && f.outline != null && f.landmark == null) {");
+    expect(at).toBeGreaterThan(0);
+    const end = src.indexOf('      continue;\n    }\n', at) + '      continue;\n    }\n'.length, cut = src.slice(0, at) + src.slice(end);
+    expect(cut.includes('f.outline != null')).toBe(false);
+    const tmp = `tools/plates/library/qa/.held-a-nobranch-${process.pid}.mjs`;
+    writeFileSync(tmp, cut);
+    try {
+      const N = await import(/* @vite-ignore */ new URL(`../../${tmp}`, import.meta.url).href);
+      const R = { normal: plate.renderPlate(S.hip_thrust, { id: 'x' }), mistake: plate.renderPlate(S.hip_thrust, { id: 'x', mistake: true }) };
+      expect(N.h6({ spec: S.hip_thrust, research: cardOf('hip_thrust') }, { engine: Eng(), pins: pins() }, R).map((p: any) => p.key)).toEqual(['H6.fact:0:contact:']);
+    } finally { rmSync(tmp, { force: true }); }
   });
 });
 
@@ -2242,7 +2300,10 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
       if (!b.some((it: any) => it.cls === 'eq')) out.push(`${p}: no pad round the bar`);
       for (const sd of ['l', 'r']) if (Math.hypot(l[`grip.${sd}`][1] - c[1]!, l[`grip.${sd}`][2] - c[2]!) > 0.005) out.push(`${p}: grip.${sd} off the bar`);
       if (Math.hypot(l.backUpper[1] - HT().edge[1], l.backUpper[2] - HT().edge[2]) > 0.005) out.push(`${p}: the upper back off the bench edge`);
-      const bar = HT().barOf(l); if (Math.hypot(bar[1] - c[1]!, bar[2] - c[2]!) > 0.005) out.push(`${p}: the bar off the hip crease`);
+      // the start and end bars sit in the crease read back from the drawn body; the Mistake's bar is the end's drawn bar
+      // (D-HELD6-HIPTHRUST: the bowed body holds the bar, hands and thorax), and the bearing test proves it rests on the body
+      const bar = p === 'mistake' ? centre(barItems(spec, 'end')[0]!.pts) : HT().barOf(l);
+      if (Math.hypot(bar[1]! - c[1]!, bar[2]! - c[2]!) > 0.005) out.push(p === 'mistake' ? 'mistake: the bar moved off the end\'s bar' : `${p}: the bar off the hip crease`);
     }
     return out;
   };
@@ -2252,6 +2313,49 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
   it('R10 mutation: the pad removed (one R10 item) is red', () => {
     const kp = s().equipment.findIndex((e: any) => typeof e === 'function' && barItems({ ...s(), equipment: [e] }, 'end')[0]?.cls === 'eq');
     expect(r10Problems(withEq(s(), kp, () => () => null)).length).toBeGreaterThan(0);
+  });
+  it('R10 mutation (D-HELD6-HIPTHRUST): the Mistake bar read back from the bowed body (0.78 cm off the end\'s) instead of held is red', () => {
+    const kb = s().equipment.flatMap((e: any, i: number) => (typeof e === 'function' && barItems({ ...s(), equipment: [e] }, 'end').length === 1 ? [i] : []));
+    const crease = { ...s(), equipment: s().equipment.map((e: any, i: number) => (kb.includes(i) ? (lm: any, ctx: any) => e(lm, { ...ctx, pose: ctx.pose === 'mistake' ? 'mistake-read' : ctx.pose }) : e)) };
+    expect(r10Problems(crease)).toContain('mistake: the bar moved off the end\'s bar');
+  });
+  // D-HELD6-HIPTHRUST (the D-A3-REVBOW form): the bow tips the pelvis under the held thorax; the thorax, bar, hands
+  // and feet stay at the end pose, and backUpper on the edge.
+  const HELD_STILL = ['backUpper', 'chest', 'shoulder.r', 'hips', 'hip.r', 'knee.r', 'ankle.r', 'heel.r', 'grip.l', 'grip.r', 'head'];
+  const bowProblems = (spec: any) => {
+    const e = lmOf(spec, 'end'), m = lmOf(spec, 'mistake'), out: string[] = [], mm = (n: string) => Math.hypot(...[0, 1, 2].map(i => m[n][i] - e[n][i])) * 1000;
+    for (const n of HELD_STILL) if (mm(n) > 0.5) out.push(`${n} moves ${mm(n).toFixed(1)} mm`);
+    if (!(mm('lumbar') > 20)) out.push(`lumbar moves only ${mm('lumbar').toFixed(1)} mm`);
+    const bar = (p: string) => centre(barItems(spec, p)[0]!.pts);
+    if (Math.hypot(...[1, 2].map(i => bar('mistake')[i]! - bar('end')[i]!)) > 0.0005) out.push('the bar moves');
+    return out;
+  };
+  it('the bowed Mistake: thorax, head, hips, legs, hands and bar move under 0.5 mm; the lumbar arch moves over 2 cm (values logged)', () => {
+    const e = lmOf(s(), 'end'), m = lmOf(s(), 'mistake');
+    console.log(`HELD-A hip_thrust bow (mm): ${['lumbar', 'sacrum', 'buttock', 'navel', 'backMid'].map(n => `${n} ${(Math.hypot(...[0, 1, 2].map(i => m[n][i] - e[n][i])) * 1000).toFixed(1)}`).join(', ')}`);
+    expect(bowProblems(s())).toEqual([]);
+  });
+  it('bow mutations: the main drawing\'s solved arch (trunk -12 with the pelvis re-tilted 6.5°) and no bow are red', () => {
+    const e = s().poses.end;
+    expect(bowProblems({ ...s(), mistake: { ...s().mistake, pose: { ...e, root: { ...e.root, tilt: e.root.tilt + 6.5 }, trunk: { flex: -12 } } } }).length).toBeGreaterThan(0);
+    expect(bowProblems({ ...s(), mistake: { ...s().mistake, pose: { ...e, trunk: { flex: 0 } } } })).toEqual(['lumbar moves only 0.0 mm']);
+  });
+  // Panel mx24 R4 (#368 6553899958): the BACK ARCHED leader ends on the red dashed lower-back line, clear of every joint
+  // mark (the lumbar end sat 3.3 px from the elbow's pivot circle centre, r 2.25, and read as pointing at the elbow).
+  const archLeaderProblems = (spec: any) => {
+    const R = plate.renderPlate(spec, { id: 'x', mistake: true }), cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm.mistake, out: string[] = [];
+    const ld = /<path class="leader m" d="M([\d.]+) ([\d.]+)L/.exec(R.svg);
+    if (!ld) return ['no Mistake leader'];
+    const end = [+ld[1]!, +ld[2]!], g = ['backUpper', 'backMid', 'sacrum', 'buttock'].map(n => cam.P(L[n]));
+    const dg = Math.min(...g.slice(1).map((q: number[], i: number) => segD(end, g[i]!, q)));
+    if (dg > 1) out.push(`leader end ${dg.toFixed(1)} px off the dashed back line`);
+    for (const m of R.svg.matchAll(/<circle class="joint" cx="([\d.]+)" cy="([\d.]+)"/g)) { const d = Math.hypot(end[0]! - +m[1]!, end[1]! - +m[2]!); if (d < 6) out.push(`leader end ${d.toFixed(1)} px from a joint mark`); }
+    return out;
+  };
+  it('R4 (panel mx24): the arch leader ends on the dashed lower-back line (<= 1 px) and at least 6 px from every joint mark; mutation: the lumbar anchor (on the elbow mark) is red', () => {
+    expect(archLeaderProblems(s())).toEqual([]);
+    const t = s().mistake.tells[0], lumbar = { ...s(), mistake: { ...s().mistake, tells: [{ ...t, anchor: { at: 'lumbar', pose: 'mistake' } }] } };
+    expect(archLeaderProblems(lumbar)).toEqual(expect.arrayContaining([expect.stringMatching(/px from a joint mark$/), expect.stringMatching(/off the dashed back line$/)]));
   });
   // Bearing (#306 6358957999 item 1): the bar rests in the hip crease (c3), so the drawn pad's outer surface sits on the
   // drawn body outline (at most 0.5 cm inside it, and at most 0.5 cm off it) in every pose and ghost; the bench at most
@@ -2284,9 +2388,9 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
     console.log(`LIB-18 hip_thrust bearing (cm in / off): ${Object.entries(r).map(([p, v]) => `${p} pad ${v.pad.toFixed(2)}/${v.gap.toFixed(2)} bench ${v.bench.toFixed(2)}`).join(', ')}`);
     expect(Object.keys(r)).toEqual(['start', 'ghost0', 'ghost1', 'end', 'mistake']);
     expect(htBearingProblems(s())).toEqual([]);
-    // pinned as measured (#306 6358957999 item 1 fix): the pad touches in every pose; the bench clears all but the
-    // Mistake's arched back (0.25 cm, inside the contact tolerance)
-    for (const [p, v] of Object.entries(r)) { expect(v.pad, p).toBeCloseTo(0, 1); expect(v.gap, p).toBeLessThan(0.05); expect(v.bench, p).toBeCloseTo(p === 'mistake' ? 0.25 : 0, 1); }
+    // pinned as measured (#306 6358957999 item 1 fix): the pad touches in every pose; the bench clears the back in
+    // every pose (Held 6: the bowed Mistake holds the thorax at the end pose, so its 0.25 cm is gone)
+    for (const [p, v] of Object.entries(r)) { expect(v.pad, p).toBeCloseTo(0, 1); expect(v.gap, p).toBeLessThan(0.05); expect(v.bench, p).toBeCloseTo(0, 1); }
   });
   it('bearing mutations: the pad PAD_R out along the pelvis\'s own crease normal (the old drawing), the ghosts drawn without the edge keys, and the bar lifted 2 cm off the hips at the start are red', async () => {
     await tick();
@@ -2551,17 +2655,27 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
       expect(phantomProblems(s())).toEqual([]);
       expect(phantomProblems(withEq(s(), 5, () => () => null))).toContain('no start phantom');
     });
-    /** Each tell's anchor sits on a drawn item: the dashed faulty-back guide (within 1 px); the first tell is the card's topFault. */
+    /** Each tell's anchor sits on a drawn item: `lean` on the dashed Mistake head (D-HELD6-RHF: c7 names the leaning
+     *  upper body, the kettlebell_swing form; within 0.5 px of the Mistake pose's head), `arch` on the dashed faulty-back
+     *  guide (within 1 px); the first tell is the card's topFault. */
     const tellProblems = (spec: any) => {
       const cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm, g = spec.mistake.guides[1].pts.map(cam.P), out: string[] = [];
-      for (const t of spec.mistake.tells) { const at = qaEng.resolvePoint(t.anchor, 'mistake', L, cam); if (Math.min(...g.slice(1).map((q: number[], i: number) => segD(at, g[i]!, q))) > 1) out.push(`${t.key} off the back guide`); }
+      const head = cam.P(L.mistake.head);
+      for (const t of spec.mistake.tells) {
+        const at = qaEng.resolvePoint(t.anchor, 'mistake', L, cam);
+        if (t.key === 'lean') { if (Math.hypot(at[0]! - head[0]!, at[1]! - head[1]!) > 0.5) out.push('lean off the Mistake head'); }
+        else if (Math.min(...g.slice(1).map((q: number[], i: number) => segD(at, g[i]!, q))) > 1) out.push(`${t.key} off the back guide`);
+      }
       if (spec.mistake.tells[0].key !== readJson(CARD).topFault) out.push('first tell is not the topFault');
       return out;
     };
-    it('both tells (lean, arch) sit on the drawn faulty back, lean first (topFault); mutations: the lean anchor 20 px off, the tells swapped', () => {
+    it('lean sits on the Mistake head and arch on the drawn faulty back, lean first (topFault); mutations: the lean anchor 20 px off, lean back on backMid, arch 20 px off, the tells swapped', () => {
       expect(tellProblems(s())).toEqual([]);
       const [t0, t1] = s().mistake.tells;
-      expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [{ ...t0, anchor: { at: 'backMid', pose: 'mistake', off: [20, 0] } }, t1] } })).toContain('lean off the back guide');
+      expect(t0.anchor).toEqual({ at: 'head', pose: 'mistake' });
+      expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [{ ...t0, anchor: { at: 'head', pose: 'mistake', off: [20, 0] } }, t1] } })).toEqual(['lean off the Mistake head']);
+      expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [{ ...t0, anchor: 'backMid' }, t1] } })).toEqual(['lean off the Mistake head']);
+      expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [t0, { ...t1, anchor: { at: 'sacrum', pose: 'mistake', off: [20, 0] } }] } })).toEqual(['arch off the back guide']);
       expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [t1, t0] } })).toContain('first tell is not the topFault');
     });
     /** Leaders: none within 6 px of a cable or the Trace (away from the anchor's first 8 px), none across the column; a
@@ -4760,7 +4874,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
 // ---- D-LIBZOOM-EXTEND ('LIB-18 resume'): the rows released with a Mistake-view LIB-ZOOM circle ----
 describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main)', { timeout: T }, () => {
   // k: the smallest of the ladder whose tell-anchor move reaches deviationMin at the zoom's scale (DESIGN.md section 18)
-  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, cable_kickback: 3 };
+  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, cable_kickback: 3, hip_thrust: 3 };   // hip_thrust: Held 6 (D-HELD6-HIPTHRUST)
   const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], BAR = 11.39;
   let Z: any;
   beforeAll(async () => { Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); }, T);
@@ -4788,15 +4902,18 @@ describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main
     expect(zoomProblems('leg_extension', { ...S.leg_extension, zoom: { view: 'mistake', k: 2 } })).toEqual(['leg_extension: zoom {"view":"mistake","k":2}', 'leg_extension: a smaller k reaches the bar']);
     expect(zoomProblems('lying_leg_curl', { ...S.lying_leg_curl, zoom: undefined }).length).toBeGreaterThan(0);
   });
-  it('D-LIB18-RINGKEEP: hip_thrust is held: with its `arch` leader on the underside lumbar arch (R4), no tell reaches 11.39 px at k 4 (arch, ribs); mutation: the old front-line anchor does', () => {
-    const at4 = (spec: any) => spec.mistake.tells.map((t: any) => { const z = Z.zoomOf({ ...spec, zoom: { view: 'mistake', k: 4, tell: t.key } }); return [t.key, +(z.fault.d * 4).toFixed(2)]; });
-    const r = at4(S.hip_thrust);
-    console.log(`LIB-18 hip_thrust tells at k 4: ${JSON.stringify(r)}`);
-    expect(r.map((x: any) => x[0])).toEqual(['arch', 'ribs']);
-    expect(r.every((x: any) => x[1] < BAR)).toBe(true);
-    expect(S.hip_thrust.mistake.tells[0].anchor).toEqual({ along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' });
-    const old = { ...S.hip_thrust, mistake: { ...S.hip_thrust.mistake, tells: S.hip_thrust.mistake.tells.map((t: any, i: number) => (i ? t : { ...t, anchor: { along: ['navel', 'hips'], t: -0.15, pose: 'mistake' } })) } };
-    expect(at4(old).some((x: any) => x[1] >= BAR)).toBe(true);
+  it('D-HELD6-HIPTHRUST: hip_thrust\'s Mistake is the end pose bowed 12 (trunk.bow), one tell `arch` on the sacrum (the dashed back line, panel mx24 R4) at 4.28 px (12.83 px at k 3); mutations: the main drawing\'s backMid-sacrum anchor and the number trunk are red', () => {
+    const h = S.hip_thrust, z = Z.zoomOf(h);
+    console.log(`HELD-A hip_thrust arch: ${z.fault.d.toFixed(3)} px -> ${(z.fault.d * 3).toFixed(2)} px at k 3; ring ${JSON.stringify(z.circle)}`);
+    expect(h.mistake.tells.map((t: any) => [t.key, t.anchor])).toEqual([['arch', { at: 'sacrum', pose: 'mistake' }]]);
+    expect(h.mistake.tells[0].cue).toMatch(/ribs/);
+    expect(h.mistake.pose.trunk).toEqual({ flex: 0, bow: 12 });
+    expect(z.fault.d).toBeCloseTo(4.278, 2);
+    const atK4 = (spec: any) => Z.zoomOf({ ...spec, zoom: { view: 'mistake', k: 4 } }).fault.d * 4;
+    const old = { ...h, mistake: { ...h.mistake, tells: [{ ...h.mistake.tells[0], anchor: { along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' } }] } };
+    expect(atK4(old)).toBeLessThan(BAR);   // the main anchor on the bowed back stays under the bar even at kMax
+    expect(zoomProblems('hip_thrust', old).length).toBeGreaterThan(0);
+    expect(() => plate.renderPlate({ ...h, poses: { ...h.poses, end: { ...h.poses.end, trunk: 0 } } }, { id: 'x', mistake: true })).toThrow(/D-SPINE-MIX/);
   });
   // panel lb8q (#325 6410306586) and D-LIB18-RINGKEEP: one red dashed back curve, the ring on the measured arch, no leader in the zoom
   const strokeProblems = (spec: any) => [
