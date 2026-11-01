@@ -8,8 +8,8 @@
 //   then one macrotask, so tests that run back to back in one child never add up to one long block of its worker.
 // - In the parent its body is replaced by one awaited child per describe: vitest on this file, filtered (-t) to the
 //   full names of that describe's child.it tests, which run there in file order. Each parent test then passes only when
-//   the child's JSON report holds exactly one result for it and that result passed; otherwise it throws the child's
-//   failure messages. The child's output is printed once, by the first of the describe's tests.
+//   the child exited 0 and its JSON report holds exactly one result for it, which passed; otherwise it throws the
+//   child's failure messages and output. The child's output is printed once, by the first of the describe's tests.
 import { execFile } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -32,7 +32,8 @@ const fullName = (task: any) => [...ancestors(task), task.name].join(' ');
 
 const runChild = async (file: string, names: string[]): Promise<Run> => {
   const dir = mkdtempSync(join(tmpdir(), 'vitest-child-')), out = join(dir, 'r.json');
-  const args = [VITEST, 'run', file, '-t', `^(?:${names.map(esc).join('|')})$`, '--reporter=dot', '--reporter=json', `--outputFile.json=${out}`];
+  const config = process.env.MARC_TEST_CHILD_CONFIG ? ['--config', process.env.MARC_TEST_CHILD_CONFIG] : [];   // tests/child-test.test.ts's fixtures
+  const args = [VITEST, 'run', ...config, file, '-t', `^(?:${names.map(esc).join('|')})$`, '--reporter=dot', '--reporter=json', `--outputFile.json=${out}`];
   let stdout = '', stderr = '', code = 0, report: any = null;
   try {
     ({ stdout, stderr } = await promisify(execFile)(process.execPath, args, { env: { ...process.env, MARC_TEST_CHILD: '1', NO_COLOR: '1', FORCE_COLOR: '0' }, maxBuffer: 1 << 28 }));
@@ -57,8 +58,10 @@ function itChild(name: string, fn: () => unknown, timeout?: number): void {
     if (first) console.log(stdout);
     const mine = (report?.testResults ?? []).flatMap((f: any) => f.assertionResults)
       .filter((r: any) => r.title === task.name && JSON.stringify(r.ancestorTitles) === JSON.stringify(ancestors(task)) && r.status !== 'skipped');
-    if (mine.length !== 1 || mine[0].status !== 'passed') {
-      throw new Error(`child test ${mine[0]?.status ?? 'not run'} (child exit ${code}, ${mine.length} result(s)): ${name}\n${(mine[0]?.failureMessages ?? []).join('\n')}\n${report ? '' : `${stdout}\n${stderr}`}`);
+    if (mine.length !== 1 || mine[0].status !== 'passed' || code !== 0) {
+      // a non-zero exit with every test passed is an error outside the tests (a hook, an unhandled rejection, vitest's
+      // own RPC timeout): it fails every test of the group, as it fails the run it would have been part of
+      throw new Error(`child test ${mine[0]?.status ?? 'not run'} (child exit ${code}, ${mine.length} result(s)): ${name}\n${(mine[0]?.failureMessages ?? []).join('\n')}\n${code !== 0 || !report ? `${stdout}\n${stderr}` : ''}`);
     }
   }, timeout);
 }
