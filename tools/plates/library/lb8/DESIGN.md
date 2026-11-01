@@ -812,3 +812,32 @@ Measured at this head (lb8-plates.test.ts 'LIB-18 resume 2'; runQa node and brow
 - Flags: F2 0.134 (the named flag, unchanged) and F5 3.57, the ruled set. No label box moved; no card key changed.
 - The LB8 page of main's rows builds `f8753967…` on this branch (the approved page, byte-identical); the page with
   glute_bridge is `3ffdc5ce…`.
+
+## 20. Held 6 plan ('HELD-A', 2026-11-01; base main `5bcbddcf`; card `verify/held6-card.md` @ `ac886f82`)
+
+Rulings: D-HELD6-HIPTHRUST and D-HELD6-RHF (held6-card "Supervisor rulings"), on D-A3-REVBOW, D-SPINE-MIX and
+D-LIBZOOM-EXTEND. Both rows leave the section 15 table for rows.json, as glute_bridge did (section 19).
+
+Measured on main `5bcbddcf` (node and browser QA, the held page `3ad53f3b…0124`, authoring, no exemptions):
+
+| id | main | red rows on main |
+|---|---|---|
+| hip_thrust | `arch` (backMid→sacrum ½) 1.870 px, `ribs` 1.377 px: k 4 gives 7.48 px; Trace 46.5 px | H3.deviation (1.9 px) |
+| resisted_hip_flexion | `lean` (backMid) 2.744 px, `arch` (sacrum) 5.088 px; zoomOf finds no place at any k; Trace 82.7 px | H3.deviation (5.1 px) |
+
+Build (each number re-measured on this branch with the same scripts before it is pinned):
+
+| id | change | measured | evidence |
+|---|---|---|---|
+| hip_thrust | Mistake = the end pose with `trunk: { flex: 0, bow: 12 }` (M_ARCH 12, unsourced drawing size as reverse_lunge's bow); the thorax, bar, hands and feet held at the end pose, backUpper on the edge; every pose writes the object trunk (D-SPINE-MIX); barIn's cache key takes the object form; M_TILT's solve and sizes row go | `arch` on `{ at: 'lumbar', pose: 'mistake' }` 4.104 px; Mistake zoom k 3 gives 12.31 px (k 2.5 gives 10.26, red) | lb8-plates: the zoom block (k 3 the smallest ladder k, ring holds both poses, no text), the Mistake moves only the bow-zone landmarks (thorax, hips, legs, bar 0 mm), A2/A18/R10/bearing/balance re-run on the bowed Mistake, and runQa all 10 hard checks |
+| hip_thrust | `ribs` tell dropped; one-tell record; "ribs" kept in the `arch` cue (reverse_lunge.mjs:136 form) | one tell | the one-tell record and its test; the `ribs` checkpoint callout stays |
+| resisted_hip_flexion | `lean` on `{ at: 'head', pose: 'mistake' }`, box {236, 60} (kettlebell_swing's form); `arch` stays on the sacrum | `lean` 15.379 px at plate scale, no zoom | the tell pin, H3 at plate scale (no zoom, H3.zoom:not-needed never arises), leader clear of both figures, all 10 hard checks |
+
+Then: rows.json gains both rows, HELD loses them, the named flags are re-recorded (`qa.mjs --held --record`), the
+page is built twice (PQ-H7) and the LB8 page of main's rows stays byte-identical. No card key changes [checked at the
+build: tell keys are not card keys; topFault stays `arch` and `lean`].
+
+Risks: the bowed Mistake moves the hip crease 0.78 cm while the bar stays at the end's place, so the bearing test may
+read the pad off the body (mitigation: measured before pinning; if it fails, the bar follows the bowed crease and the
+hands follow the bar, recorded as a ruling question). lb8q's R4/R11 points (mitigation: the ring sits on the lumbar
+dip). The `lean` leader reads as chosen by H3 (mitigation: D-HELD6-RHF, the kettlebell_swing and chest_supported_row form).
