@@ -4600,3 +4600,13 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **PANEL mx20** (LIB-13s focused recheck @ `86c0202f`) is **VALID**. Plants were caught at smith R5 [3,2,3] and dumbbell R11 [3,3,3]. The anchor items below 4 are follow-ups 19, 21 and 22.
   - **dumbbell_shrug and smith_machine_shrug: APPROVED.** LIB-13s has 5 of 5 and goes to READY (#359 6550765744).
 - **#362** advanced to `0ab56be3`, a docs-only §6 note (DIFF-CHECK PASS 6550712097). It rides the next train after train 55.
+- **Train 55 merged** (#363 → main `5bcbddcf`, 11-01 ~00:00): LB7 R3 #356, LB9 R3 #361 and PILOT-A3 #362 (pinned). All 18 checks were green on `5be28542`, and the local checks passed (pilot A, pilot B and PILOT-A3 pages unchanged; 5442 tests). There is no APK: only the generated stage lines moved, and status stays pending. **Main holds 112 of 153.** The LB7 and LB9 builders are archived. #362's docs-only delta `0ab56be3` rides the next train.
+- **Remaining 41** (inventory rows):
+  - 16 approved in open PRs: LB6 9, LIB-13s 5 and LIB-SMALL 2, with wall_ball building;
+  - SPLIT 6: step_up and 5 SPLIT T, released now that reverse_lunge is pinned;
+  - crunch and the 5 SUPCORE rows;
+  - row C, 6 rows with no ruled route;
+  - row F, the 4 calf raises (S4, at the release candidate);
+  - bicycle_crunch (research);
+  - overhead_cable_triceps_extension (held).
+- Card drafts are running for **LIB-SPLIT** and **LIB-SUPCORE**.
