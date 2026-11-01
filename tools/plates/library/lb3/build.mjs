@@ -117,8 +117,10 @@ export const SHEET_DECISIONS = [
   { name: 'Support anchor', state: 'one_arm_dumbbell_row anchors the bench-support class; back_extension is its other LB3 user (D-LIB13-SUPPORT). Options: (i) approve the anchor; (ii) reject it, and back_extension is redrawn. Recommended: (i): every item passed at a6f4bd0. Supervisor decides.' },
   { name: 'Landmine anchor', state: 'landmine_row anchors the new landmine rig; its later user t_bar_row is held (D-LIB13-LANDMINE). Options: (i) approve the anchor; (ii) reject it. Recommended: (i): approved in the panel at 59d3d78, bytes unchanged since. Supervisor decides.' },
 ];
+// LIB-13s's ids: their named flags cite D-LIB13S-FLAGS; pendlay_row's F2 keeps its own ruling.
+const LIB13S = ['lib_barbell_shrug', 'lib_dumbbell_shrug', 'lib_smith_machine_shrug', 'lib_cable_shrug', 'lib_t_bar_row'];
 const QA_LINE = {
-  F2: f => `Figure cover ${+f.value.toFixed(3)}, approved ${f.range.map(v => +v.toFixed(3)).join('-')}. Named flag (#274 6267110489; D-LIB13S-FLAGS)`,
+  F2: (f, id) => `Figure cover ${+f.value.toFixed(3)}, approved ${f.range.map(v => +v.toFixed(3)).join('-')}. Named flag (${LIB13S.includes(id) ? 'D-LIB13S-FLAGS' : '#274 6267110489'})`,
   F3: f => `Longest leader ${+f.value.toFixed(2)} px, approved ${f.range.map(v => +v.toFixed(2)).join('-')}. Named flag (D-LIB13S-FLAGS)`,
   F4: f => `Hand-placed label boxes ${f.value}, approved ${f.range.join('-')}: every label is placed by the engine. Named flag (D-LIB13S-FLAGS)`,
   F5: f => `Tell contrast ${f.value}, minimum ${f.min} (the selected Mistake tell in Midnight, D-LIB9-F5)`,
@@ -194,7 +196,7 @@ export async function buildOwnerSheet({ qaLb3, flagProblems, tableOf }) {
     const r = rep[id], s = SHEET[id], c = cid(id), sh = shots[c], an = s.anchor.replace(/_/g, ' ');
     const raised = Object.keys(r.flags).filter(k => r.flags[k].raised).sort();
     flags[id] = raised;
-    const lines = [...raised.map(k => ({ k, t: QA_LINE[k](r.flags[k]) })), ...s.notes.map(t => ({ k: 'Note', t }))];
+    const lines = [...raised.map(k => ({ k, t: QA_LINE[k](r.flags[k], id) })), ...s.notes.map(t => ({ k: 'Note', t }))];
     const aside = `<aside class="lb3-aside" aria-label="${esc(id.slice(4).replace(/_/g, ' '))}: review notes">
   <div class="lb3-meta"><span><b>Tier ${s.tier}</b> · ${esc(s.class)}</span><span>Anchor: <b>${esc(an)}</b> (pilot A, pinned)</span><span>Plate QA: <b>all ${HARD.length} hard checks pass</b></span><span>Critic: ${esc(s.critic)}</span></div>
   <ul class="lb3-flags">${lines.map(l => `<li><b>${l.k}</b> ${esc(l.t)}</li>`).join('')}</ul>

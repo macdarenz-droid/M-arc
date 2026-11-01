@@ -832,13 +832,22 @@ const childPage = async (ids: string[] | null) => {
   return Buffer.from(stdout.trim(), 'base64').toString('utf8');
 };
 const pageHtml = (ids: string[] | null = null) => (pageCache[JSON.stringify(ids)] ??= childPage(ids));
+/** Two builds of every drawn row, one after the other in ONE awaited child process (so module state left by the first
+ *  build would change the second, as in the old in-worker test): the two pages' sha256. */
+const childTwice = async () => {
+  const { execFile } = await import('node:child_process'), { promisify } = await import('node:util');
+  const script = `const b = await import(${JSON.stringify(lib('lb3/build.mjs'))}); const a = (await b.buildLb3Page()).html, c = (await b.buildLb3Page()).html; console.log(JSON.stringify([b.sha256(a), b.sha256(c)]));`;
+  const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 });
+  return JSON.parse(stdout.trim().split('\n').pop()!) as [string, string];
+};
 
 describe('LIB-13 A10: the LB3 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
   it('two builds of the drawn LB3 ids are byte-identical', async () => {
     const build = await import(/* @vite-ignore */ lib('lb3/build.mjs'));
     expect(build.drawnIds().length).toBeGreaterThanOrEqual(3);
-    const [a, b] = await Promise.all([childPage(null), childPage(null)]);   // LIB-13s: two separate child builds (D-LIB8M-RPC form)
-    expect(sha(a)).toBe(sha(b));
+    const [a, b] = await childTwice();   // LIB-13s (D-LIB13S-RPC): both builds in one awaited child process
+    expect(a).toMatch(/^[0-9a-f]{64}$/);
+    expect(a).toBe(b);
   });
 });
 
@@ -1819,7 +1828,7 @@ describe('LIB-13s wave 2: cable, dumbbell and smith_machine shrugs, card-true po
   });
 });
 
-describe('LIB-13s panel mx19 fix: dumbbell_shrug\'s ring beside the viewer\'s-right shoulder; smith_machine_shrug\'s full dashed head and Mistake zoom', { timeout: T }, () => {
+describe('LIB-13s panel mx19 fix: dumbbell_shrug\'s ring beside the viewer\'s-right shoulder; smith_machine_shrug\'s full dashed head and chin leader', { timeout: T }, () => {
   const S3: Record<string, any> = {};
   /** Distance (px) from point q to the closed polyline P. */
   const segNear = (q: number[], P: number[][]) => Math.min(...P.map((a, i) => { const b = P[(i + 1) % P.length]!, d = [b[0]! - a[0]!, b[1]! - a[1]!] as [number, number], L2 = d[0] ** 2 + d[1] ** 2 || 1;

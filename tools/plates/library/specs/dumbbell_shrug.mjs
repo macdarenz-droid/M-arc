@@ -75,7 +75,7 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 0 },
   trace: { point: 'shoulderTop.l', trim: [0, 0] },   // mx19 R11: the viewer's-right shoulder, beside the zoom
-  zoom: { view: 'normal', k: 3.5 },   // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.r), the parent's ladder k
+  zoom: { view: 'normal', k: 3.5 },   // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.l), the parent's ladder k
   datum: [{ y: 'start:shoulderTop.l', from: 346, to: 'start:shoulderTop.l' }, { y: 'shoulderTop.l', from: 346, to: 'shoulderTop.l', mistake: false }],
   callouts: [
     // c3, c6

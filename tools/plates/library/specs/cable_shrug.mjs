@@ -154,7 +154,7 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 0 },
   trace: { point: 'shoulderTop.r', trim: [0, 0] },
-  zoom: { view: 'normal', k: 3.5 },   // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.r), the parent's ladder k   // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.r), the smallest ladder k over the Trace bar
+  zoom: { view: 'normal', k: 3.5 },   // D-LIB13S-ZOOM: the 5 cm shrug (shoulderTop.r), the smallest ladder k over the Trace bar
   // Two levels bracket the 5 cm rise: shoulder top at the start and at the top (R7: small at full-figure scale).
   datum: [{ y: 'start:shoulderTop.r', from: 130, to: 'start:shoulderTop.r' }, { y: 'shoulderTop.r', from: 130, to: 'shoulderTop.r', mistake: false }],   // from 130 (the parent's 60): the labels sit left
   // Labels boxed on the left (the column fills the right), above the zoom. No elbow measure: the column leaves no place for
