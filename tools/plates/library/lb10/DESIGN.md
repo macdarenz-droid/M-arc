@@ -211,6 +211,9 @@ refuses a moving constant).
   have no tempo row; their specs carry no `tempo`; they stay off rows.json, the page, QA and the critic until the strip
   card is on main and 'LIB-22 resume' (section 15). The scan for "second"/"minute" on all 12 quote files agrees with
   D-LIB22-SECS (sled_pull c12, burpee c23, medicine_ball_slam c12, wall_ball c16: not phases of the drawn rep).
+  All six are lifted now: sled_pull, farmer_s_carry and burpee at 'LIB-22 resume' (strip card rows); sled_push and
+  medicine_ball_slam there too (D-LIB22-AFALL); wall_ball at 'LIB-22 resume 3' (D-SMALL-WBAFALL: strip fallbackA rows
+  Squat and Throw, each blank, c16; section 23.5). No NOSECS id is left.
 - The range strings keep the quote's own dash: jumping_jacks' quote writes "30-60" with a hyphen; the strip shows
   '30–60' (an en dash, as pilot A's plank row '10–60' from "10–60"). Ruled (Q1): ranges kept as ranges, with an en dash.
 - kettlebell_swing has no Rest (13 Q3) and no Hold (pause 0).

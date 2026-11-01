@@ -877,6 +877,20 @@
     },
     {
       "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c9"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c9"
+    },
+    {
+      "kind": "contact",
       "landmark": "heel.l",
       "pose": "end",
       "cardPose": "end",

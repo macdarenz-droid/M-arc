@@ -122,7 +122,7 @@ describe('LIB-22 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     battle_ropes: [...both('wrist', 'start', 'c1'), ...both('sole', 'end', 'c13')],
     bear_crawl: both('wrist', 'start', 'c3'),
     jumping_jacks: [],   // D-SMALL-JJFACTS (LIB-SMALL): verified none, D-PLATEFACTS-EMPTY
-    wall_ball: [...both('wrist', 'start', 'c1'), ...both('heel', 'end', 'c6'), ...both('sole', 'end', 'c17')],   // LIB-SMALL PLAN (DESIGN.md 23)
+    wall_ball: [...both('wrist', 'start', 'c1'), ...both('wrist', 'end', 'c9'), ...both('heel', 'end', 'c6'), ...both('sole', 'end', 'c17')],   // LIB-SMALL PLAN (DESIGN.md 23); c9 hands on the ball at the end: cfwb (#358 6551219584)
   };
   // The ruled fault→key map (DESIGN.md section 8; Q3): drawable-false ids carry the F7 key, never the drawn one.
   const TOP: Record<string, [string, string]> = {
