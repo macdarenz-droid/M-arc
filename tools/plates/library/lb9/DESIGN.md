@@ -645,3 +645,202 @@ shoulders, not behind the head. A sourced trunk-rotation limit would decide C ag
 lib-spine-card.md:115's 0.366 / 0.377 m and 0.183 / 0.181 m (joint centres) were not reproduced; on `_test_spine`'s base
 and arms the centres read 0.254 / 0.268 m (curl ≤ 40, yaw ≤ 45, hip ≤ 120) and 0.128 / 0.099 m (curl ≤ 70, yaw ≤ 70,
 hip ≤ 140). LIB-SPINE's scratch script is not in the repo, so the difference is unexplained [unverified].
+
+## 26. SUPCORE plan (LIB-SUPCORE wave 2: reverse_crunch, dead_bug, v_up, flutter_kicks, hollow_body_hold; nothing drawn)
+
+Card: `docs/supervisor/verify/lib-supcore-card.md` on `claude/sup-lib4-cards` (D-SUPCORE-1 to -13 confirmed, 11-01).
+Cards and quotes: research `a48b0594` (byte copies at wave 2, lb9/cards.sha.json). Every number below is [est] or
+unsourced until the drawn spec measures it. Quotes are the card's claim text, shortened. Near side = right (facing
+right, as crunch.mjs).
+
+### 26.1 Modes (D-SUPCORE-MODES; card mode table re-checked)
+
+PARAMS (derive.mjs:4-12) holds only camera.maxScale, grip.width, bar.kind, bench.angle, load.primitive, handedness,
+stance.width; a child never sets the view (:19). Re-checked: no difference below is one of those keys, so all 5 are H.
+
+| id | tier, card parent | outside PARAMS (each alone makes it H) | mode |
+|---|---|---|---|
+| reverse_crunch | C, crunch | legs up 90/90 (c2), arms by the sides (c1), the pelvis rolls up under a still thorax (c3, c5); Mistake a closing knee (c11, c4) | H |
+| dead_bug | C, null | arms up and knees 90/90 (c3); one arm and the opposite leg extend (c4), a limb motion. `handedness` names a loaded side, not a pose | H |
+| v_up | B, hollow_body_hold | legs and torso rise to a V (c3); the parent is undrawn and in no golden file (candidate.mjs:36-48) | H |
+| flutter_kicks | C, null | straight legs off the floor (c2, c5), alternating kicks (c3) | H |
+| hollow_body_hold | C, null | an isometric hold: legs ~15° up, shoulders lifted, crescent (c2-c4) | H |
+
+SUPCORE is not built (0 qualifying T members). LB9 marks P1 T5 H9 → **P1 T0 H14**; plan 3.1:289's "SUPCORE 6" leaves
+the template list (supervisor docs action). DESIGN.md:24-27 ("(T): SUPCORE children; … the SUPCORE template exists")
+is replaced by one line: "H rows, drawn from crunch's approved bytes after wave 1's approval; sheets wait for
+PILOT-B2's pin (D-SUPCORE-MODES, -ANCHOR)". rows.json takes each id only once drawn, non-held and with a tempo strip.
+
+### 26.2 Clone source (D-LIB9-CLONE: copied, never imported)
+
+From crunch's approved bytes (wave 1), not the branch's current crunch.mjs (main's single pivot, no SPLIT yet):
+- `bisect` (throws on a bracket with no root) and `supine(top 0)`: trunk bracket [-40, 30] → **-3.555°** (the 3.6°
+  arch), neck bracket [-40, 60] → **-1.927°**, root `[0, 0.140, 0]`, tilt -90 (solved at `0d770b2d` and on the
+  earlier scratch tree alike; re-read and recorded from the approved bytes).
+- The floor camera `{ fit: true, maxScale: 1.35, y0: 339 }` (D-LIB8-floor) and `equipment: floor`.
+- The array trunk `flex` with SPLIT [0, 0, 1, 0] (D-SUPCORE-SPLIT) wherever a row lifts the thorax (hollow_body_hold's
+  shoulders, v_up's torso).
+- The Mistake root Newton (2×2, throws on no convergence; crunch.mjs:95-105 at `0d770b2d`) for the arch Mistakes (dead_bug, v_up,
+  flutter_kicks): the buttock stays on the floor, the shoulder keeps its pose's z, the pelvis tips MIS_TILT and L3
+  takes it back (crunch's form, the card proto's arch). reverse_crunch's end uses the same Newton with its own pair
+  (backUpper on the floor, shoulder z still).
+- Each new bracket gets its solved value written in its spec header.
+
+### 26.3 Pose map, Mistake and fault→key map
+
+Mistake = an override of the spec end (plate.mjs:78). Identity except v_up.
+
+| id | spec start | spec end | Mistake (override of spec end) | drawn key (topFault) |
+|---|---|---|---|---|
+| reverse_crunch | plate.start: palms down (c1); knees over hips at 90°, "thighs vertical, shins parallel to the floor" (c2) | plate.end: "the tailbone clears the floor and the knees approach the chest" (c5), knee still 90° (c4 "Keep the knee angle at 90 degrees") | the knee angle closes and the weight rolls toward the upper back (c11 "Tucking the knees too far back toward you") | `tuck` "Knees tuck" |
+| dead_bug | plate.start: "knees bent 90 degrees directly over the hips, arms extended above the chest" (c3) | plate.end: near (right) arm overhead, far (left) leg extended, hand and heel ≥ 2 px above the floor (c4) | the low back arches off the mat as the limbs lower (c6 "start arching the back") | `arch` "Low back arches" |
+| v_up | **plate.end** (the V) | **plate.start** (lying) | the low back arches at the start (c6 "the lower back touching the ground instead of arching") | `arch` "Low back arches" |
+| flutter_kicks | plate.start: legs straight, feet "several inches off the floor" (c2), palms flat (c1) | plate.end: near leg higher, far lower, knees straight (c3, c5) | the low back arches as the legs kick (c7 "A common mistake is arching the lower back") | `arch` "Low back arches" |
+| hollow_body_hold | plate.start (entry, lying, c1) | plate.end (the hold, c2-c4) | legs too low (c5 "if they are not lifted high enough") | `low` "Legs too low" |
+
+- v_up's swap (pilot-b/tempo.json poseMap form, push_up): plate.mistake places the fault "at the start of the rep"
+  (c6, c5), and the Mistake overrides the spec end, so the lying pose must be the spec end. poseMap entry:
+  `{ start: 'plate.end', end: 'plate.start', why: 'the arch belongs to the start of the rep (c6); the Mistake overrides the spec end (plate.mjs:78)' }`.
+  The spec end's legs hover (c4 "keeping your heels a few inches off the floor"; c1 "hover limbs off the floor
+  slightly"): see Q2.
+- Each card's handlingMistakes[0] = its plate.mistake is checked at copy time (the D-LIB15-XBODY check).
+- One tell each, recorded in §8's one-tell form at drawing time. reverse_crunch's closing knee may carry a measured
+  angle arc (c4's 90°, `expect` 90 in the right end only).
+- dead_bug sides (D-LIB21-SIDES form): GGR's c4 pair "Extend your right hand above your head and your left leg";
+  "repeat for the left arm and right leg" is the each-side claim. ACE's opposite pair (right heel, left hand) is equally
+  card-true; GGR's keeps the moving near arm (the Trace) in view, as bird_dog.
+
+### 26.4 Tempo map (D-LIB8M-TEMPO; lb9/tempo.json)
+
+| id | card plate.tempo (claim) | lb9/tempo.json |
+|---|---|---|
+| reverse_crunch | up 2, down 2, pause 1 (c21) | Curl 2 (up, move), Hold 1 (pause), Lower 2 (down, move) |
+| dead_bug | null (c4) | no row: tempoOf(its strip/rows.json row), written after #358 merges (D-SUPCORE-STRIP) |
+| v_up | null (c14) | no row: as dead_bug |
+| flutter_kicks | null (c3, c12) | no row: tempoOf(strip/rows.json:349: Kick, move, "Crisp", c3) |
+| hollow_body_hold | hold "up to 30 s" (c12) | Hold, constant "up to 30" (see below) |
+
+- Strip row proposals (written after #358; D-STRIP-*): dead_bug Lower (move, "Slow", c4, says "slowly lowering"),
+  Return (move, "Slow", c4, says "slowly bring the leg and arm back"), quote ACE's c4. v_up: c14 gives both "more
+  speed" and "performing reps slower", so no single word holds (contested): Lower and Lift both blank (c14), or
+  fallbackA (D-STRIP-AFALL); order follows the swapped draw (Lower first). Q3.
+- hollow_body_hold hold form: plank `{ phase: 'Hold', constant: '10–60', claim: 'c12' }` (pilot-a/tempo.json:17,
+  plank.mjs:158) and side_plank `'30–60'` (c9's quote, lb9/tempo.json; side_plank.mjs:188) are ranges taken as the
+  quote's string. hollow's anchor quote is c12 "Start with two sets of holds for time up to 30 seconds." Proposed:
+  `{ phase: 'Hold', constant: 'up to 30', claim: 'c12', quote: <that sentence> }`. Fallback within the same claim:
+  GGR's "anywhere from 30 to 60 seconds" → '30–60' (side_plank's form, but not the card's plate.tempo choice). Q4.
+- No Entry phase (frames: "entry then the held pose"; no seconds), no Rest (c12 sets none), as plank.
+
+### 26.5 Facts plan (candidates only; the CARD FIELDS verify decides)
+
+Setup quotes state the start pose only (D-LIB9-FACTPOSE); plate.start/end citations decide other quotes' poses;
+plural parts state both sides, the far side under the near-side rule (D-CFSMALL-ELEV, D-LIB22-SIDES); the flat back is
+stated by `buttock` with `backUpper` (D-LIB11-SACRUM). Poses below are the card pose → spec pose.
+
+| id | candidates (landmark, pose, claim) | not facts (reason) |
+|---|---|---|
+| reverse_crunch | wrist.r, wrist.l start (c1 "Push your palms into the ground", setup); buttock, backUpper start (c2 "lower back flat on the floor: this is the start") | c5 "knees approach the chest": no contact; c5 "using the arms for balance": no floor named; c4 90°: an angle check, not a contact |
+| dead_bug | buttock, backUpper start (c3 "pushes the lower back into the mat"); buttock, backUpper end (c5 "back remains flat and in contact with the mat") | hand and heel (c4 "lightly touch … (but not rest)"): gaps ≥ 2 px by ruling, never contacts; c2 shoulders down: no landmark |
+| v_up | buttock, backUpper plate.start → spec end (c5 "flat against the ground for the entire exercise", c6) | the V's buttock: the balance base, a check, no quote cited by plate.end names it; c3 "reach toward your toes": no contact; c1 "feet pressed together": in depth (26.8) |
+| flutter_kicks | wrist.r, wrist.l start (c1 "palms flat against the ground", setup); buttock, backUpper start and end (c4 "flatten your lower back to the floor … remain the same throughout", cited by both) | heels: c2 "several inches off" (a gap); c4 blades: no landmark |
+| hollow_body_hold | buttock, backUpper start (c1 "Lie on the floor", setup); buttock end (c3 "lumbar spine and hips should remain in contact with the ground", c2) | biceps by the ears (c1, c9): in depth, no landmark (26.8); c4 15°: an angle check (A7 15° ±2) |
+
+Each fact gets its `checks` entry (H6). Before CARD FIELDS every id shows H6:no-card and F7 'no card top fault'
+(qa/node.mjs:360), expected.
+
+### 26.6 Trace points (fixed before any measure; DRAWING-GUIDE.md:29 "Trace the point the card's cue is about")
+
+| id | Trace | reason |
+|---|---|---|
+| reverse_crunch | knee.r | c3 "bringing the knees toward the chest"; the hip curl moves the knee most |
+| dead_bug | wrist.r | the lowering near hand (c4), the checkpoint "Opposite limbs" |
+| v_up | wrist.r | c3 "reach the arms toward the toes" (the swapped draw traces the lowering hand) |
+| flutter_kicks | heel.r | card frames "Trace follows the near foot" |
+| hollow_body_hold | heel.r | the legs lifting to ~15° (c4), checkpoint "Legs low" |
+
+Trim: crunch's [4, 6] (floor-class anchor), fixed with the point.
+
+### 26.7 H3 and zooms (deviationMin 11.39 px, traceLenMin 22.11 px)
+
+All numbers [est, card proto.mjs; re-measured on the drawn spec]. No zoom on a view that passes at plate scale
+(qa/zoom.mjs:117, :122); each zoom takes the smallest passing ladder k (1.5-4).
+
+| id | fit px/m | Trace | Mistake deviation | expected zoom |
+|---|---|---|---|---|
+| reverse_crunch | 197.49 (cap) | 42.8 (knee) | 50.9 (heel) | none |
+| dead_bug | 144.9 | 111.9 (wrist) | 5.71 (arch) | mistake, k 2-2.5 |
+| v_up | 144.9 | 76.3 (wrist) | ~5.7 (dead_bug's arch at the same scale) | mistake, k 2-2.5 |
+| flutter_kicks | 168.0 | 0.69 (heel; raw 10.89, ±4° kick) | 6.62 (arch) | normal k 3, mistake k 2 |
+| hollow_body_hold | 146.2 | 24.4 (heel; +2.3 over the bar) | 23.7 (legs 15° → 5°) | none |
+
+### 26.8 2 px clearance (D-SUPCORE-CLEAR) and contacts
+
+Every drawn pose and ghost: each non-contact part ≥ 2 px above the floor line; in-plane parts ≥ 2 px apart; in-depth
+pairs listed with a 3D gap ≥ 0 cm. The only exceptions:
+
+| id | floor contacts (quote) | body contacts (quote) | in-depth pairs listed (gap ≥ 0) |
+|---|---|---|---|
+| reverse_crunch | start: back, buttock, skull, forearms and palms (c1, c2); end and Mistake: upper back, skull, forearms and palms; buttock and tailbone off (c5) | thighs against the chest in the end and the tucked Mistake (c5, c11; allowed, not a fact) | arm.r / arm.l; thigh.r / thigh.l |
+| dead_bug | all poses: back, buttock, skull (c3, c5, c8); Mistake: buttock only of the low back | none | the up far arm / near arm; the up near leg / extended far leg |
+| v_up | lying (spec end): back, buttock, skull; arms and heels hover ≥ 2 px if Q2 is ruled so; V: buttock only | hands against the shins at the V (c3; allowed, not a fact) | feet and legs together (c1, c9: gap ≥ 0); the two arms |
+| flutter_kicks | all poses: back, buttock, skull, forearms and palms (c1, c4); heels ≥ 2 px (c2) | none | legs apart in height (c3); the two arms |
+| hollow_body_hold | entry: back, buttock, skull, arms, legs (c1 "Lie on the floor with your legs straightened and your arms extended behind your head"); hold and Mistake: buttock and low back only (c3); heels ≥ 2 px in the Mistake (c5 "lift your legs off the floor") | none | upper arms by the ears (c1, c9); legs together (c1) |
+
+dead_bug's hand and heel: ≥ 2 px, and the PLAN names the drawn gap in px (target the smallest passing, 2-3 px ≈
+1.4-2.1 cm at 144.9 px/m [est]) so it reads "just above" (R3 judges).
+
+### 26.9 Expected flags
+
+- F5 on all 5 at the approved chrome's 3.57:1 (D-LIB9-F5).
+- F1 where the fit exceeds 146.29 px/m: reverse_crunch 197.49 and flutter_kicks 168.0 [est]; hollow_body_hold at 146.2
+  sits 0.09 under the line [est] (F1 if the drawn fit crosses it; named in qa.mjs `F1_NAMED` with its measured value).
+- No F7 (all 5 cards plate.mistake drawable true). No F6 (plate.view = census view, side).
+- Possible named F2/F3 as superman (a low floor figure's cover; short leaders): named in the plate report, never fixed
+  by moving a fault or a Trace.
+
+### 26.10 Unsourced numbers (listed in each spec header)
+
+- reverse_crunch: the end pelvis roll (how far the tailbone clears; c5 gives "until your spine cannot roll any
+  further", no number), the Mistake knee angle (tuck size), arm splay and palm position, KNEE_POLE.
+- dead_bug: the hand and heel gap (px above), the extended leg's hip angle, the overhead arm angle, MIS_TILT (arch size).
+- v_up: the V angle (trunk and leg angles at the top), the heel hover (c4 "a few inches"), the arm-to-shin reach, the
+  arch size.
+- flutter_kicks: the feet height (c2 "several inches"), the kick size (±4° proto), the arch size.
+- hollow_body_hold: the shoulder lift (curl at T12), the arm angle overhead, the Mistake leg angle (5° proto; "too
+  low" gives none), the chin tuck. The 15° leg angle is sourced (c4 "between 15 and 30 degrees"; card picks 15).
+- All: the floor line's length, the hand rest points, the IK poles.
+
+### 26.11 Draw order and holds
+
+hollow_body_hold and reverse_crunch first (no zoom expected), then dead_bug, v_up, flutter_kicks (zooms). dead_bug and
+v_up stay out of rows.json (in the held table with route "strip row after #358") until #358 merges; the other 3 go
+first. A row whose fault passes no bar at k ≤ 4 is held with its route (S5), never enlarged (S2).
+
+### 26.12 Risks and mitigations
+
+- **dead_bug S4** (watch): c4's hand and heel near the floor with c5's back flat and the other limbs up. The overhead
+  arm needs shoulder flexion near 180° for the hand to sit 2-3 px above the floor, with the shoulder joint ~8-10 cm up
+  [est]. Mitigation: solve the shoulder angle for the gap; if the engine's range or the back contact forbids it, post S4.
+- **dead_bug "lightly touch"** (ACE c4; checkpoint text "just touching the floor") vs the ruled ≥ 2 px gap: a panel
+  may read the gap as the hand not reaching. Mitigation: the smallest passing gap; PANELS.md:37 card truth (c4 "but not
+  rest").
+- **v_up balance**: the V rests on the buttock only; the centre of mass must sit over it (D-LIB21-BALANCE form, a
+  measured offset). The V angle is chosen for balance and listed unsourced.
+- **hollow_body_hold Trace** passes by 2.3 px [est] and the fit sits on the F1 line: a small pose change can fail H3 or
+  add F1. Mitigation: the Trace point and trim fixed now; a fail is S2/S5, never a moved point.
+- **Arch faults under the bar** (dead_bug, v_up ~5.7 px; flutter 6.62): zooms expected; never a bigger arch (S2).
+- **flutter_kicks' two poses barely differ** (card frames note): the normal zoom carries the Trace; R11 on both zooms.
+- **reverse_crunch thighs on the chest**: an allowed contact that could hide the knee-angle tell; the tell's leader
+  stays on the open side.
+- **#358 late**: dead_bug and v_up wait (26.11).
+
+### 26.13 Questions
+
+1. reverse_crunch end: the forearms and palms stay on the floor (plate.end "arms on the floor for balance (c5)"), but
+   c5's quote names balance, not the floor. Allowed as a floor contact on plate.end's citation, not a fact?
+2. v_up spec end (plate.start): heels and arms hovering (c4's return "heels a few inches off the floor"; c1 WH "hover
+   limbs off the floor slightly") or resting (c1 FV)? Proposed: heels hover (the arch reads with lifted legs; the return
+   pose of c4), arms on the floor overhead (c1 FV). Size unsourced.
+3. v_up strip: both phases blank (c14 contested) or fallbackA (D-STRIP-AFALL)?
+4. hollow_body_hold Hold constant: 'up to 30' (the card's c12 choice, not a range string), or GGR's '30–60'?
+5. hollow_body_hold Mistake key: `low` is proposed (no existing LB key); confirm or name one.
