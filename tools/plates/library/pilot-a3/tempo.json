@@ -1,0 +1,26 @@
+{
+ "note": "PILOT-A3 tempo map (moved from pilot-a2/tempo.json, D-A3-TESTHOME; LIB-8R, pilot-a2/DESIGN.md section 4; research claude/libht-research @ 0d832e18). Timed rows (D-LIB8M-TEMPO): a row s is the card's plate.tempo[from]; up is the concentric phase, down the eccentric; pause 0 on both, so no Hold. Untimed rows (D-STRIP-ROWS): the card and spec tempo is exactly tempoOf(strip/rows.json) for the id. No constants, no Rest.",
+ "ruling": "LIB-8R PLAN RULED (#340)",
+ "research": "0d832e18a2c52ec091a37b654572db5f0468913b",
+ "constants": {},
+ "untimed": [
+  "reverse_lunge"
+ ],
+ "ids": {
+  "dumbbell_fly": {
+   "claim": "c10",
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    },
+    {
+     "phase": "Raise",
+     "from": "up",
+     "move": true
+    }
+   ]
+  }
+ }
+}

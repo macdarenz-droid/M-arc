@@ -1,0 +1,247 @@
+{
+ "id": "diamond_push_up",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "bb-diamond",
+   "text": "Position your hands close together with open fingers. Use your thumbs and first fingers to form a diamond shape.",
+   "status": "verbatim",
+   "closest": "Position your hands close together with open fingers. Use your thumbs and first fingers to form a diamond shape.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bb-diamond",
+   "text": "Make sure that your hands are below your upper chest with straight elbows.",
+   "status": "verbatim",
+   "closest": "Make sure that your hands are below your upper chest with straight elbows.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "fv-diamond",
+   "text": "Kneel down and place your hands flat on the floor, so your thumbs and first fingers form a triangle.",
+   "status": "verbatim",
+   "closest": "Kneel down and place your hands flat on the floor, so your thumbs and first fingers form a triangle.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fv-diamond",
+   "text": "With your arms extended, move your feet out and back until your body is straight. Brace your core, tuck your chin in, and lengthen your neck. Pull your shoulders down and back.",
+   "status": "verbatim",
+   "closest": "With your arms extended, move your feet out and back until your body is straight. Brace your core, tuck your chin in, and lengthen your neck. Pull your shoulders down and back.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-diamond",
+   "text": "Assume a neutral spine with a braced core. Make sure your torso and legs are rigid.",
+   "status": "verbatim",
+   "closest": "Assume a neutral spine with a braced core. Make sure your torso and legs are rigid.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-diamond",
+   "text": "Initiate the eccentric portion of the diamond push-up by lowering your chest toward your hands. Inhale as you go down. Keep your elbows tucked close to your torso.",
+   "status": "verbatim",
+   "closest": "Initiate the eccentric portion of the diamond push-up by lowering your chest toward your hands. Inhale as you go down. Keep your elbows tucked close to your torso.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-diamond",
+   "text": "Make sure your posture remains rigid when you lower yourself. Do not allow your lower back and hips to flop down or arch up.",
+   "status": "verbatim",
+   "closest": "Make sure your posture remains rigid when you lower yourself. Do not allow your lower back and hips to flop down or arch up.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "fv-diamond",
+   "text": "Keeping your body straight, bend your arms and lower your chest down to the back of your hands. Keep your elbows close to your sides.",
+   "status": "verbatim",
+   "closest": "Keeping your body straight, bend your arms and lower your chest down to the back of your hands. Keep your elbows close to your sides.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-diamond",
+   "text": "It is important to allow your shoulder blades to pinch back as you lower yourself to the ground. Otherwise, you may find your shoulders rolling forward, which may cause joint discomfort.",
+   "status": "verbatim",
+   "closest": "It is important to allow your shoulder blades to pinch back as you lower yourself to the ground. Otherwise, you may find your shoulders rolling forward, which may cause joint discomfort.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-diamond",
+   "text": "Exhale as you forcefully push yourself back up. Keep your torso and posture rigid as you push up so that your whole body comes up as one whole unit.",
+   "status": "verbatim",
+   "closest": "Exhale as you forcefully push yourself back up. Keep your torso and posture rigid as you push up so that your whole body comes up as one whole unit.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-diamond",
+   "text": "Allow your shoulder blades to fully protract, as this activates your serratus anterior. Cue yourself to reach your upper back towards the ceiling at the top of the push.",
+   "status": "verbatim",
+   "closest": "Allow your shoulder blades to fully protract, as this activates your serratus anterior. Cue yourself to reach your upper back towards the ceiling at the top of the push.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-diamond",
+   "text": "When your lower back and hips sag toward the ground, it will make it harder for your shoulder blades to protract when you push up.",
+   "status": "verbatim",
+   "closest": "When your lower back and hips sag toward the ground, it will make it harder for your shoulder blades to protract when you push up.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-diamond",
+   "text": "When you find yourself doing this, allow a subtle bend in your knees and bring your hips closer to the sky. This will help you keep your back a bit flatter. You may also find it useful to engage your abdominals and glutes.",
+   "status": "verbatim",
+   "closest": "When you find yourself doing this, allow a subtle bend in your knees and bring your hips closer to the sky. This will help you keep your back a bit flatter. You may also find it useful to engage your abdominals and glutes.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-diamond",
+   "text": "You may find it helpful to slightly unlock your knees if you tend to overextend your lower back.",
+   "status": "verbatim",
+   "closest": "You may find it helpful to slightly unlock your knees if you tend to overextend your lower back.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "fv-diamond",
+   "text": "Do not arch your back during the exercise to keep all the resistance on the target muscles, and to protect your lower back.",
+   "status": "verbatim",
+   "closest": "Do not arch your back during the exercise to keep all the resistance on the target muscles, and to protect your lower back.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-diamond",
+   "text": "If your hips and legs aren’t in line with the rest of your body, they may lower to the ground sooner than your chest. This is one sure way to reduce your range of motion and reduce the stimulus for your chest, shoulder, and triceps muscles.",
+   "status": "verbatim",
+   "closest": "If your hips and legs aren’t in line with the rest of your body, they may lower to the ground sooner than your chest. This is one sure way to reduce your range of motion and reduce the stimulus for your chest, shoulder, and triceps muscles.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-diamond",
+   "text": "One solution that can help you with this is to position yourself by the wall and press your heels against the bottom of the wall.",
+   "status": "verbatim",
+   "closest": "One solution that can help you with this is to position yourself by the wall and press your heels against the bottom of the wall.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-diamond",
+   "text": "You need to allow your shoulder blades to move freely to maximize how much you activate certain key muscle groups — like your pectoralis minor and serratus anterior — for shoulder health and maximum gains.",
+   "status": "verbatim",
+   "closest": "You need to allow your shoulder blades to move freely to maximize how much you activate certain key muscle groups — like your pectoralis minor and serratus anterior — for shoulder health and maximum gains.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-diamond",
+   "text": "When you descend, think about pinching your shoulders together behind you. Then, when you ascend, allow yourself to round your shoulders forward toward the ground.",
+   "status": "verbatim",
+   "closest": "When you descend, think about pinching your shoulders together behind you. Then, when you ascend, allow yourself to round your shoulders forward toward the ground.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-diamond",
+   "text": "diamond push-ups put your hands and arms in a potentially awkward position. This could lead to elbow, shoulder, or wrist pain for some exercisers. If diamond push-ups cause joint pain, move your hands a little further apart for a more comfortable workout.",
+   "status": "verbatim",
+   "closest": "diamond push-ups put your hands and arms in a potentially awkward position. This could lead to elbow, shoulder, or wrist pain for some exercisers. If diamond push-ups cause joint pain, move your hands a little further apart for a more comfortable workout.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "fv-diamond",
+   "text": "If diamond push-ups bother your wrists, this variation could be the solution. Placing your hands on dumbbells or push-up handles means you can keep your wrists straight, eliminating most of the joint stress.",
+   "status": "verbatim",
+   "closest": "If diamond push-ups bother your wrists, this variation could be the solution. Placing your hands on dumbbells or push-up handles means you can keep your wrists straight, eliminating most of the joint stress.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-diamond",
+   "text": "Your chest and triceps are certainly the primary drivers here, but there are other other muscles involved.",
+   "status": "verbatim",
+   "closest": "Your chest and triceps are certainly the primary drivers here, but there are other other muscles involved.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-diamond",
+   "text": "The deltoids, particularly the front deltoids, are located by the shoulders and the top of the upper arms. They help contribute to raising your arm upward to the front of your body.",
+   "status": "verbatim",
+   "closest": "The deltoids, particularly the front deltoids, are located by the shoulders and the top of the upper arms. They help contribute to raising your arm upward to the front of your body.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "fv-diamond",
+   "text": "diamond push-ups emphasize your triceps. Your pecs and delts are still involved, but you’ll definitely feel this exercise more in your upper arms.",
+   "status": "verbatim",
+   "closest": "diamond push-ups emphasize your triceps. Your pecs and delts are still involved, but you’ll definitely feel this exercise more in your upper arms.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "cogley-2005",
+   "text": "The EMG activity was greater in both muscle groups during push-ups performed from the narrow base hand position compared with the wide base position (p < 0.05).",
+   "status": "verbatim",
+   "closest": "The EMG activity was greater in both muscle groups during push-ups performed from the narrow base hand position compared with the wide base position (p < 0.05).",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "cogley-2005",
+   "text": "Forty subjects, 11 men and 29 women, performed 1 repetition of each push-up.",
+   "status": "verbatim",
+   "closest": "Forty subjects, 11 men and 29 women, performed 1 repetition of each push-up.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-diamond",
+   "text": "Aim for three to four sets of five to 10 clean reps.",
+   "status": "verbatim",
+   "closest": "Aim for three to four sets of five to 10 clean reps.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-diamond",
+   "text": "Once you get very experienced with diamond push-ups, you may hit a point where you can perform more than 20 repetitions without any trouble.",
+   "status": "verbatim",
+   "closest": "Once you get very experienced with diamond push-ups, you may hit a point where you can perform more than 20 repetitions without any trouble.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-diamond",
+   "text": "A good way of doing this is loading it up with a weight plate on your back.",
+   "status": "verbatim",
+   "closest": "A good way of doing this is loading it up with a weight plate on your back.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "fv-diamond",
+   "text": "If this variation is too difficult for you, try it on your knees or by pushing off from a wall.",
+   "status": "verbatim",
+   "closest": "If this variation is too difficult for you, try it on your knees or by pushing off from a wall.",
+   "note": ""
+  }
+ ]
+}

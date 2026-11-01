@@ -28,9 +28,9 @@
 // Plate text (card reverse_lunge plate, verified: claude/libht-research e2a70bc):
 //  Callouts = the 3 plate.checkpoints (c2 front shin vertical, with a plumb guide through the front ankle; c3 chest
 //   up; c3 weight even, pointing at the hips with a plumb guide to the floor midway between the feet).
-//  Mistake = plate.mistake (c18, drawable; LIB-8R redraw, F-LB4-1): the ribcage flares as the foot steps back (M_ARCH
-//   lumbar extension with the pelvis tipped forward M_TILT), one tell 'flare' (the card's topFault) on the lower ribs,
-//   shown in a Mistake zoom on the waist and lower ribs (D-LIBZOOM-EXTEND).
+//  Mistake = plate.mistake (c18, drawable; PILOT-A3 redraw on LIB-SPINE, F-REVLUNGE-ARCH): the low back arches as the
+//   foot steps back (trunk.bow M_ARCH: the pelvis tips M_TILT under the held thorax), one tell 'flare' (the card's
+//   topFault) on the lumbar landmark, shown in a Mistake zoom on the low back (D-LIBZOOM-EXTEND, D-A3-REVZOOM).
 //  Measure: none. The card gives no angle ("roughly vertical"); the shin plumb guide shows the checkpoint instead.
 //  Tempo: the strip without seconds (D-STRIP-ROWS): Lower slow, Rise quicker (c16).
 // CARD (checked against card v2): from the card: FRONT_SHIN 6 deg ("roughly vertical", c2), TRUNK_LEAN 3 deg
@@ -67,7 +67,7 @@ const REAR_BALL = [FOOT_X, REAR_LIFT, ankB[2] - ANK * sT + BALL * cT];
 
 const front = { at: [-FOOT_X, 0, 0] };
 const arms = lean => ({ shoulder: { flex: lean }, elbow: ELBOW });   // flexion = lean keeps the arm plumb (checked: grip z = shoulder z)
-const pose = (hip, lean, rear) => ({ root: { at: [0, ...hip.slice(1)], tilt: lean }, trunk: 0, neck: 0, ...arms(lean), plant: { r: front, l: rear } });
+const pose = (hip, lean, rear) => ({ root: { at: [0, ...hip.slice(1)], tilt: lean }, trunk: { flex: 0 }, neck: 0, ...arms(lean), plant: { r: front, l: rear } });
 
 // Start: standing tall, feet together hip-width, hip-joint centre 3 cm in front of the ankles (plumb line), knees soft.
 const start = pose([0, 0.925, -MID + 0.03], STAND_LEAN, { at: [FOOT_X, 0, 0] });
@@ -80,14 +80,13 @@ const via = [
   pose([0, 0.68, -0.40], TRUNK_LEAN, REAR),
 ];
 const end = pose(HIP, TRUNK_LEAN, REAR);
-// Mistake (card plate.mistake, c18; LIB-8R, D-LIB8R-REVLUNGE): the ribcage flares as the back foot steps back,
-// instead of the pelvis tucking under. Legs, feet and the hip joints are the end pose's. The lumbar spine extends M_ARCH
-// (the 8's lumbar arch, hanging_leg_raise.mjs:69 trunk -12) and the untucked pelvis tips forward M_TILT, so the thorax
-// keeps the end pose's upright angle (c3): the low back curves concave between the pelvis and the ribs, and the rib front
-// pushes forward past the end pose's chest (panel mx5 R5: a flare, not a lean-back). Arms stay plumb (shoulder flexion =
-// the thorax angle).
-const M_ARCH = 12, M_TILT = 12;
-const MISTAKE = { ...pose(HIP, TRUNK_LEAN + M_TILT, REAR), trunk: -M_ARCH, shoulder: { flex: TRUNK_LEAN + M_TILT - M_ARCH } };
+// Mistake (card plate.mistake, c18; PILOT-A3, D-A3-REVBOW): the ribcage flares and the pelvis stays untucked as the
+// back foot steps back, instead of the pelvis tucking under. Everything but the lumbar spine is the end pose's: the
+// trunk bows M_ARCH (LIB-SPINE trunk.bow), so the pelvis tips M_TILT under the held thorax, which is the M_ARCH lumbar
+// extension. The thorax, chest, arms and legs move 0 px; lumbar, sacrum, buttock and navel move about 4 px (DESIGN §0).
+// The trunk is an object in every key pose too (D-SPINE-MIX).
+const M_ARCH = 12, M_TILT = M_ARCH;
+const MISTAKE = { ...end, trunk: { flex: 0, bow: M_ARCH } };
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
 export const SIZES = { FOOT_X, FRONT_SHIN, FRONT_THIGH, REAR_KNEE_Y, REAR_HEEL, TRUNK_LEAN, ELBOW, M_ARCH, M_TILT };
 // Front shin plumb (c2), the shin callout's guide: a vertical through the front ankle, from the floor to SHIN_TOP m
@@ -132,14 +131,12 @@ export default {
   ],
   mistake: {
     pose: MISTAKE,
-    guides: [
-      { kind: 'arrow', from: { at: 'chest', pose: 'end' }, to: { at: 'chest', pose: 'mistake' } },
-    ],
+    // no guide: the chest moves 0 px (D-A3-REVBOW); the dashed outline and the zoom carry the fault
     tells: [
-      { key: 'flare', text: 'Ribs flare', anchor: { along: ['sternum', 'lumbar'], t: 0.7, pose: 'mistake' }, cue: 'The ribcage flares up and the low back arches as you step back.' },   // c18
+      { key: 'flare', text: 'Low back arches', anchor: { at: 'lumbar', pose: 'mistake' }, cue: 'The ribcage flares and the pelvis stays untucked, arching the low back.' },   // c18
     ],
   },
-  zoom: { view: 'mistake', k: 2.5 },   // the ring on the waist and lower ribs, holding the elbow dot (panel mx5 R11); 2.5 is the smallest k that passes (2 gives 10.5 px)
+  zoom: { view: 'mistake', k: 3 },   // the ring on the low back, holding the elbow dot; 3 is the smallest ladder k that passes (lumbar 4.10 px: 12.31 at k 3, 10.26 at k 2.5)
   // Tempo: no seconds in the card (c7, c16; 3 s down is a progression only, c15): the strip without seconds, exactly
   // tempoOf(strip/rows.json reverse_lunge) (D-STRIP-ROWS).
   tempo: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Rise', move: true, word: 'Quicker' }],

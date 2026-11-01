@@ -1,0 +1,12 @@
+{
+ "note": "sha256 of each PILOT-A3 card (moved from pilot-a2/cards.sha.json, D-A3-TESTHOME) and quotes file as copied byte for byte from the research head (LIB-8R Do 2, D-LIB8M-CARDS). The cards gain only the three machine keys (plateFacts, tempo, topFault) in one block before the final brace; tests/howto/lib8r-pilot-a3.test.ts removes that block and compares these bytes.",
+ "researchHead": "0d832e18a2c52ec091a37b654572db5f0468913b",
+ "cards": {
+  "reverse_lunge": "d006a0ad66a065f8e5aa12cf87e8ddfb830d6c1ecc006ee17b41def73be8e1ec",
+  "dumbbell_fly": "74ef0d776747c6ea3413c73caf8056f611266a0394a052973aafb1152f64739d"
+ },
+ "quotes": {
+  "reverse_lunge": "d48f314d9082872d84c45d4a86fb86319a7e6990f1625237940eab231b46d948",
+  "dumbbell_fly": "da7c5b25ea33b864c46c8b75efe40dbc59fe4a76c4532894523174290e9c5f80"
+ }
+}

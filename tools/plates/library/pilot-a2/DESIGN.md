@@ -200,3 +200,4 @@ PILOT-A2 now pins box_jump and the rear-delt fly, plus dumbbell_fly once it pass
   - lib7-fix's fixture id is v_up, guarded against any batches/ file.
 - F-LIB8M-PROV: the provenance text in pilot-a/plates.json `cards`, pilot-a/build.mjs:23 and MERGE.md is corrected.
   build.mjs:181 is sheet text outside this card's write_scope (`:23: a comment only`), so it is left for the supervisor.
+- PILOT-A3 (D-A3-TESTHOME): reverse_lunge's and dumbbell_fly's rows in sizes.json, tempo.json and cards.sha.json, `lib_dumbbell_fly` in qa.mjs EXPECTED and their tests moved to `pilot-a3/` and `tests/howto/lib8r-pilot-a3.test.ts`.

@@ -2956,6 +2956,14 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
 - **Wave 1 approved (panel mx8, 29ca5ce5).** dumbbell_overhead_triceps_extension, cross_body_hammer_curl and wrist_curl. Their fragments are pinned in tests/howto/lb5-plates.test.ts.
 - **D-LIB17-B13 ('LIB-17 resume 2', F-ZOOM-2 on main).** renegade_row joins lb7/rows.json with its Mistake zoom at k 3 and the opt-in `zoom.pair` (the far flat hex's vertex 0 against the turned tell vertex: 5.64 → 16.92 px). Its owed rows: the "Straight line" box moves to (40, 160) so no hit box overlaps "Feet wide" (H4), and the corner tell's label becomes "Corner landing" (H8, 1-3 words). cable_rear_delt_fly stays held (D-LIB17-RDFHOLD).
 - **D-LIB17-B14 (renegade_row panel mx5 R1, #343 6538121846).** The end dumbbell sits 0.16 m below the shoulder joint beside the lower ribs with the elbow led up and back, so the upper arm stands 53.9 deg from the trunk axis (was 94); the near arm keeps the row's pole from the start so no ghost bends the elbow toward the head; "Row to ribs" anchors at the hex's lower edge with its box below the body. zoom.pair unchanged; the f-zoom-2 circle pin moves to [228, 152].
+
+## LIB-17 resume 3: LB7 push-up rows (LIB-17 builder, 2026-10-31)
+
+- **D-LIB17R3-MODES.** incline_push_up, diamond_push_up and pike_push_up are drawn H. No PARAMS key covers a hand surface, a body angle, where the hands sit along the body, the elbow's aim, or a hip pike. PUSHUP gets no template. Record: tools/plates/library/lb7/DESIGN.md section 19.
+- **D-LIB17R3-BENCH, as measured.** The incline bench top is 0.4232 m, solved for c1's 45 degrees. The chest sits over the bench edge (c3), and the top arms lean 22 degrees from plumb. Plumb arms would put the belly through the pad's near corner.
+- **D-LIB17R3-AFALL, -STRIPROWS.** diamond_push_up and pike_push_up move from leftOut to fallbackA in strip/rows.json, with every phase blank and the card's claim. Only the two LABELS literals and ROWS_PIN change in lib-strip.test.ts.
+- **D-LIB17R3-F7.** pike_push_up's card has drawable false: the elbow flare cannot be seen from the side. Its topFault is `flare` and F7 is named for it. The plate draws the head-only path (c6).
+- **D-LIB17R3-CLEAR.** Each row has a 2 px clearance test with a 0-value mutation. The card contacts (palms, the forearm at the wrist, the toes) and the diamond chest over the hands are excepted by name.
 ## LIB-8R: pilot A's held rows as PILOT-A2 (builder, 2026-10-31; card docs/supervisor/verify/lib-8r-card.md, rulings D-LIB8R-*)
 - **D-LIB8R-BATCH.** Pilot A's held rows are pinned in a new batch, PILOT-A2 (batches/pilot-a2.json, its own page and
   chain), so pilot A's page (5d0e562f...) and every pilot A and pilot B pin stay byte-identical. **Why:** re-pinning pilot
@@ -2986,3 +2994,31 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   lb3-plates.test.ts run in awaited child processes, LIB-13 A10's two builds included (same assertion); long searches
   yield. This fixed vitest's worker RPC timeout ("onTaskUpdate").
 - **Source:** PR #359; lb3/DESIGN.md section 16.
+## LIB-21R3: LB9 resume 3, cable_crunch on LIB-SPINE's spine segments (builder, 2026-10-31; card docs/supervisor/verify/lb9r3-card.md, rulings D-LB9R3-*)
+- **D-LB9R3-SPLIT.** cable_crunch's curl is spread over the engine's four spine pivots (L5/S1, L3, T12, T7) by 0.123 /
+  0.341 / 0.246 / 0.290: Pearcy 1984's per-level lumbar flexion (via the NCT03737227 protocol quote) scaled to
+  Hajibozorgi & Arjmand 2016's lumbar total, plus their thoracic 20.5 deg. **Why:** the single lumbar pivot drew a fold
+  (R1, D-LIB21-CCHOLD); both sources were fetched and the numbers confirmed verbatim before use. Four number rows in
+  lb9/sizes.json (D-LB9R3-SPLITROWS) keep A17 unchanged.
+- **D-LB9R3-ANGLE.** The end keeps the 2 cm elbow-to-thigh solve: 102.33 deg of spinal flexion, about 1.45 x the
+  sourced 70.7 deg, named as a card-truth limit. Capping at 70.7 deg leaves the elbows 20.55 cm away and the Trace
+  under its bar.
+- **D-LB9R3-ROPEBOX, -CURL, -CLEAR.** "Rope by head" moves 12 px up to {200, 234}; a new test keeps any 0.02 H window
+  of the back curve under 30 % of its total turn (22.2 %; 69.4 % all at L3); the cable and ferrule stay 2 px from the
+  body in every drawn pose (least 11.76 px, the Mistake).
+- **D-SPINE-BICYCLE-NEARS.** bicycle_crunch stays held: with every sourced limit held its elbow comes no nearer than
+  6.8 cm to the other leg, and only at a trunk turn no source bounds. "Nears" goes to research (trunk rotation range,
+  arm position); lb9/DESIGN.md section 25.
+- **Source:** PR #361; lb9/DESIGN.md sections 24-25.
+## PILOT-A3: reverse_lunge on trunk.bow and dumbbell_fly F-FLY-START (builder, 2026-10-31; card docs/supervisor/verify/pilot-a3-card.md, rulings D-A3-*)
+- **D-A3-REVBOW.** reverse_lunge's Mistake is the end pose with `trunk: { flex: 0, bow: 12 }` (LIB-SPINE). The pelvis
+  tips 12° under the held thorax, so only the low back moves: lumbar 4.10 px and navel 4.65 px, while the chest and head
+  move 0 px. The tell 'Low back arches' sits on lumbar with a k 3 zoom, and the chest arrow is gone. **Why:** the
+  held round-3 Mistake moved the whole upper trunk 5.27 px, and the panel read it as a shift, not an arch.
+- **D-A3-FLYSTART, -FLYHAND.** dumbbell_fly's dashed start dumbbells are now side-on silhouettes, 15.1 × 28.0 px, the
+  same shape as the drawn end dumbbells. The faulty hands are dashed Mistake guides, the Mistake pose's own hand polys,
+  23° on screen. The chunk is 153,494 B (limit 153,600), so no fallback was needed.
+- **Pinned:** both ids, in PILOT-A3 (page bebd7730..., 465,732 B) after panel mx18 (#362 6548838657). Every median is ≥ 4,
+  and the blind TOPFAULT pass answered 'flare'. The two ids' rows and tests moved from pilot-a2/ to pilot-a3/
+  (D-A3-TESTHOME).
+- **Source:** PR #362; pilot-a3/DESIGN.md.

@@ -10,9 +10,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
-const IDS = ['box_jump', 'reverse_lunge', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly'];   // the 4 drawn specs and cards
-const ROWS = ['box_jump', 'bent_over_dumbbell_rear_delt_fly'];   // PILOT-A2's pinned rows: reverse_lunge (F-REVLUNGE-ARCH) and dumbbell_fly (F-FLY-START) are held (#340 6540319537)
-const HELD_HERE = ['reverse_lunge', 'dumbbell_fly'];
+const IDS = ['box_jump', 'bent_over_dumbbell_rear_delt_fly'];   // the drawn specs and cards (the other two moved to lib8r-pilot-a3.test.ts, D-A3-TESTHOME)
+const ROWS = IDS;   // PILOT-A2's pinned rows
 const STILL_HELD = ['barbell_shrug', 'incline_dumbbell_press'];   // D-LIB8R-SCOPE: routed to LIB-13s and LB2
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -42,7 +41,7 @@ describe('LIB-8R A1: the PILOT-A2 rows hold exactly the drawn, unheld ids (D-LIB
     const j = JSON.parse(text), bad: string[] = [], ids = Object.keys(j.rows);
     if (JSON.stringify(ids) !== JSON.stringify(ROWS.map(i => `lib_${i}`))) bad.push(`ids ${ids.join(',')}`);
     for (const id of ROWS) if (text.split(`"lib_${id}"`).length !== 2) bad.push(`${id} not exactly once`);
-    for (const id of [...STILL_HELD, ...HELD_HERE]) if (new RegExp(`\\b${id}\\b`).test(text)) bad.push(`${id} is still held`);
+    for (const id of STILL_HELD) if (new RegExp(`\\b${id}\\b`).test(text)) bad.push(`${id} is still held`);
     for (const [id, r] of Object.entries<any>(j.rows)) {
       if (r.mode !== 'H') bad.push(`${id}: mode ${r.mode}`);
       if (r.src !== `library/specs/${id.slice(4)}.mjs`) bad.push(`${id}: src ${r.src}`);
@@ -58,11 +57,9 @@ describe('LIB-8R A1: the PILOT-A2 rows hold exactly the drawn, unheld ids (D-LIB
     for (const f of ['tempo.json', 'sizes.json', 'cards.sha.json']) for (const id of STILL_HELD) expect(readFileSync(`tools/plates/library/pilot-a2/${f}`, 'utf8'), `${f} ${id}`).not.toContain(id);
     expect(existsSync('tools/plates/library/pilot-a2/rows.json')).toBe(false);
   });
-  it('each still-held id keeps its held line in pilot-a/plates.json with its route; reverse_lunge names F-REVLUNGE-ARCH', () => {
+  it('each still-held id keeps its held line in pilot-a/plates.json with its route', () => {
     const p = readJson('tools/plates/library/pilot-a/plates.json').plates;
     for (const id of STILL_HELD) expect(p.find((x: any) => x.id === id)?.held, id).toBeTruthy();
-    expect(p.find((x: any) => x.id === 'reverse_lunge')?.held).toMatch(/F-REVLUNGE-ARCH/);
-    expect(p.find((x: any) => x.id === 'dumbbell_fly')?.held).toMatch(/F-FLY-START/);
     for (const id of ROWS) expect(p.find((x: any) => x.id === id)?.held, id).toMatch(/^moved: pinned in PILOT-A2/);
   });
   it('mutations: barbell_shrug added, incline_dumbbell_press added and a duplicated row are red', () => {
@@ -70,8 +67,6 @@ describe('LIB-8R A1: the PILOT-A2 rows hold exactly the drawn, unheld ids (D-LIB
     expect(problems(add('barbell_shrug')).length).toBeGreaterThan(0);
     expect(problems(add('incline_dumbbell_press')).length).toBeGreaterThan(0);
     expect(problems(text().replace('"lib_bent_over_dumbbell_rear_delt_fly": {', '"lib_box_jump_dup": { "x": "lib_box_jump" },\n  "lib_bent_over_dumbbell_rear_delt_fly": {')).length).toBeGreaterThan(0);
-    expect(problems(add('reverse_lunge')).length, 'the held reverse_lunge added').toBeGreaterThan(0);
-    expect(problems(add('dumbbell_fly')).length, 'the held dumbbell_fly added').toBeGreaterThan(0);
   });
 });
 
@@ -82,9 +77,6 @@ describe('LIB-8R A6: the cards, the tempo map and the strip rows', () => {
   // D-LIB8R-FACTS2 (CARD FIELDS cfpa2, #340): every contact a quote states for a drawn pose is a contact fact.
   const FACTS: Record<string, string[]> = {
     box_jump: ['contact sole.l start start c2', 'contact sole.r start start c2', 'contact sole.l end end c4', 'contact sole.r end end c4'],
-    reverse_lunge: ['contact toe.l end end c4'],
-    dumbbell_fly: ['contact backUpper start start c2', 'contact buttock start start c2', 'contact backUpper end end c2', 'contact buttock end end c2',
-      'contact backUpper start start c1', 'contact buttock start start c1', 'contact wrist.r start start c3', 'contact wrist.l start start c3'],
     bent_over_dumbbell_rear_delt_fly: ['contact wrist.r start start c1', 'contact wrist.l start start c1'],
   };
   it('each card differs from its research copy (0d832e18) only in the three-key block; quotes are byte copies; validateCardFile []', () => {
@@ -122,16 +114,14 @@ describe('LIB-8R A6: the cards, the tempo map and the strip rows', () => {
     const { cards, specs } = clean();
     expect(tempoProblems(cards, specs)).toEqual([]);
   });
-  it("mutations: box_jump's Take-off word changed and seconds added to reverse_lunge's card and spec are red", () => {
+  it("mutations: box_jump's Take-off word changed is red", () => {
     const a = clean(); a.cards.box_jump.tempo[0].word = 'Fast'; a.specs.box_jump = { ...a.specs.box_jump, tempo: a.cards.box_jump.tempo };
     expect(tempoProblems(a.cards, a.specs).length).toBeGreaterThan(0);
-    const b = clean(); b.cards.reverse_lunge.tempo[0].s = 3; b.specs.reverse_lunge = { ...b.specs.reverse_lunge, tempo: b.cards.reverse_lunge.tempo };
-    expect(tempoProblems(b.cards, b.specs).length).toBeGreaterThan(0);
   });
 });
 
 describe('LIB-8R A7, D-LIB8R-BJTELL: card truth, one tell per Mistake', () => {
-  const RULED: Record<string, string> = { box_jump: 'straight', reverse_lunge: 'flare', dumbbell_fly: 'wrists', bent_over_dumbbell_rear_delt_fly: 'swing' };
+  const RULED: Record<string, string> = { box_jump: 'straight', bent_over_dumbbell_rear_delt_fly: 'swing' };
   const tellProblems = (id: string, s: any, card: any) => {
     const bad: string[] = [], tells = s.mistake.tells;
     if (tells.length !== 1) bad.push(`${id}: ${tells.length} tells (one fault, one tell: D-LIB8R-BJTELL)`);
@@ -144,75 +134,11 @@ describe('LIB-8R A7, D-LIB8R-BJTELL: card truth, one tell per Mistake', () => {
     expect(cardOf('bent_over_dumbbell_rear_delt_fly').plate.mistake.drawable).toBe(false);
     expect(spec('bent_over_dumbbell_rear_delt_fly').mistake.tells[0].key).toBe('shrug');
   });
-  it("reverse_lunge's tell names c18's fault; dumbbell_fly's names c13's", () => {
-    expect(cardOf('reverse_lunge').plate.mistake.claim).toBe('c18');
-    expect(spec('reverse_lunge').mistake.tells[0].text).toMatch(/Ribs flare/);
-    expect(cardOf('reverse_lunge').claims.find((c: any) => c.id === 'c18').text).toMatch(/flaring the ribcage/);
-    expect(cardOf('dumbbell_fly').plate.mistake.claim).toBe('c13');
-    expect(spec('dumbbell_fly').mistake.tells[0].text).toMatch(/Wrists bend/);
-  });
-  it('mutations: a second tell on the same fault (box_jump stiff), the old deep tell first on dumbbell_fly, and topFault = shrug are red', () => {
+  it('mutations: a second tell on the same fault (box_jump stiff), and topFault = shrug are red', () => {
     const bj = spec('box_jump');
     expect(tellProblems('box_jump', { ...bj, mistake: { ...bj.mistake, tells: [...bj.mistake.tells, { key: 'stiff', text: 'Stiff landing', anchor: 'buttock' }] } }, cardOf('box_jump')).length).toBeGreaterThan(0);
-    const fl = spec('dumbbell_fly');
-    expect(tellProblems('dumbbell_fly', { ...fl, mistake: { ...fl.mistake, tells: [{ key: 'deep', text: 'Below<br>the chest', anchor: 'grip.r' }, ...fl.mistake.tells] } }, cardOf('dumbbell_fly')).length).toBeGreaterThan(0);
     const rd = cardOf('bent_over_dumbbell_rear_delt_fly'); rd.topFault = 'shrug';
     expect(tellProblems('bent_over_dumbbell_rear_delt_fly', spec('bent_over_dumbbell_rear_delt_fly'), rd).length).toBeGreaterThan(0);
-  });
-  // D-LIB8R-REVLUNGE: the export minus mistake, tempo, pilot and zoom (a Mistake-view zoom: the zoom field draws only on
-  // the Mistake view) is main c7bdad7a's; the normal render's svg and overlay are main's bytes (measured at c7bdad7a).
-  const exportSha = (s: any) => { const { mistake, tempo, pilot, zoom, ...rest } = s; return sha(JSON.stringify(rest)); };
-  const NORMAL = { svg: '0744dcf3b2b2ffaae46452a9921adfe09ff45f61f268f98353791e63998b2df9', overlay: 'cbf84381abccc3ff48d647c82c3e691717d347dfbc561ef2c2ee3d65027888c3' };
-  it("reverse_lunge's normal plate is main's: export sha, a Mistake-view zoom only, and the normal render bytes", () => {
-    const s = spec('reverse_lunge');
-    expect(exportSha(s)).toBe('026964f91f030268d49bc52cf1adf46c265d9fcd27349e01e30c6f3bc87cc0dd');
-    expect(s.zoom).toEqual({ view: 'mistake', k: 2.5 });
-    const n = plate.renderPlate(s, { id: 'x-n' });
-    expect({ svg: sha(n.svg), overlay: sha(n.overlay) }).toEqual(NORMAL);
-  });
-  it('mutation: REAR_HEEL 45 -> 46 moves the export sha and the normal render', async () => {
-    const m = await variant('reverse_lunge', src => src.replace('const REAR_HEEL = 45;', 'const REAR_HEEL = 46;'));
-    expect(exportSha(m.default)).not.toBe('026964f91f030268d49bc52cf1adf46c265d9fcd27349e01e30c6f3bc87cc0dd');
-    expect(sha(plate.renderPlate(m.default, { id: 'x-n' }).svg)).not.toBe(NORMAL.svg);
-  });
-});
-
-describe('LIB-8R reverse_lunge panel mx5: a true rib flare at true size, and a ring on the waist and lower ribs', () => {
-  const H = 1.75;
-  // The flare (R5): the lumbar extension is exactly M_ARCH (12°, true size), the thorax keeps the end pose's angle, the
-  // rib front (chest) and the lower back (backMid) move forward of the end pose's (the low back concave, the ribs out).
-  const flareProblems = (s: any, S: any) => {
-    const bad: string[] = [], e = s.poses.end, m = { ...e, ...s.mistake.pose };
-    if (m.trunk !== -S.M_ARCH || S.M_ARCH !== 12) bad.push(`lumbar extension ${-m.trunk} is not the true 12°`);
-    if (Math.abs((m.root.tilt + m.trunk) - (e.root.tilt + e.trunk)) > 1e-9) bad.push('the thorax angle moved (a lean, not a flare)');
-    const a = eng.landmarksOf(e, H), b = eng.landmarksOf(m, H);
-    for (const k of ['chest', 'backMid']) if (!(b[k][2] - a[k][2] >= 0.02)) bad.push(`${k} is not 2 cm or more forward of the end pose (${((b[k][2] - a[k][2]) * 100).toFixed(1)} cm)`);
-    for (const k of ['hip.r', 'hip.l', 'knee.r', 'knee.l', 'ankle.r', 'ankle.l']) if (Math.hypot(...b[k].map((v: number, i: number) => v - a[k][i])) > 1e-6) bad.push(`${k} moved`);
-    return bad;
-  };
-  it('R5: lumbar arch 12°, thorax angle kept, rib front and low back forward, hips and legs unmoved', () => {
-    expect(flareProblems(spec('reverse_lunge'), mods.reverse_lunge.SIZES)).toEqual([]);
-  });
-  it('R5 mutations: the old lean-back (pelvis not tipped) and an enlarged arch (16°) are red', () => {
-    const s = spec('reverse_lunge'), m = s.mistake.pose;
-    const lean = { ...m, root: { ...m.root, tilt: s.poses.end.root.tilt }, shoulder: { flex: s.poses.end.root.tilt - 12 } };
-    expect(flareProblems({ ...s, mistake: { ...s.mistake, pose: lean } }, mods.reverse_lunge.SIZES).length).toBeGreaterThan(0);
-    expect(flareProblems({ ...s, mistake: { ...s.mistake, pose: { ...m, trunk: -16 } } }, { ...mods.reverse_lunge.SIZES, M_ARCH: 16 }).length).toBeGreaterThan(0);
-  });
-  // The ring (R11): zoomOf's own source ring holds the end pose's elbow dot, the lower back and the rib front.
-  const ringProblems = async (s: any) => {
-    const Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')), z = Z.zoomOf(s, { prefix: 'x' }), P = (w: number[]) => [s.camera.x0 + w[2]! * 146.29, s.camera.y0 - w[1]! * 146.29];
-    const lm = eng.landmarksOf(s.poses.end, H), bad: string[] = [];
-    const ribFront = lm.chest.map((v: number, i: number) => v + (lm.navel[i] - v) * 0.5);   // the lower-rib front, between the chest and the navel
-    for (const [k, w] of [['elbow.r', lm['elbow.r']], ['backMid', lm.backMid], ['lower-rib front', ribFront]] as const) { const p = P(w as number[]); if (Math.hypot(p[0] - z.src.c[0], p[1] - z.src.c[1]) > z.src.r) bad.push(`${k} outside the ring`); }
-    return bad;
-  };
-  it('R11: the ring holds the elbow dot, the low back and the rib front', async () => {
-    expect(await ringProblems(spec('reverse_lunge'))).toEqual([]);
-  });
-  it("R11 mutation: round 1's ring (the chest-backMid anchor) is red", async () => {
-    const s = spec('reverse_lunge');
-    expect((await ringProblems({ ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((t: any) => ({ ...t, anchor: { along: ['chest', 'backMid'], t: 0.5, pose: 'mistake' } })) } })).length).toBeGreaterThan(0);
   });
 });
 
@@ -244,22 +170,19 @@ describe('LIB-8R A8: the airborne convention on box_jump (D-LIB8R-AIR)', () => {
 });
 
 describe('LIB-8R A9: the views (D-LIB8R-FLIES)', () => {
-  const viewProblems = (fly: any, rd: any, rdAlt: any) => {
+  const viewProblems = (rd: any, rdAlt: any) => {
     const bad: string[] = [];
-    if (fly.view !== 'front' || fly.camera?.pitch !== 45 || fly.torso !== 'volume') bad.push('dumbbell_fly: not the census front view at pitch 45 with the volume trunk');
     if (rdAlt.view !== 'front' || rdAlt.camera?.pitch !== 15 || rdAlt.torso !== 'volume') bad.push('rear-delt front view: not pitch 15 with the volume trunk');
     if (rd.view !== 'side' || rd.mistake.tells[0].key !== 'shrug' || JSON.stringify(rd.mistake.pose) !== JSON.stringify(rdAlt.mistake.pose)) bad.push('rear-delt fallback: not the side view with the card\'s own Mistake unchanged');
     return bad;
   };
-  it("dumbbell_fly is the census front view; the rear-delt plate is the side fallback with the front view's own Mistake; the alts import", () => {
-    expect(viewProblems(spec('dumbbell_fly'), spec('bent_over_dumbbell_rear_delt_fly'), spec('bent_over_dumbbell_rear_delt_fly__alt'))).toEqual([]);
-    expect(spec('dumbbell_fly__alt').view).toBe('side');
+  it("the rear-delt plate is the side fallback with the front view's own Mistake; the alt imports", () => {
+    expect(viewProblems(spec('bent_over_dumbbell_rear_delt_fly'), spec('bent_over_dumbbell_rear_delt_fly__alt'))).toEqual([]);
     expect(typeof mods.bent_over_dumbbell_rear_delt_fly.posesAt).toBe('function');
   });
-  it('mutations: the pitch removed is red; makeFly renamed breaks the alt import', async () => {
-    const fl = spec('dumbbell_fly');
-    expect(viewProblems({ ...fl, camera: { ...fl.camera, pitch: undefined } }, spec('bent_over_dumbbell_rear_delt_fly'), spec('bent_over_dumbbell_rear_delt_fly__alt')).length).toBeGreaterThan(0);
-    await expect(variant('dumbbell_fly', src => src.replace('export function makeFly(', 'export function makeFly2('))).rejects.toThrow(/makeFly/);
+  it('mutation: the rear-delt front view with its pitch removed is red', () => {
+    const rdAlt = spec('bent_over_dumbbell_rear_delt_fly__alt');
+    expect(viewProblems(spec('bent_over_dumbbell_rear_delt_fly'), { ...rdAlt, camera: { ...rdAlt.camera, pitch: undefined } }).length).toBeGreaterThan(0);
   });
 });
 
@@ -275,10 +198,10 @@ describe('LIB-8R sizes (D-LIB17-SIZE form): each spec SIZES equals its pilot-a2/
     expect(Object.keys(sizes).sort()).toEqual([...IDS].sort());
     for (const id of IDS) expect(sizeProblems(id, mods[id].SIZES), id).toEqual([]);
   });
-  it('mutations: M_WRIST changed in the spec and a row dropped are red', () => {
-    expect(sizeProblems('dumbbell_fly', { ...mods.dumbbell_fly.SIZES, M_WRIST: 31 }).length).toBeGreaterThan(0);
-    const { M_ARCH, ...rest } = mods.reverse_lunge.SIZES;
-    expect(sizeProblems('reverse_lunge', rest).length).toBeGreaterThan(0);
+  it('mutations: BOX_H changed in the spec and a row dropped are red', () => {
+    expect(sizeProblems('box_jump', { ...mods.box_jump.SIZES, BOX_H: 0.46 }).length).toBeGreaterThan(0);
+    const { HEEL_BACK, ...rest } = mods.box_jump.SIZES;
+    expect(sizeProblems('box_jump', rest).length).toBeGreaterThan(0);
   });
 });
 
@@ -327,8 +250,6 @@ describe('LIB-8R A5, A10: runQa node half on each PILOT-A2 plate, the zooms, LIB
     expect(ruledProblems('bent_over_dumbbell_rear_delt_fly', r).length).toBeGreaterThan(0);
   });
   it('A10: each zoom is the planned Mistake-view zoom, at the smallest passing k', () => {
-    expect(spec('reverse_lunge').zoom).toEqual({ view: 'mistake', k: 2.5 });
-    expect(spec('dumbbell_fly').zoom).toEqual({ view: 'mistake', k: 2.5 });
     expect(spec('bent_over_dumbbell_rear_delt_fly').zoom).toEqual({ view: 'mistake', k: 2 });
     expect(spec('box_jump').zoom).toBeUndefined();
   });
