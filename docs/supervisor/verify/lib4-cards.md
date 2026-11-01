@@ -4626,3 +4626,6 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **CARD FIELDS cfwb2** (wall_ball re-verify @ `2d5762dc`) is **VALID**. The plant, a chest contact read from "held at chest height", was caught, and there were no other findings (#358 6551411150).
 - **PANEL mx21** (wall_ball round 1) is **VALID**. Plants were caught at R2 [2,2,2] and R7 [2,3,3]. wall_ball fails R3 [3,3,5] because the ghost hands float with no ball. Fix round: the upper ghost's forearm is rotated so the hand sits under the ball, and the deeper ghost's forearm is dropped.
 - A draft is running on routes for the 6 rows with none (hip_thrust, jump_rope, pallof_press, cable_rear_delt_fly, resisted_hip_flexion, russian_twist).
+- **PANEL mx22** (wall_ball recheck @ `6a1162df`) is **VALID**. Plants were caught at R5 [2,2,2] and R3 [3,3,2]. pull_up R1 is follow-up 20, and its R2 and R7 are both follow-up 22 (the same floor-line defect).
+  - wall_ball's R3 passes. **R4 fails [3,3,4]:** the "Right distance" leader ends on the chest ball. The fix is the last round: a dashed floor dimension from the toes to the wall face, with the leader ending on it (#358).
+- **#354 6552077335 (F-VITEST-RPC):** LB6 moves its long synchronous tests into child processes before READY (the D-LIB13S-RPC form). A profiling run on main is listing the tests of 10 s or more.
