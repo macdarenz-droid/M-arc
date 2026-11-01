@@ -2957,6 +2957,20 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
 - **D-LIB17-B13 ('LIB-17 resume 2', F-ZOOM-2 on main).** renegade_row joins lb7/rows.json with its Mistake zoom at k 3 and the opt-in `zoom.pair` (the far flat hex's vertex 0 against the turned tell vertex: 5.64 → 16.92 px). Its owed rows: the "Straight line" box moves to (40, 160) so no hit box overlaps "Feet wide" (H4), and the corner tell's label becomes "Corner landing" (H8, 1-3 words). cable_rear_delt_fly stays held (D-LIB17-RDFHOLD).
 - **D-LIB17-B14 (renegade_row panel mx5 R1, #343 6538121846).** The end dumbbell sits 0.16 m below the shoulder joint beside the lower ribs with the elbow led up and back, so the upper arm stands 53.9 deg from the trunk axis (was 94); the near arm keeps the row's pole from the start so no ghost bends the elbow toward the head; "Row to ribs" anchors at the hex's lower edge with its box below the body. zoom.pair unchanged; the f-zoom-2 circle pin moves to [228, 152].
 
+## LIB-16R2: LB6 resume 2, the 9 smith, fly and seated-machine rows, build-ahead (LIB-16R2 builder, 2026-10-31)
+
+- **D-LIB16R2-1 to -9 applied** (card docs/supervisor/verify/lib-16r2-card.md, lib4-cards §48; PLAN RULED #354 6543628951). All 9 rows are H. The clone sources are copied, never imported (D-LIB9-CLONE). Every unsourced number is in lb6/sizes.json r2 with its basis. Record: tools/plates/library/lb6/DESIGN.md section 19.
+- **Composers (D-LIB16R2-COMPOSERS).**
+  - `eq/hipAbdAddMachine.mjs` (14 items) serves hip_abduction (outer pads) and hip_adduction (inner pads).
+  - `eq/latRaiseMachine.mjs` (12 items) serves machine_lateral_raise.
+  - Both return PRIMITIVES only, every moving part a `poly`, and both are listed under "LIB-16" in eq-composers.json.
+- **Clearance (D-LIB16R2-CLEAR).** A frame part that sits beside the body in depth, such as a Smith stop drawn in front, is listed, not tested.
+- **rear_delt_fly zoom.** The Mistake zoom (the shrug) is at k 1.5, as PLAN RULED set it.
+- **Panel rounds.**
+  - mx12 approved the Smith shoulder press and incline press.
+  - mx14 approved both cable flies, the Smith squat, the machine lateral raise and the rear delt fly.
+  - mx16 approved hip_adduction.
+  - mx19 approved hip_abduction, after its mx16 R2 fix: the house pivot axle (leg_extension's 3 cm boss) at knee height on each pad arm (D-LIB16R2-PIVOT). Record: DESIGN.md 19.16-19.17.
 ## LIB-17 resume 3: LB7 push-up rows (LIB-17 builder, 2026-10-31)
 
 - **D-LIB17R3-MODES.** incline_push_up, diamond_push_up and pike_push_up are drawn H. No PARAMS key covers a hand surface, a body angle, where the hands sit along the body, the elbow's aim, or a hip pike. PUSHUP gets no template. Record: tools/plates/library/lb7/DESIGN.md section 19.
