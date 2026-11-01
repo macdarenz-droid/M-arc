@@ -103,6 +103,7 @@ const via = [key({ incl: END_INCL / 3, spine: 2, depth: kneeAt(40), ys: [0.4, 0.
 const LS = landmarksOf(start, H), LE = landmarksOf(end, H);
 const TOE_TIP = Math.max(LS['toe.r'][2], LS['toe.l'][2]);
 export const WALL_FACE = TOE_TIP + STAND_DIST;            // the wall's near face (world z)
+const DIM_Y = 0.05;                                        // the floor dimension's height (drawing only)
 // Mistake (c3): the squat bottom with the feet moved back so the toe tips are M_DIST from the wall, thorax M_INCL.
 const DZ = -(M_DIST - STAND_DIST);
 const MF = feetAt(DZ);
@@ -167,12 +168,15 @@ export default {
     { landmark: 'sole.l', plane: floor, pose: 'end', tol: 0.5 },
     hand('start', 'r'), hand('start', 'l'), hand('end', 'r'), hand('end', 'l'),
   ],
+  // Panel mx22 R4 (#358): a dashed floor dimension from the start toe tips to the wall face (correct plate only; the
+  // Mistake keeps its own floor-gap guide). DIM_Y lifts it off the floor line by 7 px.
+  datum: [{ y: DIM_Y, from: [0, DIM_Y, TOE_TIP], to: [0, DIM_Y, WALL_FACE], mistake: false }],
   startParts: ['trunk', 'leg.r'],
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r', 'ball'] },
   trace: { point: 'hip.r', trim: [10, 12] },
   callouts: [
     // c2: the front of the start ball (arms out, the ball touches the wall: the dashed start ball faces the wall)
-    { key: 'distance', text: 'Right<br>distance', anchor: { at: 'grip.r', pose: 'start', off: [17, -13] }, box: { left: 176, top: 40 }, cue: 'Arms out, the ball touches the wall: stand there.' },
+    { key: 'distance', text: 'Right<br>distance', anchor: [0, DIM_Y, WALL_FACE - 0.03], box: { left: 272, top: 296 }, cue: 'Arms out, the ball touches the wall: stand there.' },
     { key: 'depth', text: 'Squat depth', anchor: 'buttock', box: { left: 8, top: 240 }, cue: 'Squat until your thighs are parallel to the floor or lower, chest up.' },
     { key: 'catch', text: 'Catch,<br>then squat', anchor: { at: 'grip.r', pose: 'start', off: [0, 4] }, box: { left: 32, top: 146 }, cue: 'Catch the ball standing, hands under it, then squat.' },
   ],
