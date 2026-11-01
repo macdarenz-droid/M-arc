@@ -4651,3 +4651,4 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **Train 56** (#367, head `8635a228`) carries LB6 R2 #354 @ `85b8c380` and the PILOT-A3 docs delta #362 @ `0ab56be3`. Main goes from 112 to 121.
 - **LIB-13s READY @ `ce13cdfa`** (#359 6553020190); a fresh Opus reviewer is running.
 - **HELD-A started** (session_01EQuYNjBQnFptwsBN8xbt1B, branch claude/lib-held-a): hip_thrust and resisted_hip_flexion, then jump_rope after #358 merges. Active LIB builders: LIB-SMALL, LIB-SPLIT, LIB-SUPCORE, HELD-A.
+- **#359 review PASS** 6553118196 (0/0/0/3). The supervisor requires Low 1 fixed before the train: LIB-13 A10 runs both builds in **one** child process, as LB6 does, so leaked in-process state is still caught. Lows 2 and 3 are text only. HELD-A PLAN RULED (#368 6553075555): the bar never moves without a question.
