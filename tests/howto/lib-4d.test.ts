@@ -6,6 +6,7 @@ import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, expect, it, onTestFinished } from 'vitest';
+import { child } from '../child-test';
 import { readHowTo } from './generated-module';
 import { SHIPPED } from './shipped-rows';
 
@@ -45,7 +46,7 @@ describe('LIB-4d R2: ownRowsTree', () => {
   const DIRS = ['tools/plates/library/batches', 'src/howto', 'src/howto/generated', 'src/slices/howto/css', 'tests/howto/golden/library', 'tools/plates/library/pages'];
   const list = (root: string, d: string) => (existsSync(join(root, d)) ? readdirSync(join(root, d)).sort() : []);
   const plant = (root: string, p: string, t: string) => { mkdirSync(dirname(join(root, p)), { recursive: true }); writeFileSync(join(root, p), t); };
-  it('drops every batch row, its golden file, its pages and the files only it had; else it is the plain copy', async () => {
+  child.it('drops every batch row, its golden file, its pages and the files only it had; else it is the plain copy', async () => {
     const F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
     const core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
     const trees: string[] = [];

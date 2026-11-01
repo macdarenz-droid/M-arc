@@ -9,6 +9,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 import { HELD, PAIR, heldShapeProblems, pairingMismatches, pairingMutations } from './held-pairing';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -264,7 +265,7 @@ describe('LIB-5 S3 and S12 on the S3 fixture card: candidateOf and runQa in a co
     expect(FIXTURE_FORM.vertex).toBe(base.c.spec.measure.vertex);
     expect([fx.plate.mistake.drawable, fx.topFault]).toEqual([true, base.c.mistakeFault]);
   });
-  it('mutations through researchOf and runQa, each red', async () => {
+  child.it('mutations through researchOf and runQa, each red', async () => {
     const fx = fixture(), { tempo: _t, plateFacts: _p, topFault: _f, ...bare } = fx;
     const cases: [string, any, (r: any) => boolean][] = [
       ['tempo nested under plate', { ...bare, plateFacts: fx.plateFacts, topFault: fx.topFault, plate: { ...fx.plate, tempoArray: fx.tempo } }, r => h6(r).includes('H6.tempo')],

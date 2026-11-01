@@ -8,6 +8,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -470,7 +471,7 @@ describe('PILOT-A3 A8, A10: runQa node half on each plate, the zooms, the fly ch
   // the node-computed flags (F2 and F5 are the browser half's, pilot-a3/qa.mjs EXPECTED)
   const NODE_FLAGS: Record<string, string[]> = { reverse_lunge: ['F3', 'F4'], dumbbell_fly: ['F3'] };
   const flagProblems = (id: string, r: any) => ['F1', 'F3', 'F4', 'F6', 'F7'].filter(f => r.flags[f].raised !== NODE_FLAGS[id]!.includes(f)).map(f => `${id}: ${f} ${r.flags[f].raised}`);
-  it.each(IDS)('%s: every node hard check passes with zero exemptions; the node flags are the expected set', async id => {
+  child.it.each(IDS)('%s: every node hard check passes with zero exemptions; the node flags are the expected set', async id => {
     const r = await qa(await candOf(id));
     expect(node(r)).toEqual([]);
     expect(flagProblems(id, r)).toEqual([]);
@@ -491,7 +492,7 @@ describe('PILOT-A3 A8, A10: runQa node half on each plate, the zooms, the fly ch
       return { ...s, equipment: s.equipment.map((e, j) => (j === i ? (lm, ctx) => (ctx.pose === 'end' ? ['l', 'r'].flatMap(sd => three(st['grip.' + sd])).map(pts => ({ type: 'line', pts, cls: 'eq-line m-line', z: 'front' })) : null) : e)) }; }`;
     expect(node(await qa(await mutated('dumbbell_fly', fn)))).toContain('H7.chunk-raw');
   });
-  it('A4, A7 mutations: the next k down (reverse_lunge 2.5, dumbbell_fly 2) turns H3 red', async () => {
+  child.it('A4, A7 mutations: the next k down (reverse_lunge 2.5, dumbbell_fly 2) turns H3 red', async () => {
     for (const [id, k] of [['reverse_lunge', 2.5], ['dumbbell_fly', 2]] as const) {
       expect(node(await qa(await mutated(id, `s => ({ ...s, zoom: { ...s.zoom, k: ${k} } })`))), id).toContain('H3.zoom:deviation');
     }
@@ -518,7 +519,7 @@ describe('PILOT-A3 A8, A10: runQa node half on each plate, the zooms, the fly ch
   it('A10 M3 a Trace below the minimum turns PQ-H3 red', async () => {
     expect(node(await qa(await mutated('reverse_lunge', 's => ({ ...s, trace: { ...s.trace, trim: [s.trace.trim[0], 60] } })')))).toContain('H3.trace');
   });
-  it('A10 M4 the Mistake equal to the end pose, and M5 the start equal to the end, turn PQ-H3 red', async () => {
+  child.it('A10 M4 the Mistake equal to the end pose, and M5 the start equal to the end, turn PQ-H3 red', async () => {
     expect(node(await qa(await mutated('reverse_lunge', 's => ({ ...s, mistake: { ...s.mistake, pose: {}, guides: [] } })')))).toContain('H3.mistake-outline');
     // M5 on the fly: reverse_lunge's selected shin guide cannot be spliced into a page whose start equals its end
     expect(node(await qa(await mutated('dumbbell_fly', 's => ({ ...s, poses: { ...s.poses, start: s.poses.end, via: [] }, checks: s.checks.filter(k => k.pose !== "start") })')))).toContain('H3.start-is-end');

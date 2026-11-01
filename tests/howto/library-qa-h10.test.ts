@@ -2,6 +2,7 @@
 // (candidateOf -> runQa), on the LIB-2b fixture row turned into a D child of lib_pull_up in memory. Nothing is written
 // to rows.json, batches/ or tests/howto/golden/; TEST_ENV lives only in this file.
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const T = 180_000;
@@ -137,7 +138,7 @@ describe('LIB-3b PQ-H10 on the real path', { timeout: T }, () => {
     expect((await node.h10(c)).map((p: any) => p.key)).toEqual(['H10.envelope:camera.maxScale']);
   });
 
-  it('3b-A10 a malformed envelope row fails closed', async () => {
+  child.it('3b-A10 a malformed envelope row fails closed', async () => {
     for (const bad of [{ min: 0.9, max: 1.1 }, [1], true, JSON.parse('[0, 1e999]')]) {
       const r = await qa({ 'camera.maxScale': 99 }, { envelope: { ...TEST_ENV, 'camera.maxScale': bad } });
       expect([bad, r.keys]).toEqual([bad, ['PQ-H10 H10.envelope:camera.maxScale']]);
