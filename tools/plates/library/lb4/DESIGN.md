@@ -416,11 +416,11 @@ Pose map: identity for the 5 (each card fault is at the bottom); step_up keeps D
 | id | start | via (ghosts) | end | Mistake (size) | first tell = topFault | tempo = tempoOf(strip) |
 |---|---|---|---|---|---|---|
 | step_up | unchanged except the trailing hip 15 → 21 (17.4) | none | unchanged | unchanged (`lean`, M_INCL 40) | `lean` | Rise blank; Lower Controlled |
-| forward_lunge | standing on the rear foot's spot: both mid-feet START_Z −1.0129 m behind the front mid-foot, so the rear ball's z equals the end's (ruling 7) | 1: near foot 8 cm up, halfway, toes up 15° (heel landing, c4); 2: near foot down, rear heel up, hips halfway | the parent's end (shin 6°, thigh parallel, rear knee joint 8.5 cm up: "without touching", c1) | front shin 6° → M_SHIN 29.2°, the angle that puts the knee joint centre over the toe tip; hips held at the end height, 14.6 cm forward | `knee` (one tell; its cue names the hips) | Step Slow; Lower Smooth; Rise blank |
+| forward_lunge | standing on the rear foot's spot: both mid-feet START_Z −1.0129 m behind the front mid-foot, so the rear ball's z equals the end's (ruling 7) | 1: near foot 8 cm up, halfway, toes up 15° (heel landing, c4); 2: near foot down, rear heel up, hips halfway | the parent's end (shin 6°, thigh parallel, rear knee joint 8.5 cm up: "without touching", c1) | front shin 6° → M_SHIN 29.2°, the angle that puts the knee joint centre over the toe tip; hips held at the end height, 14.6 cm forward | `knee` (`shin`; the knee cue names the hips) | Step Slow; Lower Smooth; Rise blank |
 | walking_lunge | as forward_lunge (START_Z −1.0058) | as forward_lunge | shin 6°, front thigh 5° below parallel, rear kneecap on the floor (knee joint 4.9 cm up, c2) | pelvis and trunk pitched to M_LEAN 26.9° (solved: near shoulder over the middle of the front thigh), arms plumb, legs unmoved | `chest` (`head`) | Lower Controlled; Rise blank |
-| bodyweight_lunge | as forward_lunge, feet together (c1): near foot beside the rear one, root centred (START_Z −0.9903) | as forward_lunge | shin 12° (c4 "slightly forward"), thigh parallel (c4), trunk 20° forward from the hips, flat (c5: pelvis tilt, trunk flex 0), no load | as forward_lunge: M_SHIN 29.2° | `knee` (one tell) | Step Slow; Lower blank; Rise blank |
-| bodyweight_split_squat | same stance as the end, hips straight above the end hips, front knee 8° (c3 "about straight"; A3 ≤ 10°) | none (feet fixed; 2 interpolated ghosts) | as walking_lunge's | as forward_lunge: M_SHIN 29.2° | `knee` | Lower Smooth; Rise Smooth |
-| bulgarian_split_squat | same stance, hips above the end hips, front knee 8° ("standing on the front leg") | none | rear kneecap on the floor (c3 contact, D-SPLIT-BSSMIS), front shin 6°, hip where both thighs meet (0.476 m) | see 17.6 | `seat` | Lower Controlled; Stand blank |
+| bodyweight_lunge | as forward_lunge, feet together (c1): near foot beside the rear one, root centred (START_Z −0.9903) | as forward_lunge | shin 12° (c4 "slightly forward"), thigh parallel (c4), trunk 20° forward from the hips, flat (c5: pelvis tilt, trunk flex 0), no load | as forward_lunge: M_SHIN 29.2° | `knee` (`shin`) | Step Slow; Lower blank; Rise blank |
+| bodyweight_split_squat | same stance as the end, hips straight above the end hips, front knee 8° (c3 "about straight"; A3 ≤ 10°) | none (feet fixed; 2 interpolated ghosts) | as walking_lunge's | as forward_lunge: M_SHIN 29.2° | `knee` (`shin`) | Lower Smooth; Rise Smooth |
+| bulgarian_split_squat | same stance, hips above the end hips, front knee 8° ("standing on the front leg") | none | rear kneecap on the floor (c3 contact, D-SPLIT-BSSMIS), front shin 6°, hip where both thighs meet (0.476 m) | see 17.6 | `seat` (`knee`) | Lower Controlled; Stand blank |
 
 - Mistake sizes are picked from the card words, never to pass a bar (Q-D5-3). "Tips far forward over the foot"
   (forward_lunge, bodyweight_lunge) and "tips well past vertical" (bodyweight_split_squat) are drawn as the knee
@@ -514,8 +514,10 @@ REAR_X, STANCE, START_KNEE 8, M_SINK; step_up the trailing hip 21. Each spec hea
 
 - Q1 accepted (A3: rear ball x and z within 0.5 cm, y = REAR_LIFT ± 0.5 cm; a 1 cm x mutation). Q2 option (a): 1 cm
   sink, unsourced, Mistake zoom k 1.5. Q3: step_up F4 named at 1; the H4 fix boxes `leg` only.
-- forward_lunge and bodyweight_lunge keep one tell (`knee`): a right-side `hips` tell needed a leader over 99 px to
-  the buttock (F3's 82.26 px top), so its words moved into the knee tell's cue.
+- forward_lunge and bodyweight_lunge drop the `hips` tell: a right-side label needed a leader over 99 px to the
+  buttock (F3's 82.26 px top), so its words moved into the knee tell's cue. Section 9's 2-3 tells (Q-D5-4) are kept
+  with a `shin` tell (mid-shin, Mistake pose) on forward_lunge, bodyweight_lunge and bodyweight_split_squat, and a
+  `knee` tell (the resting kneecap) on bulgarian_split_squat.
 - Label boxes (each moved off the engine's own place for F3 or H4): forward_lunge `hips`, `back`; walking_lunge
   `hips`, `chest`; bodyweight_lunge `hips` (anchor the hip joint: every buttock place measured over 82 px), `thigh`
   (two lines), `back`; bodyweight_split_squat `knee`; step_up `leg`. bodyweight_split_squat has one box, so F4 is 1:
