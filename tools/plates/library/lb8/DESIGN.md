@@ -302,6 +302,13 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
 | "focus on pushing through the heels throughout the set" (c15) | `contact heel.l, heel.r` ("throughout": start and end) | start (start), end (end) |
 | "Your knees should form a ~90-degree angle at the top." (c8; plate.end cites c8) | `angle knee.l 90`, `knee.r 90` ("knees") | end (end) |
 
+- **c1 "Sit on the floor" (D-HELD6-SEAT, -SEAT2, #368 6553929561, 6553943662; panel mx24 R3):** the card's `contact
+  seat` (start) is replaced by `{ kind: 'contact', outline: 'torso', pose: 'start', claim: 'c1' }`: the drawn torso
+  outline's lowest point on the floor, 0 cm, 0.5 cm either way, bound by the spec's `outlineChecks` and H6's outline
+  branch (qa/node.mjs `outlineContactProblem`). The start tilt is solved on that outline: −33.88°. **Not a fact: the
+  seat landmark at the start, 2.34 cm above the floor**; c1's contact is the drawn outline. Measured (torso outline vs
+  the floor / seat landmark): −29.69° (main) −2.04 cm (−2.98 px) / 0.00; −30.62° −1.61 / 0.50; −31.12° −1.37 (−2.00
+  px) / 0.78; −31.52° −1.17 / 1.00; −33.88° 0.00 / 2.34.
 - **Not facts**: c1, c2 "shoulder-width" / "hip width": a width the side view cannot show. c3 "positioned in the crease
   of the hip": the model has no hip-crease landmark (PANELS.md 7's kinds); held by a check-free drawn-item test (the bar
   centre PAD_R clear of the drawn torso and thigh outlines at the visible crease, in every pose and ghost; bearing fix, #306 6358957999) and R10. c6 "your shins are

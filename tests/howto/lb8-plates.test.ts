@@ -2082,7 +2082,7 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
       ...LRs('ball', 'end', 'c8'), ...KNs('end', 'c13')],
     standing_calf_raise: [...LRs('ball', 'start', 'c1'), ...LRs('toe', 'start', 'c1'), ...LRs('shoulderTop', 'start', 'c1'), ...LRs('wrist', 'start', 'c2'), ...LRs('ball', 'end', 'c7')],
     bodyweight_calf_raise: [...LRs('ball', 'start', 'c3'), ...LRs('ball', 'end', 'c4'), ...LRs('toe', 'end', 'c4')],
-    hip_thrust: [['seat', 'start', 'c1'], ...LRs('heel', 'start', 'c1'), ...LRs('ball', 'start', 'c1'), ['backUpper', 'start', 'c2'], ['backUpper', 'end', 'c9'], ...LRs('wrist', 'start', 'c3'),
+    hip_thrust: [['outline:torso', 'start', 'c1'], ...LRs('heel', 'start', 'c1'), ...LRs('ball', 'start', 'c1'), ['backUpper', 'start', 'c2'], ['backUpper', 'end', 'c9'], ...LRs('wrist', 'start', 'c3'),
       ...LRs('wrist', 'end', 'c3'), ...LRs('heel', 'end', 'c15'), ...KNs('end', 'c8')],
     glute_bridge: [['backUpper', 'start', 'c1'], ['buttock', 'start', 'c1'], ...LRs('heel', 'start', 'c1'), ...LRs('ball', 'start', 'c1'), ['sacrum', 'start', 'c2'],
       ...LRs('heel', 'end', 'c3'), ['knee.r', 'end', 'c4', 90]],
@@ -2098,10 +2098,10 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
   const DRAWN_KEY: Record<string, string> = { hack_squat: 'lift', pendulum_squat: 'heels', leg_extension: 'arch', lying_leg_curl: 'arch', standing_leg_curl: 'arch', seated_calf_raise: 'range', standing_calf_raise: 'lock',
     bodyweight_calf_raise: 'part', hip_thrust: 'arch', glute_bridge: 'arch', cable_kickback: 'arch', resisted_hip_flexion: 'lean' };
   const factProblems = (id: string, card: any) => {
-    const got = (card.plateFacts ?? []).map((f: any) => [f.joint ?? f.landmark, f.pose, f.claim, ...(f.kind === 'angle' ? [f.deg] : [])]), out: string[] = [];
+    const got = (card.plateFacts ?? []).map((f: any) => [f.joint ?? f.landmark ?? `outline:${f.outline}`, f.pose, f.claim, ...(f.kind === 'angle' ? [f.deg] : [])]), out: string[] = [];
     if (JSON.stringify(got) !== JSON.stringify(RULED[id])) out.push(`${id}: plateFacts != the ruled set`);
     for (const f of card.plateFacts ?? []) {
-      if (f.pose !== f.cardPose) out.push(`${id}: ${f.joint ?? f.landmark} pose ${f.pose} is not the pose map's image of ${f.cardPose}`);
+      if (f.pose !== f.cardPose) out.push(`${id}: ${f.joint ?? f.landmark ?? `outline:${f.outline}`} pose ${f.pose} is not the pose map's image of ${f.cardPose}`);
       if (!card.claims.some((c: any) => c.id === f.claim)) out.push(`${id}: ${f.claim} is no claim`);
     }
     return out;
@@ -2120,7 +2120,7 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     c.plateFacts[0].pose = 'end'; c.plateFacts[0].cardPose = 'end';
     expect(factProblems('cable_kickback', c).length).toBeGreaterThan(0);
     const d = JSON.parse(JSON.stringify(cardOf('hip_thrust'))); d.plateFacts[0].pose = 'end';
-    expect(factProblems('hip_thrust', d)).toContain('hip_thrust: seat pose end is not the pose map\'s image of start');
+    expect(factProblems('hip_thrust', d)).toContain('hip_thrust: outline:torso pose end is not the pose map\'s image of start');
   });
   it('each card\'s tempo is the strip built from lb8/tempo.json and its plate.tempo, and equals its drawn spec\'s', () => {
     const tj = readJson('tools/plates/library/lb8/tempo.json');
@@ -2175,6 +2175,62 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
       const keys = h6Of('hip_thrust', c, moved);
       expect(keys.some((x: string) => /H6\.fact:\d+:contact:/.test(x)), pose).toBe(true);
     }
+  });
+});
+
+// ---- HELD-A (D-HELD6-SEAT, -SEAT2; panel mx24 R3): hip_thrust's c1 contact is the drawn torso outline on the floor ----
+describe('HELD-A D-HELD6-SEAT2: the outline contact (H6 branch, outlineChecks, the start solved on the torso outline)', { timeout: T }, () => {
+  const h6Keys = (spec: any, card: any) => {
+    const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
+    return qaNode.h6({ spec, research: card }, { engine: Eng(), pins: pins() }, R).map((p: any) => `${p.key} ${p.text}`);
+  };
+  const HT = () => M.hip_thrust.HT, G = () => M.hip_thrust.SIZES.GRIP_X;
+  /** hip_thrust with its start at pelvis tilt t on the bench edge, the bar in the crease and the hands on it. */
+  const startAt = (t: number) => {
+    const p = HT().onEdge(t), b = HT().barIn(p);
+    return { ...S.hip_thrust, poses: { ...S.hip_thrust.poses, start: { ...p, reach: { l: { at: [G(), b[1], b[2]], pole: [1, -0.6, 0] }, r: { at: [-G(), b[1], b[2]], pole: [-1, -0.6, 0] } } } } };
+  };
+  const outlineCm = (spec: any) => {
+    const L = qaEng.poseLandmarks(Eng(), spec), R = plate.renderPlate(spec, { id: 'x' }), cam = qaEng.cameraOf(spec, R.report);
+    const low = Math.max(...body.bodyShapes(body.fk(L.q.start, L.body), cam).filter((x: any) => x.key === 'torso' && x.poly).flatMap((x: any) => x.poly.map((q: number[]) => q[1])));
+    return ((cam.y0 - low) / cam.pxPerM) * 100;
+  };
+  it('the card\'s c1 fact is the torso outline at the start; the spec binds it in outlineChecks at 0.5 cm and checks no seat landmark; the start tilt is solved on the outline (-33.88°), the seat landmark 2.34 cm up (a not-fact)', () => {
+    const c = cardOf('hip_thrust'), f = c.plateFacts[0];
+    expect(f).toEqual({ kind: 'contact', outline: 'torso', pose: 'start', cardPose: 'start', claim: 'c1' });
+    expect(c.plateFacts.some((x: any) => x.landmark === 'seat')).toBe(false);
+    expect(S.hip_thrust.outlineChecks).toEqual([{ outline: 'torso', pose: 'start', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, tol: 0.5 }]);
+    expect(S.hip_thrust.checks.some((k: any) => k.landmark === 'seat')).toBe(false);
+    expect(M.hip_thrust.START_TILT).toBeCloseTo(-33.88, 1);
+    const cm = outlineCm(S.hip_thrust), seat = lmOf(S.hip_thrust, 'start').seat[1] * 100;
+    console.log(`HELD-A hip_thrust start: tilt ${M.hip_thrust.START_TILT.toFixed(2)}°, torso outline ${cm.toFixed(2)} cm, seat landmark ${seat.toFixed(2)} cm`);
+    expect(Math.abs(cm)).toBeLessThanOrEqual(0.5);
+    expect(seat).toBeCloseTo(2.34, 1);
+    expect(h6Keys(S.hip_thrust, c)).toEqual([]);
+  });
+  it('mutations: main\'s start (-29.69°, the outline 2.04 cm under the floor) and a 0.6 cm lift are red in H6; so is an unknown outline name, and no outlineChecks entry', () => {
+    const c = cardOf('hip_thrust'), main = startAt(-29.69);
+    expect(outlineCm(main)).toBeCloseTo(-2.04, 1);
+    expect(h6Keys(main, c)).toEqual([expect.stringMatching(/^H6\.fact:0:contact:outline:torso outline contact torso start: lowest point 2\.0\d cm below the floor/)]);
+    const st = S.hip_thrust.poses.start, lift = { ...S.hip_thrust, poses: { ...S.hip_thrust.poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1] + 0.006, st.root.at[2]] } } } };
+    expect(h6Keys(lift, c).filter((k: string) => k.startsWith('H6.fact:0:'))).toEqual([expect.stringMatching(/lowest point 0\.\d+ cm above the floor/)]);
+    const bad = JSON.parse(JSON.stringify(c)); bad.plateFacts[0].outline = 'torsoX';
+    expect(h6Keys(S.hip_thrust, bad)).toEqual(['H6.fact:0:contact:outline:torsoX outline contact torsoX: no outlineChecks entry for start']);
+    expect(qaNode.outlineContactProblem({ kind: 'contact', outline: 'torsoX', pose: 'start' }, { ...S.hip_thrust, outlineChecks: [{ ...S.hip_thrust.outlineChecks[0], outline: 'torsoX' }] }, Eng(), qaEng.poseLandmarks(Eng(), S.hip_thrust), plate.renderPlate(S.hip_thrust, { id: 'x' }).report)).toBe('outline contact torsoX: no drawn torsoX outline in start');
+    expect(h6Keys({ ...S.hip_thrust, outlineChecks: undefined }, c)).toEqual(['H6.fact:0:contact:outline:torso outline contact torso: no outlineChecks entry for start']);
+  });
+  it('mutation: qa/node.mjs with the outline branch removed fails the fact (it falls to the landmark branch and finds no check), never passes', async () => {
+    const src = readFileSync('tools/plates/library/qa/node.mjs', 'utf8'), at = src.indexOf("    if (f.kind === 'contact' && f.outline != null && f.landmark == null) {");
+    expect(at).toBeGreaterThan(0);
+    const end = src.indexOf('      continue;\n    }\n', at) + '      continue;\n    }\n'.length, cut = src.slice(0, at) + src.slice(end);
+    expect(cut.includes('f.outline != null')).toBe(false);
+    const tmp = `tools/plates/library/qa/.held-a-nobranch-${process.pid}.mjs`;
+    writeFileSync(tmp, cut);
+    try {
+      const N = await import(/* @vite-ignore */ new URL(`../../${tmp}`, import.meta.url).href);
+      const R = { normal: plate.renderPlate(S.hip_thrust, { id: 'x' }), mistake: plate.renderPlate(S.hip_thrust, { id: 'x', mistake: true }) };
+      expect(N.h6({ spec: S.hip_thrust, research: cardOf('hip_thrust') }, { engine: Eng(), pins: pins() }, R).map((p: any) => p.key)).toEqual(['H6.fact:0:contact:']);
+    } finally { rmSync(tmp, { force: true }); }
   });
 });
 

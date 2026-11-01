@@ -153,8 +153,11 @@ const withBar = p => ({ ...p, reach: hands(barIn(p)) });
 
 const end = withBar(onEdge(TOP_TILT));
 export const BAR_TOP = barIn(end);
-// ---- bottom (start): lowered until the plates or the seat (c1 "Sit on the floor") or the buttock reach the floor ----
-const lowest = t => { const p = onEdge(t), l = L(p); return Math.min(barIn(p)[1] - PLATE_D / 2, l.seat[1], l.buttock[1]); };
+// ---- bottom (start): lowered until the plates or the drawn torso outline (c1 "Sit on the floor") reach the floor ----
+// (D-HELD6-SEAT, panel mx24 R3: the contact is where the drawn body meets the floor; the seat landmark lies inside the
+// buttock's soft tissue, 2.34 cm up, so solving on it put the drawn outline 2.04 cm under the floor)
+const torsoLow = p => { const b = { height: H }, sk = fk(resolve(normPose(p, b), b).q, b); return Math.min(...bodyShapes(sk, SIDE_CAM).filter(x => x.key === 'torso' && x.poly).flatMap(x => x.poly.map(q => q[1]))) / MM; };
+const lowest = t => { const p = onEdge(t); return Math.min(barIn(p)[1] - PLATE_D / 2, torsoLow(p)); };
 export const START_TILT = bisect(lowest, -89, -20);
 const start = withBar(onEdge(START_TILT));
 // ---- the in-between keys: the rep pivots on the bench edge (c9), so the two ghosts (plate.mjs ghostT 1/3, 2/3, which
@@ -206,12 +209,13 @@ export default {
   checks: [
     ...factChecks('start', start, ['heel.l', 'heel.r', 'ball.l', 'ball.r', 'wrist.l', 'wrist.r']),
     ...factChecks('end', end, ['heel.l', 'heel.r', 'wrist.l', 'wrist.r']),
-    // c1 "Sit on the floor" (setup): the seat on the floor at the start (the bottom solve stops there: the seat lands
-    // before the plates, which stay above the floor with the pad resting in the crease)
-    { landmark: 'seat', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'start', tol: 0.5 },
     { landmark: 'backUpper', at: EDGE, pose: 'all', tol: 0.5 },                                  // c2, c9: the upper back on the bench edge
     ...['sole.l', 'sole.r'].map(landmark => ({ landmark, at: SOLE(landmark.endsWith('l') ? 1 : -1), pose: 'all', tol: 0.5 })),   // c1: feet flat
   ],
+  // c1 "Sit on the floor" (setup; D-HELD6-SEAT, -SEAT2): the drawn torso outline's lowest point on the floor at the
+  // start, 0.5 cm either way (the bottom solve stops there: the outline lands before the plates, which stay above the
+  // floor with the pad resting in the crease). Read by H6 (qa/node.mjs outlineContactProblem) and lb8-plates only.
+  outlineChecks: [{ outline: 'torso', pose: 'start', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, tol: 0.5 }],
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r'] },
   trace: { point: 'hip.r', trim: [6, 8] },
   measure: { vertex: 'knee.r', from: 'hip.r', to: 'ankle.r', radius: 20, title: 'Knee', value: 'about 90°', expect: 90, box: { left: 260, top: 200 } },
