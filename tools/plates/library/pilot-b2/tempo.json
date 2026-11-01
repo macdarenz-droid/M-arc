@@ -1,0 +1,16 @@
+{
+ "note": "PILOT-B2 tempo map (LIB-SUPCORE Do 3; pilot-b/tempo.json's form). The card tempo is built only from this file and the card's plate.tempo: up is the concentric phase, down the eccentric, pause a Hold right after the concentric, present if and only if pause > 0. Moving rows are {phase, s, move: true}; Hold is {phase, s}.",
+ "ruling": "LIB-SUPCORE PLAN RULED @ 72d1166d (#366 6552704443)",
+ "research": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
+ "constants": {},
+ "ids": {
+  "crunch": {
+   "claim": ["c12", "c3", "c5", "c11"],
+   "rows": [
+    { "phase": "Curl", "from": "up", "move": true },
+    { "phase": "Hold", "from": "pause" },
+    { "phase": "Lower", "from": "down", "move": true }
+   ]
+  }
+ }
+}

@@ -542,5 +542,8 @@
   "The back feel row restates ACE's fault (fast, hip-led curl tilting the pelvis and stressing the low back, c6) and its fix (LR-6); the back box link stays pending (LR-26, LR-27).",
   "Tempo: plate.tempo.pause is 1 for ACE's brief hold at the top (c3). The numbers are a drawing convention, not ACSM (LR-15).",
   "W1 fixer round 2026-10-03: F14: c2 text now includes ACE's hands-behind-head option, which its ACE quote states."
- ]
+ ],
+ "plateFacts": [{"kind":"contact","landmark":"buttock","pose":"start","cardPose":"start","claim":"c1","note":"c1 \"Lie on your back on a mat\": the back on the mat, read at the buttock (D-LIB11-SACRUM); a setup quote, the start pose only"},{"kind":"contact","landmark":"backUpper","pose":"start","cardPose":"start","claim":"c1","note":"c1 \"Lie on your back on a mat\": the upper back flat on the mat; a setup quote, the start pose only"},{"kind":"contact","landmark":"sole.r","pose":"start","cardPose":"start","claim":"c1","note":"c1 \"feet flat on the floor\" (both feet); a setup quote, the start pose only"},{"kind":"contact","landmark":"sole.l","pose":"start","cardPose":"start","claim":"c1","note":"c1 \"feet flat on the floor\" (both feet); a setup quote, the start pose only"},{"kind":"contact","landmark":"buttock","pose":"end","cardPose":"end","claim":"c3","note":"c3 \"feet, tailbone and low back stay on the mat while the upper back lifts off\" (plate.end cites c3): the tailbone and low back read at the buttock (D-LIB11-SACRUM)"},{"kind":"contact","landmark":"sole.r","pose":"end","cardPose":"end","claim":"c3","note":"c3 \"feet, tailbone and low back stay on the mat\" (both feet; plate.end cites c3)"},{"kind":"contact","landmark":"sole.l","pose":"end","cardPose":"end","claim":"c3","note":"c3 \"feet, tailbone and low back stay on the mat\" (both feet; plate.end cites c3)"}],
+ "tempo": [{"phase":"Curl","s":1,"move":true},{"phase":"Hold","s":1},{"phase":"Lower","s":2,"move":true}],
+ "topFault": "lowback"
 }

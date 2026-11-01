@@ -4,7 +4,7 @@
 // child processes (D-LIB13S-RPC, F-VITEST-RPC); the browser half of the plate QA runs in pilot-b2/qa.mjs.
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { promisify } from 'node:util';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
@@ -217,17 +217,21 @@ describe('PILOT-B2 A6: 2 px clearance (D-SUPCORE-CLEAR)', { timeout: T }, () => 
 });
 
 describe('PILOT-B2 A9 (node half), A2 (part): runQa, the expected flags, the page builds (awaited child processes)', { timeout: T }, () => {
-  it('runQa node: every hard check passes but H6:no-card (until CARD FIELDS); flags F1 191.76, F3 161.2 (named), F7 (until CARD FIELDS); zooms k 3 / k 2', async () => {
+  it('runQa node: every hard check passes with zero exemptions; node flags F1 191.76 and F3 161.2 (named); zooms k 3 / k 2', async () => {
     const r = await qaNode();
-    expect(r.keys).toEqual(['H6:no-card']);
+    expect(r.keys).toEqual([]);
     // the node-computed flags (F2 and F5 are the browser half's: pilot-b2/qa.mjs EXPECTED)
-    expect(Object.keys(r.flags).filter(f => ['F1', 'F3', 'F4', 'F6', 'F7'].includes(f)).sort()).toEqual(['F1', 'F3', 'F7']);
+    expect(Object.keys(r.flags).filter(f => ['F1', 'F3', 'F4', 'F6', 'F7'].includes(f)).sort()).toEqual(['F1', 'F3']);
     expect([+r.flags.F1.toFixed(2), +r.flags.F3.toFixed(1)]).toEqual([191.76, 161.2]);
     expect([r.zoom.normal.k, +r.zoom.normal.trace.toFixed(2), r.zoom.mistake.k, +r.zoom.mistake.deviation.toFixed(2)]).toEqual([3, 23.24, 2, 15.11]);
   });
   // H4.small ("Chin<br>set") is the browser half's: its mutation runs through pilot-b2/qa.mjs (listed in the PR)
   it('mutation: the Mistake zoom removed gives H3.deviation', async () => {
     expect((await qaNode("s => ({ ...s, zoom: [{ view: 'normal', k: 3 }] })")).keys).toContain('H3.deviation');
+  });
+  it('A9 mutation: the Mistake tell keyed \'pelvis\' first (the card topFault \'lowback\' not the drawn key) raises F7', async () => {
+    const r = await qaNode("s => ({ ...s, mistake: { ...s.mistake, tells: s.mistake.tells.filter(t => t.key !== 'lowback') } })");
+    expect(Object.keys(r.flags)).toContain('F7');
   });
   it('the PILOT-B2 page is deterministic, and pilot B\'s page is unchanged (ff3e017c, 409,765 B)', async () => {
     const r = await child(`const { createHash } = await import('node:crypto'), sha = x => createHash('sha256').update(x).digest('hex');
@@ -242,5 +246,92 @@ console.log(JSON.stringify({ x: sha(x.html), y: sha(y.html), ids: b2.drawnIds(),
   it('the pre-pin rows file exists and the pin files do not yet', () => {
     expect(existsSync(ROWS)).toBe(true);
     for (const f of ['tools/plates/library/batches/pilot-b2.json', 'tools/plates/library/pages/pilot-b2.json', 'tests/howto/golden/library/pilot-b2.json']) expect(existsSync(f), f).toBe(false);
+  });
+});
+
+describe('PILOT-B2 A10: crunch\'s card fields (Do 3; D-LIB8M-CARDS)', () => {
+  const cardsSha = readJson('tools/plates/library/pilot-b2/cards.sha.json');
+  const BLOCK = /,\n( +)"plateFacts": [^\n]*,\n\1"tempo": [^\n]*,\n\1"topFault": [^\n]*\n}\n$/;
+  const unkeyed = (text: string) => (BLOCK.test(text) ? text.replace(BLOCK, '\n}\n') : null);
+  const CARD = 'docs/research/howto/cards/crunch.json';
+  let V: any;
+  beforeAll(async () => { V = await import(/* @vite-ignore */ lib('research/validate.mjs')); }, T);
+  it('the card differs from its research copy (a48b0594, 8e45ee15…) only in the three-key block; the quotes file is a byte copy; validateCard []', () => {
+    expect(cardsSha.researchHead).toBe('a48b059400a74d5c9e3aceed21cf1aa67ab6f118');
+    const text = readFileSync(CARD, 'utf8');
+    expect(sha(unkeyed(text) ?? '')).toBe(cardsSha.cards.crunch);
+    expect(cardsSha.cards.crunch).toBe(readJson('tools/plates/library/pilot-b/cards.sha.json').cards.crunch);
+    expect(sha(readFileSync('docs/research/howto/quotes/crunch.json'))).toBe(cardsSha.quotes.crunch);
+    expect(Object.keys(JSON.parse(text)).slice(-3)).toEqual(['plateFacts', 'tempo', 'topFault']);
+    expect(V.validateCard(JSON.parse(text), readJson('docs/research/howto/quotes/crunch.json'), { file: 'crunch.json' })).toEqual([]);
+  });
+  it('tempo = the pilot-b2/tempo.json row built from plate.tempo (Curl 1, Hold 1, Lower 2) = the spec tempo; topFault = the drawn Mistake key', () => {
+    const c = readJson(CARD), tj = readJson('tools/plates/library/pilot-b2/tempo.json');
+    expect(tj.ids.crunch.claim).toEqual(c.plate.tempo.claim);
+    expect(c.tempo).toEqual(V.buildTempo('crunch', tj.ids.crunch.rows, c.plate.tempo));
+    expect(c.tempo).toEqual([{ phase: 'Curl', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }]);
+    expect(spec().tempo).toEqual(c.tempo);
+    expect([c.topFault, spec().mistake.tells[0].key, c.plate.mistake.drawable]).toEqual(['lowback', 'lowback', true]);
+  });
+  it('every contact fact has a spec check on its landmark in its pose (H6); facts name the ruled set', () => {
+    const c = readJson(CARD), s = spec();
+    expect(c.plateFacts.map((f: any) => `${f.landmark}@${f.pose}`)).toEqual(['buttock@start', 'backUpper@start', 'sole.r@start', 'sole.l@start', 'buttock@end', 'sole.r@end', 'sole.l@end']);
+    for (const f of c.plateFacts) expect(s.checks.some((k: any) => k.landmark === f.landmark && k.plane && (k.pose === f.pose || k.pose === 'all')), `${f.landmark}@${f.pose}`).toBe(true);
+  });
+  it('mutations: another card key edited, one second changed on the card and the spec, and a fact on a landmark with no check are red', () => {
+    const text = readFileSync(CARD, 'utf8');
+    expect(sha(unkeyed(text.replace('"view": "side"', '"view": "front"')) ?? '')).not.toBe(cardsSha.cards.crunch);
+    const c = readJson(CARD), tj = readJson('tools/plates/library/pilot-b2/tempo.json');
+    expect({ ...c, tempo: [{ phase: 'Curl', s: 2, move: true }, ...c.tempo.slice(1)] }.tempo).not.toEqual(V.buildTempo('crunch', tj.ids.crunch.rows, c.plate.tempo));
+    expect(spec().checks.some((k: any) => k.landmark === 'backUpper' && k.plane && (k.pose === 'end' || k.pose === 'all'))).toBe(false);
+  });
+});
+
+describe('PILOT-B2 A1 (files), A13: crunch is in exactly the PILOT-B2 files and never shipped', () => {
+  const FILES = ['tools/plates/library/batches', 'tools/plates/library/pages', 'tests/howto/golden/library'];
+  const NAMES = /"lib_crunch"|"library\/specs\/crunch\.mjs"|"chromeId": "crunch"/;
+  /** Every batch, page or golden file that names crunch, less the PILOT-B2 ones (none before the pin). */
+  const hits = (extra: [string, string][] = []) => [...FILES.flatMap(d => readdirSync(d).filter(n => n.endsWith('.json')).map(n => [`${d}/${n}`, readFileSync(`${d}/${n}`, 'utf8')] as [string, string])), ...extra]
+    .filter(([n, t]) => NAMES.test(t) && !/\/pilot-b2\.json$/.test(n)).map(([n]) => n);
+  it('no other batch, page or golden file names crunch; pilot-b/DESIGN.md keeps its held row (D-LIB11-SMALL) until the pin', () => {
+    expect(hits()).toEqual([]);
+    const design = readFileSync('tools/plates/library/pilot-b/DESIGN.md', 'utf8'), held = design.slice(design.indexOf('## 13. Held'));
+    expect(/^\| crunch \| .+\| D-LIB11-SMALL/m.test(held)).toBe(true);
+  });
+  it('mutation: a lib_crunch entry in pilot B\'s golden file is red', () => {
+    const g = readJson('tests/howto/golden/library/pilot-b.json'); g.entries.push({ ...g.entries[1], id: 'lib_crunch' });
+    expect(hits([['tests/howto/golden/library/pilot-b.json', JSON.stringify(g)]])).toEqual(['tests/howto/golden/library/pilot-b.json']);
+  });
+  it('crunch is not shipped; mutation: its row at shipped is caught', async () => {
+    const reg = await import(/* @vite-ignore */ lib('registry.mjs')), b2 = await import(/* @vite-ignore */ lib('pilot-b2/build.mjs'));
+    expect(reg.shippedIds(b2.pb2All()).includes('lib_crunch')).toBe(false);
+    const j = readJson(ROWS); j.rows.lib_crunch.stage = 'shipped';
+    expect(reg.shippedIds(reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, j]] })).includes('lib_crunch')).toBe(true);
+  });
+});
+
+describe('PILOT-B2 A12: the moved assertions (D-SUPCORE-TESTHOME map)', () => {
+  // lib11-pilot-b.test.ts @ 5bcbddcf line(s) -> the test here that carries it (verbatim or the named stricter form)
+  const MOVED: [string, string][] = [
+    [':13 PILOT_B lists crunch (its shipped check, :309)', 'crunch is not shipped; mutation: its row at shipped is caught'],
+    [':15 HELD = [crunch] (the held markers; the spec checks keep reading it there)', 'no other batch, page or golden file names crunch'],
+    [':251-254 the held id is in DESIGN.md\'s held table', 'pilot-b/DESIGN.md keeps its held row (D-LIB11-SMALL) until the pin'],
+    [':305-309 "the held crunch has no row" (stricter: lib_crunch once, in pilot-b2 only)', 'lib_crunch once, mode H, view side, no parent, template or params'],
+    [':326-330 the held crunch is in no batch, page or golden file (stricter: exactly the PILOT-B2 files)', 'no other batch, page or golden file names crunch'],
+    [':331, :338-339 a crunch entry in pilot B\'s golden file is red', 'mutation: a lib_crunch entry in pilot B\'s golden file is red'],
+    [':439 the held card is a byte copy (stricter: only the three-key block differs)', 'the card differs from its research copy (a48b0594, 8e45ee15…) only in the three-key block'],
+  ];
+  // the titles of this file's tests (it('...'), escapes undone)
+  const titles = [...readFileSync(new URL(import.meta.url), 'utf8').matchAll(/\bit(?:\.each\([^)]*\))?\('((?:[^'\\]|\\.)*)'/g)].map(m => m[1]!.replace(/\\'/g, "'"));
+  const missing = (m: [string, string][]) => m.filter(([, t]) => !titles.some(x => x.includes(t))).map(([l]) => l);
+  it('each moved line maps to a test in this file', () => {
+    expect(missing(MOVED)).toEqual([]);
+  });
+  it('mutation: a mapped test renamed away is red', () => {
+    expect(missing([...MOVED, [':999 dropped', 'a test that is not here']])).toEqual([':999 dropped']);
+  });
+  it('lib11-pilot-b.test.ts no longer carries the moved crunch markers', () => {
+    const old = readFileSync('tests/howto/lib11-pilot-b.test.ts', 'utf8');
+    expect(/the held crunch|held table|id: 'lib_crunch'|for \(const id of HELD\) expect\(sha/.test(old)).toBe(false);
   });
 });
