@@ -114,9 +114,9 @@ export default {
   mistake: {
     pose: MISTAKE,
     tells: [
-      { key: 'knee', text: 'Knee drives<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The hips and front knee drive forward; the shin tips far over the foot.' },   // c3
+      { key: 'knee', text: 'Knee drives<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The hips and front knee drive forward, and the shin tips far over the foot.' },   // c3
     ],
   },
   tempo: [{ phase: 'Step', move: true, word: 'Slow' }, { phase: 'Lower', move: true }, { phase: 'Rise', move: true }],
-  alt: 'Bodyweight lunge, side view. From standing with the feet together, one leg steps forward and lands heel first; the body lowers until the front thigh is about parallel, front shin leaning slightly forward, trunk bent forward at the hips with a flat back.',
+  alt: 'Bodyweight lunge, side view. From standing with the feet together, one leg steps forward and lands heel first, and the body lowers until the front thigh is about parallel, front shin leaning slightly forward, trunk bent forward at the hips with a flat back.',
 };

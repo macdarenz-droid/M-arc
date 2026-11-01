@@ -118,9 +118,9 @@ export default {
   mistake: {
     pose: MISTAKE,
     tells: [
-      { key: 'knee', text: 'Knee drives<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The hips and front knee drive forward; the shin tips far over the foot.' },   // c3
+      { key: 'knee', text: 'Knee drives<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The hips and front knee drive forward, and the shin tips far over the foot.' },   // c3
     ],
   },
   tempo: [{ phase: 'Step', move: true, word: 'Slow' }, { phase: 'Lower', move: true, word: 'Smooth' }, { phase: 'Rise', move: true }],
-  alt: 'Forward lunge with dumbbells, side view. From standing, one leg steps forward and lands heel first; the body lowers until the front thigh is parallel and the back knee is just off the floor, front shin near vertical, back foot on the ball, back straight.',
+  alt: 'Forward lunge with dumbbells, side view. From standing, one leg steps forward and lands heel first, and the body lowers until the front thigh is parallel and the back knee is just off the floor, front shin near vertical, back foot on the ball, back straight.',
 };

@@ -134,5 +134,5 @@ export default {
   },
   zoom: { view: 'mistake', k: 1.5 },
   tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Stand', move: true }],
-  alt: 'Bulgarian split squat with dumbbells, side view. The top of the rear foot rests on a bench behind, the front foot well ahead; the body lowers until the rear knee lightly touches the floor, front foot flat, back straight, dumbbells hanging at the sides.',
+  alt: 'Bulgarian split squat with dumbbells, side view. The top of the rear foot rests on a bench behind, the front foot well ahead, and the body lowers until the rear knee lightly touches the floor, front foot flat, back straight, dumbbells hanging at the sides.',
 };
