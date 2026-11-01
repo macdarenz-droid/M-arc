@@ -7,12 +7,7 @@
   "bodyweight_squat": "ce851976ceace13070cc4882f3eb0283418b31fde0d0c081a858b98e6e65764f",
   "wall_sit": "49ce8fe900fd181d1a8d9bc3f87ff17624da71eb31e09c503d2b15a1eda8cd35",
   "step_up": "9e4f43a0a0a20ee1ecf020e7a549b72808261fa116b9d01db1898075befc53b3",
-  "pistol_squat": "625b3039b37c6cb955329b29d376338d9e4ec68a55a5d13320bb5ec478acae11",
-  "bulgarian_split_squat": "6208149a2c3896cfb3ab035421b15697aa765c012ea6beecfef1349224818319",
-  "walking_lunge": "6f27c35f671d9b9940cabe012b139464bdfd1fee47b4a6b3c99dca43cac5600d",
-  "forward_lunge": "c6821c04c08d654673d58e72ccfb7e4a2aca57a5e3266dd18ebfabc1051533df",
-  "bodyweight_lunge": "84e3bf1b6a424a713b1754ba63a5e5e4b8b73fc179adc495a18796fbf0c85f44",
-  "bodyweight_split_squat": "733edbff3ea13d03b4a7aa1102e727ba7df59b3c01fc8378e0e7ee4ef188a7a5"
+  "pistol_squat": "625b3039b37c6cb955329b29d376338d9e4ec68a55a5d13320bb5ec478acae11"
  },
  "quotes": {
   "front_squat": "409372925ac018c2e2e7af7124b771a3b00cf5f6dda2745a85df1380c1d7b434",
@@ -20,11 +15,6 @@
   "bodyweight_squat": "f9a6754224819feeb6719ddc1358882da8e0259cf855648eaf377cd8c7c07dfd",
   "wall_sit": "95837c440642aaf4913e329a85574259d9a289b8659d7a4b2bdf528f781202e2",
   "step_up": "9f8f922a3865854d949df7f2455f2b1010f1481538a8f50e6cf4957d6d524577",
-  "pistol_squat": "b4bdf5c179d1513ce8f1db9c4864716a594c472cfb136df760c24cef7afc7b06",
-  "bulgarian_split_squat": "9fab40856ddd9601e2edf436e7db407d61fc65f0fe1cecbed837a58f1343f3d0",
-  "walking_lunge": "4402c7476b66c1c9ee36769d0a0d9503a61fda4b01cf5673c42929c00c2a04f7",
-  "forward_lunge": "62438747401b15075555cc35b0f24746145bd4be786c5304669bd8bd55800542",
-  "bodyweight_lunge": "cd99237b8d3c818226179145d4b6a4d42d03f64d9c09ac802f76975debe9587a",
-  "bodyweight_split_squat": "8ddb901ea7fc6dde8caf414835e7bb11d58cc08c73f23485747cdaa06296a83c"
+  "pistol_squat": "b4bdf5c179d1513ce8f1db9c4864716a594c472cfb136df760c24cef7afc7b06"
  }
 }
