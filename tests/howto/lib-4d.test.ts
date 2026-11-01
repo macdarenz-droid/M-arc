@@ -6,7 +6,7 @@ import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, expect, it, onTestFinished } from 'vitest';
-import { child } from '../child-test';
+import { ownRowsTreeInChild } from '../child-test';
 import { readHowTo } from './generated-module';
 import { SHIPPED } from './shipped-rows';
 
@@ -46,14 +46,14 @@ describe('LIB-4d R2: ownRowsTree', () => {
   const DIRS = ['tools/plates/library/batches', 'src/howto', 'src/howto/generated', 'src/slices/howto/css', 'tests/howto/golden/library', 'tools/plates/library/pages'];
   const list = (root: string, d: string) => (existsSync(join(root, d)) ? readdirSync(join(root, d)).sort() : []);
   const plant = (root: string, p: string, t: string) => { mkdirSync(dirname(join(root, p)), { recursive: true }); writeFileSync(join(root, p), t); };
-  child.it('drops every batch row, its golden file, its pages and the files only it had; else it is the plain copy', async () => {
+  it('drops every batch row, its golden file, its pages and the files only it had; else it is the plain copy', async () => {
     const F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
     const core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
     const trees: string[] = [];
     onTestFinished(() => { for (const t of trees) F.drop(t); });
-    const eight = F.ownRowsTree(); trees.push(eight);
+    const eight = await ownRowsTreeInChild(); trees.push(eight);
     expect(list(eight, 'tools/plates/library/batches').filter(n => n.endsWith('.json'))).toEqual([]);
-    const copy = F.ownRowsTree({ src: eight }); trees.push(copy);
+    const copy = await ownRowsTreeInChild({ src: eight }); trees.push(copy);
     for (const d of DIRS) expect(list(copy, d), d).toEqual(list(eight, d));
     const src = mkdtempSync(join(tmpdir(), 'lib4d-')); trees.push(src);
     cpSync(eight, src, { recursive: true, verbatimSymlinks: true });
@@ -65,7 +65,7 @@ describe('LIB-4d R2: ownRowsTree', () => {
     const stale = 'src/howto/generated/ht-zz-stale.ts';
     plant(src, stale, core.header(stale, ['tools/plates/gen/plates.mjs'], '0'.repeat(64)) + 'export default {};');
     appendFileSync(join(src, 'src/howto/ids.ts'), ' ');
-    const own = F.ownRowsTree({ src }); trees.push(own);
+    const own = await ownRowsTreeInChild({ src }); trees.push(own);
     for (const d of DIRS) expect(list(own, d), d).toEqual(list(eight, d));
     expect(readFileSync(join(own, 'src/howto/ids.ts'), 'utf8')).toBe(readFileSync(join(eight, 'src/howto/ids.ts'), 'utf8'));
   }, 300_000);

@@ -2,11 +2,10 @@
 // (D-LIB9-HANDPAGE, D-LIB7b-PAGEDUP (B) check (3)), the re-stated scoper pinned against golden B, D-LIB7b-HALVES
 // attribute-only, 7b-A2's pair-row checks and D-LIB7b-ZOOMS on a scratch tree. Each check has its mutation here.
 import { createHash } from 'node:crypto';
-import { execFile } from 'node:child_process';
 import { readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import { promisify } from 'node:util';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { nodeChild } from '../child-test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -175,18 +174,16 @@ describe('7b-A2: handpairs.mjs pair-row checks', () => {
 });
 
 describe('7b-A2 on a scratch tree: the real pipeline with the scratch rows shipped on real LIB-7 keys', () => {
-  /** fixture.mjs node(), awaited (F-VITEST-RPC): the same child, but the worker waits on it without blocking. */
-  const nodeAsync = async (root: string, code: string) => (await promisify(execFile)(process.execPath, ['--input-type=module', '-e', code], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 26 })).stdout;
   it('generate: each pair row\'s zoom-<chromeId>.css (hands.mjs + handpairs.mjs) holds its pair scope\'s rules before HX_TAIL; the handpair files are written', async () => {
     await F.keyTree(tree);
-    const out = JSON.parse((await nodeAsync(tree, `
+    const out = JSON.parse((await nodeChild(`
       import { mkdirSync, writeFileSync } from 'node:fs'; import { dirname } from 'node:path';
       import { render } from './tools/plates/generate.mjs';
       const out = await render(), o = {};
       for (const [p, v] of out) { mkdirSync(dirname(p), { recursive: true }); writeFileSync(p, v.text); }   // the tree's generated files (D-LIB7b-TUPLES reads them)
       for (const [p, v] of out) if (/zoom-(scratch-pull-row|t-bar-row|smith-machine-shoulder-press)\\.css$|handpair-/.test(p)) o[p] = { writers: v.writers, text: v.text };
       console.log(JSON.stringify(o));
-    `)).trim().split('\n').pop()!);
+    `, tree)).trim().split('\n').pop()!);
     expect(Object.keys(out).filter(p => p.includes('handpair-')).sort()).toEqual(['src/howto/generated/handpair-curl-dumbbell-under.ts', 'src/howto/generated/handpair-rope-push-neutral.ts']);
     for (const s of F.SCRATCH_7B) {
       const o = out[`src/slices/howto/css/zoom-${s.pre}.css`];

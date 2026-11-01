@@ -69,3 +69,11 @@ const each = (items: readonly string[]) => (name: string, fn: (item: string) => 
   for (const x of items) itChild(name.replace('%s', x), () => fn(x), timeout);
 };
 export const child = { it: Object.assign(itChild, { each }) };
+
+/** The D-LIB8M-RPC form for a fixture step: `node --input-type=module -e code` (in cwd), awaited, so the worker waits on
+ *  the child without blocking. Resolves to its stdout; rejects, with the child's stderr, when it exits non-zero. */
+export const nodeChild = async (code: string, cwd?: string): Promise<string> =>
+  (await promisify(execFile)(process.execPath, ['--input-type=module', '-e', code], { cwd, encoding: 'utf8', maxBuffer: 1 << 26 })).stdout;
+/** lib2b fixture.mjs ownRowsTree(opts), run in an awaited child: the temp tree it made. */
+export const ownRowsTreeInChild = async (opts: { src?: string } = {}): Promise<string> =>
+  nodeChild(`const F = await import(${JSON.stringify(new URL('howto/fixtures/lib2b/fixture.mjs', import.meta.url).href)}); process.stdout.write(F.ownRowsTree(${JSON.stringify(opts)}));`);
