@@ -120,8 +120,8 @@ export default {
   trace: { point: 'hip.r', trim: [10, 12] },
   callouts: [
     { key: 'shin', text: 'Front shin<br>vertical', anchor: { along: ['knee.r', 'ankle.r'], t: 0.45, off: [7, 0] }, guide: SHIN_PLUMB, cue: 'At the bottom, keep the front shin about vertical.' },
-    { key: 'hips', text: 'Hips drop<br>down', anchor: 'buttock', guide: HIP_PLUMB, cue: 'Lower the hips toward the floor instead of driving them forward.' },
-    { key: 'chest', text: 'Chest up', anchor: 'sternum', cue: 'Keep the trunk upright through the step.' },
+    { key: 'hips', text: 'Hips drop<br>down', anchor: 'buttock', guide: HIP_PLUMB, box: { left: 198, top: 218 }, cue: 'Lower the hips toward the floor instead of driving them forward.' },
+    { key: 'chest', text: 'Chest up', anchor: 'sternum', box: { left: 212, top: 160 }, cue: 'Keep the trunk upright through the step.' },
   ],
   mistake: {
     pose: MISTAKE,

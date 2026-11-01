@@ -107,7 +107,7 @@ export default {
   callouts: [
     { key: 'trunk', text: 'Trunk upright', anchor: 'sternum', cue: 'Keep the trunk upright.' },
     { key: 'shin', text: 'Front shin<br>vertical', anchor: { along: ['knee.r', 'ankle.r'], t: 0.45, off: [7, 0] }, guide: SHIN_PLUMB, cue: 'At the bottom, keep the front shin about vertical.' },
-    { key: 'knee', text: 'Back knee<br>down', anchor: 'knee.l', cue: 'Lower until the back knee lightly touches the floor.' },
+    { key: 'knee', text: 'Back knee<br>down', anchor: 'knee.l', box: { left: 40, top: 252 }, cue: 'Lower until the back knee lightly touches the floor.' },
   ],
   mistake: {
     pose: MISTAKE,

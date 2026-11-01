@@ -17,7 +17,7 @@
 //  hips with a flat back; c6 push back up with the front leg.
 // Plate text (card plate): callouts = plate.checkpoints (c3 Hips drop down, c4 Thigh parallel, c5 Flat back);
 //  Mistake = plate.mistake (c3, drawable): the hips and front knee drive forward on landing and the front shin tips far
-//  forward over the foot. Tells: the knee (first, the topFault key) and the hips.
+//  forward over the foot. One tell, the knee (the topFault key); its cue names the hips.
 // Mistake size: as forward_lunge's (this lane): the front shin at M_SHIN, the angle at which the front knee joint centre
 //  passes over the front toe tip (c9's "the knee ahead of the toes" read onto "tips far forward over the foot"), the
 //  front foot flat and the hips held at the end height; picked from the words before measuring, never enlarged
@@ -114,8 +114,7 @@ export default {
   mistake: {
     pose: MISTAKE,
     tells: [
-      { key: 'knee', text: 'Knee drives<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The front knee drives forward and the shin tips far over the foot.' },   // c3
-      { key: 'hips', text: 'Hips push<br>forward', anchor: { at: 'buttock', pose: 'mistake' }, cue: 'The hips drive forward instead of dropping.' },   // c3
+      { key: 'knee', text: 'Knee drives<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The hips and front knee drive forward; the shin tips far over the foot.' },   // c3
     ],
   },
   tempo: [{ phase: 'Step', move: true, word: 'Slow' }, { phase: 'Lower', move: true }, { phase: 'Rise', move: true }],

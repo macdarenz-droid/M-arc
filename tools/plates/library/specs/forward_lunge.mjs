@@ -17,7 +17,7 @@
 //  in, arms straight at the sides, back straight.
 // Plate text (card plate): callouts = plate.checkpoints (c3 Hips drop down, c2 Front shin vertical, c5 Back straight);
 //  Mistake = plate.mistake (c3, drawable): the hips and front knee drive forward on landing and the front shin tips far
-//  forward over the foot. Tells: the knee (first, the topFault key) and the hips.
+//  forward over the foot. One tell, the knee (the topFault key); its cue names the hips.
 // Mistake size: the front shin at M_SHIN deg from vertical with the front foot flat and the hips held at the end height
 //  (they move forward, not down). M_SHIN is the angle at which the front knee joint centre passes over the front toe
 //  tip (c13's "the knee ahead of the toes" read onto "tips far forward over the foot"); picked from the words before
@@ -111,15 +111,14 @@ export default {
   ghosts: { count: 2, parts: ['leg.r', 'leg.l', 'trunk', 'arm.r', 'db'] },
   trace: { point: 'hip.r', trim: [10, 12] },
   callouts: [
-    { key: 'hips', text: 'Hips drop<br>down', anchor: 'buttock', guide: HIP_PLUMB, cue: 'Drop the hips toward the floor rather than driving them forward.' },
+    { key: 'hips', text: 'Hips drop<br>down', anchor: 'buttock', guide: HIP_PLUMB, box: { left: 198, top: 218 }, cue: 'Drop the hips toward the floor rather than driving them forward.' },
     { key: 'shin', text: 'Front shin<br>vertical', anchor: { along: ['knee.r', 'ankle.r'], t: 0.45, off: [7, 0] }, guide: SHIN_PLUMB, cue: 'Step long enough that the front shin is about vertical.' },
-    { key: 'back', text: 'Back straight', anchor: 'backUpper', cue: 'Keep the back straight as you step.' },
+    { key: 'back', text: 'Back straight', anchor: 'backUpper', box: { left: 212, top: 160 }, cue: 'Keep the back straight as you step.' },
   ],
   mistake: {
     pose: MISTAKE,
     tells: [
-      { key: 'knee', text: 'Knee drives<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The front knee drives forward and the shin tips far over the foot.' },   // c3
-      { key: 'hips', text: 'Hips push<br>forward', anchor: { at: 'buttock', pose: 'mistake' }, cue: 'The hips drive forward instead of dropping.' },   // c3
+      { key: 'knee', text: 'Knee drives<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The hips and front knee drive forward; the shin tips far over the foot.' },   // c3
     ],
   },
   tempo: [{ phase: 'Step', move: true, word: 'Slow' }, { phase: 'Lower', move: true, word: 'Smooth' }, { phase: 'Rise', move: true }],
