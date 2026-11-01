@@ -1,4 +1,4 @@
-Card LIB-SPLIT: LB4 resume 3, step_up and the 5 SPLIT rows on the pinned reverse_lunge, all drawn H (2026-11-01; status `ready`: the rulings D-SPLIT-1 to -8 below wait for the supervisor. It starts on 'LIB-SPLIT start' once #358 (LIB-SMALL) has merged.)
+Card LIB-SPLIT: LB4 resume 3, step_up and the 5 SPLIT rows on the pinned reverse_lunge, all drawn H (2026-11-01; status `ready`: the supervisor confirmed D-SPLIT-1 to -8 in "Supervisor rulings" at the end, with amendments to 1, 3 and 5. It starts on 'LIB-SPLIT start' once #358 (LIB-SMALL) has merged.)
 
 Sources (every file:line was read at these heads; [est] marks an estimate, [unverified] what no run here checked):
 - main `5bcbddcf` (train 55: LB7 R3 #356, LB9 R3 #361, PILOT-A3 #362). Scratch worktree of `5bcbddcf`, npm ci. Base pages (two equal builds each): LB4 `9a2b7881a4d8af9375c1c006cd2bcf918736763a30de8258538578fc10956a9e` (565102 B, lb4/build.mjs; 5 rows); PILOT-A3 `bebd7730…a7878` (465732 B, library-ci.test.ts:621). Pilot A L1 `5d0e562f…5ba8`/1325644 (lib8-pin.test.ts:46), PILOT-A2 `3e225bc1…bb0b`/280533 and pilot B `ff3e017c…583f`/409765 (library-ci.test.ts:620, :622).
