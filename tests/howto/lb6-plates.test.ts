@@ -1992,13 +1992,49 @@ describe('LIB-16R2: hip_abduction panel mx16 R2, the pivot axle at knee height o
 
 describe('LIB-16R2: no whole-page build in the worker (D-LIB13S-RPC, #354 6552077335)', () => {
   const src = readFileSync(new URL(import.meta.url), 'utf8');
-  /** A page build outside lb6PageInChild's child script (its `const script = \`...\`;` text is cut first). */
-  const inWorker = (text: string) => /\bbuildLb6Page\(/.test(text.replace(/const script = `[\s\S]*?`;/g, '').replace(/\/\/[^\n]*|\/\*\*[^\n]*\*\//g, ''));
+  /** A page build outside lb6PageInChild's child script: any mention of the builder, called or aliased (`const f =
+   *  build.buildLb6Page`, `{ buildLb6Page }`, `build['buildLb6Page']`), once the child script's `const script = \`...\`;`
+   *  text and the comments that start a line are cut (a `//` inside a string is kept: review 6552589455 Low). */
+  const inWorker = (text: string) => /\bbuildLb6Page\b/.test(text.replace(/const script = `[\s\S]*?`;/g, '').replace(/^[ \t]*\/\/[^\n]*$/gm, '').replace(/^[ \t]*\/\*[\s\S]*?\*\/[ \t]*$/gm, ''));
   it('every LB6 page build runs in lb6PageInChild, an awaited child process', () => {
     expect(inWorker(src)).toBe(false);
     expect(src).toMatch(/promisify\(execFile\)\(process\.execPath/);
   });
-  it('mutation: a page build in the worker is red', () => {
-    expect(inWorker(`${src}\n  const page = await build.${'buildLb6'}Page();\n`)).toBe(true);
+  it('mutations: a page build in the worker, an aliased one, and one after a `//` inside a string are red', () => {
+    const B = `${'buildLb6'}Page`;
+    expect(inWorker(`${src}\n  const page = await build.${B}();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const make = build.${B};\n  const page = await make();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const u = 'https://x'; const page = await build.${B}();\n`)).toBe(true);
+  });
+});
+
+describe('LIB-16R2: the panel mx16 and mx19 approved hip plates stay byte-identical (review 6552589455 High)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf, from the review at 148f07b3: hip_adduction as approved in mx16 (= a74d3a4e), hip_abduction as
+  // approved in mx19 (page 8c7ede8a…58db).
+  const APPROVED: Record<string, Record<string, string>> = {
+    'hip-adduction': { normalSvg: '12a2d67f77498bd90a54eeeb82654d2fc8ae59a4cbb960a7648142a9f549c87d', normalOverlay: '103295f938840ec51f23b1a386c8363d5a64ae98271fdf60e2d7b6fe089c11a0',
+      mistakeSvg: '62ae7f87cce829579e31bfaf626ae3e3d915657ff02f11b248b38ed7d2468427', mistakeOverlay: 'c65c225c816d1bf89d4f030e2ab489013303525a66bd55942e41cbcbc95479ca',
+      tells: '64869cb44b3ed2dde50f016ea3db8404e2bb874fac972a2bb3d69eb99fceb041', tempo: '665a3ff414a1fa3f65b61bf61335a48fd0521c6138dedb6bae6443b8a337b4f5',
+      cues: '9bc0e1682b6e8a93e7af1bcc613b7c5c04ae883ec018bedc7bf1a28bc9583ef4', alt: 'ee8a34195f09dcdc21522ae77d6e5993cda07b57c0837c0c1d34ce843b6474cd',
+      mistakeAlt: 'd26472e1b06bd8f608c8c2dcf992516ce401fdd3389685441f921f7f957ad72a' },
+    'hip-abduction': { normalSvg: '3a14c19c98a79ba4cfbe8173a50700b093e16a38409d2f2046a6ebb497b000a2', normalOverlay: '57b44a8a6f10bbe911fb9e7e21cfc9e83394e327ce13300cefdca1581b09e262',
+      mistakeSvg: '6f5b9473542218d115ba944f2b33f872f11183e2bfced22851268f7ba09cfc57', mistakeOverlay: 'a87f6a3de3522acfa81b52b9670a770306cc4e41071226da535c0bb75ed3f938',
+      tells: '7430555c07486391c76336cb32ff90940efe73df27b8246f711b3e3de7aa395d', tempo: '709363cd3bc37f41c56cd63e2a2fedebaf97bcf1af79d2058c7180c7bfd97295',
+      cues: '26f840ac8d231f7ba29a63d921a4bc04d0c8c8701a4a6848f0c8fabf36877d64', alt: '0d1fe127907abdc4d45e715c63ce6c6268434eac8a57f8e2e1cd56e794b4d255',
+      mistakeAlt: '8afce1a999fb7c4334f4d1c88c63afbe3f8d87fd6a76047c7d2125aa4b566ba1' },
+  };
+  let golden: any;
+  beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
+  const problems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('their 9 fragments each equal the approved ones', async () => { expect(problems(await fullPage())).toEqual([]); });
+  it('mutations: one byte in the hip adduction alt, and one in the hip abduction alt, are red', async () => {
+    const html = await fullPage();
+    for (const c of ['hip-adduction', 'hip-abduction']) {
+      const p = golden.extractPlates(html).find((x: any) => x.chromeId === c);
+      expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain(`${c} alt`);
+    }
   });
 });
