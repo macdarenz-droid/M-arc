@@ -907,6 +907,31 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - **Next:** a fresh Opus reviewer per READY, then trains 55 and up in plan order (LB6 #354, LB7 #356, LB9 R3 #361, PILOT-A3 #362). After #356 merges, LIB-SMALL builds wall_ball. LIB-13s then gets a focused recheck of its FIX 2.
   - **Research owed:** F-BICYCLE-REACH (trunk axial rotation, and the hands-behind-head arm position).
   - **Usage:** the 7-day status reads "allowed_warning"; no exact figure was readable this tick (the last read was 0.78 at 18:57). No pause this week.
+- **Update 01:00 UTC (11-01):**
+  - **Train 55 merged** (#363 → main `5bcbddcf`): LB7 R3 #356, LB9 R3 #361 and PILOT-A3 #362 (pinned). **Main holds 112 of 153.** There is no APK: only the generated stage lines changed. The LB7, LB9 and PILOT-A3 builders are archived. #362's docs-only `0ab56be3` (DIFF-CHECK PASS) rides the next train.
+  - **Lanes:**
+
+    | lane | PR · session | state |
+    |---|---|---|
+    | LB6 (LIB-16R2) | #354 · session_01EQuYNiQhTrfP6PuNG5qo8o | 9 of 9 approved; READY owed (nudged at 00:57) |
+    | LIB-13s | #359 · session_01EQuYNjsRaVUx3RM4ccYhCj | 5 of 5 approved (mx16, mx19, mx20); READY running |
+    | LIB-SMALL | #358 · session_01EQuYNmQGFHuymcHkwUzaft | jumping_jacks and jump_squat approved; wall_ball CARD FIELDS VALID (cfwb2); panel mx21 running |
+    | LIB-SPLIT | #364 · session_01EQuYNjLq58WNngV59S9HzG | PLAN RULED 6551354216; wave 1 in scratch until #358 merges |
+    | LIB-SUPCORE | card `verify/lib-supcore-card.md` ready | starts when a slot frees |
+
+  - **The remaining 41 drawings:**
+    - 16 approved in open PRs, plus wall_ball;
+    - SPLIT: 6;
+    - crunch and the 5 SUPCORE rows: 6;
+    - 6 with no ruled route: hip_thrust, jump_rope, pallof_press, cable_rear_delt_fly, resisted_hip_flexion, russian_twist;
+    - 4 calf raises, at the release candidate;
+    - bicycle_crunch (research);
+    - overhead_cable_triceps_extension.
+  - **Next:**
+    - reviewers on the LB6, LIB-13s and LIB-SMALL READYs, then train 56 (with #362's doc delta);
+    - start SUPCORE in the first freed slot;
+    - rulings for the 6 with no route;
+    - the research card for bicycle_crunch and pallof_press.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
