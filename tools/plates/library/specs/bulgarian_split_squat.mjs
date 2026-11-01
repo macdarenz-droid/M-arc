@@ -132,12 +132,12 @@ export default {
   callouts: [
     { key: 'foot', text: 'Foot on<br>bench', anchor: 'ankle.l', cue: 'Rest the top of the rear foot on a bench about knee height.' },
     { key: 'stance', text: 'Long stance', anchor: 'toe.r', cue: 'Put the front foot about three foot-lengths ahead of the bench.' },
-    { key: 'back', text: 'Back straight', anchor: 'backUpper', cue: 'Keep the back straight as the rear knee lowers.' },
+    { key: 'back', text: 'Back straight', anchor: 'backUpper', box: { left: 44, top: 168 }, cue: 'Keep the back straight as the rear knee lowers.' },
   ],
   mistake: {
     pose: MISTAKE,
     tells: [
-      { key: 'seat', text: 'Drops into<br>the bottom', anchor: { at: 'seat', pose: 'mistake' }, cue: 'The hips drop into the bottom and the rear knee rests on the floor.' },   // c3, c8
+      { key: 'seat', text: 'Hips drop', anchor: { at: 'seat', pose: 'mistake' }, cue: 'The hips drop and the knee rests on the floor, tipping the front shin forward.' },   // c3, c8
     ],
   },
   zoom: { view: 'mistake', k: 1.5 },
