@@ -3,16 +3,33 @@
 // tools/plates/library/lb6/qa.mjs. Patterns copied from tests/howto/lb3-plates.test.ts (#274 @ a6f4bd07) and
 // tests/howto/lb4-plates.test.ts (#289 @ 4adde423). Every test reads what is drawn (the items a spec emits, the
 // engine's landmarks, shapes and report), never a helper's own maths.
+import { execFile } from 'node:child_process';
 import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { promisify } from 'node:util';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { otherCards } from './eq-composers';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
+// D-LIB13S-RPC (#354 6552077335): every whole-page build runs in an awaited child process, so no long synchronous
+// stretch blocks this worker's RPC to the runner; long per-spec loops yield one macrotask between steps.
+const yieldNow = () => new Promise<void>(r => setImmediate(r));
+/** buildLb6Page in an awaited child process: { ids: drawnIds(), html: [page html, ...] } (`opts.ids` limits the rows; `twice` builds two). */
+const lb6PageInChild = async ({ ids = null as string[] | null, twice = false } = {}) => {
+  const script = `const b = await import(${JSON.stringify(lib('lb6/build.mjs'))});
+const ids = ${JSON.stringify(ids)}, one = async () => (await (ids ? b.buildLb6Page({ all: b.lb6All(), ids }) : b.buildLb6Page())).html.toString('utf8');
+const html = [await one()]; if (${twice}) html.push(await one());
+process.stdout.write(JSON.stringify({ ids: b.drawnIds(), html }));`;
+  const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 28 });
+  return JSON.parse(stdout) as { ids: string[]; html: string[] };
+};
+/** The full LB6 page, built once per file in a child process and shared by the byte-pin blocks. */
+let FULL_PAGE: Promise<string> | null = null;
+const fullPage = () => (FULL_PAGE ??= lb6PageInChild().then(r => r.html[0]!));
 const LB6 = ['cable_chest_press', 'machine_pullover', 'machine_crunch'];
 const IDS = LB6.map(i => `lib_${i}`);
 // The LB6 ids drawn by no LB6 card (DESIGN.md section 2; LIB-16R2 A1: the pilot plates and the T row smith_machine_shrug): never in lb6/rows.json.
@@ -929,12 +946,12 @@ describe('LIB-16 A16: no other card\'s composer is copied, forked or imported (D
 
 describe('LIB-16 A10: the LB6 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
   it('two builds of the LB6 rows are byte-identical', async () => {
-    const build = await import(/* @vite-ignore */ lib('lb6/build.mjs'));
+    const r = await lb6PageInChild({ twice: true });   // D-LIB13S-RPC: both builds in an awaited child process
     // LIB-16R2: the resume 2 rows follow the 3 in rows.json order (wave 1, then wave 2)
     const R2_ORDER = ['low_to_high_cable_fly', 'high_to_low_cable_fly', 'smith_machine_squat', 'smith_machine_shoulder_press', 'smith_machine_incline_press',
       'hip_abduction', 'hip_adduction', 'machine_lateral_raise', 'rear_delt_fly'].filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`));
-    expect(build.drawnIds()).toEqual([...drawn(), ...R2_ORDER].map(i => `lib_${i}`));
-    const a = await build.buildLb6Page(), b = await build.buildLb6Page();
+    expect(r.ids).toEqual([...drawn(), ...R2_ORDER].map(i => `lib_${i}`));
+    const a = { html: r.html[0]! }, b = { html: r.html[1]! };
     expect(sha(a.html)).toBe(sha(b.html));
   });
 });
@@ -945,7 +962,7 @@ describe('LIB-16 A4: runQa node half on an LB6 plate (lib_machine_crunch), LIB-3
   beforeAll(async () => {
     [build, cand, muts, golden] = await Promise.all(['lb6/build.mjs', 'candidate.mjs', 'qa/mutations.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb6All();
-    html = (await build.buildLb6Page({ all, ids: [ID] })).html.toString('utf8');
+    html = (await lb6PageInChild({ ids: [ID] })).html[0]!;
     return () => qaEng.dropMirror(mirror);
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
@@ -1256,7 +1273,7 @@ describe('LIB-16 resume: one zoom per view (D-LIB16-ZOOMVIEWS, #327 6405117790),
   beforeAll(async () => {
     [build, cand, golden, zoom] = await Promise.all(['lb6/build.mjs', 'candidate.mjs', '../golden.mjs', 'zoom/inline.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb6All();
-    html = (await build.buildLb6Page({ all, ids: [ID] })).html.toString('utf8');
+    html = (await lb6PageInChild({ ids: [ID] })).html[0]!;
     return () => qaEng.dropMirror(mirror);
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
@@ -1349,10 +1366,10 @@ describe('LIB-16 resume: the approved LB6 plates stay byte-identical (page 2668c
     return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
   });
   it("machine_pullover and machine_crunch fragments on this head equal main's approved ones", async () => {
-    expect(fragProblems((await build.buildLb6Page()).html.toString('utf8'))).toEqual([]);
+    expect(fragProblems((await fullPage()))).toEqual([]);
   });
   it("mutation: one byte changed in machine_crunch's Mistake alt is red", async () => {
-    const html = (await build.buildLb6Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'machine-crunch');
+    const html = (await fullPage()), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'machine-crunch');
     expect(fragProblems(html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E')))).toContain('machine-crunch mistakeAlt');
   });
 });
@@ -1647,10 +1664,10 @@ describe('LIB-16R2 A2: nothing else moves', { timeout: T }, () => {
   const ccpProblems = (html: string) => { const p = golden.extractPlates(html).find((x: any) => x.chromeId === 'cable-chest-press'), got = p ? golden.fragmentsOf(p) : {};
     return Object.keys(CCP).filter(k => got[k] !== CCP[k]); };
   it("cable_chest_press's 9 fragments on this head equal main's approved ones", async () => {
-    expect(ccpProblems((await build.buildLb6Page()).html.toString('utf8'))).toEqual([]);
+    expect(ccpProblems((await fullPage()))).toEqual([]);
   });
   it("mutation: one byte in cable_chest_press's alt is red", async () => {
-    const html = (await build.buildLb6Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'cable-chest-press');
+    const html = (await fullPage()), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'cable-chest-press');
     expect(ccpProblems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('alt');
   });
   it('eq/smith, pecDeck, inclineBench and parts are byte-identical to main; mutation: one byte changed is red', () => {
@@ -1733,8 +1750,9 @@ describe('LIB-16R2 wave 2 A3: the two new composers (D-LIB16R2-COMPOSERS)', { ti
       for (const x of [...st, ...mv]) if (!PRIM().includes(x.type)) out.push(`${p}: ${x.type} is not a primitive`);
       for (const x of mv) if (x.type !== 'poly') out.push(`${p}: moving ${x.type} without poly`); }
     return out; };
-  it('both return PRIMITIVES items only; static parts at one place in every drawn pose; every moving part a poly; PQ-H9 clean', () => {
-    for (const [c, users] of Object.entries(USERS)) for (const id of users) { expect(problems(R2S[id]), `${c} ${id}`).toEqual([]); expect(h9(R2S[id]), id).toEqual([]); }
+  it('both return PRIMITIVES items only; static parts at one place in every drawn pose; every moving part a poly; PQ-H9 clean', async () => {
+    for (const [c, users] of Object.entries(USERS)) for (const id of users) {   // D-LIB13S-RPC: one macrotask between steps
+      expect(problems(R2S[id]), `${c} ${id}`).toEqual([]); await yieldNow(); expect(h9(R2S[id]), id).toEqual([]); await yieldNow(); }
   });
   it('each composer reads no file and imports only parts.mjs; listed under LIB-16 in eq-composers.json', () => {
     for (const c of Object.keys(USERS)) {
@@ -1742,9 +1760,10 @@ describe('LIB-16R2 wave 2 A3: the two new composers (D-LIB16R2-COMPOSERS)', { ti
       expect(readJson('tests/howto/fixtures/eq-composers.json').cards['LIB-16'], c).toContain(c);
     }
   });
-  it('mutations: a moving pad without poly is red; a static part moved between poses is red', () => {
+  it('mutations: a moving pad without poly is red; a static part moved between poses is red', async () => {
     const s = R2S.hip_abduction, bad = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const x = e(lm, ctx); return x?.part === 'leg' && x.z === 'front' ? { type: 'box', at: x.pts[0], w: 0.06, h: 0.2, z: 'front', part: 'leg' } : x; } : e)) };
     expect(problems(bad).some(p => /without poly/.test(p))).toBe(true);
+    await yieldNow();
     const moved = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const x = e(lm, ctx); return x?.type === 'seat' && ctx.pose === 'end' ? { ...x, at: [x.at[0], x.at[1] + 0.02, x.at[2]] } : x; } : e)) };
     expect(problems(moved)).toContain('end: a static part moved');
   });
@@ -1830,7 +1849,7 @@ describe('LIB-16R2 A6: rear_delt_fly\'s Mistake zoom (D-LIBZOOM-EXTEND; PLAN RUL
   beforeAll(async () => {
     [build, cand, golden] = await Promise.all(['lb6/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb6All();
-    html = (await build.buildLb6Page({ all, ids: [ID] })).html.toString('utf8');
+    html = (await lb6PageInChild({ ids: [ID] })).html[0]!;
     return () => qaEng.dropMirror(mirror);
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
@@ -1884,9 +1903,9 @@ describe('LIB-16R2: the approved R2 plates stay byte-identical (panel mx12, APPR
     const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
     return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
   });
-  it('their 9 fragments each equal the approved ones', async () => { expect(problems((await build.buildLb6Page()).html.toString('utf8'))).toEqual([]); });
+  it('their 9 fragments each equal the approved ones', async () => { expect(problems((await fullPage()))).toEqual([]); });
   it('mutation: one byte in the shoulder press alt is red', async () => {
-    const html = (await build.buildLb6Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'smith-machine-shoulder-press');
+    const html = (await fullPage()), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'smith-machine-shoulder-press');
     expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('smith-machine-shoulder-press alt');
   });
 });
@@ -1927,9 +1946,9 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
     const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
     return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
   });
-  it('their 9 fragments each equal the approved ones', async () => { expect(problems((await build.buildLb6Page()).html.toString('utf8'))).toEqual([]); });
+  it('their 9 fragments each equal the approved ones', async () => { expect(problems((await fullPage()))).toEqual([]); });
   it('mutation: one byte in the rear delt fly alt is red', async () => {
-    const html = (await build.buildLb6Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'rear-delt-fly');
+    const html = (await fullPage()), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'rear-delt-fly');
     expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('rear-delt-fly alt');
   });
 });
@@ -1968,5 +1987,18 @@ describe('LIB-16R2: hip_abduction panel mx16 R2, the pivot axle at knee height o
     const up = { ...S, equipment: [...S.equipment.slice(0, n - 2), ...S.equipment.slice(n - 2).map((f: any) => (lm: any, ctx: any) => {
       const it = f(lm, ctx); return it && { ...it, pts: it.pts.map((p: number[]) => [p[0], p[1]! + 0.03, p[2]]) }; })] };
     expect(problems(up).join()).toMatch(/off knee height/);
+  });
+});
+
+describe('LIB-16R2: no whole-page build in the worker (D-LIB13S-RPC, #354 6552077335)', () => {
+  const src = readFileSync(new URL(import.meta.url), 'utf8');
+  /** A page build outside lb6PageInChild's child script (its `const script = \`...\`;` text is cut first). */
+  const inWorker = (text: string) => /\bbuildLb6Page\(/.test(text.replace(/const script = `[\s\S]*?`;/g, '').replace(/\/\/[^\n]*|\/\*\*[^\n]*\*\//g, ''));
+  it('every LB6 page build runs in lb6PageInChild, an awaited child process', () => {
+    expect(inWorker(src)).toBe(false);
+    expect(src).toMatch(/promisify\(execFile\)\(process\.execPath/);
+  });
+  it('mutation: a page build in the worker is red', () => {
+    expect(inWorker(`${src}\n  const page = await build.${'buildLb6'}Page();\n`)).toBe(true);
   });
 });
