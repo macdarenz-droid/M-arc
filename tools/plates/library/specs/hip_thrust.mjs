@@ -39,7 +39,8 @@
 //  top reached with the lower back arched (Held 6, D-HELD6-HIPTHRUST, the D-A3-REVBOW form on LIB-SPINE): the end pose
 //  with trunk.bow M_ARCH (12, the unsourced drawing size of reverse_lunge's approved bow): the pelvis tips under the
 //  held thorax. The thorax, the bar, the hands and the feet stay at the end pose, and the upper back stays on the
-//  bench edge (c9). One tell, `arch`, on the lumbar landmark, with a Mistake zoom at k 3; the ribs are in its cue.
+//  bench edge (c9). One tell, `arch`, on the sacrum, the dashed lower-back line's vertex at the arch (panel mx24 R4: the
+//  lumbar point sat on the elbow's pivot circle), with a Mistake zoom at k 3; the ribs are in its cue.
 // Camera: the reference scale (fit, capped at 146.29 px/m).
 // Unsourced numbers (SIZES below; lb8/sizes.json holds each with its basis): PAD_R, GRIP_X, PLATE_D, SLEEVE_D,
 //  BENCH_W, M_ARCH, FLOOR_BACK, FLOOR_FRONT; BENCH_TOP, START_TILT solved.
@@ -227,9 +228,9 @@ export default {
     ],
     tells: [
       // one tell (D-HELD6-HIPTHRUST): `ribs` is dropped (1.86 px does not read) and kept in the cue, as reverse_lunge's
-      { key: 'arch', text: 'Back<br>arched', anchor: { at: 'lumbar', pose: 'mistake' }, box: { left: 150, top: 170 }, cue: 'The lower back arches and the ribs flare up as the hips lock out.' },
+      { key: 'arch', text: 'Back<br>arched', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 150, top: 170 }, cue: 'The lower back arches and the ribs flare up as the hips lock out.' },
     ],
   },
-  zoom: { view: 'mistake', k: 3 },   // the ring on the lumbar arch; 3 is the smallest ladder k that passes (lumbar 4.10 px: 12.31 at k 3, 10.26 at k 2.5)
+  zoom: { view: 'mistake', k: 3 },   // the ring on the arch; 3 is the smallest ladder k that passes (sacrum 4.28 px: 12.83 at k 3, 10.70 at k 2.5)
   alt: 'Hip thrust, side view. Upper back on a bench edge, feet flat, a padded barbell held in the hip crease: the hips drive up until shoulders, hips and knees form a level line with the shins vertical, then lower toward the floor.',
 };

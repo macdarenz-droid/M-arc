@@ -2283,6 +2283,23 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
     expect(bowProblems({ ...s(), mistake: { ...s().mistake, pose: { ...e, root: { ...e.root, tilt: e.root.tilt + 6.5 }, trunk: { flex: -12 } } } }).length).toBeGreaterThan(0);
     expect(bowProblems({ ...s(), mistake: { ...s().mistake, pose: { ...e, trunk: { flex: 0 } } } })).toEqual(['lumbar moves only 0.0 mm']);
   });
+  // Panel mx24 R4 (#368 6553899958): the BACK ARCHED leader ends on the red dashed lower-back line, clear of every joint
+  // mark (the lumbar end sat 3.3 px from the elbow's pivot circle centre, r 2.25, and read as pointing at the elbow).
+  const archLeaderProblems = (spec: any) => {
+    const R = plate.renderPlate(spec, { id: 'x', mistake: true }), cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm.mistake, out: string[] = [];
+    const ld = /<path class="leader m" d="M([\d.]+) ([\d.]+)L/.exec(R.svg);
+    if (!ld) return ['no Mistake leader'];
+    const end = [+ld[1]!, +ld[2]!], g = ['backUpper', 'backMid', 'sacrum', 'buttock'].map(n => cam.P(L[n]));
+    const dg = Math.min(...g.slice(1).map((q: number[], i: number) => segD(end, g[i]!, q)));
+    if (dg > 1) out.push(`leader end ${dg.toFixed(1)} px off the dashed back line`);
+    for (const m of R.svg.matchAll(/<circle class="joint" cx="([\d.]+)" cy="([\d.]+)"/g)) { const d = Math.hypot(end[0]! - +m[1]!, end[1]! - +m[2]!); if (d < 6) out.push(`leader end ${d.toFixed(1)} px from a joint mark`); }
+    return out;
+  };
+  it('R4 (panel mx24): the arch leader ends on the dashed lower-back line (<= 1 px) and at least 6 px from every joint mark; mutation: the lumbar anchor (on the elbow mark) is red', () => {
+    expect(archLeaderProblems(s())).toEqual([]);
+    const t = s().mistake.tells[0], lumbar = { ...s(), mistake: { ...s().mistake, tells: [{ ...t, anchor: { at: 'lumbar', pose: 'mistake' } }] } };
+    expect(archLeaderProblems(lumbar)).toEqual(expect.arrayContaining([expect.stringMatching(/px from a joint mark$/), expect.stringMatching(/off the dashed back line$/)]));
+  });
   // Bearing (#306 6358957999 item 1): the bar rests in the hip crease (c3), so the drawn pad's outer surface sits on the
   // drawn body outline (at most 0.5 cm inside it, and at most 0.5 cm off it) in every pose and ghost; the bench at most
   // 0.5 cm into the back (ghost0 included). Side-on, as A15 measures a full-width item: the pad's and the bench's drawn
@@ -4828,13 +4845,13 @@ describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main
     expect(zoomProblems('leg_extension', { ...S.leg_extension, zoom: { view: 'mistake', k: 2 } })).toEqual(['leg_extension: zoom {"view":"mistake","k":2}', 'leg_extension: a smaller k reaches the bar']);
     expect(zoomProblems('lying_leg_curl', { ...S.lying_leg_curl, zoom: undefined }).length).toBeGreaterThan(0);
   });
-  it('D-HELD6-HIPTHRUST: hip_thrust\'s Mistake is the end pose bowed 12 (trunk.bow), one tell `arch` on the lumbar landmark at 4.10 px (12.31 px at k 3); mutations: the main drawing\'s backMid-sacrum anchor and the number trunk are red', () => {
+  it('D-HELD6-HIPTHRUST: hip_thrust\'s Mistake is the end pose bowed 12 (trunk.bow), one tell `arch` on the sacrum (the dashed back line, panel mx24 R4) at 4.28 px (12.83 px at k 3); mutations: the main drawing\'s backMid-sacrum anchor and the number trunk are red', () => {
     const h = S.hip_thrust, z = Z.zoomOf(h);
     console.log(`HELD-A hip_thrust arch: ${z.fault.d.toFixed(3)} px -> ${(z.fault.d * 3).toFixed(2)} px at k 3; ring ${JSON.stringify(z.circle)}`);
-    expect(h.mistake.tells.map((t: any) => [t.key, t.anchor])).toEqual([['arch', { at: 'lumbar', pose: 'mistake' }]]);
+    expect(h.mistake.tells.map((t: any) => [t.key, t.anchor])).toEqual([['arch', { at: 'sacrum', pose: 'mistake' }]]);
     expect(h.mistake.tells[0].cue).toMatch(/ribs/);
     expect(h.mistake.pose.trunk).toEqual({ flex: 0, bow: 12 });
-    expect(z.fault.d).toBeCloseTo(4.104, 2);
+    expect(z.fault.d).toBeCloseTo(4.278, 2);
     const atK4 = (spec: any) => Z.zoomOf({ ...spec, zoom: { view: 'mistake', k: 4 } }).fault.d * 4;
     const old = { ...h, mistake: { ...h.mistake, tells: [{ ...h.mistake.tells[0], anchor: { along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' } }] } };
     expect(atK4(old)).toBeLessThan(BAR);   // the main anchor on the bowed back stays under the bar even at kMax
