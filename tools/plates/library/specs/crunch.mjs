@@ -19,15 +19,19 @@
 //  - Feet (c1): flat, heels HEEL_FROM_TAIL (37.5 cm, the midpoint of "about 30-45 cm") footward of the tailbone, read as
 //    the engine's sacrum landmark (the body model has no coccyx point); one foot under each hip joint (hip-width); the
 //    plant IK bends the knees up (pole up).
-//  - Arms (c2): crossed over the chest, each hand on the chest in front of the opposite shoulder (the reach IK, solved
-//    per pose against that pose's thorax), elbows out to the side.
+//  - Arms (c2): crossed over the chest, each hand in front of the opposite shoulder (the reach IK, solved per pose
+//    against that pose's thorax), elbows out to the side. The far (left) hand rests HAND[1] off the chest; the near
+//    (right) forearm lies over the far one, its hand NEAR_OFF off the chest, so the two forearms never pass through each
+//    other (D-SUPCORE-CROSS; c2 names no hand-on-chest contact).
 //  - Chin (c7): the start keeps the supine solve's neck (skull resting, neck neutral); the neck angle relative to the
 //    thorax is the same in every right pose ("keep it there"). A further tuck is not drawn: the engine turns the head
 //    about the neck pivot, so a tuck would lift the skull off the mat in the start.
-//  - End (c3, c4): the trunk curls END_CURL deg at the spine pivot (the engine's single lumbar bend, about L3) with the
-//    pelvis, legs and feet unchanged, so the tailbone and buttock stay down and the shoulder blades (backUpper, the
-//    engine's upper-back point, mid-blade) lift just off the floor. END_CURL is the curl-up's usual end range where the
-//    blades clear the mat (no card number; listed below).
+//  - End (c3, c4; LIB-SUPCORE D-SUPCORE-SPLIT): every pose writes the array trunk (D-SPINE-MIX), SPLIT [0, 0, 1, 0]:
+//    L3 keeps the supine solve's arch and the trunk curls END_CURL deg at T12 only, with the pelvis, legs and feet
+//    unchanged. c3 keeps the feet, tailbone and low back on the mat, which zeroes the lumbar pivots (L5/S1, L3); the
+//    shoulder blades (backUpper, the engine's mid-blade point) sit on the T7 pivot, so only a T12 turn lifts them with
+//    the low back down (pilot-b2/DESIGN.md section 2). END_CURL is the curl-up's usual end range (no card number;
+//    listed below).
 //  - Camera (D-LIB8-floor, floor-horizontal class): floor line at the approved y 339; the scale fills the plate width
 //    between the approved 16 px side margins (engine `fit`), capped at x1.35 of 146.29 px/m; F1 is that ruling's flag.
 //    Fixed before any measure (D-LIB11-SMALL): fit + maxScale 1.35, as plank and mountain_climbers.
@@ -38,7 +42,8 @@
 //   the low back lifting; tells: the low back off the mat (c6, c3), the pelvis tipping forward (c6); tempo = plate.tempo
 //   c12 (up 1, pause 1, down 2): Curl 1, Hold 1, Lower 2 (Q3: Hold right after the concentric).
 // Unsourced numbers (no card claim gives them; 13.3 must-fix 14): END_CURL 25 deg (how far the trunk curls: "just off
-//   the floor", c4, gives no number), HAND (where the crossed hands rest on the chest), ELBOW_POLE, KNEE_POLE, FLOOR
+//   the floor", c4, gives no number), HAND (where the crossed hands rest on the chest), NEAR_OFF 0.12 m (the near hand
+//   off the chest, the smallest whole cm that keeps the forearms apart; D-SUPCORE-CROSS), ELBOW_POLE, KNEE_POLE, FLOOR
 //   (the floor line's length), MIS_TILT 14 deg (how far the pelvis tips forward in the Mistake).
 import { landmarksOf, fk, resolve, normPose } from '../engine.mjs';
 
@@ -47,6 +52,7 @@ export const HEEL_FROM_TAIL = 0.375;                   // heel to tailbone along
 const HIP_W = 0.0875;                                  // foot under each hip joint (m): HJCs 17.5 cm apart (hip-width, c1)
 export const END_CURL = 25;                            // end: trunk curl at the spine pivot (deg)
 const HAND = [0.10, 0.035, 0.775];                     // crossed hand on the chest: x toward the opposite side (m), off the chest surface (m), thorax height (H)
+export const NEAR_OFF = 0.12;                          // the near (right) hand off the chest surface (m), D-SUPCORE-CROSS
 const ELBOW_POLE = [1, -0.6, 0.7];                     // elbow aim (x outward per side): out to the side, toward the hips, resting low by the ribs
 const KNEE_POLE = [0, 1, 0.25];                        // knees up
 export const MIS_TILT = 14;                            // Mistake: pelvis tips forward (deg, anterior tilt)
@@ -73,21 +79,24 @@ const feet = { l: { at: [HIP_W, 0, HEEL_Z], ref: 'heel', pole: KNEE_POLE }, r: {
 // arms crossed: each hand on the chest in front of the opposite shoulder, solved against the pose's own thorax
 const crossed = p => {
   const sk = fk(resolve(normPose(p, BODY), BODY).q, BODY);
-  const hand = s => sk.thorax([-s * HAND[0] / H, HAND[2], 0.072 + HAND[1] / H]);
+  const hand = s => sk.thorax([-s * HAND[0] / H, HAND[2], 0.072 + (s < 0 ? NEAR_OFF : HAND[1]) / H]);
   return { l: { at: hand(1), pole: ELBOW_POLE }, r: { at: hand(-1), pole: [-ELBOW_POLE[0], ELBOW_POLE[1], ELBOW_POLE[2]] } };
 };
+// LIB-SUPCORE (D-SUPCORE-SPLIT): the curl's share at each spine pivot [L5/S1, L3, T12, T7]; L3 keeps the arch
+export const SPLIT = Object.freeze([0, 0, 1, 0]);
+const flex = (arch, curl) => ({ flex: [0, arch, 0, 0].map((a, i) => a + SPLIT[i] * curl) });
 const body = (trunk, extra = {}) => ({ ...LYING, trunk, plant: feet, ...extra });
 const withArms = p => ({ ...p, reach: crossed(p) });
 
-const start = withArms(body(LYING.trunk));
-const end = withArms(body(LYING.trunk + END_CURL));
+const start = withArms(body(flex(LYING.trunk, 0)));
+const end = withArms(body(flex(LYING.trunk, END_CURL)));
 
 // Mistake (card plate.mistake, c6; key `lowback`): the hip flexors jerk the trunk up, the pelvis tips forward MIS_TILT
-// deg (anterior tilt) and the low back lifts off the mat. The thorax keeps the end's angle to the floor (the spine bend
-// takes back the tip), so only the pelvis and the low back differ from the right end pose; the root (height and z) is
+// deg (anterior tilt) and the low back lifts off the mat. The thorax keeps the end's angle to the floor (L3 takes back
+// the tip; the T12 curl is the end's), so only the pelvis and the low back differ from the right end pose; the root (height and z) is
 // solved so the buttock stays on the mat and the shoulder keeps its end z (the upper body does not slide); the feet
 // stay planted.
-const misTrunk = LYING.trunk + END_CURL - MIS_TILT;
+const misTrunk = flex(LYING.trunk - MIS_TILT, END_CURL);
 const misAt = ([y, z]) => body(misTrunk, { root: { at: [0, y, z], tilt: LYING.root.tilt + MIS_TILT } });
 const SH_E = landmarksOf(end, H)['shoulder.r'];
 // root (y, z): the buttock on the mat and the shoulder at the end pose's z (the upper body does not slide), by Newton
@@ -127,14 +136,16 @@ export default {
     { landmark: 'sole.r', plane: FLOOR, pose: 'all', tol: 0.5 },                // feet flat (c1, c3)
     { landmark: 'sole.l', plane: FLOOR, pose: 'all', tol: 0.5 },
   ],
+  // D-SUPCORE-CRUNCH: neither view reaches its PQ-H3 bar at plate scale; the smallest passing ladder k per view
+  zoom: [{ view: 'normal', k: 3 }, { view: 'mistake', k: 2 }],
   startParts: ['torso', 'arm.r', 'arm.l'],
   ghosts: { count: 2, parts: ['torso', 'arm.r'] },
   trace: { point: 'backUpper', trim: [4, 6] },
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   callouts: [
     { key: 'lowback', text: 'Low back<br>down', anchor: 'buttock', cue: 'Keep your feet, tailbone and low back on the mat.' },
-    { key: 'blades', text: 'Shoulder<br>blades up', anchor: { at: 'backUpper', off: [-7, 0] }, box: { left: 8, top: 300 }, cue: 'Curl up only until your shoulder blades leave the floor.' },
-    { key: 'chin', text: 'Chin<br>set', anchor: 'chin', box: { left: 24, top: 196 }, cue: 'Tuck your chin slightly and hold it there without pulling your neck.' },
+    { key: 'blades', text: 'Shoulder<br>blades up', anchor: { at: 'backUpper', off: [-7, 0] }, box: { left: 56, top: 216 }, cue: 'Curl up only until your shoulder blades leave the floor.' },
+    { key: 'chin', text: 'Chin set', anchor: 'chin', box: { left: 24, top: 160 }, cue: 'Tuck your chin slightly and hold it there without pulling your neck.' },
   ],
   mistake: {
     pose: mistakePose,
