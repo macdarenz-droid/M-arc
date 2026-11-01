@@ -1319,11 +1319,11 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   /** Lines a leader keeps 6 px from (away from its first 8 px): the Trace and the equipment (rope, sled, ball, bell, floor).
    *  `rope` holds the jump rope's strand outline apart, for the named nit below. */
   const avoidOf = (spec: any, mistake: boolean, svg: string) => {
-    const cam = camOf(spec), out: number[][][] = [], rope: number[][][] = [];
+    const cam = camOf(spec), out: number[][][] = [], rope: number[][][] = [], wall: number[][][] = [], wallPolys: number[][][] = [];
     for (const m of svg.matchAll(/<path class="(?:trace|eq-cable|floorline)[^"]*"[^>]*? d="([^"]+)"/g)) out.push(...segs(xy(m[1]!.replace(/H(-?[\d.]+)/, (_, x) => `L${x} ${xy(m[1]!)[0]![1]}`))));
     for (const it of itemsIn(spec, mistake ? 'mistake' : 'end').items) if (['poly', 'backPad', 'line'].includes(it.type) && it.part !== 'startbell' && it.part !== 'startball' && it.part !== 'startrope')
-      for (const p of eng.PRIMITIVES[it.type](it, cam)) { const pts = p.poly ?? p.line; if (pts) (it.part === 'rope' && it.z === 'back' ? rope : out).push(...segs([...pts, pts[0]])); }
-    return { out, rope };
+      for (const p of eng.PRIMITIVES[it.type](it, cam)) { const pts = p.poly ?? p.line; if (pts) { (it.part === 'rope' && it.z === 'back' ? rope : it.part === 'wall' ? wall : out).push(...segs([...pts, pts[0]])); if (it.part === 'wall') wallPolys.push(pts); } }
+    return { out, rope, wall, wallPolys };
   };
   /** D-LIB22-HOPNIT (#305 6355887979): jump_rope's `hop` leader, end view only, may cross the rope strand, once and
    *  steeply; it keeps 6 px from everything else. */
@@ -1348,13 +1348,33 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     }
     return { runs, angle };
   };
-  const minGap = (spec: any, nits: any[] = HOPNIT) => {
+  /** D-SMALL-WBDISTNIT (#358, HOPNIT form): wall_ball's `distance` leader, normal view only, may cross the wall slab
+   *  exactly once (one run of samples inside the slab, away from its first 8 px), at 45 deg or more to the wall face;
+   *  it keeps 6 px from everything else, and the figure rules still bind it. */
+  const WBNIT = [{ id: 'wall_ball', key: 'distance', mistake: false, part: 'wall' }];
+  const isWallNit = (nits: any[], id: string, key: string, mistake: boolean) => nits.some(n => n.id === id && n.key === key && n.mistake === mistake && n.part === 'wall');
+  /** A leader's passes through the slab: runs of samples inside any wall polygon, and the smallest angle (deg) between a
+   *  crossing leader segment and the wall face (vertical). */
+  const slabCrossing = (lead: number[][], polys: number[][][]) => {
+    let runs = 0, inRun = false, angle = 90;
+    for (const [a, b] of segs(lead)) for (let k = 0; k <= 200; k++) {
+      const q = [a![0]! + (b![0]! - a![0]!) * k / 200, a![1]! + (b![1]! - a![1]!) * k / 200];
+      if (Math.hypot(q[0]! - lead[0]![0]!, q[1]! - lead[0]![1]!) < 8) continue;
+      const inside = polys.some(P => inPoly(P, q));
+      if (inside && !inRun) { runs++; angle = Math.min(angle, Math.atan2(Math.abs(b![0]! - a![0]!), Math.abs(b![1]! - a![1]!)) * 180 / Math.PI); }
+      inRun = inside;
+    }
+    return { runs, angle };
+  };
+  const minGap = (spec: any, nits: any[] = [...HOPNIT, ...WBNIT]) => {
     let min = Infinity, at = '';
     const crossings: string[] = [];
     for (const mistake of [false, true]) {
-      const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg, list = listOf(spec, mistake), { out, rope } = avoidOf(spec, mistake, svg);
+      const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg, list = listOf(spec, mistake), { out, rope, wall, wallPolys } = avoidOf(spec, mistake, svg);
       leadersOf(svg).forEach((p, i) => {
-        const nit = isNit(nits, spec.id, list[i]?.key, mistake), avoid = nit ? out : [...out, ...rope];
+        const wnit = isWallNit(nits, spec.id, list[i]?.key, mistake);
+        const nit = isNit(nits, spec.id, list[i]?.key, mistake), avoid = [...(nit ? out : [...out, ...rope]), ...(wnit ? [] : wall)];
+        if (wnit) { const c = slabCrossing(p, wallPolys); crossings.push(`${spec.id} ${list[i]?.key}: ${c.runs} wall crossing(s) at ${c.angle.toFixed(1)} deg`); if (c.runs !== 1 || c.angle < HOP_STEEP) { min = -1; at = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: ${c.runs} wall crossing(s) at ${c.angle.toFixed(1)} deg`; } }
         if (nit) { const c = ropeCrossing(p, rope); crossings.push(`${spec.id} ${list[i]?.key}: ${c.runs} crossing(s) at ${c.angle.toFixed(1)} deg`); if (c.runs !== 1 || c.angle < HOP_STEEP) { min = -1; at = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: ${c.runs} rope crossing(s) at ${c.angle.toFixed(1)} deg`; } }
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
@@ -1374,6 +1394,21 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     expect(minGap(S.jump_rope, [{ id: 'jump_rope', key: 'hands', mistake: false, part: 'rope' }]).min).toBeLessThan(6);
     expect(minGap(S.jump_rope, [{ id: 'sled_push', key: 'hop', mistake: false, part: 'rope' }]).min).toBeLessThan(6);
     expect(minGap(S.jump_rope, [{ id: 'jump_rope', key: 'hop', mistake: true, part: 'rope' }]).min).toBeLessThan(6);
+  });
+  it('D-SMALL-WBDISTNIT: wall_ball\'s "Right distance" leader crosses the wall slab exactly once, at 45 deg or more; mutations: the exception given to another key, view or id, a second crossing, a shallow angle and a crossed figure are red', () => {
+    const g = minGap(S.wall_ball);
+    console.log(`LIB-SMALL D-SMALL-WBDISTNIT ${g.crossings.filter(x => x.startsWith('wall_ball')).join('; ')}`);
+    expect(g.min).toBeGreaterThanOrEqual(6);
+    expect(g.crossings.filter(x => x.startsWith('wall_ball'))).toHaveLength(1);
+    expect(minGap(S.wall_ball, [...HOPNIT, { id: 'wall_ball', key: 'catch', mistake: false, part: 'wall' }]).min).toBeLessThan(6);
+    expect(minGap(S.wall_ball, [...HOPNIT, { id: 'wall_ball', key: 'distance', mistake: true, part: 'wall' }]).min).toBeLessThan(6);
+    expect(minGap(S.wall_ball, [...HOPNIT, { id: 'jump_rope', key: 'distance', mistake: false, part: 'wall' }]).min).toBeLessThan(6);
+    const slab = [[252, 50], [270, 50], [270, 339], [252, 339]];
+    expect(slabCrossing([[245, 330], [300, 280]], [slab])).toMatchObject({ runs: 1 });
+    expect(slabCrossing([[245, 330], [300, 280], [240, 230]], [slab]).runs).toBe(2);
+    expect(slabCrossing([[245, 330], [262, 200]], [slab]).angle).toBeLessThan(45);
+    const left = { ...S.wall_ball, callouts: S.wall_ball.callouts.map((c: any) => (c.key === 'distance' ? { ...c, box: { left: 16, top: 300 } } : c)) };
+    expect(crossProblems(left).some(x => x.startsWith('wall_ball normal distance'))).toBe(true);
   });
   it('mutation: medicine_ball_slam\'s "Hips and knees" box moved under the ball (its leader along the floor line) is red', () => {
     const s = S.medicine_ball_slam, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'hips' ? { ...x, box: { left: 200, top: 318 } } : x)) };

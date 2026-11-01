@@ -155,7 +155,7 @@ export default {
   poses: { start, via, end },
   equipment: [
     { type: 'floor', from: DZ - 0.45, to: WALL_FACE },
-    wall({ face: WALL_FACE + WALL.t, h: WALL_H }),
+    { ...wall({ face: WALL_FACE + WALL.t, h: WALL_H }), part: 'wall' },
     ...perItem((lm, ctx) => medBall({ at: ballAt(lm, ctx) }), MED_BALL_ITEMS),
     ...perItem((lm, ctx) => (ctx.pose === 'end' ? START_BALL : null), MED_BALL_ITEMS),
   ],

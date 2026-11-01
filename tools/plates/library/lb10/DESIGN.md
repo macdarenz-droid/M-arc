@@ -899,3 +899,15 @@ draft raises H4.overlap (distance|depth), F3 126.5 and F4 0: label boxes are set
 - Test (lb10-plates.test.ts, R3): no ghost hand floats. Mutations: the ball dropped from the ghosts, the keys removed,
   and a ghost hand moved 5 cm off its ball.
 - QA: all 10 hard checks pass; F5 3.57 only; Trace 64.4 px, deviation 62.9 px.
+
+### 23.7 Panel mx22 fix (#358, D-SMALL-WBDISTNIT): wall_ball R4
+
+- A dashed floor dimension (`datum`, correct plate only) runs from the start toe tips (x 168.6) to the wall face
+  (x 252.0), DIM_Y 0.05 m up (7 px above the floor line). The `distance` leader ends on it, 0.03 m short of the wall
+  face. Its box sits right of the wall at {272, 296}: no gap position fits the 61.3 px label between the figure (x 188.4)
+  and the wall (x 252).
+- D-SMALL-WBDISTNIT (HOPNIT form): this leader, in the normal view only, may cross the wall slab exactly once at 45 deg
+  or more. Measured: 1 crossing at 54.8 deg. The wall item carries `part: 'wall'`. The test's mutations, all red:
+  the exception given to another key (`catch`), to the Mistake view, or to another id; a second crossing; a shallow
+  angle (under 45 deg); the figure crossed (box left of the figure).
+- QA: all 10 hard checks pass; F5 3.57 only; leaderMax 70.0 px.
