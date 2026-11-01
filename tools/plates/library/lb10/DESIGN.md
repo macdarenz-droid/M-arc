@@ -717,7 +717,7 @@ start, near knee 24.1 deg. pxPerM 146.3, leaderMax 68.5 px.
 farmer_s_carry last). The 8 approved cards' markup is byte-identical to main's page `5e02f6aa…` (each `#card-*`
 article compared; medicine_ball_slam up to the new card). C0 `manifestProblems()` is `[]`.
 
-## 23. Held 6 plan: jump_rope ('HELD-A', 2026-11-01; base main `5bcbddcf`; card `verify/held6-card.md` @ `ac886f82`)
+## 24. Held 6 plan: jump_rope ('HELD-A', 2026-11-01; base main `5bcbddcf`; card `verify/held6-card.md` @ `ac886f82`)
 
 Ruling D-HELD6-JUMPROPE. Built only after #358 (LIB-SMALL, which writes lb10) has merged and main is merged in.
 
