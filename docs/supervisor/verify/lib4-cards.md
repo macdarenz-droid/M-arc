@@ -4648,3 +4648,6 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **PANEL mx23** (wall_ball's last recheck @ `29e788a9`) is **VALID**. Plants were caught at R4 [3,2,5] and R5 [2,2,2].
   - **wall_ball: APPROVED.** LIB-SMALL has 3 of 3 and goes to READY, with its own F-VITEST-RPC move.
   - **Golden-B follow-up 28** (new, confirmed on the mx23 T02 dark.png crop): lat_pulldown's normal-view SHOULDERS DOWN leader runs through the head and neck to the shoulder dot (R4 [3,4,3]). The anchor bytes are unchanged since mx1. Every later RULED.md lists follow-ups 19-28.
+- **Train 56** (#367, head `8635a228`) carries LB6 R2 #354 @ `85b8c380` and the PILOT-A3 docs delta #362 @ `0ab56be3`. Main goes from 112 to 121.
+- **LIB-13s READY @ `ce13cdfa`** (#359 6553020190); a fresh Opus reviewer is running.
+- **HELD-A started** (session_01EQuYNjBQnFptwsBN8xbt1B, branch claude/lib-held-a): hip_thrust and resisted_hip_flexion, then jump_rope after #358 merges. Active LIB builders: LIB-SMALL, LIB-SPLIT, LIB-SUPCORE, HELD-A.
