@@ -3,6 +3,7 @@
 import { cpSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
+import { child, ownRowsTreeInChild } from '../child-test';
 import { LIBRARY } from './shipped-rows';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -69,9 +70,9 @@ export function hashLineProblems(paths: string[], a: Map<string, { text: string 
 }
 
 describe('L2-A4: a new library batch row stales none of the 8\'s generated files', () => {
-  it('with a synthetic batch row, the 54 fingerprinted files keep their header and the 8 ht- modules their hashes: line; the id files see the row', async () => {
+  child.it('with a synthetic batch row, the 54 fingerprinted files keep their header and the 8 ht- modules their hashes: line; the id files see the row', async () => {
     const F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
-    const t = F.ownRowsTree(), LB = 'tests/howto/fixtures/batches/lb-test.json';
+    const t = await ownRowsTreeInChild(), LB = 'tests/howto/fixtures/batches/lb-test.json';
     onTestFinished(() => F.drop(t));
     cpSync(LB, join(t, LB));
     const ID_FILES = ['src/howto/ids.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts'];

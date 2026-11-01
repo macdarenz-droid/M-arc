@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -1008,7 +1009,7 @@ describe('LIB-9a A9: nothing ships (D-LIB4-ENTRY-2)', { timeout: T }, () => {
     expect(goldenProblems([['chin-up.layers.html', '<div data-id="chin-up"></div>']]).length).toBeGreaterThan(0);
     expect(goldenProblems([['lb2.json', '{"id":"lib_dumbbell_shoulder_press"}']])).toEqual([]);
   });
-  it('generate --check is green, and no generated file is read from lb1/, the LB1 specs or How-to sources', async () => {
+  child.it('generate --check is green, and no generated file is read from lb1/, the LB1 specs or How-to sources', async () => {
     const gen = await import(/* @vite-ignore */ new URL('../../tools/plates/generate.mjs', import.meta.url).href);
     const out = await gen.render();
     expect(gen.diff(out)).toEqual([]);

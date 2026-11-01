@@ -8,6 +8,7 @@ import type { RiskJoint } from '../../src/howto/content-types';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 const SCRIPT = new URL('../../tools/plates/library/shared/check-bundle.mjs', import.meta.url).pathname;
@@ -180,7 +181,7 @@ describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes only red-flag-back.ts and s
   const GATE = 'tools/plates/gen/library-gate.mjs', SHARED_DIR = join(ROOT, 'tools/plates/library/shared');
   /** Paths render() attributes to the gate, and other files whose header names it. */
   const gatePaths = (out: Map<string, any>) => [...out].filter(([, o]) => o.writers.includes(GATE)).map(([p]) => p).sort();
-  it('render(): the paths attributed to library-gate.mjs are exactly [src/howto/red-flag-back.ts], and no other header names it', async () => {
+  child.it('render(): the paths attributed to library-gate.mjs are exactly [src/howto/red-flag-back.ts], and no other header names it', async () => {
     const out = await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render();
     expect(gatePaths(out)).toEqual(['src/howto/red-flag-back.ts']);
     expect([...out].filter(([, o]) => o.text.slice(0, 600).includes('library-gate')).map(([p]) => p)).toEqual(['src/howto/red-flag-back.ts']);
@@ -380,7 +381,7 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
     expect(bad(imps)).toEqual([]);
     expect(bad([...imps, { ...imps[0], key: 'misspelt', implement: { ...imps[0].implement, text: 'battle_rope' } }])).toEqual(['misspelt']);
   });
-  it('no data value reaches src/** or a generator output (0 hits before these modules, recorded on #244); a notes string in a generated file is red', async () => {
+  child.it('no data value reaches src/** or a generator output (0 hits before these modules, recorded on #244); a notes string in a generated file is red', async () => {
     const src = walkFiles(join(ROOT, 'src')).map(f => [f.slice(ROOT.length), readFileSync(f, 'utf8')] as [string, string]);
     const out = [...(await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render())].map(([p, o]: [string, any]) => [p, o.text] as [string, string]);
     expect(src.length).toBeGreaterThan(100);

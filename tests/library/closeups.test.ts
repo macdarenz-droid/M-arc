@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -45,7 +46,7 @@ describe('LIB-6 close-up renderer, API level', () => {
     for (const o of Object.values(opts) as any[]) expect(['zoom', 'zbox']).toContain(o.shell);
   });
 
-  it('every close-up string of all 8 === the frozen golden-B script\'s', async () => {
+  child.it('every close-up string of all 8 === the frozen golden-B script\'s', async () => {
     expect(await cmp.compareCloseups(Object.keys(opts), opts)).toEqual([]);
   }, 120_000);
 
