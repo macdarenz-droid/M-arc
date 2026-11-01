@@ -843,3 +843,19 @@ Risks: the bowed Mistake moves the hip crease 0.78 cm while the bar stays at the
 read the pad off the body (mitigation: measured before pinning; if it fails, the bar follows the bowed crease and the
 hands follow the bar, recorded as a ruling question). lb8q's R4/R11 points (mitigation: the ring sits on the lumbar
 dip). The `lean` leader reads as chosen by H3 (mitigation: D-HELD6-RHF, the kettlebell_swing and chest_supported_row form).
+
+Measured at this head (HELD-A, both rows on rows.json; lb8-plates.test.ts and runQa node and browser, all 10 hard checks
+pass on all 9 LB8 rows, flags equal the ruled set):
+- hip_thrust: the bow moves lumbar 28.1 mm, sacrum 29.2, buttock 29.4, navel 31.8, backMid 4.8; the thorax, head, hips,
+  legs, hands and bar under 0.5 mm. `arch` on the lumbar landmark 4.104 px → 12.31 px at k 3 (k 2.5 gives 10.26, red);
+  ring c (90, 162) r 52. The bar held at the end's place still rests on the bowed body: pad 0.00 cm in / 0.01 cm off in
+  the Mistake, and the bench now clears the back in every pose (the old 0.25 cm in the Mistake is gone). Balance:
+  Mistake 36.2 cm ahead of the edge, 41.0 cm behind the heels. QA deviation 4.1 px with the zoom; Trace 46.5 px.
+- resisted_hip_flexion: `lean` on the Mistake head 15.379 px at plate scale (no zoom); `arch` stays on the sacrum and
+  the dashed back guide; leaderMax 63.2 px.
+- The LB8 page builds `6ce14c40…bc2c` twice (PQ-H7). The held page (the calf raises) and the named flags are unchanged
+  (`qa.mjs --held --record` re-wrote held-flags.json byte for byte).
+- Mutations (each red, then restored): hip_thrust's zoom at k 2.5 in the spec file; resisted_hip_flexion's `lean` back
+  on backMid in the spec file; plus the in-test mutations (the Mistake bar read back from the bowed crease, the main
+  drawing's solved arch, no bow, the number trunk, the main backMid-sacrum anchor, `lean` 20 px off the head, `arch` 20
+  px off the back guide).
