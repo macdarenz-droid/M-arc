@@ -135,8 +135,21 @@ Scratch QA on this tree (node and browser, zero exemptions; page built twice, eq
 
 - tempo: up 1, pause 1, down 2 (card plate.tempo, c12) → Curl 1, Hold 1, Lower 2 (spec :133, unchanged).
 - topFault: 'lowback', the drawn Mistake key (card mistake, c6).
-- plateFacts: the CARD FIELDS step proposes them from c1-c4, c7 (feet flat and on the mat, tailbone and low back on
-  the mat, blades just off the floor, arms crossed over the chest); the verify decides.
+- plateFacts (CARD FIELDS @ df215bda, verified VALID as cfcrunch): contacts only. buttock and backUpper at the start
+  (c1 "Lie on your back on a mat", setup); sole.r and sole.l at the start (c1 "feet flat on the floor", setup) and at the
+  end (c3); buttock at the end (c3, D-LIB11-SACRUM).
+- Not a fact (D-SUPCORE-KNEE, amended to option 1, #366 6553685427): c2's "your knees bent to about 90 degrees" (StrengthLog). It
+  cannot hold together with c1's heel distance of about 30-45 cm on this body: the thigh and shank are about 43 cm each,
+  the hip joint sits 9.6 cm footward of the sacrum landmark, and the soles are planted flat. The heel stays at 37.5 cm.
+  Start knee flexion (engine `angles.start['knee.r']` = knee.l), measured at df215bda:
+
+  | heel from tailbone | start knee | hip flex |
+  |---|---|---|
+  | 37.5 cm (drawn) | 135.0° | 55.2° |
+  | 45 cm (c1's maximum) | 124.2° | 52.0° |
+  | 50 cm | 116.6° | 49.3° |
+  | 60 cm | 100.3° | 42.8° |
+  | about 65.7 cm | 90° (65 cm 91.4°, 66 cm 89.5°) | 38.4° |
 - Unsourced numbers (listed in the spec header): END_CURL 25°, MIS_TILT 14°, HAND (far hand rest), NEAR_OFF 0.12 m (new),
   ELBOW_POLE, KNEE_POLE, FLOOR, and the label boxes.
 
