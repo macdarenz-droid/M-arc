@@ -127,6 +127,7 @@ export default {
     pose: MISTAKE,
     tells: [
       { key: 'knee', text: 'Knee drives<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The hips and front knee drive forward, and the shin tips far over the foot.' },   // c3
+      { key: 'shin', text: 'Shin tips<br>forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' }, cue: 'The front shin tips past vertical, the knee ahead of the toes.' },
     ],
   },
   tempo: [{ phase: 'Step', move: true, word: 'Slow' }, { phase: 'Lower', move: true, word: 'Smooth' }, { phase: 'Rise', move: true }],
