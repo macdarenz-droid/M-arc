@@ -932,6 +932,25 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
     - start SUPCORE in the first freed slot;
     - rulings for the 6 with no route;
     - the research card for bicycle_crunch and pallof_press.
+- **Update 04:00 UTC (11-01):** main is `5bcbddcf` (112 of 153). §48 has every verdict and ruling.
+  - **Train 56** (#367, head `8635a228`): LB6 R2 #354 (delta review PASS) and the PILOT-A3 docs delta #362. Local checks: GEN, C0 and the pilots pass; vitest is being re-run for its summary. CI is running. It brings main to 121.
+  - **Lanes:**
+
+    | lane | PR · session | state |
+    |---|---|---|
+    | LIB-13s | #359 · session_01EQuYNjsRaVUx3RM4ccYhCj | review PASS 6553118196; fixing Low 1 (A10 in one child process), then train 57 |
+    | LIB-SMALL | #358 · session_01EQuYNmQGFHuymcHkwUzaft | 3 of 3 approved (wall_ball in mx23); READY owed, with its RPC move |
+    | LIB-SPLIT | #364 · session_01EQuYNjLq58WNngV59S9HzG | PLAN RULED; wave 1 waits for #358 to merge |
+    | LIB-SUPCORE | #366 · session_01EQuYNmKwoS6SHBgwKPzxFs | PLAN RULED 6552704443; crunch as PILOT-B2 building |
+    | HELD-A | #368 · session_01EQuYNjBQnFptwsBN8xbt1B | PLAN RULED 6553075555; hip_thrust and RHF building, jump_rope after #358 |
+    | F-VITEST-RPC (tooling, no slot) | session_01EQuYNm2zass4aE8d4ze8Mu | moving tests of 10 s or more out of the worker |
+
+  - **Queued:**
+    - HELD-B (pallof_press, russian_twist; `verify/held6-card.md`);
+    - research for bicycle_crunch (trunk rotation and arm position).
+    - cable_rear_delt_fly and the 4 calf raises are on the named list for the release candidate.
+  - **New follow-up 28:** lat_pulldown's SHOULDERS DOWN leader crosses the head (golden B).
+  - **Usage:** "allowed_warning"; no pause this week.
 - **Paused.** Every session was told to finish only its current step, push at most once, post WAITING with a HANDOFF block and stop. Each resumes only on the supervisor's message 'RESUME after pause'. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled**; no resume check-in is scheduled. Resume only when the owner says so. Usage at 03:57: 7-day 0.05 (reset Thu 11-05 02:00 UTC).
 - **main `6cf4ea2a`** (train 45: F-ZOOM-2). Research head `a48b0594` (F-RESEARCH-2 #338 merged; pallof_press stays held; F-R2-FARMER-5 re-bases farmer_s_carry's M_STRIDE on c29-c31 in the next LB10 resume).
 - **Lanes at the pause:**
