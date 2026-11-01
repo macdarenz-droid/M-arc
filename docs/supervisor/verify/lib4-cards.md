@@ -4610,3 +4610,10 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - bicycle_crunch (research);
   - overhead_cable_triceps_extension (held).
 - Card drafts are running for **LIB-SPLIT** and **LIB-SUPCORE**.
+- **LIB-SPLIT card `ready`** (`verify/lib-split-card.md`). D-SPLIT-1 to -8 are confirmed with three amendments:
+  - LANE: merge #358 before touching shared lb4 files.
+  - STEPUP: step_up's card goes into the CARD FIELDS set.
+  - BSSMIS: the knee is in contact at the end, per c3 Catalyst, and the Mistake is the hips sinking.
+  - The builder is session_01EQuYNjLq58WNngV59S9HzG, branch claude/lib-split. Active LIB builders: LB6, LIB-13s, LIB-SMALL, SPLIT.
+- **CARD FIELDS cfwb is NOT VALID.** The plant was missed: start heel and ball floor contacts were written for "Stand with your feet shoulder-width apart", a stance quote that names no support. The verifier passed them as "the plan's heel-and-ball form". The verifier's c9 finding (end wrist contacts, hands on the ball) was checked by the supervisor and stands, and the fix is ruled (#358 6551219584).
+  - **The re-verify gets a new plant and a fresh verifier.** rules.md gains one general line: a stance or spacing quote names no support and gives no floor contact (the D-LIB22-FACTS reading of jumping_jacks c1/c12). The landmark plan line only says which landmark a stated contact uses.
