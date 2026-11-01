@@ -4635,3 +4635,4 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **mx23** (wall_ball's last recheck @ `29e788a9`) is building.
 - **LB6 R2 READY @ `148f07b3`** (#354 6552474828): 9 of 9 rows approved, and the D-LIB13S-RPC move is done (tests only, with a guard against worker page builds). A fresh Opus reviewer is running.
 - **LIB-SUPCORE started** (session_01EQuYNmKwoS6SHBgwKPzxFs, branch claude/lib-supcore) in LB6's freed slot. Active LIB builders: LIB-13s, LIB-SMALL, LIB-SPLIT, LIB-SUPCORE.
+- **#354 review FAIL** 6552589455 (0/1/0/1): hip_adduction and hip_abduction have no byte pins; a one-byte change to an alt stays green. The fix is tests only, adding the 18 pins. The Low is that the RPC guard checks text only. A delta review follows after 'LB6 R2 FIXED'.
