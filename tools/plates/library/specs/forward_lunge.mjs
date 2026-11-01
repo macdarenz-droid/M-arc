@@ -90,6 +90,13 @@ const bells = lm => [
   { type: 'dumbbell', at: lm['grip.r'], axis: [0, 0, 1], z: 'front', part: 'db' },
 ];
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
+// The dumbbell in each hand at the start (the setup quote's contact fact), checked at the wrist: the plane square to
+// the hand (wrist to grip) through the drawn wrist (step_up's inHand form).
+const LS0 = landmarksOf(start, H);
+const inHand = s => {
+  const d = [0, 1, 2].map(i => LS0[`grip.${s}`][i] - LS0[`wrist.${s}`][i]), L = Math.hypot(...d);
+  return { landmark: `wrist.${s}`, plane: { point: LS0[`wrist.${s}`], normal: d.map(v => v / L) }, pose: 'start', tol: 0.5 };
+};
 
 export default {
   id: 'forward_lunge', name: 'Forward Lunge', view: 'side', facing: 'right',
@@ -107,6 +114,7 @@ export default {
     { landmark: 'ball.l', plane: FLOOR, pose: 'start', tol: 0.5 },
     { landmark: 'toe.l', plane: FLOOR, pose: 'end', tol: 1 },                           // rear forefoot on the floor
     { landmark: 'knee.l', above: { point: [0, 0.049 + 0.02, 0], normal: [0, 1, 0] }, pose: 'end' },   // c1 "without touching" (cap + 2 cm)
+    inHand('l'), inHand('r'),                                                           // the hands on the dumbbells at the start
   ],
   ghosts: { count: 2, parts: ['leg.r', 'leg.l', 'trunk', 'arm.r', 'db'] },
   trace: { point: 'hip.r', trim: [10, 12] },

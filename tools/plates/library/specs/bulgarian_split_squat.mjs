@@ -103,6 +103,13 @@ const bells = lm => [
   { type: 'dumbbell', at: lm['grip.r'], axis: [0, 0, 1], z: 'front', part: 'db' },
 ];
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
+// The dumbbell in each hand at the start (the setup quote's contact fact), checked at the wrist: the plane square to
+// the hand (wrist to grip) through the drawn wrist (step_up's inHand form).
+const LS0 = landmarksOf(start, H);
+const inHand = s => {
+  const d = [0, 1, 2].map(i => LS0[`grip.${s}`][i] - LS0[`wrist.${s}`][i]), L = Math.hypot(...d);
+  return { landmark: `wrist.${s}`, plane: { point: LS0[`wrist.${s}`], normal: d.map(v => v / L) }, pose: 'start', tol: 0.5 };
+};
 
 export default {
   id: 'bulgarian_split_squat', name: 'Bulgarian Split Squat', view: 'side', facing: 'right',
@@ -118,6 +125,7 @@ export default {
     { landmark: 'heel.r', plane: FLOOR, pose: 'all', tol: 0.5 },
     { landmark: 'ball.r', plane: FLOOR, pose: 'all', tol: 0.5 },
     { landmark: 'knee.l', plane: { point: [0, KNEECAP, 0], normal: [0, 1, 0] }, pose: 'end', tol: 0.5 },   // c3: the rear kneecap on the floor
+    inHand('l'), inHand('r'),                                                           // the hands on the dumbbells at the start
   ],
   ghosts: { count: 2, parts: ['leg.r', 'leg.l', 'trunk', 'arm.r', 'db'] },
   trace: { point: 'hip.r', trim: [10, 12] },

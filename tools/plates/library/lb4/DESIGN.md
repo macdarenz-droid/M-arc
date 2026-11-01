@@ -416,9 +416,9 @@ Pose map: identity for the 5 (each card fault is at the bottom); step_up keeps D
 | id | start | via (ghosts) | end | Mistake (size) | first tell = topFault | tempo = tempoOf(strip) |
 |---|---|---|---|---|---|---|
 | step_up | unchanged except the trailing hip 15 → 21 (17.4) | none | unchanged | unchanged (`lean`, M_INCL 40) | `lean` | Rise blank; Lower Controlled |
-| forward_lunge | standing on the rear foot's spot: both mid-feet START_Z −1.0129 m behind the front mid-foot, so the rear ball's z equals the end's (ruling 7) | 1: near foot 8 cm up, halfway, toes up 15° (heel landing, c4); 2: near foot down, rear heel up, hips halfway | the parent's end (shin 6°, thigh parallel, rear knee joint 8.5 cm up: "without touching", c1) | front shin 6° → M_SHIN 29.2°, the angle that puts the knee joint centre over the toe tip; hips held at the end height, 14.6 cm forward | `knee` (`hips`) | Step Slow; Lower Smooth; Rise blank |
+| forward_lunge | standing on the rear foot's spot: both mid-feet START_Z −1.0129 m behind the front mid-foot, so the rear ball's z equals the end's (ruling 7) | 1: near foot 8 cm up, halfway, toes up 15° (heel landing, c4); 2: near foot down, rear heel up, hips halfway | the parent's end (shin 6°, thigh parallel, rear knee joint 8.5 cm up: "without touching", c1) | front shin 6° → M_SHIN 29.2°, the angle that puts the knee joint centre over the toe tip; hips held at the end height, 14.6 cm forward | `knee` (one tell; its cue names the hips) | Step Slow; Lower Smooth; Rise blank |
 | walking_lunge | as forward_lunge (START_Z −1.0058) | as forward_lunge | shin 6°, front thigh 5° below parallel, rear kneecap on the floor (knee joint 4.9 cm up, c2) | pelvis and trunk pitched to M_LEAN 26.9° (solved: near shoulder over the middle of the front thigh), arms plumb, legs unmoved | `chest` (`head`) | Lower Controlled; Rise blank |
-| bodyweight_lunge | as forward_lunge, feet together (c1): near foot beside the rear one, root centred (START_Z −0.9903) | as forward_lunge | shin 12° (c4 "slightly forward"), thigh parallel (c4), trunk 20° forward from the hips, flat (c5: pelvis tilt, trunk flex 0), no load | as forward_lunge: M_SHIN 29.2° | `knee` (`hips`) | Step Slow; Lower blank; Rise blank |
+| bodyweight_lunge | as forward_lunge, feet together (c1): near foot beside the rear one, root centred (START_Z −0.9903) | as forward_lunge | shin 12° (c4 "slightly forward"), thigh parallel (c4), trunk 20° forward from the hips, flat (c5: pelvis tilt, trunk flex 0), no load | as forward_lunge: M_SHIN 29.2° | `knee` (one tell) | Step Slow; Lower blank; Rise blank |
 | bodyweight_split_squat | same stance as the end, hips straight above the end hips, front knee 8° (c3 "about straight"; A3 ≤ 10°) | none (feet fixed; 2 interpolated ghosts) | as walking_lunge's | as forward_lunge: M_SHIN 29.2° | `knee` | Lower Smooth; Rise Smooth |
 | bulgarian_split_squat | same stance, hips above the end hips, front knee 8° ("standing on the front leg") | none | rear kneecap on the floor (c3 contact, D-SPLIT-BSSMIS), front shin 6°, hip where both thighs meet (0.476 m) | see 17.6 | `seat` | Lower Controlled; Stand blank |
 
@@ -509,3 +509,16 @@ forward_lunge, walking_lunge, bodyweight_lunge: the via poses (swing foot 8 cm, 
 walking_lunge FRONT_THIGH −5°; bodyweight_lunge FRONT_SHIN 12, TRUNK_LEAN 20, the arms; bodyweight_split_squat
 START_KNEE 8, FRONT_THIGH −5°, the arms; bulgarian_split_squat BENCH_TOP 0.42 m, the bench depth, OVERHANG 0.02 m,
 REAR_X, STANCE, START_KNEE 8, M_SINK; step_up the trailing hip 21. Each spec header lists its own.
+
+### 17.9 PLAN RULED (#364 6551354216) and wave 1 build
+
+- Q1 accepted (A3: rear ball x and z within 0.5 cm, y = REAR_LIFT ± 0.5 cm; a 1 cm x mutation). Q2 option (a): 1 cm
+  sink, unsourced, Mistake zoom k 1.5. Q3: step_up F4 named at 1; the H4 fix boxes `leg` only.
+- forward_lunge and bodyweight_lunge keep one tell (`knee`): a right-side `hips` tell needed a leader over 99 px to
+  the buttock (F3's 82.26 px top), so its words moved into the knee tell's cue.
+- Label boxes (each moved off the engine's own place for F3 or H4): forward_lunge `hips`, `back`; walking_lunge
+  `hips`, `chest`; bodyweight_lunge `hips` (anchor the hip joint: every buttock place measured over 82 px), `thigh`
+  (two lines), `back`; bodyweight_split_squat `knee`; step_up `leg`. bodyweight_split_squat has one box, so F4 is 1:
+  named, as step_up's (Q3).
+- The setup quotes' hand facts get `checks` planes at the wrist at the start (step_up's inHand form) on forward_lunge,
+  walking_lunge and bulgarian_split_squat.
