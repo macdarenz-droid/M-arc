@@ -282,6 +282,10 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   drawn key `arch` (tell 1 "Back arched", c11 "arch the lower back"; c13 "overextending your back"), tell 2 `ribs`
   ("Ribs up", c12 Healthline "If your ribs are up and your lower back is arched"). handlingMistakes[0] "Arching the
   lower back." (c11, c12) = the same fault → topFault `arch`; F7 not raised.
+  - **One-tell record** (hip_thrust; Held 6, D-HELD6-HIPTHRUST, 2026-11-01): fault: the lower back arched with the ribs
+    up (plate.mistake, c11, c12, c13). Claim ids read: c11, c12, c13. The second sign, c12's ribs up, is kept in the
+    `arch` cue ("…and the ribs flare up…"), as reverse_lunge.mjs:136 does: on the bowed Mistake (the thorax held) the
+    `ribs` anchor moves 1.86 px, which does not read. The bullets below describe the drawing before Held 6 (section 20).
   - Both tells anchor on the Mistake torso's top outline (the waist and the lower ribs), met from the open space above.
     The lower back's underside is enclosed in every render: the bench edge, the end back and the start phantom's back
     meet at the pivot (c9), so a leader there would cross the start phantom; the arch reads on the torso's bend from
@@ -668,11 +672,9 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 | seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°); the c1 fact "toes ... on the foot support" (CARD FIELDS fix 2) is missed at the drawn stretch: the toe 4.2 cm off the platform's top | the named list (D-LIB18-CALF-S4, #325 6405116791): S4 arose, so the row is left out with the toe-through-platform reason and its renders, decided at the release candidate |
 | standing_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 5.1 px < 22.11 px (trim [10, 12], barbell_back_squat.mjs:117); the locked-knee Mistake 7.4 px < 11.39 px; the rigid toe is 4.85 cm inside the platform at the card's top; the c1 toe fact misses by 2.3 cm at the start | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
 | bodyweight_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace measures 5.8 px < 22.11 px (trim [10, 12]); the Mistake passes (13.6 px); the rigid toe is 4.56 cm inside the step at the top, so the c4 toe fact misses by 4.6 cm | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
-| hip_thrust | D-LIB8-shrug (D-LIB18-SIZE, S2); D-LIB18-RINGKEEP (#325) | the card-true 12° arch moves its tells 4.16 px at most; after the panel's R4 fix (lb8q, #325 6410306586: the `arch` leader on the underside lumbar arch, backMid→sacrum ½) the largest tell move is 2.3 px (`arch`; `ribs` 1.38 px), under 11.39 px even at the zoom's k 4 | held: no tell passes H3.zoom at k ≤ 4 (D-LIB18-RINGKEEP) |
-| resisted_hip_flexion | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lean/arch measures 5.1 px (`arch`; `lean` 2.7 px) < 11.39 px; the Trace passes (82.7 px) | held: with the Mistake zoom at its only free disc (288,138), no placement of its two boxes passes (D-LIB18-ZOOMPLACE scan, #325); a new route needs a ruling |
 
 Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys stay. glute_bridge left this table at
-'LIB-18 resume 2' (section 19).
+'LIB-18 resume 2' (section 19); hip_thrust and resisted_hip_flexion left it at 'HELD-A' (section 20).
 
 **Bulk rulings (LB8 BULK DRAWN RULED, #306 6357883031).** Named nits: hack_squat's "Back on pad" (39 px) and
 resisted_hip_flexion's "No back arch" (63 px), each entering the end figure once from the front, no equipment, at most
