@@ -3,7 +3,9 @@
 // Patterns copied from tests/howto/lb3-plates.test.ts (#274 @ a6f4bd07). Every test reads what is drawn (the items a
 // spec emits, the engine's landmarks and report), never a helper's own maths.
 import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -1178,6 +1180,14 @@ describe('LIB-14 panel mx1 second round (#289 6414220426, D-LIB13-PANEL2): goble
   });
 });
 
+/** F-VITEST-RPC (#358 6552271304, the D-LIB13S-RPC form): the LIB-SMALL blocks build the whole LB4 page in an awaited
+ *  child process, never in the worker. */
+const lb4PageInChild = async () => {
+  const script = `const b = await import(${JSON.stringify(lib('lb4/build.mjs'))}); const { html } = await b.buildLb4Page(); process.stdout.write(html.toString('base64'));`;
+  const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 27 });
+  return Buffer.from(stdout, 'base64').toString('utf8');
+};
+
 describe('LIB-SMALL A2: the 5 approved LB4 plates stay byte-identical (page 9a2b7881 on main 6b32d576)', { timeout: T }, () => {
   // golden.mjs fragmentsOf of the 5 approved LB4 plates on main's LB4 page 9a2b7881…6a9e (45 fragments; the form of
   // lb6-plates.test.ts's LIB-16 resume block).
@@ -1246,10 +1256,10 @@ describe('LIB-SMALL A2: the 5 approved LB4 plates stay byte-identical (page 9a2b
   });
   it('the 5 approved plates\' 45 fragments on this head equal main\'s', async () => {
     expect(Object.values(APPROVED).reduce((a, f) => a + Object.keys(f).length, 0)).toBe(45);
-    expect(fragProblems((await build.buildLb4Page()).html.toString('utf8'))).toEqual([]);
+    expect(fragProblems(await lb4PageInChild())).toEqual([]);
   });
   it('mutation: one byte changed in goblet_squat\'s alt is red', async () => {
-    const html = (await build.buildLb4Page()).html.toString('utf8'), alt = S.goblet_squat.alt;
+    const html = await lb4PageInChild(), alt = S.goblet_squat.alt;
     expect(html.includes(alt)).toBe(true);
     expect(fragProblems(html.replace(alt, alt.replace('Goblet squat', 'Goblet squaT')))).toContain('goblet-squat alt');
   });
@@ -1336,7 +1346,7 @@ describe('LIB-SMALL: jump-squat as approved in panel mx17 (#358, head c176723d) 
   };
   let golden: any, build: any;
   beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb4/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
-  const pageOf = async () => (await build.buildLb4Page()).html.toString('utf8');
+  const pageOf = lb4PageInChild;
   const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
     const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
     return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
