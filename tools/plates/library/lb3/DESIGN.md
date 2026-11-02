@@ -393,10 +393,8 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
 
 | id | held by | ruling | until |
 |---|---|---|---|
-| dumbbell_shrug | LIB-13s | D-LIB8-shrug; D-LIB13-SHRUG (ruling 6) | LIB-ZOOM's convention is ruled and extended to the shrugs |
-| cable_shrug | LIB-13s | D-LIB8-shrug; D-LIB13-SHRUG | as above |
-| t_bar_row | LIB-13s (LIB-ZOOM small-motion question) | D-LIB13-TBAR; D-LIB13-LANDMINE-2 route 3; D-LIB8M-CARDTRUE | the LIB-ZOOM convention is ruled (F-LB3-6) |
-| barbell_shrug | pilot A held (pilot-a/plates.json @ `48d49bb`), then LIB-13s | D-LIB8-shrug; D-LIB13-PA | as above |
+None. LIB-13s released every row this table held: t_bar_row and barbell_shrug in wave 1, then cable_shrug,
+dumbbell_shrug and smith_machine_shrug in wave 2 (section 16), each a row in `lb3/rows.json`.
 
 ## 14. Risks and mitigations
 
@@ -433,3 +431,194 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
 4. **Q4 (fault→key and one_arm_dumbbell_row's topFault).** Section 9's table; `momentum` for the drawable-false top
    fault.
 5. **Q5 (modes).** Section 1: HROW and HINGE not built; all 8 H.
+
+## 16. LIB-13s: the shrugs and t_bar_row (PLAN)
+
+Card: `docs/supervisor/verify/lib-13s-card.md` @ `dd30aa1a` (claude/sup-lib4-cards), rulings D-LIB13S-1 to -10
+confirmed as written (lib4-cards §48). Base: main `6b32d576` (train 53). Research: `a48b059400a74d5c9e3aceed21cf1aa67ab6f118`;
+the 4 shrug cards and quotes are byte copies from it (16.6). Every number below marked "measured" was re-run on this
+base with the wave-1 edits in the working tree (scratch scripts, never committed); [est] marks a value not yet drawn.
+
+### 16.1 Modes (re-checked on `6b32d576`)
+
+All 5 are H (D-LIB13S-MODES). derive.mjs:4-12 PARAMS on this base are still the 7 keys of section 1; none names a
+landmine, a Smith machine, a hand place or a head angle. No template, family row or ranges PR. SHRUG has 2 qualifying
+members of 3 (barbell_shrug, cable_shrug; smith_machine_shrug fails on the Smith rig and its bent elbows), under
+section 1's 3.
+
+| id | tier | view | clone source (copied, never imported) | rig | drawable / F7 | wave |
+|---|---|---|---|---|---|---|
+| barbell_shrug | A | side | itself (specs/barbell_shrug.mjs on main) | vendor barbell, floor | false: top fault rolling (c3), drawn bent arms (c4); F7 | 1 |
+| t_bar_row | A | side | itself (specs/t_bar_row.mjs on main) | eq/landmine.mjs unedited, vendor vHandle | true (c7) | 1 |
+| cable_shrug | B | side | barbell_shrug's wave-1 bytes | vendor cableColumn, low pulley, straight bar | true (c5) | 2 |
+| dumbbell_shrug | B | front | upright_row (front stance and camera); barbell_shrug (shrug key, hand capsule) | vendor dumbbell ×2, end-on | true (c6) | 2 |
+| smith_machine_shrug | B | side | barbell_shrug; smith_machine_bench_press (rig call) | eq/smith.mjs unedited (`railZ`, `stopY`, `base`) | true (c3) | 2 |
+
+Copied brackets and their solved values: barbell_shrug has no bracket (its bar solve is a 6-step fixed point,
+`key()`). t_bar_row's ROOT_Y bracket [0.5, 0.935] solves to 0.907 m (measured, unchanged by the feet); its contact
+scans start at the start angle and throw past 0.6 rad. The clones record theirs in their headers when drawn.
+
+### 16.2 Pose, fault→key and tempo maps (D-LIB8M-TEMPO)
+
+Every row is identity: spec `start` = card plate.start (the bottom: shoulders down, or the row's straight arms), spec
+`end` = card plate.end. Each fault reads against the card's end pose.
+
+| id | plate.mistake (claim) | first tell key | topFault | card tempo up/down/pause | phase array |
+|---|---|---|---|---|---|
+| barbell_shrug | elbows bend to pull (c4); top fault rolling (c3) not drawable | `elbows` | `roll` (D-LIB13S-TOPFAULT; F7 named) | 1/2/0 (c7) | Lift 1, Lower 2 |
+| t_bar_row | rounded back over the bar (c7) | `round` | `round` (on main, unchanged) | 1/2/1 (c15) | Pull 1, Hold 1, Lower 2 |
+| cable_shrug | elbows bend to curl the bar (c5) | `elbows` | `elbows` | 1/2/1 (c7, c16) | Lift 1, Hold 1, Lower 2 |
+| dumbbell_shrug | elbows bend to pull the dumbbells (c6) | `elbows` | `elbows` | 1/2/1 (c11) | Lift 1, Hold 1, Lower 2 |
+| smith_machine_shrug | head pushed forward (c3) | `head` | `head` | 2/2/0 (c11) | Lift 2, Lower 2 |
+
+smith_machine_shrug's 1 s bottom pause (c11) is named in tempo.json's `constants` note, not drawn: it sits between
+the lowering and the shrug, and the card writes it outside `pause` (its tempo text).
+
+### 16.3 Facts plan (D-LIB8M-FACTS, D-LIB13-FACTS2, D-LIB9-FACTPOSE; the cflb6r2 model)
+
+A setup quote states the start pose only; a contact is a fact only with a quote that names it, checked at both ends of
+a segment; a seat contact needs a "sit on" quote (none here: every shrug stands).
+
+| id | start/end claims read | numbers | contacts | plateFacts |
+|---|---|---|---|---|
+| barbell_shrug | c2, c4 | none ("as high as possible", "slightly bent") | c4 "in front of the body": a place, not a contact | `[]` |
+| cable_shrug | c2, c3, c4, c5 | none | c2 "stand close to the pulley": a place, not a contact | `[]` |
+| dumbbell_shrug | c1, c2, c3, c4 | none (c10 "slightly longer range": no number, never enlarged) | c1 "at your sides": a place | `[]` |
+| smith_machine_shrug | c1, c2 | "mid-thigh height" names no metres (a height fact needs `m`); "shoulder-width" shows no width side-on | none | `[]` |
+| t_bar_row | on main | unchanged | unchanged | on main, unchanged |
+
+**CARD FIELDS fix (cf13s VALID, supervisor 10-31):** each setup grip quote states the start pose's hand contact, so the
+start hand contacts are facts: barbell_shrug wrist.l and wrist.r (c1), dumbbell_shrug wrist.l and wrist.r (c4),
+cable_shrug wrist.l and wrist.r (c1), smith_machine_shrug wrist.r (c1). Each has a spec `checks` entry at the drawn start
+wrist (the CURL template's form); barbell_shrug's read 0 cm. The table above is the PLAN as ruled; this fix replaces its
+`[]` column.
+
+Placed items that are not facts get drawn-item tests (A4): smith's start bar between the hip and knee heights (c1),
+dumbbell_shrug's grips beside the thighs (c1), cable_shrug's pulley ahead of the toes (c2).
+
+### 16.4 Unsourced numbers
+
+- SHRUG 5 cm on every shrug (barbell_shrug.mjs:55; the card says "as high as possible"). Never enlarged to pass a bar.
+- barbell_shrug: KNEE_SOFT 5°, FOOT_X 0.10 m, M_PULL 15 cm (illustrative), BAR_GAP 15 mm (D-LIB13S-CLEAR: the 2 px
+  rule, not a card number).
+- t_bar_row: FOOT_X 0.19 m with toes out 17° (D-LIB13S-TBARFEET; c2 "about shoulder-width" is 45 cm on this body;
+  the side view drops x, plate.mjs:44-45), plus the header's existing list.
+- cable_shrug: the pulley place (top 0.205 m, as cable_curl.mjs:74's 16 cm pulley; z 0.25-0.45 m, ahead of the toe tip
+  at 0.210 m) [est until drawn].
+- dumbbell_shrug: grip half-width 0.26 m (the narrowest that clears 2 px, 16.5), the foot stance copied from upright_row.
+- smith_machine_shrug: ELBOW_BEND 12°, a drawing number: c1's "slight elbow bend" gives no degrees and the card has no
+  elbow fact; the 10-15° drawn-item test is this lane's own guard, not a sourced range (supervisor, #359 6549511226). The
+  head angle (M_NECK 20° neck flexion, see 16.6), RAIL_Z 0.13 m (≥ 0.122 m keeps 2 px).
+
+### 16.5 Clearance (D-LIB13S-CLEAR; #354 6543628951 point 1; the BARSTART amendment)
+
+Tested: each load part in the body's own plane against the drawn body outline (the engine's Catmull-Rom spline through
+bodyShapes, arms and fists left out), 2 px = 1.37 cm at 146.29 px/m, in every drawn pose. Measured on this base:
+
+| id | part | start | end | Mistake | status |
+|---|---|---|---|---|---|
+| barbell_shrug | bar shaft (r 14 mm) | 2.19 px (thigh.l) | 2.19 px (thigh.l) | 2.17 px (torso) | tested; main had 0.44 / 0.44 / −3.26 |
+| t_bar_row | bar surface from the hook out, hook ring, grips (torso and head) | 28.14 | 5.96 | 2.00 (bar, at the head) | tested; main's Mistake 0.47 |
+| t_bar_row | plate | 19.75 | 0.46 | 3.24 | tested except the end: c23's contact, the one exception |
+| dumbbell_shrug | end-on hex (11.9 cm) to the thigh, front view | 2.57 [est] | 3.07 [est] | 4.07 [est] | tested, hands at ±0.26 m (±0.25: 1.10) |
+| cable_shrug | bar shaft | 2.19 [est] | 2.19 [est] | 2.17 [est] | tested |
+| smith_machine_shrug | bar end (r 2.5 cm) to the thighs | ≥ 2 [est] | ≥ 2 [est] | ≥ 2 [est] | tested, rail z ≥ 0.122 m |
+
+Listed, not tested (beside the body in depth): barbell_shrug's end-on plates (z back); t_bar_row's landmine bar from the
+pivot to the hook, which runs between the straddled legs (c24; −7.4 to −9.7 px in 2D) and the floor pivot; cable_shrug's
+cable and column (the cable passes in front of the legs in depth); smith_machine_shrug's rails, hook rail, carriage,
+stops, frame and base.
+
+t_bar_row's Mistake rule: the rise stops at the first angle where the bar surface (every 1 mm), the hook ring, the
+grips or a plate corner comes within 2 px of the drawn torso and head outline (spline). The end keeps c23's first
+contact at CLEAR 5 mm on the raw outline (unchanged).
+
+### 16.6 Zooms (D-LIB13S-ZOOM; D-LIBZOOM-EXTEND)
+
+Clipped Trace in the zoom (bar 22.11 px), measured on this base:
+
+| id | view, k | ladder 1.5 / 2 / 2.5 / 3 / 3.5 / 4 | circle; source ring |
+|---|---|---|---|
+| barbell_shrug | normal, 3.5 | 10.52 / 14.02 / 17.52 / 21.02 / **24.54** / 28.04 | (110, 274) r 52; (176, 122.99) r 14.86 |
+| t_bar_row | normal, 3 (trim [10, 12] kept) | 2.62 / 10.47 / 19.21 / **27.23** / 35.44 / 43.30 | (200, 126) r 52; (258.62, 280.21) r 17.33 |
+| cable_shrug | normal, 3.5 [est] | as barbell_shrug [est] | measured when drawn (the column stands right of the parent's circle) |
+| dumbbell_shrug | normal, 3.5 [est] | prototype 24.54 at 3.5 | prototype (76, 188); remeasured with the drawn labels |
+| smith_machine_shrug | normal, 3.5 [est]; a Mistake zoom only if the head tell is under 11.39 px | | measured when drawn |
+
+smith_machine_shrug's head: the engine neck only flexes (body.mjs `rotX(q.neck)`), so "head pushed forward" draws as a
+tipped head; the tell sits on the crown (`head`). At 20° the crown moves 13.01 px (card scratch), over the 11.39 bar,
+so no Mistake zoom is needed at that angle [est until drawn]. The angle is unsourced and is never chosen to pass a bar.
+
+### 16.7 Flags (D-LIB13S-FLAGS; measured)
+
+| id | flag | value | approved range | call |
+|---|---|---|---|---|
+| all 5 | F5 | 3.57:1 | 4.5 | expected (D-LIB9-F5) |
+| barbell_shrug | F7 | draws `elbows`, top fault `roll` | | named (D-LIB13S-TOPFAULT) |
+| barbell_shrug | F2 | cover 0.139 | 0.191-0.549 | named: a standing figure at full scale whose only move is 5 cm; never padded |
+| barbell_shrug | F3 | longest leader 45.79 px | 49.33-82.26 | named: short leaders on a tall figure; shorter is not a defect |
+| barbell_shrug | F4 | 0 hand-placed label boxes | 2-6 | named: every label is placed by the engine (qa/node.mjs:110 counts `box` fields). The card's reason "ghosts off" is corrected here: F4 counts boxes, not ghosts |
+| t_bar_row | none but F5 | | | sheet note "plate size: drawing convention (228 mm)" (section 4) |
+| clones | F2, F3, F4 as measured when drawn | | | each posted with its value and range before PLATES READY 2 |
+
+### 16.8 QA on this base (wave-1 edits applied)
+
+`lb3/qa.mjs lib_barbell_shrug lib_t_bar_row`: barbell_shrug passes every hard check but H6 (no card keys yet, 16.2);
+t_bar_row passes all 10, flags F5 only (on main it was H1.engine red: feet plant 1.0 cm, and H2.alt 53 words; now 0.4 cm
+and 51 words). The 7 approved plates build page `6ff09d4c…08c6` on their own, and their 63 fragments are unchanged in
+the full page.
+
+### 16.9 Order of work
+
+PLAN → RULED; cards at start (copies done; cards.sha.json LIB-13s section, tempo.json); wave 1 (barbell_shrug CLEAR +
+zoom; t_bar_row feet + Mistake stop + alt + zoom) with tests A1-A6 for those two → PLATES READY 1; CARD FIELDS for the 4
+shrug cards; wave 2 from barbell_shrug's approved bytes → PLATES READY 2; merge main, READY.
+
+### 16.10 Panel mx16 (wave 1 round 1 @ `01b66192`, #359 6548509170)
+
+barbell_shrug APPROVED. t_bar_row's fix round (R1 [3,4,3], R3 [3,3,4]):
+- **R1:** the V-handle hangs HANDLE_L 9 cm from the hook ring to the grip (was the vendor vHandle's 22 cm; the panel's
+  bound "a V of at most about 30 px at 2x" is 15 px, 10.3 cm). The floor pivot, the end bar and the plates stay where mx16
+  saw them (the pivot SOLVED from the mx16 start; END_A unchanged, end grip z 0.161 m). The start bar angle is SOLVED so
+  the handle meets straight arms. The end grip rises to 0.585 m, so the end elbow bends 84° (80-90° tested), level with
+  the torso's underside, the upper arm along the torso.
+- **R3:** the handle is drawn from poly parts: a shaft from the grip up to a 2 cm ring round the bar at the hook, and a
+  12 cm grip turned square to the forearm in the side plane, through the fist. The card's 35° wrist (R-LB3-5) is an
+  extension of a neutral (palms-facing) grip, which bends out of the side plane, so the side view draws the wrist straight
+  and the fist sits on the forearm's axis (tested within 0.5 px). Ruled **D-LIB13S-TBARWRIST** (#359, supervisor 10-31): the
+  straight wrist in the side view is accepted; so are the k 1.5 zoom and the Soft knees box.
+- **Knock-ons:** the end grip's 24.5 cm rise makes k 1.5 the smallest ladder k (35.69 px; the ring holds the Trace, which
+  k 3's ring no longer does). The larger source ring crossed the auto-placed "Soft knees" label (H1.ink), so that label
+  gets a box under the ring (F4 counts 5 boxes, inside 2-6). Every rising part still clears 2 px; the Mistake bar
+  stops at 2.00 px; the feet stay 0.19 m with toes out 17°.
+
+### 16.11 Wave 2 (cable_shrug, dumbbell_shrug, smith_machine_shrug)
+
+Cloned from barbell_shrug's bytes as approved in mx16 (@ `01b66192`; byte-equal at `2e2ff417` and pinned), copied, never
+imported. All H, all with the parent's normal zoom at k 3.5 (24.54 px; k 3 gives 21.02).
+
+| id | drawn | measured | flags (value, range) |
+|---|---|---|---|
+| cable_shrug | the parent's body, bar and Mistake; the vendor cableColumn with its low pulley (centre 16 cm up, 6 cm ahead of the toe tip, c2); the cable to the bar's centre | bar shaft 2.19 / 2.19 / 2.17 px | F5 only |
+| dumbbell_shrug | front view: upright_row's stance; straight arms at the sides, grips 26 cm out; the vendor dumbbell end-on; Mistake: the elbows bend out and pull the dumbbells 15 cm up (dashed hexes, one arrow per hand) | hexes 2.57 / 3.07 / 4.07 px (0.25 m gives under 2) | F2 0.187 (0.191-0.549), F4 0 (2-6): named, the parent's reasons (a standing figure whose only move is 5 cm; every label engine-placed) |
+| smith_machine_shrug | eq/smith.mjs unedited: rail at z 0.13 m, stops 2 cm under the start bar's underside (drawn in front), floor beam under the rails; elbows bent 12° (c1 "slight", 10-15° tested); the bar at 0.748 m, between the knee (0.498) and the hip (0.927); Mistake: the neck flexed 20°, the tell on the crown | bar end 3.20 / 3.28 / 3.28 px; the crown moves 13.0 px (over 11.39: no Mistake zoom) | F2 0.145 (0.191-0.549): named, the parent's reason |
+
+Layout changes from the parent, each measured: cable_shrug's column fills the right, so its three labels are boxed on the
+left above the zoom, the datum lines start at x 130 (were 60) so they do not run under those labels, and the elbow measure
+is left off (no place for its label within F3's leader range; "Straight arms" carries c5). smith_machine_shrug's two
+head-level labels are boxed on the left, 48 px apart (the engine stacked them 22 px apart: H4.overlap), with the same
+datum change. The hit boxes need 44 css px between label rows (H4.overlap at 340 px).
+
+### 16.12 Panel mx19 (wave 1 recheck and wave 2 round 1 @ `fe9219bf`, #359 6549892683)
+
+t_bar_row and cable_shrug APPROVED; their 18 fragments are pinned (with barbell_shrug's 9 and the 7 on main). Fix round:
+- **dumbbell_shrug R11:** the Trace, its source ring and the datum move to the viewer's-right shoulder (shoulderTop.l; both
+  shoulders rise the same), and the circle sits beside it at (282, 188), its connector 28 px, crossing no outline, arc or
+  label (tested; the mx19 placement crossed the torso and forearm). The elbow measure is left off: with the circle beside
+  that shoulder its label had no place inside F3's leader range (98 px at best); "Straight arms" carries c3, as on
+  cable_shrug. k stays 3.5.
+- **smith_machine_shrug R5 (D-LIB13S-SMITHZOOM):** the faulty head is one complete dashed outline, the engine's Mistake
+  head shape at its own size (tested within 1 px), and the "Chin drops" leader ends on that outline at the jaw's front, not
+  under the head. No Mistake-view zoom (ruled, #359, option 1): QA's H3.zoom:not-needed:mistake refuses one whenever a
+  tell already moves 11.39 px at plate scale, and the crown moves 13.0 px. The dashed head and its arrow paint in the
+  Mistake layer, after every body and equipment element, so they draw over the rails (tested).
