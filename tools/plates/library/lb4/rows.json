@@ -47,6 +47,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_jump_squat": {
+   "src": "library/specs/jump_squat.mjs",
+   "slug": "jump-squat",
+   "prefix": "jump-squat",
+   "chromeId": "jump-squat",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }

@@ -3051,3 +3051,17 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   its pin, the frame and the cable all come within 0.00-3.00 px. So pallof_press is held again on route F-PALLOF-VIEW
   (the turned view). **Why:** a wider nit and a moved pulley were refused, and the engine has no leaderless tell.
 - **Source:** PR #371; lb9/DESIGN.md §26.
+## LIB-SMALL: jumping_jacks, wall_ball (LB10) and jump_squat (LB4) (builder, 2026-11-02; card docs/supervisor/verify/lib-small-card.md, rulings D-SMALL-*)
+- **D-SMALL-RPCGUARD.** F-VITEST-RPC (#358 6552271304) in the D-LIB13S-RPC form: every whole-page build and generate's
+  render in lb4-plates.test.ts and lb10-plates.test.ts runs in an awaited child process, assertions unchanged (LB4's
+  generate --check now reports its two per-output checks as one problem list, as LB10's already did). Each file gets a
+  guard: no `build(Lb4|Lb10|Held|Plates)Page` or `gen.render` outside a child script, with the guards' own lines cut.
+  **Why:** the worker RPC timeout on test:tz; the guard is red on main's lb4 file (7 in-worker builds) and on 41bdced1's
+  (generate's render), and six mutations (direct, aliased, after a `//` in a string, held page, plates page, render) are red.
+- **D-SMALL-RPCSYNC.** A worker-lag probe (a 50 ms timer in a scratch setup file) found lb4-plates.test.ts blocking its
+  worker for 84 s, the source of the `Timeout calling "onTaskUpdate"` error: LIB-14's item 2 called renderPlate once per
+  outline point (53 s), and runs of synchronous tests never yielded. Fixed in the D-LIB13S-RPC form, assertions unchanged:
+  that describe's camera memoised per spec object (as lb6's r2Cam), item 2's camera x0 read once, a file afterEach that
+  yields one macrotask (lb10's LIB-22 A19 form), and A6's per-spec loop yields. lb4 + lb10 together: longest block 84 s
+  to 6.0 s, RPC errors 1 to 0, 310 tests pass.
+- **Source:** PR #358; lb10/DESIGN.md 23, lb4/DESIGN.md 16.
