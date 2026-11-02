@@ -645,3 +645,87 @@ shoulders, not behind the head. A sourced trunk-rotation limit would decide C ag
 lib-spine-card.md:115's 0.366 / 0.377 m and 0.183 / 0.181 m (joint centres) were not reproduced; on `_test_spine`'s base
 and arms the centres read 0.254 / 0.268 m (curl ≤ 40, yaw ≤ 45, hip ≤ 120) and 0.128 / 0.099 m (curl ≤ 70, yaw ≤ 70,
 hip ≤ 140). LIB-SPINE's scratch script is not in the repo, so the difference is unexplained [unverified].
+
+## 26. Held 6 resume plan (HELD-B: pallof_press and russian_twist; D-HELD6-PALLOF, D-HELD6-RTWIST)
+
+Base: main `9c8035fd`. Rulings: held6-card.md §3, §6 and "Supervisor rulings" (claude/sup-lib4-cards). Every number
+below is from a scratch run on a detached worktree of the base (rows added in memory or in the worktree only, never
+committed): lb9/qa.mjs's `qaLb9` (LIB-3 runQa, node and browser, zero exemptions) and lb9-plates.test.ts's own
+`insideLen` leader measure (px inside a figure past the leader's first 8 px). Bars 22.11 / 11.39 px.
+
+**Base (both held, as on main):** pallof_press: all hard checks but H3.deviation (1.03 px, no zoom). russian_twist:
+all but H6:no-card; its tell sits on the refused shin point. Flags as ruled (pallof F5; russian F1 197.5, F5, F7).
+
+**pallof_press (D-HELD6-PALLOF).**
+- Card: a byte copy of cards/ and quotes/pallof_press.json from research `a48b0594` (F-RESEARCH-2's head, the one
+  lb10's farmer_s_carry and LIB-13s use). It adds c20-c25, rewords c12 and plate.mistake's rankNote and tempo text, and
+  adds two gaps. Its plateFacts, tempo and topFault are equal to main's, so CARD FIELDS has no key to change. The
+  other 7 LB9 cards are canonically equal at `a48b0594`, but they stay pinned at `f574bb4b`; pallof_press gets a
+  `recopied` entry in lb9/cards.sha.json (lb10's farmer_s_carry form).
+- Second tell `chest`, "Chest lifts" (c20: "lift the chest and extend the lumbar spine"), anchored on the `chest`
+  landmark in the Mistake pose, no offset. It moves **8.983 px** (end (195.57, 156.72) to Mistake (202.85, 151.46)).
+- Mistake zoom `{ view: 'mistake', k: 1.5, tell: 'chest' }`: **13.47 px** ≥ 11.39 at the zoom's scale; circle at
+  (88, 96) r 52, source ring (199.21, 154.09) r 34.67. k 1.5 is the lowest rung, so it is the smallest that passes.
+- Box: the card's {100, 164} does **not** pass here (H1: the label sits on figure ink at 171,180; {88,164} and
+  {94,164} the same). A 6 px scan (left 4-300, top 50-330), each box QA'd:
+  - {82, 164}: all 10 pass, leader 53.9 px, but it enters the solid end figure **3.29 px** (the Mistake chest lies
+    inside the end figure). Not used.
+  - Zero entry into either figure and all 10 pass: {64, 158} (leader 63.3 px), {64, 164} (66.7), {64, 170}, {70, 170}
+    and others up to 107.8 px. {64, 152}, {70, 152}, {70, 146} and {76, 146} fail H1 (the label on the figure).
+  - **Chosen {64, 158}**: the shortest leader with zero entry and all 10 checks. F3 is not raised.
+- The arch tell, arrow, dashed cable and callouts are unchanged; the side view stays (ruling).
+- QA with the zoom and {64, 158}: all 10 hard checks pass; flags F5 3.57 only (the ruled set).
+- One-tell record (§8): pallof_press now has two stated signs, the lower back over-arching (c8, c9) and the chest
+  lifting (c20); the trunk leaning back and the handle coming back stay geometry.
+
+**russian_twist (D-HELD6-RTWIST).**
+- "Knees swing" anchored on the red right knee's outline: `{ at: 'knee.r', pose: 'mistake', off: [-6.84, -6.84] }`,
+  box {12, 188}. Text and cue unchanged.
+- Measured: deviation **23.64 px**; leader 78.4 px (QA leaderMax; under F3's 81.9); entry **3.42 px** into the end
+  figure and **6.84 px** into the Mistake figure, equal to the signed entry. They are pinned in FRONT_ENTRY (±0.5).
+- QA: every hard check passes except H6:no-card, which the card fields clear. Flags F1 197.5, F5, F7 (the ruled set).
+- Do 7b card fields (proposed; CARD FIELDS verifies them), by §10's rules (plate.start cites c1, c2, c3, c6;
+  plate.end cites c4, c5):
+  - plateFacts: `seat` start c1 ("Sit on the floor"); `sole.l`, `sole.r` start c1 ("the feet on the floor");
+    `wrist.l`, `wrist.r` start c2 (the grip rule: the hands on the ball "in both hands in front of the chest");
+    `seat` end c5 ("Keep the buttocks planted on the floor", cited by plate.end).
+  - Measured on the spec: seat y 0.000 m start and end; soles y 0.000 m, x ±0.088 m; the wrists at
+    (0.168, 0.475, 0.123) and (-0.132, 0.602, 0.116) m at the start.
+  - Checks for H6: the existing `seat` plane check (pose all) covers both seat facts. New: `sole.l` and `sole.r` on
+    the floor plane (pose all), and `wrist.l` and `wrist.r` `at` their start spot (pose start, tol 0.5), as pallof_press.
+  - Not facts: c4's hips "still" (no contact; held by the hips-unchanged test); c3 "straight back" (a line).
+  - tempo `[{ Turn, 1, move }, { Return, 1, move }]` (lb9/tempo.json's map of plate.tempo up 1, down 1).
+  - topFault `control` (§8, F7: drawable false).
+
+**Release.** Both rows join lb9/rows.json (H, drawing; side and front), and build.mjs HELD becomes empty. The approved
+LB9 fragments (A10: ab-wheel-rollout, bird-dog, side-plank, superman, cable-crunch) must stay byte-identical.
+
+**Write scope.** specs/pallof_press.mjs (the `chest` tell, the zoom, header comment); specs/russian_twist.mjs (the
+tell's anchor and box, four fact checks, header comment); lb9/rows.json; lb9/build.mjs HELD; lb9/cards.sha.json;
+lb9/DESIGN.md (this section, §8, §15); docs/research/howto/cards/pallof_press.json and quotes/pallof_press.json (byte
+copies); docs/research/howto/cards/russian_twist.json (the three keys only); tests/howto/lb9-plates.test.ts (its own
+blocks); docs/COACHING-DECISIONS.md (append). lb9/qa.mjs and lb9/sizes.json are not expected to change (no new
+named flag, no new size). Not touched: engine, qa/**, zoom/**, other specs, the How-to sheet, other lanes' files.
+
+**Acceptance and mutations (each mutation red, then restored).**
+
+| # | criterion | evidence | red mutation |
+|---|---|---|---|
+| B1 | Scope | rows.json gains both ids once (H, drawing); HELD `{}`; DESIGN.md §15 strikes both | a row left in HELD; a row with mode 'T' |
+| B2 | Re-copy | cards.sha.json: pallof_press's card and quotes hashes at `a48b0594`, a `recopied` entry; the other 7 unchanged at `f574bb4b`; c20 present | main's old pallof_press card restored: hash red |
+| B3 | Chest tell and zoom | tells [arch, chest]; chest on `chest` (Mistake); zoom k 1.5 on `chest`; 8.98 px plate, 13.47 px zoom | zoom removed: H3.deviation red (QA); zoom on `arch`: 1.03 × 1.5 under the bar |
+| B4 | Leaders | no leader enters a figure, except the two named russian_twist entries (3.42 / 6.84 ±0.5) | pallof box {82, 164}: enters the end figure 3.29 px, red; russian box moved or pin removed: red |
+| B5 | Card fields | russian_twist's keys equal the ruled facts, tempo and topFault; each fact has a check within H6's limit | a fact added, a tempo second changed, topFault `hips`: each red |
+| B6 | Nothing else moves | A10's fragments byte-equal; pilot pins and C0 unchanged; Never paths empty in the diff | one byte in superman's alt (temporary): red |
+| B7 | QA and green | lb9/qa.mjs on every LB9 row: all 10 hard checks, flags = the ruled set; the page built twice, equal sha256; `npm run check`, `test:tz`, the gate | LIB-3 M-mutations on the two rows |
+| B8 | Panel | PANELS §1 per row | the plants |
+
+**Questions for the ruling.**
+1. The box: {64, 158} instead of the card's {100, 164}, which fails H1 here; {82, 164} would need a named 3.29 px
+   entry. Proposed: {64, 158}.
+2. russian_twist's plateFacts as listed above (six facts; four new spec checks). Proposed as listed.
+3. pallof_press's re-copy goes in a `recopied` entry, so the other 7 cards keep their `f574bb4b` pin. Proposed.
+
+**Risks.** R11 (the zoom shows the chest, the plate is about the low back): both tells are drawn and c20 names the chest
+lift as the sign. The red right knee partly behind the solid knees may not read: the panel judges R4. LIB-SUPCORE (#366)
+writes lb9 in its wave 2: whichever lane merges second merges main first and keeps both sides.
