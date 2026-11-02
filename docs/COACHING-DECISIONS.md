@@ -3037,7 +3037,7 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   (D-A3-TESTHOME).
 - **Source:** PR #362; pilot-a3/DESIGN.md.
 
-## HELD-B: russian_twist released, pallof_press held again (builder, 2026-11-02; card held6-card.md §3, §6, rulings D-HELD6-*, D-HELDB-*)
+## HELD-B: russian_twist card fields and knee tell, pallof_press held again (builder, 2026-11-02; card held6-card.md §3, §6, rulings D-HELD6-*, D-HELDB-*)
 - **D-HELD6-RTWIST.** russian_twist's "Knees swing" moves onto the red right knee's outline (knee.r + [-6.84, -6.84] px,
   box {12, 188}). Its leader enters the end figure 3.42 px and the Mistake figure 6.84 px: a signed named entry,
   smaller than the 15.94 / 13.95 px one approved before. **Why:** the shin anchor was refused, and neither a zoom nor a

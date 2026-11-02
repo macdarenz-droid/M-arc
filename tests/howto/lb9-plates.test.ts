@@ -878,7 +878,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_side_plank', 'lib_superman']);   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN); HELD-B released none   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_side_plank', 'lib_superman']);   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN); HELD-B released none
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('plank, crunch, the 5 T ids, russian_twist and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
