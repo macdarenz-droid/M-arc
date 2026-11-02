@@ -50,7 +50,10 @@ export const F1_IDS = ['lib_bear_crawl'];
 /** Named F2 (#305 6359365488 item 0, as cable_kickback's F2 on #306): battle_ropes' coverage 0.552 against F2's 0.549
  *  maximum at the standard 146.29 px/m; nothing changed to dodge it. */
 export const F2_IDS = ['lib_battle_ropes'];
-export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(F1_IDS.includes(id) ? ['F1'] : []), ...(F2_IDS.includes(id) ? ['F2'] : [])].sort();
+/** Named F3 (D-HELDA-JRF3, #368 6579170603; the D-LIB18-F3KICK form): jump_rope's longest leader 45.9 px against F3's
+ *  49.33 px floor, the compact front-view figure's short leaders; no box moved to dodge it. */
+export const F3_IDS = ['lib_jump_rope'];
+export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(F1_IDS.includes(id) ? ['F1'] : []), ...(F2_IDS.includes(id) ? ['F2'] : []), ...(F3_IDS.includes(id) ? ['F3'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, or F5 at any value other than 3.57. */
 export const flagProblems = reports => reports.flatMap(r => {
@@ -66,6 +69,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   console.log(`LB10 plates page sha256 ${sha}`);
   for (const line of tableOf(reports)) console.log(line);
   const bad = flagProblems(reports);
-  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the expected set (F5 3.57 on all; F7 on the drawable-false cards; F1 on bear_crawl; F2 on battle_ropes)');
+  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the expected set (F5 3.57 on all; F7 on the drawable-false cards; F1 on bear_crawl; F2 on battle_ropes; F3 on jump_rope)');
   if (bad.length || reports.some(r => HARD.some(h => !r.hard[h].pass))) process.exit(1);
 }

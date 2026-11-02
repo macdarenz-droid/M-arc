@@ -476,12 +476,11 @@ kettlebell_swing has a strip from the start; the other three render only from `l
 
 ## 15. Held ids and NOSECS rows
 
-As of 'LIB-22 resume 3' (section 23, LIB-SMALL; jumping_jacks and wall_ball lifted there). 'LIB-22 resume 2' (section 22) lifted farmer_s_carry. Lifted at 'LIB-22 resume' (section 21): sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
+As of 'HELD-A' (section 24: jump_rope lifted by D-HELD6-JUMPROPE; the table is empty). 'LIB-22 resume 3' (section 23, LIB-SMALL) lifted jumping_jacks and wall_ball. 'LIB-22 resume 2' (section 22) lifted farmer_s_carry. Lifted at 'LIB-22 resume' (section 21): sled_pull and burpee (strip rows; zoom), bear_crawl (zoom), sled_push and
 medicine_ball_slam (D-LIB22-AFALL: every phase blank, strip/rows.json fallbackA under D-LIB22-STRIPROWS).
 
 | id | ruling | why | route |
 |---|---|---|---|
-| jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px**; a normal zoom at kMax 4 gives 21.3 px < 22.11 (trim [0, 0]) | a route the zoom rules do not hold (as F-PALLOF-ARCH) |
 
 Held rows are in no rows file; their specs, tests and card keys stay. Each is confirmed or cleared by measurement.
 
@@ -911,3 +910,39 @@ draft raises H4.overlap (distance|depth), F3 126.5 and F4 0: label boxes are set
   the exception given to another key (`catch`), to the Mistake view, or to another id; a second crossing; a shallow
   angle (under 45 deg); the figure crossed (box left of the figure).
 - QA: all 10 hard checks pass; F5 3.57 only; leaderMax 70.0 px.
+
+## 24. Held 6 plan: jump_rope ('HELD-A', 2026-11-01; base main `5bcbddcf`; card `verify/held6-card.md` @ `ac886f82`)
+
+Ruling D-HELD6-JUMPROPE. Built only after #358 (LIB-SMALL, which writes lb10) has merged and main is merged in.
+
+Measured on main `5bcbddcf` (node and browser QA, the held page `f229b0e2…b76f`, authoring, no exemptions): Trace 5.3 px
+(k 4 gives 21.30 px < 22.11), Mistake `high` 16.38 px; red rows H3.trace and H8.ban:alt:semicolon (jump_rope.mjs:97).
+
+| change | expected [card scratch, re-measured before pinning] | evidence |
+|---|---|---|
+| the airborne end ankle −10° (box_jump.mjs:118's flight ankle) under c10 and c11, a new lb10/sizes.json row (basis: the claims plus the approved plate); HOP 3.8 cm stays the lowest foot point, M_HOP 15 cm the Mistake's | sole.r Trace 9.37 px | the sizes row and its spec pin; the lowest point at HOP; the facts unchanged |
+| a normal-view zoom at k 2.5 | 23.41 px (k 2 gives 18.73, red); ring closes inside the frame (D-LIB22-RINGFIT) | the zoom block: smallest ladder k, ring holds the whole Trace, no text |
+| the alt loses its ";" | H8 green | runQa all 10 hard checks |
+
+Then rows.json gains the row, HELD loses it, the page is built twice. Risk: the pointed foot reads as a number added for
+H3 (mitigation: card claims plus an approved plate's value; HOP unchanged; if the panel finds it not card-true (R1),
+the row goes to the named list, S4).
+
+Built at 'HELD-A' (main `dac9c624` merged; measured on this head):
+- The end and Mistake ankles are FLIGHT_ANKLE −10° (lb10/sizes.json, basis: box_jump's approved flight ankle under
+  c10 and c11). The body is lifted until the lowest foot landmark (the toe) is HOP 3.8 cm over the floor (M_HOP 15 cm in
+  the Mistake), so the lift is 8.95 cm. The c9 test reads the lowest foot point, toe included, still within ±0.5 cm.
+- Trace (sole.r) 9.77 px at plate scale (QA 9.4 on the page). **k 3, not the card's 2.5:** lb10's zoom rule (section
+  21) takes the smallest k that clears the bar by 10 % (24.32 px). k 2.5 gives 23.41 px (clippedTrace), under that
+  margin, so k 3 gives 28.10 px. The source ring holds the whole Trace and closes inside the frame. The k 2.5 mutation is
+  red.
+- With the higher lift the handles move 6 px or more, so D-LIB22-DRAW redraws all three rope items dashed in the end
+  pose (only the strand was dashed before). The "Hands by hips" box moved from top 184 to 172: at 184 its leader came
+  within 5.1 px of the rope.
+- The alt's ";" became a full stop (H8 green). Mistake `high` 16.4 px. runQa passes all 10 hard checks on all 12 rows.
+  jump_rope raises F3: leaderMax 45.9 px is under F3's 49.33 px floor (the front-view figure's leaders are short). This
+  is asked on #368; no box was moved to dodge it.
+- F-SMALL-WBMUT (#358 review Low 3): with wall_ball's "Right distance" box at {272, 140}, its leader crosses the wall
+  slab once at 6.5°. minGap turns that red (-1), and the real spec passes.
+- The LB10 page builds `3459ad2d…0492` twice. The 11 other cards are byte-identical to the page without jump_rope
+  (`ffc206ff…`).

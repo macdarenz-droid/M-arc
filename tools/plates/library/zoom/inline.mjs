@@ -10,6 +10,7 @@ import { renderPlate } from '../../vendor/engine/plate.mjs';
 import * as body from '../../vendor/engine/body.mjs';
 import { CAP_LH, arcBox, capWidth, inkBox, metaWidth } from '../../vendor/engine/layout.mjs';
 import { anchorInPose, cameraOf, poseLandmarks, resolvePoint } from '../qa/engine.mjs';
+import { mistakePlate, mistakeSvg } from '../mistake-ghosts.mjs';   // D-HELD6-MGHOST
 
 /** The convention's fixed numbers: circle radius, plate margin, meta band, gap to ink and labels, k range. */
 export const ZOOM = Object.freeze({ r: 52, margin: 8, top: 44, gap: 6, kMin: 1.5, kMax: 4, size: 358 });
@@ -132,7 +133,7 @@ export function zoomOf(spec, { prefix = 'p', E = ENGINE, view: which = null } = 
   const entry = which ? zoomFor(spec, which) : Array.isArray(spec.zoom) ? null : spec.zoom;
   if (!entry) throw new Error(`${spec.id}: no zoom entry${which ? ` for the ${which} view` : '; a zoom list needs a view'}`);
   const { view, k } = entry, m = view === 'mistake', vid = `${prefix}-${m ? 'm' : 'n'}`;
-  const plate = E.renderPlate(spec, { id: vid, mistake: m }), c = plate.report.camera, cam = cameraOf(spec, plate.report);
+  const raw = E.renderPlate(spec, { id: vid, mistake: m }), plate = m ? mistakePlate(spec, raw) : raw, c = plate.report.camera, cam = cameraOf(spec, plate.report);
   const fault = m ? faultOf(spec, cam, poseLandmarks(E, spec)) : null, trace = m ? null : tracePath(spec, cam, E);
   if (m && !fault) throw new Error(`${spec.id}: a Mistake zoom needs a tell`);
   if (!m && !trace.length) throw new Error(`${spec.id}: a normal zoom needs a trace`);
@@ -154,7 +155,7 @@ export function zoomOf(spec, { prefix = 'p', E = ENGINE, view: which = null } = 
   const zs = { ...spec, camera: { ...(cam.pitch ? { pitch: cam.pitch } : {}), pxPerM: c.pxPerM * k, x0: C[0] - k * (focus[0] - c.x0), y0: C[1] - k * (focus[1] - c.y0) },
     callouts: [], datum: [], measure: undefined, checks: [], zoom: undefined,
     ...(m ? { ghosts: { count: 0 } } : {}), ...(spec.mistake ? { mistake: { ...spec.mistake, tells: [] } } : {}) };
-  const inner = E.renderPlate(zs, { id: `${vid}-z`, mistake: m }).svg
+  const zsvg = E.renderPlate(zs, { id: `${vid}-z`, mistake: m }).svg, inner = (m ? mistakeSvg(spec, zsvg) : zsvg)
     .replace(/^<svg class="plate-svg"[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/<rect width="358" height="358" fill="url\(#[^)]*\)"\/>/, '');
   const clip = `${vid}-zclip`, u = [(C[0] - focus[0]) / best, (C[1] - focus[1]) / best];
   // one link along the centre line, source ring edge to circle edge: the two read as one pair

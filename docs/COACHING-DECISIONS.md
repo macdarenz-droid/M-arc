@@ -3036,7 +3036,38 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   and the blind TOPFAULT pass answered 'flare'. The two ids' rows and tests moved from pilot-a2/ to pilot-a3/
   (D-A3-TESTHOME).
 - **Source:** PR #362; pilot-a3/DESIGN.md.
+## HELD-A: hip_thrust's panel mx25 fix 2 (builder, 2026-11-02; #368, rulings D-HELD6-MGHOST, D-HELD6-RING, D-HELD6-TOES)
+- **D-HELD6-MGHOST.** hip_thrust's Mistake view no longer draws the start pose or the ghosts. An opt-in spec field
+  (`mistakeGhosts: false`) is read by one library function shared by the page build, node QA and the zoom render. The
+  vendor engine is unchanged. **Why:** the bottom pose's outlines, plates and bars crossed the red arch strokes and the
+  zoom ring (panel mx25 R5, R11). The engine's ghost fields are global, so only a Mistake-only post-step removes them.
+- **R5 (b).** The arch is drawn as one red dashed trunk outline, top and underside, from the shoulder to the hip, still
+  at 12°.
+- **D-HELD6-RING.** The zoom ring sits on the lumbar underside at k 4 (11.92 px). The near arm over the arch is the side
+  view's own geometry, so it is recorded and not tested away.
+- **D-HELD6-TOES.** c15's "keep your toes on the floor" carries its own alternative ("you can also … lift the toes"),
+  so it is not a fact.
+- **Source:** PR #368; lb8/DESIGN.md sections 8 and 20.
+- **hip_thrust HELD after panel mx26 (S2; route F-HIPTHRUST-ARCH).** At the unsourced 12° the arch reads only 3-4.5 px
+  on the phone, and the zoom shows no landmark. A larger Mistake size needs a sourced magnitude or a ruled house
+  convention from the approved bench-press arch. The row goes on the named list at the release candidate.
+  resisted_hip_flexion stays approved. **Source:** PR #368 6574480674; lb8/DESIGN.md section 15.
 
+
+## HELD-B: russian_twist card fields and knee tell, pallof_press held again (builder, 2026-11-02; card held6-card.md §3, §6, rulings D-HELD6-*, D-HELDB-*)
+- **D-HELD6-RTWIST.** russian_twist's "Knees swing" moves onto the red right knee's outline (knee.r + [-6.84, -6.84] px,
+  box {12, 188}). Its leader enters the end figure 3.42 px and the Mistake figure 6.84 px: a signed named entry,
+  smaller than the 15.94 / 13.95 px one approved before. **Why:** the shin anchor was refused, and neither a zoom nor a
+  larger pelvis turn passed without a new rule.
+- **Do 7b card fields (cfhb VALID).** plateFacts: seat start c1 and end c5; sole.l, sole.r start c1 and end c6
+  (D-HELDB-RTSOLES: c6 "keep your feet on the floor" holds through the movement); wrist.l, wrist.r start c2. Tempo is
+  Turn 1 / Return 1, and topFault is `control` (F7).
+- **D-HELD6-PALLOF, D-HELDB-PALLOF2.** pallof_press's card and quotes are re-copied from research a48b0594 (c20-c25, a
+  `recopied` pin). c20's chest lift is a second stated sign. Its tell and its k 1.5 zoom (13.47 px) passed QA, but no
+  leader can reach the Mistake chest past the pulley, which sits at the end chest's depth and height (c1). The pulley,
+  its pin, the frame and the cable all come within 0.00-3.00 px. So pallof_press is held again on route F-PALLOF-VIEW
+  (the turned view). **Why:** a wider nit and a moved pulley were refused, and the engine has no leaderless tell.
+- **Source:** PR #371; lb9/DESIGN.md §26.
 ## LIB-SMALL: jumping_jacks, wall_ball (LB10) and jump_squat (LB4) (builder, 2026-11-02; card docs/supervisor/verify/lib-small-card.md, rulings D-SMALL-*)
 - **D-SMALL-RPCGUARD.** F-VITEST-RPC (#358 6552271304) in the D-LIB13S-RPC form: every whole-page build and generate's
   render in lb4-plates.test.ts and lb10-plates.test.ts runs in an awaited child process, assertions unchanged (LB4's
@@ -3051,3 +3082,15 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   yields one macrotask (lb10's LIB-22 A19 form), and A6's per-spec loop yields. lb4 + lb10 together: longest block 84 s
   to 6.0 s, RPC errors 1 to 0, 310 tests pass.
 - **Source:** PR #358; lb10/DESIGN.md 23, lb4/DESIGN.md 16.
+- **jump_rope lifted (D-HELD6-JUMPROPE).** In the air the ankles point to −10° (box_jump's approved flight ankle, c10
+  and c11). The toe stays HOP 3.8 cm over the floor. The Trace is shown in a normal-view zoom at k 3: lb10's rule needs
+  10 % over the bar, and the card's k 2.5 gives 23.4 px, under that. **Source:** PR #368; lb10/DESIGN.md section 24.
+
+
+## HELD-B follow-up: russian_twist held after panel mx27 (builder, 2026-11-02; D-HELDB-RTSIT)
+- **D-HELDB-RTSIT.** Panel mx27 failed russian_twist (R1, R3-R7). It read the figure as not seated and not turned. No
+  ruled tool fixes the sit: the floor is one line at the feet's depth, so at the ruled pitch 20 the seat draws 37.6 px
+  above it, and pitch 0 hides the trunk behind the knees. So russian_twist is held on route F-RTWIST-SIT and goes on
+  the named list. Its verified card fields and knee tell stay in the held spec. **Why:** a floor plane would be a new
+  engine feature, which the ruling does not allow. HELD-B releases no row.
+- **Source:** PR #371 (6579432546, 6579536635); lb9/DESIGN.md §15, §26.

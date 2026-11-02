@@ -9,6 +9,7 @@ import { REF_CHROME, anchorInPose, equipmentItems, poseLandmarks, cameraOf, reso
 import { PARAMS, paramProblems } from '../derive.mjs';
 import { fragmentsOf } from '../../golden.mjs';
 import { isUntimed, wordProblems } from '../strip/tempo-strip.mjs';   // LIB-STRIP
+import { mistakePlate } from '../mistake-ghosts.mjs';   // D-HELD6-MGHOST
 
 /** Medical-claim bans for new plate copy (content.md 4, "Medical-claim bans"). */
 export const MEDICAL = [
@@ -26,7 +27,7 @@ const isEngine = c => !!c.spec;
 export function rendersOf(c, E) {
   if (!isEngine(c)) return null;
   const pre = c.plate.prefix, r = { normal: E.renderPlate(c.spec, { id: `${pre}-n` }) };
-  if (c.spec.mistake) r.mistake = E.renderPlate(c.spec, { id: `${pre}-m`, mistake: true });
+  if (c.spec.mistake) r.mistake = mistakePlate(c.spec, E.renderPlate(c.spec, { id: `${pre}-m`, mistake: true }));   // D-HELD6-MGHOST
   for (const k of (c.spec.callouts ?? []).filter(x => x.guide).map(x => x.key)) r[`selected:${k}`] = E.renderPlate(c.spec, { id: `${pre}-n`, selected: k });
   return r;
 }
@@ -148,6 +149,23 @@ const angleOf = (angles, pose, joint) => {   // 'knee.r' -> number; 'hip.r.flex'
   if (typeof v === 'string' && parts[2]) { const m = v.match(new RegExp(`\\b${parts[2]} (-?[\\d.]+)`)); return m ? +m[1] : null; }
   return null;
 };
+/** HELD-A (D-HELD6-SEAT2): the tolerance of an outline contact, cm, both ways (the spec checks' 0.5 cm). */
+export const OUTLINE_CM = 0.5;
+/** The drawn outline contact's problem text, or null when its lowest point lies within OUTLINE_CM of the floor. */
+export function outlineContactProblem(f, spec, E, L, rep) {
+  const pose = f.pose ?? 'end', q = L?.q?.[pose];
+  if (!q) return `outline contact ${f.outline}: no ${pose} pose`;
+  const chk = (spec.outlineChecks ?? []).find(k => k.outline === f.outline && k.pose === pose);
+  if (!chk) return `outline contact ${f.outline}: no outlineChecks entry for ${pose}`;
+  const n = chk.plane?.normal;
+  if (!n || n[0] !== 0 || n[1] !== 1 || n[2] !== 0) return `outline contact ${f.outline}: the plane is not a level floor`;
+  const cam = cameraOf(spec, rep);
+  if (cam.pitch) return `outline contact ${f.outline}: a pitched camera`;
+  const shapes = E?.body?.bodyShapes ? E.body.bodyShapes(E.body.fk(q, L.body), cam).filter(s => s.key === f.outline && s.poly?.length) : [];
+  if (!shapes.length) return `outline contact ${f.outline}: no drawn ${f.outline} outline in ${pose}`;
+  const lowPx = Math.max(...shapes.flatMap(s => s.poly.map(p => p[1]))), cm = +(((cam.y0 - lowPx) / cam.pxPerM - chk.plane.point[1]) * 100).toFixed(2);
+  return Math.abs(cm) > OUTLINE_CM ? `outline contact ${f.outline} ${pose}: lowest point ${cm > 0 ? `${cm} cm above` : `${-cm} cm below`} the floor (±${OUTLINE_CM} cm)` : null;
+}
 export function h6(c, ctx, R) {
   if (!R) return [P('H6:not-engine', 'no engine report to match research facts against')];
   const r = c.research;
@@ -155,6 +173,15 @@ export function h6(c, ctx, R) {
   const out = [], rep = R.normal.report, L = poseLandmarks(ctx.engine, c.spec);
   for (const [i, f] of r.plateFacts.entries()) {
     const tag = `H6.fact:${i}:${f.kind}:${f.joint ?? f.landmark ?? ''}`;
+    // HELD-A (D-HELD6-SEAT2, #368 6553943662): a contact on a drawn outline ({ kind: 'contact', outline, pose }, no
+    // landmark): the named outline's lowest point in that pose, from the engine's own bodyShapes on the plate camera,
+    // against the floor plane the spec's outlineChecks names for it. Red past OUTLINE_CM either way; red, never
+    // skipped, on an unknown outline, a missing pose, absent shapes or no matching outlineChecks entry.
+    if (f.kind === 'contact' && f.outline != null && f.landmark == null) {
+      const why = outlineContactProblem(f, c.spec, ctx.engine, L, rep);
+      if (why) out.push(P(`H6.fact:${i}:contact:outline:${f.outline}`, why));
+      continue;
+    }
     if (f.kind === 'angle') {
       const viaAngles = f.joint ? angleOf(rep.angles, f.pose ?? 'end', f.joint) : null;
       const okAngles = viaAngles != null && Math.abs(viaAngles - f.deg) <= LIMITS.angleDeg;

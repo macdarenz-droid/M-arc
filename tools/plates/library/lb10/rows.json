@@ -21,6 +21,15 @@
    "stage": "drawing",
    "view": "side"
   },
+  "lib_jump_rope": {
+   "src": "library/specs/jump_rope.mjs",
+   "slug": "jump-rope",
+   "prefix": "jump-rope",
+   "chromeId": "jump-rope",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
   "lib_battle_ropes": {
    "src": "library/specs/battle_ropes.mjs",
    "slug": "battle-ropes",

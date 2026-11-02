@@ -168,7 +168,9 @@ describe('F-ZOOM-2 A8: the zoom trim is unchanged (item b, not built)', { timeou
   };
   it('superman (low dropped) k 4: 16.33 px; jump_rope k 4: 21.30 px (< 22.11); cable_chest_press normal zoom: 63.04 px', async () => {
     expect(Math.abs(await traceAt('superman', 4, s => ({ ...s, trace: { ...s.trace, trim: [10, 12] }, callouts: s.callouts.filter((c: any) => c.key !== 'low') })) - 16.33)).toBeLessThan(0.05);   // trim [10, 12] explicit: D-FZOOM2-A8PIN (#337; superman's spec trim is [0, 0] under D-LIB21-SUPERMAN)
-    const jr = await traceAt('jump_rope', 4);
+    // jump_rope as drawn before HELD-A (D-HELD6-JUMPROPE points the feet in the air): the end pose with the standing
+    // ankle lifted HOP, the fixture this pin was measured on
+    const jr = await traceAt('jump_rope', 4, s => { const st = s.poses.start, e = s.poses.end; return { ...s, poses: { ...s.poses, end: { ...e, ankle: { ...st.ankle }, root: { ...e.root, at: [st.root.at[0], st.root.at[1] + 0.038, st.root.at[2]] } } } }; });
     expect(Math.abs(jr - 21.30)).toBeLessThan(0.05);
     expect(jr).toBeLessThan(pins.envelope.traceLenMin);
     expect(Math.abs(await traceAt('cable_chest_press', null) - 63.04)).toBeLessThan(0.05);
