@@ -3068,3 +3068,7 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   yields one macrotask (lb10's LIB-22 A19 form), and A6's per-spec loop yields. lb4 + lb10 together: longest block 84 s
   to 6.0 s, RPC errors 1 to 0, 310 tests pass.
 - **Source:** PR #358; lb10/DESIGN.md 23, lb4/DESIGN.md 16.
+- **jump_rope lifted (D-HELD6-JUMPROPE).** In the air the ankles point to −10° (box_jump's approved flight ankle, c10
+  and c11). The toe stays HOP 3.8 cm over the floor. The Trace is shown in a normal-view zoom at k 3: lb10's rule needs
+  10 % over the bar, and the card's k 2.5 gives 23.4 px, under that. **Source:** PR #368; lb10/DESIGN.md section 24.
+
