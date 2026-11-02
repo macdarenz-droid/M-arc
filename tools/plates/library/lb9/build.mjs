@@ -67,7 +67,7 @@ export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mis
 /** The ids drawn but held off rows.json (DESIGN.md held table): D-LIB21-SECS's NOSECS ids (none at the
  *  research head), then any held under D-LIB21-SIZE (D-LIB8-shrug), then the (b) rows drawn at the resume, off rows.json
  *  until their card keys are verified (D-LIB21-ER5, Do 7b). Each with its census view. */
-export const HELD = { pallof_press: 'side', russian_twist: 'front' };
+export const HELD = { pallof_press: 'side', russian_twist: 'front', flutter_kicks: 'side' };   // flutter_kicks: D-SUPCORE-FLUTTERHOLD (#366 6588547503, panel mx29), route F-FLUTTER-ZOOM
 const slugOf = id => id.replace(/_/g, '-');
 /** The held rows, in memory only (never written to rows.json or any file under the repo), for the held ids whose spec exists. */
 export function heldData(root = ROOT, only = null) {

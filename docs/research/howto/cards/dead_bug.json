@@ -615,6 +615,22 @@
    "pose": "end",
    "cardPose": "end",
    "claim": "c5"
+  },
+  {
+   "kind": "angle",
+   "joint": "knee.l",
+   "pose": "start",
+   "cardPose": "start",
+   "deg": 90,
+   "claim": "c3"
+  },
+  {
+   "kind": "angle",
+   "joint": "knee.r",
+   "pose": "start",
+   "cardPose": "start",
+   "deg": 90,
+   "claim": "c3"
   }
  ],
  "tempo": [

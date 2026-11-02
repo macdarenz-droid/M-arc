@@ -3074,3 +3074,15 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
 - **D-SUPCORE-KICKZOOM.** The zoom stays on the heel at k 3.5, with the circle moved nearer. **Why:** the toe gives no
   rung whose ring holds both heels and the floor while the Trace still passes its bar.
 - **Source:** PR #366; lb9/DESIGN.md section 26.14.
+
+## LIB-SUPCORE panel mx29 and CARD FIELDS cfdv
+
+- **D-SUPCORE-FLUTTERHOLD.** flutter_kicks is held after panel mx29. It stays drawn, and its card keys, strip row and
+  How-to source stay, but it is off lb9/rows.json. **Why:** the panel still saw no kick motion and no floor in the
+  zoom. The fixes need a two-headed arrow or a zoom ring placed off the Trace path, both new engine features
+  (route F-FLUTTER-ZOOM).
+- **dead_bug's knees.** Both knees are facts at 90 degrees in the start pose (c3), and the drawing measures 90.00.
+- **D-SUPCORE-VUPOUTLINE.** v_up's floor contact at the V is the drawn torso outline, not the buttock point. The point
+  sits 1.99 cm up, inside the soft tissue. The fact is added once the outline check (#368) is on main.
+  **Why:** lowering the figure would sink an approved drawing into the floor.
+- **Source:** PR #366 (6588547503, 6587871953, 6588653190); lb9/DESIGN.md sections 15 and 26.5.

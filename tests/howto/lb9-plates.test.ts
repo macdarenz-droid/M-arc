@@ -129,7 +129,7 @@ const RC_BACK = 24.7;   // LIB-SUPCORE D-SUPCORE-RCBACK: px inside the end figur
 // past its first 8 px (measured), entering from above through the trunk only; the anchor 1 px above `lumbar` keeps the
 // k 2 ring inside the frame (A8; at `lumbar` itself dead_bug's ring ends at 358.3 px and v_up's at 358.6)
 const LUMBAR_IN: Record<'flutter_kicks' | 'dead_bug' | 'v_up', [number, number]> & Record<string, [number, number] | undefined> = { flutter_kicks: [12.24, 18.36], dead_bug: [12.31, 18.47], v_up: [15.27, 16.66] };
-const HELD: string[] = ['pallof_press', 'russian_twist'];   // cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
+const HELD: string[] = ['pallof_press', 'russian_twist', 'flutter_kicks'];   // flutter_kicks: D-SUPCORE-FLUTTERHOLD (#366 6588547503, panel mx29; route F-FLUTTER-ZOOM)   // cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
 const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', ...ER5_DRAWN, ...SUP];   // LIB-SUPCORE wave 2
@@ -768,7 +768,9 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
       ...['start', 'end'].flatMap(pose => ['l', 'r'].map(sd => ({ kind: 'angle', joint: `knee.${sd}`, pose, cardPose: pose, deg: 90, claim: pose === 'start' ? 'c2' : 'c4' })))],
     flutter_kicks: [...both('wrist', 'start', 'c1'), F('backUpper', 'start', 'c4'), F('buttock', 'start', 'c4'), F('buttock', 'end', 'c4')],
     // dead_bug and v_up with their strip rows (train 59); v_up's card start is its spec end (poseMap)
-    dead_bug: [F('buttock', 'start', 'c3'), F('backUpper', 'start', 'c5'), F('buttock', 'end', 'c5'), F('backUpper', 'end', 'c5')],
+    // cfdv (#366 6587871953): dead_bug's knees at 90 in the start (c3, D-LIB8M-FACTS); v_up's buttock at the V waits on 6588643410
+    dead_bug: [F('buttock', 'start', 'c3'), F('backUpper', 'start', 'c5'), F('buttock', 'end', 'c5'), F('backUpper', 'end', 'c5'),
+      ...['l', 'r'].map(sd => ({ kind: 'angle', joint: `knee.${sd}`, pose: 'start', cardPose: 'start', deg: 90, claim: 'c3' }))],
     v_up: [F('buttock', 'end', 'c6', 'start'), F('backUpper', 'end', 'c4', 'start')],
   };
   // The ruled fault→key map (DESIGN.md section 8): [topFault, the drawn first tell key]; all 5 drawable-true. The (b)
@@ -901,7 +903,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_dead_bug', 'lib_flutter_kicks', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_side_plank', 'lib_superman', 'lib_v_up']);   // LIB-SUPCORE: the 5 SUPCORE rows   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_dead_bug', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_side_plank', 'lib_superman', 'lib_v_up']);   // LIB-SUPCORE: 4 SUPCORE rows (flutter_kicks held, D-SUPCORE-FLUTTERHOLD)   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('plank, crunch, the 5 T ids, russian_twist and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
@@ -911,11 +913,12 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     }
     expect(existsSync(`${SPECS_DIR}/bicycle_crunch.mjs`)).toBe(false);
   });
-  it('the held ids (pallof_press D-LIB21-PALLOFHOLD; russian_twist D-LIB21-RTWIST) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
+  it('the held ids (pallof_press D-LIB21-PALLOFHOLD; russian_twist D-LIB21-RTWIST; flutter_kicks D-SUPCORE-FLUTTERHOLD) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
-    expect(build.HELD).toEqual({ pallof_press: 'side', russian_twist: 'front' });
+    expect(build.HELD).toEqual({ pallof_press: 'side', russian_twist: 'front', flutter_kicks: 'side' });
     const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
-    for (const id of HELD) expect(new RegExp(`\\| ${id} \\| D-LIB21-[A-Z]+`).test(design), id).toBe(true);
+    const RULING: Record<string, string> = { pallof_press: 'D-LIB21-PALLOFHOLD', russian_twist: 'D-LIB21-RTWIST', flutter_kicks: 'D-SUPCORE-FLUTTERHOLD' };   // each held id's own ruling
+    for (const id of HELD) expect(new RegExp(`\\| ${id} \\| ${RULING[id]}\\b`).test(design), id).toBe(true);
     for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
   });
   it('mutations: a dropped row, a duplicated row, a held id, plank, crunch, flutter_kicks, side_plank and one mode set to D are red', () => {
@@ -927,7 +930,8 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
     // a held id: pallof_press (D-LIB21-PALLOFHOLD) stands for any held id
     expect(a5(add('lib_pallof_press'), w), 'a held id').toEqual(['extra lib_pallof_press']);
-    for (const id of ['plank', 'crunch', 'russian_twist', 'bicycle_crunch']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);   // LIB-SUPCORE: flutter_kicks is a row; russian_twist is held
+    expect(a5(add('lib_flutter_kicks'), w), 'flutter_kicks, held (D-SUPCORE-FLUTTERHOLD)').toEqual(['extra lib_flutter_kicks']);
+    for (const id of ['plank', 'crunch', 'russian_twist', 'bicycle_crunch']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);   // LIB-SUPCORE: russian_twist is held; flutter_kicks (held) is covered by the held-id line above
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
   });
   it('every row points at its own spec file and carries the census view; batch LB9, censusRef 4a9fd86', () => {
@@ -1999,7 +2003,7 @@ describe('LIB-SUPCORE A10 / A1: the 5 cards and quotes, the rows and the waits',
   });
   it('A1: each SUPCORE row in rows.json is mode H with no parent, template or params; dead_bug and v_up are in DESIGN.md\'s held table (D-SUPCORE-STRIP) and in no rows file', () => {
     const rows = readJson(ROWS).rows, design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
-    for (const id of SUP.filter(i => !SUP_WAIT.includes(i))) expect([rows[`lib_${id}`]?.mode, rows[`lib_${id}`]?.parent, rows[`lib_${id}`]?.template, rows[`lib_${id}`]?.params], id).toEqual(['H', undefined, undefined, undefined]);
+    for (const id of SUP.filter(i => !SUP_WAIT.includes(i) && !HELD.includes(i))) expect([rows[`lib_${id}`]?.mode, rows[`lib_${id}`]?.parent, rows[`lib_${id}`]?.template, rows[`lib_${id}`]?.params], id).toEqual(['H', undefined, undefined, undefined]);
     for (const id of SUP_WAIT) { expect(`lib_${id}` in rows, id).toBe(false); expect(new RegExp(`\\| ${id} \\| D-SUPCORE-STRIP`).test(design), id).toBe(true); }
     expect(readFileSync(ROWS, 'utf8').includes('lib_crunch')).toBe(false);
   });
@@ -2007,9 +2011,10 @@ describe('LIB-SUPCORE A10 / A1: the 5 cards and quotes, the rows and the waits',
     const rows = readJson(ROWS).rows, a1 = (r: Record<string, any>) => [...('lib_crunch' in r ? ['crunch'] : []), ...Object.entries(r).filter(([, x]) => x.mode !== 'H').map(([k]) => k), ...SUP_WAIT.filter(i => `lib_${i}` in r)];
     expect(a1(rows)).toEqual([]);
     expect(a1({ ...rows, lib_crunch: { mode: 'H' } })).toEqual(['crunch']);
-    expect(a1({ ...rows, lib_flutter_kicks: { ...rows.lib_flutter_kicks, mode: 'T' } })).toEqual(['lib_flutter_kicks']);
+    expect(a1({ ...rows, lib_v_up: { ...rows.lib_v_up, mode: 'T' } })).toEqual(['lib_v_up']);
     const { lib_dead_bug: _gone, ...dropped } = rows;
-    expect(SUP.filter(i => !(`lib_${i}` in dropped))).toEqual(['dead_bug']);
+    expect(SUP.filter(i => !HELD.includes(i) && !(`lib_${i}` in dropped))).toEqual(['dead_bug']);
+    expect(`lib_flutter_kicks` in rows).toBe(false);   // held (D-SUPCORE-FLUTTERHOLD)
   });
 });
 
@@ -2239,6 +2244,23 @@ describe('LIB-SUPCORE D-SUPCORE-HOLLOWLEG: hollow_body_hold\'s one measure fact 
   it('mutations: the fact at 22.5 deg and at 30 deg are red', () => {
     expect(legProblems(S.hollow_body_hold, 22.5).length).toBeGreaterThan(0);
     expect(legProblems(S.hollow_body_hold, 30).length).toBeGreaterThan(0);
+  });
+});
+
+describe('LIB-SUPCORE cfdv: dead_bug\'s start knees (#366 6587871953)', () => {
+  /** H6's rules (qa/node.mjs h6) for one fact on a spec: an angle within LIMITS.angleDeg, a contact checked within LIMITS.cm. */
+  const factProblems = (spec: any, f: any) => { const r = plate.renderPlate(spec, { id: 'x' }).report;
+    if (f.kind === 'angle') { const v = r.angles?.[f.pose]?.[f.joint]; return typeof v === 'number' && Math.abs(v - f.deg) <= qaNode.LIMITS.angleDeg ? [] : [`${f.joint} ${f.pose} ${v}`]; }
+    const hits = r.checks.filter((k: any) => k.landmark === f.landmark && (k.pose === f.pose || k.pose === 'all') && k.cm != null);
+    return hits.length && hits.every((k: any) => k.cm <= qaNode.LIMITS.cm) ? [] : [`${f.landmark} ${f.pose} ${JSON.stringify(hits)}`]; };
+  const KNEES = () => readJson('docs/research/howto/cards/dead_bug.json').plateFacts.filter((f: any) => f.kind === 'angle');
+  it('dead_bug\'s knee.l and knee.r facts are 90 at the start on c3, and the drawn start knees are 90 (within H6\'s 2 deg)', () => {
+    expect(KNEES().map((f: any) => [f.joint, f.pose, f.cardPose, f.deg, f.claim])).toEqual([['knee.l', 'start', 'start', 90, 'c3'], ['knee.r', 'start', 'start', 90, 'c3']]);
+    for (const f of KNEES()) expect(factProblems(S.dead_bug, f), f.joint).toEqual([]);
+  });
+  it('mutations: dead_bug\'s start knees drawn at 100 deg are red', () => {
+    const d = S.dead_bug, bent = { ...d, poses: { ...d.poses, start: { ...d.poses.start, knee: 100 } } };
+    for (const f of KNEES()) expect(factProblems(bent, f).length, f.joint).toBe(1);
   });
 });
 
