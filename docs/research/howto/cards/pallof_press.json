@@ -305,13 +305,14 @@
   },
   {
    "id": "c12",
-   "text": "Hold the pressed-out position for 2-3 seconds (one source) or 1-2 seconds (another), resisting rotation, before slowly bringing the elbows back.",
+   "text": "Hold the pressed-out position for 2-3 seconds (one source), 1-2 seconds (another) or one to three seconds (a third), resisting rotation, before slowly bringing the elbows back.",
    "tags": [
     "CONSENSUS"
    ],
    "sources": [
     "ace-antirotation",
-    "mo-pallof"
+    "mo-pallof",
+    "fv-pallof"
    ],
    "quotes": [
     {
@@ -323,6 +324,11 @@
      "source": "mo-pallof",
      "text": "Hold for 1-2 seconds resisting rotation.",
      "where": "How to Perform"
+    },
+    {
+     "source": "fv-pallof",
+     "text": "Pause for one to three seconds while keeping your ribs, pelvis, and head still.",
+     "where": "How to Do the Standard Press-Out"
     }
    ]
   },
@@ -490,6 +496,128 @@
      "where": "Safety, Safety Notes"
     }
    ]
+  },
+  {
+   "id": "c20",
+   "text": "Under the heading 'Flaring the Ribs or Arching the Lower Back': pressing the hands forward can tempt you to lift the chest and extend the lumbar spine; exhale, bring the lower ribs over the pelvis, and use a shorter reach until you can keep that position. The rectus abdominis helps prevent the ribs from flaring and the lower back from extending as the hands move away from the chest.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pallof",
+     "text": "Pressing the hands forward can tempt you to lift the chest and extend the lumbar spine. Exhale, bring the lower ribs over the pelvis, and use a shorter reach until you can keep that position.",
+     "where": "Common Pallof Press Errors, Flaring the Ribs or Arching the Lower Back"
+    },
+    {
+     "source": "fv-pallof",
+     "text": "Helps prevent the ribs from flaring and the lower back from extending as the hands move away from the chest.",
+     "where": "Pallof Press Muscles Worked, table, Rectus abdominis row"
+    }
+   ]
+  },
+  {
+   "id": "c21",
+   "text": "Press the hands straight forward and do not let the cable drag them toward the anchor; the handle should travel straight out from the sternum, and a diagonal path shortens the lever and reduces the anti-rotation demand.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pallof",
+     "text": "Press your hands straight forward until your elbows are extended. Do not let the cable drag your hands toward the anchor.",
+     "where": "How to Do the Standard Press-Out"
+    },
+    {
+     "source": "fv-pallof",
+     "text": "The handle should travel straight out from the sternum. A diagonal path shortens the lever and reduces the anti-rotation demand.",
+     "where": "Common Pallof Press Errors, Letting the Hands Drift Sideways"
+    }
+   ]
+  },
+  {
+   "id": "c22",
+   "text": "With too heavy a cable, watch for the near shoulder rotating toward the anchor, the hips shifting sideways, or the feet gripping the floor; lower the weight until you can pause at full reach without changing your alignment.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pallof",
+     "text": "A heavy cable can turn the exercise into a leaning contest. Watch for the near shoulder rotating toward the anchor, the hips shifting sideways, or the feet gripping the floor to stop a loss of balance.",
+     "where": "Common Pallof Press Errors, Using Too Much Resistance"
+    },
+    {
+     "source": "fv-pallof",
+     "text": "Lower the weight until you can pause at full reach without changing your alignment.",
+     "where": "Common Pallof Press Errors, Using Too Much Resistance"
+    }
+   ]
+  },
+  {
+   "id": "c23",
+   "text": "One common-mistakes list names leaning toward the cable.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "mo-pallof",
+     "text": "Leaning toward cable",
+     "where": "Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c24",
+   "text": "Locking the shoulder blades back is a named error: let the shoulder blades move naturally around the rib cage as the arms reach and do not force them into hard retraction throughout the repetition; let them protract without rounding the whole trunk.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pallof",
+     "text": "Your shoulder blades should move naturally around the rib cage as your arms reach. Do not force them into hard retraction throughout the repetition.",
+     "where": "Common Pallof Press Errors, Locking the Shoulder Blades Back"
+    },
+    {
+     "source": "fv-pallof",
+     "text": "Keep the shoulders away from the ears and let the blades protract without rounding the whole trunk.",
+     "where": "Common Pallof Press Errors, Locking the Shoulder Blades Back"
+    }
+   ]
+  },
+  {
+   "id": "c25",
+   "text": "Rushing the return is a named error: the inward phase still exposes you to rotational force, so pull the handle back on the same straight path and keep the brace until the hands reach the chest.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pallof",
+     "text": "The inward phase still exposes you to rotational force. Pull the handle back on the same straight path and maintain the brace until your hands reach your chest.",
+     "where": "Common Pallof Press Errors, Rushing the Return"
+    }
+   ]
   }
  ],
  "sources": [
@@ -501,7 +629,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-10-22"
+   "checked": "2026-10-29"
   },
   {
    "id": "bb-pallof",
@@ -531,7 +659,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-10-22"
+   "checked": "2026-10-29"
   },
   {
    "id": "mo-pallof",
@@ -542,6 +670,16 @@
    "pmid": null,
    "access": "full",
    "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-pallof",
+   "url": "https://fitnessvolt.com/pallof-press/",
+   "title": "Pallof Press: Muscles Worked, Form, and Variations – FitnessVolt",
+   "kind": "coach",
+   "year": 2026,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-29"
   }
  ],
  "plate": {
@@ -577,7 +715,7 @@
    "what": "Lower back over-arching while pressing and returning the handle.",
    "why": "LR-31 step 2: Motra lists \"Over-arching lower back\" among its common mistakes and its cue \"Maintain neutral spine to protect back\" ties the fault to harm (c8, D-SUP-PROTECT). The arch shows from the side; the rotation fault cannot be drawn (census). How often it happens is not measured.",
    "claim": "c8",
-   "rankNote": "No source measures how often each fault happens. LR-31 step 2: over-arching the lower back (c8). Common-mistakes lists read (all written for this exercise), in source order: BarBend \"Common Pallof Press Mistakes\": 1 Torso Twisting, 2 Not Pressing Straight, 3 Standing Too Close (or Too Far) (a set-up choice, not a candidate); Garage Gym Reviews \"Common Pallof Press Exercise Mistakes\": 1 Too Much Rotation, 2 Poor Pressing Position (elevated shoulders), 3 Watch Your Lower Back (overarching or flexing the lower back); Motra \"Common Mistakes\": 1 Allowing torso rotation, 2 Rushing the press, 3 Over-arching lower back, 4 Locking knees, 5 Leaning toward cable. ACE and StrengthLog have no list. Step 1: no frequency word counts for a fault of this exercise. Set aside: the headings \"Common Pallof Press Mistakes\", \"Common Pallof Press Exercise Mistakes\", \"Common Mistakes\", \"Frequently Asked Questions\" and \"Typical Rep Range\"; Garage Gym Reviews' \"Here are some common mistakes to avoid when performing the Pallof press.\" is a list sentence; BarBend's \"This is often one of the first progressions used with beginners as it’s generally easier to do.\" is about a variation, \"The obliques are challenged isometrically to resist rotation, often responsible for shearing forces placed on the lumbar spine.\" about a muscle, \"who often rotate to throw and catch a ball\" about athletes' sports, and \"The transverse abdominals (often targeted through plank variations)\" about another exercise; BarBend's \"it will become more and more tempting to drift them toward the side that the band is fixed on\" (c6) says the drift tempts, not that many do it (read like 'tend'); its \"many gymgoers don’t know how to brace properly\" is about bracing in heavy lifts generally (R-LB7-3). Step 2: harm words were checked on every list item and every rotation line. Only one named fault is tied to harm: over-arching the lower back (Motra list item 3 \"Over-arching lower back\"), by Motra's cue \"Maintain neutral spine to protect back\" (c8; D-SUP-PROTECT: the cue that corrects the fault protects a named body part; Motra's range line asks to \"retract to chest without arching spine\"). No other fault is tied to harm, so step 2's tie order (on a list, more harm sources, direct, earlier on a list naming both, step 3's count) is not reached. Checked and set aside: Garage Gym Reviews' Watch Your Lower Back text \"Overarching your lower back or putting it into flexion puts the anterior and posterior core muscles at a disadvantage, and you’ll lose all the benefits of this wonderful core exercise.\" (c9) states lost effect, no harm word; the rotation lines carry no harm word: BarBend's \"you should avoid bending or twisting at the torso or hips at all costs, as it defeats the purpose of the exercise\" (c7), Garage Gym Reviews' \"if too much resistance is used, it will cause your torso to rotate, and then all the benefits of the Pallof press disappear like magic\" (c7) and \"The benefits of the Pallof press are lost if your torso and midsection rotates.\", Motra's \"Reduce weight if rotation occurs\" (c7); Garage Gym Reviews' \"Pressing with elevated shoulders puts the spine out of position, and the upper traps get too involved.\" (c10) and BarBend's \"This will take tension off your trunk and make the movement easier.\" (c6) state no harm. Harm words that name no fault of this exercise: Motra's \"Avoid if acute lower back pain present\" (c19) and When to Avoid \"Acute lower back injury\" (conditions); Garage Gym Reviews' \"If you have back pain, the Pallof press is the better choice.\" and \"If you don’t have back pain, the Pallof press and the plank deserve a place in your workout routine.\" (exercise choice); BarBend's \"decrease injury risks when placing heavy loads on the spine or performing loaded carries\", \"minimizing excessive strain on the lumbar spine is key to longevity\" and \"help you protect yourself from back injuries in the future\" (benefits for other lifts), \"Can I do the Pallof press if I have lower back pain?\" (a question) and \"enough muscular stress to build up your six-pack\" (training stimulus). Reading not taken (D-SUP-LB9-PALLOF rules the tie above): if Motra's neutral-spine cue were not read as the cue for its arch item, no fault is tied to harm and step 3 decides by D-SUP-LB6-CCP's count, the read sources that tell the lifter to avoid each fault (sources, not lists): torso rotation 3 (BarBend, Garage Gym Reviews, Motra; c7); over-arching or flexing the lower back 2 (Garage Gym Reviews, Motra; c8, c9); not pressing straight 1 (BarBend, c6); elevated shoulders 1 (Garage Gym Reviews, c10); rushing the press, locking knees and leaning toward the cable 1 each (Motra). Lines that only give the right position are not counted (StrengthLog's \"press your arms straight out in front of you without rotating your torso\" and ACE's \"Keep the back straight and tall\", c5; Motra's \"Keep hips and shoulders square\"). Torso rotation would then be the top fault; the census note says the rotation fault cannot be drawn, so drawable would be false and plate.mistake would be the arch, next by the same count (2). The plate shows the arch under either reading; only handlingMistakes[0] would change. The arched lower back is a still sign the side view shows, so drawable is true.",
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: over-arching the lower back (c8). Common-mistakes lists read (all written for this exercise), in source order: BarBend \"Common Pallof Press Mistakes\": 1 Torso Twisting, 2 Not Pressing Straight, 3 Standing Too Close (or Too Far) (a set-up choice, not a candidate); Garage Gym Reviews \"Common Pallof Press Exercise Mistakes\": 1 Too Much Rotation, 2 Poor Pressing Position (elevated shoulders), 3 Watch Your Lower Back (overarching or flexing the lower back); Motra \"Common Mistakes\": 1 Allowing torso rotation, 2 Rushing the press, 3 Over-arching lower back, 4 Locking knees, 5 Leaning toward cable. FitnessVolt \"Common Pallof Press Errors\": 1 Using Too Much Resistance (the near shoulder rotating toward the anchor, the hips shifting sideways; c22), 2 Letting the Hands Drift Sideways (c21), 3 Flaring the Ribs or Arching the Lower Back (c20), 4 Locking the Shoulder Blades Back (c24), 5 Rushing the Return (c25), 6 Training Only One Direction (a programming choice, not a candidate). ACE and StrengthLog have no list. FitnessVolt's \"Sideways drift usually means the load is too heavy or the starting position is not square.\" gives a cause (the load or the set-up), not how often, and is set aside (as Garage Gym Reviews' \"usually\" line on farmer_s_carry, R-LB7). Step 1: no frequency word counts for a fault of this exercise. Set aside: the headings \"Common Pallof Press Mistakes\", \"Common Pallof Press Exercise Mistakes\", \"Common Mistakes\", \"Frequently Asked Questions\" and \"Typical Rep Range\"; Garage Gym Reviews' \"Here are some common mistakes to avoid when performing the Pallof press.\" is a list sentence; BarBend's \"This is often one of the first progressions used with beginners as it’s generally easier to do.\" is about a variation, \"The obliques are challenged isometrically to resist rotation, often responsible for shearing forces placed on the lumbar spine.\" about a muscle, \"who often rotate to throw and catch a ball\" about athletes' sports, and \"The transverse abdominals (often targeted through plank variations)\" about another exercise; BarBend's \"it will become more and more tempting to drift them toward the side that the band is fixed on\" (c6) says the drift tempts, not that many do it (read like 'tend'); its \"many gymgoers don’t know how to brace properly\" is about bracing in heavy lifts generally (R-LB7-3). Step 2: harm words were checked on every list item and every rotation line. Only one named fault is tied to harm: over-arching the lower back (Motra list item 3 \"Over-arching lower back\"), by Motra's cue \"Maintain neutral spine to protect back\" (c8; D-SUP-PROTECT: the cue that corrects the fault protects a named body part; Motra's range line asks to \"retract to chest without arching spine\"). No other fault is tied to harm, so step 2's tie order (on a list, more harm sources, direct, earlier on a list naming both, step 3's count) is not reached. Checked and set aside: Garage Gym Reviews' Watch Your Lower Back text \"Overarching your lower back or putting it into flexion puts the anterior and posterior core muscles at a disadvantage, and you’ll lose all the benefits of this wonderful core exercise.\" (c9) states lost effect, no harm word; the rotation lines carry no harm word: BarBend's \"you should avoid bending or twisting at the torso or hips at all costs, as it defeats the purpose of the exercise\" (c7), Garage Gym Reviews' \"if too much resistance is used, it will cause your torso to rotate, and then all the benefits of the Pallof press disappear like magic\" (c7) and \"The benefits of the Pallof press are lost if your torso and midsection rotates.\", Motra's \"Reduce weight if rotation occurs\" (c7); Garage Gym Reviews' \"Pressing with elevated shoulders puts the spine out of position, and the upper traps get too involved.\" (c10) and BarBend's \"This will take tension off your trunk and make the movement easier.\" (c6) state no harm. FitnessVolt checked: \"If your arms strain while your torso twists, reduce the resistance.\" is read as effort, not harm: it sits in the muscles paragraph that says the arms \"should not become the limiting factor\", and it names no injury, pain or pressure (the other reading, strain on a named body part under D-SUP-STRAIN, would tie rotation to harm and tie it with the arch at step 2; it is left to the supervisor, verify/lb9.md F-R2-PALLOF-5); \"stop before breathing strain changes your rib or pelvic position\" is about breathing, which is not a candidate (D-SUP-LB10-BREATH), and names no harm; \"Research on this specific exercise does not establish back-pain or injury outcomes.\" and \"The study did not test half-kneeling, dynamic press-outs, muscle activation, strength gains, pain, or injury outcomes.\" say harm is not shown. Harm words that name no fault of this exercise: Motra's \"Avoid if acute lower back pain present\" (c19) and When to Avoid \"Acute lower back injury\" (conditions); Garage Gym Reviews' \"If you have back pain, the Pallof press is the better choice.\" and \"If you don’t have back pain, the Pallof press and the plank deserve a place in your workout routine.\" (exercise choice); BarBend's \"decrease injury risks when placing heavy loads on the spine or performing loaded carries\", \"minimizing excessive strain on the lumbar spine is key to longevity\" and \"help you protect yourself from back injuries in the future\" (benefits for other lifts), \"Can I do the Pallof press if I have lower back pain?\" (a question) and \"enough muscular stress to build up your six-pack\" (training stimulus). Reading not taken (D-SUP-LB9-PALLOF rules the tie above): if Motra's neutral-spine cue were not read as the cue for its arch item, no fault is tied to harm and step 3 decides by D-SUP-LB6-CCP's count, the read sources that tell the lifter to avoid each fault (sources, not lists): torso rotation 4 (BarBend, Garage Gym Reviews, Motra, FitnessVolt; c7, c22); over-arching or flexing the lower back 3 (Garage Gym Reviews, Motra, FitnessVolt; c8, c9, c20); not pressing straight 2 (BarBend, FitnessVolt; c6, c21); rushing 2 (Motra's press, FitnessVolt's return; c25); elevated shoulders 1 (Garage Gym Reviews, c10); locking knees 1 and leaning toward the cable 1 (Motra; c23); locking the shoulder blades back 1 (FitnessVolt, c24). Lines that only give the right position are not counted (StrengthLog's \"press your arms straight out in front of you without rotating your torso\" and ACE's \"Keep the back straight and tall\", c5; Motra's \"Keep hips and shoulders square\"). Torso rotation would then be the top fault; the census note says the rotation fault cannot be drawn, so drawable would be false and plate.mistake would be the arch, next by the same count (3). The plate shows the arch under either reading; only handlingMistakes[0] would change. The arched lower back is a still sign the side view shows, so drawable is true.",
    "drawable": true
   },
   "tells": [
@@ -602,7 +740,7 @@
     "c13",
     "c12"
    ],
-   "text": "Up 1 and down 3 are Motra's Tempo 3-2-1 (c13, WEAK). Its Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause; the page shows three numbers, read as the first three: 3 s eccentric (bringing the handle back to the chest), a 2 s bottom pause (handle at the chest, between the return and the next press) and 1 s concentric (the press out). That 2 s pause is not right after the concentric, so it is named here and not written in pause (LR-33); 3-2-1 has no fourth number, so it fixes no top pause. Pause 2 is the hold right after the press out, sourced (R-LB2-1) but from two sources with different ranges for the same phase: ACE \"hold for 2-3 seconds\" and Motra's own How to Perform step \"Hold for 1-2 seconds resisting rotation.\" (c12). 2 s is the lowest (and only) value in the overlap of the two ranges (D-SUP-LB9-RANGE). StrengthLog's \"Hold briefly\" (c11) gives no seconds. BarBend's \"5 sets of 5 reps with a very slow and controlled tempo\" is a technique-learning option with no seconds."
+   "text": "Up 1 and down 3 are Motra's Tempo 3-2-1 (c13, WEAK). Its Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause; the page shows three numbers, read as the first three: 3 s eccentric (bringing the handle back to the chest), a 2 s bottom pause (handle at the chest, between the return and the next press) and 1 s concentric (the press out). That 2 s pause is not right after the concentric, so it is named here and not written in pause (LR-33); 3-2-1 has no fourth number, so it fixes no top pause. Pause 2 is the hold right after the press out, sourced (R-LB2-1) but from two sources with different ranges for the same phase: ACE \"hold for 2-3 seconds\", Motra's own How to Perform step \"Hold for 1-2 seconds resisting rotation.\" and FitnessVolt's \"Pause for one to three seconds while keeping your ribs, pelvis, and head still.\" (c12). 2 s is the lowest (and only) value in the overlap of the three ranges (D-SUP-LB9-RANGE). FitnessVolt's table pauses by goal (\"a 1 to 2-second pause\", \"a 2 to 3-second pause\") and its 10 to 30 second isometric hold (another exercise) are set aside. StrengthLog's \"Hold briefly\" (c11) gives no seconds. BarBend's \"5 sets of 5 reps with a very slow and controlled tempo\" is a technique-learning option with no seconds."
   },
   "variantLine": "Cable column drawn (census equipment: cable). BarBend's and Garage Gym Reviews' band set-up (anchor at chest height, step out for tension) and their form lines hold for both; Garage Gym Reviews says band and cable are interchangeable."
  },
@@ -800,7 +938,11 @@
   "why": "Library: core and obliques primary, no secondary. obliques stay primary (c14). core stays in the library primary and in no feel role (LR-35). abs is proposed as a drawn primary and glutes as secondary, from the claims named. A proposal for the LIB data card."
  },
  "anchorSource": "ace-antirotation",
- "gaps": [],
+ "gaps": [
+  "F-RESEARCH-2 Q1(a), 2026-10-29: no source read gives a size (degrees, distance or stated comparison) for the over-arched lower back. Read for this: BarBend (barbend.com/pallof-press/), Garage Gym Reviews (pallof-press-exercise, anti-rotation-exercises), Motra (cablePallofPress), Breaking Muscle (pallof-press), FitnessVolt (pallof-press, pallof-press-vs-plank, rotation-anti-rotation-exercises, cable-vertical-pallof-press-obliques), Muscle & Fitness (exercises/abs/pallof-press) and ACE (standing-anti-rotation-press) and StrengthLog (pallof-press), re-read in full on 2026-10-29 (StrengthLog answered 403 and 200 at different times that day): neither names the arch, the ribs, a rotation direction, hand drift or the shoulder blades, and neither has a mistakes list; PubMed terms \"pallof press\" (3), \"anti-rotation press\" (1), \"pallof AND lumbar\" (1), \"anti-rotation AND core AND lumbar extension\" (0), \"pallof press electromyography\" (0), \"anti-rotation exercise electromyography\" (0), \"Pallof\" AND trunk (2), \"cable anti-rotation AND lumbar\" (0), with the abstracts of 40005429, 39000910 and 42346761 (log: verify/lb9.md, F-RESEARCH-2).",
+  "F-RESEARCH-2 Q1(b), 2026-10-29: the only other stated sign of the arch is the chest lifting with the ribs flaring (c20, FitnessVolt); no source gives its size, and no page read names the hips pushing forward. Read for this: BarBend (barbend.com/pallof-press/), Garage Gym Reviews (pallof-press-exercise, anti-rotation-exercises), Motra (cablePallofPress), Breaking Muscle (pallof-press), FitnessVolt (pallof-press, pallof-press-vs-plank, rotation-anti-rotation-exercises, cable-vertical-pallof-press-obliques), Muscle & Fitness (exercises/abs/pallof-press) and ACE (standing-anti-rotation-press) and StrengthLog (pallof-press), re-read in full on 2026-10-29 (StrengthLog answered 403 and 200 at different times that day): neither names the arch, the ribs, a rotation direction, hand drift or the shoulder blades, and neither has a mistakes list; PubMed terms \"pallof press\" (3), \"anti-rotation press\" (1), \"pallof AND lumbar\" (1), \"anti-rotation AND core AND lumbar extension\" (0), \"pallof press electromyography\" (0), \"anti-rotation exercise electromyography\" (0), \"Pallof\" AND trunk (2), \"cable anti-rotation AND lumbar\" (0), with the abstracts of 40005429, 39000910 and 42346761 (log: verify/lb9.md, F-RESEARCH-2).",
+  "F-RESEARCH-2 Q1(c), 2026-10-29: no source gives a size for torso rotation, hand drift, leaning, the hips shifting, the shoulder blades locked back or the return speed. Direction is quoted only as toward the anchor (the hands, c6 and c21; the near shoulder rotating, c22, FitnessVolt only; leaning, c23) and as hard retraction for the shoulder blades (c24); BarBend, Garage Gym Reviews and Motra name torso rotation with no direction (c7). Read for this: BarBend (barbend.com/pallof-press/), Garage Gym Reviews (pallof-press-exercise, anti-rotation-exercises), Motra (cablePallofPress), Breaking Muscle (pallof-press), FitnessVolt (pallof-press, pallof-press-vs-plank, rotation-anti-rotation-exercises, cable-vertical-pallof-press-obliques), Muscle & Fitness (exercises/abs/pallof-press) and ACE (standing-anti-rotation-press) and StrengthLog (pallof-press), re-read in full on 2026-10-29 (StrengthLog answered 403 and 200 at different times that day): neither names the arch, the ribs, a rotation direction, hand drift or the shoulder blades, and neither has a mistakes list; PubMed terms \"pallof press\" (3), \"anti-rotation press\" (1), \"pallof AND lumbar\" (1), \"anti-rotation AND core AND lumbar extension\" (0), \"pallof press electromyography\" (0), \"anti-rotation exercise electromyography\" (0), \"Pallof\" AND trunk (2), \"cable anti-rotation AND lumbar\" (0), with the abstracts of 40005429, 39000910 and 42346761 (log: verify/lb9.md, F-RESEARCH-2)."
+ ],
  "notes": [
   "Shared card: selector-pin.json (appliesTo lists pallof_press) covers setting the weight on the stack. No line is copied here; the sheet links the shared steps.",
   "Stance width: ACE, StrengthLog and Motra say hip-width (c1, c2); Garage Gym Reviews says shoulder-width. The card shows hip-width.",
@@ -808,7 +950,8 @@
   "Hands: ACE laces the fingers around one handle (c3); BarBend squeezes the hands together and straightens the fingers on a band, which the cable handle does not need. The card draws ACE's grip.",
   "No stop line: no read source gives a stop-for-pain line for this exercise. The low back row uses LR-6 shape (place, the source's fault, its fix) and links the back box.",
   "Not used: Garage Gym Reviews' Pallof Press Hold and the half-kneeling, double-kneeling and overhead-reach variations are other exercises; BarBend's standing too close or too far is a set-up choice (LR-31), and its band-thickness and stack-weight lines are load choices.",
-  "Read and not cited: none. Tried and not found: motra.com/exercises/pallofPress (404)."
+  "Read and not cited (F-RESEARCH-2, gaps[-3]): Garage Gym Reviews anti-rotation-exercises, Breaking Muscle pallof-press, FitnessVolt pallof-press-vs-plank, rotation-anti-rotation-exercises and cable-vertical-pallof-press-obliques, Muscle & Fitness exercises/abs/pallof-press, and the PubMed abstracts of 40005429, 39000910 and 42346761; none gives a size. Tried and not found: motra.com/exercises/pallofPress (404).",
+  "Shoulder blades: BarBend says \"Ensure that your shoulder blades are squeezed together\" (c10) and keeps them \"retracted\" on the return (c11), and Motra's Form Cues say \"Squeeze shoulder blades\"; FitnessVolt names locking them back as an error and says \"Do not force them into hard retraction throughout the repetition\" (c24). The sources conflict; the card's shown lines are unchanged (D-R2-SCOPEFIX)."
  ],
  "plateFacts": [
   {

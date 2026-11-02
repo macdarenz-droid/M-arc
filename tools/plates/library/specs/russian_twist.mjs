@@ -57,6 +57,7 @@ const R_POLE = [0, 1, 0.5];   // the right elbow forward and up, so the arm cros
 const hands = (b, a) => { const d = rotY([R * GRIP_IN, 0, 0], a); return { l: { at: [b[0] + d[0], b[1], b[2] + d[2]], pole: [1, -1, 0] }, r: { at: [b[0] - d[0], b[1], b[2] - d[2]], pole: R_POLE } }; };
 export const B0 = [0, L0.chest[1] - BALL_DROP, L0.chest[2] + BALL_Z];
 export const start = { ...base, trunk: { flex: 0, yaw: 0 }, reach: hands(B0, 0) };
+const L_START = landmarksOf(start, H);
 export const B1 = [HIP_HALF + BALL_GAP + R, BALL_LIFT + R, L0['hip.l'][2]];
 // The turn: the chest faces the ball: the sternum's forward direction (sternum minus the shoulders' midpoint, level)
 // points at the ball's centre (bisection; throws without a bracket).
@@ -121,6 +122,10 @@ export default {
   ],
   checks: [
     { landmark: 'seat', plane: { point: SEAT, normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // c1, c5: buttocks on the floor
+    // Do 7b facts (D-HELD6-RTWIST, HELD-B PLAN RULED Q2): c1 "the feet on the floor", every pose; c2 the hands on the
+    // ball in front of the chest, at the start (the grip rule: checked at the wrist)
+    ...['sole.l', 'sole.r'].map(landmark => ({ landmark, plane: { point: SEAT, normal: [0, 1, 0] }, pose: 'all', tol: 0.5 })),
+    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: L_START[landmark], pose: 'start', tol: 0.5 })),
   ],
   startParts: ['ball', 'arm.l'],
   ghosts: { count: 2, parts: ['ball', 'arm.l'] },
@@ -133,7 +138,9 @@ export default {
   mistake: {
     pose: mistake,
     tells: [
-      { key: 'hips', text: 'Knees swing', anchor: { at: 'knee.l', pose: 'mistake', off: [19, 36] }, box: { left: 252, top: 256 }, cue: 'The hips and knees swing with the trunk.' },
+      // HELD-B (D-HELD6-RTWIST): on the red right knee's outline (knee.r + [-6.84, -6.84] px), from the left; the signed
+      // front entry is 3.42 px into the end figure and 6.84 px into the Mistake figure (lb9-plates.test.ts FRONT_ENTRY)
+      { key: 'hips', text: 'Knees swing', anchor: { at: 'knee.r', pose: 'mistake', off: [-6.84, -6.84] }, box: { left: 12, top: 188 }, cue: 'The hips and knees swing with the trunk.' },
     ],
   },
   tempo: [{ phase: 'Turn', s: 1, move: true }, { phase: 'Return', s: 1, move: true }],
