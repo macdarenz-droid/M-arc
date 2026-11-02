@@ -3,7 +3,7 @@
  "cards": {
   "LIB-14": ["wall"],
   "LIB-15": ["preacherPad"],
-  "LIB-16": ["crunchMachine", "pulloverMachine"],
+  "LIB-16": ["crunchMachine", "pulloverMachine", "hipAbdAddMachine", "latRaiseMachine"],
   "LIB-17": ["dipBars"],
   "LIB-18": ["ankleCuff", "calfMachine", "hackSled", "legExtMachine", "pendulum"],
   "LIB-21": ["abWheel", "medBallOptional"],

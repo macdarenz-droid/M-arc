@@ -10,5 +10,31 @@
   "cable_chest_press": "d2d3bc711e95c7b83743dc45bea079c6984539066162981a3e39adf89c603bb2",
   "machine_pullover": "4eecbd20e9a564f30dbee8d15fd151d9fed730d711dfa12560f72cce2c908439",
   "machine_crunch": "faea91c469ee82bc2dc4a3a2f857bfe5eef13342cda4e945a24e37a07d841938"
+ },
+ "r2": {
+  "note": "LIB-16 resume 2 (lib-16r2-card): the 9 T/D rows drawn H. Same form as above; byte copies from researchHead (blobs equal to the LB6 research head a8e66f32, checked 10-31).",
+  "researchHead": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
+  "cards": {
+   "low_to_high_cable_fly": "8ff47644ae18d4fe36afd03cc0dd3d7f597d1366dfa6e814d38c2a255e41c896",
+   "high_to_low_cable_fly": "73d4d826210ea982bdbe1850423febe5abb86ab43707d787a235c10fec417ed1",
+   "machine_lateral_raise": "0cc8ba1783def30ed88535ef8e358d3afd8bcbca26a233a58827cc693eaabc61",
+   "rear_delt_fly": "bcc268eaca77492451898bcc8ef95cb8b8aa33b07a56da08586f49a918756a90",
+   "hip_abduction": "dd3e39ce6901395aeb1ed6a39bbe83fb9132500cd026108a23d12c957b6deef2",
+   "hip_adduction": "885e3ab7b5512721a6fa2f12eca4f487325f1ed6d5e6d221cfdb912bf19fdb17",
+   "smith_machine_squat": "2020a06e6831e8159a9b4e07941e0a9d15c8518e530783323f2badba4be420d1",
+   "smith_machine_shoulder_press": "78508f3734f0da129d9d7ff3a8b3db5ebbd2d090b7b36e172674098f80620e11",
+   "smith_machine_incline_press": "0c1e14d1af022a3caece031b3b7aef7563c123c0cdd20ba08721b4647389348b"
+  },
+  "quotes": {
+   "low_to_high_cable_fly": "3ff1e1f04feb1d3556e4f5bef74525a7ace04d0acd644feb2ec8883c18e0a154",
+   "high_to_low_cable_fly": "c5077f50e3022f7734fdbbbd995830a9a616dd2d9d24e9c0a1b998381a5a045b",
+   "machine_lateral_raise": "b5cbffa26eb270b3bcfe08986f3fbbe8cf193895aea596cc480000ff12482dd1",
+   "rear_delt_fly": "a985281ac386c0133d9529db0bb67c6165084dcf2b3e7d92121d50c22d5d35be",
+   "hip_abduction": "937dea86023f312198122fe95e934e2adbc12d9c4bdf7f76949461a3d9d126b2",
+   "hip_adduction": "0a6ba350f174637146821a100d9ad7d624179c10aae03652f8844a9d84b80aac",
+   "smith_machine_squat": "df1f4c285a953b5a3010aa08a33cee0c5bd2bedf7b6987ad159536a97920318d",
+   "smith_machine_shoulder_press": "9c45fdcecaa1369930d4e610d25abad1cf33206008a9c73eca6948ad095cb9d6",
+   "smith_machine_incline_press": "07bd8abf9c8dad864b1fb191a6640c497eb7b0aa507ba99337807574b7d8efd8"
+  }
  }
 }

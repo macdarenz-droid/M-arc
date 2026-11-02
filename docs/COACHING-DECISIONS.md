@@ -2957,6 +2957,20 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
 - **D-LIB17-B13 ('LIB-17 resume 2', F-ZOOM-2 on main).** renegade_row joins lb7/rows.json with its Mistake zoom at k 3 and the opt-in `zoom.pair` (the far flat hex's vertex 0 against the turned tell vertex: 5.64 → 16.92 px). Its owed rows: the "Straight line" box moves to (40, 160) so no hit box overlaps "Feet wide" (H4), and the corner tell's label becomes "Corner landing" (H8, 1-3 words). cable_rear_delt_fly stays held (D-LIB17-RDFHOLD).
 - **D-LIB17-B14 (renegade_row panel mx5 R1, #343 6538121846).** The end dumbbell sits 0.16 m below the shoulder joint beside the lower ribs with the elbow led up and back, so the upper arm stands 53.9 deg from the trunk axis (was 94); the near arm keeps the row's pole from the start so no ghost bends the elbow toward the head; "Row to ribs" anchors at the hex's lower edge with its box below the body. zoom.pair unchanged; the f-zoom-2 circle pin moves to [228, 152].
 
+## LIB-16R2: LB6 resume 2, the 9 smith, fly and seated-machine rows, build-ahead (LIB-16R2 builder, 2026-10-31)
+
+- **D-LIB16R2-1 to -9 applied** (card docs/supervisor/verify/lib-16r2-card.md, lib4-cards §48; PLAN RULED #354 6543628951). All 9 rows are H. The clone sources are copied, never imported (D-LIB9-CLONE). Every unsourced number is in lb6/sizes.json r2 with its basis. Record: tools/plates/library/lb6/DESIGN.md section 19.
+- **Composers (D-LIB16R2-COMPOSERS).**
+  - `eq/hipAbdAddMachine.mjs` (14 items) serves hip_abduction (outer pads) and hip_adduction (inner pads).
+  - `eq/latRaiseMachine.mjs` (12 items) serves machine_lateral_raise.
+  - Both return PRIMITIVES only, every moving part a `poly`, and both are listed under "LIB-16" in eq-composers.json.
+- **Clearance (D-LIB16R2-CLEAR).** A frame part that sits beside the body in depth, such as a Smith stop drawn in front, is listed, not tested.
+- **rear_delt_fly zoom.** The Mistake zoom (the shrug) is at k 1.5, as PLAN RULED set it.
+- **Panel rounds.**
+  - mx12 approved the Smith shoulder press and incline press.
+  - mx14 approved both cable flies, the Smith squat, the machine lateral raise and the rear delt fly.
+  - mx16 approved hip_adduction.
+  - mx19 approved hip_abduction, after its mx16 R2 fix: the house pivot axle (leg_extension's 3 cm boss) at knee height on each pad arm (D-LIB16R2-PIVOT). Record: DESIGN.md 19.16-19.17.
 ## LIB-17 resume 3: LB7 push-up rows (LIB-17 builder, 2026-10-31)
 
 - **D-LIB17R3-MODES.** incline_push_up, diamond_push_up and pike_push_up are drawn H. No PARAMS key covers a hand surface, a body angle, where the hands sit along the body, the elbow's aim, or a hip pike. PUSHUP gets no template. Record: tools/plates/library/lb7/DESIGN.md section 19.
@@ -2977,6 +2991,23 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   F-ZOOM-PITCH, train 48). The container's `push.negotiate true` made pushes send no objects; `git -c
   push.negotiate=false push` works.
 - **Source:** PR #340; pilot-a2/DESIGN.md.
+## LIB-13s: the shrugs and t_bar_row with zooms (builder, 2026-10-31; card docs/supervisor/verify/lib-13s-card.md, rulings D-LIB13S-*)
+- **All 5 H, all approved, nothing ships.** barbell_shrug (mx16), t_bar_row and cable_shrug (mx19), dumbbell_shrug and
+  smith_machine_shrug (mx20) are LB3 rows; SHRUG is not built (2 qualifying members of 3). Their fragments are pinned in
+  tests/howto/lb3-plates.test.ts, with the 7 approved LB3 plates (page 6ff09d4c... built alone).
+- **Zooms (D-LIB13S-ZOOM).** A normal-view circle at k 3.5 on each shrug's 5 cm Trace (24.54 px; k 3 gives 21.02), never
+  enlarged; t_bar_row's at k 1.5 (35.69 px) once its handle hangs under the bar. dumbbell_shrug's ring sits on the
+  viewer's-right shoulder so its connector is short (mx19). smith_machine_shrug has no Mistake zoom: its crown's 13.0 px
+  move meets the bar, and QA refuses a zoom there (#359, option 1).
+- **Clearance (D-LIB13S-CLEAR).** Every load part clears the drawn body by 2 px: barbell_shrug's bar 15 mm in front of both
+  thighs and the torso; t_bar_row's Mistake stops at 2 px; dumbbell grips 26 cm out; the Smith rail at z 0.13 m.
+- **t_bar_row (mx16 fix).** The V-handle hangs 9 cm under the bar with its grip square to the forearm; the end elbow bends
+  84 deg; feet 0.19 m with toes out 17 deg (D-LIB13S-TBARFEET); the neutral grip's 35 deg wrist bends out of the side
+  plane, so the side view draws it straight (D-LIB13S-TBARWRIST).
+- **D-LIB13S-RPC.** The 12-plate LB3 page with its zooms is long synchronous work, so whole-page builds in
+  lb3-plates.test.ts run in awaited child processes, LIB-13 A10's two builds included (same assertion); long searches
+  yield. This fixed vitest's worker RPC timeout ("onTaskUpdate").
+- **Source:** PR #359; lb3/DESIGN.md section 16.
 ## LIB-21R3: LB9 resume 3, cable_crunch on LIB-SPINE's spine segments (builder, 2026-10-31; card docs/supervisor/verify/lb9r3-card.md, rulings D-LB9R3-*)
 - **D-LB9R3-SPLIT.** cable_crunch's curl is spread over the engine's four spine pivots (L5/S1, L3, T12, T7) by 0.123 /
   0.341 / 0.246 / 0.290: Pearcy 1984's per-level lumbar flexion (via the NCT03737227 protocol quote) scaled to

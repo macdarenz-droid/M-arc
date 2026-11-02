@@ -47,9 +47,13 @@ export const tableOf = reports => [
   }),
 ];
 
-/** The ruled expected flags (DESIGN.md section 6): F5 on every id at exactly the approved chrome's 3.57:1 (D-LIB9-F5),
- *  F2 on pendlay_row (#274 6267110489), F7 on one_arm_dumbbell_row (drawable false). */
-export const EXPECTED = id => ['F5', ...(id === 'lib_pendlay_row' ? ['F2'] : []), ...(id === 'lib_one_arm_dumbbell_row' ? ['F7'] : [])].sort();
+/** The ruled expected flags (DESIGN.md sections 6 and 16.7): F5 on every id at exactly the approved chrome's 3.57:1
+ *  (D-LIB9-F5), F2 on pendlay_row (#274 6267110489), F7 on one_arm_dumbbell_row (drawable false); barbell_shrug's named
+ *  F2, F3, F4 and F7 (D-LIB13S-FLAGS, -TOPFAULT); wave 2: dumbbell_shrug F2 and F4, smith_machine_shrug F2 (DESIGN.md
+ *  16.11, named with the parent's reasons). */
+const NAMED = { lib_pendlay_row: ['F2'], lib_one_arm_dumbbell_row: ['F7'], lib_barbell_shrug: ['F2', 'F3', 'F4', 'F7'],
+  lib_dumbbell_shrug: ['F2', 'F4'], lib_smith_machine_shrug: ['F2'] };
+export const EXPECTED = id => ['F5', ...(NAMED[id] ?? [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, or F5 at any value other than 3.57. */
 export const flagProblems = reports => reports.flatMap(r => {
@@ -73,6 +77,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1] && pro
   console.log(`LB3 plates page sha256 ${sha}`);
   for (const line of tableOf(reports)) console.log(line);
   const bad = flagProblems(reports);
-  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the ruled set (F5 3.57 on all; F2 pendlay_row; F7 one_arm_dumbbell_row)');
+  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the ruled set (F5 3.57 on all; F2 pendlay_row; F7 one_arm_dumbbell_row; F2 F3 F4 F7 barbell_shrug; F2 F4 dumbbell_shrug; F2 smith_machine_shrug)');
   if (bad.length || reports.some(r => HARD.some(h => !r.hard[h].pass))) process.exit(1);
 }
