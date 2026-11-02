@@ -136,6 +136,7 @@ export default {
   ],
   mistake: {
     pose: MISTAKE,
+    guides: [],
     tells: [
       { key: 'seat', text: 'Hips drop', anchor: { at: 'seat', pose: 'mistake' }, cue: 'The hips drop and the knee rests on the floor, tipping the front shin forward.' },   // c3, c8
       { key: 'knee', text: 'Knee rests', anchor: { at: 'knee.l', pose: 'mistake' }, box: { left: 40, top: 298 }, cue: 'The rear knee rests on the floor instead of just touching it.' },

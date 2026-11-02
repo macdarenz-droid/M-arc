@@ -75,9 +75,12 @@ const M_SHIN = Math.asin((landmarksOf(end, H)['toe.r'][2] - ankF[2]) / L_SH) / R
 // Mistake (c3): on landing the hips and the front knee drive forward instead of the hips dropping; the front shin tips
 // to M_SHIN with the foot flat, the hips held at the end height (thigh length kept). Arms, trunk lean and the rear
 // foot are the end pose's.
+const hipAt = shin => { const k = kneeAt(shin); return [0, HIP[1], k[2] - Math.sqrt(L_TH ** 2 - (k[1] - HIP[1]) ** 2)]; };
+/** The Mistake pose at a front shin angle (deg); the plate draws mistakeAt(M_SHIN) (tests build other sizes from it). */
+export const mistakeAt = shin => pose(hipAt(shin), TRUNK_LEAN, front, REAR);
 const kneeM = kneeAt(M_SHIN);
-const HIP_M = [0, HIP[1], kneeM[2] - Math.sqrt(L_TH ** 2 - (kneeM[1] - HIP[1]) ** 2)];
-const MISTAKE = pose(HIP_M, TRUNK_LEAN, front, REAR);
+const HIP_M = hipAt(M_SHIN);
+const MISTAKE = mistakeAt(M_SHIN);
 /** The unsourced sizes (pilot-a2/sizes.json form). */
 export const SIZES = { FOOT_X, FRONT_SHIN, FRONT_THIGH, REAR_KNEE_Y, REAR_HEEL, TRUNK_LEAN, ELBOW, M_SHIN, START_Z };
 export const fwdInfo = { REAR_BALL, START_Z, HIP, HIP_M, kneeF, kneeM };
@@ -125,6 +128,7 @@ export default {
   ],
   mistake: {
     pose: MISTAKE,
+    guides: [],
     tells: [
       { key: 'knee', text: 'Knee drives<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The hips and front knee drive forward, and the shin tips far over the foot.' },   // c3
       { key: 'shin', text: 'Shin tips<br>forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' }, cue: 'The front shin tips past vertical, the knee ahead of the toes.' },

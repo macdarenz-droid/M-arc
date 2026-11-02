@@ -346,13 +346,15 @@ drawn-item tests only. A9 and every mutation red then restored.
 
 | id | held under | release condition |
 |---|---|---|
-| step_up | D-LIB14-NOSECS and D-LIB14-STEPUP | NOSECS is released (LIB-STRIP on main `bec24ebd`), but reverse_lunge is still held on main (pilot-a/plates.json: "held": the strip follow-up; not redrawn or pinned), so step_up stays held and rolls (plan 3.5:376) |
+| step_up | D-LIB14-NOSECS and D-LIB14-STEPUP: **released** by LIB-SPLIT (D-SPLIT-STEPUP, section 17) | NOSECS is released (LIB-STRIP on main `bec24ebd`); reverse_lunge is redrawn and pinned (PILOT-A3 PIN GO @ `2edabdf0`), so step_up has its row, its tempo and no held-pairing entry |
 
 Released on 'LIB-14 resume' (main `bec24ebd`): front_squat, goblet_squat, bodyweight_squat and pistol_squat (section 8's
 released table). They are in rows.json, on the plates page, through QA and to the critic.
 
 Held specs build, carry no `tempo`, pass their drawn-item tests, and are in no rows file and on no committed or QA'd
 page (A8).
+
+Since LIB-SPLIT no LB4 id is held: HELD is empty in build.mjs and the test, and held-pairing.json lists no LB4 id.
 
 ## 14. Risks and mitigations
 
@@ -628,3 +630,37 @@ REAR_X, STANCE, START_KNEE 8, M_SINK; step_up the trailing hip 21. Each spec hea
   named, as step_up's (Q3).
 - The setup quotes' hand facts get `checks` planes at the wrist at the start (step_up's inHand form) on forward_lunge,
   walking_lunge and bulgarian_split_squat.
+
+### 17.10 Wave build on main with #358 (rows, cards, QA)
+
+- Base: main `dac9c624` (train 59: #358, LIB-SMALL); section 16's text is kept beside this one (#358 review Low 2).
+- rows.json gains step_up and the 5 SPLIT rows (all H, stage drawing). build.mjs HELD and the test's HELD are empty.
+  NOT_HERE is reverse_lunge and box_jump. held-pairing.json lists no id (D-SPLIT-HELDEMPTY, #364 6576723170: mutation
+  (e) falls back to the barbell_row stand-in on an empty list, `tests/howto/held-pairing.ts` E_ID and mutationE).
+- step_up (D-SPLIT-STEPUP): `tempo` = tempoOf(strip step_up) on the spec and the card; the trailing hip 15 → 21 (box
+  clearance 2.42 px); the `leg` callout box at (222, 180), 15 px above the engine's own place (H4.overlap:normal:foot|leg
+  cleared); F4 named at 1 (Q3).
+- Cards: the 3 keys on the 5 SPLIT cards (17.3's facts, 17.2's tempo and topFault); bodyweight_lunge's plateFacts is `[]`
+  (D-PLATEFACTS-EMPTY): c4's "front thigh parallel" is an angle to the floor, which no fact kind measures. cards.sha.json
+  adds the 5 (each card equals its research-head blob without the 3 keys; quotes byte copies). validateCardFile gives []
+  on all 12.
+- QA (lb4/qa.mjs, node and browser, zero exemptions): all 10 hard checks pass on all 12 ids. Flags equal the ruled set:
+  F5 3.57 on all, F7 pistol_squat, F2 named on front_squat and goblet_squat, **F4 named at 1 on step_up and
+  bodyweight_split_squat** (one moved box each; Q3's form: no box added only to raise the flag).
+
+  | id | traceLen px | deviation px | zoom |
+  |---|---|---|---|
+  | step_up | 59.07 | 30.24 | none |
+  | forward_lunge | 86.14 | 25.32 | none |
+  | walking_lunge | 91.06 | 42.36 | none |
+  | bodyweight_lunge | 91.10 | 18.83 | none |
+  | bodyweight_split_squat | 32.12 | 25.32 | none |
+  | bulgarian_split_squat | 29.56 | 8.74 (zoomed Mistake passes H3) | Mistake, k 1.5 |
+
+- forward_lunge and walking_lunge export `mistakeAt(size)`, the builder their plate's Mistake already used (render
+  unchanged), so the A4 tests build the smaller sizes from the drawn code.
+- Tests (lb4-plates.test.ts, LIB-SPLIT blocks): A1 mutations; A3 drawn poses (the forward step and pivot, kneecaps,
+  fixed feet, the laces-down rear foot read off the foot outline, the Mistake sizes and unmoved landmarks); A4 and A6
+  node QA with pinned H3 and the zoom mutations, M1-M7 on forward_lunge; A5 box and bench clearance at 2 px and the
+  dumbbell 3D listing. walking_lunge's Mistake plate has no zoom place at all, so the "zoom added" mutation runs on
+  bodyweight_split_squat. The Bulgarian zoom sits at the ladder's lowest k (1.5), so there is no lower rung to mutate.

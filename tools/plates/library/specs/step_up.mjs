@@ -4,8 +4,8 @@
 // View: side (card plate.view = census view). The rise is sagittal; the trunk lean (c1, c7), the whole foot on the box
 // (c6) and the controlled lowering (c2) read from the side.
 // Sources: research card docs/research/howto/cards/step_up.json (research head 3812989f): callouts = plate.checkpoints
-//  (c6 Whole foot down, c7 Torso upright, c1 Top leg drives); Mistake = plate.mistake (c1, drawable). Tempo: none (the
-//  card gives no seconds). variantLine: exercises.json lists Dumbbells / Bodyweight; the plate draws dumbbells at the
+//  (c6 Whole foot down, c7 Torso upright, c1 Top leg drives); Mistake = plate.mistake (c1, drawable). Tempo: the strip
+//  without seconds, exactly tempoOf(strip/rows.json step_up): Rise, Lower Controlled (D-STRIP-ROWS; LIB-SPLIT). variantLine: exercises.json lists Dumbbells / Bodyweight; the plate draws dumbbells at the
 //  sides (c5, c15).
 // Pose map (D-LIB14-STEPUP-POSE, #289 6338977366): the spec `start` is the card's end (standing tall on the box on the
 //  lead leg, c1) and the spec `end` is the card's start (one whole foot on the box, the other on the floor, c1, c6), so
@@ -20,15 +20,16 @@
 //   floor"; checks, contact fact c1); the root SOLVED (nested brackets) so the lead knee is LEAD_KNEE and the trailing knee
 //   TRAIL_KNEE; thorax END_INCL (torso upright, c6; "slightly forward", c7).
 //  Start (standing tall on the box, card end): the lead knee 5 deg soft, the trailing foot lifted beside the lead
-//   foot, just clear of the box top (above-check); the root z SOLVED so the centre of mass (body plus dumbbells) is over
-//   the lead mid-foot; thorax 3 deg.
+//   foot, clear of the box top by 2 px or more (above-check; trailing hip 21, LIB-SPLIT D-SPLIT-STEPUP: at 15 it
+//   cleared by 0.41 px); the root z SOLVED so the centre of mass (body plus dumbbells) is over the lead mid-foot;
+//   thorax 3 deg.
 //  Camera: 128 px/m (inside the 8's range) so the figure standing tall on the 45 cm box fits the plate.
 //  Arms hang plumb with a dumbbell in each hand, palms in (c5): the handle runs front to back, so the side view shows
 //   the handle and both heads; the far dumbbell sits behind the near one.
 //  Mistake (c1): at the step position the trunk is thrown forward (thorax M_INCL) with the hips held, and the trailing
 //   foot pushes off its toes (heel up TRAIL_PUSH about the ball, the toe pad on the floor: pistol_squat's convention).
 // Unsourced numbers: BOX_H 0.45 m (the box_jump precedent; c11's 45.7 cm is in no quote, so it is not a fact), BOX_D 0.50 m,
-//  BOX_Z0 0.15 m, TRAIL_Z 0.50 m, LEAD_KNEE 105, TRAIL_KNEE 10, END_INCL 6, the start trailing foot (hip 15, knee 35),
+//  BOX_Z0 0.15 m, TRAIL_Z 0.50 m, LEAD_KNEE 105, TRAIL_KNEE 10, END_INCL 6, the start trailing foot (hip 21, knee 35),
 //  DB_MASS 0.12 per pair, M_INCL 40 and TRAIL_PUSH 0.035 m (the Mistake magnitudes, illustrative).
 import { landmarksOf, normPose, resolve } from '../engine.mjs';
 
@@ -77,7 +78,7 @@ const END_Z = solve(z => knees(endAt(z)).r - LEAD_KNEE, -0.6, -0.1);
 const end = withArms(endAt(END_Z));
 // Start (standing tall on the box on the lead leg): lead knee 5; the trailing foot lifted beside it by joint angles;
 // the root z SOLVED so the centre of mass with the dumbbells is over the lead mid-foot.
-const topBody = (y, z) => ({ root: { at: [0, y, z], tilt: 3 }, trunk: 0, neck: 0, hip: { l: 15 }, knee: { l: 35 }, ankle: { l: 10 }, plant: { r: lead } });
+const topBody = (y, z) => ({ root: { at: [0, y, z], tilt: 3 }, trunk: 0, neck: 0, hip: { l: 21 }, knee: { l: 35 }, ankle: { l: 10 }, plant: { r: lead } });
 const topAt = z => withArms(topBody(solve(y => knees(topBody(y, z)).r - 5, BOX_H + 0.7, BOX_H + 0.94), z));
 const TOP_Z = solve(z => com(landmarksOf(topAt(z), H), dbs(landmarksOf(topAt(z), H)))[2], -0.3, 0.2);
 const start = topAt(TOP_Z);
@@ -120,7 +121,7 @@ export default {
   callouts: [
     { key: 'foot', text: 'Whole foot<br>down', anchor: 'heel.r', cue: 'Put your whole lead foot firmly on the box.' },
     { key: 'torso', text: 'Torso upright', anchor: 'backUpper', cue: 'Keep your torso upright, with only a slight lean as you rise.' },
-    { key: 'leg', text: 'Top leg drives', anchor: 'knee.r', cue: 'Stand up with the top leg, with little help from the bottom foot.' },
+    { key: 'leg', text: 'Top leg drives', anchor: 'knee.r', box: { left: 222, top: 180 }, cue: 'Stand up with the top leg, with little help from the bottom foot.' },
   ],
   mistake: {
     pose: mistakePose,
@@ -132,5 +133,6 @@ export default {
       { key: 'push', text: 'Back foot<br>pushes', anchor: { at: 'heel.l', pose: 'mistake' }, cue: 'The bottom foot pushes off to help.' },
     ],
   },
+  tempo: [{ phase: 'Rise', move: true }, { phase: 'Lower', move: true, word: 'Controlled' }],   // tempoOf(strip/rows.json step_up)
   alt: 'Step-up with dumbbells, side view. One whole foot on a knee-high box and the other on the floor, dumbbells hanging at the sides, the lifter stands up on the box with the top leg, torso upright.',
 };

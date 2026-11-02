@@ -34,6 +34,14 @@ export function pairingMismatches(V: any, root = ROOT, held: Held = HELD): strin
   });
 }
 
+/** D-SPLIT-HELDEMPTY (#364 6576723170): the id whose ruling mutation (e) empties: the list's first, or on an empty
+ *  list the barbell_row stand-in that (a)-(d) use. */
+export const eIdOf = (held: Held) => (held[0] ?? { id: 'barbell_row' }).id;
+export const E_ID = eIdOf(HELD);
+/** Mutation (e) on a list: its first entry (or the stand-in) with an empty ruling; while the list has entries the input
+ *  is the same as before D-SPLIT-HELDEMPTY. */
+export const mutationE = (held: Held) => heldShapeProblems([...held.slice(1), { id: eIdOf(held), ruling: '' }].sort((x, y) => x.id.localeCompare(y.id)));
+
 /** Mutations (a)-(e) and the control on a temp copy of the cards and quotes. barbell_row (plateFacts [] and a timed
  *  tempo) stands in for a held card and plank for an unlisted one, since no held id need exist on the base. */
 export function pairingMutations(V: any) {
@@ -58,7 +66,7 @@ export function pairingMutations(V: any) {
     const c = pairingMismatches(V, tmp, held);                                             // (c) a listed id with another problem
     put('barbell_row', rowNoTempo);
     const d = pairingMismatches(V, tmp, HELD);                                             // (d) the id dropped from the list
-    const e = heldShapeProblems([...HELD.slice(1), { id: HELD[0]!.id, ruling: '' }].sort((x, y) => x.id.localeCompare(y.id)));   // (e) a ruling-less entry
+    const e = mutationE(HELD);                                                              // (e) a ruling-less entry
     return { control, a, b, c, d, e };
   } finally { rmSync(tmp, { recursive: true, force: true }); }
 }

@@ -85,7 +85,9 @@ const solve = (f, a, b) => {
 // bracket [TRUNK_LEAN, 60] deg, so the near shoulder joint centre is over the middle of the front thigh (header).
 const LE = landmarksOf(end, H), THIGH_MID = (LE['hip.r'][2] + LE['knee.r'][2]) / 2;
 const M_LEAN = solve(t => landmarksOf(pose(HIP, t, front, REAR), H)['shoulder.r'][2] - THIGH_MID, TRUNK_LEAN, 60);
-const MISTAKE = pose(HIP, M_LEAN, front, REAR);
+/** The Mistake pose at a pelvis and trunk pitch (deg); the plate draws mistakeAt(M_LEAN). */
+export const mistakeAt = lean => pose(HIP, lean, front, REAR);
+const MISTAKE = mistakeAt(M_LEAN);
 /** The unsourced sizes (pilot-a2/sizes.json form). */
 export const SIZES = { FOOT_X, FRONT_SHIN, FRONT_THIGH, REAR_KNEE_Y, REAR_HEEL, TRUNK_LEAN, ELBOW, M_LEAN, START_Z };
 export const walkInfo = { REAR_BALL, START_Z, HIP, kneeF, M_LEAN };
@@ -133,6 +135,7 @@ export default {
   ],
   mistake: {
     pose: MISTAKE,
+    guides: [],
     tells: [
       { key: 'chest', text: 'Trunk pitches<br>forward', anchor: { at: 'sternum', pose: 'mistake' }, cue: 'The trunk pitches forward over the front thigh at the bottom.' },   // c7
       { key: 'head', text: 'Head drops', anchor: { at: 'ear', pose: 'mistake' }, cue: 'The head and chest drop toward the front knee.' },   // c7

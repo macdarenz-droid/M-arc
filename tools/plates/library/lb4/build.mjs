@@ -5,7 +5,7 @@
 //   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb4/build.mjs --shots [theme] [lib_id ...]
 //     screenshots each drawn card (theme default paper, 390 px wide, normal and Mistake) into a temp directory
 //   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb4/build.mjs --held [theme]
-//     the held renders (Do 5): the ids still held (step_up, D-LIB14-STEPUP), as rows added in memory only, on a separate page in a
+//     the held renders (Do 5): the ids still held (none since LIB-SPLIT), as rows added in memory only, on a separate page in a
 //     temp directory (build-page.mjs draws no tempo strip for them), screenshotted at 390 px. That page is never passed
 //     to candidateOf, runQa or the critic, and is never evidence.
 import { createHash } from 'node:crypto';
@@ -65,9 +65,10 @@ export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mis
 }
 export const mistakeShots = opts => cardShots({ ...opts, mode: 'mistake' });
 
-/** The ids still held (DESIGN.md section 13): step_up under D-LIB14-STEPUP after LIB-STRIP released the other four of
- *  D-LIB14-NOSECS; drawn and tested, never on rows.json or a QA'd page. */
-export const HELD = ['step_up'];
+/** The ids still held (DESIGN.md section 13): none. LIB-STRIP released four of D-LIB14-NOSECS and LIB-SPLIT (#364)
+ *  released step_up (D-SPLIT-STEPUP) once reverse_lunge was pinned. A held id is drawn and tested, never on rows.json or
+ *  a QA'd page. */
+export const HELD = [];
 const slugOf = id => id.replace(/_/g, '-');
 /** The held rows, in memory only (never written to rows.json or any file under the repo), for the held ids whose spec exists. */
 export function heldData(root = ROOT) {

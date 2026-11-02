@@ -3051,3 +3051,18 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   yields one macrotask (lb10's LIB-22 A19 form), and A6's per-spec loop yields. lb4 + lb10 together: longest block 84 s
   to 6.0 s, RPC errors 1 to 0, 310 tests pass.
 - **Source:** PR #358; lb10/DESIGN.md 23, lb4/DESIGN.md 16.
+
+## LIB-SPLIT: LB4 step_up and the lunge and split-squat rows (builder, 2026-11-02; card docs/supervisor/verify/lib-split-card.md, rulings D-SPLIT-*)
+- **D-SPLIT-MODES and the PLAN (#364 6551354216).** All 6 rows are H (no PARAMS key sets a forward step, a split
+  length or a bench under the feet); SPLIT is not built. Mistake sizes come from the card words: the front shin solved
+  until the knee joint is over the toe tip (29.2°), walking_lunge's trunk until the near shoulder is over the middle of
+  the front thigh (26.9°), the Bulgarian hips 1 cm lower with the knee resting (an unsourced drawing size, Q2 a).
+  **Why:** a size picked to pass a bar is never drawn (Q-D5-3).
+- **D-SPLIT-STEPUP.** step_up resumes with its strip tempo, the trailing hip at 21 (box clearance 2.42 px, was 0.41)
+  and one moved `leg` box for H4.overlap; F4 named at 1 (Q3). bodyweight_split_squat's one moved box gives F4 1, named
+  in the same form. **Why:** a box is never added only to raise a flag value.
+- **D-SPLIT-HELDEMPTY (#364 6576723170).** step_up was the last id in held-pairing.json. Mutation (e) now takes its id
+  from `E_ID` (the first listed id, or the barbell_row stand-in that (a)-(d) use on an empty list); lib-strip.test.ts and
+  library-cards8.test.ts change only that assertion (and its import). **Why:** the old `HELD[0]!.id` threw on an empty
+  list; while ids are listed (e)'s input is unchanged (shown with step_up restored), and an empty-list assertion is added.
+- **Source:** PR #364; lb4/DESIGN.md 17.

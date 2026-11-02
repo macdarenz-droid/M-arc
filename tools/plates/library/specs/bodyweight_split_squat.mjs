@@ -111,6 +111,7 @@ export default {
   ],
   mistake: {
     pose: MISTAKE,
+    guides: [],
     tells: [
       { key: 'knee', text: 'Knee slides<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The front knee slides forward and the shin tips well past vertical.' },   // c2
       { key: 'shin', text: 'Shin tips<br>forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' }, cue: 'The front shin tips past vertical, the knee ahead of the toes.' },
