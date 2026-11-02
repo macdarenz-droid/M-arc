@@ -3036,3 +3036,18 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   and the blind TOPFAULT pass answered 'flare'. The two ids' rows and tests moved from pilot-a2/ to pilot-a3/
   (D-A3-TESTHOME).
 - **Source:** PR #362; pilot-a3/DESIGN.md.
+
+## HELD-B: russian_twist released, pallof_press held again (builder, 2026-11-02; card held6-card.md §3, §6, rulings D-HELD6-*, D-HELDB-*)
+- **D-HELD6-RTWIST.** russian_twist's "Knees swing" moves onto the red right knee's outline (knee.r + [-6.84, -6.84] px,
+  box {12, 188}). Its leader enters the end figure 3.42 px and the Mistake figure 6.84 px: a signed named entry,
+  smaller than the 15.94 / 13.95 px one approved before. **Why:** the shin anchor was refused, and neither a zoom nor a
+  larger pelvis turn passed without a new rule.
+- **Do 7b card fields (cfhb VALID).** plateFacts: seat start c1 and end c5; sole.l, sole.r start c1 and end c6
+  (D-HELDB-RTSOLES: c6 "keep your feet on the floor" holds through the movement); wrist.l, wrist.r start c2. Tempo is
+  Turn 1 / Return 1, and topFault is `control` (F7).
+- **D-HELD6-PALLOF, D-HELDB-PALLOF2.** pallof_press's card and quotes are re-copied from research a48b0594 (c20-c25, a
+  `recopied` pin). c20's chest lift is a second stated sign. Its tell and its k 1.5 zoom (13.47 px) passed QA, but no
+  leader can reach the Mistake chest past the pulley, which sits at the end chest's depth and height (c1). The pulley,
+  its pin, the frame and the cable all come within 0.00-3.00 px. So pallof_press is held again on route F-PALLOF-VIEW
+  (the turned view). **Why:** a wider nit and a moved pulley were refused, and the engine has no leaderless tell.
+- **Source:** PR #371; lb9/DESIGN.md §26.

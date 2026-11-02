@@ -1,5 +1,5 @@
 {
- "note": "LB9 H build-ahead rows (LIB-21, D-LIB21-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids with a tempo strip (A5; held ids are in DESIGN.md's held table); all H (DESIGN.md section 1). The (b) ids join after LIB-20 is on main and their keys are verified (D-LIB21-ER5): side_plank at the resume (#326); superman at resume 2 (#337, D-LIB21-SUPERMAN); pallof_press and russian_twist at HELD-B (#371, D-HELD6-PALLOF, D-HELD6-RTWIST). censusRef: the census commit (claude/howto-options).",
+ "note": "LB9 H build-ahead rows (LIB-21, D-LIB21-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids with a tempo strip (A5; held ids are in DESIGN.md's held table); all H (DESIGN.md section 1). The (b) ids join after LIB-20 is on main and their keys are verified (D-LIB21-ER5): side_plank at the resume (#326); superman at resume 2 (#337, D-LIB21-SUPERMAN); russian_twist at HELD-B (#371, D-HELD6-RTWIST). censusRef: the census commit (claude/howto-options).",
  "batch": "LB9",
  "censusRef": "4a9fd86",
  "rows": {
@@ -44,15 +44,6 @@
    "slug": "cable-crunch",
    "prefix": "cable-crunch",
    "chromeId": "cable-crunch",
-   "mode": "H",
-   "stage": "drawing",
-   "view": "side"
-  },
-  "lib_pallof_press": {
-   "src": "library/specs/pallof_press.mjs",
-   "slug": "pallof-press",
-   "prefix": "pallof-press",
-   "chromeId": "pallof-press",
    "mode": "H",
    "stage": "drawing",
    "view": "side"

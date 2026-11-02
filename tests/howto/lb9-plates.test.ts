@@ -116,7 +116,7 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 const ER5_DRAWN = ['side_plank', 'russian_twist'];
 // The front entries asked with the E-R5 slice (#326), measured (px inside the figure past the leader's first 8 px).
 const FE_SINK = 9.64;
-const HELD: string[] = [];   // HELD-B (#371): pallof_press (D-HELD6-PALLOF) and russian_twist (D-HELD6-RTWIST) joined rows.json; cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
+const HELD: string[] = ['pallof_press'];   // HELD-B (#371): russian_twist joined rows.json (D-HELD6-RTWIST); pallof_press held again (D-HELDB-PALLOF2, route F-PALLOF-VIEW); cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
 const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', ...ER5_DRAWN];
@@ -878,7 +878,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_pallof_press', 'lib_russian_twist', 'lib_side_plank', 'lib_superman']);   // pallof_press and russian_twist at HELD-B   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_russian_twist', 'lib_side_plank', 'lib_superman']);   // russian_twist at HELD-B   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('plank, crunch, the 5 T ids and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
@@ -888,13 +888,12 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     }
     expect(existsSync(`${SPECS_DIR}/bicycle_crunch.mjs`)).toBe(false);
   });
-  it('no id is held after HELD-B (pallof_press D-HELD6-PALLOF, russian_twist D-HELD6-RTWIST): build.mjs HELD is empty and both are struck in DESIGN.md\'s held table', async () => {
+  it('the held id (pallof_press, D-HELDB-PALLOF2) is build.mjs HELD with its census view, in DESIGN.md\'s held table, and in no rows file; russian_twist is struck there (HELD-B)', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
-    expect(build.HELD).toEqual({});
+    expect(build.HELD).toEqual({ pallof_press: 'side' });
     const held = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
-    for (const id of ['pallof_press', 'russian_twist']) expect(new RegExp(`\\| ~~${id}~~ released at HELD-B`).test(held), id).toBe(true);
-    const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
-    for (const id of HELD) expect(new RegExp(`\\| ${id} \\| D-LIB21-[A-Z]+`).test(design), id).toBe(true);
+    expect(/\| ~~russian_twist~~ released at HELD-B/.test(held)).toBe(true);
+    expect(/\| pallof_press \| D-HELDB-PALLOF2/.test(held)).toBe(true);
     for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
   });
   it('mutations: a dropped row, a duplicated row, a held id, plank, crunch, flutter_kicks, side_plank and one mode set to D are red', () => {
@@ -904,7 +903,8 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     expect(a5(text, w)).toEqual([]);
     expect(a5(JSON.stringify({ ...j, rows: {} }, null, 1), w)).toEqual(w.map(x => `${x} x0`));
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
-    // a held id: bicycle_crunch (no spec, D-LIB21-BICYCLE) stands for any held id; pallof_press joined at HELD-B
+    // a held id: pallof_press (D-HELDB-PALLOF2) stands for any held id
+    expect(a5(add('lib_pallof_press'), w), 'a held id').toEqual(['extra lib_pallof_press']);
     for (const id of ['plank', 'crunch', 'flutter_kicks', 'bicycle_crunch']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
   });
@@ -1180,7 +1180,7 @@ describe('LIB-21 test camera (supervisor, bulk rulings on #312): camOf follows t
 
 describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and soft bends (DESIGN.md sections 6-12)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { cable_crunch: 'hips', ab_wheel_rollout: 'arch', bird_dog: 'arch', superman: 'head', pallof_press: 'arch', side_plank: 'sink', russian_twist: 'hips' };
-  const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch', 'side_plank', 'russian_twist'];   // pallof_press: two tells at HELD-B (c20, D-HELD6-PALLOF)
+  const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch', 'pallof_press', 'side_plank', 'russian_twist'];   // pallof_press: held with main's one tell (D-HELDB-PALLOF2)
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells (or one, with its record), the first carrying the ruled key', () => {
     for (const id of specsDrawn()) {
@@ -1353,10 +1353,7 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
     const s = S.side_plank, bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => ({ ...x, box: { left: 150, top: 180 } })) } };
     expect(crossProblems(bad).some(p => p.startsWith('side_plank mistake sink'))).toBe(true);
   });
-  it('HELD-B mutations: pallof_press\'s "Chest lifts" box at {82, 164} enters the end figure (red); russian_twist\'s "Knees swing" with no pin, or its box moved 40 px right, is red', () => {
-    const p = S.pallof_press, chestAt = (box: any) => ({ ...p, mistake: { ...p.mistake, tells: p.mistake.tells.map((x: any) => (x.key === 'chest' ? { ...x, box } : x)) } });
-    expect(crossProblems(chestAt({ left: 64, top: 158 }))).toEqual([]);
-    expect(crossProblems(chestAt({ left: 82, top: 164 }))).toContain('pallof_press mistake chest: crosses the end figure');   // 3.29 px (D-HELDB-PALLOFBOX)
+  it('HELD-B mutations: russian_twist\'s "Knees swing" with no pin, or its box moved 40 px right, is red', () => {
     const r = S.russian_twist;
     expect(crossProblems(r, { 'side_plank mistake sink end': FE_SINK }).some(x => x.startsWith('russian_twist mistake hips: crosses'))).toBe(true);
     const moved = { ...r, mistake: { ...r.mistake, tells: r.mistake.tells.map((x: any) => ({ ...x, box: { left: 52, top: 188 } })) } };
@@ -1945,35 +1942,13 @@ describe('LIB-21R3 (LB9 resume 3): cable_crunch on LIB-SPINE\'s spine segments (
   });
 });
 
-describe('HELD-B (#371): pallof_press\'s chest tell and Mistake zoom (D-HELD6-PALLOF, D-HELDB-PALLOFBOX); russian_twist\'s knee tell (D-HELD6-RTWIST)', { timeout: T }, () => {
-  let zoom: any, envMin: number;
-  beforeAll(async () => {
-    zoom = await import(/* @vite-ignore */ lib('zoom/inline.mjs'));
-    envMin = pins().envelope.deviationMin;
-  });
-  const p = () => S.pallof_press;
-  /** The Mistake fault the zoom shows ({ key, d } in plate px), as QA's H3.zoom measures it (qa/zoom.mjs:65). */
-  const fault = (spec: any) => zoom.faultOf(spec, qaEng.cameraOf(spec, plate.renderPlate(spec, { id: 'x' }).report), qaEng.poseLandmarks(Eng(), spec));
-  it('pallof_press: tells arch then chest; "Chest lifts" on the Mistake chest landmark, box {64, 158}; zoom { mistake, k 1.5, tell chest }', () => {
-    expect(p().mistake.tells.map((t: any) => t.key)).toEqual(['arch', 'chest']);
-    expect(p().mistake.tells[1]).toEqual({ key: 'chest', text: 'Chest lifts', anchor: { at: 'chest', pose: 'mistake' }, box: { left: 64, top: 158 }, cue: 'The chest lifts as the lower back extends.' });
-    expect(p().zoom).toEqual({ view: 'mistake', k: 1.5, tell: 'chest' });
-    expect(readJson('docs/research/howto/cards/pallof_press.json').claims.find((c: any) => c.id === 'c20').text).toMatch(/lift the chest/);
-  });
-  it('H3 at the zoom\'s scale: the chest moves 8.98 px (±0.05) at plate scale, under the bar, and 13.47 px (±0.05) at k 1.5, over it', () => {
-    const f = fault(p());
-    console.log(`HELD-B pallof_press chest: ${f.d.toFixed(3)} px plate, ${(f.d * 1.5).toFixed(3)} px at k 1.5 (bar ${envMin})`);
-    expect(f.key).toBe('chest');
-    expect(Math.abs(f.d - 8.983)).toBeLessThan(0.05);
-    expect(f.d).toBeLessThan(envMin);
-    expect(Math.abs(f.d * 1.5 - 13.474)).toBeLessThan(0.05);
-  });
-  it('mutation: the zoom on the arch tell instead reaches 1.03 x 1.5 px, under the bar (red)', () => {
-    const f = fault({ ...p(), zoom: { view: 'mistake', k: 1.5, tell: 'arch' } });
-    expect(f.key).toBe('arch');
-    expect(f.d * 1.5).toBeLessThan(envMin);
-  });
+describe('HELD-B (#371): russian_twist\'s knee tell (D-HELD6-RTWIST); pallof_press held again (D-HELDB-PALLOF2)', () => {
   it('russian_twist: "Knees swing" on the red right knee\'s outline, box {12, 188}', () => {
     expect(S.russian_twist.mistake.tells).toEqual([{ key: 'hips', text: 'Knees swing', anchor: { at: 'knee.r', pose: 'mistake', off: [-6.84, -6.84] }, box: { left: 12, top: 188 }, cue: 'The hips and knees swing with the trunk.' }]);
+  });
+  it('pallof_press (held) keeps main\'s one tell and no zoom; its re-copied card carries c20 for route F-PALLOF-VIEW', () => {
+    expect(S.pallof_press.mistake.tells.map((t: any) => t.key)).toEqual(['arch']);
+    expect(S.pallof_press.zoom).toBeUndefined();
+    expect(readJson('docs/research/howto/cards/pallof_press.json').claims.some((c: any) => c.id === 'c20')).toBe(true);
   });
 });
