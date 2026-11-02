@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-11-02 ~15:40 UTC · main `dac9c624` (train 59) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
+**Last updated:** 2026-11-02 ~18:50 UTC · main `dac9c624` (train 59) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -829,6 +829,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | F-VITEST-RPC | #365 · (second account, done) | delta PASS @ `8a3bf1ff` | train 58 |
 
 - **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
+
+- **Update 18:50 UTC (11-02):** (verdicts and rulings in lib4-cards §48)
+  - **Approved, not yet merged:** crunch (#366, mx25), resisted_hip_flexion and jump_rope (#368), and LIB-SPLIT's step_up, forward_lunge, walking_lunge, bodyweight_lunge and bodyweight_split_squat (#364, mx28). That is 8.
+  - **Reviews running:** #371 HELD-B (no released row; session_018Pv5bMM49g12RURLBgZ2Uo) and #368 HELD-A (session_018Pv5bNMFaAuZLcXNhHar4S). On PASS, train 60 carries both.
+  - **Fix rounds:** LIB-SUPCORE (hollow_body_hold, reverse_crunch, flutter_kicks; dead_bug and v_up round 1 in the same push) and LIB-SPLIT's bulgarian_split_squat (D-SPLIT-BSSTRUE, -BSSFIX). After the PANEL FIX posts, the next panel (mx29) takes all of them.
+  - **Held, named list for the release candidate:** hip_thrust, pallof_press, russian_twist, bicycle_crunch, overhead_cable_triceps_extension, cable_rear_delt_fly and the 4 calf raises (11). Engine work beyond E-R5 is outside the approved plan (lib4-cards 1694), so these wait for the owner at the release candidate.
+  - Usage: 7-day 0.09 at 17:26.
 
 - **Update 15:40 UTC (11-02):**
   - **Train 59 merged** (#372 → main `dac9c624`): LIB-SMALL #358. **Main holds 129 of 153.** No APK.
