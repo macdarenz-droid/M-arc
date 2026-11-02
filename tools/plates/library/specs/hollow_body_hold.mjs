@@ -53,9 +53,9 @@ const LYING = flatLying(supine(0, 0));
 
 // the drawn outlines in world metres (z along the floor, y up)
 const SIDE = { view: 'side', near: 'r', pxm: 1, P: w => [w[2], -w[1]] };
-const shapesOf = p => bodyShapes(fk(resolve(normPose(p, BODY), BODY).q, BODY), SIDE).filter(s => s.poly);
+const shapesOf = p => bodyShapes(fk(resolve(normPose(p, BODY), BODY).q, BODY), SIDE, { hand: 'flat' }).filter(s => s.poly);   // the open hand drawn (mx27 R7: no ring past the fingertips)
 const lowest = (p, re) => -Math.max(...shapesOf(p).filter(s => re.test(s.key)).flatMap(s => s.poly.map(q => q[1])));
-const LEGS = /^(thigh|kneecap|shank|foot)\./, ARMS = /^(shcap|upper|elbowcap|fore|fist)\./, CALF = /^(shank|foot)\./, FORE = /^(fore|fist)\./;
+const LEGS = /^(thigh|kneecap|shank|foot)\./, ARMS = /^(shcap|upper|elbowcap|fore|fist|palm)\./, CALF = /^(shank|foot)\./, FORE = /^(fore|fist|palm)\./;
 const flex = curl => ({ flex: [0, LYING.trunk, curl, 0] });
 const legs = hip => ({ hip, knee: 0, ankle: TOE });
 const arms = sh => ({ shoulder: { l: { elev: sh, plane: ARM_PLANE }, r: { elev: sh, plane: ARM_PLANE } }, elbow: 0 });
@@ -80,6 +80,7 @@ export const info = () => ({ entryHip: +entryHip.toFixed(3), entrySh: +entrySh.t
   buttock: [cm(lmS.buttock[1]), cm(lmE.buttock[1]), cm(lmM.buttock[1])], heelLiftCm: cm(lmE['heel.r'][1] - lmS['heel.r'][1]) });
 
 export default {
+  hand: 'flat',
   id: 'hollow_body_hold', name: 'Hollow Body Hold', view: 'side', facing: 'right',
   camera: { fit: true, maxScale: 1.35, y0: 339 },      // D-LIB8-floor: floor at y 339, width-filling scale <= x1.35
   poses: { start, end },
@@ -95,11 +96,11 @@ export default {
   trace: { point: 'heel.r', trim: [4, 6] },
   tempo: [{ phase: 'Hold', s: 'max 30' }],   // D-SUPCORE-HOLDMAX (#366 6570379460): c12's "up to 30 seconds" as an upper bound
   // D-SUPCORE-HOLLOWLEG (#366 6575342285): c4's 15 deg, the card's one measure fact, drawn as the angle between the floor
-  // line and the hip-to-ankle line in the hold (lb9/sizes.json LEG's measure), at the ankle
-  measure: { vertex: 'ankle.r', from: { dir: [-1, 0] }, to: 'hip.r', radius: 64, title: 'Legs', value: 'about 15°', expect: 15, box: { left: 186, top: 256 } },
+  // line and the hip-to-ankle line in the hold (lb9/sizes.json LEG's measure), at the hip (mx27 R7)
+  measure: { vertex: 'hip.r', from: { dir: [1, 0] }, to: 'ankle.r', radius: 132, title: 'Legs', value: 'about 15°', expect: 15, box: { left: 286, top: 196 } },   // mx27 R7: the house angle arc at the hip
   callouts: [
-    { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 140, top: 192 }, cue: 'Press your low back flat to the floor the whole hold.' },
-    { key: 'legs', text: 'Legs low', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 250, top: 206 }, cue: 'Legs straight and off the floor, no higher than about 30 degrees.' },
+    { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 130, top: 196 }, cue: 'Press your low back flat to the floor the whole hold.' },
+    { key: 'legs', text: 'Legs low', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 210, top: 196 }, cue: 'Legs straight and off the floor, no higher than about 30 degrees.' },
     { key: 'shoulders', text: 'Shoulders up', anchor: { at: 'shoulderTop.r', off: [0, -3] }, box: { left: 16, top: 214 }, cue: 'Lift your shoulders and arms off the floor, biceps by your ears.' },
   ],
   mistake: {

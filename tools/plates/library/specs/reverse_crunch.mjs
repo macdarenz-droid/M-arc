@@ -101,6 +101,27 @@ export const info = () => ({ HIP: +HIP.toFixed(3), SH: +SH.toFixed(3), tailboneL
   backUpperCm: [cm(lmS.backUpper[1]), cm(lmE.backUpper[1]), cm(lmM.backUpper[1])], kneeMoveCm: cm(Math.hypot(lmE['knee.r'][1] - lmS['knee.r'][1], lmE['knee.r'][2] - lmS['knee.r'][2])),
   palmLowCm: [cm(lowest(start, PALM)), cm(lowest(end, PALM)), cm(lowest(mistakePose, PALM))] });
 
+// mx27 R5: the fault leg as one closed dashed outline: the union of the Mistake's drawn near thigh, kneecap, shank and
+// foot (world metres, side view), filled on a 4 mm grid and traced once around (Moore neighbour), every 3rd cell kept
+const legOutline = p => {
+  const polys = shapesOf(p).filter(x => /^(thigh|kneecap|shank|foot)\.r$/.test(x.key)).map(x => x.poly), G = 0.004;
+  const xs = polys.flat().map(q => q[0]), ys = polys.flat().map(q => q[1]), x0 = Math.min(...xs) - 2 * G, y0 = Math.min(...ys) - 2 * G;
+  const W = Math.ceil((Math.max(...xs) - x0) / G) + 3, Hh = Math.ceil((Math.max(...ys) - y0) / G) + 3;
+  const inside = (P, x, y) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const [xi, yi] = P[i], [xj, yj] = P[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
+  const on = (i, j) => i >= 0 && j >= 0 && i < W && j < Hh && polys.some(P => inside(P, x0 + i * G, y0 + j * G));
+  let st = null; for (let j = 0; j < Hh && !st; j++) for (let i = 0; i < W; i++) if (on(i, j)) { st = [i, j]; break; }
+  const N = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]], out = [st];
+  let cur = st, dir = 6;
+  for (let n = 0; n < 20000; n++) {
+    let k = 0; for (; k < 8; k++) { const d = (dir + 6 + k) % 8, q = [cur[0] + N[d][0], cur[1] + N[d][1]]; if (on(q[0], q[1])) { cur = q; dir = d; break; } }
+    if (k === 8 || (cur[0] === st[0] && cur[1] === st[1])) break;
+    out.push(cur);
+  }
+  const pts = out.filter((_, i) => i % 3 === 0).map(([i, j]) => [0, -(y0 + j * G), x0 + i * G]);
+  return [...pts, pts[0]];
+};
+export const FAULT_LEG = Object.freeze(legOutline(mistakePose));
+
 export default {
   hand: 'flat',
   id: 'reverse_crunch', name: 'Reverse Crunch', view: 'side', facing: 'right',
@@ -125,10 +146,11 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'arc-arrow', center: { at: 'knee.r', pose: 'mistake' }, r: 22, a0: 200, a1: 250 },
+      { kind: 'dashed', pts: FAULT_LEG.map(q => [...q]) },   // mx27 R5: one closed outline of the tucked leg
+      { kind: 'arrow', from: { at: 'knee.r', pose: 'end', off: [-9, 5] }, to: { at: 'knee.r', pose: 'mistake', off: [3, -6] } },   // from the solid knee to the fault knee
     ],
     tells: [
-      { key: 'tuck', text: 'Knees tuck', anchor: { at: 'heel.r', pose: 'mistake' }, box: { left: 256, top: 266 }, cue: 'The knees tuck in toward your chest and the knee angle closes.' },
+      { key: 'tuck', text: 'Knees tuck', anchor: { at: 'knee.r', pose: 'mistake', off: [-9, 0] }, box: { left: 20, top: 206 }, cue: 'The knees tuck in toward your chest and the knee angle closes.' },
     ],
   },
   alt: 'Reverse crunch, side view. Lying on the back, arms by the sides and palms down, knees over the hips at 90 degrees, the lifter curls the hips and low back off the floor, knees toward the chest, then lowers.',

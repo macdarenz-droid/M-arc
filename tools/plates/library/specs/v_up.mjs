@@ -59,10 +59,10 @@ const LYING = flatLying(supine(0, 0));
 
 // the drawn outlines in world metres (z along the floor, y up)
 const SIDE = { view: 'side', near: 'r', pxm: 1, P: w => [w[2], -w[1]] };
-const shapesOf = p => bodyShapes(fk(resolve(normPose(p, BODY), BODY).q, BODY), SIDE).filter(s => s.poly);
+const shapesOf = p => bodyShapes(fk(resolve(normPose(p, BODY), BODY).q, BODY), SIDE, { hand: 'flat' }).filter(s => s.poly);   // the open hand drawn (mx27 R7: no ring past the fingertips)
 const lowest = (p, re) => -Math.max(...shapesOf(p).filter(s => re.test(s.key)).flatMap(s => s.poly.map(q => q[1])));
 const lowZ = (p, re) => { let best = null; for (const s of shapesOf(p)) if (re.test(s.key)) for (const q of s.poly) if (!best || q[1] > best[1]) best = q; return best[0]; };
-const HEELS = /^foot\./, FORE = /^(fore|fist)\./, TORSO = /^torso$/;
+const HEELS = /^foot\./, FORE = /^(fore|fist|palm)\./, TORSO = /^torso$/;
 const trunk = (l3 = LYING.trunk, t12 = 0) => ({ flex: [0, l3, t12, 0] });
 const mid = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
 /** Winter (2009) whole-body centre of mass on the drawn landmarks (bird_dog.mjs, from bear_crawl.mjs @ a9c64e11). */
@@ -124,12 +124,18 @@ const underside = (p, z) => { const pts = shapesOf(p).find(s => s.key === 'torso
   for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; if ((a[0] - z) * (b[0] - z) > 0 || a[0] === b[0]) continue; lo = Math.max(lo, a[1] + (b[1] - a[1]) * (z - a[0]) / (b[0] - a[0])); }
   return -lo; };
 const LUMBAR_Z = lmM.lumbar[2], gapTop = [0, underside(mistakePose, LUMBAR_Z), LUMBAR_Z], gapBot = [0, 0, LUMBAR_Z];
+// mx27 R5: the arched low back's drawn underside where it has left the floor (over 0.5 cm), every 5 mm, as a red dashed
+// line under the solid figure
+export const ARCH_UNDER = Object.freeze((() => { const out = [];
+  for (let z = lmM.backUpper[2]; z <= lmM.buttock[2]; z += 0.005) { const y = underside(mistakePose, z); if (Number.isFinite(y) && y > 0.005) out.push([0, y, z]); }
+  return out; })());
 const legDeg = l => Math.atan2(l['ankle.r'][1] - l['hip.r'][1], l['ankle.r'][2] - l['hip.r'][2]) * 180 / Math.PI;
 export const info = () => ({ TILT_V: +TILT_V.toFixed(3), HIP_V: +HIP_V.toFixed(3), SH_V: +SH_V.toFixed(3), endHip: +end.hip.toFixed(3), endSh: +end.shoulder.toFixed(3),
   thoraxV: +thoraxDeg(start).toFixed(2), legV: +legDeg(lmS).toFixed(2), comOffCm: cm(com(lmS)[2] - lowZ(start, TORSO)), heelHoverCm: [cm(lowest(end, HEELS)), cm(lowest(mistakePose, HEELS))],
   underCm: [cm(underside(end, LUMBAR_Z)), cm(gapTop[1])], buttock: [cm(lmS.buttock[1]), cm(lmE.buttock[1]), cm(lmM.buttock[1])], vLowCm: cm(lowest(start, /./)) });
 
 export default {
+  hand: 'flat',
   id: 'v_up', name: 'V-Up', view: 'side', facing: 'right',
   camera: { fit: true, maxScale: 1.35, y0: 339 },      // D-LIB8-floor: floor at y 339, width-filling scale <= x1.35
   poses: { start, end },
@@ -151,9 +157,9 @@ export default {
   ],
   mistake: {
     pose: mistakePose,
-    guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }],
+    guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }, { kind: 'dashed', pts: ARCH_UNDER.map(q => [...q]) }],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'navel', pose: 'mistake' }, box: { left: 46, top: 256 }, cue: 'Your low back arches off the floor at the start of the rep.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, box: { left: 140, top: 166 }, cue: 'Your low back arches off the floor at the start of the rep.' },
     ],
   },
   alt: 'V-up, side view. From lying face up with the arms overhead and the heels just off the floor, the lifter lifts the straight legs and the torso together into a V, hands reaching toward the toes, then lowers.',

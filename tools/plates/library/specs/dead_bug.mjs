@@ -55,7 +55,7 @@ const LYING = flatLying(supine(0, 0));
 
 // the drawn outlines in world metres (z along the floor, y up)
 const SIDE = { view: 'side', near: 'r', pxm: 1, P: w => [w[2], -w[1]] };
-const shapesOf = p => bodyShapes(fk(resolve(normPose(p, BODY), BODY).q, BODY), SIDE).filter(s => s.poly);
+const shapesOf = p => bodyShapes(fk(resolve(normPose(p, BODY), BODY).q, BODY), SIDE, { hand: 'flat' }).filter(s => s.poly);   // the open hand drawn (mx27 R7: no ring past the fingertips)
 const lowest = (p, re) => -Math.max(...shapesOf(p).filter(s => re.test(s.key)).flatMap(s => s.poly.map(q => q[1])));
 const trunk = (l5 = 0, l3 = LYING.trunk) => ({ flex: [l5, l3, 0, 0] });
 
@@ -67,7 +67,7 @@ const SH = bisect(s => -fwd({ ...base, hip: HIP, shoulder: s }, 'shoulder.r', 'w
 const start = { ...base, hip: HIP, shoulder: SH };
 
 // end: the near arm overhead and the far leg straight, fist and heel GAP above the floor
-const SH_R = bisect(s => -(lowest({ ...start, shoulder: { l: SH, r: s } }, /^fist\.r$/) - GAP), 120, 200);
+const SH_R = bisect(s => -(lowest({ ...start, shoulder: { l: SH, r: s } }, /^palm\.r$/) - GAP), 120, 200);
 const HIP_L = bisect(h => lowest({ ...start, shoulder: { l: SH, r: SH_R }, hip: { l: h, r: HIP }, knee: { l: 0, r: KNEE } }, /^(shank|foot)\.l$/) - GAP, -30, 60);
 const end = { ...start, shoulder: { l: SH, r: SH_R }, hip: { l: HIP_L, r: HIP }, knee: { l: 0, r: KNEE } };
 
@@ -103,11 +103,17 @@ const underside = (p, z) => { const pts = shapesOf(p).find(s => s.key === 'torso
   for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; if ((a[0] - z) * (b[0] - z) > 0 || a[0] === b[0]) continue; lo = Math.max(lo, a[1] + (b[1] - a[1]) * (z - a[0]) / (b[0] - a[0])); }
   return -lo; };
 const LUMBAR_Z = lmM.lumbar[2], gapTop = [0, underside(mistakePose, LUMBAR_Z), LUMBAR_Z], gapBot = [0, 0, LUMBAR_Z];
+// mx27 R5: the arched low back's drawn underside where it has left the floor (over 0.5 cm), every 5 mm, as a red dashed
+// line under the solid figure
+export const ARCH_UNDER = Object.freeze((() => { const out = [];
+  for (let z = lmM.backUpper[2]; z <= lmM.buttock[2]; z += 0.005) { const y = underside(mistakePose, z); if (Number.isFinite(y) && y > 0.005) out.push([0, y, z]); }
+  return out; })());
 export const info = () => ({ HIP: +HIP.toFixed(3), SH: +SH.toFixed(3), SH_R: +SH_R.toFixed(3), HIP_L: +HIP_L.toFixed(3),
-  fistLowCm: cm(lowest(end, /^fist\.r$/)), heelLowCm: cm(lowest(end, /^(shank|foot)\.l$/)), misHeelLowCm: cm(lowest(mistakePose, /^(shank|foot)\.l$/)), misFistLowCm: cm(lowest(mistakePose, /^fist\.r$/)),
+  fistLowCm: cm(lowest(end, /^palm\.r$/)), heelLowCm: cm(lowest(end, /^(shank|foot)\.l$/)), misHeelLowCm: cm(lowest(mistakePose, /^(shank|foot)\.l$/)), misFistLowCm: cm(lowest(mistakePose, /^palm\.r$/)),
   underCm: [cm(underside(start, LUMBAR_Z)), cm(underside(end, LUMBAR_Z)), cm(gapTop[1])], buttock: [cm(lmS.buttock[1]), cm(lmE.buttock[1]), cm(lmM.buttock[1])] });
 
 export default {
+  hand: 'flat',
   id: 'dead_bug', name: 'Dead Bug', view: 'side', facing: 'right',
   camera: { fit: true, maxScale: 1.35, y0: 339 },      // D-LIB8-floor: floor at y 339, width-filling scale <= x1.35
   poses: { start, end },
@@ -130,9 +136,9 @@ export default {
   ],
   mistake: {
     pose: mistakePose,
-    guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }],
+    guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }, { kind: 'dashed', pts: ARCH_UNDER.map(q => [...q]) }],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'navel', pose: 'mistake' }, box: { left: 138, top: 194 }, cue: 'Your low back arches off the mat as the arm and leg lower.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, box: { left: 138, top: 194 }, cue: 'Your low back arches off the mat as the arm and leg lower.' },
     ],
   },
   alt: 'Dead bug, side view. Lying on the back with the low back on the mat, knees over the hips at 90 degrees and arms straight up, the lifter lowers one arm overhead and the opposite leg until hand and heel are just above the floor, then returns.',

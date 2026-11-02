@@ -101,6 +101,11 @@ const underside = (p, z) => { const pts = shapesOf(p).find(s => s.key === 'torso
   for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; if ((a[0] - z) * (b[0] - z) > 0 || a[0] === b[0]) continue; lo = Math.max(lo, a[1] + (b[1] - a[1]) * (z - a[0]) / (b[0] - a[0])); }
   return -lo; };
 const LUMBAR_Z = lmM.lumbar[2], gapTop = [0, underside(mistakePose, LUMBAR_Z), LUMBAR_Z], gapBot = [0, 0, LUMBAR_Z];
+// mx27 R5: the arched low back's drawn underside where it has left the floor (over 0.5 cm), every 5 mm, as a red dashed
+// line under the solid figure
+export const ARCH_UNDER = Object.freeze((() => { const out = [];
+  for (let z = lmM.backUpper[2]; z <= lmM.buttock[2]; z += 0.005) { const y = underside(mistakePose, z); if (Number.isFinite(y) && y > 0.005) out.push([0, y, z]); }
+  return out; })());
 export const info = () => ({ SH: +SH.toFixed(3), HIP: +HIP.toFixed(3), heelCm: { start: [cm(lowest(start, HEEL('r'))), cm(lowest(start, HEEL('l')))], end: [cm(lowest(end, HEEL('r'))), cm(lowest(end, HEEL('l')))], mistake: [cm(lowest(mistakePose, HEEL('r'))), cm(lowest(mistakePose, HEEL('l')))] },
   palmCm: [cm(lowest(start, PALM)), cm(lowest(mistakePose, PALM))], underCm: [cm(underside(start, LUMBAR_Z)), cm(underside(end, LUMBAR_Z)), cm(gapTop[1])], buttock: [cm(lmS.buttock[1]), cm(lmE.buttock[1]), cm(lmM.buttock[1])] });
 
@@ -119,19 +124,21 @@ export default {
   ],
   zoom: [{ view: 'normal', k: 3.5 }, { view: 'mistake', k: 2 }],   // neither view reaches its PQ-H3 bar at plate scale; the smallest passing ladder k per view
   startParts: ['leg.r'],
-  ghosts: { count: 0 },
+  ghosts: { count: 1, parts: ['leg.r', 'leg.l'] },   // D-SUPCORE-KICKDATUM (#366 6580574917): the in-between legs show the alternation
+  // D-SUPCORE-KICKDATUM: a plumb beside the heels spanning the near heel's kick and the far heel's (the main drawing only)
+  datum: [{ x: { at: 'toe.r', off: [10, 0] }, from: { at: 'heel.r', off: [0, -6] }, to: { at: 'heel.l', off: [0, 6] }, mistake: false }],
   trace: { point: 'heel.r', trim: [4, 6] },
   tempo: [{ phase: 'Kick', move: true, word: 'Crisp' }],   // tempoOf(strip/rows.json flutter_kicks) (D-STRIP-ROWS; c3)
   callouts: [
     { key: 'flat', text: 'Low back<br>flat', anchor: 'navel', box: { left: 36, top: 236 }, cue: 'Flatten your low back to the floor and keep it there.' },
-    { key: 'feet', text: 'Feet lifted', anchor: { along: ['hip.r', 'knee.r'], t: 0.5, off: [0, -7] }, box: { left: 126, top: 204 }, cue: 'Both feet several inches off the floor, knees straight.' },
-    { key: 'short', text: 'Short kicks', anchor: { at: 'toe.r', off: [3, 0] }, box: { left: 214, top: 246 }, cue: 'Short, quick, alternating kicks from the hips.' },
+    { key: 'feet', text: 'Feet lifted', anchor: { at: 'toe.r', off: [3, 0] }, box: { left: 204, top: 264 }, cue: 'Both feet several inches off the floor, knees straight.' },   // mx27 R4: on the near foot
+    { key: 'short', text: 'Short kicks', anchor: { along: ['hip.r', 'knee.r'], t: 0.5, off: [0, -7] }, box: { left: 126, top: 204 }, cue: 'Short, quick, alternating kicks from the hips.' },
   ],
   mistake: {
     pose: mistakePose,
-    guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }],
+    guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }, { kind: 'dashed', pts: ARCH_UNDER.map(q => [...q]) }],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'navel', pose: 'mistake' }, box: { left: 120, top: 200 }, cue: 'Your low back arches off the floor as the legs kick.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, box: { left: 120, top: 200 }, cue: 'Your low back arches off the floor as the legs kick.' },
     ],
   },
   alt: 'Flutter kicks, side view. Lying on the back, arms by the sides and palms flat, low back on the floor, the lifter holds both straight legs a few inches up and kicks them up and down in short alternating moves.',
