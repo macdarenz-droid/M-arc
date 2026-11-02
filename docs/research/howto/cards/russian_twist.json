@@ -473,5 +473,62 @@
   "Back zoom wrong is null (LR-25): no source describes the wrong back shape.",
   "The back feel row restates BarBend's own fault and fix (c8), no added cause (LR-6); the back box link stays pending (LR-26, LR-27).",
   "W1 fixer round 2026-10-03: F02 / R-W1-6: back row fix is now 'Stop the set; choose another core exercise.' (c8, LR-27); the slow-down cue stays on the fast, jerky twists mistake (handlingMistakes[1])."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "seat",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "sole.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "sole.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "seat",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c5"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Turn",
+   "s": 1,
+   "move": true
+  },
+  {
+   "phase": "Return",
+   "s": 1,
+   "move": true
+  }
+ ],
+ "topFault": "control"
 }

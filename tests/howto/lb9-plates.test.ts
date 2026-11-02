@@ -43,6 +43,17 @@ describe('LIB-21 A11 (Do 6 a): the 8 cards and quotes are byte copies of the LB9
       expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
     }
   });
+  it('HELD-B (D-HELD6-PALLOF): pallof_press alone is re-copied, from F-RESEARCH-2\'s head a48b0594; its card carries c20 (the chest lift, the second tell) to c25', () => {
+    expect(Object.keys(cardsSha.recopied)).toEqual(['pallof_press']);
+    expect(cardsSha.recopied.pallof_press.researchHead).toBe('a48b059400a74d5c9e3aceed21cf1aa67ab6f118');
+    const c = cardOf('pallof_press');
+    for (const id of ['c20', 'c21', 'c22', 'c23', 'c24', 'c25']) expect(c.claims.some((x: any) => x.id === id), id).toBe(true);
+    expect(c.claims.find((x: any) => x.id === 'c20').quotes[0].text).toContain('lift the chest and extend the lumbar spine');
+  });
+  it('mutation (HELD-B): main\'s pre-recopy pallof_press card (no c20-c25) is red against the pin', () => {
+    const c = cardOf('pallof_press'); c.claims = c.claims.filter((x: any) => !['c20', 'c21', 'c22', 'c23', 'c24', 'c25'].includes(x.id));
+    expect(sha(canon(c))).not.toBe(cardsSha.cards.pallof_press);
+  });
   it('mutation: any other card key edited is red', () => {
     const c = cardOf('bird_dog'); c.plate.view = 'front';
     expect(sha(canon(c))).not.toBe(cardsSha.cards.bird_dog);
@@ -54,7 +65,7 @@ describe('LIB-21 A11 (Do 6 a): the 8 cards and quotes are byte copies of the LB9
   it('plank, crunch and the 5 SUPCORE T ids are not copied here', () => {
     for (const id of NOT_HERE) expect(Object.keys(cardsSha.cards), id).not.toContain(id);
   });
-  it('research/validate.mjs validateCardFile: no problem on the 8 cards (the 5 (a) cards with their keys, the 3 (b) cards without)', async () => {
+  it('research/validate.mjs validateCardFile: no problem on the 8 cards (the 5 (a) cards, side_plank and russian_twist with their keys, bicycle_crunch without)', async () => {
     const v = await import(/* @vite-ignore */ new URL('../../tools/plates/library/research/validate.mjs', import.meta.url).href);
     for (const id of LB9) expect(v.validateCardFile(`${id}.json`), id).toEqual([]);
   });
@@ -733,6 +744,9 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     // the (b) row at the resume (D-LIB21-FACTS, D-LIB18-PUSHTHROUGH): c2 "Press your elbow, your hips, and your bottom
     // foot into the ground" holds the elbow down in the entry and, cited by plate.end, in the held pose; the hips lift
     // off ("Raise your hips"), and the rolled foot's edge has no engine landmark on the floor (not facts)
+    // HELD-B Do 7b (D-HELD6-RTWIST, PLAN RULED Q2 on #371): c1 sit on the floor, feet on the floor (start); c2 the hands
+    // on the ball (start, the grip rule); c5 the buttocks planted, cited by plate.end
+    russian_twist: [F('seat', 'start', 'c1'), F('sole.l', 'start', 'c1'), F('sole.r', 'start', 'c1'), F('wrist.l', 'start', 'c2'), F('wrist.r', 'start', 'c2'), F('seat', 'end', 'c5')],
     side_plank: [F('elbow.r', 'start', 'c2'), F('elbow.r', 'end', 'c2'), F('hip.r', 'start', 'c2'),
       F('heel.r', 'start', 'c2'), F('ball.r', 'start', 'c2'), F('heel.r', 'end', 'c2'), F('ball.r', 'end', 'c2')],   // D-LIB21-SPFACTS (#326 6410127641), the foot (a)
   };
@@ -750,15 +764,21 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     for (const f of c.plateFacts ?? []) if (!known.has(f.claim)) out.push(`${id}: fact claim ${f.claim} unknown`);
     return out;
   };
-  it('the 5 (a) cards and side_plank carry the ruled facts, tempo and topFault; russian_twist and bicycle_crunch (held) carry none yet', () => {
-    for (const id of [...Object.keys(TOP), 'side_plank']) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
-    for (const id of ['russian_twist', 'bicycle_crunch']) for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in cardOf(id), `${id} ${k}`).toBe(false);
+  it('the 5 (a) cards, side_plank and russian_twist (HELD-B) carry the ruled facts, tempo and topFault; bicycle_crunch (held) carries none yet', () => {
+    for (const id of [...Object.keys(TOP), 'side_plank', 'russian_twist']) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
+    for (const id of ['bicycle_crunch']) for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in cardOf(id), `${id} ${k}`).toBe(false);
   });
   it('mutations on side_plank\'s keys: a hip fact added, its Hold changed to 5–15, and topFault set to the drawn key (sink) are red', () => {
     const c = cardOf('side_plank');
     expect(keyProblems('side_plank', { ...c, plateFacts: [...c.plateFacts, { kind: 'contact', landmark: 'hip.r', pose: 'start', cardPose: 'start', claim: 'c2' }] }).length).toBe(1);
     expect(keyProblems('side_plank', { ...c, tempo: [{ phase: 'Hold', s: '5–15' }] }).length).toBe(1);
     expect(keyProblems('side_plank', { ...c, topFault: 'sink' }).length).toBe(1);
+  });
+  it('mutations on russian_twist\'s keys (HELD-B): a knee fact added, a Turn second changed, and topFault set to the drawn key (hips) are red', () => {
+    const c = cardOf('russian_twist');
+    expect(keyProblems('russian_twist', { ...c, plateFacts: [...c.plateFacts, { kind: 'contact', landmark: 'knee.l', pose: 'start', cardPose: 'start', claim: 'c1' }] }).length).toBe(1);
+    expect(keyProblems('russian_twist', { ...c, tempo: [{ ...c.tempo[0], s: 2 }, c.tempo[1]] }).length).toBe(1);
+    expect(keyProblems('russian_twist', { ...c, topFault: 'hips' }).length).toBe(1);
   });
   it('each fact\'s pose is the pose map\'s image of its card pose: identity for all 8 (D-LIB21-POSEMAP)', () => {
     expect(t.poseMap).toEqual({});
