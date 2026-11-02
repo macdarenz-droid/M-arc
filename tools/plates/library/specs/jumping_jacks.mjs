@@ -25,8 +25,8 @@
 import { landmarksOf, REF } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X_IN: 0.055, FOOT_X_OUT: 0.15, KNEE_SOFT: 15, ARM_UP: 180, M_ROT: 30 });
-const { FOOT_X_IN, FOOT_X_OUT, KNEE_SOFT, ARM_UP, M_ROT } = SIZES;
+export const SIZES = Object.freeze({ FOOT_X_IN: 0.055, FOOT_X_OUT: 0.15, KNEE_SOFT: 15, ARM_UP: 180, M_ROT: 30, GHOST_ABD: 0.25 });
+const { FOOT_X_IN, FOOT_X_OUT, KNEE_SOFT, ARM_UP, M_ROT, GHOST_ABD } = SIZES;
 export const bisect = (f, a, b, what) => {
   let fa = f(a), fb = f(b), side = 0;
   if (!(fa * fb <= 0)) throw new Error(`jumping_jacks: no root for ${what} in [${a}, ${b}] (${fa}, ${fb})`);
@@ -71,17 +71,53 @@ const S0 = stand(FOOT_X_IN, DOWN), E0 = stand(FOOT_X_OUT, UP);
 export const START_Z = S0.z, END_Z = E0.z;
 const start = poseAt(FOOT_X_IN, DOWN, S0.y, S0.z);
 const end = poseAt(FOOT_X_OUT, UP, E0.y, E0.z);
+// The two in-between keys (panel mx13 R1, #358 6547089227): the straight arms at a third and two thirds of the
+// abduction, in the frontal plane, and the feet a third and two thirds of the way out, so each ghost arm is drawn at its
+// full length (interpolating the start's hanging arm to the end's abduction 180 turned it out of the frontal plane).
+// The ghosts sit at t 1/3 and 2/3 (two keys); the arms there are at GHOST_ABD and 1 - GHOST_ABD of the abduction, not the even 1/3
+// and 2/3, so the widest ghost hands stay inside F2's coverage range (0.191-0.549; even thirds give 0.587, 0.3 gives 0.561).
+const VIA_T = [1 / 3, 2 / 3];
+const via = VIA_T.map((t, i) => {
+  const x = FOOT_X_IN + (FOOT_X_OUT - FOOT_X_IN) * t, arms = { shoulder: { abd: ARM_UP * (i ? 1 - GHOST_ABD : GHOST_ABD) }, elbow: 0 }, v = stand(x, arms);
+  return poseAt(x, arms, v.y, v.z);
+});
 // Mistake (c12): the same landing, the feet planted flat with the toes turned out M_ROT (the hips rotate out with them).
+// The turn stays about mid-foot (feetAt): about the heel, the rigid feet miss the floor by 1 cm (0.5 cm limit; panel mx13
+// R5 asked for the heel only if the data allows, #358 6547089227).
 const mistake = { plant: feetAt(FOOT_X_OUT, M_ROT) };
 // The engine draws the front-view foot as its mid-foot cross-section (body.mjs:55, :314), so the turned foot hardly
 // changes outline: a dashed Mistake guide draws each turned foot's axis, heel to toe, on top (the sign c12 names).
 const LM = landmarksOf({ ...end, ...mistake }, H);
-const TOE_GUIDES = ['l', 'r'].map(s => ({ kind: 'dashed', pts: [LM[`heel.${s}`], LM[`toe.${s}`]] }));
+
+// D-SMALL-JJTURN (panel mx15, #358 6547988428): each faulty foot is drawn as the solid end foot's own outline at the
+// same size (FOOT_W wide and FOOT_TOP tall, as the engine draws the end foot in this view: 15.1 by 14.8 px; the end foot's
+// heel-to-toe length), turned out M_ROT about a vertical axis through the end heel, so the turned toe lies outside the
+// solid toe. A turn about a vertical axis keeps the sole on the floor (its sole points at y 0: contact 0.0 cm). The
+// engine's Mistake legs keep the mid-foot turn (feetAt): about the heel the rigid feet miss the floor by 1 cm.
+// FOOT_PROFILE: (along the foot, fraction of its length; up, fraction of FOOT_TOP), a drawing shape only.
+const FOOT_W = 0.103, FOOT_TOP = 0.101;
+const FOOT_PROFILE = [[0, 0], [1, 0], [1, 0.25], [0.72, 0.4], [0.45, 0.64], [0.2, 1], [0, 0.89]];
+const LE0 = landmarksOf(end, H);
+const hull = pts => { const p = [...pts].sort((a, b) => a[0] - b[0] || a[1] - b[1]), cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lo = [], up = []; for (const q of p) { while (lo.length > 1 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+  for (const q of [...p].reverse()) { while (up.length > 1 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+  return [...lo.slice(0, -1), ...up.slice(0, -1)]; };
+/** The turned foot (3D points) and its front-view outline (closed, at the heel's depth). */
+export const turnedFoot = (sd, rot = M_ROT) => {
+  const sg = sd === 'l' ? 1 : -1, h = LE0[`heel.${sd}`], t = LE0[`toe.${sd}`], L = Math.hypot(t[0] - h[0], t[2] - h[2]);
+  const d = [sg * Math.sin(rot * R), 0, Math.cos(rot * R)], n = [Math.cos(rot * R), 0, -sg * Math.sin(rot * R)];
+  const pts = FOOT_PROFILE.flatMap(([u, v]) => [-1, 1].flatMap(w => [0, v].map(y => [h[0] + d[0] * u * L + n[0] * w * FOOT_W / 2, y * FOOT_TOP, h[2] + d[2] * u * L + n[2] * w * FOOT_W / 2])));
+  const out = hull(pts.map(p => [p[0], p[1]])).map(([x, y]) => [x, y, h[2]]);
+  return { pts, outline: [...out, out[0]], toe: [h[0] + d[0] * L, 0.004, h[2] + d[2] * L], heel: [h[0], 0.004, h[2]] };
+};
+const FOOT_OUTLINES = ['l', 'r'].map(sd => ({ kind: 'dashed', pts: turnedFoot(sd).outline }));
+// The turned foot's heel-to-toe axis, dashed (it shows in the plate and the zoom).
+const TOE_GUIDES = ['l', 'r'].map(sd => { const f = turnedFoot(sd); return { kind: 'dashed', pts: [f.heel, f.toe] }; });
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   id: 'jumping_jacks', name: 'Jumping Jacks', view: 'front',
   camera: { x0: 179, y0: 339 },
-  poses: { start, end },
+  poses: { start, via, end },
   equipment: [{ type: 'floor', from: -0.6, to: 0.6 }],
   checks: [
     ...['heel.l', 'heel.r', 'ball.l', 'ball.r'].flatMap(landmark => ['start', 'end'].map(pose => ({ landmark, plane: FLOOR, pose, tol: 0.5 }))),   // c1, c2: standing, landed
@@ -89,15 +125,16 @@ export default {
   ghosts: { count: 2, parts: ['arm.l', 'arm.r'] },
   tempo: [{ phase: 'Work', s: '30–60', move: true }],
   trace: { point: 'grip.r', trim: [10, 12] },
+  zoom: { view: 'mistake', k: 2.5 },
   callouts: [
     { key: 'knees', text: 'Soft knees', anchor: 'knee.r', box: { left: 52, top: 240 }, cue: 'Land with a slight bend in the knees, never locked.' },
     { key: 'arms', text: 'Arms overhead', anchor: 'grip.l', box: { left: 232, top: 24 }, cue: 'Arms rise overhead as the feet jump apart.' },
-    { key: 'stack', text: 'Shoulders<br>over hips', anchor: { at: 'shoulder.l', off: [8, 0] }, box: { left: 240, top: 120 }, cue: 'Stay upright the whole time.' },
+    { key: 'stack', text: 'Shoulders<br>over hips', anchor: { at: 'shoulder.l', off: [8, 0] }, box: { left: 256, top: 104 }, cue: 'Stay upright the whole time.' },
   ],
   mistake: {
     pose: mistake,
-    guides: TOE_GUIDES,
-    tells: [{ key: 'toes', text: 'Toes out', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 64, top: 300 }, cue: 'The toes twist outward instead of pointing forward.' }],
+    guides: [...FOOT_OUTLINES, ...TOE_GUIDES],
+    tells: [{ key: 'toes', text: 'Toes out', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 16, top: 280 }, cue: 'The toes twist outward instead of pointing forward.' }],
   },
   alt: 'Jumping jacks, front view. From standing with the feet together and the arms at the sides, the feet land apart with soft knees and the straight arms overhead. Toes point forward.',
 };
