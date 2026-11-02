@@ -1777,3 +1777,80 @@ describe('LIB-SPLIT A4 and A6: runQa node half on the 6 plates, H3 pinned at the
     expect(lb4qa.flagProblems([rep('lib_step_up', null)])).toEqual(['lib_step_up: flags F5 != expected F4,F5']);
   });
 });
+
+describe('LIB-SPLIT A2: the 5 rows approved in panel mx28 (#364 6585103107, head 9f772a09) stay byte-identical', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of step_up, forward_lunge, walking_lunge, bodyweight_lunge and bodyweight_split_squat on the
+  // LB4 page a3d8098e…f366 built at 9f772a09 (45 fragments; the LIB-SMALL A2 form).
+  const APPROVED: Record<string, Record<string, string>> = {
+    "step-up": {
+      "normalSvg": "9bffea48f5e857b37e7ae199d9dabe0d4d26115fac1250ca0291ffb1a2f86324",
+      "normalOverlay": "1f4d76a592d00187cdfdcffb67e8f6a4e1563c57aae988a4df40be2427315eea",
+      "mistakeSvg": "4fa8a2a236aeaaaa59245089c9105bcd22ab3478c78dde1b4cc60f74158e9fc5",
+      "mistakeOverlay": "18fd4b60ff86004583339b2c0fa95ff89130559bcf4518de6fea4166fe8de979",
+      "tells": "8fdf4a24934b50822201a42f062bbfcfa873afa15727fcc42a54eaac84cc017f",
+      "tempo": "cfa4a0ab2667ca0875d0232447ce76260179fb165b22bf6932aa7cdc38ca9970",
+      "cues": "134191d38096b80886c14e3c9de6a67f13aa924cc3422dc4c755a61a21642eed",
+      "alt": "2b7a89b088e00be3a4d7d2eece0288433d2b448ee0ddf34a76bac6c01ba2eb64",
+      "mistakeAlt": "3e23df00e6153acda6b1919000667b70c9745d0e62ef2b79b6063d7a34682625"
+    },
+    "forward-lunge": {
+      "normalSvg": "397d5d8760d45fb95218f84bd7b3f836967478b77cc446163a096403c207a172",
+      "normalOverlay": "f837eaa304167645cd85e865fd84f3994fadb64cd47598ca8d2e64b46da65b05",
+      "mistakeSvg": "c8bdd35591de246d5ce2371321000ef54d18b55bdbcebb87fe910886569ce3ef",
+      "mistakeOverlay": "ac269346c5ceebf873779293043be1c3ef22f4e1b46f0e96963b9595ec82f6f6",
+      "tells": "a7017e3051dbe13d57596d99b3e21b6e8b17994be791a2e206c29c5dec5d3038",
+      "tempo": "7bb4525ced07b239847fa65721dcb1105745f498e178246dd223bc3de40c81fa",
+      "cues": "025f16cdb5f7da9e29dba05dbc34c548eb205ba7a1b8c8d9d38bc545c5534a3e",
+      "alt": "606b11fe23466ab09e74207f576e1070ef2bf792c4ae86a839befbd396209f28",
+      "mistakeAlt": "f373dc5ae08e7fe058d888006c743d13c1a45ec2ff1ddc55ba906970f9023b8e"
+    },
+    "walking-lunge": {
+      "normalSvg": "225043a316db6ea4cacfbad7918d6c60f011d34fbae2f3cc3304e2a50981cd4d",
+      "normalOverlay": "ade4813a7985c93d4d2e155370023f2f5212266ea79f00b1a47cf339b817bdae",
+      "mistakeSvg": "e7fcab3fae26c8b269787d35c0cfea03afb7e0e48c3f8e61b32b505f56504195",
+      "mistakeOverlay": "5403ae2aa179b34a36998c4197b64161794796022048259c6371ad959390f766",
+      "tells": "13748f245a328bc32feba4fc0343136d66bbe0e35c41682acea909810697f440",
+      "tempo": "5be2b84ec4eb55f9a8bae12552d0194298af05d03f9a6099ca4524660c1a0e5d",
+      "cues": "0908549aaaee69cce627d7ef0a4d64194bcd677d0e784d3b8dddedd7b6ec2407",
+      "alt": "42c5a2f8812ad35841c21e940bc13b504db9928b6cede1474fdf6050c3b9747b",
+      "mistakeAlt": "cc9d9faf06b2e4c55e3f6bec39cf6b159274d9e102c92ac08a0feabf72f37eee"
+    },
+    "bodyweight-lunge": {
+      "normalSvg": "6c3ce14bf43527130456107938341c03e869888ade1badf9db2f0a982a66b7b2",
+      "normalOverlay": "84b431a7e5f36b880761f8d0c833086d615fe23a69f41af6b82a5f7664651b47",
+      "mistakeSvg": "6961bc1bbdae7fa3140c195ebda0ba283e462dc19904de796dc97e6288d086a6",
+      "mistakeOverlay": "ffe30a46452711bad24d95c7f1e1061f5a97d0af2b633b7651e21bc3c2899c00",
+      "tells": "a7017e3051dbe13d57596d99b3e21b6e8b17994be791a2e206c29c5dec5d3038",
+      "tempo": "52d36f0a4dbecdf89a0ca6c54a6231bd731998818468da0e17bfceac30615eef",
+      "cues": "841871aca4d1fc3e742ce35fb917ac6dafdf181c23d3960fc9dce8a44946051e",
+      "alt": "77a929da36e03e0f778b3424828ca3e6bbbdd39d5b91e199517de2a8b3aed647",
+      "mistakeAlt": "9e54baf15b72f997c5b8599aebe6ddd598e34812251626cc474e8c9e2cae7864"
+    },
+    "bodyweight-split-squat": {
+      "normalSvg": "ed74798f818a70f3ceb9b89c451632678b885579d4bf79c70c7964958732e0d6",
+      "normalOverlay": "9916b82b111da83bfe6568981e168784ebb73a509c6218e29cfe76dbe5006812",
+      "mistakeSvg": "c52888e75843bc1e76e5e63de54ae9ebf8132721efd2546e40fa143873f85421",
+      "mistakeOverlay": "96dd2540bee7f098643816ef474281d05ef35b3d274e35c4eb99210937042584",
+      "tells": "74bcab68829d90f431aea0471490cde87fb216a9844ecd29d21195f9fd94b8d7",
+      "tempo": "88229cbe363b3a7de7ddd1c67addcadf7b85cad1cf602121147bf73462a63a2d",
+      "cues": "a3ce996975a39a8dd6b7a1c146188b260db0c1a57dafa51ee34c15ca1b317400",
+      "alt": "1dfc876b56caf7c1256f0137bafad7a44e01ed0c88148b8c2dc95e41bfa06c27",
+      "mistakeAlt": "f167659a4d7be13f31dc195b19920996863c0d616973bd09c125d3074991b404"
+    }
+  };
+  let golden: any;
+  beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('their 45 fragments on this head equal the approved ones', async () => {
+    expect(Object.values(APPROVED).reduce((n, x) => n + Object.keys(x).length, 0)).toBe(45);
+    expect(fragProblems(await lb4PageInChild())).toEqual([]);
+  });
+  it('mutation: one byte changed in walking_lunge\'s alt is red', async () => {
+    const html = await lb4PageInChild(), alt = S.walking_lunge.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, alt.replace('Walking lunge', 'Walking lungE')))).toContain('walking-lunge alt');
+  });
+});
