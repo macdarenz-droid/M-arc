@@ -3,27 +3,43 @@
 // tools/plates/library/lb6/qa.mjs. Patterns copied from tests/howto/lb3-plates.test.ts (#274 @ a6f4bd07) and
 // tests/howto/lb4-plates.test.ts (#289 @ 4adde423). Every test reads what is drawn (the items a spec emits, the
 // engine's landmarks, shapes and report), never a helper's own maths.
+import { execFile } from 'node:child_process';
 import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { promisify } from 'node:util';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { otherCards } from './eq-composers';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
+// D-LIB13S-RPC (#354 6552077335): every whole-page build runs in an awaited child process, so no long synchronous
+// stretch blocks this worker's RPC to the runner; long per-spec loops yield one macrotask between steps.
+const yieldNow = () => new Promise<void>(r => setImmediate(r));
+/** buildLb6Page in an awaited child process: { ids: drawnIds(), html: [page html, ...] } (`opts.ids` limits the rows; `twice` builds two). */
+const lb6PageInChild = async ({ ids = null as string[] | null, twice = false } = {}) => {
+  const script = `const b = await import(${JSON.stringify(lib('lb6/build.mjs'))});
+const ids = ${JSON.stringify(ids)}, one = async () => (await (ids ? b.buildLb6Page({ all: b.lb6All(), ids }) : b.buildLb6Page())).html.toString('utf8');
+const html = [await one()]; if (${twice}) html.push(await one());
+process.stdout.write(JSON.stringify({ ids: b.drawnIds(), html }));`;
+  const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 28 });
+  return JSON.parse(stdout) as { ids: string[]; html: string[] };
+};
+/** The full LB6 page, built once per file in a child process and shared by the byte-pin blocks. */
+let FULL_PAGE: Promise<string> | null = null;
+const fullPage = () => (FULL_PAGE ??= lb6PageInChild().then(r => r.html[0]!));
 const LB6 = ['cable_chest_press', 'machine_pullover', 'machine_crunch'];
 const IDS = LB6.map(i => `lib_${i}`);
-// The 13 LB6 ids not in this card (DESIGN.md section 2): never in lb6/rows.json.
-const NOT_HERE = ['smith_machine_bench_press', 'smith_machine_incline_press', 'smith_machine_shoulder_press', 'smith_machine_shrug', 'smith_machine_squat',
-  'cable_fly', 'low_to_high_cable_fly', 'high_to_low_cable_fly', 'pec_fly', 'machine_lateral_raise', 'rear_delt_fly', 'hip_abduction', 'hip_adduction'];
+// The LB6 ids drawn by no LB6 card (DESIGN.md section 2; LIB-16R2 A1: the pilot plates and the T row smith_machine_shrug): never in lb6/rows.json.
+const NOT_HERE = ['smith_machine_bench_press', 'smith_machine_shrug', 'cable_fly', 'pec_fly'];
 // Held ids (DESIGN.md section 15): drawn and tested, no row. cable_chest_press was held under D-LIB8-shrug (D-LIB16-SIZE,
 // -LOCK) until 'LIB-16 resume' drew its zooms (D-LIB16-ZOOMVIEWS); none is held now.
 const HELD: string[] = [];
 const ROWS = 'tools/plates/library/lb6/rows.json';
 const RESEARCH_HEAD = 'a8e66f32e34e1746075ffa4da35ea18c80dd4776';
-const COMPOSERS = ['crunchMachine', 'pulloverMachine'];
+const COMPOSERS = ['crunchMachine', 'pulloverMachine', 'hipAbdAddMachine', 'latRaiseMachine'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const PX = 146.29;
@@ -105,12 +121,18 @@ describe('LIB-16 A5: lb6/rows.json holds exactly the drawn, non-held LB6 H ids, 
     for (const m of text.matchAll(/"mode":\s*"([A-Z]+)"/g)) if (m[1] !== 'H') bad.push(`mode ${m[1]}`);
     return bad;
   };
-  const want = () => drawn().map(i => `lib_${i}`);
+  // LIB-16R2 (lib-16r2-card A1): the resume 2 rows join once drawn and not held (DESIGN.md section 19).
+  const R2_ROWS = ['low_to_high_cable_fly', 'high_to_low_cable_fly', 'smith_machine_squat', 'smith_machine_shoulder_press', 'smith_machine_incline_press',
+    'hip_abduction', 'hip_adduction', 'machine_lateral_raise', 'rear_delt_fly'];
+  const R2_HELD: string[] = [];
+  const want = () => [...drawn(), ...R2_ROWS.filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`) && !R2_HELD.includes(i))].map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H (D-LIB16-B1)', () => {
-    expect(want()).toEqual(['lib_cable_chest_press', 'lib_machine_pullover', 'lib_machine_crunch']);
+    expect(want()).toEqual(['lib_cable_chest_press', 'lib_machine_pullover', 'lib_machine_crunch', 'lib_low_to_high_cable_fly', 'lib_high_to_low_cable_fly',
+      'lib_smith_machine_squat', 'lib_smith_machine_shoulder_press', 'lib_smith_machine_incline_press', 'lib_hip_abduction', 'lib_hip_adduction',
+      'lib_machine_lateral_raise', 'lib_rear_delt_fly']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
-  it('none of the 13 LB6 ids not in this card is in any lb6/ file as a row', () => {
+  it('none of the LB6 ids drawn by no LB6 card is in any lb6/ file as a row', () => {
     for (const f of readdirSync('tools/plates/library/lb6').filter(n => n.endsWith('.json'))) {
       const text = readFileSync(join('tools/plates/library/lb6', f), 'utf8');
       for (const id of NOT_HERE) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
@@ -138,13 +160,18 @@ describe('LIB-16 A5: lb6/rows.json holds exactly the drawn, non-held LB6 H ids, 
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_cable_fly: row } }, null, 1), w)).toEqual(['extra lib_cable_fly']);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_smith_machine_squat: row } }, null, 1), w)).toEqual(['extra lib_smith_machine_squat']);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_machine_crunch: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
+    // LIB-16R2 A1: smith_machine_shrug added, a row set to T
+    expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_smith_machine_shrug: row } }, null, 1), w)).toEqual(['extra lib_smith_machine_shrug']);
+    expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_machine_crunch: { ...row, mode: 'T' } } }, null, 1), w)).toEqual(['mode T']);
+    expect(NOT_HERE.some(id => new RegExp(`"lib_${id}"\\s*:`).test(JSON.stringify({ rows: { lib_smith_machine_shrug: row } }))), 'NOT_HERE sees smith_machine_shrug').toBe(true);
   });
   it('every row points at its own spec file and carries the census view; batch LB6, censusRef 4a9fd86', () => {
-    const j = readJson(ROWS);
+    const j = readJson(ROWS), FRONT = ['low_to_high_cable_fly', 'high_to_low_cable_fly', 'machine_lateral_raise', 'rear_delt_fly', 'hip_abduction', 'hip_adduction'];
     for (const [id, r] of Object.entries<any>(j.rows)) {
       expect(r.src).toBe(`library/specs/${id.slice(4)}.mjs`);
       expect(r.chromeId).toBe(id.slice(4).replace(/_/g, '-'));
-      expect(r.view).toBe('side');
+      expect(r.view, id).toBe(FRONT.includes(id.slice(4)) ? 'front' : 'side');
+      expect(r.view, id).toBe(readJson(`docs/research/howto/cards/${id.slice(4)}.json`).plate.view);
       expect([r.mode, r.parent, r.template, r.params], id).toEqual(['H', undefined, undefined, undefined]);
     }
     expect(j).toMatchObject({ batch: 'LB6', censusRef: '4a9fd86' });
@@ -892,6 +919,8 @@ describe('LIB-16 A16: no other card\'s composer is copied, forked or imported (D
       ...names.filter(n => !MAIN_EQ.includes(n) && !OURS.includes(n) && !OTHER.includes(n)).map(n => `extra ${n}`),
       ...files.filter(([n, b]) => OTHER.includes(n) && ours.includes(b)).map(([n]) => `copy of ours ${n}`),
       ...[...MAIN_EQ, ...OURS].filter(n => !names.includes(n)).map(n => `missing ${n}`),
+      // LIB-16R2 A3: each of our composers is its own file, never a byte copy of another eq/ file
+      ...files.filter(([n, b]) => OURS.includes(n) && files.some(([m, c]) => m !== n && (OURS.includes(m) || MAIN_EQ.includes(m)) && c === b)).map(([n]) => `copy ${n}`),
     ];
   };
   it('tools/plates/library/eq/ holds main\'s files, this card\'s composers, and only named composers of other build-ahead cards', () => {
@@ -906,6 +935,10 @@ describe('LIB-16 A16: no other card\'s composer is copied, forked or imported (D
     const files = eqFiles(), c = files.find(([n]) => n === 'crunchMachine.mjs')![1];
     expect(eqProblems([...files, ['dipBars.mjs', c]])).toEqual(['copy of ours dipBars.mjs']);
   });
+  it('mutation (LIB-16R2 A3): a copy of crunchMachine saved as latRaiseMachine is red', () => {
+    const files = eqFiles(), c = files.find(([n]) => n === 'crunchMachine.mjs')![1];
+    expect(eqProblems(files.map(([n, b]) => [n, n === 'latRaiseMachine.mjs' ? c : b] as [string, string]))).toEqual(['copy crunchMachine.mjs', 'copy latRaiseMachine.mjs']);
+  });
   it('mutation: a missing main file or own composer is red', () => {
     expect(eqProblems(eqFiles().filter(([n]) => n !== 'smith.mjs' && n !== 'pulloverMachine.mjs'))).toEqual(['missing smith.mjs', 'missing pulloverMachine.mjs']);
   });
@@ -913,9 +946,12 @@ describe('LIB-16 A16: no other card\'s composer is copied, forked or imported (D
 
 describe('LIB-16 A10: the LB6 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
   it('two builds of the LB6 rows are byte-identical', async () => {
-    const build = await import(/* @vite-ignore */ lib('lb6/build.mjs'));
-    expect(build.drawnIds()).toEqual(drawn().map(i => `lib_${i}`));
-    const a = await build.buildLb6Page(), b = await build.buildLb6Page();
+    const r = await lb6PageInChild({ twice: true });   // D-LIB13S-RPC: both builds in an awaited child process
+    // LIB-16R2: the resume 2 rows follow the 3 in rows.json order (wave 1, then wave 2)
+    const R2_ORDER = ['low_to_high_cable_fly', 'high_to_low_cable_fly', 'smith_machine_squat', 'smith_machine_shoulder_press', 'smith_machine_incline_press',
+      'hip_abduction', 'hip_adduction', 'machine_lateral_raise', 'rear_delt_fly'].filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`));
+    expect(r.ids).toEqual([...drawn(), ...R2_ORDER].map(i => `lib_${i}`));
+    const a = { html: r.html[0]! }, b = { html: r.html[1]! };
     expect(sha(a.html)).toBe(sha(b.html));
   });
 });
@@ -926,7 +962,7 @@ describe('LIB-16 A4: runQa node half on an LB6 plate (lib_machine_crunch), LIB-3
   beforeAll(async () => {
     [build, cand, muts, golden] = await Promise.all(['lb6/build.mjs', 'candidate.mjs', 'qa/mutations.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb6All();
-    html = (await build.buildLb6Page({ all, ids: [ID] })).html.toString('utf8');
+    html = (await lb6PageInChild({ ids: [ID] })).html[0]!;
     return () => qaEng.dropMirror(mirror);
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
@@ -1237,7 +1273,7 @@ describe('LIB-16 resume: one zoom per view (D-LIB16-ZOOMVIEWS, #327 6405117790),
   beforeAll(async () => {
     [build, cand, golden, zoom] = await Promise.all(['lb6/build.mjs', 'candidate.mjs', '../golden.mjs', 'zoom/inline.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb6All();
-    html = (await build.buildLb6Page({ all, ids: [ID] })).html.toString('utf8');
+    html = (await lb6PageInChild({ ids: [ID] })).html[0]!;
     return () => qaEng.dropMirror(mirror);
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
@@ -1330,10 +1366,10 @@ describe('LIB-16 resume: the approved LB6 plates stay byte-identical (page 2668c
     return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
   });
   it("machine_pullover and machine_crunch fragments on this head equal main's approved ones", async () => {
-    expect(fragProblems((await build.buildLb6Page()).html.toString('utf8'))).toEqual([]);
+    expect(fragProblems((await fullPage()))).toEqual([]);
   });
   it("mutation: one byte changed in machine_crunch's Mistake alt is red", async () => {
-    const html = (await build.buildLb6Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'machine-crunch');
+    const html = (await fullPage()), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'machine-crunch');
     expect(fragProblems(html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E')))).toContain('machine-crunch mistakeAlt');
   });
 });
@@ -1362,5 +1398,643 @@ describe('LIB-16 resume: cable_chest_press panel lb4p R5, the locked-arm axis li
     expect(isAxisGuide(s, other)).toBe(false);
     const c = S.machine_crunch;
     expect(isAxisGuide(c, { kind: 'line', pts: [{ at: 'shoulder.r', pose: 'mistake' }, { at: 'grip.r', pose: 'mistake' }] })).toBe(false);
+  });
+});
+
+// ======================================================================================================================
+// LIB-16R2 (lib-16r2-card; rulings D-LIB16R2-1 to -9, PLAN RULED #354 6543628951): the resume 2 rows, drawn H.
+// Each block reads what is drawn (the spec's poses through the engine, its items, the engine's shapes) and carries
+// its own mutations.
+// ======================================================================================================================
+const R2_ALL = ['low_to_high_cable_fly', 'high_to_low_cable_fly', 'machine_lateral_raise', 'rear_delt_fly', 'hip_abduction', 'hip_adduction',
+  'smith_machine_squat', 'smith_machine_shoulder_press', 'smith_machine_incline_press'];
+const R2_W1 = ['low_to_high_cable_fly', 'high_to_low_cable_fly', 'smith_machine_squat', 'smith_machine_shoulder_press', 'smith_machine_incline_press'];
+const R2_HEAD = 'a48b059400a74d5c9e3aceed21cf1aa67ab6f118';
+const R2M: Record<string, any> = {}, R2S: Record<string, any> = {};
+const r2Drawn = () => R2_ALL.filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`));
+/** The plate camera in either view, from the engine's own report. */
+// memoised per spec object: renderPlate is costly, and long synchronous loops starve vitest's worker RPC
+const R2_CAMS = new WeakMap<object, any>();
+const r2Cam = (spec: any) => { if (R2_CAMS.has(spec)) return R2_CAMS.get(spec);
+  const c = plate.renderPlate(spec, { id: 'x' }).report.camera, side = spec.view === 'side';
+  const cam = { view: side ? 'side' : 'front', near: side ? 'r' : null, pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? w[2]! : w[0]!) * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
+  R2_CAMS.set(spec, cam); return cam; };
+const r2Shapes = (spec: any, pose: string) => {
+  const b = { height: 1.75 }, p = pose === 'mistake' ? (() => { const m: any = JSON.parse(JSON.stringify(spec.poses.end)); for (const [k, v] of Object.entries<any>(spec.mistake.pose)) m[k] = (v && typeof v === 'object' && !Array.isArray(v) && m[k] && typeof m[k] === 'object') ? { ...m[k], ...v } : v; return m; })() : spec.poses[pose];
+  return body.bodyShapes(body.fk(body.resolve(body.normPose(p, b), b).q, b), r2Cam(spec)).filter((x: any) => x.poly);
+};
+/** Clearance (px) of a screen polyline of half-width r from the outlines whose key matches `re`; negative inside. */
+const r2Clear = (pts: number[][], shapes: any[], re: RegExp, r = 0) => {
+  const polys = shapes.filter((x: any) => re.test(x.key)).map((x: any) => x.poly);
+  let d = Infinity;
+  for (const P of polys) {
+    if (pts.some(p => inPoly(P, p))) return -1;
+    for (let i = 0; i < P.length; i++) for (let j = 0; j < Math.max(1, pts.length - 1); j++) {
+      const a = pts[j]!, b = pts[Math.min(j + 1, pts.length - 1)]!, q0 = P[i]!, q1 = P[(i + 1) % P.length]!;
+      d = Math.min(d, segD(q0, a, b), segD(q1, a, b), segD(a, q0, q1), segD(b, q0, q1));
+    }
+  }
+  return d - r;
+};
+/** The neck: the torso outline beyond the `neck` landmark along the lumbar→neck axis (PLAN RULED point 1). */
+const r2Neck = (spec: any, pose: string, shapes: any[]) => {
+  const cam = r2Cam(spec), lm = lmOf(spec, pose), n = cam.P(lm.neck), l = cam.P(lm.lumbar), k = Math.hypot(n[0]! - l[0]!, n[1]! - l[1]!), u = [(n[0]! - l[0]!) / k, (n[1]! - l[1]!) / k];
+  return shapes.find((x: any) => x.key === 'torso').poly.filter((q: number[]) => (q[0]! - n[0]!) * u[0]! + (q[1]! - n[1]!) * u[1]! > 0);
+};
+const r2PtsClear = (pts: number[][], c: number[], r: number) => Math.min(...pts.map(q => Math.hypot(q[0]! - c[0]!, q[1]! - c[1]!))) - r;
+
+describe('LIB-16R2 setup', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  it('wave 1 is drawn', () => { expect(r2Drawn().filter(i => R2_W1.includes(i))).toEqual(R2_W1); });
+});
+
+describe('LIB-16R2 A8: the 9 cards and quotes are byte copies of research a48b0594 (cards.sha.json r2)', () => {
+  const KEYS = ['plateFacts', 'tempo', 'topFault'], j = readJson('tools/plates/library/lb6/cards.sha.json').r2;
+  const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  it('r2 names the head and the 9 ids; each card without the three keys and each quotes file matches', () => {
+    expect(j.researchHead).toBe(R2_HEAD);
+    expect(Object.keys(j.cards)).toEqual(R2_ALL);
+    expect(Object.keys(j.quotes)).toEqual(R2_ALL);
+    for (const id of R2_ALL) {
+      expect(sha(canon(cardOf(id))), id).toBe(j.cards[id]);
+      expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(j.quotes[id]);
+    }
+  });
+  it('mutation: another card key edited is red', () => {
+    const c = cardOf('rear_delt_fly'); c.plate.view = 'side';
+    expect(sha(canon(c))).not.toBe(j.cards.rear_delt_fly);
+  });
+  it('each drawn row\'s How-to source holds only its id and research card (D-LIB9a-HOWTOID)', async () => {
+    for (const id of r2Drawn()) {
+      const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
+      expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+    }
+  });
+});
+
+describe('LIB-16R2 A9: nothing ships', { timeout: T }, () => {
+  const ids = () => r2Drawn().map(i => `lib_${i}`);
+  const stageProblems = (rows: Record<string, any>) => ids().filter(id => !['drawing', 'review'].includes(rows[id]?.stage)).map(id => `${id}: ${rows[id]?.stage}`);
+  it('every drawn R2 row is in rows.json at stage drawing or review, mode H, no parent, template or params', () => {
+    const rows = readJson(ROWS).rows;
+    expect(stageProblems(rows)).toEqual([]);
+    for (const id of ids()) expect([rows[id].mode, rows[id].parent, rows[id].template, rows[id].params], id).toEqual(['H', undefined, undefined, undefined]);
+  });
+  it('mutation: one row set to shipped is red', () => {
+    const rows = readJson(ROWS).rows;
+    expect(stageProblems({ ...rows, lib_smith_machine_squat: { ...rows.lib_smith_machine_squat, stage: 'shipped' } })).toEqual(['lib_smith_machine_squat: shipped']);
+  });
+  it('none is shipped with rows.json read as a batch file, and no R2 id or slug is in batches/ or the golden files', () => {
+    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
+    expect(reg.shippedIds(rows).filter((i: string) => ids().includes(i))).toEqual([]);
+    for (const dir of ['tools/plates/library/batches', 'tests/howto/golden/library']) for (const f of readdirSync(dir)) {
+      const text = readFileSync(join(dir, f), 'utf8');
+      for (const id of R2_ALL) {
+        expect(new RegExp(`\\b(lib_)?${id}\\b`).test(text), `${f}: ${id}`).toBe(false);
+        expect(new RegExp(`(^|[^a-z0-9-])${id.replace(/_/g, '-')}([^a-z0-9-]|$)`).test(text), `${f}: slug ${id}`).toBe(false);
+      }
+    }
+  });
+});
+
+describe('LIB-16R2 A7: tempo strips follow the cards (tempo.json r2, D-LIB8M-TEMPO)', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  // The ruled table (DESIGN.md 19.2), copied here, never read from tempo.json or a spec.
+  const RULED: Record<string, [string, string, boolean][]> = {
+    low_to_high_cable_fly: [['Close', 'up', true], ['Hold', 'pause', false], ['Open', 'down', true]],
+    high_to_low_cable_fly: [['Close', 'up', true], ['Hold', 'pause', false], ['Open', 'down', true]],
+    smith_machine_squat: [['Lower', 'down', true], ['Drive up', 'up', true]],
+    smith_machine_shoulder_press: [['Lower', 'down', true], ['Press', 'up', true]],
+    smith_machine_incline_press: [['Lower', 'down', true], ['Press', 'up', true]],
+    machine_lateral_raise: [['Raise', 'up', true], ['Hold', 'pause', false], ['Lower', 'down', true]],
+    rear_delt_fly: [['Pull', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
+    hip_abduction: [['Push out', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
+    hip_adduction: [['Squeeze', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
+  };
+  const build = (rows: any[], t: any) => rows.map(r => ({ phase: r.phase, s: t[r.from], ...(r.move ? { move: true } : {}) }));
+  const problems = (tj: any, specs: Record<string, any>) => Object.keys(RULED).flatMap(id => {
+    const rows = tj.r2.ids[id]?.rows ?? [], t = readJson(`docs/research/howto/cards/${id}.json`).plate.tempo, bad: string[] = [];
+    if (JSON.stringify(rows.map((r: any) => [r.phase, r.from, !!r.move])) !== JSON.stringify(RULED[id])) bad.push(`${id}: rows != ruled`);
+    if (rows.some((r: any) => r.phase === 'Rest')) bad.push(`${id}: Rest`);
+    if ((t.pause > 0) !== rows.some((r: any) => r.from === 'pause')) bad.push(`${id}: Hold and pause disagree`);
+    if (JSON.stringify(tj.r2.ids[id]?.claim) !== JSON.stringify(t.claim)) bad.push(`${id}: claim`);
+    if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(build(rows, t))) bad.push(`${id}: spec tempo != the built strip`);
+    return bad;
+  });
+  const tj = () => readJson('tools/plates/library/lb6/tempo.json');
+  it('tempo.json r2 follows the ruled table and each drawn spec\'s tempo is built from it and its card', () => {
+    expect(problems(tj(), R2S)).toEqual([]);
+    expect(R2S.smith_machine_squat.tempo).toEqual([{ phase: 'Lower', s: 3, move: true }, { phase: 'Drive up', s: 1, move: true }]);
+  });
+  it('mutations: a Hold on the squat (pause 0), the fly Hold removed, a bottom pause drawn and one second changed are red', () => {
+    const red = (f: (t: any, s: any) => void) => { const t = tj(), s: any = { ...R2S }; f(t, s); return problems(t, s).length > 0; };
+    expect(red(t => { t.r2.ids.smith_machine_squat.rows.splice(1, 0, { phase: 'Hold', from: 'pause' }); })).toBe(true);
+    expect(red(t => { t.r2.ids.low_to_high_cable_fly.rows.splice(1, 1); })).toBe(true);
+    expect(red((t, s) => { s.smith_machine_incline_press = { ...s.smith_machine_incline_press, tempo: [...s.smith_machine_incline_press.tempo, { phase: 'Pause', s: 1 }] }; })).toBe(true);
+    expect(red((t, s) => { s.high_to_low_cable_fly = { ...s.high_to_low_cable_fly, tempo: [{ ...s.high_to_low_cable_fly.tempo[0], s: 3 }, ...s.high_to_low_cable_fly.tempo.slice(1)] }; })).toBe(true);
+  });
+});
+
+describe('LIB-16R2 A17: sizes fixed in lb6/sizes.json r2, never sized by PQ-H3', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  const table = () => readJson('tools/plates/library/lb6/sizes.json').r2.ids;
+  const problems = (spec: Record<string, number>, t: Record<string, any>) => [
+    ...Object.keys(spec).filter(k => !(k in t)).map(k => `${k}: not in sizes.json`),
+    ...Object.keys(t).filter(k => !(k in spec)).map(k => `${k}: not in the spec`),
+    ...Object.keys(spec).filter(k => k in t && t[k].value !== spec[k]).map(k => `${k}: spec ${spec[k]} != sizes.json ${t[k].value}`),
+    ...Object.entries(t).flatMap(([k, r]: [string, any]) => [...(typeof r.basis === 'string' && r.basis.trim() ? [] : [`${k}: empty basis`]),
+      ...(/PQ-H3|deviationMin|traceLenMin|\bH3\b/.test(r.basis ?? '') ? [`${k}: basis names PQ-H3`] : [])]),
+  ];
+  it('each drawn spec\'s SIZES equals its row, every row with a basis that is not PQ-H3', () => {
+    for (const id of r2Drawn()) expect(problems(R2M[id].SIZES, table()[id]), id).toEqual([]);
+  });
+  it('mutations: a Mistake size changed in the spec only, an empty basis and a PQ-H3 basis are red', () => {
+    const s = { ...R2M.high_to_low_cable_fly.SIZES }, t = table().high_to_low_cable_fly;
+    expect(problems({ ...s, MIS_CROSS: 0.12 }, t)).toEqual(['MIS_CROSS: spec 0.12 != sizes.json 0.11']);
+    expect(problems(s, { ...t, MIS_CROSS: { ...t.MIS_CROSS, basis: ' ' } })).toEqual(['MIS_CROSS: empty basis']);
+    expect(problems(s, { ...t, MIS_CROSS: { ...t.MIS_CROSS, basis: 'sized to clear deviationMin' } })).toEqual(['MIS_CROSS: basis names PQ-H3']);
+  });
+});
+
+describe('LIB-16R2 A4: card-true poses on the drawn items (wave 1)', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  const pulleyYs = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((x: any) => x.type === 'cableColumn').map((x: any) => x.pulley.at[1]);
+  /** low_to_high: pulleys between knee and hip (c1); the hands meet above the chest, at the midline (c5). */
+  const lowHigh = (spec: any) => { const s = lmOf(spec, 'start'), e = lmOf(spec, 'end'), ys = pulleyYs(spec, 'start'), bad: string[] = [];
+    if (!(ys.length === 2 && ys.every((y: number) => y > s['knee.r'][1] && y < s['hip.r'][1]))) bad.push('pulleys not between knee and hip');
+    if (!(e['grip.r'][1] > e.chest[1] && e['grip.l'][1] > e.chest[1])) bad.push('hands not above the chest');
+    if (!(Math.abs(e['grip.r'][0] - e['grip.l'][0]) <= 0.12)) bad.push('hands do not meet');
+    return bad; };
+  /** high_to_low: pulleys at about the crown (c1, within 5 cm); hands meet below the chest (c5). */
+  const highLow = (spec: any) => { const s = lmOf(spec, 'start'), e = lmOf(spec, 'end'), ys = pulleyYs(spec, 'start'), bad: string[] = [];
+    if (!(ys.length === 2 && ys.every((y: number) => Math.abs(y - s.head[1]) <= 0.05))) bad.push('pulleys not at the crown');
+    if (!(e['grip.r'][1] < e.chest[1] && e['grip.l'][1] < e.chest[1])) bad.push('hands not below the chest');
+    if (!(Math.abs(e['grip.r'][0] - e['grip.l'][0]) <= 0.12)) bad.push('hands do not meet');
+    if (!(s['grip.r'][1] < ys[0])) bad.push('start hands above the pulleys');
+    return bad; };
+  /** Each smith bar centre on its rail in every drawn pose (c8 of the anchor; smith.mjs throws otherwise). */
+  const onRail = (spec: any, rail: number) => posesOf(spec).filter(p => Math.abs(lmOf(spec, p).grips[2] - rail) > 1e-6);
+  /** smith_machine_squat: mid-soles 7.6-15.2 cm ahead of the rail (c2); thighs at least parallel (c6). */
+  const squat = (spec: any, rail: number) => { const e = lmOf(spec, 'end'), bad: string[] = [];
+    for (const sd of ['r', 'l']) { const ahead = lmOf(spec, 'start')[`sole.${sd}`][2] - rail; if (!(ahead >= 0.076 && ahead <= 0.152)) bad.push(`sole.${sd} ${(ahead * 100).toFixed(1)} cm ahead`); }
+    if (!(e['hip.r'][1] <= e['knee.r'][1] + 0.005)) bad.push('thighs above parallel');
+    return bad; };
+  const fromVertical = (lm: any) => Math.atan2(-(lm.backUpper[2] - lm.buttock[2]), lm.backUpper[1] - lm.buttock[1]) * 180 / Math.PI;
+  it('low_to_high_cable_fly (c1, c5) and high_to_low_cable_fly (c1, c5)', () => {
+    expect(lowHigh(R2S.low_to_high_cable_fly)).toEqual([]);
+    expect(highLow(R2S.high_to_low_cable_fly)).toEqual([]);
+  });
+  it('mutation: the low-to-high pulleys at shoulder height are red', () => {
+    const s = R2S.low_to_high_cable_fly, y = lmOf(s, 'start')['shoulder.r'][1];
+    const m = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const it = e(lm, ctx); return it?.type === 'cableColumn' ? { ...it, pulley: { ...it.pulley, at: [it.pulley.at[0], y, it.pulley.at[2]] } } : it; } : e)) };
+    expect(lowHigh(m)).toContain('pulleys not between knee and hip');
+  });
+  it('the smith bars stay on their rails in every pose; the squat feet are 7.6-15.2 cm ahead with thighs parallel (c2, c6)', () => {
+    for (const id of ['smith_machine_squat', 'smith_machine_shoulder_press', 'smith_machine_incline_press']) expect(onRail(R2S[id], R2M[id].RAIL_Z), id).toEqual([]);
+    expect(squat(R2S.smith_machine_squat, R2M.smith_machine_squat.RAIL_Z)).toEqual([]);
+  });
+  it('mutation: the squat feet under the rail are red', () => {
+    const s = R2S.smith_machine_squat, rail = R2M.smith_machine_squat.RAIL_Z, plant = s.poses.start.plant;
+    const m = { ...s, poses: { ...s.poses, start: { ...s.poses.start, plant: { l: { ...plant.l, at: [plant.l.at[0], 0, rail] }, r: { ...plant.r, at: [plant.r.at[0], 0, rail] } } } } };
+    expect(squat(m, rail).length).toBeGreaterThan(0);
+  });
+  it('the benches at the card angles (shoulder press about 70° from the floor, c1; incline 30°, card equipment) and the arms at the end (c5, c6; c3)', () => {
+    const sp = R2S.smith_machine_shoulder_press, ip = R2S.smith_machine_incline_press;
+    for (const p of posesOf(sp)) expect(fromVertical(lmOf(sp, p)), `shoulder press ${p}`).toBeCloseTo(20, 0);
+    for (const p of posesOf(ip)) expect(fromVertical(lmOf(ip, p)), `incline ${p}`).toBeCloseTo(60, 0);
+    const e = lmOf(sp, 'end'), lvl = Math.atan2(e['elbow.r'][1] - e['shoulder.r'][1], Math.hypot(e['elbow.r'][0] - e['shoulder.r'][0], e['elbow.r'][2] - e['shoulder.r'][2])) * 180 / Math.PI;
+    expect(lvl).toBeGreaterThanOrEqual(-15); expect(lvl).toBeLessThanOrEqual(0);                 // about parallel or slightly below (c6)
+    expect(e['elbow.r'][2] - e['shoulder.r'][2]).toBeGreaterThan(0.05);                           // elbows in front of the shoulders (c5)
+    expect(R2M.smith_machine_incline_press.info().endArmFromTorsoDeg).toBeCloseTo(60, 0);           // c3 45-75
+  });
+});
+
+describe('LIB-16R2 A5: load and machine parts clear the body by 2 px (D-LIB16R2-CLEAR; wave 1)', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  // Listed, not tested (PLAN RULED point 1-2): side-view rods, hook rails, frames, plates and stops; front-view columns;
+  // the cables where they pass in front of the torso or arms. Contacts excepted: the handles in the hands (c3 / c1).
+  const cables = (spec: any, pose: string) => { const cam = r2Cam(spec);
+    return itemsIn(spec, pose, { mistake: pose === 'mistake' }).items.filter((x: any) => x.type === 'cable').map((x: any) => [cam.P(x.from), cam.P(x.to)]); };
+  const flyClear = (spec: any) => posesOf(spec).flatMap(p => { const sh = r2Shapes(spec, p);
+    return cables(spec, p).flatMap((c, i) => [['head', /^head$/], ['legs', /^(thigh|kneecap|shank|foot)\./]].map(([k, re]) => [`${p} cable${i} ${k}`, r2Clear(c, sh, re as RegExp)] as [string, number])); });
+  it('each cable clears the head and the legs by 2 px in every pose', () => {
+    for (const id of ['low_to_high_cable_fly', 'high_to_low_cable_fly']) { const rows = flyClear(R2S[id]); expect(rows.length, id).toBe(posesOf(R2S[id]).length * 4); for (const [k, d] of rows) expect(d, `${id} ${k}`).toBeGreaterThanOrEqual(2); }
+  });
+  it('mutation: a cable run to the nose (the end grip at the face) is red', () => {
+    const s = R2S.low_to_high_cable_fly, cam = r2Cam(s), sh = r2Shapes(s, 'end'), [c] = cables(s, 'end'), chin = cam.P(lmOf(s, 'end').chin);
+    expect(r2Clear([c![0]!, [chin[0]!, chin[1]! - 12]], sh, /^head$/)).toBeLessThan(2);
+  });
+  /** A smith bar shaft (r BAR_R) against the head and the neck, along its whole path (1 cm steps start → end) and at the Mistake. */
+  const barClear = (id: string, rail = R2M[id].RAIL_Z) => { const s = R2S[id], cam = r2Cam(s), r = R2M[id].SIZES.BAR_R * cam.pxm, out: [string, number][] = [];
+    for (const p of posesOf(s)) { const sh = r2Shapes(s, p), neck = r2Neck(s, p, sh), lm = lmOf(s, p);
+      const ys = p === 'start' ? (() => { const a = lmOf(s, 'start').grips[1], b = lmOf(s, 'end').grips[1], n = Math.ceil(Math.abs(a - b) / 0.01); return Array.from({ length: n + 1 }, (_, i) => a + (b - a) * i / n); })() : [lm.grips[1]];
+      for (const y of ys) { const c = cam.P([0, y, rail]); out.push([`${p} head`, r2Clear([c], sh, /^head$/, r)], [`${p} neck`, r2PtsClear(neck, c, r)]); } }
+    return out; };
+  it('each smith bar shaft clears the head and the neck by 2 px along its path (the squat bar on the traps, c1; the shoulder press bar past the nose, c3)', () => {
+    for (const id of ['smith_machine_squat', 'smith_machine_shoulder_press', 'smith_machine_incline_press']) for (const [k, d] of barClear(id)) expect(d, `${id} ${k}`).toBeGreaterThanOrEqual(2);
+    expect(Math.min(...barClear('smith_machine_squat').filter(([k]) => /neck/.test(k)).map(([, d]) => d))).toBeCloseTo(5.06, 1);   // PLAN 19.5
+  });
+  it('mutations (the clearance-setting value at 0): the shoulder press rail on the nose line and the squat bar at the neck landmark are red', () => {
+    const sp = R2M.smith_machine_shoulder_press;
+    expect(Math.min(...barClear('smith_machine_shoulder_press', sp.HEAD_FRONT[0]).map(([, d]) => d))).toBeLessThan(2);
+    // the squat bar moved onto the neck: its centre on the neck outline point nearest the drawn bar
+    const s = R2S.smith_machine_squat, cam = r2Cam(s), sh = r2Shapes(s, 'end'), neck = r2Neck(s, 'end', sh), b = cam.P([0, lmOf(s, 'end').grips[1], R2M.smith_machine_squat.RAIL_Z]);
+    const c = neck.reduce((a: number[], q: number[]) => (Math.hypot(q[0]! - b[0]!, q[1]! - b[1]!) < Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!) ? q : a));
+    expect(r2PtsClear(neck, c, R2M.smith_machine_squat.SIZES.BAR_R * cam.pxm)).toBeLessThan(2);
+  });
+});
+
+describe('LIB-16R2 A2: nothing else moves', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of cable_chest_press on main 6d34542c's LB6 page e4260472…6848 (approved, #327).
+  const CCP: Record<string, string> = {
+    normalSvg: '68eb24a330219cf370d5aa55b7467452e4ce98aec6a93520ce92ee4bc82f6b25', normalOverlay: '571208660a04cfc7428a87fbbde495f3ea46935ddfcf17b20a70b827b5616d8f',
+    mistakeSvg: 'ea8c790503843ecc945ce75b507dc8df3248da3eed48b6661b79449c36dae413', mistakeOverlay: '6b907ed879c9e764145ce07565321596c3a4f01e5820f7f51af09945b72b3525',
+    tells: '758aead6ba01fd41188eb408036a7a99f728f43ed9bcb32fbe0ceb02883a7270', tempo: '073ad782e26734e85a2eae2df1e5d162e9241f58c132f620f389edd7f9931f45',
+    cues: '6fbadd342422baf4239267b6479cead05a32adfdcf205f93790c6746b4c586d1', alt: '4d5a5e052c095e422e5fcda3618092c01ed2031b3e78e06445335cd8bd56027f',
+    mistakeAlt: 'e398c48e2a4080f9938231a33627dbbd22028b6f13f043c8ef050c52f46cd759',
+  };
+  // The composers this card imports and never edits (main 6d34542c bytes; all four are in pinned closures).
+  const EQ: Record<string, string> = {
+    'eq/smith.mjs': '34f188f1ba5075dc12e0f52f383b386a5a4985f0467f031e6837aa0081ad4cde', 'eq/pecDeck.mjs': '577a33a11794598dbafa72a3ef19b623d5ccc6e4379575b7a328b86b6f6d5ddd',
+    'eq/inclineBench.mjs': '00d3f16f7ff7b3a0d96e6765363f6631d0e095e3de2dbe0a85980a68dd37a128', 'eq/parts.mjs': '50c007664e6fb56bbbb96d06701151123040e494c33bceef0c25288d39290ae0',
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb6/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const ccpProblems = (html: string) => { const p = golden.extractPlates(html).find((x: any) => x.chromeId === 'cable-chest-press'), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(CCP).filter(k => got[k] !== CCP[k]); };
+  it("cable_chest_press's 9 fragments on this head equal main's approved ones", async () => {
+    expect(ccpProblems((await fullPage()))).toEqual([]);
+  });
+  it("mutation: one byte in cable_chest_press's alt is red", async () => {
+    const html = (await fullPage()), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'cable-chest-press');
+    expect(ccpProblems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('alt');
+  });
+  it('eq/smith, pecDeck, inclineBench and parts are byte-identical to main; mutation: one byte changed is red', () => {
+    for (const [f, h] of Object.entries(EQ)) expect(sha(readFileSync(`tools/plates/library/${f}`)), f).toBe(h);
+    expect(sha(readFileSync('tools/plates/library/eq/smith.mjs', 'utf8').replace('RAIL_T = 0.03', 'RAIL_T = 0.04'))).not.toBe(EQ['eq/smith.mjs']);
+  });
+});
+
+describe('LIB-16R2 A3: the resume 2 spec closures are pure (D-LIB9-CLONE: copied, never imported)', { timeout: T }, () => {
+  const problems = (f: string, c: string[]) => [
+    ...(c.includes('tools/plates/vendor/MANIFEST.json') ? [] : ['no vendor MANIFEST']),
+    ...c.filter(p => p.startsWith('tools/plates/layers/')),
+    ...c.filter(p => p.startsWith('tools/plates/vendor/exercises/')),
+    ...c.filter(p => /^tools\/plates\/library\/(hands|fidelity|ci|templates)\//.test(p)),
+    ...c.filter(p => p.startsWith('tools/plates/library/specs/') && p !== f),
+  ];
+  it('every drawn R2 spec imports no other spec, no vendor exercise and no layer, and reads no file', () => {
+    for (const id of r2Drawn()) { const f = `tools/plates/library/specs/${id}.mjs`; expect(problems(f, closure.closureOf([f])), f).toEqual([]); }
+  });
+  it('mutation: the shoulder press importing its clone source (`reclined` from incline_dumbbell_press) is red', () => {
+    const f = 'tools/plates/library/specs/smith_machine_shoulder_press.mjs', root = mkdtempSync(join(tmpdir(), 'lb6r2-closure-'));
+    for (const d of ['tools/plates/library', 'tools/plates/vendor', 'tools/plates/layers', 'tools/plates/lib']) cpSync(d, join(root, d), { recursive: true });
+    writeFileSync(join(root, f), `import { reclined as R0 } from './incline_dumbbell_press.mjs';\nexport const _R0 = R0;\n${readFileSync(f, 'utf8')}`);
+    try { expect(problems(f, closure.closureOf([f], root))).toContain('tools/plates/library/specs/incline_dumbbell_press.mjs'); } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+});
+
+describe('LIB-16R2 A8 (Do 4): the card fields on the 9 cards', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  // [facts count, sha256 of JSON.stringify(plateFacts), topFault]: the facts plan as ruled (PLAN RULED point 4, DESIGN.md 19.3).
+  const RULED: Record<string, [number, string, string]> = {
+    low_to_high_cable_fly: [2, '85aa7d0633405dd91e27d311689ae517aac537253dc175a95d03443cc6cb878c', 'lean'],
+    high_to_low_cable_fly: [2, '85aa7d0633405dd91e27d311689ae517aac537253dc175a95d03443cc6cb878c', 'lean'],
+    machine_lateral_raise: [12, '0997b8066f74a3b55a0d6b07cc0e719abace6b7f70a51111c08c0d2e181733c0', 'swing'],
+    rear_delt_fly: [8, 'b58500b7552e9ef179df9b69a3556c79709c2406df05450499337283746eb612', 'rush'],
+    hip_abduction: [17, '5304f24f6eec6889a2dc6917fbbb0182c48eb49a704004b3962e074ad30c72c1', 'jerk'],
+    hip_adduction: [11, '10ceb9889497a4b097529bfa02dca5dd69e99955b1ff465ee7ad6ceed16edf8d', 'swing'],
+    smith_machine_squat: [6, 'd0745b69ea03d7e60c71f526e5f07b8124d22019e9a696c1a2825dbaba0056d7', 'under'],
+    smith_machine_shoulder_press: [9, 'ba567f53ac00a450a3f32ae3d6f3cecfb33a9304db48fce8bde5758b1f20b3b7', 'flare'],
+    smith_machine_incline_press: [8, '233c2da374b0527c82ad6529cadac10a6b645b91e74d4796f1ba9b7d73e42e01', 'flare'],
+  };
+  // The drawn Mistake key per row (DESIGN.md 19.2); F7 rows (D-LIB16R2-F7) have a topFault that differs from it.
+  const DRAWN: Record<string, string> = { low_to_high_cable_fly: 'press', high_to_low_cable_fly: 'cross', machine_lateral_raise: 'high', rear_delt_fly: 'shrug',
+    hip_abduction: 'short', hip_adduction: 'wide', smith_machine_squat: 'under', smith_machine_shoulder_press: 'flare', smith_machine_incline_press: 'flare' };
+  const F7 = ['low_to_high_cable_fly', 'high_to_low_cable_fly', 'machine_lateral_raise', 'rear_delt_fly', 'hip_abduction', 'hip_adduction'];
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  const problems = (id: string, c: any, spec?: any) => {
+    const bad: string[] = [], [n, h, top] = RULED[id]!;
+    if (c.plateFacts.length !== n || sha(JSON.stringify(c.plateFacts)) !== h) bad.push('plateFacts');
+    if (c.topFault !== top) bad.push('topFault');
+    if ((c.topFault !== DRAWN[id]) !== F7.includes(id)) bad.push('F7 set');
+    if (spec && JSON.stringify(c.tempo) !== JSON.stringify(spec.tempo)) bad.push('tempo != spec');
+    if (spec && spec.mistake.tells[0].key !== DRAWN[id]) bad.push('drawn key');
+    return bad;
+  };
+  it('each card carries the ruled facts, tempo and topFault, validateCardFile gives [], and the drawn specs use its tempo', async () => {
+    const { validateCardFile } = await import(/* @vite-ignore */ lib('research/validate.mjs'));
+    for (const id of R2_ALL) { expect(validateCardFile(`${id}.json`), id).toEqual([]); expect(problems(id, cardOf(id), R2S[id]), id).toEqual([]); }
+  });
+  it('mutations: the topFault of one F7 row set to its drawn key, one fact removed and one second changed on a card are red', () => {
+    expect(problems('rear_delt_fly', { ...cardOf('rear_delt_fly'), topFault: 'shrug' })).toEqual(['topFault', 'F7 set']);
+    const c = cardOf('smith_machine_squat'); c.plateFacts.pop();
+    expect(problems('smith_machine_squat', c)).toEqual(['plateFacts']);
+    const d = cardOf('smith_machine_squat'); d.tempo[0].s = 2;
+    expect(problems('smith_machine_squat', d, R2S.smith_machine_squat)).toEqual(['tempo != spec']);
+  });
+});
+
+describe('LIB-16R2 wave 2 A3: the two new composers (D-LIB16R2-COMPOSERS)', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  const USERS: Record<string, string[]> = { hipAbdAddMachine: ['hip_abduction', 'hip_adduction'], latRaiseMachine: ['machine_lateral_raise'] };
+  const PRIM = () => Object.keys(eng.PRIMITIVES);
+  /** Items of one spec in one pose: [static, moving] by `part`. */
+  const split = (spec: any, pose: string) => { const it = itemsIn(spec, pose, { mistake: pose === 'mistake' }).items.filter((x: any) => x.type !== 'floor');
+    return [it.filter((x: any) => !x.part), it.filter((x: any) => x.part)] as [any[], any[]]; };
+  const strip = (x: any) => { const { entry, ...rest } = x; void entry; return JSON.stringify(rest); };
+  const problems = (spec: any) => { const out: string[] = [], [s0] = split(spec, 'start');
+    for (const p of posesOf(spec)) { const [st, mv] = split(spec, p);
+      if (st.map(strip).join() !== s0.map(strip).join()) out.push(`${p}: a static part moved`);
+      for (const x of [...st, ...mv]) if (!PRIM().includes(x.type)) out.push(`${p}: ${x.type} is not a primitive`);
+      for (const x of mv) if (x.type !== 'poly') out.push(`${p}: moving ${x.type} without poly`); }
+    return out; };
+  it('both return PRIMITIVES items only; static parts at one place in every drawn pose; every moving part a poly; PQ-H9 clean', async () => {
+    for (const [c, users] of Object.entries(USERS)) for (const id of users) {   // D-LIB13S-RPC: one macrotask between steps
+      expect(problems(R2S[id]), `${c} ${id}`).toEqual([]); await yieldNow(); expect(h9(R2S[id]), id).toEqual([]); await yieldNow(); }
+  });
+  it('each composer reads no file and imports only parts.mjs; listed under LIB-16 in eq-composers.json', () => {
+    for (const c of Object.keys(USERS)) {
+      expect(closure.closureOf([`tools/plates/library/eq/${c}.mjs`]).filter((f: string) => f.startsWith('tools/plates/library/eq/')).sort(), c).toEqual([`tools/plates/library/eq/${c}.mjs`, 'tools/plates/library/eq/parts.mjs'].sort());
+      expect(readJson('tests/howto/fixtures/eq-composers.json').cards['LIB-16'], c).toContain(c);
+    }
+  });
+  it('mutations: a moving pad without poly is red; a static part moved between poses is red', async () => {
+    const s = R2S.hip_abduction, bad = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const x = e(lm, ctx); return x?.part === 'leg' && x.z === 'front' ? { type: 'box', at: x.pts[0], w: 0.06, h: 0.2, z: 'front', part: 'leg' } : x; } : e)) };
+    expect(problems(bad).some(p => /without poly/.test(p))).toBe(true);
+    await yieldNow();
+    const moved = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const x = e(lm, ctx); return x?.type === 'seat' && ctx.pose === 'end' ? { ...x, at: [x.at[0], x.at[1] + 0.02, x.at[2]] } : x; } : e)) };
+    expect(problems(moved)).toContain('end: a static part moved');
+  });
+  /** The pad's face against its limb's drawn outline (px): the hip pads at the knee band, the arm pads at 70-95 % of the upper arm. */
+  const padGap = (spec: any, pose: string, s: string, shift = [0, 0]) => {
+    const cam = r2Cam(spec), sh = r2Shapes(spec, pose), items = itemsIn(spec, pose, { mistake: pose === 'mistake' }).items;
+    const pads = items.filter((x: any) => x.type === 'poly' && x.z === 'front' && (x.part === 'leg' || x.part === 'arm'));
+    const lm = lmOf(spec, pose), sg = s === 'l' ? 1 : -1, pad = pads.find((x: any) => Math.sign(x.pts[0][0]) === sg)!;
+    const limb = spec.id === 'machine_lateral_raise' ? [`upper.${s}`] : [`thigh.${s}`, `kneecap.${s}`];
+    const polys = sh.filter((x: any) => limb.includes(x.key)).map((x: any) => x.poly);
+    const pts = pad.pts.map((q: number[]) => cam.P([q[0]! + shift[0]!, q[1]! + shift[1]!, q[2]!]));
+    return r2Clear(pts, polys.map((poly: number[][]) => ({ key: 'limb', poly })), /limb/); };
+  it('the pads rest on their limbs (within 1 px) in every drawn pose: outer thighs (hip_abduction c1), inner thighs (hip_adduction c1), just above the elbows (machine_lateral_raise c3)', () => {
+    for (const id of ['hip_abduction', 'hip_adduction', 'machine_lateral_raise']) for (const p of posesOf(R2S[id])) for (const s of ['l', 'r']) { const g = padGap(R2S[id], p, s); expect(g, `${id} ${p} ${s}`).toBeLessThanOrEqual(1); expect(g, `${id} ${p} ${s}`).toBeGreaterThanOrEqual(-1); }
+  });
+  it('mutation: a pad 2 cm off its limb is red', () => {
+    expect(padGap(R2S.hip_abduction, 'end', 'r', [-0.02, 0])).toBeGreaterThan(1);       // out, away from the right thigh
+    expect(padGap(R2S.machine_lateral_raise, 'end', 'l', [0, 0.02])).toBeGreaterThan(1);  // up, off the level upper arm
+  });
+});
+
+describe('LIB-16R2 wave 2 A4: card-true poses on the drawn items', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  const levelDeg = (lm: any, s: string) => Math.atan2(lm[`elbow.${s}`][1] - lm[`shoulder.${s}`][1], Math.abs(lm[`elbow.${s}`][0] - lm[`shoulder.${s}`][0])) * 180 / Math.PI;
+  const lateral = (lm: any) => ['l', 'r'].filter(s => Math.abs(levelDeg(lm, s)) > 5).map(s => `upper arm ${s} ${levelDeg(lm, s).toFixed(1)} deg from level`);
+  it('machine_lateral_raise ends with the upper arms horizontal within 5° (c5); its Mistake is above (c5)', () => {
+    expect(lateral(lmOf(R2S.machine_lateral_raise, 'end'))).toEqual([]);
+    expect(levelDeg(lmOf(R2S.machine_lateral_raise, 'mistake'), 'r')).toBeGreaterThan(5);
+  });
+  it('mutation: the lateral raise ended at 100° is red', () => {
+    const s = R2S.machine_lateral_raise, e = { ...s.poses.end, shoulder: { ...s.poses.end.shoulder, elev: 100 } };
+    expect(lateral(body.landmarksOf(e, 1.75)).length).toBeGreaterThan(0);
+  });
+  it('rear_delt_fly: the end arms in line with the shoulders (elevation 90 ± 2, plane 0 ± 5) and the chest on the pad in world coordinates in every pose (c1, c5, c6)', () => {
+    const s = R2S.rear_delt_fly, a = plate.renderPlate(s).report.angles.end['sh.r'], m = /elev (-?[\d.]+) plane (-?[\d.]+)/.exec(a)!;
+    expect(Math.abs(+m[1]! - 90)).toBeLessThanOrEqual(2); expect(Math.abs(+m[2]!)).toBeLessThanOrEqual(5);
+    const padZ = itemsIn(s, 'start').items.find((x: any) => x.type === 'backPad' && x.len === R2M.rear_delt_fly.SIZES.PAD_LEN).at[2];
+    for (const p of posesOf(s)) expect(padZ - lmOf(s, p).chest[2], p).toBeCloseTo(0.035, 3);
+  });
+  /** The two legs' drawn outlines' gap at the knees (px): hip_abduction's start. */
+  const legGap = (spec: any, pose: string) => { const sh = r2Shapes(spec, pose), L = sh.filter((x: any) => /^(thigh|kneecap|shank)\.l$/.test(x.key)).flatMap((x: any) => x.poly), Rr = sh.filter((x: any) => /^(thigh|kneecap|shank)\.r$/.test(x.key)).flatMap((x: any) => x.poly);
+    return Math.min(...L.map((q: number[]) => q[0]!)) - Math.max(...Rr.map((q: number[]) => q[0]!)); };
+  it('hip_abduction starts with the knees together (outlines within 1 px, c4); hip_adduction ends with the pads at most 2.5 cm apart (c3)', () => {
+    expect(Math.abs(legGap(R2S.hip_abduction, 'start'))).toBeLessThanOrEqual(1);
+    const gap = R2M.hip_adduction.info().padGapEnd; expect(gap).toBeGreaterThan(0); expect(gap).toBeLessThanOrEqual(0.025);
+  });
+  it('mutation: hip_abduction started at 0° abduction (knees apart) is red', () => {
+    const s = R2S.hip_abduction, st = { ...s.poses.start, hip: { ...s.poses.start.hip, abd: 0 } };
+    expect(Math.abs(legGap({ ...s, poses: { ...s.poses, start: st } }, 'start'))).toBeGreaterThan(1);
+  });
+});
+
+describe('LIB-16R2 wave 2 A5: machine parts clear the body by 2 px (D-LIB16R2-CLEAR)', { timeout: T }, () => {
+  beforeAll(async () => { for (const id of r2Drawn()) if (!R2S[id]) { R2M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); R2S[id] = R2M[id].default; } }, T);
+  // Listed, not tested (PLAN RULED point 1): the seat, back pad, columns, housing, uprights and bosses behind the body
+  // (z 'back', depth). Contacts excepted: each pad on its own limb, the handles in the hands, the footrests under the feet.
+  /** Each moving item as a screen polyline: poly outlines; pecDeck's chestPress levers as their pivot→handle segment. */
+  const moving = (spec: any, pose: string) => { const cam = r2Cam(spec);
+    return itemsIn(spec, pose, { mistake: pose === 'mistake' }).items.filter((x: any) => x.part && x.type !== 'cable').map((x: any) => ({ x,
+      pts: x.type === 'poly' ? x.pts.map((q: number[]) => cam.P(q)) : x.type === 'chestPress' ? [cam.P(x.pivot), cam.P(x.handle)] : [] })).filter((m: any) => m.pts.length); };
+  /** [label, px] per pose: the levers and pads against the head (all rows), the trunk (arm rows) and the other leg (hip rows). */
+  const rows = (id: string) => { const s = R2S[id], out: [string, number][] = [];
+    for (const p of posesOf(s)) { const sh = r2Shapes(s, p);
+      for (const { x, pts } of moving(s, p)) {
+        const side = Math.sign(pts.reduce((a: number, q: number[]) => a + q[0]!, 0) / pts.length - r2Cam(s).P([0, 0, 0])[0]!) > 0 ? 'l' : 'r', other = side === 'l' ? 'r' : 'l';
+        out.push([`${p} ${x.type} head`, r2Clear(pts, sh, /^head$/)]);
+        if (id.startsWith('hip_')) out.push([`${p} ${x.type} other leg`, r2Clear(pts, sh, new RegExp(`^(thigh|kneecap|shank|foot)\\.${other}$`))]);
+        if (id === 'machine_lateral_raise' && x.type === 'poly') out.push([`${p} ${x.type} torso`, r2Clear(pts, sh, /^torso$/)]);
+      } }
+    return out; };
+  it('every lever, pad, arm and handle clears the head (and the trunk or the other leg) by 2 px in every pose', () => {
+    for (const id of ['hip_abduction', 'hip_adduction', 'machine_lateral_raise', 'rear_delt_fly']) { const r = rows(id); expect(r.length, id).toBeGreaterThan(0); for (const [k, d] of r) expect(d, `${id} ${k}`).toBeGreaterThanOrEqual(2); }
+  });
+  it('mutation (the clearance value at 0): hip_adduction\'s end pads crossed onto the other knee are red', () => {
+    const s = R2S.hip_adduction, cam = r2Cam(s), sh = r2Shapes(s, 'end'), lm = lmOf(s, 'end'), k = cam.P(lm['knee.l']);
+    expect(r2Clear([[k[0]! - 2, k[1]!], [k[0]! + 2, k[1]!]], sh, /^(thigh|kneecap|shank|foot)\.l$/)).toBeLessThan(2);
+  });
+});
+
+describe('LIB-16R2 A6: rear_delt_fly\'s Mistake zoom (D-LIBZOOM-EXTEND; PLAN RULED k 1.5), runQa node half', { timeout: T }, () => {
+  const ID = 'lib_rear_delt_fly';
+  let build: any, cand: any, golden: any, mirror: any, E: any, all: any, html: string;
+  beforeAll(async () => {
+    [build, cand, golden] = await Promise.all(['lb6/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb6All();
+    html = (await lb6PageInChild({ ids: [ID] })).html[0]!;
+    return () => qaEng.dropMirror(mirror);
+  }, T);
+  const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
+  const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
+  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  const withZoom = async (z: any) => {
+    const dir = mkdtempSync(join(tmpdir(), 'lb6r2-zoom-')), file = join(dir, 'rear_delt_fly.mjs');
+    writeFileSync(file, `import s from ${JSON.stringify(lib('specs/rear_delt_fly.mjs'))};\nconst z = ${JSON.stringify(z)};\nconst { zoom, ...rest } = s;\nexport default z ? { ...rest, zoom: z } : rest;\n`);
+    try {
+      const spec = (await import(/* @vite-ignore */ `file://${file}`)).default;
+      const cid = (await import(/* @vite-ignore */ lib('plates-page.mjs'))).cardIdOf(all.find((r: any) => r.id === ID));
+      const { html: h } = await (await import(/* @vite-ignore */ lib('build-page.mjs'))).buildPlatesPage({
+        groups: [{ id: 'lb6', title: 'LB6', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: file } });
+      return { ...(await candOf(h.toString('utf8'))), spec };
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  };
+  it('clean: the Mistake zoom at k 1.5 (the ladder\'s lowest rung) meets the deviation bar (12.07 px; 8.0 px at plate scale), no node-half problem, no text or angle in it', async () => {
+    const c = await candOf(), r = await qa(c), z = r.metrics.zoom.mistake, env = pins().envelope;
+    expect(node(r)).toEqual([]);
+    expect(z.k).toBe(1.5);
+    expect(r.metrics.deviation).toBeLessThan(env.deviationMin);
+    expect(z.deviation).toBeGreaterThanOrEqual(env.deviationMin);
+    expect(+z.deviation.toFixed(2)).toBe(12.07);
+    expect(c.plate.zoom.mistake).not.toMatch(/<(text|foreignObject|tspan)\b/);
+  });
+  it('mutation: the zoom removed is red on H3.deviation', async () => {
+    expect(node(await qa(await withZoom(null)))).toContain('H3.deviation');
+  });
+  it('mutation: a rung below the ladder (k 1.25) is refused', async () => {
+    await expect(withZoom({ view: 'mistake', k: 1.25 })).rejects.toThrow(/outside 1\.5-4/);
+  });
+});
+
+describe('LIB-16R2: the approved R2 plates stay byte-identical (panel mx12, APPROVED at 6c8a5c24, page 13de1bad…9b1ca1)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the two approved plates; their specs and eq/smith.mjs are unchanged since 6c8a5c24.
+  const APPROVED: Record<string, Record<string, string>> = {
+    'smith-machine-shoulder-press': { normalSvg: '0e4f99e7809238dec0a0cd9cc10579aacda872d45fb2e8597469371e58f1eac0', normalOverlay: '7f76e341ec57e9aad8e57120f05276e0202e4c933ca279a54b27189a6d8741c7',
+      mistakeSvg: 'c841b2a275c5244917b967f9db6187514ac5b7648c8643adaa9f5edc20730435', mistakeOverlay: 'a7ea18fd0a1e6832b1fdfaeb97985faa348583461bb4d4a5601db645bbe081cd',
+      tells: '03299c424de452e5bad4549d6d76003f4d84a9a9aae0c30a56f457bb1c199191', tempo: '344c372b2c1c30ee75bfad08903bc697f19754a06a04a1559f87937fc1d17837',
+      cues: '10abd4a97c89cc3e8c9d4e0624ebe437239e5a1fd54e3d3698374587eca92f55', alt: '43677de5f3122cf69739b2948707371f4459c2dadea916618c4cf8e08fcac5f4',
+      mistakeAlt: '1ac11991b7ff60732cb7fa36ce29804c11128a3ed758df17c7aadd7edc6e309b' },
+    'smith-machine-incline-press': { normalSvg: '3fa4f9621d11d1596a25ea744d00963199c4acb6790c4b7920bcf45066319dce', normalOverlay: '0027beca4eed5639b77e9de735b1e42411055d4487330f5dba790735409fd570',
+      mistakeSvg: '35efd09cb3fc94d87c68e8482cdeb64c5afcefe36a5d2049f3c046bc7267087d', mistakeOverlay: 'ff795ad1b867a2d91f548c418cca3ec95f25d970841e27952d1e4e28d895a6b2',
+      tells: '2844f4b7376d9ee1793c3cae7fcc979080208b7d2849c417262211be6c5fd856', tempo: '485e1fec13b1f2f0142d48d554feb2cb8a0218a1ca0d8ecf0cd1040ddb45b73f',
+      cues: '1496dbc279412baf3214330f1038a79c504296589c12b6439afe8608e008948f', alt: '0369d7936fff7cc76871697b442c20ebcb059c919b4b96f2937e580f01296b61',
+      mistakeAlt: '5f5d05c8ad7e05e4cf367b0308ee0d3c4aa41895e645fe26299bf16a38280401' },
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb6/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const problems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('their 9 fragments each equal the approved ones', async () => { expect(problems((await fullPage()))).toEqual([]); });
+  it('mutation: one byte in the shoulder press alt is red', async () => {
+    const html = (await fullPage()), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'smith-machine-shoulder-press');
+    expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('smith-machine-shoulder-press alt');
+  });
+});
+
+describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED at 2b128090, page 5d51f182…bbff30d)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of the five plates approved by panel mx14, computed from buildLb6Page() at 2b128090; their
+  // specs and composers are unchanged since then.
+  const APPROVED: Record<string, Record<string, string>> = {
+    'low-to-high-cable-fly': { normalSvg: '57eb29aeb02e58342a999ae4a7a1bdf2acd55c644ac8041855342159d56429b9', normalOverlay: '11ae46b8a9bcee9faac4f0ac0c11db8f9f2bcb1ae13280cdf00ca5c0b941cb6a',
+      mistakeSvg: '4d5243c528601e5a445356e7ca6fa5c49b2d4275f3cf806645f4b7221fc1b631', mistakeOverlay: '82ce4b5b905fdbd1b2bbfa1057946658c81beee880bcda835361a60dd8994f4e',
+      tells: '974fd5d7ae64e02e87f859bccdabbb824add81f8cc501ed38abe50e0a29b6b25', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
+      cues: 'e57bcb073136e623bc0c4c7fe2a2c2743dd31dabd42ec1e7451ec62f46699c01', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
+      mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
+    'high-to-low-cable-fly': { normalSvg: '9b35cfa8ac033cf03223f5aa482b2c4efa341f8e6c4dfac4b00c781ecdfd487b', normalOverlay: '1f0d451386e2e12cc6b8e8c4fd6db326ccc0b6dc981d383312e41bbcce5ef6e1',
+      mistakeSvg: '9eb229e0544fb487f59e4910d293c6da9c05ba0d1cf6242be3104ab7d975e402', mistakeOverlay: 'e954e9ff44fd970595ba91dcbb8f18038510a7bbcc73aee5d3fee8ce056b2e85',
+      tells: '60d21de24772caa0dc87995218a1b8517e433b1e7927fc0b358aa4c869e34eb5', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
+      cues: 'acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2', alt: '8776483a58ccce47ccf95121cf10720cb66e845ee4937aeb58497a071cfc8f30',
+      mistakeAlt: 'ea2b604a94dd9d4bc75eb13615124126151b487f2dc7d4d674576c173dd7bdfe' },
+    'smith-machine-squat': { normalSvg: 'e28a7ef099a60aca269a5239828dd4d3e6ceca3ca638250fcbb5f605969b6530', normalOverlay: 'c50a52e7cf6c3d6bcd744619888c859b920b707b1ed59d9c10bf68b4e16ae881',
+      mistakeSvg: 'fa64b6806adc834a53ff43e128ea52cfa694389ddd82ec27d99a1e17694273a0', mistakeOverlay: 'c3206135bcbe197bc7e0e143f609acd2cbed988619a9b99d89e4ac4ba072f585',
+      tells: '73ff3249de7184e3fb37bb728c933043d1f686c3b413e71c4cd8fbaaca73a9dc', tempo: 'f886198ba7e406367703d407e46cd3f5178dc9b2b21e53921aaeb03899df9faf',
+      cues: 'fe51224cbe5e669a6cf6562164cacff337ed44eaa011307f5edfdd426c5c4244', alt: '727ac3352572b1cdb5596b3420ef9effb4e7b77bf2d25ada54e49e4a675fd5c8',
+      mistakeAlt: '73dd0a9bd8699833121d3a342e1343db9270ef4331a5d92ef81df0a500fad4b8' },
+    'machine-lateral-raise': { normalSvg: '740a132c3606d27e2ee332dbe3ea92d4248d3e09efa2395b5716ab13b3b8b604', normalOverlay: '3bc5f556d7b8e27bca45e7b69ac33c2731256195438076cfeb929ea6485aa784',
+      mistakeSvg: '4c1de8ec1371858e94f294757084de37ae124d9343cd08a57521c84e0d2fc846', mistakeOverlay: 'fd411a91ade4f941e202d4e3ccc96940b5ee4a9d833a0cf7dca1954456832a89',
+      tells: '687f416bd5dcdd39848f1dc1f9235c29f119151695de3723096f95497b30b92e', tempo: '0c3cfc803ccdd653f9beff83d552c129a8c4ce03a4f119808d72520aff159fbc',
+      cues: '6220387ee2b29600bbd9b45e643e5193056ddda986ddc15b6d018bddbff05d07', alt: '74f3769e116308b416bf6d9b55d70d3579b21d3abcac3bf70ca79a82483fdd34',
+      mistakeAlt: 'dadbe7b7bf2003b5b4312403ff066b86b940daa384e6d372ee6fd5548c38c2f7' },
+    'rear-delt-fly': { normalSvg: '386cba4a876bbdf5d69c930c8207d8e5d6350c64ebd7fb9ac2c0645bfff054c8', normalOverlay: '1b8f37bc2cabd0a02acffe75dfd7ef6a15423878044d49cf576854d6e7dd0b64',
+      mistakeSvg: '51a69e4ca2a27c0eea6ac484e6efed62709c6396009c2c7e5b2f78f5b266acca', mistakeOverlay: '66398edde3c915b54979bc6f9db8c88847674a3e38f767db5934d42fa55919ba',
+      tells: '9a2df2d60b2c5ee135a32b5694de1574f7cd55188fa9d77e146044b06c7569e4', tempo: '4fea38d8fe037c637a77ae44b4191a339e8fd1215cc41789124a37fcb95730ad',
+      cues: 'cffb083b22876cc09fff21e99a198a14e75ccdf1334e12a0a70e7eea4f4ae435', alt: 'f54a914422b3e1be44f3991a289859a7b089c5c3b520f2407df73ec1d71c8d1b',
+      mistakeAlt: '8025a402e572b5643fe4d0a851f73e5ac4d7de82c2544a4d4310038d05c31c01' },
+  };
+  let golden: any, build: any;
+  beforeAll(async () => { [golden, build] = await Promise.all(['../golden.mjs', 'lb6/build.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const problems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('their 9 fragments each equal the approved ones', async () => { expect(problems((await fullPage()))).toEqual([]); });
+  it('mutation: one byte in the rear delt fly alt is red', async () => {
+    const html = (await fullPage()), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'rear-delt-fly');
+    expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('rear-delt-fly alt');
+  });
+});
+
+describe('LIB-16R2: hip_abduction panel mx16 R2, the pivot axle at knee height on each pad arm (D-LIB16R2-PIVOT)', { timeout: T }, () => {
+  let S: any;
+  beforeAll(async () => { S = (await import(/* @vite-ignore */ lib('specs/hip_abduction.mjs'))).default; }, T);
+  /** The axles a spec draws in one pose: closed `leg` polys whose points all sit 3 cm (±1 mm) from their centroid. */
+  const axles = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((x: any) => x?.type === 'poly' && x.part === 'leg').filter((x: any) => {
+    const c = [0, 1].map(i => x.pts.slice(0, -1).reduce((a: number, p: number[]) => a + p[i]!, 0) / (x.pts.length - 1));
+    return x.pts.every((p: number[]) => Math.abs(Math.hypot(p[0]! - c[0]!, p[1]! - c[1]!) - 0.03) <= 0.001); })
+    .map((x: any) => [0, 1].map(i => x.pts.slice(0, -1).reduce((a: number, p: number[]) => a + p[i]!, 0) / (x.pts.length - 1)));
+  /** Problems: each knee in start and end has one axle at its height (±1 cm), on its outer side, inside its pad. */
+  const problems = (spec: any) => ['start', 'end'].flatMap(pose => {
+    const lm = lmOf(spec, pose), A = axles(spec, pose), pads = itemsIn(spec, pose).items.filter((x: any) => x?.type === 'poly' && x.part === 'leg' && x.z === 'front' && x.pts.length === 5);
+    if (A.length !== 2) return [`${pose}: ${A.length} axles`];
+    return ['l', 'r'].flatMap(s => { const k = lm[`knee.${s}`], sg = s === 'l' ? 1 : -1, a = A.find((c: number[]) => sg * c[0]! > 0);
+      if (!a) return [`${pose} ${s}: no axle`];
+      const inPad = pads.some((p: any) => { const xs = p.pts.map((q: number[]) => q[0]), ys = p.pts.map((q: number[]) => q[1]);
+        return a[0]! > Math.min(...xs) && a[0]! < Math.max(...xs) && a[1]! > Math.min(...ys) && a[1]! < Math.max(...ys); });
+      const out = sg * (a[0]! - k[0]);
+      return [...(Math.abs(a[1]! - k[1]) > 0.01 ? [`${pose} ${s}: axle ${((a[1]! - k[1]) * 100).toFixed(1)} cm off knee height`] : []),
+        ...(out <= 0 ? [`${pose} ${s}: axle ${(out * 100).toFixed(1)} cm inside the knee`] : []), ...(inPad ? [] : [`${pose} ${s}: axle not on its pad`])]; });
+  });
+  it('start and end: one axle per knee, at its height, on its pad arm; the Mistake (arms dropped, mx14 R5) draws none', () => {
+    expect(problems(S)).toEqual([]);
+    expect(axles(S, 'mistake')).toEqual([]);
+  });
+  it('the leader stays on the end knee beside the axle; the poses are unchanged (mx16: no pose change)', () => {
+    expect(S.callouts.find((c: any) => c.key === 'pivot').anchor).toEqual({ at: 'knee.l', pose: 'end' });
+    expect([S.poses.start.hip, S.poses.end.hip, S.mistake.pose.hip]).toEqual([{ flex: 90, abd: -4 }, { flex: 90, abd: 30 }, { flex: 90, abd: 10 }]);
+  });
+  it('mutation: the axles removed, or raised 3 cm, are red', () => {
+    const n = S.equipment.length, none = { ...S, equipment: S.equipment.slice(0, n - 2) };
+    expect(problems(none).length).toBeGreaterThan(0);
+    const up = { ...S, equipment: [...S.equipment.slice(0, n - 2), ...S.equipment.slice(n - 2).map((f: any) => (lm: any, ctx: any) => {
+      const it = f(lm, ctx); return it && { ...it, pts: it.pts.map((p: number[]) => [p[0], p[1]! + 0.03, p[2]]) }; })] };
+    expect(problems(up).join()).toMatch(/off knee height/);
+  });
+});
+
+describe('LIB-16R2: no whole-page build in the worker (D-LIB13S-RPC, #354 6552077335)', () => {
+  const src = readFileSync(new URL(import.meta.url), 'utf8');
+  /** A page build outside lb6PageInChild's child script: any mention of the builder, called or aliased (`const f =
+   *  build.buildLb6Page`, `{ buildLb6Page }`, `build['buildLb6Page']`), once the child script's `const script = \`...\`;`
+   *  text and the comments that start a line are cut (a `//` inside a string is kept: review 6552589455 Low). */
+  const inWorker = (text: string) => /\bbuildLb6Page\b/.test(text.replace(/const script = `[\s\S]*?`;/g, '').replace(/^[ \t]*\/\/[^\n]*$/gm, '').replace(/^[ \t]*\/\*[\s\S]*?\*\/[ \t]*$/gm, ''));
+  it('every LB6 page build runs in lb6PageInChild, an awaited child process', () => {
+    expect(inWorker(src)).toBe(false);
+    expect(src).toMatch(/promisify\(execFile\)\(process\.execPath/);
+  });
+  it('mutations: a page build in the worker, an aliased one, and one after a `//` inside a string are red', () => {
+    const B = `${'buildLb6'}Page`;
+    expect(inWorker(`${src}\n  const page = await build.${B}();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const make = build.${B};\n  const page = await make();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const u = 'https://x'; const page = await build.${B}();\n`)).toBe(true);
+  });
+});
+
+describe('LIB-16R2: the panel mx16 and mx19 approved hip plates stay byte-identical (review 6552589455 High)', { timeout: T }, () => {
+  // golden.mjs fragmentsOf, from the review at 148f07b3: hip_adduction as approved in mx16 (= a74d3a4e), hip_abduction as
+  // approved in mx19 (page 8c7ede8a…58db).
+  const APPROVED: Record<string, Record<string, string>> = {
+    'hip-adduction': { normalSvg: '12a2d67f77498bd90a54eeeb82654d2fc8ae59a4cbb960a7648142a9f549c87d', normalOverlay: '103295f938840ec51f23b1a386c8363d5a64ae98271fdf60e2d7b6fe089c11a0',
+      mistakeSvg: '62ae7f87cce829579e31bfaf626ae3e3d915657ff02f11b248b38ed7d2468427', mistakeOverlay: 'c65c225c816d1bf89d4f030e2ab489013303525a66bd55942e41cbcbc95479ca',
+      tells: '64869cb44b3ed2dde50f016ea3db8404e2bb874fac972a2bb3d69eb99fceb041', tempo: '665a3ff414a1fa3f65b61bf61335a48fd0521c6138dedb6bae6443b8a337b4f5',
+      cues: '9bc0e1682b6e8a93e7af1bcc613b7c5c04ae883ec018bedc7bf1a28bc9583ef4', alt: 'ee8a34195f09dcdc21522ae77d6e5993cda07b57c0837c0c1d34ce843b6474cd',
+      mistakeAlt: 'd26472e1b06bd8f608c8c2dcf992516ce401fdd3389685441f921f7f957ad72a' },
+    'hip-abduction': { normalSvg: '3a14c19c98a79ba4cfbe8173a50700b093e16a38409d2f2046a6ebb497b000a2', normalOverlay: '57b44a8a6f10bbe911fb9e7e21cfc9e83394e327ce13300cefdca1581b09e262',
+      mistakeSvg: '6f5b9473542218d115ba944f2b33f872f11183e2bfced22851268f7ba09cfc57', mistakeOverlay: 'a87f6a3de3522acfa81b52b9670a770306cc4e41071226da535c0bb75ed3f938',
+      tells: '7430555c07486391c76336cb32ff90940efe73df27b8246f711b3e3de7aa395d', tempo: '709363cd3bc37f41c56cd63e2a2fedebaf97bcf1af79d2058c7180c7bfd97295',
+      cues: '26f840ac8d231f7ba29a63d921a4bc04d0c8c8701a4a6848f0c8fabf36877d64', alt: '0d1fe127907abdc4d45e715c63ce6c6268434eac8a57f8e2e1cd56e794b4d255',
+      mistakeAlt: '8afce1a999fb7c4334f4d1c88c63afbe3f8d87fd6a76047c7d2125aa4b566ba1' },
+  };
+  let golden: any;
+  beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
+  const problems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('their 9 fragments each equal the approved ones', async () => { expect(problems(await fullPage())).toEqual([]); });
+  it('mutations: one byte in the hip adduction alt, and one in the hip abduction alt, are red', async () => {
+    const html = await fullPage();
+    for (const c of ['hip-adduction', 'hip-abduction']) {
+      const p = golden.extractPlates(html).find((x: any) => x.chromeId === c);
+      expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain(`${c} alt`);
+    }
   });
 });

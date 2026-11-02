@@ -44,8 +44,16 @@ export const tableOf = reports => [
 
 /** The ruled expected flags (DESIGN.md section 6; LB6 NOTE RULED, #297 6343632260): F5 on every id at exactly the
  *  approved chrome's 3.57:1 (D-LIB9-F5), F2 on machine_crunch (Q10) and on cable_chest_press
- *  (D-LIB16-F2CCP, #327 6405365741), named flags; no F7 (all 3 cards drawable true). */
-export const EXPECTED = id => ['F5', ...(['lib_machine_crunch', 'lib_cable_chest_press'].includes(id) ? ['F2'] : [])].sort();
+ *  (D-LIB16-F2CCP, #327 6405365741), named flags; no F7 on those 3 (cards drawable true); R2_EXPECTED below. */
+export const EXPECTED = id => ['F5', ...(['lib_machine_crunch', 'lib_cable_chest_press'].includes(id) ? ['F2'] : []), ...(R2_EXPECTED[id] ?? [])].sort();
+/** LIB-16R2 (PLAN RULED, #354 6543628951): F7 on the drawable-false rows (D-LIB16R2-F7), F2 named on both cable flies
+ *  (0.6) and the squat (0.177); F3 named on high_to_low_cable_fly (90.3; low_to_high's 46.3 cleared at the panel fix,
+ *  now 74.3) and on rear_delt_fly (118.5, proposed at PLATES READY 2). */
+export const R2_EXPECTED = {
+  lib_low_to_high_cable_fly: ['F2', 'F7'], lib_high_to_low_cable_fly: ['F2', 'F3', 'F7'], lib_smith_machine_squat: ['F2'],
+  lib_smith_machine_shoulder_press: [], lib_smith_machine_incline_press: [],
+  lib_hip_abduction: ['F7'], lib_hip_adduction: ['F7'], lib_machine_lateral_raise: ['F7'], lib_rear_delt_fly: ['F3', 'F7'],
+};
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, or F5 at any value other than 3.57. */
 export const flagProblems = reports => reports.flatMap(r => {
@@ -61,6 +69,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   console.log(`LB6 plates page sha256 ${sha}`);
   for (const line of tableOf(reports)) console.log(line);
   const bad = flagProblems(reports);
-  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the ruled set (F5 3.57 on all; F2 machine_crunch and cable_chest_press)');
+  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the ruled set (F5 3.57 on all; F2 machine_crunch and cable_chest_press; R2_EXPECTED)');
   if (bad.length || reports.some(r => HARD.some(h => !r.hard[h].pass))) process.exit(1);
 }

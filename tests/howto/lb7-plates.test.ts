@@ -10,6 +10,7 @@ import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 import { otherCards } from './eq-composers';
 
 // Most tests here render plates synchronously, and vitest runs back-to-back synchronous tests without returning to the
@@ -1067,7 +1068,7 @@ describe('LIB-17 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', 
     return out;
   };
   const drawnPolys = (spec: any, pose: string) => { const cam = camOf(spec), out: number[][][] = []; for (const it of itemsIn(spec, pose).items) for (const p of eng.PRIMITIVES[it.type](it, cam)) if (p.poly) out.push(p.poly); return out; };
-  it('A15: every callout and tell anchor sits on an item drawn in its pose (within 3 px)', async () => {
+  child.it('A15: every callout and tell anchor sits on an item drawn in its pose (within 3 px)', async () => {
     const out: string[] = [];
     for (const id of specsDrawn()) { out.push(...anchorProblems(S[id])); await new Promise<void>(r => setImmediate(r)); }   // one spec per macrotask (the RPC note above)
     expect(out).toEqual([]);
@@ -1301,7 +1302,7 @@ describe('LIB-17 A16: no other card\'s composer is copied, forked or imported (D
 });
 
 describe('LIB-17 A10: the LB7 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
-  it('two builds of the LB7 rows are byte-identical', async () => {
+  child.it('two builds of the LB7 rows are byte-identical', async () => {
     const build = await import(/* @vite-ignore */ lib('lb7/build.mjs'));
     expect(build.drawnIds()).toEqual(drawn().map(i => `lib_${i}`));
     const a = await build.buildLb7Page(), b = await build.buildLb7Page();
@@ -1900,7 +1901,7 @@ describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md secti
       return { ...(await cand.candidateOf(`lib_${id}`, { all, platesHtml: h.toString('utf8'), engine: E, authoring: true })), spec };
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
-  it('each zoomed spec asks for its ruled zoom, and its plate fails PQ-H3 on that view at plate scale (why the zoom exists)', async () => {
+  child.it('each zoomed spec asks for its ruled zoom, and its plate fails PQ-H3 on that view at plate scale (why the zoom exists)', async () => {
     for (const [id, z] of Object.entries(ZOOMED)) {
       expect({ view: S[id].zoom.view, k: S[id].zoom.k }, id).toEqual(z);
       expect(Object.keys(S[id].zoom).sort(), id).toEqual(id === 'renegade_row' ? ['k', 'pair', 'view'] : ['k', 'view']);
@@ -1909,7 +1910,7 @@ describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md secti
       else expect(r.metrics.traceLen, id).toBeLessThan(env.traceLenMin);
     }
   });
-  it('the node half has no problem on either zoomed plate; the bar is met inside the circle at k, never lowered', async () => {
+  child.it('the node half has no problem on either zoomed plate; the bar is met inside the circle at k, never lowered', async () => {
     const env = pins().envelope;
     for (const [id, z] of Object.entries(ZOOMED)) {
       const r = await qa(C[id]), m = r.metrics.zoom[z.view];
@@ -1922,7 +1923,7 @@ describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md secti
       expect(C[id].plate.zoom[z.view === 'mistake' ? 'normal' : 'mistake'], id).toBeNull();
     }
   });
-  it('mutations: each zoom removed is red on the plate-scale bar; resistance_band_pull_apart at k 1.5 and bench_dip\'s trace on the still heel are red at the zoom', async () => {
+  child.it('mutations: each zoom removed is red on the plate-scale bar; resistance_band_pull_apart at k 1.5 and bench_dip\'s trace on the still heel are red at the zoom', async () => {
     expect(keys(await qa(await mutated('resistance_band_pull_apart', 's => ({ ...s, zoom: undefined })')))).toEqual(['H3.deviation']);
     expect(keys(await qa(await mutated('bench_dip', 's => ({ ...s, zoom: undefined })')))).toEqual(['H3.trace']);
     expect(keys(await qa(await mutated('resistance_band_pull_apart', "s => ({ ...s, zoom: { view: 'mistake', k: 1.5 } })")))).toContain('H3.zoom:deviation');
@@ -1942,7 +1943,7 @@ describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md secti
     expect(f.d * rr.zoom.k).toBeGreaterThanOrEqual(pins().envelope.deviationMin);
     expect(zoom.faultOf({ ...rr, zoom: { view: 'mistake', k: 3 } }, cam, L).d).toBe(0);
   });
-  it('renegade_row mutations: the pair removed is red at the zoom; k 2 (11.28 px) is red; the zoom removed is red at plate scale', async () => {
+  child.it('renegade_row mutations: the pair removed is red at the zoom; k 2 (11.28 px) is red; the zoom removed is red at plate scale', async () => {
     expect(keys(await qa(await mutated('renegade_row', "s => ({ ...s, zoom: { view: 'mistake', k: 3 } })")))).toContain('H3.zoom:deviation');
     expect(keys(await qa(await mutated('renegade_row', "s => ({ ...s, zoom: { ...s.zoom, k: 2 } })")))).toContain('H3.zoom:deviation');
     expect(keys(await qa(await mutated('renegade_row', 's => ({ ...s, zoom: undefined })')))).toEqual(['H3.deviation']);
@@ -2051,10 +2052,10 @@ describe('LIB-17 resume 3 A2: the 8 approved LB7 plates stay byte-identical (pag
     expect(Object.keys(APPROVED).length).toBe(8);
     expect(Object.values(APPROVED).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(72);
   });
-  it("the 8 approved plates' fragments on this head equal main's", async () => {
+  child.it("the 8 approved plates' fragments on this head equal main's", async () => {
     expect(fragProblems((await build.buildLb7Page()).html.toString('utf8'))).toEqual([]);
   });
-  it("mutation: one byte changed in bench_dip's alt is red", async () => {
+  child.it("mutation: one byte changed in bench_dip's alt is red", async () => {
     const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'bench-dip');
     expect(fragProblems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['bench-dip alt']);
   });  // PANEL mx13 (#356 6547087962): incline_push_up APPROVED at 29a48852; its 9 fragments pinned from that head's page
@@ -2085,14 +2086,14 @@ describe('LIB-17 resume 3 A2: the 8 approved LB7 plates stay byte-identical (pag
     "alt": "424c364c21d8e1a1b3539865a581fd60b2f8a65bf971b56e1feb110b779aa2f5",
     "mistakeAlt": "8b67c2897c2f9a4f3ad369bc5a5a35fee90215d89eba6d64064e4658e23b4f4e"
   };
-  it('diamond_push_up (approved, mx15) keeps its 9 fragment shas; mutation: one byte in its alt is red', async () => {
+  child.it('diamond_push_up (approved, mx15) keeps its 9 fragment shas; mutation: one byte in its alt is red', async () => {
     const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'diamond-push-up');
     const probs = (h: string) => { const q = golden.extractPlates(h).find((x: any) => x.chromeId === 'diamond-push-up'), got = q ? golden.fragmentsOf(q) : {}; return Object.keys(DIAMOND).filter(k => got[k] !== DIAMOND[k]); };
     expect(Object.keys(DIAMOND).length).toBe(9);
     expect(probs(html)).toEqual([]);
     expect(probs(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toEqual(['alt']);
   });
-  it('incline_push_up (approved, mx13) keeps its 9 fragment shas; mutation: one byte in its Mistake alt is red', async () => {
+  child.it('incline_push_up (approved, mx13) keeps its 9 fragment shas; mutation: one byte in its Mistake alt is red', async () => {
     const html = (await build.buildLb7Page()).html.toString('utf8'), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'incline-push-up');
     expect(Object.keys(INCLINE).length).toBe(9);
     expect(incProblems(html)).toEqual([]);

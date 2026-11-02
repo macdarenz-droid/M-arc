@@ -119,6 +119,9 @@ The hands on the handles are card contacts.
   These agree with the card's to within 0.08 cm; the card's script is not in the repo.
 - Left as they were: the dumbbell_fly.mjs comments at :93, :116 and :138, and the reverse_lunge.mjs SIZES comment at
   :90. They still say "pilot-a2/sizes.json", but they sit outside the card's write_scope lines.
+- dumbbell_fly.mjs:122-136: the new helpers `startDb`, `merge`, `lmMis` and `MISTAKE_HANDS` sit outside the card's
+  listed lines (:77-79, :133, :163). They only define the start phantom and the Mistake guides that those lines use
+  (:149, :179). A7 pins the guides to the engine's own Mistake hand polys within 1e-6 px (review Low 1, #362 6550343299).
 - lib8r-pilot-a2.test.ts: these lines changed outside the map, because the map's own moves force them:
   - :45, the HELD_HERE use, which goes with :15;
   - the titles of the tempo and tell mutation tests, which named the moved ids;

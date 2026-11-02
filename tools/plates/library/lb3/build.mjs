@@ -84,13 +84,29 @@ export const SHEET = {
   lib_back_extension: { tier: 'A', class: 'Roman chair, 45° (romanChair, single use); support class', anchor: 'romanian_deadlift',
     critic: 'approved, recheck @ 423acc1 (D-LIB13-PANEL1); bytes unchanged at 8781ed0 and a6f4bd0',
     notes: ['Support anchor: one_arm_dumbbell_row, shown above (D-LIB13-SUPPORT). Redrawn if that anchor is rejected'] },
+  // LIB-13s wave 1 (lib-13s-card; DESIGN.md section 16)
+  lib_t_bar_row: { tier: 'A', class: 'landmine rig, second user (H; D-LIB13S-MODES)', anchor: 'barbell_row',
+    critic: 'approved, panel mx19 @ fe9219bf (#359 6549892683), after the mx16 fix round',
+    notes: ['Plate size: drawing convention (228 mm), the 10 lb plate (D-LIB13-TBAR)', 'Zoom: normal view, k 1.5, on the handle path (D-LIB13S-ZOOM)',
+      'Wrist drawn straight: the card\'s 35° extension of a neutral grip bends out of the side plane (mx16 R3)',
+      'Feet 38 cm apart, toes out 17°: the widest stance the engine plants within 0.5 cm; the side view does not show width (D-LIB13S-TBARFEET)'] },
+  lib_barbell_shrug: { tier: 'A', class: 'shrug, standing (H; SHRUG not built, D-LIB13S-MODES)', anchor: 'upright_row',
+    critic: 'approved, panel mx16 @ 01b66192 (#359 6548509170): every median 4 or more',
+    notes: ['Zoom: normal view, k 3.5, on the 5 cm shrug (D-LIB13S-ZOOM)', 'Bar 15 mm in front of the body: the 2 px clearance (D-LIB13S-CLEAR)',
+      'Mistake drawn as bent arms (c4): rolling (c3) cannot be drawn (D-LIB13S-TOPFAULT)'] },
+  // LIB-13s wave 2 (DESIGN.md section 16.11): barbell_shrug's approved bytes, cloned
+  lib_cable_shrug: { tier: 'B', class: 'shrug, low cable (H; SHRUG not built)', anchor: 'barbell_shrug',
+    critic: 'approved, panel mx19 @ fe9219bf (#359 6549892683)',
+    notes: ['Zoom: normal view, k 3.5, on the 5 cm shrug (D-LIB13S-ZOOM)', 'Labels boxed on the left (the column fills the right); no elbow measure'] },
+  lib_dumbbell_shrug: { tier: 'B', class: 'shrug, dumbbells, front view (H)', anchor: 'barbell_shrug',
+    critic: 'approved, panel mx20 @ 86c0202f, after the mx19 fix round',
+    notes: ['Zoom: normal view, k 3.5, beside the viewer\'s-right shoulder (D-LIB13S-ZOOM; mx19)', 'Grips 26 cm out: the narrowest that keeps the hexes 2 px off the thighs (D-LIB13S-CLEAR)'] },
+  lib_smith_machine_shrug: { tier: 'B', class: 'shrug, Smith machine (H; an LB6 id drawn with its parent)', anchor: 'barbell_shrug',
+    critic: 'approved, panel mx20 @ 86c0202f, after the mx19 fix round (no Mistake zoom, #359 option 1)',
+    notes: ['Zoom: normal view, k 3.5, on the 5 cm shrug (D-LIB13S-ZOOM)', 'Head forward drawn as a tipped head (20°): the engine neck only flexes',
+      'Rails, hooks, stops, frame and plates stand beside the body in depth (D-LIB13S-CLEAR)'] },
 };
-export const SHEET_HELD = [
-  ['t_bar_row', 'the bar end moves too little to read side-on at plate scale; waits for the LIB-ZOOM convention (D-LIB13-TBAR; F-LB3-6)'],
-  ['dumbbell_shrug', 'the shrug zoom (D-LIB8-shrug; LIB-13s)'],
-  ['cable_shrug', 'the shrug zoom (D-LIB8-shrug; LIB-13s)'],
-  ['barbell_shrug', 'held on pilot A; moves with the shrugs (D-LIB13-PA; LIB-13s)'],
-];
+export const SHEET_HELD = [];
 /** Each open choice with its recommended option (owner delegation of 10-24: the supervisor decides). */
 export const SHEET_DECISIONS = [
   { name: 'One-arm row F7', state: 'one_arm_dumbbell_row draws the short range, not its top fault (momentum, seen only as speed; c10). Options: (i) approve F7 as a named drawable-fault exemption; (ii) hold the plate. Recommended: (i), as the curl\'s F7 named yes (D-LIB8M-TF1 4); the drawn fault is the next one on the card\'s own list. Supervisor decides.' },
@@ -101,8 +117,12 @@ export const SHEET_DECISIONS = [
   { name: 'Support anchor', state: 'one_arm_dumbbell_row anchors the bench-support class; back_extension is its other LB3 user (D-LIB13-SUPPORT). Options: (i) approve the anchor; (ii) reject it, and back_extension is redrawn. Recommended: (i): every item passed at a6f4bd0. Supervisor decides.' },
   { name: 'Landmine anchor', state: 'landmine_row anchors the new landmine rig; its later user t_bar_row is held (D-LIB13-LANDMINE). Options: (i) approve the anchor; (ii) reject it. Recommended: (i): approved in the panel at 59d3d78, bytes unchanged since. Supervisor decides.' },
 ];
+// LIB-13s's ids: their named flags cite D-LIB13S-FLAGS; pendlay_row's F2 keeps its own ruling.
+const LIB13S = ['lib_barbell_shrug', 'lib_dumbbell_shrug', 'lib_smith_machine_shrug', 'lib_cable_shrug', 'lib_t_bar_row'];
 const QA_LINE = {
-  F2: f => `Figure cover ${+f.value.toFixed(3)}, approved ${f.range.map(v => +v.toFixed(3)).join('-')}. Named flag (#274 6267110489)`,
+  F2: (f, id) => `Figure cover ${+f.value.toFixed(3)}, approved ${f.range.map(v => +v.toFixed(3)).join('-')}. Named flag (${LIB13S.includes(id) ? 'D-LIB13S-FLAGS' : '#274 6267110489'})`,
+  F3: f => `Longest leader ${+f.value.toFixed(2)} px, approved ${f.range.map(v => +v.toFixed(2)).join('-')}. Named flag (D-LIB13S-FLAGS)`,
+  F4: f => `Hand-placed label boxes ${f.value}, approved ${f.range.join('-')}: every label is placed by the engine. Named flag (D-LIB13S-FLAGS)`,
   F5: f => `Tell contrast ${f.value}, minimum ${f.min} (the selected Mistake tell in Midnight, D-LIB9-F5)`,
   F7: f => `Mistake draws '${f.value}'; the card's top fault is '${f.expect}' (drawable-fault rule; needs a named yes)`,
 };
@@ -161,7 +181,7 @@ export async function buildOwnerSheet({ qaLb3, flagProblems, tableOf }) {
     anchors = await pageShots(browser, ah, anchorIds.map(i => i.slice(4).replace(/_/g, '-')), [['silent-black', 'normal']]);
   } finally { await browser.close(); }
   const rep = Object.fromEntries(qa.reports.map(r => [r.id, r]));
-  const cfg = await groupsConfig({ groups: ['A', 'C'].map(t => ({ id: `tier-${t.toLowerCase()}`, title: `Tier ${t}`, ids: ids.filter(id => SHEET[id].tier === t) })) }, all, LB3_ROWS);
+  const cfg = await groupsConfig({ groups: ['A', 'B', 'C'].map(t => ({ id: `tier-${t.toLowerCase()}`, title: `Tier ${t}`, ids: ids.filter(id => SHEET[id].tier === t) })) }, all, LB3_ROWS);
   cfg.heading = { ...cfg.heading, title: 'M/ARC Library Plates · LB3 sheet', kicker: 'M/ARC · How to do it · Library LB3', h1: `LB3 · ${ids.length} plates`,
     intro: `Each row: the plate as it will ship (live), its Mistake, a Paper thumbnail and Mistake, the pilot A anchor and every flag. Plates page sha256 <span class="pg-sha">${pageSha}</span> (${plates.length.toLocaleString('en')} B); the cards on this sheet are byte-identical to that page.${SHEET_HELD.map(([id, why]) => `</p><p>Held off this sheet: ${id.replace(/_/g, ' ')}. ${esc(why)}.`).join('')}`,
     foot: 'LB3 sheet for review. Drawings are computed by our own code from the verified research cards.' };
@@ -176,7 +196,7 @@ export async function buildOwnerSheet({ qaLb3, flagProblems, tableOf }) {
     const r = rep[id], s = SHEET[id], c = cid(id), sh = shots[c], an = s.anchor.replace(/_/g, ' ');
     const raised = Object.keys(r.flags).filter(k => r.flags[k].raised).sort();
     flags[id] = raised;
-    const lines = [...raised.map(k => ({ k, t: QA_LINE[k](r.flags[k]) })), ...s.notes.map(t => ({ k: 'Note', t }))];
+    const lines = [...raised.map(k => ({ k, t: QA_LINE[k](r.flags[k], id) })), ...s.notes.map(t => ({ k: 'Note', t }))];
     const aside = `<aside class="lb3-aside" aria-label="${esc(id.slice(4).replace(/_/g, ' '))}: review notes">
   <div class="lb3-meta"><span><b>Tier ${s.tier}</b> · ${esc(s.class)}</span><span>Anchor: <b>${esc(an)}</b> (pilot A, pinned)</span><span>Plate QA: <b>all ${HARD.length} hard checks pass</b></span><span>Critic: ${esc(s.critic)}</span></div>
   <ul class="lb3-flags">${lines.map(l => `<li><b>${l.k}</b> ${esc(l.t)}</li>`).join('')}</ul>
