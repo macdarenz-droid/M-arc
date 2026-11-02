@@ -60,7 +60,7 @@ The 8 ids not drawn here and their blocks:
 | box_jump | pilot A plate, held (D-LIB8M-NOSTRIP, lib4-cards :3305-3311); card changed by D-SUP-LB4-PACOPY |
 | reverse_lunge | pilot A plate, held (D-LIB8M-NOSTRIP); pick now the flared ribcage (F-LB4-1), redrawn at re-approval (D-SUP-LB4-REVLUNGE) |
 | bulgarian_split_squat, walking_lunge, forward_lunge, bodyweight_lunge, bodyweight_split_squat | SPLIT template children: the byte proof needs reverse_lunge pinned (D-LIB10-TEMPLATES, lib4-cards :3161-3164) |
-| jump_squat | airborne convention open until the no-seconds strip exists (lib4-cards :3310); anchor box_jump held |
+| jump_squat | drawn at LIB-SMALL (section 16): D-LIB8R-AIR settled the convention; box_jump pinned by PILOT-A2 |
 
 ## 3. Templates
 
@@ -386,3 +386,107 @@ D-LIB14-FAULTKEY. A heel lift that cannot pass PQ-H3 card-true is posted with it
 - **Q3 (facts, section 10):** wall_sit's two angle facts and four contact facts; front_squat's shoulder contact only
   (not the throat); goblet_squat's chest contact; the knee-over-ankle alignment as a drawn-item test, not a fact.
 - **Q4 (fault→key, section 9):** the keys above, pistol_squat's topFault `bounce`.
+
+## 16. Resume 2 (LIB-SMALL: jump_squat; RESUME PLAN, on main `6b32d576`)
+
+Card `docs/supervisor/verify/lib-small-card.md` on `claude/sup-lib4-cards` @ `0cf7244a`; one lane with LB10's
+jumping_jacks and wall_ball (lb10/DESIGN.md section 23). **measured** = run on this branch's base with the draft spec
+(lb4/qa.mjs node and browser); nothing is committed as drawn before 'LIB-SMALL PLAN RULED'. step_up stays held
+(D-LIB14-STEPUP).
+
+**Card.** jump_squat's card and quotes are byte copies from `a48b0594` (blobs `d53968f6`, `02393f76`; equal to the LB4
+research head `3812989f`'s, lb4/DESIGN.md:4-5), then the 3 keys (`plateFacts`, `tempo`, `topFault`) appended last.
+lb4/cards.sha.json gains jump_squat under `recopied` with that head (lb10's form).
+
+**Mode (re-checked, derive.mjs:4-12).** H (D-SMALL-MODES): card parent box_jump, but no PARAMS key removes the box, lands
+on the floor or sets the take-off depth.
+
+**Clone source: box_jump (PILOT-A2, pinned; copied, never imported).** `comZ` and `grounded` (40 fixed-point steps of
+the root z to the centre of mass over mid-foot; no bracket), the extension ghost (heel up EXT_HEEL on the balls, the
+root height by a 50-step bisection to knee EXT_KNEE on [0.8, 1.15]), the rising hip curve and the flight parabola
+(APEX 0.25 m above the higher of the two hips), the straight-knee Mistake (`grounded` at MISTAKE_HIP) and its knee arrow.
+Removed: the box and its checks. Every frame stands on the floor at the same feet (FOOT_X 0.10, mid-foot z 0).
+
+**Pose map:** identity. **Poses (measured).**
+
+| pose | what | knee (deg) | feet |
+|---|---|---|---|
+| start | take-off crouch (j2): hip 0.55 m, thorax 48 deg, arms back 25 deg | 109.5 | heels and balls on the floor (0.0 cm) |
+| ghost (via[6], t 0.5) | full extension (j3): heels 35 deg up, lean 8 deg, arms up 150 deg | 4.0 | balls on the floor (0.0 cm), heels 10.4 cm up |
+| end | landing in place (j4, j8): hip 0.72 m, thorax 32 deg, arms forward 95 deg | 79.3 | flat |
+| Mistake | knees near locked (j5): hip 0.925 m, thorax 12 deg | 8.6 | flat, same feet |
+
+- Take-off depth (risk: the two crouches coincide below the waist). Measured start-vs-end offsets at hip 0.68 / 0.60 /
+  0.55 m: hip 5.9 / 17.6 / 24.9 px, knee 4.3 / 9.8 / 12.5, shoulder 23.5 / – / 39.3, ear – / – / 46.6, hands 168.7 / – /
+  172.9, heel 0. Proposed **0.55 m**: j2 "until your feel your heels about to lift" is the deepest drawn crouch with the
+  heels still down; the dashed start reads by its deeper hips, steeper trunk and arms swung back. `startParts` stays
+  off (the whole start reads).
+- EXT_LEAN 8 deg (box_jump 18 leans toward its box; j9 "maximal vertical jump" is vertical) [proposed].
+- A6 (D-LIB8R-AIR): no drawn pose has both feet off every support; the ghost's balls on the floor within 0.5 cm; start
+  and end feet flat.
+
+**Fault→key.** `straight` "Knees straight" (j5), box_jump's key, on the Mistake knee, with the end→Mistake knee arrow.
+topFault `straight` = handlingMistakes[0] (drawable true). One tell (box_jump's D-LIB8R-BJTELL form; j5, j11 name one
+sign).
+
+**Callouts** = plate.checkpoints: `hips` "Hips back" (j2, start hip), `extend` "Full extension" (j3, ghost knee),
+`land` "Soft landing" (j4, end knee).
+
+**Tempo.** tempoOf(strip/rows.json jump_squat): `[{ Lower, move, Controlled (j9) }, { Jump, move, Explosive (j7) }]` on
+card and spec.
+
+**Facts plan (D-LIB9-FACTPOSE: j1's setup states no fact; its drawn start is the take-off crouch).**
+
+| quote (claim) | proposed plateFacts | pose (cardPose) |
+|---|---|---|
+| "Continue to lower yourself until your feel your heels about to lift off the floor." (j2; plate.start cites j2) | `contact heel.l`, `heel.r` | start (start) |
+| "land softly and quietly on the mid-foot" (j4; plate.end cites j4) | `contact sole.l`, `sole.r` | end (end) |
+
+Not facts: j8 "trunk inclined slightly forward" (no number), j10 hands at the chest (a variant), j6 "excessive forward
+movement" (no number). Each contact has a floor `checks` entry (heel, ball and sole, both sides, start, end and Mistake).
+
+**Unsourced numbers (SIZES).** FOOT_X, TAKEOFF_HIP, TAKEOFF_TRUNK, ARMS_BACK, LAND_HIP, LAND_TRUNK, ARMS_FWD, EXT_HEEL,
+EXT_KNEE, EXT_LEAN, EXT_ARMS, APEX, MISTAKE_HIP, MISTAKE_TRUNK (box_jump's values, but TAKEOFF_HIP, EXT_LEAN and the
+floor-relative LAND_HIP / MISTAKE_HIP).
+
+**PQ-H3 (measured).** deviation 27.4 px (knee.r; bar 11.39), Trace 172.0 px (`hip.r`, trim [10, 12]; bar 22.11). No
+zoom. **Clearance:** no load or machine part (D-SMALL-9); supports are `checks`.
+
+**Expected flags.** F5 3.57 only. The draft raises H4.overlap (extend|land) and F4 0 with auto-placed labels: boxes
+are set at the draw (labels only).
+
+### 16.1 jump_squat drawn (after 'LIB-SMALL PLAN RULED', #358 6545874629)
+
+- Label boxes (labels only): `hips` {40, 296}, `extend` {244, 214}, `land` {250, 270}; Mistake `straight` {16, 306},
+  `hips` {40, 196}. lb4/qa.mjs (node and browser): **all 10 hard checks pass**; flags F5 3.57 only; leaderMax 81.6 px
+  (F3 range 49.33-82.26); deviation 34.6 px, Trace 172.0 px.
+- **Two tells, not one** (the PLAN said one): LB4's own test asks 2-3 tells on every drawn plate ("each drawn plate draws
+  its Mistake with 2-3 tells"). The second, `hips` "Hips high", is the same stiff landing's second visible sign: the hips
+  stay high instead of dropping back and down (j4 "push your hips backwards and drop them downwards to absorb"; j11
+  "The hip and knee muscles absorbed more energy in the soft landing").
+- **No knee arrow** (box_jump has one): it starts inside the solid end figure, and LB4's A15 asks every solid red part to
+  clear the end figure by 6 px. The red Mistake legs and the tells carry the fault.
+- Drawn-item tests (lb4-plates.test.ts, 'LIB-SMALL A4 and A6'): start heels and balls on the floor (≤ 0.5 cm), knee > 90,
+  lumbar ≤ 10 deg; ghost balls on the floor (0.001 cm), heels up, knee < 10, hip > 160 deg; end heels, balls and soles on
+  the floor, knee > 45, hips behind the ankles, thorax lean 5-45 deg; Mistake knee < 15 on the same feet; no drawn pose
+  off every support. Mutations red: the ghost root 2 cm up, the start 2 cm up, the landing knees straight, the start
+  lumbar 30 deg.
+
+### 16.2 Panel mx13 fix round (#358 6547089227): jump_squat
+
+- R4: the `extend` leader ends on the extension ghost's raised forearm (EXT_ARM_PT, midway from elbow to wrist), clear
+  of the landing figure. Its box moves {244, 214} → {262, 84}. Before, the leader ended on the ghost knee, which lies
+  inside the solid landing thigh. QA: all 10 hard checks pass; F5 3.57 only; leaderMax 81.6 px.
+
+### 16.3 Panel mx15 second round and CARD FIELDS cfsmall (#358 6547988428): jump_squat
+
+- R1 (j10 "hold the hands loosely at the chest"): in every key (crouch, rise, ghost, flight, landing, Mistake) the hands
+  rest HAND_FWD 0.10 m in front of the sternum along the thorax normal, at HAND_X 0.75 of the shoulder's lateral offset,
+  elbows down (reach, pole down). Arm lengths in the side view (plate px): upper arm 45.1-47.4, forearm to grip
+  44.3-48.5, which is the panel's 93-94 / 99-100 at its 2x scale. The ARMS_BACK, ARMS_FWD and EXT_ARMS sizes are gone.
+  The alt says "hands loosely at the chest".
+- R4 follow-on: the ghost forearm now lies in front of the landing head, so the FULL EXTENSION leader ends on the
+  ghost's head, clear of the landing figure.
+- CARD FIELDS: the `sole.l` end fact is deleted. j4 names one mid-foot, so it gives the near side only. heel.l and
+  heel.r (start, j2) and sole.r (end, j4) stay.
+- QA: all 10 hard checks pass; F5 3.57 only; deviation 34.5 px, Trace 172.8 px, leaderMax 82.2 px.

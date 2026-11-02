@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-11-02 ~04:50 UTC · main `9c8035fd` (train 57; train 58 building) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
+**Last updated:** 2026-11-02 ~12:00 UTC · main `4f2e835b` (train 58; train 59 building) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -829,6 +829,30 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | F-VITEST-RPC | #365 · (second account, done) | delta PASS @ `8a3bf1ff` | train 58 |
 
 - **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
+
+- **Update 12:00 UTC (11-02):**
+  - **#358 LIB-SMALL review PASS @ `68407b5e`** (6576459573): train 59 carries it with this update. Then LIB-SPLIT (#364) restarts in its slot, and HELD-A starts jump_rope (and F-SMALL-WBMUT).
+  - **hip_thrust HELD** after mx26 (route F-HIPTHRUST-ARCH, named list at the release candidate). resisted_hip_flexion approved.
+  - **HELD-B:** cfhb VALID (D-HELDB-RTSOLES); pallof_press's chest leader crosses the cable column, so it gets a leaderless tell if a ruled form exists, otherwise it is held (D-HELDB-PALLOF2). russian_twist goes on.
+  - **LIB-SUPCORE:** cfsc VALID with a fix round (D-SUPCORE-HOLLOWLEG, knee facts, c4 back). Then panel **mx27** takes SUPCORE's 3 page rows and HELD-B's ready rows. dead_bug and v_up wait for #358's strip rows.
+  - **Usage:** 7-day 0.05 (resets Fri 11-06 08:00 UTC).
+
+- **Update 08:50 UTC (11-02):**
+  - **Train 58 merged** (#370 → main `4f2e835b`, ~05:38): F-VITEST-RPC #365 @ `8a3bf1ff` and handover 8.0t. All 18 checks green on `ed86938e`; local typecheck 0, vitest 273 files / 5545 tests. No APK (tests and docs only).
+  - **Usage meter (this account):** 7-day 0.03, resets **Fri 11-06 08:00 UTC** (not Thu 11-05; that was the second account). The tick prompt says so.
+  - **cfht VALID; mx25 VALID** (lib4-cards §48 has both): crunch **APPROVED @ `716bf3b7`**; hip_thrust FAIL R5/R11, in its last round under **D-HELD6-MGHOST** (opt-in Mistake-only ghost drop outside vendor/**) and **D-HELD6-RING** (ring at the underside, x 164, k 4, 11.9 px) (#368 6569943739). **D-HELD6-TOES** (c15's hedged toes are not a fact). **Golden-B follow-up 29:** lat_pulldown's Mistake draws SWING BACK and SHRUG, not its card's behind-the-neck pull; anchor facts.json from the main card shows it, and it is excepted.
+  - **Rulings:** HELD-B PLAN RULED (#371 6570334648: D-HELDB-PALLOFBOX {64, 158}; russian_twist's six facts pending CARD FIELDS; pallof_press re-copied, so CARD FIELDS covers both). LIB-SUPCORE: **D-SUPCORE-HOLDMAX** ('max 30', A7 "max N" only for a stated upper bound) and **D-SUPCORE-RCBACK** (a named forearm entry pinned at 32.0 px; R4 decides) (#366 6570379460).
+  - **Lanes (4 of 4 LIB builders):**
+
+    | lane | PR · session | state |
+    |---|---|---|
+    | LIB-SMALL | #358 · session_018Pv5bLxLAaTwYG6vKPL5hW | READY checks running on `68407b5e` (main merged; container reclaims cost two re-runs) |
+    | HELD-A | #368 · session_018Pv5bLEAdjA2Lh3C1V5Yfo | building hip_thrust fix 2 (MGHOST, RING, (b), TOES, tightenings); then jump_rope after #358 |
+    | LIB-SUPCORE | #366 · session_018Pv5bLt6Qcc1QdsQmWCVrH | wave 2 (5 rows) toward CARD FIELDS READY |
+    | HELD-B | #371 · session_018Pv5bNDWF9sXvHQNFqnobh | PLAN RULED; toward CARD FIELDS READY (both cards) |
+    | LIB-SPLIT | #364 · none | restarts in LIB-SMALL's slot when #358 merges |
+
+  - **Monitor note:** this session subscribes only to its own train PRs; #358 could not be subscribed (the second account holds it). The scratchpad monitor.sh + heads.sh Monitor is the wake signal.
 
 ### 8.0s PAUSE 10-29 ~04:57 UTC (owner: "Whatever current task, pause when finish after that and stop all task. Dont do anything after that."; read first, then 8.0r)
 - **RESUMED 10-30 ~21:56 UTC** (owner: "Continue again"). The hourly tick is re-enabled. Usage: 7-day 0.42 (the 80 % rule applies; reset Thu 11-05 02:00 UTC).
