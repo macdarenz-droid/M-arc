@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-31 ~19:00 UTC · main `6b32d576` (train 53; train 54 building) · **8.0s: resumed; read 8.0s, then 8.0r** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-11-02 ~04:50 UTC · main `9c8035fd` (train 57; train 58 building) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -808,6 +808,27 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0t TAKEOVER 11-02 ~04:40 UTC: the work moves back to the first account (read first; supersedes 8.0s where they differ)
+- **Why.** The second account (supervisor session_01PeNM9HeWPrhrcscMwXzupy, builders session_01EQuYN…) stopped at its weekly limit: its last push was 11-01 05:51 UTC. On 11-02 ~04:40 UTC the owner asked this account's session "Then continue first all exercise" (finish the library before the Play production release). The supervisor is now **session_018Pv5bKEA73navyFKzs3ihE**, on the first account (8.0o's "old" account). It cannot message or archive the second account's sessions, so every lane restarts with a new session here on its existing branch (8.0o C form: `source_revision` and `outcome_branch` = the branch).
+- **Two supervisors risk.** The second account's hourly tick (`trig_01LvkAzRwZUPqSR1m1KAGScf`) can fire again after that account's weekly reset (Thu 11-05 02:00 UTC). The owner is asked to turn it off. **A supervisor or builder on the second account that wakes and reads this: stand down; push nothing and post nothing.** Builders here run `git pull --no-rebase` before every push, which catches a stray push.
+- **Hourly tick** on this account: `trig_01LFv2nEnoaWHf21JdLR1C6T` ("M/ARC supervisor tick", minute 44), bound to this session. The old account's "M/ARC supervisor loop" `trig_016ECwLTU7XRLzsYVRrwLTGe` stays disabled.
+- **Usage.** Until Thu 11-05 02:00 UTC the owner's 10-31 rule holds ("Dont pause. Just continue until maxxed out"); after it, the 10-19 rule (pause at 80 %).
+- **Google Play.** Production access was granted (Google's email, read by the owner 11-02). The closed test still runs 37.1.0.55. The production release waits for the full library (owner 09-30: library before the Play upload) and the release candidate's full regression and phone test. The owner was told on 11-02 that he may put the newest bundle on the closed test meanwhile (37.1.0.163, run 41273797578, main `c2b48060`, gate green); that is his choice and needs no agent.
+- **Train 57 merged** (#369 → main `9c8035fd`, 11-02 ~04:40): LIB-13s #359 @ `088daa27` (delta PASS 6553215638; all 18 checks green on `1796091a`). Main holds 126 of 153 (121 plus LIB-13s's 5). No src/ change, so no APK. The LIB-13s builder and reviewer were on the second account; nothing to archive here.
+- **Train 58 building:** F-VITEST-RPC #365 @ `8a3bf1ff` (delta PASS 6554105455) and this handover.
+- **Panels rebuilt from nothing** (the second account's scratchpad is gone): **mx25** (focused recheck: crunch @ `716bf3b7`, page `cb06cf9c…24f4`; hip_thrust @ `69186742`, LB8 page `5b703d65…8400`) and **cfht** (hip_thrust's outline contact, D-HELD6-SEAT2) are building in this session's scratchpad.
+- **Lanes:**
+
+  | lane | PR · session | state | next |
+  |---|---|---|---|
+  | LIB-SMALL | #358 · session_018Pv5bLxLAaTwYG6vKPL5hW (new, Opus) | 3 of 3 approved; READY owed (its F-VITEST-RPC move, main merge, checks) | fresh Opus reviewer on READY, then a train |
+  | LIB-SUPCORE | #366 · none yet | crunch (PILOT-B2) PANEL FIX @ `716bf3b7` in mx25 | new builder after the mx25 verdict |
+  | HELD-A | #368 · none yet | resisted_hip_flexion approved (mx24); hip_thrust PANEL FIX @ `69186742` in mx25 and cfht; jump_rope after #358 | new builder after the mx25 and cfht verdicts |
+  | LIB-SPLIT | #364 · none yet | PLAN RULED 6551354216; wave 1 waits for #358 to merge | new builder when #358 merges |
+  | F-VITEST-RPC | #365 · (second account, done) | delta PASS @ `8a3bf1ff` | train 58 |
+
+- **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
 
 ### 8.0s PAUSE 10-29 ~04:57 UTC (owner: "Whatever current task, pause when finish after that and stop all task. Dont do anything after that."; read first, then 8.0r)
 - **RESUMED 10-30 ~21:56 UTC** (owner: "Continue again"). The hourly tick is re-enabled. Usage: 7-day 0.42 (the 80 % rule applies; reset Thu 11-05 02:00 UTC).
