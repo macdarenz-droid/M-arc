@@ -2266,3 +2266,16 @@ describe('LIB-SMALL: no whole-page build in the worker (F-VITEST-RPC, #358 65522
     expect(inWorker(`${src}\n  const out = await gen.${'ren'}der();\n`)).toBe(true);
   });
 });
+
+// D-HELDA-JRF3 (#368 6579170603): jump_rope's F3 is named (the D-LIB18-F3KICK form); the ruled flag set stays exact
+// both ways: F3 missing on jump_rope is red, and F3 on any other id is red.
+describe('HELD-A D-HELDA-JRF3: the named F3 on jump_rope, exact both ways', () => {
+  const rep = (id: string, raised: string[]) => ({ id, flags: Object.fromEntries(['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7'].map(f => [f, { raised: raised.includes(f), value: f === 'F5' ? 3.57 : 0 }])) });
+  it('F3 and F5 on jump_rope pass; jump_rope without F3, and F3 on kettlebell_swing, are red', async () => {
+    const q = await import(/* @vite-ignore */ lib('lb10/qa.mjs'));
+    expect(q.F3_IDS).toEqual(['lib_jump_rope']);
+    expect(q.flagProblems([rep('lib_jump_rope', ['F3', 'F5'])])).toEqual([]);
+    expect(q.flagProblems([rep('lib_jump_rope', ['F5'])])).toEqual(['lib_jump_rope: flags F5 != ruled F3,F5']);
+    expect(q.flagProblems([rep('lib_kettlebell_swing', ['F3', 'F5'])])).toEqual(['lib_kettlebell_swing: flags F3,F5 != ruled F5']);
+  });
+});
