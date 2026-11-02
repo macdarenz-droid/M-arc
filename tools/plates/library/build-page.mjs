@@ -14,6 +14,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { VENDOR, makeMirror, verifyVendor } from '../golden.mjs';
 import { applyZooms } from './zoom/inline.mjs';
+import { applyMistakeGhosts } from './mistake-ghosts.mjs';   // D-HELD6-MGHOST
 import { VENDOR_STRIP, NOSECS_STRIP } from './strip/tempo-strip.mjs';   // LIB-STRIP
 
 const VENDORED_PAGE = join(VENDOR, 'artifact/build-page.mjs');
@@ -99,7 +100,8 @@ export async function buildPlatesPage(config) {
     const cfg = { groups: config.groups, sources: config.sources, specUrl, out, heading: { ...GOLDEN_A_HEADING, ...(config.heading ?? {}) } };
     const { stderr } = await run(join(mirror, 'artifact'), file, { LIB_PAGE_CFG: JSON.stringify(cfg) });
     // LIB-ZOOM: a spec's opt-in zoom circle; a page with no zoom spec keeps its bytes (applyZooms returns the Buffer as is)
-    return { html: await applyZooms(readFileSync(out), config.specs), warnings: stderr };
+    // D-HELD6-MGHOST: an opted-in spec's Mistake view without its start pose and ghosts, before the zoom is added
+    return { html: await applyZooms(await applyMistakeGhosts(readFileSync(out), config.specs), config.specs), warnings: stderr };
   } finally {
     rmSync(mirror, { recursive: true, force: true });
     rmSync(outDir, { recursive: true, force: true });

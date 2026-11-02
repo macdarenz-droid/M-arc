@@ -3036,6 +3036,23 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   and the blind TOPFAULT pass answered 'flare'. The two ids' rows and tests moved from pilot-a2/ to pilot-a3/
   (D-A3-TESTHOME).
 - **Source:** PR #362; pilot-a3/DESIGN.md.
+## HELD-A: hip_thrust's panel mx25 fix 2 (builder, 2026-11-02; #368, rulings D-HELD6-MGHOST, D-HELD6-RING, D-HELD6-TOES)
+- **D-HELD6-MGHOST.** hip_thrust's Mistake view no longer draws the start pose or the ghosts. An opt-in spec field
+  (`mistakeGhosts: false`) is read by one library function shared by the page build, node QA and the zoom render. The
+  vendor engine is unchanged. **Why:** the bottom pose's outlines, plates and bars crossed the red arch strokes and the
+  zoom ring (panel mx25 R5, R11). The engine's ghost fields are global, so only a Mistake-only post-step removes them.
+- **R5 (b).** The arch is drawn as one red dashed trunk outline, top and underside, from the shoulder to the hip, still
+  at 12°.
+- **D-HELD6-RING.** The zoom ring sits on the lumbar underside at k 4 (11.92 px). The near arm over the arch is the side
+  view's own geometry, so it is recorded and not tested away.
+- **D-HELD6-TOES.** c15's "keep your toes on the floor" carries its own alternative ("you can also … lift the toes"),
+  so it is not a fact.
+- **Source:** PR #368; lb8/DESIGN.md sections 8 and 20.
+- **hip_thrust HELD after panel mx26 (S2; route F-HIPTHRUST-ARCH).** At the unsourced 12° the arch reads only 3-4.5 px
+  on the phone, and the zoom shows no landmark. A larger Mistake size needs a sourced magnitude or a ruled house
+  convention from the approved bench-press arch. The row goes on the named list at the release candidate.
+  resisted_hip_flexion stays approved. **Source:** PR #368 6574480674; lb8/DESIGN.md section 15.
+
 
 ## LIB-SMALL: jumping_jacks, wall_ball (LB10) and jump_squat (LB4) (builder, 2026-11-02; card docs/supervisor/verify/lib-small-card.md, rulings D-SMALL-*)
 - **D-SMALL-RPCGUARD.** F-VITEST-RPC (#358 6552271304) in the D-LIB13S-RPC form: every whole-page build and generate's
@@ -3051,3 +3068,7 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   yields one macrotask (lb10's LIB-22 A19 form), and A6's per-spec loop yields. lb4 + lb10 together: longest block 84 s
   to 6.0 s, RPC errors 1 to 0, 310 tests pass.
 - **Source:** PR #358; lb10/DESIGN.md 23, lb4/DESIGN.md 16.
+- **jump_rope lifted (D-HELD6-JUMPROPE).** In the air the ankles point to −10° (box_jump's approved flight ankle, c10
+  and c11). The toe stays HOP 3.8 cm over the floor. The Trace is shown in a normal-view zoom at k 3: lb10's rule needs
+  10 % over the bar, and the card's k 2.5 gives 23.4 px, under that. **Source:** PR #368; lb10/DESIGN.md section 24.
+

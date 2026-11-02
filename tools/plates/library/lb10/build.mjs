@@ -64,10 +64,10 @@ export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mis
   return out;
 }
 
-/** The ids held off rows.json (DESIGN.md held table, as of 'LIB-22 resume 3', LIB-SMALL): jump_rope (Trace under the
- *  bar at kMax), with its census view. farmer_s_carry left the table at 'LIB-22 resume 2' (F-R2-FARMER-5); jumping_jacks
+/** The ids held off rows.json (DESIGN.md held table), with their census views: none since 'HELD-A' (jump_rope lifted
+ *  by D-HELD6-JUMPROPE). farmer_s_carry left the table at 'LIB-22 resume 2' (F-R2-FARMER-5); jumping_jacks
  *  (D-SMALL-JJFACTS, -JJZOOM) and wall_ball (D-SMALL-WBAFALL) at 'LIB-22 resume 3'. */
-export const HELD = { jump_rope: 'front' };
+export const HELD = {};
 const slugOf = id => id.replace(/_/g, '-');
 /** The held rows, in memory only (never written to rows.json or any file under the repo), for the held ids whose spec exists. */
 export function heldData(root = ROOT, only = null) {
