@@ -313,7 +313,7 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 | ~~cable_crunch~~ released at resume 3 (LIB-21R3, §24; on LIB-SPINE's spine segments): D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
 | ~~superman~~ released at resume 2 (#337, D-LIB21-SUPERMAN): D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
 | pallof_press | D-HELDB-PALLOF2 (#371 6575314108; §26): held again at HELD-B. c20's chest tell and its k 1.5 zoom pass QA, but no leader can reach the Mistake chest: the pulley, its pin, the frame and the cable's vertical run all sit within 6 px (0.00-3.00 px), and the engine has no leaderless tell. Before that, D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
-| ~~russian_twist~~ released at HELD-B (#371, §26; D-HELD6-RTWIST: the signed 3.42 / 6.84 px entry on the red right knee, Do 7b card fields): D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
+| russian_twist | D-HELDB-RTSIT (#371 6579536635; §26): held again after panel mx27 failed R1, R3-R7 (#371 6579432546). The front-view floor sit cannot be drawn with a ruled tool: the one floor line sits at the feet's depth, so at CAM_PITCH 20 the seat draws 37.6 px above it. The 51.6° trunk turn draws as a 62 % shoulder span (89.5 → 55.6 px), which does not read as a turn. Kept in the held spec: the knee tell (D-HELD6-RTWIST), the cfhb card fields with D-HELDB-RTSOLES, and the fact checks. Before that, D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
 
 ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG; it and bird_dog are approved (slice panel and recheck).
 
@@ -734,7 +734,7 @@ lift as the sign. The red right knee partly behind the solid knees may not read:
 writes lb9 in its wave 2: whichever lane merges second merges main first and keeps both sides.
 
 **Outcome (plates, 11-02).**
-- russian_twist released as planned: tell on the red right knee, box {12, 188}, named entry 3.42 / 6.84 px pinned;
+- russian_twist built as planned (then held after panel mx27, below): tell on the red right knee, box {12, 188}, named entry 3.42 / 6.84 px pinned;
   Do 7b card fields verified (cfhb VALID, #371 6574663054) with D-HELDB-RTSOLES (sole.l, sole.r end c6).
 - pallof_press held again (D-HELDB-PALLOF2, #371 6575314108; route F-PALLOF-VIEW, the turned view of §20 and held6 §3
   route C, numbers only [est]). The chest tell at {64, 158} with the k 1.5 zoom passed all 10 QA checks and entered
@@ -757,3 +757,13 @@ writes lb9 in its wave 2: whichever lane merges second merges main first and kee
   for every callout), so (iv) does not apply.
 - The held spec is main's (one tell, no zoom). The re-copied card (c20-c25, the `recopied` pin) and the cfhb verdict
   stay.
+- **russian_twist held again** (D-HELDB-RTSIT, #371 6579536635, after panel mx27 #371 6579432546: R1 [2,2,2], R3
+  [2,2,2], R4 [2,4,2], R5 [3,2,2], R6 [3,3,3], R7 [3,2,3]). Route **F-RTWIST-SIT** (a floor plane for a pitched front
+  view, or a ruled seated-view convention); on the named list. Measured on `5341df74`:
+  - the floor line is one horizontal line at the feet's depth (equipment.mjs:22-26). At CAM_PITCH 20 the seat (z 0,
+    0 cm in 3D) draws at y 300.9 against the line at 338.5, so 37.6 px above it. Pitch 0 puts it on the line
+    (0.45 px), but the raised knees then cover the trunk and the ball, and F1 (named at 197.49 px/m) moves;
+  - the trunk turn is drawn: yaw 51.6°, the shoulder span 89.5 → 55.6 px (62 %). The flat front trunk reads it as
+    narrower, not turned; `torso: 'volume'` gives the same span.
+  - The held spec keeps the knee tell (3.42 / 6.84 px entry), the cfhb card fields with D-HELDB-RTSOLES, and the fact
+    checks. No row is released by HELD-B.

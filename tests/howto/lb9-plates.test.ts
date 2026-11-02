@@ -76,7 +76,7 @@ describe('LIB-21 A5 (first push): rows.json holds no row before a spec is drawn;
   it('batch LB9, censusRef 4a9fd86; no plank, crunch, T or (b) id in any LB9 rows file; no plank, crunch, T id or bicycle_crunch (before \'LB9 ER5 GO\') in tempo.json', () => {
     expect(rows.batch).toBe('LB9');
     expect(rows.censusRef).toBe('4a9fd86');
-    for (const id of [...NOT_HERE, 'bicycle_crunch']) expect(Object.keys(rows.rows), id).not.toContain(`lib_${id}`);   // russian_twist joined at HELD-B (D-HELD6-RTWIST)
+    for (const id of [...NOT_HERE, 'russian_twist', 'bicycle_crunch']) expect(Object.keys(rows.rows), id).not.toContain(`lib_${id}`);
     for (const id of [...NOT_HERE, 'bicycle_crunch']) expect(Object.keys(t.rows), id).not.toContain(id);
   });
   /** A7 (D-LIB8M-TEMPO): a phase reads from plate.tempo (up, down, pause), Hold only where pause > 0; or it is a constant
@@ -116,7 +116,7 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 const ER5_DRAWN = ['side_plank', 'russian_twist'];
 // The front entries asked with the E-R5 slice (#326), measured (px inside the figure past the leader's first 8 px).
 const FE_SINK = 9.64;
-const HELD: string[] = ['pallof_press'];   // HELD-B (#371): russian_twist joined rows.json (D-HELD6-RTWIST); pallof_press held again (D-HELDB-PALLOF2, route F-PALLOF-VIEW); cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
+const HELD: string[] = ['pallof_press', 'russian_twist'];   // HELD-B (#371): pallof_press held again (D-HELDB-PALLOF2, route F-PALLOF-VIEW); russian_twist held again after panel mx27 (D-HELDB-RTSIT, route F-RTWIST-SIT); cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
 const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', ...ER5_DRAWN];
@@ -878,22 +878,22 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_russian_twist', 'lib_side_plank', 'lib_superman']);   // russian_twist at HELD-B   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_side_plank', 'lib_superman']);   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN); HELD-B released none   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
-  it('plank, crunch, the 5 T ids and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
+  it('plank, crunch, the 5 T ids, russian_twist and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
     for (const f of readdirSync('tools/plates/library/lb9').filter(n => n.endsWith('.json'))) {
       const text = readFileSync(join('tools/plates/library/lb9', f), 'utf8');
-      for (const id of [...NOT_HERE, 'bicycle_crunch']) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
+      for (const id of [...NOT_HERE, 'russian_twist', 'bicycle_crunch']) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
     }
     expect(existsSync(`${SPECS_DIR}/bicycle_crunch.mjs`)).toBe(false);
   });
-  it('the held id (pallof_press, D-HELDB-PALLOF2) is build.mjs HELD with its census view, in DESIGN.md\'s held table, and in no rows file; russian_twist is struck there (HELD-B)', async () => {
+  it('the held ids (pallof_press D-HELDB-PALLOF2; russian_twist D-HELDB-RTSIT) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
-    expect(build.HELD).toEqual({ pallof_press: 'side' });
+    expect(build.HELD).toEqual({ pallof_press: 'side', russian_twist: 'front' });
     const held = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
-    expect(/\| ~~russian_twist~~ released at HELD-B/.test(held)).toBe(true);
     expect(/\| pallof_press \| D-HELDB-PALLOF2/.test(held)).toBe(true);
+    expect(/\| russian_twist \| D-HELDB-RTSIT/.test(held)).toBe(true);
     for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
   });
   it('mutations: a dropped row, a duplicated row, a held id, plank, crunch, flutter_kicks, side_plank and one mode set to D are red', () => {
@@ -1942,7 +1942,7 @@ describe('LIB-21R3 (LB9 resume 3): cable_crunch on LIB-SPINE\'s spine segments (
   });
 });
 
-describe('HELD-B (#371): russian_twist\'s knee tell (D-HELD6-RTWIST); pallof_press held again (D-HELDB-PALLOF2)', () => {
+describe('HELD-B (#371): russian_twist\'s knee tell (D-HELD6-RTWIST; held, D-HELDB-RTSIT); pallof_press held again (D-HELDB-PALLOF2)', () => {
   it('russian_twist: "Knees swing" on the red right knee\'s outline, box {12, 188}', () => {
     expect(S.russian_twist.mistake.tells).toEqual([{ key: 'hips', text: 'Knees swing', anchor: { at: 'knee.r', pose: 'mistake', off: [-6.84, -6.84] }, box: { left: 12, top: 188 }, cue: 'The hips and knees swing with the trunk.' }]);
   });

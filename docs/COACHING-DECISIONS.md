@@ -3065,3 +3065,11 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   yields one macrotask (lb10's LIB-22 A19 form), and A6's per-spec loop yields. lb4 + lb10 together: longest block 84 s
   to 6.0 s, RPC errors 1 to 0, 310 tests pass.
 - **Source:** PR #358; lb10/DESIGN.md 23, lb4/DESIGN.md 16.
+
+## HELD-B follow-up: russian_twist held after panel mx27 (builder, 2026-11-02; D-HELDB-RTSIT)
+- **D-HELDB-RTSIT.** Panel mx27 failed russian_twist (R1, R3-R7). It read the figure as not seated and not turned. No
+  ruled tool fixes the sit: the floor is one line at the feet's depth, so at the ruled pitch 20 the seat draws 37.6 px
+  above it, and pitch 0 hides the trunk behind the knees. So russian_twist is held on route F-RTWIST-SIT and goes on
+  the named list. Its verified card fields and knee tell stay in the held spec. **Why:** a floor plane would be a new
+  engine feature, which the ruling does not allow. HELD-B releases no row.
+- **Source:** PR #371 (6579432546, 6579536635); lb9/DESIGN.md §15, §26.
