@@ -586,5 +586,48 @@
   "The neck has no shared red-flag box, so the neck row links none.",
   "Read but not cited: BarBend's Dead Bug Benefits page (benefits and loaded variations, no technique steps for the standard dead bug); PubMed abstracts Kim 2016 (27317910), Bini 2021 (34776131) and Tsartsapakis 2024 (38651428), whose results do not single out the dead bug for a line on this card. Not reachable: StrengthLog dead bug (HTTP 429 on every try, 2026-10-22), Verywell Fit (402), Muscle & Strength (403).",
   "Fetcher check 2026-10-22 (Sonnet source fetcher, curl and NCBI efetch): every quote verbatim; titles set to each page's served title."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "buttock",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c3"
+  },
+  {
+   "kind": "contact",
+   "landmark": "backUpper",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "buttock",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "backUpper",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c5"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Lower",
+   "move": true,
+   "word": "Slow"
+  },
+  {
+   "phase": "Return",
+   "move": true,
+   "word": "Slow"
+  }
+ ],
+ "topFault": "arch"
 }

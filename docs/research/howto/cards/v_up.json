@@ -612,5 +612,32 @@
   "Fitness Volt says the back stays flat against the floor for the whole exercise (c4, c5); at the top of the V only the hips can stay down. The plate draws the lower back on the floor at the start and on the return, and the checkpoint and zoom say so.",
   "Not reachable: StrengthLog V-up (HTTP 429 on every try, 2026-10-22), Verywell Fit (402), Muscle & Strength (403), Shape (402). Read but not cited: Willett 2001 (PMID 11726260), which tests a v-sit, a different exercise.",
   "Fetcher check 2026-10-22 (Sonnet source fetcher, curl and NCBI efetch): every quote verbatim; titles set to each page's served title."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "buttock",
+   "pose": "end",
+   "cardPose": "start",
+   "claim": "c6"
+  },
+  {
+   "kind": "contact",
+   "landmark": "backUpper",
+   "pose": "end",
+   "cardPose": "start",
+   "claim": "c4"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Lower",
+   "move": true
+  },
+  {
+   "phase": "Lift",
+   "move": true
+  }
+ ],
+ "topFault": "arch"
 }

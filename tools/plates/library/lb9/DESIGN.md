@@ -324,8 +324,8 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 | ~~cable_crunch~~ released at resume 3 (LIB-21R3, §24; on LIB-SPINE's spine segments): D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
 | ~~superman~~ released at resume 2 (#337, D-LIB21-SUPERMAN): D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
 | pallof_press | D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
-| dead_bug | D-SUPCORE-STRIP (lib-supcore-card ruling 10): drawn (section 26.14); its strip row (Lower, Return: "Slow", c4) and so its card keys wait for #358, which writes strip/rows.json | the strip row after #358 merges, then rows.json and CARD FIELDS |
-| v_up | D-SUPCORE-STRIP (PLAN RULED Q3: fallbackA, D-STRIP-AFALL): drawn (section 26.14); its fallbackA row and so its card keys wait for #358 | the fallbackA row after #358 merges, then rows.json and CARD FIELDS |
+| ~~dead_bug~~ released after #358 (train 59, `dac9c624`): its strip row and card keys landed; D-SUPCORE-STRIP (lib-supcore-card ruling 10): drawn (section 26.14); its strip row (Lower, Return: "Slow", c4) and so its card keys wait for #358, which writes strip/rows.json | the strip row after #358 merges, then rows.json and CARD FIELDS |
+| ~~v_up~~ released after #358 (train 59, `dac9c624`): its strip row and card keys landed; D-SUPCORE-STRIP (PLAN RULED Q3: fallbackA, D-STRIP-AFALL): drawn (section 26.14); its fallbackA row and so its card keys wait for #358 | the fallbackA row after #358 merges, then rows.json and CARD FIELDS |
 | russian_twist | D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
 
 ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG; it and bird_dog are approved (slice panel and recheck).
@@ -913,7 +913,10 @@ lb9/qa.mjs).
   depth every arm clears the head, legs and other arm; the upper arms clear the torso by ≥ 1.00 cm, except the arms
   resting by the sides (reverse_crunch, flutter_kicks: c1), which lie 1.81-2.01 cm into the drawn torso solid at the
   shoulder (listed, the engine's torso width at the armpit).
-- **Card fields.** hollow_body_hold, reverse_crunch and flutter_kicks carry their three keys (plateFacts per 26.5,
+- **Card fields.** All 5 carry their three keys (dead_bug and v_up after #358, train 59: dead_bug's strip row Lower/Return
+  'Slow' on ACE's c4 quote, v_up's fallbackA row; their plateFacts per 26.5 with the claims that name the back: dead_bug
+  buttock start c3, backUpper start and both at the end c5; v_up buttock c6, backUpper c4, on the spec end). hollow_body_hold,
+  reverse_crunch and flutter_kicks carry their three keys (plateFacts per 26.5,
   tempo per 26.4 with D-SUPCORE-HOLDMAX, topFault the drawn key).
 - **CARD FIELDS cfsc fix round (#366 6575342285).** reverse_crunch gains knee.l and knee.r at 90 deg, start (c2) and end
   (c4 "keep your knee angle consistent at 90 degrees throughout"); drawn 90.00. flutter_kicks' backUpper at the start cites

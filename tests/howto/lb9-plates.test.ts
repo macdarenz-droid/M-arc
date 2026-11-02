@@ -26,10 +26,10 @@ const LB9 = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof
 const ER5 = ['side_plank', 'russian_twist', 'bicycle_crunch'];
 const NOT_HERE = ['plank', 'crunch'];   // LIB-SUPCORE: the 5 SUPCORE rows are drawn here as H rows (D-SUPCORE-MODES); crunch is PILOT-B2's
 // LIB-SUPCORE wave 2 (D-SUPCORE-MODES, -ANCHOR): the 5 H rows drawn from crunch's approved bytes, in draw order; their
-// cards are byte copies from research a48b0594 (cards.sha.json `supcore`). dead_bug and v_up wait for their strip rows
-// (#358, D-SUPCORE-STRIP): drawn, in DESIGN.md's held table, in no rows file.
+// cards are byte copies from research a48b0594 (cards.sha.json `supcore`). dead_bug and v_up waited for their strip rows
+// (#358, D-SUPCORE-STRIP) and joined rows.json once it merged (train 59): no SUPCORE row waits now.
 const SUP = ['hollow_body_hold', 'reverse_crunch', 'dead_bug', 'v_up', 'flutter_kicks'];
-const SUP_WAIT = ['dead_bug', 'v_up'];
+const SUP_WAIT: string[] = [];
 const RESEARCH_HEAD = 'f574bb4b761ded9010a61b59881b6eae125b58e0';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -763,6 +763,9 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     reverse_crunch: [...both('wrist', 'start', 'c1'), F('buttock', 'start', 'c2'), F('backUpper', 'start', 'c1'),
       ...['start', 'end'].flatMap(pose => ['l', 'r'].map(sd => ({ kind: 'angle', joint: `knee.${sd}`, pose, cardPose: pose, deg: 90, claim: pose === 'start' ? 'c2' : 'c4' })))],
     flutter_kicks: [...both('wrist', 'start', 'c1'), F('backUpper', 'start', 'c4'), F('buttock', 'start', 'c4'), F('buttock', 'end', 'c4')],
+    // dead_bug and v_up with their strip rows (train 59); v_up's card start is its spec end (poseMap)
+    dead_bug: [F('buttock', 'start', 'c3'), F('backUpper', 'start', 'c5'), F('buttock', 'end', 'c5'), F('backUpper', 'end', 'c5')],
+    v_up: [F('buttock', 'end', 'c6', 'start'), F('backUpper', 'end', 'c4', 'start')],
   };
   // The ruled fault→key map (DESIGN.md section 8): [topFault, the drawn first tell key]; all 5 drawable-true. The (b)
   // rows' planned topFault (D-LIB21-F7), which differs from the drawn key.
@@ -786,7 +789,7 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
   };
   it('the 5 (a) cards and side_plank carry the ruled facts, tempo and topFault; russian_twist and bicycle_crunch (held) carry none yet', () => {
     for (const id of [...Object.keys(TOP).filter(i => !SUP_WAIT.includes(i)), 'side_plank']) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
-    for (const id of ['russian_twist', 'bicycle_crunch', ...SUP_WAIT]) for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in cardOf(id), `${id} ${k}`).toBe(false);   // LIB-SUPCORE: dead_bug and v_up wait for their strip rows
+    for (const id of ['russian_twist', 'bicycle_crunch', ...SUP_WAIT]) for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in cardOf(id), `${id} ${k}`).toBe(false);
   });
   it('mutations on side_plank\'s keys: a hip fact added, its Hold changed to 5–15, and topFault set to the drawn key (sink) are red', () => {
     const c = cardOf('side_plank');
@@ -894,7 +897,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_flutter_kicks', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_side_plank', 'lib_superman']);   // LIB-SUPCORE: 3 SUPCORE rows (dead_bug, v_up wait for #358)   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_dead_bug', 'lib_flutter_kicks', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_side_plank', 'lib_superman', 'lib_v_up']);   // LIB-SUPCORE: the 5 SUPCORE rows   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('plank, crunch, the 5 T ids, russian_twist and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
@@ -920,7 +923,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
     // a held id: pallof_press (D-LIB21-PALLOFHOLD) stands for any held id
     expect(a5(add('lib_pallof_press'), w), 'a held id').toEqual(['extra lib_pallof_press']);
-    for (const id of ['plank', 'crunch', 'dead_bug', 'bicycle_crunch']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);   // LIB-SUPCORE: flutter_kicks is a row; dead_bug waits for #358
+    for (const id of ['plank', 'crunch', 'russian_twist', 'bicycle_crunch']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);   // LIB-SUPCORE: flutter_kicks is a row; russian_twist is held
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
   });
   it('every row points at its own spec file and carries the census view; batch LB9, censusRef 4a9fd86', () => {
@@ -1067,12 +1070,11 @@ describe('LIB-21 A7 (spec half): each spec\'s tempo follows lb9/tempo.json and i
   const t = readJson('tools/plates/library/lb9/tempo.json');
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
   // LIB-SUPCORE (D-SUPCORE-STRIP): an id with no timed row takes tempoOf(its strip/rows.json row) (D-STRIP-ROWS; fallbackA,
-  // D-STRIP-AFALL); dead_bug and v_up, whose rows wait for #358, carry DESIGN.md 26.4's proposed rows exactly
+  // D-STRIP-AFALL)
   const strip = readJson('tools/plates/library/strip/rows.json');
-  const STRIP_WAIT: Record<string, any[]> = { dead_bug: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Return', move: true, word: 'Slow' }], v_up: [{ phase: 'Lower', move: true }, { phase: 'Lift', move: true }] };
   const stripOf = (id: string) => [...strip.cards, ...strip.fallbackA].find((c: any) => c.id === id);
   const build = (id: string) => (id in t.rows ? t.rows[id].map((r: any) => ({ phase: r.phase, s: 'constant' in r ? r.constant : cardOf(id).plate.tempo[r.from], ...(r.move ? { move: true } : {}) }))
-    : stripOf(id) ? stripOf(id).rows.map((r: any) => ({ phase: r.phase, ...(r.move ? { move: true } : {}), ...('word' in r ? { word: r.word } : {}) })) : STRIP_WAIT[id]);
+    : stripOf(id).rows.map((r: any) => ({ phase: r.phase, ...(r.move ? { move: true } : {}), ...('word' in r ? { word: r.word } : {}) })));
   const tempoProblems = (id: string, spec: any) => (JSON.stringify(spec.tempo) === JSON.stringify(build(id)) ? [] : [`${id}: ${JSON.stringify(spec.tempo)} != ${JSON.stringify(build(id))}`]);
   it('every drawn spec\'s tempo is its ruled row built from the card', () => {
     for (const id of specsDrawn()) expect(tempoProblems(id, S[id])).toEqual([]);
@@ -1985,10 +1987,10 @@ describe('LIB-SUPCORE A10 / A1: the 5 cards and quotes, the rows and the waits',
   it('each card\'s handlingMistakes[0] is its plate.mistake (D-LIB15-XBODY), and every card is drawable true', () => {
     for (const id of SUP) { const c = cardOf(id); expect(c.plate.mistake.drawable, id).toBe(true); expect([c.handlingMistakes[0].claim].flat()[0], id).toBe([c.plate.mistake.claim].flat()[0]); }
   });
-  it('validateCardFile: no problem on the 5 cards (3 with their keys; dead_bug and v_up without, until their strip rows)', async () => {
+  it('validateCardFile: no problem on the 5 cards, each with its three keys', async () => {
     const v = await import(/* @vite-ignore */ new URL('../../tools/plates/library/research/validate.mjs', import.meta.url).href);
     for (const id of SUP) expect(v.validateCardFile(`${id}.json`), id).toEqual([]);
-    for (const id of SUP_WAIT) expect(KEYS.some(k => k in cardOf(id)), id).toBe(false);
+    for (const id of SUP) expect(KEYS.every(k => k in cardOf(id)), id).toBe(true);
   });
   it('A1: each SUPCORE row in rows.json is mode H with no parent, template or params; dead_bug and v_up are in DESIGN.md\'s held table (D-SUPCORE-STRIP) and in no rows file', () => {
     const rows = readJson(ROWS).rows, design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
@@ -1996,12 +1998,13 @@ describe('LIB-SUPCORE A10 / A1: the 5 cards and quotes, the rows and the waits',
     for (const id of SUP_WAIT) { expect(`lib_${id}` in rows, id).toBe(false); expect(new RegExp(`\\| ${id} \\| D-SUPCORE-STRIP`).test(design), id).toBe(true); }
     expect(readFileSync(ROWS, 'utf8').includes('lib_crunch')).toBe(false);
   });
-  it('A1 mutations: crunch added to rows.json, a row set to T, and dead_bug added before its strip row, are red', () => {
+  it('A1 mutations: crunch added to rows.json, a row set to T, and a SUPCORE row dropped, are red', () => {
     const rows = readJson(ROWS).rows, a1 = (r: Record<string, any>) => [...('lib_crunch' in r ? ['crunch'] : []), ...Object.entries(r).filter(([, x]) => x.mode !== 'H').map(([k]) => k), ...SUP_WAIT.filter(i => `lib_${i}` in r)];
     expect(a1(rows)).toEqual([]);
     expect(a1({ ...rows, lib_crunch: { mode: 'H' } })).toEqual(['crunch']);
     expect(a1({ ...rows, lib_flutter_kicks: { ...rows.lib_flutter_kicks, mode: 'T' } })).toEqual(['lib_flutter_kicks']);
-    expect(a1({ ...rows, lib_dead_bug: { mode: 'H' } })).toEqual(['dead_bug']);
+    const { lib_dead_bug: _gone, ...dropped } = rows;
+    expect(SUP.filter(i => !(`lib_${i}` in dropped))).toEqual(['dead_bug']);
   });
 });
 
