@@ -138,7 +138,9 @@ export default {
   mistake: {
     pose: mistake,
     tells: [
-      { key: 'hips', text: 'Knees swing', anchor: { at: 'knee.l', pose: 'mistake', off: [19, 36] }, box: { left: 252, top: 256 }, cue: 'The hips and knees swing with the trunk.' },
+      // HELD-B (D-HELD6-RTWIST): on the red right knee's outline (knee.r + [-6.84, -6.84] px), from the left; the signed
+      // front entry is 3.42 px into the end figure and 6.84 px into the Mistake figure (lb9-plates.test.ts FRONT_ENTRY)
+      { key: 'hips', text: 'Knees swing', anchor: { at: 'knee.r', pose: 'mistake', off: [-6.84, -6.84] }, box: { left: 12, top: 188 }, cue: 'The hips and knees swing with the trunk.' },
     ],
   },
   tempo: [{ phase: 'Turn', s: 1, move: true }, { phase: 'Return', s: 1, move: true }],

@@ -193,6 +193,9 @@ starts at the hidden start ankle.
 - pallof_press: fault c8 (and c9); claim ids read: c5, c8 ("Over-arching the lower back ... keep a neutral spine"),
   c9 ("Overarching the lower back, or rounding it"), c10. One stated sign: the lower back over-arching; the trunk leaning
   back and the handle coming back are the fault's geometry, not signs a claim states. So one tell.
+  HELD-B (#371, D-HELD6-PALLOF; F-PALLOF-ARCH closed on F-RESEARCH-2 Q1(b)): the re-copied card's c20 (FitnessVolt:
+  "Pressing the hands forward can tempt you to lift the chest and extend the lumbar spine") states a second sign, the
+  chest lifting, so pallof_press now draws two tells (`arch`, `chest`) and is no longer a one-tell plate.
 - cable_crunch: fault c8 (and c3); claim ids read: c8 (Fitness Volt: "You will see a lot of people doing this
   exercise by moving their hips too, but that's a mistake ... Done correctly, only your spine should move."; Motra:
   "Using hips to pull"), c3 (Motra: "keeping hips stationary", "Hips still and elevated", "Spine flexes, not hips").
@@ -309,8 +312,8 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 |---|---|---|
 | ~~cable_crunch~~ released at resume 3 (LIB-21R3, §24; on LIB-SPINE's spine segments): D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
 | ~~superman~~ released at resume 2 (#337, D-LIB21-SUPERMAN): D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
-| pallof_press | D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
-| russian_twist | D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
+| ~~pallof_press~~ released at HELD-B (#371, §26; D-HELD6-PALLOF: c20's chest lift is a second tell with a Mistake zoom at k 1.5): D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
+| ~~russian_twist~~ released at HELD-B (#371, §26; D-HELD6-RTWIST: the signed 3.42 / 6.84 px entry on the red right knee, Do 7b card fields): D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
 
 ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG; it and bird_dog are approved (slice panel and recheck).
 

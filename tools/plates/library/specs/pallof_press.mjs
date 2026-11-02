@@ -32,9 +32,11 @@
 //   full arm length less 0.1 mm (upright_row's ARM), the arms straight (c5 "full arm extension"); trunk, neck and scap
 //   unchanged (c5 "back straight and tall", c10 "shoulders down"). The hands travel on a straight line (c6): the
 //   engine blends the reach targets and re-solves the arms.
-//  Mistake (c8, c9): the lower back over-arches while pressing: lumbar extension M_ARCH (trunk), the pelvis, legs and
-//   feet unchanged; the arms stay straight at full length and the handle at chest height (c8 "at chest height"), so
-//   the handle comes back with the shoulders.
+//  Mistake (c8, c9, c20): the lower back over-arches while pressing: lumbar extension M_ARCH (trunk), the pelvis, legs
+//   and feet unchanged; the arms stay straight at full length and the handle at chest height (c8 "at chest height"), so
+//   the handle comes back with the shoulders. Its two stated signs are the two tells: the low back arching (c8, c9) and
+//   the chest lifting (c20, "lift the chest and extend the lumbar spine"; HELD-B, D-HELD6-PALLOF). The chest moves
+//   8.98 px at plate scale, so a Mistake zoom on it at k 1.5 (the lowest rung) carries it to 13.47 px.
 //  Column (c1, c4): the vendor cableColumn and its stack, default 2.1 m frame and 34 cm width; its pulley at the start
 //   chest landmark's height and depth (c1 "about chest height", "directly to the right of the body") and COL_X out to
 //   the figure's right (c4 "walk out ... until you feel the pull"). Frame and stack static in every pose
@@ -174,12 +176,15 @@ export default {
       { kind: 'arrow', from: { along: ['sacrum', 'backMid'], t: 0.6, pose: 'mistake', off: [12, 0] }, to: { along: ['sacrum', 'backMid'], t: 0.6, pose: 'mistake' } },
       { kind: 'dashed', pts: MIS_CABLE },                                       // the Mistake's cable, one stroke
     ],
-    // One tell (D-LIB10-SKULL1; the one-tell record in the hand-off): c8 and c9 state one sign of this fault, the lower
-    // back over-arching; the trunk leaning back and the handle coming back are its geometry, not signs a claim states.
+    // Two tells (HELD-B, D-HELD6-PALLOF; lb9/DESIGN.md section 8): c8 and c9 state the lower back over-arching, c20 the
+    // chest lifting; the trunk leaning back and the handle coming back are the fault's geometry, not signs a claim states.
+    // The chest box {64, 158} (D-HELDB-PALLOFBOX): the shortest leader entering neither figure with all hard checks.
     tells: [
       { key: 'arch', text: 'Low back<br>arches', anchor: { along: ['sacrum', 'backMid'], t: 0.3, pose: 'mistake', off: [-1, 0] }, box: { left: 252, top: 206 }, cue: 'The lower back over-arches as you press the handle out.' },
+      { key: 'chest', text: 'Chest lifts', anchor: { at: 'chest', pose: 'mistake' }, box: { left: 64, top: 158 }, cue: 'The chest lifts as the lower back extends.' },
     ],
   },
+  zoom: { view: 'mistake', k: 1.5, tell: 'chest' },   // D-HELD6-PALLOF, D-LIBZOOM-EXTEND: the chest tell, 13.47 px at the zoom's scale
   alt: 'Pallof press, side view. Standing side-on to a cable column with the knees slightly bent, the lifter holds one handle in both hands at the chest and presses it straight out in front of the chest, back tall.',
 };
 

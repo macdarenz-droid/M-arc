@@ -516,6 +516,20 @@
    "pose": "end",
    "cardPose": "end",
    "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "sole.l",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c6"
+  },
+  {
+   "kind": "contact",
+   "landmark": "sole.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c6"
   }
  ],
  "tempo": [
