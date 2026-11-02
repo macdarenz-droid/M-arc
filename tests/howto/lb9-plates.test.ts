@@ -128,7 +128,7 @@ const RC_BACK = 24.7;   // LIB-SUPCORE D-SUPCORE-RCBACK: px inside the end figur
 // LIB-SUPCORE D-SUPCORE-LUMBARTELL (#366 6580574917): each arch tell's leader, px inside the end and the Mistake figure
 // past its first 8 px (measured), entering from above through the trunk only; the anchor 1 px above `lumbar` keeps the
 // k 2 ring inside the frame (A8; at `lumbar` itself dead_bug's ring ends at 358.3 px and v_up's at 358.6)
-const LUMBAR_IN: Record<string, [number, number]> = { flutter_kicks: [12.24, 18.36], dead_bug: [12.31, 18.47], v_up: [15.27, 16.66] };
+const LUMBAR_IN: Record<'flutter_kicks' | 'dead_bug' | 'v_up', [number, number]> & Record<string, [number, number] | undefined> = { flutter_kicks: [12.24, 18.36], dead_bug: [12.31, 18.47], v_up: [15.27, 16.66] };
 const HELD: string[] = ['pallof_press', 'russian_twist'];   // cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
@@ -2250,6 +2250,7 @@ describe('LIB-SUPCORE D-SUPCORE-LUMBARTELL: the arch tell on the lumbar point (#
    *  and whether it runs from above (the box end higher than the anchor). */
   const archEntry = (spec: any) => {
     const i = spec.mistake.tells.findIndex((t: any) => t.key === 'arch'), p = leadersOf(plate.renderPlate(spec, { id: 'x', mistake: true }).svg)[i]!;
+    type Entry = { len: number, keys: string[], above: boolean };
     return Object.fromEntries((['end', 'mistake'] as const).map(f => {
       const sh = shapesIn(spec, f); let len = 0; const keys = new Set<string>();
       for (const [a, b] of segs(p)) { const L = Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!); for (let k = 0; k < 40; k++) {
@@ -2258,7 +2259,7 @@ describe('LIB-SUPCORE D-SUPCORE-LUMBARTELL: the arch tell on the lumbar point (#
         const hit = sh.filter((x: any) => inPoly(x.poly, q)); if (hit.length) { len += L / 40; hit.forEach((x: any) => keys.add(x.key)); }
       } }
       return [f, { len, keys: [...keys].sort(), above: p[p.length - 1]![1]! < p[0]![1]! }];
-    }));
+    })) as Record<'end' | 'mistake', Entry>;
   };
   const archProblems = (spec: any, want = LUMBAR_IN[spec.id]!) => {
     const e = archEntry(spec), out: string[] = [];
