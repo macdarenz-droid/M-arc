@@ -3048,4 +3048,8 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
 - **D-HELD6-TOES.** c15's "keep your toes on the floor" carries its own alternative ("you can also … lift the toes"),
   so it is not a fact.
 - **Source:** PR #368; lb8/DESIGN.md sections 8 and 20.
+- **hip_thrust HELD after panel mx26 (S2; route F-HIPTHRUST-ARCH).** At the unsourced 12° the arch reads only 3-4.5 px
+  on the phone, and the zoom shows no landmark. A larger Mistake size needs a sourced magnitude or a ruled house
+  convention from the approved bench-press arch. The row goes on the named list at the release candidate.
+  resisted_hip_flexion stays approved. **Source:** PR #368 6574480674; lb8/DESIGN.md section 15.
 

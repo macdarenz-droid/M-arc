@@ -199,6 +199,10 @@ const trunkOf = lm => ang(lm.backUpper, lm.lumbar) - Math.atan2(UPPER_REF[2], UP
 const barOf = lm => barIn({ root: { at: lm.hips, tilt: tiltOf(lm) }, trunk: trunkOf(lm), neck: 0, plant });
 const BARS = { start: barIn(start), end: BAR_TOP, mistake: BAR_TOP };   // the Mistake's bar is the end's (D-HELD6-HIPTHRUST)
 
+// D-HELD6-RING (#368 6569943739): the Mistake zoom's ring on the lumbar underside; 4 is the smallest ladder k that
+// passes (2.98 px: 11.92 at k 4, 10.43 at k 3.5). Not drawn: hip_thrust is HELD after panel mx26 (S2, route
+// F-HIPTHRUST-ARCH, #368 6574480674), and a held row carries no zoom; the tests measure the route's ring with it.
+export const RING = Object.freeze({ view: 'mistake', k: 4 });
 export const HT = { edge: EDGE, benchTop: BENCH_TOP, bars: BARS, barIn, barOf, creaseAt, tiltOf, onEdge, via, start, end, mistakePose };
 // The card's contact facts (lb8 DESIGN.md; D-LIB18-FACTS): each bound by a check on its landmark in its pose, at the
 // drawn point (H6 reads the report's checks); the drawn-item tests prove the contact itself.
@@ -251,7 +255,6 @@ export default {
       { key: 'arch', text: 'Back<br>arched', anchor: { along: ['backMid', 'lumbar'], t: 0.67, pose: 'mistake', off: [-2, 2.15] }, box: { left: 150, top: 170 }, cue: 'The lower back arches and the ribs flare up as the hips lock out.' },
     ],
   },
-  zoom: { view: 'mistake', k: 4 },   // D-HELD6-RING: the ring on the lumbar underside; 4 is the smallest ladder k that passes (2.98 px: 11.92 at k 4, 10.43 at k 3.5)
   mistakeGhosts: false,   // D-HELD6-MGHOST (panel mx25 R5 a): the Mistake view leaves out the start pose and the ghosts
   alt: 'Hip thrust, side view. Upper back on a bench edge, feet flat, a padded barbell held in the hip crease: the hips drive up until shoulders, hips and knees form a level line with the shins vertical, then lower toward the floor.',
 };

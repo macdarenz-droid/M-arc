@@ -686,9 +686,12 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 | seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°); the c1 fact "toes ... on the foot support" (CARD FIELDS fix 2) is missed at the drawn stretch: the toe 4.2 cm off the platform's top | the named list (D-LIB18-CALF-S4, #325 6405116791): S4 arose, so the row is left out with the toe-through-platform reason and its renders, decided at the release candidate |
 | standing_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 5.1 px < 22.11 px (trim [10, 12], barbell_back_squat.mjs:117); the locked-knee Mistake 7.4 px < 11.39 px; the rigid toe is 4.85 cm inside the platform at the card's top; the c1 toe fact misses by 2.3 cm at the start | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
 | bodyweight_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace measures 5.8 px < 22.11 px (trim [10, 12]); the Mistake passes (13.6 px); the rigid toe is 4.56 cm inside the step at the top, so the c4 toe fact misses by 4.6 cm | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
+| hip_thrust | D-LIB8-shrug (S2) under D-LIB13-PANEL2 (panel mx26, #368 6574480674) | the bowed Mistake (M_ARCH 12, unsourced) moves the lumbar underside 2.98 px at plate scale (11.92 px only in the route's k 4 ring, D-HELD6-RING, not drawn). Panels: mx24 R4 [3,3,3] and R3 (fixed), mx25 R5 [3,3,2] and R11 [2,2,2], mx26 R5 [3,3,4] and R11 [3,3,4]: the red trunk outline leaves the solid one by 5-9 px at 780 px, and the ring shows the arm edge and the trunk underside with no landmark (section 20) | F-HIPTHRUST-ARCH: a larger Mistake size needs a sourced magnitude or a ruled house convention from the approved bench-press arch; until then the named list at the release candidate. The spec, its tests and D-HELD6-MGHOST stay |
 
 Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys stay. glute_bridge left this table at
-'LIB-18 resume 2' (section 19); hip_thrust and resisted_hip_flexion left it at 'HELD-A' (section 20).
+'LIB-18 resume 2' (section 19); hip_thrust and resisted_hip_flexion left it at 'HELD-A' (section 20), and hip_thrust
+came back after panel mx26 (its last focused round). A held row carries no zoom: hip_thrust's route ring is the spec's
+exported `RING`, which the tests measure and the plate does not draw.
 
 **Bulk rulings (LB8 BULK DRAWN RULED, #306 6357883031).** Named nits: hack_squat's "Back on pad" (39 px) and
 resisted_hip_flexion's "No back arch" (63 px), each entering the end figure once from the front, no equipment, at most
@@ -908,3 +911,10 @@ round):
 - The LB8 page builds `7e466f8e…5799` twice. Every other article, resisted_hip_flexion's and glute_bridge's included,
   is byte-identical to the `5b703d65` page. runQa passes all 10 hard checks on all 9 rows, and the flag set is the
   ruled set.
+
+Panel mx26 (#368 6574480674, last focused round): **hip_thrust HELD** (S2, D-LIB13-PANEL2). R5 [3,3,4] and R11 [3,3,4];
+R1-R4, R6, R10 5, R7 4. With MGHOST no critic named a ghost. At M_ARCH 12 the red trunk outline leaves the solid outline
+by 5-9 px at 780 px (3-4.5 px on the phone; the approved bench-press arch is about 30 px with an arrow), and the ring
+shows the arm edge, the trunk underside and the elbow dot with no landmark. Route F-HIPTHRUST-ARCH (section 15). The row
+leaves rows.json for the held table; the spec drops its zoom field (exported as `RING` for the route) and keeps the
+fix-2 drawing and `mistakeGhosts`. resisted_hip_flexion stays approved @ `6d31c473`, byte-identical.

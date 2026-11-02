@@ -36,11 +36,12 @@ const NOT_HERE = ['seated_leg_curl'];
 const LEGCURLS = ['lying_leg_curl', 'standing_leg_curl'];
 // DESIGN.md section 15: every held id, with its ruling there.
 // 'LIB-18 resume 2': glute_bridge released with one zoom per view (D-LIBZOOM-EXTEND, D-LIB16-ZOOMVIEWS).
-// 'HELD-A' (Held 6): hip_thrust and resisted_hip_flexion released (D-HELD6-HIPTHRUST, D-HELD6-RHF).
-const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise'];
+// 'HELD-A' (Held 6): hip_thrust and resisted_hip_flexion released (D-HELD6-HIPTHRUST, D-HELD6-RHF); hip_thrust held
+// again after panel mx26 (S2, route F-HIPTHRUST-ARCH, #368 6574480674).
+const HELD = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust'];
 // The ids on lb8/rows.json now: drawn and not held (A5).
 // 'LIB-18 resume': the leg curls, and the rows released with a LIB-ZOOM circle (D-LIBZOOM-EXTEND; D-LIB18-ZOOMPLACE).
-const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'hip_thrust', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
+const ON_ROWS = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
 // Card facts the held plates' drawings miss (CARD FIELDS fix round, #306 6356303497): recorded with their holds, never hidden.
 const FACT_MISSES: Record<string, string[]> = { seated_calf_raise: ['check:start:toe.l:4.2cm', 'check:start:toe.r:4.2cm'], standing_calf_raise: ['check:start:toe.l:2.3cm', 'check:start:toe.r:2.3cm'], bodyweight_calf_raise: ['check:end:toe.l:4.6cm', 'check:end:toe.r:4.6cm'] };
 // Measured values inside PQ-H6's 1 cm that are past A2's 0.5 cm, or a back landmark under 1 cm into the floor (no
@@ -4880,7 +4881,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
 // ---- D-LIBZOOM-EXTEND ('LIB-18 resume'): the rows released with a Mistake-view LIB-ZOOM circle ----
 describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main)', { timeout: T }, () => {
   // k: the smallest of the ladder whose tell-anchor move reaches deviationMin at the zoom's scale (DESIGN.md section 18)
-  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, cable_kickback: 3, hip_thrust: 4 };   // hip_thrust: Held 6 (D-HELD6-HIPTHRUST); k 4 on the lumbar underside (D-HELD6-RING)
+  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, cable_kickback: 3 };   // hip_thrust: held after mx26; its route's ring (D-HELD6-RING, k 4) is measured below with RING
   const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], BAR = 11.39;
   let Z: any;
   beforeAll(async () => { Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); }, T);
@@ -4909,7 +4910,10 @@ describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main
     expect(zoomProblems('lying_leg_curl', { ...S.lying_leg_curl, zoom: undefined }).length).toBeGreaterThan(0);
   });
   it('D-HELD6-HIPTHRUST, -RING: hip_thrust\'s Mistake is the end pose bowed 12 (trunk.bow), one tell `arch` on the lumbar underside at plate x 164 (panel mx25 R11) at 2.98 px (11.92 px at k 4); mutations: the main drawing\'s backMid-sacrum anchor and the number trunk are red', () => {
-    const h = S.hip_thrust, z = Z.zoomOf(h);
+    const h = { ...S.hip_thrust, zoom: M.hip_thrust.RING }, z = Z.zoomOf(h);
+    expect(M.hip_thrust.RING).toEqual({ view: 'mistake', k: 4 });
+    const lower = LADDER.filter(k => k < 4);
+    expect(z.fault.d * 4).toBeGreaterThanOrEqual(BAR); expect(lower.some(k => z.fault.d * k >= BAR)).toBe(false);
     console.log(`HELD-A hip_thrust arch: ${z.fault.d.toFixed(3)} px -> ${(z.fault.d * 4).toFixed(2)} px at k 4; source ring ${JSON.stringify(z.src)}; circle ${JSON.stringify(z.circle)}`);
     expect(h.mistake.tells.map((t: any) => [t.key, t.anchor])).toEqual([['arch', { along: ['backMid', 'lumbar'], t: 0.67, pose: 'mistake', off: [-2, 2.15] }]]);
     expect(h.mistake.tells[0].cue).toMatch(/ribs/);
@@ -4919,7 +4923,7 @@ describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main
     const atK4 = (spec: any) => Z.zoomOf({ ...spec, zoom: { view: 'mistake', k: 4 } }).fault.d * 4;
     const old = { ...h, mistake: { ...h.mistake, tells: [{ ...h.mistake.tells[0], anchor: { along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' } }] } };
     expect(atK4(old)).toBeLessThan(BAR);   // the main anchor on the bowed back stays under the bar even at kMax
-    expect(zoomProblems('hip_thrust', old).length).toBeGreaterThan(0);
+    expect(Z.zoomOf(old).fault.d * M.hip_thrust.RING.k).toBeLessThan(BAR);
     expect(() => plate.renderPlate({ ...h, poses: { ...h.poses, end: { ...h.poses.end, trunk: 0 } } }, { id: 'x', mistake: true })).toThrow(/D-SPINE-MIX/);
   });
   // panel lb8q (#325 6410306586) and D-LIB18-RINGKEEP: one red dashed back curve, the ring on the measured arch, no leader in the zoom
@@ -5011,7 +5015,7 @@ describe('LIB-18 resume 2: glute_bridge, a normal-view zoom on the hip Trace and
 describe('HELD-A mx25 fix 2: hip_thrust\'s Mistake view without the start pose and ghosts (D-HELD6-MGHOST), the red trunk outline (R5 b) and the ring on the lumbar underside (D-HELD6-RING)', { timeout: T }, () => {
   let MG: any, Z: any;
   beforeAll(async () => { [MG, Z] = await Promise.all(['mistake-ghosts.mjs', 'zoom/inline.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
-  const h = () => S.hip_thrust;
+  const h = () => ({ ...S.hip_thrust, zoom: M.hip_thrust.RING });   // held after mx26: the route's ring, measured (D-HELD6-RING)
   const ghostProblems = (svg: string) => [...svg.matchAll(/<g class="(pose-start|ghost)\b/g)].map(m => `a ${m[1]} group in the Mistake svg`);
   const rawMistake = (spec: any) => plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
   /** The engine's render with every equipment function given the correct-plate context (ctx.mistake false). */
@@ -5019,6 +5023,7 @@ describe('HELD-A mx25 fix 2: hip_thrust\'s Mistake view without the start pose a
 
   it('MGHOST: with the field the Mistake svg holds no start or ghost group in the plate, the node QA render and the zoom render; the normal view keeps them; mutation: the call removed (the engine\'s own render) is red', () => {
     expect(h().mistakeGhosts).toBe(false);
+    expect(S.hip_thrust.zoom).toBeUndefined();
     expect(ghostProblems(MG.mistakeSvg(h(), rawMistake(h())))).toEqual([]);
     const R = qaNode.rendersOf({ spec: h(), plate: { prefix: 'x' } }, Eng());
     expect(ghostProblems(R.mistake.svg)).toEqual([]);
@@ -5030,6 +5035,7 @@ describe('HELD-A mx25 fix 2: hip_thrust\'s Mistake view without the start pose a
   it('MGHOST: hip_thrust\'s normal view is byte-identical with and without the field (engine and node QA renders); a spec without the field is unchanged; mutation: the step run on a normal svg changes it', () => {
     const off = { ...h(), mistakeGhosts: undefined };
     expect(plate.renderPlate(h(), { id: 'x' }).svg).toBe(plate.renderPlate(off, { id: 'x' }).svg);
+    expect(plate.renderPlate(S.hip_thrust, { id: 'x' }).svg).toBe(plate.renderPlate({ ...S.hip_thrust, mistakeGhosts: undefined }, { id: 'x' }).svg);
     expect(qaNode.rendersOf({ spec: h(), plate: { prefix: 'x' } }, Eng()).normal.svg).toBe(qaNode.rendersOf({ spec: off, plate: { prefix: 'x' } }, Eng()).normal.svg);
     for (const id of DRAWN_NOW.filter(i => i !== 'hip_thrust')) {
       expect(S[id].mistakeGhosts, id).toBeUndefined();
@@ -5038,15 +5044,16 @@ describe('HELD-A mx25 fix 2: hip_thrust\'s Mistake view without the start pose a
     const n = plate.renderPlate(h(), { id: 'x' }).svg;
     expect(MG.mistakeSvg(h(), n)).not.toBe(n);
   });
-  it('MGHOST on the LB8 page (child process): the page built with the field off, passed through applyMistakeGhosts, is the page byte for byte, so only hip_thrust\'s Mistake svg changes; the field-off page holds the groups; a page with no opted-in spec is returned as the same bytes', async () => {
+  it('MGHOST on the LB8 held page (child process; hip_thrust held after mx26): the page built with the field off, passed through applyMistakeGhosts, is the page byte for byte, so only hip_thrust\'s Mistake svg changes; the field-off page holds the groups; a page with no opted-in spec is returned as the same bytes', async () => {
     const script = `const P = await import(${JSON.stringify(lib('plates-page.mjs'))}), B = await import(${JSON.stringify(lib('build-page.mjs'))});
 const MG = await import(${JSON.stringify(lib('mistake-ghosts.mjs'))}), L8 = await import(${JSON.stringify(lib('lb8/build.mjs'))});
 const { mkdtempSync, writeFileSync, rmSync } = await import('node:fs'), { tmpdir } = await import('node:os'), { join } = await import('node:path'), { pathToFileURL } = await import('node:url');
-const cfg = await P.groupsConfig({ groups: [{ id: 'lb8', title: 'LB8', ids: L8.drawnIds() }] }, L8.lb8All(), L8.LB8_ROWS);
+const held = await L8.buildHeldPage();
+const cfg = await P.groupsConfig({ groups: [{ id: 'lb8-held', title: 'LB8 held', ids: held.ids }] }, held.all, 'tools/plates/library/lb8/held (memory)');
 const key = Object.keys(cfg.specs).find(k => k.endsWith('hip_thrust')), dir = mkdtempSync(join(tmpdir(), 'mghost-')), off = join(dir, 'hip_thrust.mjs');
 writeFileSync(off, 'import s from ' + JSON.stringify(pathToFileURL(cfg.specs[key]).href) + '; export default { ...s, mistakeGhosts: undefined };');
 try {
-  const on = (await B.buildPlatesPage(cfg)).html, raw = (await B.buildPlatesPage({ ...cfg, specs: { ...cfg.specs, [key]: off } })).html;
+  const on = (await B.buildPlatesPage(cfg)).html; if (Buffer.compare(on, held.html) !== 0) throw new Error('held page differs from its config build'); const raw = (await B.buildPlatesPage({ ...cfg, specs: { ...cfg.specs, [key]: off } })).html;
   const fixed = await MG.applyMistakeGhosts(raw, { [key]: cfg.specs[key] });
   const rest = Object.fromEntries(Object.entries(cfg.specs).filter(([k]) => k !== key)), same = await MG.applyMistakeGhosts(raw, rest);
   const fig = (h, mode) => { const s = h.toString('utf8'), a = s.indexOf('<div class="plate-fit" id="hip-thrust-plate">'); if (a < 0) throw new Error('no hip-thrust plate'); const f = s.indexOf('<figure class="plate" data-mode="' + mode + '"', a); return s.slice(f, s.indexOf('</figure>', f)); };
@@ -5128,6 +5135,7 @@ try {
     const bad = ringProblems(today);
     console.log(`HELD-A hip_thrust ring, today's place: ${JSON.stringify(bad)}`);
     expect(bad).toEqual(expect.arrayContaining([expect.stringMatching(/^end: a plate rim [\d.]+ px from the ring centre/), expect.stringMatching(/^\d+ ghost elements in the ring$/)]));
-    expect(ringProblems({ ...h(), mistakeGhosts: undefined }).length).toBeGreaterThan(0);   // the post-step alone removed
+    expect(ringProblems({ ...h(), mistakeGhosts: undefined }).length).toBeGreaterThan(0);
+    expect(() => ringProblems(S.hip_thrust)).toThrow(/no zoom entry/);   // held: no zoom is drawn   // the post-step alone removed
   });
 });
