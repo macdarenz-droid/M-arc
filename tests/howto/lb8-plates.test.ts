@@ -5121,7 +5121,7 @@ try {
     expect(ringProblems(h())).toEqual([]);
     const z = Z.zoomOf(h()), C = z.src.c, cam = camOf(h()), el = cam.P(lmOf(h(), 'end')['elbow.r']);
     const arm = shapesIn(h(), 'end').filter((x: any) => /^(upper|elbowcap|fore|fist|shcap)\.r$/.test(x.key)).flatMap((x: any) => x.poly as number[][]);
-    const depth = z.src.r - Math.min(...arm.map(p => Math.hypot(p[0]! - C[0], p[1]! - C[1])));
+    const depth = z.src.r - Math.min(...arm.map((p: number[]) => Math.hypot(p[0]! - C[0], p[1]! - C[1])));
     console.log(`HELD-A hip_thrust ring: centre ${C.map((v: number) => v.toFixed(1))}, r ${z.src.r.toFixed(1)}; arm edge ${depth.toFixed(1)} px deep, elbow dot ${Math.hypot(el[0]! - C[0], el[1]! - C[1]).toFixed(1)} px from the centre (side-view geometry, not a check)`);
     const t = h().mistake.tells[0];
     const today = noCtxMistake({ ...h(), mistakeGhosts: undefined, zoom: { view: 'mistake', k: 3 }, mistake: { ...h().mistake, tells: [{ ...t, anchor: { at: 'sacrum', pose: 'mistake' } }] } });
