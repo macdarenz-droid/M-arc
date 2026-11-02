@@ -2223,3 +2223,26 @@ describe('LIB-SMALL: wall-ball as approved in panel mx23 (#358, head 29e788a9) s
     expect(fragProblems(html.replace(alt, alt.replace('side view', 'side vieW')))).toContain('wall-ball alt');
   });
 });
+
+describe('LIB-SMALL: no whole-page build in the worker (F-VITEST-RPC, #358 6552271304; the D-LIB13S-RPC guard form)', () => {
+  const src = readFileSync(new URL(import.meta.url), 'utf8');
+  /** A whole-page build outside an awaited child process: any mention of a page builder (called or aliased) or of
+   *  generate's render, once the child scripts' `const script = \`...\`;` text, the guards' own lines (`const
+   *  inWorker =`, `expect(inWorker(`, `it('mutation`) and the comments that start a line are cut. */
+  const inWorker = (text: string) => /\bbuild(Lb10|Held|Plates)Page\b|\b(gen|generate)\.render\b/.test(text
+    .replace(/const script = `[\s\S]*?`;/g, '').replace(/^[ \t]*(const inWorker =|expect\(inWorker\(|it\('mutation)[^\n]*$/gm, '')
+    .replace(/^[ \t]*\/\/[^\n]*$/gm, '').replace(/^[ \t]*\/\*[\s\S]*?\*\/[ \t]*$/gm, ''));
+  it('every LB10 page build and generate render runs in an awaited child process', () => {
+    expect(inWorker(src)).toBe(false);
+    expect(src).toMatch(/promisify\(execFile\)\(process\.execPath/);
+  });
+  it('mutations: a page build in the worker, an aliased one, one after a `//` inside a string, a held or plates page and a generate render are red', () => {
+    const P = `${'buildLb10'}Page`;
+    expect(inWorker(`${src}\n  const page = await build.${P}();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const make = build.${P};\n  const page = await make();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const u = 'https://x'; const page = await build.${P}();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const page = await build.${'buildHeld'}Page();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const page = await bp.${'buildPlates'}Page({});\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const out = await gen.${'ren'}der();\n`)).toBe(true);
+  });
+});

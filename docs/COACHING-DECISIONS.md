@@ -3036,3 +3036,12 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   and the blind TOPFAULT pass answered 'flare'. The two ids' rows and tests moved from pilot-a2/ to pilot-a3/
   (D-A3-TESTHOME).
 - **Source:** PR #362; pilot-a3/DESIGN.md.
+
+## LIB-SMALL: jumping_jacks, wall_ball (LB10) and jump_squat (LB4) (builder, 2026-11-02; card docs/supervisor/verify/lib-small-card.md, rulings D-SMALL-*)
+- **D-SMALL-RPCGUARD.** F-VITEST-RPC (#358 6552271304) in the D-LIB13S-RPC form: every whole-page build and generate's
+  render in lb4-plates.test.ts and lb10-plates.test.ts runs in an awaited child process, assertions unchanged (LB4's
+  generate --check now reports its two per-output checks as one problem list, as LB10's already did). Each file gets a
+  guard: no `build(Lb4|Lb10|Held|Plates)Page` or `gen.render` outside a child script, with the guards' own lines cut.
+  **Why:** the worker RPC timeout on test:tz; the guard is red on main's lb4 file (7 in-worker builds) and on 41bdced1's
+  (generate's render), and six mutations (direct, aliased, after a `//` in a string, held page, plates page, render) are red.
+- **Source:** PR #358; lb10/DESIGN.md 23, lb4/DESIGN.md 16.

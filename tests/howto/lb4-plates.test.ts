@@ -173,15 +173,20 @@ describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
       ...LB4.map(i => `tools/plates/library/howto/lib_${i}.howto.mjs`), 'tools/plates/library/lb4/build.mjs', 'tools/plates/library/lb4/qa.mjs', 'tests/howto/lb4-plates.test.ts'];
     for (const f of files) expect(readFileSync(f, 'utf8'), f).not.toMatch(/from\s+['"][^'"]*\/hands\/|import\(\s*[^)]*\/hands\//);
   });
-  it('generate --check is green, and no generated file is read from lb4/, the LB4 specs, the wall composer or How-to sources', async () => {
-    const gen = await import(/* @vite-ignore */ new URL('../../tools/plates/generate.mjs', import.meta.url).href);
-    const t0 = Date.now(), out = await gen.render();
-    expect(gen.diff(out)).toEqual([]);
-    console.log(`LIB-14 A9: generate --check render took ${((Date.now() - t0) / 1000).toFixed(1)} s`);
-    for (const [p, { text }] of out) {
-      expect(text, p).not.toMatch(/library\/lb4\/|eq\/wall\.mjs/);
-      for (const id of LB4) expect(text, p).not.toMatch(new RegExp(`library/(specs|howto)/(lib_)?${id}\\b`));
-    }
+  it('generate --check is green, and no generated file is read from lb4/, the LB4 specs, the wall composer or How-to sources (awaited child process)', async () => {
+    // F-VITEST-RPC (#358 6552271304, the D-LIB13S-RPC form): generate's render runs in an awaited child process; the
+    // same two checks per output, reported as one problem list.
+    const script = `const gen = await import(${JSON.stringify(new URL('../../tools/plates/generate.mjs', import.meta.url).href)});
+const ids = ${JSON.stringify(LB4)}, out = await gen.render(), bad = [];
+for (const [p, { text }] of out) { if (/library\\/lb4\\/|eq\\/wall\\.mjs/.test(text)) bad.push(p + ': lb4/ or eq/wall.mjs');
+  for (const id of ids) if (new RegExp('library/(specs|howto)/(lib_)?' + id + '\\\\b').test(text)) bad.push(p + ': ' + id); }
+console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;
+    const t0 = Date.now(), { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 });
+    const r = JSON.parse(stdout.trim().split('\n').pop()!);
+    console.log(`LIB-14 A9: generate --check render took ${((Date.now() - t0) / 1000).toFixed(1)} s (${r.n} outputs)`);
+    expect(r.n).toBeGreaterThan(0);
+    expect(r.diff).toEqual([]);
+    expect(r.bad).toEqual([]);
   });
 });
 
@@ -1181,9 +1186,7 @@ describe('LIB-14 panel mx1 second round (#289 6414220426, D-LIB13-PANEL2): goble
   });
 });
 
-/** F-VITEST-RPC (#358 6552271304, the D-LIB13S-RPC form): the LIB-SMALL blocks build the whole LB4 page in an awaited
- *  child process, never in the worker. */
-/** F-VITEST-RPC: any whole-page build in an awaited child process. `body` runs there with `b` (lb4/build.mjs), `lib`
+/** F-VITEST-RPC (#358 6552271304, the D-LIB13S-RPC form): any whole-page build in an awaited child process. `body` runs there with `b` (lb4/build.mjs), `lib`
  *  (a path to a library file URL) and `fs`, and returns the page html (Buffer or string). */
 const lb4BuildInChild = async (body: string) => {
   const script = `const b = await import(${JSON.stringify(lib('lb4/build.mjs'))}); const fs = await import('node:fs'); const lib = f => new URL(f, ${JSON.stringify(lib(''))}).href;
@@ -1368,5 +1371,28 @@ describe('LIB-SMALL: jump-squat as approved in panel mx17 (#358, head c176723d) 
     const html = await pageOf(), alt = S.jump_squat.alt;
     expect(html.includes(alt)).toBe(true);
     expect(fragProblems(html.replace(alt, `${alt.slice(0, -1)}!`))).toContain('jump-squat alt');
+  });
+});
+
+describe('LIB-SMALL: no whole-page build in the worker (F-VITEST-RPC, #358 6552271304; the D-LIB13S-RPC guard form)', () => {
+  const src = readFileSync(new URL(import.meta.url), 'utf8');
+  /** A whole-page build outside an awaited child process: any mention of a page builder (called or aliased) or of
+   *  generate's render, once the child scripts' `const script = \`...\`;` text and lb4BuildInChild's body arguments, the guards' own lines (`const
+   *  inWorker =`, `expect(inWorker(`, `it('mutation`) and the comments that start a line are cut. */
+  const inWorker = (text: string) => /\bbuild(Lb4|Held|Plates)Page\b|\b(gen|generate)\.render\b/.test(text
+    .replace(/const script = `[\s\S]*?`;/g, '').replace(/lb4BuildInChild\(('[^'\n]*'|`[\s\S]*?`)\)/g, '').replace(/^[ \t]*(const inWorker =|expect\(inWorker\(|it\('mutation)[^\n]*$/gm, '')
+    .replace(/^[ \t]*\/\/[^\n]*$/gm, '').replace(/^[ \t]*\/\*[\s\S]*?\*\/[ \t]*$/gm, ''));
+  it('every LB4 page build and generate render runs in an awaited child process', () => {
+    expect(inWorker(src)).toBe(false);
+    expect(src).toMatch(/promisify\(execFile\)\(process\.execPath/);
+  });
+  it('mutations: a page build in the worker, an aliased one, one after a `//` inside a string, a held or plates page and a generate render are red', () => {
+    const P = `${'buildLb4'}Page`;
+    expect(inWorker(`${src}\n  const page = await build.${P}();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const make = build.${P};\n  const page = await make();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const u = 'https://x'; const page = await build.${P}();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const page = await build.${'buildHeld'}Page();\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const page = await bp.${'buildPlates'}Page({});\n`)).toBe(true);
+    expect(inWorker(`${src}\n  const out = await gen.${'ren'}der();\n`)).toBe(true);
   });
 });
