@@ -50,7 +50,7 @@
    "START_TILT": {
     "value": "solved",
     "unit": "deg",
-    "basis": "physical: c10 'slowly lowering back to the ground', c1 'Sit on the floor': lowered on the bench-edge pivot (c9), the padded bar resting in the drawn hip crease (c3, #306 6358957999 item 1), until the first of the 45 cm plates, the seat and the buttock reaches the floor (the seat first; the plates stay 11.4 cm up): solved -29.69 deg"
+    "basis": "physical: c10 'slowly lowering back to the ground', c1 'Sit on the floor': lowered on the bench-edge pivot (c9), the padded bar resting in the drawn hip crease (c3, #306 6358957999 item 1), until the first of the 45 cm plates and the drawn torso outline reaches the floor (the outline first, D-HELD6-SEAT: the seat landmark lies 2.34 cm up in the soft tissue): solved -33.88 deg"
    },
    "trace": {
     "value": "hip.r",

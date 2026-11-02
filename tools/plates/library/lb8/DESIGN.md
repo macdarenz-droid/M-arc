@@ -22,8 +22,8 @@ body.mjs segment lengths, to be replaced by measurements as each plate is drawn.
 - **Engine.** Every LB8 spec imports only `tools/plates/library/engine.mjs`, eq/parts.mjs and the LB8 composers under
   `eq/` (D-LIB9-ENGINE). Specs copy code from the 8 on main and from pilot A and LB7 heads with `git show`; they never
   import a spec (D-LIB9-CLONE; A3 tests it). Every copied root finder throws on a bracket with no root; each records
-  what it solves to (hip_thrust: START_TILT bracket -89..-20 deg solves to -37.82 deg; M_TILT bracket -110..-65 solves
-  to -83.44 deg).
+  what it solves to (hip_thrust: START_TILT bracket -89..-20 deg solves to -33.88 deg, on the drawn torso outline,
+  D-HELD6-SEAT; M_TILT's solve went with Held 6, section 20).
 - **Modes: all twelve are H; no D row** (plan 6.2 :717 "H13", :753-755 no mark). A D spec is its parent with only
   PARAMS paths set (derive.mjs:4-12: camera.maxScale, grip.width, bar.kind, bench.angle, load.primitive, handedness,
   stance.width), and of those the vendor engine reads only `spec.camera` (vendor/engine/plate.mjs:81-95). What each id
@@ -279,9 +279,9 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
 - **Pose map**: identity. Start = plate.start (the bottom), end = plate.end (the top). The Mistake is drawn against the
   end pose.
 - **Fault→key**: plate.mistake "Lower back arched (overextended) with the ribs up" (c11, c12, c13; drawable true) →
-  drawn key `arch` (tell 1 "Back arched", c11 "arch the lower back"; c13 "overextending your back"), tell 2 `ribs`
-  ("Ribs up", c12 Healthline "If your ribs are up and your lower back is arched"). handlingMistakes[0] "Arching the
-  lower back." (c11, c12) = the same fault → topFault `arch`; F7 not raised.
+  drawn key `arch` (the one tell "Back arched", c11 "arch the lower back"; c13 "overextending your back"; c12's ribs up
+  is in its cue, the one-tell record below). handlingMistakes[0] "Arching the lower back." (c11, c12) = the same fault
+  → topFault `arch`; F7 not raised.
   - **One-tell record** (hip_thrust; Held 6, D-HELD6-HIPTHRUST, 2026-11-01): fault: the lower back arched with the ribs
     up (plate.mistake, c11, c12, c13). Claim ids read: c11, c12, c13. The second sign, c12's ribs up, is kept in the
     `arch` cue ("…and the ribs flare up…"), as reverse_lunge.mjs:136 does: on the bowed Mistake (the thorax held) the
@@ -315,14 +315,17 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   vertical" and c8 "torso should be parallel to the ground", "a straight line from shoulders to knees": angles to the
   floor with no model joint (PANELS.md 7 maps none of them); held by drawn-item tests (the shin plumb ±1°, the shoulder,
   hip and knee level ±1 cm at the top). c24 "just wider than hip width": a width (GRIP_X). c23 the neck: the sources
-  conflict (card notes), so the head is drawn in line. c4 "a pad or mat": an item, drawn (R10).
+  conflict (card notes), so the head is drawn in line. c4 "a pad or mat": an item, drawn (R10). c15 "Keep your toes on
+  the floor … (you can also dorsiflex and lift the toes if this helps)" (D-HELD6-TOES, #368 6569349184): the toe contact
+  carries its own alternative, so it is not a fact, as the "or" rule; the feet stay bound by the heel facts.
 - **Trace**: `hip.r` (c8 "Push the bar towards the ceiling by extending your hips"; the bar rides the pelvis and the
   engine traces landmarks only), trim [6, 8], the clone source's (leg_press.mjs:132; D-LIB18-TRIM). **measured
   46.6 px** since the bearing fix (36.9 px before it; 28.2 px at the earlier [10, 12]): passes.
 - **Balance**: between the upper back on the bench edge and the heels (c2, c15): the centre of mass (body plus the
   bar's load at the crease) lies between the edge and the heels in every drawn pose (a two-contact base).
 - **Sizes**: lb8/sizes.json `hip_thrust` (PAD_R 0.045 m, GRIP_X 0.2 m, PLATE_D 0.45 m, SLEEVE_D 0.05 m, BENCH_W 0.29 m,
-  M_ARCH 12°, FLOOR_BACK, FLOOR_FRONT; BENCH_TOP solved 0.3728 m, START_TILT solved -37.82°, M_TILT solved -83.44°).
+  M_ARCH 12°, FLOOR_BACK, FLOOR_FRONT; BENCH_TOP solved 0.3728 m, START_TILT solved -33.88° on the drawn torso outline, D-HELD6-SEAT; M_TILT's row went with
+  Held 6).
 - **PQ-H3**: the Mistake **measured 4.1 px** (the `arch` anchor; `ribs` 1.7 px) < 11.39 px: **S2, held** (section
   15). The 12° arch on a body pinned at the bench edge and the feet moves little. The three readings of c11-c13 were
   measured with the same anchors (node, 146.29 px/m), and none reaches the line, so the hold does not hang on the

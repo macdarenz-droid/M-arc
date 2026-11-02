@@ -25,9 +25,9 @@
 //   the height of the upper back (backUpper) on that line, and the bench's front edge sits under it (c2, c9).
 //  The rep pivots on the bench edge (c9 "a pivot point around the bench"): every pose keeps backUpper on the edge and
 //   the feet where the top plants them; the spine stays neutral (trunk 0, c10, c13).
-//  Bottom: lowered until the first of the barbell's plates, the seat and the buttock reaches the floor (c10 "slowly
-//   lowering back to the ground", c1 "Sit on the floor"; with the pad resting on the body the seat lands first): the
-//   pelvis tilt is SOLVED by bisection.
+//  Bottom: lowered until the first of the barbell's plates and the drawn torso outline reaches the floor (c10 "slowly
+//   lowering back to the ground", c1 "Sit on the floor"; with the pad resting on the body the outline lands first,
+//   D-HELD6-SEAT): the pelvis tilt is SOLVED by bisection.
 //  The ghosts: two in-between keys (poses.via) on the bench edge at a third and two thirds of the tilt, where plate.mjs
 //   draws the two ghosts (ghostT 1/3, 2/3), so the ghosts pivot on the edge too (c9) instead of sliding into the bench.
 //  The bar sits on its pad in the hip crease (c3, c4), resting on the drawn body in every pose (#306 6358957999 item
