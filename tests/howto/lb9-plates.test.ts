@@ -24,7 +24,12 @@ afterAll(() => { loopDelay.disable(); console.log(`LIB-21 A19 event-loop: max bl
 const LB9 = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', 'side_plank', 'russian_twist', 'bicycle_crunch'];
 // LB9's other rows: pilot A's plate (pA), pilot B's plate (pB) and the SUPCORE T children; never in an LB9 file.
 const ER5 = ['side_plank', 'russian_twist', 'bicycle_crunch'];
-const NOT_HERE = ['plank', 'crunch', 'reverse_crunch', 'dead_bug', 'v_up', 'flutter_kicks', 'hollow_body_hold'];
+const NOT_HERE = ['plank', 'crunch'];   // LIB-SUPCORE: the 5 SUPCORE rows are drawn here as H rows (D-SUPCORE-MODES); crunch is PILOT-B2's
+// LIB-SUPCORE wave 2 (D-SUPCORE-MODES, -ANCHOR): the 5 H rows drawn from crunch's approved bytes, in draw order; their
+// cards are byte copies from research a48b0594 (cards.sha.json `supcore`). dead_bug and v_up wait for their strip rows
+// (#358, D-SUPCORE-STRIP): drawn, in DESIGN.md's held table, in no rows file.
+const SUP = ['hollow_body_hold', 'reverse_crunch', 'dead_bug', 'v_up', 'flutter_kicks'];
+const SUP_WAIT = ['dead_bug', 'v_up'];
 const RESEARCH_HEAD = 'f574bb4b761ded9010a61b59881b6eae125b58e0';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -51,8 +56,9 @@ describe('LIB-21 A11 (Do 6 a): the 8 cards and quotes are byte copies of the LB9
     const q = readFileSync('docs/research/howto/quotes/cable_crunch.json', 'utf8');
     expect(sha(q.replace('"', ' "'))).not.toBe(cardsSha.quotes.cable_crunch);
   });
-  it('plank, crunch and the 5 SUPCORE T ids are not copied here', () => {
+  it('plank and crunch are not copied here, and the 5 SUPCORE ids only in the `supcore` section (LIB-SUPCORE)', () => {
     for (const id of NOT_HERE) expect(Object.keys(cardsSha.cards), id).not.toContain(id);
+    for (const id of SUP) expect(Object.keys(cardsSha.cards), id).not.toContain(id);
   });
   it('research/validate.mjs validateCardFile: no problem on the 8 cards (the 5 (a) cards with their keys, the 3 (b) cards without)', async () => {
     const v = await import(/* @vite-ignore */ new URL('../../tools/plates/library/research/validate.mjs', import.meta.url).href);
@@ -65,8 +71,8 @@ describe('LIB-21 A5 (first push): rows.json holds no row before a spec is drawn;
   it('batch LB9, censusRef 4a9fd86; no plank, crunch, T or (b) id in any LB9 rows file; no plank, crunch, T id or bicycle_crunch (before \'LB9 ER5 GO\') in tempo.json', () => {
     expect(rows.batch).toBe('LB9');
     expect(rows.censusRef).toBe('4a9fd86');
-    for (const id of [...NOT_HERE, 'russian_twist', 'bicycle_crunch']) expect(Object.keys(rows.rows), id).not.toContain(`lib_${id}`);
-    for (const id of [...NOT_HERE, 'bicycle_crunch']) expect(Object.keys(t.rows), id).not.toContain(id);
+    for (const id of [...NOT_HERE, ...SUP_WAIT, 'russian_twist', 'bicycle_crunch']) expect(Object.keys(rows.rows), id).not.toContain(`lib_${id}`);
+    for (const id of [...NOT_HERE, 'bicycle_crunch', 'dead_bug', 'v_up', 'flutter_kicks']) expect(Object.keys(t.rows), id).not.toContain(id);   // LIB-SUPCORE: the strip rows' ids take no timed row
   });
   /** A7 (D-LIB8M-TEMPO): a phase reads from plate.tempo (up, down, pause), Hold only where pause > 0; or it is a constant
    *  that carries its claim and a quote found verbatim in the card's quotes file under that claim, its string the quote's
@@ -76,8 +82,10 @@ describe('LIB-21 A5 (first push): rows.json holds no row before a spec is drawn;
     for (const p of phases) {
       if ('constant' in p) {
         if (!quotes.some((q: any) => q.claim === p.claim && q.text === p.quote)) out.push(`${id} ${p.phase}: quote not in ${p.claim}`);
-        const [a, b] = String(p.constant).split('–').map(Number), nums = [...String(p.quote).matchAll(/\d+/g)].map(m => +m[0]);
-        if (!(nums.includes(a!) && nums.includes(b!))) out.push(`${id} ${p.phase}: ${p.constant} not the quote's seconds`);
+        const nums = [...String(p.quote).matchAll(/\d+/g)].map(m => +m[0]), max = /^max (\d+)$/.exec(String(p.constant));
+        // D-SUPCORE-HOLDMAX (#366 6570379460): "max N" when the cited quote states N as an upper bound
+        if (max) { if (!new RegExp(`\\b(up to|no more than|maximum of) ${max[1]}\\b`, 'i').test(String(p.quote))) out.push(`${id} ${p.phase}: ${p.constant} not the quote's upper bound`); }
+        else { const [a, b] = String(p.constant).split('–').map(Number); if (!(nums.includes(a!) && nums.includes(b!))) out.push(`${id} ${p.phase}: ${p.constant} not the quote's seconds`); }
       } else if (!['up', 'down', 'pause'].includes(p.from)) out.push(`${id} ${p.phase}: from ${p.from}`);
     }
     if (pt && 'pause' in pt && phases.some(p => p.from === 'pause') !== pt.pause > 0) out.push(`${id}: Hold against pause ${pt.pause}`);
@@ -90,6 +98,17 @@ describe('LIB-21 A5 (first push): rows.json holds no row before a spec is drawn;
     const sp = t.rows.side_plank;
     expect(a7('side_plank', [{ ...sp[0], claim: 'c2' }]).length).toBe(1);
     expect(a7('side_plank', [{ ...sp[0], constant: '5–15' }]).length).toBe(1);
+  });
+  it('D-SUPCORE-HOLDMAX mutations: \'max 31\', \'max 30\' on a quote that states 30 but not as an upper bound, \'max 30\' citing another claim, and \'up to 30\' are red', () => {
+    const hb = t.rows.hollow_body_hold[0], q = readJson('docs/research/howto/quotes/hollow_body_hold.json').quotes;
+    expect(hb).toMatchObject({ phase: 'Hold', constant: 'max 30', claim: 'c12' });
+    expect(a7('hollow_body_hold', [hb])).toEqual([]);
+    expect(a7('hollow_body_hold', [{ ...hb, constant: 'max 31' }]).length).toBe(1);
+    const notBound = { ...hb, quote: 'For Endurance: Try five rounds of 20-30 seconds, adding five seconds per week.' };
+    expect(q.some((x: any) => x.claim === 'c12' && x.text === notBound.quote)).toBe(true);
+    expect(a7('hollow_body_hold', [notBound]).length).toBe(1);
+    expect(a7('hollow_body_hold', [{ ...hb, claim: 'c4' }]).length).toBe(1);
+    expect(a7('hollow_body_hold', [{ ...hb, constant: 'up to 30' }]).length).toBe(1);
   });
 });
 
@@ -105,10 +124,11 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 const ER5_DRAWN = ['side_plank', 'russian_twist'];
 // The front entries asked with the E-R5 slice (#326), measured (px inside the figure past the leader's first 8 px).
 const FE_SINK = 9.64;
+const RC_BACK = 24.7;   // LIB-SUPCORE D-SUPCORE-RCBACK: px inside the end figure past the leader's first 8 px (measured)
 const HELD: string[] = ['pallof_press', 'russian_twist'];   // cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
-const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', ...ER5_DRAWN];
+const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', ...ER5_DRAWN, ...SUP];   // LIB-SUPCORE wave 2
 const COMPOSERS = ['abWheel', 'medBallOptional'];
 const yieldNow = () => new Promise<void>(r => setImmediate(r));
 let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, markup: any;
@@ -118,11 +138,11 @@ beforeAll(async () => {
     'registry.mjs', 'engine.mjs', '../vendor/engine/body.mjs', 'qa/node.mjs', 'qa/engine.mjs', 'qa/index.mjs', '../vendor/engine/plate.mjs',
     'inputs-closure.mjs', 'qa/markup.mjs',
   ].map(f => import(/* @vite-ignore */ lib(f))));
-  for (const id of LB9.filter(i => existsSync(`${SPECS_DIR}/${i}.mjs`))) { M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); S[id] = M[id].default; }
+  for (const id of [...LB9, ...SUP].filter(i => existsSync(`${SPECS_DIR}/${i}.mjs`))) { M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); S[id] = M[id].default; }
   for (const c of COMPOSERS) EQ[c] = await import(/* @vite-ignore */ lib(`eq/${c}.mjs`));
 }, T);
-const specsDrawn = () => LB9.filter(i => existsSync(`${SPECS_DIR}/${i}.mjs`));
-const drawn = () => specsDrawn().filter(id => !HELD.includes(id));
+const specsDrawn = () => [...LB9, ...SUP].filter(i => existsSync(`${SPECS_DIR}/${i}.mjs`));
+const drawn = () => specsDrawn().filter(id => !HELD.includes(id) && !SUP_WAIT.includes(id));
 const pins = () => qaIdx.loadPins();
 const Eng = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eng.PRIMITIVES, body });
 const posesOf = (spec: any) => ['start', 'end', ...(spec.mistake?.pose ? ['mistake'] : [])];
@@ -284,7 +304,7 @@ describe('LIB-21 A2 / Do 4: the composers and the drawn plates draw PRIMITIVES o
     }
   });
   it('the drawn set: the slice (cable_crunch, ab_wheel_rollout, bird_dog) and the bulk drawn so far', () => {
-    expect(specsDrawn()).toEqual(LB9.filter(i => DRAWN.includes(i)));
+    expect(specsDrawn()).toEqual([...LB9, ...SUP].filter(i => DRAWN.includes(i)));
   });
   it('every item the drawn specs draw is a PRIMITIVES type, in every drawn pose', async () => {
     for (const id of specsDrawn()) {
@@ -735,12 +755,21 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     // off ("Raise your hips"), and the rolled foot's edge has no engine landmark on the floor (not facts)
     side_plank: [F('elbow.r', 'start', 'c2'), F('elbow.r', 'end', 'c2'), F('hip.r', 'start', 'c2'),
       F('heel.r', 'start', 'c2'), F('ball.r', 'start', 'c2'), F('heel.r', 'end', 'c2'), F('ball.r', 'end', 'c2')],   // D-LIB21-SPFACTS (#326 6410127641), the foot (a)
+    // LIB-SUPCORE (DESIGN.md 26.5; setup quotes state the start only, D-LIB9-FACTPOSE; the back read at the buttock,
+    // D-LIB11-SACRUM); dead_bug and v_up take theirs with their strip rows (#358)
+    hollow_body_hold: [F('buttock', 'start', 'c1'), F('backUpper', 'start', 'c1'), F('buttock', 'end', 'c3')],
+    reverse_crunch: [...both('wrist', 'start', 'c1'), F('buttock', 'start', 'c2'), F('backUpper', 'start', 'c1')],
+    flutter_kicks: [...both('wrist', 'start', 'c1'), F('backUpper', 'start', 'c1'), F('buttock', 'start', 'c4'), F('buttock', 'end', 'c4')],
   };
   // The ruled fault→key map (DESIGN.md section 8): [topFault, the drawn first tell key]; all 5 drawable-true. The (b)
   // rows' planned topFault (D-LIB21-F7), which differs from the drawn key.
   const TOP_B0: Record<string, [string, string]> = { side_plank: ['breath', 'sink'], russian_twist: ['control', 'hips'], bicycle_crunch: ['neck', 'hips'] };
-  const TOP: Record<string, [string, string]> = { ab_wheel_rollout: ['arch', 'arch'], cable_crunch: ['hips', 'hips'], bird_dog: ['arch', 'arch'], superman: ['head', 'head'], pallof_press: ['arch', 'arch'] };
-  const tempoOf = (id: string) => t.rows[id].map((r: any) => ({ phase: r.phase, s: 'constant' in r ? r.constant : cardOf(id).plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
+  const TOP: Record<string, [string, string]> = { ab_wheel_rollout: ['arch', 'arch'], cable_crunch: ['hips', 'hips'], bird_dog: ['arch', 'arch'], superman: ['head', 'head'], pallof_press: ['arch', 'arch'],
+    hollow_body_hold: ['low', 'low'], reverse_crunch: ['tuck', 'tuck'], dead_bug: ['arch', 'arch'], v_up: ['arch', 'arch'], flutter_kicks: ['arch', 'arch'] };   // LIB-SUPCORE: all 5 drawable true
+  // LIB-SUPCORE: an id with no timed row takes tempoOf(its strip/rows.json row) (D-STRIP-ROWS, D-SUPCORE-STRIP)
+  const strip = readJson('tools/plates/library/strip/rows.json'), stripOf = (id: string) => [...strip.cards, ...strip.fallbackA].find((c: any) => c.id === id);
+  const tempoOf = (id: string) => (id in t.rows ? t.rows[id].map((r: any) => ({ phase: r.phase, s: 'constant' in r ? r.constant : cardOf(id).plate.tempo[r.from], ...(r.move ? { move: true } : {}) }))
+    : stripOf(id).rows.map((r: any) => ({ phase: r.phase, ...(r.move ? { move: true } : {}), ...('word' in r ? { word: r.word } : {}) })));
   const keyProblems = (id: string, c: any) => {
     const out: string[] = [], want = FACTS[id]!.map(([landmark, pose, cardPose, claim]) => ({ kind: 'contact', landmark, pose, cardPose, claim }));
     if (JSON.stringify(c.plateFacts) !== JSON.stringify(want)) out.push(`${id}: plateFacts ${JSON.stringify(c.plateFacts)}`);
@@ -751,8 +780,8 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     return out;
   };
   it('the 5 (a) cards and side_plank carry the ruled facts, tempo and topFault; russian_twist and bicycle_crunch (held) carry none yet', () => {
-    for (const id of [...Object.keys(TOP), 'side_plank']) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
-    for (const id of ['russian_twist', 'bicycle_crunch']) for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in cardOf(id), `${id} ${k}`).toBe(false);
+    for (const id of [...Object.keys(TOP).filter(i => !SUP_WAIT.includes(i)), 'side_plank']) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
+    for (const id of ['russian_twist', 'bicycle_crunch', ...SUP_WAIT]) for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in cardOf(id), `${id} ${k}`).toBe(false);   // LIB-SUPCORE: dead_bug and v_up wait for their strip rows
   });
   it('mutations on side_plank\'s keys: a hip fact added, its Hold changed to 5–15, and topFault set to the drawn key (sink) are red', () => {
     const c = cardOf('side_plank');
@@ -761,8 +790,11 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     expect(keyProblems('side_plank', { ...c, topFault: 'sink' }).length).toBe(1);
   });
   it('each fact\'s pose is the pose map\'s image of its card pose: identity for all 8 (D-LIB21-POSEMAP)', () => {
-    expect(t.poseMap).toEqual({});
-    for (const id of Object.keys(TOP)) for (const f of cardOf(id).plateFacts) expect(f.pose, `${id} ${f.landmark}`).toBe(f.cardPose);
+    // LIB-SUPCORE: v_up swaps (DESIGN.md 26.3), the only entry
+    expect(Object.keys(t.poseMap)).toEqual(['v_up']);
+    expect([t.poseMap.v_up.start, t.poseMap.v_up.end]).toEqual(['plate.end', 'plate.start']);
+    const image = (id: string, cp: string) => (t.poseMap[id] ? ['start', 'end'].find(k => t.poseMap[id][k] === `plate.${cp}`) : cp);   // the spec pose that draws card pose cp
+    for (const id of Object.keys(TOP).filter(i => !SUP_WAIT.includes(i))) for (const f of cardOf(id).plateFacts) expect(f.pose, `${id} ${f.landmark}`).toBe(image(id, f.cardPose));
   });
   it('drawable-true: topFault is the drawn spec\'s first tell key (F7 not raised)', () => {
     for (const id of specsDrawn().filter(i => i in TOP)) { const [top, drawnKey] = TOP[id]!; expect(S[id].mistake.tells[0].key, id).toBe(drawnKey); expect(top, id).toBe(drawnKey); }
@@ -805,9 +837,10 @@ describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and
   const dog = (o: Record<string, number> = {}) => report('lib_bird_dog', { F1: 151.49, F3: 33.5, F5: 3.57, ...o });
   const cc = (o: Record<string, number> = {}) => report('lib_cable_crunch', { F2: 0.622, F3: 26.05, F5: 3.57, ...o });
   it('the named sets: F1 151.49 and F3 33.5 on bird_dog, F2 0.622 and F3 26.05 on cable_crunch; EXPECTED gives F5 alone on ab_wheel_rollout', () => {
-    expect(qa.F1_NAMED).toEqual({ lib_bird_dog: 151.49, lib_side_plank: 150.31, lib_russian_twist: 197.49 });   // the (b) two asked with the E-R5 slice (#326)
+    expect(qa.F1_NAMED).toEqual({ lib_bird_dog: 151.49, lib_side_plank: 150.31, lib_russian_twist: 197.49,   // the (b) two asked with the E-R5 slice (#326)
+      lib_reverse_crunch: 181.11, lib_dead_bug: 148.18, lib_flutter_kicks: 155.24 });   // LIB-SUPCORE (DESIGN.md 26.14)
     expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 33.5, lib_cable_crunch: 26.05, lib_superman: 44.9 });   // superman: D-LIB21-SUPFLAGS (#337)
-    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.622, lib_superman: 0.128 });
+    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.622, lib_superman: 0.128, lib_hollow_body_hold: 0.157, lib_flutter_kicks: 0.141 });   // LIB-SUPCORE (DESIGN.md 26.14)
     expect(qa.EXPECTED('lib_superman')).toEqual(['F2', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_bird_dog')).toEqual(['F1', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_cable_crunch')).toEqual(['F2', 'F3', 'F5']);
@@ -853,13 +886,13 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_side_plank', 'lib_superman']);   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_flutter_kicks', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_side_plank', 'lib_superman']);   // LIB-SUPCORE: 3 SUPCORE rows (dead_bug, v_up wait for #358)   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('plank, crunch, the 5 T ids, russian_twist and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
     for (const f of readdirSync('tools/plates/library/lb9').filter(n => n.endsWith('.json'))) {
       const text = readFileSync(join('tools/plates/library/lb9', f), 'utf8');
-      for (const id of [...NOT_HERE, 'russian_twist', 'bicycle_crunch']) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
+      for (const id of [...NOT_HERE, ...SUP_WAIT, 'russian_twist', 'bicycle_crunch']) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
     }
     expect(existsSync(`${SPECS_DIR}/bicycle_crunch.mjs`)).toBe(false);
   });
@@ -879,7 +912,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
     // a held id: pallof_press (D-LIB21-PALLOFHOLD) stands for any held id
     expect(a5(add('lib_pallof_press'), w), 'a held id').toEqual(['extra lib_pallof_press']);
-    for (const id of ['plank', 'crunch', 'flutter_kicks', 'bicycle_crunch']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);
+    for (const id of ['plank', 'crunch', 'dead_bug', 'bicycle_crunch']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);   // LIB-SUPCORE: flutter_kicks is a row; dead_bug waits for #358
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
   });
   it('every row points at its own spec file and carries the census view; batch LB9, censusRef 4a9fd86', () => {
@@ -964,7 +997,7 @@ describe('LIB-21 A9 (D-LIB21-AHEAD): the rows never ship; generate is unchanged'
     expect(stageProblems({ ...rows, lib_bird_dog: { ...rows.lib_bird_dog, stage: 'approved-plate' } })).toEqual(['lib_bird_dog: approved-plate']);
   });
   it('none of the 8 is shipped, even with lb9/rows.json read as a batch file', () => {
-    const IDS = LB9.map(i => `lib_${i}`);
+    const IDS = [...LB9, ...SUP].map(i => `lib_${i}`);   // LIB-SUPCORE: the 5 SUPCORE rows too
     const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
     expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
@@ -1025,7 +1058,13 @@ console.log(JSON.stringify({ ids: b.drawnIds(), a: sha(a.html), c: sha(c.html), 
 describe('LIB-21 A7 (spec half): each spec\'s tempo follows lb9/tempo.json and its card', () => {
   const t = readJson('tools/plates/library/lb9/tempo.json');
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
-  const build = (id: string) => t.rows[id].map((r: any) => ({ phase: r.phase, s: 'constant' in r ? r.constant : cardOf(id).plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
+  // LIB-SUPCORE (D-SUPCORE-STRIP): an id with no timed row takes tempoOf(its strip/rows.json row) (D-STRIP-ROWS; fallbackA,
+  // D-STRIP-AFALL); dead_bug and v_up, whose rows wait for #358, carry DESIGN.md 26.4's proposed rows exactly
+  const strip = readJson('tools/plates/library/strip/rows.json');
+  const STRIP_WAIT: Record<string, any[]> = { dead_bug: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Return', move: true, word: 'Slow' }], v_up: [{ phase: 'Lower', move: true }, { phase: 'Lift', move: true }] };
+  const stripOf = (id: string) => [...strip.cards, ...strip.fallbackA].find((c: any) => c.id === id);
+  const build = (id: string) => (id in t.rows ? t.rows[id].map((r: any) => ({ phase: r.phase, s: 'constant' in r ? r.constant : cardOf(id).plate.tempo[r.from], ...(r.move ? { move: true } : {}) }))
+    : stripOf(id) ? stripOf(id).rows.map((r: any) => ({ phase: r.phase, ...(r.move ? { move: true } : {}), ...('word' in r ? { word: r.word } : {}) })) : STRIP_WAIT[id]);
   const tempoProblems = (id: string, spec: any) => (JSON.stringify(spec.tempo) === JSON.stringify(build(id)) ? [] : [`${id}: ${JSON.stringify(spec.tempo)} != ${JSON.stringify(build(id))}`]);
   it('every drawn spec\'s tempo is its ruled row built from the card', () => {
     for (const id of specsDrawn()) expect(tempoProblems(id, S[id])).toEqual([]);
@@ -1153,8 +1192,9 @@ describe('LIB-21 test camera (supervisor, bulk rulings on #312): camOf follows t
 });
 
 describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and soft bends (DESIGN.md sections 6-12)', { timeout: T }, () => {
-  const KEYS: Record<string, string> = { cable_crunch: 'hips', ab_wheel_rollout: 'arch', bird_dog: 'arch', superman: 'head', pallof_press: 'arch', side_plank: 'sink', russian_twist: 'hips' };
-  const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch', 'pallof_press', 'side_plank', 'russian_twist'];
+  const KEYS: Record<string, string> = { cable_crunch: 'hips', ab_wheel_rollout: 'arch', bird_dog: 'arch', superman: 'head', pallof_press: 'arch', side_plank: 'sink', russian_twist: 'hips',
+    hollow_body_hold: 'low', reverse_crunch: 'tuck', dead_bug: 'arch', v_up: 'arch', flutter_kicks: 'arch' };   // LIB-SUPCORE: DESIGN.md 26.3's fault→key map
+  const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch', 'pallof_press', 'side_plank', 'russian_twist', ...SUP];   // LIB-SUPCORE: one tell each, recorded (D-LIB10-SKULL1)
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells (or one, with its record), the first carrying the ruled key', () => {
     for (const id of specsDrawn()) {
@@ -1292,7 +1332,9 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
    *  enters the solid end figure once from above to the red top outline of the sunk pelvis (the fault lies under the
    *  solid figure, D-LIB21-FRONT); russian_twist's "Knees swing" enters from the left to the red right knee, which
    *  swings behind the solid right knee and arm. An entry the supervisor does not sign is redrawn or its row is held. */
-  const FRONT_ENTRY: Record<string, number> = { 'side_plank mistake sink end': FE_SINK };   // russian_twist: held on its tell (F-RTWIST-TELL, #326 6409862229); its shin anchor enters no figure
+  // D-SUPCORE-RCBACK (#366 6570379460): reverse_crunch's 'Back down' enters the near arm from the right to the end back's
+  // roll-off point (the low back under the curled hips; the arm by the side lies along the floor in front of it)
+  const FRONT_ENTRY: Record<string, number> = { 'side_plank mistake sink end': FE_SINK, 'reverse_crunch normal back end': RC_BACK };   // russian_twist: held on its tell (F-RTWIST-TELL, #326 6409862229); its shin anchor enters no figure
   const insideLen = (p: number[][], polys: number[][][]) => {
     let len = 0;
     for (const [a, b] of segs(p)) { const L = Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!); for (let k = 0; k < 40; k++) {
@@ -1906,5 +1948,256 @@ describe('LIB-21R3 (LB9 resume 3): cable_crunch on LIB-SPINE\'s spine segments (
     console.log(`LIB-21R3 A7 edge mutation: the ferrule ${k.toFixed(2)} px toward the outline (its own start gap ${base.min.toFixed(2)} px): gap ${c.min.toFixed(2)} px (${c.at})`);
     expect(c.min).toBeGreaterThanOrEqual(1.0);
     expect(c.min).toBeLessThan(2);
+  });
+});
+
+// ---------------------------------------------------------------- LIB-SUPCORE wave 2 (lib-supcore-card Do 5-7) ----
+// The 5 SUPCORE H rows drawn from crunch's approved bytes (PILOT-B2, APPROVED @ 716bf3b7; D-SUPCORE-ANCHOR, -MODES).
+// Acceptance A1, A6, A7, A8, A10, A13 (the card's table); the inherited LIB-21 blocks above cover the layout (A15), the
+// sizes (A17), the tempo (A7 spec half) and the card keys (Do 6 b).
+describe('LIB-SUPCORE A10 / A1: the 5 cards and quotes, the rows and the waits', () => {
+  const cardsSha = readJson('tools/plates/library/lb9/cards.sha.json').supcore;
+  const KEYS = ['plateFacts', 'tempo', 'topFault'];
+  const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  it('cards.sha.json `supcore` names research a48b0594 and the 5 ids; each card without its three keys and each quotes file matches', () => {
+    expect(cardsSha.researchHead).toBe('a48b059400a74d5c9e3aceed21cf1aa67ab6f118');
+    expect(Object.keys(cardsSha.cards).sort()).toEqual([...SUP].sort());
+    expect(Object.keys(cardsSha.quotes).sort()).toEqual([...SUP].sort());
+    for (const id of SUP) {
+      expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
+      expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
+    }
+  });
+  it('mutations: another card key edited, and one quotes byte changed, are red', () => {
+    const c = cardOf('hollow_body_hold'); c.plate.view = 'front';
+    expect(sha(canon(c))).not.toBe(cardsSha.cards.hollow_body_hold);
+    expect(sha(readFileSync('docs/research/howto/quotes/v_up.json', 'utf8').replace('"', ' "'))).not.toBe(cardsSha.quotes.v_up);
+  });
+  it('each card\'s handlingMistakes[0] is its plate.mistake (D-LIB15-XBODY), and every card is drawable true', () => {
+    for (const id of SUP) { const c = cardOf(id); expect(c.plate.mistake.drawable, id).toBe(true); expect([c.handlingMistakes[0].claim].flat()[0], id).toBe([c.plate.mistake.claim].flat()[0]); }
+  });
+  it('validateCardFile: no problem on the 5 cards (3 with their keys; dead_bug and v_up without, until their strip rows)', async () => {
+    const v = await import(/* @vite-ignore */ new URL('../../tools/plates/library/research/validate.mjs', import.meta.url).href);
+    for (const id of SUP) expect(v.validateCardFile(`${id}.json`), id).toEqual([]);
+    for (const id of SUP_WAIT) expect(KEYS.some(k => k in cardOf(id)), id).toBe(false);
+  });
+  it('A1: each SUPCORE row in rows.json is mode H with no parent, template or params; dead_bug and v_up are in DESIGN.md\'s held table (D-SUPCORE-STRIP) and in no rows file', () => {
+    const rows = readJson(ROWS).rows, design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
+    for (const id of SUP.filter(i => !SUP_WAIT.includes(i))) expect([rows[`lib_${id}`]?.mode, rows[`lib_${id}`]?.parent, rows[`lib_${id}`]?.template, rows[`lib_${id}`]?.params], id).toEqual(['H', undefined, undefined, undefined]);
+    for (const id of SUP_WAIT) { expect(`lib_${id}` in rows, id).toBe(false); expect(new RegExp(`\\| ${id} \\| D-SUPCORE-STRIP`).test(design), id).toBe(true); }
+    expect(readFileSync(ROWS, 'utf8').includes('lib_crunch')).toBe(false);
+  });
+  it('A1 mutations: crunch added to rows.json, a row set to T, and dead_bug added before its strip row, are red', () => {
+    const rows = readJson(ROWS).rows, a1 = (r: Record<string, any>) => [...('lib_crunch' in r ? ['crunch'] : []), ...Object.entries(r).filter(([, x]) => x.mode !== 'H').map(([k]) => k), ...SUP_WAIT.filter(i => `lib_${i}` in r)];
+    expect(a1(rows)).toEqual([]);
+    expect(a1({ ...rows, lib_crunch: { mode: 'H' } })).toEqual(['crunch']);
+    expect(a1({ ...rows, lib_flutter_kicks: { ...rows.lib_flutter_kicks, mode: 'T' } })).toEqual(['lib_flutter_kicks']);
+    expect(a1({ ...rows, lib_dead_bug: { mode: 'H' } })).toEqual(['dead_bug']);
+  });
+});
+
+describe('LIB-SUPCORE A13: the 5 never ship', () => {
+  it('no SUPCORE id is in any batches/ file, any library golden file or library/MANIFEST.json', () => {
+    const files = [...readdirSync('tools/plates/library/batches').map(f => `tools/plates/library/batches/${f}`), ...readdirSync('tests/howto/golden/library').map(f => `tests/howto/golden/library/${f}`), 'tools/plates/library/MANIFEST.json'];
+    for (const f of files) for (const id of SUP) expect(new RegExp(`\\blib_${id}\\b|"${id}"`).test(readFileSync(f, 'utf8')), `${f}: ${id}`).toBe(false);
+  });
+  it('mutation: a golden text naming lib_v_up is red', () => {
+    expect(new RegExp('\\blib_v_up\\b').test('{"id":"lib_v_up"}')).toBe(true);
+  });
+});
+
+describe('LIB-SUPCORE A6: 2 px clearance (D-SUPCORE-CLEAR)', { timeout: T }, () => {
+  // The quoted floor contacts per row and pose (DESIGN.md 26.14): every other drawn part keeps 2 px off the floor line;
+  // a named contact sits within 1 px of it. Ghosts draw only their `parts`.
+  const ALL = (...k: string[]) => ({ start: k, end: k, mistake: k });
+  const CONTACTS: Record<string, Record<string, string[]>> = {
+    hollow_body_hold: { start: ['torso', 'head', 'foot.l', 'foot.r', 'fist.l', 'fist.r'], end: ['torso'], mistake: ['torso'] },
+    reverse_crunch: ALL('torso', 'head', 'fore.l', 'fore.r', 'palm.l', 'palm.r'),
+    dead_bug: ALL('torso', 'head'),
+    v_up: { start: ['torso'], end: ['torso', 'head', 'fist.l', 'fist.r'], mistake: ['torso', 'head', 'fist.l', 'fist.r'] },
+    flutter_kicks: ALL('torso', 'head', 'fore.l', 'fore.r', 'palm.l', 'palm.r'),
+  };
+  const floorProblems = (spec: any, contacts = CONTACTS[spec.id]!) => {
+    const cam = camOf(spec), out: string[] = [];
+    for (const [p, q] of bodyQs(spec)) for (const sh of drawnShapes(spec, p, q, cam)) {
+      const gap = 339 - Math.max(...sh.poly.map((v: number[]) => v[1]!)), named = (contacts[p] ?? []).includes(sh.key);
+      if (named ? gap < -1 || gap > 1 : gap < 2) out.push(`${spec.id} ${p} ${sh.key} ${gap.toFixed(2)} px`);
+    }
+    return out;
+  };
+  it('floor: every drawn part >= 2 px above the floor line in every drawn pose and ghost; the quoted contacts within 1 px', async () => {
+    for (const id of SUP) { expect(floorProblems(S[id]), id).toEqual([]); await yieldNow(); }
+  });
+  // Arms resting by the sides (c1 of reverse_crunch and flutter_kicks: "arms by the sides", "arms to your sides") lie
+  // against the drawn torso: the upper arm's limbClearance to the torso is listed (logged), not held to 0 (DESIGN.md
+  // 26.14); every other pair of every row is held to >= 0 cm.
+  const AT_SIDES = ['reverse_crunch', 'flutter_kicks'];
+  const depthProblems = (spec: any) => limbClearance(spec).filter(r => r[3] < 0 && !(AT_SIDES.includes(spec.id) && r[1].startsWith('upper.') && r[2] === 'torso')).map(r => `${spec.id} ${r[0]} ${r[1]}|${r[2]} ${r[3].toFixed(2)}`);
+  it('in depth: every arm clears the torso, the head, the legs and the other arm (>= 0 cm) in every drawn pose (logged)', async () => {
+    const out: string[] = [];
+    for (const id of SUP) {
+      const rows = limbClearance(S[id]);
+      console.log(`LIB-SUPCORE A6 ${id}: least ${Math.min(...rows.map(r => r[3])).toFixed(2)} cm (${rows.reduce((a, r) => (r[3] < a[3] ? r : a))?.slice(0, 3).join(' ')}); ${rows.filter(r => r[1].startsWith('upper.') && r[2] === 'torso').map(r => `${r[0]} ${r[1]}|torso ${r[3].toFixed(2)}`).join(', ')}`);
+      out.push(...depthProblems(S[id]));
+      await yieldNow();
+    }
+    expect(out).toEqual([]);
+  });
+  it('mutation: hollow_body_hold\'s arms dropped to its sides (no AT_SIDES exception for it) are red', () => {
+    const s = S.hollow_body_hold;
+    expect(depthProblems({ ...s, poses: { ...s.poses, end: { ...s.poses.end, shoulder: 0 } } }).some(p => /end upper\.[lr]\|torso/.test(p))).toBe(true);
+  });
+  it('mutations: dead_bug\'s far heel set on the floor (0 px), and hollow_body_hold\'s entry head lifted off its named contact, are red', () => {
+    const d = S.dead_bug, H0 = M.dead_bug.SIZES.GAP;
+    expect(H0).toBe(0.02);
+    const lowered = { ...d, poses: { ...d.poses, end: { ...d.poses.end, root: { ...d.poses.end.root, at: [d.poses.end.root.at[0], d.poses.end.root.at[1], d.poses.end.root.at[2]] }, hip: { ...d.poses.end.hip, l: d.poses.end.hip.l - 4 } } } };
+    expect(floorProblems(lowered).some(p => /end (shank|foot)\.l/.test(p))).toBe(true);
+    const h = S.hollow_body_hold;
+    expect(floorProblems(h, { ...CONTACTS.hollow_body_hold, start: ['torso', 'foot.l', 'foot.r', 'fist.l', 'fist.r'] })).toEqual([expect.stringMatching(/^hollow_body_hold start head -0\.\d+ px$/)]);
+  });
+});
+
+describe('LIB-SUPCORE A7: card-true poses (drawn-item tests)', { timeout: T }, () => {
+  const kneeDeg = (l: any, sd: string) => angle3(l[`hip.${sd}`], l[`knee.${sd}`], l[`ankle.${sd}`]);
+  const legDeg = (l: any) => Math.atan2(l['ankle.r'][1] - l['hip.r'][1], l['ankle.r'][2] - l['hip.r'][2]) * 180 / Math.PI;
+  const rc = (s: any) => { const a = lmOf(s, 'start'), b = lmOf(s, 'end'), out: string[] = [];
+    for (const [p, l] of [['start', a], ['end', b]] as const) for (const sd of ['l', 'r']) if (Math.abs(kneeDeg(l, sd) - 90) > 3) out.push(`${p} knee.${sd} ${kneeDeg(l, sd).toFixed(1)}`);
+    if (Math.abs(a['knee.r'][2] - a['hip.r'][2]) > 0.01) out.push('start thigh not vertical');
+    if (!(b.buttock[1] > 0.1)) out.push(`end tailbone ${(b.buttock[1] * 100).toFixed(1)} cm`);
+    return out; };
+  it('reverse_crunch: knees 90 deg (±3) at the start and the end (c2, c4), thighs vertical at the start (c2), the tailbone off the floor at the end (c5)', () => {
+    expect(rc(S.reverse_crunch)).toEqual([]);
+    const l = lmOf(S.reverse_crunch, 'end'); console.log(`LIB-SUPCORE A7 reverse_crunch: end knee ${kneeDeg(l, 'r').toFixed(2)} deg, tailbone ${(l.buttock[1] * 100).toFixed(1)} cm`);
+  });
+  it('mutation: reverse_crunch\'s end knee at 110 deg is red', () => {
+    const s = S.reverse_crunch;
+    expect(rc({ ...s, poses: { ...s.poses, end: { ...s.poses.end, knee: 110 } } }).length).toBeGreaterThan(0);
+  });
+  const db = (s: any) => { const a = lmOf(s, 'start'), b = lmOf(s, 'end'), out: string[] = [];
+    for (const sd of ['l', 'r']) { if (Math.abs(kneeDeg(a, sd) - 90) > 3) out.push(`start knee.${sd}`); if (Math.abs(a[`knee.${sd}`][2] - a[`hip.${sd}`][2]) > 0.01) out.push(`start knee.${sd} not over the hip`); if (Math.abs(a[`wrist.${sd}`][2] - a[`shoulder.${sd}`][2]) > 0.01) out.push(`start arm.${sd} not vertical`); }
+    if (!(b['wrist.r'][2] < b['head'][2])) out.push('end: the near arm not overhead');
+    if (!(kneeDeg(b, 'l') > 175)) out.push(`end: the far leg not extended (${kneeDeg(b, 'l').toFixed(1)})`);
+    if (Math.abs(kneeDeg(b, 'r') - 90) > 3 || Math.abs(b['wrist.l'][2] - b['shoulder.l'][2]) > 0.01) out.push('end: the other arm and leg moved');
+    return out; };
+  it('dead_bug: the start knees over the hips at 90 deg and the arms vertical (c3); the end the near arm overhead and the far leg extended, the others still (c4)', () => {
+    expect(db(S.dead_bug)).toEqual([]);
+  });
+  it('mutation: dead_bug with the same-side (near) leg extended is red', () => {
+    const s = S.dead_bug, e = s.poses.end, same = { ...e, hip: { l: e.hip.r, r: e.hip.l }, knee: { l: e.knee.r, r: e.knee.l } };
+    expect(db({ ...s, poses: { ...s.poses, end: same } }).length).toBeGreaterThan(0);
+  });
+  const vu = (s: any) => { const v = lmOf(s, 'start'), l = lmOf(s, 'end'), out: string[] = [];
+    for (const sd of ['l', 'r']) if (kneeDeg(l, sd) < 178 || kneeDeg(v, sd) < 178) out.push(`knee.${sd} bent`);
+    if (Math.abs(l['ankle.l'][1] - l['ankle.r'][1]) > 0.005 || Math.abs(l['ankle.l'][2] - l['ankle.r'][2]) > 0.005) out.push('legs not together');
+    if (!(l['wrist.r'][2] < l.head[2])) out.push('lying: arms not overhead');
+    const a = v['shoulder.r'], b = v['toe.r'], w = v['wrist.r'], d = Math.abs((b[2] - a[2]) * (w[1] - a[1]) - (b[1] - a[1]) * (w[2] - a[2])) / Math.hypot(b[2] - a[2], b[1] - a[1]);
+    if (d > 0.01) out.push(`V: wrist ${(d * 100).toFixed(1)} cm off the shoulder-to-toe line`);
+    return out; };
+  it('v_up: legs straight and together, arms overhead lying (c1); in the V the hands reach toward the toes (c3)', () => {
+    expect(vu(S.v_up)).toEqual([]);
+  });
+  it('mutation: v_up with the V\'s arms raised 30 deg off the reach is red', () => {
+    const s = S.v_up;
+    expect(vu({ ...s, poses: { ...s.poses, start: { ...s.poses.start, shoulder: s.poses.start.shoulder + 30 } } }).length).toBeGreaterThan(0);
+  });
+  const fk2 = (s: any) => { const a = lmOf(s, 'start'), b = lmOf(s, 'end'), out: string[] = [];
+    for (const [p, l] of [['start', a], ['end', b]] as const) for (const sd of ['l', 'r']) if (kneeDeg(l, sd) < 178) out.push(`${p} knee.${sd} bent`);
+    if (!(b['heel.r'][1] - b['heel.l'][1] > 0.05)) out.push('end: the legs not apart in height');
+    return out; };
+  it('flutter_kicks: knees straight in every pose (c5), the near leg higher than the far at the end (c3)', () => {
+    expect(fk2(S.flutter_kicks)).toEqual([]);
+  });
+  it('mutation: flutter_kicks with a bent near knee is red', () => {
+    const s = S.flutter_kicks;
+    expect(fk2({ ...s, poses: { ...s.poses, end: { ...s.poses.end, knee: { l: 0, r: 20 } } } }).length).toBeGreaterThan(0);
+  });
+  const hb = (s: any) => { const e = lmOf(s, 'end'), out: string[] = [];
+    if (Math.abs(legDeg(e) - 15) > 2) out.push(`hold legs ${legDeg(e).toFixed(1)} deg`);
+    for (const sd of ['l', 'r']) if (kneeDeg(e, sd) < 178) out.push(`knee.${sd} bent`);
+    if (!(e['wrist.r'][2] < e.head[2] && e['elbow.r'][1] > e['shoulder.r'][1])) out.push('arms not overhead by the head');
+    if (!(e.backUpper[1] > 0.02)) out.push('shoulders not lifted');
+    return out; };
+  it('hollow_body_hold: in the hold the straight legs 15 deg (±2) off the floor (c4), the arms overhead, the shoulders lifted (c2), the buttock down (checks)', () => {
+    expect(hb(S.hollow_body_hold)).toEqual([]);
+    console.log(`LIB-SUPCORE A7 hollow_body_hold: legs ${legDeg(lmOf(S.hollow_body_hold, 'end')).toFixed(2)} deg; Mistake ${legDeg(lmOf(S.hollow_body_hold, 'mistake')).toFixed(2)} deg`);
+  });
+  it('mutation: hollow_body_hold\'s legs at 30 deg are red', () => {
+    const s = S.hollow_body_hold;
+    expect(hb({ ...s, poses: { ...s.poses, end: { ...s.poses.end, hip: s.poses.end.hip + 15 } } }).length).toBeGreaterThan(0);
+  });
+});
+
+describe('LIB-SUPCORE A8: the zooms (D-LIBZOOM-EXTEND, D-LIB16-ZOOMVIEWS)', { timeout: T }, () => {
+  let Z: any, QZ: any;
+  beforeAll(async () => { [Z, QZ] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const ZOOMS: Record<string, any[]> = { hollow_body_hold: [], reverse_crunch: [], dead_bug: [['mistake', 2]], v_up: [['mistake', 2]], flutter_kicks: [['normal', 3.5], ['mistake', 2]] };
+  const LADDER = [1.5, 2, 2.5, 3, 3.5, 4];
+  const bar = (view: string) => (view === 'normal' ? pins().envelope.traceLenMin : pins().envelope.deviationMin);
+  const rung = (s: any, view: string, k: number) => {
+    const e = (s.zoom ?? []).find((z: any) => z.view === view) ?? { view };
+    const z = Z.zoomOf({ ...s, zoom: [{ ...e, k }] }, { E: Eng(), view }), r = z.src;
+    return { v: view === 'normal' ? QZ.clippedTrace(z.svg, z.circle) : z.fault.d * k, fits: r.c[0] - r.r >= 0 && r.c[0] + r.r <= 358 && r.c[1] - r.r >= 0 && r.c[1] + r.r <= 358 };
+  };
+  const passes = (s: any, view: string, k: number) => { let r; try { r = rung(s, view, k); } catch { return false; } return r.fits && r.v >= bar(view); };
+  const a8 = (s: any) => {
+    const want = ZOOMS[s.id]!, got = (s.zoom ?? []).map((z: any) => [z.view, z.k]), out: string[] = [];
+    if (JSON.stringify(got) !== JSON.stringify(want)) return [`${s.id}: zoom ${JSON.stringify(got)}`];
+    for (const [view, k] of want) {
+      if (!passes(s, view, k)) out.push(`${s.id} ${view} k ${k} fails`);
+      for (const lo of LADDER.filter(x => x < k)) if (passes(s, view, lo)) out.push(`${s.id} ${view}: k ${lo} also passes`);
+    }
+    return out;
+  };
+  it('each zoom is the PLAN\'s view at the smallest passing ladder k, its ring inside the frame (values logged); hollow_body_hold and reverse_crunch carry none', async () => {
+    for (const id of SUP) {
+      for (const z of S[id].zoom ?? []) console.log(`LIB-SUPCORE A8 ${id} ${z.view} k ${z.k}: ${rung(S[id], z.view, z.k).v.toFixed(2)} px`);
+      expect(a8(S[id]), id).toEqual([]);
+      await yieldNow();
+    }
+  });
+  it('mutations: one zoom one rung lower, one zoom removed, and a normal zoom added on reverse_crunch, are red', () => {
+    const f = S.flutter_kicks;
+    expect(a8({ ...f, zoom: [{ view: 'normal', k: 3 }, f.zoom[1]] }).length).toBeGreaterThan(0);
+    expect(a8({ ...f, zoom: [f.zoom[1]] }).length).toBeGreaterThan(0);
+    expect(a8({ ...S.reverse_crunch, zoom: [{ view: 'normal', k: 2 }] }).length).toBeGreaterThan(0);
+    expect(passes(f, 'normal', 3)).toBe(false);
+  });
+});
+
+describe('LIB-SUPCORE D-SUPCORE-RCBACK: reverse_crunch\'s named \'Back down\' entry (#366 6570379460)', { timeout: T }, () => {
+  const ARM = /^(upper|elbowcap|fore)\.[lr]$/;
+  /** Per normal leader: px inside the solid end figure past its first 8 px, and the drawn shapes it passes through. */
+  const entries = (spec: any) => {
+    const sh = shapesQ(spec, body.resolve(body.normPose(spec.poses.end, B175), B175).q), list = listOf(spec, false);
+    return leadersOf(plate.renderPlate(spec, { id: 'x' }).svg).map((p, i) => {
+      let len = 0; const keys = new Set<string>();
+      // the same sampling as A15's insideLen (40 per segment), so the pinned value is one number
+      for (const [a, b] of segs(p)) { const L = Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!); for (let k = 0; k < 40; k++) {
+        const q = [a![0]! + (b![0]! - a![0]!) * (k + 0.5) / 40, a![1]! + (b![1]! - a![1]!) * (k + 0.5) / 40];
+        if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) < 8) continue;
+        const hit = sh.filter((x: any) => inPoly(x.poly, q)); if (hit.length) { len += L / 40; for (const x of hit) keys.add(x.key); }
+      } }
+      return { key: list[i]?.key, len, keys: [...keys].sort() };
+    });
+  };
+  const rcProblems = (spec: any, want = RC_BACK) => entries(spec).flatMap(e => (e.key === 'back'
+    ? [...(Math.abs(e.len - want) > 0.5 ? [`back ${e.len.toFixed(1)} px != ${want}`] : []), ...e.keys.filter(k => !ARM.test(k)).map(k => `back through ${k}`)]
+    : e.len > 0 ? [`${e.key} enters ${e.len.toFixed(1)} px`] : []));
+  it('the leader enters the arm only (the near arm and the far arm behind it), at the pinned 24.7 px (±0.5); no other leader enters (logged)', () => {
+    const e = entries(S.reverse_crunch).find(x => x.key === 'back')!;
+    console.log(`LIB-SUPCORE RCBACK: ${e.len.toFixed(2)} px through ${e.keys.join(', ')}`);
+    expect(rcProblems(S.reverse_crunch)).toEqual([]);
+    expect(S.reverse_crunch.callouts.find((c: any) => c.key === 'back')).toMatchObject({ anchor: M.reverse_crunch.BACK_AT, box: { left: 212, top: 296 } });
+  });
+  it('the named-entry list holds side_plank\'s and this one only', () => {
+    const line = readFileSync('tests/howto/lb9-plates.test.ts', 'utf8').split('\n').find(l => l.includes('const FRONT_ENTRY:'))!;
+    expect([...line.matchAll(/'([a-z_]+ (?:normal|mistake) [a-z]+ (?:end|Mistake))'/g)].map(m => m[1])).toEqual(['side_plank mistake sink end', 'reverse_crunch normal back end']);
+  });
+  it('mutations: the entry +1 px, the leader also through the trunk (box {216, 286}), and another key entering (hips anchored at the roll-off point) are red', () => {
+    const s = S.reverse_crunch, withBox = (k: string, box: any, anchor?: any) => ({ ...s, callouts: s.callouts.map((c: any) => (c.key === k ? { ...c, box, ...(anchor ? { anchor } : {}) } : c)) });
+    expect(rcProblems(s, RC_BACK + 1).length).toBe(1);
+    expect(rcProblems(withBox('back', { left: 216, top: 286 })).some(p => p === 'back through torso')).toBe(true);
+    expect(rcProblems(withBox('hips', { left: 256, top: 236 }, M.reverse_crunch.BACK_AT)).some(p => p.startsWith('hips enters'))).toBe(true);
   });
 });

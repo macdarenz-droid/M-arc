@@ -3036,3 +3036,16 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   and the blind TOPFAULT pass answered 'flare'. The two ids' rows and tests moved from pilot-a2/ to pilot-a3/
   (D-A3-TESTHOME).
 - **Source:** PR #362; pilot-a3/DESIGN.md.
+## LIB-SUPCORE wave 2: the 5 SUPCORE rows (builder, 2026-11-02; card docs/supervisor/verify/lib-supcore-card.md, rulings on #366)
+- **D-SUPCORE-MODES, -ANCHOR.** reverse_crunch, dead_bug, v_up, flutter_kicks and hollow_body_hold are H rows drawn from
+  crunch's approved bytes (`716bf3b7`): its supine solve, the flat low back (PELVIS_TUCK 15), the floor camera and the
+  T12 curl. **Why:** none differs from crunch only in a PARAMS key, so no SUPCORE template is built.
+- **The arch Mistake.** dead_bug, v_up and flutter_kicks tip the pelvis 14 deg (crunch's MIS_TILT) with the thorax held
+  exactly still (a 3x3 solve), so only the low back lifts (4.56 cm under the lumbar). **Why:** a solve that kept the upper
+  back down turned the thorax and moved the head, which would read as a second fault.
+- **D-SUPCORE-HOLDMAX.** hollow_body_hold holds 'max 30' (c12 "up to 30 seconds"). **Why:** "up to 30 s" is 4 words and
+  fails PQ-H8.
+- **D-SUPCORE-RCBACK.** reverse_crunch's 'Back down' leader crosses the near arm (24.7 px) to the low back's roll-off
+  point. **Why:** the arm by the side covers the whole low back in a side view; R4 decides it.
+- **Waits.** dead_bug and v_up are drawn but off rows.json and without card keys until #358 writes their strip rows.
+- **Source:** PR #366; lb9/DESIGN.md section 26.14.

@@ -1,0 +1,590 @@
+{
+ "id": "dead_bug",
+ "libId": "lib_dead_bug",
+ "name": "Dead Bug",
+ "family": "Anti-extension and static core",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "none",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Lie on the back on an exercise mat or firm surface, knees bent and feet flat on the floor 12-18 inches from the buttocks.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ace-deadbug",
+     "text": "Starting Position: Lie supine (on your back) on an exercise mat or firm surface, bending your knees until your feet are positioned flat on the floor 12 - 18\" from your buttocks.",
+     "where": "Step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Pull the shoulders down and back without increasing the arch in the low back or lifting the hips, and hold this through the exercise.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ace-deadbug",
+     "text": "Depress and retract your scapulae (pull your shoulders down and back) without increasing the arch in your low back or lifting your hips off the mat / floot. Hold this position throughout the exercise.",
+     "where": "Step 1"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Steady the spine and pelvis with a hollowing movement (one source) or a brace that pushes the lower back into the mat (another), then lift the legs and arms: knees bent 90 degrees directly over the hips, arms extended above the chest.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-deadbug",
+    "ggr-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ace-deadbug",
+     "text": "Once you have used a hollowing movement to stabilize your spine and pelvis, lift both legs and arms off of the floor; the knees should be directly over the hip joints and bent ninety degrees (pictured)",
+     "where": "Step 2"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "Lie face up on the floor with your knees forming a 90-degree angle above your hips and your arms fully extended above your chest.",
+     "where": "How To Do the Dead Bug Exercise"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "Brace your core, pushing your lower back into the mat.",
+     "where": "How To Do the Dead Bug Exercise"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Breathing in, slowly lower one arm and the opposite leg toward the floor until the hand and heel lightly touch it without resting; breathing out, slowly bring them back, then switch to the other pair.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-deadbug",
+    "ggr-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ace-deadbug",
+     "text": "Inhale and maintain the abdominal hollowing while slowly lowering the right heel and left hand towards the floor. The hand and heel should lightly touch the floor (but not rest), exhale continue the abdominal hollowing and slowly bring the leg and arm back to the initial starting position.",
+     "where": "Step 3"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "Extend your right hand above your head and your left leg in front of you.",
+     "where": "How To Do the Dead Bug Exercise"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "Return to the starting position and repeat for the left arm and right leg.",
+     "where": "How To Do the Dead Bug Exercise"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "The back stays flat and in contact with the mat on every rep; losing the flat back and neutral spine places unnecessary shear forces on the lumbar spine.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-deadbug",
+     "text": "Check in with your form on each rep and make sure your back remains flat and in contact with the mat.",
+     "where": "Trainer Tips for Form, Maintain a Flat Back/Neutral Spine"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "Losing that flat back and neutral spine positioning places unnecessary shear forces on the lumbar spine.",
+     "where": "Trainer Tips for Form, Maintain a Flat Back/Neutral Spine"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Arching: as the reps add up, it is easy to lose core tension and start arching the back; arching could contribute to a back injury.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-deadbug",
+     "text": "As you rack up the reps, however, and that position becomes excruciating to hold, it’s then easy to lose core tension and start arching the back and overextending the spine to compensate.",
+     "where": "Common Dead Bug Mistakes, Spine Overextending/Arching"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "Not only does arching reduce the overall effectiveness of the exercise, it could contribute to a back injury including strains, sprains, and herniations.",
+     "where": "Common Dead Bug Mistakes, Spine Overextending/Arching"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Take a beat between reps to check form; if the flat back starts to go, finish the rep and rest.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-deadbug",
+     "text": "We know it’s a challenging movement, but try to take a beat in between each rep and ensure you’re maintaining proper form and alignment. If you do feel yourself losing that perfect flat back positioning, finish the reps you’re on and rest.",
+     "where": "Common Dead Bug Mistakes, Spine Overextending/Arching"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Neck: looking down at the legs or craning the neck strains the neck; stare straight up at the ceiling.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-deadbug",
+     "text": "It’s tempting to look down at your legs while doing the dead bug, but doing so places strain on your neck.",
+     "where": "Trainer Tips for Form, Look at the Ceiling"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "Craning your neck is another great way to lose proper spinal alignment and place undue stress on critical regions of your body.",
+     "where": "Common Dead Bug Mistakes, Craning the Neck"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "Stare straight up at the ceiling during the dead bug exercise to ensure proper alignment and prevent possible injury to your neck.",
+     "where": "Common Dead Bug Mistakes, Craning the Neck"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Breathing: breathe in as the arm and leg extend and out on the way back; never hold the breath.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-deadbug",
+    "ace-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-deadbug",
+     "text": "A great way to make sure you’re doing that is by taking a deep breath as you extend your arm and leg, then exhaling as you move to return to the starting position.",
+     "where": "Trainer Tips for Form, Practice Engaging Your Core"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "“Sync your breath with your movement,” says Capritto, “and never hold your breath.”",
+     "where": "Trainer Tips for Form, Practice Engaging Your Core"
+    },
+    {
+     "source": "ace-deadbug",
+     "text": "Continue to breathe while holding the abdominal hollowing and bracing.",
+     "where": "Step 4"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Easier versions: start with the hands resting on the floor above the head and the feet resting on the floor, lifting the opposite arm and leg together; one source (a legs-only version) keeps the legs higher off the ground at first and lowers them little by little.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "ace-deadbug",
+    "fv-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ace-deadbug",
+     "text": "To have more control (making it easier) when learning this exercise, start with the hands resting on the floor above the head and the feet resting gently on the floor in front of the buttocks",
+     "where": "Step 4"
+    },
+    {
+     "source": "ace-deadbug",
+     "text": "slowly lift the right arm and left leg off of the floor together while maintaining the abdominal hollowing",
+     "where": "Step 4"
+    },
+    {
+     "source": "fv-deadbug",
+     "text": "To make the exercise easier especially if you have limited hip range of motion or mobility; keep your leg/s higher off the ground at first and then gradually lower it little by little.",
+     "where": "Dead bug exercise tips"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "The exercise works the abs, including the rectus abdominis, transverse abdominis and obliques, with the hip flexors and back muscles also working.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-deadbug",
+    "ggr-deadbug"
+   ],
+   "quotes": [
+    {
+     "source": "ace-deadbug",
+     "text": "Target Body Part: Abs",
+     "where": "exercise header"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "including abdominal muscles like the rectus abdominis, transverse abdominis, and obliques, as well as the erector spinae, multifidus, hip flexors, and pelvic floor",
+     "where": "introduction"
+    },
+    {
+     "source": "ggr-deadbug",
+     "text": "Hip flexors: These muscles, as the name suggests, flex your hips and help you bring your legs towards your torso, which is required for getting into the dead bug position.",
+     "where": "FAQs: What does the dead bug exercise work?"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "In an EMG study of Pilates mat exercises in healthy and low-back-pain adults, the dead bug worked the obliques more than the multifidus and rectus abdominis.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "pereira-2017"
+   ],
+   "quotes": [
+    {
+     "source": "pereira-2017",
+     "text": "Electromyographic analysis assessed the multifidus, external oblique, internal oblique, and rectus abdominis muscles during classical Pilates exercises (single leg stretch, criss-cross, and dead bug).",
+     "where": "abstract, methods"
+    },
+    {
+     "source": "pereira-2017",
+     "text": "the criss-cross and dead bug created more activation of the oblique compared with the multifidus and rectus.",
+     "where": "abstract, results"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "ace-deadbug",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/147/supine-dead-bug/",
+   "title": "Ab Exercises | Supine Dead Bug",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ggr-deadbug",
+   "url": "https://www.garagegymreviews.com/dead-bug-exercise",
+   "title": "Try the Dead Bug Exercise for a Strong Core | Garage Gym Reviews",
+   "kind": "coach",
+   "year": 2023,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-deadbug",
+   "url": "https://fitnessvolt.com/dead-bug-exercise/",
+   "title": "Dead Bug Exercise: Strengthen Core and Improve Stability – Fitness Volt",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "pereira-2017",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28413116/",
+   "title": "Trunk Muscle EMG During Intermediate Pilates Mat Exercises in Beginner Healthy and Chronic Low Back Pain Individuals.",
+   "kind": "peer-reviewed",
+   "year": 2017,
+   "pmid": 28413116,
+   "access": "abstract",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side: the lower back on the mat (c3, c5), the knees over the hips (c3) and the arm and leg lowering toward the floor (c4) read from the side.",
+  "equipment": "Floor line, exercise mat (c1).",
+  "start": "Lying on the back, knees bent 90 degrees directly over the hips, arms extended straight up above the chest, lower back pressed into the mat (c3); shoulders down and back (c2).",
+  "end": "One arm reaching overhead and the opposite leg extended, hand and heel just above the floor, not resting (c4); the other arm and leg still up (c4); lower back still on the mat (c5).",
+  "checkpoints": [
+   {
+    "label": "Low back down",
+    "what": "Lower back stays flat on the mat every rep.",
+    "claim": [
+     "c3",
+     "c5"
+    ]
+   },
+   {
+    "label": "Knees over hips",
+    "what": "Knees bent 90 degrees, right over your hips.",
+    "claim": "c3"
+   },
+   {
+    "label": "Opposite limbs",
+    "what": "Lower one arm and the opposite leg together, just touching the floor.",
+    "claim": "c4"
+   }
+  ],
+  "mistake": {
+   "what": "Back arching off the mat as the arm and leg lower.",
+   "why": "Garage Gym Reviews puts arching first in its common dead bug mistakes: as the reps add up it is easy to lose core tension and arch, and arching could contribute to a back injury (c6).",
+   "claim": "c6",
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the back arching off the mat (c6). Step 1 finds no frequency word for a fault of this exercise. Garage Gym Reviews has six hits, none about a fault of this exercise: \"Here are some of the most common mistakes when performing the dead bug exercise.\" is a list sentence and is not read onto one item (LR-31; R-LB4-2); \"including tips from a personal trainer for proper form, common mistakes to avoid, some useful gear recommendations\" introduces the article; \"The dead bug is an unassuming exercise that often requires nothing more than your own bodyweight to perform correctly\" is about the exercise's equipment; \"The most common way to incorporate a yoga block\" is about an accessory; \"the “six-pack” muscle most people spend countless hours trying to develop\" is about a muscle and training in general (R-LB7-3); \"is often found running, hiking\" is the author's bio. Unlike D-SUP-LB7-DIPREPS, no \"most people\" or \"many\" sentence names this exercise's own fault, so the pick does not move to step 1. Also: its \"it’s then easy to lose core tension and start arching the back\" (c6) uses 'easy to', which LR-31 excludes; \"It’s tempting to look down at your legs\" (c8) is not a frequency word. Common-mistakes list read: Garage Gym Reviews' \"Common Dead Bug Mistakes\" (1 Spine Overextending/Arching, 2 Craning the Neck); ACE, Fitness Volt and Pereira have none. The ACE page, the Fitness Volt page and the Pereira abstract have none. Step 2: two named faults are tied to harm, both on Garage Gym Reviews' common-mistakes list. The arch (item 1, \"Spine Overextending/Arching\"): \"it could contribute to a back injury including strains, sprains, and herniations\" (c6), with the same source's tip \"Losing that flat back and neutral spine positioning places unnecessary shear forces on the lumbar spine.\" (c5). Craning the neck (item 2): \"place undue stress on critical regions of your body\" and \"prevent possible injury to your neck\", with the tip on looking down, \"doing so places strain on your neck\" (c8) and \"it could contribute to a nasty, possibly permanent neck injury\", all from the same source. Tie order: both are on the list, each tied to harm by one source (Garage Gym Reviews), both directly sourced; the earlier on the list that names both is the arch. Set aside: Fitness Volt's \"If you have tight or weak hip flexors, you may have to take care of that before doing this exercise as it can cause pain and injury by forcing the movement.\" is about a muscle condition and forcing the movement, not a position or movement during the set, and is written for its legs-only version; Garage Gym Reviews' \"never hold your breath\" (c9) names no harm; \"places unnecessary shear forces on the lumbar spine\" (c5) has no listed harm word and backs the same arch either way; \"it should hurt because of the intense core activation, not the hard gym floor on your lower back\" is about the floor surface, a setup choice; \"excellent for preventing and reducing low back pain\" and \"relieve low back pain\" are benefits, not faults. drawable true: the side view shows the lower back lifted off the mat."
+  },
+  "tells": [
+   {
+    "text": "Low back stays on the mat",
+    "claim": "c5"
+   },
+   {
+    "text": "Eyes stay on the ceiling",
+    "claim": "c8"
+   }
+  ],
+  "tempo": {
+   "up": null,
+   "down": null,
+   "pause": null,
+   "text": "No source gives seconds, so up, down and pause stay null (LR-33). ACE asks to lower the arm and leg slowly and to bring them back slowly (c4); with \"slowly\" on both phases, the 2 s down / 1 s up convention would contradict the return, and R-LB7-6 lets a card with a slow quote keep null. Garage Gym Reviews' \"take a beat in between each rep\" (c7) is a form check between reps with no length; its pause dead bug, a pause at the bottom, is a named variation, not this exercise.",
+   "claim": "c4"
+  },
+  "variantLine": "Easier: hands and feet resting on the floor, lifting the opposite arm and leg together (c10). The plate draws the standard version with the arms up and knees over the hips (c3)."
+ },
+ "grip": {
+  "type": "",
+  "width": "",
+  "thumb": "",
+  "handContact": "No hand contact: arms extended straight up above the chest, one arm lowering overhead each rep (c3, c4).",
+  "wrist": "",
+  "claims": [
+   "c3",
+   "c4"
+  ],
+  "note": "Hand archetype none: no hand zoom."
+ },
+ "setup": [
+  {
+   "step": "Lie on your back on a mat.",
+   "claim": "c1"
+  },
+  {
+   "step": "Lift your legs: knees bent 90 degrees, over your hips.",
+   "claim": "c3"
+  },
+  {
+   "step": "Reach your arms straight up above your chest.",
+   "claim": "c3"
+  },
+  {
+   "step": "Brace and press your lower back into the mat.",
+   "claim": "c3"
+  },
+  {
+   "step": "Pull your shoulders down and back.",
+   "claim": "c2"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Slowly lower one arm and the opposite leg toward the floor.",
+   "claim": "c4"
+  },
+  {
+   "point": "Hand and heel lightly touch the floor without resting.",
+   "claim": "c4"
+  },
+  {
+   "point": "Bring them back slowly, then switch sides.",
+   "claim": "c4"
+  },
+  {
+   "point": "Breathe in as you reach out, breathe out as you return.",
+   "claim": [
+    "c9",
+    "c4"
+   ]
+  },
+  {
+   "point": "Stare straight up at the ceiling.",
+   "claim": "c8"
+  },
+  {
+   "point": "Easier: start with hands and feet resting on the floor.",
+   "claim": "c10"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Back arching off the mat.",
+   "fix": "Press your lower back into the mat. If it lifts, finish the rep and rest.",
+   "claim": [
+    "c6",
+    "c3",
+    "c7"
+   ]
+  },
+  {
+   "mistake": "Craning your neck to look at your legs.",
+   "fix": "Stare straight up at the ceiling.",
+   "claim": "c8"
+  },
+  {
+   "mistake": "Holding your breath.",
+   "fix": "Breathe in as you reach out, out as you return.",
+   "claim": "c9"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "abs",
+    "claim": "c11"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "obliques",
+    "claim": [
+     "c11",
+     "c12"
+    ]
+   },
+   {
+    "muscleId": "hip_flexors",
+    "claim": "c11"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Front of the belly",
+    "means": "Your abs are working.",
+    "fix": "",
+    "claim": "c11",
+    "redFlag": null
+   },
+   {
+    "where": "Sides of the waist",
+    "means": "Your obliques are working too.",
+    "fix": "",
+    "claim": [
+     "c11",
+     "c12"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Low back",
+    "means": "Fault: your back is arching off the mat.",
+    "fix": "Finish the rep you're on and rest.",
+    "claim": [
+     "c6",
+     "c7"
+    ],
+    "redFlag": "back"
+   },
+   {
+    "where": "Neck",
+    "means": "Looking down at your legs strains your neck.",
+    "fix": "Stare straight up at the ceiling.",
+    "claim": "c8",
+    "redFlag": null
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Arching your back could contribute to a back injury.",
+   "claim": "c6"
+  },
+  {
+   "risk": "Looking down at your legs places strain on your neck.",
+   "claim": "c8"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "low-back",
+   "kind": "posture",
+   "right": "Lower back flat on the mat.",
+   "wrong": "Back arching off the mat.",
+   "claim": [
+    "c5",
+    "c6"
+   ]
+  },
+  {
+   "key": "neck",
+   "kind": "posture",
+   "right": "Eyes straight up at the ceiling.",
+   "wrong": "Neck craned to look at the legs.",
+   "claim": "c8"
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "obliques",
+   "hip_flexors"
+  ],
+  "remove": [],
+  "why": "Add obliques as secondary: Garage Gym Reviews names them and Pereira measured more oblique than rectus activity in the dead bug (c11, c12). Add hip_flexors as secondary: Garage Gym Reviews says they work to hold the legs up (c11). abs stays primary (ACE target body part, c11). The library's core (primary) stays; it is not used in feel (LR-35)."
+ },
+ "anchorSource": "ace-deadbug",
+ "notes": [
+  "Anchor: ACE's Supine Dead Bug (ace-deadbug) is read in full and covers the start, the brace, each phase, breathing and an easier version. Garage Gym Reviews was also read in full and carries the common-mistakes list.",
+  "Shared card: floor-body (docs/research/howto/shared/floor-body.json) lists dead_bug in appliesTo; its gaps say lying face-up ids have no shared checkpoint and stay per exercise, so nothing is cited from it here.",
+  "Arms and legs: ACE has the elbows over the shoulders with the hands pointed over the head and lowers the heel; Garage Gym Reviews has the arms extended above the chest and extends the leg (c3, c4). The plate draws Garage Gym Reviews' straight arm and extended leg, with ACE's light touch on the floor.",
+  "Fitness Volt's page is a legs-only version (arms down by the sides); it is cited only for the easier leg height, tagged WEAK, in c10.",
+  "The low-back feel row ends the set from Garage Gym Reviews' stop words (\"finish the reps you’re on and rest\", c7), a fetched stop quote (R-LB3-4); no source names pain there, so the row names none.",
+  "The neck has no shared red-flag box, so the neck row links none.",
+  "Read but not cited: BarBend's Dead Bug Benefits page (benefits and loaded variations, no technique steps for the standard dead bug); PubMed abstracts Kim 2016 (27317910), Bini 2021 (34776131) and Tsartsapakis 2024 (38651428), whose results do not single out the dead bug for a line on this card. Not reachable: StrengthLog dead bug (HTTP 429 on every try, 2026-10-22), Verywell Fit (402), Muscle & Strength (403).",
+  "Fetcher check 2026-10-22 (Sonnet source fetcher, curl and NCBI efetch): every quote verbatim; titles set to each page's served title."
+ ]
+}

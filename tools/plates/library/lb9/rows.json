@@ -1,5 +1,5 @@
 {
- "note": "LB9 H build-ahead rows (LIB-21, D-LIB21-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids with a tempo strip (A5; held ids are in DESIGN.md's held table); all H (DESIGN.md section 1). The (b) ids join after LIB-20 is on main and their keys are verified (D-LIB21-ER5): side_plank at the resume (#326); superman at resume 2 (#337, D-LIB21-SUPERMAN). censusRef: the census commit (claude/howto-options).",
+ "note": "LB9 H build-ahead rows (LIB-21, D-LIB21-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids with a tempo strip (A5; held ids are in DESIGN.md's held table); all H (DESIGN.md section 1). The (b) ids join after LIB-20 is on main and their keys are verified (D-LIB21-ER5): side_plank at the resume (#326); superman at resume 2 (#337, D-LIB21-SUPERMAN); LIB-SUPCORE wave 2 adds hollow_body_hold, reverse_crunch and flutter_kicks (D-SUPCORE-MODES), and dead_bug and v_up after their strip rows (#358, D-SUPCORE-STRIP). censusRef: the census commit (claude/howto-options).",
  "batch": "LB9",
  "censusRef": "4a9fd86",
  "rows": {
@@ -44,6 +44,33 @@
    "slug": "cable-crunch",
    "prefix": "cable-crunch",
    "chromeId": "cable-crunch",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_hollow_body_hold": {
+   "src": "library/specs/hollow_body_hold.mjs",
+   "slug": "hollow-body-hold",
+   "prefix": "hollow-body-hold",
+   "chromeId": "hollow-body-hold",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_reverse_crunch": {
+   "src": "library/specs/reverse_crunch.mjs",
+   "slug": "reverse-crunch",
+   "prefix": "reverse-crunch",
+   "chromeId": "reverse-crunch",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_flutter_kicks": {
+   "src": "library/specs/flutter_kicks.mjs",
+   "slug": "flutter-kicks",
+   "prefix": "flutter-kicks",
+   "chromeId": "flutter-kicks",
    "mode": "H",
    "stage": "drawing",
    "view": "side"

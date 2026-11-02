@@ -351,6 +351,211 @@
     ],
     "basis": "D-LIB21-TRACE: the ball toward the hip (c4), the grips' midpoint holds the ball; trim hanging_leg_raise.mjs:124 [10, 12] (D-LIB18-TRIM: the census closest)"
    }
+  },
+  "hollow_body_hold": {
+   "PELVIS_TUCK": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: crunch.mjs:61 PELVIS_TUCK (PILOT-B2, panel mx25 APPROVED @ 716bf3b7; D-SUPCORE-ANCHOR, the floor-supine class's clone source): the pelvis tucked so the lower-trunk underside lies on the floor (crunch's mx24 R1/R3 fix); copied with flatLying"
+   },
+   "TOE": {
+    "value": -40,
+    "unit": "deg",
+    "basis": "stated reason: plate.start 'toes pointed' (c1) gives no angle; -40 deg ankle plantarflexion, a pointed foot that keeps the drawn heel the leg's lowest point on the floor at the entry; no source states it"
+   },
+   "CURL": {
+    "value": 25,
+    "unit": "deg",
+    "basis": "convention: crunch.mjs:56 END_CURL (PILOT-B2, APPROVED @ 716bf3b7), the floor class's T12 curl that lifts the shoulder blades with the low back down (D-SUPCORE-SPLIT); no card number"
+   },
+   "LEG": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "claim: c4 'one source says 15 to 30 degrees off the floor' and plate.end 'about 15 degrees off the floor, the low end of the anchor source's 15-30 degrees'; measured on the hip-to-ankle line against the floor"
+   },
+   "ARM": {
+    "value": 185,
+    "unit": "deg",
+    "basis": "stated reason: c1 and plate.end 'arms by the ears' give no angle; the arm's elevation 185 deg from hanging, 5 deg past the thorax's long axis, so the upper arm lies beside the head in line with the curled trunk; no source states it"
+   },
+   "ARM_PLANE": {
+    "value": 80,
+    "unit": "deg",
+    "basis": "stated reason: the arm's plane 10 deg out from straight forward (90), so the upper arms pass beside the head in depth (c1 'biceps next to the ears') rather than through it; no source states it"
+   },
+   "NECK": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "stated reason: c9 'lower the chin and look down the body to the feet without tucking the chin to the chest': 10 deg of neck flexion from the supine solve's neutral neck; no source gives the angle"
+   },
+   "M_LEG": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "stated reason: c5 'if they are not lifted high enough' gives no angle; 5 deg, a third of the card's 15, with the heels still off the floor (c5 'the legs must be lifted off the floor'); measured on the hip-to-ankle line"
+   },
+   "trace": {
+    "point": "heel.r",
+    "trim": [
+     4,
+     6
+    ],
+    "basis": "DRAWING-GUIDE.md:29 (DESIGN.md 26.6, fixed before any measure): the legs lifting to about 15 deg (c4, checkpoint 'Legs low'); trim [4, 6]: crunch's (PILOT-B2, the floor-class anchor)"
+   }
+  },
+  "reverse_crunch": {
+   "PELVIS_TUCK": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: crunch.mjs:61 PELVIS_TUCK (PILOT-B2, panel mx25 APPROVED @ 716bf3b7; D-SUPCORE-ANCHOR, the floor-supine class's clone source): the pelvis tucked so the lower-trunk underside lies on the floor (crunch's mx24 R1/R3 fix); copied with flatLying"
+   },
+   "KNEE_DEG": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "claim: c2 'knees ... bent at 90 degrees' and c4 'Keep the knee angle at 90 degrees, unchanged'; the engine's knee flexion"
+   },
+   "ROLL": {
+    "value": 35,
+    "unit": "deg",
+    "basis": "stated reason: c5 'until the spine cannot roll any further (the tailbone clears the floor ...)' gives no angle; the pelvis rolled 35 deg, which lifts the drawn buttock 16.4 cm off the floor with the upper back still down; no source states it"
+   },
+   "BACK_H": {
+    "value": 0.045,
+    "unit": "m",
+    "basis": "stated reason: the 'Back down' anchor is the end's low back where it leaves the floor, 4.5 cm up, so its leader starts clear of the floor line (the 6 px rule); a drawing number, no source states it"
+   },
+   "SPLIT_L5S1": {
+    "value": 0.123,
+    "unit": "share",
+    "basis": "convention: lb9/sizes.json cable_crunch SPLIT_L5S1 (D-LB9R3-SPLIT, sourced: Pearcy 1984, PMID 6374922), the sourced share of whole-spine flexion at each pivot, for the roll's take-back"
+   },
+   "SPLIT_L3": {
+    "value": 0.341,
+    "unit": "share",
+    "basis": "convention: lb9/sizes.json cable_crunch SPLIT_L3 (D-LB9R3-SPLIT, sourced: Pearcy 1984, PMID 6374922)"
+   },
+   "SPLIT_T12": {
+    "value": 0.246,
+    "unit": "share",
+    "basis": "convention: lb9/sizes.json cable_crunch SPLIT_T12 (D-LB9R3-SPLIT, sourced: Pearcy 1984, PMID 6374922)"
+   },
+   "SPLIT_T7": {
+    "value": 0.29,
+    "unit": "share",
+    "basis": "convention: lb9/sizes.json cable_crunch SPLIT_T7 (D-LB9R3-SPLIT, sourced: Pearcy 1984, PMID 6374922)"
+   },
+   "M_KNEE": {
+    "value": 40,
+    "unit": "deg",
+    "basis": "stated reason: c11 'Tucking the knees too far back' and plate.mistake 'the knee angle closing' give no size; the knee closes 40 deg (90 to 130 deg flexion), heels toward the buttocks; no source states it"
+   },
+   "M_HIP": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated reason: c11 'too far back toward you': the hips flex 20 deg more, knees toward the chest; no source states it"
+   },
+   "trace": {
+    "point": "knee.r",
+    "trim": [
+     4,
+     6
+    ],
+    "basis": "DRAWING-GUIDE.md:29 (DESIGN.md 26.6, fixed before any measure): the knees coming toward the chest (c3 'bringing the knees toward the chest'), the point the hip curl moves most; trim [4, 6]: crunch's (PILOT-B2, the floor-class anchor)"
+   }
+  },
+  "dead_bug": {
+   "PELVIS_TUCK": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: crunch.mjs:61 PELVIS_TUCK (PILOT-B2, panel mx25 APPROVED @ 716bf3b7; D-SUPCORE-ANCHOR, the floor-supine class's clone source): the pelvis tucked so the lower-trunk underside lies on the floor (crunch's mx24 R1/R3 fix); copied with flatLying"
+   },
+   "KNEE_DEG": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "claim: c3 'knees bent 90 degrees directly over the hips'; the engine's knee flexion"
+   },
+   "GAP": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "claim: c4 'until the hand and heel lightly touch it without resting' (plate.end 'just above the floor, not resting'); 2 cm from the drawn fist and heel to the floor, 2.96 px at 148.18 px/m, the D-SUPCORE-CLEAR 2 px gap with the least room above it; no source gives a height"
+   },
+   "MIS_TILT": {
+    "value": 14,
+    "unit": "deg",
+    "basis": "convention: crunch.mjs:62 MIS_TILT (PILOT-B2, APPROVED @ 716bf3b7), the floor class's arch Mistake: the pelvis tips 14 deg forward and the spine takes it back, so the low back lifts off the floor; no source sizes the arch"
+   },
+   "trace": {
+    "point": "wrist.r",
+    "trim": [
+     4,
+     6
+    ],
+    "basis": "DRAWING-GUIDE.md:29 (DESIGN.md 26.6, fixed before any measure): the near hand lowering overhead (c4, checkpoint 'Opposite limbs'); trim [4, 6]: crunch's (PILOT-B2, the floor-class anchor)"
+   }
+  },
+  "v_up": {
+   "PELVIS_TUCK": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: crunch.mjs:61 PELVIS_TUCK (PILOT-B2, panel mx25 APPROVED @ 716bf3b7; D-SUPCORE-ANCHOR, the floor-supine class's clone source): the pelvis tucked so the lower-trunk underside lies on the floor (crunch's mx24 R1/R3 fix); copied with flatLying"
+   },
+   "HOVER": {
+    "value": 0.0762,
+    "unit": "m",
+    "basis": "claim: c4 'keeping the heels a few inches off the floor' (PLAN RULED Q2: heels hover, arms rest); 3 in = 7.62 cm, superman's reading of 'a few inches' (lb9/sizes.json superman LIFT); measured from the floor to the drawn heels"
+   },
+   "THORAX_V": {
+    "value": 65,
+    "unit": "deg",
+    "basis": "stated reason: c3 'lift the legs and torso together' (a V) gives no angle; the thorax 65 deg off the floor, the legs then solved so the Winter centre of mass sits over the buttock's floor contact (D-LIB21-BALANCE form; legs 53.6 deg); no source states it"
+   },
+   "CURL": {
+    "value": 25,
+    "unit": "deg",
+    "basis": "convention: crunch.mjs:56 END_CURL (PILOT-B2, APPROVED @ 716bf3b7), the floor class's T12 curl that lifts the shoulder blades with the low back down (D-SUPCORE-SPLIT); no card number"
+   },
+   "MIS_TILT": {
+    "value": 14,
+    "unit": "deg",
+    "basis": "convention: crunch.mjs:62 MIS_TILT (PILOT-B2, APPROVED @ 716bf3b7), the floor class's arch Mistake: the pelvis tips 14 deg forward and the spine takes it back, so the low back lifts off the floor; no source sizes the arch"
+   },
+   "trace": {
+    "point": "wrist.r",
+    "trim": [
+     4,
+     6
+    ],
+    "basis": "DRAWING-GUIDE.md:29 (DESIGN.md 26.6, fixed before any measure): the hands reaching (c3 'reach the arms toward the toes', checkpoint 'Reach to toes'); the swapped draw traces the lowering hand; trim [4, 6]: crunch's (PILOT-B2, the floor-class anchor)"
+   }
+  },
+  "flutter_kicks": {
+   "PELVIS_TUCK": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: crunch.mjs:61 PELVIS_TUCK (PILOT-B2, panel mx25 APPROVED @ 716bf3b7; D-SUPCORE-ANCHOR, the floor-supine class's clone source): the pelvis tucked so the lower-trunk underside lies on the floor (crunch's mx24 R1/R3 fix); copied with flatLying"
+   },
+   "FEET": {
+    "value": 0.1016,
+    "unit": "m",
+    "basis": "claim: c2 'lift the feet several inches off the floor'; 4 in = 10.16 cm, one more than superman's 3 in 'a few'; measured from the floor to the drawn heels at the start"
+   },
+   "KICK": {
+    "value": 4,
+    "unit": "deg",
+    "basis": "stated reason: c3 'short, crisp movements' and c9 'the kicks should be short' give no size; each hip 4 deg up or down from the start (the plan's proto, DESIGN.md 26.7), so the far heel stays 3.9 cm off the floor; no source states it"
+   },
+   "MIS_TILT": {
+    "value": 14,
+    "unit": "deg",
+    "basis": "convention: crunch.mjs:62 MIS_TILT (PILOT-B2, APPROVED @ 716bf3b7), the floor class's arch Mistake: the pelvis tips 14 deg forward and the spine takes it back, so the low back lifts off the floor; no source sizes the arch"
+   },
+   "trace": {
+    "point": "heel.r",
+    "trim": [
+     4,
+     6
+    ],
+    "basis": "DRAWING-GUIDE.md:29 (DESIGN.md 26.6, fixed before any measure): the card frames 'Trace follows the near foot'; trim [4, 6]: crunch's (PILOT-B2, the floor-class anchor)"
+   }
   }
  }
 }

@@ -1,0 +1,616 @@
+{
+ "id": "v_up",
+ "libId": "lib_v_up",
+ "name": "V-Up",
+ "family": "Trunk flexion (child of hollow_body_hold)",
+ "tier": "B",
+ "tierNote": "Safety tier B (content.md appendix B, neck: crunches); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "none",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": "hollow_body_hold",
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Start lying face up with the legs straight and the feet pressed together, and the arms extended above the head; for more challenge, hover the limbs slightly off the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-vup",
+    "wh-vup"
+   ],
+   "quotes": [
+    {
+     "source": "fv-vup",
+     "text": "Lie on the floor face up with your legs straight out, feet pressed together, and arms extended above your head.",
+     "where": "How To Do V-Ups, Basic v-up steps"
+    },
+    {
+     "source": "wh-vup",
+     "text": "Lie face-up on the floor with legs and arms straight. For added challenge, hover limbs off the floor slightly.",
+     "where": "How To Do A V-Up With Proper Form"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Brace first: push the pelvis down, breathe in and tense the midsection.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-vup"
+   ],
+   "quotes": [
+    {
+     "source": "fv-vup",
+     "text": "Brace your core by pushing the pelvis down, taking a breath in, and tensing the midsection.",
+     "where": "How To Do V-Ups, Basic v-up steps"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "In one movement, lift the legs and torso together and reach the arms toward the toes.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-vup",
+    "wh-vup"
+   ],
+   "quotes": [
+    {
+     "source": "fv-vup",
+     "text": "Then, simultaneously lift your legs up toward the center of the body, and reach your arms toward your toes.",
+     "where": "How To Do V-Ups, Basic v-up steps"
+    },
+    {
+     "source": "wh-vup",
+     "text": "In one movement, lift torso and legs as if you're trying to touch your toes.",
+     "where": "How To Do A V-Up With Proper Form"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Reverse the motion back to the start, keeping the heels a few inches off the floor, with the back flat against the floor and the core tensed.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-vup",
+    "wh-vup"
+   ],
+   "quotes": [
+    {
+     "source": "fv-vup",
+     "text": "Reverse the motion and return to the starting position while keeping your heels a few inches off the floor. Your back should always be flat against the floor and your core tensed.",
+     "where": "How To Do V-Ups, Basic v-up steps"
+    },
+    {
+     "source": "wh-vup",
+     "text": "Lower body back down. That's 1 rep.",
+     "where": "How To Do A V-Up With Proper Form"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "The lower back stays flat against the floor; if it arches, the hip flexors take over too much.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-vup"
+   ],
+   "quotes": [
+    {
+     "source": "fv-vup",
+     "text": "Your lower back should be flat against the ground for the entire exercise. If your lower back arches, the hip flexors will take over too much.",
+     "where": "How To Do V-Ups, Tips"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Start with the abs engaged and the lower back touching the ground instead of arching; arching could bring serious discomfort or pain in the lower back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "wh-vup"
+   ],
+   "quotes": [
+    {
+     "source": "wh-vup",
+     "text": "make sure you start with your abs engaged and your lower back touching the ground, instead of arching your back when you're lying down. If you don't, you could experience serious discomfort or pain in your lower back.",
+     "where": "How To Do A V-Up With Proper Form, Form cue"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "The upper body starts the lift, not the legs, using the core.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "wh-vup"
+   ],
+   "quotes": [
+    {
+     "source": "wh-vup",
+     "text": "Make sure its your upper body that's starting the initiation of coming up, rather than your legs. The key here again is to use that core.",
+     "where": "How To Do A V-Up With Proper Form, Form cue"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Keep the legs as straight as possible, and do not worry if they cannot be fully straight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-vup"
+   ],
+   "quotes": [
+    {
+     "source": "fv-vup",
+     "text": "Try to keep your legs as straight as possible. Although, do not worry if you can’t. Try your best.",
+     "where": "How To Do V-Ups, Tips"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Flailing legs: legs flopping around cost balance and stability; gently pressing the toes together helps.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-vup"
+   ],
+   "quotes": [
+    {
+     "source": "fv-vup",
+     "text": "You won’t have the balance, stability, and optimal focus if your legs are flopping around during v-ups. It really helps to gently press your toes together which will help you to maintain proper energy balance throughout your body.",
+     "where": "Common Mistakes While Performing V-Ups, Flailing legs"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Easier: use a shorter range of motion, or start with easier progressions such as cocoons or leg lifts if the full movement cannot be done properly.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-vup"
+   ],
+   "quotes": [
+    {
+     "source": "fv-vup",
+     "text": "You can perform the movement using a shorter range of movement as a progression to full v-ups.",
+     "where": "How To Do V-Ups, Tips"
+    },
+    {
+     "source": "fv-vup",
+     "text": "If you cannot do v-ups properly because you lack balance, core strength or stability, coordination, etc, then you’re better off starting with easier progression like cocoons, or simply leg lifts.",
+     "where": "Common Mistakes While Performing V-Ups, Forcing the movement when you lack the ability"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "The rectus abdominis is the target muscle; the obliques and hip flexors are secondary.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-vup"
+   ],
+   "quotes": [
+    {
+     "source": "fv-vup",
+     "text": "Target Muscle Group: Rectus abdominis Secondary Muscles: Obliques, hip flexors",
+     "where": "This Exercise box"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "In an isometric EMG study of 21 subjects, rectus femoris (a hip flexor) activity was lower in the crunch than in the supine V-up and the other four exercises, and internal oblique activity was higher in the supine V-up than in the slide-board V-up.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "schoffstall-2010"
+   ],
+   "quotes": [
+    {
+     "source": "schoffstall-2010",
+     "text": "The subjects (n = 21) performed an isometric contraction of the abdominal musculature while performing these exercises.",
+     "where": "abstract"
+    },
+    {
+     "source": "schoffstall-2010",
+     "text": "(crunch, supine V-up, prone V-up on ball, prone V-up on slide board, prone V-up on TRX, and prone V-up on Power Wheel)",
+     "where": "abstract"
+    },
+    {
+     "source": "schoffstall-2010",
+     "text": "EMG activity of the RF during the crunch was significantly less than in any of the other 5 exercises.",
+     "where": "abstract"
+    },
+    {
+     "source": "schoffstall-2010",
+     "text": "However, when examining the IO muscle, the supine V-up exercise displayed significantly greater muscle activity than did the slide exercise.",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "One source, written for a seated V-up progression (another version: it starts seated, supported on the arms), says to brace and avoid arching or slumping the low back, and to control movement speed and watch the low back to reduce the potential for injury.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "ace-vup"
+   ],
+   "quotes": [
+    {
+     "source": "ace-vup",
+     "text": "Starting Position: Assume a seated bent-knee position, feet placed flat on the floor / mat and arms outstretched behind you with your palms flat on the floor / mat and fingers pointed outwards or away from your body.",
+     "where": "Step 1"
+    },
+    {
+     "source": "ace-vup",
+     "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine and attempt to hold this position throughout the exercise (avoid “arching” or “slumping” your low back).",
+     "where": "Step 2"
+    },
+    {
+     "source": "ace-vup",
+     "text": "To maximize the benefits of this exercise and reduce the potential for injury, it is important to control movement speed and monitor changes in your low back carefully.",
+     "where": "closing tip after Step 7"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Pace varies by goal: reps can be done with more speed for an explosive version, or slower to make them harder; no seconds are given.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-vup"
+   ],
+   "quotes": [
+    {
+     "source": "fv-vup",
+     "text": "You can make v-ups an explosive movement by performing them with more speed.",
+     "where": "Benefits of V-Ups, Build a more explosive midsection"
+    },
+    {
+     "source": "fv-vup",
+     "text": "A few methods include performing reps slower, holding weights/using ankle weights, increasing the range of motion, or using more advanced variations.",
+     "where": "Frequently Asked Questions, What are some simple ways to make v-ups more challenging?"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Each rep can start from a hollow body: flat on the back with the arms and legs straight and raised slightly off the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "wh-vup"
+   ],
+   "quotes": [
+    {
+     "source": "wh-vup",
+     "text": "Starting every rep from a hollow body (the position where you're flat on your back with your arms and legs straight and raised off the floor slightly) will increase your strength and core endurance.",
+     "where": "Introduction"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "fv-vup",
+   "url": "https://fitnessvolt.com/24111/v-up/",
+   "title": "Ultimate V-Ups: Strengthen Your Core and Sculpt Your Abs! – Fitness Volt",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "wh-vup",
+   "url": "https://www.womenshealthmag.com/fitness/a26977658/v-ups/",
+   "title": "How To Do V-Ups With Proper Form, According To A Certified Trainer",
+   "kind": "coach",
+   "year": 2025,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ace-vup",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/242/v-ups/",
+   "title": "How To Do V-Ups | Exercise Library | ACE",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "schoffstall-2010",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21088553/",
+   "title": "Electromyographic response of the abdominal musculature to varying abdominal exercises.",
+   "kind": "peer-reviewed",
+   "year": 2010,
+   "pmid": 21088553,
+   "access": "abstract",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side: the lower back on the floor at the start (c5, c6) and the V of arms and legs at the top (c3) read from the side.",
+  "equipment": "Floor line.",
+  "start": "Lying face up, legs straight, feet pressed together, arms extended above the head (c1); lower back touching the floor (c5, c6).",
+  "end": "Legs and torso lifted together, arms reaching toward the toes, the body in a V (c3); legs as straight as possible (c8). The return ends with the heels a few inches off the floor (c4).",
+  "checkpoints": [
+   {
+    "label": "Low back down",
+    "what": "Lower back touching the floor at the start and return.",
+    "claim": [
+     "c5",
+     "c6",
+     "c4"
+    ]
+   },
+   {
+    "label": "Reach to toes",
+    "what": "Lift legs and torso together, hands reaching toward your toes.",
+    "claim": "c3"
+   },
+   {
+    "label": "Legs together",
+    "what": "Legs as straight as you can, toes pressed together.",
+    "claim": [
+     "c8",
+     "c9",
+     "c1"
+    ]
+   }
+  ],
+  "mistake": {
+   "what": "Lower back arching off the floor at the start of the rep.",
+   "why": "Women's Health says arching the back when lying down could bring serious discomfort or pain in the lower back (c6); Fitness Volt says the hip flexors then take over (c5).",
+   "claim": [
+    "c6",
+    "c5"
+   ],
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the lower back arching off the floor (c6). Step 1 finds no frequency word for a fault of this exercise: Fitness Volt's \"V-ups are a popular rectus abdominis exercise\" is about the exercise, its \"an optimal range for most people is 2-3 sets x 6-12 reps\" is about sets and reps, and \"Common Mistakes While Performing V-Ups\" is a heading; Women's Health's \"I can't say it enough\" is not a frequency word; Fitness Volt's \"everyone likes to show them off\" is about the abs; the ACE page and the Schoffstall abstract have none. Common-mistakes list read: Fitness Volt's \"Common Mistakes While Performing V-Ups\" (\"Here are a few bad habits to avoid when performing V-ups.\"): 1 Flailing legs, 2 Forcing the movement when you lack the ability. Women's Health, ACE and Schoffstall have no list. Step 2: one named fault is tied to harm, the arch. The arch: Women's Health's \"instead of arching your back when you're lying down. If you don't, you could experience serious discomfort or pain in your lower back.\" (c6), and ACE's \"reduce the potential for injury, it is important to control movement speed and monitor changes in your low back carefully\" (c13, WEAK: ACE's seated V-up progression, another version). Set aside: ACE's \"control movement speed\" (c13, WEAK, another version) names no fault on the card or on a mistakes list, and speed alone is never drawable. Set aside, no harm word: Fitness Volt's \"If your lower back arches, the hip flexors will take over too much.\" (c5, a muscle's activity, the same fault); \"Flailing legs\" (\"You won’t have the balance, stability, and optimal focus if your legs are flopping around during v-ups.\", c9); Women's Health's legs-first start (c7). Not about a fault: Women's Health's tuck-up line \"This will take the pressure out of the hip flexors.\" (a variation) and Schoffstall's \"non-equipment-based exercises stressed the abdominal muscles similarly to equipment-based exercises\" (muscle load). Not a candidate: Fitness Volt's \"Forcing the movement when you lack the ability\" (c10), a choice of exercise level, not a position or movement during the set. Schoffstall's rectus femoris finding (c12) is a muscle-activity finding and stays a feel line. drawable true: the side view shows the lower back lifted off the floor at the start and return."
+  },
+  "tells": [
+   {
+    "text": "Hands reach toward your toes",
+    "claim": "c3"
+   },
+   {
+    "text": "Legs stay together, not flopping",
+    "claim": "c9"
+   }
+  ],
+  "tempo": {
+   "up": null,
+   "down": null,
+   "pause": null,
+   "text": "No source gives seconds for any phase, so up, down and pause stay null (LR-33, R-LB7-6). Fitness Volt allows an explosive version with more speed, or slower reps to make it harder (c14). ACE's \"control movement speed\" and its holds of 5-30 s belong to its seated V-up progression, another version (c13). No quote on the card asks for a pause at the top of the classic V-up.",
+   "claim": "c14"
+  },
+  "variantLine": "Harder: start each rep from a hollow body, the arms and legs raised slightly off the floor (c15, c1). Easier: a shorter range of motion (c10). The plate draws the basic rep from the floor (c1, c3)."
+ },
+ "grip": {
+  "type": "",
+  "width": "",
+  "thumb": "",
+  "handContact": "No hand contact: arms extended above the head, then reaching toward the toes (c1, c3).",
+  "wrist": "",
+  "claims": [
+   "c1",
+   "c3"
+  ],
+  "note": "Hand archetype none: no hand zoom."
+ },
+ "setup": [
+  {
+   "step": "Lie on your back, legs straight, feet pressed together.",
+   "claim": "c1"
+  },
+  {
+   "step": "Extend your arms above your head.",
+   "claim": "c1"
+  },
+  {
+   "step": "Push your pelvis down, breathe in and tense your middle.",
+   "claim": "c2"
+  },
+  {
+   "step": "Start with your lower back touching the floor.",
+   "claim": "c6"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Lift legs and torso together, reaching toward your toes.",
+   "claim": "c3"
+  },
+  {
+   "point": "Lead with your upper body, not your legs.",
+   "claim": "c7"
+  },
+  {
+   "point": "Keep your legs as straight as you can.",
+   "claim": "c8"
+  },
+  {
+   "point": "Lower back flat on the floor as you come down.",
+   "claim": [
+    "c5",
+    "c4"
+   ]
+  },
+  {
+   "point": "Return with your heels a few inches off the floor.",
+   "claim": "c4"
+  },
+  {
+   "point": "Easier: use a shorter range of motion.",
+   "claim": "c10"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Lower back arching off the floor.",
+   "fix": "Brace first, and start with your lower back touching the floor.",
+   "claim": [
+    "c6",
+    "c5",
+    "c2"
+   ]
+  },
+  {
+   "mistake": "Legs flopping around.",
+   "fix": "Gently press your toes together.",
+   "claim": "c9"
+  },
+  {
+   "mistake": "Legs starting the lift.",
+   "fix": "Start the lift with your upper body, not your legs.",
+   "claim": "c7"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "abs",
+    "claim": "c11"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "obliques",
+    "claim": [
+     "c11",
+     "c12"
+    ]
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "hip_flexors",
+    "claim": [
+     "c5",
+     "c11",
+     "c12"
+    ]
+   }
+  ],
+  "rows": [
+   {
+    "where": "Front of the belly",
+    "means": "Your abs are the target.",
+    "fix": "",
+    "claim": "c11",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the hips",
+    "means": "Fault: an arched lower back lets your hip flexors take over.",
+    "fix": "Keep your lower back flat on the floor.",
+    "claim": "c5",
+    "redFlag": null
+   },
+   {
+    "where": "Low back",
+    "means": "Arching your back could bring discomfort or pain here.",
+    "fix": "Brace, and keep your lower back touching the floor.",
+    "claim": [
+     "c6",
+     "c2"
+    ],
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Arching your back could bring serious discomfort or pain in your lower back.",
+   "claim": "c6"
+  },
+  {
+   "risk": "Control your speed and watch your low back to reduce the chance of injury.",
+   "claim": "c13"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "low-back",
+   "kind": "posture",
+   "right": "Lower back flat on the floor, braced.",
+   "wrong": "Lower back arched off the floor.",
+   "claim": [
+    "c5",
+    "c6",
+    "c2"
+   ]
+  },
+  {
+   "key": "top-reach",
+   "kind": "posture",
+   "right": "Hands reach toward your toes, legs straight and together.",
+   "wrong": "Legs flopping around.",
+   "claim": [
+    "c3",
+    "c8",
+    "c9"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "obliques",
+   "hip_flexors"
+  ],
+  "remove": [],
+  "why": "Add obliques and hip_flexors as secondary: Fitness Volt lists both as secondary muscles (c11), and Schoffstall measured more rectus femoris activity in the supine V-up than in the crunch (c12). abs primary matches c11."
+ },
+ "anchorSource": "fv-vup",
+ "notes": [
+  "Parent card: hollow_body_hold (cards/hollow_body_hold.json), new in this batch and not yet verified. Under LR-34 way (1) this card has no inherit entries and every line rests on its own claims, fetched by curl; nothing is carried from the parent card.",
+  "Shared card: floor-body (docs/research/howto/shared/floor-body.json) lists v_up in appliesTo; its gaps say lying face-up ids have no shared checkpoint and stay per exercise, so nothing is cited from it here.",
+  "Anchor: Fitness Volt (fv-vup) is read in full and covers the start, each phase, tips and a common-mistakes list. Women's Health was also read in full.",
+  "ACE's \"V-ups\" page is a seated progression (it starts seated, leaning on the arms, and holds the legs up for 5-30 s), not the classic V-up from lying flat. Its claim (c13) is tagged WEAK and says so (bench_dip-2 precedent); it backs only the speed and low-back risk line and the rankNote.",
+  "Fitness Volt says the back stays flat against the floor for the whole exercise (c4, c5); at the top of the V only the hips can stay down. The plate draws the lower back on the floor at the start and on the return, and the checkpoint and zoom say so.",
+  "Not reachable: StrengthLog V-up (HTTP 429 on every try, 2026-10-22), Verywell Fit (402), Muscle & Strength (403), Shape (402). Read but not cited: Willett 2001 (PMID 11726260), which tests a v-sit, a different exercise.",
+  "Fetcher check 2026-10-22 (Sonnet source fetcher, curl and NCBI efetch): every quote verbatim; titles set to each page's served title."
+ ]
+}
