@@ -2270,8 +2270,9 @@ describe('LIB-SUPCORE D-SUPCORE-LUMBARTELL: the arch tell on the lumbar point (#
     });
     return out;
   };
-  it('each arch tell is on `lumbar` at the Mistake; its leader enters from above through the trunk only, at its pinned length (+-0.5, logged)', () => {
+  it('each arch tell is on `lumbar` at the Mistake; its leader enters from above through the trunk only, at its pinned length (+-0.5, logged)', async () => {
     for (const id of ARCH) {
+      await yieldNow();
       const e = archEntry(S[id]);
       console.log(`LIB-SUPCORE LUMBARTELL ${id}: end ${e.end.len.toFixed(2)} px, Mistake ${e.mistake.len.toFixed(2)} px through ${e.mistake.keys.join(', ')}`);
       expect(S[id].mistake.tells.find((t: any) => t.key === 'arch').anchor, id).toEqual({ at: 'lumbar', pose: 'mistake', off: [0, -1] });
@@ -2280,8 +2281,9 @@ describe('LIB-SUPCORE D-SUPCORE-LUMBARTELL: the arch tell on the lumbar point (#
     // each box the lowest that keeps the leader inside F3's band (<= 82.26 px; 81.6 / 82.1 / 65.5 px) and from above
     expect(['flutter_kicks', 'dead_bug', 'v_up'].map(id => S[id].mistake.tells[0].box)).toEqual([{ left: 96, top: 206 }, { left: 138, top: 206 }, { left: 72, top: 258 }]);
   });
-  it('each Mistake zoom (k 2) rings the floor line and the daylight under the low back', () => {
+  it('each Mistake zoom (k 2) rings the floor line and the daylight under the low back', async () => {
     for (const id of ARCH) {
+      await yieldNow();
       const s = S[id], z = Z.zoomOf(s, { E: Eng(), view: 'mistake' }), P = camOf(s).P, r = z.src, floorY = P([0, 0, 0])[1]!, gap = s.mistake.guides[0].pts.map(P);
       expect(z.k, id).toBe(2);
       expect(Math.abs(floorY - r.c[1]) < r.r, `${id} floor line`).toBe(true);
@@ -2328,9 +2330,10 @@ describe('LIB-SUPCORE D-SUPCORE-KICKDATUM and D-SUPCORE-KICKZOOM: flutter_kicks\
     const holds = ['heel.r', 'heel.l'].every(h => { const q = P(lm[h]); return Math.hypot(q[0]! - r.c[0], q[1]! - r.c[1]) < r.r; }) && Math.abs(P([0, 0, 0])[1]! - r.c[1]) < r.r;
     return { trace: QZ.clippedTrace(z.svg, z.circle), r: r.r, holds, circle: z.circle.c, src: r.c };
   };
-  it('(b) measured first: no passing toe.r rung gives a ring of r >= 32 holding both heels and the floor, so (a) is taken: heel.r at k 3.5 (logged)', () => {
+  it('(b) measured first: no passing toe.r rung gives a ring of r >= 32 holding both heels and the floor, so (a) is taken: heel.r at k 3.5 (logged)', async () => {
     const bar = pins().envelope.traceLenMin;
-    for (const point of ['heel.r', 'toe.r']) console.log(`LIB-SUPCORE KICKZOOM ${point}: ${[1.5, 2, 2.5, 3, 3.5, 4].map(k => { const g = ring(point, k); return `k ${k} ${g.trace.toFixed(2)} px r ${g.r.toFixed(1)} ${g.holds ? 'holds' : '-'}`; }).join('; ')}`);
+    for (const point of ['heel.r', 'toe.r']) { await yieldNow(); console.log(`LIB-SUPCORE KICKZOOM ${point}: ${[1.5, 2, 2.5, 3, 3.5, 4].map(k => { const g = ring(point, k); return `k ${k} ${g.trace.toFixed(2)} px r ${g.r.toFixed(1)} ${g.holds ? 'holds' : '-'}`; }).join('; ')}`); }
+    await yieldNow();
     expect([1.5, 2, 2.5, 3, 3.5, 4].filter(k => { const g = ring('toe.r', k); return g.trace >= bar && g.r >= 32 && g.holds; })).toEqual([]);
     expect(S.flutter_kicks.trace.point).toBe('heel.r');
     expect(S.flutter_kicks.zoom[0]).toEqual({ view: 'normal', k: 3.5 });
