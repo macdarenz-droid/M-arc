@@ -636,5 +636,16 @@
       "claim": "c1"
     }
   ],
+  "tempo": [
+    {
+      "phase": "Rise",
+      "move": true
+    },
+    {
+      "phase": "Lower",
+      "move": true,
+      "word": "Controlled"
+    }
+  ],
   "topFault": "lean"
 }

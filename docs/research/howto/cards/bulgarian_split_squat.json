@@ -590,5 +590,40 @@
     "Tempo in seconds.",
     "Breathing.",
     "Getting the rear foot on and off the bench while holding dumbbells."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "knee.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c9"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c9"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "move": true,
+      "word": "Controlled"
+    },
+    {
+      "phase": "Stand",
+      "move": true
+    }
+  ],
+  "topFault": "seat"
 }

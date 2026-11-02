@@ -662,5 +662,40 @@
     "Tempo in seconds.",
     "Space and turning at the end of a lane.",
     "Breathing."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "knee.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c12"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c12"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "move": true,
+      "word": "Controlled"
+    },
+    {
+      "phase": "Rise",
+      "move": true
+    }
+  ],
+  "topFault": "chest"
 }

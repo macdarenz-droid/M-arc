@@ -682,5 +682,38 @@
     "Tempo in seconds.",
     "Knee tracking over the toes (front view).",
     "Breathing."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c5"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Step",
+      "move": true,
+      "word": "Slow"
+    },
+    {
+      "phase": "Lower",
+      "move": true,
+      "word": "Smooth"
+    },
+    {
+      "phase": "Rise",
+      "move": true
+    }
+  ],
+  "topFault": "knee"
 }

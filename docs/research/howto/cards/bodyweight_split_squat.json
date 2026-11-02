@@ -415,5 +415,27 @@
     "Arm position.",
     "Rep range for bodyweight only (Catalyst gives 5-10 for the loaded version).",
     "Tempo in seconds."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "knee.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "move": true,
+      "word": "Smooth"
+    },
+    {
+      "phase": "Rise",
+      "move": true,
+      "word": "Smooth"
+    }
+  ],
+  "topFault": "knee"
 }

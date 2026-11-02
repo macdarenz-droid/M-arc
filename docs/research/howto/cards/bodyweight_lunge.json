@@ -452,5 +452,22 @@
     "Arm position (hands on hips or at the sides).",
     "Tempo in seconds.",
     "Breathing."
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [
+    {
+      "phase": "Step",
+      "move": true,
+      "word": "Slow"
+    },
+    {
+      "phase": "Lower",
+      "move": true
+    },
+    {
+      "phase": "Rise",
+      "move": true
+    }
+  ],
+  "topFault": "knee"
 }
