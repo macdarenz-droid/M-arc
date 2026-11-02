@@ -10,6 +10,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 import { otherCards } from './eq-composers';
 
 // D-LIB18-TESTS (VITEST-RPC; #299 6351689010, 6352726951): most tests here render plates synchronously, and vitest runs
@@ -414,7 +415,7 @@ describe('LIB-18 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', 
     return out;
   };
   const drawnPolys = (spec: any, pose: string) => { const cam = camOf(spec), out: number[][][] = []; for (const it of itemsIn(spec, pose).items) for (const p of eng.PRIMITIVES[it.type](it, cam)) if (p.poly) out.push(p.poly); return out; };
-  it('A15: every callout and tell anchor sits on an item drawn in its pose (within 3 px)', async () => {
+  child.it('A15: every callout and tell anchor sits on an item drawn in its pose (within 3 px)', async () => {
     const out: string[] = [];
     for (const id of specsDrawn()) { await tick(); out.push(...anchorProblems(S[id])); }
     expect(out).toEqual([]);
@@ -751,7 +752,7 @@ fs.writeFileSync(${JSON.stringify(out)}, h);`;
     expect(r.flags.F7.raised).toBe(true);
     expect(qaMod.flagProblems([{ ...r, flags: { ...r.flags, F5: { ...r.flags.F5, raised: true, value: 3.57 } } }]).some((p: string) => /F7/.test(p))).toBe(true);
   });
-  it('A4 M1 a label 1 px onto the figure (the Thighs to parallel callout) turns PQ-H1 red; 1 px back is clean', async () => {
+  child.it('A4 M1 a label 1 px onto the figure (the Thighs to parallel callout) turns PQ-H1 red; 1 px back is clean', async () => {
     const c0 = cg().callouts.find((x: any) => x.key === 'parallel'), at = (box: any) => ({ ...cg(), callouts: cg().callouts.map((x: any) => (x.key === 'parallel' ? { ...x, box } : x)) });
     let hit: any = null;
     for (const [dx, dy] of [[-1, 0], [0, -1], [0, 1], [1, 0]]) {
@@ -1361,7 +1362,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
       const it = sledItems(spec, pose);
       return JOINS.flatMap(([a, b]) => { if (!it[a] || !it[b]) return [`${pose}: ${!it[a] ? a : b} not drawn`]; const g = polyGap(outlineOf(spec, it[a]), outlineOf(spec, it[b])); return g <= 1 ? [] : [`${pose}: ${a} ${g.toFixed(1)} px off ${b}`]; });
     });
-    it('every pad, the plate, the rail and the posts are joined to the frame', async () => {
+    child.it('every pad, the plate, the rail and the posts are joined to the frame', async () => {
       const out: string[] = [];
       for (const pose of posesOf(s())) { await tick(); out.push(...frameProblems(s(), [pose])); }   // one yield per pose (A19)
       expect(out).toEqual([]);
@@ -4410,7 +4411,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
       }
       expect(out).toEqual([]);
     });
-    it(`each named item clears the body or touches it within ${TOL_CM} cm, in every pose, via and ghost (depths logged)`, async () => {
+    child.it(`each named item clears the body or touches it within ${TOL_CM} cm, in every pose, via and ghost (depths logged)`, async () => {
       const out: string[] = [];
       for (const id of specsDrawn()) {
         await tick();
