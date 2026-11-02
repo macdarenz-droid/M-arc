@@ -8,11 +8,15 @@ import { createHash } from 'node:crypto';
 import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
+// F-VITEST-RPC (the LIB-22 A19 form in lb10-plates): one macrotask between tests, so runs of synchronous tests never
+// block this worker's RPC to the runner for their summed time.
+const yieldNow = () => new Promise<void>(r => setImmediate(r));
+afterEach(yieldNow);
 const LB4 = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'wall_sit', 'step_up', 'pistol_squat', 'jump_squat'];   // jump_squat: LIB-SMALL (LB4 resume 2)
 const IDS = LB4.map(i => `lib_${i}`);
 // The 7 LB4 ids not drawn here (DESIGN.md section 2; jump_squat left at LIB-SMALL, section 16): never in lb4/rows.json.
@@ -1022,8 +1026,8 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
   // Every numeric triple named `at` in a pose (root, reach and plant targets) moved by v: the whole body moves rigidly.
   const shiftPose = (p: any, v: number[]): any => Array.isArray(p) ? p.map(x => shiftPose(x, v)) : p && typeof p === 'object'
     ? Object.fromEntries(Object.entries(p).map(([k, x]: [string, any]) => [k, k === 'at' && Array.isArray(x) && x.length === 3 && x.every((n: any) => typeof n === 'number') ? x.map((n: number, i: number) => n + v[i]!) : shiftPose(x, v)])) : p;
-  it('A6 mutation: for each contact fact, its pose\'s body moved 2 cm along that fact\'s plane normal turns that fact red and no fact of another pose', () => {
-    for (const id of specsDrawn()) FACTS[id]!.forEach((f, i) => {
+  it('A6 mutation: for each contact fact, its pose\'s body moved 2 cm along that fact\'s plane normal turns that fact red and no fact of another pose', async () => {
+    for (const id of specsDrawn()) { await yieldNow(); FACTS[id]!.forEach((f, i) => {   // F-VITEST-RPC: one macrotask per spec
       if (f.kind !== 'contact') return;
       const s = S[id], k = s.checks.find((c: any) => c.landmark === f.landmark && c.plane && (c.pose === f.pose || c.pose === 'all'));
       const n = k.plane.normal, L = Math.hypot(...n), v = n.map((x: number) => x / L * 0.02);
@@ -1031,7 +1035,7 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
       expect(red, `${id} ${f.pose} ${f.landmark}`).toContain(`H6.fact:${i}:contact:${f.landmark}`);
       const others = FACTS[id]!.flatMap((g, j) => (g.kind === 'contact' && g.pose !== f.pose ? [`H6.fact:${j}:contact:${g.landmark}`] : []));
       expect(red.filter((x: string) => others.includes(x)), `${id} ${f.pose} ${f.landmark}`).toEqual([]);
-    });
+    }); }
   });
   it('A6 mutations: an angle fact +3 deg (wall_sit\'s knee 93), and the card path removed, are red', () => {
     const s = S.wall_sit, r = research('wall_sit');
@@ -1042,7 +1046,12 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
 
 describe('LIB-14 panel lb4p fix round (#289 6410190090): items 1-7 on drawn items', { timeout: T }, () => {
   const b = { height: 1.75 };
-  const camOf = (spec: any) => { const c = rep(spec).camera; return { view: 'side', near: 'r', pxm: c.pxPerM, y0: c.y0, P: (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM] }; };
+  // F-VITEST-RPC (D-LIB13S-RPC form, as lb6-plates' r2Cam): the camera is memoised per spec object, since renderPlate is
+  // costly and item 2 called it per point (53 s of synchronous work in the worker; now under 2 s).
+  const CAMS = new WeakMap<object, any>();
+  const camOf = (spec: any) => { if (CAMS.has(spec)) return CAMS.get(spec);
+    const c = rep(spec).camera, cam = { view: 'side', near: 'r', pxm: c.pxPerM, y0: c.y0, P: (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
+    CAMS.set(spec, cam); return cam; };
   const qOf = (pose: any) => body.resolve(body.normPose(pose, b), b).q;
   const shapes = (spec: any, q: any) => body.bodyShapes(body.fk(q, b), camOf(spec));
   const px = (spec: any, pose: string, k: string) => camOf(spec).P(lmOf(spec, pose)[k]);
@@ -1134,7 +1143,8 @@ describe('LIB-14 panel lb4p fix round (#289 6410190090): items 1-7 on drawn item
     expect(problems(s)).toEqual([]);
     expect(problems({ ...s, mistake: { ...s.mistake, guides: s.mistake.guides.filter((x: any) => x.kind !== 'arrow') } })).toContain('no drop arrow');
     expect(problems({ ...s, mistake: { ...s.mistake, guides: s.mistake.guides.filter((x: any) => x.pts?.length !== 13) } })).toContain('no joint circle at the dropped elbow');
-    const unrot = shapes(s, qOf(s.poses.end)).filter((x: any) => ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'].includes(x.key)).map((x: any) => [...x.poly, x.poly[0]].map((q: number[]) => [0, (cam.y0 - q[1]!) / cam.pxm, (q[0]! - rep(s).camera.x0) / cam.pxm]));
+    const x0 = rep(s).camera.x0;   // F-VITEST-RPC: read once, not once per outline point (the same value)
+    const unrot = shapes(s, qOf(s.poses.end)).filter((x: any) => ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'].includes(x.key)).map((x: any) => [...x.poly, x.poly[0]].map((q: number[]) => [0, (cam.y0 - q[1]!) / cam.pxm, (q[0]! - x0) / cam.pxm]));
     expect(problems({ ...s, mistake: { ...s.mistake, guides: [...s.mistake.guides.filter((x: any) => !mod.DROP_ARM.includes(x.pts)), ...unrot.map((pts: any) => ({ kind: 'dashed', pts }))] } }, unrot)).toEqual([]);
     expect(unrot.map((p: any) => cam.P(p[0])).some((q: number[], i: number) => Math.hypot(q[0]! - cam.P(mod.DROP_ARM[i][0])[0]!, q[1]! - cam.P(mod.DROP_ARM[i][0])[1]!) > 5)).toBe(true);
   });
