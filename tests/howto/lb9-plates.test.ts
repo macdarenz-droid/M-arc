@@ -126,8 +126,9 @@ const ER5_DRAWN = ['side_plank', 'russian_twist'];
 const FE_SINK = 9.64;
 const RC_BACK = 24.7;   // LIB-SUPCORE D-SUPCORE-RCBACK: px inside the end figure past the leader's first 8 px (measured)
 // LIB-SUPCORE D-SUPCORE-LUMBARTELL (#366 6580574917): each arch tell's leader, px inside the end and the Mistake figure
-// past its first 8 px (measured), entering from above through the trunk only
-const LUMBAR_IN: Record<string, [number, number]> = { flutter_kicks: [13.29, 19.94], dead_bug: [14.26, 19.01], v_up: [12.35, 15.44] };
+// past its first 8 px (measured), entering from above through the trunk only; the anchor 1 px above `lumbar` keeps the
+// k 2 ring inside the frame (A8; at `lumbar` itself dead_bug's ring ends at 358.3 px and v_up's at 358.6)
+const LUMBAR_IN: Record<string, [number, number]> = { flutter_kicks: [12.24, 18.36], dead_bug: [12.31, 18.47], v_up: [15.27, 16.66] };
 const HELD: string[] = ['pallof_press', 'russian_twist'];   // cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
@@ -854,7 +855,7 @@ describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and
     expect(qa.F1_NAMED).toEqual({ lib_bird_dog: 151.49, lib_side_plank: 150.31, lib_russian_twist: 197.49,   // the (b) two asked with the E-R5 slice (#326)
       lib_reverse_crunch: 181.11, lib_dead_bug: 148.18, lib_flutter_kicks: 155.24 });   // LIB-SUPCORE (DESIGN.md 26.14)
     expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 33.5, lib_cable_crunch: 26.05, lib_superman: 44.9 });   // superman: D-LIB21-SUPFLAGS (#337)
-    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.622, lib_superman: 0.128, lib_hollow_body_hold: 0.157, lib_flutter_kicks: 0.141 });   // LIB-SUPCORE (DESIGN.md 26.14)
+    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.622, lib_superman: 0.128, lib_hollow_body_hold: 0.163, lib_flutter_kicks: 0.141 });   // LIB-SUPCORE (DESIGN.md 26.14)
     expect(qa.EXPECTED('lib_superman')).toEqual(['F2', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_bird_dog')).toEqual(['F1', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_cable_crunch')).toEqual(['F2', 'F3', 'F5']);
@@ -2272,24 +2273,24 @@ describe('LIB-SUPCORE D-SUPCORE-LUMBARTELL: the arch tell on the lumbar point (#
     for (const id of ARCH) {
       const e = archEntry(S[id]);
       console.log(`LIB-SUPCORE LUMBARTELL ${id}: end ${e.end.len.toFixed(2)} px, Mistake ${e.mistake.len.toFixed(2)} px through ${e.mistake.keys.join(', ')}`);
-      expect(S[id].mistake.tells.find((t: any) => t.key === 'arch').anchor, id).toEqual({ at: 'lumbar', pose: 'mistake' });
+      expect(S[id].mistake.tells.find((t: any) => t.key === 'arch').anchor, id).toEqual({ at: 'lumbar', pose: 'mistake', off: [0, -1] });
       expect(archProblems(S[id]), id).toEqual([]);
     }
-    expect(S.v_up.mistake.tells[0].box).toEqual({ left: 140, top: 166 });
+    // each box the lowest that keeps the leader inside F3's band (<= 82.26 px; 81.6 / 82.1 / 65.5 px) and from above
+    expect(['flutter_kicks', 'dead_bug', 'v_up'].map(id => S[id].mistake.tells[0].box)).toEqual([{ left: 96, top: 206 }, { left: 138, top: 206 }, { left: 72, top: 258 }]);
   });
   it('each Mistake zoom (k 2) rings the floor line and the daylight under the low back', () => {
     for (const id of ARCH) {
-      const s = S[id], z = Z.zoomOf(s, { E: Eng(), view: 'mistake' }), c = camOf(s), r = z.src;
-      const P = (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM], gap = s.mistake.guides[0].pts.map(P);
+      const s = S[id], z = Z.zoomOf(s, { E: Eng(), view: 'mistake' }), P = camOf(s).P, r = z.src, floorY = P([0, 0, 0])[1]!, gap = s.mistake.guides[0].pts.map(P);
       expect(z.k, id).toBe(2);
-      expect(Math.abs(c.y0 - r.c[1]) < r.r, `${id} floor line`).toBe(true);
+      expect(Math.abs(floorY - r.c[1]) < r.r, `${id} floor line`).toBe(true);
       for (const q of gap) expect(Math.hypot(q[0] - r.c[0], q[1] - r.c[1]) < r.r, `${id} gap ${q}`).toBe(true);
     }
   });
-  it('mutations: an entry +1 px, the tell anchored on the knee (an entry through a limb), and a fourth named entry are red', () => {
+  it('mutations: an entry +1 px, the tell anchored on the hip (an entry through the thighs), and a fourth named entry are red', () => {
     for (const id of ARCH) expect(archProblems(S[id], LUMBAR_IN[id]!.map(v => v + 1) as [number, number]).length, id).toBe(2);
-    const f = S.flutter_kicks, knee = { ...f, mistake: { ...f.mistake, tells: f.mistake.tells.map((t: any) => ({ ...t, anchor: { at: 'knee.r', pose: 'mistake' } })) } };
-    expect(archProblems(knee).some(p => /through (thigh|shank|kneecap)/.test(p))).toBe(true);
+    const f = S.flutter_kicks, knee = { ...f, mistake: { ...f.mistake, tells: f.mistake.tells.map((t: any) => ({ ...t, anchor: { at: 'hip.r', pose: 'mistake' } })) } };
+    expect(archProblems(knee).some(p => /through thigh\.[lr]/.test(p))).toBe(true);
     const src = readFileSync('tests/howto/lb9-plates.test.ts', 'utf8').replace("'v_up mistake arch Mistake': LUMBAR_IN.v_up[1] };", "'v_up mistake arch Mistake': LUMBAR_IN.v_up[1], 'hollow_body_hold mistake low end': 1 };");
     expect(namedList(src)).not.toEqual(NAMED);
   });
@@ -2301,9 +2302,9 @@ describe('LIB-SUPCORE D-SUPCORE-KICKDATUM and D-SUPCORE-KICKZOOM: flutter_kicks\
   const kickProblems = (s: any) => {
     const out: string[] = [], svg = plate.renderPlate(s, { id: 'x' }).svg, msvg = plate.renderPlate(s, { id: 'x', mistake: true }).svg;
     if (JSON.stringify(s.ghosts) !== JSON.stringify({ count: 1, parts: ['leg.r', 'leg.l'] })) out.push(`ghosts ${JSON.stringify(s.ghosts)}`);
-    const d = [...svg.matchAll(/<path class="datum" d="M(-?[\d.]+),(-?[\d.]+)L(-?[\d.]+),(-?[\d.]+)"/g)].map(m => m.slice(1).map(Number));
+    const d = [...svg.matchAll(/<path class="datum" d="M(-?[\d.]+)[ ,](-?[\d.]+)L(-?[\d.]+)[ ,](-?[\d.]+)"/g)].map(m => m.slice(1).map(Number));
     if (d.length !== 1) return [...out, `${d.length} datum lines`];
-    const [x0, y0, x1, y1] = d[0]!, c = camOf(s), lm = body.landmarksOf(s.poses.end, 1.75), P = (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM];
+    const [x0, y0, x1, y1] = d[0]!, lm = body.landmarksOf(s.poses.end, 1.75), P = camOf(s).P;
     const hr = P(lm['heel.r']), hl = P(lm['heel.l']), toe = P(lm['toe.r']);
     if (x0 !== x1) out.push('datum not plumb');
     if (!(x0! > toe[0]!)) out.push('datum not beside the heels');
@@ -2322,8 +2323,8 @@ describe('LIB-SUPCORE D-SUPCORE-KICKDATUM and D-SUPCORE-KICKZOOM: flutter_kicks\
   /** One normal rung: the clipped Trace, the ring, and whether the ring holds both end heels and the floor line. */
   const ring = (point: string, k: number) => {
     const s = { ...S.flutter_kicks, trace: { ...S.flutter_kicks.trace, point }, zoom: [{ view: 'normal', k }] }, z = Z.zoomOf(s, { E: Eng(), view: 'normal' }), r = z.src;
-    const c = camOf(s), lm = body.landmarksOf(s.poses.end, 1.75), P = (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM];
-    const holds = ['heel.r', 'heel.l'].every(h => { const q = P(lm[h]); return Math.hypot(q[0]! - r.c[0], q[1]! - r.c[1]) < r.r; }) && Math.abs(c.y0 - r.c[1]) < r.r;
+    const lm = body.landmarksOf(s.poses.end, 1.75), P = camOf(s).P;
+    const holds = ['heel.r', 'heel.l'].every(h => { const q = P(lm[h]); return Math.hypot(q[0]! - r.c[0], q[1]! - r.c[1]) < r.r; }) && Math.abs(P([0, 0, 0])[1]! - r.c[1]) < r.r;
     return { trace: QZ.clippedTrace(z.svg, z.circle), r: r.r, holds, circle: z.circle.c, src: r.c };
   };
   it('(b) measured first: no passing toe.r rung gives a ring of r >= 32 holding both heels and the floor, so (a) is taken: heel.r at k 3.5 (logged)', () => {

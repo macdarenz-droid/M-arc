@@ -138,7 +138,7 @@ export default {
     pose: mistakePose,
     guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }, { kind: 'dashed', pts: ARCH_UNDER.map(q => [...q]) }],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, box: { left: 138, top: 194 }, cue: 'Your low back arches off the mat as the arm and leg lower.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake', off: [0, -1] }, box: { left: 138, top: 206 }, cue: 'Your low back arches off the mat as the arm and leg lower.' },
     ],
   },
   alt: 'Dead bug, side view. Lying on the back with the low back on the mat, knees over the hips at 90 degrees and arms straight up, the lifter lowers one arm overhead and the opposite leg until hand and heel are just above the floor, then returns.',

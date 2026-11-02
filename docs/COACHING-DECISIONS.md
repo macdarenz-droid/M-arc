@@ -3064,3 +3064,13 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   yields one macrotask (lb10's LIB-22 A19 form), and A6's per-spec loop yields. lb4 + lb10 together: longest block 84 s
   to 6.0 s, RPC errors 1 to 0, 310 tests pass.
 - **Source:** PR #358; lb10/DESIGN.md 23, lb4/DESIGN.md 16.
+
+## LIB-SUPCORE panel mx27 fix round (builder, 2026-11-02; #366 6579428932, rulings 6580574917)
+- **D-SUPCORE-LUMBARTELL.** The arch tell on flutter_kicks, dead_bug and v_up sits on the lumbar point, its leader from
+  above through the trunk (named entries 12-19 px). **Why:** the zoom then rings the floor and the daylight under the low
+  back; on the belly it missed them.
+- **D-SUPCORE-KICKDATUM.** flutter_kicks shows the kick with a plumb beside the heels and one in-between leg ghost.
+  **Why:** a two-headed arrow in the main drawing would be a new engine feature.
+- **D-SUPCORE-KICKZOOM.** The zoom stays on the heel at k 3.5, with the circle moved nearer. **Why:** the toe gives no
+  rung whose ring holds both heels and the floor while the Trace still passes its bar.
+- **Source:** PR #366; lb9/DESIGN.md section 26.14.

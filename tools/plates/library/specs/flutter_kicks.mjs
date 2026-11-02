@@ -138,7 +138,7 @@ export default {
     pose: mistakePose,
     guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }, { kind: 'dashed', pts: ARCH_UNDER.map(q => [...q]) }],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, box: { left: 120, top: 200 }, cue: 'Your low back arches off the floor as the legs kick.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake', off: [0, -1] }, box: { left: 96, top: 206 }, cue: 'Your low back arches off the floor as the legs kick.' },
     ],
   },
   alt: 'Flutter kicks, side view. Lying on the back, arms by the sides and palms flat, low back on the floor, the lifter holds both straight legs a few inches up and kicks them up and down in short alternating moves.',

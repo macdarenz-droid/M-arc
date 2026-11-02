@@ -159,7 +159,7 @@ export default {
     pose: mistakePose,
     guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }, { kind: 'dashed', pts: ARCH_UNDER.map(q => [...q]) }],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, box: { left: 140, top: 166 }, cue: 'Your low back arches off the floor at the start of the rep.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake', off: [0, -1] }, box: { left: 72, top: 258 }, cue: 'Your low back arches off the floor at the start of the rep.' },
     ],
   },
   alt: 'V-up, side view. From lying face up with the arms overhead and the heels just off the floor, the lifter lifts the straight legs and the torso together into a V, hands reaching toward the toes, then lowers.',

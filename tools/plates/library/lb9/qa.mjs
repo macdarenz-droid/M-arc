@@ -56,7 +56,7 @@ export const F3_NAMED = { lib_bird_dog: 33.5, lib_cable_crunch: 26.05, lib_super
  *  spanning the plate (as LB8's cable_kickback 0.645); its F3 above likewise. Values re-measured after the slice fix round
  *  (#312 6383060997: bird_dog's "Leg too high" box raised, its leader 33.5 px; cable_crunch's rope redrawn). Nothing moved to clear either. */
 export const F2_NAMED = { lib_cable_crunch: 0.622, lib_superman: 0.128,   // superman: D-LIB21-SUPFLAGS (#337), a prone figure at the D-LIB21-FLOOR camera
-  lib_hollow_body_hold: 0.157, lib_flutter_kicks: 0.141 };   // LIB-SUPCORE (DESIGN.md 26.9, 26.14): low supine figures' ink cover, superman's form
+  lib_hollow_body_hold: 0.163, lib_flutter_kicks: 0.141 };   // LIB-SUPCORE (DESIGN.md 26.9, 26.14): low supine figures' ink cover, superman's form; hollow re-measured after mx27 R7 (the arc at the hip, open hands)
 export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(id in F1_NAMED ? ['F1'] : []), ...(id in F3_NAMED ? ['F3'] : []), ...(id in F2_NAMED ? ['F2'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, F5 at any value other than 3.57, or a named

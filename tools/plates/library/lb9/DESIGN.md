@@ -869,11 +869,11 @@ lb9/qa.mjs).
 
 | id | rows.json | fit px/m | Trace (plate) | Mistake deviation (plate) | zoom (smallest passing k) | flags (named) |
 |---|---|---|---|---|---|---|
-| hollow_body_hold | yes | 127.84 | 26.3 (heel.r) | 23.2 (toe.r) | none | F2 0.157, F5 |
-| reverse_crunch | yes | 181.11 | 49.5 (knee.r) | 49.3 (heel.r) | none | F1 181.11, F5 |
-| dead_bug | waits for #358 | 148.18 | 133.7 (wrist.r) | 6.9 (navel) | Mistake k 2: 13.71 | F1 148.18, F5 |
-| v_up | waits for #358 | 141.74 | 239.1 (wrist.r) | 6.6 (navel) | Mistake k 2: 13.12 | F5 |
-| flutter_kicks | yes | 155.24 | 0 (heel.r, under the trim) | 7.2 (navel) | normal k 3.5: 24.22; Mistake k 2: 14.37 | F1 155.24, F2 0.141, F5 |
+| hollow_body_hold | yes | 127.84 | 26.3 (heel.r) | 23.2 (toe.r) | none | F2 0.163, F5 |
+| reverse_crunch | yes | 181.11 | 49.5 (knee.r) | 27.0 (knee.r) | none | F1 181.11, F5 |
+| dead_bug | yes (after #358) | 148.18 | 134.4 (wrist.r) | 6.5 (lumbar) | Mistake k 2: 13.00 | F1 148.18, F5 |
+| v_up | yes (after #358) | 141.74 | 239.7 (wrist.r) | 6.2 (lumbar) | Mistake k 2: 12.44 | F5 |
+| flutter_kicks | yes | 155.24 | 0 (heel.r, under the trim) | 6.8 (lumbar) | normal k 3.5: 24.22; Mistake k 2: 13.62 | F1 155.24, F2 0.141, F5 |
 
 - **Clone (D-LIB9-CLONE).** Each spec copies crunch's `bisect`, `supine` and `flatLying` (PELVIS_TUCK 15) and solves its
   own poses on them; the floor camera { fit, maxScale 1.35, y0 339 } and floor equipment. hollow_body_hold and v_up
@@ -885,9 +885,9 @@ lb9/qa.mjs).
   underside under the lumbar rises 0.61 → 4.56 cm. A 2x2 solve that kept the upper back on the floor turned the thorax
   and moved the head (rejected); a split over L5/S1 and L3 alone does not converge (the pivots are 2 cm apart).
 - **The low back's labels.** In a supine side view the low back is the figure's underside: no leader reaches it without
-  crossing the figure (A15). 'Low back down/flat' and 'Low back arches' are anchored on `navel`, the belly over L3,
-  which rises with the arch; the dashed I-bar draws the gap under the low back. reverse_crunch's 'Back down' is the one
-  named entry (D-SUPCORE-RCBACK, below).
+  crossing the figure (A15). 'Low back down/flat' is anchored on `navel`, the belly over L3; 'Low back arches' on
+  `lumbar` with a named entry from above (D-SUPCORE-LUMBARTELL, below); the dashed I-bar draws the gap under the low back. reverse_crunch's 'Back down' is also
+  a named entry (D-SUPCORE-RCBACK, below).
 - **D-SUPCORE-RCBACK.** reverse_crunch's 'Back down' anchors at the end back's roll-off point, BACK_H 4.5 cm up
   (166.0, 330.9) px, box {212, 296}. Its leader enters the arm at the elbow from the right: **24.7 px** inside the end
   figure (fore, elbow cap and the upper arm's end, near arm and the far arm behind it; no trunk or thigh). The ruling
@@ -903,13 +903,13 @@ lb9/qa.mjs).
   the V rests on the drawn torso's lowest point, the hips are solved so the Winter centre of mass sits over it (0.00 cm;
   legs 53.6 deg) and the shoulders so the wrists lie on the shoulder-to-toe line (c3).
 - **Layout.** Ghosts: hollow 1 (leg and arm), reverse_crunch 2 (the near leg; its torso ghosts dipped 1.1 px into the
-  floor), dead_bug, v_up and flutter_kicks none (the zooms and the label boxes need the room; the start phantom and the
+  floor), flutter_kicks 1 (both legs, D-SUPCORE-KICKDATUM), dead_bug and v_up none (the zooms and the label boxes need the room; the start phantom and the
   Trace carry the motion). hollow_body_hold's floor line runs to 1.25 m so the 'Legs too low' box sits right of the end
-  foot with the fit at 127.84 px/m (inside F1's band). Every leader is inside F3's band (longest 80.3 px).
+  foot with the fit at 127.84 px/m (inside F1's band). Every leader is inside F3's band (longest 82.1 px).
 - **2 px clearance (D-SUPCORE-CLEAR).** Floor contacts (within 1 px; every other drawn part ≥ 2 px): hollow entry torso,
-  head, feet and fists, hold and Mistake torso; reverse_crunch torso, head, forearms and palms (the tailbone 16.4 cm up at
-  the end); dead_bug torso and head (fist and far heel 2.96 px, c4's "lightly touch ... without resting"); v_up lying
-  torso, head and fists (heels 7.62 cm), V torso; flutter_kicks torso, head, forearms and palms (heels ≥ 3.92 cm). In
+  head, feet and palms, hold and Mistake torso; reverse_crunch torso, head, forearms and palms (the tailbone 16.4 cm up at
+  the end); dead_bug torso and head (hand and far heel 2.96 px, c4's "lightly touch ... without resting"); v_up lying
+  torso, head and palms (heels 7.62 cm), V torso; flutter_kicks torso, head, forearms and palms (heels ≥ 3.92 cm). In
   depth every arm clears the head, legs and other arm; the upper arms clear the torso by ≥ 1.00 cm, except the arms
   resting by the sides (reverse_crunch, flutter_kicks: c1), which lie 1.81-2.01 cm into the drawn torso solid at the
   shoulder (listed, the engine's torso width at the armpit).
@@ -918,6 +918,24 @@ lb9/qa.mjs).
   buttock start c3, backUpper start and both at the end c5; v_up buttock c6, backUpper c4, on the spec end). hollow_body_hold,
   reverse_crunch and flutter_kicks carry their three keys (plateFacts per 26.5,
   tempo per 26.4 with D-SUPCORE-HOLDMAX, topFault the drawn key).
+- **Panel mx27 fix round (#366 6579428932; rulings 6580574917).**
+  - hollow_body_hold R7: the house angle arc at the hip (radius 132 px, 'Legs / about 15°', drawn 15.0 deg); open hands
+    (`hand: 'flat'`) on hollow, dead_bug and v_up, so no fist ring shows past the fingertips. Ink cover F2 0.157 → 0.163.
+  - reverse_crunch R4, R5: one closed dashed outline of the tucked leg (`FAULT_LEG`, the drawn thigh, kneecap, shank and
+    foot traced on a 4 mm grid), a 10.7 px arrow from the solid knee to the fault knee, and the 'Knees tuck' tell on the
+    fault knee with its box {20, 206} left of the legs.
+  - D-SUPCORE-LUMBARTELL: the arch tell on `lumbar` at the Mistake, 1 px up (at the point itself dead_bug's k 2 ring ends
+    at 358.3 px and v_up's at 358.6, outside the frame). Each leader enters from above through the trunk only, named in
+    A15's FRONT_ENTRY (end / Mistake figure, ±0.5): flutter_kicks 12.24 / 18.36 px, box {96, 206}; dead_bug 12.31 /
+    18.47, box {138, 206}; v_up 15.27 / 16.66, box {72, 258}. Each box is the lowest that keeps its leader inside F3's
+    band (81.6, 82.1, 65.5 px); v_up's {140, 166} gave 12.35 / 15.44 but a 123 px leader (F3). The k 2 rings hold the
+    floor line and the gap under the low back; a red dashed line draws the lifted underside (`ARCH_UNDER`, every 5 mm).
+  - D-SUPCORE-KICKDATUM: a plumb beside the heels (10 px past the near toe) spanning both heels, the main drawing only,
+    and one in-between ghost of both legs.
+  - D-SUPCORE-KICKZOOM: (b) measured first. toe.r's clipped Trace is 24.31 px at k 3.5 (r 14.9) and under 22.11 below
+    it; no passing rung gives r ≥ 32 holding both heels and the floor (r 32.5 is k 1.6: 6.06 px). So (a): heel.r at
+    k 3.5; R4's 'Feet lifted' box to {204, 264}, its leader on the near toe, puts the circle at (298, 206), 111.3 px
+    from its ring (129.1 before). The foot's own ink blocks a lower place.
 - **CARD FIELDS cfsc fix round (#366 6575342285).** reverse_crunch gains knee.l and knee.r at 90 deg, start (c2) and end
   (c4 "keep your knee angle consistent at 90 degrees throughout"); drawn 90.00. flutter_kicks' backUpper at the start cites
   c4 ("Lying on your back"). hollow_body_hold gains one measure fact, 15 deg on c4 (D-SUPCORE-HOLLOWLEG), drawn as the
