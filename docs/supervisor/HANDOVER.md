@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-11-02 ~12:00 UTC · main `4f2e835b` (train 58; train 59 building) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
+**Last updated:** 2026-11-02 ~15:40 UTC · main `dac9c624` (train 59) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -829,6 +829,14 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | F-VITEST-RPC | #365 · (second account, done) | delta PASS @ `8a3bf1ff` | train 58 |
 
 - **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
+
+- **Update 15:40 UTC (11-02):**
+  - **Train 59 merged** (#372 → main `dac9c624`): LIB-SMALL #358. **Main holds 129 of 153.** No APK.
+  - **mx27 VALID, all four candidates failed round 1** (lib4-cards §48). russian_twist is **HELD** (no ruled engine tool for a front-view floor sit and trunk yaw; route F-RTWIST-SIT). pallof_press is **HELD** (D-HELDB-PALLOF2). So HELD-B releases no row; its PR carries the re-copied pallof card and the held records, and it goes to review as such.
+  - **LIB-SUPCORE** is on its mx27 fix round (D-SUPCORE-LUMBARTELL, -KICKDATUM, -KICKZOOM on #366 6580574917). dead_bug and v_up join the recheck as round 1.
+  - **HELD-A:** jump_rope built (D-HELDA-JRZOOM, -JRF3); PLATES READY due. **LIB-SPLIT:** building after train 59 (D-SPLIT-HELDEMPTY).
+  - **The 24 not on main:** approved but not merged: crunch and resisted_hip_flexion. In fix rounds: hollow_body_hold, reverse_crunch, flutter_kicks. Being built: jump_rope, dead_bug, v_up and LIB-SPLIT's 6. Held or on the named list: hip_thrust, pallof_press, russian_twist, bicycle_crunch, overhead_cable_triceps_extension, cable_rear_delt_fly and the 4 calf raises.
+  - **Sessions:** HELD-A session_018Pv5bLEAdjA2Lh3C1V5Yfo, LIB-SUPCORE session_018Pv5bLt6Qcc1QdsQmWCVrH, HELD-B session_018Pv5bNDWF9sXvHQNFqnobh, LIB-SPLIT session_018Pv5bM8LQwvFRx7GASVVGy. Hourly tick `trig_01LFv2nEnoaWHf21JdLR1C6T`. Usage 7-day about 0.05 at 11:00.
 
 - **Update 12:00 UTC (11-02):**
   - **#358 LIB-SMALL review PASS @ `68407b5e`** (6576459573): train 59 carries it with this update. Then LIB-SPLIT (#364) restarts in its slot, and HELD-A starts jump_rope (and F-SMALL-WBMUT).
