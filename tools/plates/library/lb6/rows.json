@@ -29,6 +29,87 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_low_to_high_cable_fly": {
+   "src": "library/specs/low_to_high_cable_fly.mjs",
+   "slug": "low-to-high-cable-fly",
+   "prefix": "low-to-high-cable-fly",
+   "chromeId": "low-to-high-cable-fly",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_high_to_low_cable_fly": {
+   "src": "library/specs/high_to_low_cable_fly.mjs",
+   "slug": "high-to-low-cable-fly",
+   "prefix": "high-to-low-cable-fly",
+   "chromeId": "high-to-low-cable-fly",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_smith_machine_squat": {
+   "src": "library/specs/smith_machine_squat.mjs",
+   "slug": "smith-machine-squat",
+   "prefix": "smith-machine-squat",
+   "chromeId": "smith-machine-squat",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_smith_machine_shoulder_press": {
+   "src": "library/specs/smith_machine_shoulder_press.mjs",
+   "slug": "smith-machine-shoulder-press",
+   "prefix": "smith-machine-shoulder-press",
+   "chromeId": "smith-machine-shoulder-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_smith_machine_incline_press": {
+   "src": "library/specs/smith_machine_incline_press.mjs",
+   "slug": "smith-machine-incline-press",
+   "prefix": "smith-machine-incline-press",
+   "chromeId": "smith-machine-incline-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_hip_abduction": {
+   "src": "library/specs/hip_abduction.mjs",
+   "slug": "hip-abduction",
+   "prefix": "hip-abduction",
+   "chromeId": "hip-abduction",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_hip_adduction": {
+   "src": "library/specs/hip_adduction.mjs",
+   "slug": "hip-adduction",
+   "prefix": "hip-adduction",
+   "chromeId": "hip-adduction",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_machine_lateral_raise": {
+   "src": "library/specs/machine_lateral_raise.mjs",
+   "slug": "machine-lateral-raise",
+   "prefix": "machine-lateral-raise",
+   "chromeId": "machine-lateral-raise",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_rear_delt_fly": {
+   "src": "library/specs/rear_delt_fly.mjs",
+   "slug": "rear-delt-fly",
+   "prefix": "rear-delt-fly",
+   "chromeId": "rear-delt-fly",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
   }
  }
 }
