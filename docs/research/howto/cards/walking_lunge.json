@@ -684,6 +684,20 @@
       "pose": "start",
       "cardPose": "start",
       "claim": "c12"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
     }
   ],
   "tempo": [

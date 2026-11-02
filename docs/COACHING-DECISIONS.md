@@ -3066,3 +3066,10 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   library-cards8.test.ts change only that assertion (and its import). **Why:** the old `HELD[0]!.id` threw on an empty
   list; while ids are listed (e)'s input is unchanged (shown with step_up restored), and an empty-list assertion is added.
 - **Source:** PR #364; lb4/DESIGN.md 17.
+- **D-SPLIT-BSSFIX (#364 6585103107).** bulgarian_split_squat's Mistake tells name the drawn change, the front knee and
+  shin tipping to 13.9° with the rear knee resting, and its zoom shows the front knee; the hips tell goes. **Why:** at
+  1 cm the hip drop does not read, and the rear knee on the floor is the card's own end (c3, D-SPLIT-BSSTRUE).
+- **D-SPLIT-FRONTFOOT and -DIRWORDS (cfsp, #364 6584536292).** The front-foot press quotes become heel.r and ball.r end
+  contacts on forward_lunge, walking_lunge and bulgarian_split_squat; direction words ("parallel", "about vertical")
+  stay card-true pose tests, not facts.
+

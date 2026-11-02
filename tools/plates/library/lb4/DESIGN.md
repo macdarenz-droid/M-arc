@@ -544,7 +544,7 @@ Pose map: identity for the 5 (each card fault is at the bottom); step_up keeps D
 | step_up | none new (verified on #289) | `tempo` only (ruling 3: in the CARD FIELDS set) |
 | forward_lunge | c5 "hold one in each hand" (setup) | `contact wrist.l`, `wrist.r`, pose start (the hand planes); c1 "without touching": none |
 | walking_lunge | c2 "back knee very lightly touches the floor"; c12 "held at the sides" | `contact knee.l` end (the kneecap plane, ab_wheel_rollout.mjs:172 form); `wrist.l`, `wrist.r` start; c11 "~90º" is eccentric lunge walking: none |
-| bodyweight_lunge | c4 "until the front thigh is parallel" (no number) | `[]` with the reason (no fact kind measures a thigh angle to the floor) |
+| bodyweight_lunge | c4 "until the front thigh is parallel" (no number) | `[]`: a direction, not a quoted number; the A3 direction-word test holds it (D-SPLIT-DIRWORDS) |
 | bodyweight_split_squat | c1 "lightly touches the floor" | `contact knee.l` end |
 | bulgarian_split_squat | c3 "lightly contacts the floor"; c9 "at the sides"; c2 "top of your rear foot on the support" | `contact knee.l` end; `wrist.l`, `wrist.r` start; c2: a note (no landmark lies on the foot's top) |
 
@@ -641,7 +641,7 @@ REAR_X, STANCE, START_KNEE 8, M_SINK; step_up the trailing hip 21. Each spec hea
   clearance 2.42 px); the `leg` callout box at (222, 180), 15 px above the engine's own place (H4.overlap:normal:foot|leg
   cleared); F4 named at 1 (Q3).
 - Cards: the 3 keys on the 5 SPLIT cards (17.3's facts, 17.2's tempo and topFault); bodyweight_lunge's plateFacts is `[]`
-  (D-PLATEFACTS-EMPTY): c4's "front thigh parallel" is an angle to the floor, which no fact kind measures. cards.sha.json
+  (D-PLATEFACTS-EMPTY): c4's "front thigh parallel" is a direction, not a quoted number; the A3 direction-word test holds it (D-SPLIT-DIRWORDS). cards.sha.json
   adds the 5 (each card equals its research-head blob without the 3 keys; quotes byte copies). validateCardFile gives []
   on all 12.
 - QA (lb4/qa.mjs, node and browser, zero exemptions): all 10 hard checks pass on all 12 ids. Flags equal the ruled set:
@@ -664,3 +664,23 @@ REAR_X, STANCE, START_KNEE 8, M_SINK; step_up the trailing hip 21. Each spec hea
   node QA with pinned H3 and the zoom mutations, M1-M7 on forward_lunge; A5 box and bench clearance at 2 px and the
   dumbbell 3D listing. walking_lunge's Mistake plate has no zoom place at all, so the "zoom added" mutation runs on
   bodyweight_split_squat. The Bulgarian zoom sits at the ladder's lowest k (1.5), so there is no lower rung to mutate.
+
+### 17.11 Panel mx28 fix round (#364 6585103107) and cfsp (6584536292)
+
+- mx28: step_up, forward_lunge, walking_lunge, bodyweight_lunge and bodyweight_split_squat APPROVED @ `9f772a09`; their
+  fragments stay byte-identical (A2 block).
+- bulgarian_split_squat (R5, R11; D-SPLIT-BSSTRUE, D-SPLIT-BSSFIX): the pose is unchanged (the rear knee stays on the
+  floor, c3). The tells now name what is drawn: `knee` "Front knee forward" on the Mistake front knee (box (262, 192),
+  leader 64.2 px, inside F3's range) and `shin` "Shin tips forward" on the Mistake front shin; no hips tell. The zoom
+  shows the front knee (`zoom.tell: 'knee'`): k 1.5, fault 8.75 px → 13.12 px (bar 11.39); the ring's source sits on
+  the front knee and upper shin. Head, trunk and dumbbells move only with the hips, 8.6 px, as the shin tip implies
+  (the rear thigh turns about the resting knee). topFault `seat` → `knee` (the first tell's key).
+- cfsp D-SPLIT-FRONTFOOT: heel.r and ball.r contacts at the end on forward_lunge (c1), walking_lunge (c4) and
+  bulgarian_split_squat (c3); the specs already check those soles on the floor in every pose.
+- cfsp D-SPLIT-DIRWORDS: "front thigh parallel" and "front shin about vertical" are A3 direction-word tests (thigh 0°
+  ±1 on forward_lunge and bodyweight_lunge; shin 6° ±1 on forward_lunge, walking_lunge, bodyweight_split_squat and
+  bulgarian_split_squat), not facts.
+- Not a fact: bulgarian c2 "about 3 foot-lengths in front of the rear foot support" is a distance no fact kind states;
+  A3's stance test holds it (front toe 0.798 m ±0.5 cm ahead of the bench edge in every pose).
+- Follow-up for research (outside this write scope): walking_lunge.json plate.tempo credits "Controlled descent" to
+  c8, but only c7's quote states it (the strip row cites c7).

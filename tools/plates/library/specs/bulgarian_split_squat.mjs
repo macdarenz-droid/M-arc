@@ -21,7 +21,9 @@
 // Bench height (D-SPLIT-BSSBENCH): 0.42 m, the highest on a 1 cm grid at which c3's floor contact holds on this body
 //  (84 % of the 0.499 m standing knee joint height: c2's "about knee height"), an engine-limit size, unsourced.
 // Mistake (D-SPLIT-BSSMIS; c3, c8): the hips sink M_SINK lower with the rear knee resting on the floor (the knee kept on
-//  the floor, the hip z SOLVED). The tell is on `seat`, shown in a Mistake zoom at the smallest passing ladder k.
+//  the floor, the hip z SOLVED), which tips the front shin to 13.9 deg. The tells name what is drawn (D-SPLIT-BSSFIX,
+//  #364 6585103107): the front knee and the front shin tipping forward (the 1 cm hip drop is too small to read, so it
+//  has no tell of its own); the Mistake zoom is on the front knee (zoom.tell) at the smallest passing ladder k.
 // Tempo: the strip without seconds, exactly tempoOf(strip/rows.json bulgarian_split_squat) (D-STRIP-ROWS).
 // Unsourced numbers: BENCH_TOP 0.42 m, the bench depth (the vendor 0.29 m), OVERHANG 0.02 m, STANCE (3 foot-lengths of
 //  the engine foot, 0.266 m each), as reverse_lunge's (FOOT_X, FRONT_SHIN, TRUNK_LEAN, ELBOW), START_KNEE, M_SINK.
@@ -138,11 +140,11 @@ export default {
     pose: MISTAKE,
     guides: [],
     tells: [
-      { key: 'seat', text: 'Hips drop', anchor: { at: 'seat', pose: 'mistake' }, cue: 'The hips drop and the knee rests on the floor, tipping the front shin forward.' },   // c3, c8
-      { key: 'knee', text: 'Knee rests', anchor: { at: 'knee.l', pose: 'mistake' }, box: { left: 40, top: 298 }, cue: 'The rear knee rests on the floor instead of just touching it.' },
+      { key: 'knee', text: 'Front knee<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 262, top: 192 }, cue: 'Dropping into the bottom with the rear knee resting tips the front knee forward.' },   // c3, c8
+      { key: 'shin', text: 'Shin tips<br>forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' }, cue: 'The front shin tips forward past vertical as the hips sink.' },
     ],
   },
-  zoom: { view: 'mistake', k: 1.5 },
+  zoom: { view: 'mistake', k: 1.5, tell: 'knee' },
   tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Stand', move: true }],
   alt: 'Bulgarian split squat with dumbbells, side view. The top of the rear foot rests on a bench behind, the front foot well ahead, and the body lowers until the rear knee lightly touches the floor, front foot flat, back straight, dumbbells hanging at the sides.',
 };

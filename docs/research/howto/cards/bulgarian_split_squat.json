@@ -612,6 +612,20 @@
       "pose": "start",
       "cardPose": "start",
       "claim": "c9"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
     }
   ],
   "tempo": [
@@ -625,5 +639,5 @@
       "move": true
     }
   ],
-  "topFault": "seat"
+  "topFault": "knee"
 }
