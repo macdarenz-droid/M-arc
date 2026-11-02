@@ -914,5 +914,11 @@ lb9/qa.mjs).
   resting by the sides (reverse_crunch, flutter_kicks: c1), which lie 1.81-2.01 cm into the drawn torso solid at the
   shoulder (listed, the engine's torso width at the armpit).
 - **Card fields.** hollow_body_hold, reverse_crunch and flutter_kicks carry their three keys (plateFacts per 26.5,
-  tempo per 26.4 with D-SUPCORE-HOLDMAX, topFault the drawn key). dead_bug and v_up carry none: research/validate.mjs
+  tempo per 26.4 with D-SUPCORE-HOLDMAX, topFault the drawn key).
+- **CARD FIELDS cfsc fix round (#366 6575342285).** reverse_crunch gains knee.l and knee.r at 90 deg, start (c2) and end
+  (c4 "keep your knee angle consistent at 90 degrees throughout"); drawn 90.00. flutter_kicks' backUpper at the start cites
+  c4 ("Lying on your back"). hollow_body_hold gains one measure fact, 15 deg on c4 (D-SUPCORE-HOLLOWLEG), drawn as the
+  plate's `measure` at the ankle between the floor line and the hip-to-ankle line (15.0 deg, label 'Legs / about 15°').
+  Not a fact: ggr's "four to six inches off the ground" (c4, c6) cannot hold at bb's 15-30 deg on this body: at 15 deg the
+  drawn foot is 28.8 cm off the floor (4-6 in is 10.2-15.2 cm, about 7-10 deg). dead_bug and v_up carry none: research/validate.mjs
   takes an untimed tempo only from a strip/rows.json row, which #358 writes.

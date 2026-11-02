@@ -880,6 +880,38 @@
    "pose": "start",
    "cardPose": "start",
    "claim": "c1"
+  },
+  {
+   "kind": "angle",
+   "joint": "knee.l",
+   "pose": "start",
+   "cardPose": "start",
+   "deg": 90,
+   "claim": "c2"
+  },
+  {
+   "kind": "angle",
+   "joint": "knee.r",
+   "pose": "start",
+   "cardPose": "start",
+   "deg": 90,
+   "claim": "c2"
+  },
+  {
+   "kind": "angle",
+   "joint": "knee.l",
+   "pose": "end",
+   "cardPose": "end",
+   "deg": 90,
+   "claim": "c4"
+  },
+  {
+   "kind": "angle",
+   "joint": "knee.r",
+   "pose": "end",
+   "cardPose": "end",
+   "deg": 90,
+   "claim": "c4"
   }
  ],
  "tempo": [

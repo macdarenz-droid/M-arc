@@ -94,9 +94,12 @@ export default {
   ghosts: { count: 1, parts: ['leg.r', 'arm.r'] },
   trace: { point: 'heel.r', trim: [4, 6] },
   tempo: [{ phase: 'Hold', s: 'max 30' }],   // D-SUPCORE-HOLDMAX (#366 6570379460): c12's "up to 30 seconds" as an upper bound
+  // D-SUPCORE-HOLLOWLEG (#366 6575342285): c4's 15 deg, the card's one measure fact, drawn as the angle between the floor
+  // line and the hip-to-ankle line in the hold (lb9/sizes.json LEG's measure), at the ankle
+  measure: { vertex: 'ankle.r', from: { dir: [-1, 0] }, to: 'hip.r', radius: 64, title: 'Legs', value: 'about 15°', expect: 15, box: { left: 186, top: 256 } },
   callouts: [
-    { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 150, top: 200 }, cue: 'Press your low back flat to the floor the whole hold.' },
-    { key: 'legs', text: 'Legs low', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 236, top: 214 }, cue: 'Legs straight and off the floor, no higher than about 30 degrees.' },
+    { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 140, top: 192 }, cue: 'Press your low back flat to the floor the whole hold.' },
+    { key: 'legs', text: 'Legs low', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 250, top: 206 }, cue: 'Legs straight and off the floor, no higher than about 30 degrees.' },
     { key: 'shoulders', text: 'Shoulders up', anchor: { at: 'shoulderTop.r', off: [0, -3] }, box: { left: 16, top: 214 }, cue: 'Lift your shoulders and arms off the floor, biceps by your ears.' },
   ],
   mistake: {

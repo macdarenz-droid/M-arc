@@ -721,6 +721,15 @@
    "pose": "end",
    "cardPose": "end",
    "claim": "c3"
+  },
+  {
+   "kind": "angle",
+   "measure": true,
+   "pose": "end",
+   "cardPose": "end",
+   "deg": 15,
+   "claim": "c4",
+   "note": "D-SUPCORE-HOLLOWLEG: c4's two sources do not overlap. bb-hollow: \"Aim to suspend your legs between 15 and 30 degrees off the ground.\" (15-30 deg); ggr-hollow: \"Your legs only need to be four to six inches off the ground.\" (4-6 in, about 7-10 deg on this body). Not the midpoint of one range: the ranges do not overlap, and 15 deg, the end of bb's range nearest ggr's height, is their closest point of agreement (plate.end draws it). Measured on the hip-to-ankle line against the floor."
   }
  ],
  "tempo": [

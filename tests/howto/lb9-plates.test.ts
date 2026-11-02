@@ -757,9 +757,12 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
       F('heel.r', 'start', 'c2'), F('ball.r', 'start', 'c2'), F('heel.r', 'end', 'c2'), F('ball.r', 'end', 'c2')],   // D-LIB21-SPFACTS (#326 6410127641), the foot (a)
     // LIB-SUPCORE (DESIGN.md 26.5; setup quotes state the start only, D-LIB9-FACTPOSE; the back read at the buttock,
     // D-LIB11-SACRUM); dead_bug and v_up take theirs with their strip rows (#358)
-    hollow_body_hold: [F('buttock', 'start', 'c1'), F('backUpper', 'start', 'c1'), F('buttock', 'end', 'c3')],
-    reverse_crunch: [...both('wrist', 'start', 'c1'), F('buttock', 'start', 'c2'), F('backUpper', 'start', 'c1')],
-    flutter_kicks: [...both('wrist', 'start', 'c1'), F('backUpper', 'start', 'c1'), F('buttock', 'start', 'c4'), F('buttock', 'end', 'c4')],
+    // cfsc fix round (#366 6575342285): reverse_crunch's knee angles (D-LIB8M-FACTS), hollow_body_hold's one measure fact
+    // (D-SUPCORE-HOLLOWLEG), flutter_kicks' backUpper on c4
+    hollow_body_hold: [F('buttock', 'start', 'c1'), F('backUpper', 'start', 'c1'), F('buttock', 'end', 'c3'), { kind: 'angle', measure: true, pose: 'end', cardPose: 'end', deg: 15, claim: 'c4' }],
+    reverse_crunch: [...both('wrist', 'start', 'c1'), F('buttock', 'start', 'c2'), F('backUpper', 'start', 'c1'),
+      ...['start', 'end'].flatMap(pose => ['l', 'r'].map(sd => ({ kind: 'angle', joint: `knee.${sd}`, pose, cardPose: pose, deg: 90, claim: pose === 'start' ? 'c2' : 'c4' })))],
+    flutter_kicks: [...both('wrist', 'start', 'c1'), F('backUpper', 'start', 'c4'), F('buttock', 'start', 'c4'), F('buttock', 'end', 'c4')],
   };
   // The ruled fault→key map (DESIGN.md section 8): [topFault, the drawn first tell key]; all 5 drawable-true. The (b)
   // rows' planned topFault (D-LIB21-F7), which differs from the drawn key.
@@ -771,8 +774,10 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
   const tempoOf = (id: string) => (id in t.rows ? t.rows[id].map((r: any) => ({ phase: r.phase, s: 'constant' in r ? r.constant : cardOf(id).plate.tempo[r.from], ...(r.move ? { move: true } : {}) }))
     : stripOf(id).rows.map((r: any) => ({ phase: r.phase, ...(r.move ? { move: true } : {}), ...('word' in r ? { word: r.word } : {}) })));
   const keyProblems = (id: string, c: any) => {
-    const out: string[] = [], want = FACTS[id]!.map(([landmark, pose, cardPose, claim]) => ({ kind: 'contact', landmark, pose, cardPose, claim }));
-    if (JSON.stringify(c.plateFacts) !== JSON.stringify(want)) out.push(`${id}: plateFacts ${JSON.stringify(c.plateFacts)}`);
+    // LIB-SUPCORE: an entry may be a whole fact (an angle); a fact's `note` is free text and is checked where it is ruled
+    const out: string[] = [], want = FACTS[id]!.map((x: any) => (Array.isArray(x) ? { kind: 'contact', landmark: x[0], pose: x[1], cardPose: x[2], claim: x[3] } : x));
+    const bare = (c.plateFacts ?? []).map((f: any) => { const { note, ...o } = f; return o; });
+    if (JSON.stringify(bare) !== JSON.stringify(want)) out.push(`${id}: plateFacts ${JSON.stringify(c.plateFacts)}`);
     if (JSON.stringify(c.tempo) !== JSON.stringify(tempoOf(id))) out.push(`${id}: tempo ${JSON.stringify(c.tempo)}`);
     if (c.topFault !== (TOP[id] ?? TOP_B0[id])![0]) out.push(`${id}: topFault ${c.topFault}`);
     const known = new Set(c.claims.map((x: any) => x.id));
@@ -814,6 +819,9 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     for (const id of specsDrawn()) {
       const r = plate.renderPlate(S[id], { id: 'x' }).report;
       for (const f of cardOf(id).plateFacts ?? []) {
+        // LIB-SUPCORE: an angle fact is H6's angle rule: the drawn joint angle, or the drawn measure with its expect, within LIMITS.angleDeg
+        if (f.kind === 'angle') { const v = f.joint ? r.angles?.[f.pose]?.[f.joint] : (S[id].measure?.expect === f.deg ? r.measure?.drawnDeg : null);
+          expect(typeof v === 'number' && Math.abs(v - f.deg) <= qaNode.LIMITS.angleDeg, `${id} ${f.joint ?? 'measure'} ${f.pose}: ${v} vs ${f.deg}`).toBe(true); continue; }
         const hits = r.checks.filter((k: any) => k.landmark === f.landmark && (k.pose === f.pose || k.pose === 'all') && k.cm != null);
         expect(hits.length > 0 && hits.every((k: any) => k.cm <= qaNode.LIMITS.cm), `${id} ${f.landmark} ${f.pose}: ${JSON.stringify(hits)}`).toBe(true);
       }
@@ -2199,5 +2207,24 @@ describe('LIB-SUPCORE D-SUPCORE-RCBACK: reverse_crunch\'s named \'Back down\' en
     expect(rcProblems(s, RC_BACK + 1).length).toBe(1);
     expect(rcProblems(withBox('back', { left: 216, top: 286 })).some(p => p === 'back through torso')).toBe(true);
     expect(rcProblems(withBox('hips', { left: 256, top: 236 }, M.reverse_crunch.BACK_AT)).some(p => p.startsWith('hips enters'))).toBe(true);
+  });
+});
+
+describe('LIB-SUPCORE D-SUPCORE-HOLLOWLEG: hollow_body_hold\'s one measure fact (#366 6575342285)', () => {
+  const card = () => readJson('docs/research/howto/cards/hollow_body_hold.json');
+  /** H6's measure rule (qa/node.mjs h6): the fact's deg against the spec's measure.expect and the drawn angle, ±LIMITS.angleDeg. */
+  const legProblems = (spec: any, deg = 15) => { const r = plate.renderPlate(spec, { id: 'x' }).report.measure, out: string[] = [];
+    if (Math.abs(spec.measure.expect - deg) > qaNode.LIMITS.angleDeg) out.push(`expect ${spec.measure.expect} vs ${deg}`);
+    if (Math.abs(r.drawnDeg - deg) > qaNode.LIMITS.angleDeg) out.push(`drawn ${r.drawnDeg} vs ${deg}`);
+    return out; };
+  it('the fact is 15 deg on c4, with both quotes and the not-the-midpoint reason in its note; the drawn measure is 15 deg', () => {
+    const f = card().plateFacts.find((x: any) => x.kind === 'angle');
+    expect(f).toMatchObject({ measure: true, pose: 'end', cardPose: 'end', deg: 15, claim: 'c4' });
+    for (const t of ['Aim to suspend your legs between 15 and 30 degrees off the ground.', 'Your legs only need to be four to six inches off the ground.', 'midpoint']) expect(f.note, t).toContain(t);
+    expect(legProblems(S.hollow_body_hold)).toEqual([]);
+  });
+  it('mutations: the fact at 22.5 deg and at 30 deg are red', () => {
+    expect(legProblems(S.hollow_body_hold, 22.5).length).toBeGreaterThan(0);
+    expect(legProblems(S.hollow_body_hold, 30).length).toBeGreaterThan(0);
   });
 });
