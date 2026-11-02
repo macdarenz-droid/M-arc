@@ -141,7 +141,7 @@ export default {
     guides: [],
     tells: [
       { key: 'knee', text: 'Front knee<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 262, top: 192 }, cue: 'Dropping into the bottom with the rear knee resting tips the front knee forward.' },   // c3, c8
-      { key: 'shin', text: 'Shin tips<br>forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' }, cue: 'The front shin tips forward past vertical as the hips sink.' },
+      { key: 'shin', text: 'Shin tips<br>forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' }, box: { left: 283, top: 238 }, cue: 'The front shin tips forward past vertical as the hips sink.' },
     ],
   },
   zoom: { view: 'mistake', k: 1.5, tell: 'knee' },

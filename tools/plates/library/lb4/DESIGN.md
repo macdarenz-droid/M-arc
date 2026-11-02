@@ -671,7 +671,8 @@ REAR_X, STANCE, START_KNEE 8, M_SINK; step_up the trailing hip 21. Each spec hea
   fragments stay byte-identical (A2 block).
 - bulgarian_split_squat (R5, R11; D-SPLIT-BSSTRUE, D-SPLIT-BSSFIX): the pose is unchanged (the rear knee stays on the
   floor, c3). The tells now name what is drawn: `knee` "Front knee forward" on the Mistake front knee (box (262, 192),
-  leader 64.2 px, inside F3's range) and `shin` "Shin tips forward" on the Mistake front shin; no hips tell. The zoom
+  leader 64.2 px, inside F3's range) and `shin` "Shin tips forward" on the Mistake front shin (box (283, 238): at
+  its engine place the text sat on the zoom's source ring, H1.ink:mistake:shin in the browser half); no hips tell. The zoom
   shows the front knee (`zoom.tell: 'knee'`): k 1.5, fault 8.75 px → 13.12 px (bar 11.39); the ring's source sits on
   the front knee and upper shin. Head, trunk and dumbbells move only with the hips, 8.6 px, as the shin tip implies
   (the rear thigh turns about the resting knee). topFault `seat` → `knee` (the first tell's key).
