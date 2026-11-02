@@ -318,6 +318,10 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   conflict (card notes), so the head is drawn in line. c4 "a pad or mat": an item, drawn (R10). c15 "Keep your toes on
   the floor … (you can also dorsiflex and lift the toes if this helps)" (D-HELD6-TOES, #368 6569349184): the toe contact
   carries its own alternative, so it is not a fact, as the "or" rule; the feet stay bound by the heel facts.
+- **Side-view geometry, not a fact and not a check (D-HELD6-RING, #368 6569943739):** the near arm lies over the
+  lumbar arch. The Mistake zoom's source ring (centre (164.5, 278.2), r 13 at k 4) holds the arm's lower edge 8.5 px
+  deep, and the elbow dot is 10.3 px from its centre. No ring that holds the arch at k ≤ 4 is clear of the arm (#368
+  6569926741 table).
 - **Trace**: `hip.r` (c8 "Push the bar towards the ceiling by extending your hips"; the bar rides the pelvis and the
   engine traces landmarks only), trim [6, 8], the clone source's (leg_press.mjs:132; D-LIB18-TRIM). **measured
   46.6 px** since the bearing fix (36.9 px before it; 28.2 px at the earlier [10, 12]): passes.
@@ -881,3 +885,26 @@ Panel mx24 fix round (#368 6553899958; resisted_hip_flexion APPROVED @ `6d31c473
   [] on both: main passes its landmark fact, this head its outline fact).
 - The LB8 page builds `5b703d65…8400` twice; resisted_hip_flexion's and glute_bridge's `<article>` are byte-identical
   to the `6ce14c40` page; runQa all 10 hard checks pass on all 9 rows.
+
+Panel mx25 fix 2 (#368 6569811038; rulings D-HELD6-MGHOST and D-HELD6-RING, 6569943739; hip_thrust's last focused
+round):
+- R5 (a), D-HELD6-MGHOST: the spec field `mistakeGhosts: false` drops `pose-start` and the `ghost` groups from the
+  Mistake svg. It is one library function (`mistake-ghosts.mjs`, outside vendor/**) with three callers: the page build
+  (before `applyZooms`), the node QA render (`qa/node.mjs` rendersOf) and the zoom render (`zoom/inline.mjs` zoomOf).
+  The start and ghost bars and the start phantom go through `ctx.mistake`. The normal view and every spec without the
+  field keep their bytes.
+- R5 (b): the fault is one red dashed trunk outline, drawn as two dashed guides: the Mistake torso's drawn top and
+  underside from the shoulder joint (x 125.9) to the hip joint (x 195.0), 49 world points each, at M_ARCH 12. With
+  `parts: ['head']`, the masked torso union is not drawn (lying_leg_curl's form).
+- R11, D-HELD6-RING: `arch` sits on the lumbar underside at plate x 164,
+  `{ along: ['backMid', 'lumbar'], t: 0.67, pose: 'mistake', off: [-2, 2.15] }`. Its Mistake point lies on the red
+  underside, and it moves 2.98 px (the drawn underside's own move there): 11.92 px at k 4, and 10.43 at k 3.5 (red).
+  The ring holds no ghost element and no plate rim. Today's place (the sacrum at k 3, ghosts drawn) is red: 24 ghost
+  elements, and the end plate rim is 9.1 px from the centre. The leader ends on the underside, 10.3 px from the elbow
+  mark.
+- Node QA renders, zoom renders and H6 over every library spec (134), at `69186742` and at this head (merged with main
+  `4f2e835`): only hip_thrust's Mistake and its zoom change, plus main's own rows. H6 has no difference. Against main:
+  hip_thrust and resisted_hip_flexion (this PR's rows) only.
+- The LB8 page builds `7e466f8e…5799` twice. Every other article, resisted_hip_flexion's and glute_bridge's included,
+  is byte-identical to the `5b703d65` page. runQa passes all 10 hard checks on all 9 rows, and the flag set is the
+  ruled set.
