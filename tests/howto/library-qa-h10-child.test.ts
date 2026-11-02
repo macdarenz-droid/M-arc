@@ -6,6 +6,7 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, w
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const T = 300_000;
@@ -89,7 +90,7 @@ describe('LIB-3c 3c-A4 PARAMS ranges (D-LIB10-RANGES, D-LIB3c-SHARED)', { timeou
     const r = await qa(all, {}, () => {}, await pageFor(all));
     expect(r.keys).toEqual(['PQ-H10 H10.envelope:camera.maxScale']);
   });
-  it('pinned envelope: no family, no key or no file gives H10.envelope; a test envelope that names the key is the fallback', async () => {
+  child.it('pinned envelope: no family, no key or no file gives H10.envelope; a test envelope that names the key is the fallback', async () => {
     for (const fams of [{}, { 'D:lib_pull_up': fam({ 'bar.kind': ['straight'] }) }, { BENCH: fam({ 'camera.maxScale': [0.9, 1.1] }) }]) {
       writeRanges(fams);
       expect([fams, (await qa(dAll({ 'camera.maxScale': 1 }))).keys]).toEqual([fams, ['PQ-H10 H10.envelope:camera.maxScale']]);
@@ -124,7 +125,7 @@ describe('LIB-3c 3c-A4 PARAMS ranges (D-LIB10-RANGES, D-LIB3c-SHARED)', { timeou
     expect(() => L.loadRanges()).toThrow(/param-ranges/);
     writeRanges({});
   });
-  it('one object: H10\'s value check and the child rebuild read the same object (family row first, then ctx.envelope)', async () => {
+  child.it('one object: H10\'s value check and the child rebuild read the same object (family row first, then ctx.envelope)', async () => {
     const env = { ...pins.envelope, 'camera.maxScale': [5, 6], handedness: ['both'] }, params = { 'camera.maxScale': 1, handedness: 'both' };
     const run = async (range: number[]) => {
       writeRanges({ 'D:lib_pull_up': fam({ 'camera.maxScale': range }) });
@@ -158,7 +159,7 @@ describe('LIB-3c 3c-A4 PARAMS ranges (D-LIB10-RANGES, D-LIB3c-SHARED)', { timeou
 });
 
 describe('LIB-3c 3c-A5 the child proof (D-LIB10-CHILDPROOF)', { timeout: T }, () => {
-  it('control: a clean D child and a clean T child, with test family rows present, give no H10 problem; no rebuild module is left behind', async () => {
+  child.it('control: a clean D child and a clean T child, with test family rows present, give no H10 problem; no rebuild module is left behind', async () => {
     // own TMPDIR for this row (os.tmpdir() reads it on each call), so no other process's temp dirs reach the check
     const own = mkdtempSync(join(tmpdir(), 'lib3c-row-')), saved = process.env.TMPDIR;
     process.env.TMPDIR = own;
