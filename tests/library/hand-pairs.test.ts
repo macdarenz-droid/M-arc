@@ -7,6 +7,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -80,7 +81,7 @@ beforeAll(async () => {
 });
 
 describe('LIB-7 A1: golden B unchanged with every hand-*.mjs loaded', () => {
-  it('the 8 close-ups === the frozen golden-B scripts (LIB-6 compare), after loading all key modules', async () => {
+  child.it('the 8 close-ups === the frozen golden-B scripts (LIB-6 compare), after loading all key modules', async () => {
     expect(P.MODULES.length).toBeGreaterThan(0);
     expect(await cmp.compareCloseups(Object.keys(opts), opts)).toEqual([]);
   }, 180_000);

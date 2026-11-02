@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -209,7 +210,7 @@ describe('LIB-15 A9: nothing ships (D-LIB15-AHEAD)', { timeout: T }, () => {
       ...LB5.map(i => `tools/plates/library/howto/lib_${i}.howto.mjs`), 'tools/plates/library/lb5/build.mjs', 'tools/plates/library/lb5/qa.mjs', 'tests/howto/lb5-plates.test.ts'];
     for (const f of files) expect(readFileSync(f, 'utf8'), f).not.toMatch(/from\s+['"][^'"]*\/hands\/|import\(\s*[^)]*\/hands\//);
   });
-  it('generate --check is green, and no generated file is read from lb5/, the LB5 specs, the composer or How-to sources', async () => {
+  child.it('generate --check is green, and no generated file is read from lb5/, the LB5 specs, the composer or How-to sources', async () => {
     const gen = await import(/* @vite-ignore */ new URL('../../tools/plates/generate.mjs', import.meta.url).href);
     const t0 = Date.now(), out = await gen.render();
     expect(gen.diff(out)).toEqual([]);
@@ -258,7 +259,7 @@ describe('LIB-15 A2 / Do 4: the preacherPad composer and the drawn plates draw P
     for (const id of specced()) for (const pose of posesOf(S[id]))
       for (const it of itemsIn(S[id], pose).items) expect(Object.keys(eng.PRIMITIVES), `${id} ${pose}`).toContain(it.type);
   });
-  it('the drawn plates pass PQ-H9', () => {
+  child.it('the drawn plates pass PQ-H9', () => {
     for (const id of specced()) expect(h9(S[id]), id).toEqual([]);
   });
   it('mutation: an item of an unknown type ({type: wedge}) turns H9.type red', () => {
@@ -394,7 +395,7 @@ describe('LIB-15 A16: no pilot A composer is copied or forked (D-LIB15-INCLINE; 
 });
 
 describe('LIB-15 A10: the LB5 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
-  it('two builds of the drawn LB5 ids are byte-identical', async () => {
+  child.it('two builds of the drawn LB5 ids are byte-identical', async () => {
     const build = await import(/* @vite-ignore */ lib('lb5/build.mjs'));
     expect(build.drawnIds().length).toBeGreaterThanOrEqual(2);
     const a = await build.buildLb5Page(), b = await build.buildLb5Page();
@@ -578,7 +579,7 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     }
     return min;
   };
-  it('no leader comes within 6 px of the Trace, a cable or the pad; mutation: a leader boxed across the pad is red', () => {
+  child.it('no leader comes within 6 px of the Trace, a cable or the pad; mutation: a leader boxed across the pad is red', () => {
     for (const id of drawn()) expect(leaderGap(S[id], { factsOnly: !fullScope(id) }), id).toBeGreaterThanOrEqual(6);
     const s = S.preacher_curl, cam = camOf(s), p = itemsIn(s, 'end').items.find((it: any) => it.type === 'poly' && it.z === 'mid'), c = cam.P(p.pts[2]);
     const bad = { ...s, callouts: [{ ...s.callouts[0], anchor: 'heel.r', box: { left: Math.round(c[0]! + 10), top: Math.round(c[1]! - 40) } }, ...s.callouts.slice(1)] };
