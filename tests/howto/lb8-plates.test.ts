@@ -2346,7 +2346,12 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
     const R = plate.renderPlate(spec, { id: 'x', mistake: true }), cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm.mistake, out: string[] = [];
     const ld = /<path class="leader m" d="M([\d.]+) ([\d.]+)L/.exec(R.svg);
     if (!ld) return ['no Mistake leader'];
-    const end = [+ld[1]!, +ld[2]!], g = ['backUpper', 'backMid', 'sacrum', 'buttock'].map(n => cam.P(L[n]));
+    // the red dashed lower-back line: since panel mx25 R5 (b) the Mistake torso's drawn underside (the spec's second
+    // dashed guide, TRUNK_LINES.under), read here from the drawn outline itself so a guide moved off it cannot pass
+    const tM = shapesIn(spec, 'mistake').find((x: any) => x.key === 'torso').poly as number[][];
+    const ysAt = (x: number) => tM.flatMap((a, i) => { const q = tM[(i + 1) % tM.length]!; return (a[0]! - x) * (q[0]! - x) <= 0 && a[0] !== q[0] ? [a[1]! + (q[1]! - a[1]!) * (x - a[0]!) / (q[0]! - a[0]!)] : []; });
+    const x0 = cam.P(L['shoulder.r'])[0]!, x1 = cam.P(L['hip.r'])[0]!, g = Array.from({ length: 141 }, (_, i) => { const x = x0 + (x1 - x0) * i / 140; return [x, Math.max(...ysAt(x))]; });
+    const end = [+ld[1]!, +ld[2]!];
     const dg = Math.min(...g.slice(1).map((q: number[], i: number) => segD(end, g[i]!, q)));
     if (dg > 1) out.push(`leader end ${dg.toFixed(1)} px off the dashed back line`);
     for (const m of R.svg.matchAll(/<circle class="joint" cx="([\d.]+)" cy="([\d.]+)"/g)) { const d = Math.hypot(end[0]! - +m[1]!, end[1]! - +m[2]!); if (d < 6) out.push(`leader end ${d.toFixed(1)} px from a joint mark`); }
@@ -4874,7 +4879,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
 // ---- D-LIBZOOM-EXTEND ('LIB-18 resume'): the rows released with a Mistake-view LIB-ZOOM circle ----
 describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main)', { timeout: T }, () => {
   // k: the smallest of the ladder whose tell-anchor move reaches deviationMin at the zoom's scale (DESIGN.md section 18)
-  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, cable_kickback: 3, hip_thrust: 3 };   // hip_thrust: Held 6 (D-HELD6-HIPTHRUST)
+  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, cable_kickback: 3, hip_thrust: 4 };   // hip_thrust: Held 6 (D-HELD6-HIPTHRUST); k 4 on the lumbar underside (D-HELD6-RING)
   const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], BAR = 11.39;
   let Z: any;
   beforeAll(async () => { Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); }, T);
@@ -4902,13 +4907,14 @@ describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main
     expect(zoomProblems('leg_extension', { ...S.leg_extension, zoom: { view: 'mistake', k: 2 } })).toEqual(['leg_extension: zoom {"view":"mistake","k":2}', 'leg_extension: a smaller k reaches the bar']);
     expect(zoomProblems('lying_leg_curl', { ...S.lying_leg_curl, zoom: undefined }).length).toBeGreaterThan(0);
   });
-  it('D-HELD6-HIPTHRUST: hip_thrust\'s Mistake is the end pose bowed 12 (trunk.bow), one tell `arch` on the sacrum (the dashed back line, panel mx24 R4) at 4.28 px (12.83 px at k 3); mutations: the main drawing\'s backMid-sacrum anchor and the number trunk are red', () => {
+  it('D-HELD6-HIPTHRUST, -RING: hip_thrust\'s Mistake is the end pose bowed 12 (trunk.bow), one tell `arch` on the lumbar underside at plate x 164 (panel mx25 R11) at 2.98 px (11.92 px at k 4); mutations: the main drawing\'s backMid-sacrum anchor and the number trunk are red', () => {
     const h = S.hip_thrust, z = Z.zoomOf(h);
-    console.log(`HELD-A hip_thrust arch: ${z.fault.d.toFixed(3)} px -> ${(z.fault.d * 3).toFixed(2)} px at k 3; ring ${JSON.stringify(z.circle)}`);
-    expect(h.mistake.tells.map((t: any) => [t.key, t.anchor])).toEqual([['arch', { at: 'sacrum', pose: 'mistake' }]]);
+    console.log(`HELD-A hip_thrust arch: ${z.fault.d.toFixed(3)} px -> ${(z.fault.d * 4).toFixed(2)} px at k 4; source ring ${JSON.stringify(z.src)}; circle ${JSON.stringify(z.circle)}`);
+    expect(h.mistake.tells.map((t: any) => [t.key, t.anchor])).toEqual([['arch', { along: ['backMid', 'lumbar'], t: 0.67, pose: 'mistake', off: [-2, 2.15] }]]);
     expect(h.mistake.tells[0].cue).toMatch(/ribs/);
     expect(h.mistake.pose.trunk).toEqual({ flex: 0, bow: 12 });
-    expect(z.fault.d).toBeCloseTo(4.278, 2);
+    expect(z.fault.d).toBeCloseTo(2.979, 2);
+    expect(z.src.c[0]).toBeCloseTo(164.5, 0);
     const atK4 = (spec: any) => Z.zoomOf({ ...spec, zoom: { view: 'mistake', k: 4 } }).fault.d * 4;
     const old = { ...h, mistake: { ...h.mistake, tells: [{ ...h.mistake.tells[0], anchor: { along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake' } }] } };
     expect(atK4(old)).toBeLessThan(BAR);   // the main anchor on the bowed back stays under the bar even at kMax
@@ -4997,5 +5003,130 @@ describe('LIB-18 resume 2: glute_bridge, a normal-view zoom on the hip Trace and
     expect(w([...WANT, { view: 'normal', k: 3 }]).some((p: string) => /a list holds 1 or 2 entries/.test(p))).toBe(true);
     expect(w([{ view: 'mistake', k: 2 }, { view: 'mistake', k: 2.5 }]).some((p: string) => /two entries for the mistake view/.test(p))).toBe(true);
     expect(w([WANT[1]])).toContain('no normal zoom');
+  });
+});
+
+// ---- HELD-A panel mx25 fix 2 (#368 6569811038; rulings D-HELD6-MGHOST and D-HELD6-RING, 6569943739) ----
+describe('HELD-A mx25 fix 2: hip_thrust\'s Mistake view without the start pose and ghosts (D-HELD6-MGHOST), the red trunk outline (R5 b) and the ring on the lumbar underside (D-HELD6-RING)', { timeout: T }, () => {
+  let MG: any, Z: any;
+  beforeAll(async () => { [MG, Z] = await Promise.all(['mistake-ghosts.mjs', 'zoom/inline.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const h = () => S.hip_thrust;
+  const ghostProblems = (svg: string) => [...svg.matchAll(/<g class="(pose-start|ghost)\b/g)].map(m => `a ${m[1]} group in the Mistake svg`);
+  const rawMistake = (spec: any) => plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
+  /** The engine's render with every equipment function given the correct-plate context (ctx.mistake false). */
+  const noCtxMistake = (spec: any) => ({ ...spec, equipment: spec.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => e(lm, { ...ctx, mistake: false }) : e)) });
+
+  it('MGHOST: with the field the Mistake svg holds no start or ghost group in the plate, the node QA render and the zoom render; the normal view keeps them; mutation: the call removed (the engine\'s own render) is red', () => {
+    expect(h().mistakeGhosts).toBe(false);
+    expect(ghostProblems(MG.mistakeSvg(h(), rawMistake(h())))).toEqual([]);
+    const R = qaNode.rendersOf({ spec: h(), plate: { prefix: 'x' } }, Eng());
+    expect(ghostProblems(R.mistake.svg)).toEqual([]);
+    expect(ghostProblems(Z.zoomOf(h()).svg)).toEqual([]);
+    expect(ghostProblems(R.normal.svg)).toEqual(['a pose-start group in the Mistake svg', 'a ghost group in the Mistake svg', 'a ghost group in the Mistake svg']);
+    expect(ghostProblems(rawMistake(h()))).toEqual(['a pose-start group in the Mistake svg', 'a ghost group in the Mistake svg', 'a ghost group in the Mistake svg']);
+    expect(ghostProblems(Z.zoomOf({ ...h(), mistakeGhosts: undefined }).svg)).toEqual(['a pose-start group in the Mistake svg']);
+  });
+  it('MGHOST: hip_thrust\'s normal view is byte-identical with and without the field (engine and node QA renders); a spec without the field is unchanged; mutation: the step run on a normal svg changes it', () => {
+    const off = { ...h(), mistakeGhosts: undefined };
+    expect(plate.renderPlate(h(), { id: 'x' }).svg).toBe(plate.renderPlate(off, { id: 'x' }).svg);
+    expect(qaNode.rendersOf({ spec: h(), plate: { prefix: 'x' } }, Eng()).normal.svg).toBe(qaNode.rendersOf({ spec: off, plate: { prefix: 'x' } }, Eng()).normal.svg);
+    for (const id of DRAWN_NOW.filter(i => i !== 'hip_thrust')) {
+      expect(S[id].mistakeGhosts, id).toBeUndefined();
+      if (S[id].mistake) { const raw = rawMistake(S[id]); expect(MG.mistakeSvg(S[id], raw), id).toBe(raw); }
+    }
+    const n = plate.renderPlate(h(), { id: 'x' }).svg;
+    expect(MG.mistakeSvg(h(), n)).not.toBe(n);
+  });
+  it('MGHOST on the LB8 page (child process): the page built with the field off, passed through applyMistakeGhosts, is the page byte for byte, so only hip_thrust\'s Mistake svg changes; the field-off page holds the groups; a page with no opted-in spec is returned as the same bytes', async () => {
+    const script = `const P = await import(${JSON.stringify(lib('plates-page.mjs'))}), B = await import(${JSON.stringify(lib('build-page.mjs'))});
+const MG = await import(${JSON.stringify(lib('mistake-ghosts.mjs'))}), L8 = await import(${JSON.stringify(lib('lb8/build.mjs'))});
+const { mkdtempSync, writeFileSync, rmSync } = await import('node:fs'), { tmpdir } = await import('node:os'), { join } = await import('node:path'), { pathToFileURL } = await import('node:url');
+const cfg = await P.groupsConfig({ groups: [{ id: 'lb8', title: 'LB8', ids: L8.drawnIds() }] }, L8.lb8All(), L8.LB8_ROWS);
+const key = Object.keys(cfg.specs).find(k => k.endsWith('hip_thrust')), dir = mkdtempSync(join(tmpdir(), 'mghost-')), off = join(dir, 'hip_thrust.mjs');
+writeFileSync(off, 'import s from ' + JSON.stringify(pathToFileURL(cfg.specs[key]).href) + '; export default { ...s, mistakeGhosts: undefined };');
+try {
+  const on = (await B.buildPlatesPage(cfg)).html, raw = (await B.buildPlatesPage({ ...cfg, specs: { ...cfg.specs, [key]: off } })).html;
+  const fixed = await MG.applyMistakeGhosts(raw, { [key]: cfg.specs[key] });
+  const rest = Object.fromEntries(Object.entries(cfg.specs).filter(([k]) => k !== key)), same = await MG.applyMistakeGhosts(raw, rest);
+  const fig = (h, mode) => { const s = h.toString('utf8'), a = s.indexOf('<div class="plate-fit" id="hip-thrust-plate">'); if (a < 0) throw new Error('no hip-thrust plate'); const f = s.indexOf('<figure class="plate" data-mode="' + mode + '"', a); return s.slice(f, s.indexOf('</figure>', f)); };
+  console.log(JSON.stringify({ key, equal: Buffer.compare(fixed, on) === 0, differ: Buffer.compare(raw, on) !== 0, same: same === raw,
+    onM: /<g class="(pose-start|ghost)\\b/.test(fig(on, 'mistake')), rawM: /<g class="(pose-start|ghost)\\b/.test(fig(raw, 'mistake')), normalSame: fig(on, 'normal') === fig(raw, 'normal') }));
+} finally { rmSync(dir, { recursive: true, force: true }); }`;
+    const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 });
+    const r = JSON.parse(stdout.trim().split('\n').pop()!);
+    expect(r).toEqual({ key: 'hip_thrust', equal: true, differ: true, same: true, onM: false, rawM: true, normalSame: true });
+  });
+
+  // R5 (b): one red dashed trunk outline, top and underside, from the shoulder to the hip joint, at M_ARCH 12
+  const trunkProblems = (spec: any) => {
+    const out: string[] = [], cam = camOf(spec), L = lmOf(spec, 'mistake');
+    if (JSON.stringify(spec.mistake.parts) !== JSON.stringify(['head'])) out.push('the Mistake torso union is drawn as well (parts not [head])');
+    const g = spec.mistake.guides.filter((x: any) => x.kind === 'dashed');
+    if (g.length !== 2) out.push(`${g.length} dashed guides, not 2 (top and underside)`);
+    const tM = shapesIn(spec, 'mistake').find((x: any) => x.key === 'torso').poly as number[][], x0 = cam.P(L['shoulder.r'])[0]!, x1 = cam.P(L['hip.r'])[0]!;
+    g.forEach((gd: any, i: number) => {
+      const ps = gd.pts.map((p: any) => (Array.isArray(p) && p.length === 3 ? cam.P(p) : null));
+      if (ps.some((p: any) => !p)) { out.push(`guide ${i}: not world points`); return; }
+      const off = Math.max(...ps.map((p: number[]) => Math.abs(outside([tM], p))));
+      if (off > 0.5) out.push(`guide ${i}: ${off.toFixed(1)} px off the Mistake torso outline`);
+      if (Math.abs(ps[0][0] - x0) > 0.5 || Math.abs(ps.at(-1)[0] - x1) > 0.5) out.push(`guide ${i}: not shoulder to hip`);
+    });
+    return out;
+  };
+  it('R5 (b): two dashed guides on the Mistake torso\'s drawn top and underside (<= 0.5 px) from the shoulder joint to the hip joint, no masked torso union; mutations: the guides on the end pose\'s outline (no arch) and the mx24 landmark back line are red', () => {
+    expect(trunkProblems(h())).toEqual([]);
+    expect(h().mistake.guides.map((gd: any) => gd.pts.length)).toEqual([49, 49]);
+    const cam = camOf(h()), c = rep(h()).camera, w = (p: number[]) => [0, (c.y0 - p[1]!) / c.pxPerM, (p[0]! - c.x0) / c.pxPerM];
+    const tE = shapesIn(h(), 'end').find((x: any) => x.key === 'torso').poly as number[][];
+    const ysAt = (x: number) => tE.flatMap((a, i) => { const q = tE[(i + 1) % tE.length]!; return (a[0]! - x) * (q[0]! - x) <= 0 && a[0] !== q[0] ? [a[1]! + (q[1]! - a[1]!) * (x - a[0]!) / (q[0]! - a[0]!)] : []; });
+    const flat = h().mistake.guides.map((gd: any, i: number) => ({ ...gd, pts: gd.pts.map((p: number[]) => { const x = cam.P(p)[0]!, ys = ysAt(x); return w([x, i ? Math.max(...ys) : Math.min(...ys)]); }) }));
+    expect(trunkProblems({ ...h(), mistake: { ...h().mistake, guides: flat } })).toEqual([expect.stringMatching(/^guide 0: [\d.]+ px off the Mistake torso outline$/), expect.stringMatching(/^guide 1: [\d.]+ px off the Mistake torso outline$/)]);
+    const mx24 = { ...h(), mistake: { ...h().mistake, parts: undefined, guides: [{ kind: 'dashed', smooth: true, pts: ['backUpper', 'backMid', 'sacrum', 'buttock'].map(at => ({ at, pose: 'mistake' })) }] } };
+    expect(trunkProblems(mx24)).toEqual(['the Mistake torso union is drawn as well (parts not [head])', '1 dashed guides, not 2 (top and underside)', 'guide 0: not world points']);
+  });
+
+  // D-HELD6-RING: the source ring holds no ghost element and no plate rim (the arm's lower edge and the elbow dot over
+  // the lumbar arch are the side view's own geometry: recorded in lb8/DESIGN.md, not a check)
+  const ringProblems = (spec: any) => {
+    const z = Z.zoomOf(spec), C = z.src.c, r = z.src.r, cam = camOf(spec), out: string[] = [], PLATE_R = M.hip_thrust.SIZES.PLATE_D / 2;
+    const inR = (p: number[]) => Math.hypot(p[0]! - C[0], p[1]! - C[1]) < r;
+    const dens = (P: number[][], closed = true) => P.flatMap((p, i) => { if (!closed && i === P.length - 1) return [p]; const q = P[(i + 1) % P.length]!, k = Math.max(1, Math.ceil(Math.hypot(q[0]! - p[0]!, q[1]! - p[1]!) * 2)); return Array.from({ length: k }, (_, j) => [p[0]! + (q[0]! - p[0]!) * j / k, p[1]! + (q[1]! - p[1]!) * j / k]); });
+    const b = { height: 1.75 }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, b)), n = spec.ghosts?.count ?? 3;
+    const L = qaEng.poseLandmarks(Eng(), spec), qs: [string, any][] = [['start', L.q.start], ...Array.from({ length: n }, (_, i) => [`ghost${i}`, body.poseAt(keys, (i + 1) / (n + 1), b).q] as [string, any]), ['end', L.q.end], ['mistake', L.q.mistake]];
+    const svg = MG.mistakeSvg(spec, rawMistake(spec)), ghostsDrawn = ghostProblems(svg).length > 0;
+    const endShapes = new Map(body.bodyShapes(body.fk(L.q.end, b), cam, {}).filter((x: any) => x.poly).map((x: any) => [x.key, JSON.stringify(x.poly)]));
+    const gParts = new Set(spec.ghosts?.parts ?? []), partOf = (k: string) => (/^(head|torso)$/.test(k) ? 'trunk' : /^(thigh|kneecap|shank|foot)\.(l|r)$/.test(k) ? `leg.${k.slice(-1)}` : `arm.${k.slice(-1)}`);
+    let shapes = 0;
+    for (const [pose, q] of qs) {
+      const sk = body.fk(q, b), lm = body.landmarks(sk), ghost = pose !== 'end' && pose !== 'mistake';
+      if (ghost && ghostsDrawn) for (const s of body.bodyShapes(sk, cam, {}).filter((x: any) => x.poly)) {
+        if (endShapes.get(s.key) === JSON.stringify(s.poly) || (pose !== 'start' && !gParts.has(partOf(s.key)))) continue;
+        if (dens(s.poly).some(inR)) shapes++;
+      }
+      const ctx = { pose, start: L.lm.start, mistake: true, body: b, q };
+      const items: any[] = spec.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(lm, ctx) ?? [] : e)).filter((it: any) => it?.pts?.length);
+      for (const it of items) {
+        const ps = it.pts.map((p: number[]) => cam.P(p)), cen = [0, 1, 2].map(i => it.pts.reduce((a: number, p: number[]) => a + p[i]!, 0) / it.pts.length);
+        if (ghost && !ghostsDrawn && dens(ps, it.type !== 'line').some(inR)) out.push(`${pose}: a ghost ${it.type} item in the ring`);
+        else if (ghost && ghostsDrawn && dens(ps, it.type !== 'line').some(inR)) shapes++;
+        const rim = it.pts.length >= 16 && it.pts.every((p: number[]) => Math.abs(Math.hypot(p[1]! - cen[1]!, p[2]! - cen[2]!) - PLATE_R) < 1e-6);
+        if (rim && (pose === 'end' || pose === 'mistake' || ghostsDrawn)) { const d = Math.min(...dens(ps).map(p => Math.hypot(p[0]! - C[0], p[1]! - C[1]))); if (d < r) out.push(`${pose}: a plate rim ${d.toFixed(1)} px from the ring centre (r ${r.toFixed(1)})`); }
+      }
+    }
+    if (shapes) out.push(`${shapes} ghost elements in the ring`);
+    return out;
+  };
+  it('RING: the source ring (plate x 164, k 4, r 13) holds no ghost element and no plate rim; the arm edge and elbow dot inside are logged; mutation: today\'s place (the sacrum at k 3, ghosts and phantom drawn) is red', () => {
+    expect(ringProblems(h())).toEqual([]);
+    const z = Z.zoomOf(h()), C = z.src.c, cam = camOf(h()), el = cam.P(lmOf(h(), 'end')['elbow.r']);
+    const arm = shapesIn(h(), 'end').filter((x: any) => /^(upper|elbowcap|fore|fist|shcap)\.r$/.test(x.key)).flatMap((x: any) => x.poly as number[][]);
+    const depth = z.src.r - Math.min(...arm.map(p => Math.hypot(p[0]! - C[0], p[1]! - C[1])));
+    console.log(`HELD-A hip_thrust ring: centre ${C.map((v: number) => v.toFixed(1))}, r ${z.src.r.toFixed(1)}; arm edge ${depth.toFixed(1)} px deep, elbow dot ${Math.hypot(el[0]! - C[0], el[1]! - C[1]).toFixed(1)} px from the centre (side-view geometry, not a check)`);
+    const t = h().mistake.tells[0];
+    const today = noCtxMistake({ ...h(), mistakeGhosts: undefined, zoom: { view: 'mistake', k: 3 }, mistake: { ...h().mistake, tells: [{ ...t, anchor: { at: 'sacrum', pose: 'mistake' } }] } });
+    const bad = ringProblems(today);
+    console.log(`HELD-A hip_thrust ring, today's place: ${JSON.stringify(bad)}`);
+    expect(bad).toEqual(expect.arrayContaining([expect.stringMatching(/^end: a plate rim [\d.]+ px from the ring centre/), expect.stringMatching(/^\d+ ghost elements in the ring$/)]));
+    expect(ringProblems({ ...h(), mistakeGhosts: undefined }).length).toBeGreaterThan(0);   // the post-step alone removed
   });
 });

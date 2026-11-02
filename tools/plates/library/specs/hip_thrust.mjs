@@ -169,6 +169,16 @@ const via = [1, 2].map(i => withBar(onEdge(START_TILT + (TOP_TILT - START_TILT) 
 const mistakePose = { ...end, trunk: { flex: 0, bow: M_ARCH } };
 
 const LE = L(end), LS = L(start), LM = L(mistakePose);
+// The fault drawn as one red dashed trunk outline (panel mx25 R5 (b), #368 6569811038): the Mistake torso's top and
+// underside, read from its drawn outline (engine bodyShapes, side view, mm) from the shoulder joint to the hip joint,
+// as world points every 10 mm, so the plate and the zoom draw the same line at the same M_ARCH.
+export const TRUNK_LINES = (() => {
+  const b = { height: H }, sk = fk(resolve(normPose(mistakePose, b), b).q, b), lm = landmarks(sk);
+  const poly = bodyShapes(sk, SIDE_CAM).find(x => x.key === 'torso' && x.poly).poly;
+  const ysAt = z => { const ys = []; for (let i = 0; i < poly.length; i++) { const a = poly[i], q = poly[(i + 1) % poly.length]; if ((a[0] - z) * (q[0] - z) <= 0 && a[0] !== q[0]) ys.push(a[1] + (q[1] - a[1]) * (z - a[0]) / (q[0] - a[0])); } if (!ys.length) throw new Error('hip_thrust: the trunk outline misses a scan line'); return ys; };
+  const z0 = lm['shoulder.r'][2] * MM, z1 = lm['hip.r'][2] * MM, n = Math.ceil((z1 - z0) / 10), zs = Array.from({ length: n + 1 }, (_, i) => z0 + (z1 - z0) * i / n);
+  return { top: zs.map(z => [0, Math.max(...ysAt(z)) / MM, z / MM]), under: zs.map(z => [0, Math.min(...ysAt(z)) / MM, z / MM]) };
+})();
 // the barbell from poly: the 45 cm plate as an outline over the figure (the vendor barbell's x-ray look), its inner
 // ring, the sleeve and the pad round the bar (c4)
 const ring = (c, r, n = 32) => Array.from({ length: n }, (_, k) => [0, c[1] + r * Math.sin(2 * Math.PI * k / n), c[2] + r * Math.cos(2 * Math.PI * k / n)]);
@@ -200,11 +210,12 @@ export default {
   equipment: [
     { type: 'floor', from: EDGE_Z - BENCH_W - FLOOR_BACK, to: SOLE(1)[2] + FLOOR_FRONT },
     { type: 'bench', at: [0, BENCH_TOP, EDGE_Z - BENCH_W / 2], axis: 'x', width: BENCH_W, z: 'back' },
-    ...Array.from({ length: BAR_ITEMS }, (_, k) => (lm, ctx) => barItems(ctx?.pose === 'mistake' ? BARS.mistake : barOf(lm))[k]),
+    // in the Mistake view only the Mistake's own bar is drawn (D-HELD6-MGHOST: no start or ghost bar there)
+    ...Array.from({ length: BAR_ITEMS }, (_, k) => (lm, ctx) => (ctx?.mistake && ctx.pose !== 'mistake' && ctx.pose !== 'end' ? null : barItems(ctx?.pose === 'mistake' ? BARS.mistake : barOf(lm))[k])),
     // the start bar's phantom (Q2 (c); DRAWING-GUIDE 4): the start layer drops moving equipment, so the start plate and
     // pad are redrawn as hidden lines in the end layer, where the Trace starts
-    (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-line m-line', pts: [...ring(BARS.start, PLATE_D / 2), ring(BARS.start, PLATE_D / 2)[0]], z: 'front', part: 'phantom' } : null),
-    (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-line m-line', pts: [...ring(BARS.start, PAD_R, 16), ring(BARS.start, PAD_R, 16)[0]], z: 'front', part: 'phantom' } : null),
+    (lm, ctx) => (ctx.pose === 'end' && !ctx.mistake ? { type: 'line', cls: 'eq-line m-line', pts: [...ring(BARS.start, PLATE_D / 2), ring(BARS.start, PLATE_D / 2)[0]], z: 'front', part: 'phantom' } : null),
+    (lm, ctx) => (ctx.pose === 'end' && !ctx.mistake ? { type: 'line', cls: 'eq-line m-line', pts: [...ring(BARS.start, PAD_R, 16), ring(BARS.start, PAD_R, 16)[0]], z: 'front', part: 'phantom' } : null),
   ],
   checks: [
     ...factChecks('start', start, ['heel.l', 'heel.r', 'ball.l', 'ball.r', 'wrist.l', 'wrist.r']),
@@ -227,14 +238,20 @@ export default {
   tempo: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
+    parts: ['head'],   // the trunk is the red dashed outline below, not the masked union (lying_leg_curl.mjs's form)
     guides: [
-      { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
+      { kind: 'dashed', smooth: true, pts: TRUNK_LINES.top },
+      { kind: 'dashed', smooth: true, pts: TRUNK_LINES.under },
     ],
     tells: [
       // one tell (D-HELD6-HIPTHRUST): `ribs` is dropped (1.86 px does not read) and kept in the cue, as reverse_lunge's
-      { key: 'arch', text: 'Back<br>arched', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 150, top: 170 }, cue: 'The lower back arches and the ribs flare up as the hips lock out.' },
+      // the anchor is the lumbar underside at plate x 164 (D-HELD6-RING, #368 6569943739): two thirds of the way from
+      // backMid to the lumbar pivot, moved 2.00 px back and 2.15 px down onto the red underside line; it moves 2.98 px
+      // (the drawn underside's own move there), so the ring sits on the underside clear of the plate rim
+      { key: 'arch', text: 'Back<br>arched', anchor: { along: ['backMid', 'lumbar'], t: 0.67, pose: 'mistake', off: [-2, 2.15] }, box: { left: 150, top: 170 }, cue: 'The lower back arches and the ribs flare up as the hips lock out.' },
     ],
   },
-  zoom: { view: 'mistake', k: 3 },   // the ring on the arch; 3 is the smallest ladder k that passes (sacrum 4.28 px: 12.83 at k 3, 10.70 at k 2.5)
+  zoom: { view: 'mistake', k: 4 },   // D-HELD6-RING: the ring on the lumbar underside; 4 is the smallest ladder k that passes (2.98 px: 11.92 at k 4, 10.43 at k 3.5)
+  mistakeGhosts: false,   // D-HELD6-MGHOST (panel mx25 R5 a): the Mistake view leaves out the start pose and the ghosts
   alt: 'Hip thrust, side view. Upper back on a bench edge, feet flat, a padded barbell held in the hip crease: the hips drive up until shoulders, hips and knees form a level line with the shins vertical, then lower toward the floor.',
 };

@@ -9,6 +9,7 @@ import { REF_CHROME, anchorInPose, equipmentItems, poseLandmarks, cameraOf, reso
 import { PARAMS, paramProblems } from '../derive.mjs';
 import { fragmentsOf } from '../../golden.mjs';
 import { isUntimed, wordProblems } from '../strip/tempo-strip.mjs';   // LIB-STRIP
+import { mistakePlate } from '../mistake-ghosts.mjs';   // D-HELD6-MGHOST
 
 /** Medical-claim bans for new plate copy (content.md 4, "Medical-claim bans"). */
 export const MEDICAL = [
@@ -26,7 +27,7 @@ const isEngine = c => !!c.spec;
 export function rendersOf(c, E) {
   if (!isEngine(c)) return null;
   const pre = c.plate.prefix, r = { normal: E.renderPlate(c.spec, { id: `${pre}-n` }) };
-  if (c.spec.mistake) r.mistake = E.renderPlate(c.spec, { id: `${pre}-m`, mistake: true });
+  if (c.spec.mistake) r.mistake = mistakePlate(c.spec, E.renderPlate(c.spec, { id: `${pre}-m`, mistake: true }));   // D-HELD6-MGHOST
   for (const k of (c.spec.callouts ?? []).filter(x => x.guide).map(x => x.key)) r[`selected:${k}`] = E.renderPlate(c.spec, { id: `${pre}-n`, selected: k });
   return r;
 }
