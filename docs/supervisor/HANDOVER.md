@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-11-03 ~05:20 UTC · main `2f6ca539` (train 60) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
+**Last updated:** 2026-11-03 ~08:20 UTC · main `2f6ca539` (train 60) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -830,6 +830,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 - **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
 
+- **Update 08:20 UTC (11-03):** main `2f6ca539`, 131/153 merged. Both lanes are in review: #366 LIB-SUPCORE READY @ `557b3b45` (reviewer session_018Pv5bJRm5mUjPbh2dWaeGp) and #364 LIB-SPLIT READY @ `adf89498` (6597529504; reviewer session_018Pv5bJ5ThjmX7Ptze2TTFe). On each PASS: freeze, then train 61 (both lanes plus this file). Then 142/153 are merged and the 11 held rows go to the owner.
 - **Update 05:20 UTC (11-03):** main `2f6ca539` (train 60), 131/153 merged.
   - **LIB-SUPCORE #366:** READY @ `557b3b45` (6595243776). The reviewer session_018Pv5bJRm5mUjPbh2dWaeGp is running checks. On PASS: freeze, then the train.
   - **LIB-SPLIT #364:** mx30 VALID, bulgarian FAIL; mx31 (the second focused round under D-SPLIT-BSSHOVER) VALID, and **bulgarian_split_squat is APPROVED @ `7f8afd68`**. All 6 rows are approved; READY is being built (head `adf89498`).
