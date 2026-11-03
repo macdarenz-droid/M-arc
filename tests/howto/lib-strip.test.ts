@@ -90,6 +90,8 @@ const LABELS: Record<string, string> = {
   diamond_push_up: 'Tempo: press, lower',
   pike_push_up: 'Tempo: lower, press',
   wall_ball: 'Tempo: squat, throw',
+  dead_bug: 'Tempo: lower slow, return slow',   // LIB-SUPCORE (D-SUPCORE-STRIP)
+  v_up: 'Tempo: lower, lift',   // LIB-SUPCORE (D-SUPCORE-STRIP; fallbackA, PLAN RULED Q3)
 };
 
 describe('A4: the strip, on NOSECS_STRIP with the vendored esc and plain', () => {
@@ -287,13 +289,14 @@ describe('A9: extractPlates and PQ-H2 on a built page', () => {
   }, 60_000);
 });
 
-/** D-STRIP-SCOPE's 17 plus D-STRIP-ALL's 8 (LIB-STRIP start). */
+/** D-STRIP-SCOPE's 17 plus D-STRIP-ALL's 8 (LIB-STRIP start), plus LIB-SUPCORE's dead_bug and v_up (D-SUPCORE-STRIP). */
 const SCOPE = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'step_up', 'pistol_squat', 'box_jump', 'reverse_lunge', 'jump_squat', 'bulgarian_split_squat',
   'walking_lunge', 'forward_lunge', 'bodyweight_lunge', 'bodyweight_split_squat', 'renegade_row', 'sled_pull', 'flutter_kicks', 'bear_crawl',
-  'cable_rear_delt_fly', 'sled_push', 'farmer_s_carry', 'burpee', 'medicine_ball_slam', 'wall_ball', 'diamond_push_up', 'pike_push_up'];
+  'cable_rear_delt_fly', 'sled_push', 'farmer_s_carry', 'burpee', 'medicine_ball_slam', 'wall_ball', 'diamond_push_up', 'pike_push_up',
+  'dead_bug', 'v_up'];   // LIB-SUPCORE (D-SUPCORE-STRIP, lib-supcore-card ruling 10): the two SUPCORE rows with no tempo seconds
 const SET_LEVEL_PHASE = /^(set|sets|rep|reps|rest)$/i, SET_LEVEL_SAYS = /(?<![A-Za-z])(set|sets|rep|reps|rest|round|rounds|failure)(?![A-Za-z])/i;
 /** sha256 of rows.json's canonical JSON (JSON.stringify of the parsed file), set at 'STRIP ROWS VERIFIED' (Do 6). */
-const ROWS_PIN = '310c4093e291b4bc793fb02e84c710bf61beefc113719f203c886e48fded4b65';   // the rows verified at 511ded30, plus D-STRIP-BURPEE's burpee row, re-synced to research 42cf542a; sled_push and medicine_ball_slam moved from leftOut to fallbackA (D-LIB22-STRIPROWS, #331 6410069703); diamond_push_up and pike_push_up moved from leftOut to fallbackA (D-LIB17R3-STRIPROWS, #356); wall_ball moved from leftOut to fallbackA (D-SMALL-WBSTRIPROWS, LIB-SMALL)
+const ROWS_PIN = '67f39b3009d161053d6e77ba9573861cb16b9054c1a4b1ff92f9e8b6ff15528e';   // the rows verified at 511ded30, plus D-STRIP-BURPEE's burpee row, re-synced to research 42cf542a; sled_push and medicine_ball_slam moved from leftOut to fallbackA (D-LIB22-STRIPROWS, #331 6410069703); diamond_push_up and pike_push_up moved from leftOut to fallbackA (D-LIB17R3-STRIPROWS, #356); wall_ball moved from leftOut to fallbackA (D-SMALL-WBSTRIPROWS, LIB-SMALL); dead_bug added to cards and v_up to fallbackA (D-SUPCORE-STRIP, LIB-SUPCORE #366)
 
 /** A11's checks on a parsed rows.json; returns problems. */
 function rowProblems(R: any, V: any): string[] {
@@ -353,9 +356,9 @@ describe('A11: the rows (D-STRIP-ROWS, -SCOPE, -SAYS, D-STRIP-ALL)', () => {
     ];
     for (const [name, bad, re] of cases) expect([name, bad.some(b => re.test(b))]).toEqual([name, true]);
     const R1 = rows(); R1.cards.push({ id: 'bear_crawl', lane: 'LB10', text: 'x', claim: 'c4', rows: [{ phase: 'Walk', move: true, word: 'Controlled', says: 'controlled', claim: 'c4' }] });
-    expect(rowProblems(R1, V).some(b => /are not the scope's 25, each once/.test(b))).toBe(true);
+    expect(rowProblems(R1, V).some(b => /are not the scope's 27, each once/.test(b))).toBe(true);
     const R2 = rows(); R2.cards.pop();
-    expect(rowProblems(R2, V).some(b => /are not the scope's 25, each once/.test(b))).toBe(true);
+    expect(rowProblems(R2, V).some(b => /are not the scope's 27, each once/.test(b))).toBe(true);
     const R4 = rows(); R4.fallbackA[0].rows[0] = { phase: 'Lower', move: true, word: 'Controlled', says: 'Controlled descent', quote: 'control', claim: 'b7' };
     expect(rowProblems(R4, V)).toContain('bodyweight_squat: a word on a fallbackA card');
     const R5 = rows(); R5.cards.find((c: any) => c.id === 'front_squat').rows[0] = { phase: 'Lower', move: true, blank: true, claim: 'c21' };

@@ -440,6 +440,30 @@
      "quote": "Keep your arms long, your torso upright, and your gaze ahead. Walk with controlled steps."
     }
    ]
+  },
+  {
+   "id": "dead_bug",
+   "lane": "LIB-SUPCORE #366",
+   "text": "No source gives seconds, so up, down and pause stay null (LR-33). ACE asks to lower the arm and leg slowly and to bring them back slowly (c4); with \"slowly\" on both phases, the 2 s down / 1 s up convention would contradict the return, and R-LB7-6 lets a card with a slow quote keep null. Garage Gym Reviews' \"take a beat in between each rep\" (c7) is a form check between reps with no length; its pause dead bug, a pause at the bottom, is a named variation, not this exercise.",
+   "claim": "c4",
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Slow",
+     "claim": "c4",
+     "says": "lower the arm and leg slowly",
+     "quote": "Inhale and maintain the abdominal hollowing while slowly lowering the right heel and left hand towards the floor. The hand and heel should lightly touch the floor (but not rest), exhale continue the abdominal hollowing and slowly bring the leg and arm back to the initial starting position."
+    },
+    {
+     "phase": "Return",
+     "move": true,
+     "word": "Slow",
+     "claim": "c4",
+     "says": "bring them back slowly",
+     "quote": "Inhale and maintain the abdominal hollowing while slowly lowering the right heel and left hand towards the floor. The hand and heel should lightly touch the floor (but not rest), exhale continue the abdominal hollowing and slowly bring the leg and arm back to the initial starting position."
+    }
+   ]
   }
  ],
  "fallbackA": [
@@ -556,6 +580,27 @@
     }
    ],
    "why": "D-SMALL-WBAFALL (D-STRIP-AFALL in the D-LIB22-AFALL form)"
+  },
+  {
+   "id": "v_up",
+   "lane": "LIB-SUPCORE #366",
+   "text": "No source gives seconds for any phase, so up, down and pause stay null (LR-33, R-LB7-6). Fitness Volt allows an explosive version with more speed, or slower reps to make it harder (c14). ACE's \"control movement speed\" and its holds of 5-30 s belong to its seated V-up progression, another version (c13). No quote on the card asks for a pause at the top of the classic V-up.",
+   "claim": "c14",
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "blank": true,
+     "claim": "c14"
+    },
+    {
+     "phase": "Lift",
+     "move": true,
+     "blank": true,
+     "claim": "c14"
+    }
+   ],
+   "why": "D-SUPCORE-STRIP (PLAN RULED Q3, #366 6552704443; D-STRIP-AFALL): c14 gives both more speed and slower reps, so no single word holds (contested); the order follows the swapped draw (lying is the spec end)"
   }
  ],
  "timedAtHead": [

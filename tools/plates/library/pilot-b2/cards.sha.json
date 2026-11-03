@@ -1,0 +1,10 @@
+{
+ "note": "sha256 of crunch's card and quotes file at the research head (LIB-SUPCORE; the same blob as pilot B's research copy, pilot-b/cards.sha.json). The card gains only the three machine keys (plateFacts, tempo, topFault) in one block before the final brace (Do 3); tests/howto/lib11-pilot-b2.test.ts removes that block and compares these bytes.",
+ "researchHead": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
+ "cards": {
+  "crunch": "8e45ee1579fae82b255377ddead6b581fef7298fe2ed8b4a7e579ce5d3d0fe13"
+ },
+ "quotes": {
+  "crunch": "f31cc3a6cea20091fa22a96d9fb90484123cb15030dcaa70ca415f048c6ffbea"
+ }
+}

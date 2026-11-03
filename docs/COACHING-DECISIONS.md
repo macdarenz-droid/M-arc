@@ -3036,6 +3036,19 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   and the blind TOPFAULT pass answered 'flare'. The two ids' rows and tests moved from pilot-a2/ to pilot-a3/
   (D-A3-TESTHOME).
 - **Source:** PR #362; pilot-a3/DESIGN.md.
+## LIB-SUPCORE wave 2: the 5 SUPCORE rows (builder, 2026-11-02; card docs/supervisor/verify/lib-supcore-card.md, rulings on #366)
+- **D-SUPCORE-MODES, -ANCHOR.** reverse_crunch, dead_bug, v_up, flutter_kicks and hollow_body_hold are H rows drawn from
+  crunch's approved bytes (`716bf3b7`): its supine solve, the flat low back (PELVIS_TUCK 15), the floor camera and the
+  T12 curl. **Why:** none differs from crunch only in a PARAMS key, so no SUPCORE template is built.
+- **The arch Mistake.** dead_bug, v_up and flutter_kicks tip the pelvis 14 deg (crunch's MIS_TILT) with the thorax held
+  exactly still (a 3x3 solve), so only the low back lifts (4.56 cm under the lumbar). **Why:** a solve that kept the upper
+  back down turned the thorax and moved the head, which would read as a second fault.
+- **D-SUPCORE-HOLDMAX.** hollow_body_hold holds 'max 30' (c12 "up to 30 seconds"). **Why:** "up to 30 s" is 4 words and
+  fails PQ-H8.
+- **D-SUPCORE-RCBACK.** reverse_crunch's 'Back down' leader crosses the near arm (24.7 px) to the low back's roll-off
+  point. **Why:** the arm by the side covers the whole low back in a side view; R4 decides it.
+- **Waits.** dead_bug and v_up are drawn but off rows.json and without card keys until #358 writes their strip rows.
+- **Source:** PR #366; lb9/DESIGN.md section 26.14.
 ## HELD-A: hip_thrust's panel mx25 fix 2 (builder, 2026-11-02; #368, rulings D-HELD6-MGHOST, D-HELD6-RING, D-HELD6-TOES)
 - **D-HELD6-MGHOST.** hip_thrust's Mistake view no longer draws the start pose or the ghosts. An opt-in spec field
   (`mistakeGhosts: false`) is read by one library function shared by the page build, node QA and the zoom render. The
@@ -3067,7 +3080,7 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   leader can reach the Mistake chest past the pulley, which sits at the end chest's depth and height (c1). The pulley,
   its pin, the frame and the cable all come within 0.00-3.00 px. So pallof_press is held again on route F-PALLOF-VIEW
   (the turned view). **Why:** a wider nit and a moved pulley were refused, and the engine has no leaderless tell.
-- **Source:** PR #371; lb9/DESIGN.md §26.
+- **Source:** PR #371; lb9/DESIGN.md §27.
 ## LIB-SMALL: jumping_jacks, wall_ball (LB10) and jump_squat (LB4) (builder, 2026-11-02; card docs/supervisor/verify/lib-small-card.md, rulings D-SMALL-*)
 - **D-SMALL-RPCGUARD.** F-VITEST-RPC (#358 6552271304) in the D-LIB13S-RPC form: every whole-page build and generate's
   render in lb4-plates.test.ts and lb10-plates.test.ts runs in an awaited child process, assertions unchanged (LB4's
@@ -3104,6 +3117,27 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   contacts on forward_lunge, walking_lunge and bulgarian_split_squat; direction words ("parallel", "about vertical")
   stay card-true pose tests, not facts.
 
+## LIB-SUPCORE panel mx27 fix round (builder, 2026-11-02; #366 6579428932, rulings 6580574917)
+- **D-SUPCORE-LUMBARTELL.** The arch tell on flutter_kicks, dead_bug and v_up sits on the lumbar point, its leader from
+  above through the trunk (named entries 12-19 px). **Why:** the zoom then rings the floor and the daylight under the low
+  back; on the belly it missed them.
+- **D-SUPCORE-KICKDATUM.** flutter_kicks shows the kick with a plumb beside the heels and one in-between leg ghost.
+  **Why:** a two-headed arrow in the main drawing would be a new engine feature.
+- **D-SUPCORE-KICKZOOM.** The zoom stays on the heel at k 3.5, with the circle moved nearer. **Why:** the toe gives no
+  rung whose ring holds both heels and the floor while the Trace still passes its bar.
+- **Source:** PR #366; lb9/DESIGN.md section 26.14.
+
+## LIB-SUPCORE panel mx29 and CARD FIELDS cfdv
+
+- **D-SUPCORE-FLUTTERHOLD.** flutter_kicks is held after panel mx29. It stays drawn, and its card keys, strip row and
+  How-to source stay, but it is off lb9/rows.json. **Why:** the panel still saw no kick motion and no floor in the
+  zoom. The fixes need a two-headed arrow or a zoom ring placed off the Trace path, both new engine features
+  (route F-FLUTTER-ZOOM).
+- **dead_bug's knees.** Both knees are facts at 90 degrees in the start pose (c3), and the drawing measures 90.00.
+- **D-SUPCORE-VUPOUTLINE.** v_up's floor contact at the V is the drawn torso outline, not the buttock point. The point
+  sits 1.99 cm up, inside the soft tissue. The fact is added once the outline check (#368) is on main.
+  **Why:** lowering the figure would sink an approved drawing into the floor.
+- **Source:** PR #366 (6588547503, 6587871953, 6588653190); lb9/DESIGN.md sections 15 and 26.5.
 - **jump_rope lifted (D-HELD6-JUMPROPE).** In the air the ankles point to −10° (box_jump's approved flight ankle, c10
   and c11). The toe stays HOP 3.8 cm over the floor. The Trace is shown in a normal-view zoom at k 3: lb10's rule needs
   10 % over the bar, and the card's k 2.5 gives 23.4 px, under that. **Source:** PR #368; lb10/DESIGN.md section 24.
@@ -3121,3 +3155,6 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   the floor with one rear-knee tell, and knee.l's end fact becomes a height fact (0.079 m). The knee's 11.63 px move
   needs no zoom. **Why:** the fault reads as a gap against a contact; the 1 cm hip drop did not.
 
+- **Source:** PR #371 (6579432546, 6579536635); lb9/DESIGN.md §15, §27.
+- **v_up's outline fact added (after train 60).** The V's contact is now checked: the torso outline must lie within
+  0.5 cm of the floor, and it does (0.00 cm). The drawing did not change.

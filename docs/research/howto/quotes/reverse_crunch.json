@@ -1,0 +1,383 @@
+{
+ "id": "reverse_crunch",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-revcrunch",
+   "text": "Starting Position: Lie in a supine (on your back) position on a mat with your knees bent, feet flat on the floor and arms spread out to your sides with your palms facing down.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bb-revcrunch",
+   "text": "Lie down on a flat surface with your back on the ground and your eyes facing toward the ceiling. Position your arms straight by the sides of your body. Push your palms into the ground.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "motra-revcrunch",
+   "text": "Lie flat on your back on a mat with arms by your sides, palms down.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-revcrunch",
+   "text": "Gently exhale, stiffen your torso by contracting your abdominal/core muscles (\"bracing\") and slowly lift your feet off the floor, raising your knees directly above your hips while maintaining a 90 degree bend in the knees.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-revcrunch",
+   "text": "Lift your lower body off the ground and bend your knees, so your legs form an upside-down “L.” Make sure that when you are in this position, your lower back is flat on the floor. This is the starting position for the reverse crunch.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "motra-revcrunch",
+   "text": "Bend knees to 90 degrees, lifting thighs perpendicular to floor and shins parallel.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-revcrunch",
+   "text": "Upward Phase: Exhale, contract your abdominal, core and hip flexor muscles and slowly raise your hips off the mat, rolling your spine up as if trying to bring your knees towards your head (your hips and pelvis should move towards your rib cage).",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-revcrunch",
+   "text": "Crunch through your abdominal muscles to bring your knees to your chest as you roll your lower back off the floor. Exhale as you bring your thighs up and back toward your chest.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "pg-revcrunch",
+   "text": "Brace your core by pushing the bellybutton to the spine, then curl your glutes and lower back off the floor to bring your knees towards your chest.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-revcrunch",
+   "text": "Avoid any change in the angle of your knees during the roll-up.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-revcrunch",
+   "text": "Make sure that you keep your knee angle consistent at 90 degrees throughout the whole movement.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "motra-revcrunch",
+   "text": "Keep knees bent at 90 degrees throughout the lift.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-revcrunch",
+   "text": "Use your arms and hands to assist with maintaining your balance and continue to curl-up until your spine cannot roll any further. Hold this position briefly.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "motra-revcrunch",
+   "text": "Lift hips until tailbone clears floor and knees approach chest; lower until lower back contacts mat without full leg drop.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ace-revcrunch",
+   "text": "Downward Phase: Gently inhale and lower your spine back towards the mat in a controlled fashion, moving your upper thighs backwards until they are positioned directly over your hips.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-revcrunch",
+   "text": "Inhale as you slowly return your lower back to the floor in a controlled manner. Flatten your back gradually down to your tailbone. Stop when you reach your starting position.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-revcrunch",
+   "text": "Proper form is important when performing this exercise to prevent excessive stresses on your low back. When returning to your starting position during the repetitions, control your leg movement ensuring that your knees don't move past your hips, but instead return to a position directly above your hips.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-revcrunch",
+   "text": "Since the abdominals connect the rib cage to the pelvis, the emphasis of the movement should be on pulling your pelvis upwards towards your rib cage.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-revcrunch",
+   "text": "To avoid making this ab move too much of a hip flexor exercise, use your core to curl your hips off the floor toward your chest instead of initiating the movement with your legs.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-revcrunch",
+   "text": "If you do not lift your back off the floor and you end up only hinging at your hips, you are not engaging your abdominals enough. You are consequently only training your hip flexors instead.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-revcrunch",
+   "text": "To make sure you’re fully engaging your abs instead of just yanking through your hip flexors, focus on making sure the movement comes from crunching your abs together. Actively curl your lower back away from the ground to help this happen.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-revcrunch",
+   "text": "Avoid letting your back just flop back down as one unit. Really concentrate on returning to the ground vertebrae by vertebrae, moving slowly and with control.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-revcrunch",
+   "text": "You do not want to tuck your knees too far back toward yourself when you perform the reverse crunch. This is because when you tuck your knees back too much you end up bringing your whole body weight onto your upper back and then towards your neck.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-revcrunch",
+   "text": "You don’t want to lose control at the top of the lift and risk the alignment of your neck. Instead, maintain a 90-degree angle with your knees at all times throughout the exercise. This will help protect your neck and keep the emphasis on your core.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "pg-revcrunch",
+   "text": "It is important to keep the core engaged to ensure the lower back does not arch when performing reverse crunches, as this can put strain on the lower back.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "motra-revcrunch",
+   "text": "Arching lower back.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "motra-revcrunch",
+   "text": "Inhale and slowly lower hips back to start without arching lower back.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "motra-revcrunch",
+   "text": "Swinging legs with momentum.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "motra-revcrunch",
+   "text": "Curl from abs, not momentum.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "pg-revcrunch",
+   "text": "It can be tempting to use momentum to lift the legs, however reverse crunches should be performed with control to ensure the movement comes from the abs.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "motra-revcrunch",
+   "text": "Letting feet touch floor between reps.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "pg-revcrunch",
+   "text": "The reverse crunch primarily works the rectus abdominis through spinal flexion. The obliques and hip flexors are also worked.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-revcrunch",
+   "text": "While mainly targeting the abdominal muscles (what you think of when you visualize a six-pack), this move also targets the obliques and hip flexors.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-revcrunch",
+   "text": "You may feel the reverse crunch in your lower abdominal fibers more and feel the crunch in your upper abdominal fibers more.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "bb-revcrunch",
+   "text": "As such, it’s normal for them to be somewhat involved in the reverse crunch. Just make sure they don’t take over the exercise by concentrating on initiating each movement with your abs, not your legs.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "motra-revcrunch",
+   "text": "Exhale during the hip lift and contraction; inhale as you lower back to start. Brace core throughout.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "motra-revcrunch",
+   "text": "Stop if sharp pain occurs in back or neck.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "motra-revcrunch",
+   "text": "Avoid if you have acute back or neck injuries.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "bb-revcrunch",
+   "text": "If you have a hard time flattening your lower back, you can keep your hands underneath your tailbone. This will help you tuck your pelvis under and flatten your lower back.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "motra-revcrunch",
+   "text": "Use hands under hips for support if needed.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "bb-revcrunch",
+   "text": "For Muscle Mass: Aim for three to four sets of eight to 20 repetitions.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "bb-revcrunch",
+   "text": "If you need to load the reverse crunch to achieve this, you can attach ankle weights or a cable machine handle to your ankles to increase resistance.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "motra-revcrunch",
+   "text": "2-1-2",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "motra-revcrunch",
+   "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "motra-revcrunch",
+   "text": "Pause briefly at top to squeeze abs.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "ace-revcrunch",
+   "text": "Hold this position briefly.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "pg-revcrunch",
+   "text": "Take a short pause before slowly lowering your legs, glutes, and lower back as you return to the starting position.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  }
+ ]
+}
