@@ -1077,8 +1077,10 @@ console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;
 
 /** The approved LB9 plates' card fragments (`<article ... id="card-<slug>">` ... `</article>`), sha256 first 16 hex:
  *  ab_wheel_rollout and bird_dog from the LB9 slice and bulk panels, side_plank from mx1 (#326 6414221457), superman
- *  from mx7 (#337 6540319980, at 1273e4f6). */
-const APPROVED_FRAGS: Record<string, string> = { 'ab-wheel-rollout': 'e0e6d3b9aaeaa902', 'bird-dog': '4ae4f8913f726103', 'side-plank': '18e0fb027e416a05', superman: '2ed02b364e72c3a4' };
+ *  from mx7 (#337 6540319980, at 1273e4f6). LIB-SUPCORE (review 6599286972, ruling 6599303605): cable_crunch from mx18
+ *  (at d9e8085d), and hollow_body_hold, reverse_crunch, dead_bug and v_up from mx29 (#366 6588547503, at b6f7dd59). */
+const APPROVED_FRAGS: Record<string, string> = { 'ab-wheel-rollout': 'e0e6d3b9aaeaa902', 'bird-dog': '4ae4f8913f726103', 'side-plank': '18e0fb027e416a05', superman: '2ed02b364e72c3a4',
+  'cable-crunch': '17c013e5d7d341ba', 'hollow-body-hold': 'f1e3f6990bc6dd7a', 'reverse-crunch': '8d189ceca9f17ee7', 'dead-bug': 'dffcec3c1d6655c0', 'v-up': '55c3ecd9f47f2a30' };
 const FRAG_RE = '/<article [^>]*id="card-([a-z-]+)"[\\s\\S]*?<\\/article>/g';
 const fragProblems = (frags: Record<string, string>) => Object.entries(APPROVED_FRAGS).flatMap(([k, v]) => ((frags[k] ?? '').slice(0, 16) === v ? [] : [`${k}: ${(frags[k] ?? 'missing').slice(0, 16)} != approved ${v}`]));
 describe('LIB-21 A10: the LB9 plates page is deterministic (PQ-H7; built in an awaited child process)', { timeout: T }, () => {
@@ -1096,8 +1098,17 @@ console.log(JSON.stringify({ ids: b.drawnIds(), a: sha(a.html), c: sha(c.html), 
     expect(fragProblems(r.frags)).toEqual([]);
   });
   it('mutation: one byte changed in an approved card fragment is red', () => {
-    const f = { 'ab-wheel-rollout': 'x', 'bird-dog': 'x', 'side-plank': 'x', superman: 'x' };
-    expect(fragProblems(f).length).toBe(4);
+    const f = Object.fromEntries(Object.keys(APPROVED_FRAGS).map(k => [k, 'x']));
+    expect(Object.keys(f).length).toBe(9);
+    expect(fragProblems(f).length).toBe(9);
+  });
+  it('mutation (LIB-SUPCORE): one hex character changed in any new entry is red, and only that entry', () => {
+    const ok = { ...APPROVED_FRAGS };
+    expect(fragProblems(ok)).toEqual([]);
+    for (const k of ['cable-crunch', 'hollow-body-hold', 'reverse-crunch', 'dead-bug', 'v-up']) {
+      const v = ok[k]!, flip = v.slice(0, -1) + (v.endsWith('0') ? '1' : '0');
+      expect(fragProblems({ ...ok, [k]: flip }), k).toEqual([`${k}: ${flip} != approved ${v}`]);
+    }
   });
 });
 

@@ -3080,7 +3080,7 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   leader can reach the Mistake chest past the pulley, which sits at the end chest's depth and height (c1). The pulley,
   its pin, the frame and the cable all come within 0.00-3.00 px. So pallof_press is held again on route F-PALLOF-VIEW
   (the turned view). **Why:** a wider nit and a moved pulley were refused, and the engine has no leaderless tell.
-- **Source:** PR #371; lb9/DESIGN.md §26.
+- **Source:** PR #371; lb9/DESIGN.md §27.
 ## LIB-SMALL: jumping_jacks, wall_ball (LB10) and jump_squat (LB4) (builder, 2026-11-02; card docs/supervisor/verify/lib-small-card.md, rulings D-SMALL-*)
 - **D-SMALL-RPCGUARD.** F-VITEST-RPC (#358 6552271304) in the D-LIB13S-RPC form: every whole-page build and generate's
   render in lb4-plates.test.ts and lb10-plates.test.ts runs in an awaited child process, assertions unchanged (LB4's
@@ -3128,6 +3128,6 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   above it, and pitch 0 hides the trunk behind the knees. So russian_twist is held on route F-RTWIST-SIT and goes on
   the named list. Its verified card fields and knee tell stay in the held spec. **Why:** a floor plane would be a new
   engine feature, which the ruling does not allow. HELD-B releases no row.
-- **Source:** PR #371 (6579432546, 6579536635); lb9/DESIGN.md §15, §26.
+- **Source:** PR #371 (6579432546, 6579536635); lb9/DESIGN.md §15, §27.
 - **v_up's outline fact added (after train 60).** The V's contact is now checked: the torso outline must lie within
   0.5 cm of the floor, and it does (0.00 cm). The drawing did not change.
