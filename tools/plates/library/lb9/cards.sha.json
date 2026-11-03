@@ -6,7 +6,7 @@
   "ab_wheel_rollout": "a06fc90a03da55296d218b26b9fffc38f1d87eef4f1735da86bd4021fd8c5c01",
   "bird_dog": "2c711994b9d75c8dfee65050d74dcd58f0b0dfb6232af8f22fb704864bef4712",
   "superman": "cb76fe0c7ad2b86d9f22e5f1bada72660917691febe74d0ef1b07b474a0bea33",
-  "pallof_press": "d87bd9d245fd4e1905935424e8631238f30aeee3ee5d59ec594e6bd2b84da32b",
+  "pallof_press": "c323f12ef6bec31ec9d88f35823a656d842f4888d61af62a8ca87bfa656c349b",
   "side_plank": "f55f3ad188e7df293b0f506df07973ce4aa52c01e33ffe06a9a778eb869a129e",
   "russian_twist": "a23ea99e37c320500995d33a8310f750316d4960b8b57d093ca55cb5e478f990",
   "bicycle_crunch": "2ef0d53d38c977c23675c525feb898b3d01ca2bb0f42c5b875475153271432c4"
@@ -16,10 +16,16 @@
   "ab_wheel_rollout": "9c309ef658d117fecb9e06968c90bbab85bfa09b38d38391b323331ea476ad94",
   "bird_dog": "90227dbb0b0499161f259ec38dadecc3e91b076c4270d34984ca47cbcd8ab5b1",
   "superman": "60555d03483a5c2ad960d7187541bc9f8c52cd0613a10dbac1e8cb0a9d334a44",
-  "pallof_press": "90eb52182d9d51bcfcb9ba619eaa463643e8f8d42131881590fc330b709d5f4b",
+  "pallof_press": "0113c465830b1849e0f896bcde5db5e211537e1d6161f1042b15a3ca6439ce6b",
   "side_plank": "f4bd56e2e70ca90971a29c7474ace3f54f8641fc7fbe2544cdfaa1c22ecb40fa",
   "russian_twist": "965f625496370e52db4a16cd07173c44d3bfac71c8e6f3755d772f80d56fd8db",
   "bicycle_crunch": "45e7e5bed5cc209a50f86a1e0ad52bb38dd0ec5d5f71f5951745e305d62fc87e"
+ },
+ "recopied": {
+  "pallof_press": {
+   "researchHead": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
+   "why": "D-HELD6-PALLOF (held6-card.md rulings; HELD-B PLAN RULED, #371 6570334648): F-RESEARCH-2 adds c20-c25 (c20, the chest lift, is the second tell) and rewords c12 and plate.mistake; the card and the quotes file are byte copies from that head, and its plateFacts, tempo and topFault are unchanged. The other 7 cards and quotes stay at researchHead."
+  }
  },
  "supcore": {
   "note": "LIB-SUPCORE wave 2 (D-SUPCORE-MODES, -ANCHOR): the 5 SUPCORE cards and quotes are byte copies from research a48b0594 (the LB9 research merge 8e4e7769's blobs, LR-29 VALID), hashed as above (the card with its three keys removed, canonical JSON; the quotes file's bytes).",

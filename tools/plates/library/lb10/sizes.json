@@ -448,6 +448,11 @@
     "value": "sole.r",
     "unit": "point",
     "basis": "claim: c9 'just enough for the jump rope to pass gracefully under your feet' (plate.frames 'the turn is not traced')"
+   },
+   "FLIGHT_ANKLE": {
+    "value": -10,
+    "unit": "deg",
+    "basis": "approved plate plus claims (D-HELD6-JUMPROPE, #368; D-LIB22-AIRBORNE 'box_jump's method'): box_jump.mjs's flight ankle -10 deg on its approved airborne frame, for c11 'The basic jump comes from the ankles and calves' and c10 'land softly on the balls of the feet'; HOP stays the lowest foot point"
    }
   },
   "jumpRope": {

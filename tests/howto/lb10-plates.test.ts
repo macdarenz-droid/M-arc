@@ -336,10 +336,10 @@ const T = 600_000;
 const SPECS_DIR = 'tools/plates/library/specs';
 const ROWS = 'tools/plates/library/lb10/rows.json';
 const FRONT = ['jumping_jacks', 'jump_rope'];
-// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; jump_rope's Trace, short of the bar at kMax).
+// DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids).
 // farmer_s_carry left at 'LIB-22 resume 2' (F-R2-FARMER-5); jumping_jacks at 'LIB-22 resume 3' (LIB-SMALL:
 // D-SMALL-JJFACTS, -JJZOOM).
-const HELD = [...NOSECS, 'jump_rope'];
+const HELD = [...NOSECS];   // jump_rope lifted at 'HELD-A' (D-HELD6-JUMPROPE)
 // The ids drawn on this branch: the slice, then the bulk as each plate is integrated (BULK GO, #305 6356763967).
 const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl', 'high_knees', 'jumping_jacks', 'battle_ropes', 'wall_ball'];
 const COMPOSERS = ['kettlebell', 'medBall', 'sled', 'jumpRope', 'battleRope'];
@@ -952,9 +952,9 @@ describe('LIB-22 A2 / A18: jump_rope and `jumpRope` (front view; held: D-LIB8-sh
     if (low >= soles) out.push('rope not under the soles');
     return out;
   };
-  it('c9: in the hop the soles are HOP up (±0.5 cm) and the rope passes under them, on or above the floor', () => {
+  it('c9: in the hop the lowest foot point is HOP up (±0.5 cm; the pointed toe since D-HELD6-JUMPROPE) and the rope passes under it, on or above the floor', () => {
     const l = lmOf(s(), 'end');
-    expect(Math.abs(Math.min(...['heel.l', 'heel.r', 'ball.l', 'ball.r'].map(k => l[k][1])) - K().SIZES.HOP)).toBeLessThanOrEqual(0.005);
+    expect(Math.abs(Math.min(...['heel.l', 'heel.r', 'ball.l', 'ball.r', 'toe.l', 'toe.r'].map(k => l[k][1])) - K().SIZES.HOP)).toBeLessThanOrEqual(0.005);
     expect(hopProblems(rope(s(), 'end')[2].pts, l)).toEqual([]);
   });
   it('A18 mutation: the rope\'s lowest point 1 cm below the floor in the hop is red', () => {
@@ -972,12 +972,17 @@ describe('LIB-22 A2 / A18: jump_rope and `jumpRope` (front view; held: D-LIB8-sh
       expect(Math.abs(l['elbow.l'][0] - l['shoulder.l'][0])).toBeLessThanOrEqual(0.08);
     }
   });
-  it('held (D-LIB8-shrug, D-LIB22-SIZE, S2): the card-true hop\'s Trace at the ruled point is under traceLenMin; the Mistake deviation passes', () => {
+  it('D-HELD6-JUMPROPE: in the air the ankles are at FLIGHT_ANKLE (-10, box_jump\'s), the lowest foot landmark at HOP (M_HOP in the Mistake); the plate-scale Trace is under traceLenMin (the zoom lifts it) and the Mistake deviation passes', () => {
+    expect(K().SIZES.FLIGHT_ANKLE).toBe(-10);
+    const low = (p: string) => Math.min(...['heel', 'ball', 'toe'].flatMap(n => ['l', 'r'].map(sd => lmOf(s(), p)[`${n}.${sd}`][1])));
+    expect(low('end')).toBeCloseTo(K().SIZES.HOP, 4); expect(low('mistake')).toBeCloseTo(K().SIZES.M_HOP, 4);
+    expect(s().poses.end.ankle).toEqual({ l: -10, r: -10 });
     const env = pins().envelope, R = { normal: plate.renderPlate(s(), { id: 'x' }), mistake: plate.renderPlate(s(), { id: 'x', mistake: true }) };
     const dev = qaNode.deviation({ spec: s() }, Eng(), R), tr = markup.pathsOf(R.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0);
-    console.log(`LIB-22 H3 jump_rope: deviation ${dev.toFixed(1)} px, Trace ${tr.toFixed(1)} px (held)`);
+    console.log(`HELD-A H3 jump_rope: deviation ${dev.toFixed(1)} px, Trace ${tr.toFixed(1)} px at plate scale`);
     expect(tr).toBeLessThan(env.traceLenMin);
     expect(dev).toBeGreaterThanOrEqual(env.deviationMin);
+    expect(/;/.test(s().alt)).toBe(false);
   });
   it('the tempo strip is the ruled jump_rope row (Work 30, Rest 60)', () => {
     expect(s().tempo).toEqual([{ phase: 'Work', s: 30, move: true }, { phase: 'Rest', s: 60 }]);
@@ -995,7 +1000,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H (D-LIB22-B1)', () => {
-    expect(want()).toEqual(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry', 'lib_burpee', 'lib_jumping_jacks', 'lib_high_knees', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_wall_ball', 'lib_bear_crawl', 'lib_kettlebell_swing']);
+    expect(want()).toEqual(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry', 'lib_burpee', 'lib_jumping_jacks', 'lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_wall_ball', 'lib_bear_crawl', 'lib_kettlebell_swing']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('mountain_climbers (pA) is in no lb10/ file as a row; wall_ball has its spec (LIB-SMALL)', () => {
@@ -1016,14 +1021,15 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
       expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
     }
   });
-  it('mutations: a dropped row, a duplicated row, a held id (jump_rope), jumping_jacks and wall_ball dropped (LIB-SMALL A1), mountain_climbers and one mode set to D are red', () => {
+  it('mutations: a dropped row, a duplicated row, jump_rope dropped (HELD-A), jumping_jacks and wall_ball dropped (LIB-SMALL A1), mountain_climbers and one mode set to D are red', () => {
     const row = { src: 'library/specs/x.mjs', mode: 'H', stage: 'drawing', view: 'side' };
     const w = want(), j = { batch: 'LB10', rows: Object.fromEntries(w.map(id => [id, row])) };
     const text = JSON.stringify(j, null, 1), add = (id: string) => JSON.stringify({ ...j, rows: { ...j.rows, [id]: row } }, null, 1);
     expect(a5(text, w)).toEqual([]);
     expect(a5(JSON.stringify({ ...j, rows: {} }, null, 1), w)).toEqual(w.map(x => `${x} x0`));
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
-    expect(a5(add('lib_jump_rope'), w), 'a held id').toEqual(['extra lib_jump_rope']);
+    const { lib_jump_rope: _jr, ...noJr } = j.rows;
+    expect(a5(JSON.stringify({ ...j, rows: noJr }, null, 1), w), 'jump_rope dropped (HELD-A)').toEqual(['lib_jump_rope x0']);
     const { lib_jumping_jacks: _jj, ...noJj } = j.rows;
     expect(a5(JSON.stringify({ ...j, rows: noJj }, null, 1), w), 'jumping_jacks dropped').toEqual(['lib_jumping_jacks x0']);
     expect(a5(add('lib_mountain_climbers'), w)).toEqual(['extra lib_mountain_climbers']);
@@ -1410,6 +1416,17 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     const left = { ...S.wall_ball, callouts: S.wall_ball.callouts.map((c: any) => (c.key === 'distance' ? { ...c, box: { left: 16, top: 300 } } : c)) };
     expect(crossProblems(left).some(x => x.startsWith('wall_ball normal distance'))).toBe(true);
   });
+  // F-SMALL-WBMUT (#358 review Low 3, 6576459573): the exception's rule turns red through minGap on a real spec, not
+  // only on the synthetic slab: the "Right distance" box moved high above the anchor, so its leader runs down the wall
+  // and crosses the slab at under 45 deg.
+  it('F-SMALL-WBMUT: wall_ball with the "Right distance" box moved high (the leader crosses the wall at under 45 deg) is red in minGap', () => {
+    const s = S.wall_ball, at = (box: any) => ({ ...s, callouts: s.callouts.map((c: any) => (c.key === 'distance' ? { ...c, box } : c)) });
+    expect(minGap(s).min).toBeGreaterThanOrEqual(6);
+    const g = minGap(at({ left: 272, top: 140 })), m = /^normal distance: 1 wall crossing\(s\) at ([\d.]+) deg$/.exec(g.at);
+    console.log(`F-SMALL-WBMUT: box {272, 140}: ${g.at}`);
+    expect(g.min).toBe(-1);
+    expect(m && +m[1]!).toBeLessThan(45);
+  });
   it('mutation: medicine_ball_slam\'s "Hips and knees" box moved under the ball (its leader along the floor line) is red', () => {
     const s = S.medicine_ball_slam, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'hips' ? { ...x, box: { left: 200, top: 318 } } : x)) };
     expect(minGap(bad).min).toBeLessThan(6);
@@ -1689,7 +1706,8 @@ describe('LIB-22 resume: the zoom circles (D-LIBZOOM-EXTEND, lib4-cards §41; DE
   // zoom-scale value clears its bar by at least 10 %.
   const ZOOMS: Record<string, { view: string; k: number }> = {
     sled_pull: { view: 'normal', k: 3 }, burpee: { view: 'mistake', k: 2 }, bear_crawl: { view: 'normal', k: 4 },
-    jumping_jacks: { view: 'mistake', k: 2.5 },   // LIB-SMALL (D-SMALL-JJZOOM; D-LIB22-RINGFIT: at k 1.5 and 2 the source ring around the toes crosses the frame's bottom): the `toes` tell, 24.0 px
+    jumping_jacks: { view: 'mistake', k: 2.5 },
+    jump_rope: { view: 'normal', k: 3 },   // HELD-A (D-HELD6-JUMPROPE): the flight ankle's sole.r Trace, 28.1 px; k 2.5 gives 23.4 px, under the bar + 10 %   // LIB-SMALL (D-SMALL-JJZOOM; D-LIB22-RINGFIT: at k 1.5 and 2 the source ring around the toes crosses the frame's bottom): the `toes` tell, 24.0 px
   };
   let zi: any, qz: any, env: any;
   beforeAll(async () => {
@@ -1734,8 +1752,10 @@ describe('LIB-22 resume: the zoom circles (D-LIBZOOM-EXTEND, lib4-cards §41; DE
       await yieldNow();
     }
   });
-  it('jump_rope stays held: a normal zoom at kMax 4 is under traceLenMin', () => {
-    const m = measure({ ...S.jump_rope, zoom: { view: 'normal', k: zi.ZOOM.kMax } });
+  it('jump_rope mutations: k 2.5 (the ruling\'s, under the bar + 10 %) is red; the standing ankle in the air (main\'s end) stays under traceLenMin even at kMax 4', () => {
+    expect(ruleProblems('jump_rope', { ...S.jump_rope, zoom: { view: 'normal', k: 2.5 } })).toEqual(['jump_rope: zoom {"view":"normal","k":2.5}', expect.stringMatching(/^jump_rope: 23\.4 px under the bar \+ 10 %$/)]);
+    const st = S.jump_rope.poses.start, e = S.jump_rope.poses.end, flat = { ...e, ankle: { ...st.ankle }, root: { ...e.root, at: [st.root.at[0], st.root.at[1] + M.jump_rope.SIZES.HOP, st.root.at[2]] } };
+    const m = measure({ ...S.jump_rope, poses: { ...S.jump_rope.poses, end: flat }, zoom: { view: 'normal', k: zi.ZOOM.kMax } });
     expect(m.value).toBeLessThan(env.traceLenMin);
   });
   it('D-LIB22-RINGFIT mutation: sled_pull at k 1.5 and 2.5 (its source ring runs past the plate\'s bottom edge) is red', () => {
@@ -2244,5 +2264,18 @@ describe('LIB-SMALL: no whole-page build in the worker (F-VITEST-RPC, #358 65522
     expect(inWorker(`${src}\n  const page = await build.${'buildHeld'}Page();\n`)).toBe(true);
     expect(inWorker(`${src}\n  const page = await bp.${'buildPlates'}Page({});\n`)).toBe(true);
     expect(inWorker(`${src}\n  const out = await gen.${'ren'}der();\n`)).toBe(true);
+  });
+});
+
+// D-HELDA-JRF3 (#368 6579170603): jump_rope's F3 is named (the D-LIB18-F3KICK form); the ruled flag set stays exact
+// both ways: F3 missing on jump_rope is red, and F3 on any other id is red.
+describe('HELD-A D-HELDA-JRF3: the named F3 on jump_rope, exact both ways', () => {
+  const rep = (id: string, raised: string[]) => ({ id, flags: Object.fromEntries(['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7'].map(f => [f, { raised: raised.includes(f), value: f === 'F5' ? 3.57 : 0 }])) });
+  it('F3 and F5 on jump_rope pass; jump_rope without F3, and F3 on kettlebell_swing, are red', async () => {
+    const q = await import(/* @vite-ignore */ lib('lb10/qa.mjs'));
+    expect(q.F3_IDS).toEqual(['lib_jump_rope']);
+    expect(q.flagProblems([rep('lib_jump_rope', ['F3', 'F5'])])).toEqual([]);
+    expect(q.flagProblems([rep('lib_jump_rope', ['F5'])])).toEqual(['lib_jump_rope: flags F5 != ruled F3,F5']);
+    expect(q.flagProblems([rep('lib_kettlebell_swing', ['F3', 'F5'])])).toEqual(['lib_kettlebell_swing: flags F3,F5 != ruled F5']);
   });
 });

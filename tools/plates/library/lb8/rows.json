@@ -65,6 +65,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_resisted_hip_flexion": {
+   "src": "library/specs/resisted_hip_flexion.mjs",
+   "slug": "resisted-hip-flexion",
+   "prefix": "resisted-hip-flexion",
+   "chromeId": "resisted-hip-flexion",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }

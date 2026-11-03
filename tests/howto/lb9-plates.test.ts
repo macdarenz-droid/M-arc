@@ -48,6 +48,17 @@ describe('LIB-21 A11 (Do 6 a): the 8 cards and quotes are byte copies of the LB9
       expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
     }
   });
+  it('HELD-B (D-HELD6-PALLOF): pallof_press alone is re-copied, from F-RESEARCH-2\'s head a48b0594; its card carries c20 (the chest lift, the second tell) to c25', () => {
+    expect(Object.keys(cardsSha.recopied)).toEqual(['pallof_press']);
+    expect(cardsSha.recopied.pallof_press.researchHead).toBe('a48b059400a74d5c9e3aceed21cf1aa67ab6f118');
+    const c = cardOf('pallof_press');
+    for (const id of ['c20', 'c21', 'c22', 'c23', 'c24', 'c25']) expect(c.claims.some((x: any) => x.id === id), id).toBe(true);
+    expect(c.claims.find((x: any) => x.id === 'c20').quotes[0].text).toContain('lift the chest and extend the lumbar spine');
+  });
+  it('mutation (HELD-B): main\'s pre-recopy pallof_press card (no c20-c25) is red against the pin', () => {
+    const c = cardOf('pallof_press'); c.claims = c.claims.filter((x: any) => !['c20', 'c21', 'c22', 'c23', 'c24', 'c25'].includes(x.id));
+    expect(sha(canon(c))).not.toBe(cardsSha.cards.pallof_press);
+  });
   it('mutation: any other card key edited is red', () => {
     const c = cardOf('bird_dog'); c.plate.view = 'front';
     expect(sha(canon(c))).not.toBe(cardsSha.cards.bird_dog);
@@ -60,7 +71,7 @@ describe('LIB-21 A11 (Do 6 a): the 8 cards and quotes are byte copies of the LB9
     for (const id of NOT_HERE) expect(Object.keys(cardsSha.cards), id).not.toContain(id);
     for (const id of SUP) expect(Object.keys(cardsSha.cards), id).not.toContain(id);
   });
-  it('research/validate.mjs validateCardFile: no problem on the 8 cards (the 5 (a) cards with their keys, the 3 (b) cards without)', async () => {
+  it('research/validate.mjs validateCardFile: no problem on the 8 cards (the 5 (a) cards, side_plank and russian_twist with their keys, bicycle_crunch without)', async () => {
     const v = await import(/* @vite-ignore */ new URL('../../tools/plates/library/research/validate.mjs', import.meta.url).href);
     for (const id of LB9) expect(v.validateCardFile(`${id}.json`), id).toEqual([]);
   });
@@ -129,7 +140,7 @@ const RC_BACK = 24.7;   // LIB-SUPCORE D-SUPCORE-RCBACK: px inside the end figur
 // past its first 8 px (measured), entering from above through the trunk only; the anchor 1 px above `lumbar` keeps the
 // k 2 ring inside the frame (A8; at `lumbar` itself dead_bug's ring ends at 358.3 px and v_up's at 358.6)
 const LUMBAR_IN: Record<'flutter_kicks' | 'dead_bug' | 'v_up', [number, number]> & Record<string, [number, number] | undefined> = { flutter_kicks: [12.24, 18.36], dead_bug: [12.31, 18.47], v_up: [15.27, 16.66] };
-const HELD: string[] = ['pallof_press', 'russian_twist', 'flutter_kicks'];   // flutter_kicks: D-SUPCORE-FLUTTERHOLD (#366 6588547503, panel mx29; route F-FLUTTER-ZOOM)   // cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
+const HELD: string[] = ['pallof_press', 'russian_twist', 'flutter_kicks'];   // flutter_kicks: D-SUPCORE-FLUTTERHOLD (#366 6588547503, panel mx29; route F-FLUTTER-ZOOM)   // HELD-B (#371): pallof_press held again (D-HELDB-PALLOF2, route F-PALLOF-VIEW); russian_twist held again after panel mx27 (D-HELDB-RTSIT, route F-RTWIST-SIT); cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
 const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press', ...ER5_DRAWN, ...SUP];   // LIB-SUPCORE wave 2
@@ -757,6 +768,12 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     // the (b) row at the resume (D-LIB21-FACTS, D-LIB18-PUSHTHROUGH): c2 "Press your elbow, your hips, and your bottom
     // foot into the ground" holds the elbow down in the entry and, cited by plate.end, in the held pose; the hips lift
     // off ("Raise your hips"), and the rolled foot's edge has no engine landmark on the floor (not facts)
+    // HELD-B Do 7b (D-HELD6-RTWIST, PLAN RULED Q2 on #371): c1 sit on the floor, feet on the floor (start); c2 the hands
+    // on the ball (start, the grip rule); c5 the buttocks planted, cited by plate.end
+    // D-HELDB-RTSOLES (cfhb, #371 6574663054): c6 "keep your feet on the floor" holds through the movement (plate.start
+    // cites c6), so the soles are end facts too
+    russian_twist: [F('seat', 'start', 'c1'), F('sole.l', 'start', 'c1'), F('sole.r', 'start', 'c1'), F('wrist.l', 'start', 'c2'), F('wrist.r', 'start', 'c2'), F('seat', 'end', 'c5'),
+      F('sole.l', 'end', 'c6'), F('sole.r', 'end', 'c6')],
     side_plank: [F('elbow.r', 'start', 'c2'), F('elbow.r', 'end', 'c2'), F('hip.r', 'start', 'c2'),
       F('heel.r', 'start', 'c2'), F('ball.r', 'start', 'c2'), F('heel.r', 'end', 'c2'), F('ball.r', 'end', 'c2')],   // D-LIB21-SPFACTS (#326 6410127641), the foot (a)
     // LIB-SUPCORE (DESIGN.md 26.5; setup quotes state the start only, D-LIB9-FACTPOSE; the back read at the buttock,
@@ -793,15 +810,23 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     for (const f of c.plateFacts ?? []) if (!known.has(f.claim)) out.push(`${id}: fact claim ${f.claim} unknown`);
     return out;
   };
-  it('the 5 (a) cards and side_plank carry the ruled facts, tempo and topFault; russian_twist and bicycle_crunch (held) carry none yet', () => {
-    for (const id of [...Object.keys(TOP).filter(i => !SUP_WAIT.includes(i)), 'side_plank']) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
-    for (const id of ['russian_twist', 'bicycle_crunch', ...SUP_WAIT]) for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in cardOf(id), `${id} ${k}`).toBe(false);
+  it('the 5 (a) cards, side_plank and russian_twist (HELD-B) carry the ruled facts, tempo and topFault; bicycle_crunch (held) carries none yet', () => {
+    for (const id of [...Object.keys(TOP).filter(i => !SUP_WAIT.includes(i)), 'side_plank', 'russian_twist']) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
+    for (const id of ['bicycle_crunch', ...SUP_WAIT]) for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in cardOf(id), `${id} ${k}`).toBe(false);
   });
   it('mutations on side_plank\'s keys: a hip fact added, its Hold changed to 5–15, and topFault set to the drawn key (sink) are red', () => {
     const c = cardOf('side_plank');
     expect(keyProblems('side_plank', { ...c, plateFacts: [...c.plateFacts, { kind: 'contact', landmark: 'hip.r', pose: 'start', cardPose: 'start', claim: 'c2' }] }).length).toBe(1);
     expect(keyProblems('side_plank', { ...c, tempo: [{ phase: 'Hold', s: '5–15' }] }).length).toBe(1);
     expect(keyProblems('side_plank', { ...c, topFault: 'sink' }).length).toBe(1);
+  });
+  it('mutations on russian_twist\'s keys (HELD-B): a knee fact added, a Turn second changed, and topFault set to the drawn key (hips) are red', () => {
+    const c = cardOf('russian_twist');
+    expect(keyProblems('russian_twist', { ...c, plateFacts: [...c.plateFacts, { kind: 'contact', landmark: 'knee.l', pose: 'start', cardPose: 'start', claim: 'c1' }] }).length).toBe(1);
+    expect(keyProblems('russian_twist', { ...c, tempo: [{ ...c.tempo[0], s: 2 }, c.tempo[1]] }).length).toBe(1);
+    expect(keyProblems('russian_twist', { ...c, topFault: 'hips' }).length).toBe(1);
+    // D-HELDB-RTSOLES: the two c6 end soles removed
+    expect(keyProblems('russian_twist', { ...c, plateFacts: c.plateFacts.filter((f: any) => f.claim !== 'c6') }).length).toBe(1);
   });
   it('each fact\'s pose is the pose map\'s image of its card pose: identity for all 8 (D-LIB21-POSEMAP)', () => {
     // LIB-SUPCORE: v_up swaps (DESIGN.md 26.3), the only entry
@@ -903,7 +928,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_dead_bug', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_side_plank', 'lib_superman', 'lib_v_up']);   // LIB-SUPCORE: 4 SUPCORE rows (flutter_kicks held, D-SUPCORE-FLUTTERHOLD)   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN)
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_dead_bug', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_side_plank', 'lib_superman', 'lib_v_up']);   // LIB-SUPCORE: 4 SUPCORE rows (flutter_kicks held, D-SUPCORE-FLUTTERHOLD)   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN); HELD-B released none
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('plank, crunch, the 5 T ids, russian_twist and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
@@ -913,11 +938,11 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     }
     expect(existsSync(`${SPECS_DIR}/bicycle_crunch.mjs`)).toBe(false);
   });
-  it('the held ids (pallof_press D-LIB21-PALLOFHOLD; russian_twist D-LIB21-RTWIST; flutter_kicks D-SUPCORE-FLUTTERHOLD) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
+  it('the held ids (pallof_press D-HELDB-PALLOF2; russian_twist D-HELDB-RTSIT; flutter_kicks D-SUPCORE-FLUTTERHOLD) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
     expect(build.HELD).toEqual({ pallof_press: 'side', russian_twist: 'front', flutter_kicks: 'side' });
     const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
-    const RULING: Record<string, string> = { pallof_press: 'D-LIB21-PALLOFHOLD', russian_twist: 'D-LIB21-RTWIST', flutter_kicks: 'D-SUPCORE-FLUTTERHOLD' };   // each held id's own ruling
+    const RULING: Record<string, string> = { pallof_press: 'D-HELDB-PALLOF2', russian_twist: 'D-HELDB-RTSIT', flutter_kicks: 'D-SUPCORE-FLUTTERHOLD' };   // each held id's own ruling
     for (const id of HELD) expect(new RegExp(`\\| ${id} \\| ${RULING[id]}\\b`).test(design), id).toBe(true);
     for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
   });
@@ -928,7 +953,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     expect(a5(text, w)).toEqual([]);
     expect(a5(JSON.stringify({ ...j, rows: {} }, null, 1), w)).toEqual(w.map(x => `${x} x0`));
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
-    // a held id: pallof_press (D-LIB21-PALLOFHOLD) stands for any held id
+    // a held id: pallof_press (D-HELDB-PALLOF2) stands for any held id
     expect(a5(add('lib_pallof_press'), w), 'a held id').toEqual(['extra lib_pallof_press']);
     expect(a5(add('lib_flutter_kicks'), w), 'flutter_kicks, held (D-SUPCORE-FLUTTERHOLD)').toEqual(['extra lib_flutter_kicks']);
     for (const id of ['plank', 'crunch', 'russian_twist', 'bicycle_crunch']) expect(a5(add(`lib_${id}`), w)).toEqual([`extra lib_${id}`]);   // LIB-SUPCORE: russian_twist is held; flutter_kicks (held) is covered by the held-id line above
@@ -939,7 +964,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     for (const [id, r] of Object.entries<any>(j.rows)) {
       expect(r.src).toBe(`library/specs/${id.slice(4)}.mjs`);
       expect(r.chromeId).toBe(id.slice(4).replace(/_/g, '-'));
-      expect(r.view, id).toBe(id === 'lib_side_plank' ? 'front' : 'side');   // the census view (side_plank: front)
+      expect(r.view, id).toBe(['lib_side_plank', 'lib_russian_twist'].includes(id) ? 'front' : 'side');   // the census view (side_plank, russian_twist: front)
       expect(readJson(`docs/research/howto/cards/${id.slice(4)}.json`).plate.view, id).toBe(r.view);
       expect([r.mode, r.parent, r.template, r.params], id).toEqual(['H', undefined, undefined, undefined]);
     }
@@ -1212,7 +1237,7 @@ describe('LIB-21 test camera (supervisor, bulk rulings on #312): camOf follows t
 describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and soft bends (DESIGN.md sections 6-12)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { cable_crunch: 'hips', ab_wheel_rollout: 'arch', bird_dog: 'arch', superman: 'head', pallof_press: 'arch', side_plank: 'sink', russian_twist: 'hips',
     hollow_body_hold: 'low', reverse_crunch: 'tuck', dead_bug: 'arch', v_up: 'arch', flutter_kicks: 'arch' };   // LIB-SUPCORE: DESIGN.md 26.3's fault→key map
-  const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch', 'pallof_press', 'side_plank', 'russian_twist', ...SUP];   // LIB-SUPCORE: one tell each, recorded (D-LIB10-SKULL1)
+  const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch', 'pallof_press', 'side_plank', 'russian_twist', ...SUP];   // LIB-SUPCORE: one tell each, recorded (D-LIB10-SKULL1); pallof_press: held with main's one tell (D-HELDB-PALLOF2)
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells (or one, with its record), the first carrying the ruled key', () => {
     for (const id of specsDrawn()) {
@@ -1352,8 +1377,10 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
    *  swings behind the solid right knee and arm. An entry the supervisor does not sign is redrawn or its row is held. */
   // D-SUPCORE-RCBACK (#366 6570379460): reverse_crunch's 'Back down' enters the near arm from the right to the end back's
   // roll-off point (the low back under the curled hips; the arm by the side lies along the floor in front of it)
+  // russian_twist (D-HELD6-RTWIST, signed in held6-card.md's rulings): "Knees swing" on the red right knee's outline
   const FRONT_ENTRY: Record<string, number> = { 'side_plank mistake sink end': FE_SINK, 'reverse_crunch normal back end': RC_BACK,
-    'flutter_kicks mistake arch end': LUMBAR_IN.flutter_kicks[0], 'flutter_kicks mistake arch Mistake': LUMBAR_IN.flutter_kicks[1], 'dead_bug mistake arch end': LUMBAR_IN.dead_bug[0], 'dead_bug mistake arch Mistake': LUMBAR_IN.dead_bug[1], 'v_up mistake arch end': LUMBAR_IN.v_up[0], 'v_up mistake arch Mistake': LUMBAR_IN.v_up[1] };   // russian_twist: held on its tell (F-RTWIST-TELL, #326 6409862229); its shin anchor enters no figure
+    'flutter_kicks mistake arch end': LUMBAR_IN.flutter_kicks[0], 'flutter_kicks mistake arch Mistake': LUMBAR_IN.flutter_kicks[1], 'dead_bug mistake arch end': LUMBAR_IN.dead_bug[0], 'dead_bug mistake arch Mistake': LUMBAR_IN.dead_bug[1], 'v_up mistake arch end': LUMBAR_IN.v_up[0], 'v_up mistake arch Mistake': LUMBAR_IN.v_up[1],
+    'russian_twist mistake hips end': 3.42, 'russian_twist mistake hips Mistake': 6.84 };
   const insideLen = (p: number[][], polys: number[][][]) => {
     let len = 0;
     for (const [a, b] of segs(p)) { const L = Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!); for (let k = 0; k < 40; k++) {
@@ -1386,6 +1413,12 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
     expect(crossProblems(S.side_plank, {}).some(p => p.startsWith('side_plank mistake sink: crosses the end'))).toBe(true);
     const s = S.side_plank, bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => ({ ...x, box: { left: 150, top: 180 } })) } };
     expect(crossProblems(bad).some(p => p.startsWith('side_plank mistake sink'))).toBe(true);
+  });
+  it('HELD-B mutations: russian_twist\'s "Knees swing" with no pin, or its box moved 40 px right, is red', () => {
+    const r = S.russian_twist;
+    expect(crossProblems(r, { 'side_plank mistake sink end': FE_SINK }).some(x => x.startsWith('russian_twist mistake hips: crosses'))).toBe(true);
+    const moved = { ...r, mistake: { ...r.mistake, tells: r.mistake.tells.map((x: any) => ({ ...x, box: { left: 52, top: 188 } })) } };
+    expect(crossProblems(moved).some(x => x.startsWith('russian_twist mistake hips'))).toBe(true);
   });
   it('no leader crosses the solid figure, and no Mistake leader crosses the Mistake figure', async () => {
     const out: string[] = [];
@@ -2191,7 +2224,7 @@ const namedList = (src = readFileSync('tests/howto/lb9-plates.test.ts', 'utf8'))
   const i = src.indexOf('const FRONT_ENTRY:'), j = src.indexOf('};', i);
   return [...src.slice(i, j).matchAll(/'([a-z_]+ (?:normal|mistake) [a-z]+ (?:end|Mistake))'/g)].map(m => m[1]);
 };
-const NAMED = ['side_plank mistake sink end', 'reverse_crunch normal back end', ...['flutter_kicks', 'dead_bug', 'v_up'].flatMap(id => [`${id} mistake arch end`, `${id} mistake arch Mistake`])];
+const NAMED = ['side_plank mistake sink end', 'reverse_crunch normal back end', ...['flutter_kicks', 'dead_bug', 'v_up'].flatMap(id => [`${id} mistake arch end`, `${id} mistake arch Mistake`]), 'russian_twist mistake hips end', 'russian_twist mistake hips Mistake'];   // russian_twist: HELD-B (D-HELD6-RTWIST)
 describe('LIB-SUPCORE D-SUPCORE-RCBACK: reverse_crunch\'s named \'Back down\' entry (#366 6570379460)', { timeout: T }, () => {
   const ARM = /^(upper|elbowcap|fore)\.[lr]$/;
   /** Per normal leader: px inside the solid end figure past its first 8 px, and the drawn shapes it passes through. */
@@ -2316,7 +2349,9 @@ describe('LIB-SUPCORE D-SUPCORE-LUMBARTELL: the arch tell on the lumbar point (#
     for (const id of ARCH) expect(archProblems(S[id], LUMBAR_IN[id]!.map(v => v + 1) as [number, number]).length, id).toBe(2);
     const f = S.flutter_kicks, knee = { ...f, mistake: { ...f.mistake, tells: f.mistake.tells.map((t: any) => ({ ...t, anchor: { at: 'hip.r', pose: 'mistake' } })) } };
     expect(archProblems(knee).some(p => /through thigh\.[lr]/.test(p))).toBe(true);
-    const src = readFileSync('tests/howto/lb9-plates.test.ts', 'utf8').replace("'v_up mistake arch Mistake': LUMBAR_IN.v_up[1] };", "'v_up mistake arch Mistake': LUMBAR_IN.v_up[1], 'hollow_body_hold mistake low end': 1 };");
+    const own = readFileSync('tests/howto/lb9-plates.test.ts', 'utf8'), at = "'v_up mistake arch Mistake': LUMBAR_IN.v_up[1],";
+    expect(own.includes(at)).toBe(true);   // the plant's anchor exists, so the mutation is real
+    const src = own.replace(at, `${at} 'hollow_body_hold mistake low end': 1,`);
     expect(namedList(src)).not.toEqual(NAMED);
   });
 });
@@ -2366,5 +2401,16 @@ describe('LIB-SUPCORE D-SUPCORE-KICKDATUM and D-SUPCORE-KICKZOOM: flutter_kicks\
     expect(Math.hypot(g.circle[0] - g.src[0], g.circle[1] - g.src[1])).toBeCloseTo(111.3, 0);
     const f = S.flutter_kicks, old = { ...f, callouts: f.callouts.map((c: any) => (c.key === 'feet' ? { ...c, box: { left: 214, top: 246 } } : c)) };
     expect(Z.zoomOf(old, { E: Eng(), view: 'normal' }).circle.c).not.toEqual([298, 206]);
+  });
+});
+
+describe('HELD-B (#371): russian_twist\'s knee tell (D-HELD6-RTWIST; held, D-HELDB-RTSIT); pallof_press held again (D-HELDB-PALLOF2)', () => {
+  it('russian_twist: "Knees swing" on the red right knee\'s outline, box {12, 188}', () => {
+    expect(S.russian_twist.mistake.tells).toEqual([{ key: 'hips', text: 'Knees swing', anchor: { at: 'knee.r', pose: 'mistake', off: [-6.84, -6.84] }, box: { left: 12, top: 188 }, cue: 'The hips and knees swing with the trunk.' }]);
+  });
+  it('pallof_press (held) keeps main\'s one tell and no zoom; its re-copied card carries c20 for route F-PALLOF-VIEW', () => {
+    expect(S.pallof_press.mistake.tells.map((t: any) => t.key)).toEqual(['arch']);
+    expect(S.pallof_press.zoom).toBeUndefined();
+    expect(readJson('docs/research/howto/cards/pallof_press.json').claims.some((c: any) => c.id === 'c20')).toBe(true);
   });
 });
