@@ -1868,3 +1868,35 @@ describe('LIB-SPLIT A2: the 5 rows approved in panel mx28 (#364 6585103107, head
     expect(fragProblems(html.replace(alt, alt.replace('Walking lunge', 'Walking lungE')))).toContain('walking-lunge alt');
   });
 });
+
+describe('LIB-SPLIT A2: bulgarian_split_squat as approved in panel mx31 (#364 6595403393, head 7f8afd68) stays byte-identical', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of bulgarian_split_squat on the LB4 page 38750fee…67e4 built at 7f8afd68 (9 fragments).
+  const APPROVED: Record<string, Record<string, string>> = {
+    "bulgarian-split-squat": {
+      "normalSvg": "fbd896b85d8bf04d32185ff85e6cd802e29e61d10615f58e7454e9c214a01946",
+      "normalOverlay": "d5f3b567f68d8fe33c9001a17707fb81bd67d4986d72548ad280861ef845ee40",
+      "mistakeSvg": "268dca12faffd1fa6b92bd340737073ef038c9473cb1aa32923d77e685c60d29",
+      "mistakeOverlay": "f6aca0d82dfc5e31dd0fe3b608745a3028cb60bdcadde81dd7bbd954c9f275e5",
+      "tells": "c7aaf7b87df630811b7faf9bbb63bb8fcf6323e6fc7fb4a453e8663af7751887",
+      "tempo": "a50b50e7ec7b35d22bc21c16497750d5d5ee1a1096921e8fed7a370cf92e305a",
+      "cues": "b2eabfacf9a601cfefb7a02c4414189e7675edd2417683cdddb69ad5b15e26ff",
+      "alt": "125ed79b6854cea07c42177a7c601d487035d825e6cd84b0ddcbcd682d23a786",
+      "mistakeAlt": "b7b6a8a37b969a44eadb3ba34811da5c34bce618a7dc5f0c270a4bee40df5477"
+    }
+  };
+  let golden: any;
+  beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('its 9 fragments on this head equal the approved ones', async () => {
+    expect(Object.values(APPROVED).reduce((n, x) => n + Object.keys(x).length, 0)).toBe(9);
+    expect(fragProblems(await lb4PageInChild())).toEqual([]);
+  });
+  it('mutation: one byte changed in its alt is red', async () => {
+    const html = await lb4PageInChild(), alt = S.bulgarian_split_squat.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, alt.replace('Bulgarian split squat', 'Bulgarian split squaT')))).toContain('bulgarian-split-squat alt');
+  });
+});

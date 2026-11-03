@@ -704,4 +704,6 @@ REAR_X, STANCE, START_KNEE 8, M_SINK; step_up the trailing hip 21. Each spec hea
   form; draw order only). A test pins the order, and the dumbbell at z front is red.
 - Bench clearance: start 4.04, end 3.09, Mistake 2.26 px. Dumbbell 3D gaps (cm): start 0.73 / 0.30, end 0.98 / 9.70,
   Mistake 0.43 / 9.70. QA: all 10 hard checks pass; traceLen 24.00, deviation 11.63, leaderMax 66.8.
+- mx31 (#364 6595403393): bulgarian_split_squat APPROVED @ `7f8afd68`, card-key diff-check passed; all six LIB-SPLIT
+  rows are approved. Its 9 fragments are pinned (LIB-SPLIT A2 block, page `38750fee…67e4`).
 
