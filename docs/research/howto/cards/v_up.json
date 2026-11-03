@@ -627,6 +627,13 @@
    "pose": "end",
    "cardPose": "start",
    "claim": "c4"
+  },
+  {
+   "kind": "contact",
+   "outline": "torso",
+   "pose": "start",
+   "cardPose": "end",
+   "claim": "c5"
   }
  ],
  "tempo": [

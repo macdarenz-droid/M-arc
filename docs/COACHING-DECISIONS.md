@@ -3129,3 +3129,5 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   the named list. Its verified card fields and knee tell stay in the held spec. **Why:** a floor plane would be a new
   engine feature, which the ruling does not allow. HELD-B releases no row.
 - **Source:** PR #371 (6579432546, 6579536635); lb9/DESIGN.md §15, §26.
+- **v_up's outline fact added (after train 60).** The V's contact is now checked: the torso outline must lie within
+  0.5 cm of the floor, and it does (0.00 cm). The drawing did not change.

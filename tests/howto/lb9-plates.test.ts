@@ -785,10 +785,10 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
       ...['start', 'end'].flatMap(pose => ['l', 'r'].map(sd => ({ kind: 'angle', joint: `knee.${sd}`, pose, cardPose: pose, deg: 90, claim: pose === 'start' ? 'c2' : 'c4' })))],
     flutter_kicks: [...both('wrist', 'start', 'c1'), F('backUpper', 'start', 'c4'), F('buttock', 'start', 'c4'), F('buttock', 'end', 'c4')],
     // dead_bug and v_up with their strip rows (train 59); v_up's card start is its spec end (poseMap)
-    // cfdv (#366 6587871953): dead_bug's knees at 90 in the start (c3, D-LIB8M-FACTS); v_up's buttock at the V waits on 6588643410
+    // cfdv (#366 6587871953): dead_bug's knees at 90 in the start (c3, D-LIB8M-FACTS); v_up's contact at the V is the drawn torso outline (c5, D-SUPCORE-VUPOUTLINE, 6588653190)
     dead_bug: [F('buttock', 'start', 'c3'), F('backUpper', 'start', 'c5'), F('buttock', 'end', 'c5'), F('backUpper', 'end', 'c5'),
       ...['l', 'r'].map(sd => ({ kind: 'angle', joint: `knee.${sd}`, pose: 'start', cardPose: 'start', deg: 90, claim: 'c3' }))],
-    v_up: [F('buttock', 'end', 'c6', 'start'), F('backUpper', 'end', 'c4', 'start')],
+    v_up: [F('buttock', 'end', 'c6', 'start'), F('backUpper', 'end', 'c4', 'start'), { kind: 'contact', outline: 'torso', pose: 'start', cardPose: 'end', claim: 'c5' }],
   };
   // The ruled fault→key map (DESIGN.md section 8): [topFault, the drawn first tell key]; all 5 drawable-true. The (b)
   // rows' planned topFault (D-LIB21-F7), which differs from the drawn key.
@@ -856,6 +856,8 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
         // LIB-SUPCORE: an angle fact is H6's angle rule: the drawn joint angle, or the drawn measure with its expect, within LIMITS.angleDeg
         if (f.kind === 'angle') { const v = f.joint ? r.angles?.[f.pose]?.[f.joint] : (S[id].measure?.expect === f.deg ? r.measure?.drawnDeg : null);
           expect(typeof v === 'number' && Math.abs(v - f.deg) <= qaNode.LIMITS.angleDeg, `${id} ${f.joint ?? 'measure'} ${f.pose}: ${v} vs ${f.deg}`).toBe(true); continue; }
+        // LIB-SUPCORE: an outline contact is H6's outline branch (HELD-A, D-HELD6-SEAT2)
+        if (f.kind === 'contact' && f.outline != null) { expect(qaNode.outlineContactProblem(f, S[id], Eng(), qaEng.poseLandmarks(Eng(), S[id]), r), `${id} outline ${f.outline} ${f.pose}`).toBeNull(); continue; }
         const hits = r.checks.filter((k: any) => k.landmark === f.landmark && (k.pose === f.pose || k.pose === 'all') && k.cm != null);
         expect(hits.length > 0 && hits.every((k: any) => k.cm <= qaNode.LIMITS.cm), `${id} ${f.landmark} ${f.pose}: ${JSON.stringify(hits)}`).toBe(true);
       }
@@ -2280,7 +2282,7 @@ describe('LIB-SUPCORE D-SUPCORE-HOLLOWLEG: hollow_body_hold\'s one measure fact 
   });
 });
 
-describe('LIB-SUPCORE cfdv: dead_bug\'s start knees (#366 6587871953)', () => {
+describe('LIB-SUPCORE cfdv: dead_bug\'s start knees (#366 6587871953) and v_up\'s outline contact at the V (D-SUPCORE-VUPOUTLINE, 6588653190)', () => {
   /** H6's rules (qa/node.mjs h6) for one fact on a spec: an angle within LIMITS.angleDeg, a contact checked within LIMITS.cm. */
   const factProblems = (spec: any, f: any) => { const r = plate.renderPlate(spec, { id: 'x' }).report;
     if (f.kind === 'angle') { const v = r.angles?.[f.pose]?.[f.joint]; return typeof v === 'number' && Math.abs(v - f.deg) <= qaNode.LIMITS.angleDeg ? [] : [`${f.joint} ${f.pose} ${v}`]; }
@@ -2294,6 +2296,27 @@ describe('LIB-SUPCORE cfdv: dead_bug\'s start knees (#366 6587871953)', () => {
   it('mutations: dead_bug\'s start knees drawn at 100 deg are red', () => {
     const d = S.dead_bug, bent = { ...d, poses: { ...d.poses, start: { ...d.poses.start, knee: 100 } } };
     for (const f of KNEES()) expect(factProblems(bent, f).length, f.joint).toBe(1);
+  });
+  /** H6 on v_up's spec and card: the problem keys and texts (qa/node.mjs h6, HELD-A's outline branch included). */
+  const h6Keys = (spec: any) => { const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
+    return qaNode.h6({ spec, research: readJson('docs/research/howto/cards/v_up.json') }, { engine: Eng(), pins: pins() }, R).map((p: any) => `${p.key} ${p.text}`); };
+  const vOutlineCm = (spec: any) => { const L = qaEng.poseLandmarks(Eng(), spec), cam = qaEng.cameraOf(spec, plate.renderPlate(spec, { id: 'x' }).report);
+    const low = Math.max(...body.bodyShapes(body.fk(L.q.start, L.body), cam).filter((x: any) => x.key === 'torso' && x.poly).flatMap((x: any) => x.poly.map((q: number[]) => q[1])));
+    return ((cam.y0 - low) / cam.pxPerM) * 100; };
+  const vRoot = (dy: number) => { const v = S.v_up, st = v.poses.start; return { ...v, poses: { ...v.poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1] + dy, st.root.at[2]] } } } }; };
+  it('v_up: the V\'s fact is the torso outline (spec start, card end, c5), bound in outlineChecks at 0.5 cm; the outline is on the floor, the buttock landmark 1.99 cm up (a not-fact); H6 is clean', () => {
+    const c = readJson('docs/research/howto/cards/v_up.json');
+    expect(c.plateFacts.filter((f: any) => f.outline != null)).toEqual([{ kind: 'contact', outline: 'torso', pose: 'start', cardPose: 'end', claim: 'c5' }]);
+    expect(c.plateFacts.some((f: any) => f.landmark != null && f.pose === 'start')).toBe(false);
+    expect(S.v_up.outlineChecks).toEqual([{ outline: 'torso', pose: 'start', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, tol: 0.5 }]);
+    expect(Math.abs(vOutlineCm(S.v_up))).toBeLessThanOrEqual(0.05);
+    expect(qaEng.poseLandmarks(Eng(), S.v_up).lm.start.buttock[1] * 100).toBeCloseTo(1.99, 1);
+    expect(h6Keys(S.v_up).filter((k: string) => k.startsWith('H6.fact:'))).toEqual([]);   // the facts half of H6 (its tempo half reads the candidate's strip row, which lb9/qa.mjs runs)
+  });
+  it('mutations: v_up\'s V lifted 0.6 cm and dipped 0.6 cm are red in H6\'s outline branch', () => {
+    const fact = (k: string) => k.startsWith('H6.fact:') && k.includes(':contact:outline:torso');
+    expect(h6Keys(vRoot(0.006)).filter(fact)).toEqual([expect.stringMatching(/lowest point 0\.\d+ cm above the floor/)]);
+    expect(h6Keys(vRoot(-0.006)).filter(fact)).toEqual([expect.stringMatching(/lowest point 0\.\d+ cm below the floor/)]);
   });
 });
 

@@ -145,6 +145,9 @@ export default {
     { landmark: 'backUpper', plane: FLOOR, pose: 'end', tol: 1 },
     { landmark: 'heel.r', above: FLOOR, pose: 'end' },                          // heels a few inches off (c4)
   ],
+  // D-SUPCORE-VUPOUTLINE (#366 6588653190): the V rests on the drawn torso outline (solved by onButt, 0.00 cm); the buttock
+  // landmark sits 1.99 cm up in the soft tissue, so c5's contact is the outline, checked by H6's outline branch (HELD-A)
+  outlineChecks: [{ outline: 'torso', pose: 'start', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, tol: 0.5 }],
   zoom: [{ view: 'mistake', k: 2 }],   // the arch is under deviationMin at plate scale; the smallest passing ladder k
   startParts: ['torso', 'head', 'arm.r', 'leg.r'],
   ghosts: { count: 0 },
