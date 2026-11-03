@@ -193,6 +193,9 @@ starts at the hidden start ankle.
 - pallof_press: fault c8 (and c9); claim ids read: c5, c8 ("Over-arching the lower back ... keep a neutral spine"),
   c9 ("Overarching the lower back, or rounding it"), c10. One stated sign: the lower back over-arching; the trunk leaning
   back and the handle coming back are the fault's geometry, not signs a claim states. So one tell.
+  HELD-B (#371, D-HELD6-PALLOF): the re-copied card's c20 (FitnessVolt: "Pressing the hands forward can tempt you to
+  lift the chest and extend the lumbar spine") states a second sign, the chest lifting. Its tell could not be drawn
+  (D-HELDB-PALLOF2, §26), so the held spec keeps main's one tell until route F-PALLOF-VIEW.
 - cable_crunch: fault c8 (and c3); claim ids read: c8 (Fitness Volt: "You will see a lot of people doing this
   exercise by moving their hips too, but that's a mistake ... Done correctly, only your spine should move."; Motra:
   "Using hips to pull"), c3 (Motra: "keeping hips stationary", "Hips still and elevated", "Spine flexes, not hips").
@@ -309,8 +312,8 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 |---|---|---|
 | ~~cable_crunch~~ released at resume 3 (LIB-21R3, §24; on LIB-SPINE's spine segments): D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
 | ~~superman~~ released at resume 2 (#337, D-LIB21-SUPERMAN): D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
-| pallof_press | D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
-| russian_twist | D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-TELL, a design note at the next resume |
+| pallof_press | D-HELDB-PALLOF2 (#371 6575314108; §26): held again at HELD-B. c20's chest tell and its k 1.5 zoom pass QA, but no leader can reach the Mistake chest: the pulley, its pin, the frame and the cable's vertical run all sit within 6 px (0.00-3.00 px), and the engine has no leaderless tell. Before that, D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | F-PALLOF-VIEW (D-HELDB-PALLOF2): a turned view (§20; held6 §3 route C, numbers [est]) where a leader can reach the chest past the column; was: no front view; a turned-view note with LIB-ZOOM for the arch |
+| russian_twist | D-HELDB-RTSIT (#371 6579536635; §26): held again after panel mx27 failed R1, R3-R7 (#371 6579432546). The front-view floor sit cannot be drawn with a ruled tool: the one floor line sits at the feet's depth, so at CAM_PITCH 20 the seat draws 37.6 px above it. The 51.6° trunk turn draws as a 62 % shoulder span (89.5 → 55.6 px), which does not read as a turn. Kept in the held spec: the knee tell (D-HELD6-RTWIST), the cfhb card fields with D-HELDB-RTSOLES, and the fact checks. Before that, D-LIB21-RTWIST (#326 6409862229): drawn on LIB-20's `trunk.yaw`, `root.yaw` and `camera.pitch`; held on its one tell: the red knees swing under the ball and the crossing forearm, so no leader reaches a red knee within the rules (its anchor sits on the red shin below the ball for now) | F-RTWIST-SIT (D-HELDB-RTSIT) and the named list: a floor plane for a pitched front view, or a ruled seated-view convention; was: F-RTWIST-TELL |
 
 ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG; it and bird_dog are approved (slice panel and recheck).
 
@@ -645,3 +648,122 @@ shoulders, not behind the head. A sourced trunk-rotation limit would decide C ag
 lib-spine-card.md:115's 0.366 / 0.377 m and 0.183 / 0.181 m (joint centres) were not reproduced; on `_test_spine`'s base
 and arms the centres read 0.254 / 0.268 m (curl ≤ 40, yaw ≤ 45, hip ≤ 120) and 0.128 / 0.099 m (curl ≤ 70, yaw ≤ 70,
 hip ≤ 140). LIB-SPINE's scratch script is not in the repo, so the difference is unexplained [unverified].
+
+## 26. Held 6 resume plan (HELD-B: pallof_press and russian_twist; D-HELD6-PALLOF, D-HELD6-RTWIST)
+
+Base: main `9c8035fd`. Rulings: held6-card.md §3, §6 and "Supervisor rulings" (claude/sup-lib4-cards). Every number
+below is from a scratch run on a detached worktree of the base (rows added in memory or in the worktree only, never
+committed): lb9/qa.mjs's `qaLb9` (LIB-3 runQa, node and browser, zero exemptions) and lb9-plates.test.ts's own
+`insideLen` leader measure (px inside a figure past the leader's first 8 px). Bars 22.11 / 11.39 px.
+
+**Base (both held, as on main):** pallof_press: all hard checks but H3.deviation (1.03 px, no zoom). russian_twist:
+all but H6:no-card; its tell sits on the refused shin point. Flags as ruled (pallof F5; russian F1 197.5, F5, F7).
+
+**pallof_press (D-HELD6-PALLOF).**
+- Card: a byte copy of cards/ and quotes/pallof_press.json from research `a48b0594` (F-RESEARCH-2's head, the one
+  lb10's farmer_s_carry and LIB-13s use). It adds c20-c25, rewords c12 and plate.mistake's rankNote and tempo text, and
+  adds two gaps. Its plateFacts, tempo and topFault are equal to main's, so CARD FIELDS has no key to change. The
+  other 7 LB9 cards are canonically equal at `a48b0594`, but they stay pinned at `f574bb4b`; pallof_press gets a
+  `recopied` entry in lb9/cards.sha.json (lb10's farmer_s_carry form).
+- Second tell `chest`, "Chest lifts" (c20: "lift the chest and extend the lumbar spine"), anchored on the `chest`
+  landmark in the Mistake pose, no offset. It moves **8.983 px** (end (195.57, 156.72) to Mistake (202.85, 151.46)).
+- Mistake zoom `{ view: 'mistake', k: 1.5, tell: 'chest' }`: **13.47 px** ≥ 11.39 at the zoom's scale; circle at
+  (88, 96) r 52, source ring (199.21, 154.09) r 34.67. k 1.5 is the lowest rung, so it is the smallest that passes.
+- Box: the card's {100, 164} does **not** pass here (H1: the label sits on figure ink at 171,180; {88,164} and
+  {94,164} the same). A 6 px scan (left 4-300, top 50-330), each box QA'd:
+  - {82, 164}: all 10 pass, leader 53.9 px, but it enters the solid end figure **3.29 px** (the Mistake chest lies
+    inside the end figure). Not used.
+  - Zero entry into either figure and all 10 pass: {64, 158} (leader 63.3 px), {64, 164} (66.7), {64, 170}, {70, 170}
+    and others up to 107.8 px. {64, 152}, {70, 152}, {70, 146} and {76, 146} fail H1 (the label on the figure).
+  - **Chosen {64, 158}**: the shortest leader with zero entry and all 10 checks. F3 is not raised.
+- The arch tell, arrow, dashed cable and callouts are unchanged; the side view stays (ruling).
+- QA with the zoom and {64, 158}: all 10 hard checks pass; flags F5 3.57 only (the ruled set).
+- One-tell record (§8): pallof_press now has two stated signs, the lower back over-arching (c8, c9) and the chest
+  lifting (c20); the trunk leaning back and the handle coming back stay geometry.
+
+**russian_twist (D-HELD6-RTWIST).**
+- "Knees swing" anchored on the red right knee's outline: `{ at: 'knee.r', pose: 'mistake', off: [-6.84, -6.84] }`,
+  box {12, 188}. Text and cue unchanged.
+- Measured: deviation **23.64 px**; leader 78.4 px (QA leaderMax; under F3's 81.9); entry **3.42 px** into the end
+  figure and **6.84 px** into the Mistake figure, equal to the signed entry. They are pinned in FRONT_ENTRY (±0.5).
+- QA: every hard check passes except H6:no-card, which the card fields clear. Flags F1 197.5, F5, F7 (the ruled set).
+- Do 7b card fields (proposed; CARD FIELDS verifies them), by §10's rules (plate.start cites c1, c2, c3, c6;
+  plate.end cites c4, c5):
+  - plateFacts: `seat` start c1 ("Sit on the floor"); `sole.l`, `sole.r` start c1 ("the feet on the floor");
+    `wrist.l`, `wrist.r` start c2 (the grip rule: the hands on the ball "in both hands in front of the chest");
+    `seat` end c5 ("Keep the buttocks planted on the floor", cited by plate.end).
+  - Measured on the spec: seat y 0.000 m start and end; soles y 0.000 m, x ±0.088 m; the wrists at
+    (0.168, 0.475, 0.123) and (-0.132, 0.602, 0.116) m at the start.
+  - Checks for H6: the existing `seat` plane check (pose all) covers both seat facts. New: `sole.l` and `sole.r` on
+    the floor plane (pose all), and `wrist.l` and `wrist.r` `at` their start spot (pose start, tol 0.5), as pallof_press.
+  - Not facts: c4's hips "still" (no contact; held by the hips-unchanged test); c3 "straight back" (a line).
+  - tempo `[{ Turn, 1, move }, { Return, 1, move }]` (lb9/tempo.json's map of plate.tempo up 1, down 1).
+  - topFault `control` (§8, F7: drawable false).
+
+**Release.** Both rows join lb9/rows.json (H, drawing; side and front), and build.mjs HELD becomes empty. The approved
+LB9 fragments (A10: ab-wheel-rollout, bird-dog, side-plank, superman, cable-crunch) must stay byte-identical.
+
+**Write scope.** specs/pallof_press.mjs (the `chest` tell, the zoom, header comment); specs/russian_twist.mjs (the
+tell's anchor and box, four fact checks, header comment); lb9/rows.json; lb9/build.mjs HELD; lb9/cards.sha.json;
+lb9/DESIGN.md (this section, §8, §15); docs/research/howto/cards/pallof_press.json and quotes/pallof_press.json (byte
+copies); docs/research/howto/cards/russian_twist.json (the three keys only); tests/howto/lb9-plates.test.ts (its own
+blocks); docs/COACHING-DECISIONS.md (append). lb9/qa.mjs and lb9/sizes.json are not expected to change (no new
+named flag, no new size). Not touched: engine, qa/**, zoom/**, other specs, the How-to sheet, other lanes' files.
+
+**Acceptance and mutations (each mutation red, then restored).**
+
+| # | criterion | evidence | red mutation |
+|---|---|---|---|
+| B1 | Scope | rows.json gains both ids once (H, drawing); HELD `{}`; DESIGN.md §15 strikes both | a row left in HELD; a row with mode 'T' |
+| B2 | Re-copy | cards.sha.json: pallof_press's card and quotes hashes at `a48b0594`, a `recopied` entry; the other 7 unchanged at `f574bb4b`; c20 present | main's old pallof_press card restored: hash red |
+| B3 | Chest tell and zoom | tells [arch, chest]; chest on `chest` (Mistake); zoom k 1.5 on `chest`; 8.98 px plate, 13.47 px zoom | zoom removed: H3.deviation red (QA); zoom on `arch`: 1.03 × 1.5 under the bar |
+| B4 | Leaders | no leader enters a figure, except the two named russian_twist entries (3.42 / 6.84 ±0.5) | pallof box {82, 164}: enters the end figure 3.29 px, red; russian box moved or pin removed: red |
+| B5 | Card fields | russian_twist's keys equal the ruled facts, tempo and topFault; each fact has a check within H6's limit | a fact added, a tempo second changed, topFault `hips`: each red |
+| B6 | Nothing else moves | A10's fragments byte-equal; pilot pins and C0 unchanged; Never paths empty in the diff | one byte in superman's alt (temporary): red |
+| B7 | QA and green | lb9/qa.mjs on every LB9 row: all 10 hard checks, flags = the ruled set; the page built twice, equal sha256; `npm run check`, `test:tz`, the gate | LIB-3 M-mutations on the two rows |
+| B8 | Panel | PANELS §1 per row | the plants |
+
+**Questions for the ruling.**
+1. The box: {64, 158} instead of the card's {100, 164}, which fails H1 here; {82, 164} would need a named 3.29 px
+   entry. Proposed: {64, 158}.
+2. russian_twist's plateFacts as listed above (six facts; four new spec checks). Proposed as listed.
+3. pallof_press's re-copy goes in a `recopied` entry, so the other 7 cards keep their `f574bb4b` pin. Proposed.
+
+**Risks.** R11 (the zoom shows the chest, the plate is about the low back): both tells are drawn and c20 names the chest
+lift as the sign. The red right knee partly behind the solid knees may not read: the panel judges R4. LIB-SUPCORE (#366)
+writes lb9 in its wave 2: whichever lane merges second merges main first and keeps both sides.
+
+**Outcome (plates, 11-02).**
+- russian_twist built as planned (then held after panel mx27, below): tell on the red right knee, box {12, 188}, named entry 3.42 / 6.84 px pinned;
+  Do 7b card fields verified (cfhb VALID, #371 6574663054) with D-HELDB-RTSOLES (sole.l, sole.r end c6).
+- pallof_press held again (D-HELDB-PALLOF2, #371 6575314108; route F-PALLOF-VIEW, the turned view of §20 and held6 §3
+  route C, numbers only [est]). The chest tell at {64, 158} with the k 1.5 zoom passed all 10 QA checks and entered
+  no figure, but lb9-plates.test.ts's 6 px leader gap failed. The pulley sits at the end chest's depth and height
+  (c1 "directly to the right of the body", "about chest height"), 8.98 px from the Mistake chest anchor. Measured on
+  the Mistake view, past the leader's first 8 px:
+
+  | part | least gap (px) |
+  |---|---|
+  | the cable's run down to the stack (x 195.6) | 0.03 |
+  | the pulley disc | 0.04 |
+  | the pulley pin | 0.00 |
+  | the column frame | 0.03 |
+  | the cable's run up from the pulley (x 189.0) | 3.00 |
+  | the Mistake's cable to the handle | 5.74 |
+
+  A 6 px scan (left 4-300, top 40-330) found no box clear of every part that also enters no figure and passes H1.
+  D-HELDB-CHESTNIT allowed one steep crossing of the cable only, so the other parts still fail. Widening the nit (i)
+  and moving the pulley (ii) were refused. The engine has no ruled leaderless tell (plate.mjs:275-277 draws a leader
+  for every callout), so (iv) does not apply.
+- The held spec is main's (one tell, no zoom). The re-copied card (c20-c25, the `recopied` pin) and the cfhb verdict
+  stay.
+- **russian_twist held again** (D-HELDB-RTSIT, #371 6579536635, after panel mx27 #371 6579432546: R1 [2,2,2], R3
+  [2,2,2], R4 [2,4,2], R5 [3,2,2], R6 [3,3,3], R7 [3,2,3]). Route **F-RTWIST-SIT** (a floor plane for a pitched front
+  view, or a ruled seated-view convention); on the named list. Measured on `5341df74`:
+  - the floor line is one horizontal line at the feet's depth (equipment.mjs:22-26). At CAM_PITCH 20 the seat (z 0,
+    0 cm in 3D) draws at y 300.9 against the line at 338.5, so 37.6 px above it. Pitch 0 puts it on the line
+    (0.45 px), but the raised knees then cover the trunk and the ball, and F1 (named at 197.49 px/m) moves;
+  - the trunk turn is drawn: yaw 51.6°, the shoulder span 89.5 → 55.6 px (62 %). The flat front trunk reads it as
+    narrower, not turned; `torso: 'volume'` gives the same span.
+  - The held spec keeps the knee tell (3.42 / 6.84 px entry), the cfhb card fields with D-HELDB-RTSOLES, and the fact
+    checks. No row is released by HELD-B.

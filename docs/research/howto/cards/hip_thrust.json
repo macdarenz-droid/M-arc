@@ -1068,7 +1068,7 @@
   "plateFacts": [
     {
       "kind": "contact",
-      "landmark": "seat",
+      "outline": "torso",
       "pose": "start",
       "cardPose": "start",
       "claim": "c1"
