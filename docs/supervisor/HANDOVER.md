@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-11-03 ~19:05 UTC · main `b9369130` (train 62) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
+**Last updated:** 2026-11-03 ~20:15 UTC · main `b9369130` (train 62) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -830,6 +830,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 - **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
 
+- **LIB-SHIP started (11-03 ~20:15 UTC):** the card is `verify/lib-ship-card.md` on claude/sup-lib4-cards @ `20e1d1b1`, with 15 rulings (D-SHIP-*). Key finding: the 134 library How-to sources are stubs, so each needs its full sheet written from its research card (about 390-600 Opus-hours over 2.5-4 weeks [est]). Builder W0-W1: session_018Pv5bJh8Jvpq3f1LLKDcbe on `claude/lib-ship-w1` (W0 PLAN, then 5 pilot A ids). **Owner asked (~19:40 UTC):** (1) all 134 sheets before the Play release, or (2) release sooner with the 8 and add the rest in updates (recommended). No answer yet. Flags (D-SHIP-FLAGS) go to the owner with the W1 APK.
 - **Owner decision 11-03 ~19:00 UTC (D-OWNER-LIB142):** release with the 142. The 11 held rows get no How-to button and come in a later update. **Next:** the ship card, which switches the 142 on in the app (today only 8 show). An Opus agent is drafting it from the research into how the 8 shipped and every "ship card" obligation in the rulings. Then: supervisor rulings, a builder, a review, the train, an APK for the owner's phone check, the release candidate and its full regression, and the production release (the owner publishes).
 - **Update 18:45 UTC (11-03):** no change since 15:45. Still waiting for the owner's choice on the 11 held rows; no lane is open.
 - **Update 15:45 UTC (11-03):** main `b9369130` (train 62), **142/153 merged**. No lane is open. At ~13:20 UTC the owner was asked to choose for the 11 held rows: (1) release with 142, with no How-to button on the 11 (as for every undrawn exercise today, Train.tsx:830), recommended; or (2) engine work beyond E-R5 first. **Waiting for his answer.** Either way the next card is the ship card: the app shows only 8 How-tos today (src/howto/ids.ts:5, loaders.ts:17-26), so the 142 must be switched on, then the release candidate, its full regression and an APK for the phone check.
