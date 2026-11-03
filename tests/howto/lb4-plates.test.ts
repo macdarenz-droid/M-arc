@@ -17,15 +17,19 @@ const T = 600_000;
 // block this worker's RPC to the runner for their summed time.
 const yieldNow = () => new Promise<void>(r => setImmediate(r));
 afterEach(yieldNow);
-const LB4 = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'wall_sit', 'step_up', 'pistol_squat', 'jump_squat'];   // jump_squat: LIB-SMALL (LB4 resume 2)
+const LB4 = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'wall_sit', 'step_up', 'pistol_squat', 'jump_squat',   // jump_squat: LIB-SMALL (LB4 resume 2)
+  'forward_lunge', 'walking_lunge', 'bodyweight_lunge', 'bodyweight_split_squat', 'bulgarian_split_squat'];   // LIB-SPLIT (D-SPLIT-MODES)
+const SPLIT = ['forward_lunge', 'walking_lunge', 'bodyweight_lunge', 'bodyweight_split_squat', 'bulgarian_split_squat'];
 const IDS = LB4.map(i => `lib_${i}`);
-// The 7 LB4 ids not drawn here (DESIGN.md section 2; jump_squat left at LIB-SMALL, section 16): never in lb4/rows.json.
-const NOT_HERE = ['reverse_lunge', 'bulgarian_split_squat', 'walking_lunge', 'forward_lunge', 'bodyweight_lunge', 'bodyweight_split_squat', 'box_jump'];
+// The LB4 ids not drawn here (DESIGN.md section 2; jump_squat left at LIB-SMALL, section 16; the 5 SPLIT rows left at
+// LIB-SPLIT, section 17): the two pilot A plates, never in lb4/rows.json.
+const NOT_HERE = ['reverse_lunge', 'box_jump'];
 // Held: drawn and tested, no row (DESIGN.md section 13). LIB-STRIP (#309, main bec24ebd) released the other four of
-// D-LIB14-NOSECS ('LIB-14 resume'); step_up stays held under D-LIB14-STEPUP (reverse_lunge is still held on main).
-const HELD = ['step_up'];
+// D-LIB14-NOSECS ('LIB-14 resume'); LIB-SPLIT released step_up (D-SPLIT-STEPUP) once reverse_lunge was pinned. None.
+const HELD: string[] = [];
 // The released no-seconds ids: their tempo is tempoOf(LIB-STRIP's verified rows), D-STRIP-B / D-STRIP-AFALL.
-const RELEASED = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'pistol_squat', 'jump_squat'];   // jump_squat: LIB-SMALL (strip cards row, j9 and j7)
+const RELEASED = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'pistol_squat', 'jump_squat',   // jump_squat: LIB-SMALL (strip cards row, j9 and j7)
+  'step_up', ...SPLIT];   // LIB-SPLIT: the strip cards rows (D-STRIP-ROWS)
 const ROWS = 'tools/plates/library/lb4/rows.json';
 const RESEARCH_HEAD = '3812989f59c000705731f7944d7a1a275e86045d';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -78,7 +82,8 @@ describe('LIB-14 A5: lb4/rows.json holds exactly the drawn, non-held LB4 ids, al
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H (D-LIB14-MODES)', () => {
-    expect(want()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_pistol_squat', 'lib_jump_squat']);
+    expect(want()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_step_up', 'lib_pistol_squat', 'lib_jump_squat',
+      'lib_forward_lunge', 'lib_walking_lunge', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_bulgarian_split_squat']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('none of the 8 LB4 ids not drawn here is in any lb4/ file as a row', () => {
@@ -107,6 +112,14 @@ describe('LIB-14 A5: lb4/rows.json holds exactly the drawn, non-held LB4 ids, al
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_pistol_squat: row } }, null, 1), w)).toEqual(['extra lib_pistol_squat']);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_box_jump: row } }, null, 1), w)).toEqual(['extra lib_box_jump']);
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_wall_sit: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
+  });
+  it('LIB-SPLIT A1 mutations: step_up left in HELD with its row added, reverse_lunge added, one row set to T and a row duplicated are red', () => {
+    const text = readFileSync(ROWS, 'utf8'), wantHeld = (held: string[]) => LB4.filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`) && !held.includes(i)).map(i => `lib_${i}`);
+    expect(a5(text, wantHeld(['step_up']))).toEqual(['extra lib_step_up']);
+    const j = readJson(ROWS), row = j.rows.lib_forward_lunge;
+    expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_reverse_lunge: row } }, null, 1), want())).toEqual(['extra lib_reverse_lunge']);
+    expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, lib_walking_lunge: { ...row, mode: 'T' } } }, null, 1), want())).toEqual(['mode T']);
+    expect(a5(text.replace('  "lib_bodyweight_lunge": {', `  "lib_bodyweight_lunge": ${JSON.stringify(row)},\n  "lib_bodyweight_lunge": {`), want())).toEqual(['lib_bodyweight_lunge x2']);
   });
   it('every row points at its own spec file and carries the census view; batch LB4, censusRef 4a9fd86', () => {
     const j = readJson(ROWS);
@@ -534,36 +547,41 @@ describe('LIB-14 bulk (LB4 BULK GO, 6341498444): bodyweight_squat, goblet_squat,
   });
 });
 
-describe('LIB-14 A8: the hold (D-LIB14-STEPUP; D-LIB14-NOSECS released for the other four)', { timeout: T }, () => {
-  it('each held spec that exists builds, carries no tempo, and is in no rows file', () => {
-    const held = HELD.filter(id => S[id]);
-    expect(held).toEqual(HELD);
-    for (const id of held) {
-      expect(() => plate.renderPlate(S[id], { id: 'x' }), id).not.toThrow();
-      expect(S[id].tempo, id).toBeUndefined();
-      expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
-    }
+describe('LIB-14 A8: the hold (D-LIB14-STEPUP; D-LIB14-NOSECS released for the other four; LIB-SPLIT released step_up)', { timeout: T }, () => {
+  // LIB-SPLIT (D-SPLIT-STEPUP): no id is held, so the held-row page mutation (a held spec has no tempo, so its card
+  // fails the extractor) has no subject; the A5 mutation 'step_up left in HELD with its row added' replaces it.
+  it('no id is held: the test list and build.mjs HELD are empty, and every LB4 spec that exists has its row', async () => {
+    const build = await import(/* @vite-ignore */ lib('lb4/build.mjs'));
+    expect(HELD).toEqual([]);
+    expect(build.HELD).toEqual([]);
+    expect(build.heldData().rows).toEqual({});
+    const keys = Object.keys(readJson(ROWS).rows);
+    for (const id of specsDrawn()) expect(keys.filter(k => k === `lib_${id}`).length, id).toBe(1);
   });
-  it('mutation: a held row on the page makes candidateOf throw for every id (the extractor, golden.mjs:116)', async () => {
+  it('D-SPLIT-HELDEMPTY: held-pairing.json lists no id; mutation (e) on the empty list still gives exactly one ruling-less problem (the barbell_row stand-in)', async () => {
+    const hp = await import('./held-pairing');
+    expect(hp.HELD).toEqual([]);
+    expect(hp.E_ID).toBe('barbell_row');
+    expect(hp.mutationE([])).toEqual(['held[0] (barbell_row) has no ruling']);
+    expect(hp.mutationE([{ id: 'step_up', ruling: 'x' }])).toEqual(['held[0] (step_up) has no ruling']);   // a listed id: its own entry, as before
+  });
+  it('every row resolves through candidateOf on the page built from rows.json (awaited child process)', async () => {
     const [build, cand, golden] = await Promise.all(['lb4/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
-    const data = readJson(ROWS), withHeld = { ...data, rows: { ...data.rows, lib_step_up: { src: 'library/specs/step_up.mjs', slug: 'step-up', prefix: 'step-up', chromeId: 'step-up', mode: 'H', stage: 'drawing', view: 'side' } } };
-    const d = build.lb4Data(undefined, withHeld), all = build.lb4All(undefined, d);
-    const html = await lb4BuildInChild(`const data = JSON.parse(fs.readFileSync(${JSON.stringify(ROWS)}, 'utf8')), withHeld = { ...data, rows: { ...data.rows, lib_step_up: ${JSON.stringify(withHeld.rows.lib_step_up)} } };
-      const all = b.lb4All(undefined, b.lb4Data(undefined, withHeld)); return (await b.buildLb4Page({ all, ids: Object.keys(withHeld.rows) })).html;`);
     const mirror = golden.makeMirror(), E = await qaEng.loadEngine(mirror);
     try {
-      for (const id of Object.keys(withHeld.rows)) await expect(cand.candidateOf(id, { all, platesHtml: html, engine: E, authoring: true }), id).rejects.toThrow();
-      const ids = Object.keys(data.rows), clean = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: ${JSON.stringify(ids)} })).html;`);
+      const ids = Object.keys(readJson(ROWS).rows), clean = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: ${JSON.stringify(ids)} })).html;`);
       for (const id of ids) await expect(cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean, engine: E, authoring: true }), id).resolves.toBeTruthy();
     } finally { qaEng.dropMirror(mirror); }
   });
 });
 
 describe('LIB-14 slice Mistakes, tells, cues, callouts and tempo (DESIGN.md sections 8-9)', { timeout: T }, () => {
-  const KEYS: Record<string, string> = { front_squat: 'elbows', goblet_squat: 'lean', bodyweight_squat: 'heels', wall_sit: 'feet', step_up: 'lean', pistol_squat: 'heel', jump_squat: 'straight' };
+  const KEYS: Record<string, string> = { front_squat: 'elbows', goblet_squat: 'lean', bodyweight_squat: 'heels', wall_sit: 'feet', step_up: 'lean', pistol_squat: 'heel', jump_squat: 'straight',
+    forward_lunge: 'knee', walking_lunge: 'chest', bodyweight_lunge: 'knee', bodyweight_split_squat: 'knee', bulgarian_split_squat: 'knee' };   // LIB-SPLIT (DESIGN.md 17.2; bulgarian 17.11)
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells, the first carrying the proposed key', () => {
-    for (const id of specsDrawn()) { expect(keyProblems(S[id])).toEqual([]); expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3); }
+    const ONE_TELL = ['bulgarian_split_squat'];   // D-SPLIT-BSSHOVER (#364 6592673388): one tell, on the resting rear knee, exactly 1
+    for (const id of specsDrawn()) { expect(keyProblems(S[id])).toEqual([]); if (ONE_TELL.includes(id)) { expect(S[id].mistake.tells.length, id).toBe(1); continue; } expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3); }
   });
   it('mutation: the first tell key swapped is red', () => {
     const s = S.wall_sit;
@@ -579,7 +597,8 @@ describe('LIB-14 slice Mistakes, tells, cues, callouts and tempo (DESIGN.md sect
     expect(S.wall_sit.tempo).toEqual([{ phase: 'Hold', s: '30-60' }]);
     expect(S.wall_sit.tempo[0].s).toBe('30-60');
     for (const id of HELD.filter(i => S[i])) expect(S[id].tempo, id).toBeUndefined();
-    for (const id of RELEASED) { expect(S[id].tempo.length, id).toBe(2); for (const t of S[id].tempo) expect('s' in t, id).toBe(false); }
+    const phases: Record<string, number> = { forward_lunge: 3, bodyweight_lunge: 3 };   // LIB-SPLIT: Step, Lower, Rise (their strip rows)
+    for (const id of RELEASED) { expect(S[id].tempo.length, id).toBe(phases[id] ?? 2); for (const t of S[id].tempo) expect('s' in t, id).toBe(false); }
     const q = readJson('docs/research/howto/quotes/wall_sit.json').quotes.filter((x: any) => x.claim === 'w6').map((x: any) => x.text).join(' ');
     expect(q).toContain(`${S.wall_sit.tempo[0].s}-second holds`);
   });
@@ -776,7 +795,8 @@ describe('LIB-14 A3: spec and composer closures are pure and drawn by the vendor
 describe('LIB-14 A10: the LB4 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
   it('two builds of the LB4 rows are byte-identical', async () => {
     const build = await import(/* @vite-ignore */ lib('lb4/build.mjs'));
-    expect(build.drawnIds()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_pistol_squat', 'lib_jump_squat']);
+    expect(build.drawnIds()).toEqual(['lib_front_squat', 'lib_goblet_squat', 'lib_bodyweight_squat', 'lib_wall_sit', 'lib_pistol_squat', 'lib_jump_squat',
+      'lib_step_up', 'lib_forward_lunge', 'lib_walking_lunge', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_bulgarian_split_squat']);   // LIB-SPLIT
     const a = await lb4BuildInChild('return (await b.buildLb4Page()).html;'), b = await lb4BuildInChild('return (await b.buildLb4Page()).html;');
     expect(sha(a)).toBe(sha(b));
   });
@@ -898,6 +918,13 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     bodyweight_squat: [{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true }],
     pistol_squat: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Drive up', move: true, word: 'Slow' }],
     jump_squat: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Jump', move: true, word: 'Explosive' }],   // LIB-SMALL
+    // LIB-SPLIT (DESIGN.md 17.2): copied from strip/rows.json's verified cards rows on main
+    step_up: [{ phase: 'Rise', move: true }, { phase: 'Lower', move: true, word: 'Controlled' }],
+    forward_lunge: [{ phase: 'Step', move: true, word: 'Slow' }, { phase: 'Lower', move: true, word: 'Smooth' }, { phase: 'Rise', move: true }],
+    walking_lunge: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Rise', move: true }],
+    bodyweight_lunge: [{ phase: 'Step', move: true, word: 'Slow' }, { phase: 'Lower', move: true }, { phase: 'Rise', move: true }],
+    bodyweight_split_squat: [{ phase: 'Lower', move: true, word: 'Smooth' }, { phase: 'Rise', move: true, word: 'Smooth' }],
+    bulgarian_split_squat: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Stand', move: true }],
   };
   // The ruled pose map (D-LIB14-STEPUP-POSE; DESIGN.md section 9): the spec pose each card pose is drawn as.
   const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB4.map(id => [id, id === 'step_up' ? { start: 'end', end: 'start' } : { start: 'start', end: 'end' }]));
@@ -938,7 +965,7 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     const R = readJson('tools/plates/library/strip/rows.json'), rowsOf = (id: string) => [...R.cards, ...R.fallbackA].find((c: any) => c.id === id)?.rows;
     for (const id of RELEASED) expect(strip.tempoOf(rowsOf(id)), id).toEqual(RULED_STRIP[id]);
     expect(R.fallbackA.map((c: any) => c.id)).toContain('bodyweight_squat');
-    for (const id of LB4) expect(V.validateCardFile(`${id}.json`), id).toEqual(id === 'step_up' ? [`cards/${id}.json: plateFacts and tempo go in together or not at all`] : []);
+    for (const id of LB4) expect(V.validateCardFile(`${id}.json`), id).toEqual([]);   // LIB-SPLIT: step_up's pairing marker retired with its hold
   });
   it('mutations: a Set or a Rest phase added to wall_sit (card and spec), the Hold constant as \'30–60\' (en dash), and seconds added to a no-seconds card and spec are each red', () => {
     const red = (f: (s: any) => void) => { const s: any = copy({ tj: clean().tj, cards: clean().cards }); s.specs = { ...clean().specs }; f(s); return tempoProblems(s.tj, s.cards, s.specs).length > 0; };
@@ -950,18 +977,20 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     expect(red(s => { s.specs.front_squat = { ...s.specs.front_squat, tempo: [{ phase: 'Lower', s: 2, move: true }] }; }), 'seconds on a no-seconds spec').toBe(true);
     expect(red(s => both(s, 'front_squat', [{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true, word: 'Controlled' }])), 'word moved to the other phase').toBe(true);
     expect(red(s => both(s, 'goblet_squat', [{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true }])), 'words dropped').toBe(true);
-    expect(red(s => both(s, 'step_up', [{ phase: 'Rise', move: true }, { phase: 'Lower', move: true, word: 'Controlled' }])), 'a tempo on the held step_up').toBe(true);
+    expect(red(s => both(s, 'step_up', [{ phase: 'Rise', move: true }, { phase: 'Lower', move: true, word: 'Slow' }])), 'step_up\'s word changed (card and spec)').toBe(true);   // LIB-SPLIT: replaces the held-tempo mutation
+    expect(red(s => both(s, 'forward_lunge', [{ phase: 'Lower', move: true, word: 'Smooth' }, { phase: 'Rise', move: true }])), 'forward_lunge\'s Step row dropped').toBe(true);
     expect(red(s => { s.specs.pistol_squat = { ...s.specs.pistol_squat, tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Drive up', move: true, word: 'Slow' }] }; }), 'spec word != card word').toBe(true);
   });
   const cardsSha = readJson('tools/plates/library/lb4/cards.sha.json');
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
-  it('each card differs from its research-head copy only in the three keys, written last (no tempo on the held step_up)', () => {
+  it('each card differs from its research-head copy only in the three keys, written last (LIB-SPLIT: step_up now carries all three)', () => {
     for (const id of LB4) {
       expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
-      expect(Object.keys(cardOf(id)).slice(id !== 'step_up' ? -3 : -2), id).toEqual(id !== 'step_up' ? KEYS : ['plateFacts', 'topFault']);
+      expect(Object.keys(cardOf(id)).slice(-3), id).toEqual(KEYS);
     }
   });
-  const DRAWN: Record<string, string> = { front_squat: 'elbows', goblet_squat: 'lean', bodyweight_squat: 'heels', wall_sit: 'feet', step_up: 'lean', pistol_squat: 'heel', jump_squat: 'straight' };
+  const DRAWN: Record<string, string> = { front_squat: 'elbows', goblet_squat: 'lean', bodyweight_squat: 'heels', wall_sit: 'feet', step_up: 'lean', pistol_squat: 'heel', jump_squat: 'straight',
+    forward_lunge: 'knee', walking_lunge: 'chest', bodyweight_lunge: 'knee', bodyweight_split_squat: 'knee', bulgarian_split_squat: 'knee' };   // LIB-SPLIT (DESIGN.md 17.3; bulgarian 17.11)
   const topFaultProblems = (card: any, drawnKey: string) => (card.plate.mistake.drawable
     ? (card.topFault === drawnKey ? [] : ['drawable:true but topFault is not the drawn fault'])
     : (card.topFault !== drawnKey ? [] : ['drawable:false but topFault equals the drawn fault']));
@@ -1002,9 +1031,24 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     step_up: [...C(['heel.r', 'ball.r'], 'end', 'start', 'c6'), ...C(['heel.l', 'ball.l'], 'end', 'start', 'c1'), ...C(['wrist.r', 'wrist.l'], 'end', 'start', 'c5'), ...C(['heel.r', 'ball.r'], 'start', 'end', 'c1')],
     pistol_squat: C(['heel.r', 'ball.r'], 'end', 'end', 'p3'),
     jump_squat: [...C(['heel.l', 'heel.r'], 'start', 'start', 'j2'), ...C(['sole.r'], 'end', 'end', 'j4')],   // LIB-SMALL PLAN (lb4/DESIGN.md 16); cfsmall: j4 names one mid-foot, so the near side only (#358 6547988428)
+    // LIB-SPLIT facts plan (lb4/DESIGN.md 17.3): setup hand quotes at the start, kneecap contacts at the end
+    // cfsp D-SPLIT-FRONTFOOT (#364 6584536292): the front foot pressed into the floor at the bottom, heel.r and ball.r at the end
+    forward_lunge: [...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c5'), ...C(['heel.r', 'ball.r'], 'end', 'end', 'c1')],
+    walking_lunge: [...C(['knee.l'], 'end', 'end', 'c2'), ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c12'), ...C(['heel.r', 'ball.r'], 'end', 'end', 'c4')],
+    bodyweight_lunge: [],
+    bodyweight_split_squat: C(['knee.l'], 'end', 'end', 'c1'),
+    // D-SPLIT-BSSHOVER (#364 6592673388): knee.l's end fact is the kneecap 3 cm above the floor (joint centre 0.049 + 0.03 m)
+    bulgarian_split_squat: [{ kind: 'height', landmark: 'knee.l', pose: 'end', cardPose: 'end', m: 0.079, claim: 'c3' }, ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c9'), ...C(['heel.r', 'ball.r'], 'end', 'end', 'c3')],
   };
   it('every card\'s plateFacts is the ruled set (D-LIB14-FACTS)', () => {
     for (const id of LB4) { expect(cardOf(id).plateFacts, id).toEqual(FACTS[id]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
+  });
+  it('D-SPLIT-FRONTFOOT mutations: each card with its front-foot facts removed is red', () => {
+    for (const id of ['forward_lunge', 'walking_lunge', 'bulgarian_split_squat']) {
+      const c = cardOf(id), cut = c.plateFacts.filter((f: any) => !(f.pose === 'end' && ['heel.r', 'ball.r'].includes(f.landmark)));
+      expect(cut.length, id).toBe(c.plateFacts.length - 2);
+      expect(cut, id).not.toEqual(FACTS[id]);
+    }
   });
   it('mutations: a fact with both joint and measure: true, and a start fact named with the unmapped pose, are red', () => {
     const c = cardOf('wall_sit'); c.plateFacts.push({ kind: 'angle', joint: 'knee.r', measure: true, deg: 90, claim: 'w2' });
@@ -1404,5 +1448,455 @@ describe('LIB-SMALL: no whole-page build in the worker (F-VITEST-RPC, #358 65522
     expect(inWorker(`${src}\n  const page = await build.${'buildHeld'}Page();\n`)).toBe(true);
     expect(inWorker(`${src}\n  const page = await bp.${'buildPlates'}Page({});\n`)).toBe(true);
     expect(inWorker(`${src}\n  const out = await gen.${'ren'}der();\n`)).toBe(true);
+  });
+});
+
+// LIB-SPLIT (lib-split-card A3, A5; lb4/DESIGN.md 17): step_up's resume and the 5 SPLIT rows, read off the drawn
+// landmarks (the engine's own solve) and outlines.
+const LANDMARK_KEYS = (lm: any) => Object.keys(lm).filter(k => Array.isArray(lm[k]) && lm[k].length === 3);
+const dist = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!);
+/** Whole-body rigid move of one pose (every numeric `at` triple: root, reach and plant targets). */
+const movePose = (p: any, v: number[]): any => Array.isArray(p) ? p.map(x => movePose(x, v)) : p && typeof p === 'object'
+  ? Object.fromEntries(Object.entries(p).map(([k, x]: [string, any]) => [k, k === 'at' && Array.isArray(x) && x.length === 3 && x.every((n: any) => typeof n === 'number') ? x.map((n: number, i: number) => n + v[i]!) : movePose(x, v)])) : p;
+describe('LIB-SPLIT A3: card-true poses (DESIGN.md 17.2, 17.6; PLAN RULED Q1, Q2)', { timeout: T }, () => {
+  const H = 1.75, KC = 0.028 * H, REAR_LIFT = 0.0360;
+  const FWD = ['forward_lunge', 'walking_lunge', 'bodyweight_lunge'];
+  /** D-SPLIT-FWD and Q1: start on the rear foot's spot (the rear ball's x and z within 0.5 cm, y up by REAR_LIFT ± 0.5 cm, the
+   *  toe pad's lift), and the near (r) foot steps forward at least half a metre. */
+  const fwdProblems = (s: any) => {
+    const a = lmOf(s, 'start'), b = lmOf(s, 'end'), d = [0, 1, 2].map(i => b['ball.l'][i] - a['ball.l'][i]), bad: string[] = [];
+    if (Math.abs(d[0]!) > 0.005) bad.push(`ball.l x ${d[0]!.toFixed(4)}`);
+    if (Math.abs(d[2]!) > 0.005) bad.push(`ball.l z ${d[2]!.toFixed(4)}`);
+    if (Math.abs(d[1]! - REAR_LIFT) > 0.005) bad.push(`ball.l y ${d[1]!.toFixed(4)}`);
+    if (b['heel.r'][2] - a['heel.r'][2] < 0.5) bad.push('the near foot does not step forward');
+    return bad;
+  };
+  it('forward_lunge, walking_lunge, bodyweight_lunge: start on the rear foot\'s spot, the near foot steps forward, the rear foot pivots on its ball', () => {
+    for (const id of FWD) expect(fwdProblems(S[id]), id).toEqual([]);
+  });
+  it('mutations: forward_lunge stepping back (reverse_lunge\'s start) and the start 1 cm across in x are red', async () => {
+    const rl = (await import(/* @vite-ignore */ lib('specs/reverse_lunge.mjs'))).default, s = S.forward_lunge;
+    expect(fwdProblems({ ...s, poses: { ...s.poses, start: rl.poses.start } }).length).toBeGreaterThan(0);
+    expect(fwdProblems({ ...s, poses: { ...s.poses, start: movePose(s.poses.start, [0.01, 0, 0]) } })).toEqual([expect.stringMatching(/^ball\.l x /)]);
+  });
+  /** The end kneecap: on the floor (the knee joint centre one kneecap radius up, ±0.5 cm) or, for forward_lunge (c1
+   *  "without touching"), clear of it by more than 0.5 cm. */
+  const kneeProblems = (s: any, on: boolean) => { const g = lmOf(s, 'end')['knee.l'][1] - KC;
+    return (on ? Math.abs(g) <= 0.005 : g > 0.005) ? [] : [`${s.id}: end kneecap gap ${(g * 100).toFixed(2)} cm`]; };
+  it('walking_lunge and bodyweight_split_squat end with the kneecap on the floor; forward_lunge\'s stays off it', () => {
+    for (const id of ['walking_lunge', 'bodyweight_split_squat']) expect(kneeProblems(S[id], true)).toEqual([]);
+    expect(kneeProblems(S.forward_lunge, false)).toEqual([]);
+  });
+  it('mutations: walking_lunge\'s end 3.6 cm up, and forward_lunge\'s end kneecap put on the floor, are red', () => {
+    const w = S.walking_lunge;
+    expect(kneeProblems({ ...w, poses: { ...w.poses, end: movePose(w.poses.end, [0, 0.036, 0]) } }, true).length).toBe(1);
+    expect(kneeProblems(w, false).length).toBe(1);
+  });
+  /** Front knee flexion (deg) from the drawn hip, knee and ankle. */
+  const kneeFlex = (lm: any, sd: string) => { const u = [0, 1, 2].map(i => lm[`hip.${sd}`][i] - lm[`knee.${sd}`][i]), v = [0, 1, 2].map(i => lm[`ankle.${sd}`][i] - lm[`knee.${sd}`][i]);
+    return 180 - Math.acos(u.reduce((a, x, i) => a + x * v[i]!, 0) / Math.hypot(...u) / Math.hypot(...v)) * 180 / Math.PI; };
+  const fixedProblems = (s: any) => { const e = lmOf(s, 'end'), bad: string[] = [];
+    for (const p of posesOf(s)) for (const k of ['heel.r', 'ball.r', 'toe.r', 'ball.l', 'toe.l']) if (dist(lmOf(s, p)[k], e[k]) > 0.005) bad.push(`${p} ${k}`);
+    if (kneeFlex(lmOf(s, 'start'), 'r') > 10) bad.push('start front knee over 10 deg');
+    return bad; };
+  it('bodyweight_split_squat: both feet fixed in every pose (0.5 cm), the start front knee about straight (8 deg, at most 10; c3)', () => {
+    expect(fixedProblems(S.bodyweight_split_squat)).toEqual([]);
+    expect(kneeFlex(lmOf(S.bodyweight_split_squat, 'start'), 'r')).toBeCloseTo(8, 0);
+  });
+  it('mutation: bodyweight_split_squat\'s start as forward_lunge\'s (a step, the knee straight under the hips) is red', () => {
+    const s = S.bodyweight_split_squat;
+    expect(fixedProblems({ ...s, poses: { ...s.poses, start: S.forward_lunge.poses.start } }).length).toBeGreaterThan(0);
+  });
+  const shinDeg = (lm: any) => Math.atan2(lm['knee.r'][2] - lm['ankle.r'][2], lm['knee.r'][1] - lm['ankle.r'][1]) * 180 / Math.PI;
+  const trunkDeg = (lm: any) => Math.atan2(lm.shoulders[2] - lm.hips[2], lm.shoulders[1] - lm.hips[1]) * 180 / Math.PI;
+  it('bodyweight_lunge: the end front shin slightly forward of vertical (12 deg, c4) and the trunk 20 deg forward from the hips with a flat back (c5)', () => {
+    const s = S.bodyweight_lunge, e = lmOf(s, 'end');
+    expect(shinDeg(e)).toBeCloseTo(12, 1);
+    expect(trunkDeg(e)).toBeCloseTo(20, 1);
+    expect([s.poses.end.trunk, M.bodyweight_lunge.SIZES.TRUNK_LEAN]).toEqual([{ flex: 0 }, 20]);
+  });
+  /** The rear foot laces-down on the bench (c2): its lowest outline points sit on the bench top (±0.5 cm) and span the
+   *  instep to the toe dorsum (at least 15 cm), the sole faces up (heel and mid-sole at least 3 cm above the top); the
+   *  front foot flat on the floor; the bench top at the ruled 0.42 m (D-SPLIT-BSSBENCH). */
+  const bssCam = (s: any) => { const c = plate.renderPlate(s, { id: 'x' }).report.camera; return { view: 'side', near: 'r', pxm: c.pxPerM, P: (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM], c }; };
+  const footPoly = (s: any, p: any, cam: any) => { const b = { height: H };
+    return body.bodyShapes(body.fk(body.resolve(body.normPose(p, b), b).q, b), cam).find((x: any) => x.key === 'foot.l' && x.poly)?.poly; };
+  const plantProblems = (s: any) => {
+    const cam = bssCam(s), bench = s.equipment.find((e: any) => e?.type === 'bench'), top = bench?.at?.[1], bad: string[] = [];
+    if (top !== 0.42) bad.push(`bench top ${top}`);
+    const yTop = cam.c.y0 - 0.42 * cam.pxm, tol = 0.005 * cam.pxm;
+    const poses: [string, any][] = [['start', s.poses.start], ['end', s.poses.end], ['mistake', { ...s.poses.end, ...s.mistake.pose }]];
+    for (const [name, p] of poses) {
+      const poly = footPoly(s, p, cam), low = Math.max(...poly.map((q: number[]) => q[1]!)), band = poly.filter((q: number[]) => q[1]! >= yTop - tol);
+      if (Math.abs(low - yTop) > tol) bad.push(`${name}: lowest foot point ${((yTop - low) / cam.pxm * 100).toFixed(2)} cm off the top`);
+      const xs = band.map((q: number[]) => q[0]!);
+      if (!xs.length || (Math.max(...xs) - Math.min(...xs)) / cam.pxm < 0.15) bad.push(`${name}: the foot does not rest instep to toe`);
+      const lm = lmOf(s, name);
+      for (const k of ['heel.l', 'sole.l']) if (lm[k][1] - 0.42 < 0.03) bad.push(`${name}: ${k} not facing up`);
+      for (const k of ['heel.r', 'ball.r']) if (Math.abs(lm[k][1]) > 0.005) bad.push(`${name}: ${k} off the floor`);
+    }
+    return bad;
+  };
+  it('bulgarian_split_squat: the rear foot laces-down on the 0.42 m bench (instep to toe dorsum) in every pose, the front foot flat', () => {
+    expect(plantProblems(S.bulgarian_split_squat)).toEqual([]);
+  });
+  it('mutation: the rear foot sole-down on the bench is red', () => {
+    const s = S.bulgarian_split_squat, rear = s.poses.end.plant.l;
+    const sole = (p: any) => ({ ...p, plant: { ...p.plant, l: { at: [rear.at[0], 0.42, rear.at[2]] } } });
+    expect(plantProblems({ ...s, poses: { ...s.poses, start: sole(s.poses.start), end: sole(s.poses.end) }, mistake: { ...s.mistake, pose: sole(s.mistake.pose) } }).length).toBeGreaterThan(0);
+  });
+  // cfsp D-SPLIT-DIRWORDS (#364 6584536292): the direction words are card-true pose tests, not plate facts.
+  const thighDeg = (lm: any) => Math.atan2(lm['knee.r'][1] - lm['hip.r'][1], lm['knee.r'][2] - lm['hip.r'][2]) * 180 / Math.PI;
+  it('direction words: the end front thigh parallel to the floor (forward_lunge, bodyweight_lunge: 0 deg ±1) and the front shin about vertical (forward_lunge, walking_lunge, bodyweight_split_squat, bulgarian_split_squat: 6 deg ±1)', () => {
+    for (const id of ['forward_lunge', 'bodyweight_lunge']) expect(Math.abs(thighDeg(lmOf(S[id], 'end'))), id).toBeLessThanOrEqual(1);
+    for (const id of ['forward_lunge', 'walking_lunge', 'bodyweight_split_squat', 'bulgarian_split_squat']) expect(Math.abs(shinDeg(lmOf(S[id], 'end')) - 6), id).toBeLessThanOrEqual(1);
+  });
+  it('mutation: bodyweight_lunge\'s end hips 5 cm higher breaks the parallel thigh (red)', () => {
+    const s = S.bodyweight_lunge, e = s.poses.end, up = { ...e, root: { ...e.root, at: [e.root.at[0], e.root.at[1] + 0.05, e.root.at[2]] } };
+    expect(Math.abs(thighDeg(eng.landmarksOf(up, H)))).toBeGreaterThan(1);
+  });
+  /** bulgarian c2 "3 foot-lengths" (a distance no fact kind states): the front toe tip 3 engine foot lengths (3 × 0.266 m)
+   *  ahead of the bench's front edge, in every pose. */
+  const stanceOf = (s: any, p: string) => lmOf(s, p)['toe.r'][2] - (s.equipment.find((e: any) => e?.type === 'bench').at[2] + s.equipment.find((e: any) => e?.type === 'bench').width / 2);
+  it('bulgarian_split_squat c2: the front toe 3 foot-lengths (0.798 m ±0.5 cm) ahead of the bench edge; mutation: the bench 10 cm forward is red', () => {
+    for (const p of posesOf(S.bulgarian_split_squat)) expect(Math.abs(stanceOf(S.bulgarian_split_squat, p) - 0.798), p).toBeLessThanOrEqual(0.005);
+    const b = S.bulgarian_split_squat, moved = { ...b, equipment: b.equipment.map((e: any) => (e?.type === 'bench' ? { ...e, at: [e.at[0], e.at[1], e.at[2] + 0.1] } : e)) };
+    expect(Math.abs(stanceOf(moved, 'end') - 0.798)).toBeGreaterThan(0.005);
+  });
+  /** D-SPLIT-BSSHOVER (#364 6592673388): the end kneecap 3 cm above the floor (±0.5 cm; the height fact), the Mistake's
+   *  kneecap resting on the floor, one tell on the resting rear knee, no zoom (the knee's move passes the bar). */
+  const hoverProblems = (s: any) => { const e = lmOf(s, 'end')['knee.l'][1] - KC, m = lmOf(s, 'mistake')['knee.l'][1] - KC, t = s.mistake.tells, bad: string[] = [];
+    if (Math.abs(e - 0.03) > 0.005) bad.push(`end kneecap gap ${(e * 100).toFixed(2)} cm`);
+    if (Math.abs(m) > 0.005) bad.push(`Mistake kneecap gap ${(m * 100).toFixed(2)} cm`);
+    if (t.length !== 1 || t[0].key !== 'knee' || t[0].anchor?.at !== 'knee.l' || t[0].anchor?.pose !== 'mistake') bad.push('not one tell on the Mistake rear knee');
+    if (s.zoom) bad.push('a zoom');
+    return bad; };
+  it('bulgarian_split_squat: the end kneecap 3 cm above the floor, the Mistake kneecap resting on it, one rear-knee tell', () => {
+    expect(hoverProblems(S.bulgarian_split_squat)).toEqual([]);
+  });
+  it('mutations: the end kneecap at 0 cm (on the floor) and at +1 cm (4 cm), and the mx30 tells (front knee, shin) with the zoom, are red', () => {
+    const b = S.bulgarian_split_squat, at = (dy: number) => ({ ...b, poses: { ...b.poses, end: { ...b.poses.end, root: { ...b.poses.end.root, at: [b.poses.end.root.at[0], b.poses.end.root.at[1] + dy, b.poses.end.root.at[2]] } } } });
+    expect(hoverProblems({ ...b, poses: { ...b.poses, end: b.mistake.pose } }).filter(x => x.startsWith('end kneecap gap')).length).toBe(1);
+    expect(hoverProblems(at(0.01)).some(x => x.startsWith('end kneecap gap'))).toBe(true);
+    const old = { ...b, zoom: { view: 'mistake', k: 1.5, tell: 'knee' }, mistake: { ...b.mistake, tells: [{ key: 'knee', text: 'Front knee forward', anchor: { at: 'knee.r', pose: 'mistake' } }, { key: 'shin', text: 'Shin tips forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' } }] } };
+    expect(hoverProblems(old)).toEqual(['not one tell on the Mistake rear knee', 'a zoom']);
+  });
+  /** R3 (mx30): the near hand and forearm drawn over the near dumbbell (draw order only; the goblet_squat item 1 form). */
+  const handOverDbR = (spec: any) => { const v = plate.renderPlate(spec, { id: 'x' }).svg, db = v.lastIndexOf('class="disc"');
+    return db > v.lastIndexOf('<use href="#x-e-torso"/>') && v.lastIndexOf('<use href="#x-e-fist.r"/>') > db && v.lastIndexOf('<use href="#x-e-fore.r"/>') > db; };
+  it('bulgarian_split_squat R3: the near fist and forearm over the near dumbbell; mutation: the dumbbell at z front is red', () => {
+    const b = S.bulgarian_split_squat;
+    expect(handOverDbR(b)).toBe(true);
+    const front = { ...b, equipment: b.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && r.z === 'mid' ? { ...r, z: 'front' } : r; } : e)) };
+    expect(handOverDbR(front)).toBe(false);
+  });
+  // The Mistakes at the PLAN's sizes (17.2, 17.6), with the landmarks each leaves in place unmoved (≤ 1e-9 m); the rear
+  // foot planted on its ball moves only by the plant solve (≤ 0.05 cm).
+  const STILL: Record<string, string[]> = {
+    forward_lunge: ['ankle.r', 'heel.r', 'ball.r', 'toe.r', 'sole.r'], bodyweight_lunge: ['ankle.r', 'heel.r', 'ball.r', 'toe.r', 'sole.r'],
+    bodyweight_split_squat: ['ankle.r', 'heel.r', 'ball.r', 'toe.r', 'sole.r'],
+    walking_lunge: ['hips', ...['hip', 'knee', 'ankle', 'heel', 'ball', 'toe', 'sole', 'thighTop', 'thighUnder'].flatMap(k => [`${k}.l`, `${k}.r`])],
+    bulgarian_split_squat: ['ankle.l', 'heel.l', 'ball.l', 'toe.l', 'sole.l', 'ankle.r'],   // D-SPLIT-BSSHOVER: the rear knee swings down
+  };
+  const PLANTED: Record<string, string[]> = { forward_lunge: ['heel.l', 'ball.l', 'toe.l'], bodyweight_lunge: ['heel.l', 'ball.l', 'toe.l'], bodyweight_split_squat: ['heel.l', 'ball.l', 'toe.l'], walking_lunge: [], bulgarian_split_squat: ['heel.r', 'ball.r', 'toe.r'] };
+  // the front knee holds within 1 mm (the engine's leg solve against the analytic hip: 0.93 mm, 0.14 px)
+  const NEAR: Record<string, string[]> = { bulgarian_split_squat: ['knee.r'] };
+  const stillProblems = (s: any) => { const e = lmOf(s, 'end'), m = lmOf(s, 'mistake');
+    return [...STILL[s.id]!.filter(k => dist(e[k], m[k]) > 1e-9), ...PLANTED[s.id]!.filter(k => dist(e[k], m[k]) > 0.0005), ...(NEAR[s.id] ?? []).filter(k => dist(e[k], m[k]) > 0.001)]; };
+  it('each Mistake moves only what its card names: the listed landmarks unmoved', () => {
+    for (const id of SPLIT) { expect(stillProblems(S[id]), id).toEqual([]); expect(LANDMARK_KEYS(lmOf(S[id], 'end')).length, id).toBeGreaterThan(20); }
+  });
+  it('the Mistake sizes: the front shin at 29.2 deg (forward_lunge, bodyweight_lunge, bodyweight_split_squat), the trunk at 26.9 deg (walking_lunge), the kneecap down onto the floor (bulgarian_split_squat)', () => {
+    for (const id of ['forward_lunge', 'bodyweight_lunge', 'bodyweight_split_squat']) expect(shinDeg(lmOf(S[id], 'mistake')), id).toBeCloseTo(29.2, 1);
+    expect(trunkDeg(lmOf(S.walking_lunge, 'mistake'))).toBeCloseTo(26.9, 1);
+    const b = S.bulgarian_split_squat, e = lmOf(b, 'end'), m = lmOf(b, 'mistake');
+    expect(e['knee.l'][1] - m['knee.l'][1]).toBeCloseTo(0.03, 6);   // D-SPLIT-BSSHOVER: the kneecap drops its 3 cm gap
+    expect(m['knee.l'][1] - KC).toBeCloseTo(0, 3);
+    expect(shinDeg(m)).toBeCloseTo(6, 0);
+  });
+  it('mutation: forward_lunge\'s Mistake moving the front foot 2 cm is red', () => {
+    const s = S.forward_lunge, m = s.mistake.pose;
+    expect(stillProblems({ ...s, mistake: { ...s.mistake, pose: { ...m, plant: { ...m.plant, r: { at: [m.plant.r.at[0], 0, 0.02] } } } } })).toContain('heel.r');
+  });
+});
+
+describe('LIB-SPLIT A5: clearance (D-SPLIT-CLEAR; DESIGN.md 17.4)', { timeout: T }, () => {
+  const H = 1.75;
+  let equip: any, geomM: any;
+  beforeAll(async () => { [equip, geomM] = await Promise.all(['../vendor/engine/equipment.mjs', '../vendor/engine/geom.mjs'].map(f => import(/* @vite-ignore */ lib(f)))); }, T);
+  const camOf = (s: any) => { const c = plate.renderPlate(s, { id: 'x' }).report.camera;
+    return { view: 'side', facing: s.facing ?? 'right', near: 'r', pxm: c.pxPerM, P: (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM] }; };
+  const inP = (poly: number[][], [x, y]: number[]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!; if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
+  const sD = (p: number[], a: number[], b: number[]) => { const dx = b[0]! - a[0]!, dy = b[1]! - a[1]!, L2 = dx * dx + dy * dy, t = L2 ? Math.max(0, Math.min(1, ((p[0]! - a[0]!) * dx + (p[1]! - a[1]!) * dy) / L2)) : 0; return Math.hypot(p[0]! - a[0]! - dx * t, p[1]! - a[1]! - dy * t); };
+  /** Gap (px) between two closed outlines; negative when one holds a vertex of the other. */
+  const polyGap = (A: number[][], B: number[][]) => {
+    if (A.some(p => inP(B, p)) || B.some(p => inP(A, p))) return -1;
+    let d = Infinity;
+    for (let i = 0; i < A.length; i++) for (let j = 0; j < B.length; j++) { const a0 = A[i]!, a1 = A[(i + 1) % A.length]!, b0 = B[j]!, b1 = B[(j + 1) % B.length]!; d = Math.min(d, sD(a0, b0, b1), sD(a1, b0, b1), sD(b0, a0, a1), sD(b1, a0, a1)); }
+    return d;
+  };
+  const poseOf = (s: any, p: string) => (p === 'mistake' ? { ...s.poses.end, ...s.mistake.pose } : s.poses[p]);
+  const shapes = (s: any, p: string, cam: any) => { const b = { height: H }; return body.bodyShapes(body.fk(body.resolve(body.normPose(poseOf(s, p), b), b).q, b), cam).filter((x: any) => x.poly); };
+  /** The equipment outlines of one type (the vendor primitive's own polygons) against every body outline but the excepted
+   *  contacts, per pose: [pose, part, px]. */
+  const clear = (s: any, type: string, except: RegExp) => { const cam = camOf(s), item = s.equipment.find((e: any) => e?.type === type), out: [string, string, number][] = [];
+    const eqPolys = equip[type](item, cam).map((x: any) => x.poly).filter(Boolean);
+    for (const p of posesOf(s)) for (const sh of shapes(s, p, cam)) if (!except.test(sh.key)) out.push([p, sh.key, Math.min(...eqPolys.map((q: number[][]) => polyGap(q, sh.poly)))]);
+    return out; };
+  const minOf = (rows: [string, string, number][], pose?: string) => Math.min(...rows.filter(r => !pose || r[0] === pose).map(r => r[2]));
+  it('step_up: the box clears every body outline but the lead foot (the c6 contact) by 2 px or more in every pose; the trailing foot standing tall 2.42 px', () => {
+    const rows = clear(S.step_up, 'box', /^foot\.r$/);
+    expect(rows.length).toBeGreaterThan(30);
+    for (const [p, k, d] of rows) expect(d, `${p} ${k}`).toBeGreaterThanOrEqual(2);
+    expect(minOf(rows.filter(r => r[1] === 'foot.l'), 'start')).toBeCloseTo(2.42, 1);
+  });
+  it('mutation: step_up\'s start trailing hip back at 15 (main\'s) is red', () => {
+    const s = S.step_up, st = { ...s.poses.start, hip: { ...s.poses.start.hip, l: 15 } };
+    expect(minOf(clear({ ...s, poses: { ...s.poses, start: st } }, 'box', /^foot\.r$/), 'start')).toBeLessThan(2);
+  });
+  it('bulgarian_split_squat: the bench clears every body outline but the rear foot (the c2 contact) by 2 px or more in every pose (end 3.09, Mistake 2.26 px)', () => {
+    const rows = clear(S.bulgarian_split_squat, 'bench', /^foot\.l$/);
+    for (const [p, k, d] of rows) expect(d, `${p} ${k}`).toBeGreaterThanOrEqual(2);
+    expect(minOf(rows, 'end')).toBeCloseTo(3.09, 1);
+    expect(minOf(rows, 'mistake')).toBeCloseTo(2.26, 1);
+  });
+  it('mutation: the Bulgarian rear foot 2 cm back (the instep on the bench edge) is red', () => {
+    const s = S.bulgarian_split_squat, back = (p: any) => ({ ...p, plant: { ...p.plant, l: { ...p.plant.l, at: [p.plant.l.at[0], p.plant.l.at[1], p.plant.l.at[2] - 0.02] } } });
+    const m = { ...s, poses: { ...s.poses, start: back(s.poses.start), end: back(s.poses.end) }, mistake: { ...s.mistake, pose: back(s.mistake.pose) } };
+    expect(Math.min(minOf(clear(m, 'bench', /^foot\.l$/), 'end'), minOf(clear(m, 'bench', /^foot\.l$/), 'mistake'))).toBeLessThan(2);
+  });
+  // The dumbbells beside the body (the PILOT-A3 A9 model, lib8r-pilot-a3.test.ts): each head its circumscribed cylinder
+  // (r 0.0595 m, 0.07 m long, axis z), the thigh the engine's radius profile; listed in cm, each ≥ 0.
+  const lerp = (a: number[], b: number[], t: number) => a.map((v, i) => v + (b[i]! - v) * t);
+  const headGap = (G: number[], A: number[], B: number[], r: (t: number) => number) => {
+    let best = Infinity;
+    for (const sg of [-1, 1]) { const c = [G[0]!, G[1]!, G[2]! + sg * (0.065 + 0.035)];
+      for (let k = 0; k <= 400; k++) { const q = lerp(A, B, k / 400), rad = Math.hypot(q[0]! - c[0]!, q[1]! - c[1]!), ax = Math.abs(q[2]! - c[2]!);
+        best = Math.min(best, Math.hypot(Math.max(rad - 0.0595, 0), Math.max(ax - 0.035, 0)) - r(k / 400)); } }
+    return best;
+  };
+  const dbListing = (s: any, dx = 0) => { const thR = geomM.limbR(...eng.RADII.thigh);
+    return [s.poses.start, ...(s.poses.via ?? []), s.poses.end, poseOf(s, 'mistake')].map((p: any) => { const lm = eng.landmarksOf(p, H);
+      return ['l', 'r'].map(sd => { const G = lm[`grip.${sd}`], toward = Math.sign(lm[`hip.${sd}`][0] - G[0]);
+        return +(headGap(sd === 'l' ? [G[0] + toward * dx, G[1], G[2]] : G, lm[`hip.${sd}`], lm[`knee.${sd}`], (t: number) => thR(t) * H) * 100).toFixed(2); }); }); };
+  // [start, via..., end, Mistake] x [db.l, db.r], cm, measured on this head (DESIGN.md 17.4)
+  const LISTED: Record<string, number[][]> = {
+    step_up: [[0.91, 1.14], [0.42, 10.15], [11.85, 20.63]],
+    forward_lunge: [[1.47, 1.47], [1.52, 0.38], [0.85, 1.78], [0.11, 9.7], [1.74, 8.59]],
+    walking_lunge: [[1.47, 1.47], [1.52, 0.39], [0.9, 1.88], [0.09, 9.7], [10.56, 15.18]],
+    bulgarian_split_squat: [[0.73, 0.3], [0.98, 9.7], [0.43, 9.7]],   // D-SPLIT-BSSHOVER
+  };
+  it('every dumbbell clears the thighs in 3D in every drawn pose (listed, each ≥ 0)', () => {
+    for (const [id, want] of Object.entries(LISTED)) { const got = dbListing(S[id]);
+      expect(got.length, id).toBe(want.length);
+      got.forEach((row, i) => row.forEach((v, j) => { expect(v, `${id} ${i} ${j}`).toBeGreaterThanOrEqual(0); expect(v, `${id} ${i} ${j}`).toBeCloseTo(want[i]![j]!, 1); })); }
+  });
+  it('mutation: the Bulgarian far dumbbell 2 cm toward the rear thigh turns the listing negative', () => {
+    expect(dbListing(S.bulgarian_split_squat, 0.02).some(row => row[0]! < 0)).toBe(true);
+  });
+});
+
+describe('LIB-SPLIT A4 and A6: runQa node half on the 6 plates, H3 pinned at the PLAN sizes, the Bulgarian zoom, LIB-3 M1-M7 on forward_lunge', { timeout: T }, () => {
+  const IDS6 = ['step_up', ...SPLIT].map(i => `lib_${i}`);
+  // traceLen and deviation (px) at the PLAN sizes, from runQa's metrics on this head (DESIGN.md 17.10)
+  const PIN: Record<string, [number, number]> = {
+    lib_step_up: [59.07, 30.24], lib_forward_lunge: [86.14, 25.32], lib_walking_lunge: [91.06, 42.36], lib_bodyweight_lunge: [91.1, 18.83],
+    lib_bodyweight_split_squat: [32.12, 25.32], lib_bulgarian_split_squat: [24, 11.63],   // D-SPLIT-BSSHOVER: the rear knee's drop
+  };
+  let build: any, cand: any, muts: any, golden: any, mirror: any, E: any, all: any, html: string;
+  beforeAll(async () => {
+    [build, cand, muts, golden] = await Promise.all(['lb4/build.mjs', 'candidate.mjs', 'qa/mutations.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb4All();
+    html = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: ${JSON.stringify(IDS6)} })).html;`);
+    return () => qaEng.dropMirror(mirror);
+  }, T);
+  const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
+  const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
+  const candOf = (id: string, page = html) => cand.candidateOf(id, { all, platesHtml: page, engine: E, authoring: true });
+  /** A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn. */
+  const mutated = async (id: string, fn: string, arg: any = null) => {
+    const name = id.slice(4), dir = mkdtempSync(join(tmpdir(), 'lb4-split-mut-')), file = join(dir, `${name}.mjs`);
+    writeFileSync(file, `import s, * as mod from ${JSON.stringify(lib(`specs/${name}.mjs`))};\nconst fn = ${fn};\nexport default fn(s, ${JSON.stringify(arg)}, mod);\n`);
+    try {
+      const cid = (await import(/* @vite-ignore */ lib('plates-page.mjs'))).cardIdOf(all.find((r: any) => r.id === id));
+      const h = await lb4BuildInChild(`const bp = await import(lib('build-page.mjs')), cid = ${JSON.stringify(cid)};
+        return (await bp.buildPlatesPage({ groups: [{ id: 'lb4', title: 'LB4', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: ${JSON.stringify(file)} } })).html;`);
+      return { ...(await candOf(id, h)), spec: (await import(/* @vite-ignore */ `file://${file}`)).default };
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  };
+  it('clean: every hard check\'s node half passes on all 6; Trace and deviation pinned; only the Bulgarian plate carries a zoom (Mistake, k 1.5)', async () => {
+    const got: Record<string, [number, number]> = {};
+    for (const id of IDS6) { const r = await qa(await candOf(id)); expect(node(r), id).toEqual([]); got[id] = [+r.metrics.traceLen.toFixed(2), +r.metrics.deviation.toFixed(2)]; }
+    for (const id of IDS6) { expect(got[id]![0], id).toBeGreaterThanOrEqual(22.11); expect(got[id]![1], id).toBeGreaterThanOrEqual(11.39); }
+    for (const [id, [t, d]] of Object.entries(PIN)) { expect(got[id]![0], `${id} trace`).toBeCloseTo(t, 2); expect(got[id]![1], `${id} deviation`).toBeCloseTo(d, 2); }
+    expect(Object.keys(PIN).sort(), JSON.stringify(got)).toEqual([...IDS6].sort());
+    for (const id of SPLIT) expect(S[id].zoom ?? null, id).toEqual(null);   // D-SPLIT-BSSHOVER: bulgarian's knee move passes the bar
+  });
+  it('mutations: a Mistake zoom added to bulgarian_split_squat (D-SPLIT-BSSHOVER) and to bodyweight_split_squat (H3.zoom:not-needed:mistake; walking_lunge\'s Mistake plate has no zoom place at all), are red', async () => {
+    const b = await mutated('lib_bulgarian_split_squat', '(s) => ({ ...s, zoom: { view: \'mistake\', k: 1.5 } })');
+    expect(node(await qa(b))).toContain('H3.zoom:not-needed:mistake');
+    const w = await mutated('lib_bodyweight_split_squat', '(s) => ({ ...s, zoom: { view: \'mistake\', k: 1.5 } })');
+    expect(node(await qa(w))).toContain('H3.zoom:not-needed:mistake');
+  });
+  it('mutations: forward_lunge\'s Mistake shin at 12 deg and walking_lunge\'s trunk at 9 deg (3 + 6) turn H3.deviation red', async () => {
+    const f = await mutated('lib_forward_lunge', '(s, a, mod) => ({ ...s, mistake: { ...s.mistake, pose: mod.mistakeAt(a) } })', 12);
+    expect(node(await qa(f))).toContain('H3.deviation');
+    const w = await mutated('lib_walking_lunge', '(s, a, mod) => ({ ...s, mistake: { ...s.mistake, pose: mod.mistakeAt(a) } })', 9);
+    expect(node(await qa(w))).toContain('H3.deviation');
+  });
+  const ID = 'lib_forward_lunge', fl = () => S.forward_lunge;
+  const MUT = (id: string) => muts.SPEC_MUTATIONS.find((m: any) => m.id.startsWith(`${id} `));
+  it('A6 M1 a label 1 px onto the figure (the Back straight callout) turns PQ-H1 red; 1 px back is clean', async () => {
+    const c0 = fl().callouts.find((x: any) => x.key === 'back'), at = (box: any) => ({ ...fl(), callouts: fl().callouts.map((x: any) => (x.key === 'back' ? { ...x, box } : x)) });
+    let hit: any = null;
+    for (const [dx, dy] of [[-1, 0], [0, 1], [0, -1], [1, 0]]) {
+      for (let d = 1; d <= 120 && !hit; d++) {
+        const box = { left: c0.box.left + dx! * d, top: c0.box.top + dy! * d }, is = plate.renderPlate(at(box), { id: 'm' }).report.issues;
+        if (is.some((i: string) => !i.startsWith(`figure:${c0.text}`))) break;
+        if (is.length) hit = { box, clean: { left: box.left - dx!, top: box.top - dy! } };
+      }
+      if (hit) break;
+    }
+    expect(hit).toBeTruthy();
+    expect(plate.renderPlate(at(hit.clean), { id: 'm' }).report.issues).toEqual([]);
+    expect(node(await qa({ ...(await candOf(ID)), spec: at(hit.box) })).some((k: string) => k.startsWith('H1.engine:normal:figure:'))).toBe(true);
+  });
+  it('A6 M2 a contact 1 cm off (the floor plane under the front heel moved 1.1 cm along its normal) turns PQ-H1 red', async () => {
+    const shift = (s: any) => ({ ...s, checks: s.checks.map((k: any) => (k.landmark !== 'heel.r' || !k.plane ? k : { ...k, plane: { ...k.plane, point: k.plane.point.map((v: number, i: number) => v + k.plane.normal[i] / Math.hypot(...k.plane.normal) * 0.011) } })) });
+    expect(node(await qa({ ...(await candOf(ID)), spec: shift(fl()) })).some((k: string) => /^H1\.engine:normal:check:/.test(k))).toBe(true);
+  });
+  it('A6 M3 a Trace below the minimum turns PQ-H3 red', async () => {
+    const a = MUT('M3').prepare(E, fl(), pins().envelope);
+    expect(node(await qa(await mutated(ID, '(s, a) => ({ ...s, trace: { ...s.trace, trim: [s.trace.trim?.[0] ?? 8, a.t] } })', a)))).toContain('H3.trace');
+  });
+  it('A6 M4 the Mistake equal to the end pose turns PQ-H3 red', async () => {
+    expect(node(await qa(await mutated(ID, 's => ({ ...s, mistake: { ...s.mistake, pose: {} } })')))).toContain('H3.mistake-outline');
+  });
+  it('A6 M5 the start equal to the end pose turns PQ-H3 red', async () => {
+    expect(node(await qa(await mutated(ID, 's => ({ ...s, poses: { ...s.poses, start: s.poses.end } })')))).toContain('H3.start-is-end');
+  });
+  it('A6 M6 an unapproved type (rackUpright) as a moving line part turns PQ-H9 red', async () => {
+    const extra = (lm: any, ctx: any) => ({ type: 'rackUpright', at: [0.5, 0, ctx.pose === 'mistake' ? -1.3 : -1.22], h: 0.5 });
+    expect(node(await qa({ ...(await candOf(ID)), spec: { ...fl(), equipment: [...fl().equipment, extra] } })).some((k: string) => k.startsWith(`H9.moving-line:eq${fl().equipment.length}.rackUpright.`))).toBe(true);
+  });
+  it('A6 M7 an unknown equipment type turns PQ-H9 red', async () => {
+    expect(node(await qa({ ...(await candOf(ID)), spec: { ...fl(), equipment: [...fl().equipment, { type: 'rope3d', at: [0, 0, 0] }] } })).some((k: string) => k.startsWith('H9.type:'))).toBe(true);
+  });
+  it('A6 flags: F4 is named at 1 on step_up and bodyweight_split_squat only (PLAN RULED Q3); F4 2 on step_up, or 1 elsewhere, is red', async () => {
+    const lb4qa = await import(/* @vite-ignore */ lib('lb4/qa.mjs'));
+    const rep = (id: string, f4: number | null) => { const x: any = { id, flags: Object.fromEntries(qaIdx.FLAGS.map((f: string) => [f, { raised: false }])) }; x.flags.F5 = { raised: true, value: 3.57 }; if (f4 != null) x.flags.F4 = { raised: true, value: f4 }; return x; };
+    expect(lb4qa.flagProblems([rep('lib_step_up', 1), rep('lib_bodyweight_split_squat', 1), rep('lib_forward_lunge', null)])).toEqual([]);
+    expect(lb4qa.flagProblems([rep('lib_step_up', 2)])).toEqual(['lib_step_up: F4 2 != the named 1']);
+    expect(lb4qa.flagProblems([rep('lib_forward_lunge', 1)])).toEqual(['lib_forward_lunge: flags F4,F5 != expected F5']);
+    expect(lb4qa.flagProblems([rep('lib_step_up', null)])).toEqual(['lib_step_up: flags F5 != expected F4,F5']);
+  });
+});
+
+describe('LIB-SPLIT A2: the 5 rows approved in panel mx28 (#364 6585103107, head 9f772a09) stay byte-identical', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of step_up, forward_lunge, walking_lunge, bodyweight_lunge and bodyweight_split_squat on the
+  // LB4 page a3d8098e…f366 built at 9f772a09 (45 fragments; the LIB-SMALL A2 form).
+  const APPROVED: Record<string, Record<string, string>> = {
+    "step-up": {
+      "normalSvg": "9bffea48f5e857b37e7ae199d9dabe0d4d26115fac1250ca0291ffb1a2f86324",
+      "normalOverlay": "1f4d76a592d00187cdfdcffb67e8f6a4e1563c57aae988a4df40be2427315eea",
+      "mistakeSvg": "4fa8a2a236aeaaaa59245089c9105bcd22ab3478c78dde1b4cc60f74158e9fc5",
+      "mistakeOverlay": "18fd4b60ff86004583339b2c0fa95ff89130559bcf4518de6fea4166fe8de979",
+      "tells": "8fdf4a24934b50822201a42f062bbfcfa873afa15727fcc42a54eaac84cc017f",
+      "tempo": "cfa4a0ab2667ca0875d0232447ce76260179fb165b22bf6932aa7cdc38ca9970",
+      "cues": "134191d38096b80886c14e3c9de6a67f13aa924cc3422dc4c755a61a21642eed",
+      "alt": "2b7a89b088e00be3a4d7d2eece0288433d2b448ee0ddf34a76bac6c01ba2eb64",
+      "mistakeAlt": "3e23df00e6153acda6b1919000667b70c9745d0e62ef2b79b6063d7a34682625"
+    },
+    "forward-lunge": {
+      "normalSvg": "397d5d8760d45fb95218f84bd7b3f836967478b77cc446163a096403c207a172",
+      "normalOverlay": "f837eaa304167645cd85e865fd84f3994fadb64cd47598ca8d2e64b46da65b05",
+      "mistakeSvg": "c8bdd35591de246d5ce2371321000ef54d18b55bdbcebb87fe910886569ce3ef",
+      "mistakeOverlay": "ac269346c5ceebf873779293043be1c3ef22f4e1b46f0e96963b9595ec82f6f6",
+      "tells": "a7017e3051dbe13d57596d99b3e21b6e8b17994be791a2e206c29c5dec5d3038",
+      "tempo": "7bb4525ced07b239847fa65721dcb1105745f498e178246dd223bc3de40c81fa",
+      "cues": "025f16cdb5f7da9e29dba05dbc34c548eb205ba7a1b8c8d9d38bc545c5534a3e",
+      "alt": "606b11fe23466ab09e74207f576e1070ef2bf792c4ae86a839befbd396209f28",
+      "mistakeAlt": "f373dc5ae08e7fe058d888006c743d13c1a45ec2ff1ddc55ba906970f9023b8e"
+    },
+    "walking-lunge": {
+      "normalSvg": "225043a316db6ea4cacfbad7918d6c60f011d34fbae2f3cc3304e2a50981cd4d",
+      "normalOverlay": "ade4813a7985c93d4d2e155370023f2f5212266ea79f00b1a47cf339b817bdae",
+      "mistakeSvg": "e7fcab3fae26c8b269787d35c0cfea03afb7e0e48c3f8e61b32b505f56504195",
+      "mistakeOverlay": "5403ae2aa179b34a36998c4197b64161794796022048259c6371ad959390f766",
+      "tells": "13748f245a328bc32feba4fc0343136d66bbe0e35c41682acea909810697f440",
+      "tempo": "5be2b84ec4eb55f9a8bae12552d0194298af05d03f9a6099ca4524660c1a0e5d",
+      "cues": "0908549aaaee69cce627d7ef0a4d64194bcd677d0e784d3b8dddedd7b6ec2407",
+      "alt": "42c5a2f8812ad35841c21e940bc13b504db9928b6cede1474fdf6050c3b9747b",
+      "mistakeAlt": "cc9d9faf06b2e4c55e3f6bec39cf6b159274d9e102c92ac08a0feabf72f37eee"
+    },
+    "bodyweight-lunge": {
+      "normalSvg": "6c3ce14bf43527130456107938341c03e869888ade1badf9db2f0a982a66b7b2",
+      "normalOverlay": "84b431a7e5f36b880761f8d0c833086d615fe23a69f41af6b82a5f7664651b47",
+      "mistakeSvg": "6961bc1bbdae7fa3140c195ebda0ba283e462dc19904de796dc97e6288d086a6",
+      "mistakeOverlay": "ffe30a46452711bad24d95c7f1e1061f5a97d0af2b633b7651e21bc3c2899c00",
+      "tells": "a7017e3051dbe13d57596d99b3e21b6e8b17994be791a2e206c29c5dec5d3038",
+      "tempo": "52d36f0a4dbecdf89a0ca6c54a6231bd731998818468da0e17bfceac30615eef",
+      "cues": "841871aca4d1fc3e742ce35fb917ac6dafdf181c23d3960fc9dce8a44946051e",
+      "alt": "77a929da36e03e0f778b3424828ca3e6bbbdd39d5b91e199517de2a8b3aed647",
+      "mistakeAlt": "9e54baf15b72f997c5b8599aebe6ddd598e34812251626cc474e8c9e2cae7864"
+    },
+    "bodyweight-split-squat": {
+      "normalSvg": "ed74798f818a70f3ceb9b89c451632678b885579d4bf79c70c7964958732e0d6",
+      "normalOverlay": "9916b82b111da83bfe6568981e168784ebb73a509c6218e29cfe76dbe5006812",
+      "mistakeSvg": "c52888e75843bc1e76e5e63de54ae9ebf8132721efd2546e40fa143873f85421",
+      "mistakeOverlay": "96dd2540bee7f098643816ef474281d05ef35b3d274e35c4eb99210937042584",
+      "tells": "74bcab68829d90f431aea0471490cde87fb216a9844ecd29d21195f9fd94b8d7",
+      "tempo": "88229cbe363b3a7de7ddd1c67addcadf7b85cad1cf602121147bf73462a63a2d",
+      "cues": "a3ce996975a39a8dd6b7a1c146188b260db0c1a57dafa51ee34c15ca1b317400",
+      "alt": "1dfc876b56caf7c1256f0137bafad7a44e01ed0c88148b8c2dc95e41bfa06c27",
+      "mistakeAlt": "f167659a4d7be13f31dc195b19920996863c0d616973bd09c125d3074991b404"
+    }
+  };
+  let golden: any;
+  beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('their 45 fragments on this head equal the approved ones', async () => {
+    expect(Object.values(APPROVED).reduce((n, x) => n + Object.keys(x).length, 0)).toBe(45);
+    expect(fragProblems(await lb4PageInChild())).toEqual([]);
+  });
+  it('mutation: one byte changed in walking_lunge\'s alt is red', async () => {
+    const html = await lb4PageInChild(), alt = S.walking_lunge.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, alt.replace('Walking lunge', 'Walking lungE')))).toContain('walking-lunge alt');
+  });
+});
+
+describe('LIB-SPLIT A2: bulgarian_split_squat as approved in panel mx31 (#364 6595403393, head 7f8afd68) stays byte-identical', { timeout: T }, () => {
+  // golden.mjs fragmentsOf of bulgarian_split_squat on the LB4 page 38750fee…67e4 built at 7f8afd68 (9 fragments).
+  const APPROVED: Record<string, Record<string, string>> = {
+    "bulgarian-split-squat": {
+      "normalSvg": "fbd896b85d8bf04d32185ff85e6cd802e29e61d10615f58e7454e9c214a01946",
+      "normalOverlay": "d5f3b567f68d8fe33c9001a17707fb81bd67d4986d72548ad280861ef845ee40",
+      "mistakeSvg": "268dca12faffd1fa6b92bd340737073ef038c9473cb1aa32923d77e685c60d29",
+      "mistakeOverlay": "f6aca0d82dfc5e31dd0fe3b608745a3028cb60bdcadde81dd7bbd954c9f275e5",
+      "tells": "c7aaf7b87df630811b7faf9bbb63bb8fcf6323e6fc7fb4a453e8663af7751887",
+      "tempo": "a50b50e7ec7b35d22bc21c16497750d5d5ee1a1096921e8fed7a370cf92e305a",
+      "cues": "b2eabfacf9a601cfefb7a02c4414189e7675edd2417683cdddb69ad5b15e26ff",
+      "alt": "125ed79b6854cea07c42177a7c601d487035d825e6cd84b0ddcbcd682d23a786",
+      "mistakeAlt": "b7b6a8a37b969a44eadb3ba34811da5c34bce618a7dc5f0c270a4bee40df5477"
+    }
+  };
+  let golden: any;
+  beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
+  const fragProblems = (html: string) => Object.entries(APPROVED).flatMap(([c, want]) => {
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
+    return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
+  });
+  it('its 9 fragments on this head equal the approved ones', async () => {
+    expect(Object.values(APPROVED).reduce((n, x) => n + Object.keys(x).length, 0)).toBe(9);
+    expect(fragProblems(await lb4PageInChild())).toEqual([]);
+  });
+  it('mutation: one byte changed in its alt is red', async () => {
+    const html = await lb4PageInChild(), alt = S.bulgarian_split_squat.alt;
+    expect(html.includes(alt)).toBe(true);
+    expect(fragProblems(html.replace(alt, alt.replace('Bulgarian split squat', 'Bulgarian split squaT')))).toContain('bulgarian-split-squat alt');
   });
 });

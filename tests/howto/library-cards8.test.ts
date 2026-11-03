@@ -10,7 +10,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
-import { HELD, PAIR, heldShapeProblems, pairingMismatches, pairingMutations } from './held-pairing';
+import { E_ID, HELD, PAIR, heldShapeProblems, pairingMismatches, pairingMutations } from './held-pairing';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -161,7 +161,7 @@ describe('LIB-5 S12: the 8\'s cards are research 9eaa248\'s bytes, validated, wi
     expect(m.c.length).toBe(1);
     expect(m.c[0]).toMatch(/^barbell_row: .*names unknown claim c999/);
     expect(m.d).toEqual([`barbell_row: ${JSON.stringify([PAIR('barbell_row')])}, want []`]);
-    expect(m.e).toEqual([`held[0] (${HELD[0]!.id}) has no ruling`]);
+    expect(m.e).toEqual([`held[0] (${E_ID}) has no ruling`]);
   });
 });
 

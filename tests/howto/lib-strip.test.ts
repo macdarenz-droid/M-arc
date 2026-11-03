@@ -9,7 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { HELD, PAIR, heldShapeProblems, pairingMismatches, pairingMutations } from './held-pairing';   // D-PLATEFACTS-HELD
+import { E_ID, HELD, PAIR, heldShapeProblems, pairingMismatches, pairingMutations } from './held-pairing';   // D-PLATEFACTS-HELD
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -165,7 +165,7 @@ describe('A6: the validator accepts the untimed shapes (D-STRIP-SHAPE), add-only
     expect(m.c.length).toBe(1);
     expect(m.c[0]).toMatch(/^barbell_row: .*names unknown claim c999/);
     expect(m.d).toEqual([`barbell_row: ${JSON.stringify([PAIR('barbell_row')])}, want []`]);
-    expect(m.e).toEqual([`held[0] (${HELD[0]!.id}) has no ruling`]);
+    expect(m.e).toEqual([`held[0] (${E_ID}) has no ruling`]);
   });
   it('mutations, each red on its own check', () => {
     const T = S.tempoOf(frontSquat().rows), with0 = (x: any) => [{ ...T[0], ...x }, T[1]];
