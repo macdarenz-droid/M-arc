@@ -1,0 +1,7 @@
+{
+ "about": "LIB-SHIP D-SHIP-C3 (#376 6614298313): the library rows that ship with no hand zoom. Each entry names its ruling and exactly one reason: gap-key (a hand key's GAPS entry, at file:line), gap-ruled (a ruling that names the id) or card-no-zoom (the card has no hand zoom, checked against the card file at test time). The row's handling.why names the same ruling. Entries are added per wave, each ruled before it is used (tests/howto/checks/c3-library.ts RULED).",
+ "entries": {
+  "lib_barbell_overhead_press": { "ruling": "D-SHIP-Q1", "reason": "gap-ruled", "note": "push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19, hands/DESIGN.md:211); the grip copy carries c3 and c4" },
+  "lib_pec_fly": { "ruling": "D-SHIP-C3", "reason": "card-no-zoom" }
+ }
+}
