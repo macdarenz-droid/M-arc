@@ -406,6 +406,21 @@
       "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
       "supersedes": null,
       "prev": "c331a386e8db274400f940ad0378be046795371f032c052f985490b96180dbfa"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-A",
+      "ids": [
+        "lib_dumbbell_biceps_curl"
+      ],
+      "pageSha256": "dc4931df49f9d33fa04cbd64a81aeaa16fba25a7a5e8e4ebfffd4376a1c9c991",
+      "bytes": 269552,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W1-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/376#issuecomment-6616230145 @ 26593a92bdbe428f12186949c7842b35d9f47dec",
+      "date": "2026-11-03",
+      "why": "W1 LAYERS APPROVED (#376 6616230145): the calibrated layers panel (3 fresh Opus critics, 2 plants caught, 2 golden-B anchors; every median 4 or more for dumbbell_biceps_curl, review 6616096384) and the supervisor diff-check of SHIP LAYERS FIXED W1 @ 26593a92 (curl only, D-SHIP-SHAPES).",
+      "prev": "6ce3197cc824ba5ba54852a37cadfdb4fe2ac5f6089e5e61d71fefa48c3d692b"
     }
   ]
 }

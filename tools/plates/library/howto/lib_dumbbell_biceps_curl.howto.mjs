@@ -58,7 +58,9 @@ const KEYED = IDS.dumbbell_biceps_curl, V = VARIANTS[KEYED.variant];
 const RIGHT_POSE = V.right;
 const FAULTS = KEYED.faults.map(key => {
   const f = V.faults[key];
-  return { key, label: f.label, pose: f.pose, markers: f.markers, alt: f.alt };
+  // HandFault.pose.wrist needs dev: the key's fault sets ext only and the engine merges it over the right pose
+  // (render/closeup/common.mjs mergePose), so dev is the right pose's own value (0), written out for the type.
+  return { key, label: f.label, pose: { ...f.pose, wrist: { dev: RIGHT_POSE.wrist.dev, ...f.pose.wrist } }, markers: f.markers, alt: f.alt };
 });
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */

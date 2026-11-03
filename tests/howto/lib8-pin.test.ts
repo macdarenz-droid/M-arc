@@ -102,21 +102,34 @@ describe('LIB-8M A7: card keys and the tempo map', () => {
 
 describe('LIB-8M A11: rows, pages and held ids', () => {
   const raw = read('tools/plates/library/batches/pilot-a.json'), batch = JSON.parse(raw);
-  it('batches/pilot-a.json holds exactly the 13 pinned ids, each once, mode H, census view, one stage', () => {
+  // LIB-SHIP (D-SHIP-A9, ruling 3; D-SHIP-SHAPES, D-SHIP-W1-LAYERS #376 6616230145): pilot A ships exactly the ruled ids;
+  // every other row stays at approved-plate. Replaces "one stage": a second stage, an unruled shipped id or a ruled id
+  // not shipped is red.
+  const SHIPPED_RULED = ['lib_dumbbell_biceps_curl'];
+  it('batches/pilot-a.json holds exactly the 13 pinned ids, each once, mode H, census view; LIB-SHIP: exactly the ruled ids shipped, the rest approved-plate', () => {
     for (const id of PINNED) expect(raw.split(`"lib_${id}"`).length - 1).toBe(1);
     expect(Object.keys(batch.rows).sort()).toEqual(PINNED.map(id => `lib_${id}`).sort());
-    const stages = new Set(Object.values(batch.rows).map((r: any) => r.stage));
-    expect(stages.size).toBe(1);
-    expect(['review', 'approved-plate']).toContain([...stages][0]);
+    expect(Object.entries(batch.rows).filter(([, r]: [string, any]) => r.stage === 'shipped').map(([id]) => id).sort()).toEqual([...SHIPPED_RULED].sort());
+    expect(Object.entries(batch.rows).filter(([id, r]: [string, any]) => !SHIPPED_RULED.includes(id) && r.stage !== 'approved-plate')).toEqual([]);
     for (const id of PINNED) expect(batch.rows[`lib_${id}`]).toMatchObject({ src: `library/specs/${id}.mjs`, chromeId: id.replace(/_/g, '-'), mode: 'H', view: VIEW[id] });
     expect(batch.censusRef).toBe('4a9fd86');
   });
-  it('its pages object is the ruled three paths, and neither layers file exists', () => {
+  // LIB-SHIP (D-SHIP-A9, ruling 3): replaces "neither layers file exists". Both layers files exist; the chain's one
+  // layers-page entry names exactly the ruled shipped ids and pins the committed page's sha256 and bytes; each ruled id
+  // has its plate entry and its C15 stamp. A missing file, an unpinned or changed page, an extra or missing id, a second
+  // layers-page entry without supersedes, or a missing stamp is red.
+  it('its pages object is the ruled three paths; LIB-SHIP: the layers page is pinned for exactly the ruled ids, each with its plate entry and stamp', async () => {
     expect(batch.pages).toEqual({ plates: 'tools/plates/library/pages/pilot-a.json', layers: 'tests/howto/golden/library/pilot-a.layers.html', layersConfig: 'tools/plates/library/pages/pilot-a.layers.json' });
-    expect(existsSync(ROOT + batch.pages.layers)).toBe(false);
-    expect(existsSync(ROOT + batch.pages.layersConfig)).toBe(false);
-    const chain = ROOT + 'tests/howto/golden/library/pilot-a.json';
-    if (existsSync(chain)) expect(JSON.parse(readFileSync(chain, 'utf8')).entries.some((e: any) => e.kind === 'layers-page')).toBe(false);
+    expect(existsSync(ROOT + batch.pages.layers)).toBe(true);
+    expect(existsSync(ROOT + batch.pages.layersConfig)).toBe(true);
+    const entries = JSON.parse(read('tests/howto/golden/library/pilot-a.json')).entries;
+    const lp = entries.filter((e: any) => e.kind === 'layers-page');
+    expect(lp).toHaveLength(1);
+    const page = readFileSync(ROOT + batch.pages.layers);
+    expect([lp[0].ids, lp[0].pageSha256, lp[0].bytes]).toEqual([SHIPPED_RULED, createHash('sha256').update(page).digest('hex'), page.length]);
+    for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
+    const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
+    expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);
   });
   const heldFiles = () => [...readdirSync(ROOT + 'tools/plates/library/batches').filter(f => f.endsWith('.json')).map(f => `tools/plates/library/batches/${f}`),
     ...(existsSync(ROOT + 'tests/howto/golden/library') ? readdirSync(ROOT + 'tests/howto/golden/library').map(f => `tests/howto/golden/library/${f}`) : [])];

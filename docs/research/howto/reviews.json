@@ -135,6 +135,23 @@
       "approvedBy": "supervisor",
       "decision": "D-LIB5-STAMPS",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb"
+    },
+    {
+      "scope": "lib_dumbbell_biceps_curl",
+      "hash": "99aba73c623e1ea6569619ea57ac87c9b803cbaae6fec0e44dea96297b95e8f8",
+      "date": "2026-11-03",
+      "fetcher": "LIB-SHIP W1: no new source fetch; the sheet cites the verified research card docs/research/howto/cards/dumbbell_biceps_curl.json and the curl hand key's convention (D-SHIP-GRIP (a))",
+      "critic": "LIB-SHIP W1: fresh Opus content critic on card and quotes (set C, 2 planted errors both caught); findings fixed (CONVENTION provenance; c4 wording) and diff-checked by the supervisor (#376)",
+      "safety": "LIB-SHIP W1: tier C, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-SHIP W1: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught, 2 golden-B anchors); every median 4 or more",
+      "findings": [
+        "F-CURL-TELL: the approved plate tell 'Shoulder takes over' overstates c4; recorded, plate unchanged (S1)",
+        "F-CURL-ZOOM: the card's zoom Wrong (elbow back) differs from the plate's drawn fault (elbow forward); recorded"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W1-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/376#issuecomment-6616230145 @ 26593a92bdbe428f12186949c7842b35d9f47dec"
     }
   ]
 }
