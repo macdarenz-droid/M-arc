@@ -3158,3 +3158,8 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
 - **Source:** PR #371 (6579432546, 6579536635); lb9/DESIGN.md §15, §27.
 - **v_up's outline fact added (after train 60).** The V's contact is now checked: the torso outline must lie within
   0.5 cm of the floor, and it does (0.00 cm). The drawing did not change.
+
+## LIB-SHAPES: `none` and no-hand-zoom sheets (2026-11-03)
+
+- **Plan posted for ruling** on the LIB-SHAPES PR ('LIB-SHAPES PLAN'). Card: lib-shapes-card.md on claude/sup-lib4-cards;
+  rulings D-SHIP-SHAPES, D-SHIP-C3, D-SHIP-GRIP (#376). Decisions are recorded here once ruled.
