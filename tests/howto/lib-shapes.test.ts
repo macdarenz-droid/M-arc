@@ -206,3 +206,16 @@ describe('LIB-SHAPES D-SHAPES-HANDS: gen/hands.mjs, a library row with no hand p
     expect(src.split('throw new Error(`hands: ${rowId}: no hand pair (').length).toBe(2);
   });
 });
+
+describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-layers-page.mjs', () => {
+  const BLP = 'tools/plates/library/build-layers-page.mjs';
+  it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main b9369130', () => {
+    const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
+    const rows = Object.values(m.rows) as { files: Record<string, string> }[];
+    expect(rows).toHaveLength(21);
+    for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; }
+    // main b9369130's MANIFEST.json with the same one entry blanked (if LIB-SHIP W1 re-pins first, re-measure on the merge)
+    expect(sha(JSON.stringify(m))).toBe('81dba56101c3d510fe41eb1f00caa0fc361aae77abf4fb93ad5ebdaff81e4307');
+  });
+});
+

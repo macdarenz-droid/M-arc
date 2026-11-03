@@ -3177,3 +3177,7 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   `why` names D-SHIP-C3 (`noPairRuling`, `noPairCheck`); every other row throws "no hand pair" as before. hands.mjs is a
   hashed writer, so 27 of the 8's generated files move their `inputsSha256=` header line only; bodies and `www/` are
   unchanged. **Why:** the generate step must accept the two shapes LIB-SHIP W2 ships.
+- **D-SHAPES-PIN (#377 6616912755).** tools/plates/library/MANIFEST.json re-pins only build-layers-page.mjs's sha256 in
+  the 21 pinned rows (manifestOf/manifestText), in one `[golden update]` commit; lib-shapes.test fails if any other
+  entry moves from main b9369130. **Why:** the builder is a pinned input of every row, and no pinned row has a layers
+  page yet, so no pinned output moves. If LIB-SHIP W1 re-pins first, merge main and re-run manifestOf.
