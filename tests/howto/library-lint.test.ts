@@ -358,7 +358,7 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
       const boxes = Object.fromEntries((c.riskFlags ?? ['wrist']).map((f: string) => [`RED_FLAG_${f.toUpperCase()}`, shared[CL.RED_FLAG_BLOCKS[f].exp]]));
       const bad = [
         ...checkC1(c, known), ...checkC2(c), ...checkC4(c), ...checkC7(c),
-        ...(r.batch === 'golden' ? checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '')
+        ...(r.mode === 'golden' ? checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '')
           : (card => [...C3L.checkC3Library(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '', { list: noZoom, card, gapKeyOf }), ...C3L.checkGripLibrary(c, card)])(
             JSON.parse(readFileSync(join(ROOT, c.research.card), 'utf8')))),
         ...checkC8(c, SOURCES), ...checkC15(c, plate, reviews), ...checkC16(c),
