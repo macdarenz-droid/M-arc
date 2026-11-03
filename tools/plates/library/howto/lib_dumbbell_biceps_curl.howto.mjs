@@ -29,7 +29,9 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'WEAK' },
   // The curl key's own source for the hand contact (the card has no grip.handContact): a drawing convention.
   'hand-key-curl': { cite: 'LIB-7 hand pair key curl (dumbbell), CONVENTIONS ga:curl-mid: across the middle of the palm', url: 'tools/plates/library/hands/pairs.mjs',
-    kind: 'secondary', access: 'full', checked: '2026-11-03', use: 'CONVENTION' },
+    kind: 'secondary', access: 'full', checked: '2026-11-03', use: 'CONVENTION' },  // RED_FLAG's own source (layers/howto/shared.mjs), as golden B's machine_chest_press lists it: the card's redFlags 'wrist'.
+  'nhs-wrist-pain': { cite: 'NHS, Wrist pain', url: 'https://www.nhs.uk/conditions/hand-pain/wrist-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When wrist pain needs a check.' },
 };
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });
@@ -66,21 +68,22 @@ const FAULTS = KEYED.faults.map(key => {
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): the elbow-back
 // swing is the plate's own forward drift mirrored; no card gives its size, no number appears in user copy; the layers
 // panel judges it.
-const MIS = plateSpec.mistake.pose;
+const MIS = plateSpec.mistake.pose, ELBOW_BACK = { ...MIS, shoulder: { ...MIS.shoulder, flex: -MIS.shoulder.flex } };
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: plateSpec.poses.end },
-  'elbow-back': { pose: { ...plateSpec.poses.end, ...MIS, shoulder: { ...MIS.shoulder, flex: -MIS.shoulder.flex } } },
+  'elbow-back': { pose: { ...plateSpec.poses.end, ...ELBOW_BACK } },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
-// One per card zoom, same keys and kinds. `guide` names the crop mark the close-ups page defines (pilot-a.closeups.mjs).
+// One per card zoom, same kinds; the hand zoom's key is 'hand' (golden B's chip rule). The posture zoom is in the zoom
+// shell's shape (callout with an anchor at the landmark it names, no guide mark; pilot-a.closeups.mjs).
 const zooms = [
   {
-    key: 'curl-wrist', chip: 'Wrist', heading: 'Wrist position', kind: 'hand',
+    key: 'hand', chip: 'Wrist', heading: 'Wrist position', kind: 'hand',   // card zoom key: curl-wrist
     hand: {
       right: RIGHT_POSE,
-      wrong: KEYED.faults,          // handling.faults keys; the pair pages them in this order
+      wrong: FAULTS,                // handling.faults (golden B's shape: fault objects); the pair pages them in this order
       camera: 'side',               // the pair's camera (pairs.mjs pairSpec)
       panelHeight: V.panelHeight,
       notes: { right: 'Middle of palm', wrong: 'Wrist curled' },   // words/curl-dumbbell-under.json, first page
@@ -95,12 +98,14 @@ const zooms = [
   },
   {
     key: 'curl-elbow', chip: 'Elbows', heading: 'Elbow path', kind: 'posture',
-    crop: { center: { landmark: 'elbow.r', pose: 'end', dx: 0, dy: -10 }, sizePx: 150 },
+    // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's elbow for both halves; the Wrong is the
+    // elbow-back still drawn alone (solid), as `stills['elbow-back']`.
+    crop: { center: { at: 'elbow.r', pose: 'right', off: [0, -10] }, sizePx: 150 },
     right: 'end',
-    wrong: { still: 'elbow-back' },
-    callouts: {
-      right: { text: 'Elbow at side', guide: 'side-line' },
-      wrong: { text: 'Elbow back', guide: 'side-line' },
+    wrong: { base: 'end', pose: ELBOW_BACK, solid: true },
+    callout: {
+      right: { text: 'Elbow at side', anchor: 'elbow.r' },
+      wrong: { text: 'Elbow back', anchor: 'elbow.r' },
     },
     caption: {
       right: 'Upper arm by your side at the top.',
@@ -108,7 +113,7 @@ const zooms = [
     },
     alt: {
       right: 'Side view, top of the curl. The upper arm hangs straight down by the side. The elbow is fully bent, the dumbbell in front of the shoulder.',
-      wrong: 'Side view, top of the curl. The elbow has swung back behind the body to cheat the weight up.',
+      wrong: 'Side view. The elbow has swung back behind the body to cheat the weight. The dumbbell hangs low, in front of the hip.',
     },
     feelRow: 'front-shoulder',
   },
@@ -129,14 +134,14 @@ const feel = {
     { key: 'wrist', where: 'Wrist discomfort or pain', at: { parts: HANDS },
       means: 'Your wrists are bent up or down under load.',
       fix: "Stop and don't train through the pain. Keep the wrist straight.",
-      zoom: 'curl-wrist', redFlag: true, claim: CL.c6 },
+      zoom: 'hand', redFlag: true, claim: CL.c6 },
   ],
   claim: C(['CONSENSUS', 'DATA'], ['oliveira-2009', 'marcolin-2018', SL], 'c11, c12'),
 };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
 const MISTAKES = [
-  { key: 'wrists', title: 'Wrists bending up or down', zoom: 'curl-wrist', claim: CL.c6,
+  { key: 'wrists', title: 'Wrists bending up or down', zoom: 'hand', claim: CL.c6,
     fix: 'Keep the hand in line with the forearm.' },
   { key: 'swing', title: 'Swinging the body', claim: CL.c5,
     fix: 'Use a lighter dumbbell and lift with control.' },
@@ -172,7 +177,7 @@ export default {
   setup: [
     { kind: 'load', text: 'Pick a weight you can curl without swinging.', claim: CL.c5 },
     { kind: 'position', text: 'Stand with feet shoulder-width, knees slightly bent.', claim: CL.c2 },
-    { kind: 'grip', text: 'Palms forward, thumbs wrapped, handle across the middle of the palm.', zoom: 'curl-wrist',
+    { kind: 'grip', text: 'Palms forward, thumbs wrapped, handle across the middle of the palm.', zoom: 'hand',
       claim: C(['CONSENSUS', 'CONVENTION'], [ACE, SL, 'hand-key-curl'], 'c1. The contact is the curl key\'s ga:curl-mid (the card has no grip.handContact).') },
     { kind: 'brace', text: 'Chest up, shoulders down and slightly back.', claim: CL.c8 },
   ],
@@ -182,12 +187,13 @@ export default {
     { key: 'upper-arm', label: 'Never back', detail: 'Upper arms never travel back. Slightly forward at the top is fine.',
       anchor: { landmark: 'shoulder.r', pose: 'end' }, zoom: 'curl-elbow', claim: CL.c13 },
     { key: 'still', label: 'Still body', detail: 'Body stays still. Only the arms move.', anchor: { landmark: 'backUpper', pose: 'end' }, claim: CL.c14 },
-    { key: 'wrists', label: 'Straight wrists', detail: 'Wrists stay straight.', anchor: { landmark: 'wrist.r', pose: 'end' }, zoom: 'curl-wrist', claim: CL.c6 },
+    { key: 'wrists', label: 'Straight wrists', detail: 'Wrists stay straight.', anchor: { landmark: 'wrist.r', pose: 'end' }, zoom: 'hand', claim: CL.c6 },
     { key: 'shrug', label: 'No shrugging', detail: 'No shrugging during the lift.', anchor: { landmark: 'shoulderTop.r', pose: 'end' }, claim: CL.c8 },
     { key: 'range', label: 'Full range', detail: 'Lower until the arms are straight again.', anchor: { landmark: 'grip.r', pose: 'start' }, claim: CL.c12 },
   ],
   feel,
   zooms,
+  chips: ['hand', 'curl-elbow', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
     setupLine: 'Stand tall, feet shoulder-width, knees slightly bent. Palms forward, elbows close to your sides.',
     mistakeLine: 'Never let your elbows travel back to cheat the weight up. Go lighter instead of swinging.',

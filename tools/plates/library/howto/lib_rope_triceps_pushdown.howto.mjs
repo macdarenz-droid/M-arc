@@ -24,7 +24,11 @@ export const SOURCES = {
   'sl-rope': { cite: 'How to Do Tricep Pushdown With Rope: Muscles Worked & Proper Form (StrengthLog, 2023)', url: 'https://www.strengthlog.com/?p=2541',
     kind: 'coach', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
   'sl-pushdown': { cite: 'How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (StrengthLog, 2023)', url: 'https://www.strengthlog.com/tricep-pushdown/',
-    kind: 'coach', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
+    kind: 'coach', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },  // RED_FLAG_ELBOW's own source (layers/howto/shared.mjs), as golden B's machine_chest_press lists it: the card's redFlags 'elbow'.
+  'nhs-elbow-pain': { cite: 'NHS, Elbow and arm pain', url: 'https://www.nhs.uk/symptoms/elbow-and-arm-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When elbow pain needs a check.' },  // The back box's own source (shared/back-box.mjs, docs/research/howto/shared/back-pain-box.json sources): the card's redFlags 'back'.
+  'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
 };
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });
@@ -73,19 +77,20 @@ const CURLED = {
 // spec's own Mistake value) and START_ELBOW 100 size the elbows-forward Wrong; no card gives them, no number appears in
 // user copy; the layers panel judges them.
 const { start: START, end: END } = plateSpec.poses, MIS_SHOULDER = 25, START_ELBOW = 100;
+const ELBOWS_FORWARD = { reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: START_ELBOW, wrist: 0 };
 export const stills = {
   start: { pose: START },
   end: { pose: END },
-  'elbows-forward': { pose: { ...START, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: START_ELBOW, wrist: 0 } },
+  'elbows-forward': { pose: { ...START, ...ELBOWS_FORWARD } },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 const zooms = [
   {
-    key: 'rope-hand', chip: 'Hand', heading: 'Rope grip', kind: 'hand',
+    key: 'hand', chip: 'Hand', heading: 'Rope grip', kind: 'hand',   // card zoom key: rope-hand
     hand: {
       right: RIGHT_POSE,
-      wrong: ['curled'],
+      wrong: [CURLED],   // handling.faults (golden B's shape: fault objects)
       camera: 'above',   // pairs.mjs ORIENTATIONS.neutral
       panelHeight: 170,
       notes: { right: 'Middle of palm', wrong: 'Wrist curled' },   // the key's approved words (rope-push-neutral.json)
@@ -101,12 +106,14 @@ const zooms = [
   },
   {
     key: 'rope-elbow', chip: 'Elbows', heading: 'Elbow position', kind: 'posture',
-    crop: { center: { landmark: 'elbow.r', pose: 'start', dx: 10, dy: 0 }, sizePx: 140 },
+    // zoom shell (render/closeup/crop.mjs): the Wrong is the elbows-forward still dashed over the start pose, as
+    // `stills['elbows-forward']`; crop centre on the right pose's elbow for both halves.
+    crop: { center: { at: 'elbow.r', pose: 'right', off: [10, 0] }, sizePx: 140 },
     right: 'start',
-    wrong: { still: 'elbows-forward', over: 'start' },
-    callouts: {
-      right: { text: 'At your sides', guide: 'upper-arm-plumb' },
-      wrong: { text: 'Drifted forward', guide: 'upper-arm-plumb' },
+    wrong: { base: 'start', pose: ELBOWS_FORWARD },
+    callout: {
+      right: { text: 'At your sides', anchor: 'elbow.r' },
+      wrong: { text: 'Drifted forward', anchor: { at: 'elbow.r', pose: 'mistake' } },
     },
     caption: {
       right: 'Elbows against your sides at the top.',
@@ -180,7 +187,7 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     { kind: 'adjust', text: 'Fix the rope to the pulley at its top position.', claim: CL.c1 },
-    { kind: 'grip', text: 'Hold each end with your hand against the knob, thumbs wrapped.', zoom: 'rope-hand', claim: CL.c2 },
+    { kind: 'grip', text: 'Hold each end with your hand against the knob, thumbs wrapped.', zoom: 'hand', claim: CL.c2 },
     { kind: 'position', text: 'Stand facing the machine, feet hip-width or staggered, torso tall.', claim: CL.c10 },
     { kind: 'position', text: 'Elbows at your sides, forearms just past parallel, shoulders down and back.', zoom: 'rope-elbow', claim: CL.setupArms },
     { kind: 'load', text: 'Pick a weight you can move with control.', claim: CL.c15 },
@@ -189,7 +196,7 @@ export default {
     { key: 'elbows', label: 'Elbows in', detail: 'Elbows stay in at your sides.',
       anchor: { landmark: 'elbow.r', pose: 'start' }, zoom: 'rope-elbow', claim: CL.c6 },
     { key: 'wrists', label: 'Straight wrists', detail: 'Wrists straight throughout.',
-      anchor: { landmark: 'wrist.r', pose: 'end' }, zoom: 'rope-hand', claim: CL.c5 },
+      anchor: { landmark: 'wrist.r', pose: 'end' }, zoom: 'hand', claim: CL.c5 },
     { key: 'torso', label: 'Torso tall', detail: 'Torso tall. Any lean comes from the hips, not an arched back.',
       anchor: { landmark: 'backUpper', pose: 'start' }, claim: CL.c10 },
     { key: 'shoulders', label: 'Shoulders down', detail: 'Shoulders down and back.',
@@ -203,6 +210,7 @@ export default {
   ],
   feel,
   zooms,
+  chips: ['hand', 'rope-elbow', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
     setupLine: 'Rope on the top pulley, hands against the knobs. Elbows at your sides, shoulders down and back.',
     mistakeLine: 'Keep your elbows at your sides. Lean only from the hips, never by arching your back.',
