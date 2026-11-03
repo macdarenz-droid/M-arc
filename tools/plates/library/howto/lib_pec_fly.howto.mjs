@@ -56,38 +56,15 @@ const bentReach = (pose, flex) => {
   return out;
 };
 const PAD_FLEX = (75 + 90) / 2;
-// 'back-off-pad' (card zoom fly-backpad wrong, c6: "upper back peeled off the pad to finish the rep"): the spec's end
-// pose with the trunk bent forward off the pad. OPEN ITEM: the card gives no angle, and the plate is a front view, which
-// cannot show the gap (card plate.viewWhy: "needs a side view"); BACK_OFF is a drawing value for the close-ups review.
-const BACK_OFF = 15;
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: plateSpec.poses.end },
   'elbows-bent': { pose: { ...plateSpec.poses.start, reach: bentReach(plateSpec.poses.start, PAD_FLEX) } },
-  'back-off-pad': { pose: { ...plateSpec.poses.end, trunk: BACK_OFF } },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom, same keys and kinds. `guide` names the crop mark the close-ups page defines (pilot-a.closeups.mjs).
 const zooms = [
-  {
-    key: 'fly-backpad', chip: 'Back pad', heading: 'Back pad', kind: 'posture',
-    crop: { center: { landmark: 'backUpper', pose: 'end', dx: 0, dy: 0 }, sizePx: 150 },
-    right: 'end',
-    wrong: { still: 'back-off-pad' },
-    callouts: {
-      right: { text: 'On the pad', guide: 'pad-contact' },
-      wrong: { text: 'Off the pad', guide: 'pad-gap' },
-    },
-    caption: {
-      right: 'Upper back pressed into the pad as the handles meet.',
-      wrong: 'Upper back peeled off the pad to finish the rep.',
-    },
-    alt: {
-      right: 'End of the fly. The upper back stays pressed into the pad. The handles nearly meet in front of the chest.',
-      wrong: 'End of the fly. The upper back has peeled off the pad to finish the rep.',
-    },
-  },
   {
     key: 'fly-elbow', chip: 'Elbows', heading: 'Elbow bend', kind: 'posture',
     crop: { center: { landmark: 'elbow.l', pose: 'start', dx: 0, dy: 0 }, sizePx: 150 },
@@ -131,7 +108,7 @@ const feel = {
 const MISTAKES = [
   { key: 'short', title: 'Stopping short of full range', claim: CL.c6,
     fix: 'Go lighter until the handles nearly meet every rep.' },
-  { key: 'back-off', title: 'Upper back lifting off pad', zoom: 'fly-backpad', claim: CL.c6,
+  { key: 'back-off', title: 'Upper back lifting off pad', claim: CL.c6,
     fix: 'Go lighter. Keep the back on the pad.' },
   { key: 'technique', title: 'Changing technique for more weight', claim: CL.c7,
     fix: 'Lower the weight.' },
@@ -151,13 +128,15 @@ export default {
   contacts: ['seat-back'],
   setup: [
     { kind: 'adjust', text: 'Set the seat so the handles are at chest level.', claim: CL.c2 },
-    { kind: 'position', text: 'Sit back against the pad, feet flat, shoulder-width or wider.', zoom: 'fly-backpad', claim: CL.c1 },
+    { kind: 'position', text: 'Sit back against the pad, feet flat, shoulder-width or wider.', claim: CL.c1 },
     { kind: 'grip', text: 'Take the handles with the elbows slightly bent.', zoom: 'fly-elbow', claim: CL.c3 },
     { kind: 'load', text: 'Pick a weight you can take through the full range without rocking.', claim: CL.c14 },
   ],
   posture: [
-    { key: 'back', label: 'Back on pad', detail: 'Back stays pressed into the pad for every rep.',
-      anchor: { landmark: 'backUpper', pose: 'end' }, zoom: 'fly-backpad', claim: CL.c1 },
+    // D-SHIP-Q14 (#376 6614695581): the card zoom fly-backpad is a text checkpoint (the front-view plate cannot show the
+    // gap), as golden B's machine_chest_press keeps "Start depth" (:165, :285).
+    { key: 'back', label: 'Back on pad', detail: 'Upper back pressed into the pad as the handles meet. Never peel it off to finish.',
+      anchor: { landmark: 'backUpper', pose: 'end' }, claim: CL.c6 },
     { key: 'elbows', label: 'Soft elbows', detail: 'Elbows keep the same slight bend.',
       anchor: { landmark: 'elbow.l', pose: 'start' }, zoom: 'fly-elbow', claim: CL.c3 },
     { key: 'height', label: 'Chest height', detail: 'Arms at chest-to-shoulder height.', anchor: { landmark: 'grip.r', pose: 'start' }, claim: CL.c2 },

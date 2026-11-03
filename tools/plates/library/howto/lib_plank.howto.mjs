@@ -52,6 +52,8 @@ const CL = {
 //         How far it sags is a drawing choice (the card gives no number), as the spec's HIKE_HIP is.
 //   shrug (card zoom shoulder-stack Wrong, c5): the shoulder girdle raised SHRUG cm, forearms on their spots, so the
 //         shoulders move toward the head, off the elbows. 5 cm is barbell_shrug's card shrug; not in this card.
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SAG 20 deg and SHRUG
+// 5 cm are Wrong-pose sizes no card gives; no number from them appears in user copy; the layers panel judges them.
 const H = 1.75, SAG = 20, SHRUG = 5;
 const END = plateSpec.poses.end, LE = landmarksOf(END, H), SH = LE['shoulder.r'], TOE = LE['toe.r'];
 function solve(p0, make, res, iters = 30) {   // Newton with finite differences (the spec's own solver)

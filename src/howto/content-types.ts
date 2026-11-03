@@ -27,7 +27,7 @@ import type { MuscleId } from '../data/muscles';
 /** exercises.json id. Broader than types.ts's `LibId` (the 8 golden exercises): content spans all 153. */
 export type ContentLibId = `lib_${string}`;
 
-export type EvidenceTag = 'DATA' | 'MECH' | 'CONSENSUS' | 'WEAK';
+export type EvidenceTag = 'DATA' | 'MECH' | 'CONSENSUS' | 'WEAK' | 'CONVENTION';   // CONVENTION: LIB-SHIP D-SHIP-Q15, a pair key's recorded drawing convention (D-SHIP-GRIP (a)); type-only, never shown
 export type SourceId = string;
 
 /** Attached to every rule. Never shown in user copy; research data only, never shown (LR-23). */

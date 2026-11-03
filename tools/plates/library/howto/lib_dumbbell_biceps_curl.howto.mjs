@@ -63,6 +63,9 @@ const FAULTS = KEYED.faults.map(key => {
 // From the plate spec's own poses. 'elbow-back' (card zoom wrong, c4: "elbow swung back behind the body to cheat the
 // weight"): the spec's Mistake pose draws the forward drift (MIS_FLEX 45), so this still is the same arm change mirrored
 // back. The card gives no angle; the size is the plate's own drift size, not a card number.
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): the elbow-back
+// swing is the plate's own forward drift mirrored; no card gives its size, no number appears in user copy; the layers
+// panel judges it.
 const MIS = plateSpec.mistake.pose;
 export const stills = {
   start: { pose: plateSpec.poses.start },

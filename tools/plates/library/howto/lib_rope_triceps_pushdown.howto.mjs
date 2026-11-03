@@ -66,16 +66,16 @@ const CURLED = {
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // Built from the plate spec's own poses (no new geometry beyond what the card names):
-//   together (card zoom rope-spread Wrong, c4): the end pose with the grips at the spec's own top spread (GRIP_X0, 7 cm
-//            each side) instead of its bottom spread, so the rope ends stay together at the thighs.
 //   elbows-forward (card zoom rope-elbow Wrong, c7): the start pose with the upper arms swung forward MIS_SHOULDER deg
 //            (the spec's own Mistake value) and the start elbow angle (START_ELBOW 100). How far is a drawing choice
 //            (the card gives no number).
-const { start: START, end: END } = plateSpec.poses, GR = END.reach, GRIP_X0 = 0.07, MIS_SHOULDER = 25, START_ELBOW = 100;
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): MIS_SHOULDER 25 (the
+// spec's own Mistake value) and START_ELBOW 100 size the elbows-forward Wrong; no card gives them, no number appears in
+// user copy; the layers panel judges them.
+const { start: START, end: END } = plateSpec.poses, MIS_SHOULDER = 25, START_ELBOW = 100;
 export const stills = {
   start: { pose: START },
   end: { pose: END },
-  together: { pose: { ...END, reach: { l: { ...GR.l, at: [GRIP_X0, GR.l.at[1], GR.l.at[2]] }, r: { ...GR.r, at: [-GRIP_X0, GR.r.at[1], GR.r.at[2]] } } } },
   'elbows-forward': { pose: { ...START, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: START_ELBOW, wrist: 0 } },
 };
 
@@ -97,27 +97,6 @@ const zooms = [
     alt: {
       right: 'Rope across the middle of the palm, thumb wrapped round it. Wrist straight, in line with the forearm.',   // the key's alt, split to two sentences (C7)
       wrong: CURLED.alt,
-    },
-  },
-  {
-    key: 'rope-spread', chip: 'Rope spread', heading: 'Rope spread', kind: 'posture',
-    // The spread is sideways and does not show in the plate's side view (card plate.viewWhy), so this crop is seen
-    // from the front.
-    view: 'front', camLabel: 'Seen from the front',
-    crop: { center: { landmark: 'grip.r', pose: 'end', dx: 0, dy: 0 }, sizePx: 130 },
-    right: 'end',
-    wrong: { still: 'together' },
-    callouts: {
-      right: { text: 'Ends apart', guide: 'grip-spread' },
-      wrong: { text: 'Hands together', guide: 'grip-spread' },
-    },
-    caption: {
-      right: 'Rope ends spread apart, hands passing the thighs.',
-      wrong: 'Hands jammed together, rope ends hitting the thighs.',
-    },
-    alt: {
-      right: 'Front view, bottom of the pushdown. Arms straight, the rope ends pulled apart, hands passing the thighs.',
-      wrong: 'Front view, bottom of the pushdown. The hands stay together, so the rope ends hit the thighs.',
     },
   },
   {
@@ -215,8 +194,10 @@ export default {
       anchor: { landmark: 'backUpper', pose: 'start' }, claim: CL.c10 },
     { key: 'shoulders', label: 'Shoulders down', detail: 'Shoulders down and back.',
       anchor: { landmark: 'shoulder.r', pose: 'start' }, claim: CL.c11 },
-    { key: 'spread', label: 'Rope ends apart', detail: 'Spread the rope ends apart as the arms straighten.',
-      anchor: { landmark: 'grip.r', pose: 'end' }, zoom: 'rope-spread', claim: CL.c4 },
+    // D-SHIP-Q14 (#376 6614695581): the card zoom rope-spread is a text checkpoint (the spread does not show side-on and
+    // the crop engine draws only the plate's camera), as golden B's machine_chest_press keeps "Start depth" (:165, :285).
+    { key: 'spread', label: 'Rope ends apart', detail: 'Rope ends spread apart, hands passing the thighs. Hands jammed together hit the thighs.',
+      anchor: { landmark: 'grip.r', pose: 'end' }, claim: CL.c4 },
     { key: 'soft', label: 'Elbows not locked', detail: 'Arms straight at the bottom, elbows not locked out.',
       anchor: { landmark: 'elbow.r', pose: 'end' }, claim: CL.c9 },
   ],
