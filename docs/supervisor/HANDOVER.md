@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-11-02 ~23:10 UTC · main `dac9c624` + train 60 · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
+**Last updated:** 2026-11-03 ~02:20 UTC · main `2f6ca539` (train 60) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -830,6 +830,10 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 - **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
 
+- **Update 02:20 UTC (11-03):** main `2f6ca539` (train 60), 131/153 merged. (verdicts and rulings in lib4-cards §48)
+  - **LIB-SUPCORE #366:** v_up's outline fact and the main merge are pushed @ `557b3b45`; its full check chain is running, then READY, a fresh Opus reviewer and the train. It brings crunch, hollow_body_hold, reverse_crunch, dead_bug and v_up (5).
+  - **LIB-SPLIT #364:** mx30 was VALID; bulgarian_split_squat failed R5 and R3. Ruling D-SPLIT-BSSHOVER: the right pose's rear knee goes 3 cm above the floor (ace-bss "before the knee hits the floor"), and the Mistake shows the knee resting. This is the second and last focused round (mx31 next; a further fail means HELD). Its 5 approved rows wait for that round or the hold.
+  - **Count:** 131 merged + 10 approved and not merged (LIB-SUPCORE 5, LIB-SPLIT 5) + 1 in a fix round + 11 held = 153.
 - **Train 60 (11-02 ~23:10 UTC):** #368 HELD-A @ `40ae822d` (review 6590820219 PASS, 0 findings; releases resisted_hip_flexion and jump_rope; hip_thrust stays held) and #371 HELD-B @ `aa89c078` (held records only, no row). Main then holds 131/153. Next: LIB-SUPCORE adds v_up's outline fact on top of train 60 and posts READY (PRE-READY @ `e28e7672`); LIB-SPLIT's bulgarian fix is in its check chain @ `38a45c9b`.
 - **Update 21:45 UTC (11-02):** (verdicts and rulings in lib4-cards §48)
   - **Approved, not yet merged (12):** the 8 below plus hollow_body_hold, reverse_crunch, dead_bug and v_up (#366, mx29). dead_bug's knees (cfdv) and v_up's V contact (D-SUPCORE-VUPOUTLINE: the drawn torso outline, on HELD-A's outline branch) go into LIB-SUPCORE's READY after train 60.
