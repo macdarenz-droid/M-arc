@@ -31,3 +31,13 @@ export function checkC3Library(content: HowToContent, equipment: string, ctx: {
   if (typeof why !== 'string' || !why.includes(entry.ruling)) bad.push(`C3L: ${content.id}: handling.why must name ${entry.ruling}`);
   return bad;
 }
+
+/** D-SHIP-GRIP (#376 6614415740) case (b): a library row may use NoHandling for a handled archetype only when its card
+ *  gives no hand claim at all (grip.thumb, grip.handContact and grip.wrist all empty), and its why names D-SHIP-GRIP. */
+export function checkGripLibrary(content: HowToContent, card: { grip?: Record<string, unknown> } | null): string[] {
+  const why = (content.handling as { why?: unknown }).why;
+  const usesB = content.handling.archetype === 'none' && typeof why === 'string' && why.includes('D-SHIP-GRIP');
+  if (!usesB) return [];
+  const claimed = (['thumb', 'handContact', 'wrist'] as const).filter(k => typeof card?.grip?.[k] === 'string' && (card.grip[k] as string).trim() !== '');
+  return claimed.length ? [`GRIP: ${content.id} uses D-SHIP-GRIP (b) but its card claims grip.${claimed.join(', grip.')}`] : [];
+}

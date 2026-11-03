@@ -145,6 +145,8 @@ export interface HandlingSpec {
   readonly faults: ReadonlyArray<string | HandFault>;
   /** Grip-free alternatives (card `grip.type`), text only until each has its own zoom (hanging_leg_raise). */
   readonly alternatives?: readonly string[];
+  /** LIB-SHIP (D-SHIP-C3, D-SHIP-Q12): the ruling a library row ships under with no hand zoom. Never shown. */
+  readonly why?: string;
   readonly gripLine: string;
   /** The workout hint line outside the sheet; HT-5 generates HOWTO_HINTS from this. */
   readonly cue: string;
