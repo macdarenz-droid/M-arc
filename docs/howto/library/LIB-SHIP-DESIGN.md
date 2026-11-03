@@ -52,25 +52,25 @@ Totals: 5 + 16 + 13 + 21 + 27 + 23 + 29 = 134. The batch files sort lb01 … lb1
 
 ## 4. Hints and ids.ts bytes (ruling 5)
 
-The hint is the sheet's `handling.cue` on a push-archetype row (content.mjs:142-149). Each text below restates the card's own grip claims (grip.handContact and grip.wrist). Ids with the same claim share one text, and a child inherits its parent's. ab_wheel_rollout and sled_push have no grip claim, so they get no hint.
+The hint is the sheet's `handling.cue` on a push-archetype row (content.mjs:142-149). Each text is at most 6 words (copy-lint `cue`, CUE_MAX_WORDS; corrected on W1, #376) and restates the card's own grip claims (grip.handContact and grip.wrist). Ids with the same claim share one text, and a child inherits its parent's. ab_wheel_rollout and sled_push have no grip claim, so they get no hint.
 
 | Text | Chars | Ids (card claim) |
 |---|---|---|
 | A "Heel of palm, wrist straight." (shipped) | 29 | machine_chest_press (shipped); children incline_machine_press, shoulder_press (inherited) |
-| B "Bar on palm heel, wrist not bent back." | 38 | barbell_overhead_press (c4), smith_machine_shoulder_press (c18) |
-| C "Bar in palm base, wrist not bent back." | 38 | barbell_bench_press (c5) and its children incline_barbell_bench_press, close_grip_bench_press, decline_bench_press, smith_machine_bench_press, smith_machine_incline_press |
+| B "Palm heel, wrist not bent back." | 31 | barbell_overhead_press (c4), smith_machine_shoulder_press (c18) |
+| C "Palm base, wrist not bent back." | 31 | barbell_bench_press (c5) and its children incline_barbell_bench_press, close_grip_bench_press, decline_bench_press, smith_machine_bench_press, smith_machine_incline_press |
 | D "Handle firm in palm, wrist neutral." | 35 | dumbbell_bench_press (c3), dumbbell_shoulder_press (c2), incline_dumbbell_press (c3) |
 | E "Hands against the rope knobs." | 29 | rope_triceps_pushdown (grip.handContact; shared/rope-rule.json c1) |
 | F "Wrist in line with the forearm." | 31 | triceps_pushdown, single_arm_triceps_pushdown, straight_bar_triceps_pushdown (grip.wrist) |
 | G "Squeeze the handle, wrist neutral." | 34 | arnold_press (c16; wrist inherited) |
-| H "Push through the palms, wrists over elbows." | 43 | cable_chest_press (c3) |
-| I "Both hands round the handle, palms up." | 38 | dumbbell_overhead_triceps_extension (c1, c4) |
+| H "Push through palms, wrists over elbows." | 39 | cable_chest_press (c3) |
+| I "Both hands round handle, palms up." | 34 | dumbbell_overhead_triceps_extension (c1, c4) |
 | J "Drive through the palms." | 24 | weighted_dip (c5) |
 | K "Wrist neutral." | 14 | skull_crusher (c3; the card states no hand placement) |
 
 Bytes, from `hintsOutputs` run on these exact texts with exercises.json's 153 ids:
-- **W1 (N = 13; texts A, B, E): 1,172 B.** Today: 1,076 B.
-- **All 142 shipped, 11 texts: 1,999 B** of IDS_MAX 2,048 (49 B left). One more ~30-character text fits; a 13th distinct text goes to 2,069 B and is refused (ids-encoding.mjs:89-91). ids.ts + lazy.tsx (1,001 B) = 3,000 ≤ 3,072.
+- **W1 (N = 13; texts A, B, E): 1,165 B.** Today: 1,076 B.
+- **All 142 shipped, 11 texts: 1,977 B** of IDS_MAX 2,048 (71 B left). One more ~30-character text fits; a 13th distinct text goes to 2,069 B and is refused (ids-encoding.mjs:89-91). ids.ts + lazy.tsx (1,001 B) = 3,000 ≤ 3,072.
 - Exact wording of each text is settled with its sheet in its wave and checked by copy-lint's `cue` kind. If a sheet's cue wording changes, the bytes are re-measured in that wave's PR.
 
 ## 5. W1 plan (after 'SHIP PLAN RULED')
