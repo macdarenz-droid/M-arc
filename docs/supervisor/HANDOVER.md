@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-11-03 ~15:45 UTC · main `b9369130` (train 62) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
+**Last updated:** 2026-11-03 ~18:45 UTC · main `b9369130` (train 62) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -830,6 +830,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 - **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
 
+- **Update 18:45 UTC (11-03):** no change since 15:45. Still waiting for the owner's choice on the 11 held rows; no lane is open.
 - **Update 15:45 UTC (11-03):** main `b9369130` (train 62), **142/153 merged**. No lane is open. At ~13:20 UTC the owner was asked to choose for the 11 held rows: (1) release with 142, with no How-to button on the 11 (as for every undrawn exercise today, Train.tsx:830), recommended; or (2) engine work beyond E-R5 first. **Waiting for his answer.** Either way the next card is the ship card: the app shows only 8 How-tos today (src/howto/ids.ts:5, loaders.ts:17-26), so the 142 must be switched on, then the release candidate, its full regression and an APK for the phone check.
 - **Train 62 (11-03 ~12:35 UTC):** #366 LIB-SUPCORE @ `d6992b84`: review 6599286972 FAIL (APPROVED_FRAGS guard missing), fixed per ruling 6599303605, and the supervisor diff-check passed. It adds crunch (pilot-b2) and hollow_body_hold, reverse_crunch, dead_bug and v_up (LB9); flutter_kicks stays held. Train 61 (#374, LIB-SPLIT) merged at `7ed2da4f`. After train 62, main holds 142/153. **Only the 11 held rows remain:** hip_thrust, pallof_press, russian_twist, flutter_kicks, bicycle_crunch, overhead_cable_triceps_extension, cable_rear_delt_fly and the 4 calf raises. Each needs engine work beyond E-R5, which is outside the approved plan, so the owner decides.
 - **Train 61 (11-03 ~10:20 UTC):** #364 LIB-SPLIT @ `adf89498` (review 6600943271 PASS, 0 blockers, 2 lows recorded): step_up, forward_lunge, walking_lunge, bodyweight_lunge, bodyweight_split_squat and bulgarian_split_squat. Main then holds 137/153. #366 LIB-SUPCORE: review FAIL 6599286972 (APPROVED_FRAGS guard missing), fix pushed @ `d6992b8`, then a re-check by the same reviewer before its train.
