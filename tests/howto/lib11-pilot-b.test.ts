@@ -10,9 +10,9 @@ import { beforeAll, describe, expect, it } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
-const PILOT_B = ['smith_machine_bench_press', 'cable_fly', 'push_up', 'seated_leg_curl', 'crunch'];
+const PILOT_B = ['smith_machine_bench_press', 'cable_fly', 'push_up', 'seated_leg_curl'];   // crunch: PILOT-B2 (lib11-pilot-b2.test.ts)
 const DRAWN = ['smith_machine_bench_press', 'seated_leg_curl', 'cable_fly', 'push_up'];   // drawn, not held (batches/pilot-b.json)
-const HELD = ['crunch'];                                                       // D-LIB11-SMALL (DESIGN.md section 13)
+const HELD = ['crunch'];   // pilot B's held row, now PILOT-B2: only the spec checks read it here; its markers are in lib11-pilot-b2.test.ts
 const ROWS = 'tools/plates/library/batches/pilot-b.json';   // pilot-b/rows.json until the pin (Do 11)
 const COMPOSERS = ['smith', 'legCurlMachine'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -248,10 +248,8 @@ describe('LIB-11 A5: batches/pilot-b.json holds exactly the drawn ids that are n
     for (const k of keys) if (!IDS.includes(k!)) bad.push(`extra ${k}`);
     return bad;
   };
-  it('each drawn id exactly once in the raw text, nothing else; each held id is in DESIGN.md\'s held table', () => {
+  it('each drawn id exactly once in the raw text, nothing else', () => {
     expect(a5(readFileSync(ROWS, 'utf8'))).toEqual([]);
-    const design = readFileSync('tools/plates/library/pilot-b/DESIGN.md', 'utf8'), held = design.slice(design.indexOf('## 13. Held'));
-    for (const h of HELD) expect(new RegExp(`^\\| ${h} \\| .+\\| D-LIB11-SMALL`, 'm').test(held), h).toBe(true);
   });
   it('mutations: a dropped row, a duplicated row, a pilot A id and a held id added are red', () => {
     const text = readFileSync(ROWS, 'utf8'), j = readJson(ROWS);
@@ -302,7 +300,7 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     }
     return out;
   };
-  it('every pilot B row is approved-plate, none is shipped, and the held crunch has no row', () => {
+  it('every pilot B row is approved-plate, none is shipped, and only the 4 drawn ids have rows', () => {
     const rows = readJson(ROWS).rows;
     expect(stageProblems(rows)).toEqual([]);
     expect(Object.keys(rows).sort()).toEqual(DRAWN.map(i => `lib_${i}`).sort());
@@ -323,20 +321,13 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
   it('no other library golden file names a pinned pilot B id', () => {
     expect(otherGolden(goldenFiles())).toEqual([]);
   });
-  it('the held crunch is in no batch, page or golden file', () => {
-    const hits = ['tools/plates/library/batches', 'tools/plates/library/pages', 'tests/howto/golden/library'].flatMap(d => readdirSync(d).filter(n => n.endsWith('.json'))
-      .filter(n => /"lib_crunch"|"library\/specs\/crunch\.mjs"|"chromeId": "crunch"/.test(readFileSync(join(d, n), 'utf8'))).map(n => `${d}/${n}`));
-    expect(hits).toEqual([]);
-  });
-  it('mutations: a row at review, an exemption added, a fragment changed, a crunch entry and a moved page byte are red', () => {
+  it('mutations: a row at review, an exemption added, a fragment changed and a moved page byte are red', () => {
     const rows = readJson(ROWS).rows, g = readJson(GOLD);
     expect(stageProblems({ ...rows, lib_cable_fly: { ...rows.lib_cable_fly, stage: 'review' } })).toEqual(['lib_cable_fly: review']);
     const ex = structuredClone(g); ex.entries[1].exemptions = [...ex.entries[1].exemptions, 'F1'];
     expect(pinProblems(ex, html).some(p => p.endsWith('exemptions F5,F1'))).toBe(true);
     const fr = structuredClone(g); fr.entries[2].fragments.mistakeSvg = '0'.repeat(64);
     expect(pinProblems(fr, html).some(p => p.endsWith(': fragments'))).toBe(true);
-    const cr = structuredClone(g); cr.entries.push({ ...cr.entries[4], id: 'lib_crunch' });
-    expect(pinProblems(cr, html).length).toBeGreaterThan(0);
     expect(pinProblems(g, html.replace('Smith Machine Bench Press', 'Smith Machine Bench Pres'))).toContain('page entry');
     const ap = structuredClone(g); ap.entries[4].approval = ap.entries[4].approval.replace('6393170019', '6393188049');
     expect(pinProblems(ap, html)).toEqual(['lib_push_up: approval is not the GO']);
@@ -436,7 +427,6 @@ describe('LIB-11 A10, A6 and Q1 (Do 5 b): the card fields, the ruled tempo map a
       expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
       expect(Object.keys(JSON.parse(text)).slice(-3), id).toEqual(KEYS);
     }
-    for (const id of HELD) expect(sha(readFileSync(`docs/research/howto/cards/${id}.json`)), id).toBe(cardsSha.cards[id]);
   });
   it('mutation: any other card key edited is red', () => {
     const text = readFileSync('docs/research/howto/cards/cable_fly.json', 'utf8').replace('"view": "front"', '"view": "side"');

@@ -47,14 +47,16 @@ export const tableOf = reports => [
  *  (D-LIB21-F7); F1 on each D-LIB21-FLOOR plate at its measured px/m (named, D-LIB18-F3KICK's form). */
 export const F7_IDS = ['lib_side_plank', 'lib_russian_twist', 'lib_bicycle_crunch'];
 /** F1 named per D-LIB21-FLOOR plate: its px/m from the width-filling scale (D-LIB8-floor), fixed before H3. */
-export const F1_NAMED = { lib_bird_dog: 151.49, lib_side_plank: 150.31, lib_russian_twist: 197.49 };   // the (b) two asked with the E-R5 slice (#326)
+export const F1_NAMED = { lib_bird_dog: 151.49, lib_side_plank: 150.31, lib_russian_twist: 197.49,   // the (b) two asked with the E-R5 slice (#326)
+  lib_reverse_crunch: 181.11, lib_dead_bug: 148.18, lib_flutter_kicks: 155.24 };   // LIB-SUPCORE (DESIGN.md 26.9, 26.14): the width-filling floor scale over 146.29 (D-LIB8-floor)
 /** F3 named on bird_dog (D-LIB21-F3DOG, 'LB9 NOTE RULED' Q2, #312 6382248634): its longest leader, px, short of the
  *  envelope's minimum because the labels sit in open space beside their parts; never cleared by lengthening a leader. */
 export const F3_NAMED = { lib_bird_dog: 33.5, lib_cable_crunch: 26.05, lib_superman: 44.9 };   // superman: D-LIB21-SUPFLAGS (#337), raised before the zoom and unchanged by the `low` box move
 /** F2 named on cable_crunch (D-LIB21-CCFLAGS, #312 after 6382642897): ink coverage, the high-pulley cable and the column
  *  spanning the plate (as LB8's cable_kickback 0.645); its F3 above likewise. Values re-measured after the slice fix round
  *  (#312 6383060997: bird_dog's "Leg too high" box raised, its leader 33.5 px; cable_crunch's rope redrawn). Nothing moved to clear either. */
-export const F2_NAMED = { lib_cable_crunch: 0.622, lib_superman: 0.128 };   // superman: D-LIB21-SUPFLAGS (#337), a prone figure at the D-LIB21-FLOOR camera
+export const F2_NAMED = { lib_cable_crunch: 0.622, lib_superman: 0.128,   // superman: D-LIB21-SUPFLAGS (#337), a prone figure at the D-LIB21-FLOOR camera
+  lib_hollow_body_hold: 0.163, lib_flutter_kicks: 0.141 };   // LIB-SUPCORE (DESIGN.md 26.9, 26.14): low supine figures' ink cover, superman's form; hollow re-measured after mx27 R7 (the arc at the hip, open hands)
 export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(id in F1_NAMED ? ['F1'] : []), ...(id in F3_NAMED ? ['F3'] : []), ...(id in F2_NAMED ? ['F2'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, F5 at any value other than 3.57, or a named

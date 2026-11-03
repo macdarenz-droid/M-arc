@@ -26,5 +26,23 @@
    "researchHead": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
    "why": "D-HELD6-PALLOF (held6-card.md rulings; HELD-B PLAN RULED, #371 6570334648): F-RESEARCH-2 adds c20-c25 (c20, the chest lift, is the second tell) and rewords c12 and plate.mistake; the card and the quotes file are byte copies from that head, and its plateFacts, tempo and topFault are unchanged. The other 7 cards and quotes stay at researchHead."
   }
+ },
+ "supcore": {
+  "note": "LIB-SUPCORE wave 2 (D-SUPCORE-MODES, -ANCHOR): the 5 SUPCORE cards and quotes are byte copies from research a48b0594 (the LB9 research merge 8e4e7769's blobs, LR-29 VALID), hashed as above (the card with its three keys removed, canonical JSON; the quotes file's bytes).",
+  "researchHead": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
+  "cards": {
+   "reverse_crunch": "d54c4c38c8a768a69ed2a1f99d1fb5c486d015438196561527a87f3653c7671d",
+   "dead_bug": "f60d71644a31bca5da647b545dbfa727d37ed46cb2d7ac9762567e709ae67fde",
+   "v_up": "22d22b087bcf60a019cd1418f189889526ac1181559274994d27403b76da3db1",
+   "flutter_kicks": "a434f1b81c1b15fc4057c72fe620b5011f4fa25bb5ff24e5e054d85bb31a0229",
+   "hollow_body_hold": "d981a778634f21bc7bcd43c25cdcdb88d3b0bd92e73addae49fba06458f51771"
+  },
+  "quotes": {
+   "reverse_crunch": "c350bebf9038cb047acd05a2cbb93b9b2fcb2734f684090a3018c8f0a06c74e8",
+   "dead_bug": "f4f09e2d1fdc8c7b15e5e1972d5622e7fdcef9a0a29ea83b4b52e09dc9f51c9d",
+   "v_up": "487b422d2ac5181ac2fc17d2d1ef20783249aab04f16fac93d9a49e95f8e9a5a",
+   "flutter_kicks": "33cf88a15c71e9ef6b412dc5baadf0a640c70602a09ad63b7888c0faf01a9f41",
+   "hollow_body_hold": "94bd2618140cba8de799bd2718d4616bc3a681d498493cf42ac5aae0fb784b91"
+  }
  }
 }
