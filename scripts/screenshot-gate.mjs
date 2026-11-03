@@ -9543,6 +9543,26 @@ if (gate.runs('F-ZOOM-INK'))
   if (!errors.some(e => e.startsWith(`${tag}: `))) console.log(`${tag}: H1 clean as built; ${r.rows.length} probes as wanted (clipped render clean; drawn render ${r.rows.find(x => x.want === 'in').d} px, ring, plate ink red)`);
 }
 
+// LIB-SHAPES (#377, PLAN RULED point 4; card A4): the two library sheet shapes on screen. The built app ships only the 8,
+// so the leg press is served as the `none` fixture and the machine chest press as the no-hand-zoom fixture through a
+// test-only route swap of their built ht- chunks (tests/howto/fixtures/lib-shapes/gate.mjs); nothing in src/ or www/
+// changes. Silent Black and Paper at 390 px: the swap ran (else red), no Hand chip, hand close-up or wrist row, no Grip
+// on `none`, grip words on no-zoom, the chips, golden B's section order minus the absent parts, 44 px targets and no
+// horizontal overflow.
+if (gate.runs('LIB-SHAPES'))
+{
+  const tag = 'LIB-SHAPES';
+  const e0 = errors.length;
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const G = await import('../tests/howto/fixtures/lib-shapes/gate.mjs');
+  const shapesBrowser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), args: ['--no-sandbox'] });
+  try {
+    const shots = await G.libShapesGate({ browser: shapesBrowser, port: PORT, OUT, P: m => errors.push(`${tag}: ${m}`), H, writeFileSync });
+    if (shots !== G.SHAPES.length * G.THEMES.length) errors.push(`${tag}: ${shots} screenshots, want ${G.SHAPES.length * G.THEMES.length}`);
+    if (errors.length === e0) console.log(`${tag}: none and no-hand-zoom sheets x ${G.THEMES.join(', ')} at 390 px: swapped, no Hand chip, order, 44 px, no overflow`);
+  } finally { await shapesBrowser.close(); }
+}
+
 // LIB-7: the radial hand pairs (card LIB-7; tools/plates/library/hands/DESIGN.md §4 A5). Every drawn library hand page,
 // rendered through hands/zoom.mjs with golden B's own zoom CSS, in 5 themes at 390, 360 and 340 px: no overflow (H4), each
 // ink class's contrast >= golden B's on its 8 hands in the same job (H5), bend values off the outline (G9, real boxes),

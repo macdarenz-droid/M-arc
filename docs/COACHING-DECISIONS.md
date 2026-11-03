@@ -3163,3 +3163,12 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
 
 - **Plan posted for ruling** on the LIB-SHAPES PR ('LIB-SHAPES PLAN'). Card: lib-shapes-card.md on claude/sup-lib4-cards;
   rulings D-SHIP-SHAPES, D-SHIP-C3, D-SHIP-GRIP (#376). Decisions are recorded here once ruled.
+- **Ruled (LIB-SHAPES PLAN RULED, #377 6615017999).** Builder: `spec.noZoom` (howto ids) in the layers-page spec; named
+  patches 'shape nozoom list/tag/chip/also' and 'shape none grip' on the mirror copy (tools/plates/library/
+  build-layers-page.mjs). A `none` row prints no Grip; a `none` row with a grip line or handling mistakes does not build.
+  App: a `none` sheet keeps its Look closer chips (Hand.tsx); a handled sheet with no `hand`-kind zoom and a non-empty
+  `handling.why` takes the no-zoom branch (LookCloser.tsx `noHandZoom`). **Why:** the list stays out of the bundle;
+  LIB-SHIP's checkC3Library ties `why` to the pinned list. Gate: a test-only route swap of the built ht- chunk
+  (tests/howto/fixtures/lib-shapes/gate.mjs), fail closed. The gate block sits after F-ZOOM-INK's, because
+  lib-strip.test pins LIB-STRIP as the last group; tests/gate-split.test.ts's group count goes 110 -> 111, as that line
+  asks of each new block.

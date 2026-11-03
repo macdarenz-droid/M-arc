@@ -26,18 +26,21 @@ export function Hand({ pre, content }: { pre: string; content: GripContent }) {
 }
 
 /** The content this card reads. HT-5 generates it from golden B into the base chunk; until then it is absent and
- *  the sections render nothing. */
+ *  the sections render nothing. LIB-SHAPES (#377): a `none` sheet keeps its Look closer chips (posture, Feel); only
+ *  its Grip section is absent (HandSections). */
 export type HandContent = GripContent & ChipContent;
 export function handContentOf(howTo: BuiltHowTo): HandContent | null {
   const c = howTo as unknown as Partial<HowToContent>;
-  if (!c.handling || !c.zooms || !c.mistakes || c.handling.archetype === 'none') return null;
+  if (!c.handling || !c.zooms || !c.mistakes) return null;
   return { id: c.id ?? howTo.id, handling: c.handling, zooms: c.zooms, mistakes: c.mistakes, chips: c.chips } as HandContent;
 }
 
-/** The registry entry (sections/index.ts, `hand`): Look closer, then Grip with its handling mistakes (golden order). */
+/** The registry entry (sections/index.ts, `hand`): Look closer, then Grip with its handling mistakes (golden order).
+ *  A `none` sheet has no Grip (LIB-SHAPES). */
 export function HandSections({ howTo }: SectionProps) {
   const content = useMemo(() => handContentOf(howTo), [howTo]);
   if (!content) return null;
   const pre = chromeIdOf(howTo);
-  return <><LookCloser pre={pre} content={content} feel={SECTIONS.some(s => s.id === 'feel')} /><Hand pre={pre} content={content} /></>;
+  return <><LookCloser pre={pre} content={content} feel={SECTIONS.some(s => s.id === 'feel')} />
+    {content.handling.archetype !== 'none' && <Hand pre={pre} content={content} />}</>;
 }
