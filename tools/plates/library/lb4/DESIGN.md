@@ -685,3 +685,23 @@ REAR_X, STANCE, START_KNEE 8, M_SINK; step_up the trailing hip 21. Each spec hea
   A3's stance test holds it (front toe 0.798 m ±0.5 cm ahead of the bench edge in every pose).
 - Follow-up for research (outside this write scope): walking_lunge.json plate.tempo credits "Controlled descent" to
   c8, but only c7's quote states it (the strip row cites c7).
+
+### 17.12 Panel mx30 second focused round (#364 6592673388, D-SPLIT-BSSHOVER, D-LIB13-PANEL2)
+
+- mx30 failed R5 (the drawn front-knee tip is not the card's fault) and R3 (the hand short of the handle). Ruling
+  D-SPLIT-BSSHOVER replaces D-SPLIT-BSSTRUE's refusal: c3's ace-bss and plate.end allow the rear knee just above the floor.
+- End: the rear kneecap END_GAP 0.03 m above the floor (unsourced, "just above"); the gap draws 4.39 px at plate scale,
+  8.78 px at 780 px (≥ 8). The front shin stays 6°; the hip where the two thighs meet.
+- Card: knee.l's end fact becomes `{ kind: 'height', landmark: 'knee.l', pose: 'end', m: 0.079 }` (the joint centre
+  0.049 m + 0.03 m; H6 ±1 cm); A3 tests the gap at ±0.5 cm, with 0 cm and +1 cm mutations red. topFault stays `knee`.
+- Mistake: the rear knee swings down about the bench-fixed rear foot until the kneecap rests on the floor; the front
+  knee holds (0.93 mm engine solve); the hips sink as the two thighs meet. One tell, `knee` "Knee rests" on the
+  Mistake rear knee (box (30, 292); leader 66.8 px), in plate.mistake's words. The section 9 rule of 2-3 tells has
+  this one ruled exception, tested as exactly 1.
+- Zoom: the rear kneecap moves 11.63 px at plate scale, at or over the 11.39 px bar, so the plate carries no zoom
+  (a zoom is H3.zoom:not-needed:mistake, now a mutation). R11 has no zoom to score.
+- R3: the near dumbbell is drawn at z `mid`, so the near forearm and fist lie over it (the goblet_squat mx1 item 1
+  form; draw order only). A test pins the order, and the dumbbell at z front is red.
+- Bench clearance: start 4.04, end 3.09, Mistake 2.26 px. Dumbbell 3D gaps (cm): start 0.73 / 0.30, end 0.98 / 9.70,
+  Mistake 0.43 / 9.70. QA: all 10 hard checks pass; traceLen 24.00, deviation 11.63, leaderMax 66.8.
+

@@ -593,10 +593,11 @@
   ],
   "plateFacts": [
     {
-      "kind": "contact",
+      "kind": "height",
       "landmark": "knee.l",
       "pose": "end",
       "cardPose": "end",
+      "m": 0.079,
       "claim": "c3"
     },
     {

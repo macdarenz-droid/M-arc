@@ -3116,3 +3116,8 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   the named list. Its verified card fields and knee tell stay in the held spec. **Why:** a floor plane would be a new
   engine feature, which the ruling does not allow. HELD-B releases no row.
 - **Source:** PR #371 (6579432546, 6579536635); lb9/DESIGN.md §15, §26.
+- **D-SPLIT-BSSHOVER (#364 6592673388).** bulgarian_split_squat's end holds the rear kneecap 3 cm above the floor (c3's
+  ace-bss "Before the left knee hits the floor", plate.end "just above or lightly touching"); the Mistake rests it on
+  the floor with one rear-knee tell, and knee.l's end fact becomes a height fact (0.079 m). The knee's 11.63 px move
+  needs no zoom. **Why:** the fault reads as a gap against a contact; the 1 cm hip drop did not.
+

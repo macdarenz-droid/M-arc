@@ -10,9 +10,10 @@
 //  the rigid engine foot turned over so that its dorsum line, from the instep point (foot frame [0.018, 0.018] H) to the
 //  toe dorsum ([0.113, -0.020] H, FOOT_SIDE, body.mjs:57-58), lies on the bench top; the ankle then sits 4.1 cm above
 //  the top. The instep overhangs the bench's front edge by OVERHANG (c2's free shin). The front (near, r) foot is flat,
-//  its toe tip STANCE ahead of the bench's front edge (c2 "about three foot-lengths"). The end puts the rear kneecap on
-//  the floor (c3 "lightly touches", D-SPLIT-BSSMIS): the rear knee joint centre KNEECAP above the floor, the hip where the
-//  two thighs meet (front shin FRONT_SHIN). The start is the same stance with the hips straight above the end hips,
+//  its toe tip STANCE ahead of the bench's front edge (c2 "about three foot-lengths"). The end holds the rear kneecap
+//  END_GAP just above the floor (D-SPLIT-BSSHOVER, #364 6592673388: c3's ace-bss "Before the left knee hits the floor"
+//  and plate.end "rear knee just above or lightly touching the floor"): the rear knee joint centre KNEECAP + END_GAP
+//  up, the hip where the two thighs meet (front shin FRONT_SHIN). The start is the same stance with the hips straight above the end hips,
 //  raised until the front knee is START_KNEE ("standing on the front leg").
 // Form (research card bulgarian_split_squat, claims): c2 the front foot about three foot-lengths ahead of the support,
 //  the top of the rear foot on a bench about knee height; c3 lower at a controlled speed until the rear knee lightly
@@ -20,13 +21,14 @@
 //  sides.
 // Bench height (D-SPLIT-BSSBENCH): 0.42 m, the highest on a 1 cm grid at which c3's floor contact holds on this body
 //  (84 % of the 0.499 m standing knee joint height: c2's "about knee height"), an engine-limit size, unsourced.
-// Mistake (D-SPLIT-BSSMIS; c3, c8): the hips sink M_SINK lower with the rear knee resting on the floor (the knee kept on
-//  the floor, the hip z SOLVED), which tips the front shin to 13.9 deg. The tells name what is drawn (D-SPLIT-BSSFIX,
-//  #364 6585103107): the front knee and the front shin tipping forward (the 1 cm hip drop is too small to read, so it
-//  has no tell of its own); the Mistake zoom is on the front knee (zoom.tell) at the smallest passing ladder k.
+// Mistake (D-SPLIT-BSSHOVER; plate.mistake c3, c8 "dropping into the bottom and resting the rear knee on the floor"):
+//  the hips sink until the rear kneecap rests on the floor, the rear knee swung down about the bench-fixed rear foot
+//  and the hip where the two thighs meet (front shin FRONT_SHIN unchanged: no free slide). One tell, on the resting rear
+//  knee. The kneecap's move is 11.63 px at plate scale, at or over the 11.39 px bar, so the plate carries no zoom
+//  (H3.zoom:not-needed:mistake).
 // Tempo: the strip without seconds, exactly tempoOf(strip/rows.json bulgarian_split_squat) (D-STRIP-ROWS).
 // Unsourced numbers: BENCH_TOP 0.42 m, the bench depth (the vendor 0.29 m), OVERHANG 0.02 m, STANCE (3 foot-lengths of
-//  the engine foot, 0.266 m each), as reverse_lunge's (FOOT_X, FRONT_SHIN, TRUNK_LEAN, ELBOW), START_KNEE, M_SINK.
+//  the engine foot, 0.266 m each), as reverse_lunge's (FOOT_X, FRONT_SHIN, TRUNK_LEAN, ELBOW), START_KNEE, END_GAP 0.03 m.
 import { landmarksOf, normPose, resolve } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180, B = { height: H };
@@ -44,7 +46,7 @@ const OVERHANG = 0.02;            // instep point ahead of the bench's front edg
 const FOOT_LEN = (0.120 + 0.032) * H;   // engine foot, heel to toe tip (FOOT_SIDE)
 const STANCE = 3 * FOOT_LEN;      // front toe tip ahead of the bench's front edge (c2)
 const KNEECAP = 0.028 * H;        // kneecap radius (body.mjs RADII.kneeCap)
-const M_SINK = 0.01;              // Mistake: the hips sink this much lower, the knee resting (m)
+const END_GAP = 0.03;             // end: the rear kneecap this far above the floor (m), D-SPLIT-BSSHOVER, unsourced
 
 // Bracketed root finder (Illinois regula falsi, copied from step_up.mjs): throws when f(a) and f(b) have the same sign.
 const solve = (f, a, b) => {
@@ -72,11 +74,12 @@ const REAR = {
 };
 const front = { at: [-FOOT_X, 0, 0] };
 
-// End: the rear knee joint centre KNEECAP above the floor, in front of the rear ankle; the front knee at FRONT_SHIN;
-// the hip where the two thighs meet (the upper intersection).
+// End: the rear knee joint centre KNEECAP + END_GAP above the floor, in front of the rear ankle; the front knee at
+// FRONT_SHIN; the hip where the two thighs meet (the upper intersection).
 const ankF = [ANK, -MID];   // (y, z)
 const kneeF = [ankF[0] + L_SH * Math.cos(FRONT_SHIN * R), ankF[1] + L_SH * Math.sin(FRONT_SHIN * R)];
-const kneeB = [KNEECAP, ANKLE_B[0] + Math.sqrt(L_SH ** 2 - (ANKLE_B[1] - KNEECAP) ** 2)];
+const kneeAt = y => [y, ANKLE_B[0] + Math.sqrt(L_SH ** 2 - (ANKLE_B[1] - y) ** 2)];   // the rear knee at height y, the shank from the fixed ankle
+const kneeB = kneeAt(KNEECAP + END_GAP), kneeRest = kneeAt(KNEECAP);
 const meet = (a, b) => {   // the upper point at L_TH from both (y, z) points
   const dy = b[0] - a[0], dz = b[1] - a[1], d = Math.hypot(dy, dz), h = Math.sqrt(L_TH ** 2 - (d / 2) ** 2);
   const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], u = [dz / d, -dy / d];
@@ -91,18 +94,17 @@ const knees = p => resolve(normPose(p, B), B).q.knee;
 // Start: the hips straight above the end hips, the height SOLVED so the front knee is START_KNEE.
 const START_Y = solve(y => knees(pose(y, HIP[1], TRUNK_LEAN)).r - START_KNEE, HIP[0] + 0.1, HIP[0] + 0.42);
 const start = pose(START_Y, HIP[1], TRUNK_LEAN);
-// Mistake: the hips M_SINK lower; the hip z SOLVED, bracket [HIP z, HIP z + 0.25] m, so the rear knee stays on the
-// floor (the rear foot is fixed on the bench, so the knee cannot move: the hips swing forward about it).
-const M_Y = HIP[0] - M_SINK;
-const M_Z = solve(z => landmarksOf(pose(M_Y, z, TRUNK_LEAN), H)['knee.l'][1] - KNEECAP, HIP[1], HIP[1] + 0.25);
-const MISTAKE = pose(M_Y, M_Z, TRUNK_LEAN);
-export const SIZES = { FOOT_X, REAR_X, FRONT_SHIN, TRUNK_LEAN, ELBOW, START_KNEE, BENCH_TOP, BENCH_W, OVERHANG, STANCE, M_SINK };
-export const bssInfo = { EDGE_Z, INSTEP, ANKLE_B, HIP, kneeB, START_Y, M_Y, M_Z, PHI: PHI / R };
+// Mistake: the rear knee swung down onto the floor (kneecap resting), the front knee where it was; the hip where the
+// two thighs meet.
+const HIP_M = meet(kneeF, kneeRest);
+const MISTAKE = pose(HIP_M[0], HIP_M[1], TRUNK_LEAN);
+export const SIZES = { FOOT_X, REAR_X, FRONT_SHIN, TRUNK_LEAN, ELBOW, START_KNEE, BENCH_TOP, BENCH_W, OVERHANG, STANCE, END_GAP };
+export const bssInfo = { EDGE_Z, INSTEP, ANKLE_B, HIP, HIP_M, kneeB, kneeRest, START_Y, PHI: PHI / R };
 const SHIN_TOP = 0.12;
 const SHIN_PLUMB = [[0, 0, ankF[1]], [0, kneeF[0] + SHIN_TOP, ankF[1]]];
 const bells = lm => [
   { type: 'dumbbell', at: lm['grip.l'], axis: [0, 0, 1], z: 'back', part: 'db' },
-  { type: 'dumbbell', at: lm['grip.r'], axis: [0, 0, 1], z: 'front', part: 'db' },
+  { type: 'dumbbell', at: lm['grip.r'], axis: [0, 0, 1], z: 'mid', part: 'db' },   // the near hand drawn over it (R3, mx30)
 ];
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 // The dumbbell in each hand at the start (the setup quote's contact fact), checked at the wrist: the plane square to
@@ -126,7 +128,8 @@ export default {
   checks: [
     { landmark: 'heel.r', plane: FLOOR, pose: 'all', tol: 0.5 },
     { landmark: 'ball.r', plane: FLOOR, pose: 'all', tol: 0.5 },
-    { landmark: 'knee.l', plane: { point: [0, KNEECAP, 0], normal: [0, 1, 0] }, pose: 'end', tol: 0.5 },   // c3: the rear kneecap on the floor
+    { landmark: 'knee.l', above: { point: [0, KNEECAP + END_GAP - 0.005, 0], normal: [0, 1, 0] }, pose: 'end' },   // c3: the rear kneecap just above the floor
+    { landmark: 'knee.l', plane: { point: [0, KNEECAP, 0], normal: [0, 1, 0] }, pose: 'mistake', tol: 0.5 },   // the fault: the kneecap resting on the floor
     inHand('l'), inHand('r'),                                                           // the hands on the dumbbells at the start
   ],
   ghosts: { count: 2, parts: ['leg.r', 'leg.l', 'trunk', 'arm.r', 'db'] },
@@ -140,11 +143,9 @@ export default {
     pose: MISTAKE,
     guides: [],
     tells: [
-      { key: 'knee', text: 'Front knee<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 262, top: 192 }, cue: 'Dropping into the bottom with the rear knee resting tips the front knee forward.' },   // c3, c8
-      { key: 'shin', text: 'Shin tips<br>forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' }, box: { left: 283, top: 238 }, cue: 'The front shin tips forward past vertical as the hips sink.' },
+      { key: 'knee', text: 'Knee rests', anchor: { at: 'knee.l', pose: 'mistake' }, box: { left: 30, top: 292 }, cue: 'Dropping into the bottom, the rear knee rests on the floor.' },   // c3, c8 (one tell: D-SPLIT-BSSHOVER)
     ],
   },
-  zoom: { view: 'mistake', k: 1.5, tell: 'knee' },
   tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Stand', move: true }],
-  alt: 'Bulgarian split squat with dumbbells, side view. The top of the rear foot rests on a bench behind, the front foot well ahead, and the body lowers until the rear knee lightly touches the floor, front foot flat, back straight, dumbbells hanging at the sides.',
+  alt: 'Bulgarian split squat with dumbbells, side view. The top of the rear foot rests on a bench behind, the front foot well ahead, and the body lowers until the rear knee is just above the floor, front foot flat, back straight, dumbbells hanging at the sides.',
 };
