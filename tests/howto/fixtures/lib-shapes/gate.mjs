@@ -39,7 +39,10 @@ export function wrapperOf(orig, origUrl, id, shape) {
 export async function libShapesGate({ browser, port, OUT, P, H, writeFileSync }) {
   let shots = 0;
   for (const theme of THEMES) {
-    const { ctx, page } = await H.openAppTrain(browser, port, theme, { onError: m => P(`${theme}: page error: ${m}`) });
+    // service workers blocked in this context only: a context route never sees a request the service worker answers
+    // (precedent: HT-8's early-chip check in the gate)
+    const noSw = { newContext: o => browser.newContext({ ...o, serviceWorkers: 'block' }) };
+    const { ctx, page } = await H.openAppTrain(noSw, port, theme, { onError: m => P(`${theme}: page error: ${m}`) });
     const hits = Object.fromEntries(SHAPES.map(s => [s.id, 0]));
     try {
       await ctx.route(/\/assets\/ht-(leg-press|machine-chest-press)-[\w-]+\.js(\?.*)?$/, async route => {
