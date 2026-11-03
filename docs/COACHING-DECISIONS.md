@@ -3172,3 +3172,8 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   (tests/howto/fixtures/lib-shapes/gate.mjs), fail closed. The gate block sits after F-ZOOM-INK's, because
   lib-strip.test pins LIB-STRIP as the last group; tests/gate-split.test.ts's group count goes 110 -> 111, as that line
   asks of each new block.
+- **D-SHAPES-HANDS, D-SHAPES-HDR (#377 6615017999, 6615207958).** tools/plates/gen/hands.mjs: a library row with no hand
+  pair passes only as a `none` sheet whose `why` names D-SHIP-GRIP, or a handled sheet with no `hand`-kind zoom whose
+  `why` names D-SHIP-C3 (`noPairRuling`, `noPairCheck`); every other row throws "no hand pair" as before. hands.mjs is a
+  hashed writer, so 27 of the 8's generated files move their `inputsSha256=` header line only; bodies and `www/` are
+  unchanged. **Why:** the generate step must accept the two shapes LIB-SHIP W2 ships.

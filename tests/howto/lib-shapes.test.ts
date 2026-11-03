@@ -61,14 +61,28 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     expect(layers.sha256(await blp.buildLayersPage(blp.GOLDEN_B_SPEC))).toBe(layers.PAGE_SHA256);
   }, 120_000);
 
-  it('GOLDEN.json, the golden-B page and the 8\'s ht-, hand-, posture- and feel- files equal main b9369130', () => {
-    const list = ['tests/howto/golden/GOLDEN.json', 'tests/howto/golden/howto-layers.html',
-      ...['ht', 'hand', 'posture', 'feel'].flatMap(k => Object.values(JSON.parse(readFileSync('tools/plates/plates.json', 'utf8')) as { chromeId: string }[])
-        .map(r => `src/howto/generated/${k}-${k === 'ht' ? (r.chromeId === 'lateral-raise' ? 'dumbbell-lateral-raise' : r.chromeId) : r.chromeId}.ts`))].sort();
-    expect(list).toHaveLength(34);
+  // D-SHAPES-HDR (#377 6615207958): hands.mjs (D-SHAPES-HANDS) is a hashed writer of 27 of the 8's files, so only their
+  // `inputsSha256=` header line moves; their bodies, and every other file of the 8, stay byte-equal to main b9369130.
+  const ROWS = Object.values(JSON.parse(readFileSync('tools/plates/plates.json', 'utf8')) as Record<string, { chromeId: string }>).map(r => r.chromeId);
+  const listSha = (list: string[], body: boolean) => {
     const h = createHash('sha256');
-    for (const p of list) h.update(`${p}\0${sha(readFileSync(p))}\n`);
-    expect(h.digest('hex')).toBe('a3b813e132eaff911bec84f8283ffe96bf3ebc8a2d1cfe29d66fa9f1d8585c07');
+    for (const p of list) { const t = readFileSync(p, 'utf8'); h.update(`${p}\0${sha(body ? t.slice(t.indexOf('\n') + 1) : t)}\n`); }
+    return h.digest('hex');
+  };
+  it('the 27 header-moved files: each body (all but line 1) equals main b9369130', () => {
+    const list = [...ROWS.map(i => `src/howto/generated/hand-${i}.ts`), ...ROWS.map(i => `src/howto/generated/posture-${i}.ts`),
+      ...ROWS.map(i => `src/slices/howto/css/zoom-${i}.css`), 'src/slices/howto/css/hand.css', 'src/slices/howto/css/posture.css',
+      'src/howto/generated/loaders.ts'].sort();
+    expect(list).toHaveLength(27);
+    for (const p of list) expect(readFileSync(p, 'utf8'), p).toMatch(/^(\/\/|\/\*) GENERATED, do not edit\. [^\n]*inputsSha256=[0-9a-f]{64}( \*\/)?\n/);
+    expect(listSha(list, true)).toBe('db72fd48f355c3038d39bcaefbba8588d78aed65d911df5e30adec85e7c327e9');
+  });
+
+  it('GOLDEN.json, the golden-B page and the 8\'s ht- and feel- files are byte-equal to main b9369130', () => {
+    const list = ['tests/howto/golden/GOLDEN.json', 'tests/howto/golden/howto-layers.html',
+      ...ROWS.map(i => `src/howto/generated/ht-${i === 'lateral-raise' ? 'dumbbell-lateral-raise' : i}.ts`), ...ROWS.map(i => `src/howto/generated/feel-${i}.ts`)].sort();
+    expect(list).toHaveLength(18);
+    expect(listSha(list, false)).toBe('af07a70aa6221dc3808eb2acb75d99d5d8c0da0c3b03f34d8ff0285f4dffd1dc');
   });
 
   it('every patch anchor matches once, and a spec with no noZoom and no `none` row needs none of the new branches', () => {
@@ -164,4 +178,31 @@ describe('LIB-SHAPES A3: the handled sheet with no hand close-up', () => {
     await expect(build({ shapes: { [F.NOZOOM_ID]: 'nozoom' }, extra: { [F.NOZOOM_ID]: { handling: { why: '' } } } }))
       .rejects.toThrow(/lib_machine_chest_press: on the no-zoom list, but handling.why is empty/);
   }, 120_000);
+});
+
+describe('LIB-SHAPES D-SHAPES-HANDS: gen/hands.mjs, a library row with no hand pair', () => {
+  const C3 = (why?: string, zooms: object[] = []) => ({ handling: { archetype: 'push', ...(why === undefined ? {} : { why }) }, zooms });
+  const NONE = (why?: string) => ({ handling: { archetype: 'none', ...(why === undefined ? {} : { why }) }, zooms: [] });
+  const OLD = 'hands: lib_x: no hand pair (tools/plates/library/hands/pairs.mjs HAND_OF_ID); a library hand ships only as handpair-<key>';
+  it('exactly two rulings pass: `none` + D-SHIP-GRIP, and handled with no hand zoom + D-SHIP-C3', () => {
+    expect(hands.noPairCheck('lib_x', NONE('D-SHIP-GRIP (b): card has no hand claim'), false, 'p.html', 'x')).toBe('D-SHIP-GRIP');
+    expect(hands.noPairCheck('lib_x', C3('D-SHIP-C3: gap-ruled D-SHIP-Q1'), false, 'p.html', 'x')).toBe('D-SHIP-C3');
+    expect(hands.noPairCheck('lib_x', fNone(), false, 'p.html', 'x')).toBe('D-SHIP-GRIP');
+    expect(hands.noPairCheck('lib_x', fNoZoom(), false, 'p.html', 'x')).toBe('D-SHIP-C3');
+  });
+  it('a handled row with neither `why` throws exactly as today', () => {
+    for (const s of [C3(), C3(''), NONE(), { handling: (chestPress as any).handling, zooms: [] }, {}]) expect(() => hands.noPairCheck('lib_x', s, false, 'p.html', 'x')).toThrow(OLD);
+  });
+  it('a `why` naming another ruling, or the other shape\'s ruling, throws', () => {
+    for (const s of [C3('D-SHIP-Q1'), C3('D-SHIP-GRIP'), NONE('D-SHIP-C3'), C3('D-SHIP-C3X'), NONE('D-SHIP-GRIP-2'), C3('xD-SHIP-C3')]) expect(() => hands.noPairCheck('lib_x', s, false, 'p.html', 'x')).toThrow(OLD);
+  });
+  it('a handled row that still has a hand zoom throws, and a ruled row whose page holds a hand close-up throws', () => {
+    expect(() => hands.noPairCheck('lib_x', C3('D-SHIP-C3', [{ kind: 'hand', key: 'hand' }]), false, 'p.html', 'x')).toThrow(OLD);
+    expect(() => hands.noPairCheck('lib_x', NONE('D-SHIP-GRIP'), true, 'p.html', 'x')).toThrow('hands: lib_x: no hand pair under D-SHIP-GRIP, but p.html holds a hand close-up for x');
+  });
+  it('the library loop calls it in place of the old throw, and only for a row with no pair', () => {
+    const src = readFileSync('tools/plates/gen/hands.mjs', 'utf8');
+    expect(src.split('else if (!pairOf[id]) noPairCheck(row.id, (await import(pathToFileURL(join(ROOT, sourceOf(row.id))).href)).default, hasHand, file, id);').length).toBe(2);
+    expect(src.split('throw new Error(`hands: ${rowId}: no hand pair (').length).toBe(2);
+  });
 });
