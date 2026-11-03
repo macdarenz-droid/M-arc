@@ -86,6 +86,8 @@ const zooms = [
       wrong: FAULTS,                // handling.faults (golden B's shape: fault objects); the pair pages them in this order
       camera: 'side',               // the pair's camera (pairs.mjs pairSpec)
       panelHeight: V.panelHeight,
+      // CONVENTION (D-SHIP-GRIP (a)): 'Middle of palm' is the curl key's ga:curl-mid label, source hand-key-curl
+      // (hands/pairs.mjs CONVENTIONS; words/curl-dumbbell-under.json:9-10, radial-rules.mjs:16); the card gives no contact.
       notes: { right: 'Middle of palm', wrong: 'Wrist curled' },   // words/curl-dumbbell-under.json, first page
     },
     caption: {
@@ -93,6 +95,7 @@ const zooms = [
       wrong: 'Wrist bent back or curled toward the forearm.',
     },
     // the key's alt (radial-rules.mjs curlVariant), split in two sentences for the 15-word sentence cap
+    // CONVENTION (D-SHIP-GRIP (a)): the contact in this alt is the curl key's ga:curl-mid, source hand-key-curl.
     alt: { right: 'Handle across the middle of the palm, thumb wrapped round it. Wrist straight, in line with the forearm.', wrong: V.faults[KEYED.faults[0]].alt },
     feelRow: 'wrist',
   },
@@ -128,7 +131,7 @@ const feel = {
   feelLine: 'You should feel this in the front of your upper arm.',
   rows: [
     { key: 'front-shoulder', where: 'Front of the shoulder', at: { muscles: ['front_delts'] },
-      means: 'Your elbows move forward, which loads the front delts.',
+      means: 'Your elbows move forward, which puts extra load on the front delts.',
       fix: 'Keep the elbows at your sides.',
       zoom: 'curl-elbow', claim: CL.c4 },
     { key: 'wrist', where: 'Wrist discomfort or pain', at: { parts: HANDS },
@@ -165,11 +168,13 @@ export default {
     loadAxis: V.loadAxis,            // 'across'
     width: { text: 'Let the dumbbells hang slightly out from your sides if that keeps your wrist straight.', claim: CL.c7 },
     thumb: { mode: RIGHT_POSE.thumb, claim: CL.c1 },   // 'wrapped' (c1; the key's right pose)
-    contact: 'mid-palm',             // the key's contact 'mid' (ga:curl-mid); the card gives none
+    contact: 'mid-palm',             // CONVENTION: the key's contact 'mid' (ga:curl-mid, source hand-key-curl); the card gives none
     wrist: { ext: V.wristRange, limitText: 'Keep the hand in line with the forearm, not bent up or down.',
       claim: C(['CONSENSUS', 'CONVENTION'], [ACE, SL, 'hand-key-curl'], 'c6. The ext range is the curl key\'s wristRange (ga:curl-mid), a convention, not a card number.') },
     pose: RIGHT_POSE,
     faults: FAULTS,
+    // CONVENTION (D-SHIP-GRIP (a)): 'across the middle of your palm' is the curl key's ga:curl-mid, source hand-key-curl;
+    // palms forward and thumb wrapped c1, wrist straight c6.
     gripLine: 'Palms forward, handle across the middle of your palm, thumb wrapped. Keep your wrist straight.',
     cue: 'Wrist straight, thumbs wrapped.',
   },
