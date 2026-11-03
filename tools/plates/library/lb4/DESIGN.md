@@ -346,13 +346,15 @@ drawn-item tests only. A9 and every mutation red then restored.
 
 | id | held under | release condition |
 |---|---|---|
-| step_up | D-LIB14-NOSECS and D-LIB14-STEPUP | NOSECS is released (LIB-STRIP on main `bec24ebd`), but reverse_lunge is still held on main (pilot-a/plates.json: "held": the strip follow-up; not redrawn or pinned), so step_up stays held and rolls (plan 3.5:376) |
+| step_up | D-LIB14-NOSECS and D-LIB14-STEPUP: **released** by LIB-SPLIT (D-SPLIT-STEPUP, section 17) | NOSECS is released (LIB-STRIP on main `bec24ebd`); reverse_lunge is redrawn and pinned (PILOT-A3 PIN GO @ `2edabdf0`), so step_up has its row, its tempo and no held-pairing entry |
 
 Released on 'LIB-14 resume' (main `bec24ebd`): front_squat, goblet_squat, bodyweight_squat and pistol_squat (section 8's
 released table). They are in rows.json, on the plates page, through QA and to the critic.
 
 Held specs build, carry no `tempo`, pass their drawn-item tests, and are in no rows file and on no committed or QA'd
 page (A8).
+
+Since LIB-SPLIT no LB4 id is held: HELD is empty in build.mjs and the test, and held-pairing.json lists no LB4 id.
 
 ## 14. Risks and mitigations
 
@@ -490,3 +492,218 @@ are set at the draw (labels only).
 - CARD FIELDS: the `sole.l` end fact is deleted. j4 names one mid-foot, so it gives the near side only. heel.l and
   heel.r (start, j2) and sole.r (end, j4) stay.
 - QA: all 10 hard checks pass; F5 3.57 only; deviation 34.5 px, Trace 172.8 px, leaderMax 82.2 px.
+
+## 17. LIB-SPLIT (step_up resume; the 5 SPLIT rows; PLAN)
+
+Card: `docs/supervisor/verify/lib-split-card.md` on `claude/sup-lib4-cards` @ `b556a860`, rulings D-SPLIT-1 to -8
+(amended 1, 3, 5). Base: main `5bcbddcf`; #358 is not merged yet, so rows.json, build.mjs, held-pairing.json and the
+lb4 test are not pushed (ruling 1). Every number below was measured on this branch's specs with the engine (node, not
+QA evidence) unless it says QA. The specs are the PLAN's prototypes.
+
+### 17.1 Modes (re-checked on `5bcbddcf`)
+
+All 6 are H (D-SPLIT-MODES). derive.mjs:4-12 still has only the 7 PARAMS keys; none sets a forward step, a split
+length, a raised rear foot or a bench under the feet. SPLIT is not built: no templates/ file, no qa/param-ranges.json
+row, no H10 child proof.
+
+| id | clone source (copied, never imported) | copied root finder: bracket, solved value |
+|---|---|---|
+| step_up | itself (main) | unchanged: END_Z −0.42326, PUSH_UP 9.718; TOP_Z −0.01964 (was −0.01383: the CoM solve follows the lifted trailing leg) |
+| forward_lunge | reverse_lunge (pinned): sizes, end pose built from the front foot, REAR_LIFT (solved 0.0360 m), arms, dumbbells, shin plumb, camera | none (closed form) |
+| walking_lunge | reverse_lunge, as forward_lunge; step_up's Illinois solve | M_LEAN: [3, 60] deg, 26.872 |
+| bodyweight_lunge | reverse_lunge, as forward_lunge; no dumbbells | none |
+| bodyweight_split_squat | reverse_lunge; walking_lunge's end; step_up's solve | START_Y: [0.80, 0.836] m, 0.83542 |
+| bulgarian_split_squat | reverse_lunge; vendor `bench` axis 'x' (bench_dip.mjs entry form); step_up's solve | START_Y: [HIP+0.1, HIP+0.42] m, 0.83485; M_Z: [HIP z, HIP z+0.25] m, −0.40137 |
+
+### 17.2 Per row: poses, fault → key, tempo
+
+Pose map: identity for the 5 (each card fault is at the bottom); step_up keeps D-LIB14-STEPUP-POSE (section 9).
+
+| id | start | via (ghosts) | end | Mistake (size) | first tell = topFault | tempo = tempoOf(strip) |
+|---|---|---|---|---|---|---|
+| step_up | unchanged except the trailing hip 15 → 21 (17.4) | none | unchanged | unchanged (`lean`, M_INCL 40) | `lean` | Rise blank; Lower Controlled |
+| forward_lunge | standing on the rear foot's spot: both mid-feet START_Z −1.0129 m behind the front mid-foot, so the rear ball's z equals the end's (ruling 7) | 1: near foot 8 cm up, halfway, toes up 15° (heel landing, c4); 2: near foot down, rear heel up, hips halfway | the parent's end (shin 6°, thigh parallel, rear knee joint 8.5 cm up: "without touching", c1) | front shin 6° → M_SHIN 29.2°, the angle that puts the knee joint centre over the toe tip; hips held at the end height, 14.6 cm forward | `knee` (`shin`; the knee cue names the hips) | Step Slow; Lower Smooth; Rise blank |
+| walking_lunge | as forward_lunge (START_Z −1.0058) | as forward_lunge | shin 6°, front thigh 5° below parallel, rear kneecap on the floor (knee joint 4.9 cm up, c2) | pelvis and trunk pitched to M_LEAN 26.9° (solved: near shoulder over the middle of the front thigh), arms plumb, legs unmoved | `chest` (`head`) | Lower Controlled; Rise blank |
+| bodyweight_lunge | as forward_lunge, feet together (c1): near foot beside the rear one, root centred (START_Z −0.9903) | as forward_lunge | shin 12° (c4 "slightly forward"), thigh parallel (c4), trunk 20° forward from the hips, flat (c5: pelvis tilt, trunk flex 0), no load | as forward_lunge: M_SHIN 29.2° | `knee` (`shin`) | Step Slow; Lower blank; Rise blank |
+| bodyweight_split_squat | same stance as the end, hips straight above the end hips, front knee 8° (c3 "about straight"; A3 ≤ 10°) | none (feet fixed; 2 interpolated ghosts) | as walking_lunge's | as forward_lunge: M_SHIN 29.2° | `knee` (`shin`) | Lower Smooth; Rise Smooth |
+| bulgarian_split_squat | same stance, hips above the end hips, front knee 8° ("standing on the front leg") | none | rear kneecap on the floor (c3 contact, D-SPLIT-BSSMIS), front shin 6°, hip where both thighs meet (0.476 m) | see 17.6 | `seat` (`knee`) | Lower Controlled; Stand blank |
+
+- Mistake sizes are picked from the card words, never to pass a bar (Q-D5-3). "Tips far forward over the foot"
+  (forward_lunge, bodyweight_lunge) and "tips well past vertical" (bodyweight_split_squat) are drawn as the knee
+  joint centre reaching the toe tip (each card's own "the knee ahead of the toes" step-length claim: c13, c9, c4); it is
+  solved from the drawn foot, not chosen. "Pitches forward over the front thigh" (walking_lunge) is drawn as the near
+  shoulder over the middle of the front thigh.
+- **Q1 (A3 pivot):** "ball.l moves ≤ 0.5 cm from start to end": the rear ball moves 0.00 cm in x and z and 3.60 cm up
+  (REAR_LIFT, the parent's rigid-foot toe-pad convention: the toe pad, not the ball, is on the floor at the end).
+  Proposed: A3 tests x and z ≤ 0.5 cm and y = REAR_LIFT ± 0.5 cm.
+
+### 17.3 Facts plan (for CARD FIELDS; the verifier rules)
+
+| id | quote | proposed plateFacts |
+|---|---|---|
+| step_up | none new (verified on #289) | `tempo` only (ruling 3: in the CARD FIELDS set) |
+| forward_lunge | c5 "hold one in each hand" (setup) | `contact wrist.l`, `wrist.r`, pose start (the hand planes); c1 "without touching": none |
+| walking_lunge | c2 "back knee very lightly touches the floor"; c12 "held at the sides" | `contact knee.l` end (the kneecap plane, ab_wheel_rollout.mjs:172 form); `wrist.l`, `wrist.r` start; c11 "~90º" is eccentric lunge walking: none |
+| bodyweight_lunge | c4 "until the front thigh is parallel" (no number) | `[]`: a direction, not a quoted number; the A3 direction-word test holds it (D-SPLIT-DIRWORDS) |
+| bodyweight_split_squat | c1 "lightly touches the floor" | `contact knee.l` end |
+| bulgarian_split_squat | c3 "lightly contacts the floor"; c9 "at the sides"; c2 "top of your rear foot on the support" | `contact knee.l` end; `wrist.l`, `wrist.r` start; c2: a note (no landmark lies on the foot's top) |
+
+Each fact gets its `checks` plane. topFault: step_up `lean` (kept), forward_lunge `knee`, walking_lunge `chest`,
+bodyweight_lunge `knee`, bodyweight_split_squat `knee`, bulgarian_split_squat `seat`.
+
+### 17.4 Clearance (D-SPLIT-CLEAR; px at the plate's camera, outlines from bodyShapes)
+
+| id | part, pose | measured | fix |
+|---|---|---|---|
+| step_up | box top to the trailing foot, start | 0.41 px on main → **2.42 px** | trailing hip 15 → 21 (one value, :80); 2 px needs ≥ 21 (20: 1.99 px). Its `above` checks stay |
+| step_up | box to the shank, end and Mistake | 5.18 / 5.22 px | none (lead foot = the c6 contact) |
+| step_up | dumbbells, 3D (cm) | start 0.91 / 1.14, end 0.42 / 10.15, Mistake 11.85 / 20.63 | none |
+| forward_lunge | dumbbells, 3D (cm, db.l rear thigh / db.r front) | start 1.47 / 1.47, via 1.52 / 0.38, 0.85 / 1.78, end 0.11 / 9.70, Mistake 1.74 / 8.59 | none |
+| walking_lunge | dumbbells, 3D | start 1.47 / 1.47, via 1.52 / 0.39, 0.90 / 1.88, end 0.09 / 9.70, Mistake 10.56 / 15.18 | none |
+| bulgarian_split_squat | bench pad to the rear shank (foot = the c2 contact) | start 4.04, end 2.28, Mistake 2.28 px | none: OVERHANG 2 cm already in |
+| bulgarian_split_squat | dumbbells, 3D | start 0.73 / 0.30, end 0.43 / 9.70, Mistake 0.45 / 9.70 | none: the card's −2.1 / −4.6 cm are not reproduced on this stance (front toe 0.80 m ahead of the edge, rear foot under the hip joint) |
+| bodyweight rows | no load | n/a | floor `checks` only |
+
+Model as PILOT-A3 A9 (lib8r-pilot-a3.test.ts:376): each head a 0.0595 m × 0.07 m cylinder, the thigh the engine radius
+profile. Every value ≥ 0.
+
+### 17.5 PQ-H3 at the PLAN sizes (node; bars 22.11 / 11.39 px)
+
+| id | Trace px | deviation px (tell) | zoom |
+|---|---|---|---|
+| step_up | 59.1 (QA) | 30.2 (QA, `lean`) | none |
+| forward_lunge | 86.1 | 25.3 (`knee`; `hips` 24.6) | none |
+| walking_lunge | 91.1 | 42.4 (`head`; `chest` 29.5) | none |
+| bodyweight_lunge | 91.1 | 18.8 (`knee`; `hips` 18.0) | none |
+| bodyweight_split_squat | 32.1 | 25.3 (`knee`) | none |
+| bulgarian_split_squat | 29.6 | 8.74 at M_SINK 1 cm (`seat`) | Mistake zoom, k 1.5 gives 13.1 [est until QA places the ring] |
+
+### 17.6 bulgarian_split_squat (wave 2): stance, plant and the Mistake
+
+- Stance: bench top 0.42 m (D-SPLIT-BSSBENCH), depth 0.29 m (vendor), front edge 0.80 m (3 engine foot lengths of
+  0.266 m) behind the front toe tip. The rear foot is the rigid engine foot turned over: toe direction 201.8° in the
+  (z, y) plane, so the instep point (foot frame [0.018, 0.018] H) and the toe dorsum ([0.113, −0.020] H) both sit on
+  the bench top (measured 0.4200 m in every pose); the instep 2 cm ahead of the edge. The rear plant's lateral x is the
+  hip joint's (0.0875 m): at the parent's 0.10 m the turned-over plant misses by 0.7 cm (S3's 0.5 cm), at 0.0875 m by
+  0.0 cm. The rear knee pole points down (with the default pole along the toes it bulged sideways).
+- End: rear knee joint 4.9 cm up (kneecap on the floor), 12.5 cm in front of the rear ankle; front shin 6°; the hip
+  where the thighs meet (0.476 m).
+- **Q2 (the Mistake, ruling 5):** with the rear foot fixed on the bench and the kneecap kept on the floor, the rear
+  knee cannot move, so the hips can only sink by swinging forward about it, and the front shin tips at once:
+
+  | sink | hips forward | front shin | `seat` move |
+  |---|---|---|---|
+  | 0.5 cm | 3.5 cm | 10.7° | 5.18 px |
+  | 1 cm | 5.9 cm | 13.9° | 8.69 px |
+  | 2 cm | 9.3 cm | 18.8° | 13.96 px (no zoom allowed) |
+  | 3 cm | 12.0 cm | 22.6° | 18.13 px |
+
+  The card's 4.5 cm "before the front shin tips forward" is not reproduced. The prototype draws 1 cm (k 1.5,
+  13.1 px [est]), which still moves the front shin 8°, the forward_lunge fault. Options: (a) 1 cm as drawn, the shin
+  change named in the cue; (b) the rear foot rolls on its toe dorsum so the hips drop straight down (not on the card);
+  (c) hold under S3 with a research follow-up. Proposed: (a), for the panel's R5; a second fail holds the row.
+
+### 17.7 Expected flags
+
+F5 on all (D-LIB9-F5). No F7 after CARD FIELDS (all 5 drawable). F3 and F4 are fixed with label `box`es in wave 1 (the
+prototypes show F3 87-219 px and F4 0 before boxes). **step_up F4 (Q3):** the H4 fix is one moved box (`leg`), which
+gives F4 1, still below 2. Proposed: box `foot` at the engine's own position too (0 px move), F4 2; else F4 named.
+
+### 17.8 Unsourced numbers
+
+forward_lunge, walking_lunge, bodyweight_lunge: the via poses (swing foot 8 cm, toes up 15°, hips), the Mistake sizes;
+walking_lunge FRONT_THIGH −5°; bodyweight_lunge FRONT_SHIN 12, TRUNK_LEAN 20, the arms; bodyweight_split_squat
+START_KNEE 8, FRONT_THIGH −5°, the arms; bulgarian_split_squat BENCH_TOP 0.42 m, the bench depth, OVERHANG 0.02 m,
+REAR_X, STANCE, START_KNEE 8, M_SINK; step_up the trailing hip 21. Each spec header lists its own.
+
+### 17.9 PLAN RULED (#364 6551354216) and wave 1 build
+
+- Q1 accepted (A3: rear ball x and z within 0.5 cm, y = REAR_LIFT ± 0.5 cm; a 1 cm x mutation). Q2 option (a): 1 cm
+  sink, unsourced, Mistake zoom k 1.5. Q3: step_up F4 named at 1; the H4 fix boxes `leg` only.
+- forward_lunge and bodyweight_lunge drop the `hips` tell: a right-side label needed a leader over 99 px to the
+  buttock (F3's 82.26 px top), so its words moved into the knee tell's cue. Section 9's 2-3 tells (Q-D5-4) are kept
+  with a `shin` tell (mid-shin, Mistake pose) on forward_lunge, bodyweight_lunge and bodyweight_split_squat, and a
+  `knee` tell (the resting kneecap) on bulgarian_split_squat.
+- Label boxes (each moved off the engine's own place for F3 or H4): forward_lunge `hips`, `back`; walking_lunge
+  `hips`, `chest`; bodyweight_lunge `hips` (anchor the hip joint: every buttock place measured over 82 px), `thigh`
+  (two lines), `back`; bodyweight_split_squat `knee`; step_up `leg`. bodyweight_split_squat has one box, so F4 is 1:
+  named, as step_up's (Q3).
+- The setup quotes' hand facts get `checks` planes at the wrist at the start (step_up's inHand form) on forward_lunge,
+  walking_lunge and bulgarian_split_squat.
+
+### 17.10 Wave build on main with #358 (rows, cards, QA)
+
+- Base: main `dac9c624` (train 59: #358, LIB-SMALL); section 16's text is kept beside this one (#358 review Low 2).
+- rows.json gains step_up and the 5 SPLIT rows (all H, stage drawing). build.mjs HELD and the test's HELD are empty.
+  NOT_HERE is reverse_lunge and box_jump. held-pairing.json lists no id (D-SPLIT-HELDEMPTY, #364 6576723170: mutation
+  (e) falls back to the barbell_row stand-in on an empty list, `tests/howto/held-pairing.ts` E_ID and mutationE).
+- step_up (D-SPLIT-STEPUP): `tempo` = tempoOf(strip step_up) on the spec and the card; the trailing hip 15 → 21 (box
+  clearance 2.42 px); the `leg` callout box at (222, 180), 15 px above the engine's own place (H4.overlap:normal:foot|leg
+  cleared); F4 named at 1 (Q3).
+- Cards: the 3 keys on the 5 SPLIT cards (17.3's facts, 17.2's tempo and topFault); bodyweight_lunge's plateFacts is `[]`
+  (D-PLATEFACTS-EMPTY): c4's "front thigh parallel" is a direction, not a quoted number; the A3 direction-word test holds it (D-SPLIT-DIRWORDS). cards.sha.json
+  adds the 5 (each card equals its research-head blob without the 3 keys; quotes byte copies). validateCardFile gives []
+  on all 12.
+- QA (lb4/qa.mjs, node and browser, zero exemptions): all 10 hard checks pass on all 12 ids. Flags equal the ruled set:
+  F5 3.57 on all, F7 pistol_squat, F2 named on front_squat and goblet_squat, **F4 named at 1 on step_up and
+  bodyweight_split_squat** (one moved box each; Q3's form: no box added only to raise the flag).
+
+  | id | traceLen px | deviation px | zoom |
+  |---|---|---|---|
+  | step_up | 59.07 | 30.24 | none |
+  | forward_lunge | 86.14 | 25.32 | none |
+  | walking_lunge | 91.06 | 42.36 | none |
+  | bodyweight_lunge | 91.10 | 18.83 | none |
+  | bodyweight_split_squat | 32.12 | 25.32 | none |
+  | bulgarian_split_squat | 29.56 | 8.74 (zoomed Mistake passes H3) | Mistake, k 1.5 |
+
+- forward_lunge and walking_lunge export `mistakeAt(size)`, the builder their plate's Mistake already used (render
+  unchanged), so the A4 tests build the smaller sizes from the drawn code.
+- Tests (lb4-plates.test.ts, LIB-SPLIT blocks): A1 mutations; A3 drawn poses (the forward step and pivot, kneecaps,
+  fixed feet, the laces-down rear foot read off the foot outline, the Mistake sizes and unmoved landmarks); A4 and A6
+  node QA with pinned H3 and the zoom mutations, M1-M7 on forward_lunge; A5 box and bench clearance at 2 px and the
+  dumbbell 3D listing. walking_lunge's Mistake plate has no zoom place at all, so the "zoom added" mutation runs on
+  bodyweight_split_squat. The Bulgarian zoom sits at the ladder's lowest k (1.5), so there is no lower rung to mutate.
+
+### 17.11 Panel mx28 fix round (#364 6585103107) and cfsp (6584536292)
+
+- mx28: step_up, forward_lunge, walking_lunge, bodyweight_lunge and bodyweight_split_squat APPROVED @ `9f772a09`; their
+  fragments stay byte-identical (A2 block).
+- bulgarian_split_squat (R5, R11; D-SPLIT-BSSTRUE, D-SPLIT-BSSFIX): the pose is unchanged (the rear knee stays on the
+  floor, c3). The tells now name what is drawn: `knee` "Front knee forward" on the Mistake front knee (box (262, 192),
+  leader 64.2 px, inside F3's range) and `shin` "Shin tips forward" on the Mistake front shin (box (283, 238): at
+  its engine place the text sat on the zoom's source ring, H1.ink:mistake:shin in the browser half); no hips tell. The zoom
+  shows the front knee (`zoom.tell: 'knee'`): k 1.5, fault 8.75 px → 13.12 px (bar 11.39); the ring's source sits on
+  the front knee and upper shin. Head, trunk and dumbbells move only with the hips, 8.6 px, as the shin tip implies
+  (the rear thigh turns about the resting knee). topFault `seat` → `knee` (the first tell's key).
+- cfsp D-SPLIT-FRONTFOOT: heel.r and ball.r contacts at the end on forward_lunge (c1), walking_lunge (c4) and
+  bulgarian_split_squat (c3); the specs already check those soles on the floor in every pose.
+- cfsp D-SPLIT-DIRWORDS: "front thigh parallel" and "front shin about vertical" are A3 direction-word tests (thigh 0°
+  ±1 on forward_lunge and bodyweight_lunge; shin 6° ±1 on forward_lunge, walking_lunge, bodyweight_split_squat and
+  bulgarian_split_squat), not facts.
+- Not a fact: bulgarian c2 "about 3 foot-lengths in front of the rear foot support" is a distance no fact kind states;
+  A3's stance test holds it (front toe 0.798 m ±0.5 cm ahead of the bench edge in every pose).
+- Follow-up for research (outside this write scope): walking_lunge.json plate.tempo credits "Controlled descent" to
+  c8, but only c7's quote states it (the strip row cites c7).
+
+### 17.12 Panel mx30 second focused round (#364 6592673388, D-SPLIT-BSSHOVER, D-LIB13-PANEL2)
+
+- mx30 failed R5 (the drawn front-knee tip is not the card's fault) and R3 (the hand short of the handle). Ruling
+  D-SPLIT-BSSHOVER replaces D-SPLIT-BSSTRUE's refusal: c3's ace-bss and plate.end allow the rear knee just above the floor.
+- End: the rear kneecap END_GAP 0.03 m above the floor (unsourced, "just above"); the gap draws 4.39 px at plate scale,
+  8.78 px at 780 px (≥ 8). The front shin stays 6°; the hip where the two thighs meet.
+- Card: knee.l's end fact becomes `{ kind: 'height', landmark: 'knee.l', pose: 'end', m: 0.079 }` (the joint centre
+  0.049 m + 0.03 m; H6 ±1 cm); A3 tests the gap at ±0.5 cm, with 0 cm and +1 cm mutations red. topFault stays `knee`.
+- Mistake: the rear knee swings down about the bench-fixed rear foot until the kneecap rests on the floor; the front
+  knee holds (0.93 mm engine solve); the hips sink as the two thighs meet. One tell, `knee` "Knee rests" on the
+  Mistake rear knee (box (30, 292); leader 66.8 px), in plate.mistake's words. The section 9 rule of 2-3 tells has
+  this one ruled exception, tested as exactly 1.
+- Zoom: the rear kneecap moves 11.63 px at plate scale, at or over the 11.39 px bar, so the plate carries no zoom
+  (a zoom is H3.zoom:not-needed:mistake, now a mutation). R11 has no zoom to score.
+- R3: the near dumbbell is drawn at z `mid`, so the near forearm and fist lie over it (the goblet_squat mx1 item 1
+  form; draw order only). A test pins the order, and the dumbbell at z front is red.
+- Bench clearance: start 4.04, end 3.09, Mistake 2.26 px. Dumbbell 3D gaps (cm): start 0.73 / 0.30, end 0.98 / 9.70,
+  Mistake 0.43 / 9.70. QA: all 10 hard checks pass; traceLen 24.00, deviation 11.63, leaderMax 66.8.
+- mx31 (#364 6595403393): bulgarian_split_squat APPROVED @ `7f8afd68`, card-key diff-check passed; all six LIB-SPLIT
+  rows are approved. Its 9 fragments are pinned (LIB-SPLIT A2 block, page `38750fee…67e4`).
+

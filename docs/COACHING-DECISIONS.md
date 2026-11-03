@@ -3082,6 +3082,28 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   yields one macrotask (lb10's LIB-22 A19 form), and A6's per-spec loop yields. lb4 + lb10 together: longest block 84 s
   to 6.0 s, RPC errors 1 to 0, 310 tests pass.
 - **Source:** PR #358; lb10/DESIGN.md 23, lb4/DESIGN.md 16.
+
+## LIB-SPLIT: LB4 step_up and the lunge and split-squat rows (builder, 2026-11-02; card docs/supervisor/verify/lib-split-card.md, rulings D-SPLIT-*)
+- **D-SPLIT-MODES and the PLAN (#364 6551354216).** All 6 rows are H (no PARAMS key sets a forward step, a split
+  length or a bench under the feet); SPLIT is not built. Mistake sizes come from the card words: the front shin solved
+  until the knee joint is over the toe tip (29.2°), walking_lunge's trunk until the near shoulder is over the middle of
+  the front thigh (26.9°), the Bulgarian hips 1 cm lower with the knee resting (an unsourced drawing size, Q2 a).
+  **Why:** a size picked to pass a bar is never drawn (Q-D5-3).
+- **D-SPLIT-STEPUP.** step_up resumes with its strip tempo, the trailing hip at 21 (box clearance 2.42 px, was 0.41)
+  and one moved `leg` box for H4.overlap; F4 named at 1 (Q3). bodyweight_split_squat's one moved box gives F4 1, named
+  in the same form. **Why:** a box is never added only to raise a flag value.
+- **D-SPLIT-HELDEMPTY (#364 6576723170).** step_up was the last id in held-pairing.json. Mutation (e) now takes its id
+  from `E_ID` (the first listed id, or the barbell_row stand-in that (a)-(d) use on an empty list); lib-strip.test.ts and
+  library-cards8.test.ts change only that assertion (and its import). **Why:** the old `HELD[0]!.id` threw on an empty
+  list; while ids are listed (e)'s input is unchanged (shown with step_up restored), and an empty-list assertion is added.
+- **Source:** PR #364; lb4/DESIGN.md 17.
+- **D-SPLIT-BSSFIX (#364 6585103107).** bulgarian_split_squat's Mistake tells name the drawn change, the front knee and
+  shin tipping to 13.9° with the rear knee resting, and its zoom shows the front knee; the hips tell goes. **Why:** at
+  1 cm the hip drop does not read, and the rear knee on the floor is the card's own end (c3, D-SPLIT-BSSTRUE).
+- **D-SPLIT-FRONTFOOT and -DIRWORDS (cfsp, #364 6584536292).** The front-foot press quotes become heel.r and ball.r end
+  contacts on forward_lunge, walking_lunge and bulgarian_split_squat; direction words ("parallel", "about vertical")
+  stay card-true pose tests, not facts.
+
 - **jump_rope lifted (D-HELD6-JUMPROPE).** In the air the ankles point to −10° (box_jump's approved flight ankle, c10
   and c11). The toe stays HOP 3.8 cm over the floor. The Trace is shown in a normal-view zoom at k 3: lb10's rule needs
   10 % over the bar, and the card's k 2.5 gives 23.4 px, under that. **Source:** PR #368; lb10/DESIGN.md section 24.
@@ -3094,3 +3116,8 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   the named list. Its verified card fields and knee tell stay in the held spec. **Why:** a floor plane would be a new
   engine feature, which the ruling does not allow. HELD-B releases no row.
 - **Source:** PR #371 (6579432546, 6579536635); lb9/DESIGN.md §15, §26.
+- **D-SPLIT-BSSHOVER (#364 6592673388).** bulgarian_split_squat's end holds the rear kneecap 3 cm above the floor (c3's
+  ace-bss "Before the left knee hits the floor", plate.end "just above or lightly touching"); the Mistake rests it on
+  the floor with one rear-knee tell, and knee.l's end fact becomes a height fact (0.079 m). The knee's 11.63 px move
+  needs no zoom. **Why:** the fault reads as a gap against a contact; the 1 cm hip drop did not.
+
