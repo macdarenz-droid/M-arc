@@ -80,15 +80,19 @@ describe('LIB-SHIP D-SHIP-C3: checkC3Library and the no-zoom list', () => {
 });
 
 describe('LIB-SHIP D-SHIP-GRIP', () => {
-  it('(a) dumbbell_biceps_curl: each field its card leaves empty equals the curl key\'s recorded value; a mutated value is red', async () => {
+  // W1 review low 4 (#378 6624739613): every pinned value is read from the live key module, the contact through its
+  // CONVENTIONS entry, so a change to the key (its contact, convention, wrist range, pose or faults) turns this red.
+  const CONTACT_OF = { heel: 'heel', mid: 'mid-palm', base: 'finger-base' } as const;
+  it('(a) dumbbell_biceps_curl: each field its card leaves empty equals the curl key\'s recorded value, the contact through its CONVENTIONS entry', async () => {
     const { content: c } = await content.loadContent('lib_dumbbell_biceps_curl'), K = keyMods.find((m: any) => m.KEY === 'curl');
     const V = K.VARIANTS[K.IDS.dumbbell_biceps_curl.variant];
+    expect(V.claims.contact).toEqual(['ga:curl-mid']);
+    expect(P.CONVENTIONS['ga:curl-mid']).toMatch(/middle of the palm/);
     const pinned = (h: any) => [h.contact, h.wrist.ext, h.pose, h.loadAxis, h.faults.map((f: any) => f.key)];
-    const want = ['mid-palm', V.wristRange, V.right, V.loadAxis, K.IDS.dumbbell_biceps_curl.faults];
+    const want = [CONTACT_OF[V.contact as keyof typeof CONTACT_OF], V.wristRange, V.right, V.loadAxis, K.IDS.dumbbell_biceps_curl.faults];
     expect(json('docs/research/howto/cards/dumbbell_biceps_curl.json').grip.handContact).toBe('');
+    expect(want[0]).toBe('mid-palm');
     expect(pinned(c.handling)).toEqual(want);
-    expect(pinned({ ...c.handling, contact: 'heel' })).not.toEqual(want);
-    expect(pinned({ ...c.handling, wrist: { ...c.handling.wrist, ext: [-15, 15] } })).not.toEqual(want);
   });
   it('(b) NoHandling with why D-SHIP-GRIP is red when the card claims any of thumb, contact or wrist; pec_fly (none claimed) passes', async () => {
     const { content: pec } = await content.loadContent('lib_pec_fly');
