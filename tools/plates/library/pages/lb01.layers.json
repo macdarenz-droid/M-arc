@@ -1,0 +1,69 @@
+{
+  "groups": [
+    {
+      "id": "lb1",
+      "title": "LB1",
+      "ids": [
+        "lib_chin_up",
+        "lib_hanging_knee_raise",
+        "lib_assisted_pull_up",
+        "lib_inverted_row",
+        "lib_close_grip_pulldown",
+        "lib_underhand_lat_pulldown",
+        "lib_single_arm_lat_pulldown",
+        "lib_straight_arm_pulldown",
+        "lib_chest_supported_row",
+        "lib_resistance_band_row",
+        "lib_incline_machine_press",
+        "lib_shoulder_press"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb01.closeups.mjs",
+  "closeups": {
+    "lib_chin_up": {
+      "optionsKey": "chin_up",
+      "pair": "bar-hang-under"
+    },
+    "lib_hanging_knee_raise": {
+      "optionsKey": "hanging_knee_raise",
+      "pair": "bar-hang-over"
+    },
+    "lib_assisted_pull_up": {
+      "optionsKey": "assisted_pull_up",
+      "pair": "bar-hang-over"
+    },
+    "lib_inverted_row": {
+      "optionsKey": "inverted_row",
+      "pair": "bar-row-over"
+    },
+    "lib_close_grip_pulldown": {
+      "optionsKey": "close_grip_pulldown",
+      "pair": "v-handle-pull-neutral-overhead"
+    },
+    "lib_underhand_lat_pulldown": {
+      "optionsKey": "underhand_lat_pulldown",
+      "pair": "bar-pulldown-under"
+    },
+    "lib_single_arm_lat_pulldown": {
+      "optionsKey": "single_arm_lat_pulldown",
+      "pair": "d-handle-pull-unstated"
+    },
+    "lib_straight_arm_pulldown": {
+      "optionsKey": "straight_arm_pulldown"
+    },
+    "lib_chest_supported_row": {
+      "optionsKey": "chest_supported_row"
+    },
+    "lib_resistance_band_row": {
+      "optionsKey": "resistance_band_row"
+    },
+    "lib_incline_machine_press": {
+      "optionsKey": "incline_machine_press"
+    },
+    "lib_shoulder_press": {
+      "optionsKey": "shoulder_press"
+    }
+  },
+  "jump": null
+}
