@@ -146,11 +146,11 @@ export default {
   id: 'lib_crunch',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'Hand archetype none, no hand zoom (card grip note).' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b2): the card archetype.hand is none; its handContact (c2) is on the setup line.' },
   contacts: ['floor-body'],
   setup: [
     { kind: 'position', text: 'Lie on your back, knees bent, feet flat and hip-width apart.', claim: CL.c1 },
-    { kind: 'position', text: 'Cross your arms over your chest, or fingertips by your ears.', zoom: 'chin', claim: CL.c2 },
+    { kind: 'position', text: 'Arms crossed on your chest, or fingertips light by your ears.', zoom: 'chin', claim: CL.c2 },
     { kind: 'position', text: 'Tuck your chin slightly and keep it there.', zoom: 'chin', claim: CL.c7 },
   ],
   posture: [

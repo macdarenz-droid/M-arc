@@ -179,3 +179,28 @@ describe('LIB-SHIP cable_fly hold-default (#379 6627240712): thumb and contact p
       'hold-default: lib_cable_fly contact mid-palm is not lib_dumbbell_lateral_raise\'s finger-base']);
   });
 });
+
+describe('LIB-SHIP D-SHIP-GRIP (b2) (#379 6628848012): card-none rows with a claimed handContact', () => {
+  const card = (id: string) => json(`docs/research/howto/cards/${id}.json`);
+  it('plank and crunch pass; their claim ids are on a setup line', async () => {
+    for (const id of ['plank', 'crunch']) {
+      const { content: c } = await content.loadContent(`lib_${id}`);
+      expect(c.handling.why).toMatch(/D-SHIP-GRIP \(b2\)/);
+      expect([id, checkGripLibrary(c, card(id))]).toEqual([id, []]);
+    }
+  });
+  it('red 1: a card whose archetype.hand is not none uses (b2)', async () => {
+    const { content: c } = await content.loadContent('lib_plank');
+    expect(checkGripLibrary(c, { ...card('plank'), archetype: { hand: 'hold' } })).toEqual(['GRIP: lib_plank uses D-SHIP-GRIP (b2) but its card\'s archetype.hand is not none']);
+  });
+  it('red 2: a claimed field\'s claim cited on no setup or posture line', async () => {
+    const { content: c } = await content.loadContent('lib_crunch');
+    const m = { ...c, setup: c.setup.map((s: any) => ({ ...s, claim: s.claim && { ...s.claim, note: String(s.claim.note ?? '').replace(/\bc2\b/g, 'cX') } })),
+      posture: c.posture.map((s: any) => ({ ...s, claim: s.claim && { ...s.claim, note: String(s.claim.note ?? '').replace(/\bc2\b/g, 'cX') } })) };
+    expect(checkGripLibrary(m, card('crunch'))).toEqual(['GRIP: lib_crunch uses D-SHIP-GRIP (b2) but card claim c2 is cited on no setup or posture line']);
+  });
+  it('red 3: (b) unchanged, a why naming plain D-SHIP-GRIP with a claimed field is red', async () => {
+    const { content: c } = await content.loadContent('lib_plank');
+    expect(checkGripLibrary({ ...c, handling: { ...c.handling, why: 'D-SHIP-GRIP (b)' } }, card('plank'))).toEqual(['GRIP: lib_plank uses D-SHIP-GRIP (b) but its card claims grip.handContact']);
+  });
+});

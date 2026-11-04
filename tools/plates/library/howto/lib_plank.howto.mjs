@@ -175,7 +175,7 @@ export default {
   id: 'lib_plank',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'Forearm plank: hand archetype none, no hand zoom (card grip note).' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b2): the card archetype.hand is none (forearm plank); its handContact (c1) is on the setup line.' },
   contacts: ['floor-body'],
   setup: [
     { kind: 'position', text: 'Lie face down, elbows under your shoulders, palms down.', claim: CL.c1 },

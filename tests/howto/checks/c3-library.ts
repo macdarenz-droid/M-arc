@@ -34,12 +34,20 @@ export function checkC3Library(content: HowToContent, equipment: string, ctx: {
 
 /** D-SHIP-GRIP (#376 6614415740) case (b): a library row may use NoHandling for a handled archetype only when its card
  *  gives no hand claim at all (grip.thumb, grip.handContact and grip.wrist all empty), and its why names D-SHIP-GRIP. */
-export function checkGripLibrary(content: HowToContent, card: { grip?: Record<string, unknown> } | null): string[] {
+export function checkGripLibrary(content: HowToContent, card: { grip?: Record<string, unknown>; archetype?: { hand?: unknown } } | null): string[] {
   const why = (content.handling as { why?: unknown }).why;
   const usesB = content.handling.archetype === 'none' && typeof why === 'string' && why.includes('D-SHIP-GRIP');
   if (!usesB) return [];
   const claimed = (['thumb', 'handContact', 'wrist'] as const).filter(k => typeof card?.grip?.[k] === 'string' && (card.grip[k] as string).trim() !== '');
-  return claimed.length ? [`GRIP: ${content.id} uses D-SHIP-GRIP (b) but its card claims grip.${claimed.join(', grip.')}`] : [];
+  if (!/D-SHIP-GRIP \(b2\)/.test(why as string)) return claimed.length ? [`GRIP: ${content.id} uses D-SHIP-GRIP (b) but its card claims grip.${claimed.join(', grip.')}`] : [];
+  // (b2) (#379 6628848012): only a card whose own archetype.hand is none; each claimed field's claim id cited on a
+  // setup or posture line of the sheet.
+  if (card?.archetype?.hand !== 'none') return [`GRIP: ${content.id} uses D-SHIP-GRIP (b2) but its card's archetype.hand is not none`];
+  const ids = (t: unknown) => (typeof t === 'string' ? t.match(/\bc\d+\b/g) ?? [] : []);
+  const cited = new Set([...(content.setup ?? []), ...(content.posture ?? [])].flatMap(x => ids((x as { claim?: { note?: unknown } }).claim?.note)));
+  const want = [...new Set([...(Array.isArray(card.grip?.claims) ? card.grip.claims as string[] : []), ...claimed.flatMap(k => ids(card.grip?.[k]))])];
+  if (claimed.length && !want.length) return [`GRIP: ${content.id} uses D-SHIP-GRIP (b2) but its card names no claim for grip.${claimed.join(', grip.')}`];
+  return want.filter(c => !cited.has(c)).map(c => `GRIP: ${content.id} uses D-SHIP-GRIP (b2) but card claim ${c} is cited on no setup or posture line`);
 }
 
 /** Q-W2-2 (#379 6625803515): a GRIP (c) row whose contact and wrist range come from a pair-key convention. Red when the
