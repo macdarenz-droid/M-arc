@@ -307,7 +307,7 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     // LIB-SHIP W2 (ruling 3): the 9 W2 ids add 5 outputs each (ht-, feel-, posture-, zoom css, research json); none has a
     // hand pair (rope and push_up are on the pinned no-zoom list, D-SHIP-PAIR-NOZOOM; the rest have no hand chunk).
     expect(real.inputs.size).toBe(61 + 6 + 9 * 5);
-    const W2 = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'pec-fly', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up'];
+    const W2 = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up'];
     for (const c of W2) for (const p of [`src/howto/generated/ht-${c}.ts`, `src/howto/generated/feel-${c}.ts`, `src/howto/generated/posture-${c}.ts`, `src/slices/howto/css/zoom-${c}.css`]) expect(real.inputs.has(p), p).toBe(true);
     expect([...real.inputs.keys()].filter((p: string) => p.includes('/handpair-'))).toEqual(['src/howto/generated/handpair-curl-dumbbell-under.ts']);
     const r = await run(tree, ['--input-type=module', '-e', "import { inputsMap } from './tools/plates/library/ci/affected.mjs'; const m = await inputsMap(); console.log('@@' + JSON.stringify({ proven: m.proven, why: m.why, n: m.inputs.size }));"]);
@@ -373,7 +373,7 @@ const clone = (x: any): any => JSON.parse(JSON.stringify(x));
 // LIB-SHIP W2 (ruling 3): the ruled set is the W1 id plus the 9 W2 flips, in registry order. At the fixture times
 // (280.8 s each, target 900 s) that is K = 4 shards of 3, 3, 2 and 2 ids; the W1 asserts are kept at K = 4 (shard 1
 // holds the 4 run rows; every shard holds its own 2 once-rows and its ids' tuples), and a ruled id left out of the proofs is red.
-const SHIP_LIB = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_pec_fly', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
+const SHIP_LIB = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
 describe('C6, C8: the shipped library ids on this tree (LIB-SHIP W2: the ruled ten)', { timeout: 300_000 }, () => {
   const times = { default: 280.8, c0: 30, once: { run: 0, shard: 0 }, ids: {} };
   const verdict = (s: any, over: any = {}) => libraryVerdict({ lib: s.lib, rebuild: s.rebuild, gate: s.gate, sha: SHA, ref: 'refs/heads/main', event: 'push', needs: NEEDS, root: ROOT, times, ...over });

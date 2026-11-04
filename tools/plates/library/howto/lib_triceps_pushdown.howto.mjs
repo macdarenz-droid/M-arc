@@ -160,7 +160,7 @@ export default {
   plate: plateSpec,
   handling: {
     archetype: 'push',
-    why: 'D-SHIP-HANDW2: the push heel-of-palm pair cannot be drawn by golden B\'s engine (D-LIB7-19); the grip copy carries c2 and c9.',
+    why: 'D-SHIP-C3 no-zoom list, D-SHIP-HANDW2: the push heel-of-palm pair cannot be drawn by golden B\'s engine (D-LIB7-19); the grip copy carries c2 and c9.',
     orientation: 'pronated',   // c2: overhand, palms down
     handle: 'bar-28',          // the spec's straight bar, 28 mm
     overBody: false,

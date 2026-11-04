@@ -137,7 +137,7 @@ export default {
   plate: plateSpec,
   handling: {
     archetype: 'push',
-    why: 'D-SHIP-Q1: the push heel-of-palm pair cannot be drawn by golden B\'s engine (D-LIB7-19); the grip copy carries c3 and c4.',
+    why: 'D-SHIP-C3 no-zoom list, D-SHIP-Q1: the push heel-of-palm pair cannot be drawn by golden B\'s engine (D-LIB7-19); the grip copy carries c3 and c4.',
     orientation: 'pronated',   // card grip.type: full grip, overhand (c3)
     handle: 'bar-28',          // the spec's 28 mm shaft
     overBody: true,            // c3: the bar is over the head, so a thumbless grip can drop it on the head

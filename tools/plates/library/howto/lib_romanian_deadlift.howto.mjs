@@ -174,7 +174,7 @@ export default {
   plate: plateSpec,
   handling: {
     archetype: 'hold',
-    why: 'D-SHIP-HANDW2: no pair key variant holds this card\'s hanging barbell (ruling 8); the grip copy carries c9 and c22.',
+    why: 'D-SHIP-C3 no-zoom list, D-SHIP-HANDW2: no pair key variant holds this card\'s hanging barbell (ruling 8); the grip copy carries c9 and c22.',
     // No orientation: card grip.type leaves it to the hold archetype (no source read names overhand or mixed).
     handle: 'bar-28',          // the spec's 28 mm shaft
     width: { text: 'Slightly wider than shoulders, arms just outside the thighs.', claim: CL.c9 },

@@ -16,7 +16,7 @@ const json = (p: string) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
 const EIGHT = Object.keys(json('tools/plates/plates.json'));
 /** The library ids ruled to ship on this head, in registry order (W1: D-SHIP-W1-LAYERS #376 6616230145; W2: the 9 of
  *  D-SHIP-W2-STAMP #379 6636105974, less crunch and seated_leg_curl held by Q6/Q7 6636501505, 6636616603). */
-const RULED_SHIPPED = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_pec_fly',
+const RULED_SHIPPED = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
   'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
 
 let reg: any, content: any, P: any, keyMods: any[];
@@ -354,5 +354,25 @@ describe('LIB-SHIP D-SHIP-A6NOGRIP and D-SHIP-G7ONE (#379 6641008259): HT4-A6 on
     expect(await F.g7Tell(page(0, log), bad)).toBe(false);
     expect([log, bad]).toEqual([[], ['A3: G7: the mistake figure has no .plate-callout to tap (D-SHIP-G7ONE)']]);
     expect(readFileSync('tools/plates/fidelity/harness.mjs', 'utf8')).toContain('.ht-plate[data-mode="mistake"] .plate-callout`).nth(1).click();');
+  });
+});
+
+describe('LIB-SHIP D-SHIP-IDS-NOPAIR + D-SHIP-PAIR-NOZOOM: every pinned no-zoom row\'s handling.why names its route', () => {
+  // pairsOf gives a listed id no pair, so missingChunks passes it only through noPairRuling; a staged sheet whose why names
+  // only its gap ruling broke the full-coverage control (lib-4a, write-ids at 153). The why form is Q7's (#379 6636616603)
+  it('each hands/no-zoom.json entry\'s sheet gets noPairRuling D-SHIP-C3, and still names its own ruling', async () => {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const { pathToFileURL } = await import('node:url');
+    const hands: any = await import(/* @vite-ignore */ pathToFileURL(join(process.cwd(), 'tools/plates/gen/hands.mjs')).href);
+    const nz = json('tools/plates/library/hands/no-zoom.json').entries as Record<string, { ruling: string }>;
+    expect(Object.keys(nz).length).toBeGreaterThanOrEqual(13);
+    for (const [id, e] of Object.entries(nz)) {
+      const s = (await import(/* @vite-ignore */ pathToFileURL(join(process.cwd(), `tools/plates/library/howto/${id}.howto.mjs`)).href)).default;
+      expect([id, hands.noPairRuling(s)]).toEqual([id, 'D-SHIP-C3']);
+      expect([id, s.handling.why.includes(e.ruling)]).toEqual([id, true]);
+    }
+    // red: the why with the route taken out
+    const ohp = (await import(/* @vite-ignore */ pathToFileURL(join(process.cwd(), 'tools/plates/library/howto/lib_barbell_overhead_press.howto.mjs')).href)).default;
+    expect(hands.noPairRuling({ ...ohp, handling: { ...ohp.handling, why: ohp.handling.why.replace('D-SHIP-C3 no-zoom list, ', '') } })).toBe(null);
   });
 });

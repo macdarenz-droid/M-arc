@@ -408,7 +408,7 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   // resolver lands in W2, D-SHIP-FAMILY): an unruled shipped id, a dropped ruled id or a shipped child is red.
   // LIB-SHIP W2 (ruling 3): the ruled library ids are W1's curl plus W2's 9 (#379 6625803515, holds per Q6/Q7 and PLATEFIX);
   // the map also holds D-SHIP-FAMILY's single_leg_romanian_deadlift, a W2-ruled child that is held (PLATEFIX) and not shipped.
-  const RULED_LIB = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_pec_fly',
+  const RULED_LIB = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
     'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
   const SLRDL = 'lib_single_leg_romanian_deadlift';
   it('the map covers every inherit[] field of the 9 cards exactly, and no field is unmapped', () => {

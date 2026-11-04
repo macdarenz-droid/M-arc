@@ -107,7 +107,7 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
   // not shipped is red.
   // LIB-SHIP W2 (D-SHIP-W2-STAMP, #379 6636105974): the 7 W2 pilot A ids join the curl; the 6 held rows (PLATEFIX and
   // F-PAIR-FAULTS) stay at approved-plate
-  const SHIPPED_RULED = ['lib_dumbbell_biceps_curl', 'lib_pec_fly', 'lib_plank', 'lib_rope_triceps_pushdown', 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row'];
+  const SHIPPED_RULED = ['lib_dumbbell_biceps_curl', 'lib_plank', 'lib_rope_triceps_pushdown', 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row'];
   /** LIB-SHIP W2: one line per row off the ruled state (an unruled id shipped, a ruled id not shipped, another stage). */
   const shipProblems = (rows: Record<string, any>) => Object.entries(rows).flatMap(([id, r]: [string, any]) =>
     SHIPPED_RULED.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));

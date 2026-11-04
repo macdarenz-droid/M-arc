@@ -77,7 +77,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   // LIB-SHIP W2 (ruling 3): the ruled library stamps, each with its decision and approval
   const W1_RULE = ['D-SHIP-W1-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/376#issuecomment-6616230145 @ 26593a92bdbe428f12186949c7842b35d9f47dec'];
   const W2_RULE = ['D-SHIP-W2-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf'];
-  const W2_STAMPED = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_pec_fly', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
+  const W2_STAMPED = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
   const RULING: Record<string, string[]> = { lib_dumbbell_biceps_curl: W1_RULE, ...Object.fromEntries(W2_STAMPED.map(id => [id, W2_RULE])) };
   const clone = (x: any) => JSON.parse(JSON.stringify(x));
   /** The library entries against RULING: every ruled id stamped once under its own decision, no unruled id stamped. */

@@ -41,9 +41,9 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
     expect(chromeIds).toHaveLength(reg.shippedIds().length);   // LIB-4a (D-LIB4-PINS-2): the registry's count, the 8 today
     expect(reg.shippedIds().slice(0, 8)).toEqual(Object.keys(JSON.parse(readFileSync('tools/plates/plates.json', 'utf8'))));   // the 8 ship first, in plates.json order
     const keys = S.mapKeys(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
-    // LIB-SHIP W2 (ruling 3, D-SHIP-IDS-NOPAIR): the 9 W2 ids ship with no hand chunk and no hand pair (gap-ruled or on the
+    // LIB-SHIP W2 (ruling 3, D-SHIP-IDS-NOPAIR): the 8 W2 ids ship (pec_fly held, D-SHIP-PECFLY-HOLD) with no hand chunk and no hand pair (gap-ruled or on the
     // pinned no-zoom list), so HAND holds exactly the other shipped chrome ids, in order; POSTURE and FEEL hold all of them
-    const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'pec-fly', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up'];
+    const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     expect(handIds).toHaveLength(9);   // the 8 and dumbbell_biceps_curl

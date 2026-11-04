@@ -69,7 +69,7 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     for (const p of list) { const t = readFileSync(p, 'utf8'); h.update(`${p}\0${sha(body ? t.slice(t.indexOf('\n') + 1) : t)}\n`); }
     return h.digest('hex');
   };
-  const W2_IDS = ['barbell_row', 'dumbbell_bench_press', 'dumbbell_shoulder_press', 'upright_row', 'pec_fly', 'rope_triceps_pushdown', 'plank', 'cable_fly', 'push_up'];
+  const W2_IDS = ['barbell_row', 'dumbbell_bench_press', 'dumbbell_shoulder_press', 'upright_row', 'rope_triceps_pushdown', 'plank', 'cable_fly', 'push_up'];
   const W2_LINE = new RegExp(`^  (?:"lib_(?:${W2_IDS.join('|')})",|lib_(?:${W2_IDS.join('|')}): \\(\\) => |"(?:${W2_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   /** loaders.ts's body (all but line 1) without the W2 lines: how many were taken out, and the rest's sha. */
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };

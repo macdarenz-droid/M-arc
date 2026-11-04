@@ -134,7 +134,7 @@ export default {
   plate: plateSpec,
   handling: {
     archetype: 'hold',
-    why: 'D-SHIP-HANDW2: no pair key variant draws this card\'s neutral dumbbell hold; the grip copy carries the card\'s grip claims (c12, c7).',
+    why: 'D-SHIP-C3 no-zoom list, D-SHIP-HANDW2: no pair key variant draws this card\'s neutral dumbbell hold; the grip copy carries the card\'s grip claims (c12, c7).',
     orientation: 'neutral',    // card grip.type: palms facing each other (c12, c7)
     handle: 'dumbbell',        // card grip.type: one dumbbell per hand
     width: { text: 'Arms hang under the shoulders.', claim: CL.grip },
