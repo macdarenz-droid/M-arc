@@ -2,7 +2,7 @@
 // A3 baseline: the body (after the GENERATED header line, whose inputsSha256 moves with the generators) of every
 // posture chunk and of loaders.ts stays byte-equal to main cb9a6dae for every row that has posture zooms.
 import { createHash } from 'node:crypto';
-import { spawnSync } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -86,15 +86,18 @@ describe('F-ZOOM-NONE A2: textZoomRow, the zero-zoom guard', () => {
 });
 
 // A1 (amended, D-TEXT-GOLDEN): LIB-2b's scratch row made zero-zoom in a temp tree (tests/howto/fixtures/zoom-none)
-const gen = (root: string) => spawnSync(process.execPath, ['tools/plates/generate.mjs'], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 26 });
-let tree = '', first: ReturnType<typeof gen>, guardless: ReturnType<typeof gen>;
+// generate runs in an awaited child process, so no long synchronous block holds this worker's RPC (F-VITEST-RPC)
+type Gen = { status: number; stderr: string };
+const gen = (root: string) => new Promise<Gen>(res => execFile(process.execPath, ['tools/plates/generate.mjs'], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 26 },
+  (e, _out, stderr) => res({ status: e ? ((e as { code?: number }).code ?? 1) : 0, stderr: String(stderr) })));
+let tree = '', first: Gen, guardless: Gen;
 describe('F-ZOOM-NONE A1: a ruled zero-zoom row generates no posture chunk; with the guard removed it throws', () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     if (!IN_CHILD) return;   // the tree is built in the child process (F-VITEST-RPC)
     tree = F.zeroZoomTree();
-    first = gen(tree);
+    first = await gen(tree);
     F.guardOff(tree);
-    guardless = gen(tree);
+    guardless = await gen(tree);
   }, 600_000);
   afterAll(() => { if (tree) L.drop(tree); });
   child.it('generate passes, writes the row\'s ht- and feel- chunks and no posture chunk; loaders.ts has no POSTURE line for it', () => {
