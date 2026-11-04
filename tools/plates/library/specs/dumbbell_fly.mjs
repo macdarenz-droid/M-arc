@@ -93,7 +93,7 @@ const PITCH = 0;                                     // camera pitch (deg), D-SP
 const PX_M = 256 / 1.75;                              // the engine's reference scale (px/m), REF_CAMERA (vendor/engine/plate.mjs:11)
 // Mistake (card plate.mistake, c13): the end pose's own joint angles (the reach released), with both wrists bent back
 // M_WRIST out of neutral; the arm does not move, only the hand and its dumbbell.
-const M_WRIST = 30;                                   // wrist bend (deg): a stated reason, pilot-a2/sizes.json
+const M_WRIST = 32;                                   // wrist bend (deg): a stated reason, pilot-a3/sizes.json (LIB-PLATEFIX-1 pf2 R5: 30-35 asked; 32 in 3D draws 32 on screen at pitch 0)
 const qEnd = resolve(normPose(end, BODY), BODY).q;
 const wristPose = { reach: { l: null, r: null }, shoulder: qEnd.sh, elbow: qEnd.elbow, wrist: { l: -M_WRIST, r: -M_WRIST } };
 // The bench in the pitched view (panel mx4 R2): the engine's `bench` primitive draws a front-view cross-section only
@@ -159,10 +159,11 @@ for (const s of ['l', 'r']) {
   // pf1 R5: the forearm axis continued past the wrist in grey dashes (the correct plate's line style, drawn on the
   // Mistake plate only), the faulty hand outline in red dashes turned M_WRIST about the wrist joint with its dumbbell,
   // and a small red angle arc at the wrist from the axis to the bent hand
-  NEUTRAL_LINES.push({ type: 'line', pts: [[...W], add(W, mul(fore, hl * 1.4))], cls: 'eq-line m-line', z: 'front', part: `axis.${s}` });
-  const hp = HANDS(lmMis).find(h => h.part === `hand.${s}`).pts;
+  // pf2 R5: the reference line runs along the forearm axis from mid-forearm through the wrist and one and a half hand lengths past it
+  const E = lmMis[`elbow.${s}`], Wm = add(E, mul(sub(W, E), 0.5));
+  NEUTRAL_LINES.push({ type: 'line', pts: [Wm, add(W, mul(fore, hl * 1.5))], cls: 'eq-line m-line', z: 'front', part: `axis.${s}` });
   MISTAKE_HANDS.push(
-    { kind: 'dashed', pts: [...hp, hp[0]] },
+    { kind: 'dashed', pts: [[...W], lmMis[`grip.${s}`]] },   // pf2 R5: the faulty hand as one clear red dashed segment, wrist to grip (the drawn hand length)
     { kind: 'arc-arrow', center: [...W], r: 9, a0: +a0.toFixed(1), a1: +a1.toFixed(1) });
 }
 
@@ -189,7 +190,9 @@ function frontFly(id) {
       ...PITCHED_BENCH,
       (lm, ctx) => (ctx.pose === 'end' ? [...phantom, ...(ctx.mistake ? NEUTRAL_LINES : [])] : null),
       lm => HANDS(lm),
-      (lm, ctx) => ['l', 'r'].map(s => ({ type: 'dumbbell', at: lm[`grip.${s}`], axis: ctx.pose === 'mistake' ? MIS_AXIS[s] : [0, 0, 1], z: 'front', part: `db.${s}` })),
+      // pf2 R5: on the Mistake plate the correct end dumbbells are left out, so the faulty dumbbell moves with the hand instead
+      // of sitting as a red copy on top of a solid one
+      (lm, ctx) => (ctx.mistake && ctx.pose === 'end' ? null : ['l', 'r'].map(s => ({ type: 'dumbbell', at: lm[`grip.${s}`], axis: ctx.pose === 'mistake' ? MIS_AXIS[s] : [0, 0, 1], z: 'front', part: `db.${s}` }))),
     ],
     checks: CHECKS,
     marks: ['elbow.l', 'elbow.r'],
