@@ -132,6 +132,9 @@ export function patchHowtoLayers(src, plan) {
     + "    if (h.gripLine || howto.mistakes?.length) throw new Error(`${howto.id}: archetype 'none' with a grip line or handling mistakes`);\n"
     + "    return '';\n  }\n"
     + '  if (!h?.gripLine) throw');
+  // D-FEEL-NOMEANS-PAGE (#379 6636105974): a feel row with an empty or missing `means` prints no "Usually means" label,
+  // as gen/feel.mjs dropEmptyMeans does for the app. Rows with a means print the vendored bytes unchanged.
+  src = patchOnce(src, 'feel no means', '<p><b>Usually means</b>${esc(r.means)}</p>', '${r.means ? `<p><b>Usually means</b>${esc(r.means)}</p>` : \'\'}');
   return src;
 }
 

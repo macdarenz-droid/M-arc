@@ -138,7 +138,7 @@ export default {
   plate: plateSpec,
   handling: {
     archetype: 'pull',
-    why: 'D-SHIP-HANDW2: no pair key variant draws this card\'s barbell grip (Q-W2-1, ruling 8); the grip copy carries c1, c2 and c16.',
+    why: 'D-SHIP-C3 no-zoom list, D-SHIP-HANDW2: no pair key variant draws this card\'s barbell grip (Q-W2-1, ruling 8); the grip copy carries c1, c2 and c16.',
     orientation: 'pronated',   // card grip.type: overhand, double overhand (c1, c2)
     handle: 'bar-28',          // the spec's 28 mm shaft
     width: { text: 'Slightly wider than shoulder width, so wrists, elbows and shoulders line up.',

@@ -421,6 +421,29 @@
       "date": "2026-11-03",
       "why": "W1 LAYERS APPROVED (#376 6616230145): the calibrated layers panel (3 fresh Opus critics, 2 plants caught, 2 golden-B anchors; every median 4 or more for dumbbell_biceps_curl, review 6616096384) and the supervisor diff-check of SHIP LAYERS FIXED W1 @ 26593a92 (curl only, D-SHIP-SHAPES).",
       "prev": "6ce3197cc824ba5ba54852a37cadfdb4fe2ac5f6089e5e61d71fefa48c3d692b"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-A",
+      "ids": [
+        "lib_dumbbell_biceps_curl",
+        "lib_pec_fly",
+        "lib_plank",
+        "lib_rope_triceps_pushdown",
+        "lib_barbell_row",
+        "lib_dumbbell_bench_press",
+        "lib_dumbbell_shoulder_press",
+        "lib_upright_row"
+      ],
+      "pageSha256": "783a060708b735236c1e26b51bb670d8f0b66bda5e20372b57f6437c973bef70",
+      "bytes": 1550530,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W2-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf",
+      "date": "2026-11-04",
+      "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row).",
+      "supersedes": 14,
+      "prev": "4843e6969fbdc4a84772767d1d15f8d59ba083ec7547967c80d6609ec9714a6f"
     }
   ]
 }

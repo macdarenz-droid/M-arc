@@ -8,6 +8,5 @@ const ZOOM = {
 };
 export const CLOSEUP_OPTIONS = {
   cable_fly: ZOOM,
-  seated_leg_curl: ZOOM,
   push_up: ZOOM,
 };

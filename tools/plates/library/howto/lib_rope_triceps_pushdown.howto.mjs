@@ -158,7 +158,7 @@ export default {
   plate: plateSpec,
   handling: {
     archetype: 'push',
-    why: 'D-SHIP-ROPEPAIR: the approved rope pair draws the rope across the middle of the palm; card c2 puts the hand against the knob. The grip copy carries c2, c3 and c5.',
+    why: 'D-SHIP-C3 no-zoom list, D-SHIP-ROPEPAIR: the approved rope pair draws the rope across the middle of the palm; card c2 puts the hand against the knob. The grip copy carries c2, c3 and c5.',
     orientation: 'neutral',
     handle: 'rope',
     loadAxis: 'across',

@@ -132,7 +132,7 @@ export default {
   plate: plateSpec,
   handling: {
     archetype: 'push',
-    why: 'D-SHIP-HANDW2: the push heel-of-palm pair cannot be drawn by golden B\'s engine (D-LIB7-19); the grip copy carries c3 and c7.',
+    why: 'D-SHIP-C3 no-zoom list, D-SHIP-HANDW2: the push heel-of-palm pair cannot be drawn by golden B\'s engine (D-LIB7-19); the grip copy carries c3 and c7.',
     orientation: 'pronated',   // c3: closed grip, palms facing forward
     handle: 'dumbbell',        // the spec's engine dumbbell primitive
     overBody: true,            // c10: lying, the dumbbells are held over the shoulders and face
