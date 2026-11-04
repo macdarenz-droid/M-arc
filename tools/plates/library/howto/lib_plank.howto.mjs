@@ -51,17 +51,19 @@ const CL = {
 // Built from the plate spec's own held pose (no new geometry beyond what the card names):
 //   sag   (card zoom hip-line Wrong, c4 "sagging low back"): the low back arches (lumbar extension SAG); the forearms and
 //         toes stay on their floor spots, so root, pelvis tilt and ankle are solved as the spec solves its Mistake.
-//         How far it sags is a drawing choice (the card gives no number), as the spec's HIKE_HIP is.
+//         How far it sags is a drawing choice (the card gives no number), as the spec's HIKE_HIP is. W2 panel round 2
+//         (#6634756753): SAG is sized so the sag reads at panel size (the hip joint about 50 px and the low back's
+//         lowest point about 45 px below the shoulder-heel line at 2x, the belly still off the floor).
 //   off   (card zoom shoulder-stack Wrong, c5 "not over the elbows"; handlingMistakes[2] "shoulders drifting away from
 //         the elbows"): the body slides forward over the fixed forearms until each upper arm leans OFF_ELBOW deg forward
 //         of the plumb line (the shoulder away from its elbow, the body kept straight, the toe tips on the floor, solved
 //         as the sag). The elbow and the forearm stay on their floor spots (reach IK, the spec's own targets). W2 panel
 //         (#6633524031): the shrug is not drawn (it reads only as this drift), so the Wrong label names the drift and
 //         the shrug stays a text checkpoint (posture 'shoulders', c5).
-// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SAG 20 deg
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SAG 45 deg
 // and OFF_ELBOW 25 deg are Wrong-pose sizes no card gives; no number from them appears in user copy; the layers panel
 // judges them. OFF_ELBOW 25 deg is rope_triceps_pushdown's spec MIS_SHOULDER (its upper arm swung off the plumb line).
-const H = 1.75, SAG = 20, OFF_ELBOW = 25;
+const H = 1.75, SAG = 45, OFF_ELBOW = 25;
 const END = plateSpec.poses.end, LE = landmarksOf(END, H), SH = LE['shoulder.r'], TOE = LE['toe.r'];
 function solve(p0, make, res, iters = 30) {   // Newton with finite differences (the spec's own solver)
   const keys = Object.keys(p0); const p = { ...p0 };
@@ -100,21 +102,26 @@ export const stills = {
 const zooms = [
   {
     key: 'hip-line', chip: 'Hip line', heading: 'Hip line', kind: 'posture',
-    // zoom shell (render/closeup/crop.mjs): the Wrong is the sag still drawn over the right pose (not solid), so its
-    // anchor reads the sagged pose ('mistake'). W2 panel (#6633524031, L5): the crop runs from the shoulders to the heels
-    // with the floor line, centred left of the right hip (plate px: heel x 22, shoulder x 274, elbow x 274, floor
-    // y 339); 300 px shows the heels, the shoulders over the forearms, and the floor.
-    // The straight shoulder-to-heel reference (c4, the plate's plank line, plank.mjs datum[0]) is a 'spine' guide on the
-    // right pose's joints, drawn over the figure in both halves: in the Wrong the sagging hips fall below it. (The plate's
-    // datum, kept by the option datumZooms, is drawn under the figure and hidden by it at this size.) The guide's stroke
-    // needs the closeup css option `spine` on plank's record (pilot-a.closeups.mjs); without it the path is not seen.
-    crop: { center: { at: 'hip.r', pose: 'right', off: [-24, 17] }, sizePx: 300 },
-    guides: [{ kind: 'spine', from: { at: 'heel.r', pose: 'end' }, to: { at: 'shoulder.r', pose: 'end' }, extend: [0.06, 0.06] }],
+    // zoom shell (render/closeup/crop.mjs). W2 panel round 2 (#6634756753, L5): both crops run from the knees to the
+    // shoulders so the trunk fills the panel (the window centred on the right pose's hip, `off` and `sizePx` drawing
+    // values). The Wrong is the sag still drawn alone (solid), so its anchors resolve on the sagged pose ('mistake'
+    // falls back to the shown pose). Guides, both on the right pose's joints or the sag's:
+    //   spine - the straight shoulder-to-heel reference (c4, the plate's plank line, plank.mjs datum[0]) on the RIGHT
+    //           pose in both halves (accent in Right, grey in Wrong); in the Wrong the sagged trunk falls below it. Its
+    //           stroke needs the closeup css option `spine` on plank's record (pilot-a.closeups.mjs).
+    //   drop  - the red arrow down at the hips: from above the reference over the right hip to the sagged hips' top
+    //           (the offsets, plate px, are drawing values that start the arrow above the line and end it at the body).
+    // The Wrong callout dot sits on the lowest point of the sagged back (the lumbar dip; `off` nudges it onto the outline).
+    crop: { center: { at: 'hip.r', pose: 'right', off: [2, 20] }, sizePx: 180 },
+    guides: [
+      { kind: 'spine', from: { at: 'heel.r', pose: 'right' }, to: { at: 'shoulder.r', pose: 'right' }, extend: [0.06, 0.06] },
+      { kind: 'drop', from: { at: 'hip.r', pose: 'right', off: [0, -14] }, to: { at: 'hip.r', pose: 'mistake', off: [0, -23] } },
+    ],
     right: 'end',
-    wrong: { base: 'end', pose: stills.sag.pose, solid: false },
+    wrong: { base: 'end', pose: stills.sag.pose, solid: true },
     callout: {
       right: { text: 'Hips level', anchor: 'hip.r' },
-      wrong: { text: 'Low back sags', anchor: { at: 'lumbar', pose: 'mistake' } },
+      wrong: { text: 'Low back sags', anchor: { at: 'lumbar', pose: 'mistake', off: [-2, -2] } },
     },
     caption: {
       right: 'No sagging low back, no hiked hips.',
@@ -160,9 +167,9 @@ const feel = {
   rows: [
     // The card's first row (front and sides of the belly) has no fix, so it is left out: the feel line says it.
     { key: 'low-back', where: 'Pain in the low back', at: { muscles: ['lower_back'] },
-      means: 'A sign to stop.',   // c8: low-back pain during the plank means stop
-      fix: 'Stop the exercise.',
-      redFlag: 'back', claim: CL.c8 },
+      means: 'Your low back is sagging.',   // c4: the sagging low back the hold must avoid (W2 panel round 2, L6)
+      fix: 'Stop the exercise.',            // c8: low-back pain during the plank means stop
+      redFlag: 'back', claim: C(['CONSENSUS'], ['ace-plank'], 'card c4, c8') },
   ],
   libraryDiff: { add: ['obliques'], why: 'Both EMG studies measure oblique activity during the prone plank (card c10).' },
   claim: CL.c10,
@@ -170,7 +177,9 @@ const feel = {
 
 /* ------------------------------------------------------------------------------------------------ risks ---------- */
 const RISKS = [
-  { key: 'sag', text: 'Low back sagging (arching) during the hold.', claim: CL.c4 },
+  // W2 panel round 2 (L6): the sag named as the risk it carries in the card: low-back pain (c8) from the sagging low
+  // back the hold must avoid (c4), and the card's way out when the hold fails (c14).
+  { key: 'sag', text: "Low-back pain from a sagging low back. Can't hold it? Rest on your knees.", claim: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c8, c14') },
   { key: 'back-pain', text: 'Low-back pain during the hold: stop.', claim: CL.c8 },
 ];
 
