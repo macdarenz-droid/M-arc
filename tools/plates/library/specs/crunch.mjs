@@ -172,7 +172,7 @@ export default {
   callouts: [
     { key: 'lowback', text: 'Low back<br>down', anchor: [0, 0, lmE.lumbar[2]],   // the lumbar underside on the mat (panel mx24 R4)
       cue: 'Keep your feet, tailbone and low back on the mat.' },
-    { key: 'blades', text: 'Shoulder<br>blades up', anchor: { at: 'backUpper', off: [-7, 0] }, box: { left: 56, top: 216 }, cue: 'Curl up only until your shoulder blades leave the floor.' },
+    { key: 'blades', text: 'Shoulder<br>blades up', anchor: { at: 'backUpper', off: [-7, 0] }, box: { left: 26, top: 216 }, cue: 'Curl up only until your shoulder blades leave the floor.' },   // LIB-PLATEFIX-1 (#379 6634756753): box left 56 -> 26 so the CHIN SET leader clears this label
     { key: 'chin', text: 'Chin set', anchor: 'chin', box: { left: 24, top: 160 }, cue: 'Tuck your chin slightly and hold it there without pulling your neck.' },
   ],
   mistake: {
