@@ -106,6 +106,7 @@ describe('LIB-SHIP Q-W2-2: triceps_pushdown contact from CONVENTIONS[ga:push-hee
   it('the sheet matches the convention, and the card has no handContact', async () => {
     const { content: c } = await content.loadContent('lib_triceps_pushdown');
     expect(card().grip.handContact).toBe('');
+    expect(readFileSync(join(ROOT, 'tools/plates/library/howto/lib_triceps_pushdown.howto.mjs'), 'utf8')).toContain(`const PUSH_HEEL = ${JSON.stringify(P.CONVENTIONS['ga:push-heel']).replace(/"/g, "'")};`);
     expect(checkConventionGrip(c, card(), P.CONVENTIONS['ga:push-heel'])).toEqual([]);
   });
   it('red 1: the convention changes (zone or range)', async () => {
@@ -144,5 +145,22 @@ describe('LIB-SHIP D-SHIP-FAMILY: single_leg_romanian_deadlift inherits from rom
     expect(bar(kid)).toEqual([]);
     const m = { ...kid, handling: { ...kid.handling, wrist: { ...kid.handling.wrist, limitText: 'Keep the bar close.' } } };
     expect(bar(m).length).toBeGreaterThan(0);
+  });
+});
+
+describe('LIB-SHIP D-SHIP-GRIP (a): palm-flat values copied from the key (the key module is not importable by a sheet)', () => {
+  // hand-palm-flat.mjs pulls view-common.mjs, which reads files outside the MANIFEST-locked trees, so the two sheets copy
+  // the key's record. Each copied value is pinned here against the live key: a change to the key turns this red.
+  const norm = (t: string) => t.toLowerCase().replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
+  for (const id of ['mountain_climbers', 'push_up']) it(`${id}: archetype, load axis, contact, faults (and poses where drawn) equal the key's`, async () => {
+    const { content: c } = await content.loadContent(`lib_${id}`), K = keyMods.find((m: any) => m.KEY === 'palm-flat');
+    const k = K.IDS[id], V = K.VARIANTS[k.variant], h = c.handling;
+    expect([h.archetype, h.loadAxis, h.contact, V.contact]).toEqual([V.archetype, V.loadAxis, 'palm-flat', 'whole-hand']);
+    for (const f of h.faults) {
+      expect(k.faults).toContain(f.key);
+      expect([f.label, norm(f.alt)]).toEqual([V.faults[f.key].label, norm(V.faults[f.key].alt)]);
+      if (id === 'mountain_climbers') expect(f.pose).toEqual({ ...V.right, ...V.faults[f.key].pose });
+    }
+    if (id === 'mountain_climbers') expect(h.pose).toEqual(V.right);
   });
 });

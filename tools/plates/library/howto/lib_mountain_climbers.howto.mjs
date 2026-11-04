@@ -10,7 +10,6 @@
 // Feel (D-SHIP-Q7): the card's only primary, `core`, is text only (feel.textOnly, as lib_plank); C2 refuses `core` in any
 // drawn role. feel.primary is empty.
 import plateSpec from '../specs/mountain_climbers.mjs';
-import { IDS, VARIANTS } from '../hands/hand-palm-flat.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
 
@@ -59,7 +58,15 @@ const CL = {
 // The key's record for this id and its variant (hand-palm-flat.mjs IDS.mountain_climbers, VARIANTS.floor). The palm-flat
 // view draws its own pose ({ forearmTilt, cup }, view-palm-flat.mjs), not a radial HandPose; the key's render takes the
 // Wrong as a whole pose, so each fault pose is the right pose with the fault's change merged over it.
-const KEYED = IDS.mountain_climbers, V = VARIANTS[KEYED.variant];
+// The key module is not imported: hand-palm-flat.mjs pulls view-common.mjs, which reads files outside the
+// MANIFEST-locked trees (library-manifest closure). Its record is copied here and pinned against the live key by
+// tests/howto/lib-ship.test.ts (D-SHIP-GRIP (a)).
+const KEYED = { variant: 'floor', faults: ['cupped-palm', 'hand-ahead'] };   // IDS.mountain_climbers
+const V = {                                                                 // VARIANTS.floor
+  right: { forearmTilt: 0, cup: 0 }, contact: 'whole-hand', rightNote: 'Whole hand down', archetype: 'palm-flat', loadAxis: 'along-forearm',
+  alt: 'Hand flat on the floor, palm and fingers down, forearm straight up over the wrist.',
+  faults: { 'hand-ahead': { label: 'Hand ahead', pose: { forearmTilt: 25 }, markers: [], alt: 'Hand flat but ahead of the shoulder, forearm leaning back.' } },
+};
 const RIGHT_POSE = V.right;
 // The key lists cupped-palm and hand-ahead for this id. Only hand-ahead is this card's zoom Wrong ("Hands ahead of the
 // shoulders, weight shifted back", c6, c19); cupped-palm cites shared/palm-flat.json#c2, which this card has no claim

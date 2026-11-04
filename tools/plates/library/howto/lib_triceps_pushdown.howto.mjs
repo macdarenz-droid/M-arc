@@ -10,7 +10,6 @@
 // Red flags: the card's redFlags (elbow, back). The elbow box is golden B's shared block; the back box is LIB-5's
 // (tools/plates/library/shared/back-box.mjs), linked by the lower-back row's redFlag: 'back'.
 import plateSpec from '../specs/triceps_pushdown.mjs';
-import { CONVENTIONS } from '../hands/pairs.mjs';
 import { RED_FLAG, RED_FLAG_ELBOW } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_ELBOW };
 
@@ -64,7 +63,9 @@ const CL = {
 // it. pairs.mjs CONVENTIONS['ga:push-heel'] reads 'GA 3.1 push: heel of the palm, low, over the forearm; extension 0 to
 // 15'. HandContact names the palm zone 'heel of the palm' as 'heel' (src/howto/content-types.ts HandContact), so the map
 // below turns the convention's zone words into the enum value; a convention that names no mapped zone throws.
-const PUSH_HEEL = CONVENTIONS['ga:push-heel'];
+// pairs.mjs is not imported (its closure pulls howto-layers.mjs, which the MANIFEST closure cannot follow); the text is
+// copied here, and tests/howto/lib-ship.test.ts (Q-W2-2) turns red when the live convention no longer matches the sheet.
+const PUSH_HEEL = 'GA 3.1 push: heel of the palm, low, over the forearm; extension 0 to 15';   // CONVENTIONS['ga:push-heel']
 const CONTACT_OF_ZONE = { 'heel of the palm': 'heel' };   // convention zone words -> HandContact
 const CONTACT = Object.entries(CONTACT_OF_ZONE).find(([zone]) => PUSH_HEEL.includes(zone))?.[1];
 const EXT = PUSH_HEEL.match(/extension (\d+) to (\d+)/)?.slice(1).map(Number);
