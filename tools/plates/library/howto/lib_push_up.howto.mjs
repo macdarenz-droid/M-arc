@@ -201,7 +201,7 @@ export default {
     { kind: 'position', text: 'Straighten your legs, feet together. Torso and legs move together.', zoom: 'hip-line',   // D-TEXT-GOLDEN: posture together (c3)
       claim: C(['CONSENSUS'], [ACE, SL, BB], 'c2, c3') },
     { kind: 'brace', text: 'Brace your trunk and tense your glutes and thighs.', claim: CL.c2 },
-    { kind: 'grip', text: 'Squeeze the floor. Breathe in going down, out going up.', claim: C(['CONSENSUS'], [BB, ACE, SL], 'c14, c8') },   // D-TEXT-GOLDEN: posture breathe (c8)
+    { kind: 'grip', text: 'Hands squeeze the floor. Breathe in going down, out going up.', claim: C(['CONSENSUS'], [BB, ACE, SL], 'c14, c8') },   // D-TEXT-GOLDEN: posture breathe (c8)
   ],
   posture: [
     { key: 'line', label: 'Straight line', detail: "Low back doesn't sag, hips don't hike.",

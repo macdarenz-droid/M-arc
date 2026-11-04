@@ -140,13 +140,13 @@
         "lib_cable_fly",
         "lib_push_up"
       ],
-      "pageSha256": "df4aab80f3c1595230b7c65121e96703a197d584163710be910dcb8ab020f127",
-      "bytes": 425299,
+      "pageSha256": "ae7fd1553f1a3ffe132b0e509eacae06cac42ef6f2ea18d69b4f5cd5ad39275e",
+      "bytes": 425305,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W2-STAMP",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf",
       "date": "2026-11-04",
-      "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row), and the D-TEXT-GOLDEN placements (#379 6637739563), which move posture-only card lines into visible setup and risk slots.",
+      "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row), and the D-TEXT-GOLDEN placements (#379 6637739563), which move posture-only card lines into visible setup and risk slots, and plank's harder checkpoint removed (D-TEXT-PROGRESSION, #379 6638023726), and the content check's two line fixes (#379 6638098178).",
       "prev": "252297287c2608f77972271a27a8de10ed861cd434334bd1cf1aae94bde6790b"
     }
   ]

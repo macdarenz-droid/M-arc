@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=d7ceca2064f25f09d4ae7cc6345f343ae910bbfa619c325db37c3ab7c267eb73
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=9be4c76b5d88a369243a916b6586449b6de13e0212fd3f1ebbec6b1156f8eacf
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_cable_fly",

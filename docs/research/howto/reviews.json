@@ -234,7 +234,7 @@
     },
     {
       "scope": "lib_push_up",
-      "hash": "982643ce934c8a15c1052476a9d0bbb64fcbd44dd0723f6d97b58f8702ed9454",
+      "hash": "2e1fa1bd08284ffd338a88a41ba7e9705ea80a6c6ebd5ec0d31ff9676cbb739a",
       "date": "2026-11-04",
       "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/push_up.json",
       "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",

@@ -78,7 +78,7 @@ const feel = {
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
   { key: 'pivot', text: 'Knees out of line with the pivot can hurt.', claim: CL.c1 },
-  { key: 'swing', text: 'Too much weight turns the curl into a swing. Straighten slowly.', claim: C(['CONSENSUS'], [SL, BB], 'c8, c7') },   // D-TEXT-GOLDEN: posture return (c7)
+  { key: 'swing', text: 'Too much weight turns the curl into a swing.', claim: CL.c8 },
 ];
 
 export default {
@@ -94,7 +94,8 @@ export default {
     { kind: 'adjust', text: 'Thigh pad snug above your knees, ankle pad just above your shoes.', claim: C(['CONSENSUS'], [BB], 'c2, c3') },
     { kind: 'position', text: 'Back flat against the back pad. Breathe out as you curl.', claim: C(['CONSENSUS'], [SL, BB], 'c4, c5') },   // D-TEXT-GOLDEN: posture breathe (c5)
     { kind: 'grip', text: 'Grip the handles and press your hips into the seat.', claim: CL.c5 },
-    { kind: 'position', text: 'Brace your trunk. Curl as far as you can, slow and controlled.', claim: CL.c6 },
+    { kind: 'position', text: 'Brace your trunk. Curl as far as you can, then straighten slowly.',   // D-TEXT-GOLDEN: posture return (c7)
+      claim: C(['CONSENSUS'], [SL, BB], 'c6, c7') },
   ],
   posture: [
     // D-SHIP-Q14: the card zoom knee-pivot as a text checkpoint (its wrong is null, LR-25)
