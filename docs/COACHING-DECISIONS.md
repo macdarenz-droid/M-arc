@@ -3199,3 +3199,10 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   a zoom the crop engine cannot draw becomes a text checkpoint (golden B's "Start depth" precedent).
 - **Push hints are at most 6 words** (copy-lint `cue`); 11 shared texts fit ids.ts at 142 ids (1,977 of 2,048 B).
 - **The HT4-A5 twin records the vendor engine too**, since every library spec draws through it (D-LIB9-ENGINE).
+
+## LIB-PLATEFIX-1: six approved plates fixed from the W2 layers panel (2026-11-04)
+
+- **Plan posted for ruling** on the LIB-PLATEFIX-1 PR ('PLATEFIX PLAN READY'). Card: lib-platefix-1-card.md on
+  claude/sup-lib4-cards; source: the W2 layers panel, #379 6633524031. Ids: dumbbell_fly,
+  bent_over_dumbbell_rear_delt_fly, reverse_lunge, romanian_deadlift (+ single_leg_romanian_deadlift held with it),
+  barbell_overhead_press, triceps_pushdown. Decisions are recorded here once ruled.
