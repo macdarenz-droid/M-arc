@@ -31,15 +31,29 @@ const frame = (z, role, vx, vy, s, inner, overlay, label) => `<svg class="z-crop
 const unwrap = svg => svg.replace(/<svg class="plate-svg"[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/<rect width="358" height="358" fill="url\(#[^)]*\)"\/>/, '');
 
 /** cropHalf(z, role) for engine-spec plates. */
-export function engineCrop(howto, o, engine = LAYERS_ENGINE) {
+/** `probe` (tests only, F-CROP-FRONT A1): { points: [], specs: [] } collects every world point a crop projects, with
+ *  its plate px, and every crop spec drawn. It changes no output. */
+export function engineCrop(howto, o, engine = LAYERS_ENGINE, probe = null) {
   const { renderPlate, landmarksOf } = engine;   // D-LIB9-ENGINE: every plate and landmark below comes from the spec's engine
   const base = renderPlate(howto.plate, { id: 'base' });
   const CAM = base.report.camera;                    // the fitted camera of the plate on screen; every crop reuses it
   const H = howto.plate.body?.height ?? 1.75;
   const poseOf = ref => typeof ref === 'string' ? howto.plate.poses[ref] : mergeDeep(howto.plate.poses[ref.base], ref.pose);
   const back = z => o.backView && z.view === 'back';
-  const camOf = z => back(z) ? { pxPerM: CAM.pxPerM, x0: 179, y0: CAM.y0 } : { pxPerM: CAM.pxPerM, x0: CAM.x0, y0: CAM.y0 };
-  const projOf = z => { const c = camOf(z); return back(z) ? (w => [c.x0 + w[0] * c.pxPerM, c.y0 - w[1] * c.pxPerM]) : (w => [c.x0 + w[2] * c.pxPerM, c.y0 - w[1] * c.pxPerM]); };
+  // F-CROP-FRONT: a crop keeps the plate's camera.pitch (LIB-20, vendor engine, front view), and projects as the engine's
+  // makeCamera does (vendor/engine/plate.mjs; golden B's layers engine has no pitch): side view x = z (facing left: -z),
+  // front view x = x; screen-up = y, or y cos p - z sin p when pitched. A back crop is the front view at x0 179, unpitched.
+  // tests/howto/crop-projection.test.ts pins this to the engine's own makeCamera.
+  const PITCH = howto.plate.camera?.pitch;
+  const camOf = z => back(z) ? { pxPerM: CAM.pxPerM, x0: 179, y0: CAM.y0 }
+    : { pxPerM: CAM.pxPerM, x0: CAM.x0, y0: CAM.y0, ...(PITCH != null ? { pitch: PITCH } : {}) };
+  const projRaw = z => {
+    const c = camOf(z), side = !back(z) && howto.plate.view === 'side', left = howto.plate.facing === 'left';
+    const pitch = side || engine.name === 'layers' ? 0 : (c.pitch ?? 0), pc = Math.cos(pitch * Math.PI / 180), ps = Math.sin(pitch * Math.PI / 180);
+    const sx = side ? (left ? (w => -w[2]) : (w => w[2])) : (w => w[0]);
+    return pitch ? (w => [c.x0 + sx(w) * c.pxPerM, c.y0 - (w[1] * pc - w[2] * ps) * c.pxPerM]) : (w => [c.x0 + sx(w) * c.pxPerM, c.y0 - w[1] * c.pxPerM]);
+  };
+  const projOf = z => { const P = projRaw(z); return probe ? (w => { const px = P(w); probe.points.push({ key: z.key, w, px }); return px; }) : P; };
   const wrongPose = z => mergeDeep(poseOf(z.right), poseOf(z.wrong));
   // equipment 'noRays': the lean construction rays (a function returning only 'line' items on the correct end pose)
   // belong to the plate's measured arc, which a crop does not carry
@@ -106,6 +120,7 @@ export function engineCrop(howto, o, engine = LAYERS_ENGINE) {
 
   return function cropHalf(z, role) {
     const spec = cropSpec(z, role);
+    probe?.specs.push({ key: z.key, role, spec });
     const p = renderPlate(spec, { id: `${z.key}-${role}`, mistake: role === 'wrong' });
     const guides = z.guides ?? [];
     const levels = guides.filter(g => g.kind === 'level'), drops = role === 'wrong' ? guides.filter(g => g.kind === 'drop') : [];
