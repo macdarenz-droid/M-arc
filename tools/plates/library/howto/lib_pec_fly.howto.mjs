@@ -66,16 +66,16 @@ export const stills = {
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
-// One per card zoom, same keys and kinds. `guide` names the crop mark the close-ups page defines (pilot-a.closeups.mjs).
+// One per card zoom, same keys and kinds, in the zoom shell's form (callout anchors on the joint each label names).
 const zooms = [
   {
     key: 'fly-elbow', chip: 'Elbows', heading: 'Elbow bend', kind: 'posture',
-    crop: { center: { landmark: 'elbow.l', pose: 'start', dx: 0, dy: 0 }, sizePx: 150 },
+    crop: { center: { at: 'elbow.l', pose: 'right', off: [0, 0] }, sizePx: 150 },
     right: 'start',
-    wrong: { still: 'elbows-bent' },
-    callouts: {
-      right: { text: 'Soft elbows', guide: 'elbow-angle' },
-      wrong: { text: 'Bent sharply', guide: 'elbow-angle' },
+    wrong: { base: 'start', pose: { reach: stills['elbows-bent'].pose.reach }, solid: true },
+    callout: {
+      right: { text: 'Soft elbows', anchor: 'elbow.l' },
+      wrong: { text: 'Bent sharply', anchor: 'elbow.l' },
     },
     caption: {
       right: 'Slight, fixed elbow bend with the arms at chest height.',
@@ -107,15 +107,7 @@ const feel = {
   claim: C(['DATA'], [ACE, 'pinto-2025'], 'c10 (primary); c11 is the front-delt secondary (soncin-2014, MECH/WEAK)'),
 };
 
-/* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
-const MISTAKES = [
-  { key: 'short', title: 'Stopping short of full range', claim: CL.c6,
-    fix: 'Go lighter until the handles nearly meet every rep.' },
-  { key: 'back-off', title: 'Upper back lifting off pad', claim: CL.c6,
-    fix: 'Go lighter. Keep the back on the pad.' },
-  { key: 'technique', title: 'Changing technique for more weight', claim: CL.c7,
-    fix: 'Lower the weight.' },
-];
+/* ------------------------------------------------------------------------------- risks (card risks) ---------- */
 const RISKS = [
   { key: 'shoulder', text: 'The pec deck puts the front of the shoulder in a vulnerable position.', claim: CL.c8 },
   { key: 'technique', text: 'Changing the technique to lift more weight can cause injury.', claim: CL.c7 },
@@ -138,12 +130,16 @@ export default {
   posture: [
     // D-SHIP-Q14 (#376 6614695581): the card zoom fly-backpad is a text checkpoint (the front-view plate cannot show the
     // gap), as golden B's machine_chest_press keeps "Start depth" (:165, :285).
-    { key: 'back', label: 'Back on pad', detail: 'Upper back pressed into the pad as the handles meet. Never peel it off to finish.',
+    // Q-W2-12 (#379 6628699724): the card's handlingMistakes on this `none` sheet are posture checkpoints: back-off
+    // merged here (same claim c6), short merged into 'meet', technique as its own checkpoint.
+    { key: 'back', label: 'Back on pad', detail: 'Upper back pressed into the pad as the handles meet. Never peel it off. Go lighter.',
       anchor: { landmark: 'backUpper', pose: 'end' }, claim: CL.c6 },
     { key: 'elbows', label: 'Soft elbows', detail: 'Elbows keep the same slight bend.',
       anchor: { landmark: 'elbow.l', pose: 'start' }, zoom: 'fly-elbow', claim: CL.c3 },
     { key: 'height', label: 'Chest height', detail: 'Arms at chest-to-shoulder height.', anchor: { landmark: 'grip.r', pose: 'start' }, claim: CL.c2 },
-    { key: 'meet', label: 'Hands meet', detail: 'Bring the handles together until they nearly meet.', anchor: { landmark: 'grips', pose: 'end' }, claim: CL.c5 },
+    { key: 'meet', label: 'Hands meet', detail: 'Go lighter until the handles nearly meet every rep.', anchor: { landmark: 'grips', pose: 'end' },
+      claim: C(['CONSENSUS'], [ACE, 'vg-pecfly'], 'c5, c6') },
+    { key: 'technique', label: 'Changing technique', detail: 'Keep the same technique. Lower the weight.', anchor: { landmark: 'grip.l', pose: 'end' }, claim: CL.c7 },
     { key: 'behind', label: 'Arms in front', detail: "Don't start with the arms behind the body.", anchor: { landmark: 'elbow.r', pose: 'start' }, claim: CL.c9 },
     { key: 'grip', label: 'Overhand grip', detail: 'Overhand on the handles. On the pad version, the forearms rest on the pads.',
       anchor: { landmark: 'grip.l', pose: 'start' }, claim: CL.grip },
@@ -151,13 +147,14 @@ export default {
   ],
   feel,
   zooms,
+  chips: ['fly-elbow', 'feel'],   // the zoom shell's chip row: the zoom keys, then feel
   copy: {
     setupLine: 'Set the seat so the handles are at chest level. Sit back against the pad, feet flat.',
     mistakeLine: 'Never lift your upper back off the pad to finish a rep. Lower the weight instead.',
     cueLine: 'Handles nearly meet.',
   },
   redFlag: RED_FLAG,
-  mistakes: MISTAKES,
+  mistakes: [],
   risks: RISKS,
   riskFlags: ['shoulder'],   // the card's redFlags
   sources: Object.keys(SOURCES),

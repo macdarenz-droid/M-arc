@@ -3,12 +3,13 @@
     {
       "id": "pilot-b",
       "title": "Pilot B",
-      "ids": ["lib_seated_leg_curl", "lib_push_up"]
+      "ids": ["lib_seated_leg_curl", "lib_cable_fly", "lib_push_up"]
     }
   ],
   "optionsModule": "tools/plates/library/pages/pilot-b.closeups.mjs",
   "closeups": {
     "lib_seated_leg_curl": { "optionsKey": "seated_leg_curl" },
+    "lib_cable_fly": { "optionsKey": "cable_fly" },
     "lib_push_up": { "optionsKey": "push_up" }
   },
   "jump": null

@@ -9,21 +9,20 @@ const ZOOM = {
   crop: { source: 'engine', landmarks: 'spec', solidPose: 'own', equipment: 'noRays' },
   css: { thumb: 'plain' },
 };
-// No hand close-up: zoom.mjs calls handZoomOf(mod, o.hand) for every record, which reads o.handleChoiceHint and needs a
-// known layout; handZoom() itself runs only for a sheet with a hand zoom, so this layout is never drawn.
-const NO_HAND = { ...ZOOM, hand: { layout: 'single' } };
 export const CLOSEUP_OPTIONS = {
-  barbell_overhead_press: NO_HAND,
+  pec_fly: ZOOM,
+  upright_row: ZOOM,
+  barbell_overhead_press: ZOOM,
   dumbbell_biceps_curl: { ...ZOOM, hand: { layout: 'single', uid: 'dbc', rightNote: 'Middle of palm', panelHeight: 282 } },
-  plank: NO_HAND,
-  rope_triceps_pushdown: NO_HAND,
-  barbell_row: NO_HAND,
-  dumbbell_bench_press: NO_HAND,
-  dumbbell_shoulder_press: NO_HAND,
+  plank: ZOOM,
+  rope_triceps_pushdown: ZOOM,
+  barbell_row: ZOOM,
+  dumbbell_bench_press: ZOOM,
+  dumbbell_shoulder_press: ZOOM,
   // W2: the palm-flat pair (words/palm-flat-floor-over.json); the key's rightNote and render default panel height
   // (hand-palm-flat.mjs VARIANTS.floor, render). The page swaps this block for the pair panel (LIB-7b).
   mountain_climbers: { ...ZOOM, hand: { layout: 'single', uid: 'mc', rightNote: 'Whole hand down', panelHeight: 170 } },
-  romanian_deadlift: NO_HAND,
-  single_leg_romanian_deadlift: NO_HAND,
-  triceps_pushdown: NO_HAND,
+  romanian_deadlift: ZOOM,
+  single_leg_romanian_deadlift: ZOOM,
+  triceps_pushdown: ZOOM,
 };
