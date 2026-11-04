@@ -3,12 +3,11 @@
     {
       "id": "pilot-a",
       "title": "Pilot A",
-      "ids": ["lib_barbell_overhead_press", "lib_dumbbell_biceps_curl", "lib_pec_fly", "lib_plank", "lib_rope_triceps_pushdown", "lib_barbell_row", "lib_dumbbell_bench_press", "lib_dumbbell_shoulder_press", "lib_mountain_climbers", "lib_romanian_deadlift", "lib_single_leg_romanian_deadlift", "lib_triceps_pushdown", "lib_upright_row"]
+      "ids": ["lib_dumbbell_biceps_curl", "lib_pec_fly", "lib_plank", "lib_rope_triceps_pushdown", "lib_barbell_row", "lib_dumbbell_bench_press", "lib_dumbbell_shoulder_press", "lib_mountain_climbers", "lib_upright_row"]
     }
   ],
   "optionsModule": "tools/plates/library/pages/pilot-a.closeups.mjs",
   "closeups": {
-    "lib_barbell_overhead_press": { "optionsKey": "barbell_overhead_press" },
     "lib_dumbbell_biceps_curl": { "optionsKey": "dumbbell_biceps_curl", "pair": "curl-dumbbell-under" },
     "lib_pec_fly": { "optionsKey": "pec_fly" },
     "lib_plank": { "optionsKey": "plank" },
@@ -17,9 +16,6 @@
     "lib_dumbbell_bench_press": { "optionsKey": "dumbbell_bench_press" },
     "lib_dumbbell_shoulder_press": { "optionsKey": "dumbbell_shoulder_press" },
     "lib_mountain_climbers": { "optionsKey": "mountain_climbers", "pair": "palm-flat-floor-over" },
-    "lib_romanian_deadlift": { "optionsKey": "romanian_deadlift" },
-    "lib_single_leg_romanian_deadlift": { "optionsKey": "single_leg_romanian_deadlift" },
-    "lib_triceps_pushdown": { "optionsKey": "triceps_pushdown" },
     "lib_upright_row": { "optionsKey": "upright_row" }
   },
   "jump": null
