@@ -9,7 +9,9 @@
 //                    posture checkpoint `pivot`.
 //   ankle-pad (c3):  its Wrong (pad high on the calves) is an equipment change, not a pose: the spec places the pad at
 //                    ANKLE_T of the shank in every pose (specs/seated_leg_curl.mjs anklePadOf), and the crop engine
-//                    draws only pose changes; posture checkpoint `ankle-pad`, setup step 3.
+//                    draws only pose changes; posture checkpoint `ankle-pad`, setup step 3. Not crop.mjs shiftEq
+//                    (#379 6627240712): it moves only non-function items, by dy, and the pad is perItem functions
+//                    (eq/parts.mjs:35) placed along the shank.
 // No variant line (equipment 'Machine').
 import plateSpec from '../specs/seated_leg_curl.mjs';
 import { RED_FLAG, RED_FLAG_KNEE } from '../../layers/howto/shared.mjs';
