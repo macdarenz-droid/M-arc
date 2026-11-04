@@ -13,6 +13,7 @@ import { join } from 'node:path';
 import { ROOT, sha256 } from '../lib/inputs.mjs';
 import { FIXTURE, FONT, GOLDEN_JSON, LIB_OF, firstDiff, buildGallery, extractPlates, fragmentsOf, latestEntries, makeMirror, readManifest, verifyChain } from '../golden.mjs';
 import { galleryCss, rewriteCss } from '../css.mjs';
+import { ZOOM_CSS } from '../library/zoom/inline.mjs';
 import { CODEC, decoderSource, pack } from './codec/delta.mjs';
 
 const rel = p => p.slice(ROOT.length + 1).split('\\').join('/');
@@ -128,9 +129,11 @@ async function outputsOf({ hashFor }) {
     return { path, text: moduleText(id, byId.get(id), latest.get(id), hashFor(path, inputsFor(path)), true) };
   });
   out.push({ path: 'src/howto/generated/index.ts', text: indexText() });
-  const plateCss = rewriteCss(galleryCss(html));
-  out.push({ path: 'src/slices/howto/css/plate.css', text: plateCss });
-  out.push(...await libraryOutputs(hashFor, plateCss));
+  // F-PLATE-ZOOMCSS: plate.css = golden A's gallery CSS plus the inline-zoom renderer's pz-* rules, read from
+  // zoom/inline.mjs's ZOOM_CSS (applyZooms puts that block first in a zoomed page's <style>), never typed by hand.
+  const goldenCss = galleryCss(html), plateCss = rewriteCss(ZOOM_CSS + goldenCss);
+  out.push({ path: PLATE_CSS, text: plateCss });
+  out.push(...await libraryOutputs(hashFor, goldenCss));
   return out;
 }
 
@@ -164,8 +167,18 @@ export async function gateNodeHalf(row, platesHtml, engine, all) {
   return report;
 }
 
+export const PLATE_CSS = 'src/slices/howto/css/plate.css';
+/** F-PLATE-ZOOMCSS (D-LIB2b-CSS): null when a batch page's gallery CSS `pageCss` is golden A's `goldenCss`, either alone or
+ *  led by exactly zoom/inline.mjs's ZOOM_CSS (a page with an inline zoom), compared after rewriteCss as before; otherwise what differs. Any other rule, a missing
+ *  or edited pz-* rule, or the zoom block anywhere else is refused. */
+export function pageCssProblem(pageCss, goldenCss) {
+  const rest = pageCss.startsWith(ZOOM_CSS) ? pageCss.slice(ZOOM_CSS.length) : pageCss;
+  if (rewriteCss(rest) === rewriteCss(goldenCss)) return null;
+  return rest.includes('pz-') ? 'its pz-* rules are not zoom/inline.mjs ZOOM_CSS, byte for byte' : 'its CSS is not golden A\'s gallery CSS';
+}
+
 /** Each shipped library row's ht-<slug>.ts plate part, cut from its batch plates page after its pins and the QA node half. */
-async function libraryOutputs(hashFor, plateCss) {
+async function libraryOutputs(hashFor, goldenCss) {
   const all = registryRows(), lib = libraryRows(all);
   if (!lib.length) return [];
   const { dropMirror, loadEngine } = await qa(), mirror = makeMirror();
@@ -173,8 +186,9 @@ async function libraryOutputs(hashFor, plateCss) {
     const engine = await loadEngine(mirror), out = [];
     for (const row of lib) {
       const html = await platesPage(row, all), file = pagesOf(row).plates;
-      // plate.css is built from golden A's gallery only: a batch page must rebuild it byte for byte (D-LIB2b-CSS)
-      if (rewriteCss(galleryCss(html)) !== plateCss) throw new Error(`plates: ${row.id}: the page built from ${file} does not rebuild plate.css byte for byte`);
+      // D-LIB2b-CSS, F-PLATE-ZOOMCSS: a batch page's CSS is golden A's gallery CSS, optionally led by inline.mjs's ZOOM_CSS
+      const cssBad = pageCssProblem(galleryCss(html), goldenCss);
+      if (cssBad) throw new Error(`plates: ${row.id}: the page built from ${file} does not rebuild plate.css byte for byte (${cssBad})`);
       const p = extractPlates(html).find(x => x.chromeId === row.chromeId);
       if (!p) throw new Error(`plates: ${row.id}: no card-${row.chromeId} in the page built from ${file}`);
       const entry = pinOf(row, 'plate'), bad = libraryProblems(p, entry, row);
@@ -192,6 +206,7 @@ async function libraryOutputs(hashFor, plateCss) {
  *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4). A library row's
  *  ht-<slug>.ts adds its plates page config, the closure of its spec (closureOf), its batch file and batch golden file. */
 export function inputsFor(path) {
+  if (path === PLATE_CSS) return [...inputs(), 'tools/plates/library/zoom/inline.mjs'];   // F-PLATE-ZOOMCSS: ZOOM_CSS
   const row = libraryRows().find(r => path === `src/howto/generated/${chunkName(r.slug)}.ts`);
   if (!row) return /\/ht-[^/]+\.ts$/.test(path) ? [...inputs(), ...CODEC] : inputs();   // HT-11: an ht-*.ts is packed with CODEC
   return [...inputs(), ...CODEC, 'tools/plates/library/plates-page.mjs', 'tools/plates/library/build-page.mjs', 'tools/plates/library/batch-golden.mjs',
