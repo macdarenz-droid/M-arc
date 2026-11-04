@@ -14,8 +14,10 @@ const ROOT = new URL('../../', import.meta.url).pathname;
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 const json = (p: string) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
 const EIGHT = Object.keys(json('tools/plates/plates.json'));
-/** The library ids ruled to ship on this head (W1: D-SHIP-SHAPES, D-SHIP-W1-LAYERS #376 6616230145). */
-const RULED_SHIPPED = ['lib_dumbbell_biceps_curl'];
+/** The library ids ruled to ship on this head, in registry order (W1: D-SHIP-W1-LAYERS #376 6616230145; W2: the 9 of
+ *  D-SHIP-W2-STAMP #379 6636105974, less crunch and seated_leg_curl held by Q6/Q7 6636501505, 6636616603). */
+const RULED_SHIPPED = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_pec_fly',
+  'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
 
 let reg: any, content: any, P: any, keyMods: any[];
 beforeAll(async () => {
@@ -202,5 +204,27 @@ describe('LIB-SHIP D-SHIP-GRIP (b2) (#379 6628848012): card-none rows with a cla
   it('red 3: (b) unchanged, a why naming plain D-SHIP-GRIP with a claimed field is red', async () => {
     const { content: c } = await content.loadContent('lib_plank');
     expect(checkGripLibrary({ ...c, handling: { ...c.handling, why: 'D-SHIP-GRIP (b)' } }, card('plank'))).toEqual(['GRIP: lib_plank uses D-SHIP-GRIP (b) but its card claims grip.handContact']);
+  });
+});
+
+describe('LIB-SHIP D-SHIP-IDS-NOPAIR (#379 6636740340): gen/ids.mjs missingChunks takes hands.mjs noPairRuling', () => {
+  let ids: any;
+  beforeAll(async () => { ids = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs')); });
+  const row = [{ id: 'lib_x', chromeId: 'x', slug: 'x' }], has = (n: string) => n !== 'hand-x', file = () => true;
+  const handled = (why: unknown, zooms: unknown[] = []) => ({ handling: { archetype: 'push', why }, zooms });
+  it('a handled no-zoom sheet naming D-SHIP-C3 passes; a sheet archetype none counts as none', () => {
+    expect(() => ids.missingChunks(row, has, {}, { lib_x: 'push' }, file, { lib_x: handled('D-SHIP-C3 no-zoom list, D-SHIP-HANDW2: x') })).not.toThrow();
+    expect(() => ids.missingChunks(row, has, {}, { lib_x: 'hold' }, file, { lib_x: { handling: { archetype: 'none' }, zooms: [] } })).not.toThrow();
+  });
+  it('red 1: no ruling in why', () => {
+    expect(() => ids.missingChunks(row, has, {}, { lib_x: 'push' }, file, { lib_x: handled('D-SHIP-HANDW2: x') })).toThrow('ids: lib_x: no src/howto/generated/hand-x.ts and no hand pair');
+  });
+  it('red 2: a sheet with a hand zoom and no pair', () => {
+    expect(() => ids.missingChunks(row, has, {}, { lib_x: 'push' }, file, { lib_x: handled('D-SHIP-C3: x', [{ key: 'hand', kind: 'hand' }]) })).toThrow(/no hand pair/);
+  });
+  it('red 3: the rule is hands.mjs\'s own (the import removed is red)', () => {
+    const src = readFileSync(join(ROOT, 'tools/plates/gen/ids.mjs'), 'utf8');
+    expect(src).toMatch(/^import \{ noPairRuling \} from '\.\/hands\.mjs';/m);
+    expect(src).toMatch(/noPairRuling\(sheet\)/);
   });
 });
