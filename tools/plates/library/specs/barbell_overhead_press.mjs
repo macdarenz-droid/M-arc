@@ -70,9 +70,8 @@ const NECK_START = -10;                                // deg head flexion at th
 const LEAN_VIA2 = 3;                                   // torso moving forward under the bar once it passes the head (c6)
 const KNEE_LOCK = 2;                                   // deg: knees locked (c9), 2 deg keeps the IK off full extension
 const SCAP_TOP = 0;                                    // cm shrug at lockout: not in the card
-const NECK_END = 15;                                   // deg: head forward under the bar at lockout ("through the window", c6). LIB-PLATEFIX-1
-// (PLATEFIX PLAN RULED #385 6633777095, cap 15): the W2 panel read the lockout arm as drawn over the head; the face's front
-// is 9.8 px ahead of the arm's front edge at 8, 11.9 px at 15 (engine outlines, 134.6 px/m), so the cap gives the most face
+const NECK_END = 8;                                    // deg: head forward under the bar at lockout ("through the window", c6). LIB-PLATEFIX-1:
+// the face's front is 9.8 px ahead of the lockout arm's front edge (>= 8 px; ruling #385 6635051630 keeps 8)
 const ARM = (WINTER.upperArm + WINTER.forearm + REF.gripOff) * H;   // shoulder to grip centre, wrist straight
 
 const feet = { l: { at: [FOOT_X, 0, 0] }, r: { at: [-FOOT_X, 0, 0] } };
