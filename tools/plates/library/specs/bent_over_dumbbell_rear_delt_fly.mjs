@@ -112,11 +112,12 @@ const { via, end } = posesAt(TOP);
 // named (decision 9). The census front view was drawn first (pitch 15, volume trunk): its shrug moves along the trunk
 // axis, which points almost at the camera, 1.3 px at plate scale and 5.1 px at k 4, below H3's 11.39 px at every k on
 // the ladder (S3), so this side view carries the card's own Mistake unchanged, F6 named; the front view is the alt.
-const M_SHRUG = 5;                                       // cm, scap elevation
+const M_SHRUG = 8;                                       // cm, scap elevation. LIB-PLATEFIX-1: 5 (golden A's lateral-raise shrug) moves the front plate's tell anchor 1.8 px at PITCH 24, 7.1 px at the largest zoom k 4, under H3's 11.4; 8 at PITCH 26 gives 3.2 px, 12.8 at k 4
 const mistakePose = { scap: { elev: M_SHRUG, pro: PRO_END } };
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
-const PITCH = 40;                                        // front plate camera pitch (deg), LIB-PLATEFIX-1 (see the plate below)
-export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG, PITCH };
+const PITCH = 26;                                        // front plate camera pitch (deg), LIB-PLATEFIX-1 (see the plate below)
+const SHRUG_PX = 8;                                      // drawing value: the shrug contour's move toward the head (plate px; pf1 asked 12-18 px at 780)
+export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG, PITCH, SHRUG_PX };
 
 const G0 = landmarksOf(start, H)['grip.r'], HZ = 0.135, HY = 0.119 * 0.866 / 2;
 const HH = 0.065, HR = 0.008;                          // handle half-length, half-thickness (m)
@@ -178,39 +179,57 @@ export const SIDE = {
 
 // ---- the plate: FRONT view (LIB-PLATEFIX-1, PLATEFIX PLAN RULED #385 6633777095) ----
 // The W2 layers panel (#379 6633524031) read the side plate as a row: side-on, the arms sweep at the camera. The card's
-// plate.view is front (F6 dropped). The camera is raised on the viewer's side and tilted down PITCH (D-SPIKE-hinge;
-// rendered at 15, 40 and 60: at 15 the hinged trunk is a blob, at 60 the legs go under it, at 40 the back reads from
-// above with the head below the shoulders and both arms sweep out to level, c3). The full sweep to level (posesAt(90)).
-// Mistake (c3): the shoulder blades raised M_SHRUG, as the side drawing; from the front the shrug moves the shoulders
-// toward the head (down on screen), so each shoulder carries an arrow from its correct to its faulty top and two short
-// dashed shoulder lines (correct and faulty), shown in a Mistake zoom (H3).
-const FRONT_POSES = posesAt(90);
-const shoulderLine = (s, pose) => ({ kind: 'dashed', pts: [{ at: `shoulderTop.${s}`, pose, off: [-9, 0] }, { at: `shoulderTop.${s}`, pose, off: [9, 0] }] });
+// plate.view is front (F6 dropped). The camera is raised on the viewer's side and tilted down PITCH (D-SPIKE-hinge).
+// Plates panel pf1 (#385 6636073314): at 40 the trunk read as pitched down at the viewer and the hanging arm short, so
+// PITCH is 26: the back reads as a flat oval above the head, the shoulder joints sit higher and the hanging arm shows at
+// 0.91 of its length (rendered at 0, 12, 24 and 26: at 0 and 12 the figure reads as standing upright with the head on top; 26, not 24, so the 8 cm shrug clears H3 at k 4).
+// The full sweep to level, c3, with 5 via poses so the Trace is one smooth arc about the shoulder (pf1 R6).
+// Mistake (c3): the shoulder blades raised M_SHRUG, as the side drawing. From the front the shrug moves the shoulder caps
+// toward the head, so it is drawn as a shape change (pf1 R5): a red dashed shoulder-cap and trapezius contour moved
+// SHRUG_PX toward the head on each side, closing the neck gap, with one red arrow per side from the shoulder toward the
+// head; the faulty caps are the engine's own outline. The zoom ring sits between the shoulder cap and the head (R11).
+const PC = Math.cos(PITCH * R), PS = Math.sin(PITCH * R), PXM = 256 / 1.75;   // the engine's reference scale (vendor/engine/plate.mjs REF_CAMERA)
+const scr = w => [w[0] * PXM, -(w[1] * PC - w[2] * PS) * PXM];                   // plate px of a world point (makeCamera, less the origin)
+const FRONT_POSES = { start: pose(ROOT_Y, ROOT_Z, 0), via: [15, 30, 45, 60, 75].map(a => pose(ROOT_Y, ROOT_Z, a)), end: pose(ROOT_Y, ROOT_Z, 90) };
+const lmF = landmarksOf(FRONT_POSES.end, H);
+const toHead = s => { const a = scr(lmF[`shoulderTop.${s}`]), b = scr(lmF.head), d = Math.hypot(b[0] - a[0], b[1] - a[1]); return [(b[0] - a[0]) / d, (b[1] - a[1]) / d]; };
+const off = (u, k) => [+(u[0] * k).toFixed(2), +(u[1] * k).toFixed(2)];
+const U = { l: toHead('l'), r: toHead('r') };
+// the contour: outer cap, cap top, trapezius (half way to the neck) on each side, through the neck; each point moved
+// SHRUG_PX toward the head on its own side (the neck by the mean of both)
+const side = s => [{ along: [`shoulderTop.${s}`, `shoulder.${s}`], t: -0.6 }, `shoulderTop.${s}`, { along: [`shoulderTop.${s}`, 'neck'], t: 0.5 }];
+const SHRUG_CONTOUR = [
+  ...side('r').map(at => (typeof at === 'string' ? { at, pose: 'end', off: off(U.r, SHRUG_PX) } : { ...at, pose: 'end', off: off(U.r, SHRUG_PX) })),
+  { at: 'neck', pose: 'end', off: off([(U.l[0] + U.r[0]) / 2, (U.l[1] + U.r[1]) / 2], SHRUG_PX) },
+  ...side('l').reverse().map(at => (typeof at === 'string' ? { at, pose: 'end', off: off(U.l, SHRUG_PX) } : { ...at, pose: 'end', off: off(U.l, SHRUG_PX) })),
+];
 export default {
   ...SIDE,
   view: 'front', facing: undefined,
   camera: { x0: 195, y0: 339, pitch: PITCH },
   torso: 'volume',
   poses: FRONT_POSES,
-  // no dashed side-profile start dumbbell; one part per dumbbell, so the one ghost carries only its own arm's dumbbell
+  // no dashed side-profile start dumbbell; one part per dumbbell. pf1 R2: drawn end-on, the axis on the view line (the
+  // neutral-grip handle runs along the trunk, 16 deg off that line at INCL 80 and PITCH 26), so they match the start's end-on hex
   equipment: [{ type: 'floor', from: -0.55, to: 0.55 },
-    lm => ['l', 'r'].map(s => ({ type: 'dumbbell', at: lm[`grip.${s}`], axis: [0, 0, 1], part: `db.${s}`, z: 'front' }))],
+    lm => ['l', 'r'].map(s => ({ type: 'dumbbell', at: lm[`grip.${s}`], axis: [0, PS, PC], part: `db.${s}`, z: 'front' }))],
   startParts: ['arm.r', 'db.r'],
-  ghosts: { count: 0 },   // H7: 1 ghost (arm and dumbbell) made the chunk 161.6 KB, 0 with the shoulder-only outline gives 151,768 B (bar 153,600); the trace carries the sweep   // one: the front alt's 2 ghosts on both arms made a 180.3 KB chunk (> H7's 150 KB)
+  ghosts: { count: 0 },   // H7: 1 ghost (arm and dumbbell) made the chunk 161.6 KB; the Trace carries the sweep
   datum: [{ y: 'shoulder.r', from: 'grip.r', to: 'grip.l' }],   // shoulder level: the hands finish on it (c3)
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'slight bend, held' },   // c2
   callouts: SIDE.callouts.map(c => ({ ...c, prefer: undefined })),
   mistake: {
     pose: mistakePose,
-    parts: ['shcap.l', 'shcap.r'],   // the faulty shoulder caps only (H7: the faulty trunk outline too made 154.6 KB); the shoulder lines and arrows carry the shrug
+    parts: ['shcap.l', 'shcap.r'],   // the faulty shoulder caps only (H7: the faulty trunk outline too made 154.6 KB)
     guides: [
-      ...['l', 'r'].flatMap(s => [shoulderLine(s, 'end'), shoulderLine(s, 'mistake'),
-        { kind: 'arrow', from: { at: `shoulderTop.${s}`, pose: 'end' }, to: { at: `shoulderTop.${s}`, pose: 'mistake' } }]),
+      { kind: 'dashed', smooth: true, pts: SHRUG_CONTOUR },
+      ...['l', 'r'].map(s => ({ kind: 'arrow', from: { at: `shoulderTop.${s}`, pose: 'end', off: off(U[s], -4) }, to: { at: `shoulderTop.${s}`, pose: 'end', off: off(U[s], SHRUG_PX + 3) } })),
     ],
     tells: [
-      { key: 'shrug', text: 'Shoulders<br>shrug', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, cue: 'The shoulders hike up toward the ears as the dumbbells rise.' },   // c3
+      // anchored on the faulty cap top, moved half way to the head so the zoom ring sits between the cap and the head (R11)
+      { key: 'shrug', text: 'Shoulders<br>shrug', anchor: { at: 'shoulderTop.r', pose: 'mistake', off: off(U.r, 10) }, cue: 'The shoulders hike up toward the ears as the dumbbells rise.' },   // c3
     ],
   },
-  zoom: { view: 'mistake', k: 4 },   // H3: the shrug moves the anchor 3.7 px at plate scale; k 2.5 gives 9.1 px and 3 gives 11.1 px, under 11.4; 4 is the next ladder k
+  zoom: { view: 'mistake', k: 4 },   // H3: the shrug moves the anchor about 3 px at plate scale; 4 is the smallest ladder k over 11.4 px
   alt: 'Bent-over dumbbell rear delt fly, front view. Hinged forward at the hips with a straight spine, the lifter raises two dumbbells from hanging under the chest out to the sides until the arms are about level with the body, elbows slightly bent.',
 };

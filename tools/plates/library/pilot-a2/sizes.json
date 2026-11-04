@@ -145,14 +145,19 @@
     "basis": "stated reason: the side view stops the drawn sweep where the near arm and hand still show (bent_over_dumbbell_rear_delt_fly.mjs:101-104); bent_over_dumbbell_rear_delt_fly as drawn on main c7bdad7a (pilot A #109); poses unchanged by LIB-8R"
    },
    "M_SHRUG": {
-    "value": 5,
+    "value": 8,
     "unit": "cm",
-    "basis": "convention: golden A dumbbell_lateral_raise's shrug (ref-src/plate.mjs:147 'shrug_cm 5'), as lb7/sizes.json:522; c3 'don't shrug'"
+    "basis": "convention: golden A dumbbell_lateral_raise's shrug (ref-src/plate.mjs:147 'shrug_cm 5'), as lb7/sizes.json:522, raised to 8 for the front plate (LIB-PLATEFIX-1): 5 moved the tell anchor 1.8 px at pitch 24, under H3 at the largest zoom k 4; c3 'don't shrug'"
    },
    "PITCH": {
-    "value": 40,
+    "value": 26,
     "unit": "deg",
-    "basis": "decision: LIB-PLATEFIX-1 (PLATEFIX PLAN RULED, #385 6633777095), D-SPIKE-hinge camera pitch for the card's front view: rendered at 15, 40 and 60; at 40 the back reads from above and both arms sweep out to level (c3)"
+    "basis": "decision: LIB-PLATEFIX-1, D-SPIKE-hinge camera pitch for the card's front view; plates panel pf1 (#385 6636073314 R1) read 40 as the trunk pitched at the viewer with a short hanging arm; rendered at 0, 12, 24 and 26 (0 and 12 read as standing upright); 26 keeps the back readable and lets the 8 cm shrug clear H3 at k 4"
+   },
+   "SHRUG_PX": {
+    "value": 8,
+    "unit": "px",
+    "basis": "stated reason: plates panel pf1 (#385 6636073314 R5) asked the shrug contour moved 12-18 px at 780 (6-9 plate px) toward the head; 8 plate px; c3"
    }
   }
  }

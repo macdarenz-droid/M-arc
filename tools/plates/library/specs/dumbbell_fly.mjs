@@ -24,8 +24,8 @@
 //    to grip across the chest top.
 //  - Elbow pole: out and a little down, so the bend is in the arc plane with the elbows pointing out (c5).
 //  - Dumbbells: `dumbbell` primitive, axis [0,0,1] (palms facing, handles along the body, c3/c4 "parallel"): end-on
-//    hexes in front view. The start layer never draws equipment, so the start dumbbells are dashed side-on silhouettes
-//    (PILOT-A3, F-FLY-START R2: the pitched view sees them side-on, so a hex ring was the wrong shape).
+//    hexes in front view. The start layer never draws equipment, so the start dumbbells are dashed phantoms
+//    (LIB-PLATEFIX-1: at pitch 0 every handle points at the viewer, so they are end-on dashed hexes again).
 // Plate labels (verified card): callouts = plate.checkpoints c5 (Soft elbows, on the end elbow), c4 (Chest-level stop,
 //   on the end dumbbell), c4 (Dumbbells parallel, on the start dumbbell); measure = the held elbow bend (c5);
 //   Mistake (front) = plate.mistake c13: at the end pose both wrists bend back M_WRIST out of neutral (arms, elbows and
@@ -86,7 +86,10 @@ const lmStart = landmarksOf(start, H);
 
 
 // ---- front view (LIB-8R) ----
-const PITCH = 25;                                     // camera pitch (deg), D-SPIKE-pitch; LIB-PLATEFIX-1: 45 read as a standing T-pose (W2 panel, #379 6633524031). At 25 the knees come to the front, the head shows above them and the bench frame between the shins
+const PITCH = 0;                                     // camera pitch (deg), D-SPIKE-pitch. LIB-PLATEFIX-1: 45 read as a standing T-pose (W2 panel, #379 6633524031) and 25 as
+// sitting on a stool with the bench floating (plates panel pf1, #385 6636073314 R1). At 0 (the level view from the feet) the
+// bench stands on the floor, the shoulders sit just above the pad, the bent knees and vertical shins come to the front and
+// the arms sweep at their true length, so the ghosts and the arm share one circle
 const PX_M = 256 / 1.75;                              // the engine's reference scale (px/m), REF_CAMERA (vendor/engine/plate.mjs:11)
 // Mistake (card plate.mistake, c13): the end pose's own joint angles (the reach released), with both wrists bent back
 // M_WRIST out of neutral; the arm does not move, only the hand and its dumbbell.
@@ -119,14 +122,14 @@ const handPoly = (W, G, part) => {
   return { type: 'poly', pts: [[W[0] + n[0], W[1] + n[1], W[2]], [G[0] + n[0], G[1] + n[1], G[2]], [G[0] - n[0], G[1] - n[1], G[2]], [W[0] - n[0], W[1] - n[1], W[2]]], cls: 'eq-solid', z: 'front', part };
 };
 const HANDS = lm => ['l', 'r'].map(s => handPoly(lm[`wrist.${s}`], lm[`grip.${s}`], `hand.${s}`));
-// Start dumbbells (PILOT-A3, F-FLY-START R2): one dashed closed side-on silhouette per dumbbell in the x-z plane at the
-// start grip, from the primitive's sizes (heads DB.head * 0.866 across, DB.headLen long; handle 1.6 cm thick), so the
-// pitched view shows the same shape as the drawn end dumbbells, not a hex ring. 13 points, the last closing the outline.
-const startDb = c => {
-  const hx = DB.head * 0.866 / 2, bx = 0.008, zo = DB.handle / 2 + DB.headLen, zi = DB.handle / 2;
-  return [[-hx, -zo], [hx, -zo], [hx, -zi], [bx, -zi], [bx, zi], [hx, zi], [hx, zo], [-hx, zo], [-hx, zi], [-bx, zi], [-bx, -zi], [-hx, -zi], [-hx, -zo]]
-    .map(([x, z]) => [c[0] + x, c[1], c[2] + z]);
-};
+// Start dumbbells: PILOT-A3 (F-FLY-START R2) drew side-on silhouettes for the pitched view.
+// LIB-PLATEFIX-1 (pf1 R2): in the level view every handle points at the viewer, so the start dumbbells are end-on, the
+// primitive's own end-on face (vendor/engine/equipment.mjs dumbbell: hex head/2 across the corners, core 1.58 cm): a closed
+// dashed hexagon and a dashed core ring in the x-y plane at the start grip.
+const startDb = c => [
+  [0, 60, 120, 180, 240, 300, 360].map(a => [c[0] + DB.head / 2 * Math.cos(a * R), c[1] - DB.head / 2 * Math.sin(a * R), c[2]]),
+  Array.from({ length: 17 }, (_, k) => [c[0] + 0.0158 * Math.cos(k * Math.PI / 8), c[1] + 0.0158 * Math.sin(k * Math.PI / 8), c[2]]),
+];
 // The faulty hands (PILOT-A3, F-FLY-START R5): the Mistake pose's own hand polys (wrist -> grip, bent M_WRIST), closed,
 // as Mistake `dashed` guides, drawn on top of the masked pose so the bend reads at its true size. The Mistake pose is
 // the end pose merged with wristPose, as the engine merges it (vendor/engine/plate.mjs:20-26, :48).
@@ -142,7 +145,7 @@ const sub = (a, b) => a.map((v, i) => v - b[i]), add = (a, b) => a.map((v, i) =>
 const unit = a => mul(a, 1 / Math.hypot(...a)), cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 const dot = (a, b) => a.reduce((t, v, i) => t + v * b[i], 0);
 const rotate = (v, k, th) => add(add(mul(v, Math.cos(th)), mul(cross(k, v), Math.sin(th))), mul(k, dot(k, v) * (1 - Math.cos(th))));   // Rodrigues
-const MIS_AXIS = {}, MISTAKE_HANDS = [];
+const MIS_AXIS = {}, MISTAKE_HANDS = [], NEUTRAL_LINES = [];
 // The straight-arm line (LIB-PLATEFIX-1, W2 panel: the arm read as straight): from the end elbow along shoulder -> elbow,
 // the forearm-plus-grip length, so the slight bend (ELBOW) reads as the forearm leaving it. A datum proving the Soft elbows checkpoint.
 const ELBOW_LINE = (() => { const E = lmEnd['elbow.r'], u = unit(sub(E, lmEnd['shoulder.r'])); return [[...E], add(E, mul(u, L2))]; })();
@@ -153,9 +156,13 @@ for (const s of ['l', 'r']) {
   const hl = Math.hypot(...sub(lmMis[`grip.${s}`], W)), fore = unit(sub(W, lmMis[`elbow.${s}`]));
   const ang = v => { const q = scr(v); return Math.atan2(q[1], q[0]) / R; };
   let a0 = ang(fore), a1 = ang(db); while (a1 - a0 > 180) a1 -= 360; while (a1 - a0 < -180) a1 += 360;
+  // pf1 R5: the forearm axis continued past the wrist in grey dashes (the correct plate's line style, drawn on the
+  // Mistake plate only), the faulty hand outline in red dashes turned M_WRIST about the wrist joint with its dumbbell,
+  // and a small red angle arc at the wrist from the axis to the bent hand
+  NEUTRAL_LINES.push({ type: 'line', pts: [[...W], add(W, mul(fore, hl * 1.4))], cls: 'eq-line m-line', z: 'front', part: `axis.${s}` });
+  const hp = HANDS(lmMis).find(h => h.part === `hand.${s}`).pts;
   MISTAKE_HANDS.push(
-    { kind: 'dashed', pts: [W, add(W, mul(fore, hl * 1.3))] },                   // the neutral line: the forearm's own line
-    { kind: 'line', pts: [W, lmMis[`grip.${s}`]] },                              // the faulty hand, solid
+    { kind: 'dashed', pts: [...hp, hp[0]] },
     { kind: 'arc-arrow', center: [...W], r: 9, a0: +a0.toFixed(1), a1: +a1.toFixed(1) });
 }
 
@@ -170,7 +177,7 @@ export function makeFly(view, id) {
 const ALT = 'Dumbbell fly, front view from the feet. Lying on a flat bench, feet flat, the lifter lowers the dumbbells out to the sides in a wide arc, elbows slightly bent and fixed, until level with the chest, then raises them back. Mistake: wrists bent back off the forearms.';
 
 function frontFly(id) {
-  const phantom = ['l', 'r'].map(s => ({ type: 'line', pts: startDb(lmStart[`grip.${s}`]), cls: 'eq-line m-line', z: 'front' }));
+  const phantom = ['l', 'r'].flatMap(s => startDb(lmStart[`grip.${s}`]).map(pts => ({ type: 'line', pts, cls: 'eq-line m-line', z: 'front' })));
   return {
     id, name: 'Dumbbell Fly', view: 'front',
     // y0: the floor under the feet (world y 0, z FOOT_Z) at the approved floor y 339 once pitched (D-LIB8-floor)
@@ -180,7 +187,7 @@ function frontFly(id) {
     equipment: [
       { type: 'floor', from: [-0.5, 0, FOOT_Z], to: [0.5, 0, FOOT_Z] },   // the floor line under the feet, clear of the zoom corners
       ...PITCHED_BENCH,
-      (lm, ctx) => (ctx.pose === 'end' ? phantom : null),
+      (lm, ctx) => (ctx.pose === 'end' ? [...phantom, ...(ctx.mistake ? NEUTRAL_LINES : [])] : null),
       lm => HANDS(lm),
       (lm, ctx) => ['l', 'r'].map(s => ({ type: 'dumbbell', at: lm[`grip.${s}`], axis: ctx.pose === 'mistake' ? MIS_AXIS[s] : [0, 0, 1], z: 'front', part: `db.${s}` })),
     ],
@@ -193,8 +200,8 @@ function frontFly(id) {
     datum: [{ y: 'grip.r', from: { at: 'grip.r', off: [-14, 0] }, to: { at: 'grip.l', off: [14, 0] }, mistake: false },   // the stop line: dumbbells level with the chest top (c4)
       { x: 0, from: 0, to: 0, line: ELBOW_LINE, mistake: false }],   // x/from/to: the engine's line-datum form (ab_wheel_rollout.mjs:181)   // the upper arm's line past the elbow: the forearm leaves it by the held bend (c5, LIB-PLATEFIX-1)
     callouts: [
-      { key: 'elbows', text: 'Soft<br>elbows', anchor: 'elbow.l', box: { left: 236, top: 276 }, cue: 'Keep a slight elbow bend that stays the same all the way.' },
-      { key: 'stop', text: 'Chest-level<br>stop', anchor: 'grip.l', box: { left: 252, top: 222 }, cue: 'Lower until the dumbbells are level with your shoulders or chest, no deeper.' },   // c4, the card's label
+      { key: 'elbows', text: 'Soft<br>elbows', anchor: 'elbow.l', cue: 'Keep a slight elbow bend that stays the same all the way.' },
+      { key: 'stop', text: 'Chest-level<br>stop', anchor: 'grip.l', cue: 'Lower until the dumbbells are level with your shoulders or chest, no deeper.' },   // c4, the card's label
       { key: 'parallel', text: 'Dumbbells<br>parallel', anchor: 'start:grip.l', cue: 'Keep both dumbbells parallel, palms facing, through the whole arc.' },
     ],
     tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Raise', s: 2, move: true }],
