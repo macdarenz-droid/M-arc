@@ -2,12 +2,12 @@
 // (LIB-12's too) is a new file and no shared registry is edited. This loader builds the id index, `pairSpec(id)`,
 // `renderPair(id, opts)` (the key's own `render`, or golden-B `renderHandPair` unchanged, then the extras) and
 // `inputsFor(id)` (LIB-2's per-output inputs). Golden-B engine files and LIB-6's renderer are imported, never edited.
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { renderHandPair } from '../../layers/engine/hand.mjs';
 import { mergePose } from '../render/closeup/common.mjs';
-import { CHROME_WORDS, panelHtml, wordsFileOf } from './panel.mjs';
+import { CHROME_WORDS, panelHtml, readWords, wordsFileOf } from './panel.mjs';
 
 export const HERE = dirname(fileURLToPath(import.meta.url));
 export const ROOT = join(HERE, '../../../..');
@@ -302,6 +302,8 @@ export function importClosure(files) {
  *  import, plus the key's declared INPUTS (sizes matched to a composer). A change to another key never marks it stale. */
 export function inputsFor(id, index = INDEX) {
   // LIB-7-FIX (D-LIB7FIX-API): a pair key gives the list of its ids (keys hold '-', ids never do; keyIndexOf throws on a clash)
+  // F-PAIR-FAULTS: a sub-key reads its base key's files, the layers config that names it and the row's research card
+  if (index === INDEX && SUBS.has(id)) { const t = SUBS.get(id); return [...new Set([...inputsFor(t.base, index), t.config, cardFileOf(t.cardId)])].sort(); }
   if (!index.drawn.has(id)) { const k = (index === INDEX ? KEYS : keyIndexOf(index)).keys.get(id); if (k) id = k.ids[0]; }
   const e = index.drawn.get(id);
   if (!e) throw new Error(`hand pairs: inputsFor: ${id} has no pair`);
@@ -342,17 +344,103 @@ export function keyIndexOf(index = INDEX) {
   return { keys, keyOf };
 }
 const KEYS = keyIndexOf(INDEX);
-/** Every drawn id of any owner, as `lib_<card id>` -> pair key. Never one of the 8 or a gap. */
-export const HAND_OF_ID = Object.freeze(Object.fromEntries([...KEYS.keyOf].map(([id, k]) => [`lib_${id}`, k])));
-/** The pair keys, in first-drawn order. */
-export const keysOf = (index = INDEX) => [...(index === INDEX ? KEYS : keyIndexOf(index)).keys.keys()];
+
+// ---- F-PAIR-FAULTS (card f-pair-faults-card.md, PLAN RULED on #386): a row draws only the faults its card supports ----
+// A layers-config row `{ pair: K, pairFaults: [f…], pairWords?: { f: { right|wrong|pager: { text, source } } } }` gets
+// the sub-key `<KEY>-<variant>-only-<f…>-<orientation>`: K's drawing with only those faults, in that order, under its own
+// ids (`hp-<sub>-`) and chunk (handpair-<sub>.ts), with K's words and the row's card-sourced overrides. A row with
+// neither field keeps K (no new code on its path).
+export const CARDS_DIR = 'docs/research/howto/cards';
+export const cardFileOf = id => `${CARDS_DIR}/${id}.json`;
+const readCard = id => { const f = cardFileOf(id); if (!existsSync(join(ROOT, f))) throw new Error(`hand pairs: no research card ${f}`); return JSON.parse(readFileSync(join(ROOT, f), 'utf8')); };
+const SLOTS = ['right', 'wrong', 'pager'];
+/** Whether a fault's claims cite `cards/<cardId>.json#cN` for a claim cN of that card or of its `hand` zoom's claim list. */
+export function cardSupports(fault, cardId, card) {
+  const pre = `cards/${cardId}.json#`, ids = new Set([...(card.claims ?? []).map(c => c.id), ...(card.zooms ?? []).filter(z => z.kind === 'hand').flatMap(z => z.claim ?? [])]);
+  return (fault.claims ?? []).some(r => r.startsWith(pre) && ids.has(r.slice(pre.length)));
+}
+/** The row's filter, or null for a row with neither field. Throws on every red the ruling lists. */
+export function rowFilterOf(howtoId, row, index = INDEX, card) {
+  if (!row || (row.pairFaults === undefined && row.pairWords === undefined)) return null;
+  const at = `hand pairs: ${howtoId}`, F = row.pairFaults;
+  if (row.pair === undefined) throw new Error(`${at}: pairFaults or pairWords without pair`);
+  if (F === undefined) throw new Error(`${at}: pairWords without pairFaults`);
+  if (!Array.isArray(F)) throw new Error(`${at}: pairFaults is not a list`);
+  if (!F.length) throw new Error(`${at}: pairFaults is empty`);
+  if (F.some(f => typeof f !== 'string')) throw new Error(`${at}: pairFaults holds a non-string`);
+  if (new Set(F).size !== F.length) throw new Error(`${at}: pairFaults repeats a fault`);
+  const k = (index === INDEX ? KEYS : keyIndexOf(index)).keys.get(row.pair);
+  if (!k) throw new Error(`${at}: no pair key ${row.pair}`);
+  const id = howtoId.replace(/^lib_/, '');
+  if (!k.ids.includes(id)) throw new Error(`${at}: ${id} is not drawn on ${row.pair}`);
+  const notOf = F.filter(f => !k.faults.includes(f));
+  if (notOf.length) throw new Error(`${at}: ${notOf} not a fault of ${row.pair} [${k.faults}]`);
+  card ??= readCard(id);
+  const wrong = pairSpec(k.ids[0], index).wrong, unsupported = F.filter(f => !cardSupports(wrong.find(w => w.key === f), id, card));
+  if (unsupported.length) throw new Error(`${at}: ${unsupported} not supported by ${cardFileOf(id)} (no claim of the card or its hand zoom cites it)`);
+  const W = row.pairWords ?? {};
+  if (typeof W !== 'object' || Array.isArray(W)) throw new Error(`${at}: pairWords is not an object`);
+  for (const [f, slots] of Object.entries(W)) {
+    if (!F.includes(f)) throw new Error(`${at}: pairWords for ${f}, which pairFaults does not draw`);
+    for (const [slot, w] of Object.entries(slots ?? {})) {
+      if (!SLOTS.includes(slot)) throw new Error(`${at}: pairWords ${f}.${slot} is not one of ${SLOTS}`);
+      if (typeof w?.source !== 'string' || !w.source.includes(`cards/${id}.json`)) throw new Error(`${at}: pairWords ${f}.${slot} source does not cite cards/${id}.json`);
+    }
+  }
+  const [KEY, variant, orientation] = k.triple.split('/');
+  return { sub: `${KEY}-${variant}-only-${F.join('-')}-${orientation}`, base: row.pair, faults: [...F], words: W, id, cardId: id };
+}
+/** The key a layers-config row draws: its sub-key when it names pairFaults, else its pair (undefined for none). */
+export const rowKeyOf = (howtoId, row, index = INDEX) => rowFilterOf(howtoId, row, index)?.sub ?? row?.pair;
+/** sub-key -> { sub, base, faults, words, id, cardId, config } from [{ file, closeups }]. Throws when an id gets two
+ *  sub-keys, a sub-key is not [a-z0-9-], equals a key or a drawn id, or one key + '-' starts another. */
+export function subKeysOf(configs, index = INDEX) {
+  const subs = new Map(), ofId = new Map(), keys = [...(index === INDEX ? KEYS : keyIndexOf(index)).keys.keys()];
+  for (const { file, closeups } of configs) for (const [howtoId, row] of Object.entries(closeups ?? {})) {
+    const t = rowFilterOf(howtoId, row, index);
+    if (!t) continue;
+    if (ofId.has(t.id) && ofId.get(t.id) !== t.sub) throw new Error(`hand pairs: ${t.id} gets sub-keys ${ofId.get(t.id)} and ${t.sub}`);
+    ofId.set(t.id, t.sub);
+    const was = subs.get(t.sub);
+    if (was && JSON.stringify(was.words) !== JSON.stringify(t.words)) throw new Error(`hand pairs: sub-key ${t.sub}: ${was.config} and ${file} give different pairWords`);
+    if (!was) subs.set(t.sub, { ...t, config: file });
+  }
+  const all = [...keys, ...subs.keys()];
+  for (const a of subs.keys()) {
+    if (!KEY_RE.test(a)) throw new Error(`hand pairs: sub-key ${a} is not ${KEY_RE}`);
+    if (keys.includes(a) || index.drawn.has(a)) throw new Error(`hand pairs: sub-key ${a} equals a key or a drawn id`);
+    for (const b of all) if (a !== b && (b.startsWith(`${a}-`) || a.startsWith(`${b}-`))) throw new Error(`hand pairs: key ${a} and ${b}: one + '-' starts the other`);
+  }
+  return { subs, ofId };
+}
+// every layers config (registry rows name them under PAGES_DIR; read here by path, so pairs.mjs imports nothing new)
+export const PAGES_DIR = 'tools/plates/library/pages';
+const CONFIGS = readdirSync(join(ROOT, PAGES_DIR)).filter(n => n.endsWith('.layers.json')).sort().map(n => `${PAGES_DIR}/${n}`)
+  .map(file => ({ file, closeups: JSON.parse(readFileSync(join(ROOT, file), 'utf8')).closeups }));
+const SUBBED = subKeysOf(CONFIGS), SUBS = SUBBED.subs;
+
+/** Every drawn id of any owner, as `lib_<card id>` -> pair key (a row's sub-key when its config names pairFaults). Never
+ *  one of the 8 or a gap. */
+export const HAND_OF_ID = Object.freeze(Object.fromEntries([...KEYS.keyOf].map(([id, k]) => [`lib_${id}`, SUBBED.ofId.get(id) ?? k])));
+/** The pair keys, in first-drawn order, then the sub-keys the layers configs name. */
+export const keysOf = (index = INDEX) => (index === INDEX ? [...KEYS.keys.keys(), ...SUBS.keys()] : [...keyIndexOf(index).keys.keys()]);
 
 /** The exercise-neutral hand close-up of one pair key: a `<div class="zx"` panel whose ids all start `hp-<key>-`, one
  *  page per fault, each the key's first id drawn by renderPair with the uid `hp-<key>-<fault>`; words from words/chrome.json and words/<key>.json. */
-export async function pairPanel(key, index = INDEX) {
+export async function pairPanel(key, index = INDEX, subs = index === INDEX ? SUBS : new Map()) {
+  if (subs.has(key)) return subPanel(subs.get(key), index);
   const k = (index === INDEX ? KEYS : keyIndexOf(index)).keys.get(key);
   if (!k) throw new Error(`hand pairs: pairPanel: no key ${key}`);
   const s = pairSpec(k.ids[0], index);
   return panelHtml(key, s.wrong.map(w => ({ fault: w.key, svg: renderPair(k.ids[0], { fault: w.key, uid: `hp-${key}-${w.key}`, index }).svg })));
 }
 
+
+/** F-PAIR-FAULTS: a sub-key's panel: its base key's first id drawn by renderPair for the row's faults only, uids
+ *  `hp-<sub>-<fault>`, words from the base key's file with the row's pairWords slots over them. */
+function subPanel(t, index) {
+  const k = keyIndexOf(index).keys.get(t.base), base = readWords(t.base), kw = base.keys[t.base];
+  const faults = Object.fromEntries(t.faults.map(f => [f, { ...kw.faults?.[f], ...(t.words[f] ?? {}) }]));
+  return panelHtml(t.sub, t.faults.map(f => ({ fault: f, svg: renderPair(k.ids[0], { fault: f, uid: `hp-${t.sub}-${f}`, index }).svg })),
+    { chrome: base.chrome, keys: { [t.sub]: { ...kw, faults } } });
+}
