@@ -103,10 +103,10 @@ const feel = {
   rows: [
     // The card's first row (chest and front of shoulders) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'front-shoulder', where: 'Chest or front-shoulder pain', at: { muscles: ['chest', 'front_delts'] },
-      // c17 (the card's "lowering too fast" gives a cause no claim states; c5 says lower slowly, c17 when tears happen)
-      means: 'Pec tendon tears happen while the weight is lowered.',
+      // The card's own row (W2 second recheck, #379 6635699146): lowering too fast (c5 lower slowly, c17 tears happen then)
+      means: 'Lowering the dumbbells too fast.',
       fix: "Stop the set. Don't train through the pain.",
-      redFlag: 'shoulder', claim: CL.c17 },
+      redFlag: 'shoulder', claim: C(['CONSENSUS'], [...new Set([...CL.c5.sources, ...CL.c17.sources])], 'c5, c17') },
   ],
   claim: CL.c12,
 };
