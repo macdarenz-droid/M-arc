@@ -10,7 +10,7 @@
 //     HOWTO_ZOOM_CSS part for it) through HT-2's rewriteCss. Vite splits it off with the chunk and loads it on first
 //     open, after hand.css. The posture close-ups (HT-7) use the same rules and import the same file.
 // Nothing is re-rendered or re-serialized: every string is a slice of the approved page.
-import { batchGoldenOf, goldenInputs, goldenRows, rows as registryRows, shippedIds, shippedRows } from '../library/registry.mjs';
+import { batchGoldenOf, goldenInputs, goldenRows, rows as registryRows, shippedIds, shippedRows, sourceOf } from '../library/registry.mjs';
 import { layersPage, pagesOf } from '../library/batch-golden.mjs';
 import { loadPairs, pairsOf } from './handpairs.mjs';
 import { readFileSync } from 'node:fs';
@@ -168,6 +168,25 @@ async function outputsOf() {
   return out;
 }
 
+/** LIB-SHAPES (D-SHAPES-HANDS, #377): the ruling under which a library sheet ships with no hand pair, else null.
+ *  Exactly two cases: a sheet with `archetype: 'none'` whose `why` names D-SHIP-GRIP, and a handled sheet with no
+ *  `hand`-kind zoom whose `why` names D-SHIP-C3. */
+export function noPairRuling(sheet) {
+  const h = sheet?.handling, names = r => typeof h?.why === 'string' && new RegExp(`(?<![\\w-])${r}(?![\\w-])`).test(h.why);
+  if (!h) return null;
+  if (h.archetype === 'none') return names('D-SHIP-GRIP') ? 'D-SHIP-GRIP' : null;
+  if (!(sheet.zooms ?? []).some(z => z.kind === 'hand')) return names('D-SHIP-C3') ? 'D-SHIP-C3' : null;
+  return null;
+}
+/** The library loop's check for a row with no hand pair: its ruling, else today's "no hand pair" throw. A ruled row's
+ *  page must hold no hand close-up for it. */
+export function noPairCheck(rowId, sheet, hasHand, file, id) {
+  const ruling = noPairRuling(sheet);
+  if (!ruling) throw new Error(`hands: ${rowId}: no hand pair (tools/plates/library/hands/pairs.mjs HAND_OF_ID); a library hand ships only as handpair-<key>`);
+  if (hasHand) throw new Error(`hands: ${rowId}: no hand pair under ${ruling}, but ${file} holds a hand close-up for ${id}`);
+  return ruling;
+}
+
 /** LIB-2b: the shipped library rows (the 8 stay above, from golden B's committed page). */
 export const libraryRows = (all = registryRows()) => shippedRows(all).filter(r => r.mode !== 'golden');
 export const COVERAGE_DATA = 'tools/plates/library/coverage-archetypes.json';
@@ -189,7 +208,8 @@ async function libraryOutputs(H, handCss) {
     if (rewrite(`${H.HAND_CSS}\n${chromeRules(howtoCss(buildPage, style))}`) !== handCss) throw new Error(`hands: ${row.id}: ${file} does not rebuild hand.css byte for byte`);
     const hasHand = html.includes(`<div class="zx" id="${id}-zoom-hand" data-zoom="hand"`);
     if (archetypes[row.id] === 'none') { if (hasHand) throw new Error(`hands: ${row.id}: archetype 'none', but ${file} holds a hand close-up for ${id}`); }
-    else if (!pairOf[id]) throw new Error(`hands: ${row.id}: no hand pair (tools/plates/library/hands/pairs.mjs HAND_OF_ID); a library hand ships only as handpair-<key>`);
+    // LIB-SHAPES (D-SHAPES-HANDS): a sheet ruled to ship with no hand close-up needs no pair; every other row throws as before
+    else if (!pairOf[id]) noPairCheck(row.id, (await import(pathToFileURL(join(ROOT, sourceOf(row.id))).href)).default, hasHand, file, id);
     out.push({ path: `src/slices/howto/css/zoom-${id}.css`, text: rewrite(`${scopedRules(flatStyle(style), id)}\n${chromeRules(howtoCss(buildPage, style), HX_TAIL)}`, { inPanel: true }) });
   }
   return out;
