@@ -127,7 +127,7 @@ const zooms = [
     },
     caption: {
       right: 'Shoulders over elbows over wrists.',
-      wrong: 'Hands planted far in front of the shoulders.',
+      wrong: 'Hands planted far in front of the shoulders.',   // c6
     },
     alt: {
       right: 'Side view, top of the push-up. Shoulder, elbow and wrist stand in one vertical line, palm flat.',
@@ -151,9 +151,9 @@ const feel = {
   rows: [
     // The card's first two rows (the pressing muscles; the belly holding the body straight) have no fix, so they are
     // left out: the feel line and feel.textOnly say them (D-SHIP-Q16).
-    { key: 'shoulder', where: 'Front of the shoulder', at: { muscles: ['front_delts'] },
+    { key: 'shoulder', where: 'Front-shoulder pain', at: { muscles: ['front_delts'] },
       means: 'Flared elbows can load the shoulder more.',
-      fix: 'Turn your hands forward and keep your elbows close.',
+      fix: "Stop and don't train through the pain. Turn your hands forward, elbows close.",
       redFlag: 'shoulder', claim: CL.c7 },
   ],
   claim: C(['CONSENSUS', 'DATA'], [SL, BB, 'kikuchi-2017'], 'c9, c11'),
@@ -197,7 +197,7 @@ export default {
   contacts: ['floor-body'],
   setup: [
     { kind: 'position', text: 'Kneel, palms flat on the floor about shoulder-width apart.', claim: CL.c1 },
-    { kind: 'position', text: 'Shift forward until your shoulders are over your hands.', zoom: 'stack', claim: CL.c1 },
+    { kind: 'position', text: 'Shift forward until your shoulders are over your hands.', zoom: 'stack', claim: CL.stack },
     { kind: 'position', text: 'Straighten your legs, feet together, body in one line.', zoom: 'hip-line', claim: CL.c2 },
     { kind: 'brace', text: 'Brace your trunk and tense your glutes and thighs.', claim: CL.c2 },
     { kind: 'grip', text: 'Squeeze the floor with your hands.', claim: CL.c14 },

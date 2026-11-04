@@ -103,9 +103,10 @@ const feel = {
   rows: [
     // The card's first row (chest and front of shoulders) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'front-shoulder', where: 'Chest or front-shoulder pain', at: { muscles: ['chest', 'front_delts'] },
-      means: 'You are lowering the dumbbells too fast.',
+      // c17 (the card's "lowering too fast" gives a cause no claim states; c5 says lower slowly, c17 when tears happen)
+      means: 'Pec tendon tears happen while the weight is lowered.',
       fix: "Stop the set. Don't train through the pain.",
-      redFlag: 'shoulder', claim: C(['CONSENSUS'], [ACE, 'kowalczuk2022'], 'c5, c17') },
+      redFlag: 'shoulder', claim: CL.c17 },
   ],
   claim: CL.c12,
 };
@@ -118,7 +119,7 @@ const MISTAKES = [
     fix: 'Lower slowly and touch gently.' },
 ];
 const RISKS = [
-  { key: 'dropped', text: 'Dropped weights cause most bad lifting injuries. Have a spotter hold your wrists.',
+  { key: 'dropped', text: 'Dropped weights cause most bad lifting injuries. Heavy? A spotter behind grips your wrists.',
     claim: C(['DATA', 'CONSENSUS'], ['kerr2010', HK], 'c16, c11') },
   { key: 'pec', text: 'Pec tendon rupture while lowering the weight.', claim: CL.c17 },
   { key: 'shoulder', text: 'Shoulder injuries are common in lifting and linked to poor technique.', claim: CL.c18 },

@@ -147,7 +147,7 @@ const MISTAKES = [
 ];
 const RISKS = [
   { key: 'lockout', text: 'Locking the elbows out hard at the bottom can injure the elbows.', claim: CL.c9 },
-  { key: 'lean', text: 'Leaning or arching strains the lower back.', claim: CL.c12 },
+  { key: 'lean', text: 'Leaning too far forward or arching strains the lower back.', claim: CL.c12 },
   { key: 'weight', text: 'Too much weight moved with momentum can lead to injury.', claim: CL.c15 },
 ];
 

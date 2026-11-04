@@ -83,7 +83,7 @@ const zooms = [
     },
     alt: {
       right: 'Side view, top of the row. Hips hinged, back flat, knees slightly bent. The bar touches the belly.',
-      wrong: 'Side view. The torso has swung up from the hips to heave the bar to the belly.',
+      wrong: 'Side view. The torso has swung up from the hips to heave the bar to the belly.',   // c7
     },
     feelRow: 'low-back',
   },
