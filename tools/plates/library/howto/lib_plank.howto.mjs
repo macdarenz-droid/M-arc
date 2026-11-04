@@ -2,9 +2,10 @@
 // (layers/exercises/machine_chest_press.howto.mjs, barbell_back_squat.howto.mjs). Every shown string restates a claim of
 // the research card docs/research/howto/cards/plank.json (cited in its field's claim, cN = card claim id).
 // Handling: none (card grip note: hand archetype none, forearm plank, no hand zoom).
-// Feel (ruling D-SHIP-Q7): the card's only primary, `core`, is text only (feel.textOnly, as the squat; C2 refuses `core`
-// in any drawn role, the map paints it on the serratus); abs and obliques are drawn as secondary. The card leaves no
-// other primary, so feel.primary is empty.
+// Feel (W2 panel #6633524031, L4): the card's only primary, `core`, is drawn as Main on the abs and obliques, the two
+// regions c10 names as working muscles (rectus abdominis, obliques) and the intro line's "front and sides of the belly".
+// C2 refuses `core` as a drawn muscle id (the map paints it on the serratus), so the two regions stand for it. The card's
+// secondary lists the same two, so feel.secondary is empty.
 //
 // Additions to the architecture's types, used as golden B uses them:
 //   FeelSpec.textOnly   muscles named in the text, never painted (barbell_back_squat)
@@ -51,17 +52,16 @@ const CL = {
 //   sag   (card zoom hip-line Wrong, c4 "sagging low back"): the low back arches (lumbar extension SAG); the forearms and
 //         toes stay on their floor spots, so root, pelvis tilt and ankle are solved as the spec solves its Mistake.
 //         How far it sags is a drawing choice (the card gives no number), as the spec's HIKE_HIP is.
-//   shrug (card zoom shoulder-stack Wrong, c5 "shoulders shrugged, not over the elbows"; W2 fix of the W1 low "Right
-//         and Wrong look almost the same"): the body slides forward over the fixed forearms until each upper arm leans
-//         OFF_ELBOW deg forward of the plumb line (the shoulder ahead of its elbow, the body kept straight, the toe tips
-//         on the floor, solved as the sag) with the shoulder girdle raised SHRUG cm toward the head. The shoulder joint
-//         is solved with the shrug in place, so the elbow and the forearm stay on their floor spots (reach IK, the
-//         spec's own targets).
-// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SAG 20 deg,
-// SHRUG 5 cm and OFF_ELBOW 25 deg are Wrong-pose sizes no card gives; no number from them appears in user copy; the
-// layers panel judges them. SHRUG 5 cm is barbell_shrug's card shrug; OFF_ELBOW 25 deg is rope_triceps_pushdown's spec
-// MIS_SHOULDER (its upper arm swung off the plumb line).
-const H = 1.75, SAG = 20, SHRUG = 5, OFF_ELBOW = 25;
+//   off   (card zoom shoulder-stack Wrong, c5 "not over the elbows"; handlingMistakes[2] "shoulders drifting away from
+//         the elbows"): the body slides forward over the fixed forearms until each upper arm leans OFF_ELBOW deg forward
+//         of the plumb line (the shoulder away from its elbow, the body kept straight, the toe tips on the floor, solved
+//         as the sag). The elbow and the forearm stay on their floor spots (reach IK, the spec's own targets). W2 panel
+//         (#6633524031): the shrug is not drawn (it reads only as this drift), so the Wrong label names the drift and
+//         the shrug stays a text checkpoint (posture 'shoulders', c5).
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SAG 20 deg
+// and OFF_ELBOW 25 deg are Wrong-pose sizes no card gives; no number from them appears in user copy; the layers panel
+// judges them. OFF_ELBOW 25 deg is rope_triceps_pushdown's spec MIS_SHOULDER (its upper arm swung off the plumb line).
+const H = 1.75, SAG = 20, OFF_ELBOW = 25;
 const END = plateSpec.poses.end, LE = landmarksOf(END, H), SH = LE['shoulder.r'], TOE = LE['toe.r'];
 function solve(p0, make, res, iters = 30) {   // Newton with finite differences (the spec's own solver)
   const keys = Object.keys(p0); const p = { ...p0 };
@@ -82,27 +82,34 @@ function solve(p0, make, res, iters = 30) {   // Newton with finite differences 
 const sagPose = q => ({ ...END, root: { at: [0, q.y, q.z], tilt: q.tilt }, trunk: -SAG, ankle: q.ankle });
 const SQ = solve({ y: END.root.at[1] - 0.05, z: END.root.at[2], tilt: END.root.tilt - 10, ankle: 10 }, sagPose,
   lm => [lm['shoulder.r'][1] - SH[1], lm['shoulder.r'][2] - SH[2], lm['toe.r'][1], lm['toe.r'][2] - TOE[2]]);
-// shrug: the shoulder target OFF_ELBOW deg forward of the plumb over the held elbow (+z is toward the head), the body
-// straight (END's trunk, hip, knee), the girdle shrugged, the toe tips on the floor; root y, z and pelvis tilt solved
+// off: the shoulder target OFF_ELBOW deg forward of the plumb over the held elbow (+z is toward the head), the body
+// straight (END's trunk, hip, knee), the toe tips on the floor; root y, z and pelvis tilt solved
 const EL = LE['elbow.r'], L_UA = Math.hypot(SH[1] - EL[1], SH[2] - EL[2]), R = Math.PI / 180;
 const SH_OFF = [EL[1] + L_UA * Math.cos(OFF_ELBOW * R), EL[2] + L_UA * Math.sin(OFF_ELBOW * R)];
-const offPose = q => ({ ...END, root: { at: [0, q.y, q.z], tilt: q.tilt }, scap: { elev: SHRUG, pro: 0 } });
+const offPose = q => ({ ...END, root: { at: [0, q.y, q.z], tilt: q.tilt } });
 const OQ = solve({ y: END.root.at[1], z: END.root.at[2] + 0.1, tilt: END.root.tilt }, offPose,
   lm => [lm['shoulder.r'][1] - SH_OFF[0], lm['shoulder.r'][2] - SH_OFF[1], lm['toe.r'][1]]);
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
   sag: { pose: sagPose(SQ) },
-  shrug: { pose: offPose(OQ) },
+  off: { pose: offPose(OQ) },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 const zooms = [
   {
     key: 'hip-line', chip: 'Hip line', heading: 'Hip line', kind: 'posture',
-    // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's buttock for both halves; the Wrong is the sag
-    // still drawn over the right pose (not solid), so its anchor reads the sagged pose ('mistake').
-    crop: { center: { at: 'buttock', pose: 'right', off: [0, 0] }, sizePx: 150 },
+    // zoom shell (render/closeup/crop.mjs): the Wrong is the sag still drawn over the right pose (not solid), so its
+    // anchor reads the sagged pose ('mistake'). W2 panel (#6633524031, L5): the crop runs from the shoulders to the heels
+    // with the floor line, centred left of the right hip (plate px: heel x 22, shoulder x 274, elbow x 274, floor
+    // y 339); 300 px shows the heels, the shoulders over the forearms, and the floor.
+    // The straight shoulder-to-heel reference (c4, the plate's plank line, plank.mjs datum[0]) is a 'spine' guide on the
+    // right pose's joints, drawn over the figure in both halves: in the Wrong the sagging hips fall below it. (The plate's
+    // datum, kept by the option datumZooms, is drawn under the figure and hidden by it at this size.) The guide's stroke
+    // needs the closeup css option `spine` on plank's record (pilot-a.closeups.mjs); without it the path is not seen.
+    crop: { center: { at: 'hip.r', pose: 'right', off: [-24, 17] }, sizePx: 300 },
+    guides: [{ kind: 'spine', from: { at: 'heel.r', pose: 'end' }, to: { at: 'shoulder.r', pose: 'end' }, extend: [0.06, 0.06] }],
     right: 'end',
     wrong: { base: 'end', pose: stills.sag.pose, solid: false },
     callout: {
@@ -120,35 +127,32 @@ const zooms = [
   },
   {
     key: 'shoulder-stack', chip: 'Shoulders', heading: 'Shoulder stack', kind: 'posture',
-    // zoom shell: crop centre on the right pose's shoulder for both halves; the Wrong is the shrug still drawn alone (solid).
+    // zoom shell: crop centre on the right pose's shoulder for both halves; the Wrong is the off still drawn alone (solid).
     crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, 10] }, sizePx: 110 },
     right: 'end',
-    wrong: { base: 'end', pose: stills.shrug.pose, solid: true },
+    wrong: { base: 'end', pose: stills.off.pose, solid: true },
     callout: {
       right: { text: 'Over elbows', anchor: 'elbow.r' },
-      wrong: { text: 'Shrugged', anchor: 'shoulder.r' },
+      wrong: { text: 'Not over elbows', anchor: 'shoulder.r' },   // card zoom wrong (c5), the drawn drift
     },
     caption: {
       right: 'Shoulders straight over the elbows.',
-      wrong: 'Shoulders shrugged, not over the elbows.',
+      wrong: 'Shoulders not over the elbows.',   // card zoom wrong (c5) without the undrawn shrug
     },
     alt: {
       right: 'Side view, forearm plank. Each shoulder sits straight above its elbow, forearm flat on the floor.',
-      wrong: 'Side view, forearm plank. The shoulders are shrugged up toward the head, ahead of the elbows.',
+      wrong: 'Side view, forearm plank. The shoulders drift away from the elbows, no longer over them.',   // card c5, handlingMistakes[2]
     },
   },
 ];
 
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const feel = {
-  primary: [],   // the card's only primary is core: text only (D-SHIP-Q7)
-  secondary: [
-    { muscleId: 'abs', plain: 'The front of the belly works to hold the body stiff.' },
-    { muscleId: 'obliques', plain: 'The sides of the belly work too.' },
+  primary: [   // the card's primary core, drawn on the two regions c10 names (header note)
+    { muscleId: 'abs', plain: 'The front of the belly works.', claim: CL.c10 },
+    { muscleId: 'obliques', plain: 'The sides of the belly work.', claim: CL.c10 },
   ],
-  textOnly: [   // named in the text, never painted (C2: the map draws core on the serratus); barbell_back_squat
-    { muscleId: 'core', plain: 'The core holds you stiff: front and sides of the belly, and the lower back.', claim: CL.c10 },
-  ],
+  secondary: [],
   watch: [
     { muscleId: 'lower_back', plain: 'Pain in the low back means stop.' },
   ],
@@ -156,7 +160,7 @@ const feel = {
   rows: [
     // The card's first row (front and sides of the belly) has no fix, so it is left out: the feel line says it.
     { key: 'low-back', where: 'Pain in the low back', at: { muscles: ['lower_back'] },
-      means: '',
+      means: 'A sign to stop.',   // c8: low-back pain during the plank means stop
       fix: 'Stop the exercise.',
       redFlag: 'back', claim: CL.c8 },
   ],

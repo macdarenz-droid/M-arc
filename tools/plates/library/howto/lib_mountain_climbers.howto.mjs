@@ -7,8 +7,9 @@
 // Right/Wrong notes are the pair panel's words (tools/plates/library/hands/words/palm-flat-floor-over.json). The card
 // leaves grip.thumb and grip.handContact empty: both are the key's drawing, cited as CONVENTION (source
 // hand-key-palm-flat), never DATA.
-// Feel (D-SHIP-Q7): the card's only primary, `core`, is text only (feel.textOnly, as lib_plank); C2 refuses `core` in any
-// drawn role. feel.primary is empty.
+// Feel (W2 panel #6633524031, L4, as lib_plank): the card's only primary, `core` (c11), is drawn as Main on the abs and
+// obliques, the belly the feel line names. C2 refuses `core` as a drawn muscle id (the map paints it on the serratus), so
+// the two regions stand for it; abs leaves the secondary list for Main.
 import plateSpec from '../specs/mountain_climbers.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
@@ -107,17 +108,18 @@ const zooms = [
       wrong: FAULTS,                // handling.faults (golden B's shape: fault objects)
       camera: 'side',               // the key's render camera (hand-palm-flat.mjs render)
       panelHeight: 170,             // the key's render default (hand-palm-flat.mjs render: spec.panelHeight ?? 170)
-      // CONVENTION (D-SHIP-GRIP (a)): 'Whole hand down' is the key's rightNote, source hand-key-palm-flat
-      // (words/palm-flat-floor-over.json); the card's note says the flat palm is the drawn archetype, not a claim.
-      notes: { right: V.rightNote, wrong: FAULTS[0].label },   // words/palm-flat-floor-over.json, hand-ahead page
+      // W2 panel (#6633524031): only card claims print. Right: the card's grip.type and zoom right ("Palm flat", c2);
+      // Wrong: the card's zoom wrong ("Hands ahead of the shoulders", c6, c19). The key's rightNote ('Whole hand down')
+      // stays data (V.rightNote) and is not printed from here.
+      notes: { right: 'Palm flat', wrong: 'Hands ahead' },
     },
     caption: {
       right: 'Palm flat, hand directly under the shoulder.',
       wrong: 'Hands ahead of the shoulders, weight shifted back.',
     },
-    // the key's alt (VARIANTS.floor.alt), split in two sentences for the 15-word sentence cap
-    // CONVENTION (D-SHIP-GRIP (a)): the flat hand in this alt is the palm-flat key's drawing, source hand-key-palm-flat.
-    alt: { right: 'Hand flat on the floor, palm and fingers down. Forearm straight up over the wrist.', wrong: FAULTS[0].alt },
+    // W2 panel (#6633524031): the card's zoom words only (c2; c6, c19), not the key's alt (a convention).
+    alt: { right: 'Palm flat on the floor, hand directly under the shoulder, arm straight.',
+      wrong: 'Hand ahead of the shoulder, weight shifted back.' },
   },
   {
     key: 'hip-line', chip: 'Hip line', heading: 'Hip line', kind: 'posture',
@@ -144,13 +146,12 @@ const zooms = [
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const HANDS = ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'];
 const feel = {
-  primary: [],   // the card's only primary is core: text only (D-SHIP-Q7)
-  secondary: [
-    { muscleId: 'hip_flexors', plain: 'The hip flexors lift the legs.' },
-    { muscleId: 'abs', plain: 'The front of the belly works too.' },
+  primary: [   // the card's primary core (c11), drawn on the belly (header note)
+    { muscleId: 'abs', plain: 'The front of the belly works.', claim: CL.c11 },
+    { muscleId: 'obliques', plain: 'The sides of the belly work.', claim: CL.c11 },
   ],
-  textOnly: [   // named in the text, never painted (C2: the map draws core on the serratus); lib_plank
-    { muscleId: 'core', plain: 'The core works, with the shoulders and arms.', claim: CL.c11 },
+  secondary: [
+    { muscleId: 'hip_flexors', plain: 'The hip flexors lift the legs.', claim: CL.c11 },
   ],
   watch: [],
   feelLine: 'You should feel this in your belly, shoulders, arms and the front of your hips.',
@@ -158,7 +159,7 @@ const feel = {
     // The card's first two rows (belly, shoulders and arms; front of the hips) have no fix, so they are left out: the
     // feel line says them (D-SHIP-Q16).
     { key: 'wrist', where: 'Back-of-wrist pain', at: { parts: HANDS },
-      means: '',
+      means: 'Your weight loads the wrist bent back.',   // c12: planks and push-ups load the wrist bent back
       fix: 'Stop the exercise. Hands on a bench, or dumbbells to keep the wrists neutral.',
       redFlag: true, claim: CL.wristRow },
   ],
