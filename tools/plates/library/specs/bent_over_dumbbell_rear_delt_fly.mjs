@@ -116,8 +116,11 @@ const M_SHRUG = 8;                                       // cm, scap elevation. 
 const mistakePose = { scap: { elev: M_SHRUG, pro: PRO_END } };
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
 const PITCH = 26;                                        // front plate camera pitch (deg), LIB-PLATEFIX-1 (see the plate below)
-const SHRUG_PX = 8;                                      // drawing value: the shrug contour's move toward the head (plate px; pf1 asked 12-18 px at 780)
-export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG, PITCH, SHRUG_PX };
+// Drawing values of the front plate's shrug contour (pf2 R5/R11, #385 6637293768), plate px (x 2 at the 780-px card):
+const TRAP_RISE = 10;                                    // drawing value: the bunched trapezius hump, this far above the trap landmark (card y ~592, 8 px above the caps' centres; 14 drew the hump above the zoom's ring at k 4, 9 read as a straight line)
+const HEAD_MEET = 11.8;                                  // drawing value: the contour meets the head oval this far above the head landmark (card y 612, pf2 R5; the oval's side is 9.5 px from its axis there, read from the engine's head outline)
+const TELL_DX = 15, TELL_DY = 2;                         // drawing values: the tell anchor's offset right and down from the cap top (plate px), so the zoom's source ring centres on the shoulder-head gap and holds the cap's inner edge, the hump and the head's side (card ~(384, 610), pf2 R11)
+export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG, PITCH, TRAP_RISE, HEAD_MEET, TELL_DX, TELL_DY };
 
 const G0 = landmarksOf(start, H)['grip.r'], HZ = 0.135, HY = 0.119 * 0.866 / 2;
 const HH = 0.065, HR = 0.008;                          // handle half-length, half-thickness (m)
@@ -185,24 +188,22 @@ export const SIDE = {
 // 0.91 of its length (rendered at 0, 12, 24 and 26: at 0 and 12 the figure reads as standing upright with the head on top; 26, not 24, so the 8 cm shrug clears H3 at k 4).
 // The full sweep to level, c3, with 5 via poses so the Trace is one smooth arc about the shoulder (pf1 R6).
 // Mistake (c3): the shoulder blades raised M_SHRUG, as the side drawing. From the front the shrug moves the shoulder caps
-// toward the head, so it is drawn as a shape change (pf1 R5): a red dashed shoulder-cap and trapezius contour moved
-// SHRUG_PX toward the head on each side, closing the neck gap, with one red arrow per side from the shoulder toward the
-// head; the faulty caps are the engine's own outline. The zoom ring sits between the shoulder cap and the head (R11).
-const PC = Math.cos(PITCH * R), PS = Math.sin(PITCH * R), PXM = 256 / 1.75;   // the engine's reference scale (vendor/engine/plate.mjs REF_CAMERA)
-const scr = w => [w[0] * PXM, -(w[1] * PC - w[2] * PS) * PXM];                   // plate px of a world point (makeCamera, less the origin)
+// toward the head, so it is drawn as a change of shape (pf2 R5): on each side a red dashed shoulder-cap and upper-trapezius
+// contour bunches from the faulty cap's top over a hump to the side of the head oval, closing the gap between shoulder and
+// head. No arrows: arrows joined by a line read as 'squeeze the blades', the correct cue (pf2 R5). The faulty caps and arms
+// are the engine's own outline. The zoom's source ring sits on the shoulder-head gap (pf2 R11).
+const PC = Math.cos(PITCH * R), PS = Math.sin(PITCH * R), PXM = 256 / 1.75;   // the engine's reference scale (vendor/engine/plate.mjs REF_CAMERA; QA reads pxPerM 146.3)
 const FRONT_POSES = { start: pose(ROOT_Y, ROOT_Z, 0), via: [15, 30, 45, 60, 75].map(a => pose(ROOT_Y, ROOT_Z, a)), end: pose(ROOT_Y, ROOT_Z, 90) };
-const lmF = landmarksOf(FRONT_POSES.end, H);
-const toHead = s => { const a = scr(lmF[`shoulderTop.${s}`]), b = scr(lmF.head), d = Math.hypot(b[0] - a[0], b[1] - a[1]); return [(b[0] - a[0]) / d, (b[1] - a[1]) / d]; };
-const off = (u, k) => [+(u[0] * k).toFixed(2), +(u[1] * k).toFixed(2)];
-const U = { l: toHead('l'), r: toHead('r') };
-// the contour: outer cap, cap top, trapezius (half way to the neck) on each side, through the neck; each point moved
-// SHRUG_PX toward the head on its own side (the neck by the mean of both)
-const side = s => [{ along: [`shoulderTop.${s}`, `shoulder.${s}`], t: -0.6 }, `shoulderTop.${s}`, { along: [`shoulderTop.${s}`, 'neck'], t: 0.5 }];
-const SHRUG_CONTOUR = [
-  ...side('r').map(at => (typeof at === 'string' ? { at, pose: 'end', off: off(U.r, SHRUG_PX) } : { ...at, pose: 'end', off: off(U.r, SHRUG_PX) })),
-  { at: 'neck', pose: 'end', off: off([(U.l[0] + U.r[0]) / 2, (U.l[1] + U.r[1]) / 2], SHRUG_PX) },
-  ...side('l').reverse().map(at => (typeof at === 'string' ? { at, pose: 'end', off: off(U.l, SHRUG_PX) } : { ...at, pose: 'end', off: off(U.l, SHRUG_PX) })),
-];
+const CAP_R = 7.68;                                      // the engine's shoulder-cap radius at plate scale (the svg's shcap circle r), so the contour starts on the faulty cap
+// The contour's points are world points (plate px offsets turned into metres on the plate camera), so the zoom, drawn at
+// k x the camera, scales the red overlay with the outline (pf2 R11); px offsets would stay 1:1 inside the zoom.
+const lmE = landmarksOf(FRONT_POSES.end, H), lmM = landmarksOf({ ...FRONT_POSES.end, scap: { ...FRONT_POSES.end.scap, ...mistakePose.scap } }, H);
+const W = (w, dx, dy) => [w[0] + dx / PXM, w[1] - dy / (PXM * PC), w[2]];   // world point at plate offset (dx right, dy down) on the pitched camera
+const shrugSide = (s, sg) => ({ kind: 'dashed', smooth: true, pts: [
+  W(lmM[`shoulder.${s}`], sg * CAP_R * 0.71, -CAP_R * 0.71),                // the faulty cap's outline, 45 deg in from its top
+  W(lmE[`trap.${s}`], -sg * 1, -TRAP_RISE),                                  // the bunched trapezius (1 px toward the cap: the hump's crest)
+  W(lmE.head, -sg * 9.5, -HEAD_MEET),                                        // on the head oval's side (card y 612)
+] });
 export default {
   ...SIDE,
   view: 'front', facing: undefined,
@@ -221,13 +222,10 @@ export default {
   mistake: {
     pose: mistakePose,
     parts: ['shcap.l', 'shcap.r'],   // the faulty shoulder caps only (H7: the faulty trunk outline too made 154.6 KB)
-    guides: [
-      { kind: 'dashed', smooth: true, pts: SHRUG_CONTOUR },
-      ...['l', 'r'].map(s => ({ kind: 'arrow', from: { at: `shoulderTop.${s}`, pose: 'end', off: off(U[s], -4) }, to: { at: `shoulderTop.${s}`, pose: 'end', off: off(U[s], SHRUG_PX + 3) } })),
-    ],
+    guides: [shrugSide('r', 1), shrugSide('l', -1)],
     tells: [
-      // anchored on the faulty cap top, moved half way to the head so the zoom ring sits between the cap and the head (R11)
-      { key: 'shrug', text: 'Shoulders<br>shrug', anchor: { at: 'shoulderTop.r', pose: 'mistake', off: off(U.r, 10) }, cue: 'The shoulders hike up toward the ears as the dumbbells rise.' },   // c3
+      // anchored on the faulty cap top, moved into the shoulder-head gap so the zoom ring centres on it (pf2 R11)
+      { key: 'shrug', text: 'Shoulders<br>shrug', anchor: { at: 'shoulderTop.r', pose: 'mistake', off: [TELL_DX, TELL_DY] }, cue: 'The shoulders hike up toward the ears as the dumbbells rise.' },   // c3
     ],
   },
   zoom: { view: 'mistake', k: 4 },   // H3: the shrug moves the anchor about 3 px at plate scale; 4 is the smallest ladder k over 11.4 px

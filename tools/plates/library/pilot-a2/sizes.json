@@ -154,10 +154,25 @@
     "unit": "deg",
     "basis": "decision: LIB-PLATEFIX-1, D-SPIKE-hinge camera pitch for the card's front view; plates panel pf1 (#385 6636073314 R1) read 40 as the trunk pitched at the viewer with a short hanging arm; rendered at 0, 12, 24 and 26 (0 and 12 read as standing upright); 26 keeps the back readable and lets the 8 cm shrug clear H3 at k 4"
    },
-   "SHRUG_PX": {
-    "value": 8,
+   "TRAP_RISE": {
+    "value": 10,
     "unit": "px",
-    "basis": "stated reason: plates panel pf1 (#385 6636073314 R5) asked the shrug contour moved 12-18 px at 780 (6-9 plate px) toward the head; 8 plate px; c3"
+    "basis": "stated reason: plates panel pf2 (#385 6637293768 R5) asked a bunched trapezius contour; the hump sits 10 plate px above the trap landmark (9 read as a straight line, 14 left the k 4 ring); c3"
+   },
+   "HEAD_MEET": {
+    "value": 11.8,
+    "unit": "px",
+    "basis": "stated reason: pf2 R5 'meets the head oval at about y 612' (card px): the contour meets the engine's head outline 11.8 plate px above the head landmark; c3"
+   },
+   "TELL_DX": {
+    "value": 15,
+    "unit": "px",
+    "basis": "stated reason: pf2 R11, the Mistake source ring centred on the shoulder-head gap (card ~(384, 610)): the tell anchor 15 plate px right of the cap top"
+   },
+   "TELL_DY": {
+    "value": 2,
+    "unit": "px",
+    "basis": "stated reason: pf2 R11, as TELL_DX: 2 plate px down, so the ring holds the cap edge, the hump and the head's side"
    }
   }
  }
