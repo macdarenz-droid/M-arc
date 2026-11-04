@@ -3159,6 +3159,28 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
 - **v_up's outline fact added (after train 60).** The V's contact is now checked: the torso outline must lie within
   0.5 cm of the floor, and it does (0.00 cm). The drawing did not change.
 
+## LIB-SHAPES: `none` and no-hand-zoom sheets (2026-11-03)
+
+- **Plan posted for ruling** on the LIB-SHAPES PR ('LIB-SHAPES PLAN'). Card: lib-shapes-card.md on claude/sup-lib4-cards;
+  rulings D-SHIP-SHAPES, D-SHIP-C3, D-SHIP-GRIP (#376). Decisions are recorded here once ruled.
+- **Ruled (LIB-SHAPES PLAN RULED, #377 6615017999).** Builder: `spec.noZoom` (howto ids) in the layers-page spec; named
+  patches 'shape nozoom list/tag/chip/also' and 'shape none grip' on the mirror copy (tools/plates/library/
+  build-layers-page.mjs). A `none` row prints no Grip; a `none` row with a grip line or handling mistakes does not build.
+  App: a `none` sheet keeps its Look closer chips (Hand.tsx); a handled sheet with no `hand`-kind zoom and a non-empty
+  `handling.why` takes the no-zoom branch (LookCloser.tsx `noHandZoom`). **Why:** the list stays out of the bundle;
+  LIB-SHIP's checkC3Library ties `why` to the pinned list. Gate: a test-only route swap of the built ht- chunk
+  (tests/howto/fixtures/lib-shapes/gate.mjs), fail closed. The gate block sits after F-ZOOM-INK's, because
+  lib-strip.test pins LIB-STRIP as the last group; tests/gate-split.test.ts's group count goes 110 -> 111, as that line
+  asks of each new block.
+- **D-SHAPES-HANDS, D-SHAPES-HDR (#377 6615017999, 6615207958).** tools/plates/gen/hands.mjs: a library row with no hand
+  pair passes only as a `none` sheet whose `why` names D-SHIP-GRIP, or a handled sheet with no `hand`-kind zoom whose
+  `why` names D-SHIP-C3 (`noPairRuling`, `noPairCheck`); every other row throws "no hand pair" as before. hands.mjs is a
+  hashed writer, so 27 of the 8's generated files move their `inputsSha256=` header line only; bodies and `www/` are
+  unchanged. **Why:** the generate step must accept the two shapes LIB-SHIP W2 ships.
+- **D-SHAPES-PIN (#377 6616912755).** tools/plates/library/MANIFEST.json re-pins only build-layers-page.mjs's sha256 in
+  the 21 pinned rows (manifestOf/manifestText), in one `[golden update]` commit; lib-shapes.test fails if any other
+  entry moves from main b9369130. **Why:** the builder is a pinned input of every row, and no pinned row has a layers
+  page yet, so no pinned output moves. If LIB-SHIP W1 re-pins first, merge main and re-run manifestOf.
 ## LIB-SHIP W1: the first library How-to ships (2026-11-03/04, PR #376)
 
 - **Source:** PR #376 rulings 6614181887 (SHIP PLAN RULED, D-SHIP-Q1…Q10), 6614298313 (D-SHIP-C3), 6614415740
