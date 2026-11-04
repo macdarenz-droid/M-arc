@@ -1450,7 +1450,7 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 **Update 07:45 UTC (10-24): OWNER DELEGATION.** The owner (07:15): "U do qll that. Dont stall and decide for me." The supervisor now makes the owner's open library choices, and records each one with its reason. Owner-only items in AGENTS.md stay his: Worker deploys, signing and keys, releases and store listings, new kinds of stored or sent data, paid services and spending.
 - **Pilot A (#109): PILOT A PIN GO @ dcac4a38 (6381356655).**
   - "Use proposed" on every line.
-  - 13 ids pinned, with the exemptions from 6261394431; plank's F7 is named. 6 held.
+  - 13 ids pinned, with the exemptions from 6261394431; plank's F7 is named (correction 11-04: the pin, pilot-a.json:338, and pilot-a/MERGE.md:114 carry F1 only; the pin governs, #379 6627967819). 6 held.
   - **D-LIB8M-ROUTED (6381374935):** research applies plank's and mountain_climbers' routed lines on its cards (after LB9's fix round), and #109 copies them from one research head.
   - The builder session_01DtfGjqYEVnEwyRxtRGwSj6 is preparing the pin.
 - **LB9 (#295):** the supervisor runs the fix round itself, under the owner's approval. A helper is applying lb9-research-verify.md. The blocked research session is archived. Next: recheck the delta, merge into research, then the routed-lines research change, then post the head on #109.
