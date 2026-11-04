@@ -78,11 +78,18 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     expect(listSha(list, true)).toBe('c6e705922e80476a69f42ca65b22131ca28fa87938ce1f2018138e607495fbbf');
   });
 
-  it('GOLDEN.json, the golden-B page and the 8\'s ht- and feel- files are byte-equal to main b9369130', () => {
-    const list = ['tests/howto/golden/GOLDEN.json', 'tests/howto/golden/howto-layers.html',
-      ...ROWS.map(i => `src/howto/generated/ht-${i === 'lateral-raise' ? 'dumbbell-lateral-raise' : i}.ts`), ...ROWS.map(i => `src/howto/generated/feel-${i}.ts`)].sort();
-    expect(list).toHaveLength(18);
-    expect(listSha(list, false)).toBe('af07a70aa6221dc3808eb2acb75d99d5d8c0da0c3b03f34d8ff0285f4dffd1dc');
+  // F-PLATE-ZOOMCSS (D-ZOOMCSS-PINS, #387 6637398953): gen/plates.mjs is the 8 ht- files' hashed writer, so only their
+  // header and `hashes:` line (inputsSha256) move; their bodies (bodies.mjs bodySha) and the other 10 files stay as main.
+  it('GOLDEN.json, the golden-B page and the 8\'s feel- files are byte-equal, and the 8\'s ht- bodies equal, main b9369130', async () => {
+    const rest = ['tests/howto/golden/GOLDEN.json', 'tests/howto/golden/howto-layers.html', ...ROWS.map(i => `src/howto/generated/feel-${i}.ts`)].sort();
+    const ht = ROWS.map(i => `src/howto/generated/ht-${i === 'lateral-raise' ? 'dumbbell-lateral-raise' : i}.ts`).sort();
+    expect(rest).toHaveLength(10);
+    expect(ht).toHaveLength(8);
+    expect(listSha(rest, false)).toBe('d6081d2d9becdfa049c929263e79eda95c2320e61b73f6704bcbf8f4ba156458');
+    const { bodySha } = await import(/* @vite-ignore */ new URL('../../tools/plates/library/bodies.mjs', import.meta.url).href);
+    const h = createHash('sha256');
+    for (const p of ht) h.update(`${p}\0${bodySha(readFileSync(p, 'utf8'))}\n`);
+    expect(h.digest('hex')).toBe('6aec194783462dd939055d18714f957c9de30a9f38c91dfd2956dff6a6424078');
   });
 
   it('every patch anchor matches once, and a spec with no noZoom and no `none` row needs none of the new branches', () => {
