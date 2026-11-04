@@ -86,7 +86,7 @@ Risks in W1: (a) the scratch flip finds guards beyond Q6. Mitigation: listed fir
 
 ## 6. Raised flags (ruling 11)
 
-Read from each id's pilot pin `exemptions` (pilots) or its batch qa.mjs `EXPECTED` (lb3-lb10, pilot-b2). For lb1, lb2 and zoom, which have no EXPECTED, the source is lb1/DESIGN.md:84-91 and lb2/DESIGN.md:145-150: F7 on a drawable:false card, plus F1 on resistance_band_row. F5 is on every row and is left out here. Pilot ids (24 flags over 16 ids) are recorded as owner-answered in their pins (Q5).
+Read from each id's pilot pin `exemptions` (pilots) or its batch qa.mjs `EXPECTED` (lb3-lb10, pilot-b2). For lb1, lb2 and zoom, which have no EXPECTED, the source is lb1/DESIGN.md:84-91 and lb2/DESIGN.md:145-150: F7 on a drawable:false card, plus F1 on resistance_band_row. F5 is on every row and is left out here. Pilot ids (24 flags over 14 ids, corrected 11-04, #379 6627967819) are recorded as owner-answered in their pins (Q5).
 
 **Open for the one owner question (53 build-ahead ids):** assisted_pull_up (F7), resistance_band_row (F1+F7), shoulder_press (F7), barbell_shrug (F2+F3+F4+F7), dumbbell_shrug (F2+F4), one_arm_dumbbell_row (F7), pendlay_row (F2), smith_machine_shrug (F2), alternating_dumbbell_curl (F4+F7), barbell_curl (F2+F7), bodyweight_split_squat (F4), concentration_curl (F2), cross_body_hammer_curl (F2+F7), dumbbell_overhead_triceps_extension (F3+F4), ez_bar_curl (F2+F7), front_squat (F2), goblet_squat (F2), incline_dumbbell_curl (F7), pistol_squat (F7), reverse_curl (F2), step_up (F4), wrist_curl (F2+F3+F7), bench_dip (F7), cable_chest_press (F2), cable_external_rotation (F7), high_to_low_cable_fly (F2+F3+F7), hip_abduction (F7), hip_adduction (F7), low_to_high_cable_fly (F2+F7), machine_crunch (F2), machine_lateral_raise (F7), pike_push_up (F7), rear_delt_fly (F3+F7), smith_machine_squat (F2), battle_ropes (F2), bear_crawl (F1), bird_dog (F1+F3), burpee (F7), cable_crunch (F2+F3), cable_kickback (F2+F3), dead_bug (F1), farmer_s_carry (F7), glute_bridge (F2), hollow_body_hold (F2), jump_rope (F3), jumping_jacks (F7), lying_leg_curl (F7), medicine_ball_slam (F7), pendulum_squat (F7), reverse_crunch (F1), side_plank (F1+F7), standing_leg_curl (F7), superman (F2+F3).
 
@@ -118,7 +118,7 @@ Columns: W = wave. hand close-up: `key` = drawn by a pair key; `GAP` = a recorde
 | 18 | cable_fly | 2 | pilot-b → batches/pilot-b.json | B | hold | — | — | — | — | GAP (d-handle) | — | — | F2 |
 | 19 | push_up | 2 | pilot-b → batches/pilot-b.json | C | palm-flat | — | — | — | — | key palm-flat (no card hand zoom) | — | — | — |
 | 20 | seated_leg_curl | 2 | pilot-b → batches/pilot-b.json | C | balance | — | — | — | — | — | — | — | — |
-| 21 | crunch | 2 | pilot-b2 rows.json → batches/pilot-b2.json | B | none | — | — | yes / in box | — | — | — | — | — |
+| 21 | crunch | 2 | pilot-b2 rows.json → batches/pilot-b2.json | B | none | — | — | yes / in box | — | — | — | — | F1, F3 (pilot-b2/qa.mjs:49; D-OWNER-FLAGS per #379 6627803879, 6627967819) |
 | 22 | assisted_pull_up | 3 | lb1 rows.json → batches/lb01.json | A | hang | — | — | — | — | key bar | — | — | F7 ¹ |
 | 23 | chest_supported_row | 3 | lb1 rows.json → batches/lb01.json | C | pull | — | — | yes / in box | — | — | — | — | — ¹ |
 | 24 | chin_up | 3 | lb1 rows.json → batches/lb01.json | A | hang | pull_up | 2 (mapped) | — | — | key bar | — | — | — ¹ |
@@ -481,7 +481,7 @@ Sources: `git log origin/main --first-parent`; `git show/grep origin/main:…`; 
 | LIB-5v before preacher_curl / wrist_curl | met | cd6113c4 |
 | incline_dumbbell_press, reverse_lunge redrawn + pinned | met + routed | incline_dumbbell_press APPROVED lib4:4282; reverse_lunge pilot-a3 pin; batch pin at move (R2, W4 before W5) |
 | preacher_curl approved; skull_crusher pinned first | met + routed | skull_crusher approved lib4:4152; preacher pinned lb5-plates.test.ts APPROVED_FRAGS (:982); batch pin R2 |
-| F7 ids + wrist_curl F1 owner yes | routed | R11 |
+| F7 ids owner yes (wrist_curl: F2, F3, F7 per lb5/qa.mjs:54, no F1: the zoom route was taken; corrected 11-04, #379 6627967819) | routed | R11 |
 | Critic R8, R9 | routed | R10 |
 
 #### lib-16 (LB6)

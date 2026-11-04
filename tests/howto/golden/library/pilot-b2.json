@@ -12,7 +12,7 @@
       "decision": "D-LIB-PILOTB2",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6627803879 @ 7bd217cd5333224b340c0ebfe83233fc4f19b73d",
       "date": "2026-11-04",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; PILOTB2 PIN GO (supervisor, 2026-11-04, #379 6627803879): crunch's page and its 9 fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10 (a)); exemptions F1, F3, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "why": "Approved by the supervisor (PILOTB2 PIN GO, #379 6627803879): crunch's page and its 9 fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10 (a)). F1, F3, F5 named exemptions under D-OWNER-FLAGS (the owner's 11-04 approval of plan decision 9's default for this kind of flag). Crunch was added by supervisor ruling 6627803879 after the re-derivation, and the owner is told the corrected count (58) with the next APK (#379 6627967819).",
       "supersedes": null,
       "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -43,9 +43,9 @@
       "decision": "D-LIB-PILOTB2",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6627803879 @ 7bd217cd5333224b340c0ebfe83233fc4f19b73d",
       "date": "2026-11-04",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; PILOTB2 PIN GO (supervisor, 2026-11-04, #379 6627803879): crunch's page and its 9 fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10 (a)); exemptions F1, F3, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "why": "Approved by the supervisor (PILOTB2 PIN GO, #379 6627803879): crunch's page and its 9 fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10 (a)). F1, F3, F5 named exemptions under D-OWNER-FLAGS (the owner's 11-04 approval of plan decision 9's default for this kind of flag). Crunch was added by supervisor ruling 6627803879 after the re-derivation, and the owner is told the corrected count (58) with the next APK (#379 6627967819).",
       "supersedes": null,
-      "prev": "fc7d98f736209f3959391545f1c1333aac8370ff60d0df45557f6a20e8380244"
+      "prev": "9583c75fae39044276f28a6ebc9ee6c9f123cdf5fd963ef9487335a8981791ca"
     }
   ]
 }
