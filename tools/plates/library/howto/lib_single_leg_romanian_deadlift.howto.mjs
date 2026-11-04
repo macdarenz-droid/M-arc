@@ -28,8 +28,11 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA' },
   acsm2009: { cite: 'American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.', url: 'https://pubmed.ncbi.nlm.nih.gov/19204579/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-17', use: 'CONSENSUS' },
+  // The back box's own source (shared/back-box.mjs boxClaim), as lib_rope_triceps_pushdown lists it: the card's redFlags 'back'.
+  'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
 };
-// Not cited: nhs-back-pain (c20, the back box's own content); c16 (tempo, plate only).
+// Not cited: c16 (tempo, plate only).
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });
 const ACE = 'ace-sl-rdl', SL = 'sl-sl-rdl', TG = 'gentilcore-slrdl';

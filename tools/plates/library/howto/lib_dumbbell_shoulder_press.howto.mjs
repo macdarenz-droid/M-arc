@@ -27,6 +27,9 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA' },
   kerr2010: { cite: 'Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007', url: 'https://pubmed.ncbi.nlm.nih.gov/20139328/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA' },
+  // RED_FLAG_SHOULDER's own source (layers/howto/shared.mjs), as golden B's lateral raise lists it: the card's redFlags 'shoulder'.
+  'nhs-shoulder-pain': { cite: 'NHS, Shoulder pain', url: 'https://www.nhs.uk/conditions/shoulder-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When shoulder pain needs a check.' },
 };
 // Not cited: c12 (tempo, a plate drawing convention).
 

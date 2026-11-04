@@ -24,6 +24,9 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'DATA' },
   'ace-incline-reverse-fly': { cite: 'ACE Exercise Library: Incline Reverse Fly', url: 'https://www.acefitness.org/resources/everyone/exercise-library/34/incline-reverse-fly/',
     kind: 'guideline', access: 'full', checked: '2026-10-22', use: 'CONSENSUS' },
+  // The back box's own source (shared/back-box.mjs boxClaim), as lib_rope_triceps_pushdown lists it: the card's redFlags 'back'.
+  'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
 };
 // Not cited: zhu2025 (c8, model study), acsm2009 (c10 tempo, c11 load steps; no field here restates them).
 

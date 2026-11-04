@@ -22,6 +22,9 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA' },
   'soncin-2014': { cite: 'Influence of exercise order on electromyographic activity during upper body resistance training', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4327372/',
     kind: 'peer-reviewed', access: 'full', checked: '2026-09-30', use: 'WEAK' },
+  // RED_FLAG_SHOULDER's own source (layers/howto/shared.mjs), as golden B's lateral raise lists it: the card's redFlags 'shoulder'.
+  'nhs-shoulder-pain': { cite: 'NHS, Shoulder pain', url: 'https://www.nhs.uk/conditions/shoulder-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When shoulder pain needs a check.' },
 };
 // Not cited: acsm-2009 (c12, c15: tempo and load steps; no field here restates them).
 

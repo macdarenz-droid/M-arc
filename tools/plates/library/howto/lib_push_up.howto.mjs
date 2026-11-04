@@ -33,6 +33,9 @@ export const SOURCES = {
   // The palm-flat key's own source for the thumb (the card has no grip.thumb): a drawing convention.
   'hand-key-palm-flat': { cite: 'LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index', url: 'tools/plates/library/hands/hand-palm-flat.mjs',
     kind: 'secondary', access: 'full', checked: '2026-11-04', use: 'CONVENTION' },
+  // RED_FLAG_SHOULDER's own source (layers/howto/shared.mjs), as golden B's lateral raise lists it: the card's redFlags 'shoulder'.
+  'nhs-shoulder-pain': { cite: 'NHS, Shoulder pain', url: 'https://www.nhs.uk/conditions/shoulder-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When shoulder pain needs a check.' },
 };
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });

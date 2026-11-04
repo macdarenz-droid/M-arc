@@ -24,6 +24,9 @@ export const SOURCES = {
     kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
   'pel-revlunge': { cite: 'Peloton (Rebecca Schumer, physical therapist), Reverse Lunge: How to Do It, Benefits, & Variations', url: 'https://www.onepeloton.com/blog/reverse-lunge',
     kind: 'coach', access: 'full', checked: '2026-10-03', use: 'CONSENSUS' },
+  // RED_FLAG_KNEE's own source (layers/howto/shared.mjs), as golden B's leg_press lists it: the card's redFlags 'knee'.
+  'nhs-knee-pain': { cite: 'NHS, Knee pain', url: 'https://www.nhs.uk/symptoms/knee-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When knee pain needs a check.' },
 };
 // Not cited: fw-revlunge (c15, tempo progression; no field here restates it).
 
@@ -129,15 +132,7 @@ const feel = {
   claim: CL.c9,
 };
 
-/* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
-const MISTAKES = [
-  { key: 'flare', title: 'Flaring the ribcage', claim: CL.c18,
-    fix: 'Tuck the pelvis under as you step back.' },
-  { key: 'lean', title: 'Leaning the chest forward', zoom: 'trunk', claim: CL.c6,
-    fix: 'Go lighter until you can stay upright and controlled.' },
-  { key: 'drop', title: 'Dropping fast into the bottom', claim: C(['CONSENSUS'], [CAT, PEL], 'c7, c16'),
-    fix: 'Lower slowly. Use a weight that lets you move smoothly.' },
-];
+/* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
   { key: 'heavy', text: 'Too heavy a load costs the upright trunk, the controlled descent and balance.', claim: CL.c6 },
   { key: 'crash', text: 'Crashing into the bottom position instead of lowering under control.', claim: CL.c7 },
@@ -161,8 +156,14 @@ export default {
   posture: [
     { key: 'shin', label: 'Front shin vertical', detail: 'Front shin roughly vertical at the bottom.',
       anchor: { landmark: 'knee.r', pose: 'end' }, zoom: 'front-shin', claim: CL.c2 },
-    { key: 'trunk', label: 'Trunk upright', detail: 'Trunk upright.',
-      anchor: { landmark: 'sternum', pose: 'end' }, zoom: 'trunk', claim: CL.c3 },
+    // Q-W2-12: handlingMistake 'Leaning the chest forward' (c6) merged here, its fix added
+    { key: 'trunk', label: 'Trunk upright', detail: 'Trunk upright. Go lighter until you can stay upright and controlled.',
+      anchor: { landmark: 'sternum', pose: 'end' }, zoom: 'trunk', claim: C(['CONSENSUS'], [CAT], 'c3, c6') },
+    // Q-W2-12: handlingMistakes 'Flaring the ribcage' (c18) and 'Dropping fast into the bottom' (c7, c16)
+    { key: 'ribcage', label: 'Flaring the ribcage', detail: 'Tuck the pelvis under as you step back.',
+      anchor: { landmark: 'chest', pose: 'end' }, claim: CL.c18 },
+    { key: 'drop', label: 'Dropping fast', detail: 'Lower slowly. Use a weight that lets you move smoothly.',
+      anchor: { landmark: 'hip.r', pose: 'end' }, claim: C(['CONSENSUS'], [CAT, PEL], 'c7, c16') },
     { key: 'weight', label: 'Weight even', detail: 'Weight about even on both feet at the bottom.',
       anchor: { landmark: 'buttock', pose: 'end' }, claim: CL.c3 },
   ],
@@ -177,7 +178,7 @@ export default {
     variantLine: 'Same form with a barbell instead of dumbbells.',
   },
   redFlag: RED_FLAG,
-  mistakes: MISTAKES,
+  mistakes: [],   // Q-W2-12 (#379 6628699724): the card's handlingMistakes are posture checkpoints above
   risks: RISKS,
   riskFlags: ['knee'],   // the card's redFlags
   sources: Object.keys(SOURCES),

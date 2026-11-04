@@ -33,9 +33,11 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'WEAK' },
   'baechle-grip': { cite: 'Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)', url: 'https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location',
     kind: 'textbook', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
+  // The back box's own source (shared/back-box.mjs boxClaim), as lib_rope_triceps_pushdown lists it: the card's redFlags 'back'.
+  'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
 };
-// Not cited: martinfuentes2020 (c14, only in the card's libraryDiff reasoning), nhs-back-pain (c23, the back box's own
-// content); c20 (tempo, plate only).
+// Not cited: martinfuentes2020 (c14, only in the card's libraryDiff reasoning); c20 (tempo, plate only).
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });
 const ACE = 'ace-romanian-deadlift', SL = 'sl-romanian-deadlift', NASM = 'nasm-rdl';

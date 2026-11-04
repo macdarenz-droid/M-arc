@@ -29,6 +29,12 @@ export const SOURCES = {
     kind: 'guideline', access: 'abstract', checked: '2026-10-17', use: 'CONSENSUS' },
   kolber2010: { cite: 'Shoulder injuries attributed to resistance training: a brief review', url: 'https://pubmed.ncbi.nlm.nih.gov/20508476/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA' },
+  // RED_FLAG_SHOULDER's own source (layers/howto/shared.mjs), as golden B's lateral raise lists it: the card's redFlags 'shoulder'.
+  'nhs-shoulder-pain': { cite: 'NHS, Shoulder pain', url: 'https://www.nhs.uk/conditions/shoulder-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When shoulder pain needs a check.' },
+  // The back box's own source (shared/back-box.mjs boxClaim), as lib_rope_triceps_pushdown lists it: the card's redFlags 'back'.
+  'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
 };
 // Not cited: kerr2010 (c19, all weight training; no field here restates it).
 
@@ -61,17 +67,18 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except the hand zoom `bar-heel-of-palm` (D-SHIP-Q1, above). The crop window is set on the right
-// still; it is wide enough for the start forearm and the Mistake bar in front of the face. `guide` names the crop mark
-// the close-ups page defines (pilot-a.closeups.mjs).
+// still; it is wide enough for the start forearm and the Mistake bar in front of the face. Zoom shell shape
+// (render/closeup/crop.mjs): crop centre on the right pose's shoulder for both halves; the Wrong is the elbows-back still
+// drawn alone (solid), as `stills['elbows-back']`; each callout's anchor dot sits on the elbow, where the forearm starts.
 const zooms = [
   {
     key: 'ohp-forearm-vertical', chip: 'Forearms', heading: 'Forearm angle', kind: 'posture',
-    crop: { center: { landmark: 'shoulder.r', pose: 'start', dx: 14, dy: -16 }, sizePx: 160 },
+    crop: { center: { at: 'shoulder.r', pose: 'right', off: [14, -16] }, sizePx: 160 },
     right: 'start',
-    wrong: { still: 'elbows-back' },
-    callouts: {
-      right: { text: 'Forearms vertical', guide: 'forearm-line' },
-      wrong: { text: 'Elbows back', guide: 'forearm-line' },
+    wrong: { base: 'end', pose: plateSpec.mistake.pose, solid: true },
+    callout: {
+      right: { text: 'Forearms vertical', anchor: 'elbow.r' },
+      wrong: { text: 'Elbows back', anchor: 'elbow.r' },
     },
     caption: {
       right: 'Elbows under the bar, forearms vertical.',
@@ -167,6 +174,7 @@ export default {
   ],
   feel,
   zooms,
+  chips: ['ohp-forearm-vertical', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
     setupLine: 'Set the crossbars, bar at shoulder height. Grip just outside the shoulders, elbows forward under the bar.',
     mistakeLine: "Never arch your low back to finish a rep. If it won't stay neutral, the weight is too heavy.",

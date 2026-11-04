@@ -26,6 +26,9 @@ export const SOURCES = {
     kind: 'coach', access: 'full', checked: '2026-10-02', use: 'CONSENSUS' },
   'maeo-2021': { cite: 'Greater Hamstrings Muscle Hypertrophy but Similar Damage Protection after Training at Long versus Short Muscle Lengths.', url: 'https://pubmed.ncbi.nlm.nih.gov/33009197/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-02', use: 'DATA' },
+  // RED_FLAG_KNEE's own source (layers/howto/shared.mjs), as golden B's leg_press lists it: the card's redFlags 'knee'.
+  'nhs-knee-pain': { cite: 'NHS, Knee pain', url: 'https://www.nhs.uk/symptoms/knee-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When knee pain needs a check.' },
 };
 // Not cited: acsm-2009 (c14, load progression; the card's five setup steps fill the setup cap, no field restates it).
 
@@ -72,15 +75,7 @@ const feel = {
   claim: C(['CONSENSUS', 'DATA'], [SL, 'maeo-2021'], 'c12 (primary), c11; c10 is the calves secondary'),
 };
 
-/* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
-const MISTAKES = [
-  { key: 'calves', title: 'Pushing with your calves', claim: CL.c10,
-    fix: 'Point your toes, or lower the weight.' },
-  { key: 'adjust', title: 'Machine not adjusted', claim: CL.pivot,
-    fix: 'Knees in line with the pivot. Set the seat and leg pad.' },
-  { key: 'swing', title: 'Swinging too heavy a weight', claim: CL.c8,
-    fix: 'Lower the weight. Keep it slow.' },
-];
+/* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
   { key: 'pivot', text: 'Knees out of line with the pivot can hurt.', claim: CL.c1 },
   { key: 'swing', text: 'Too much weight turns the curl into a swing.', claim: CL.c8 },
@@ -102,8 +97,9 @@ export default {
   ],
   posture: [
     // D-SHIP-Q14: the card zoom knee-pivot as a text checkpoint (its wrong is null, LR-25)
-    { key: 'pivot', label: 'Knees at pivot', detail: 'Knees stay in line with the pivot.',
-      anchor: { landmark: 'knee.r', pose: 'start' }, claim: CL.c1 },
+    // Q-W2-12: handlingMistake 'Machine not adjusted' (c1, c9) merged here, its fix added
+    { key: 'pivot', label: 'Knees at pivot', detail: 'Knees stay in line with the pivot. Set the seat and leg pad.',
+      anchor: { landmark: 'knee.r', pose: 'start' }, claim: CL.pivot },
     // D-SHIP-Q14: the card zoom ankle-pad as a text checkpoint (its Wrong moves the pad, which the crop cannot draw)
     { key: 'ankle-pad', label: 'Pad above shoes', detail: 'Ankle pad just above the shoes, never high on the calves.',
       anchor: { landmark: 'ankle.r', pose: 'start' }, claim: CL.c3 },
@@ -111,6 +107,9 @@ export default {
     { key: 'grip', label: 'Hands on handles', detail: 'Hands on the side handles, squeezed.', anchor: { landmark: 'grip.r', pose: 'start' }, claim: CL.c5 },
     { key: 'curl', label: 'Full curl', detail: 'Curl as far as you can, slow and controlled.', anchor: { landmark: 'ankle.r', pose: 'end' }, claim: CL.c6 },
     { key: 'breathe', label: 'Breathe out', detail: 'Breathe out as you curl.', anchor: { landmark: 'chest', pose: 'end' }, claim: CL.c5 },
+    // Q-W2-12: handlingMistakes 'Pushing with your calves' (c10) and 'Swinging a weight that's too heavy' (c8)
+    { key: 'calves', label: 'Pushing with calves', detail: 'Point your toes, or lower the weight.', anchor: { landmark: 'ankle.r', pose: 'end' }, claim: CL.c10 },
+    { key: 'swing', label: 'Swinging heavy weight', detail: 'Lower the weight. Keep it slow.', anchor: { landmark: 'ankle.r', pose: 'end' }, claim: CL.c8 },
     { key: 'return', label: 'Slow return', detail: "Straighten slowly. Don't let the weights clang.", anchor: { landmark: 'knee.r', pose: 'end' }, claim: CL.c7 },
   ],
   feel,
@@ -121,7 +120,7 @@ export default {
     cueLine: 'Knees in line with the pivot.',
   },
   redFlag: RED_FLAG,
-  mistakes: MISTAKES,
+  mistakes: [],   // Q-W2-12 (#379 6628699724): the card's handlingMistakes are posture checkpoints above
   risks: RISKS,
   riskFlags: ['knee'],   // the card's redFlags
   sources: Object.keys(SOURCES),

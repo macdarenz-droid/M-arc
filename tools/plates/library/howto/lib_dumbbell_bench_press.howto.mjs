@@ -30,6 +30,9 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'CONSENSUS' },
   kolber2010: { cite: 'Shoulder injuries attributed to resistance training: a brief review', url: 'https://pubmed.ncbi.nlm.nih.gov/20508476/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'DATA' },
+  // RED_FLAG_SHOULDER's own source (layers/howto/shared.mjs), as golden B's lateral raise lists it: the card's redFlags 'shoulder'.
+  'nhs-shoulder-pain': { cite: 'NHS, Shoulder pain', url: 'https://www.nhs.uk/conditions/shoulder-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When shoulder pain needs a check.' },
 };
 // Not cited: welsch2005 (c13, a barbell/dumbbell/fly comparison; no field here restates it), c8 (breathing), c9 (elbow
 // position and muscle shift, WEAK), c15 (tempo, a plate drawing convention).

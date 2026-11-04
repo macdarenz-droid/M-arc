@@ -8,7 +8,7 @@
 //
 // Additions to the architecture's types, used as golden B uses them:
 //   FeelSpec.textOnly   muscles named in the text, never painted (barbell_back_squat)
-//   ZoomSpec.callouts   one label per crop ({ text, guide }), machine_chest_press
+//   ZoomSpec.callout    one label per crop ({ text, anchor }), the zoom shell's shape (lib_dumbbell_biceps_curl)
 //   stills              still poses for the posture crops, built from the plate spec's own poses
 import plateSpec from '../specs/plank.mjs';
 import { landmarksOf } from '../engine.mjs';
@@ -25,6 +25,9 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'DATA' },
   'harvard-plank': { cite: 'Try this move for better core strength (Harvard Health Publishing, 2021)', url: 'https://www.health.harvard.edu/healthy-aging-and-longevity/try-this-move-for-better-core-strength',
     kind: 'coach', access: 'full', checked: '2026-10-22', use: 'CONSENSUS' },
+  // The back box's own source (shared/back-box.mjs boxClaim), as lib_rope_triceps_pushdown lists it: the card's redFlags 'back'.
+  'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
 };
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });
@@ -39,8 +42,6 @@ const CL = {
   c8: C(['CONSENSUS'], ['ace-plank'], 'card c8'),
   c10: C(['DATA'], ['cortell-2017', 'schoenfeld-2014'], 'card c10'),
   c11: C(['DATA'], ['cortell-2017'], 'card c11'),
-  hike: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c13'),
-  sag: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c2, c14'),
   setupLine: C(['CONSENSUS'], ['ace-plank'], 'card c1, c3'),
   cueLine: C(['CONSENSUS'], ['ace-plank'], 'card c5, c4'),
 };
@@ -99,12 +100,14 @@ export const stills = {
 const zooms = [
   {
     key: 'hip-line', chip: 'Hip line', heading: 'Hip line', kind: 'posture',
-    crop: { center: { landmark: 'buttock', pose: 'end', dx: 0, dy: 0 }, sizePx: 150 },
+    // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's buttock for both halves; the Wrong is the sag
+    // still drawn over the right pose (not solid), so its anchor reads the sagged pose ('mistake').
+    crop: { center: { at: 'buttock', pose: 'right', off: [0, 0] }, sizePx: 150 },
     right: 'end',
-    wrong: { still: 'sag', over: 'end' },
-    callouts: {
-      right: { text: 'Hips level', guide: 'plank-line' },
-      wrong: { text: 'Low back sags', guide: 'plank-line' },
+    wrong: { base: 'end', pose: stills.sag.pose, solid: false },
+    callout: {
+      right: { text: 'Hips level', anchor: 'hip.r' },
+      wrong: { text: 'Low back sags', anchor: { at: 'lumbar', pose: 'mistake' } },
     },
     caption: {
       right: 'No sagging low back, no hiked hips.',
@@ -117,12 +120,13 @@ const zooms = [
   },
   {
     key: 'shoulder-stack', chip: 'Shoulders', heading: 'Shoulder stack', kind: 'posture',
-    crop: { center: { landmark: 'shoulder.r', pose: 'end', dx: 0, dy: 10 }, sizePx: 110 },
+    // zoom shell: crop centre on the right pose's shoulder for both halves; the Wrong is the shrug still drawn alone (solid).
+    crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, 10] }, sizePx: 110 },
     right: 'end',
-    wrong: { still: 'shrug' },
-    callouts: {
-      right: { text: 'Over elbows', guide: 'elbow-plumb' },
-      wrong: { text: 'Shrugged', guide: 'elbow-plumb' },
+    wrong: { base: 'end', pose: stills.shrug.pose, solid: true },
+    callout: {
+      right: { text: 'Over elbows', anchor: 'elbow.r' },
+      wrong: { text: 'Shrugged', anchor: 'shoulder.r' },
     },
     caption: {
       right: 'Shoulders straight over the elbows.',
@@ -160,15 +164,7 @@ const feel = {
   claim: CL.c10,
 };
 
-/* ------------------------------------------------------------------------------------------------ mistakes, risks */
-const MISTAKES = [
-  { key: 'hike', title: 'Hips hiked up', claim: CL.hike,
-    fix: "Don't bend at your hips." },
-  { key: 'sag', title: 'Low back sags', zoom: 'hip-line', claim: CL.sag,
-    fix: "Brace your trunk. Can't hold it? Rest on your knees." },
-  { key: 'shrug', title: 'Shoulders drift off elbows', zoom: 'shoulder-stack', claim: CL.c5,
-    fix: 'Shoulders back over the elbows.' },
-];
+/* ------------------------------------------------------------------------------------------------ risks ---------- */
 const RISKS = [
   { key: 'sag', text: 'Low back sagging (arching) during the hold.', claim: CL.c4 },
   { key: 'back-pain', text: 'Low-back pain during the hold: stop.', claim: CL.c8 },
@@ -189,10 +185,12 @@ export default {
     { kind: 'finish', text: 'Lower yourself down with the body still stiff.', claim: CL.c7 },
   ],
   posture: [
+    // Q-W2-12: handlingMistake 'Shrugging' (c5) merged here; its fix is this detail and its claim is this claim
     { key: 'shoulders', label: 'Shoulders over elbows', detail: 'Shoulders over the elbows, no shrug.',
       anchor: { landmark: 'shoulder.r', pose: 'end' }, zoom: 'shoulder-stack', claim: CL.c5 },
-    { key: 'hips', label: 'Hips level', detail: 'The low back does not sag, and the hips are not hiked.',
-      anchor: { landmark: 'buttock', pose: 'end' }, zoom: 'hip-line', claim: CL.c4 },
+    // Q-W2-12: handlingMistakes 'Hips hiked up' (c4, c13) and 'Low back sags' (c4, c2, c14) merged here, their fixes added
+    { key: 'hips', label: 'Hips level', detail: "The low back does not sag, and the hips are not hiked. Don't bend at your hips. Brace your trunk. Can't hold it? Rest on your knees.",
+      anchor: { landmark: 'buttock', pose: 'end' }, zoom: 'hip-line', claim: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c13, c2, c14') },
     { key: 'knees', label: 'Knees straight', detail: 'Knees straight.',
       anchor: { landmark: 'knee.r', pose: 'end' }, claim: CL.c4 },
     { key: 'harder', label: 'Harder version', detail: 'Tilt the pelvis backward and draw the shoulder blades together.',
@@ -200,13 +198,14 @@ export default {
   ],
   feel,
   zooms,
+  chips: ['hip-line', 'shoulder-stack', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
     setupLine: 'Elbows under your shoulders, palms down. Lift slowly and keep trunk and legs stiff.',
     mistakeLine: 'Keep the hips level: no sagging low back, no hiked hips.',
     cueLine: 'Shoulders over elbows, hips level.',
   },
   redFlag: RED_FLAG,
-  mistakes: MISTAKES,
+  mistakes: [],   // Q-W2-12 (#379 6628699724): the card's handlingMistakes are posture checkpoints above
   risks: RISKS,
   riskFlags: ['back'],
   sources: Object.keys(SOURCES),

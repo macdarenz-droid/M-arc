@@ -21,6 +21,9 @@ export const SOURCES = {
     kind: 'coach', access: 'full', checked: '2026-10-02', use: 'CONSENSUS' },
   'juker-1998': { cite: 'Quantitative intramuscular myoelectric activity of lumbar portions of psoas and the abdominal wall during a wide variety of tasks.', url: 'https://pubmed.ncbi.nlm.nih.gov/9502361/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-02', use: 'DATA' },
+  // The back box's own source (shared/back-box.mjs boxClaim), as lib_rope_triceps_pushdown lists it: the card's redFlags 'back'.
+  'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
 };
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });
@@ -133,15 +136,7 @@ const feel = {
   claim: C(['CONSENSUS'], [SL, BB], 'c9'),
 };
 
-/* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
-const MISTAKES = [
-  { key: 'jerk', title: 'Jerking up with hip flexors', zoom: 'low-back', claim: CL.jerk,
-    fix: 'Curl slowly. Keep your low back on the mat.' },
-  { key: 'pull', title: 'Pulling on your head', zoom: 'chin', claim: CL.c7,
-    fix: 'Cross your arms over your chest.' },
-  { key: 'situp', title: 'Sitting all the way up', claim: CL.c4,
-    fix: 'Stop when your shoulder blades leave the floor.' },
-];
+/* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
   { key: 'low-back', text: 'A fast, hip-led crunch adds stress on the low back.', claim: CL.c6 },
 ];
@@ -160,10 +155,13 @@ export default {
   ],
   posture: [
     { key: 'curl', label: 'Ribs to hips', detail: 'Breathe out and curl your ribs toward your hips.', anchor: { landmark: 'sternum', pose: 'end' }, claim: CL.c3 },
+    // Q-W2-12: handlingMistake 'Sitting all the way up' (c4) merged here; its fix is this detail and its claim is this claim
     { key: 'blades', label: 'Shoulder blades up', detail: 'Stop once your shoulder blades leave the floor.', anchor: { landmark: 'backUpper', pose: 'end' }, claim: CL.c4 },
-    { key: 'low-back', label: 'Low back down', detail: 'Low back, tailbone and feet stay on the mat.',
-      anchor: { landmark: 'lumbar', pose: 'end' }, zoom: 'low-back', claim: CL.c3 },
-    { key: 'chin', label: 'Chin set', detail: "Chin slightly tucked and held. The neck doesn't pull.",
+    // Q-W2-12: handlingMistake 'Jerking up fast with the hip flexors' (c6, c3) merged here, its fix added
+    { key: 'low-back', label: 'Low back down', detail: 'Low back, tailbone and feet stay on the mat. Curl slowly.',
+      anchor: { landmark: 'lumbar', pose: 'end' }, zoom: 'low-back', claim: CL.jerk },   // CL.jerk (c6, c3) covers c3
+    // Q-W2-12: handlingMistake 'Pulling on your head' (c7) merged here, its fix added
+    { key: 'chin', label: 'Chin set', detail: "Chin slightly tucked and held. The neck doesn't pull. Cross your arms over your chest.",
       anchor: { landmark: 'chin', pose: 'end' }, zoom: 'chin', claim: CL.c7 },
     { key: 'shoulders', label: 'Shoulders relaxed', detail: 'Shoulders relaxed. Only your abs curl.', anchor: { landmark: 'shoulder.r', pose: 'end' }, claim: CL.c8 },
     { key: 'uncurl', label: 'Slow uncurl', detail: 'Breathe in and uncurl slowly.', anchor: { landmark: 'backUpper', pose: 'start' }, claim: CL.c5 },
@@ -177,7 +175,7 @@ export default {
     cueLine: 'Ribs toward your hips.',
   },
   redFlag: RED_FLAG,
-  mistakes: MISTAKES,
+  mistakes: [],   // Q-W2-12 (#379 6628699724): the card's handlingMistakes are posture checkpoints above
   risks: RISKS,
   riskFlags: ['back'],   // the card's redFlags
   sources: Object.keys(SOURCES),
