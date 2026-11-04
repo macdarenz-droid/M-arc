@@ -21,13 +21,17 @@ export async function loadPairs(file = PAIRS) {
 }
 
 /** Shipped id -> key, and the keys in first-use order, for the shipped ids that have a pair. */
-export function pairsOf(pairs, shipped, all = rows()) {
+/** D-SHIP-PAIR-NOZOOM (#379 6637870829): the ids on the pinned no-zoom list ship with no hand close-up, so no pair. */
+export const NO_ZOOM_LIST = 'tools/plates/library/hands/no-zoom.json';
+export const noZoomIds = (root = ROOT) => (existsSync(join(root, NO_ZOOM_LIST)) ? Object.keys(JSON.parse(readFileSync(join(root, NO_ZOOM_LIST), 'utf8')).entries ?? {}) : []);
+
+export function pairsOf(pairs, shipped, all = rows(), noZoom = noZoomIds()) {
   if (!pairs) return { pairOf: {}, keys: [] };
   const byId = new Map(all.map(r => [r.id, r]));
   const pairOf = {}, keys = [];
   for (const id of shipped) {
     const key = pairs.HAND_OF_ID[id];
-    if (!key) continue;
+    if (!key || noZoom.includes(id)) continue;
     if (!/^[a-z0-9-]+$/.test(key)) throw new Error(`handpairs: ${id}: bad key ${key}`);
     pairOf[byId.get(id).chromeId] = key;
     if (!keys.includes(key)) keys.push(key);
@@ -39,7 +43,7 @@ export const pairText = (key, panel) => `// The ${key} hand pair (library plan 2
 export const panel = ${JSON.stringify(panel)};
 `;
 
-export const inputs = () => [...registryInputs(), PAIRS].filter(p => existsSync(join(ROOT, p)));
+export const inputs = () => [...registryInputs(), PAIRS, NO_ZOOM_LIST].filter(p => existsSync(join(ROOT, p)));
 
 export async function outputs({ pairsFile = PAIRS, prev } = {}) {
   const pairs = await loadPairs(pairsFile);

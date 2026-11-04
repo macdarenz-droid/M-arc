@@ -228,3 +228,31 @@ describe('LIB-SHIP D-SHIP-IDS-NOPAIR (#379 6636740340): gen/ids.mjs missingChunk
     expect(src).toMatch(/noPairRuling\(sheet\)/);
   });
 });
+
+describe('LIB-SHIP D-SHIP-PAIR-NOZOOM (#379 6637870829): pairsOf leaves out ids on the pinned no-zoom list', () => {
+  let HP: any, H: any, R: any, pairs: any;
+  beforeAll(async () => {
+    [HP, H, R] = await Promise.all(['tools/plates/gen/handpairs.mjs', 'tools/plates/gen/hands.mjs', 'tools/plates/library/registry.mjs'].map(p => import(/* @vite-ignore */ url(p))));
+    pairs = await HP.loadPairs();
+  });
+  it('red 1: a listed id gets no pair (rope and push_up are keyed but listed); without the list they would get one', () => {
+    const shipped = R.shippedIds(), { pairOf } = HP.pairsOf(pairs, shipped);
+    expect(pairOf['rope-triceps-pushdown']).toBeUndefined();
+    expect(pairOf['push-up']).toBeUndefined();
+    const unfiltered = HP.pairsOf(pairs, shipped, R.rows(), []).pairOf;   // mutation: the exclusion removed
+    expect([unfiltered['rope-triceps-pushdown'], unfiltered['push-up']]).toEqual(['rope-push-neutral', 'palm-flat-floor-over']);
+  });
+  it('red 2: an unlisted keyed id keeps its pair (the curl)', () => {
+    const { pairOf, keys } = HP.pairsOf(pairs, R.shippedIds());
+    expect(pairOf['dumbbell-biceps-curl']).toBe('curl-dumbbell-under');
+    expect(keys).toEqual(['curl-dumbbell-under']);
+    expect(HP.noZoomIds()).not.toContain('lib_dumbbell_biceps_curl');
+  });
+  it('red 3: hands.mjs\'s no-zoom check runs for rope and push_up (their sheets name D-SHIP-C3; a sheet naming none is refused)', async () => {
+    for (const id of ['lib_rope_triceps_pushdown', 'lib_push_up']) {
+      const { content: c } = await content.loadContent(id);
+      expect([id, H.noPairCheck(id, c, false, 'page', id)]).toEqual([id, 'D-SHIP-C3']);
+      expect(() => H.noPairCheck(id, { ...c, handling: { ...c.handling, why: 'no ruling' } }, false, 'page', id)).toThrow(/no hand pair/);
+    }
+  });
+});

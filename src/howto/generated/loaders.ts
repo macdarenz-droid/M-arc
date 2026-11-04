@@ -57,8 +57,6 @@ export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: strin
   "leg-press": () => import('./hand-leg-press'),
   "machine-chest-press": () => import('./hand-machine-chest-press'),
   "dumbbell-biceps-curl": () => import('../../slices/howto/css/zoom-dumbbell-biceps-curl.css').then(() => import('./handpair-curl-dumbbell-under')),
-  "rope-triceps-pushdown": () => import('../../slices/howto/css/zoom-rope-triceps-pushdown.css').then(() => import('./handpair-rope-push-neutral')),
-  "push-up": () => import('../../slices/howto/css/zoom-push-up.css').then(() => import('./handpair-palm-flat-floor-over')),
 };
 export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: Readonly<Record<string, string>>; readonly zdots: string }>>> = {
   "lateral-raise": () => import('./posture-lateral-raise'),
