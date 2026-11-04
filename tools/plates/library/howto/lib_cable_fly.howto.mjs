@@ -89,7 +89,7 @@ const zooms = [
     },
     alt: {
       right: 'Front view, hands together in front of the chest. The elbows keep the same slight bend.',
-      wrong: 'Front view. The elbows bend deeply and drop under the hands. The handles are pressed in.',
+      wrong: 'Front view. The elbows bend deeply, so the fly turns into a press.',   // c6
     },
   },
 ];

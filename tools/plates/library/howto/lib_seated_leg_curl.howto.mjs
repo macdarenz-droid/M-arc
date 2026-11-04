@@ -90,10 +90,11 @@ export default {
   contacts: ['seat-back', 'pivot-pad'],   // the card's archetype.contact
   setup: [
     { kind: 'adjust', text: 'Set the seat so your knees line up with the pivot.', claim: CL.c1 },
-    { kind: 'adjust', text: 'Thigh pad snug just above your knees.', claim: CL.c2 },
-    { kind: 'adjust', text: 'Ankle pad just above your shoes.', claim: CL.c3 },
+    // card setup steps 2 and 3 in one, so c6's range cue fits the five-step cap (W2 panel: it was only posture text)
+    { kind: 'adjust', text: 'Thigh pad snug above your knees, ankle pad just above your shoes.', claim: C(['CONSENSUS'], [BB], 'c2, c3') },
     { kind: 'position', text: 'Back flat against the back pad.', claim: CL.c4 },
     { kind: 'grip', text: 'Grip the handles and press your hips into the seat.', claim: CL.c5 },
+    { kind: 'position', text: 'Curl as far as you can, slow and controlled.', claim: CL.c6 },
   ],
   posture: [
     // D-SHIP-Q14: the card zoom knee-pivot as a text checkpoint (its wrong is null, LR-25)

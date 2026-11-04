@@ -100,11 +100,11 @@ const zooms = [
       wrong: { text: 'Low back arched', anchor: { at: 'lumbar', pose: 'mistake' } },
     },
     caption: {
-      right: 'Head, shoulders and buttocks on the pad.',
-      wrong: 'Low back arched off the pad.',
+      right: 'Head, shoulders and buttocks on the pad.',   // c1
+      wrong: 'Low back arched off the pad.',              // c4
     },
     alt: {
-      right: 'Side view, top of the press. Head, shoulders and buttocks rest on the upright pad, arms straight overhead.',
+      right: 'Side view, top of the press. Head, shoulders and buttocks rest on the upright pad, arms straight overhead.',   // c1, c4
       wrong: 'Side view, top of the press. The low back arches away from the pad between the hips and the shoulders.',
     },
   },
@@ -170,7 +170,8 @@ export default {
       // card zoom wrong (c2). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Wrist bent back under the dumbbell.' },
     ],
-    gripLine: 'Closed grip, palms forward, thumbs wrapped. Handle firm in your palm, wrists neutral.',
+    // c2. The wrists are the grey line under it (wrist.limitText), so the lead does not repeat them (W2 panel).
+    gripLine: 'Closed grip, palms forward, thumbs wrapped. Handle firm in your palm.',
     cue: 'Handle firm in palm, wrist neutral.',   // the W2 hint text (c2)
   },
   contacts: ['seat-back'],
@@ -182,8 +183,9 @@ export default {
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c11 },
   ],
   posture: [
+    // The seat-back-contact zoom it opens: Right "Head, shoulders and buttocks on the pad" is c1, Wrong (the arch) c4.
     { key: 'back', label: 'Back on pad', detail: 'Back on the pad, no low-back arch.',
-      anchor: { landmark: 'lumbar', pose: 'end' }, zoom: 'seat-back-contact', claim: CL.c4 },
+      anchor: { landmark: 'lumbar', pose: 'end' }, zoom: 'seat-back-contact', claim: C(['CONSENSUS'], [ACE], 'c1, c4') },
     { key: 'elbows', label: 'Elbows forward', detail: 'Elbows pointed in front of you.',
       anchor: { landmark: 'elbow.r', pose: 'start' }, claim: CL.c5 },
     { key: 'front', label: 'Dumbbells in front', detail: 'Dumbbells in front of the head, never behind the neck.',

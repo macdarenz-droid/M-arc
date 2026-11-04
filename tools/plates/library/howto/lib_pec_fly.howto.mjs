@@ -96,7 +96,7 @@ const feel = {
   feelLine: 'You should feel this across your chest.',
   rows: [
     { key: 'shoulder', where: 'Shoulder pain', at: { muscles: ['front_delts'] },
-      means: 'This machine puts the front of the shoulder in a vulnerable position.',
+      means: 'The pec deck puts the front shoulder in a vulnerable position.',   // c8 says it of the pec deck
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: CL.c8 },
     { key: 'rocking', where: 'Body rocking on the seat', at: {},   // c14 names no body region
@@ -126,13 +126,15 @@ export default {
     { kind: 'position', text: 'Sit back against the pad, feet flat, shoulder-width or wider.', claim: CL.c1 },
     { kind: 'grip', text: 'Take the handles with the elbows slightly bent.', zoom: 'fly-elbow', claim: CL.c3 },
     { kind: 'load', text: 'Pick a weight you can take through the full range without rocking.', claim: CL.c14 },
+    // c6's fault, shown (W2 panel: the posture checkpoint text is not printed on the sheet)
+    { kind: 'brace', text: 'Upper back lifting off the pad? Go lighter.', claim: CL.c6 },
   ],
   posture: [
     // D-SHIP-Q14 (#376 6614695581): the card zoom fly-backpad is a text checkpoint (the front-view plate cannot show the
     // gap), as golden B's machine_chest_press keeps "Start depth" (:165, :285).
     // Q-W2-12 (#379 6628699724): the card's handlingMistakes on this `none` sheet are posture checkpoints: back-off
     // merged here (same claim c6), short merged into 'meet', technique as its own checkpoint.
-    { key: 'back', label: 'Back on pad', detail: 'Upper back pressed into the pad as the handles meet. Never peel it off. Go lighter.',
+    { key: 'back', label: 'Back on pad', detail: 'Upper back pressed into the pad as the handles meet. Upper back lifting off the pad to finish the rep? Go lighter.',
       anchor: { landmark: 'backUpper', pose: 'end' }, claim: CL.c6 },
     { key: 'elbows', label: 'Soft elbows', detail: 'Elbows keep the same slight bend.',
       anchor: { landmark: 'elbow.l', pose: 'start' }, zoom: 'fly-elbow', claim: CL.c3 },

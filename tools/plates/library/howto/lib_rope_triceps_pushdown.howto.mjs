@@ -168,7 +168,9 @@ export default {
     wrist: { ext: [0, 15], limitText: 'Fist curling toward the forearm? Keep the wrist straight.', claim: CL.c5 },   // the key's wristRange
     pose: RIGHT_POSE,
     faults: [CURLED],
-    gripLine: 'Hold each rope end, hands against the knobs. Palms face each other, wrists straight.',
+    // c2, c3, c4 (card grip.width: the ends spread apart at the bottom; W2 panel: the spread was only in posture text).
+    // The wrist is the grey line under it (wrist.limitText, c5), so the lead does not repeat it.
+    gripLine: 'Hold each rope end, hands against the knobs, palms facing. Spread the ends apart at the bottom.',
     cue: 'Hands against the rope knobs.',
   },
   contacts: ['standing-feet'],

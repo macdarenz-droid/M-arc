@@ -148,7 +148,8 @@ export default {
       // card zoom wrong (c3). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Wrist bent back under the dumbbell.' },
     ],
-    gripLine: 'Closed grip, palms facing forward, thumbs wrapped. Handle firm in your palm, wrist neutral.',
+    // c3. The wrist is the grey line under it (wrist.limitText), so the lead does not repeat it (W2 panel).
+    gripLine: 'Closed grip, palms facing forward, thumbs wrapped. Handle firm in your palm.',
     cue: 'Handle firm in palm, wrist neutral.',   // the W2 hint text (c3)
   },
   contacts: ['bench-lying'],

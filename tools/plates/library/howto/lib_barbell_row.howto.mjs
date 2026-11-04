@@ -75,11 +75,11 @@ const zooms = [
     wrong: { base: 'end', pose: SWING, solid: true },
     callout: {
       right: { text: 'Flat back', anchor: 'backMid' },
-      wrong: { text: 'Torso swings up', anchor: 'backUpper' },
+      wrong: { text: 'Torso swings up', anchor: 'backUpper' },   // c7 (card plate.mistake)
     },
     caption: {
       right: 'Flat back, hips hinged, soft knees.',
-      wrong: 'Torso rising as the bar is heaved.',
+      wrong: 'Torso rising as the bar is heaved.',   // c7
     },
     alt: {
       right: 'Side view, top of the row. Hips hinged, back flat, knees slightly bent. The bar touches the belly.',
@@ -155,8 +155,9 @@ export default {
       // modules' label for this fault key (family consistency).
       { key: 'curled', label: 'Wrist curled', pose: {}, markers: [], alt: 'Wrist curled under the bar, out of line with the forearm.' },
     ],
-    // c1 overhand, card grip.handContact, c16 thumbs, c17 straps
-    gripLine: 'Overhand, bar across the base of your fingers, thumbs around it. Straps are fine if grip fails first.',
+    // c1 overhand, c16 thumbs, c17 straps. The card's grip.handContact (base of the fingers) is the pull archetype's
+    // convention, so it fills `contact` only and is not printed (W2 panel, #379 6633524031: convention values are data).
+    gripLine: 'Overhand, thumbs around the bar. Straps are fine if grip fails first.',
     cue: 'Overhand, thumbs wrapped, wrists straight.',   // c1, c16
   },
   contacts: ['standing-feet'],
@@ -171,9 +172,11 @@ export default {
   ],
   posture: [
     { key: 'back', label: 'Flat back', detail: 'Back neutral the whole set, not rounded or arched.',
-      anchor: { landmark: 'backMid', pose: 'end' }, zoom: 'row-back', claim: CL.c4 },
+      anchor: { landmark: 'backMid', pose: 'end' }, claim: CL.c4 },
+    // The row-back zoom's Wrong (torso swings up) is c7's fault, so the zoom hangs on this c5/c7 checkpoint, not on
+    // the c4 flat-back one (W2 panel, #379 6633524031).
     { key: 'trunk', label: 'Trunk still', detail: 'Trunk angle stays the same while the bar moves.',
-      anchor: { landmark: 'lumbar', pose: 'end' }, zoom: 'row-back', claim: CL.c5 },
+      anchor: { landmark: 'lumbar', pose: 'end' }, zoom: 'row-back', claim: C(['CONSENSUS'], [ACE, SL], 'c5, c7') },
     { key: 'bar', label: 'Bar to belly', detail: 'Bar pulled to the belly button or low chest.',
       anchor: { landmark: 'grip.r', pose: 'end' }, claim: C(['CONSENSUS'], [ACE, SL], 'c5, c6') },
     { key: 'blades', label: 'Shoulder blades', detail: 'Shoulder blades forward at the bottom, together at the top.',

@@ -63,10 +63,10 @@ const CL = {
 // HandPose (the key's own pose values are its palm-flat view's, not a HandPose: BOP's undrawn fault shape).
 const V = { archetype: 'palm-flat', loadAxis: 'along-forearm' };   // VARIANTS.floor.archetype, .loadAxis
 const FAULTS = [   // IDS.push_up.faults, in order
-  // VARIANTS.floor.faults['cupped-palm']; its alt's semicolon split into two sentences for the copy lint (C7, as the
-  // curl splits its key's alt)
+  // VARIANTS.floor.faults['cupped-palm']; its alt's semicolon split into two sentences for copy-lint check C7 (a lint
+  // rule, not a card claim), as the curl splits its key's alt
   { key: 'cupped-palm', label: 'Palm cupped', pose: {}, markers: [], alt: 'Palm arched off the floor, only the heel and fingertips down. The heel takes the load.' },
-  // VARIANTS.floor.faults['hand-ahead']
+  // VARIANTS.floor.faults['hand-ahead']; card claim c6 (hands planted too far in front), as the stack zoom's Wrong
   { key: 'hand-ahead', label: 'Hand ahead', pose: {}, markers: [], alt: 'Hand flat but ahead of the shoulder, forearm leaning back.' },
 ];
 const KEY_AHEAD_TILT = 25;   // VARIANTS.floor.faults['hand-ahead'].pose.forearmTilt
@@ -123,7 +123,7 @@ const zooms = [
     wrong: { base: 'end', pose: AHEAD_POSE, solid: true },
     callout: {
       right: { text: 'Stacked', anchor: 'shoulder.r' },
-      wrong: { text: 'Hands ahead', anchor: 'wrist.r' },
+      wrong: { text: 'Hands ahead', anchor: 'wrist.r' },   // c6
     },
     caption: {
       right: 'Shoulders over elbows over wrists.',
@@ -131,7 +131,7 @@ const zooms = [
     },
     alt: {
       right: 'Side view, top of the push-up. Shoulder, elbow and wrist stand in one vertical line, palm flat.',
-      wrong: 'Side view, top of the push-up. The hands are planted far in front of the shoulders, arms leaning.',
+      wrong: 'Side view, top of the push-up. The hands are planted far in front of the shoulders, arms leaning.',   // c6
     },
   },
 ];
@@ -210,7 +210,7 @@ export default {
     { key: 'head', label: 'Head in line', detail: 'Head in line with your spine.', anchor: { landmark: 'head', pose: 'end' }, claim: CL.c2 },
     { key: 'together', label: 'One piece', detail: 'Torso and legs move together.', anchor: { landmark: 'backMid', pose: 'start' }, claim: CL.c3 },
     { key: 'breathe', label: 'Breathe', detail: 'Breathe in going down, out going up.', anchor: { landmark: 'chest', pose: 'start' }, claim: CL.c8 },
-    { key: 'grip', label: 'Palms flat', detail: 'Palms flat, push through the heel and outer edge of the palm.',
+    { key: 'grip', label: 'Palms flat', detail: "Palms flat. 'Squeeze' the floor, pushing through the heel and outer edge of the palm.",
       anchor: { landmark: 'grip.r', pose: 'end' }, claim: CL.grip },
   ],
   feel,
