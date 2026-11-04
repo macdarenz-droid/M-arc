@@ -9,9 +9,7 @@
 //   back-on-pad, foot and hand zooms are drawn on the 45 degree sled and are not on this card).
 // - posture soft: leaf-equal to the parent's (no zoom link in the parent).
 // No hand zoom: the card has none, and the parent's hand zoom is not inherited.
-//   OPEN (C3, reported to the W3 lane): a balance row with handling and no hand zoom needs a no-zoom entry whose
-//   handling.why names D-SHIP-C3, but `grip -> handling` makes every handling leaf equal to the parent's, which has no
-//   `why`. No `why` is written here until that is ruled.
+//   Q-W3-10 (#383 6631278086): `grip` maps to every handling key except `why`; `why` names D-SHIP-C3 (card-no-zoom).
 // Zooms: `knee at the top` is the plate's drawn fault (M: the knees lock). `seat set` is a text checkpoint
 // (D-SHIP-TEXTZOOM): its Wrong (seat too close, thighs at the ribs, hips lifting) moves the sled and the hips together;
 // the spec's sled placement (specs/horizontal_leg_press.mjs:48 feetAt) is module-private and no pose of the plate draws
@@ -176,6 +174,7 @@ export default {
   rev: 1,
   plate: plateSpec,
   handling: {
+    why: 'D-SHIP-C3: card-no-zoom; the card has no hand zoom, and its grip copy (inherited from leg_press, c2) carries the light hold.',
     archetype: 'balance',
     handle: 'pad-handle',
     loadAxis: 'across',
@@ -202,10 +201,10 @@ export default {
       anchor: { at: 'sacrum', pose: 'end' }, claim: CL.back },
     { key: 'feet', label: 'Whole foot flat', detail: 'Heels down, foot in the middle of the plate, toes straight or out a little. Push from heel through ball.',
       anchor: { at: 'heel.r', pose: 'end' }, claim: CL.feet },
-    // inherited, leaf-equal (posture[key=soft]); OPEN (reported): on this plate `start` is the bottom (knees about 90),
-    // while on the parent's plate it is the top, so the parent's anchor pose marks the bent knee here.
+    // Q-W3-11 (#383 6631278086): label and detail inherited; the anchor is this plate's top pose (`end`, knee bent
+    // about 15 degrees; spec T_END), since `start` here is the bottom (knees about 90).
     { key: 'soft', label: 'Soft knees', detail: 'At the top your legs are almost straight, with a small bend at the knee.',
-      anchor: { at: 'knee.r', pose: 'start' }, claim: CL.soft },
+      anchor: { at: 'knee.r', pose: 'end' }, claim: CL.soft },
     { key: 'hands', label: 'Hands light', detail: 'Arms relaxed, shoulders and head on the pad, hands wrapped lightly round the side handles.',
       anchor: { at: 'grip.r', pose: 'end' }, claim: CL.grip },
     // this card's own

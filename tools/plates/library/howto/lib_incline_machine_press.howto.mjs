@@ -182,7 +182,9 @@ export default {
     overBody: false,
     thumb: { mode: 'wrapped', claim: CL.inh },   // inherited (grip.thumb)
     contact: 'heel',               // inherited (grip.handContact)
-    wrist: { ext: [0, 10], dev: [-10, 10], limitText: 'Wrist bending back past about 15 to 20 degrees? Stop and go lighter.', claim: CL.inh },   // inherited (grip.wrist)
+    // Q-W3-7 (#383 6631278086): ext and dev inherited (grip.wrist); limitText restates the inherited grip.wrist only
+    // (neutral, in line with the forearm), not the parent's 'go lighter' line (LR-34 gap on this card).
+    wrist: { ext: [0, 10], dev: [-10, 10], limitText: 'Keep your wrist in line with your forearm.', claim: CL.inh },
     pose: RIGHT_POSE,              // inherited (handling.pose.thumb is in the map)
     faults: [BENT_BACK],
     gripLine: 'Push through the heel of your palm, wrist in line with your forearm. Thumbs wrapped round the handles.',

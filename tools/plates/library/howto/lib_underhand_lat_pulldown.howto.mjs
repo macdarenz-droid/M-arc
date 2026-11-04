@@ -69,7 +69,7 @@ const CL = {
   c11: C(['MECH'], [ACE], 'c11'),
   c18: C(['MECH'], ['odriscoll-1992'], 'c18'),
   far: C(['CONSENSUS'], [PG], 'c8, c6'),
-  path: C(['DATA', 'WEAK'], ['sperandei2009', 'signorile-2002', 'padovan2024', 'kolber2013'], 'card inherit[0]: lat_pulldown\'s front bar path claim (lat_pulldown.howto.mjs:205), inherited by D-LIB9a-MAP'),
+  pathC6: C(['CONSENSUS', 'DATA', 'WEAK'], [PG, 'sperandei2009', 'signorile-2002', 'padovan2024', 'kolber2013'], 'c6 (stop just below the chin); card inherit[0]: in front of the face, never behind the head'),
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
@@ -158,10 +158,7 @@ const zooms = [
       right: 'Side view of the thighs, knee pad and seat. The pad presses on the tops of the thighs, just above the knees. Feet flat, hips down on the seat.',
       wrong: 'The pad set too high, with a gap above the thighs. The hips lift off the seat as the bar comes down. Drawn dashed over the right position.',
     },
-    // OPEN (S3, reported on #383): the parent's feelRow 'low-back' has no row here; this card dropped the lower-back
-    // feel row ("no source links a lower-back feeling to rocking", card notes[0]).
-    feelRow: 'low-back',
-    feelPrompt: 'Lower back aching? This is usually why.',
+    // Q-W3-8 (#383 6631278086): feelRow and feelPrompt are not compared; this card dropped the low-back row, so no feel link.
   },
 ];
 
@@ -243,8 +240,10 @@ export default {
     { key: 'lean', label: 'Torso still', detail: 'Torso stable. The lean does not change.',
       anchor: { landmark: 'backMid', pose: 'end' }, zoom: 'torso', claim: CL.c7 },
     // D-LIB9a-MAP inherit (Q-W3-2): label, detail and anchor equal lat_pulldown's; no zoom link.
-    { key: 'path', label: 'Bar in front', detail: 'The bar travels past your chin to the top of your chest. Never behind the head.',
-      anchor: { at: 'chin' }, claim: CL.path },
+    // Q-W3-9 (#383 6631278086): label and anchor inherited; the detail is this card's c6 (stop just below the chin)
+    // plus the inherited 'never behind the head' (card inherit[0]).
+    { key: 'path', label: 'Bar in front', detail: 'The bar comes down in front of your face and stops just below your chin. Never behind the head.',
+      anchor: { at: 'chin' }, claim: CL.pathC6 },
     { key: 'elbows', label: 'Elbows down', detail: 'Elbows down and back toward the glutes.',
       anchor: { landmark: 'elbow.r', pose: 'end' }, claim: CL.c6 },
     { key: 'stop', label: 'Stop point', detail: 'Stop just below the chin, when the elbows stop moving down.',

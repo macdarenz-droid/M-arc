@@ -153,10 +153,7 @@ const zooms = [
       right: 'Side view of the thighs, knee pad and seat. The pad presses on the tops of the thighs, just above the knees. Feet flat, hips down on the seat.',
       wrong: 'The pad set too high, with a gap above the thighs. The hips lift off the seat as the bar comes down. Drawn dashed over the right position.',
     },
-    // OPEN (S3, reported on #383): the parent's feelRow 'low-back' has no row here; this card dropped the lower-back
-    // feel row ("no source links a lower-back feeling to rocking", card notes[0]).
-    feelRow: 'low-back',
-    feelPrompt: 'Lower back aching? This is usually why.',
+    // Q-W3-8 (#383 6631278086): feelRow and feelPrompt are not compared; this card dropped the low-back row, so no feel link.
   },
 ];
 
