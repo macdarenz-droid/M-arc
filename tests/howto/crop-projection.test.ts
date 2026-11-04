@@ -101,7 +101,7 @@ describe('F-CROP-FRONT D-CROP-NONE: a none sheet builds through the zoom shell',
       .map(p => import(/* @vite-ignore */ href(p))));
     const specFile = path('tools/plates/library/specs/cable_fly.mjs');
     const plate = (await import(/* @vite-ignore */ href('tools/plates/library/specs/cable_fly.mjs'))).default;
-    const z = { ...ZOOMS[0], chip: 'Elbows', heading: 'Elbow bend', kind: 'posture', caption: { right: 'r', wrong: 'w' } };
+    const z: any = { ...ZOOMS[0], chip: 'Elbows', heading: 'Elbow bend', kind: 'posture', caption: { right: 'r', wrong: 'w' } };
     const howto = { id: 'lib_cable_fly', plate, handling: { archetype: 'none', why: 'D-SHIP-GRIP' }, zooms: [z], chips: [z.key, 'feel'] };
     const opts = { shell: 'zoom', chipText: { feel: 'Feel' }, crop: { source: 'engine', ...OPTS }, css: { thumb: 'plain' } };
     const api = zoomApi({ default: howto }, opts, await cu.engineOf(specFile));
