@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=bf00e3ee983178a6dbc8d39366a5a8775bb0d57b04aca0bc6257501470d9aa4c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=2d042bf8eb42c544c10dd2fafc543fa8ab61a3157e02170bca7dfcb68003d7ee
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -48,12 +48,28 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-seated-curl": {
+    "id": "ace-seated-curl",
+    "cite": "Seated Biceps Curl (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "ace-seated-row": {
     "id": "ace-seated-row",
     "cite": "ACE, Seated Row (machine version with a chest pad; torso, elbow and wrist cues carried over)",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/",
     "kind": "guideline",
     "access": "full",
+    "checked": "2026-09-30"
+  },
+  "acsm-2009": {
+    "id": "acsm-2009",
+    "cite": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+    "kind": "guideline",
+    "access": "abstract",
     "checked": "2026-09-30"
   },
   "andersen2008": {
@@ -376,6 +392,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "hand-key-curl": {
+    "id": "hand-key-curl",
+    "cite": "LIB-7 hand pair key curl (dumbbell), CONVENTIONS ga:curl-mid: across the middle of the palm",
+    "url": "tools/plates/library/hands/pairs.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-03"
+  },
   "hk-squat": {
     "id": "hk-squat",
     "cite": "Broussal-Derval A. Squat technique. Human Kinetics, 2019",
@@ -404,6 +428,14 @@
     "id": "jukic2021",
     "cite": "Jukic I et al. (2021) Ergogenic effects of lifting straps on movement velocity, grip strength, perceived exertion and grip security during the deadlift exercise. Physiol Behav 229:113283",
     "url": "https://pubmed.ncbi.nlm.nih.gov/33306977/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "kerr-2010": {
+    "id": "kerr-2010",
+    "cite": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
@@ -502,6 +534,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/37184975/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "marcolin-2018": {
+    "id": "marcolin-2018",
+    "cite": "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/",
+    "kind": "peer-reviewed",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "martinfuentes2020": {
@@ -624,6 +664,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "oliveira-2009": {
+    "id": "oliveira-2009",
+    "cite": "Effect of the shoulder position on the biceps brachii emg in different dumbbell curls",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3737788/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "oranchuk2022": {
     "id": "oranchuk2022",
     "cite": "Oranchuk DJ et al. (2022) Improved power clean performance with the hook-grip is not due to altered force-time or horizontal bar-path characteristics. J Sports Sci 40(2):226-35",
@@ -710,6 +758,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/12423182/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "sl-dbcurl": {
+    "id": "sl-dbcurl",
+    "cite": "How to Dumbbell Curl: Muscles Worked & Proper Form",
+    "url": "https://www.strengthlog.com/dumbbell-curl/",
+    "kind": "coach",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "snarr2017": {

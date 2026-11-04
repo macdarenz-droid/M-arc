@@ -27,7 +27,7 @@ import type { MuscleId } from '../data/muscles';
 /** exercises.json id. Broader than types.ts's `LibId` (the 8 golden exercises): content spans all 153. */
 export type ContentLibId = `lib_${string}`;
 
-export type EvidenceTag = 'DATA' | 'MECH' | 'CONSENSUS' | 'WEAK';
+export type EvidenceTag = 'DATA' | 'MECH' | 'CONSENSUS' | 'WEAK' | 'CONVENTION';   // CONVENTION: LIB-SHIP D-SHIP-Q15, a pair key's recorded drawing convention (D-SHIP-GRIP (a)); type-only, never shown
 export type SourceId = string;
 
 /** Attached to every rule. Never shown in user copy; research data only, never shown (LR-23). */
@@ -145,6 +145,8 @@ export interface HandlingSpec {
   readonly faults: ReadonlyArray<string | HandFault>;
   /** Grip-free alternatives (card `grip.type`), text only until each has its own zoom (hanging_leg_raise). */
   readonly alternatives?: readonly string[];
+  /** LIB-SHIP (D-SHIP-C3, D-SHIP-Q12): the ruling a library row ships under with no hand zoom. Never shown. */
+  readonly why?: string;
   readonly gripLine: string;
   /** The workout hint line outside the sheet; HT-5 generates HOWTO_HINTS from this. */
   readonly cue: string;

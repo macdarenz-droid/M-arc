@@ -1,0 +1,14 @@
+{
+  "groups": [
+    {
+      "id": "pilot-a",
+      "title": "Pilot A",
+      "ids": ["lib_dumbbell_biceps_curl"]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/pilot-a.closeups.mjs",
+  "closeups": {
+    "lib_dumbbell_biceps_curl": { "optionsKey": "dumbbell_biceps_curl", "pair": "curl-dumbbell-under" }
+  },
+  "jump": null
+}

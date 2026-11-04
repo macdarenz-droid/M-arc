@@ -3158,3 +3158,22 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
 - **Source:** PR #371 (6579432546, 6579536635); lb9/DESIGN.md §15, §27.
 - **v_up's outline fact added (after train 60).** The V's contact is now checked: the torso outline must lie within
   0.5 cm of the floor, and it does (0.00 cm). The drawing did not change.
+
+## LIB-SHIP W1: the first library How-to ships (2026-11-03/04, PR #376)
+
+- **Source:** PR #376 rulings 6614181887 (SHIP PLAN RULED, D-SHIP-Q1…Q10), 6614298313 (D-SHIP-C3), 6614415740
+  (D-SHIP-GRIP, D-SHIP-Q12), 6614695581 (D-SHIP-DRAWVAL, -TEXTZOOM, -Q15), 6614896048 (D-SHIP-SHAPES), 6616096384
+  (W1 layers review, D-SHIP-ROPEPAIR), 6616230145 (W1 LAYERS APPROVED, D-SHIP-W1-LAYERS, D-SHIP-W1-STAMP), 6617194861
+  (D-SHIP-A5VENDOR); plan docs/howto/library/LIB-SHIP-DESIGN.md.
+- **W1 ships dumbbell_biceps_curl alone.** barbell_overhead_press (no hand zoom), pec_fly and plank (NoHandling) wait
+  for LIB-SHAPES, which teaches the app and the layers builder those two sheet shapes; rope_triceps_pushdown waits for
+  its three panel fixes and a ruled GAP for its hand close-up (its approved pair draws the palm middle; the card says
+  the knob). **Why:** the vendored builder and the app sections only knew golden B's shape (Hand first, a grip line).
+- **A row with no hand zoom ships only from a pinned, ruled list** (tools/plates/library/hands/no-zoom.json,
+  checkC3Library); a field a card leaves empty takes the drawing pair key's recorded value, cited CONVENTION, never
+  DATA; a card with no hand claim at all uses NoHandling. **Why:** ruling 8 lets a GAP ship with its grip in words;
+  nothing about a hand is invented.
+- **Posture Wrong stills may use drawing values** no card gives, never printed and always judged by the layers panel;
+  a zoom the crop engine cannot draw becomes a text checkpoint (golden B's "Start depth" precedent).
+- **Push hints are at most 6 words** (copy-lint `cue`); 11 shared texts fit ids.ts at 142 ids (1,977 of 2,048 B).
+- **The HT4-A5 twin records the vendor engine too**, since every library spec draws through it (D-LIB9-ENGINE).

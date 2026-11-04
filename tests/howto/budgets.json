@@ -234,15 +234,51 @@
       "measuredGz": 7494,
       "setBy": "HT-11",
       "reason": "HT-11: the panels and zdots ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 105237 / 14972 B, set by HT-7)."
+    },
+    {
+      "chunk": "ht-dumbbell-biceps-curl-*.js",
+      "rawMax": 37250,
+      "gzMax": 9341,
+      "measuredRaw": 33863,
+      "measuredGz": 8491,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W1: dumbbell_biceps_curl ships (#376); measured + 10 % on claude/lib-ship-w1 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-dumbbell-biceps-curl-*.js",
+      "rawMax": 17845,
+      "gzMax": 4162,
+      "measuredRaw": 16222,
+      "measuredGz": 3783,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W1: dumbbell_biceps_curl ships (#376); measured + 10 % on claude/lib-ship-w1 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-dumbbell-biceps-curl-*.js",
+      "rawMax": 27930,
+      "gzMax": 8340,
+      "measuredRaw": 25390,
+      "measuredGz": 7581,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W1: dumbbell_biceps_curl ships (#376); measured + 10 % on claude/lib-ship-w1 after the pin, flip and generate."
+    },
+    {
+      "chunk": "handpair-curl-dumbbell-under-*.js",
+      "rawMax": 51999,
+      "gzMax": 14004,
+      "measuredRaw": 47271,
+      "measuredGz": 12730,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W1: dumbbell_biceps_curl ships (#376); measured + 10 % on claude/lib-ship-w1 after the pin, flip and generate (the curl key's shared pair chunk, under the hands cap gen/hands.mjs handCeiling(pull-up) 92917/26286)."
     }
   ],
   "perId": [
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 8,
-      "rawMax": 5018,
-      "gzMax": 1197,
+      "n": 9,
+      "rawMax": 5645,
+      "gzMax": 1347,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -252,8 +288,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 1456974,
-      "gzMax": 367195,
+      "rawMax": 1639095,
+      "gzMax": 413094,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

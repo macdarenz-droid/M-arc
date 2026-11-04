@@ -76,9 +76,11 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
       for (const id of idsOfKey(k)) expect([k, id, P.inputsFor(id)]).toEqual([k, id, byKey]);
     }
   });
-  it('pairPanel(key) is a zx panel; with main\'s registry no shipped row has a key; a fresh import does not throw', async () => {
+  // LIB-SHIP (D-SHIP-A9, ruling 3; D-SHIP-W1-LAYERS #376 6616230145): replaces "no shipped row has a key". The shipped rows'
+  // keys are exactly the ruled set: an unruled keyed row shipped, or a ruled one dropped, is red.
+  it('pairPanel(key) is a zx panel; LIB-SHIP: the shipped rows with a key are exactly the ruled ones; a fresh import does not throw', async () => {
     for (const k of P.keysOf()) expect((await P.pairPanel(k)).startsWith('<div class="zx"')).toBe(true);
-    expect(hp.pairsOf(P, reg.shippedIds())).toEqual({ pairOf: {}, keys: [] });
+    expect(hp.pairsOf(P, reg.shippedIds())).toEqual({ pairOf: { 'dumbbell-biceps-curl': 'curl-dumbbell-under' }, keys: ['curl-dumbbell-under'] });
     const fresh = await import(/* @vite-ignore */ `${url('tools/plates/library/hands/pairs.mjs')}?lib7fix=${Date.now()}`);
     expect(fresh.HAND_OF_ID).toEqual(P.HAND_OF_ID);
   }, 60_000);
