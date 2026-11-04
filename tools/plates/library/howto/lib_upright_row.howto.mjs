@@ -47,10 +47,19 @@ const CL = {
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
-// From the plate spec's own poses: the end (elbows level with the shoulders, bar at the lower ribs, c6) and the spec's
-// Mistake pose merged over the end pose, as the engine draws it (bar under the chin, elbows above the shoulders; card
-// plate.mistake, c5). The card zoom urow-top's Wrong is that drawn fault, so no new pose is made.
-const CHIN = plateSpec.mistake.pose;
+// From the plate spec's own poses: the end (elbows level with the shoulders, bar at the lower ribs, c6) and the chin
+// still for the card zoom urow-top's Wrong (bar under the chin, elbows above the shoulders; card plate.mistake, c5).
+// W2 panel fix (#6633524031, L1): the chin still is the plate's own Mistake (bar height and depth, elbow pole) with the
+// hands drawn in under the chin (HAND_IN, m from the midline, a drawing value; c5: "pulling the bar up under the chin").
+// At the plate's grip (0.25 m) the hand projects onto the shoulder in this front view, so the folded forearm and fist
+// hide inside the upper arm and the bar floats (L1). With the hands in, the forearms run down and in from the raised
+// elbows to the hands on the bar under the chin. The Wrong crop draws the still alone and solid (merged over the end
+// pose), as lib_triceps_pushdown's ELBOWS_FORWARD. No number from it appears in user copy.
+const MR = plateSpec.mistake.pose.reach, HAND_IN = 0.12;
+const CHIN = { reach: {
+  l: { ...MR.l, at: [HAND_IN, MR.l.at[1], MR.l.at[2]] },
+  r: { ...MR.r, at: [-HAND_IN, MR.r.at[1], MR.r.at[2]] },
+} };
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: plateSpec.poses.end },
@@ -60,7 +69,7 @@ export const stills = {
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except the hand zoom `urow-grip` (D-SHIP-HANDW2, above). Zoom shell form (render/closeup/crop.mjs),
 // in the plate's front view: the crop centre is on the right pose's chest for both halves, wide enough for both
-// elbows; the Wrong is the Mistake pose drawn alone (solid).
+// elbows; the Wrong is the chin still drawn alone (solid), whole arms to the hands on the bar.
 const zooms = [
   {
     key: 'urow-top', chip: 'Top', heading: 'Top position', kind: 'posture',
@@ -77,7 +86,7 @@ const zooms = [
     },
     alt: {
       right: 'Front view, top of the row. The elbows are out to the sides, level with the shoulders. The bar is at the lower ribs.',
-      wrong: 'Front view. The bar is pulled up under the chin, and the elbows rise above the shoulders.',
+      wrong: 'Front view. The bar is pulled up under the chin, and the elbows rise above the shoulders. The forearms run down and in to the hands.',
     },
     feelRow: 'shoulder',
   },
@@ -86,29 +95,33 @@ const zooms = [
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 // The card's first row (side of the shoulders, c8) has no fix, so it is left off the rows (D-SHIP-Q16); the feel line
 // says it.
+// W2 panel fix (#6633524031, content): c8 names the side delts the main movers and the trapezius secondary, so the
+// upper traps are secondary here (the card's feel.primary lists them under c7, an EMG result on grip width, not a
+// ranking of movers) and the feel line names only the sides of the shoulders (c8).
 const feel = {
   primary: [
     { muscleId: 'side_delts', plain: 'The side delts are the main movers.' },
-    { muscleId: 'upper_traps', plain: 'The upper traps work hard, more with a wider grip.' },
   ],
   secondary: [
+    { muscleId: 'upper_traps', plain: 'The upper traps help, more with a wider grip.' },
     { muscleId: 'front_delts', plain: 'The front delts help.' },
     { muscleId: 'biceps', plain: 'The biceps help, more with a narrower grip.' },
   ],
   watch: [],
-  feelLine: 'You should feel this in the sides of your shoulders and your upper traps.',
+  feelLine: 'You should feel this in the sides of your shoulders.',
   rows: [
     { key: 'biceps', where: 'Mostly the biceps', at: { muscles: ['biceps'] },
       means: 'A narrower grip gives more biceps work and less shoulder work.',
-      fix: 'Widen the grip.',
-      claim: CL.c7 },
+      // W2 panel fix: the fix restates handling mistake 2's fix (c5: a too-narrow grip; card grip.width, c5 and c7)
+      fix: 'Widen the grip to about shoulder width or more.',
+      claim: C(['DATA', 'MECH', 'CONSENSUS'], ['mcallister2013', LM], 'c7, c5') },
     { key: 'shoulder', where: 'Shoulder discomfort or pain', at: { muscles: ['side_delts', 'front_delts'] },
       means: 'Elbows above the shoulders, or the bar under the chin.',
       fix: "Stop and don't train through the pain. Keep upper arms below shoulder height.",
       zoom: 'urow-top', redFlag: 'shoulder', claim: C(['CONSENSUS', 'MECH'], [SL, LM], 'c15, c5, c2') },
   ],
   libraryDiff: { add: ['front_delts'], why: 'The front delts are named as secondary movers (card c8).' },
-  claim: C(['CONSENSUS', 'DATA'], [SL, 'mcallister2013'], 'c8, c7'),
+  claim: C(['CONSENSUS', 'DATA'], [SL, 'mcallister2013'], 'c8, c7'),   // c8: movers and their ranks; c7: grip width
 };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */

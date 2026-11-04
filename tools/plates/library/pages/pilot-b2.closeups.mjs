@@ -7,5 +7,6 @@ const ZOOM = {
   css: { thumb: 'plain' },
 };
 export const CLOSEUP_OPTIONS = {
-  crunch: ZOOM,
+  // W2 panel fix: the chin Wrong's pull arrow is a `path` guide, so its css (render/closeup/zoom-css.mjs o.path)
+  crunch: { ...ZOOM, css: { ...ZOOM.css, path: true } },
 };

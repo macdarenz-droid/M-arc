@@ -6,7 +6,7 @@
 // c2) is setup step 2.
 // No variant line (equipment 'Bodyweight').
 import plateSpec from '../specs/crunch.mjs';
-import { fk, resolve, normPose } from '../engine.mjs';
+import { fk, resolve, normPose, landmarksOf } from '../engine.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
 
@@ -69,16 +69,31 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom, same keys and kinds. Zoom shell shape (callout with an anchor at the landmark it names, no guide
-// mark; pilot-a.closeups.mjs); each Wrong is its still drawn alone (solid).
+// mark; pilot-a.closeups.mjs).
+// W2 panel fix (#6633524031, L5): both crops show head to knees with the mat line (WIDE: the window centred off the
+// right pose's hip, a drawing value). The low-back Wrong is the plate's own Mistake (pose and guides: the gap from the
+// mat to the lifted low back, the pelvis tip arrow) dashed red over the right pose, as the plate's Mistake view draws
+// it. The chin Wrong is the `pulled` still drawn alone (solid), with a dashed arrow from the right pose's head to the
+// pulled head (the hands pull it forward, c2, c7).
+const WIDE = { center: { at: 'hip.r', pose: 'right', off: [-30, -28] }, sizePx: 240 };
+// The chin Wrong's pull arrow: an arc round the pulled head (centred on its ear) from behind it (where the hands are) over the crown to the
+// front, the way the hands tip the head forward. PULL_R (arc radius, m) and PULL_DEG (arc angles, deg, 0 = toward the
+// knees, 90 = up) are drawing values that keep the arc just outside the head outline.
+const PULL_R = 0.17, PULL_DEG = [200, 165, 130, 95, 65];
+const PULL_PATH = (() => {
+  const c = landmarksOf({ ...END, ...PULLED }, H).ear;   // the ear: the head's centre in the side view
+  return PULL_DEG.map(d => [c[0], c[1] + PULL_R * Math.sin(d * Math.PI / 180), c[2] + PULL_R * Math.cos(d * Math.PI / 180)]);
+})();
 const zooms = [
   {
     key: 'low-back', chip: 'Low back', heading: 'Low back', kind: 'posture',
-    crop: { center: { at: 'lumbar', pose: 'right', off: [0, -30] }, sizePx: 140 },
+    crop: WIDE,
     right: 'end',
-    wrong: { base: 'end', pose: MIS, solid: true },
+    wrong: { base: 'end', pose: MIS },
+    guides: plateSpec.mistake.guides,
     callout: {
       right: { text: 'Back down', anchor: 'lumbar' },
-      wrong: { text: 'Back lifts', anchor: 'lumbar' },
+      wrong: { text: 'Back lifts', anchor: { at: 'lumbar', pose: 'mistake' } },
     },
     caption: {
       right: 'Low back and tailbone on the mat, upper back lifted.',
@@ -92,9 +107,10 @@ const zooms = [
   },
   {
     key: 'chin', chip: 'Chin', heading: 'Chin position', kind: 'posture',
-    crop: { center: { at: 'chin', pose: 'right', off: [0, 0] }, sizePx: 140 },
+    crop: WIDE,
     right: 'end',
     wrong: { base: 'end', pose: PULLED, solid: true },
+    guides: [{ kind: 'path', role: 'wrong', pts: PULL_PATH }],
     callout: {
       right: { text: 'Chin set', anchor: 'chin' },
       wrong: { text: 'Head pulled', anchor: 'chin' },
@@ -150,7 +166,8 @@ export default {
   contacts: ['floor-body'],
   setup: [
     { kind: 'position', text: 'Lie on your back, knees bent, feet flat and hip-width apart.', claim: CL.c1 },
-    { kind: 'position', text: 'Arms crossed on your chest, or fingertips light by your ears.', zoom: 'chin', claim: CL.c2 },
+    // W2 panel fix (L6): the chin link only under step 3
+    { kind: 'position', text: 'Arms crossed on your chest, or fingertips light by your ears.', claim: CL.c2 },
     { kind: 'position', text: 'Tuck your chin slightly and keep it there.', zoom: 'chin', claim: CL.c7 },
   ],
   posture: [
