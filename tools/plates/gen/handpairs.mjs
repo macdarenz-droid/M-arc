@@ -10,7 +10,6 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT } from '../lib/inputs.mjs';
 import { registryInputs, rows, shippedIds } from '../library/registry.mjs';
-import { rowKeyOf } from '../library/hands/pairs.mjs';   // F-PAIR-FAULTS (configPairOf)
 
 export const PAIRS = 'tools/plates/library/hands/pairs.mjs';
 export const pairPath = key => `src/howto/generated/handpair-${key}.ts`;
@@ -18,8 +17,11 @@ export const pairPath = key => `src/howto/generated/handpair-${key}.ts`;
 /** The pair loader module, or null when LIB-7 has not landed it. `file` is repo-relative (tests pass a fixture). */
 export async function loadPairs(file = PAIRS) {
   if (!existsSync(join(ROOT, file))) return null;
-  return import(pathToFileURL(join(ROOT, file)).href);
+  const m = await import(pathToFileURL(join(ROOT, file)).href);
+  if (file === PAIRS) loaded = m;   // F-PAIR-FAULTS: configPairOf's sub-keys
+  return m;
 }
+let loaded = null;
 
 /** Shipped id -> key, and the keys in first-use order, for the shipped ids that have a pair. */
 export function pairsOf(pairs, shipped, all = rows()) {
@@ -81,7 +83,11 @@ export const after = ['tools/plates/gen/hands.mjs'];
 export function configPairOf(row, root = ROOT) {
   const file = row.pages?.layersConfig;
   if (!file || !existsSync(join(root, file))) return undefined;
-  return rowKeyOf(row.id, JSON.parse(readFileSync(join(root, file), 'utf8')).closeups?.[row.id]);   // F-PAIR-FAULTS: a pairFaults row's sub-key
+  const c = JSON.parse(readFileSync(join(root, file), 'utf8')).closeups?.[row.id];
+  if (c?.pairFaults === undefined && c?.pairWords === undefined) return c?.pair;
+  // F-PAIR-FAULTS: a pairFaults row's sub-key, from the repo's pair loader (gen/hands.mjs loads it before any reader)
+  if (!loaded?.rowKeyOf) throw new Error(`handpairs: ${row.id}: ${file} names pairFaults, but the pair loader is not loaded`);
+  return loaded.rowKeyOf(row.id, c);
 }
 /** The card element of `chromeId` on a layers page (build-page.mjs: `<article class="sheet-card" id="card-<id>"`). */
 export function cardOf(html, chromeId) {

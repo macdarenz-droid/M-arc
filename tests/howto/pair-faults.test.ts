@@ -112,6 +112,7 @@ describe('F-PAIR-FAULTS A1/A4: a row with pairFaults draws only those faults (la
     writeFileSync(join(root, 'x.layers.json'), JSON.stringify({ closeups: { lib_mountain_climbers: MC } }));
     writeFileSync(join(root, 'y.layers.json'), JSON.stringify({ closeups: { lib_mountain_climbers: { optionsKey: 'mountain_climbers', pair: BASE } } }));
     const row = (f: string) => ({ id: 'lib_mountain_climbers', chromeId: 'mountain-climbers', pages: { layersConfig: f } });
+    await hp.loadPairs();
     expect(hp.configPairOf(row('x.layers.json'), root)).toBe(SUB);
     expect(hp.configPairOf(row('y.layers.json'), root)).toBe(BASE);
     const pairs = { HAND_OF_ID: { lib_mountain_climbers: SUB } }, all = [row('x.layers.json')];
