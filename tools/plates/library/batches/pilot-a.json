@@ -172,7 +172,7 @@
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
     "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_rope_triceps_pushdown": {
    "src": "library/specs/rope_triceps_pushdown.mjs",

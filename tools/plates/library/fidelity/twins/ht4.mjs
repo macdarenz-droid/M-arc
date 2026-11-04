@@ -6,7 +6,7 @@
 // derived from source (D-LIB4b-POSES (1)-(5), libraryA5); without LIB-6 in the tree its A5 rows fail: never a skip.
 import { cpSync, existsSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { rows as registryRows, sourceOf } from '../../registry.mjs';
 import { WIDTH, pinnedPlate } from '../tuples.mjs';
@@ -70,9 +70,11 @@ export const SPEC_IDS_8 = ['lateral_raise', 'dumbbell_lateral_raise', 'barbell_b
 /** engine/plate.mjs's shim: every renderPlate call (opts, spec with functions stripped), written to `out` at exit. */
 const shim = out => `export * from './plate.real.mjs';
 import { renderPlate as __real } from './plate.real.mjs';
-import { writeFileSync } from 'node:fs';
+import { existsSync, writeFileSync } from 'node:fs';
 const g = globalThis;
-if (!g.__LIB4B_RP) { g.__LIB4B_RP = []; process.on('exit', () => writeFileSync(${JSON.stringify(out)}, JSON.stringify(g.__LIB4B_RP))); }
+// D-SHIP-A5VENDOR: the twin's own process also loads the shimmed engines (it imports the mirror's builder); its exit runs
+// after the mirror is gone, so it writes only while the mirror exists (the build's child process writes the record)
+if (!g.__LIB4B_RP) { g.__LIB4B_RP = []; process.on('exit', () => { if (existsSync(${JSON.stringify(dirname(out))})) writeFileSync(${JSON.stringify(out)}, JSON.stringify(g.__LIB4B_RP)); }); }
 export function renderPlate(spec, opts) {
   g.__LIB4B_RP.push({ opts: opts ? { ...opts } : opts, spec: JSON.parse(JSON.stringify(spec, (k, v) => typeof v === 'function' ? undefined : v)) });
   return __real(spec, opts);
@@ -91,9 +93,13 @@ export async function captureLayersBuild(root, specOf) {
     cpSync(join(root, 'tools/plates'), join(T, 'tools/plates'), { recursive: true });
     cpSync(join(root, 'src/data'), join(T, 'src/data'), { recursive: true });   // LIB-7b (D-LIB7b-SCRATCH2 P4): a pair row's build loads hands/pairs.mjs, which reads src/data/exercises.json
     symlinkSync(join(root, 'node_modules'), join(T, 'node_modules'));
-    const eng = join(T, 'tools/plates/layers/engine'), out = join(T, 'rp-calls.json');
-    renameSync(join(eng, 'plate.mjs'), join(eng, 'plate.real.mjs'));
-    writeFileSync(join(eng, 'plate.mjs'), shim(out));
+    const out = join(T, 'rp-calls.json');
+    // LIB-SHIP D-SHIP-A5VENDOR (#376 6617194861): a library spec draws through the vendor engine (D-LIB9-ENGINE), so the
+    // mirror's vendor plate.mjs records into the same list as golden B's layers engine; the A5 checks are unchanged.
+    for (const eng of [join(T, 'tools/plates/layers/engine'), join(T, 'tools/plates/vendor/engine')]) {
+      renameSync(join(eng, 'plate.mjs'), join(eng, 'plate.real.mjs'));
+      writeFileSync(join(eng, 'plate.mjs'), shim(out));
+    }
     const b = await import(pathToFileURL(join(T, 'tools/plates/library/build-layers-page.mjs')).href);
     const html = (await b.buildLayersPage(await specOf(T, b))).toString('utf8');
     return { calls: JSON.parse(readFileSync(out, 'utf8')), html };
@@ -162,7 +168,8 @@ async function runLibrary(ctx, { lib }) {
   ctx.ht4lib ??= new Map();
   if (!ctx.ht4lib.has(row.batchFile)) ctx.ht4lib.set(row.batchFile, captureLayersBuild(root, async T => {
     const { layersSpecOf } = await import(pathToFileURL(join(T, 'tools/plates/library/layers-spec.mjs')).href);
-    const s = layersSpecOf(row.batchFile, { stageDir: mkdtempSync(join(tmpdir(), 'lib4b-ht4-stage-')), root });
+    // D-SHIP-A5VENDOR: staged from the mirror T, so a vendor-engine spec's staged closure holds the recording shim
+    const s = layersSpecOf(row.batchFile, { stageDir: mkdtempSync(join(tmpdir(), 'lib4b-ht4-stage-')), root: T });
     return s.optionsUrl ? { ...s, optionsUrl: s.optionsUrl.replace(pathToFileURL(join(root, 'tools/plates')).href, pathToFileURL(join(T, 'tools/plates')).href) } : s;
   }));
   const cap = await ctx.ht4lib.get(row.batchFile);

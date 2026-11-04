@@ -302,7 +302,9 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     const real = await inputsMap(ROOT);
     expect(real.why).toEqual([]);
     expect(real.proven).toBe(true);
-    expect(real.inputs.size).toBe(61);
+    // LIB-SHIP W1 (D-SHIP-A9): the real tree ships dumbbell_biceps_curl, whose 6 generated outputs (ht-, feel-, posture-,
+    // handpair-curl-dumbbell-under, zoom css, docs/research/howto/lib_dumbbell_biceps_curl.json) join the 61 of the 8.
+    expect(real.inputs.size).toBe(61 + 6);
     const r = await run(tree, ['--input-type=module', '-e', "import { inputsMap } from './tools/plates/library/ci/affected.mjs'; const m = await inputsMap(); console.log('@@' + JSON.stringify({ proven: m.proven, why: m.why, n: m.inputs.size }));"]);
     expect(JSON.parse(r.out.split('\n').find(l => l.startsWith('@@'))!.slice(2))).toEqual({ proven: true, why: [], n: 67 });
   });
@@ -361,27 +363,31 @@ async function greenSet(root: string, { ids, times, mode = 'full', all = registr
 const NEEDS = { 'howto-rebuild': { result: 'success' }, 'howto-shard': { result: 'success' } };
 const clone = (x: any): any => JSON.parse(JSON.stringify(x));
 
-describe('C6, C8: zero library ids on this tree', { timeout: 120_000 }, () => {
+// LIB-SHIP W1 (D-SHIP-A9, ruling 3): was "zero library ids on this tree"; the tree now ships exactly the ruled library ids
+// (dumbbell_biceps_curl), so the family is proven over them: their tuples join shard 1, and every old red stays.
+const SHIP_LIB = ['lib_dumbbell_biceps_curl'];
+describe('C6, C8: the shipped library ids on this tree (LIB-SHIP W1: the ruled one)', { timeout: 120_000 }, () => {
   const times = { default: 280.8, c0: 30, once: { run: 0, shard: 0 }, ids: {} };
   const verdict = (s: any, over: any = {}) => libraryVerdict({ lib: s.lib, rebuild: s.rebuild, gate: s.gate, sha: SHA, ref: 'refs/heads/main', event: 'push', needs: NEEDS, root: ROOT, times, ...over });
-  it('C6: K = 1, shard 1 holds exactly LIB_ONCE.shard(1) plus the 4 LIB_ONCE.run rows, and the family is green', async () => {
-    const s = await greenSet(ROOT, { ids: [], times });
+  it('C6: K = 1, shard 1 holds exactly LIB_ONCE.shard(1) plus the 4 LIB_ONCE.run rows and the shipped ids\' tuples, and the family is green', async () => {
+    const s = await greenSet(ROOT, { ids: SHIP_LIB, times });
     expect(s.plan.K).toBe(1);
-    expect(s.lib[0].rows).toHaveLength(6);
+    expect((await libraryTuples(SHIP_LIB, { root: ROOT })).length).toBe(324);   // dumbbell_biceps_curl's tuples (measured on W1)
+    expect(s.lib[0].rows).toHaveLength(6 + 324);
     expect(LIB_ONCE.run).toHaveLength(4);
     const v = await verdict(s);
     expect(v.problems).toEqual([]);
-    expect(v.line).toBe('library: full (0 of 0)');
+    expect(v.line).toBe('library: full (1 of 1)');
   });
   it('C6: shard 1\'s proof missing is red; a skipped or missing needed job is red', async () => {
-    const s = await greenSet(ROOT, { ids: [], times });
+    const s = await greenSet(ROOT, { ids: SHIP_LIB, times });
     expect((await verdict({ ...s, lib: [] })).problems.join('\n')).toMatch(/expected shard proofs 1\.\.1 of 1/);
     expect((await verdict(s, { needs: { ...NEEDS, 'howto-shard': { result: 'skipped' } } })).problems).toContain('library: needed job howto-shard ended skipped');
     expect((await verdict(s, { needs: { 'howto-rebuild': { result: 'success' } } })).problems).toContain('library: needed job howto-shard is missing from MARC_NEEDS');
   });
   it('C8: the 4 LIB_ONCE.run rows exactly once, in shard 1: a failed selftest, a run row also in shard 2, or a dropped run row is red', async () => {
     const t2 = { default: 280.8, c0: 30, once: { run: 0, shard: 0 }, ids: {} };
-    const s = await greenSet(ROOT, { ids: [], times: t2 });
+    const s = await greenSet(ROOT, { ids: SHIP_LIB, times: t2 });
     const failed = clone(s); failed.lib[0].rows.find((r: any) => r.state === 'qa-selftest/browser@*').result = 'fail';
     expect((await verdict(failed)).problems.join('\n')).toMatch(/qa-selftest\/browser@\*: fail/);
     const dropped = clone(s); dropped.lib[0].rows = dropped.lib[0].rows.filter((r: any) => r.state !== 'guard/HT9-A3-dup@390');
@@ -504,7 +510,7 @@ describe('C7: C-TZ, no Date, Intl or toLocale in the How-to code or its built ch
     expect(b.code, b.out).toBe(0);
     const chunks = readdirSync(join(out, 'assets')).filter(n => /^(HowToSheet|ht|hand|handpair|feel|posture|zoom|loaders)-.+\.js$/.test(n));
     expect(chunks.filter(n => n.startsWith('HowToSheet-')).length).toBe(1);
-    expect(chunks.filter(n => n.startsWith('ht-')).length).toBe(8);
+    expect(chunks.filter(n => n.startsWith('ht-')).length).toBe(8 + 1);   // LIB-SHIP W1: the 8 plus dumbbell_biceps_curl
     expect(chunks.flatMap(n => tzProblems(n, readFileSync(join(out, 'assets', n), 'utf8')))).toEqual([]);
   });
   it('the scan bites: a fixture file with new Date() and a chunk with toLocaleString are red; Date.now() is allowed', () => {
@@ -614,9 +620,11 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
   // LIB-11 Do 11 (supervisor ruling 1, #278 6393188049): pilot B's pin adds exactly its page entry
   // LIB-8R Do 7 (D-LIB8R-PINLINES): PILOT-A2's pin adds exactly its page entry
   // PILOT-A3 step 6 (D-A3-PINLINES): PILOT-A3's pin adds exactly its page entry
-  it('the pinned-page list is pilot A\'s, pilot B\'s, PILOT-A2\'s and PILOT-A3\'s pages on this tree and sha256 is the pin hash', () => {
+  // LIB-SHIP W1 (D-SHIP-W1-LAYERS, #376 6616230145): pilot A's layers-page pin adds exactly its layers-page entry
+  it('the pinned-page list is pilot A\'s (page and layers page), pilot B\'s, PILOT-A2\'s and PILOT-A3\'s pages on this tree and sha256 is the pin hash', () => {
     expect(pinnedPages(ROOT)).toEqual({ pages: [{ id: 'tests/howto/golden/library/pilot-a.json#page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'page',
-      pageSha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 }, { id: 'tests/howto/golden/library/pilot-a2.json#page',
+      pageSha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 }, { id: 'tests/howto/golden/library/pilot-a.json#layers-page',
+      file: 'tests/howto/golden/library/pilot-a.json', kind: 'layers-page', pageSha256: 'dc4931df49f9d33fa04cbd64a81aeaa16fba25a7a5e8e4ebfffd4376a1c9c991', bytes: 269552 }, { id: 'tests/howto/golden/library/pilot-a2.json#page',
       file: 'tests/howto/golden/library/pilot-a2.json', kind: 'page', pageSha256: '3e225bc12531e6c395e5a532a77736ebaeb9cdc276c55709d8ac4c73ef78bb0b', bytes: 280533 }, { id: 'tests/howto/golden/library/pilot-a3.json#page',
       file: 'tests/howto/golden/library/pilot-a3.json', kind: 'page', pageSha256: 'bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878', bytes: 465732 }, { id: 'tests/howto/golden/library/pilot-b.json#page',
       file: 'tests/howto/golden/library/pilot-b.json', kind: 'page', pageSha256: 'ff3e017c98f73b6d049808a6ffea057a7fa350eed764d9ceedb9a582fa22583f', bytes: 409765 }], unknown: [] });

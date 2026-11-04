@@ -79,8 +79,12 @@ describe('HT-3c B3: tests/howto/budgets.json', () => {
     // fixture shipped lists (rows not in the registry, so they carry their own chromeId): a keyed row with no entry, a stale entry, an entry over the cap
     const fx = (...ids: string[]) => ids.map(id => ({ id, chromeId: id.slice(4).replace(/_/g, '-') }));
     const entry = (k: string, raw: number, gz: number): Budget => ({ chunk: `handpair-${k}-*.js`, rawMax: raw, gzMax: gz, measuredRaw: raw, measuredGz: gz, setBy: 'LIB-7-FIX', reason: 'fixture entry, never written' });
-    expect(problems(['lib_dumbbell_biceps_curl'], file.budgets, fx('lib_dumbbell_biceps_curl')).bad).toEqual(['handpair-curl-dumbbell-under-*.js: no entry']);
-    expect(problems([], [...file.budgets, entry('rope-push-neutral', 100, 50)], fx()).bad).toEqual(['handpair-rope-push-neutral-*.js: stale']);
-    expect(problems(['lib_rope_triceps_pushdown'], [...file.budgets, entry('rope-push-neutral', cap.raw + 1, cap.gz)], fx('lib_rope_triceps_pushdown')).bad).toEqual([`handpair-rope-push-neutral-*.js: ${cap.raw + 1}/${cap.gz} over the cap ${cap.raw}/${cap.gz}`]);
+    // LIB-SHIP W1: the real file now holds the curl key's entry (dumbbell_biceps_curl ships), so each fixture list starts
+    // from the file without it; every fixture red is unchanged
+    const base = file.budgets.filter(b => b.chunk !== 'handpair-curl-dumbbell-under-*.js');
+    expect(base).toHaveLength(file.budgets.length - 1);
+    expect(problems(['lib_dumbbell_biceps_curl'], base, fx('lib_dumbbell_biceps_curl')).bad).toEqual(['handpair-curl-dumbbell-under-*.js: no entry']);
+    expect(problems([], [...base, entry('rope-push-neutral', 100, 50)], fx()).bad).toEqual(['handpair-rope-push-neutral-*.js: stale']);
+    expect(problems(['lib_rope_triceps_pushdown'], [...base, entry('rope-push-neutral', cap.raw + 1, cap.gz)], fx('lib_rope_triceps_pushdown')).bad).toEqual([`handpair-rope-push-neutral-*.js: ${cap.raw + 1}/${cap.gz} over the cap ${cap.raw}/${cap.gz}`]);
   }, 60_000);
 });
