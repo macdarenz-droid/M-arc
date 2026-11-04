@@ -145,7 +145,9 @@ describe('L2-A1, L2-A18, L2-A20: the 8 as data (pins.json, LIB_OF, HT_PLATES)', 
     expect(platesGen.inputs()).toContain('tools/plates/pins.json');
     const css = out.get('src/slices/howto/css/plate.css')!;
     expect(css.writers).toEqual(['tools/plates/gen/plates.mjs']);
-    expect(css.hash).toBe(core.inputsSha256(css.writers, platesGen.inputs()));
+    // F-PLATE-ZOOMCSS (D-ZOOMCSS-PINS, #387 6636735178): plate.css also hashes zoom/inline.mjs (its ZOOM_CSS), so a zoom CSS edit stales it
+    expect(platesGen.inputsFor('src/slices/howto/css/plate.css')).toEqual([...platesGen.inputs(), 'tools/plates/library/zoom/inline.mjs']);
+    expect(css.hash).toBe(core.inputsSha256(css.writers, platesGen.inputsFor('src/slices/howto/css/plate.css')));
   });
 });
 
