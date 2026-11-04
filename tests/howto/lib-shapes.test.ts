@@ -93,18 +93,24 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     expect(w2Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"plank\": () => import('./hand-plank'),\n")).removed).toBe(37);
   });
 
-  it('GOLDEN.json, the golden-B page and the 8\'s ht- and feel- files are byte-equal to main b9369130', () => {
-    const list = ['tests/howto/golden/GOLDEN.json', 'tests/howto/golden/howto-layers.html',
-      ...ROWS.map(i => `src/howto/generated/ht-${i === 'lateral-raise' ? 'dumbbell-lateral-raise' : i}.ts`), ...ROWS.map(i => `src/howto/generated/feel-${i}.ts`)].sort();
-    expect(list).toHaveLength(18);
-    // LIB-SHIP W2 (ruling 3; D-FEEL-NOMEANS): the 18 were af07a70a on main cb9a6dae. gen/feel.mjs is the feel files'
-    // hashed writer, so only their header line moves: the 10 others stay byte-equal (96d98328) and the 8 feel files keep
-    // their main bodies exactly (dd5410f0), both measured on main cb9a6dae
-    const feel = list.filter(p => p.includes('/feel-'));
+  // F-PLATE-ZOOMCSS (D-ZOOMCSS-PINS, #387 6637398953): gen/plates.mjs is the 8 ht- files' hashed writer, so only their
+  // header and `hashes:` line (inputsSha256) move; their bodies (bodies.mjs bodySha) stay as main. LIB-SHIP W2 (ruling 3;
+  // D-FEEL-NOMEANS; merge of main 8bb433bd, both sides kept): gen/feel.mjs is the 8 feel files' hashed writer, so only their
+  // header line moves: they keep their main bodies exactly (dd5410f0, main cb9a6dae), and GOLDEN.json and the golden-B page
+  // stay byte-equal (7c7700d5, the same on main 8bb433bd).
+  it('GOLDEN.json and the golden-B page are byte-equal, and the 8\'s ht- and feel- bodies equal, main b9369130', async () => {
+    const two = ['tests/howto/golden/GOLDEN.json', 'tests/howto/golden/howto-layers.html'].sort();
+    const feel = ROWS.map(i => `src/howto/generated/feel-${i}.ts`).sort();
+    const ht = ROWS.map(i => `src/howto/generated/ht-${i === 'lateral-raise' ? 'dumbbell-lateral-raise' : i}.ts`).sort();
     expect(feel).toHaveLength(8);
-    expect(listSha(list.filter(p => !feel.includes(p)), false)).toBe('96d9832868e248d98788d2e9bca3a475a210ddfcbd63afed1c835b20dc7d6c88');
+    expect(ht).toHaveLength(8);
+    expect(listSha(two, false)).toBe('7c7700d50566bd931cd700763825c2735b21b86e614e4acd85f396433b278644');
     expect(listSha(feel, true)).toBe('dd5410f05fe597226a210692d5f4c9092e06fc51898e98b7fa343de868cda435');
     for (const p of feel) expect(readFileSync(p, 'utf8'), p).toMatch(/^\/\/ GENERATED, do not edit\. Written by tools\/plates\/generate\.mjs \(tools\/plates\/gen\/feel\.mjs\)\. inputsSha256=[0-9a-f]{64}\n/);
+    const { bodySha } = await import(/* @vite-ignore */ new URL('../../tools/plates/library/bodies.mjs', import.meta.url).href);
+    const h = createHash('sha256');
+    for (const p of ht) h.update(`${p}\0${bodySha(readFileSync(p, 'utf8'))}\n`);
+    expect(h.digest('hex')).toBe('6aec194783462dd939055d18714f957c9de30a9f38c91dfd2956dff6a6424078');
   });
 
   it('every patch anchor matches once, and a spec with no noZoom and no `none` row needs none of the new branches', () => {
