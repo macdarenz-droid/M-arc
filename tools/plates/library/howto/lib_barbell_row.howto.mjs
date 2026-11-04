@@ -162,12 +162,12 @@ export default {
   },
   contacts: ['standing-feet'],
   setup: [
-    { kind: 'get-in', text: 'Lift the bar from the rack.', claim: CL.c3 },
+    { kind: 'get-in', text: 'Lift the bar from the rack. Weight even under the feet.', claim: C(['CONSENSUS'], [ACE, SL], 'c3, c8') },   // D-TEXT-GOLDEN: posture feet (c8)
     { kind: 'grip', text: 'Feet shoulder width. Overhand grip slightly wider, thumbs around the bar.',
       claim: C(['CONSENSUS'], [SL, 'baechle-grip'], 'c8, c2, c16') },
     { kind: 'position', text: 'Bend at the hips, back straight, knees slightly bent. Arms straight.', zoom: 'row-back',
       claim: C(['CONSENSUS'], [ACE], 'c3, c5') },
-    { kind: 'brace', text: 'Breathe in, then pull.', claim: CL.c19 },
+    { kind: 'brace', text: 'Breathe in, then pull. Shoulder blades together at the top.', claim: C(['CONSENSUS'], [SL], 'c19, c9') },   // D-TEXT-GOLDEN: posture blades (c9)
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c14 },
   ],
   posture: [

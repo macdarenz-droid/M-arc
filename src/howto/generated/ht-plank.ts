@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=53337e77c149d8658a681e9559ef3d9da33df603bdb0fac761b15954b1eae67d
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=ca2f206d7cb49773ca915ba67760e97b0054798a885ba463293b544a251cf2e0
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_plank",
   name: "Plank",
-  hashes: { inputsSha256: "53337e77c149d8658a681e9559ef3d9da33df603bdb0fac761b15954b1eae67d", golden: "6f7e82190f975b620d641ca3a096032bfb8e7ebe7f7d5ba72ba4309e3ddffa6d" },
+  hashes: { inputsSha256: "ca2f206d7cb49773ca915ba67760e97b0054798a885ba463293b544a251cf2e0", golden: "6f7e82190f975b620d641ca3a096032bfb8e7ebe7f7d5ba72ba4309e3ddffa6d" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -264,15 +264,16 @@ export default {
   risks: [
     {
       "key": "sag",
-      "text": "Low back sagging (arching) during the hold.",
+      "text": "Low back sagging (arching) during the hold. Can't hold it? Rest on your knees.",
       "claim": {
         "tags": [
           "CONSENSUS"
         ],
         "sources": [
-          "ace-plank"
+          "ace-plank",
+          "harvard-plank"
         ],
-        "note": "card c4"
+        "note": "card c4, c14"
       }
     },
     {

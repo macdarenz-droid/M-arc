@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=668b757deda2b823d9f716b97b731dd361ecf081457d9698d2a85c40b9ca19d5
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=4f40a2faff7ab59ef28ddde5ed376be23da6fe3db80bf5c5fd71e6d6946f47b0
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_push_up",
   name: "Push-Up",
-  hashes: { inputsSha256: "668b757deda2b823d9f716b97b731dd361ecf081457d9698d2a85c40b9ca19d5", golden: "e75ad6eadb8da0b4721b3b8c1dd0473dc9e3db1ea8d45a0fc81f1e3ce6a79042" },
+  hashes: { inputsSha256: "4f40a2faff7ab59ef28ddde5ed376be23da6fe3db80bf5c5fd71e6d6946f47b0", golden: "e75ad6eadb8da0b4721b3b8c1dd0473dc9e3db1ea8d45a0fc81f1e3ce6a79042" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -184,7 +184,7 @@ export default {
     },
     {
       "kind": "position",
-      "text": "Straighten your legs, feet together, body in one line.",
+      "text": "Straighten your legs, feet together. Torso and legs move together.",
       "zoom": "hip-line",
       "claim": {
         "tags": [
@@ -192,9 +192,10 @@ export default {
         ],
         "sources": [
           "ace-pushup",
-          "sl-pushup"
+          "sl-pushup",
+          "bb-pushup"
         ],
-        "note": "c2"
+        "note": "c2, c3"
       }
     },
     {
@@ -213,16 +214,17 @@ export default {
     },
     {
       "kind": "grip",
-      "text": "Squeeze the floor with your hands.",
+      "text": "Squeeze the floor. Breathe in going down, out going up.",
       "claim": {
         "tags": [
           "CONSENSUS"
         ],
         "sources": [
           "bb-pushup",
-          "ace-pushup"
+          "ace-pushup",
+          "sl-pushup"
         ],
-        "note": "c14"
+        "note": "c14, c8"
       }
     }
   ],

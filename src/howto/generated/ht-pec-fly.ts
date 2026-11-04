@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=c7e5fae245b8f8dc5d83e80b67d4dc5c483c97863d0c20543364775858ea4667
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=79d636d94140d3cf4b9ef87443943013e92879a3c5a26d1efc850f9f3cebfb50
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_pec_fly",
   name: "Pec Fly",
-  hashes: { inputsSha256: "c7e5fae245b8f8dc5d83e80b67d4dc5c483c97863d0c20543364775858ea4667", golden: "d9aac21e853c01cb74f6cf188823d6c2c62d71c808492fd69c793e7e199e2c1f" },
+  hashes: { inputsSha256: "79d636d94140d3cf4b9ef87443943013e92879a3c5a26d1efc850f9f3cebfb50", golden: "d9aac21e853c01cb74f6cf188823d6c2c62d71c808492fd69c793e7e199e2c1f" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -123,7 +123,7 @@ export default {
     },
     {
       "kind": "grip",
-      "text": "Take the handles with the elbows slightly bent.",
+      "text": "Overhand grip, elbows slightly bent. The machine arms set the width.",
       "zoom": "fly-elbow",
       "claim": {
         "tags": [
@@ -131,9 +131,10 @@ export default {
         ],
         "sources": [
           "vg-pecfly",
-          "hl-pecdeck"
+          "hl-pecdeck",
+          "ace-top3-chest"
         ],
-        "note": "c3"
+        "note": "c3, c4"
       }
     },
     {

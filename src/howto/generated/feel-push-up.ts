@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=6a8d49ea10f8b7557c1d439cae5c752b85976a37caa2b823bcad029177e22370
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=d7ceca2064f25f09d4ae7cc6345f343ae910bbfa619c325db37c3ab7c267eb73
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_push_up",

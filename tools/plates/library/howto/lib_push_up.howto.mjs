@@ -198,9 +198,10 @@ export default {
   setup: [
     { kind: 'position', text: 'Kneel, palms flat on the floor about shoulder-width apart.', claim: CL.c1 },
     { kind: 'position', text: 'Shift forward until your shoulders are over your hands.', zoom: 'stack', claim: CL.stack },
-    { kind: 'position', text: 'Straighten your legs, feet together, body in one line.', zoom: 'hip-line', claim: CL.c2 },
+    { kind: 'position', text: 'Straighten your legs, feet together. Torso and legs move together.', zoom: 'hip-line',   // D-TEXT-GOLDEN: posture together (c3)
+      claim: C(['CONSENSUS'], [ACE, SL, BB], 'c2, c3') },
     { kind: 'brace', text: 'Brace your trunk and tense your glutes and thighs.', claim: CL.c2 },
-    { kind: 'grip', text: 'Squeeze the floor with your hands.', claim: CL.c14 },
+    { kind: 'grip', text: 'Squeeze the floor. Breathe in going down, out going up.', claim: C(['CONSENSUS'], [BB, ACE, SL], 'c14, c8') },   // D-TEXT-GOLDEN: posture breathe (c8)
   ],
   posture: [
     { key: 'line', label: 'Straight line', detail: "Low back doesn't sag, hips don't hike.",

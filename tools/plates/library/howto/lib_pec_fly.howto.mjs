@@ -124,7 +124,8 @@ export default {
   setup: [
     { kind: 'adjust', text: 'Set the seat so the handles are at chest level.', claim: CL.c2 },
     { kind: 'position', text: 'Sit back against the pad, feet flat, shoulder-width or wider.', claim: CL.c1 },
-    { kind: 'grip', text: 'Take the handles with the elbows slightly bent.', zoom: 'fly-elbow', claim: CL.c3 },
+    { kind: 'grip', text: 'Overhand grip, elbows slightly bent. The machine arms set the width.', zoom: 'fly-elbow',   // D-TEXT-GOLDEN: posture grip, width (c3, c4)
+      claim: C(['CONSENSUS'], [...new Set([...CL.c3.sources, ...CL.grip.sources])], 'c3, c4') },
     { kind: 'load', text: 'Pick a weight you can take through the full range without rocking.', claim: CL.c14 },
     // c6's fault, shown (W2 panel: the posture checkpoint text is not printed on the sheet)
     { kind: 'brace', text: 'Upper back lifting off the pad? Go lighter.', claim: CL.c6 },

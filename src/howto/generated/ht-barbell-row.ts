@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=2ef30dd122bee77876a78f36e1a7955dc22a96b47255944742fdca551d41128a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=738a95711c5cf051e7ba0dae30715e2701f4b6baf3ac2c7b6a1e748bd56e6581
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_barbell_row",
   name: "Barbell Row",
-  hashes: { inputsSha256: "2ef30dd122bee77876a78f36e1a7955dc22a96b47255944742fdca551d41128a", golden: "c632740ce86dab4d29e7812a76fc19bb07fd2f150e2301264df8d73443881e80" },
+  hashes: { inputsSha256: "738a95711c5cf051e7ba0dae30715e2701f4b6baf3ac2c7b6a1e748bd56e6581", golden: "c632740ce86dab4d29e7812a76fc19bb07fd2f150e2301264df8d73443881e80" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -149,15 +149,16 @@ export default {
   setup: [
     {
       "kind": "get-in",
-      "text": "Lift the bar from the rack.",
+      "text": "Lift the bar from the rack. Weight even under the feet.",
       "claim": {
         "tags": [
           "CONSENSUS"
         ],
         "sources": [
-          "ace-bent-over-row"
+          "ace-bent-over-row",
+          "sl-barbell-row"
         ],
-        "note": "c3"
+        "note": "c3, c8"
       }
     },
     {
@@ -190,7 +191,7 @@ export default {
     },
     {
       "kind": "brace",
-      "text": "Breathe in, then pull.",
+      "text": "Breathe in, then pull. Shoulder blades together at the top.",
       "claim": {
         "tags": [
           "CONSENSUS"
@@ -198,7 +199,7 @@ export default {
         "sources": [
           "sl-barbell-row"
         ],
-        "note": "c19"
+        "note": "c19, c9"
       }
     },
     {

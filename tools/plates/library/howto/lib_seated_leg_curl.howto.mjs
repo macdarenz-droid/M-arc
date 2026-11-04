@@ -78,7 +78,7 @@ const feel = {
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
   { key: 'pivot', text: 'Knees out of line with the pivot can hurt.', claim: CL.c1 },
-  { key: 'swing', text: 'Too much weight turns the curl into a swing.', claim: CL.c8 },
+  { key: 'swing', text: 'Too much weight turns the curl into a swing. Straighten slowly.', claim: C(['CONSENSUS'], [SL, BB], 'c8, c7') },   // D-TEXT-GOLDEN: posture return (c7)
 ];
 
 export default {
@@ -92,7 +92,7 @@ export default {
     { kind: 'adjust', text: 'Set the seat so your knees line up with the pivot.', claim: CL.c1 },
     // card setup steps 2 and 3 in one, so c6's range cue fits the five-step cap (W2 panel: it was only posture text)
     { kind: 'adjust', text: 'Thigh pad snug above your knees, ankle pad just above your shoes.', claim: C(['CONSENSUS'], [BB], 'c2, c3') },
-    { kind: 'position', text: 'Back flat against the back pad.', claim: CL.c4 },
+    { kind: 'position', text: 'Back flat against the back pad. Breathe out as you curl.', claim: C(['CONSENSUS'], [SL, BB], 'c4, c5') },   // D-TEXT-GOLDEN: posture breathe (c5)
     { kind: 'grip', text: 'Grip the handles and press your hips into the seat.', claim: CL.c5 },
     { kind: 'position', text: 'Brace your trunk. Curl as far as you can, slow and controlled.', claim: CL.c6 },
   ],

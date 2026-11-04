@@ -155,7 +155,7 @@
     },
     {
       "scope": "lib_pec_fly",
-      "hash": "ddcfcc1b5168bb77c16e70928a8dcb7369f90b000eb00d603a4762d7b3ad58cf",
+      "hash": "26f2367a62712aa62c8fb9886913bc0612a0fa8a5385976e3c87c3c0b668d395",
       "date": "2026-11-04",
       "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/pec_fly.json",
       "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
@@ -171,7 +171,7 @@
     },
     {
       "scope": "lib_barbell_row",
-      "hash": "031a1dbe68a0e9b3c0014943628b90c184353d7a88b050f95937404e6e484575",
+      "hash": "9e1365878f929283f8f8f3074f11094a3937579b5bba24cbd67f51e89403ca35",
       "date": "2026-11-04",
       "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/barbell_row.json",
       "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
@@ -234,7 +234,7 @@
     },
     {
       "scope": "lib_push_up",
-      "hash": "e3c41759629ca7711b0fe028254dc9ec57dbe12316fa3415f3f2131326550603",
+      "hash": "982643ce934c8a15c1052476a9d0bbb64fcbd44dd0723f6d97b58f8702ed9454",
       "date": "2026-11-04",
       "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/push_up.json",
       "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
@@ -284,7 +284,7 @@
     },
     {
       "scope": "lib_plank",
-      "hash": "dedb4342ba055d6a85164fe5087e2c366e559783c6a6337c184c2b7ac21ffafe",
+      "hash": "913b4c33b523d3111c112c5eaab468726dea8b9a53cdb605d6aab178128a058d",
       "date": "2026-11-04",
       "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/plank.json",
       "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",

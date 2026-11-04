@@ -435,13 +435,13 @@
         "lib_dumbbell_shoulder_press",
         "lib_upright_row"
       ],
-      "pageSha256": "783a060708b735236c1e26b51bb670d8f0b66bda5e20372b57f6437c973bef70",
-      "bytes": 1550530,
+      "pageSha256": "f4da100622088b25a84c236c612282e7c42eb34ebb9db60538889ac55e8ca1ca",
+      "bytes": 1550651,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W2-STAMP",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf",
       "date": "2026-11-04",
-      "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row).",
+      "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row), and the D-TEXT-GOLDEN placements (#379 6637739563), which move posture-only card lines into visible setup and risk slots.",
       "supersedes": 14,
       "prev": "4843e6969fbdc4a84772767d1d15f8d59ba083ec7547967c80d6609ec9714a6f"
     }

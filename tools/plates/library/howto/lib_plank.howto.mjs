@@ -179,7 +179,8 @@ const feel = {
 const RISKS = [
   // W2 panel fix 3: the card's own risk text (c4). c14's "Can't hold it? Rest on your knees." lives once, in the hips
   // posture detail, so it never sits beside "stop".
-  { key: 'sag', text: 'Low back sagging (arching) during the hold.', claim: CL.c4 },
+  { key: 'sag', text: 'Low back sagging (arching) during the hold. Can\'t hold it? Rest on your knees.',   // D-TEXT-GOLDEN: c14 way out
+    claim: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c14') },
   { key: 'back-pain', text: 'Low-back pain during the hold: stop.', claim: CL.c8 },
 ];
 
