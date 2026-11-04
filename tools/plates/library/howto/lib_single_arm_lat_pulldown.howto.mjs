@@ -217,7 +217,8 @@ export default {
   chips: ['hand', 'bottom', 'feel'],
   copy: {
     setupLine: 'Sit with your thighs pinned and lean back slightly. Brace so your torso stays square.',
-    mistakeLine: "Don't pull past the end. Stop when the handle just passes your chin.",
+    // D-TEXT-GOLDEN (#379 6637607604): posture 'top' (c4, c5: tension kept, slow return) is shown here; the stop point (c10, c2) stays.
+    mistakeLine: 'Stop when the handle passes your chin. Return slowly, never let it fly up.',
     cueLine: 'Shoulder down, elbow to pocket.',
   },
   redFlag: RED_FLAG,

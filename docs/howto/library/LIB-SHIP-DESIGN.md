@@ -688,3 +688,64 @@ among the 8, so the resolver from W2 (library-gate.mjs:56, #379) finds them in e
 the A9 guard replacements (lb1-plates.test.ts:968, library-lint.test.ts SHIPPED and its INHERIT_MAP coverage lines);
 sheets; LAYERS READY for `lb01` and `zoom` pages; panel; stamps; flip; generate; budgets at N; QA; merge W2's main and
 regenerate; READY.
+
+### W3 D-TEXT-GOLDEN inventory
+
+Rule (D-TEXT-GOLDEN, #379 6637607604): the app prints no posture section, so every posture checkpoint and every card
+handlingMistake must show in an existing slot. Each row below gives the claim, the slot where it shows, and the claim ids.
+Rows marked **moved** had their text added to that slot in this commit; every other claim was already visible. Plate
+slots are the spec's callouts and mistake tells (cue text). Card posture points that the sheet has no checkpoint for
+(chest_supported_row c6 "head still", hanging_knee_raise c9 "brief hold", inverted_row c7) are listed under "card".
+
+| id | claim | slot | claim ids |
+|---|---|---|---|
+| chin_up | hang | copy.setupLine, mistakes[1].fix | c18, c7 |
+| chin_up | shoulders | setup[3], zoom shoulders caption | c4 |
+| chin_up | wrists | gripLine, zoom hand caption | c3 |
+| chin_up | elbows | plate callout "Elbows in front" | c5 |
+| chin_up | line | zoom body-line caption, mistakes[0] | c6 |
+| chin_up | chin | mistakes[1].fix, plate callout "Chin to bar" | c7 |
+| chin_up | 3 handlingMistakes | mistakes[0-2] | c6 c17, c7, c24 c4 |
+| hanging_knee_raise | still, knees, curl, lower | setup[2], plate callouts, zoom top caption, cueLine, mistakes[2] | c4, c5, c7 c6, c8 |
+| hanging_knee_raise | wrists | wrist limitText | c16 |
+| hanging_knee_raise | card: brief hold | plate callout "Knees above hips" cue | c9 |
+| hanging_knee_raise | 3 handlingMistakes | mistakes[0-2] | c4 c8, c6, c8 |
+| assisted_pull_up | straight, chin | zoom knee-pad caption, mistakes[1].fix | c3 |
+| assisted_pull_up | blades | setup[3], zoom shoulders caption | c7 |
+| assisted_pull_up | **elbows (moved)** | setup[3] "…then pull elbows to ribs…" | c7 |
+| assisted_pull_up | **chest (moved)** | setup[3] "…chest up." | c2 |
+| assisted_pull_up | still | mistakes[2] | c8 c5 |
+| assisted_pull_up | 3 handlingMistakes | mistakes[0-2] | c16, c8 c5, c5 |
+| inverted_row | line, arms, chest, blades, lower, wrists | setup[2], mistakes[0-2], zoom top caption, setup[3], gripLine | c3, c4, c5, c15 |
+| inverted_row | card: horizontal body as you get stronger | setup[4] | c7 |
+| inverted_row | 3 handlingMistakes | mistakes[0-2] | c3 c7, c4 c7, c5 |
+| close_grip_pulldown | thighs, lean, elbows, stop, return | setup[1], setup[3], plate callouts, mistakes[0-2] | c3, c4, c5, c7, c8 |
+| close_grip_pulldown | card: blades down first | setup[4] | c9 |
+| close_grip_pulldown | 3 handlingMistakes | mistakes[0-2] | c6 c7 c5, c4 c8, c8 |
+| underhand_lat_pulldown | thighs, lean, elbows, stop | setup[0], setup[2], plate callout, mistakes[0] | c4, c7, c6, c11 |
+| underhand_lat_pulldown | **path (moved)** | copy.mistakeLine "…behind your head or past your chin…" | inherit[0], c6, c8 |
+| underhand_lat_pulldown | card: blades, return | setup[3], mistakes[2] | c10, c9 |
+| underhand_lat_pulldown | 3 handlingMistakes | mistakes[0-2] | c8 c6, c7, c9 |
+| single_arm_lat_pulldown | square, shoulder, pocket, stop | setupLine, plate callouts, mistakes[0] | c1 c7, c3, c2, c13 c2 |
+| single_arm_lat_pulldown | **top (moved)** | copy.mistakeLine "Return slowly, never let it fly up." | c4, c5 |
+| single_arm_lat_pulldown | 3 handlingMistakes | mistakes[0-2] | c10 c2, c6, c11 c6 |
+| straight_arm_pulldown | elbows, arc, trunk, chest | mistakes[0], cueLine, plate callouts, zoom trunk caption | c4, c5, c9 c7, c5 |
+| straight_arm_pulldown | **return (moved)** | copy.setupLine "…let the bar rise slowly." | c8 |
+| straight_arm_pulldown | 3 handlingMistakes | mistakes[0-2] | c6 c4, c7, c9 c10 |
+| chest_supported_row | upright, chest, elbows, return, wrists | setup[3], mistakes[0-1], plate callouts, gripLine | c7, c4, c3 |
+| chest_supported_row | **finish (moved)** | zoom elbow-finish caption "…then a short pause." | c5 |
+| chest_supported_row | 2 handlingMistakes | mistakes[0-1] | c6 c4, c7 |
+| resistance_band_row | tall, shoulders, elbows, squeeze, band | plate callouts, setup[4], zoom blades caption, mistakes[2] | c3, c4, c2 |
+| resistance_band_row | **breathe (moved)** | feelLine "Breathe out as you pull." (slow return: mistakes[0]) | c5 |
+| resistance_band_row | 3 handlingMistakes | mistakes[0-2] | c5, c3 c6, c2 |
+| incline_machine_press | start, top, blades, soft, wrist, feet | setup[0], zoom blades caption, mistakes[0], mistakes[2], gripLine, setup[1] | c1, c2, c5, c3, inherited |
+| incline_machine_press | 3 handlingMistakes | mistakes[0-2] | c5, c4, c3 |
+| shoulder_press | height, back, soft | setup[0], plate callout, zoom low-back caption, mistakes[2] | c1, c4 c5, c6 |
+| shoulder_press | **elbows, head (moved)** | copy.setupLine "…elbows slightly in front… head in line." | c3, c5 |
+| shoulder_press | **breath (moved)** | feelLine "Breathe out as you press." | c5, c11 |
+| shoulder_press | 3 handlingMistakes | mistakes[0-2] | c6, c5 c4, c6 |
+| horizontal_leg_press | back, feet, soft, hands, top, knees-line, seat | setup[0-3], cueLine, mistakes[0], mistakes[2], gripLine | c1, c3, c4, c2, c7, c6 |
+| horizontal_leg_press | **seat/return (moved)** | copy.setupLine "…thighs clear of your ribs." and feelLine "Control the plate on the way back." | c5 |
+| horizontal_leg_press | 3 handlingMistakes | mistakes[0-2] | c7, c4 c2 c1, c6 |
+
+Moved: 10 claims across 8 ids. None failed to fit. Every moved line passes the copy lint and the word caps; inherited leaves are unchanged.

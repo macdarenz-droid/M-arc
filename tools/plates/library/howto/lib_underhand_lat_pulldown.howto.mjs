@@ -254,7 +254,8 @@ export default {
   chips: ['hand', 'torso', 'pad', 'feel'],
   copy: {
     setupLine: 'Pin your thighs under the pads. Lean back slightly and keep that lean.',
-    mistakeLine: "Don't pull the bar past your chin. Stop when your elbows stop moving down.",
+    // D-TEXT-GOLDEN (#379 6637607604): posture 'path' (card inherit[0]: never behind the head; c6, c8) is shown here.
+    mistakeLine: "Don't pull the bar behind your head or past your chin. Stop when your elbows stop moving down.",
     cueLine: 'Palms facing you, bar to chin.',
     // card plate.variantLine: drawn on the pulldown station; no line is claimed for a cable machine with a bar (c19)
     variantLine: 'Drawn on a lat pulldown machine with a long bar.',

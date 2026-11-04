@@ -147,7 +147,8 @@ const feel = {
   watch: [
     { muscleId: 'lower_back', plain: 'The lower back should stay quiet. An ache there means it is arching.' },
   ],
-  feelLine: 'You should feel this in the fronts and sides of your shoulders.',
+  // D-TEXT-GOLDEN (#379 6637607604): posture 'breath' (c5, c11) is shown in the feel line.
+  feelLine: 'You should feel this in the fronts and sides of your shoulders. Breathe out as you press.',
   rows: [
     { key: 'shoulder', where: 'Sharp shoulder pinch', at: { muscles: ['front_delts'] },
       means: 'You let the handles drop on the way down.',
@@ -232,7 +233,8 @@ export default {
   zooms,
   chips: ['hand', 'low-back', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
-    setupLine: 'Handles level with or just above your shoulders. Back on the pad, feet planted, braced.',
+    // D-TEXT-GOLDEN (#379 6637607604): posture 'elbows' (c3) and 'head' (c5) are shown here; feet planted and brace stay in setup steps 2 and 4.
+    setupLine: 'Handles at or just above shoulder height, elbows slightly in front. Back on the pad, head in line.',
     mistakeLine: 'Never let the handles drop on the way down. Draw them down slowly with your back muscles.',
     cueLine: 'Back on the pad.',
   },

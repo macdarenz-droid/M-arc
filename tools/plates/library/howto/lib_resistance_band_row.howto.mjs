@@ -126,7 +126,8 @@ const feel = {
     { muscleId: 'biceps', plain: 'The biceps bend the elbows.' },
   ],
   watch: [{ muscleId: 'lower_back', plain: 'Your lower back should stay straight.' }],
-  feelLine: 'You should feel this as a small squeeze between your shoulder blades.',
+  // D-TEXT-GOLDEN (#379 6637607604): posture 'breathe' (c5) is shown in the feel line.
+  feelLine: 'You should feel this as a small squeeze between your shoulder blades. Breathe out as you pull.',
   rows: [
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
       means: 'You are losing your tall, straight back.',

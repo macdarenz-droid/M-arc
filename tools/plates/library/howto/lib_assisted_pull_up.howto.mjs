@@ -241,7 +241,8 @@ export default {
     { kind: 'load', text: 'More stack weight, more help. Use the least for full reps.', claim: CL.assist },
     { kind: 'grip', text: 'Overhand, about shoulder width or a little wider, thumbs wrapped.', zoom: 'hand', claim: CL.grip },
     { kind: 'position', text: 'Knees on the pad. Let it sink until your arms are straight.', zoom: 'knee-pad', claim: CL.c1 },
-    { kind: 'brace', text: 'Draw your shoulder blades down and back, then pull.', zoom: 'shoulders', claim: CL.c7 },
+    // D-TEXT-GOLDEN (#379 6637607604): posture 'elbows' (c7) and 'chest' (c2) carried into this visible step.
+    { kind: 'brace', text: 'Blades down and back, then pull elbows to ribs, chest up.', zoom: 'shoulders', claim: C(['CONSENSUS', 'WEAK'], [BB, NASM, SL], 'c7, c2') },
     { kind: 'load', text: 'Over the weeks, add reps first, then take assistance away.', claim: CL.c6 },
   ],
   posture: [

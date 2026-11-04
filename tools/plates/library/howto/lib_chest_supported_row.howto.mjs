@@ -125,7 +125,8 @@ const zooms = [
       wrong: { text: 'Stops in front', anchor: 'elbow.r' },
     },
     caption: {
-      right: 'Elbows close to the ribs, just behind the body.',
+      // D-TEXT-GOLDEN (#379 6637607604): posture 'finish' (c5: short pause) is shown in this caption.
+      right: 'Elbows just behind the body, then a short pause.',
       wrong: 'Elbows stopping in front of the body.',
     },
     alt: {

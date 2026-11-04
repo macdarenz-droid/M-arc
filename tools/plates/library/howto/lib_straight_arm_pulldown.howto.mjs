@@ -205,7 +205,8 @@ export default {
   zooms,
   chips: ['elbow', 'trunk', 'feel'],
   copy: {
-    setupLine: 'Stand a step back from a high pulley, cable taut. Brace your trunk.',
+    // D-TEXT-GOLDEN (#379 6637607604): posture 'return' (c8: slow way back up) is shown here.
+    setupLine: 'Stand a step back from a high pulley, cable taut. Brace, then let the bar rise slowly.',
     mistakeLine: "Don't bend your elbows to push the bar down. Keep the same slight bend.",
     cueLine: 'Arms long, bar to thighs.',
   },

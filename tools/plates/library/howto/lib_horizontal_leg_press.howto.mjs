@@ -134,7 +134,8 @@ const feel = {
     { muscleId: 'calves', plain: 'Your calves work hard as the knees straighten.' },
   ],
   watch: [{ muscleId: 'lower_back', plain: 'Your lower back should stay still on the pad.' }],
-  feelLine: 'You should feel this in the front of your thighs and your glutes.',
+  // D-TEXT-GOLDEN (#379 6637607604): posture 'return' (c5: controlled return) is shown in the feel line.
+  feelLine: 'You should feel this in the front of your thighs and your glutes. Control the plate on the way back.',
   rows: [
     { key: 'knee', where: 'Knee', at: { parts: KNEES },
       means: 'Your knees lock at the top, or bend past about 90 degrees.',
@@ -221,7 +222,8 @@ export default {
   zooms,
   chips: ['knee-top', 'feel'],   // the zoom shell's chip row: the zoom keys, then feel
   copy: {
-    setupLine: 'Sit back, tailbone flat on the pad. Feet flat, knees at about 90 degrees.',
+    // D-TEXT-GOLDEN (#379 6637607604): posture 'seat'/'return' (c5: thighs clear of the ribs) is shown here.
+    setupLine: 'Sit back, tailbone flat on the pad. Feet flat, knees at about 90 degrees, thighs clear of your ribs.',
     mistakeLine: 'Keep a small bend at the top. Never lock your knees.',
     cueLine: 'Heels pressed, soft knees.',
   },
