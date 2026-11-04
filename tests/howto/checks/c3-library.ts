@@ -41,3 +41,18 @@ export function checkGripLibrary(content: HowToContent, card: { grip?: Record<st
   const claimed = (['thumb', 'handContact', 'wrist'] as const).filter(k => typeof card?.grip?.[k] === 'string' && (card.grip[k] as string).trim() !== '');
   return claimed.length ? [`GRIP: ${content.id} uses D-SHIP-GRIP (b) but its card claims grip.${claimed.join(', grip.')}`] : [];
 }
+
+/** Q-W2-2 (#379 6625803515): a GRIP (c) row whose contact and wrist range come from a pair-key convention. Red when the
+ *  sheet's contact or ext range differs from what `convention` names now, or when the card gains a handContact that
+ *  disagrees with it (the card then wins and the derivation no longer applies). */
+const ZONE_OF: Record<string, string> = { heel: 'heel of the palm', 'mid-palm': 'middle of the palm', 'finger-base': 'base of the fingers' };
+export function checkConventionGrip(content: HowToContent, card: { grip?: Record<string, unknown> } | null, convention: string): string[] {
+  const h = content.handling as { contact?: string; wrist?: { ext?: number[] } }, out: string[] = [];
+  const zone = h.contact ? ZONE_OF[h.contact] : undefined;
+  if (!zone || !convention.includes(zone)) out.push(`GRIPC: ${content.id}: contact ${h.contact} is not the convention's zone`);
+  const ext = convention.match(/extension (\d+) to (\d+)/)?.slice(1).map(Number);
+  if (!ext || JSON.stringify(h.wrist?.ext) !== JSON.stringify(ext)) out.push(`GRIPC: ${content.id}: wrist ext ${JSON.stringify(h.wrist?.ext)} is not the convention's range`);
+  const hc = card?.grip?.handContact;
+  if (typeof hc === 'string' && hc.trim() !== '' && !(zone && hc.toLowerCase().includes(zone.split(' of ')[0] ?? zone))) out.push(`GRIPC: ${content.id}: card grip.handContact disagrees with the convention`);
+  return out;
+}

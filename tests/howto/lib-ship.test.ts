@@ -7,7 +7,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { RULED, checkC3Library, checkGripLibrary } from './checks/c3-library';
+import { RULED, checkC3Library, checkConventionGrip, checkGripLibrary } from './checks/c3-library';
 import { checkC3 } from './checks/c3';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -98,5 +98,51 @@ describe('LIB-SHIP D-SHIP-GRIP', () => {
     const { content: pec } = await content.loadContent('lib_pec_fly');
     expect(checkGripLibrary(pec, json('docs/research/howto/cards/pec_fly.json'))).toEqual([]);
     expect(checkGripLibrary(pec, { grip: { thumb: 'Wrapped.', handContact: '', wrist: '' } })).toEqual(['GRIP: lib_pec_fly uses D-SHIP-GRIP (b) but its card claims grip.thumb']);
+  });
+});
+
+describe('LIB-SHIP Q-W2-2: triceps_pushdown contact from CONVENTIONS[ga:push-heel]', () => {
+  const card = () => json('docs/research/howto/cards/triceps_pushdown.json');
+  it('the sheet matches the convention, and the card has no handContact', async () => {
+    const { content: c } = await content.loadContent('lib_triceps_pushdown');
+    expect(card().grip.handContact).toBe('');
+    expect(checkConventionGrip(c, card(), P.CONVENTIONS['ga:push-heel'])).toEqual([]);
+  });
+  it('red 1: the convention changes (zone or range)', async () => {
+    const { content: c } = await content.loadContent('lib_triceps_pushdown'), conv = P.CONVENTIONS['ga:push-heel'] as string;
+    expect(checkConventionGrip(c, card(), conv.replace('heel of the palm', 'middle of the palm'))).toEqual(['GRIPC: lib_triceps_pushdown: contact heel is not the convention\'s zone']);
+    expect(checkConventionGrip(c, card(), conv.replace(/extension \d+ to \d+/, 'extension 0 to 20'))).toEqual(['GRIPC: lib_triceps_pushdown: wrist ext [0,15] is not the convention\'s range']);
+  });
+  it('red 2: the card gains a handContact that disagrees', async () => {
+    const { content: c } = await content.loadContent('lib_triceps_pushdown'), k = card();
+    expect(checkConventionGrip(c, { grip: { ...k.grip, handContact: 'Bar across the middle of the palm.' } }, P.CONVENTIONS['ga:push-heel'])).toEqual(['GRIPC: lib_triceps_pushdown: card grip.handContact disagrees with the convention']);
+    expect(checkConventionGrip(c, { grip: { ...k.grip, handContact: 'Bar on the heel of the palm.' } }, P.CONVENTIONS['ga:push-heel'])).toEqual([]);   // control
+  });
+});
+
+describe('LIB-SHIP D-SHIP-FAMILY: single_leg_romanian_deadlift inherits from romanian_deadlift', () => {
+  let FAM: any, L: any, kid: any, par: any;
+  const readCard = (p: string) => json(p);
+  beforeAll(async () => {
+    [FAM, L] = await Promise.all(['tools/plates/library/lint/family.mjs', 'tools/plates/library/lint/index.mjs'].map(p => import(/* @vite-ignore */ url(p))));
+    [kid, par] = await Promise.all(['lib_single_leg_romanian_deadlift', 'lib_romanian_deadlift'].map(async id => (await content.loadContent(id)).content));
+  });
+  const run = (parent: any) => FAM.familyRefusal(kid.id, kid, readCard, (id: string) => (id === par.id ? parent : undefined));
+  it('passes with the parent shipped in this head, and refuses with no parent', () => {
+    expect(run(par)).toBeNull();
+    expect(run(undefined)).toMatch(/parent lib_romanian_deadlift is not shipped in this head/);
+  });
+  it('red 1: the child\'s resolved thumb differs from the parent\'s', () => {
+    const other = par.handling.thumb.mode === 'wrapped' ? 'thumbless' : 'wrapped';
+    expect(run({ ...par, handling: { ...par.handling, thumb: { ...par.handling.thumb, mode: other } } })).toMatch(/grip\.thumb/);
+  });
+  it('red 2: the child\'s resolved wrist differs from the parent\'s', () => {
+    expect(run({ ...par, handling: { ...par.handling, wrist: { ...par.handling.wrist, ext: [0, 30] } } })).toMatch(/grip\.wrist/);
+  });
+  it('red 3: the SLRDL sheet text contains "bar"', () => {
+    const bar = (c: any) => L.shownCopyFields(c).filter((f: any) => /\bbar\b/i.test(typeof f === 'string' ? f : f.text ?? ''));
+    expect(bar(kid)).toEqual([]);
+    const m = { ...kid, handling: { ...kid.handling, wrist: { ...kid.handling.wrist, limitText: 'Keep the bar close.' } } };
+    expect(bar(m).length).toBeGreaterThan(0);
   });
 });
