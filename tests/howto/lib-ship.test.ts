@@ -96,3 +96,30 @@ describe('LIB-SHIP D-SHIP-GRIP', () => {
     expect(checkGripLibrary(pec, { grip: { thumb: 'Wrapped.', handContact: '', wrist: '' } })).toEqual(['GRIP: lib_pec_fly uses D-SHIP-GRIP (b) but its card claims grip.thumb']);
   });
 });
+
+// LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE (#383 6632352291): a `left-out:` row in a batch file (leg_press_calf_raise, no spec)
+// is never staged or listed by the batch closure (ci/manifest.mjs filesOf); a non-left-out row with no spec still throws.
+describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batch closure', () => {
+  const LEFT = 'lib_leg_press_calf_raise';
+  it('the left-out row is in lb01.json at left-out:D-OWNER-LIB142, and no MANIFEST row or file names it', async () => {
+    const { rows } = await import('../../tools/plates/library/registry.mjs');
+    const { manifestOf } = await import('../../tools/plates/library/ci/manifest.mjs');
+    const row = rows().find((r: any) => r.id === LEFT);
+    expect(row?.stage).toBe('left-out:D-OWNER-LIB142');
+    expect(row?.batchFile).toBe('tools/plates/library/batches/lb01.json');
+    const m: any = await manifestOf();
+    expect(Object.keys(m.rows)).not.toContain(LEFT);
+    for (const r of Object.values(m.rows) as any[]) expect(Object.keys(r.files).filter(p => p.includes('leg_press_calf_raise'))).toEqual([]);
+  }, 120_000);
+  it('the pinned MANIFEST sets are byte-equal to the committed file', async () => {
+    const { manifestOf, manifestText, MANIFEST } = await import('../../tools/plates/library/ci/manifest.mjs');
+    expect(manifestText(await manifestOf())).toBe(readFileSync(join(process.cwd(), MANIFEST), 'utf8'));
+  }, 120_000);
+  it('a row that is not left-out with a missing spec still throws', async () => {
+    const { rows } = await import('../../tools/plates/library/registry.mjs');
+    const { filesOf } = await import('../../tools/plates/library/ci/manifest.mjs');
+    const all = rows().map((r: any) => (r.id === LEFT ? { ...r, stage: 'approved-plate' } : r));
+    const chin = all.find((r: any) => r.id === 'lib_chin_up');
+    await expect(filesOf(chin, { all })).rejects.toThrow(/leg_press_calf_raise\.mjs does not exist/);
+  }, 120_000);
+});
