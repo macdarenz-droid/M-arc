@@ -50,11 +50,17 @@ const CL = {
 //   sag   (card zoom hip-line Wrong, c4 "sagging low back"): the low back arches (lumbar extension SAG); the forearms and
 //         toes stay on their floor spots, so root, pelvis tilt and ankle are solved as the spec solves its Mistake.
 //         How far it sags is a drawing choice (the card gives no number), as the spec's HIKE_HIP is.
-//   shrug (card zoom shoulder-stack Wrong, c5): the shoulder girdle raised SHRUG cm, forearms on their spots, so the
-//         shoulders move toward the head, off the elbows. 5 cm is barbell_shrug's card shrug; not in this card.
-// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SAG 20 deg and SHRUG
-// 5 cm are Wrong-pose sizes no card gives; no number from them appears in user copy; the layers panel judges them.
-const H = 1.75, SAG = 20, SHRUG = 5;
+//   shrug (card zoom shoulder-stack Wrong, c5 "shoulders shrugged, not over the elbows"; W2 fix of the W1 low "Right
+//         and Wrong look almost the same"): the body slides forward over the fixed forearms until each upper arm leans
+//         OFF_ELBOW deg forward of the plumb line (the shoulder ahead of its elbow, the body kept straight, the toe tips
+//         on the floor, solved as the sag) with the shoulder girdle raised SHRUG cm toward the head. The shoulder joint
+//         is solved with the shrug in place, so the elbow and the forearm stay on their floor spots (reach IK, the
+//         spec's own targets).
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SAG 20 deg,
+// SHRUG 5 cm and OFF_ELBOW 25 deg are Wrong-pose sizes no card gives; no number from them appears in user copy; the
+// layers panel judges them. SHRUG 5 cm is barbell_shrug's card shrug; OFF_ELBOW 25 deg is rope_triceps_pushdown's spec
+// MIS_SHOULDER (its upper arm swung off the plumb line).
+const H = 1.75, SAG = 20, SHRUG = 5, OFF_ELBOW = 25;
 const END = plateSpec.poses.end, LE = landmarksOf(END, H), SH = LE['shoulder.r'], TOE = LE['toe.r'];
 function solve(p0, make, res, iters = 30) {   // Newton with finite differences (the spec's own solver)
   const keys = Object.keys(p0); const p = { ...p0 };
@@ -75,11 +81,18 @@ function solve(p0, make, res, iters = 30) {   // Newton with finite differences 
 const sagPose = q => ({ ...END, root: { at: [0, q.y, q.z], tilt: q.tilt }, trunk: -SAG, ankle: q.ankle });
 const SQ = solve({ y: END.root.at[1] - 0.05, z: END.root.at[2], tilt: END.root.tilt - 10, ankle: 10 }, sagPose,
   lm => [lm['shoulder.r'][1] - SH[1], lm['shoulder.r'][2] - SH[2], lm['toe.r'][1], lm['toe.r'][2] - TOE[2]]);
+// shrug: the shoulder target OFF_ELBOW deg forward of the plumb over the held elbow (+z is toward the head), the body
+// straight (END's trunk, hip, knee), the girdle shrugged, the toe tips on the floor; root y, z and pelvis tilt solved
+const EL = LE['elbow.r'], L_UA = Math.hypot(SH[1] - EL[1], SH[2] - EL[2]), R = Math.PI / 180;
+const SH_OFF = [EL[1] + L_UA * Math.cos(OFF_ELBOW * R), EL[2] + L_UA * Math.sin(OFF_ELBOW * R)];
+const offPose = q => ({ ...END, root: { at: [0, q.y, q.z], tilt: q.tilt }, scap: { elev: SHRUG, pro: 0 } });
+const OQ = solve({ y: END.root.at[1], z: END.root.at[2] + 0.1, tilt: END.root.tilt }, offPose,
+  lm => [lm['shoulder.r'][1] - SH_OFF[0], lm['shoulder.r'][2] - SH_OFF[1], lm['toe.r'][1]]);
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
   sag: { pose: sagPose(SQ) },
-  shrug: { pose: { ...END, scap: { elev: SHRUG, pro: 0 } } },
+  shrug: { pose: offPose(OQ) },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
