@@ -94,7 +94,7 @@ export default {
     { kind: 'adjust', text: 'Thigh pad snug above your knees, ankle pad just above your shoes.', claim: C(['CONSENSUS'], [BB], 'c2, c3') },
     { kind: 'position', text: 'Back flat against the back pad. Breathe out as you curl.', claim: C(['CONSENSUS'], [SL, BB], 'c4, c5') },   // D-TEXT-GOLDEN: posture breathe (c5)
     { kind: 'grip', text: 'Grip the handles and press your hips into the seat.', claim: CL.c5 },
-    { kind: 'position', text: 'Brace your trunk. Curl as far as you can, then straighten slowly.',   // D-TEXT-GOLDEN: posture return (c7)
+    { kind: 'position', text: 'Brace your trunk. Curl slowly, as far as you can. Straighten slowly.',   // D-TEXT-GOLDEN: posture return (c7)
       claim: C(['CONSENSUS'], [SL, BB], 'c6, c7') },
   ],
   posture: [
