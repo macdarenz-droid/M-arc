@@ -115,13 +115,21 @@ export function textZoomPageCheck(rowId, html, chromeId, file, own = ['hand']) {
 }
 /** The posture close-up keys a page holds for `id` (posturePanels without its throw). */
 export const posturePanelKeys = (html, id) => [...html.matchAll(new RegExp(`<div class="zx" id="${id}-zoom-([a-z0-9-]+)" data-zoom="([a-z0-9-]+)"`, 'g'))].map(m => m[2]).filter(k => k !== 'hand');
+/** F-ZOOM-NONE: textZoomRow for a loaded sheet; null at once for a row with a drawn posture zoom and no entry, before the
+ *  card is read (the zero-zoom path only). readCard(path) gives the parsed research card. */
+export function textZoomOfSheet(rowId, sheet, list, readCard) {
+  if ((sheet.zooms ?? []).some(z => z.kind !== 'hand') && !(rowId in list)) return null;
+  const cardFile = sheet.research?.card;
+  const e = textZoomRow(rowId, sheet, readCard(cardFile), list);
+  return e && { entry: e, own: sheet.zooms.map(z => z.key) };
+}
 /** F-ZOOM-NONE: the row's text-zooms entry (checked) and its sheet's zoom keys, or null. */
 async function textZoomOf(row, list) {
   const sheet = (await import(pathToFileURL(join(ROOT, sourceOf(row.id))).href)).default;
-  const cardFile = sheet.research?.card;
-  if (typeof cardFile !== 'string' || !existsSync(join(ROOT, cardFile))) throw new Error(`zooms: ${row.id}: no research card ${cardFile}`);
-  const e = textZoomRow(row.id, sheet, JSON.parse(readFileSync(join(ROOT, cardFile), 'utf8')), list);
-  return e && { entry: e, own: sheet.zooms.map(z => z.key) };
+  return textZoomOfSheet(row.id, sheet, list, cardFile => {
+    if (typeof cardFile !== 'string' || !existsSync(join(ROOT, cardFile))) throw new Error(`zooms: ${row.id}: no research card ${cardFile}`);
+    return JSON.parse(readFileSync(join(ROOT, cardFile), 'utf8'));
+  });
 }
 
 const lit = s => JSON.stringify(s);

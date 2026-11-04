@@ -77,6 +77,12 @@ describe('F-ZOOM-NONE A2: textZoomRow, the zero-zoom guard', () => {
     expect(() => Z.textZoomPageCheck('lib_x', card('<button class="zx-chip" data-zoom="hand"></button>'), 'x', 'p.html', ['hand'])).not.toThrow();
     expect(() => Z.textZoomPageCheck('lib_x', card('<button class="fr-show" data-zoom="pivot"></button>'), 'x', 'p.html', ['hand'])).toThrow(/its card on p.html opens close-ups it does not have \[pivot\]/);
   });
+  it('the zero-zoom path only (#388 review, Low): a drawn-zoom row with no entry never reads its card', () => {
+    const none = () => { throw new Error('card read'); };
+    expect(Z.textZoomOfSheet('lib_y', { ...SHEET, zooms: [{ key: 'back', kind: 'posture' }] }, {}, none)).toBeNull();
+    expect(() => Z.textZoomOfSheet('lib_x', SHEET, { lib_x: ENTRY }, none)).toThrow(/card read/);
+    expect(Z.textZoomOfSheet('lib_x', SHEET, { lib_x: ENTRY }, () => CARD)).toEqual({ entry: ENTRY, own: ['hand'] });
+  });
   it('ids.mjs missingChunks: a ruled row needs no posture chunk; without the ruling (the guard removed) it throws as today', () => {
     const row = { id: 'lib_x', slug: 'x', chromeId: 'x' }, has = (n: string) => n !== 'posture-x';
     expect(() => I.missingChunks([row], has, { x: 'k' }, {}, () => true, new Set(['lib_x']))).not.toThrow();
@@ -90,7 +96,8 @@ describe('F-ZOOM-NONE A2: textZoomRow, the zero-zoom guard', () => {
 type Gen = { status: number; stderr: string };
 const gen = (root: string) => new Promise<Gen>(res => execFile(process.execPath, ['tools/plates/generate.mjs'], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 26 },
   (e, _out, stderr) => res({ status: e ? ((e as { code?: number }).code ?? 1) : 0, stderr: String(stderr) })));
-let tree = '', first: Gen, guardless: Gen;
+let tree = '', first: Gen, guardless: Gen, keptPanel: Gen, keptButton: Gen;
+const extra: string[] = [];
 describe('F-ZOOM-NONE A1: a ruled zero-zoom row generates no posture chunk; with the guard removed it throws', () => {
   beforeAll(async () => {
     if (!IN_CHILD) return;   // the tree is built in the child process (F-VITEST-RPC)
@@ -98,8 +105,16 @@ describe('F-ZOOM-NONE A1: a ruled zero-zoom row generates no posture chunk; with
     first = await gen(tree);
     F.guardOff(tree);
     guardless = await gen(tree);
-  }, 600_000);
-  afterAll(() => { if (tree) L.drop(tree); });
+    // the page-check reds through generate (#388 review, Medium): the ruled row's page keeps one posture close-up, or
+    // one control that opens it
+    for (const keep of ['panel', 'button']) {
+      const t = F.zeroZoomTree({ keep });
+      extra.push(t);
+      const r = await gen(t);
+      if (keep === 'panel') keptPanel = r; else keptButton = r;
+    }
+  }, 900_000);
+  afterAll(() => { if (tree) L.drop(tree); for (const t of extra) L.drop(t); });
   child.it('generate passes, writes the row\'s ht- and feel- chunks and no posture chunk; loaders.ts has no POSTURE line for it', () => {
     expect([first.status, first.stderr.split('\n').filter((l: string) => /Error/.test(l)).slice(0, 3)]).toEqual([0, []]);
     const g = join(tree, 'src/howto/generated');
@@ -115,4 +130,10 @@ describe('F-ZOOM-NONE A1: a ruled zero-zoom row generates no posture chunk; with
     expect(guardless.status).not.toBe(0);
     expect(guardless.stderr).toContain(`zooms: ${L.CHROME}: no posture close-up in the golden-B page`);
   }, 600_000);
+  child.it('red 4 through generate: a ruled row whose page keeps a posture close-up, or a control that opens one, is refused', () => {
+    expect(keptPanel.status).not.toBe(0);
+    expect(keptPanel.stderr).toContain(`zooms: ${L.ID}: ruled in tools/plates/library/text-zooms.json, but tests/howto/golden/library/zz-lib2b.layers.html holds posture close-ups [top]`);
+    expect(keptButton.status).not.toBe(0);
+    expect(keptButton.stderr).toContain(`zooms: ${L.ID}: ruled in tools/plates/library/text-zooms.json, but its card on tests/howto/golden/library/zz-lib2b.layers.html opens close-ups it does not have [top]`);
+  }, 900_000);
 });

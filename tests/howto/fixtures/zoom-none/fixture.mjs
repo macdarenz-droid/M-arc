@@ -16,14 +16,16 @@ export const ENTRY = { ruling: 'D-SHIP-TEXTZOOM', checkpoints: CHECKPOINTS };
 
 /** The fixture page with the row's posture close-ups cut out of its card, and every control that opens one (chips,
  *  setup, mistake and feel "Show me" buttons), as a page built from the zero-zoom sheet has it. The hand stays. */
-export function zeroZoomPage(page = readFileSync(PAGE_FIXTURE, 'utf8')) {
-  for (const k of Object.keys(CHECKPOINTS)) {
+export function zeroZoomPage(page = readFileSync(PAGE_FIXTURE, 'utf8'), { keep } = {}) {
+  // keep: 'panel' leaves the `top` close-up on the page, 'button' leaves one control that opens it (the page-check reds)
+  for (const k of Object.keys(CHECKPOINTS).filter(k => !(keep === 'panel' && k === 'top'))) {
     const at = page.indexOf(`<div class="zx" id="${CHROME}-zoom-${k}" data-zoom="${k}"`);
     if (at < 0 || page.indexOf(`<div class="zx" id="${CHROME}-zoom-${k}"`, at + 1) >= 0) throw new Error(`zoom-none fixture: ${k} close-up not found once`);
     page = page.replace(divAt(page, at), '');
   }
   const re = new RegExp(`<button[^<>]*data-zoom="(?:${Object.keys(CHECKPOINTS).join('|')})"[^<>]*>[\\s\\S]*?<\\/button>`, 'g');
   if (!(page.match(re)?.length)) throw new Error('zoom-none fixture: no control opens the dropped close-ups');
+  if (keep === 'button') { let first = true; return page.replace(re, m => (first && /data-zoom="top"/.test(m) ? ((first = false), m) : '')); }
   return page.replace(re, '');
 }
 /** The zero-zoom sheet: the staged clone renamed to BASE_HOWTO, re-exported with its posture zooms and their references dropped. */
@@ -34,8 +36,8 @@ const zeroZoomOf = ${zeroZoomOf.toString()};
 export default zeroZoomOf(base);
 `;
 /** The temp tree. `entry`: the text-zooms entry (null leaves the list empty); `card`: the card's posture zooms. */
-export function zeroZoomTree({ entry = ENTRY, cardZooms = Object.keys(CHECKPOINTS) } = {}) {
-  const root = fixtureTree({ page: zeroZoomPage() });
+export function zeroZoomTree({ entry = ENTRY, cardZooms = Object.keys(CHECKPOINTS), keep } = {}) {
+  const root = fixtureTree({ page: zeroZoomPage(undefined, { keep }) });
   renameSync(join(root, HOWTO), join(root, BASE_HOWTO));
   writeFileSync(join(root, HOWTO), WRAPPER());
   const card = JSON.parse(readFileSync(join(root, CARD_FILE), 'utf8'));
