@@ -262,10 +262,12 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     expect(Object.keys(m.rows)).toContain('lib_crunch');
     // F-CROP-FRONT D-CROP-PIN / D-CROP-NONE (#380): crop.mjs's and hand.mjs's keys are re-pinned there and pinned exactly by crop-projection.test.ts
     const F_CROP = ['tools/plates/library/render/closeup/crop.mjs', 'tools/plates/library/render/closeup/hand.mjs'];
-    for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of F_CROP) r.files[k] = 'X'; }
-    // main c4c34d75's MANIFEST.json with the same entries blanked was 227e5d30 (main cb9a6dae gives the same); LIB-SHIP W2:
-    // with W2's changes also taken out, main cb9a6dae's with the same blanks
-    expect(sha(JSON.stringify(lessW2(m, [BLP])))).toBe('6dd225c220ae583208020da6f0882d719f5cb727b77fa7d3f3eea58140a3a5e9');
+    // F-PAIR-FAULTS (#386): pairs.mjs's key is re-pinned there and pinned exactly by pair-faults.test.ts
+    const F_PAIR = ['tools/plates/library/hands/pairs.mjs'];
+    for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of [...F_CROP, ...F_PAIR]) r.files[k] = 'X'; }
+    // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
+    // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
+    expect(sha(JSON.stringify(lessW2(m, [BLP])))).toBe('3882bf3eb1690fd260bd5b02351a7bf93684946cdb7a05cd0ca1acb0c19f2a68');
   });
 });
 

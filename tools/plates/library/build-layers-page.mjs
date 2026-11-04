@@ -186,9 +186,11 @@ export async function buildLayersPage(spec) {
 export const PAIR_LABEL = 'library/hands/pairs.mjs';
 /** [{ howtoId, pre, key }] for the spec rows that name a pair. */
 export function pairRowsOf(spec) {
+  // F-PAIR-FAULTS red 3: a row filter with no pair would otherwise fall through to the card's own hand block
+  for (const [howtoId, c] of Object.entries(spec.closeups ?? {})) if (c.pair === undefined && (c.pairFaults !== undefined || c.pairWords !== undefined)) throw new Error(`layers page: ${howtoId}: pairFaults or pairWords without pair`);
   return Object.entries(spec.closeups ?? {}).filter(([, c]) => c.pair !== undefined).map(([howtoId, c]) => {
     if (typeof c.pair !== 'string' || !/^[a-z0-9-]+$/.test(c.pair)) throw new Error(`layers page: ${howtoId}: bad pair key ${c.pair}`);
-    return { howtoId, pre: (howtoId === 'dumbbell_lateral_raise' ? 'lateral_raise' : howtoId).replace(/_/g, '-'), key: c.pair };
+    return { howtoId, pre: (howtoId === 'dumbbell_lateral_raise' ? 'lateral_raise' : howtoId).replace(/_/g, '-'), key: c.pair, row: c };
   });
 }
 /** The whole element starting at `start` (a `<div`), by balanced div tags (gen/hands.mjs divAt). */
@@ -251,10 +253,12 @@ export const namespaced = (panel, key, pre) => mapIds(panel, t => (t.startsWith(
 export const unNamespaced = (panel, key, pre) => mapIds(panel, t => (t.startsWith(`${pre}-hp-${key}-`) ? t.slice(pre.length + 1) : t));
 /** The built page with each pair row's hand block replaced by its pair panel: the first copy of a key verbatim, each
  *  later copy on the same page under its card's namespace (D-LIB7b-PAGEDUP (B)). */
-export async function withPairPanels(html, spec, panelOf) {
+export async function withPairPanels(html, spec, panelOf, keyOf) {
   panelOf ??= (await import('./hands/pairs.mjs')).pairPanel;
   const rows = pairRowsOf(spec), done = new Set();
-  for (const { howtoId, pre, key } of rows) {
+  for (const { howtoId, pre, key: pair, row } of rows) {
+    // F-PAIR-FAULTS: a row naming pairFaults draws its sub-key's panel; a row naming neither field keeps its pair
+    const key = row.pairFaults === undefined && row.pairWords === undefined ? pair : (keyOf ?? (await import('./hands/pairs.mjs')).rowKeyOf)(howtoId, row);
     const old = divAt(html, once(html, `<div class="zx" id="${pre}-zoom-hand" data-zoom="hand"`, `${howtoId}: hand close-up`));
     const raw = await panelOf(key);
     if (!raw.startsWith(`<div class="zx" id="hp-${key}-zoom-hand" data-zoom="hand"`) || divAt(raw, 0) !== raw) throw new Error(`layers page: ${howtoId}: pairPanel(${key}) is not one zx panel`);

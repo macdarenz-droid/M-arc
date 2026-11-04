@@ -113,9 +113,12 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
     expect(Object.keys(m.rows)).toContain('lib_crunch');
     for (const r of rows) for (const k of KEYS) { expect(r.files[k]).toBe(sha(readFileSync(path(k)))); r.files[k] = 'X'; }
-    // main 8d596fab's MANIFEST.json with the same two entries blanked was 497e6f30 (main cb9a6dae gives the same); LIB-SHIP
-    // W2: with W2's changes also taken out, main cb9a6dae's with the same blanks
-    expect(sha(JSON.stringify(lessW2(m)))).toBe('6dd225c220ae583208020da6f0882d719f5cb727b77fa7d3f3eea58140a3a5e9');
+    // F-PAIR-FAULTS (#386): build-layers-page.mjs's and pairs.mjs's keys are re-pinned there and pinned exactly by pair-faults.test.ts
+    // (build-layers-page.mjs's key is checked against its file and blanked by lessW2, a W2 key too)
+    for (const r of rows) r.files['tools/plates/library/hands/pairs.mjs'] = 'X';
+    // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
+    // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
+    expect(sha(JSON.stringify(lessW2(m)))).toBe('3882bf3eb1690fd260bd5b02351a7bf93684946cdb7a05cd0ca1acb0c19f2a68');
   });
 });
 
