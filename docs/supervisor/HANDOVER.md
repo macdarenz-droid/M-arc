@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-11-04 ~00:45 UTC · main `b9369130` (train 62) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
+**Last updated:** 2026-11-04 ~04:45 UTC · main `b9369130` (train 62) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -830,6 +830,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 - **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
 
+- **Update 04:45 UTC (11-04):** main `b9369130`. Both lanes are READY and in review:
+  - LIB-SHIP W1 #376 @ `bd86e240` (curl only; reviewer session_018Pv5bL6TXPmTCq6sK5mjw3);
+  - LIB-SHAPES #377 @ `4c79eeba` (reviewer session_018Pv5bJnZEgBzu7eu5w4Yz6).
+
+  CI split D-SUP-CI-TZSPLIT is on `claude/sup-ci-unittz-split` @ `8da2b11f`. Next train: #376 + #377 + the CI split + this file. Whichever lane is second needs the D-SHAPES-PIN re-pin. After it merges, the APK goes to the owner with the first library How-to (curl), the flag question (D-SHIP-FLAGS) and the hand close-up count note.
 - **Update 00:45 UTC (11-04):** main `b9369130`. LIB-SHIP W1 (#376, curl only) is past W1 LAYERS APPROVED (6616230145), with D-SHIP-A5VENDOR ruled; its pin, flip and checks are running (head `bd86e24`). LIB-SHAPES (#377) is building, with D-SHAPES-HDR and D-SHAPES-PIN ruled. The owner's release-timing question is still open.
 - **Update 21:45 UTC (11-03):** main `b9369130`. Two LIB lanes are active. Rulings are in lib4-cards §48 (D-SHIP-*, D-SHAPES-*).
   - **LIB-SHIP W1, #376** (session_018Pv5bJh8Jvpq3f1LLKDcbe): the PLAN is ruled (Q1-Q17). Ruled since: D-SHIP-C3 (a no-zoom list), D-SHIP-GRIP, D-SHIP-SHAPES and D-SHIP-ROPEPAIR. W1 is now **dumbbell_biceps_curl alone**: its visual is approved, and 2 text fixes are pending, then a diff-check, 'W1 LAYERS APPROVED', the stamps, the flip, READY, a review, the train and the APK. rope, OHP, pec_fly and plank move to W2.
