@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=aced3e6d317a1ca35b96319725728a49de8fecb700c946aa399234b2f7bef4ec
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=127a5cd33535ec1414146ec8202423fc413abb3ccf8ab60c0292d308eed7c3f3
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_rope_triceps_pushdown",
   name: "Rope Triceps Pushdown",
-  hashes: { inputsSha256: "aced3e6d317a1ca35b96319725728a49de8fecb700c946aa399234b2f7bef4ec", golden: "011653bb9934915c32da9ddf07b9edea32a0ad3b2b8d749e954eb9556dbc2a06" },
+  hashes: { inputsSha256: "127a5cd33535ec1414146ec8202423fc413abb3ccf8ab60c0292d308eed7c3f3", golden: "011653bb9934915c32da9ddf07b9edea32a0ad3b2b8d749e954eb9556dbc2a06" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -150,7 +150,8 @@ export default {
         "label": "Wrist curled",
         "pose": {
           "wrist": {
-            "ext": -30
+            "ext": -30,
+            "dev": 0
           }
         },
         "markers": [

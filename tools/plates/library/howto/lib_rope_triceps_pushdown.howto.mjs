@@ -65,7 +65,7 @@ const RIGHT_POSE = {
 };
 const CURLED = {
   key: 'curled', label: 'Wrist curled',
-  pose: { wrist: { ext: -30 } },
+  pose: { wrist: { ext: -30, dev: 0 } },   // dev as the right pose (HandFault needs both)
   markers: ['lever-arc'],
   alt: 'Wrist bent toward the palm as the rope is pushed down.',
 };

@@ -188,7 +188,7 @@
     },
     {
       "scope": "lib_rope_triceps_pushdown",
-      "hash": "f097b3aece3bb4a7d3831000e50bec70fde9399ed5b3fe663dfc8cb181f04706",
+      "hash": "a1007175d25f4120543073c7d2b9fabae860b3e52d30a12d4a7567e3e76f748a",
       "date": "2026-11-04",
       "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/rope_triceps_pushdown.json",
       "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
