@@ -304,9 +304,9 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     expect(real.proven).toBe(true);
     // LIB-SHIP W1 (D-SHIP-A9): the real tree ships dumbbell_biceps_curl, whose 6 generated outputs (ht-, feel-, posture-,
     // handpair-curl-dumbbell-under, zoom css, docs/research/howto/lib_dumbbell_biceps_curl.json) join the 61 of the 8.
-    // LIB-SHIP W2 (ruling 3): the 9 W2 ids add 5 outputs each (ht-, feel-, posture-, zoom css, research json); none has a
+    // LIB-SHIP W2 (ruling 3): the 8 W2 ids (pec_fly held, D-SHIP-PECFLY-HOLD) add 5 outputs each (ht-, feel-, posture-, zoom css, research json); none has a
     // hand pair (rope and push_up are on the pinned no-zoom list, D-SHIP-PAIR-NOZOOM; the rest have no hand chunk).
-    expect(real.inputs.size).toBe(61 + 6 + 9 * 5);
+    expect(real.inputs.size).toBe(61 + 6 + 8 * 5);
     const W2 = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up'];
     for (const c of W2) for (const p of [`src/howto/generated/ht-${c}.ts`, `src/howto/generated/feel-${c}.ts`, `src/howto/generated/posture-${c}.ts`, `src/slices/howto/css/zoom-${c}.css`]) expect(real.inputs.has(p), p).toBe(true);
     expect([...real.inputs.keys()].filter((p: string) => p.includes('/handpair-'))).toEqual(['src/howto/generated/handpair-curl-dumbbell-under.ts']);
@@ -370,34 +370,34 @@ const clone = (x: any): any => JSON.parse(JSON.stringify(x));
 
 // LIB-SHIP W1 (D-SHIP-A9, ruling 3): was "zero library ids on this tree"; the tree now ships exactly the ruled library ids,
 // so the family is proven over them, and every old red stays.
-// LIB-SHIP W2 (ruling 3): the ruled set is the W1 id plus the 9 W2 flips, in registry order. At the fixture times
-// (280.8 s each, target 900 s) that is K = 4 shards of 3, 3, 2 and 2 ids; the W1 asserts are kept at K = 4 (shard 1
+// LIB-SHIP W2 (ruling 3): the ruled set is the W1 id plus the 8 W2 flips (pec_fly held), in registry order. At the fixture times
+// (280.8 s each, target 900 s) that is K = 3 shards of 3 ids each; the W1 asserts are kept at K = 3 (shard 1
 // holds the 4 run rows; every shard holds its own 2 once-rows and its ids' tuples), and a ruled id left out of the proofs is red.
 const SHIP_LIB = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
-describe('C6, C8: the shipped library ids on this tree (LIB-SHIP W2: the ruled ten)', { timeout: 300_000 }, () => {
+describe('C6, C8: the shipped library ids on this tree (LIB-SHIP W2: the ruled nine)', { timeout: 300_000 }, () => {
   const times = { default: 280.8, c0: 30, once: { run: 0, shard: 0 }, ids: {} };
   const verdict = (s: any, over: any = {}) => libraryVerdict({ lib: s.lib, rebuild: s.rebuild, gate: s.gate, sha: SHA, ref: 'refs/heads/main', event: 'push', needs: NEEDS, root: ROOT, times, ...over });
-  it('C6: the proven ids are exactly the ruled ten; K = 4, every shard holds its 2 once-rows and its ids\' tuples, shard 1 also the 4 run rows, and the family is green', async () => {
+  it('C6: the proven ids are exactly the ruled nine; K = 3, every shard holds its 2 once-rows and its ids\' tuples, shard 1 also the 4 run rows, and the family is green', async () => {
     expect(libraryIds()).toEqual(SHIP_LIB);
     const s = await greenSet(ROOT, { ids: SHIP_LIB, times });
-    expect(s.plan.K).toBe(4);
-    expect([1, 2, 3, 4].map(k => idsOfShard(s.plan, k).length)).toEqual([3, 3, 2, 2]);
-    expect((await libraryTuples(SHIP_LIB, { root: ROOT })).length).toBe(2821);   // the ten's tuples (measured on W2)
+    expect(s.plan.K).toBe(3);
+    expect([1, 2, 3].map(k => idsOfShard(s.plan, k).length)).toEqual([3, 3, 3]);
+    expect((await libraryTuples(SHIP_LIB, { root: ROOT })).length).toBe(2551);   // the nine's tuples (measured on W2, pec_fly held)
     expect((await libraryTuples(['lib_dumbbell_biceps_curl'], { root: ROOT })).length).toBe(324);   // W1's id, unchanged
-    expect(s.lib.reduce((n: number, p: any) => n + p.rows.length, 0)).toBe(4 * 2 + 4 + 2821);
+    expect(s.lib.reduce((n: number, p: any) => n + p.rows.length, 0)).toBe(3 * 2 + 4 + 2551);
     expect(LIB_ONCE.run).toHaveLength(4);
     const v = await verdict(s);
     expect(v.problems).toEqual([]);
-    expect(v.line).toBe('library: full (10 of 10)');   // ids proven of ids shipped
+    expect(v.line).toBe('library: full (9 of 9)');   // ids proven of ids shipped
   });
   it('C6: every shard proof missing is red; a skipped or missing needed job is red; a ruled id left out of the proofs is red', async () => {
     const s = await greenSet(ROOT, { ids: SHIP_LIB, times });
-    expect((await verdict({ ...s, lib: [] })).problems.join('\n')).toMatch(/expected shard proofs 1\.\.4 of 4/);
+    expect((await verdict({ ...s, lib: [] })).problems.join('\n')).toMatch(/expected shard proofs 1\.\.3 of 3/);
     expect((await verdict({ ...s, lib: s.lib.slice(1) })).problems.length).toBeGreaterThan(0);
     expect((await verdict(s, { needs: { ...NEEDS, 'howto-shard': { result: 'skipped' } } })).problems).toContain('library: needed job howto-shard ended skipped');
     expect((await verdict(s, { needs: { 'howto-rebuild': { result: 'success' } } })).problems).toContain('library: needed job howto-shard is missing from MARC_NEEDS');
-    const nine = await greenSet(ROOT, { ids: SHIP_LIB.filter(id => id !== 'lib_push_up'), times });
-    expect((await verdict(nine)).problems.length).toBeGreaterThan(0);
+    const eight = await greenSet(ROOT, { ids: SHIP_LIB.filter(id => id !== 'lib_push_up'), times });
+    expect((await verdict(eight)).problems.length).toBeGreaterThan(0);
   });
   it('C8: the 4 LIB_ONCE.run rows exactly once, in shard 1: a failed selftest, a run row also in shard 2, or a dropped run row is red', async () => {
     const s = await greenSet(ROOT, { ids: SHIP_LIB, times });
@@ -523,7 +523,7 @@ describe('C7: C-TZ, no Date, Intl or toLocale in the How-to code or its built ch
     expect(b.code, b.out).toBe(0);
     const chunks = readdirSync(join(out, 'assets')).filter(n => /^(HowToSheet|ht|hand|handpair|feel|posture|zoom|loaders)-.+\.js$/.test(n));
     expect(chunks.filter(n => n.startsWith('HowToSheet-')).length).toBe(1);
-    expect(chunks.filter(n => n.startsWith('ht-')).length).toBe(8 + 1 + 9);   // LIB-SHIP W1: the 8 plus dumbbell_biceps_curl; LIB-SHIP W2 (ruling 3): plus the 9 W2 ids
+    expect(chunks.filter(n => n.startsWith('ht-')).length).toBe(8 + 1 + 8);   // LIB-SHIP W1: the 8 plus dumbbell_biceps_curl; LIB-SHIP W2 (ruling 3): plus the 8 W2 ids (pec_fly held)
     expect(chunks.flatMap(n => tzProblems(n, readFileSync(join(out, 'assets', n), 'utf8')))).toEqual([]);
   });
   it('the scan bites: a fixture file with new Date() and a chunk with toLocaleString are red; Date.now() is allowed', () => {
@@ -640,7 +640,7 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
   it('the pinned-page list is pilot A\'s (page and layers page), PILOT-A2\'s, PILOT-A3\'s, pilot B\'s (page and layers page) and PILOT-B2\'s (page and layers page) on this tree and sha256 is the pin hash', () => {
     expect(pinnedPages(ROOT)).toEqual({ pages: [
       { id: 'tests/howto/golden/library/pilot-a.json#page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'page', pageSha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 },
-      { id: 'tests/howto/golden/library/pilot-a.json#layers-page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'layers-page', pageSha256: 'f4da100622088b25a84c236c612282e7c42eb34ebb9db60538889ac55e8ca1ca', bytes: 1550651 },
+      { id: 'tests/howto/golden/library/pilot-a.json#layers-page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'layers-page', pageSha256: 'afd5d4136ee57fd74f831ae0ad35d09e4708d747fcf3d9e266c10ee39f65e3e1', bytes: 1375425 },
       { id: 'tests/howto/golden/library/pilot-a2.json#page', file: 'tests/howto/golden/library/pilot-a2.json', kind: 'page', pageSha256: '3e225bc12531e6c395e5a532a77736ebaeb9cdc276c55709d8ac4c73ef78bb0b', bytes: 280533 },
       { id: 'tests/howto/golden/library/pilot-a3.json#page', file: 'tests/howto/golden/library/pilot-a3.json', kind: 'page', pageSha256: 'bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878', bytes: 465732 },
       { id: 'tests/howto/golden/library/pilot-b.json#page', file: 'tests/howto/golden/library/pilot-b.json', kind: 'page', pageSha256: 'ff3e017c98f73b6d049808a6ffea057a7fa350eed764d9ceedb9a582fa22583f', bytes: 409765 },

@@ -79,18 +79,18 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
       'src/howto/generated/loaders.ts'].sort();
     expect(list).toHaveLength(27);
     for (const p of list) expect(readFileSync(p, 'utf8'), p).toMatch(/^(\/\/|\/\*) GENERATED, do not edit\. [^\n]*inputsSha256=[0-9a-f]{64}( \*\/)?\n/);
-    // LIB-SHIP W2 (ruling 3): the 27 together were c6e70592 on main cb9a6dae. loaders.ts's body now adds the 9 W2 ids, so
+    // LIB-SHIP W2 (ruling 3): the 27 together were c6e70592 on main cb9a6dae. loaders.ts's body now adds the 8 W2 ids (pec_fly held), so
     // the 26 others keep their main bodies exactly (67195ffa, measured on main cb9a6dae), and loaders.ts's body with exactly
     // the W2 lines taken out (4 per id: HOWTO_IDS, LOADERS, POSTURE, FEEL; no HAND line, D-SHIP-PAIR-NOZOOM) is main's
     // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
-    expect(w2Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'))).toEqual({ removed: 36, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
+    expect(w2Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'))).toEqual({ removed: 32, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
   });
   it('LIB-SHIP W2 mutations: a HAND line for a W2 id, a W2 line dropped, and another line changed in loaders.ts are red', () => {
     const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(t);
     expect(w2Less(t.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(ok.sha);
-    expect(w2Less(t.replace('  "plank": () => import(\'./posture-plank\'),\n', '')).removed).toBe(35);
-    expect(w2Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"plank\": () => import('./hand-plank'),\n")).removed).toBe(37);
+    expect(w2Less(t.replace('  "plank": () => import(\'./posture-plank\'),\n', '')).removed).toBe(31);
+    expect(w2Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"plank\": () => import('./hand-plank'),\n")).removed).toBe(33);
   });
 
   // F-PLATE-ZOOMCSS (D-ZOOMCSS-PINS, #387 6637398953): gen/plates.mjs is the 8 ht- files' hashed writer, so only their
