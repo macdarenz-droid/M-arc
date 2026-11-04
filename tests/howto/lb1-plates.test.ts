@@ -20,7 +20,8 @@ const IDS = LB1.map(i => `lib_${i}`);
 // LIB-ZOOM (#279) re-adds it with its approved zoom. Its spec, card and tempo stay; it still must never ship.
 const HELD = ['lib_horizontal_leg_press'];
 const ROW_IDS = IDS.filter(i => !HELD.includes(i));
-const ROWS = 'tools/plates/library/lb1/rows.json';
+// LIB-SHIP W3 (Q-W3-6): the LB1 rows moved into batches/lb01.json (D-SHIP-MOVE); lb1/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb01.json';
 const COMPOSERS = ['assistMachine', 'chestRowMachine', 'band', 'dHandle', 'polybar'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
