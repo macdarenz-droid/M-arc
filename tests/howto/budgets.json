@@ -380,33 +380,6 @@
       "reason": "LIB-SHIP W2: the 9 ship (#379 D-SHIP-W2-STAMP); measured + 10 % on claude/lib-ship-w2 after the pin, flip and generate."
     },
     {
-      "chunk": "ht-pec-fly-*.js",
-      "rawMax": 42605,
-      "gzMax": 10886,
-      "measuredRaw": 38731,
-      "measuredGz": 9896,
-      "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W2: the 9 ship (#379 D-SHIP-W2-STAMP); measured + 10 % on claude/lib-ship-w2 after the pin, flip and generate."
-    },
-    {
-      "chunk": "posture-pec-fly-*.js",
-      "rawMax": 19113,
-      "gzMax": 5550,
-      "measuredRaw": 17375,
-      "measuredGz": 5045,
-      "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W2: the 9 ship (#379 D-SHIP-W2-STAMP); measured + 10 % on claude/lib-ship-w2 after the pin, flip and generate."
-    },
-    {
-      "chunk": "feel-pec-fly-*.js",
-      "rawMax": 23817,
-      "gzMax": 8091,
-      "measuredRaw": 21651,
-      "measuredGz": 7355,
-      "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W2: the 9 ship (#379 D-SHIP-W2-STAMP); measured + 10 % on claude/lib-ship-w2 after the pin, flip and generate."
-    },
-    {
       "chunk": "ht-rope-triceps-pushdown-*.js",
       "rawMax": 42737,
       "gzMax": 10943,
@@ -519,9 +492,9 @@
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 18,
-      "rawMax": 11289,
-      "gzMax": 2693,
+      "n": 17,
+      "rawMax": 10662,
+      "gzMax": 2544,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -531,8 +504,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 3278190,
-      "gzMax": 826188,
+      "rawMax": 3096068,
+      "gzMax": 780288,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

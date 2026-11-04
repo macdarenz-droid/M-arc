@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=894ac7b2a955b6260316539127b6ec7949b00ee9966cbb2a86d49d413e244488
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=6bdbae9f45bf725645b2a68b752950b9b8e7e1e67cb608219a9307b82fc859b1
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
@@ -15,7 +15,6 @@ export const HOWTO_IDS = [
   "lib_dumbbell_bench_press",
   "lib_dumbbell_shoulder_press",
   "lib_upright_row",
-  "lib_pec_fly",
   "lib_dumbbell_biceps_curl",
   "lib_rope_triceps_pushdown",
   "lib_plank",
@@ -37,7 +36,6 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
   lib_dumbbell_bench_press: () => import('./ht-dumbbell-bench-press'),
   lib_dumbbell_shoulder_press: () => import('./ht-dumbbell-shoulder-press'),
   lib_upright_row: () => import('./ht-upright-row'),
-  lib_pec_fly: () => import('./ht-pec-fly'),
   lib_dumbbell_biceps_curl: () => import('./ht-dumbbell-biceps-curl'),
   lib_rope_triceps_pushdown: () => import('./ht-rope-triceps-pushdown'),
   lib_plank: () => import('./ht-plank'),
@@ -71,7 +69,6 @@ export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: R
   "dumbbell-bench-press": () => import('./posture-dumbbell-bench-press'),
   "dumbbell-shoulder-press": () => import('./posture-dumbbell-shoulder-press'),
   "upright-row": () => import('./posture-upright-row'),
-  "pec-fly": () => import('./posture-pec-fly'),
   "dumbbell-biceps-curl": () => import('./posture-dumbbell-biceps-curl'),
   "rope-triceps-pushdown": () => import('./posture-rope-triceps-pushdown'),
   "plank": () => import('./posture-plank'),
@@ -91,7 +88,6 @@ export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { r
   "dumbbell-bench-press": () => import('./feel-dumbbell-bench-press'),
   "dumbbell-shoulder-press": () => import('./feel-dumbbell-shoulder-press'),
   "upright-row": () => import('./feel-upright-row'),
-  "pec-fly": () => import('./feel-pec-fly'),
   "dumbbell-biceps-curl": () => import('./feel-dumbbell-biceps-curl'),
   "rope-triceps-pushdown": () => import('./feel-rope-triceps-pushdown'),
   "plank": () => import('./feel-plank'),

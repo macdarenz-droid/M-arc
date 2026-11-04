@@ -218,22 +218,6 @@
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
     },
     {
-      "scope": "lib_pec_fly",
-      "hash": "26f2367a62712aa62c8fb9886913bc0612a0fa8a5385976e3c87c3c0b668d395",
-      "date": "2026-11-04",
-      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/pec_fly.json",
-      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
-      "safety": "LIB-SHIP W2: tier B, no tier-A safety check required; risks and red flags checked by the content critic",
-      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
-      "findings": [
-        "F-PLATE-OVERLAP-W2: the approved plate's 'Soft elbows' dot sits on the dashed start arc; recorded"
-      ],
-      "open": 0,
-      "approvedBy": "supervisor",
-      "decision": "D-SHIP-W2-STAMP",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
-    },
-    {
       "scope": "lib_rope_triceps_pushdown",
       "hash": "a1007175d25f4120543073c7d2b9fabae860b3e52d30a12d4a7567e3e76f748a",
       "date": "2026-11-04",

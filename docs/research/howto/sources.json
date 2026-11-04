@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=e24e5af14b40ac48d5c4e4c4c5df553aaf9926d508755a50bf2a41cedd7c48f7
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=a14e55f8d7d943d09798149fb5f0dc76b5a93e7fb4f7e390a96997e17529a10a
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -116,14 +116,6 @@
     "id": "ace-standing-fly",
     "cite": "Standing Chest Fly (ACE Exercise Library)",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/160/standing-chest-fly/",
-    "kind": "guideline",
-    "access": "full",
-    "checked": "2026-09-30"
-  },
-  "ace-top3-chest": {
-    "id": "ace-top3-chest",
-    "cite": "What are the Top 3 Most Effective Chest Exercises? (Schanke, Porcari et al., ACE Certified News)",
-    "url": "https://www.acefitness.org/certifiednewsarticle/3003/what-are-the-top-3-most-effective-chest-exercises/",
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
@@ -536,14 +528,6 @@
     "access": "full",
     "checked": "2026-09-30"
   },
-  "hl-pecdeck": {
-    "id": "hl-pecdeck",
-    "cite": "How and Why to Use a Pec Deck Machine",
-    "url": "https://www.healthline.com/health/pec-deck",
-    "kind": "coach",
-    "access": "full",
-    "checked": "2026-09-30"
-  },
   "hold-default": {
     "id": "hold-default",
     "cite": "Golden B hold archetype default (dumbbell_lateral_raise handling: thumb wrapped, contact mid-palm)",
@@ -912,14 +896,6 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
-  "pinto-2025": {
-    "id": "pinto-2025",
-    "cite": "Pectoralis Clavicular and Sternocostal Thicknesses Increase Similarly in Response to One and Three Sets of Pec Deck Resistance Training in Untrained Young Men",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/40266636/",
-    "kind": "peer-reviewed",
-    "access": "abstract",
-    "checked": "2026-09-30"
-  },
   "prinold2016": {
     "id": "prinold2016",
     "cite": "Prinold JA, Bull AM (2016) Scapula kinematics of pull-up techniques: avoiding impingement risk with training changes. J Sci Med Sport 19(8):629-35",
@@ -1096,14 +1072,6 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
-  "soncin-2014": {
-    "id": "soncin-2014",
-    "cite": "Influence of exercise order on electromyographic activity during upper body resistance training",
-    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4327372/",
-    "kind": "peer-reviewed",
-    "access": "full",
-    "checked": "2026-09-30"
-  },
   "sperandei2009": {
     "id": "sperandei2009",
     "cite": "Sperandei S et al. (2009) Electromyographic analysis of three different types of lat pull-down. J Strength Cond Res 23(7):2033-8",
@@ -1166,14 +1134,6 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/31198105/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": "2026-09-30"
-  },
-  "vg-pecfly": {
-    "id": "vg-pecfly",
-    "cite": "Pectoral Fly Machine Video Exercise Guide (Virtuagym)",
-    "url": "https://exercises.virtuagym.com/exercise/pectoral-fly-machine/",
-    "kind": "coach",
-    "access": "full",
     "checked": "2026-09-30"
   },
   "weiss1995": {

@@ -10,7 +10,6 @@ const ZOOM = {
   css: { thumb: 'plain' },
 };
 export const CLOSEUP_OPTIONS = {
-  pec_fly: ZOOM,
   upright_row: ZOOM,
   dumbbell_biceps_curl: { ...ZOOM, hand: { layout: 'single', uid: 'dbc', rightNote: 'Middle of palm', panelHeight: 282 } },
   plank: { ...ZOOM, css: { ...ZOOM.css, spine: true } },   // the hip-line crop's shoulder-heel reference (spine guide)
