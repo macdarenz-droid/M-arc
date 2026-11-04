@@ -76,7 +76,11 @@ export function planOf(spec) {
       keys[id] = c.optionsKey; labels[id] = c.label ?? RENDERER_LABEL;
     }
   }
-  return { ids, legacy, labels, keys, optionsUrl: spec.optionsUrl ?? null, regionFix: spec.regionFix !== false };
+  // LIB-SHAPES (D-SHIP-SHAPES, D-SHIP-C3): the ids that ship with no hand close-up (the pinned no-zoom list, passed in)
+  const noZoom = spec.noZoom ?? [];
+  if (!Array.isArray(noZoom) || new Set(noZoom).size !== noZoom.length) throw new Error('layers page: noZoom must be a list of distinct ids');
+  for (const id of noZoom) if (!ids.includes(id)) throw new Error(`layers page: noZoom: ${id} is not on the page`);
+  return { ids, legacy, labels, keys, optionsUrl: spec.optionsUrl ?? null, regionFix: spec.regionFix !== false, noZoom };
 }
 
 /** The patched howto-layers.mjs source. */
@@ -104,6 +108,30 @@ export function patchHowtoLayers(src, plan) {
   src = patchOnce(src, 'FLAG', 'const FLAG = { wrist: RED_FLAG, shoulder: RED_FLAG_SHOULDER, knee: RED_FLAG_KNEE, elbow: RED_FLAG_ELBOW };',
     'const FLAG = { wrist: RED_FLAG, shoulder: RED_FLAG_SHOULDER, knee: RED_FLAG_KNEE, elbow: RED_FLAG_ELBOW, '
     + 'get back() { try { return __BACK.backBox(); } catch (e) { throw new Error(`${howto.id}: ${e.message}`); } } };');
+  // LIB-SHAPES (#377, PLAN RULED): the two library sheet shapes. Golden B's 8 never reach these branches, so its page
+  // stays byte-equal; every other row keeps the vendored throws.
+  src = patchOnce(src, 'shape nozoom list', 'const chipKeys = howto => ',
+    `const __NOZOOM = ${JSON.stringify(plan.noZoom ?? [])};   // LIB-SHAPES: ids ruled to ship with no hand close-up\n`
+    + 'const __NZ = new WeakSet();   // LIB-SHAPES: the listed sheets, tagged by the build loop below\n'
+    + 'function __noZoom(howto) {\n'
+    + '  if (!__NZ.has(howto)) return false;\n'
+    + "  if (!howto.handling || howto.handling.archetype === 'none') throw new Error(`${howto.id}: on the no-zoom list, but not a handled sheet`);\n"
+    + "  if (howto.zooms.some(z => z.kind === 'hand')) throw new Error(`${howto.id}: on the no-zoom list, but it has a hand close-up`);\n"
+    + "  if (typeof howto.handling.why !== 'string' || !howto.handling.why.trim()) throw new Error(`${howto.id}: on the no-zoom list, but handling.why is empty`);\n"
+    + '  return true;\n}\n'
+    + 'const chipKeys = howto => ');
+  src = patchOnce(src, 'shape nozoom tag', '    const howto = M.default, api = apis[id];\n',
+    '    const howto = M.default, api = apis[id];\n    if (__NOZOOM.includes(id)) { __NZ.add(howto); __noZoom(howto); }   // LIB-SHAPES: checked whatever its chips\n');
+  src = patchOnce(src, 'shape nozoom chip', "  if (handFirst && keys[0] !== 'hand') throw",
+    "  if (handFirst && keys[0] !== 'hand' && !__noZoom(howto)) throw");
+  src = patchOnce(src, 'shape nozoom also', "  if (howto.handling?.archetype !== 'push') return '';\n  const z = howto.zooms.find(q => q.kind === 'hand');\n",
+    "  if (howto.handling?.archetype !== 'push') return '';\n  if (__noZoom(howto)) return '';   // LIB-SHAPES: no hand close-up to open\n  const z = howto.zooms.find(q => q.kind === 'hand');\n");
+  src = patchOnce(src, 'shape none grip', '  const h = howto.handling;\n  if (!h?.gripLine) throw',
+    "  const h = howto.handling;\n"
+    + "  if (h?.archetype === 'none') {   // LIB-SHAPES: no Grip section; a grip line or handling mistake would never be shown\n"
+    + "    if (h.gripLine || howto.mistakes?.length) throw new Error(`${howto.id}: archetype 'none' with a grip line or handling mistakes`);\n"
+    + "    return '';\n  }\n"
+    + '  if (!h?.gripLine) throw');
   return src;
 }
 

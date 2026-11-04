@@ -16,11 +16,19 @@ export const MAX_CHIPS = 4;
 /** What is registered in this build: the zoom kinds with a loader, and whether the feel section exists. */
 export interface Registered { readonly kind: (kind: string) => boolean; readonly feel: boolean }
 
+/** LIB-SHAPES (D-SHIP-C3, #377): a handled sheet ruled to ship with no hand close-up: no `hand`-kind zoom and a
+ *  non-empty `handling.why` (LIB-SHIP's checkC3Library ties `why` to the pinned no-zoom list at test time). */
+export function noHandZoom(c: ChipContent): boolean {
+  if (c.handling.archetype === 'none' || c.zooms.some(z => z.kind === 'hand')) return false;
+  const why = (c.handling as { readonly why?: unknown }).why;
+  return typeof why === 'string' && why.trim() !== '';
+}
+
 /** HT6-A3: the chip keys in golden B's order, keeping only what can open. Throws on golden B's own rules. */
 export function chipKeys(c: ChipContent, reg: Registered): string[] {
   const all = c.chips ? [...c.chips] : [...c.zooms.map(z => z.key), 'feel'];
   if (all.length > MAX_CHIPS) throw new Error(`${c.id}: ${all.length} chips (max ${MAX_CHIPS})`);
-  if (HAND_FIRST.includes(c.handling.archetype) && all[0] !== 'hand') throw new Error(`${c.id}: load goes through the hands, Hand must be the first chip`);
+  if (HAND_FIRST.includes(c.handling.archetype) && all[0] !== 'hand' && !noHandZoom(c)) throw new Error(`${c.id}: load goes through the hands, Hand must be the first chip`);
   if (all.includes('feel') && all[all.length - 1] !== 'feel') throw new Error(`${c.id}: "Where to feel it" must be the last chip`);
   return all.filter(k => (k === 'feel' ? reg.feel : (z => !!z && reg.kind(z.kind))(c.zooms.find(z => z.key === k))));
 }
@@ -37,6 +45,7 @@ export function chipRowHtml(pre: string, c: ChipContent, keys: readonly string[]
 /** Push exercises: the Mistake view's one quiet line that opens the hand close-up (shown only while Mistake is on). */
 export function alsoRowHtml(pre: string, c: ChipContent): string {
   if (c.handling.archetype !== 'push') return '';
+  if (noHandZoom(c)) return '';   // LIB-SHAPES: no hand close-up to open
   const z = c.zooms.find(q => q.kind === 'hand');
   if (!z) throw new Error(`${c.id}: push exercise without a hand close-up`);
   return `<p class="ht-also" id="${pre}-also" hidden><span>Also check your wrist:</span><button type="button" class="ht-also-btn" id="${pre}-also-hand" data-zoom="${esc(z.key)}" aria-controls="${pre}-zoom-${esc(z.key)}">${esc(z.chip)}${z.chipCaption ? `, ${esc(z.chipCaption.toLowerCase())}` : ''}${I.up(16)}</button></p>`;
