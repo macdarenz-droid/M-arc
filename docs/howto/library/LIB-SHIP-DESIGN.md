@@ -583,3 +583,75 @@ Sources: `git log origin/main --first-parent`; `git show/grep origin/main:…`; 
 4. battle_ropes hand camera (owner's choice, D-LIB12FIX-ROPE deferred): no ruling found. Ship as a GAP under R8, or rule under the 10-24 delegation?
 5. W1 note (not a card line): plank's card primary is `core`, and C2 refuses `core` in any feel role (tests/howto/checks/c2.ts:15, :26). The W1 swap rule may apply.
 6. Caveat: C13/C14 ran on LIB-4c's runner, and ci/fidelity has changed since. The ENTRY text is met as written. A8's full runs per wave are the only fresh stability evidence.
+
+## 10. W2 PLAN update (base main c4c34d75, train 63)
+
+W2 is 20 ids: the other 8 of pilot A, the 4 W1 holdovers (barbell_overhead_press, pec_fly, plank, rope_triceps_pushdown),
+pilot A2 (2), pilot A3 (2), pilot B less smith (3) and pilot B2's crunch. Columns are read from each card on this base.
+GRIP is the D-SHIP-GRIP case: `full` (the card claims thumb, contact and wrist), `a` (a pair key fills the empty field),
+`b` (NoHandling, no hand claim), `c` (some claims missing, no key), `none` (archetype none).
+
+| id | batch | tier | arch. | GRIP (empty card fields) | hand zoom (card) | proposed no-zoom entry | text checkpoints (D-SHIP-TEXTZOOM) | flags (pin) | other |
+|---|---|---|---|---|---|---|---|---|---|
+| barbell_row | pilot-a | A | pull | full | row-grip, no key | key-join bar/`row` (Q-W2-1) else gap-ruled | — | F4 (owner 10-19) | tier-A way-out (Q-W2-3) |
+| dumbbell_bench_press | pilot-a | A | push | full | wrist-neutral-press | gap-ruled D-SHIP-HANDW2 (push heel, D-LIB7-19) | — | F4 (owner) | — |
+| dumbbell_shoulder_press | pilot-a | A | push | full | wrist-neutral-press | gap-ruled D-SHIP-HANDW2 (push) | — | F3, F4 (owner) | way-out (Q-W2-3) |
+| romanian_deadlift | pilot-a | A | hold | full | rdl-grip, no key | gap-ruled D-SHIP-HANDW2 (no key variant holds a hanging bar) | — | — | way-out (Q-W2-3); parent of SLRDL |
+| single_leg_romanian_deadlift | pilot-a | A | hold | full | none | card-no-zoom | — | F4 (owner) | way-out; variant line (Dumbbell / Bodyweight); inherit thumb, wrist |
+| upright_row | pilot-a | B | pull | full | urow-grip, no key | gap-ruled D-SHIP-HANDW2 | none (front plate; crops in the plate's view) | F2 (owner) | variant line (Cable / Barbell) |
+| mountain_climbers | pilot-a | C | palm-flat | a (thumb, handContact) | key palm-flat | — | — | F1, F3 (owner) | core text-only (D-SHIP-Q7) |
+| triceps_pushdown | pilot-a | C | push | c (handContact) | pushdown-wrist, no key | gap-ruled D-SHIP-HANDW2 (push) | — | — (owner) | GRIP (c): Q-W2-2 |
+| barbell_overhead_press | pilot-a | A | push | full | bar-heel-of-palm | gap-ruled D-SHIP-Q1 (listed) | — | F2, F3 (owner) | W1 holdover, LIB-SHAPES |
+| pec_fly | pilot-a | B | hold | b (all) | none | — (NoHandling) | fly-backpad, fly-elbow (ruled) | — | W1 holdover; "overhand" kept (c3 quote) |
+| plank | pilot-a | C | none | none | none | — | — | F1 (owner) | core in textOnly; fix shoulder-stack pair (W1 low) |
+| rope_triceps_pushdown | pilot-a | C | push | full | rope-hand (key rope) | gap-ruled D-SHIP-ROPEPAIR | rope-spread (ruled) | — | the 3 panel fixes (6616096384) |
+| box_jump | pilot-a2 | A | none | none | none | — | — | F2, F3, F4 (delegation only) | way-out (Q-W2-3); flags to the owner (Q5) |
+| bent_over_dumbbell_rear_delt_fly | pilot-a2 | C | hold | full | rdfly-grip, no key | gap-ruled D-SHIP-HANDW2 | none (front plate) | F2, F3, F6, F7 (delegation only) | flags to the owner (Q5) |
+| reverse_lunge | pilot-a3 | B | hold | b (all) | none | — (NoHandling) | — | F3, F4 (delegation only) | variant line (Dumbbells / Barbell); flags to the owner |
+| dumbbell_fly | pilot-a3 | A | hold | full | none | card-no-zoom | none (front plate) | F3 (delegation only) | flags to the owner |
+| seated_leg_curl | pilot-b | C | balance | b (all) | none | — (NoHandling) | — | — (owner) | — |
+| cable_fly | pilot-b | B | hold | full | fly-handle | gap-key (hand-d-handle.mjs:24, D-SHIP-C3) | none (front plate) | F2 (owner) | — |
+| push_up | pilot-b | C | palm-flat | a (thumb) | none on the card | card-no-zoom | — | — (owner) | the palm-flat key holds push_up, but the card has no hand zoom |
+| crunch | pilot-b2 | B | none | none | none | — | — | none raised | moves from pilot-b2/rows.json into batches/pilot-b2.json with its plate pin = APPROVED_FRAGS (ruling 2) |
+
+Counts: 20 ids; 8 new gap-ruled hand zooms (D-SHIP-HANDW2) plus OHP and rope; 1 gap-key; 3 card-no-zoom; 4 NoHandling or
+none from the card plus 3 `none`; 2 GRIP (a); 1 GRIP (c). Tier-A way-out gaps: barbell_row, dumbbell_shoulder_press,
+romanian_deadlift, single_leg_romanian_deadlift, box_jump; none is in a shared move card's appliesTo (unrack-rerack,
+get-in-out, selector-pin).
+
+**Inherit map (D-SHIP-FAMILY, D-LIB9a-MAP form)**, single_leg_romanian_deadlift → romanian_deadlift, both in W2 and in
+the same head, the parent first in batches/pilot-a.json: `grip.thumb` → THUMB; `grip.wrist` → ['handling.wrist'] (the
+RDL sheet's limitText must not say "bar"). The resolver lands here: library-gate.mjs:56 passes `shipped` = loadContent
+of a row shipped in this head (family.mjs stays fail-closed for an unshipped parent).
+
+**Drawing values (D-SHIP-DRAWVAL)** are listed per id in LAYERS READY once the sheets exist; the plate's own Mistake
+pose is reused wherever a card zoom's Wrong is the plate's drawn fault.
+
+**Layers pages.** pilot A's page is re-pinned by a superseding entry with its 13 ids (A10: the curl's hand-, posture- and
+feel- chunk bodies stay byte-equal, headers aside); new pages for pilot A2, A3, B (3 ids, smith stays) and B2.
+
+**Carried W1 lows (review 6624739613).** 1-2: the next READY restates budgets from the file and test:tz from the log.
+3: the PR body names ht4.mjs:172 (`root: T`). 4: lib-ship.test.ts GRIP (a) derives `contact` from the curl key's
+CONVENTIONS (`ga:curl-mid`) through a small map (`mid` → `mid-palm`), and the two tautological lines go; mutation:
+editing the key's convention turns it red.
+
+### W2 questions (for 'SHIP W2 PLAN RULED')
+
+- **Q-W2-1 barbell_row's grip close-up.** hand-bar.mjs already draws a `row` variant (pull, overhand, 32 mm bar, approved
+  panel words bar-row-over.json) for inverted_row. barbell_row's card claims the same grip (overhand, thumb wrapped,
+  wrist straight). **Proposal:** add `barbell_row` to hand-bar.mjs IDS with its own claims (one line; the variant and its
+  panel are unchanged), if the variant's recorded values match the card field by field (checked and posted before
+  LAYERS READY); otherwise gap-ruled with the others.
+- **Q-W2-2 triceps_pushdown's empty grip.handContact (GRIP (c)).** It claims thumb and wrist but not contact, and no key
+  draws it (push, D-LIB7-19). **Proposal:** contact `heel` from the GA push convention `ga:push-heel`
+  (hands/pairs.mjs CONVENTIONS), cited CONVENTION, as GRIP (a) cites a key's value; the hand zoom is gap-ruled.
+  The other option is S3 (hold).
+- **Q-W2-3 Tier-A way-out gaps (D-SHIP-WAYOUT)** on barbell_row, dumbbell_shoulder_press, romanian_deadlift,
+  single_leg_romanian_deadlift and box_jump: no shared move card applies, so each needs the safety checker's ruling
+  that the sheet is safe with no way-out line, or the id is held (S3, to the owner as a later-update item).
+- **Q-W2-4 Flags without a recorded owner answer (D-SHIP-Q5 narrowed):** box_jump F2 F3 F4; rear delt fly F2 F3 F6 F7;
+  reverse_lunge F3 F4; dumbbell_fly F3. Their pins record the supervisor's approval under the 10-24 delegation, not the
+  owner's answer per flag. They wait on ruling 11's owner question; the other 16 ids do not.
+- **Q-W2-5 New D-SHIP-HANDW2 gap-ruled ids:** dumbbell_bench_press, dumbbell_shoulder_press, triceps_pushdown (push,
+  D-LIB7-19); romanian_deadlift, upright_row, bent_over_dumbbell_rear_delt_fly (no key variant fits the card; no
+  per-id pose without every number). Each needs its ruling id in the no-zoom list and `handling.why`.
