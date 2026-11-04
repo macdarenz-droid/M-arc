@@ -84,9 +84,17 @@ jobs:
           retention-days: 7
 
   # F-CI-4 (D-SUP-CI-3): the unit tests in two more time zones, the same command source-gate ran as a step until 10-26.
+  # D-SUP-CI-TZSPLIT (11-04): test:tz's two zones run as two parallel legs of this job, each with exactly the
+  # command test:tz runs for its zone (package.json "test:tz"). unit-tz took 74.8 of its 75 min on LIB-SHIP W1
+  # (#376, 5c4c0944). Nothing is dropped: both zones still run every vitest file, and android-gate still needs
+  # unit-tz, which waits for both legs. tests/ci-unittz-split.test.ts pins the zones to test:tz's.
   unit-tz:
     runs-on: ubuntu-latest
-    timeout-minutes: 75  # runaway limit, not a check; test:tz took about 48 min as a step of source-gate
+    timeout-minutes: 75  # runaway limit per leg, not a check
+    strategy:
+      fail-fast: false
+      matrix:
+        tz: [America/New_York, Asia/Manila]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -94,8 +102,10 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - name: Unit tests in two more time zones
-        run: npm run test:tz
+      - name: Unit tests in ${{ matrix.tz }}
+        run: npx vitest run
+        env:
+          TZ: ${{ matrix.tz }}
 
   # RG-14's second visual gate (Pacific/Auckland) runs as its own job, in parallel with
   # source-gate, instead of as a step after the first gate. Same command, same TZ, same
