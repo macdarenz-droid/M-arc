@@ -159,7 +159,7 @@ const feel = {
     // The card's first two rows (belly, shoulders and arms; front of the hips) have no fix, so they are left out: the
     // feel line says them (D-SHIP-Q16).
     { key: 'wrist', where: 'Back-of-wrist pain', at: { parts: HANDS },
-      means: 'Your weight loads the wrist bent back.',   // c12: planks and push-ups load the wrist bent back
+      means: '',   // the card's row has no means; D-FEEL-NOMEANS prints no label
       fix: 'Stop the exercise. Hands on a bench, or dumbbells to keep the wrists neutral.',
       redFlag: true, claim: CL.wristRow },
   ],

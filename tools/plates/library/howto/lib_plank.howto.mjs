@@ -167,9 +167,9 @@ const feel = {
   rows: [
     // The card's first row (front and sides of the belly) has no fix, so it is left out: the feel line says it.
     { key: 'low-back', where: 'Pain in the low back', at: { muscles: ['lower_back'] },
-      means: 'Your low back is sagging.',   // c4: the sagging low back the hold must avoid (W2 panel round 2, L6)
+      means: '',                            // the card's row has no means (its rankNote: c8 names pain, not a fault); D-FEEL-NOMEANS prints no label
       fix: 'Stop the exercise.',            // c8: low-back pain during the plank means stop
-      redFlag: 'back', claim: C(['CONSENSUS'], ['ace-plank'], 'card c4, c8') },
+      redFlag: 'back', claim: CL.c8 },
   ],
   libraryDiff: { add: ['obliques'], why: 'Both EMG studies measure oblique activity during the prone plank (card c10).' },
   claim: CL.c10,
@@ -177,9 +177,9 @@ const feel = {
 
 /* ------------------------------------------------------------------------------------------------ risks ---------- */
 const RISKS = [
-  // W2 panel round 2 (L6): the sag named as the risk it carries in the card: low-back pain (c8) from the sagging low
-  // back the hold must avoid (c4), and the card's way out when the hold fails (c14).
-  { key: 'sag', text: "Low-back pain from a sagging low back. Can't hold it? Rest on your knees.", claim: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c8, c14') },
+  // W2 panel fix 3: the card's own risk text (c4). c14's "Can't hold it? Rest on your knees." lives once, in the hips
+  // posture detail, so it never sits beside "stop".
+  { key: 'sag', text: 'Low back sagging (arching) during the hold.', claim: CL.c4 },
   { key: 'back-pain', text: 'Low-back pain during the hold: stop.', claim: CL.c8 },
 ];
 
