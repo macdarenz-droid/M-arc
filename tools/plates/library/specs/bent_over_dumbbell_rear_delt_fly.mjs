@@ -1,7 +1,6 @@
-// Bent-over dumbbell rear delt fly. The plate is the FRONT view, the card's plate.view (LIB-PLATEFIX-1: the default
-// export at the end of this file, pitch 40). The SIDE drawing below (SIDE, figure facing screen right) was the plate from
-// LIB-8R (D-LIB8R-FLIES fallback, F6) until the W2 layers panel read it as a row; it is now the sheet extra
-// bent_over_dumbbell_rear_delt_fly__alt.mjs. The history below is LIB-8R's (pitch 15 front view, S3 shrug).
+// Bent-over dumbbell rear delt fly, SIDE view (figure facing screen right): the plate (LIB-8R, D-LIB8R-FLIES fallback,
+// F6). The census front view, drawn with LIB-20's camera.pitch 15 and volume trunk, is bent_over_dumbbell_rear_delt_fly__alt.mjs
+// (a sheet extra only): it reads, but its shrug Mistake is below H3's bar at every zoom k (S3; see Mistake below).
 // View decision (go/no-go): the census asks for the front view, because the exercise is an arm sweep across the
 // body (horizontal abduction). Rendered both ways:
 //  - Front view, trunk 80 deg (the textbook pose): the engine draws a flexed trunk as a foreshortened FRONTAL
@@ -112,23 +111,17 @@ const { via, end } = posesAt(TOP);
 // named (decision 9). The census front view was drawn first (pitch 15, volume trunk): its shrug moves along the trunk
 // axis, which points almost at the camera, 1.3 px at plate scale and 5.1 px at k 4, below H3's 11.39 px at every k on
 // the ladder (S3), so this side view carries the card's own Mistake unchanged, F6 named; the front view is the alt.
-const M_SHRUG = 8;                                       // cm, scap elevation. LIB-PLATEFIX-1: 5 (golden A's lateral-raise shrug) moves the front plate's tell anchor 1.8 px at PITCH 24, 7.1 px at the largest zoom k 4, under H3's 11.4; 8 at PITCH 26 gives 3.2 px, 12.8 at k 4
+const M_SHRUG = 5;                                       // cm, scap elevation
 const mistakePose = { scap: { elev: M_SHRUG, pro: PRO_END } };
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
-const PITCH = 26;                                        // front plate camera pitch (deg), LIB-PLATEFIX-1 (see the plate below)
-// Drawing values of the front plate's shrug contour (pf2 R5/R11, #385 6637293768), plate px (x 2 at the 780-px card):
-const TRAP_RISE = 10;                                    // drawing value: the bunched trapezius hump, this far above the trap landmark (card y ~592, 8 px above the caps' centres; 14 drew the hump above the zoom's ring at k 4, 9 read as a straight line)
-const HEAD_MEET = 11.8;                                  // drawing value: the contour meets the head oval this far above the head landmark (card y 612, pf2 R5; the oval's side is 9.5 px from its axis there, read from the engine's head outline)
-const TELL_DX = 15, TELL_DY = 2;                         // drawing values: the tell anchor's offset right and down from the cap top (plate px), so the zoom's source ring centres on the shoulder-head gap and holds the cap's inner edge, the hump and the head's side (card ~(384, 610), pf2 R11)
-export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG, PITCH, TRAP_RISE, HEAD_MEET, TELL_DX, TELL_DY };
+export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG };
 
 const G0 = landmarksOf(start, H)['grip.r'], HZ = 0.135, HY = 0.119 * 0.866 / 2;
 const HH = 0.065, HR = 0.008;                          // handle half-length, half-thickness (m)
 const START_DB = [[-HZ, -HY], [-HH, -HY], [-HH, -HR], [HH, -HR], [HH, -HY], [HZ, -HY], [HZ, HY], [HH, HY], [HH, HR], [-HH, HR], [-HH, HY], [-HZ, HY], [-HZ, -HY]].map(([dz, dy]) => [G0[0], G0[1] + dy, G0[2] + dz]);
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 
-/** The side drawing (the plate until LIB-PLATEFIX-1; now the sheet extra, bent_over_dumbbell_rear_delt_fly__alt.mjs). */
-export const SIDE = {
+export default {
   id: 'bent_over_dumbbell_rear_delt_fly', name: 'Bent-Over Dumbbell Rear Delt Fly', view: 'side', facing: 'right',
   camera: { x0: 172, y0: 339 },                          // reference scale; the hinged figure centred
   poses: { start, via, end },
@@ -178,56 +171,4 @@ export const SIDE = {
   // Drawable fault (decision 9): the card's top fault, the torso swing (c4, c5; topFault 'swing'), is drawable false on
   // the card, so the plate draws its drawable fault, the shrug (c3), and F7 is named on the sheet.
   alt: 'Bent-over dumbbell rear delt fly, side view. Hinged forward at the hips with a straight spine, the lifter raises two dumbbells from hanging under the chest out to the sides until the arms are about level with the body, elbows slightly bent.',
-};
-
-// ---- the plate: FRONT view (LIB-PLATEFIX-1, PLATEFIX PLAN RULED #385 6633777095) ----
-// The W2 layers panel (#379 6633524031) read the side plate as a row: side-on, the arms sweep at the camera. The card's
-// plate.view is front (F6 dropped). The camera is raised on the viewer's side and tilted down PITCH (D-SPIKE-hinge).
-// Plates panel pf1 (#385 6636073314): at 40 the trunk read as pitched down at the viewer and the hanging arm short, so
-// PITCH is 26: the back reads as a flat oval above the head, the shoulder joints sit higher and the hanging arm shows at
-// 0.91 of its length (rendered at 0, 12, 24 and 26: at 0 and 12 the figure reads as standing upright with the head on top; 26, not 24, so the 8 cm shrug clears H3 at k 4).
-// The full sweep to level, c3, with 5 via poses so the Trace is one smooth arc about the shoulder (pf1 R6).
-// Mistake (c3): the shoulder blades raised M_SHRUG, as the side drawing. From the front the shrug moves the shoulder caps
-// toward the head, so it is drawn as a change of shape (pf2 R5): on each side a red dashed shoulder-cap and upper-trapezius
-// contour bunches from the faulty cap's top over a hump to the side of the head oval, closing the gap between shoulder and
-// head. No arrows: arrows joined by a line read as 'squeeze the blades', the correct cue (pf2 R5). The faulty caps and arms
-// are the engine's own outline. The zoom's source ring sits on the shoulder-head gap (pf2 R11).
-const PC = Math.cos(PITCH * R), PS = Math.sin(PITCH * R), PXM = 256 / 1.75;   // the engine's reference scale (vendor/engine/plate.mjs REF_CAMERA; QA reads pxPerM 146.3)
-const FRONT_POSES = { start: pose(ROOT_Y, ROOT_Z, 0), via: [15, 30, 45, 60, 75].map(a => pose(ROOT_Y, ROOT_Z, a)), end: pose(ROOT_Y, ROOT_Z, 90) };
-const CAP_R = 7.68;                                      // the engine's shoulder-cap radius at plate scale (the svg's shcap circle r), so the contour starts on the faulty cap
-// The contour's points are world points (plate px offsets turned into metres on the plate camera), so the zoom, drawn at
-// k x the camera, scales the red overlay with the outline (pf2 R11); px offsets would stay 1:1 inside the zoom.
-const lmE = landmarksOf(FRONT_POSES.end, H), lmM = landmarksOf({ ...FRONT_POSES.end, scap: { ...FRONT_POSES.end.scap, ...mistakePose.scap } }, H);
-const W = (w, dx, dy) => [w[0] + dx / PXM, w[1] - dy / (PXM * PC), w[2]];   // world point at plate offset (dx right, dy down) on the pitched camera
-const shrugSide = (s, sg) => ({ kind: 'dashed', smooth: true, pts: [
-  W(lmM[`shoulder.${s}`], sg * CAP_R * 0.71, -CAP_R * 0.71),                // the faulty cap's outline, 45 deg in from its top
-  W(lmE[`trap.${s}`], -sg * 1, -TRAP_RISE),                                  // the bunched trapezius (1 px toward the cap: the hump's crest)
-  W(lmE.head, -sg * 9.5, -HEAD_MEET),                                        // on the head oval's side (card y 612)
-] });
-export default {
-  ...SIDE,
-  view: 'front', facing: undefined,
-  camera: { x0: 195, y0: 339, pitch: PITCH },
-  torso: 'volume',
-  poses: FRONT_POSES,
-  // no dashed side-profile start dumbbell; one part per dumbbell. pf1 R2: drawn end-on, the axis on the view line (the
-  // neutral-grip handle runs along the trunk, 16 deg off that line at INCL 80 and PITCH 26), so they match the start's end-on hex
-  equipment: [{ type: 'floor', from: -0.55, to: 0.55 },
-    lm => ['l', 'r'].map(s => ({ type: 'dumbbell', at: lm[`grip.${s}`], axis: [0, PS, PC], part: `db.${s}`, z: 'front' }))],
-  startParts: ['arm.r', 'db.r'],
-  ghosts: { count: 0 },   // H7: 1 ghost (arm and dumbbell) made the chunk 161.6 KB; the Trace carries the sweep
-  datum: [{ y: 'shoulder.r', from: 'grip.r', to: 'grip.l' }],   // shoulder level: the hands finish on it (c3)
-  measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'slight bend, held' },   // c2
-  callouts: SIDE.callouts.map(c => ({ ...c, prefer: undefined })),
-  mistake: {
-    pose: mistakePose,
-    parts: ['shcap.l', 'shcap.r'],   // the faulty shoulder caps only (H7: the faulty trunk outline too made 154.6 KB)
-    guides: [shrugSide('r', 1), shrugSide('l', -1)],
-    tells: [
-      // anchored on the faulty cap top, moved into the shoulder-head gap so the zoom ring centres on it (pf2 R11)
-      { key: 'shrug', text: 'Shoulders<br>shrug', anchor: { at: 'shoulderTop.r', pose: 'mistake', off: [TELL_DX, TELL_DY] }, cue: 'The shoulders hike up toward the ears as the dumbbells rise.' },   // c3
-    ],
-  },
-  zoom: { view: 'mistake', k: 4 },   // H3: the shrug moves the anchor about 3 px at plate scale; 4 is the smallest ladder k over 11.4 px
-  alt: 'Bent-over dumbbell rear delt fly, front view. Hinged forward at the hips with a straight spine, the lifter raises two dumbbells from hanging under the chest out to the sides until the arms are about level with the body, elbows slightly bent.',
 };

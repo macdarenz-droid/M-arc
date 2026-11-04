@@ -145,34 +145,9 @@
     "basis": "stated reason: the side view stops the drawn sweep where the near arm and hand still show (bent_over_dumbbell_rear_delt_fly.mjs:101-104); bent_over_dumbbell_rear_delt_fly as drawn on main c7bdad7a (pilot A #109); poses unchanged by LIB-8R"
    },
    "M_SHRUG": {
-    "value": 8,
+    "value": 5,
     "unit": "cm",
-    "basis": "convention: golden A dumbbell_lateral_raise's shrug (ref-src/plate.mjs:147 'shrug_cm 5'), as lb7/sizes.json:522, raised to 8 for the front plate (LIB-PLATEFIX-1): 5 moved the tell anchor 1.8 px at pitch 24, under H3 at the largest zoom k 4; c3 'don't shrug'"
-   },
-   "PITCH": {
-    "value": 26,
-    "unit": "deg",
-    "basis": "decision: LIB-PLATEFIX-1, D-SPIKE-hinge camera pitch for the card's front view; plates panel pf1 (#385 6636073314 R1) read 40 as the trunk pitched at the viewer with a short hanging arm; rendered at 0, 12, 24 and 26 (0 and 12 read as standing upright); 26 keeps the back readable and lets the 8 cm shrug clear H3 at k 4"
-   },
-   "TRAP_RISE": {
-    "value": 10,
-    "unit": "px",
-    "basis": "stated reason: plates panel pf2 (#385 6637293768 R5) asked a bunched trapezius contour; the hump sits 10 plate px above the trap landmark (9 read as a straight line, 14 left the k 4 ring); c3"
-   },
-   "HEAD_MEET": {
-    "value": 11.8,
-    "unit": "px",
-    "basis": "stated reason: pf2 R5 'meets the head oval at about y 612' (card px): the contour meets the engine's head outline 11.8 plate px above the head landmark; c3"
-   },
-   "TELL_DX": {
-    "value": 15,
-    "unit": "px",
-    "basis": "stated reason: pf2 R11, the Mistake source ring centred on the shoulder-head gap (card ~(384, 610)): the tell anchor 15 plate px right of the cap top"
-   },
-   "TELL_DY": {
-    "value": 2,
-    "unit": "px",
-    "basis": "stated reason: pf2 R11, as TELL_DX: 2 plate px down, so the ring holds the cap edge, the hump and the head's side"
+    "basis": "convention: golden A dumbbell_lateral_raise's shrug (ref-src/plate.mjs:147 'shrug_cm 5'), as lb7/sizes.json:522; c3 'don't shrug'"
    }
   }
  }
