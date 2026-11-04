@@ -1,0 +1,14 @@
+{
+  "groups": [
+    {
+      "id": "pilot-a2",
+      "title": "Pilot A2",
+      "ids": ["lib_bent_over_dumbbell_rear_delt_fly"]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/pilot-a2.closeups.mjs",
+  "closeups": {
+    "lib_bent_over_dumbbell_rear_delt_fly": { "optionsKey": "bent_over_dumbbell_rear_delt_fly" }
+  },
+  "jump": null
+}
