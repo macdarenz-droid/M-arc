@@ -78,16 +78,16 @@ describe('F-CROP-FRONT crops project as the plate', { timeout: 300_000 }, () => 
 });
 
 // D-CROP-PIN (#380 6627881461, the D-SHAPES-PIN form): MANIFEST.json pins crop.mjs's own source sha in every pinned row,
-// so the fix re-pins exactly that one key; every other entry equals main c4c34d75.
+// so the fix re-pins exactly that one key; every other entry equals main 8d596fab.
 describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.mjs', () => {
   const CROP = 'tools/plates/library/render/closeup/crop.mjs';
   const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
-  it('every pinned row pins the current crop.mjs, and every other entry equals main c4c34d75', () => {
+  it('every pinned row pins the current crop.mjs, and every other entry equals main 8d596fab', () => {
     const m = JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(21);
     for (const r of rows) { expect(r.files[CROP]).toBe(sha(readFileSync(path(CROP)))); r.files[CROP] = 'X'; }
-    // main c4c34d75's MANIFEST.json with the same one entry blanked (whichever of #380 and #379 merges second re-measures)
-    expect(sha(JSON.stringify(m))).toBe('3fd45dc68cc4c0ecc85b0ba81f1a8bfa1a417836650b89ef1c2b6516993fc2d0');
+    // main 8d596fab's MANIFEST.json with the same one entry blanked (whichever of #380 and #379 merges second re-measures)
+    expect(sha(JSON.stringify(m))).toBe('d72a652c2ffa05721229ad55cf268e0af4b3715e3eeee40ddbcdc7984b891eec');
   });
 });
