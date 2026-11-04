@@ -2,9 +2,11 @@
 // A3 baseline: the body (after the GENERATED header line, whose inputsSha256 moves with the generators) of every
 // posture chunk and of loaders.ts stays byte-equal to main cb9a6dae for every row that has posture zooms.
 import { createHash } from 'node:crypto';
-import { readdirSync, readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { child, IN_CHILD } from '../child-test';
 
 const GEN = join(__dirname, '../../src/howto/generated');
 const sha = (s: string) => createHash('sha256').update(s).digest('hex');
@@ -30,4 +32,84 @@ describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on
     expect(now).toEqual(Object.keys(BODY_MAIN).sort());
     for (const [n, want] of Object.entries(BODY_MAIN)) expect([n, sha(body(n))]).toEqual([n, want]);
   });
+});
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
+let Z: any, I: any, F: any, L: any;
+const SHEET = { zooms: [{ key: 'hand', kind: 'hand' }], posture: [{ key: 'pivot' }, { key: 'pad' }], setup: [{ zoom: 'hand' }], mistakes: [], feel: { rows: [] } };
+const CARD = { zooms: [{ key: 'knee-pivot', kind: 'posture' }, { key: 'ankle-pad', kind: 'posture' }, { key: 'grip', kind: 'hand' }] };
+const ENTRY = { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'knee-pivot': 'pivot', 'ankle-pad': 'pad' } };
+const ok = (list: any = { lib_x: ENTRY }, sheet: any = SHEET, card: any = CARD) => Z.textZoomRow('lib_x', sheet, card, list);
+
+beforeAll(async () => {
+  Z = await import(/* @vite-ignore */ url('tools/plates/gen/zooms.mjs'));
+  I = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));
+  F = await import(/* @vite-ignore */ url('tests/howto/fixtures/zoom-none/fixture.mjs'));
+  L = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
+});
+
+describe('F-ZOOM-NONE A2: textZoomRow, the zero-zoom guard', () => {
+  it('a ruled zero-zoom row gives its entry; a row with posture zooms and no entry gives null; the real list is empty on main', () => {
+    expect(ok()).toEqual(ENTRY);
+    expect(Z.textZoomRow('lib_y', { ...SHEET, zooms: [{ key: 'back', kind: 'posture' }] }, CARD, {})).toBeNull();
+    expect(Z.readTextZooms()).toEqual({});
+    expect(I.TEXT_ZOOMS).toBe(Z.TEXT_ZOOMS);
+    expect([...Z.TEXT_ZOOM_RULINGS]).toEqual(['D-SHIP-TEXTZOOM']);
+  });
+  it('red 1: a card posture zoom not mapped, or mapped to a checkpoint the sheet lacks (the card zoom is drawable)', () => {
+    expect(() => ok({ lib_x: { ...ENTRY, checkpoints: { 'knee-pivot': 'pivot' } } })).toThrow(/card zoom ankle-pad is drawable/);
+    expect(() => ok({ lib_x: { ...ENTRY, checkpoints: { ...ENTRY.checkpoints, 'ankle-pad': 'calves' } } })).toThrow(/maps to checkpoint calves, which the sheet's posture does not hold/);
+  });
+  it('red 2: no entry, no ruling, a ruling outside the set', () => {
+    expect(() => ok({})).toThrow(/no posture zoom, and no tools\/plates\/library\/text-zooms.json entry/);
+    expect(() => ok({ lib_x: { checkpoints: ENTRY.checkpoints } })).toThrow(/ruling undefined is not one of D-SHIP-TEXTZOOM/);
+    expect(() => ok({ lib_x: { ...ENTRY, ruling: 'D-SHIP-C3' } })).toThrow(/ruling "D-SHIP-C3" is not one of/);
+  });
+  it('red 4: an entry for a row with posture zooms, a zoom the card lacks, a dangling link, a ruled page holding a posture close-up', () => {
+    expect(() => ok(undefined, { ...SHEET, zooms: [...SHEET.zooms, { key: 'pivot', kind: 'posture' }] })).toThrow(/has posture zooms \[pivot\], but tools\/plates\/library\/text-zooms.json names it/);
+    expect(() => ok({ lib_x: { ...ENTRY, checkpoints: { ...ENTRY.checkpoints, seat: 'pivot' } } })).toThrow(/names card zoom seat, which the card's posture zooms do not hold/);
+    expect(() => ok(undefined, { ...SHEET, posture: [{ key: 'pivot', zoom: 'knee-pivot' }, { key: 'pad' }] })).toThrow(/links to close-ups the sheet does not have: knee-pivot/);
+    expect(() => ok(undefined, { ...SHEET, feel: { rows: [{ zoom: 'pad-zoom' }] } })).toThrow(/does not have: pad-zoom/);
+    const page = '<div class="zx" id="x-zoom-hand" data-zoom="hand"></div><div class="zx" id="x-zoom-pivot" data-zoom="pivot"></div>';
+    expect(() => Z.textZoomPageCheck('lib_x', page, 'x', 'p.html')).toThrow(/ruled in .*, but p.html holds posture close-ups \[pivot\]/);
+    const card = (inner: string) => `<article class="sheet-card" id="card-x">${inner}<div class="zx" id="x-zoom-hand" data-zoom="hand"></div></article>`;
+    expect(() => Z.textZoomPageCheck('lib_x', card('<button class="zx-chip" data-zoom="hand"></button>'), 'x', 'p.html', ['hand'])).not.toThrow();
+    expect(() => Z.textZoomPageCheck('lib_x', card('<button class="fr-show" data-zoom="pivot"></button>'), 'x', 'p.html', ['hand'])).toThrow(/its card on p.html opens close-ups it does not have \[pivot\]/);
+  });
+  it('ids.mjs missingChunks: a ruled row needs no posture chunk; without the ruling (the guard removed) it throws as today', () => {
+    const row = { id: 'lib_x', slug: 'x', chromeId: 'x' }, has = (n: string) => n !== 'posture-x';
+    expect(() => I.missingChunks([row], has, { x: 'k' }, {}, () => true, new Set(['lib_x']))).not.toThrow();
+    expect(() => I.missingChunks([row], has, { x: 'k' }, {}, () => true)).toThrow(/ids: lib_x: no src\/howto\/generated\/posture-x.ts/);
+    expect(() => I.missingChunks([row], () => true, { x: 'k' }, {}, () => true, new Set(['lib_x']))).not.toThrow();
+  });
+});
+
+// A1 (amended, D-TEXT-GOLDEN): LIB-2b's scratch row made zero-zoom in a temp tree (tests/howto/fixtures/zoom-none)
+const gen = (root: string) => spawnSync(process.execPath, ['tools/plates/generate.mjs'], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 26 });
+let tree = '', first: ReturnType<typeof gen>, guardless: ReturnType<typeof gen>;
+describe('F-ZOOM-NONE A1: a ruled zero-zoom row generates no posture chunk; with the guard removed it throws', () => {
+  beforeAll(() => {
+    if (!IN_CHILD) return;   // the tree is built in the child process (F-VITEST-RPC)
+    tree = F.zeroZoomTree();
+    first = gen(tree);
+    F.guardOff(tree);
+    guardless = gen(tree);
+  }, 600_000);
+  afterAll(() => { if (tree) L.drop(tree); });
+  child.it('generate passes, writes the row\'s ht- and feel- chunks and no posture chunk; loaders.ts has no POSTURE line for it', () => {
+    expect([first.status, first.stderr.split('\n').filter((l: string) => /Error/.test(l)).slice(0, 3)]).toEqual([0, []]);
+    const g = join(tree, 'src/howto/generated');
+    expect(existsSync(join(g, `ht-${L.CHROME}.ts`))).toBe(true);
+    expect(existsSync(join(g, `feel-${L.CHROME}.ts`))).toBe(true);
+    expect(existsSync(join(g, `posture-${L.CHROME}.ts`))).toBe(false);
+    const loaders = readFileSync(join(g, 'loaders.ts'), 'utf8'), posture = loaders.slice(loaders.indexOf('export const POSTURE'), loaders.indexOf('export const FEEL'));
+    expect(posture.length).toBeGreaterThan(0);
+    expect(posture).not.toContain(`"${L.CHROME}"`);
+    expect(loaders).toContain(`lib_cable_lateral_raise: () => import('./ht-${L.CHROME}')`);
+  }, 600_000);
+  child.it('red 3: the same tree with the guard removed (today\'s code) throws "no posture close-up"', () => {
+    expect(guardless.status).not.toBe(0);
+    expect(guardless.stderr).toContain(`zooms: ${L.CHROME}: no posture close-up in the golden-B page`);
+  }, 600_000);
 });

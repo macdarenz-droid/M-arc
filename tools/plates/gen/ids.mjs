@@ -23,6 +23,8 @@ export const after = [...LAYERS, 'tools/plates/gen/plates.mjs'];
 
 export const ENCODING = 'tools/plates/library/ids-encoding.mjs';
 export const COVERAGE_DATA = 'tools/plates/library/coverage-archetypes.json';
+/** F-ZOOM-NONE: gen/zooms.mjs TEXT_ZOOMS (read here by path: ids.mjs does not load the zoom generator). */
+export const TEXT_ZOOMS = 'tools/plates/library/text-zooms.json';
 // The encoding (S, H, O and the decoder) lives in ../library/ids-encoding.mjs, shared with content.mjs (D-LIB2-hints).
 export { IDS_MAX, IDS_WRITERS, LABEL, hintsOutputs, idHash, idsBudget, idsNodeText, idsText, literals, setOf } from '../library/ids-encoding.mjs';
 
@@ -49,10 +51,11 @@ export function chunkMaps(shippedRows, has, pairOf = {}) {
  *  posture-<c> chunk, its zoom-<c>.css (posture-<c>.ts imports it; `hasFile` takes a repo path, D-LIB2b-REVIEW-1) and,
  *  unless its archetype is 'none', its hand-<c> chunk or a hand pair. Runs before any text is built, so no loaders.ts
  *  line can point at a chunk that is not written. */
-export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}, hasFile) {
+export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}, hasFile, textZoom = new Set()) {
   for (const r of shippedRows) {
     const c = r.chromeId;
-    for (const name of [`ht-${r.slug}`, `feel-${c}`, `posture-${c}`]) if (!has(name)) throw new Error(`ids: ${r.id}: no src/howto/generated/${name}.ts`);
+    // F-ZOOM-NONE: a row ruled in tools/plates/library/text-zooms.json (checked by gen/zooms.mjs, which runs first) has no posture chunk
+    for (const name of [`ht-${r.slug}`, `feel-${c}`, ...(textZoom.has(r.id) ? [] : [`posture-${c}`])]) if (!has(name)) throw new Error(`ids: ${r.id}: no src/howto/generated/${name}.ts`);
     const zoom = `src/slices/howto/css/zoom-${c}.css`;
     if (!hasFile(zoom)) throw new Error(`ids: ${r.id}: no ${zoom}`);
     if (archetypes[r.id] !== 'none' && !has(`hand-${c}`) && !pairOf[c]) throw new Error(`ids: ${r.id}: no src/howto/generated/hand-${c}.ts and no hand pair`);
@@ -146,7 +149,8 @@ export async function outputs(ctx = {}) {
   const gen = name => `src/howto/generated/${name}.ts`;
   const hasFile = ctx.prev ? path => ctx.prev.has(path) : path => existsSync(join(ROOT, path)), has = name => hasFile(gen(name));
   const byId = new Map(all.map(r => [r.id, r]));
-  missingChunks(shipped.map(id => byId.get(id)), has, pairOf, archetypes, hasFile);
+  const textZoom = new Set(Object.keys(existsSync(join(ROOT, TEXT_ZOOMS)) ? JSON.parse(readFileSync(join(ROOT, TEXT_ZOOMS), 'utf8')).entries ?? {} : {}));
+  missingChunks(shipped.map(id => byId.get(id)), has, pairOf, archetypes, hasFile, textZoom);
   const maps = chunkMaps(shipped.map(id => byId.get(id)), has, pairOf);
   const out = [
     { path: 'src/howto/ids.ts', text: twins.ids },
