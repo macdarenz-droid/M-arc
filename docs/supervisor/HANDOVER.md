@@ -830,7 +830,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 - **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
 
-- **Train 63 (11-04 ~07:10 UTC):** #376 LIB-SHIP W1 @ `bd86e240` (review PASS, 4 lows carried to W2): the first library How-to, dumbbell_biceps_curl. #377 LIB-SHAPES @ `4c79eeba` (review PASS, 0 findings). The CI split D-SUP-CI-TZSPLIT @ `8da2b11f`. MANIFEST: the train re-runs manifestOf if both lanes' pins collide (D-SHAPES-PIN). After the merge, the APK goes to the owner (the first library How-to).
+- **Train 63 (11-04 ~07:10 UTC):** #376 LIB-SHIP W1 @ `bd86e240` (review PASS, 4 lows carried to W2): the first library How-to, dumbbell_biceps_curl. Also the CI split D-SUP-CI-TZSPLIT @ `8da2b11f`. **#377 LIB-SHAPES (review PASS, frozen @ `4c79eeba`) is not in this train:** merging it on top of W1 conflicts in MANIFEST.json, generated loaders.ts and gate-split.test.ts (the group count). Generated files and pins are never hand-merged, so its builder merges main after train 63, regenerates, re-pins (D-SHAPES-PIN) and sets the count to 112. Then a supervisor diff-check and train 64. After train 63, the APK goes to the owner (the first library How-to).
 - **Update 04:45 UTC (11-04):** main `b9369130`. Both lanes are READY and in review:
   - LIB-SHIP W1 #376 @ `bd86e240` (curl only; reviewer session_018Pv5bL6TXPmTCq6sK5mjw3);
   - LIB-SHAPES #377 @ `4c79eeba` (reviewer session_018Pv5bJnZEgBzu7eu5w4Yz6).
