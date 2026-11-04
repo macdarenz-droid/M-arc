@@ -837,6 +837,10 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Owner answers: D-OWNER-FLAGS (approve; crunch was added under the ruling, so the corrected count of 58 goes to the owner with the next APK) and D-OWNER-RELEASE-ALL.
   - Owner items for the release candidate: F-SHEET-COPY (the "not medical advice" closing line vs the AGENTS UI-copy rule), golden-B follow-ups 30-36, F-PLATE-OVERLAP-W2, and the box_jump ankle box.
   - Panel scratch: lyr-w2a/b/c, k1, k2 and s, with keys in lyr-w2-private.
+- **Train 66 MERGED 11-04 ~19:20 UTC** (#389 → main `cf28ab23`; 20/20 green on `e05e423f`; local 279 files, 5767 tests). It merged F-PAIR-FAULTS #386 @ `9afb2a0b` (review PASS 6638488356) and HANDOVER @ `afc6aa2c`. There was no src/ change, so no APK. The reviewer was archived; the builder session_018Pv5bK2kG14GgsRk2NTyrH carries on with F-ZOOM-NONE #388.
+  - **pf3** (#385 6638551153): dumbbell_fly and the rear delt fly are HELD (D-LIB13-PANEL2) and reverted to main in #385. Queued card LIB-PLATEFIX-2 (lib4-cards section 48).
+  - **#387 F-PLATE-ZOOMCSS** READY @ `d5099d3b`, with reviewer session_018Pv5bLd33URcjQzGWxZxg5. The head predates train 66, so it needs a main merge and a delta check.
+  - mountain_climbers flips in W3.
 - **Update 11-04 ~17:50 UTC** (weekly meter 0.40; resets Fri 11-06 08:00 UTC). There are 4 active LIB builders. The rulings are in `verify/lib4-cards.md` section 48.
   - **W2 #379** (session_018Pv5bJh8Jvpq3f1LLKDcbe): layers approved with a STAMP @ `91ee3dfa` (6636105974). 9 ids flip: pec_fly, barbell_row, rope_triceps_pushdown, dumbbell_bench_press, dumbbell_shoulder_press, push_up, cable_fly, upright_row, plank. Held: mountain_climbers (#386), crunch (#387), seated_leg_curl (#388).
     - **D-TEXT-GOLDEN** (#388 6637606077): golden B shows posture checkpoints only as zooms, so every claim on a library sheet must sit in a visible slot.
