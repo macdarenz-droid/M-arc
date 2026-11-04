@@ -4,7 +4,7 @@
 // For the 8 the layers build is the vendored golden B (tools/plates/layers) with HT-4's exact path (D-LIB4b-POSES (6)).
 // A library id's build is LIB-6's builder, captured through a shim on a mirror of tools/plates, and its pose rule is
 // derived from source (D-LIB4b-POSES (1)-(5), libraryA5); without LIB-6 in the tree its A5 rows fail: never a skip.
-import { cpSync, existsSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -86,12 +86,30 @@ export function renderPlate(spec, opts) {
  * a mirror of tools/plates: the mirrored engine/plate.mjs is a recording shim, so both golden B's scripts and LIB-6's
  * close-up renderer draw through it). `specOf(mirrorRoot, builder)` returns the buildLayersPage spec. -> { calls, html }.
  */
-export async function captureLayersBuild(root, specOf) {
+/** D-SHIP-A5BACK: the files MANIFEST.json pins for `ids` that lie outside tools/plates and src/data (sorted, unique). */
+export function mirrorExtras(root, ids = []) {
+  const f = join(root, 'tools/plates/library/MANIFEST.json');
+  if (!ids.length || !existsSync(f)) return [];
+  const m = JSON.parse(readFileSync(f, 'utf8')), out = new Set();
+  for (const id of ids) for (const p of Object.keys(m.rows?.[id]?.files ?? {})) if (!p.startsWith('tools/plates/') && !p.startsWith('src/data/')) out.add(p);
+  return [...out].sort();
+}
+
+export async function captureLayersBuild(root, specOf, ids = []) {
   if (!existsSync(join(root, 'tools/plates/library/build-layers-page.mjs'))) throw new Error('HT4-A5: LIB-6\'s build-layers-page.mjs is not in this tree');
   const T = mkdtempSync(join(tmpdir(), 'lib4b-ht4-'));
   try {
     cpSync(join(root, 'tools/plates'), join(T, 'tools/plates'), { recursive: true });
     cpSync(join(root, 'src/data'), join(T, 'src/data'), { recursive: true });   // LIB-7b (D-LIB7b-SCRATCH2 P4): a pair row's build loads hands/pairs.mjs, which reads src/data/exercises.json
+    // LIB-SHIP W2 (D-SHIP-A5BACK, #379 6640257406): the batch's rows can read files outside tools/plates and src/data (today
+    // only the back box's research file, which shared/back-box.mjs reads for a back-flagged sheet). The mirror carries every
+    // such file that MANIFEST.json pins for the batch's ids: the pinned list is manifest.mjs filesOf's output (manifestProblems
+    // keeps them equal), and filesOf itself skips a missing file, so a pinned file that is missing fails loud by name here.
+    for (const p of mirrorExtras(root, ids)) {
+      if (!existsSync(join(root, p))) throw new Error(`HT4-A5: ${p} is pinned in MANIFEST.json for this batch but missing from the tree`);
+      mkdirSync(dirname(join(T, p)), { recursive: true });
+      cpSync(join(root, p), join(T, p));
+    }
     symlinkSync(join(root, 'node_modules'), join(T, 'node_modules'));
     const out = join(T, 'rp-calls.json');
     // LIB-SHIP D-SHIP-A5VENDOR (#376 6617194861): a library spec draws through the vendor engine (D-LIB9-ENGINE), so the
@@ -171,7 +189,7 @@ async function runLibrary(ctx, { lib }) {
     // D-SHIP-A5VENDOR: staged from the mirror T, so a vendor-engine spec's staged closure holds the recording shim
     const s = layersSpecOf(row.batchFile, { stageDir: mkdtempSync(join(tmpdir(), 'lib4b-ht4-stage-')), root: T });
     return s.optionsUrl ? { ...s, optionsUrl: s.optionsUrl.replace(pathToFileURL(join(root, 'tools/plates')).href, pathToFileURL(join(T, 'tools/plates')).href) } : s;
-  }));
+  }, registryRows(root).filter(r => r.batchFile === row.batchFile).map(r => r.id)));
   const cap = await ctx.ht4lib.get(row.batchFile);
   const cfg = JSON.parse(readFileSync(join(root, row.pages.layersConfig), 'utf8'));
   const options = (await import(pathToFileURL(join(root, cfg.optionsModule)).href)).CLOSEUP_OPTIONS[cfg.closeups?.[lib]?.optionsKey];

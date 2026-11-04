@@ -256,3 +256,41 @@ describe('LIB-SHIP D-SHIP-PAIR-NOZOOM (#379 6637870829): pairsOf leaves out ids 
     }
   });
 });
+
+describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries every pinned file outside tools/plates and src/data', () => {
+  // captureLayersBuild builds a batch's layers page in a mirror; a back-flagged sheet (plank, barbell_row, rope on pilot-a)
+  // makes shared/back-box.mjs read docs/research/howto/shared/back-pain-box.json, so the mirror must carry it
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const BACK = 'docs/research/howto/shared/back-pain-box.json';
+  const ht4 = async (): Promise<any> => import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/fidelity/twins/ht4.mjs')).href);
+  const pilotA = async (): Promise<string[]> => {
+    const reg: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/registry.mjs')).href);
+    return reg.rows().filter((r: any) => r.batchFile === 'tools/plates/library/batches/pilot-a.json').map((r: any) => r.id);
+  };
+  const build = async (root: string, ids: string[]) => {
+    const { pathToFileURL } = await import('node:url'), { mkdtempSync } = await import('node:fs'), { tmpdir } = await import('node:os');
+    return (await ht4()).captureLayersBuild(root, async (T: string) => {
+      const { layersSpecOf }: any = await import(/* @vite-ignore */ pathToFileURL(join(T, 'tools/plates/library/layers-spec.mjs')).href);
+      const s = layersSpecOf('tools/plates/library/batches/pilot-a.json', { stageDir: mkdtempSync(join(tmpdir(), 'a5back-stage-')), root: T });
+      return s.optionsUrl ? { ...s, optionsUrl: s.optionsUrl.replace(pathToFileURL(join(root, 'tools/plates')).href, pathToFileURL(join(T, 'tools/plates')).href) } : s;
+    }, ids);
+  };
+  it('pilot-a\'s pinned extras are exactly the back box research file, and the real tree builds pilot-a in the mirror', async () => {
+    const ids = await pilotA();
+    expect((await ht4()).mirrorExtras(process.cwd(), ids)).toEqual([BACK]);
+    expect((await build(process.cwd(), ids)).calls.length).toBeGreaterThan(0);
+  }, 300_000);
+  it('red (the copy step removed, i.e. no ids reach it): the ENOENT crash on the back-flagged rows', async () => {
+    await expect(build(process.cwd(), [])).rejects.toThrow(/ENOENT[\s\S]*back-pain-box\.json/);
+  }, 300_000);
+  it('red (a pinned file deleted from the source tree): the loud missing-file error names it', async () => {
+    const { cpSync, mkdtempSync, rmSync, symlinkSync } = await import('node:fs'), { tmpdir } = await import('node:os');
+    const R = mkdtempSync(join(tmpdir(), 'a5back-root-'));
+    try {
+      cpSync('tools/plates', join(R, 'tools/plates'), { recursive: true });
+      cpSync('src/data', join(R, 'src/data'), { recursive: true });
+      symlinkSync(join(process.cwd(), 'node_modules'), join(R, 'node_modules'));
+      await expect(build(R, await pilotA())).rejects.toThrow(`HT4-A5: ${BACK} is pinned in MANIFEST.json for this batch but missing from the tree`);
+    } finally { rmSync(R, { recursive: true, force: true }); }
+  }, 300_000);
+});
