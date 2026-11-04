@@ -167,12 +167,21 @@ async function entryJob({ browser, port, R, order, custom, fixtures, root }, { l
       // G7 (ht3Behaviour): after the first Mistake tap and a tell, no .form-guide element inside the open sheet
       await page.locator(`#${chrome}-mistake`).click();
       if (!(await page.locator('dialog.sheet.ht .ht-plate[data-mode="mistake"]').count())) bad.push('A3: the first Mistake tap did not insert the mistake figure');
-      else await page.locator('dialog.sheet.ht .ht-plate[data-mode="mistake"] .plate-callout').nth(1).click();
+      else await g7Tell(page, bad);
       if (await page.locator('.form-guide').count()) bad.push('G7: a .form-guide element is inside the open How-to sheet');
       await closeHowTo(page);
     }
   } catch (e) { bad.push(e.message.split('\n')[0]); } finally { await ctx.close(); }
   R.check(lib, theme, st, bad);
+}
+
+/** G7's tell (LIB-SHIP W2, D-SHIP-G7ONE, #379 6641008259): tap the Mistake plate's last callout, so a one-callout plate
+ *  still has its tell tapped (the 8's HT-3 path keeps its .nth(1)); no callout fails loud by name. */
+export async function g7Tell(page, bad) {
+  const tells = page.locator('dialog.sheet.ht .ht-plate[data-mode="mistake"] .plate-callout');
+  if (!(await tells.count())) { bad.push('A3: G7: the mistake figure has no .plate-callout to tap (D-SHIP-G7ONE)'); return false; }
+  await tells.last().click();
+  return true;
 }
 
 /** HT10 (HT10_PER_ID): the sweep and the reduced-motion sweep (ht10Sweep, reused), and A2 (the plate compare after the script). */

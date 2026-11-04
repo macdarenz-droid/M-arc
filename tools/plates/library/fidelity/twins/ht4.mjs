@@ -207,12 +207,21 @@ async function runLibrary(ctx, { lib }) {
   for (const s of ['protected', 'fragments', 'poses']) R.check(lib, '*', A5(s), got[s]);
 }
 
+/** D-SHIP-A6NOGRIP: false only for a sheet whose handling hands.mjs noPairRuling rules 'D-SHIP-GRIP' (no Grip block). */
+export async function gripOf(root, lib) {
+  const { noPairRuling } = await import(pathToFileURL(join(root, 'tools/plates/gen/hands.mjs')).href);
+  const src = sourceOf(lib, root);
+  if (!src) return true;
+  const sheet = (await import(pathToFileURL(join(root, src)).href)).default;
+  return noPairRuling(sheet) !== 'D-SHIP-GRIP';
+}
+
 /** HT4-A6 for one id in one theme: the golden-B state driver self-check on the id's layers page. */
 export async function run(ctx, { lib, chrome, theme }) {
   const gb = await GB(), st = stateOf('HT4', 'A6', WIDTH);
   const { browser: b, page, errs } = await gb.openPage(ctx.layersFile(lib), theme, { chromePath: process.env.MARC_CHROMIUM });
   try {
-    const bad = await gb.selfCheck(page, chrome);
+    const bad = await gb.selfCheck(page, chrome, { grip: await gripOf(ctx.root, lib) });
     ctx.R.check(lib, theme, st, [...bad, ...errs.map(e => `page error: ${e}`)]);
   } finally { await b.close(); }
 }
