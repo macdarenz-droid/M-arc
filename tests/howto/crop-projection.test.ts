@@ -88,8 +88,10 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(21);
     for (const r of rows) for (const k of KEYS) { expect(r.files[k]).toBe(sha(readFileSync(path(k)))); r.files[k] = 'X'; }
-    // main 8d596fab's MANIFEST.json with the same two entries blanked (whichever of #380 and #379 merges second re-measures)
-    expect(sha(JSON.stringify(m))).toBe('497e6f30f1ca3adb32b93f6ea8370948d412829292180f41c0f6c13ce5cc972e');
+    // F-PAIR-FAULTS (#386): build-layers-page.mjs's and pairs.mjs's keys are re-pinned there and pinned exactly by pair-faults.test.ts
+    for (const r of rows) for (const k of ['tools/plates/library/build-layers-page.mjs', 'tools/plates/library/hands/pairs.mjs']) r.files[k] = 'X';
+    // main cb9a6dae's MANIFEST.json with the same entries blanked (was 497e6f30… on main 8d596fab without F-PAIR-FAULTS's two; re-measured)
+    expect(sha(JSON.stringify(m))).toBe('b126d854f879d014474d6a78af89d376439dd7aad0b3bc6389e5da352dc1c840');
   });
 });
 
