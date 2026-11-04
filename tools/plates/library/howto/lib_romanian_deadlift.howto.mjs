@@ -207,8 +207,9 @@ export default {
       anchor: { landmark: 'lumbar', pose: 'end' }, zoom: 'rdl-bottom', claim: CL.c5 },
     { key: 'bar', label: 'Bar close', detail: 'Bar very close to the body.',
       anchor: { landmark: 'grip.r', pose: 'end' }, zoom: 'rdl-bar-path', claim: CL.c3 },
-    { key: 'depth', label: 'About mid-shin', detail: 'Typically down to about mid-shin. Spine position beats depth.',
-      anchor: { landmark: 'ankle.r', pose: 'end' }, claim: CL.c6 },
+    // Pre-panel restore (#379 6632122694): card c2's depth cue, cut from 'hips', carried here with its claim.
+    { key: 'depth', label: 'About mid-shin', detail: 'Lower until you feel tension along the back of the legs. Spine position beats depth.',
+      anchor: { landmark: 'ankle.r', pose: 'end' }, claim: { ...CL.c6, sources: [...new Set([...CL.c6.sources, ...CL.c2.sources])], note: 'c6, c2' } },
     { key: 'heels', label: 'Heels down', detail: 'Push the heels into the floor to stand.',
       anchor: { landmark: 'heel.r', pose: 'start' }, claim: CL.c3 },
   ],

@@ -94,7 +94,7 @@ const zooms = [
 // left off the rows (D-SHIP-Q16); the feel line says them.
 const feel = {
   primary: [
-    { muscleId: 'mid_back', plain: 'The muscles between and around the shoulder blades do most of the work.' },
+    { muscleId: 'mid_back', plain: 'The traps and the muscles around the shoulder blades do most of the work.' },   // c12 names the trapezius (pre-panel restore, #379 6632122694)
     { muscleId: 'lats', plain: 'The lats are main movers too.' },
   ],
   secondary: [
