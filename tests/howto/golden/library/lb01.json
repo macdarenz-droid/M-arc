@@ -1,0 +1,372 @@
+{
+  "base": {
+    "index": 8,
+    "hash": "e48d731d176c5e3994cab5e2de5ea2db938cbdf6c249600679588daa58b22361"
+  },
+  "entries": [
+    {
+      "kind": "page",
+      "pageSha256": "242262d4589782b44a8d0a47ce4b928de733fdd16b90bcd781b98bb334960e7c",
+      "bytes": 1282099,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): the lb01 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page.",
+      "supersedes": null,
+      "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_chin_up",
+      "src": "library/specs/chin_up.mjs",
+      "slug": "chin-up",
+      "prefix": "chin-up",
+      "chromeId": "chin-up",
+      "fragments": {
+        "normalSvg": "59e95ced66856680ceae4697afca36456f6cfa495bc4e189ef5f52c22b5ebd31",
+        "normalOverlay": "d1fbbceb1291c9f4418864fb16ce451218145596d1ed18c72016ea4995a36ab1",
+        "mistakeSvg": "20a5893beadbbf7f8814016e0ca5939fe6048de757f76e73300bb30284c8eb1c",
+        "mistakeOverlay": "24807aaccdcbde1a4cbe49833569ad327d0f1b8739d58159d7229f250b984890",
+        "tells": "49fbb31af4596549438c91936ec7d85662de92198672c705c723a671919a5f5b",
+        "tempo": "7301204cf48b225c60a326ca23a134df9fbb42ab5800d7fd9ed5889e29634016",
+        "cues": "4b6873511168e1d922b6b7e7c6d16ecfb2468d7304783af65d22a758734a104a",
+        "alt": "038e297ac1e4811bdf6282c55dec2524b05c87cb596d58e9614cced13ccb3183",
+        "mistakeAlt": "b067649fbee3fc510fbd333b2c0bf5f6a52aba68cc2098fae50e72367a61b81b"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_chin_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "2f538b8c1a011bbec7fc00117f23848f1e3710098c2707dbacbb043275aed41b"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_hanging_knee_raise",
+      "src": "library/specs/hanging_knee_raise.mjs",
+      "slug": "hanging-knee-raise",
+      "prefix": "hanging-knee-raise",
+      "chromeId": "hanging-knee-raise",
+      "fragments": {
+        "normalSvg": "02b5388a630080596df88dfa60020a0183895b1329872514d624ebcc3da53c78",
+        "normalOverlay": "d5ab0467a183672c96fc725e665ca3d87251421700bb9f8b734416c8e69edbee",
+        "mistakeSvg": "3db224948115f91f300a0054bee9ebf9573b7e25ac329e12bd80321f061cbbb5",
+        "mistakeOverlay": "367fcbf66349f2d3c91b6631546257ce874e662c9cb227baad0ebe2079578c73",
+        "tells": "60b43c0eaf91a2b3bb87f7ed9152fb90903128cb934798906a2ca02cda75cfa7",
+        "tempo": "8c1a840e14fab09fb3181eebe48a482e98b8fab8f7e035855cb47ccee90d0474",
+        "cues": "0bfc4f53c213ef2c515429d64061fe318289f20a2a642a7743cc9e2776ec8338",
+        "alt": "b56a7246959c718ac2bb5a00a73e936db0c22c05bbd8aa252375cf7e8de9645d",
+        "mistakeAlt": "ee6ee60648b4d3c500bc2e174f55a2bc50eff93d863ae8dce13ae12be6de89eb"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_hanging_knee_raise's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "6605871b51cd9b02790b8db42f597baaf488a80fb12def63cf0b852ce60ef410"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_assisted_pull_up",
+      "src": "library/specs/assisted_pull_up.mjs",
+      "slug": "assisted-pull-up",
+      "prefix": "assisted-pull-up",
+      "chromeId": "assisted-pull-up",
+      "fragments": {
+        "normalSvg": "4209a50ad8779c6079d4c674f9a2ddc1fef80a9386c9f86cf787cf80a2c1b922",
+        "normalOverlay": "9b800f8a3e71509d9bef4f61cab2fddbe50c8e646448922469408d6326695d49",
+        "mistakeSvg": "5779382f820287ad4f30e1670627a4708cc5a8d4e1f50331a7dd915618ca8bab",
+        "mistakeOverlay": "320a951685802edc4a7f2a7e050c4b4b0b8de2badf157091212f6ed64f0205bf",
+        "tells": "70d5487ffa28853fad1df2cf1349eee89e56451409e0e2f02f2e0154535f8bdd",
+        "tempo": "c5d7c44a59ad194e22dff64691b360c0b4a857d66dbc429a90c67ac0d73f034b",
+        "cues": "7ebb3b6745aa7ed5c2b95b6a3dcbceac59d777711b6ea68eb06552a3a8042687",
+        "alt": "4ea031136898be26e2a2e2994e9bf0f767f8f209acf2fa706da0aeeda6eddea8",
+        "mistakeAlt": "97a75ea21fffa795c78c6f0babd9a4d643123ed750e2750fc71f1029da45aedf"
+      },
+      "exemptions": [
+        "F5",
+        "F7"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_assisted_pull_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "c9ea36c83105a15de568a4afc72dcd77ee7e9d6c6fe2723dee77eea53e07d14b"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_inverted_row",
+      "src": "library/specs/inverted_row.mjs",
+      "slug": "inverted-row",
+      "prefix": "inverted-row",
+      "chromeId": "inverted-row",
+      "fragments": {
+        "normalSvg": "79dcd472930421981c3bf19554e3bd32e47683536f00a040f07ddfa4a6320c3d",
+        "normalOverlay": "078236da80cced0bcedd27eb63811e7f0743c81c861c3047c07394093a76241f",
+        "mistakeSvg": "ffa54ecf03cc179d06d28b58968a6f771703125cf08cc28c2c492de6e2183895",
+        "mistakeOverlay": "45587ff3afb127f214973cc38eb30dc15312ee609a56c9b388df911c581fa53b",
+        "tells": "46be563b3a5e18456f7009ff729d080d67c6a97c43a15ed3a4af0d40ec17aa3b",
+        "tempo": "1abe99bb41e11a9299d678e9f35bf3bc56e5914201313343974af433de126912",
+        "cues": "dd5f61d4d02c5e18e9f8e024d729ccb28b12f3eec927686c61d1496ca9fc3da2",
+        "alt": "85283ee824378535609eaca463b4be59537a2595d658ee0d5e39b56ac83e2443",
+        "mistakeAlt": "fcdc27c1746ac6c5fd2a910d365c2d68e0419aaebe94466b6a8c43643eb79196"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_inverted_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "1db8bf10d707917216a0ea85da411a30b6ca1921b15ce61e411c418dbf0b19fd"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_close_grip_pulldown",
+      "src": "library/specs/close_grip_pulldown.mjs",
+      "slug": "close-grip-pulldown",
+      "prefix": "close-grip-pulldown",
+      "chromeId": "close-grip-pulldown",
+      "fragments": {
+        "normalSvg": "31a7658233a17836b717ba92ae273c3539bd947b4cc5b28dd7422e0b758cd9ee",
+        "normalOverlay": "e1525081d6e24b2b6eefe7aaaa2bb3f67ad2bf26600a223ea5912c4de1789a06",
+        "mistakeSvg": "bd28497337a7a3001d579ba09791fc30a7dd4aa7e66769e285a962e293e3902e",
+        "mistakeOverlay": "592e525ba29b5ac6d23a8e3cf520d5e1ac0bb0138d75f498003c5075235ef0de",
+        "tells": "383363c6fa0258c9150ad7ea597dc8f34e35f8640735f2a53be15e82cda0c457",
+        "tempo": "796fbe7b0fe12e3121ae343b598ed832ad0ba73c2d14d43c8680ad5536220bc2",
+        "cues": "8927ea36b9600a591834d88614ab282075e7a072934ce944775ad6dee276db02",
+        "alt": "8e8bc84570ef6db833b065e6c931735aa758ed19da41222030e0204c3aff814a",
+        "mistakeAlt": "adcb34379874d439cc9f68a806690f5f94f860b49942851b54bac90db77aa678"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_close_grip_pulldown's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "69301997e9f68186589784864bdf29c47eb8a1ed05445067aeccb7317aa3d8f9"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_underhand_lat_pulldown",
+      "src": "library/specs/underhand_lat_pulldown.mjs",
+      "slug": "underhand-lat-pulldown",
+      "prefix": "underhand-lat-pulldown",
+      "chromeId": "underhand-lat-pulldown",
+      "fragments": {
+        "normalSvg": "7b21bac6aec233fc033a5c3c33bd091d9e2eae3948a48edf2547f52ced7202ee",
+        "normalOverlay": "ed58ecfd9059ae09c28ef62778d8d8a17522b35675a719061042247c99ca9464",
+        "mistakeSvg": "188bb84ca8e87ca44c6f43240d39f8579e6bb196bcaedda31a1d2d69bb762ce8",
+        "mistakeOverlay": "76b751f207f8a2aa15f71be5a6afff6ca7bb372f911f9a84b114b6b22fbf4bfa",
+        "tells": "fc848a24a1103e46232a9d98689684ed06d86fc24456deafd8c42c952437ccbb",
+        "tempo": "796fbe7b0fe12e3121ae343b598ed832ad0ba73c2d14d43c8680ad5536220bc2",
+        "cues": "6a65646abb9d895e96a16f95a031131ab06baa7d0bdfd6d0c3d1cdb3614a8ed6",
+        "alt": "0dcc4cacce15bcaaaac12efadbd047f9f0bcb5250d367d7195bbda2dcc2c1102",
+        "mistakeAlt": "7592ba4f3573bbae58c16859b7b3a7da5481de9bf0b601e4ac9dbb740a6b4519"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_underhand_lat_pulldown's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "be85f022c3b75cc85e471e5b8882e232b4e989c42e50cab792fadc6120113adc"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_single_arm_lat_pulldown",
+      "src": "library/specs/single_arm_lat_pulldown.mjs",
+      "slug": "single-arm-lat-pulldown",
+      "prefix": "single-arm-lat-pulldown",
+      "chromeId": "single-arm-lat-pulldown",
+      "fragments": {
+        "normalSvg": "0220ee55339b0a0171df31bd874b3f595e77ea8d9c0d63d2a1b9e745f2247f48",
+        "normalOverlay": "468a9e032f2848031ed03174ccb5e5326f56aab1cb9ecb6388393f0346f57c58",
+        "mistakeSvg": "dc7eaa722017516f1d4a05bf9be4bee7d239ca08a02a5be25f69eb01f8e794a3",
+        "mistakeOverlay": "8bf8fd04f44fa36a0e14e60e143e24fe4b527880ff96229bfcd9ee3e02b1951c",
+        "tells": "87d905cdb9ebb5742b983bdd5aede3e654347595ffd66dd3afa8a36fa56d4a00",
+        "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
+        "cues": "b45b90278b629fed7c919ea9017dc7a8a7610d201a6054ef892718834972a6ac",
+        "alt": "3c575a9e430ddb355685d1ecebffe25ed0af2c330b5459e9b3bc44ec519244ce",
+        "mistakeAlt": "7ada03532aed383634f940b528e43d1522a98d2494adef5af679eb28a23b3429"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_single_arm_lat_pulldown's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "f3504dc74ad9001e7a3e5c08c4aee5131f58d9746dd7893051442c775200f2e8"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_straight_arm_pulldown",
+      "src": "library/specs/straight_arm_pulldown.mjs",
+      "slug": "straight-arm-pulldown",
+      "prefix": "straight-arm-pulldown",
+      "chromeId": "straight-arm-pulldown",
+      "fragments": {
+        "normalSvg": "7b870a9e08b1ca8e31513657ea38f99394392bca77b0e6e22e6d32342943b0ac",
+        "normalOverlay": "fd7716b031338bc45d1f764b81f572b618385dd26a20127a1e524253783513c9",
+        "mistakeSvg": "1d54ebbaa0ae3e08b7067c5dd77d2ad6d1c631730505900ce3a519ed93c78e02",
+        "mistakeOverlay": "f64e135840a3956de1aeac74c27a8fb4816fc3ecbf64474306ee758d192b40ec",
+        "tells": "fc50973a676ea0a35eba82dca177a3840029efe398d5e303f3b39ca1e1ab9341",
+        "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
+        "cues": "cd56a81fa80dcd29762ed9ce8cb896048072ff090c9b02674ca6661bbcbcc107",
+        "alt": "27fe5247c0b803cd3c6bd470f71b332c99d6e7687637d81c44ce8bd1788decac",
+        "mistakeAlt": "86d114facb827120c222908c70d4c88389d25d105fa98e415af73eafaebb9e19"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_straight_arm_pulldown's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "eb25a84f0b7da792d158536daa06cfdaaba24a5a9dfbc242a292ccbbff1cfce0"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_chest_supported_row",
+      "src": "library/specs/chest_supported_row.mjs",
+      "slug": "chest-supported-row",
+      "prefix": "chest-supported-row",
+      "chromeId": "chest-supported-row",
+      "fragments": {
+        "normalSvg": "9a692376ca1e8878de85617c756cb246c88bf0840f73762719387141e57a6622",
+        "normalOverlay": "179e371937051969ea35167b2f7b28170a0b085de67f4d99973d5cdcc0099f5f",
+        "mistakeSvg": "8a0863e180a0ab1d85bb0d39595f3e683e581aba218903554221e247f3bac88c",
+        "mistakeOverlay": "cbea62b9daf77a5acde0781b5a030c07d2a1ae4887d34235598bfc1ee05dfc00",
+        "tells": "e35dd3968cab7fa8488b908247bd7282ba2cfeda930ffd01c0657343c1800b2b",
+        "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
+        "cues": "8902d9279368776458e8d02a648d1ad8ccdaf318f87280721378cd14afab120b",
+        "alt": "80ecdb74170138fb04dcbea4c1b07b60b2a5e85115e02ed6783b479be8e67993",
+        "mistakeAlt": "fab031258396857345b800d784ea93a561bb4ffa6e14e38a495e4958c9851abd"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_chest_supported_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "94a1af9a907cd6ebeb3569f5f68c44cc14fc800b1948995266bf91fd1a0c1366"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_resistance_band_row",
+      "src": "library/specs/resistance_band_row.mjs",
+      "slug": "resistance-band-row",
+      "prefix": "resistance-band-row",
+      "chromeId": "resistance-band-row",
+      "fragments": {
+        "normalSvg": "74aeba13d42613b932b023795d8318d9dfc921b952a22b4aa2c6c0df16bd2da5",
+        "normalOverlay": "61876746f74ead6c11568d9611eb06a8b3c05f5cd82f6f1fd91a362aec50603f",
+        "mistakeSvg": "6795f56ec45b5ab1ba000a77b7411cda4da7ac3077f77279605d38c1784646a2",
+        "mistakeOverlay": "3835ff85882341083db9b25b2a86688308cd90c978ac32c5a4294000bdc4ec0d",
+        "tells": "78a704be25046058ddb058a5930c506909ca2d06fdb521cc6e399204cc092d96",
+        "tempo": "796fbe7b0fe12e3121ae343b598ed832ad0ba73c2d14d43c8680ad5536220bc2",
+        "cues": "6c5d8c2dd01a0031a01357c996b7dd1e7a346a1e9a69f0f03f1b8bcaebe81778",
+        "alt": "ebd49edbc08279fc12a702b10e509a0a6416b3668159284451986e91108bbe28",
+        "mistakeAlt": "92cc7b7e764fbc5719fa27675b7509118a891ff991beb7c22f2dea2462d699ca"
+      },
+      "exemptions": [
+        "F1",
+        "F5",
+        "F7"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_resistance_band_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F1, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "b1ca3ac169076ab4ed952655a9b5601330b899e418a8392ec4233c7ea3aefad3"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_incline_machine_press",
+      "src": "library/specs/incline_machine_press.mjs",
+      "slug": "incline-machine-press",
+      "prefix": "incline-machine-press",
+      "chromeId": "incline-machine-press",
+      "fragments": {
+        "normalSvg": "b3acf28323b5ae288ee9a88318827672a5332fad63f3385c6fb20dd4808a36ea",
+        "normalOverlay": "05a5849064a6072912da5895288df6b90cc09cbf7e769d1976b80e3b4a940684",
+        "mistakeSvg": "e830ca2b92dbb69b2bd1338cd6c3e82b506c03ef77b5dc63c318237b9e384db3",
+        "mistakeOverlay": "5bf25da5707e81f384e79e606c48a0a388271408b9c3d97199cbc914df3620b6",
+        "tells": "6fecef01314ce78d17fe7e7dd5405ee170fdacabd0981e51145d5ad8da16653a",
+        "tempo": "5472d1d641b3a34dbd529cb0be7506dd93281fc12d368b58f46c54a75e0cc5e8",
+        "cues": "973aaea9fc65a29dc4c16e9551c7a7ebb8d78101876627ccfa8941b52f0c7183",
+        "alt": "0b2d3f842e1e6aa065df1926cc7c6d80de7266eafa827fe65bc585493c6283a6",
+        "mistakeAlt": "c720a35fb6a480a86b9936e735466a66f9685c14af0760b91e80864840e24f28"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_incline_machine_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "67672bd209eeba5f1794c29d89deecb7a9eb24812ac2e9830ad5d410dea15236"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_shoulder_press",
+      "src": "library/specs/shoulder_press.mjs",
+      "slug": "shoulder-press",
+      "prefix": "shoulder-press",
+      "chromeId": "shoulder-press",
+      "fragments": {
+        "normalSvg": "1fe4db4d655287a9a61f7ad604d908b12d266372922c7c64658b8e0ab8a1b492",
+        "normalOverlay": "b842c2465bbef2f22707cde902c1018bdefb5bf797ea71dc8aefb03fa2c9b316",
+        "mistakeSvg": "8c9d82602843e16d87654111838ed5326fc6032d54cf1b4d33567eab73127bad",
+        "mistakeOverlay": "256c62f7584fccbb3dc99945ebb27cebd1d83f6e9d8bf7ee62860ea0fa69b226",
+        "tells": "e50fc69f6bad8a042539da5cd093e961fb43ddd3d6b47b8f501fc13c91d0883a",
+        "tempo": "5472d1d641b3a34dbd529cb0be7506dd93281fc12d368b58f46c54a75e0cc5e8",
+        "cues": "550097473d3e6a2492ae48e8ef6ac9bccb251c740db82bde3eea081974c6003e",
+        "alt": "6e21da4c3f910474ecd4491b36cdbe5bbe6b4ec464b7257c255e6fbb7b0b725d",
+        "mistakeAlt": "9033f2d8c1dc77817fae2e86d4f6ad445b57d73ce0b586aced4086b73d08324d"
+      },
+      "exemptions": [
+        "F5",
+        "F7"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-LB1ZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_shoulder_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "b0ff644ed4dcb7845fab343b172e6dcbd969bc3b17acadff50432ea4ba4e2a93"
+    }
+  ]
+}
