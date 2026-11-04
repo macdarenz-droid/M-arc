@@ -80,11 +80,17 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     ...(typeof e.approval !== 'string' || !e.approval ? [`${e.scope}: no approval`] : []),
     ...(e.open !== 0 ? [`${e.scope}: open ${JSON.stringify(e.open)}`] : []),
   ]);
-  it('one approved entry per id of the 8, each matching stampOf; every committed entry is the supervisor\'s', async () => {
+  // LIB-SHIP (D-SHIP-A9, ruling 3; D-SHIP-W1-STAMP #376 6616230145): replaces "exactly the 8": the committed entries are
+  // the 8 then exactly the ruled shipped library ids, in shipping order; an unruled or missing entry is red.
+  it('one approved entry per id of the 8, each matching stampOf; LIB-SHIP: then one per ruled shipped library id; every committed entry is the supervisor\'s', async () => {
     const r = reviews();
-    expect(r.entries.map((e: any) => e.scope)).toEqual(EIGHT);
+    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl']);
     expect(entryProblems(r.entries)).toEqual([]);
-    for (const e of r.entries) {
+    for (const e of r.entries.filter((x: any) => !EIGHT.includes(x.scope))) {   // LIB-SHIP: each library stamp matches its sheet and its ruling
+      expect([e.scope, e.hash]).toEqual([e.scope, (await S.stampOf(e.scope)).hash]);
+      expect([e.scope, e.decision, e.approval]).toEqual([e.scope, 'D-SHIP-W1-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/376#issuecomment-6616230145 @ 26593a92bdbe428f12186949c7842b35d9f47dec']);
+    }
+    for (const e of r.entries.filter((x: any) => EIGHT.includes(x.scope))) {
       expect([e.scope, e.hash]).toEqual([e.scope, (await S.stampOf(e.scope)).hash]);
       expect([e.decision, e.approval]).toEqual(['D-LIB5-STAMPS', 'https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb']);
       for (const role of ['fetcher', 'critic', 'safety', 'reviewer']) expect([e.scope, role, e[role]]).toEqual([e.scope, role, expect.stringContaining('README.md:52-90')]);

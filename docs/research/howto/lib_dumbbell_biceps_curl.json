@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=917de3cecdcf20a509346a5792854794728591112dc59d614d36462a8ea8435b
+{
+  "id": "lib_dumbbell_biceps_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/dumbbell_biceps_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "sl-dbcurl",
+    "ace-seated-curl",
+    "marcolin-2018",
+    "oliveira-2009",
+    "acsm-2009",
+    "kerr-2010",
+    "hand-key-curl",
+    "nhs-wrist-pain"
+  ],
+  "riskFlags": [
+    "wrist"
+  ]
+}

@@ -9631,6 +9631,71 @@ if (gate.runs('LIB-7c'))
   } finally { await lib7c.close(); }
 }
 
+// LIB-SHIP (card docs/supervisor/verify/lib-ship-card.md A6; D-SHIP-SHAPES, D-SHIP-W1-LAYERS, PR #376): per wave, one
+// shipped library id per batch opens its Train card with exactly one 44 px button.ht-entry named "How to do it" and
+// opens its sheet (dialog .ht-plate-fit); each of the owner's 11 rows present in exercises.json opens its card with no
+// .ht-entry (D-OWNER-LIB142). Silent Black and Paper. Add-only: it touches no other block's state.
+if (gate.runs('LIB-SHIP'))
+{
+  const tag = 'LIB-SHIP', e0 = errors.length;
+  const reg = await import('../tools/plates/library/registry.mjs');
+  const eight = new Set(Object.keys(reg.goldenRows()));
+  const byBatch = new Map();
+  for (const r of reg.shippedRows()) if (!eight.has(r.id) && !byBatch.has(r.batchFile)) byBatch.set(r.batchFile, r.id);
+  const SHIP = [...byBatch.values()];
+  const exIds = new Set(JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => e.id));
+  const ELEVEN = ['hip_thrust', 'pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch', 'overhead_cable_triceps_extension',
+    'cable_rear_delt_fly', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'leg_press_calf_raise'].map(s => `lib_${s}`).filter(id => exIds.has(id));
+  if (!SHIP.length) errors.push(`${tag}: no shipped library id to probe`);
+  if (ELEVEN.length !== 11) errors.push(`${tag}: ${ELEVEN.length} of the owner's 11 named rows are in exercises.json, expected 11`);
+  const ids = [...SHIP, ...ELEVEN];
+  const seed = ([t, list]) => {
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: list.map(exerciseId => ({ exerciseId, sets: 1 })) }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  };
+  for (const theme of ['silent-black', 'paper']) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+    const page = await ctx.newPage();
+    try {
+      page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
+      await page.addInitScript(seed, [theme, ids]);
+      await page.goto(`http://localhost:${PORT}/`);
+      await page.waitForSelector('.nav'); await launchGone(page);
+      await page.waitForTimeout(300);
+      await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+      await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+      if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+      if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
+      const cards = page.locator('.card.exercise');
+      if ((await cards.count()) !== ids.length) errors.push(`${tag} ${theme}: ${await cards.count()} exercise cards, expected ${ids.length}`);
+      for (const [i, id] of ids.entries()) {
+        const card = cards.nth(i);
+        if (i > 0) { await card.locator('.ex-head').click(); await page.waitForTimeout(300); }
+        if (!(await visible(card.locator('.why-toggle')))) { errors.push(`${tag} ${theme}: the ${id} card did not open`); continue; }
+        const entry = card.locator('button.ht-entry'), n = await entry.count();
+        if (ELEVEN.includes(id)) { if (n) errors.push(`${tag} ${theme}: ${id} (D-OWNER-LIB142, no How-to) has ${n} .ht-entry`); continue; }
+        const eb = n === 1 ? await entry.boundingBox() : null;
+        const name = eb ? await entry.evaluate(b => (b.getAttribute('aria-label') ?? b.textContent).trim()) : null;
+        if (!eb || name !== 'How to do it' || eb.width < 44 || eb.height < 44) { errors.push(`${tag} ${theme}: ${id} needs exactly one button.ht-entry "How to do it" of at least 44x44 (${n} found, name ${JSON.stringify(name)}, box ${JSON.stringify(eb)})`); continue; }
+        await entry.click();
+        if (!(await visible(page.locator('dialog .ht-plate-fit')))) errors.push(`${tag} ${theme}: tapping ${id}'s entry opened no dialog with .ht-plate-fit`);
+        await page.keyboard.press('Escape'); await page.waitForTimeout(400);
+      }
+    } finally { await ctx.close(); }
+  }
+  if (errors.length === e0) console.log(`${tag}: ${SHIP.join(', ')} open their How-to; the owner's ${ELEVEN.length} named rows show none; Silent Black and Paper`);
+}
+
+
 // LIB-12: the hand views (palm-flat, cupped, front-rack, ball-contact) and the battle-rope pair (card LIB-12; plan 2.3;
 // tools/plates/library/hands/gate-lib12.mjs). Every LIB-12 drawn pair in 5 themes at 390, 360 and 340 px: no horizontal
 // scroll, SVG and text inside the plate (H4); each ink class's contrast >= golden B's minimum for it, measured in the

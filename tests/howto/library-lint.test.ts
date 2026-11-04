@@ -344,6 +344,12 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
     const SOURCES = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/sources.json'), 'utf8').replace(/^\/\/[^\n]*\n/, ''));
     const reviews = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/reviews.json'), 'utf8'));
     const known = new Set((exercises as any[]).map(e => e.id));
+    // LIB-SHIP (D-SHIP-C3, D-SHIP-GRIP): a library row runs C3 through checkC3Library (plain C3 unless it is on the pinned
+    // no-zoom list) and the GRIP (b) check; the 8 keep plain C3.
+    const C3L = await import('./checks/c3-library');
+    const P = await import(/* @vite-ignore */ url('tools/plates/library/hands/pairs.mjs')), keyMods = await P.loadKeyModules();
+    const gapKeyOf = (id: string) => keyMods.find((m: any) => m.GAPS && id in m.GAPS)?.KEY ?? null;
+    const noZoom = JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/hands/no-zoom.json'), 'utf8')).entries;
     expect(SHIPPED.length).toBeGreaterThanOrEqual(8);
     for (const r of SHIPPED) {
       const { content: c } = await content.loadContent(r.id), M = await import(/* @vite-ignore */ url(R.sourceOf(r.id)));
@@ -351,7 +357,10 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
       expect(Object.keys(plate)).toHaveLength(9);
       const boxes = Object.fromEntries((c.riskFlags ?? ['wrist']).map((f: string) => [`RED_FLAG_${f.toUpperCase()}`, shared[CL.RED_FLAG_BLOCKS[f].exp]]));
       const bad = [
-        ...checkC1(c, known), ...checkC2(c), ...checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? ''), ...checkC4(c), ...checkC7(c),
+        ...checkC1(c, known), ...checkC2(c), ...checkC4(c), ...checkC7(c),
+        ...(r.mode === 'golden' ? checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '')
+          : (card => [...C3L.checkC3Library(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '', { list: noZoom, card, gapKeyOf }), ...C3L.checkGripLibrary(c, card)])(
+            JSON.parse(readFileSync(join(ROOT, c.research.card), 'utf8')))),
         ...checkC8(c, SOURCES), ...checkC15(c, plate, reviews), ...checkC16(c),
         ...C19.checkC19Copy(L.shownCopyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),
         ...L.lintLibraryRow(M, shared).map((x: any) => `lint: ${x.path}: ${x.rule}`),
@@ -382,8 +391,12 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   const refuse = (id: string, c: any, card = cards.get(id), res: any = shipped) => FM.familyRefusal(id, c, () => card, res);
   const UNRULED = (id: string) => `${id}: family: docs/research/howto/cards/${id.slice(4)}.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`;
 
+  // LIB-SHIP (D-SHIP-A9, ruling 3): replaces "SHIPPED.length is 8". The shipped rows are exactly the 8 then the ruled
+  // library ids (W1: dumbbell_biceps_curl, #376 6616230145), and none of the 9 mapped children ships yet (their parents'
+  // resolver lands in W2, D-SHIP-FAMILY): an unruled shipped id, a dropped ruled id or a shipped child is red.
   it('the map covers every inherit[] field of the 9 cards exactly, and no field is unmapped', () => {
-    expect(SHIPPED.length).toBe(8);
+    expect(SHIPPED.map(r => r.id)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl']);
+    expect([...cards.keys()].filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
     for (const [id, card] of cards) {
       expect([id, card.inherit.length > 0, typeof card.parent]).toEqual([id, true, 'string']);
       expect([id, FM.unmappedFields(id, card)]).toEqual([id, []]);
