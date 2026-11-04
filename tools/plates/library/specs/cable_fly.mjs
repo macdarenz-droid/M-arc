@@ -157,7 +157,7 @@ export default {
     ],
     tells: [
       { key: 'press', text: 'Elbows<br>bend', anchor: { at: 'elbow.l', pose: 'mistake' }, cue: 'Your elbows bend deeply, turning the fly into a press.' },
-      { key: 'drop', text: 'Elbows<br>drop', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbows drop under your hands, as in a press.' },
+      { key: 'drop', text: 'Becomes<br>a press', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Bending the elbows more than slightly turns the fly into a press.' },   // c6 (LIB-PLATEFIX-1, Q-W2-15: 'Elbows drop' is not c6's fault)
     ],
   },
   alt: 'Cable fly, front view. Standing braced between two cable columns with the pulleys just above shoulder height, the lifter sweeps the arms from open to the sides, in line with the chest, until the hands meet in front, elbows slightly bent the whole time.',
