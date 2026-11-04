@@ -294,3 +294,31 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
     } finally { rmSync(R, { recursive: true, force: true }); }
   }, 300_000);
 });
+
+describe('LIB-SHIP D-SHIP-A2FEEL (#379 6640877874): HT10-A2 scrolls the feel map back into view after the script', () => {
+  // In the shard, HT10-A2 timed out on bench, shoulder_press, barbell_row, plank, cable_fly and push_up: ht10Script ends with
+  // the feel map off-screen, the app's hold observer pauses the sweep, and settleApp waits for an animation that never ends.
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const run = async (mutate: (pre: string) => Promise<void>) => {
+    const calls: string[] = [], g = globalThis as any, had = 'document' in g, was = g.document;
+    g.__a2calls = calls;
+    g.document = { querySelector: (s: string) => (s === 'dialog.sheet.ht .feel-map' ? { scrollIntoView: (o: any) => calls.push(`scroll ${JSON.stringify(o)}`) } : null) };
+    try { await mutate('pre'); } finally { if (had) g.document = was; else delete g.document; delete g.__a2calls; }
+    return calls;
+  };
+  const script = 'async pre => { globalThis.__a2calls.push(`script ${pre}`); }';
+  it('a2Mutate runs the script, then scrolls the sheet\'s feel map into view (block center)', async () => {
+    const F: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/fidelity.mjs')).href);
+    expect(await run(F.a2Mutate(script))).toEqual(['script pre', 'scroll {"block":"center"}']);
+    // a sheet with no feel map: the script still runs and nothing throws
+    const none = async (m: any) => { const g = globalThis as any, was = g.document, calls: string[] = []; g.__a2calls = calls; g.document = { querySelector: () => null }; try { await m('pre'); } finally { g.document = was; delete g.__a2calls; } return calls; };
+    expect(await none(F.a2Mutate(script))).toEqual(['script pre']);
+  });
+  it('red (the scroll removed, the old wrapper): the map is left where the script put it', async () => {
+    // eslint-disable-next-line no-new-func
+    const old = new Function('pre', `return (${script})(pre).then(() => {})`) as any;
+    expect(await run(old)).toEqual(['script pre']);
+    const src = readFileSync('tools/plates/library/fidelity.mjs', 'utf8');
+    expect(src).toContain('const mutate = a2Mutate(ht10Script.toString());');
+  });
+});

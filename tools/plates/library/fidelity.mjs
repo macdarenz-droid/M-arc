@@ -188,12 +188,18 @@ async function ht10Job(ctx, { lib, chrome, index, theme }) {
     if (!reduced && r.stats.steps < 15) bad.push(`A1: only ${r.stats.steps} script steps probed, expected at least 15`);
     R.check(lib, theme, stateOf('HT10', state, WIDTH), bad);
   }
-  const src = ht10Script.toString();
-  // eslint-disable-next-line no-new-func
-  const mutate = new Function('pre', `return (${src})(pre).then(() => {})`);
+  const mutate = a2Mutate(ht10Script.toString());
   const st = { ...plateStats() }, a2 = stateOf('HT10', 'a2', WIDTH);
   await plateJob(browser, port, R, { lib, chrome, index, theme, html: pages[lib].plates, order, custom, full: false, widths: [], mutate, markup: false, as: a2, stats: st });
   if (st.pairs < 2) R.fail(lib, theme, a2, `A2: only ${st.pairs} plate pairs compared, expected at least 2`);
+}
+/** HT10-A2's page mutation: HT-10's script, then (LIB-SHIP W2, D-SHIP-A2FEEL, #379 6640877874) the sheet's feel map scrolled
+ *  into view. The script can start the feel sweep and end with the map off-screen, where the app's hold observer pauses
+ *  the band (useFeelMap.ts, FEEL_JS condition 6); a paused sweep never ends, so A2's settleApp would time out. Back in
+ *  view the sweep resumes and ends on its own: nothing is finished or skipped. */
+export function a2Mutate(src) {
+  // eslint-disable-next-line no-new-func
+  return new Function('pre', `return (${src})(pre).then(() => { document.querySelector('dialog.sheet.ht .feel-map')?.scrollIntoView({ block: 'center' }); })`);
 }
 const extractChromeIds = html => [...new Set([...String(html).matchAll(/id="card-([a-z0-9-]+)"/g)].map(m => m[1]))];
 
