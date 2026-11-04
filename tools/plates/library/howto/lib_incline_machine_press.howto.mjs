@@ -151,7 +151,7 @@ const feel = {
     { key: 'wrist', where: 'Wrist', at: { parts: HANDS },
       means: 'Your wrist bends out of line with the forearm.',
       fix: 'Keep the wrist in line with the forearm.',
-      zoom: 'hand', redFlag: 'wrist', claim: CL.c1 },
+      zoom: 'hand', redFlag: true, claim: CL.c1 },
   ],
   claim: CL.c6,
 };
