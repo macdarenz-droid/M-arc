@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT } from '../lib/inputs.mjs';
 import { registryInputs, rows, shippedIds } from '../library/registry.mjs';
+import { rowKeyOf } from '../library/hands/pairs.mjs';   // F-PAIR-FAULTS (configPairOf)
 
 export const PAIRS = 'tools/plates/library/hands/pairs.mjs';
 export const pairPath = key => `src/howto/generated/handpair-${key}.ts`;
@@ -80,7 +81,7 @@ export const after = ['tools/plates/gen/hands.mjs'];
 export function configPairOf(row, root = ROOT) {
   const file = row.pages?.layersConfig;
   if (!file || !existsSync(join(root, file))) return undefined;
-  return JSON.parse(readFileSync(join(root, file), 'utf8')).closeups?.[row.id]?.pair;
+  return rowKeyOf(row.id, JSON.parse(readFileSync(join(root, file), 'utf8')).closeups?.[row.id]);   // F-PAIR-FAULTS: a pairFaults row's sub-key
 }
 /** The card element of `chromeId` on a layers page (build-page.mjs: `<article class="sheet-card" id="card-<id>"`). */
 export function cardOf(html, chromeId) {

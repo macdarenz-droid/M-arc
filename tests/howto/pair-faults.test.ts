@@ -1,16 +1,24 @@
 // F-PAIR-FAULTS (card docs/supervisor/verify/f-pair-faults-card.md): a row draws only the pair-key faults its card
 // supports. A1/A2 baseline: with no row naming `pairFaults`, every pair key's panel stays byte-equal to main cb9a6dae.
 import { createHash } from 'node:crypto';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
-let P: any;
+let P: any, B: any, hp: any, ids: any;
+const tmps: string[] = [];
 
 beforeAll(async () => {
   P = await import(/* @vite-ignore */ url('tools/plates/library/hands/pairs.mjs'));
+  B = await import(/* @vite-ignore */ url('tools/plates/library/build-layers-page.mjs'));
+  hp = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs'));
+  ids = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));
 });
+afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
 
 // sha256 of pairPanel(key) for every pair key on main cb9a6dae, before F-PAIR-FAULTS
 const PANEL_MAIN: Record<string, string> = {
@@ -36,4 +44,145 @@ describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws
     expect([...P.keysOf()].sort()).toEqual(Object.keys(PANEL_MAIN).sort());
     for (const [k, want] of Object.entries(PANEL_MAIN)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);
   }, 60_000);
+});
+
+// A4: mountain_climbers names pairFaults ['hand-ahead'] in a scratch config only (its sheet flips in a later LIB-SHIP wave)
+const BASE = 'palm-flat-floor-over', SUB = 'palm-flat-floor-only-hand-ahead-over', CARD = 'cards/mountain_climbers.json';
+const MC = { optionsKey: 'mountain_climbers', pair: BASE, pairFaults: ['hand-ahead'] };
+const MCW = { ...MC, pairWords: { 'hand-ahead': { wrong: { text: 'Hands ahead of the shoulders', source: `${CARD} zooms[hand-under-shoulder].wrong, c2/c6/c19` } } } };
+const pagesIn = (h: string) => h.split('<div class="zx-page" data-page=').length - 1;
+const subsOf = (rows: Record<string, unknown>) => P.subKeysOf([{ file: 'scratch.layers.json', closeups: rows }]).subs;
+const panelWith = (subs: unknown) => (k: string) => P.pairPanel(k, P.INDEX, subs);
+// a host page around the hand block, as withPairPanels needs it: the card's hand zx block, a reference, and HOWTO_CSS
+// after the close-up CSS (build-page.mjs)
+const HOWTO = (() => { const src = readFileSync(join(__dirname, '../../tools/plates/layers/artifact/build-page.mjs'), 'utf8'), a = src.indexOf('const HOWTO_CSS = `');
+  return src.slice(a + 'const HOWTO_CSS = `'.length, src.indexOf('\n`;', a) + 1); })();
+const host = (pre: string) => `<style>\n${HOWTO}</style><article class="sheet-card" id="card-${pre}"><button data-zoom="hand" aria-expanded="false" aria-controls="${pre}-zoom-hand">Hand</button>`
+  + `<div class="zx" id="${pre}-zoom-hand" data-zoom="hand" hidden><h4 id="${pre}-zoom-hand-h">x</h4></div></article>`;
+
+describe('F-PAIR-FAULTS A1/A4: a row with pairFaults draws only those faults (layers page and app chunk)', () => {
+  it('rowFilterOf / rowKeyOf: the sub-key, its faults; a row with neither field keeps its pair', () => {
+    expect(P.rowFilterOf('lib_mountain_climbers', MC)).toMatchObject({ sub: SUB, base: BASE, faults: ['hand-ahead'], id: 'mountain_climbers' });
+    expect(P.rowKeyOf('mountain_climbers', MC)).toBe(SUB);
+    expect(P.rowKeyOf('mountain_climbers', { pair: BASE })).toBe(BASE);
+    expect(P.rowKeyOf('mountain_climbers', undefined)).toBeUndefined();
+    expect(P.rowFilterOf('mountain_climbers', { pair: BASE })).toBeNull();
+  });
+  it('pairPanel(sub-key): one page, the hand-ahead drawing under hp-<sub>- ids; pairWords replace only their slot', async () => {
+    const h = await P.pairPanel(SUB, P.INDEX, subsOf({ lib_mountain_climbers: MC })), full = await P.pairPanel(BASE);
+    expect([pagesIn(h), pagesIn(full)]).toEqual([1, 2]);
+    expect(h.startsWith(`<div class="zx" id="hp-${SUB}-zoom-hand" data-zoom="hand"`)).toBe(true);
+    expect([...h.matchAll(/\sid="([^"]+)"/g)].every(m => m[1]!.startsWith(`hp-${SUB}-`))).toBe(true);
+    expect(h).toContain(`id="hp-${SUB}-hand-ahead-`);
+    expect(h).not.toContain('cupped-palm');
+    expect(h).not.toContain('Palm cupped');
+    // the drawing is hand-ahead's, byte for byte, apart from its uid
+    const svg = (x: string) => x.match(/<div class="hand-plate">([\s\S]*?)<\/div>/)![1]!;
+    const baseAhead = P.renderPair('mountain_climbers', { fault: 'hand-ahead', uid: `hp-${BASE}-hand-ahead` }).svg, subAhead = P.renderPair('mountain_climbers', { fault: 'hand-ahead', uid: `hp-${SUB}-hand-ahead` }).svg;
+    expect(subAhead.split(`hp-${SUB}-hand-ahead`).join(`hp-${BASE}-hand-ahead`)).toBe(baseAhead);
+    // and the panel's one page is that drawing, as the base panel's hand-ahead page is the base one (ids aside)
+    const fullAhead = full.slice(full.indexOf('<div class="zx-page" data-page="1"'));
+    expect(svg(h).split(`hp-${SUB}-`).join(`hp-${BASE}-`)).toBe(svg(fullAhead));
+    const w = await P.pairPanel(SUB, P.INDEX, subsOf({ lib_mountain_climbers: MCW }));
+    expect(w).toContain('Hands ahead of the shoulders');
+    expect(w.replace('Hands ahead of the shoulders', 'Hand ahead')).toBe(h);
+  });
+  it('withPairPanels: the row\'s block is the sub-key panel (one page), pairPanelProblems is clean; red when the filter is dropped', async () => {
+    const subs = subsOf({ lib_mountain_climbers: MC }), panelOf = panelWith(subs);
+    const spec = { closeups: { mountain_climbers: MC } }, page = await B.withPairPanels(host('mountain-climbers'), spec, panelOf);
+    expect(page).toContain(`<div class="hx hx-hp-${SUB}">`);
+    expect(page).toContain(`aria-controls="hp-${SUB}-zoom-hand"`);
+    expect(pagesIn(page)).toBe(1);
+    expect(page).toContain(`/* close-ups: ${B.PAIR_LABEL} hp-${SUB} */\n${B.pairCss(SUB)}`);
+    expect(await B.pairPanelProblems(page, panelOf)).toEqual([]);
+    // red 4: the filter removed (the row's pairFaults ignored) draws the base key's two pages
+    const dropped = await B.withPairPanels(host('mountain-climbers'), spec, panelOf, (_: string, r: any) => r.pair);
+    expect(pagesIn(dropped)).toBe(2);
+    expect(dropped).not.toContain(`hx-hp-${SUB}`);
+    // a byte changed in the sub-key block is red in pairPanelProblems
+    expect((await B.pairPanelProblems(page.replace('Hand: right and wrong', 'Hand: right and wronG'), panelOf)).join('\n')).toMatch(new RegExp(`first copy on ${SUB}: not pairPanel`));
+  });
+  it('A1: a row with no pairFaults gets pairPanel(pair) byte for byte, as on main', async () => {
+    const page = await B.withPairPanels(host('mountain-climbers'), { closeups: { mountain_climbers: { optionsKey: 'mountain_climbers', pair: BASE } } });
+    expect(B.divAt(page, page.indexOf('<div class="zx"'))).toBe(await P.pairPanel(BASE));
+    expect(sha(await P.pairPanel(BASE))).toBe(PANEL_MAIN[BASE]);
+  });
+  it('the app: configPairOf gives the sub-key, the ids map points at handpair-<sub>, the chunk holds one page', async () => {
+    const root = mkdtempSync(join(tmpdir(), 'fpf-')); tmps.push(root);
+    writeFileSync(join(root, 'x.layers.json'), JSON.stringify({ closeups: { lib_mountain_climbers: MC } }));
+    writeFileSync(join(root, 'y.layers.json'), JSON.stringify({ closeups: { lib_mountain_climbers: { optionsKey: 'mountain_climbers', pair: BASE } } }));
+    const row = (f: string) => ({ id: 'lib_mountain_climbers', chromeId: 'mountain-climbers', pages: { layersConfig: f } });
+    expect(hp.configPairOf(row('x.layers.json'), root)).toBe(SUB);
+    expect(hp.configPairOf(row('y.layers.json'), root)).toBe(BASE);
+    const pairs = { HAND_OF_ID: { lib_mountain_climbers: SUB } }, all = [row('x.layers.json')];
+    const { pairOf, keys } = hp.pairsOf(pairs, ['lib_mountain_climbers'], all);
+    expect([pairOf, keys]).toEqual([{ 'mountain-climbers': SUB }, [SUB]]);
+    expect(ids.chunkMaps(all, () => false, pairOf).hand).toEqual([['mountain-climbers', `handpair-${SUB}`]]);
+    expect(() => hp.pairRowCheck(row('x.layers.json'), SUB, SUB, 'palm-flat', '')).not.toThrow();
+    const text = hp.pairText(SUB, await P.pairPanel(SUB, P.INDEX, subsOf({ lib_mountain_climbers: MC })));
+    expect(pagesIn(JSON.parse(text.match(/export const panel = (.*);\n$/)![1]!))).toBe(1);
+  });
+  it('subKeysOf: the sub-key and the id map from a config; the same id on two sub-keys is red; main names none', () => {
+    const { subs, ofId } = P.subKeysOf([{ file: 'x.layers.json', closeups: { lib_mountain_climbers: MC, lib_push_up: { pair: BASE } } }]);
+    expect([[...subs.keys()], [...ofId]]).toEqual([[SUB], [['mountain_climbers', SUB]]]);
+    expect(subs.get(SUB).config).toBe('x.layers.json');
+    expect(() => P.subKeysOf([{ file: 'x', closeups: { lib_mountain_climbers: MC } }, { file: 'y', closeups: { lib_mountain_climbers: { ...MC, pairFaults: ['hand-ahead', 'hand-ahead'] } } }])).toThrow(/repeats/);
+    expect(Object.values(P.HAND_OF_ID).filter((k: any) => k.includes('-only-'))).toEqual([]);
+    expect([...P.keysOf()].sort()).toEqual(Object.keys(PANEL_MAIN).sort());
+  });
+});
+
+describe('F-PAIR-FAULTS A3: the reds', () => {
+  const red = (row: Record<string, unknown>, re: RegExp) => expect(() => P.rowFilterOf('lib_mountain_climbers', row)).toThrow(re);
+  it('1: an entry that is not a fault of the key', () => red({ ...MC, pairFaults: ['hand-ahead', 'wrist-bent'] }, /wrist-bent not a fault of palm-flat-floor-over/));
+  it('2: an entry the card does not support (cupped-palm cites only shared/palm-flat.json)', () => {
+    red({ ...MC, pairFaults: ['cupped-palm'] }, /cupped-palm not supported by docs\/research\/howto\/cards\/mountain_climbers.json/);
+    // the rule itself: a card that holds neither c6 as a claim nor in its hand zoom does not support hand-ahead
+    const ahead = P.pairSpec('mountain_climbers').wrong.find((w: any) => w.key === 'hand-ahead');
+    expect(P.cardSupports(ahead, 'mountain_climbers', { claims: [{ id: 'c6' }], zooms: [] })).toBe(true);
+    expect(P.cardSupports(ahead, 'mountain_climbers', { claims: [], zooms: [{ kind: 'hand', claim: ['c6'] }] })).toBe(true);
+    expect(P.cardSupports(ahead, 'mountain_climbers', { claims: [{ id: 'c2' }], zooms: [{ kind: 'posture', claim: ['c6'] }] })).toBe(false);
+    expect(P.cardSupports(ahead, 'push_up', { claims: [{ id: 'c6' }], zooms: [] })).toBe(false);
+  });
+  it('3: an empty list; also a non-list, a non-string, a repeat, pairFaults without pair, pairWords without pairFaults', () => {
+    red({ ...MC, pairFaults: [] }, /pairFaults is empty/);
+    red({ ...MC, pairFaults: 'hand-ahead' }, /not a list/);
+    red({ ...MC, pairFaults: [1] }, /non-string/);
+    red({ ...MC, pairFaults: ['hand-ahead', 'hand-ahead'] }, /repeats/);
+    red({ optionsKey: 'mountain_climbers', pairFaults: ['hand-ahead'] }, /without pair/);
+    red({ pair: BASE, pairWords: {} }, /pairWords without pairFaults/);
+    expect(() => B.pairRowsOf({ closeups: { mountain_climbers: { pairFaults: ['hand-ahead'] } } })).toThrow(/mountain_climbers: pairFaults or pairWords without pair/);
+    red({ ...MC, pair: 'curl-dumbbell-under' }, /mountain_climbers is not drawn on curl-dumbbell-under/);
+  });
+  it('4: the filter removed draws two pages (also in the withPairPanels block above)', async () => {
+    const subs = subsOf({ lib_mountain_climbers: MC }), t = subs.get(SUB);
+    const unfiltered = new Map([[SUB, { ...t, faults: ['cupped-palm', 'hand-ahead'] }]]);
+    expect(pagesIn(await P.pairPanel(SUB, P.INDEX, unfiltered))).toBe(2);
+    expect(pagesIn(await P.pairPanel(SUB, P.INDEX, subs))).toBe(1);
+  });
+  it('5: a pairWords slot for a fault not drawn, a source not citing the card, an unknown slot', () => {
+    red({ ...MC, pairWords: { 'cupped-palm': { wrong: { text: 'x', source: CARD } } } }, /pairWords for cupped-palm, which pairFaults does not draw/);
+    red({ ...MC, pairWords: { 'hand-ahead': { wrong: { text: 'x', source: 'shared/palm-flat.json#c3' } } } }, /source does not cite cards\/mountain_climbers.json/);
+    red({ ...MC, pairWords: { 'hand-ahead': { caption: { text: 'x', source: CARD } } } }, /caption is not one of/);
+  });
+});
+
+// A2: tools/plates/library/MANIFEST.json moves only the keys of the files this card changes (manifestOf, D-CROP-PIN form)
+const MOVED = ['tools/plates/library/build-layers-page.mjs', 'tools/plates/library/hands/pairs.mjs'];
+// sha256 of main cb9a6dae's MANIFEST.json (JSON.stringify of the parsed file) with MOVED's values blanked in every row
+const MANIFEST_BLANKED_MAIN = 'd7f80b6f1768f11a08abfcb1ecaa28bad6c429f2a276cfe0619106dae8d728c0';
+const blanked = (m: any, keys = MOVED) => { const c = structuredClone(m); for (const r of Object.values<any>(c.rows)) for (const k of keys) if (k in r.files) r.files[k] = ''; return sha(JSON.stringify(c)); };
+describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
+  const read = (p: string) => readFileSync(join(__dirname, '../..', p));
+  it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
+    const m = JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
+    expect(blanked(m)).toBe(MANIFEST_BLANKED_MAIN);
+    for (const k of MOVED) for (const r of Object.values<any>(m.rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
+  });
+  it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
+    const m = JSON.parse(read('tools/plates/library/MANIFEST.json').toString()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k))!;
+    row.files[other] = '0'.repeat(64);
+    expect(blanked(m)).not.toBe(MANIFEST_BLANKED_MAIN);
+    expect(blanked(JSON.parse(read('tools/plates/library/MANIFEST.json').toString()), MOVED.slice(0, 1))).not.toBe(MANIFEST_BLANKED_MAIN);
+  });
 });
