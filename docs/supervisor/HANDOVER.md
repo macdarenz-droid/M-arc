@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-11-04 ~04:45 UTC · main `b9369130` (train 62) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
+**Last updated:** 2026-11-04 ~07:10 UTC · main `b9369130` (train 62) · **8.0t: takeover back to the first account; read 8.0t, then 8.0s** · by session_018Pv5bKEA73navyFKzs3ihE
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -830,6 +830,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 - **Queued (unchanged from 8.0s):** HELD-B (pallof_press, russian_twist; `verify/held6-card.md`); research for bicycle_crunch; overhead_cable_triceps_extension; cable_rear_delt_fly and the 4 calf raises on the named list for the release candidate. Golden-B follow-up 28 stands.
 
+- **Train 63 (11-04 ~07:10 UTC):** #376 LIB-SHIP W1 @ `bd86e240` (review PASS, 4 lows carried to W2): the first library How-to, dumbbell_biceps_curl. #377 LIB-SHAPES @ `4c79eeba` (review PASS, 0 findings). The CI split D-SUP-CI-TZSPLIT @ `8da2b11f`. MANIFEST: the train re-runs manifestOf if both lanes' pins collide (D-SHAPES-PIN). After the merge, the APK goes to the owner (the first library How-to).
 - **Update 04:45 UTC (11-04):** main `b9369130`. Both lanes are READY and in review:
   - LIB-SHIP W1 #376 @ `bd86e240` (curl only; reviewer session_018Pv5bL6TXPmTCq6sK5mjw3);
   - LIB-SHAPES #377 @ `4c79eeba` (reviewer session_018Pv5bJnZEgBzu7eu5w4Yz6).
