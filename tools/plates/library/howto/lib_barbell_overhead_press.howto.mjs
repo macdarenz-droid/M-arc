@@ -78,7 +78,7 @@ const zooms = [
     wrong: { base: 'end', pose: plateSpec.mistake.pose, solid: true },
     callout: {
       right: { text: 'Forearms vertical', anchor: 'elbow.r' },
-      wrong: { text: 'Elbows back', anchor: 'elbow.r' },
+      wrong: { text: 'Elbows back', anchor: { at: 'elbow.r', pose: 'mistake' } },
     },
     caption: {
       right: 'Elbows under the bar, forearms vertical.',

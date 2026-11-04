@@ -97,7 +97,7 @@ const zooms = [
     // `stills['elbows-forward']`; crop centre on the right pose's elbow for both halves.
     crop: { center: { at: 'elbow.r', pose: 'right', off: [10, 0] }, sizePx: 140 },
     right: 'start',
-    wrong: { base: 'start', pose: ELBOWS_FORWARD },
+    wrong: { base: 'start', pose: ELBOWS_FORWARD, solid: true },
     callout: {
       right: { text: 'Elbows at sides', anchor: 'elbow.r' },
       wrong: { text: 'Drifted forward', anchor: { at: 'elbow.r', pose: 'mistake' } },
