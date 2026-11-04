@@ -5,6 +5,7 @@
 //   A1 parity: every point a crop projects (centre, callout anchors, guides) is within 0.01 px of the engine's projection.
 //   A3: the crop's own drawn spec projects as the plate does (front stays front, facing and pitch kept), and the drawn
 //       anchor dot sits on the engine's point within the svg's 2-decimal rounding.
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
@@ -73,5 +74,20 @@ describe('F-CROP-FRONT crops project as the plate', { timeout: 300_000 }, () => 
       const P = makeCamera(spec, spec.camera).P;
       for (const w of W) { const a = P(w), b = ref(w); expect(Math.hypot(a[0] - b[0], a[1] - b[1]), `${id} ${key}-${role} drawn view`).toBeLessThan(0.01); }
     }
+  });
+});
+
+// D-CROP-PIN (#380 6627881461, the D-SHAPES-PIN form): MANIFEST.json pins crop.mjs's own source sha in every pinned row,
+// so the fix re-pins exactly that one key; every other entry equals main c4c34d75.
+describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.mjs', () => {
+  const CROP = 'tools/plates/library/render/closeup/crop.mjs';
+  const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
+  it('every pinned row pins the current crop.mjs, and every other entry equals main c4c34d75', () => {
+    const m = JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'));
+    const rows = Object.values(m.rows) as { files: Record<string, string> }[];
+    expect(rows).toHaveLength(21);
+    for (const r of rows) { expect(r.files[CROP]).toBe(sha(readFileSync(path(CROP)))); r.files[CROP] = 'X'; }
+    // main c4c34d75's MANIFEST.json with the same one entry blanked (whichever of #380 and #379 merges second re-measures)
+    expect(sha(JSON.stringify(m))).toBe('3fd45dc68cc4c0ecc85b0ba81f1a8bfa1a417836650b89ef1c2b6516993fc2d0');
   });
 });
