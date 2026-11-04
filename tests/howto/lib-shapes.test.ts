@@ -69,13 +69,13 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     for (const p of list) { const t = readFileSync(p, 'utf8'); h.update(`${p}\0${sha(body ? t.slice(t.indexOf('\n') + 1) : t)}\n`); }
     return h.digest('hex');
   };
-  it('the 27 header-moved files: each body (all but line 1) equals main b9369130', () => {
+  it('the 27 header-moved files: each body (all but line 1) equals main c4c34d75 (re-measured after train 63)', () => {
     const list = [...ROWS.map(i => `src/howto/generated/hand-${i}.ts`), ...ROWS.map(i => `src/howto/generated/posture-${i}.ts`),
       ...ROWS.map(i => `src/slices/howto/css/zoom-${i}.css`), 'src/slices/howto/css/hand.css', 'src/slices/howto/css/posture.css',
       'src/howto/generated/loaders.ts'].sort();
     expect(list).toHaveLength(27);
     for (const p of list) expect(readFileSync(p, 'utf8'), p).toMatch(/^(\/\/|\/\*) GENERATED, do not edit\. [^\n]*inputsSha256=[0-9a-f]{64}( \*\/)?\n/);
-    expect(listSha(list, true)).toBe('db72fd48f355c3038d39bcaefbba8588d78aed65d911df5e30adec85e7c327e9');
+    expect(listSha(list, true)).toBe('c6e705922e80476a69f42ca65b22131ca28fa87938ce1f2018138e607495fbbf');
   });
 
   it('GOLDEN.json, the golden-B page and the 8\'s ht- and feel- files are byte-equal to main b9369130', () => {
@@ -209,13 +209,13 @@ describe('LIB-SHAPES D-SHAPES-HANDS: gen/hands.mjs, a library row with no hand p
 
 describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-layers-page.mjs', () => {
   const BLP = 'tools/plates/library/build-layers-page.mjs';
-  it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main b9369130', () => {
+  it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main c4c34d75 (re-measured after train 63)', () => {
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(21);
     for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; }
-    // main b9369130's MANIFEST.json with the same one entry blanked (if LIB-SHIP W1 re-pins first, re-measure on the merge)
-    expect(sha(JSON.stringify(m))).toBe('81dba56101c3d510fe41eb1f00caa0fc361aae77abf4fb93ad5ebdaff81e4307');
+    // main c4c34d75's MANIFEST.json with the same one entry blanked (if LIB-SHIP W1 re-pins first, re-measure on the merge)
+    expect(sha(JSON.stringify(m))).toBe('8a908d1890924191a8bc82393a40ea52b9998b0afe96c102bdda4c72fc13fec5');
   });
 });
 
