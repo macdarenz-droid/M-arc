@@ -207,8 +207,7 @@ export default {
       anchor: { landmark: 'buttock', pose: 'end' }, zoom: 'hip-line', claim: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c13, c2, c14') },
     { key: 'knees', label: 'Knees straight', detail: 'Knees straight.',
       anchor: { landmark: 'knee.r', pose: 'end' }, claim: CL.c4 },
-    { key: 'harder', label: 'Harder version', detail: 'Tilt the pelvis backward and draw the shoulder blades together.',
-      anchor: { landmark: 'hip.r', pose: 'end' }, claim: CL.c11 },
+    // D-TEXT-PROGRESSION (#379 6638023726): the card's harder version (c11) is not a form checkpoint, so it is not on the sheet.
   ],
   feel,
   zooms,

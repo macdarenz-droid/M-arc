@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=ca2f206d7cb49773ca915ba67760e97b0054798a885ba463293b544a251cf2e0
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=e074645610877ce09620d2a5125fa5ce908269ffe91c78ee9450ae8d39c6e839
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_plank",
   name: "Plank",
-  hashes: { inputsSha256: "ca2f206d7cb49773ca915ba67760e97b0054798a885ba463293b544a251cf2e0", golden: "6f7e82190f975b620d641ca3a096032bfb8e7ebe7f7d5ba72ba4309e3ddffa6d" },
+  hashes: { inputsSha256: "e074645610877ce09620d2a5125fa5ce908269ffe91c78ee9450ae8d39c6e839", golden: "6f7e82190f975b620d641ca3a096032bfb8e7ebe7f7d5ba72ba4309e3ddffa6d" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -215,24 +215,6 @@ export default {
           "ace-plank"
         ],
         "note": "card c4"
-      }
-    },
-    {
-      "key": "harder",
-      "label": "Harder version",
-      "detail": "Tilt the pelvis backward and draw the shoulder blades together.",
-      "anchor": {
-        "pose": "end",
-        "at": "hip.r"
-      },
-      "claim": {
-        "tags": [
-          "DATA"
-        ],
-        "sources": [
-          "cortell-2017"
-        ],
-        "note": "card c11"
       }
     }
   ],

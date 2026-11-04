@@ -284,7 +284,7 @@
     },
     {
       "scope": "lib_plank",
-      "hash": "913b4c33b523d3111c112c5eaab468726dea8b9a53cdb605d6aab178128a058d",
+      "hash": "e06614b701d888b2eb30e167a64bf76d03ed03ec94019d2522d52543a7ff4df8",
       "date": "2026-11-04",
       "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/plank.json",
       "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
