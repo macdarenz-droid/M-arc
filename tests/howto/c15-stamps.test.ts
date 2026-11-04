@@ -85,8 +85,9 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     const lib = entries.filter(e => !e.scratch && !EIGHT.includes(e.scope)), bad: string[] = [];
     for (const id of Object.keys(RULING)) if (!lib.some(e => e.scope === id)) bad.push(`${id}: ruled, not stamped`);
     for (const e of lib) {
-      if (!RULING[e.scope]) bad.push(`${e.scope}: stamped, not ruled`);
-      else if (e.decision !== RULING[e.scope][0]) bad.push(`${e.scope}: decision ${e.decision}, ruled ${RULING[e.scope][0]}`);
+      const ruled = RULING[e.scope];
+      if (!ruled) bad.push(`${e.scope}: stamped, not ruled`);
+      else if (e.decision !== ruled[0]) bad.push(`${e.scope}: decision ${e.decision}, ruled ${ruled[0]}`);
     }
     return bad;
   };
