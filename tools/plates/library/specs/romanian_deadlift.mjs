@@ -38,7 +38,7 @@
 //   lumbar spine flexes until the hanging bar's 45 cm plates reach the floor (solved: 52 deg lumbar flexion). The
 //   bar hangs plumb from the shoulders, so it also leaves the legs. Guides (round 3, R5): a dashed curve along the rounded
 //   lower back (sacrum to mid-back, 10 px hump: the pose alone draws ~3 px), a red arrow onto its top where the
-//   LOWER BACK ROUNDS tell ends, and an arrow from the correct bar to the faulty one.
+//   LOWER BACK ROUNDS tell ends (one tell since LIB-PLATEFIX-1: the bar-too-low tell, its plate ring and bar arrow are gone).
 // CARD: KNEE (c4, 15 deg), bottom bar height (c6, mid-shin), stance (c10) and grip (c9) widths; tempo (c20).
 // Unsourced (not on the card, geometry choices above): the 5 deg lumbar flexion, 5 deg toe-out, the 5 mm bar gap,
 //  ARM_BACK (10 deg: the critic's "within about 10 degrees of vertical").
@@ -210,14 +210,13 @@ export default {
       // the rounded lower back (R5): dashed hump along the back, red arrow onto its top
       { kind: 'dashed', pts: HUMP_PTS.pts },
       { kind: 'arrow', from: HUMP_OUT(0.12), to: HUMP_OUT(0.015) },
-      { kind: 'dashed', pts: Array.from({ length: 25 }, (_, k) => [0, MIST_BAR[1] + PLATE_R * Math.sin(k * Math.PI / 12), MIST_BAR[2] + PLATE_R * Math.cos(k * Math.PI / 12)]) },   // the faulty plate, unmasked, on the floor
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'end' }, to: { at: 'grip.r', pose: 'mistake' } },
     ],
     tells: [
-      // c7 (plate.mistake)
+      // c7 (plate.mistake). LIB-PLATEFIX-1 (PLATEFIX PLAN RULED, #385 6633777095): the 'Bar too low' tell, its plate ring
+      // and grip arrow are gone: with 45 cm plates at mid-shin (c6) the bar can drop only 4.7 cm (27.6 -> 22.9 cm, about
+      // 7 px) before the plates meet the floor, so the tell could not be seen (W2 panel, #379 6633524031). The faulty
+      // plate still draws on the floor (the pose's own equipment).
       { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'lumbar', pose: 'mistake', off: ROUND_OFF }, cue: 'The lower back rounds at the bottom of the rep.' },
-      // c7 (handlingMistakes: rounding to get the bar lower), c5
-      { key: 'reach', text: 'Bar<br>too low', anchor: 'grip.r', cue: 'The bar is reached down to the floor by rounding the back.' },
     ],
   },
   alt: 'Romanian deadlift, side view. Standing tall with the bar at the thighs and knees about 15 degrees bent, the lifter pushes the hips back with a flat back, keeping the knee bend fixed and the bar close to the legs down to about mid-shin.',

@@ -1,6 +1,7 @@
-// Bent-over dumbbell rear delt fly, SIDE view (figure facing screen right): the plate (LIB-8R, D-LIB8R-FLIES fallback,
-// F6). The census front view, drawn with LIB-20's camera.pitch 15 and volume trunk, is bent_over_dumbbell_rear_delt_fly__alt.mjs
-// (a sheet extra only): it reads, but its shrug Mistake is below H3's bar at every zoom k (S3; see Mistake below).
+// Bent-over dumbbell rear delt fly. The plate is the FRONT view, the card's plate.view (LIB-PLATEFIX-1: the default
+// export at the end of this file, pitch 40). The SIDE drawing below (SIDE, figure facing screen right) was the plate from
+// LIB-8R (D-LIB8R-FLIES fallback, F6) until the W2 layers panel read it as a row; it is now the sheet extra
+// bent_over_dumbbell_rear_delt_fly__alt.mjs. The history below is LIB-8R's (pitch 15 front view, S3 shrug).
 // View decision (go/no-go): the census asks for the front view, because the exercise is an arm sweep across the
 // body (horizontal abduction). Rendered both ways:
 //  - Front view, trunk 80 deg (the textbook pose): the engine draws a flexed trunk as a foreshortened FRONTAL
@@ -114,14 +115,16 @@ const { via, end } = posesAt(TOP);
 const M_SHRUG = 5;                                       // cm, scap elevation
 const mistakePose = { scap: { elev: M_SHRUG, pro: PRO_END } };
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
-export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG };
+const PITCH = 40;                                        // front plate camera pitch (deg), LIB-PLATEFIX-1 (see the plate below)
+export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG, PITCH };
 
 const G0 = landmarksOf(start, H)['grip.r'], HZ = 0.135, HY = 0.119 * 0.866 / 2;
 const HH = 0.065, HR = 0.008;                          // handle half-length, half-thickness (m)
 const START_DB = [[-HZ, -HY], [-HH, -HY], [-HH, -HR], [HH, -HR], [HH, -HY], [HZ, -HY], [HZ, HY], [HH, HY], [HH, HR], [-HH, HR], [-HH, HY], [-HZ, HY], [-HZ, -HY]].map(([dz, dy]) => [G0[0], G0[1] + dy, G0[2] + dz]);
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 
-export default {
+/** The side drawing (the plate until LIB-PLATEFIX-1; now the sheet extra, bent_over_dumbbell_rear_delt_fly__alt.mjs). */
+export const SIDE = {
   id: 'bent_over_dumbbell_rear_delt_fly', name: 'Bent-Over Dumbbell Rear Delt Fly', view: 'side', facing: 'right',
   camera: { x0: 172, y0: 339 },                          // reference scale; the hinged figure centred
   poses: { start, via, end },
@@ -171,4 +174,43 @@ export default {
   // Drawable fault (decision 9): the card's top fault, the torso swing (c4, c5; topFault 'swing'), is drawable false on
   // the card, so the plate draws its drawable fault, the shrug (c3), and F7 is named on the sheet.
   alt: 'Bent-over dumbbell rear delt fly, side view. Hinged forward at the hips with a straight spine, the lifter raises two dumbbells from hanging under the chest out to the sides until the arms are about level with the body, elbows slightly bent.',
+};
+
+// ---- the plate: FRONT view (LIB-PLATEFIX-1, PLATEFIX PLAN RULED #385 6633777095) ----
+// The W2 layers panel (#379 6633524031) read the side plate as a row: side-on, the arms sweep at the camera. The card's
+// plate.view is front (F6 dropped). The camera is raised on the viewer's side and tilted down PITCH (D-SPIKE-hinge;
+// rendered at 15, 40 and 60: at 15 the hinged trunk is a blob, at 60 the legs go under it, at 40 the back reads from
+// above with the head below the shoulders and both arms sweep out to level, c3). The full sweep to level (posesAt(90)).
+// Mistake (c3): the shoulder blades raised M_SHRUG, as the side drawing; from the front the shrug moves the shoulders
+// toward the head (down on screen), so each shoulder carries an arrow from its correct to its faulty top and two short
+// dashed shoulder lines (correct and faulty), shown in a Mistake zoom (H3).
+const FRONT_POSES = posesAt(90);
+const shoulderLine = (s, pose) => ({ kind: 'dashed', pts: [{ at: `shoulderTop.${s}`, pose, off: [-9, 0] }, { at: `shoulderTop.${s}`, pose, off: [9, 0] }] });
+export default {
+  ...SIDE,
+  view: 'front', facing: undefined,
+  camera: { x0: 195, y0: 339, pitch: PITCH },
+  torso: 'volume',
+  poses: FRONT_POSES,
+  // no dashed side-profile start dumbbell; one part per dumbbell, so the one ghost carries only its own arm's dumbbell
+  equipment: [{ type: 'floor', from: -0.55, to: 0.55 },
+    lm => ['l', 'r'].map(s => ({ type: 'dumbbell', at: lm[`grip.${s}`], axis: [0, 0, 1], part: `db.${s}`, z: 'front' }))],
+  startParts: ['arm.r', 'db.r'],
+  ghosts: { count: 0 },   // H7: 1 ghost (arm and dumbbell) made the chunk 161.6 KB, 0 with the shoulder-only outline gives 151,768 B (bar 153,600); the trace carries the sweep   // one: the front alt's 2 ghosts on both arms made a 180.3 KB chunk (> H7's 150 KB)
+  datum: [{ y: 'shoulder.r', from: 'grip.r', to: 'grip.l' }],   // shoulder level: the hands finish on it (c3)
+  measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'slight bend, held' },   // c2
+  callouts: SIDE.callouts.map(c => ({ ...c, prefer: undefined })),
+  mistake: {
+    pose: mistakePose,
+    parts: ['shcap.l', 'shcap.r'],   // the faulty shoulder caps only (H7: the faulty trunk outline too made 154.6 KB); the shoulder lines and arrows carry the shrug
+    guides: [
+      ...['l', 'r'].flatMap(s => [shoulderLine(s, 'end'), shoulderLine(s, 'mistake'),
+        { kind: 'arrow', from: { at: `shoulderTop.${s}`, pose: 'end' }, to: { at: `shoulderTop.${s}`, pose: 'mistake' } }]),
+    ],
+    tells: [
+      { key: 'shrug', text: 'Shoulders<br>shrug', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, cue: 'The shoulders hike up toward the ears as the dumbbells rise.' },   // c3
+    ],
+  },
+  zoom: { view: 'mistake', k: 4 },   // H3: the shrug moves the anchor 3.7 px at plate scale; k 2.5 gives 9.1 px and 3 gives 11.1 px, under 11.4; 4 is the next ladder k
+  alt: 'Bent-over dumbbell rear delt fly, front view. Hinged forward at the hips with a straight spine, the lifter raises two dumbbells from hanging under the chest out to the sides until the arms are about level with the body, elbows slightly bent.',
 };

@@ -70,7 +70,9 @@ const NECK_START = -10;                                // deg head flexion at th
 const LEAN_VIA2 = 3;                                   // torso moving forward under the bar once it passes the head (c6)
 const KNEE_LOCK = 2;                                   // deg: knees locked (c9), 2 deg keeps the IK off full extension
 const SCAP_TOP = 0;                                    // cm shrug at lockout: not in the card
-const NECK_END = 8;                                    // deg: head forward under the bar at lockout ("through the window", c6)
+const NECK_END = 15;                                   // deg: head forward under the bar at lockout ("through the window", c6). LIB-PLATEFIX-1
+// (PLATEFIX PLAN RULED #385 6633777095, cap 15): the W2 panel read the lockout arm as drawn over the head; the face's front
+// is 9.8 px ahead of the arm's front edge at 8, 11.9 px at 15 (engine outlines, 134.6 px/m), so the cap gives the most face
 const ARM = (WINTER.upperArm + WINTER.forearm + REF.gripOff) * H;   // shoulder to grip centre, wrist straight
 
 const feet = { l: { at: [FOOT_X, 0, 0] }, r: { at: [-FOOT_X, 0, 0] } };
@@ -146,7 +148,8 @@ function armShapes(pose, keys) {
 // outline (every other plate's start convention): upper arm to the elbow ahead of the chest, vertical forearm up to
 // the racked bar. Unfilled, so the head and the solid lockout arm stay visible (a filled patch read as a third limb).
 // The FOREARMS VERTICAL leader ends on this forearm.
-const START_ARM = armShapes(start, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']).map(pts => ({ type: 'line', pts: [...pts, pts[0]], cls: 'eq-line m-line', z: 'front', part: 'startarm' }));
+// LIB-PLATEFIX-1: the forearm and fist only; the start upper arm lay wholly inside the end torso (W2 panel L7).
+const START_ARM = armShapes(start, ['fore.r', 'fist.r']).map(pts => ({ type: 'line', pts: [...pts, pts[0]], cls: 'eq-line m-line', z: 'front', part: 'startarm' }));
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 // Mistake (card plate.mistake, c5): elbows back, forearms tilted, so the bar curves forward away from the face. Drawn
 // ON THE DRAWN (lockout) FIGURE, mid-press (critic on ab0c553, R5: the red upper arm began at the torso's back edge,
@@ -231,7 +234,9 @@ export default {
   ghosts: { count: 2, parts: ['arm.r', 'bar'] },
   trace: { point: 'grip.r', trim: [12, 12] },
   datum: [{ x: [0, 0, 0], from: 349, to: 20 }],
-  measure: { vertex: 'shoulder.r', from: 'down', to: 'elbow.r', radius: 20, title: 'Shoulder', value: 'straight up', box: { left: 258, top: 172 } },
+  // LIB-PLATEFIX-1: the start forearm against vertical (c5), no number (the card gives none). The former lockout shoulder
+  // arc ("straight up", no card number) crossed the chest and the start arm (W2 panel L7).
+  measure: { vertex: { at: 'elbow.r', pose: 'start' }, from: 'up', to: { at: 'grip.r', pose: 'start' }, radius: 30, title: 'Forearm', value: 'vertical', box: { left: 258, top: 172 } },
   callouts: [
     { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: [{ at: 'elbow.r', pose: 'start' }, { at: 'grip.r', pose: 'start' }], t: 0.45 }, box: { left: 22, top: 118 }, cue: 'Keep your elbows under the bar so your forearms point straight up.' },
     { key: 'head', text: 'Head<br>through', anchor: 'chin', cue: 'Lean back slightly from the hips, then move under the bar as it passes.',

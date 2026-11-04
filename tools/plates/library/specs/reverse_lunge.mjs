@@ -29,8 +29,9 @@
 //  Callouts = the 3 plate.checkpoints (c2 front shin vertical, with a plumb guide through the front ankle; c3 chest
 //   up; c3 weight even, pointing at the hips with a plumb guide to the floor midway between the feet).
 //  Mistake = plate.mistake (c18, drawable; PILOT-A3 redraw on LIB-SPINE, F-REVLUNGE-ARCH): the low back arches as the
-//   foot steps back (trunk.bow M_ARCH: the pelvis tips M_TILT under the held thorax), one tell 'flare' (the card's
-//   topFault) on the lumbar landmark, shown in a Mistake zoom on the low back (D-LIBZOOM-EXTEND, D-A3-REVZOOM).
+//   foot steps back (trunk.bow M_ARCH: the pelvis tips M_TILT under the thorax) and the ribcage flares (the thorax tips
+//   back M_FLARE; LIB-PLATEFIX-1), two tells: 'flare' (the card's topFault) on the lumbar landmark and 'ribs' on the
+//   chest, with the pelvis arc-arrow and the rib arrow, and a Mistake zoom on the low back (D-LIBZOOM-EXTEND, D-A3-REVZOOM).
 //  Measure: none. The card gives no angle ("roughly vertical"); the shin plumb guide shows the checkpoint instead.
 //  Tempo: the strip without seconds (D-STRIP-ROWS): Lower slow, Rise quicker (c16).
 // CARD (checked against card v2): from the card: FRONT_SHIN 6 deg ("roughly vertical", c2), TRUNK_LEAN 3 deg
@@ -85,10 +86,13 @@ const end = pose(HIP, TRUNK_LEAN, REAR);
 // trunk bows M_ARCH (LIB-SPINE trunk.bow), so the pelvis tips M_TILT under the held thorax, which is the M_ARCH lumbar
 // extension. The thorax, chest, arms and legs move 0 px; lumbar, sacrum, buttock and navel move about 4 px (DESIGN §0).
 // The trunk is an object in every key pose too (D-SPINE-MIX).
-const M_ARCH = 12, M_TILT = M_ARCH;
-const MISTAKE = { ...end, trunk: { flex: 0, bow: M_ARCH } };
+// LIB-PLATEFIX-1 (W2 panel, #379 6633524031: the Mistake read as the Right pose plus two ticks): M_ARCH 12 -> 24 (RDL's
+// illustrative M_TUCK 30 precedent), and the ribcage flares: the thorax tips back M_FLARE over the arched lumbar (trunk
+// flex -M_FLARE), the arms kept plumb (shoulder flexion = the thorax lean, as `arms`). Drawing values (D-SHIP-DRAWVAL).
+const M_ARCH = 24, M_TILT = M_ARCH, M_FLARE = 8;
+const MISTAKE = { ...end, trunk: { flex: -M_FLARE, bow: M_ARCH }, ...arms(TRUNK_LEAN - M_FLARE) };
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
-export const SIZES = { FOOT_X, FRONT_SHIN, FRONT_THIGH, REAR_KNEE_Y, REAR_HEEL, TRUNK_LEAN, ELBOW, M_ARCH, M_TILT };
+export const SIZES = { FOOT_X, FRONT_SHIN, FRONT_THIGH, REAR_KNEE_Y, REAR_HEEL, TRUNK_LEAN, ELBOW, M_ARCH, M_TILT, M_FLARE };
 // Front shin plumb (c2), the shin callout's guide: a vertical through the front ankle, from the floor to SHIN_TOP m
 // above the knee, drawn when the callout is selected (a datum would sit under the dashed start figure, unseen).
 const SHIN_TOP = 0.12;
@@ -131,12 +135,20 @@ export default {
   ],
   mistake: {
     pose: MISTAKE,
-    // no guide: the chest moves 0 px (D-A3-REVBOW); the dashed outline and the zoom carry the fault
+    // LIB-PLATEFIX-1: the faulty trunk and head (dashed, the engine's own outline; the plumb arms and dumbbells are left
+    // out, as triceps_pushdown's parts), the pelvis tipping forward (arc-arrow on the back of the hips, clockwise = the
+    // pelvis top forward) and the lower ribs lifting (arrow up and out)
+    parts: ['torso', 'head'],
+    guides: [
+      { kind: 'arc-arrow', center: { at: 'hips', pose: 'mistake' }, r: 30, a0: 140, a1: 195 },
+      { kind: 'arrow', from: { at: 'chest', pose: 'mistake', off: [6, 12] }, to: { at: 'chest', pose: 'mistake', off: [16, 0] } },
+    ],
     tells: [
-      { key: 'flare', text: 'Low back arches', anchor: { at: 'lumbar', pose: 'mistake' }, cue: 'The ribcage flares and the pelvis stays untucked, arching the low back.' },   // c18
+      { key: 'flare', text: 'Low back arches', anchor: { at: 'lumbar', pose: 'mistake' }, cue: 'The ribcage flares and the pelvis stays untucked, arching the low back.' },   // c18 (first: the card's topFault, F7)
+      { key: 'ribs', text: 'Ribs flare', anchor: { at: 'chest', pose: 'mistake', off: [16, 0] }, box: { left: 266, top: 196 }, cue: 'The ribcage flares up instead of the pelvis tucking under.' },   // c18
     ],
   },
-  zoom: { view: 'mistake', k: 3 },   // the ring on the low back, holding the elbow dot; 3 is the smallest ladder k that passes (lumbar 4.10 px: 12.31 at k 3, 10.26 at k 2.5)
+  zoom: { view: 'mistake', k: 3 },   // the ring on the low back (H3: the tell anchors move 8.2 px at plate scale, under 11.4); 3 as before LIB-PLATEFIX-1
   // Tempo: no seconds in the card (c7, c16; 3 s down is a progression only, c15): the strip without seconds, exactly
   // tempoOf(strip/rows.json reverse_lunge) (D-STRIP-ROWS).
   tempo: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Rise', move: true, word: 'Quicker' }],

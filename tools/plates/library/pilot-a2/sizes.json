@@ -148,6 +148,11 @@
     "value": 5,
     "unit": "cm",
     "basis": "convention: golden A dumbbell_lateral_raise's shrug (ref-src/plate.mjs:147 'shrug_cm 5'), as lb7/sizes.json:522; c3 'don't shrug'"
+   },
+   "PITCH": {
+    "value": 40,
+    "unit": "deg",
+    "basis": "decision: LIB-PLATEFIX-1 (PLATEFIX PLAN RULED, #385 6633777095), D-SPIKE-hinge camera pitch for the card's front view: rendered at 15, 40 and 60; at 40 the back reads from above and both arms sweep out to level (c3)"
    }
   }
  }

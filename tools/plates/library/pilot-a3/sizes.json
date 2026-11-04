@@ -38,14 +38,19 @@
     "basis": "D-LIB8R-REVLUNGE: the normal plate stays byte-identical; as drawn on main c7bdad7a (pilot A #109)"
    },
    "M_ARCH": {
-    "value": 12,
+    "value": 24,
     "unit": "deg",
-    "basis": "convention: hanging_leg_raise.mjs:69 (the 8) trunk -12, 'lower back arches (lumbar extension 12 deg)'; lb8/sizes.json:118 and :620 use it for the same sign; c18 'flaring the ribcage'"
+    "basis": "LIB-PLATEFIX-1 (PLATEFIX PLAN RULED, #385 6633777095): 12 did not read (#379 6633524031), doubled to 24, an illustrative size as romanian_deadlift's M_TUCK 30; was: convention: hanging_leg_raise.mjs:69 (the 8) trunk -12, 'lower back arches (lumbar extension 12 deg)'; lb8/sizes.json:118 and :620 use it for the same sign; c18 'flaring the ribcage'"
    },
    "M_TILT": {
-    "value": 12,
+    "value": 24,
     "unit": "deg",
-    "basis": "claim: c18 'tuck the pelvis under' names the untucked pelvis as the fault's site: the pelvis tips 12 deg under the held thorax (trunk.bow, LIB-SPINE), which is the 12 deg lumbar extension M_ARCH; the thorax keeps its upright angle (c3); D-A3-REVBOW"
+    "basis": "claim: c18 'tuck the pelvis under' names the untucked pelvis as the fault's site: the pelvis tips M_ARCH (24 deg since LIB-PLATEFIX-1) under the thorax (trunk.bow, LIB-SPINE), which is the M_ARCH lumbar extension; D-A3-REVBOW"
+   },
+   "M_FLARE": {
+    "value": 8,
+    "unit": "deg",
+    "basis": "LIB-PLATEFIX-1 (PLATEFIX PLAN RULED, #385 6633777095): c18 'flaring the ribcage': the thorax tips back 8 deg over the arched lumbar (trunk flex -8), the arms kept plumb; an illustrative drawing value (D-SHIP-DRAWVAL)"
    }
   },
   "dumbbell_fly": {
@@ -80,9 +85,9 @@
     "basis": "dumbbell_fly as drawn on main c7bdad7a (pilot A #109); the arc, bench and body are unchanged by LIB-8R"
    },
    "PITCH": {
-    "value": 45,
+    "value": 25,
     "unit": "deg",
-    "basis": "decision: D-SPIKE-pitch (COACHING-DECISIONS.md:2222), camera pitch about 45 deg for this front view"
+    "basis": "decision: D-SPIKE-pitch (COACHING-DECISIONS.md:2222) camera pitch; LIB-PLATEFIX-1 (PLATEFIX PLAN RULED, #385 6633777095): 45 read as a standing T-pose (#379 6633524031), 25 shows the knees in front, the head above them and the bench frame between the shins"
    },
    "M_WRIST": {
     "value": 30,

@@ -29,7 +29,7 @@
 //  card's plate.mistake, leaning too far forward over the bar or arching the back to press it down (c11); tempo press 1 s, pause
 //  1 s, return 2 s (c12), no Rest phase (the card gives none). Measure: the end elbow, value "not locked" (c8), no
 //  number (the card gives none).
-import { landmarksOf, bodyShapes, fk, resolve, normPose } from '../engine.mjs';
+import { landmarksOf } from '../engine.mjs';
 
 const H = 1.75;
 const R = Math.PI / 180;
@@ -122,21 +122,6 @@ const MIS_TILT = 42, MIS_ARCH = 14, MIS_SHOULDER = 25, MIS_ELBOW = 75;   // extr
                                                        //  flexion relative to the leaning thorax (arm along the side), elbow
 const MIS_HIPS = 0.07, MIS_DROP = 0.008;              // hips pushed back as the trunk tips (weight over the feet), knees kept soft
 const mistakePose = { root: { at: [ROOT[0], ROOT[1] - MIS_DROP, ROOT[2] - MIS_HIPS], tilt: TILT + MIS_TILT }, trunk: TRUNK - MIS_ARCH, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: MIS_ELBOW, wrist: 0 };
-// R5 (critic 10-03): the faulty upper arm drawn as the clear solid red segment: the engine's own outline of the faulty
-// near upper arm (side view, sampled on its Catmull-Rom spline) as a solid Mistake guide, and the faulty forearm and
-// hand as dashed guides, kept apart from the dashed leaning torso and head (the masked engine arm outline tangled with
-// them, so the near arm is no longer in `parts`).
-const misArm = (() => {
-  const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
-  const cr = ps => { const n = ps.length, g = i => ps[(i + n) % n], out = [];
-    for (let i = 0; i < n; i++) { const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
-      for (let k = 0; k < 8; k++) { const t = k / 8, u = 1 - t, c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
-        out.push([0, 1].map(d => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d])); } }
-    return out; };
-  const shapes = bodyShapes(fk(resolve(normPose({ ...end, ...mistakePose }, bd), bd).q, bd), probe);
-  const get = key => { const sh = shapes.find(x => x.key === key), pts = (key.includes('cap') ? sh.poly : cr(sh.poly)).map(([x, y]) => [0, -y / 1000, x / 1000]); return [...pts, pts[0]]; };
-  return { upper: get('upper.r'), rest: ['elbowcap.r', 'fore.r', 'fist.r'].map(get) };
-})();
 const lmM = landmarksOf({ ...end, ...mistakePose }, H), MIS_BAR = barOf(lmM);
 
 export default {
@@ -175,7 +160,7 @@ export default {
     ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', at: E, pose, tol: 0.5 })),                 // elbow pinned (start and end)
     { landmark: 'grip.r', above: THIGH_FRONT, pose: 'end' },                                          // bar ends in front of the thigh
   ],
-  ghosts: { count: 3, parts: ['arm.r', 'bar'] },
+  ghosts: { count: 2, parts: ['arm.r', 'bar'] },   // LIB-PLATEFIX-1: 3 -> 2, a calmer Mistake view (the 8 use 2-3)
   trace: { point: 'grip.r', trim: [10, 12] },
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'not locked', box: { left: 44, top: 216 } },
   callouts: [
@@ -186,16 +171,19 @@ export default {
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['torso', 'head', 'bar'],   // the near arm is drawn as guides (R5); far arm doubles it; the stack's travel is not the fault
+    // LIB-PLATEFIX-1 (W2 panel L5, #379 6633524031: the overlay was a tangle): one merged dashed faulty figure drawn by
+    // the engine (trunk, head, near arm, bar), no separate arm guides; far arm doubles the near one; the stack's travel
+    // is not the fault. The dashed line just behind the faulty low back shows the arch (c11).
+    parts: ['torso', 'head', 'arm.r', 'bar'],
     guides: [
-      { kind: 'line', pts: misArm.upper },                                          // the faulty upper arm, solid (R5)
-      ...misArm.rest.map(pts => ({ kind: 'dashed', pts })),
       { kind: 'dashed', pts: [MIS_BAR, headTangent(MIS_BAR)] },
+      { kind: 'dashed', smooth: true, pts: ['sacrum', 'lumbar', 'backMid'].map(at => ({ at, pose: 'mistake', off: [-6, 0] })) },
       { kind: 'arc-arrow', center: 'hips', r: 108, a0: -84, a1: -56 },   // the trunk tipping forward from the hips
     ],
     tells: [
       { key: 'lean', text: 'Leaning<br>over', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'You lean far over the bar or arch your back to push it down.' },
+      { key: 'arch', text: 'Back<br>arches', anchor: { at: 'lumbar', pose: 'mistake', off: [-6, 0] }, box: { left: 36, top: 214 }, cue: 'Your low back arches as you push the bar down.' },   // c11
     ],
   },
-  alt: 'Triceps pushdown, side view. Standing at a high cable tower with a slight forward lean, upper arms pinned at the sides, the lifter presses a straight bar from forearms about level down in an arc to straight arms in front of the thighs.',
+  alt: 'Triceps pushdown, side view. Standing at a high cable tower with a slight forward lean, upper arms pinned at the sides, the lifter presses a straight bar from about upper-chest level down in an arc to straight arms in front of the thighs.',
 };
