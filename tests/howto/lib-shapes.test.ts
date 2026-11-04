@@ -213,9 +213,11 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(21);
-    for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; }
-    // main c4c34d75's MANIFEST.json with the same one entry blanked (if LIB-SHIP W1 re-pins first, re-measure on the merge)
-    expect(sha(JSON.stringify(m))).toBe('8a908d1890924191a8bc82393a40ea52b9998b0afe96c102bdda4c72fc13fec5');
+    // F-CROP-FRONT D-CROP-PIN / D-CROP-NONE (#380): crop.mjs's and hand.mjs's keys are re-pinned there and pinned exactly by crop-projection.test.ts
+    const F_CROP = ['tools/plates/library/render/closeup/crop.mjs', 'tools/plates/library/render/closeup/hand.mjs'];
+    for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of F_CROP) r.files[k] = 'X'; }
+    // main c4c34d75's MANIFEST.json with the same entries blanked (if LIB-SHIP W1 re-pins first, re-measure on the merge)
+    expect(sha(JSON.stringify(m))).toBe('227e5d3041fdab60e00f0fe3ab53e7de6fa2ec0ec30b7d15c6f1dbeee6b4e417');
   });
 });
 

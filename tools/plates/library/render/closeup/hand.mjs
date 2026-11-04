@@ -82,6 +82,7 @@ function sharedPairSvg(P) {
 export function handZoomOf(mod, o, thumbOpts = {}) {
   const howto = mod.default;
   const z = howto.zooms.find(q => q.kind === 'hand'), h = howto.handling;
+  if (!z) return { PAGES: undefined, handZoom: undefined };   // D-CROP-NONE: a sheet with no hand zoom (D-SHIP-GRIP 'none')
   const tail = `\n  <p class="grip-line">${esc(h.gripLine)}</p>\n  <p class="hint limit">${esc(h.wrist.limitText)}</p>`
     + (o.handleChoiceHint && h.handleChoice ? `<p class="hint limit">${esc(h.handleChoice.sore)}</p>` : '');
   const pairFor = (page, i) => {
