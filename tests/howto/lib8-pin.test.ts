@@ -105,12 +105,24 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
   // LIB-SHIP (D-SHIP-A9, ruling 3; D-SHIP-SHAPES, D-SHIP-W1-LAYERS #376 6616230145): pilot A ships exactly the ruled ids;
   // every other row stays at approved-plate. Replaces "one stage": a second stage, an unruled shipped id or a ruled id
   // not shipped is red.
-  const SHIPPED_RULED = ['lib_dumbbell_biceps_curl'];
+  // LIB-SHIP W2 (D-SHIP-W2-STAMP, #379 6636105974): the 7 W2 pilot A ids join the curl; the 6 held rows (PLATEFIX and
+  // F-PAIR-FAULTS) stay at approved-plate
+  const SHIPPED_RULED = ['lib_dumbbell_biceps_curl', 'lib_pec_fly', 'lib_plank', 'lib_rope_triceps_pushdown', 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row'];
+  /** LIB-SHIP W2: one line per row off the ruled state (an unruled id shipped, a ruled id not shipped, another stage). */
+  const shipProblems = (rows: Record<string, any>) => Object.entries(rows).flatMap(([id, r]: [string, any]) =>
+    SHIPPED_RULED.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
+  it('LIB-SHIP W2 A9 mutations: an unruled id at shipped, a ruled id held back, and a ruled id\'s stamp removed are red', async () => {
+    expect(shipProblems({ ...batch.rows, lib_triceps_pushdown: { ...batch.rows.lib_triceps_pushdown, stage: 'shipped' } })).toEqual(['lib_triceps_pushdown: unruled, at shipped']);
+    expect(shipProblems({ ...batch.rows, lib_plank: { ...batch.rows.lib_plank, stage: 'approved-plate' } })).toEqual(['lib_plank: ruled, at approved-plate']);
+    const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
+    const { scope, hash } = await S.stampOf('lib_plank'), rv = S.readReviews();
+    const cut = { ...rv, entries: rv.entries.filter((e: any) => !(e.scope === scope && e.hash === hash)) };
+    expect(await S.stampProblems(SHIPPED_RULED, { reviews: cut })).toEqual([`LIB-5 stamp: lib_plank: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`]);
+  }, 120_000);
   it('batches/pilot-a.json holds exactly the 13 pinned ids, each once, mode H, census view; LIB-SHIP: exactly the ruled ids shipped, the rest approved-plate', () => {
     for (const id of PINNED) expect(raw.split(`"lib_${id}"`).length - 1).toBe(1);
     expect(Object.keys(batch.rows).sort()).toEqual(PINNED.map(id => `lib_${id}`).sort());
-    expect(Object.entries(batch.rows).filter(([, r]: [string, any]) => r.stage === 'shipped').map(([id]) => id).sort()).toEqual([...SHIPPED_RULED].sort());
-    expect(Object.entries(batch.rows).filter(([id, r]: [string, any]) => !SHIPPED_RULED.includes(id) && r.stage !== 'approved-plate')).toEqual([]);
+    expect(shipProblems(batch.rows)).toEqual([]);
     for (const id of PINNED) expect(batch.rows[`lib_${id}`]).toMatchObject({ src: `library/specs/${id}.mjs`, chromeId: id.replace(/_/g, '-'), mode: 'H', view: VIEW[id] });
     expect(batch.censusRef).toBe('4a9fd86');
   });
@@ -123,10 +135,16 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     expect(existsSync(ROOT + batch.pages.layers)).toBe(true);
     expect(existsSync(ROOT + batch.pages.layersConfig)).toBe(true);
     const entries = JSON.parse(read('tests/howto/golden/library/pilot-a.json')).entries;
-    const lp = entries.filter((e: any) => e.kind === 'layers-page');
-    expect(lp).toHaveLength(1);
+    // LIB-SHIP W2: W1's layers-page entry (index 14) is superseded by W2's; the one current entry (no later entry
+    // supersedes it) is the last, names exactly the ruled ids and pins the page. A second current entry, a supersedes
+    // naming anything but the earlier layers-page entry, or a W1 entry left current is red.
+    const lp = entries.map((e: any, i: number) => ({ e, i })).filter(({ e }: any) => e.kind === 'layers-page');
+    expect(lp).toHaveLength(2);
+    expect(lp.map(({ e }: any) => e.decision)).toEqual(['D-SHIP-W1-LAYERS', 'D-SHIP-W2-STAMP']);
+    expect(lp[1].e.supersedes).toBe(lp[0].i);
+    expect(lp[1].i).toBe(entries.length - 1);
     const page = readFileSync(ROOT + batch.pages.layers);
-    expect([lp[0].ids, lp[0].pageSha256, lp[0].bytes]).toEqual([SHIPPED_RULED, createHash('sha256').update(page).digest('hex'), page.length]);
+    expect([[...lp[1].e.ids].sort(), lp[1].e.ids.length, lp[1].e.pageSha256, lp[1].e.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);

@@ -74,6 +74,22 @@ describe('LIB-5 S8 / D-LIB5-SCRATCH: main holds no scratch marker or scratch sta
 describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s committed stamps', () => {
   const reviews = () => JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/reviews.json'), 'utf8'));
   /** Problems with the committed (non-scratch) entries: approvedBy 'supervisor', a decision, an approval and open 0. */
+  // LIB-SHIP W2 (ruling 3): the ruled library stamps, each with its decision and approval
+  const W1_RULE = ['D-SHIP-W1-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/376#issuecomment-6616230145 @ 26593a92bdbe428f12186949c7842b35d9f47dec'];
+  const W2_RULE = ['D-SHIP-W2-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf'];
+  const W2_STAMPED = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_pec_fly', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
+  const RULING: Record<string, string[]> = { lib_dumbbell_biceps_curl: W1_RULE, ...Object.fromEntries(W2_STAMPED.map(id => [id, W2_RULE])) };
+  const clone = (x: any) => JSON.parse(JSON.stringify(x));
+  /** The library entries against RULING: every ruled id stamped once under its own decision, no unruled id stamped. */
+  const stampedProblems = (entries: any[]) => {
+    const lib = entries.filter(e => !e.scratch && !EIGHT.includes(e.scope)), bad: string[] = [];
+    for (const id of Object.keys(RULING)) if (!lib.some(e => e.scope === id)) bad.push(`${id}: ruled, not stamped`);
+    for (const e of lib) {
+      if (!RULING[e.scope]) bad.push(`${e.scope}: stamped, not ruled`);
+      else if (e.decision !== RULING[e.scope][0]) bad.push(`${e.scope}: decision ${e.decision}, ruled ${RULING[e.scope][0]}`);
+    }
+    return bad;
+  };
   const entryProblems = (entries: any[]) => entries.filter(e => !e.scratch).flatMap(e => [
     ...(e.approvedBy !== 'supervisor' ? [`${e.scope}: approvedBy ${JSON.stringify(e.approvedBy)}`] : []),
     ...(typeof e.decision !== 'string' || !e.decision ? [`${e.scope}: no decision`] : []),
@@ -84,11 +100,13 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   // the 8 then exactly the ruled shipped library ids, in shipping order; an unruled or missing entry is red.
   it('one approved entry per id of the 8, each matching stampOf; LIB-SHIP: then one per ruled shipped library id; every committed entry is the supervisor\'s', async () => {
     const r = reviews();
-    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl']);
+    // LIB-SHIP W2 (ruling 3; D-SHIP-W2-STAMP #379 6636105974): the W1 id, then the 9 W2 ids in shipping (registry) order
+    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED]);
+    expect(stampedProblems(r.entries)).toEqual([]);
     expect(entryProblems(r.entries)).toEqual([]);
     for (const e of r.entries.filter((x: any) => !EIGHT.includes(x.scope))) {   // LIB-SHIP: each library stamp matches its sheet and its ruling
       expect([e.scope, e.hash]).toEqual([e.scope, (await S.stampOf(e.scope)).hash]);
-      expect([e.scope, e.decision, e.approval]).toEqual([e.scope, 'D-SHIP-W1-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/376#issuecomment-6616230145 @ 26593a92bdbe428f12186949c7842b35d9f47dec']);
+      expect([e.scope, e.decision, e.approval]).toEqual([e.scope, ...(RULING[e.scope] ?? ['no ruling', ''])]);
     }
     for (const e of r.entries.filter((x: any) => EIGHT.includes(x.scope))) {
       expect([e.scope, e.hash]).toEqual([e.scope, (await S.stampOf(e.scope)).hash]);
@@ -97,6 +115,13 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
       for (const f of e.findings) expect(f).toMatch(/recorded, not changed: golden B is locked \(plan 2\.8\)$/);
     }
     expect(await S.stampProblems(EIGHT)).toEqual([]);
+  });
+  it('LIB-SHIP W2 A9 mutations, each red: a ruled id\'s stamp removed; an unruled id stamped; a W2 id under the W1 ruling', () => {
+    const es = reviews().entries;
+    expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_plank'))).toEqual(['lib_plank: ruled, not stamped']);
+    expect(stampedProblems([...es, { ...es[es.length - 1], scope: 'lib_crunch' }])).toEqual(['lib_crunch: stamped, not ruled']);
+    const w1 = clone(es); w1.find((e: any) => e.scope === 'lib_push_up').decision = 'D-SHIP-W1-STAMP';
+    expect(stampedProblems(w1)).toEqual(['lib_push_up: decision D-SHIP-W1-STAMP, ruled D-SHIP-W2-STAMP']);
   });
   it('mutations, each red: \'owner\'; approvedBy missing; open: 1', () => {
     const e = reviews().entries[0], { approvedBy: _a, ...noBy } = e;

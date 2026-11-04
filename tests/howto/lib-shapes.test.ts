@@ -69,20 +69,42 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     for (const p of list) { const t = readFileSync(p, 'utf8'); h.update(`${p}\0${sha(body ? t.slice(t.indexOf('\n') + 1) : t)}\n`); }
     return h.digest('hex');
   };
+  const W2_IDS = ['barbell_row', 'dumbbell_bench_press', 'dumbbell_shoulder_press', 'upright_row', 'pec_fly', 'rope_triceps_pushdown', 'plank', 'cable_fly', 'push_up'];
+  const W2_LINE = new RegExp(`^  (?:"lib_(?:${W2_IDS.join('|')})",|lib_(?:${W2_IDS.join('|')}): \\(\\) => |"(?:${W2_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+  /** loaders.ts's body (all but line 1) without the W2 lines: how many were taken out, and the rest's sha. */
+  const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
   it('the 27 header-moved files: each body (all but line 1) equals main c4c34d75 (re-measured after train 63)', () => {
     const list = [...ROWS.map(i => `src/howto/generated/hand-${i}.ts`), ...ROWS.map(i => `src/howto/generated/posture-${i}.ts`),
       ...ROWS.map(i => `src/slices/howto/css/zoom-${i}.css`), 'src/slices/howto/css/hand.css', 'src/slices/howto/css/posture.css',
       'src/howto/generated/loaders.ts'].sort();
     expect(list).toHaveLength(27);
     for (const p of list) expect(readFileSync(p, 'utf8'), p).toMatch(/^(\/\/|\/\*) GENERATED, do not edit\. [^\n]*inputsSha256=[0-9a-f]{64}( \*\/)?\n/);
-    expect(listSha(list, true)).toBe('c6e705922e80476a69f42ca65b22131ca28fa87938ce1f2018138e607495fbbf');
+    // LIB-SHIP W2 (ruling 3): the 27 together were c6e70592 on main cb9a6dae. loaders.ts's body now adds the 9 W2 ids, so
+    // the 26 others keep their main bodies exactly (67195ffa, measured on main cb9a6dae), and loaders.ts's body with exactly
+    // the W2 lines taken out (4 per id: HOWTO_IDS, LOADERS, POSTURE, FEEL; no HAND line, D-SHIP-PAIR-NOZOOM) is main's
+    // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
+    expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
+    expect(w2Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'))).toEqual({ removed: 36, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
+  });
+  it('LIB-SHIP W2 mutations: a HAND line for a W2 id, a W2 line dropped, and another line changed in loaders.ts are red', () => {
+    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(t);
+    expect(w2Less(t.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(ok.sha);
+    expect(w2Less(t.replace('  "plank": () => import(\'./posture-plank\'),\n', '')).removed).toBe(35);
+    expect(w2Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"plank\": () => import('./hand-plank'),\n")).removed).toBe(37);
   });
 
   it('GOLDEN.json, the golden-B page and the 8\'s ht- and feel- files are byte-equal to main b9369130', () => {
     const list = ['tests/howto/golden/GOLDEN.json', 'tests/howto/golden/howto-layers.html',
       ...ROWS.map(i => `src/howto/generated/ht-${i === 'lateral-raise' ? 'dumbbell-lateral-raise' : i}.ts`), ...ROWS.map(i => `src/howto/generated/feel-${i}.ts`)].sort();
     expect(list).toHaveLength(18);
-    expect(listSha(list, false)).toBe('af07a70aa6221dc3808eb2acb75d99d5d8c0da0c3b03f34d8ff0285f4dffd1dc');
+    // LIB-SHIP W2 (ruling 3; D-FEEL-NOMEANS): the 18 were af07a70a on main cb9a6dae. gen/feel.mjs is the feel files'
+    // hashed writer, so only their header line moves: the 10 others stay byte-equal (96d98328) and the 8 feel files keep
+    // their main bodies exactly (dd5410f0), both measured on main cb9a6dae
+    const feel = list.filter(p => p.includes('/feel-'));
+    expect(feel).toHaveLength(8);
+    expect(listSha(list.filter(p => !feel.includes(p)), false)).toBe('96d9832868e248d98788d2e9bca3a475a210ddfcbd63afed1c835b20dc7d6c88');
+    expect(listSha(feel, true)).toBe('dd5410f05fe597226a210692d5f4c9092e06fc51898e98b7fa343de868cda435');
+    for (const p of feel) expect(readFileSync(p, 'utf8'), p).toMatch(/^\/\/ GENERATED, do not edit\. Written by tools\/plates\/generate\.mjs \(tools\/plates\/gen\/feel\.mjs\)\. inputsSha256=[0-9a-f]{64}\n/);
   });
 
   it('every patch anchor matches once, and a spec with no noZoom and no `none` row needs none of the new branches', () => {
@@ -209,15 +231,41 @@ describe('LIB-SHAPES D-SHAPES-HANDS: gen/hands.mjs, a library row with no hand p
 
 describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-layers-page.mjs', () => {
   const BLP = 'tools/plates/library/build-layers-page.mjs';
+  // LIB-SHIP W2 (#379; [golden update] re-pins): W2 re-pins these keys (its sheets, batches, closeups, layers configs and
+  // build-layers-page.mjs), adds these keys to these rows, and adds PILOT-B2's lib_crunch row. Each W2 key pins its
+  // file's current sha; with the W2 keys blanked (moved) or removed (added) and the crunch row removed, the manifest
+  // equals main cb9a6dae's with the same blanks (6dd225c2): every other entry still equals main.
+  const W2_MOVED = ['tools/plates/library/batches/pilot-a.json', 'tools/plates/library/batches/pilot-b.json', 'tools/plates/library/build-layers-page.mjs',
+    ...['barbell_overhead_press', 'barbell_row', 'bent_over_dumbbell_rear_delt_fly', 'box_jump', 'cable_fly', 'dumbbell_bench_press', 'dumbbell_fly',
+      'dumbbell_shoulder_press', 'mountain_climbers', 'pec_fly', 'plank', 'push_up', 'reverse_lunge', 'romanian_deadlift', 'rope_triceps_pushdown',
+      'seated_leg_curl', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'upright_row'].map(id => `tools/plates/library/howto/lib_${id}.howto.mjs`),
+    'tools/plates/library/pages/pilot-a.closeups.mjs', 'tools/plates/library/pages/pilot-a.layers.json'];
+  const W2_ADDED: Record<string, string[]> = {
+    'docs/research/howto/shared/back-pain-box.json': ['lib_bent_over_dumbbell_rear_delt_fly', 'lib_box_jump'],
+    'tools/plates/library/shared/back-box.mjs': ['lib_bent_over_dumbbell_rear_delt_fly', 'lib_box_jump'],
+    'tools/plates/library/pages/pilot-b.closeups.mjs': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
+    'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
+  };
+  /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
+  const lessW2 = (m: any, blanked: string[] = []) => {   // blanked: keys the caller already checked and blanked
+    delete m.rows.lib_crunch;
+    for (const [id, r] of Object.entries<any>(m.rows)) {
+      for (const k of W2_MOVED) if (k in r.files && !blanked.includes(k)) { expect(r.files[k], `${id} ${k}`).toBe(sha(readFileSync(k))); r.files[k] = 'X'; }
+      for (const [k, ids] of Object.entries(W2_ADDED)) if (ids.includes(id)) { expect(r.files[k], `${id} ${k}`).toBe(sha(readFileSync(k))); delete r.files[k]; }
+    }
+    return m;
+  };
   it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main c4c34d75 (re-measured after train 63)', () => {
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
-    expect(rows).toHaveLength(21);
+    expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
+    expect(Object.keys(m.rows)).toContain('lib_crunch');
     // F-CROP-FRONT D-CROP-PIN / D-CROP-NONE (#380): crop.mjs's and hand.mjs's keys are re-pinned there and pinned exactly by crop-projection.test.ts
     const F_CROP = ['tools/plates/library/render/closeup/crop.mjs', 'tools/plates/library/render/closeup/hand.mjs'];
     for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of F_CROP) r.files[k] = 'X'; }
-    // main c4c34d75's MANIFEST.json with the same entries blanked (if LIB-SHIP W1 re-pins first, re-measure on the merge)
-    expect(sha(JSON.stringify(m))).toBe('227e5d3041fdab60e00f0fe3ab53e7de6fa2ec0ec30b7d15c6f1dbeee6b4e417');
+    // main c4c34d75's MANIFEST.json with the same entries blanked was 227e5d30 (main cb9a6dae gives the same); LIB-SHIP W2:
+    // with W2's changes also taken out, main cb9a6dae's with the same blanks
+    expect(sha(JSON.stringify(lessW2(m, [BLP])))).toBe('6dd225c220ae583208020da6f0882d719f5cb727b77fa7d3f3eea58140a3a5e9');
   });
 });
 

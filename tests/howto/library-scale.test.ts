@@ -41,10 +41,19 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
     expect(chromeIds).toHaveLength(reg.shippedIds().length);   // LIB-4a (D-LIB4-PINS-2): the registry's count, the 8 today
     expect(reg.shippedIds().slice(0, 8)).toEqual(Object.keys(JSON.parse(readFileSync('tools/plates/plates.json', 'utf8'))));   // the 8 ship first, in plates.json order
     const keys = S.mapKeys(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
-    expect(mapProblems(keys, chromeIds)).toEqual([]);
+    // LIB-SHIP W2 (ruling 3, D-SHIP-IDS-NOPAIR): the 9 W2 ids ship with no hand chunk and no hand pair (gap-ruled or on the
+    // pinned no-zoom list), so HAND holds exactly the other shipped chrome ids, in order; POSTURE and FEEL hold all of them
+    const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'pec-fly', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up'];
+    expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
+    const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
+    expect(handIds).toHaveLength(9);   // the 8 and dumbbell_biceps_curl
+    expect(keys.HAND).toEqual(handIds);
+    expect(mapProblems({ ...keys, HAND: keys.POSTURE }, chromeIds)).toEqual([]);
+    expect(mapProblems(keys, chromeIds)).toEqual([`HAND: ${handIds.length} keys, not the ${chromeIds.length} shipped chrome ids in order`]);
+    expect(mapProblems({ HAND: [...handIds, 'push-up'], POSTURE: handIds, FEEL: handIds }, handIds)).toEqual([`HAND: ${handIds.length + 1} keys, not the ${handIds.length} shipped chrome ids in order`]);   // a no-hand id with a HAND entry is red
     expect(mapProblems(keys, [])).toEqual(['no shipped chrome ids']);
     expect(mapProblems(S.mapKeys(''), chromeIds)).toEqual(['HAND: no map', 'POSTURE: no map', 'FEEL: no map']);
-    expect(mapProblems({ ...keys, FEEL: keys.FEEL.slice(1) }, chromeIds)).toHaveLength(1);
+    expect(mapProblems({ ...keys, HAND: keys.POSTURE, FEEL: keys.FEEL.slice(1) }, chromeIds)).toHaveLength(1);   // LIB-SHIP W2: HAND set whole, so only FEEL's red counts
   });
   it('chunkMaps: an own hand chunk wins over a hand pair, a pair fills in, and an unwritten posture or feel chunk has no entry', async () => {
     const ids = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));

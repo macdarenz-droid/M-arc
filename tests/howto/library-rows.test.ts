@@ -327,6 +327,21 @@ async function libraryCases() {
 /** HT8-A1's checks on one shipped library row in `base`: its committed feel-<chromeId>.ts section === feelSectionOf(its
  *  pinned page); the rest map, each row's watch and pain marks and the legend are golden B's renderer output from that
  *  row's own How-to feel spec; no is-playing or is-focus. Throws on the first failed check. */
+// LIB-SHIP W2 (ruling 3): the shipped library rows hands.mjs's noPairRuling rules to ship with no hand pair
+const NO_HAND = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_pec_fly', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
+// LIB-SHIP W2 (ruling 3): the shipped library ids whose feel draws no mark (card watch [] and no pain part in any row)
+const NO_MARK = ['lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_pec_fly', 'lib_cable_fly', 'lib_push_up'];
+/** LIB-SHIP W2: the ids among `ids` whose How-to feel has no watch-listed non-primary muscle and no pain part in any row. */
+async function noMarkIds(base: string, ids: string[]) {
+  const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));
+  const out: string[] = [];
+  for (const id of ids) {
+    const Fs = (await content.loadContent(id)).content.feel;
+    const draws = Fs.rows.some((r: any) => (r.at?.parts ?? []).length || (r.at?.muscles ?? []).some((m: string) => Fs.watch.some((w: any) => w.muscleId === m) && !Fs.primary.some((p: any) => p.muscleId === m)));
+    if (!draws) out.push(id);
+  }
+  return out;
+}
 async function feelChecks(base: string, row: any) {
   const feel = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/feel.mjs'));
   const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));
@@ -347,7 +362,10 @@ async function feelChecks(base: string, row: any) {
       if (w || p) { marks++; expect(section, `${row.id}/${r.key}`).toContain(`<g class="feel-mark" data-row="${r.key}">${w.replace('class="feel-watch"', 'class="feel-quiet"')}${p}${w}</g>`); }
     });
   }
-  expect(marks, row.id).toBeGreaterThan(0);
+  // LIB-SHIP W2 (ruling 3): a row whose card has no watch muscle and no pain part draws no mark, so its id is on
+  // NO_MARK (each feel row was checked above to draw nothing); every other id still draws at least one mark
+  if (NO_MARK.includes(row.id)) expect(marks, row.id).toBe(0);
+  else expect(marks, row.id).toBeGreaterThan(0);
   const lg = fm.renderFeelLegend({ avoid: true }).replace(/<span>(<svg class="feel-sw sw-watch)/, '<span class="lg-watch" hidden>$1');
   expect(section).toContain(lg.replace(/<\/div>$/, ''));
   expect(section).not.toMatch(/is-playing|is-focus|feel-mark on/);
@@ -359,6 +377,15 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
     const cases = await libraryCases();
     expect(cases.at(-1)!.row.id).toBe(F.ID);
     for (const { base, row } of cases) await feelChecks(base, row);
+  });
+  it('LIB-SHIP W2: NO_MARK is exactly the shipped library ids whose feel draws no mark; a mark-drawing id on it, or a no-mark id off it, is red', async () => {
+    const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
+    expect(await noMarkIds(repo, LIBRARY.map(r => r.id))).toEqual(NO_MARK);
+    const rope = LIBRARY.find(r => r.id === 'lib_rope_triceps_pushdown')!, bench = LIBRARY.find(r => r.id === 'lib_dumbbell_bench_press')!;
+    NO_MARK.push(rope.id);
+    try { await expect(feelChecks(repo, rope)).rejects.toThrow(rope.id); } finally { NO_MARK.pop(); }
+    const i = NO_MARK.indexOf(bench.id); NO_MARK.splice(i, 1);
+    try { await expect(feelChecks(repo, bench)).rejects.toThrow(bench.id); } finally { NO_MARK.splice(i, 0, bench.id); }
   });
   it('failure path: one row\'s mark moved to another muscle in the How-to source, without a page rebuild, is red', async () => {
     const m = mkdtempSync(join(tmpdir(), 'lib2b-feel-')); tmps.push(m);
@@ -497,12 +524,30 @@ describe('D-LIB2b-HANDCSS: a library row\'s HAND loader brings in its zoom css b
     const cases = await libraryCases();
     expect(cases.at(-1)!.row.id).toBe(F.ID);
     for (const { base, row } of cases) {
-      const c = row.chromeId, { key, problems } = handLineProblems(readFileSync(join(base, 'src/howto/generated/loaders.ts'), 'utf8'), c);
+      const c = row.chromeId, loaders = readFileSync(join(base, 'src/howto/generated/loaders.ts'), 'utf8');
+      // LIB-SHIP W2 (ruling 3; D-SHIP-C3, D-SHIP-GRIP): a row ruled to ship with no hand pair has no HAND line at all
+      if (base !== root && NO_HAND.includes(row.id)) {
+        expect(handLineProblems(loaders, c).problems, row.id).toEqual([`${c}: 0 HAND lines`]);
+        expect(existsSync(join(base, `src/howto/generated/hand-${c}.ts`)), row.id).toBe(false);
+        continue;
+      }
+      const { key, problems } = handLineProblems(loaders, c);
       expect(problems, row.id).toEqual([]);
       expect(existsSync(join(base, `src/slices/howto/css/zoom-${c}.css`)), row.id).toBe(true);
       expect(readFileSync(join(base, `src/howto/generated/handpair-${key}.ts`), 'utf8')).not.toMatch(/\bimport\b/);
       expect(existsSync(join(base, `src/howto/generated/hand-${c}.ts`)), row.id).toBe(false);
     }
+  });
+  it('LIB-SHIP W2: NO_HAND is exactly the shipped library rows hands.mjs\'s noPairRuling rules; a HAND line for one of them is red', async () => {
+    const hands = await import(/* @vite-ignore */ url('tools/plates/gen/hands.mjs'));
+    const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const ruled: string[] = [];
+    for (const r of LIBRARY) if (hands.noPairRuling((await import(/* @vite-ignore */ url(reg.sourceOf(r.id)))).default)) ruled.push(r.id);
+    expect(ruled).toEqual(NO_HAND);
+    const loaders = readFileSync('src/howto/generated/loaders.ts', 'utf8'), line = '  "barbell-row": () => import(\'../../slices/howto/css/zoom-barbell-row.css\').then(() => import(\'./handpair-curl-dumbbell-under\')),\n';
+    const added = loaders.replace('export const POSTURE', `${line}export const POSTURE`);
+    expect(handLineProblems(added, 'barbell-row').problems).toEqual([]);   // the line now passes the W1 shape, so the 0-lines assert above is red
+    expect(handLineProblems(loaders, 'barbell-row').problems).toEqual(['barbell-row: 0 HAND lines']);
   });
   it('the 8\'s loaders.ts lines are unchanged by a library row: the tree\'s lines minus the library rows\' are the repo\'s (header aside)', () => {
     const lib = [...LIBRARY, { id: F.ID, chromeId: 'cable-lateral-raise' }];

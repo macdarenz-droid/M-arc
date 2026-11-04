@@ -11,7 +11,8 @@ import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
-const ROWS = 'tools/plates/library/pilot-b2/rows.json';   // batches/pilot-b2.json after the pin (Do 4)
+// LIB-SHIP W2 (D-SHIP-MOVE, Q-W2-10 (a)): the pin moved the row from pilot-b2/rows.json into batches/pilot-b2.json
+const ROWS = 'tools/plates/library/batches/pilot-b2.json', PRE_PIN = 'tools/plates/library/pilot-b2/rows.json';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const H = 1.75, FLOOR_Y = 339, BAR_TRACE = 22.11, BAR_DEV = 11.39, LADDER = [1.5, 2, 2.5, 3, 3.5, 4];
@@ -55,10 +56,13 @@ if (fn) {
   html = (await bp.buildPlatesPage({ groups: [{ id: 'pilot-b2', title: 'Pilot B2', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: file } })).html.toString('utf8');
   spec = (await import('file://' + file)).default; rmSync(dir, { recursive: true, force: true });
 }
-const c = await cand.candidateOf('lib_crunch', { all, platesHtml: html, engine: E, authoring: true });
+// LIB-SHIP W2: crunch is pinned at approved-plate, where authoring QA is refused (D-LIB9-AUTHORQA); the pinned candidate
+// with its exemptions set to [] is the candidate authoring gave (candidate.mjs: the same, exemptions [] and no pin read)
+const c0 = await cand.candidateOf('lib_crunch', { all, platesHtml: html, engine: E }), c = { ...c0, exemptions: [] };
+const refused = await cand.candidateOf('lib_crunch', { all, platesHtml: html, engine: E, authoring: true }).then(() => null, e => e.message);
 const r = await qaIdx.runQa(spec ? { ...c, spec } : c, { engine: E, pins });
 qaEng.dropMirror(mirror);
-console.log(JSON.stringify({ keys: qaIdx.HARD.flatMap(h => r.hard[h].problems.map(p => p.key)).filter(k => k !== 'browser:not-run'),
+console.log(JSON.stringify({ pinned: c0.exemptions, refused, keys: qaIdx.HARD.flatMap(h => r.hard[h].problems.map(p => p.key)).filter(k => k !== 'browser:not-run'),
   flags: Object.fromEntries(qaIdx.FLAGS.filter(f => r.flags[f].raised).map(f => [f, r.flags[f].value])), zoom: r.metrics.zoom ?? null }));`);
 
 describe('PILOT-B2 A1: the rows hold exactly lib_crunch; crunch is in no pilot B or LB9 rows file (D-SUPCORE-PIN)', () => {
@@ -75,6 +79,12 @@ describe('PILOT-B2 A1: the rows hold exactly lib_crunch; crunch is in no pilot B
   };
   it('lib_crunch once, mode H, view side, no parent, template or params; batch PILOT-B2, censusRef 4a9fd86', () => {
     expect(a1(readFileSync(ROWS, 'utf8'))).toEqual([]);
+  });
+  // LIB-SHIP W2 (ruling 3, A9): crunch is held at approved-plate (Q6, F-PLATE-ZOOMCSS); the pre-pin rows file is gone, so
+  // a row copied back into it is red
+  it('LIB-SHIP W2: lib_crunch is at approved-plate, and the pre-pin rows file does not exist', () => {
+    expect(readJson(ROWS).rows.lib_crunch.stage).toBe('approved-plate');
+    expect(existsSync(PRE_PIN)).toBe(false);
   });
   it('crunch is in neither batches/pilot-b.json nor lb9/rows.json', () => {
     for (const f of ['tools/plates/library/batches/pilot-b.json', 'tools/plates/library/lb9/rows.json']) expect(/"lib_crunch"/.test(readFileSync(f, 'utf8')), f).toBe(false);
@@ -220,6 +230,9 @@ describe('PILOT-B2 A9 (node half), A2 (part): runQa, the expected flags, the pag
   it('runQa node: every hard check passes with zero exemptions; node flags F1 191.76 and F3 142.9 (named); zooms k 3 / k 2', async () => {
     const r = await qaNode();
     expect(r.keys).toEqual([]);
+    // LIB-SHIP W2: the pin's exemptions are the GO's F1, F3, F5, and authoring QA is refused at approved-plate
+    expect(r.pinned).toEqual(['F1', 'F3', 'F5']);
+    expect(r.refused).toMatch(/authoring QA is refused at stage approved-plate \(D-LIB9-AUTHORQA\)/);
     // the node-computed flags (F2 and F5 are the browser half's: pilot-b2/qa.mjs EXPECTED)
     expect(Object.keys(r.flags).filter(f => ['F1', 'F3', 'F4', 'F6', 'F7'].includes(f)).sort()).toEqual(['F1', 'F3']);
     expect([+r.flags.F1.toFixed(2), +r.flags.F3.toFixed(1)]).toEqual([191.76, 142.9]);
@@ -243,9 +256,11 @@ console.log(JSON.stringify({ x: sha(x.html), y: sha(y.html), ids: b2.drawnIds(),
     expect(r.pb).toEqual(['ff3e017c98f73b6d049808a6ffea057a7fa350eed764d9ceedb9a582fa22583f', 409765]);
     console.log(`PILOT-B2 page sha256 ${r.x}`);
   });
-  it('the pre-pin rows file exists and the pin files do not yet', () => {
-    expect(existsSync(ROWS)).toBe(true);
-    for (const f of ['tools/plates/library/batches/pilot-b2.json', 'tools/plates/library/pages/pilot-b2.json', 'tests/howto/golden/library/pilot-b2.json']) expect(existsSync(f), f).toBe(false);
+  // LIB-SHIP W2 (ruling 3): replaces "the pre-pin rows file exists and the pin files do not yet": the pin files exist
+  // and the pre-pin rows file does not
+  it('LIB-SHIP W2: the pin files exist and the pre-pin rows file does not', () => {
+    expect(existsSync(PRE_PIN)).toBe(false);
+    for (const f of [ROWS, 'tools/plates/library/pages/pilot-b2.json', 'tools/plates/library/pages/pilot-b2.layers.json', 'tests/howto/golden/library/pilot-b2.json', 'tests/howto/golden/library/pilot-b2.layers.html']) expect(existsSync(f), f).toBe(true);
   });
 });
 
@@ -292,7 +307,7 @@ describe('PILOT-B2 A1 (files), A13: crunch is in exactly the PILOT-B2 files and 
   const NAMES = /"lib_crunch"|"library\/specs\/crunch\.mjs"|"chromeId": "crunch"/;
   /** Every batch, page or golden file that names crunch, less the PILOT-B2 ones (none before the pin). */
   const hits = (extra: [string, string][] = []) => [...FILES.flatMap(d => readdirSync(d).filter(n => n.endsWith('.json')).map(n => [`${d}/${n}`, readFileSync(`${d}/${n}`, 'utf8')] as [string, string])), ...extra]
-    .filter(([n, t]) => NAMES.test(t) && !/\/pilot-b2\.json$/.test(n)).map(([n]) => n);
+    .filter(([n, t]) => NAMES.test(t) && !/\/pilot-b2(\.layers)?\.json$/.test(n)).map(([n]) => n);   // LIB-SHIP W2: + PILOT-B2's layers config
   it('no other batch, page or golden file names crunch; pilot-b/DESIGN.md keeps its held row (D-LIB11-SMALL) until the pin', () => {
     expect(hits()).toEqual([]);
     const design = readFileSync('tools/plates/library/pilot-b/DESIGN.md', 'utf8'), held = design.slice(design.indexOf('## 13. Held'));
@@ -305,8 +320,10 @@ describe('PILOT-B2 A1 (files), A13: crunch is in exactly the PILOT-B2 files and 
   it('crunch is not shipped; mutation: its row at shipped is caught', async () => {
     const reg = await import(/* @vite-ignore */ lib('registry.mjs')), b2 = await import(/* @vite-ignore */ lib('pilot-b2/build.mjs'));
     expect(reg.shippedIds(b2.pb2All()).includes('lib_crunch')).toBe(false);
+    // LIB-SHIP W2: ROWS is now one of the registry's batch files, so the mutation replaces it in place
+    expect(reg.batchFiles()).toContain(ROWS);
     const j = readJson(ROWS); j.rows.lib_crunch.stage = 'shipped';
-    expect(reg.shippedIds(reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, j]] })).includes('lib_crunch')).toBe(true);
+    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? j : readJson(p)]) })).includes('lib_crunch')).toBe(true);
   });
 });
 
