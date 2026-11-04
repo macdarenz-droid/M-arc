@@ -77,17 +77,38 @@ describe('F-CROP-FRONT crops project as the plate', { timeout: 300_000 }, () => 
   });
 });
 
-// D-CROP-PIN (#380 6627881461, the D-SHAPES-PIN form): MANIFEST.json pins crop.mjs's own source sha in every pinned row,
-// so the fix re-pins exactly that one key; every other entry equals main 8d596fab.
-describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.mjs', () => {
-  const CROP = 'tools/plates/library/render/closeup/crop.mjs';
+// D-CROP-PIN (#380 6627881461, the D-SHAPES-PIN form; D-CROP-NONE 6628698370 adds hand.mjs): MANIFEST.json pins the
+// renderers' own source sha in every pinned row, so this card re-pins exactly crop.mjs's and hand.mjs's keys; every other
+// entry equals main 8d596fab.
+describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.mjs and hand.mjs', () => {
+  const KEYS = ['tools/plates/library/render/closeup/crop.mjs', 'tools/plates/library/render/closeup/hand.mjs'];
   const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
-  it('every pinned row pins the current crop.mjs, and every other entry equals main 8d596fab', () => {
+  it('every pinned row pins the current crop.mjs and hand.mjs, and every other entry equals main 8d596fab', () => {
     const m = JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(21);
-    for (const r of rows) { expect(r.files[CROP]).toBe(sha(readFileSync(path(CROP)))); r.files[CROP] = 'X'; }
-    // main 8d596fab's MANIFEST.json with the same one entry blanked (whichever of #380 and #379 merges second re-measures)
-    expect(sha(JSON.stringify(m))).toBe('d72a652c2ffa05721229ad55cf268e0af4b3715e3eeee40ddbcdc7984b891eec');
+    for (const r of rows) for (const k of KEYS) { expect(r.files[k]).toBe(sha(readFileSync(path(k)))); r.files[k] = 'X'; }
+    // main 8d596fab's MANIFEST.json with the same two entries blanked (whichever of #380 and #379 merges second re-measures)
+    expect(sha(JSON.stringify(m))).toBe('497e6f30f1ca3adb32b93f6ea8370948d412829292180f41c0f6c13ce5cc972e');
+  });
+});
+
+// D-CROP-NONE (#380 6628698370, from #379 Q-W2-11): a sheet with no hand zoom (D-SHIP-GRIP 'none') builds through the
+// zoom shell (render/closeup/zoom.mjs zoomApi); handZoomOf returned before it read the absent handling.wrist.
+describe('F-CROP-FRONT D-CROP-NONE: a none sheet builds through the zoom shell', { timeout: 300_000 }, () => {
+  it('zoomApi builds a none sheet (no hand zoom, no wrist text) and draws its posture crop', async () => {
+    const [{ zoomApi }, cu] = await Promise.all(['tools/plates/library/render/closeup/zoom.mjs', 'tools/plates/library/render/closeups.mjs']
+      .map(p => import(/* @vite-ignore */ href(p))));
+    const specFile = path('tools/plates/library/specs/cable_fly.mjs');
+    const plate = (await import(/* @vite-ignore */ href('tools/plates/library/specs/cable_fly.mjs'))).default;
+    const z = { ...ZOOMS[0], chip: 'Elbows', heading: 'Elbow bend', kind: 'posture', caption: { right: 'r', wrong: 'w' } };
+    const howto = { id: 'lib_cable_fly', plate, handling: { archetype: 'none', why: 'D-SHIP-GRIP' }, zooms: [z], chips: [z.key, 'feel'] };
+    const opts = { shell: 'zoom', chipText: { feel: 'Feel' }, crop: { source: 'engine', ...OPTS }, css: { thumb: 'plain' } };
+    const api = zoomApi({ default: howto }, opts, await cu.engineOf(specFile));
+    expect(api.handZoom).toBeUndefined();
+    expect(api.PAGES).toBeUndefined();
+    const html = api.postureZoom(z);
+    expect(html.match(/<svg class="z-crop"/g)).toHaveLength(2);
+    expect(api.chipRow(z.key)).toContain('aria-pressed="true">Elbows</button>');
   });
 });
