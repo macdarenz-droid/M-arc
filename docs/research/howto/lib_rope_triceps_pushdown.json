@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=24980711665d881d6e37912818a4c620ee5510fa64a3f12b397800750a1791af
+{
+  "id": "lib_rope_triceps_pushdown",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/rope_triceps_pushdown.json",
+    "rev": 1
+  },
+  "sources": [
+    "nfpt-rope",
+    "ace-pushdown",
+    "sl-rope",
+    "sl-pushdown",
+    "nhs-elbow-pain",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "elbow",
+    "back"
+  ]
+}

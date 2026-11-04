@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=9f2c6ba9c84604ad21d1beac871f1c0e435f9598fac3467f14622d75899567fb
+{
+  "id": "lib_dumbbell_shoulder_press",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/dumbbell_shoulder_press.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-seated-ohp",
+    "saeterbakken2013",
+    "kolber2013",
+    "esenkaya2000",
+    "acsm2009",
+    "kolber2010",
+    "kerr2010",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

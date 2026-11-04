@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=32322143cfe332fde79fbe44cfa30b00753de00a395119c8e8a06088e3e447b4
+{
+  "id": "lib_upright_row",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/upright_row.json",
+    "rev": 1
+  },
+  "sources": [
+    "sl-upright-row",
+    "lesmills-upright-row",
+    "mcallister2013",
+    "kolber2010",
+    "baechle-grip",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

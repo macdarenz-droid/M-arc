@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=01564e701e41de90c470406dddf9bff88cad95cc645380041ec4459ad2e6374c
+{
+  "id": "lib_push_up",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/push_up.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-pushup",
+    "sl-pushup",
+    "bb-pushup",
+    "kikuchi-2017",
+    "hand-key-palm-flat",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

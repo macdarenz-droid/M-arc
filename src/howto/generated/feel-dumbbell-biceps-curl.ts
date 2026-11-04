@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=e83722334b31303551db50cac1acb4f984388dd6570ce5d227177e39f890f987
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=a9b48db05cf7e781905550ce0b7bf6b79bedd7bd9e4072083f9381cc9fa711a0
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_dumbbell_biceps_curl",

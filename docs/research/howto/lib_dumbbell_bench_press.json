@@ -1,0 +1,24 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=82f38c30fb63fa0315a61a744ed9e9ef8e884973b30eb7a777ae6377ddc9b8fc
+{
+  "id": "lib_dumbbell_bench_press",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/dumbbell_bench_press.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-db-chest-press",
+    "nsca-ch15-summary",
+    "sbs-bench",
+    "hk-db-bench",
+    "saeterbakken2011",
+    "acsm2009",
+    "kerr2010",
+    "kowalczuk2022",
+    "kolber2010",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

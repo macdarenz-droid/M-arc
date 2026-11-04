@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=f07557a823951bf0de33ea963ce247242577d34a091e706da762dc90bc524e0f
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=b58087b0fb00adbb69b9da4774da4264916d84d5bad9a045520760f6ab7586d8
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
@@ -11,7 +11,16 @@ export const HOWTO_IDS = [
   "lib_seated_cable_row",
   "lib_leg_press",
   "lib_machine_chest_press",
+  "lib_barbell_row",
+  "lib_dumbbell_bench_press",
+  "lib_dumbbell_shoulder_press",
+  "lib_upright_row",
+  "lib_pec_fly",
   "lib_dumbbell_biceps_curl",
+  "lib_rope_triceps_pushdown",
+  "lib_plank",
+  "lib_cable_fly",
+  "lib_push_up",
 ] as const;
 
 // One dynamic import per shipped id. Partial: LibId names every exercise, and only the shipped ones have a loader.
@@ -24,7 +33,16 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
   lib_seated_cable_row: () => import('./ht-seated-cable-row'),
   lib_leg_press: () => import('./ht-leg-press'),
   lib_machine_chest_press: () => import('./ht-machine-chest-press'),
+  lib_barbell_row: () => import('./ht-barbell-row'),
+  lib_dumbbell_bench_press: () => import('./ht-dumbbell-bench-press'),
+  lib_dumbbell_shoulder_press: () => import('./ht-dumbbell-shoulder-press'),
+  lib_upright_row: () => import('./ht-upright-row'),
+  lib_pec_fly: () => import('./ht-pec-fly'),
   lib_dumbbell_biceps_curl: () => import('./ht-dumbbell-biceps-curl'),
+  lib_rope_triceps_pushdown: () => import('./ht-rope-triceps-pushdown'),
+  lib_plank: () => import('./ht-plank'),
+  lib_cable_fly: () => import('./ht-cable-fly'),
+  lib_push_up: () => import('./ht-push-up'),
 };
 
 // Per-chromeId chunks (D-LIB2-sheet-maps): the sheet chunk holds no per-id map, so it does not grow with the library.
@@ -39,6 +57,8 @@ export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: strin
   "leg-press": () => import('./hand-leg-press'),
   "machine-chest-press": () => import('./hand-machine-chest-press'),
   "dumbbell-biceps-curl": () => import('../../slices/howto/css/zoom-dumbbell-biceps-curl.css').then(() => import('./handpair-curl-dumbbell-under')),
+  "rope-triceps-pushdown": () => import('../../slices/howto/css/zoom-rope-triceps-pushdown.css').then(() => import('./handpair-rope-push-neutral')),
+  "push-up": () => import('../../slices/howto/css/zoom-push-up.css').then(() => import('./handpair-palm-flat-floor-over')),
 };
 export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: Readonly<Record<string, string>>; readonly zdots: string }>>> = {
   "lateral-raise": () => import('./posture-lateral-raise'),
@@ -49,7 +69,16 @@ export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: R
   "seated-cable-row": () => import('./posture-seated-cable-row'),
   "leg-press": () => import('./posture-leg-press'),
   "machine-chest-press": () => import('./posture-machine-chest-press'),
+  "barbell-row": () => import('./posture-barbell-row'),
+  "dumbbell-bench-press": () => import('./posture-dumbbell-bench-press'),
+  "dumbbell-shoulder-press": () => import('./posture-dumbbell-shoulder-press'),
+  "upright-row": () => import('./posture-upright-row'),
+  "pec-fly": () => import('./posture-pec-fly'),
   "dumbbell-biceps-curl": () => import('./posture-dumbbell-biceps-curl'),
+  "rope-triceps-pushdown": () => import('./posture-rope-triceps-pushdown'),
+  "plank": () => import('./posture-plank'),
+  "cable-fly": () => import('./posture-cable-fly'),
+  "push-up": () => import('./posture-push-up'),
 };
 export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { readonly id: string; readonly pre: string; readonly section: string } }>>> = {
   "lateral-raise": () => import('./feel-lateral-raise'),
@@ -60,5 +89,14 @@ export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { r
   "seated-cable-row": () => import('./feel-seated-cable-row'),
   "leg-press": () => import('./feel-leg-press'),
   "machine-chest-press": () => import('./feel-machine-chest-press'),
+  "barbell-row": () => import('./feel-barbell-row'),
+  "dumbbell-bench-press": () => import('./feel-dumbbell-bench-press'),
+  "dumbbell-shoulder-press": () => import('./feel-dumbbell-shoulder-press'),
+  "upright-row": () => import('./feel-upright-row'),
+  "pec-fly": () => import('./feel-pec-fly'),
   "dumbbell-biceps-curl": () => import('./feel-dumbbell-biceps-curl'),
+  "rope-triceps-pushdown": () => import('./feel-rope-triceps-pushdown'),
+  "plank": () => import('./feel-plank'),
+  "cable-fly": () => import('./feel-cable-fly'),
+  "push-up": () => import('./feel-push-up'),
 };
