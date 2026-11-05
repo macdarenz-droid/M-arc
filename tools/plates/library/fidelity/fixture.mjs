@@ -21,6 +21,7 @@ import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { node } from '../../../../tests/howto/fixtures/lib2b/fixture.mjs';
+import { markScratch, writeScratchStamps } from '../research/stamps.mjs';
 
 /** The scratch ids (F-SCRATCH-SYNTH, D-LIB8M-SCRATCH7B form): a synthetic id, never in the real exercises.json nor a
  *  batches/ row, added to the temp tree's exercises.json as a copy of `copyOf`'s entry (and to its coverage data as
@@ -215,8 +216,9 @@ export function pin(root, { scratch = SCRATCH, card: withCard = true, noF5 = [] 
   put(root, 'tools/plates/library/hands/pairs.mjs', `// LIB-4b B5 scratch pair loader (lib4-cards 11.1 items 4, 14): one key per scratch id, each panel that id's own hand
 // close-up, cut from the batch's fixture layers page, over the real loader (pairs-real.mjs). Scratch tree only.
 import { readFileSync } from 'node:fs';
-import { divAt } from '../../gen/hands.mjs';
 import * as R from './pairs-real.mjs';
+// gen/hands.mjs divAt, inline: the real loader's inputsFor reads this file's relative imports (importClosure)
+const divAt = (h, s) => { const re = /<div\\b|<\\/div>/g; re.lastIndex = s; let d = 0; for (let m; (m = re.exec(h));) { d += m[0] === '</div>' ? -1 : 1; if (!d) return h.slice(s, m.index + 6); } throw new Error('pairs: unclosed div'); };
 export * from './pairs-real.mjs';
 const SCRATCH_OF_ID = ${JSON.stringify(Object.fromEntries(scratch.map(s => [s.id, s.key])))};
 export const HAND_OF_ID = { ...R.HAND_OF_ID, ...SCRATCH_OF_ID };
@@ -231,6 +233,9 @@ export async function pairPanel(key) {
   return divAt(page, a);
 }
 `);
+  // F-SCRATCH-SYNTH: generate's LIB-5 stamp gate needs a scratch stamp per scratch id (as lib7b's tree writes them)
+  markScratch(root);
+  writeScratchStamps(root, scratch.map(s => s.id));
   return facts;
 }
 
