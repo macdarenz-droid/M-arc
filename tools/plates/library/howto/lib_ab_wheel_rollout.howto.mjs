@@ -3,10 +3,10 @@
 // docs/research/howto/cards/ab_wheel_rollout.json; its claim ids are named on each field's claim.
 // Handling (D-SHIP-GRIP case (b)): the card's grip.thumb, grip.handContact and grip.wrist are all empty (no rollout source
 // gives them), so there is no hand claim to draw: NoHandling, no hand zoom (the card has none). The card's grip.type and
-// grip.width (c1) are setup step 2.
+// grip.width (c1) are setup step 1.
 // Feel (D-SHIP-Q7): the card's primary `core` is text only (feel.textOnly), as lib_plank; `abs` is drawn.
 // Tier A: the card's tierA.wayOut is null (a kneeling rollout has no stuck point to escape); its range limiter (the wall,
-// c7) is setup step 5.
+// c7) is setup step 4.
 // No variant line (equipment 'Ab Wheel').
 // Red flags: the card's redFlags (back): LIB-5's back box (shared/back-box.mjs), linked by the low-back row.
 //
@@ -14,11 +14,12 @@
 //   posture c2, c5 roll out slowly               -> posture 'slow'
 //   posture c2 knees to head in one line         -> posture 'line', zoom back-line Right
 //   posture c3 low back doesn't arch             -> posture 'back', zoom back-line Wrong
-//   posture c5 start with the core (trunk), not the arms -> posture 'core'
-//   posture c4 pull back with the lats           -> posture 'return'
-//   zoom range (Wrong null, LR-25)               -> T: posture 'range' (D-SHIP-TEXTZOOM)
-//   handlingMistakes (Q-W2-12): low back arching (c3, c7) -> posture 'back'; rolling too fast (c5, c2) -> posture
-//   'slow'; starting with the standing version (c6, c7) -> posture 'standing'
+//   posture c5 start with the core (trunk), not the arms -> posture 'core', setup 3 (W7 printed)
+//   posture c4 pull back with the lats           -> posture 'return', setup 5 (W7 printed)
+//   zoom range (Wrong null, LR-25)               -> T: posture 'range' (D-SHIP-TEXTZOOM), setup 5 (W7 printed)
+//   handlingMistakes (Q-W2-12): low back arching (c3, c7) -> posture 'back', zoom back-line Wrong, feel row low-back;
+//   rolling too fast (c5, c2) -> posture 'slow', risks[fast], plate label 'slow'; starting with the standing version
+//   (c6, c7) -> posture 'standing', setup 4 (W7 printed)
 import plateSpec from '../specs/ab_wheel_rollout.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
@@ -133,14 +134,18 @@ export default {
   id: 'lib_ab_wheel_rollout',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b): the card gives no thumb, contact or wrist claim; its grip type and width (c1) are setup step 2.' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b): the card gives no thumb, contact or wrist claim; its grip type and width (c1) are setup step 1.' },
   contacts: ['floor-body'],   // the card's archetype.contact
   setup: [
-    { kind: 'position', text: 'Kneel on a soft pad.', claim: CL.c1 },
-    { kind: 'grip', text: 'Hands on the wheel handles, about shoulder-width apart.', claim: CL.c1 },
+    // W7 D-TEXT-PRINTED (posture checkpoints are not printed): steps 1-2 merged to make room; posture 'core' (c5) ->
+    // step 3; handlingMistake 'Starting with the standing version' (c6, c7) -> step 4; T range Right (c7) and posture
+    // 'return' (c4) -> step 5.
+    { kind: 'grip', text: 'Kneel on a soft pad, hands on the wheel, shoulder-width apart.', claim: CL.c1 },
     { kind: 'position', text: 'Set the wheel on the floor just in front of your knees.', claim: CL.c1 },
-    { kind: 'brace', text: 'Brace your trunk and squeeze your glutes.', zoom: 'back-line', claim: CL.brace },
-    { kind: 'safety', text: 'New to it? Roll toward a wall that stops you.', claim: CL.c7 },
+    { kind: 'brace', text: 'Brace and squeeze your glutes. Start with your trunk, not your arms.', zoom: 'back-line', claim: CL.brace },
+    { kind: 'safety', text: 'New? Kneel, not standing, and roll toward a wall that stops you.', claim: CL.standing },
+    { kind: 'position', text: 'Keep roll-outs short and fully controlled. Pull back with your lats.',
+      claim: C(['CONSENSUS'], [BBR, BBA, SLW], 'card c7, c4') },
   ],
   posture: [
     // Q-W2-12: handlingMistake 'Rolling out too fast' (c5, c2) merged here, its fix added

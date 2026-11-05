@@ -2,21 +2,21 @@
 // string restates a claim of the research card docs/research/howto/cards/reverse_crunch.json (cited in its field's
 // claim, cN = card claim id).
 // Handling: none, D-SHIP-GRIP (b2): the card archetype.hand is none; its handContact (c1 arms by the sides, palms
-// pressing down; c19 hands under the hips) is on setup steps 1 and 5.
+// pressing down; c19 hands under the hips) is on setup steps 1 and 3.
 // No variant line (equipment 'Bodyweight').
 //
 // D-TEXT-GOLDEN (claim -> visible slot; posture checkpoints are kept in Q-W2-12 form as well):
-//   card posture 'Breathe out and curl your hips' (c3, c8, c17)   -> zoom 'hips' Right, plate cue 'hips', copy.setupLine
+//   card posture 'Breathe out and curl your hips' (c3, c8, c17)   -> zoom 'hips' Right, plate cue 'hips', copy.setupLine, setup 4 (W7 printed)
 //   card posture 'Keep your knees at 90 degrees' (c4)             -> zoom 'knees' Right, plate cue 'knees', copy.mistakeLine fix
-//   card posture 'Curl until your tailbone clears' (c5)           -> copy.setupLine
-//   card posture 'Hold briefly at the top' (c5)                   -> copy.setupLine (plate tempo Hold)
-//   card posture 'Breathe in and roll down slowly' (c6, c10, c17) -> copy.setupLine
-//   card posture 'Knees return over your hips' (c7)               -> copy.mistakeLine fix, risks 'legs'
+//   card posture 'Curl until your tailbone clears' (c5)           -> copy.setupLine, setup 4 (W7 printed)
+//   card posture 'Hold briefly at the top' (c5)                   -> copy.setupLine (plate tempo Hold), setup 5 (W7 printed)
+//   card posture 'Breathe in and roll down slowly' (c6, c10, c17) -> copy.setupLine, setup 5 (W7 printed)
+//   card posture 'Knees return over your hips' (c7)               -> copy.mistakeLine fix, risks 'legs' (W7: as its fix)
 //   handlingMistake 'Tucking your knees too far' (c11, c4)        -> zoom 'knees' Wrong, copy.mistakeLine, feel row 'neck', risks 'tuck'
 //   handlingMistake 'Lower back arching' (c12, c17)               -> feel row 'low-back', risks 'arch', plate cue 'back'
-//   handlingMistake 'Knees moving past your hips' (c7)            -> copy.mistakeLine (a fault, with its fix)
+//   handlingMistake 'Knees moving past your hips' (c7)            -> copy.mistakeLine (a fault, with its fix), risks 'legs' (W7 printed)
 //   card zooms knees (M), hips (DV, its Wrong c9)                 -> zooms
-//   card zoom low-back (T: the near arm covers the low back)      -> Right: setup step 4, plate cue 'back'; Wrong: feel row 'low-back', risks 'arch'
+//   card zoom low-back (T: the near arm covers the low back)      -> Right: setup step 3, plate cue 'back'; Wrong: feel row 'low-back', risks 'arch'
 import plateSpec, { SIZES as SPEC_SIZES } from '../specs/reverse_crunch.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
@@ -153,7 +153,8 @@ const feel = {
 const RISKS = [
   { key: 'tuck', text: 'Tucking your knees too far brings your weight onto your upper back and neck.', claim: CL.c11 },
   { key: 'arch', text: 'If your lower back arches, it can strain your lower back.', claim: CL.c12 },
-  { key: 'legs', text: 'Control your legs on the way down to avoid extra low-back stress.', claim: CL.c7 },
+  // W7 D-TEXT-PRINTED: handlingMistake 'Knees moving past your hips on the way down' (c7) as a fault, with its fix
+  { key: 'legs', text: 'Knees going past your hips add low-back stress. Return them over your hips.', claim: CL.c7 },
 ];
 
 export default {
@@ -161,14 +162,20 @@ export default {
   id: 'lib_reverse_crunch',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b2): the card archetype.hand is none; its handContact (c1, c19) is on setup steps 1 and 5.' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b2): the card archetype.hand is none; its handContact (c1, c19) is on setup steps 1 and 3.' },
   contacts: ['floor-body'],
   setup: [
     { kind: 'position', text: 'Lie on your back, arms by your sides, palms down.', claim: CL.c1 },
-    { kind: 'brace', text: 'Brace and lift your feet, knees over your hips.', claim: CL.c2 },
-    { kind: 'position', text: 'Bend your knees to 90 degrees.', zoom: 'knees', claim: CL.c2 },
-    { kind: 'position', text: 'Lower back flat on the floor.', claim: CL.c2 },
-    { kind: 'position', text: 'Hard to flatten your back? Put your hands under your hips.', claim: CL.c19 },
+    // W7 D-TEXT-PRINTED (copy lines and posture checkpoints are not printed): the card's steps 2-3 (c2) and 4-5 (c2,
+    // c19) merged; card posture 'Breathe out and curl your hips' (c3, c8, c17) and 'Curl until your tailbone clears'
+    // (c5) -> step 4; 'Hold briefly at the top' (c5) and 'Breathe in and roll down slowly' (c6, c10, c17) -> step 5.
+    { kind: 'brace', text: 'Brace, lift your feet, knees over hips and bent to 90 degrees.', zoom: 'knees', claim: CL.c2 },
+    { kind: 'position', text: 'Lower back flat. Hard to flatten? Put your hands under your hips.',
+      claim: C(['CONSENSUS'], [ACE, BB, MO], 'card c2, c19') },
+    { kind: 'position', text: 'Breathe out, curl your hips toward your ribs, tailbone off the floor.', zoom: 'hips',
+      claim: C(['CONSENSUS'], [ACE, BB, PG, MO], 'card c3, c8, c17, c5') },
+    { kind: 'position', text: 'Hold briefly. Breathe in and roll down slowly, vertebra by vertebra.',
+      claim: C(['CONSENSUS'], [ACE, BB, MO], 'card c5, c6, c10, c17') },
   ],
   posture: [
     { key: 'curl', label: 'Hips curl up', detail: 'Breathe out and curl your hips toward your rib cage. Lift your lower back, not just your legs.',

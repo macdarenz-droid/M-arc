@@ -10,12 +10,12 @@
 // top-knee row.
 //
 // D-TEXT-GOLDEN (claim -> slot):
-//   posture c2 head to feet in one line          -> posture 'line', zoom hip-line Right
+//   posture c2 head to feet in one line          -> posture 'line', zoom hip-line Right, setup 3 (W7 printed)
 //   posture c5 hips up, not sinking              -> posture 'hips', zoom hip-line Wrong
 //   posture c7 bottom shoulder down              -> posture 'shoulder', zoom shoulder
 //   posture c6 keep breathing                    -> posture 'breathe', setup step 5
-//   handlingMistakes (Q-W2-12): holding the breath (c6) -> posture 'breathe'; hips sinking (c5, c9, c2) -> posture
-//   'hips'; shrugging the bottom shoulder (c7) -> posture 'shoulder' (zoom shoulder Wrong)
+//   handlingMistakes (Q-W2-12): holding the breath (c6) -> posture 'breathe', risks[breath] (W7 printed); hips sinking
+//   (c5, c9, c2) -> posture 'hips', zoom hip-line Wrong, risks[sink] (W7 printed); shrugging the bottom shoulder (c7) -> posture 'shoulder' (zoom shoulder Wrong)
 import plateSpec from '../specs/side_plank.mjs';
 import { RED_FLAG, RED_FLAG_KNEE } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_KNEE };
@@ -142,6 +142,10 @@ const feel = {
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
   { key: 'knee', text: 'Too much pressure inside the top knee or foot may stress those joints.', claim: CL.c8 },
+  // W7 D-TEXT-PRINTED (posture checkpoints are not printed): handlingMistakes 'Hips sinking' (c5, c9, c2, its stop rule)
+  // and 'Holding your breath' (c6) as faults
+  { key: 'sink', text: 'Sinking hips take work off your trunk. Lift them, or end the hold.', claim: CL.hips },
+  { key: 'breath', text: 'Holding your breath is one of the biggest side-plank mistakes.', claim: CL.breath },
 ];
 
 export default {
@@ -154,7 +158,8 @@ export default {
   setup: [
     { kind: 'position', text: 'Lie on your side, elbow under your shoulder, forearm on a mat.', claim: CL.elbow },
     { kind: 'position', text: 'Stack your top leg on your bottom leg.', claim: CL.c1 },
-    { kind: 'position', text: 'Press elbow and bottom foot down and lift your hips.', zoom: 'hip-line', claim: CL.c2 },
+    // W7 D-TEXT-PRINTED: posture 'line' (c2, head to feet in one line) printed here
+    { kind: 'position', text: 'Press elbow and foot down. Lift hips in line, head to feet.', zoom: 'hip-line', claim: CL.c2 },
     { kind: 'position', text: 'Top hand on your hip. Hold as steadily as you can.', claim: CL.c3 },
     { kind: 'brace', text: 'Brace and keep breathing, slow and deep.', claim: CL.breathe },
   ],

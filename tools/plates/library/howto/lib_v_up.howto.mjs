@@ -1,24 +1,24 @@
 // LIB-SHIP W7: the How-to content of lib_v_up, golden B's HowToContent shape (as lib_crunch). Every shown string
 // restates a claim of the research card docs/research/howto/cards/v_up.json (cited in its field's claim, cN = card claim id).
 // Handling: none, D-SHIP-GRIP (b2): the card archetype.hand is none; its handContact (c1, c3: arms above the head, then
-// reaching toward the toes) is on setup step 3 and the posture line 'reach'.
+// reaching toward the toes) is on setup steps 2 and 4 and the posture line 'reach'.
 // Spec pose names: the spec's `start` is the V (the card's plate.end) and its `end` the lying pose (the card's
 // plate.start; the spec checks the low back on the floor at 'end').
 // No variant line (equipment 'Bodyweight').
 //
 // D-TEXT-GOLDEN (claim -> visible slot; posture checkpoints are kept in Q-W2-12 form as well):
-//   card posture 'Lift legs and torso together' (c3)            -> plate cue 'reach'
-//   card posture 'Lead with your upper body' (c7)               -> copy.mistakeLine (its fix)
-//   card posture 'Keep your legs as straight as you can' (c8)   -> plate cue 'legs'
+//   card posture 'Lift legs and torso together' (c3)            -> plate cue 'reach', setup 4 (W7 printed)
+//   card posture 'Lead with your upper body' (c7)               -> copy.mistakeLine (its fix), setup 4 (W7 printed)
+//   card posture 'Keep your legs as straight as you can' (c8)   -> plate cue 'legs', setup 5 (W7 printed)
 //   card posture 'Lower back flat on the floor' (c5, c4)        -> zoom 'low-back' Right, plate cue 'lowback', copy.setupLine
-//   card posture 'Return with your heels a few inches off' (c4) -> copy.setupLine
+//   card posture 'Return with your heels a few inches off' (c4) -> copy.setupLine, setup 5 (W7 printed)
 //   card posture 'Easier: ...' (c10)                            -> left off (D-TEXT-PROGRESSION)
 //   handlingMistake 'Lower back arching' (c6, c5, c2)           -> zoom 'low-back' Wrong, feel rows 'hips' and 'low-back', risks 'arch'
-//   handlingMistake 'Legs flopping around' (c9)                 -> copy.mistakeLine (a fault, with its fix), setup step 2
-//   handlingMistake 'Legs starting the lift' (c7)               -> copy.mistakeLine (a fault, with its fix)
+//   handlingMistake 'Legs flopping around' (c9)                 -> copy.mistakeLine (a fault, with its fix), setup step 1 (its fix), risks 'legs' (W7 printed)
+//   handlingMistake 'Legs starting the lift' (c7)               -> copy.mistakeLine (a fault, with its fix), risks 'legs' (W7 printed)
 //   card zoom low-back (M)                                      -> zoom 'low-back'
 //   card zoom top-reach (T, D-SHIP-TEXTZOOM: its Wrong "legs flopping around" is a motion fault no still shows)
-//                                                               -> Right: plate cues 'reach' and 'legs'; Wrong: copy.mistakeLine
+//                                                               -> Right: plate cues 'reach' and 'legs', setup 4; Wrong: copy.mistakeLine, risks 'legs' (W7 printed)
 import plateSpec from '../specs/v_up.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
@@ -115,6 +115,10 @@ const feel = {
 const RISKS = [
   { key: 'arch', text: 'Arching your back could bring serious discomfort or pain in your lower back.', claim: CL.c6 },
   { key: 'speed', text: 'Control your speed and watch your low back to reduce the chance of injury.', claim: CL.c13 },
+  // W7 D-TEXT-PRINTED: handlingMistakes 'Legs flopping around' (c9; T top-reach Wrong) and 'Legs starting the lift'
+  // (c7) as faults (copy.mistakeLine is not printed)
+  { key: 'legs', text: 'Legs flopping around cost you balance. Legs starting the lift is a mistake.',
+    claim: C(['CONSENSUS'], [FV, WH], 'card c9, c7') },
 ];
 
 export default {
@@ -122,14 +126,21 @@ export default {
   id: 'lib_v_up',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b2): the card archetype.hand is none; its handContact (c1, c3) is on setup step 3 and the posture line reach.' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b2): the card archetype.hand is none; its handContact (c1, c3) is on setup steps 2 and 4 and the posture line reach.' },
   contacts: ['floor-body'],
   setup: [
-    { kind: 'position', text: 'Lie on your back, legs straight, feet pressed together.', claim: CL.c1 },
-    { kind: 'position', text: 'Gently press your toes together.', claim: CL.c9 },
+    // W7 D-TEXT-PRINTED (copy lines and plate cues off the default selection are not printed): the card's steps 1-2 (c1,
+    // c9) and 4-5 (c2, c6) merged; card posture 'Lift legs and torso together' (c3), 'Lead with your upper body' (c7)
+    // and T top-reach Right (c3) -> step 4; 'Keep your legs as straight as you can' (c8) and 'Return with your heels a
+    // few inches off' (c4) -> step 5.
+    { kind: 'position', text: 'Lie on your back, legs straight, toes gently pressed together.', claim: C(['CONSENSUS'], [FV, WH], 'card c1, c9') },
     { kind: 'position', text: 'Extend your arms above your head.', claim: CL.c1 },
-    { kind: 'brace', text: 'Push your pelvis down, breathe in and tense your middle.', claim: CL.c2 },
-    { kind: 'position', text: 'Start with your lower back touching the floor.', zoom: 'low-back', claim: CL.c6 },
+    { kind: 'brace', text: 'Breathe in, tense your middle, push your pelvis and lower back down.', zoom: 'low-back',
+      claim: C(['CONSENSUS'], [FV, WH], 'card c2, c6') },
+    { kind: 'position', text: 'Lift legs and torso together, upper body leading, reaching toward your toes.',
+      claim: C(['CONSENSUS'], [FV, WH], 'card c3, c7') },
+    { kind: 'position', text: 'Legs straight as you can. Return with heels just off the floor.',
+      claim: C(['CONSENSUS'], [FV, WH], 'card c8, c4') },
   ],
   posture: [
     { key: 'reach', label: 'Reach to toes', detail: 'Lift legs and torso together, hands reaching toward your toes.',

@@ -8,13 +8,13 @@
 //
 // D-TEXT-GOLDEN (claim -> slot):
 //   posture c5 head and neck neutral, eyes down  -> posture 'neck', zoom neck Right
-//   posture c4 arms and legs straight            -> posture 'limbs'
-//   posture c9 shoulders down and back           -> posture 'shoulders'
-//   posture c10 squeeze the glutes               -> posture 'glutes'
+//   posture c4 arms and legs straight            -> posture 'limbs', setup 3 (W7 printed)
+//   posture c9 shoulders down and back           -> posture 'shoulders', setup 2 (W7 printed)
+//   posture c10 squeeze the glutes               -> posture 'glutes', setup 5 (W7 printed)
 //   posture c3, c7 lift 3-6 inches               -> posture 'height', zoom lift-height Right
-//   posture c13 breathe steadily                 -> posture 'breathe'
+//   posture c13 breathe steadily                 -> posture 'breathe', setup 4 (W7 printed)
 //   handlingMistakes (Q-W2-12): head too high (c6, c5) -> posture 'neck' (zoom neck Wrong); jerky movements (c18) ->
-//   posture 'control'; lifting too high (c8, c3, c7) -> posture 'height' (zoom lift-height Wrong)
+//   posture 'control', risks[jerky] (W7 printed); lifting too high (c8, c3, c7) -> posture 'height' (zoom lift-height Wrong)
 import plateSpec from '../specs/superman.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
@@ -150,6 +150,8 @@ const feel = {
 const RISKS = [
   { key: 'neck', text: 'Lifting your head too high can strain your neck.', claim: CL.c6 },
   { key: 'high', text: 'Lifting too high can cause strain.', claim: CL.c8 },
+  // W7 D-TEXT-PRINTED: handlingMistake 'Jerky, uncontrolled movements' (c18) as a fault (posture 'control' is not printed)
+  { key: 'jerky', text: 'Jerky, uncontrolled movements raise your risk of injury.', claim: CL.c18 },
 ];
 
 export default {
@@ -161,10 +163,16 @@ export default {
   contacts: ['floor-body'],
   setup: [
     { kind: 'position', text: 'Lie face down on a mat, legs straight, toes pointing away.', claim: CL.c1 },
-    { kind: 'position', text: 'Arms straight overhead, palms facing each other.', claim: CL.c1 },
-    { kind: 'position', text: 'Relax your head in line with your spine.', zoom: 'neck', claim: CL.c1 },
-    { kind: 'brace', text: 'Tighten your abs to steady your spine.', claim: CL.c2 },
-    { kind: 'position', text: 'Slowly raise both arms and both legs a few inches together.', zoom: 'lift-height', claim: CL.c2 },
+    // W7 D-TEXT-PRINTED (posture checkpoints are not printed): posture 'shoulders' (c9) -> step 2; 'limbs' (c4) ->
+    // step 3; 'breathe' (c13) -> step 4; 'glutes' (c10) -> step 5.
+    { kind: 'position', text: 'Arms overhead, palms facing each other, shoulders down and back.',
+      claim: C(['CONSENSUS'], [ACE, LI, UC], 'card c1, c9') },
+    { kind: 'position', text: 'Relax your head in line. Arms and legs straight, no rotation.', zoom: 'neck',
+      claim: C(['CONSENSUS'], [ACE, LI, MO], 'card c1, c4') },
+    { kind: 'brace', text: 'Tighten your abs to steady your spine. Keep breathing steadily.',
+      claim: C(['CONSENSUS'], [ACE, BB, MO], 'card c2, c13') },
+    { kind: 'position', text: 'Squeeze your glutes and slowly lift arms and legs a few inches.', zoom: 'lift-height',
+      claim: C(['CONSENSUS'], [ACE, BB, UC], 'card c2, c10') },
   ],
   posture: [
     // Q-W2-12: handlingMistake 'Lifting your head too high to look up' (c6, c5) merged here, its fix added

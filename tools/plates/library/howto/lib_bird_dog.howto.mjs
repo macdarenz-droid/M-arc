@@ -14,8 +14,8 @@
 // D-TEXT-GOLDEN (claim -> visible slot; posture checkpoints kept as well):
 //   posture 'Back flat: no sagging or arching' (c3)           -> zoom 'back-line' Right, setup 5, plate cue 'flat'
 //   posture 'Raise the limbs only as high as ...' (c7)        -> mistakes[0] fix
-//   posture 'Keep your hips and shoulders level' (c4, c5, c12) -> plate cue 'level', mistakes[2] fix
-//   posture 'Move slowly and keep breathing' (c10, c13)       -> copy.setupLine
+//   posture 'Keep your hips and shoulders level' (c4, c5, c12) -> plate cue 'level', mistakes[2] fix, setup 4 (W7 printed)
+//   posture 'Move slowly and keep breathing' (c10, c13)       -> setup 5 (W7 D-TEXT-PRINTED; copy.setupLine kept)
 //   posture 'Head in line, eyes on the floor' (c6)            -> zoom 'head' Right, mistakes[1] fix
 //   posture 'Press the floor with your unmoving hand ...' (c11, c12) -> mistakes[2] fix
 //   handlingMistake arching the lower back (c8, c7)           -> mistakes[0] (zoom back-line, the plate's Mistake), mistakeLine
@@ -193,8 +193,12 @@ export default {
     { kind: 'position', text: 'Kneel on a mat, knees and feet hip-width apart.', claim: CL.c1 },
     { kind: 'position', text: 'Put a cushion or folded towel under your knees.', claim: CL.c22 },
     { kind: 'grip', text: 'Hands on the mat under your shoulders, fingers forward.', claim: CL.c2 },
-    { kind: 'position', text: 'Knees directly under your hips.', claim: CL.c2 },
-    { kind: 'brace', text: 'Hold your spine neutral, back flat.', zoom: 'back-line', claim: CL.c3 },
+    // W7 D-TEXT-PRINTED: posture 'Keep your hips and shoulders level' (c4, c5, c12) printed here
+    { kind: 'position', text: 'Knees under your hips. Keep hips and shoulders level.',
+      claim: C(['CONSENSUS'], [ACE, BB, HL, MO], 'card c2, c4, c5, c12') },
+    // W7 D-TEXT-PRINTED: posture 'Move slowly and keep breathing' (c10, c13) printed here (copy.setupLine is not printed)
+    { kind: 'brace', text: 'Hold your spine neutral, back flat. Move slowly and keep breathing.', zoom: 'back-line',
+      claim: C(['CONSENSUS'], [ACE, GGR, BB, MO, HL], 'card c3, c10, c13') },
   ],
   posture: [
     // D-SHIP-TEXTZOOM: card hand zoom 'hands' (Wrong null) as a text checkpoint

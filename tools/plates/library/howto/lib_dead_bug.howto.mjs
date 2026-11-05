@@ -1,19 +1,19 @@
 // LIB-SHIP W7: the How-to content of lib_dead_bug, golden B's HowToContent shape (as lib_crunch). Every shown string
 // restates a claim of the research card docs/research/howto/cards/dead_bug.json (cited in its field's claim, cN = card claim id).
 // Handling: none, D-SHIP-GRIP (b2): the card archetype.hand is none; its handContact (c3, c4: arms straight up above the
-// chest, one lowering overhead) is on setup step 3 and the posture line 'lower'.
+// chest, one lowering overhead) is on setup steps 2 and 4 and the posture line 'lower'.
 // No variant line (equipment 'Bodyweight').
 //
 // D-TEXT-GOLDEN (claim -> visible slot; posture checkpoints are kept in Q-W2-12 form as well):
-//   card posture 'Slowly lower one arm and the opposite leg' (c4) -> plate label/cue 'opposite'
-//   card posture 'Hand and heel lightly touch' (c4)                -> copy.setupLine
-//   card posture 'Bring them back slowly, then switch' (c4)        -> copy.setupLine (plate tempo Lower/Return Slow)
-//   card posture 'Breathe in as you reach out' (c9, c4)            -> copy.mistakeLine
+//   card posture 'Slowly lower one arm and the opposite leg' (c4) -> plate label/cue 'opposite', setup 4 (W7 printed)
+//   card posture 'Hand and heel lightly touch' (c4)                -> copy.setupLine, setup 5 (W7 printed)
+//   card posture 'Bring them back slowly, then switch' (c4)        -> copy.setupLine (plate tempo Lower/Return Slow), setup 5 (W7 printed)
+//   card posture 'Breathe in as you reach out' (c9, c4)            -> copy.mistakeLine, setup 4-5 (W7 printed)
 //   card posture 'Stare straight up at the ceiling' (c8)           -> zoom 'neck' Right caption, feel row 'neck' fix
 //   card posture 'Easier: ...' (c10)                               -> left off (D-TEXT-PROGRESSION)
-//   handlingMistake 'Back arching off the mat' (c6, c3, c7)        -> zoom 'low-back' Wrong, setup step 4, feel row 'low-back', risks 'arch'
+//   handlingMistake 'Back arching off the mat' (c6, c3, c7)        -> zoom 'low-back' Wrong, setup step 3, feel row 'low-back', risks 'arch'
 //   handlingMistake 'Craning your neck' (c8)                       -> zoom 'neck' Wrong, feel row 'neck', risks 'neck'
-//   handlingMistake 'Holding your breath' (c9)                     -> copy.mistakeLine
+//   handlingMistake 'Holding your breath' (c9)                     -> copy.mistakeLine, risks 'breath' (W7 printed)
 //   card zooms low-back (M), neck (DV)                             -> zooms
 import plateSpec from '../specs/dead_bug.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -138,6 +138,8 @@ const feel = {
 const RISKS = [
   { key: 'arch', text: 'Arching your back could contribute to a back injury.', claim: CL.c6 },
   { key: 'neck', text: 'Looking down at your legs strains your neck.', claim: CL.c8 },
+  // W7 D-TEXT-PRINTED: handlingMistake 'Holding your breath' (c9) as a fault (copy.mistakeLine is not printed)
+  { key: 'breath', text: 'Holding your breath during the reps is a mistake.', claim: CL.c9 },
 ];
 
 export default {
@@ -145,14 +147,19 @@ export default {
   id: 'lib_dead_bug',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b2): the card archetype.hand is none; its handContact (c3, c4) is on setup step 3 and the posture line lower.' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b2): the card archetype.hand is none; its handContact (c3, c4) is on setup steps 2 and 4 and the posture line lower.' },
   contacts: ['floor-body'],
   setup: [
     { kind: 'position', text: 'Lie on your back on a mat.', claim: CL.c1 },
-    { kind: 'position', text: 'Lift your legs: knees bent 90 degrees, over your hips.', claim: CL.c3 },
-    { kind: 'position', text: 'Reach your arms straight up above your chest.', claim: CL.c3 },
-    { kind: 'brace', text: 'Brace and press your lower back into the mat.', zoom: 'low-back', claim: CL.c3 },
-    { kind: 'position', text: 'Pull your shoulders down and back.', claim: CL.c2 },
+    // W7 D-TEXT-PRINTED (copy lines and posture checkpoints are not printed): the card's steps 2-3 (c3) and 4-5 (c3,
+    // c2) merged; card posture 'Slowly lower one arm and the opposite leg' (c4) and 'Breathe in as you reach out'
+    // (c9, c4) -> step 4; 'Hand and heel lightly touch' and 'Bring them back slowly, then switch' (c4, c9) -> step 5.
+    { kind: 'position', text: 'Knees at 90 degrees over your hips, arms straight above your chest.', claim: CL.c3 },
+    { kind: 'brace', text: 'Brace, press your lower back into the mat, shoulders down and back.', zoom: 'low-back',
+      claim: C(['CONSENSUS'], [ACE, GGR], 'card c3, c2') },
+    { kind: 'position', text: 'Breathe in and slowly lower one arm and the opposite leg.', claim: CL.c4 },
+    { kind: 'position', text: 'Touch hand and heel lightly, without resting. Breathe out, return, switch sides.',
+      claim: C(['CONSENSUS'], [ACE, GGR], 'card c4, c9') },
   ],
   posture: [
     { key: 'lower', label: 'Opposite limbs', detail: 'Slowly lower one arm and the opposite leg toward the floor.',

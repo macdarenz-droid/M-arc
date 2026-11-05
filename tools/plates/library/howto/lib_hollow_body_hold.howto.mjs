@@ -6,14 +6,14 @@
 // No variant line (equipment 'Bodyweight').
 //
 // D-TEXT-GOLDEN (claim -> visible slot; posture checkpoints are kept in Q-W2-12 form as well):
-//   card posture 'Lower back and hips stay on the floor, crescent' (c3) -> copy.cueLine, plate cue 'lowback'
+//   card posture 'Lower back and hips stay on the floor, crescent' (c3) -> copy.cueLine, plate cue 'lowback', setup 5 (W7 printed)
 //   card posture 'Legs straight, off the floor, no higher than 30' (c4, c5, c6) -> zoom 'leg-height' Right, plate cue 'legs'
-//   card posture 'Lower your chin and look toward your feet' (c9)  -> copy.setupLine, feel row 'neck' fix
-//   card posture 'Breathe shallowly' (c10)                         -> copy.setupLine
+//   card posture 'Lower your chin and look toward your feet' (c9)  -> copy.setupLine, feel row 'neck' fix (W7: "don't tuck" added)
+//   card posture 'Breathe shallowly' (c10)                         -> copy.setupLine, setup 5 (W7 printed)
 //   card posture 'Easier: bend your knees' (c11)                   -> left off (D-TEXT-PROGRESSION)
 //   handlingMistake 'Legs too low' (c5, c4)                        -> zoom 'leg-height' Wrong, copy.mistakeLine, feel row 'hips' fix
 //   handlingMistake 'Lower back arching off the floor' (c7)        -> zoom 'low-back' Wrong, feel row 'low-back', risks 'arch'
-//   handlingMistake 'Shoulder blades and head dropping' (c8)       -> risks 'drop'
+//   handlingMistake 'Shoulder blades and head dropping' (c8)       -> risks 'drop' (W7: its fix added)
 //   card zooms leg-height (M), low-back (DV)                       -> zooms
 //   card zoom head (T: the arm by the ear hides the head)          -> Right: copy.setupLine, feel row 'neck' fix; Wrong: feel row 'neck' means, risks 'neck'
 import plateSpec from '../specs/hollow_body_hold.mjs';
@@ -163,7 +163,7 @@ const feel = {
       zoom: 'low-back', redFlag: 'back', claim: C(['CONSENSUS'], [BB, GGR, FV], 'card c7, c11') },
     { key: 'neck', where: 'Neck', at: { parts: ['neck-left', 'neck-right'] },
       means: 'Your neck is hyperextending.',
-      fix: 'Lower your chin and look down at your feet.',
+      fix: 'Lower your chin and look down at your feet, without tucking it.',   // W7: c9 "don't tuck it" printed
       claim: CL.c9 },
   ],
   libraryDiff: { add: ['obliques', 'hip_flexors'], why: 'Fitness Volt and Garage Gym Reviews name the obliques (card c15); BarBend and Fitness Volt the hip flexors (card c14).' },
@@ -173,7 +173,8 @@ const feel = {
 /* ------------------------------------------------------------------------------------------------ risks ---------- */
 const RISKS = [
   { key: 'arch', text: 'An arched lower back could lead to injury.', claim: CL.c7 },
-  { key: 'drop', text: 'Shoulder blades and head dropping may result in lower back pain.', claim: CL.c8 },
+  // W7 D-TEXT-PRINTED: handlingMistake 'Shoulder blades and head dropping' fix (c8, lower the limbs and rest) added
+  { key: 'drop', text: 'Dropping shoulder blades and head may cause low back pain. Lower your limbs, rest.', claim: CL.c8 },
   { key: 'neck', text: 'Hyperextending your neck could result in neck pain.', claim: CL.c9 },
 ];
 
@@ -187,9 +188,13 @@ export default {
   setup: [
     { kind: 'position', text: 'Lie on your back, legs straight, feet together.', claim: CL.c1 },
     { kind: 'position', text: 'Reach your arms overhead, biceps by your ears.', claim: CL.c1 },
-    { kind: 'brace', text: 'Breathe out and pull your ribs down.', claim: CL.c2 },
-    { kind: 'brace', text: 'Press your lower back flat to the floor.', zoom: 'low-back', claim: CL.c2 },
+    // W7 D-TEXT-PRINTED: the card's steps 3 and 4 (c2) merged to make room for step 5 (copy lines are not printed)
+    { kind: 'brace', text: 'Breathe out, pull your ribs down, press your lower back flat.', zoom: 'low-back', claim: CL.c2 },
     { kind: 'position', text: 'Lift your shoulders and legs off the floor and hold.', zoom: 'leg-height', claim: CL.c2 },
+    // W7 D-TEXT-PRINTED: card posture 'Lower back and hips stay on the floor, crescent' (c3) and 'Breathe shallowly.
+    // Don't hold your breath' (c10)
+    { kind: 'brace', text: "Body in a crescent, hips down. Breathe shallowly, don't hold your breath.",
+      claim: C(['CONSENSUS'], [BB, FV], 'card c3, c10') },
   ],
   posture: [
     { key: 'crescent', label: 'Crescent shape', detail: 'Lower back and hips stay on the floor, body like a crescent.',

@@ -3,23 +3,23 @@
 // card claim id).
 // Handling: NoHandling, D-SHIP-GRIP (b3) (D-SHIP-W7-B3, #394 6647954465; tests/howto/checks/c3-library.ts B3_PINS): the card
 // archetype.hand is on-body (the rope held by the head) and its sources give no thumb or wrist. The pinned handContact
-// claim and the card's grip.claims (both c2) are on setup step 4. The card's hand zoom `rope` (c2, c9): its Right
-// ("Rope ends held on either side of the head") is setup step 4; its Wrong ("Arms yanking the rope down") shows as a
+// claim and the card's grip.claims (both c2) are on setup step 3. The card's hand zoom `rope` (c2, c9): its Right
+// ("Rope ends held on either side of the head") is setup step 3; its Wrong ("Arms yanking the rope down") shows as a
 // fault on copy.mistakeLine and posture 'arms' (Q-W2-12 form), never as an instruction. No hand zoom is drawn.
 // Shared move steps (D-SHIP-W7-MOVES selector-pin): not added here, an open question to the supervisor.
 // No variant line (equipment 'Cable').
 //
 // D-TEXT-GOLDEN (claim -> visible slot; posture checkpoints are kept in Q-W2-12 form as well):
-//   card posture 'Brace, breathe out and curl your spine' (c4, c7)      -> copy.setupLine; plate cue 'curl'
+//   card posture 'Brace, breathe out and curl your spine' (c4, c7)      -> copy.setupLine; plate cue 'curl'; setup 5 (W7 printed)
 //   card posture 'Elbows move toward your thighs' (c5)                  -> plate cue 'curl'
 //   card posture 'Hips stay still and raised' (c3)                      -> zoom 'hips' Right, plate cue 'hips', copy.cueLine
 //   card posture 'Chin stays tucked' (c12)                              -> feel row 'neck' fix
-//   card posture 'Breathe in and straighten slowly ...' (c6, c7)        -> copy.setupLine
+//   card posture 'Breathe in and straighten slowly ...' (c6, c7)        -> copy.setupLine; setup 5 (W7 printed)
 //   handlingMistake 'Moving your hips to pull' (c8, c3)                 -> zoom 'hips' Wrong, copy.mistakeLine, feel row 'hips'
-//   handlingMistake 'Yanking with your arms' (c9, c11)                  -> copy.mistakeLine, plate cue 'rope', risks 'load'
+//   handlingMistake 'Yanking with your arms' (c9, c11)                  -> copy.mistakeLine, plate cue 'rope', risks 'load' (W7: the fault printed)
 //   handlingMistake 'Rounding your lower back' (c13, c5)                -> feel row 'low-back' (means and fix)
-//   hand zoom rope Right (c2)                                           -> setup step 4
-//   hand zoom rope Wrong (c2, c9)                                       -> copy.mistakeLine (a fault)
+//   hand zoom rope Right (c2)                                           -> setup step 3
+//   hand zoom rope Wrong (c2, c9)                                       -> copy.mistakeLine (a fault), risks 'load' (W7 printed)
 //   card zoom hips (M)                                                  -> zoom 'hips'
 import plateSpec from '../specs/cable_crunch.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -123,7 +123,9 @@ const feel = {
 const RISKS = [
   { key: 'neck', text: 'Keep the movement controlled to avoid neck strain.', claim: CL.c12 },
   { key: 'acute', text: 'Acute lower back pain? Avoid this exercise.', claim: CL.c13 },
-  { key: 'load', text: 'Too much weight risks overloading your traps, arms and back instead of your abs.', claim: CL.c11 },
+  // W7 D-TEXT-PRINTED: handlingMistake 'Yanking with your arms' (c9) and hand zoom rope Wrong (c2, c9) as a fault, merged
+  // with the card risk c11 (copy.mistakeLine is not printed)
+  { key: 'load', text: 'Arms yanking the rope. Too much weight risks overloading traps, arms and back.', claim: CL.arms },
 ];
 
 export default {
@@ -131,15 +133,19 @@ export default {
   id: 'lib_cable_crunch',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3): the card archetype.hand is on-body with no thumb or wrist given; its handContact and grip claim (c2) are on setup step 4, its rope zoom Wrong (c2, c9) on the mistake line.' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3): the card archetype.hand is on-body with no thumb or wrist given; its handContact and grip claim (c2) are on setup step 3, its rope zoom Wrong (c2, c9) on the mistake line and risk load.' },
   contacts: ['floor-body'],
   setup: [
     { kind: 'load', text: 'Fix a rope to the high pulley. Choose a light-to-moderate weight.', claim: CL.c1 },
-    { kind: 'position', text: 'Kneel a few feet away, facing the machine.', claim: CL.c1 },
-    { kind: 'position', text: 'Set your stance about hip to shoulder-width apart.', claim: CL.c1 },
+    // W7 D-TEXT-PRINTED: the card's steps 2 and 3 (c1) merged to make room for step 5
+    { kind: 'position', text: 'Kneel a few feet from the machine, facing it, stance about hip-to-shoulder-width.', claim: CL.c1 },
     // card hand zoom rope Right (c2); the pinned handContact and grip.claims c2
     { kind: 'grip', text: 'Hold the rope ends on either side of your head.', claim: CL.c2 },
     { kind: 'position', text: 'Hinge back slightly from your hips to raise them. Tuck your chin.', zoom: 'hips', claim: CL.c3 },
+    // W7 D-TEXT-PRINTED (copy.setupLine is not printed): card posture 'Brace, breathe out and curl your spine' (c4, c7)
+    // and 'Breathe in and straighten slowly. Keep tension on your abs' (c6, c7)
+    { kind: 'brace', text: 'Brace, breathe out and curl. Breathe in, straighten slowly, abs tense.',
+      claim: C(['CONSENSUS'], [BB, SL, MO], 'card c4, c7, c6') },
   ],
   posture: [
     { key: 'curl', label: 'Curl the spine', detail: 'Brace, breathe out and curl your spine.',
