@@ -842,6 +842,17 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-05 ~07:50 UTC** (the five-hour window ran out at about 05:00 and reset at 07:40; weekly was 0.81 at 06:17 and resets Fri 08:00; the owner's rule is no pause until then). Rulings since 03:57 are in `verify/lib4-cards.md` section 48 @ `ec165a85`. The working notes are in the scratchpad file `notes-resume-0740.md`.
+  - **APK SENT** at 04:52: main `e623d3ef`, run 41963254689, artifact 13390316663, fingerprint step success. **Last APK sent: `e623d3ef`.** (Relay line owed: `PROJECT_STATE.md` "last APK sent".) The owner was asked the battle_ropes question: grip as text only, or keep it for a later update.
+  - **W3 #384:** focused recheck VALID (6649416891); resistance_band_row approved. FIX 2 @ `6e8c2724`, then cite fields @ `27a1a024` (no page moved). The second recheck is running: sets `lyr-w3r2`, `critic-w3p`, `lyr-w3r2k` and `lyr-w3r2s`; keys in `lyr-w3r2-private`. Content and safety are done.
+  - **W5 #392:** panel VALID (6649453813); 13 approved. PANEL FIX @ `866f4d4c` (lb04 `8c3836b4…`); a focused recheck is owed. preacher_curl waits on F-BODYMAP-FRONTDELT (card @ `ec165a85`; no builder yet).
+  - **PLATEFIX #385:** recheck VALID (6649655218); the OHP plate is approved. LAYERS FIX 2 @ `7971bce1`; the second recheck of OHP and RDL layers is owed.
+  - **W4 #391:** PIN GO posted (6649217767). Its panel (9 visual + content + safety) is running again after the limit.
+  - **W6 #393:** panel sets built (`lyr-w6*`, `critic-lth`); critics are queued. Rulings: D-SHIP-W6-FZOOM2 and D-SHIP-W6-ZOOMNONE.
+  - **W7 #394:** sets A and B scored. Sets C and D, content and safety are queued (`w7-queue.txt`). PIN GO posted (6649092340).
+  - **PLATEFIX-2 #395:** fix @ `562304bc`; its recheck set build is queued. Ruling: D-PF2-H4GATE (an add-only gate block).
+  - **F-ZOOM-NONE #388:** merges next after its delta. The post-W2 merge is pushed @ `2e1f87ec`; the delta post is owed.
+  - **Queue order after the limit:** finish the W3 recheck 2 and the W4 panel, then the W5 recheck, the PLATEFIX recheck 2, the W6 panel, W7 C/D, the PLATEFIX-2 recheck, an F-BODYMAP-FRONTDELT builder and the LIB-PLATEFIX-3 card.
 - **Update 11-05 ~03:57 UTC** (weekly 0.71; the **five-hour window** was 0.61 at 03:48 and rising about 1.5 % a minute, so it runs out about 04:15 and resets **07:40 UTC**. The hourly tick at 07:44 is the resume point.)
   - **Train 68 MERGED** (#396 → main `e623d3ef`; 28/28 green on `7a35ef99`). W2's 8 ids are on main. **APK owed:** main's "M/ARC gate" run 41963254689 builds it. When it is green and the fingerprint step passed, send the owner the MARC-DEBUG-APK link (6.9) with W2's 8 new guides, the battle_ropes question (ship with the grip as text only, or keep it for a later update) and the later-update list above.
   - **Told every lane to merge main** (comments 6649085079-6649089659). W3 merged it @ `9901e8cc`, PLATEFIX-1 @ `194bbbbf`.
