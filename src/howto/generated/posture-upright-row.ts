@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=12f0131dd949dbaaee4ab25c0fc454cf6b51765cab4a02cfed3a2d654f5bf9b7
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=f6da18c43c6a3a70a001153eb35cc955ae9d9e526bc76e2a632d8de74bff45fc
 // The upright-row posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-upright-row.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives
