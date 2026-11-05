@@ -37,12 +37,34 @@ export function zoomFieldProblems(z) {
 // F-ZOOM-2 (D-LIB17-ZOOMPAIR): a Mistake entry may carry `pair: [flat, turned]`, the same drawn vertex in world metres in
 // the end pose and in the Mistake pose, for a fault that turns about a fixed tell anchor (the anchor itself never moves).
 const isPoint = p => Array.isArray(p) && p.length === 3 && p.every(Number.isFinite);
+// LIB-PLATEFIX-2 (a): a chosen-focus POSTURE zoom, a normal entry with `focus: { region, pose }` (1-8 landmark names,
+// drawn in one held pose: 'start' or 'end'), optionally `project: 'side'` (the same pose drawn in side projection,
+// facing right) and `ref: [a, b]` (a straight grey dashed reference, world metres, drawn only inside the zoom). It shows a
+// posture the plate's own projection cannot show, so it carries no trace and its k may be from POSTURE.kMin. Its rows
+// are qa/zoom.mjs H3.zoom:posture:* (exempt from the trace rows; the plate's own trace bar still holds).
+export const POSTURE = Object.freeze({ kMin: 1, regionMax: 8, inset: 4, fill: 0.6, pad: 3 });
+const isPosture = z => z != null && typeof z === 'object' && 'focus' in z;
 function entryProblems(z) {
   const out = [];
   if (typeof z !== 'object' || z === null || Array.isArray(z)) return ['zoom must be { view, k }'];
-  for (const k of Object.keys(z)) if (!['view', 'k', 'tell', 'pair'].includes(k)) out.push(`zoom: unknown key ${k}`);
+  const posture = isPosture(z), keys = posture ? ['view', 'k', 'focus', 'project', 'ref'] : ['view', 'k', 'tell', 'pair'];
+  for (const k of Object.keys(z)) if (!keys.includes(k)) out.push(`zoom: unknown key ${k}`);
   if (!VIEWS.includes(z.view)) out.push(`zoom.view ${JSON.stringify(z.view)} is not 'normal' or 'mistake'`);
-  if (!(typeof z.k === 'number' && z.k >= ZOOM.kMin && z.k <= ZOOM.kMax)) out.push(`zoom.k ${JSON.stringify(z.k)} is outside ${ZOOM.kMin}-${ZOOM.kMax}`);
+  const kMin = posture ? POSTURE.kMin : ZOOM.kMin;
+  if (!(typeof z.k === 'number' && z.k >= kMin && z.k <= ZOOM.kMax)) out.push(`zoom.k ${JSON.stringify(z.k)} is outside ${kMin}-${ZOOM.kMax}`);
+  if (posture) {
+    const f = z.focus;
+    if (z.view !== 'normal') out.push(`zoom.focus is for a normal entry, not the ${z.view} view`);
+    if (typeof f !== 'object' || f === null || Array.isArray(f) || Object.keys(f).some(k => !['region', 'pose'].includes(k))) out.push('zoom.focus must be { region, pose }');
+    else {
+      if (!(Array.isArray(f.region) && f.region.length >= 1 && f.region.length <= POSTURE.regionMax && f.region.every(n => typeof n === 'string' && n)))
+        out.push(`zoom.focus.region must list 1-${POSTURE.regionMax} landmark names`);
+      if (!['start', 'end'].includes(f.pose)) out.push(`zoom.focus.pose ${JSON.stringify(f.pose)} is not 'start' or 'end'`);
+    }
+    if ('project' in z && z.project !== 'side') out.push(`zoom.project ${JSON.stringify(z.project)} is not 'side'`);
+    if ('ref' in z && !(Array.isArray(z.ref) && z.ref.length === 2 && z.ref.every(isPoint) && !z.ref[0].every((v, i) => v === z.ref[1][i])))
+      out.push('zoom.ref must be two different points [x, y, z] of finite numbers');
+  }
   if ('pair' in z) {
     const p = z.pair;
     if (z.view !== 'mistake') out.push(`zoom.pair is for a Mistake entry, not the ${z.view} view`);
@@ -123,6 +145,26 @@ function discFree(occ, c, r) {
   return true;
 }
 
+/** The posture spec drawn in the zoom: the focus pose held (start = end, no via), seen from the plate's view or, with
+ *  project 'side', from the side facing right with the engine's side trunk (the volume trunk is a front-view part). */
+export function postureSpec(spec, entry) {
+  const P = spec.poses[entry.focus.pose], side = entry.project === 'side';
+  return { ...spec, poses: { start: P, end: P, via: [] }, ...(side ? { view: 'side', facing: 'right', torso: undefined, camera: undefined } : {}) };
+}
+/** World landmarks of the focus pose, as the engine resolves it. */
+export function focusLandmarks(spec, entry, E = ENGINE) {
+  const { normPose, resolve, fk, landmarks } = E.body, b = { height: spec.body?.height ?? 1.75 };
+  return landmarks(fk(resolve(normPose(spec.poses[entry.focus.pose], b), b).q, b));
+}
+/** The focus region's world points (throws on a name the engine does not draw). */
+export function focusPoints(spec, entry, E = ENGINE) {
+  const lm = focusLandmarks(spec, entry, E);
+  return entry.focus.region.map(n => { if (!isPoint(lm[n])) throw new Error(`${spec.id}: zoom.focus.region: no landmark ${n}`); return lm[n]; });
+}
+/** The posture zoom's own projection of a world point at unit scale (side: z right, y up; else the plate's own P with
+ *  its x0/y0 taken out), so a zoom camera at pxPerM s maps it to [x0 + s * u, y0 - s * v]. */
+export const postureUV = (entry, cam) => (entry.project === 'side' ? w => [w[2], w[1]] : w => { const p = cam.P(w); return [(p[0] - cam.x0) / cam.pxPerM, (cam.y0 - p[1]) / cam.pxPerM]; });
+
 /**
  * The zoom of `spec` (its `zoom` field), placed and drawn. Returns { view, k, focus, circle: { c, r }, src: { c, r },
  * fault?, trace?, svg } or throws when no place passes the placement rules. `prefix`: the card's svg id prefix.
@@ -134,21 +176,14 @@ export function zoomOf(spec, { prefix = 'p', E = ENGINE, view: which = null } = 
   if (!entry) throw new Error(`${spec.id}: no zoom entry${which ? ` for the ${which} view` : '; a zoom list needs a view'}`);
   const { view, k } = entry, m = view === 'mistake', vid = `${prefix}-${m ? 'm' : 'n'}`;
   const raw = E.renderPlate(spec, { id: vid, mistake: m }), plate = m ? mistakePlate(spec, raw) : raw, c = plate.report.camera, cam = cameraOf(spec, plate.report);
+  if (isPosture(entry)) return postureZoomOf(spec, entry, { E, vid, plate, c, cam });
   const fault = m ? faultOf(spec, cam, poseLandmarks(E, spec)) : null, trace = m ? null : tracePath(spec, cam, E);
   if (m && !fault) throw new Error(`${spec.id}: a Mistake zoom needs a tell`);
   if (!m && !trace.length) throw new Error(`${spec.id}: a normal zoom needs a trace`);
-  const focus = m ? mid([fault.end, fault.mistake]) : mid(trace), { r, gap, margin, top, size } = ZOOM, rs = r / k;
-  const labels = labelBoxes(plate.overlay), leaders = leadersOf(plate.svg);
-  let C = null, best = Infinity;
-  for (let cy = top + r; cy <= size - margin - r; cy += 2) for (let cx = margin + r; cx <= size - margin - r; cx += 2) {
-    const d = Math.hypot(cx - focus[0], cy - focus[1]);
-    if (d >= best || d < r + rs + gap) continue;
-    const at = [cx, cy];
-    if (!discFree(plate.occ, at, r + gap) || labels.some(b => rectHitsCircle(b, at, r + gap)) || leaders.some(p => polyHitsCircle(p, at, r + gap))) continue;
-    if (labels.some(b => linkHitsBox(focus, at, rs, r, b))) continue;
-    C = at; best = d;
-  }
-  if (!C) throw new Error(`${spec.id}: no place on the ${view} plate keeps the zoom clear of ink, labels and leaders`);
+  const focus = m ? mid([fault.end, fault.mistake]) : mid(trace), { r } = ZOOM, rs = r / k;
+  const placed = placeCircle(plate, focus, rs);
+  if (!placed) throw new Error(`${spec.id}: no place on the ${view} plate keeps the zoom clear of ink, labels and leaders`);
+  const { C, d: best } = placed;
   // the magnified render: the same spec at k x the camera, the focus mapped to the circle centre; no labels, guides of
   // the plate's own layout (callouts, datum, measure) or checks; ghosts kept in the normal view (the motion)
   // (F-ZOOM-PITCH) the camera keeps the plate's pitch; its fit/maxScale stay out, since a fit would replace k x pxPerM
@@ -168,6 +203,50 @@ export function zoomOf(spec, { prefix = 'p', E = ENGINE, view: which = null } = 
     + `<g class="pz-in" clip-path="url(#${clip})">${inner}</g>`
     + `<circle class="pz-ring" cx="${f(C[0])}" cy="${f(C[1])}" r="${r}"/></g>`;
   return { view, k, focus, circle: { c: C, r }, src: { c: focus, r: rs }, link, fault, trace, svg };
+}
+
+/** The circle centre nearest `focus` that passes the placement rules (zoomOf's search), or null. */
+function placeCircle(plate, focus, rs) {
+  const { r, gap, margin, top, size } = ZOOM, labels = labelBoxes(plate.overlay), leaders = leadersOf(plate.svg);
+  let C = null, best = Infinity;
+  for (let cy = top + r; cy <= size - margin - r; cy += 2) for (let cx = margin + r; cx <= size - margin - r; cx += 2) {
+    const d = Math.hypot(cx - focus[0], cy - focus[1]);
+    if (d >= best || d < r + rs + gap) continue;
+    const at = [cx, cy];
+    if (!discFree(plate.occ, at, r + gap) || labels.some(b => rectHitsCircle(b, at, r + gap)) || leaders.some(p => polyHitsCircle(p, at, r + gap))) continue;
+    if (labels.some(b => linkHitsBox(focus, at, rs, r, b))) continue;
+    C = at; best = d;
+  }
+  return C ? { C, d: best } : null;
+}
+
+/** LIB-PLATEFIX-2 (a): the posture zoom. The source ring holds the focus region on the plate (radius: the farthest region
+ *  point + POSTURE.pad; in the plate's own projection never under r/k); the circle draws the focus pose at k x the plate's scale (in side
+ *  projection with project 'side'), the region's centre on the circle centre; no trace, ghosts, labels or checks. */
+function postureZoomOf(spec, entry, { E, vid, plate, c, cam }) {
+  const { k } = entry, { r } = ZOOM, pts = focusPoints(spec, entry, E);
+  const onPlate = pts.map(w => cam.P(w)), focus = mid(onPlate);
+  const side = entry.project === 'side', hold = Math.max(...onPlate.map(p => Math.hypot(p[0] - focus[0], p[1] - focus[1]) + POSTURE.pad));
+  const rs = side ? hold : Math.max(r / k, hold);
+  const placed = placeCircle(plate, focus, rs);
+  if (!placed) throw new Error(`${spec.id}: no place on the normal plate keeps the zoom clear of ink, labels and leaders`);
+  const { C, d: best } = placed, uv = postureUV(entry, cam), mc = mid(pts.map(uv)), s = c.pxPerM * k;
+  const zs = { ...postureSpec(spec, entry), camera: { ...(!side && cam.pitch ? { pitch: cam.pitch } : {}), pxPerM: s, x0: C[0] - s * mc[0], y0: C[1] + s * mc[1] },
+    callouts: [], datum: [], measure: undefined, checks: [], zoom: undefined, trace: undefined, ghosts: { count: 0 }, startParts: [],
+    equipment: [...(spec.equipment ?? []), ...(entry.ref ? [{ type: 'line', pts: entry.ref, cls: 'eq-line m-line', z: 'front', part: 'pz-ref' }] : [])],
+    ...(spec.mistake ? { mistake: { ...spec.mistake, tells: [] } } : {}) };
+  const inner = E.renderPlate(zs, { id: `${vid}-z`, mistake: false }).svg
+    .replace(/^<svg class="plate-svg"[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/<rect width="358" height="358" fill="url\(#[^)]*\)"\/>/, '');
+  const clip = `${vid}-zclip`, u = [(C[0] - focus[0]) / best, (C[1] - focus[1]) / best];
+  const link = `M${f(focus[0] + u[0] * rs)} ${f(focus[1] + u[1] * rs)}L${f(C[0] - u[0] * r)} ${f(C[1] - u[1] * r)}`;
+  const svg = `<g class="plate-zoom" data-view="normal" data-k="${k}" data-c="${f(C[0])} ${f(C[1])}" data-src="${f(focus[0])} ${f(focus[1])}" data-focus="${entry.focus.pose}"${side ? ' data-project="side"' : ''}>`
+    + `<defs><clipPath id="${clip}"><circle cx="${f(C[0])}" cy="${f(C[1])}" r="${r}"/></clipPath></defs>`
+    + `<circle class="pz-src" cx="${f(focus[0])}" cy="${f(focus[1])}" r="${f(rs)}"/>`
+    + `<path class="pz-link" d="${link}"/>`
+    + `<circle class="pz-bg" cx="${f(C[0])}" cy="${f(C[1])}" r="${r}"/>`
+    + `<g class="pz-in" clip-path="url(#${clip})">${inner}</g>`
+    + `<circle class="pz-ring" cx="${f(C[0])}" cy="${f(C[1])}" r="${r}"/></g>`;
+  return { view: 'normal', k, focus, circle: { c: C, r }, src: { c: focus, r: rs }, link, posture: { pose: entry.focus.pose, project: side ? 'side' : null }, svg };
 }
 
 /** The zoom classes, on the page's own theme tokens (the ring draws as ink: H5 holds it to the ink floor). */

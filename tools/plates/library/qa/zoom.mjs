@@ -6,12 +6,17 @@
 //   H3.zoom:*                      field shape and k range; present where the spec asks, nowhere else; allowed only on
 //                                  a view that fails at plate scale; the bar at k; the source ring holds the fault/trace;
 //                                  F-ZOOM-2: a pair's points are drawn vertices, turned the tell's own anchor (pairProblems)
+//   H3.zoom:posture:*              LIB-PLATEFIX-2 (a): a chosen-focus posture zoom (a normal entry with `focus`) is exempt
+//                                  from the trace rows above; instead: the plate's own trace bar still holds (trace), the
+//                                  source ring holds the focus region on the plate (source), the circle holds it at k
+//                                  (hold), the region spans at least POSTURE.fill of the circle (fill: its magnification
+//                                  bar, with k >= POSTURE.kMin), a `ref` lies inside the circle (ref)
 //   H4.zoom:*                      node placement: 8 px margin and the meta band; 6 px gap to the figure and equipment;
 //                                  no leader or label crossing; the source ring apart from the circle
 // The browser half (label and hit boxes at 390/360/340 px, ring contrast) is browser.mjs.
 import { tags } from './markup.mjs';
 import { anchorInPose, cameraOf, equipmentItems, poseLandmarks, resolvePoint } from './engine.mjs';
-import { ZOOM, faultOf, labelBoxes, leadersOf, polyHitsCircle, tracePath, zoomFieldProblems, zoomFor } from '../zoom/inline.mjs';
+import { POSTURE, ZOOM, faultOf, focusPoints, labelBoxes, leadersOf, polyHitsCircle, postureUV, tracePath, zoomFieldProblems, zoomFor } from '../zoom/inline.mjs';
 
 const P = (key, text) => ({ key, text });
 export const ANGLE = /°|&deg;|&#176;|&#x[bB]0;|\bdeg(?:rees?)?\b/;
@@ -93,6 +98,30 @@ export function pairProblems(spec, E, report) {
   return out;
 }
 
+/**
+ * LIB-PLATEFIX-2 (a): the posture rows of a normal entry with `focus`, read from the drawn rings (m.ring, m.src, m.k) and
+ * the plate's camera. Problems: H3.zoom:posture:{trace,source,hold,fill,ref}. `M`: nodeMetrics (plate-scale traceLen).
+ */
+export function postureProblems(spec, want, m, ctx, R, M) {
+  const out = [], bad = (k, t) => out.push(P(`H3.zoom:posture:${k}`, t)), env = ctx.envelope;
+  if (!(M.traceLen >= env.traceLenMin)) bad('trace', `Trace ${M.traceLen.toFixed(1)} px < the shortest approved ${env.traceLenMin.toFixed(1)} px: a posture zoom carries no trace, so the plate's own bar holds`);
+  const report = R?.normal?.report;
+  if (!report) { bad('source', 'no normal render to check the posture zoom against'); return out; }
+  let pts;
+  try { pts = focusPoints(spec, want, ctx.engine); } catch (e) { bad('source', e.message); return out; }
+  const cam = cameraOf(spec, report), onPlate = pts.map(w => cam.P(w));
+  if (onPlate.some(p => Math.hypot(p[0] - m.src.c[0], p[1] - m.src.c[1]) > m.src.r - 1)) bad('source', 'the source ring does not hold the focus region on the plate');
+  const uv = postureUV(want, cam), U = pts.map(uv), xs = U.map(q => q[0]), ys = U.map(q => q[1]);
+  const mc = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2], s = cam.pxPerM * m.k;
+  const inZoom = q => [m.ring.c[0] + s * (q[0] - mc[0]), m.ring.c[1] - s * (q[1] - mc[1])], Z = U.map(inZoom);
+  const lim = m.ring.r - POSTURE.inset, far = Z.map((q, i) => [want.focus.region[i], Math.hypot(q[0] - m.ring.c[0], q[1] - m.ring.c[1])]).filter(([, d]) => d > lim);
+  if (far.length) bad('hold', `the zoom does not hold ${far.map(([n, d]) => `${n} (${d.toFixed(1)} px from the centre > ${lim})`).join(', ')}`);
+  const span = Math.max(0, ...Z.flatMap((a, i) => Z.slice(i + 1).map(b => Math.hypot(a[0] - b[0], a[1] - b[1]))));
+  if (span < POSTURE.fill * 2 * m.ring.r) bad('fill', `the focus region spans ${span.toFixed(1)} px in the zoom < ${(POSTURE.fill * 2 * m.ring.r).toFixed(1)} px (${POSTURE.fill} of the circle)`);
+  if (want.ref && want.ref.map(uv).map(inZoom).some(q => Math.hypot(q[0] - m.ring.c[0], q[1] - m.ring.c[1]) > m.ring.r)) bad('ref', 'the reference line leaves the zoom circle');
+  return out;
+}
+
 const ink = (occ, c, r) => { let n = 0; for (let y = -r; y <= r; y += 2) { const w = Math.sqrt(Math.max(0, r * r - y * y)); n += occ.count(c[0] - w, c[1] + y - 1, c[0] + w, c[1] + y + 1); } return n; };
 const rectHits = (b, c, r) => Math.hypot(Math.max(b.x0 - c[0], 0, c[0] - b.x1), Math.max(b.y0 - c[1], 0, c[1] - b.y1)) < r;
 
@@ -111,9 +140,12 @@ export function zoomRows(c, ctx, R, M) {
     if (ANGLE.test(z)) H2.push(P('H2.zoom:angle', `the ${view} zoom holds an angle (owner rule: no angle in a zoom view)`));
     const m = Z[view];
     if (!m?.ring || !m?.src) { H3.push(P(`H3.zoom:shape:${view}`, 'the zoom has no ring or no source ring')); continue; }
-    if (m.k !== want.k || Math.abs(m.ring.r / m.src.r - want.k) > 0.01) H3.push(P(`H3.zoom:k:${view}`, `the drawn zoom (k ${m.k}, ring ${m.ring.r}/${m.src.r}) is not the spec's k ${want.k}`));
+    const posture = view === 'normal' && 'focus' in want, side = posture && want.project === 'side';
+    // a posture zoom's source ring holds its region: in the plate's own projection never under r/k; in side projection its own size
+    if (m.k !== want.k || (posture ? !side && m.src.r < m.ring.r / want.k - 0.01 : Math.abs(m.ring.r / m.src.r - want.k) > 0.01)) H3.push(P(`H3.zoom:k:${view}`, `the drawn zoom (k ${m.k}, ring ${m.ring.r}/${m.src.r}) is not the spec's k ${want.k}`));
     // allowed only on a view that fails at plate scale; the bar at the zoom's own scale
-    if (view === 'normal') {
+    if (posture) H3.push(...postureProblems(spec, want, m, ctx, R, M));
+    else if (view === 'normal') {
       if (M.traceLen >= env.traceLenMin) H3.push(P('H3.zoom:not-needed:normal', `the Trace already reaches ${env.traceLenMin.toFixed(1)} px at plate scale (${M.traceLen.toFixed(1)} px)`));
       if (!(m.trace >= env.traceLenMin)) H3.push(P('H3.zoom:trace', `Trace inside the zoom ${(m.trace ?? 0).toFixed(1)} px < the shortest approved ${env.traceLenMin.toFixed(1)} px`));
       const tp = R && spec ? tracePath(spec, cameraOf(spec, R.normal.report), ctx.engine) : [];
