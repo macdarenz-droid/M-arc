@@ -1001,9 +1001,9 @@ Rulings applied: SHIP W7 PLAN RULED (#394 6647954465), QUESTION 1 (no shared mov
 (D-SHIP-W7-NOREDFLAG = D-SHIP-W6-NOREDFLAG plus the card-flag red; D-SHIP-W7-WRISTPTR), D-FEEL-MEANS-CAUSAL (#385).
 
 **Layers pages** (`tests/howto/golden/library/<batch>.layers.html`, two builds each, equal sha256; not pinned until the
-panel): lb08 `71e60ec8510af727839c2c312cdb4b62dbdaae381ad5d4940566137e0fa68f16` (8 ids, 1,614,826 B); lb09
-`13404ea0373b2379db281648a4442ebfb04b8822833bce68f380d25bb0bbf5ce` (9 ids, 1,978,438 B); lb10
-`27edb2de1e9461508eab0cef7081096753372803934880f348d2c035230e004d` (12 ids incl. battle_ropes, held for the owner; 2,282,319 B).
+panel), after the pre-panel copy pass (#394 6648618730): lb08 `f5f14a4797ab152850be8f59e6a589615ee426652a81813017e471667c95f8b8`
+(8 ids, 1,614,814 B); lb09 `45bedf3de851880b32d1b685b75d1cfcde0fb1b1142e94035617db893fcf82e4` (9 ids, 1,978,444 B); lb10
+`81fd2d2ceeea3b9d54de244567b3cf5b97c65828c8e9be854c91a3d1a7b119ab` (12 ids incl. battle_ropes, held for the owner; 2,282,291 B).
 Plates pages rebuilt from the moved rows equal main 8bb433bd's build-ahead pages (lb8 95e9a1fe…, lb9 52bb57fd…, lb10 3459ad2d…).
 
 **(b3) pin table** (tests/howto/checks/c3-library.ts B3_PINS; reds in lib-ship.test.ts "D-SHIP-W7-B3"):
