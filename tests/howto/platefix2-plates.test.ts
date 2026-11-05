@@ -70,7 +70,7 @@ describe('PF2 bent_over_dumbbell_rear_delt_fly', { timeout: T }, () => {
     const caps = rd.mistake.guides.filter((g: any) => g.kind === 'dashed' && g.pts.length === 25);
     expect(caps).toHaveLength(2);
     for (const [cap, s] of [[caps[0], 'r'], [caps[1], 'l']] as const) {
-      const ps = cap.pts.map((p: number[]) => cam.P(p)), c = [ps.slice(0, 24).reduce((a: number, p: number[]) => a + p[0], 0) / 24, ps.slice(0, 24).reduce((a: number, p: number[]) => a + p[1], 0) / 24];
+      const ps = cap.pts.map((p: number[]) => cam.P(p)), c = [ps.slice(0, 24).reduce((a: number, p: number[]) => a + p[0]!, 0) / 24, ps.slice(0, 24).reduce((a: number, p: number[]) => a + p[1]!, 0) / 24];
       const S = cam.P(L.end[`shoulder.${s}`]), ear = cam.P(L.end.ear);
       expect(d(c, S)).toBeCloseTo(13, 1);
       expect(d(c, ear)).toBeCloseTo(d(S, ear) - 13, 1);
@@ -83,7 +83,7 @@ describe('PF2 bent_over_dumbbell_rear_delt_fly', { timeout: T }, () => {
     expect(lines).toHaveLength(4);   // per side a dashed end-on hexagon (7 points, closed) and its core ring (17)
     expect(lines.map((x: any) => x.pts.length).sort()).toEqual([17, 17, 7, 7]);
     const pts = zoom.tracePath(rd, qaEng.cameraOf(rd, r.report));
-    const n = pts.length, mx = pts.reduce((a: number, p: number[]) => a + p[0], 0) / n, my = pts.reduce((a: number, p: number[]) => a + p[1], 0) / n;
+    const n = pts.length, mx = pts.reduce((a: number, p: number[]) => a + p[0]!, 0) / n, my = pts.reduce((a: number, p: number[]) => a + p[1]!, 0) / n;
     let suu = 0, svv = 0, suv = 0, suuu = 0, svvv = 0, suvv = 0, svuu = 0;
     for (const [x, y] of pts) { const u = x - mx, v = y - my; suu += u * u; svv += v * v; suv += u * v; suuu += u ** 3; svvv += v ** 3; suvv += u * v * v; svuu += v * u * u; }
     const a = (suuu + suvv) / 2, b = (svvv + svuu) / 2, det = suu * svv - suv * suv, uc = (a * svv - b * suv) / det, vc = (b * suu - a * suv) / det;
