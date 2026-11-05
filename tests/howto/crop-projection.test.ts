@@ -98,6 +98,17 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     'tools/plates/library/pages/pilot-b.closeups.mjs': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
     'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
   };
+  // LIB-SHIP W6 (#393): the 23 lb06/lb07 rows; each must pin its files' current sha256, then it is taken out (lib-shapes form)
+  const W6_ROWS = [...Object.keys(JSON.parse(readFileSync(path('tools/plates/library/batches/lb06.json'), 'utf8')).rows),
+    ...Object.keys(JSON.parse(readFileSync(path('tools/plates/library/batches/lb07.json'), 'utf8')).rows)];
+  const lessW6 = (m: any) => {
+    for (const id of W6_ROWS) {
+      if (!(id in m.rows)) throw new Error(`LIB-SHIP W6: ${id} has no MANIFEST row`);
+      for (const [k, v] of Object.entries<any>(m.rows[id].files)) if (v !== sha(readFileSync(path(k)))) throw new Error(`LIB-SHIP W6: ${id} ${k} does not pin its file`);
+      delete m.rows[id];
+    }
+    return m;
+  };
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
   const lessW2 = (m: any) => {
     delete m.rows.lib_crunch;
@@ -108,7 +119,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     return m;
   };
   it('every pinned row pins the current crop.mjs and hand.mjs, and every other entry equals main 8d596fab', () => {
-    const m = JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'));
+    const m = lessW6(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8')));   // LIB-SHIP W6: the 23 W6 rows checked and taken out
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
     expect(Object.keys(m.rows)).toContain('lib_crunch');
