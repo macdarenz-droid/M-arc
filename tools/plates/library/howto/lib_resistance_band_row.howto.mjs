@@ -15,6 +15,7 @@
 // and the crop engine draws only pose changes; posture checkpoint `band` and setup step 1 carry it.
 // No variant line (equipment 'Resistance Band').
 import plateSpec from '../specs/resistance_band_row.mjs';
+import { landmarksOf } from '../engine.mjs';   // W3 LAYERS FIX: the blade outlines (the plate's own engine)
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
 
@@ -74,6 +75,27 @@ export const stills = {
   apart: { pose: { ...plateSpec.poses.end, ...APART } },
 };
 
+// Shoulder blades seen from behind (W3 LAYERS FIX, L5; golden B's bladeOutlines form, pull_up.howto.mjs:172). The engine
+// moves the shoulder joints forward for a protracted blade (scap pro) but not toward the spine, so each blade is drawn
+// from the spine: DRAWING VALUES in cm, [out from the spine, up from the shoulder joint height], a blade about 10 cm
+// wide and 15 cm tall with its inner edge about 5 cm from the spine when squeezed. A blade slides out by as much as
+// the pose moves its shoulder joint forward from the squeezed end (the plate's own 6 cm, start pro +2 against end -4),
+// so 'apart' shows the blades that far from the spine. No card gives a size; no number appears in user copy.
+const BLADE = [[5, 1], [4.5, -6], [6, -14], [11, -8], [15, -2], [14, 3], [9, 3]];
+const BLADE_SPINE = [[5, -1], [15, 2]];
+const fwdOf = lm => lm['shoulder.l'][2] - lm.backUpper[2];
+const FWD0 = fwdOf(landmarksOf(plateSpec.poses.end));
+function bladeOutlines(lm) {
+  const lines = [], points = {}, out = (fwdOf(lm) - FWD0) * 100;
+  for (const sd of ['l', 'r']) {
+    const Sj = lm[`shoulder.${sd}`], sg = Math.sign(Sj[0]);
+    const w = ([m, up]) => [sg * (m + out) / 100, Sj[1] + up / 100, lm.backUpper[2] - 0.02];
+    lines.push({ pts: [...BLADE, BLADE[0]].map(w), kind: 'outline' }, { pts: BLADE_SPINE.map(w), kind: 'ridge' });
+    points[`bladeIn.${sd}`] = w(BLADE[1]);
+  }
+  return { lines, points };
+}
+
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // Zoom shell form (render/closeup/crop.mjs): callouts anchored at the landmark they name, no guide mark; the Wrong is
 // drawn alone (solid).
@@ -99,7 +121,11 @@ const zooms = [
   },
   {
     key: 'blades', chip: 'Shoulder blades', heading: 'Shoulder blades', kind: 'posture',   // card zoom key: shoulder blades
-    crop: { center: { at: 'backUpper', pose: 'right', off: [0, 0] }, sizePx: 140 },
+    // W3 LAYERS FIX (#384 6648454032, L5): from the side the blades cannot be seen, so both crops are drawn from behind,
+    // golden B's "Seen from behind" form (view 'back', both solid), with the blades outlined (bladeOutlines below). c4.
+    view: 'back', camLabel: 'Seen from behind',
+    outlines: bladeOutlines,
+    crop: { center: { at: 'backUpper', pose: 'right', off: [0, -4] }, sizePx: 118 },
     right: 'end',
     wrong: { base: 'end', pose: APART, solid: true },
     callout: {
@@ -111,8 +137,8 @@ const zooms = [
       wrong: 'Shoulder blades still apart at the end of the pull.',
     },
     alt: {
-      right: 'Side view, end of the pull. The shoulder blades are drawn back together.',
-      wrong: 'Side view, end of the pull. The shoulder blades stay apart, shoulders forward.',
+      right: 'Seen from behind, end of the pull. The shoulder blades are drawn back together.',
+      wrong: 'Seen from behind, end of the pull. The shoulder blades stay apart, shoulders forward.',
     },
   },
 ];

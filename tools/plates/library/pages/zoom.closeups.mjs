@@ -9,6 +9,8 @@ const ZOOM = {
 // No hand close-up: zoom.mjs calls handZoomOf(mod, o.hand) for every record, which reads o.handleChoiceHint and needs a
 // known layout; handZoom() itself runs only for a sheet with a hand zoom, so this layout is never drawn.
 const NO_HAND = { ...ZOOM, hand: { layout: 'single' } };
+// W3 LAYERS FIX (#384 6648454032, L5): the leg-line outlines' styles (zoom-css 'outlines', golden B's hanging_leg_raise).
+const LINES = r => ({ ...r, css: { ...r.css, outlines: true } });
 export const CLOSEUP_OPTIONS = {
-  horizontal_leg_press: NO_HAND,
+  horizontal_leg_press: LINES(NO_HAND),
 };
