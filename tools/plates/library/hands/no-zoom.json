@@ -1,5 +1,5 @@
 {
- "about": "LIB-SHIP D-SHIP-C3 (#376 6614298313): the library rows that ship with no hand zoom. Each entry names its ruling and exactly one reason: gap-key (a hand key's GAPS entry, at file:line), gap-ruled (a ruling that names the id) or card-no-zoom (the card has no hand zoom, checked against the card file at test time). The row's handling.why names the same ruling. W2 entries per SHIP W2 PLAN RULED (#379 6625803515). Entries are added per wave, each ruled before it is used (tests/howto/checks/c3-library.ts RULED).",
+ "about": "LIB-SHIP D-SHIP-C3 (#376 6614298313): the library rows that ship with no hand zoom. Each entry names its ruling and exactly one reason: gap-key (a hand key's GAPS entry, at file:line), gap-ruled (a ruling that names the id) or card-no-zoom (the card has no hand zoom, checked against the card file at test time). The row's handling.why names the same ruling. W2 entries per SHIP W2 PLAN RULED (#379 6625803515). Entries are added per wave, each ruled before it is used (tests/howto/checks/c3-library.ts RULED). W6 entries per SHIP W6 PLAN RULED (#393 6647923934).",
  "entries": {
   "lib_barbell_overhead_press": {
    "ruling": "D-SHIP-Q1",
@@ -60,6 +60,96 @@
    "reason": "card-no-zoom"
   },
   "lib_push_up": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_machine_pullover": {
+   "ruling": "D-SHIP-HANDW6",
+   "reason": "gap-ruled",
+   "note": "no pair key draws an open hand on a pullover arm and the card gives no pose numbers (ruling 8); the grip copy carries c3 and c6 (W6: #393 6647923934)"
+  },
+  "lib_smith_machine_squat": {
+   "ruling": "D-SHIP-HANDW6",
+   "reason": "gap-ruled",
+   "note": "no on-body pair key variant and the card gives no pose numbers (ruling 8); the grip copy carries c5 (W6: #393 6647923934)"
+  },
+  "lib_smith_machine_shoulder_press": {
+   "ruling": "D-SHIP-HANDW6",
+   "reason": "gap-ruled",
+   "note": "push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19); the grip copy carries c5, c13 and c18 (W6: #393 6647923934)"
+  },
+  "lib_rear_delt_fly": {
+   "ruling": "D-SHIP-HANDW6",
+   "reason": "gap-ruled",
+   "note": "no pair key draws this machine's handles and the card gives no pose numbers (ruling 8); the grip copy carries c3 and c10 (W6: #393 6647923934)"
+  },
+  "lib_dumbbell_front_raise": {
+   "ruling": "D-SHIP-HANDW6",
+   "reason": "gap-ruled",
+   "note": "no pair key variant holds a dumbbell palms down and the card gives no pose numbers (ruling 8); the grip copy carries c1, c7 and c9 (W6: #393 6647923934)"
+  },
+  "lib_face_pull": {
+   "ruling": "D-SHIP-HANDW6",
+   "reason": "gap-ruled",
+   "note": "the rope key's GAPS reason is stale and the card refuses rope-rule c1 (no sourced contact); the grip copy carries c2 (W6: #393 6647923934)"
+  },
+  "lib_resistance_band_pull_apart": {
+   "ruling": "D-SHIP-HANDW6",
+   "reason": "gap-ruled",
+   "note": "the band key's GAPS reason is stale and no band contact exists (Q-W3-5); the grip copy carries c1 (W6: #393 6647923934)"
+  },
+  "lib_diamond_push_up": {
+   "ruling": "D-SHIP-HANDW6",
+   "reason": "gap-ruled",
+   "note": "the palm-flat pair draws one hand and cannot show the two-hand diamond (c1); the grip copy carries c1 (W6: #393 6647923934)"
+  },
+  "lib_cable_chest_press": {
+   "ruling": "D-SHIP-C3",
+   "reason": "gap-key",
+   "at": "tools/plates/library/hands/hand-d-handle.mjs:23"
+  },
+  "lib_low_to_high_cable_fly": {
+   "ruling": "D-SHIP-C3",
+   "reason": "gap-key",
+   "at": "tools/plates/library/hands/hand-d-handle.mjs:25"
+  },
+  "lib_high_to_low_cable_fly": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_machine_lateral_raise": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_weighted_dip": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_incline_push_up": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_pike_push_up": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_machine_crunch": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_hip_abduction": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_hip_adduction": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_cable_lateral_raise": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_cable_external_rotation": {
    "ruling": "D-SHIP-C3",
    "reason": "card-no-zoom"
   }
