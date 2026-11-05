@@ -31,8 +31,8 @@
  },
  "recopied": {
   "front_squat": {
-   "researchHead": "11df609286e9340117cff61bab7c0e2499ca7fb8",
-   "why": "RESEARCH-ROUTES-1 (D-RR-HEAD, #398 6648297602; F-CARD-FRONTSQ-SETUP, #392 Q-W5-5(b)): re-copied from research 11df6092 (#399). Only inherit[] and notes[] changed; quotes file unchanged. The other entries stay at their heads."
+   "researchHead": "fa24858988ecb7745fd3b4b7554f781e716a51eb",
+   "why": "RESEARCH-ROUTES-1 (D-RR-HEAD, #398 6648297602; F-CARD-FRONTSQ-SETUP, #392 Q-W5-5(b)): re-copied from research fa248589 (#399 merged). Only inherit[] and notes[] changed; quotes file unchanged. The other entries stay at their heads."
   }
  }
 }

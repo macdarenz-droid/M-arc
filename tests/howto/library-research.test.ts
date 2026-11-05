@@ -1,5 +1,5 @@
 // LIB-5 S1: the 38 shared research files (19 cards, 19 quote files) are byte copies of the named research head
-// (claude/libht-research @ 9eaa248, lib4-cards.md 14.5: the one re-copy, after 9dbc7e0 of 14.2); the back box at 0393aac9 (Do 9), re-copied at 11df6092 (RESEARCH-ROUTES-1).
+// (claude/libht-research @ 9eaa248, lib4-cards.md 14.5: the one re-copy, after 9dbc7e0 of 14.2); the back box at 0393aac9 (Do 9), re-copied at fa248589 (RESEARCH-ROUTES-1).
 import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
@@ -10,8 +10,8 @@ const ROOT = join(new URL('.', import.meta.url).pathname, '..', '..');
 const HOWTO = 'docs/research/howto';
 const RESEARCH_HEAD = '9eaa2480fea8f8f82a52ac2596c14d9a0da08ca5';
 /** Do 9 (D-LIB5-BOX, #244 6250331645): the owner-approved back box is copied from this head; its box text equals 9eaa248's.
- *  RESEARCH-ROUTES-1 (D-RR-HEAD, #398 6648297602): re-copied from 11df6092 (appliesTo +21, ruling 6); box text unchanged. */
-const BOX_HEAD = '11df609286e9340117cff61bab7c0e2499ca7fb8';
+ *  RESEARCH-ROUTES-1 (D-RR-HEAD, #398 6648297602): re-copied from fa248589 (#399 merged) (appliesTo +21, ruling 6); box text unchanged. */
+const BOX_HEAD = 'fa24858988ecb7745fd3b4b7554f781e716a51eb';
 
 /** path under docs/research/howto -> sha256 of the file bytes at RESEARCH_HEAD (shared/back-pain-box.json: at BOX_HEAD). */
 const PINS: Record<string, string> = {
