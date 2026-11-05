@@ -1,0 +1,62 @@
+{
+  "groups": [
+    {
+      "id": "lb3",
+      "title": "LB3",
+      "ids": [
+        "lib_pendlay_row",
+        "lib_landmine_row",
+        "lib_one_arm_dumbbell_row",
+        "lib_dumbbell_romanian_deadlift",
+        "lib_conventional_deadlift",
+        "lib_sumo_deadlift",
+        "lib_back_extension",
+        "lib_t_bar_row",
+        "lib_barbell_shrug",
+        "lib_cable_shrug",
+        "lib_dumbbell_shrug",
+        "lib_smith_machine_shrug"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb03.closeups.mjs",
+  "closeups": {
+    "lib_pendlay_row": {
+      "optionsKey": "pendlay_row"
+    },
+    "lib_landmine_row": {
+      "optionsKey": "landmine_row"
+    },
+    "lib_one_arm_dumbbell_row": {
+      "optionsKey": "one_arm_dumbbell_row"
+    },
+    "lib_dumbbell_romanian_deadlift": {
+      "optionsKey": "dumbbell_romanian_deadlift"
+    },
+    "lib_conventional_deadlift": {
+      "optionsKey": "conventional_deadlift"
+    },
+    "lib_sumo_deadlift": {
+      "optionsKey": "sumo_deadlift"
+    },
+    "lib_back_extension": {
+      "optionsKey": "back_extension"
+    },
+    "lib_t_bar_row": {
+      "optionsKey": "t_bar_row"
+    },
+    "lib_barbell_shrug": {
+      "optionsKey": "barbell_shrug"
+    },
+    "lib_cable_shrug": {
+      "optionsKey": "cable_shrug"
+    },
+    "lib_dumbbell_shrug": {
+      "optionsKey": "dumbbell_shrug"
+    },
+    "lib_smith_machine_shrug": {
+      "optionsKey": "smith_machine_shrug"
+    }
+  },
+  "jump": null
+}

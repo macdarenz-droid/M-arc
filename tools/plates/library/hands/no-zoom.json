@@ -62,6 +62,107 @@
   "lib_push_up": {
    "ruling": "D-SHIP-C3",
    "reason": "card-no-zoom"
+  },
+  "lib_barbell_bench_press": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "bar-low-palm: push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19); no key draws it; the grip copy carries c4 and c5"
+  },
+  "lib_arnold_press": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "arnold-palm-turn: a palm turn during the rep; no key draws a rotating grip and no card gives the turn angles; Right and Wrong are text checkpoints (c1)"
+  },
+  "lib_close_grip_bench_press": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "bar-low-palm, inherited from barbell_bench_press: push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19); no key draws it"
+  },
+  "lib_decline_bench_press": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "bar-low-palm, inherited from barbell_bench_press: push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19); no key draws it"
+  },
+  "lib_dumbbell_pullover": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "cupped-dumbbell: hand-cupped.mjs has no pullover variant (goblet is a GAP there); no card number for the cradle pose"
+  },
+  "lib_incline_barbell_bench_press": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "bar-low-palm, inherited from barbell_bench_press: push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19); no key draws it"
+  },
+  "lib_incline_dumbbell_press": {
+   "ruling": "D-SHIP-HANDW2",
+   "reason": "gap-ruled",
+   "note": "wrist-neutral-press, inherited from dumbbell_bench_press (gap-ruled D-SHIP-HANDW2): push heel-of-palm pair (D-LIB7-19)"
+  },
+  "lib_skull_crusher": {
+   "ruling": "D-SHIP-C3",
+   "reason": "gap-key",
+   "at": "tools/plates/library/hands/hand-ez.mjs:21",
+   "note": "hand-ez.mjs GAPS: golden-B follow-up 9, the engine cannot seat a heel push low and over the forearm (D-LIB7-19a)"
+  },
+  "lib_barbell_shrug": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "shrug-grip: the Wrong is a thumb fault and no key draws one; no hold key; bar diameter not on the card"
+  },
+  "lib_cable_shrug": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "cshrug-grip: no hold key; the cable bar diameter and the contact point are not on the card"
+  },
+  "lib_conventional_deadlift": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "dl-grip: a placement zoom (grip width, hands outside the knees), not a hand pose; Right and Wrong are text checkpoints"
+  },
+  "lib_dumbbell_romanian_deadlift": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "dbrdl-grip: a placement zoom (dumbbells on the thighs), not a hand pose; Right and Wrong are text checkpoints"
+  },
+  "lib_dumbbell_shrug": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "dshrug-grip: no hold key; the handle diameter and the contact point are not on the card"
+  },
+  "lib_landmine_row": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "landmine-grip: the Wrong is a thumb fault and no key draws one; the bar diameter where the hands sit is not on the card"
+  },
+  "lib_smith_machine_shrug": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "shrug-grip, inherited from barbell_shrug: the Wrong is a thumb fault and no key draws one"
+  },
+  "lib_sumo_deadlift": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "sumo-grip: a placement zoom (hands inside the knees), not a hand pose; Right and Wrong are text checkpoints"
+  },
+  "lib_t_bar_row": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "tbar-grip: the Wrong is a thumb fault and no key draws one; the V-handle diameter is not on this card (hand-v-handle.mjs uses close_grip_pulldown's 30 mm)"
+  },
+  "lib_smith_machine_bench_press": {
+   "ruling": "D-SHIP-HANDW4",
+   "reason": "gap-ruled",
+   "note": "bar-low-palm, inherited from barbell_bench_press: push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19); no key draws it"
+  },
+  "lib_one_arm_dumbbell_row": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom",
+   "note": "the card has no hand zoom"
+  },
+  "lib_pendlay_row": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom",
+   "note": "the card has no hand zoom"
   }
  }
 }

@@ -3,13 +3,14 @@
     {
       "id": "pilot-b",
       "title": "Pilot B",
-      "ids": ["lib_cable_fly", "lib_push_up"]
+      "ids": ["lib_cable_fly", "lib_push_up", "lib_smith_machine_bench_press"]
     }
   ],
   "optionsModule": "tools/plates/library/pages/pilot-b.closeups.mjs",
   "closeups": {
     "lib_cable_fly": { "optionsKey": "cable_fly" },
-    "lib_push_up": { "optionsKey": "push_up" }
+    "lib_push_up": { "optionsKey": "push_up" },
+    "lib_smith_machine_bench_press": { "optionsKey": "smith_machine_bench_press" }
   },
   "jump": null
 }

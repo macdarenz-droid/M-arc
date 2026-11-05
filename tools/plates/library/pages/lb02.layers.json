@@ -1,0 +1,46 @@
+{
+  "groups": [
+    {
+      "id": "lb2",
+      "title": "LB2",
+      "ids": [
+        "lib_barbell_bench_press",
+        "lib_incline_barbell_bench_press",
+        "lib_incline_dumbbell_press",
+        "lib_close_grip_bench_press",
+        "lib_decline_bench_press",
+        "lib_arnold_press",
+        "lib_skull_crusher",
+        "lib_dumbbell_pullover"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb02.closeups.mjs",
+  "closeups": {
+    "lib_barbell_bench_press": {
+      "optionsKey": "barbell_bench_press"
+    },
+    "lib_incline_barbell_bench_press": {
+      "optionsKey": "incline_barbell_bench_press"
+    },
+    "lib_incline_dumbbell_press": {
+      "optionsKey": "incline_dumbbell_press"
+    },
+    "lib_close_grip_bench_press": {
+      "optionsKey": "close_grip_bench_press"
+    },
+    "lib_decline_bench_press": {
+      "optionsKey": "decline_bench_press"
+    },
+    "lib_arnold_press": {
+      "optionsKey": "arnold_press"
+    },
+    "lib_skull_crusher": {
+      "optionsKey": "skull_crusher"
+    },
+    "lib_dumbbell_pullover": {
+      "optionsKey": "dumbbell_pullover"
+    }
+  },
+  "jump": null
+}
