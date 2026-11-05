@@ -11,9 +11,8 @@ const ZOOM = {
 };
 export const CLOSEUP_OPTIONS = {
   upright_row: ZOOM,
-  // LIB-PLATEFIX-1: back on the page with its fixed plate; its Wrong draws the plate's faulty-arm outlines and drift
-  // path (render/closeup/zoom-css.mjs o.outlines, o.path)
-  barbell_overhead_press: { ...ZOOM, css: { ...ZOOM.css, outlines: true, path: true } },
+  // barbell_overhead_press: held from LIB-PLATEFIX-1 (D-LIB13-PANEL2, #385 6653693122); its plate items go to
+  // LIB-PLATEFIX-3, and it is off this layers page (seated_leg_curl form) until that card returns it.
   dumbbell_biceps_curl: { ...ZOOM, hand: { layout: 'single', uid: 'dbc', rightNote: 'Middle of palm', panelHeight: 282 } },
   plank: { ...ZOOM, css: { ...ZOOM.css, spine: true } },   // the hip-line crop's shoulder-heel reference (spine guide)
   rope_triceps_pushdown: ZOOM,

@@ -185,7 +185,9 @@ function chipRow(pre, howto) {
 }
 
 /* ---------------------------------------------------------------- feel ------------------------------------------- */
-const PAIN_NAMES = [[/^hand-/, 'wrists and hands'], [/^elbow-/, 'elbows'], [/^knee-/, 'knees'], [/^nape$/, 'back of the neck']];
+// D-PF-PAINNAMES (#385 6653463370), add-only: the library pain rows' lower back, front shoulders, neck (crunch) and feet (box_jump).
+const PAIN_NAMES = [[/^hand-/, 'wrists and hands'], [/^elbow-/, 'elbows'], [/^knee-/, 'knees'], [/^nape$/, 'back of the neck'],
+  [/^lower-back-/, 'lower back'], [/^shoulder-front-/, 'front shoulders'], [/^neck-/, 'neck'], [/^foot-/, 'feet']];
 function feelSection(pre, howto, M) {
   const F = howto.feel, ids = x => x.muscleId;
   const rest = renderFeelMap({ primary: F.primary, secondary: F.secondary, views: ['front', 'back'], id: `${pre}-feel`, shimmer: true });
