@@ -35,7 +35,7 @@ export const SOURCES = {
     kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When knee pain needs a check.' },
 };
 // Not cited: hatfield-2017 (c13, hip demand vs other stepping tasks); c4 (starts with the lifting part) and c10 (ACE's
-// beginner version), restated by no field here.
+// beginner version) and c14 (reps, repeat or alternate legs: load progression), restated by no field here.
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });
 const CAT = 'cat-stepup', ACE = 'ace-stepup';
@@ -46,7 +46,6 @@ const CL = {
   c5: C(['CONSENSUS'], [ACE], 'c5 (card grip.type)'),
   c6: C(['CONSENSUS'], [ACE], 'c6'),
   c9: C(['CONSENSUS'], [ACE], 'c9'),
-  c14: C(['CONSENSUS'], [CAT], 'c14'),
   c16: C(['CONSENSUS'], ['nhs-knee'], 'c16'),
 };
 
@@ -130,7 +129,7 @@ const feel = {
   feelLine: "You should feel this in the top leg's thigh and glute.",
   rows: [
     { key: 'bottom-leg', where: 'Mostly the bottom leg', at: { muscles: ['quads', 'calves'] },
-      means: 'Fault: the bottom foot pushing you up.',
+      means: 'The bottom foot is pushing you up.',   // W5 K4 (c1)
       fix: 'Let the top leg do the work.',
       zoom: 'trunk', claim: CL.c1 },
     { key: 'knee', where: 'Very painful, locking or giving-way knee', at: { parts: ['knee-left', 'knee-right'] },
@@ -157,10 +156,11 @@ export default {
   setup: [
     { kind: 'position', text: 'Dumbbells at the sides, palms facing in, feet hip width apart.', claim: CL.c5 },
     { kind: 'position', text: 'Whole foot firmly on the box, knee over the second toe.', zoom: 'lead-foot', claim: CL.c6 },
+    // c3 (card posture point) moved here from the feel lines (not shown on the page, D-TEXT-GOLDEN)
+    { kind: 'position', text: 'Foot closer for more quads, farther for glutes and hamstrings.', claim: CL.c3 },
     { kind: 'position', text: 'Stand up with the top leg, little help from the bottom foot.', zoom: 'trunk', claim: CL.c1 },
-    { kind: 'position', text: 'Step the trailing foot down first, controlling the way down.',
+    { kind: 'finish', text: 'Step the trailing foot down first, controlling the way down.',
       claim: C(['CONSENSUS'], [ACE, CAT], 'c8, c2') },
-    { kind: 'finish', text: 'Repeat on the same leg or alternate.', claim: CL.c14 },
   ],
   posture: [
     { key: 'foot', label: 'Whole foot down', detail: 'Whole lead foot on the box.',

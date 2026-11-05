@@ -53,13 +53,14 @@ const CL = {
   c9: C(['CONSENSUS'], [ACE], 'c9'),
   c12: C(['CONSENSUS'], [SL], 'c12'),
   elbows: C(['CONSENSUS'], [SL], 'c5, c4'),
+  sides: C(['CONSENSUS'], [SL, ACE], 'c4, c3'),
   still: C(['CONSENSUS'], [ACE, SL], 'c9, c3'),
   lower: C(['CONSENSUS'], [SL, ACE], 'c10, c9'),
   finish: C(['CONSENSUS'], [SL, ACE], 'c10, c9, c6'),
   wrist: C(['CONSENSUS', 'MECH'], [SL, 'nhs-wrist-pain'], 'c8, c16'),
-  // card grip.thumb "Wrapped round the bar.", carried by inherit grip.thumb (the curl archetype wraps the thumb; the
-  // parent dumbbell_biceps_curl's c1). The card gives the reason, no source of its own (MECH).
-  thumb: C(['MECH'], [], 'card grip.thumb and inherit grip.thumb: the curl archetype wraps the thumb (parent dumbbell_biceps_curl c1).'),
+  // card grip.thumb "Wrapped round the bar.", carried by inherit grip.thumb: the parent dumbbell_biceps_curl's c1
+  // ("thumbs wrapped round the handles", sources ace-seated-curl, sl-dbcurl); sl-dbcurl is also this card's source.
+  thumb: C(['CONSENSUS'], ['sl-dbcurl'], 'card grip.thumb and inherit grip.thumb: parent dumbbell_biceps_curl c1 (sources ace-seated-curl, sl-dbcurl).'),
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
@@ -163,7 +164,7 @@ const MISTAKES = [
     fix: 'Take weight off and lift with control.' },
 ];
 const RISKS = [
-  { key: 'wrist', text: 'Bent wrists under load can cause discomfort and even injury.', claim: CL.c8 },
+  { key: 'wrist', text: 'Bent wrists under load can cause wrist discomfort.', claim: CL.c8 },
 ];
 
 export default {
@@ -176,14 +177,14 @@ export default {
     orientation: 'supinated',        // c1: underhand, palms up; the key's orientation 'under'
     handle: V.handle?.profile ?? HANDLE.profile,   // the key's bar variant: 'bar-28'
     loadAxis: V.loadAxis,            // 'across'
-    width: { text: 'Hands about shoulder-width, in line with your elbows and shoulders.', claim: CL.c1 },
+    width: { text: 'In line with your elbows and shoulders.', claim: CL.c1 },   // the gripLine carries the width
     thumb: { mode: RIGHT_POSE.thumb, claim: CL.thumb },   // 'wrapped' (card grip.thumb; === the parent's, THUMB)
     contact: CONTACT,                // CONVENTION: 'mid-palm' from the key's ga:curl-mid (source hand-key-curl); never printed
     wrist: { ext: V.wristRange, limitText: 'Keep the hands in line with the forearms.',
       claim: C(['CONSENSUS', 'CONVENTION'], [SL, 'hand-key-curl'], 'c8. The ext range is the curl key\'s wristRange (ga:curl-mid), a convention, not a card number.') },
     pose: RIGHT_POSE,                // its thumb 'wrapped' === the parent's handling.pose.thumb (THUMB)
     faults: FAULTS,
-    gripLine: 'Underhand grip, hands about shoulder-width, thumbs wrapped. Keep your wrists straight.',   // c1, grip.thumb, c8
+    gripLine: 'Underhand grip, hands about shoulder-width, thumbs wrapped.',   // c1, grip.thumb; the wrist line is limitText (c8)
     cue: 'Wrists straight, thumbs wrapped.',   // c8, grip.thumb
   },
   contacts: ['standing-feet'],
@@ -195,8 +196,9 @@ export default {
     { kind: 'finish', text: 'Lower the bar slowly, keeping tension at the bottom. No half reps.', claim: CL.finish },   // D-TEXT-GOLDEN: posture lower (c10, c9), range (c6)
   ],
   posture: [
+    // K2 (W5 panel): the plate's Elbows cue under this key says "Never let them travel back" (c4), so c4 and c3.
     { key: 'elbows', label: 'Elbows at sides', detail: 'Elbows stay close to your body.',
-      anchor: { landmark: 'elbow.r', pose: 'end' }, zoom: 'curl-elbow', claim: CL.c3 },
+      anchor: { landmark: 'elbow.r', pose: 'end' }, zoom: 'curl-elbow', claim: CL.sides },
     { key: 'upper-arm', label: 'Never back', detail: 'Upper arms never travel back.',
       anchor: { landmark: 'shoulder.r', pose: 'end' }, zoom: 'curl-elbow', claim: CL.c4 },
     { key: 'still', label: 'Still body', detail: 'Body and chest stay still.', anchor: { landmark: 'backUpper', pose: 'end' }, claim: CL.c9 },

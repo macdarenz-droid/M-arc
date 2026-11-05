@@ -80,7 +80,7 @@ const zooms = [
     },
     alt: {
       right: 'Side view, bottom of the lunge. The hips are low over the back knee, the front shin leans slightly forward.',
-      wrong: 'Side view, bottom of the lunge. The hips and front knee have driven forward, the knee past the toes.',
+      wrong: 'Side view, bottom of the lunge. The hips and front knee have driven forward, the shin tipped far forward.',   // W5 K1 (c3)
     },
   },
   {

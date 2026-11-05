@@ -14,7 +14,7 @@
 // D-SHIP-W5-HAMMERWRONG (Q-W5-8): the card zoom's Wrong is a twist toward palms up (c5), a forearm rotation the radial
 // view cannot draw; the key draws the wrist curled and bent back. The zoom's Wrong caption names the drawn fault, from
 // the card's own wrist-straight claim (c4), and never says "twist"; the twist claim (c5) stays visible in the mistake
-// row 'Wrists twisting out of neutral' and in the cue line.
+// row 'Wrists twisting out of neutral', the Grip wrist line and the cue line.
 // No variant line (equipment 'Dumbbells').
 import plateSpec from '../specs/hammer_curl.mjs';
 import { IDS, VARIANTS } from '../hands/hand-curl.mjs';
@@ -172,11 +172,11 @@ export default {
     width: { text: 'Let the dumbbells hang slightly out from your sides if that keeps your wrist straight.', claim: CL.c10 },
     thumb: { mode: RIGHT_POSE.thumb, claim: CL.c1 },   // 'wrapped' (c1: thumbs round the handles; the key's right pose)
     contact: 'mid-palm',             // CONVENTION, data only: the key's contact 'mid' (ga:curl-mid, source hand-key-curl); the card gives none
-    wrist: { ext: V.wristRange, limitText: 'Keep the wrist straight, palms facing your body.',
-      claim: C(['CONSENSUS', 'CONVENTION'], [ACE, 'hand-key-curl'], 'c4. The ext range is the curl key\'s wristRange (ga:curl-mid), a convention, not a card number.') },
+    wrist: { ext: V.wristRange, limitText: 'Keep the wrist straight, no twisting.',   // audit6 issue 6: grip.wrist (c4, c5), not a repeat of gripLine
+      claim: C(['CONSENSUS', 'CONVENTION'], [ACE, 'sl-hammer', 'hand-key-curl'], 'c4, c5. The ext range is the curl key\'s wristRange (ga:curl-mid), a convention, not a card number.') },
     pose: RIGHT_POSE,
     faults: FAULTS,
-    gripLine: 'Closed neutral grip, palms facing your body, thumbs wrapped round the handles.',   // c1; the wrist line is wrist.limitText (c4)
+    gripLine: 'Closed neutral grip, palms facing your body, thumbs wrapped round the handles.',   // c1; the wrist line is wrist.limitText (c4, c5)
     cue: 'Palms facing you, wrists straight.',   // c4, c5
   },
   contacts: ['standing-feet'],
@@ -185,6 +185,8 @@ export default {
     { kind: 'position', text: 'Take a split stance, brace, shoulders down and back.', claim: CL.c2 },
     { kind: 'grip', text: 'Hold the dumbbells with a closed neutral grip beside your thighs.', zoom: 'hand', claim: CL.c1 },
     { kind: 'position', text: 'Curl to the front of the shoulders, lower to straight arms.', claim: CL.c3 },
+    // D-TEXT-GOLDEN (copy lines are not printed): posture torso and shrug (c4) moved here from the mistake line
+    { kind: 'brace', text: 'Torso upright, no arching the lower back, no shrugging.', claim: CL.c4 },
   ],
   posture: [
     { key: 'grip', label: 'Neutral grip', detail: 'Palms keep facing your body, no wrist twist.',

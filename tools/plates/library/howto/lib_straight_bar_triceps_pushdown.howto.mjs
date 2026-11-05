@@ -139,11 +139,11 @@ const feel = {
       fix: 'Pin the elbows to your sides.',
       zoom: 'pushdown-elbow', claim: CL.c6 },
     { key: 'lower-back', where: 'Lower back pain', at: { muscles: ['lower_back'] },
-      means: 'You lean too far forward or arch your back.',   // c11 (the row's own claim)
+      means: '',   // D-FEEL-NOMEANS: the card's row means is a question with no cause (audit6 issue 1)
       fix: "Stop and don't train through the pain. Stand taller, tilt only from the hips.",
       redFlag: 'back', claim: CL.backRow },
     { key: 'elbows', where: 'Elbow discomfort or pain', at: { parts: ['elbow-left', 'elbow-right'] },
-      means: 'Heavy, low-rep sets feel uncomfortable in the elbows for many.',   // c17 (the row's own claim)
+      means: '',   // D-FEEL-NOMEANS: the card's row means is a question with no cause (audit6 issue 1)
       fix: "Stop and don't train through the pain. Use lighter weights for more reps.",
       redFlag: 'elbow', claim: CL.elbowRow },
   ],
@@ -176,7 +176,7 @@ export default {
     orientation: 'pronated',   // c2: overhand, palms down
     handle: 'bar-28',          // the spec's straight bar (the parent's bar, templates/PUSHDOWN.mjs)
     overBody: false,
-    width: { text: 'Hands about shoulder-width.', claim: CL.c2 },
+    // No width text: the Grip line says 'hands about shoulder-width' (c2; audit6 issue 6).
     thumb: { mode: 'wrapped', claim: CL.c2 },   // `===` the parent's mode (INHERIT_MAP grip.thumb)
     contact: CONTACT,          // 'heel', DERIVED from pairs.mjs CONVENTIONS ga:push-heel (CONVENTION, above); never printed
     // `===` the parent's handling.wrist (INHERIT_MAP grip.wrist): c9 gives no degrees ("neutral, in line with the
@@ -186,8 +186,9 @@ export default {
     // The card's hand zoom wrong is null (LR-25: no read source names wrists bent back over the bar), so this row has
     // no hand fault; the parent's 'bent-back' alt is not carried over.
     faults: [],
-    // card zooms[0] right (c9, c2; Q-W5-3): overhand full grip, thumbs wrapped, hands in line with the forearms.
-    gripLine: 'Overhand full grip, hands about shoulder-width, thumbs wrapped. Hands in line with the forearms.',
+    // card zooms[0] right (c9, c2; Q-W5-3): overhand full grip, thumbs wrapped (here); hands in line with the forearms
+    // (wrist.limitText, the grey line under it, so the lead does not repeat it: audit6 issue 6).
+    gripLine: 'Overhand full grip, hands about shoulder-width, thumbs wrapped.',
     cue: 'Wrist in line with the forearm.',   // hint F (grip.wrist, c9)
   },
   contacts: ['standing-feet'],

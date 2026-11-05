@@ -116,7 +116,8 @@ const zooms = [
       wrong: { text: 'Shoulder shrugs', anchor: 'shoulderTop.r' },
     },
     caption: {
-      right: 'Dumbbell arcs toward the opposite shoulder, shoulders level.',   // card zoom right (c2, c5)
+      // D-TEXT-GOLDEN (copy lines are not printed): posture elbow in place (c2) moved here from the cue line
+      right: 'Elbow in place, dumbbell arcs to the opposite shoulder.',   // card zoom right reworded (c2); shoulders level: Wrong, mistakes[2], setup[3]
       wrong: 'Working shoulder shrugged up toward the ear.',                  // card zoom wrong (c5)
     },
     alt: {
@@ -184,7 +185,8 @@ export default {
     { kind: 'load', text: 'Pick a weight you can lift without swinging.', claim: CL.c4 },
     { kind: 'position', text: 'Stand with feet about shoulder-width apart.', claim: CL.c1 },
     { kind: 'grip', text: 'Hold the dumbbells in front of you, palms facing your body.', zoom: 'hand', claim: CL.c1 },
-    { kind: 'brace', text: 'Brace your trunk, shoulders down and back.', claim: CL.c6 },
+    // D-TEXT-GOLDEN (copy lines are not printed): posture torso (c6) moved here from the mistake line
+    { kind: 'brace', text: 'Brace your trunk upright, shoulders down, lower back not arched.', claim: CL.c6 },
     // D-TEXT-GOLDEN: posture arc, same path and switch (c2); elbow in place is the cue line
     { kind: 'position', text: 'Curl toward the opposite shoulder. Lower the same path, then switch.',
       zoom: 'cross-arc', claim: CL.c2 },

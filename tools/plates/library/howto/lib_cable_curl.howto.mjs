@@ -181,14 +181,13 @@ export default {
     orientation: 'supinated',        // c1: underhand, palms up; the key's orientation 'under'
     handle: V.handle?.profile ?? HANDLE.profile,   // the key's bar variant: 'bar-28' (the spec's 28 mm straight bar)
     loadAxis: V.loadAxis,            // 'across'
-    width: { text: 'Hands about shoulder-width apart.', claim: CL.c1 },
     thumb: { mode: RIGHT_POSE.thumb, claim: CL.thumb },   // CONVENTION: the key's right-pose thumb ('wrapped'); never printed
     contact: CONTACT,                // CONVENTION: 'mid-palm' from the key's ga:curl-mid (source hand-key-curl); never printed
     wrist: { ext: V.wristRange, limitText: 'Keep the hand in line with the forearm.',
       claim: C(['MECH', 'CONVENTION'], ['ace-seated-curl', 'sl-dbcurl', 'hand-key-curl'], 'c9. The ext range is the curl key\'s wristRange (ga:curl-mid), a convention, not a card number.') },
     pose: RIGHT_POSE,
     faults: FAULTS,
-    gripLine: 'Underhand grip, palms up, hands about shoulder-width. Keep your wrists straight.',   // c1, c9
+    gripLine: 'Underhand grip, palms up, hands about shoulder-width.',   // c1 (the width lives here); the wrist line is limitText (c9)
     cue: 'Wrist in line with the forearm.',   // c9
   },
   contacts: ['standing-feet'],

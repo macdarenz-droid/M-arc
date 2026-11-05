@@ -52,6 +52,7 @@ const CL = {
   j13: C(['CONSENSUS', 'WEAK'], [ACE], 'j13'),
   j14: C(['CONSENSUS'], ['nhs-knee'], 'j14'),
   j16: C(['MECH', 'WEAK'], ['hewett-2005'], 'j16'),
+  j15: C(['CONSENSUS', 'MECH'], ['nasm-boxjump'], 'j15 (card tierA.wayOut)'),
   j17: C(['MECH'], [ACE], 'j17'),
   wayOut: C(['CONSENSUS', 'MECH'], ['nasm-boxjump', ACE], 'card tierA.wayOut: j15, j7 (copy.setupLine)'),
 };
@@ -98,7 +99,7 @@ const zooms = [
       wrong: { text: 'Locked knees', anchor: 'knee.r' },
     },
     caption: {
-      right: 'Mid-foot landing, hips back and down, knees bent.',
+      right: 'Mid-foot landing, rolling to the heels, knees bent.',
       wrong: 'Straight, locked knees on landing.',
     },
     alt: {
@@ -139,8 +140,8 @@ const feel = {
   feelLine: 'You should feel this in your thighs and buttocks.',
   rows: [
     { key: 'knees', where: 'Knees', at: { parts: ['knee-left', 'knee-right'] },
-      means: 'Fault: locked knees or knees shooting far forward on landing.',
-      fix: 'Land softly, hips back. Make the jumps smaller.',
+      means: 'Your knees lock or shoot far forward when you land.',   // W5 K2/K4 (j5, j6)
+      fix: 'Land softly, hips back. Go back to small jumps until landings are quiet.',   // j4, j7 (mistake 'Big jumps')
       zoom: 'landing', claim: C(['CONSENSUS'], [ACE], 'j5, j6, j4, j7') },
     { key: 'knee', where: 'Very painful, locking or giving-way knee', at: { parts: ['knee-left', 'knee-right'] },
       means: 'Not a training feeling.',
@@ -166,11 +167,15 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     { kind: 'safety', text: 'Learn to squat and land first. Start with small jumps.', claim: CL.j7 },
-    { kind: 'brace', text: 'Feet hip width, hands loosely at the chest, brace.',
-      claim: C(['CONSENSUS'], [ACE, 'cat-squatjump'], 'j1, j10') },
-    { kind: 'position', text: 'Hips back, then down, until the heels are about to lift.', claim: CL.j2 },
-    { kind: 'position', text: 'Brief pause, then jump: ankles, knees and hips extend together.', zoom: 'take-off', claim: CL.j3 },
-    { kind: 'finish', text: 'Land quietly on the mid-foot, rolling to the heels, hips back.', zoom: 'landing', claim: CL.j4 },
+    // W5 panel safety (b) / K3: the card's stop rule (tierA.wayOut, j15) in setup; copy.setupLine is not shown on the page
+    { kind: 'safety', text: 'Never jump to failure: end the set before fatigue spoils your landings.', claim: CL.j15 },
+    { kind: 'position', text: 'Feet hip width, hands at the chest, brace. Hips back, then down.',
+      claim: C(['CONSENSUS'], [ACE, 'cat-squatjump'], 'j1, j10, j2') },
+    { kind: 'position', text: 'Heels about to lift: brief pause, then extend ankles, knees, hips.', zoom: 'take-off',
+      claim: C(['CONSENSUS'], [ACE], 'j2, j3') },   // j2 depth (heels about to lift); 'together' is the take-off Right caption
+    // j8 moved here from copy.mistakeLine (not shown on the page); mid-foot rolling to the heels is the landing caption
+    { kind: 'finish', text: 'Land quietly, hips back and down, trunk slightly forward, head in line.', zoom: 'landing',
+      claim: C(['CONSENSUS'], [ACE], 'j4, j8') },
   ],
   posture: [
     { key: 'back', label: 'Back flat', detail: 'Back flat on the way down.',

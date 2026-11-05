@@ -51,13 +51,20 @@ const CL = {
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
-// From the plate spec's own poses. The card zoom rear-knee Wrong (c3: "Rear knee resting on the floor") is the plate's
-// drawn fault, the spec's Mistake pose (D-SPLIT-BSSHOVER: the hips sink until the rear kneecap rests on the floor). No
-// drawing value is added here.
+// The card zoom rear-knee Wrong (c3: "Rear knee resting on the floor") is the plate's drawn fault, the spec's Mistake
+// pose (D-SPLIT-BSSHOVER: the hips sink until the rear kneecap rests on the floor, hips 3 cm lower than the end). Its
+// Right is the end pose with one change (fix round 1, panel L5: the Right and Wrong knees differed by about 10 px): the
+// hips raised LIFT m, both feet held, so the rear kneecap sits clearly above the floor (measured: 6.9 cm gap against
+// the end pose's 3.0 cm; the Wrong's kneecap is on the floor), "just above" the floor (c3, card plate.end).
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent lib_reverse_lunge's SHORT, D-LIB7-2): LIFT 0.03 m is a
+// Right-pose size no card gives; no number from it appears in user copy; the layers panel judges it.
+const LIFT = 0.03;
 const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
+const KNEE_GAP = { root: { ...END.root, at: [END.root.at[0], END.root.at[1] + LIFT, END.root.at[2]] } };
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
+  'knee-gap': { pose: { ...END, ...KNEE_GAP } },
   'knee-rests': { pose: { ...END, ...MIS } },
 };
 
@@ -67,11 +74,12 @@ export const stills = {
 const zooms = [
   {
     key: 'rear-knee', chip: 'Rear knee', heading: 'Rear knee', kind: 'posture',
-    crop: { center: { at: 'knee.l', pose: 'right', off: [0, -10] }, sizePx: 150 },
-    right: 'end',
+    // crop centre below the Right knee, so both knees and the floor line sit in the window
+    crop: { center: { at: 'knee.l', pose: 'right', off: [0, 10] }, sizePx: 130 },
+    right: { base: 'end', pose: KNEE_GAP },
     wrong: { base: 'end', pose: MIS, solid: true },
     callout: {
-      right: { text: 'Just above floor', anchor: 'knee.l' },
+      right: { text: 'Clear of floor', anchor: 'knee.l' },
       wrong: { text: 'Knee rests', anchor: { at: 'knee.l', pose: 'mistake' } },
     },
     caption: {
@@ -79,7 +87,7 @@ const zooms = [
       wrong: 'Rear knee resting on the floor.',
     },
     alt: {
-      right: 'Side view, bottom of the split squat. The rear knee is just above the floor, the rear foot on the bench.',
+      right: 'Side view, bottom of the split squat. The rear knee is clear of the floor, the rear foot on the bench.',
       wrong: 'Side view, bottom of the split squat. The hips have sunk and the rear knee rests on the floor.',
     },
   },
@@ -122,10 +130,13 @@ export default {
   handling: { archetype: 'none', why: 'D-SHIP-GRIP: the card gives no thumb, contact or wrist claim.' },
   contacts: ['standing-feet'],
   setup: [
-    { kind: 'adjust', text: 'Set a bench or box about knee height behind you.', claim: CL.c2 },
-    // D-TEXT-GOLDEN: posture point 'Top of the rear foot on the bench' and the stance-length text checkpoint (c2)
-    { kind: 'position', text: 'Rear foot laces-down on it, front foot about three foot-lengths ahead.', claim: CL.c2 },
-    { kind: 'position', text: 'Hold a dumbbell in each hand at your sides.', claim: C(['CONSENSUS'], [CAT], 'c9 (card grip.type)') },
+    // D-TEXT-GOLDEN: posture point 'Top of the rear foot on the bench' (c2)
+    { kind: 'adjust', text: 'Rest the top of your rear foot on a knee-high bench.', claim: CL.c2 },
+    // D-TEXT-GOLDEN: the stance-length text checkpoint (c2) and posture point c6 (front-foot distance)
+    { kind: 'position', text: 'Front foot about three foot-lengths ahead. Farther works hips, closer quads.',
+      claim: C(['CONSENSUS'], [CAT, ACE], 'c2, c6') },
+    // D-TEXT-GOLDEN: posture point c4 and handlingMistake 'Knee moving in or out' fix (c4)
+    { kind: 'position', text: 'Dumbbells at your sides, front knee over the front foot.', claim: C(['CONSENSUS'], [CAT], 'c9 (card grip.type), c4') },
     // D-TEXT-GOLDEN: handlingMistake 'Rear knee resting on floor' (c3, c8) fix placed here
     { kind: 'position', text: 'Lower under control until the rear knee lightly touches the floor.',
       zoom: 'rear-knee', claim: CL.c3 },
@@ -155,11 +166,8 @@ export default {
   zooms,
   chips: ['rear-knee', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
-    // D-TEXT-GOLDEN: posture point c6 (front-foot distance) placed in the setup line
     setupLine: 'Rear foot on a knee-high bench. Front foot farther forward works the hips more, closer the quads.',
-    // D-TEXT-GOLDEN: handlingMistakes 'Rear knee resting on floor' and 'Crashing into the bottom' (c3, c8)
     mistakeLine: 'Never drop onto the rear knee. Use a weight you can lower smoothly.',
-    // D-TEXT-GOLDEN: handlingMistake 'Knee moving in or out' fix (c4)
     cueLine: 'Front knee over the front foot.',
     // D-LIB5-VARIANT: c9 (dumbbells at the sides, or a barbell); the card's plate.variantLine: c2, c3, c5 hold for both.
     variantLine: 'Same stance and depth with a barbell instead of dumbbells.',

@@ -1,7 +1,7 @@
 // LIB-SHIP W5: the How-to content of lib_concentration_curl (golden B's HowToContent shape, as
 // tools/plates/layers/exercises/machine_chest_press.howto.mjs). Every shown string restates a claim of the verified card
-// docs/research/howto/cards/concentration_curl.json (cN = card claim id), or, for the thumb only, of the shared curl
-// card docs/research/howto/shared/curl.json (shared cN), whose appliesTo names concentration_curl.
+// docs/research/howto/cards/concentration_curl.json (cN = card claim id). The thumb value (data, not shown) cites the
+// shared curl card docs/research/howto/shared/curl.json (shared cN), whose appliesTo names concentration_curl.
 // No hand zoom (D-SHIP-C3, card-no-zoom on tools/plates/library/hands/no-zoom.json): the card has no hand zoom, and the
 // curl key lists the id as a GAP (hands/hand-curl.mjs GAPS: no claim names the grip orientation), so the sheet has no
 // handling.pose and no orientation.
@@ -9,7 +9,7 @@
 //   - contact: DERIVED at import from the curl convention, pairs.mjs CONVENTIONS['ga:curl-mid'], cited as CONVENTION;
 //     data only (D-SHIP-CONVCOPY: never printed in any copy).
 //   - thumb: shared/curl.json thumbRule "Closed grip, thumbs wrapped round the handle" (shared c1, c2), cited to that
-//     claim; printed.
+//     claim; data only since fix round 1 (w5-content K1: the card's own claims name no thumb, so nothing prints it).
 //   - wrist: the card's own grip.wrist "Neutral through the lift" (c11) is the printed line; it gives no degrees, so the
 //     ext range is the same convention's (as lib_triceps_pushdown takes ga:push-heel's), data only.
 // Red flags: the card has none (redFlags [], risks []), so riskFlags is empty.
@@ -125,7 +125,8 @@ const zooms = [
       wrong: { text: 'Arm lifted', anchor: 'elbow.r' },
     },
     caption: {
-      right: 'Curl ends while the triceps still touches the thigh.',   // card zoom right (c7)
+      // D-TEXT-GOLDEN (copy lines are not printed): posture steady (c6) moved here from the cue line
+      right: 'Upper arm steady. Stop while the triceps touches the thigh.',   // card zoom right reworded (c7) + c6
       wrong: 'Upper arm lifted off the thigh to reach the shoulder.',  // card zoom wrong (c7)
     },
     alt: {
@@ -169,7 +170,7 @@ export default {
   plate: plateSpec,
   handling: {
     archetype: 'curl',
-    why: 'D-SHIP-C3 no-zoom list, card-no-zoom: the card has no hand zoom; the grip copy carries c1, c11 and shared/curl.json c1, c2.',
+    why: 'D-SHIP-C3 no-zoom list, card-no-zoom: the card has no hand zoom; the grip copy carries c1 and c11.',
     handle: 'dumbbell',          // c1: one dumbbell in the working hand
     thumb: { mode: 'wrapped', claim: CL.thumb },   // shared/curl.json thumbRule (shared c1, c2)
     contact: CONTACT,            // 'mid-palm', DERIVED from pairs.mjs CONVENTIONS ga:curl-mid (CONVENTION, data only)
@@ -178,7 +179,9 @@ export default {
     wrist: { ext: EXT, limitText: 'Keep the wrist neutral through the lift.',
       claim: C(['CONSENSUS', 'CONVENTION'], [BB, SL, 'ga-curl-mid'], 'c11 (card grip.wrist). The ext range is pairs.mjs CONVENTIONS ga:curl-mid, a convention, not a card number.') },
     faults: [],                  // no hand zoom and no hand fault on the card
-    gripLine: 'One dumbbell in the working hand. Closed grip, thumb wrapped round the handle.',   // c1; shared c1, c2
+    // Fix round 1 (w5-content K1): the card itself has no thumb claim, so the grip line says only c1; the thumb stays
+    // data (shared/curl.json thumbRule, cited on thumb.claim), never printed.
+    gripLine: 'One dumbbell in the working hand.',   // c1 (card grip.type)
     cue: 'Triceps on thigh, wrist neutral.',   // c3, c11
   },
   contacts: ['brace-pad'],

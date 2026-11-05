@@ -9,12 +9,12 @@
 // in GAPS (tools/plates/library/hands/hand-cupped.mjs:30, no hand fault sourced for the cupped grip). The card's hand
 // zoom `db-oh-hands` right line ("Both hands wrapped round the handle, dumbbell hanging vertically", c1, c4) lives in
 // handling.gripLine and setup step 3.
-// Zooms: none. The card's posture zoom `db-oh-elbows` (c5, c6) is a text checkpoint (D-SHIP-TEXTZOOM, seated_leg_curl
-// precedent): its Wrong ("Upper arms dropped back, dumbbell touching the head") cannot be drawn on this plate. In the
-// side view the forearm at the 90 degree bottom sits about 24 cm behind the back of the skull (spec start pose), and
-// swinging the upper arms back moves the dumbbell further from the head, not onto it: no pose of this rig puts the
-// dumbbell against the head with the upper arms dropped back. Posture checkpoint `depth`; the Right is the plate's own
-// 'Arms vertical' and 'Stop at 90°' callouts, the Wrong mistake 2.
+// Zooms: the card's posture zoom `db-oh-elbows` (c5, c6), panel item L7. Its Right is drawn as the card says (spec
+// start: upper arms vertical, 90 degree bend, dumbbell clear of the head). Its Wrong is drawn for the first half only,
+// "Upper arms dropped back": the second half ("dumbbell touching the head") cannot be drawn on this plate. In the side
+// view the forearm at the 90 degree bottom sits about 24 cm behind the back of the skull, and swinging the upper arms
+// back moves the dumbbell further from the head; no pose of this rig puts the dumbbell against the head. That half
+// stays in text (posture `depth`, the plate's 'Stop at 90°' cue "clear of the back of your head"). QUESTION 2 (notes).
 // Way out: a tier-A way-out GAP (card gaps[0]: no read source describes getting the dumbbell overhead and back down;
 // Q-W5-4). No way-out line is written; the safety checker rules it. The spotter line (setup 5) is the card's posture
 // point c13, not a way out of the gap.
@@ -72,8 +72,9 @@ const CL = {
   hands: C(['CONSENSUS'], [ACE], 'card c1, c4 (grip.handContact; card zoom db-oh-hands right)'),
   stance: C(['CONSENSUS'], [MO, ACE], 'card c11, c1'),
   start: C(['CONSENSUS'], [ACE], 'card c3, c4'),
-  vertical: C(['CONSENSUS', 'WEAK'], [ACE, MO], 'card c6, c12'),
-  depth: C(['CONSENSUS'], [ACE], 'card c5, c6 (posture c5; card zoom db-oh-elbows as a text checkpoint)'),
+  // K2 (w5-content): 'still' and 'only the elbows bend' are c7; c12 stays for 'no flaring' in the detail.
+  vertical: C(['CONSENSUS', 'WEAK'], [ACE, MO], 'card c6, c7, c12'),
+  depth: C(['CONSENSUS'], [ACE], 'card c5, c6 (posture c5; the undrawn half of card zoom db-oh-elbows)'),
   brace: C(['CONSENSUS'], [HL, ACE], 'card c9, c3'),
   arch: C(['CONSENSUS'], [HL, ACE], 'card c9, c3'),
   flare: C(['CONSENSUS', 'WEAK'], [ACE, MO], 'card c6, c5, c12'),
@@ -96,10 +97,47 @@ const EXT = PUSH_HEEL.match(/extension (\d+) to (\d+)/)?.slice(1).map(Number);
 if (!CONTACT || !EXT) throw new Error(`lib_dumbbell_overhead_triceps_extension: pairs.mjs CONVENTIONS ga:push-heel has no mapped contact or range: ${PUSH_HEEL}`);
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
+// 'arms-back' (card zoom db-oh-elbows Wrong, first half: "Upper arms dropped back"; c5: stop "when the upper arms
+// start to move back", c6): the 90 degree bottom (spec start) with the upper arms swung back DROP past the spec's
+// vertical SH_FLEX, the elbow bend kept, so only the upper arms move. The second half ("dumbbell touching the head") is
+// not drawn: no pose of this rig puts the dumbbell on the head (header); it stays in text (posture `depth`, the plate's
+// 'Stop at 90°' cue). Panel item L7, QUESTION 2 in the notes.
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and lib_plank's OFF_ELBOW 25 deg, which is
+// rope_triceps_pushdown's spec MIS_SHOULDER, an upper arm swung off its line): DROP 25 deg is a Wrong-pose size no card
+// gives; no number from it appears in user copy; the layers panel judges it.
+const START = plateSpec.poses.start, DROP = 25;
+const ARMS_BACK = { shoulder: { ...START.shoulder, flex: START.shoulder.flex + DROP } };
 export const stills = {
-  start: { pose: plateSpec.poses.start },
+  start: { pose: START },
   end: { pose: plateSpec.poses.end },
+  'arms-back': { pose: { ...START, ...ARMS_BACK } },
 };
+
+/* ------------------------------------------------------------------------------------------------ zooms --------- */
+// The card's posture zoom db-oh-elbows (c5, c6), on this row's own plate (spec start = the 90 degree bottom). Its hand
+// zoom db-oh-hands is not built (gap-key, D-SHIP-C3; QUESTION 1 in the notes).
+const zooms = [
+  {
+    key: 'db-oh-elbows', chip: 'Upper arms', heading: 'Upper arm position', kind: 'posture',
+    // zoom shell (render/closeup/crop.mjs): the Wrong is the arms-back still drawn alone (solid), as
+    // `stills['arms-back']`; crop centre between the right pose's elbow and the dumbbell behind the head.
+    crop: { center: { at: 'elbow.r', pose: 'right', off: [-30, 15] }, sizePx: 170 },
+    right: 'start',
+    wrong: { base: 'start', pose: ARMS_BACK, solid: true },
+    callout: {
+      right: { text: 'Arms vertical', anchor: 'elbow.r' },
+      wrong: { text: 'Arms dropped back', anchor: { at: 'elbow.r', pose: 'mistake' } },
+    },
+    caption: {
+      right: 'Upper arms vertical, dumbbell clear of the head at 90°.',   // card zooms[1] right (c5, c6)
+      wrong: 'Upper arms dropped back.',                                  // card zooms[1] wrong, first half (c5, c6)
+    },
+    alt: {
+      right: 'Side view, bottom of the lowering. Upper arms vertical, elbows bent to about 90 degrees, dumbbell clear of the head.',   // c5, c6
+      wrong: 'Side view, bottom of the lowering. The upper arms have swung back behind the head instead of staying vertical.',                // c5, c6
+    },
+  },
+];
 
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const feel = {
@@ -118,7 +156,7 @@ const feel = {
       fix: 'Use a lighter dumbbell.',
       redFlag: 'shoulder', claim: CL.shoulderRow },
     { key: 'elbow', where: 'Back-of-elbow pain', at: { parts: ['elbow-left', 'elbow-right'] },
-      means: 'You lower the dumbbell forcefully.',   // c16 (not specific to this exercise)
+      means: '',   // D-FEEL-NOMEANS (audit6 issue 1): c16 is about ruptures in general and c19 lists elbow pain only; no claim ties this pain to a cause
       fix: "Stop the set. Don't train through the pain.",   // c19 (card fixNote)
       redFlag: 'elbow', claim: CL.elbowRow },
   ],
@@ -129,8 +167,7 @@ const feel = {
 const MISTAKES = [
   { key: 'arch', title: 'Arching the back', claim: CL.arch,
     fix: 'Brace. If the back still arches, use a lighter dumbbell.' },
-  // card zoom db-oh-elbows Wrong (upper arms dropped back) lands here as 'upper arms move' (c5, c6)
-  { key: 'flare', title: 'Elbows flare, upper arms move', claim: CL.flare,
+  { key: 'flare', title: 'Elbows flare, upper arms move', zoom: 'db-oh-elbows', claim: CL.flare,
     fix: 'Keep upper arms vertical, elbows shoulder-width. Stop lowering if they move.' },
   // D-TEXT-GOLDEN: posture still (c7: head, torso, wrists and feet still) placed here with the card fix (c10)
   { key: 'swing', title: 'Swinging the weight with momentum', claim: CL.swing,
@@ -154,7 +191,8 @@ export default {
     handle: 'dumbbell',        // c1: one dumbbell (the spec's vendor dumbbell, axis vertical)
     loadAxis: 'along-forearm', // card archetype.loadAxis
     overBody: true,            // card archetype.overBody: the dumbbell is held over the head (c4)
-    width: { text: 'Both hands together on the handle.', claim: CL.c1 },   // card grip.width
+    // No width text: card grip.width (both hands together on the handle) is the Grip line's 'both hands wrapped round
+    // the handle' (audit6 issue 6).
     thumb: { mode: 'wrapped', claim: CL.c1 },   // card grip.thumb: wrapped around the handle (c1)
     // card grip.handContact: "Both hands around the handle, palms facing up" (c1, c4) names no palm zone. CONTACT is
     // 'heel', DERIVED from pairs.mjs CONVENTIONS ga:push-heel (CONVENTION, the card's push archetype; Q-W2-2 form). Data
@@ -184,12 +222,11 @@ export default {
   ],
   posture: [
     { key: 'vertical', label: 'Arms vertical', detail: 'Upper arms vertical and still, elbows shoulder-width apart, no flaring.',
-      anchor: { landmark: 'elbow.r', pose: 'start' }, claim: CL.vertical },
-    { key: 'spotter', label: 'Elbow spotter', detail: 'For heavy sets, a spotter can help by supporting your elbows.',
-      anchor: { landmark: 'elbow.r', pose: 'end' }, claim: CL.c13 },
-    // D-SHIP-TEXTZOOM: the card zoom db-oh-elbows (c5, c6) as a text checkpoint, merged with the card's c5 point
+      anchor: { landmark: 'elbow.r', pose: 'start' }, zoom: 'db-oh-elbows', claim: CL.vertical },
+    // The card's spotter point (c13) is setup step 5, word for word, so it is not repeated here (audit6 'other').
+    // The card zoom db-oh-elbows' undrawn half (dumbbell touching the head) is text here, with the card's c5 point.
     { key: 'depth', label: 'Stop at 90°', detail: 'Lower slowly behind your head to about 90°, without touching it.',
-      anchor: { landmark: 'grip.r', pose: 'start' }, claim: CL.depth },
+      anchor: { landmark: 'grip.r', pose: 'start' }, zoom: 'db-oh-elbows', claim: CL.depth },
     { key: 'brace', label: 'Braced torso', detail: "Torso braced. Don't arch your back.",
       anchor: { landmark: 'lumbar', pose: 'end' }, claim: CL.brace },
     { key: 'still', label: 'Body still', detail: 'Head, torso, wrists and feet stay still.',
@@ -198,7 +235,8 @@ export default {
       anchor: { landmark: 'elbow.r', pose: 'end' }, claim: CL.c4 },
   ],
   feel,
-  zooms: [],
+  zooms,
+  chips: ['db-oh-elbows', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
     setupLine: 'One dumbbell in both hands, in a split stance or on a back-supported bench.',
     mistakeLine: 'Keep your upper arms vertical. Brace, and go lighter if your back arches.',

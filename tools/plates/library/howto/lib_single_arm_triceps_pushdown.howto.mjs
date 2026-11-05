@@ -136,11 +136,11 @@ const feel = {
       fix: 'Pin the elbow to your side.',
       zoom: 'single-pushdown-elbow', claim: CL.lats },
     { key: 'elbows', where: 'Elbow discomfort or pain', at: { parts: ['elbow-left', 'elbow-right'] },
-      means: 'Heavy, low-rep sets feel uncomfortable in the elbows for many.',   // c12 (the row's own claim)
+      means: '',   // D-FEEL-NOMEANS: the card's row means is a question with no cause (audit6 issue 1)
       fix: "Stop and don't train through the pain. Use lighter weights for more reps.",
       redFlag: 'elbow', claim: CL.elbowRow },
     { key: 'lower-back', where: 'Lower back pain', at: { muscles: ['lower_back'] },
-      means: 'You lean too far forward or arch your back.',   // c17 (the row's own claim)
+      means: '',   // D-FEEL-NOMEANS: the card's row means is a question with no cause (audit6 issue 1)
       fix: "Stop and don't train through the pain. Stand taller, tilt only from the hips.",
       redFlag: 'back', claim: CL.backRow },
   ],
@@ -181,8 +181,9 @@ export default {
       claim: C(['CONSENSUS', 'CONVENTION'], [ACE, 'ga-push-heel'], 'card c9. The ext range is pairs.mjs CONVENTIONS ga:push-heel, a convention, not a card number.') },
     // The card's hand zoom wrong is null (LR-25), so this row has no hand fault.
     faults: [],
-    // card zooms[0] right (c9, c2): full grip, thumb wrapped, hand in line with the forearm; c2: grip it firmly.
-    gripLine: 'Single handle, firm full grip, thumb wrapped. Hand in line with the forearm.',
+    // card zooms[0] right (c9, c2): full grip, thumb wrapped (here); hand in line with the forearm (wrist.limitText,
+    // the grey line under it, so the lead does not repeat it: audit6 issue 6); c2: grip it firmly.
+    gripLine: 'Single handle, firm full grip, thumb wrapped.',
     cue: 'Wrist in line with the forearm.',   // hint F (grip.wrist, c9)
   },
   contacts: ['standing-feet'],

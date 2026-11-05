@@ -58,6 +58,7 @@ const CL = {
   c8: C(['CONSENSUS'], [TG], 'c8'),
   c13: C(['CONSENSUS'], [SL, TG], 'c13'),
   palms: C(['CONSENSUS'], [SL, ACE], 'c1, c3'),
+  ribs: C(['CONSENSUS'], [TG, ACE, SL], 'c7, c3'),
   tall: C(['CONSENSUS'], [TG], 'c8, c2'),
   zoom: C(['CONSENSUS'], [TG, SL], 'c5, c4'),
   joints: C(['CONSENSUS'], [TG, SL], 'c5, c13'),
@@ -111,7 +112,7 @@ const zooms = [
       wrong: 'Wrist bent back or curled toward the forearm.',      // the key's two drawn faults; c6 (hand out of line)
     },
     // Right: the card's own words (c1, c6), no thumb or contact (D-SHIP-CONVCOPY); Wrong: the key's alt.
-    alt: { right: 'Bar held overhand, palm down. A straight line from the hand to the elbow.', wrong: FAULTS[0].alt },
+    alt: { right: 'Bar held overhand, palm down. Wrist neutral, in line with the forearm.', wrong: FAULTS[0].alt },
     feelRow: 'wrist',
   },
   {
@@ -126,7 +127,7 @@ const zooms = [
       wrong: { text: 'Arms swinging', anchor: 'elbow.r' },
     },
     caption: {
-      right: 'Upper arm by the side at the top.',                    // card zoom right (c4)
+      right: 'Upper arm by the side at the top, never back.',        // card zoom right (c4); D-TEXT-GOLDEN: posture upper-arm
       wrong: 'Arms swinging, using momentum to get the bar up.',     // card zoom wrong (c5)
     },
     alt: {
@@ -151,7 +152,7 @@ const feel = {
   rows: [
     { key: 'wrist', where: 'Wrist', at: { parts: ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'] },
       means: 'Your wrist is bending.',
-      fix: 'Keep a straight line from hands to elbows.',
+      fix: 'Keep the wrist neutral, in line with the forearm.',
       zoom: 'hand', redFlag: true, claim: CL.c6 },
     { key: 'joints', where: 'Joints', at: { parts: ['elbow-left', 'elbow-right'] },
       means: 'You swing the bar up with momentum.',
@@ -167,7 +168,7 @@ const MISTAKES = [
   { key: 'swing', title: 'Swinging to move the bar', zoom: 'curl-elbow', claim: CL.c5,
     fix: 'Go lighter and control both the lift and the lowering.' },
   { key: 'wrists', title: 'Wrists bending under the bar', zoom: 'hand', claim: CL.c6,
-    fix: 'Keep a straight line from hands to elbows.' },
+    fix: 'Keep the wrists neutral.' },   // L6: c6's other words; the straight-line phrase is the plate's cue
   { key: 'flare', title: 'Elbows flaring outward', claim: CL.c7,
     fix: 'Reduce the weight. Keep the elbows close to your ribs.' },
 ];
@@ -186,14 +187,14 @@ export default {
     orientation: 'pronated',         // c1: overhand, palms down; the key's orientation 'over'
     handle: V.handle?.profile ?? HANDLE.profile,   // the ez key's HANDLE: 'ez-bend' (the plate's EZ bar)
     loadAxis: V.loadAxis,            // 'across'
-    width: { text: 'Hands about shoulder-width, in line with your shoulders and elbows.', claim: CL.c1 },
+    width: { text: 'In line with your shoulders and elbows.', claim: CL.c1 },   // the gripLine carries the width
     thumb: { mode: RIGHT_POSE.thumb, claim: CL.thumb },   // CONVENTION: the key's right-pose thumb ('wrapped'); never printed
     contact: CONTACT,                // CONVENTION: 'mid-palm' from the key's ga:curl-mid (source hand-key-ez); never printed
-    wrist: { ext: V.wristRange, limitText: 'Keep a straight line from your hands to your elbows.',
+    wrist: { ext: V.wristRange, limitText: 'Keep the wrists neutral, in line with the forearms.',
       claim: C(['CONSENSUS', 'CONVENTION'], [TG, 'hand-key-ez'], 'c6. The ext range is the ez key\'s wristRange (ga:curl-mid), a convention, not a card number.') },
     pose: RIGHT_POSE,
     faults: FAULTS,
-    gripLine: 'Overhand grip, palms down, hands about shoulder-width. Keep a straight line from hands to elbows.',   // c1, c6
+    gripLine: 'Overhand grip, palms down, hands about shoulder-width.',   // c1; the wrist line is limitText (c6)
     cue: 'Straight line, hands to elbows.',   // c6
   },
   contacts: ['standing-feet'],
@@ -207,8 +208,9 @@ export default {
   posture: [
     { key: 'palms', label: 'Palms down', detail: 'Overhand grip about shoulder-width, kept all the way up.',
       anchor: { landmark: 'grip.r', pose: 'end' }, zoom: 'hand', claim: CL.palms },
+    // K2 (W5 panel): the plate's Elbows cue under this key is c7's line (upper arms still, elbows close to the ribs).
     { key: 'elbows', label: 'Elbows at sides', detail: 'Elbows stay close to the sides.',
-      anchor: { landmark: 'elbow.r', pose: 'end' }, claim: CL.c3 },
+      anchor: { landmark: 'elbow.r', pose: 'end' }, claim: CL.ribs },
     { key: 'upper-arm', label: 'Never back', detail: 'Upper arms never travel back.',
       anchor: { landmark: 'shoulder.r', pose: 'end' }, zoom: 'curl-elbow', claim: CL.c4 },
     { key: 'wrists', label: 'Straight wrists', detail: 'A straight line from hands to elbows.',
@@ -221,7 +223,7 @@ export default {
   chips: ['hand', 'curl-elbow', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
     setupLine: 'Stand tall, knees soft, shoulders back and down. Grip the bar overhand, elbows close to your sides.',
-    // D-TEXT-GOLDEN: posture upper-arm (c4) in the mistake line.
+    // Not printed on the layers page; posture upper-arm (c4) is in the curl-elbow Right caption.
     mistakeLine: 'Never let your upper arms travel back. Go lighter instead of swinging.',
     cueLine: 'Elbows close to your ribs.',
     // D-LIB5-VARIANT: the card's plate.variantLine: c1, c3, c4 hold for the straight bar too.

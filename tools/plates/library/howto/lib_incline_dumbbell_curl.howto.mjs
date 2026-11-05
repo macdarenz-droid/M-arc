@@ -116,7 +116,8 @@ const zooms = [
       wrong: { text: 'Elbows forward', anchor: 'elbow.r' },
     },
     caption: {
-      right: 'Upper arm behind the torso, elbow pinned back.',   // card zoom right (c4)
+      // D-TEXT-GOLDEN (copy lines are not printed): posture height (c3) moved here from the mistake line
+      right: 'Arm behind the torso, elbow back. Curl only that high.',   // card zoom right (c4) + c3
       wrong: 'Elbow drifted forward past the torso line.',      // card zoom wrong (c4)
     },
     alt: {
@@ -187,7 +188,9 @@ export default {
     { kind: 'adjust', text: 'Set the bench to about 45-65 degrees.', claim: CL.c1 },
     { kind: 'position', text: 'Sit with a dumbbell in each hand.', claim: CL.c1 },
     { kind: 'grip', text: 'Palms forward, thumbs wrapped round the handles.', zoom: 'hand', claim: CL.c11 },
-    { kind: 'position', text: 'Lean back on the pad. Let your arms hang straight down.', claim: CL.c2 },
+    // D-TEXT-GOLDEN (copy lines are not printed): posture pad (c2, c11) moved here from the setup line
+    { kind: 'position', text: 'Head, shoulders and buttocks on the pad, arms hanging straight down.',
+      claim: C(['CONSENSUS', 'MECH'], [BB, SL, 'ace-seated-curl'], 'c2, c11') },
     { kind: 'safety', text: 'If your shoulder feels it, raise the bench a bit.', claim: CL.c5 },
   ],
   posture: [

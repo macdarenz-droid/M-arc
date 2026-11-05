@@ -28,6 +28,9 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'full', checked: '2026-10-22', use: 'DATA' },
   'acsm-2009': { cite: 'American College of Sports Medicine position stand. Progression models in resistance training for healthy adults', url: 'https://pubmed.ncbi.nlm.nih.gov/19204579/',
     kind: 'guideline', access: 'abstract', checked: '2026-10-22', use: 'CONSENSUS' },
+  // The parent dumbbell_biceps_curl's c1 source, for this card's inherited grip.thumb ("thumbs wrapped round the handles").
+  'sl-dbcurl': { cite: 'How to Dumbbell Curl: Muscles Worked & Proper Form (StrengthLog)', url: 'https://www.strengthlog.com/dumbbell-curl/',
+    kind: 'coach', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
   // The ez key's own source for the hand contact (the card has no grip.handContact): a drawing convention.
   'hand-key-ez': { cite: 'LIB-7 hand pair key ez (curl), CONVENTIONS ga:curl-mid: across the middle of the palm', url: 'tools/plates/library/hands/pairs.mjs',
     kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
@@ -53,9 +56,9 @@ const CL = {
   elbows: C(['CONSENSUS'], [SL], 'c5, c4'),
   finish: C(['CONSENSUS'], [SL], 'c12, c6'),
   wrist: C(['CONSENSUS', 'MECH'], [SL, 'nhs-wrist-pain'], 'c8, c15'),
-  // card grip.thumb "Wrapped round the bar.", carried by inherit grip.thumb (the curl archetype wraps the thumb; the
-  // parent dumbbell_biceps_curl's c1). The card gives the reason, no source of its own (MECH).
-  thumb: C(['MECH'], [], 'card grip.thumb and inherit grip.thumb: the curl archetype wraps the thumb (parent dumbbell_biceps_curl c1).'),
+  // card grip.thumb "Wrapped round the bar.", carried by inherit grip.thumb: the parent dumbbell_biceps_curl's c1
+  // ("thumbs wrapped round the handles", sources ace-seated-curl, sl-dbcurl).
+  thumb: C(['CONSENSUS'], ['sl-dbcurl'], 'card grip.thumb and inherit grip.thumb: parent dumbbell_biceps_curl c1 (sources ace-seated-curl, sl-dbcurl).'),
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
@@ -106,7 +109,7 @@ const zooms = [
     feelRow: 'wrist',
   },
   {
-    key: 'curl-elbow', chip: 'Elbows', heading: 'Elbow path', kind: 'posture',   // card zoom key: ez-curl-elbow
+    key: 'ez-curl-elbow', chip: 'Elbows', heading: 'Elbow path', kind: 'posture',   // the card zoom's own key (K2: its claim c5, with c4)
     // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's elbow for both halves; the Wrong is the
     // spec's Mistake drawn alone (solid), as `stills['elbows-forward']`.
     crop: { center: { at: 'elbow.r', pose: 'right', off: [0, -10] }, sizePx: 150 },
@@ -140,7 +143,7 @@ const feel = {
     { key: 'front-shoulder', where: 'Front of the shoulder', at: { muscles: ['front_delts'] },
       means: 'Your elbows move forward, which loads the front delts.',
       fix: 'Keep the elbows close to your body.',
-      zoom: 'curl-elbow', claim: CL.elbows },
+      zoom: 'ez-curl-elbow', claim: CL.elbows },
     { key: 'wrist', where: 'Wrist discomfort or pain', at: { parts: HANDS },
       means: 'Your wrists are bent up or down under load.',
       fix: "Stop and don't train through the pain. Keep the wrist straight.",
@@ -153,13 +156,13 @@ const feel = {
 const MISTAKES = [
   { key: 'wrists', title: 'Wrists bending', zoom: 'hand', claim: CL.c8,
     fix: 'Keep the hands in line with the forearms.' },
-  { key: 'elbows', title: 'Elbows drifting forward or back', zoom: 'curl-elbow', claim: CL.elbows,
+  { key: 'elbows', title: 'Elbows drifting forward or back', zoom: 'ez-curl-elbow', claim: CL.elbows,
     fix: 'Keep the elbows close to your body.' },
   { key: 'swing', title: 'Swinging the body', claim: CL.c7,
     fix: 'Take weight off and lift with control.' },
 ];
 const RISKS = [
-  { key: 'wrist', text: 'Bent wrists under load can cause discomfort and even injury.', claim: CL.c8 },
+  { key: 'wrist', text: 'Bent wrists under load can cause wrist discomfort.', claim: CL.c8 },
 ];
 
 export default {
@@ -179,7 +182,7 @@ export default {
       claim: C(['CONSENSUS', 'CONVENTION'], [SL, 'hand-key-ez'], 'c8. The ext range is the ez key\'s wristRange (ga:curl-mid), a convention, not a card number.') },
     pose: RIGHT_POSE,                // its thumb 'wrapped' === the parent's handling.pose.thumb (THUMB)
     faults: FAULTS,
-    gripLine: 'Underhand on the angled sections, thumbs wrapped. Keep your wrists straight.',   // c1, grip.thumb, c8
+    gripLine: 'Underhand on the angled sections, thumbs wrapped.',   // c1, grip.thumb; the wrist line is limitText (c8)
     cue: 'Wrists straight, thumbs wrapped.',   // c8, grip.thumb
   },
   contacts: ['standing-feet'],
@@ -192,9 +195,9 @@ export default {
   ],
   posture: [
     { key: 'elbows', label: 'Elbows at sides', detail: 'Elbows stay close to your body.',
-      anchor: { landmark: 'elbow.r', pose: 'end' }, zoom: 'curl-elbow', claim: CL.c4 },
+      anchor: { landmark: 'elbow.r', pose: 'end' }, zoom: 'ez-curl-elbow', claim: CL.c4 },
     { key: 'no-drift', label: 'No forward drift', detail: 'No elbow drift forward at the top.',
-      anchor: { landmark: 'shoulder.r', pose: 'end' }, zoom: 'curl-elbow', claim: CL.c4 },
+      anchor: { landmark: 'shoulder.r', pose: 'end' }, zoom: 'ez-curl-elbow', claim: CL.c4 },
     { key: 'still', label: 'Still body', detail: 'Body stays still. Only the arms move.', anchor: { landmark: 'backUpper', pose: 'end' }, claim: CL.c4 },
     { key: 'wrists', label: 'Straight wrists', detail: 'Wrists stay straight.', anchor: { landmark: 'wrist.r', pose: 'end' }, zoom: 'hand', claim: CL.c8 },
     { key: 'pause', label: 'Pause, lower slowly', detail: 'Pause at the top, then lower slowly.', anchor: { landmark: 'grip.r', pose: 'end' }, claim: CL.c12 },
@@ -202,7 +205,7 @@ export default {
   ],
   feel,
   zooms,
-  chips: ['hand', 'curl-elbow', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
+  chips: ['hand', 'ez-curl-elbow', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
     setupLine: 'Stand upright, feet hip- to shoulder-width, core braced. Grip the angled sections underhand.',
     mistakeLine: 'Keep your elbows close to your body. Never let them drift forward at the top.',

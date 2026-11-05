@@ -79,7 +79,8 @@ const zooms = [
       wrong: { text: 'Upper arm swings', anchor: 'elbow.r' },
     },
     caption: {
-      right: 'Upper arm held still, drawn back behind the torso.',   // card zoom right (c5, c2)
+      // D-TEXT-GOLDEN (copy lines are not printed): posture elbow (c4) and lower (c6) moved here from the cue line
+      right: 'Upper arm still and close, behind the torso. Lower slowly.',   // card zoom right (c5, c2) + c4, c6
       wrong: 'Upper arm swinging forward as the handle rises.',     // card zoom wrong (c5)
     },
     alt: {
@@ -144,9 +145,11 @@ export default {
   setup: [
     { kind: 'adjust', text: 'Set the cable to its lowest height with a single handle.', claim: CL.c1 },
     { kind: 'grip', text: 'Handle in your working hand, back to the machine.', claim: C(['CONSENSUS'], [BB, SL], 'c1 (card grip.type)') },
-    { kind: 'position', text: 'Step forward to light cable tension, arm drawn behind you.', zoom: 'bayes-reach', claim: CL.c2 },
+    // D-TEXT-GOLDEN (copy lines are not printed): posture lean (c2) moved here from the setup line
+    { kind: 'position', text: 'Step forward to light tension, arm behind you, torso leaning slightly forward.', zoom: 'bayes-reach', claim: CL.c2 },
     { kind: 'safety', text: 'Stand closer if your shoulder feels restricted.', claim: CL.c3 },
-    { kind: 'brace', text: 'Free hand on your hip or out to the side.', claim: CL.c7 },
+    // D-TEXT-GOLDEN (copy lines are not printed): posture trunk (c7, its mistake fix) moved here from the mistake line
+    { kind: 'brace', text: 'Brace the trunk, no tilting. Free hand on your hip.', claim: CL.c7 },
   ],
   posture: [
     { key: 'lean', label: 'Slight lean', detail: 'Torso leans slightly forward.', anchor: { landmark: 'chest', pose: 'start' }, claim: CL.c2 },

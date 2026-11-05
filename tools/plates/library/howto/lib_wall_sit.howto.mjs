@@ -161,7 +161,8 @@ export default {
     { kind: 'position', text: 'Slide down until hips and knees are about 90 degrees.', claim: C(['CONSENSUS'], [CAT], 'w2, w3') },
     { kind: 'position', text: 'Knees right above the ankles. Move the feet if not.', zoom: 'knee-over-ankle',
       claim: C(['MECH', 'CONSENSUS'], ['escamilla-2023', 'escamilla-2009', PT], 'w8, w4') },
-    { kind: 'position', text: 'Knees over the second toe, ankles not rolling.', claim: INHERIT_KNEES },   // === the parent's knees detail
+    // W5 panel L2: the inherited 'Knees over the second toe, ankles not rolling.' step is deleted (no card claim of its
+    // own); the inherited checkpoint stays as posture[key=knees] (family map, D-SHIP-W5-WALLSIT).
     { kind: 'position', text: 'Hold 30-60 seconds and keep breathing steadily.', claim: C(['CONSENSUS', 'MECH'], [CAT, 'watanabe-2022'], 'w3, w10') },
   ],
   posture: [

@@ -122,9 +122,12 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     { kind: 'safety', text: 'Master air squats and single-leg balance first.', claim: C(['CONSENSUS'], [PT, REP], 'p6, p7') },
-    { kind: 'position', text: 'Stand tall, arms forward, and shift onto one leg.', claim: CL.p1 },
-    { kind: 'position', text: 'Lift the other leg forward, knee straight.', claim: C(['CONSENSUS'], [REP, PT], 'p1, p5') },
-    { kind: 'brace', text: 'Brace, then send the hips back and bend the knee.', claim: CL.p2 },
+    // W5 panel safety (b) / K3: the way out in setup (p7); copy.setupLine is not shown on the page
+    { kind: 'safety', text: 'While learning, squat to a box behind you or hold a support.', claim: CL.p7 },
+    { kind: 'position', text: 'On one leg, arms forward, lift the other leg forward, knee straight.',
+      claim: C(['CONSENSUS'], [REP, PT], 'p1, p5') },
+    // p8 knee cave moved here from copy.mistakeLine (not shown on the page)
+    { kind: 'brace', text: 'Brace, hips back, bend the knee without letting it cave in.', claim: C(['CONSENSUS'], [REP], 'p2, p8') },
     { kind: 'position', text: 'Go as low as mobility allows, foot flat. Press up, no bounce.', zoom: 'standing-foot',
       claim: C(['CONSENSUS'], [REP], 'p3, p4, p8') },
   ],

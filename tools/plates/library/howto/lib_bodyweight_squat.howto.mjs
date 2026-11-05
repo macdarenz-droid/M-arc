@@ -117,8 +117,10 @@ export default {
   setup: [
     { kind: 'position', text: 'Feet slightly wider than hip width, toes slightly out.', claim: CL.b1 },
     { kind: 'brace', text: 'Shoulders down and back, brace, chest up.', claim: C(['CONSENSUS'], [ACE], 'b1, b2') },
-    { kind: 'position', text: 'Hips back, then down, back flat. Shins forward under control.',
-      claim: C(['CONSENSUS', 'MECH'], [ACE, 'fry-2003'], 'b3, b8') },
+    // W5 fix 1: b5 moved here from copy.mistakeLine (copy.* lines are not shown on the page, D-TEXT-GOLDEN); b8 stays
+    // in step 4 and the risk; back flat (b3) is in the bottom zoom's Right caption
+    { kind: 'position', text: 'Hips back then down. Knees over the second toe, ankles steady.',
+      claim: C(['CONSENSUS'], [ACE], 'b3, b5') },
     { kind: 'position', text: 'Lower to thighs about parallel. Knees may pass the toes slightly.',
       zoom: 'bottom', claim: C(['CONSENSUS', 'MECH'], [ACE, 'fry-2003'], 'b4, b8') },
     { kind: 'finish', text: 'Breathe out, push the feet down, hips and chest rise together.', claim: CL.b7 },

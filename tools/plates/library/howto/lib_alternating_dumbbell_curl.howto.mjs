@@ -118,7 +118,8 @@ const zooms = [
       wrong: { text: 'Trunk swings', anchor: 'backUpper' },
     },
     caption: {
-      right: 'Working arm curled, resting arm hanging straight, torso upright.',   // card zoom right (c1, c4, c14)
+      // D-TEXT-GOLDEN (copy lines are not printed): posture torso (c4) moved here from the mistake line
+      right: 'Torso upright, lower back not arched. Resting arm hangs straight.',   // card zoom right reworded (c4, c1)
       wrong: 'Trunk moving as the dumbbell swings up.',                            // card zoom wrong (c6, c14)
     },
     alt: {

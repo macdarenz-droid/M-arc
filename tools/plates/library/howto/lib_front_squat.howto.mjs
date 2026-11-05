@@ -12,7 +12,8 @@
 // D-SHIP-W5-GOLDENFEET, label exactly the golden's "Knees follow toes", detail from this card's own P3 (c10), never the
 // golden detail. The card's inherit setup[2] (plates loaded evenly, collars on) has no valid map entry and goes to
 // research (Q-W5-5); no step here restates it.
-// Tier A way out (card tierA.wayOut, c14, c25; Q-W5-4): shown in copy.setupLine, the app's setup lead line.
+// Tier A way out (card tierA.wayOut, c14, c25; Q-W5-4): setup step 1 and mistakes[safeties].fix (both printed);
+// copy.setupLine (app only) repeats it.
 // No variant line (equipment 'Barbell').
 // Red flags: the card's redFlags (wrist, back, knee), in its order. Wrist: golden B's shared RED_FLAG (the wrists row,
 // redFlag: true); back: LIB-5's back box (tools/plates/library/shared/back-box.mjs), linked by the lower-back row; knee:
@@ -101,7 +102,7 @@ const zooms = [
     },
     alt: {
       right: 'Side view, bottom of the squat. The torso is upright and the elbows are high, the bar on the shoulders.',
-      wrong: 'Side view, out of the bottom. The elbows have dropped and the chest falls forward, so the bar slips.',
+      wrong: 'Side view, out of the bottom. The elbows have dropped and the chest falls forward.',
     },
     feelRow: 'lower-back',
   },
@@ -113,7 +114,8 @@ const feel = {
   primary: [{ muscleId: 'quads', plain: 'The front of the thighs do most of the work.' }],
   secondary: [{ muscleId: 'glutes', plain: 'The glutes help.' }],
   watch: [{ muscleId: 'lower_back', plain: 'If the torso tips forward, the lower back works more.' }],
-  feelLine: 'You should feel this mostly in the front of your thighs.',
+  // D-TEXT-GOLDEN: posture point depth (c11) in the second sentence
+  feelLine: 'You should feel this in your front thighs. Go as deep as balance and a neutral spine allow.',
   rows: [
     { key: 'wrists', where: 'Wrists or fingers', at: { parts: HANDS },
       means: 'The hands are holding the bar up.',
@@ -132,19 +134,20 @@ const feel = {
       fix: 'Stop the set.',
       redFlag: 'knee', claim: CL.c23 },
   ],
-  claim: C(['CONSENSUS', 'DATA'], [CAT, 'yavuz-2015', HK], 'c1, c17, c18'),
+  claim: C(['CONSENSUS', 'DATA'], [CAT, 'yavuz-2015', HK], 'c1, c17, c18, c11'),
 };
 
 /* ------------------------------------------------------------------------------------------------ mistakes, risks */
 // The card's three handlingMistakes. Each fix is the card's, reworded so no sentence prints twice on the page (the
-// matching feel row carries the card's full fix). The safeties fix carries the second half of the way out (c14).
+// matching feel row carries the card's full fix).
 const MISTAKES = [
   { key: 'chest', title: 'Chest falling, elbows dropping', zoom: 'upright-torso', claim: CL.c7,
     fix: 'Elbows up, chest tall.' },
   { key: 'hands', title: 'Hands holding the bar up', claim: CL.c3,
     fix: 'Let your shoulders carry the bar. Try a fingertip rack.' },
-  { key: 'safeties', title: 'Bailing with no safeties set', claim: CL.c14,
-    fix: 'Set the safeties. To bail, drop the bar forward and step back.' },
+  // Tier A way out, second half (card tierA.wayOut, c14, c25); the first half is setup step 1
+  { key: 'safeties', title: 'Bailing with no safeties set', claim: C(['CONSENSUS', 'MECH'], [REP], 'c14, c25'),
+    fix: 'Practise light. To bail, let go, drop it forward, step back.' },
 ];
 const RISKS = [
   { key: 'no-safeties', text: 'A failed rep with no safeties set.', claim: CL.c14 },
@@ -162,9 +165,9 @@ export default {
     why: 'D-SHIP-C3 no-zoom list, gap-key: the front-rack key lists front_squat in GAPS (hand-front-rack.mjs:29, below the hand bar); the grip copy carries c3, c4, c6 and c7.',
     handle: 'bar-28',          // data only: the front-rack key's HANDLE (hand-front-rack.mjs: golden B's bar value)
     // card grip.width (c5)
-    width: { text: 'No fixed width. Try other widths for a full grip. Fingertips are fine if your shoulders hold the bar.',
-      claim: C(['CONSENSUS'], [RACK, HK], 'card grip.width, c5, c3') },
-    // card grip.thumb (c4, c5): wrapped as far as the rack allows; the fingertip rack is in the width text
+    width: { text: 'No fixed width. Try other widths until a full grip fits.',
+      claim: C(['CONSENSUS'], [RACK], 'card grip.width, c5') },
+    // card grip.thumb (c4, c5): wrapped as far as the rack allows; the fingertip rack is in mistakes[hands] and the wrists row
     thumb: { mode: 'wrapped', claim: C(['CONSENSUS'], [CAT, RACK], 'card grip.thumb, c4, c5') },
     // card grip.handContact (c3): the bar rests on the shoulders, the hands only add security; the hand zone is the
     // fingertip rack the card allows (c3, c5) and the plate draws (specs/front_squat.mjs rackHands). Data only.
@@ -183,10 +186,14 @@ export default {
   },
   contacts: ['standing-feet'],
   setup: [
-    { kind: 'safety', text: 'Set the safety bars just below your lowest squat depth.', claim: CL.c14 },
+    // Tier A way out, first half (card tierA.wayOut, c14, c25)
+    { kind: 'safety', text: 'Set safeties just below your lowest depth, or a spotter when heavy.',
+      claim: C(['CONSENSUS', 'MECH'], [REP], 'c14, c25 (card tierA.wayOut)') },
     { kind: 'position', text: 'Bar between throat and shoulders. Shoulders pushed forward and slightly up.',
       claim: C(['CONSENSUS'], [CAT, RACK, HK], 'c2, c3') },
-    { kind: 'grip', text: 'Loose full grip, elbows high.', zoom: 'upright-torso', claim: CL.c4 },
+    // D-TEXT-GOLDEN: posture point 'Knees and hips bend together, straight down' (c10)
+    { kind: 'grip', text: 'Loose full grip, elbows high. Sit straight down, knees and hips together.', zoom: 'upright-torso',
+      claim: C(['CONSENSUS'], [CAT], 'c4, c10') },
     { kind: 'position', text: 'Heels hip width or a little wider, toes out 15-30 degrees.', claim: CL.c8 },
     { kind: 'brace', text: 'Walk out one step back on each leg. Brace hard each rep.',
       claim: C(['CONSENSUS', 'MECH'], ['stronglifts-squat', CAT], 'c26, c9') },
@@ -210,11 +217,9 @@ export default {
   zooms,
   chips: ['upright-torso', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
-    // Tier A way out (card tierA.wayOut, c14, c25), card-true and cut to the 22-word lead cap
+    // app-only lead line (not printed on the layers page): the way out again, card-true and cut to the 22-word cap
     setupLine: 'Safeties below your lowest depth, or a spotter when heavy. Practise bailing light: let go, drop it forward onto them, step back.',
-    // D-TEXT-GOLDEN: posture point depth (c11) placed in the second sentence
     mistakeLine: 'Keep your elbows high, or the bar may slip. Go only as deep as balance and a neutral spine allow.',
-    // D-TEXT-GOLDEN: posture point 'Knees and hips bend together, straight down' (c10)
     cueLine: 'Hips and knees together, straight down.',
   },
   redFlag: RED_FLAG,

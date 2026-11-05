@@ -186,7 +186,7 @@ export default {
   chips: ['wrist-curl-support', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
     setupLine: 'Sit with your forearm on your thigh, hand past the knee. Hold the dumbbell palm up.',
-    // D-TEXT-GOLDEN: posture still (c3) and grip (c5) in the mistake line.
+    // Not printed on the layers page; posture still (c3) is mistakes[1] and the zoom captions, grip (c5) the Grip line.
     mistakeLine: 'Keep the forearm down and the body still. Never let the weight roll to the fingertips.',
     cueLine: 'Only your hand moves.',
     // D-LIB5-VARIANT: the card's plate.variantLine: the barbell version shares the grip and lowering lines (c1, c3, c5).

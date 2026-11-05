@@ -77,7 +77,7 @@ const zooms = [
     },
     alt: {
       right: 'Side view, bottom of the split squat. The front knee is over the ankle, the front shin about vertical.',
-      wrong: 'Side view, bottom of the split squat. The front knee has slid forward past the toes, the shin tipped.',
+      wrong: 'Side view, bottom of the split squat. The front knee has slid forward, the shin tipped far forward.',   // W5 K1 (c2)
     },
   },
   {
@@ -132,6 +132,8 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     { kind: 'position', text: 'Stand in a split stance, one foot forward, one back.', claim: CL.c1 },
+    // c4 (card posture point) moved here from the feel lines (not shown on the page, D-TEXT-GOLDEN)
+    { kind: 'position', text: 'Front foot farther forward for more hip work, closer for more quads.', claim: CL.c4 },
     { kind: 'position', text: 'Bend both knees, lowering smoothly until the back knee lightly touches.',
       claim: C(['CONSENSUS'], [CAT], 'c1, c6') },
     { kind: 'position', text: 'Keep the trunk upright and the front shin about vertical.', zoom: 'front-shin', claim: CL.c2 },

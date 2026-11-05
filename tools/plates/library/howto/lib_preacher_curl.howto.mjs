@@ -61,6 +61,8 @@ const CL = {
   c8: C(['CONSENSUS'], [SL, BB], 'c8'),
   c10: C(['CONSENSUS'], [SL], 'c10'),
   c13: C(['WEAK'], ['jukes-2022'], 'c13'),
+  range: C(['CONSENSUS'], [BB, SL], 'c6, c7'),
+  feet: C(['CONSENSUS'], [SL, BB], 'c2, c9'),
   pad: C(['CONSENSUS'], [BB, SL], 'c2, c3'),
   arms: C(['CONSENSUS'], [BB, SL], 'c5, c4'),
   seat: C(['CONSENSUS'], [BB, SL], 'c3, c2'),
@@ -162,7 +164,7 @@ const feel = {
       fix: 'Reset the seat. Go lighter.',
       zoom: 'preacher-pad', redFlag: 'shoulder', claim: CL.shoulder },
     { key: 'elbow', where: 'Elbow, at full straightening', at: { parts: ['elbow-left', 'elbow-right'] },
-      means: 'Full straightening feels uncomfortable for you.',
+      means: '',   // the card's means restates the where; no cause given (D-FEEL-NOMEANS)
       fix: 'Turn back a little earlier. Lower slowly.',
       redFlag: 'elbow', claim: CL.elbow },
     { key: 'wrist', where: 'Wrist discomfort or pain', at: { parts: HANDS },
@@ -176,16 +178,16 @@ const feel = {
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
 const MISTAKES = [
   { key: 'arms-off', title: 'Upper arms leaving the pad', zoom: 'preacher-pad', claim: CL.arms,
-    fix: 'Go lighter. Keep the arms pressed into the pad.' },
+    fix: 'Go lighter. Keep the arms on the pad, body still.' },   // D-TEXT-GOLDEN: posture still (c4)
   { key: 'seat', title: 'Seat too high or low', claim: CL.seat,
     fix: 'Reset it so the pad top sits under your armpits.' },
-  { key: 'drop', title: 'Dropping fast into the bottom', claim: CL.c6,
-    fix: "Lower slowly. Go lighter if you can't control it." },
+  { key: 'drop', title: 'Dropping fast into the bottom', claim: CL.range,
+    fix: "Lower slowly, past 90 degrees. Go lighter if you can't control it." },   // D-TEXT-GOLDEN: posture range (c7)
 ];
 const RISKS = [
   { key: 'heave', text: 'Heaving a heavy bar off the pad can put the front shoulder at risk.', claim: CL.c5 },
   { key: 'seat', text: 'A wrong seat height can shift stress onto the shoulder.', claim: CL.c3 },
-  { key: 'tendon', text: 'Across many activities, most biceps tendon ruptures on video were palm-up, elbow nearly straight.', claim: CL.c13 },
+  { key: 'tendon', text: 'Across many activities, most biceps tendon tears happened palm-up, elbow nearly straight.', claim: CL.c13 },
 ];
 
 export default {
@@ -204,14 +206,14 @@ export default {
       claim: C(['CONSENSUS', 'CONVENTION'], [SL, BB, 'hand-key-ez'], 'c8. The ext range is the ez key\'s wristRange (ga:curl-mid), a convention, not a card number.') },
     pose: RIGHT_POSE,
     faults: FAULTS,
-    gripLine: 'Underhand grip on the curl bar. Keep your wrists straight.',   // c1, c8
+    gripLine: 'Underhand grip on the curl bar.',   // c1; the wrist line is limitText (c8)
     cue: 'Wrist in line with the forearm.',   // c8
   },
   contacts: ['pivot-pad'],
   setup: [
     { kind: 'adjust', text: 'Set the seat so your chest and upper arms touch the pad.', claim: CL.c1 },
     { kind: 'adjust', text: 'Pad top under your armpits, arms straight. Not so high you hunch.', zoom: 'preacher-pad', claim: CL.pad },
-    { kind: 'position', text: 'Feet flat on the floor.', claim: CL.c2 },
+    { kind: 'position', text: 'Feet flat on the floor. Upper body active, not hanging.', claim: CL.feet },   // D-TEXT-GOLDEN: posture active (c9)
     { kind: 'grip', text: 'Take the bar with an underhand grip.', zoom: 'hand', claim: CL.c1 },
     { kind: 'load', text: 'Pick a weight you can lower under control.', claim: CL.c6 },
   ],
@@ -231,12 +233,12 @@ export default {
   zooms,
   chips: ['hand', 'preacher-pad', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
-    // D-TEXT-GOLDEN: posture active (c9) in the setup line; still (c4) and range (c7) in the mistake line.
+    // Not printed on the layers page; the D-TEXT-GOLDEN homes are setup[2], mistakes[0] and mistakes[2].
     setupLine: 'Chest and upper arms on the pad, feet flat. Keep your upper body active, not hanging.',
     mistakeLine: 'Keep your upper arms on the pad, body still. Lower well past 90 degrees, under control.',
     cueLine: 'Arms pressed into the pad.',
     // D-LIB5-VARIANT: the card's plate.variantLine: every line is for the free-weight EZ bar only (c1, c11).
-    variantLine: 'Each line is for the EZ bar, not the machine.',
+    variantLine: 'Shown with the EZ bar, not the machine.',
   },
   redFlag: RED_FLAG,
   mistakes: MISTAKES,
