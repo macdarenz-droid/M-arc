@@ -1,8 +1,11 @@
 // LIB-PLATEFIX-2 part (a) (D-PF2-POSTZOOM, D-PF2-PLACE; PLATEFIX-2 PLAN RULED on #395): the chosen-focus posture zoom
-// and the opt-in place 'outer', in zoom/inline.mjs and qa/zoom.mjs. Clean on the rear delt fly plate; every row red under
+// and the opt-in place 'outer', in zoom/inline.mjs and qa/zoom.mjs. The rear delt fly's drawing is held (D-LIB13-PANEL2,
+// #395 6655186998), so the rows run on a fixture: the front-view rear delt (main's __alt) with a side posture inset on the
+// normal view and a side posture zoom on the Mistake view, built through the real page builder. Clean; every row red under
 // its planted fault; every other zoom spec renders the bytes it rendered before (a).
 import { createHash } from 'node:crypto';
-import { readdirSync } from 'node:fs';
+import { mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -11,20 +14,36 @@ const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.met
 const T = 600_000;
 const ID = 'bent_over_dumbbell_rear_delt_fly', LID = `lib_${ID}`;
 const OURS = /^(dumbbell_fly|bent_over_dumbbell_rear_delt_fly|pec_fly)(__alt)?\.mjs$/;
-let zoom: any, qz: any, qaIdx: any, qaEng: any, cand: any, pa2: any, golden: any, E: any, mirror = '', c0: any, spec: any, pins: any;
+let zoom: any, qz: any, qaIdx: any, qaEng: any, cand: any, bp: any, reg: any, golden: any, E: any, mirror = '', c0: any, spec: any, pins: any, dir = '';
+// the fixture: main's front-view rear delt (__alt), the shrug alone (10 cm), no plate guides, a side inset (normal) and a
+// side posture zoom off the body axis (Mistake)
+const FIXTURE = `import alt from ${JSON.stringify(pathToFileURL(join(process.cwd(), `tools/plates/library/specs/${ID}__alt.mjs`)).href)};
+export default { ...alt, id: ${JSON.stringify(ID)}, mistake: { ...alt.mistake, pose: { scap: { elev: 10 } }, guides: [] }, zoom: [
+  { view: 'normal', k: 1, r: 68, focus: { region: ['head', 'backUpper', 'sacrum', 'buttock', 'hip.r', 'shoulder.r'], pose: 'end' }, project: 'side', ring: false },
+  { view: 'mistake', k: 2, r: 56, focus: { region: ['shoulder.r', 'trap.r', 'ear', 'backUpper'], pose: 'start' }, project: 'side', place: 'outer' }] };
+`;
 beforeAll(async () => {
-  [zoom, qz, qaIdx, qaEng, cand, pa2] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs', 'qa/index.mjs', 'qa/engine.mjs', 'candidate.mjs',
-    'pilot-a2/build.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+  [zoom, qz, qaIdx, qaEng, cand, bp, reg] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs', 'qa/index.mjs', 'qa/engine.mjs', 'candidate.mjs',
+    'build-page.mjs', 'registry.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
   golden = await import(/* @vite-ignore */ new URL('../../tools/plates/golden.mjs', import.meta.url).href);
-  spec = (await import(/* @vite-ignore */ lib(`specs/${ID}.mjs`))).default;
+  dir = mkdtempSync(join(tmpdir(), 'pf2-zoom-'));
+  const file = join(dir, `${ID}.mjs`);
+  writeFileSync(file, FIXTURE);
+  spec = (await import(/* @vite-ignore */ pathToFileURL(file).href)).default;
   pins = qaIdx.loadPins();
   mirror = golden.makeMirror();
   E = await qaEng.loadEngine(mirror);
-  const all = pa2.pa2All(), html = (await pa2.buildPa2Page({ all, ids: [LID] })).html.toString('utf8');
-  c0 = await cand.candidateOf(LID, { all, platesHtml: html, engine: E, authoring: false });
+  const all = reg.rows(), html = (await bp.buildPlatesPage({ groups: [{ id: 'z', title: 'Z', ids: [ID] }], sources: { [ID]: ['PF2 fixture'] }, specs: { [ID]: file } })).html.toString('utf8');
+  c0 = { ...(await cand.candidateOf(LID, { all, platesHtml: html, engine: E, authoring: false })), spec };
 }, T);
-afterAll(() => { if (mirror) qaEng.dropMirror(mirror); });
+afterAll(() => { if (mirror) qaEng.dropMirror(mirror); if (dir) rmSync(dir, { recursive: true, force: true }); });
 
+// a spec variant drawn through the real zoom code: its own markup in both views, so the rows read what the page would show
+const variant = (zs: any[], extra: any = {}) => { const s2 = { ...spec, ...extra, zoom: zs }, pre = 'bent-over-dumbbell-rear-delt-fly';
+  return { ...c0, spec: s2, plate: { ...c0.plate, zoom: { normal: zoom.zoomOf(s2, { prefix: pre, view: 'normal' }).svg, mistake: zoom.zoomOf(s2, { prefix: pre, view: 'mistake' }).svg } } }; };
+// a straight line 2 cm out of the back, sacrum -> upper back (end pose), as the held drawing's BACK_REF
+const backRef = () => { const lm = zoom.focusLandmarks(spec, { focus: { pose: 'end' } }), a = lm.sacrum, b = lm.backUpper;
+  return [[a[0], a[1] + 0.02, a[2]], [b[0], b[1] + 0.02, b[2]]]; };
 const zoomKeys = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => /^H\d\.zoom/.test(k));
 const qa = (c: any) => qaIdx.runQa(c, { engine: E, pins });
 const withZoom = (view: string, z: string) => ({ ...c0, plate: { ...c0.plate, zoom: { ...c0.plate.zoom, [view]: z } } });
@@ -83,19 +102,21 @@ describe('PF2 (a): the field rows', () => {
 
 describe('PF2 (a): the rear delt fly plate, clean', { timeout: T }, () => {
   it('both zooms are drawn and no zoom row is red', async () => {
-    // pf5: the side-view hinge is a plain inset (no source ring, no link); the Mistake zoom magnifies its ring in the plate's own view
+    // the side-view hinge is a plain inset (no source ring, no link); the Mistake posture zoom has its source ring
     expect(c0.plate.zoom.normal).toMatch(/^<g class="plate-zoom" data-view="normal" data-k="1" data-c="[\d. ]+" data-src="[\d. ]+" data-focus="end" data-project="side" data-ring="none">/);
     expect(c0.plate.zoom.normal).not.toMatch(/pz-src|pz-link/);
-    expect(c0.plate.zoom.mistake).toMatch(/^<g class="plate-zoom" data-view="mistake" data-k="3" data-c="[\d. ]+" data-src="[\d. ]+">/);
+    expect(c0.plate.zoom.mistake).toMatch(/^<g class="plate-zoom" data-view="mistake" data-k="2" data-c="[\d. ]+" data-src="[\d. ]+" data-focus="start" data-project="side">/);
     expect(qz.circlesOf(c0.plate.zoom.normal)).toMatchObject({ ring: { r: 68 }, src: null });
     const r = await qa(c0);
     expect(zoomKeys(r)).toEqual([]);
     expect(r.metrics.traceLen).toBeGreaterThanOrEqual(pins.envelope.traceLenMin);
   });
-  it('the posture zoom draws the end pose side-on with the ref line, and no trace or text', () => {
-    const z = c0.plate.zoom.normal;
+  it('the posture zoom draws the end pose side-on with the ref line, and no trace or text', async () => {
+    const r = await qa(variant([{ ...zoom.zoomFor(spec, 'normal'), ref: backRef() }, zoom.zoomFor(spec, 'mistake')]));
+    expect(zoomKeys(r)).toEqual([]);
+    const z = zoom.zoomOf({ ...spec, zoom: [{ ...zoom.zoomFor(spec, 'normal'), ref: backRef() }] }, { view: 'normal' }).svg;
     expect(z).toMatch(/<path class="eq-line m-line" d="M[\d.]+ [\d.]+L[\d.]+ [\d.]+"\/>/);   // the ref: one straight dashed segment
-    expect(z).not.toMatch(/class="trace/);
+    expect(c0.plate.zoom.normal).not.toMatch(/class="trace/);
     expect(z).not.toMatch(/<text\b/);
   });
   it('the Mistake circle sits beyond its source ring from the body midline (place outer)', () => {
@@ -107,9 +128,6 @@ describe('PF2 (a): the rear delt fly plate, clean', { timeout: T }, () => {
 
 describe('PF2 (a): each row turns red on its planted fault', { timeout: T }, () => {
   const posture = (over: any, view = 'normal') => zoom.zoomList(spec.zoom).map((z: any) => (z.view === view ? { ...z, ...over } : z));
-  // a spec variant drawn through the real zoom code: its own markup in both views, so the rows read what the page would show
-  const variant = (zs: any[], extra: any = {}) => { const s2 = { ...spec, ...extra, zoom: zs }, pre = 'bent-over-dumbbell-rear-delt-fly';
-    return { ...c0, spec: s2, plate: { ...c0.plate, zoom: { normal: zoom.zoomOf(s2, { prefix: pre, view: 'normal' }).svg, mistake: zoom.zoomOf(s2, { prefix: pre, view: 'mistake' }).svg } } }; };
   const ringedOf = () => { const { ring: _ring, ...e } = zoom.zoomFor(spec, 'normal'); return e; };   // the same side posture entry with its source ring
   const PM = { view: 'mistake', k: 2, r: 56, focus: { region: ['shoulder.r', 'trap.r', 'ear', 'backUpper'], pose: 'start' }, project: 'side', place: 'outer' };
   it('the ringed and the Mistake posture variants are clean (the controls for the reds below)', async () => {
@@ -141,8 +159,8 @@ describe('PF2 (a): each row turns red on its planted fault', { timeout: T }, () 
     expect(zoomKeys(r)).toContain('H3.zoom:posture:fill');
   });
   it('ref: a reference line run 1 m past the back', async () => {
-    const z = zoom.zoomFor(spec, 'normal'), [a, b] = z.ref;
-    const r = await qa({ ...c0, spec: { ...spec, zoom: posture({ ref: [a, [b[0], b[1], b[2] + 1]] }) } });
+    const [a, b] = backRef() as [number[], number[]];
+    const r = await qa({ ...c0, spec: { ...spec, zoom: posture({ ref: [a, [b[0]!, b[1]!, b[2]! + 1]] }) } });
     expect(zoomKeys(r)).toContain('H3.zoom:posture:ref');
   });
   it('trace: the plate trace under the bar is red although the normal view has a zoom', () => {
@@ -158,14 +176,14 @@ describe('PF2 (a): each row turns red on its planted fault', { timeout: T }, () 
     expect(zoomKeys(r)).toContain('H4.zoom:place:mistake');
   });
   it('place: the placement search honours outer (the circle without the key sits elsewhere)', () => {
-    const { place, ...me } = zoom.zoomFor(spec, 'mistake');
-    expect(place).toBe('outer');
-    const free = zoom.zoomOf({ ...spec, zoom: [me] }, { view: 'mistake' }), outer = zoom.zoomOf(spec, { view: 'mistake' });
+    // on the fixture the nearest free spot of the posture zoom is already outer, so the fault zoom (k 3) shows the search
+    const free = zoom.zoomOf({ ...spec, zoom: [{ view: 'mistake', k: 3 }] }, { view: 'mistake' }), outer = zoom.zoomOf({ ...spec, zoom: [{ view: 'mistake', k: 3, place: 'outer' }] }, { view: 'mistake' });
     expect(free.circle.c).not.toEqual(outer.circle.c);
     expect(zoom.outerOk(free.circle.c, free.focus, 195, free.circle.r)).toBe(false);
     expect(zoom.outerOk(outer.circle.c, outer.focus, 195, outer.circle.r)).toBe(true);
   });
-  const pmCase = (mistake: any) => variant([zoom.zoomFor(spec, 'normal'), PM], { mistake: { ...spec.mistake, guides: [], ...mistake } });
+  const { place: _p, ...PMfree } = PM;   // the deviation cases move the tell label, so they place the circle anywhere
+  const pmCase = (mistake: any) => variant([zoom.zoomFor(spec, 'normal'), PMfree], { mistake: { ...spec.mistake, guides: [], ...mistake } });
   it('deviation: a Mistake posture zoom whose shrug is 1 cm moves the tell under the bar inside the zoom', async () => {
     expect(zoomKeys(await qa(pmCase({ pose: { scap: { elev: 1 } } })))).toContain('H3.zoom:posture:deviation');
     expect(zoomKeys(await qa(pmCase({})))).not.toContain('H3.zoom:posture:deviation');

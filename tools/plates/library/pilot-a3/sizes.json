@@ -80,14 +80,14 @@
     "basis": "dumbbell_fly as drawn on main c7bdad7a (pilot A #109); the arc, bench and body are unchanged by LIB-8R"
    },
    "PITCH": {
-    "value": 0,
+    "value": 45,
     "unit": "deg",
-    "basis": "decision: D-SPIKE-pitch (COACHING-DECISIONS.md:2222) camera pitch; LIB-PLATEFIX-1: 45 read as a standing T-pose (#379 6633524031), 25 as sitting on a stool with the bench floating (plates panel pf1, #385 6636073314 R1); 0 puts the bench on the floor, the shoulders 27 px (780) above the pad and the arms at true length (upper arm 94, forearm-to-grip 100 px)"
+    "basis": "decision: D-SPIKE-pitch (COACHING-DECISIONS.md:2222), camera pitch about 45 deg for this front view"
    },
    "M_WRIST": {
-    "value": 32,
+    "value": 30,
     "unit": "deg",
-    "basis": "stated reason: a bend that reads as the hand off the forearm's line; no card claim or approved plate gives a wrist-bend size (LIB-8R PLAN RULED: M_WRIST 30 stands under D-LIB17-SIZE; LIB-PLATEFIX-1 plates panel pf2, #385 6637293768 R5, asked 30-35: 32); c13 'avoid flexion/extension at the wrist joint'"
+    "basis": "stated reason: a bend that reads as the hand off the forearm's line; no card claim or approved plate gives a wrist-bend size (LIB-8R PLAN RULED: M_WRIST 30 stands under D-LIB17-SIZE); c13 'avoid flexion/extension at the wrist joint'"
    },
    "HAND_W": {
     "value": 0.02,
@@ -123,16 +123,6 @@
     "value": 0.03,
     "unit": "m",
     "basis": "convention: the engine bench primitive's default (vendor/engine/equipment.mjs:158-177), the bench of dumbbell_bench_press (pilot A); drawn as pitched world polys (panel mx4 R2): the foot bar 1.5 cm half height, so 3 cm"
-   },
-   "AXIS_PAST": {
-    "value": 2,
-    "unit": "hand lengths",
-    "basis": "decision: LIB-PLATEFIX-2 plates panel pf4 R5 (#395): the grey dashed forearm axis runs straight through the wrist into the dumbbell, 2 hand lengths past the wrist, so the neutral hand and its hexagon (far corner 1.69 hand lengths out) sit on it; c13"
-   },
-   "ARC_R": {
-    "value": 0.6,
-    "unit": "hand lengths",
-    "basis": "decision: LIB-PLATEFIX-2 last focused round pf5 R5 (#395 6653868933: 'a short red angle arc with no number'): the plain red arc at the wrist from the grey forearm axis to the turned hand, 0.6 hand lengths out, inside the hand and clear of the hexagon; c13"
    }
   }
  }

@@ -145,49 +145,9 @@
     "basis": "stated reason: the side view stops the drawn sweep where the near arm and hand still show (bent_over_dumbbell_rear_delt_fly.mjs:101-104); bent_over_dumbbell_rear_delt_fly as drawn on main c7bdad7a (pilot A #109); poses unchanged by LIB-8R"
    },
    "M_SHRUG": {
-    "value": 10,
+    "value": 5,
     "unit": "cm",
-    "basis": "decision: D-PF2-SHRUG10 (LIB-PLATEFIX-2, PLATEFIX-2 PLAN RULED #395): sized to read, as the plank SAG precedent: a drawing value larger than a real range is allowed when no number appears in copy; side-on in the Mistake posture zoom it moves the shoulder 14.6 plate px toward the head at k 1 (pf3 R5/R11, pf4 R5); was 8 (LIB-PLATEFIX-1) and 5 (golden A dumbbell_lateral_raise's shrug, ref-src/plate.mjs:147); c3 'don't shrug'"
-   },
-   "PITCH": {
-    "value": 26,
-    "unit": "deg",
-    "basis": "decision: LIB-PLATEFIX-1, D-SPIKE-hinge camera pitch for the card's front view; plates panel pf1 (#385 6636073314 R1) read 40 as the trunk pitched at the viewer with a short hanging arm; rendered at 0, 12, 24 and 26 (0 and 12 read as standing upright); 26 keeps the back readable"
-   },
-   "BACK_OUT": {
-    "value": 0.02,
-    "unit": "m",
-    "basis": "stated reason (LIB-PLATEFIX-2 R1, D-PF2-POSTZOOM): the posture zoom's straight dashed back reference sits 2 cm out of the back surface (sacrum -> upper back), so it runs beside the outline instead of on it; c2 'spine straight'"
-   },
-   "BACK_EXT": {
-    "value": 0.15,
-    "unit": "fraction",
-    "basis": "stated reason (LIB-PLATEFIX-2 R1): the reference runs 15% of the sacrum -> upper-back length past each end, inside the zoom circle (H3.zoom:posture:ref); c2"
-   },
-   "POSTURE_R": {
-    "value": 68,
-    "unit": "px",
-    "basis": "decision: LIB-PLATEFIX-2 plates panel pf4 R11 (#395: 'a larger circle, r about 125-130' card px): the side-profile posture zoom's radius, 68 plate px (148 card px), the smallest that holds the head, back, sacrum, buttock, hip and shoulder at k 1 with the 4 px inset; c2"
-   },
-   "SHRUG_K": {
-    "value": 3,
-    "unit": "x",
-    "basis": "decision: LIB-PLATEFIX-2 pf5 R11 (#395 6653868933: 'the ringed region at about 2.7x, in the plate's raised-arm pose'): the Mistake zoom in the plate's own view; at 3 its ring (17.3 px) holds the shoulder joint marker, the cap top and the head side (pf3 R11); c3"
-   },
-   "SHRUG_PX": {
-    "value": 10,
-    "unit": "px",
-    "basis": "decision: LIB-PLATEFIX-2 pf5 R5 (#395 6653868933: 'red dashed shoulder caps and the trap line raised about 8-12 px toward the head, on the main figure'): plate px along the trunk axis on screen (shoulders' midpoint -> head), drawn on top of the fill; c3"
-   },
-   "HEAD_SIDE": {
-    "value": 9.5,
-    "unit": "px",
-    "basis": "stated reason: the head oval's half width at ear height, read from the engine's head outline (pf2 R5, #385 6637293768); where the trap line meets the head"
-   },
-   "HEAD_MEET": {
-    "value": 11.8,
-    "unit": "px",
-    "basis": "stated reason: pf2 R5 'meets the head oval at about y 612' (card px): the trap line meets the engine's head outline 11.8 plate px above the head landmark; c3"
+    "basis": "convention: golden A dumbbell_lateral_raise's shrug (ref-src/plate.mjs:147 'shrug_cm 5'), as lb7/sizes.json:522; c3 'don't shrug'"
    }
   }
  }
