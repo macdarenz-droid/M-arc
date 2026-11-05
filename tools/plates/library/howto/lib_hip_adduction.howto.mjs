@@ -4,9 +4,9 @@
 // No hand zoom (D-SHIP-C3, card-no-zoom): the card has no hand zoom, so the sheet has none; the id is on
 // tools/plates/library/hands/no-zoom.json. Its hand claim (hold the side handles; c1) lives in handling and setup step 1.
 // GRIP (Q-W6-3, D-SHIP-W6-CONV, #393 6647923934): the card's grip.thumb, grip.handContact and grip.wrist each read "Not
-// given by any source read (balance archetype default)". All three take golden B's balance default as data, DERIVED at
-// import from leg_press's handling (below), cited CONVENTION (source balance-default), never printed (D-SHIP-CONVCOPY).
-// The wrist's limitText is the card's own c1, not leg_press's wrist line.
+// given by any source read (balance archetype default)". The thumb and contact take golden B's balance default as data,
+// DERIVED at import from leg_press's handling (below), cited CONVENTION (source balance-default), never printed
+// (D-SHIP-CONVCOPY). The wrist is exempt (D-SHIP-W6-WRISTEXEMPT, #393 6648157060): no range, nothing printed.
 // Zooms: add-start only. add-back (c4, "Back peeled off the pad to swing the legs together") is a text checkpoint
 // (D-SHIP-TEXTZOOM, the machine_chest_press 'Start depth' precedent): the trunk leaving the pad moves front to back,
 // which the front-view plate (card plate.view) does not show; posture checkpoint `back`, the plate's 'Back on pad' label
@@ -27,7 +27,7 @@ export const SOURCES = {
   'brandt-2013': { cite: 'Perceived loading and muscle activity during hip strengthening exercises: comparison of elastic resistance and machine exercises', url: 'https://pubmed.ncbi.nlm.nih.gov/24377067/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'DATA' },
   // golden B's `balance` archetype default for the three hand values the card delegates: a convention.
-  'balance-default': { cite: 'Golden B balance archetype default (leg_press handling: thumb wrapped, contact finger-base, wrist range)', url: 'tools/plates/layers/exercises/leg_press.howto.mjs',
+  'balance-default': { cite: 'Golden B balance archetype default (leg_press handling: thumb wrapped, contact finger-base)', url: 'tools/plates/layers/exercises/leg_press.howto.mjs',
     kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
 };
 // Not cited: acsm-2009 (c10, load progression; the five setup steps carry the card's own steps and its return line).
@@ -43,17 +43,16 @@ const CL = {
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
-// GRIP (Q-W6-3): the three hand values DERIVED at import from golden B's balance default, so they cannot drift from it.
-// The source lines are copied here (leg_press.howto.mjs:329, :330, :331; the wrist line up to its range only, its
-// limitText is not copied) and pinned against the live file by a test; a line that no longer parses throws.
+// GRIP (Q-W6-3): the two hand values DERIVED at import from golden B's balance default, so they cannot drift from it.
+// The source lines are copied here (leg_press.howto.mjs:329, :330) and pinned against the live file by a test; a line
+// that no longer parses throws.
 const LP_THUMB = "thumb: { mode: 'wrapped', claim: CL.thumb },";        // leg_press.howto.mjs:329
 const LP_CONTACT = "contact: 'finger-base',";                           // leg_press.howto.mjs:330
-const LP_WRIST = 'wrist: { ext: [0, 20], dev: [-10, 10],';              // leg_press.howto.mjs:331 (range only)
 const THUMB = LP_THUMB.match(/mode: '([a-z-]+)'/)?.[1];
 const CONTACT = LP_CONTACT.match(/contact: '([a-z-]+)'/)?.[1];
-const RANGE = LP_WRIST.match(/ext: \[(-?\d+), (-?\d+)\], dev: \[(-?\d+), (-?\d+)\]/)?.slice(1).map(Number);
-if (!THUMB || !CONTACT || !RANGE) throw new Error('lib_hip_adduction: golden B leg_press balance default does not parse');
-const CONV = C(['CONVENTION'], ['balance-default'], 'card grip.thumb, grip.handContact and grip.wrist: no source gives them (balance archetype default); golden B\'s balance default, not a card claim, never shown');
+if (!THUMB || !CONTACT) throw new Error('lib_hip_adduction: golden B leg_press balance default does not parse');
+const CONV = C(['CONVENTION'], ['balance-default'], 'card grip.thumb and grip.handContact: no source gives them (balance archetype default); golden B\'s balance default, not a card claim, never shown');
+const CONV_WRIST = C(['CONVENTION'], ['balance-default'], 'card grip.wrist: balance archetype default only; no source gives a wrist range, so none is taken and nothing is shown (D-SHIP-W6-WRISTEXEMPT)');
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses: the start (legs apart to a light inner-thigh stretch; c2) and the spec's Mistake
@@ -136,8 +135,8 @@ export default {
     width: { text: 'Set by the machine.', claim: CL.c1 },
     thumb: { mode: THUMB, claim: CONV },   // CONVENTION (Q-W6-3): 'wrapped', derived above
     contact: CONTACT,          // CONVENTION (Q-W6-3): 'finger-base', derived above
-    // CONVENTION (Q-W6-3): ext [0, 20], dev [-10, 10], derived above; the limitText is the card's own c1
-    wrist: { ext: [RANGE[0], RANGE[1]], dev: [RANGE[2], RANGE[3]], limitText: 'Hold the side handles.', claim: CL.c1 },
+    // D-SHIP-W6-WRISTEXEMPT: the card delegates grip.wrist; no range, nothing printed. c1 stays in gripLine and the grip step.
+    wrist: { exempt: 'Card grip.wrist: balance archetype default only; no source gives a wrist range for this exercise.', claim: CONV_WRIST },
     faults: [],                // the card names no hand fault
     gripLine: 'Hold the side handles. Keep your back flat against the pad.',
     cue: 'Light stretch, then squeeze.',   // c2, c3

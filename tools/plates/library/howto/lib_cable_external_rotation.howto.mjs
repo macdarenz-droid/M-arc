@@ -6,8 +6,9 @@
 // side, elbow at 90 degrees; c2, c3) live in handling and setup steps 2 and 3.
 // GRIP (Q-W6-3, D-SHIP-W6-CONV): the card's grip.thumb, grip.handContact and grip.wrist read "Not given by any source
 // read" (Q-W2-2 / Q-W6-7 form). The thumb is DERIVED from golden B's pull default (lat_pulldown and seated_cable_row
-// handling: thumb wrapped) and the contact and wrist range from the pull key's convention pairs.mjs
-// CONVENTIONS['ga:pull-base'], all cited CONVENTION, data only, never printed (D-SHIP-CONVCOPY). No orientation: the
+// handling: thumb wrapped) and the contact from the pull key's convention pairs.mjs
+// CONVENTIONS['ga:pull-base'], both cited CONVENTION, data only, never printed (D-SHIP-CONVCOPY). The wrist is exempt
+// (D-SHIP-W6-WRISTEXEMPT, #393 6648157060): no range, nothing printed. No orientation: the
 // card names no palm direction (its notes: the plate's neutral D-handle grip is a drawing convention, LR-4).
 // Feel (Q-W6-2, D-SHIP-W6-NOPRIMARY): feel.primary is [] exactly as the card has it; rotator_cuff is text-only in
 // secondary (C2 NO_REGION, golden B's brachialis form on lat_pulldown) and rear_delts is drawn in secondary. No feel row
@@ -32,7 +33,7 @@ export const SOURCES = {
     kind: 'guideline', access: 'full', checked: '2026-10-22', use: 'CONSENSUS' },
   'sl-cuff-article': { cite: 'Rotator Cuff Exercises and Workout (StrengthLog, Daniel Richter)', url: 'https://www.strengthlog.com/rotator-cuff-exercises-workout/',
     kind: 'coach', access: 'full', checked: '2026-10-22', use: 'CONSENSUS' },
-  // The pull key's own source for the hand contact and wrist range: a convention.
+  // The pull key's own source for the hand contact: a convention.
   'ga-pull-base': { cite: 'LIB-7 pull hand convention, pairs.mjs CONVENTIONS ga:pull-base: base of the fingers and top edge of the palm', url: 'tools/plates/library/hands/pairs.mjs',
     kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
   // golden B's pull archetype default for the thumb the card leaves unsourced: a convention.
@@ -63,23 +64,22 @@ const CL = {
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
-// GRIP (Q-W6-3): the contact and wrist range DERIVED at import from the pull key's convention text, so they cannot
+// GRIP (Q-W6-3): the contact DERIVED at import from the pull key's convention text, so it cannot
 // drift from it. pairs.mjs:25 CONVENTIONS['ga:pull-base'] reads 'GA 3.1 pull: base of the fingers and top edge of the
 // palm; extension 0 to 25'. HandContact names that zone 'finger-base' (src/howto/content-types.ts HandContact); a
-// convention that names no mapped zone or range throws. pairs.mjs is not imported (its closure pulls howto-layers.mjs,
+// convention that names no mapped zone throws. pairs.mjs is not imported (its closure pulls howto-layers.mjs,
 // which the MANIFEST closure cannot follow); the text is copied here and pinned against the live convention by a test.
 const PULL_BASE = 'GA 3.1 pull: base of the fingers and top edge of the palm; extension 0 to 25';   // CONVENTIONS['ga:pull-base']
 const CONTACT_OF_ZONE = { 'base of the fingers': 'finger-base' };   // convention zone words -> HandContact
 const CONTACT = Object.entries(CONTACT_OF_ZONE).find(([zone]) => PULL_BASE.includes(zone))?.[1];
-const EXT = PULL_BASE.match(/extension (\d+) to (\d+)/)?.slice(1).map(Number);
 // The thumb DERIVED from golden B's pull rows (lat_pulldown.howto.mjs:174, seated_cable_row.howto.mjs:174: thumb.mode
 // 'wrapped'), copied and pinned against the live files by a test; the two must agree, or this throws.
 const PULL_THUMBS = { lat_pulldown: 'wrapped', seated_cable_row: 'wrapped' };
 const THUMB = new Set(Object.values(PULL_THUMBS)).size === 1 ? Object.values(PULL_THUMBS)[0] : undefined;
-if (!CONTACT || !EXT || !THUMB) throw new Error(`lib_cable_external_rotation: no mapped pull contact, range or one pull thumb default: ${PULL_BASE}`);
+if (!CONTACT || !THUMB) throw new Error(`lib_cable_external_rotation: no mapped pull contact or one pull thumb default: ${PULL_BASE}`);
 const CONV_THUMB = C(['CONVENTION'], ['pull-default'], 'card grip.thumb: not given by any source read; golden B\'s pull default, not a card claim, never shown');
-// limitText is the card's own words (c3, c10); the ext range is the convention, never shown.
-const WRIST = C(['CONSENSUS', 'CONVENTION'], [SL, MO, ACE, 'ga-pull-base'], 'c3, c10; card grip.wrist is not given: the ext range is pairs.mjs CONVENTIONS ga:pull-base, not a card number');
+// D-SHIP-W6-WRISTEXEMPT (#393 6648157060): the card delegates grip.wrist; no range is taken and nothing is printed.
+const CONV_WRIST = C(['CONVENTION'], ['pull-default'], 'card grip.wrist: not given by any source read (pull archetype); no source gives a wrist range, so none is taken and nothing is shown (D-SHIP-W6-WRISTEXEMPT)');
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses: the end (forearm turned out, the hand just outside the body line, elbow at the side;
@@ -189,7 +189,7 @@ export default {
     width: { text: 'One arm. Upper arm against your side.', claim: CL.c3 },
     thumb: { mode: THUMB, claim: CONV_THUMB },   // CONVENTION: golden B's pull default, derived above
     contact: CONTACT,          // 'finger-base', DERIVED from pairs.mjs CONVENTIONS ga:pull-base (CONVENTION, above)
-    wrist: { ext: EXT, limitText: 'Elbow bent 90 degrees, forearm parallel to the floor.', claim: WRIST },   // ext DERIVED, data only
+    wrist: { exempt: 'Card grip.wrist: not given by any source read; no source gives a wrist range for this exercise.', claim: CONV_WRIST },   // D-SHIP-W6-WRISTEXEMPT
     faults: [],                // the card names no hand fault
     gripLine: 'Hold one single handle in your far hand.',   // c2
     cue: 'Elbow at your side. Turn only.',   // c3, c8

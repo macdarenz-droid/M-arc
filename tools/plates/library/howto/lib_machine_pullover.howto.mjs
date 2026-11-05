@@ -4,13 +4,12 @@
 // No hand zoom (D-SHIP-C3 no-zoom list, gap-ruled D-SHIP-HANDW6, #393 6647923934): the card's hand zoom
 // `pullover-hands` (c6) has no pair key that draws an open hand on a pullover arm, and the card gives no pose numbers
 // (ruling 8); the id is on tools/plates/library/hands/no-zoom.json. Its hand claims (no grip, open hands on the bar,
-// fingers extended, the elbows doing the push; c3, c6) live in handling (gripLine, limitText) and the plate's
+// fingers extended, the elbows doing the push; c3, c6) live in handling (gripLine) and the plate's
 // 'Push with elbows' label.
 // GRIP (Q-W6-4): thumb `spread` from the card's grip.thumb "Not wrapped; fingers extended" (c3, c6); contact `palm-flat`
 // from grip.handContact "Palms open against the bar" (c6); `handle` omitted (grip.type "No grip"). The card's grip.wrist
-// reads "Not given by any source read (balance archetype default)": the range is golden B's balance default as data,
-// DERIVED at import from leg_press's handling (below), cited CONVENTION (source balance-default), never printed
-// (D-SHIP-CONVCOPY). The wrist's limitText is the card's own c6, not leg_press's wrist line.
+// reads "Not given by any source read (balance archetype default)": the wrist is exempt (D-SHIP-W6-WRISTEXEMPT, #393
+// 6648157060), cited CONVENTION (source balance-default); no range is taken and nothing is printed.
 // Zooms: none. pullover-pivot (c1) is a text checkpoint (D-SHIP-TEXTZOOM, the machine_chest_press 'Start depth'
 // precedent): its Wrong is a seat setting; posture checkpoint `pivot`, setup step 1 and the plate's 'Shoulders at
 // pivot' label.
@@ -33,8 +32,8 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'DATA' },
   'bull-2007': { cite: 'Electromyographic validation of the deltoideus (anterior portion) and pectoralis major (clavicular portion) muscles in pull-over exercises', url: 'https://pubmed.ncbi.nlm.nih.gov/18051626/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'DATA' },
-  // golden B's `balance` archetype default for the wrist range the card delegates: a convention.
-  'balance-default': { cite: 'Golden B balance archetype default (leg_press handling: wrist range)', url: 'tools/plates/layers/exercises/leg_press.howto.mjs',
+  // golden B's `balance` archetype default, which the card's grip.wrist delegates to: a convention (no range taken).
+  'balance-default': { cite: 'Golden B balance archetype default (leg_press handling)', url: 'tools/plates/layers/exercises/leg_press.howto.mjs',
     kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
 };
 // Not cited: acsm-2009 (c14 tempo, c15 load progression; the plate carries the tempo, and the five setup steps carry the
@@ -57,13 +56,8 @@ const CL = {
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
-// GRIP (Q-W6-4): the wrist range DERIVED at import from golden B's balance default, so it cannot drift from it. The
-// source line is copied here (leg_press.howto.mjs:331, up to its range only; its limitText is not copied) and pinned
-// against the live file by a test; a line that no longer parses throws.
-const LP_WRIST = 'wrist: { ext: [0, 20], dev: [-10, 10],';              // leg_press.howto.mjs:331 (range only)
-const RANGE = LP_WRIST.match(/ext: \[(-?\d+), (-?\d+)\], dev: \[(-?\d+), (-?\d+)\]/)?.slice(1).map(Number);
-if (!RANGE) throw new Error('lib_machine_pullover: golden B leg_press balance default does not parse');
-const CONV = C(['CONVENTION'], ['balance-default'], 'card grip.wrist: no source gives it (balance archetype default); golden B\'s balance default range, not a card claim, never shown');
+// D-SHIP-W6-WRISTEXEMPT: the card's grip.wrist delegates to the balance archetype default; no range is taken.
+const CONV_WRIST = C(['CONVENTION'], ['balance-default'], 'card grip.wrist: balance archetype default only; no source gives a wrist range, so none is taken and nothing is shown (D-SHIP-W6-WRISTEXEMPT)');
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // No zoom crops; the stills are the plate spec's own poses.
@@ -124,8 +118,8 @@ export default {
     width: { text: 'Set by the machine arm.', claim: CL.c3 },
     thumb: { mode: 'spread', claim: CL.grip },   // c3, c6: not wrapped, fingers extended
     contact: 'palm-flat',      // c6: palms open against the bar
-    // CONVENTION (Q-W6-4): ext [0, 20], dev [-10, 10], derived above; the limitText is the card's own c6
-    wrist: { ext: [RANGE[0], RANGE[1]], dev: [RANGE[2], RANGE[3]], limitText: 'Keep your palms open and fingers extended.', claim: CL.c6 },
+    // D-SHIP-W6-WRISTEXEMPT: the card delegates grip.wrist; no range, nothing printed. c6 stays in gripLine and the cue.
+    wrist: { exempt: 'Card grip.wrist: balance archetype default only; no source gives a wrist range for this exercise.', claim: CONV_WRIST },
     faults: [
       // card zoom pullover-hands wrong (c6). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'fist', label: 'Fist gripping', pose: {}, markers: [], alt: 'A fist grips the bar and the hands pull.' },

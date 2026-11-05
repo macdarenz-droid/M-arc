@@ -6,10 +6,11 @@
 // so no sourced contact exists for a pose; the id is on tools/plates/library/hands/no-zoom.json. Its claim (hands on the
 // rope ends, palms facing each other; c2) lives in setup step 2 (D-TEXT-GOLDEN, Q-W6-11) and handling.gripLine.
 // GRIP (Q-W6-11): the card's grip.thumb and grip.wrist read "(pull archetype default)". The thumb is DERIVED from golden
-// B's pull default (lat_pulldown and seated_cable_row handling: thumb wrapped), and the contact and wrist range from the
-// pull key's convention pairs.mjs CONVENTIONS['ga:pull-base'], all cited CONVENTION, data only, never printed
+// B's pull default (lat_pulldown and seated_cable_row handling: thumb wrapped), and the contact from the pull key's
+// convention pairs.mjs CONVENTIONS['ga:pull-base'], both cited CONVENTION, data only, never printed
 // (D-SHIP-CONVCOPY). The card's grip.handContact ("hands on the ends of the rope", c2) names no zone on the hand; c2's
 // words stay in copy and the zone is the convention's.
+// The wrist is exempt (D-SHIP-W6-WRISTEXEMPT, #393 6648157060): no range, nothing printed.
 // Zooms: `fp-elbows` is the plate's own Mistake (M); `fp-height` is a drawing value (DV, below).
 // Red flag: the card's redFlags (shoulder): the shared shoulder box, linked by the pinch and pain rows.
 // No variant line (equipment 'Cable').
@@ -28,7 +29,7 @@ export const SOURCES = {
     kind: 'coach', access: 'full', checked: '2026-10-22', use: 'CONSENSUS' },
   'zhu-2025': { cite: 'Biomechanical evaluation of posterior deltoid exercises and kinematic trajectory modeling', url: 'https://pubmed.ncbi.nlm.nih.gov/41964926/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'DATA' },
-  // The pull key's own source for the hand contact and wrist range: a convention.
+  // The pull key's own source for the hand contact: a convention.
   'ga-pull-base': { cite: 'LIB-7 pull hand convention, pairs.mjs CONVENTIONS ga:pull-base: base of the fingers and top edge of the palm', url: 'tools/plates/library/hands/pairs.mjs',
     kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
   // golden B's pull archetype default for the thumb the card delegates: a convention.
@@ -55,24 +56,22 @@ const CL = {
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
-// GRIP (Q-W6-11): the contact and wrist range DERIVED at import from the pull key's convention text, so they cannot
+// GRIP (Q-W6-11): the contact DERIVED at import from the pull key's convention text, so it cannot
 // drift from it. pairs.mjs:25 CONVENTIONS['ga:pull-base'] reads 'GA 3.1 pull: base of the fingers and top edge of the
 // palm; extension 0 to 25'. HandContact names that zone 'finger-base' (src/howto/content-types.ts HandContact); a
-// convention that names no mapped zone or range throws. pairs.mjs is not imported (its closure pulls howto-layers.mjs,
+// convention that names no mapped zone throws. pairs.mjs is not imported (its closure pulls howto-layers.mjs,
 // which the MANIFEST closure cannot follow); the text is copied here and pinned against the live convention by a test.
 const PULL_BASE = 'GA 3.1 pull: base of the fingers and top edge of the palm; extension 0 to 25';   // CONVENTIONS['ga:pull-base']
 const CONTACT_OF_ZONE = { 'base of the fingers': 'finger-base' };   // convention zone words -> HandContact
 const CONTACT = Object.entries(CONTACT_OF_ZONE).find(([zone]) => PULL_BASE.includes(zone))?.[1];
-const EXT = PULL_BASE.match(/extension (\d+) to (\d+)/)?.slice(1).map(Number);
 // The thumb DERIVED from golden B's pull rows (lat_pulldown.howto.mjs:174, seated_cable_row.howto.mjs:174: thumb.mode
 // 'wrapped'), copied and pinned against the live files by a test; the two must agree, or this throws.
 const PULL_THUMBS = { lat_pulldown: 'wrapped', seated_cable_row: 'wrapped' };
 const THUMB = new Set(Object.values(PULL_THUMBS)).size === 1 ? Object.values(PULL_THUMBS)[0] : undefined;
-if (!CONTACT || !EXT || !THUMB) throw new Error(`lib_face_pull: no mapped pull contact, range or one pull thumb default: ${PULL_BASE}`);
+if (!CONTACT || !THUMB) throw new Error(`lib_face_pull: no mapped pull contact or one pull thumb default: ${PULL_BASE}`);
 const CONV_THUMB = C(['CONVENTION'], ['pull-default'], 'card grip.thumb: the pull archetype default, no face-pull source; golden B\'s pull default, not a card claim, never shown');
-// limitText is the card's own words (c6: the rope ends separate, the shoulder blades squeeze); the ext range is the
-// convention, never shown.
-const WRIST = C(['CONSENSUS', 'CONVENTION'], [MO, BB, SL, 'ga-pull-base'], 'c6; card grip.wrist is the pull archetype default: the ext range is pairs.mjs CONVENTIONS ga:pull-base, not a card number');
+// D-SHIP-W6-WRISTEXEMPT (#393 6648157060): the card delegates grip.wrist; no range is taken and nothing is printed.
+const CONV_WRIST = C(['CONVENTION'], ['pull-default'], 'card grip.wrist: pull archetype default only; no source gives a wrist range, so none is taken and nothing is shown (D-SHIP-W6-WRISTEXEMPT)');
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses: the end (rope at the face, hands by the ears, elbows high and out; c5, c7, c9) and
@@ -187,10 +186,10 @@ export default {
     width: { text: 'Set by the rope. The ends separate as you pull.', claim: C(['CONSENSUS'], [MO, BB, SL], 'c6, c7') },
     thumb: { mode: THUMB, claim: CONV_THUMB },   // CONVENTION: golden B's pull default, derived above
     contact: CONTACT,          // 'finger-base', DERIVED from pairs.mjs CONVENTIONS ga:pull-base (CONVENTION, above)
-    // D-TEXT-GOLDEN: posture apart and squeeze (c6)
-    wrist: { ext: EXT, limitText: 'Pull the rope ends apart. Squeeze your shoulder blades together.', claim: WRIST },
+    wrist: { exempt: 'Card grip.wrist: pull archetype default only; no source gives a wrist range for this exercise.', claim: CONV_WRIST },   // D-SHIP-W6-WRISTEXEMPT
     faults: [],                // the card's hand zoom has no Wrong
-    gripLine: 'Hands on the ends of the rope, palms facing each other.',   // c2
+    // D-TEXT-GOLDEN: posture apart and squeeze (c6), moved here from the wrist limitText (D-SHIP-W6-WRISTEXEMPT)
+    gripLine: 'Hands on the ends of the rope, palms facing each other. Pull the ends apart and squeeze your shoulder blades.',   // c2, c6
     cue: 'Elbows high, rope to your face.',   // c5, c9
   },
   contacts: ['standing-feet'],   // the card's archetype.contact

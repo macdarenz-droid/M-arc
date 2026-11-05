@@ -5,9 +5,9 @@
 // tools/plates/library/hands/no-zoom.json. Its hand claims (both hands on the handles, the abs and not the arms doing
 // the work; c3, c14) live in handling and setup step 4.
 // GRIP (Q-W6-3, D-SHIP-W6-CONV, #393 6647923934): the card's grip.thumb, grip.handContact and grip.wrist each read "Not
-// given by any source read (balance archetype default)". All three take golden B's balance default as data, DERIVED at
-// import from leg_press's handling (below), cited CONVENTION (source balance-default), never printed (D-SHIP-CONVCOPY).
-// The wrist's limitText is the card's own c14, not leg_press's wrist line.
+// given by any source read (balance archetype default)". The thumb and contact take golden B's balance default as data,
+// DERIVED at import from leg_press's handling (below), cited CONVENTION (source balance-default), never printed
+// (D-SHIP-CONVCOPY). The wrist is exempt (D-SHIP-W6-WRISTEXEMPT, #393 6648157060): no range, nothing printed.
 // Red flags: the card's redFlags (back): LIB-5's back box (tools/plates/library/shared/back-box.mjs), linked by the
 // lower-back row's redFlag: 'back'.
 // No variant line (equipment 'Machine').
@@ -30,7 +30,7 @@ export const SOURCES = {
   'sundstrup-2012': { cite: 'Swiss ball abdominal crunch with added elastic resistance is an effective alternative to training machines', url: 'https://pubmed.ncbi.nlm.nih.gov/22893857/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'DATA' },
   // golden B's `balance` archetype default for the three hand values the card delegates: a convention.
-  'balance-default': { cite: 'Golden B balance archetype default (leg_press handling: thumb wrapped, contact finger-base, wrist range)', url: 'tools/plates/layers/exercises/leg_press.howto.mjs',
+  'balance-default': { cite: 'Golden B balance archetype default (leg_press handling: thumb wrapped, contact finger-base)', url: 'tools/plates/layers/exercises/leg_press.howto.mjs',
     kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
   // The back box's own source (shared/back-box.mjs boxClaim), as lib_crunch lists it: the card's redFlags 'back'.
   'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
@@ -49,24 +49,22 @@ const CL = {
   c6: C(['CONSENSUS'], [MO], 'c6'),
   c11: C(['MECH', 'WEAK'], [MO, 'sundstrup-2012'], 'c11'),
   c14: C(['CONSENSUS'], [MO], 'c14'),
-  arms: C(['CONSENSUS'], [ACE, MO, FB], 'c3, c14'),
   rest: C(['CONSENSUS'], [ACE, MO], 'c5, c14'),
   breathe: C(['CONSENSUS'], [MO], 'c7, c14'),
   hipPain: C(['DATA', 'WEAK'], ['sundstrup-2012'], 'c10, c9'),
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
-// GRIP (Q-W6-3): the three hand values DERIVED at import from golden B's balance default, so they cannot drift from it.
-// The source lines are copied here (leg_press.howto.mjs:329, :330, :331; the wrist line up to its range only, its
-// limitText is not copied) and pinned against the live file by a test; a line that no longer parses throws.
+// GRIP (Q-W6-3): the two hand values DERIVED at import from golden B's balance default, so they cannot drift from it.
+// The source lines are copied here (leg_press.howto.mjs:329, :330) and pinned against the live file by a test; a line
+// that no longer parses throws.
 const LP_THUMB = "thumb: { mode: 'wrapped', claim: CL.thumb },";        // leg_press.howto.mjs:329
 const LP_CONTACT = "contact: 'finger-base',";                           // leg_press.howto.mjs:330
-const LP_WRIST = 'wrist: { ext: [0, 20], dev: [-10, 10],';              // leg_press.howto.mjs:331 (range only)
 const THUMB = LP_THUMB.match(/mode: '([a-z-]+)'/)?.[1];
 const CONTACT = LP_CONTACT.match(/contact: '([a-z-]+)'/)?.[1];
-const RANGE = LP_WRIST.match(/ext: \[(-?\d+), (-?\d+)\], dev: \[(-?\d+), (-?\d+)\]/)?.slice(1).map(Number);
-if (!THUMB || !CONTACT || !RANGE) throw new Error('lib_machine_crunch: golden B leg_press balance default does not parse');
-const CONV = C(['CONVENTION'], ['balance-default'], 'card grip.thumb, grip.handContact and grip.wrist: no source gives them (balance archetype default); golden B\'s balance default, not a card claim, never shown');
+if (!THUMB || !CONTACT) throw new Error('lib_machine_crunch: golden B leg_press balance default does not parse');
+const CONV = C(['CONVENTION'], ['balance-default'], 'card grip.thumb and grip.handContact: no source gives them (balance archetype default); golden B\'s balance default, not a card claim, never shown');
+const CONV_WRIST = C(['CONVENTION'], ['balance-default'], 'card grip.wrist: balance archetype default only; no source gives a wrist range, so none is taken and nothing is shown (D-SHIP-W6-WRISTEXEMPT)');
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses:
@@ -208,8 +206,8 @@ export default {
     width: { text: 'Set by the machine.', claim: CL.c3 },
     thumb: { mode: THUMB, claim: CONV },   // CONVENTION (Q-W6-3): 'wrapped', derived above
     contact: CONTACT,          // CONVENTION (Q-W6-3): 'finger-base', derived above
-    // CONVENTION (Q-W6-3): ext [0, 20], dev [-10, 10], derived above; the limitText is the card's own c14
-    wrist: { ext: [RANGE[0], RANGE[1]], dev: [RANGE[2], RANGE[3]], limitText: 'Hold the handles, but let your abs do the bending.', claim: CL.arms },
+    // D-SHIP-W6-WRISTEXEMPT: the card delegates grip.wrist; no range, nothing printed. c3/c14 stay in gripLine and setup 4.
+    wrist: { exempt: 'Card grip.wrist: balance archetype default only; no source gives a wrist range for this exercise.', claim: CONV_WRIST },
     faults: [],                // the card names no hand fault
     gripLine: 'Hold the handles in both hands. Start the crunch with your abs, not your arms.',
     cue: 'Start the crunch with your abs.',   // c14

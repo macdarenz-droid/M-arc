@@ -516,3 +516,24 @@ describe('LIB-SHIP W6 D-SHIP-W6-BACKREACH: a shipped library row flagged back is
     expect(problems([c], applies)).toEqual(['lib_cable_chest_press: back flag outside the back box\'s appliesTo']);
   });
 });
+
+describe('LIB-SHIP W6 D-SHIP-W6-WRISTEXEMPT (#393 6648157060): no printed wrist line where the card says nothing about the wrist', () => {
+  const EIGHT_EXEMPT = ['lib_machine_crunch', 'lib_hip_abduction', 'lib_hip_adduction', 'lib_machine_pullover', 'lib_rear_delt_fly', 'lib_face_pull',
+    'lib_cable_external_rotation', 'lib_resistance_band_pull_apart'];
+  const problems = (c: any) => {
+    const w = c.handling?.wrist ?? {}, out: string[] = [];
+    if ('limitText' in w || 'ext' in w) out.push(`${c.id}: a printed wrist line or range, but its card gives no wrist claim`);
+    if (typeof w.exempt !== 'string' || !/^Card grip\.wrist: /.test(w.exempt)) out.push(`${c.id}: wrist is not the card-delegation exempt form`);
+    return out;
+  };
+  for (const id of EIGHT_EXEMPT) it(`${id}: wrist is exempt, no range, no limitText`, async () => {
+    const { content: c } = await content.loadContent(id);
+    expect(problems(c)).toEqual([]);
+    expect(delegated(json(`docs/research/howto/cards/${id.slice(4)}.json`).grip.wrist)).toBe(true);
+  });
+  it('red: a limitText with a convention range put back', async () => {
+    const { content: c } = await content.loadContent('lib_face_pull');
+    expect(problems({ ...c, handling: { ...c.handling, wrist: { ext: [0, 25], limitText: 'Pull the rope ends apart.', claim: {} } } }))
+      .toEqual(['lib_face_pull: a printed wrist line or range, but its card gives no wrist claim', 'lib_face_pull: wrist is not the card-delegation exempt form']);
+  });
+});
