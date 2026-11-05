@@ -147,12 +147,6 @@ const feel = {
 };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
-const MISTAKES = [
-  { key: 'round', title: 'Rounding the back', zoom: 'bext-pad', claim: CL.round,
-    fix: 'Hinge at the hips. Set the pad below your hip bones.' },
-  { key: 'arch', title: 'Arching past straight', zoom: 'bext-top', claim: CL.c5,
-    fix: 'Stop at a straight line and squeeze the glutes.' },
-];
 const RISKS = [
   { key: 'too-much', text: 'Doing too much too soon can hurt the back.', claim: CL.c12 },
   { key: 'swing', text: 'Swinging with momentum raises injury risk.', claim: CL.c9 },
@@ -178,6 +172,10 @@ export default {
     { key: 'hinge', label: 'Hinge at hips', detail: 'Bend at the hips, back stiff and straight.',
       anchor: { landmark: 'buttock', pose: 'end' }, zoom: 'bext-pad', claim: CL.c6 },
     { key: 'depth', label: 'Depth', detail: 'Lower to just below parallel.', anchor: { landmark: 'backUpper', pose: 'end' }, claim: CL.c7 },
+    // Q-W2-12: handlingMistake 'Rounding the back' (c6, c19, c2) as a checkpoint; its fix is this detail.
+    { key: 'round', label: 'No rounding', detail: 'Hinge at the hips. Set the pad below your hip bones.',
+      anchor: { landmark: 'lumbar', pose: 'end' }, zoom: 'bext-pad', claim: CL.round },
+    // Q-W2-12: handlingMistake 'Arching past straight' (c5) merged here; its fix is this detail.
     { key: 'line', label: 'Straight line', detail: 'Rise to a straight line and squeeze the glutes. Do not arch the lower back past straight.',
       anchor: { landmark: 'backUpper', pose: 'start' }, zoom: 'bext-top', claim: CL.c5 },
     // Q-W2-12: handlingMistake 'Swinging with momentum.' (c9, c8) merged here; its fix is this detail.
@@ -195,7 +193,7 @@ export default {
     variantLine: 'Drawn on the 45-degree back-extension bench (Roman chair).',
   },
   redFlag: RED_FLAG,
-  mistakes: MISTAKES,
+  mistakes: [],   // Q-W2-12 (#379 6628699724): the card's handlingMistakes are posture checkpoints above
   risks: RISKS,
   riskFlags: ['back'],   // the card's redFlags
   sources: Object.keys(SOURCES),
