@@ -208,14 +208,22 @@ export function pin(root, { scratch = SCRATCH, card: withCard = true, noF5 = [] 
     if (typeof elbow !== 'number') throw new Error(`fixture: ${s.id}: no end elbow.r angle in the clone's report (${JSON.stringify(m.angles.end)})`);
     put(root, paths(s).research, json({ $comment: 'LIB-4b B5 scratch QA card (D-LIB4-FIXTURE-3): measured from the clone\'s own engine report; never pinned or shipped.', plateFacts: [{ kind: 'angle', joint: 'elbow.r', pose: 'end', deg: elbow }], tempo: m.tempo, topFault: m.topFault }));
   }
+  // F-SCRATCH-SYNTH: the real loader stays beside it (pairs-real.mjs), so a shipped library row keeps its pair (the curl's,
+  // since LIB-SHIP W1); the scratch keys are added over it
+  const real = join(root, 'tools/plates/library/hands/pairs-real.mjs');
+  if (!existsSync(real)) writeFileSync(real, readFileSync(join(root, 'tools/plates/library/hands/pairs.mjs')));
   put(root, 'tools/plates/library/hands/pairs.mjs', `// LIB-4b B5 scratch pair loader (lib4-cards 11.1 items 4, 14): one key per scratch id, each panel that id's own hand
-// close-up, cut from the batch's fixture layers page. Scratch tree only.
+// close-up, cut from the batch's fixture layers page, over the real loader (pairs-real.mjs). Scratch tree only.
 import { readFileSync } from 'node:fs';
 import { divAt } from '../../gen/hands.mjs';
-export const HAND_OF_ID = ${JSON.stringify(Object.fromEntries(scratch.map(s => [s.id, s.key])))};
+import * as R from './pairs-real.mjs';
+export * from './pairs-real.mjs';
+const SCRATCH_OF_ID = ${JSON.stringify(Object.fromEntries(scratch.map(s => [s.id, s.key])))};
+export const HAND_OF_ID = { ...R.HAND_OF_ID, ...SCRATCH_OF_ID };
 const CHROME_OF_KEY = ${JSON.stringify(Object.fromEntries(scratch.map(s => [s.key, paths(s).chromeId])))};
-export const inputsFor = () => ['${PAGES.layers}'];
+export const inputsFor = key => (key in CHROME_OF_KEY ? ['${PAGES.layers}'] : R.inputsFor(key));
 export async function pairPanel(key) {
+  if (!(key in CHROME_OF_KEY)) return R.pairPanel(key);
   const page = readFileSync(new URL('../../../../${PAGES.layers}', import.meta.url), 'utf8'), id = CHROME_OF_KEY[key];
   if (!id) throw new Error('pairs: unknown key ' + key);
   const open = '<div class="zx" id="' + id + '-zoom-hand" data-zoom="hand"', a = page.indexOf(open);
