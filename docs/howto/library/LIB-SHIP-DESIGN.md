@@ -907,14 +907,14 @@ comes with LAYERS READY. Flags are each id's EXPECTED minus F5; all raised ones 
 | jumping_jacks | lb10 | C | none | none | — | toes-forward M; landing-knees DV (knee ext), front view | F7 | — | no red flag; scratch target (**Q-W7-8**) |
 | wall_ball | lb10 | A | implement | c (contact c9; thumb, wrist "not given") → **Q-W7-5** | catch-hands (GAP ball-contact, hand-ball-contact.mjs:28) | wall-distance M; catch-timing T (a timing fault) | — | gap → safety checker | shoulder box |
 
-Counts: 29. GRIP: none 3, b2 6, b 13 (incl. 3 under Q-W7-1, 1 under Q-W7-2), a-values 3, c 4 (2 with a precedent, 3
+Counts: 29. GRIP: none 3, b2 6, b 12 (incl. 3 under Q-W7-1, 1 under Q-W7-2), a-values 3, c 5 (2 with a precedent, 3
 without, cable_crunch among them). **No W7 row draws a hand pair**, so W7 adds no handpair- chunk or budget. No-zoom
 entries: 4 gap-ruled (D-SHIP-HANDW7: bird_dog, burpee, bear_crawl, farmer_s_carry), 1 gap-key (sled_pull), plus up to 3
 gap-key under Q-W7-5. Every id keeps at least one drawn posture zoom (M or DV), so none waits on F-ZOOM-NONE. `core` in a
 feel role: 5 ids, all textOnly (D-SHIP-Q7). Variant lines: glute_bridge, resisted_hip_flexion, farmer_s_carry. Hints:
 none (the two push ids are NoHandling), so ids.ts gains no text. Inherit: all 29 cards have `inherit: []`, so W7 adds no
 INHERIT_MAP entry and the family check returns null for each (family.mjs:73); parents come first in their batch file.
-Red flags: back 22, knee 6, wrist 3, shoulder 1, none 3. Boxes exist for knee, wrist and shoulder (layers/howto/shared.mjs).
+Red flags: back 20, knee 7, wrist 3, shoulder 1, none 3. Boxes exist for knee, wrist and shoulder (layers/howto/shared.mjs).
 **17 back-linked ids are outside the back box's appliesTo** (marked "needs R6"); ruling 6's appliesTo edit is not yet on
 claude/libht-research (appliesTo still 35 at 0393aac9). W7 builds ahead; its flip waits for that edit on main.
 Gate: lib_farmer_s_carry is seeded by 6 lines (screenshot-gate.mjs:4861, :8729, :8764, :8832, :9388, :9450); "Ab Wheel
@@ -971,8 +971,8 @@ appliesTo is on main); generate; budgets at N; QA; merge main once W2-W6 land; R
   **Proposal:** accept; farmer_s_carry's sourced set-down (c15, c16) is its way-out line.
 - **Q-W7-7 Where the other 10 left-out rows go.** lb08.json: seated_calf_raise, standing_calf_raise,
   bodyweight_calf_raise, hip_thrust (lb8/build.mjs:69 HELD); lb09.json: pallof_press, russian_twist, flutter_kicks
-  (lb9/build.mjs:70 HELD) and bicycle_crunch (lb9/qa.mjs; no spec); overhead_cable_triceps_extension (LB5,
-  lb5-plates.test.ts:49) and cable_rear_delt_fly (lb7/build.mjs:66 HELD) belong to W5's lb05.json and W6's lb07.json.
+  (lb9/build.mjs:70 HELD) and bicycle_crunch (lb9/qa.mjs:48; no spec); overhead_cable_triceps_extension (LB5,
+  lb5-plates.test.ts:49) and cable_rear_delt_fly (lb7/build.mjs:69 HELD) belong to W5's lb05.json and W6's lb07.json.
   **Proposal:** W7 adds those 2 rows to lb05.json and lb07.json after W5 and W6 merge (W7 merges last), one row each,
   nothing else in those files; the rows use each build's heldData row form plus the stage, with no pages and no pin
   (D-SHIP-LEFTOUT-CLOSURE path, as leg_press_calf_raise). The HELD maps stay (held plate pages are their own tests);
