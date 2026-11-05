@@ -45,7 +45,8 @@ const isPoint = p => Array.isArray(p) && p.length === 3 && p.every(Number.isFini
 // PLATEFIX-2 fix round (pf4 R5/R11): a posture entry may set its own circle radius `r` (ZOOM.r to POSTURE.rMax), and may
 // sit on the Mistake view (the focus pose with the Mistake pose applied to it, as the plate applies it to the end pose) with its
 // own `guides` (the Mistake guides drawn inside the zoom instead of the plate's, in the zoom's projection); its bar there
-// is the tell anchor's move measured in the zoom (H3.zoom:posture:deviation).
+// is the tell anchor's move measured in the zoom (H3.zoom:posture:deviation). PLATEFIX-2 pf5 R11: a side-projection entry
+// may set `ring: false`, a plain inset of another view: no source ring and no link (it magnifies no plate region).
 export const POSTURE = Object.freeze({ kMin: 1, regionMax: 8, inset: 4, fill: 0.6, pad: 3, rMax: 90 });
 const isPosture = z => z != null && typeof z === 'object' && 'focus' in z;
 // D-PF2-PLACE: an opt-in `place: 'outer'` on any entry keeps the circle on the far side of its focus from the body's
@@ -56,7 +57,7 @@ export const outerOk = (at, focus, xm, r) => Math.sign(at[0] - xm) === Math.sign
 function entryProblems(z) {
   const out = [];
   if (typeof z !== 'object' || z === null || Array.isArray(z)) return ['zoom must be { view, k }'];
-  const posture = isPosture(z), keys = posture ? ['view', 'k', 'focus', 'project', 'ref', 'place', 'r', 'guides'] : ['view', 'k', 'tell', 'pair', 'place'];
+  const posture = isPosture(z), keys = posture ? ['view', 'k', 'focus', 'project', 'ref', 'place', 'r', 'guides', 'ring'] : ['view', 'k', 'tell', 'pair', 'place'];
   for (const k of Object.keys(z)) if (!keys.includes(k)) out.push(`zoom: unknown key ${k}`);
   if (!VIEWS.includes(z.view)) out.push(`zoom.view ${JSON.stringify(z.view)} is not 'normal' or 'mistake'`);
   const kMin = posture ? POSTURE.kMin : ZOOM.kMin;
@@ -66,6 +67,7 @@ function entryProblems(z) {
     const f = z.focus;
     if ('r' in z && !(typeof z.r === 'number' && z.r >= ZOOM.r && z.r <= POSTURE.rMax)) out.push(`zoom.r ${JSON.stringify(z.r)} is outside ${ZOOM.r}-${POSTURE.rMax}`);
     if ('guides' in z && (z.view !== 'mistake' || !Array.isArray(z.guides))) out.push('zoom.guides is a list, for a Mistake entry only');
+    if ('ring' in z && !(z.ring === false && z.project === 'side')) out.push("zoom.ring is false or absent, and false only with project 'side' (an inset of another view)");
     if (typeof f !== 'object' || f === null || Array.isArray(f) || Object.keys(f).some(k => !['region', 'pose'].includes(k))) out.push('zoom.focus must be { region, pose }');
     else {
       if (!(Array.isArray(f.region) && f.region.length >= 1 && f.region.length <= POSTURE.regionMax && f.region.every(n => typeof n === 'string' && n)))
@@ -224,7 +226,7 @@ export function midlineX(entry, cam, spec) {
 }
 /** The circle centre nearest `focus` that passes the placement rules (zoomOf's search), or null. `xm`: the midline's
  *  plate x for place 'outer' (null: anywhere). */
-function placeCircle(plate, focus, rs, xm = null, r = ZOOM.r) {
+function placeCircle(plate, focus, rs, xm = null, r = ZOOM.r, link = true) {
   const { gap, margin, top, size } = ZOOM, labels = labelBoxes(plate.overlay), leaders = leadersOf(plate.svg);
   let C = null, best = Infinity;
   for (let cy = top + r; cy <= size - margin - r; cy += 2) for (let cx = margin + r; cx <= size - margin - r; cx += 2) {
@@ -233,7 +235,7 @@ function placeCircle(plate, focus, rs, xm = null, r = ZOOM.r) {
     const at = [cx, cy];
     if (xm != null && !outerOk(at, focus, xm, r)) continue;
     if (!discFree(plate.occ, at, r + gap) || labels.some(b => rectHitsCircle(b, at, r + gap)) || leaders.some(p => polyHitsCircle(p, at, r + gap))) continue;
-    if (labels.some(b => linkHitsBox(focus, at, rs, r, b))) continue;
+    if (link && labels.some(b => linkHitsBox(focus, at, rs, r, b))) continue;
     C = at; best = d;
   }
   return C ? { C, d: best } : null;
@@ -246,8 +248,8 @@ function postureZoomOf(spec, entry, { E, vid, plate, c, cam, m }) {
   const { k } = entry, r = entry.r ?? ZOOM.r, view = m ? 'mistake' : 'normal', pts = focusPoints(spec, entry, E);
   const onPlate = pts.map(w => cam.P(w)), focus = mid(onPlate);
   const side = entry.project === 'side', hold = Math.max(...onPlate.map(p => Math.hypot(p[0] - focus[0], p[1] - focus[1]) + POSTURE.pad));
-  const rs = side ? hold : Math.max(r / k, hold);
-  const placed = placeCircle(plate, focus, rs, midlineX(entry, cam, spec), r);
+  const inset = entry.ring === false, rs = inset ? 0 : side ? hold : Math.max(r / k, hold);
+  const placed = placeCircle(plate, focus, rs, midlineX(entry, cam, spec), r, !inset);
   if (!placed) throw new Error(`${spec.id}: no place on the ${view} plate keeps the zoom clear of ink, labels and leaders`);
   const { C, d: best } = placed, uv = postureUV(entry, cam), mc = mid(pts.map(uv)), s = c.pxPerM * k;
   const zs = { ...postureSpec(spec, entry), camera: { ...(!side && cam.pitch ? { pitch: cam.pitch } : {}), pxPerM: s, x0: C[0] - s * mc[0], y0: C[1] + s * mc[1] },
@@ -258,14 +260,14 @@ function postureZoomOf(spec, entry, { E, vid, plate, c, cam, m }) {
     .replace(/^<svg class="plate-svg"[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/<rect width="358" height="358" fill="url\(#[^)]*\)"\/>/, '');
   const clip = `${vid}-zclip`, u = [(C[0] - focus[0]) / best, (C[1] - focus[1]) / best];
   const link = `M${f(focus[0] + u[0] * rs)} ${f(focus[1] + u[1] * rs)}L${f(C[0] - u[0] * r)} ${f(C[1] - u[1] * r)}`;
-  const svg = `<g class="plate-zoom" data-view="${view}" data-k="${k}" data-c="${f(C[0])} ${f(C[1])}" data-src="${f(focus[0])} ${f(focus[1])}" data-focus="${entry.focus.pose}"${side ? ' data-project="side"' : ''}>`
+  const svg = `<g class="plate-zoom" data-view="${view}" data-k="${k}" data-c="${f(C[0])} ${f(C[1])}" data-src="${f(focus[0])} ${f(focus[1])}" data-focus="${entry.focus.pose}"${side ? ' data-project="side"' : ''}${inset ? ' data-ring="none"' : ''}>`
     + `<defs><clipPath id="${clip}"><circle cx="${f(C[0])}" cy="${f(C[1])}" r="${r}"/></clipPath></defs>`
-    + `<circle class="pz-src" cx="${f(focus[0])}" cy="${f(focus[1])}" r="${f(rs)}"/>`
-    + `<path class="pz-link" d="${link}"/>`
+    + (inset ? '' : `<circle class="pz-src" cx="${f(focus[0])}" cy="${f(focus[1])}" r="${f(rs)}"/>`
+    + `<path class="pz-link" d="${link}"/>`)
     + `<circle class="pz-bg" cx="${f(C[0])}" cy="${f(C[1])}" r="${r}"/>`
     + `<g class="pz-in" clip-path="url(#${clip})">${inner}</g>`
     + `<circle class="pz-ring" cx="${f(C[0])}" cy="${f(C[1])}" r="${r}"/></g>`;
-  return { view, k, focus, circle: { c: C, r }, src: { c: focus, r: rs }, link, posture: { pose: entry.focus.pose, project: side ? 'side' : null }, svg };
+  return { view, k, focus, circle: { c: C, r }, src: inset ? null : { c: focus, r: rs }, link: inset ? null : link, posture: { pose: entry.focus.pose, project: side ? 'side' : null }, svg };
 }
 
 /** The zoom classes, on the page's own theme tokens (the ring draws as ink: H5 holds it to the ink floor). */

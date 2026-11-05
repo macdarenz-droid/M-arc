@@ -44,7 +44,7 @@ describe('PF2 dumbbell_fly', { timeout: T }, () => {
       expect(G[1]).toBeGreaterThan(Ge[1]);                          // toward the floor (screen y down)
     }
     const g = fly.mistake.guides, kinds = g.map((x: any) => x.kind);
-    expect(kinds).toEqual(['dashed', 'dashed', 'arc-arrow', 'dashed', 'dashed', 'arc-arrow']);   // pf4 R5: no core ring
+    expect(kinds).toEqual(['dashed', 'dashed', 'line', 'dashed', 'dashed', 'line']);   // pf4 R5: no core ring; pf5 R5: a plain arc, no arrowhead
     // the red hexagon is centred on the faulty grip (the tell anchor), 6 sides, the primitive's size
     const hex = g[1].pts.slice(0, 6).map((p: number[]) => cam.P(p)), Gl = cam.P(L.mistake['grip.l']);
     const c = [hex.reduce((a: number, p: number[]) => a + p[0]!, 0) / 6, hex.reduce((a: number, p: number[]) => a + p[1]!, 0) / 6];
@@ -71,27 +71,42 @@ describe('PF2 dumbbell_fly', { timeout: T }, () => {
       expect(off(W)).toBeLessThan(0.1); expect(off(G)).toBeLessThan(0.1);
       expect(d(W, b)).toBeCloseTo(2 * d(W, G), 1);
     }
-    expect(fly.mistake.guides.filter((x: any) => x.kind === 'arc-arrow')).toHaveLength(2);
+    // pf5 R5: a short plain red arc at the wrist, 0.6 hand lengths out, from the grey axis (0) to the turned hand (TURN)
+    const arcs = fly.mistake.guides.filter((x: any) => x.kind === 'line');
+    expect(arcs).toHaveLength(2);
+    const Lm = qaEng.poseLandmarks(E, fly).lm.mistake;
+    for (const [g, s] of [[arcs[0], 'l'], [arcs[1], 'r']] as const) {
+      const ps = g.pts.map((p: number[]) => cam.P(p)), W = cam.P(Lm[`wrist.${s}`]), G = cam.P(L[`grip.${s}`]), hl = d(W, G);
+      for (const p of ps) expect(d(p, W)).toBeCloseTo(0.6 * hl, 1);
+      const a0 = Math.atan2(ps[0][1] - W[1]!, ps[0][0] - W[0]!) * 180 / Math.PI, a1 = Math.atan2(ps[8][1] - W[1]!, ps[8][0] - W[0]!) * 180 / Math.PI;
+      expect(((a1 - a0 + 540) % 360) - 180).toBeCloseTo(flyMod.FLY_TURN[s], 0);
+    }
     expect(zoom.zoomFor(fly, 'mistake').k).toBe(2.5);
   });
 });
 
 describe('PF2 bent_over_dumbbell_rear_delt_fly', { timeout: T }, () => {
-  it('pf4 R5: the shrug is drawn side-on in the Mistake zoom (k 2, place outer): the faulty cap moves 10-15+ px toward the head, with an arrow; the front Mistake draws no rings', () => {
-    expect(rd.mistake.guides).toEqual([]);
-    const me = zoom.zoomFor(rd, 'mistake'), z = zoom.zoomOf(rd, { view: 'mistake' });
-    expect(me).toMatchObject({ k: 2, project: 'side', place: 'outer', focus: { pose: 'start' } });
-    expect(me.focus.region).toEqual(expect.arrayContaining(['shoulder.r', 'ear']));
-    expect(zoom.outerOk(z.circle.c, z.focus, 195, z.circle.r)).toBe(true);
-    const ps = zoom.postureSpec(rd, me), L = qaEng.poseLandmarks(E, ps).lm, px = 256 / 1.75 * me.k;
-    const dz = (L.mistake['shoulder.r'][2] - L.end['shoulder.r'][2]) * px, dy = (L.mistake['shoulder.r'][1] - L.end['shoulder.r'][1]) * px;
-    expect(Math.hypot(dz, dy)).toBeGreaterThanOrEqual(10);   // side-on, inside the zoom
-    expect(dz).toBeGreaterThan(0);                            // toward the head (facing right)
-    const cap = me.guides.find((g: any) => g.kind === 'dashed' && g.pts.length === 25), c = cap.pts.slice(0, 24).reduce((a: number[], p: number[]) => [a[0]! + p[1]! / 24, a[1]! + p[2]! / 24], [0, 0]);
-    expect(Math.hypot(c[0]! - L.mistake['shoulder.r'][1], c[1]! - L.mistake['shoulder.r'][2])).toBeLessThan(1e-6);   // the red cap on the faulty shoulder
-    expect(me.guides.filter((g: any) => g.kind === 'arrow')).toHaveLength(1);
-    expect(z.svg).toContain('class="m-arrow"');
+  it('pf5 R5: on the main figure, red dashed caps and trap lines raised 10 px toward the head along the trunk axis, with arrows, drawn on top', () => {
+    const cam = qaEng.cameraOf(rd, E.renderPlate(rd, { id: 'r' }).report), L = qaEng.poseLandmarks(E, rd).lm.end;
+    expect(rdMod.R11.up).toEqual([0, 10]);   // the trunk axis on screen points straight at the head
+    const caps = rd.mistake.guides.filter((g: any) => g.kind === 'dashed' && g.pts.length === 25);
+    expect(caps).toHaveLength(2);
+    for (const [cap, s] of [[caps[0], 'r'], [caps[1], 'l']] as const) {
+      const ps = cap.pts.slice(0, 24).map((p: number[]) => cam.P(p)), c = [ps.reduce((a: number, p: number[]) => a + p[0]!, 0) / 24, ps.reduce((a: number, p: number[]) => a + p[1]!, 0) / 24];
+      const S = cam.P(L[`shoulder.${s}`]);
+      expect(c[0]! - S[0]!).toBeCloseTo(0, 1); expect(c[1]! - S[1]!).toBeCloseTo(10, 1);
+    }
+    expect(rd.mistake.guides.filter((g: any) => g.kind === 'arrow')).toHaveLength(2);
+    const m = E.renderPlate(rd, { id: 'r', mistake: true }).svg;
+    expect(m.indexOf('class="mistake-layer"')).toBeGreaterThan(m.indexOf('class="m-pose"'));   // the guides draw after (over) the faulty outline and fill
     expect(rdMod.SIZES.M_SHRUG).toBe(10);
+  });
+  it('pf5 R11: the Mistake zoom magnifies its ringed region at k 3 in the plate\'s own view and raised-arm pose, holding the joint marker, cap top and head side', () => {
+    const me = zoom.zoomFor(rd, 'mistake'), z = zoom.zoomOf(rd, { view: 'mistake' }), r11 = rdMod.R11;
+    expect(me).toEqual({ view: 'mistake', k: 3, place: 'outer' });
+    for (const p of [r11.joint, r11.capTop, r11.headSide]) expect(d(p, z.src.c)).toBeLessThanOrEqual(z.src.r - 1);
+    expect(z.src.r).toBeCloseTo(52 / 3, 2);
+    expect(zoom.outerOk(z.circle.c, z.focus, 195, z.circle.r)).toBe(true);
   });
   it('R7 note: the start dumbbells are dashed end-on hexagons, and the Trace is one circular arc within 1 px', () => {
     const r = E.renderPlate(rd, { id: 'r' });
@@ -108,7 +123,8 @@ describe('PF2 bent_over_dumbbell_rear_delt_fly', { timeout: T }, () => {
   });
   it('R1, pf4 R11: the posture zoom shows the whole bent-over body side-on at the main view\'s moment (end), r 68 at k 1, with the straight ref line; FLAT BACK stays on backUpper', () => {
     const z = zoom.zoomFor(rd, 'normal'), o = zoom.zoomOf(rd, { view: 'normal' });
-    expect(z).toMatchObject({ k: 1, r: 68, project: 'side', focus: { pose: 'end' } });
+    expect(z).toMatchObject({ k: 1, r: 68, project: 'side', focus: { pose: 'end' }, ring: false });   // pf5 R11: a plain inset, no ring
+    expect(o.src).toBeNull(); expect(o.svg).not.toMatch(/pz-src|pz-link/);
     expect(z.focus.region).toEqual(expect.arrayContaining(['head', 'backUpper', 'sacrum', 'buttock', 'hip.r', 'shoulder.r']));
     expect(o.circle.r).toBe(68);
     expect(rd.callouts.find((c: any) => c.key === 'back').anchor).toBe('backUpper');

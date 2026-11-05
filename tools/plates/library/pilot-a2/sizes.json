@@ -170,9 +170,24 @@
     "basis": "decision: LIB-PLATEFIX-2 plates panel pf4 R11 (#395: 'a larger circle, r about 125-130' card px): the side-profile posture zoom's radius, 68 plate px (148 card px), the smallest that holds the head, back, sacrum, buttock, hip and shoulder at k 1 with the 4 px inset; c2"
    },
    "SHRUG_K": {
-    "value": 2,
+    "value": 3,
     "unit": "x",
-    "basis": "stated reason (LIB-PLATEFIX-2 pf4 R5): the Mistake side-profile zoom's magnification (circle POSTURE_R), so the shoulder, the neck gap and the ear all sit inside the circle and span over 0.6 of it (H3.zoom:posture:fill), and the shrug reads as elevation toward the head; c3"
+    "basis": "decision: LIB-PLATEFIX-2 pf5 R11 (#395 6653868933: 'the ringed region at about 2.7x, in the plate's raised-arm pose'): the Mistake zoom in the plate's own view; at 3 its ring (17.3 px) holds the shoulder joint marker, the cap top and the head side (pf3 R11); c3"
+   },
+   "SHRUG_PX": {
+    "value": 10,
+    "unit": "px",
+    "basis": "decision: LIB-PLATEFIX-2 pf5 R5 (#395 6653868933: 'red dashed shoulder caps and the trap line raised about 8-12 px toward the head, on the main figure'): plate px along the trunk axis on screen (shoulders' midpoint -> head), drawn on top of the fill; c3"
+   },
+   "HEAD_SIDE": {
+    "value": 9.5,
+    "unit": "px",
+    "basis": "stated reason: the head oval's half width at ear height, read from the engine's head outline (pf2 R5, #385 6637293768); where the trap line meets the head"
+   },
+   "HEAD_MEET": {
+    "value": 11.8,
+    "unit": "px",
+    "basis": "stated reason: pf2 R5 'meets the head oval at about y 612' (card px): the trap line meets the engine's head outline 11.8 plate px above the head landmark; c3"
    }
   }
  }

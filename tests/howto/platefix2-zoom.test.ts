@@ -64,6 +64,9 @@ describe('PF2 (a): the field rows', () => {
     expect(zoom.zoomFieldProblems({ ...N, r: 91 })).toEqual(['zoom.r 91 is outside 52-90']);
     expect(zoom.zoomFieldProblems({ ...N, guides: [] })).toEqual(['zoom.guides is a list, for a Mistake entry only']);
     expect(zoom.zoomFieldProblems({ view: 'mistake', k: 3, r: 68 })).toEqual(['zoom: unknown key r']);   // the fault zoom keeps its radius
+    expect(zoom.zoomFieldProblems({ ...N, ring: false })).toEqual(["zoom.ring is false or absent, and false only with project 'side' (an inset of another view)"]);
+    expect(zoom.zoomFieldProblems({ ...N, project: 'side', ring: true })).toEqual(["zoom.ring is false or absent, and false only with project 'side' (an inset of another view)"]);
+    expect(zoom.zoomFieldProblems({ ...N, project: 'side', ring: false })).toEqual([]);
     expect(zoom.zoomFieldProblems({ ...N, focus: { region: [], pose: 'start' } })).toEqual(['zoom.focus.region must list 1-8 landmark names']);
     expect(zoom.zoomFieldProblems({ ...N, focus: { region: Array(9).fill('hip.r'), pose: 'start' } })).toEqual(['zoom.focus.region must list 1-8 landmark names']);
     expect(zoom.zoomFieldProblems({ ...N, focus: { region: ['hip.r'], pose: 'mistake' } })).toEqual(["zoom.focus.pose \"mistake\" is not 'start' or 'end'"]);
@@ -80,9 +83,11 @@ describe('PF2 (a): the field rows', () => {
 
 describe('PF2 (a): the rear delt fly plate, clean', { timeout: T }, () => {
   it('both zooms are drawn and no zoom row is red', async () => {
-    expect(c0.plate.zoom.normal).toMatch(/^<g class="plate-zoom" data-view="normal" data-k="1" data-c="[\d. ]+" data-src="[\d. ]+" data-focus="end" data-project="side">/);
-    expect(c0.plate.zoom.mistake).toMatch(/^<g class="plate-zoom" data-view="mistake" data-k="2" data-c="[\d. ]+" data-src="[\d. ]+" data-focus="start" data-project="side">/);
-    expect(qz.circlesOf(c0.plate.zoom.normal).ring.r).toBe(68);
+    // pf5: the side-view hinge is a plain inset (no source ring, no link); the Mistake zoom magnifies its ring in the plate's own view
+    expect(c0.plate.zoom.normal).toMatch(/^<g class="plate-zoom" data-view="normal" data-k="1" data-c="[\d. ]+" data-src="[\d. ]+" data-focus="end" data-project="side" data-ring="none">/);
+    expect(c0.plate.zoom.normal).not.toMatch(/pz-src|pz-link/);
+    expect(c0.plate.zoom.mistake).toMatch(/^<g class="plate-zoom" data-view="mistake" data-k="3" data-c="[\d. ]+" data-src="[\d. ]+">/);
+    expect(qz.circlesOf(c0.plate.zoom.normal)).toMatchObject({ ring: { r: 68 }, src: null });
     const r = await qa(c0);
     expect(zoomKeys(r)).toEqual([]);
     expect(r.metrics.traceLen).toBeGreaterThanOrEqual(pins.envelope.traceLenMin);
@@ -102,6 +107,20 @@ describe('PF2 (a): the rear delt fly plate, clean', { timeout: T }, () => {
 
 describe('PF2 (a): each row turns red on its planted fault', { timeout: T }, () => {
   const posture = (over: any, view = 'normal') => zoom.zoomList(spec.zoom).map((z: any) => (z.view === view ? { ...z, ...over } : z));
+  // a spec variant drawn through the real zoom code: its own markup in both views, so the rows read what the page would show
+  const variant = (zs: any[], extra: any = {}) => { const s2 = { ...spec, ...extra, zoom: zs }, pre = 'bent-over-dumbbell-rear-delt-fly';
+    return { ...c0, spec: s2, plate: { ...c0.plate, zoom: { normal: zoom.zoomOf(s2, { prefix: pre, view: 'normal' }).svg, mistake: zoom.zoomOf(s2, { prefix: pre, view: 'mistake' }).svg } } }; };
+  const ringedOf = () => { const { ring: _ring, ...e } = zoom.zoomFor(spec, 'normal'); return e; };   // the same side posture entry with its source ring
+  const PM = { view: 'mistake', k: 2, r: 56, focus: { region: ['shoulder.r', 'trap.r', 'ear', 'backUpper'], pose: 'start' }, project: 'side', place: 'outer' };
+  it('the ringed and the Mistake posture variants are clean (the controls for the reds below)', async () => {
+    expect(zoomKeys(await qa(variant([ringedOf(), zoom.zoomFor(spec, 'mistake')])))).toEqual([]);
+    expect(zoomKeys(await qa(variant([zoom.zoomFor(spec, 'normal'), PM], { mistake: { ...spec.mistake, guides: [] } })))).toEqual([]);
+  });
+  it('shape: an inset that carries a source ring is red', async () => {
+    const withSrc = variant([ringedOf(), zoom.zoomFor(spec, 'mistake')]).plate.zoom.normal;
+    const r = await qa(withZoom('normal', withSrc));
+    expect(zoomKeys(r)).toContain('H3.zoom:shape:normal');
+  });
   it('hold: the region drawn at k 2 no longer fits the circle', async () => {
     const s2 = { ...spec, zoom: posture({ k: 2 }) }, z2 = zoom.zoomOf(s2, { prefix: 'bent-over-dumbbell-rear-delt-fly', view: 'normal' }).svg;
     const r = await qa({ ...withZoom('normal', z2), spec: s2 });
@@ -109,7 +128,8 @@ describe('PF2 (a): each row turns red on its planted fault', { timeout: T }, () 
     expect(zoomKeys(r)).not.toContain('H3.zoom:k:normal');
   });
   it('source: the source ring shrunk to 5 px', async () => {
-    const r = await qa(withZoom('normal', c0.plate.zoom.normal.replace(/(<circle class="pz-src" cx="[\d.]+" cy="[\d.]+" r=")[\d.]+"/, '$15"')));
+    const c = variant([ringedOf(), zoom.zoomFor(spec, 'mistake')]);
+    const r = await qa({ ...c, plate: { ...c.plate, zoom: { ...c.plate.zoom, normal: c.plate.zoom.normal.replace(/(<circle class="pz-src" cx="[\d.]+" cy="[\d.]+" r=")[\d.]+"/, '$15"') } } });
     expect(zoomKeys(r)).toContain('H3.zoom:posture:source');
   });
   it('k: the drawn k is not the spec k', async () => {
@@ -145,15 +165,12 @@ describe('PF2 (a): each row turns red on its planted fault', { timeout: T }, () 
     expect(zoom.outerOk(free.circle.c, free.focus, 195, free.circle.r)).toBe(false);
     expect(zoom.outerOk(outer.circle.c, outer.focus, 195, outer.circle.r)).toBe(true);
   });
+  const pmCase = (mistake: any) => variant([zoom.zoomFor(spec, 'normal'), PM], { mistake: { ...spec.mistake, guides: [], ...mistake } });
   it('deviation: a Mistake posture zoom whose shrug is 1 cm moves the tell under the bar inside the zoom', async () => {
-    const r = await qa({ ...c0, spec: { ...spec, mistake: { ...spec.mistake, pose: { scap: { elev: 1 } } } } });
-    expect(zoomKeys(r)).toContain('H3.zoom:posture:deviation');
-    const r0 = await qa(c0);
-    expect(zoomKeys(r0)).not.toContain('H3.zoom:posture:deviation');
+    expect(zoomKeys(await qa(pmCase({ pose: { scap: { elev: 1 } } })))).toContain('H3.zoom:posture:deviation');
+    expect(zoomKeys(await qa(pmCase({})))).not.toContain('H3.zoom:posture:deviation');
   });
   it('deviation: a tell anchored off a landmark cannot be measured and is red', async () => {
-    const tells = [{ ...spec.mistake.tells[0], anchor: [0, 1, 0] }];
-    const r = await qa({ ...c0, spec: { ...spec, mistake: { ...spec.mistake, tells } } });
-    expect(zoomKeys(r)).toContain('H3.zoom:posture:deviation');
+    expect(zoomKeys(await qa(pmCase({ tells: [{ ...spec.mistake.tells[0], anchor: [0, 1, 0] }] })))).toContain('H3.zoom:posture:deviation');
   });
 });

@@ -146,6 +146,7 @@ const unit = a => mul(a, 1 / Math.hypot(...a)), cross = (a, b) => [a[1] * b[2] -
 const dot = (a, b) => a.reduce((t, v, i) => t + v * b[i], 0);
 const rotate = (v, k, th) => add(add(mul(v, Math.cos(th)), mul(cross(k, v), Math.sin(th))), mul(k, dot(k, v) * (1 - Math.cos(th))));   // Rodrigues
 const MIS_AXIS = {}, MISTAKE_HANDS = [], NEUTRAL_LINES = [], TURN = {};
+const ARC_R = 0.6;                                    // pf5 R5: the red angle arc's radius, 0.6 hand lengths from the wrist (inside the hand, clear of the hexagon)
 const AXIS_PAST = 2;                                  // pf4 R5: the grey forearm axis runs 2 hand lengths past the wrist, straight through the neutral hand and its hexagon (far corner at 1.69)
 // The straight-arm line (LIB-PLATEFIX-1, W2 panel: the arm read as straight): from the end elbow along shoulder -> elbow,
 // the forearm-plus-grip length, so the slight bend (ELBOW) reads as the forearm leaving it. A datum proving the Soft elbows checkpoint.
@@ -170,16 +171,19 @@ for (const s of ['l', 'r']) {
   const Ge = lmEnd[`grip.${s}`], tw = (a1 - a0) * R, c = Math.cos(-tw), sn = Math.sin(-tw);
   const turn = p => [W[0] + (p[0] - W[0]) * c - (p[1] - W[1]) * sn, W[1] + (p[0] - W[0]) * sn + (p[1] - W[1]) * c, p[2]];
   const block = handPoly(W, Ge).pts, hex = startDb(Ge)[0];
+  const turnBy = (p, th) => [W[0] + (p[0] - W[0]) * Math.cos(th) - (p[1] - W[1]) * Math.sin(th), W[1] + (p[0] - W[0]) * Math.sin(th) + (p[1] - W[1]) * Math.cos(th), p[2]];
   TURN[s] = +(a1 - a0).toFixed(1);
   MISTAKE_HANDS.push(
     { kind: 'dashed', pts: [...block, block[0]].map(turn) },
     { kind: 'dashed', pts: hex.map(turn) },
-    { kind: 'arc-arrow', center: [...W], r: 9, a0: +a0.toFixed(1), a1: +a1.toFixed(1) });
+    // pf5 R5: a short plain red angle arc at the wrist from the grey axis to the turned hand, no arrowhead and no number,
+    // as world points (ARC_R of the hand length) so the zoom scales it with the hand
+    { kind: 'line', pts: Array.from({ length: 9 }, (_, i) => turnBy(add(W, mul(dc, hl * ARC_R)), -tw * i / 8)) });
 }
 
 export const FLY_TURN = TURN;
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
-export const SIZES = { BENCH_TOP, FOOT_Z, FOOT_X, ELBOW, SHOULDER_W, ARC_DZ, PITCH, M_WRIST, HAND_W, PAD_W, PAD_T, LEG_IN, POST, FOOT_HALF, FOOT_T, AXIS_PAST };
+export const SIZES = { BENCH_TOP, FOOT_Z, FOOT_X, ELBOW, SHOULDER_W, ARC_DZ, PITCH, M_WRIST, HAND_W, PAD_W, PAD_T, LEG_IN, POST, FOOT_HALF, FOOT_T, AXIS_PAST, ARC_R };
 
 /** The fly plate in `view` ('front' = the card, 'side' = the former view, kept as the alternate); `id` for the file. */
 export function makeFly(view, id) {

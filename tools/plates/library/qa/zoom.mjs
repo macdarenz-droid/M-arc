@@ -112,7 +112,7 @@ export function postureProblems(spec, want, m, ctx, R, M) {
   let pts;
   try { pts = focusPoints(spec, want, ctx.engine); } catch (e) { bad('source', e.message); return out; }
   const cam = cameraOf(spec, report), onPlate = pts.map(w => cam.P(w));
-  if (onPlate.some(p => Math.hypot(p[0] - m.src.c[0], p[1] - m.src.c[1]) > m.src.r - 1)) bad('source', 'the source ring does not hold the focus region on the plate');
+  if (want.ring !== false && onPlate.some(p => Math.hypot(p[0] - m.src.c[0], p[1] - m.src.c[1]) > m.src.r - 1)) bad('source', 'the source ring does not hold the focus region on the plate');
   const uv = postureUV(want, cam), U = pts.map(uv), xs = U.map(q => q[0]), ys = U.map(q => q[1]);
   const mc = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2], s = cam.pxPerM * m.k;
   const inZoom = q => [m.ring.c[0] + s * (q[0] - mc[0]), m.ring.c[1] - s * (q[1] - mc[1])], Z = U.map(inZoom);
@@ -152,10 +152,12 @@ export function zoomRows(c, ctx, R, M) {
     if (/<(text|foreignObject|tspan)\b/.test(z)) H2.push(P('H2.zoom:text', `the ${view} zoom holds text`));
     if (ANGLE.test(z)) H2.push(P('H2.zoom:angle', `the ${view} zoom holds an angle (owner rule: no angle in a zoom view)`));
     const m = Z[view];
-    if (!m?.ring || !m?.src) { H3.push(P(`H3.zoom:shape:${view}`, 'the zoom has no ring or no source ring')); continue; }
+    // PLATEFIX-2 pf5: a posture inset (ring: false) has a circle and no source ring; every other zoom has both
+    const inset = want.ring === false;
+    if (!m?.ring || (inset ? !!m?.src : !m?.src)) { H3.push(P(`H3.zoom:shape:${view}`, inset ? 'the inset has no circle, or has a source ring' : 'the zoom has no ring or no source ring')); continue; }
     const posture = 'focus' in want, side = posture && want.project === 'side';
     // a posture zoom's source ring holds its region: in the plate's own projection never under r/k; in side projection its own size
-    if (m.k !== want.k || (posture ? !side && m.src.r < m.ring.r / want.k - 0.01 : Math.abs(m.ring.r / m.src.r - want.k) > 0.01)) H3.push(P(`H3.zoom:k:${view}`, `the drawn zoom (k ${m.k}, ring ${m.ring.r}/${m.src.r}) is not the spec's k ${want.k}`));
+    if (m.k !== want.k || (posture ? !side && m.src.r < m.ring.r / want.k - 0.01 : Math.abs(m.ring.r / m.src.r - want.k) > 0.01)) H3.push(P(`H3.zoom:k:${view}`, `the drawn zoom (k ${m.k}, ring ${m.ring.r}/${m.src?.r ?? "none"}) is not the spec's k ${want.k}`));
     // allowed only on a view that fails at plate scale; the bar at the zoom's own scale
     if (posture) H3.push(...postureProblems(spec, { ...want, view }, m, ctx, R, M));
     else if (view === 'normal') {
@@ -180,7 +182,7 @@ export function zoomRows(c, ctx, R, M) {
       const rep = R?.normal?.report, xm = rep && rep.view === 'front' ? cameraOf(spec, rep).P([0, 0, 0])[0] : null;
       if (xm == null || !outerOk(C, m.src.c, xm, r)) H4.push(P(`H4.zoom:place:${view}`, `the ${view} zoom is not beyond its source ring from the body midline (place 'outer')`));
     }
-    if (Math.hypot(C[0] - m.src.c[0], C[1] - m.src.c[1]) < r + m.src.r + ZOOM.gap) H4.push(P(`H4.zoom:source:${view}`, `the ${view} zoom overlaps its source ring`));
+    if (m.src && Math.hypot(C[0] - m.src.c[0], C[1] - m.src.c[1]) < r + m.src.r + ZOOM.gap) H4.push(P(`H4.zoom:source:${view}`, `the ${view} zoom overlaps its source ring`));
   }
   return { H2, H3, H4 };
 }

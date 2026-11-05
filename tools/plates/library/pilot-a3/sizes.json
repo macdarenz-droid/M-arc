@@ -128,6 +128,11 @@
     "value": 2,
     "unit": "hand lengths",
     "basis": "decision: LIB-PLATEFIX-2 plates panel pf4 R5 (#395): the grey dashed forearm axis runs straight through the wrist into the dumbbell, 2 hand lengths past the wrist, so the neutral hand and its hexagon (far corner 1.69 hand lengths out) sit on it; c13"
+   },
+   "ARC_R": {
+    "value": 0.6,
+    "unit": "hand lengths",
+    "basis": "decision: LIB-PLATEFIX-2 last focused round pf5 R5 (#395 6653868933: 'a short red angle arc with no number'): the plain red arc at the wrist from the grey forearm axis to the turned hand, 0.6 hand lengths out, inside the hand and clear of the hexagon; c13"
    }
   }
  }
