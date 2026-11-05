@@ -147,15 +147,15 @@ export function citeIds(path, ids, card) {
   return out;
 }
 /** The How-to's claim-id fields (#385 6649353130): zooms[].cite.{right,wrong} (the half's callout, caption and alt)
- *  and handling.gripCite (the grip line), each checked by citeIds against cards/<id without lib_>.json. Absent
+ *  and the module's CITES.grip (the grip line, kept out of the app's HandlingSpec), each checked by citeIds against cards/<id without lib_>.json. Absent
  *  fields are not required here; a zoom with `cite` must cite both halves. */
 export function zoomCites(M, read = cardReader()) {
   const H = M.default ?? M, out = [], ex = String(H.id ?? '').replace(/^lib_/, '');
-  const zs = (H.zooms ?? []).filter(z => z && z.cite !== undefined), grip = H.handling?.gripCite;
+  const zs = (H.zooms ?? []).filter(z => z && z.cite !== undefined), grip = (M.default ? M : {}).CITES?.grip;
   if (!zs.length && grip === undefined) return out;
   const card = read(`docs/research/howto/cards/${ex}.json`);
   for (const z of zs) for (const side of ['right', 'wrong']) out.push(...citeIds(`zooms(${z.key}).cite.${side}`, z.cite?.[side], card));
-  if (grip !== undefined) out.push(...citeIds('handling.gripCite', grip, card));
+  if (grip !== undefined) out.push(...citeIds('CITES.grip', grip, card));
   return out;
 }
 

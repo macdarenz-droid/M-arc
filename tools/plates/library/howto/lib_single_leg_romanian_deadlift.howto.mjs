@@ -171,6 +171,9 @@ const RISKS = [
 const INHERIT_THUMB = C(['MECH'], [], 'card inherit grip.thumb: the parent\'s wrapped thumb carries over to a dumbbell handle by reasoning (MECH).');
 const INHERIT_WRIST = C(['MECH'], [], 'card inherit grip.wrist: same hold archetype and hanging load as the parent, so its neutral range applies (MECH).');
 
+// Claim ids of strings whose spec type has no claim field, read by the library lint (lint/index.mjs zoomCites) and
+// never by the app generator (#385 6649353130): the grip line.
+export const CITES = { grip: ['c1', 'c18'] };
 export default {
   schema: 1,
   id: 'lib_single_leg_romanian_deadlift',
@@ -189,7 +192,6 @@ export default {
     pose: { thumb: 'wrapped' },   // === the parent's handling.pose.thumb; no hand pose is drawn (no hand zoom)
     faults: [],                   // the card has no hand zoom and no handling mistake is a hand fault
     gripLine: 'One dumbbell in the hand opposite your standing leg. Grip it hard, thumb wrapped.',   // thumb: inherit
-    gripCite: ['c1', 'c18'],   // the gripLine's card claim ids (lint/index.mjs zoomCites; #385 6649353130)
     cue: 'Grip hard, arm straight.',   // c18, c3
   },
   contacts: ['standing-feet'],

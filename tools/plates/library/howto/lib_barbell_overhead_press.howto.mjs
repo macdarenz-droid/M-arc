@@ -154,6 +154,9 @@ const RISKS = [
   { key: 'behind-neck', text: 'Pressing behind the neck is linked to shoulder instability.', claim: CL.c14 },
 ];
 
+// Claim ids of strings whose spec type has no claim field, read by the library lint (lint/index.mjs zoomCites) and
+// never by the app generator (#385 6649353130): the grip line.
+export const CITES = { grip: ['c3', 'c4'] };
 export default {
   schema: 1,
   id: 'lib_barbell_overhead_press',
@@ -177,7 +180,6 @@ export default {
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar in mid-palm, wrist bent back.' },
     ],
     gripLine: 'Full grip, thumbs wrapped, bar on the heel of your palm. Your wrist stays almost straight.',
-    gripCite: ['c3', 'c4'],   // the gripLine's card claim ids (#385 6648438434; lint/index.mjs zoomCites, #385 6649353130)
     cue: 'Palm heel, wrist not bent back.',   // PLAN section 4, text B (c4)
   },
   contacts: ['standing-feet'],

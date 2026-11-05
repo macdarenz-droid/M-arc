@@ -1,6 +1,6 @@
 // LIB-PLATEFIX-1 (#385 6649353130): the W2 fix round's re-citations live in fields, not only in source comments.
 // Each string the fix round re-cited carries its card claim ids in a field: How-to zooms[].cite.{right,wrong} (the
-// half's callout, caption and alt), handling.gripCite (the grip line), and the plate spec's callout or tell `cite`.
+// half's callout, caption and alt), the module's CITES.grip (the grip line), and the plate spec's callout or tell `cite`.
 // The library lint (lint/index.mjs zoomCites, inside lintLibraryRow) checks every How-to cite against the card; this
 // file pins each cite to exactly the ids its fix names, so a string citing any other id fails.
 import { describe, expect, it } from 'vitest';
@@ -36,7 +36,8 @@ describe('PLATEFIX cites: each re-cited string carries the ids its fix names (#3
     it(`${id}: zoom and grip cites are exactly the fix's ids, and the lint passes them`, async () => {
       const M = await howto(id), H = M.default;
       expect(citedZooms(H)).toEqual(want.zooms);
-      expect(H.handling?.gripCite).toEqual(want.grip);
+      expect(M.CITES?.grip).toEqual(want.grip);
+      expect(H.handling?.gripCite).toBeUndefined();   // kept out of the app's HandlingSpec
       expect(zoomCites(M)).toEqual([]);
       expect(lintLibraryRow(M, await shared()).filter((x: any) => /^cite /.test(x.rule))).toEqual([]);
     });
@@ -68,8 +69,8 @@ describe('PLATEFIX cites: each re-cited string carries the ids its fix names (#3
   });
   it('mutation: a grip cite not in the card, and a spec cite not in the card, are refused', async () => {
     const M = await howto('barbell_overhead_press');
-    const g = { ...M, default: { ...M.default, handling: { ...M.default.handling, gripCite: ['c3', 'c40'] } } };
-    expect(zoomCites(g).map((x: any) => x.path)).toEqual(['handling.gripCite']);
+    const g = { ...M, CITES: { grip: ['c3', 'c40'] } };
+    expect(zoomCites(g).map((x: any) => x.path)).toEqual(['CITES.grip']);
     expect(citeIds('reverse_lunge.flare', ['c18', 'c77'], card('reverse_lunge')).map((x: any) => x.rule)).toEqual(['cite id not in the card']);
     expect(citeIds('x', ['c1'], null).map((x: any) => x.rule)).toEqual(['cite id not in the card']);
   });

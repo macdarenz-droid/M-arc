@@ -189,6 +189,9 @@ const RISKS = [
     claim: C(['CONSENSUS'], [SL, 'acsm2009'], 'c17, c19') },
 ];
 
+// Claim ids of strings whose spec type has no claim field, read by the library lint (lint/index.mjs zoomCites) and
+// never by the app generator (#385 6649353130): the grip line.
+export const CITES = { grip: ['c9', 'c22'] };
 export default {
   schema: 1,
   id: 'lib_romanian_deadlift',
@@ -211,7 +214,6 @@ export default {
     pose: { thumb: 'wrapped' },   // c22; no hand pose is drawn (no hand zoom)
     faults: [],                   // the card's hand zoom has no Wrong and no handling mistake is a hand fault
     gripLine: 'Hands just outside your thighs, thumbs wrapped round the bar. Straps are fine if grip limits the set.',
-    gripCite: ['c9', 'c22'],   // the gripLine's card claim ids (lint/index.mjs zoomCites; #385 6649353130)
     cue: 'Thumbs wrapped, wrists neutral.',   // c22, card grip.wrist
   },
   contacts: ['standing-feet'],
