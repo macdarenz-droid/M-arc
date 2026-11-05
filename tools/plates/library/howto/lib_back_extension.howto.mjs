@@ -109,7 +109,7 @@ const zooms = [
       wrong: { text: 'Arched past straight', anchor: 'lumbar' },   // c5
     },
     caption: {
-      right: 'Shoulders, spine and hips in one straight line.',   // c5
+      right: 'Shoulders, spine and hips in one line. Squeeze the glutes.',   // c5 (W4 D-TEXT-PRINTED: glutes moved here)
       wrong: 'Lower back arched past straight.',                   // c5
     },
     alt: {
@@ -165,7 +165,8 @@ export default {
     { kind: 'position', text: 'Feet about shoulder width and secured, knees slightly bent.', claim: CL.c3 },
     { kind: 'position', text: 'Cross your arms over your chest (hands behind the head is harder).',
       claim: C(['CONSENSUS', 'DATA'], [SL, 'mayer1999'], 'c4, c17') },
-    { kind: 'brace', text: 'Breathe in at the bottom and out as you lift.', claim: CL.c10 },
+    // W4 D-TEXT-PRINTED: posture c7 (depth) moved into this step.
+    { kind: 'brace', text: 'Lower to just below parallel. Breathe in, then out as you rise.', claim: C(['CONSENSUS'], [FV, SL], 'c7, c10') },
     { kind: 'load', text: 'Start with body weight. Add weight after 12 to 15 good reps.', claim: CL.c11 },
   ],
   posture: [

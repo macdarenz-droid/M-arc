@@ -134,8 +134,9 @@ const feel = {
 const MISTAKES = [
   { key: 'round', title: 'Rounding the lower back', zoom: 'landmine-back', claim: CL.round,
     fix: 'Brace before each rep and use a lighter load.' },
-  { key: 'jerk', title: 'Jerking it up', claim: CL.c7,
-    fix: 'Pull with control, no momentum.' },
+  // W4 D-TEXT-PRINTED: posture c6 (shoulder blades squeeze at the top) moved into this fix.
+  { key: 'jerk', title: 'Jerking it up', claim: C(['CONSENSUS'], [REP], 'c7, c6'),
+    fix: 'Pull with control. Squeeze the shoulder blades at the top.' },
   { key: 'short', title: 'Stopping short at the bottom', claim: CL.c8,
     fix: 'Lower until the arms are straight.' },
 ];

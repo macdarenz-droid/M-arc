@@ -177,7 +177,9 @@ export default {
     { kind: 'position', text: 'Wide stance, toes out, bar over mid-foot, shins vertical from the front.',
       claim: C(['CONSENSUS', 'DATA'], [SLS, BB, 'escamilla2000'], 'c1, c2') },
     { kind: 'grip', text: 'Arms inside the knees, not outside as in a conventional pull.', claim: CL.c3 },
-    { kind: 'position', text: 'Chest up, bar against the shins.', claim: CL.c13 },
+    // W4 D-TEXT-PRINTED: c13 (chest up, bar on the shins) stays printed in the plate cue, the sumo-start caption and the
+    // bar-drift fix; this slot carries posture c14 (lockout together) and c16 (lower with control).
+    { kind: 'position', text: 'Lock knees and hips out together. Lower the bar with control.', claim: C(['CONSENSUS'], [BB, SLS], 'c14, c16') },
     { kind: 'brace', text: 'Build tension, then take a full breath into the belly.', claim: CL.c10 },
     { kind: 'load', text: 'Practise with light weight. Add load in small steps.', claim: CL.c18 },
   ],

@@ -206,9 +206,11 @@ export default {
     { kind: 'get-in', text: 'Load the bar on the floor with full-size plates.', claim: CL.c23 },
     { kind: 'position', text: 'Bar over mid-foot, feet hip to shoulder width, toes slightly out.',
       claim: C(['CONSENSUS'], [SL, ACE], 'c1, c2') },
-    { kind: 'grip', text: 'Grip about shoulder width, arms straight outside the knees.', claim: C(['CONSENSUS'], [SL], 'c3, c4') },
-    { kind: 'brace', text: 'Breathe in and brace before each rep.', claim: CL.c5 },
-    { kind: 'tension', text: 'Build tension slowly before the bar leaves the floor.', claim: CL.c22 },
+    // W4 D-TEXT-PRINTED: the grip step's c3/c4 stay printed in the Grip line, the dl-start caption and the arms fix;
+    // its slot carries posture c10 (tall finish) and c11 (lowering) instead, and the brace and tension steps merge.
+    { kind: 'brace', text: 'Breathe in and brace. Build tension slowly before liftoff.', claim: C(['CONSENSUS'], [SL], 'c5, c22') },
+    { kind: 'position', text: 'Finish tall: hips and knees locked, shoulders back.', claim: CL.c10 },
+    { kind: 'position', text: 'To lower, push hips back first. Bend knees once the bar passes.', claim: CL.c11 },
   ],
   posture: [
     { key: 'shins', label: 'Shins close', detail: 'Shins close to or touching the bar at the start.',

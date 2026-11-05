@@ -178,9 +178,11 @@ export default {
   setup: [
     { kind: 'get-in', text: 'Dumbbell on the floor beside a flat bench.', claim: CL.c1 },
     { kind: 'position', text: 'One knee and the same-side hand on the bench.', claim: CL.c1 },
-    { kind: 'position', text: 'Hand under the shoulder, knee under the hip.', claim: CL.c2 },   // oadr-support Right
+    // oadr-support (T): Right and Wrong (W4 D-TEXT-PRINTED: the Wrong moved here from posture).
+    { kind: 'position', text: 'Hand under the shoulder, not far forward. Knee under the hip.', claim: CL.c2 },
     { kind: 'position', text: 'Back flat and level, eyes on the floor below you.', claim: CL.c4 },
-    { kind: 'brace', text: 'Brace, then let the working arm hang straight down.', claim: C(['CONSENSUS'], [ACE], 'c3, c5') },
+    // W4 D-TEXT-PRINTED: posture c5 (shoulder doesn't drop at the bottom) moved into this step.
+    { kind: 'brace', text: 'Brace, then let the arm hang straight, shoulder not dropping.', claim: C(['CONSENSUS'], [ACE], 'c3, c5') },
   ],
   posture: [
     // oadr-support (T): the card zoom's Wrong as text (c2).

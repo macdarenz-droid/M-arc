@@ -126,10 +126,11 @@ const feel = {
 const MISTAKES = [
   { key: 'round', title: 'Rounding the back', zoom: 'tbar-back', claim: CL.c7,
     fix: 'Brace and use a lighter load.' },
-  { key: 'swing', title: 'Swinging the weight up', claim: CL.c8,
-    fix: 'Hold the squeeze at the top of each rep.' },
-  { key: 'short', title: 'Stopping halfway down', claim: CL.c9,
-    fix: 'Lower all the way each rep.' },
+  // W4 D-TEXT-PRINTED: posture c4 (shoulder blades back) and c5 (lower slowly) moved into these fixes.
+  { key: 'swing', title: 'Swinging the weight up', claim: C(['CONSENSUS'], [GGR], 'c8, c4'),
+    fix: 'Pull the shoulder blades back. Hold the squeeze at the top.' },
+  { key: 'short', title: 'Stopping halfway down', claim: C(['CONSENSUS'], [GGR], 'c9, c5'),
+    fix: 'Lower all the way, slowly, each rep.' },
 ];
 const RISKS = [
   { key: 'round', text: 'A rounded back strains the lower back and raises the chance of injury.', claim: CL.c7 },

@@ -148,7 +148,8 @@ const feel = {
 const MISTAKES = [
   // the plate's own Mistake (c10): the arch while standing up
   { key: 'arch', title: 'Arching to stand up', claim: C(['CONSENSUS'], [SW], 'c10, c5'),
-    fix: 'Drive with glutes and hamstrings. Keep the back neutral.' },
+    // W4 D-TEXT-PRINTED: posture c5 (push through the heels to stand) moved into this fix.
+    fix: 'Push through the heels with glutes and hamstrings. Back neutral.' },
   { key: 'round', title: 'Rounding to reach lower', zoom: 'dbrdl-bottom', claim: C(['CONSENSUS', 'MECH'], [FB, SL, 'sl-deadlift'], 'c8, c22'),
     fix: 'Stop where the back stays flat. If it rounds, go lighter.' },
   { key: 'low', title: 'Going too low', claim: CL.c9,
@@ -183,8 +184,10 @@ export default {
   setup: [
     { kind: 'position', text: 'Feet shoulder width. Dumbbells on thighs, not hanging away from the legs.',
       claim: C(['CONSENSUS'], [SW, FB], 'c1, c4') },
-    { kind: 'posture', text: 'Shoulder blades down and back, core braced.', claim: CL.c2 },
-    { kind: 'brace', text: 'Breathe in and brace slightly before each rep.', claim: CL.c11 },
+    { kind: 'brace', text: 'Shoulder blades down and back. Breathe in and brace before each rep.',
+      claim: C(['CONSENSUS'], [SW, SL], 'c2, c11') },
+    // W4 D-TEXT-PRINTED: posture c6 (knees behind the toes) and c7 (eyes to the floor) moved into this step.
+    { kind: 'posture', text: 'Knees behind the toes. Eyes to the floor as you lower.', claim: C(['CONSENSUS'], [SW], 'c6, c7') },
     { kind: 'adjust', text: 'Want more range? Stand on a plate.', claim: CL.c12 },
     { kind: 'load', text: 'Add weight in small steps once you beat your target reps.', claim: CL.c21 },
   ],

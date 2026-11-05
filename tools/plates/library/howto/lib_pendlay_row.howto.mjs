@@ -123,7 +123,7 @@ const zooms = [
       wrong: { text: 'Torso rises', anchor: 'backUpper' },   // c6
     },
     caption: {
-      right: 'Bar at the base of the chest, torso still level.',   // c5, c2
+      right: 'Bar at chest base. Torso level, shoulders not shrugged.',   // c5, c2 (W4 D-TEXT-PRINTED: c5 shoulders moved here from posture)
       wrong: 'Torso risen up to yank the bar.',                      // c6
     },
     alt: {
@@ -163,8 +163,9 @@ const feel = {
 const MISTAKES = [
   { key: 'round', title: 'Starting with a rounded back', zoom: 'pendlay-start', claim: CL.c8,
     fix: 'Raise the bar on blocks or plates. Keep the back flat.' },
-  { key: 'rise', title: 'Standing partly up to yank', zoom: 'pendlay-top', claim: CL.c6,
-    fix: 'Use less weight and keep the torso level.' },
+  // W4 D-TEXT-PRINTED: posture c5 (hips don't come forward) moved into this fix.
+  { key: 'rise', title: 'Standing partly up to yank', zoom: 'pendlay-top', claim: C(['CONSENSUS'], [GGR, BB], 'c6, c5'),
+    fix: 'Use less weight. Keep the torso level, hips not forward.' },
   { key: 'flare', title: 'Elbows flared wide', claim: CL.c9,
     fix: 'Lighten the load. Pull the bar toward the hips.' },
 ];
@@ -200,9 +201,11 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     { kind: 'get-in', text: 'New to lifting? Start with seated or chest-supported rows first.', claim: CL.c13 },
-    { kind: 'position', text: 'Bar on the floor. Stand over it, feet shoulder width.', claim: CL.c10 },
-    { kind: 'grip', text: 'Hips a little above deadlift height. Overhand grip, slightly wider than shoulders.',
-      claim: C(['CONSENSUS'], [BB, GGR, 'baechle-grip'], 'c1, c16') },
+    // W4 D-TEXT-PRINTED: posture c10 (both feet flat) moved into this step.
+    { kind: 'position', text: 'Bar on the floor. Stand over it, feet flat, shoulder width.', claim: CL.c10 },
+    // W4 D-TEXT-PRINTED: posture c5 (brace before each pull) moved into this step; overhand is the Grip line (c1).
+    { kind: 'grip', text: 'Hips a little above deadlift height. Grip slightly wider than shoulders. Brace.',
+      claim: C(['CONSENSUS'], [BB, GGR, 'baechle-grip'], 'c1, c16, c5') },
     { kind: 'position', text: 'Back rounds to reach it? Raise the bar on blocks or plates.', zoom: 'pendlay-start', claim: CL.c8 },
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c7 },
   ],
