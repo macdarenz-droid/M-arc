@@ -6,6 +6,7 @@ Status `ready` (supervisor, 11-05 ~03:10 UTC). Source: the SHIP W7 PLAN ruling, 
 A scratch or fixture target that already has a `batches/` row makes the registry throw (D-LIB-SCRATCHIDS; registry.mjs:34-35, :52; rows of every stage count). Once W3-W7 move their rows, no library id is a clash-free target. Two sets still name real library ids:
 - LIB-4b: `tools/plates/library/fidelity/fixture.mjs:27-29` (underhand_lat_pulldown, chest_supported_row, cable_chest_press);
 - LIB-4c: `tools/plates/library/ci/scratch.mjs:21-26` (jumping_jacks, one_arm_dumbbell_row, t_bar_row, landmine_row, sled_push, smith_machine_incline_press).
+- LIB-7-FIX / LIB-8R hand fixture: `tests/library/lib7-fix.test.ts:303` (`IDS: { v_up: … }`). W7 moves v_up into `batches/lb09.json`, so its D-LIB8R-PINLINES guard (:417-426) is red on W7's head (#394, W7 LAYERS READY addendum, class 4; ruled D-SHIP-W7-V_UPFIX).
 
 CI stays green, but a tree rebuilt by those CLIs throws. W3's Q-W3-6 swap is folded into this card.
 
@@ -18,6 +19,7 @@ Every current check stays for every other entry.
 
 ## Files it may touch (write_scope)
 - `tools/plates/library/ci/scratch.mjs` (copyOf entries, `setProblems`, `TAKEN`), `tools/plates/library/fidelity/fixture.mjs` (its 3 targets);
+- `tests/library/lib7-fix.test.ts:303` (the fixture's id) and its guard's wording; the guard and its box_jump mutation stay;
 - the test lines that name those ids, renamed and listed (lib11-pilot-b.test.ts:352-355, lib8r-pilot-a2.test.ts:338-340, lib8r-pilot-a3.test.ts:598-600, lib-5v.test.ts:132-141, and any other use you find by grep);
 - one new test file.
 - Never: the real `exercises.json`, batches, sheets, specs, pages, cards, CI workflows.
@@ -25,6 +27,7 @@ Every current check stays for every other entry.
 ## Acceptance (each red with a mutation)
 - A target in any of the three sets (lib7b, LIB-4b, LIB-4c) that has a `batches/` row on the head is red. Mutation: lib_hip_thrust as a target.
 - A `copyOf` id that is in the real `exercises.json` is red.
+- The lib7-fix fixture id is synthetic, so D-LIB8R-PINLINES stays green after W7's v_up move; its box_jump mutation stays red. If the hand-pairs code refuses an id that is not in `exercises.json`, stop and post `F-SCRATCH-SYNTH QUESTION`.
 - The old `setProblems` refusals stay red at the listed lines.
 - Both CLIs rebuild their tree on today's main and after a scratch move of every W3-W7 row (show both).
 - If `transformSources` or `copyProblems` refuse a synthetic id (lib-5v.test.ts:132, :141), stop and post `F-SCRATCH-SYNTH QUESTION` before changing either.
