@@ -37,7 +37,13 @@ const NOT_HERE = ['smith_machine_bench_press', 'smith_machine_shrug', 'cable_fly
 // Held ids (DESIGN.md section 15): drawn and tested, no row. cable_chest_press was held under D-LIB8-shrug (D-LIB16-SIZE,
 // -LOCK) until 'LIB-16 resume' drew its zooms (D-LIB16-ZOOMVIEWS); none is held now.
 const HELD: string[] = [];
-const ROWS = 'tools/plates/library/lb6/rows.json';
+// LIB-SHIP W6 (D-SHIP-MOVE): the LB6 rows moved from lb6/rows.json (deleted) into batches/lb06.json, pinned in its golden chain
+const ROWS = 'tools/plates/library/batches/lb06.json', PRE_MOVE = 'tools/plates/library/lb6/rows.json', GOLD = 'tests/howto/golden/library/lb06.json';
+/** LIB-SHIP W6 (D-SHIP-A9, ruling 3): the ruled LB6 rows, in batch order, all at stage approved-plate until the W6 flip. */
+const W6_RULED = ['cable_chest_press', 'machine_pullover', 'machine_crunch', 'low_to_high_cable_fly', 'high_to_low_cable_fly', 'smith_machine_squat',
+  'smith_machine_shoulder_press', 'smith_machine_incline_press', 'hip_abduction', 'hip_adduction', 'machine_lateral_raise', 'rear_delt_fly'].map(i => `lib_${i}`);
+/** LIB-SHIP W6: a ruled id's plate pin exemptions (its entry in lb06's golden chain), what the pinned candidate carries. */
+const pinExemptions = (id: string) => readJson(GOLD).entries.find((e: any) => e.kind === 'plate' && e.id === id)?.exemptions;
 const RESEARCH_HEAD = 'a8e66f32e34e1746075ffa4da35ea18c80dd4776';
 const COMPOSERS = ['crunchMachine', 'pulloverMachine', 'hipAbdAddMachine', 'latRaiseMachine'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -179,21 +185,63 @@ describe('LIB-16 A5: lb6/rows.json holds exactly the drawn, non-held LB6 H ids, 
 });
 
 describe('LIB-16 A9: nothing ships (D-LIB16-AHEAD)', { timeout: T }, () => {
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => !['drawing', 'review'].includes(r.stage)).map(([id, r]) => `${id}: ${r.stage}`);
+  // LIB-SHIP W6 (D-SHIP-A9, ruling 3): the rows are pinned at approved-plate (SHIP W6 PIN GO, #393 6647923934); none
+  // ships until the W6 flip. A row off the ruled list, a ruled row missing, or a ruled row at any stage but
+  // approved-plate (shipped, or back at drawing or review) is red.
+  const stageProblems = (rows: Record<string, any>) => [
+    ...Object.entries(rows).filter(([id, r]) => !W6_RULED.includes(id) || r.stage !== 'approved-plate').map(([id, r]) => `${id}: ${r.stage}`),
+    ...W6_RULED.filter(id => !(id in rows)).map(id => `${id}: no row`)];
+  /** LIB-SHIP W6: lb06's golden chain is valid and holds exactly one plate entry per row, in row order, naming the row's files. */
+  const pinProblems = (rows: Record<string, any>, g: any, golden: any) => {
+    const out: string[] = [...golden.verifyBatchChain(g, readJson('tests/howto/golden/GOLDEN.json').entries)];
+    const plates = g.entries.filter((e: any) => e.kind === 'plate');
+    if (plates.map((e: any) => e.id).join() !== Object.keys(rows).join()) out.push(`plate entries ${plates.map((e: any) => e.id).join()}`);
+    for (const [id, r] of Object.entries<any>(rows)) {
+      const e = plates.filter((x: any) => x.id === id);
+      if (e.length !== 1) { out.push(`${id}: ${e.length} plate entries`); continue; }
+      for (const k of ['src', 'slug', 'prefix', 'chromeId']) if (e[0][k] !== r[k]) out.push(`${id}: ${k}`);
+    }
+    return out;
+  };
   const someRow = { src: 'library/specs/machine_crunch.mjs', slug: 'machine-crunch', prefix: 'machine-crunch', chromeId: 'machine-crunch', mode: 'H', stage: 'drawing', view: 'side' };
-  it('every LB6 row is at stage drawing or review', () => {
-    expect(stageProblems(readJson(ROWS).rows)).toEqual([]);
+  // LIB-SHIP W6 (ruling 3): replaces "every LB6 row is at stage drawing or review"
+  it('LIB-SHIP W6: the batch rows are exactly the ruled 12 at stage approved-plate, each with its plate pin entry in lb06\'s golden chain', async () => {
+    const golden = await import(/* @vite-ignore */ lib('../golden.mjs')), rows = readJson(ROWS).rows;
+    expect(Object.keys(rows)).toEqual(W6_RULED);
+    expect(stageProblems(rows)).toEqual([]);
+    expect(pinProblems(rows, readJson(GOLD), golden)).toEqual([]);
   });
-  it('mutations: one row set to shipped and one to approved-plate are red', () => {
-    const rows = readJson(ROWS).rows;
+  // LIB-SHIP W6 (ruling 3): replaces "mutations: one row set to shipped and one to approved-plate are red". The shipped
+  // mutation stays red; approved-plate is now the ruled stage, so the old green stages (drawing, review) are red instead.
+  it('LIB-SHIP W6 mutations: a ruled row at shipped, drawing or review, a ruled row dropped, a non-ruled id added at shipped, and a plate pin entry dropped or renamed are red', async () => {
+    const golden = await import(/* @vite-ignore */ lib('../golden.mjs')), rows = readJson(ROWS).rows;
     expect(stageProblems({ ...rows, lib_machine_crunch: { ...someRow, stage: 'shipped' } })).toEqual(['lib_machine_crunch: shipped']);
-    expect(stageProblems({ ...rows, lib_machine_crunch: { ...someRow, stage: 'approved-plate' } })).toEqual(['lib_machine_crunch: approved-plate']);
+    expect(stageProblems({ ...rows, lib_machine_crunch: { ...someRow, stage: 'drawing' } })).toEqual(['lib_machine_crunch: drawing']);
+    expect(stageProblems({ ...rows, lib_machine_crunch: { ...someRow, stage: 'review' } })).toEqual(['lib_machine_crunch: review']);
+    expect(stageProblems(Object.fromEntries(Object.entries(rows).filter(([id]) => id !== 'lib_machine_crunch')))).toEqual(['lib_machine_crunch: no row']);
+    expect(stageProblems({ ...rows, lib_cable_fly: { ...someRow, stage: 'shipped' } })).toEqual(['lib_cable_fly: shipped']);
+    const g = readJson(GOLD), noPin = structuredClone(g); noPin.entries = noPin.entries.filter((e: any) => e.id !== 'lib_rear_delt_fly');
+    expect(pinProblems(rows, noPin, golden)).toContain('lib_rear_delt_fly: 0 plate entries');
+    const moved = structuredClone(g); moved.entries.find((e: any) => e.id === 'lib_hip_adduction').chromeId = 'hip-adductor';
+    expect(pinProblems(rows, moved, golden)).toContain('lib_hip_adduction: chromeId');
   });
-  it('none of the 3 is shipped, even with lb6/rows.json read as a batch file', () => {
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
-    expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual([]);
+  // LIB-SHIP W6 (ruling 3): replaces "none of the 3 is shipped, even with lb6/rows.json read as a batch file". The
+  // pre-move file is gone; a row copied back into it is refused by the registry (a row in two places).
+  it('LIB-SHIP W6: no LB6 row is shipped; the pre-move lb6/rows.json does not exist, and a row copied back into it is refused', async () => {
+    const build = await import(/* @vite-ignore */ lib('lb6/build.mjs'));
+    expect(existsSync(PRE_MOVE)).toBe(false);
+    expect(build.rowsFile()).toBe(ROWS);
+    const all = reg.rows();
+    expect(all.filter((r: any) => W6_RULED.includes(r.id)).map((r: any) => [r.id, r.stage, r.batchFile])).toEqual(W6_RULED.map(id => [id, 'approved-plate', ROWS]));
+    expect(build.lb6All().filter((r: any) => W6_RULED.includes(r.id)).map((r: any) => r.stage)).toEqual(W6_RULED.map(() => 'approved-plate'));
+    expect(reg.shippedIds().filter((i: string) => W6_RULED.includes(i) || IDS.includes(i))).toEqual([]);
+    // mutation: lib_machine_crunch's row copied back into lb6/rows.json, read the way lb6All reads a copy-back
+    const back = { batch: 'LB6', censusRef: '4a9fd86', rows: { lib_machine_crunch: readJson(ROWS).rows.lib_machine_crunch } };
+    expect(() => reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [PRE_MOVE, back]] }))
+      .toThrow(/registry: tools\/plates\/library\/lb6\/rows\.json: id lib_machine_crunch already used by tools\/plates\/library\/batches\/lb06\.json lib_machine_crunch/);
+    // mutation: a ruled row set to shipped in the batch file is caught by shippedIds
+    const j = readJson(ROWS); j.rows.lib_machine_crunch.stage = 'shipped';
+    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? j : readJson(p)]) })).filter((i: string) => W6_RULED.includes(i))).toEqual(['lib_machine_crunch']);
   });
   /** An id or its slug as a whole token in a file's name or text (the card's matcher). */
   const tokenHits = (ids: string[], name: string, text: string) => ids.flatMap(id => {
@@ -209,11 +257,26 @@ describe('LIB-16 A9: nothing ships (D-LIB16-AHEAD)', { timeout: T }, () => {
     ...hits(LB6, f, text),
   ]);
   const dirFiles = (dir: string): [string, string][] => (existsSync(dir) ? readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : []);
-  it('no LB6 H id, slug or batch is in any tools/plates/library/batches/ file', () => {
-    expect(batchProblems(dirFiles('tools/plates/library/batches'))).toEqual([]);
+  /** LIB-SHIP W6 (ruling 3): the LB6 pin's own files per directory (the layers files and the layers page's closeups config, as pilot-b's, when they exist); any other file naming an LB6 id is red. */
+  const OWN: Record<string, string[]> = { 'tools/plates/library/batches': ['lb06.json'], 'tests/howto/golden/library': ['lb06.json', 'lb06.layers.html'], 'tools/plates/library/pages': ['lb06.json', 'lb06.layers.json', 'lb06.closeups.mjs'] };
+  const others = (dir: string, files = dirFiles(dir)) => files.filter(([f]) => !OWN[dir]!.includes(f));
+  // LIB-SHIP W6 (ruling 3): replaces "no LB6 H id, slug or batch is in any tools/plates/library/batches/ file"
+  it('LIB-SHIP W6: in tools/plates/library/batches/, only lb06.json names an LB6 H id, slug or batch (and it does)', () => {
+    expect(batchProblems(others('tools/plates/library/batches'))).toEqual([]);
+    expect(batchProblems(dirFiles('tools/plates/library/batches').filter(([f]) => f === 'lb06.json')).length).toBeGreaterThan(0);
   });
-  it('no LB6 H id, slug or batch is in tests/howto/golden/library/', () => {
-    expect(batchProblems(dirFiles('tests/howto/golden/library'))).toEqual([]);
+  // LIB-SHIP W6 (ruling 3): replaces "no LB6 H id, slug or batch is in tests/howto/golden/library/"; pages/ is added
+  it('LIB-SHIP W6: in tests/howto/golden/library/ and tools/plates/library/pages/, only the lb06 pin files name an LB6 H id, slug or batch', () => {
+    expect(batchProblems(others('tests/howto/golden/library'))).toEqual([]);
+    expect(batchProblems(others('tools/plates/library/pages'))).toEqual([]);
+    expect(batchProblems(dirFiles('tests/howto/golden/library').filter(([f]) => f === 'lb06.json')).length).toBeGreaterThan(0);
+  });
+  it('LIB-SHIP W6 mutations: lb06.json copied under another name in batches/, golden/library/ or pages/, and machine-crunch.layers.html in golden/library/, are red', () => {
+    const own = readFileSync(ROWS, 'utf8');
+    for (const dir of Object.keys(OWN)) {
+      expect(batchProblems(others(dir, [...dirFiles(dir), ['lb06-copy.json', own]])).length, dir).toBeGreaterThan(0);
+    }
+    expect(batchProblems(others('tests/howto/golden/library', [['machine-crunch.layers.html', '<div data-id="machine-crunch"></div>']]))).toEqual(['machine-crunch.layers.html: machine-crunch']);
   });
   it('mutations: rows.json copied into batches/, a golden file naming an LB6 H id, a page-only lb6.json and machine-crunch.layers.html are red', () => {
     const rowsText = JSON.stringify({ batch: 'LB6', rows: { lib_machine_crunch: someRow } }, null, 1);
@@ -275,11 +338,22 @@ describe('LIB-16 A11 (Do 6 a): the 3 cards and quotes are byte copies of the LB6
     const c = cardOf('machine_crunch'); c.plate.view = 'front';
     expect(sha(canon(c))).not.toBe(cardsSha.cards.machine_crunch);
   });
-  it('the How-to source of each LB6 H id holds only its id and research card (D-LIB9a-HOWTOID)', async () => {
-    for (const id of LB6) {
-      const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
-      expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
-    }
+  // LIB-SHIP W6 (ruling 3): replaces "the How-to source of each LB6 H id holds only its id and research card
+  // (D-LIB9a-HOWTOID)". W6 wrote every LB6 sheet (the held ids renegade_row and bench_dip are LB7's): each is the full
+  // sheet at schema 1, research rev 1, naming its own id and card; the old id-and-card stub is red.
+  const sheetProblems = (id: string, h: any) => [
+    ...(Object.keys(h).length > 2 ? [] : [`${id}: a stub`]),
+    ...(JSON.stringify([h.id, h.schema, h.research]) === JSON.stringify([`lib_${id}`, 1, { card: `docs/research/howto/cards/${id}.json`, rev: 1 }]) ? [] : [`${id}: id, schema or research`]),
+  ];
+  it('LIB-SHIP W6: the How-to source of each LB6 id is a full sheet whose id and research.card match', async () => {
+    for (const id of LB6) expect(sheetProblems(id, (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default), id).toEqual([]);
+  });
+  it('LIB-SHIP W6 mutations: the stub, another id, another card and research rev 0 are red', async () => {
+    const h = (await import(/* @vite-ignore */ lib('howto/lib_machine_crunch.howto.mjs'))).default;
+    expect(sheetProblems('machine_crunch', { id: 'lib_machine_crunch', research: { card: 'docs/research/howto/cards/machine_crunch.json' } })).toEqual(['machine_crunch: a stub', 'machine_crunch: id, schema or research']);
+    expect(sheetProblems('machine_crunch', { ...h, id: 'lib_machine_pullover' })).toEqual(['machine_crunch: id, schema or research']);
+    expect(sheetProblems('machine_crunch', { ...h, research: { ...h.research, card: 'docs/research/howto/cards/machine_pullover.json' } })).toEqual(['machine_crunch: id, schema or research']);
+    expect(sheetProblems('machine_crunch', { ...h, research: { ...h.research, rev: 0 } })).toEqual(['machine_crunch: id, schema or research']);
   });
 });
 
@@ -967,7 +1041,15 @@ describe('LIB-16 A4: runQa node half on an LB6 plate (lib_machine_crunch), LIB-3
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
-  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W6 (D-LIB9-AUTHORQA; W2 pilot-b2 form): the row is pinned at approved-plate, where authoring QA is refused;
+  // the pinned candidate with its exemptions set to [] is the candidate authoring gave (candidate.mjs: the same, exemptions [] and no pin read)
+  const candOf = async (page = html) => { const c0 = await cand.candidateOf(ID, { all, platesHtml: page, engine: E }), c = { ...c0, exemptions: [] }; return c; };
+  it('LIB-SHIP W6: authoring QA is refused at approved-plate, and the pinned candidate carries its plate pin\'s exemptions', async () => {
+    await expect(cand.candidateOf(ID, { all, platesHtml: html, engine: E, authoring: true })).rejects.toThrow(/authoring QA is refused at stage approved-plate \(D-LIB9-AUTHORQA\)/);
+    const c0 = await cand.candidateOf(ID, { all, platesHtml: html, engine: E });
+    expect(c0.exemptions).toEqual(pinExemptions(ID));
+    expect(c0.exemptions).toEqual(['F2', 'F5']);
+  });
   const MUT = (id: string) => muts.SPEC_MUTATIONS.find((m: any) => m.id.startsWith(`${id} `));
   // A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn.
   const mutated = async (fn: string, arg: any = null) => {
@@ -1278,7 +1360,15 @@ describe('LIB-16 resume: one zoom per view (D-LIB16-ZOOMVIEWS, #327 6405117790),
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
-  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W6 (D-LIB9-AUTHORQA; W2 pilot-b2 form): the row is pinned at approved-plate, where authoring QA is refused;
+  // the pinned candidate with its exemptions set to [] is the candidate authoring gave (candidate.mjs: the same, exemptions [] and no pin read)
+  const candOf = async (page = html) => { const c0 = await cand.candidateOf(ID, { all, platesHtml: page, engine: E }), c = { ...c0, exemptions: [] }; return c; };
+  it('LIB-SHIP W6: authoring QA is refused at approved-plate, and the pinned candidate carries its plate pin\'s exemptions', async () => {
+    await expect(cand.candidateOf(ID, { all, platesHtml: html, engine: E, authoring: true })).rejects.toThrow(/authoring QA is refused at stage approved-plate \(D-LIB9-AUTHORQA\)/);
+    const c0 = await cand.candidateOf(ID, { all, platesHtml: html, engine: E });
+    expect(c0.exemptions).toEqual(pinExemptions(ID));
+    expect(c0.exemptions).toEqual(['F2', 'F5']);
+  });
   // The spec with a different zoom field, built the way the page builds it (a scratch module importing the real spec).
   const withZoom = async (z: any) => {
     const dir = mkdtempSync(join(tmpdir(), 'lb6-zoom-')), file = join(dir, 'cable_chest_press.mjs');
@@ -1465,36 +1555,67 @@ describe('LIB-16R2 A8: the 9 cards and quotes are byte copies of research a48b05
     const c = cardOf('rear_delt_fly'); c.plate.view = 'side';
     expect(sha(canon(c))).not.toBe(j.cards.rear_delt_fly);
   });
-  it('each drawn row\'s How-to source holds only its id and research card (D-LIB9a-HOWTOID)', async () => {
-    for (const id of r2Drawn()) {
-      const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
-      expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
-    }
+  // LIB-SHIP W6 (ruling 3): replaces "each drawn row's How-to source holds only its id and research card
+  // (D-LIB9a-HOWTOID)": each is W6's full sheet at schema 1, research rev 1, naming its own id and card; the stub is red.
+  // smith_machine_incline_press's sheet is written last, after W4's parent sheets (Q-W6-9): until then it is exactly the
+  // stub, so a sheet landing there turns this red and the list is updated with it.
+  const SHEET_LATER = ['smith_machine_incline_press'];
+  const sheetProblems = (id: string, h: any) => (SHEET_LATER.includes(id)
+    ? (JSON.stringify(h) === JSON.stringify({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } }) ? [] : [`${id}: not the stub`])
+    : [...(Object.keys(h).length > 2 ? [] : [`${id}: a stub`]),
+      ...(JSON.stringify([h.id, h.schema, h.research]) === JSON.stringify([`lib_${id}`, 1, { card: `docs/research/howto/cards/${id}.json`, rev: 1 }]) ? [] : [`${id}: id, schema or research`])]);
+  it('LIB-SHIP W6: the How-to source of each drawn R2 row is a full sheet whose id and research.card match (smith_machine_incline_press: the stub until its Q-W6-9 sheet)', async () => {
+    expect(r2Drawn()).toEqual(R2_ALL);
+    for (const id of r2Drawn()) expect(sheetProblems(id, (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default), id).toEqual([]);
+  });
+  it('LIB-SHIP W6 mutations: the stub and another card are red; smith_machine_incline_press given a sheet is red', async () => {
+    const h = (await import(/* @vite-ignore */ lib('howto/lib_rear_delt_fly.howto.mjs'))).default;
+    expect(sheetProblems('rear_delt_fly', { id: 'lib_rear_delt_fly', research: { card: 'docs/research/howto/cards/rear_delt_fly.json' } })).toEqual(['rear_delt_fly: a stub', 'rear_delt_fly: id, schema or research']);
+    expect(sheetProblems('rear_delt_fly', { ...h, research: { ...h.research, card: 'docs/research/howto/cards/hip_abduction.json' } })).toEqual(['rear_delt_fly: id, schema or research']);
+    expect(sheetProblems('smith_machine_incline_press', { ...h, id: 'lib_smith_machine_incline_press', research: { card: 'docs/research/howto/cards/smith_machine_incline_press.json', rev: 1 } })).toEqual(['smith_machine_incline_press: not the stub']);
   });
 });
 
 describe('LIB-16R2 A9: nothing ships', { timeout: T }, () => {
   const ids = () => r2Drawn().map(i => `lib_${i}`);
-  const stageProblems = (rows: Record<string, any>) => ids().filter(id => !['drawing', 'review'].includes(rows[id]?.stage)).map(id => `${id}: ${rows[id]?.stage}`);
-  it('every drawn R2 row is in rows.json at stage drawing or review, mode H, no parent, template or params', () => {
-    const rows = readJson(ROWS).rows;
+  // LIB-SHIP W6 (D-SHIP-A9, ruling 3): each drawn R2 row is ruled and pinned at approved-plate; a ruled row at any other
+  // stage (shipped, or back at drawing or review) or missing is red.
+  const stageProblems = (rows: Record<string, any>) => ids().filter(id => !W6_RULED.includes(id) || rows[id]?.stage !== 'approved-plate').map(id => `${id}: ${rows[id]?.stage}`);
+  // LIB-SHIP W6 (ruling 3): replaces "every drawn R2 row is in rows.json at stage drawing or review, mode H, no parent, template or params"
+  it('LIB-SHIP W6: every drawn R2 row is in batches/lb06.json at stage approved-plate with its plate pin entry, mode H, no parent, template or params', () => {
+    const rows = readJson(ROWS).rows, g = readJson(GOLD);
     expect(stageProblems(rows)).toEqual([]);
     for (const id of ids()) expect([rows[id].mode, rows[id].parent, rows[id].template, rows[id].params], id).toEqual(['H', undefined, undefined, undefined]);
+    for (const id of ids()) expect(g.entries.filter((e: any) => e.kind === 'plate' && e.id === id && e.src === rows[id].src && e.chromeId === rows[id].chromeId).length, id).toBe(1);
   });
-  it('mutation: one row set to shipped is red', () => {
+  // LIB-SHIP W6 (ruling 3): replaces "mutation: one row set to shipped is red" (kept), + the old green stage and a dropped row
+  it('LIB-SHIP W6 mutations: one row set to shipped, one set back to review, and one dropped are red', () => {
     const rows = readJson(ROWS).rows;
     expect(stageProblems({ ...rows, lib_smith_machine_squat: { ...rows.lib_smith_machine_squat, stage: 'shipped' } })).toEqual(['lib_smith_machine_squat: shipped']);
+    expect(stageProblems({ ...rows, lib_smith_machine_squat: { ...rows.lib_smith_machine_squat, stage: 'review' } })).toEqual(['lib_smith_machine_squat: review']);
+    expect(stageProblems(Object.fromEntries(Object.entries(rows).filter(([id]) => id !== 'lib_hip_adduction')))).toEqual(['lib_hip_adduction: undefined']);
   });
-  it('none is shipped with rows.json read as a batch file, and no R2 id or slug is in batches/ or the golden files', () => {
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(reg.shippedIds(rows).filter((i: string) => ids().includes(i))).toEqual([]);
-    for (const dir of ['tools/plates/library/batches', 'tests/howto/golden/library']) for (const f of readdirSync(dir)) {
-      const text = readFileSync(join(dir, f), 'utf8');
-      for (const id of R2_ALL) {
-        expect(new RegExp(`\\b(lib_)?${id}\\b`).test(text), `${f}: ${id}`).toBe(false);
-        expect(new RegExp(`(^|[^a-z0-9-])${id.replace(/_/g, '-')}([^a-z0-9-]|$)`).test(text), `${f}: slug ${id}`).toBe(false);
-      }
-    }
+  // LIB-SHIP W6 (ruling 3): replaces "none is shipped with rows.json read as a batch file, and no R2 id or slug is in
+  // batches/ or the golden files": none is shipped in the registry, the pre-move file is gone (a copy-back is refused),
+  // and only the lb06 pin files name an R2 id or slug
+  const OWN_R2: Record<string, string[]> = { 'tools/plates/library/batches': ['lb06.json'], 'tests/howto/golden/library': ['lb06.json', 'lb06.layers.html'], 'tools/plates/library/pages': ['lb06.json', 'lb06.layers.json', 'lb06.closeups.mjs'] };
+  const r2Hits = (files: [string, string][]) => files.flatMap(([f, text]) => R2_ALL.flatMap(id => [
+    ...(new RegExp(`\\b(lib_)?${id}\\b`).test(text) ? [`${f}: ${id}`] : []),
+    ...(new RegExp(`(^|[^a-z0-9-])${id.replace(/_/g, '-')}([^a-z0-9-]|$)`).test(text) ? [`${f}: slug ${id}`] : []),
+  ]));
+  const filesIn = (dir: string, files: [string, string][] = readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')])) => files.filter(([f]) => !OWN_R2[dir]!.includes(f));
+  it('LIB-SHIP W6: no R2 row is shipped, the pre-move lb6/rows.json does not exist, and only the lb06 pin files in batches/, the golden files and pages/ name an R2 id or slug', () => {
+    expect(existsSync(PRE_MOVE)).toBe(false);
+    expect(reg.shippedIds(reg.rows()).filter((i: string) => ids().includes(i))).toEqual([]);
+    for (const dir of Object.keys(OWN_R2)) expect(r2Hits(filesIn(dir)), dir).toEqual([]);
+    expect(r2Hits([[ROWS, readFileSync(ROWS, 'utf8')]]).length).toBeGreaterThan(0);
+  });
+  it('LIB-SHIP W6 mutations: a copy-back into lb6/rows.json is refused, an R2 row at shipped is caught, and lb06.json copied under another name is red', () => {
+    const back = { batch: 'LB6', censusRef: '4a9fd86', rows: { lib_rear_delt_fly: readJson(ROWS).rows.lib_rear_delt_fly } };
+    expect(() => reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [PRE_MOVE, back]] })).toThrow(/id lib_rear_delt_fly already used by/);
+    const j = readJson(ROWS); j.rows.lib_smith_machine_squat.stage = 'shipped';
+    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? j : readJson(p)]) })).filter((i: string) => ids().includes(i))).toEqual(['lib_smith_machine_squat']);
+    for (const dir of Object.keys(OWN_R2)) expect(r2Hits(filesIn(dir, [...filesIn(dir), ['lb06-copy.json', readFileSync(ROWS, 'utf8')]])).length, dir).toBeGreaterThan(0);
   });
 });
 
@@ -1854,7 +1975,15 @@ describe('LIB-16R2 A6: rear_delt_fly\'s Mistake zoom (D-LIBZOOM-EXTEND; PLAN RUL
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
-  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W6 (D-LIB9-AUTHORQA; W2 pilot-b2 form): the row is pinned at approved-plate, where authoring QA is refused;
+  // the pinned candidate with its exemptions set to [] is the candidate authoring gave (candidate.mjs: the same, exemptions [] and no pin read)
+  const candOf = async (page = html) => { const c0 = await cand.candidateOf(ID, { all, platesHtml: page, engine: E }), c = { ...c0, exemptions: [] }; return c; };
+  it('LIB-SHIP W6: authoring QA is refused at approved-plate, and the pinned candidate carries its plate pin\'s exemptions', async () => {
+    await expect(cand.candidateOf(ID, { all, platesHtml: html, engine: E, authoring: true })).rejects.toThrow(/authoring QA is refused at stage approved-plate \(D-LIB9-AUTHORQA\)/);
+    const c0 = await cand.candidateOf(ID, { all, platesHtml: html, engine: E });
+    expect(c0.exemptions).toEqual(pinExemptions(ID));
+    expect(c0.exemptions).toEqual(['F3', 'F5', 'F7']);
+  });
   const withZoom = async (z: any) => {
     const dir = mkdtempSync(join(tmpdir(), 'lb6r2-zoom-')), file = join(dir, 'rear_delt_fly.mjs');
     writeFileSync(file, `import s from ${JSON.stringify(lib('specs/rear_delt_fly.mjs'))};\nconst z = ${JSON.stringify(z)};\nconst { zoom, ...rest } = s;\nexport default z ? { ...rest, zoom: z } : rest;\n`);
