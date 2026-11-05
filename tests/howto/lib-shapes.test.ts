@@ -253,7 +253,12 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
   };
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
+  // LIB-SHIP W7 (PIN GO #394 6649092340): the 29 W7 rows the pin adds; every other row and key is unchanged, so they are
+  // taken out (each must be present) before the W2 comparison below.
+  const W7_ROWS = ['lib_hack_squat', 'lib_pendulum_squat', 'lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion', 'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_side_plank', 'lib_superman', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug', 'lib_v_up', 'lib_kettlebell_swing', 'lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry', 'lib_jumping_jacks', 'lib_wall_ball'];
+  const lessW7 = (m: any) => { for (const id of W7_ROWS) { expect(Object.keys(m.rows), id).toContain(id); delete m.rows[id]; } return m; };
   const lessW2 = (m: any, blanked: string[] = []) => {   // blanked: keys the caller already checked and blanked
+    lessW7(m);
     delete m.rows.lib_crunch;
     for (const [id, r] of Object.entries<any>(m.rows)) {
       for (const k of W2_MOVED) if (k in r.files && !blanked.includes(k)) { expect(r.files[k], `${id} ${k}`).toBe(sha(readFileSync(k))); r.files[k] = 'X'; }
@@ -264,7 +269,7 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
   it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main c4c34d75 (re-measured after train 63)', () => {
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
-    expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
+    expect(rows).toHaveLength(22 + W7_ROWS.length);   // LIB-SHIP W2: + PILOT-B2's lib_crunch; LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows, taken out again by lessW7
     expect(Object.keys(m.rows)).toContain('lib_crunch');
     // F-CROP-FRONT D-CROP-PIN / D-CROP-NONE (#380): crop.mjs's and hand.mjs's keys are re-pinned there and pinned exactly by crop-projection.test.ts
     const F_CROP = ['tools/plates/library/render/closeup/crop.mjs', 'tools/plates/library/render/closeup/hand.mjs'];

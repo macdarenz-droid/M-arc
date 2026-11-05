@@ -639,6 +639,9 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
   // (D-LIB-PILOTB2, crunch held at approved-plate) are added; every other entry is unchanged
   it('the pinned-page list is pilot A\'s (page and layers page), PILOT-A2\'s, PILOT-A3\'s, pilot B\'s (page and layers page) and PILOT-B2\'s (page and layers page) on this tree and sha256 is the pin hash', () => {
     expect(pinnedPages(ROOT)).toEqual({ pages: [
+      { id: 'tests/howto/golden/library/lb08.json#page', file: 'tests/howto/golden/library/lb08.json', kind: 'page', pageSha256: '95e9a1feaa526c005380b0aba6f49f7944ff79cb5d4887533b781ecb28487543', bytes: 1232830 },   // LIB-SHIP W7 PIN GO (#394 6649092340)
+      { id: 'tests/howto/golden/library/lb09.json#page', file: 'tests/howto/golden/library/lb09.json', kind: 'page', pageSha256: '52bb57fd638aed7dfae3700eb7049ae3c86227a0eb2bef6db63ac4daa49993fa', bytes: 946251 },   // LIB-SHIP W7 PIN GO (#394 6649092340)
+      { id: 'tests/howto/golden/library/lb10.json#page', file: 'tests/howto/golden/library/lb10.json', kind: 'page', pageSha256: '3459ad2d689ea1d9e8794916d1be9c7f6d971fd7d4a90f20592a1a7f9d9d0492', bytes: 1450166 },   // LIB-SHIP W7 PIN GO (#394 6649092340)
       { id: 'tests/howto/golden/library/pilot-a.json#page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'page', pageSha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 },
       { id: 'tests/howto/golden/library/pilot-a.json#layers-page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'layers-page', pageSha256: 'afd5d4136ee57fd74f831ae0ad35d09e4708d747fcf3d9e266c10ee39f65e3e1', bytes: 1375425 },
       { id: 'tests/howto/golden/library/pilot-a2.json#page', file: 'tests/howto/golden/library/pilot-a2.json', kind: 'page', pageSha256: '3e225bc12531e6c395e5a532a77736ebaeb9cdc276c55709d8ac4c73ef78bb0b', bytes: 280533 },
