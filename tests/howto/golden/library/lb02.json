@@ -1,0 +1,252 @@
+{
+  "base": {
+    "index": 8,
+    "hash": "e48d731d176c5e3994cab5e2de5ea2db938cbdf6c249600679588daa58b22361"
+  },
+  "entries": [
+    {
+      "kind": "page",
+      "pageSha256": "cb267416ab4c17434a116683c184d5f29b2ae6f39138df108a9ff7a4ddca1ae4",
+      "bytes": 796222,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB02 PIN GO (supervisor, 2026-11-05, #391 6649217767): the lb02 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page.",
+      "supersedes": null,
+      "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_barbell_bench_press",
+      "src": "library/specs/barbell_bench_press.mjs",
+      "slug": "barbell-bench-press",
+      "prefix": "barbell-bench-press",
+      "chromeId": "barbell-bench-press",
+      "fragments": {
+        "normalSvg": "9f7d1cdb09324e3735986707a561170300e0d4531ee31cca5c128af3786951a2",
+        "normalOverlay": "6f45346858c760270c415964692657b5cf9e5c7836ef1cba7b97c893dc433747",
+        "mistakeSvg": "1447faac437a1ae5c8481d24c3c10238d7820e527badd1bd04b275a7c518bc03",
+        "mistakeOverlay": "c7403316df89a677b7448c93c5cfda192265f8c4bfb64e64ff88a26fcdb6e5e3",
+        "tells": "bd868d4278607daeaee09ec6a6447a465e335d085b35f7929d3846f344d8b152",
+        "tempo": "cf63e40e037e0f8d1a9cf327745c129b5c27ce48afc4412b42ae8d2061e8f7db",
+        "cues": "d72f66345992958c68680fc0208ceb4e92864c127f64155a469d052e896ad3a1",
+        "alt": "9e2ecf70abd407571cb624f9cec405614f2b83f282f3e50e6eace1d1efbc07dc",
+        "mistakeAlt": "73968921ac23260dfc6ff4ed9a0b7c8dfa59a2c999f3b87fa06d3ce08f5a659a"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB02 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_barbell_bench_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "98039251aeca8ca7205d5f06a80f7e3e64ca94a241f1ddb21449e583043ac85d"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_incline_barbell_bench_press",
+      "src": "library/specs/incline_barbell_bench_press.mjs",
+      "slug": "incline-barbell-bench-press",
+      "prefix": "incline-barbell-bench-press",
+      "chromeId": "incline-barbell-bench-press",
+      "fragments": {
+        "normalSvg": "f64d685f272b472763a77a8550420a44d63d76a3591735f8064d5413d45b3afe",
+        "normalOverlay": "bfb79c680e1e0726e350fb73614b6541f4d0021820260abb7008ad447dd0e4c8",
+        "mistakeSvg": "4b57b8b878f22ba17e7d28a2e94df3b98a3a034a8d4c6329dd7884a8d86e81d0",
+        "mistakeOverlay": "0b0e5057efa6eae2b07919f1d2a7a69282074883dbf3db6db345ff9405b193e6",
+        "tells": "b33501ba966622809baaa9c887c11cd888feecfba1fdb5573c0a3ba3e7829d0e",
+        "tempo": "9af9e6552a529e3708cf8dafa367dc90b5d5d8b5b1f51cedaf88fe48e65d10d8",
+        "cues": "b3ab76c02e9333eb59b20727b35fd925d4edea0f9ecdcd8a106662418b02f8ce",
+        "alt": "2216b2555c66e883db8ab669c6cbcf7e3d6b0aa658ca7bf004165e901b572163",
+        "mistakeAlt": "2072bc25a161c63c7b003833845afef7194bed9b88098050ab013dbe4cc471f1"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB02 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_incline_barbell_bench_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "4c727d438946de3dd045db000fe968c1d72810a52da803fbee5f822cdfce8b8c"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_incline_dumbbell_press",
+      "src": "library/specs/incline_dumbbell_press__lb2.mjs",
+      "slug": "incline-dumbbell-press",
+      "prefix": "incline-dumbbell-press",
+      "chromeId": "incline-dumbbell-press",
+      "fragments": {
+        "normalSvg": "fc08cf61a71657c62ef83b989a6103ba5c01be4fb9c932fb4fe21de1c13861c6",
+        "normalOverlay": "4c218628d55b709c9be4048c006380778e4d114963c4009823bc2810bfa79a94",
+        "mistakeSvg": "5679a439d9e0110c4a7a06fa2f2a98e99a75de74a528ae968aeff95f56c574a7",
+        "mistakeOverlay": "afcdd9bac0baca9100f5cf646d9c921301085d3870ab5df5d8c03fd738979eb0",
+        "tells": "8c5aa86dd3fea225b280a7071583450c25e3fcc715cfe8e250831fbb66ff315c",
+        "tempo": "9af9e6552a529e3708cf8dafa367dc90b5d5d8b5b1f51cedaf88fe48e65d10d8",
+        "cues": "2ee73dd579633223b173cc9e00f4b5cd27ecdbc0aaa808813e798c753a7f0e3b",
+        "alt": "b4983466e159517be873ff0cbfe04a0dc72ba3cfca0f9ffe05be5291f92b606f",
+        "mistakeAlt": "53db254eeb326efd40c65dbcdf02a0596bb083b97168ac5ebcdd2d6722187888"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB02 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_incline_dumbbell_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "6be65a571b365796b72adc2262f1ee559bc511fec5f083d0ea792c3f78bead85"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_close_grip_bench_press",
+      "src": "library/specs/close_grip_bench_press.mjs",
+      "slug": "close-grip-bench-press",
+      "prefix": "close-grip-bench-press",
+      "chromeId": "close-grip-bench-press",
+      "fragments": {
+        "normalSvg": "eec591ee2b7e346efceae10cfe5915799afb0341459c9dea6299839d2190b5ea",
+        "normalOverlay": "bbdc71a97a86ccaeb2e1fb2b694259ddcf33b8469eadecd7514a59060832a257",
+        "mistakeSvg": "c435a526654fe95f779b050add31a00423075b3665dcdf4171d10a8e5080e337",
+        "mistakeOverlay": "5eb11f278003d355d8da3271547937f46e1a4c7ed4aa43b5fa45166589d0bc5e",
+        "tells": "17f4e0006cb5f40ffbe8b0e6462ea91e18593fc4ee9526053ec5bf0bde35cfc4",
+        "tempo": "9af9e6552a529e3708cf8dafa367dc90b5d5d8b5b1f51cedaf88fe48e65d10d8",
+        "cues": "97f4d59f8e0d09bb02083f3c6f4fa1546b66ab4094def83460efdd708169bc82",
+        "alt": "ccc2187c290d3625852c7dc286dc0cf64a477db5a19593616500bebf019cc0ed",
+        "mistakeAlt": "dab9d1be69327bf751ad83e4055e3826c7382145cf840c73cac0d1f9bcb79a5d"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB02 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_close_grip_bench_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "5d32e91061ad5243a74026716f01297995b302fddccc5d20711a694dd8152589"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_decline_bench_press",
+      "src": "library/specs/decline_bench_press.mjs",
+      "slug": "decline-bench-press",
+      "prefix": "decline-bench-press",
+      "chromeId": "decline-bench-press",
+      "fragments": {
+        "normalSvg": "778e460acbe81ce8d6556f7c8067c458aa9a77460caf68f0213be267cbaf5f33",
+        "normalOverlay": "43cd13fdc53adba9c92ee1f2604e3d3532a8e09088dcf880b892f01bc0e55cd8",
+        "mistakeSvg": "563b1230aa3bbbe6c8d14c68517e4b24f668bb8d4eb774065bda1c106bb03ce2",
+        "mistakeOverlay": "d89ff0709043ecf0cdc6191e87011b7f7dcfdcd0335554dfce51955b5b1c7368",
+        "tells": "8d16995c746deccf14b7239d86641a9bb57dad6e8c3ce47d167ef41ab11767ad",
+        "tempo": "c7b84bd29aff9986297fb581aa2e2f08eacbab46e263262db094b59e480d6e7b",
+        "cues": "9a9709f238d1b5af4ba8dbf55927dad4ce67794bd064d51cef93484a88bafc5c",
+        "alt": "04b2961cbea3d20814dea2d1bff819429eca240a89354d9e18b8811c662d02a3",
+        "mistakeAlt": "38769c94923b9cf1f7b30fe6925369b5f1fa02a65c62f39efa41e61cd08766dd"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB02 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_decline_bench_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "09952c5885b10dcdacfde5df5581199be64ba486c2136aa2f24e1612e902420a"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_arnold_press",
+      "src": "library/specs/arnold_press.mjs",
+      "slug": "arnold-press",
+      "prefix": "arnold-press",
+      "chromeId": "arnold-press",
+      "fragments": {
+        "normalSvg": "8d8c3a1a73b9abecee665cee3f2a5b47fad258695559c5a67c1dc33f6f28bc5e",
+        "normalOverlay": "e1c4c212fc691ce0487df1405d2da95c8f79c7c496167395719da96ded6c1864",
+        "mistakeSvg": "a6ce58419b32a0cb50870f4f4bcf63935d56105bc4c74691f3a69cb483de1100",
+        "mistakeOverlay": "296dfdbf4545871f4237ff93e2dc9b95573ffb1a1725be7b55ee5d0d6b33ca68",
+        "tells": "8043dbf511d1b0e0c9474664c86345f958771550ec1201462fe592e9ff13633c",
+        "tempo": "7e32c0e848a9e6ce971b689bf96058ea943956570433e96247d364eb475c7aff",
+        "cues": "0dd9930f3d36f2b87ea77d58d29bee845384d6d5a89db000aed4694b67d6394e",
+        "alt": "857b3ddf845c3abb8b9499fcd9d2d4bbf2640492f6fada94e35e68de7dce38aa",
+        "mistakeAlt": "1b5635f2ae58632d4e449487815ac91159feebd2f4031f2efdf0e2e7a4f67a62"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB02 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_arnold_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "d58ede0b213ed7d6ca161f25d6d61dbd2ed96c4e3d66e852f1b649a7e2b33203"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_skull_crusher",
+      "src": "library/specs/skull_crusher.mjs",
+      "slug": "skull-crusher",
+      "prefix": "skull-crusher",
+      "chromeId": "skull-crusher",
+      "fragments": {
+        "normalSvg": "b52bcdb5b11e83e820da96745fbf92fc39933e4b6c0b0bdb6d2470eb97f8a63a",
+        "normalOverlay": "978a8db0add8ec69d473487b0416849a0a6687ec29f59faaf8447a1be1cd547a",
+        "mistakeSvg": "d1e332d02835bddf5370e2fa1ac669abd2386c89cea6fb6989e16c0d2872639f",
+        "mistakeOverlay": "548c678cab26d3976927a5571b509f542f2dba3b240181628ca867f1f093e8b8",
+        "tells": "8c8af8a333e0b5835b38074cd83c5f8e1a70d9cc83192d8b0af30468e2eb119f",
+        "tempo": "35068615b6ee188a97b21e3ff5e61b750234ce1c6098c76536579ce86e6f34b9",
+        "cues": "062ac8fe49adba832dc876ebd8f0f646b1060df6546a398a7cdd51aa6b5711cb",
+        "alt": "93c340d28923344a382e1551761eae3d5f98a9cd0fb391b091827c43dedaf18b",
+        "mistakeAlt": "8ec38d107cc0443abc293adb8e580c2e6b9b28b6b416ad9404c95c58877986b5"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB02 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_skull_crusher's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "eabfe55b7a6a5445683754a5189df21f78123e98859e3480072942b18c898648"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_dumbbell_pullover",
+      "src": "library/specs/dumbbell_pullover.mjs",
+      "slug": "dumbbell-pullover",
+      "prefix": "dumbbell-pullover",
+      "chromeId": "dumbbell-pullover",
+      "fragments": {
+        "normalSvg": "57f52446bbdee88a4b14dd88b75f452ae4db2f8e038e59a672cf45571838dbb9",
+        "normalOverlay": "da2e86be081bbaeb39d9a2301993698ee635410c1bfb50ee99e3f3466812c88d",
+        "mistakeSvg": "949d154e4f4c46d646062ac57e010ec469dd4aed1e84f41702c3bc511a5f7831",
+        "mistakeOverlay": "b3f7a7054235aa1e208aeff99b090916218f9ef86b01cd120f60590ed0d9b9da",
+        "tells": "f96db77cd0c3cf237c5313a865403a843069bf2858d26d5419179abdb52c0fe1",
+        "tempo": "6d54e989adeb68a11dee835225371ccc6f605797fdeff858e574210cc4f2b219",
+        "cues": "865ab47ce0f0681aa8b4b8a0f59c8af95f57565b0581c9441b1b8cdfdc4e6d81",
+        "alt": "89ab1ef768810ff9f301af89e3e100597b3f406bf6c6b89446c80c4c141e58ea",
+        "mistakeAlt": "d9e43d7efbfb550f0e7fd4ab56bec66b6135f2f8a4ec2a6db4f8fbedcc69034a"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB02 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_pullover's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "81e4e8882731dd2c6abda97f13eddf62686f83d1dd318d9181f1d94a073e28b2"
+    }
+  ]
+}

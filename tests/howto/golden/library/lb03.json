@@ -1,0 +1,377 @@
+{
+  "base": {
+    "index": 8,
+    "hash": "e48d731d176c5e3994cab5e2de5ea2db938cbdf6c249600679588daa58b22361"
+  },
+  "entries": [
+    {
+      "kind": "page",
+      "pageSha256": "be50e4d1cd0cce9997f525ce4422173900b121a43a74d2a0ce66edd4dd4e6529",
+      "bytes": 1186071,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): the lb03 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page.",
+      "supersedes": null,
+      "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_pendlay_row",
+      "src": "library/specs/pendlay_row.mjs",
+      "slug": "pendlay-row",
+      "prefix": "pendlay-row",
+      "chromeId": "pendlay-row",
+      "fragments": {
+        "normalSvg": "c47a5e46c6cae0a308d786196e2c007f9fda8b03bb5af327742ca57d46bc1c3c",
+        "normalOverlay": "4b424626b2dbd508f85db62cbd0ffe21506a6be8f3ff4fd7427ebd382bc002b5",
+        "mistakeSvg": "b1531ffe142c04e198a690964c24bc9af0a77dd7f69a4279e048137e300c4e62",
+        "mistakeOverlay": "f028d20677d7709f71e6a1d48424ebcb3aae1bce911bdcaaea288117da0c80d0",
+        "tells": "1396470914bdfa0d3abc107be8a103ad4916548fd82c07bbacdbd4a6d4f3972f",
+        "tempo": "6d54e989adeb68a11dee835225371ccc6f605797fdeff858e574210cc4f2b219",
+        "cues": "2d6c7cf3e8dd390c9f5a05a56684f2d7d36c12ae3821d2234dc458dccd29b894",
+        "alt": "65412e50ffc46f0b4f78265a953cffe5566e1c9a7c9211d0aecee422ee0d2e9a",
+        "mistakeAlt": "59f9b9bb1f39f85536bd306f831b8030b67732d7a828f973c14ce36475dc4590"
+      },
+      "exemptions": [
+        "F2",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_pendlay_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "46aa15b0ccd2c1b8406fa95b8d36182be2bc40cdfcab81bcacf82097fe11835d"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_landmine_row",
+      "src": "library/specs/landmine_row.mjs",
+      "slug": "landmine-row",
+      "prefix": "landmine-row",
+      "chromeId": "landmine-row",
+      "fragments": {
+        "normalSvg": "ba794202e2211ec4a599581485245d65a2cc2e4ea8a6511b0afe98f1cf297677",
+        "normalOverlay": "07e549d3a9a686b545af202dd7f05db135135cc2c3dd82ed317a1eb1dc682ca3",
+        "mistakeSvg": "37780c55527471d5eb3e0f98a5275746489889d4ea99ae045b9b749fdf7d6494",
+        "mistakeOverlay": "e3e5a35f79d607204f35992daff2656e2e708e518b8051a06e91b161aa25ef37",
+        "tells": "f515ae721b28b8a4edd93baf6e89e3146c49ae7ce3b3e8ee9135ee1a3e6d9df7",
+        "tempo": "85464aff27287f56375923a2ea166aab9e5aab3fac8821ace0063acb9b3a3e0f",
+        "cues": "acfbd56978554b4a72ff3d67e4e7372ddac090560d0d297be0f9aa1ec684210e",
+        "alt": "62ecca60452f962b3e4e5234186a67162a6608024a0d56e401e50ebb3da33a47",
+        "mistakeAlt": "8d7f941c7ea660773b1572dc4884e058b13437dc191c91f6144ebac444c3e158"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_landmine_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "c6f434c2bf4c0e7fb60c9641564abbddb9bf6ccd94d24940d90524c7411e2dbd"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_one_arm_dumbbell_row",
+      "src": "library/specs/one_arm_dumbbell_row.mjs",
+      "slug": "one-arm-dumbbell-row",
+      "prefix": "one-arm-dumbbell-row",
+      "chromeId": "one-arm-dumbbell-row",
+      "fragments": {
+        "normalSvg": "4bb20c3d141733f389b2c100c1b4fe7df1fd5c28d787015a04adbff91dff3466",
+        "normalOverlay": "880027edac5bd42c9e3efb28b5173fff83681732e860b0d89235d2ee2402acdf",
+        "mistakeSvg": "2dc08147f5865e93d2075ba11648b5370f8aef7e6c457df7e5e21fb85ce2ebc2",
+        "mistakeOverlay": "175a7442fe23358b7ae59138ed6b260c24015d04f4216375e072dc2b0f621410",
+        "tells": "b666789c21305b66eee9157ce009a2cece7b27dedfb58a236d843b968a0cfe99",
+        "tempo": "20977979ba2d5b41227e085fd7f83ef86468ab3e175170f6b056cd3dad40b579",
+        "cues": "cc9a1ddf74bf2d8efae0769f36c548c9b95db75331d15a650c29d6902ae38872",
+        "alt": "db9324702c44f4f7937d8380891ebfa4d54ab883770ecc1427edc28f2f9a33c4",
+        "mistakeAlt": "d771c0785ceebae45ea330788f553fb08a7b6cc5525d06ce4b52be9d9378f0be"
+      },
+      "exemptions": [
+        "F5",
+        "F7"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_one_arm_dumbbell_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "2c6986891e634ffc98151ff01a1f0c887d44f69fdbf74f749727e934845460d1"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_dumbbell_romanian_deadlift",
+      "src": "library/specs/dumbbell_romanian_deadlift.mjs",
+      "slug": "dumbbell-romanian-deadlift",
+      "prefix": "dumbbell-romanian-deadlift",
+      "chromeId": "dumbbell-romanian-deadlift",
+      "fragments": {
+        "normalSvg": "27c5aed23d94529cd082c51faea8d6d2fda1bafd1769196984b9c0cf62680273",
+        "normalOverlay": "5a34f3ad897d0d21dde658b7bb409c10b122ae9c1d37382dd84897fbce50793e",
+        "mistakeSvg": "6a98456d2836e5f0503f7bfdb144d5217c22489596f40d86bd5c2a6d53d8329a",
+        "mistakeOverlay": "69bf07d50cd124b6839053092065a397af4dfac338fe4d67791aadce0ade120f",
+        "tells": "c62dec6cd8c7d223ca7c7d063358b69c16172c0081907d7ddf498de319d66c83",
+        "tempo": "d779228da386025e8d7f2ba40e2cd2eeb7440d2dcd29882ce9633f0e2d38d8ee",
+        "cues": "fc56926595fb2b9aa778a32581768352af833e3a7c7264de2780fedfec001cbe",
+        "alt": "cc9662d04e98944b44097c31b7e112601e0bdbd432a8c061a3368bc431232026",
+        "mistakeAlt": "c37ad885da61232cf876b5e6fd9c9c9dea577166bd97a88a8eeae36fa83720d5"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_romanian_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "81f48c2be028b2e131cce245e0a119eab108dc5fcfcdb4186a10f8d871cf1437"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_conventional_deadlift",
+      "src": "library/specs/conventional_deadlift.mjs",
+      "slug": "conventional-deadlift",
+      "prefix": "conventional-deadlift",
+      "chromeId": "conventional-deadlift",
+      "fragments": {
+        "normalSvg": "d74f187edf5266561e372bcfeaa5c4e70063b9c30d27cce2b6f8c25a1436cb13",
+        "normalOverlay": "f935bc9ef0e0f27c74b7cdbd0c8b8fdb77926d3d543808d98683adc8de367bda",
+        "mistakeSvg": "e32b06f7e0cfb951da7b388c136d482cbd15c5be6d59d2a22bea737143d5d6c3",
+        "mistakeOverlay": "07786e0e182eba798fc0eb8f6dbb5e03cbfbce8f623ee504798d62456be38d41",
+        "tells": "76d338722edb81af2e914ad09e4cf07f6f5f3a0bfbe4e9404b63e1042163ce44",
+        "tempo": "37010198d446f18f117df876fee4dc108ccbdbe147775b8c915f627e8611d468",
+        "cues": "a453740cfa767b5d5a3227b8834009eb63aa6bd402e85a5e73d630d341957018",
+        "alt": "efa5eafa680cfb7607ff314efa56b0d76bb35acf30cd3364523727824523c7d6",
+        "mistakeAlt": "2d6d1d4c634533ebdd4a6c0802a3f797f56479abd0b4a516ac3c92904fca2a05"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_conventional_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "7cd2965bc63504d1bbb2022efe3e1aacbd676f094ac0f746e01b4ffafab9a2a8"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_sumo_deadlift",
+      "src": "library/specs/sumo_deadlift.mjs",
+      "slug": "sumo-deadlift",
+      "prefix": "sumo-deadlift",
+      "chromeId": "sumo-deadlift",
+      "fragments": {
+        "normalSvg": "9a2f2b0e2a325dc698d0acdff5a59c203cef3013f9b230610601bf686f50868a",
+        "normalOverlay": "87101be011d94c7212ea7a710cf4b05ab97eabab45dcef76680296d025b777bb",
+        "mistakeSvg": "da50e75c5094ff2476f3be0685b24f9cdb1c1c3c6a83b9c0137b2b5586a3acc4",
+        "mistakeOverlay": "bbb6d492d7107a6d080b9f51da800e55678069b25cef2777cc5169b4f1e478b5",
+        "tells": "09075a3625dea0c893795e6b758e8992ab92e904971970a35676b82c49288095",
+        "tempo": "37010198d446f18f117df876fee4dc108ccbdbe147775b8c915f627e8611d468",
+        "cues": "52ed45d9aa7ced257552fba1deffd42f417ccd25191d0c1be311f5d71c8577c3",
+        "alt": "5c36d71989166b93a4710d9b40f731139745478b97447cb53cb256b2bb51b285",
+        "mistakeAlt": "895f31a0b03531fc67e465902ca503c30d508eb1f10ff57f7fbb3d6b16ee33ac"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_sumo_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "484c80252f72855939c10133022b71402d8fe2ee29600fee87087b48fc3e7a8b"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_back_extension",
+      "src": "library/specs/back_extension.mjs",
+      "slug": "back-extension",
+      "prefix": "back-extension",
+      "chromeId": "back-extension",
+      "fragments": {
+        "normalSvg": "6635c051ae842d46dcde7119c6c33316bce1e5e1effac15c01b7a982196ce074",
+        "normalOverlay": "c2cdee31297c4503157fa82a234bbeaaa2aece737c63f0d394e831dc148bfc6f",
+        "mistakeSvg": "1a2de143b2123d7a4dfaaddb6b5bcf2905e099cf10916aedaa84da8543145163",
+        "mistakeOverlay": "7de203341dba44d0b708b33ac3ed43823235c71205d422d561651653bdce90a5",
+        "tells": "0be502a8c45b495594a60aac16a604e4ba58f6cff133693abe26e96c393e9fb5",
+        "tempo": "b76e5404da881272ff155a64336f76dc60a8e1d99d60e3abac0b3c3cd27ab2e6",
+        "cues": "d4031709c54c6ee7ea7e49ad7fbe10810e51a10ece2a4fcad5143f903323f311",
+        "alt": "bbffa4ff5cc2132e7ca48c9ce849e8d02925af71104155374e3322ca6fa1b9fb",
+        "mistakeAlt": "f611081c93f0cf420ae8067963c4431623bacf7e7f7288cb4c851e345b5064b5"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_back_extension's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "d55e7051f3533710a07a85e2fbe7a352441a9e33f77af5d9fd45b23c197e47e5"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_t_bar_row",
+      "src": "library/specs/t_bar_row.mjs",
+      "slug": "t-bar-row",
+      "prefix": "t-bar-row",
+      "chromeId": "t-bar-row",
+      "fragments": {
+        "normalSvg": "55033f287c6452884c321a351bd22fc80fcd6427d882b116ff4adbec10adab62",
+        "normalOverlay": "8ef5dee012db1a6350170a7dcff6cf7c0b618be232c20c080cec3e85350da3eb",
+        "mistakeSvg": "58ef7ff6c0da83be29daf5c34576055181b37048af96031b5337812577d6f19e",
+        "mistakeOverlay": "e3415d48b64ba51d4e57bdbff5f3fe91eb09cbee61f664fdd8dbcf06bf1c6979",
+        "tells": "0f124fe0f85ad2f33973d731c7ff12b56828ef8c91914c83ec9e0a435ee41d74",
+        "tempo": "1abe99bb41e11a9299d678e9f35bf3bc56e5914201313343974af433de126912",
+        "cues": "4b4f147dac10cd4bff49b55377ac9293e8b4af978f79dc9d2e6af8ff9d43fcc3",
+        "alt": "85abbeb013abf88c2602c783245d74ba2016084897e233562fa60bd7ff725b63",
+        "mistakeAlt": "6eea18cf9ec0b7692427b8066dd69f0df01dc88a94d51cda657797510b69e884"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_t_bar_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "6c0090ab49ebcb630358bb151ca01d40bd1cc20f32e0031bfb4c519e317c9f96"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_barbell_shrug",
+      "src": "library/specs/barbell_shrug.mjs",
+      "slug": "barbell-shrug",
+      "prefix": "barbell-shrug",
+      "chromeId": "barbell-shrug",
+      "fragments": {
+        "normalSvg": "5f1fe8abe186bef16f0f0721052cfc59c0d46adce7d63c5eeac391bdfce560c3",
+        "normalOverlay": "39ae0531c1467137f5b9219be4889e0427935054de184f554366bd8aac813b7d",
+        "mistakeSvg": "d13fb13d689b97c63548facfd9bfd6cae9c31bce6ff3cd669098a8dbd9ab4da7",
+        "mistakeOverlay": "2116ee95ef7ecfc595c4d3f3581545d19be6a847fa144292972045651beb8527",
+        "tells": "62fe5129a6ea13ec01e392041626a6d679404d0fad9916c4ef23c3da4232c128",
+        "tempo": "16fa92968d867844b0523f60f380e5bb4bc57a89d2543adcd24c7a35816a1e11",
+        "cues": "2124f85f22a111c0ff46a73940153eb17873ff8ddf446ac532f640464f0f0d53",
+        "alt": "4a903ff68dc6f01198c4a46cb12ce3f2db9e998787ac9d71a904a6218d7a467c",
+        "mistakeAlt": "04e3c794510433dda67db495922070a5b792b78421301ffbb4fddbf3b2d96deb"
+      },
+      "exemptions": [
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F7"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_barbell_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F3, F4, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "662ef9885b4b1998ca735a2082d9e3d2df3e9449570100f63c145657205a2224"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_cable_shrug",
+      "src": "library/specs/cable_shrug.mjs",
+      "slug": "cable-shrug",
+      "prefix": "cable-shrug",
+      "chromeId": "cable-shrug",
+      "fragments": {
+        "normalSvg": "3368eb4b27523618e65e83222f402016ab3c03ac26b97a9fdebb85a57ff84fc8",
+        "normalOverlay": "5d967c3e5e5ac58e732291abdff84e7446026c769a13d4020e95dfe20f18dd9d",
+        "mistakeSvg": "60f8c3a1b2c058e0dfac1710e09e68d52cfde317b05845cda46c99b0602c7b88",
+        "mistakeOverlay": "7e7ea27a3295af5b89dfd83671b02f736fdf612b9c103448d04a30dddd362d2e",
+        "tells": "f37a3668fadfc962b51cc69828608cbe51fc16803a072dd7f33843088ff0c2a9",
+        "tempo": "8c1a840e14fab09fb3181eebe48a482e98b8fab8f7e035855cb47ccee90d0474",
+        "cues": "3ce71672c772458d93046ac84313639d0600a93d29ee5df4628d778df5bb81f6",
+        "alt": "7af90ce3fe791c078e03008c9f21939a6ca77d66f9cf6e2bbf84713dbbaebb11",
+        "mistakeAlt": "1e758bea4bc223e3b79ea6eb5aa5beb3a1809755fb7f9fe3ac8c6b0d32973a7f"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_cable_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "3932d4eaf616c6ce6b7d1cb026b5e6c1f14b3aa23fc8e885504a40cdbef64d71"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_dumbbell_shrug",
+      "src": "library/specs/dumbbell_shrug.mjs",
+      "slug": "dumbbell-shrug",
+      "prefix": "dumbbell-shrug",
+      "chromeId": "dumbbell-shrug",
+      "fragments": {
+        "normalSvg": "acacdbacf5bcd9a9c7a397b10c85b4b9a84347a56ecfcfc8d841fbedaece04b4",
+        "normalOverlay": "24172c405359fbd18ce66773d76bcf898c1debb56a7326624dcc310636b1c977",
+        "mistakeSvg": "8a5dc3ef00453ea377b7fed2aa65fcaefcf4bb4ef3691ef106ed779b1d6854d7",
+        "mistakeOverlay": "73e17339e57607e0db54a4c94378222b418d9168406661e209aaccc1fa7cdbe1",
+        "tells": "e77b3d5f135c83265ef5ea6dbc9b0e3ef4886776ac78f99b26cddd00883dfcb4",
+        "tempo": "8c1a840e14fab09fb3181eebe48a482e98b8fab8f7e035855cb47ccee90d0474",
+        "cues": "5b4da2fc6d0eabef7735308e17ccf9e5e26864b54686146fdce7040d210ddf85",
+        "alt": "9c048668ecd3eee4c2c72ea897eed338fd081071680be8637e25f5f9439a4839",
+        "mistakeAlt": "97e01716226b9f875c18a35b1ab0ee239d357e8c3dc51556d0861b4260c992f2"
+      },
+      "exemptions": [
+        "F2",
+        "F4",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F4, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "08d550c1d67d599578e48e9e90763be8795f5bea2b7814bdeaaef2a299e75d36"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_smith_machine_shrug",
+      "src": "library/specs/smith_machine_shrug.mjs",
+      "slug": "smith-machine-shrug",
+      "prefix": "smith-machine-shrug",
+      "chromeId": "smith-machine-shrug",
+      "fragments": {
+        "normalSvg": "c992d625e0326d01fd5259d52be376f84106652f24158620b5645ea18e3e50e5",
+        "normalOverlay": "351b295d1934570614854b84c276a05c4694636361936a8e3cadae86207e5276",
+        "mistakeSvg": "e6e436083944f3e63b7c931cf9772b5e7d433eb0b4d9043a634d43a9d26f0e73",
+        "mistakeOverlay": "1b9dc3b3f0ebb734a363cbdc707744368682405c2327296cdcde383f4c06d5ef",
+        "tells": "38462db5023058bcbeff4229212930b944f53a8741d596a08a4152c0af7f82fd",
+        "tempo": "9dddaf8a1a7ac621957def9a5b63268a33a0c8f1e54fe49a8e69b7ed5e12d0ea",
+        "cues": "5312985a5fe57a54e51272373c456fab67fb3109769833cedc04ca2af92f883b",
+        "alt": "fe1572ff1c232f7851280e9af6dabdb90cc5ed4f2eba82728a50cfb41045290e",
+        "mistakeAlt": "249c7ff4ca7f963b3eb821c974e46575af6049c16902021ec50bf68856b15b47"
+      },
+      "exemptions": [
+        "F2",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-PIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125",
+      "date": "2026-11-05",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_smith_machine_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "supersedes": null,
+      "prev": "5cf47464b6acd9fc37a300900773ea94da4abd61227fb9fb3998c86d8e5be28f"
+    }
+  ]
+}
