@@ -23,7 +23,7 @@ export const INHERIT_MAP = {
   lib_incline_machine_press: { 'grip.type': ['handling.handle'], 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'],
     "posture['Straight wrist, forearm behind the handle']": ['posture[key=wrist]'], "posture['Feet flat, hips back']": ['posture[key=feet]'], "zooms['hand']": ['zooms[key=hand]'] },
   lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], "zooms['hand']": ['zooms[key=hand]'] },
-  // D-SHIP-FAMILY (LIB-SHIP W2, #379 6625803515): the dumbbell child of romanian_deadlift; both ship in W2, parent first.
+  // D-SHIP-FAMILY (LIB-SHIP W2, #379 6625803515): the dumbbell child of romanian_deadlift, parent first in the same head. Neither RDL ships in W2: both ship through #385.
   lib_single_leg_romanian_deadlift: { 'grip.thumb': THUMB, 'grip.wrist': ['handling.wrist'] },
   lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': ['setup[kind=position,zoom=path].text'] },
   lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path]'], 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },

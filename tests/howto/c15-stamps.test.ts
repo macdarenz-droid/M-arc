@@ -81,8 +81,14 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   const RULING: Record<string, string[]> = { lib_dumbbell_biceps_curl: W1_RULE, ...Object.fromEntries(W2_STAMPED.map(id => [id, W2_RULE])) };
   const clone = (x: any) => JSON.parse(JSON.stringify(x));
   /** The library entries against RULING: every ruled id stamped once under its own decision, no unruled id stamped. */
-  const stampedProblems = (entries: any[]) => {
+  // W2 review follow-up (#384 6647873082): cross-checked against the registry's shipped ids, so a shipped library id
+  // outside RULING is red even with no stamp
+  let SHIPPED: string[] = [];
+  beforeAll(async () => { SHIPPED = (await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'))).shippedIds(); });
+  const stampedProblems = (entries: any[], shipped = SHIPPED) => {
     const lib = entries.filter(e => !e.scratch && !EIGHT.includes(e.scope)), bad: string[] = [];
+    if (!shipped.length) bad.push('no shipped ids');
+    for (const id of shipped) if (!EIGHT.includes(id) && !RULING[id]) bad.push(`${id}: shipped, not ruled`);
     for (const id of Object.keys(RULING)) if (!lib.some(e => e.scope === id)) bad.push(`${id}: ruled, not stamped`);
     for (const e of lib) {
       const ruled = RULING[e.scope];
@@ -123,6 +129,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     expect(stampedProblems([...es, { ...es[es.length - 1], scope: 'lib_crunch' }])).toEqual(['lib_crunch: stamped, not ruled']);
     const w1 = clone(es); w1.find((e: any) => e.scope === 'lib_push_up').decision = 'D-SHIP-W1-STAMP';
     expect(stampedProblems(w1)).toEqual(['lib_push_up: decision D-SHIP-W1-STAMP, ruled D-SHIP-W2-STAMP']);
+    expect(stampedProblems(es, [...SHIPPED, 'lib_crunch'])).toEqual(['lib_crunch: shipped, not ruled']);
   });
   it('mutations, each red: \'owner\'; approvedBy missing; open: 1', () => {
     const e = reviews().entries[0], { approvedBy: _a, ...noBy } = e;
