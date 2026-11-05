@@ -27,10 +27,6 @@
     {
       "field": "archetype.contact",
       "why": "true for this child because both feet stand flat on the floor (standing-feet); only the stance width changes (c1, c2)."
-    },
-    {
-      "field": "plate.equipment (bar on the floor with full-size plates, parent c23)",
-      "why": "true for this child because the sumo lift also starts from a bar resting on the floor (c1)."
     }
   ],
   "claims": [
@@ -879,6 +875,7 @@
   ],
   "notes": [
     "The breath risk (c19) sits beside c10's cue, \"Hold your breath, brace your core slightly, and lift the bar.\" The card keeps both: the brace is the lifting cue, and the risk line names the blood-pressure cost of a held breath on heavy reps.",
-    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the middle of the palm, fingers wrapped (inherited).\") and the drawn palm direction (overhand, as grip.type gives it; no claim on this card names the grip type) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Neutral (inherited).\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3). grip.handContact and grip.wrist are inherited from conventional_deadlift; F-LB3-3 settles the hold wrist across cards."
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the middle of the palm, fingers wrapped (inherited).\") and the drawn palm direction (overhand, as grip.type gives it; no claim on this card names the grip type) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Neutral (inherited).\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3). grip.handContact and grip.wrist are inherited from conventional_deadlift; F-LB3-3 settles the hold wrist across cards.",
+    "RESEARCH-ROUTES-1 (F-W4-INHERIT, #391 Q-W4-9 6647760116): plate.equipment leaves inherit[]. It is a plate-only field with no sheet path, so it is not compared (F-LB1-SETUP form); plate.equipment and its claims stay as they are. No claim text changes."
   ]
 }
