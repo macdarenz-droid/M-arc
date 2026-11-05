@@ -11,10 +11,17 @@ const ZOOM = {
 };
 export const CLOSEUP_OPTIONS = {
   upright_row: ZOOM,
+  // LIB-PLATEFIX-1: back on the page with its fixed plate; its Wrong draws the plate's faulty-arm outlines and drift
+  // path (render/closeup/zoom-css.mjs o.outlines, o.path)
+  barbell_overhead_press: { ...ZOOM, css: { ...ZOOM.css, outlines: true, path: true } },
   dumbbell_biceps_curl: { ...ZOOM, hand: { layout: 'single', uid: 'dbc', rightNote: 'Middle of palm', panelHeight: 282 } },
   plank: { ...ZOOM, css: { ...ZOOM.css, spine: true } },   // the hip-line crop's shoulder-heel reference (spine guide)
   rope_triceps_pushdown: ZOOM,
   barbell_row: ZOOM,
   dumbbell_bench_press: ZOOM,
   dumbbell_shoulder_press: ZOOM,
+  // LIB-PLATEFIX-1: back on the page with their fixed plates (#379 6633524031)
+  romanian_deadlift: ZOOM,
+  single_leg_romanian_deadlift: ZOOM,
+  triceps_pushdown: ZOOM,
 };

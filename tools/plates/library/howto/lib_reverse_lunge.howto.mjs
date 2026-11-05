@@ -121,7 +121,9 @@ const feel = {
   feelLine: 'You should feel this in the front of your thighs and your hips.',
   rows: [
     { key: 'lower-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'Leaning the chest forward can make the lower-back muscles work harder.',
+      // W2 panel (#379 6633524031): the card's means is a finding (c8), so the row names the cause it links to, the
+      // forward lean (c8, the trunk zoom's Wrong c3), as the other rows' "Usually means" do.
+      means: 'You are leaning the chest forward.',
       fix: "Stay upright. Go lighter if you can't.",
       zoom: 'trunk', claim: C(['DATA', 'WEAK', 'CONSENSUS'], ['bezerra-2021', CAT], 'c8, c6') },
     { key: 'knee', where: 'Very painful, locking or giving-way knee', at: { parts: ['knee-left', 'knee-right'] },
@@ -136,6 +138,9 @@ const feel = {
 const RISKS = [
   { key: 'heavy', text: 'Too heavy a load costs the upright trunk, the controlled descent and balance.', claim: CL.c6 },
   { key: 'crash', text: 'Crashing into the bottom position instead of lowering under control.', claim: CL.c7 },
+  // handlingMistake 'Flaring the ribcage' with its fix (c18): the W2 panel's dropped tuck fix, in the only visible slot
+  // left (D-TEXT-GOLDEN; the plate's two Mistake tells show the flare).
+  { key: 'flare', text: 'Flaring the ribcage. Tuck the pelvis under to protect the lower back.', claim: CL.c18 },
 ];
 
 export default {
@@ -149,7 +154,10 @@ export default {
     { kind: 'position', text: 'Dumbbells at your sides, feet about hip to shoulder width apart.',
       claim: C(['CONSENSUS'], [ACE, CAT], 'c1, c11 (card grip.type)') },
     { kind: 'position', text: 'Step one foot back, a full-length step.', claim: C(['CONSENSUS'], [ACE, CAT], 'c1, c7') },
-    { kind: 'position', text: 'Lower the back knee slowly toward the floor, chest up.', zoom: 'trunk', claim: CL.c4 },
+    // D-TEXT-GOLDEN (#385 6637650243) and the W2 panel: the plate's 'Weight even' cue drops "at the bottom" (c3), so the
+    // posture checkpoint is said here in full.
+    { kind: 'position', text: 'Lower the back knee slowly, chest up. Weight even at the bottom.', zoom: 'trunk',
+      claim: C(['CONSENSUS'], [ACE, CAT], 'c4, c3') },
     { kind: 'position', text: 'Press the front foot down, swing the back leg forward to stand.', claim: CL.c5 },
     { kind: 'finish', text: 'Alternate legs, or finish all reps on one side before switching.', claim: CL.c12 },
   ],

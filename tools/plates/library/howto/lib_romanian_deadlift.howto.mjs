@@ -136,14 +136,18 @@ const feel = {
     { muscleId: 'adductors', plain: 'The inner thighs help.' },
   ],
   watch: [],
-  feelLine: 'You should feel this along the back of your thighs. Your glutes work hard too.',
+  // c2's depth cue (W2 panel restore, #379 6633524031): the posture 'depth' detail is zoom data the app never shows
+  // (D-TEXT-GOLDEN), so it is the feel line's second sentence. The glutes stay on the map's Main (c15).
+  feelLine: 'You should feel this in your hamstrings. Lower until you feel tension along the back of the legs.',
   rows: [
     { key: 'low-back-more', where: 'Lower back more than hamstrings', at: { muscles: ['lower_back'] },
       means: 'You are rounding your lower back, or the weight is too heavy.',
       fix: 'Stop higher, before the back rounds.',
       zoom: 'rdl-bottom', claim: C(['CONSENSUS'], [NASM, SL], 'c7, c8, c5') },
     { key: 'low-back', where: 'Lower-back pain during or after sessions', at: { muscles: ['lower_back'] },
-      means: 'It usually comes from too much too soon, or technique.',
+      // The card row's own check-up line (c17: "get checked if pain is severe or lasts"), W2 panel restore; the causes
+      // stay in the 'soon' risk (c17, c19).
+      means: 'Severe, or still there after a few days to a week?',
       fix: "Stop. Don't train through the pain.",
       redFlag: 'back', claim: C(['CONSENSUS'], [SL], 'c17') },
   ],
@@ -195,7 +199,8 @@ export default {
     { kind: 'get-in', text: 'Unrack the bar, or deadlift it off the floor.', claim: CL.c11 },
     { kind: 'position', text: 'Feet hip width, bar resting on the thighs.', claim: C(['CONSENSUS'], [NASM, ACE], 'c10, c1') },
     { kind: 'grip', text: 'Grip slightly wider than shoulders. Shoulders back and down.', claim: CL.c9 },
-    { kind: 'brace', text: 'Breathe in and brace slightly before each rep.', claim: CL.c12 },
+    // D-TEXT-GOLDEN (#385 6637650243): posture 'Push the heels into the floor to stand.' (c3) had no visible slot.
+    { kind: 'brace', text: 'Breathe in, brace slightly. Push the heels into the floor to stand.', claim: C(['CONSENSUS'], [SL, ACE], 'c12, c3') },
     { kind: 'safety', text: 'Want to avoid turning heavy weight around in mid-air? Lower onto blocks.', claim: CL.c18 },
   ],
   posture: [

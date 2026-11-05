@@ -7,6 +7,7 @@
 // Red flags: the card's redFlags (shoulder, back). The shoulder box is golden B's shared block; the back box is LIB-5's
 // (tools/plates/library/shared/back-box.mjs), linked by the low-back row's redFlag: 'back'.
 import plateSpec from '../specs/barbell_overhead_press.mjs';
+import { landmarksOf } from '../engine.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER };
 
@@ -46,6 +47,7 @@ const CL = {
   c3: C(['CONSENSUS'], [SL], 'c3'),
   c4: C(['CONSENSUS'], [SL], 'c4'),
   c5: C(['CONSENSUS', 'WEAK'], [SL], 'c5'),
+  c6: C(['CONSENSUS'], [SL], 'c6'),
   c7: C(['CONSENSUS'], [SL], 'c7'),
   c8: C(['CONSENSUS'], [SL], 'c8'),
   c9: C(['CONSENSUS'], [SL], 'c9'),
@@ -57,13 +59,25 @@ const CL = {
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses: the start (bar on the front of the shoulders, forearms vertical, c5) and the spec's
-// Mistake pose merged over the end pose, as the engine draws it (elbows back, forearms tilted, bar in front of the
-// face; card plate.mistake, c5).
+// Mistake pose merged over the end pose, as the engine draws it (LIB-PLATEFIX-1: the start-position fault, bar on the
+// front delts, elbow back under the shoulder and behind the bar, forearm tilted; card plate.mistake, c5).
+const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
 export const stills = {
   start: { pose: plateSpec.poses.start },
-  end: { pose: plateSpec.poses.end },
-  'elbows-back': { pose: { ...plateSpec.poses.end, ...plateSpec.mistake.pose } },
+  end: { pose: END },
+  'elbows-back': { pose: { ...END, ...MIS } },
 };
+// LIB-PLATEFIX-1 (W2 panel L5, #379 6633524031: the Wrong showed a mid-press arm): the Wrong is the plate's own Mistake
+// drawing. The faulty arm lies over the torso in this side view, so the solid pose alone cannot show it; as on the
+// plate, it is outlined dashed in the mistake colour from the plate's own Mistake guides (the closed outlines: the arm
+// shapes and the bar sleeve, plus the drift's end ring), and the drift is the plate's open dashed path, drawn as a
+// `path` guide whose arrow head is the plate's arrow. The outlines are drawn only on the Wrong crop's pose (the Right
+// crop shows the start pose, whose grip is 12 cm behind the faulty bar). No new number: every point is the plate's.
+const GUIDES = plateSpec.mistake.guides.filter(g => g.kind === 'dashed');
+const closed = g => g.pts.length > 2 && Math.hypot(...g.pts[0].map((v, i) => v - g.pts[g.pts.length - 1][i])) < 1e-9;
+const DRIFT = GUIDES.find(g => !closed(g)).pts, OUTLINES = GUIDES.filter(closed).map(g => ({ kind: 'mis', pts: g.pts }));
+const WRONG_GRIP = landmarksOf({ ...END, ...MIS }, 1.75)['grip.r'];
+const onWrong = lm => Math.hypot(...lm['grip.r'].map((v, i) => v - WRONG_GRIP[i])) < 0.02;
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except the hand zoom `bar-heel-of-palm` (D-SHIP-Q1, above). The crop window is set on the right
@@ -75,7 +89,9 @@ const zooms = [
     key: 'ohp-forearm-vertical', chip: 'Forearms', heading: 'Forearm angle', kind: 'posture',
     crop: { center: { at: 'shoulder.r', pose: 'right', off: [14, -16] }, sizePx: 160 },
     right: 'start',
-    wrong: { base: 'end', pose: plateSpec.mistake.pose, solid: true },
+    wrong: { base: 'end', pose: MIS, solid: true },
+    guides: [{ kind: 'path', role: 'wrong', pts: DRIFT }],
+    outlines: lm => ({ points: {}, lines: onWrong(lm) ? OUTLINES : [] }),
     callout: {
       right: { text: 'Forearms vertical', anchor: 'elbow.r' },
       wrong: { text: 'Elbows back', anchor: { at: 'elbow.r', pose: 'mistake' } },
@@ -86,7 +102,7 @@ const zooms = [
     },
     alt: {
       right: 'Side view, bottom of the press. The bar rests on the front of the shoulders. The elbows sit under the bar and the forearms point straight up.',
-      wrong: 'Side view, mid-press. The elbows sit behind the bar, so the forearms tilt. The bar curves forward, away from the face.',
+      wrong: 'Side view, bottom of the press. The elbows sit back, behind the bar, so the forearms tilt. The bar path curves forward, away from the face.',
     },
   },
 ];
@@ -159,13 +175,18 @@ export default {
   setup: [
     { kind: 'safety', text: 'In the power rack, set the crossbars. Bar at shoulder height.', claim: C(['CONSENSUS'], ['nsca-ch15-summary', SL, 'ace-standing-sp'], 'c11, c1') },
     { kind: 'grip', text: "Grip just outside the shoulders, thumbs wrapped, bar on the palm's heel.", claim: C(['CONSENSUS'], [SL], 'c2, c3, c4') },
-    { kind: 'position', text: 'Feet hip-width and flat. Elbows forward so the forearms are vertical.', zoom: 'ohp-forearm-vertical', claim: C(['CONSENSUS', 'WEAK'], [SL], 'c10, c5') },
+    // D-TEXT-GOLDEN (#385 6637650243): posture 'Hips and knees locked.' (c9) had no visible slot; the forearms stay on the
+    // plate label, the zoom caption and the Grip width (c5, c2).
+    { kind: 'position', text: 'Feet hip-width and flat. Hips and knees locked, elbows under the bar.', zoom: 'ohp-forearm-vertical', claim: C(['CONSENSUS', 'WEAK'], [SL], 'c10, c9, c5') },
     { kind: 'safety', text: 'Failed rep? Lower the bar to your shoulders, then rack it.', claim: CL.c11 },
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c16 },
   ],
   posture: [
     { key: 'forearms', label: 'Forearms vertical', detail: 'Elbows under the bar at the bottom, forearms straight up and down.',
       anchor: { landmark: 'elbow.r', pose: 'start' }, zoom: 'ohp-forearm-vertical', claim: CL.c5 },
+    // The plate's 'Head through' label (card plate.checkpoints 'Head clear'): c6, not the bar-in-front c14 (W2 panel).
+    { key: 'head', label: 'Head clear', detail: 'Lean back slightly from the hips so the bar clears your chin.',
+      anchor: { landmark: 'chin', pose: 'start' }, claim: CL.c6 },
     { key: 'back', label: 'Low back neutral', detail: 'Low back neutral. Lean comes from the hips, not the spine.',
       anchor: { landmark: 'lumbar', pose: 'start' }, claim: C(['CONSENSUS'], [SL], 'c8, c6') },
     { key: 'legs', label: 'Legs locked', detail: 'Hips and knees locked.', anchor: { landmark: 'knee.r', pose: 'end' }, claim: CL.c9 },
