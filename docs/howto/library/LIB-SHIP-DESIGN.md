@@ -1003,3 +1003,108 @@ constraints on how those sheets are written. `THUMB*` = `['handling.thumb.mode']
 **Order after the ruling.** Q6-form local scratch flip of the 21 (every red listed); moves + guard replacements; the
 3 parents' sheets first, then the children; D-TEXT-GOLDEN inventory; LAYERS READY for lb02, lb03 and pilot-b pages;
 panel; stamps; flip; generate; budgets at N; QA; merge main (after #379, W3, #385) and regenerate; READY.
+
+### 13.1 W4 layers evidence (SHIP W4 PLAN RULED, #391 6647760116)
+
+**Row moves (D-SHIP-MOVE, Q-W2-10).** lb2/rows.json (8) and lb3/rows.json (12) moved into `batches/lb02.json` and
+`batches/lb03.json`. Each moved row is the old row, except that `stage` (now `approved-plate`, the last key) and `sources`
+(= sourceLines(card)) are new; no other key changed and the key order is kept. The rows files are deleted, and
+lb2/lb3 build.mjs read the batch files (W3's lb1 form). The plates pages rebuilt from the moved rows are byte-equal to
+main's build-ahead pages, two builds each: **lb02 `cb267416ab4c17434a116683c184d5f29b2ae6f39138df108a9ff7a4ddca1ae4`**
+(796,222 B), **lb03 `be50e4d1cd0cce9997f525ce4422173900b121a43a74d2a0ce66edd4dd4e6529`** (1,186,071 B; the page lb3-plates.test.ts:1347 names).
+Row order is the rows files' order (the page shas depend on it). The resolver does not read row order (byId over all shipped rows).
+
+**INHERIT_MAP (as ruled; lands in the flip commit).** `THUMB*` = `['handling.thumb.mode']` only where the parent has no
+`handling.pose` (D-SHIP-W4-THUMB). Every child below passes the family check against its parent's draft sheet. The 3 refusals
+are the expected D-SHIP-W4-ROUTE ones.
+
+| child | field | paths | status |
+|---|---|---|---|
+| arnold_press | grip.thumb / grip.wrist / setup.spotter | THUMB*; handling.wrist; setup[kind=safety] | pass |
+| arnold_press | zooms.seat-back-contact | key, kind, chip, heading, callout.right.text, callout.wrong.text, caption.right, caption.wrong (D-SHIP-W4-PADZOOM) | pass; crop, poses, anchors and alt are Arnold's own; Wrong = Arnold's plate Mistake |
+| close_grip_bench_press | thumb / handContact / wrist / safety-pins / spotter / bar-low-palm | THUMB*; contact; wrist; setup[kind=safety]; setup[kind=get-in]; thumb.mode, contact, wrist, faults[key=bent-back] | pass |
+| decline_bench_press | thumb / handContact / wrist / bar-low-palm | as above, without setup | pass |
+| incline_barbell_bench_press | thumb / handContact / safety-pins / bar-low-palm | THUMB*; contact; setup[kind=safety]; thumb.mode, contact, **wrist.ext**, faults[key=bent-back] | pass. **Deviation:** the ruling names `.ext` and `.dev`, but neither sheet has a `dev` (no card gives a deviation; DBP and DSP have none either), so `.dev` would throw in atPath. Only `.ext` is compared. Own limitText 'Keep your wrists straight.' (c4) |
+| smith_machine_bench_press | thumb / type / handContact / wrist / bar-low-palm | THUMB*; orientation; contact; wrist; BENCH_ZOOM | pass; no `handle` |
+| incline_dumbbell_press | thumb / wrist / wrist-neutral-press | THUMB*; wrist; thumb.mode, wrist, faults[key=bent-back] (DBP 'Wrist bent back under the dumbbell.') | pass |
+| cable_shrug | thumb / breath / redFlags / type | THUMB*; risks[key=breath]; riskFlags; orientation | **refused (expected):** grip.wrist, grip.width unmapped (F-W4-INHERIT); mapped leaves `===` (probe with the 2 fields dropped) |
+| dumbbell_shrug | thumb / breath / redFlags | THUMB*; risks[key=breath]; riskFlags | **refused (expected):** grip.wrist (F-W4-INHERIT) |
+| smith_machine_shrug | thumb / handContact / shrug-grip | THUMB*; contact; thumb.mode, faults[key=thumbless] | pass |
+| conventional_deadlift | thumb / handContact / wrist / archetype.contact | THUMB (full: RDL has pose); contact; wrist; contacts | pass against W2's RDL sheet; proven only in a head where RDL ships (D-SHIP-W4-RDL) |
+| dumbbell_romanian_deadlift | wrist / knees | wrist; posture[key=knees].label/.detail/.anchor | pass (same) |
+| sumo_deadlift | thumb / handContact / wrist / archetype.contact | THUMB (full); contact; wrist; contacts | **refused (expected):** plate.equipment (F-W4-INHERIT); mapped leaves `===` conventional (probe) |
+| landmine_row | type / thumb / back / breath / redFlags | orientation; THUMB*; posture[key=back]; risks[key=breath]; riskFlags | pass |
+| pendlay_row | type / thumb / handContact / breath / redFlags | orientation, handle; THUMB*; contact; breath; riskFlags | pass |
+| t_bar_row | trunk / thumb / breath / redFlags | posture[key=trunk].label/.detail/.anchor; THUMB*; breath; riskFlags | pass; the checkpoint links no zoom |
+
+**Drawing values (D-SHIP-DRAWVAL; never a number in copy; the panel judges).**
+
+| id | zoom | value | how |
+|---|---|---|---|
+| incline_barbell_bench_press | back-on-incline-pad | lumbar extension 15° on the end pose | trunk 0 → −15 through the spec's own `reclined()` (pad 60, seat tilt 12, seat top 0.45, copied with a guard that throws if they drift); pelvis tilt −62.0 → −53.5, neck 8.5; buttock and upper back about 1.2 cm off the pad, lumbar 3.7 cm |
+| smith_machine_bench_press | smith-bench-position | lumbar extension 15° on the end pose | trunk −3.56 → −18.56 through `supine()` (BENCH_TOP 0.43, guarded); pelvis −90 → −81.46, neck 11.75; lumbar +2.5 cm |
+| conventional_deadlift | dl-liftoff | knee flexion 30° ('shoot' pose) | floor start with the root raised until the knee reads 30°; root tilt solved so the straight arm still reaches the bar, which stays on the floor |
+| dumbbell_romanian_deadlift | dbrdl-bottom | lumbar flexion +30° on the bottom pose | straight arms hang plumb; the grip drops from 0.279 m to 0.115 m, above the floor |
+| smith_machine_shrug | smith-shrug-top | elbow flexion 60° on the end pose | bar kept on the rail line (the plate's own bend is 12°); grip rises 8.8 cm |
+| pendlay_row | pendlay-top | trunk rise 30° (pelvis tilt) on the top pose | hands stay on the torso front, feet planted |
+| one_arm_dumbbell_row | oadr-top | trunk yaw −30° (turned open) on the end pose | working shoulder +12 cm, dumbbell with it; the support hand is re-solved so the wrist stays on the bench, but that palm tips about 2.8 cm at the fingers |
+| back_extension | bext-top | lumbar extension 25° on the top pose | the back line moves from about 50° to about 70° above horizontal; crossed arms put back on the chest |
+
+DV form note: on the two benches, a one-joint lumbar change with the pelvis fixed pushes the upper back into the pad. So
+the one value is the lumbar angle, and the spec's own lying-body functions place the pelvis and neck. The panel judges both.
+
+**Posture zooms M / T.** M (the plate's own Mistake still): close_grip elbows-to-ribs, dumbbell_pullover elbow-bend-constant,
+skull_crusher upper-arm-vertical, arnold seat-back-contact, back_extension bext-pad, the 4 shrug tops except smith,
+conventional dl-start, landmine-back, pendlay-start, tbar-back, sumo-start. **sumo-start and sumo-liftoff are merged (E8):**
+both crop the same floor-start Right, the same Wrong (the plate Mistake, hips shoot up with the bar on the floor) and the same box.
+T (no zoom): hips-on-bench, feet-hooked, incline-angle (SHIP W4 QUESTION 1), oadr-support, and the 4 placement hand zooms.
+
+**D-TEXT-GOLDEN inventory (E7).** Each row is: claim → visible slot (claim ids). *moved* marks a claim placed in a slot
+while writing. Gap-ruled hand zooms show the Right in gripLine and the Wrong as `handling.faults[].alt`
+(key bent-back 'Wrist bent back', thumbless 'Thumb not wrapped', curled 'Wrist curled', tilted-flat 'Dumbbell tilted').
+
+- **barbell_bench_press:**
+  - hips/feet → setupLine, mistakeLine (hips-on-bench T Right and Wrong), mistakes[2], plate "Hips down" (c1 c10)
+  - blades → setup[1] (c12); elbows 75° → front-shoulder feel fix (c2); forearms → plate "Forearms vertical" (c2)
+  - wrists, low palm → gripLine, setup[2], limitText (c5); bar-low-palm Wrong → faults bent-back (c5)
+  - bar path → plate "Mid-chest touch", mistakes[0].fix, cueLine (c8)
+  - 3 handlingMistakes → mistakes[0-2] (c25 c8; c4; c10)
+- **close_grip_bench_press:** hands → setup[2], width (c1); elbows → zoom, plate, cueLine (c2); low chest → zoom, plate (c4); hips → plate, mistakes[2] (c3); blades → setup[1] (c5); 3 handlingMistakes → mistakes (c2; c6; c3)
+- **decline_bench_press:** feet hooked → setup[2], setupLine, mistakeLine (T Right and Wrong), plate (c1); blades (c4); lower chest → plate, mistakes[0].fix, cueLine (c5); wrists → gripLine, limitText (inherit 1, 2); 3 handlingMistakes (c5 c12; c6; c5 c8)
+- **incline_barbell_bench_press:** pad contact → zoom, setup[0], plate (c3); no big arch → zoom Wrong, mistakeLine, mistakes[1] (c9); elbows 45-75 → mistakes[0].fix (c7); wrists → setup[2], limitText, gripLine (c4); upper chest → plate, cueLine (c15 c7); 3 handlingMistakes (c8 c7; c9 c12 c13; c8 c7)
+- **smith_machine_bench_press:** blades and chest → setup[2], plate (c1); feet → setup[2] (c2); mid-chest → zoom, setup[0], plate (c3 c2); elbows 45 → mistakes[0].fix, cueLine (c3 c7); arch → zoom Wrong, mistakes[1], mistakeLine (c7 c17); 3 handlingMistakes (c7 c3; c7 c17; c7 c3)
+- **arnold_press:** back on pad → zoom, mistakes (c3); palms → posture and *palm-turn Right setup[3]*, *palm-turn Wrong gripLine* (c1); upper arms level (c4); squeeze → gripLine (c16); spotter → inherited safety step (c10); 3 handlingMistakes (c3; c6; c7)
+- **incline_dumbbell_press:** five points (c4); no arch → mistake (c8); elbows → width (c7); wrists → limitText, *gripLine Right* (c3), Wrong faults bent-back (c3); *incline-angle Right and Wrong → setup[0]* (c1 c2); bounce → mistake (c6); spotter → risk (c15 c10)
+- **skull_crusher:** upper arms (c5); elbows → width (c6); wrists (c3); feet (c1); forehead (c4); 3 handlingMistakes (c5; c9; c3); *Right gripLine*, Wrong faults bent-back (c3); spotter → safety step, risk (c16); variant line
+- **dumbbell_pullover:** five points → setup[1] (c1); same bend → zoom (c6); hips → mistake (c8); head (c9); hang → gripLine (c13); 3 handlingMistakes (c7; c8; c10); *Right gripLine and setup[3]* (c3 c13); Wrong faults tilted-flat (c13); spotter → let-go fix, risk (c10 c11)
+- **back_extension:** hinge (c6); depth (c7); line and arch → zoom bext-top caption (c5); round → zoom bext-pad, mistakeLine (c6 c19 c2); *swinging → slow checkpoint and risk* (c9 c8); arms setup step cites c4 (GRIP b2)
+- **barbell_shrug:** back tall (c2); arms straight → zoom (c4); no rolling (c2 c3 c4); lower slowly (c7); 3 handlingMistakes (c3; c4; c7); *pull hands apart → setup[3]* (c3); Right gripLine, Wrong faults thumbless
+- **cable_shrug:** stand straight (c4); arms (c5); no rolling (c9); hold and lower (c3 c7 c16); *breathe out → top checkpoint* (c3); 3 handlingMistakes (c5; c9; c4); Wrong faults curled
+- **dumbbell_shrug:** tall (c4); arms (c3); no rolling (c12 c6); pause and lower (c5); 3 handlingMistakes (c6; c12 c6; c7 c8); *straps → setup[3]* (c8); Wrong faults curled
+- **smith_machine_shrug:** arms long (c1); straight up (c2 c7 c11); head (c3); no rocking (c3); 3 handlingMistakes (c3; c3 c5 c8; c3 c2); pins → setup[1] (c4); unhook → setup[4] (c6 c1); Wrong faults thumbless (inherited)
+- **conventional_deadlift:** shins (c1); arms → setup[2] (c4); flat back (c7); bar close (c6); tall finish (c10); hips first (c11); 3 handlingMistakes (c8; c9; *arms merged with dl-grip Wrong 'Hands too wide, arms bent'* c3 c4); dl-grip Right → gripLine, setup[2] (c3 c21); *front-thighs feel row → feelLine* (c9)
+- **dumbbell_romanian_deadlift:** hips back (c6); knees fixed (inherited); bells on legs (c4); mid-shin (c9 c3); back neutral (c10); eyes down (c7); heels down (c5); 3 handlingMistakes (arch c10 c5 plate; round c8 c22 zoom; low c9); dbrdl-grip Right → gripLine (c4 c1 c24), *Wrong → setup[0]* (c1 c4)
+- **sumo_deadlift:** upright trunk (c4); straight back (c15); legs first (c11); bar on shins (c13); lockout (c14); controlled lowering (c16); 3 handlingMistakes (c12; c17; c13); sumo-grip Right → gripLine (c3), *Wrong → setup[1]* (c3); *feel rows c11 c8 → feelLine*
+- **landmine_row:** back (c9, inherited words); *brace → plate "Brace first" and round fix* (c5); torso → setup[2] (c3); blades (c6); 3 handlingMistakes (c7; c8; c11 c5); Wrong faults thumbless
+- **pendlay_row:** torso level (c2); still → plate (c4); brace (c5); feet (c10); *dead stop → plate "Floor each rep"* (c3); 3 handlingMistakes (c8; c6; c9)
+- **t_bar_row:** back, chest parallel (c3); *knees → setup[2], plate "Soft knees"* (c2); blades (c4); *squeeze, no swinging → mistake swing* (c8); lower slowly (c9 c5); 3 handlingMistakes (c7; c8; c9); Wrong faults thumbless; variant line (c12)
+- **one_arm_dumbbell_row:** back flat (c4); head (c4); square → oadr-top (c7); shoulder (c5); elbow (c6); oadr-support T → Right setup[2], Wrong in the support checkpoint; 3 handlingMistakes (c10 c6 c8; c6; c10)
+
+Not shown, none a form checkpoint (each listed in its file's "not cited" comment):
+- tempo claims;
+- plate-only claims (landmine c20, t_bar c23 c24);
+- comparisons (barbell_shrug c6, dumbbell_shrug c10, one_arm c12, pendlay c12);
+- progressions and other notes: bbp c3's 45-60 range (R-LB2-24), c11 bounce (R-LB2-2), c13, c15; smith bench c8 c9 c12 c18; one_arm c15; dbrdl c16; back_extension c22; t_bar c17.
+
+Card watch rows that equal a primary or secondary muscle are dropped, because C2 refuses a muscle that is both. Their text stays
+in the feelLine (conventional and dbrdl lower_back).
+
+**Judgement calls listed for the content critic:**
+- cable_shrug and dumbbell_shrug wrist `ext [15, 35]`: the card names 35° as the strongest grip and 15° as where grip already weakens; no number reaches copy.
+- The 4 pull sheets' wrist uses the parent's pull convention `[0, 25]`; the cards record their own 35° as a convention until F-LB3-3.
+- arnold_press `contact: 'heel'` is the push convention, as on DSP, and is not printed.
+- dumbbell_pullover's cue 'Cradle the plate, grip securely.' (c3 c11): a hold, so no hint is shown.
+- nhs-back-pain is cited under RDL's `nhs-back` id, because a separate cite name repeats the back box's (C19).
+- Feel-row muscles where the card names none: front_delts.
+- 3rd risks taken from the card's own claims: bbp c23 and decline c13.
+- The dumbbell-kickup and unrack-rerack shared cards are not wired into any sheet (no W2/W3 sheet imports a shared move card). Each sheet carries its own card's get-in, rack and spotter claims.
