@@ -178,10 +178,40 @@ describe('PILOT-B2 A4: the two zooms (D-LIBZOOM-EXTEND, D-LIB16-ZOOMVIEWS)', { t
 
 describe('PILOT-B2 A5: layout (D-SUPCORE-LAYOUT)', { timeout: T }, () => {
   const box = (s: any, key: string) => s.callouts.find((c: any) => c.key === key);
-  it('the blades box at {56, 216}; "Chin set" on one line at {24, 160}; the engine reports no issue in either view', () => {
-    expect(box(spec(), 'blades').box).toEqual({ left: 56, top: 216 });
+  /** D-PLATEFIX-PINS: the CHIN SET leader (the svg leader path ending at the chin label's ink box) against the blades label's ink box. */
+  const chinCrossesBlades = (s: any, mistake: boolean) => {
+    const r = plate.renderPlate(s, { id: 'x', mistake }), ink = (k: string) => r.report.labels.find((l: any) => l.key === k).ink;
+    const chin = ink('chin'), b = ink('blades');
+    const leaders = [...r.svg.matchAll(/<path class="leader" d="([^"]+)"/g)].map(m => {
+      const pts: number[][] = [];
+      for (const [, c, a, bb] of m[1]!.matchAll(/([MLH])([-\d.]+)(?: ([-\d.]+))?/g)) pts.push(c === 'H' ? [+a!, pts[pts.length - 1]![1]!] : [+a!, +bb!]);
+      return pts;
+    });
+    const ends = leaders.filter(p => { const [x, y] = p[p.length - 1]!; return Math.abs(x! - chin.x1) <= 2 && y! >= chin.y0 && y! <= chin.y1; });
+    if (ends.length !== 1) return [`${ends.length} leaders end at the chin label`];
+    const hit = (p: number[], q: number[]) => {   // Liang-Barsky: does segment p-q meet the box?
+      let t0 = 0, t1 = 1; const d = [q[0]! - p[0]!, q[1]! - p[1]!];
+      for (const [pp, dd, lo, hi] of [[p[0]!, d[0]!, b.x0, b.x1], [p[1]!, d[1]!, b.y0, b.y1]] as number[][]) {
+        if (dd === 0) { if (pp! < lo! || pp! > hi!) return false; continue; }
+        let a = (lo! - pp!) / dd!, c = (hi! - pp!) / dd!; if (a > c) [a, c] = [c, a];
+        t0 = Math.max(t0, a); t1 = Math.min(t1, c); if (t0 > t1) return false;
+      }
+      return true;
+    };
+    const p = ends[0]!;
+    return p.slice(1).some((q, i) => hit(p[i]!, q)) ? [`${mistake ? 'mistake' : 'normal'}: the CHIN SET leader crosses the blades label`] : [];
+  };
+  it('the blades box at {26, 216}; "Chin set" on one line at {24, 160}; the engine reports no issue in either view; the CHIN SET leader clears the blades label', () => {
+    expect(box(spec(), 'blades').box).toEqual({ left: 26, top: 216 });
     expect([box(spec(), 'chin').text, box(spec(), 'chin').box]).toEqual(['Chin set', { left: 24, top: 160 }]);
     for (const mistake of [false, true]) expect(plate.renderPlate(spec(), { id: 'x', mistake }).report.issues).toEqual([]);
+    expect(chinCrossesBlades(spec(), false)).toEqual([]);
+    // the Mistake view draws neither label (its labels: lowback, pelvis, meta), so there is no leader to cross there
+    expect(plate.renderPlate(spec(), { id: 'x', mistake: true }).report.labels.filter((l: any) => l.key === 'chin' || l.key === 'blades')).toEqual([]);
+  });
+  it('mutation (D-PLATEFIX-PINS): the blades box back at {56, 216} puts the CHIN SET leader across the blades label', () => {
+    const s = { ...spec(), callouts: spec().callouts.map((c: any) => (c.key === 'blades' ? { ...c, box: { left: 56, top: 216 } } : c)) };
+    expect(chinCrossesBlades(s, false)).toEqual(['normal: the CHIN SET leader crosses the blades label']);
   });
   it('mutation: the blades box back at {8, 300} is an engine issue on the figure', () => {
     const s = { ...spec(), callouts: spec().callouts.map((c: any) => (c.key === 'blades' ? { ...c, box: { left: 8, top: 300 } } : c)) };

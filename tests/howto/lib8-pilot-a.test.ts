@@ -84,13 +84,43 @@ describe('LIB-8 OHP Mistake arm on the drawn shoulder (ohp-mistake.test.mjs)', (
     expect(d, `faulty shoulder is ${(d * 100).toFixed(1)} cm off the drawn shoulder joint`).toBeLessThanOrEqual(0.005);
   });
 
-  it('the elbow is below and behind the bar; the forearm lies in front of the chest, above the safety arms', () => {
-    const el = lmMis['elbow.r'], gr = lmMis['grip.r'];
-    expect(el[1] < gr[1] && el[2] < gr[2], 'elbow below and behind the bar').toBe(true);
-    expect(el[2], `elbow ${el[2].toFixed(3)} m not clear in front of the chest ${lmEnd.chest[2].toFixed(3)} m`).toBeGreaterThan(lmEnd.chest[2] + 0.06);
-    expect(el[1] - 0.05, `elbow ${el[1].toFixed(3)} m too close to the safety arms ${mod.ARM_Y.toFixed(3)} m`).toBeGreaterThan(mod.ARM_Y);
+  // LIB-PLATEFIX-1 (D-PLATEFIX-PINS): the fault is drawn at the START (spec Mistake block), no longer mid-press. Re-measured
+  // on the approved plate: elbow 0.23 cm ahead of the shoulder joint (z), 32.6 cm under it; forearm 21.0 deg off vertical;
+  // bar (grip.r) 12.5 cm ahead of and 0.6 cm under the shoulder joint, 12.3 cm ahead of and 31.9 cm above the elbow, 1.3 cm
+  // above the safety-arm top ARM_Y. Measured fact replacing the old "above the safety arms": the elbow now hangs 30.6 cm
+  // under ARM_Y (as in the correct start); the bar stays above it.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const misProblems = (m: any) => {
+    const bad: string[] = [], el = m['elbow.r'], gr = m['grip.r'], sh = m['shoulder.r'];
+    if (!(el[1] < gr[1] && el[2] < gr[2])) bad.push('elbow not below and behind the bar');
+    if (Math.abs(el[2] - sh[2]) > 0.01) bad.push(`elbow ${((el[2] - sh[2]) * 100).toFixed(1)} cm off the shoulder joint's z (not under it)`);
+    if (!(el[1] < sh[1] - 0.25)) bad.push(`elbow ${el[1].toFixed(3)} m not under the shoulder ${sh[1].toFixed(3)} m`);
     const tilt = Math.atan2(gr[2] - el[2], gr[1] - el[1]) * 180 / Math.PI;
-    expect(tilt >= 25 && tilt <= 35, `forearm tilt ${tilt.toFixed(1)} deg`).toBe(true);
+    if (!(tilt >= 18 && tilt <= 24)) bad.push(`forearm tilt ${tilt.toFixed(1)} deg`);
+    if (Math.abs(gr[1] - sh[1]) > 0.01 || gr[2] - sh[2] < 0.10 || gr[2] - sh[2] > 0.15) bad.push(`bar ${gr.map((v: number) => v.toFixed(3))} not on the front delts`);
+    if (!(gr[1] - 0.01 > mod.ARM_Y && el[1] < mod.ARM_Y)) bad.push(`bar ${gr[1].toFixed(3)} m / elbow ${el[1].toFixed(3)} m against the safety arms ${mod.ARM_Y.toFixed(3)} m`);
+    return bad;
+  };
+
+  it('the elbow is below and behind the bar, straight under the shoulder joint; the forearm tilts 18-24 deg; the bar sits on the front delts, above the safety arms', () => {
+    expect(misProblems(lmMis)).toEqual([]);
+    // the spec's own mistake-pose check: the grips on the front-delt plane (MIS_BAR z), within its tolerance (cm)
+    const chk = mod.default.checks.filter((c: { pose: string }) => c.pose === 'mistake');
+    expect(chk.length).toBe(1);
+    expect(chk[0].landmark).toBe('grips');
+    const off = (lmMis['grip.r'][2] - chk[0].plane.point[2]) * 100;
+    expect(Math.abs(off), `grip ${off.toFixed(2)} cm off the front-delt plane`).toBeLessThanOrEqual(chk[0].tol);
+  });
+
+  it('mutation: the old mid-press Mistake pose (bar [1.80, 0.38], pole down and out; elbow 6+ cm in front) is red', async () => {
+    const { landmarksOf } = await imp('engine.mjs');
+    const spec = mod.default, gx = spec.mistake.pose.reach.l.at[0];
+    const old = { ...spec.mistake.pose, reach: { l: { at: [gx, 1.80, 0.38], pole: [0.5, -0.3, 0] }, r: { at: [-gx, 1.80, 0.38], pole: [-0.5, -0.3, 0] } } };
+    const m = landmarksOf({ ...spec.poses.end, ...old }, mod.H);
+    expect(m['elbow.r'][2] - lmEnd.chest[2]).toBeGreaterThan(0.06);   // the old pose's fact: elbow 6+ cm in front of the chest
+    const bad = misProblems(m);
+    expect(bad.some(b => /off the shoulder joint's z/.test(b))).toBe(true);
+    expect(bad.some(b => /forearm tilt/.test(b))).toBe(true);
   });
 });
 

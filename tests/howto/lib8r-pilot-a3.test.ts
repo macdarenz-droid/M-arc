@@ -638,6 +638,20 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped'
   }, T);
   const GOLDEN = () => JSON.parse(readFileSync('tests/howto/golden/GOLDEN.json', 'utf8')).entries;
   const file = () => readJson('tests/howto/golden/library/pilot-a3.json');
+  const LAYERS_CFG = 'tools/plates/library/pages/pilot-a3.layers.json', LAYERS_PAGE = 'tests/howto/golden/library/pilot-a3.layers.html';
+  // The layers page is pinned by the later [golden update] commit; its existence check lands with that pin commit.
+  const readLayersPage = () => (existsSync(LAYERS_PAGE) ? readFileSync(LAYERS_PAGE, 'utf8') : null);
+  /** D-PLATEFIX-PINS: the config exists with groups' ids exactly [lib_reverse_lunge]; the page, when present, holds exactly the reverse-lunge card. */
+  const layersProblems = (cfg: any, page: string | null) => {
+    const bad: string[] = [];
+    const ids = (cfg?.groups ?? []).flatMap((g: any) => g.ids);
+    if (JSON.stringify(ids) !== JSON.stringify(['lib_reverse_lunge'])) bad.push(`layers config ids: ${JSON.stringify(ids)}`);
+    if (page !== null) {
+      const cards = [...page.matchAll(/<article [^>]*id="card-([a-z0-9-]+)"/g)].map(m => m[1]);
+      if (JSON.stringify(cards) !== JSON.stringify(['reverse-lunge'])) bad.push(`layers page cards: ${JSON.stringify(cards)}`);
+    }
+    return bad;
+  };
   /** A11: chain, the page entry equal to the built page, each plate entry's 9 fragments equal to extractPlates of it. */
   const chainProblems = async (f: any) => {
     const bad = [...G.verifyBatchChain(f, GOLDEN())];
@@ -656,13 +670,19 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped'
       ...[...scratch.PILOT_A, ...scratch.PILOT_B, ...scratch.PILOT_A2].map((n: string) => `lib_${n}`)]) if (new RegExp(`\\b${id}\\b`).test(text)) bad.push(`names ${id}`);
     return bad;
   };
-  it('A11: the chain is valid, the page entry is the two-build page (bebd7730, 465,732 B), each plate entry equals its fragments, no layers entry or file', async () => {
+  it('A11: the chain is valid, the page entry is the two-build page (bebd7730, 465,732 B), each plate entry equals its fragments, no layers entry; the layers config and page hold exactly lib_reverse_lunge', async () => {
     expect(pinned()).toBe(true);
     expect(await chainProblems(file())).toEqual([]);
     expect(file().entries[0].pageSha256).toBe('bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878');
     expect(file().base).toEqual(readJson('tests/howto/golden/library/pilot-a2.json').base);
-    expect(existsSync('tests/howto/golden/library/pilot-a3.layers.html')).toBe(false);
-    expect(existsSync('tools/plates/library/pages/pilot-a3.layers.json')).toBe(false);
+    // D-PLATEFIX-PINS: the pilot-a3 layers config and page exist and hold exactly [lib_reverse_lunge].
+    expect(layersProblems(readJson(LAYERS_CFG), readLayersPage())).toEqual([]);
+  });
+  it('A11 mutations (D-PLATEFIX-PINS): lib_dumbbell_fly added to the layers config, or a fly card in the layers page, is red', () => {
+    const cfg = readJson(LAYERS_CFG); cfg.groups[0].ids.push('lib_dumbbell_fly');
+    expect(layersProblems(cfg, readLayersPage())).toEqual(['layers config ids: ["lib_reverse_lunge","lib_dumbbell_fly"]']);
+    const page = '<article class="sheet-card" id="card-reverse-lunge"></article><article class="sheet-card" id="card-dumbbell-fly"></article>';
+    expect(layersProblems(readJson(LAYERS_CFG), page)).toEqual(['layers page cards: ["reverse-lunge","dumbbell-fly"]']);
   });
   it('A11 mutations: a second page entry superseding 0 by the supervisor, one fragment edited, a layers-page entry and "lib_crunch" are red', async () => {
     const f0 = file();
