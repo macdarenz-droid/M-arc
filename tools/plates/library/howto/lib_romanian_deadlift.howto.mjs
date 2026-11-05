@@ -89,7 +89,9 @@ export const stills = {
 const zooms = [
   {
     key: 'rdl-bottom', chip: 'Bottom', heading: 'Bottom position', kind: 'posture',
-    crop: { center: { at: 'backMid', pose: 'right', off: [0, 0] }, sizePx: 170 },
+    // Second focused round (#385 6649655218): framed on the knee so the hips, the knee bend and the bar at mid-shin
+    // show (c4, c5); was backMid at 170 px, which left the top ~45 % empty and cut the knees and bar.
+    crop: { center: { at: 'knee.r', pose: 'right', off: [-10, -20] }, sizePx: 220 },
     right: 'end',
     wrong: { base: 'end', pose: ROUND, solid: true },
     callout: {
@@ -133,6 +135,8 @@ const zooms = [
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 // The card's first row (back of the thighs, stretching going down; c2, c16) has no fix, so it is left off the rows
 // (D-SHIP-Q16); the feel line says it.
+// The body map's lower-back parts (layers/engine/bodymap-parts.mjs BACK_PARTS).
+const LOW_BACK_PARTS = ['lower-back-erectors-left', 'lower-back-erectors-right', 'lower-back-ql-left', 'lower-back-ql-right'];
 const feel = {
   primary: [
     { muscleId: 'hamstrings', plain: 'The hamstrings work hardest in this lift.' },
@@ -142,7 +146,9 @@ const feel = {
     { muscleId: 'lower_back', plain: 'The lower back works, less than the hamstrings.' },
     { muscleId: 'adductors', plain: 'The inner thighs help.' },
   ],
-  watch: [],
+  // The "more than hamstrings" row marks the lower back dashed ("Should not take over"), as golden B's squat does
+  // (barbell_back_squat watch lower_back); second focused round, #385 6649655218. c7, c8: rounding loads the low back.
+  watch: [{ muscleId: 'lower_back', plain: 'The lower back should not take over from the hamstrings.' }],
   // c2's depth cue (W2 panel restore, #379 6633524031): the posture 'depth' detail is zoom data the app never shows
   // (D-TEXT-GOLDEN), so it is the feel line's second sentence. The glutes stay on the map's Main (c15).
   feelLine: 'You should feel this in your hamstrings. Lower until you feel tension along the back of the legs.',
@@ -152,7 +158,8 @@ const feel = {
       means: 'Rounding the lower back, or a weight that breaks your form.',
       fix: 'Stop higher, before the back rounds.',
       zoom: 'rdl-bottom', claim: C(['CONSENSUS'], [NASM, SL], 'c7, c8, c5') },
-    { key: 'low-back', where: 'Lower-back pain during or after sessions', at: { muscles: ['lower_back'] },
+    // The pain row marks the region red ("Where it may hurt") with `at.parts`, not dashed (second focused round).
+    { key: 'low-back', where: 'Lower-back pain during or after sessions', at: { parts: LOW_BACK_PARTS },
       // W2 fix round L6 (#385 6648438434, D-FEEL-MEANS-CAUSAL): c17's own cause ("usually comes from doing too much too
       // soon or from technique"). Its check ("get checked if pain is severe or lasts") is the linked back box's: C8 and
       // copy-lint refuse check-up wording in a row's fix (red-flag wording lives in redFlag).

@@ -109,6 +109,8 @@ const zooms = [
 ];
 
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
+// The body map's lower-back parts (layers/engine/bodymap-parts.mjs BACK_PARTS).
+const LOW_BACK_PARTS = ['lower-back-erectors-left', 'lower-back-erectors-right', 'lower-back-ql-left', 'lower-back-ql-right'];
 const feel = {
   primary: [
     { muscleId: 'front_delts', plain: 'The front of the shoulders work in every shoulder press.' },
@@ -121,11 +123,13 @@ const feel = {
   feelLine: 'You should feel this in the front and sides of your shoulders. Your triceps help.',
   rows: [
     // D-FEEL-MEANS-CAUSAL (#385 6648438434): the card row's own cause at c8's strength ("can result in back pain").
-    { key: 'low-back', where: 'Low-back pain while pressing', at: { muscles: ['lower_back'] },
+    // Pain rows mark their region red on the map ("Where it may hurt"), as golden B's pain rows do with `at.parts`
+    // (second focused round, #385 6649655218).
+    { key: 'low-back', where: 'Low-back pain while pressing', at: { parts: LOW_BACK_PARTS },
       means: 'Leaning back by arching the low back hard can cause back pain.',
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'back', claim: C(['CONSENSUS'], [SL], 'c8, c6') },
-    { key: 'front-shoulder', where: 'Pain at the front shoulder', at: { muscles: ['front_delts'] },
+    { key: 'front-shoulder', where: 'Pain at the front shoulder', at: { parts: ['shoulder-front-left', 'shoulder-front-right'] },
       // W2 fix round (#385 6648438434, D-FEEL-MEANS-CAUSAL): c14 is an association, not a cause; c18 names technique.
       // The panel's two sentences joined by a colon: copy lint allows one sentence in a row's means (ROW_MEANS_MAX_SENTENCES).
       means: 'Could be technique: pressing behind the neck is linked to shoulder instability.',
