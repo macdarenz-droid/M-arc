@@ -74,12 +74,12 @@ export const stills = {
 const zooms = [
   {
     key: 'rear-knee', chip: 'Rear knee', heading: 'Rear knee', kind: 'posture',
-    // crop centre below the Right knee, so both knees and the floor line sit in the window
-    crop: { center: { at: 'knee.l', pose: 'right', off: [0, 10] }, sizePx: 130 },
+    // crop (fix round 2, recheck L7): the floor near the bottom edge, the rear knee, shin and bench filling the frame
+    crop: { center: { at: 'knee.l', pose: 'right', off: [-40, -24] }, sizePx: 100 },
     right: { base: 'end', pose: KNEE_GAP },
     wrong: { base: 'end', pose: MIS, solid: true },
     callout: {
-      right: { text: 'Clear of floor', anchor: 'knee.l' },
+      right: { text: 'Just above floor', anchor: 'knee.l' },
       wrong: { text: 'Knee rests', anchor: { at: 'knee.l', pose: 'mistake' } },
     },
     caption: {
@@ -87,7 +87,7 @@ const zooms = [
       wrong: 'Rear knee resting on the floor.',
     },
     alt: {
-      right: 'Side view, bottom of the split squat. The rear knee is clear of the floor, the rear foot on the bench.',
+      right: 'Side view, bottom of the split squat. The rear knee is just above the floor, the rear foot on the bench.',
       wrong: 'Side view, bottom of the split squat. The hips have sunk and the rear knee rests on the floor.',
     },
   },
@@ -133,7 +133,7 @@ export default {
     // D-TEXT-GOLDEN: posture point 'Top of the rear foot on the bench' (c2)
     { kind: 'adjust', text: 'Rest the top of your rear foot on a knee-high bench.', claim: CL.c2 },
     // D-TEXT-GOLDEN: the stance-length text checkpoint (c2) and posture point c6 (front-foot distance)
-    { kind: 'position', text: 'Front foot about three foot-lengths ahead. Farther works hips, closer quads.',
+    { kind: 'position', text: 'Front foot about three foot-lengths ahead. Farther: more hips. Closer: more quads.',
       claim: C(['CONSENSUS'], [CAT, ACE], 'c2, c6') },
     // D-TEXT-GOLDEN: posture point c4 and handlingMistake 'Knee moving in or out' fix (c4)
     { kind: 'position', text: 'Dumbbells at your sides, front knee over the front foot.', claim: C(['CONSENSUS'], [CAT], 'c9 (card grip.type), c4') },

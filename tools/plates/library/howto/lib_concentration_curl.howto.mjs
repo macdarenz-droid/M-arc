@@ -157,7 +157,7 @@ const feel = {
 const MISTAKES = [
   { key: 'knee', title: 'Elbow wedged into the knee', zoom: 'conc-brace', claim: CL.c3,
     fix: 'Press the triceps into your inner thigh instead.' },
-  { key: 'top', title: 'Curling up to the shoulder', zoom: 'conc-top', claim: CL.c7,
+  { key: 'top', title: 'Curling up to the shoulder', zoom: 'conc-top', claim: C(['CONSENSUS'], [BB], 'c7, c2 (vertical)'),
     fix: 'Stop when the upper arm starts to leave vertical.' },
   { key: 'drop', title: 'Letting the weight drop', claim: CL.c8,
     fix: 'Lower slowly. Resist the weight.' },

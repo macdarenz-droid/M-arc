@@ -132,13 +132,13 @@ const feel = {
     { key: 'kneecap', where: 'Around the kneecap', at: { parts: ['knee-left', 'knee-right'] },
       means: 'Feet too close to the wall, or the hold is too deep.',
       fix: 'Walk your feet further out. Hold higher on the wall.',
-      zoom: 'knee-over-ankle', claim: C(['MECH'], ['escamilla-2023', 'escamilla-2009'], 'w8, w9') },
+      zoom: 'knee-over-ankle', claim: C(['MECH'], ['escamilla-2023', 'escamilla-2009'], 'w8, w9: feet too close / walk the feet out w8; hold too deep / hold higher w9') },
     { key: 'knee', where: 'Very painful, locking or giving-way knee', at: { parts: ['knee-left', 'knee-right'] },
       means: 'Not a training feeling.',
       fix: 'Stop the hold.',
-      redFlag: 'knee', claim: CL.w12 },
+      redFlag: 'knee', claim: C(['CONSENSUS'], ['nhs-knee'], 'w12: where, means and fix (card feel row 3)') },
   ],
-  claim: CL.w11,
+  claim: C(['CONSENSUS', 'WEAK'], [PT], 'w11: feel line and the quads line (card feel row 1)'),
 };
 
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
@@ -157,13 +157,13 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     { kind: 'position', text: 'Back on the wall, feet out front, shoulder width, toes slightly out.',
-      claim: C(['CONSENSUS'], [PT, CAT], 'w4, w2') },
-    { kind: 'position', text: 'Slide down until hips and knees are about 90 degrees.', claim: C(['CONSENSUS'], [CAT], 'w2, w3') },
+      claim: C(['CONSENSUS'], [PT, CAT], 'w5, w4, w2: back on the wall w5, w4; feet out front w2; shoulder width, toes slightly out w4') },
+    { kind: 'position', text: 'Slide down until hips and knees are about 90 degrees.', claim: C(['CONSENSUS'], [CAT], 'w3, w2: slide down w3; hips and knees about 90 degrees w2') },
     { kind: 'position', text: 'Knees right above the ankles. Move the feet if not.', zoom: 'knee-over-ankle',
-      claim: C(['MECH', 'CONSENSUS'], ['escamilla-2023', 'escamilla-2009', PT], 'w8, w4') },
+      claim: C(['MECH', 'CONSENSUS'], ['escamilla-2023', 'escamilla-2009', PT], 'w4, w8: knees right above the ankles w4; move the feet if not w8') },
     // W5 panel L2: the inherited 'Knees over the second toe, ankles not rolling.' step is deleted (no card claim of its
     // own); the inherited checkpoint stays as posture[key=knees] (family map, D-SHIP-W5-WALLSIT).
-    { kind: 'position', text: 'Hold 30-60 seconds and keep breathing steadily.', claim: C(['CONSENSUS', 'MECH'], [CAT, 'watanabe-2022'], 'w3, w10') },
+    { kind: 'position', text: 'Hold 30-60 seconds and keep breathing steadily.', claim: C(['CONSENSUS', 'MECH'], [CAT, 'watanabe-2022'], 'w3, w10: hold 30-60 seconds w3; keep breathing steadily w10') },
   ],
   posture: [
     // Q-W2-12: handlingMistake 'Back leaving the wall.' (w5) merged here; its fix is this detail

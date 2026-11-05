@@ -5,19 +5,18 @@
 // Family (D-SHIP-FAMILY, lint/family.mjs INHERIT_MAP): child of dumbbell_biceps_curl. grip.width ->
 // handling.width.text, the parent sheet's string exactly (true here: c10, the dumbbells may hang slightly away from the
 // sides, the hand position that keeps the wrist straight); redFlags -> riskFlags ['wrist']; plate.view [].
-// Hand zoom (D-SHIP-GRIP case (a)): the card zoom `hammer-hand` is drawn by the approved `curl` pair key
-// (tools/plates/library/hands/hand-curl.mjs IDS.hammer_curl: variant 'dumbbell', orientation 'neutral', faults curled
-// and bent-back). The pose, faults and wrist range below are that key's recorded values, read from the key module so
-// they cannot drift; the Right/Wrong notes are the pair panel's words (hands/words/curl-dumbbell-neutral.json). The
-// card leaves grip.handContact empty: the contact is the key's convention 'ga:curl-mid' (hands/pairs.mjs CONVENTIONS),
-// cited as CONVENTION, and is data only (D-SHIP-CONVCOPY: never printed).
-// D-SHIP-W5-HAMMERWRONG (Q-W5-8): the card zoom's Wrong is a twist toward palms up (c5), a forearm rotation the radial
-// view cannot draw; the key draws the wrist curled and bent back. The zoom's Wrong caption names the drawn fault, from
-// the card's own wrist-straight claim (c4), and never says "twist"; the twist claim (c5) stays visible in the mistake
-// row 'Wrists twisting out of neutral', the Grip wrist line and the cue line.
+// No hand zoom (D-SHIP-C3 no-zoom list, D-SHIP-W5-HAMMER; W5 panel L3 twice, recheck1): the card zoom `hammer-hand`'s
+// Wrong is the wrist twisting toward palms up (c5), a forearm rotation. The hand engine cannot draw it: HandPose
+// (src/howto/content-types.ts) has wrist ext and dev only, no forearm rotation, and the curl key records the twist as not
+// drawable (hands/hand-curl.mjs IDS.hammer_curl comment). Its drawable faults (curled, bent back) are not the card's
+// fault, so the sheet shows no hand zoom, no handling.pose and no faults, and no flexion or extension Wrong anywhere
+// (D-SHIP-Q1 form). The grip copy carries c1 and c4 (gripLine) and c5 (the wrist line); the twist stays in the mistake
+// row 'Wrists twisting out of neutral' (c5).
+// GRIP (c) values (data only, never printed; D-SHIP-CONVCOPY): the card leaves grip.handContact empty, so the contact
+// and the wrist ext range are DERIVED from the curl convention, pairs.mjs CONVENTIONS['ga:curl-mid'] (as
+// lib_concentration_curl), cited as CONVENTION.
 // No variant line (equipment 'Dumbbells').
 import plateSpec from '../specs/hammer_curl.mjs';
-import { IDS, VARIANTS } from '../hands/hand-curl.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
 
@@ -31,7 +30,7 @@ export const SOURCES = {
   'caufriez-2018': { cite: 'The Role of the Muscle Brachioradialis in Elbow Flexion: An Electromyographic Study', url: 'https://pubmed.ncbi.nlm.nih.gov/29409427/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'DATA' },
   // The curl key's own source for the hand contact (the card has no grip.handContact): a drawing convention.
-  'hand-key-curl': { cite: 'LIB-7 hand pair key curl (dumbbell), CONVENTIONS ga:curl-mid: across the middle of the palm', url: 'tools/plates/library/hands/pairs.mjs',
+  'ga-curl-mid': { cite: 'LIB-7 curl hand convention, pairs.mjs CONVENTIONS ga:curl-mid: across the middle of the palm, extension -10 to +10', url: 'tools/plates/library/hands/pairs.mjs',
     kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
   // RED_FLAG's own source (layers/howto/shared.mjs), as golden B's machine_chest_press lists it: the card's redFlags 'wrist'.
   'nhs-wrist-pain': { cite: 'NHS, Wrist pain', url: 'https://www.nhs.uk/conditions/hand-pain/wrist-pain/',
@@ -53,15 +52,13 @@ const CL = {
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
-// The key's record for this id and its variant (hand-curl.mjs, radial-rules.mjs curlVariant).
-const KEYED = IDS.hammer_curl, V = VARIANTS[KEYED.variant];
-const RIGHT_POSE = V.right;
-const FAULTS = KEYED.faults.map(key => {
-  const f = V.faults[key];
-  // HandFault.pose.wrist needs dev: the key's fault sets ext only and the engine merges it over the right pose
-  // (render/closeup/common.mjs mergePose), so dev is the right pose's own value (0), written out for the type.
-  return { key, label: f.label, pose: { ...f.pose, wrist: { dev: RIGHT_POSE.wrist.dev, ...f.pose.wrist } }, markers: f.markers, alt: f.alt };
-});
+// GRIP (c): the contact and wrist range DERIVED at import from the curl convention text, so they cannot drift from it
+// (pairs.mjs CONVENTIONS['ga:curl-mid'], copied as lib_concentration_curl does; pairs.mjs is not imported).
+const CURL_MID = 'GA 3.1 curl: across the middle of the palm; extension -10 to +10 (shared/curl.json gap 1)';   // CONVENTIONS['ga:curl-mid']
+const CONTACT_OF_ZONE = { 'middle of the palm': 'mid-palm' };   // convention zone words -> HandContact
+const CONTACT = Object.entries(CONTACT_OF_ZONE).find(([zone]) => CURL_MID.includes(zone))?.[1];
+const EXT = CURL_MID.match(/extension (-?\d+) to \+?(-?\d+)/)?.slice(1).map(Number);
+if (!CONTACT || !EXT) throw new Error(`lib_hammer_curl: pairs.mjs CONVENTIONS ga:curl-mid has no mapped contact or range: ${CURL_MID}`);
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses. 'elbows-forward' (card zoom hammer-elbow Wrong, c6: "Elbows pushed forward,
@@ -75,29 +72,9 @@ export const stills = {
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
-// One per card zoom, same kinds; the hand zoom's key is 'hand' (golden B's chip rule). The posture zoom is in the zoom
+// One per card zoom except the hand zoom `hammer-hand` (D-SHIP-W5-HAMMER, above). The posture zoom is in the zoom
 // shell's shape (callout with an anchor at the landmark it names, no guide mark; pilot-a.closeups.mjs).
 const zooms = [
-  {
-    key: 'hand', chip: 'Wrist', heading: 'Wrist position', kind: 'hand',   // card zoom key: hammer-hand
-    hand: {
-      right: RIGHT_POSE,
-      wrong: FAULTS,                // handling.faults (golden B's shape: fault objects); the pair pages them in this order
-      camera: 'above',              // the pair's camera (pairs.mjs ORIENTATIONS.neutral: the handle seen end-on from above)
-      panelHeight: V.panelHeight,
-      // The pair panel's own words (D-SHIP-CONVCOPY allows the key's panel words): 'Middle of palm' is the curl key's
-      // ga:curl-mid label, source hand-key-curl (words/curl-dumbbell-neutral.json, radial-rules.mjs:16).
-      notes: { right: 'Middle of palm', wrong: 'Wrist curled' },   // words/curl-dumbbell-neutral.json, first page
-    },
-    caption: {
-      right: 'Closed neutral grip, thumb round the handle, wrist straight.',   // card zoom right (c1, c4)
-      // D-SHIP-W5-HAMMERWRONG: the key's drawn faults (curled, bent back), the inverse of c4 "keep the wrist straight"
-      wrong: 'Wrist bent back or curled toward the forearm.',
-    },
-    // The key's alt without its contact words (D-SHIP-CONVCOPY): palms facing the body and thumb wrapped c1, wrist c4.
-    alt: { right: 'Palm facing the body, thumb wrapped round the handle. Wrist straight, in line with the forearm.', wrong: V.faults[KEYED.faults[0]].alt },
-    feelRow: 'wrist',
-  },
   {
     key: 'hammer-elbow', chip: 'Elbows', heading: 'Elbow path', kind: 'posture',
     // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's elbow for both halves; the Wrong is the
@@ -138,7 +115,7 @@ const feel = {
     { key: 'wrist', where: 'Wrist', at: { parts: HANDS },
       means: 'Your wrist is bending or twisting.',
       fix: 'Keep the wrist straight, palms facing your body.',
-      zoom: 'hand', redFlag: true, claim: C(['CONSENSUS'], [ACE, SL], 'c4, c5') },
+      redFlag: true, claim: C(['CONSENSUS'], [ACE, SL], 'c4, c5') },
   ],
   claim: C(['CONSENSUS', 'DATA'], [SL, 'caufriez-2018'], 'c8, c11'),
 };
@@ -164,26 +141,25 @@ export default {
   rev: 1,
   plate: plateSpec,
   handling: {
-    archetype: V.archetype,          // 'curl'
+    archetype: 'curl',
+    why: 'D-SHIP-C3 no-zoom list, D-SHIP-W5-HAMMER: the card zoom\'s Wrong, the wrist twisting toward palms up (c5), is a forearm rotation the curl key cannot draw; the grip copy carries c1, c4 and c5.',
     orientation: 'neutral',          // c1: palms facing the body; the key's orientation 'neutral'
     handle: 'dumbbell',              // the key's HANDLE profile
-    loadAxis: V.loadAxis,            // 'across'
     // inherited grip.width: the parent sheet's string, exactly (lint/family.mjs); the child's own c10 says the same
     width: { text: 'Let the dumbbells hang slightly out from your sides if that keeps your wrist straight.', claim: CL.c10 },
-    thumb: { mode: RIGHT_POSE.thumb, claim: CL.c1 },   // 'wrapped' (c1: thumbs round the handles; the key's right pose)
-    contact: 'mid-palm',             // CONVENTION, data only: the key's contact 'mid' (ga:curl-mid, source hand-key-curl); the card gives none
-    wrist: { ext: V.wristRange, limitText: 'Keep the wrist straight, no twisting.',   // audit6 issue 6: grip.wrist (c4, c5), not a repeat of gripLine
-      claim: C(['CONSENSUS', 'CONVENTION'], [ACE, 'sl-hammer', 'hand-key-curl'], 'c4, c5. The ext range is the curl key\'s wristRange (ga:curl-mid), a convention, not a card number.') },
-    pose: RIGHT_POSE,
-    faults: FAULTS,
-    gripLine: 'Closed neutral grip, palms facing your body, thumbs wrapped round the handles.',   // c1; the wrist line is wrist.limitText (c4, c5)
+    thumb: { mode: 'wrapped', claim: CL.c1 },   // c1: thumbs round the handles
+    contact: CONTACT,                // 'mid-palm', DERIVED from ga:curl-mid (CONVENTION, data only); the card gives none
+    wrist: { ext: EXT, limitText: 'Keep the wrist from twisting through the lift.',   // c5 (grip.wrist "not twisting"); c4 is in gripLine
+      claim: C(['CONSENSUS', 'CONVENTION'], [ACE, SL, 'ga-curl-mid'], 'c5, c4. The ext range is pairs.mjs CONVENTIONS ga:curl-mid, a convention, not a card number.') },
+    faults: [],                      // no hand zoom: no drawn fault (D-SHIP-W5-HAMMER)
+    gripLine: 'Closed neutral grip, thumbs round the handles. Wrist straight, palms facing your body.',   // c1, c4
     cue: 'Palms facing you, wrists straight.',   // c4, c5
   },
   contacts: ['standing-feet'],
   setup: [
     { kind: 'load', text: 'Pick dumbbells you can curl without swinging.', claim: CL.c7 },
     { kind: 'position', text: 'Take a split stance, brace, shoulders down and back.', claim: CL.c2 },
-    { kind: 'grip', text: 'Hold the dumbbells with a closed neutral grip beside your thighs.', zoom: 'hand', claim: CL.c1 },
+    { kind: 'grip', text: 'Hold the dumbbells with a closed neutral grip beside your thighs.', claim: CL.c1 },
     { kind: 'position', text: 'Curl to the front of the shoulders, lower to straight arms.', claim: CL.c3 },
     // D-TEXT-GOLDEN (copy lines are not printed): posture torso and shrug (c4) moved here from the mistake line
     { kind: 'brace', text: 'Torso upright, no arching the lower back, no shrugging.', claim: CL.c4 },
@@ -200,7 +176,7 @@ export default {
   ],
   feel,
   zooms,
-  chips: ['hand', 'hammer-elbow', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
+  chips: ['hammer-elbow', 'feel'],   // the zoom shell's chip row: the zoom keys, then feel
   copy: {
     setupLine: 'Split stance, torso braced, shoulders down and back. Dumbbells beside your thighs, palms facing your body.',   // c2, c1
     // D-TEXT-GOLDEN: posture torso and shrug (c4), range (c7)

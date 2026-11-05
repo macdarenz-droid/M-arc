@@ -544,7 +544,8 @@ describe('LIB-SHIP W5 D-SHIP-W5-HAMMERWRONG: the hand-zoom Wrong caption never s
     if (!slot) out.push(`${c.id}: the twist claim is missing from its slot`);
     return out;
   };
-  for (const id of ['lib_hammer_curl', 'lib_cross_body_hammer_curl']) it(`${id}: green; reds: twist in the caption, the twist claim removed`, async () => {
+  // D-SHIP-W5-HAMMER (W5 focused recheck, #392 6654466055): hammer_curl has no hand zoom now; its block is below. cross_body unchanged.
+  for (const id of ['lib_cross_body_hammer_curl']) it(`${id}: green; reds: twist in the caption, the twist claim removed`, async () => {
     const { content: c } = await content.loadContent(id);
     expect(problems(c)).toEqual([]);
     const cap = { ...c, zooms: c.zooms.map((z: any) => (z.kind === 'hand' ? { ...z, caption: { ...z.caption, wrong: 'Wrist twisting out of neutral.' } } : z)) };
@@ -552,6 +553,38 @@ describe('LIB-SHIP W5 D-SHIP-W5-HAMMERWRONG: the hand-zoom Wrong caption never s
     const gone = id === 'lib_hammer_curl' ? { ...c, mistakes: c.mistakes.filter((m: any) => m.key !== 'twist') }
       : { ...c, handling: { ...c.handling, wrist: { ...c.handling.wrist, limitText: 'Keep the wrist straight.' } } };
     expect(problems(gone)).toEqual([`${id}: the twist claim is missing from its slot`]);
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-HAMMER (#392 6654466055): hammer_curl ships with no hand zoom, the twist in its c5 mistake row', () => {
+  const card = () => json('docs/research/howto/cards/hammer_curl.json'), list = () => json('tools/plates/library/hands/no-zoom.json').entries;
+  /** A flexion or extension Wrong for the hand (the curl key's curled / bent-back faults) in a printed string. */
+  const FLEXEXT = /\b(curled|bent (back|forward)|flex(ed|ion)|extension)\b/i;
+  const problems = (c: any, e: any) => {
+    const out: string[] = [];
+    if (c.zooms.some((z: any) => z.kind === 'hand')) out.push(`${c.id}: has a hand zoom`);
+    if (c.handling.pose !== undefined || c.handling.faults.length) out.push(`${c.id}: carries a hand pose or faults`);
+    if (!(e?.ruling === 'D-SHIP-W5-HAMMER' && e.reason === 'gap-ruled')) out.push(`${c.id}: entry is not gap-ruled D-SHIP-W5-HAMMER`);
+    if (!c.handling.why.startsWith('D-SHIP-C3 no-zoom list, D-SHIP-W5-HAMMER')) out.push(`${c.id}: why does not name D-SHIP-W5-HAMMER after the D-SHIP-C3 route`);
+    if (!c.mistakes.some((m: any) => /twist/i.test(m.title) && /\bc5\b/.test(m.claim?.note ?? ''))) out.push(`${c.id}: the twist claim is missing from its c5 mistake row`);
+    return out;
+  };
+  it('green on the tree: no hand zoom, pose or faults; gap-ruled entry; why; c5 twist row; C3L passes; no printed flexion/extension Wrong', async () => {
+    const L: any = await import(/* @vite-ignore */ url('tools/plates/library/lint/index.mjs')), { content: c } = await content.loadContent('lib_hammer_curl');
+    expect(problems(c, list().lib_hammer_curl)).toEqual([]);
+    expect(RULED.has('D-SHIP-W5-HAMMER')).toBe(true);
+    expect(checkC3Library(c, 'Dumbbells', { list: list(), card: card(), gapKeyOf })).toEqual([]);
+    const flexExt = (x: any) => L.shownCopyFields(x).filter((f: any) => FLEXEXT.test(f.text)).map((f: any) => f.path);
+    expect(flexExt(c)).toEqual([]);
+    expect(flexExt({ ...c, handling: { ...c.handling, cue: 'Wrist bent back is wrong.' } })).toEqual(['handling.cue']);
+  });
+  it('reds: a hand zoom added back (C3L and this check), the entry\'s ruling changed, the twist row removed', async () => {
+    const { content: c } = await content.loadContent('lib_hammer_curl'), e = list().lib_hammer_curl;
+    const zoomed = { ...c, zooms: [...c.zooms, { key: 'hand', kind: 'hand', chip: 'Wrist', heading: 'Wrist position' }] };
+    expect(checkC3Library(zoomed, 'Dumbbells', { list: list(), card: card(), gapKeyOf })).toContain('C3L: lib_hammer_curl is on the no-zoom list but has a hand zoom');
+    expect(problems(zoomed, e)).toEqual(['lib_hammer_curl: has a hand zoom']);
+    expect(problems(c, { ...e, ruling: 'D-SHIP-C3' })).toEqual(['lib_hammer_curl: entry is not gap-ruled D-SHIP-W5-HAMMER']);
+    expect(problems({ ...c, mistakes: c.mistakes.filter((m: any) => m.key !== 'twist') }, e)).toEqual(['lib_hammer_curl: the twist claim is missing from its c5 mistake row']);
   });
 });
 

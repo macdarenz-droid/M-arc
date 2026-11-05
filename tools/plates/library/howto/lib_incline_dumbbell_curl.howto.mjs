@@ -155,7 +155,7 @@ const MISTAKES = [
     fix: 'Keep the hand in line with the forearm.' },
   { key: 'elbows', title: 'Elbows drifting forward', zoom: 'incline-elbow', claim: C(['CONSENSUS'], [BB], 'c4, c3'),
     fix: 'Keep the elbows back. Stop the curl a little lower.' },
-  { key: 'bench', title: 'Bench set too low', claim: CL.c5,
+  { key: 'bench', title: 'Bench set too low', claim: C(['CONSENSUS'], [BB, SL], 'c5, c1 (the 45-65 degrees)'),
     fix: 'Raise it toward 45-65 degrees.' },
 ];
 const RISKS = [

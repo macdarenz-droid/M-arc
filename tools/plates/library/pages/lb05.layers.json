@@ -49,8 +49,7 @@
       "optionsKey": "wrist_curl"
     },
     "lib_hammer_curl": {
-      "optionsKey": "hammer_curl",
-      "pair": "curl-dumbbell-neutral"
+      "optionsKey": "hammer_curl"
     },
     "lib_alternating_dumbbell_curl": {
       "optionsKey": "alternating_dumbbell_curl",

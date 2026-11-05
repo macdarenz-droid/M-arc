@@ -145,12 +145,13 @@ const MISTAKES = [
     fix: 'Elbows up, chest tall.' },
   { key: 'hands', title: 'Hands holding the bar up', claim: CL.c3,
     fix: 'Let your shoulders carry the bar. Try a fingertip rack.' },
-  // Tier A way out, second half (card tierA.wayOut, c14, c25); the first half is setup step 1
+  // Tier A way out (card tierA.wayOut, c14, c25): setup step 1 sets the safeties or a spotter, this fix is the bail
+  // sequence, and risks[no-safeties] carries 'practise bailing light' (c25)
   { key: 'safeties', title: 'Bailing with no safeties set', claim: C(['CONSENSUS', 'MECH'], [REP], 'c14, c25'),
-    fix: 'Practise light. To bail, let go, drop it forward, step back.' },
+    fix: 'To bail, let go, drop it forward onto the safeties, step back.' },
 ];
 const RISKS = [
-  { key: 'no-safeties', text: 'A failed rep with no safeties set.', claim: CL.c14 },
+  { key: 'no-safeties', text: 'A failed rep with no safeties set. Practise bailing light.', claim: C(['CONSENSUS', 'MECH'], [REP], 'c14, c25') },
   { key: 'breath', text: 'Holding your breath under heavy load raises blood pressure.', claim: CL.c19 },
   { key: 'throat', text: 'Bar pressing on the throat.', claim: CL.c2 },
 ];
@@ -187,7 +188,7 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     // Tier A way out, first half (card tierA.wayOut, c14, c25)
-    { kind: 'safety', text: 'Set safeties just below your lowest depth, or a spotter when heavy.',
+    { kind: 'safety', text: 'Set safeties just below your lowest depth. Heavy? Use a spotter.',
       claim: C(['CONSENSUS', 'MECH'], [REP], 'c14, c25 (card tierA.wayOut)') },
     { kind: 'position', text: 'Bar between throat and shoulders. Shoulders pushed forward and slightly up.',
       claim: C(['CONSENSUS'], [CAT, RACK, HK], 'c2, c3') },

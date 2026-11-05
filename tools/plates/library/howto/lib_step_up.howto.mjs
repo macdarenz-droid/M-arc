@@ -157,7 +157,7 @@ export default {
     { kind: 'position', text: 'Dumbbells at the sides, palms facing in, feet hip width apart.', claim: CL.c5 },
     { kind: 'position', text: 'Whole foot firmly on the box, knee over the second toe.', zoom: 'lead-foot', claim: CL.c6 },
     // c3 (card posture point) moved here from the feel lines (not shown on the page, D-TEXT-GOLDEN)
-    { kind: 'position', text: 'Foot closer for more quads, farther for glutes and hamstrings.', claim: CL.c3 },
+    { kind: 'position', text: 'Foot closer: more quads. Farther with a vertical shin: more glutes, hamstrings.', claim: CL.c3 },
     { kind: 'position', text: 'Stand up with the top leg, little help from the bottom foot.', zoom: 'trunk', claim: CL.c1 },
     { kind: 'finish', text: 'Step the trailing foot down first, controlling the way down.',
       claim: C(['CONSENSUS'], [ACE, CAT], 'c8, c2') },

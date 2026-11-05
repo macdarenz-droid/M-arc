@@ -16,7 +16,7 @@ export const CLOSEUP_OPTIONS = {
   dumbbell_overhead_triceps_extension: ZOOM,
   cross_body_hammer_curl: { ...ZOOM, hand: { layout: 'single', uid: 'cbhc', rightNote: 'Middle of palm', panelHeight: 282 } },
   wrist_curl: ZOOM,
-  hammer_curl: { ...ZOOM, hand: { layout: 'single', uid: 'hc', rightNote: 'Middle of palm', panelHeight: 282 } },
+  hammer_curl: ZOOM,   // no hand zoom (D-SHIP-W5-HAMMER, hands/no-zoom.json)
   alternating_dumbbell_curl: { ...ZOOM, hand: { layout: 'single', uid: 'adc', rightNote: 'Middle of palm', panelHeight: 282 } },
   single_arm_triceps_pushdown: ZOOM,
   incline_dumbbell_curl: { ...ZOOM, hand: { layout: 'single', uid: 'idc', rightNote: 'Middle of palm', panelHeight: 282 } },

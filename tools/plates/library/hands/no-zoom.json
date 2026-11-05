@@ -91,6 +91,11 @@
    "ruling": "D-SHIP-HANDW5",
    "reason": "gap-ruled",
    "note": "push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19), as its parent triceps_pushdown (D-SHIP-HANDW2); the grip copy carries the card's claims"
+  },
+  "lib_hammer_curl": {
+   "ruling": "D-SHIP-W5-HAMMER",
+   "reason": "gap-ruled",
+   "note": "the card's hand fault is the wrist twisting toward palms-up (c5), a forearm rotation the curl key cannot draw; flexion or extension Wrongs are never shown (W5 focused recheck, #392 6654466055, D-SHIP-Q1 form); the grip copy carries c1 and c4, the twist is in the mistakes (c5)"
   }
  }
 }
