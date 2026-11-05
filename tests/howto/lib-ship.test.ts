@@ -262,6 +262,9 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
   // makes shared/back-box.mjs read docs/research/howto/shared/back-pain-box.json, so the mirror must carry it
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const BACK = 'docs/research/howto/shared/back-pain-box.json';
+  // LIB-SHIP W3 (D-SHIP-A5BACK-CARDS): lb01.layers.json's pairWords rows (W3 layers fix, #384 6648454032)
+  const PAIR_CARDS = ['assisted_pull_up', 'close_grip_pulldown', 'inverted_row', 'single_arm_lat_pulldown', 'underhand_lat_pulldown']
+    .map(id => `docs/research/howto/cards/${id}.json`);
   const ht4 = async (): Promise<any> => import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/fidelity/twins/ht4.mjs')).href);
   const pilotA = async (): Promise<string[]> => {
     const reg: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/registry.mjs')).href);
@@ -277,7 +280,8 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
   };
   it('pilot-a\'s pinned extras are exactly the back box research file, and the real tree builds pilot-a in the mirror', async () => {
     const ids = await pilotA();
-    expect((await ht4()).mirrorExtras(process.cwd(), ids)).toEqual([BACK]);
+    // D-SHIP-A5BACK-CARDS (#384 6648753200): then the research card of every layers-config row naming pairFaults or pairWords
+    expect((await ht4()).mirrorExtras(process.cwd(), ids)).toEqual([BACK, ...PAIR_CARDS]);
     expect((await build(process.cwd(), ids)).calls.length).toBeGreaterThan(0);
   }, 300_000);
   it('red (the copy step removed, i.e. no ids reach it): the ENOENT crash on the back-flagged rows', async () => {
@@ -291,6 +295,32 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
       cpSync('src/data', join(R, 'src/data'), { recursive: true });
       symlinkSync(join(process.cwd(), 'node_modules'), join(R, 'node_modules'));
       await expect(build(R, await pilotA())).rejects.toThrow(`HT4-A5: ${BACK} is pinned in MANIFEST.json for this batch but missing from the tree`);
+    } finally { rmSync(R, { recursive: true, force: true }); }
+  }, 300_000);
+});
+
+describe('LIB-SHIP W3 D-SHIP-A5BACK-CARDS (#384 6648753200): the HT4 mirror carries the pair rows\' research cards', () => {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const BACK = 'docs/research/howto/shared/back-pain-box.json', CARD = 'docs/research/howto/cards/inverted_row.json';
+  const ht4 = async (): Promise<any> => import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/fidelity/twins/ht4.mjs')).href);
+  const pilotA = async (): Promise<string[]> => {
+    const reg: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/registry.mjs')).href);
+    return reg.rows().filter((r: any) => r.batchFile === 'tools/plates/library/batches/pilot-a.json').map((r: any) => r.id);
+  };
+  it('red (a pair row\'s card dropped from the tree): the mirror build throws, naming it', async () => {
+    const { cpSync, mkdtempSync, mkdirSync, rmSync, symlinkSync } = await import('node:fs'), { tmpdir } = await import('node:os'), { dirname } = await import('node:path');
+    const { pathToFileURL } = await import('node:url');
+    const R = mkdtempSync(join(tmpdir(), 'a5cards-root-'));
+    try {
+      cpSync('tools/plates', join(R, 'tools/plates'), { recursive: true });
+      cpSync('src/data', join(R, 'src/data'), { recursive: true });
+      for (const p of [BACK, ...(await ht4()).pairCardsOf(process.cwd())].filter(p => p !== CARD)) { mkdirSync(dirname(join(R, p)), { recursive: true }); cpSync(p, join(R, p)); }
+      symlinkSync(join(process.cwd(), 'node_modules'), join(R, 'node_modules'));
+      const ids = await pilotA();
+      await expect((await ht4()).captureLayersBuild(R, async (T: string) => {
+        const { layersSpecOf }: any = await import(/* @vite-ignore */ pathToFileURL(join(T, 'tools/plates/library/layers-spec.mjs')).href);
+        return layersSpecOf('tools/plates/library/batches/pilot-a.json', { stageDir: mkdtempSync(join(tmpdir(), 'a5cards-stage-')), root: T });
+      }, ids)).rejects.toThrow(`HT4-A5: ${CARD} is a pair row's research card (D-SHIP-A5BACK-CARDS) but missing from the tree`);
     } finally { rmSync(R, { recursive: true, force: true }); }
   }, 300_000);
 });
