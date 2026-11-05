@@ -1,9 +1,9 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=e990535b781b4742bb5cc0522e0131daec697adef5d48b18da904a68f460661d
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=b99913c0a67105d0acf4d4864dfef8cc5dcef845a6f05c3b67464953bfd9df79
 // Node twin of src/howto/ids.ts (tests and the gate's harness): the same literals and decoder template, emitted
 // together by tools/plates/gen/ids.mjs (D-LIB2-hints).
-const S = "2eTgR?oeeYPaW@NI22\\X@@[:2`_N8@HY18f@";
-const H = ["Heel of palm, wrist straight."];
-const O = "A";
+const S = "2eTgEhDkUMbG`?G=R?oeeYPaW@NI22\\X@@[:2`_N8@HYPYedM>dL18f@U\\R=H@YoZg4J";
+const H = ["Heel of palm, wrist straight.","Handle firm in palm, wrist neutral.","Hands against the rope knobs."];
+const O = "ABBC";
 function at(s) {
   if (!s.startsWith('lib_')) return -1;
   let x = 0x811c9dc5, t = '';

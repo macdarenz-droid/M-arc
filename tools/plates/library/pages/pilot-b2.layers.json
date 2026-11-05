@@ -1,0 +1,14 @@
+{
+  "groups": [
+    {
+      "id": "pilot-b2",
+      "title": "Pilot B2",
+      "ids": ["lib_crunch"]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/pilot-b2.closeups.mjs",
+  "closeups": {
+    "lib_crunch": { "optionsKey": "crunch" }
+  },
+  "jump": null
+}
