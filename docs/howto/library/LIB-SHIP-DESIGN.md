@@ -885,7 +885,6 @@ ruling 3 in the flip push. Columns read from each card and from `hands/pairs.mjs
 | bulgarian_split_squat | lb04 | B | hold | b | none | — (NoHandling) | — | — | — | Dumbbells / Barbell | reverse_lunge: same three |
 | bodyweight_lunge | lb04 | C | none | none | — | — | — | — | — | — | — |
 | bodyweight_split_squat | lb04 | C | none | none | — | — | — | F4 | — | — | — |
-| dumbbell_biceps_curl family: | | | | | | | | | | | |
 | alternating_dumbbell_curl | lb05 | C | curl | a (contact) | curl-wrist → key curl/dumbbell, under | — | — | F4, F7 | — | — | dumbbell_biceps_curl (W1): grip.type, thumb, width, plate.view, redFlags |
 | barbell_curl | lb05 | C | curl | a (contact) | bb-curl-wrist → key curl/bar, under | — | — | F2, F7 | — | — | dumbbell_biceps_curl: plate.view, grip.thumb, redFlags |
 | ez_bar_curl | lb05 | C | curl | a (contact) | ez-curl-hand → key ez/curl, angled | — | — | F2, F7 | — | — | dumbbell_biceps_curl: plate.view, grip.thumb, redFlags |
@@ -970,7 +969,7 @@ SHIP W3 QUESTIONS RULED).** Parent values read from the parent sheet named.
   checker reads those too.
 - **Q-W5-5 front_squat and goblet_squat inherit from golden barbell_back_squat.** (a) posture[3]: map to the golden
   `feet` checkpoint's label and detail (text fields only; anchor knee.r on the child's own `end` pose). The child card's
-  own stance (front_squat "toes out 15-30 degrees", c-claims; goblet "heels down", g7) stays as its own checkpoint; no
+  own stance (front_squat "toes out 15-30 degrees"; goblet "heels down", g7) stays as its own checkpoint; no
   string contradicts the golden one (checked by reading). (b) front_squat setup[2] ("load the plates evenly, collars on"):
   no valid path (the golden sheet folds collars into one of two `kind: 'safety'` steps and has no plate-loading step).
   **Proposal:** research route F-CARD-FRONTSQ-SETUP (drop the field from inherit[]; front_squat's own safety step comes
@@ -1001,5 +1000,5 @@ SHIP W3 QUESTIONS RULED).** Parent values read from the parent sheet named.
 - **Q-W5-10 lb04/lb05 page pins.** The moved rows need the supervisor's PIN GO on each rebuilt build-ahead page (sha
   posted at LAYERS READY, built twice), as D-LIB-LB1ZOOM; the lb4/lb5 pins cite D-OWNER-FLAGS.
 
-If every proposal holds: 27 written; flip at most 27, at least 18 (less jump_squat, goblet_squat, front_squat,
-single_arm_, and the 5 family children if Q-W5-1's parents are not shipped by W5's flip, overlap counted once).
+If every proposal holds: 27 written; flip at most 27. Worst case 18: less jump_squat (Q-W5-2), goblet_squat (Q-W5-4/-7), front_squat (Q-W5-5),
+the 5 family children (Q-W5-1; single_arm_ also Q-W5-9) and wall_sit (Q-W5-6).
