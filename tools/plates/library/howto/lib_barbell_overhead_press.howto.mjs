@@ -6,7 +6,7 @@
 // (bar on the heel of the palm, wrist almost straight, thumb wrapped; c3, c4) live in handling and setup step 2.
 // Red flags: the card's redFlags (shoulder, back). The shoulder box is golden B's shared block; the back box is LIB-5's
 // (tools/plates/library/shared/back-box.mjs), linked by the low-back row's redFlag: 'back'.
-import plateSpec from '../specs/barbell_overhead_press.mjs';
+import plateSpec, { ZOOM_WRONG } from '../specs/barbell_overhead_press.mjs';
 import { landmarksOf } from '../engine.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER };
@@ -58,25 +58,23 @@ const CL = {
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
-// From the plate spec's own poses: the start (bar on the front of the shoulders, forearms vertical, c5) and the spec's
-// Mistake pose merged over the end pose, as the engine draws it (LIB-PLATEFIX-1: the start-position fault, bar on the
-// front delts, elbow back under the shoulder and behind the bar, forearm tilted; card plate.mistake, c5).
-const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
+// From the plate spec's own poses: the start (bar on the front of the shoulders, forearms vertical, c5) and the start
+// pose with the plate's Mistake arm (spec ZOOM_WRONG: bar on the front delts, elbow back under the shoulder and behind
+// the bar, forearm tilted ~21 deg; card plate.mistake, c5).
+const START = plateSpec.poses.start, WRONG = { reach: ZOOM_WRONG.reach };
 export const stills = {
-  start: { pose: plateSpec.poses.start },
-  end: { pose: END },
-  'elbows-back': { pose: { ...END, ...MIS } },
+  start: { pose: START },
+  end: { pose: plateSpec.poses.end },
+  'elbows-back': { pose: { ...START, ...WRONG } },
 };
-// LIB-PLATEFIX-1 (W2 panel L5, #379 6633524031: the Wrong showed a mid-press arm): the Wrong is the plate's own Mistake
-// drawing. The faulty arm lies over the torso in this side view, so the solid pose alone cannot show it; as on the
-// plate, it is outlined dashed in the mistake colour from the plate's own Mistake guides (the closed outlines: the arm
-// shapes and the bar sleeve, plus the drift's end ring), and the drift is the plate's open dashed path, drawn as a
-// `path` guide whose arrow head is the plate's arrow. The outlines are drawn only on the Wrong crop's pose (the Right
-// crop shows the start pose, whose grip is 12 cm behind the faulty bar). No new number: every point is the plate's.
-const GUIDES = plateSpec.mistake.guides.filter(g => g.kind === 'dashed');
-const closed = g => g.pts.length > 2 && Math.hypot(...g.pts[0].map((v, i) => v - g.pts[g.pts.length - 1][i])) < 1e-9;
-const DRIFT = GUIDES.find(g => !closed(g)).pts, OUTLINES = GUIDES.filter(closed).map(g => ({ kind: 'mis', pts: g.pts }));
-const WRONG_GRIP = landmarksOf({ ...END, ...MIS }, 1.75)['grip.r'];
+// LIB-PLATEFIX-1 (W2 panel L5 [4,3,3], PR #385 6648438434): the Wrong is the Right's start pose with one change, the
+// elbow behind the bar and the forearm tilted (c5), plus the forward-curving bar arrow; no lockout figure. The faulty arm
+// lies over the torso in this side view, so the solid pose alone cannot show it; as on the plate, it is outlined dashed
+// in the mistake colour (the spec's ZOOM_WRONG outlines: the arm shapes, the bar sleeve and the drift's end ring), and
+// the drift is its open dashed path, drawn as a `path` guide with an arrow head. The outlines are drawn only on the
+// Wrong crop's pose (the Right crop's grip is 7.5 cm from the faulty bar).
+const OUTLINES = ZOOM_WRONG.outlines.map(pts => ({ kind: 'mis', pts }));
+const WRONG_GRIP = landmarksOf({ ...START, ...WRONG }, 1.75)['grip.r'];
 const onWrong = lm => Math.hypot(...lm['grip.r'].map((v, i) => v - WRONG_GRIP[i])) < 0.02;
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
@@ -89,8 +87,8 @@ const zooms = [
     key: 'ohp-forearm-vertical', chip: 'Forearms', heading: 'Forearm angle', kind: 'posture',
     crop: { center: { at: 'shoulder.r', pose: 'right', off: [14, -16] }, sizePx: 160 },
     right: 'start',
-    wrong: { base: 'end', pose: MIS, solid: true },
-    guides: [{ kind: 'path', role: 'wrong', pts: DRIFT }],
+    wrong: { base: 'start', pose: WRONG, solid: true },
+    guides: [{ kind: 'path', role: 'wrong', pts: ZOOM_WRONG.drift }],
     outlines: lm => ({ points: {}, lines: onWrong(lm) ? OUTLINES : [] }),
     callout: {
       right: { text: 'Forearms vertical', anchor: 'elbow.r' },
@@ -119,14 +117,17 @@ const feel = {
   watch: [],
   feelLine: 'You should feel this in the front and sides of your shoulders. Your triceps help.',
   rows: [
+    // D-FEEL-MEANS-CAUSAL (#385 6648438434): the card row's own cause at c8's strength ("can result in back pain").
     { key: 'low-back', where: 'Low-back pain while pressing', at: { muscles: ['lower_back'] },
-      means: 'You are leaning back from the low back, not the hips.',
+      means: 'Leaning back by arching the low back hard can cause back pain.',
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'back', claim: C(['CONSENSUS'], [SL], 'c8, c6') },
     { key: 'front-shoulder', where: 'Pain at the front shoulder', at: { muscles: ['front_delts'] },
-      means: 'You are pressing behind your neck.',
+      // W2 fix round (#385 6648438434, D-FEEL-MEANS-CAUSAL): c14 is an association, not a cause; c18 names technique.
+      // The panel's two sentences joined by a colon: copy lint allows one sentence in a row's means (ROW_MEANS_MAX_SENTENCES).
+      means: 'Could be technique: pressing behind the neck is linked to shoulder instability.',
       fix: "Stop and don't train through the pain. Press in front of your head.",
-      redFlag: 'shoulder', claim: C(['DATA', 'WEAK'], ['kolber2013', 'esenkaya2000', 'kolber2010'], 'c14, c18') },
+      redFlag: 'shoulder', claim: C(['DATA', 'WEAK'], ['kolber2010', 'kolber2013', 'esenkaya2000'], 'c18, c14') },
   ],
   claim: CL.c13,
 };
@@ -138,7 +139,7 @@ const MISTAKES = [
   { key: 'arch', title: 'Leaning back, low back arching', claim: CL.c8,
     fix: 'The weight is too heavy: end the set.' },
   { key: 'thumbless', title: 'Thumbless grip', claim: CL.c3,
-    fix: 'Wrap the thumbs.' },
+    fix: 'Wrap the thumbs.' },   // title and fix: c3 (W2 fix round, #385 6648438434)
 ];
 const RISKS = [
   { key: 'thumbless', text: 'Bar falling on the head with a thumbless grip.', claim: CL.c3 },
@@ -168,7 +169,7 @@ export default {
       // card zoom wrong (c4). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar in mid-palm, wrist bent back.' },
     ],
-    gripLine: 'Full grip, thumbs wrapped, bar on the heel of your palm. Your wrist stays almost straight.',
+    gripLine: 'Full grip, thumbs wrapped, bar on the heel of your palm. Your wrist stays almost straight.',   // c3, c4 (#385 6648438434)
     cue: 'Palm heel, wrist not bent back.',   // PLAN section 4, text B (c4)
   },
   contacts: ['standing-feet'],
@@ -184,7 +185,8 @@ export default {
   posture: [
     { key: 'forearms', label: 'Forearms vertical', detail: 'Elbows under the bar at the bottom, forearms straight up and down.',
       anchor: { landmark: 'elbow.r', pose: 'start' }, zoom: 'ohp-forearm-vertical', claim: CL.c5 },
-    // The plate's 'Head through' label (card plate.checkpoints 'Head clear'): c6, not the bar-in-front c14 (W2 panel).
+    // The plate's 'Head through' label and its cue (card plate.checkpoints 'Head clear'): c6, not the bar-in-front c14
+    // (W2 panel; W2 fix round, #385 6648438434).
     { key: 'head', label: 'Head clear', detail: 'Lean back slightly from the hips so the bar clears your chin.',
       anchor: { landmark: 'chin', pose: 'start' }, claim: CL.c6 },
     { key: 'back', label: 'Low back neutral', detail: 'Low back neutral. Lean comes from the hips, not the spine.',

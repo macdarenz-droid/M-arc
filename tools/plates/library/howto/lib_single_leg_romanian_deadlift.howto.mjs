@@ -98,6 +98,7 @@ const zooms = [
       right: 'Head, back and free leg in one straight line.',
       wrong: 'Back and shoulders rounded.',
     },
+    // alt (W2 fix round, #385 6648438434): Right c8 (one straight line), c9 (mid-shin); Wrong c7.
     alt: {
       right: 'Side view, bottom of the lift. Head, back and free leg form one straight line. The dumbbell is at mid-shin.',
       wrong: 'Side view. The back and shoulders round as the dumbbell is reached down to the floor.',
@@ -139,7 +140,9 @@ const feel = {
   feelLine: 'You should feel this in the back of your standing thigh and buttock.',
   rows: [
     { key: 'low-back', where: 'Lower back pain', at: { muscles: ['lower_back'] },
-      means: 'You are rounding your back while reaching the dumbbell low.',
+      // D-FEEL-MEANS-CAUSAL, D-FEEL-NOMEANS (#385 6648438434): the card ties no fault to harm (plate.mistake rankNote),
+      // so no cause is written and no label prints.
+      means: '',
       fix: "Stop the set. Don't train through the pain.",
       zoom: 'slrdl-line', redFlag: 'back', claim: CL.c7 },
   ],
@@ -151,7 +154,7 @@ const feel = {
 const MISTAKES = [
   { key: 'reach', title: 'Reaching to the floor, rounding', zoom: 'slrdl-line', claim: C(['CONSENSUS'], [TG], 'c7, c9'),
     fix: 'Stop around mid-shin with a flat back.' },
-  { key: 'hip', title: 'Opening the lifted-leg hip', claim: CL.c5,
+  { key: 'hip', title: 'Opening the lifted-leg hip', claim: C(['CONSENSUS'], [SL, TG], 'c5, c12'),
     fix: 'Keep both hips pointing at the floor. Shorten the range if needed.' },
   { key: 'toes', title: 'Weight drifting onto the toes', claim: CL.c11,
     fix: 'Push the hips back and sit into the standing heel.' },
@@ -183,7 +186,7 @@ export default {
     wrist: { ext: [-10, 10], limitText: 'Keep the wrist neutral, in line with the forearm.', claim: INHERIT_WRIST },
     pose: { thumb: 'wrapped' },   // === the parent's handling.pose.thumb; no hand pose is drawn (no hand zoom)
     faults: [],                   // the card has no hand zoom and no handling mistake is a hand fault
-    gripLine: 'One dumbbell in the hand opposite your standing leg. Grip it hard, thumb wrapped.',
+    gripLine: 'One dumbbell in the hand opposite your standing leg. Grip it hard, thumb wrapped.',   // c1, c18; thumb: inherit
     cue: 'Grip hard, arm straight.',   // c18, c3
   },
   contacts: ['standing-feet'],

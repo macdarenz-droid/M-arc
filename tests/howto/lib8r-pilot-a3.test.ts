@@ -184,13 +184,16 @@ describe('PILOT-A3 card truth, one tell per Mistake (moved from :134, :147-153, 
   it("reverse_lunge's tell names c18's fault on the low back (D-A3-REVTELL); dumbbell_fly's names c13's", () => {
     const rl = spec('reverse_lunge').mistake.tells[0];
     expect(cardOf('reverse_lunge').plate.mistake.claim).toBe('c18');
-    expect(rl.text).toMatch(/Low back arches/);
+    // D-PLATEFIX-PINS (#385, layers panel 6648438434): the c18 label is "Pelvis untucked"; the old "Low back arches" is red
+    expect(rl.text).toBe('Pelvis untucked');
+    expect('Low back arches').not.toBe(rl.text);
     // D-PLATEFIX-PINS (#385): the anchor is the faulty lumbar plus the pf1 R4 offset that ends the leader on the red lumbar curve
     const REVTELL_ANCHOR = { at: 'lumbar', pose: 'mistake', off: [-9.75, -7.61] };
     expect(rl.anchor).toEqual(REVTELL_ANCHOR);
     // mutation: the offset dropped (the leader back on the lumbar landmark, inside the grey body) is red
     expect({ at: 'lumbar', pose: 'mistake' }).not.toEqual(REVTELL_ANCHOR);
-    expect(rl.cue).toBe('The ribcage flares and the pelvis stays untucked, arching the low back.');
+    expect(rl.cue).toBe('The ribcage flares as you step back and the pelvis stays untucked.');
+    expect('The ribcage flares and the pelvis stays untucked, arching the low back.').not.toBe(rl.cue);   // mutation: the old cue is red
     expect(cardOf('reverse_lunge').claims.find((c: any) => c.id === 'c18').text).toMatch(/flaring the ribcage/);
     expect(cardOf('dumbbell_fly').plate.mistake.claim).toBe('c13');
     expect(spec('dumbbell_fly').mistake.tells[0].text).toMatch(/Wrists bend/);

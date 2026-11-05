@@ -109,6 +109,7 @@ const zooms = [
       right: 'Elbows against the sides at the top of the return.',
       wrong: 'Elbows drifted forward, upper arms swung up.',
     },
+    // alt (W2 fix round, #385 6648438434): Right c5 (elbows at the sides), c7 (bar at upper chest); Wrong c6.
     alt: {
       right: 'Side view, top of the pushdown. Upper arms hang down against the sides, bar at upper-chest level.',
       wrong: 'Side view, top of the pushdown. The upper arms swing forward and up, so the elbows leave the sides.',
@@ -126,11 +127,11 @@ const feel = {
   rows: [
     // The card's first row (back of the upper arm) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'lats', where: 'Sides of the back', at: { muscles: ['lats'] },
-      means: 'Your elbows drift forward, which brings in the lats.',
+      means: 'Elbows drifting forward brings in the lats.',   // D-FEEL-MEANS-CAUSAL: c6's cause, at its strength
       fix: 'Pin the elbows to your sides.',
       zoom: 'pushdown-elbow', claim: CL.c6 },
     { key: 'lower-back', where: 'Lower back pain', at: { muscles: ['lower_back'] },
-      means: 'You lean too far forward or arch your back.',
+      means: 'Leaning too far forward or arching the back strains the lower back.',   // D-FEEL-MEANS-CAUSAL: c11's words
       fix: "Stop and don't train through the pain. Stand taller, tilt only from the hips.",
       redFlag: 'back', claim: CL.lean },
     { key: 'elbows', where: 'Elbow discomfort or pain', at: { parts: ['elbow-left', 'elbow-right'] },

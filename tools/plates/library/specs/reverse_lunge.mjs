@@ -167,7 +167,7 @@ export default {
   callouts: [
     { key: 'shin', text: 'Front shin<br>vertical', anchor: { along: ['knee.r', 'ankle.r'], t: 0.45, off: [7, 0] }, guide: SHIN_PLUMB, cue: 'At the bottom, keep the front shin roughly vertical.' },
     { key: 'chest', text: 'Chest up', anchor: 'sternum', cue: 'Keep the trunk upright as the back knee lowers.' },
-    { key: 'weight', text: 'Weight even', anchor: 'buttock', guide: ['hips', MIDWAY], cue: 'Share the weight about evenly between both feet.' },
+    { key: 'weight', text: 'Weight even', anchor: 'buttock', guide: ['hips', MIDWAY], cue: 'At the bottom, share the weight about evenly between both feet.' },
   ],
   mistake: {
     pose: MISTAKE,
@@ -188,7 +188,7 @@ export default {
     tells: [
       // 'flare' box (fix round): left of the back, 10 px further left than the auto place, so the zoom link (focus up-left
       // to the ring) clears the label; the leader ends on the red lumbar curve (LUMBAR_OFF)
-      { key: 'flare', text: 'Low back arches', anchor: { at: 'lumbar', pose: 'mistake', off: LUMBAR_OFF }, box: { left: 20, top: 217 }, cue: 'The ribcage flares and the pelvis stays untucked, arching the low back.' },   // c18 (first: the card's topFault, F7)
+      { key: 'flare', text: 'Pelvis untucked', anchor: { at: 'lumbar', pose: 'mistake', off: LUMBAR_OFF }, box: { left: 20, top: 217 }, cue: 'The ribcage flares as you step back and the pelvis stays untucked.' },   // c18 (first: the card's topFault, F7)
       { key: 'ribs', text: 'Ribs flare', anchor: { at: 'chest', pose: 'mistake', off: RIBS_OFF }, box: { left: 266, top: 196 }, cue: 'The ribcage flares up instead of the pelvis tucking under.' },   // c18
     ],
   },
@@ -198,5 +198,5 @@ export default {
   // Tempo: no seconds in the card (c7, c16; 3 s down is a progression only, c15): the strip without seconds, exactly
   // tempoOf(strip/rows.json reverse_lunge) (D-STRIP-ROWS).
   tempo: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Rise', move: true, word: 'Quicker' }],
-  alt: 'Reverse lunge with dumbbells, side view. From standing tall, one leg steps back and the body lowers until the front thigh is parallel and the rear knee hovers just above the floor, front shin near vertical, front foot flat, rear foot on the ball, trunk upright, dumbbells hanging at the sides.',
+  alt: 'Reverse lunge with dumbbells, side view. From standing tall, one leg steps back and the body lowers until the rear knee hovers just above the floor, front shin near vertical, front foot flat, rear foot on the ball, trunk upright, dumbbells hanging at the sides.',
 };

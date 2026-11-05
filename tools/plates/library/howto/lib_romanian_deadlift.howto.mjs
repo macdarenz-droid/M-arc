@@ -3,7 +3,7 @@
 // docs/research/howto/cards/romanian_deadlift.json; its claim ids are named on each field's claim.
 // No hand zoom (D-SHIP-HANDW2, no-zoom.json gap-ruled): no pair key variant holds this card's hanging barbell for the
 // card's hand zoom `rdl-grip` (c22, c9), and no per-id hand pose is drawn without every number (ruling 8). Its hand
-// claims (thumbs wrapped, straps, width just outside the thighs) live in handling and setup step 3.
+// claims (thumbs wrapped, straps, width just outside the thighs) live in handling and setup step 1.
 // Parent of lib_single_leg_romanian_deadlift (D-SHIP-FAMILY, D-LIB9a-MAP form): handling.thumb.mode, handling.pose.thumb
 // and handling.wrist are compared leaf by leaf with the child, so the wrist limitText names no implement.
 // Red flags: the card's redFlags (back): LIB-5's back box, linked by the pain row's redFlag: 'back'. Tier-A way out:
@@ -33,6 +33,9 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-09-30', use: 'WEAK' },
   'baechle-grip': { cite: 'Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)', url: 'https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location',
     kind: 'textbook', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
+  // The wrist line's hold-archetype default (card grip.wrist), as lib_cable_fly lists it (W2 fix round, #385 6648438434).
+  'hold-default': { cite: 'Golden B hold archetype default (dumbbell_lateral_raise handling: thumb wrapped, contact mid-palm)', url: 'tools/plates/layers/exercises/dumbbell_lateral_raise.howto.mjs',
+    kind: 'secondary', access: 'full', checked: '2026-11-04', use: 'CONVENTION' },
   // The back box's own source (shared/back-box.mjs boxClaim), as lib_rope_triceps_pushdown lists it: the card's redFlags 'back'.
   'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
     kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
@@ -93,6 +96,8 @@ const zooms = [
       right: { text: 'Flat back', anchor: 'backMid' },
       wrong: { text: 'Back rounds', anchor: 'lumbar' },
     },
+    // Right caption and alt (W2 fix round, #385 6648438434): hips back c2, flat back c5, knees slightly bent c4, bar at
+    // mid-shin c6; the Wrong (rounded lower back) is c7.
     caption: {
       right: 'Hips back, flat back, knees slightly bent, bar at mid-shin.',
       wrong: 'Rounded lower back.',
@@ -141,13 +146,15 @@ const feel = {
   feelLine: 'You should feel this in your hamstrings. Lower until you feel tension along the back of the legs.',
   rows: [
     { key: 'low-back-more', where: 'Lower back more than hamstrings', at: { muscles: ['lower_back'] },
-      means: 'You are rounding your lower back, or the weight is too heavy.',
+      // D-FEEL-MEANS-CAUSAL (#385 6648438434): the card row's own cause (c7, c8), not said of the user.
+      means: 'Rounding the lower back, or a weight that breaks your form.',
       fix: 'Stop higher, before the back rounds.',
       zoom: 'rdl-bottom', claim: C(['CONSENSUS'], [NASM, SL], 'c7, c8, c5') },
     { key: 'low-back', where: 'Lower-back pain during or after sessions', at: { muscles: ['lower_back'] },
-      // The card row's own check-up line (c17: "get checked if pain is severe or lasts"), W2 panel restore; the causes
-      // stay in the 'soon' risk (c17, c19).
-      means: 'Severe, or still there after a few days to a week?',
+      // W2 fix round L6 (#385 6648438434, D-FEEL-MEANS-CAUSAL): c17's own cause ("usually comes from doing too much too
+      // soon or from technique"). Its check ("get checked if pain is severe or lasts") is the linked back box's: C8 and
+      // copy-lint refuse check-up wording in a row's fix (red-flag wording lives in redFlag).
+      means: 'Too much too soon, or your technique.',
       fix: "Stop. Don't train through the pain.",
       redFlag: 'back', claim: C(['CONSENSUS'], [SL], 'c17') },
   ],
@@ -159,7 +166,9 @@ const feel = {
 const MISTAKES = [
   { key: 'round', title: 'Rounding the lower back', zoom: 'rdl-bottom', claim: C(['CONSENSUS'], [NASM], 'c7, c8'),
     fix: 'Stop where the back stays flat. If it rounds, lower the weight.' },
-  { key: 'squat', title: 'Knees bending into a squat', zoom: 'rdl-bottom', claim: CL.c7,
+  // W2 fix round (#385 6648438434): no zoom link, as the Bottom close-up draws only the rounding; the row stays shown
+  // (D-TEXT-GOLDEN). The fix: knees at a slight bend c4, hips back c2, the fault c7.
+  { key: 'squat', title: 'Knees bending into a squat', claim: C(['CONSENSUS'], [NASM, SL, ACE], 'c7, c4, c2'),
     fix: 'Lock the knees at a slight bend and push the hips back.' },
   { key: 'heavy', title: 'Too heavy, form breaks', claim: CL.c8,
     fix: 'Go lighter and move smoothly.' },
@@ -188,24 +197,28 @@ export default {
     // (GRIP-AND-FEEL 3.1 `hold`, as golden B's dumbbell_lateral_raise), not a card number. Shared leaf for leaf with
     // lib_single_leg_romanian_deadlift (D-LIB9a-MAP), so its limitText names no implement.
     wrist: { ext: [-10, 10], limitText: 'Keep the wrist neutral, in line with the forearm.',
-      claim: C(['CONSENSUS'], [NASM], 'c9, card grip.wrist. The ext range is the hold archetype\'s (GA 3.1), a convention, not a card number.') },
+      // W2 fix round (#385 6648438434): no card claim id; the line is card grip.wrist's hold-archetype default.
+      claim: C(['CONVENTION'], ['hold-default'], 'card grip.wrist (hold archetype). The ext range is the hold archetype\'s (GA 3.1), a convention, not a card number.') },
     pose: { thumb: 'wrapped' },   // c22; no hand pose is drawn (no hand zoom)
     faults: [],                   // the card's hand zoom has no Wrong and no handling mistake is a hand fault
-    gripLine: 'Hands just outside your thighs, thumbs wrapped round the bar. Straps are fine if grip limits the set.',
+    gripLine: 'Hands just outside your thighs, thumbs wrapped round the bar. Straps are fine if grip limits the set.',   // c9, c22
     cue: 'Thumbs wrapped, wrists neutral.',   // c22, card grip.wrist
   },
   contacts: ['standing-feet'],
   setup: [
+    // W2 fix round L2 (#385 6648438434): feet and grip are set before the bar moves (c10, c9, c22), then the bar is
+    // unracked or lifted off the floor (c11), then it rests on the thighs with the shoulders set (c1, c9).
+    { kind: 'grip', text: 'Feet hip width. Grip slightly wider than shoulders, thumbs wrapped.',
+      claim: C(['CONSENSUS'], [NASM, 'baechle-grip', SL], 'c10, c9, c22') },
     { kind: 'get-in', text: 'Unrack the bar, or deadlift it off the floor.', claim: CL.c11 },
-    { kind: 'position', text: 'Feet hip width, bar resting on the thighs.', claim: C(['CONSENSUS'], [NASM, ACE], 'c10, c1') },
-    { kind: 'grip', text: 'Grip slightly wider than shoulders. Shoulders back and down.', claim: CL.c9 },
+    { kind: 'position', text: 'Bar resting on the thighs. Shoulders back and down.', claim: C(['CONSENSUS'], [ACE, NASM], 'c1, c9') },
     // D-TEXT-GOLDEN (#385 6637650243): posture 'Push the heels into the floor to stand.' (c3) had no visible slot.
     { kind: 'brace', text: 'Breathe in, brace slightly. Push the heels into the floor to stand.', claim: C(['CONSENSUS'], [SL, ACE], 'c12, c3') },
     { kind: 'safety', text: 'Want to avoid turning heavy weight around in mid-air? Lower onto blocks.', claim: CL.c18 },
   ],
   posture: [
     { key: 'hips', label: 'Hips back', detail: 'Push the hips back to lower the bar.',
-      anchor: { landmark: 'buttock', pose: 'end' }, claim: CL.c2 },
+      anchor: { landmark: 'buttock', pose: 'end' }, claim: C(['CONSENSUS'], [ACE, SL], 'c2, c4') },
     { key: 'knees', label: 'Knees fixed', detail: 'Knees fixed at a slight bend. The movement is at the hips.',
       anchor: { landmark: 'knee.r', pose: 'end' }, zoom: 'rdl-bottom', claim: CL.c4 },
     { key: 'back', label: 'Spine neutral', detail: 'Spine neutral. Stop before it rounds.',
