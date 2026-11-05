@@ -1910,14 +1910,19 @@ describe('LIB-16R2: the approved R2 plates stay byte-identical (panel mx12, APPR
   });
 });
 
+const W6_LTH_RED = ['low-to-high-cable-fly cues', 'low-to-high-cable-fly mistakeOverlay', 'low-to-high-cable-fly tells'];   // LIB-SHIP W6, measured
 describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED at 2b128090, page 5d51f182…bbff30d)', { timeout: T }, () => {
   // golden.mjs fragmentsOf of the five plates approved by panel mx14, computed from buildLb6Page() at 2b128090; their
   // specs and composers are unchanged since then.
   const APPROVED: Record<string, Record<string, string>> = {
+    // LIB-SHIP W6 (F-ELBOWS-DROP-LTH, #393 6647923934; D-PLATEFIX-PINS form): the 'drop' tell reads "Becomes a press" (c11),
+    // so mistakeSvg (the label's leader end), mistakeOverlay, tells and cues are re-measured from buildLb6Page() on this
+    // head; every other fragment is the mx14 value. Was: mistakeSvg 4d5243c5…, mistakeOverlay 82ce4b5b…, tells 974fd5d7…,
+    // cues e57bcb07… (the mutation below keeps each old value red).
     'low-to-high-cable-fly': { normalSvg: '57eb29aeb02e58342a999ae4a7a1bdf2acd55c644ac8041855342159d56429b9', normalOverlay: '11ae46b8a9bcee9faac4f0ac0c11db8f9f2bcb1ae13280cdf00ca5c0b941cb6a',
-      mistakeSvg: '4d5243c528601e5a445356e7ca6fa5c49b2d4275f3cf806645f4b7221fc1b631', mistakeOverlay: '82ce4b5b905fdbd1b2bbfa1057946658c81beee880bcda835361a60dd8994f4e',
-      tells: '974fd5d7ae64e02e87f859bccdabbb824add81f8cc501ed38abe50e0a29b6b25', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
-      cues: 'e57bcb073136e623bc0c4c7fe2a2c2743dd31dabd42ec1e7451ec62f46699c01', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
+      mistakeSvg: 'ef8fe288185a6ed0d38dad7f97982a8b04d5b27b67a4b76e41d97c7413f2b760', mistakeOverlay: '78994857a72ad54f252e0b57647baf1f64e5a0d9bf4d25ae32fe0a0f169d554b',
+      tells: '4ef6ef619c62ecbb1c5269c11f4f37c7c9a747f7f194ae7a2e8954acae188c59', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
+      cues: '95a9069cb601c2e76e0505e2ad2c27e09b9c318c4f9be10b8f05981cd0d59860', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
       mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
     'high-to-low-cable-fly': { normalSvg: '9b35cfa8ac033cf03223f5aa482b2c4efa341f8e6c4dfac4b00c781ecdfd487b', normalOverlay: '1f0d451386e2e12cc6b8e8c4fd6db326ccc0b6dc981d383312e41bbcce5ef6e1',
       mistakeSvg: '9eb229e0544fb487f59e4910d293c6da9c05ba0d1cf6242be3104ab7d975e402', mistakeOverlay: 'e954e9ff44fd970595ba91dcbb8f18038510a7bbcc73aee5d3fee8ce056b2e85',
@@ -1950,6 +1955,14 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
   it('mutation: one byte in the rear delt fly alt is red', async () => {
     const html = (await fullPage()), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'rear-delt-fly');
     expect(problems(html.replace(p.alt, p.alt.replace(/e/, 'E')))).toContain('rear-delt-fly alt');
+  });
+  // LIB-SHIP W6 (F-ELBOWS-DROP-LTH, D-PLATEFIX-PINS: a mutation per re-pinned value): the old 'Elbows drop' tell is red on
+  // all four re-pinned fragments, and the normal-view fragments do not move with it
+  it('LIB-SHIP W6 mutation: the page with the old "Elbows drop" tell text put back is red on the re-pinned fragments', async () => {
+    const html = (await fullPage()), back = html.split('Becomes<br>a press').join('Elbows<br>drop').split('Becomes a press').join('Elbows drop')
+      .split('Bending the elbows more than slightly turns the fly into a press.').join('Your elbows drop under your hands, as in a press.');
+    expect(back).not.toBe(html);
+    expect(problems(back).filter(x => x.startsWith('low-to-high-cable-fly')).sort()).toEqual(W6_LTH_RED);
   });
 });
 

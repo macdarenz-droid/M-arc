@@ -41,6 +41,11 @@ export const GOLDEN_B_CLOSEUPS = Object.fromEntries(Object.entries(LEGACY_SCRIPT
 export const GOLDEN_B_SPEC = { groups: GOLDEN_B_GROUPS, closeups: GOLDEN_B_CLOSEUPS, optionsUrl: GOLDEN_B_OPTIONS_URL };
 export const GOLDEN_B_JUMP = '  <a class="pg-jump" href="#machine-chest-press-chip-hand">Machine chest press: the wrist fix <span aria-hidden="true">&darr;</span></a>\n';
 
+/** D-SHIP-W6-NOPRIMARY: [mark, clause, Main legend span], equal to gen/feel.mjs NOPRIMARY_MARK, NOPRIMARY_CLAUSE and
+ *  MAIN_LEGEND_SPAN (a test pins the three). */
+export const FEEL_NOPRIMARY = Object.freeze(['aria-label="Where you should feel it. Main: .', ' Main: .',
+  '<span><svg class="feel-sw sw-pri" viewBox="0 0 14 14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="3"/></svg>Main</span>']);
+
 /** One exact-once source patch; throws, naming it, when the vendored text it expects is not there exactly once. */
 export function patchOnce(src, name, from, to) {
   const n = src.split(from).length - 1;
@@ -135,6 +140,10 @@ export function patchHowtoLayers(src, plan) {
   // D-FEEL-NOMEANS-PAGE (#379 6636105974): a feel row with an empty or missing `means` prints no "Usually means" label,
   // as gen/feel.mjs dropEmptyMeans does for the app. Rows with a means print the vendored bytes unchanged.
   src = patchOnce(src, 'feel no means', '<p><b>Usually means</b>${esc(r.means)}</p>', '${r.means ? `<p><b>Usually means</b>${esc(r.means)}</p>` : \'\'}');
+  // D-SHIP-W6-NOPRIMARY (#393 6647923934): a feel section with no primary muscle drops every " Main: ." clause and the one
+  // Main legend span, as gen/feel.mjs dropEmptyPrimary does for the app (FEEL_NOPRIMARY below equals its constants, pinned
+  // by tests/howto/lib-ship.test.ts). A section with a primary is returned unchanged.
+  src = patchOnce(src, 'feel no primary', 'function feelSection(pre, howto, M) {\n', `function feelSection(pre, howto, M) {\n  const s = feelSection0(pre, howto, M), [mark, clause, span] = ${JSON.stringify(FEEL_NOPRIMARY)};\n  return s.includes(mark) ? s.split(clause).join('').replace(span, '') : s;\n}\nfunction feelSection0(pre, howto, M) {\n`);
   return src;
 }
 
