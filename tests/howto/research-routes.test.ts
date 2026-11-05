@@ -55,15 +55,15 @@ describe('RESEARCH-ROUTES-1 P1-b/P1-c: the ruled fields left inherit[] (F-W4-INH
   });
 });
 
-// The D-CROP-PIN form (#380 6627881461): MANIFEST.json pins back-pain-box.json in 13 rows, so this lane re-pins exactly
-// that one key; every other entry equals main 8bb433bd.
+// The D-CROP-PIN form (#380 6627881461): MANIFEST.json pins back-pain-box.json in 16 rows (13 before main e623d3ef), so this lane re-pins exactly
+// that one key; every other entry equals main e623d3ef.
 describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-box.json', () => {
-  it('every row that lists it pins the current file, and every other entry equals main 8bb433bd', () => {
+  it('every row that lists it pins the current file, and every other entry equals main e623d3ef', () => {
     const m = JSON.parse(rd('tools/plates/library/MANIFEST.json'));
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
-    expect(rows).toHaveLength(13);
+    expect(rows).toHaveLength(16);
     for (const r of rows) { expect(r.files[BOX]).toBe(sha(rd(BOX))); r.files[BOX] = 'X'; }
-    // main 8bb433bd's MANIFEST.json with the same one entry blanked (re-measure if a later re-pin merges first)
-    expect(sha(JSON.stringify(m))).toBe('f0ec7bd56b6752507fe2577f27451aea89da56b063955813deb433f231f493b9');
+    // main e623d3ef's MANIFEST.json with the same one entry blanked (was f0ec7bd5… on main 8bb433bd; re-measure if a later re-pin merges first)
+    expect(sha(JSON.stringify(m))).toBe('daf6779bd9505c07f28f805fac904bd0acd6408c78a65a8ce966691814502e69');
   });
 });

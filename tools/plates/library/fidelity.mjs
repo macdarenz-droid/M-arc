@@ -167,12 +167,21 @@ async function entryJob({ browser, port, R, order, custom, fixtures, root }, { l
       // G7 (ht3Behaviour): after the first Mistake tap and a tell, no .form-guide element inside the open sheet
       await page.locator(`#${chrome}-mistake`).click();
       if (!(await page.locator('dialog.sheet.ht .ht-plate[data-mode="mistake"]').count())) bad.push('A3: the first Mistake tap did not insert the mistake figure');
-      else await page.locator('dialog.sheet.ht .ht-plate[data-mode="mistake"] .plate-callout').nth(1).click();
+      else await g7Tell(page, bad);
       if (await page.locator('.form-guide').count()) bad.push('G7: a .form-guide element is inside the open How-to sheet');
       await closeHowTo(page);
     }
   } catch (e) { bad.push(e.message.split('\n')[0]); } finally { await ctx.close(); }
   R.check(lib, theme, st, bad);
+}
+
+/** G7's tell (LIB-SHIP W2, D-SHIP-G7ONE, #379 6641008259): tap the Mistake plate's last callout, so a one-callout plate
+ *  still has its tell tapped (the 8's HT-3 path keeps its .nth(1)); no callout fails loud by name. */
+export async function g7Tell(page, bad) {
+  const tells = page.locator('dialog.sheet.ht .ht-plate[data-mode="mistake"] .plate-callout');
+  if (!(await tells.count())) { bad.push('A3: G7: the mistake figure has no .plate-callout to tap (D-SHIP-G7ONE)'); return false; }
+  await tells.last().click();
+  return true;
 }
 
 /** HT10 (HT10_PER_ID): the sweep and the reduced-motion sweep (ht10Sweep, reused), and A2 (the plate compare after the script). */
@@ -188,12 +197,18 @@ async function ht10Job(ctx, { lib, chrome, index, theme }) {
     if (!reduced && r.stats.steps < 15) bad.push(`A1: only ${r.stats.steps} script steps probed, expected at least 15`);
     R.check(lib, theme, stateOf('HT10', state, WIDTH), bad);
   }
-  const src = ht10Script.toString();
-  // eslint-disable-next-line no-new-func
-  const mutate = new Function('pre', `return (${src})(pre).then(() => {})`);
+  const mutate = a2Mutate(ht10Script.toString());
   const st = { ...plateStats() }, a2 = stateOf('HT10', 'a2', WIDTH);
   await plateJob(browser, port, R, { lib, chrome, index, theme, html: pages[lib].plates, order, custom, full: false, widths: [], mutate, markup: false, as: a2, stats: st });
   if (st.pairs < 2) R.fail(lib, theme, a2, `A2: only ${st.pairs} plate pairs compared, expected at least 2`);
+}
+/** HT10-A2's page mutation: HT-10's script, then (LIB-SHIP W2, D-SHIP-A2FEEL, #379 6640877874) the sheet's feel map scrolled
+ *  into view. The script can start the feel sweep and end with the map off-screen, where the app's hold observer pauses
+ *  the band (useFeelMap.ts, FEEL_JS condition 6); a paused sweep never ends, so A2's settleApp would time out. Back in
+ *  view the sweep resumes and ends on its own: nothing is finished or skipped. */
+export function a2Mutate(src) {
+  // eslint-disable-next-line no-new-func
+  return new Function('pre', `return (${src})(pre).then(() => { document.querySelector('dialog.sheet.ht .feel-map')?.scrollIntoView({ block: 'center' }); })`);
 }
 const extractChromeIds = html => [...new Set([...String(html).matchAll(/id="card-([a-z0-9-]+)"/g)].map(m => m[1]))];
 

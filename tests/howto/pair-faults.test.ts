@@ -171,22 +171,55 @@ describe('F-PAIR-FAULTS A3: the reds', () => {
 // A2: tools/plates/library/MANIFEST.json moves only the keys of the files this card changes (manifestOf, D-CROP-PIN form)
 const MOVED = ['tools/plates/library/build-layers-page.mjs', 'tools/plates/library/hands/pairs.mjs'];
 // sha256 of main cb9a6dae's MANIFEST.json (JSON.stringify of the parsed file) with MOVED's values blanked in every row
-// RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
-// research-routes.test.ts (was d7f80b6f… without it; re-measured on main 8bb433bd).
-const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
-const MANIFEST_BLANKED_MAIN = 'e0f9a4bc64eb78a2b96f2f998b11f1c4d150d7de17ec1085bf3e3da246780c43';
+const MANIFEST_BLANKED_MAIN = 'd7f80b6f1768f11a08abfcb1ecaa28bad6c429f2a276cfe0619106dae8d728c0';
 const blanked = (m: any, keys = MOVED) => { const c = structuredClone(m); for (const r of Object.values<any>(c.rows)) for (const k of keys) if (k in r.files) r.files[k] = ''; return sha(JSON.stringify(c)); };
+// LIB-SHIP W2 (#379, merge of main cf28ab23, both sides kept): W2 also re-pins these keys (the D-CROP-PIN / D-SHAPES-PIN
+// lessW2 list in crop-projection.test.ts and lib-shapes.test.ts), adds these keys to these rows and adds PILOT-B2's lib_crunch
+// row. Each W2 key pins its file's current sha; with W2's changes taken out as well, the manifest is main cb9a6dae's with
+// MOVED and W2_MOVED blanked (49909603): every other entry still equals main.
+const W2_MOVED = ['tools/plates/library/batches/pilot-a.json', 'tools/plates/library/batches/pilot-b.json',
+  ...['barbell_overhead_press', 'barbell_row', 'bent_over_dumbbell_rear_delt_fly', 'box_jump', 'cable_fly', 'dumbbell_bench_press', 'dumbbell_fly',
+    'dumbbell_shoulder_press', 'mountain_climbers', 'pec_fly', 'plank', 'push_up', 'reverse_lunge', 'romanian_deadlift', 'rope_triceps_pushdown',
+    'seated_leg_curl', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'upright_row'].map(id => `tools/plates/library/howto/lib_${id}.howto.mjs`),
+  'tools/plates/library/pages/pilot-a.closeups.mjs', 'tools/plates/library/pages/pilot-a.layers.json'];
+const W2_ADDED: Record<string, string[]> = {
+  'docs/research/howto/shared/back-pain-box.json': ['lib_bent_over_dumbbell_rear_delt_fly', 'lib_box_jump'],
+  'tools/plates/library/shared/back-box.mjs': ['lib_bent_over_dumbbell_rear_delt_fly', 'lib_box_jump'],
+  'tools/plates/library/pages/pilot-b.closeups.mjs': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
+  'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
+};
+// RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
+// research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef).
+const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
+const MANIFEST_BLANKED_MAIN_W2 = '5a51002ef2a7fb2a551601cc78f1b9d338d45f87c6f5be63b23d4853eebf0532';
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
+  /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
+  const lessW2 = (m: any) => {
+    expect(Object.keys(m.rows)).toContain('lib_crunch');
+    delete m.rows.lib_crunch;
+    for (const [id, r] of Object.entries<any>(m.rows)) {
+      for (const k of W2_MOVED) if (k in r.files) { expect([id, k, r.files[k]]).toEqual([id, k, sha(read(k))]); r.files[k] = ''; }
+      for (const [k, ids] of Object.entries(W2_ADDED)) if (ids.includes(id)) { expect([id, k, r.files[k]]).toEqual([id, k, sha(read(k))]); delete r.files[k]; }
+    }
+    return m;
+  };
+  const current = () => JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
   it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
-    const m = JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
-    expect(blanked(m, [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN);
-    for (const k of MOVED) for (const r of Object.values<any>(m.rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
+    const m = current();
+    // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out
+    expect(blanked(lessW2(m), [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN_W2);
+    for (const k of MOVED) for (const r of Object.values<any>(current().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
-    const m = JSON.parse(read('tools/plates/library/MANIFEST.json').toString()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => ![...MOVED, RR_BOX].includes(k))!;
+    const m = lessW2(current()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX)!;
     row.files[other] = '0'.repeat(64);
-    expect(blanked(m, [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN);
-    expect(blanked(JSON.parse(read('tools/plates/library/MANIFEST.json').toString()), [MOVED[0]!, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN);
+    expect(blanked(m, [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(current()), [MOVED[0]!, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    // LIB-SHIP W2: a W2 key that does not pin its file, or a crunch row missing, is red
+    const bad = current(); (Object.values<any>(bad.rows).find(r => W2_MOVED[0]! in r.files)).files[W2_MOVED[0]!] = '0'.repeat(64);
+    expect(() => lessW2(bad)).toThrow();
+    const noCrunch = current(); delete noCrunch.rows.lib_crunch;
+    expect(() => lessW2(noCrunch)).toThrow();
   });
 });

@@ -83,18 +83,46 @@ describe('F-CROP-FRONT crops project as the plate', { timeout: 300_000 }, () => 
 describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.mjs and hand.mjs', () => {
   const KEYS = ['tools/plates/library/render/closeup/crop.mjs', 'tools/plates/library/render/closeup/hand.mjs'];
   const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
+  // LIB-SHIP W2 (#379; [golden update] re-pins): W2 re-pins these keys (its sheets, batches, closeups, layers configs and
+  // build-layers-page.mjs), adds these keys to these rows, and adds PILOT-B2's lib_crunch row. Each W2 key pins its
+  // file's current sha; with the W2 keys blanked (moved) or removed (added) and the crunch row removed, the manifest
+  // equals main cb9a6dae's with the same blanks (6dd225c2): every other entry still equals main.
+  const W2_MOVED = ['tools/plates/library/batches/pilot-a.json', 'tools/plates/library/batches/pilot-b.json', 'tools/plates/library/build-layers-page.mjs',
+    ...['barbell_overhead_press', 'barbell_row', 'bent_over_dumbbell_rear_delt_fly', 'box_jump', 'cable_fly', 'dumbbell_bench_press', 'dumbbell_fly',
+      'dumbbell_shoulder_press', 'mountain_climbers', 'pec_fly', 'plank', 'push_up', 'reverse_lunge', 'romanian_deadlift', 'rope_triceps_pushdown',
+      'seated_leg_curl', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'upright_row'].map(id => `tools/plates/library/howto/lib_${id}.howto.mjs`),
+    'tools/plates/library/pages/pilot-a.closeups.mjs', 'tools/plates/library/pages/pilot-a.layers.json'];
+  const W2_ADDED: Record<string, string[]> = {
+    'docs/research/howto/shared/back-pain-box.json': ['lib_bent_over_dumbbell_rear_delt_fly', 'lib_box_jump'],
+    'tools/plates/library/shared/back-box.mjs': ['lib_bent_over_dumbbell_rear_delt_fly', 'lib_box_jump'],
+    'tools/plates/library/pages/pilot-b.closeups.mjs': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
+    'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
+  };
+  /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
+  const lessW2 = (m: any) => {
+    delete m.rows.lib_crunch;
+    for (const [id, r] of Object.entries<any>(m.rows)) {
+      for (const k of W2_MOVED) if (k in r.files) { expect(r.files[k], `${id} ${k}`).toBe(sha(readFileSync(path(k)))); r.files[k] = 'X'; }
+      for (const [k, ids] of Object.entries(W2_ADDED)) if (ids.includes(id)) { expect(r.files[k], `${id} ${k}`).toBe(sha(readFileSync(path(k)))); delete r.files[k]; }
+    }
+    return m;
+  };
   it('every pinned row pins the current crop.mjs and hand.mjs, and every other entry equals main 8d596fab', () => {
     const m = JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
-    expect(rows).toHaveLength(21);
+    expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
+    expect(Object.keys(m.rows)).toContain('lib_crunch');
     for (const r of rows) for (const k of KEYS) { expect(r.files[k]).toBe(sha(readFileSync(path(k)))); r.files[k] = 'X'; }
     // F-PAIR-FAULTS (#386): build-layers-page.mjs's and pairs.mjs's keys are re-pinned there and pinned exactly by pair-faults.test.ts
-    for (const r of rows) for (const k of ['tools/plates/library/build-layers-page.mjs', 'tools/plates/library/hands/pairs.mjs']) r.files[k] = 'X';
-    // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts
-    for (const r of rows) if ('docs/research/howto/shared/back-pain-box.json' in r.files) r.files['docs/research/howto/shared/back-pain-box.json'] = 'X';
-    // main cb9a6dae's MANIFEST.json with the same entries blanked (was 497e6f30… on main 8d596fab without F-PAIR-FAULTS's two; re-measured)
-    // (was b126d854… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main 8bb433bd)
-    expect(sha(JSON.stringify(m))).toBe('f7ce35cd35b3d769e6c335437b3c87d0367c35d6e3f6acc71e3701dabe88e403');
+    // (build-layers-page.mjs's key is checked against its file and blanked by lessW2, a W2 key too)
+    for (const r of rows) r.files['tools/plates/library/hands/pairs.mjs'] = 'X';
+    // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
+    // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
+    // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts;
+    // each row that still lists it after lessW2 must pin the current file, then it is blanked too
+    const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync(path('docs/research/howto/shared/back-pain-box.json')))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
+    // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
+    expect(sha(JSON.stringify(rrBox(lessW2(m))))).toBe('99d9824be548ecd2454a92bb35c43c1339eca13f8d6731660c6140f2d30e882e');
   });
 });
 

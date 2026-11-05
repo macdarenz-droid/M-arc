@@ -2,13 +2,14 @@
 // (layers/exercises/machine_chest_press.howto.mjs, barbell_back_squat.howto.mjs). Every shown string restates a claim of
 // the research card docs/research/howto/cards/plank.json (cited in its field's claim, cN = card claim id).
 // Handling: none (card grip note: hand archetype none, forearm plank, no hand zoom).
-// Feel (ruling D-SHIP-Q7): the card's only primary, `core`, is text only (feel.textOnly, as the squat; C2 refuses `core`
-// in any drawn role, the map paints it on the serratus); abs and obliques are drawn as secondary. The card leaves no
-// other primary, so feel.primary is empty.
+// Feel (W2 panel #6633524031, L4): the card's only primary, `core`, is drawn as Main on the abs and obliques, the two
+// regions c10 names as working muscles (rectus abdominis, obliques) and the intro line's "front and sides of the belly".
+// C2 refuses `core` as a drawn muscle id (the map paints it on the serratus), so the two regions stand for it. The card's
+// secondary lists the same two, so feel.secondary is empty.
 //
 // Additions to the architecture's types, used as golden B uses them:
 //   FeelSpec.textOnly   muscles named in the text, never painted (barbell_back_squat)
-//   ZoomSpec.callouts   one label per crop ({ text, guide }), machine_chest_press
+//   ZoomSpec.callout    one label per crop ({ text, anchor }), the zoom shell's shape (lib_dumbbell_biceps_curl)
 //   stills              still poses for the posture crops, built from the plate spec's own poses
 import plateSpec from '../specs/plank.mjs';
 import { landmarksOf } from '../engine.mjs';
@@ -25,6 +26,9 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'DATA' },
   'harvard-plank': { cite: 'Try this move for better core strength (Harvard Health Publishing, 2021)', url: 'https://www.health.harvard.edu/healthy-aging-and-longevity/try-this-move-for-better-core-strength',
     kind: 'coach', access: 'full', checked: '2026-10-22', use: 'CONSENSUS' },
+  // The back box's own source (shared/back-box.mjs boxClaim), as lib_rope_triceps_pushdown lists it: the card's redFlags 'back'.
+  'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
+    kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
 };
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });
@@ -39,8 +43,6 @@ const CL = {
   c8: C(['CONSENSUS'], ['ace-plank'], 'card c8'),
   c10: C(['DATA'], ['cortell-2017', 'schoenfeld-2014'], 'card c10'),
   c11: C(['DATA'], ['cortell-2017'], 'card c11'),
-  hike: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c13'),
-  sag: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c2, c14'),
   setupLine: C(['CONSENSUS'], ['ace-plank'], 'card c1, c3'),
   cueLine: C(['CONSENSUS'], ['ace-plank'], 'card c5, c4'),
 };
@@ -49,12 +51,19 @@ const CL = {
 // Built from the plate spec's own held pose (no new geometry beyond what the card names):
 //   sag   (card zoom hip-line Wrong, c4 "sagging low back"): the low back arches (lumbar extension SAG); the forearms and
 //         toes stay on their floor spots, so root, pelvis tilt and ankle are solved as the spec solves its Mistake.
-//         How far it sags is a drawing choice (the card gives no number), as the spec's HIKE_HIP is.
-//   shrug (card zoom shoulder-stack Wrong, c5): the shoulder girdle raised SHRUG cm, forearms on their spots, so the
-//         shoulders move toward the head, off the elbows. 5 cm is barbell_shrug's card shrug; not in this card.
-// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SAG 20 deg and SHRUG
-// 5 cm are Wrong-pose sizes no card gives; no number from them appears in user copy; the layers panel judges them.
-const H = 1.75, SAG = 20, SHRUG = 5;
+//         How far it sags is a drawing choice (the card gives no number), as the spec's HIKE_HIP is. W2 panel round 2
+//         (#6634756753): SAG is sized so the sag reads at panel size (the hip joint about 50 px and the low back's
+//         lowest point about 45 px below the shoulder-heel line at 2x, the belly still off the floor).
+//   off   (card zoom shoulder-stack Wrong, c5 "not over the elbows"; handlingMistakes[2] "shoulders drifting away from
+//         the elbows"): the body slides forward over the fixed forearms until each upper arm leans OFF_ELBOW deg forward
+//         of the plumb line (the shoulder away from its elbow, the body kept straight, the toe tips on the floor, solved
+//         as the sag). The elbow and the forearm stay on their floor spots (reach IK, the spec's own targets). W2 panel
+//         (#6633524031): the shrug is not drawn (it reads only as this drift), so the Wrong label names the drift and
+//         the shrug stays a text checkpoint (posture 'shoulders', c5).
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SAG 45 deg
+// and OFF_ELBOW 25 deg are Wrong-pose sizes no card gives; no number from them appears in user copy; the layers panel
+// judges them. OFF_ELBOW 25 deg is rope_triceps_pushdown's spec MIS_SHOULDER (its upper arm swung off the plumb line).
+const H = 1.75, SAG = 45, OFF_ELBOW = 25;
 const END = plateSpec.poses.end, LE = landmarksOf(END, H), SH = LE['shoulder.r'], TOE = LE['toe.r'];
 function solve(p0, make, res, iters = 30) {   // Newton with finite differences (the spec's own solver)
   const keys = Object.keys(p0); const p = { ...p0 };
@@ -75,23 +84,44 @@ function solve(p0, make, res, iters = 30) {   // Newton with finite differences 
 const sagPose = q => ({ ...END, root: { at: [0, q.y, q.z], tilt: q.tilt }, trunk: -SAG, ankle: q.ankle });
 const SQ = solve({ y: END.root.at[1] - 0.05, z: END.root.at[2], tilt: END.root.tilt - 10, ankle: 10 }, sagPose,
   lm => [lm['shoulder.r'][1] - SH[1], lm['shoulder.r'][2] - SH[2], lm['toe.r'][1], lm['toe.r'][2] - TOE[2]]);
+// off: the shoulder target OFF_ELBOW deg forward of the plumb over the held elbow (+z is toward the head), the body
+// straight (END's trunk, hip, knee), the toe tips on the floor; root y, z and pelvis tilt solved
+const EL = LE['elbow.r'], L_UA = Math.hypot(SH[1] - EL[1], SH[2] - EL[2]), R = Math.PI / 180;
+const SH_OFF = [EL[1] + L_UA * Math.cos(OFF_ELBOW * R), EL[2] + L_UA * Math.sin(OFF_ELBOW * R)];
+const offPose = q => ({ ...END, root: { at: [0, q.y, q.z], tilt: q.tilt } });
+const OQ = solve({ y: END.root.at[1], z: END.root.at[2] + 0.1, tilt: END.root.tilt }, offPose,
+  lm => [lm['shoulder.r'][1] - SH_OFF[0], lm['shoulder.r'][2] - SH_OFF[1], lm['toe.r'][1]]);
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
   sag: { pose: sagPose(SQ) },
-  shrug: { pose: { ...END, scap: { elev: SHRUG, pro: 0 } } },
+  off: { pose: offPose(OQ) },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 const zooms = [
   {
     key: 'hip-line', chip: 'Hip line', heading: 'Hip line', kind: 'posture',
-    crop: { center: { landmark: 'buttock', pose: 'end', dx: 0, dy: 0 }, sizePx: 150 },
+    // zoom shell (render/closeup/crop.mjs). W2 panel round 2 (#6634756753, L5): both crops run from the knees to the
+    // shoulders so the trunk fills the panel (the window centred on the right pose's hip, `off` and `sizePx` drawing
+    // values). The Wrong is the sag still drawn alone (solid), so its anchors resolve on the sagged pose ('mistake'
+    // falls back to the shown pose). Guides, both on the right pose's joints or the sag's:
+    //   spine - the straight shoulder-to-heel reference (c4, the plate's plank line, plank.mjs datum[0]) on the RIGHT
+    //           pose in both halves (accent in Right, grey in Wrong); in the Wrong the sagged trunk falls below it. Its
+    //           stroke needs the closeup css option `spine` on plank's record (pilot-a.closeups.mjs).
+    //   drop  - the red arrow down at the hips: from above the reference over the right hip to the sagged hips' top
+    //           (the offsets, plate px, are drawing values that start the arrow above the line and end it at the body).
+    // The Wrong callout dot sits on the lowest point of the sagged back (the lumbar dip; `off` nudges it onto the outline).
+    crop: { center: { at: 'hip.r', pose: 'right', off: [2, 20] }, sizePx: 180 },
+    guides: [
+      { kind: 'spine', from: { at: 'heel.r', pose: 'right' }, to: { at: 'shoulder.r', pose: 'right' }, extend: [0.06, 0.06] },
+      { kind: 'drop', from: { at: 'hip.r', pose: 'right', off: [0, -14] }, to: { at: 'hip.r', pose: 'mistake', off: [0, -23] } },
+    ],
     right: 'end',
-    wrong: { still: 'sag', over: 'end' },
-    callouts: {
-      right: { text: 'Hips level', guide: 'plank-line' },
-      wrong: { text: 'Low back sags', guide: 'plank-line' },
+    wrong: { base: 'end', pose: stills.sag.pose, solid: true },
+    callout: {
+      right: { text: 'Hips level', anchor: 'hip.r' },
+      wrong: { text: 'Low back sags', anchor: { at: 'lumbar', pose: 'mistake', off: [-2, -2] } },
     },
     caption: {
       right: 'No sagging low back, no hiked hips.',
@@ -104,34 +134,32 @@ const zooms = [
   },
   {
     key: 'shoulder-stack', chip: 'Shoulders', heading: 'Shoulder stack', kind: 'posture',
-    crop: { center: { landmark: 'shoulder.r', pose: 'end', dx: 0, dy: 10 }, sizePx: 110 },
+    // zoom shell: crop centre on the right pose's shoulder for both halves; the Wrong is the off still drawn alone (solid).
+    crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, 10] }, sizePx: 110 },
     right: 'end',
-    wrong: { still: 'shrug' },
-    callouts: {
-      right: { text: 'Over elbows', guide: 'elbow-plumb' },
-      wrong: { text: 'Shrugged', guide: 'elbow-plumb' },
+    wrong: { base: 'end', pose: stills.off.pose, solid: true },
+    callout: {
+      right: { text: 'Over elbows', anchor: 'elbow.r' },
+      wrong: { text: 'Not over elbows', anchor: 'shoulder.r' },   // card zoom wrong (c5), the drawn drift
     },
     caption: {
       right: 'Shoulders straight over the elbows.',
-      wrong: 'Shoulders shrugged, not over the elbows.',
+      wrong: 'Shoulders not over the elbows.',   // card zoom wrong (c5) without the undrawn shrug
     },
     alt: {
       right: 'Side view, forearm plank. Each shoulder sits straight above its elbow, forearm flat on the floor.',
-      wrong: 'Side view, forearm plank. The shoulders are shrugged up toward the head, ahead of the elbows.',
+      wrong: 'Side view, forearm plank. The shoulders drift away from the elbows, no longer over them.',   // card c5, handlingMistakes[2]
     },
   },
 ];
 
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const feel = {
-  primary: [],   // the card's only primary is core: text only (D-SHIP-Q7)
-  secondary: [
-    { muscleId: 'abs', plain: 'The front of the belly works to hold the body stiff.' },
-    { muscleId: 'obliques', plain: 'The sides of the belly work too.' },
+  primary: [   // the card's primary core, drawn on the two regions c10 names (header note)
+    { muscleId: 'abs', plain: 'The front of the belly works.', claim: CL.c10 },
+    { muscleId: 'obliques', plain: 'The sides of the belly work.', claim: CL.c10 },
   ],
-  textOnly: [   // named in the text, never painted (C2: the map draws core on the serratus); barbell_back_squat
-    { muscleId: 'core', plain: 'The core holds you stiff: front and sides of the belly, and the lower back.', claim: CL.c10 },
-  ],
+  secondary: [],
   watch: [
     { muscleId: 'lower_back', plain: 'Pain in the low back means stop.' },
   ],
@@ -139,25 +167,20 @@ const feel = {
   rows: [
     // The card's first row (front and sides of the belly) has no fix, so it is left out: the feel line says it.
     { key: 'low-back', where: 'Pain in the low back', at: { muscles: ['lower_back'] },
-      means: '',
-      fix: 'Stop the exercise.',
+      means: '',                            // the card's row has no means (its rankNote: c8 names pain, not a fault); D-FEEL-NOMEANS prints no label
+      fix: 'Stop the exercise.',            // c8: low-back pain during the plank means stop
       redFlag: 'back', claim: CL.c8 },
   ],
   libraryDiff: { add: ['obliques'], why: 'Both EMG studies measure oblique activity during the prone plank (card c10).' },
   claim: CL.c10,
 };
 
-/* ------------------------------------------------------------------------------------------------ mistakes, risks */
-const MISTAKES = [
-  { key: 'hike', title: 'Hips hiked up', claim: CL.hike,
-    fix: "Don't bend at your hips." },
-  { key: 'sag', title: 'Low back sags', zoom: 'hip-line', claim: CL.sag,
-    fix: "Brace your trunk. Can't hold it? Rest on your knees." },
-  { key: 'shrug', title: 'Shoulders drift off elbows', zoom: 'shoulder-stack', claim: CL.c5,
-    fix: 'Shoulders back over the elbows.' },
-];
+/* ------------------------------------------------------------------------------------------------ risks ---------- */
 const RISKS = [
-  { key: 'sag', text: 'Low back sagging (arching) during the hold.', claim: CL.c4 },
+  // W2 panel fix 3: the card's own risk text (c4). c14's "Can't hold it? Rest on your knees." lives once, in the hips
+  // posture detail, so it never sits beside "stop".
+  { key: 'sag', text: 'Low back sagging (arching) during the hold. Can\'t hold it? Rest on your knees.',   // D-TEXT-GOLDEN: c14 way out
+    claim: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c14') },
   { key: 'back-pain', text: 'Low-back pain during the hold: stop.', claim: CL.c8 },
 ];
 
@@ -166,7 +189,7 @@ export default {
   id: 'lib_plank',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'Forearm plank: hand archetype none, no hand zoom (card grip note).' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b2): the card archetype.hand is none (forearm plank); its handContact (c1) is on the setup line.' },
   contacts: ['floor-body'],
   setup: [
     { kind: 'position', text: 'Lie face down, elbows under your shoulders, palms down.', claim: CL.c1 },
@@ -176,24 +199,26 @@ export default {
     { kind: 'finish', text: 'Lower yourself down with the body still stiff.', claim: CL.c7 },
   ],
   posture: [
+    // Q-W2-12: handlingMistake 'Shrugging' (c5) merged here; its fix is this detail and its claim is this claim
     { key: 'shoulders', label: 'Shoulders over elbows', detail: 'Shoulders over the elbows, no shrug.',
       anchor: { landmark: 'shoulder.r', pose: 'end' }, zoom: 'shoulder-stack', claim: CL.c5 },
-    { key: 'hips', label: 'Hips level', detail: 'The low back does not sag, and the hips are not hiked.',
-      anchor: { landmark: 'buttock', pose: 'end' }, zoom: 'hip-line', claim: CL.c4 },
+    // Q-W2-12: handlingMistakes 'Hips hiked up' (c4, c13) and 'Low back sags' (c4, c2, c14) merged here, their fixes added
+    { key: 'hips', label: 'Hips level', detail: "The low back does not sag, and the hips are not hiked. Don't bend at your hips. Brace your trunk. Can't hold it? Rest on your knees.",
+      anchor: { landmark: 'buttock', pose: 'end' }, zoom: 'hip-line', claim: C(['CONSENSUS'], ['ace-plank', 'harvard-plank'], 'card c4, c13, c2, c14') },
     { key: 'knees', label: 'Knees straight', detail: 'Knees straight.',
       anchor: { landmark: 'knee.r', pose: 'end' }, claim: CL.c4 },
-    { key: 'harder', label: 'Harder version', detail: 'Tilt the pelvis backward and draw the shoulder blades together.',
-      anchor: { landmark: 'hip.r', pose: 'end' }, claim: CL.c11 },
+    // D-TEXT-PROGRESSION (#379 6638023726): the card's harder version (c11) is not a form checkpoint, so it is not on the sheet.
   ],
   feel,
   zooms,
+  chips: ['hip-line', 'shoulder-stack', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
     setupLine: 'Elbows under your shoulders, palms down. Lift slowly and keep trunk and legs stiff.',
     mistakeLine: 'Keep the hips level: no sagging low back, no hiked hips.',
     cueLine: 'Shoulders over elbows, hips level.',
   },
   redFlag: RED_FLAG,
-  mistakes: MISTAKES,
+  mistakes: [],   // Q-W2-12 (#379 6628699724): the card's handlingMistakes are posture checkpoints above
   risks: RISKS,
   riskFlags: ['back'],
   sources: Object.keys(SOURCES),

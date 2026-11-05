@@ -180,7 +180,11 @@ describe('LIB-5 S9: the source registry is consistent', () => {
   });
   it('mutation: a duplicate id with a different URL is red', () => {
     const sets = V.registrySets(), s0 = sets[1].sources[0];
+    // LIB-SHIP W2 (ruling 3): the W2 ids' sources put s0's id into sources.json too, so the first set that holds it (where
+    // registryProblems saw it first) is named; the message is still exact
+    const first = sets.find((x: any) => x.sources.some((y: any) => y.id === s0.id))!;
+    expect(sets.indexOf(first)).toBeLessThanOrEqual(1);
     sets.push({ where: 'shared/extra.json', sources: [{ id: s0.id, url: `${s0.url}x` }] });
-    expect(V.registryProblems(sets)).toEqual([`source ${s0.id}: shared/extra.json has ${s0.url}x, ${sets[1].where} has ${s0.url}`]);
+    expect(V.registryProblems(sets)).toEqual([`source ${s0.id}: shared/extra.json has ${s0.url}x, ${first.where} has ${s0.url}`]);
   });
 });
