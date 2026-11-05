@@ -6,6 +6,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { RULED, checkC3Library, checkConventionGrip, checkGripLibrary } from './checks/c3-library';
 import { checkC3 } from './checks/c3';
@@ -562,5 +563,73 @@ describe('LIB-SHIP W5 D-SHIP-HANDW5: straight_bar\'s no-zoom entry and why', () 
     expect(ok(e, c.handling.why)).toEqual([]);
     expect(ok({ ...e, ruling: 'D-SHIP-HANDW2' }, c.handling.why)).toEqual(['entry is not gap-ruled D-SHIP-HANDW5']);
     expect(ok(e, c.handling.why.replace('D-SHIP-C3 no-zoom list, ', '') + ' D-SHIP-C3 no-zoom list')).toEqual(['why does not begin with the D-SHIP-C3 route then name D-SHIP-HANDW5']);
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-EQUIPDRAWN (#392 6654347642): straight_bar\'s spec equipment draws as triceps_pushdown\'s', () => {
+  // The cards' plate.equipment strings differ only by "(above head height)" on the parent: text, not equipment (no card change).
+  let E: any, kid: any, par: any;
+  beforeAll(async () => {
+    E = await import(/* @vite-ignore */ url('tools/plates/library/engine.mjs'));
+    [kid, par] = await Promise.all(['straight_bar_triceps_pushdown', 'triceps_pushdown'].map(async id => (await import(/* @vite-ignore */ url(`tools/plates/library/specs/${id}.mjs`))).default));
+  });
+  const merge = (a: any, b: any): any => (b === undefined ? a : a && b && typeof a === 'object' && typeof b === 'object' && !Array.isArray(a) && !Array.isArray(b)
+    ? { ...a, ...Object.fromEntries(Object.keys(b).map(k => [k, merge(a[k], b[k])])) } : b);   // vendor/engine/plate.mjs mergeDeep
+  /** Each function item's output on every pose the engine draws for `spec` (start, every via, end, the ghosts, the
+   *  Mistake), with the ctx renderPlate/drawPose pass: { pose, start, body, mistake, q }. */
+  const drawnArgs = (spec: any) => {
+    const body = { height: spec.body?.height ?? 1.75 }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => E.normPose(p, body));
+    const n = spec.ghosts?.count ?? 3, lmOf = (q: any) => E.landmarks(E.fk(q, body)), start = lmOf(E.poseAt(keys, 0, body).q);
+    const qs: [string, any, boolean][] = [...keys.map((k: any, i: number) => [i === 0 ? 'start' : i === keys.length - 1 ? 'end' : `via${i - 1}`, E.resolve(k, body).q, false] as [string, any, boolean]),
+      ...Array.from({ length: n }, (_, i) => [`ghost${i}`, E.poseAt(keys, (i + 1) / (n + 1), body).q, false] as [string, any, boolean]),
+      ...(spec.mistake?.pose ? [['mistake', E.resolve(E.normPose(merge(spec.poses.end, spec.mistake.pose), body), body).q, true] as [string, any, boolean]] : [])];
+    return qs.map(([pose, q, mistake]) => [pose, lmOf(q), { pose, start, body, mistake, q }] as const);
+  };
+  const equipProblems = (a: any, b: any) => {
+    const out: string[] = [];
+    if (a.equipment.length !== b.equipment.length) return [`length ${a.equipment.length} !== ${b.equipment.length}`];
+    a.equipment.forEach((x: any, i: number) => {
+      const y = b.equipment[i];
+      if (typeof x !== 'function' || typeof y !== 'function') { if (typeof x === 'function' || typeof y === 'function' || !isDeepStrictEqual(x, y)) out.push(`item ${i} differs`); return; }
+      for (const s of [a, b]) for (const [pose, lm, ctx] of drawnArgs(s)) if (!isDeepStrictEqual(x(lm, ctx), y(lm, ctx))) out.push(`item ${i} differs on ${s.id} ${pose}`);
+    });
+    return out;
+  };
+  it('items 0-11 deep-equal; items 12-13 are functions with deep-equal output on every drawn pose of both plates', () => {
+    expect(kid.equipment.map((x: any) => typeof x)).toEqual([...Array(12).fill('object'), 'function', 'function']);
+    for (let i = 0; i < 12; i++) expect([i, kid.equipment[i]]).toStrictEqual([i, par.equipment[i]]);
+    expect(drawnArgs(kid).map(([p]) => p)).toEqual(['start', ...Array.from({ length: kid.poses.via.length }, (_, i) => `via${i}`), 'end', 'ghost0', 'ghost1', 'ghost2', 'mistake']);
+    expect(equipProblems(kid, par)).toEqual([]);
+  });
+  it('red 1: one data item changed', () => {
+    const eq = [...kid.equipment]; eq[6] = { ...eq[6], r: eq[6].r + 0.01 };
+    expect(equipProblems({ ...kid, equipment: eq }, par)).toEqual(['item 6 differs']);
+  });
+  it('red 2: one closure\'s output changed on one pose', () => {
+    const eq = [...kid.equipment], f = eq[13];
+    eq[13] = (lm: any, ctx: any) => (ctx.pose === 'end' ? f(lm, ctx).map((o: any) => (o.type === 'latBar' ? { ...o, width: o.width + 0.01 } : o)) : f(lm, ctx));
+    expect(equipProblems({ ...kid, equipment: eq }, par)).toEqual(['item 13 differs on straight_bar_triceps_pushdown end', 'item 13 differs on triceps_pushdown end']);
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-CONVCONTACT (#392 6654347642): dumbbell_overhead_triceps_extension takes its zone from ga:push-heel', () => {
+  const ZONES = ['heel of the palm', 'middle of the palm', 'base of the fingers'];
+  /** The card's handContact may name no palm zone (the zone then comes from the convention, data only); a zone it names must be the convention's. */
+  const cardZone = (id: string, card: any, conv: string) => ZONES.filter(z => String(card.grip?.handContact ?? '').toLowerCase().includes(z) && !conv.includes(z))
+    .map(z => `CONVCONTACT: ${id}: card grip.handContact names ${z}, not the convention's zone`);
+  const ID = 'lib_dumbbell_overhead_triceps_extension', card = () => json('docs/research/howto/cards/dumbbell_overhead_triceps_extension.json');
+  it('the card names no zone and passes; red: a card naming another zone, through this check and through checkConventionGrip', async () => {
+    const { content: c } = await content.loadContent(ID), conv = P.CONVENTIONS['ga:push-heel'] as string, k = card();
+    expect([k.grip.handContact.length > 0, cardZone(ID, k, conv), c.handling.contact]).toEqual([true, [], 'heel']);
+    const mid = { ...k, grip: { ...k.grip, handContact: 'Both hands around the handle, across the middle of the palm.' } };
+    expect(cardZone(ID, mid, conv)).toEqual([`CONVCONTACT: ${ID}: card grip.handContact names middle of the palm, not the convention's zone`]);
+    expect(checkConventionGrip(c, mid, conv)).toEqual([`GRIPC: ${ID}: card grip.handContact disagrees with the convention`]);
+    expect(cardZone(ID, { ...k, grip: { ...k.grip, handContact: 'Handle on the heel of the palm.' } }, conv)).toEqual([]);   // control
+  });
+  it('no printed string of the sheet names the heel or a palm zone (red: one that does)', async () => {
+    const L: any = await import(/* @vite-ignore */ url('tools/plates/library/lint/index.mjs')), { content: c } = await content.loadContent(ID);
+    const named = (x: any) => L.shownCopyFields(x).filter((f: any) => /\bheel\b/i.test(f.text) || ZONES.some(z => f.text.toLowerCase().includes(z))).map((f: any) => f.path);
+    expect(named(c)).toEqual([]);
+    expect(named({ ...c, handling: { ...c.handling, gripLine: `${c.handling.gripLine} Handle on the heel of the palm.` } })).toEqual(['handling.gripLine']);
   });
 });
