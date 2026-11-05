@@ -6,7 +6,7 @@ import type { HowToContent } from '../../../src/howto/content-types';
 import { checkC3 } from './c3';
 
 /** The rulings a no-zoom entry may name. A new one is added only with its ruling posted (D-SHIP-C3 item 4). */
-export const RULED = new Set(['D-SHIP-Q1', 'D-SHIP-C3', 'D-SHIP-HANDW2', 'D-SHIP-ROPEPAIR']);   // W2: #379 6625803515, #376 6616096384
+export const RULED = new Set(['D-SHIP-Q1', 'D-SHIP-C3', 'D-SHIP-HANDW2', 'D-SHIP-ROPEPAIR', 'D-SHIP-HANDW5']);   // W2: #379 6625803515, #376 6616096384; W5: #392 6647901307
 export const REASONS = ['gap-key', 'gap-ruled', 'card-no-zoom'] as const;
 export type NoZoomEntry = { ruling: string; reason: string; at?: string; note?: string };
 

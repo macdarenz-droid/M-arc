@@ -62,6 +62,35 @@
   "lib_push_up": {
    "ruling": "D-SHIP-C3",
    "reason": "card-no-zoom"
+  },
+  "lib_front_squat": {
+   "ruling": "D-SHIP-C3",
+   "reason": "gap-key",
+   "at": "tools/plates/library/hands/hand-front-rack.mjs:29"
+  },
+  "lib_dumbbell_overhead_triceps_extension": {
+   "ruling": "D-SHIP-C3",
+   "reason": "gap-key",
+   "at": "tools/plates/library/hands/hand-cupped.mjs:30"
+  },
+  "lib_wrist_curl": {
+   "ruling": "D-SHIP-C3",
+   "reason": "gap-key",
+   "at": "tools/plates/library/hands/hand-curl.mjs:27"
+  },
+  "lib_single_arm_triceps_pushdown": {
+   "ruling": "D-SHIP-C3",
+   "reason": "gap-key",
+   "at": "tools/plates/library/hands/hand-d-handle.mjs:21"
+  },
+  "lib_concentration_curl": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_straight_bar_triceps_pushdown": {
+   "ruling": "D-SHIP-HANDW5",
+   "reason": "gap-ruled",
+   "note": "push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19), as its parent triceps_pushdown (D-SHIP-HANDW2); the grip copy carries the card's claims"
   }
  }
 }
