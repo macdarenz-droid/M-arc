@@ -842,6 +842,17 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-05 ~10:50 UTC** (weekly 0.98 at 10:40; the limit is about to hit; it resets Fri 08:00, then the 80 % pause rule applies).
+  - **Owner question open (asked ~09:00 in chat):** a standing OK for superseding `plate`/`page` pins after a full panel (option 1, recommended), or approval each time (D-LIB-O5 point 5). This blocks W3's pin and flip (8 entries prepared, #384), PLATEFIX's (7 plate and 4 page entries, #385; STAMP confirmed 6654532221), and next PLATEFIX-2's pec_fly. On his answer, post his exact words and the date on each PR for the `approval` field, and record D-OWNER-REPIN in lib4-cards 48.
+  - **Train 69 MERGED:** F-ZOOM-NONE #388 → main `98eaec86`. Generated headers only, so no APK. W6 then adds its text-zooms entries (6653994390).
+  - **W5:** PANEL FIX 2 @ `f8ebd02d` (lb04 `c50a938d…`). A small second recheck is owed: reverse_curl's pair note (D-SHIP-W5-EZWORDS), the bulgarian crop, hammer_curl now no-hand-zoom (gap-ruled), and the content rows. Rulings Q6 D-SHIP-W5-EQUIPDRAWN and Q7 D-SHIP-W5-CONVCONTACT (6654347642). The plates recheck approved step_up, forward_lunge, bodyweight_split_squat and bodyweight_lunge. incline_dumbbell_curl (back pad), DOTE (Mistake) and wall_sit (label) go to LIB-PLATEFIX-3.
+  - **W4:** PANEL FIX @ `66925aac`. Its focused recheck is owed: build the sets in the lyr-w5r form.
+  - **PLATEFIX-2:** rear delt fly and dumbbell_fly are HELD after the last round (6655186998). pec_fly ships. Next: READY.
+  - **RESEARCH-ROUTES part 1:** READY @ `6f787450`; the supervisor diff check is OK. Reviewer session_018Pv5bJtJGXRHp48yW6WusX is running. On PASS, a train ahead of W4.
+  - **F-SCRATCH-SYNTH:** ruled D-SCRATCH-SYNTH-KEYIDX (6654000337); READY is owed.
+  - **LIB-PLATEFIX-3 card** (@ sup-lib4-cards): W3 apu/underhand, PLATEFIX OHP, the W5 items, and W4's list to come. No builder yet.
+  - The W6 panel and W7 sets C/D/content/safety are still unrun (`w7-queue.txt`).
+  - After the reset: wake every builder session and any reviewer whose last turn failed (one send_message each). Resume dead in-process critics with SendMessage only if this container survived; otherwise rebuild the sets.
 - **Update 11-05 ~08:50 UTC: the weekly window is at 0.91 (08:37) and will run out soon. It resets Fri 11-06 08:00 UTC. After the reset, the 10-19 rule applies: pause at 0.80.** Resume from this entry. Cards and rulings are on `claude/sup-lib4-cards` @ `2a95963c` (section 48, and `verify/*-card.md`). Working notes are in the scratchpad: `notes-resume-0740.md`, `w7-queue.txt` and the panel sets with their `*-private` keys. The scratchpad survives only while this container lives.
   - **W3 #384:** second recheck VALID (6653062201).
     - Approved: 11 ids (shoulder_press, straight_arm_pulldown, incline_machine_press, chest_supported_row, resistance_band_row, single_arm_lat_pulldown, hanging_knee_raise, chin_up, horizontal_leg_press, inverted_row, close_grip_pulldown).
