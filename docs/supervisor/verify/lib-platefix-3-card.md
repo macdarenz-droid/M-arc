@@ -17,6 +17,7 @@ Status `ready` (supervisor, 11-05 ~08:45 UTC). Base: latest origin/main; branch 
 | jump_squat (staged) | lb4 | one open hip path, back then down; the "Hips high" cue is j5-unsupported | #392 |
 | concentration_curl (staged) | lb5 | Right and Wrong hinge the same (c1, c2) | #392 |
 | barbell_overhead_press | pilot-a | keep the FOREARMS VERTICAL pill and drop the duplicate measure label; draw the start-pose forearm clearly; draw the head clear of the lockout arm (c5, c6) | #385 PLATEFIX second recheck |
+| incline_dumbbell_curl | lb5 | the incline back pad stops in mid-air on its own post; extend it along its line to meet the seat (equipment, R2 [3,3,5]) | #392 W5 recheck plates |
 | W4 items | lb02/lb03 | the list the W4 PANEL FIX post gives | #391 |
 
 ## Rules
