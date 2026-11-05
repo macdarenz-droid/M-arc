@@ -54,6 +54,9 @@ const COPY = ['index.html', 'vite.config.ts', 'package.json', 'tsconfig.json', '
 const put = (root, p, text) => { mkdirSync(dirname(join(root, p)), { recursive: true }); writeFileSync(join(root, p), text); };
 const json = v => `${JSON.stringify(v, null, 2)}\n`;
 
+/** LIB-SHIP W6 (SHIP W6 QUESTION 4, #393): the no-zoom list `nz` without the entries of the removed batch rows `gone`. */
+export const withoutRows = (nz, gone) => ({ ...nz, entries: Object.fromEntries(Object.entries(nz.entries).filter(([id]) => !gone.includes(id))) });
+
 /** D-LIB4d-OWNROWS: a temp repo copy that holds the 8 and no batch row. With no batch .json file it is the plain copy;
  *  else each batch file, its batch golden file and its pages are removed, and the generated files are rewritten for the
  *  8 alone (stale ones removed), so no shipped batch row can collide with a fixture's own row. */
@@ -64,11 +67,19 @@ export function ownRowsTree({ src = REPO } = {}) {
   const dir = join(root, 'tools/plates/library/batches');
   const files = existsSync(dir) ? readdirSync(dir).filter(n => n.endsWith('.json')) : [];
   if (files.length === 0) return root;
+  const gone = [];
   for (const n of files) {
     const b = JSON.parse(readFileSync(join(dir, n), 'utf8'));
+    gone.push(...Object.keys(b.rows ?? {}));
     rmSync(join(dir, n), { force: true });
     rmSync(join(root, 'tests/howto/golden/library', n), { force: true });
     for (const p of Object.values(b.pages ?? {})) rmSync(join(root, p), { force: true });
+  }
+  // LIB-SHIP W6 (Q-W6-10, SHIP W6 QUESTION 4): the pinned no-zoom list names batch rows too; a removed row's entry goes
+  // with it, so a fixture's own row is never read as a shipped row's no-zoom entry (lib_cable_lateral_raise, W6).
+  const NZ = join(root, 'tools/plates/library/hands/no-zoom.json');
+  if (existsSync(NZ)) {
+    writeFileSync(NZ, `${JSON.stringify(withoutRows(JSON.parse(readFileSync(NZ, 'utf8')), gone), null, 1)}\n`);
   }
   node(root, `
     import { rmSync, writeFileSync } from 'node:fs';

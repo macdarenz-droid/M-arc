@@ -537,3 +537,18 @@ describe('LIB-SHIP W6 D-SHIP-W6-WRISTEXEMPT (#393 6648157060): no printed wrist 
       .toEqual(['lib_face_pull: a printed wrist line or range, but its card gives no wrist claim', 'lib_face_pull: wrist is not the card-delegation exempt form']);
   });
 });
+
+describe('LIB-SHIP W6 SHIP W6 QUESTION 4 (#393): ownRowsTree drops the no-zoom entries of the batch rows it removes', () => {
+  it('every W6 batch row\'s entry goes, nothing else; red: the removal skipped leaves lib_cable_lateral_raise listed', async () => {
+    const F: any = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
+    const nz = json('tools/plates/library/hands/no-zoom.json');
+    const gone = reg.batchFiles().flatMap((f: string) => Object.keys(json(f).rows ?? {}));
+    const out = F.withoutRows(nz, gone);
+    expect(Object.keys(out.entries).filter(id => gone.includes(id))).toEqual([]);
+    expect(Object.keys(out.entries)).toEqual(Object.keys(nz.entries).filter(id => !gone.includes(id)));
+    expect(out.about).toBe(nz.about);
+    expect('lib_cable_lateral_raise' in F.withoutRows(nz, []).entries).toBe(true);
+    const src = readFileSync(join(ROOT, 'tests/howto/fixtures/lib2b/fixture.mjs'), 'utf8');
+    expect(src).toMatch(/withoutRows\(JSON\.parse\(readFileSync\(NZ, 'utf8'\)\), gone\)/);
+  });
+});
