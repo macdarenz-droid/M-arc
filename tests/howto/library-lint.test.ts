@@ -411,6 +411,8 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   const RULED_LIB = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
     'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
   const SLRDL = 'lib_single_leg_romanian_deadlift';
+  const W5 = ['alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'forward_lunge', 'walking_lunge', 'bulgarian_split_squat',
+    'single_arm_triceps_pushdown', 'straight_bar_triceps_pushdown', 'front_squat', 'wall_sit'].map(s => `lib_${s}`);
   it('the map covers every inherit[] field of the 9 cards exactly, and no field is unmapped', () => {
     expect(SHIPPED.map(r => r.id)).toEqual([...EIGHT, ...RULED_LIB]);
     expect([...cards.keys(), SLRDL].filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
@@ -423,7 +425,16 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     const slrdl = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/cards/single_leg_romanian_deadlift.json'), 'utf8'));
     expect([slrdl.parent, FM.unmappedFields(SLRDL, slrdl)]).toEqual(['romanian_deadlift', []]);
     expect(Object.keys(FM.INHERIT_MAP[SLRDL]).sort()).toEqual(slrdl.inherit.map((e: any) => e.field).sort());
-    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys(), SLRDL].sort());
+    // LIB-SHIP W5 (SHIP W5 PLAN RULED, #392 6647901307): the map also holds W5's 11 children, each card's inherit[] covered
+    // exactly, except front_squat's setup[2], which goes to research (D-SHIP-W5-GOLDENFEET) and stays unmapped
+    for (const id of W5) {
+      const card = JSON.parse(readFileSync(join(ROOT, `docs/research/howto/cards/${id.slice(4)}.json`), 'utf8'));
+      const open = id === 'lib_front_squat' ? ['setup[2] (load the plates evenly, collars on)'] : [];
+      expect([id, typeof card.parent, FM.unmappedFields(id, card)]).toEqual([id, 'string', open]);
+      expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).filter((f: string) => !open.includes(f)).sort()]);
+    }
+    expect([...cards.keys(), SLRDL, ...W5].filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
+    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys(), SLRDL, ...W5].sort());
   });
   /** D-LIB9a-MAP as ruled (#245 6393424755 on the tables of 6393419324), keyed by each card's exact field string. Literal:
    *  a narrowed or widened path in INHERIT_MAP turns this red. shoulder_press's setup line is not in it (F-LB1-SETUP). */
@@ -437,6 +448,20 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], "zooms['hand']": ['zooms[key=hand]'] },
     // LIB-SHIP W2 D-SHIP-FAMILY (#379 6625803515)
     lib_single_leg_romanian_deadlift: { 'grip.thumb': THUMB, 'grip.wrist': ['handling.wrist'] },
+    // LIB-SHIP W5 (SHIP W5 PLAN RULED, #392 6647901307): D-SHIP-W5-PLATEONLY, -THUMB, -SAWRIST, -GOLDENFEET, -WALLSIT
+    lib_alternating_dumbbell_curl: { 'grip.type': ['handling.orientation', 'handling.handle'], 'grip.thumb': THUMB, 'grip.width': ['handling.width.text'], 'plate.view': [], redFlags: ['riskFlags'] },
+    lib_barbell_curl: { 'plate.view': [], 'grip.thumb': THUMB, redFlags: ['riskFlags'] },
+    lib_ez_bar_curl: { 'plate.view': [], 'grip.thumb': THUMB, redFlags: ['riskFlags'] },
+    lib_hammer_curl: { 'plate.view': [], 'grip.width': ['handling.width.text'], redFlags: ['riskFlags'] },
+    lib_forward_lunge: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+    lib_walking_lunge: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+    lib_bulgarian_split_squat: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+    lib_single_arm_triceps_pushdown: { 'plate.view': [], 'grip.thumb': ['handling.thumb.mode'], 'grip.wrist': ['handling.wrist.ext'], redFlags: ['riskFlags'] },
+    lib_straight_bar_triceps_pushdown: { 'plate.view': [], 'plate.equipment': [], 'grip.thumb': ['handling.thumb.mode'], 'grip.wrist': ['handling.wrist'],
+      zooms: ['zooms[key=pushdown-elbow].chip', 'zooms[key=pushdown-elbow].heading', 'zooms[key=pushdown-elbow].caption', 'zooms[key=pushdown-elbow].callout.right.text',
+        'zooms[key=pushdown-elbow].callout.wrong.text', 'zooms[key=pushdown-elbow].alt'], redFlags: ['riskFlags'] },
+    lib_front_squat: { 'posture[3] (feet flat, knees follow the toes)': ['posture[key=feet].label'] },
+    lib_wall_sit: { 'posture[1] (knees over the second toe, ankles not rolling)': ['posture[key=knees].label', 'posture[key=knees].detail'], 'b10 / redFlags knee (NHS knee box)': ['riskFlags'] },
     lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': ['setup[kind=position,zoom=path].text'] },
     lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path]'], 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
     lib_horizontal_leg_press: { grip: ['handling'], "posture['Tailbone and lower back flat on the pad']": ['posture[key=back]'], "posture['Whole foot flat, mid-platform']": ['posture[key=feet]'],
