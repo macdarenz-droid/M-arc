@@ -129,7 +129,7 @@ const feel = {
   rows: [
     // The card's first row (target muscles) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'shoulder', where: 'Any shoulder pain', at: { muscles: ['front_delts'] },
-      means: 'Flaring the elbows wide.',
+      means: '',   // D-FEEL-NOMEANS: c7 names the fault, but no claim ties it to the pain (SWEEP 1)
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: C(['CONSENSUS', 'WEAK'], ['motra-smith-incline', MO], 'c16, c7') },
   ],
@@ -171,8 +171,9 @@ export default {
       // inherited (zooms.bar-low-palm): the parent's bent-back fault, the card zoom's Wrong. Not drawn.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar high toward the fingers, wrist bent back.' },
     ],
-    // card zoom bar-low-palm Right (inherit:4), with the inherited grip type.
-    gripLine: "Closed grip, palms toward your feet. Bar in the palm's base, thumb wrapped, wrist straight.",
+    // card zoom bar-low-palm Right (inherit:4), with the inherited grip type. Its "wrist straight" shows as the
+    // inherited wrist.limitText's "wrist not bent back", the words parent c5 supports (SWEEP 2, 6).
+    gripLine: "Closed grip, palms toward your feet. Bar in the palm's base, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C
   },
   contacts: ['bench-lying'],

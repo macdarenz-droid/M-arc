@@ -86,11 +86,11 @@ const feel = {
   rows: [
     // The card's first row (target muscles) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'lowering', where: 'Chest or shoulder pain while lowering', at: { muscles: ['chest', 'front_delts'] },
-      means: 'Lowering the bar without control.',
+      means: '',   // D-FEEL-NOMEANS: c5 and c14 give no cause for the pain (SWEEP 1)
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: C(['CONSENSUS', 'DATA'], [SLG, WL, 'kowalczuk2022'], 'c5, c14') },
     { key: 'front-shoulder', where: 'Pain deep in the front shoulder', at: { muscles: ['front_delts'] },
-      means: 'Poor technique is a risk for shoulder injuries.',
+      means: 'Poor technique can raise shoulder injury risk.',
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: CL.c15 },
   ],
@@ -133,8 +133,9 @@ export default {
       // inherited (zooms.bar-low-palm): the parent's bent-back fault, the card zoom's Wrong. Not drawn.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar high toward the fingers, wrist bent back.' },
     ],
-    // card zoom bar-low-palm Right (inherit:3), with the grip type (c3).
-    gripLine: "Overhand grip. Bar in the palm's base, thumb wrapped, wrist straight.",
+    // card zoom bar-low-palm Right (inherit:3), with the grip type (c3). Its "wrist straight" shows as the inherited
+    // wrist.limitText's "wrist not bent back", the words parent c5 supports (SWEEP 2, 6).
+    gripLine: "Overhand grip. Bar in the palm's base, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C
   },
   contacts: ['bench-lying'],
@@ -155,7 +156,8 @@ export default {
       anchor: { landmark: 'backUpper', pose: 'start' }, claim: CL.c4 },
     { key: 'touch', label: 'Lower-chest touch', detail: 'Bar to the lower chest only.',
       anchor: { landmark: 'grip.r', pose: 'end' }, claim: CL.c5 },
-    { key: 'wrists', label: 'Wrists straight', detail: 'Wrists straight, bar low in the palm.',
+    // card posture point "Wrists straight, bar low in the palm." (inherit:1, 2; parent c5), in c5's words (SWEEP 2).
+    { key: 'wrists', label: 'Low in palm', detail: 'Bar low in the palm, wrists not bent back.',
       anchor: { landmark: 'wrist.r', pose: 'start' }, claim: CL.hand },
   ],
   feel,

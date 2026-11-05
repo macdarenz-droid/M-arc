@@ -86,7 +86,7 @@ const feel = {
   feelLine: 'You should feel this in your upper chest.',
   rows: [
     { key: 'front-shoulders', where: 'Mostly front shoulders, little chest', at: { muscles: ['front_delts'] },
-      means: 'A steeper bench shifts work to the front shoulders.',
+      means: 'A steeper bench can shift work to the front shoulders.',   // c2 is barbell data applied here (MECH)
       fix: 'Lower the bench to about 45 degrees.',
       claim: CL.angle },
     { key: 'shoulder-pain', where: 'Pain at the front shoulder', at: { muscles: ['front_delts'] },
@@ -133,8 +133,9 @@ export default {
       // inherited zoom wrong (zooms.wrist-neutral-press, c3 here). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Wrist bent back under the dumbbell.' },
     ],
-    // c3; the inherited zoom's Right ("Thumb wrapped, wrist straight over the forearm").
-    gripLine: 'Closed grip, palms forward. Thumb wrapped, wrist straight over the forearm.',
+    // c3; the inherited zoom's Right ("Thumb wrapped, wrist straight over the forearm"): the thumb here, the wrist as
+    // the grey line under it (inherited wrist.limitText), so the lead does not repeat it (SWEEP 6; the parent's W2 form).
+    gripLine: 'Closed grip, palms forward, thumbs wrapped. Handle firm in your palm.',
     cue: 'Handle firm in palm, wrist neutral.',   // hint D (c3)
   },
   contacts: ['bench-lying'],
@@ -147,7 +148,7 @@ export default {
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c13 },
   ],
   posture: [
-    { key: 'angle', label: 'Bench angle', detail: 'Back pad at about 45 degrees. Steeper shifts work to the front shoulder.',
+    { key: 'angle', label: 'Bench angle', detail: 'Back pad at about 45 degrees. Steeper can shift work to the front shoulders.',
       anchor: { landmark: 'backUpper', pose: 'start' }, claim: CL.angle },
     { key: 'contact', label: 'Five points', detail: 'Head, shoulders, buttocks and feet keep contact.',
       anchor: { landmark: 'buttock', pose: 'end' }, claim: CL.c4 },

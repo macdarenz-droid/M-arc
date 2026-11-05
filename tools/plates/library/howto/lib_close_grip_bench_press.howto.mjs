@@ -110,11 +110,11 @@ const feel = {
   rows: [
     // The card's first row (target muscles) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'grip-width', where: 'Mostly the front of the shoulders', at: { muscles: ['front_delts'] },
-      means: 'A medium grip works the front shoulder more than a narrow one.',
+      means: 'A wider grip can work the front shoulders more.',
       fix: 'Bring the hands in line with the shoulders.',
       claim: C(['DATA', 'CONSENSUS'], ['saeterbakken2021', ACE, SLG, 'lockie2017'], 'c7, c1') },
     { key: 'front-shoulder', where: 'Pain deep in the front shoulder', at: { muscles: ['front_delts'] },
-      means: 'Poor technique is a risk for shoulder injuries.',
+      means: 'Poor technique can raise shoulder injury risk.',
       fix: "Stop and don't train through the pain. Keep elbows close to your ribs.",
       zoom: 'elbows-to-ribs', redFlag: 'shoulder', claim: C(['DATA', 'CONSENSUS'], ['kolber2010', ACE], 'c12, c2') },
   ],
@@ -157,8 +157,9 @@ export default {
       // inherited (zooms.bar-low-palm): the parent's bent-back fault, the card zoom's Wrong. Not drawn.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar high toward the fingers, wrist bent back.' },
     ],
-    // card zoom bar-low-palm Right (inherit:5), with the grip type.
-    gripLine: "Closed overhand grip. Bar in the palm's base, thumb wrapped, wrist straight.",
+    // card zoom bar-low-palm Right (inherit:5), with the grip type. Its "wrist straight" shows as the inherited
+    // wrist.limitText's "wrist not bent back", the words parent c5 supports (SWEEP 2, 6).
+    gripLine: "Closed overhand grip. Bar in the palm's base, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C
   },
   contacts: ['bench-lying'],

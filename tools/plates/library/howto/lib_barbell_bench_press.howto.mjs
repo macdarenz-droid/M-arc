@@ -100,15 +100,15 @@ const feel = {
   rows: [
     // The card's first row (target muscles) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'lowering', where: 'Chest or shoulder pain while lowering', at: { muscles: ['chest', 'front_delts'] },
-      means: 'Lowering the bar too fast.',
+      means: 'Lowering fast can add stress to the shoulders and pec tendons.',
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: C(['CONSENSUS'], [SBS], 'c18') },
     { key: 'front-shoulder', where: 'Pain deep in the front shoulder', at: { muscles: ['front_delts'] },
-      means: 'Poor technique is a risk for shoulder injuries.',
+      means: 'Poor technique can raise shoulder injury risk.',
       fix: "Stop and don't train through the pain. Tuck elbows in about 75 degrees.",
       redFlag: 'shoulder', claim: C(['DATA', 'CONSENSUS'], ['kolber2010', HK, SL], 'c24, c2') },
     { key: 'wrist', where: 'Wrist pain or strain', at: { parts: HANDS },
-      means: 'The bar sits near the fingers, bending the wrist back.',
+      means: 'A bar high toward the fingers can bend the wrist back.',
       fix: "Grip the bar lower in the palm. Don't train through the pain.",
       redFlag: true, claim: CL.c5 },
   ],
@@ -153,8 +153,9 @@ export default {
       // card zoom bar-low-palm Wrong (c5). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar high toward the fingers, wrist bent back.' },
     ],
-    // card zoom bar-low-palm Right (c5), with the grip type (c4).
-    gripLine: "Closed grip, palms toward your feet. Bar in the palm's base, thumb wrapped, wrist straight.",
+    // card zoom bar-low-palm Right (c5), with the grip type (c4). Its "wrist straight" shows as wrist.limitText's
+    // "wrist not bent back", the words c5 supports (SWEEP 2, 6: the grey line carries it, not a repeat).
+    gripLine: "Closed grip, palms toward your feet. Bar in the palm's base, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C (c5)
   },
   contacts: ['bench-lying'],
@@ -178,7 +179,8 @@ export default {
       anchor: { landmark: 'elbow.r', pose: 'end' }, claim: CL.c2 },
     { key: 'forearms', label: 'Forearms vertical', detail: 'Forearms vertical at the bottom.',
       anchor: { landmark: 'grip.r', pose: 'end' }, claim: CL.c2 },
-    { key: 'wrists', label: 'Wrists straight', detail: 'Wrists straight, bar low in the palm.',
+    // card posture point "Wrists straight, bar low in the palm." (c5), in c5's own words (SWEEP 2).
+    { key: 'wrists', label: 'Low in palm', detail: 'Bar low in the palm, wrists not bent back.',
       anchor: { landmark: 'wrist.r', pose: 'start' }, claim: CL.c5 },
     { key: 'path', label: 'Bar path', detail: 'Bar travels between mid-chest and over the shoulders, never to the neck.',
       anchor: { landmark: 'grip.r', pose: 'start' }, claim: CL.c8 },

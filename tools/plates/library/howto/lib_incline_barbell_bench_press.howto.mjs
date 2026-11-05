@@ -133,7 +133,7 @@ const feel = {
       fix: 'Set the back pad between 30 and 45 degrees.',
       claim: CL.c1 },
     { key: 'shoulder', where: 'Shoulder or chest pain or discomfort', at: { muscles: ['front_delts', 'upper_chest'] },
-      means: 'The elbows flare out too far, which strains the shoulder.',
+      means: 'Elbows flared out too far can strain the shoulder.',
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: C(['CONSENSUS'], [BC], 'c12, c8') },
   ],
@@ -179,8 +179,9 @@ export default {
       // inherited (zooms.bar-low-palm): the parent's bent-back fault, the card zoom's Wrong. Not drawn.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar high toward the fingers, wrist bent back.' },
     ],
-    // card zoom bar-low-palm Right (inherit:2), with the grip type (c4).
-    gripLine: "Closed grip, palms forward. Bar in the palm's base, thumb wrapped, wrist straight.",
+    // card zoom bar-low-palm Right (inherit:2), with the grip type (c4). Its "wrist straight" shows as
+    // wrist.limitText (c4), so the grip line does not repeat it (SWEEP 6).
+    gripLine: "Closed grip, palms forward. Bar in the palm's base, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C
   },
   contacts: ['bench-lying'],

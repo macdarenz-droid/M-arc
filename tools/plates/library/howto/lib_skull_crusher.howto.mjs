@@ -124,11 +124,11 @@ const feel = {
   rows: [
     // The card's first row (backs of the upper arms) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'shoulders', where: 'Mostly the shoulders', at: { muscles: ['front_delts'] },
-      means: 'Your upper arms drift back, shifting the load onto the shoulder.',
+      means: 'Upper arms drifting back can shift the load onto the shoulder.',   // c7 is WEAK
       fix: 'Keep the upper arms vertical.',
       zoom: 'upper-arm-vertical', claim: CL.c7 },
     { key: 'elbow', where: 'Back-of-elbow pain', at: { parts: ['elbow-left', 'elbow-right'] },
-      means: 'You are lowering the bar forcefully.',
+      means: 'Forceful lowering can injure the triceps tendon.',
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'elbow', claim: CL.c15 },
   ],
@@ -170,8 +170,9 @@ export default {
       // card zoom wrong (c3). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Wrists bent back under the bar.' },
     ],
-    // c1, c8; the card zoom's Right ("Thumbs wrapped, wrists straight on the EZ grips", c3).
-    gripLine: 'Closed grip, palms toward your feet. Thumbs wrapped, wrists straight on the EZ grips.',
+    // c1, c8; the card zoom's Right ("Thumbs wrapped, wrists straight on the EZ grips", c3): thumbs and EZ grips here,
+    // the wrist as the grey line under it (wrist.limitText, c3), so the lead does not repeat it (SWEEP 6).
+    gripLine: 'Closed grip, palms toward your feet, thumbs wrapped. Hands on the EZ grips.',
     cue: 'Wrist neutral.',   // hint K (c3)
   },
   contacts: ['bench-lying'],

@@ -112,15 +112,15 @@ const feel = {
   rows: [
     // The card's first row (lats and lower chest, side stretch) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'triceps', where: 'Mostly the backs of the arms', at: { muscles: ['triceps'] },
-      means: 'Your elbows bend and straighten during the rep.',
+      means: 'Bending and straightening the elbows can move work to the triceps.',
       fix: 'Keep the elbow bend the same.',
       zoom: 'elbow-bend-constant', claim: CL.c6 },
     { key: 'elbow', where: 'Pain inside the elbow', at: { parts: ['elbow-left', 'elbow-right'] },
-      means: 'Too much elbow bend, with the elbows flaring out.',
+      means: 'Too much bend with flared elbows may stress the inner elbow.',
       fix: "Stop and don't train through the pain. Keep elbows pointing forward or up.",
       redFlag: 'elbow', claim: CL.c14 },
     { key: 'shoulder', where: 'Shoulder pain at the bottom', at: { muscles: ['front_delts'] },
-      means: 'You lower further than you can control.',
+      means: '',   // D-FEEL-NOMEANS: c5 and c20 give no cause for this pain at the card's strength (SWEEP 1)
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: CL.shoulder },
   ],
