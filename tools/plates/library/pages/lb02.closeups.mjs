@@ -12,7 +12,5 @@ export const CLOSEUP_OPTIONS = {
   incline_dumbbell_press: ZOOM,
   close_grip_bench_press: ZOOM,
   decline_bench_press: ZOOM,
-  arnold_press: ZOOM,
-  skull_crusher: ZOOM,
   dumbbell_pullover: ZOOM,
 };
