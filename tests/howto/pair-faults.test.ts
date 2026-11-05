@@ -188,7 +188,10 @@ const W2_ADDED: Record<string, string[]> = {
   'tools/plates/library/pages/pilot-b.closeups.mjs': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
   'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
 };
-const MANIFEST_BLANKED_MAIN_W2 = '499096034a25f3dc2cfe80c48f341ec31614ed6184226527af1d39c4b819d37b';
+// RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
+// research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef).
+const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
+const MANIFEST_BLANKED_MAIN_W2 = '5a51002ef2a7fb2a551601cc78f1b9d338d45f87c6f5be63b23d4853eebf0532';
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
@@ -205,14 +208,14 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
     const m = current();
     // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out
-    expect(blanked(lessW2(m))).toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(m), [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN_W2);
     for (const k of MOVED) for (const r of Object.values<any>(current().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
-    const m = lessW2(current()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k))!;
+    const m = lessW2(current()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX)!;
     row.files[other] = '0'.repeat(64);
-    expect(blanked(m)).not.toBe(MANIFEST_BLANKED_MAIN_W2);
-    expect(blanked(lessW2(current()), MOVED.slice(0, 1))).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(m, [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(current()), [MOVED[0]!, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
     // LIB-SHIP W2: a W2 key that does not pin its file, or a crunch row missing, is red
     const bad = current(); (Object.values<any>(bad.rows).find(r => W2_MOVED[0]! in r.files)).files[W2_MOVED[0]!] = '0'.repeat(64);
     expect(() => lessW2(bad)).toThrow();
