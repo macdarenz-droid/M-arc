@@ -386,7 +386,7 @@ describe('LIB-SHIP W7 D-SHIP-W7-B3 (#394 6647954465, Q-W7-1/Q-W7-5): NoHandling 
     expect(Object.keys(B3_PINS)).toEqual(B3);
     for (const id of B3) {
       const g = card(id.slice(4)).grip, filled = (['thumb', 'handContact', 'wrist'] as const).filter(k => String(g[k] ?? '').trim() !== '');
-      expect([id, Object.keys(B3_PINS[id]).sort()]).toEqual([id, [...filled].sort()]);
+      expect([id, Object.keys(B3_PINS[id] ?? {}).sort()]).toEqual([id, [...filled].sort()]);
     }
   });
   it('each listed sheet is NoHandling with why D-SHIP-GRIP (b3) and passes', async () => {
