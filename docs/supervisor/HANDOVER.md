@@ -837,6 +837,17 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Owner answers: D-OWNER-FLAGS (approve; crunch was added under the ruling, so the corrected count of 58 goes to the owner with the next APK) and D-OWNER-RELEASE-ALL.
   - Owner items for the release candidate: F-SHEET-COPY (the "not medical advice" closing line vs the AGENTS UI-copy rule), golden-B follow-ups 30-36, F-PLATE-OVERLAP-W2, and the box_jump ankle box.
   - Panel scratch: lyr-w2a/b/c, k1, k2 and s, with keys in lyr-w2-private.
+- **D-OWNER-PARALLEL 11-05 ~02:00 UTC** (owner: "Make work faster and do more parallel agents"). The cap is up to 9 active LIB builders; merges stay in wave order, and builders may merge W2's READY head to build ahead. New lanes:
+
+  | lane | session |
+  |---|---|
+  | W4 | session_018Pv5bMiWjAgBDQNEL69smj |
+  | W5 | session_018Pv5bKkkcS2Ca418ayCZdk |
+  | W6 | session_018Pv5bJMLgYNrdFdvrC9BEE |
+  | W7 | session_018Pv5bK1RdhfbyRB1zk8cFT |
+  | LIB-PLATEFIX-2 | session_018Pv5bJpu8Jj7VT8B6HKN4u (card `verify/lib-platefix-2-card.md`) |
+
+  W3 and PLATEFIX-1 were told to build ahead on W2's head. Each new lane posts a PLAN first, and the supervisor rules it.
 - **Update 11-04 ~23:25 UTC** (weekly meter 0.45).
   - **W2 #379:** READY @ `84360f00` (8 ids). The fresh reviewer is session_018Pv5bMTkipS2LSoNQmBYB8. On PASS, train 68.
   - **F-ZOOM-NONE #388:** review PASS @ `a9992a49` (6644365532, 0/0/1/1). The builder is fixing both findings, and the supervisor checks the delta. It merges after W2, then merges main.
