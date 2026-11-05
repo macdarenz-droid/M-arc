@@ -12,7 +12,7 @@ export const CLOSEUP_OPTIONS = {
   jump_rope: ZOOM,
   battle_ropes: ZOOM,
   sled_pull: ZOOM,
-  burpee: ZOOM,
+  burpee: { ...ZOOM, css: { ...ZOOM.css, spine: true } },   // the landing crop's hip-ankle reference (spine guide), as plank's
   bear_crawl: ZOOM,
   sled_push: ZOOM,
   medicine_ball_slam: ZOOM,
