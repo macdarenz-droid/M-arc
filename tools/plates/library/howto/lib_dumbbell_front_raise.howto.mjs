@@ -5,7 +5,7 @@
 // own claims), so no field is inherited and no INHERIT_MAP entry applies.
 // No hand zoom (D-SHIP-HANDW6, gap-ruled on tools/plates/library/hands/no-zoom.json): the card's hand zoom `dfr-hand-top`
 // (c1, c7, c9; Wrong null) has no pair key. Its hand claims (closed grip, palms down, thumbs around the handles, inside
-// edge slightly up near the top, wrist straight) live in handling (gripLine, limitText).
+// edge slightly up near the top, wrist straight) live in handling (gripLine, limitText), with the width (c6).
 // GRIP (c) (Q-W6-7, #393 6647923934): grip.handContact reads "Not given by any source read". The contact is golden B's
 // hold default, this card's own parent dumbbell_lateral_raise (layers/exercises/dumbbell_lateral_raise.howto.mjs
 // handling), DERIVED at import from the copied source line and cited CONVENTION (source hold-default), never shown
@@ -57,7 +57,8 @@ const CL = {
   c14: C(['CONSENSUS'], [SL, BB, MO], 'c14'),
   c15: C(['DATA'], ['coratella2020'], 'c15'),
   c18: C(['CONSENSUS'], [BB], 'c18'),
-  thumbs: C(['CONSENSUS'], [ACE, MO], 'c1, c2'),
+  hold: C(['CONSENSUS'], [ACE, MO], 'c1, c2'),
+  move: C(['CONSENSUS'], [ACE, MO, BB], 'c5, c10, c11'),
   width: C(['CONSENSUS'], [BB, ACE, MO], 'c6, c2'),
   swing: C(['CONSENSUS'], [MO, BB], 'c12, c13'),
   hips: C(['CONSENSUS'], [MO, BB, ACE], 'c12, c4'),
@@ -182,7 +183,7 @@ export default {
   plate: plateSpec,
   handling: {
     archetype: 'hold',
-    why: 'D-SHIP-C3 no-zoom list, D-SHIP-HANDW6: no pair key draws the card\'s hand zoom; the grip copy carries c1, c7 and c9.',
+    why: 'D-SHIP-C3 no-zoom list, D-SHIP-HANDW6: no pair key draws the card\'s hand zoom; the grip copy carries c1, c6, c7 and c9.',
     orientation: 'pronated',   // c1: closed, pronated grip, palms facing the thighs (palms down as the arms rise)
     handle: 'dumbbell',        // the spec's engine dumbbell primitive
     overBody: false,
@@ -192,16 +193,19 @@ export default {
     // c9: "wrists neutral", no flexion or extension. No degrees given; [0, 0] is that straight wrist, not a card number.
     wrist: { ext: [0, 0], limitText: 'Keep your wrists straight, not bent up or down.', claim: CL.c9 },
     faults: [],                // the card zoom's Wrong is null; the card names no hand fault
-    gripLine: 'Closed grip, palms down, thumbs around the handles. Near the top, turn the inside edge slightly up.',   // c1, c7
+    // D-TEXT-PRINTED: posture width (c6) is shown here; handling.width.text is not printed.
+    gripLine: 'Closed grip, palms down, thumbs around the handles, dumbbells shoulder-width apart. Near the top, turn the inside edge slightly up.',   // c1, c6, c7
     cue: 'Palms down, wrists straight.',   // c1, c9
   },
   contacts: ['standing-feet'],
   setup: [
     { kind: 'position', text: 'Stand with feet slightly wider than hips, or in a split stance.', claim: CL.c3 },
-    { kind: 'grip', text: 'Hold the dumbbells in front of your thighs, palms facing them.', claim: CL.c1 },
-    { kind: 'grip', text: 'Thumbs around the handles. Elbows straight or slightly bent.', claim: CL.thumbs },
+    // D-TEXT-GOLDEN: card setup step 3 (c1, c2) joined to step 2; its thumbs (c1) are also in gripLine.
+    { kind: 'grip', text: 'Dumbbells in front of your thighs, palms facing them. Elbows slightly bent.', claim: CL.hold },
     { kind: 'brace', text: 'Brace your torso and pull your shoulders down and back.', zoom: 'dfr-hips', claim: CL.c4 },
     { kind: 'load', text: 'Pick a lighter weight than you think.', claim: CL.c14 },
+    // D-TEXT-GOLDEN, D-TEXT-PRINTED: posture raise and lower (c5, c10, c11), unprinted in copy and posture, shown here.
+    { kind: 'brace', text: 'Breathe out, raise slowly. Breathe in, lower slowly, not onto your thighs.', claim: CL.move },
   ],
   posture: [
     { key: 'raise', label: 'Raise slowly', detail: 'Breathe out and raise the dumbbells slowly in front of you.',
@@ -221,7 +225,7 @@ export default {
   zooms,
   chips: ['dfr-top-height', 'dfr-hips', 'feel'],   // the zoom shell's chip row: the zoom keys, then feel
   copy: {
-    // D-TEXT-GOLDEN: posture 'raise' (c5) is shown here; 'lower' (c10, c11) in mistakeLine.
+    // Not printed on the layers page (D-TEXT-PRINTED): posture 'raise' and 'lower' (c5, c10, c11) are in setup step 5.
     setupLine: 'Brace, shoulders down and back. Breathe out and raise the dumbbells slowly in front of you.',
     mistakeLine: "Breathe in and lower slowly. Don't rest the dumbbells on your thighs.",
     cueLine: 'Stop at shoulder height.',
