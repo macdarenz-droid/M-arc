@@ -53,7 +53,7 @@
       "pairWords": {
         "curled": {
           "right": {
-            "text": "Overhand, bar across the base of the fingers, thumb wrapped, wrist not curled.",
+            "text": "Overhand, thumb wrapped, wrist not curled.",
             "source": "docs/research/howto/cards/inverted_row.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
           }
         }
