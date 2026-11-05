@@ -6,6 +6,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error untyped .mjs
 import { BACK_PARTS, FRONT_PARTS } from '../../tools/plates/layers/engine/bodymap-parts.mjs';
+// @ts-expect-error untyped .mjs
+import { painNamesPatch } from '../../tools/plates/library/build-layers-page.mjs';
 
 const ROOT = join(__dirname, '..', '..');
 const GOLDEN = 'tests/howto/golden/library', GEN = 'src/howto/generated';
@@ -25,12 +27,14 @@ describe('D-PF-PAINNAMES: no data-label on a built page holds a raw body-map par
     expect(PAGES.reduce((n, p) => n + labels(readFileSync(join(ROOT, p), 'utf8')).length, 0)).toBeGreaterThan(50);
   });
   for (const p of PAGES) it(p, () => expect(rawIn(readFileSync(join(ROOT, p), 'utf8'))).toEqual([]));
-  // The source's PAIN_NAMES table (howto-layers.mjs, MANIFEST-pinned golden B, add-only) names every part a library
-  // How-to marks as pain, so a page built from them can carry no raw id.
-  const SRC = readFileSync(join(ROOT, 'tools/plates/layers/artifact/howto-layers.mjs'), 'utf8');
-  const TABLE = SRC.match(/const PAIN_NAMES = (\[[\s\S]*?\]\]);/)?.[1] ?? '';
-  const NAMES: [RegExp, string][] = new Function(`return ${TABLE}`)();
-  const named = (part: string) => NAMES.find(([re]) => re.test(part))?.[1];
+  // D-PF-PAINNAMES-LIB: golden B's PAIN_NAMES (howto-layers.mjs, byte-locked) plus the library's names, as
+  // build-layers-page.mjs painNamesPatch appends them to the mirror copy the review pages (and so the app's library feel
+  // chunks) are built from.
+  const VENDORED = readFileSync(join(ROOT, 'tools/plates/layers/artifact/howto-layers.mjs'), 'utf8');
+  const tableOf = (src: string): [RegExp, string][] => new Function(`return ${src.match(/const PAIN_NAMES = (\[[\s\S]*?\]\]);/)?.[1] ?? '[]'}`)();
+  const NAMES = tableOf(painNamesPatch(VENDORED));
+  const nameIn = (T: [RegExp, string][], part: string) => T.find(([re]) => re.test(part))?.[1];
+  const named = (part: string) => nameIn(NAMES, part);
   it('every library pain-row part has a PAIN_NAMES name (D-PF-PAINNAMES adds lower back, front shoulders)', async () => {
     expect(named('lower-back-erectors-left')).toBe('lower back');
     expect(named('lower-back-ql-right')).toBe('lower back');
@@ -45,6 +49,14 @@ describe('D-PF-PAINNAMES: no data-label on a built page holds a raw body-map par
     }
     expect(parts.size).toBeGreaterThan(0);
     expect([...parts].filter(p => !named(p))).toEqual([]);
+  });
+  it('mutation: without the library mapping (golden B\'s table alone) the library parts have no name', () => {
+    const bare = tableOf(VENDORED);
+    expect(bare.length).toBeGreaterThan(0);
+    for (const p of ['lower-back-erectors-left', 'shoulder-front-left', 'neck-left', 'foot-right']) expect(nameIn(bare, p)).toBeUndefined();
+  });
+  it('golden B stays byte-locked: the vendored source carries no library name', () => {
+    expect(VENDORED).not.toContain("'lower back'");
   });
   it('mutation: a label naming raw part ids is caught, a worded one is not', () => {
     expect(rawIn('<button data-label="Main: x. Marked: lower-back-erectors-left and lower-back-ql-right.">')).toHaveLength(1);
