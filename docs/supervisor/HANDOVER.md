@@ -842,6 +842,23 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-05 ~08:50 UTC: the weekly window is at 0.91 (08:37) and will run out soon. It resets Fri 11-06 08:00 UTC. After the reset, the 10-19 rule applies: pause at 0.80.** Resume from this entry. Cards and rulings are on `claude/sup-lib4-cards` @ `2a95963c` (section 48, and `verify/*-card.md`). Working notes are in the scratchpad: `notes-resume-0740.md`, `w7-queue.txt` and the panel sets with their `*-private` keys. The scratchpad survives only while this container lives.
+  - **W3 #384:** second recheck VALID (6653062201).
+    - Approved: 11 ids (shoulder_press, straight_arm_pulldown, incline_machine_press, chest_supported_row, resistance_band_row, single_arm_lat_pulldown, hanging_knee_raise, chin_up, horizontal_leg_press, inverted_row, close_grip_pulldown).
+    - assisted_pull_up is HELD (plate R5 failed twice; LIB-PLATEFIX-3). mountain_climbers is staged for a later wave.
+    - READY @ `e351f554` passed its delta, except 2 text fixes and "newtons" (6653343780). PIN GO is conditional on those.
+    - Next: `SHIP W3 FLIPPED @ <sha>`, then a fresh Opus reviewer, then train 69.
+  - **F-ZOOM-NONE #388:** its delta post is owed (asked 6649085079). Then it rides train 69 with W3, or before it.
+  - **W4 #391:** panel VALID (6653540190). Approved: pendlay_row, dumbbell_romanian_deadlift, cable_shrug, smith_machine_shrug. HELD (S3): skull_crusher, arnold_press. The fix round uses `verify/panels/w4-findings.md`. Next: `W4 PANEL FIX`, then a focused recheck.
+  - **W5 #392:** panel VALID (6649453813); 13 approved. Plate text fixed @ `30b0ea6f` (lb4 plates `cff17ef7…`, lb5 `36911d39…`, layers lb04 `f2d4bdc7…`, lb05 `32b26611…`). The focused-recheck set builder is running (sets `lyr-w5r`, `critic-w5p`, `lyr-w5rk`, `lyr-w5rs`; keys `lyr-w5r-private`). preacher_curl waits on F-BODYMAP-FRONTDELT.
+  - **PLATEFIX #385:** OHP plate approved. The second layers recheck (`lyr-pfl2`) critics are running. Rulings D-PF-OHPHAND and D-PF-PAINNAMES (6653463370). Content: the plant was caught; the raw-id labels are fixed by PAINNAMES.
+  - **PLATEFIX-2 #395:** the recheck plates critics (`critic-pf5`, key `critic-pf5-private`) are running. D-PF2-H4GATE: the gate block is ready locally @ `1b0cabde`.
+  - **W6 #393 and W7 #394:** panels not run yet. W6 sets `lyr-w6*` and `critic-lth`. W7 sets A and B are scored; C, D, content and safety are queued. Both lanes have D-TEXT-PRINTED moves ready.
+  - **New cards, no builder yet:**
+    - `f-bodymap-frontdelt-card.md`;
+    - `f-text-printed-card.md` (the main audit found no safety line lost, but dumbbell_biceps_curl c7 is never shown);
+    - `lib-platefix-3-card.md` (W3-W5 plate items; W4's list is to come).
+  - **Builders:** all were woken at 07:58 after the five-hour limit. They will stop again when the weekly limit hits, and their 20-minute check-ins resume them after Fri 08:00. Wake any that do not resume, with one send_message each.
 - **Update 11-05 ~07:50 UTC** (the five-hour window ran out at about 05:00 and reset at 07:40; weekly was 0.81 at 06:17 and resets Fri 08:00; the owner's rule is no pause until then). Rulings since 03:57 are in `verify/lib4-cards.md` section 48 @ `ec165a85`. The working notes are in the scratchpad file `notes-resume-0740.md`.
   - **APK SENT** at 04:52: main `e623d3ef`, run 41963254689, artifact 13390316663, fingerprint step success. **Last APK sent: `e623d3ef`.** (Relay line owed: `PROJECT_STATE.md` "last APK sent".) The owner was asked the battle_ropes question: grip as text only, or keep it for a later update.
   - **W3 #384:** focused recheck VALID (6649416891); resistance_band_row approved. FIX 2 @ `6e8c2724`, then cite fields @ `27a1a024` (no page moved). The second recheck is running: sets `lyr-w3r2`, `critic-w3p`, `lyr-w3r2k` and `lyr-w3r2s`; keys in `lyr-w3r2-private`. Content and safety are done.
