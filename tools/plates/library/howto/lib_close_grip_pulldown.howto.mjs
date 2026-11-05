@@ -129,7 +129,7 @@ const zooms = [
       right: 'Handle just below the chin, upper arms tucked.',
       wrong: 'Handle past the chin, elbows moving back.',
     },
-    alt: {
+    alt: {   // c6, c7 (card zooms[key=bottom position])
       right: 'Side view, seated. The V-handle is just below the chin. Upper arms tucked at the sides, elbows pointing down.',
       wrong: 'Side view. The handle is pulled past the chin and the elbows move back behind the body.',
     },
@@ -151,7 +151,7 @@ const zooms = [
       wrong: 'Pad too high, hips lifting.' },
     alt: {
       right: 'Side view of the thighs, knee pad and seat. The pad presses on the tops of the thighs, just above the knees. Feet flat, hips down on the seat.',
-      wrong: 'The pad set too high, with a gap above the thighs. The hips lift off the seat as the handle comes down. Drawn dashed over the right position.',
+      wrong: 'The pad set too high, with a gap above the thighs. Drawn dashed over the right position.',
     },
     // Q-W3-8 (#383 6631278086): feelRow and feelPrompt are not compared; this card dropped the low-back row, so no feel link.
   },

@@ -164,7 +164,7 @@ const zooms = [
       right: 'Both knees on the pad, arms fully straight.',
       wrong: 'Arms still bent at the bottom: a half rep.',
     },
-    alt: {
+    alt: {   // c8, c1 (card zooms[key=knee pad])
       right: 'Side view, bottom of the rep. Both knees on the pad, arms fully straight overhead.',
       wrong: 'Side view. The arms stay bent at the bottom and the pad stays up.',
     },
@@ -189,7 +189,7 @@ const zooms = [
       right: 'Shoulder blades down and back at the start.',
       wrong: 'Shoulders shrugged up to the ears.',
     },
-    alt: {
+    alt: {   // c7, c8 (card zooms[key=shoulders])
       right: 'Seen from behind, straight-arm hang on the pad. Shoulders drawn down, a clear gap to the ears.',
       wrong: 'Seen from behind, the same hang shrugged. Shoulders up at the ears, the head sunk between the arms.',
     },

@@ -250,7 +250,7 @@ const MISTAKES = [
 ];
 const RISKS = [
   { key: 'shoulder', text: 'Arms high overhead narrow the space under the shoulder roof.', claim: C(['MECH'], ['prinold-2016'], 'c14, c13') },
-  { key: 'spine', text: 'This pull and the pull-up gave the highest spine load of the pulls tested.', claim: CL.c15 },
+  { key: 'spine', text: 'Of the pulls tested, chin-ups and pull-ups loaded the spine most.', claim: CL.c15 },
   { key: 'elbow', text: 'Elbows can get overused when pulling volume rises too fast.', claim: CL.c16 },
 ];
 
@@ -270,7 +270,7 @@ export default {
     wrist: { ext: V.wristRange, limitText: 'Keep your wrist straight, in line with your forearm, not curled.', claim: CL.wrist },
     pose: RIGHT_POSE,
     faults: FAULTS,
-    gripLine: 'Palms facing you, bar just below the base of your fingers, thumbs wrapped. Wrists straight.',   // c1, c25, c3
+    gripLine: 'Palms facing you, bar just below the base of your fingers, thumbs wrapped.',   // c1, c25 (the wrist line is limitText, c3)
     cue: 'Thumbs wrapped, wrists straight.',   // c1, c3
   },
   contacts: ['hang-support'],

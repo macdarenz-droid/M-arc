@@ -23,7 +23,22 @@
   "closeups": {
     "lib_chin_up": {
       "optionsKey": "chin_up",
-      "pair": "bar-hang-under"
+      "pair": "bar-hang-under",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Bar just below the finger base, thumb wrapped, wrist straight.",
+            "source": "docs/research/howto/cards/chin_up.json zooms[key=hand] (W3 PANEL FIX 2, #384 6649416891: card detail, not the sublabel) right; c25, c1, c3"
+          },
+          "wrong": {
+            "text": "Wrist curled forward, so the grip is weaker.",
+            "source": "docs/research/howto/cards/chin_up.json zooms[key=hand] (W3 PANEL FIX 2, #384 6649416891: card detail, not the sublabel) wrong; c20"
+          }
+        }
+      }
     },
     "lib_hanging_knee_raise": {
       "optionsKey": "hanging_knee_raise",

@@ -146,8 +146,8 @@ const feel = {
   watch: [
     { muscleId: 'lower_back', plain: 'The lower back should stay quiet. An ache there means it is arching.' },
   ],
-  // D-TEXT-GOLDEN (#379 6637607604): posture 'breath' (c5, c11) is shown in the feel line.
-  feelLine: 'You should feel this in the fronts and sides of your shoulders. Breathe out as you press.',
+  // D-TEXT-GOLDEN (#379 6637607604): posture 'breath' (c5, c11) moved from the feel line to a setup step (W3 PANEL FIX 2, #384 6649416891: no movement cues under the feel heading).
+  feelLine: 'You should feel this in the fronts and sides of your shoulders.',
   rows: [
     { key: 'shoulder', where: 'Sharp shoulder pinch', at: { muscles: ['front_delts'] },
       means: 'Watch for letting the handles drop on the way down.',
@@ -162,7 +162,7 @@ const feel = {
       fix: 'Stop just short of lockout.',
       redFlag: 'elbow', claim: CL.c6 },
   ],
-  claim: C(['DATA', 'WEAK', 'CONSENSUS'], ['bull2010', 'paoli2010', 'kim2026', ACE], 'c10, c8, c9, c5 (feel-line breathing cue)'),
+  claim: C(['DATA', 'WEAK'], ['bull2010', 'paoli2010', 'kim2026'], 'c10, c8, c9'),
 };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
@@ -203,7 +203,7 @@ export default {
   contacts: ['seat-back'],
   setup: [
     { kind: 'adjust', text: 'Set the seat: handles at or just above shoulder height.', claim: CL.c1 },
-    { kind: 'position', text: 'Sit back against the pad, feet planted.', claim: CL.c4 },
+    { kind: 'position', text: 'Sit back against the pad, feet planted. Breathe out as you press.', claim: C(['CONSENSUS', 'DATA'], [ACE, 'macdougall1985'], 'c4, c5, c11') },
     { kind: 'grip', text: 'Full grip, thumbs round, wrists straight.', zoom: 'hand', claim: CL.c2 },
     { kind: 'brace', text: 'Brace, keep the natural low-back curve, shoulders back and down.', zoom: 'low-back', claim: CL.c4 },
     { kind: 'load', text: 'One or two reps over target? Add 2 to 10 percent.', claim: CL.c13 },

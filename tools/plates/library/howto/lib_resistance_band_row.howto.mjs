@@ -113,7 +113,7 @@ const zooms = [
       right: 'Sitting tall, back straight, holding the pull.',
       wrong: 'Lower back rounded, trunk tipped forward.',
     },
-    alt: {
+    alt: {   // c3 (card zooms[key=back line])
       right: 'Side view, end of the pull. Sitting tall on the floor, back straight. The elbows are drawn back.',
       wrong: 'Side view. The lower back rounds and the trunk tips forward over the legs.',
     },
@@ -136,7 +136,7 @@ const zooms = [
       right: 'Shoulder blades squeezed together at the end.',
       wrong: 'Shoulder blades still apart at the end of the pull.',
     },
-    alt: {
+    alt: {   // c4 (card zooms[key=shoulder blades])
       right: 'Seen from behind, end of the pull. The shoulder blades are drawn back together.',
       wrong: 'Seen from behind, end of the pull. The shoulder blades stay apart, shoulders forward.',
     },
@@ -152,8 +152,8 @@ const feel = {
     { muscleId: 'biceps', plain: 'The biceps bend the elbows.' },
   ],
   watch: [{ muscleId: 'lower_back', plain: 'Your lower back should stay straight.' }],
-  // D-TEXT-GOLDEN (#379 6637607604): posture 'breathe' (c5) is shown in the feel line.
-  feelLine: 'You should feel this as a small squeeze between your shoulder blades. Breathe out as you pull.',
+  // D-TEXT-GOLDEN (#379 6637607604): posture 'breathe' (c5) moved from the feel line to a setup step (W3 PANEL FIX 2, #384 6649416891: no movement cues under the feel heading).
+  feelLine: 'You should feel this as a small squeeze between your shoulder blades.',
   rows: [
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
       means: 'Watch for losing your tall, straight back.',
@@ -161,7 +161,7 @@ const feel = {
       zoom: 'back-line', redFlag: 'back', claim: CL.slump },
   ],
   libraryDiff: { add: ['biceps'], why: 'card libraryDiff: the elbows bend against the band (c4) and a prone row measured the biceps working (c9; MECH).' },
-  claim: C(['CONSENSUS', 'DATA', 'MECH'], [SW, PT, 'lehman2004', 'fischer2025'], 'c4 (primary), c8, c9 (secondary), c3 (watch), c5 (feel-line breathing cue)'),
+  claim: C(['CONSENSUS', 'DATA', 'MECH'], [SW, PT, 'lehman2004', 'fischer2025'], 'c4 (primary), c8, c9 (secondary), c3 (watch)'),
 };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
@@ -199,7 +199,7 @@ export default {
   },
   contacts: ['floor-body'],   // the card's archetype.contact
   setup: [
-    { kind: 'safety', text: 'Check the band for wear before you start.', claim: CL.c2 },
+    { kind: 'safety', text: 'Check the band for wear. Breathe out as you pull.', claim: C(['CONSENSUS'], [SW, PT], 'c2, c5') },
     { kind: 'position', text: 'Sit on a mat, legs straight out, feet flexed.', claim: CL.c1 },
     { kind: 'grip', text: 'Loop the band round both soles. Wrap an end round each hand.', claim: CL.wrap },
     { kind: 'load', text: 'Hold the band shorter or longer to change how hard it is.', claim: CL.c6 },

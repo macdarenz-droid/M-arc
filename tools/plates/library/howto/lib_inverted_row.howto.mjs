@@ -135,7 +135,7 @@ const zooms = [
       right: 'Heels, hips and shoulders in one straight line.',
       wrong: 'Hips sagging toward the floor.',
     },
-    alt: {
+    alt: {   // c3 (card zooms[key=body line])
       right: 'Side view, top of the row. Heels, hips and shoulders in one straight line under the bar.',
       wrong: 'Side view. The hips sag toward the floor, so the body bends at the hips.',
     },
@@ -155,7 +155,7 @@ const zooms = [
       right: 'Chest touching the bar, shoulder blades squeezed back.',
       wrong: 'Chest well short of the bar.',
     },
-    alt: {
+    alt: {   // c4 (card zooms[key=top position])
       right: 'Side view, top of the row. The chest touches the bar, shoulder blades squeezed back and down.',
       wrong: 'Side view. The pull stops with the chest well short of the bar.',
     },

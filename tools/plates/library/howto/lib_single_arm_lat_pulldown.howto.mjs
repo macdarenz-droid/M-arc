@@ -125,7 +125,7 @@ const zooms = [
       right: 'Upper arm flush with the side, shoulder down.',
       wrong: 'Elbow behind the body, shoulder rolled forward.',
     },
-    alt: {
+    alt: {   // c10 (card zooms[key=bottom position])
       right: 'Side view, seated, one arm pulling. The upper arm is flush with the side and the shoulder is down.',
       wrong: 'Side view. The elbow has gone back behind the body and the shoulder rolls forward.',
     },

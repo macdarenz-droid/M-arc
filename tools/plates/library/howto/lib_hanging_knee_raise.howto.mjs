@@ -61,6 +61,7 @@ const CL = {
   c10: C(['DATA'], ['escamilla-2006'], 'c10'),
   c13: C(['CONSENSUS'], [YS, SL], 'c13'),
   c14: C(['MECH', 'WEAK'], ['mcgill-2015'], 'c14'),
+  spine: C(['MECH', 'WEAK', 'CONSENSUS'], ['mcgill-2015', YS, SL], 'c14, c13 (plain words: straight legs measured, bent knees inferred lower)'),
   c15: C(['MECH'], ['prinold-2016'], 'c15'),
   c17: C(['MECH', 'WEAK'], ['bullbar-calluses'], 'c17'),
   c19: C(['MECH', 'WEAK'], ['bullbar-calluses'], 'c19'),
@@ -141,7 +142,7 @@ const zooms = [
       right: 'Knees above hip height, pelvis curled up.',
       wrong: 'Knees stopped at hip height, pelvis not curled.',
     },
-    alt: {
+    alt: {   // c6, c5 (card zooms[key=top position])
       right: 'Side view, top of the rep. Knees above hip height, pelvis curled up, lower back gently rounded.',
       wrong: 'Side view. The knees stop level with the hips and the pelvis stays flat.',
     },
@@ -165,7 +166,7 @@ const zooms = [
       right: 'Body still under the bar on every rep.',
       wrong: 'Body swinging to kick the legs up.',
     },
-    alt: {
+    alt: {   // c4 (card zooms[key=body line])
       right: 'Side view. The body hangs still under the bar as the knees lift.',
       wrong: 'Side view. The body swings back under the bar to kick the legs up. Drawn dashed over the still position.',
     },
@@ -192,11 +193,12 @@ const feel = {
       fix: 'Lift the knees higher and curl the pelvis up at the top.',
       zoom: 'top', claim: CL.c6 },
     { key: 'grip', where: 'Forearms give out first', at: { muscles: ['forearms'] },
-      means: 'The arm-strap version showed some of the highest ab activity.',
-      fix: 'Use arm straps (ab slings), the version with some of the highest ab activity.',
+      // D-FEEL-MEANS-CAUSAL (#384 6649416891): the card states no cause for the grip giving out, so no means label.
+      means: '',
+      fix: 'Use arm straps (ab slings).',
       claim: CL.c10 },
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'Straight legs measured about 3000 N spine load, bent knees likely less.',
+      means: 'Straight legs load the spine more, bent knees likely less.',
       fix: 'Keep the knees bent.',
       zoom: 'body-line', redFlag: 'back', claim: CL.backRow },
     { key: 'shoulder', where: 'Shoulder', at: {},   // pain, not a muscle taking over: no map mark (golden B pull_up)
@@ -218,7 +220,7 @@ const MISTAKES = [
     fix: 'Lower the legs with control.' },
 ];
 const RISKS = [
-  { key: 'spine', text: 'The straight-leg version measured about 3000 N of spine compression.', claim: CL.c14 },
+  { key: 'spine', text: 'Straight legs load the spine more, bent knees likely less.', claim: CL.spine },
   { key: 'shoulder', text: 'A long hang with arms overhead narrows the space under the shoulder roof.', claim: CL.c15 },
 ];
 
