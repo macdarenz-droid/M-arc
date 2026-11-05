@@ -153,11 +153,11 @@ const feel = {
   feelLine: 'You should feel this in your glutes and hamstrings, not your back. Front thighs help off the floor.',
   rows: [
     { key: 'low-back-over', where: 'Lower back taking over', at: { muscles: ['lower_back'] },
-      means: 'Your back is rounding as the weight goes up.',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: 'Lower the weight or do fewer reps.',
       zoom: 'dl-start', claim: CL.c8 },
     { key: 'low-back', where: 'Lower back pain while lifting', at: { muscles: ['lower_back'] },
-      means: 'Is it getting worse?',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'back', claim: C(['CONSENSUS', 'MECH'], ['nhs-back'], 'c25 (card source nhs-back-pain, the same NHS page)') },
   ],

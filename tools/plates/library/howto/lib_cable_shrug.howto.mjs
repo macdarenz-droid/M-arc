@@ -105,11 +105,11 @@ const feel = {
   feelLine: 'You should feel this on top of your shoulders, beside the neck.',
   rows: [
     { key: 'biceps', where: 'Biceps working', at: { muscles: ['biceps'] },
-      means: 'You are bending the arms to lift the bar.',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: 'Keep the arms straight.',
       zoom: 'cshrug-top', claim: CL.c5 },
     { key: 'shoulder', where: 'Pain in your shoulder', at: { muscles: ['front_delts'] },
-      means: 'Is it getting worse?',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: CL.c17 },
   ],
@@ -149,7 +149,7 @@ export default {
     // Own claim (Q-W4-5; refused until the route lands). card grip.wrist: bent back into its natural grip position, about
     // 35 degrees, not curled forward; grip weakens moving away from it, even to 15 degrees (c11). The range runs between
     // the card's two measured positions (15 and 35 degrees of extension); no number from it appears in copy.
-    wrist: { ext: [15, 35], limitText: 'Wrist bent back in its natural grip position, not curled forward.',
+    wrist: { ext: [15, 35], limitText: '',   // dropped: it repeated the gripLine's wrist words (sweep point 6)
       claim: C(['DATA', 'MECH'], ['odriscoll1992'], 'c11, card grip.wrist (a card drawing convention until F-LB3-3)') },
     faults: [
       // card zoom cshrug-grip wrong (c11). Not drawn (no hand zoom), so no pose or marker is set.

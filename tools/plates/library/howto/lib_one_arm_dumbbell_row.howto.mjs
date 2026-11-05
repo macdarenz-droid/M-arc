@@ -132,7 +132,7 @@ const feel = {
       means: 'Your back is usually stronger than your grip.',
       fix: 'Use a lifting strap.', claim: CL.c16 },
     { key: 'shoulder', where: 'Pain in your shoulder', at: { muscles: ['front_delts'] },
-      means: 'Is it getting worse?',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: C(['CONSENSUS', 'MECH'], ['nhs-shoulder-pain'], 'c20') },
   ],

@@ -118,11 +118,11 @@ const feel = {
   feelLine: 'You should feel this between and around your shoulder blades.',
   rows: [
     { key: 'low-back', where: 'Lower back rounding or straining', at: { muscles: ['lower_back'] },
-      means: 'Your lower back is rounding under the load.',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: 'Brace first and use a lighter load.',
       zoom: 'landmine-back', claim: CL.round },
     { key: 'back-pain', where: 'Pain in your back while rowing', at: { muscles: ['lower_back'] },
-      means: 'Is it getting worse?',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'back', claim: C(['CONSENSUS', 'MECH'], ['nhs-back'], 'c19') },
   ],

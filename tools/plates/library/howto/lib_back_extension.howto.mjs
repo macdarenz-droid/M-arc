@@ -135,11 +135,11 @@ const feel = {
   feelLine: 'You should feel this in your glutes, hamstrings and lower back. A pump, not a deep ache.',
   rows: [
     { key: 'ache', where: 'Deep ache in the lower back', at: { muscles: ['lower_back'] },
-      means: 'Too much too soon, or a form fault to revise.',
-      fix: 'Take a week or two off, then come back lighter.',
+      means: 'Doing too much too soon can hurt your back.',   // c12 ("If you do too much, too soon, they can")
+      fix: 'Take a week or two off, then come back lighter and check your form.',   // c13
       claim: C(['CONSENSUS'], [SL], 'c13, c12') },
     { key: 'back-pain', where: 'Lower back pain while lifting', at: { muscles: ['lower_back'] },
-      means: 'Is it getting worse?',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'back', claim: C(['CONSENSUS', 'MECH'], ['nhs-back'], 'c20') },
   ],

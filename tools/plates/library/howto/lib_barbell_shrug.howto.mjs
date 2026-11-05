@@ -103,7 +103,7 @@ const feel = {
   feelLine: 'You should feel this on top of your shoulders, between neck and shoulder.',
   rows: [
     { key: 'shoulder', where: 'Sharp pain in the shoulder joint', at: { muscles: ['front_delts'] },
-      means: 'Not a normal training feeling at a common injury site.',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: 'Stop the set.',
       redFlag: 'shoulder', claim: CL.c11 },
   ],

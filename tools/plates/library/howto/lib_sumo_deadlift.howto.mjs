@@ -124,11 +124,11 @@ const feel = {
   feelLine: 'You should feel this in your glutes, inner and front thighs, most off the floor.',
   rows: [
     { key: 'low-back-early', where: 'Lower back takes over early', at: { muscles: ['lower_back'] },
-      means: 'Your hips are shooting up first.',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: 'Stay patient and keep driving with the legs.',
       zoom: 'sumo-start', claim: CL.c12 },
     { key: 'low-back', where: 'Lower back pain while lifting', at: { muscles: ['lower_back'] },
-      means: 'Is it getting worse?',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'back', claim: C(['CONSENSUS', 'MECH'], ['nhs-back'], 'c22 (card source nhs-back-pain, the same NHS page)') },
   ],

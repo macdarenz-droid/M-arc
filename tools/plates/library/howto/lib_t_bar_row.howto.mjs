@@ -114,7 +114,7 @@ const feel = {
   feelLine: 'You should feel this in the middle and sides of your back. Your lower back works hard too.',
   rows: [
     { key: 'low-back', where: 'Pain in your back while rowing', at: { muscles: ['lower_back'] },
-      means: 'Is it getting worse?',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: "Stop the set. Don't train through the pain.",
       zoom: 'tbar-back', redFlag: 'back', claim: C(['CONSENSUS', 'MECH'], ['nhs-back'], 'c22') },
   ],

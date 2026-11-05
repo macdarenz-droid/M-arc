@@ -115,7 +115,7 @@ const feel = {
   feelLine: 'You should feel this between your neck and shoulders.',
   rows: [
     { key: 'shoulder', where: 'Any neck or shoulder pain', at: { muscles: ['front_delts'] },
-      means: 'The shoulder is a common injury site in lifting.',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: CL.pain },
   ],

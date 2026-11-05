@@ -128,15 +128,15 @@ const feel = {
   feelLine: 'You should feel this in the backs of your thighs going down, glutes coming up.',
   rows: [
     { key: 'no-hams', where: 'No feeling in the hamstrings', at: { muscles: ['hamstrings'] },
-      means: 'Too much knee bend, or the hips are not going back.',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: 'Push the hips back and keep only a slight knee bend.',
       zoom: 'dbrdl-bottom', claim: C(['CONSENSUS'], [SW], 'c13') },
     { key: 'low-back-more', where: 'Lower back more than the hamstrings', at: { muscles: ['lower_back'] },
-      means: 'You are using your back to stand up.',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: 'Use your glutes and hamstrings to stand up.',
       claim: C(['CONSENSUS'], [SW], 'c10, c5') },
     { key: 'low-back', where: 'Lower back pain while lifting', at: { muscles: ['lower_back'] },
-      means: 'Is it getting worse?',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'back', claim: C(['CONSENSUS', 'MECH'], ['nhs-back'], 'c23 (card source nhs-back-pain, the same NHS page)') },
   ],
