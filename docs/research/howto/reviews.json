@@ -152,6 +152,136 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W1-STAMP",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/376#issuecomment-6616230145 @ 26593a92bdbe428f12186949c7842b35d9f47dec"
+    },
+    {
+      "scope": "lib_barbell_row",
+      "hash": "9e1365878f929283f8f8f3074f11094a3937579b5bba24cbd67f51e89403ca35",
+      "date": "2026-11-04",
+      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/barbell_row.json",
+      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
+      "safety": "LIB-SHIP W2: tier A; fresh Opus safety checker (planted unsafe line caught): nothing unsafe; way-out question answered yes where asked (D-SHIP-WAYOUT)",
+      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
+      "findings": [
+        "F-CARD-ROWBACK: the card's row-back zoom claim is c4 only, while its Wrong is the c7 swing; recorded",
+        "Q-W2-15: the approved plate's 'not the neck' and 'middle of the foot' text is fixed in LIB-PLATEFIX-1 (release-blocking)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W2-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
+    },
+    {
+      "scope": "lib_dumbbell_bench_press",
+      "hash": "53be0515eb544ddc2a09b3a9f4935da7d8eab513c709df6b0b60b2783e65822a",
+      "date": "2026-11-04",
+      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/dumbbell_bench_press.json",
+      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
+      "safety": "LIB-SHIP W2: tier A; fresh Opus safety checker (planted unsafe line caught): nothing unsafe; way-out question answered yes where asked (D-SHIP-WAYOUT)",
+      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
+      "findings": [
+        "F-CARD-BENCH-ROW: the card's pain row carries a raw 'Fault:' prefix; the sheet prints the plain words; recorded"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W2-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
+    },
+    {
+      "scope": "lib_dumbbell_shoulder_press",
+      "hash": "b72e39edaa2476622bd50e15a54954b76dd7b1b6e1d6928fb148f65d842000e3",
+      "date": "2026-11-04",
+      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/dumbbell_shoulder_press.json",
+      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
+      "safety": "LIB-SHIP W2: tier A; fresh Opus safety checker (planted unsafe line caught): nothing unsafe; way-out question answered yes where asked (D-SHIP-WAYOUT)",
+      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W2-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
+    },
+    {
+      "scope": "lib_upright_row",
+      "hash": "0e841a17c1d0ac8469600b3350a87fb133869750ac3d24246933a0f8e6632681",
+      "date": "2026-11-04",
+      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/upright_row.json",
+      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
+      "safety": "LIB-SHIP W2: tier B, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
+      "findings": [
+        "F-CARD-UPRIGHT-FEEL: the card's feel.primary lists upper_traps (c7) while c8 says secondary; the sheet follows c8",
+        "F-PLATE-OVERLAP-W2: the approved plate's 'Elbows lead' box touches 'Shoulder level'; recorded"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W2-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
+    },
+    {
+      "scope": "lib_rope_triceps_pushdown",
+      "hash": "a1007175d25f4120543073c7d2b9fabae860b3e52d30a12d4a7567e3e76f748a",
+      "date": "2026-11-04",
+      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/rope_triceps_pushdown.json",
+      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
+      "safety": "LIB-SHIP W2: tier C, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
+      "findings": [
+        "F-PLATE-OVERLAP-W2: the approved plate's 'Elbows in' box touches 'Elbow not locked'; recorded"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W2-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
+    },
+    {
+      "scope": "lib_plank",
+      "hash": "e06614b701d888b2eb30e167a64bf76d03ed03ec94019d2522d52543a7ff4df8",
+      "date": "2026-11-04",
+      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/plank.json",
+      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
+      "safety": "LIB-SHIP W2: tier C, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
+      "findings": [
+        "F-FLOOR-FRAMING (approved floor plate framing); recorded",
+        "Drawing value SAG 45° is sized to read at panel size (more than a real lumbar range); no number in copy"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W2-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
+    },
+    {
+      "scope": "lib_cable_fly",
+      "hash": "95f24d21915181bcc78bef59061466e71f02f6c01912c78e14d0332cf1f7cce5",
+      "date": "2026-11-04",
+      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/cable_fly.json",
+      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
+      "safety": "LIB-SHIP W2: tier B, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
+      "findings": [
+        "Golden-B follow-up 36 (front_delts region); recorded",
+        "Q-W2-15: the approved plate's 'Elbows drop' tell is fixed in LIB-PLATEFIX-1 (release-blocking)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W2-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
+    },
+    {
+      "scope": "lib_push_up",
+      "hash": "2e1fa1bd08284ffd338a88a41ba7e9705ea80a6c6ebd5ec0d31ff9676cbb739a",
+      "date": "2026-11-04",
+      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/push_up.json",
+      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
+      "safety": "LIB-SHIP W2: tier C, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
+      "findings": [
+        "Golden-B follow-up 36: the shared bodymap's front_delts region sits on the trap slope; recorded"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W2-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
     }
   ]
 }

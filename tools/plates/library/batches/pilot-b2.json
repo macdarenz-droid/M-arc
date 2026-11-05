@@ -1,0 +1,26 @@
+{
+ "batch": "PILOT-B2",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/pilot-b2.json",
+  "layers": "tests/howto/golden/library/pilot-b2.layers.html",
+  "layersConfig": "tools/plates/library/pages/pilot-b2.layers.json"
+ },
+ "rows": {
+  "lib_crunch": {
+   "src": "library/specs/crunch.mjs",
+   "slug": "crunch",
+   "prefix": "crunch",
+   "chromeId": "crunch",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Crunch | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/52/crunch/",
+    "How to Do Crunches: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/crunch/",
+    "How to Do Crunches: Proper Form, Variations, & Benefits | BarBend. https://barbend.com/crunches/",
+    "Quantitative intramuscular myoelectric activity of lumbar portions of psoas and the abdominal wall during a wide variety of tasks. (1998). https://pubmed.ncbi.nlm.nih.gov/9502361/ PMID 9502361"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}

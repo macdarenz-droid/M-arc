@@ -1,11 +1,12 @@
 // LIB-SHIP W1: the How-to content of lib_rope_triceps_pushdown, golden B's HowToContent shape
 // (layers/exercises/machine_chest_press.howto.mjs). Every shown string restates a claim of the research card
 // docs/research/howto/cards/rope_triceps_pushdown.json (cited in its field's claim, cN = card claim id).
-// Hand: the rope-hand zoom is drawn on the page by the approved `rope` pair key (hands/hand-rope.mjs, variant push,
-// orientation neutral, fault curled; words hands/words/rope-push-neutral.json). handling and the zoom's hand data repeat
-// that key's recorded values (pose, contact, wrist range, thumb, fault), so the sheet and the drawing agree. The key's
-// contact (rope across the middle of the palm, contactAt .6) is its drawing value ga:rope-fist-mid, not a claim
-// (shared/rope-rule.json gap 1); the card's own claim is the hand against the knob (c2).
+// No hand zoom (D-SHIP-ROPEPAIR, #376 6616096384; tools/plates/library/hands/no-zoom.json gap-ruled): the card's hand
+// zoom `rope-hand` (c5) would be drawn by the approved `rope` pair key (hands/hand-rope.mjs), which puts the rope across
+// the middle of the palm (its drawing value ga:rope-fist-mid, shared/rope-rule.json gap 1); the card's own claim is the
+// hand against the knob (c2). The hand claims (hand against the knob, neutral grip, thumb wrapped, wrist straight; c2,
+// c3, c5) live in handling and setup step 2. handling keeps the key's recorded pose, contact, wrist range and fault so
+// a later drawing agrees with it.
 // Hint (handling.cue): 'Hands against the rope knobs.' (LIB-SHIP-DESIGN.md section 4, text E).
 //
 // Additions to the architecture's types, used as golden B uses them:
@@ -56,14 +57,15 @@ const CL = {
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
-// The `rope` key's push variant, as recorded (hands/hand-rope.mjs VARIANTS.push, IDS.rope_triceps_pushdown).
+// The `rope` key's push variant, as recorded (hands/hand-rope.mjs VARIANTS.push, IDS.rope_triceps_pushdown); not drawn
+// on this sheet (D-SHIP-ROPEPAIR).
 const RIGHT_POSE = {
   view: 'radial', forearm: 90, wrist: { ext: 0, dev: 0 }, contactAt: 0.6, fingers: { curl: 1 }, thumb: 'wrapped', squeeze: 'firm',
   handle: { profile: 'rope', axis: 'across', diameterMm: 28 }, load: { kind: 'pull' },
 };
 const CURLED = {
   key: 'curled', label: 'Wrist curled',
-  pose: { wrist: { ext: -30 } },
+  pose: { wrist: { ext: -30, dev: 0 } },   // dev as the right pose (HandFault needs both)
   markers: ['lever-arc'],
   alt: 'Wrist bent toward the palm as the rope is pushed down.',
 };
@@ -71,12 +73,14 @@ const CURLED = {
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // Built from the plate spec's own poses (no new geometry beyond what the card names):
 //   elbows-forward (card zoom rope-elbow Wrong, c7): the start pose with the upper arms swung forward MIS_SHOULDER deg
-//            (the spec's own Mistake value) and the start elbow angle (START_ELBOW 100). How far is a drawing choice
-//            (the card gives no number).
+//            (the spec's own Mistake value, read from plateSpec.mistake.pose) and the start elbow angle (START_ELBOW
+//            100). How far is a drawing choice (the card gives no number). W1 layers review fix (#376 6616096384): the
+//            Wrong crop draws this still solid and alone, so the upper arm swung forward reads in the figure itself,
+//            not only as a dashed forearm over the right pose.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): MIS_SHOULDER 25 (the
 // spec's own Mistake value) and START_ELBOW 100 size the elbows-forward Wrong; no card gives them, no number appears in
 // user copy; the layers panel judges them.
-const { start: START, end: END } = plateSpec.poses, MIS_SHOULDER = 25, START_ELBOW = 100;
+const { start: START, end: END } = plateSpec.poses, MIS_SHOULDER = plateSpec.mistake.pose.shoulder.flex, START_ELBOW = 100;   // MIS_SHOULDER 25
 const ELBOWS_FORWARD = { reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: START_ELBOW, wrist: 0 };
 export const stills = {
   start: { pose: START },
@@ -87,33 +91,15 @@ export const stills = {
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 const zooms = [
   {
-    key: 'hand', chip: 'Hand', heading: 'Rope grip', kind: 'hand',   // card zoom key: rope-hand
-    hand: {
-      right: RIGHT_POSE,
-      wrong: [CURLED],   // handling.faults (golden B's shape: fault objects)
-      camera: 'above',   // pairs.mjs ORIENTATIONS.neutral
-      panelHeight: 170,
-      notes: { right: 'Middle of palm', wrong: 'Wrist curled' },   // the key's approved words (rope-push-neutral.json)
-    },
-    caption: {
-      right: 'Hand up against the knob, neutral grip, wrist straight.',
-      wrong: 'Fist curled toward the forearm, wrist bent.',
-    },
-    alt: {
-      right: 'Rope across the middle of the palm, thumb wrapped round it. Wrist straight, in line with the forearm.',   // the key's alt, split to two sentences (C7)
-      wrong: CURLED.alt,
-    },
-  },
-  {
     key: 'rope-elbow', chip: 'Elbows', heading: 'Elbow position', kind: 'posture',
-    // zoom shell (render/closeup/crop.mjs): the Wrong is the elbows-forward still dashed over the start pose, as
+    // zoom shell (render/closeup/crop.mjs): the Wrong is the elbows-forward still drawn alone (solid), as
     // `stills['elbows-forward']`; crop centre on the right pose's elbow for both halves.
     crop: { center: { at: 'elbow.r', pose: 'right', off: [10, 0] }, sizePx: 140 },
     right: 'start',
-    wrong: { base: 'start', pose: ELBOWS_FORWARD },
+    wrong: { base: 'start', pose: ELBOWS_FORWARD, solid: true },
     callout: {
       right: { text: 'At your sides', anchor: 'elbow.r' },
-      wrong: { text: 'Drifted forward', anchor: { at: 'elbow.r', pose: 'mistake' } },
+      wrong: { text: 'Drifted forward', anchor: 'elbow.r' },   // the solid Wrong crop's own elbow
     },
     caption: {
       right: 'Elbows against your sides at the top.',
@@ -161,7 +147,7 @@ const MISTAKES = [
 ];
 const RISKS = [
   { key: 'lockout', text: 'Locking the elbows out hard at the bottom can injure the elbows.', claim: CL.c9 },
-  { key: 'lean', text: 'Leaning or arching strains the lower back.', claim: CL.c12 },
+  { key: 'lean', text: 'Leaning too far forward or arching strains the lower back.', claim: CL.c12 },
   { key: 'weight', text: 'Too much weight moved with momentum can lead to injury.', claim: CL.c15 },
 ];
 
@@ -172,6 +158,7 @@ export default {
   plate: plateSpec,
   handling: {
     archetype: 'push',
+    why: 'D-SHIP-C3 no-zoom list, D-SHIP-ROPEPAIR: the approved rope pair draws the rope across the middle of the palm; card c2 puts the hand against the knob. The grip copy carries c2, c3 and c5.',
     orientation: 'neutral',
     handle: 'rope',
     loadAxis: 'across',
@@ -181,13 +168,15 @@ export default {
     wrist: { ext: [0, 15], limitText: 'Fist curling toward the forearm? Keep the wrist straight.', claim: CL.c5 },   // the key's wristRange
     pose: RIGHT_POSE,
     faults: [CURLED],
-    gripLine: 'Hold each rope end, hands against the knobs. Palms face each other, wrists straight.',
+    // c2, c3, c4 (card grip.width: the ends spread apart at the bottom; W2 panel: the spread was only in posture text).
+    // The wrist is the grey line under it (wrist.limitText, c5), so the lead does not repeat it.
+    gripLine: 'Hold each rope end, hands against the knobs, palms facing. Spread the ends apart at the bottom.',
     cue: 'Hands against the rope knobs.',
   },
   contacts: ['standing-feet'],
   setup: [
     { kind: 'adjust', text: 'Fix the rope to the pulley at its top position.', claim: CL.c1 },
-    { kind: 'grip', text: 'Hold each end with your hand against the knob, thumbs wrapped.', zoom: 'hand', claim: CL.c2 },
+    { kind: 'grip', text: 'Hold each end with your hand against the knob, thumbs wrapped.', claim: CL.c2 },
     { kind: 'position', text: 'Stand facing the machine, feet hip-width or staggered, torso tall.', claim: CL.c10 },
     { kind: 'position', text: 'Elbows at your sides, forearms just past parallel, shoulders down and back.', zoom: 'rope-elbow', claim: CL.setupArms },
     { kind: 'load', text: 'Pick a weight you can move with control.', claim: CL.c15 },
@@ -196,21 +185,21 @@ export default {
     { key: 'elbows', label: 'Elbows in', detail: 'Elbows stay in at your sides.',
       anchor: { landmark: 'elbow.r', pose: 'start' }, zoom: 'rope-elbow', claim: CL.c6 },
     { key: 'wrists', label: 'Straight wrists', detail: 'Wrists straight throughout.',
-      anchor: { landmark: 'wrist.r', pose: 'end' }, zoom: 'hand', claim: CL.c5 },
+      anchor: { landmark: 'wrist.r', pose: 'end' }, claim: CL.c5 },
     { key: 'torso', label: 'Torso tall', detail: 'Torso tall. Any lean comes from the hips, not an arched back.',
       anchor: { landmark: 'backUpper', pose: 'start' }, claim: CL.c10 },
     { key: 'shoulders', label: 'Shoulders down', detail: 'Shoulders down and back.',
       anchor: { landmark: 'shoulder.r', pose: 'start' }, claim: CL.c11 },
     // D-SHIP-Q14 (#376 6614695581): the card zoom rope-spread is a text checkpoint (the spread does not show side-on and
     // the crop engine draws only the plate's camera), as golden B's machine_chest_press keeps "Start depth" (:165, :285).
-    { key: 'spread', label: 'Rope ends apart', detail: 'Rope ends spread apart, hands passing the thighs. Hands jammed together hit the thighs.',
+    { key: 'spread', label: 'Rope ends apart', detail: 'Bottom: rope ends spread apart, hands passing the thighs. Never hands jammed together, rope ends hitting the thighs.',
       anchor: { landmark: 'grip.r', pose: 'end' }, claim: CL.c4 },
     { key: 'soft', label: 'Elbows not locked', detail: 'Arms straight at the bottom, elbows not locked out.',
       anchor: { landmark: 'elbow.r', pose: 'end' }, claim: CL.c9 },
   ],
   feel,
   zooms,
-  chips: ['hand', 'rope-elbow', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
+  chips: ['rope-elbow', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
     setupLine: 'Rope on the top pulley, hands against the knobs. Elbows at your sides, shoulders down and back.',
     mistakeLine: 'Keep your elbows at your sides. Lean only from the hips, never by arching your back.',

@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=9e25e09c2294999eadd068ff7bdb485e3b2826de623000de92ea9d74fa1a995a
+{
+  "id": "lib_barbell_row",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/barbell_row.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-bent-over-row",
+    "sl-barbell-row",
+    "fenwick2009",
+    "saeterbakken2015",
+    "acsm2009",
+    "macdougall1985",
+    "baechle-grip",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

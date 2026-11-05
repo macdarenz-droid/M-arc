@@ -837,6 +837,26 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Owner answers: D-OWNER-FLAGS (approve; crunch was added under the ruling, so the corrected count of 58 goes to the owner with the next APK) and D-OWNER-RELEASE-ALL.
   - Owner items for the release candidate: F-SHEET-COPY (the "not medical advice" closing line vs the AGENTS UI-copy rule), golden-B follow-ups 30-36, F-PLATE-OVERLAP-W2, and the box_jump ankle box.
   - Panel scratch: lyr-w2a/b/c, k1, k2 and s, with keys in lyr-w2-private.
+- **D-OWNER-PARALLEL 11-05 ~02:00 UTC** (owner: "Make work faster and do more parallel agents"). The cap is up to 9 active LIB builders; merges stay in wave order, and builders may merge W2's READY head to build ahead. New lanes:
+
+  | lane | session |
+  |---|---|
+  | W4 | session_018Pv5bMiWjAgBDQNEL69smj |
+  | W5 | session_018Pv5bKkkcS2Ca418ayCZdk |
+  | W6 | session_018Pv5bJMLgYNrdFdvrC9BEE |
+  | W7 | session_018Pv5bK1RdhfbyRB1zk8cFT |
+  | LIB-PLATEFIX-2 | session_018Pv5bJpu8Jj7VT8B6HKN4u (card `verify/lib-platefix-2-card.md`) |
+
+  W3 and PLATEFIX-1 were told to build ahead on W2's head. Each new lane posts a PLAN first, and the supervisor rules it.
+- **Update 11-04 ~23:25 UTC** (weekly meter 0.45).
+  - **W2 #379:** READY @ `84360f00` (8 ids). The fresh reviewer is session_018Pv5bMTkipS2LSoNQmBYB8. On PASS, train 68.
+  - **F-ZOOM-NONE #388:** review PASS @ `a9992a49` (6644365532, 0/0/1/1). The builder is fixing both findings, and the supervisor checks the delta. It merges after W2, then merges main.
+  - **PLATEFIX #385:** waiting for W2 to merge, then the layers recheck.
+  - **W3 #384:** waiting for W2; mountain_climbers joins it.
+  - A container restart at ~22:40 stopped the monitor; it was re-armed.
+- **Train 67 MERGED 11-04 ~20:30 UTC** (#390 → main `8bb433bd`; 20/20 green on `704a3ce8`; local 280 files, 5773 tests). It merged F-PLATE-ZOOMCSS #387 @ `d5099d3b` (PASS 6640028711), and #387 is closed as delivered. There was no app-visible change, so no APK. The reviewer was archived.
+  - **W2 #379 is now 8 ids** (pec_fly held, D-SHIP-PECFLY-HOLD, into LIB-PLATEFIX-2). Rulings Q9-Q12 are D-SHIP-PAIR-NOZOOM, A5BACK, A2FEEL, A6NOGRIP and G7ONE. READY is next.
+  - crunch flips once #385 merges. mountain_climbers flips in W3.
 - **Train 66 MERGED 11-04 ~19:20 UTC** (#389 → main `cf28ab23`; 20/20 green on `e05e423f`; local 279 files, 5767 tests). It merged F-PAIR-FAULTS #386 @ `9afb2a0b` (review PASS 6638488356) and HANDOVER @ `afc6aa2c`. There was no src/ change, so no APK. The reviewer was archived; the builder session_018Pv5bK2kG14GgsRk2NTyrH carries on with F-ZOOM-NONE #388.
   - **pf3** (#385 6638551153): dumbbell_fly and the rear delt fly are HELD (D-LIB13-PANEL2) and reverted to main in #385. Queued card LIB-PLATEFIX-2 (lib4-cards section 48).
   - **#387 F-PLATE-ZOOMCSS** READY @ `d5099d3b`, with reviewer session_018Pv5bLd33URcjQzGWxZxg5. The head predates train 66, so it needs a main merge and a delta check.

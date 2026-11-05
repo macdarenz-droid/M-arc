@@ -218,13 +218,16 @@ export async function assertReducedMotionNoShimmer(page, id) {
  * selector with a rest state, so selfCheck can assert the open state's capture actually differs from rest (finding 3:
  * a state that never opens anything captures the same pixels as rest and would otherwise pass unnoticed). Returns [{ name, selector, ... }].
  */
-export async function statesFor(page, id) {
+// LIB-SHIP W2 (D-SHIP-A6NOGRIP, #379 6641008259): `grip: false` only for a library sheet whose handling is ruled none
+// (hands.mjs noPairRuling 'D-SHIP-GRIP'); the grip capture is then left out and selfCheck asserts the block is absent.
+// The default (the 8 and every Grip sheet) keeps the capture, which stays red when the block is missing.
+export async function statesFor(page, id, { grip = true } = {}) {
   const card = `#card-${id}`;
   const zoomKeys = await page.evaluate(c => [...document.querySelectorAll(`${c} .zx-chip[data-zoom]`)].map(b => b.dataset.zoom), card);
   const rows = await page.evaluate(c => [...document.querySelectorAll(`${c} .fr`)].map(r => r.dataset.row), card);
   const states = [
     { name: `${id}: chips`, selector: `${card} .zx-chips-wrap` },
-    { name: `${id}: grip`, selector: `${card} .grip` },
+    ...(grip ? [{ name: `${id}: grip`, selector: `${card} .grip` }] : []),
     { name: `${id}: plate at rest`, selector: `#${id}-plate`, group: 'plate', isBaseline: true },
     { name: `${id}: plate mistake`, selector: `#${id}-plate`, group: 'plate', open: () => openMistake(page, id), close: () => clickSel(page, `#${id}-mistake`) },
     { name: `${id}: feel at rest`, selector: `${card} .feel`, group: 'feel', isBaseline: true },
@@ -247,10 +250,15 @@ export async function statesFor(page, id) {
  * own motion setting. Also asserts C11 holds (a shimmer attempt under reduced motion draws nothing).
  * Returns the list of problem strings (empty = clean).
  */
-export async function selfCheck(page, id) {
+/** D-SHIP-A6NOGRIP: on a sheet ruled with no Grip, a shown .grip block is red. */
+export async function gripAbsenceProblems(page, id) {
+  return (await page.evaluate(c => !!document.querySelector(`${c} .grip`), `#card-${id}`)) ? [`${id}: grip: a .grip block is shown on a sheet ruled with no Grip (D-SHIP-A6NOGRIP)`] : [];
+}
+export async function selfCheck(page, id, { grip = true } = {}) {
   await setReduced(page, true);
   const bad = [];
-  const states = await statesFor(page, id);
+  if (!grip) bad.push(...await gripAbsenceProblems(page, id));
+  const states = await statesFor(page, id, { grip });
   const baselineCaptures = {};
   for (const s of states) {
     if (s.open) await s.open();

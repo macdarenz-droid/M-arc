@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=43365aafc04b3b55661fab3ac62f0c2cf26f9631d708b0f5b47b37695bd65e33
+{
+  "id": "lib_cable_fly",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/cable_fly.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-standing-fly",
+    "puregym-cable-fly",
+    "sl-cable-fly",
+    "schutz2022",
+    "acsm2009",
+    "kolber2010",
+    "hold-default",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}
