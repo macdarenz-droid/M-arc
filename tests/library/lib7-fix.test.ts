@@ -444,7 +444,7 @@ describe('F-SCRATCH-SYNTH D-SCRATCH-SYNTH-KEYIDX: keyIndexOf\'s exercise-id hook
       expect(() => P.keyIndexOf(P.indexOf(mods))).toThrow(`hand pairs: ${SYNTH} is not in src/data/exercises.json`);
       expect(() => P.keysOf(P.indexOf(mods))).toThrow(`hand pairs: ${SYNTH} is not in src/data/exercises.json`);
     });
-    expect(readFileSync('tools/plates/library/hands/pairs.mjs', 'utf8').match(/keyIndexOf\([^)]*,/g) ?? []).toEqual([]);   // no caller passes a set
+    expect(readFileSync('tools/plates/library/hands/pairs.mjs', 'utf8').match(/(?<!function )keyIndexOf\([^)]*,/g) ?? []).toEqual([]);   // no caller passes a set
     expect('exerciseIds' in P.INDEX).toBe(false);
   });
   it('the synthetic id passes only through the hook (parameter or the index\'s own set)', async () => {
