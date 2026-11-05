@@ -16,6 +16,7 @@ Status `ready` (supervisor, 11-05 ~08:45 UTC). Base: latest origin/main; branch 
 | pistol_squat | lb4 | drop the "Knee forward" tell (K1, p8). It needs a tell-set and deviation change. | #392 30b0ea6f note |
 | jump_squat (staged) | lb4 | one open hip path, back then down; the "Hips high" cue is j5-unsupported | #392 |
 | concentration_curl (staged) | lb5 | Right and Wrong hinge the same (c1, c2) | #392 |
+| barbell_overhead_press | pilot-a | keep the FOREARMS VERTICAL pill and drop the duplicate measure label; draw the start-pose forearm clearly; draw the head clear of the lockout arm (c5, c6) | #385 PLATEFIX second recheck |
 | W4 items | lb02/lb03 | the list the W4 PANEL FIX post gives | #391 |
 
 ## Rules
