@@ -343,6 +343,30 @@ describe('LIB-5 D-LIB5-FAULTKEYS 4: the family reader over the 8, the shared mod
   });
 });
 
+/** The red-flag boxes the sweep hands checkC19Shared for one row: the boxes its riskFlags show (absent riskFlags means
+ *  golden B's ['wrist']). LIB-SHIP W6 (D-SHIP-W6-NOREDFLAG, #393 6648157060): a row whose card has no red flag
+ *  (riskFlags []) shows no box, so the sweep checks every shared box (the RED_FLAG_BLOCKS ones and the back box) instead:
+ *  more text checked, never less; c19.ts is unchanged. */
+export function sweepBoxes(riskFlags: string[] | undefined, boxOf: (f: string) => unknown, blockFlags: string[]) {
+  const flags = riskFlags === undefined ? ['wrist'] : riskFlags.length ? riskFlags : [...blockFlags, 'back'];
+  return Object.fromEntries(flags.map(f => [`RED_FLAG_${f.toUpperCase()}`, boxOf(f)]));
+}
+
+describe('LIB-SHIP W6 D-SHIP-W6-NOREDFLAG: the sweep\'s boxes for a row with no red flag', () => {
+  it('[] takes every shared box; a flagged row gets exactly its own; absent riskFlags is wrist', async () => {
+    const C19 = await import('./checks/c19');
+    const BB = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), BACK = BB.backBox();
+    const boxOf = (f: string) => (f === 'back' ? BACK : shared[CL.RED_FLAG_BLOCKS[f].exp]);
+    const flags = Object.keys(CL.RED_FLAG_BLOCKS);
+    expect(Object.keys(sweepBoxes([], boxOf, flags)).sort()).toEqual([...flags, 'back'].map(f => `RED_FLAG_${f.toUpperCase()}`).sort());
+    expect(Object.keys(sweepBoxes(['shoulder', 'back'], boxOf, flags))).toEqual(['RED_FLAG_SHOULDER', 'RED_FLAG_BACK']);
+    expect(Object.keys(sweepBoxes(undefined, boxOf, flags))).toEqual(['RED_FLAG_WRIST']);
+    expect(C19.checkC19Shared({ ...sweepBoxes([], boxOf, flags), DISCLAIMER: shared.DISCLAIMER }, 'x')).toEqual([]);
+    // red: a [] row whose shared boxes are all removed (boxOf finds none)
+    expect(C19.checkC19Shared({ ...sweepBoxes([], () => undefined, flags), DISCLAIMER: shared.DISCLAIMER }, 'x')).toEqual(['C19: x: no RED_FLAG box to check']);
+  });
+});
+
 describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and C19, with every red-flag box it shows', () => {
   it(`${SHIPPED.length} shipped rows, no finding`, async () => {
     const [{ checkC1 }, { checkC2 }, { checkC3 }, { checkC4 }, { checkC8 }, { checkC16 }, C19] = await Promise.all([
@@ -367,7 +391,7 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
       const BB = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), BACK = BB.backBox();
       const boxOf = (f: string) => (f === 'back' ? BACK : shared[CL.RED_FLAG_BLOCKS[f].exp]);
       for (const f of c.riskFlags ?? ['wrist']) expect(boxOf(f), `${r.id} ${f}`).toBeDefined();
-      const boxes = Object.fromEntries((c.riskFlags ?? ['wrist']).map((f: string) => [`RED_FLAG_${f.toUpperCase()}`, boxOf(f)]));
+      const boxes = sweepBoxes(c.riskFlags, boxOf, Object.keys(CL.RED_FLAG_BLOCKS));   // LIB-SHIP W6 (D-SHIP-W6-NOREDFLAG)
       const bad = [
         ...checkC1(c, known), ...checkC2(c), ...checkC4(c), ...checkC7(c),
         ...(r.mode === 'golden' ? checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '')
