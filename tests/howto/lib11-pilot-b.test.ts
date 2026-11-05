@@ -282,14 +282,31 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     golden = await import(/* @vite-ignore */ new URL('../../tools/plates/golden.mjs', import.meta.url).href);
     html = (await (await import(/* @vite-ignore */ lib('pilot-b/build.mjs'))).buildPbPage()).html.toString('utf8');
   }, T);
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => r.stage !== 'approved-plate').map(([id, r]) => `${id}: ${r.stage}`);
+  // LIB-SHIP W2 (D-SHIP-A9, ruling 3; D-SHIP-W2-STAMP #379 6636105974): cable_fly and push_up ship; smith and
+  // seated_leg_curl (Q7, F-ZOOM-NONE) stay at approved-plate. Replaces "every row approved-plate": a ruled id at any
+  // stage but shipped, or an unruled id at any stage but approved-plate, is red.
+  const SHIPPED_RULED = ['lib_cable_fly', 'lib_push_up'];
+  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([id, r]) => r.stage !== (SHIPPED_RULED.includes(id) ? 'shipped' : 'approved-plate')).map(([id, r]) => `${id}: ${r.stage}`);
+  /** LIB-SHIP W2: the chain's layers-page entries against the committed layers page: exactly one, last, first of its
+   *  key (no supersedes), the supervisor's under D-SHIP-W2-STAMP, naming exactly the ruled ids, pinning the page. */
+  const layersPinProblems = (file: any, layersPage: Buffer) => {
+    const lp = file.entries.map((e: any, i: number) => ({ e, i })).filter(({ e }: any) => e.kind === 'layers-page'), out: string[] = [];
+    if (lp.length !== 1) return [`layers-page entries: ${lp.length}`];
+    const { e, i } = lp[0];
+    if (i !== file.entries.length - 1) out.push('layers-page entry is not last');
+    if (e.supersedes != null) out.push('layers-page entry supersedes');
+    if (e.approvedBy !== 'supervisor' || e.decision !== 'D-SHIP-W2-STAMP') out.push('layers-page approval');
+    if (JSON.stringify(e.ids) !== JSON.stringify(SHIPPED_RULED)) out.push(`layers-page ids ${e.ids}`);
+    if (e.pageSha256 !== createHash('sha256').update(layersPage).digest('hex') || e.bytes !== layersPage.length) out.push('layers-page pin');
+    return out;
+  };
   /** The golden file against the built page and the GO: [problems]. */
   const pinProblems = (file: any, page: string) => {
     const out: string[] = [...golden.verifyBatchChain(file, readJson('tests/howto/golden/GOLDEN.json').entries)];
-    const [pg, ...pl] = file.entries;
+    // LIB-SHIP W2: the GO's page and plate checks run on the entries before the layers-page entry (layersPinProblems)
+    const [pg, ...pl] = file.entries.filter((e: any) => e.kind !== 'layers-page');
     if (pg?.kind !== 'page' || pg.pageSha256 !== PAGE || golden.sha256(page) !== PAGE || pg.bytes !== Buffer.byteLength(page)) out.push('page entry');
-    for (const e of file.entries) if (e.approval !== APPROVAL) out.push(`${e.id ?? e.kind}: approval is not the GO`);
-    if (file.entries.some((e: any) => e.kind === 'layers-page')) out.push('a layers-page entry');
+    for (const e of [pg, ...pl]) if (e?.approval !== APPROVAL) out.push(`${e.id ?? e.kind}: approval is not the GO`);
     const plates = golden.extractPlates(page);
     if (pl.map((e: any) => e.id).join() !== plates.map((p: any) => `lib_${p.chromeId.replace(/-/g, '_')}`).join()) out.push('plate entries are not the page\'s plates in page order');
     for (const e of pl) {
@@ -300,47 +317,62 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     }
     return out;
   };
-  it('every pilot B row is approved-plate, none is shipped, and only the 4 drawn ids have rows', () => {
+  it('LIB-SHIP W2: exactly the ruled pilot B ids are shipped, the rest approved-plate, and only the 4 drawn ids have rows', () => {
     const rows = readJson(ROWS).rows;
     expect(stageProblems(rows)).toEqual([]);
     expect(Object.keys(rows).sort()).toEqual(DRAWN.map(i => `lib_${i}`).sort());
-    expect(reg.shippedIds(reg.rows()).filter((i: string) => PILOT_B.includes(i.slice(4)))).toEqual([]);
+    expect(reg.shippedIds(reg.rows()).filter((i: string) => PILOT_B.includes(i.slice(4)))).toEqual(SHIPPED_RULED);
     expect(readJson(ROWS).pages).toEqual({ plates: 'tools/plates/library/pages/pilot-b.json', layers: 'tests/howto/golden/library/pilot-b.layers.html', layersConfig: 'tools/plates/library/pages/pilot-b.layers.json' });
   });
-  it('the golden file holds the page and the 4 plates with the GO\'s exemptions exactly; its chain is valid', () => {
-    expect(pinProblems(readJson(GOLD), html)).toEqual([]);
+  it('the golden file holds the page and the 4 plates with the GO\'s exemptions exactly; its chain is valid; LIB-SHIP W2: one layers-page entry pins the page for exactly the ruled ids', () => {
+    const g = readJson(GOLD);
+    expect(pinProblems(g, html)).toEqual([]);
+    expect(layersPinProblems(g, readFileSync(readJson(ROWS).pages.layers))).toEqual([]);
   });
-  const layersProblems = (p: any) => [p.layers, p.layersConfig].filter((f: string) => existsSync(f)).map((f: string) => `${f} exists`);
-  it('the pages object is the ruled three paths, and neither layers file exists', () => {
+  // LIB-SHIP W2 (ruling 3): replaces "neither layers file exists". Both layers files exist; a missing one is red.
+  const layersProblems = (p: any) => [p.layers, p.layersConfig].filter((f: string) => !existsSync(f)).map((f: string) => `${f} missing`);
+  it('the pages object is the ruled three paths; LIB-SHIP W2: both layers files exist', () => {
     expect(layersProblems(readJson(ROWS).pages)).toEqual([]);
   });
   /** The 4 pinned ids in any other library golden file (entry ids, chromeIds, srcs, card ids in HTML). */
   const otherGolden = (files: Record<string, string>) => Object.entries(files).flatMap(([n, t]) =>
     DRAWN.filter(id => [`"lib_${id}"`, `"library/specs/${id}.mjs"`, `"chromeId": "${id.replace(/_/g, '-')}"`, `id="card-${id.replace(/_/g, '-')}"`].some(v => t.includes(v))).map(id => `${n}: ${id}`));
-  const goldenFiles = () => Object.fromEntries(readdirSync('tests/howto/golden/library').filter(n => n !== 'pilot-b.json').map(n => [n, readFileSync(join('tests/howto/golden/library', n), 'utf8')]));
+  // LIB-SHIP W2: pilot B's own layers page (pinned in pilot-b.json) is pilot B's file, not another golden file
+  const goldenFiles = () => Object.fromEntries(readdirSync('tests/howto/golden/library').filter(n => n !== 'pilot-b.json' && n !== 'pilot-b.layers.html').map(n => [n, readFileSync(join('tests/howto/golden/library', n), 'utf8')]));
   it('no other library golden file names a pinned pilot B id', () => {
     expect(otherGolden(goldenFiles())).toEqual([]);
   });
   it('mutations: a row at review, an exemption added, a fragment changed and a moved page byte are red', () => {
     const rows = readJson(ROWS).rows, g = readJson(GOLD);
     expect(stageProblems({ ...rows, lib_cable_fly: { ...rows.lib_cable_fly, stage: 'review' } })).toEqual(['lib_cable_fly: review']);
+    // LIB-SHIP W2 A9: an unruled id at shipped, and a ruled id held back, are red
+    expect(stageProblems({ ...rows, lib_seated_leg_curl: { ...rows.lib_seated_leg_curl, stage: 'shipped' } })).toEqual(['lib_seated_leg_curl: shipped']);
+    expect(stageProblems({ ...rows, lib_push_up: { ...rows.lib_push_up, stage: 'approved-plate' } })).toEqual(['lib_push_up: approved-plate']);
     const ex = structuredClone(g); ex.entries[1].exemptions = [...ex.entries[1].exemptions, 'F1'];
     expect(pinProblems(ex, html).some(p => p.endsWith('exemptions F5,F1'))).toBe(true);
     const fr = structuredClone(g); fr.entries[2].fragments.mistakeSvg = '0'.repeat(64);
     expect(pinProblems(fr, html).some(p => p.endsWith(': fragments'))).toBe(true);
     expect(pinProblems(g, html.replace('Smith Machine Bench Press', 'Smith Machine Bench Pres'))).toContain('page entry');
     const ap = structuredClone(g); ap.entries[4].approval = ap.entries[4].approval.replace('6393170019', '6393188049');
-    expect(pinProblems(ap, html)).toEqual(['lib_push_up: approval is not the GO']);
+    // LIB-SHIP W2: the layers-page entry now follows entry 4, so the chain names the edit too
+    expect(pinProblems(ap, html)).toEqual(['entry 5 (layers-page): prev does not match the entries before it (an older entry was edited)', 'lib_push_up: approval is not the GO']);
     const pa = structuredClone(g); pa.entries[0].approval = pa.entries[0].approval.replace('1d7f28d2', '8ae48ed9');
     expect(pinProblems(pa, html)).toContain('page: approval is not the GO');
     const ow = structuredClone(g); ow.entries[1].approvedBy = 'owner';
     expect(pinProblems(ow, html).length).toBeGreaterThan(0);
-    const lp = structuredClone(g); lp.entries.push({ ...lp.entries[0], kind: 'layers-page' });
-    expect(pinProblems(lp, html)).toContain('a layers-page entry');
+    // LIB-SHIP W2: a second layers-page entry, a changed page byte, an unruled id named, and a superseding entry are red
+    const lpage = readFileSync(readJson(ROWS).pages.layers), last = g.entries.length - 1;
+    const lp = structuredClone(g); lp.entries.push({ ...lp.entries[last] });
+    expect(layersPinProblems(lp, lpage)).toEqual(['layers-page entries: 2']);
+    expect(layersPinProblems(g, Buffer.concat([lpage, Buffer.from(' ')]))).toEqual(['layers-page pin']);
+    const li = structuredClone(g); li.entries[last].ids = [...li.entries[last].ids, 'lib_seated_leg_curl'];
+    expect(layersPinProblems(li, lpage)).toEqual(['layers-page ids lib_cable_fly,lib_push_up,lib_seated_leg_curl']);
+    const ls = structuredClone(g); ls.entries[last].supersedes = 0;
+    expect(layersPinProblems(ls, lpage)).toEqual(['layers-page entry supersedes']);
   });
   it('mutations: an existing layers file and a pinned id in another golden file are red', () => {
     const p = readJson(ROWS).pages;
-    expect(layersProblems({ ...p, layers: GOLD })).toEqual([`${GOLD} exists`]);
+    expect(layersProblems({ ...p, layers: 'tests/howto/golden/library/pilot-b.nope.html' })).toEqual(['tests/howto/golden/library/pilot-b.nope.html missing']);
     expect(otherGolden({ ...goldenFiles(), 'lb9.json': '{"entries":[{"kind":"plate","id":"lib_push_up"}]}' })).toEqual(['lb9.json: push_up']);
     expect(otherGolden({ 'x.layers.html': '<article id="card-cable-fly"></article>' })).toEqual(['x.layers.html: cable_fly']);
   });
@@ -459,11 +491,15 @@ describe('LIB-11 A10, A6 and Q1 (Do 5 b): the card fields, the ruled tempo map a
     ...(f.kind === 'contact' && f.cardPose !== CARD_POSE[id]?.[f.claim] ? [`${i}: cardPose ${f.cardPose}`] : []),
     ...(f.pose === specPose(id, f.cardPose ?? CARD_POSE[id]?.[f.claim] ?? '') ? [] : [`${i}: pose ${f.pose}`]),
   ]);
+  const W2_SHEETS = ['seated_leg_curl', 'cable_fly', 'push_up'];
   it('every plate fact has a kind, one form, a claim of its own card and the ruled pose; each How-to names its card', async () => {
     for (const id of DRAWN) {
       expect(factProblems(id, cardOf(id)), id).toEqual([]);
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
-      expect(h).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+      // LIB-SHIP W2: the ids W2 wrote sheets for (cable_fly, push_up shipped; seated_leg_curl staged) hold the full
+      // sheet at schema 1 and rev 1, still naming their own card; the rest keep the id-and-card stub
+      if (W2_SHEETS.includes(id)) expect([h.id, h.schema, h.research]).toEqual([`lib_${id}`, 1, { card: `docs/research/howto/cards/${id}.json`, rev: 1 }]);
+      else expect(h).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
     // the ruled contact set (CARD FIELDS RULED @ 24d2b68, #278 6272494659): landmark@pose per card, nothing more or less
     const RULED_CONTACTS: Record<string, string[]> = {
