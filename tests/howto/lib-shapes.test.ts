@@ -11,6 +11,7 @@ import { gripHtml, handContentOf } from '@/slices/howto/sections/Hand';
 import legPress from '@/howto/generated/ht-leg-press';
 import chestPress from '@/howto/generated/ht-machine-chest-press';
 import type { BuiltHowTo } from '@/howto/types';
+import { W5, lessW5 } from './lib-ship-w5';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -264,7 +265,7 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
   it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main c4c34d75 (re-measured after train 63)', () => {
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
-    expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
+    expect(rows).toHaveLength(22 + W5.length);   // LIB-SHIP W2: + PILOT-B2's lib_crunch; LIB-SHIP W5: + lb04's and lb05's 27 rows (lessW5)
     expect(Object.keys(m.rows)).toContain('lib_crunch');
     // F-CROP-FRONT D-CROP-PIN / D-CROP-NONE (#380): crop.mjs's and hand.mjs's keys are re-pinned there and pinned exactly by crop-projection.test.ts
     const F_CROP = ['tools/plates/library/render/closeup/crop.mjs', 'tools/plates/library/render/closeup/hand.mjs'];
@@ -273,7 +274,8 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of [...F_CROP, ...F_PAIR]) r.files[k] = 'X'; }
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
-    expect(sha(JSON.stringify(lessW2(m, [BLP])))).toBe('3882bf3eb1690fd260bd5b02351a7bf93684946cdb7a05cd0ca1acb0c19f2a68');
+    // LIB-SHIP W5: with W5's 27 rows also taken out (each must be present), the same hash
+    expect(sha(JSON.stringify(lessW2(lessW5(m), [BLP])))).toBe('3882bf3eb1690fd260bd5b02351a7bf93684946cdb7a05cd0ca1acb0c19f2a68');
   });
 });
 

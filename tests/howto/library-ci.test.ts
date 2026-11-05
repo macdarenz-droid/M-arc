@@ -637,8 +637,12 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
   // LIB-SHIP W2 (ruling 3, D-SHIP-W2-STAMP, #379 6636105974): pilot A's layers page is re-pinned for the 7 W2 ids it adds
   // (it supersedes the W1 pin), and pilot B's layers page (cable_fly, push_up) and PILOT-B2's page and layers page
   // (D-LIB-PILOTB2, crunch held at approved-plate) are added; every other entry is unchanged
+  // LIB-SHIP W5 (Q-W5-10 PIN GO, #392; D-SHIP-W5-PLATETEXT re-pin 380faca9): lb04's and lb05's plates pages are added (their
+  // layers pages are not pinned until the layers panel); every other entry is unchanged
   it('the pinned-page list is pilot A\'s (page and layers page), PILOT-A2\'s, PILOT-A3\'s, pilot B\'s (page and layers page) and PILOT-B2\'s (page and layers page) on this tree and sha256 is the pin hash', () => {
     expect(pinnedPages(ROOT)).toEqual({ pages: [
+      { id: 'tests/howto/golden/library/lb04.json#page', file: 'tests/howto/golden/library/lb04.json', kind: 'page', pageSha256: 'cff17ef7a3c175c9c283cde50457353ec63da655c5a8d3fb7104e2ad2e5efeba', bytes: 1466599 },
+      { id: 'tests/howto/golden/library/lb05.json#page', file: 'tests/howto/golden/library/lb05.json', kind: 'page', pageSha256: '36911d39d7ce6af59ed3739c66f03234af3a3064095cf8bd4020dde37492c1c4', bytes: 1436090 },
       { id: 'tests/howto/golden/library/pilot-a.json#page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'page', pageSha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 },
       { id: 'tests/howto/golden/library/pilot-a.json#layers-page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'layers-page', pageSha256: 'afd5d4136ee57fd74f831ae0ad35d09e4708d747fcf3d9e266c10ee39f65e3e1', bytes: 1375425 },
       { id: 'tests/howto/golden/library/pilot-a2.json#page', file: 'tests/howto/golden/library/pilot-a2.json', kind: 'page', pageSha256: '3e225bc12531e6c395e5a532a77736ebaeb9cdc276c55709d8ac4c73ef78bb0b', bytes: 280533 },

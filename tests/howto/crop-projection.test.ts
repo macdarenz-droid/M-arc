@@ -8,6 +8,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { W5, lessW5 } from './lib-ship-w5';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = new URL('../../', import.meta.url);
@@ -110,7 +111,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
   it('every pinned row pins the current crop.mjs and hand.mjs, and every other entry equals main 8d596fab', () => {
     const m = JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
-    expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
+    expect(rows).toHaveLength(22 + W5.length);   // LIB-SHIP W2: + PILOT-B2's lib_crunch; LIB-SHIP W5: + lb04's and lb05's 27 rows (lessW5)
     expect(Object.keys(m.rows)).toContain('lib_crunch');
     for (const r of rows) for (const k of KEYS) { expect(r.files[k]).toBe(sha(readFileSync(path(k)))); r.files[k] = 'X'; }
     // F-PAIR-FAULTS (#386): build-layers-page.mjs's and pairs.mjs's keys are re-pinned there and pinned exactly by pair-faults.test.ts
@@ -118,7 +119,8 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     for (const r of rows) r.files['tools/plates/library/hands/pairs.mjs'] = 'X';
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
-    expect(sha(JSON.stringify(lessW2(m)))).toBe('3882bf3eb1690fd260bd5b02351a7bf93684946cdb7a05cd0ca1acb0c19f2a68');
+    // LIB-SHIP W5: with W5's 27 rows also taken out (each must be present), the same hash
+    expect(sha(JSON.stringify(lessW2(lessW5(m))))).toBe('3882bf3eb1690fd260bd5b02351a7bf93684946cdb7a05cd0ca1acb0c19f2a68');
   });
 });
 

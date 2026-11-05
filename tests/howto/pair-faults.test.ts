@@ -5,6 +5,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { W5, lessW5 } from './lib-ship-w5';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -205,18 +206,24 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
     const m = current();
     // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out
-    expect(blanked(lessW2(m))).toBe(MANIFEST_BLANKED_MAIN_W2);
+    // LIB-SHIP W5: with W5's 27 rows also taken out (lessW5: each must be present), the same hash
+    expect(blanked(lessW2(lessW5(m)))).toBe(MANIFEST_BLANKED_MAIN_W2);
     for (const k of MOVED) for (const r of Object.values<any>(current().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
-    const m = lessW2(current()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k))!;
+    const m = lessW2(lessW5(current())), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k))!;
     row.files[other] = '0'.repeat(64);
     expect(blanked(m)).not.toBe(MANIFEST_BLANKED_MAIN_W2);
-    expect(blanked(lessW2(current()), MOVED.slice(0, 1))).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW5(current())), MOVED.slice(0, 1))).not.toBe(MANIFEST_BLANKED_MAIN_W2);
     // LIB-SHIP W2: a W2 key that does not pin its file, or a crunch row missing, is red
     const bad = current(); (Object.values<any>(bad.rows).find(r => W2_MOVED[0]! in r.files)).files[W2_MOVED[0]!] = '0'.repeat(64);
     expect(() => lessW2(bad)).toThrow();
     const noCrunch = current(); delete noCrunch.rows.lib_crunch;
     expect(() => lessW2(noCrunch)).toThrow();
+    // LIB-SHIP W5: a W5 row missing throws; an extra unlisted row moves the hash
+    const noW5 = current(); delete noW5.rows[W5[26]!];
+    expect(() => lessW5(noW5)).toThrow(/has no row/);
+    const extra = current(); extra.rows.lib_unlisted = structuredClone(extra.rows[W5[0]!]);
+    expect(blanked(lessW2(lessW5(extra)))).not.toBe(MANIFEST_BLANKED_MAIN_W2);
   });
 });
