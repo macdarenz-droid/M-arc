@@ -4762,6 +4762,23 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - Card **RESEARCH-ROUTES-1** (`verify/research-routes-card.md`): one research lane for D-SHIP-BACKBOX, F-W4-INHERIT and F-CARD-FRONTSQ-SETUP (part 1), and for the held-id routes (part 2).
   - **W7** (#394 6647954465): D-SHIP-W7-B3, -ROPES (battle_ropes held until the owner answers: grip as text only, or a later update), D-SHIP-HANDW7, -SCRATCH and -MOVES. Card **F-SCRATCH-SYNTH** (`verify/f-scratch-synth-card.md`): synthetic scratch ids for the LIB-4b and LIB-4c sets. W3's Q-W3-6 swap folds into it, and W4 and W6 swap lib7b:19/:20 to synthetic ids.
   - Train 68 (#396): W2 #379 @ `84360f00` (PASS 6647793612). Its lows go to W3.
+- **11-05 ~02:30-03:30 UTC rulings and panels:**
+  - **Rules:**
+    - **D-FEEL-MEANS-CAUSAL** (#385 6648438434): a "Usually means" text states a cause only at the card's own strength. Otherwise `means` stays empty and no label prints, and the text never repeats the label. It applies to every wave.
+    - **F-SHEET-COPY** (template headings and "not medical advice") is one sweep after W7, because it moves golden B and every pin.
+  - **Panels:**
+    - **W3 panel** (#384 6648454032): VALID; 4 approved. underhand_lat_pulldown is held because its approved plate's end pose has the elbow in front of the trunk. It goes to **LIB-PLATEFIX-3** (to be written: plate faults found in wave panels). The content findings are in `verify/panels/w3-content-findings.md`. The fix landed @ a1c44003; a focused recheck is building.
+    - **PLATEFIX layers** (#385): VALID. triceps_pushdown, SLRDL and reverse_lunge are approved; RDL and OHP (plus OHP's start-ghost plate tweak) have one fix round.
+    - **pf4** (#395 6648800268): VALID; pec_fly is approved. dumbbell_fly R5 and the rear delt fly R5/R11 have the second focused round (D-LIB13-PANEL2); a failure means a hold.
+  - **Wave rulings:**
+    - W4: Q1 (merge #388 for text-zooms) and **D-SHIP-W4-PAGE12**.
+    - W5: Q1, where concentration_curl gets no risks, so it goes to research part 2 (F-CARD-CONCCURL-RISK) and stays staged.
+    - W6: **D-SHIP-W6-NOREDFLAG**, **-LB06FIRST**, **-WRISTEXEMPT** and **-OWNROWS-NZ**.
+    - W7: Q1 (D-SHIP-W7-MOVES withdrawn; F-SHARED-MOVES), Q2 (= NOREDFLAG) and **D-SHIP-W7-WRISTPTR**; the pre-panel copy pass is done.
+    - W3: **D-SHIP-A5BACK-CARDS**.
+  - **RESEARCH-ROUTES:** **D-RR-HEAD**. Research head #399 was merged into claude/libht-research @ fa248589. Part 2 record: bench_dip, renegade_row and goblet_squat stay held; the CER primary is ready if needed.
+  - **PLATEFIX-2 scope:** **D-PF2-PUSHDOWN-T**, the PUSHDOWN template re-clone for straight_bar after #385.
+  - **Panels building:** W4, W5, W6 (+ the LTH plates check) and W7, plus the W3 focused recheck.
 - **D-OWNER-PARALLEL** (owner, 11-05 ~02:00 UTC: "Make work faster and do more parallel agents"). This amends lib-ship-card ruling 1 and D-LIB-LANE-ACTIVE.
   - All wave lanes W3-W7 build at once, plus LIB-PLATEFIX-2, so up to **9 active LIB builders**. Merges stay strictly in order (W2 → W3 → … → W7).
   - Builders may merge W2's READY head into their branch to build ahead, then merge main when W2 lands.
