@@ -9,6 +9,9 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { RULED, checkC3Library, checkConventionGrip, checkGripLibrary } from './checks/c3-library';
 import { checkC3 } from './checks/c3';
+import { checkC1 } from './checks/c1';
+import { W4_IDS, W4_STAGED } from './checks/ship-w4';
+import exercises from '../../src/data/exercises.json';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -28,7 +31,11 @@ const gapKeyOf = (id: string) => keyMods.find((m: any) => m.GAPS && id in m.GAPS
 
 describe('LIB-SHIP A1: the shipped set', () => {
   it('shippedIds() is the 8 then exactly the ruled library ids; none of the owner\'s 11 ships', () => {
-    expect(reg.shippedIds()).toEqual([...EIGHT, ...RULED_SHIPPED]);
+    // LIB-SHIP W4 (ruling 3): then the W4 ids (checks/ship-w4.ts), all in registry order; no W4 staged id ships
+    const ruled = [...RULED_SHIPPED, ...W4_IDS];
+    expect(reg.shippedIds()).toEqual([...EIGHT, ...reg.rows().map((r: any) => r.id).filter((id: string) => ruled.includes(id))]);
+    expect(ruled.filter(id => !reg.shippedIds().includes(id))).toEqual([]);
+    expect(reg.shippedIds().filter((id: string) => W4_STAGED.includes(id))).toEqual([]);
     const eleven = ['hip_thrust', 'pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch', 'overhead_cable_triceps_extension',
       'cable_rear_delt_fly', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'leg_press_calf_raise'].map(s => `lib_${s}`);
     expect(reg.shippedIds().filter((id: string) => eleven.includes(id))).toEqual([]);
@@ -375,4 +382,234 @@ describe('LIB-SHIP D-SHIP-IDS-NOPAIR + D-SHIP-PAIR-NOZOOM: every pinned no-zoom 
     const ohp = (await import(/* @vite-ignore */ pathToFileURL(join(process.cwd(), 'tools/plates/library/howto/lib_barbell_overhead_press.howto.mjs')).href)).default;
     expect(hands.noPairRuling({ ...ohp, handling: { ...ohp.handling, why: ohp.handling.why.replace('D-SHIP-C3 no-zoom list, ', '') } })).toBe(null);
   }, 60_000); // W4: 20 no-zoom sheets import cold in about 6 s, over vitest's 5 s default (red on 66925aac CI); the checks are unchanged
+});
+
+// ---- LIB-SHIP W4 (SHIP W4 PLAN RULED, #391 6647760116): the W4 rulings' own reds. Each block runs on the real sheets
+// (loadContent) and shows its red on an in-memory mutation; nothing is written. ----
+describe('LIB-SHIP W4: the family rulings (D-SHIP-W4-THUMB, -GAPZOOM, -PADZOOM, Q-W4-6, Q-W4-7, E5)', () => {
+  let FAM: any;
+  const C: Record<string, any> = {};
+  const cardOf = (id: string) => json(`docs/research/howto/cards/${id.slice(4)}.json`);
+  const parentOf = (id: string) => `lib_${cardOf(id).parent}`;
+  beforeAll(async () => {
+    FAM = await import(/* @vite-ignore */ url('tools/plates/library/lint/family.mjs'));
+    const ids = Object.keys(FAM.INHERIT_MAP).filter(id => W4_IDS.includes(id) || W4_STAGED.includes(id));
+    for (const id of new Set([...ids, ...ids.map(parentOf)])) C[id] = (await content.loadContent(id)).content;
+  });
+  const W4 = () => Object.keys(C).filter(id => id in FAM.INHERIT_MAP && (W4_IDS.includes(id) || W4_STAGED.includes(id)));
+  /** familyRefusal of `id` (or of `child`) against `parent` (default: its real parent sheet). `onlyMapped` reads the card
+   *  with its unmapped fields dropped (the probe the design ran for cable_shrug, dumbbell_shrug and sumo). */
+  const refuse = (id: string, { child = C[id], parent = C[parentOf(id)], onlyMapped = false, only }: { child?: any; parent?: any; onlyMapped?: boolean; only?: string } = {}) => {
+    const card = cardOf(id), read = () => (only ? { ...card, inherit: card.inherit.filter((e: any) => e.field === only) }
+      : onlyMapped ? { ...card, inherit: card.inherit.filter((e: any) => !FAM.unmappedFields(id, { inherit: [e] }).length) } : card);
+    return FAM.familyRefusal(id, child, read, (x: string) => (x === parentOf(id) ? parent : undefined));
+  };
+  /** A deep copy (functions kept) with one leaf changed: `sub` is a leaves() suffix under `path` ('' = the path itself). */
+  const copy = (v: any): any => (Array.isArray(v) ? v.map(copy) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, copy(x)])) : v);
+  const bump = (x: any) => (typeof x === 'string' ? `${x} x` : typeof x === 'number' ? x + 1 : typeof x === 'boolean' ? !x : 'x');
+  const withLeaf = (obj: any, path: string, sub: string, v: any) => {
+    const o = copy(obj);
+    if (sub === '') {
+      const i = path.lastIndexOf('.'), at = i < 0 ? o : FAM.atPath(o, path.slice(0, i));
+      at[path.slice(i + 1)] = v;
+      return o;
+    }
+    const steps = [...sub.matchAll(/\.([^.[]+)|\[(\d+)\]/g)].map(m => m[1] ?? Number(m[2]));
+    let t = FAM.atPath(o, path);
+    for (const k of steps.slice(0, -1)) t = t[k as any];
+    t[steps.at(-1) as any] = v;
+    return o;
+  };
+  /** Every compared path of one map entry, with its first leaf changed in the parent (past a selected item's own `key`,
+   *  which would only unmatch the selector): the refusal each gives. */
+  const perLeaf = (id: string, field: string) => FAM.INHERIT_MAP[id][field].map((path: string) => {
+    const all = FAM.leaves(FAM.atPath(C[parentOf(id)], path)), [sub, x] = all.find(([k]: [string]) => k !== '.key') ?? all[0];
+    // the card read with this entry's field alone, so the red is this entry's and not an overlapping grip.* entry's
+    return [path, refuse(id, { parent: withLeaf(C[parentOf(id)], path, sub, bump(x)), only: field })];
+  });
+  const THUMB_STAR = JSON.stringify(['handling.thumb.mode']);
+  /** D-SHIP-W4-THUMB: a THUMB* entry (the thumb mode alone) only where neither the parent nor the child sheet has a pose. */
+  const thumbProblems = (sheet: (id: string) => any) => W4().flatMap(id => Object.entries<string[]>(FAM.INHERIT_MAP[id])
+    .filter(([, paths]) => JSON.stringify(paths) === THUMB_STAR)
+    .flatMap(([f]) => ([[parentOf(id), 'parent'], [id, 'child']] as [string, string][]).filter(([x]) => sheet(x).handling?.pose !== undefined).map(([x, who]) => `${id}: ${f}: THUMB* but the ${who} ${x} has handling.pose (D-SHIP-W4-THUMB)`)));
+
+  it('every W4 child passes the family check against its real parent sheet (the 3 D-SHIP-W4-ROUTE ones on their mapped fields)', () => {
+    const ROUTE = ['lib_cable_shrug', 'lib_dumbbell_shrug', 'lib_sumo_deadlift'];
+    expect(W4().sort()).toEqual([...W4_IDS, ...W4_STAGED].filter(id => id in FAM.INHERIT_MAP).sort());
+    for (const id of W4()) expect([id, refuse(id, { onlyMapped: ROUTE.includes(id) })]).toEqual([id, null]);
+    for (const id of ROUTE) expect([id, refuse(id)]).toEqual([id, `${id}: family: docs/research/howto/cards/${id.slice(4)}.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`]);
+  });
+
+  describe('D-SHIP-W4-THUMB', () => {
+    it('every THUMB* entry\'s parent and child have no handling.pose; the full THUMB entries are the RDL family\'s', () => {
+      expect(thumbProblems(id => C[id])).toEqual([]);
+      const full = W4().filter(id => Object.values<string[]>(FAM.INHERIT_MAP[id]).some(p => JSON.stringify(p) === JSON.stringify(['handling.thumb.mode', 'handling.pose.thumb'])));
+      expect(full.sort()).toEqual(['lib_conventional_deadlift', 'lib_sumo_deadlift']);
+      for (const id of full) expect([id, C[parentOf(id)].handling.pose !== undefined]).toEqual([id, true]);
+    });
+    it('red: a THUMB* entry\'s parent gains handling.pose; its child gains one', () => {
+      const posed = (x: string) => (id: string) => (id === x ? { ...C[id], handling: { ...C[id].handling, pose: { thumb: 'wrapped' } } } : C[id]);
+      expect(thumbProblems(posed('lib_barbell_bench_press'))).toEqual(expect.arrayContaining(['lib_close_grip_bench_press: grip.thumb: THUMB* but the parent lib_barbell_bench_press has handling.pose (D-SHIP-W4-THUMB)']));
+      expect(thumbProblems(posed('lib_landmine_row'))).toEqual(['lib_landmine_row: grip.thumb: THUMB* but the child lib_landmine_row has handling.pose (D-SHIP-W4-THUMB)']);
+    });
+    it('red: the thumb mode changed in one child', () => {
+      for (const id of ['lib_arnold_press', 'lib_pendlay_row', 'lib_smith_machine_shrug']) {
+        const other = C[id].handling.thumb.mode === 'wrapped' ? 'thumbless' : 'wrapped';
+        expect([id, refuse(id, { child: withLeaf(C[id], 'handling.thumb.mode', '', other) })]).toEqual([id, `${id}: family: grip.thumb: handling.thumb.mode ${JSON.stringify(other)} !== parent ${parentOf(id)}'s ${JSON.stringify(C[parentOf(id)].handling.thumb.mode)} (D-LIB5-FAMILY)`]);
+      }
+    });
+  });
+
+  describe('D-SHIP-W4-GAPZOOM: the inherited gap-ruled hand zooms compare the handling leaves', () => {
+    const GAP: [string, string][] = [['lib_close_grip_bench_press', 'zooms.bar-low-palm'], ['lib_decline_bench_press', 'zooms.bar-low-palm'],
+      ['lib_incline_barbell_bench_press', 'zooms.bar-low-palm'], ['lib_smith_machine_bench_press', 'zooms.bar-low-palm'],
+      ['lib_incline_dumbbell_press', 'zooms.wrist-neutral-press'], ['lib_smith_machine_shrug', 'zooms.shrug-grip']];
+    it('the parent has no such zoom (gap-ruled), and every entry maps handling leaves only', () => {
+      for (const [id, f] of GAP) {
+        const key = f.slice('zooms.'.length);
+        expect([id, (C[parentOf(id)].zooms ?? []).some((z: any) => z.key === key)]).toEqual([id, false]);
+        expect([id, FAM.INHERIT_MAP[id][f].every((p: string) => p.startsWith('handling.'))]).toEqual([id, true]);
+      }
+    });
+    it.each(GAP)('red: %s %s, one compared leaf changed in the parent, per path', (id, f) => {
+      expect(refuse(id, { only: f })).toBeNull();
+      for (const [path, r] of perLeaf(id, f)) expect([path, r]).toEqual([path, expect.stringMatching(new RegExp(`^${id}: family: ${f.replace('.', '\\.')}: ${path.replace(/[.[\]]/g, '\\$&')}.* !== parent ${parentOf(id)}'s `))]);
+    });
+  });
+
+  describe('D-SHIP-W4-PADZOOM: arnold_press seat-back-contact compares the words; the crop and poses are its own', () => {
+    const ID = 'lib_arnold_press', F = 'zooms.seat-back-contact';
+    const zoomOf = (c: any) => c.zooms.find((z: any) => z.key === 'seat-back-contact');
+    /** Arnold's Wrong is drawn on Arnold's plate: its pose must not be DSP's. */
+    const poseProblems = (arnold: any, dsp: any) => (JSON.stringify(zoomOf(arnold).wrong.pose) === JSON.stringify(zoomOf(dsp).wrong.pose)
+      ? [`${ID}: zooms[seat-back-contact].wrong.pose is ${parentOf(ID)}'s (D-SHIP-W4-PADZOOM)`] : []);
+    it('the mapped leaves are exactly the 8 text leaves; Arnold\'s Wrong pose is its own', () => {
+      expect(FAM.INHERIT_MAP[ID][F].map((p: string) => p.replace('zooms[key=seat-back-contact].', ''))).toEqual(['key', 'kind', 'chip', 'heading', 'callout.right.text', 'callout.wrong.text', 'caption.right', 'caption.wrong']);
+      expect(refuse(ID)).toBeNull();
+      expect(poseProblems(C[ID], C[parentOf(ID)])).toEqual([]);
+    });
+    it('red: each compared text leaf changed in the parent', () => {
+      const r = perLeaf(ID, F);
+      expect(r).toHaveLength(8);
+      for (const [path, x] of r) expect([path, x]).toEqual([path, path.endsWith('.key')
+        ? `${ID}: family: ${F}: parent ${parentOf(ID)}: ${path}: [key=seat-back-contact] matches 0 items (D-LIB5-FAMILY)`   // the key leaf: the selector unmatched
+        : `${ID}: family: ${F}: ${path} ${JSON.stringify(FAM.atPath(C[ID], path))} !== parent ${parentOf(ID)}'s ${JSON.stringify(`${FAM.atPath(C[parentOf(ID)], path)} x`)} (D-LIB5-FAMILY)`]);
+    });
+    it('red: DSP\'s wrong.pose copied onto Arnold\'s zoom', () => {
+      const dspPose = zoomOf(C[parentOf(ID)]).wrong.pose;
+      const m = { ...C[ID], zooms: C[ID].zooms.map((z: any) => (z.key === 'seat-back-contact' ? { ...z, wrong: { ...z.wrong, pose: dspPose } } : z)) };
+      expect(poseProblems(m, C[parentOf(ID)])).toEqual([`${ID}: zooms[seat-back-contact].wrong.pose is lib_dumbbell_shoulder_press's (D-SHIP-W4-PADZOOM)`]);
+      expect(refuse(ID, { child: m })).toBeNull();   // the family check does not compare poses: this red is the only guard
+    });
+  });
+
+  describe('Q-W4-6: grip.type maps to the orientation; no handle without a card claim', () => {
+    const ORIENT = ['lib_smith_machine_bench_press', 'lib_cable_shrug', 'lib_landmine_row', 'lib_pendlay_row'];
+    const NO_HANDLE = ['lib_landmine_row', 'lib_cable_shrug', 'lib_smith_machine_bench_press'];
+    /** Q-W4-6: a sheet sets handling.handle only when its card gives a handle (a grip.handle line); none of these does. */
+    const handleProblems = (id: string, c: any, card = cardOf(id)) => (c.handling?.handle !== undefined && !card.grip?.handle
+      ? [`${id}: handling.handle ${JSON.stringify(c.handling.handle)} with no card claim (Q-W4-6)`] : []);
+    it('each maps grip.type to the orientation (pendlay also the handle); the 3 have no handle and their cards give none', () => {
+      for (const id of ORIENT) expect([id, FAM.INHERIT_MAP[id]['grip.type']]).toEqual([id, id === 'lib_pendlay_row' ? ['handling.orientation', 'handling.handle'] : ['handling.orientation']]);
+      for (const id of NO_HANDLE) expect([id, C[id].handling.handle, cardOf(id).grip?.handle, handleProblems(id, C[id])]).toEqual([id, undefined, undefined, []]);
+    });
+    it('red: the child\'s orientation differs from its parent\'s', () => {
+      for (const id of ORIENT) {
+        const r = refuse(id, { child: withLeaf(C[id], 'handling.orientation', '', 'supinated'), onlyMapped: true });
+        expect([id, r]).toEqual([id, `${id}: family: grip.type: handling.orientation "supinated" !== parent ${parentOf(id)}'s ${JSON.stringify(C[parentOf(id)].handling.orientation)} (D-LIB5-FAMILY)`]);
+      }
+    });
+    it('red: a handle on landmine_row, cable_shrug or smith_machine_bench_press without a card claim', () => {
+      for (const id of NO_HANDLE) {
+        const m = { ...C[id], handling: { ...C[id].handling, handle: 'bar-28' } };
+        expect([id, handleProblems(id, m)]).toEqual([id, [`${id}: handling.handle "bar-28" with no card claim (Q-W4-6)`]]);
+        expect([id, refuse(id, { child: m, onlyMapped: true })]).toEqual([id, null]);   // the family check maps no handle here: this red is the guard
+      }
+    });
+  });
+
+  describe('Q-W4-7: the zoom-linked parent checkpoints compare label, detail and anchor only', () => {
+    const CP: [string, string, string, string][] = [['lib_t_bar_row', 'posture[trunk angle stays the same]', 'trunk', 'row-back'],
+      ['lib_dumbbell_romanian_deadlift', 'posture: knees fixed at a slight bend, movement at the hips (parent c4)', 'knees', 'rdl-bottom']];
+    const known = new Set((exercises as any[]).map(e => e.id));
+    it('the parent\'s checkpoint links its own zoom; the child\'s links none of the parent\'s, and C1 passes', () => {
+      for (const [id, f, key, zoom] of CP) {
+        expect([id, FAM.INHERIT_MAP[id][f]]).toEqual([id, ['label', 'detail', 'anchor'].map(l => `posture[key=${key}].${l}`)]);
+        expect([id, C[parentOf(id)].posture.find((p: any) => p.key === key).zoom]).toEqual([id, zoom]);
+        expect([id, C[id].posture.find((p: any) => p.key === key).zoom === zoom]).toEqual([id, false]);
+        expect([id, checkC1(C[id], known)]).toEqual([id, []]);
+      }
+    });
+    it.each(CP)('red: %s, one inherited word changed in the parent\'s label and detail', (id, f, key) => {
+      const p = C[parentOf(id)];
+      for (const leaf of ['label', 'detail']) {
+        const path = `posture[key=${key}].${leaf}`, m = withLeaf(p, path, '', FAM.atPath(p, path).replace(/\w+/, 'Other'));
+        expect([leaf, refuse(id, { parent: m })]).toEqual([leaf, expect.stringMatching(new RegExp(`^${id}: family: ${f.replace(/[.[\]()]/g, '\\$&')}: posture\\[key=${key}\\]\\.${leaf} `))]);
+      }
+    });
+    it.each(CP)('red: %s, the parent\'s zoom link (%s… %s → %s) copied onto the child is a dangling zoom reference', (id, _f, key, zoom) => {
+      const m = { ...C[id], posture: C[id].posture.map((p: any) => (p.key === key ? { ...p, zoom } : p)) };
+      expect(checkC1(m, known)).toEqual([expect.stringMatching(new RegExp(`^C1: posture\\[\\d+\\] \\(${key}\\) references zoom "${zoom}", which is not in zooms$`))]);
+    });
+  });
+
+  describe('E5 (amended D-SHIP-W5-PLATEONLY): no INHERIT_MAP field maps to []', () => {
+    /** `plateCompared`: the `${id}#${field}` plate.* fields that have their own plate-compare red (none in W4). */
+    const emptyProblems = (map: Record<string, Record<string, string[]>>, plateCompared: Set<string> = new Set()) => Object.entries(map).flatMap(([id, e]) =>
+      Object.entries(e).filter(([f, paths]) => paths.length === 0 && !(f.startsWith('plate.') && plateCompared.has(`${id}#${f}`))).map(([f]) => `${id}: ${f}: mapped to [] (E5)`));
+    it('the real map has none', () => { expect(emptyProblems(FAM.INHERIT_MAP)).toEqual([]); });
+    it('red: a sheet field mapped to []; a plate.* field mapped to [] with no plate-compare red; control: one that has its red', () => {
+      expect(emptyProblems({ ...FAM.INHERIT_MAP, lib_t_bar_row: { ...FAM.INHERIT_MAP.lib_t_bar_row, 'grip.thumb': [] } })).toEqual(['lib_t_bar_row: grip.thumb: mapped to [] (E5)']);
+      const plate = { ...FAM.INHERIT_MAP, lib_sumo_deadlift: { ...FAM.INHERIT_MAP.lib_sumo_deadlift, 'plate.equipment': [] } };
+      expect(emptyProblems(plate)).toEqual(['lib_sumo_deadlift: plate.equipment: mapped to [] (E5)']);
+      expect(emptyProblems(plate, new Set(['lib_sumo_deadlift#plate.equipment']))).toEqual([]);
+      // why it is needed: familyRefusal compares nothing for [] and passes
+      const card = cardOf('lib_t_bar_row');
+      FAM.INHERIT_MAP.lib_e5 = { f: [] };
+      try { expect(FAM.familyRefusal('lib_e5', { research: { card: 'c.json' } }, () => ({ parent: card.parent, inherit: [{ field: 'f' }] }), () => ({}))).toBeNull(); }
+      finally { delete FAM.INHERIT_MAP.lib_e5; }
+    });
+  });
+});
+
+describe('LIB-SHIP W4 Q-W4-10: skull_crusher contact from CONVENTIONS[ga:push-heel]', () => {
+  const card = () => json('docs/research/howto/cards/skull_crusher.json');
+  const CONTACT_OF_ZONE = { 'heel of the palm': 'heel', 'middle of the palm': 'mid-palm', 'base of the fingers': 'finger-base' } as const;
+  /** The contact the convention derives: the HandContact of the zone its text names. */
+  const derived = (conv: string) => Object.entries(CONTACT_OF_ZONE).find(([z]) => conv.includes(z))?.[1];
+  it('the sheet copies the convention text and its contact is the one the convention derives (heel)', async () => {
+    const { content: c } = await content.loadContent('lib_skull_crusher'), conv = P.CONVENTIONS['ga:push-heel'] as string;
+    expect(readFileSync(join(ROOT, 'tools/plates/library/howto/lib_skull_crusher.howto.mjs'), 'utf8')).toContain(`const PUSH_HEEL = ${JSON.stringify(conv).replace(/"/g, "'")};`);
+    expect([c.handling.contact, derived(conv)]).toEqual(['heel', 'heel']);
+    expect(checkConventionGrip(c, null, conv)).toEqual([]);
+  });
+  it('red 1: the convention changes (zone or range)', async () => {
+    const { content: c } = await content.loadContent('lib_skull_crusher'), conv = P.CONVENTIONS['ga:push-heel'] as string;
+    const moved = conv.replace('heel of the palm', 'middle of the palm');
+    expect([derived(moved), checkConventionGrip(c, null, moved)]).toEqual(['mid-palm', ['GRIPC: lib_skull_crusher: contact heel is not the convention\'s zone']]);
+    expect(checkConventionGrip(c, null, conv.replace(/extension \d+ to \d+/, 'extension 0 to 20'))).toEqual(['GRIPC: lib_skull_crusher: wrist ext [0,15] is not the convention\'s range']);
+  });
+  it('red 2: the card gains a handContact that disagrees', async () => {
+    const { content: c } = await content.loadContent('lib_skull_crusher'), k = card();
+    expect(checkConventionGrip(c, { grip: { ...k.grip, handContact: 'Bar across the middle of the palm.' } }, P.CONVENTIONS['ga:push-heel'])).toEqual(['GRIPC: lib_skull_crusher: card grip.handContact disagrees with the convention']);
+    expect(checkConventionGrip(c, { grip: { ...k.grip, handContact: 'Bar on the heel of the palm.' } }, P.CONVENTIONS['ga:push-heel'])).toEqual([]);   // control
+  });
+});
+
+describe('LIB-SHIP W4 barbell_shrug contact from golden B\'s hold default (as cable_fly, #379 6627240712)', () => {
+  const contactProblems = (row: any, src: any) => (row.handling.contact === src.handling.contact ? [] : [`hold-default: ${row.id} contact ${row.handling.contact} is not ${src.id}'s ${src.handling.contact}`]);
+  it('equals lib_dumbbell_lateral_raise\'s contact (mid-palm), the file its hold-default source names', async () => {
+    const [{ content: sh, sources }, { content: src }] = await Promise.all(['lib_barbell_shrug', 'lib_dumbbell_lateral_raise'].map(id => content.loadContent(id)));
+    expect((sources as any)['hold-default'].url).toBe('tools/plates/layers/exercises/dumbbell_lateral_raise.howto.mjs');
+    expect((sources as any)['hold-default'].use).toBe('CONVENTION');
+    expect([sh.handling.contact, contactProblems(sh, src)]).toEqual(['mid-palm', []]);
+  });
+  it('red 1: the source\'s contact changes', async () => {
+    const [{ content: sh }, { content: src }] = await Promise.all(['lib_barbell_shrug', 'lib_dumbbell_lateral_raise'].map(id => content.loadContent(id)));
+    expect(contactProblems(sh, { ...src, handling: { ...src.handling, contact: 'finger-base' } })).toEqual(['hold-default: lib_barbell_shrug contact mid-palm is not lib_dumbbell_lateral_raise\'s finger-base']);
+  });
+  it('red 2: the sheet\'s contact changes', async () => {
+    const [{ content: sh }, { content: src }] = await Promise.all(['lib_barbell_shrug', 'lib_dumbbell_lateral_raise'].map(id => content.loadContent(id)));
+    expect(contactProblems({ ...sh, handling: { ...sh.handling, contact: 'heel' } }, src)).toEqual(['hold-default: lib_barbell_shrug contact heel is not lib_dumbbell_lateral_raise\'s mid-palm']);
+  });
 });

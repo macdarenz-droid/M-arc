@@ -13,6 +13,7 @@ import { LIMITS, checkC7 } from './checks/c7';
 import { checkC15 } from './checks/c15';
 import { RULE_CONTACT, RULE_NAME, RULE_SAFETY, RULE_SOURCE, checkC19Shared } from './checks/c19';
 import { SHIPPED } from './shipped-rows';
+import { W4_IDS } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -389,8 +390,11 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   const CHILDREN = ['chin_up', 'close_grip_pulldown', 'hanging_knee_raise', 'incline_machine_press', 'shoulder_press', 'single_arm_lat_pulldown',
     'underhand_lat_pulldown', 'horizontal_leg_press', 'leg_press_calf_raise'];
   const SETUP_FIELD = "setup['Pick the weight. Start lighter than you think; if you have to bend your wrist back to hold it, it is too heavy.']";
+  let REG: any;
+  const rowsOf = () => REG.rows();
   beforeAll(async () => {
     FM = await import(/* @vite-ignore */ url('tools/plates/library/lint/family.mjs'));
+    REG = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
     for (const r of SHIPPED) parents.set(r.id, (await content.loadContent(r.id)).content);
     for (const c of CHILDREN) cards.set(`lib_${c}`, JSON.parse(readFileSync(join(ROOT, `docs/research/howto/cards/${c}.json`), 'utf8')));
   });
@@ -411,8 +415,18 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   const RULED_LIB = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
     'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
   const SLRDL = 'lib_single_leg_romanian_deadlift';
+  // LIB-SHIP W4 (ruling 3; D-SHIP-FAMILY W4, #391 6647760116): the shipped rows are the 8, then the W1/W2 ids and the W4
+  // ids (checks/ship-w4.ts) in registry order; the map adds one entry per W4 child, each covering its card's inherit[]
+  // except the fields D-SHIP-W4-ROUTE leaves unmapped until F-W4-INHERIT (asserted exactly, so they stay refused).
+  const W4_CHILDREN = ['arnold_press', 'close_grip_bench_press', 'decline_bench_press', 'incline_barbell_bench_press', 'incline_dumbbell_press',
+    'smith_machine_bench_press', 'cable_shrug', 'dumbbell_shrug', 'smith_machine_shrug', 'conventional_deadlift', 'dumbbell_romanian_deadlift',
+    'sumo_deadlift', 'landmine_row', 'pendlay_row', 't_bar_row'].map(c => `lib_${c}`);
+  const W4_UNMAPPED: Record<string, string[]> = { lib_cable_shrug: ['grip.wrist', 'grip.width'], lib_dumbbell_shrug: ['grip.wrist'],
+    lib_sumo_deadlift: ['plate.equipment (bar on the floor with full-size plates, parent c23)'] };
   it('the map covers every inherit[] field of the 9 cards exactly, and no field is unmapped', () => {
-    expect(SHIPPED.map(r => r.id)).toEqual([...EIGHT, ...RULED_LIB]);
+    const order = (SHIPPED as any[]).map(r => r.id), regOrder = (rowsOf() as any[]).map(r => r.id);
+    expect(order).toEqual([...EIGHT, ...regOrder.filter(id => [...RULED_LIB, ...W4_IDS].includes(id))]);
+    expect([...RULED_LIB, ...W4_IDS].filter(id => !order.includes(id))).toEqual([]);
     expect([...cards.keys(), SLRDL].filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
     for (const [id, card] of cards) {
       expect([id, card.inherit.length > 0, typeof card.parent]).toEqual([id, true, 'string']);
@@ -423,7 +437,16 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     const slrdl = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/cards/single_leg_romanian_deadlift.json'), 'utf8'));
     expect([slrdl.parent, FM.unmappedFields(SLRDL, slrdl)]).toEqual(['romanian_deadlift', []]);
     expect(Object.keys(FM.INHERIT_MAP[SLRDL]).sort()).toEqual(slrdl.inherit.map((e: any) => e.field).sort());
-    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys(), SLRDL].sort());
+    // LIB-SHIP W4: each W4 child's card names its parent; its mapped fields are its card's inherit[] less exactly the ruled
+    // unmapped ones (cable_shrug, dumbbell_shrug and sumo stay refused by familyRefusal until F-W4-INHERIT)
+    for (const id of W4_CHILDREN) {
+      const card = JSON.parse(readFileSync(join(ROOT, `docs/research/howto/cards/${id.slice(4)}.json`), 'utf8'));
+      expect([id, card.inherit.length > 0, typeof card.parent]).toEqual([id, true, 'string']);
+      expect([id, FM.unmappedFields(id, card)]).toEqual([id, W4_UNMAPPED[id] ?? []]);
+      expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).filter((f: string) => !(W4_UNMAPPED[id] ?? []).includes(f)).sort()]);
+      if (W4_UNMAPPED[id]) expect([id, FM.familyRefusal(id, { research: { card: `docs/research/howto/cards/${id.slice(4)}.json` } }, () => card, () => ({}))]).toEqual([id, UNRULED(id)]);
+    }
+    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys(), SLRDL, ...W4_CHILDREN].sort());
   });
   /** D-LIB9a-MAP as ruled (#245 6393424755 on the tables of 6393419324), keyed by each card's exact field string. Literal:
    *  a narrowed or widened path in INHERIT_MAP turns this red. shoulder_press's setup line is not in it (F-LB1-SETUP). */
@@ -444,6 +467,35 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     lib_leg_press_calf_raise: { grip: ['handling'],
       "setup['After the last rep, pause at the top, turn the handles back in, and let the sled settle on the catches before you take your feet off or let go.']": ['setup[kind=finish]'],
       "posture['Hands light on the side handles']": ['posture[key=hands]'] },
+    // LIB-SHIP W4 D-SHIP-FAMILY W4 (SHIP W4 PLAN RULED, #391 6647760116), literal as ruled: THUMB* is the thumb mode alone
+    // (D-SHIP-W4-THUMB), the gap-ruled zooms map to handling leaves (D-SHIP-W4-GAPZOOM), Arnold's pad zoom to its words
+    // (D-SHIP-W4-PADZOOM), the zoom-linked checkpoints to label, detail and anchor (Q-W4-7)
+    lib_arnold_press: { 'grip.thumb': ['handling.thumb.mode'], 'grip.wrist': ['handling.wrist'], 'setup.spotter': ['setup[kind=safety]'],
+      'zooms.seat-back-contact': ['zooms[key=seat-back-contact].key', 'zooms[key=seat-back-contact].kind', 'zooms[key=seat-back-contact].chip',
+        'zooms[key=seat-back-contact].heading', 'zooms[key=seat-back-contact].callout.right.text', 'zooms[key=seat-back-contact].callout.wrong.text',
+        'zooms[key=seat-back-contact].caption.right', 'zooms[key=seat-back-contact].caption.wrong'] },
+    lib_close_grip_bench_press: { 'grip.thumb': ['handling.thumb.mode'], 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'],
+      'setup.safety-pins': ['setup[kind=safety]'], 'setup.spotter': ['setup[kind=get-in]'],
+      'zooms.bar-low-palm': ['handling.thumb.mode', 'handling.contact', 'handling.wrist', 'handling.faults[key=bent-back]'] },
+    lib_decline_bench_press: { 'grip.thumb': ['handling.thumb.mode'], 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'],
+      'zooms.bar-low-palm': ['handling.thumb.mode', 'handling.contact', 'handling.wrist', 'handling.faults[key=bent-back]'] },
+    lib_incline_barbell_bench_press: { 'grip.thumb': ['handling.thumb.mode'], 'grip.handContact': ['handling.contact'],
+      'zooms.bar-low-palm': ['handling.thumb.mode', 'handling.contact', 'handling.wrist.ext', 'handling.faults[key=bent-back]'], 'setup.safety-pins': ['setup[kind=safety]'] },
+    lib_incline_dumbbell_press: { 'grip.thumb': ['handling.thumb.mode'], 'grip.wrist': ['handling.wrist'],
+      'zooms.wrist-neutral-press': ['handling.thumb.mode', 'handling.wrist', 'handling.faults[key=bent-back]'] },
+    lib_smith_machine_bench_press: { 'grip.thumb': ['handling.thumb.mode'], 'grip.type': ['handling.orientation'], 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'],
+      'zooms.bar-low-palm': ['handling.thumb.mode', 'handling.contact', 'handling.wrist', 'handling.faults[key=bent-back]'] },
+    lib_cable_shrug: { 'grip.thumb': ['handling.thumb.mode'], 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'], 'grip.type': ['handling.orientation'] },
+    lib_dumbbell_shrug: { 'grip.thumb': ['handling.thumb.mode'], 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },
+    lib_smith_machine_shrug: { 'grip.thumb': ['handling.thumb.mode'], 'grip.handContact': ['handling.contact'], 'zooms.shrug-grip': ['handling.thumb.mode', 'handling.faults[key=thumbless]'] },
+    lib_conventional_deadlift: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], 'archetype.contact': ['contacts'] },
+    lib_dumbbell_romanian_deadlift: { 'grip.wrist': ['handling.wrist'],
+      'posture: knees fixed at a slight bend, movement at the hips (parent c4)': ['posture[key=knees].label', 'posture[key=knees].detail', 'posture[key=knees].anchor'] },
+    lib_sumo_deadlift: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], 'archetype.contact': ['contacts'] },
+    lib_landmine_row: { 'grip.type': ['handling.orientation'], 'grip.thumb': ['handling.thumb.mode'], 'posture[back neutral]': ['posture[key=back]'], 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },
+    lib_pendlay_row: { 'grip.type': ['handling.orientation', 'handling.handle'], 'grip.thumb': ['handling.thumb.mode'], 'grip.handContact': ['handling.contact'], 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },
+    lib_t_bar_row: { 'posture[trunk angle stays the same]': ['posture[key=trunk].label', 'posture[key=trunk].detail', 'posture[key=trunk].anchor'],
+      'grip.thumb': ['handling.thumb.mode'], 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },
   };
   it('INHERIT_MAP is exactly the ruled map (D-LIB9a-MAP): every field and every path', () => {
     expect(FM.INHERIT_MAP).toStrictEqual(RULED);

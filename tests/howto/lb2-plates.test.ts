@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
+import { sheetProblems, w4Of } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -19,7 +20,8 @@ const IDP = 'incline_dumbbell_press';
 const IDS = [...LB2, IDP].map(i => `lib_${i}`);
 const REUSED = ['dumbbell_bench_press', 'dumbbell_shoulder_press', 'barbell_overhead_press'];
 const HELD = 'dumbbell_fly';
-const ROWS = 'tools/plates/library/lb2/rows.json';
+// LIB-SHIP W4 (D-SHIP-MOVE, Q-W2-10; W3's lb1 form): the LB2 rows moved into batches/lb02.json; lb2/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb02.json';
 const COMPOSERS = ['declineBench'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -611,9 +613,12 @@ describe('LIB-10 incline_dumbbell_press (D-LIB10-IDP, D-LIB10-IDP-A): the Mistak
     expect(Object.keys(card).slice(-3)).toEqual(KEYS3);
     expect(idp.mistake.tells[0].key).toBe(card.topFault);
   });
-  it('its How-to source names only its id and card (D-LIB9a-HOWTOID)', async () => {
+  // LIB-SHIP W4 (ruling 3): replaces "its How-to source names only its id and card (D-LIB9a-HOWTOID)": the sheet is written
+  it('its How-to sheet names its card and is not a stub (replaces D-LIB9a-HOWTOID); mutation: the old stub is red', async () => {
     const h = (await import(/* @vite-ignore */ lib(`howto/lib_${IDP}.howto.mjs`))).default;
-    expect(h).toEqual({ id: `lib_${IDP}`, research: { card: `docs/research/howto/cards/${IDP}.json` } });
+    expect(sheetProblems(h, IDP)).toEqual([]);
+    expect(sheetProblems({ id: `lib_${IDP}`, research: { card: `docs/research/howto/cards/${IDP}.json` } }, IDP).length).toBeGreaterThan(0);
+    expect(sheetProblems({ ...h, research: { ...h.research, card: 'docs/research/howto/cards/dumbbell_bench_press.json' } }, IDP)).toEqual([`${IDP}: research.card "docs/research/howto/cards/dumbbell_bench_press.json"`]);
   });
   it('A6: PQ-H6 is green on the redrawn plate against its card', () => {
     const c = readJson(`docs/research/howto/cards/${IDP}.json`);
@@ -706,20 +711,44 @@ describe('LIB-10 A5: lb2/rows.json holds exactly the 7 LB2 ids drawn here and in
   });
 });
 
-describe('LIB-10 A9: nothing ships (D-LIB10-AHEAD)', { timeout: T }, () => {
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => !['drawing', 'review'].includes(r.stage)).map(([id, r]) => `${id}: ${r.stage}`);
-  it('every LB2 row is at stage drawing or review', () => {
-    expect(stageProblems(readJson(ROWS).rows)).toEqual([]);
-  });
-  it('mutations: one row set to shipped and one to approved-plate are red', () => {
+// LIB-SHIP W4 (D-SHIP-A9, ruling 3; SHIP W4 PLAN RULED #391 6647760116): replaces "LIB-10 A9: nothing ships"
+// (D-LIB10-AHEAD). The LB2 rows moved into batches/lb02.json (D-SHIP-MOVE) and the ruled ids (checks/ship-w4.ts) ship
+// there; every LB2 id still lives in exactly its batch file and its two golden files. The old reds stay (a row at another
+// stage, a row named in a second batch or golden file, the rows file read as one more batch); new reds: an id at shipped
+// that is not ruled, a ruled id with its stamp removed, and the rows copied back into lb2/rows.json.
+describe('LIB-SHIP W4 A9 (replaces LIB-10 A9, D-LIB10-AHEAD): exactly the ruled LB2 ids ship, from batches/lb02.json', { timeout: T }, () => {
+  const OLD_ROWS = 'tools/plates/library/lb2/rows.json';
+  const RULED = () => w4Of(ROWS);
+  /** One line per row off the ruled state: a ruled id not shipped, an unruled id at any stage but approved-plate. */
+  const shipProblems = (rows: Record<string, any>, ruled = RULED()) => Object.entries(rows).flatMap(([id, r]) =>
+    ruled.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
+  it('every ruled LB2 row is at stage shipped and every other one at approved-plate; the ruled ids are LB2 rows', () => {
     const rows = readJson(ROWS).rows;
-    expect(stageProblems({ ...rows, lib_skull_crusher: { ...rows.lib_skull_crusher, stage: 'shipped' } })).toEqual(['lib_skull_crusher: shipped']);
-    expect(stageProblems({ ...rows, lib_skull_crusher: { ...rows.lib_skull_crusher, stage: 'approved-plate' } })).toEqual(['lib_skull_crusher: approved-plate']);
+    expect(RULED().filter(id => !IDS.includes(id))).toEqual([]);
+    expect(shipProblems(rows)).toEqual([]);
   });
-  it('no LB2 id is shipped, even with lb2/rows.json read as a batch file', () => {
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(8);
-    expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
+  it('mutations: an unruled id at shipped, a ruled id held back, and a row at drawing are red', () => {
+    const rows = readJson(ROWS).rows;
+    expect(shipProblems(rows, RULED().filter(id => id !== 'lib_skull_crusher'))).toEqual(['lib_skull_crusher: unruled, at shipped']);
+    expect(shipProblems({ ...rows, lib_skull_crusher: { ...rows.lib_skull_crusher, stage: 'approved-plate' } })).toEqual(['lib_skull_crusher: ruled, at approved-plate']);
+    expect(shipProblems({ ...rows, lib_skull_crusher: { ...rows.lib_skull_crusher, stage: 'drawing' } })).toEqual(['lib_skull_crusher: ruled, at drawing']);
+  });
+  it('each ruled id has its C15 stamp; mutation: a ruled id\'s stamp removed is red', async () => {
+    const S = await import(/* @vite-ignore */ lib('research/stamps.mjs'));
+    expect(await S.stampProblems(RULED())).toEqual([]);
+    const { scope, hash } = await S.stampOf('lib_skull_crusher'), rv = S.readReviews();
+    const cut = { ...rv, entries: rv.entries.filter((e: any) => !(e.scope === scope && e.hash === hash)) };
+    expect(await S.stampProblems(RULED(), { reviews: cut })).toEqual([`LIB-5 stamp: lib_skull_crusher: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`]);
+  }, 120_000);
+  it('the registry holds each LB2 id once, from batches/lb02.json; lb2/rows.json is gone, and its rows copied back are refused (a row in two places)', () => {
+    const rows = reg.rows();
+    for (const id of IDS) expect([id, rows.filter((r: any) => r.id === id).map((r: any) => r.batchFile)]).toEqual([id, [ROWS]]);
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(RULED());
+    expect(existsSync(OLD_ROWS)).toBe(false);
+    const back = (ids: string[]) => () => reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]),
+      [OLD_ROWS, { ...readJson(ROWS), rows: Object.fromEntries(ids.map(id => [id, readJson(ROWS).rows[id]])) }]] });
+    expect(back(IDS)).toThrow(/registry: tools\/plates\/library\/lb2\/rows\.json: id lib_barbell_bench_press already used by tools\/plates\/library\/batches\/lb02\.json/);
+    expect(back(['lib_skull_crusher'])).toThrow(/id lib_skull_crusher already used by/);
   });
   /** An id or its slug as a whole token in a file's name or text. */
   const tokenHits = (ids: string[], name: string, text: string) => ids.flatMap(id => {
@@ -728,33 +757,35 @@ describe('LIB-10 A9: nothing ships (D-LIB10-AHEAD)', { timeout: T }, () => {
     if (new RegExp(`(^|[^a-z0-9-])${slug}([^a-z0-9-]|$)`).test(s)) out.push(`${name}: ${slug}`);
     return out;
   });
-  // Before pilot A is on main, the 4 reused ids and dumbbell_fly are in no batches/ or golden file either.
-  const pilotAOnMain = () => readdirSync('tools/plates/library/batches').some(n => /pilot/i.test(n));
-  const watched = () => [...LB2, IDP, ...(pilotAOnMain() ? [] : [...REUSED, HELD])];
-  const batchProblems = (files: [string, string][]) => files.flatMap(([f, text]) => tokenHits(watched(), f, text));
-  it('no LB2 id is in any tools/plates/library/batches/ file', () => {
-    const dir = 'tools/plates/library/batches';
-    expect(batchProblems(readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')]))).toEqual([]);
+  const watched = () => [...LB2, IDP];
+  /** The LB2 files of a folder: each LB2 id or slug must be in every `want` file and in no other. */
+  const placeProblems = (files: [string, string][], want: string[]) => [
+    ...files.filter(([f]) => !want.includes(f)).flatMap(([f, text]) => tokenHits(watched(), f, text)),
+    ...want.flatMap(w => { const t = files.find(([f]) => f === w)?.[1]; return t === undefined ? [`${w}: missing`] : watched().filter(id => !tokenHits([id], w, t).length).map(id => `${w}: no ${id}`); }),
+  ];
+  const dirFiles = (dir: string): [string, string][] => (existsSync(dir) ? readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : []);
+  it('the LB2 ids are in batches/lb02.json and in no other tools/plates/library/batches/ file', () => {
+    expect(placeProblems(dirFiles('tools/plates/library/batches'), ['lb02.json'])).toEqual([]);
   });
-  it('mutations: rows.json copied into batches/ is red; a file naming only lib_smith_machine_bench_press (LB6) stays green', () => {
-    expect(batchProblems([['lb2.json', readFileSync(ROWS, 'utf8')]]).length).toBeGreaterThanOrEqual(7);
-    expect(batchProblems([['zz.json', '{"rows":{"lib_smith_machine_bench_press":{}}}']])).toEqual([]);
+  it('mutations: the rows copied into a second batches/ file is red; a file naming only lib_smith_machine_bench_press (LB6) stays green', () => {
+    expect(placeProblems([...dirFiles('tools/plates/library/batches'), ['lb2.json', readFileSync(ROWS, 'utf8')]], ['lb02.json']).length).toBeGreaterThanOrEqual(8);
+    expect(placeProblems([...dirFiles('tools/plates/library/batches'), ['zz.json', '{"rows":{"lib_smith_machine_bench_press":{}}}']], ['lb02.json'])).toEqual([]);
   });
-  const goldenProblems = (files: [string, string][]) => files.flatMap(([name, text]) => [
-    ...(/lb2/i.test(name) ? [`${name}: an LB2 batch file name`] : []),
-    ...(/"batch"\s*:\s*"LB2"/.test(text) ? [`${name}: names batch LB2`] : []),
-    ...tokenHits(watched(), name, text),
-  ]);
-  it('no LB2 id, slug or batch is in tests/howto/golden/library/', () => {
-    const dir = 'tests/howto/golden/library';
-    const files: [string, string][] = existsSync(dir) ? readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : [];
-    expect(goldenProblems(files)).toEqual([]);
+  const GOLDEN = ['lb02.json', 'lb02.layers.html'];
+  const goldenProblems = (files: [string, string][]) => [
+    ...files.filter(([n]) => !GOLDEN.includes(n)).flatMap(([n, text]) => [...(/lb0?2\b/i.test(n) ? [`${n}: an LB2 batch file name`] : []), ...(/"batch"\s*:\s*"LB2"/.test(text) ? [`${n}: names batch LB2`] : [])]),
+    ...placeProblems(files, GOLDEN),
+  ];
+  it('the LB2 ids, slugs and batch are in tests/howto/golden/library/ lb02.json and lb02.layers.html only', () => {
+    expect(goldenProblems(dirFiles('tests/howto/golden/library'))).toEqual([]);
   });
-  it('mutations: a golden file naming an LB2 id, a page-only lb2.json and skull-crusher.layers.html are red; lib_smith_machine_bench_press stays green', () => {
-    expect(goldenProblems([['x.json', '{"id":"lib_decline_bench_press"}']])).toEqual(['x.json: decline_bench_press']);
-    expect(goldenProblems([['lb2.json', '{"entries":[{"kind":"page","batch":"LB2"}]}']]).length).toBe(2);
-    expect(goldenProblems([['skull-crusher.layers.html', '<div data-id="skull-crusher"></div>']])).toEqual(['skull-crusher.layers.html: skull-crusher']);
-    expect(goldenProblems([['lb6x.json', '{"id":"lib_smith_machine_bench_press"}']])).toEqual([]);
+  it('mutations: a golden file naming an LB2 id, a page-only lb2.json, skull-crusher.layers.html and an LB2 id dropped from lb02.json are red; lib_smith_machine_bench_press stays green', () => {
+    const real = dirFiles('tests/howto/golden/library'), plus = (f: [string, string]) => goldenProblems([...real, f]);
+    expect(plus(['x.json', '{"id":"lib_decline_bench_press"}'])).toEqual(['x.json: decline_bench_press']);
+    expect(plus(['lb2.json', '{"entries":[{"kind":"page","batch":"LB2"}]}']).length).toBe(2);
+    expect(plus(['skull-crusher.layers.html', '<div data-id="skull-crusher"></div>'])).toEqual(['skull-crusher.layers.html: skull-crusher']);
+    expect(plus(['lb6x.json', '{"id":"lib_smith_machine_bench_press"}'])).toEqual([]);
+    expect(goldenProblems(real.map(([n, t]) => [n, n === 'lb02.json' ? t.replace(/(lib_)?dumbbell_pullover|dumbbell-pullover/g, 'x') : t]))).toEqual(['lb02.json: no dumbbell_pullover']);
   });
   it('lib_incline_barbell_bench_press names incline_barbell_bench_press, never barbell_bench_press (the one real id holding an LB2 id)', () => {
     const ex = readJson('src/data/exercises.json').map((e: any) => e.id as string);
@@ -869,11 +900,13 @@ describe('LIB-10 A11 and A6 (Do 6): the card fields, the ruled tempo map and the
     ...(f.joint && f.measure === true ? [`${i}: both joint and measure`] : []),
     ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
   ]);
+  // LIB-SHIP W4 (ruling 3): the How-to half replaces D-LIB9a-HOWTOID's stub equality: each sheet names its card, not a stub
   it('every plate fact has a kind, one form and a claim of its own card; the How-to of each LB2 id names its card', async () => {
     for (const id of LB2) {
       expect(factProblems(cardOf(id)), id).toEqual([]);
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
-      expect(h).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+      expect(sheetProblems(h, id)).toEqual([]);
+      expect(sheetProblems({ id: h.id, research: h.research }, id).length, `${id}: the stub`).toBeGreaterThan(0);
     }
   });
   it('mutation: a fact with both joint and measure: true is red', () => {
@@ -917,7 +950,9 @@ describe('LIB-10 A4: runQa node half on an LB2 plate (lib_close_grip_bench_press
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
-  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W4 (D-LIB-LB1ZOOM route; D-LIB9-AUTHORQA refuses authoring QA at approved-plate and shipped): after the pin
+  // (SHIP W4 PIN GO, #391 6649217767) the default path, no authoring flag: the pinned exemptions apply. Mutations kept red.
+  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E });
   const M = (id: string) => muts.SPEC_MUTATIONS.find((m: any) => m.id.startsWith(`${id} `));
   // A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn.
   const mutated = async (fn: string, arg: any = null) => {
@@ -935,6 +970,13 @@ describe('LIB-10 A4: runQa node half on an LB2 plate (lib_close_grip_bench_press
     const r = await qa(await candOf());
     expect(node(r)).toEqual([]);
     expect(qaIdx.FLAGS.filter((f: string) => r.flags[f].raised && !['F2', 'F5'].includes(f))).toEqual([]);
+  });
+  it('LIB-SHIP W4: authoring QA on the row is refused at its stage (D-LIB9-AUTHORQA); the pinned path reads the pin\'s exemptions', async () => {
+    const stage = all.find((r: any) => r.id === ID).stage;
+    expect(cand.AUTHORING_REFUSED).toContain(stage);
+    await expect(cand.candidateOf(ID, { all, platesHtml: html, engine: E, authoring: true })).rejects.toThrow(`authoring QA is refused at stage ${stage} (D-LIB9-AUTHORQA)`);
+    const pinned = JSON.parse(readFileSync('tests/howto/golden/library/lb02.json', 'utf8')).entries.filter((e: any) => e.kind === 'plate' && e.id === ID).at(-1);
+    expect((await candOf()).exemptions).toEqual(pinned.exemptions ?? []);
   });
   it('A4 M1 a label 1 px onto the figure (the ribs callout) turns PQ-H1 red; 1 px back is clean', async () => {
     const c0 = cg.callouts.find((x: any) => x.key === 'ribs'), at = (box: any) => ({ ...cg, callouts: cg.callouts.map((x: any) => (x.key === 'ribs' ? { ...x, box } : x)) });
