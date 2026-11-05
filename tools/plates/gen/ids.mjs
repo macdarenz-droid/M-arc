@@ -25,6 +25,8 @@ export const after = [...LAYERS, 'tools/plates/gen/plates.mjs'];
 
 export const ENCODING = 'tools/plates/library/ids-encoding.mjs';
 export const COVERAGE_DATA = 'tools/plates/library/coverage-archetypes.json';
+/** F-ZOOM-NONE: gen/zooms.mjs TEXT_ZOOMS (read here by path: ids.mjs does not load the zoom generator). */
+export const TEXT_ZOOMS = 'tools/plates/library/text-zooms.json';
 // The encoding (S, H, O and the decoder) lives in ../library/ids-encoding.mjs, shared with content.mjs (D-LIB2-hints).
 export { IDS_MAX, IDS_WRITERS, LABEL, hintsOutputs, idHash, idsBudget, idsNodeText, idsText, literals, setOf } from '../library/ids-encoding.mjs';
 
@@ -51,10 +53,14 @@ export function chunkMaps(shippedRows, has, pairOf = {}) {
  *  posture-<c> chunk, its zoom-<c>.css (posture-<c>.ts imports it; `hasFile` takes a repo path, D-LIB2b-REVIEW-1) and,
  *  unless its archetype is 'none', its hand-<c> chunk or a hand pair. Runs before any text is built, so no loaders.ts
  *  line can point at a chunk that is not written. */
-export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}, hasFile, sheets = {}) {
+export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}, hasFile, sheets = {}, textZoom = new Set()) {
+  // W4 merge of W2 (6th: sheets) and F-ZOOM-NONE #388 (6th: textZoom): a Set in 6th place is #388's form; the lane
+  // merged second settles one argument order (the #388/W2 'whoever merges second' rule).
+  if (sheets instanceof Set) [sheets, textZoom] = [{}, sheets];
   for (const r of shippedRows) {
     const c = r.chromeId;
-    for (const name of [`ht-${r.slug}`, `feel-${c}`, `posture-${c}`]) if (!has(name)) throw new Error(`ids: ${r.id}: no src/howto/generated/${name}.ts`);
+    // F-ZOOM-NONE: a row ruled in tools/plates/library/text-zooms.json (checked by gen/zooms.mjs, which runs first) has no posture chunk
+    for (const name of [`ht-${r.slug}`, `feel-${c}`, ...(textZoom.has(r.id) ? [] : [`posture-${c}`])]) if (!has(name)) throw new Error(`ids: ${r.id}: no src/howto/generated/${name}.ts`);
     const zoom = `src/slices/howto/css/zoom-${c}.css`;
     if (!hasFile(zoom)) throw new Error(`ids: ${r.id}: no ${zoom}`);
     // D-SHIP-IDS-NOPAIR: a sheet whose own handling archetype is 'none' counts as none, and a sheet with no hand chunk
@@ -153,7 +159,8 @@ export async function outputs(ctx = {}) {
   const byId = new Map(all.map(r => [r.id, r]));
   const sheets = Object.fromEntries(await Promise.all(shipped.filter(id => byId.get(id)?.mode !== 'golden' && existsSync(join(ROOT, sourceOf(id))))
     .map(async id => [id, (await import(pathToFileURL(join(ROOT, sourceOf(id))).href)).default])));
-  missingChunks(shipped.map(id => byId.get(id)), has, pairOf, archetypes, hasFile, sheets);
+  const textZoom = new Set(Object.keys(existsSync(join(ROOT, TEXT_ZOOMS)) ? JSON.parse(readFileSync(join(ROOT, TEXT_ZOOMS), 'utf8')).entries ?? {} : {}));
+  missingChunks(shipped.map(id => byId.get(id)), has, pairOf, archetypes, hasFile, sheets, textZoom);
   const maps = chunkMaps(shipped.map(id => byId.get(id)), has, pairOf);
   const out = [
     { path: 'src/howto/ids.ts', text: twins.ids },
