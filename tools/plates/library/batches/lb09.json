@@ -1,0 +1,153 @@
+{
+ "batch": "LB9",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/lb09.json",
+  "layers": "tests/howto/golden/library/lb09.layers.html",
+  "layersConfig": "tools/plates/library/pages/lb09.layers.json"
+ },
+ "rows": {
+  "lib_ab_wheel_rollout": {
+   "src": "library/specs/ab_wheel_rollout.mjs",
+   "slug": "ab-wheel-rollout",
+   "prefix": "ab-wheel-rollout",
+   "chromeId": "ab-wheel-rollout",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Kneeling Ab Wheel Roll-Out: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/kneeling-ab-wheel-roll-out/",
+    "The 10 Best Ab Exercises for Muscle and Strength – StrengthLog. https://www.strengthlog.com/ab-exercises/",
+    "The 10 Best Core Exercises for Muscle & Strength – StrengthLog. https://www.strengthlog.com/core-exercises/",
+    "12 Best Ab Exercises and Workouts for Strength | BarBend. https://barbend.com/best-ab-exercises/",
+    "The Benefits of Ab Rollouts and Progressions to Perform Them | BarBend. https://barbend.com/ab-rollouts/",
+    "Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training. (2006). https://pubmed.ncbi.nlm.nih.gov/16649890/ PMID 16649890",
+    "Spinal cord injury without radiological abnormality due to a fall while using an abdominal roller: A report of two cases. (2023). https://pubmed.ncbi.nlm.nih.gov/37780607/ PMID 37780607"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_bird_dog": {
+   "src": "library/specs/bird_dog.mjs",
+   "slug": "bird-dog",
+   "prefix": "bird-dog",
+   "chromeId": "bird-dog",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Bird Dog | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/14/bird-dog/",
+    "Master the Bird Dog to Give Your Core Routine Wings | BarBend. https://barbend.com/bird-dog-exercise/",
+    "The Bird Dog Exercise: Your Ticket to a Strong Core | Garage Gym Reviews. https://www.garagegymreviews.com/bird-dog-exercise",
+    "Bird Dog Exercise: How to Do, Variations, and Muscles Targeted. https://www.healthline.com/health/bird-dog-exercise",
+    "Bird Dog - Exercise Guide | Motra. https://www.motra.com/exercises/birdDog",
+    "Tolerability and Muscle Activity of Core Muscle Exercises in Chronic Low-back Pain. (2019). https://pubmed.ncbi.nlm.nih.gov/31547140/ PMID 31547140"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_side_plank": {
+   "src": "library/specs/side_plank.mjs",
+   "slug": "side-plank",
+   "prefix": "side-plank",
+   "chromeId": "side-plank",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Learn How to Do a Side Plank with Proper Form, Variations, and Benefits | BarBend. https://barbend.com/side-plank/",
+    "How to Do Side Plank: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/side-plank/",
+    "Ab Exercises | Side Plank (Modified). https://www.acefitness.org/resources/everyone/exercise-library/99/side-plank-modified/",
+    "Quantitative intramuscular myoelectric activity of lumbar portions of psoas and the abdominal wall during a wide variety of tasks. (1998). https://pubmed.ncbi.nlm.nih.gov/9502361/ PMID 9502361",
+    "Exercises for spine stabilization: motion/motor patterns, stability progressions, and clinical technique. (2009). https://pubmed.ncbi.nlm.nih.gov/19154838/ PMID 19154838"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_superman": {
+   "src": "library/specs/superman.mjs",
+   "slug": "superman",
+   "prefix": "superman",
+   "chromeId": "superman",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Superman Exercise | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/9/supermans/",
+    "Superman holds | field hockey | SIPRC – SHRED injuries | University of Calgary. https://ucalgary.ca/shred-injuries/all-sports/field-hockey/superman-holds",
+    "Bodyweight Superman - How To, Muscles Worked & Form Guide (Liftosaur). https://liftosaur.com/exercises/bodyweight-superman",
+    "Superman Hold - Exercise Guide | Motra. https://www.motra.com/exercises/supermanHold",
+    "Six Superb Benefits of the Superman | BarBend. https://barbend.com/benefits-of-superman/",
+    "Surface electromyographic analysis of the low back muscles during rehabilitation exercises. (2008). https://pubmed.ncbi.nlm.nih.gov/19195137/ PMID 19195137"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_cable_crunch": {
+   "src": "library/specs/cable_crunch.mjs",
+   "slug": "cable-crunch",
+   "prefix": "cable-crunch",
+   "chromeId": "cable-crunch",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Learn the Cable Crunch to Build Yourself a Strong, Supportive Core | BarBend (2024). https://barbend.com/cable-crunch/",
+    "Cable Crunch - Exercise Guide | Motra. https://motra.com/exercises/cableCrunch",
+    "How to Do Cable Crunch: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/cable-crunch/",
+    "The 10 Best Cable Crunch Alternatives for Stronger, More Defined Abs – Fitness Volt. https://fitnessvolt.com/cable-crunch/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_hollow_body_hold": {
+   "src": "library/specs/hollow_body_hold.mjs",
+   "slug": "hollow-body-hold",
+   "prefix": "hollow-body-hold",
+   "chromeId": "hollow-body-hold",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do the Hollow Hold Position for Six-Pack Abs and Stronger Lifts | BarBend (2024). https://barbend.com/hollow-hold/",
+    "Hollow Hold Workout: Expert Tips | Garage Gym Reviews (2023). https://www.garagegymreviews.com/hollow-hold-workout",
+    "Hollow Hold: Strengthen Your Core and Hip Flexors Efficiently – Fitness Volt (2026). https://fitnessvolt.com/hollow-hold/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_reverse_crunch": {
+   "src": "library/specs/reverse_crunch.mjs",
+   "slug": "reverse-crunch",
+   "prefix": "reverse-crunch",
+   "chromeId": "reverse-crunch",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How To Do a Reverse Ab Crunch | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/76/reverse-crunch/",
+    "Learn the Reverse Crunch to Fire Up Your Core Training | BarBend (2024). https://barbend.com/reverse-crunch/",
+    "Reverse Crunch - Exercise Guide | Motra. https://motra.com/exercises/reverseCrunch",
+    "How To Do Reverse Crunches | PureGym. https://www.puregym.com/exercises/abs/reverse-crunches/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_dead_bug": {
+   "src": "library/specs/dead_bug.mjs",
+   "slug": "dead-bug",
+   "prefix": "dead-bug",
+   "chromeId": "dead-bug",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Ab Exercises | Supine Dead Bug. https://www.acefitness.org/resources/everyone/exercise-library/147/supine-dead-bug/",
+    "Try the Dead Bug Exercise for a Strong Core | Garage Gym Reviews (2023). https://www.garagegymreviews.com/dead-bug-exercise",
+    "Dead Bug Exercise: Strengthen Core and Improve Stability – Fitness Volt (2024). https://fitnessvolt.com/dead-bug-exercise/",
+    "Trunk Muscle EMG During Intermediate Pilates Mat Exercises in Beginner Healthy and Chronic Low Back Pain Individuals. (2017). https://pubmed.ncbi.nlm.nih.gov/28413116/ PMID 28413116"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_v_up": {
+   "src": "library/specs/v_up.mjs",
+   "slug": "v-up",
+   "prefix": "v-up",
+   "chromeId": "v-up",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Ultimate V-Ups: Strengthen Your Core and Sculpt Your Abs! – Fitness Volt (2024). https://fitnessvolt.com/24111/v-up/",
+    "How To Do V-Ups With Proper Form, According To A Certified Trainer (2025). https://www.womenshealthmag.com/fitness/a26977658/v-ups/",
+    "How To Do V-Ups | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/242/v-ups/",
+    "Electromyographic response of the abdominal musculature to varying abdominal exercises. (2010). https://pubmed.ncbi.nlm.nih.gov/21088553/ PMID 21088553"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}

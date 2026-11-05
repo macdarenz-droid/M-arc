@@ -86,8 +86,8 @@ describe('PILOT-B2 A1: the rows hold exactly lib_crunch; crunch is in no pilot B
     expect(readJson(ROWS).rows.lib_crunch.stage).toBe('approved-plate');
     expect(existsSync(PRE_PIN)).toBe(false);
   });
-  it('crunch is in neither batches/pilot-b.json nor lb9/rows.json', () => {
-    for (const f of ['tools/plates/library/batches/pilot-b.json', 'tools/plates/library/lb9/rows.json']) expect(/"lib_crunch"/.test(readFileSync(f, 'utf8')), f).toBe(false);
+  it('crunch is in neither batches/pilot-b.json nor batches/lb09.json (LIB-SHIP W7: LB9 moved there)', () => {
+    for (const f of ['tools/plates/library/batches/pilot-b.json', 'tools/plates/library/batches/lb09.json']) expect(/"lib_crunch"/.test(readFileSync(f, 'utf8')), f).toBe(false);
   });
   it('mutations: a duplicated row, a row set to T and a second id are red', () => {
     const text = readFileSync(ROWS, 'utf8'), j = readJson(ROWS);

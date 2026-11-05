@@ -1,0 +1,211 @@
+{
+ "batch": "LB10",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/lb10.json",
+  "layers": "tests/howto/golden/library/lb10.layers.html",
+  "layersConfig": "tools/plates/library/pages/lb10.layers.json"
+ },
+ "rows": {
+  "lib_kettlebell_swing": {
+   "src": "library/specs/kettlebell_swing.mjs",
+   "slug": "kettlebell-swing",
+   "prefix": "kettlebell-swing",
+   "chromeId": "kettlebell-swing",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Kettlebell Swing - Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/kettlebellSwing",
+    "Here’s How to Do a Kettlebell Swing (excerpt from Kettlebell Strength Training Anatomy, Michael Hartle; Human Kinetics). https://us.humankinetics.com/blogs/excerpt/here-s-how-to-do-a-kettlebell-swing",
+    "Kettlebell Swings: How To Do Them, Muscles Worked, and Common Mistakes (Nike) (2025). https://www.nike.com/a/kettlebell-swings",
+    "Learn How to Do Picture Perfect Kettlebell Swings (BarBend). https://barbend.com/kettlebell-swings/",
+    "Kettlebell Swings: How To, Benefits, and Who Should Do Them (Garage Gym Reviews). https://www.garagegymreviews.com/kettlebell-swings",
+    "How to Do Kettlebell Swing: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/kettlebell-swing/",
+    "Kettlebell Swing (Muscle & Fitness exercise library). https://www.muscleandfitness.com/exercise/kettlebell-swing/",
+    "Kettlebell Swings (PureGym exercise guide). https://www.puregym.com/exercises/plyometrics/kettlebells/",
+    "Kettlebell swing, snatch, and bottoms-up carry: back and hip muscle activation, motion, and low back loads. (2012). https://pubmed.ncbi.nlm.nih.gov/21997449/ PMID 21997449"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_high_knees": {
+   "src": "library/specs/high_knees.mjs",
+   "slug": "high-knees",
+   "prefix": "high-knees",
+   "chromeId": "high-knees",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "It's Time to Revisit the High Knees Exercise You Learned in PE (Healthline; medically reviewed by a NASM-CPT) (2021). https://www.healthline.com/health/fitness/high-knees-benefits",
+    "Learn How to Do High Knees to Step Up Your Leg & Core Game (BarBend) (2024). https://barbend.com/high-knees/",
+    "Rev up Your Cardio With This 15-Minute Drill (ACE blog) (2015). https://www.acefitness.org/resources/everyone/blog/5430/rev-up-your-cardio-with-this-15-minute-drill/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_jump_rope": {
+   "src": "library/specs/jump_rope.mjs",
+   "slug": "jump-rope",
+   "prefix": "jump-rope",
+   "chromeId": "jump-rope",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "How to Jump Rope: 5 Easy Steps From an Expert (Garage Gym Reviews) (2023). https://www.garagegymreviews.com/how-to-jump-rope",
+    "Jump Rope: The Ultimate Guide – Fitness Volt (2021). https://fitnessvolt.com/jump-rope/",
+    "Why Does Jumping Rope Hurt My Wrists? | Elevate Rope (2026). https://www.elevaterope.com/blogs/articles/jump-rope-wrist-pain",
+    "How to Jump Rope: The Complete Beginner’s Guide | Crossrope. https://www.crossrope.com/blogs/blog/how-to-jump-rope"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_battle_ropes": {
+   "src": "library/specs/battle_ropes.mjs",
+   "slug": "battle-ropes",
+   "prefix": "battle-ropes",
+   "chromeId": "battle-ropes",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Get Started with Battle Rope Exercises (Healthline; medically reviewed by a CSCS) (2022). https://www.healthline.com/health/fitness/battle-rope-exercises",
+    "Muscle Activation During Battle Rope Exercises (ACE-sponsored research summary, Salzgeber, Porcari et al.) (2020). https://acefitness.org/education-and-resources/professional/certified/research/7470/muscle-activation-during-battle-rope-exercises",
+    "Muscle Activity During Unilateral vs. Bilateral Battle Rope Exercises (2015). https://pubmed.ncbi.nlm.nih.gov/25853917/ PMID 25853917",
+    "Total-Body Battle Ropes Workout (ACE expert article) (2015). https://www.acefitness.org/resources/pros/expert-articles/5396/total-body-battle-ropes-workout/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_sled_pull": {
+   "src": "library/specs/sled_pull.mjs",
+   "slug": "sled-pull",
+   "prefix": "sled-pull",
+   "chromeId": "sled-pull",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Sled Pull Guide: How To Improve Your Technique, Training & Full-Body Strength | Gymshark Central (2025). https://row.gymshark.com/blog/article/how-to-sled-pull",
+    "The metabolic, hormonal, biochemical, and neuromuscular function responses to a backward sled drag training session (2014). https://pubmed.ncbi.nlm.nih.gov/23575361/ PMID 23575361"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_burpee": {
+   "src": "library/specs/burpee.mjs",
+   "slug": "burpee",
+   "prefix": "burpee",
+   "chromeId": "burpee",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Burpees: Proper Form & Benefits (CPT-Approved) | BarBend (2024). https://barbend.com/burpees/",
+    "Ultimate Burpees Workout: Target Every Key Muscle Group! – Fitness Volt (2024). https://fitnessvolt.com/burpees/",
+    "Burpee - Exercise Guide | Motra. https://www.motra.com/exercises/burpee",
+    "How to Do a Burpee: Step-by-Step Guide, Benefits, Variations (2026). https://www.healthline.com/health/how-to-do-a-burpee",
+    "How To Do a Burpee | Burpees Video Workouts | PureGym. https://www.puregym.com/exercises/plyometrics/burpees/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_bear_crawl": {
+   "src": "library/specs/bear_crawl.mjs",
+   "slug": "bear-crawl",
+   "prefix": "bear-crawl",
+   "chromeId": "bear-crawl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Bear Crawl (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/150/bear-crawl/",
+    "How to Do the Bear Crawl Exercise to Boost Strength and Coordination (SHAPE, reprinted by ACE) (2022). https://www.acefitness.org/about-ace/press-room/in-the-news/8226/how-to-do-the-bear-crawl-exercise-to-boost-strength-and-coordination-shape/",
+    "Build an Unstoppable Core and Upper Body with the Bear Crawl (BarBend) (2025). https://barbend.com/bear-crawl/",
+    "Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study (2017). https://pubmed.ncbi.nlm.nih.gov/29085728/ PMID 29085728"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_sled_push": {
+   "src": "library/specs/sled_push.mjs",
+   "slug": "sled-push",
+   "prefix": "sled-push",
+   "chromeId": "sled-push",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Sled Push: Muscles Worked & Proper Form – StrengthLog (2026). https://www.strengthlog.com/sled-push/",
+    "The Sled Push May Be the Ultimate Leg-Builder (Yes, We're Serious) | BarBend (2024). https://barbend.com/sled-push/",
+    "Sled Push: Ultimate Guide to Strengthen Your Legs and Core (2024). https://fitnessvolt.com/sled-push-guide/",
+    "Sled Push Workout: Trainer Tips | Garage Gym Reviews (2023). https://www.garagegymreviews.com/sled-push-workout",
+    "Lower-limb and trunk muscle activation with back squats and weighted sled apparatus (2014). https://pubmed.ncbi.nlm.nih.gov/25226330/ PMID 25226330"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_medicine_ball_slam": {
+   "src": "library/specs/medicine_ball_slam.mjs",
+   "slug": "medicine-ball-slam",
+   "prefix": "medicine-ball-slam",
+   "chromeId": "medicine-ball-slam",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Lay the Smackdown on Your Core Workouts with Medicine Ball Slams (BarBend) (2024). https://barbend.com/medicine-ball-slams/",
+    "The Main Benefits of Medicine Ball Slams And How to Do Them (BarBend) (2024). https://barbend.com/benefits-of-medicine-ball-slams/",
+    "How to Do Ball Slams: Muscles Worked & Proper Form (StrengthLog) (2024). https://www.strengthlog.com/ball-slams/",
+    "Overhead Slams (ACE exercise library). https://www.acefitness.org/resources/everyone/exercise-library/182/overhead-slams/",
+    "Heavy Slam Ball Workout (ACE blog, Shana Verstegen) (2014). https://www.acefitness.org/resources/everyone/blog/3801/heavy-slam-ball-workout/",
+    "How to Master the Medicine Ball Slam Throw Technique (Vitruve) (2022). https://vitruve.fit/blog/how-to-master-the-medicine-ball-slam-throw-technique/",
+    "Medicine Ball Slam (BodBot). https://www.bodbot.com/Exercises/966/Medicine-Ball-Slam",
+    "How To Do Overhead Medicine Ball Slam (Iron Man Magazine) (2015). https://www.ironmanmagazine.com/how-to-do-overhead-medicine-ball-slam/",
+    "How and Why You Should Use a Medicine Ball (PureGym) (2023). https://www.puregym.com/blog/how-and-why-you-should-use-a-medicine-ball/",
+    "Slam Ball Exercises and Benefits (Healthline; medically reviewed by a CSCS) (2025). https://www.healthline.com/health/fitness-exercise/slam-ball-exercises"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_farmer_s_carry": {
+   "src": "library/specs/farmer_s_carry.mjs",
+   "slug": "farmer-s-carry",
+   "prefix": "farmer-s-carry",
+   "chromeId": "farmer-s-carry",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do the Farmer’s Carry: Benefits and Expert Tips | BarBend (2026). https://barbend.com/farmers-carry/",
+    "How to Do the Farmer's Carry: Expert Tips | Garage Gym Reviews (2024). https://www.garagegymreviews.com/farmers-carry",
+    "Farmer's Walk Guide: How-To, Muscles Worked, Variations, and Benefits – Fitness Volt (2026). https://fitnessvolt.com/farmers-walk/",
+    "How to Do Farmers Walk: Muscles Worked & Proper Form – StrengthLog (2023). https://www.strengthlog.com/farmers-walk/",
+    "A Step by Step Breakdown of the Farmer’s Walk | BarBend (2023). https://barbend.com/farmers-walk-breakdown/",
+    "Mexi A et al. (2023) Effects of Load Carriage on Postural Control and Spatiotemporal Gait Parameters during Level and Uphill Walking. Sensors (Basel) (Europe PMC full text, PMC9863443) (2023). https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9863443/fullTextXML PMID 36679405",
+    "Paśko W et al. (2026) Changes in Spatiotemporal Parameters During Gait of Special Forces Operators with Additional External Load. Sensors (Basel) (Europe PMC full text, PMC13029918) (2026). https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13029918/fullTextXML PMID 41902126",
+    "Mobbs L et al. (2025) Normative Database of Spatiotemporal Gait Metrics Across Age Groups: An Observational Case-Control Study. Sensors (Basel) (Europe PMC full text, PMC11768510) (2025). https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11768510/fullTextXML PMID 39860951",
+    "Lau LK et al. (2020) Reference Values of Gait Speed and Gait Spatiotemporal Parameters for a South East Asian Population: The Yishun Study. Clin Interv Aging (Europe PMC full text, PMC7522423) (2020). https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7522423/fullTextXML PMID 33061327",
+    "Winwood PW, Cronin JB, Brown SR, Keogh JWL (2014) A biomechanical analysis of the farmers walk, and comparison with the deadlift and unloaded walk. Int J Sports Sci Coach 9(5):1127-1143 (Bond University repository copy) (2014). https://pure.bond.edu.au/ws/files/9659702/A_biomechanical_analysis_of_the_farmers_walk_and_comparison_with_the_deadlift_and_unloaded_walk.pdf",
+    "Hindle BR et al. (2019) The Biomechanics and Applications of Strongman Exercises: a Systematic Review. Sports Med Open (Europe PMC full text, PMC6901656) (2019). https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6901656/fullTextXML PMID 31820223"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_jumping_jacks": {
+   "src": "library/specs/jumping_jacks.mjs",
+   "slug": "jumping-jacks",
+   "prefix": "jumping-jacks",
+   "chromeId": "jumping-jacks",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Jumping Jacks (NASM Exercise Library). https://www.nasm.org/resource-center/exercise-library/jumping-jacks",
+    "How to Do Jumping Jacks (Experience Life, Life Time) (2021). https://experiencelife.lifetime.life/article/break-it-down-the-jumping-jack/",
+    "How to Do Jumping Jacks (WebMD; medically reviewed by a DPT) (2026). https://www.webmd.com/fitness-exercise/how-to-do-jumping-jacks"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_wall_ball": {
+   "src": "library/specs/wall_ball.mjs",
+   "slug": "wall-ball",
+   "prefix": "wall-ball",
+   "chromeId": "wall-ball",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "The Wall Ball is the Cardio Booster Your Workouts Are Missing (BarBend) (2024). https://barbend.com/wall-balls-exercise-guide/",
+    "Ball Out With Our Wall Ball Workout (Garage Gym Reviews) (2024). https://www.garagegymreviews.com/wall-ball-workout",
+    "Hyrox Wall Ball Guide: Everything You Need To Know (PureGym) (2025). https://www.puregym.com/blog/hyrox-wall-ball/",
+    "5 Tips To Dominate Wall Balls (Box Life Magazine) (2018). https://boxlifemagazine.com/5-tips-to-dominate-wall-balls/",
+    "Seven Important Technique Tips to Improve Your Wall Ball Efficiency in CrossFit (BOXROX) (2020). https://www.boxrox.com/?p=106154",
+    "5 Tips to Destroy Wall Balls in Crossfit WODs (BOXROX) (2016). https://www.boxrox.com/5-tips-to-destroy-wall-balls/",
+    "Advice On Making Wall Balls Easier For CrossFit Athletes (Fitness Volt) (2019). https://fitnessvolt.com/wall-balls-crossfit-athletes/",
+    "Slam Ball Exercises and Benefits (Healthline; medically reviewed by a CSCS), wall balls section (2025). https://www.healthline.com/health/fitness-exercise/slam-ball-exercises"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}

@@ -334,7 +334,8 @@ describe('LIB-22 A19 (D-LIB22-TESTS): test manners', () => {
 // ---------------------------------------------------------------- the drawn specs (Do 2, Do 4, Do 5) ----
 const T = 600_000;
 const SPECS_DIR = 'tools/plates/library/specs';
-const ROWS = 'tools/plates/library/lb10/rows.json';
+// LIB-SHIP W7 (D-SHIP-MOVE): the LB10 rows moved into batches/lb10.json; lb10/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb10.json';
 const FRONT = ['jumping_jacks', 'jump_rope'];
 // DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids).
 // farmer_s_carry left at 'LIB-22 resume 2' (F-R2-FARMER-5); jumping_jacks at 'LIB-22 resume 3' (LIB-SMALL:

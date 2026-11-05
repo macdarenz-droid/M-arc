@@ -1,6 +1,9 @@
 // LIB-21 (lib-21-card Do 5, Do 8, A10; copied from lb10/build.mjs @ a9c64e11, with its --held page): the
 // LB9 plates page, built from lb9/rows.json read as if it were a batch file (it never goes into batches/: D-LIB21-AHEAD).
 // Each row's sources lines come from its research card, in memory only. The page holds every LB9 row whose spec exists.
+// LIB-SHIP W7 (D-SHIP-MOVE as amended by Q-W2-10; W3's lb1/build.mjs form): the rows moved into batches/lb09.json with their
+// sources lines and lb9/rows.json is gone. A lb9/rows.json written back is read as one more batch file, so a row copied
+// back there is refused (registry.mjs: a row in two places).
 //   node tools/plates/library/lb9/build.mjs     builds the page twice into a temp directory and prints both sha256
 //   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb9/build.mjs --shots [theme] [lib_id ...]
 //     screenshots each drawn card (theme default paper, 390 px wide, normal and Mistake) into a temp directory
@@ -19,27 +22,31 @@ import { groupsConfig } from '../plates-page.mjs';
 import { batchFiles, rows } from '../registry.mjs';
 
 export const LB9_ROWS = 'tools/plates/library/lb9/rows.json';
+export const LB9_BATCH = 'tools/plates/library/batches/lb09.json';
+/** The rows file: lb9/rows.json if it exists (a copy-back), else batches/lb09.json (LIB-SHIP W7, D-SHIP-MOVE). */
+export const rowsFile = (root = ROOT) => (existsSync(join(root, LB9_ROWS)) ? LB9_ROWS : LB9_BATCH);
 const read = (root, p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
 const cardOf = (root, id) => read(root, `docs/research/howto/cards/${id.slice(4)}.json`);
 /** A research card's source list as page lines (title, year, url, PMID). */
 export const sourceLines = card => card.sources.map(s => `${s.title}${s.year ? ` (${s.year})` : ''}. ${s.url}${s.pmid ? ` PMID ${s.pmid}` : ''}`);
 
 /** The LB9 rows data with each row's sources from its card (memory only). `data` defaults to lb9/rows.json. */
-export function lb9Data(root = ROOT, data = read(root, LB9_ROWS)) {
+export function lb9Data(root = ROOT, data = read(root, rowsFile(root))) {
   return { ...data, rows: Object.fromEntries(Object.entries(data.rows).map(([id, r]) => [id, { ...r, sources: sourceLines(cardOf(root, id)) }])) };
 }
 
 /** Every registry row: the 8, the batch files, then lb9/rows.json read as one more batch file (Do 5). */
 export function lb9All(root = ROOT, data = lb9Data(root)) {
-  return rows(root, { batches: [...batchFiles(root).map(p => [p, read(root, p)]), [LB9_ROWS, data]] });
+  if (rowsFile(root) === LB9_ROWS) return rows(root, { batches: [...batchFiles(root).map(p => [p, read(root, p)]), [LB9_ROWS, data]] });
+  return rows(root, { batches: batchFiles(root).map(p => [p, p === LB9_BATCH ? data : read(root, p)]) });
 }
 
 /** The LB9 ids whose spec file exists, in rows.json order. */
-export const drawnIds = (root = ROOT, data = read(root, LB9_ROWS)) => Object.entries(data.rows).filter(([, r]) => existsSync(join(root, 'tools/plates', r.src))).map(([id]) => id);
+export const drawnIds = (root = ROOT, data = read(root, rowsFile(root))) => Object.entries(data.rows).filter(([, r]) => existsSync(join(root, 'tools/plates', r.src))).map(([id]) => id);
 
 /** The LB9 plates page bytes ({ html: Buffer, warnings }) for `ids` (default: every drawn id). */
 export async function buildLb9Page({ root = ROOT, all = lb9All(root), ids = drawnIds(root) } = {}) {
-  return buildPlatesPage(await groupsConfig({ groups: [{ id: 'lb9', title: 'LB9', ids }] }, all, LB9_ROWS));
+  return buildPlatesPage(await groupsConfig({ groups: [{ id: 'lb9', title: 'LB9', ids }] }, all, rowsFile(root)));
 }
 
 export const sha256 = b => createHash('sha256').update(b).digest('hex');
@@ -47,7 +54,7 @@ export const sha256 = b => createHash('sha256').update(b).digest('hex');
 /** PNG screenshots of each card at 390 px in `theme`, `mode` 'mistake' or 'normal': [{ id, path }] in `dir`. */
 export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mistake', dir = mkdtempSync(join(tmpdir(), 'lb9-shots-')), page: given = null } = {}) {
   const { launch } = await import('../qa/browser.mjs'), { openGolden, settle } = await import('../../fidelity/harness.mjs');
-  const { html, data } = given ?? { html: (await buildLb9Page({ ids })).html, data: read(ROOT, LB9_ROWS) }, browser = await launch(), out = [];
+  const { html, data } = given ?? { html: (await buildLb9Page({ ids })).html, data: read(ROOT, rowsFile(ROOT)) }, browser = await launch(), out = [];
   try {
     const { ctx, page } = await openGolden(browser, theme, { viewport: { width: 390, height: 844 }, html });
     try {
@@ -76,7 +83,7 @@ export function heldData(root = ROOT, only = null) {
     const s = slugOf(id);
     rowsOut[`lib_${id}`] = { src: `library/specs/${id}.mjs`, slug: s, prefix: s, chromeId: s, mode: 'H', stage: 'drawing', view };
   }
-  return { ...read(root, LB9_ROWS), rows: rowsOut };
+  return { ...read(root, rowsFile(root)), rows: rowsOut };
 }
 /** The held page ({ html, data, ids }): a separate page of the held rows only, in memory; never evidence (Do 5). */
 export async function buildHeldPage(root = ROOT, only = null) {

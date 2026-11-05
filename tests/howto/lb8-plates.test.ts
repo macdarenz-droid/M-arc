@@ -51,7 +51,8 @@ const NEAR_MISSES: Record<string, string[]> = { glute_bridge: ['check:start:sacr
 const H6_MISSES: Record<string, string[]> = { seated_calf_raise: ['H6.fact:5:contact:toe.l', 'H6.fact:6:contact:toe.r'], standing_calf_raise: ['H6.fact:2:contact:toe.l', 'H6.fact:3:contact:toe.r'], bodyweight_calf_raise: ['H6.fact:4:contact:toe.l', 'H6.fact:5:contact:toe.r'] };
 // Every spec drawn now (the slice), held or not, in plan order.
 const DRAWN_NOW = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
-const ROWS = 'tools/plates/library/lb8/rows.json';
+// LIB-SHIP W7 (D-SHIP-MOVE): the LB8 rows moved into batches/lb08.json; lb8/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb08.json';
 const RESEARCH_HEAD = '596dbe0748f11d13b431ee11d38d1742771925f1';
 const COMPOSERS = ['hackSled', 'pendulum', 'legExtMachine', 'calfMachine', 'ankleCuff'];
 // Each composer's exported size constants (A17).

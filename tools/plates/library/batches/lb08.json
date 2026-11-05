@@ -1,0 +1,140 @@
+{
+ "batch": "LB8",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/lb08.json",
+  "layers": "tests/howto/golden/library/lb08.layers.html",
+  "layersConfig": "tools/plates/library/pages/lb08.layers.json"
+ },
+ "rows": {
+  "lib_hack_squat": {
+   "src": "library/specs/hack_squat.mjs",
+   "slug": "hack-squat",
+   "prefix": "hack-squat",
+   "chromeId": "hack-squat",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Hack Squat: Target Muscles, Benefits, Exercise Instructions, And Variations (Fitness Volt, Matthew Magnante, ACE) (2024). https://fitnessvolt.com/hack-squat/",
+    "Crack the Code on New Leg Gains With the Hack Squat Machine (BarBend, Jake Dickson, NASM-CPT) (2025). https://barbend.com/hack-squat-machine/",
+    "How to Do Hack Squats: Muscles Worked & Benefits (StrengthLog). https://www.strengthlog.com/hack-squat/",
+    "How to Do a Hack Squat the Right Way (Healthline, Nicole Davis; medically reviewed by Daniel Bubnis, NASM-CPT) (2020). https://www.healthline.com/health/fitness-exercise/hack-squat",
+    "Want Monster Quads? Time to Learn the Hack Squat. (Men's Health, David Otey, CSCS, and Brett Williams, NASM) (2023). https://www.menshealth.com/fitness/a39318435/hack-squat/",
+    "Hack Squat (Facing Out) - Exercise Guide (Motra). https://www.motra.com/exercises/machineHackSquat"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_pendulum_squat": {
+   "src": "library/specs/pendulum_squat.mjs",
+   "slug": "pendulum-squat",
+   "prefix": "pendulum-squat",
+   "chromeId": "pendulum-squat",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Pendulum Squat: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/pendulum-squat/",
+    "Pendulum Squat: Muscles Worked and How to Use It (FORM gym trainers). https://weareformfitness.com/training/equipment/specialist/pendulum-squat/",
+    "Pendulum Squats: Step-by-Step Form Guide (XcelerateGyms blog). https://xcelerategyms.com/pendulum-squats/",
+    "The Pendulum Squat: Bridging the Gap Between Strength and Safety (BoxLife Magazine, Julien Raby). https://boxlifemagazine.com/pendulum-squat/",
+    "How To Use A Pendulum Squat Machine (YR Fitness, machine maker's guide). https://www.yanrefitness.com/how-to-use-a-pendulum-squat-machine/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_leg_extension": {
+   "src": "library/specs/leg_extension.mjs",
+   "slug": "leg-extension",
+   "prefix": "leg-extension",
+   "chromeId": "leg-extension",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Use the Leg Extension Machine for Quad Growth & Strength | BarBend (2024). https://barbend.com/leg-extension/",
+    "How to Do Leg Extension: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/leg-extension/",
+    "Machine Leg Extension - Exercise Guide | Motra. https://www.motra.com/exercises/legExtension",
+    "Leverage Machine Leg Extension - How To, Muscles Worked & Form Guide | Liftosaur. https://www.liftosaur.com/exercises/leverage-machine-leg-extension",
+    "Leg Extension: Mastering Quadriceps for Stronger Legs – Fitness Volt (2024). https://fitnessvolt.com/leg-extension/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_lying_leg_curl": {
+   "src": "library/specs/lying_leg_curl.mjs",
+   "slug": "lying-leg-curl",
+   "prefix": "lying-leg-curl",
+   "chromeId": "lying-leg-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Lying Leg Curl: Muscles Worked, Form, and Variations (Fitness Volt) (2026). https://fitnessvolt.com/24561/lying-leg-curl/",
+    "Machine Leg / Hamstring Curl Prone (Motra). https://www.motra.com/exercises/machineLegCurlLying",
+    "Leverage Machine Lying Leg Curl - How To, Muscles Worked & Form Guide | Liftosaur. https://www.liftosaur.com/exercises/leverage-machine-lying-leg-curl",
+    "Lying Hamstrings Curl | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/153/lying-hamstrings-curl/",
+    "Lying Leg Curl (NASM exercise library). https://www.nasm.org/resource-center/exercise-library/lying-leg-curl",
+    "How to Do Lying Leg Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/lying-leg-curl/",
+    "5 Types of Hamstring Curls for Stronger Thighs (Healthline) (2019). https://www.healthline.com/health/hamstring-curls"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_standing_leg_curl": {
+   "src": "library/specs/standing_leg_curl.mjs",
+   "slug": "standing-leg-curl",
+   "prefix": "standing-leg-curl",
+   "chromeId": "standing-leg-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Standing Leg Curls: How-to, Tips, Alternatives & More (Hevy). https://www.hevyapp.com/exercises/how-to-standing-leg-curl/",
+    "How to Do Standing Leg Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/standing-leg-curl/",
+    "Lying Leg Curl: Muscles Worked, Form, and Variations (Fitness Volt) (2026). https://fitnessvolt.com/24561/lying-leg-curl/",
+    "5 Types of Hamstring Curls for Stronger Thighs (Healthline) (2019). https://www.healthline.com/health/hamstring-curls"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_glute_bridge": {
+   "src": "library/specs/glute_bridge.mjs",
+   "slug": "glute-bridge",
+   "prefix": "glute-bridge",
+   "chromeId": "glute-bridge",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Glute Bridges (PureGym exercise guide). https://www.puregym.com/exercises/glutes/glute-bridge/glute-bridges/",
+    "Glute Bridge (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/49/glute-bridge/",
+    "Glute Bridge Exercises (PureGym exercise guide). https://www.puregym.com/exercises/glutes/glute-bridge/",
+    "How to Do Glute Bridge: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/glute-bridge/",
+    "How to Perform 5 Variations of the Glute Bridge Exercise (Healthline) (2020). https://www.healthline.com/health/fitness-exercise/glute-bridge-variations",
+    "Barbell Glute Bridges (PureGym exercise guide). https://www.puregym.com/exercises/glutes/glute-bridge/barbell-glute-bridges/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_cable_kickback": {
+   "src": "library/specs/cable_kickback.mjs",
+   "slug": "cable-kickback",
+   "prefix": "cable-kickback",
+   "chromeId": "cable-kickback",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Glute Kickbacks to Build Your Butt (BarBend) (2024). https://barbend.com/glute-kickbacks/",
+    "Cable Kickbacks (PureGym exercise guide). https://www.puregym.com/exercises/glutes/glute-kickbacks/cable-kickbacks/",
+    "How to Do Cable Glute Kickback: Muscled Worked & Proper Form (StrengthLog). https://www.strengthlog.com/cable-glute-kickback/",
+    "Cable Hip Extension (also known as Cable Kickback): Form, Muscles Worked (Fitbod). https://fitbod.me/exercises/cable-hip-extension",
+    "Glute Kickback Variations (PureGym exercise guide). https://www.puregym.com/exercises/glutes/glute-kickbacks/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_resisted_hip_flexion": {
+   "src": "library/specs/resisted_hip_flexion.mjs",
+   "slug": "resisted-hip-flexion",
+   "prefix": "resisted-hip-flexion",
+   "chromeId": "resisted-hip-flexion",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Cable Standing Hip Flexor Raise: Exercise Guide (Motra). https://www.motra.com/exercises/cableStandingHipFlexorRaise",
+    "Cable Standing Hip Flexion: How to Do It, Form & Muscles Worked (Kovo). https://www.kovofitness.com/exercises/cable-standing-hip-flexion",
+    "9 Hip Flexor Exercises to Improve Your Athletic Performance (Outside, Amber Sayer, certified personal trainer) (2025). https://www.outsideonline.com/health/training-performance/hip-flexor-exercises/"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}

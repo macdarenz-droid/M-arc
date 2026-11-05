@@ -1,0 +1,19 @@
+{
+ "groups": [
+  {
+   "id": "lb9",
+   "title": "LB9",
+   "ids": [
+    "lib_ab_wheel_rollout",
+    "lib_bird_dog",
+    "lib_side_plank",
+    "lib_superman",
+    "lib_cable_crunch",
+    "lib_hollow_body_hold",
+    "lib_reverse_crunch",
+    "lib_dead_bug",
+    "lib_v_up"
+   ]
+  }
+ ]
+}

@@ -78,7 +78,7 @@ describe('LIB-21 A11 (Do 6 a): the 8 cards and quotes are byte copies of the LB9
 });
 
 describe('LIB-21 A5 (first push): rows.json holds no row before a spec is drawn; tempo.json is the proposed map', () => {
-  const rows = readJson('tools/plates/library/lb9/rows.json'), t = readJson('tools/plates/library/lb9/tempo.json');
+  const rows = readJson('tools/plates/library/batches/lb09.json'), t = readJson('tools/plates/library/lb9/tempo.json');
   it('batch LB9, censusRef 4a9fd86; no plank, crunch, T or (b) id in any LB9 rows file; no plank, crunch, T id or bicycle_crunch (before \'LB9 ER5 GO\') in tempo.json', () => {
     expect(rows.batch).toBe('LB9');
     expect(rows.censusRef).toBe('4a9fd86');
@@ -127,7 +127,8 @@ describe('LIB-21 A5 (first push): rows.json holds no row before a spec is drawn;
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
 const SPECS_DIR = 'tools/plates/library/specs';
-const ROWS = 'tools/plates/library/lb9/rows.json';
+// LIB-SHIP W7 (D-SHIP-MOVE): the LB9 rows moved into batches/lb09.json; lb9/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb09.json';
 // DESIGN.md section 15: the held ids ('LB9 NOTE RULED', #312 6382248634: none; ab_wheel_rollout is drawn at the plank
 // class's -30 deg sag, D-LIB21-ABSAG, and joins rows.json).
 // DESIGN.md section 15: cable_crunch held by D-LIB21-CCHOLD (#312) for a LIB-SPINE engine card (F-SPINE-1).
