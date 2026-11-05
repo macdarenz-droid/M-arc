@@ -122,6 +122,8 @@ const zooms = [
   },
   {
     key: 'body-line', chip: 'Body line', heading: 'Body line', kind: 'posture',   // card zoom key: body line
+    // `cite` (W3, #384 6650401348; #385 PLATEFIX form): the card claim ids of each half's callout, caption and alt.
+    cite: { right: ['c3'], wrong: ['c3'] },
     // zoom shell: crop centre on the right pose's buttock; the Wrong is the spec's Mistake dashed over the end pose, as
     // `stills.sag`.
     crop: { center: { at: 'buttock', pose: 'right', off: [0, 0] }, sizePx: 220 },
@@ -143,6 +145,8 @@ const zooms = [
   },
   {
     key: 'top', chip: 'Top', heading: 'Top position', kind: 'posture',   // card zoom key: top position
+    // `cite` (W3, #384 6650401348; #385 PLATEFIX form): the card claim ids of each half's callout, caption and alt.
+    cite: { right: ['c4'], wrong: ['c4'] },
     // zoom shell: crop centre on the right pose's chest; the Wrong is the short pull dashed over the end pose.
     crop: { center: { at: 'chest', pose: 'right', off: [0, 10] }, sizePx: 180 },
     right: 'end',
@@ -220,6 +224,7 @@ export default {
     // CONVENTION (D-SHIP-GRIP (a)): 'across the base of your fingers' is the bar key's ga:pull-base, source hand-key-bar;
     // overhand c2, thumbs c14, wrists c15.
     gripLine: 'Overhand, bar across the base of your fingers, thumbs wrapped.',   // card grip claims: c2, c10, c14, c15
+    gripCite: ['c2', 'c10', 'c14', 'c15'],   // the grip line's card claim ids (W3, #384 6650401348)
     cue: 'Overhand, thumbs wrapped.',   // c2, c14
   },
   contacts: ['hang-support'],

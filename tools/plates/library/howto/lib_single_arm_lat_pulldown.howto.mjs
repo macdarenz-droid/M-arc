@@ -112,6 +112,8 @@ const zooms = [
   },
   {
     key: 'bottom', chip: 'Bottom', heading: 'Bottom position', kind: 'posture',   // card zoom key: bottom position
+    // `cite` (W3, #384 6650401348; #385 PLATEFIX form): the card claim ids of each half's callout, caption and alt.
+    cite: { right: ['c2', 'c3'], wrong: ['c10', 'c13'] },
     // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's elbow for both halves; the Wrong is the
     // spec's Mistake dashed over the end pose, as `stills.past`.
     crop: { center: { at: 'elbow.r', pose: 'right', off: [0, -10] }, sizePx: 170 },
@@ -192,6 +194,7 @@ export default {
       claim: C(['MECH', 'CONVENTION'], ['odriscoll-1992', KEYSRC], 'c15; the ext range is the key\'s ga:pull-base convention, not a card number') },
     faults: FAULTS,
     gripLine: 'Single handle, thumb around it.',   // c1, c16 (the wrist line is limitText, c15)
+    gripCite: ['c1', 'c16'],   // the grip line's card claim ids (W3, #384 6650401348)
     cue: 'Thumb wrapped, wrist straight.',   // c16, c15
   },
   contacts: ['seat-back', 'brace-pad'],

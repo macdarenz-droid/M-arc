@@ -151,6 +151,8 @@ const zooms = [
   },
   {
     key: 'knee-pad', chip: 'Bottom', heading: 'Bottom position', kind: 'posture',   // card zoom key: knee pad
+    // `cite` (W3, #384 6650401348; #385 PLATEFIX form): the card claim ids of each half's callout, caption and alt.
+    cite: { right: ['c8', 'c1'], wrong: ['c8', 'c1'] },
     // zoom shell: crop centre on the right pose's elbow; the Wrong is the spec's Mistake dashed over the end pose, as
     // `stills.half`.
     crop: { center: { at: 'elbow.r', pose: 'right', off: [0, 20] }, sizePx: 200 },
@@ -173,6 +175,8 @@ const zooms = [
   },
   {
     key: 'shoulders', chip: 'Shoulders', heading: 'Shoulder set', kind: 'posture',   // card zoom key: shoulders
+    // `cite` (W3, #384 6650401348; #385 PLATEFIX form): the card claim ids of each half's callout, caption and alt.
+    cite: { right: ['c7', 'c8'], wrong: ['c7', 'c8'] },
     // W3 LAYERS FIX (#384 6648454032, L5): from the side the near arm hides the shrug, so both crops are drawn from
     // behind, golden B's hanging_leg_raise/pull_up "Seen from behind" form (view 'back', both solid, blades outlined, a
     // level at the right hang's head and an arrow down to the sunk head). c8.
@@ -263,6 +267,7 @@ export default {
     // CONVENTION (D-SHIP-GRIP (a)): 'across the base of your fingers' is the bar key's ga:hang-base, source hand-key-bar;
     // overhand c1, thumbs c12.
     gripLine: 'Overhand, thumbs wrapped around the bar.',   // card grip claims: c1, c12, c14
+    gripCite: ['c1', 'c12', 'c14'],   // the grip line's card claim ids (W3, #384 6650401348)
     cue: 'Overhand, thumbs wrapped.',   // c1, c12
   },
   contacts: ['brace-pad'],
