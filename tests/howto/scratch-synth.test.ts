@@ -86,3 +86,28 @@ describe('F-SCRATCH-SYNTH: the three sets name synthetic ids', () => {
     expect(read('src/data/exercises.json') + read('tools/plates/library/coverage-archetypes.json')).toBe(before);
   });
 });
+
+describe('F-SCRATCH-SYNTH: ci/scratch.mjs check and seed run on the built tree (builtProblems)', () => {
+  // a built tree: addSynthetic's exercises.json, the scratch batch holding the six rows, one shipped batch beside it
+  const built = (mut?: (zz: any, other: any) => void) => {
+    const r = rootWith({ lib_hip_thrust: {} });
+    FX.addSynthetic(r, C.SCRATCH_4C);
+    const zz = { rows: Object.fromEntries(C.SCRATCH_4C.map((s: any) => [s.id, {}])) }, other = { rows: { lib_hip_thrust: {} } };
+    mut?.(zz, other);
+    writeFileSync(join(r, FX.BATCH), JSON.stringify(zz));
+    writeFileSync(join(r, 'tools/plates/library/batches/zz-move.json'), JSON.stringify(other));
+    return r;
+  };
+  it('a built tree is clean for builtProblems and refused by setProblems (why check and seed need their own guard)', () => {
+    const r = built();
+    expect(C.builtProblems(C.SCRATCH_4C, r)).toEqual([]);
+    expect(C.setProblems(C.SCRATCH_4C, r)).toContain('lib_scratch_fourc_a is a row of batches/zz-lib4b.json');
+  });
+  it('mutations: an id missing from the scratch batch, an id in a shipped batch, an id missing from exercises.json are each red', () => {
+    expect(C.builtProblems(C.SCRATCH_4C, built(zz => { delete zz.rows.lib_scratch_fourc_a; }))).toEqual([`lib_scratch_fourc_a is not a row of ${FX.BATCH}`]);
+    expect(C.builtProblems(C.SCRATCH_4C, built((_, o) => { o.rows.lib_scratch_fourc_b = {}; }))).toEqual(['lib_scratch_fourc_b is a row of batches/zz-move.json']);
+    const r = built(), f = join(r, 'src/data/exercises.json');
+    writeFileSync(f, JSON.stringify(JSON.parse(readFileSync(f, 'utf8')).filter((e: any) => e.id !== 'lib_scratch_fourc_c')));
+    expect(C.builtProblems(C.SCRATCH_4C, r)).toEqual(["lib_scratch_fourc_c is not in the built tree's src/data/exercises.json"]);
+  });
+});

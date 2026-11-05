@@ -13,7 +13,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ROOT } from '../../lib/inputs.mjs';
-import { COPY_EDITS, budgets, exerciseOf, page, paths, pin, scratchTargetProblems, stage, transformSources } from '../fidelity/fixture.mjs';
+import { BATCH, COPY_EDITS, budgets, exerciseOf, page, paths, pin, scratchTargetProblems, stage, transformSources } from '../fidelity/fixture.mjs';
 import { manifestOf, manifestText, MANIFEST } from './manifest.mjs';
 
 /** The scratch set: two targets per usable pool source, each with its own pair key (D-LIB4c-1 (a)). F-SCRATCH-SYNTH
@@ -97,6 +97,19 @@ export function seamed(text) {
 const sh = (root, cmd, args) => execFileSync(cmd, args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'], maxBuffer: 1 << 28 }).trim();
 const commit = (root, msg) => { sh(root, 'git', ['add', '-A']); sh(root, 'git', ['commit', '-q', '-m', msg]); return sh(root, 'git', ['rev-parse', 'HEAD']); };
 
+/** F-SCRATCH-SYNTH: a built scratch tree's set problems: each id is in exercises.json (its copyOf's copy) and a row of
+ *  the scratch batch only, never of a shipped batches/ file. */
+export function builtProblems(set, root = ROOT) {
+  const known = new Set(JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8')).map(e => e.id)), out = [];
+  for (const p of scratchTargetProblems(set.map(s => ({ ...s, copyOf: undefined })), root)) if (!p.endsWith(` is a row of batches/${BATCH.split('/').pop()}`)) out.push(p);
+  for (const s of set) {
+    if (!known.has(s.id)) out.push(`${s.id} is not in the built tree's src/data/exercises.json`);
+    if (s.copyOf && !known.has(s.copyOf)) out.push(`${s.id}: copyOf ${s.copyOf} is not in src/data/exercises.json`);
+    if (!Object.keys(JSON.parse(readFileSync(join(root, BATCH), 'utf8')).rows ?? {}).includes(s.id)) out.push(`${s.id} is not a row of ${BATCH}`);
+  }
+  return out;
+}
+
 /**
  * C16 (part, node side): the copied sources differ from the 8's only in the id, name, research-card and import lines and
  * the ruled COPY_EDITS (a line diff of each clone against its source).
@@ -152,7 +165,8 @@ export function seededShard(text, n) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const [step, ...rest] = process.argv.slice(2), root = ROOT;
-  const bad = setProblems(SCRATCH_4C, root);
+  // F-SCRATCH-SYNTH: check and seed run on the built tree, where the build has added each synthetic id and its batch row
+  const bad = ['check', 'seed'].includes(step) ? builtProblems(SCRATCH_4C, root) : setProblems(SCRATCH_4C, root);
   if (bad.length) { console.error(`scratch: refused:\n${bad.join('\n')}`); process.exit(1); }
   if (step === 'merge') {
     const [wiring, lib6] = rest;
