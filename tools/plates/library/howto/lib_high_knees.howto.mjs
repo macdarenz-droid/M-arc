@@ -118,7 +118,7 @@ export default {
     { key: 'thigh', label: 'Thigh to hip', detail: 'Thigh up to about hip height.',
       anchor: { landmark: 'knee.r', pose: 'end' }, zoom: 'knee-height', claim: CL.c3 },
     // Q-W2-12: handlingMistake 'Knees so high your back arches' (c5, c3) merged here, its fix added
-    { key: 'back', label: 'Back level', detail: "Lower back doesn't arch. Brace your trunk, knee at hip height.",
+    { key: 'back', label: 'Braced trunk', detail: "Lower back doesn't arch. Brace your trunk, knee at hip height.",
       anchor: { landmark: 'lumbar', pose: 'end' }, claim: J('c5', 'c3') },
     // D-SHIP-TEXTZOOM: the card zoom ball-of-foot (Wrong null, LR-25) as a text checkpoint
     { key: 'balls', label: 'Balls of feet', detail: 'On the balls of your feet, knees soft.', anchor: { landmark: 'ball.l', pose: 'end' }, claim: CL.c4 },

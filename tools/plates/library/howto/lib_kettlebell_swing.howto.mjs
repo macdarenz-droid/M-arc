@@ -148,9 +148,9 @@ const zooms = [
 
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const feel = {
-  primary: [{ muscleId: 'glutes', plain: 'The glutes drive the bell.', claim: CL.c25 }],
+  primary: [{ muscleId: 'glutes', plain: 'The glutes drive the bell.', claim: J('c25', 'c7') }],
   secondary: [
-    { muscleId: 'hamstrings', plain: 'The backs of the thighs help the hips drive.', claim: CL.c25 },
+    { muscleId: 'hamstrings', plain: 'The backs of the thighs help the hips drive.', claim: J('c25', 'c7') },
     { muscleId: 'lower_back', plain: 'The low back steadies you. It should not do the lifting.', claim: J('c25', 'c27') },
   ],
   watch: [],

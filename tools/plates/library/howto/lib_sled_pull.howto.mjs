@@ -7,7 +7,7 @@
 // GRIP (Q-W3-4 form, as lib_chest_supported_row): the card gives no thumb or hand contact. Contact 'finger-base' and the
 // wrist range ext [0, 25] are the pull key's convention pairs.mjs CONVENTIONS['ga:pull-base'] (hands/pairs.mjs:25), the
 // thumb golden B's pull default (lat_pulldown and seated_cable_row handling: thumb wrapped); all cited CONVENTION,
-// data only, never printed. The card's own wrist claim (c4, wrists firm) is on the grip line and posture[elbows].
+// data only, never printed. The card's own wrist claim (c4, wrists firm) is the grip grey line (limitText) and posture[elbows].
 // Feel (D-SHIP-Q7): the card's secondary `core` is text only (feel.textOnly), as lib_plank. Back box: card redFlags
 // ['back'], linked by the low-back row.
 // No variant line (equipment 'Sled').
@@ -16,11 +16,11 @@
 //   posture c2 shoulders over hips      -> posture stack (zoom torso-stack)
 //   posture c2 knees soft, quarter squat-> posture squat, setup step 3
 //   posture c6 chin level, eyes forward -> posture head
-//   posture c4 elbows tucked, wrists firm -> posture elbows, gripLine
+//   posture c4 elbows tucked, wrists firm -> posture elbows, handling.wrist.limitText (grip grey line)
 //   handlingMistake leaning back c8, c2, c9 -> mistakes[lean] (zoom torso-stack), feel row low-back, risks[lean]
 //   handlingMistake yanking c6          -> mistakes[yank]
 //   handlingMistake rope piled c5       -> mistakes[pile], setup step 5, risks[slack]
-//   hand zoom rope-grip Right c1, c4    -> gripLine, setup step 1
+//   hand zoom rope-grip Right c1, c4    -> gripLine (c1), wrist.limitText (c4), setup step 1
 // Left off (D-TEXT-PROGRESSION): c14 (starting load), c9's lighter loads and shorter distances as progression.
 import plateSpec from '../specs/sled_pull.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -116,7 +116,7 @@ const feel = {
     { muscleId: 'glutes', plain: 'The drag lights up the glutes.', claim: CL.c7 },
   ],
   secondary: [
-    { muscleId: 'calves', plain: 'The calves help drive each step.', claim: CL.c7 },
+    { muscleId: 'calves', plain: 'The calves help drive each step.', claim: J('c7', 'c3') },
     { muscleId: 'mid_back', plain: 'The back works to steady you.', claim: CL.c7 },
   ],
   textOnly: [   // named in the text, never painted (D-SHIP-Q7, as lib_plank)
@@ -165,7 +165,9 @@ export default {
     wrist: { ext: EXT, limitText: 'Keep your wrists firm and your elbows tucked.',
       claim: C(['CONSENSUS'], ['gs-sled'], 'card c4. The ext range is pairs.mjs CONVENTIONS ga:pull-base, a convention, not a card number.') },
     faults: [],                // the card hand zoom has no Wrong
-    gripLine: 'Both hands on the rope, one over the other. Wrists firm, elbows tucked.',
+    // card zoom rope-grip Right (c1, c4): the wrists are the grey line under it (wrist.limitText), so the lead does not
+    // repeat them (W2 panel form, as lib_dumbbell_bench_press).
+    gripLine: 'Both hands on the rope, one over the other.',
     cue: 'Shoulders over hips.',   // c2
   },
   contacts: ['standing-feet'],

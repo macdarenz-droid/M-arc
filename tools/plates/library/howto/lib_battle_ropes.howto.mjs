@@ -89,7 +89,7 @@ const zooms = [
 
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const feel = {
-  primary: [{ muscleId: 'front_delts', plain: 'The front of the shoulders works hard in both wave types.', claim: CL.c10 }],
+  primary: [{ muscleId: 'front_delts', plain: 'The front of the shoulders works in both wave types.', claim: CL.c10 }],
   secondary: [
     { muscleId: 'obliques', plain: 'The sides of the waist work, more in alternating waves.', claim: CL.c10 },
     { muscleId: 'lower_back', plain: 'The low back works too.', claim: CL.c10 },
