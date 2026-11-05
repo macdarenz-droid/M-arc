@@ -1,0 +1,21 @@
+{
+ "groups": [
+  {
+   "id": "lb7",
+   "title": "LB7",
+   "ids": [
+    "lib_cable_lateral_raise",
+    "lib_dumbbell_front_raise",
+    "lib_face_pull",
+    "lib_cable_external_rotation",
+    "lib_resistance_band_pull_apart",
+    "lib_renegade_row",
+    "lib_weighted_dip",
+    "lib_bench_dip",
+    "lib_incline_push_up",
+    "lib_diamond_push_up",
+    "lib_pike_push_up"
+   ]
+  }
+ ]
+}

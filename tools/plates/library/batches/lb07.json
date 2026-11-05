@@ -1,0 +1,177 @@
+{
+ "batch": "LB7",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/lb07.json",
+  "layers": "tests/howto/golden/library/lb07.layers.html",
+  "layersConfig": "tools/plates/library/pages/lb07.layers.json"
+ },
+ "rows": {
+  "lib_cable_lateral_raise": {
+   "src": "library/specs/cable_lateral_raise.mjs",
+   "slug": "cable-lateral-raise",
+   "prefix": "cable-lateral-raise",
+   "chromeId": "cable-lateral-raise",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Cable Single-Arm Lateral Raise: Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/cableSingleArmLateralRaise",
+    "How to Do Cable Lateral Raise: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/cable-lateral-raise/",
+    "Cable Lateral Raise (Fitness Volt, Matthew Magnante). https://fitnessvolt.com/cable-lateral-raise/",
+    "Dumbbell versus cable lateral raises for lateral deltoid hypertrophy: an experimental study (Larsen et al., Front Physiol 16:1611468) (2025). https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/ PMID 40692697",
+    "Characteristics of shoulder impingement in the recreational weight-training population (Kolber et al., J Strength Cond Res 28(4):1081-9) (2014). https://pubmed.ncbi.nlm.nih.gov/24077379/ PMID 24077379"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_dumbbell_front_raise": {
+   "src": "library/specs/dumbbell_front_raise.mjs",
+   "slug": "dumbbell-front-raise",
+   "prefix": "dumbbell-front-raise",
+   "chromeId": "dumbbell-front-raise",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Front Raise (ACE exercise library). https://www.acefitness.org/resources/everyone/exercise-library/54/front-raise/",
+    "Dumbbell Front Raise: Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/dumbbellFrontRaise",
+    "How to Do the Dumbbell Front Raise for a Stronger Front Rack Position (BarBend, Mike Dewar) (2024). https://barbend.com/dumbbell-front-raise/",
+    "How to Do Dumbbell Front Raise: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/dumbbell-front-raise/",
+    "Dumbbell Front Raise: Build Strong Deltoids & Upper Chest (Fitness Volt, Matthew Magnante) (2024). https://fitnessvolt.com/dumbbell-front-raise/",
+    "An Electromyographic Analysis of Lateral Raise Variations and Frontal Raise in Competitive Bodybuilders (Coratella et al., Int J Environ Res Public Health 17(17):6015) (2020). https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/ PMID 32824894"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_face_pull": {
+   "src": "library/specs/face_pull.mjs",
+   "slug": "face-pull",
+   "prefix": "face-pull",
+   "chromeId": "face-pull",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Cable Face Pull - Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/cableFacePull",
+    "How to Do Face Pulls: Benefits & Variations (BarBend) (2023). https://barbend.com/face-pulls/",
+    "How to Do Face Pull: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/face-pull/",
+    "Biomechanical evaluation of posterior deltoid exercises and kinematic trajectory modeling (2025). https://pubmed.ncbi.nlm.nih.gov/41964926/ PMID 41964926"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_cable_external_rotation": {
+   "src": "library/specs/cable_external_rotation.mjs",
+   "slug": "cable-external-rotation",
+   "prefix": "cable-external-rotation",
+   "chromeId": "cable-external-rotation",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Cable External Shoulder Rotation: Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/cableExternalShoulderRotation",
+    "How to Do Cable External Shoulder Rotation: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/cable-external-shoulder-rotation/",
+    "Rotator Cuff External Rotation (ACE exercise library). https://www.acefitness.org/resources/everyone/exercise-library/352/rotator-cuff-external-rotation/",
+    "Rotator Cuff Exercises and Workout (StrengthLog, Daniel Richter) (2024). https://www.strengthlog.com/rotator-cuff-exercises-workout/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_resistance_band_pull_apart": {
+   "src": "library/specs/resistance_band_pull_apart.mjs",
+   "slug": "resistance-band-pull-apart",
+   "prefix": "resistance-band-pull-apart",
+   "chromeId": "resistance-band-pull-apart",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Resistance Band Pull Apart - Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/resistanceBandPullApart",
+    "How to Do Band Pull-Apart: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/band-pull-apart/",
+    "Band Pull-Apart Exercise: Effects of Movement Direction and Hand Position on Shoulder Muscle Activity (2022). https://pubmed.ncbi.nlm.nih.gov/35391860/ PMID 35391860"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_renegade_row": {
+   "src": "library/specs/renegade_row.mjs",
+   "slug": "renegade-row",
+   "prefix": "renegade-row",
+   "chromeId": "renegade-row",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Build a Big Back and Strong Core at Once With the Renegade Row (BarBend) (2024). https://barbend.com/renegade-row/",
+    "How To Do a Renegade Row (Garage Gym Reviews; certified personal trainer). https://www.garagegymreviews.com/how-to-do-a-renegade-row",
+    "How to Do Renegade Rows: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/renegade-row/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_weighted_dip": {
+   "src": "library/specs/weighted_dip.mjs",
+   "slug": "weighted-dip",
+   "prefix": "weighted-dip",
+   "chromeId": "weighted-dip",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Bar Dips: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/bar-dip/",
+    "How to Do Dips: Proper Form & Variations | BarBend (2024). https://barbend.com/dips/",
+    "Dip Correctly or Don't Dip at All | BarBend. https://barbend.com/news/dip-correctly-or-dont-dip-at-all/",
+    "Bench, Bar, and Ring Dips: Do Kinematics and Muscle Activity Differ? (2022). https://pubmed.ncbi.nlm.nih.gov/36293792/ PMID 36293792",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_bench_dip": {
+   "src": "library/specs/bench_dip.mjs",
+   "slug": "bench-dip",
+   "prefix": "bench-dip",
+   "chromeId": "bench-dip",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Bench Dips: 13 Benefits, Form Tips, Variations, Weights, More (2020). https://www.healthline.com/health/fitness-exercise/bench-dips",
+    "How to Do Bench Dip: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/bench-dip/",
+    "Bench Dip: Target Your Triceps and Build Upper Body Strength – Fitness Volt. https://fitnessvolt.com/bench-dip/",
+    "Bench Dip - Muscle & Fitness. https://www.muscleandfitness.com/exercise/workouts/arm-exercises/bench-dip/",
+    "Bench, Bar, and Ring Dips: Do Kinematics and Muscle Activity Differ? (2022). https://pmc.ncbi.nlm.nih.gov/articles/PMC9603242/ PMID 36293792"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_incline_push_up": {
+   "src": "library/specs/incline_push_up.mjs",
+   "slug": "incline-push-up",
+   "prefix": "incline-push-up",
+   "chromeId": "incline-push-up",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How To Do the Incline Push-Up for No-Equipment Chest Building | BarBend (2024). https://barbend.com/incline-push-up/",
+    "Incline Push-Up (NASM exercise library). https://www.nasm.org/resource-center/exercise-library/incline-push-up",
+    "How to Do Incline Push-Up: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/incline-push-up/",
+    "Kinetic analysis of several variations of push-ups. (2011). https://pubmed.ncbi.nlm.nih.gov/21873902/ PMID 21873902"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_diamond_push_up": {
+   "src": "library/specs/diamond_push_up.mjs",
+   "slug": "diamond-push-up",
+   "prefix": "diamond-push-up",
+   "chromeId": "diamond-push-up",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "BarBend: How to Do the Diamond Push-Up (Norman Cheung) (2024). https://barbend.com/diamond-push-up/",
+    "Diamond Push-Ups: Tone Your Chest, Arms, and Shoulders! – Fitness Volt (2024). https://fitnessvolt.com/diamond-push-ups/",
+    "Comparison of muscle activation using various hand positions during the push-up exercise. (2005). https://pubmed.ncbi.nlm.nih.gov/16095413/ PMID 16095413"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_pike_push_up": {
+   "src": "library/specs/pike_push_up.mjs",
+   "slug": "pike-push-up",
+   "prefix": "pike-push-up",
+   "chromeId": "pike-push-up",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Pike Push-Ups: Target Your Deltoids and Build Upper Body Strength – Fitness Volt (2026). https://fitnessvolt.com/pike-push-up/",
+    "How To Do Pike Push-Ups: Tips From An Expert | Garage Gym Reviews (2024). https://www.garagegymreviews.com/how-to-do-pike-push-ups",
+    "Pike Push-Up (NASM exercise library). https://www.nasm.org/resource-center/exercise-library/pike-push-up"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}

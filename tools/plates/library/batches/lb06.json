@@ -1,0 +1,219 @@
+{
+ "batch": "LB6",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/lb06.json",
+  "layers": "tests/howto/golden/library/lb06.layers.html",
+  "layersConfig": "tools/plates/library/pages/lb06.layers.json"
+ },
+ "rows": {
+  "lib_cable_chest_press": {
+   "src": "library/specs/cable_chest_press.mjs",
+   "slug": "cable-chest-press",
+   "prefix": "cable-chest-press",
+   "chromeId": "cable-chest-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Cable Chest Press: What Is It, How To Do It & Mistakes To Avoid (Bells of Steel) (2023). https://bellsofsteel.us/blogs/content/cable-chest-press",
+    "Cable Standing Chest Press - Exercise Guide (Motra). https://www.motra.com/exercises/cableStandingChestPress",
+    "How to do Standing Cable Presses (NFPT) (2025). https://nfpt.com/standing-cable-presses/",
+    "How to Do Cable Chest Press: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/cable-chest-press/",
+    "A kinetic and electromyographic comparison of the standing cable press and bench press (2007). https://pubmed.ncbi.nlm.nih.gov/18076235/ PMID 18076235",
+    "Muscle activity levels in upper-body push exercises with different loads and stability conditions (2014). https://pubmed.ncbi.nlm.nih.gov/25419894/ PMID 25419894",
+    "Chest Exercises: Movement and Loading of Shoulder, Elbow and Wrist Joints (2022). https://pubmed.ncbi.nlm.nih.gov/35202059/ PMID 35202059",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_machine_pullover": {
+   "src": "library/specs/machine_pullover.mjs",
+   "slug": "machine-pullover",
+   "prefix": "machine-pullover",
+   "chromeId": "machine-pullover",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Pullover (Marquette University Athletics, strength and conditioning exercise description) (2006). https://gomarquette.com/news/2006/5/8/pullover.aspx",
+    "Pullover Machine (Back Target): How to Do, Proper Form, Tips & Alternatives (Planfit). https://planfit.ai/en/exercise/pullover-machine-back-target",
+    "Pullover Machine Video Exercise Guide (Virtuagym). https://exercises.virtuagym.com/exercise/pullover-machine/",
+    "Electromyographic Analysis of Latissimus Dorsi Activation During Common Resistance Training Exercises: A Narrative Review (2026). https://pubmed.ncbi.nlm.nih.gov/42647355/ PMID 42647355",
+    "Electromyographic validation of the deltoideus (anterior portion) and pectoralis major (clavicular portion) muscles in pull-over exercises (2007). https://pubmed.ncbi.nlm.nih.gov/18051626/ PMID 18051626",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_machine_crunch": {
+   "src": "library/specs/machine_crunch.mjs",
+   "slug": "machine-crunch",
+   "prefix": "machine-crunch",
+   "chromeId": "machine-crunch",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Seated Crunch (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/291/seated-crunch/",
+    "Machine Ab Crunch: Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/abCrunchMachine",
+    "Ab Crunch Machine: Form, Muscles Worked, Target Weight & Variations (Fitbod). https://fitbod.me/exercises/ab-crunch-machine",
+    "How to Do Machine Crunch: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/machine-crunch/",
+    "Swiss ball abdominal crunch with added elastic resistance is an effective alternative to training machines (2012). https://pubmed.ncbi.nlm.nih.gov/22893857/ PMID 22893857",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_low_to_high_cable_fly": {
+   "src": "library/specs/low_to_high_cable_fly.mjs",
+   "slug": "low-to-high-cable-fly",
+   "prefix": "low-to-high-cable-fly",
+   "chromeId": "low-to-high-cable-fly",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Incline Cable Flyes (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/163/standing-incline-cable-flyes/",
+    "How To Do Cable Flyes (PureGym). https://www.puregym.com/exercises/chest/chest-fly/cable-flyes/",
+    "How to Do Standing Cable Chest Fly: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/standing-cable-chest-fly/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "Chest Exercises: Movement and Loading of Shoulder, Elbow and Wrist Joints (2022). https://pubmed.ncbi.nlm.nih.gov/35202059/ PMID 35202059"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_high_to_low_cable_fly": {
+   "src": "library/specs/high_to_low_cable_fly.mjs",
+   "slug": "high-to-low-cable-fly",
+   "prefix": "high-to-low-cable-fly",
+   "chromeId": "high-to-low-cable-fly",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Standing Decline Cable Flyes (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/161/standing-decline-cable-flyes/",
+    "What are the Top 3 Most Effective Chest Exercises? (Schanke, Porcari et al., ACE Certified News) (2011). https://www.acefitness.org/certifiednewsarticle/3003/what-are-the-top-3-most-effective-chest-exercises/",
+    "Activation of the three deltoid muscle portions during common strengthening exercises: A systematic review (2024). https://pubmed.ncbi.nlm.nih.gov/39593452/ PMID 39593452",
+    "Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders (2020). https://pubmed.ncbi.nlm.nih.gov/31397215/ PMID 31397215",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_smith_machine_squat": {
+   "src": "library/specs/smith_machine_squat.mjs",
+   "slug": "smith-machine-squat",
+   "prefix": "smith-machine-squat",
+   "chromeId": "smith-machine-squat",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Smith Machine Squats Safely and Effectively (Gold's Gym) (2025). https://www.goldsgym.com/blog/how-to-do-smith-machine-squats/",
+    "Smith Machine Squat - Exercise Guide (Motra). https://www.motra.com/exercises/smithMachineSquat",
+    "How to Do Smith Machine Squat: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/smith-machine-squat/",
+    "Biomechanical model and evaluation of a linear motion squat type exercise (2002). https://pubmed.ncbi.nlm.nih.gov/12423179/ PMID 12423179",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "A comparison of free weight squat to Smith machine squat using electromyography (2009). https://pubmed.ncbi.nlm.nih.gov/19855308/ PMID 19855308",
+    "Comparison of muscle force production using the Smith machine and free weights for bench press and squat exercises (2005). https://pubmed.ncbi.nlm.nih.gov/15705030/ PMID 15705030",
+    "Arterial blood pressure response to heavy resistance exercise (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness) (2025). https://www.eosfitness.com/blog/how-to-use-smith-machine"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_smith_machine_shoulder_press": {
+   "src": "library/specs/smith_machine_shoulder_press.mjs",
+   "slug": "smith-machine-shoulder-press",
+   "prefix": "smith-machine-shoulder-press",
+   "chromeId": "smith-machine-shoulder-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Smith Machine Seated Overhead Press: Build Strong Shoulders! (Fitness Volt). https://fitnessvolt.com/24023/smith-machine-seated-overhead-press/",
+    "Smith Machine Shoulder Press - Exercise Guide (Motra). https://www.motra.com/exercises/smithMachineShoulderPress",
+    "How to Do Seated Smith Machine Shoulder Press: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/seated-smith-machine-shoulder-press/",
+    "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness) (2025). https://www.eosfitness.com/blog/how-to-use-smith-machine",
+    "Effects of body position and loading modality on muscle activity and strength in shoulder presses (2013). https://pubmed.ncbi.nlm.nih.gov/23096062/ PMID 23096062",
+    "How to Overhead Press with Proper Form: Full Guide (StrongLifts). https://stronglifts.com/overhead-press/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "Arterial blood pressure response to heavy resistance exercise (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_smith_machine_incline_press": {
+   "src": "library/specs/smith_machine_incline_press.mjs",
+   "slug": "smith-machine-incline-press",
+   "prefix": "smith-machine-incline-press",
+   "chromeId": "smith-machine-incline-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Smith Machine Incline Bench Press - Exercise Guide (Motra). https://www.motra.com/exercises/smithMachineInclineBenchPress",
+    "How to Do Smith Machine Incline Bench Press: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/smith-machine-incline-bench-press/",
+    "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness) (2025). https://www.eosfitness.com/blog/how-to-use-smith-machine",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Traumatic asphyxia in weightlifters (2007). https://pubmed.ncbi.nlm.nih.gov/17456099/ PMID 17456099",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_hip_abduction": {
+   "src": "library/specs/hip_abduction.mjs",
+   "slug": "hip-abduction",
+   "prefix": "hip-abduction",
+   "chromeId": "hip-abduction",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Machine Hip Abduction: Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/machineHipAbduction",
+    "How to Do Hip Abduction Machine: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/hip-abduction-machine/",
+    "Hip abduction machine is better than free weights to target the gluteus medius while minimizing tensor fascia latae activation (2022). https://pubmed.ncbi.nlm.nih.gov/35500965/ PMID 35500965",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_hip_adduction": {
+   "src": "library/specs/hip_adduction.mjs",
+   "slug": "hip-adduction",
+   "prefix": "hip-adduction",
+   "chromeId": "hip-adduction",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Machine Hip Adduction: Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/machineHipAdduction",
+    "How to Do Hip Adduction Machine: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/hip-adduction-machine/",
+    "Perceived loading and muscle activity during hip strengthening exercises: comparison of elastic resistance and machine exercises (2013). https://pubmed.ncbi.nlm.nih.gov/24377067/ PMID 24377067",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_machine_lateral_raise": {
+   "src": "library/specs/machine_lateral_raise.mjs",
+   "slug": "machine-lateral-raise",
+   "prefix": "machine-lateral-raise",
+   "chromeId": "machine-lateral-raise",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Machine Lateral Raise: Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/machineLateralRaise",
+    "Lateral Raise Machine Video Exercise Guide (Virtuagym). https://exercises.virtuagym.com/exercise/lateral-raise-machine/",
+    "Lateral Shoulder Raise (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/295/lateral-shoulder-raise/",
+    "How to use The Lateral Raise Machine (LA Fitness, Living Healthy blog) (2016). https://blog.lafitness.com/2016/03/31/how-to-use-a-lateral-raise-machine/",
+    "How to Do Machine Lateral Raise: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/machine-lateral-raise/",
+    "Activation of the three deltoid muscle portions during common strengthening exercises: A systematic review (2024). https://pubmed.ncbi.nlm.nih.gov/39593452/ PMID 39593452",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_rear_delt_fly": {
+   "src": "library/specs/rear_delt_fly.mjs",
+   "slug": "rear-delt-fly",
+   "prefix": "rear-delt-fly",
+   "chromeId": "rear-delt-fly",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Reverse Pec Deck Fly: Target Your Upper Back Muscles Effectively (Fitness Volt). https://fitnessvolt.com/reverse-pec-deck-fly/",
+    "Machine Rear Delt (Reverse) Fly: Exercise Guide (Motra, formerly Train Fitness). https://motra.com/exercises/machineRearDeltFly",
+    "How to Do Reverse Machine Fly: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/reverse-machine-fly/",
+    "Effect of hand position on EMG activity of the posterior shoulder musculature during a horizontal abduction exercise (2013). https://pubmed.ncbi.nlm.nih.gov/23302754/ PMID 23302754",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}
