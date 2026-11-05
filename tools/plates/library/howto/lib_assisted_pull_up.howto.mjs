@@ -155,7 +155,9 @@ const zooms = [
     // `stills.half`.
     crop: { center: { at: 'elbow.r', pose: 'right', off: [0, 20] }, sizePx: 200 },
     right: 'end',
-    wrong: { base: 'end', pose: MIS },
+    // W3 PANEL FIX 2 (#384 6649416891, L5; c8): the bent-arm half hang drawn solid as the main stroke, over the
+    // straight-arm hang faded (crop wrong.under)
+    wrong: { base: 'end', pose: MIS, solid: true, under: true },
     callout: {
       right: { text: 'Arms straight', anchor: 'elbow.r' },
       wrong: { text: 'Arms bent', anchor: { at: 'elbow.r', pose: 'mistake' } },
