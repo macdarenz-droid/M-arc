@@ -1,6 +1,7 @@
-// LIB-13 (lib-13-card Do 5, Do 8, A10): the LB3 plates page, built from lb3/rows.json read as if it were a batch file
-// (it never goes into batches/: D-LIB13-AHEAD). Each row's sources lines come from its research card (as pilot A's
-// sheet does), in memory only. The page holds every LB3 row whose spec exists (the build-ahead draws in steps).
+// LIB-13 (lib-13-card Do 5, Do 8, A10): the LB3 plates page. LIB-SHIP W4 (D-SHIP-MOVE as amended by Q-W2-10; W3's
+// lb1/build.mjs precedent) moved the rows into batches/lb03.json with their sources lines and deleted lb3/rows.json.
+// The page is built from the registry's batch file; a lb3/rows.json written back is read as one more batch file again,
+// so a row copied back there is refused (registry.mjs: a row in two places).
 //   node tools/plates/library/lb3/build.mjs     builds the page twice into a temp directory and prints both sha256
 //   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb3/build.mjs --shots [theme] [lib_id ...]
 //     screenshots each drawn card's Mistake (theme default paper, 390 px wide) into a temp directory (sheet review)
@@ -15,27 +16,32 @@ import { groupsConfig } from '../plates-page.mjs';
 import { batchFiles, rows } from '../registry.mjs';
 
 export const LB3_ROWS = 'tools/plates/library/lb3/rows.json';
+export const LB3_BATCH = 'tools/plates/library/batches/lb03.json';
+/** The rows file: lb3/rows.json if it exists (a copy-back), else batches/lb03.json (LIB-SHIP W4). */
+export const rowsFile = (root = ROOT) => (existsSync(join(root, LB3_ROWS)) ? LB3_ROWS : LB3_BATCH);
 const read = (root, p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
 const cardOf = (root, id) => read(root, `docs/research/howto/cards/${id.slice(4)}.json`);
 /** A research card's source list as page lines (title, year, url, PMID). */
 export const sourceLines = card => card.sources.map(s => `${s.title}${s.year ? ` (${s.year})` : ''}. ${s.url}${s.pmid ? ` PMID ${s.pmid}` : ''}`);
 
 /** The LB3 rows data with each row's sources from its card (memory only). `data` defaults to lb3/rows.json. */
-export function lb3Data(root = ROOT, data = read(root, LB3_ROWS)) {
+export function lb3Data(root = ROOT, data = read(root, rowsFile(root))) {
   return { ...data, rows: Object.fromEntries(Object.entries(data.rows).map(([id, r]) => [id, { ...r, sources: sourceLines(cardOf(root, id)) }])) };
 }
 
-/** Every registry row: the 8, the batch files, then lb3/rows.json read as one more batch file (Do 4). */
+/** Every registry row: the 8 and the batch files with `data` in place of batches/lb03.json; a lb3/rows.json copy-back is
+ *  read as one more batch file (so its rows are refused as duplicates). */
 export function lb3All(root = ROOT, data = lb3Data(root)) {
-  return rows(root, { batches: [...batchFiles(root).map(p => [p, read(root, p)]), [LB3_ROWS, data]] });
+  if (rowsFile(root) === LB3_ROWS) return rows(root, { batches: [...batchFiles(root).map(p => [p, read(root, p)]), [LB3_ROWS, data]] });
+  return rows(root, { batches: batchFiles(root).map(p => [p, p === LB3_BATCH ? data : read(root, p)]) });
 }
 
-/** The LB3 ids whose spec file exists, in rows.json order. */
-export const drawnIds = (root = ROOT, data = read(root, LB3_ROWS)) => Object.entries(data.rows).filter(([, r]) => existsSync(join(root, 'tools/plates', r.src))).map(([id]) => id);
+/** The LB3 ids whose spec file exists, in rows-file order. */
+export const drawnIds = (root = ROOT, data = read(root, rowsFile(root))) => Object.entries(data.rows).filter(([, r]) => existsSync(join(root, 'tools/plates', r.src))).map(([id]) => id);
 
 /** The LB3 plates page bytes ({ html: Buffer, warnings }) for `ids` (default: every drawn id). */
 export async function buildLb3Page({ root = ROOT, all = lb3All(root), ids = drawnIds(root) } = {}) {
-  return buildPlatesPage(await groupsConfig({ groups: [{ id: 'lb3', title: 'LB3', ids }] }, all, LB3_ROWS));
+  return buildPlatesPage(await groupsConfig({ groups: [{ id: 'lb3', title: 'LB3', ids }] }, all, rowsFile(root)));
 }
 
 export const sha256 = b => createHash('sha256').update(b).digest('hex');
@@ -43,7 +49,7 @@ export const sha256 = b => createHash('sha256').update(b).digest('hex');
 /** PNG screenshots of each card at 390 px in `theme`, `mode` 'mistake' or 'normal': [{ id, path }] in `dir`. */
 export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mistake', dir = mkdtempSync(join(tmpdir(), 'lb3-shots-')) } = {}) {
   const { launch } = await import('../qa/browser.mjs'), { openGolden, settle } = await import('../../fidelity/harness.mjs');
-  const { html } = await buildLb3Page({ ids }), data = read(ROOT, LB3_ROWS), browser = await launch(), out = [];
+  const { html } = await buildLb3Page({ ids }), data = read(ROOT, rowsFile()), browser = await launch(), out = [];
   try {
     const { ctx, page } = await openGolden(browser, theme, { viewport: { width: 390, height: 844 }, html });
     try {
@@ -165,7 +171,7 @@ async function pageShots(browser, html, ids, cells) {
  *  byte-identical to the plates page's card. qa.mjs passes its own functions (no import cycle). Returns { html, pageSha, sheetSha, flags, table }. */
 export async function buildOwnerSheet({ qaLb3, flagProblems, tableOf }) {
   const { HARD } = await import('../qa/index.mjs'), { launch } = await import('../qa/browser.mjs');
-  const ids = drawnIds(), data = read(ROOT, LB3_ROWS), all = lb3All(), cid = id => data.rows[id].chromeId;
+  const ids = drawnIds(), data = read(ROOT, rowsFile()), all = lb3All(), cid = id => data.rows[id].chromeId;
   if (ids.length !== Object.keys(SHEET).length || ids.some(id => !SHEET[id])) throw new Error(`sheet rows: ${ids.join(', ')}`);
   const { html: plates } = await buildLb3Page({ all, ids }), pageSha = sha256(plates);
   const browser = await launch();
@@ -181,7 +187,7 @@ export async function buildOwnerSheet({ qaLb3, flagProblems, tableOf }) {
     anchors = await pageShots(browser, ah, anchorIds.map(i => i.slice(4).replace(/_/g, '-')), [['silent-black', 'normal']]);
   } finally { await browser.close(); }
   const rep = Object.fromEntries(qa.reports.map(r => [r.id, r]));
-  const cfg = await groupsConfig({ groups: ['A', 'B', 'C'].map(t => ({ id: `tier-${t.toLowerCase()}`, title: `Tier ${t}`, ids: ids.filter(id => SHEET[id].tier === t) })) }, all, LB3_ROWS);
+  const cfg = await groupsConfig({ groups: ['A', 'B', 'C'].map(t => ({ id: `tier-${t.toLowerCase()}`, title: `Tier ${t}`, ids: ids.filter(id => SHEET[id].tier === t) })) }, all, rowsFile());
   cfg.heading = { ...cfg.heading, title: 'M/ARC Library Plates · LB3 sheet', kicker: 'M/ARC · How to do it · Library LB3', h1: `LB3 · ${ids.length} plates`,
     intro: `Each row: the plate as it will ship (live), its Mistake, a Paper thumbnail and Mistake, the pilot A anchor and every flag. Plates page sha256 <span class="pg-sha">${pageSha}</span> (${plates.length.toLocaleString('en')} B); the cards on this sheet are byte-identical to that page.${SHEET_HELD.map(([id, why]) => `</p><p>Held off this sheet: ${id.replace(/_/g, ' ')}. ${esc(why)}.`).join('')}`,
     foot: 'LB3 sheet for review. Drawings are computed by our own code from the verified research cards.' };

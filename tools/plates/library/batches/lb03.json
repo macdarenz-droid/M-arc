@@ -1,0 +1,247 @@
+{
+ "batch": "LB3",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/lb03.json",
+  "layers": "tests/howto/golden/library/lb03.layers.html",
+  "layersConfig": "tools/plates/library/pages/lb03.layers.json"
+ },
+ "rows": {
+  "lib_pendlay_row": {
+   "src": "library/specs/pendlay_row.mjs",
+   "slug": "pendlay-row",
+   "prefix": "pendlay-row",
+   "chromeId": "pendlay-row",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do the Pendlay Row for Back Size and Stronger Lifts (BarBend; Mike Dewar, CSCS). https://barbend.com/pendlay-row/",
+    "Pendlay Row: How To, Benefits, and Variations (Garage Gym Reviews; with Kate Meier, NASM-CPT, USAW-L1) (2023). https://www.garagegymreviews.com/pendlay-row",
+    "How to Do Pendlay Row: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/pendlay-row/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness. (2009). https://pubmed.ncbi.nlm.nih.gov/19620925/ PMID 19620925",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/",
+    "The relationship between wrist position, grasp size, and grip strength. (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_landmine_row": {
+   "src": "library/specs/landmine_row.mjs",
+   "slug": "landmine-row",
+   "prefix": "landmine-row",
+   "chromeId": "landmine-row",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to do a Landmine Row: Technique, Variations, and Benefits (REP Fitness; Aimee Heckel) (2024). https://repfitness.com/blogs/training/how-to-do-a-landmine-row-technique-variations-and-benefits",
+    "T-Bar Row: How To, Benefits, Muscles Worked (Garage Gym Reviews; Stephen Sheehan, CPT) (2024). https://www.garagegymreviews.com/t-bar-row",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness. (2009). https://pubmed.ncbi.nlm.nih.gov/19620925/ PMID 19620925",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Landmine Bent Over Rows (Improving Athletic Performance blog, John Cissik) (2022). https://www.cissik.com/blog/?p=7015",
+    "The relationship between wrist position, grasp size, and grip strength. (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "How to Do the T-Bar Row: Best Landmine Move to Build Your Back (Kate Neudecker, Men's Health UK, updated 2024-10-02) (2024). https://www.menshealth.com/uk/how-tos/a735444/t-bar-row/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_one_arm_dumbbell_row": {
+   "src": "library/specs/one_arm_dumbbell_row.mjs",
+   "slug": "one-arm-dumbbell-row",
+   "prefix": "one-arm-dumbbell-row",
+   "chromeId": "one-arm-dumbbell-row",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "ACE Exercise Library: Single Arm Row. https://www.acefitness.org/resources/everyone/exercise-library/126/single-arm-row/",
+    "How to Do Dumbbell Row: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/dumbbell-row/",
+    "The Effect of Performing Bi- and Unilateral Row Exercises on Core Muscle Activation. (2015). https://pubmed.ncbi.nlm.nih.gov/26134664/ PMID 26134664",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Shoulder injuries attributed to resistance training: a brief review. (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "The relationship between wrist position, grasp size, and grip strength. (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "Shoulder pain (NHS). https://www.nhs.uk/conditions/shoulder-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_dumbbell_romanian_deadlift": {
+   "src": "library/specs/dumbbell_romanian_deadlift.mjs",
+   "slug": "dumbbell-romanian-deadlift",
+   "prefix": "dumbbell-romanian-deadlift",
+   "chromeId": "dumbbell-romanian-deadlift",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How To Master Dumbbell Romanian Deadlifts (Sweat) (2024). https://sweat.com/blogs/fitness/how-to-dumbbell-romanian-deadlift",
+    "Dumbbell Romanian Deadlift: Form, Muscles Worked, Target Weight & Variations (Fitbod). https://fitbod.me/exercises/dumbbell-romanian-deadlift",
+    "How to Do Dumbbell Romanian Deadlift: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/dumbbell-romanian-deadlift/",
+    "Electromyographic activity in deadlift exercise and its variants. A systematic review. (2020). https://pubmed.ncbi.nlm.nih.gov/32107499/ PMID 32107499",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/",
+    "How to Deadlift: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/deadlift/",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_conventional_deadlift": {
+   "src": "library/specs/conventional_deadlift.mjs",
+   "slug": "conventional-deadlift",
+   "prefix": "conventional-deadlift",
+   "chromeId": "conventional-deadlift",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Deadlift: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/deadlift/",
+    "Deadlift | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/6/deadlift/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Electromyographic activity in deadlift exercise and its variants. A systematic review. (2020). https://pubmed.ncbi.nlm.nih.gov/32107499/ PMID 32107499",
+    "An electromyographic and kinetic comparison of conventional and Romanian deadlifts. (2018). https://pubmed.ncbi.nlm.nih.gov/30662500/ PMID 30662500",
+    "Beyond the Neutral Spine: A Narrative Review and Modern Framework for Low Back Injury Prevention in Deadlifting. (2026). https://pubmed.ncbi.nlm.nih.gov/42043083/ PMID 42043083",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "Grip selection and location (excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_sumo_deadlift": {
+   "src": "library/specs/sumo_deadlift.mjs",
+   "slug": "sumo-deadlift",
+   "prefix": "sumo-deadlift",
+   "chromeId": "sumo-deadlift",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Sumo Deadlift: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/sumo-deadlift/",
+    "How to Do the Sumo Deadlift, According to a CPT (BarBend) (2025). https://barbend.com/sumo-deadlift/",
+    "A three-dimensional biomechanical analysis of sumo and conventional style deadlifts. (2000). https://pubmed.ncbi.nlm.nih.gov/10912892/ PMID 10912892",
+    "How to Deadlift: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/deadlift/",
+    "Lumbar spine loads during the lifting of extremely heavy weights. (1991). https://pubmed.ncbi.nlm.nih.gov/1758295/ PMID 1758295",
+    "An electromyographic analysis of sumo and conventional style deadlifts. (2002). https://pubmed.ncbi.nlm.nih.gov/11932579/ PMID 11932579",
+    "Biomechanical analysis of conventional and sumo deadlift. (2025). https://pubmed.ncbi.nlm.nih.gov/40497251/ PMID 40497251",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_back_extension": {
+   "src": "library/specs/back_extension.mjs",
+   "slug": "back-extension",
+   "prefix": "back-extension",
+   "chromeId": "back-extension",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Back Extensions: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/back-extension/",
+    "45 degree back extension (Physitrack exercise library). https://us.physitrack.com/home-exercise-video/45-degree-back-extension",
+    "45-Degree Hyperextension: Strengthen Your Back and Glutes (Fitness Volt). https://fitnessvolt.com/45-degree-hyperextension/",
+    "Comparison of Muscle Activity in Three Single-Joint, Hip Extension Exercises in Resistance-Trained Women. (2021). https://pubmed.ncbi.nlm.nih.gov/33948095/ PMID 33948095",
+    "Specificity of a back muscle roman chair exercise in healthy and back pain subjects. (2011). https://pubmed.ncbi.nlm.nih.gov/20508534/ PMID 20508534",
+    "Electromyographic activity of the lumbar extensor muscles: effect of angle and hand position during Roman chair exercise. (1999). https://pubmed.ncbi.nlm.nih.gov/10414757/ PMID 10414757",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_t_bar_row": {
+   "src": "library/specs/t_bar_row.mjs",
+   "slug": "t-bar-row",
+   "prefix": "t-bar-row",
+   "chromeId": "t-bar-row",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "T-Bar Row: How To, Benefits, Muscles Worked (Garage Gym Reviews; Stephen Sheehan, CPT) (2024). https://www.garagegymreviews.com/t-bar-row",
+    "How to Do the T-Bar Row (BarBend; Mike Dewar, CSCS). https://barbend.com/t-bar-row/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness. (2009). https://pubmed.ncbi.nlm.nih.gov/19620925/ PMID 19620925",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "The relationship between wrist position, grasp size, and grip strength. (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "How to Do the T-Bar Row: Best Landmine Move to Build Your Back (Kate Neudecker, Men's Health UK, updated 2024-10-02) (2024). https://www.menshealth.com/uk/how-tos/a735444/t-bar-row/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_barbell_shrug": {
+   "src": "library/specs/barbell_shrug.mjs",
+   "slug": "barbell-shrug",
+   "prefix": "barbell-shrug",
+   "chromeId": "barbell-shrug",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "ACE Exercise Library: Shrug. https://www.acefitness.org/resources/everyone/exercise-library/72/shrug/",
+    "How to Do Barbell Shrug: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/barbell-shrug/",
+    "Modifying a shrug exercise can facilitate the upward rotator muscles of the scapula. (2014). https://pubmed.ncbi.nlm.nih.gov/24342452/ PMID 24342452",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Shoulder injuries attributed to resistance training: a brief review. (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_cable_shrug": {
+   "src": "library/specs/cable_shrug.mjs",
+   "slug": "cable-shrug",
+   "prefix": "cable-shrug",
+   "chromeId": "cable-shrug",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Cable Shrug (Exercise.com exercise library). https://www.exercise.com/exercises/cable-shrug",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "ACE Exercise Library: Shrug. https://www.acefitness.org/resources/everyone/exercise-library/72/shrug/",
+    "How to Do Barbell Shrug: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/barbell-shrug/",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "The relationship between wrist position, grasp size, and grip strength. (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "Shoulder injuries attributed to resistance training: a brief review. (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles. (2003). https://pubmed.ncbi.nlm.nih.gov/12774999/ PMID 12774999",
+    "Muscle activation during selected strength exercises in women with chronic neck muscle pain. (2008). https://pubmed.ncbi.nlm.nih.gov/18339796/ PMID 18339796",
+    "Shoulder pain (NHS). https://www.nhs.uk/conditions/shoulder-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_dumbbell_shrug": {
+   "src": "library/specs/dumbbell_shrug.mjs",
+   "slug": "dumbbell-shrug",
+   "prefix": "dumbbell-shrug",
+   "chromeId": "dumbbell-shrug",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "How to Do Dumbbell Shrugs: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/dumbbell-shrug/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "ACE Exercise Library: Shrug. https://www.acefitness.org/resources/everyone/exercise-library/72/shrug/",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "The relationship between wrist position, grasp size, and grip strength. (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "Shoulder injuries attributed to resistance training: a brief review. (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles. (2003). https://pubmed.ncbi.nlm.nih.gov/12774999/ PMID 12774999",
+    "Muscle activation during selected strength exercises in women with chronic neck muscle pain. (2008). https://pubmed.ncbi.nlm.nih.gov/18339796/ PMID 18339796",
+    "Shoulder pain (NHS). https://www.nhs.uk/conditions/shoulder-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_smith_machine_shrug": {
+   "src": "library/specs/smith_machine_shrug.mjs",
+   "slug": "smith-machine-shrug",
+   "prefix": "smith-machine-shrug",
+   "chromeId": "smith-machine-shrug",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Smith Machine Shrug - Exercise Guide (Motra). https://www.motra.com/exercises/smithMachineShrug",
+    "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness) (2025). https://www.eosfitness.com/blog/how-to-use-smith-machine",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "Arterial blood pressure response to heavy resistance exercise (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}
