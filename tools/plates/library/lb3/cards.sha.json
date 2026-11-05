@@ -8,7 +8,7 @@
   "one_arm_dumbbell_row": "ad90cca370bd40a1685093efe5e8ad29ed0daca9c19c312e1ab9c0a220558670",
   "dumbbell_romanian_deadlift": "9400a02b5d29d2cea3cd0479e6930156e799798a0f491bb7e593e61cf912206d",
   "conventional_deadlift": "bdc204b6adb4050f0fe98534bdf8cbf2291c740d08570cf055254f2da106f1c5",
-  "sumo_deadlift": "f9899a4bb8fa58f68da0af6596ed58faa5adb9eac9f1e707bdccc7f42f97fadd",
+  "sumo_deadlift": "3b2c3856642a9e96ba872bdf930146ea5dc1ee38a240e6e442df997bdacac54c",
   "back_extension": "b4b3f42743f2c52e8516476f56cc39a0c0c97a93619f12611632dac8abf53421"
  },
  "quotes": {
@@ -26,8 +26,8 @@
   "researchHead": "a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
   "cards": {
    "barbell_shrug": "34099d4556655e52de5a21a92f2bdefabde22908343385ccfaab5f3e84f1b049",
-   "dumbbell_shrug": "3747deffe97e75ff7a80c87787b789ae607ffdb768b0a7043be0bc620f20e789",
-   "cable_shrug": "b93be608be8c6ae26303fc6e965b07e17ac9077bf0eac1ce1daa6805c2a6be1c",
+   "dumbbell_shrug": "7c17f9c3c2f2802068458b3266686ea516b8a37f9c6fa0096eb8f5a6843d8dd7",
+   "cable_shrug": "05647c44ecb06caf1d4c335c19d5c879732ee3f0a8adc0079b1b5e89ff381b00",
    "smith_machine_shrug": "ffc13c1e295670107259318b34404a4ba884ad3b01e1610d38e826d6ad0cb1e1"
   },
   "quotes": {
@@ -35,6 +35,20 @@
    "dumbbell_shrug": "3848bfa09613456f850b4e9f3f4f7ffa82911717abf5bb7c98780e759c4de2cc",
    "cable_shrug": "38c97ca1de587f05e5c7de17efe9e547708c9abc34c29bcb9134c0a2340e3686",
    "smith_machine_shrug": "41aa67e7dd98726d716bd3b190282c1944a98b28792bd038dcbae9111eaee695"
+  }
+ },
+ "recopied": {
+  "sumo_deadlift": {
+   "researchHead": "11df609286e9340117cff61bab7c0e2499ca7fb8",
+   "why": "RESEARCH-ROUTES-1 (D-RR-HEAD, #398 6648297602; F-W4-INHERIT, #391 Q-W4-9): re-copied from research 11df6092 (#399). Only inherit[] and notes[] changed; quotes file unchanged. The other entries stay at their heads."
+  },
+  "dumbbell_shrug": {
+   "researchHead": "11df609286e9340117cff61bab7c0e2499ca7fb8",
+   "why": "RESEARCH-ROUTES-1 (D-RR-HEAD, #398 6648297602; F-W4-INHERIT, #391 Q-W4-5): re-copied from research 11df6092 (#399). Only inherit[] and notes[] changed; quotes file unchanged. The other entries stay at their heads."
+  },
+  "cable_shrug": {
+   "researchHead": "11df609286e9340117cff61bab7c0e2499ca7fb8",
+   "why": "RESEARCH-ROUTES-1 (D-RR-HEAD, #398 6648297602; F-W4-INHERIT, #391 Q-W4-5): re-copied from research 11df6092 (#399). Only inherit[] and notes[] changed; quotes file unchanged. The other entries stay at their heads."
   }
  }
 }
