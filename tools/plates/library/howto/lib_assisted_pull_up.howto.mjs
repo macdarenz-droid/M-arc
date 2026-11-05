@@ -260,7 +260,7 @@ export default {
     faults: FAULTS,
     // CONVENTION (D-SHIP-GRIP (a)): 'across the base of your fingers' is the bar key's ga:hang-base, source hand-key-bar;
     // overhand c1, thumbs c12.
-    gripLine: 'Overhand, thumbs wrapped around the bar.',
+    gripLine: 'Overhand, thumbs wrapped around the bar.',   // card grip claims: c1, c12, c14
     cue: 'Overhand, thumbs wrapped.',   // c1, c12
   },
   contacts: ['brace-pad'],

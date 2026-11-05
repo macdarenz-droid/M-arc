@@ -194,7 +194,7 @@ export default {
     // c13: wrists straight, in line with the forearms. No tolerance given: straight itself.
     wrist: { ext: [0, 0], limitText: 'Keep your wrists straight, in line with your forearms.', claim: CL.c13 },
     faults: [],                // the card's band-hand fault (c14) has no wrist direction (card gaps): text only, in risks
-    gripLine: 'Band flat in your palm, long end round the back of your hand. Grip it firmly.',
+    gripLine: 'Band flat in your palm, long end round the back of your hand. Grip it firmly.',   // card grip claims: c1, c3, c11, c12, c13
     cue: 'Sit tall, elbows back.',   // c3, c4
   },
   contacts: ['floor-body'],   // the card's archetype.contact
