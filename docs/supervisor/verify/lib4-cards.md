@@ -4802,3 +4802,8 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
     - **41:** lateral_raise vs its card: "the upper traps stay quiet" (c12 says they work hard, as expected); the tempo disagrees with c9; the hand close-up is unsourced; the stance disagrees with c2.
     - 40 and 41 join F-GOLDENB-CARDS (30-33). Panels give anchors their current card facts, so these lows are correct calls (D-SUP-ANCHOR-3).
   - **D-SHIP-W5-FRONTDELT:** the front_delts watch region is drawn on the upper-trap strip in the shared body map (follow-up 36, `layers/engine/bodymap-parts.mjs`). It was found on preacher_curl, cable_curl and bayesian_cable_curl (L4). One shared card fixes it: **F-BODYMAP-FRONTDELT**, still to be written; it re-pins every page that shows the region. Wave lanes never touch the shared map. When that card merges, it clears those L4 items.
+- **11-05 ~07:45-08:10 UTC (supervisor):**
+  - **D-SHIP-W5-PLATETEXT** (#392 6652647984): W5 fixes card-false plate text, as text only, and re-pins its plates. The plate geometry items go to LIB-PLATEFIX-3.
+  - **D-TEXT-PRINTED:** a claim counts only in a printed slot. Every wave lane was told (#384, #385, #391, #393 and #394). Audit of main: no safety-relevant miss. dumbbell_biceps_curl c7 is never shown. Card: `f-text-printed-card.md`.
+  - **D-SHIP-W6-FZOOM2** (#393 6649496953) and **D-SHIP-W6-ZOOMNONE** (#393 6649724429). **D-PF2-H4GATE** (#395 6649895802): an add-only gate block.
+  - **W3 recheck 2, plates** (critic-w3p @ `6e8c2724`): VALID; the plant was caught, R2 [2,2,2]. single_arm_lat_pulldown plate APPROVED. assisted_pull_up plate R5 [3,4,3] fails a second time.
