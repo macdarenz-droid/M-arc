@@ -148,11 +148,11 @@ const feel = {
   feelLine: 'You should feel this in the middle of your back, between your shoulder blades.',
   rows: [
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'You are leaning back off the pad and arching your lower back.',
+      means: 'Watch for leaning back off the pad and arching your lower back.',
       fix: 'Keep your chest on the pad. Do not lean back.',
       zoom: 'chest-pad', redFlag: 'back', claim: CL.lean },
     { key: 'front-shoulder', where: 'Front of the shoulders', at: { muscles: ['front_delts'] },
-      means: 'Your shoulder blades round forward at the end of each rep.',
+      means: 'Watch for your shoulder blades rounding forward on the return.',
       fix: 'Return slowly and keep your shoulders back.',
       claim: CL.c7 },
   ],
@@ -168,7 +168,7 @@ const MISTAKES = [
 ];
 const RISKS = [
   { key: 'lean', text: 'Leaning back and arching adds needless stress to your lower back.', claim: CL.c6 },
-  { key: 'free', text: 'Free-weight rows work the lower back harder than machine rows.', claim: CL.c11 },
+  { key: 'free', text: 'A free-weight row measured more lower-back muscle work than a machine row.', claim: CL.c11 },
 ];
 
 export default {

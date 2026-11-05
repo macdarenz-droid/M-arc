@@ -177,14 +177,14 @@ const feel = {
   watch: [
     { muscleId: 'forearms', plain: 'The forearms take over if you pull too far.' },
   ],
-  feelLine: 'You should feel this in your lats. Lab tests found no extra biceps work from this grip.',
+  feelLine: 'You should feel this in your lats. Pull your elbows back and down toward your glutes.',
   rows: [
     { key: 'forearms', where: 'Forearms more than your back', at: { muscles: ['forearms'] },
-      means: 'Usually means you are pulling the bar too low.',
+      means: 'You are pulling the bar too low.',
       fix: 'Stop just below the chin.',
       claim: CL.far },
     { key: 'shoulder', where: 'Shoulders', at: { muscles: ['front_delts'] },
-      means: 'Usually means the grip is too wide, or you pull too far.',
+      means: 'The grip is too wide, or you pull too far.',
       fix: 'Bring the hands in to shoulder width. Stop when the elbows stop moving down.',
       redFlag: 'shoulder', claim: C(['CONSENSUS', 'WEAK', 'MECH'], [BB, ACE, PG], 'c3, c11, c1') },
   ],

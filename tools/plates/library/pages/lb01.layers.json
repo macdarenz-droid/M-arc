@@ -31,23 +31,78 @@
     },
     "lib_assisted_pull_up": {
       "optionsKey": "assisted_pull_up",
-      "pair": "bar-hang-over"
+      "pair": "bar-hang-over",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Overhand, thumb wrapped, wrist not curled.",
+            "source": "docs/research/howto/cards/assisted_pull_up.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
+          }
+        }
+      }
     },
     "lib_inverted_row": {
       "optionsKey": "inverted_row",
-      "pair": "bar-row-over"
+      "pair": "bar-row-over",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Overhand, bar across the base of the fingers, thumb wrapped, wrist not curled.",
+            "source": "docs/research/howto/cards/inverted_row.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
+          }
+        }
+      }
     },
     "lib_close_grip_pulldown": {
       "optionsKey": "close_grip_pulldown",
-      "pair": "v-handle-pull-neutral-overhead"
+      "pair": "v-handle-pull-neutral-overhead",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Neutral grip on the V-handle, wrists not curled.",
+            "source": "docs/research/howto/cards/close_grip_pulldown.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
+          }
+        }
+      }
     },
     "lib_underhand_lat_pulldown": {
       "optionsKey": "underhand_lat_pulldown",
-      "pair": "bar-pulldown-under"
+      "pair": "bar-pulldown-under",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Palms facing you, wrists not curled.",
+            "source": "docs/research/howto/cards/underhand_lat_pulldown.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
+          }
+        }
+      }
     },
     "lib_single_arm_lat_pulldown": {
       "optionsKey": "single_arm_lat_pulldown",
-      "pair": "d-handle-pull-unstated"
+      "pair": "d-handle-pull-unstated",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Single handle, wrist not curled.",
+            "source": "docs/research/howto/cards/single_arm_lat_pulldown.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
+          }
+        }
+      }
     },
     "lib_straight_arm_pulldown": {
       "optionsKey": "straight_arm_pulldown"

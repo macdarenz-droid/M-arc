@@ -59,7 +59,7 @@ const CL = {
   short: C(['CONSENSUS'], [SL, ACE], 'c4, c7'),
   conv: C(['CONVENTION'], [KEYSRC], 'the bar key\'s ga:pull-base (the card leaves grip.handContact to the pull archetype)'),
   wrist: C(['MECH', 'CONVENTION'], ['odriscoll-1992', KEYSRC], 'c15. The ext range is the bar key\'s row wristRange (ga:pull-base), a convention, not a card number.'),
-  backRow: C(['DATA', 'CONSENSUS'], ['youdas-2020', CAT, ACE, 'nhs-back'], 'c12, c3. The referral is LIB-5\'s back box (NHS).'),
+  backRow: C(['DATA', 'CONSENSUS'], ['youdas-2020', CAT, ACE, 'nhs-back', SL, 'catalyst-ring-row'], 'c12, c3, c7 (raise the bar). The referral is LIB-5\'s back box (NHS).'),
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
@@ -180,7 +180,7 @@ const feel = {
   feelLine: 'You should feel this between your shoulder blades and down the sides of your back.',
   rows: [
     { key: 'low-back', where: 'Lower back and trunk', at: { muscles: ['lower_back'] },
-      means: 'Usually means the trunk is working hard to hold the line.',
+      means: 'The trunk is working hard to hold the line.',
       fix: 'Keep the body rigid. Raise the bar if the line breaks.',
       zoom: 'body-line', redFlag: 'back', claim: CL.backRow },
   ],
@@ -214,12 +214,12 @@ export default {
     width: { text: 'Slightly wider than shoulder width.', claim: C(['CONSENSUS'], [ACE, 'youdas-2016', SL], 'c2') },
     thumb: { mode: RIGHT_POSE.thumb, claim: CL.thumb },   // 'wrapped' (c14; the key's right pose)
     contact: CONTACT,                // 'finger-base', CONVENTION: the key's ga:pull-base (source hand-key-bar); the card gives none
-    wrist: { ext: V.wristRange, limitText: 'Keep your wrist level, not curled forward.', claim: CL.wrist },
+    wrist: { ext: V.wristRange, limitText: 'Keep your wrist from curling forward.', claim: CL.wrist },
     pose: RIGHT_POSE,
     faults: FAULTS,
     // CONVENTION (D-SHIP-GRIP (a)): 'across the base of your fingers' is the bar key's ga:pull-base, source hand-key-bar;
     // overhand c2, thumbs c14, wrists c15.
-    gripLine: 'Overhand, bar across the base of your fingers, thumbs wrapped. Wrists not curled.',
+    gripLine: 'Overhand, bar across the base of your fingers, thumbs wrapped.',
     cue: 'Overhand, thumbs wrapped.',   // c2, c14
   },
   contacts: ['hang-support'],

@@ -109,7 +109,7 @@ const zooms = [
       right: 'Horizontal handle, side view. The handle sits on the heel of the hand, thumb wrapped. Wrist straight, knuckles in line with the forearm. The push runs straight down the forearm.',
       wrong: BENT_BACK.alt,
     },
-    feelRow: 'wrist',
+    // W3 layers fix (#384 6648454032, content K1 c2): no wrist feel row (the card has none), so no feelRow link.
   },
   {
     key: 'low-back', chip: 'Low back', heading: 'Low back', kind: 'posture',   // card zoom key: low back
@@ -135,7 +135,6 @@ const zooms = [
 ];
 
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
-const HANDS = ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'];
 const feel = {
   primary: [
     { muscleId: 'front_delts', plain: 'The front of the shoulders work most.' },
@@ -151,24 +150,19 @@ const feel = {
   feelLine: 'You should feel this in the fronts and sides of your shoulders. Breathe out as you press.',
   rows: [
     { key: 'shoulder', where: 'Sharp shoulder pinch', at: { muscles: ['front_delts'] },
-      means: 'You let the handles drop on the way down.',
+      means: 'Watch for letting the handles drop on the way down.',
       fix: 'Stop the set.',
       redFlag: 'shoulder', claim: CL.c6 },
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'Your low back arches off the pad.',
+      means: 'Watch for the low back arching off the pad.',
       fix: 'Brace, keep the natural curve, and lower the weight.',
       zoom: 'low-back', redFlag: 'back', claim: CL.back },
     { key: 'elbows', where: 'Elbows', at: { parts: ['elbow-left', 'elbow-right'] },
       means: 'Your elbows lock at the top.',
       fix: 'Stop just short of lockout.',
       redFlag: 'elbow', claim: CL.c6 },
-    // The inherited hand zoom's feelRow is 'wrist' (leaf-equal to the parent), so the row is here: c2, wrists in line.
-    { key: 'wrist', where: 'Wrist', at: { parts: HANDS },
-      means: 'Your wrist bends out of line with the forearm.',
-      fix: 'Keep the wrist in line with the forearm.',
-      zoom: 'hand', claim: CL.c2 },
   ],
-  claim: C(['DATA', 'WEAK'], ['bull2010', 'paoli2010', 'kim2026'], 'c10, c8, c9'),
+  claim: C(['DATA', 'WEAK', 'CONSENSUS'], ['bull2010', 'paoli2010', 'kim2026', ACE], 'c10, c8, c9, c5 (feel-line breathing cue)'),
 };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */

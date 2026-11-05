@@ -129,7 +129,7 @@ const zooms = [
     alt: { right: 'Bar across the base of the fingers, thumb wrapped. Back of the hand in line with the forearm.', wrong: FAULTS[0].alt },
   },
   {
-    key: 'knee-pad', chip: 'Knee pad', heading: 'Bottom position', kind: 'posture',   // card zoom key: knee pad
+    key: 'knee-pad', chip: 'Bottom', heading: 'Bottom position', kind: 'posture',   // card zoom key: knee pad
     // zoom shell: crop centre on the right pose's elbow; the Wrong is the spec's Mistake dashed over the end pose, as
     // `stills.half`.
     crop: { center: { at: 'elbow.r', pose: 'right', off: [0, 20] }, sizePx: 200 },
@@ -193,7 +193,7 @@ const feel = {
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: CL.shoulderRow },
     { key: 'elbow', where: 'Inside or outside of the elbow', at: { parts: ['elbow-left', 'elbow-right'] },
-      means: 'Usually means too much pulling volume, too soon.',
+      means: 'Too much pulling volume, too soon.',
       fix: "Add sets slowly. Don't train through the pain.",
       redFlag: 'elbow', claim: CL.elbowRow },
   ],
@@ -228,19 +228,19 @@ export default {
     width: { text: 'About shoulder width, or a little wider.', claim: CL.c1 },
     thumb: { mode: RIGHT_POSE.thumb, claim: CL.thumb },   // 'wrapped' (c12; the key's right pose)
     contact: CONTACT,                // 'finger-base', CONVENTION: the key's ga:hang-base (source hand-key-bar); the card gives none
-    wrist: { ext: V.wristRange, limitText: 'Keep your wrist level, not curled forward.', claim: CL.wrist },
+    wrist: { ext: V.wristRange, limitText: 'Keep your wrist from curling forward.', claim: CL.wrist },
     pose: RIGHT_POSE,
     faults: FAULTS,
     // CONVENTION (D-SHIP-GRIP (a)): 'across the base of your fingers' is the bar key's ga:hang-base, source hand-key-bar;
     // overhand c1, thumbs c12.
-    gripLine: 'Overhand, bar across the base of your fingers, thumbs wrapped. Wrists not curled.',
+    gripLine: 'Overhand, thumbs wrapped around the bar.',
     cue: 'Overhand, thumbs wrapped.',   // c1, c12
   },
   contacts: ['brace-pad'],
   setup: [
     { kind: 'load', text: 'More stack weight, more help. Use the least for full reps.', claim: CL.assist },
     { kind: 'grip', text: 'Overhand, about shoulder width or a little wider, thumbs wrapped.', zoom: 'hand', claim: CL.grip },
-    { kind: 'position', text: 'Knees on the pad. Let it sink until your arms are straight.', zoom: 'knee-pad', claim: CL.c1 },
+    { kind: 'position', text: 'Knees securely on the pad. Let it sink until your arms straighten.', zoom: 'knee-pad', claim: CL.c1 },
     // D-TEXT-GOLDEN (#379 6637607604): posture 'elbows' (c7) and 'chest' (c2) carried into this visible step.
     { kind: 'brace', text: 'Blades down and back, then pull elbows to ribs, chest up.', zoom: 'shoulders', claim: C(['CONSENSUS', 'WEAK'], [BB, NASM, SL], 'c7, c2') },
     { kind: 'load', text: 'Over the weeks, add reps first, then take assistance away.', claim: CL.c6 },

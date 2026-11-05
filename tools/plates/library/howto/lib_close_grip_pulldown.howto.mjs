@@ -151,7 +151,7 @@ const zooms = [
       wrong: 'Pad too high, hips lifting.' },
     alt: {
       right: 'Side view of the thighs, knee pad and seat. The pad presses on the tops of the thighs, just above the knees. Feet flat, hips down on the seat.',
-      wrong: 'The pad set too high, with a gap above the thighs. The hips lift off the seat as the bar comes down. Drawn dashed over the right position.',
+      wrong: 'The pad set too high, with a gap above the thighs. The hips lift off the seat as the handle comes down. Drawn dashed over the right position.',
     },
     // Q-W3-8 (#383 6631278086): feelRow and feelPrompt are not compared; this card dropped the low-back row, so no feel link.
   },
@@ -173,11 +173,11 @@ const feel = {
   feelLine: 'You should feel this in your lats, along the sides of your back.',
   rows: [
     { key: 'shoulder', where: 'Shoulders', at: { muscles: ['front_delts'] },
-      means: 'Usually means you are pulling too low.',
+      means: 'You are pulling too low.',
       fix: 'Stop just below the chin, when the elbows stop moving down.',
       zoom: 'bottom', redFlag: 'shoulder', claim: CL.low },
     { key: 'forearms', where: 'Forearms more than your back', at: { muscles: ['forearms'] },
-      means: 'Usually means the handle is going too low.',
+      means: 'The handle is going too low.',
       fix: 'Stop just below the chin.',
       zoom: 'bottom', claim: C(['CONSENSUS'], [PG], 'c6, c5') },
   ],

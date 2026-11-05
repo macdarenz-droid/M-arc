@@ -185,15 +185,15 @@ const feel = {
   feelLine: 'You should feel this in your belly and the front of your hips.',
   rows: [
     { key: 'hips', where: 'Mostly the front of the hips', at: { muscles: ['hip_flexors'] },
-      means: 'Usually means the knees stop near hip height.',
+      means: 'Knees stop near hip height, so the hip flexors do the lifting.',
       fix: 'Lift the knees higher and curl the pelvis up at the top.',
       zoom: 'top', claim: CL.c6 },
     { key: 'grip', where: 'Forearms give out first', at: { muscles: ['forearms'] },
       means: 'The arm-strap version showed some of the highest ab activity.',
-      fix: 'Use arm straps, so your grip lasts as long as your abs.',
+      fix: 'Use arm straps (ab slings), the version with some of the highest ab activity.',
       claim: CL.c10 },
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'Straight legs load the spine most, bent knees likely less.',
+      means: 'Straight legs measured about 3000 N spine load, bent knees likely less.',
       fix: 'Keep the knees bent.',
       zoom: 'body-line', redFlag: 'back', claim: CL.backRow },
     { key: 'shoulder', where: 'Shoulder', at: {},   // pain, not a muscle taking over: no map mark (golden B pull_up)
@@ -232,7 +232,7 @@ export default {
     width: { text: 'Hands about shoulder width.', claim: C(['MECH', 'WEAK'], ['bullbar-calluses'], 'c18') },
     thumb: { mode: RIGHT_POSE.thumb, claim: CL.thumb },   // 'wrapped' (c3); THUMB === hanging_leg_raise's
     contact: CONTACT,                // 'finger-base' (c17; the key's ga:hang-base)
-    wrist: { ext: V.wristRange, limitText: 'Keep your wrist level, not curled forward.', claim: CL.wrist },
+    wrist: { ext: V.wristRange, limitText: 'Keep your wrist from curling forward.', claim: CL.wrist },
     pose: RIGHT_POSE,
     faults: FAULTS,
     gripLine: 'Overhand, bar just below the base of your fingers, thumbs wrapped. Arms fully straight.',   // c2, c17, c3

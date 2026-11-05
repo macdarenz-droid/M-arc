@@ -56,11 +56,11 @@ const CL = {
   c9: C(['CONSENSUS'], [PG], 'c9'),
   c10: C(['CONSENSUS'], [BB], 'c10'),
   c11: C(['CONSENSUS'], [BB], 'c11'),
+  c12: C(['CONSENSUS'], [BB, PG], 'c12'),
   c15: C(['MECH'], ['odriscoll-1992'], 'c15'),
   c16: C(['CONSENSUS', 'MECH'], ['hk-baechle-grip'], 'c16'),
   past: C(['CONSENSUS'], [BB, PG], 'c10, c2'),
   stop: C(['MECH', 'CONSENSUS'], [ACE, PG], 'c13, c2'),
-  lean: C(['CONSENSUS'], [ACE], 'card inherit[0]: lat_pulldown\'s lean step (lat_pulldown.howto.mjs:192-193), inherited by D-LIB9a-MAP'),
 };
 
 /* ------------------------------------------------------------------------------------------------ hand ---------- */
@@ -149,7 +149,7 @@ const feel = {
   feelLine: 'You should feel this in your lat. The side of your waist works to stop you twisting.',
   rows: [
     { key: 'shoulder', where: 'Shoulder', at: { muscles: ['front_delts'] },
-      means: 'Usually means you pull past the end and the shoulder rolls forward.',
+      means: 'You pull past the end and the shoulder rolls forward.',
       fix: 'Stop when the handle passes your chin.',
       zoom: 'bottom', redFlag: 'shoulder', claim: CL.past },
   ],
@@ -167,7 +167,7 @@ const MISTAKES = [
     fix: 'Tighten your abs to hold the spine still.' },
 ];
 const RISKS = [
-  { key: 'shoulder', text: 'Rolling the shoulder forward at the end of the pull stresses it.', claim: CL.c10 },
+  { key: 'shoulder', text: 'Rolling the shoulder forward at the end of the pull may stress it.', claim: CL.c10 },
 ];
 
 export default {
@@ -187,7 +187,7 @@ export default {
     wrist: { ext: V.wristRange, limitText: 'Keep the wrist from curling forward.',
       claim: C(['MECH', 'CONVENTION'], ['odriscoll-1992', KEYSRC], 'c15; the ext range is the key\'s ga:pull-base convention, not a card number') },
     faults: FAULTS,
-    gripLine: 'Single handle, thumb around it, wrist not curled.',   // c1, c16, c15
+    gripLine: 'Single handle, thumb around it.',   // c1, c16 (the wrist line is limitText, c15)
     cue: 'Thumb wrapped, wrist straight.',   // c16, c15
   },
   contacts: ['seat-back', 'brace-pad'],
@@ -195,9 +195,9 @@ export default {
     { kind: 'adjust', text: 'Clip a single handle to the cable.', claim: CL.c1 },
     { kind: 'get-in', text: 'Stand to take the handle, then sit, thighs tight under the pads.', claim: CL.c1 },
     { kind: 'load', text: 'Use less than half your two-arm pulldown weight to start.', claim: CL.c9 },
-    // D-LIB9a-MAP inherit (Q-W3-2): text equals lat_pulldown's position step; no zoom link.
-    { kind: 'position', text: 'Lean back slightly, about 30 degrees at most.', claim: CL.lean },
     { kind: 'brace', text: "Brace your trunk so it won't twist.", claim: CL.c6 },
+    // W3 layers fix (#384 6648454032, L2): the card's own setup steps; its upright torso (c7, c11) replaces the inherited lean.
+    { kind: 'position', text: 'No pulldown machine? Kneel at a cable machine.', claim: CL.c12 },
   ],
   posture: [
     { key: 'square', label: 'Torso square', detail: 'Thighs pinned. Torso upright and square, no twisting.',

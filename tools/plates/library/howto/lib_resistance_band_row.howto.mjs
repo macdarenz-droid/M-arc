@@ -130,12 +130,12 @@ const feel = {
   feelLine: 'You should feel this as a small squeeze between your shoulder blades. Breathe out as you pull.',
   rows: [
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'You are losing your tall, straight back.',
+      means: 'Watch for losing your tall, straight back.',
       fix: 'Sit tall. Hold the band further along so it stretches less.',
       zoom: 'back-line', redFlag: 'back', claim: CL.slump },
   ],
   libraryDiff: { add: ['biceps'], why: 'card libraryDiff: the elbows bend against the band (c4) and a prone row measured the biceps working (c9; MECH).' },
-  claim: C(['CONSENSUS', 'DATA', 'MECH'], [SW, PT, 'lehman2004', 'fischer2025'], 'c4 (primary), c8, c9 (secondary), c3 (watch)'),
+  claim: C(['CONSENSUS', 'DATA', 'MECH'], [SW, PT, 'lehman2004', 'fischer2025'], 'c4 (primary), c8, c9 (secondary), c3 (watch), c5 (feel-line breathing cue)'),
 };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */

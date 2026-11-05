@@ -205,7 +205,7 @@ const feel = {
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: CL.shoulder },
     { key: 'elbow', where: 'Elbow', at: { parts: ['elbow-left', 'elbow-right'] },
-      means: 'Usually means too much pulling volume, too soon.',
+      means: 'Too much pulling volume, too soon.',
       fix: "Add sets slowly. Don't train through the pain.",
       redFlag: 'elbow', claim: CL.elbow },
   ],
@@ -224,7 +224,7 @@ const MISTAKES = [
 ];
 const RISKS = [
   { key: 'shoulder', text: 'Arms high overhead narrow the space under the shoulder roof.', claim: C(['MECH'], ['prinold-2016'], 'c14, c13') },
-  { key: 'spine', text: 'This pull and the pull-up gave the highest spine load tested.', claim: CL.c15 },
+  { key: 'spine', text: 'This pull and the pull-up gave the highest spine load of the pulls tested.', claim: CL.c15 },
   { key: 'elbow', text: 'Elbows can get overused when pulling volume rises too fast.', claim: CL.c16 },
 ];
 

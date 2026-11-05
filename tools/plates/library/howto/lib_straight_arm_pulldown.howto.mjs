@@ -184,7 +184,7 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     { kind: 'adjust', text: 'Set the pulley at its highest point and attach a straight bar.', claim: CL.c1 },
-    { kind: 'grip', text: 'Take the bar overhand, hands about shoulder width or wider.', claim: CL.c1 },
+    { kind: 'grip', text: 'Take the bar overhand, hands about shoulder width or a little wider.', claim: CL.c1 },
     { kind: 'position', text: 'Step back until the cable is taut. Feet hip width, knees soft.', claim: CL.c2 },
     { kind: 'brace', text: 'Chest up, trunk braced, at most a slight lean forward.', zoom: 'trunk', claim: CL.c3 },
     { kind: 'load', text: 'Pick a weight you can move smoothly, with a one-second squeeze.', claim: CL.c7 },

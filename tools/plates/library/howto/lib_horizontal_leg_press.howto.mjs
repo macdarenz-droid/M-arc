@@ -63,6 +63,9 @@ const CL = {
   feet: C(['CONSENSUS'], [ACE, WM], 'c1, c3 (inherit: posture Whole foot flat, mid-platform)'),
   soft: C(['CONSENSUS'], [ACE, WM], 'c3, c4 (inherit: posture Soft knees at the top)'),
   grip: C(['CONSENSUS'], [ACE], 'c2 (inherit: grip; posture Hands light on the side handles)'),
+  // W3 layers fix (#384 6648454032): the wrist line is the parent's, so it cites the parent's wrist claim
+  // (leg_press.howto.mjs CL.wrist: level wrist 0-20 deg, a drawing check; ACE, NASM).
+  wrist: C(['WEAK', 'MECH'], [ACE], 'inherit: grip; parent leg_press handling.wrist claim (level wrist, drawing check)'),
   lock: C(['CONSENSUS', 'DATA', 'WEAK'], [ACE, WM, 'barnds2019'], 'c7, c4, c8'),
   seat: C(['CONSENSUS'], [ACE, WM], 'c1, c5'),
   hips: C(['CONSENSUS'], [ACE, WM], 'c4, c2, c1'),
@@ -138,20 +141,20 @@ const feel = {
   feelLine: 'You should feel this in the front of your thighs and your glutes. Control the plate on the way back.',
   rows: [
     { key: 'knee', where: 'Knee', at: { parts: KNEES },
-      means: 'Your knees lock at the top, or bend past about 90 degrees.',
+      means: 'Watch for locking at the top or going below about 90 degrees.',
       fix: "Keep a small bend at the top. Don't go below about 90 degrees.",
       zoom: 'knee-top', redFlag: 'knee', claim: CL.knee },
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'Your hips lift or your lower back rounds.',
+      means: 'Watch for the hips lifting or the low back rounding.',
       fix: 'Keep your tailbone on the pad and your lower back still.',
       redFlag: 'back', claim: CL.lowBack },
     { key: 'knees-in', where: 'Knee, as the knees drift in', at: { parts: KNEES },
-      means: 'Your knees are coming together.',
+      means: 'Watch for the knees coming together.',
       fix: 'Keep your kneecaps in line with your feet.',
       redFlag: 'knee', claim: CL.c6 },
   ],
   libraryDiff: { add: ['calves'], why: 'card libraryDiff: on a horizontal leg press the calf fired strongly at the end of knee extension (c9).' },
-  claim: C(['CONSENSUS', 'DATA'], [ACE, 'tassi1998', 'tassi1999'], 'c3 (primary, hamstrings), c9 (calves), c4 (watch)'),
+  claim: C(['CONSENSUS', 'DATA'], [ACE, WM, 'tassi1998', 'tassi1999'], 'c3 (primary, hamstrings), c9 (calves), c4 (watch), c5 (feel-line return cue)'),
 };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
@@ -182,7 +185,7 @@ export default {
     width: { text: 'Set by the machine: one handle beside each hip. Arms relaxed with soft elbows, shoulders down and back on the pad.', claim: CL.grip },
     thumb: { mode: 'wrapped', claim: CL.grip },
     contact: 'finger-base',
-    wrist: { ext: [0, 20], dev: [-10, 10], limitText: 'Keep your wrist level, not curled forward or bent far back.', claim: CL.grip },
+    wrist: { ext: [0, 20], dev: [-10, 10], limitText: 'Keep your wrist level, not curled forward or bent far back.', claim: CL.wrist },
     pose: RIGHT_POSE,
     faults: [PUSH_ON_KNEES],
     gripLine: 'Your hands just keep you in the seat. Hold lightly, never push on your knees.',
