@@ -39,9 +39,13 @@ describe('C0: L0-lib on this tree', { timeout: 300_000 }, () => {   // F-C0-TIME
   const PILOT_A3 = ['dumbbell_fly', 'reverse_lunge'].map(id => `lib_${id}`);
   // LIB-SHIP W2 (D-SHIP-MOVE, D-LIB-PILOTB2): PILOT-B2's pin adds exactly its 1 row (crunch, held at approved-plate)
   const PILOT_B2 = ['lib_crunch'];
+  // LIB-SHIP W6: the 23 lb06/lb07 rows (pinned in their [golden update] commits)
+  const W6 = [...Object.keys(JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/batches/lb06.json'), 'utf8')).rows),
+    ...Object.keys(JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/batches/lb07.json'), 'utf8')).rows)];
   it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2 and PILOT-B2\'s 1 here, and no problem', async () => {
     const file = JSON.parse(readFileSync(join(ROOT, MANIFEST), 'utf8'));
-    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2].sort());
+    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2, ...W6].sort());
+    expect(W6).toHaveLength(23);
     expect(await manifestOf(ROOT)).toEqual(file);
     expect(await manifestProblems(ROOT)).toEqual([]);
   });

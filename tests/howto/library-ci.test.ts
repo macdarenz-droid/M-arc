@@ -647,7 +647,10 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
       { id: 'tests/howto/golden/library/pilot-b.json#layers-page', file: 'tests/howto/golden/library/pilot-b.json', kind: 'layers-page', pageSha256: 'ae7fd1553f1a3ffe132b0e509eacae06cac42ef6f2ea18d69b4f5cd5ad39275e', bytes: 425305 },
       { id: 'tests/howto/golden/library/pilot-b2.json#page', file: 'tests/howto/golden/library/pilot-b2.json', kind: 'page', pageSha256: 'cb06cf9c6aeffe863b6c12fc1382b81021a34b8bbc65d5b54f31f1180b2924f4', bytes: 190740 },
       { id: 'tests/howto/golden/library/pilot-b2.json#layers-page', file: 'tests/howto/golden/library/pilot-b2.json', kind: 'layers-page', pageSha256: '7c66d68e69d3d1c8c3e0fc6b5ec65fb164a9db8596556a092fcf797034e1f112', bytes: 265290 },
-    ], unknown: [] });
+    ].concat([   // LIB-SHIP W6 (SHIP W6 PIN GO #393 6647923934, D-SHIP-W6-LB06FIRST 6648157060): the lb06 and lb07 plates pages
+      { id: 'tests/howto/golden/library/lb06.json#page', file: 'tests/howto/golden/library/lb06.json', kind: 'page', pageSha256: '5cea2ed7ecc0b5bc210d2dbeb04fd79c467c9303a4d9f89628e25e7a47e879cd', bytes: 1398822 },
+      { id: 'tests/howto/golden/library/lb07.json#page', file: 'tests/howto/golden/library/lb07.json', kind: 'page', pageSha256: '29fae61a694072fc184e7537fdd4e384ff408a356840d0eee4a217af0278286e', bytes: 1269653 },
+    ]).sort((a, b) => (a.file < b.file ? -1 : a.file > b.file ? 1 : 0)), unknown: [] });   // files sort (goldenFiles); a file's own order kept (stable sort)
     expect(sha256('')).toHaveLength(64);
   });
 });
