@@ -156,7 +156,7 @@ const feel = {
   feelLine: 'You should feel this mostly in the front of your thighs, and in your glutes.',
   rows: [
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'Lower back off the pad, often from feet set too high.',
+      means: 'Lower back lifting off the pad at the bottom.',   // card row (c8), its own strength (D-FEEL-MEANS-CAUSAL)
       fix: "Keep your hips and back on the pad. Don't set your feet too high.",
       zoom: 'back-pad', redFlag: 'back', claim: CL.back },
     { key: 'knee', where: 'Knees', at: { parts: KNEES },

@@ -7,7 +7,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { B3_PINS, RULED, checkC3Library, checkConventionGrip, checkGripB3, checkGripLibrary } from './checks/c3-library';
+import { B3_PINS, RULED, allSharedBoxes, checkC3Library, checkConventionGrip, checkGripB3, checkGripLibrary, noRedFlagProblems } from './checks/c3-library';
 import { checkC3 } from './checks/c3';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -444,5 +444,30 @@ describe('LIB-SHIP W7 D-SHIP-HANDW7 (#394 6647954465, Q-W7-3/Q-W7-4): gap-ruled 
   it('red: a gap-ruled trio entry removed turns C3 red', async () => {
     const { content: c } = await content.loadContent('lib_bird_dog'), { lib_bird_dog: _drop, ...rest } = nz();
     expect(checkC3Library(c, 'Bodyweight', { list: rest, card: json('docs/research/howto/cards/bird_dog.json'), gapKeyOf }).join('\n')).toMatch(/C3: handling.archetype is not none, and no hand zoom/);
+  });
+});
+
+describe('LIB-SHIP W7 D-SHIP-W7-NOREDFLAG (#394 6648497703, = D-SHIP-W6-NOREDFLAG #393 6648157060): riskFlags [] rows', () => {
+  const NO_RED_FLAG = ['lib_high_knees', 'lib_battle_ropes', 'lib_jumping_jacks'];
+  const W7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.keys(json(`tools/plates/library/batches/${b}.json`).rows));
+  it('the W7 sheets with riskFlags [] are exactly the 3 pinned ids, each card names no red flag, and none is red', async () => {
+    const empty: string[] = [];
+    for (const id of W7) {
+      const { content: c } = await content.loadContent(id);
+      if (Array.isArray(c.riskFlags) && c.riskFlags.length === 0) empty.push(id);
+      expect([id, noRedFlagProblems(c, json(c.research.card))]).toEqual([id, []]);
+    }
+    expect(empty).toEqual(NO_RED_FLAG);
+  }, 60_000);
+  it('red: riskFlags [] on a card that names a red flag', async () => {
+    const { content: c } = await content.loadContent('lib_high_knees');
+    expect(noRedFlagProblems(c, { ...json(c.research.card), redFlags: ['knee'] })).toEqual(['RF: lib_high_knees: riskFlags is [] but its card names red flags knee']);
+  });
+  it('the C19 boxes for such a row are every shared box plus the back box; the disclaimer alone stays red', async () => {
+    const [shared, BB, C19] = await Promise.all([import(/* @vite-ignore */ url('tools/plates/layers/howto/shared.mjs')), import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), import('./checks/c19')]);
+    const boxes = allSharedBoxes(shared, BB.backBox());
+    expect(Object.values(boxes).every(b => b && typeof b === 'object')).toBe(true);
+    expect(C19.checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, 'lib_high_knees')).toEqual([]);
+    expect(C19.checkC19Shared({ DISCLAIMER: shared.DISCLAIMER }, 'lib_high_knees')).toEqual(['C19: lib_high_knees: no RED_FLAG box to check']);
   });
 });

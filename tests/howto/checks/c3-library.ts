@@ -111,3 +111,16 @@ export function checkGripB3(content: HowToContent, card: { grip?: Record<string,
   for (const c of want) if (!cited.has(c)) out.push(`${at} but card claim ${c} (grip.claims) is cited on no setup or posture line`);
   return out;
 }
+
+/** D-SHIP-W6-NOREDFLAG / D-SHIP-W7-NOREDFLAG (#393 6648157060, #394 6648497703): a `riskFlags: []` row shows no red-flag
+ *  box (Risks.tsx:30), which is card-true only when its card names no red flag. Red when the card's redFlags is not empty. */
+export function noRedFlagProblems(content: HowToContent, card: { redFlags?: unknown } | null): string[] {
+  if (!Array.isArray(content.riskFlags) || content.riskFlags.length) return [];
+  const flags = Array.isArray(card?.redFlags) ? card.redFlags : [];
+  return flags.length ? [`RF: ${content.id}: riskFlags is [] but its card names red flags ${flags.join(', ')}`] : [];
+}
+/** The boxes C19 checks for a `riskFlags: []` row: every shared box plus the back box, so the check is at least as
+ *  strict as any one row's (D-SHIP-W6-NOREDFLAG). */
+export const allSharedBoxes = (shared: Record<string, unknown>, back: unknown) => ({
+  RED_FLAG: shared.RED_FLAG, RED_FLAG_SHOULDER: shared.RED_FLAG_SHOULDER, RED_FLAG_KNEE: shared.RED_FLAG_KNEE, RED_FLAG_ELBOW: shared.RED_FLAG_ELBOW, RED_FLAG_BACK: back,
+});

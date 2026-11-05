@@ -132,7 +132,7 @@ const feel = {
       fix: 'Pull your shoulder down and pad the elbow.',
       zoom: 'shoulder', claim: CL.c7 },
     { key: 'knee', where: 'Top knee or foot', at: { parts: ['knee-left', 'knee-right'] },
-      means: 'Too much pressure on the inside of that joint.',
+      means: 'Too much pressure on that joint.',   // card row (c8) as worded (D-FEEL-MEANS-CAUSAL)
       fix: 'Stop the exercise.',
       redFlag: 'knee', claim: CL.c8 },
   ],

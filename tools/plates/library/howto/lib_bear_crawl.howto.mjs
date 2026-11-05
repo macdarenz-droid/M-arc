@@ -125,7 +125,15 @@ const feel = {
   // The card's four feel rows have empty fixes, so they are left out (D-FEEL-NOMEANS); the feel line keeps their
   // claim (c9) and the wrist row's claim (c11) is the first risk.
   feelLine: 'You should feel this in your belly and sides, shoulders and front thighs.',
-  rows: [],
+  rows: [
+    // D-SHIP-W7-WRISTPTR (#394 6648497703): the card's c11 row, kept so the wrist box has its linked row
+    // (howto-layers.mjs:275); its fix points to the box, as the card's fixNote says, and gives no stop line of its own.
+    // D-FEEL-MEANS-CAUSAL (#385): the means keeps the card's own strength ("often").
+    { key: 'wrist', where: 'Back-of-wrist pain', at: { parts: ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'] },   // hanging_leg_raise's wrist parts
+      means: 'With this pain under load, scans often find a wrist problem.',   // card feel row 4 (c11), shortened to 11 words at its strength
+      fix: 'Check the wrist box below.',   // card fixNote: the shared wrist box carries what to do
+      redFlag: true, claim: CL.c11 },
+  ],
   libraryDiff: { add: ['abs', 'obliques'], why: 'BarBend names the rectus abdominis and the obliques as the core muscles worked (card c9).' },
   claim: CL.c9,
 };
