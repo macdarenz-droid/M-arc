@@ -130,7 +130,7 @@ const RISKS = [
   { key: 'face', text: 'Bar over face and neck: wrap the thumbs. Use safety pins or a spotter.',
     claim: C(['DATA', 'CONSENSUS'], ['jumbelic2007', HK, SL], 'c9, c4, c6, c7') },
   { key: 'pec', text: 'Pec tendon rupture while lowering the bar.', claim: CL.c22 },
-  { key: 'dropped', text: 'Weights dropping on the lifter is the most common weight-room injury mechanism.', claim: CL.c23 },
+  { key: 'dropped', text: 'Weights dropping on the lifter are a leading cause of weight-training injuries.', claim: CL.c23 },
 ];
 
 export default {

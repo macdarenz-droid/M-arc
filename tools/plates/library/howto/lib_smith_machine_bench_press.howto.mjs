@@ -61,9 +61,9 @@ const CL = {
   flare: C(['CONSENSUS'], [MO, SL], 'c7, c3'),
   stops: C(['CONSENSUS'], ['eos-smith', MO, SL], 'c4, c3'),
   // card inherit[]: the field is barbell_bench_press's, true here by the card's own inherit reason (MECH)
-  thumb: C(['MECH'], [], 'card inherit grip.thumb (inherit:0): the lifter lies under a loaded bar lowered to the mid-chest (c14); parent c4.'),
-  type: C(['MECH'], [], 'card inherit grip.type (inherit:1): the same straight bar pressed lying face up with an overhand grip; parent c4.'),
-  hand: C(['MECH'], [], 'card inherit grip.handContact, grip.wrist, zooms.bar-low-palm (inherit:2, 3, 4): the bar sits low in the palm whatever the rails; parent c5.'),
+  thumb: C(['MECH'], [], 'card inherit grip.thumb (inherit:0): the lifter lies under a loaded bar lowered to the mid-chest (c14) (barbell_bench_press thumb rule).'),
+  type: C(['MECH'], [], 'card inherit grip.type (inherit:1): the same straight bar pressed lying face up with an overhand grip (barbell_bench_press grip type).'),
+  hand: C(['MECH'], [], 'card inherit grip.handContact, grip.wrist, zooms.bar-low-palm (inherit:2, 3, 4): the bar sits low in the palm whatever the rails (barbell_bench_press wrist and contact rule).'),
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
@@ -72,18 +72,19 @@ const CL = {
 // wide, c7). 'arch' is the card zoom smith-bench-position Wrong (c7: "Back arched excessively"), which the plate does not
 // draw:
 // DRAWING VALUE (D-SHIP-DRAWVAL, #376 6614695581; precedent lib_straight_arm_pulldown ARCH): ARCH, the end pose's lumbar
-// (trunk) extended 15 deg past the plate's own (the supine class's slight arch that puts the upper back and buttock on
+// (trunk) extended 30 deg (W4 layers panel L5, #391 6653540190: at 15 deg the arch did not read) past the plate's own (the supine class's slight arch that puts the upper back and buttock on
 // the pad), one joint. The spec's own `supine()` holds the buttock, upper back and skull on the pad for it: the pelvis
 // tilt is solved so supine's trunk is the plate's minus ARCH, and the lumbar lifts off the pad. The card gives no size,
 // so no number from it appears in user copy; the layers panel judges it. BENCH_TOP (0.43 m) and the bench z (0) are the
 // spec's own (specs/smith_machine_bench_press.mjs LYING; not exported); the guard below throws if they stop reproducing
 // the spec's end pose.
 const END = plateSpec.poses.end;
-const ARCH = 15, BENCH_TOP = 0.43;
+const ARCH = 30, BENCH_TOP = 0.43;
 { const p = supine(BENCH_TOP, 0);
   if (Math.abs(p.trunk - END.trunk) > 1e-9 || p.root.at.some((v, i) => Math.abs(v - END.root.at[i]) > 1e-9))
     throw new Error('lib_smith_machine_bench_press: BENCH_TOP no longer reproduces the spec end pose'); }
-const ARCH_TILT = bisect(t => (END.trunk - ARCH) - supine(BENCH_TOP, 0, { tilt: t }).trunk, -90, -75);
+// The tilt bracket is widened to -70 for the larger arch (supine() keeps the skull, upper back and buttock on the pad).
+const ARCH_TILT = bisect(t => (END.trunk - ARCH) - supine(BENCH_TOP, 0, { tilt: t }).trunk, -90, -70);
 const ARCH_POSE = supine(BENCH_TOP, 0, { tilt: ARCH_TILT });   // { root, trunk, neck }
 export const stills = {
   start: { pose: plateSpec.poses.start },
@@ -94,12 +95,15 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except the hand zoom `bar-low-palm` (D-SHIP-HANDW4, above). Zoom shell shape (callout with an anchor
-// at the landmark it names, no guide mark): crop centre on the right pose's lumbar, wide enough for the bar on the
-// mid-chest and the stops; the Wrong is the `arch` still drawn alone (solid).
+// at the landmark it names): crop centre on the right pose's lumbar, sizePx 160 (drawing values: tight on the low back,
+// still showing the bar on the mid-chest); the Wrong is the `arch` still drawn alone (solid), with a red `drop` arrow
+// from the bench top under the lumbar (offsets in plate px, drawing values) up to the arched low back, so the gap reads
+// (lib_plank precedent; W4 panel L5).
 const zooms = [
   {
     key: 'smith-bench-position', chip: 'Bench', heading: 'Bench position', kind: 'posture',
-    crop: { center: { at: 'lumbar', pose: 'right', off: [-10, -20] }, sizePx: 220 },
+    crop: { center: { at: 'lumbar', pose: 'right', off: [-14, -16] }, sizePx: 160 },
+    guides: [{ kind: 'drop', from: { at: 'lumbar', pose: 'right', off: [0, 12] }, to: { at: 'lumbar', pose: 'mistake', off: [0, 3] } }],
     right: 'end',
     wrong: { base: 'end', pose: ARCH_POSE, solid: true },
     callout: {
@@ -172,7 +176,8 @@ export default {
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar high toward the fingers, wrist bent back.' },
     ],
     // card zoom bar-low-palm Right (inherit:4), with the inherited grip type. Its "wrist straight" shows as the
-    // inherited wrist.limitText's "wrist not bent back", the words parent c5 supports (SWEEP 2, 6).
+    // inherited wrist.limitText's "wrist not bent back", the words the parent's wrist rule supports (inherit:3; SWEEP 2, 6).
+    // Claims (no gripLine claim slot in HandlingSpec): inherit:0 (thumb), inherit:1 (grip type), inherit:2 (palm base).
     gripLine: "Closed grip, palms toward your feet. Bar in the palm's base, not high toward the fingers, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C
   },

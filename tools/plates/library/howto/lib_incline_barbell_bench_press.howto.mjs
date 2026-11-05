@@ -71,14 +71,15 @@ const CL = {
 // c8). 'arch' is the card zoom back-on-incline-pad Wrong (c9: "Low back arched off the pad, hips pushing up"), which the
 // plate does not draw:
 // DRAWING VALUE (D-SHIP-DRAWVAL, #376 6614695581; precedent lib_straight_arm_pulldown ARCH): ARCH, the end pose's lumbar
-// (trunk) extended 15 deg past the plate's neutral 0 (c3, c9), one joint. The spec's own `reclined()` places the body
+// (trunk) extended 35 deg past the plate's neutral 0 (c3, c9), one joint (W4 layers panel L1/L5, #391 6653540190: at
+// 15 deg the arch did not read; all three critics). The spec's own `reclined()` places the body
 // for that trunk on the same seat, pad angle and seat tilt (it solves the pelvis tilt and the neck), so the buttock and
-// upper back ride about 1 cm off the drawn pad and the lumbar about 4 cm. The card gives no size, so no number from it
+// upper back ride about 3 cm off the drawn pad and the lumbar about 9 cm (hips pushing up, c9). The card gives no size, so no number from it
 // appears in user copy; the layers panel judges it. BACK, SEAT_TILT and SEAT_TOP are the spec's own constants
 // (specs/incline_barbell_bench_press.mjs: 60, 12, 0.45; not exported); the guard below throws if they stop
 // reproducing the spec's end pose.
 const END = plateSpec.poses.end;
-const ARCH = 15;
+const ARCH = 35;
 const REC = { back: 60, seatTilt: 12, seatTop: 0.45 };
 { const p = reclined({ ...REC, trunk: END.trunk }).pose;
   if (Math.abs(p.root.tilt - END.root.tilt) > 1e-9 || p.root.at.some((v, i) => Math.abs(v - END.root.at[i]) > 1e-9))
@@ -93,12 +94,15 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except the hand zoom `bar-low-palm` (D-SHIP-HANDW4, above). Zoom shell shape (callout with an anchor
-// at the landmark it names, no guide mark): crop centre on the right pose's lumbar for both halves; the Wrong is the
-// `arch` still drawn alone (solid).
+// at the landmark it names): crop centre on the right pose's lumbar for both halves, sizePx 150 (a drawing value: the
+// low back fills the panel, W4 panel L5); the Wrong is the `arch` still drawn alone (solid), with a red `drop` arrow
+// from the right pose's lumbar on the pad up to the arched lumbar, so the gap reads as the lift (lib_plank precedent).
+// Alt claims (no zoom claim slot): right c3, wrong c9.
 const zooms = [
   {
     key: 'back-on-incline-pad', chip: 'Back', heading: 'Back on pad', kind: 'posture',
-    crop: { center: { at: 'lumbar', pose: 'right', off: [0, 0] }, sizePx: 200 },
+    crop: { center: { at: 'lumbar', pose: 'right', off: [0, 0] }, sizePx: 150 },
+    guides: [{ kind: 'drop', from: { at: 'lumbar', pose: 'right' }, to: { at: 'lumbar', pose: 'mistake' } }],
     right: 'end',
     wrong: { base: 'end', pose: ARCH_POSE, solid: true },
     callout: {
@@ -152,7 +156,7 @@ const MISTAKES = [
 const RISKS = [
   { key: 'face', text: 'Bar over face and neck: wrap thumbs. Use a spotter or safety pins.',
     claim: C(['DATA', 'MECH', 'CONSENSUS'], ['jumbelic2007', BCX, BC], 'c15, c6, inherit:0, inherit:3') },
-  { key: 'dropped', text: 'Weights dropping on the lifter is the most common weight-room injury mechanism.', claim: CL.c16 },
+  { key: 'dropped', text: 'Weights dropping on the lifter are a leading cause of weight-training injuries.', claim: CL.c16 },
   { key: 'shoulder', text: 'Shoulder injuries are linked to poor technique. Flared elbows strain the shoulder.',
     claim: C(['DATA', 'CONSENSUS'], ['kolber2010', BC], 'c17, c8') },
 ];
@@ -181,6 +185,7 @@ export default {
     ],
     // card zoom bar-low-palm Right (inherit:2), with the grip type (c4). Its "wrist straight" shows as
     // wrist.limitText (c4), so the grip line does not repeat it (SWEEP 6).
+    // Claims (no gripLine claim slot in HandlingSpec): c4 (palms forward), inherit:0 (thumb), inherit:1 (palm base).
     gripLine: "Closed grip, palms forward. Bar in the palm's base, not high toward the fingers, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C
   },

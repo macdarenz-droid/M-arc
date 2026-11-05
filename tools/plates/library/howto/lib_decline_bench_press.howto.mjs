@@ -55,8 +55,8 @@ const CL = {
   c14: C(['DATA'], ['kowalczuk2022'], 'c14'),
   c15: C(['DATA'], ['kolber2010'], 'c15'),
   // card inherit[]: the field is barbell_bench_press's, true here by the card's own inherit reason (MECH)
-  thumb: C(['MECH'], [], 'card inherit grip.thumb (inherit:0): the bar still travels over the face, neck and chest; parent c4.'),
-  hand: C(['MECH'], [], 'card inherit grip.handContact, grip.wrist, zooms.bar-low-palm (inherit:1, 2, 3): same bar and overhand grip (c3); parent c5.'),
+  thumb: C(['MECH'], [], 'card inherit grip.thumb (inherit:0): the bar still travels over the face, neck and chest (barbell_bench_press thumb rule).'),
+  hand: C(['MECH'], [], 'card inherit grip.handContact, grip.wrist, zooms.bar-low-palm (inherit:1, 2, 3): same bar and overhand grip (c3) (barbell_bench_press wrist and contact rule).'),
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
@@ -110,7 +110,7 @@ const RISKS = [
   { key: 'face', text: 'Bar over face and neck: touch low. Wrap thumbs. Set the safety racks.',
     claim: C(['DATA', 'MECH', 'CONSENSUS'], ['jumbelic2007', WL, SLG], 'c12, c6, inherit:0') },
   { key: 'pec', text: 'Pec tendon rupture while lowering the bar.', claim: CL.c14 },
-  { key: 'dropped', text: 'Weights dropping on the lifter is the most common weight-room injury mechanism.', claim: CL.c13 },
+  { key: 'dropped', text: 'Weights dropping on the lifter are a leading cause of weight-training injuries.', claim: CL.c13 },
 ];
 
 export default {
@@ -134,7 +134,8 @@ export default {
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar high toward the fingers, wrist bent back.' },
     ],
     // card zoom bar-low-palm Right (inherit:3), with the grip type (c3). Its "wrist straight" shows as the inherited
-    // wrist.limitText's "wrist not bent back", the words parent c5 supports (SWEEP 2, 6).
+    // wrist.limitText's "wrist not bent back", the words the parent's wrist rule supports (inherit:2; SWEEP 2, 6).
+    // Claims (no gripLine claim slot in HandlingSpec): c3 (overhand), inherit:0 (thumb), inherit:1 (palm base).
     gripLine: "Overhand grip. Bar in the palm's base, not high toward the fingers, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C
   },

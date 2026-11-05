@@ -105,7 +105,7 @@ const MISTAKES = [
     fix: 'Touch gently.' },
 ];
 const RISKS = [
-  { key: 'dropped', text: 'Dropped weights cause most bad lifting injuries. Have a spotter hold your wrists.',
+  { key: 'dropped', text: 'Dropped weights: a leading cause of weight-training injuries. Have a spotter hold your wrists.',
     claim: C(['DATA', 'CONSENSUS'], ['kerr2010', HK], 'c15, c10') },
   { key: 'shoulder', text: 'Shoulder injuries are common in lifting and linked to poor technique.', claim: CL.c16 },
 ];

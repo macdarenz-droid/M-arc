@@ -55,16 +55,18 @@ const CL = {
   c11: C(['DATA'], ['kerr2010'], 'c11'),
   c12: C(['DATA'], ['kolber2010'], 'c12'),
   // card inherit[]: the field is barbell_bench_press's, true here by the card's own inherit reason (MECH)
-  thumb: C(['MECH'], [], 'card inherit grip.thumb (inherit:0): the bar still travels over the face, neck and chest; parent c4.'),
-  hand: C(['MECH'], [], 'card inherit grip.handContact, grip.wrist, zooms.bar-low-palm (inherit:1, 2, 5): same straight bar from the base of the palm; parent c5.'),
-  pins: C(['MECH'], [], 'card inherit setup.safety-pins (inherit:3): same flat bench in the same rack; parent c6.'),
-  spotter: C(['MECH'], [], 'card inherit setup.spotter (inherit:4): same J-hooks over the face; parent c7, c27.'),
+  thumb: C(['MECH'], [], 'card inherit grip.thumb (inherit:0): the bar still travels over the face, neck and chest (barbell_bench_press thumb rule).'),
+  hand: C(['MECH'], [], 'card inherit grip.handContact, grip.wrist, zooms.bar-low-palm (inherit:1, 2, 5): same straight bar from the base of the palm (barbell_bench_press wrist and contact rule).'),
+  pins: C(['MECH'], [], 'card inherit setup.safety-pins (inherit:3): same flat bench in the same rack (barbell_bench_press pins step).'),
+  spotter: C(['MECH'], [], 'card inherit setup.spotter (inherit:4): same J-hooks over the face (barbell_bench_press spotter step).'),
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses: the end (bar on the low chest, elbows by the ribs; c4, c2) and the spec's Mistake
 // pose merged over it, as the engine draws it (elbows drift from the ribs, the bar lands high; card plate.mistake, c2).
-// The card zoom elbows-to-ribs Wrong is that drawn fault, so no drawing value is added.
+// The card zoom elbows-to-ribs Wrong is that drawn fault, so no drawing value is added. The zoom draws it solid, on its
+// own (wrong.solid): dashed over the end pose the engine masked it inside the body and the Wrong read as the Right
+// (W4 layers panel L1/L5, #391 6653540190).
 const MIS = plateSpec.mistake.pose;
 export const stills = {
   start: { pose: plateSpec.poses.start },
@@ -75,13 +77,13 @@ export const stills = {
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except the hand zoom `bar-low-palm` (D-SHIP-HANDW4, above). Zoom shell shape (callout with an anchor
 // at the landmark it names, no guide mark): crop centre on the right pose's elbow for both halves; the Wrong is the
-// spec's Mistake dashed over the end pose, as `stills.flare`.
+// spec's Mistake pose (`stills.flare`) drawn solid: the bar high on the chest, the upper arm out from the ribs.
 const zooms = [
   {
     key: 'elbows-to-ribs', chip: 'Elbows', heading: 'Elbow path', kind: 'posture',
     crop: { center: { at: 'elbow.r', pose: 'right', off: [20, -10] }, sizePx: 180 },
     right: 'end',
-    wrong: { base: 'end', pose: MIS },
+    wrong: { base: 'end', pose: MIS, solid: true },
     callout: {
       right: { text: 'Elbows to ribs', anchor: 'elbow.r' },
       wrong: { text: 'Elbows flare', anchor: { at: 'elbow.r', pose: 'mistake' } },
@@ -133,7 +135,7 @@ const MISTAKES = [
 const RISKS = [
   { key: 'face', text: 'Bar over face and neck: touch low. Wrap thumbs. Use pins or a spotter.',
     claim: C(['DATA', 'MECH', 'CONSENSUS'], ['jumbelic2007', SLG, 'sbs-bench'], 'c10, c4, inherit:0, inherit:3, inherit:4') },
-  { key: 'dropped', text: 'Weights dropping on the lifter is the most common weight-room injury mechanism.', claim: CL.c11 },
+  { key: 'dropped', text: 'Weights dropping on the lifter are a leading cause of weight-training injuries.', claim: CL.c11 },
   { key: 'shoulder', text: 'Shoulder injuries are common in lifting and linked to poor technique.', claim: CL.c12 },
 ];
 
@@ -158,7 +160,8 @@ export default {
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar high toward the fingers, wrist bent back.' },
     ],
     // card zoom bar-low-palm Right (inherit:5), with the grip type. Its "wrist straight" shows as the inherited
-    // wrist.limitText's "wrist not bent back", the words parent c5 supports (SWEEP 2, 6).
+    // wrist.limitText's "wrist not bent back", the words the parent's wrist rule supports (inherit:2; SWEEP 2, 6).
+    // Claims (no gripLine claim slot in HandlingSpec): inherit:0 (thumb), inherit:1 (palm base).
     gripLine: "Closed overhand grip. Bar in the palm's base, not high toward the fingers, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C
   },
