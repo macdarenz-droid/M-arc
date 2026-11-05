@@ -842,6 +842,18 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-05 ~03:57 UTC** (weekly 0.71; the **five-hour window** was 0.61 at 03:48 and rising about 1.5 % a minute, so it runs out about 04:15 and resets **07:40 UTC**. The hourly tick at 07:44 is the resume point.)
+  - **Train 68 MERGED** (#396 → main `e623d3ef`; 28/28 green on `7a35ef99`). W2's 8 ids are on main. **APK owed:** main's "M/ARC gate" run 41963254689 builds it. When it is green and the fingerprint step passed, send the owner the MARC-DEBUG-APK link (6.9) with W2's 8 new guides, the battle_ropes question (ship with the grip as text only, or keep it for a later update) and the later-update list above.
+  - **Told every lane to merge main** (comments 6649085079-6649089659). W3 merged it @ `9901e8cc`, PLATEFIX-1 @ `194bbbbf`.
+  - **PIN GO posted:** W5 lb4/lb5 (6648851720, plus addendum 6649093511: rebuild after the main merge); W7 lb8/lb9/lb10 (6649092340).
+  - **F-SCRATCH-SYNTH card @ `d6fccdfa`:** adds the lib7-fix v_up fixture (D-SHIP-W7-V_UPFIX; #394 6648965952, #397 6648965408).
+  - **Panels in the scratchpad** (keys in `*-private`; briefs `msgs/layers-critic-brief.txt` and `msgs/plates-critic-brief.txt`, with {RUN}, {SET}, {N} and {LAST}). Launch queue: `w7-queue.txt`, W6 before W7.
+    - W3 focused recheck `lyr-w3r` @ `a1c44003`: content and safety are done (both plants caught); 3 visual critics are running.
+    - W5: content, safety, a.1, a.2, b.2, b.3 and c.3 are done; a.3, b.1, c.1 and c.2 are running.
+    - W6 sets (`lyr-w6a/b/c`, `k1-3`, `s`, `critic-lth`): a.1-a.3 and b.1 running; the rest are queued.
+    - W7 sets (`lyr-w7a-d`, `k1-4`, `s`): a.1-a.3 and b.1-b.3 running; the rest are queued.
+    - PLATEFIX-1 recheck sets: builder running. W4 sets: builder running. PLATEFIX-2 recheck (#395 @ `562304bc`): queued.
+  - Agents that the five-hour limit stops lose their partial work. Re-launch the missing critics from the queue after 07:40.
 - **Update 11-05 ~03:05 UTC** (weekly meter 0.56 and rising fast with about 12 lanes; owner rule: no pause until the Fri 08:00 reset). Rulings are in `verify/lib4-cards.md` section 48.
   - **Train 68 (#396), W2's 8 ids:** CI is queued behind the lanes. Local run: 281 files, 5823 tests. When it merges, an APK goes to the owner, with the battle_ropes question and the later-update list (goblet_squat, jump_squat, bench_dip, renegade_row, dumbbell_fly, the rear delt fly, pec_fly and concentration_curl, unless their routes land).
   - **W3 #384:** layers panel VALID (6648454032); a fix round is running. Content findings are in `verify/panels/w3-content-findings.md`.
