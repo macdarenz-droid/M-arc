@@ -300,10 +300,16 @@ const wordsInputProblems = (k: string, list: string[], files = true) => {
 };
 // a key module with its own declarations (literals; THUMB_SIDE's words written out), drawing one id outside LB1/LB2, in no
 // module and not a pinned row (D-LIB-SCRATCHIDS). LIB-8R (D-LIB8R-PINLINES): was box_jump until PILOT-A2 pinned it.
+// F-SCRATCH-SYNTH (D-SHIP-W7-V_UPFIX): was v_up until W7 moved it into batches/lb09.json; now a synthetic id in the
+// D-LIB8M-SCRATCH7B form (lib_scratch_*), in no exercises.json and no batches/ file.
+const SYNTH = 'lib_scratch_sevenfix_pull';
+const REAL_EX: any[] = JSON.parse(readFileSync('src/data/exercises.json', 'utf8'));
+/** D-SCRATCH-SYNTH-KEYIDX: a fixture index carrying the synthetic id in its own exercise-id set (keyIndexOf's hook). */
+const synthIdx = (mods: any[]) => Object.assign(P.indexOf(mods), { exerciseIds: new Set([...REAL_EX.map(e => e.id), SYNTH]) });
 const fixtureModule = (KEY: string, decl: any = { CONVENTIONS: { 'ga:zz': 'fixture convention: base of the fingers' }, ORIENTATIONS: { zz: 'side' }, CAMERA_TEXT: { zz: 'Seen from the thumb side' } }) => {
   const dh = P.MODULES.find((m: any) => m.KEY === 'd-handle'), pull = structuredClone(dh.VARIANTS.pull);
   pull.claims.contact = ['ga:zz'];
-  return { ...dh, KEY, OWNER: 'LIB-7-FIX-FIXTURE', FILE: `fixture/${KEY}`, ...decl, VARIANTS: { pull }, GAPS: {}, IDS: { v_up: { variant: 'pull', orientation: 'zz', faults: ['curled'], claims: [] } } };
+  return { ...dh, KEY, OWNER: 'LIB-7-FIX-FIXTURE', FILE: `fixture/${KEY}`, ...decl, VARIANTS: { pull }, GAPS: {}, IDS: { scratch_sevenfix_pull: { variant: 'pull', orientation: 'zz', faults: ['curled'], claims: [] } } };
 };
 const KINDS = ['CONVENTIONS', 'ORIENTATIONS', 'CAMERA_TEXT'];
 /** Apply declarationsOf(mods) onto pairs.mjs's exported objects for `f`, then remove what it added (hand-pairs.test.ts:94-97). */
@@ -351,7 +357,7 @@ describe('LIB-7-FIX PK2: inputs per key', () => {
   it('D-LIB12FIX-ORDER: a key that sorts before chrome passes the sorted pair and fails the fixed order; a missing chrome file is red', async () => {
     const fx = { ...fixtureModule('aa-fix'), FILE: P.MODULES.find((m: any) => m.KEY === 'd-handle').FILE };   // a real file for importClosure
     await withDeclared([...P.MODULES, fx], () => {
-      const idx2 = P.indexOf([...P.MODULES, fx]), k = 'aa-fix-pull-zz', list = P.inputsFor(k, idx2);
+      const idx2 = synthIdx([...P.MODULES, fx]), k = 'aa-fix-pull-zz', list = P.inputsFor(k, idx2);
       const under = list.filter((f: string) => f.startsWith(`${PN.WORDS_DIR}/`));
       expect(under).toEqual([PN.CHROME_WORDS, PN.wordsFileOf(k)].sort());   // F1's row, new check
       expect(under).not.toEqual([PN.CHROME_WORDS, PN.wordsFileOf(k)]);      // F1's row, the old fixed order: red
@@ -379,10 +385,10 @@ describe('LIB-7-FIX PK3: declarations per module', () => {
   it('a fixture module\'s own convention, orientation and camera words are read by indexOf, pairSpec, the sheet and G8', async () => {
     const fx = fixtureModule('zz-fix');
     await withDeclared([...P.MODULES, fx], async () => {
-      const idx = P.indexOf([...P.MODULES, fx]), s = P.pairSpec('v_up', idx);
+      const idx = P.indexOf([...P.MODULES, fx]), s = P.pairSpec('scratch_sevenfix_pull', idx);
       expect([s.orientation, s.camera, s.extras.cameraText]).toEqual(['zz', 'side', 'Seen from the thumb side']);
       expect((await S.buildSheet({ mods: [fx] })).body).toContain('ga:zz (convention: fixture convention: base of the fingers)');
-      const { spec, pages } = C.renderedPages('v_up', idx);
+      const { spec, pages } = C.renderedPages('scratch_sevenfix_pull', idx);
       expect(C.problemsOf(spec, pages).filter((p: string) => /G8 camera/.test(p))).toEqual([]);
       const keep = P.CAMERA_TEXT.zz;
       try { P.CAMERA_TEXT.zz = 'Seen from elsewhere'; expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G8 camera "Seen from the thumb side", want "Seen from elsewhere"/); } finally { P.CAMERA_TEXT.zz = keep; }
@@ -393,7 +399,7 @@ describe('LIB-7-FIX PK3: declarations per module', () => {
     expect(() => P.declarationsOf([...P.MODULES, fixtureModule('zz-a', { CONVENTIONS: { 'ga:pull-base': 'x' } })])).toThrow('hand pairs: zz-a declares CONVENTIONS.ga:pull-base, already defined by pairs.mjs');
     expect(() => P.declarationsOf([fixtureModule('zz-a'), fixtureModule('zz-b')])).toThrow('hand pairs: zz-b declares CONVENTIONS.ga:zz, already defined by zz-a');
     expect(() => P.declarationsOf([fixtureModule('zz-a'), fixtureModule('zz-b', {})])).toThrow('hand pairs: zz-b uses ORIENTATIONS.zz, declared by zz-a');
-    const convUser = { ...fixtureModule('zz-b', { ORIENTATIONS: { yy: 'side' } }) }; convUser.IDS = { v_up: { ...convUser.IDS.v_up, orientation: 'yy' } };
+    const convUser = { ...fixtureModule('zz-b', { ORIENTATIONS: { yy: 'side' } }) }; convUser.IDS = { scratch_sevenfix_pull: { ...convUser.IDS.scratch_sevenfix_pull, orientation: 'yy' } };
     expect(() => P.declarationsOf([fixtureModule('zz-a'), convUser])).toThrow('hand pairs: zz-b uses CONVENTIONS.ga:zz, declared by zz-a');
     expect(() => P.declarationsOf([fixtureModule('zz-a', { CONVENTIONS: { 'ga:zz': 'x' }, ORIENTATIONS: { zz: 'side' }, CAMERA_TEXT: { qq: 'Seen from q' } })])).toThrow('hand pairs: zz-a declares CAMERA_TEXT.qq for an orientation no module or pairs.mjs holds');
   });
@@ -412,7 +418,7 @@ export const HANDLE = { profile: 'd-handle', diameterMm: 30 };
 export const ORIENTATIONS = { zz: 'side' };
 export const CAMERA_TEXT = { zz: 'Seen from the thumb side' };
 export const VARIANTS = { pull: pullVariant({ thumbClaims: [], wristClaims: [], curledClaims: [] }) };
-export const IDS = { v_up: { variant: 'pull', orientation: 'zz', faults: ['curled'], claims: [] } };
+export const IDS = { scratch_sevenfix_pull: { variant: 'pull', orientation: 'zz', faults: ['curled'], claims: [] } };
 export const GAPS = {};
 `;
 
@@ -427,11 +433,35 @@ describe('LIB-8R D-LIB8R-PINLINES: the fixture id is not a pinned row', () => {
   });
 });
 
+describe('F-SCRATCH-SYNTH D-SCRATCH-SYNTH-KEYIDX: keyIndexOf\'s exercise-id hook', () => {
+  it('the synthetic id is in no exercises.json and no batches/ file', () => {
+    expect(REAL_EX.some(e => e.id === SYNTH)).toBe(false);
+    expect(readdirSync('tools/plates/library/batches').some(f => readFileSync(`tools/plates/library/batches/${f}`, 'utf8').includes(`"${SYNTH}"`))).toBe(false);
+  });
+  it('with no hook a non-exercise id still throws (the default check bites); production callers pass nothing', async () => {
+    const mods = [...P.MODULES, fixtureModule('zz-hook')];
+    await withDeclared(mods, () => {
+      expect(() => P.keyIndexOf(P.indexOf(mods))).toThrow(`hand pairs: ${SYNTH} is not in src/data/exercises.json`);
+      expect(() => P.keysOf(P.indexOf(mods))).toThrow(`hand pairs: ${SYNTH} is not in src/data/exercises.json`);
+    });
+    expect(readFileSync('tools/plates/library/hands/pairs.mjs', 'utf8').match(/keyIndexOf\([^)]*,/g) ?? []).toEqual([]);   // no caller passes a set
+    expect('exerciseIds' in P.INDEX).toBe(false);
+  });
+  it('the synthetic id passes only through the hook (parameter or the index\'s own set)', async () => {
+    const mods = [...P.MODULES, fixtureModule('zz-hook')], set = new Set([...REAL_EX.map(e => e.id), SYNTH]);
+    await withDeclared(mods, () => {
+      expect(P.keyIndexOf(P.indexOf(mods), set).keyOf.get('scratch_sevenfix_pull')).toBe('zz-hook-pull-zz');
+      expect(P.keyIndexOf(synthIdx(mods)).keyOf.get('scratch_sevenfix_pull')).toBe('zz-hook-pull-zz');
+      expect(() => P.keyIndexOf(P.indexOf(mods), new Set(REAL_EX.map(e => e.id)))).toThrow(/is not in src\/data\/exercises\.json/);
+    });
+  });
+});
+
 describe('LIB-7-FIX PK4: adding a key moves no existing key\'s files', () => {
   it('(a) in memory: with a declaring fixture key added, every existing key\'s inputsFor and panel are equal', async () => {
     const fx = fixtureModule('zz-fix');
     await withDeclared([...P.MODULES, fx], async () => {
-      const idx2 = P.indexOf([...P.MODULES, fx]);
+      const idx2 = synthIdx([...P.MODULES, fx]);
       expect(P.keysOf(idx2)).toContain('zz-fix-pull-zz');
       for (const k of P.keysOf()) {
         expect([k, P.inputsFor(k, idx2)]).toEqual([k, P.inputsFor(k)]);
@@ -445,10 +475,12 @@ describe('LIB-7-FIX PK4: adding a key moves no existing key\'s files', () => {
     try {
       git('worktree', 'add', '--detach', '--no-checkout', wt, 'HEAD');
       git('-C', wt, 'checkout', 'HEAD', '--', 'tools/plates', 'src/data');
+      // D-SCRATCH-SYNTH-KEYIDX: the synthetic row is added to this scratch worktree's exercises.json only
+      writeFileSync(join(wt, 'src/data/exercises.json'), JSON.stringify([...REAL_EX, { ...REAL_EX[0], id: SYNTH }], null, 2));
       writeFileSync(join(wt, 'tools/plates/library/hands/hand-zz-dummy.mjs'), DUMMY_MODULE);
       writeFileSync(join(wt, 'tools/plates/library/hands/words/zz-dummy-pull-zz.json'), JSON.stringify(PN.allWords().keys['d-handle-pull-unstated'], null, 1));
       const W = await import(/* @vite-ignore */ pathToFileURL(join(wt, 'tools/plates/library/hands/pairs.mjs')).href);
-      expect(W.HAND_OF_ID.lib_v_up).toBe('zz-dummy-pull-zz');
+      expect(W.HAND_OF_ID.lib_scratch_sevenfix_pull).toBe('zz-dummy-pull-zz');
       expect(W.keysOf().filter((k: string) => k !== 'zz-dummy-pull-zz')).toEqual(P.keysOf());
       for (const k of P.keysOf()) {
         expect([k, W.inputsFor(k)]).toEqual([k, P.inputsFor(k)]);
