@@ -20,7 +20,7 @@ import { manifestOf, manifestText, MANIFEST } from './manifest.mjs';
  *  (#397, D-LIB8M-SCRATCH7B form): each id is synthetic, a copy of `copyOf`'s exercises.json entry in the tree only;
  *  copyOf is the real id the entry named before. */
 export const SCRATCH_4C = [
-  { id: 'lib_scratch_fourc_a', copyOf: 'lib_jumping_jacks', archetype: 'none', from: 'lat_pulldown', key: 'lib4c-scratch-a' },   // D-LIB11-SCRATCHA: was lib_barbell_row (pilot A)
+  { id: 'lib_scratch_fourc_a', copyOf: 'lib_jumping_jacks', archetype: 'pull', from: 'lat_pulldown', key: 'lib4c-scratch-a' },   // D-LIB11-SCRATCHA: was lib_barbell_row (pilot A)
   { id: 'lib_scratch_fourc_b', copyOf: 'lib_one_arm_dumbbell_row', archetype: 'pull', from: 'lat_pulldown', key: 'lib4c-scratch-b' },
   { id: 'lib_scratch_fourc_c', copyOf: 'lib_t_bar_row', archetype: 'pull', from: 'seated_cable_row', key: 'lib4c-scratch-c' },
   { id: 'lib_scratch_fourc_d', copyOf: 'lib_landmine_row', archetype: 'pull', from: 'seated_cable_row', key: 'lib4c-scratch-d' },
