@@ -9563,6 +9563,24 @@ if (gate.runs('LIB-SHAPES'))
   } finally { await shapesBrowser.close(); }
 }
 
+// F-ZOOM-NONE (#388, PLAN RULED, A1 amended under D-TEXT-GOLDEN): a sheet with no posture zoom on screen. As LIB-SHAPES,
+// the built leg press chunk is served through a test-only route swap with its posture zooms dropped in memory
+// (tests/howto/fixtures/zoom-none/gate.mjs); nothing in src/ or www/ changes. Silent Black and Paper at 390 px: the swap
+// ran (else red), no posture chip, close-up or link, the Feel chip kept, no posture chunk requested, 44 px, no overflow.
+if (gate.runs('F-ZOOM-NONE'))
+{
+  const tag = 'F-ZOOM-NONE';
+  const e0 = errors.length;
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const G = await import('../tests/howto/fixtures/zoom-none/gate.mjs');
+  const zb = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), args: ['--no-sandbox'] });
+  try {
+    const shots = await G.zoomNoneGate({ browser: zb, port: PORT, OUT, P: m => errors.push(`${tag}: ${m}`), H, writeFileSync });
+    if (shots !== G.THEMES.length) errors.push(`${tag}: ${shots} screenshots, want ${G.THEMES.length}`);
+    if (errors.length === e0) console.log(`${tag}: zero-posture-zoom sheet x ${G.THEMES.join(', ')} at 390 px: swapped, chips ${G.ROW.chips.join(', ')}, no posture chunk, 44 px, no overflow`);
+  } finally { await zb.close(); }
+}
+
 // LIB-7: the radial hand pairs (card LIB-7; tools/plates/library/hands/DESIGN.md §4 A5). Every drawn library hand page,
 // rendered through hands/zoom.mjs with golden B's own zoom CSS, in 5 themes at 390, 360 and 340 px: no overflow (H4), each
 // ink class's contrast >= golden B's on its 8 hands in the same job (H5), bend values off the outline (G9, real boxes),
