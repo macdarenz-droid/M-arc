@@ -79,13 +79,13 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom (no hand zoom: handling none). Zoom shell form (render/closeup/crop.mjs): the crop centre on the
-// right pose's mid-back for both halves; the Wrong is drawn alone (solid).
+// right pose's mid-back for both halves; bext-pad's Wrong is drawn dashed over the Right (W4 panel L5); bext-top's alone (solid).
 const zooms = [
   {
     key: 'bext-pad', chip: 'Pad', heading: 'Pad height', kind: 'posture',
     crop: { center: { at: 'backMid', pose: 'right', off: [0, 10] }, sizePx: 180 },
     right: 'end',
-    wrong: { base: 'end', pose: ROUND, solid: true },
+    wrong: { base: 'end', pose: ROUND },   // W4 panel L5: dashed Wrong over the Right pose (the plate's Mistake overlay)
     callout: {
       right: { text: 'Hips hinge', anchor: 'buttock' },
       wrong: { text: 'Back curls', anchor: { at: 'backMid', pose: 'mistake' } },   // c2, c6 (the spec's tell)
@@ -106,7 +106,7 @@ const zooms = [
     wrong: { base: 'start', pose: ARCH_POSE, solid: true },
     callout: {
       right: { text: 'Straight line', anchor: 'backUpper' },
-      wrong: { text: 'Arched past straight', anchor: 'lumbar' },   // c5
+      wrong: { text: 'Over-arched', anchor: 'lumbar' },   // c5 (W4 panel L8: two words, so the sub-label keeps its margin)
     },
     caption: {
       right: 'Shoulders, spine and hips in one line. Squeeze the glutes.',   // c5 (W4 D-TEXT-PRINTED: glutes moved here)

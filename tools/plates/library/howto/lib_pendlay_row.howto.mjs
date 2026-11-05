@@ -140,9 +140,10 @@ const feel = {
   primary: [
     { muscleId: 'lats', plain: 'The lats are main movers.' },
     { muscleId: 'mid_back', plain: 'The traps do most of the work with them.' },
+    // W4 content K1 (c11): the rear delts are main movers with the lats and traps
+    { muscleId: 'rear_delts', plain: 'The rear delts are main movers too.' },
   ],
   secondary: [
-    { muscleId: 'rear_delts', plain: 'The rear delts help pull.' },
     { muscleId: 'biceps', plain: 'The biceps help bend the elbows.' },
   ],
   watch: [
@@ -195,7 +196,7 @@ export default {
       claim: C(['DATA', 'MECH'], ['odriscoll1992'], 'c21, card grip.wrist. The ext range is pairs.mjs CONVENTIONS ga:pull-base, a convention, not a card number.') },
     faults: [],                // the card names no hand fault
     // c1 overhand, c16 thumbs, c20 straps.
-    gripLine: 'Overhand, thumbs around the bar. Straps are fine if grip fails first.',
+    gripLine: 'Overhand, thumbs around the bar. Straps are fine if grip fails first.',   // c1, c16, c20 (W4 content K2)
     cue: 'Overhand, thumbs wrapped.',   // c1, c16
   },
   contacts: ['standing-feet'],

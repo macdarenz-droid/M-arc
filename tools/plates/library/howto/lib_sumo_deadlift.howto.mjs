@@ -65,7 +65,7 @@ const CL = {
   c19: C(['DATA', 'WEAK'], ['macdougall1985'], 'c19'),
   // card inherit[]: the field is conventional_deadlift's, true here by the card's own inherit reason
   inhThumb: C(['CONSENSUS', 'DATA'], ['sl-deadlift', 'escamilla2000'], 'c3; card inherit[0] grip.thumb (conventional_deadlift)'),
-  inhWrist: C(['CONSENSUS'], [SLS], 'c15; card inherit[2] grip.wrist (conventional_deadlift). The ext range is the hold archetype\'s (GA 3.1), a convention, not a card number.'),
+  inhWrist: C(['CONSENSUS'], [SLS], 'inherit:2 (card inherit[2] grip.wrist, conventional_deadlift; the card notes call the neutral wrist a drawing convention; W4 content K2: not c15). The ext range is the hold archetype\'s (GA 3.1), a convention, not a card number.'),
   inhPlate: C(['CONSENSUS'], [SLS], 'c1; card inherit[4] plate.equipment (conventional_deadlift c23): unmapped, D-SHIP-W4-ROUTE'),
 };
 
@@ -82,16 +82,16 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // sumo-start (merged with sumo-liftoff, header). sumo-grip is text (above). Zoom shell form (render/closeup/crop.mjs):
-// the crop centre is on the right pose for both halves; the Wrong is drawn alone (solid).
+// the crop centre is on the right pose for both halves; the Wrong is drawn dashed over the Right (W4 panel L5).
 const zooms = [
   {
     key: 'sumo-start', chip: 'Start', heading: 'Start position', kind: 'posture',
     crop: { center: { at: 'hip.r', pose: 'right', off: [20, 10] }, sizePx: 210 },
     right: 'end',
-    wrong: { base: 'end', pose: HIPS, solid: true },
+    wrong: { base: 'end', pose: HIPS },   // W4 panel L5: dashed Wrong over the Right pose (the plate's Mistake overlay)
     callout: {
       right: { text: 'Chest up', anchor: 'sternum' },
-      wrong: { text: 'Hips shoot up', anchor: 'buttock' },
+      wrong: { text: 'Hips shoot up', anchor: { at: 'buttock', pose: 'mistake' } },   // the dot on the risen hips
     },
     caption: {
       right: 'Chest up, trunk upright, bar on shins, back flat.',

@@ -77,13 +77,13 @@ export const stills = {
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except the hand zoom `landmine-grip` (D-SHIP-HANDW4, above). Zoom shell form
 // (render/closeup/crop.mjs): the crop centre on the right pose's mid-back for both halves; the Wrong is the Mistake pose
-// drawn alone (solid).
+// drawn dashed over the Right pose (W4 panel L5).
 const zooms = [
   {
     key: 'landmine-back', chip: 'Back', heading: 'Back line', kind: 'posture',
     crop: { center: { at: 'backMid', pose: 'right', off: [0, 0] }, sizePx: 170 },
     right: 'end',
-    wrong: { base: 'end', pose: ROUND, solid: true },
+    wrong: { base: 'end', pose: ROUND },   // W4 panel L5: dashed Wrong over the Right pose (the plate's Mistake overlay)
     callout: {
       right: { text: 'Back straight', anchor: 'backMid' },
       wrong: { text: 'Lower back rounds', anchor: { at: 'lumbar', pose: 'mistake' } },   // c9, c11 (the spec's tell)

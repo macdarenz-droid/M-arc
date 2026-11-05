@@ -77,12 +77,12 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except the hand zoom `dshrug-grip` (D-SHIP-HANDW4, above). Zoom shell form (render/closeup/crop.mjs):
-// the crop centre is on the right pose for both halves (the elbow the plate's Mistake tell names); the Wrong is the
+// the crop centre is on the right pose's midline for both halves (W4 panel L8: both arms and dumbbells inside); the Wrong is the
 // spec's Mistake drawn alone (solid).
 const zooms = [
   {
     key: 'dshrug-top', chip: 'Top', heading: 'Top position', kind: 'posture',
-    crop: { center: { at: 'elbow.l', pose: 'right', off: [0, -10] }, sizePx: 170 },
+    crop: { center: { at: 'navel', pose: 'right', off: [0, -10] }, sizePx: 200 },   // W4 panel L8: on the midline, wide enough for both arms and dumbbells
     right: 'end',
     wrong: { base: 'end', pose: MIS, solid: true },
     callout: {
@@ -110,7 +110,7 @@ const feel = {
   rows: [
     { key: 'grip', where: 'Forearms and grip tiring first', at: { muscles: ['forearms'] },
       means: 'Your grip may be holding back the load.',   // c8 ("If you feel like the grip strength is what's holding you back")
-      fix: 'Use lifting straps.',
+      fix: 'Use lifting straps.',   // c8 (W4 content K2)
       claim: CL.c8 },
     { key: 'shoulder', where: 'Pain in your shoulder', at: { muscles: ['front_delts'] },
       means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label

@@ -85,16 +85,18 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // oadr-top only (oadr-support is text, header). Zoom shell form (render/closeup/crop.mjs): the crop centre on the right
-// pose's working shoulder for both halves; the Wrong is drawn alone (solid).
+// pose's working shoulder for both halves; the Wrong is drawn dashed over the Right (W4 panel L5).
 const zooms = [
   {
     key: 'oadr-top', chip: 'Top', heading: 'Top position', kind: 'posture',
     crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, 10] }, sizePx: 170 },
-    right: 'end',
-    wrong: { base: 'end', pose: TWIST_POSE, solid: true },
+    // the end pose with its trunk 0 written as the object form (flex 0, yaw 0: the same drawing), so the dashed Wrong can
+    // merge over it (D-LIB20-TRUNK)
+    right: { base: 'end', pose: { trunk: { flex: 0, yaw: 0 } } },
+    wrong: { base: 'end', pose: TWIST_POSE },   // W4 panel L5: dashed Wrong over the Right pose, so the turn reads against the square torso
     callout: {
       right: { text: 'Torso square', anchor: 'backUpper' },
-      wrong: { text: 'Torso twists', anchor: 'shoulder.r' },   // c7
+      wrong: { text: 'Torso twists', anchor: { at: 'shoulder.r', pose: 'mistake' } },   // c7 (the dot on the turned shoulder)
     },
     caption: {
       right: 'Elbow driven back, dumbbell at the hip, torso square.',   // c6, c9, c7
@@ -130,7 +132,7 @@ const feel = {
       fix: 'Pull toward your hip instead.', claim: CL.c9 },
     { key: 'grip', where: 'Grip giving out before the back', at: { muscles: ['forearms'] },
       means: 'Your back is usually stronger than your grip.',
-      fix: 'Use a lifting strap.', claim: CL.c16 },
+      fix: 'Use a lifting strap.', claim: CL.c16 },   // c16 (W4 content K2)
     { key: 'shoulder', where: 'Pain in your shoulder', at: { muscles: ['front_delts'] },
       means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
       fix: "Stop the set. Don't train through the pain.",
@@ -171,7 +173,7 @@ export default {
     wrist: { ext: [0, 25], limitText: 'Keep the wrist from curling forward.',
       claim: C(['DATA', 'MECH'], ['odriscoll1992'], 'c19, card grip.wrist. The ext range is pairs.mjs CONVENTIONS ga:pull-base, a convention, not a card number.') },
     faults: [],                // the card names no hand fault
-    gripLine: 'One dumbbell in the working hand, thumb wrapped around the handle.',   // c1, c17
+    gripLine: 'One dumbbell in the working hand, thumb wrapped around the handle.',   // c1, c17 (W4 content K2)
     cue: 'Elbow back to your hip.',   // c6, c9
   },
   contacts: ['brace-pad'],   // the card's archetype.contact

@@ -60,7 +60,7 @@ const CL = {
   c22: C(['CONSENSUS'], [SL], 'c22'),
   c23: C(['CONSENSUS'], [SL], 'c23'),
   // card inherit[]: the field is romanian_deadlift's, true here by the card's own inherit reason
-  inhWrist: C(['CONSENSUS'], [SL], 'c4; card inherit[2] grip.wrist (romanian_deadlift). The ext range is the hold archetype\'s (GA 3.1), a convention, not a card number.'),
+  inhWrist: C(['CONSENSUS'], [SL], 'inherit:2 (card inherit[2] grip.wrist, romanian_deadlift; the card notes call the neutral wrist a drawing convention; W4 content K2: not c4). The ext range is the hold archetype\'s (GA 3.1), a convention, not a card number.'),
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
@@ -141,15 +141,19 @@ const feel = {
   primary: [
     { muscleId: 'glutes', plain: 'The glutes work hard, more than in the Romanian deadlift.' },
     { muscleId: 'hamstrings', plain: 'The back of the thighs should feel the work.' },
-    { muscleId: 'lower_back', plain: 'The lower back works hard in this lift.' },
   ],
+  // W4 panel L4 / content K1 (c13): the lower back is Also working (c15: it works hard) and the watch region, so the map
+  // agrees with the feel line's "not your back" and the 'Lower back taking over' row draws the dashed outline.
   secondary: [
+    { muscleId: 'lower_back', plain: 'The lower back works hard in this lift.' },
     { muscleId: 'quads', plain: 'The front thighs work hard too.' },
     { muscleId: 'adductors', plain: 'The inner thighs help.' },
     { muscleId: 'upper_traps', plain: 'The traps help.' },
     { muscleId: 'forearms', plain: 'The forearms help.' },
   ],
-  watch: [],   // card watch lower_back (c13) is also primary (C2): the feel line's "not your back" carries c13
+  watch: [
+    { muscleId: 'lower_back', plain: 'The lower back should not take over.' },   // c13 (card watch)
+  ],
   feelLine: 'You should feel this in your glutes and hamstrings, not your back. Front thighs help off the floor.',
   rows: [
     { key: 'low-back-over', where: 'Lower back taking over', at: { muscles: ['lower_back'] },
@@ -198,7 +202,7 @@ export default {
     wrist: { ext: [-10, 10], limitText: 'Keep the wrist neutral, in line with the forearm.', claim: CL.inhWrist },   // inherited
     pose: { thumb: 'wrapped' },   // inherited (handling.pose.thumb); no hand pose is drawn (no hand zoom)
     faults: [],                   // dl-grip's Wrong is a placement fault, written as the third mistake
-    gripLine: 'Overhand, thumbs wrapped, hands about shoulder width, outside the knees. Use mixed grip or straps only when grip limits heavy sets.',
+    gripLine: 'Overhand, thumbs wrapped, hands about shoulder width, outside the knees. Use mixed grip or straps only when grip limits heavy sets.',   // c3, c21 (W4 content K2)
     cue: 'Thumbs wrapped, arms straight.',   // c21, c4
   },
   contacts: ['standing-feet'],   // inherited (card inherit[3] archetype.contact)

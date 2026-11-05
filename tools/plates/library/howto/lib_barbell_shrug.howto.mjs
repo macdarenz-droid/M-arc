@@ -144,7 +144,7 @@ export default {
       // card zoom shrug-grip wrong (c10). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'thumbless', label: 'Thumb not wrapped', pose: {}, markers: [], alt: 'Thumb not wrapped around the bar.' },
     ],
-    gripLine: 'Overhand, hands shoulder width. Thumbs wrapped around the bar, never left unwrapped.',
+    gripLine: 'Overhand, hands about shoulder width, thumbs wrapped around the bar.',   // c1, c10 (W4 content K2, K4)
     cue: 'Arms straight, shoulders up.',   // c4, c2
   },
   contacts: ['standing-feet'],
@@ -152,7 +152,8 @@ export default {
     { kind: 'grip', text: 'Overhand grip, hands about shoulder width, thumbs around the bar.', claim: CL.grip },
     { kind: 'position', text: 'Stand tall with knees slightly bent and hips straight.', claim: CL.c2 },
     { kind: 'position', text: 'Let the bar hang in front of your thighs on straight arms.', claim: CL.c4 },
-    { kind: 'brace', text: 'Grip the bar and think of pulling your hands apart.', claim: CL.c3 },
+    // W4 panel L2 / content K1: the invented bar-spreading cue is gone; the card's lift line (c2, c3) takes the step.
+    { kind: 'position', text: 'Lift your shoulders straight up toward your ears. No rolling.', claim: C(['CONSENSUS'], [ACE], 'c2, c3') },
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c8 },
   ],
   posture: [

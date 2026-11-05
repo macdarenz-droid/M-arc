@@ -59,7 +59,7 @@ const CL = {
   c19: C(['DATA', 'WEAK'], ['macdougall1985'], 'c19'),
   c21: C(['CONSENSUS'], ['acsm2009'], 'c21'),
   // card inherit[]: the field is romanian_deadlift's, true here by the card's own inherit reason
-  inhWrist: C(['CONSENSUS'], [SW], 'c15; card inherit[0] grip.wrist (romanian_deadlift). The ext range is the hold archetype\'s (GA 3.1), a convention, not a card number.'),
+  inhWrist: C(['CONSENSUS'], [SW], 'inherit:0 (card inherit[0] grip.wrist, romanian_deadlift; the card notes call the neutral wrist a drawing convention; W4 content K2: not c15). The ext range is the hold archetype\'s (GA 3.1), a convention, not a card number.'),
   inhKnees: C(['CONSENSUS'], [SW], 'c3, c6; card inherit[1] knees posture (romanian_deadlift c4)'),
 };
 

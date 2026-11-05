@@ -52,7 +52,7 @@ const CL = {
   c9: C(['DATA'], ['kolber2010'], 'c9'),
   c10: C(['DATA', 'WEAK'], ['macdougall1985'], 'c10'),
   up: C(['CONSENSUS', 'WEAK'], [MO, 'acsm2009'], 'c2, c7, c11'),
-  grip: C(['CONSENSUS'], [MO, 'baechle-grip'], 'c1, inherit:0 (parent c10)'),
+  grip: C(['CONSENSUS'], [MO, 'baechle-grip'], 'c1, inherit:0 (the parent\'s thumb rule; W4 content K2: this card\'s c10 is the blood-pressure claim)'),
   unrack: C(['CONSENSUS'], ['eos-smith', MO], 'c6, c1'),
   rock: C(['CONSENSUS'], [MO, 'eos-smith', 'acsm2009'], 'c3, c5, c8'),
   elbows: C(['CONSENSUS'], [MO], 'c3, c2'),
@@ -157,7 +157,7 @@ export default {
       // === the parent's faults[key=thumbless] (card zoom shrug-grip wrong, inherit:2). Not drawn (no hand zoom).
       { key: 'thumbless', label: 'Thumb not wrapped', pose: {}, markers: [], alt: 'Thumb not wrapped around the bar.' },
     ],
-    gripLine: 'Overhand, hands slightly wider than your shoulders. Thumbs wrapped around the bar, never left unwrapped.',
+    gripLine: 'Overhand, hands slightly wider than your shoulders, thumbs wrapped around the bar.',   // c1, inherit:0 (W4 content K4)
     cue: 'Arms long, head level.',   // c1, c3
   },
   contacts: ['standing-feet'],
