@@ -194,8 +194,17 @@ describe('HT5-A4: the push hints (critic fix 8)', () => {
     const { byId } = await loadAll();
     const wantKeys = [...byId.entries()].filter(([, c]) => c.handling?.archetype === 'push').map(([id]) => id);
     expect(wantKeys.length).toBeGreaterThan(0);
+    // LIB-SHIP W2 (ruling 3): pushHints runs over every shipped id (gen/ids.mjs), so the shipped library rows whose sheet is
+    // push-archetype with a cue are hinted too, each with its own sheet's cue; exactly the three W2 push ids
+    const cueOf = new Map(byId.entries());
+    for (const id of HOWTO_IDS) if (!cueOf.has(id)) {
+      const { content: c } = await content.loadContent(id);
+      cueOf.set(id, c);
+      if (c.handling?.archetype === 'push' && c.handling.cue) wantKeys.push(id);
+    }
+    expect(wantKeys.filter(id => !byId.has(id))).toEqual(['lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_rope_triceps_pushdown']);
     expect(allIds.filter(id => howToHint(id) !== undefined).sort()).toEqual(wantKeys.sort());
-    for (const id of wantKeys) expect(howToHint(id)).toBe(byId.get(id)!.handling.cue);
+    for (const id of wantKeys) expect(howToHint(id)).toBe(cueOf.get(id)!.handling.cue);
     for (const id of HOWTO_IDS) if (!wantKeys.includes(id)) expect(howToHint(id)).toBeUndefined();
   });
 

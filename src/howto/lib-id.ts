@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=461ae03b1a001830052cca86cf5bb1b8c770d18f94fc46f0060207d9adfd1f84
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=19117947f96be495b69a31450280f858eb19db09c55bc0c0ae7f6e22891e87fa
 // Every library exercise id in src/data/exercises.json (library plan 5.2). Types only: costs no bundle bytes.
 export type LibId =
   | "lib_machine_chest_press"

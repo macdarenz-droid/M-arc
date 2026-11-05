@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=2d042bf8eb42c544c10dd2fafc543fa8ab61a3157e02170bca7dfcb68003d7ee
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=a14e55f8d7d943d09798149fb5f0dc76b5a93e7fb4f7e390a96997e17529a10a
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -16,10 +16,26 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-bent-over-row": {
+    "id": "ace-bent-over-row",
+    "cite": "ACE Exercise Library: Bent-over Row",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/12/bent-over-row/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "ace-chest-press": {
     "id": "ace-chest-press",
     "cite": "ACE Exercise Library, Seated Chest Press",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-db-chest-press": {
+    "id": "ace-db-chest-press",
+    "cite": "Chest Press (dumbbell), ACE Exercise Library",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/19/chest-press/",
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
@@ -48,10 +64,42 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-plank": {
+    "id": "ace-plank",
+    "cite": "Front Plank (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "ace-pushdown": {
+    "id": "ace-pushdown",
+    "cite": "Triceps Pushdowns (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-pushup": {
+    "id": "ace-pushup",
+    "cite": "Push-Ups, Exercise Library (ACE)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/41/push-up/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-02"
+  },
   "ace-seated-curl": {
     "id": "ace-seated-curl",
     "cite": "Seated Biceps Curl (ACE Exercise Library)",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-seated-ohp": {
+    "id": "ace-seated-ohp",
+    "cite": "Seated Overhead Press, ACE Exercise Library",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/45/seated-overhead-press/",
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
@@ -64,6 +112,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-standing-fly": {
+    "id": "ace-standing-fly",
+    "cite": "Standing Chest Fly (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/160/standing-chest-fly/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "acsm-2009": {
     "id": "acsm-2009",
     "cite": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
@@ -71,6 +127,14 @@
     "kind": "guideline",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "acsm2009": {
+    "id": "acsm2009",
+    "cite": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-17"
   },
   "andersen2008": {
     "id": "andersen2008",
@@ -112,6 +176,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "baechle-grip": {
+    "id": "baechle-grip",
+    "cite": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+    "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "kind": "textbook",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "barbell-logic-grip": {
     "id": "barbell-logic-grip",
     "cite": "Barbell Logic, Bench Press Grip Tips",
@@ -135,6 +207,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "bb-pushup": {
+    "id": "bb-pushup",
+    "cite": "How to Perform the Push-Up: Tips, Tricks, & Variations (BarBend)",
+    "url": "https://barbend.com/push-up/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-02"
   },
   "bells-of-steel": {
     "id": "bells-of-steel",
@@ -256,6 +336,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "cortell-2017": {
+    "id": "cortell-2017",
+    "cite": "Influence of Scapular Position on the Core Musculature Activation in the Prone Plank Exercise (2017)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27787465/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "cronin2007": {
     "id": "cronin2007",
     "cite": "Cronin JB, Jones JV, Hagstrom JT (2007) Kinematics and kinetics of the seated row and implications for conditioning. J Strength Cond Res 21(4):1265-70",
@@ -336,6 +424,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "esenkaya2000": {
+    "id": "esenkaya2000",
+    "cite": "Bilateral anterior shoulder dislocation in a weight lifter",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/20086631/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "fees1998": {
     "id": "fees1998",
     "cite": "Fees M, Decker T, Snyder-Mackler L, Axe MJ. Upper extremity weight-training modifications for the injured athlete. Am J Sports Med 1998;26(5):732-42",
@@ -400,6 +496,30 @@
     "access": "full",
     "checked": "2026-11-03"
   },
+  "hand-key-palm-flat": {
+    "id": "hand-key-palm-flat",
+    "cite": "LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index",
+    "url": "tools/plates/library/hands/hand-palm-flat.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-04"
+  },
+  "harvard-plank": {
+    "id": "harvard-plank",
+    "cite": "Try this move for better core strength (Harvard Health Publishing, 2021)",
+    "url": "https://www.health.harvard.edu/healthy-aging-and-longevity/try-this-move-for-better-core-strength",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "hk-db-bench": {
+    "id": "hk-db-bench",
+    "cite": "How to perform a dumbbell bench press (Human Kinetics excerpt)",
+    "url": "https://us.humankinetics.com/blogs/excerpt/how-to-perform-a-dumbbell-bench-press",
+    "kind": "textbook",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "hk-squat": {
     "id": "hk-squat",
     "cite": "Broussal-Derval A. Squat technique. Human Kinetics, 2019",
@@ -407,6 +527,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "hold-default": {
+    "id": "hold-default",
+    "cite": "Golden B hold archetype default (dumbbell_lateral_raise handling: thumb wrapped, contact mid-palm)",
+    "url": "tools/plates/layers/exercises/dumbbell_lateral_raise.howto.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-04"
   },
   "jakobsen2012": {
     "id": "jakobsen2012",
@@ -448,6 +576,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "kikuchi-2017": {
+    "id": "kikuchi-2017",
+    "cite": "Low-load bench press and push-up induce similar muscle hypertrophy and strength gain.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29541130/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-02"
+  },
   "kinoshita2026": {
     "id": "kinoshita2026",
     "cite": "Kinoshita M et al. Hypertrophic effects of single- versus multi-joint exercise: a direct comparison between knee extension and leg press. Med Sci Sports Exerc 2026;58(7):1566-1580",
@@ -476,6 +612,14 @@
     "id": "kolber2014",
     "cite": "Kolber MJ et al. (2014) Characteristics of shoulder impingement in the recreational weight-training population. J Strength Cond Res 28(4):1081-9",
     "url": "https://pubmed.ncbi.nlm.nih.gov/24077379/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "kowalczuk2022": {
+    "id": "kowalczuk2022",
+    "cite": "Pectoralis Major Rupture: Evaluation and Management",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35025841/",
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
@@ -510,6 +654,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/15228624/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "lesmills-upright-row": {
+    "id": "lesmills-upright-row",
+    "cite": "Upright rows (Bryce Hastings, Les Mills Fit Planet)",
+    "url": "https://www.lesmills.com/fit-planet/fitness/upright-rows",
+    "kind": "coach",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "lusk2010": {
@@ -568,6 +720,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "mcallister2013": {
+    "id": "mcallister2013",
+    "cite": "Effect of grip width on electromyographic activity during the upright row.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/22362088/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "mcgill2015": {
     "id": "mcgill2015",
     "cite": "McGill S, Andersen J, Cannon J (2015) Muscle activity and spine load during anterior chain whole body linkage exercises: the body saw, hanging leg raise and walkout from a push-up. J Sports Sci 33(4):419-26",
@@ -608,6 +768,22 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "nfpt-rope": {
+    "id": "nfpt-rope",
+    "cite": "How to do Tricep Pushdowns with the Rope (Robert Bovee, NFPT, 2025)",
+    "url": "https://nfpt.com/how-to-do-tricep-pushdowns-with-the-rope/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "nhs-back": {
+    "id": "nhs-back",
+    "cite": "NHS, Back pain",
+    "url": "https://www.nhs.uk/conditions/back-pain/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-02"
+  },
   "nhs-elbow-pain": {
     "id": "nhs-elbow-pain",
     "cite": "NHS, Elbow and arm pain",
@@ -637,6 +813,14 @@
     "cite": "NHS, Wrist pain",
     "url": "https://www.nhs.uk/conditions/hand-pain/wrist-pain/",
     "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "nsca-ch15-summary": {
+    "id": "nsca-ch15-summary",
+    "cite": "NSCA CSCS Chapter 15 (Exercise Technique) study summary, PTPioneer",
+    "url": "https://www.ptpioneer.com/personal-training/certifications/nsca-cscs/cscs-chapter-15/",
+    "kind": "secondary",
     "access": "full",
     "checked": "2026-09-30"
   },
@@ -720,6 +904,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "puregym-cable-fly": {
+    "id": "puregym-cable-fly",
+    "cite": "How To Do Cable Flyes (PureGym)",
+    "url": "https://www.puregym.com/exercises/chest/chest-fly/cable-flyes/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "rogue-false-grip": {
     "id": "rogue-false-grip",
     "cite": "Rogue Fitness, False Grips",
@@ -736,6 +928,22 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "saeterbakken2011": {
+    "id": "saeterbakken2011",
+    "cite": "A comparison of muscle activity and 1-RM strength of three chest-press exercises with different stability requirements",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21225489/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "saeterbakken2013": {
+    "id": "saeterbakken2013",
+    "cite": "Effects of body position and loading modality on muscle activity and strength in shoulder presses",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23096062/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "saeterbakken2015": {
     "id": "saeterbakken2015",
     "cite": "Saeterbakken A et al. (2015) The effect of performing bi- and unilateral row exercises on core muscle activation. Int J Sports Med 36(11):900-5",
@@ -744,11 +952,35 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "sbs-bench": {
+    "id": "sbs-bench",
+    "cite": "How to Bench Press: The Definitive Guide (Stronger by Science)",
+    "url": "https://www.strongerbyscience.com/how-to-bench/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "schoenfeld-2014": {
+    "id": "schoenfeld-2014",
+    "cite": "An electromyographic comparison of a modified version of the plank with a long lever and posterior tilt versus the traditional plank exercise (2014)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25325773/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "schulz": {
     "id": "schulz",
     "cite": "Schulz DS. Low Bar Squat Wrist Pain: Reasons and Solutions. Torokhtiy",
     "url": "https://store.torokhtiy.com/blogs/guides/low-bar-squat-wrist-pain",
     "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "schutz2022": {
+    "id": "schutz2022",
+    "cite": "Chest Exercises: Movement and Loading of Shoulder, Elbow and Wrist Joints",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35202059/",
+    "kind": "peer-reviewed",
     "access": "full",
     "checked": "2026-09-30"
   },
@@ -760,10 +992,58 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "sl-barbell-row": {
+    "id": "sl-barbell-row",
+    "cite": "How to Do Barbell Rows: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/barbell-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "sl-cable-fly": {
+    "id": "sl-cable-fly",
+    "cite": "How to Do Standing Cable Chest Fly: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/standing-cable-chest-fly/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "sl-dbcurl": {
     "id": "sl-dbcurl",
     "cite": "How to Dumbbell Curl: Muscles Worked & Proper Form",
     "url": "https://www.strengthlog.com/dumbbell-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "sl-pushdown": {
+    "id": "sl-pushdown",
+    "cite": "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (StrengthLog, 2023)",
+    "url": "https://www.strengthlog.com/tricep-pushdown/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "sl-pushup": {
+    "id": "sl-pushup",
+    "cite": "How to Do Push-Up: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/push-up/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-02"
+  },
+  "sl-rope": {
+    "id": "sl-rope",
+    "cite": "How to Do Tricep Pushdown With Rope: Muscles Worked & Proper Form (StrengthLog, 2023)",
+    "url": "https://www.strengthlog.com/?p=2541",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "sl-upright-row": {
+    "id": "sl-upright-row",
+    "cite": "How to Do Barbell Upright Row: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/barbell-upright-row/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"

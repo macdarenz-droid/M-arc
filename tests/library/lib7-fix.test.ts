@@ -272,7 +272,9 @@ describe('LIB-7-FIX F7: L2-A21\'s covering proof (D-LIB7FIX-A21)', () => {
   });
   it('mutation: gen/ids.mjs without its hand clause (a temp copy outside tools/plates/) lets that row through', async () => {
     const src = readFileSync('tools/plates/gen/ids.mjs', 'utf8'), base = pathToFileURL(join(process.cwd(), 'tools/plates/gen/')).href;
-    const clause = /\n {4}if \(archetypes\[r\.id\] !== 'none' && !has\(`hand-\$\{c\}`\) && !pairOf\[c\]\) throw [^\n]*/;
+    // LIB-SHIP W2 (D-SHIP-IDS-NOPAIR): the clause now also reads the sheet's own archetype and noPairRuling; the same
+    // mutation (the whole hand clause cut) must still let the row through
+    const clause = /\n {4}if \(!none && !has\(`hand-\$\{c\}`\) && !pairOf\[c\] && !\(sheet && noPairRuling\(sheet\)\)\) throw [^\n]*/;
     expect(src).toMatch(clause);
     const copy = src.replace(clause, '').replace(/(from\s+)'(\.{1,2}\/[^']+)'/g, (_m, pre, spec) => `${pre}'${new URL(spec, base).href}'`);
     const file = join(tmpdir(), `lib7fix-ids-${process.pid}-${Date.now()}.mjs`);

@@ -17,17 +17,24 @@ export const pairPath = key => `src/howto/generated/handpair-${key}.ts`;
 /** The pair loader module, or null when LIB-7 has not landed it. `file` is repo-relative (tests pass a fixture). */
 export async function loadPairs(file = PAIRS) {
   if (!existsSync(join(ROOT, file))) return null;
-  return import(pathToFileURL(join(ROOT, file)).href);
+  const m = await import(pathToFileURL(join(ROOT, file)).href);
+  if (file === PAIRS) loaded = m;   // F-PAIR-FAULTS: configPairOf's sub-keys
+  return m;
 }
+let loaded = null;
 
 /** Shipped id -> key, and the keys in first-use order, for the shipped ids that have a pair. */
-export function pairsOf(pairs, shipped, all = rows()) {
+/** D-SHIP-PAIR-NOZOOM (#379 6637870829): the ids on the pinned no-zoom list ship with no hand close-up, so no pair. */
+export const NO_ZOOM_LIST = 'tools/plates/library/hands/no-zoom.json';
+export const noZoomIds = (root = ROOT) => (existsSync(join(root, NO_ZOOM_LIST)) ? Object.keys(JSON.parse(readFileSync(join(root, NO_ZOOM_LIST), 'utf8')).entries ?? {}) : []);
+
+export function pairsOf(pairs, shipped, all = rows(), noZoom = noZoomIds()) {
   if (!pairs) return { pairOf: {}, keys: [] };
   const byId = new Map(all.map(r => [r.id, r]));
   const pairOf = {}, keys = [];
   for (const id of shipped) {
     const key = pairs.HAND_OF_ID[id];
-    if (!key) continue;
+    if (!key || noZoom.includes(id)) continue;
     if (!/^[a-z0-9-]+$/.test(key)) throw new Error(`handpairs: ${id}: bad key ${key}`);
     pairOf[byId.get(id).chromeId] = key;
     if (!keys.includes(key)) keys.push(key);
@@ -39,7 +46,7 @@ export const pairText = (key, panel) => `// The ${key} hand pair (library plan 2
 export const panel = ${JSON.stringify(panel)};
 `;
 
-export const inputs = () => [...registryInputs(), PAIRS].filter(p => existsSync(join(ROOT, p)));
+export const inputs = () => [...registryInputs(), PAIRS, NO_ZOOM_LIST].filter(p => existsSync(join(ROOT, p)));
 
 export async function outputs({ pairsFile = PAIRS, prev } = {}) {
   const pairs = await loadPairs(pairsFile);
@@ -80,7 +87,11 @@ export const after = ['tools/plates/gen/hands.mjs'];
 export function configPairOf(row, root = ROOT) {
   const file = row.pages?.layersConfig;
   if (!file || !existsSync(join(root, file))) return undefined;
-  return JSON.parse(readFileSync(join(root, file), 'utf8')).closeups?.[row.id]?.pair;
+  const c = JSON.parse(readFileSync(join(root, file), 'utf8')).closeups?.[row.id];
+  if (c?.pairFaults === undefined && c?.pairWords === undefined) return c?.pair;
+  // F-PAIR-FAULTS: a pairFaults row's sub-key, from the repo's pair loader (gen/hands.mjs loads it before any reader)
+  if (!loaded?.rowKeyOf) throw new Error(`handpairs: ${row.id}: ${file} names pairFaults, but the pair loader is not loaded`);
+  return loaded.rowKeyOf(row.id, c);
 }
 /** The card element of `chromeId` on a layers page (build-page.mjs: `<article class="sheet-card" id="card-<id>"`). */
 export function cardOf(html, chromeId) {

@@ -51,9 +51,11 @@ export async function outputs() {
   const rows = shippedRows(), mods = await Promise.all(rows.map(async r => ({ src: r.id, M: await import(pathToFileURL(join(ROOT, sourceOf(r.id))).href) })));
   const fam = await treeFamily(mods, ROOT);
   if (fam.problems.length) throw new Error(`library family (rows ${fam.counts.eight}, shared ${fam.counts.shared}, hands ${fam.counts.hands}):\n  ${fam.problems.map(b => `${b.path}: ${b.rule}${b.detail ? ` (${b.detail})` : ''}`).join('\n  ')}`);
+  // D-SHIP-FAMILY (ruling 4): the resolver reads a parent's content only from a row shipped in this head.
+  const byId = new Map(await Promise.all(rows.map(async r => [r.id, (await loadContent(r.id)).content])));
   for (const [i, row] of rows.entries()) {
-    const { content } = await loadContent(row.id);
-    const refused = familyRefusal(row.id, content, readCard);
+    const content = byId.get(row.id);
+    const refused = familyRefusal(row.id, content, readCard, id => byId.get(id));
     if (refused) throw new Error(refused);
     if (row.mode === 'golden') continue;
     const bad = lintLibraryRow(mods[i].M, shared, { extraBoxes: { back }, boxKeys: { back: BACK_BOX_KEY } });
