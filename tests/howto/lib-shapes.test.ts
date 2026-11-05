@@ -225,8 +225,11 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     // F-PAIR-FAULTS (#386): pairs.mjs's key is re-pinned there and pinned exactly by pair-faults.test.ts
     const F_PAIR = ['tools/plates/library/hands/pairs.mjs'];
     for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of [...F_CROP, ...F_PAIR]) r.files[k] = 'X'; }
+    // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts
+    for (const r of rows) if ('docs/research/howto/shared/back-pain-box.json' in r.files) r.files['docs/research/howto/shared/back-pain-box.json'] = 'X';
     // main cb9a6dae's MANIFEST.json with the same entries blanked (was 227e5d30… on main c4c34d75 without F_PAIR; re-measured by F-PAIR-FAULTS)
-    expect(sha(JSON.stringify(m))).toBe('b126d854f879d014474d6a78af89d376439dd7aad0b3bc6389e5da352dc1c840');
+    // (was b126d854… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main 8bb433bd)
+    expect(sha(JSON.stringify(m))).toBe('f7ce35cd35b3d769e6c335437b3c87d0367c35d6e3f6acc71e3701dabe88e403');
   });
 });
 

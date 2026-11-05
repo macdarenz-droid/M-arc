@@ -171,19 +171,22 @@ describe('F-PAIR-FAULTS A3: the reds', () => {
 // A2: tools/plates/library/MANIFEST.json moves only the keys of the files this card changes (manifestOf, D-CROP-PIN form)
 const MOVED = ['tools/plates/library/build-layers-page.mjs', 'tools/plates/library/hands/pairs.mjs'];
 // sha256 of main cb9a6dae's MANIFEST.json (JSON.stringify of the parsed file) with MOVED's values blanked in every row
-const MANIFEST_BLANKED_MAIN = 'd7f80b6f1768f11a08abfcb1ecaa28bad6c429f2a276cfe0619106dae8d728c0';
+// RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
+// research-routes.test.ts (was d7f80b6f… without it; re-measured on main 8bb433bd).
+const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
+const MANIFEST_BLANKED_MAIN = 'e0f9a4bc64eb78a2b96f2f998b11f1c4d150d7de17ec1085bf3e3da246780c43';
 const blanked = (m: any, keys = MOVED) => { const c = structuredClone(m); for (const r of Object.values<any>(c.rows)) for (const k of keys) if (k in r.files) r.files[k] = ''; return sha(JSON.stringify(c)); };
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
     const m = JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
-    expect(blanked(m)).toBe(MANIFEST_BLANKED_MAIN);
+    expect(blanked(m, [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN);
     for (const k of MOVED) for (const r of Object.values<any>(m.rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
-    const m = JSON.parse(read('tools/plates/library/MANIFEST.json').toString()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k))!;
+    const m = JSON.parse(read('tools/plates/library/MANIFEST.json').toString()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => ![...MOVED, RR_BOX].includes(k))!;
     row.files[other] = '0'.repeat(64);
-    expect(blanked(m)).not.toBe(MANIFEST_BLANKED_MAIN);
-    expect(blanked(JSON.parse(read('tools/plates/library/MANIFEST.json').toString()), MOVED.slice(0, 1))).not.toBe(MANIFEST_BLANKED_MAIN);
+    expect(blanked(m, [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN);
+    expect(blanked(JSON.parse(read('tools/plates/library/MANIFEST.json').toString()), [MOVED[0]!, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN);
   });
 });

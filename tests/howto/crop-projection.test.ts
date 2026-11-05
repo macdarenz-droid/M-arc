@@ -90,8 +90,11 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     for (const r of rows) for (const k of KEYS) { expect(r.files[k]).toBe(sha(readFileSync(path(k)))); r.files[k] = 'X'; }
     // F-PAIR-FAULTS (#386): build-layers-page.mjs's and pairs.mjs's keys are re-pinned there and pinned exactly by pair-faults.test.ts
     for (const r of rows) for (const k of ['tools/plates/library/build-layers-page.mjs', 'tools/plates/library/hands/pairs.mjs']) r.files[k] = 'X';
+    // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts
+    for (const r of rows) if ('docs/research/howto/shared/back-pain-box.json' in r.files) r.files['docs/research/howto/shared/back-pain-box.json'] = 'X';
     // main cb9a6dae's MANIFEST.json with the same entries blanked (was 497e6f30… on main 8d596fab without F-PAIR-FAULTS's two; re-measured)
-    expect(sha(JSON.stringify(m))).toBe('b126d854f879d014474d6a78af89d376439dd7aad0b3bc6389e5da352dc1c840');
+    // (was b126d854… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main 8bb433bd)
+    expect(sha(JSON.stringify(m))).toBe('f7ce35cd35b3d769e6c335437b3c87d0367c35d6e3f6acc71e3701dabe88e403');
   });
 });
 
