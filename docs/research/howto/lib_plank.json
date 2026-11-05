@@ -1,0 +1,19 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=5885eeea618736f2424720896d406aee5b9c1c7c5929ab702f8496d3c18f9d52
+{
+  "id": "lib_plank",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/plank.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-plank",
+    "schoenfeld-2014",
+    "cortell-2017",
+    "harvard-plank",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

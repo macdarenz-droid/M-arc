@@ -86,9 +86,11 @@ describe('HT2-A6 css.mjs rules (one test per rule)', () => {
     expect(() => c.rewriteCss('.a { transition: opacity 170ms; }')).toThrow(/170ms/);
     expect(() => c.rewriteCss('.a { font-size: 12px; }')).toThrow(/font-size/);
   });
-  it('the generated plate.css is exactly rewriteCss(the fixture\'s <style>)', () => {
+  // F-PLATE-ZOOMCSS (D-ZOOMCSS-PINS, #387 6636735178): plate.css also carries zoom/inline.mjs's ZOOM_CSS, read from the module
+  it('the generated plate.css is exactly rewriteCss(ZOOM_CSS + the fixture\'s <style>)', async () => {
+    const { ZOOM_CSS } = await import(/* @vite-ignore */ new URL('../../tools/plates/library/zoom/inline.mjs', import.meta.url).href);
     const text = readFileSync(`${DIR}/plate.css`, 'utf8');
-    expect(text.slice(text.indexOf('\n') + 1)).toBe(c.rewriteCss(c.galleryCss(readFileSync(g.FIXTURE, 'utf8'))));
+    expect(text.slice(text.indexOf('\n') + 1)).toBe(c.rewriteCss(ZOOM_CSS + c.galleryCss(readFileSync(g.FIXTURE, 'utf8'))));
   });
   it('every rule on .plate-svg, .plate-callout, .plate-meta, .plate-arc-label, .tells and .tempo survives unchanged but for .ht and the ht tokens', () => {
     const golden = c.parse(c.galleryCss(readFileSync(g.FIXTURE, 'utf8'))).flatMap((n: any) => (n.sel != null ? [n] : Array.isArray(n.body) ? n.body.map((r: any) => ({ ...r, at: n.at })) : []));

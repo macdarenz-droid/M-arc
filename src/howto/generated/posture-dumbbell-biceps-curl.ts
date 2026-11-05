@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=bb74e2ef5dd40303c09b408ac21534b1a721532ba79e486c9915ed1c37f33c9e
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=12f0131dd949dbaaee4ab25c0fc454cf6b51765cab4a02cfed3a2d654f5bf9b7
 // The dumbbell-biceps-curl posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-dumbbell-biceps-curl.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

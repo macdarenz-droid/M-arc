@@ -149,7 +149,15 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
       const M = await import(/* @vite-ignore */ url((await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'))).sourceOf(r.id)));
       const { content: c } = await content.loadContent(r.id);
       for (const f of M.default.riskFlags ?? ['wrist']) {
+        // LIB-SHIP W2: a shipped row's 'back' flag shows the approved back box (backBox(), RED_FLAG_BACK) under its key,
+        // as the library gate lints it (gen/library-gate.mjs:61); every other flag is golden B's shared block
+        if (f === 'back') {
+          const BB = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), B = BB.backBox(), KEY = BB.BACK_BOX_KEY;
+          expect([r.id, f, lintTokens(L.boxReach('redFlag(back)', B, [], KEY))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B, DISCLAIMER: shared.DISCLAIMER }, 'back'))]);
+          continue;
+        }
         const B = shared[CL.RED_FLAG_BLOCKS[f].exp];
+        expect(B, `${r.id} ${f}`).toBeDefined();
         expect([r.id, f, lintTokens(L.boxReach(`redFlag(${f})`, B))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG: B, DISCLAIMER: shared.DISCLAIMER }, f))]);
       }
     }
@@ -355,7 +363,11 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
       const { content: c } = await content.loadContent(r.id), M = await import(/* @vite-ignore */ url(R.sourceOf(r.id)));
       const names = CL.sourceNamePatterns([M]), plate = await S.plateFragmentsOf(r.id);
       expect(Object.keys(plate)).toHaveLength(9);
-      const boxes = Object.fromEntries((c.riskFlags ?? ['wrist']).map((f: string) => [`RED_FLAG_${f.toUpperCase()}`, shared[CL.RED_FLAG_BLOCKS[f].exp]]));
+      // LIB-SHIP W2: 'back' is the approved back box (RED_FLAG_BACK, backBox()) linted under its key, as gen/library-gate.mjs:61
+      const BB = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), BACK = BB.backBox();
+      const boxOf = (f: string) => (f === 'back' ? BACK : shared[CL.RED_FLAG_BLOCKS[f].exp]);
+      for (const f of c.riskFlags ?? ['wrist']) expect(boxOf(f), `${r.id} ${f}`).toBeDefined();
+      const boxes = Object.fromEntries((c.riskFlags ?? ['wrist']).map((f: string) => [`RED_FLAG_${f.toUpperCase()}`, boxOf(f)]));
       const bad = [
         ...checkC1(c, known), ...checkC2(c), ...checkC4(c), ...checkC7(c),
         ...(r.mode === 'golden' ? checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '')
@@ -363,7 +375,7 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
             JSON.parse(readFileSync(join(ROOT, c.research.card), 'utf8')))),
         ...checkC8(c, SOURCES), ...checkC15(c, plate, reviews), ...checkC16(c),
         ...C19.checkC19Copy(L.shownCopyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),
-        ...L.lintLibraryRow(M, shared).map((x: any) => `lint: ${x.path}: ${x.rule}`),
+        ...L.lintLibraryRow(M, shared, { extraBoxes: { back: BACK }, boxKeys: { back: BB.BACK_BOX_KEY } }).map((x: any) => `lint: ${x.path}: ${x.rule}`),
       ];
       expect([r.id, bad]).toEqual([r.id, []]);
     }
@@ -394,15 +406,24 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   // LIB-SHIP (D-SHIP-A9, ruling 3): replaces "SHIPPED.length is 8". The shipped rows are exactly the 8 then the ruled
   // library ids (W1: dumbbell_biceps_curl, #376 6616230145), and none of the 9 mapped children ships yet (their parents'
   // resolver lands in W2, D-SHIP-FAMILY): an unruled shipped id, a dropped ruled id or a shipped child is red.
+  // LIB-SHIP W2 (ruling 3): the ruled library ids are W1's curl plus W2's 9 (#379 6625803515, holds per Q6/Q7 and PLATEFIX);
+  // the map also holds D-SHIP-FAMILY's single_leg_romanian_deadlift, a W2-ruled child that is held (PLATEFIX) and not shipped.
+  const RULED_LIB = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
+    'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
+  const SLRDL = 'lib_single_leg_romanian_deadlift';
   it('the map covers every inherit[] field of the 9 cards exactly, and no field is unmapped', () => {
-    expect(SHIPPED.map(r => r.id)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl']);
-    expect([...cards.keys()].filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
+    expect(SHIPPED.map(r => r.id)).toEqual([...EIGHT, ...RULED_LIB]);
+    expect([...cards.keys(), SLRDL].filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
     for (const [id, card] of cards) {
       expect([id, card.inherit.length > 0, typeof card.parent]).toEqual([id, true, 'string']);
       expect([id, FM.unmappedFields(id, card)]).toEqual([id, []]);
       expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).sort()]);
     }
-    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys()].sort());
+    // LIB-SHIP W2 (D-SHIP-FAMILY): the map is the 9 cards plus single_leg_romanian_deadlift, whose card's inherit[] it covers exactly
+    const slrdl = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/cards/single_leg_romanian_deadlift.json'), 'utf8'));
+    expect([slrdl.parent, FM.unmappedFields(SLRDL, slrdl)]).toEqual(['romanian_deadlift', []]);
+    expect(Object.keys(FM.INHERIT_MAP[SLRDL]).sort()).toEqual(slrdl.inherit.map((e: any) => e.field).sort());
+    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys(), SLRDL].sort());
   });
   /** D-LIB9a-MAP as ruled (#245 6393424755 on the tables of 6393419324), keyed by each card's exact field string. Literal:
    *  a narrowed or widened path in INHERIT_MAP turns this red. shoulder_press's setup line is not in it (F-LB1-SETUP). */
@@ -414,6 +435,8 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     lib_incline_machine_press: { 'grip.type': ['handling.handle'], 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'],
       "posture['Straight wrist, forearm behind the handle']": ['posture[key=wrist]'], "posture['Feet flat, hips back']": ['posture[key=feet]'], "zooms['hand']": ['zooms[key=hand]'] },
     lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], "zooms['hand']": ['zooms[key=hand]'] },
+    // LIB-SHIP W2 D-SHIP-FAMILY (#379 6625803515)
+    lib_single_leg_romanian_deadlift: { 'grip.thumb': THUMB, 'grip.wrist': ['handling.wrist'] },
     lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': ['setup[kind=position,zoom=path].text'] },
     lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path]'], 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
     lib_horizontal_leg_press: { grip: ['handling'], "posture['Tailbone and lower back flat on the pad']": ['posture[key=back]'], "posture['Whole foot flat, mid-platform']": ['posture[key=feet]'],

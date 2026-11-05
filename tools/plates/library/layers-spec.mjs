@@ -41,6 +41,9 @@ export function rewriteSpecifiers(text, map, file) {
 }
 
 /** LIB-6's buildLayersPage spec for one batch file. `stageDir`: an empty temp folder the staged copies are written to. */
+/** LIB-SHIP: the pinned no-zoom list (tests/howto/checks/c3-library.ts checks it against each card). */
+export const NO_ZOOM_LIST = 'tools/plates/library/hands/no-zoom.json';
+
 export function layersSpecOf(batchFile, { stageDir, root = ROOT, all = rows(root) } = {}) {
   if (!stageDir) throw new Error('layers-spec: no stageDir');
   // D-SHIP-LEFTOUT-CLOSURE (#383 6632352291): a `left-out:` row (no page, maybe no spec) is never staged.
@@ -94,8 +97,11 @@ export function layersSpecOf(batchFile, { stageDir, root = ROOT, all = rows(root
     writeFileSync(abs, text);
     files[m] = abs;
   }
+  // LIB-SHAPES (D-SHIP-SHAPES, D-SHIP-C3; #377 6615017999): the page's ids on the pinned no-zoom list, as howto ids
+  const listed = JSON.parse(readFileSync(join(root, NO_ZOOM_LIST), 'utf8')).entries ?? {};
+  const noZoom = ids.filter(id => Object.hasOwn(listed, id)).map(id => howtoIdOf(cardIdOf(byId.get(id))));
   return {
-    groups, closeups, files,
+    groups, closeups, files, ...(noZoom.length ? { noZoom } : {}),
     ...(cfg.optionsModule ? { optionsUrl: pathToFileURL(join(root, cfg.optionsModule)).href } : {}),
     ...('jump' in cfg ? { jump: cfg.jump } : {}),
   };

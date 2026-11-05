@@ -85,6 +85,8 @@ describe('HT-3c B3: tests/howto/budgets.json', () => {
     expect(base).toHaveLength(file.budgets.length - 1);
     expect(problems(['lib_dumbbell_biceps_curl'], base, fx('lib_dumbbell_biceps_curl')).bad).toEqual(['handpair-curl-dumbbell-under-*.js: no entry']);
     expect(problems([], [...base, entry('rope-push-neutral', 100, 50)], fx()).bad).toEqual(['handpair-rope-push-neutral-*.js: stale']);
-    expect(problems(['lib_rope_triceps_pushdown'], [...base, entry('rope-push-neutral', cap.raw + 1, cap.gz)], fx('lib_rope_triceps_pushdown')).bad).toEqual([`handpair-rope-push-neutral-*.js: ${cap.raw + 1}/${cap.gz} over the cap ${cap.raw}/${cap.gz}`]);
+    // LIB-SHIP W2 (D-SHIP-PAIR-NOZOOM): rope is on the pinned no-zoom list, so pairsOf gives it no pair; the over-the-cap red
+    // runs on mountain_climbers, a keyed id that is not on the list
+    expect(problems(['lib_mountain_climbers'], [...base, entry('palm-flat-floor-over', cap.raw + 1, cap.gz)], fx('lib_mountain_climbers')).bad).toEqual([`handpair-palm-flat-floor-over-*.js: ${cap.raw + 1}/${cap.gz} over the cap ${cap.raw}/${cap.gz}`]);
   }, 60_000);
 });

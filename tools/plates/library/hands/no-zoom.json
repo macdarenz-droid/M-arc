@@ -1,6 +1,67 @@
 {
- "about": "LIB-SHIP D-SHIP-C3 (#376 6614298313): the library rows that ship with no hand zoom. Each entry names its ruling and exactly one reason: gap-key (a hand key's GAPS entry, at file:line), gap-ruled (a ruling that names the id) or card-no-zoom (the card has no hand zoom, checked against the card file at test time). The row's handling.why names the same ruling. Entries are added per wave, each ruled before it is used (tests/howto/checks/c3-library.ts RULED).",
+ "about": "LIB-SHIP D-SHIP-C3 (#376 6614298313): the library rows that ship with no hand zoom. Each entry names its ruling and exactly one reason: gap-key (a hand key's GAPS entry, at file:line), gap-ruled (a ruling that names the id) or card-no-zoom (the card has no hand zoom, checked against the card file at test time). The row's handling.why names the same ruling. W2 entries per SHIP W2 PLAN RULED (#379 6625803515). Entries are added per wave, each ruled before it is used (tests/howto/checks/c3-library.ts RULED).",
  "entries": {
-  "lib_barbell_overhead_press": { "ruling": "D-SHIP-Q1", "reason": "gap-ruled", "note": "push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19, hands/DESIGN.md:211); the grip copy carries c3 and c4" }
+  "lib_barbell_overhead_press": {
+   "ruling": "D-SHIP-Q1",
+   "reason": "gap-ruled",
+   "note": "push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19, hands/DESIGN.md:211); the grip copy carries c3 and c4"
+  },
+  "lib_dumbbell_bench_press": {
+   "ruling": "D-SHIP-HANDW2",
+   "reason": "gap-ruled",
+   "note": "push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19); the grip copy carries the card's claims"
+  },
+  "lib_dumbbell_shoulder_press": {
+   "ruling": "D-SHIP-HANDW2",
+   "reason": "gap-ruled",
+   "note": "push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19); the grip copy carries the card's claims"
+  },
+  "lib_triceps_pushdown": {
+   "ruling": "D-SHIP-HANDW2",
+   "reason": "gap-ruled",
+   "note": "push heel-of-palm pair not drawable through golden B's engine (D-LIB7-19); the grip copy carries the card's claims"
+  },
+  "lib_romanian_deadlift": {
+   "ruling": "D-SHIP-HANDW2",
+   "reason": "gap-ruled",
+   "note": "no pair key variant draws this card's handle (barbell_row: the bar key's row variant is the 32 mm pull-up bar, no sourced barbell diameter, Q-W2-1); no per-id pose without every number (ruling 8)"
+  },
+  "lib_upright_row": {
+   "ruling": "D-SHIP-HANDW2",
+   "reason": "gap-ruled",
+   "note": "no pair key variant draws this card's handle (barbell_row: the bar key's row variant is the 32 mm pull-up bar, no sourced barbell diameter, Q-W2-1); no per-id pose without every number (ruling 8)"
+  },
+  "lib_bent_over_dumbbell_rear_delt_fly": {
+   "ruling": "D-SHIP-HANDW2",
+   "reason": "gap-ruled",
+   "note": "no pair key variant draws this card's handle (barbell_row: the bar key's row variant is the 32 mm pull-up bar, no sourced barbell diameter, Q-W2-1); no per-id pose without every number (ruling 8)"
+  },
+  "lib_barbell_row": {
+   "ruling": "D-SHIP-HANDW2",
+   "reason": "gap-ruled",
+   "note": "no pair key variant draws this card's handle (barbell_row: the bar key's row variant is the 32 mm pull-up bar, no sourced barbell diameter, Q-W2-1); no per-id pose without every number (ruling 8)"
+  },
+  "lib_rope_triceps_pushdown": {
+   "ruling": "D-SHIP-ROPEPAIR",
+   "reason": "gap-ruled",
+   "note": "the approved rope pair draws the rope across the middle of the palm; card c2 puts the hand against the knob (F-ROPE-PAIR)"
+  },
+  "lib_cable_fly": {
+   "ruling": "D-SHIP-C3",
+   "reason": "gap-key",
+   "at": "tools/plates/library/hands/hand-d-handle.mjs:24"
+  },
+  "lib_single_leg_romanian_deadlift": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_dumbbell_fly": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_push_up": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  }
  }
 }
