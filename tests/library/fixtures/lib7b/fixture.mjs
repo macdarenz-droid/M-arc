@@ -1,6 +1,6 @@
 // LIB-7b fixture (scratch; lib4-cards 11.1 item 3's limits: never pinned or shipped). A temp tree with LIB-4b's B5
 // staging (fidelity/fixture.mjs stage) of three scratch library ids whose layers config names a pair:
-//   - lib_scratch_pull_row and lib_t_bar_row (D-LIB-SCRATCHIDS: outside LB1 and LB2, not taken; accepted on #284) on
+//   - lib_scratch_pull_row and lib_scratch_row_b (synthetic, as lib_scratch_pull_row; LIB-SHIP W4 swapped it from lib_t_bar_row) on
 //     curl-dumbbell-under: two rows on one key on one page (D-LIB7b-PAGEDUP). lib_scratch_pull_row is no library id: the
 //     tree's copied exercises.json gains it as a copy of lib_lat_pulldown's entry (copyOf; D-LIB8M-SCRATCH7B, #109) and
 //     its coverage-archetypes.json gains it as 'pull';
@@ -16,7 +16,7 @@ import { markScratch, writeScratchStamps } from '../../../../tools/plates/librar
 export const REPO = join(dirname(fileURLToPath(import.meta.url)), '../../../..');
 export const SCRATCH_7B = [
   { id: 'lib_scratch_pull_row', from: 'lat_pulldown', key: 'curl-dumbbell-under', pre: 'scratch-pull-row', copyOf: 'lib_lat_pulldown', archetype: 'pull' },
-  { id: 'lib_t_bar_row', from: 'seated_cable_row', key: 'curl-dumbbell-under', pre: 't-bar-row' },
+  { id: 'lib_scratch_row_b', from: 'seated_cable_row', key: 'curl-dumbbell-under', pre: 'scratch-row-b', copyOf: 'lib_seated_cable_row', archetype: 'pull' },   // LIB-SHIP W4 (#391 6647967408): was lib_t_bar_row, now a batches/lb03.json row
   { id: 'lib_smith_machine_shoulder_press', from: 'machine_chest_press', key: 'rope-push-neutral', pre: 'smith-machine-shoulder-press' },
 ];
 const COPY = ['index.html', 'vite.config.ts', 'package.json', 'tsconfig.json', 'public', 'src', 'tools', 'tests/howto/golden', 'docs/research/howto', 'tests/howto/fixtures/lib2b'];
@@ -29,7 +29,7 @@ export async function stagePairs(root, { scratch = SCRATCH_7B, pair = true, src 
   const exf = join(root, 'src/data/exercises.json'), ex = JSON.parse(readFileSync(exf, 'utf8'));
   for (const s of scratch.filter(x => x.copyOf)) ex.push({ ...ex.find(e => e.id === s.copyOf), id: s.id });
   writeFileSync(exf, `${JSON.stringify(ex, null, 1)}\n`);
-  // generate (gen/ids.mjs) needs every exercises.json id in the coverage data: the hand archetype of the replaced target and of lib_t_bar_row
+  // generate (gen/ids.mjs) needs every exercises.json id in the coverage data: the hand archetype of the replaced target and of each copyOf id
   const cvf = join(root, 'tools/plates/library/coverage-archetypes.json'), cv = JSON.parse(readFileSync(cvf, 'utf8'));
   for (const s of scratch.filter(x => x.copyOf)) cv.archetypes[s.id] = s.archetype;
   writeFileSync(cvf, `${JSON.stringify(cv, null, 2)}\n`);
