@@ -402,4 +402,25 @@ describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batc
     const chin = all.find((r: any) => r.id === 'lib_chin_up');
     await expect(filesOf(chin, { all })).rejects.toThrow(/leg_press_calf_raise\.mjs does not exist/);
   }, 120_000);
+  it('the lb01 layers spec stages no file of the left-out row (layers-spec.mjs filter)', async () => {
+    const { layersSpecOf } = await import(/* @vite-ignore */ url('tools/plates/library/layers-spec.mjs'));
+    const { mkdtempSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { rows } = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    // the left-out row (no pages, no spec) first in the batch: unfiltered, the spec would read its missing pages
+    const { writeFileSync } = await import('node:fs');
+    const { relative } = await import('node:path');
+    // a scratch config that lists the left-out row, given to that row only and put first: unfiltered, layersSpecOf reads
+    // the first batch row's config and stages the left-out row (its spec does not exist, so it throws)
+    const dir = mkdtempSync(join(tmpdir(), 'w3-leftout-cfg-')), cfgPath = join(dir, 'lb01.layers.json');
+    const cfg = json('tools/plates/library/pages/lb01.layers.json');
+    writeFileSync(cfgPath, JSON.stringify({ ...cfg, groups: cfg.groups.map((g: any) => ({ ...g, ids: [...g.ids, 'lib_leg_press_calf_raise'] })) }));
+    const all = rows(), left = all.find((r: any) => r.id === 'lib_leg_press_calf_raise');
+    const front = [{ ...left, pages: { ...left.pages, layersConfig: relative(ROOT, cfgPath) } }, ...all.filter((r: any) => r !== left)];
+    for (const order of [all, front]) {
+      const spec: any = layersSpecOf('tools/plates/library/batches/lb01.json', { stageDir: mkdtempSync(join(tmpdir(), 'w3-leftout-')), all: order });
+      expect(JSON.stringify(spec)).not.toContain('leg_press_calf_raise');
+      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(12);
+    }
+  }, 120_000);
 });
