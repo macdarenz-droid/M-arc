@@ -376,3 +376,143 @@ describe('LIB-SHIP D-SHIP-IDS-NOPAIR + D-SHIP-PAIR-NOZOOM: every pinned no-zoom 
     expect(hands.noPairRuling({ ...ohp, handling: { ...ohp.handling, why: ohp.handling.why.replace('D-SHIP-C3 no-zoom list, ', '') } })).toBe(null);
   });
 });
+
+/* ------------------------------------------------------------------ LIB-SHIP W6 (SHIP W6 PLAN RULED, #393 6647923934) */
+// D-SHIP-W6-CONV / Q-W6-4 / Q-W6-5 / Q-W6-7 / Q-W6-11 / D-SHIP-W6-PALMS: every convention value a W6 sheet takes is pinned
+// against its live source (golden B's handling, or pairs.mjs CONVENTIONS), never against a literal. Two reds per source:
+// the source changes; the card gains a value of its own for that field.
+const W6_GOLD: Record<string, string> = { balance: 'lib_leg_press', pull: 'lib_lat_pulldown', hold: 'lib_dumbbell_lateral_raise', push: 'lib_machine_chest_press', onbody: 'lib_barbell_back_squat' };
+/** Per W6 sheet: the field it takes from a convention, and where from (golden B archetype default or a ga: text). */
+const W6_CONV: Record<string, Record<string, string>> = {
+  lib_machine_crunch: { thumb: 'balance', contact: 'balance' },
+  lib_hip_abduction: { thumb: 'balance', contact: 'balance' },
+  lib_hip_adduction: { thumb: 'balance', contact: 'balance' },
+  lib_machine_lateral_raise: { thumb: 'balance', contact: 'balance' },
+  lib_rear_delt_fly: { thumb: 'pull', contact: 'ga:pull-base' },
+  lib_face_pull: { thumb: 'pull', contact: 'ga:pull-base' },
+  lib_cable_external_rotation: { thumb: 'pull', contact: 'ga:pull-base' },
+  lib_resistance_band_pull_apart: { thumb: 'pull', contact: 'ga:pull-base' },
+  lib_cable_chest_press: { thumb: 'push', contact: 'ga:push-heel' },
+  lib_weighted_dip: { thumb: 'push', contact: 'ga:push-heel' },
+  lib_low_to_high_cable_fly: { thumb: 'hold', contact: 'hold' },
+  lib_high_to_low_cable_fly: { thumb: 'hold', contact: 'hold' },
+  lib_cable_lateral_raise: { thumb: 'hold', contact: 'hold' },
+  lib_dumbbell_front_raise: { contact: 'hold' },
+  lib_smith_machine_squat: { thumb: 'onbody', contact: 'onbody' },
+};
+const W6_ZONE: Record<string, string> = { 'heel of the palm': 'heel', 'base of the fingers': 'finger-base' };
+const W6_CARD_FIELD: Record<string, string> = { thumb: 'thumb', contact: 'handContact' };
+/** A card field the card leaves to the archetype: empty, "Not given…", "…archetype default…". The palms rows (D-SHIP-W6-PALMS)
+ *  and face_pull (Q-W6-11) name the hands' place but no zone, so their contact is ruled data with the card's words kept. */
+const W6_RULED_CONTACT_TEXT: Record<string, string> = { lib_cable_chest_press: 'Push through the palms (c3).', lib_weighted_dip: 'Drive through the palms on the way up (c5).',
+  lib_face_pull: 'Hands on the ends of the rope (c2).' };
+const delegated = (t: unknown) => typeof t !== 'string' || t.trim() === '' || /not given|archetype default/i.test(t);
+function w6ConvProblems(id: string, c: any, card: any, gold: Record<string, any>, conv: Record<string, string>) {
+  const out: string[] = [];
+  for (const [field, src] of Object.entries(W6_CONV[id]!)) {
+    const got = field === 'thumb' ? c.handling.thumb.mode : c.handling.contact;
+    let want: unknown;
+    if (src.startsWith('ga:')) want = Object.entries(W6_ZONE).find(([z]) => conv[src]!.includes(z))?.[1];
+    else want = field === 'thumb' ? gold[src]!.handling.thumb.mode : gold[src]!.handling.contact;
+    if (got !== want) out.push(`${id} ${field} ${got} is not ${src}'s ${want}`);
+    const cf = card.grip?.[W6_CARD_FIELD[field]!];
+    const ruled = field === 'contact' && W6_RULED_CONTACT_TEXT[id] !== undefined && typeof cf === 'string' && cf.startsWith(W6_RULED_CONTACT_TEXT[id]!.replace(/ \(c\d+\)\.$/, ''));
+    if (!delegated(cf) && !ruled) out.push(`${id} ${field}: the card gives its own value, so no convention may fill it`);
+  }
+  return out;
+}
+
+describe('LIB-SHIP W6 D-SHIP-W6-CONV: convention values pinned against their live sources', () => {
+  let gold: Record<string, any> = {};
+  beforeAll(async () => { for (const [k, id] of Object.entries(W6_GOLD)) gold[k] = (await content.loadContent(id)).content; });
+  const card = (id: string) => json(`docs/research/howto/cards/${id.slice(4)}.json`);
+  for (const id of Object.keys(W6_CONV)) it(`${id}: each convention field equals its source`, async () => {
+    const { content: c } = await content.loadContent(id);
+    expect(w6ConvProblems(id, c, card(id), gold, P.CONVENTIONS)).toEqual([]);
+  });
+  it('red 1: a source changes (leg_press thumb, ga:pull-base zone, dumbbell_lateral_raise contact)', async () => {
+    const crunch = (await content.loadContent('lib_machine_crunch')).content, fp = (await content.loadContent('lib_face_pull')).content;
+    const fly = (await content.loadContent('lib_cable_lateral_raise')).content;
+    const g2 = { ...gold, balance: { ...gold.balance, handling: { ...gold.balance.handling, thumb: { ...gold.balance.handling.thumb, mode: 'over' } } },
+      hold: { ...gold.hold, handling: { ...gold.hold.handling, contact: 'fingertips' } } };
+    expect(w6ConvProblems('lib_machine_crunch', crunch, card('lib_machine_crunch'), g2, P.CONVENTIONS)).toEqual(['lib_machine_crunch thumb wrapped is not balance\'s over']);
+    expect(w6ConvProblems('lib_cable_lateral_raise', fly, card('lib_cable_lateral_raise'), g2, P.CONVENTIONS)).toEqual(['lib_cable_lateral_raise contact mid-palm is not hold\'s fingertips']);
+    const conv = { ...P.CONVENTIONS, 'ga:pull-base': 'GA 3.1 pull: heel of the palm; extension 0 to 25' };
+    expect(w6ConvProblems('lib_face_pull', fp, card('lib_face_pull'), gold, conv)).toEqual(['lib_face_pull contact finger-base is not ga:pull-base\'s heel']);
+  });
+  it('red 2: the card gains a value of its own for a convention field', async () => {
+    const c = (await content.loadContent('lib_rear_delt_fly')).content, k = card('lib_rear_delt_fly');
+    expect(w6ConvProblems('lib_rear_delt_fly', c, { ...k, grip: { ...k.grip, thumb: 'Thumbs over the handles (c3).' } }, gold, P.CONVENTIONS))
+      .toEqual(['lib_rear_delt_fly thumb: the card gives its own value, so no convention may fill it']);
+    const p = (await content.loadContent('lib_cable_chest_press')).content, kp = card('lib_cable_chest_press');
+    expect(w6ConvProblems('lib_cable_chest_press', p, { ...kp, grip: { ...kp.grip, handContact: 'Fingertips on the handles (c3).' } }, gold, P.CONVENTIONS))
+      .toEqual(['lib_cable_chest_press contact: the card gives its own value, so no convention may fill it']);
+  });
+});
+
+describe('LIB-SHIP W6 D-SHIP-W6-NOPRIMARY: the empty-primary feel section (gen/feel.mjs + build-layers-page.mjs)', () => {
+  const sec = (label: string) => `<div class="feel-map" role="img" aria-label="${label}" data-feel-map data-rest-label="${label}"></div><div class="feel-legend"><span><svg class="feel-sw sw-pri" viewBox="0 0 14 14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="3"/></svg>Main</span><span>x</span></div>`;
+  let F: any, B: any;
+  beforeAll(async () => { [F, B] = await Promise.all(['tools/plates/gen/feel.mjs', 'tools/plates/library/build-layers-page.mjs'].map(p => import(/* @vite-ignore */ url(p)))); });
+  it('the page patch\'s constants equal gen/feel.mjs\'s', () => {
+    expect([...B.FEEL_NOPRIMARY]).toEqual([F.NOPRIMARY_MARK, F.NOPRIMARY_CLAUSE, F.MAIN_LEGEND_SPAN]);
+  });
+  it('an empty-primary section loses every " Main: ." clause and the Main span; a section with a primary is byte-equal', () => {
+    const empty = sec('Where you should feel it. Main: . Also working: rear delts.');
+    const out = F.dropEmptyPrimary(empty);
+    expect(out).not.toContain('Main');
+    expect(out).toContain('aria-label="Where you should feel it. Also working: rear delts."');
+    const full = sec('Where you should feel it. Main: chest.');
+    expect(F.dropEmptyPrimary(full)).toBe(full);
+  });
+  it('red: an empty-primary section with no Main span (or two) throws', () => {
+    expect(() => F.dropEmptyPrimary(sec('Where you should feel it. Main: .').replace(F.MAIN_LEGEND_SPAN, ''))).toThrow('0 Main legend spans');
+  });
+  it('cable_external_rotation: primary is exactly [] (no muscle promoted); rotator_cuff only as text; no row highlights it', async () => {
+    const { content: c } = await content.loadContent('lib_cable_external_rotation'), k = json('docs/research/howto/cards/cable_external_rotation.json');
+    /** The sheet's primary ids against the card's (a promoted muscle is a claim the card does not make). */
+    const pri = (f: any) => JSON.stringify(f.primary.map((m: any) => m.muscleId)) === JSON.stringify(k.feel.primary.map((m: any) => m.muscleId)) ? [] : ['primary differs from the card'];
+    expect(k.feel.primary).toEqual([]);
+    expect(pri(c.feel)).toEqual([]);
+    expect(c.feel.rows.flatMap((r: any) => r.at?.muscles ?? [])).not.toContain('rotator_cuff');
+    // red: rear_delts promoted to primary
+    expect(pri({ ...c.feel, primary: [{ muscleId: 'rear_delts' }] })).toEqual(['primary differs from the card']);
+  });
+});
+
+describe('LIB-SHIP W6 D-SHIP-W6-WAYOUT: each Smith sheet carries its own card\'s way-out step, cited to its own card', () => {
+  const WAY: Record<string, string> = { lib_smith_machine_squat: 'c8', lib_smith_machine_shoulder_press: 'c7', lib_smith_machine_incline_press: 'c5' };
+  const problems = (c: any, claim: string) => {
+    const cites = (s: any) => new RegExp(`\\b${claim}\\b`).test(String(s.claim?.note ?? ''));
+    const out = c.setup.some((s: any) => s.kind === 'safety' && cites(s)) || c.setup.some(cites) ? [] : [`${c.id}: no setup step cites its card's way-out ${claim}`];
+    if (JSON.stringify(c).includes('unrack-rerack')) out.push(`${c.id}: cites shared/unrack-rerack.json`);
+    return out;
+  };
+  for (const [id, claim] of Object.entries(WAY)) it(`${id}: a setup step cites ${claim}`, async () => {
+    const { content: c } = await content.loadContent(id);
+    if (!c.setup) return;   // smith_machine_incline_press is written from W4's head (Q-W6-9); a stub has no setup yet
+    expect(problems(c, claim)).toEqual([]);
+  });
+  it('red: the way-out step removed; a shared-card cite added', async () => {
+    const { content: c } = await content.loadContent('lib_smith_machine_squat');
+    const strip = { ...c, setup: c.setup.map((s: any) => ({ ...s, claim: { ...s.claim, note: String(s.claim?.note ?? '').replace(/\bc8\b/g, 'cX') } })) };
+    expect(problems(strip, 'c8')).toEqual(['lib_smith_machine_squat: no setup step cites its card\'s way-out c8']);
+    expect(problems({ ...c, x: 'shared/unrack-rerack.json' }, 'c8')).toEqual(['lib_smith_machine_squat: cites shared/unrack-rerack.json']);
+  });
+});
+
+describe('LIB-SHIP W6 D-SHIP-W6-BACKREACH: a shipped library row flagged back is in the back box\'s appliesTo', () => {
+  const problems = (sheets: { id: string; riskFlags?: string[] }[], applies: string[]) =>
+    sheets.filter(s => (s.riskFlags ?? []).includes('back') && !applies.includes(s.id.replace(/^lib_/, ''))).map(s => `${s.id}: back flag outside the back box's appliesTo`);
+  it('holds on this head over every shipped library row', async () => {
+    const applies = json('docs/research/howto/shared/back-pain-box.json').appliesTo as string[];
+    const lib = reg.shippedIds().filter((i: string) => !EIGHT.includes(i));
+    const sheets = await Promise.all(lib.map(async (i: string) => (await content.loadContent(i)).content));
+    expect(problems(sheets, applies)).toEqual([]);
+  });
+  it('red: cable_chest_press (back, not in the 35) shipped', async () => {
+    const applies = json('docs/research/howto/shared/back-pain-box.json').appliesTo as string[];
+    const { content: c } = await content.loadContent('lib_cable_chest_press');
+    expect(problems([c], applies)).toEqual(['lib_cable_chest_press: back flag outside the back box\'s appliesTo']);
+  });
+});
