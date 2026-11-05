@@ -7,7 +7,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { RULED, checkC3Library, checkConventionGrip, checkGripLibrary } from './checks/c3-library';
+import { B3_PINS, RULED, checkC3Library, checkConventionGrip, checkGripB3, checkGripLibrary } from './checks/c3-library';
 import { checkC3 } from './checks/c3';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -374,5 +374,75 @@ describe('LIB-SHIP D-SHIP-IDS-NOPAIR + D-SHIP-PAIR-NOZOOM: every pinned no-zoom 
     // red: the why with the route taken out
     const ohp = (await import(/* @vite-ignore */ pathToFileURL(join(process.cwd(), 'tools/plates/library/howto/lib_barbell_overhead_press.howto.mjs')).href)).default;
     expect(hands.noPairRuling({ ...ohp, handling: { ...ohp.handling, why: ohp.handling.why.replace('D-SHIP-C3 no-zoom list, ', '') } })).toBe(null);
+  });
+});
+
+describe('LIB-SHIP W7 D-SHIP-W7-B3 (#394 6647954465, Q-W7-1/Q-W7-5): NoHandling for 5 listed handled cards, fields pinned', () => {
+  const card = (id: string) => json(`docs/research/howto/cards/${id}.json`);
+  const B3 = ['lib_cable_crunch', 'lib_jump_rope', 'lib_wall_ball', 'lib_kettlebell_swing', 'lib_medicine_ball_slam'];
+  const strip = (c: any, cid: string) => ({ ...c, setup: c.setup.map((s: any) => ({ ...s, claim: s.claim && { ...s.claim, note: String(s.claim.note ?? '').replace(new RegExp(`\\b${cid}\\b`, 'g'), 'cX') } })),
+    posture: c.posture.map((s: any) => ({ ...s, claim: s.claim && { ...s.claim, note: String(s.claim.note ?? '').replace(new RegExp(`\\b${cid}\\b`, 'g'), 'cX') } })) });
+  it('the listed set is exactly the 5, and each pin names every non-empty card field', () => {
+    expect(Object.keys(B3_PINS)).toEqual(B3);
+    for (const id of B3) {
+      const g = card(id.slice(4)).grip, filled = (['thumb', 'handContact', 'wrist'] as const).filter(k => String(g[k] ?? '').trim() !== '');
+      expect([id, Object.keys(B3_PINS[id]).sort()]).toEqual([id, [...filled].sort()]);
+    }
+  });
+  it('each listed sheet is NoHandling with why D-SHIP-GRIP (b3) and passes', async () => {
+    for (const id of B3) {
+      const { content: c } = await content.loadContent(id);
+      expect([id, c.handling.archetype, /D-SHIP-GRIP \(b3\)/.test(c.handling.why ?? '')]).toEqual([id, 'none', true]);
+      expect([id, checkGripLibrary(c, card(id.slice(4)))]).toEqual([id, []]);
+    }
+  });
+  it('red 1: an unlisted handled card under (b3)', async () => {
+    const { content: c } = await content.loadContent('lib_cable_fly');
+    expect(checkGripLibrary({ ...c, handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3)' } }, card('cable_fly'))).toEqual(['GRIP: lib_cable_fly uses D-SHIP-GRIP (b3) but it is not one of the listed ids']);
+  });
+  it('red 2: a listed field whose card bytes differ from its pin', async () => {
+    const { content: c } = await content.loadContent('lib_wall_ball'), k = card('wall_ball');
+    expect(checkGripLibrary(c, { ...k, grip: { ...k.grip, thumb: 'Wrapped round the ball.' } })).toEqual(['GRIP: lib_wall_ball uses D-SHIP-GRIP (b3) but card grip.thumb differs from its pinned bytes']);
+  });
+  it('red 3: a pinned claim cited on no setup or posture line (and the grip.claims id with it)', async () => {
+    const { content: c } = await content.loadContent('lib_wall_ball');
+    expect(checkGripLibrary(strip(c, 'c9'), card('wall_ball'))).toEqual(['GRIP: lib_wall_ball uses D-SHIP-GRIP (b3) but pinned claim c9 (grip.handContact) is cited on no setup or posture line',
+      'GRIP: lib_wall_ball uses D-SHIP-GRIP (b3) but card claim c9 (grip.claims) is cited on no setup or posture line']);
+  });
+  it('red 4: a card grip.claims id cited nowhere, and a card field emptied while pinned', async () => {
+    const { content: c } = await content.loadContent('lib_kettlebell_swing'), k = card('kettlebell_swing');
+    expect(checkGripLibrary(strip(c, 'c24'), k)).toEqual(['GRIP: lib_kettlebell_swing uses D-SHIP-GRIP (b3) but card claim c24 (grip.claims) is cited on no setup or posture line']);
+    expect(checkGripB3(c, { ...k, grip: { ...k.grip, wrist: '' } }, ['thumb', 'handContact'])).toEqual(['GRIP: lib_kettlebell_swing uses D-SHIP-GRIP (b3) but card grip.wrist is empty and pinned']);
+  });
+  it('red 5: (b3) on a card whose archetype.hand is none, and plain (b) on a listed row (the b/b2 reds above still hold)', async () => {
+    const { content: c } = await content.loadContent('lib_jump_rope'), k = card('jump_rope');
+    expect(checkGripLibrary(c, { ...k, archetype: { hand: 'none' } })).toEqual(['GRIP: lib_jump_rope uses D-SHIP-GRIP (b3) but its card\'s archetype.hand is not a handled archetype (use (b2))']);
+    expect(checkGripLibrary({ ...c, handling: { archetype: 'none', why: 'D-SHIP-GRIP (b)' } }, k)).toEqual(['GRIP: lib_jump_rope uses D-SHIP-GRIP (b) but its card claims grip.handContact, grip.wrist']);
+  });
+});
+
+describe('LIB-SHIP W7 D-SHIP-HANDW7 (#394 6647954465, Q-W7-3/Q-W7-4): gap-ruled palm-flat trio and farmer_s_carry; no W7 hand pair', () => {
+  const nz = () => json('tools/plates/library/hands/no-zoom.json').entries as Record<string, any>;
+  const TRIO = ['bird_dog', 'burpee', 'bear_crawl'];
+  it('D-SHIP-HANDW7 is ruled; the trio and farmer_s_carry are gap-ruled under it, sled_pull gap-key at hand-implement.mjs:7', () => {
+    expect(RULED.has('D-SHIP-HANDW7')).toBe(true);
+    for (const id of [...TRIO, 'farmer_s_carry']) expect([id, nz()[`lib_${id}`]?.ruling, nz()[`lib_${id}`]?.reason]).toEqual([id, 'D-SHIP-HANDW7', 'gap-ruled']);
+    expect(nz().lib_sled_pull).toEqual({ ruling: 'D-SHIP-C3', reason: 'gap-key', at: 'tools/plates/library/hands/hand-implement.mjs:7' });
+  });
+  it('the trio stay in hand-palm-flat.mjs IDS and get no pair; bear_crawl keeps its own wrist claim (c11)', async () => {
+    const pf = keyMods.find((m: any) => m.KEY === 'palm-flat');
+    for (const id of TRIO) expect([id, id in pf.IDS]).toEqual([id, true]);
+    // pairsOf over the 4 no-zoom W7 ids and sled_pull (gap-key): none gets a pair (battle_ropes is held: HAND_OF_ID maps it,
+    // so it would get one; the supervisor's Q-W7-2 route stops its flip, D-SHIP-W7-ROPES)
+    const HP = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs'));
+    const W = [...TRIO, 'farmer_s_carry', 'sled_pull'].map(i => `lib_${i}`);
+    expect(HP.pairsOf(P, W).pairOf).toEqual({});
+    expect(Object.keys(HP.pairsOf(P, ['lib_battle_ropes']).pairOf)).toEqual(['battle-ropes']);   // control: the held id would pair
+    const { content: c } = await content.loadContent('lib_bear_crawl');
+    expect(String(c.handling.wrist.claim?.note ?? '')).toMatch(/\bc11\b/);
+  });
+  it('red: a gap-ruled trio entry removed turns C3 red', async () => {
+    const { content: c } = await content.loadContent('lib_bird_dog'), { lib_bird_dog: _drop, ...rest } = nz();
+    expect(checkC3Library(c, 'Bodyweight', { list: rest, card: json('docs/research/howto/cards/bird_dog.json'), gapKeyOf }).join('\n')).toMatch(/C3: handling.archetype is not none, and no hand zoom/);
   });
 });

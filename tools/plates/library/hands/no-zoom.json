@@ -1,5 +1,5 @@
 {
- "about": "LIB-SHIP D-SHIP-C3 (#376 6614298313): the library rows that ship with no hand zoom. Each entry names its ruling and exactly one reason: gap-key (a hand key's GAPS entry, at file:line), gap-ruled (a ruling that names the id) or card-no-zoom (the card has no hand zoom, checked against the card file at test time). The row's handling.why names the same ruling. W2 entries per SHIP W2 PLAN RULED (#379 6625803515). Entries are added per wave, each ruled before it is used (tests/howto/checks/c3-library.ts RULED).",
+ "about": "LIB-SHIP D-SHIP-C3 (#376 6614298313): the library rows that ship with no hand zoom. Each entry names its ruling and exactly one reason: gap-key (a hand key's GAPS entry, at file:line), gap-ruled (a ruling that names the id) or card-no-zoom (the card has no hand zoom, checked against the card file at test time). The row's handling.why names the same ruling. W2 entries per SHIP W2 PLAN RULED (#379 6625803515). Entries are added per wave, each ruled before it is used (tests/howto/checks/c3-library.ts RULED). W7 entries per SHIP W7 PLAN RULED (#394 6647954465).",
  "entries": {
   "lib_barbell_overhead_press": {
    "ruling": "D-SHIP-Q1",
@@ -62,6 +62,31 @@
   "lib_push_up": {
    "ruling": "D-SHIP-C3",
    "reason": "card-no-zoom"
+  },
+  "lib_bird_dog": {
+   "ruling": "D-SHIP-HANDW7",
+   "reason": "gap-ruled",
+   "note": "the palm-flat key's faults (cupped-palm, hand-ahead) cite no claim of this card (F-PAIR-FAULTS cardSupports), and the card's hand zoom has no Wrong; the grip copy carries the card's claims"
+  },
+  "lib_burpee": {
+   "ruling": "D-SHIP-HANDW7",
+   "reason": "gap-ruled",
+   "note": "the palm-flat key's faults (cupped-palm, hand-ahead) cite no claim of this card (F-PAIR-FAULTS cardSupports), and the card's hand zoom has no Wrong; the grip copy carries the card's claims"
+  },
+  "lib_bear_crawl": {
+   "ruling": "D-SHIP-HANDW7",
+   "reason": "gap-ruled",
+   "note": "the palm-flat key's faults (cupped-palm, hand-ahead) cite no claim of this card (F-PAIR-FAULTS cardSupports), and the card's hand zoom has no Wrong; the grip copy carries the card's claims"
+  },
+  "lib_sled_pull": {
+   "ruling": "D-SHIP-C3",
+   "reason": "gap-key",
+   "at": "tools/plates/library/hands/hand-implement.mjs:7"
+  },
+  "lib_farmer_s_carry": {
+   "ruling": "D-SHIP-HANDW7",
+   "reason": "gap-ruled",
+   "note": "no pair key draws a carry handle (no key variant has a hold archetype), and the card gives no wrist; the grip copy carries c13"
   }
  }
 }

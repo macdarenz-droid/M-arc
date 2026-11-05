@@ -6,7 +6,7 @@ import type { HowToContent } from '../../../src/howto/content-types';
 import { checkC3 } from './c3';
 
 /** The rulings a no-zoom entry may name. A new one is added only with its ruling posted (D-SHIP-C3 item 4). */
-export const RULED = new Set(['D-SHIP-Q1', 'D-SHIP-C3', 'D-SHIP-HANDW2', 'D-SHIP-ROPEPAIR']);   // W2: #379 6625803515, #376 6616096384
+export const RULED = new Set(['D-SHIP-Q1', 'D-SHIP-C3', 'D-SHIP-HANDW2', 'D-SHIP-ROPEPAIR', 'D-SHIP-HANDW7']);   // W2: #379 6625803515, #376 6616096384; W7: #394 6647954465 (D-SHIP-HANDW7)
 export const REASONS = ['gap-key', 'gap-ruled', 'card-no-zoom'] as const;
 export type NoZoomEntry = { ruling: string; reason: string; at?: string; note?: string };
 
@@ -39,6 +39,7 @@ export function checkGripLibrary(content: HowToContent, card: { grip?: Record<st
   const usesB = content.handling.archetype === 'none' && typeof why === 'string' && why.includes('D-SHIP-GRIP');
   if (!usesB) return [];
   const claimed = (['thumb', 'handContact', 'wrist'] as const).filter(k => typeof card?.grip?.[k] === 'string' && (card.grip[k] as string).trim() !== '');
+  if (/D-SHIP-GRIP \(b3\)/.test(why as string)) return checkGripB3(content, card, claimed);
   if (!/D-SHIP-GRIP \(b2\)/.test(why as string)) return claimed.length ? [`GRIP: ${content.id} uses D-SHIP-GRIP (b) but its card claims grip.${claimed.join(', grip.')}`] : [];
   // (b2) (#379 6628848012): only a card whose own archetype.hand is none; each claimed field's claim id cited on a
   // setup or posture line of the sheet.
@@ -62,5 +63,51 @@ export function checkConventionGrip(content: HowToContent, card: { grip?: Record
   if (!ext || JSON.stringify(h.wrist?.ext) !== JSON.stringify(ext)) out.push(`GRIPC: ${content.id}: wrist ext ${JSON.stringify(h.wrist?.ext)} is not the convention's range`);
   const hc = card?.grip?.handContact;
   if (typeof hc === 'string' && hc.trim() !== '' && !(zone && hc.toLowerCase().includes(zone.split(' of ')[0] ?? zone))) out.push(`GRIPC: ${content.id}: card grip.handContact disagrees with the convention`);
+  return out;
+}
+
+/** D-SHIP-W7-B3 (#394 6647954465, Q-W7-1 and Q-W7-5): NoHandling for exactly these 5 non-none cards, whose sources leave
+ *  the thumb or the wrist unplaced and whose hand key lists the id in GAPS. Each non-empty card field is pinned as one of
+ *  two kinds: `claim` (this card's own claim ids, each cited on a setup or posture line) or `none` (the card's exact
+ *  bytes: a "not given" statement, shown nowhere). Each grip.claims id is cited on a setup or posture line, as in (b2).
+ *  These pins replace (b2)'s cN regex, which would demand the shared cards' ids that kettlebell_swing's texts name. */
+export type B3Field = { kind: 'claim'; claims: string[] } | { kind: 'none'; bytes: string };
+export type B3Pin = Partial<Record<'thumb' | 'handContact' | 'wrist', B3Field>>;
+export const B3_PINS: Record<string, B3Pin> = {
+  lib_cable_crunch: { handContact: { kind: 'claim', claims: ['c2'] } },
+  lib_jump_rope: { handContact: { kind: 'claim', claims: ['c2'] }, wrist: { kind: 'claim', claims: ['c5'] } },
+  lib_wall_ball: {
+    thumb: { kind: 'none', bytes: 'Not given by any read source (shared/implement-wall-ball.json gaps).' },
+    handContact: { kind: 'claim', claims: ['c9'] },
+    wrist: { kind: 'none', bytes: 'Not given by any read source beyond the six-inch spacing.' },
+  },
+  lib_kettlebell_swing: {
+    thumb: { kind: 'none', bytes: 'Not stated by a two-hand swing source read for this card. shared/implement-kettlebell-swing.json c5 (no thumbs up) is MECH/WEAK and written mainly for cleans; not copied.' },
+    handContact: { kind: 'claim', claims: ['c3'] },   // the handle tilted toward you: an orientation, not a contact zone
+    wrist: { kind: 'none', bytes: 'Not given by a swing source read for this card (the shared card lists the same gap).' },
+  },
+  lib_medicine_ball_slam: {
+    thumb: { kind: 'none', bytes: 'Not given by any read source (implement default).' },
+    handContact: { kind: 'none', bytes: 'Not given by any read source.' },
+    wrist: { kind: 'none', bytes: 'Not given by any read source.' },
+  },
+};
+export function checkGripB3(content: HowToContent, card: { grip?: Record<string, unknown>; archetype?: { hand?: unknown } } | null,
+  claimed: readonly ('thumb' | 'handContact' | 'wrist')[], pins: Record<string, B3Pin> = B3_PINS): string[] {
+  const at = `GRIP: ${content.id} uses D-SHIP-GRIP (b3)`, pin = pins[content.id];
+  if (!pin) return [`${at} but it is not one of the listed ids`];
+  if (card?.archetype?.hand === 'none' || typeof card?.archetype?.hand !== 'string') return [`${at} but its card's archetype.hand is not a handled archetype (use (b2))`];
+  const ids = (t: unknown) => (typeof t === 'string' ? t.match(/\bc\d+\b/g) ?? [] : []);
+  const cited = new Set([...(content.setup ?? []), ...(content.posture ?? [])].flatMap(x => ids((x as { claim?: { note?: unknown } }).claim?.note)));
+  const out: string[] = [];
+  for (const k of ['thumb', 'handContact', 'wrist'] as const) {
+    const p = pin[k], has = claimed.includes(k);
+    if (!p) { if (has) out.push(`${at} but card grip.${k} has no pin`); continue; }
+    if (!has) { out.push(`${at} but card grip.${k} is empty and pinned`); continue; }
+    if (p.kind === 'none') { if (card?.grip?.[k] !== p.bytes) out.push(`${at} but card grip.${k} differs from its pinned bytes`); continue; }
+    for (const c of p.claims) if (!cited.has(c)) out.push(`${at} but pinned claim ${c} (grip.${k}) is cited on no setup or posture line`);
+  }
+  const want = Array.isArray(card?.grip?.claims) ? card!.grip!.claims as string[] : [];
+  for (const c of want) if (!cited.has(c)) out.push(`${at} but card claim ${c} (grip.claims) is cited on no setup or posture line`);
   return out;
 }

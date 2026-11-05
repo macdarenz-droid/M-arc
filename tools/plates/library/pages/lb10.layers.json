@@ -1,0 +1,62 @@
+{
+  "groups": [
+    {
+      "id": "lb10",
+      "title": "LB10",
+      "ids": [
+        "lib_kettlebell_swing",
+        "lib_high_knees",
+        "lib_jump_rope",
+        "lib_battle_ropes",
+        "lib_sled_pull",
+        "lib_burpee",
+        "lib_bear_crawl",
+        "lib_sled_push",
+        "lib_medicine_ball_slam",
+        "lib_farmer_s_carry",
+        "lib_jumping_jacks",
+        "lib_wall_ball"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb10.closeups.mjs",
+  "closeups": {
+    "lib_kettlebell_swing": {
+      "optionsKey": "kettlebell_swing"
+    },
+    "lib_high_knees": {
+      "optionsKey": "high_knees"
+    },
+    "lib_jump_rope": {
+      "optionsKey": "jump_rope"
+    },
+    "lib_battle_ropes": {
+      "optionsKey": "battle_ropes"
+    },
+    "lib_sled_pull": {
+      "optionsKey": "sled_pull"
+    },
+    "lib_burpee": {
+      "optionsKey": "burpee"
+    },
+    "lib_bear_crawl": {
+      "optionsKey": "bear_crawl"
+    },
+    "lib_sled_push": {
+      "optionsKey": "sled_push"
+    },
+    "lib_medicine_ball_slam": {
+      "optionsKey": "medicine_ball_slam"
+    },
+    "lib_farmer_s_carry": {
+      "optionsKey": "farmer_s_carry"
+    },
+    "lib_jumping_jacks": {
+      "optionsKey": "jumping_jacks"
+    },
+    "lib_wall_ball": {
+      "optionsKey": "wall_ball"
+    }
+  },
+  "jump": null
+}
