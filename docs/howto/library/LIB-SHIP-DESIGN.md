@@ -861,3 +861,136 @@ Ruled acceptable (#379 6627240712). Each row: the card line verbatim, the sheet 
 | crunch | feel.rows[1].fix | Set your chin once; cross your arms. | Set your chin once. Cross your arms. | split at semicolon (7→7 words) |
 | crunch | feel.rows[2].fix | Slow down; keep your low back on the mat. | Slow down. Keep your low back on the mat. | split at semicolon (9→9 words) |
 | crunch | copy.cueLine | Breathe out and curl your ribs toward your hips. | Ribs toward your hips. | cut 9→4 words |
+
+## 17. W7 PLAN (base main 8bb433bd, train 67, with W2 #379 @ 84360f00 merged to build ahead)
+
+W7 is 29 rows: lb8/rows.json (8), lb9/rows.json (9) and lb10/rows.json (12) move into `batches/lb08.json`,
+`batches/lb09.json` and `batches/lb10.json` (D-SHIP-MOVE as amended by Q-W2-10). The other 10 named rows get stage
+`left-out:D-OWNER-LIB142` (ruling 14; placement Q-W7-7). Section 17 numbers past W3's section 11 so the lanes' sections
+never collide. Columns were read from each card, lbN/qa.mjs `EXPECTED`, `hands/*.mjs` IDS/GAPS (pairs.mjs indexOf) and
+`hands/no-zoom.json` on this base (scratch script, not committed). GRIP uses the section 10 key, plus `b2` (#379
+6628848012: a card with archetype.hand `none` that names a body contact). Posture zooms use the section 11 (W3) key:
+`M` = the card's Wrong is the plate's drawn Mistake, `DV` = a one-joint drawing value from the plate's poses (no number in
+copy), `T` = a text checkpoint (D-SHIP-TEXTZOOM; LR-25 null Wrong, equipment placement, rotation unseen in the view, or a
+timing fault). Every T and every handlingMistake goes to an existing visible slot (D-TEXT-GOLDEN); the per-id inventory
+comes with LAYERS READY. Flags are each id's EXPECTED minus F5; all raised ones are approved by D-OWNER-FLAGS.
+
+| id | file | tier | arch. | GRIP | hand zoom (card) / no-zoom entry | posture zooms | flags | way-out (A) | other |
+|---|---|---|---|---|---|---|---|---|---|
+| hack_squat | lb08 | B | balance | b (type c18) | — | back-pad M; knee-lock DV (knee ext at top); feet-plate T | — | — | back box: needs R6 |
+| pendulum_squat | lb08 | B | balance | b (type c16) | — | heels-flat M; knee-track T (knees caving is not seen from the side) | F7 | — | — |
+| leg_extension | lb08 | C | balance | b (type, width c3) | — | top DV (knee ext); knee-pivot T, shin-pad T (null Wrong) | — | — | back box: needs R6 |
+| lying_leg_curl | lb08 | C | balance | b (type, width c5) | — | hips-pad DV (pelvis lift); knee-axis T (null), roller T (equipment place) | F7 | — | back box: needs R6; parent of standing_leg_curl (first in lb08.json) |
+| standing_leg_curl | lb08 | C | balance | b (type, width c2) | — | knee-steady DV (thigh forward); top DV (knee flexion short); pad-heel T (null) | F7 | — | card parent lying_leg_curl, inherit [] (no map entry); back box: needs R6 |
+| glute_bridge | lb08 | C | none | b2 (contact c1; barbell type/width c14) | — | spine-top M; heels-down T (null) | F2 | — | variant line required (section 7); back box: needs R6 |
+| cable_kickback | lb08 | C | balance | b (type c2, c4) | — | braced-back M; hips-square T (hip twist is not seen from the side) | F2, F3 | — | back box: needs R6; selector-pin card applies |
+| resisted_hip_flexion | lb08 | C | balance | b (type c1, c2) | — | torso-upright M; ankle-cuff T (null) | — | — | variant line required; back box: in |
+| ab_wheel_rollout | lb09 | A | push | b (type, width c1) | — (GAP ab-wheel, unused: NoHandling) | back-line M; range T (null) | — | gap → safety checker | `core` in feel.primary → textOnly (D-SHIP-Q7); no hint (no cue); back box: in |
+| bird_dog | lb09 | C | palm-flat | a-values (push_up form) | hands (no Wrong) → gap-ruled D-SHIP-HANDW7 (**Q-W7-3**) | back-line M; head DV (neck ext) | F1, F3 | — | back box: needs R6 |
+| side_plank | lb09 | C | none | b2 (contact c1, c3) | — | hip-line M; shoulder DV (scap elevation), front view | F1, F7 | — | `core` secondary → textOnly; knee box |
+| superman | lb09 | C | none | none | — | neck M; lift-height DV (lumbar ext) | F2, F3 | — | back box: needs R6 |
+| cable_crunch | lb09 | B | on-body | c (contact c2; thumb, wrist none; no convention) → **Q-W7-5** | rope (GAP rope, hand-rope.mjs:34) | hips M | F2, F3 | — | GAP reason "no research card" is stale (card exists): follow-up F-GAP-REASONS; back box: needs R6 |
+| hollow_body_hold | lb09 | C | none | b2 (contact c1) | — | leg-height M; low-back DV (lumbar ext); head DV (neck ext) | F2 | — | parent of v_up (first in lb09.json); back box: needs R6 |
+| reverse_crunch | lb09 | C | none | b2 (contact c1, c19) | — | knees M; low-back DV (lumbar ext); hips DV (pelvis curl short) | F1 | — | card parent crunch (held in W2), inherit [] → **Q-W7-9**; back box: needs R6 |
+| dead_bug | lb09 | C | none | b2 (contact c3, c4) | — | low-back M; neck DV (neck flex) | F1 | — | back box: needs R6 |
+| v_up | lb09 | B | none | b2 (contact c1, c3) | — | low-back M; top-reach T (legs flopping is not a pose) | — | — | card parent hollow_body_hold, inherit [] (no map entry); back box: needs R6 |
+| kettlebell_swing | lb10 | A | implement | b (type, width c2; orientation c3; thumb/contact/wrist say "not stated/not copied") → **Q-W7-1** | kb-grip (GAP implement, hand-implement.mjs:5) → text | kb-top M; kb-back DV (lumbar flex) | — | gap → safety checker | back box: needs R6 |
+| high_knees | lb10 | C | none | none | — | knee-height M; ball-of-foot T (null) | — | — | `core` secondary → textOnly; no red flag |
+| jump_rope | lb10 | B | implement | c (contact c2, wrist c5; thumb none; key GAP: thumb-and-index is no ThumbMode) → **Q-W7-5** | grip (GAP implement, hand-implement.mjs:6) | hop M; elbows DV (shoulder abduction), front view | F3 | — | wrist box |
+| battle_ropes | lb10 | C | implement | b (type c4, c14) → **Q-W7-2** | rope-grip (no Wrong; key battle-rope draws it, unused) → text | shoulder-blades M | F2 | — | `core` secondary → textOnly; no red flag; D-LIB12FIX-ROPE camera moot under Q-W7-2 |
+| sled_pull | lb10 | B | pull | c (wrist c4; thumb, contact none) → Q-W3-4 form (**Q-W7-4**) | rope-grip (GAP implement, hand-implement.mjs:7) | torso-stack M | — | — | `core` secondary → textOnly; back box: in |
+| burpee | lb10 | B | palm-flat | a-values (push_up form) | hands (no Wrong) → gap-ruled D-SHIP-HANDW7 (**Q-W7-3**) | landing M; plank DV (lumbar ext) | F7 | — | knee, wrist boxes |
+| bear_crawl | lb10 | C | palm-flat | a-values (push_up form; wrist c11 own) | hand-under-shoulder (no Wrong) → gap-ruled D-SHIP-HANDW7 (**Q-W7-3**) | hip-line M | F1 | — | wrist box |
+| sled_push | lb10 | B | push | b (type, width c1) → **Q-W7-1** | hands (no Wrong, no key) → text | back M; feet DV (ankle) | — | — | no hint (no cue); scratch target (**Q-W7-8**); back box: needs R6 |
+| medicine_ball_slam | lb10 | A | implement | b (type c15; thumb/contact/wrist "not given") → **Q-W7-1** | ball-grip (no Wrong; GAP ball-contact, hand-ball-contact.mjs:28) → text | slam-hips M; pickup-back DV (lumbar flex) | F7 | gap → safety checker | back box: needs R6 |
+| farmer_s_carry | lb10 | A | hold | c (thumb, contact c13; wrist none) → Q-W2-9 hold-default form (**Q-W7-4**) | grip → gap-ruled D-SHIP-HANDW7 (no key holds a carry handle; wrist unsourced) | shoulders DV (scap elevation); torso DV (trunk flex) | F7 | fall gap → safety checker (the set-down c15, c16 is on the sheet) | variant line required; gate seeds it (6 lines); back box: needs R6 |
+| jumping_jacks | lb10 | C | none | none | — | toes-forward M; landing-knees DV (knee ext), front view | F7 | — | no red flag; scratch target (**Q-W7-8**) |
+| wall_ball | lb10 | A | implement | c (contact c9; thumb, wrist "not given") → **Q-W7-5** | catch-hands (GAP ball-contact, hand-ball-contact.mjs:28) | wall-distance M; catch-timing T (a timing fault) | — | gap → safety checker | shoulder box |
+
+Counts: 29. GRIP: none 3, b2 6, b 13 (incl. 3 under Q-W7-1, 1 under Q-W7-2), a-values 3, c 4 (2 with a precedent, 3
+without, cable_crunch among them). **No W7 row draws a hand pair**, so W7 adds no handpair- chunk or budget. No-zoom
+entries: 4 gap-ruled (D-SHIP-HANDW7: bird_dog, burpee, bear_crawl, farmer_s_carry), 1 gap-key (sled_pull), plus up to 3
+gap-key under Q-W7-5. Every id keeps at least one drawn posture zoom (M or DV), so none waits on F-ZOOM-NONE. `core` in a
+feel role: 5 ids, all textOnly (D-SHIP-Q7). Variant lines: glute_bridge, resisted_hip_flexion, farmer_s_carry. Hints:
+none (the two push ids are NoHandling), so ids.ts gains no text. Inherit: all 29 cards have `inherit: []`, so W7 adds no
+INHERIT_MAP entry and the family check returns null for each (family.mjs:73); parents come first in their batch file.
+Red flags: back 22, knee 6, wrist 3, shoulder 1, none 3. Boxes exist for knee, wrist and shoulder (layers/howto/shared.mjs).
+**17 back-linked ids are outside the back box's appliesTo** (marked "needs R6"); ruling 6's appliesTo edit is not yet on
+claude/libht-research (appliesTo still 35 at 0393aac9). W7 builds ahead; its flip waits for that edit on main.
+Gate: lib_farmer_s_carry is seeded by 6 lines (screenshot-gate.mjs:4861, :8729, :8764, :8832, :9388, :9450); "Ab Wheel
+Rollout" and "Cable Crunch" are named in workout seeds (:4070-4078). Any change is settled in the add-only LIB-SHIP block.
+
+**Way-out (tier A, D-SHIP-WAYOUT / Q-W2-3).** ab_wheel_rollout (can't roll back), kettlebell_swing (set-down, lost grip),
+medicine_ball_slam (lost grip overhead, rebound), wall_ball (missed catch), farmer_s_carry (dropping in a fall; the
+controlled set-down c15, c16 is sourced and goes on the sheet). None is in a shared move card's appliesTo (unrack-rerack,
+get-in-out, selector-pin read on this base). Each is a safety-checker item in the W7 layers review; no or unsure → S3.
+
+**Pallof_press (design open item).** It never ships (D-OWNER-LIB142): stage `left-out:D-OWNER-LIB142` in lb09.json.
+content.test.ts:246's C6 fixture drops lib_pallof_press from a good set and stays valid; crop-projection.test.ts:28 reads
+its spec only. Both re-run on the W7 head. No hold needed.
+
+**Order of work after the ruling.** Q6-form local scratch flip of the 29 first (every red listed); then the moves with the
+A9 guard replacements (lb8-plates.test.ts:200, lb9-plates.test.ts:977/:1037/:2067, lb10-plates.test.ts:273/:1059) and the
+scratch swaps (Q-W7-8) in the same push; sheets; LAYERS READY for lb08, lb09, lb10 pages; panel; stamps; flip (after R6's
+appliesTo is on main); generate; budgets at N; QA; merge main once W2-W6 land; READY.
+
+### W7 questions (for 'SHIP W7 PLAN RULED')
+
+- **Q-W7-1 GRIP (b) where the card fields say "not given".** kettlebell_swing and medicine_ball_slam fill
+  grip.thumb/handContact/wrist with "Not stated …"/"Not given …" strings, not claims (kettlebell contact names only the
+  handle tilt, c3, an orientation). sled_push leaves all three empty. **Proposal:** NoHandling, why D-SHIP-GRIP (b); the
+  card's type, width and orientation claims go on setup lines; checkGripLibrary reads a field as a claim only when it
+  cites a cN, so a "not given" string is no claim (red: a cN added to one is refused under (b)). Each card's hand zoom
+  becomes text (D-TEXT-GOLDEN): Right on a setup line, kettlebell's Wrong "Crush grip on the handle." as a setup
+  instruction citing the zoom's claims. Other option: S3 for each.
+- **Q-W7-2 battle_ropes.** The battle-rope key draws it (neutral, forearm 180, "Seen from above"), but its only fault,
+  "Too tight", cites shared/implement-battle-ropes.json c4, while the card's grip note says "No source on grip pressure"
+  and its hand zoom has no Wrong. F-PAIR-FAULTS' cardSupports refuses the fault (it cites no claim of the card).
+  **Proposal:** GRIP (b): NoHandling, "Handshake grip on each rope end" (c4, c14) on a setup line; hand-battle-rope.mjs
+  stays byte-equal and unused; D-LIB12FIX-ROPE stays deferred as a later-update follow-up (F-ROPES-PAIR). This needs no
+  camera choice from the owner. Other option: draw the full key with the shared card's fault (contradicts the card note).
+- **Q-W7-3 Palm-flat trio (bird_dog, burpee, bear_crawl).** The palm-flat key lists them, but its faults cupped-palm
+  (shared c2) and hand-ahead (shared c3, mountain_climbers c6) cite no claim of these cards, and each card's hand zoom
+  has no Wrong, so pairFaults cannot be set (pairs.mjs:369, :380). **Proposal:** push_up's form (W2): handling values
+  copied from the key with each value's key line, cited CONVENTION (source hand-key-palm-flat), never printed
+  (D-SHIP-CONVCOPY); the card's own claims (bird_dog contact c2, burpee contact c2, bear_crawl wrist c11) stay the cited
+  fields; hand zoom gap-ruled **D-SHIP-HANDW7** ("the key's faults are not supported by the card; the card's hand zoom has
+  no Wrong"), its Right line in gripLine. Reds: a key value edited; the gap entry removed. Other option: S3.
+- **Q-W7-4 Conventions with a precedent.** sled_pull: contact `finger-base` from `ga:pull-base` and thumb `wrapped` from
+  golden B's pull default (Q-W3-4 form), wrist from c4 "firm" with ext from ga:pull-base (0 to 25), derived pin + red;
+  gap-key (hand-implement.mjs:7). farmer_s_carry: wrist from the hold default as cable_fly (Q-W2-9), no wrist claim,
+  derived pin + red; hand zoom gap-ruled D-SHIP-HANDW7 (no key draws a carry handle). **Proposal:** accept both.
+- **Q-W7-5 GRIP (c) with no convention: cable_crunch, jump_rope, wall_ball.** Each card claims a contact (and jump_rope a
+  wrist), but no source places the thumb (and wall_ball the wrist), no GA convention covers on-body or implement thumbs,
+  and each hand key lists the id in GAPS. HandlingSpec requires thumb, contact and wrist (content-types.ts). **Proposal
+  (b3):** NoHandling with why D-SHIP-GRIP (b3), each claimed hand field on a cited setup or grip-copy line (b2's check
+  extended to these 3 listed ids only, never a blanket rule), the hand zoom's Right and Wrong as text; reds: an unlisted
+  non-none id under (b3); an uncited claim. Other options: (i) wrist `exempt` plus an invented thumb mode (no: guessing);
+  (ii) S3 hold, the 3 ids to the owner's later-update list.
+- **Q-W7-6 Way-out.** The 5 tier-A ids above go to the safety checker in the W7 layers review (Q-W2-3 form).
+  **Proposal:** accept; farmer_s_carry's sourced set-down (c15, c16) is its way-out line.
+- **Q-W7-7 Where the other 10 left-out rows go.** lb08.json: seated_calf_raise, standing_calf_raise,
+  bodyweight_calf_raise, hip_thrust (lb8/build.mjs:69 HELD); lb09.json: pallof_press, russian_twist, flutter_kicks
+  (lb9/build.mjs:70 HELD) and bicycle_crunch (lb9/qa.mjs; no spec); overhead_cable_triceps_extension (LB5,
+  lb5-plates.test.ts:49) and cable_rear_delt_fly (lb7/build.mjs:66 HELD) belong to W5's lb05.json and W6's lb07.json.
+  **Proposal:** W7 adds those 2 rows to lb05.json and lb07.json after W5 and W6 merge (W7 merges last), one row each,
+  nothing else in those files; the rows use each build's heldData row form plus the stage, with no pages and no pin
+  (D-SHIP-LEFTOUT-CLOSURE path, as leg_press_calf_raise). The HELD maps stay (held plate pages are their own tests);
+  the build that reads the batch file skips `left-out:` rows. Other option: W5 and W6 add their own left-out row.
+- **Q-W7-8 Scratch targets (ruling 15).** jumping_jacks and sled_push are LIB-4c targets (ci/scratch.mjs:21, :25). W4
+  (one_arm_dumbbell_row, t_bar_row, landmine_row) and W6 (smith_machine_incline_press) swap theirs too, and each needs a
+  distinct never-shipping id outside LB1 (setProblems). **Proposal (one assignment for all lanes):** W7 jumping_jacks →
+  lib_hip_thrust, sled_push → lib_flutter_kicks; the supervisor gives W4 and W6 three and one of russian_twist,
+  bicycle_crunch, pallof_press, seated_calf_raise, standing_calf_raise, bodyweight_calf_raise,
+  overhead_cable_triceps_extension, cable_rear_delt_fly. Each swap lands in the push that moves its row, with the fixture
+  test re-run and the changed lines listed.
+- **Q-W7-9 reverse_crunch's card parent crunch is held** (W2 Q6, F-PLATE-ZOOMCSS merged in train 67). reverse_crunch's
+  inherit[] is empty, so no copy is inherited and familyRefusal returns null. D-LIB10-PARENTS ties the card parent to
+  "copy inheritance and the comparator" only. **Proposal:** reverse_crunch ships in W7 whether or not crunch has
+  shipped by then. Other option: hold it with crunch.
+- **Q-W7-10 Plate pins.** **Proposal:** the D-LIB-LB1ZOOM form: the supervisor rebuilds main's lb08, lb09, lb10
+  build-ahead plates pages twice and posts PIN GO with each sha; the batch pins' exemptions cite D-OWNER-FLAGS; the
+  "nothing ships" guards turn red only at the flip and are replaced there (ruling 3).
+- **Q-W7-11 Back box (ruling 6).** 17 W7 ids need the appliesTo edit, which is not yet on the research branch.
+  **Proposal:** no change to W7; the flip commit waits for that edit on main, and LAYERS READY lists the box text each
+  of the 17 shows.
