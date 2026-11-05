@@ -4752,6 +4752,15 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **D-SHIP-G7ONE:** entryJob taps `.last()`; zero callouts fails loud.
   - **D-SHIP-PECFLY-HOLD:** pec_fly has a PQ-H4 overlap of 11.58 px² at 360 px on its approved plate, plus its "Shoulder pain" row duplicates the RED_FLAG_SHOULDER line. Both go to **LIB-PLATEFIX-2**, alongside dumbbell_fly and the rear delt fly.
   - **W2 = 8 ids:** barbell_row, dumbbell_bench_press, dumbbell_shoulder_press, upright_row, rope_triceps_pushdown, plank, cable_fly, push_up.
+- **Wave PLANs ruled** (11-05 ~02:30-03:00 UTC; drafts by Opus helpers, reviewed and posted by the supervisor):
+  - **W4** (#391 6647760116): Q-W4-1..13 and E1-E8. D-SHIP-W4-RDL, -THUMB, -GAPZOOM, D-SHIP-HANDW4, -ROUTE (F-W4-INHERIT), -PADZOOM and -SCRATCH. E5 was amended (6647902684).
+  - **W5** (#392 6647901307): D-SHIP-W5-PARENTS, D-SHIP-W5-PLATEONLY (an empty `[]` is allowed only on `plate.*` with a plate-compare red, for every wave), -GOLDENFEET, -WALLSIT, -GRIPC, -HAMMERWRONG, -RESEARCH, -THUMB, -SAWRIST, -H10 and D-SHIP-HANDW5. goblet_squat is held (S3).
+  - **W6** (#393 6647923934): D-SHIP-W6-BACKREACH, -NOPRIMARY, -CONV, -WAYOUT, -PALMS and D-SHIP-HANDW6. bench_dip and renegade_row are held (S3). F-ELBOWS-DROP-LTH is W6's. PIN GO for lb06 8c7ede8a and lb07 29fae61a.
+  - **PLATEFIX-2** (#395 6647619197): D-PF2-POSTZOOM, -SHRUG10 and -PLACE.
+  - **W3 Q-W3-14** (#384 6647625183): D-SHIP-W3-MCLIMB.
+  - **PLATEFIX LAYERS READY** (#385 6647771285): D-PLATEFIX-PINS extended; PIN GO after the layers panel.
+  - Card **RESEARCH-ROUTES-1** (`verify/research-routes-card.md`): one research lane for D-SHIP-BACKBOX, F-W4-INHERIT and F-CARD-FRONTSQ-SETUP (part 1), and for the held-id routes (part 2).
+  - Train 68 (#396): W2 #379 @ `84360f00` (PASS 6647793612). Its lows go to W3.
 - **D-OWNER-PARALLEL** (owner, 11-05 ~02:00 UTC: "Make work faster and do more parallel agents"). This amends lib-ship-card ruling 1 and D-LIB-LANE-ACTIVE.
   - All wave lanes W3-W7 build at once, plus LIB-PLATEFIX-2, so up to **9 active LIB builders**. Merges stay strictly in order (W2 → W3 → … → W7).
   - Builders may merge W2's READY head into their branch to build ahead, then merge main when W2 lands.
