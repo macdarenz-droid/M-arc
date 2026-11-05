@@ -22,12 +22,51 @@ import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { node } from '../../../../tests/howto/fixtures/lib2b/fixture.mjs';
 
-/** The scratch ids: target library id (in exercises.json, no How-to on main), the 8's source it copies, its pair key. */
+/** The scratch ids (F-SCRATCH-SYNTH, D-LIB8M-SCRATCH7B form): a synthetic id, never in the real exercises.json nor a
+ *  batches/ row, added to the temp tree's exercises.json as a copy of `copyOf`'s entry (and to its coverage data as
+ *  `archetype`); the 8's source it copies; its pair key. copyOf is the real id these entries named before. */
 export const SCRATCH = [
-  { id: 'lib_underhand_lat_pulldown', from: 'lat_pulldown', key: 'lib4b-scratch-a' },
-  { id: 'lib_chest_supported_row', from: 'seated_cable_row', key: 'lib4b-scratch-b' },
-  { id: 'lib_cable_chest_press', from: 'machine_chest_press', key: 'lib4b-scratch-c' },
+  { id: 'lib_scratch_fourb_a', copyOf: 'lib_underhand_lat_pulldown', archetype: 'pull', from: 'lat_pulldown', key: 'lib4b-scratch-a' },
+  { id: 'lib_scratch_fourb_b', copyOf: 'lib_chest_supported_row', archetype: 'pull', from: 'seated_cable_row', key: 'lib4b-scratch-b' },
+  { id: 'lib_scratch_fourb_c', copyOf: 'lib_cable_chest_press', archetype: 'push', from: 'machine_chest_press', key: 'lib4b-scratch-c' },
 ];
+// ---- F-SCRATCH-SYNTH (#397, PLAN RULED; D-SCRATCH-SYNTH-COPYOF) ----
+const readJson = (root, p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
+/** One scratch entry's exercises.json entry: its own, else (a synthetic id) its copyOf's; refused as before otherwise. */
+export function exerciseOf(s, ex) {
+  const own = ex.find(e => e.id === s.id);
+  if (own || !s.copyOf) { if (!own) throw new Error(`fixture: ${s.id} is not in src/data/exercises.json`); return own; }
+  const base = ex.find(e => e.id === s.copyOf);
+  if (!base) throw new Error(`fixture: ${s.id}: copyOf ${s.copyOf} is not in src/data/exercises.json`);
+  return base;
+}
+/** A scratch set's problems against `real` (the repo the tree is copied from): a target that is a batches/ row; a
+ *  synthetic (copyOf) id that is in exercises.json; a copyOf that is not. */
+export function scratchTargetProblems(set, real) {
+  const known = new Set(readJson(real, 'src/data/exercises.json').map(e => e.id)), dir = join(real, 'tools/plates/library/batches'), out = [];
+  const batches = existsSync(dir) ? readdirSync(dir).filter(n => n.endsWith('.json')).sort().map(n => [n, Object.keys(readJson(real, `tools/plates/library/batches/${n}`).rows ?? {})]) : [];
+  for (const s of set) {
+    for (const [n, ids] of batches) if (ids.includes(s.id)) out.push(`${s.id} is a row of batches/${n}`);
+    if (s.copyOf) {
+      if (known.has(s.id)) out.push(`${s.id} is in src/data/exercises.json (a copyOf id is synthetic)`);
+      if (!known.has(s.copyOf)) out.push(`${s.id}: copyOf ${s.copyOf} is not in src/data/exercises.json`);
+    }
+  }
+  return out;
+}
+/** Adds each synthetic id to the tree's exercises.json (a copy of its copyOf's entry) and coverage data; idempotent. */
+export function addSynthetic(root, set) {
+  const exf = join(root, 'src/data/exercises.json'), ex = JSON.parse(readFileSync(exf, 'utf8'));
+  const cvf = join(root, 'tools/plates/library/coverage-archetypes.json'), cv = JSON.parse(readFileSync(cvf, 'utf8'));
+  let changed = false;
+  for (const s of set.filter(x => x.copyOf)) {
+    if (!ex.some(e => e.id === s.id)) { ex.push({ ...exerciseOf({ id: s.id, copyOf: s.copyOf }, ex), id: s.id }); changed = true; }
+    if (cv.archetypes[s.id] !== s.archetype) { cv.archetypes[s.id] = s.archetype; changed = true; }
+  }
+  if (!changed) return;
+  writeFileSync(exf, `${JSON.stringify(ex, null, 1)}\n`);
+  writeFileSync(cvf, `${JSON.stringify(cv, null, 2)}\n`);
+}
 export const POOL = ['lat_pulldown', 'seated_cable_row', 'leg_press', 'machine_chest_press'];
 /**
  * Copy edits on a clone's spec (D-LIB4b-COPYEDITS, ruled 11.1 item 19): [from, to, the refusal it answers], each applied
@@ -38,9 +77,9 @@ export const POOL = ['lat_pulldown', 'seated_cable_row', 'leg_press', 'machine_c
  */
 export const COPY_EDITS = {
   lat_pulldown: [["cue: 'Lean back slightly and pull the bar past the face to the top of the chest.'", "cue: 'Lean back slightly and pull the bar past the face to the chest.'",
-    'QaRefused: plate QA refused lib_underhand_lat_pulldown: PQ-H8 normal.chest.cue has 16 words (max 15)']],
+    'QaRefused: plate QA refused lib_scratch_fourb_a: PQ-H8 normal.chest.cue has 16 words (max 15)']],
   seated_cable_row: [["cue: 'Sit tall; no rocking, the torso finishes upright.'", "cue: 'Sit tall. No rocking, the torso finishes upright.'",
-    'QaRefused: plate QA refused lib_chest_supported_row: PQ-H8 normal.tall.cue "Sit tall; no rocking, the torso finishes upright.": semicolon']],
+    'QaRefused: plate QA refused lib_scratch_fourb_b: PQ-H8 normal.tall.cue "Sit tall; no rocking, the torso finishes upright.": semicolon']],
   machine_chest_press: [],
 };
 /** D-LIB4b-F5 (11.1 item 17): the 8's named F5 exemption, quoted verbatim from qa/exemptions.json (one text on all 8). */
@@ -77,7 +116,7 @@ export function transformSources(s, src) {
   if (!POOL.includes(s.from)) throw new Error(`fixture: ${s.from} is not in the B5 pool`);
   const P = paths(s), SRC_SPEC = `tools/plates/layers/exercises/${s.from}.mjs`, SRC_HOWTO = `tools/plates/layers/exercises/${s.from}.howto.mjs`;
   const ex = JSON.parse(readFileSync(join(src, 'src/data/exercises.json'), 'utf8'));
-  const name = ex.find(e => e.id === s.id)?.name;
+  const entry = exerciseOf(s, ex), name = entry.name;   // F-SCRATCH-SYNTH: a synthetic id reads its copyOf's entry
   if (!name) throw new Error(`fixture: ${s.id} is not in src/data/exercises.json`);
   let spec = repoint(readFileSync(join(src, SRC_SPEC), 'utf8'), SRC_SPEC, P.spec);
   const idLine = spec.match(new RegExp(`\\bid: '${s.from}', name: '[^'\\n]*'`, 'g')) ?? [];
@@ -89,7 +128,7 @@ export function transformSources(s, src) {
   howto = once(howto, `research: { card: 'grip/research/${s.from}.json', rev: 1 }`, `research: { card: '${P.research}', rev: 1 }`, `research line in ${SRC_HOWTO}`);
   // LIB-5v: a target whose equipment names two kinds needs its variant line (D-LIB5-VARIANT); one word, the second kind,
   // because each pool sheet already reads 449 of 450 (D-LIB5-WORDS (a))
-  const kinds = String(ex.find(e => e.id === s.id)?.equipment ?? '').split('/').map(k => k.trim());
+  const kinds = String(entry.equipment ?? '').split('/').map(k => k.trim());
   if (kinds.length > 1) howto = once(howto, '\n  copy: {\n', `\n  copy: {\n    variantLine: '${kinds[1]}.',\n`, `copy line in ${SRC_HOWTO}`);
   return { spec, howto };
 }
@@ -98,7 +137,11 @@ export const batchRow = s => ({ src: `library/specs/${card(s)}.mjs`, slug: chrom
 const ids = scratch => scratch.map(s => s.id);
 
 /** Writes the sources, the batch file and the two page configs into `root`. */
-export function stage(root, { scratch = SCRATCH, src = root } = {}) {
+export function stage(root, { scratch = SCRATCH, src = root, real = src } = {}) {
+  // F-SCRATCH-SYNTH: refuse a target that is a batches/ row or a synthetic id that is real, then add the synthetic ids
+  const bad = scratchTargetProblems(scratch, real);
+  if (bad.length) throw new Error(`fixture: ${bad.join('; ')}`);
+  addSynthetic(root, scratch);
   for (const s of scratch) { const t = transformSources(s, src), P = paths(s); put(root, P.spec, t.spec); put(root, P.howto, t.howto); }
   put(root, BATCH, json({ batch: 'LB-LIB4B', censusRef: '48153c4', pages: PAGES, rows: Object.fromEntries(scratch.map(s => [s.id, batchRow(s)])) }));
   put(root, PAGES.plates, json({ groups: [{ id: 'scratch', title: 'Scratch', ids: ids(scratch) }] }));

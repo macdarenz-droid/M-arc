@@ -291,7 +291,9 @@ describe('LIB-4b B5: the scratch fixture sources (D-LIB4-FIXTURE, lib4-cards 11.
         // `    variantLine: '<second kind>.',`, directly after the clone's one `  copy: {` line; it is taken out here, so
         // every other line keeps the comparison below. Any other target carries none (the line count catches one).
         if (kind === 'howto') {
-          const kinds = String(JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).find((e: { id: string }) => e.id === s.id)?.equipment ?? '').split('/').map(k => k.trim());
+          // F-SCRATCH-SYNTH (D-SCRATCH-SYNTH-COPYOF): a synthetic id reads its copyOf's entry, as transformSources does
+          const ex = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')) as { id: string; equipment?: string }[];
+          const kinds = String((ex.find(e => e.id === s.id) ?? ex.find(e => e.id === (s as { copyOf?: string }).copyOf))?.equipment ?? '').split('/').map(k => k.trim());
           const at = b.flatMap((l: string, i: number) => (l === '  copy: {' ? [i] : []));
           expect(at, `${s.id} howto: one copy line`).toHaveLength(1);
           if (kinds.length > 1) {
@@ -304,7 +306,7 @@ describe('LIB-4b B5: the scratch fixture sources (D-LIB4-FIXTURE, lib4-cards 11.
           if (a[i] === b[i]) continue;
           const ma = a[i]!.match(imp), mb = b[i]!.match(imp);
           if (ma && mb && ma[1] === mb[1] && ma[3] === mb[3]) { why.push('import'); continue; }
-          if (kind === 'spec' && a[i]!.replace(/\bid: '[a-z_]+', name: '[^']*'/, '') === b[i]!.replace(/\bid: '[a-z_]+', name: '[^']*'/, '') && b[i]!.includes(`id: '${P.card}', name: '`)) { why.push('id'); continue; }
+          if (kind === 'spec' && a[i]!.replace(/\bid: '[a-z0-9_]+', name: '[^']*'/, '') === b[i]!.replace(/\bid: '[a-z0-9_]+', name: '[^']*'/, '') && b[i]!.includes(`id: '${P.card}', name: '`)) { why.push('id'); continue; }
           const e = edits.find((e: string[]) => a[i]!.replace(e[0]!, e[1]!) === b[i]);
           if (kind === 'spec' && e) { why.push('edit'); continue; }
           if (kind === 'howto' && a[i]!.replace(`id: 'lib_${s.from}'`, `id: '${s.id}'`) === b[i]) { why.push('id'); continue; }

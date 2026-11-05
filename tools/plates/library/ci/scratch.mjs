@@ -13,23 +13,25 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ROOT } from '../../lib/inputs.mjs';
-import { COPY_EDITS, budgets, page, paths, pin, stage, transformSources } from '../fidelity/fixture.mjs';
+import { COPY_EDITS, budgets, exerciseOf, page, paths, pin, scratchTargetProblems, stage, transformSources } from '../fidelity/fixture.mjs';
 import { manifestOf, manifestText, MANIFEST } from './manifest.mjs';
 
-/** The scratch set: two targets per usable pool source, each with its own pair key (D-LIB4c-1 (a)). */
+/** The scratch set: two targets per usable pool source, each with its own pair key (D-LIB4c-1 (a)). F-SCRATCH-SYNTH
+ *  (#397, D-LIB8M-SCRATCH7B form): each id is synthetic, a copy of `copyOf`'s exercises.json entry in the tree only;
+ *  copyOf is the real id the entry named before. */
 export const SCRATCH_4C = [
-  { id: 'lib_jumping_jacks', from: 'lat_pulldown', key: 'lib4c-scratch-a' },   // D-LIB11-SCRATCHA: was lib_barbell_row (pilot A)
-  { id: 'lib_one_arm_dumbbell_row', from: 'lat_pulldown', key: 'lib4c-scratch-b' },
-  { id: 'lib_t_bar_row', from: 'seated_cable_row', key: 'lib4c-scratch-c' },
-  { id: 'lib_landmine_row', from: 'seated_cable_row', key: 'lib4c-scratch-d' },
-  { id: 'lib_sled_push', from: 'machine_chest_press', key: 'lib4c-scratch-e' },   // D-LIB11-SCRATCHIDS (a): was lib_smith_machine_bench_press (pilot B)
-  { id: 'lib_smith_machine_incline_press', from: 'machine_chest_press', key: 'lib4c-scratch-f' },
+  { id: 'lib_scratch_fourc_a', copyOf: 'lib_jumping_jacks', archetype: 'none', from: 'lat_pulldown', key: 'lib4c-scratch-a' },   // D-LIB11-SCRATCHA: was lib_barbell_row (pilot A)
+  { id: 'lib_scratch_fourc_b', copyOf: 'lib_one_arm_dumbbell_row', archetype: 'pull', from: 'lat_pulldown', key: 'lib4c-scratch-b' },
+  { id: 'lib_scratch_fourc_c', copyOf: 'lib_t_bar_row', archetype: 'pull', from: 'seated_cable_row', key: 'lib4c-scratch-c' },
+  { id: 'lib_scratch_fourc_d', copyOf: 'lib_landmine_row', archetype: 'pull', from: 'seated_cable_row', key: 'lib4c-scratch-d' },
+  { id: 'lib_scratch_fourc_e', copyOf: 'lib_sled_push', archetype: 'push', from: 'machine_chest_press', key: 'lib4c-scratch-e' },   // D-LIB11-SCRATCHIDS (a): was lib_smith_machine_bench_press (pilot B)
+  { id: 'lib_scratch_fourc_f', copyOf: 'lib_smith_machine_incline_press', archetype: 'push', from: 'machine_chest_press', key: 'lib4c-scratch-f' },
 ];
 /** docs/howto/library/arch/batchlines.md @ 4a9fd86 (D-LIB-SCRATCHIDS): never a scratch target. */
 export const LB1 = ['chin_up', 'hanging_knee_raise', 'assisted_pull_up', 'inverted_row', 'close_grip_pulldown', 'underhand_lat_pulldown', 'single_arm_lat_pulldown', 'straight_arm_pulldown', 'chest_supported_row', 'resistance_band_row', 'incline_machine_press', 'shoulder_press', 'horizontal_leg_press', 'leg_press_calf_raise'];
 export const LB2 = ['dumbbell_bench_press', 'barbell_bench_press', 'incline_dumbbell_press', 'incline_barbell_bench_press', 'decline_bench_press', 'close_grip_bench_press', 'dumbbell_shoulder_press', 'barbell_overhead_press', 'arnold_press', 'dumbbell_fly', 'skull_crusher', 'dumbbell_pullover'];
 /** Ids other fixtures use (LIB-2b's clone, LIB-4b's B5 set). */
-export const TAKEN = ['lib_cable_lateral_raise', 'lib_underhand_lat_pulldown', 'lib_chest_supported_row', 'lib_cable_chest_press'];
+export const TAKEN = ['lib_cable_lateral_raise', 'lib_scratch_fourb_a', 'lib_scratch_fourb_b', 'lib_scratch_fourb_c', 'lib_scratch_pull_row', 'lib_scratch_sevenb_row', 'lib_scratch_sevenb_press'];
 /** D-LIB11-SCRATCHIDS (a) and D-LIB11-SCRATCHA: pinned batches' ids (pilot B's held crunch included), never a scratch target. */
 export const PILOT_A = ['barbell_row', 'dumbbell_bench_press', 'dumbbell_shoulder_press', 'barbell_overhead_press', 'romanian_deadlift', 'single_leg_romanian_deadlift', 'upright_row', 'pec_fly', 'dumbbell_biceps_curl', 'rope_triceps_pushdown', 'plank', 'mountain_climbers', 'triceps_pushdown'];
 export const PILOT_B = ['smith_machine_bench_press', 'seated_leg_curl', 'cable_fly', 'push_up', 'crunch'];
@@ -48,8 +50,9 @@ export function setProblems(set, root = ROOT) {
     if (PILOT_A.includes(name) || PILOT_B.includes(name)) out.push(`${s.id} is a pilot ${PILOT_A.includes(name) ? 'A' : 'B'} id (D-LIB11-SCRATCHIDS)`);
     if (PILOT_A2.includes(name)) out.push(`${s.id} is a PILOT-A2 id (D-LIB11-SCRATCHIDS)`);
     if (PILOT_A3.includes(name)) out.push(`${s.id} is a PILOT-A3 id (D-LIB11-SCRATCHIDS)`);
-    if (!known.has(s.id)) out.push(`${s.id} is not in src/data/exercises.json`);
+    if (!s.copyOf && !known.has(s.id)) out.push(`${s.id} is not in src/data/exercises.json`);
   }
+  out.push(...scratchTargetProblems(set, root));   // F-SCRATCH-SYNTH: a batches/ row; a real synthetic id; a missing copyOf
   if (new Set(set.map(s => s.id)).size !== set.length) out.push('an id is listed twice');
   if (new Set(set.map(s => s.key)).size !== set.length) out.push('a pair key is shared');
   return out;
@@ -108,7 +111,7 @@ export function copyProblems(root, set = SCRATCH_4C) {
       // `    variantLine: '<second kind>.',`, directly after the clone's one `  copy: {` line; it is taken out here, so
       // every other line keeps the comparison below. Any other target carries none (the line count catches one).
       if (kind === 'howto') {
-        const kinds = String(JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8')).find(e => e.id === s.id)?.equipment ?? '').split('/').map(k => k.trim());
+        const kinds = String(exerciseOf(s, JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8'))).equipment ?? '').split('/').map(k => k.trim());   // F-SCRATCH-SYNTH
         const at = b.flatMap((l, i) => (l === '  copy: {' ? [i] : []));
         if (at.length !== 1) { out.push(`${s.id} howto: ${at.length} copy lines, want 1`); continue; }
         if (kinds.length > 1) {
