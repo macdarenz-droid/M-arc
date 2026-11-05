@@ -4752,6 +4752,11 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **D-SHIP-G7ONE:** entryJob taps `.last()`; zero callouts fails loud.
   - **D-SHIP-PECFLY-HOLD:** pec_fly has a PQ-H4 overlap of 11.58 px² at 360 px on its approved plate, plus its "Shoulder pain" row duplicates the RED_FLAG_SHOULDER line. Both go to **LIB-PLATEFIX-2**, alongside dumbbell_fly and the rear delt fly.
   - **W2 = 8 ids:** barbell_row, dumbbell_bench_press, dumbbell_shoulder_press, upright_row, rope_triceps_pushdown, plank, cable_fly, push_up.
+- **D-OWNER-PARALLEL** (owner, 11-05 ~02:00 UTC: "Make work faster and do more parallel agents"). This amends lib-ship-card ruling 1 and D-LIB-LANE-ACTIVE.
+  - All wave lanes W3-W7 build at once, plus LIB-PLATEFIX-2, so up to **9 active LIB builders**. Merges stay strictly in order (W2 → W3 → … → W7).
+  - Builders may merge W2's READY head into their branch to build ahead, then merge main when W2 lands.
+  - CI load mitigation: push at most once per step, and trains batch waves (ruling 12).
+  - New lanes: W4 (21 ids), W5 (27), W6 (23), W7 (29), and LIB-PLATEFIX-2 (`verify/lib-platefix-2-card.md`).
 - **PLATEFIX recheck pf3** (#385 6638551153, @ `9f2d0dcd`, salt pf3-f16c8236a9d66a81, key critic-pf3-private): **VALID**. Plants caught: fly elbow bend R5 [1,1,1]; rear delt shrug drawn downward R5 [2,2,2]. Anchor lows are follow-ups 21, 22/26, 29 and pull_up R6. **HELD under D-LIB13-PANEL2 (owner later-update items):**
   - dumbbell_fly: R5 [3,3,3] (the wrist bend doesn't read); R7 [4,3,3] (the Mistake view turns the hexagons into circles).
   - bent_over_dumbbell_rear_delt_fly: R1 [3,3,4] (front view can't show the hinge); R5 [2,2,2] (the shrug is not a displacement and scored the same as the plant); R11 [2,2,2].
