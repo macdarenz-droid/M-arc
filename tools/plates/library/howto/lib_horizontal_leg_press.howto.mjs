@@ -198,7 +198,7 @@ export default {
   setup: [
     { kind: 'get-in', text: 'Sit back, back and tailbone flat against the pad.', claim: CL.c1 },
     { kind: 'position', text: 'Feet flat on the plate, toes forward.', claim: CL.c1 },
-    { kind: 'adjust', text: 'Set the seat: knees at about 90 degrees, thighs clear of ribs.', claim: CL.c1 },
+    { kind: 'adjust', text: 'Set the seat: knees at about 90 degrees, thighs clear of ribs.', claim: CL.seat },
     { kind: 'grip', text: 'Hold the handles lightly and brace your stomach.', claim: CL.c2 },
     { kind: 'brace', text: 'Breathe out as you push. Control the plate on the way back.', claim: C(['CONSENSUS', 'DATA', 'MECH'], [ACE, WM, 'macdougall1985'], 'c3, c11, c5') },
   ],

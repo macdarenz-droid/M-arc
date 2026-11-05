@@ -149,10 +149,10 @@ const zooms = [
       right: { text: 'Pad<br>on thighs', anchor: { at: 'thighTop.r', off: [0, -1] } },
       wrong: { text: 'Pad<br>too high', anchor: { at: [0, 0.5647817206547646, 0.38121249356203657], off: [0, 1] }, prefer: 'right' },
     },
-    caption: { right: 'Pad firm on the thighs, hips down.',
+    caption: { right: 'Pad firm on top of the thighs.',
       wrong: 'Pad too high, gap above the thighs.' },
     alt: {
-      right: 'Side view of the thighs, knee pad and seat. The pad presses on the tops of the thighs, just above the knees. Feet flat, hips down on the seat.',
+      right: 'Side view of the thighs, knee pad and seat. The pad presses on the tops of the thighs, just above the knees. Feet flat.',
       wrong: 'The pad set too high, with a gap above the thighs. Drawn dashed over the right position.',
     },
     // Q-W3-8 (#383 6631278086): feelRow and feelPrompt are not compared; this card dropped the low-back row, so no feel link.

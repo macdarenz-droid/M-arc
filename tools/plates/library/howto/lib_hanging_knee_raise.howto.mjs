@@ -219,7 +219,7 @@ const MISTAKES = [
     fix: 'Lower the legs with control.' },
 ];
 const RISKS = [
-  { key: 'spine', text: 'The straight-leg version measured about 3000 N of spine load. Bent knees likely less.', claim: CL.c14 },
+  { key: 'spine', text: 'The straight-leg version measured about 3000 newtons of spine load. Bent knees likely less.', claim: CL.c14 },
   { key: 'shoulder', text: 'A long hang with arms overhead narrows the space under the shoulder roof.', claim: CL.c15 },
 ];
 
