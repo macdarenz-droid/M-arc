@@ -837,6 +837,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Owner answers: D-OWNER-FLAGS (approve; crunch was added under the ruling, so the corrected count of 58 goes to the owner with the next APK) and D-OWNER-RELEASE-ALL.
   - Owner items for the release candidate: F-SHEET-COPY (the "not medical advice" closing line vs the AGENTS UI-copy rule), golden-B follow-ups 30-36, F-PLATE-OVERLAP-W2, and the box_jump ankle box.
   - Panel scratch: lyr-w2a/b/c, k1, k2 and s, with keys in lyr-w2-private.
+- **Meter 11-05 03:23 UTC: weekly 0.64**, rising about 12 % an hour with about 12 lanes and the panels. At this rate it reaches 100 % around 06:30 UTC, about 25 h before the Fri 08:00 reset. The owner's rule still holds (no pause until maxed out).
+  - If the account maxes out, the next supervisor resumes from this file and section 48 after the reset. Every lane posts its state on its PR.
+  - Priority before then: train 68 (W2) merge and the APK message to the owner.
+  - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
+  - Panels still building: W4, W5, W6 and W7.
 - **Update 11-05 ~03:05 UTC** (weekly meter 0.56 and rising fast with about 12 lanes; owner rule: no pause until the Fri 08:00 reset). Rulings are in `verify/lib4-cards.md` section 48.
   - **Train 68 (#396), W2's 8 ids:** CI is queued behind the lanes. Local run: 281 files, 5823 tests. When it merges, an APK goes to the owner, with the battle_ropes question and the later-update list (goblet_squat, jump_squat, bench_dip, renegade_row, dumbbell_fly, the rear delt fly, pec_fly and concentration_curl, unless their routes land).
   - **W3 #384:** layers panel VALID (6648454032); a fix round is running. Content findings are in `verify/panels/w3-content-findings.md`.
