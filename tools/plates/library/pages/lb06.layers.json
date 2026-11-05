@@ -1,0 +1,58 @@
+{
+  "groups": [
+    {
+      "id": "lb6",
+      "title": "LB6",
+      "ids": [
+        "lib_cable_chest_press",
+        "lib_machine_pullover",
+        "lib_machine_crunch",
+        "lib_low_to_high_cable_fly",
+        "lib_high_to_low_cable_fly",
+        "lib_smith_machine_squat",
+        "lib_smith_machine_shoulder_press",
+        "lib_hip_abduction",
+        "lib_hip_adduction",
+        "lib_machine_lateral_raise",
+        "lib_rear_delt_fly"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb06.closeups.mjs",
+  "closeups": {
+    "lib_cable_chest_press": {
+      "optionsKey": "cable_chest_press"
+    },
+    "lib_machine_pullover": {
+      "optionsKey": "machine_pullover"
+    },
+    "lib_machine_crunch": {
+      "optionsKey": "machine_crunch"
+    },
+    "lib_low_to_high_cable_fly": {
+      "optionsKey": "low_to_high_cable_fly"
+    },
+    "lib_high_to_low_cable_fly": {
+      "optionsKey": "high_to_low_cable_fly"
+    },
+    "lib_smith_machine_squat": {
+      "optionsKey": "smith_machine_squat"
+    },
+    "lib_smith_machine_shoulder_press": {
+      "optionsKey": "smith_machine_shoulder_press"
+    },
+    "lib_hip_abduction": {
+      "optionsKey": "hip_abduction"
+    },
+    "lib_hip_adduction": {
+      "optionsKey": "hip_adduction"
+    },
+    "lib_machine_lateral_raise": {
+      "optionsKey": "machine_lateral_raise"
+    },
+    "lib_rear_delt_fly": {
+      "optionsKey": "rear_delt_fly"
+    }
+  },
+  "jump": null
+}
