@@ -44,14 +44,20 @@ const isPoint = p => Array.isArray(p) && p.length === 3 && p.every(Number.isFini
 // are qa/zoom.mjs H3.zoom:posture:* (exempt from the trace rows; the plate's own trace bar still holds).
 export const POSTURE = Object.freeze({ kMin: 1, regionMax: 8, inset: 4, fill: 0.6, pad: 3 });
 const isPosture = z => z != null && typeof z === 'object' && 'focus' in z;
+// D-PF2-PLACE: an opt-in `place: 'outer'` on any entry keeps the circle on the far side of its focus from the body's
+// midline (world x 0 on the plate): |cx - xm| >= |focus.x - xm| + r, on the focus's side. Front view only.
+export const PLACES = ['outer'];
+/** Is centre `at` beyond `focus` from the midline `xm`, by the circle radius r (place 'outer')? */
+export const outerOk = (at, focus, xm, r) => Math.sign(at[0] - xm) === Math.sign(focus[0] - xm) && Math.abs(at[0] - xm) >= Math.abs(focus[0] - xm) + r;
 function entryProblems(z) {
   const out = [];
   if (typeof z !== 'object' || z === null || Array.isArray(z)) return ['zoom must be { view, k }'];
-  const posture = isPosture(z), keys = posture ? ['view', 'k', 'focus', 'project', 'ref'] : ['view', 'k', 'tell', 'pair'];
+  const posture = isPosture(z), keys = posture ? ['view', 'k', 'focus', 'project', 'ref', 'place'] : ['view', 'k', 'tell', 'pair', 'place'];
   for (const k of Object.keys(z)) if (!keys.includes(k)) out.push(`zoom: unknown key ${k}`);
   if (!VIEWS.includes(z.view)) out.push(`zoom.view ${JSON.stringify(z.view)} is not 'normal' or 'mistake'`);
   const kMin = posture ? POSTURE.kMin : ZOOM.kMin;
   if (!(typeof z.k === 'number' && z.k >= kMin && z.k <= ZOOM.kMax)) out.push(`zoom.k ${JSON.stringify(z.k)} is outside ${kMin}-${ZOOM.kMax}`);
+  if ('place' in z && !PLACES.includes(z.place)) out.push(`zoom.place ${JSON.stringify(z.place)} is not 'outer'`);
   if (posture) {
     const f = z.focus;
     if (z.view !== 'normal') out.push(`zoom.focus is for a normal entry, not the ${z.view} view`);
@@ -181,7 +187,7 @@ export function zoomOf(spec, { prefix = 'p', E = ENGINE, view: which = null } = 
   if (m && !fault) throw new Error(`${spec.id}: a Mistake zoom needs a tell`);
   if (!m && !trace.length) throw new Error(`${spec.id}: a normal zoom needs a trace`);
   const focus = m ? mid([fault.end, fault.mistake]) : mid(trace), { r } = ZOOM, rs = r / k;
-  const placed = placeCircle(plate, focus, rs);
+  const placed = placeCircle(plate, focus, rs, midlineX(entry, cam, spec));
   if (!placed) throw new Error(`${spec.id}: no place on the ${view} plate keeps the zoom clear of ink, labels and leaders`);
   const { C, d: best } = placed;
   // the magnified render: the same spec at k x the camera, the focus mapped to the circle centre; no labels, guides of
@@ -205,14 +211,22 @@ export function zoomOf(spec, { prefix = 'p', E = ENGINE, view: which = null } = 
   return { view, k, focus, circle: { c: C, r }, src: { c: focus, r: rs }, link, fault, trace, svg };
 }
 
-/** The circle centre nearest `focus` that passes the placement rules (zoomOf's search), or null. */
-function placeCircle(plate, focus, rs) {
+/** The body midline's plate x for an entry with place 'outer' (front view), else null. */
+export function midlineX(entry, cam, spec) {
+  if (entry?.place !== 'outer') return null;
+  if (cam.view !== 'front') throw new Error(`${spec.id}: zoom.place 'outer' needs the front view`);
+  return cam.P([0, 0, 0])[0];
+}
+/** The circle centre nearest `focus` that passes the placement rules (zoomOf's search), or null. `xm`: the midline's
+ *  plate x for place 'outer' (null: anywhere). */
+function placeCircle(plate, focus, rs, xm = null) {
   const { r, gap, margin, top, size } = ZOOM, labels = labelBoxes(plate.overlay), leaders = leadersOf(plate.svg);
   let C = null, best = Infinity;
   for (let cy = top + r; cy <= size - margin - r; cy += 2) for (let cx = margin + r; cx <= size - margin - r; cx += 2) {
     const d = Math.hypot(cx - focus[0], cy - focus[1]);
     if (d >= best || d < r + rs + gap) continue;
     const at = [cx, cy];
+    if (xm != null && !outerOk(at, focus, xm, r)) continue;
     if (!discFree(plate.occ, at, r + gap) || labels.some(b => rectHitsCircle(b, at, r + gap)) || leaders.some(p => polyHitsCircle(p, at, r + gap))) continue;
     if (labels.some(b => linkHitsBox(focus, at, rs, r, b))) continue;
     C = at; best = d;
@@ -228,7 +242,7 @@ function postureZoomOf(spec, entry, { E, vid, plate, c, cam }) {
   const onPlate = pts.map(w => cam.P(w)), focus = mid(onPlate);
   const side = entry.project === 'side', hold = Math.max(...onPlate.map(p => Math.hypot(p[0] - focus[0], p[1] - focus[1]) + POSTURE.pad));
   const rs = side ? hold : Math.max(r / k, hold);
-  const placed = placeCircle(plate, focus, rs);
+  const placed = placeCircle(plate, focus, rs, midlineX(entry, cam, spec));
   if (!placed) throw new Error(`${spec.id}: no place on the normal plate keeps the zoom clear of ink, labels and leaders`);
   const { C, d: best } = placed, uv = postureUV(entry, cam), mc = mid(pts.map(uv)), s = c.pxPerM * k;
   const zs = { ...postureSpec(spec, entry), camera: { ...(!side && cam.pitch ? { pitch: cam.pitch } : {}), pxPerM: s, x0: C[0] - s * mc[0], y0: C[1] + s * mc[1] },

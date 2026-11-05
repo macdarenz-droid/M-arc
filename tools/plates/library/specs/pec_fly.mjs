@@ -141,7 +141,7 @@ export default {
   trace: { point: 'grip.r', trim: [12, 12] },
   callouts: [
     { key: 'elbows', text: 'Soft<br>elbows', anchor: { at: 'elbow.l', pose: 'start' }, box: { left: 236, top: 214 }, cue: 'Keep a slight, fixed bend in the elbows.' },
-    { key: 'height', text: 'Chest<br>height', anchor: { at: 'grip.r', pose: 'start' }, box: { left: 20, top: 244 }, cue: 'Set the seat so the arms move at chest-to-shoulder height.' },
+    { key: 'height', text: 'Chest<br>height', anchor: { at: 'grip.r', pose: 'start' }, box: { left: 20, top: 260 }, cue: 'Set the seat so the arms move at chest-to-shoulder height.' },
     { key: 'meet', text: 'Hands<br>meet', anchor: 'grips', box: { left: 79, top: 214 }, cue: 'Bring the handles together in front of the chest each rep.' },
   ],
   tempo: [{ phase: 'Close', s: 2, move: true }, { phase: 'Hold', s: 2 }, { phase: 'Open', s: 2, move: true }],

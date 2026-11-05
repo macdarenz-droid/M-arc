@@ -12,11 +12,12 @@
 //                                  (hold), the region spans at least POSTURE.fill of the circle (fill: its magnification
 //                                  bar, with k >= POSTURE.kMin), a `ref` lies inside the circle (ref)
 //   H4.zoom:*                      node placement: 8 px margin and the meta band; 6 px gap to the figure and equipment;
-//                                  no leader or label crossing; the source ring apart from the circle
+//                                  no leader or label crossing; the source ring apart from the circle; D-PF2-PLACE: an
+//                                  entry with place 'outer' sits beyond its source ring from the body midline (place)
 // The browser half (label and hit boxes at 390/360/340 px, ring contrast) is browser.mjs.
 import { tags } from './markup.mjs';
 import { anchorInPose, cameraOf, equipmentItems, poseLandmarks, resolvePoint } from './engine.mjs';
-import { POSTURE, ZOOM, faultOf, focusPoints, labelBoxes, leadersOf, polyHitsCircle, postureUV, tracePath, zoomFieldProblems, zoomFor } from '../zoom/inline.mjs';
+import { POSTURE, ZOOM, faultOf, outerOk, focusPoints, labelBoxes, leadersOf, polyHitsCircle, postureUV, tracePath, zoomFieldProblems, zoomFor } from '../zoom/inline.mjs';
 
 const P = (key, text) => ({ key, text });
 export const ANGLE = /°|&deg;|&#176;|&#x[bB]0;|\bdeg(?:rees?)?\b/;
@@ -163,6 +164,10 @@ export function zoomRows(c, ctx, R, M) {
     if (R?.[view]?.occ && ink(R[view].occ, C, r + ZOOM.gap) > 0) H4.push(P(`H4.zoom:ink:${view}`, `the ${view} zoom comes within ${ZOOM.gap} px of the figure or equipment`));
     if (leadersOf(pv.svg).some(p => polyHitsCircle(p, C, r + ZOOM.gap))) H4.push(P(`H4.zoom:leader:${view}`, `a leader crosses the ${view} zoom`));
     if (labelBoxes(pv.overlay).some(b => rectHits(b, C, r + ZOOM.gap))) H4.push(P(`H4.zoom:label:${view}`, `a label box overlaps the ${view} zoom`));
+    if (want.place === 'outer') {
+      const rep = R?.normal?.report, xm = rep && rep.view === 'front' ? cameraOf(spec, rep).P([0, 0, 0])[0] : null;
+      if (xm == null || !outerOk(C, m.src.c, xm, r)) H4.push(P(`H4.zoom:place:${view}`, `the ${view} zoom is not beyond its source ring from the body midline (place 'outer')`));
+    }
     if (Math.hypot(C[0] - m.src.c[0], C[1] - m.src.c[1]) < r + m.src.r + ZOOM.gap) H4.push(P(`H4.zoom:source:${view}`, `the ${view} zoom overlaps its source ring`));
   }
   return { H2, H3, H4 };

@@ -1,0 +1,112 @@
+// LIB-PLATEFIX-2 plates (PLATEFIX-2 PLAN RULED on #395): dumbbell_fly R5/R7, bent_over_dumbbell_rear_delt_fly R1/R5/R7/R11
+// (D-PF2-SHRUG10, D-PF2-PLACE, D-PF2-POSTZOOM), pec_fly PQ-H4 (D-SHIP-PECFLY-HOLD). The drawing facts each fix promises,
+// measured on the engine's own output.
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
+const T = 900_000;
+let zoom: any, qz: any, qaIdx: any, qaEng: any, golden: any, E: any, mirror = '', fly: any, flyMod: any, rd: any, rdMod: any, pec: any;
+beforeAll(async () => {
+  [zoom, qz, qaIdx, qaEng] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs', 'qa/index.mjs', 'qa/engine.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+  golden = await import(/* @vite-ignore */ new URL('../../tools/plates/golden.mjs', import.meta.url).href);
+  flyMod = await import(/* @vite-ignore */ lib('specs/dumbbell_fly.mjs')); fly = flyMod.default;
+  rdMod = await import(/* @vite-ignore */ lib('specs/bent_over_dumbbell_rear_delt_fly.mjs')); rd = rdMod.default;
+  pec = (await import(/* @vite-ignore */ lib('specs/pec_fly.mjs'))).default;
+  mirror = golden.makeMirror();
+  E = await qaEng.loadEngine(mirror);
+}, T);
+afterAll(() => { if (mirror) qaEng.dropMirror(mirror); });
+
+const d = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!);
+// the equipment entries a spec returns for one pose (the engine's own call shape: plate.mjs drawPose)
+const entries = (spec: any, pose: string, mistake: boolean) => {
+  const L = qaEng.poseLandmarks(E, spec), ctx = { pose, start: L.lm.start, body: L.body, mistake, q: L.q[pose] };
+  return (spec.equipment ?? []).flatMap((e: any) => [].concat((typeof e === 'function' ? e(L.lm[pose], ctx) : e) ?? []));
+};
+const ofType = (es: any[], t: string) => es.filter(x => x.type === t);
+
+describe('PF2 dumbbell_fly', { timeout: T }, () => {
+  it('R7: the Mistake view draws the solid end dumbbells end-on at the neutral grip, as the normal view does', () => {
+    const n = E.renderPlate(fly, { id: 'f' }), m = E.renderPlate(fly, { id: 'f', mistake: true });
+    const hexes = (svg: string) => [...svg.matchAll(/<path class="eq-solid[^"]*"[^>]*d="([^"]+)"/g)].length;
+    expect(hexes(m.svg)).toBe(hexes(n.svg));
+    for (const mistake of [false, true]) expect(ofType(entries(fly, 'end', mistake), 'dumbbell').map((x: any) => x.axis)).toEqual([[0, 0, 1], [0, 0, 1]]);
+    expect(ofType(entries(fly, 'mistake', true), 'dumbbell')).toEqual([]);   // the Mistake pose draws no dumbbell
+  });
+  it('R5: the red hand block and hexagon turn 30-35 deg toward the floor about the wrist, at the drawn hand length', () => {
+    const cam = qaEng.cameraOf(fly, E.renderPlate(fly, { id: 'f' }).report), L = qaEng.poseLandmarks(E, fly).lm;
+    expect(flyMod.FLY_TURN.l).toBeGreaterThanOrEqual(30); expect(flyMod.FLY_TURN.l).toBeLessThanOrEqual(35);
+    expect(flyMod.FLY_TURN.r).toBe(-flyMod.FLY_TURN.l);
+    for (const s of ['l', 'r']) {
+      const W = cam.P(L.mistake[`wrist.${s}`]), G = cam.P(L.mistake[`grip.${s}`]), We = cam.P(L.end[`wrist.${s}`]), Ge = cam.P(L.end[`grip.${s}`]);
+      expect(d(W, We)).toBeLessThan(0.1);                         // about the wrist joint: the forearm stays on its line
+      expect(Math.abs(d(W, G) - d(We, Ge))).toBeLessThan(0.1);   // the hand keeps its drawn length
+      expect(G[1]).toBeGreaterThan(Ge[1]);                          // toward the floor (screen y down)
+    }
+    const g = fly.mistake.guides, kinds = g.map((x: any) => x.kind);
+    expect(kinds).toEqual(['dashed', 'dashed', 'dashed', 'arc-arrow', 'dashed', 'dashed', 'dashed', 'arc-arrow']);
+    // the red hexagon is centred on the faulty grip (the tell anchor), 6 sides, the primitive's size
+    const hex = g[1].pts.slice(0, 6).map((p: number[]) => cam.P(p)), Gl = cam.P(L.mistake['grip.l']);
+    const c = [hex.reduce((a: number, p: number[]) => a + p[0]!, 0) / 6, hex.reduce((a: number, p: number[]) => a + p[1]!, 0) / 6];
+    expect(d(c, Gl)).toBeLessThan(0.1);   // the spec builds lmMis as the engine merges the pose; 0.05 px apart
+    for (const p of hex) expect(d(p, Gl)).toBeCloseTo(0.0595 * cam.pxPerM, 2);
+  });
+  it('the grey forearm axis and the red angle arc at the wrist are kept; the zoom stays at k 2.5', () => {
+    expect(ofType(entries(fly, 'end', true), 'line')).toHaveLength(6);   // 4 dashed start phantoms (hex and core per side) + the 2 grey forearm axes
+    expect(fly.mistake.guides.filter((x: any) => x.kind === 'arc-arrow')).toHaveLength(2);
+    expect(zoom.zoomFor(fly, 'mistake').k).toBe(2.5);
+  });
+});
+
+describe('PF2 bent_over_dumbbell_rear_delt_fly', { timeout: T }, () => {
+  it('R11: the Mistake ring (k 3, place outer) holds the joint marker, the cap top and the head side', () => {
+    const z = zoom.zoomOf(rd, { view: 'mistake' }), r11 = rdMod.R11;
+    expect(z.k).toBe(3);
+    for (const p of [r11.joint, r11.capTop, r11.headSide]) expect(d(p, z.src.c)).toBeLessThanOrEqual(z.src.r - 1);
+    expect(zoom.outerOk(z.circle.c, z.focus, 195, 52)).toBe(true);
+  });
+  it('R5: the red dashed caps sit 13 px toward the ear from the correct caps, closing the shoulder-head gap', () => {
+    const cam = qaEng.cameraOf(rd, E.renderPlate(rd, { id: 'r' }).report), L = qaEng.poseLandmarks(E, rd).lm;
+    const caps = rd.mistake.guides.filter((g: any) => g.kind === 'dashed' && g.pts.length === 25);
+    expect(caps).toHaveLength(2);
+    for (const [cap, s] of [[caps[0], 'r'], [caps[1], 'l']] as const) {
+      const ps = cap.pts.map((p: number[]) => cam.P(p)), c = [ps.slice(0, 24).reduce((a: number, p: number[]) => a + p[0], 0) / 24, ps.slice(0, 24).reduce((a: number, p: number[]) => a + p[1], 0) / 24];
+      const S = cam.P(L.end[`shoulder.${s}`]), ear = cam.P(L.end.ear);
+      expect(d(c, S)).toBeCloseTo(13, 1);
+      expect(d(c, ear)).toBeCloseTo(d(S, ear) - 13, 1);
+    }
+    expect(rdMod.SIZES.M_SHRUG).toBe(10);
+  });
+  it('R7 note: the start dumbbells are dashed end-on hexagons, and the Trace is one circular arc within 1 px', () => {
+    const r = E.renderPlate(rd, { id: 'r' });
+    const lines = ofType(entries(rd, 'end', false), 'line');
+    expect(lines).toHaveLength(4);   // per side a dashed end-on hexagon (7 points, closed) and its core ring (17)
+    expect(lines.map((x: any) => x.pts.length).sort()).toEqual([17, 17, 7, 7]);
+    const pts = zoom.tracePath(rd, qaEng.cameraOf(rd, r.report));
+    const n = pts.length, mx = pts.reduce((a: number, p: number[]) => a + p[0], 0) / n, my = pts.reduce((a: number, p: number[]) => a + p[1], 0) / n;
+    let suu = 0, svv = 0, suv = 0, suuu = 0, svvv = 0, suvv = 0, svuu = 0;
+    for (const [x, y] of pts) { const u = x - mx, v = y - my; suu += u * u; svv += v * v; suv += u * v; suuu += u ** 3; svvv += v ** 3; suvv += u * v * v; svuu += v * u * u; }
+    const a = (suuu + suvv) / 2, b = (svvv + svuu) / 2, det = suu * svv - suv * suv, uc = (a * svv - b * suv) / det, vc = (b * suu - a * suv) / det;
+    const c = [uc + mx, vc + my], rad = Math.sqrt(uc * uc + vc * vc + (suu + svv) / n);
+    expect(Math.max(...pts.map((p: number[]) => Math.abs(d(p, c) - rad)))).toBeLessThanOrEqual(1);
+  });
+  it('R1: the posture zoom shows the start pose side-on, hip to upper back, with the straight ref line; FLAT BACK stays on backUpper', () => {
+    const z = zoom.zoomFor(rd, 'normal');
+    expect(z).toMatchObject({ k: 1, project: 'side', focus: { pose: 'start' } });
+    expect(z.focus.region).toEqual(expect.arrayContaining(['hip.r', 'backUpper', 'sacrum']));
+    expect(rd.callouts.find((c: any) => c.key === 'back').anchor).toBe('backUpper');
+  });
+});
+
+describe('PF2 pec_fly PQ-H4 (D-SHIP-PECFLY-HOLD)', { timeout: T }, () => {
+  it('no callout hit boxes overlap at 390, 360 or 340 px, and the height leader still ends on the start grip', async () => {
+    const [cand, reg, pp, bp, br] = await Promise.all(['candidate.mjs', 'registry.mjs', 'plates-page.mjs', 'build-page.mjs', 'qa/browser.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    const all = reg.rows(), html = (await bp.buildPlatesPage(await pp.groupsConfig({ groups: [{ id: 'pf2', title: 'PF2', ids: ['lib_pec_fly'] }] }, all))).html.toString('utf8');
+    const c = await cand.candidateOf('lib_pec_fly', { all, platesHtml: html, engine: E, authoring: false });
+    const b = await br.launch();
+    let res: any;
+    try { res = (await br.browserResults(b, html, [c], E, qaIdx.loadPins().envelope)).get('lib_pec_fly'); } finally { await b.close(); }
+    expect(res.H4.filter((p: any) => /^H4\.overlap/.test(p.key))).toEqual([]);
+    expect(pec.callouts.find((x: any) => x.key === 'height')).toMatchObject({ anchor: { at: 'grip.r', pose: 'start' }, box: { left: 20, top: 260 } });
+  });
+});

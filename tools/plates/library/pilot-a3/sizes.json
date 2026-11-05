@@ -80,14 +80,14 @@
     "basis": "dumbbell_fly as drawn on main c7bdad7a (pilot A #109); the arc, bench and body are unchanged by LIB-8R"
    },
    "PITCH": {
-    "value": 45,
+    "value": 0,
     "unit": "deg",
-    "basis": "decision: D-SPIKE-pitch (COACHING-DECISIONS.md:2222), camera pitch about 45 deg for this front view"
+    "basis": "decision: D-SPIKE-pitch (COACHING-DECISIONS.md:2222) camera pitch; LIB-PLATEFIX-1: 45 read as a standing T-pose (#379 6633524031), 25 as sitting on a stool with the bench floating (plates panel pf1, #385 6636073314 R1); 0 puts the bench on the floor, the shoulders 27 px (780) above the pad and the arms at true length (upper arm 94, forearm-to-grip 100 px)"
    },
    "M_WRIST": {
-    "value": 30,
+    "value": 32,
     "unit": "deg",
-    "basis": "stated reason: a bend that reads as the hand off the forearm's line; no card claim or approved plate gives a wrist-bend size (LIB-8R PLAN RULED: M_WRIST 30 stands under D-LIB17-SIZE); c13 'avoid flexion/extension at the wrist joint'"
+    "basis": "stated reason: a bend that reads as the hand off the forearm's line; no card claim or approved plate gives a wrist-bend size (LIB-8R PLAN RULED: M_WRIST 30 stands under D-LIB17-SIZE; LIB-PLATEFIX-1 plates panel pf2, #385 6637293768 R5, asked 30-35: 32); c13 'avoid flexion/extension at the wrist joint'"
    },
    "HAND_W": {
     "value": 0.02,
