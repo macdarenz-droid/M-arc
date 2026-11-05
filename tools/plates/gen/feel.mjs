@@ -194,11 +194,18 @@ export function librarySection(row, r) {
   return section;
 }
 
+/** D-FEEL-NOMEANS (supervisor, W2 panel fix 3): a feel row with an empty or missing `means` prints no "Usually means"
+ *  label. The vendored row template (artifact/howto-layers.mjs) always prints `<p><b>Usually means</b>${esc(r.means)}</p>`,
+ *  which is `...</b></p>` for '' and `...</b>undefined</p>` for a missing key (esc is String(s)); both are cut here, in
+ *  the app's copy only. A row with a means is untouched, so the 8 and every row with means stay byte-identical. */
+export const EMPTY_MEANS = Object.freeze(['<p><b>Usually means</b></p>', '<p><b>Usually means</b>undefined</p>']);
+export const dropEmptyMeans = section => EMPTY_MEANS.reduce((s, p) => s.split(p).join(''), section);
+
 async function outputsOf() {
   const r = await renderAll(), { sections, css } = r;
   return [
-    ...sections.map(s => ({ path: `src/howto/generated/${chunkName(s.pre)}.ts`, text: moduleText(s.id, s.pre, s.section) })),
-    ...libraryRows().map(row => ({ path: `src/howto/generated/${chunkName(row.chromeId)}.ts`, text: moduleText(row.id, row.chromeId, librarySection(row, r)) })),
+    ...sections.map(s => ({ path: `src/howto/generated/${chunkName(s.pre)}.ts`, text: moduleText(s.id, s.pre, dropEmptyMeans(s.section)) })),
+    ...libraryRows().map(row => ({ path: `src/howto/generated/${chunkName(row.chromeId)}.ts`, text: moduleText(row.id, row.chromeId, dropEmptyMeans(librarySection(row, r))) })),
     { path: CSS_OUT, text: css },
   ];
 }

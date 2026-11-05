@@ -85,9 +85,9 @@ describe('F-ZOOM-NONE A2: textZoomRow, the zero-zoom guard', () => {
   });
   it('ids.mjs missingChunks: a ruled row needs no posture chunk; without the ruling (the guard removed) it throws as today', () => {
     const row = { id: 'lib_x', slug: 'x', chromeId: 'x' }, has = (n: string) => n !== 'posture-x';
-    expect(() => I.missingChunks([row], has, { x: 'k' }, {}, () => true, new Set(['lib_x']))).not.toThrow();
+    expect(() => I.missingChunks([row], has, { x: 'k' }, {}, () => true, {}, new Set(['lib_x']))).not.toThrow();
     expect(() => I.missingChunks([row], has, { x: 'k' }, {}, () => true)).toThrow(/ids: lib_x: no src\/howto\/generated\/posture-x.ts/);
-    expect(() => I.missingChunks([row], () => true, { x: 'k' }, {}, () => true, new Set(['lib_x']))).not.toThrow();
+    expect(() => I.missingChunks([row], () => true, { x: 'k' }, {}, () => true, {}, new Set(['lib_x']))).not.toThrow();
   });
 });
 

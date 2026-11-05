@@ -10,11 +10,13 @@
 // plugin, stays ids.ts's second writer: it checks the hints it renders are the ones written.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { ROOT } from '../lib/inputs.mjs';
 import { hintsOutputs } from '../library/ids-encoding.mjs';
 import { inputs as contentInputs, pushHints } from './content.mjs';
 import { EXERCISES_JSON, registryInputs, rows, shippedIds, sourceOf } from '../library/registry.mjs';
 import { PAIRS, loadPairs, pairsOf } from './handpairs.mjs';
+import { noPairRuling } from './hands.mjs';   // D-SHIP-IDS-NOPAIR (#379 6636740340): the rule hands.mjs enforces
 
 /** The layer plugins whose chunks loaders.ts maps (run first, so ctx.prev holds their outputs). */
 export const LAYERS = ['tools/plates/gen/hands.mjs', 'tools/plates/gen/zooms.mjs', 'tools/plates/gen/feel.mjs', 'tools/plates/gen/handpairs.mjs'];
@@ -51,14 +53,17 @@ export function chunkMaps(shippedRows, has, pairOf = {}) {
  *  posture-<c> chunk, its zoom-<c>.css (posture-<c>.ts imports it; `hasFile` takes a repo path, D-LIB2b-REVIEW-1) and,
  *  unless its archetype is 'none', its hand-<c> chunk or a hand pair. Runs before any text is built, so no loaders.ts
  *  line can point at a chunk that is not written. */
-export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}, hasFile, textZoom = new Set()) {
+export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}, hasFile, sheets = {}, textZoom = new Set()) {
   for (const r of shippedRows) {
     const c = r.chromeId;
     // F-ZOOM-NONE: a row ruled in tools/plates/library/text-zooms.json (checked by gen/zooms.mjs, which runs first) has no posture chunk
     for (const name of [`ht-${r.slug}`, `feel-${c}`, ...(textZoom.has(r.id) ? [] : [`posture-${c}`])]) if (!has(name)) throw new Error(`ids: ${r.id}: no src/howto/generated/${name}.ts`);
     const zoom = `src/slices/howto/css/zoom-${c}.css`;
     if (!hasFile(zoom)) throw new Error(`ids: ${r.id}: no ${zoom}`);
-    if (archetypes[r.id] !== 'none' && !has(`hand-${c}`) && !pairOf[c]) throw new Error(`ids: ${r.id}: no src/howto/generated/hand-${c}.ts and no hand pair`);
+    // D-SHIP-IDS-NOPAIR: a sheet whose own handling archetype is 'none' counts as none, and a sheet with no hand chunk
+    // and no pair passes only when hands.mjs's noPairRuling names its ruling (D-SHAPES-HANDS); `sheets` maps id -> sheet.
+    const sheet = sheets[r.id], none = archetypes[r.id] === 'none' || sheet?.handling?.archetype === 'none';
+    if (!none && !has(`hand-${c}`) && !pairOf[c] && !(sheet && noPairRuling(sheet))) throw new Error(`ids: ${r.id}: no src/howto/generated/hand-${c}.ts and no hand pair`);
   }
 }
 
@@ -149,8 +154,10 @@ export async function outputs(ctx = {}) {
   const gen = name => `src/howto/generated/${name}.ts`;
   const hasFile = ctx.prev ? path => ctx.prev.has(path) : path => existsSync(join(ROOT, path)), has = name => hasFile(gen(name));
   const byId = new Map(all.map(r => [r.id, r]));
+  const sheets = Object.fromEntries(await Promise.all(shipped.filter(id => byId.get(id)?.mode !== 'golden' && existsSync(join(ROOT, sourceOf(id))))
+    .map(async id => [id, (await import(pathToFileURL(join(ROOT, sourceOf(id))).href)).default])));
   const textZoom = new Set(Object.keys(existsSync(join(ROOT, TEXT_ZOOMS)) ? JSON.parse(readFileSync(join(ROOT, TEXT_ZOOMS), 'utf8')).entries ?? {} : {}));
-  missingChunks(shipped.map(id => byId.get(id)), has, pairOf, archetypes, hasFile, textZoom);
+  missingChunks(shipped.map(id => byId.get(id)), has, pairOf, archetypes, hasFile, sheets, textZoom);
   const maps = chunkMaps(shipped.map(id => byId.get(id)), has, pairOf);
   const out = [
     { path: 'src/howto/ids.ts', text: twins.ids },

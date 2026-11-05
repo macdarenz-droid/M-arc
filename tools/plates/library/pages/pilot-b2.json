@@ -1,0 +1,11 @@
+{
+ "groups": [
+  {
+   "id": "pilot-b2",
+   "title": "Pilot B2",
+   "ids": [
+    "lib_crunch"
+   ]
+  }
+ ]
+}

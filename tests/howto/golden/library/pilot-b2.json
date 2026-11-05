@@ -1,0 +1,66 @@
+{
+  "base": {
+    "index": 8,
+    "hash": "e48d731d176c5e3994cab5e2de5ea2db938cbdf6c249600679588daa58b22361"
+  },
+  "entries": [
+    {
+      "kind": "page",
+      "pageSha256": "cb06cf9c6aeffe863b6c12fc1382b81021a34b8bbc65d5b54f31f1180b2924f4",
+      "bytes": 190740,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTB2",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6627803879 @ 7bd217cd5333224b340c0ebfe83233fc4f19b73d",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor (PILOTB2 PIN GO, #379 6627803879): crunch's page and its 9 fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10 (a)). F1, F3, F5 named exemptions under D-OWNER-FLAGS (the owner's 11-04 approval of plan decision 9's default for this kind of flag). Crunch was added by supervisor ruling 6627803879 after the re-derivation, and the owner is told the corrected count (58) with the next APK (#379 6627967819).",
+      "supersedes": null,
+      "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_crunch",
+      "src": "library/specs/crunch.mjs",
+      "slug": "crunch",
+      "prefix": "crunch",
+      "chromeId": "crunch",
+      "fragments": {
+        "normalSvg": "cf85b79ea4d3cdfdfc27c921ac9e1ce0605db815c1fda4363c0ff2397ae91672",
+        "normalOverlay": "cc8fe8636355e44c02f33997943d27ddcb744850e7210ad637117fcbe46896ff",
+        "mistakeSvg": "2809d4d320ff9cd35bfbf7f9bfa17ac79f244f92f40e8543f296e0fe13cdbfe6",
+        "mistakeOverlay": "aed65954198cd2d93758acfc3c21f86990bb023907960db75ccb024b706b35ae",
+        "tells": "321bba25aa962437d750fc70157f4e3747fbfc97bbafe062b29cc88e72201986",
+        "tempo": "ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3",
+        "cues": "66dab1fc6678d2aa1fb4d2ac2d83f95a11316ee364e2140c05f97ff83f4b8c7f",
+        "alt": "7dabec950a17628c1a76b830c7d401ec033f9d2a6659e950e5b6a85924f829a9",
+        "mistakeAlt": "eaab91db60719c62f79e1fa47bfcd85451e7b2062f7214ecec3090cd6b7dc778"
+      },
+      "exemptions": [
+        "F1",
+        "F3",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTB2",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6627803879 @ 7bd217cd5333224b340c0ebfe83233fc4f19b73d",
+      "date": "2026-11-04",
+      "why": "Approved by the supervisor (PILOTB2 PIN GO, #379 6627803879): crunch's page and its 9 fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10 (a)). F1, F3, F5 named exemptions under D-OWNER-FLAGS (the owner's 11-04 approval of plan decision 9's default for this kind of flag). Crunch was added by supervisor ruling 6627803879 after the re-derivation, and the owner is told the corrected count (58) with the next APK (#379 6627967819).",
+      "supersedes": null,
+      "prev": "9583c75fae39044276f28a6ebc9ee6c9f123cdf5fd963ef9487335a8981791ca"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B2",
+      "ids": [
+        "lib_crunch"
+      ],
+      "pageSha256": "7c66d68e69d3d1c8c3e0fc6b5ec65fb164a9db8596556a092fcf797034e1f112",
+      "bytes": 265290,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W2-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf",
+      "date": "2026-11-04",
+      "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row).",
+      "prev": "ba72467d084a841c0ff8895df693cfe05e68fbefb59244a9fc2fb891df5c73ae"
+    }
+  ]
+}
