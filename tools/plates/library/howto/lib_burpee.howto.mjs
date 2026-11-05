@@ -24,6 +24,8 @@
 //   handlingMistake hard landing c11      -> mistakes[landing] (zoom landing)
 //   handlingMistake back sagging c6, c18  -> mistakes[sag] (zoom plank), copy.mistakeLine
 //   hand zoom hands Right c2              -> handling.gripLine, setup step 2
+// D-TEXT-PRINTED (W7, #394): c19 breathing -> setup step 1; c15 neck neutral -> setup step 4 (and plate label);
+//   c16 knees over toes -> setup step 5.
 // Left off (D-TEXT-PROGRESSION): c23 (easier versions, progression).
 import plateSpec from '../specs/burpee.mjs';
 import { landmarksOf } from '../engine.mjs';
@@ -238,11 +240,11 @@ export default {
   },
   contacts: ['standing-feet'],
   setup: [
-    { kind: 'position', text: 'Stand with your feet about shoulder-width apart.', claim: CL.c1 },
+    { kind: 'position', text: "Stand with feet about shoulder-width apart. Don't hold your breath.", claim: J('c1', 'c19') },
     { kind: 'grip', text: 'Squat down. Hands flat on the floor, shoulder-width apart.', claim: CL.c2 },
     { kind: 'position', text: 'Hands down first, then kick your feet back into a plank.', zoom: 'plank', claim: CL.c3 },
-    { kind: 'position', text: 'Lower your chest to the floor, then push back up.', claim: CL.c4 },
-    { kind: 'finish', text: 'Jump your feet back under you, then jump up.', zoom: 'landing', claim: CL.c5 },
+    { kind: 'position', text: 'Lower your chest to the floor, neck neutral, then push back up.', claim: J('c4', 'c15') },
+    { kind: 'finish', text: 'Jump your feet under you, knees over toes, then jump up.', zoom: 'landing', claim: J('c5', 'c16') },
   ],
   posture: [
     { key: 'line', label: 'Straight plank', detail: 'Body straight from head to heels in the plank.',

@@ -21,6 +21,7 @@
 //   handlingMistake yanking c6          -> mistakes[yank]
 //   handlingMistake rope piled c5       -> mistakes[pile], setup step 5, risks[slack]
 //   hand zoom rope-grip Right c1, c4    -> gripLine (c1), wrist.limitText (c4), setup step 1
+// D-TEXT-PRINTED (W7, #394): posture c6 chin level, eyes forward -> setup step 2.
 // Left off (D-TEXT-PROGRESSION): c14 (starting load), c9's lighter loads and shorter distances as progression.
 import plateSpec from '../specs/sled_pull.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -173,7 +174,7 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     { kind: 'grip', text: 'Face the sled, rope in both hands, one hand over the other.', claim: CL.c1 },
-    { kind: 'position', text: 'Step back to put light tension in the rope.', claim: CL.c1 },
+    { kind: 'position', text: 'Step back for light tension in the rope. Chin level, eyes forward.', claim: J('c1', 'c6') },
     { kind: 'brace', text: 'Feet shoulder-width, sink into a quarter squat, chest up, trunk braced.', claim: CL.c2 },
     { kind: 'position', text: 'Step back one foot at a time, short and quick.', claim: CL.c3 },
     { kind: 'position', text: 'Feed the rope through your hands. Flick the piled rope aside.', claim: J('c4', 'c5') },

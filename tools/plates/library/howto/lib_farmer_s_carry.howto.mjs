@@ -24,6 +24,9 @@
 //   handlingMistake shrugging (c5)             -> mistakes[2] (zoom shoulders, DV)
 //   hand zoom `grip` Right (c13)               -> handling.gripLine; Wrong (c13) -> copy.mistakeLine, handling.faults
 //   T checkpoints                              -> none (both posture zooms drawn)
+// D-TEXT-PRINTED (W7, #394): c9 weights even -> zoom torso caption.right; c17 turns -> mistakes[rush] fix; hand zoom
+//   grip Wrong (c13) -> gripLine; way out c15 (steps, posture) -> mistakes[long], mistakes[shrug] fixes; c16 set-down
+//   (bend hips and knees) -> feel row hands fix.
 // D-TEXT-PROGRESSION: c18 (load progression) is not a form checkpoint, not on the sheet.
 import plateSpec from '../specs/farmer_s_carry.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -128,7 +131,7 @@ const zooms = [
       wrong: { text: 'Leaning forward', anchor: { at: 'backUpper', pose: 'mistake' } },
     },
     caption: {
-      right: 'Tall and upright, arms long.',   // card zoom right (c4, c9)
+      right: 'Tall and upright, arms long, weights even.',   // card zoom right (c4, c9); c9 weights even (D-TEXT-PRINTED)
       wrong: 'Leaning forward.',               // card zoom wrong (c9)
     },
     alt: {
@@ -155,7 +158,7 @@ const feel = {
     // Tier-A way out (card tierA.wayOut c15, c16).
     { key: 'hands', where: 'Hands', at: { muscles: ['forearms'] },
       means: 'A handle starts slipping.',
-      fix: 'End the carry. Lower the weights beside you, feet clear.',
+      fix: 'End the carry. Bend hips and knees, lower them beside you, feet clear.',
       claim: CL.out },
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
       means: 'Not bracing your trunk.',   // card row means ("Fault: not bracing your core.")
@@ -167,9 +170,9 @@ const feel = {
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
 const MISTAKES = [
-  { key: 'rush', title: 'Rushing the walk', claim: CL.c7, fix: "Slow down. Don't speed up for more distance." },
-  { key: 'long', title: 'Steps too long', claim: CL.long, fix: 'Take short, deliberate steps.' },
-  { key: 'shrug', title: 'Shrugging as you tire', zoom: 'shoulders', claim: CL.c5, fix: 'Keep your shoulders back and down.' },
+  { key: 'rush', title: 'Rushing the walk', claim: C(['CONSENSUS'], [GG, FV], 'card c7, c17'), fix: "Slow down, don't speed up. Turn with small steps, not a pivot." },
+  { key: 'long', title: 'Steps too long', claim: C(CL.long.tags, [...new Set([...CL.long.sources, ...CL.out.sources])], `${CL.long.note}, c15`), fix: 'Take short, deliberate steps. Steps out of control? End the carry.' },
+  { key: 'shrug', title: 'Shrugging as you tire', zoom: 'shoulders', claim: C(['CONSENSUS'], [BB, FV, SL], 'card c5, c15'), fix: 'Keep your shoulders back and down. Posture changing? End the carry.' },
 ];
 const RISKS = [
   { key: 'rush', text: 'Rushing: one misstep could pull a calf, roll an ankle or twist a knee.', claim: CL.c7 },
@@ -197,7 +200,7 @@ export default {
       // card zoom grip wrong (c13). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'fingers-only', label: 'Fingers only', pose: {}, markers: [], alt: 'Handle held in the fingers only, not pushed into the palm.' },
     ],
-    gripLine: 'Palm pushed into the handle, thumb wrapped. Curl your fingers around it.',   // card zoom grip right (c13)
+    gripLine: 'Palm pushed into the handle, thumb wrapped, fingers curled around it. Not in the fingers only.',   // card zoom grip right (c13); its Wrong as a fault (D-TEXT-PRINTED)
     cue: 'Squeeze the handles hard.',   // c13
   },
   contacts: ['standing-feet'],

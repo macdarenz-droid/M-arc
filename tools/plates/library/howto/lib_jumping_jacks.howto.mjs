@@ -18,6 +18,8 @@
 //   handlingMistake rushing (c6, c15)         -> posture 'hm-rush' (Q-W2-12)
 //   T landing-knees (c5, c6)                  -> Right: posture 'knees', setup 4; Wrong: posture 'hm-knees', mistakeLine
 //   zoom toes-forward Wrong (c12)             -> zoom toes-forward (the plate's Mistake)
+// D-TEXT-PRINTED (W7, #394): handlingMistake rushing (c6, c15) -> risks[rush]; T landing-knees Wrong and the
+//   straight-knee and jerky-landing mistakes print in risks[landing], the Right in setup 4.
 // D-TEXT-PROGRESSION: c8 and c10 (easier and harder versions) and c9 (intervals) are not form checkpoints, not on the sheet.
 import plateSpec, { turnedFoot } from '../specs/jumping_jacks.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -108,6 +110,8 @@ const feel = {
 const RISKS = [
   { key: 'landing', text: 'Stiff-kneed landings add joint stress. Jerky landings add impact stress.', claim: CL.c6 },
   { key: 'surface', text: 'Hard surfaces like cement absorb less shock than rubber or grass.', claim: CL.c11 },
+  // D-TEXT-PRINTED (W7, #394): handlingMistake rushing (c6, c15); posture hm-rush is not printed
+  { key: 'rush', text: 'Rushing the reps can lead to overuse injuries. Choose a suitable speed.', claim: CL.pace },
 ];
 
 export default {

@@ -22,6 +22,8 @@
 //   handlingMistake hips rise / chest drops (c9) -> posture 'hm-angle' (Q-W2-12)
 //   hand zoom `hands` Right (c1, c4)          -> setup 2; Wrong null (LR-25), nothing to show
 //   T checkpoints                              -> none (both posture zooms drawn)
+// D-TEXT-PRINTED (W7, #394): c11 arms same position -> setup 4; c6 eyes ahead -> setup 5; c10 short steps -> zoom feet
+//   caption.right; handlingMistake c9 -> risks[angle].
 // D-TEXT-PROGRESSION: c16 (start light, then add one thing at a time) is a progression, not on the sheet.
 import plateSpec from '../specs/sled_push.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -118,7 +120,7 @@ const zooms = [
       wrong: { text: 'Heel down', anchor: { at: 'heel.r', pose: 'mistake' } },
     },
     caption: {
-      right: 'On the balls of your feet, heels up.',   // card zoom right (c8)
+      right: 'Short, powerful steps on the balls of your feet.',   // card zoom right (c8), c10 (D-TEXT-PRINTED)
       wrong: 'Heel down on the floor.',                // card zoom wrong (c8)
     },
     alt: {
@@ -157,6 +159,8 @@ const feel = {
 const RISKS = [
   { key: 'round', text: 'A rounded back will not favor your spine.', claim: CL.c7 },
   { key: 'bent', text: 'Bent arms may cause some discomfort in your elbows and shoulders.', claim: CL.c5 },
+  // D-TEXT-PRINTED (W7, #394): handlingMistake c9 (posture hm-angle is not printed)
+  { key: 'angle', text: 'Hips rising or chest dropping as you tire? Keep the same body angle.', claim: CL.c9 },
 ];
 
 export default {
@@ -170,8 +174,8 @@ export default {
     { kind: 'safety', text: 'Load the sled. Check the path is flat and clear.', claim: CL.c17 },
     { kind: 'grip', text: 'Stand behind the sled. Hands about halfway down the handles, arms straight.', claim: CL.hands },
     { kind: 'position', text: 'Step back and lean forward, head to hips in a straight line.', zoom: 'back', claim: CL.c3 },
-    { kind: 'position', text: 'Arms straight, shoulders straight behind your hands.', claim: CL.arms },
-    { kind: 'brace', text: 'Tighten your abs and keep your spine neutral.', claim: CL.c6 },
+    { kind: 'position', text: 'Keep arms straight the whole push, shoulders behind your hands.', claim: C(['CONSENSUS'], [SL, BB, GG, FV], 'card c3, c4, c11') },
+    { kind: 'brace', text: 'Tighten your abs, spine neutral, eyes just ahead of the sled.', claim: CL.c6 },
   ],
   posture: [
     { key: 'shoulders', label: 'Shoulders behind hands', detail: 'Shoulders straight behind your hands.',

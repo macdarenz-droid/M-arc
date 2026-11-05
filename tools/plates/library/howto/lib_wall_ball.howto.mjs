@@ -22,6 +22,11 @@
 //   handlingMistake squatting before the catch (c8) -> posture 'hm-early' (Q-W2-12; T catch-timing Wrong)
 //   handlingMistake squatting too shallow (c6) -> posture 'hm-shallow' (Q-W2-12)
 //   hand zoom catch-hands Right (c9)           -> setup 5; Wrong (c9) -> posture 'hm-hands', copy.mistakeLine
+// D-TEXT-PRINTED (W7, #394): card setup steps 1 and 2 merged (c2 also in the feel row fix and zoom caption.right);
+//   c9 ball close, brace -> setup 2; c6 depth, heels, chest (handlingMistake too shallow), c11 breathe in -> setup 3;
+//   c7 drive and throw, c11 breathe out -> setup 4; c8 catch tall and hand zoom catch-hands Right and Wrong (c9,
+//   sandwiching, as a fault) -> setup 5; T catch-timing Wrong (c8) -> risks[early], which takes the slot of card risk
+//   c4 (still printed in the feel row shoulders means).
 // D-TEXT-PROGRESSION: c12 (ball weight, start light) and c16 (programming) are not form checkpoints, not on the sheet.
 import plateSpec from '../specs/wall_ball.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
@@ -131,7 +136,9 @@ const feel = {
 
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
-  { key: 'distance', text: 'The right distance from the wall takes strain off your shoulders.', claim: CL.c4 },
+  // D-TEXT-PRINTED (W7, #394): the card's first risk (c4) prints in the feel row shoulders means, so its slot carries
+  // the T catch-timing Wrong / handlingMistake squatting before the catch (c8), as a fault.
+  { key: 'early', text: 'Catching at the bottom of the squat makes the impact feel heavier.', claim: CL.c8 },
   { key: 'close', text: 'Too close to the wall, the ball will probably fall on your face.', claim: CL.c4 },
   { key: 'tired', text: 'Tired arms can let the ball smash into your face.', claim: CL.c10 },
 ];
@@ -144,11 +151,11 @@ export default {
   handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3): the card gives no thumb or wrist (pinned "Not given" statements); grip claims c1 and c9 and the hand zoom Right are on setup 3 and 5.' },
   contacts: ['standing-feet'],
   setup: [
-    { kind: 'position', text: 'Face a sturdy wall, feet shoulder-width apart, toes slightly out.', claim: CL.c1 },
-    { kind: 'position', text: 'Arms out, ball touching the wall: stand there.', zoom: 'wall-distance', claim: CL.c2 },
-    { kind: 'grip', text: 'Hold the ball at chest height, elbows tucked in.', claim: CL.c1 },
-    { kind: 'brace', text: 'Brace your trunk and stand tall.', claim: CL.brace },
-    { kind: 'grip', text: 'At the catch: hands under the ball, elbows high in front.', claim: CL.c9 },
+    { kind: 'position', text: "Face a sturdy wall at arm's length, feet shoulder-width, toes slightly out.", zoom: 'wall-distance', claim: C(['CONSENSUS'], [GG, PG, BB, B5, BL, HL], 'card c1, c2') },
+    { kind: 'grip', text: 'Brace and stand tall, ball close at chest height, elbows tucked in.', claim: C(['CONSENSUS'], [GG, PG, BB, BR, BL], 'card c1, c5, c9') },
+    { kind: 'position', text: 'Breathe in, squat: weight in heels, chest up, thighs parallel or lower.', claim: C(['CONSENSUS'], [BL, PG, BB, B5], 'card c11, c6') },
+    { kind: 'position', text: 'Breathe out, drive up through your heels and throw to the target.', claim: C(['CONSENSUS'], [BL, PG, GG, HL], 'card c11, c7') },
+    { kind: 'grip', text: 'Catch tall, hands under the ball, elbows high, not sandwiching it.', claim: C(['CONSENSUS'], [BR, BL, PG, BB], 'card c8, c9') },
   ],
   posture: [
     { key: 'depth', label: 'Squat depth', detail: 'Squat until your thighs are parallel to the floor or lower.', anchor: { landmark: 'hip.r', pose: 'end' }, claim: CL.c6 },

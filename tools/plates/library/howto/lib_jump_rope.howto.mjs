@@ -21,6 +21,8 @@
 //   handlingMistake grip too tight c3, c2 -> posture tight
 //   hand zoom grip Right c2            -> setup step 2
 //   hand zoom grip Wrong c2, c3        -> posture tight (label 'Tight grip', "Knuckles white?")
+// D-TEXT-PRINTED (W7, #394): hand zoom grip Wrong / handlingMistake too tight (c3, as a fault) -> setup step 2;
+//   c9 1 to 2 inches, c12 one jump per turn -> setup step 4; c10 soft knees, land on the balls -> zoom hop caption.right.
 // Left off (D-TEXT-PROGRESSION): c16 (stepping over first, work and rest build-up); c17 cadence (not a form point).
 import plateSpec from '../specs/jump_rope.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -96,7 +98,7 @@ const zooms = [
       wrong: { text: 'Too high', anchor: { at: 'ankle.r', pose: 'mistake' } },
     },
     caption: {
-      right: 'Low hop, knees slightly bent.',
+      right: 'Soft knees, landing softly on the balls of the feet.',
       wrong: 'Jumping too high over the rope.',
     },
     alt: {
@@ -159,9 +161,9 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     { kind: 'adjust', text: "Stand on the rope's middle. The handles should reach your armpits.", claim: CL.c1 },
-    { kind: 'grip', text: 'Hold the handles loosely, toward their ends.', claim: CL.c2 },
+    { kind: 'grip', text: 'Hold the handles loosely, toward their ends. White knuckles are too tight.', claim: J('c2', 'c3') },
     { kind: 'position', text: 'Feet together, rope behind your feet, hands by your sides.', claim: CL.c4 },
-    { kind: 'position', text: 'Swing the rope overhead and jump as it reaches your feet.', zoom: 'hop', claim: CL.c4 },
+    { kind: 'position', text: 'Swing it overhead and hop about 1 to 2 inches each turn.', zoom: 'hop', claim: J('c4', 'c9', 'c12') },
     { kind: 'safety', text: 'Where possible, avoid concrete. A sprung wooden or matted floor is better.', claim: CL.c15 },
   ],
   posture: [

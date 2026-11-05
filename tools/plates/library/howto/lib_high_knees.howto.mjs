@@ -14,6 +14,7 @@
 //   handlingMistake knees too high c5, c3 -> posture back (fix added), copy.mistakeLine
 //   handlingMistake knee drops c6      -> posture drops
 //   handlingMistake legs turn out c7   -> posture turn-out
+// D-TEXT-PRINTED (W7, #394): T ball-of-foot 'knee soft' (c4) -> setup step 2; c6 and c7 stop lines -> risks[tire].
 // Left off (D-TEXT-PROGRESSION): c9 (easier march, harder versions).
 import plateSpec from '../specs/high_knees.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -97,6 +98,8 @@ const feel = {
 const RISKS = [
   { key: 'arch', text: 'Driving the knees too high arches the lower back.', claim: CL.c5 },
   { key: 'shoes', text: 'Wear supportive shoes. Knee or ankle issues? Use a gym floor or grass.', claim: CL.c10 },
+  // D-TEXT-PRINTED (W7, #394): the stop lines of handlingMistakes c6 and c7 (posture drops, turn-out are not printed)
+  { key: 'tire', text: 'Knee height dropping, or legs turning out more as you tire? Take a rest.', claim: J('c6', 'c7') },
 ];
 
 export default {
@@ -108,7 +111,7 @@ export default {
   contacts: ['standing-feet'],
   setup: [
     { kind: 'position', text: 'Stand tall, feet about hip-width apart, arms at your sides.', claim: J('c1', 'c4') },
-    { kind: 'brace', text: 'Brace your trunk and shift onto the balls of your feet.', claim: J('c1', 'c4') },
+    { kind: 'brace', text: 'Brace your trunk, shift onto the balls of your feet, knees soft.', claim: J('c1', 'c4') },
     { kind: 'position', text: 'Drive one knee to hip height as the opposite arm pumps up.', zoom: 'knee-height', claim: J('c2', 'c3') },
     { kind: 'position', text: 'Lower it quickly and switch legs.', claim: CL.c2 },
     { kind: 'finish', text: 'To start, work 30 seconds, then rest 30 seconds.', claim: CL.c8 },

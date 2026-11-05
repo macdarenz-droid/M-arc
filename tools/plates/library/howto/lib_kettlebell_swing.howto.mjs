@@ -23,6 +23,10 @@
 //   hand zoom kb-grip Right c2, c3   -> setup steps 2, 3
 //   hand zoom kb-grip Wrong c4       -> posture crush (label 'Crush grip'), detail "an easy hook grip, not a crush grip"
 //   c24 full grip                    -> setup step 5, risks[grip]
+// D-TEXT-PRINTED (W7, #394): posture checkpoints and copy lines are not printed, so each claim also has a printed home:
+//   c7 arms straight and loose -> feel row arms fix; c9 chest height -> setup step 3; c17 feet planted -> setup step 1;
+//   c19 breathe -> setup step 4; c3 tilt -> setup step 2 (merged); kb-grip Wrong c4 (crush grip, as a fault) -> feel
+//   row grip (c4: over-gripping can stress the wrists and forearms), its fix c4's.
 // No variant line (equipment 'Kettlebell').
 import plateSpec from '../specs/kettlebell_swing.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -160,7 +164,11 @@ const feel = {
     // out: the feel line and feel.secondary say them (D-FEEL-NOMEANS).
     { key: 'arms', where: 'Arms and shoulders', at: { muscles: ['front_delts'] },
       means: 'You are lifting with the arms instead of the hips.',
-      fix: 'Drive with your hips and keep your arms loose.', claim: J('c16', 'c7', 'c20') },
+      fix: 'Drive with your hips. Keep your arms straight and loose.', claim: J('c16', 'c7', 'c20') },
+    // D-TEXT-PRINTED: card hand zoom kb-grip Wrong (crush grip) as a fault, c4's own place (wrists and forearms)
+    { key: 'grip', where: 'Wrists and forearms', at: { muscles: ['forearms'] },
+      means: 'A crush grip can stress them.',
+      fix: 'Grip firmly, not too tightly: an easy hook grip.', claim: CL.c4 },
     { key: 'low-back', where: 'Lower back discomfort', at: { muscles: ['lower_back'] },
       means: 'Your form may be breaking down.',
       fix: 'Stop or reset your form.',
@@ -184,10 +192,10 @@ export default {
   handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3): the card gives no thumb or wrist; c2, c3, c4 and c24 are on the setup lines.' },
   contacts: ['standing-feet'],
   setup: [
-    { kind: 'position', text: 'Stand with feet about shoulder-width, the bell a foot in front.', claim: CL.c1 },
-    { kind: 'grip', text: 'Hinge and grip the handle, hands side by side, palms down.', claim: J('c1', 'c2') },
-    { kind: 'grip', text: 'Grip firmly, not too tightly. Tilt the bell toward you.', claim: J('c4', 'c3') },
-    { kind: 'position', text: 'Hike the bell back between your legs, high toward the groin.', zoom: 'kb-back', claim: CL.c5 },
+    { kind: 'position', text: 'Feet about shoulder-width and planted, the bell a foot in front.', claim: J('c1', 'c17') },
+    { kind: 'grip', text: 'Hinge and grip, palms down side by side, bell tilted toward you.', claim: J('c1', 'c2', 'c3') },
+    { kind: 'position', text: 'Hike it high between your legs, then swing to about chest height.', zoom: 'kb-back', claim: J('c5', 'c9') },
+    { kind: 'position', text: "Don't hold your breath: out as it rises, in as it falls.", claim: CL.c19 },
     { kind: 'finish', text: 'Keep a full grip. Set the bell on the ground when done.', claim: J('c24', 'c21') },
   ],
   posture: [

@@ -17,6 +17,8 @@
 //   handlingMistake holding breath c7        -> posture breathe
 //   handlingMistake too much too soon c8     -> posture form-first
 //   hand zoom rope-grip Right c4, c14        -> setup step 2
+// D-TEXT-PRINTED (W7, #394): c13 feet planted -> setup step 1; c7 breath -> setup step 4; c5 arms in front -> setup
+//   step 5; c8 too soon -> risks[too-soon].
 // Left off (D-TEXT-PROGRESSION): c8's rope size and anchor distance, c9's starting dose.
 import plateSpec from '../specs/battle_ropes.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -113,6 +115,8 @@ const feel = {
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
   { key: 'neck', text: 'Lifted or hunched shoulder blades strain the neck.', claim: CL.c6 },
+  // D-TEXT-PRINTED (W7, #394): handlingMistake c8 (posture form-first is not printed)
+  { key: 'too-soon', text: 'Adding speed or a heavier rope too soon? Get the form right first.', claim: CL.c8 },
 ];
 
 export default {
@@ -123,11 +127,11 @@ export default {
   handling: { archetype: 'none', why: 'D-SHIP-GRIP (b): the card gives no thumb, contact or wrist; the grip type (c4, c14) is on a setup line.' },
   contacts: ['standing-feet'],
   setup: [
-    { kind: 'position', text: 'Stand with feet hip-width apart, a little slack in the ropes.', claim: CL.c1 },
+    { kind: 'position', text: 'Feet planted hip-width apart, a little slack in the ropes.', claim: J('c1', 'c13') },
     { kind: 'grip', text: 'Handshake grip on each rope end.', claim: J('c1', 'c4', 'c14') },
     { kind: 'position', text: 'Bend your knees slightly and lean forward a little, back straight.', claim: J('c2', 'c4') },
-    { kind: 'brace', text: 'Shoulders back, trunk braced.', claim: CL.c2 },
-    { kind: 'position', text: 'Swing one rope up as the other comes down.', claim: CL.c3 },
+    { kind: 'brace', text: "Shoulders back, trunk braced. Don't hold your breath as you speed up.", claim: J('c2', 'c7') },
+    { kind: 'position', text: 'Arms in front, swing one rope up as the other comes down.', claim: J('c3', 'c5') },
   ],
   posture: [
     { key: 'feet', label: 'Feet planted', detail: 'Feet planted, knees slightly bent.', anchor: { landmark: 'heel.r', pose: 'start' }, claim: J('c2', 'c13') },

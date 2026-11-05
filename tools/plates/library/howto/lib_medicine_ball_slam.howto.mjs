@@ -21,6 +21,7 @@
 //   handlingMistake rounding the back (c5)     -> posture 'hm-round' (Q-W2-12), zoom pickup-back (DV)
 //   hand zoom `ball-grip` Right (c15)          -> setup 3; Wrong null (LR-25), nothing to show
 //   T checkpoints                              -> none (both posture zooms drawn)
+// D-TEXT-PRINTED (W7, #394): c3 slam between the feet, c7 exhale, handlingMistake too softly (c16, c3) -> setup 4.
 // D-TEXT-PROGRESSION: c11 (ball weight, start at 10 pounds and work up) is a progression, not on the sheet.
 import plateSpec from '../specs/medicine_ball_slam.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -175,7 +176,7 @@ export default {
     { kind: 'load', text: 'Use a soft ball without much bounce.', claim: CL.ball },
     { kind: 'position', text: 'Feet about shoulder-width apart, knees slightly bent.', claim: CL.c1 },
     { kind: 'grip', text: 'Hold the ball firmly in both hands at chest height.', claim: CL.hold },
-    { kind: 'brace', text: 'Brace your trunk.', claim: CL.c1 },
+    { kind: 'brace', text: 'Brace, then exhale and slam it down hard between your feet.', claim: C(['CONSENSUS'], [SL, BOD, ACE, BB, VIT, 'im-slam'], 'card c1, c3, c7, c16') },
     { kind: 'safety', text: 'Check the space around you is safe.', claim: CL.c9 },
   ],
   posture: [
