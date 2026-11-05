@@ -75,6 +75,7 @@ export const stills = {
 const zooms = [
   {
     key: 'braced-back', chip: 'Back', heading: 'Braced back', kind: 'posture',
+    // claims: Right (callout, caption, alt) card c2, c8, c4; Wrong card c7, c8
     crop: { center: { at: 'lumbar', pose: 'right', off: [0, 0] }, sizePx: 190 },
     right: 'end',
     wrong: { base: 'end', pose: MIS },
@@ -99,7 +100,7 @@ const zooms = [
 const feel = {
   primary: [{ muscleId: 'glutes', plain: 'The glute of the working leg does the work.' }],
   secondary: [{ muscleId: 'hamstrings', plain: 'The hamstrings help.' }],
-  watch: [{ muscleId: 'lower_back', plain: 'Poor form brings in the lower back.' }],
+  watch: [{ muscleId: 'lower_back', plain: 'Poor form can bring in the lower back.' }],   // card c8 (its strength)
   feelLine: 'You should feel this in the glute of your working leg.',
   rows: [
     // The card's first row (glute of the working leg) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
@@ -145,7 +146,7 @@ export default {
     { key: 'squeeze', label: 'Top pause', detail: 'Squeeze your glute and pause for a second at the top.',
       anchor: { landmark: 'buttock', pose: 'end' }, claim: CL.c6 },
     // Q-W2-12: handlingMistake 'Swinging the leg' (c9, c8)
-    { key: 'swing', label: 'Swinging the leg', detail: 'Drop the weight. Use a smooth, controlled movement.',
+    { key: 'swing', label: 'Swinging the leg', detail: "If you can't move it without swinging, drop the weight.",
       anchor: { landmark: 'ankle.r', pose: 'end' }, claim: CL.swing },
     { key: 'return', label: 'Slow return', detail: 'Return slowly.',
       anchor: { landmark: 'ankle.r', pose: 'start' }, claim: CL.c6 },
@@ -154,9 +155,9 @@ export default {
   zooms,
   chips: ['braced-back', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
-    setupLine: 'Cuff on your working ankle, pulley low. Hinge forward and hold the machine.',
-    mistakeLine: "Don't let your lower back arch. Only your glute moves the leg.",
-    cueLine: 'Back flat, hips square.',
+    setupLine: 'Cuff on your working ankle, pulley low. Hinge forward and hold the machine.',   // card c1, c2
+    mistakeLine: "Don't let your lower back arch. Only your glute moves the leg.",   // card c7
+    cueLine: 'Back flat, hips square.',   // card c8, c10
   },
   redFlag: RED_FLAG,
   mistakes: [],   // Q-W2-12 (#379 6628699724): the card's handlingMistakes are posture checkpoints above

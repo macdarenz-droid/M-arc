@@ -82,6 +82,7 @@ export const stills = {
 const zooms = [
   {
     key: 'heels-flat', chip: 'Heels', heading: 'Heels flat', kind: 'posture',
+    // claims: Right (callout, caption, alt) card c9, c7; Wrong card c9, c15
     crop: { center: { at: 'ankle.r', pose: 'right', off: [0, 0] }, sizePx: 110 },
     right: 'end',
     wrong: { base: 'end', pose: MIS, solid: true },
@@ -95,7 +96,7 @@ const zooms = [
     },
     alt: {
       right: 'Side view, bottom of the pendulum squat. The whole foot is flat on the platform.',
-      wrong: 'Side view, bottom of the pendulum squat. The heels lift off the platform and the knees move forward.',
+      wrong: 'Side view, bottom of the pendulum squat. The heels lift off the platform, shifting the weight forward.',
     },
     feelRow: 'knee',
   },
@@ -159,9 +160,9 @@ export default {
   zooms,
   chips: ['heels-flat', 'feel'],   // the zoom shell's chip row: the zoom keys, then feel
   copy: {
-    setupLine: "Learn the safety catch first. It's your way out if you fail a rep.",
-    mistakeLine: "Don't drop into the bottom. Lower over two to three seconds.",
-    cueLine: "Extend fully, don't lock out hard.",
+    setupLine: "Learn the safety catch first. It's your way out if you fail a rep.",   // card c22, c17
+    mistakeLine: "Don't drop into the bottom. Lower over two to three seconds.",   // card c10
+    cueLine: "Extend fully, don't lock out hard.",   // card c21
   },
   redFlag: RED_FLAG,
   mistakes: [],   // Q-W2-12 (#379 6628699724): NoHandling; the card's handlingMistakes are posture checkpoints

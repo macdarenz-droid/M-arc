@@ -105,6 +105,7 @@ export const stills = {
 const zooms = [
   {
     key: 'back-pad', chip: 'Back', heading: 'Back on pad', kind: 'posture',
+    // claims: Right (callout, caption, alt) card c2; Wrong card c8, c9, c10
     crop: { center: { at: 'buttock', pose: 'right', off: [0, 0] }, sizePx: 110 },
     right: 'end',
     wrong: { base: 'end', pose: MIS, solid: true },
@@ -124,6 +125,7 @@ const zooms = [
   },
   {
     key: 'knee-lock', chip: 'Knees', heading: 'Knee lockout', kind: 'posture',
+    // claims: Right and Wrong (callout, caption, alt) card c7
     crop: { center: { at: 'knee.r', pose: 'right', off: [0, 0] }, sizePx: 120 },
     right: 'start',
     wrong: { base: 'start', pose: LOCK, solid: true },
@@ -207,9 +209,9 @@ export default {
   zooms,
   chips: ['back-pad', 'knee-lock', 'feel'],   // the zoom shell's chip row: the zoom keys, then feel
   copy: {
-    setupLine: 'Shoulders under the pads, back and hips on the pad. Feet shoulder-width, mid-plate.',
-    mistakeLine: "Don't cut the squat short. Lower until your thighs are at least parallel.",
-    cueLine: 'Back on pad, slight knee bend.',
+    setupLine: 'Shoulders under the pads, back and hips on the pad. Feet shoulder-width, mid-plate.',   // card c1, c2, c12
+    mistakeLine: "Don't cut the squat short. Lower until your thighs are at least parallel.",   // card c5
+    cueLine: 'Back on pad, slight knee bend.',   // card c2, c7
   },
   redFlag: RED_FLAG,
   mistakes: [],   // Q-W2-12 (#379 6628699724): NoHandling; the card's handlingMistakes are posture checkpoints

@@ -82,6 +82,7 @@ export const stills = {
 const zooms = [
   {
     key: 'spine-top', chip: 'Low back', heading: 'Spine at top', kind: 'posture',
+    // claims: Right (callout, caption, alt) card c2, c4, c6, c12; Wrong card c6
     crop: { center: { at: 'hip.r', pose: 'right', off: [0, 12] }, sizePx: 220 },
     right: 'end',
     wrong: { base: 'end', pose: MIS },
@@ -168,9 +169,9 @@ export default {
   zooms,
   chips: ['spine-top', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
-    setupLine: 'Lie on your back, knees bent, feet flat. Tuck your pelvis, low back flat.',
-    mistakeLine: "Don't push your hips too high. Stop when shoulders, hips and knees line up.",
-    cueLine: 'Heels down, hips up.',
+    setupLine: 'Lie on your back, knees bent, feet flat. Tuck your pelvis, low back flat.',   // card c1, c2
+    mistakeLine: "Don't push your hips too high. Stop when shoulders, hips and knees line up.",   // card c6, c4
+    cueLine: 'Heels down, hips up.',   // card c3
     // D-LIB5-VARIANT: the card's plate.variantLine (c14): the barbell adds the bar over the hips.
     variantLine: 'Barbell: bar centred over your hips, hands stop it rolling.',
   },

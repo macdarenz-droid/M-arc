@@ -88,6 +88,7 @@ export const stills = {
 const zooms = [
   {
     key: 'knee-steady', chip: 'Knee', heading: 'Knee steady', kind: 'posture',
+    // claims: Right (callout, caption, alt) card c6, c2; Wrong card c6
     crop: { center: { at: 'knee.r', pose: 'right', off: [0, 0] }, sizePx: 150 },
     right: 'end',
     wrong: { base: 'end', pose: DRIFT, solid: true },
@@ -106,6 +107,7 @@ const zooms = [
   },
   {
     key: 'top', chip: 'Range', heading: 'Full curl', kind: 'posture',
+    // claims: Right (callout, caption, alt) card c4; Wrong card c8
     crop: { center: { at: 'knee.r', pose: 'right', off: [0, 0] }, sizePx: 170 },
     right: 'end',
     wrong: { base: 'end', pose: SHORT, solid: true },
@@ -181,9 +183,9 @@ export default {
   zooms,
   chips: ['knee-steady', 'top', 'feel'],   // the zoom shell's chip row: the zoom keys, then feel
   copy: {
-    setupLine: 'Start with a lighter weight. Pad just above your heel.',
-    mistakeLine: "Don't drop the weight. Lower it slowly, with control.",
-    cueLine: 'Control the weight, no swinging.',
+    setupLine: 'Start with a lighter weight. Pad just above your heel.',   // card c1
+    mistakeLine: "Don't drop the weight. Lower it slowly, with control.",   // card c7, c5
+    cueLine: 'Control the weight, no swinging.',   // card c9
   },
   redFlag: RED_FLAG,
   mistakes: [],   // Q-W2-12 (#379 6628699724): NoHandling; the card's handlingMistakes are posture checkpoints

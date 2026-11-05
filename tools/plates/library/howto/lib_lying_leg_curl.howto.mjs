@@ -119,6 +119,7 @@ export const stills = {
 const zooms = [
   {
     key: 'hips-pad', chip: 'Hips', heading: 'Hips on pad', kind: 'posture',
+    // claims: Right (callout, caption, alt) card c5; Wrong card c8
     crop: { center: { at: 'navel', pose: 'right', off: [0, -10] }, sizePx: 120 },
     right: 'end',
     wrong: { base: 'end', pose: LIFT, solid: true },
@@ -194,9 +195,9 @@ export default {
   zooms,
   chips: ['hips-pad', 'feel'],   // the zoom shell's chip row: the zoom keys, then feel
   copy: {
-    setupLine: 'Knees start nearly straight, not forced locked.',
-    mistakeLine: 'Knees off the axis, or the roller pressing into your heel? Reset first.',
-    cueLine: 'Lower slowly, stack never touches.',
+    setupLine: 'Knees start nearly straight, not forced locked.',   // card c6
+    mistakeLine: "Don't start with your knees off the axis or the roller on your heel.",   // card c2, c4 (CL.setupMis)
+    cueLine: 'Lower slowly, stack never touches.',   // card c11
   },
   redFlag: RED_FLAG,
   mistakes: [],   // Q-W2-12 (#379 6628699724): NoHandling; the card's handlingMistakes are posture checkpoints

@@ -74,6 +74,7 @@ export const stills = {
 const zooms = [
   {
     key: 'torso-upright', chip: 'Torso', heading: 'Upright torso', kind: 'posture',
+    // claims: Right (callout, caption, alt) card c3, c2, c5; Wrong card c7
     crop: { center: { at: 'lumbar', pose: 'right', off: [0, -20] }, sizePx: 230 },
     right: 'end',
     wrong: { base: 'end', pose: MIS },
@@ -157,9 +158,9 @@ export default {
   zooms,
   chips: ['torso-upright', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
-    setupLine: 'Cuff on one ankle, facing away from a low cable. Hold the frame.',
-    mistakeLine: "Don't lean back to lift higher. Stand tall, core tight.",
-    cueLine: 'Stand tall, knee up.',
+    setupLine: 'Cuff on one ankle, facing away from a low cable. Hold the frame.',   // card c1, c2
+    mistakeLine: "Don't lean back to lift higher. Stand tall, core tight.",   // card c7, c6
+    cueLine: 'Stand tall, knee up.',   // card c12, c3
     // D-LIB5-VARIANT: the card's plate.variantLine; the band setup is c13's.
     variantLine: 'Band version: band round a low anchor and your shoe.',
   },

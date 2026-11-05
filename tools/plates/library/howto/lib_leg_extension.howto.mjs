@@ -89,6 +89,7 @@ export const stills = {
 const zooms = [
   {
     key: 'top', chip: 'Knees', heading: 'Knee lockout', kind: 'posture',
+    // claims: Right and Wrong (callout, caption, alt) card c7, c8
     crop: { center: { at: 'knee.r', pose: 'right', off: [0, 0] }, sizePx: 170 },
     right: 'end',
     wrong: { base: 'end', pose: LOCK, solid: true },
@@ -101,7 +102,7 @@ const zooms = [
       wrong: 'Knees locked or hyperextended at the top.',
     },
     alt: {
-      right: 'Side view, top of the leg extension. The legs are nearly straight, with a small bend left at the knee.',
+      right: 'Side view, top of the leg extension. The legs are nearly straight, the knees not locked.',
       wrong: 'Side view, top of the leg extension. The knees are pushed past straight and locked.',
     },
     feelRow: 'knee',
@@ -164,9 +165,9 @@ export default {
   zooms,
   chips: ['top', 'feel'],   // the zoom shell's chip row: the zoom keys, then feel
   copy: {
-    setupLine: 'Start with a lower weight. Knees line up with the pivot.',
-    mistakeLine: "Don't kick up with momentum. Lift with your quads, slow and controlled.",
-    cueLine: 'Pause at the top, lower slowly.',
+    setupLine: 'Start with a lower weight. Knees line up with the pivot.',   // card c17, c1
+    mistakeLine: "Don't kick up with momentum. Lift with your quads, slow and controlled.",   // card c9, c10
+    cueLine: 'Pause at the top, lower slowly.',   // card c18, c11
   },
   redFlag: RED_FLAG,
   mistakes: [],   // Q-W2-12 (#379 6628699724): NoHandling; the card's handlingMistakes are posture checkpoints
