@@ -4,7 +4,10 @@
 //     curl-dumbbell-under: two rows on one key on one page (D-LIB7b-PAGEDUP). lib_scratch_pull_row is no library id: the
 //     tree's copied exercises.json gains it as a copy of lib_lat_pulldown's entry (copyOf; D-LIB8M-SCRATCH7B, #109) and
 //     its coverage-archetypes.json gains it as 'pull';
-//   - lib_smith_machine_shoulder_press (a push clone: its ht-also button names the hand panel) on rope-push-neutral.
+//   - lib_scratch_push_press (a push clone: its ht-also button names the hand panel) on rope-push-neutral. LIB-SHIP W6
+//     (#393 6647967860): it was lib_smith_machine_shoulder_press, which W6 moves into batches/lb06.json; the synthetic id
+//     is no library id, so the tree's exercises.json gains it as a copy of lib_machine_chest_press's entry (copyOf) and its
+//     coverage-archetypes.json gains it as 'push', as lib_scratch_pull_row.
 // pairTree() builds the tree; pageOf() builds its layers page through layersSpecOf + buildLayersPage, in the tree.
 import { cpSync, mkdtempSync, readdirSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -17,7 +20,7 @@ export const REPO = join(dirname(fileURLToPath(import.meta.url)), '../../../..')
 export const SCRATCH_7B = [
   { id: 'lib_scratch_pull_row', from: 'lat_pulldown', key: 'curl-dumbbell-under', pre: 'scratch-pull-row', copyOf: 'lib_lat_pulldown', archetype: 'pull' },
   { id: 'lib_t_bar_row', from: 'seated_cable_row', key: 'curl-dumbbell-under', pre: 't-bar-row' },
-  { id: 'lib_smith_machine_shoulder_press', from: 'machine_chest_press', key: 'rope-push-neutral', pre: 'smith-machine-shoulder-press' },
+  { id: 'lib_scratch_push_press', from: 'machine_chest_press', key: 'rope-push-neutral', pre: 'scratch-push-press', copyOf: 'lib_machine_chest_press', archetype: 'push' },
 ];
 const COPY = ['index.html', 'vite.config.ts', 'package.json', 'tsconfig.json', 'public', 'src', 'tools', 'tests/howto/golden', 'docs/research/howto', 'tests/howto/fixtures/lib2b'];
 
