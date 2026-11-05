@@ -169,7 +169,8 @@ export default {
   contacts: ['bench-lying'],
   setup: [
     { kind: 'position', text: 'Head as far up the bench as possible, feet flat.', claim: CL.head },
-    { kind: 'brace', text: 'Keep five points of contact.', claim: CL.c1 },
+    // card posture point c9 (D-TEXT-PRINTED: posture details are not printed)
+    { kind: 'brace', text: 'Keep five points of contact. Head neutral, eyes on the ceiling.', claim: C(['CONSENSUS'], [BM], 'c1, c9') },
     { kind: 'get-in', text: 'Take the dumbbell from a spotter, or lift it from your thigh.', claim: CL.c21 },
     { kind: 'grip', text: 'Cradle the top plate, thumbs overlapping behind the handle. Grip it securely.', claim: CL.cradle },
     { kind: 'position', text: 'Dumbbell above your upper chest, arms vertical, elbows slightly bent.', zoom: 'elbow-bend-constant', claim: CL.c4 },

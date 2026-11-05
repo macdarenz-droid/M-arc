@@ -143,8 +143,10 @@ export default {
     { kind: 'safety', text: 'Set the bench in decline and the safety racks at both sides.',
       claim: C(['CONSENSUS', 'WEAK'], [SLG, 'lauver2016', 'coratella2020', WL], 'c2, c6') },
     { kind: 'adjust', text: 'Set the bar where you can reach it without straightening your arms.', claim: CL.c7 },
-    { kind: 'position', text: 'Feet hooked, blades together and down, grip slightly wider than shoulders.',
-      claim: C(['CONSENSUS'], [WL, SLG], 'c1, c4, c3') },
+    // card zoom feet-hooked Right and Wrong (c1), a text checkpoint (D-TEXT-PRINTED: copy.setupLine/mistakeLine are not printed)
+    // (blades together and down, c4, shows on the plate's Blades callout cue)
+    { kind: 'position', text: 'Feet locked under the pads, not loose. Grip slightly wider than shoulders.',
+      claim: C(['CONSENSUS'], [WL, SLG], 'c1, c3') },
     { kind: 'get-in', text: 'New to it? Use a spotter. Lift out on locked arms.', claim: C(['CONSENSUS'], [SLG, WL], 'c6, c7') },
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c11 },
   ],

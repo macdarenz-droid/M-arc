@@ -143,7 +143,8 @@ export default {
     // card zoom incline-angle (c2): Right "Back pad at about 45 degrees", Wrong "Back pad near upright" (text checkpoint)
     { kind: 'adjust', text: 'Set the back pad to about 45 degrees, not near upright.', claim: CL.angle },
     { kind: 'get-in', text: 'Dumbbells on your thighs, lie back and lift them to shoulder height.', claim: CL.c9 },
-    { kind: 'brace', text: 'Shoulder blades down and back. Feet flat.', claim: CL.c4 },
+    // card posture point c4 (head, shoulders, buttocks and feet keep contact): D-TEXT-PRINTED, posture details are not printed
+    { kind: 'brace', text: 'Shoulder blades down and back. Head, shoulders, buttocks and feet keep contact.', claim: CL.c4 },
     { kind: 'position', text: 'Press to straight arms, dumbbells over the shoulders.', claim: CL.c17 },
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c13 },
   ],

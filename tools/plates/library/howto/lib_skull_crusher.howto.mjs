@@ -178,7 +178,9 @@ export default {
   contacts: ['bench-lying'],
   setup: [
     { kind: 'position', text: 'Lie on a flat bench, head near the end, feet flat.', claim: CL.lie },
-    { kind: 'grip', text: 'Grip the bar closed, thumbs wrapped, palms toward your feet.', claim: CL.c1 },
+    // card posture point c6 (D-TEXT-PRINTED: posture details are not printed)
+    { kind: 'grip', text: 'Grip closed, thumbs wrapped, palms toward your feet, elbows shoulder-width apart.',
+      claim: C(['CONSENSUS'], [ACE, SL], 'c1, c6') },
     { kind: 'position', text: 'Press to straight arms above your face. Upper arms vertical.', zoom: 'upper-arm-vertical', claim: CL.press },
     { kind: 'safety', text: 'When new to the lift, have a spotter and start light.', claim: CL.c16 },
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c12 },

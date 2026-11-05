@@ -161,7 +161,9 @@ export default {
   },
   contacts: ['seat-back'],
   setup: [
-    { kind: 'adjust', text: 'Set the bench upright. Keep your back on the pad.', zoom: 'seat-back-contact', claim: CL.bench },
+    // card posture point c4 (D-TEXT-PRINTED: posture details are not printed)
+    { kind: 'adjust', text: 'Bench upright, back on pad. Upper arms about level with the floor.', zoom: 'seat-back-contact',
+      claim: C(['CONSENSUS'], [GG, FF], 'c2, c3, c4') },
     { kind: 'get-in', text: 'Sit with the dumbbells on your knees, then kick them up.', claim: CL.c5 },
     // card zoom arnold-palm-turn Right (c1), a text checkpoint
     { kind: 'grip', text: 'Palms facing you at bottom, turning forward as you press.', claim: CL.c1 },

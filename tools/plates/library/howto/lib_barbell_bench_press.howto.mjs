@@ -9,7 +9,7 @@
 // `bar-low-palm` (c5) is a push heel-of-palm pair that golden B's engine cannot draw (D-LIB7-19). Its Right words are
 // the gripLine, its Wrong words the bent-back fault's alt.
 // Posture zoom `hips-on-bench` (c10): T, a text checkpoint (no zoom; the plate's Mistake is the bar path, c25). Its
-// Right shows in copy.setupLine, its Wrong in copy.mistakeLine.
+// Right and Wrong show in the hips mistake (fix and title; D-TEXT-PRINTED), and in copy.setupLine / copy.mistakeLine.
 // Way out (c6, c7): the shared equipment-move card docs/research/howto/shared/unrack-rerack.json (press-rack) covers this
 // id; no W2/W3 sheet imports a shared equipment-move card (lib_barbell_overhead_press writes its own rack steps), so the
 // pins and spotter steps are this card's own (c6, c7, c27).
@@ -121,8 +121,10 @@ const MISTAKES = [
     fix: 'Drive it up and slightly back toward your shoulders.' },
   { key: 'thumbless', title: 'Thumbless grip', claim: CL.c4,
     fix: 'Wrap your thumbs round the bar.' },
-  { key: 'hips', title: 'Hips lifting off the bench', claim: CL.c10,
-    fix: "Keep hips on the bench. If they lift, it's a failed rep." },
+  // card handlingMistake c10 with the card zoom hips-on-bench (T) Wrong in the title and Right in the fix, and posture
+  // point c1 (D-TEXT-PRINTED: copy.setupLine and copy.mistakeLine are not printed)
+  { key: 'hips', title: 'Hips lifting, low back over-arched', claim: CL.hips,
+    fix: 'Buttocks down, feet pressing the floor. Lifted hips fail the rep.' },
 ];
 const RISKS = [
   { key: 'face', text: 'Bar over face and neck: wrap the thumbs. Use safety pins or a spotter.',
@@ -170,7 +172,7 @@ export default {
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c16 },
   ],
   posture: [
-    // card zoom hips-on-bench: T, a text checkpoint (Right in copy.setupLine, Wrong in copy.mistakeLine).
+    // card zoom hips-on-bench: T, a text checkpoint (Right and Wrong in mistakes[key=hips], D-TEXT-PRINTED).
     { key: 'hips', label: 'Hips down', detail: 'Buttocks on the bench, feet pressing the floor.',
       anchor: { landmark: 'buttock', pose: 'end' }, claim: CL.hips },
     { key: 'blades', label: 'Blades together', detail: 'Shoulder blades together before you unrack.',
