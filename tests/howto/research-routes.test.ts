@@ -50,8 +50,8 @@ describe('RESEARCH-ROUTES-1 P1-b/P1-c: the ruled fields left inherit[] (F-W4-INH
     expect(back(now())).toEqual([]);
   });
   it('mutation: a ruled field put back is red', () => {
-    const c = now(); c.front_squat.inherit.unshift({ field: GONE.front_squat[0], why: 'x' });
-    expect(back(c)).toEqual([`front_squat: ${GONE.front_squat[0]}`]);
+    const f = 'setup[2] (load the plates evenly, collars on)', c = now(); c.front_squat.inherit.unshift({ field: f, why: 'x' });
+    expect(back(c)).toEqual([`front_squat: ${f}`]);
   });
 });
 
