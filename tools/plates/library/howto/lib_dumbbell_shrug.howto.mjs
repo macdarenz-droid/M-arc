@@ -159,7 +159,7 @@ export default {
       // card zoom dshrug-grip wrong (c14). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'curled', label: 'Wrist curled', pose: {}, markers: [], alt: 'Wrist curled forward.' },
     ],
-    gripLine: 'A dumbbell in each hand, thumbs wrapped. Wrist bent back, in its natural grip position.',
+    gripLine: 'A dumbbell in each hand, thumbs wrapped. Wrist bent back in its natural grip position, not curled forward.',
     cue: 'Arms straight, pause at the top.',   // c3, c5
   },
   contacts: ['standing-feet'],

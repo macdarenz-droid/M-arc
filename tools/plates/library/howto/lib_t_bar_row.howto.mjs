@@ -159,7 +159,7 @@ export default {
       { key: 'thumbless', label: 'Thumb not wrapped', pose: {}, markers: [], alt: 'Thumbs alongside the handle, not wrapped.' },
     ],
     // c6 palms facing, c19 thumbs (card zoom tbar-grip Right), c20 straps.
-    gripLine: 'Palms facing, thumbs wrapped around the V-handle. Straps are fine on heavy sets.',
+    gripLine: 'Palms facing, thumbs wrapped around the V-handle, not alongside it. Straps are fine on heavy sets.',
     cue: 'Palms facing, thumbs wrapped.',   // c6, c19
   },
   contacts: ['standing-feet'],

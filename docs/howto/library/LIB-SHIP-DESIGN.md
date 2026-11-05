@@ -1060,8 +1060,15 @@ both crop the same floor-start Right, the same Wrong (the plate Mistake, hips sh
 T (no zoom): hips-on-bench, feet-hooked, incline-angle (SHIP W4 QUESTION 1), oadr-support, and the 4 placement hand zooms.
 
 **D-TEXT-GOLDEN inventory (E7).** Each row is: claim → visible slot (claim ids). *moved* marks a claim placed in a slot
-while writing. Gap-ruled hand zooms show the Right in gripLine and the Wrong as `handling.faults[].alt`
-(key bent-back 'Wrist bent back', thumbless 'Thumb not wrapped', curled 'Wrist curled', tilted-flat 'Dumbbell tilted').
+while writing. Gap-ruled hand zooms: the Right is in gripLine. `handling.faults[].alt` holds the Wrong as data (keys
+bent-back 'Wrist bent back', thumbless 'Thumb not wrapped', curled 'Wrist curled', tilted-flat 'Dumbbell tilted'), but
+**no app or layers renderer prints faults on a no-zoom sheet** (checked: Hand.tsx gripHtml and howto-layers.mjs print
+gripLine, limitText, sore and mistakes only). So each Wrong is also printed in a visible slot:
+- **gripLine:** "not high toward the fingers" (4 bench children); "not tilted flat by the wrists" (pullover); "never left
+  unwrapped" (barbell and smith shrug); "not curled forward" (cable and dumbbell shrug); "not alongside it" (landmine, t_bar);
+- **feel row:** barbell_bench_press "A bar high toward the fingers can bend the wrist back.";
+- **limitText:** "not bent forward or back" (incline_dumbbell, skull, with skull's 'Wrists bent back or curled' mistake);
+- **setup or mistakes:** the 4 placement zooms (arnold, conventional, dbrdl, sumo).
 
 - **barbell_bench_press:**
   - hips/feet → setupLine, mistakeLine (hips-on-bench T Right and Wrong), mistakes[2], plate "Hips down" (c1 c10)

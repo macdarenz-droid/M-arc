@@ -155,7 +155,7 @@ export default {
       // card zoom cshrug-grip wrong (c11). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'curled', label: 'Wrist curled', pose: {}, markers: [], alt: 'Wrist curled forward.' },
     ],
-    gripLine: 'Overhand, thumbs wrapped around the bar. Wrist bent back, in its natural grip position.',
+    gripLine: 'Overhand, thumbs wrapped around the bar. Wrist bent back in its natural grip position, not curled forward.',
     cue: 'Arms straight, hold the top.',   // c5, c3
   },
   contacts: ['standing-feet'],

@@ -144,7 +144,7 @@ export default {
       // card zoom shrug-grip wrong (c10). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'thumbless', label: 'Thumb not wrapped', pose: {}, markers: [], alt: 'Thumb not wrapped around the bar.' },
     ],
-    gripLine: 'Overhand, thumbs wrapped around the bar, hands shoulder width.',
+    gripLine: 'Overhand, hands shoulder width. Thumbs wrapped around the bar, never left unwrapped.',
     cue: 'Arms straight, shoulders up.',   // c4, c2
   },
   contacts: ['standing-feet'],

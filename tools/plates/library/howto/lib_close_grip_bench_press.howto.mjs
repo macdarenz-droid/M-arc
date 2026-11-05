@@ -159,7 +159,7 @@ export default {
     ],
     // card zoom bar-low-palm Right (inherit:5), with the grip type. Its "wrist straight" shows as the inherited
     // wrist.limitText's "wrist not bent back", the words parent c5 supports (SWEEP 2, 6).
-    gripLine: "Closed overhand grip. Bar in the palm's base, thumb wrapped.",
+    gripLine: "Closed overhand grip. Bar in the palm's base, not high toward the fingers, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C
   },
   contacts: ['bench-lying'],

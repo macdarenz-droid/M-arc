@@ -181,7 +181,7 @@ export default {
     ],
     // card zoom bar-low-palm Right (inherit:2), with the grip type (c4). Its "wrist straight" shows as
     // wrist.limitText (c4), so the grip line does not repeat it (SWEEP 6).
-    gripLine: "Closed grip, palms forward. Bar in the palm's base, thumb wrapped.",
+    gripLine: "Closed grip, palms forward. Bar in the palm's base, not high toward the fingers, thumb wrapped.",
     cue: 'Palm base, wrist not bent back.',   // hint C
   },
   contacts: ['bench-lying'],

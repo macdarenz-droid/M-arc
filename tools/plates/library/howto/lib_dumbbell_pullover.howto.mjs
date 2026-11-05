@@ -163,7 +163,7 @@ export default {
       { key: 'tilted-flat', label: 'Dumbbell tilted', pose: {}, markers: [], alt: 'Dumbbell tilted flat, held by the wrists.' },
     ],
     // c3, c13; the card zoom's Right ("Palms cradle the top plate, thumbs overlapping, dumbbell hanging vertically").
-    gripLine: 'Palms cradle the top plate, thumbs overlapping behind the handle. Let it hang vertically.',
+    gripLine: 'Palms cradle the top plate, thumbs overlapping behind the handle. Let it hang vertically, not tilted flat by the wrists.',
     cue: 'Cradle the plate, grip securely.',   // c3, c11
   },
   contacts: ['bench-lying'],

@@ -167,7 +167,7 @@ export default {
       { key: 'thumbless', label: 'Thumb not wrapped', pose: {}, markers: [], alt: 'Thumbs alongside the bar, not wrapped.' },
     ],
     // c4 overhand, one hand above the other; c17 thumbs (card zoom landmine-grip Right).
-    gripLine: 'Overhand, one hand above the other. Thumbs wrapped around the bar.',
+    gripLine: 'Overhand, one hand above the other. Thumbs wrapped around the bar, not alongside it.',
     cue: 'Overhand, thumbs wrapped.',   // c4, c17
   },
   contacts: ['standing-feet'],
