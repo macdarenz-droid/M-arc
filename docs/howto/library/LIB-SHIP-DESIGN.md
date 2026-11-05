@@ -861,3 +861,145 @@ Ruled acceptable (#379 6627240712). Each row: the card line verbatim, the sheet 
 | crunch | feel.rows[1].fix | Set your chin once; cross your arms. | Set your chin once. Cross your arms. | split at semicolon (7→7 words) |
 | crunch | feel.rows[2].fix | Slow down; keep your low back on the mat. | Slow down. Keep your low back on the mat. | split at semicolon (9→9 words) |
 | crunch | copy.cueLine | Breathe out and curl your ribs toward your hips. | Ribs toward your hips. | cut 9→4 words |
+
+## W5. PLAN update (base main 8bb433bd + W2 head 84360f00, D-OWNER-PARALLEL)
+
+W5 is 27 ids: lb04.json 12 (from lb4/rows.json) and lb05.json 15 (from lb5/rows.json), moved under D-SHIP-MOVE as amended by
+Q-W2-10 (row = old row except `stage` and `sources` = sourceLines(card)); page pins wait for the supervisor's PIN GO on
+each rebuilt build-ahead page (D-LIB-LB1ZOOM form). lb4-plates.test.ts:136 and lb5-plates.test.ts:154 are replaced under
+ruling 3 in the flip push. Columns read from each card and from `hands/pairs.mjs` loadKeyModules/indexOf on this base
+(scratch script, not committed). GRIP as section 10: `full`, `a` (pair key fills an empty field), `b` (NoHandling),
+`b2`, `c` (partial, no key), `none`. Flags are section 7's, all covered by D-OWNER-FLAGS (pins cite it).
+
+| id | batch | tier | arch. | GRIP (empty card fields) | hand zoom (card) → route | no-zoom entry | text checkpoints | flags | way-out (tier A) | variant line | parent / inherit |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| bodyweight_squat | lb04 | C | none | none | — | — | — | — | — | — | parent of wall_sit (first in lb04.json) |
+| wall_sit | lb04 | C | none | none | — | — | — | — | — | — | bodyweight_squat: posture[1], redFlags (Q-W5-6) |
+| front_squat | lb04 | A | on-body | full (wrist: front-rack exemption, shared/front-rack-exemption.json) | front-rack, cross-arm → front-rack GAP (hand-front-rack.mjs:29) | gap-key | — | F2 | card wayOut c14, c25 (safety checker) | — | barbell_back_squat (golden): setup[2], posture[3] (Q-W5-5) |
+| goblet_squat | lb04 | A | on-body | c (thumb, wrist) | goblet-hold → cupped GAP (hand-cupped.mjs:29) | gap-key | — | F2 | **gap** (Q-W5-4) | Dumbbell / Kettlebell | barbell_back_squat: posture[3] (Q-W5-5); GRIP Q-W5-7 |
+| pistol_squat | lb04 | A | none | none | — | — | — | F7 | card wayOut p7 (safety checker) | — | — |
+| jump_squat | lb04 | A | none | none | — | — | — | — | card wayOut j15, j7 (safety checker) | — | box_jump (held S3, Q-W2-6): plate.frames (Q-W5-2) |
+| step_up | lb04 | B | hold | b (all three) | none | — (NoHandling) | — | F4 | — | Dumbbells / Bodyweight | — |
+| forward_lunge | lb04 | B | hold | b | none | — (NoHandling) | — | — | — | Dumbbells / Barbell | reverse_lunge: plate.view, redFlags.knee, grip (Q-W5-1, -3) |
+| walking_lunge | lb04 | B | hold | b | none | — (NoHandling) | — | — | — | Dumbbells / Barbell | reverse_lunge: same three |
+| bulgarian_split_squat | lb04 | B | hold | b | none | — (NoHandling) | — | — | — | Dumbbells / Barbell | reverse_lunge: same three |
+| bodyweight_lunge | lb04 | C | none | none | — | — | — | — | — | — | — |
+| bodyweight_split_squat | lb04 | C | none | none | — | — | — | F4 | — | — | — |
+| dumbbell_biceps_curl family: | | | | | | | | | | | |
+| alternating_dumbbell_curl | lb05 | C | curl | a (contact) | curl-wrist → key curl/dumbbell, under | — | — | F4, F7 | — | — | dumbbell_biceps_curl (W1): grip.type, thumb, width, plate.view, redFlags |
+| barbell_curl | lb05 | C | curl | a (contact) | bb-curl-wrist → key curl/bar, under | — | — | F2, F7 | — | — | dumbbell_biceps_curl: plate.view, grip.thumb, redFlags |
+| ez_bar_curl | lb05 | C | curl | a (contact) | ez-curl-hand → key ez/curl, angled | — | — | F2, F7 | — | — | dumbbell_biceps_curl: plate.view, grip.thumb, redFlags |
+| hammer_curl | lb05 | C | curl | a (contact) | hammer-hand → key curl/dumbbell, neutral | — | — | — | — | — | dumbbell_biceps_curl: plate.view, grip.width, redFlags; zoom Wrong Q-W5-8 |
+| cable_curl | lb05 | C | curl | a (thumb, contact) | curl-wrist → key curl/bar, under | — | — | — | — | — | — |
+| preacher_curl | lb05 | C | curl | a (thumb, contact) | curl-wrist → key ez/curl, under | — | — | — | — | Machine / EZ Bar | — |
+| reverse_curl | lb05 | C | curl | a (thumb, contact) | reverse-wrist → key ez/curl, over | — | — | F2 | — | EZ Bar / Barbell | — |
+| cross_body_hammer_curl | lb05 | C | curl | a (thumb, contact) | hammer-wrist → key curl/dumbbell, neutral | — | — (front plate; crop after F-CROP-FRONT) | F2, F7 | — | — | zoom Wrong Q-W5-8 |
+| incline_dumbbell_curl | lb05 | C | curl | a (contact) | curl-wrist → key curl/dumbbell, under | — | — | F7 | — | — | — |
+| bayesian_cable_curl | lb05 | C | curl | b (all three) | none (d-handle GAP listed, hand-d-handle.mjs:22) | — (NoHandling) | — | — | — | — | — |
+| concentration_curl | lb05 | C | curl | c (thumb, contact) | none (curl GAP, hand-curl.mjs:26) | card-no-zoom | — | F2 | — | — | GRIP Q-W5-7 |
+| wrist_curl | lb05 | C | curl | c (thumb, contact; wrist exempt c2-c4) | wrist-curl-grip → curl GAP (hand-curl.mjs:27) | gap-key | — | F2, F3, F7 | — | Dumbbell / Barbell | GRIP Q-W5-7 |
+| dumbbell_overhead_triceps_extension | lb05 | A | push | full | db-oh-hands → cupped GAP (hand-cupped.mjs:30) | gap-key | — | F3, F4 | **gap** (card gaps[0], Q-W5-4) | — | hint I |
+| single_arm_triceps_pushdown | lb05 | C | push | c (contact) | single-pushdown-wrist → d-handle GAP (hand-d-handle.mjs:21) | gap-key | — | — | — | — | triceps_pushdown (staged): plate.view, thumb, wrist, redFlags; back box Q-W5-9; hint F |
+| straight_bar_triceps_pushdown | lb05 | C | push | c (contact) | pushdown-wrist → none (no key) | gap-ruled D-SHIP-HANDW2 (push, D-LIB7-19, as its parent) | — | — | — | — | triceps_pushdown: plate.view, plate.equipment, thumb, wrist, zooms, redFlags (Q-W5-3); hint F |
+
+Counts: 27 ids; 9 pair-key hand zooms (curl 6, ez 3; all words files present in hands/words/); 5 gap-key, 1
+card-no-zoom, 1 gap-ruled; 5 NoHandling (b), 7 `none`; GRIP (a) 9, (c) 5. Tier A 5: front_squat, pistol_squat and
+jump_squat carry a card wayOut (safety checker reads it); goblet_squat and dumbbell_overhead_triceps_extension have a
+way-out gap. Back links: front_squat, goblet_squat, dumbbell_overhead_triceps_extension, straight_bar_triceps_pushdown are
+in the 35-id appliesTo; **single_arm_triceps_pushdown is not** (main, research branch and W2 head all 35 ids, checked).
+Variant lines: the 8 ids whose exercises.json equipment names two kinds (variantLine rule). Hints: I "Both hands round
+handle, palms up." (c1, c4) and F "Wrist in line with the forearm." (grip.wrist); ids.ts bytes re-measured at the flip.
+No posture crop is planned as text (front crops work after F-CROP-FRONT #380); any crop the panel cannot read becomes a
+D-SHIP-TEXTZOOM checkpoint, listed at LAYERS READY. D-TEXT-GOLDEN, D-TEXT-PROGRESSION, D-FEEL-NOMEANS, D-SHIP-CONVCOPY
+apply to every sheet: each posture point and handlingMistake claim in an existing visible slot, convention values data only.
+The plates are clones that copy reverse_lunge (never import it), so LIB-PLATEFIX-1's reverse_lunge and triceps_pushdown
+spec edits move no W5 fragment (checked: `grep import` over specs/).
+
+**Inherit map (D-SHIP-FAMILY, D-LIB9a-MAP form; text-field compares per Q-W3-2, child plate beats inherited leaves per
+SHIP W3 QUESTIONS RULED).** Parent values read from the parent sheet named.
+
+| child | card field | proposed paths | parent value (sheet) | child card agrees? |
+|---|---|---|---|---|
+| alternating_dumbbell_curl | grip.type | ['handling.orientation','handling.handle'] | 'supinated', 'dumbbell' (lib_dumbbell_biceps_curl, W1) | yes (c: "palms forward (supinated), one dumbbell per hand") |
+| alternating_dumbbell_curl | grip.thumb | THUMB | 'wrapped' (key right pose) | yes ("Wrapped round the handle") |
+| alternating_dumbbell_curl | grip.width | ['handling.width.text'] | "Let the dumbbells hang slightly out from your sides if that keeps your wrist straight." | yes: card width says the same (inherit flag 10 resolves: the parent sheet's text has no "close to the body") |
+| alternating_dumbbell_curl | redFlags | ['riskFlags'] | ['wrist'] | yes |
+| alternating_dumbbell_curl | plate.view | [] (Q-W5-3) | side | side |
+| barbell_curl | grip.thumb / redFlags / plate.view | THUMB / ['riskFlags'] / [] | wrapped / ['wrist'] / side | yes / yes / side |
+| ez_bar_curl | grip.thumb / redFlags / plate.view | THUMB / ['riskFlags'] / [] | wrapped / ['wrist'] / side | yes / yes / side |
+| hammer_curl | grip.width | ['handling.width.text'] | as above | yes: card c10 "may sit slightly out from the sides if that keeps the wrist straight" (flag 11 resolves) |
+| hammer_curl | redFlags / plate.view | ['riskFlags'] / [] | ['wrist'] / side | yes / side |
+| forward_lunge, walking_lunge, bulgarian_split_squat | grip | ['handling'] | NoHandling { archetype 'none', why 'D-SHIP-GRIP: the card gives no thumb, contact or wrist claim.' } (lib_reverse_lunge, staged on W2) | yes: each card claims only grip.type, which goes to setup copy under (b) (flag 12 resolves: "palms facing in" is setup text, not handling) |
+| same three | redFlags.knee | ['riskFlags'] | ['knee'] | yes |
+| same three | plate.view | [] (Q-W5-3) | side | side |
+| single_arm_triceps_pushdown | grip.thumb | THUMB | 'wrapped' (lib_triceps_pushdown, staged) | yes |
+| single_arm_triceps_pushdown | grip.wrist | ['handling.wrist'] | ext from ga:push-heel, limitText "Keep the wrists in line with the forearms." | yes; no "bar" in it; plural on a one-arm sheet (the `===` forces it) |
+| single_arm_triceps_pushdown | redFlags / plate.view | ['riskFlags'] / [] | ['elbow','back'] / side | yes / side |
+| straight_bar_triceps_pushdown | grip.thumb / grip.wrist / redFlags | THUMB / ['handling.wrist'] / ['riskFlags'] | as above | yes |
+| straight_bar_triceps_pushdown | zooms | ['zooms[key=pushdown-elbow].caption','zooms[key=pushdown-elbow].callout.right.text','zooms[key=pushdown-elbow].callout.wrong.text'] (Q-W3-2 text fields) | captions "Elbows against the sides at the top of the return." / "Elbows drifted forward, upper arms swung up." | yes (card zooms[1]); zooms[0]'s right line has no parent path: the parent's hand zoom is gap-ruled (no `pushdown-wrist` zoom), Q-W5-3 |
+| straight_bar_triceps_pushdown | plate.view, plate.equipment | [] (Q-W5-3) | side; cable stack, straight bar | side; card drops "(above head height)" |
+| wall_sit | posture[1] | ['posture[key=knees].label','posture[key=knees].detail'] | bodyweight_squat's own new sheet: label "Knees over toes", detail "Knees over the second toe, ankles not rolling." (b5) | Q-W5-6 |
+| wall_sit | b10 / redFlags knee | ['riskFlags'] | ['knee'] | yes |
+| front_squat | posture[3] | ['posture[key=feet].label','posture[key=feet].detail'] | golden "Knees follow toes" / "Feet hip to shoulder width, toes out a little, heels down. Each knee points where its foot points and may pass the toes." | Q-W5-5 |
+| front_squat | setup[2] (load the plates evenly, collars on) | none valid | golden folds collars into setup[0] `kind: 'safety'` (2 safety steps; the selector cannot pick one) | Q-W5-5 |
+| goblet_squat | posture[3] | as front_squat | as above | Q-W5-5 |
+| jump_squat | plate.frames | [] (Q-W5-3) | box_jump is held (S3) | Q-W5-2 |
+
+### W5 questions (for 'SHIP W5 PLAN RULED')
+
+- **Q-W5-1 Parents not yet in any merging wave.** reverse_lunge (parent of forward_lunge, walking_lunge,
+  bulgarian_split_squat) and triceps_pushdown (parent of single_arm_ and straight_bar_triceps_pushdown) are staged on W2
+  (LIB-PLATEFIX-1 #385 items) and are in no wave's flip list. family.mjs refuses a child whose parent is not shipped in the
+  same head. **Proposal:** they flip in the first wave head after #385 merges (the supervisor names it; W3 or W4); W5's
+  5 children flip only in a head where the parent is shipped, otherwise they stay staged in their own flip commit, as
+  Q-W2-4 did.
+- **Q-W5-2 jump_squat's parent box_jump is held (Q-W2-6, S3).** Its only inherit field is plate-only (plate.frames, the
+  same airborne-convention string in both cards). **Proposal:** jump_squat is written and staged, and ships with box_jump
+  (owner later-update item); the other way is a research route dropping the plate-only field from its inherit[] (cards
+  are research's), after which it ships here with no family check.
+- **Q-W5-3 Plate-only inherit fields** (plate.view ×9, plate.equipment ×1, plate.frames ×1 in W5; the same class in W4,
+  W6). No sheet path holds them, and an unmapped field is refused. **Proposal:** INHERIT_MAP entry `[]` (an entry only;
+  family.mjs code unchanged, the parent must still be shipped) plus a lib-ship.test.ts red per entry that compares the
+  field on the two approved plate specs (`view`; equipment and frames by the spec's recorded strings), so the claim is
+  still checked. A `[]` entry for a non-plate field is red. For straight_bar's zooms[0] right line: the parent has no hand
+  zoom, so it maps to nothing; proposal: that line goes to the child's own gap-ruled grip copy (card c9, c2) and the map
+  lists only zooms[key=pushdown-elbow] text fields. If W4 rules this first, W5 follows it.
+- **Q-W5-4 Way-out gaps** on goblet_squat and dumbbell_overhead_triceps_extension: no shared move card fits (setting a
+  dumbbell down; getting a dumbbell overhead). **Proposal:** Q-W2-3's route: a safety-checker item per id in the W5 layers
+  review; no or unsure → S3 (owner later-update). front_squat, pistol_squat and jump_squat show their card wayOut; the
+  checker reads those too.
+- **Q-W5-5 front_squat and goblet_squat inherit from golden barbell_back_squat.** (a) posture[3]: map to the golden
+  `feet` checkpoint's label and detail (text fields only; anchor knee.r on the child's own `end` pose). The child card's
+  own stance (front_squat "toes out 15-30 degrees", c-claims; goblet "heels down", g7) stays as its own checkpoint; no
+  string contradicts the golden one (checked by reading). (b) front_squat setup[2] ("load the plates evenly, collars on"):
+  no valid path (the golden sheet folds collars into one of two `kind: 'safety'` steps and has no plate-loading step).
+  **Proposal:** research route F-CARD-FRONTSQ-SETUP (drop the field from inherit[]; front_squat's own safety step comes
+  from its c14/c25); front_squat stays staged until it lands. Other way: a ruled selector extension in family.mjs (not
+  in write_scope).
+- **Q-W5-6 wall_sit posture[1] vs its own card** (flag 16): the parent's "Knees over the second toe, ankles not rolling"
+  (b5, side-to-side tracking) and the child's w4 "Knees directly above the ankles" (fore-aft) are two rules that both
+  hold in a wall sit. **Proposal:** wall_sit carries the parent's `knees` checkpoint label and detail exactly (text
+  fields only), plus its own `knee-over-ankle` checkpoint (w4); bodyweight_squat is first in lb04.json and in the same
+  head. Other way: S3 if the supervisor reads them as conflicting.
+- **Q-W5-7 GRIP (c) without a key** (goblet_squat thumb + wrist; concentration_curl thumb + contact; wrist_curl thumb +
+  contact; single_arm_ and straight_bar_triceps_pushdown contact). **Proposal:** contacts from the archetype's own
+  convention, data only (D-SHIP-CONVCOPY): `ga:push-heel` for the two pushdowns (Q-W2-2 precedent, derived at import, 2
+  reds), `ga:curl-mid` for the two curls; wrist for goblet from the GA 3.1 on-body range (0-15, recorded in
+  shared/front-rack-exemption.json `rule`). Thumb: wrist_curl "Closed underhand grip" (grip.type) is the definition of a
+  wrapped thumb, cited to that claim; concentration_curl and goblet_squat have no thumb claim and no convention exists for
+  on-body or a key-less curl. Options for those two: (1) the curl key's dumbbell right-pose thumb as a convention (data
+  only), and for goblet none → S3; (2) both S3. Recommended (1) for concentration_curl, S3 for goblet_squat only if Q-W5-4
+  does not already hold it.
+- **Q-W5-8 Card zoom Wrong vs the key's drawn fault** (F-CURL-ZOOM class): hammer_curl's card Wrong is a twist toward
+  palms-up (c5), cross_body_hammer_curl's "twisted or bent" (c7); the curl key draws `curled` and `bent-back`. **Proposal:**
+  the Wrong caption names the drawn fault, cited to the key's claim; the card's twist claim stays visible in the mistakes
+  slot (D-TEXT-GOLDEN). Other way: gap-ruled hand zoom for the two.
+- **Q-W5-9 Back box appliesTo for single_arm_triceps_pushdown** (ruling 6, owed before W5): not landed (35 ids on main,
+  the research branch and W2). **Proposal:** single_arm_triceps_pushdown is written and staged; it flips in the head that
+  carries the appliesTo edit (research branch, W2B form, supervisor's 10 % re-fetch). The edit's lane is the supervisor's
+  to name.
+- **Q-W5-10 lb04/lb05 page pins.** The moved rows need the supervisor's PIN GO on each rebuilt build-ahead page (sha
+  posted at LAYERS READY, built twice), as D-LIB-LB1ZOOM; the lb4/lb5 pins cite D-OWNER-FLAGS.
+
+If every proposal holds: 27 written; flip at most 27, at least 18 (less jump_squat, goblet_squat, front_squat,
+single_arm_, and the 5 family children if Q-W5-1's parents are not shipped by W5's flip, overlap counted once).
