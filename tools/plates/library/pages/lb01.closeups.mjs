@@ -23,11 +23,12 @@ const BACK = r => ({ ...r, crop: { ...r.crop, backView: true }, css: { ...r.css,
 export const CLOSEUP_OPTIONS = {
   chin_up: BACK(KEYED('cu', 250)),
   hanging_knee_raise: KEYED('hkr', 250),
-  assisted_pull_up: BACK(KEYED('apu', 250)),
+  assisted_pull_up: (r => ({ ...r, css: { ...r.css, fade: true } }))(BACK(KEYED('apu', 250))),   // W3 PANEL FIX 2: Bottom Wrong fade
   inverted_row: KEYED('ir', 282),
   close_grip_pulldown: KEYED('cgp', 282),
   underhand_lat_pulldown: KEYED('ulp', 282),
-  single_arm_lat_pulldown: KEYED('salp', 282),
+  // W3 PANEL FIX 2 (#384 6649416891): the Bottom Wrong fades the correct arm (crop wrong.fade)
+  single_arm_lat_pulldown: (r => ({ ...r, css: { ...r.css, fade: true } }))(KEYED('salp', 282)),
   straight_arm_pulldown: NO_HAND,
   chest_supported_row: NO_HAND,
   resistance_band_row: BACK(NO_HAND),

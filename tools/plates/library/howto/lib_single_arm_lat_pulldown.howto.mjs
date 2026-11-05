@@ -116,7 +116,11 @@ const zooms = [
     // spec's Mistake dashed over the end pose, as `stills.past`.
     crop: { center: { at: 'elbow.r', pose: 'right', off: [0, -10] }, sizePx: 170 },
     right: 'end',
-    wrong: { base: 'end', pose: MIS },
+    // W3 PANEL FIX 2 (#384 6649416891, L5; c10, c13): the correct arm faded, the whole wrong arm dashed (the plate's
+    // Mistake parts), and the plate's own Mistake guides: the dashed forearm the mask hides over the trunk, the dashed
+    // forward shoulder cap and its arrow (the cable and 'low' arrow guides stay on the plate only).
+    wrong: { base: 'end', pose: MIS, parts: plateSpec.mistake.parts, fade: ['shcap.r', 'upper.r', 'elbowcap.r', 'fore.r', 'fist.r'] },
+    guides: plateSpec.mistake.guides.filter(g => g.kind === 'dashed' ? Array.isArray(g.pts[0]) === false : g.from?.at === 'shoulder.r'),
     callout: {
       right: { text: 'Arm at side', anchor: 'elbow.r' },
       wrong: { text: 'Elbow behind', anchor: { at: 'elbow.r', pose: 'mistake' } },

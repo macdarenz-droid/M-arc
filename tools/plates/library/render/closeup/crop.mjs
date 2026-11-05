@@ -122,6 +122,9 @@ export function engineCrop(howto, o, engine = LAYERS_ENGINE, probe = null) {
     const spec = cropSpec(z, role);
     probe?.specs.push({ key: z.key, role, spec });
     const p = renderPlate(spec, { id: `${z.key}-${role}`, mistake: role === 'wrong' });
+    // W3 PANEL FIX 2 (#384 6649416891): wrong.fade - shape keys of the correct pose that a dashed Wrong (not solid) shows
+    // faded under the fault; they leave the end layer's unions and are drawn as one faded union at its end (css fade)
+    if (role === 'wrong' && !solidOf(z, role) && z.wrong.fade) p.svg = fadeEnd(p.svg, `${z.key}-${role}`, z.wrong.fade);
     const guides = z.guides ?? [];
     const levels = guides.filter(g => g.kind === 'level'), drops = role === 'wrong' ? guides.filter(g => g.kind === 'drop') : [];
     const caps = role === 'wrong' ? guides.filter(g => g.kind === 'cap') : [];
@@ -132,7 +135,9 @@ export function engineCrop(howto, o, engine = LAYERS_ENGINE, probe = null) {
     // trim: small black discs added to the plate's mistake mask (wrong crop), e.g. a hook the mask left at a dive
     const trims = role === 'wrong' ? (z.wrong.trim ?? []) : [], trimAt = resolveRefs(z, spec, trims);
     const cut = trims.map((t, i) => `<circle cx="${f(trimAt[i][0])}" cy="${f(trimAt[i][1])}" r="${t.r}" fill="#000"/>`).join('');
-    const inner = unwrap(cut ? p.svg.replace(/(<mask id="[^"]*-mmask"[\s\S]*?)(<\/mask>)/, `$1${cut}$2`) : p.svg);
+    let inner = unwrap(cut ? p.svg.replace(/(<mask id="[^"]*-mmask"[\s\S]*?)(<\/mask>)/, `$1${cut}$2`) : p.svg);
+    // W3 PANEL FIX 2 (#384 6649416891): wrong.under - a solid Wrong drawn over the Right crop's plate, faded (css fade)
+    if (role === 'wrong' && solidOf(z, role) && z.wrong.under) inner = `<g class="z-fade">${unwrap(renderPlate(cropSpec(z, 'right'), { id: `${z.key}-under` }).svg)}</g>${inner}`;
     const toPanel = ([x, y]) => [(x - vx) * k, (y - vy) * k], P = projOf(z);
     const A = toPanel(anchors[1]), cls = role === 'right' ? 'ok' : 'm';
     // spine: a dashed line along the back, offset 3 px off the body, optionally extended past its ends
@@ -164,6 +169,25 @@ export function engineCrop(howto, o, engine = LAYERS_ENGINE, probe = null) {
     const label = lv + dr + cp + ol + `<circle class="z-anchor ${cls}" cx="${f(A[0])}" cy="${f(A[1])}" r="2.5"/>`;   // the words are the subtag under Right / Wrong
     return `<div class="plate z-wrap">${frame(z, role, vx, vy, s, inner, overlay, label)}</div>`;
   };
+}
+
+/** W3 PANEL FIX 2: move the end layer's `<use>` of each faded shape key (`<id>-e-<key>`) out of its union into one
+ *  `z-fade` union at the end of the end layer. Throws when a key is not drawn there. */
+export function fadeEnd(svg, id, keys) {
+  const i0 = svg.indexOf('<g class="pose-end">');
+  if (i0 < 0) throw new Error(`${id}: wrong.fade: no end layer`);
+  let i1 = i0, depth = 0;
+  const re = /<g\b[^>]*>|<\/g>/g; re.lastIndex = i0;
+  for (let m; (m = re.exec(svg));) { depth += m[0] === '</g>' ? -1 : 1; if (!depth) { i1 = m.index; break; } }
+  let end = svg.slice(i0, i1);
+  for (const k of keys) {
+    const u = `<use href="#${id}-e-${k}"/>`;
+    if (!end.includes(u)) throw new Error(`${id}: wrong.fade: ${k} is not in the end layer`);
+    end = end.split(u).join('');
+  }
+  const uses = keys.map(k => `<use href="#${id}-e-${k}"/>`).join('');
+  end = end.replace(/<g class="[^"]*"><g class="u-stroke"><\/g><g class="u-fill"><\/g><\/g>/g, '');
+  return svg.slice(0, i0) + end + `<g class="z-fade"><g class="u-stroke">${uses}</g><g class="u-fill">${uses}</g></g>` + svg.slice(i1);
 }
 
 /* ---------- ref-src crops: the approved ref-src plate drawing, re-framed (lateral raise, S-2 condition 2) ---------- */
