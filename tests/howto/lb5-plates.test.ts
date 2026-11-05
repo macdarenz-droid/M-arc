@@ -32,9 +32,10 @@ const modeOf = (id: string) => (id.replace(/^lib_/, '') in T_ROWS ? 'T' : 'H');
 /** D-LIB15R2-TPARENT (#349 6540842602): A15's drawn-item tests bind an H row in full and a T child only in the parts its
  *  facts set (callouts, tells, cues, boxes); the template-fixed parts (Trace keys, Mistake guides and arrows, the measure
  *  arc and leader) are the pinned parent's. The scope is the row's mode in rows.json, which A5 holds to the ruled mode. */
-const rowMode = (id: string, rows = readJson('tools/plates/library/lb5/rows.json').rows) => rows[`lib_${id}`]?.mode ?? 'H';
+const rowMode = (id: string, rows = readJson(ROWS).rows) => rows[`lib_${id}`]?.mode ?? 'H';
 const fullScope = (id: string, rows?: any) => rowMode(id, rows) !== 'T';
-const ROWS = 'tools/plates/library/lb5/rows.json';
+// LIB-SHIP W5 (D-SHIP-MOVE): the LB5 rows moved into batches/lb05.json; lb5/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb05.json';
 const RESEARCH_HEAD = 'baf2ff09cf2e91232f536cfc6c766fdf68925217';   // F-LB5-2 (#302): concentration_curl's c14 and notes
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -586,7 +587,7 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     expect(leaderGap(bad)).toBeLessThan(6);
   });
   it('D-LIB15R2-TPARENT mutations: an H row given the T scope is red (its rows.json mode must be the ruled one), and a T child\'s own callout moved onto the figure is red', () => {
-    const rows = readJson('tools/plates/library/lb5/rows.json').rows;
+    const rows = readJson(ROWS).rows;
     const modeMismatch = (r: any) => ALL.filter(id => r[`lib_${id}`] && r[`lib_${id}`].mode !== modeOf(id));
     expect(modeMismatch(rows)).toEqual([]);
     const flipped = { ...rows, lib_hammer_curl: { ...rows.lib_hammer_curl, mode: 'T' } };
@@ -1220,7 +1221,7 @@ describe('LIB-15R2 A5, A6: the templates and the T rows\' params', { timeout: T 
       for (const k of Object.keys(r.params ?? {})) if (!claimIds.includes(r.paramClaims?.[k])) out.push(`${id}: ${k} has no claim`);
       return out;
     };
-    const rows = readJson('tools/plates/library/lb5/rows.json').rows;
+    const rows = readJson(ROWS).rows;
     for (const id of Object.keys(T_ROWS)) expect(problems(id, rows[`lib_${id}`]), id).toEqual([]);
     const sb = rows.lib_straight_bar_triceps_pushdown;
     expect(problems('straight_bar_triceps_pushdown', { ...sb, params: { 'bar.kind': 'rope' } })).toEqual(['straight_bar_triceps_pushdown: bar.kind: rope is not an allowed value']);

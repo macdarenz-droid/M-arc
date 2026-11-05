@@ -30,7 +30,8 @@ const HELD: string[] = [];
 // The released no-seconds ids: their tempo is tempoOf(LIB-STRIP's verified rows), D-STRIP-B / D-STRIP-AFALL.
 const RELEASED = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'pistol_squat', 'jump_squat',   // jump_squat: LIB-SMALL (strip cards row, j9 and j7)
   'step_up', ...SPLIT];   // LIB-SPLIT: the strip cards rows (D-STRIP-ROWS)
-const ROWS = 'tools/plates/library/lb4/rows.json';
+// LIB-SHIP W5 (D-SHIP-MOVE): the LB4 rows moved into batches/lb04.json; lb4/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb04.json';
 const RESEARCH_HEAD = '3812989f59c000705731f7944d7a1a275e86045d';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');

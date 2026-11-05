@@ -1,0 +1,303 @@
+{
+ "batch": "LB5",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/lb05.json",
+  "layers": "tests/howto/golden/library/lb05.layers.html",
+  "layersConfig": "tools/plates/library/pages/lb05.layers.json"
+ },
+ "rows": {
+  "lib_preacher_curl": {
+   "src": "library/specs/preacher_curl.mjs",
+   "slug": "preacher-curl",
+   "prefix": "preacher-curl",
+   "chromeId": "preacher-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Learn the Preacher Curl to Build Strong and Inspiring Biceps | BarBend (2024). https://barbend.com/preacher-curl/",
+    "How to Do Barbell Preacher Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/barbell-preacher-curl/",
+    "Effect of the shoulder position on the biceps brachii emg in different dumbbell curls. (2009). https://pmc.ncbi.nlm.nih.gov/articles/PMC3737788/ PMID 24150552",
+    "Placing Greater Torque at Shorter or Longer Muscle Lengths? Effects of Cable vs. Barbell Preacher Curl Training on Muscular Strength and Hypertrophy in Young Adults. (2020). https://pubmed.ncbi.nlm.nih.gov/32823490/ PMID 32823490",
+    "Distinct muscle growth and strength adaptations after preacher and incline biceps curls. (2025). https://pubmed.ncbi.nlm.nih.gov/39809454/ PMID 39809454",
+    "Challenging the mechanism of distal biceps tendon rupture using a video analysis study. (2022). https://pubmed.ncbi.nlm.nih.gov/36243942/ PMID 36243942",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_cable_curl": {
+   "src": "library/specs/cable_curl.mjs",
+   "slug": "cable-curl",
+   "prefix": "cable-curl",
+   "chromeId": "cable-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Cable Curl With Bar: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/cable-curl-with-bar/",
+    "Cable Bicep Curl: Form, Muscles Worked, Target Weight & Variations. https://fitbod.me/exercises/cable-bicep-curl",
+    "How to Dumbbell Curl: Muscles Worked & Proper Form – StrengthLog (2020). https://www.strengthlog.com/dumbbell-curl/",
+    "Seated Biceps Curl | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. (2018). https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/ PMID 30013836",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "The effects of shoulder extension angle on elbow flexor hypertrophy in the cable curl exercise. (2026). https://pubmed.ncbi.nlm.nih.gov/41988507/ PMID 41988507",
+    "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_bayesian_cable_curl": {
+   "src": "library/specs/bayesian_cable_curl.mjs",
+   "slug": "bayesian-cable-curl",
+   "prefix": "bayesian-cable-curl",
+   "chromeId": "bayesian-cable-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How To Do the Bayesian Curl for Bigger, Beefier Biceps | BarBend (2024). https://barbend.com/bayesian-curl/",
+    "How to Do Bayesian Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/bayesian-curl/",
+    "An Exploratory Study of Biceps Brachii Electromyographic Activity During Traditional Dumbbell Versus Bayesian Cable Curls. (2025). https://pubmed.ncbi.nlm.nih.gov/41133617/ PMID 41133617",
+    "Comparison Between Shoulder Flexed and Extended Positions in Elbow Flexion Resistance Training on Regional Hypertrophy and Maximum Strength: Preacher versus Bayesian Cable Curls. (2025). https://pubmed.ncbi.nlm.nih.gov/40082069/ PMID 40082069",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_concentration_curl": {
+   "src": "library/specs/concentration_curl.mjs",
+   "slug": "concentration-curl",
+   "prefix": "concentration-curl",
+   "chromeId": "concentration-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do the Concentration Curl for Bigger Biceps | BarBend (2024). https://barbend.com/concentration-curl/",
+    "How to Do Concentration Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/concentration-curl/",
+    "ACE Research: Best Biceps Exercises for Strength | ProSource™ | ACE (2014). https://www.acefitness.org/continuing-education/prosource/august-2014/4933/ace-study-reveals-best-biceps-exercises/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_dumbbell_overhead_triceps_extension": {
+   "src": "library/specs/dumbbell_overhead_triceps_extension.mjs",
+   "slug": "dumbbell-overhead-triceps-extension",
+   "prefix": "dumbbell-overhead-triceps-extension",
+   "chromeId": "dumbbell-overhead-triceps-extension",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Triceps Extension (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/74/triceps-extension/",
+    "How to Do Proper Overhead Tricep Extensions (Healthline; written by Travis Edwards, PT, medically reviewed by Jake Tipane, CPT) (2021). https://www.healthline.com/health/fitness/overhead-triceps-extension",
+    "Dumbbell Overhead Triceps Extension, Exercise Guide (Motra). https://motra.com/exercises/dumbbellOverheadTricepsExtension",
+    "Effect of shoulder position on triceps brachii heads activity in dumbbell elbow extension exercises (2018). https://pubmed.ncbi.nlm.nih.gov/28677940/ PMID 28677940",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Triceps Tendon Ruptures: Risk Factors, Treatment, and Rehabilitation (2020). https://pubmed.ncbi.nlm.nih.gov/32539261/ PMID 32539261",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_cross_body_hammer_curl": {
+   "src": "library/specs/cross_body_hammer_curl.mjs",
+   "slug": "cross-body-hammer-curl",
+   "prefix": "cross-body-hammer-curl",
+   "chromeId": "cross-body-hammer-curl",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Cross Body Hammer Curls: Form, Muscles Worked, Target Weight & Variations. https://fitbod.me/exercises/cross-body-hammer-curls",
+    "Hammer Curl Exercise Guide for Stronger Arms | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/",
+    "How to Do Hammer Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/hammer-curl/",
+    "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy. (2023). https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/ PMID 36976950",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007. (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_wrist_curl": {
+   "src": "library/specs/wrist_curl.mjs",
+   "slug": "wrist-curl",
+   "prefix": "wrist-curl",
+   "chromeId": "wrist-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Arm Exercises | Wrist Curl - Flexion. https://www.acefitness.org/resources/everyone/exercise-library/30/wrist-curl-flexion/",
+    "How to Do Dumbbell Wrist Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/dumbbell-wrist-curl/",
+    "How to Do Barbell Wrist Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/barbell-wrist-curl/",
+    "The Nine Best Wrist Curl Variations to Supercharge Your Grip | BarBend (2024). https://barbend.com/barbell-wrist-curl/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_hammer_curl": {
+   "src": "library/specs/hammer_curl.mjs",
+   "slug": "hammer-curl",
+   "prefix": "hammer-curl",
+   "chromeId": "hammer-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Hammer Curl (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/",
+    "How to Do Hammer Curl: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/hammer-curl/",
+    "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy (2023). https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/ PMID 36976950",
+    "The Role of the Muscle Brachioradialis in Elbow Flexion: An Electromyographic Study (2018). https://pubmed.ncbi.nlm.nih.gov/29409427/ PMID 29409427",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_alternating_dumbbell_curl": {
+   "src": "library/specs/alternating_dumbbell_curl.mjs",
+   "slug": "alternating-dumbbell-curl",
+   "prefix": "alternating-dumbbell-curl",
+   "chromeId": "alternating-dumbbell-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Hammer Curl (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/",
+    "Alternating Dumbbell Curls (Niel Asher Education). https://nielasher.com/blogs/strength-and-conditioning/alternating-dumbbell-curls",
+    "How to Dumbbell Curl: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/dumbbell-curl/",
+    "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl (2018). https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/ PMID 30013836",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_single_arm_triceps_pushdown": {
+   "src": "library/specs/single_arm_triceps_pushdown.mjs",
+   "slug": "single-arm-triceps-pushdown",
+   "prefix": "single-arm-triceps-pushdown",
+   "chromeId": "single-arm-triceps-pushdown",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Triceps Pushdowns (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+    "Tutorial: Cable single-arm pushdown (Centr). https://shop.hyroxequipment.centr.com/blogs/features/cp-tutorial-cable-single-arm-pushdown",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/tricep-pushdown-with-bar/",
+    "Tennis elbow (NHS). https://www.nhs.uk/conditions/tennis-elbow/",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_incline_dumbbell_curl": {
+   "src": "library/specs/incline_dumbbell_curl.mjs",
+   "slug": "incline-dumbbell-curl",
+   "prefix": "incline-dumbbell-curl",
+   "chromeId": "incline-dumbbell-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Do the Incline Dumbbell Curl to Double Down on Your Arm Gains | BarBend (2024). https://barbend.com/incline-dumbbell-curl/",
+    "How to Do Incline Dumbbell Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/incline-dumbbell-curl/",
+    "Effect of the shoulder position on the biceps brachii emg in different dumbbell curls. (2009). https://pmc.ncbi.nlm.nih.gov/articles/PMC3737788/ PMID 24150552",
+    "Distinct muscle growth and strength adaptations after preacher and incline biceps curls. (2025). https://pubmed.ncbi.nlm.nih.gov/39809454/ PMID 39809454",
+    "ACE Research: Best Biceps Exercises for Strength | ProSource™ | ACE (2014). https://www.acefitness.org/continuing-education/prosource/august-2014/4933/ace-study-reveals-best-biceps-exercises/",
+    "Seated Biceps Curl | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "How to Dumbbell Curl: Muscles Worked & Proper Form – StrengthLog (2020). https://www.strengthlog.com/dumbbell-curl/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007. (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_straight_bar_triceps_pushdown": {
+   "src": "library/specs/straight_bar_triceps_pushdown.mjs",
+   "slug": "straight-bar-triceps-pushdown",
+   "prefix": "straight-bar-triceps-pushdown",
+   "chromeId": "straight-bar-triceps-pushdown",
+   "mode": "T",
+   "parent": "lib_triceps_pushdown",
+   "template": "PUSHDOWN",
+   "params": {
+    "bar.kind": "straight"
+   },
+   "paramClaims": {
+    "bar.kind": "c1"
+   },
+   "view": "side",
+   "sources": [
+    "How To Do a Tricep Pressdown (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/333/tricep-pressdown/",
+    "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/tricep-pushdown-with-bar/",
+    "Muscle Fatigue in the Three Heads of Triceps Brachii During Intensity and Speed Variations of Triceps Push-Down Exercise (2020). https://pmc.ncbi.nlm.nih.gov/articles/PMC7047337/ PMID 32153422",
+    "Triceps Pushdowns (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/",
+    "Tennis elbow (NHS). https://www.nhs.uk/conditions/tennis-elbow/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_barbell_curl": {
+   "src": "library/specs/barbell_curl.mjs",
+   "slug": "barbell-curl",
+   "prefix": "barbell-curl",
+   "chromeId": "barbell-curl",
+   "mode": "T",
+   "parent": "lib_dumbbell_biceps_curl",
+   "template": "CURL",
+   "params": {
+    "load.primitive": "barbell",
+    "stance.width": 0.22
+   },
+   "paramClaims": {
+    "load.primitive": "c1",
+    "stance.width": "c2"
+   },
+   "view": "side",
+   "sources": [
+    "How to Do Barbell Curl: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/barbell-curl/",
+    "Bicep Curl (ACE Exercise Library; barbell). https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+    "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl (2018). https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/ PMID 30013836",
+    "How to Dumbbell Curl: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/dumbbell-curl/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_ez_bar_curl": {
+   "src": "library/specs/ez_bar_curl.mjs",
+   "slug": "ez-bar-curl",
+   "prefix": "ez-bar-curl",
+   "chromeId": "ez-bar-curl",
+   "mode": "T",
+   "parent": "lib_dumbbell_biceps_curl",
+   "template": "CURL",
+   "params": {
+    "load.primitive": "barbell"
+   },
+   "paramClaims": {
+    "load.primitive": "c1"
+   },
+   "view": "side",
+   "sources": [
+    "How to Do EZ Curls: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/ez-curl/",
+    "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy (2023). https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/ PMID 36976950",
+    "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl (2018). https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/ PMID 30013836",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_reverse_curl": {
+   "src": "library/specs/reverse_curl.mjs",
+   "slug": "reverse-curl",
+   "prefix": "reverse-curl",
+   "chromeId": "reverse-curl",
+   "mode": "T",
+   "parent": "lib_dumbbell_biceps_curl",
+   "template": "CURL",
+   "params": {
+    "load.primitive": "barbell"
+   },
+   "paramClaims": {
+    "load.primitive": "c1"
+   },
+   "view": "side",
+   "sources": [
+    "How to Do Reverse Barbell Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/reverse-barbell-curl/",
+    "Arm Exercises | Reverse Bicep Curl. https://www.acefitness.org/resources/everyone/exercise-library/310/reverse-bicep-curl/",
+    "Reverse curls: how to do them, and the benefits for bulking your biceps | Tom's Guide. https://www.tomsguide.com/wellness/fitness/reverse-curls-how-to-do-them-and-the-benefits-for-bulking-your-biceps",
+    "The Role of the Muscle Brachioradialis in Elbow Flexion: An Electromyographic Study. (2018). https://pubmed.ncbi.nlm.nih.gov/29409427/ PMID 29409427",
+    "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy. (2023). https://pubmed.ncbi.nlm.nih.gov/36976950/ PMID 36976950",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}

@@ -25,6 +25,25 @@ export const INHERIT_MAP = {
   lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], "zooms['hand']": ['zooms[key=hand]'] },
   // D-SHIP-FAMILY (LIB-SHIP W2, #379 6625803515): the dumbbell child of romanian_deadlift; both ship in W2, parent first.
   lib_single_leg_romanian_deadlift: { 'grip.thumb': THUMB, 'grip.wrist': ['handling.wrist'] },
+  // LIB-SHIP W5 (SHIP W5 PLAN RULED, #392 6647901307). D-SHIP-W5-PLATEONLY: `[]` only on a `plate.*` field (no sheet path
+  // holds it; the parent must still be shipped; lib-ship.test.ts compares the field on the two approved plate specs).
+  // D-SHIP-W5-THUMB: thumb mode only where the parent sheet has no handling.pose (triceps_pushdown, gap-ruled).
+  // D-SHIP-W5-SAWRIST: single_arm compares wrist.ext only (its own limitText, c9). Q-W3-2 text fields for the zooms.
+  // D-SHIP-W5-GOLDENFEET: front_squat compares the golden feet label only; its setup[2] goes to research
+  // (F-CARD-FRONTSQ-SETUP) and stays unmapped. D-SHIP-W5-WALLSIT: the parent's knees label and detail exactly.
+  lib_alternating_dumbbell_curl: { 'grip.type': ['handling.orientation', 'handling.handle'], 'grip.thumb': THUMB, 'grip.width': ['handling.width.text'], 'plate.view': [], redFlags: ['riskFlags'] },
+  lib_barbell_curl: { 'plate.view': [], 'grip.thumb': THUMB, redFlags: ['riskFlags'] },
+  lib_ez_bar_curl: { 'plate.view': [], 'grip.thumb': THUMB, redFlags: ['riskFlags'] },
+  lib_hammer_curl: { 'plate.view': [], 'grip.width': ['handling.width.text'], redFlags: ['riskFlags'] },
+  lib_forward_lunge: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+  lib_walking_lunge: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+  lib_bulgarian_split_squat: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+  lib_single_arm_triceps_pushdown: { 'plate.view': [], 'grip.thumb': ['handling.thumb.mode'], 'grip.wrist': ['handling.wrist.ext'], redFlags: ['riskFlags'] },
+  lib_straight_bar_triceps_pushdown: { 'plate.view': [], 'plate.equipment': [], 'grip.thumb': ['handling.thumb.mode'], 'grip.wrist': ['handling.wrist'],
+    zooms: ['zooms[key=pushdown-elbow].chip', 'zooms[key=pushdown-elbow].heading', 'zooms[key=pushdown-elbow].caption', 'zooms[key=pushdown-elbow].callout.right.text',
+      'zooms[key=pushdown-elbow].callout.wrong.text', 'zooms[key=pushdown-elbow].alt'], redFlags: ['riskFlags'] },
+  lib_front_squat: { 'posture[3] (feet flat, knees follow the toes)': ['posture[key=feet].label'] },
+  lib_wall_sit: { 'posture[1] (knees over the second toe, ankles not rolling)': ['posture[key=knees].label', 'posture[key=knees].detail'], 'b10 / redFlags knee (NHS knee box)': ['riskFlags'] },
   lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': ['setup[kind=position,zoom=path].text'] },
   lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path]'], 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
   lib_horizontal_leg_press: { grip: ['handling'], "posture['Tailbone and lower back flat on the pad']": ['posture[key=back]'], "posture['Whole foot flat, mid-platform']": ['posture[key=feet]'],

@@ -1,0 +1,211 @@
+{
+ "batch": "LB4",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/lb04.json",
+  "layers": "tests/howto/golden/library/lb04.layers.html",
+  "layersConfig": "tools/plates/library/pages/lb04.layers.json"
+ },
+ "rows": {
+  "lib_front_squat": {
+   "src": "library/specs/front_squat.mjs",
+   "slug": "front-squat",
+   "prefix": "front-squat",
+   "chromeId": "front-squat",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Front Squat (Exercise Library). https://www.catalystathletics.com/exercise/78/Front-Squat/",
+    "Clean Rack Position. https://www.catalystathletics.com/video/1402/Clean-Rack-Position/",
+    "Learn this foundational exercise: front squat (excerpt from Powerlifting, 2nd ed., Austin and Mann). https://us.humankinetics.com/blogs/excerpt/learn-this-foundational-exercise-front-squat",
+    "How to Safely Fail a Heavy Squat in the Gym. https://repfitness.com/blogs/training/how-to-safely-fail-a-heavy-squat-in-the-gym",
+    "A biomechanical comparison of back and front squats in healthy trained individuals (2009). https://pubmed.ncbi.nlm.nih.gov/19002072/ PMID 19002072",
+    "Kinematic and EMG activities during front and back squat variations in maximum loads (2015). https://pubmed.ncbi.nlm.nih.gov/25630691/ PMID 25630691",
+    "The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise (2013). https://pubmed.ncbi.nlm.nih.gov/23222073/ PMID 23222073",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/",
+    "How to Squat with Proper Form: The Definitive Guide (StrongLifts). https://stronglifts.com/squat/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_goblet_squat": {
+   "src": "library/specs/goblet_squat.mjs",
+   "slug": "goblet-squat",
+   "prefix": "goblet-squat",
+   "chromeId": "goblet-squat",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Goblet Squat (NASM Exercise Library). https://www.nasm.org/resource-center/exercise-library/goblet-squat",
+    "Goblet Squat (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/362/goblet-squat/",
+    "Differences in Muscle Activity and Kinetics Between the Goblet Squat and Landmine Squat in Men and Women (2021). https://pubmed.ncbi.nlm.nih.gov/34341315/ PMID 34341315",
+    "The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise (2013). https://pubmed.ncbi.nlm.nih.gov/23222073/ PMID 23222073",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_bodyweight_squat": {
+   "src": "library/specs/bodyweight_squat.mjs",
+   "slug": "bodyweight-squat",
+   "prefix": "bodyweight-squat",
+   "chromeId": "bodyweight-squat",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Bodyweight Squat (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/135/bodyweight-squat/",
+    "Effect of knee position on hip and knee torques during the barbell squat (2003). https://pubmed.ncbi.nlm.nih.gov/14636100/ PMID 14636100",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_wall_sit": {
+   "src": "library/specs/wall_sit.mjs",
+   "slug": "wall-sit",
+   "prefix": "wall-sit",
+   "chromeId": "wall-sit",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Wall Sit (Exercise Library). https://www.catalystathletics.com/exercise/749/Wall-Sit/",
+    "Step-by-step guide to the wall sit exercise (Physitrack). https://www.physitrack.com/exercise-library/how-to-perform-the-wall-sit-exercise",
+    "The effects of isometric wall squat exercise on heart rate and blood pressure in a normotensive population (2014). https://pubmed.ncbi.nlm.nih.gov/23879248/ PMID 23879248",
+    "Patellofemoral Joint Loading during the Performance of the Wall Squat and Ball Squat with Heel-to-Wall-Distance Variations (2023). https://pubmed.ncbi.nlm.nih.gov/37057713/ PMID 37057713",
+    "Patellofemoral joint force and stress during the wall squat and one-leg squat (2009). https://pubmed.ncbi.nlm.nih.gov/19276845/ PMID 19276845",
+    "Effect of breath-hold on the responses of arterial blood pressure and cerebral blood velocity to isometric exercise (2022). https://pubmed.ncbi.nlm.nih.gov/34618221/ PMID 34618221",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_pistol_squat": {
+   "src": "library/specs/pistol_squat.mjs",
+   "slug": "pistol-squat",
+   "prefix": "pistol-squat",
+   "chromeId": "pistol-squat",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "The Ultimate Guide for Nailing The Pistol Squat (REP Fitness; author NASM-CPT). https://repfitness.com/blogs/training/how-to-do-pistol-squats",
+    "Step-by-step guide to the pistol squat exercise (Physitrack). https://www.physitrack.com/exercise-library/how-to-perform-the-pistol-squat-exercise",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_jump_squat": {
+   "src": "library/specs/jump_squat.mjs",
+   "slug": "jump-squat",
+   "prefix": "jump-squat",
+   "chromeId": "jump-squat",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Squat Jumps (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/116/squat-jumps/",
+    "Squat Vertical Jump (Exercise Library). https://www.catalystathletics.com/exercise/555/Squat-Vertical-Jump/",
+    "Effect of landing stiffness on joint kinetics and energetics in the lower extremity (1992). https://pubmed.ncbi.nlm.nih.gov/1548984/ PMID 1548984",
+    "The Relationship Between Landing Sound, Vertical Ground Reaction Force, and Kinematics of the Lower Limb During Drop Landings in Healthy Men (2016). https://pubmed.ncbi.nlm.nih.gov/26813751/ PMID 26813751",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/",
+    "Box Jumps (NASM Exercise Library). https://www.nasm.org/resource-center/exercise-library/box-jumps",
+    "Biomechanical measures of neuromuscular control and valgus loading of the knee predict anterior cruciate ligament injury risk in female athletes: a prospective study (2005). https://pubmed.ncbi.nlm.nih.gov/15722287/ PMID 15722287"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_step_up": {
+   "src": "library/specs/step_up.mjs",
+   "slug": "step-up",
+   "prefix": "step-up",
+   "chromeId": "step-up",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Step-up (Exercise Library). https://www.catalystathletics.com/exercise/560/Step-up/",
+    "Step-Up (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/28/step-up/",
+    "Electromyographical analysis of lower extremity muscle activation during variations of the loaded step-up exercise (2012). https://pubmed.ncbi.nlm.nih.gov/22237139/ PMID 22237139",
+    "The Biomechanical Demands on the Hip During Progressive Stepping Tasks (2017). https://pubmed.ncbi.nlm.nih.gov/27984498/ PMID 27984498",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_forward_lunge": {
+   "src": "library/specs/forward_lunge.mjs",
+   "slug": "forward-lunge",
+   "prefix": "forward-lunge",
+   "chromeId": "forward-lunge",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Forward Lunge (ACE Exercise Library, barbell). https://www.acefitness.org/resources/everyone/exercise-library/8/forward-lunge/",
+    "Lunge (Exercise Library). https://www.catalystathletics.com/exercise/354/Lunge/",
+    "Forward Lunge (ACE Exercise Library, no equipment). https://www.acefitness.org/resources/everyone/exercise-library/94/forward-lunge/",
+    "Lunge (ACE Exercise Library, dumbbells). https://www.acefitness.org/resources/everyone/exercise-library/363/lunge/",
+    "Patellofemoral joint loading during the forward and backward lunge (2021). https://pubmed.ncbi.nlm.nih.gov/33310585/ PMID 33310585",
+    "Effects of Step Length and Stride Variation During Forward Lunges on Lower-Extremity Muscle Activity (2025). https://pubmed.ncbi.nlm.nih.gov/39982282/ PMID 39982282",
+    "Trunk position influences the kinematics, kinetics, and muscle activity of the lead lower extremity during the forward lunge exercise (2008). https://pubmed.ncbi.nlm.nih.gov/18591759/ PMID 18591759",
+    "Influence of Trunk Position during Three Lunge Exercises on Muscular Activation in Trained Women (2021). https://pubmed.ncbi.nlm.nih.gov/34055138/ PMID 34055138",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_walking_lunge": {
+   "src": "library/specs/walking_lunge.mjs",
+   "slug": "walking-lunge",
+   "prefix": "walking-lunge",
+   "chromeId": "walking-lunge",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Lunge (Exercise Library). https://www.catalystathletics.com/exercise/354/Lunge/",
+    "Walking Lunges with Twists (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/139/walking-lunges-with-twists/",
+    "Influence of Trunk Position during Three Lunge Exercises on Muscular Activation in Trained Women (2021). https://pubmed.ncbi.nlm.nih.gov/34055138/ PMID 34055138",
+    "Comparison of lower limb muscle activities during eccentric lunge walking in three different step lengths (2026). https://pubmed.ncbi.nlm.nih.gov/42806070/ PMID 42806070",
+    "Effects of Step Length and Stride Variation During Forward Lunges on Lower-Extremity Muscle Activity (2025). https://pubmed.ncbi.nlm.nih.gov/39982282/ PMID 39982282",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_bodyweight_lunge": {
+   "src": "library/specs/bodyweight_lunge.mjs",
+   "slug": "bodyweight-lunge",
+   "prefix": "bodyweight-lunge",
+   "chromeId": "bodyweight-lunge",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Forward Lunge (ACE Exercise Library, no equipment). https://www.acefitness.org/resources/everyone/exercise-library/94/forward-lunge/",
+    "Lunge (Exercise Library). https://www.catalystathletics.com/exercise/354/Lunge/",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_bodyweight_split_squat": {
+   "src": "library/specs/bodyweight_split_squat.mjs",
+   "slug": "bodyweight-split-squat",
+   "prefix": "bodyweight-split-squat",
+   "chromeId": "bodyweight-split-squat",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Split Squat (Exercise Library). https://www.catalystathletics.com/exercise/174/Split-Squat/",
+    "Effects of Step Length and Stride Variation During Forward Lunges on Lower-Extremity Muscle Activity (2025). https://pubmed.ncbi.nlm.nih.gov/39982282/ PMID 39982282",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_bulgarian_split_squat": {
+   "src": "library/specs/bulgarian_split_squat.mjs",
+   "slug": "bulgarian-split-squat",
+   "prefix": "bulgarian-split-squat",
+   "chromeId": "bulgarian-split-squat",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Bulgarian Split Squat (Exercise Library). https://www.catalystathletics.com/exercise/173/Bulgarian-Split-Squat/",
+    "Bulgarian Split Squat (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/366/bulgarian-split-squat/",
+    "Hip and Knee Extensor Activation During the Hip Thrust and Rear-Foot-Elevated Split Squat in Trained Females (2021). https://pubmed.ncbi.nlm.nih.gov/33900255/ PMID 33900255",
+    "Greater Hip Moments in Rear-Foot-Elevated Split Squats Than in Conventional Back Squats With the Same Relative Intensity of Loads (2023). https://pubmed.ncbi.nlm.nih.gov/36542838/ PMID 36542838",
+    "Targeted muscle activation in Bulgarian split squat variations: effects of trunk position and suspension-based execution (2025). https://pubmed.ncbi.nlm.nih.gov/40867012/ PMID 40867012",
+    "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}
