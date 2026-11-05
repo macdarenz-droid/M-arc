@@ -94,6 +94,9 @@ const zooms = [
       right: { text: 'Forearms vertical', anchor: 'elbow.r' },
       wrong: { text: 'Elbows back', anchor: { at: 'elbow.r', pose: 'mistake' } },
     },
+    // `cite`: the card claim ids of each half's callout, caption and alt (lint/index.mjs zoomCites; #385 6649353130):
+    // Right c5 (elbows under the bar), c2 (forearms vertical at the bottom); Wrong c5 (elbows back, forearms tilted).
+    cite: { right: ['c5', 'c2'], wrong: ['c5'] },
     caption: {
       right: 'Elbows under the bar, forearms vertical.',
       wrong: 'Elbows back, forearms tilted.',
@@ -169,7 +172,8 @@ export default {
       // card zoom wrong (c4). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar in mid-palm, wrist bent back.' },
     ],
-    gripLine: 'Full grip, thumbs wrapped, bar on the heel of your palm. Your wrist stays almost straight.',   // c3, c4 (#385 6648438434)
+    gripLine: 'Full grip, thumbs wrapped, bar on the heel of your palm. Your wrist stays almost straight.',
+    gripCite: ['c3', 'c4'],   // the gripLine's card claim ids (#385 6648438434; lint/index.mjs zoomCites, #385 6649353130)
     cue: 'Palm heel, wrist not bent back.',   // PLAN section 4, text B (c4)
   },
   contacts: ['standing-feet'],

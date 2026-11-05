@@ -110,6 +110,8 @@ const zooms = [
       wrong: 'Elbows drifted forward, upper arms swung up.',
     },
     // alt (W2 fix round, #385 6648438434): Right c5 (elbows at the sides), c7 (bar at upper chest); Wrong c6.
+    // `cite`: the card claim ids of each half's callout, caption and alt (lint/index.mjs zoomCites; #385 6649353130).
+    cite: { right: ['c5', 'c7'], wrong: ['c6'] },
     alt: {
       right: 'Side view, top of the pushdown. Upper arms hang down against the sides, bar at upper-chest level.',
       wrong: 'Side view, top of the pushdown. The upper arms swing forward and up, so the elbows leave the sides.',

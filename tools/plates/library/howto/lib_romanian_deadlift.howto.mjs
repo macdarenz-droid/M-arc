@@ -98,6 +98,8 @@ const zooms = [
     },
     // Right caption and alt (W2 fix round, #385 6648438434): hips back c2, flat back c5, knees slightly bent c4, bar at
     // mid-shin c6; the Wrong (rounded lower back) is c7.
+    // `cite`: the card claim ids of each half's callout, caption and alt (lint/index.mjs zoomCites; #385 6649353130).
+    cite: { right: ['c2', 'c5', 'c4', 'c6'], wrong: ['c7'] },
     caption: {
       right: 'Hips back, flat back, knees slightly bent, bar at mid-shin.',
       wrong: 'Rounded lower back.',
@@ -201,7 +203,8 @@ export default {
       claim: C(['CONVENTION'], ['hold-default'], 'card grip.wrist (hold archetype). The ext range is the hold archetype\'s (GA 3.1), a convention, not a card number.') },
     pose: { thumb: 'wrapped' },   // c22; no hand pose is drawn (no hand zoom)
     faults: [],                   // the card's hand zoom has no Wrong and no handling mistake is a hand fault
-    gripLine: 'Hands just outside your thighs, thumbs wrapped round the bar. Straps are fine if grip limits the set.',   // c9, c22
+    gripLine: 'Hands just outside your thighs, thumbs wrapped round the bar. Straps are fine if grip limits the set.',
+    gripCite: ['c9', 'c22'],   // the gripLine's card claim ids (lint/index.mjs zoomCites; #385 6649353130)
     cue: 'Thumbs wrapped, wrists neutral.',   // c22, card grip.wrist
   },
   contacts: ['standing-feet'],

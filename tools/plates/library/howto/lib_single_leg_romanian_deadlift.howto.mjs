@@ -99,6 +99,8 @@ const zooms = [
       wrong: 'Back and shoulders rounded.',
     },
     // alt (W2 fix round, #385 6648438434): Right c8 (one straight line), c9 (mid-shin); Wrong c7.
+    // `cite`: the card claim ids of each half's callout, caption and alt (lint/index.mjs zoomCites; #385 6649353130).
+    cite: { right: ['c8', 'c9'], wrong: ['c7'] },
     alt: {
       right: 'Side view, bottom of the lift. Head, back and free leg form one straight line. The dumbbell is at mid-shin.',
       wrong: 'Side view. The back and shoulders round as the dumbbell is reached down to the floor.',
@@ -186,7 +188,8 @@ export default {
     wrist: { ext: [-10, 10], limitText: 'Keep the wrist neutral, in line with the forearm.', claim: INHERIT_WRIST },
     pose: { thumb: 'wrapped' },   // === the parent's handling.pose.thumb; no hand pose is drawn (no hand zoom)
     faults: [],                   // the card has no hand zoom and no handling mistake is a hand fault
-    gripLine: 'One dumbbell in the hand opposite your standing leg. Grip it hard, thumb wrapped.',   // c1, c18; thumb: inherit
+    gripLine: 'One dumbbell in the hand opposite your standing leg. Grip it hard, thumb wrapped.',   // thumb: inherit
+    gripCite: ['c1', 'c18'],   // the gripLine's card claim ids (lint/index.mjs zoomCites; #385 6649353130)
     cue: 'Grip hard, arm straight.',   // c18, c3
   },
   contacts: ['standing-feet'],

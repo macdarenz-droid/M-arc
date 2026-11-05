@@ -270,7 +270,7 @@ export default {
   callouts: [
     { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: [{ at: 'elbow.r', pose: 'start' }, { at: 'grip.r', pose: 'start' }], t: 0.5 }, box: { left: 22, top: 118 }, cue: 'Keep your elbows under the bar so your forearms point straight up.' },
     // 'Head through' and its cue: c6 (card plate.checkpoints 'Head clear'; W2 fix round, #385 6648438434)
-    { key: 'head', text: 'Head<br>through', anchor: 'chin', cue: 'Lean back slightly from the hips, then move under the bar as it passes.',
+    { key: 'head', text: 'Head<br>through', anchor: 'chin', cue: 'Lean back slightly from the hips, then move under the bar as it passes.', cite: ['c6'],
       guide: [{ at: 'ear', pose: 'start' }, 'ear'], box: { left: 258, top: 96 } },
     { key: 'midfoot', text: 'Over<br>mid-foot', anchor: { at: 'grip.r', off: [6, -2] }, cue: 'Lock out with the bar over your shoulders and mid-foot.' },
   ],

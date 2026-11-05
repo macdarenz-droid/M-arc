@@ -167,7 +167,7 @@ export default {
   callouts: [
     { key: 'shin', text: 'Front shin<br>vertical', anchor: { along: ['knee.r', 'ankle.r'], t: 0.45, off: [7, 0] }, guide: SHIN_PLUMB, cue: 'At the bottom, keep the front shin roughly vertical.' },
     { key: 'chest', text: 'Chest up', anchor: 'sternum', cue: 'Keep the trunk upright as the back knee lowers.' },
-    { key: 'weight', text: 'Weight even', anchor: 'buttock', guide: ['hips', MIDWAY], cue: 'At the bottom, share the weight about evenly between both feet.' },
+    { key: 'weight', text: 'Weight even', anchor: 'buttock', guide: ['hips', MIDWAY], cue: 'At the bottom, share the weight about evenly between both feet.', cite: ['c3'] },
   ],
   mistake: {
     pose: MISTAKE,
@@ -188,7 +188,7 @@ export default {
     tells: [
       // 'flare' box (fix round): left of the back, 10 px further left than the auto place, so the zoom link (focus up-left
       // to the ring) clears the label; the leader ends on the red lumbar curve (LUMBAR_OFF)
-      { key: 'flare', text: 'Pelvis untucked', anchor: { at: 'lumbar', pose: 'mistake', off: LUMBAR_OFF }, box: { left: 20, top: 217 }, cue: 'The ribcage flares as you step back and the pelvis stays untucked.' },   // c18 (first: the card's topFault, F7)
+      { key: 'flare', text: 'Pelvis untucked', anchor: { at: 'lumbar', pose: 'mistake', off: LUMBAR_OFF }, box: { left: 20, top: 217 }, cue: 'The ribcage flares as you step back and the pelvis stays untucked.', cite: ['c18'] },   // c18 (first: the card's topFault, F7)
       { key: 'ribs', text: 'Ribs flare', anchor: { at: 'chest', pose: 'mistake', off: RIBS_OFF }, box: { left: 266, top: 196 }, cue: 'The ribcage flares up instead of the pelvis tucking under.' },   // c18
     ],
   },

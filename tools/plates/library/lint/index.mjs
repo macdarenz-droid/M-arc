@@ -133,11 +133,37 @@ export const cardReader = (root = ROOT) => p => { try { return JSON.parse(readFi
 
 export { familyLabels, familyRefusal } from './family.mjs';
 
+/** LIB-PLATEFIX-1 (#385 6649353130): a string's claim-id field. `ids` must be a non-empty list of distinct card claim
+ *  ids ('c' + digits) that the exercise's verified card holds. `card` null (no card file) refuses every cite. */
+export function citeIds(path, ids, card) {
+  const out = [];
+  if (!Array.isArray(ids) || !ids.length) { v(out, path, 'cite must be a non-empty list of card claim ids', JSON.stringify(ids)); return out; }
+  const held = new Set((card?.claims ?? []).map(c => c.id));
+  if (new Set(ids).size !== ids.length) v(out, path, 'cite lists an id twice', ids.join(', '));
+  for (const id of ids) {
+    if (!/^c\d+$/.test(String(id))) v(out, path, 'cite id is not a card claim id', String(id));
+    else if (!held.has(id)) v(out, path, 'cite id not in the card', id);
+  }
+  return out;
+}
+/** The How-to's claim-id fields (#385 6649353130): zooms[].cite.{right,wrong} (the half's callout, caption and alt)
+ *  and handling.gripCite (the grip line), each checked by citeIds against cards/<id without lib_>.json. Absent
+ *  fields are not required here; a zoom with `cite` must cite both halves. */
+export function zoomCites(M, read = cardReader()) {
+  const H = M.default ?? M, out = [], ex = String(H.id ?? '').replace(/^lib_/, '');
+  const zs = (H.zooms ?? []).filter(z => z && z.cite !== undefined), grip = H.handling?.gripCite;
+  if (!zs.length && grip === undefined) return out;
+  const card = read(`docs/research/howto/cards/${ex}.json`);
+  for (const z of zs) for (const side of ['right', 'wrong']) out.push(...citeIds(`zooms(${z.key}).cite.${side}`, z.cite?.[side], card));
+  if (grip !== undefined) out.push(...citeIds('handling.gripCite', grip, card));
+  return out;
+}
+
 /** Every library rule for one shipped library row (golden B's own lint included), as [{ path, rule, detail }]. */
 export function lintLibraryRow(M, shared, { extraBoxes = {}, boxKeys = {} } = {}) {
   const H = M.default ?? M, names = sourceNamePatterns([M]), out = [];
   out.push(...lintHowto(M, shared, names).violations.map(x => ({ path: x.path, rule: x.rule, detail: x.detail })));
-  out.push(...medicalBans(M), ...fixVerbs(M));
+  out.push(...medicalBans(M), ...fixVerbs(M), ...zoomCites(M));
   for (const f of H.riskFlags ?? ['wrist']) { const B = boxOf(f, shared, extraBoxes); if (B) out.push(...boxReach(`redFlag(${f})`, B, names, boxKeys[f])); }
   out.push(...sheetWords(M, shared, extraBoxes).violations.filter(x => x.path !== '(sheet)' || !out.some(y => y.path === '(sheet)')));
   return out;
