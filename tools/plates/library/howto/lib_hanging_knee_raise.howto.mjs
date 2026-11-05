@@ -149,11 +149,14 @@ const zooms = [
   },
   {
     key: 'body-line', chip: 'Body line', heading: 'Body line', kind: 'posture',   // card zoom key: body line
-    // zoom shell: crop centre on the right pose's hip; the Wrong is the spec's Mistake drawn alone (solid): the whole
-    // body swings back under the bar.
-    crop: { center: { at: 'hip.r', pose: 'right', off: [0, -10] }, sizePx: 230 },
+    // zoom shell: crop centre on the right pose's hip. W3 LAYERS FIX (#384 6648454032, L5): the Wrong draws the still
+    // pose solid with the spec's Mistake (the whole body swung back under the bar) as a dashed ghost over it, and the
+    // plate Mistake's own curved arrow (specs/hanging_knee_raise.mjs mistake.guides: arc-arrow about the grips), so the
+    // swing reads as movement, not a static tilt. c4 (card plate.mistake).
+    crop: { center: { at: 'hip.r', pose: 'right', off: [-5, -40] }, sizePx: 230 },
     right: 'end',
-    wrong: { base: 'end', pose: MIS, solid: true },
+    wrong: { base: 'end', pose: MIS },
+    guides: [{ kind: 'arc-arrow', center: 'grips', r: 100, a0: 118, a1: 140 }],
     callout: {
       right: { text: 'Body still', anchor: 'hip.r' },
       wrong: { text: 'Body swings', anchor: { at: 'hip.r', pose: 'mistake' } },
@@ -164,7 +167,7 @@ const zooms = [
     },
     alt: {
       right: 'Side view. The body hangs still under the bar as the knees lift.',
-      wrong: 'Side view. The body swings back under the bar to kick the legs up.',
+      wrong: 'Side view. The body swings back under the bar to kick the legs up. Drawn dashed over the still position.',
     },
     feelRow: 'low-back',
   },

@@ -14,6 +14,7 @@
 // Tier-A way out: the card records a gap (no sourced way to get down from the bar or fail a rep safely), so no way-out
 // line is written; the W3 safety checker rules on it (Q-W2-3 form).
 import plateSpec from '../specs/chin_up.mjs';
+import { landmarksOf } from '../engine.mjs';   // W3 LAYERS FIX: the blade outlines' rib level (the plate's own engine)
 import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_ELBOW } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_ELBOW };
 
@@ -116,6 +117,26 @@ export const stills = {
   kip: { pose: { ...plateSpec.poses.end, ...MIS } },
 };
 
+// Shoulder blades seen from behind (W3 LAYERS FIX, L5): golden B's bladeOutlines (layers/exercises/pull_up.howto.mjs:172)
+// and its drawing values, in cm from each shoulder joint centre: [toward the spine, up]. The blades ride on the shoulder
+// joints, so in the shrug the ribcage and head sink under them. ribLevel: a fixed level on the ribcage, at the right
+// hang's lower blade corners.
+const BLADE = [[13, 2], [5, 3.2], [0.5, 4], [1, -1], [3, -6], [7.5, -13.5], [11.5, -8], [13.8, -2.5]];
+const BLADE_SPINE = [[13.6, -1.5], [1, 3.6]];
+const RIB_D = (() => { const lm = landmarksOf(S); return lm['shoulder.l'][1] + BLADE[5][1] / 100 - lm.backMid[1]; })();
+function bladeOutlines(lm) {
+  const lines = [], points = {};
+  for (const sd of ['l', 'r']) {
+    const Sj = lm[`shoulder.${sd}`], sg = Math.sign(Sj[0]);
+    const w = ([m, up]) => [Sj[0] - sg * m / 100, Sj[1] + up / 100, Sj[2] - 0.08];
+    lines.push({ pts: [...BLADE, BLADE[0]].map(w), kind: 'outline' }, { pts: BLADE_SPINE.map(w), kind: 'ridge' });
+    points[`bladeLow.${sd}`] = w(BLADE[5]);
+    points[`bladeTop.${sd}`] = w(BLADE[0]);
+  }
+  points.ribLevel = [0, lm.backMid[1] + RIB_D, lm.backMid[2]];
+  return { lines, points };
+}
+
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom, same kinds; the hand zoom's key is 'hand' and its heading the shared pair heading (D-SHIP-Q3,
 // hands/words/bar-hang-under.json). The posture zooms are in the zoom shell's shape (callout with an anchor at the
@@ -138,22 +159,27 @@ const zooms = [
   },
   {
     key: 'shoulders', chip: 'Shoulders', heading: 'Shoulder set', kind: 'posture',   // card zoom key: shoulders
-    // zoom shell: crop centre on the right pose's shoulder top for both halves; the Wrong is the shrug dashed over the
-    // start pose, as `stills.shrug`.
-    crop: { center: { at: 'shoulderTop.r', pose: 'right', off: [0, -10] }, sizePx: 150 },
+    // W3 LAYERS FIX (#384 6648454032, L5): from the side the near arm hides the shrug, so both crops are drawn from
+    // behind, golden B's hanging_leg_raise/pull_up "Seen from behind" form (view 'back', both solid, blades outlined, a
+    // level at the right hang's head and an arrow down to the sunk head). c24.
+    view: 'back', camLabel: 'Seen from behind',
+    outlines: bladeOutlines,
+    crop: { center: { at: 'shoulderTop.r', pose: 'right', off: [0, 8] }, sizePx: 150 },
     right: 'start',
-    wrong: { base: 'start', pose: SHRUG },
+    wrong: { base: 'start', pose: SHRUG, solid: true },
+    guides: [{ kind: 'level', at: { at: 'head', pose: 'right' } }, { kind: 'level', at: 'ribLevel', tone: 'neutral' },
+      { kind: 'drop', from: { at: 'head', pose: 'right' }, to: { at: 'head' } }],
     callout: {
       right: { text: 'Shoulders down', anchor: 'shoulderTop.r' },
-      wrong: { text: 'Shrugged', anchor: { at: 'shoulderTop.r', pose: 'mistake' } },
+      wrong: { text: 'Shrugged', anchor: 'shoulderTop.r' },
     },
     caption: {
       right: 'Shoulder blades down and back before the arms bend.',
       wrong: 'Shoulders shrugged to the ears at the start.',
     },
     alt: {
-      right: 'Side view, free hang with straight arms. Shoulders pulled down, a clear gap to the ears.',
-      wrong: 'Side view, the same hang shrugged. Shoulders up at the ears, the body sunk lower.',
+      right: 'Seen from behind, free hang with straight arms. Shoulders pulled down, a clear gap to the ears.',
+      wrong: 'Seen from behind, the same hang shrugged. Shoulders up at the ears, the head sunk between the arms.',
     },
     feelRow: 'traps',
   },

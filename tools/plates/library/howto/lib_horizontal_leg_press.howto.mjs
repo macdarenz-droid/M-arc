@@ -103,6 +103,11 @@ export const stills = {
 const zooms = [
   {
     key: 'knee-top', chip: 'Knees', heading: 'Knee lockout', kind: 'posture',   // card zoom key: knee at the top
+    // W3 LAYERS FIX (#384 6648454032, L5): each crop draws its own leg line, hip to knee to ankle, with a thin straight
+    // hip-to-ankle line under it (zoom `outlines`: accent in Right, red dashed in Wrong). The soft knee shows as a bend
+    // off the straight line; the locked knee lies on it. c4 (soft knees), c7 (locking).
+    outlines: lm => ({ lines: [{ pts: [lm['hip.r'], lm['knee.r'], lm['ankle.r']], kind: 'outline' },
+      { pts: [lm['hip.r'], lm['ankle.r']], kind: 'ridge' }], points: {} }),
     crop: { center: { at: 'knee.r', pose: 'right', off: [0, 0] }, sizePx: 150 },
     right: 'end',
     wrong: { base: 'end', pose: MIS, solid: true },

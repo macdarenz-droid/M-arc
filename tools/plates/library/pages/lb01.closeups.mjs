@@ -17,17 +17,20 @@ const ZOOM = {
 const NO_HAND = { ...ZOOM, hand: { layout: 'single' } };
 const KEYED = (uid, panelHeight) => ({ ...ZOOM, hand: { layout: 'single', uid, rightNote: 'Base of fingers', panelHeight } });
 const MCP = uid => ({ ...ZOOM, hand: { layout: 'single', uid, rightNote: 'Heel of palm', panelHeight: 150 } });
+// W3 LAYERS FIX (#384 6648454032, L5): a sheet with a "Seen from behind" zoom (view 'back') takes golden B's
+// hanging_leg_raise record for it (render/closeups-8.mjs): backView, and the level and blade-outline styles.
+const BACK = r => ({ ...r, crop: { ...r.crop, backView: true }, css: { ...r.css, levelNeutral: true, outlines: true } });
 export const CLOSEUP_OPTIONS = {
-  chin_up: KEYED('cu', 250),
+  chin_up: BACK(KEYED('cu', 250)),
   hanging_knee_raise: KEYED('hkr', 250),
-  assisted_pull_up: KEYED('apu', 250),
+  assisted_pull_up: BACK(KEYED('apu', 250)),
   inverted_row: KEYED('ir', 282),
   close_grip_pulldown: KEYED('cgp', 282),
   underhand_lat_pulldown: KEYED('ulp', 282),
   single_arm_lat_pulldown: KEYED('salp', 282),
   straight_arm_pulldown: NO_HAND,
   chest_supported_row: NO_HAND,
-  resistance_band_row: NO_HAND,
+  resistance_band_row: BACK(NO_HAND),
   incline_machine_press: MCP('imp'),
   shoulder_press: MCP('sp'),
 };
