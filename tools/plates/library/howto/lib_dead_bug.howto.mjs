@@ -115,7 +115,7 @@ const feel = {
   primary: [{ muscleId: 'abs', plain: 'The abs at the front of the belly work.', claim: CL.c11 }],
   secondary: [
     { muscleId: 'obliques', plain: 'The sides of the waist work too.', claim: C(['CONSENSUS', 'DATA'], [GGR, 'pereira-2017'], 'card c11, c12') },
-    { muscleId: 'hip_flexors', plain: 'The hip flexors help hold the legs up.', claim: CL.c11 },
+    { muscleId: 'hip_flexors', plain: 'The hip flexors also work.', claim: CL.c11 },
   ],
   watch: [],
   feelLine: 'You should feel this in the front of your belly and sides of your waist.',

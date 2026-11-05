@@ -123,7 +123,7 @@ const feel = {
 const RISKS = [
   { key: 'neck', text: 'Keep the movement controlled to avoid neck strain.', claim: CL.c12 },
   { key: 'acute', text: 'Acute lower back pain? Avoid this exercise.', claim: CL.c13 },
-  { key: 'load', text: 'Too much weight overloads your traps, arms and back instead of your abs.', claim: CL.c11 },
+  { key: 'load', text: 'Too much weight risks overloading your traps, arms and back instead of your abs.', claim: CL.c11 },
 ];
 
 export default {

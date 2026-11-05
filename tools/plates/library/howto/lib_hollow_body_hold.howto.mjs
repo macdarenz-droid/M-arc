@@ -214,7 +214,7 @@ export default {
   chips: ['leg-height', 'low-back', 'feel'],
   copy: {
     setupLine: "Breathe shallowly and don't hold your breath. Lower your chin toward your feet, but don't tuck it.",   // card c10, c9
-    mistakeLine: 'Keep your legs off the floor. Legs too low load the hip flexors over the abs.',
+    mistakeLine: 'Keep your legs off the floor. Legs too low might stress the hip flexors over the abs.',   // card c5
     cueLine: 'Low back down, body a crescent.',
   },
   redFlag: RED_FLAG,

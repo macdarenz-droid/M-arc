@@ -125,10 +125,10 @@ const zooms = [
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const feel = {
   primary: [
-    { muscleId: 'lower_back', plain: 'The muscles along your spine do the work.' },
-    { muscleId: 'glutes', plain: 'The glutes lift your legs.' },
+    { muscleId: 'lower_back', plain: 'The muscles along your spine do the work.', claim: C(['CONSENSUS', 'DATA'], [BB, MO, 'ekstrom-2008'], 'card c14, c16') },
+    { muscleId: 'glutes', plain: 'The glutes lift your legs.', claim: C(['CONSENSUS'], [BB, UC], 'card c15, c10') },
   ],
-  secondary: [{ muscleId: 'mid_back', plain: 'The mid back helps.' }],
+  secondary: [{ muscleId: 'mid_back', plain: 'The mid back helps.', claim: C(['CONSENSUS'], [BB], 'card c15') }],
   watch: [],
   feelLine: 'You should feel this in your low back and glutes.',
   rows: [

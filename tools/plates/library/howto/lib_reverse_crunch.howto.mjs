@@ -153,7 +153,7 @@ const feel = {
 const RISKS = [
   { key: 'tuck', text: 'Tucking your knees too far brings your weight onto your upper back and neck.', claim: CL.c11 },
   { key: 'arch', text: 'If your lower back arches, it can strain your lower back.', claim: CL.c12 },
-  { key: 'legs', text: 'Control your legs on the way down to avoid stress on your low back.', claim: CL.c7 },
+  { key: 'legs', text: 'Control your legs on the way down to avoid extra low-back stress.', claim: CL.c7 },
 ];
 
 export default {

@@ -107,7 +107,7 @@ const feel = {
   primary: [{ muscleId: 'abs', plain: 'The abs hold your body straight.', claim: CL.c9 }],
   secondary: [{ muscleId: 'lats', plain: 'The lats pull you back in.', claim: C(['CONSENSUS', 'MECH'], [SLW, 'escamilla-2006'], 'card c9, c10, c4') }],
   textOnly: [   // named in the text, never painted (D-SHIP-Q7, as lib_plank)
-    { muscleId: 'core', plain: 'The whole trunk braces to keep the body straight.', claim: CL.c9 },
+    { muscleId: 'core', plain: 'The whole trunk braces to keep the body straight.', claim: C(['CONSENSUS'], [SLW, SLX, BBA], 'card c9, c2') },
   ],
   watch: [{ muscleId: 'lower_back', plain: 'The low back is the part at risk.' }],
   feelLine: 'You should feel this in the front of your belly and under your arms.',
