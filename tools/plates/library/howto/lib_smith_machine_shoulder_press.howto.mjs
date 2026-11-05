@@ -114,7 +114,7 @@ const feel = {
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: CL.shoulderRow },
   ],
-  claim: CL.c11,
+  claim: C(['CONSENSUS'], [MO, SL, FV], 'c11, c6'),   // the feel line: c11 (muscles), c6 (depth)
 };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
@@ -147,7 +147,7 @@ export default {
     contact: 'heel',           // c18: the bar on the heel of the hand, close to the wrist
     // c18 gives no degrees ("so the wrists do not bend back"). The range is the push hand key's recorded convention,
     // derived above (pairs.mjs CONVENTIONS 'ga:push-heel': extension 0 to 15), not a card number.
-    wrist: { ext: EXT, limitText: 'Bar low on the heel of your palm, so your wrist does not bend back.',
+    wrist: { ext: EXT, limitText: 'Bar low on the heel of your hand, so your wrist does not bend back.',   // c18's words (D-SHIP-CONVCOPY)
       claim: C(['CONSENSUS', 'WEAK', 'CONVENTION'], [STL, 'ga-push-heel'], 'c18. The ext range is pairs.mjs CONVENTIONS ga:push-heel, a convention, not a card number.') },
     faults: [
       // card zoom smith-ohp-grip wrong (c13). Not drawn (no hand zoom), so no pose or marker is set.

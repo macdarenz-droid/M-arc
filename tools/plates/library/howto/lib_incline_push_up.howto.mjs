@@ -171,7 +171,9 @@ const feel = {
       fix: 'Walk your feet back and keep your elbows at 45 degrees.',
       redFlag: 'shoulder', claim: CL.shoulderRow },
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'Your low back dropping means the set has gone on long enough.',
+      // D-FEEL-MEANS-CAUSAL: the card's means ties the stop to the back dropping, not to a feeling there, so no
+      // means is shown (D-FEEL-NOMEANS); the fix carries c12.
+      means: '',
       fix: 'End the set when your low back starts to drop.', claim: CL.c12 },
     // D-TEXT-GOLDEN: posture 'gaze' (c5) is shown in this fix.
     { key: 'neck', where: 'Neck', at: { parts: ['neck-left', 'neck-right'] },

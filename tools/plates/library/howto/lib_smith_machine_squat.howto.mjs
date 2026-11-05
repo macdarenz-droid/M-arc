@@ -149,7 +149,7 @@ const feel = {
       fix: 'Stop, rack the bar, then move it onto your upper traps.',
       claim: CL.neck },
   ],
-  claim: CL.c15,
+  claim: C(['CONSENSUS'], [SL, MO, GG], 'c15, c7'),   // the feel line: c15 (muscles), c7 (stop short of lockout)
 };
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */

@@ -153,7 +153,7 @@ const feel = {
   feelLine: 'You should feel this at the back of your shoulder.',
   rows: [
     { key: 'shrug', where: 'Top of the shoulder and neck', at: { muscles: ['upper_traps'] },
-      means: 'Fault: shrugging the shoulder.',
+      means: 'You are shrugging the shoulder.',
       fix: "Keep your shoulder down. Don't shrug.",
       claim: CL.c11 },
     { key: 'pain', where: 'Shoulder pain', at: {},   // pain, not a muscle taking over: no map mark (golden B)
