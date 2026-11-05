@@ -189,6 +189,19 @@ const W2_ADDED: Record<string, string[]> = {
   'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
 };
 const MANIFEST_BLANKED_MAIN_W2 = '499096034a25f3dc2cfe80c48f341ec31614ed6184226527af1d39c4b819d37b';
+// LIB-SHIP W6 (#393): W6 adds the 23 lb06/lb07 rows (D-SHIP-MOVE; [golden update] pin commits) and moves no key of an older
+// row past build-layers-page.mjs (already blanked as a W2 key). lessW6 checks each W6 row pins its files' current sha256
+// and removes it, so every other entry is still compared as before.
+const W6_ROWS = [...Object.keys(JSON.parse(readFileSync(join(__dirname, '../..', 'tools/plates/library/batches/lb06.json'), 'utf8')).rows),
+  ...Object.keys(JSON.parse(readFileSync(join(__dirname, '../..', 'tools/plates/library/batches/lb07.json'), 'utf8')).rows)];
+const lessW6 = (m: any) => {
+  for (const id of W6_ROWS) {
+    if (!(id in m.rows)) throw new Error(`LIB-SHIP W6: ${id} has no MANIFEST row`);
+    for (const [k, v] of Object.entries<any>(m.rows[id].files)) if (v !== sha(readFileSync(join(__dirname, '../..', k)))) throw new Error(`LIB-SHIP W6: ${id} ${k} does not pin its file`);
+    delete m.rows[id];
+  }
+  return m;
+};
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
@@ -201,7 +214,7 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     }
     return m;
   };
-  const current = () => JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
+  const current = () => lessW6(JSON.parse(read('tools/plates/library/MANIFEST.json').toString()));   // LIB-SHIP W6: the 23 W6 rows checked and taken out
   it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
     const m = current();
     // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out

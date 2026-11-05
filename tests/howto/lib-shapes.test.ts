@@ -235,6 +235,19 @@ describe('LIB-SHAPES D-SHAPES-HANDS: gen/hands.mjs, a library row with no hand p
   });
 });
 
+// LIB-SHIP W6 (#393): W6 adds the 23 lb06/lb07 rows (D-SHIP-MOVE; [golden update] pin commits) and moves no key of an older
+// row past build-layers-page.mjs (already blanked as a W2 key). lessW6 checks each W6 row pins its files' current sha256
+// and removes it, so every other entry is still compared as before.
+const W6_ROWS = [...Object.keys(JSON.parse(readFileSync('tools/plates/library/batches/lb06.json', 'utf8')).rows),
+  ...Object.keys(JSON.parse(readFileSync('tools/plates/library/batches/lb07.json', 'utf8')).rows)];
+const lessW6 = (m: any) => {
+  for (const id of W6_ROWS) {
+    if (!(id in m.rows)) throw new Error(`LIB-SHIP W6: ${id} has no MANIFEST row`);
+    for (const [k, v] of Object.entries<any>(m.rows[id].files)) if (v !== sha(readFileSync(k))) throw new Error(`LIB-SHIP W6: ${id} ${k} does not pin its file`);
+    delete m.rows[id];
+  }
+  return m;
+};
 describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-layers-page.mjs', () => {
   const BLP = 'tools/plates/library/build-layers-page.mjs';
   // LIB-SHIP W2 (#379; [golden update] re-pins): W2 re-pins these keys (its sheets, batches, closeups, layers configs and
@@ -262,7 +275,7 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     return m;
   };
   it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main c4c34d75 (re-measured after train 63)', () => {
-    const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
+    const m = lessW6(JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8')));   // LIB-SHIP W6: the 23 W6 rows checked and taken out
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
     expect(Object.keys(m.rows)).toContain('lib_crunch');
@@ -274,6 +287,13 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
     expect(sha(JSON.stringify(lessW2(m, [BLP])))).toBe('3882bf3eb1690fd260bd5b02351a7bf93684946cdb7a05cd0ca1acb0c19f2a68');
+  });
+  it('LIB-SHIP W6 red: a W6 row whose file does not pin its sha, or a W6 row missing, throws', () => {
+    const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8')), r = m.rows[W6_ROWS[0]!];
+    r.files[Object.keys(r.files)[0]!] = '0'.repeat(64);
+    expect(() => lessW6(m)).toThrow('does not pin its file');
+    const n = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8')); delete n.rows[W6_ROWS[1]!];
+    expect(() => lessW6(n)).toThrow('has no MANIFEST row');
   });
 });
 
