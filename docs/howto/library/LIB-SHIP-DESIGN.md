@@ -992,3 +992,113 @@ leaves, child value, status) is posted from W4's head (Q-W6-9). No other W6 chil
 guard replacements (lb6-plates.test.ts:181, :1476; lb7-plates.test.ts:174) and the ruling-15 swaps; 21 sheets
 (smith_machine_incline_press last, from W4's head); lb06/lb07 layers pages; LAYERS READY with the D-TEXT-GOLDEN
 inventory and the M/DV/T confirmation; panel; stamps; flip; generate; budgets at N; QA; merge main and regenerate; READY.
+
+### 14.1 W6 layers evidence (LAYERS READY)
+
+Rulings applied: SHIP W6 PLAN RULED (#393 6647923934), its Q-W6-10 addition (6647967860), QUESTIONS 1-3 RULED (6648157060:
+D-SHIP-W6-NOREDFLAG, -LB06FIRST, -WRISTEXEMPT) and QUESTION 4 (ownRowsTree no-zoom removal, lib7b swap).
+
+**Pages (each built twice, same sha256).** Plates: lb06 `5cea2ed7…79cd` (PIN GO 8c7ede8a plus F-ELBOWS-DROP-LTH; first chain
+entry under D-SHIP-W6-LB06FIRST once the focused plates check passes), lb07 `29fae61a…286e` (= PIN GO). Layers: lb06 and lb07,
+shas in the LAYERS READY comment. On the layers pages: lb06 11 ids (smith_machine_incline_press waits for W4, Q-W6-9);
+lb07 9 ids (renegade_row and bench_dip held, S3).
+
+**Held (owner later-update list with the next APK):** renegade_row (F-CARD-RENEGADE-HAND), bench_dip (F-CARD-BENCHDIP-HAND).
+**Staged:** smith_machine_incline_press (written from W4's READY head; its leaf table comes then).
+**Own flip commit (D-SHIP-W6-BACKREACH):** cable_chest_press, smith_machine_shoulder_press, resistance_band_pull_apart.
+
+**Flags, re-derived from lb6/lb7 qa.mjs EXPECTED (F5 on all, left out):** cable_chest_press F2; machine_crunch F2;
+low_to_high_cable_fly F2+F7; high_to_low_cable_fly F2+F3+F7; smith_machine_squat F2; hip_abduction F7; hip_adduction F7;
+machine_lateral_raise F7; rear_delt_fly F3+F7; cable_external_rotation F7; bench_dip F7; pike_push_up F7. All 12 are in
+section 6's 53 (D-OWNER-FLAGS); none is outside them.
+
+**Posture zooms, confirmed against the plate poses (M = the plate's Mistake; DV = drawing value, D-SHIP-DRAWVAL, no number
+in copy; T = text checkpoint).** Differences from the PLAN are marked *.
+
+| id | zooms |
+|---|---|
+| cable_chest_press | stance DV (lumbar arch 15°, start pose; the card Wrong's "handles at the collarbone" is the plate cue `height`) |
+| machine_pullover | pivot T (no zooms) |
+| machine_crunch | arms M; curl DV (spine straight, pelvis tipped by the spec's own CURL 40°); hips DV (pelvis slid 0.10 m; golden B machine_chest_press 0.12 m seat-drop precedent) |
+| low_to_high_cable_fly | trunk DV* (lean 30°; the plate's Mistake is the press, c11, not the lean) |
+| high_to_low_cable_fly | trunk DV* (lean 30°; the plate's Mistake is the crossing hands, c8); back-limit T* (20-30° behind the side line moves the grip 3-8 px in the front view) |
+| smith_machine_squat | feet M |
+| smith_machine_shoulder_press | bench T (no zooms) |
+| hip_abduction | range M* (the spec's MIS_ABD); pivot T |
+| hip_adduction | start M* (MIS_ABD 45 over the start); back T* (a front-to-back move, front-view plate) |
+| machine_lateral_raise | shrug DV (blades raised 8 cm; golden B pull_up shrug precedent); pivot T |
+| rear_delt_fly | elbows DV (grip pulled in to 0.8 of the reach: inside elbow angle 160° → 104°); chestpad T* (depth only; the card's viewWhy) |
+| cable_lateral_raise | top-height M; cable-tight T; elbow-lead DV (working shoulder's rotation mirrored, the spec's END_ROT) |
+| dumbbell_front_raise | hips M; top-height DV (shoulder flexion 120° with the spec's ARM_ROT and ELBOW_BEND) |
+| face_pull | elbows M; height DV (the Mistake's hand targets with the end pose's elbow poles) |
+| cable_external_rotation | elbow M* (the plate's Mistake draws the flaring elbow, c9); turn DV (trunk yaw 20°) |
+| resistance_band_pull_apart | shoulders M; elbows DV (elbows bent 60° instead of 18°) |
+| weighted_dip | shoulders DV (blades up 4 cm, incline_push_up spec M_SHRUG); depth DV* (0.15 m below parallel: the card Wrong is the opposite of the plate's half-rep Mistake; the deepest 5 cm step with the plate above the floor); plate T |
+| incline_push_up | shoulders M; hip-line DV (push_up's SAG_HIP -20; hips drop 15 cm, wrist and toe fixed) |
+| diamond_push_up | hip-line M; shoulder-blades DV (pro -3 / +2, chest_supported_row spec values) |
+| pike_push_up | head-path M* (the spec's own Mistake); pike DV (hip flexion 40° less; no source, sized to read, lib_plank precedent) |
+
+**Text checkpoints (ruling extra 8), each visible:** machine_pullover pivot → setup 1 and plate "Shoulders at pivot" (c1);
+smith_machine_shoulder_press bench → setup 1 and plate "Bar misses nose" (c1, c2, c3); hip_abduction pivot → setup 1 and plate
+"Knees at pivot" (c1); machine_lateral_raise pivot → setup 1 and plate "Shoulders at pivot" (c1); cable_lateral_raise
+cable-tight → setup 3 and plate "tight" (c3); weighted_dip plate → setup 2, mistakes 3, risks 3 (c8);
+smith_machine_incline_press position → with its sheet (W4 head). Extra T from the table above: high_to_low back-limit →
+mistakes 2 fix (c8, c4); hip_adduction back → plate "Back on pad", mistakes 1 fix (c4); rear_delt_fly chestpad → plate cue,
+setup 3, mistakes 2 fix (c6).
+
+**Gap-ruled and gap-key hand zooms: where each zoom's claims show.** cable_chest_press (gap-key) c3 → limitText, setup 4;
+low_to_high_cable_fly (gap-key) c4/c6 → gripLine; machine_pullover c3/c6 → gripLine; smith_machine_squat c5 → gripLine,
+limitText, setup 5; smith_machine_shoulder_press c5/c13 → gripLine, setup 4, fault label; rear_delt_fly c10/c3 → gripLine,
+setup 4; dumbbell_front_raise c1/c7/c9 → gripLine, limitText; face_pull c2 → setup 2, gripLine; resistance_band_pull_apart c1
+→ gripLine; diamond_push_up c1 → setup 2, gripLine.
+
+**Moved words:** face_pull c2 (setup 2, gripLine) and c6 (gripLine, after WRISTEXEMPT); resistance_band_pull_apart c6
+(gripLine); diamond_push_up c1 (setup 2, gripLine); Smith way-out steps: smith_machine_squat c8 (setup 2, risk 3 with c21),
+smith_machine_shoulder_press c7 (setup 2).
+
+**D-TEXT-GOLDEN inventory per sheet** (card posture checkpoint or handlingMistake → slot → claim ids). Every handlingMistake
+of every sheet is in `mistakes[0..2]` with the card's claims (the Grip block), so the table lists the posture points.
+
+| id | posture claims → slot |
+|---|---|
+| cable_chest_press | stagger → setup 3, plate `stance` (c2); spine and brace → setup 5, plate `spine`, zoom (c6); nipple height → plate `height`, zoom (c4); wrists → limitText, setup 4 (c3); shoulders down → setup 5 (c7) |
+| machine_pullover | torso and head on pad → plate "Back on pad", mistakes 1 (c7); no arch → low-back row, risk 1 (c8); open hands → gripLine, plate (c6); shoulders relaxed → neck row (c10); bar at belt → setup 4 (c4) |
+| machine_crunch | hips back → plate, zoom, setup 2 (c2); curl → plate, zoom, hips row (c4, c11); stack → mistakes 3 (c5, c14); breathe, neck → setup 5 (c7, c14) |
+| low_to_high_cable_fly | trunk → zoom, setup 2, mistakes 1 (c6, c7); brace → setup 3 (c2); soft elbows → plate (c6); wrists → gripLine (c4, c6); armpits → mistakes 3 (c4) |
+| high_to_low_cable_fly | trunk → zoom, plate, mistakes 1 (c7); no arch → setup 3 (c2); soft elbows → plate (c3); wrists → gripLine (c3); armpits → mistakes 2 (c8, c4); arc → setup 5 (c6) |
+| smith_machine_squat | traps → setup 3, neck row (c1, c9); elbows, wrists, chest → gripLine, limitText (c5); spine → mistakes 3, low-back row (c11, c12); knees → mistakes 2 (c10); heels → zoom (c2, c6); no lockout → feelLine (c7) |
+| smith_machine_shoulder_press | back on pad → setup 3, plate (c4); brace → mistakes 2, low-back row (c9, c4); elbows → mistakes 1, mistakeLine (c10, c5); depth → feelLine (c6); no lockout → mistakes 3 (c10, c6) |
+| hip_abduction | back flat, still → plate cue, mistakes 1 (c5); range → plate, zoom (c4); return → setup 5 (c3) |
+| hip_adduction | back flat → plate, gripLine (c4); light stretch → plate, zoom, setup 3 (c2); pads meet → plate (c3); return → setup 5 (c3) |
+| machine_lateral_raise | back on pad → setup 2 (c2); elbows lead → plate, gripLine (c4); elbows level → plate (c5); no shrug → zoom, mistakes 2, traps row (c6); lower slowly → setup 5 (c9) |
+| rear_delt_fly | chest on pad → plate cue, setup 3, mistakes 2 (c6); sit tall, neck → setup 3 (c7); fixed bend → plate, zoom (c3); shoulders height → plate, row (c5); stack off rest → setup 5 (c13) |
+| cable_lateral_raise | elbow leads → zoom, plate (c6, c13); parallel → plate, zoom, mistakes 1 (c7); slight bend → zoom, setup 4 (c9); upright → setup 2 (c12); lower slowly → mistakes 2 (c8) |
+| dumbbell_front_raise | elbows lead, breathe → setupLine, plate (c5); width, soft elbows → gripLine, setup 3 (c6, c2); edge up → gripLine, risk 2 (c7); shoulder level → mistakes 3, zoom, plate (c8); upright, wrists → mistakes 2, limitText (c9, c4); lower slowly → mistakeLine (c10, c11) |
+| face_pull | elbows high, rope to face, body still → plate, zooms (c5, c9, c4); ends apart, blades → gripLine (c6); spine → setup 5 (c12) |
+| cable_external_rotation | torso still, elbow at side, forearm level → plate, zooms (c8, c3, c9, c10); turn, pause, return → setup 5 (c5, c18, c7); card setup c4 → setup 3 |
+| resistance_band_pull_apart | arms level, soft elbows, shoulders down → plate, setup 4, zooms (c7, c5, c9, c3, c8); squeeze → setup 5 (c4); return → gripLine (c6); tall, no arch → setup 2, low-back row, mistakes 3 (c1, c10) |
+| weighted_dip | shoulders down → setup 5, plate (c3, c6); elbows back → plate, mistakes 3 (c4); depth → plate, mistakes 1 (c4); torso → shoulder row (c5); plate still → setup 2, mistakes 3, risk 3 (c8); palms → limitText, cue (c5) |
+| incline_push_up | line → setup 4, plate (c2, c3); shoulders → setup 5 (c10); chest to bench → plate cue (c3); hips → mistakes 3 (c3, c6); elbows 45 → mistakes 2 (c4); gaze → neck row (c5); glutes → setup 4 (c6); breathe → feelLine (c8) |
+| diamond_push_up | line → setup 5, plate (c2, c3); hands under chest → setup 1, gripLine (c1); elbows → plate cue (c3); blades → mistakes 2 (c4, c9); reach → mistakes 2 (c5); breathe → feelLine (c3, c5) |
+| pike_push_up | hips high → setup 3, plate (c2, c3); head forward → plate, mistakes 2 (c5, c6); head near floor → plate cue (c3); elbows 45 → mistakes 1 (c3, c7); neck → mistakes 2 (c5); breathe → mistakes 3 (c8); abs → setup 5 (c10) |
+
+Notes for the panel: copy.setupLine and copy.mistakeLine are counted as visible (the app shows them; W3 shoulder_press
+precedent). diamond_push_up's thumb is `spread` (c1, thumbs held out to touch), data only: no ThumbMode means "thumbs
+touching" and the key's `beside` contradicts the diamond. pike_push_up's 40° hip value has no source (a drawing value sized to
+read, lib_plank precedent).
+
+**Q-W6-10 grep list (every use of the four ids on this head).**
+- lib_smith_machine_shoulder_press: tests/library/fixtures/lib7b/fixture.mjs:20 and lib7b.test.ts (6 lines) → swapped to
+  the synthetic lib_scratch_push_press (collides: the row is in batches/lb06.json); lib7b 14/14 green.
+- lib_smith_machine_incline_press: ci/scratch.mjs:26 and ci/times.json:13 → F-SCRATCH-SYNTH's (#393 6647967860), not W6's.
+  times.json is a measured time, not a fixture, and does not collide.
+- lib_cable_chest_press: fidelity/fixture.mjs:29 and ci/scratch.mjs:32 TAKEN → F-SCRATCH-SYNTH's.
+- lib_cable_lateral_raise: LIB-2b's E1 (tests/howto/fixtures/lib2b and its users, including tests/library/layers-back.test.ts:35
+  and layers-engine.test.ts:45) → no swap; the collision was the no-zoom entry, removed in the tree by ownRowsTree (QUESTION 4).
+  ci/scratch.mjs:32 TAKEN → F-SCRATCH-SYNTH's.
+
+**F-ELBOWS-DROP-LTH evidence.** specs/low_to_high_cable_fly.mjs:152 `drop` tell: "Elbows<br>drop" → "Becomes<br>a press",
+cue "Bending the elbows more than slightly turns the fly into a press." (c11). The figure is not redrawn: normalSvg,
+normalOverlay, tempo, alt and mistakeAlt are byte-equal to mx14. mistakeSvg moves only the label's leader end (M156.53 185.94
+L151.5 250 → L151.39 254); mistakeOverlay, tells and cues carry the text. The lb6 mx14 APPROVED line is re-pinned in the
+D-PLATEFIX-PINS form, with a red that puts the old text back. lb06 page 8c7ede8a → 5cea2ed7 (both built twice).
