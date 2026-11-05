@@ -4790,3 +4790,15 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - Both revert to main in #385, and `9f2d0dcd` is kept as the start point.
   - **Queued card LIB-PLATEFIX-2** (start when a lane frees after W2 merges): the fly gets a red hand rotated about the wrist, with the 34-px hexagons kept in Mistake. The rear delt fly gets card (a), a chosen-focus posture zoom in library zoom/qa, plus a shrug drawn as caps displaced 12-15 px toward the ears, and the ring re-centred or moved off the axis.
   - Library count for the owner at the next APK: 2 more held, under D-LIB13-PANEL2.
+- **11-05 ~04:00-04:30 UTC (supervisor):**
+  - **Train 68 MERGED** (#396 → main `e623d3ef`): W2's 8 ids. Every lane was told to merge main.
+  - **W3 focused recheck** (lyr-w3r @ `a1c44003`; #384 6649416891): VALID. resistance_band_row APPROVED. A second focused round (D-LIB13-PANEL2) for single_arm_lat_pulldown, assisted_pull_up, hanging_knee_raise, horizontal_leg_press, chin_up, plus mountain_climbers' pilot-a entry @ `c1ab9d5e`.
+  - **D-SHIP-W3-NOEXIT:** a sheet whose card is not tier A and lists its exit as an unsourced gap ships with no invented exit line. The exit goes to RESEARCH-ROUTES part 2 as a later improvement.
+  - **Golden-B follow-ups, PNG-confirmed:**
+    - **37:** leg_press Mistake: KNEES CAVE sits over a side-view knee, and HEELS LIFT points at a flat heel (lyr-w3r T10 dark-5).
+    - **38:** hanging_leg_raise pelvis-curl close-up: the drawing fills only the top ~45 % of each panel, and Right and Wrong differ only by a small arc (lyr-w5b T02 dark-8).
+    - **39:** lateral_raise Mistake: DIP points at straight legs, three tells are stacked, and the card's mistake (arms past 90°, c13) is not drawn (lyr-w5b T11 dark-5).
+    - **40:** hanging_leg_raise vs its card: the end pose has the legs level with "HIP 90°" (c3, c8 say toes to the bar); KNEES ONLY marks the bent-knee version as a fault (c5 recommends it for beginners); the tempo disagrees with c10; the hip flexors are drawn as "should not take over" (c13, c14).
+    - **41:** lateral_raise vs its card: "the upper traps stay quiet" (c12 says they work hard, as expected); the tempo disagrees with c9; the hand close-up is unsourced; the stance disagrees with c2.
+    - 40 and 41 join F-GOLDENB-CARDS (30-33). Panels give anchors their current card facts, so these lows are correct calls (D-SUP-ANCHOR-3).
+  - **D-SHIP-W5-FRONTDELT:** the front_delts watch region is drawn on the upper-trap strip in the shared body map (follow-up 36, `layers/engine/bodymap-parts.mjs`). It was found on preacher_curl, cable_curl and bayesian_cable_curl (L4). One shared card fixes it: **F-BODYMAP-FRONTDELT**, still to be written; it re-pins every page that shows the region. Wave lanes never touch the shared map. When that card merges, it clears those L4 items.
