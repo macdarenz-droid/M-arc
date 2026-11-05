@@ -1002,3 +1002,561 @@ SHIP W3 QUESTIONS RULED).** Parent values read from the parent sheet named.
 
 If every proposal holds: 27 written; flip at most 27. Worst case 18: less jump_squat (Q-W5-2), goblet_squat (Q-W5-4/-7), front_squat (Q-W5-5),
 the 5 family children (Q-W5-1; single_arm_ also Q-W5-9) and wall_sit (Q-W5-6).
+
+## W5. Layers evidence (LAYERS READY)
+
+Pages (two builds each, equal sha256; not pinned until the panel): `tests/howto/golden/library/lb04.layers.html`
+b90a5eb8af9179ae80de175aede956b2e0453ed91c7b57996dec57263bb47b07 (2,317,948 B, 11 ids: goblet_squat held, off the page);
+`lb05.layers.html` fd8f189de5383ff4bdfed2117a4ec45421b33e72af2a3d577b995c33fc6d2a10 (2,961,182 B, 15 ids). Plates pages from
+the moved rows are byte-equal to main's build-ahead pages: lb4 38750fee…, lb5 cd0fb267… (PIN GO pending, Q-W5-10).
+
+Checks on every sheet (scratch validator: C1-C4, C7, C16, C19, the library lint, the variant line, familyRefusal with the
+parents in this tree): 23 of 26 clean. The three reds, each expected or asked:
+- front_squat: `inherited-string map not ruled` (setup[2], F-CARD-FRONTSQ-SETUP research route); with that field out, null.
+- jump_squat: `inherited-string map not ruled` (plate.frames waits with box_jump, Q-W5-2).
+- concentration_curl: `C19: no RED_FLAG box to check` (card redFlags [] and risks []): SHIP W5 QUESTION 1.
+
+**Amended INHERIT_MAP (tools/plates/library/lint/family.mjs), field by field, as ruled.** Parent values: W1's
+lib_dumbbell_biceps_curl (shipped); W2's staged lib_reverse_lunge and lib_triceps_pushdown (byte-equal on #385 head
+b4b3e441 today; re-resolve when #385 rebuilds them); W5's own lib_bodyweight_squat; golden barbell_back_squat.
+
+| child | card field | paths | value compared |
+|---|---|---|---|
+| alternating_dumbbell_curl | grip.type / grip.thumb / grip.width / plate.view / redFlags | orientation + handle / THUMB / width.text / [] / riskFlags | 'supinated', 'dumbbell' / 'wrapped' ×2 / "Let the dumbbells hang slightly out from your sides if that keeps your wrist straight." / view side = side / ['wrist'] |
+| barbell_curl, ez_bar_curl | plate.view / grip.thumb / redFlags | [] / THUMB / riskFlags | side / 'wrapped' ×2 / ['wrist'] |
+| hammer_curl | plate.view / grip.width / redFlags | [] / width.text / riskFlags | side / the parent's width text / ['wrist'] |
+| forward_lunge, walking_lunge, bulgarian_split_squat | plate.view / redFlags.knee / grip | [] / riskFlags / handling | side / ['knee'] / NoHandling { none, 'D-SHIP-GRIP: the card gives no thumb, contact or wrist claim.' } |
+| single_arm_triceps_pushdown | plate.view / grip.thumb / grip.wrist / redFlags | [] / thumb.mode (D-SHIP-W5-THUMB) / wrist.ext (D-SHIP-W5-SAWRIST) / riskFlags | side / 'wrapped' / [0, 15] / ['elbow','back']; own limitText "Keep the wrist in line with the forearm." (c9) |
+| straight_bar_triceps_pushdown | plate.view, plate.equipment / grip.thumb / grip.wrist / zooms / redFlags | [] / thumb.mode / wrist / pushdown-elbow chip, heading, caption, callout texts, alt (Q-W3-2) / riskFlags | side; equipment compare waits for the red (D-SHIP-W5-PLATEONLY) / 'wrapped' / whole wrist / parent's strings / ['elbow','back'] |
+| wall_sit | posture[1] / b10 | posture[key=knees].label + .detail / riskFlags | "Knees follow toes" / "Knees over the second toe, ankles not rolling." / ['knee'] |
+| front_squat | posture[3] | posture[key=feet].label (D-SHIP-W5-GOLDENFEET) | "Knees follow toes"; detail its own c10; setup[2] unmapped (research) |
+
+**straight_bar H10 (D-SHIP-W5-H10):** main 8bb433bd all 10 pass; #385 head b4b3e441 PQ-H10 red on 6 fragments
+(normalSvg, mistakeSvg, mistakeOverlay, tells, cues, alt). straight_bar stays staged (posted #392 6648084423).
+
+**Safety-checker list (tier A):** front_squat (card wayOut c14, c25 in copy.setupLine and mistake 3's fix), pistol_squat
+(wayOut p7 as the setup line), jump_squat (wayOut j15, j7 as the setup line), dumbbell_overhead_triceps_extension (way-out
+gap: no line written, Q-W5-4).
+
+**Lead builder's changes and open review items** (beyond the per-id notes below):
+- dumbbell_overhead_triceps_extension: contact derived from ga:push-heel (the card names no zone; same convention as its
+  wrist range), data only; the writer's judged 'mid-palm' was replaced. Q-W5-7 form extended to this push id; to rule.
+- front_squat contact 'fingertips' (c3, c5 and the plate's rack hands), data only.
+- libraryDiff applied from the cards' own proposals (pistol_squat adds adductors, drops abductors; bodyweight_lunge glutes
+  primary; reverse_curl biceps primary): for the supervisor.
+- jump_squat setup "hands loosely at the chest" (j10, as the plate draws) against the card's setup "arms by the sides" (j1):
+  content-critic item.
+- The pushdown children leave the NHS data-only sources out of SOURCES (C19 names the back box heading), the parent's form.
+- wrist_curl: a convention test must compare its contact only (the wrist is exempt; Q-W5-7 red at the flip).
+- Text checkpoints (D-SHIP-TEXTZOOM): bodyweight_squat feet-and-knees (front view) → `knees`; pistol_squat box-pistol (no
+  Wrong, no box drawn) → way-out line; bulgarian_split_squat stance-length (no Wrong); dumbbell_overhead_triceps_extension
+  db-oh-elbows (its Wrong, dumbbell touching the head, cannot be drawn on this plate: the engine puts the dumbbell about
+  24 cm behind the skull at 90°).
+
+Per-id notes from the sheet writers follow: the D-TEXT-GOLDEN table (claim → visible slot), the Q-W2-12 mappings for the
+`none` cards, hand-zoom routes and drawing values (D-SHIP-DRAWVAL).
+
+### W5 G1 notes (lb04): bodyweight_squat, wall_sit, pistol_squat, jump_squat, bodyweight_lunge, bodyweight_split_squat, step_up
+
+Checks: `IDS=<all 7> npx vitest run tests/howto/zz-w5-draft.test.ts`: 6 clean; jump_squat fails only the expected family
+check: `family: lib_jump_squat: family: docs/research/howto/cards/jump_squat.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`
+(card inherit[] plate.frames has no INHERIT_MAP entry; parent box_jump held, Q-W5-2). `node layers.mjs 04 <all 7>` builds.
+Handling: the 6 `none` cards use the plain `{ archetype: 'none' }` (box_jump form; no card grip field holds a body
+contact, so no b2). step_up: NoHandling (b), why 'D-SHIP-GRIP: the card gives no thumb, contact or wrist claim.'
+No hand zoom on any of the 7 (all card archetype none or (b); none on no-zoom.json, none needed).
+`mistakes: []` on all 7 (build-layers-page.mjs:132 throws for archetype none with mistakes; Q-W2-12 form, as reverse_lunge).
+
+Slot names: setup[n], setupLine, mistakeLine, cueLine, zoom caption/callout, feel (plain/feelLine/row), risk, plate
+(spec callout or tell and its cue).
+
+#### bodyweight_squat
+D-TEXT-GOLDEN (claim -> slot)
+| card point / mistake | claim | slot |
+|---|---|---|
+| Hips back then down | b3 | setup[2], plate callout 'Hips back', cueLine |
+| Knees over the second toe, ankles not rolling | b5 | mistakeLine |
+| Shins forward under control, slightly past toes fine | b8 | setup[2], setup[3], risk 'knees-back' |
+| Thighs about parallel, back flat | b4 | setup[3], setupLine, zoom 'bottom' right caption |
+| Shin and torso parallel | b6 | zoom 'bottom' right caption, plate callout 'Shin parallel torso' |
+| Hips and torso rise together, heels flat | b7 | setup[4], plate callout 'Heels down' cue |
+| M: Heels lifting at the bottom | b4 | setupLine, zoom 'bottom' wrong caption, plate tell |
+| M: Back rounding at the bottom | b4 | setupLine, feel row 'lower-back' |
+| M: Knees drifting in or out | b5 | mistakeLine |
+Q-W2-12: 'Heels lifting' + 'Back rounding' merged into posture `depth` (fixes added); 'Knees drifting in or out' merged into
+`knees` (its fix = the b5 detail; label/detail fixed by D-SHIP-W5-WALLSIT: "Knees follow toes" / "Knees over the second toe,
+ankles not rolling.").
+Text checkpoint (D-SHIP-TEXTZOOM): card zoom feet-and-knees (front view) -> posture `knees`.
+Drawing values: none new (bottom zoom Wrong = spec Mistake). Zoom 'bottom' Wrong caption names the heel lift only (the
+plate does not draw the rounding; plank precedent).
+
+#### wall_sit
+| card point / mistake | claim | slot |
+|---|---|---|
+| Back and buttocks on the wall | w5 | zoom 'back-on-wall' captions, plate callout 'Back on wall', cueLine |
+| Knees directly above the ankles | w4 | setup[2], zoom 'knee-over-ankle' right caption, cueLine |
+| Hips and knees about 90 degrees | w2 | setup[1], setupLine, plate callout '90 degrees' |
+| (inherited) Knees over the second toe, ankles not rolling | parent b5 via inherit[0] | setup[3] (=== string) |
+| M: Feet too close to wall | w8 | mistakeLine, zoom 'knee-over-ankle' wrong caption, risk 'feet-close', feel row 'kneecap' |
+| M: Holding your breath | w10 | setup[4] ("keep breathing steadily"), risk 'breath' |
+| M: Back leaving the wall | w5 | zoom 'back-on-wall' |
+Q-W2-12: 'Back leaving the wall' merged into `back`; 'Feet too close to wall' merged into `ankles` (w4, fix added);
+'Holding your breath' -> new checkpoint `breath` ("Keep breathing steadily.").
+Family: posture[key=knees] label/detail === lib_bodyweight_squat; riskFlags ['knee'] === parent. Family check passes.
+D-TEXT-PROGRESSION: w6 harder versions left out.
+Drawing value: AWAY 0.12 m (back-on-wall Wrong: held body moved off the wall; precedent reverse_lunge SHORT).
+
+#### pistol_squat
+| card point / mistake | claim | slot |
+|---|---|---|
+| Arms forward for balance | p1 | setup[1], plate callout, cueLine |
+| Free leg straight, off the floor | p5 | setup[2], plate callout |
+| Hips go back as the knee bends | p2 | setup[3] |
+| Standing foot flat, heel down | p3 | setup[4], zoom 'standing-foot', cueLine |
+| As deep as mobility allows | p3 | setup[4] |
+| Knee does not cave inward | p8 | mistakeLine |
+| M: Bouncing out of the bottom | p8 | mistakeLine, setup[4] ("no bounce") |
+| M: Attempting it before the basics | p6, p7 | risk 'basics', setup[0], setupLine (way out) |
+| M: Pushing through knee pain | p9 | feel row 'knee-discomfort' fix ("Back off and check your form...") |
+Q-W2-12: all three mistakes -> new checkpoints `bounce` ("Bouncing at bottom"), `basics` ("Skipping the basics"),
+`knee-pain` ("Pushing through pain"); labels shortened to the 3-word label cap, card-true.
+Way out (tier A): card tierA.wayOut verbatim in copy.setupLine.
+Card zoom box-pistol: not built (card wrong null; needs a box the plate lacks); it is the way out (regression, D-TEXT-PROGRESSION).
+Text checkpoint: knee cave `knee` (front view).
+Drawing values: none new. libraryDiff add adductors, drop abductors (card's proposal, for the supervisor).
+
+#### jump_squat
+| card point / mistake | claim | slot |
+|---|---|---|
+| Back flat on the way down | j2 | plate callout 'Hips back' cue |
+| Ankles, knees and hips extend together | j3 | setup[3], zoom 'take-off' right caption, plate callout |
+| Land on the mid-foot, rolling to the heels | j4 | setup[4], zoom 'landing' right caption |
+| Knees bent on landing, never locked | j5 | mistakeLine, zoom 'landing', risk 'locked' |
+| Trunk slightly forward, head in line | j8 | mistakeLine |
+| Knees do not cave inward on landing | j16 | risk 'cave' |
+| M: Landing with locked knees | j5, j4 | mistakeLine, zoom 'landing', feel row 'knees' |
+| M: Knees shooting far forward | j6, j4 | risk 'forward', feel row 'knees' |
+| M: Big jumps before solid landings | j7 | setup[0], setupLine (way out), feel row fix "Make the jumps smaller." |
+Q-W2-12: 'Landing with locked knees' merged into `knees-bent`; 'Knees shooting far forward' -> `knees-forward`;
+'Big jumps before solid landings' -> `small-jumps` ("Jumps too big").
+Way out (tier A): card tierA.wayOut (j15, j7) verbatim in copy.setupLine.
+Family: refused as expected (parent box_jump held).
+Drawing value: BEND 30 deg (take-off Wrong: full-extension ghost with the pelvis/trunk pitched forward; hands re-placed by a
+copy of the spec's chestHands rule; precedent reverse_lunge LEAN 30).
+Text checkpoint: knee cave `knee-line` (front view).
+
+#### bodyweight_lunge
+| card point / mistake | claim | slot |
+|---|---|---|
+| Hips lower down, not forward | c3 | setup[3], mistakeLine, zoom 'front-shin', plate callout |
+| Front shin leans only slightly forward | c4 | zoom 'front-shin' right caption |
+| Flat back, bent forward at the hips | c5 | zoom 'back', plate callout, cueLine |
+| No sideways tilt of the upper body | c2 | setup[2] ("upper body level"), mistakeLine |
+| M: Driving the hips forward | c3, c2 | mistakeLine, zoom 'front-shin' wrong caption, risk 'shin' |
+| M: Upper body swaying sideways | c2 | mistakeLine |
+| M: Wobbling on one leg | c7, c2 | risk 'balance' |
+Q-W2-12: 'Driving the hips forward' merged into `hips`; 'Upper body swaying sideways' merged into `tilt`; 'Wobbling on
+one leg' -> `wobble` ("One-leg wobble").
+Text checkpoint: sideways tilt `tilt` (front view).
+Drawing value: ROUND 30 deg (back Wrong: lumbar flexion, arms kept plumb; precedent reverse_lunge LEAN 30).
+
+#### bodyweight_split_squat
+| card point / mistake | claim | slot |
+|---|---|---|
+| Trunk upright | c2 | setup[2], zoom 'trunk', cueLine |
+| Front shin about vertical at the bottom | c2 | setup[2], mistakeLine, zoom 'front-shin' |
+| Front foot farther for hip work, closer for quads | c4 | feel primary/secondary plain lines |
+| M: Front knee sliding forward | c2 | mistakeLine, zoom 'front-shin' wrong caption |
+| M: Dropping fast into the bottom | c6, c1 | setup[1] ("lowering smoothly"), risk 'crash' |
+Q-W2-12: 'Front knee sliding forward' merged into `shin`; 'Dropping fast into the bottom' -> `drop`.
+Drawing value: LEAN 30 deg (trunk Wrong; reverse_lunge's CHEST_FORWARD copied on its clone plate).
+
+#### step_up
+| card point / mistake | claim | slot |
+|---|---|---|
+| Whole lead foot on the box | c6 | setup[1], setupLine, zoom 'lead-foot' |
+| Torso upright, only a slight forward lean | c7 | mistakeLine, zoom 'trunk', cueLine |
+| Knee over the second toe, foot and ankle don't roll | c9 | setup[1], setupLine, risk 'knee-in' |
+| Foot closer for quads, farther for glutes/hamstrings | c3 | feel primary/secondary plain lines |
+| M: Lurching the trunk forward | c1 | mistakeLine, zoom 'trunk' wrong caption, setup[2] |
+| M: Dropping down off the box | c2 | setup[3], risk 'drop' |
+| M: Knee or ankle collapsing inward | c9 | risk 'knee-in', setup[1] |
+Grip (b): grip.type c5 "Dumbbells at the sides, palms facing in" in setup[0] and setupLine.
+Q-W2-12 (NoHandling form): 'Lurching the trunk forward' merged into `torso`; 'Knee or ankle collapsing inward' merged into
+`knee`; 'Dropping down off the box' -> `drop`.
+Variant line: "Same form with bodyweight only, no dumbbells." (card plate.variantLine).
+Text checkpoint: knee over second toe `knee` (front view, card viewWhy).
+Drawing value: OFF_BOX 0.2 m (lead-foot Wrong: lead foot planted back so its rear half hangs off the box).
+
+### G2 notes (LIB-SHIP W5, lb04): forward_lunge, walking_lunge, bulgarian_split_squat, front_squat
+
+Checks: `IDS=... npx vitest run tests/howto/zz-w5-draft.test.ts`: the three lunges clean. front_squat: one expected
+refusal, `family: lib_front_squat: family: docs/research/howto/cards/front_squat.json#inherit: inherited-string map not
+ruled (D-LIB5-FAMILY)`. `unmappedFields` names only `setup[2] (load the plates evenly, collars on)` (research route,
+Q-W5-5). With that one entry filtered out of a copy of the card, `familyRefusal` returns null (feet label === golden).
+Build: `layers.mjs 04 <4 ids>` builds (lb04-lib_forward_lunge.layers.html, sha 5371b67f..., 931421 bytes).
+
+#### Inherit (the three lunges, parent lib_reverse_lunge)
+- grip -> ['handling']: `{ archetype: 'none', why: 'D-SHIP-GRIP: the card gives no thumb, contact or wrist claim.' }`, byte-equal.
+- redFlags.knee -> riskFlags ['knee']. plate.view -> [] (nothing written).
+- grip.type in setup step: forward c5 (palms facing in) setup[0]; walking c12 setup[0]; bss c9 setup[2].
+- mistakes: [] (NoHandling, Q-W2-12: handlingMistakes are posture checkpoints).
+
+#### Q-W2-12 mappings (NoHandling cards: handlingMistake -> posture checkpoint)
+| id | handlingMistake | checkpoint |
+|---|---|---|
+| forward_lunge | Driving the hips forward (c3, c4) | merged into `hips` (fix added) |
+| forward_lunge | Chest pitching forward (c6) | merged into `back` (fix added) |
+| forward_lunge | Dropping fast into the bottom (c7, c6) | `drop` |
+| walking_lunge | Chest pitching forward (c7) | merged into `trunk` |
+| walking_lunge | Driving the hips forward (c3) | merged into `hips` |
+| walking_lunge | Dropping fast into the bottom (c8, c7) | `drop` |
+| bulgarian_split_squat | Rear knee resting on floor (c3, c8) | `rest` |
+| bulgarian_split_squat | Knee moving in or out (c4) | merged into `knee` |
+| bulgarian_split_squat | Crashing into the bottom (c8) | `crash` |
+
+#### D-TEXT-GOLDEN: claim -> visible slot
+##### forward_lunge
+| claim | slot |
+|---|---|
+| P c2 front shin vertical | zoom front-shin caption.right, cueLine, plate callout `shin` |
+| P c3 hips down, not forward | setup[2], mistakeLine, zoom front-shin captions, plate callout `hips` |
+| P c5 back straight | setup[4], zoom back caption.right, plate callout `back` |
+| P c13 step length emphasis | feelLine ("Longer steps work glutes and hamstrings more, shorter the quads.") |
+| HM c3/c4 hips forward | mistakeLine (fix verbatim), setup[1] heel first |
+| HM c6 chest forward | feel row lower-back fix, zoom back caption.wrong, risks[1] |
+| HM c7/c6 dropping fast | setup[2] "Lower slowly", risks[2] |
+##### walking_lunge
+| claim | slot |
+|---|---|
+| P c2 shin vertical | zoom front-shin caption.right, cueLine, setup[2] (knee lightly touches) |
+| P c3 hips down | zoom front-shin captions, setup[2] |
+| P c7 trunk upright | mistakeLine, zoom trunk caption.right, cueLine "Chest up" |
+| P c5 no sideways tilt | setup[1] |
+| HM c7 chest forward | mistakeLine (fix verbatim), feel row lower-back |
+| HM c3 hips forward | setup[2] "back knee toward the front heel", zoom caption.wrong |
+| HM c8/c7 dropping fast | setup[2] "Lower slowly", risks[1] |
+##### bulgarian_split_squat
+| claim | slot |
+|---|---|
+| P c2 rear foot top on bench | setup[1], setupLine, plate callout `foot` |
+| P c4 knee over foot | cueLine, risks[1] |
+| P c5 back straight | plate callout `back` cue ("Keep the back straight as the rear knee lowers.") |
+| P c6 front-foot distance | setupLine |
+| zoom stance-length (text) c2 | setup[1], plate callout `stance` |
+| HM c3/c8 rear knee resting | setup[3], zoom rear-knee captions, mistakeLine |
+| HM c4 knee in/out | cueLine (fix), risks[1] |
+| HM c8 crashing | mistakeLine ("Use a weight you can lower smoothly."), risks[0] |
+##### front_squat
+| claim | slot |
+|---|---|
+| P c2 bar in channel, no throat pressure | setup[1], feel row throat, risks[2] |
+| P c7 elbows high | setup[2], gripLine, mistakeLine, zoom upright-torso caption.right |
+| P c10 knees and hips together, straight down | cueLine |
+| P c10 whole-foot, knees in line (checkpoint `feet`) | plate callout `foot` cue |
+| P c11 depth | mistakeLine sentence 2 |
+| P c12 torso upright on the way up | plate callout `chest` cue, zoom caption.right |
+| HM c7, c3, c14 | mistakes[0..2] |
+| hand zooms front-rack (c3, c4), cross-arm (c6, c7) Right lines | gripLine, setup[2] |
+| tierA.wayOut (c14, c25) | copy.setupLine (whole text, cut to 22 words); mistakes[2].fix repeats the bail |
+
+#### Text checkpoints (D-SHIP-TEXTZOOM)
+- bulgarian_split_squat `stance` (card zoom stance-length: wrong null; seated_leg_curl knee-pivot precedent).
+
+#### Drawing values (D-SHIP-DRAWVAL)
+- forward_lunge `chest-forward` still: LEAN 30 deg (precedent lib_reverse_lunge LEAN 30). front-shin Wrong = spec Mistake pose.
+- walking_lunge `shin-forward` still: SHORT 0.15 m front foot back (precedent lib_reverse_lunge SHORT). trunk Wrong = spec Mistake pose.
+- bulgarian_split_squat, front_squat: none (each Wrong is the spec's own Mistake pose).
+- Crop sizes/offsets (front-shin 180 px off [-20,0]; rear-knee 150 off [0,-10]; upright-torso 190 on chest): panel judges.
+
+#### Hand zoom routes
+- lunges: none (NoHandling, card has none). front_squat: none, D-SHIP-C3 gap-key (hand-front-rack.mjs:29); why starts
+  "D-SHIP-C3 no-zoom list, gap-key: ...". No handling.pose.
+
+#### Data-only values (D-SHIP-CONVCOPY / not printed)
+- front_squat handle 'bar-28' (front-rack key HANDLE), contact 'fingertips' (card c3/c5 fingertip rack, the plate's
+  rackHands), wrist exempt (front-rack-exemption.json).
+
+#### Open (S3 candidates)
+- bulgarian_split_squat setup[1] "laces-down" restates c2 via the card's archetype.contactNote, not c2's own words.
+
+### G3 notes (LIB-SHIP W5, lb05): alternating_dumbbell_curl, hammer_curl, cross_body_hammer_curl, incline_dumbbell_curl, concentration_curl, bayesian_cable_curl
+
+Checks: `IDS=<6 ids> npx vitest run tests/howto/zz-w5-draft.test.ts`: 5 clean. concentration_curl: one failure,
+`C19: lib_concentration_curl: no RED_FLAG box to check`: the card has redFlags [] and risks [], so riskFlags is []
+and the validator passes no box to checkC19Shared (it reds an empty box set). First no-flag sheet; not fixable inside
+the sheet without inventing a flag. Needs a supervisor ruling (validator/sweep: a riskFlags [] row checks C19 on the
+disclaimer only, or another route). Its page also shows "Risks and when to stop" with an empty list and no box
+(howto-layers.mjs risksSection renders whatever riskFlags/risks hold).
+Build: `layers.mjs 05 <6 ids>` builds (lb05-lib_alternating_dumbbell_curl.layers.html, sha 09308187..., 1293267 bytes).
+Every posture crop rendered and looked at (headless chromium, scratch shot-g3.mjs): all read. No text checkpoints
+(D-SHIP-TEXTZOOM): none.
+
+#### Hand zoom routes
+| id | route |
+|---|---|
+| alternating_dumbbell_curl | pair key curl/dumbbell, under (IDS, VARIANTS imported); camera side; notes curl-dumbbell-under.json |
+| hammer_curl | pair key curl/dumbbell, neutral; camera above (pairs.mjs ORIENTATIONS.neutral); notes curl-dumbbell-neutral.json; Wrong caption = drawn fault (D-SHIP-W5-HAMMERWRONG), twist in mistake row c5 and cue |
+| cross_body_hammer_curl | pair key curl/dumbbell, neutral; camera above; Wrong caption = drawn fault; twist in the Grip wrist line (limitText, c7 "no bend or twist") |
+| incline_dumbbell_curl | pair key curl/dumbbell, under; camera side; hand zoom moved first (builder: "Hand must be the first chip") |
+| concentration_curl | none: card-no-zoom, why 'D-SHIP-C3 no-zoom list, card-no-zoom: ...'; no handling.pose, no orientation (curl GAPS) |
+| bayesian_cable_curl | none: NoHandling (b), why 'D-SHIP-GRIP: ...'; mistakes [] (Q-W2-12 form, as pec_fly) |
+
+Contact 'mid-palm' (ga:curl-mid) is data only on all five handled sheets: never in gripLine, limitText, setup,
+captions, alt or cue. W1's curl alt/setup/gripLine printed it; not copied (alt rewritten without the contact). The key's
+panel notes ('Middle of palm') stay (the key's own words).
+Thumb: alternating c3, hammer c1, cross_body c5 ("thumbs around the handles"; grip.thumb empty but the claim exists, so
+printed and cited to c5), incline c11, concentration shared/curl.json thumbRule (shared c1, c2; sources ace-seatedcurl,
+ace-hammer as the shared card has them).
+Concentration wrist: printed line from card grip.wrist (c11, "Keep the wrist neutral through the lift."); ext range from
+the ga:curl-mid text (-10..+10, data only), as lib_triceps_pushdown takes ga:push-heel's. Note: tests' checkConventionGrip
+regex `/extension (\d+) to (\d+)/` cannot parse "-10 to +10" if the supervisor applies it to this row.
+
+#### Inherit (parent lib_dumbbell_biceps_curl, W1)
+- alternating: orientation 'supinated', handle 'dumbbell' (grip.type); thumb.mode and pose.thumb 'wrapped' (pose = key
+  right pose); width.text === parent "Let the dumbbells hang slightly out from your sides if that keeps your wrist
+  straight." (child c13 says the same); riskFlags ['wrist']. Family check clean.
+- hammer: width.text === parent (child c10 says the same); riskFlags ['wrist']. Family check clean.
+
+#### Drawing values (D-SHIP-DRAWVAL; none appears in copy)
+- alternating `swing` still: SWAY 15 deg trunk lean back (root tilt -15), feet held (precedent reverse_lunge LEAN 30).
+- concentration `arm-lifted` still: LIFT_UP 0.06 m, LIFT_FWD 0.22 m, IK pole [0.3,-0.3,1] (elbow about 4 cm up, 16 cm forward).
+- bayesian `far` still: FAR 0.25 m (body further from the column), EXTRA 25 deg more shoulder extension.
+- hammer, cross_body, incline, concentration conc-brace, bayesian bayes-arm: Wrong = the spec's own Mistake (no new value).
+- crop window sizes/offsets are layout, not body values.
+
+#### Q-W2-12 mappings (bayesian_cable_curl, NoHandling)
+| handlingMistake | checkpoint |
+|---|---|
+| Upper arm moving forward (c5, c4) | merged into `still` (fix added) |
+| Standing too far away (c3) | `far` |
+| Tilting side to side (c7) | merged into `trunk` (fix added) |
+
+#### D-TEXT-GOLDEN: claim -> visible slot
+##### alternating_dumbbell_curl
+| claim | slot |
+|---|---|
+| P c1 resting arm still | setup[3]; zoom alt-curl-arms right caption |
+| P c5 working elbow close | mistakes[1] (title + fix) |
+| P c4 torso upright, no arching | mistakeLine; zoom right caption (torso upright) |
+| P c7 wrists straight | Grip limitText; hand zoom; mistakes[0] |
+| P c12 range | setup[4] |
+| P c14 body still | cueLine; mistakeLine |
+| M c7, c5, c6 | mistakes[0..2] |
+##### hammer_curl
+| claim | slot |
+|---|---|
+| P c5 palms facing, no twist | mistakes[1] (twist); cueLine |
+| P c4 elbows not forward | hammer-elbow zoom; mistakes[0] |
+| P c4 torso upright, no arching | mistakeLine |
+| P c4 no shrugging | mistakeLine |
+| P c3 lower to straight | setup[3] |
+| P c7 full range | mistakeLine; risks[0] |
+| M c6/c4, c5, c7 | mistakes[0..2] |
+##### cross_body_hammer_curl
+| claim | slot |
+|---|---|
+| P c2 arc to opposite shoulder | setup[4]; cross-arc right caption |
+| P c2/c15 elbow in place, slightly bent | cueLine (elbow in place); mistakes[0] fix (slightly bent) |
+| P c7/c5 palm facing, wrist straight | gripLine; Grip limitText (no bend or twist) |
+| P c5 no shrugging | cross-arc Wrong; mistakes[2] |
+| P c6 torso upright, no arching | mistakeLine |
+| P c2 lower same path, switch | setup[4] |
+| M c15, c4, c5/c6 | mistakes[0..2] |
+##### incline_dumbbell_curl
+| claim | slot |
+|---|---|
+| P c2/c11 head, shoulders, buttocks on bench | setupLine |
+| P c3 arms behind torso | incline-elbow right caption |
+| P c4 elbows pinned back | incline-elbow zoom; mistakes[1]; cueLine |
+| P c11 wrists straight | Grip limitText; hand zoom; mistakes[0] |
+| P c3 curl height | mistakeLine |
+| M c11, c4/c3, c5 | mistakes[0..2] |
+##### concentration_curl
+| claim | slot |
+|---|---|
+| P c2 upper arm vertical | conc-brace right caption |
+| P c3 triceps on thigh, not knee | setup[3]; mistakes[0]; mistakeLine |
+| P c6 upper arm steady, only elbow bends | cueLine |
+| P c7 stop before arm leaves thigh | conc-top zoom; mistakes[1] |
+| P c8 lower slowly | mistakes[2] |
+| M c3, c7, c8 | mistakes[0..2] |
+##### bayesian_cable_curl
+| claim | slot |
+|---|---|
+| P c2 slight forward lean | setupLine |
+| P c4 elbow close | cueLine |
+| P c5 upper arm motionless (+ M c5/c4) | bayes-arm right caption; mistakeLine |
+| P c7 trunk braced, no tilting (+ M c7) | mistakeLine; setup[4] (free hand) |
+| P c6 lower slowly | cueLine |
+| M c3 standing too far | setup[3]; bayes-reach zoom |
+| grip.type/width (c1) | setup[0], setup[1]; setupLine |
+
+#### S3 candidates
+None. Open item: concentration_curl C19 (above).
+
+### G4 notes (LIB-SHIP W5, lb05): barbell_curl, ez_bar_curl, cable_curl, preacher_curl, reverse_curl, wrist_curl
+
+Checks: `IDS=lib_barbell_curl,lib_ez_bar_curl,lib_cable_curl,lib_preacher_curl,lib_reverse_curl,lib_wrist_curl npx vitest run tests/howto/zz-w5-draft.test.ts` 6/6 pass (family check passes for barbell_curl and ez_bar_curl against lib_dumbbell_biceps_curl). `layers.mjs 05 <6 ids>` builds (sha beb0aa62..., 1262447 bytes). Every posture-zoom anchor lands inside its 171 px panel (read from the built page).
+
+Q-W2-12: no `none` card in G4 (all six are archetype curl), so no mappings.
+
+#### Hand zoom routes
+| id | route |
+|---|---|
+| barbell_curl | pair key curl/bar/under, faults bent-back, curled (words curl-bar-under) |
+| ez_bar_curl | pair key ez/curl/angled, faults bent-back, curled (words ez-curl-angled) |
+| cable_curl | pair key curl/bar/under (words curl-bar-under) |
+| preacher_curl | pair key ez/curl/under (words ez-curl-under) |
+| reverse_curl | pair key ez/curl/over (words ez-curl-over) |
+| wrist_curl | none: gap-key (hand-curl.mjs:27), why "D-SHIP-C3 no-zoom list, gap-key: ..." |
+
+On every pair-key sheet the Wrong caption names both faults the key draws ("Wrist(s) bent back or curled toward the forearm(s)."), citing the card's own wrist claim (barbell c8, ez c8, cable c9, preacher c8, reverse c6). The Right alt is the sheet's own (card words), never the key's alt, because the key's alt prints the contact (D-SHIP-CONVCOPY). The notes "Middle of palm" / "Wrist bent back" are the key's words files (allowed).
+
+#### Convention data (D-SHIP-CONVCOPY: never printed)
+- contact 'mid-palm' on all six: the pair-key ids read V.contact 'mid' from the key (ga:curl-mid); wrist_curl derives it from the copied ga:curl-mid text (triceps_pushdown form), and does NOT take the -10..+10 range (wrist exempt).
+- thumb: barbell_curl, ez_bar_curl print "thumbs wrapped" (their own card grip.thumb "Wrapped round the bar.", MECH, inherit reason); cable_curl, preacher_curl, reverse_curl take the key's right-pose thumb as CONVENTION, never printed; wrist_curl 'wrapped' CONVENTION (closed grip c1, c5), never printed, no handling.pose.
+
+#### Drawing values (D-SHIP-DRAWVAL)
+- cable_curl `elbows-back` still (curl-elbow Wrong, card c7): spec start (top) + shoulder flex -30, elbow 140 = templates/CURL.mjs BUILDERS.elbows.back (imported, the approved barbell_curl plate's Mistake); commented, no number in copy.
+- preacher-pad crop centre elbow.r + [-16, -17] px, size 170 (centre on the upper arm); wrist-curl-support crop centre elbow.r + [34, -4] px, size 160 (on the forearm, so the lifted Wrong arm stays in frame). Crop framing values only.
+- All other Wrongs are the plates' own Mistakes (barbell back, ez forward, preacher arms-off-pad, reverse swing, wrist_curl lean).
+
+#### Text checkpoints moved to text (D-SHIP-TEXTZOOM)
+None. No crop was turned into text.
+
+#### D-TEXT-GOLDEN: claim -> visible slot
+##### barbell_curl
+| card claim | slot |
+|---|---|
+| posture elbows close (c3) | copy.setupLine "elbows close to your body"; copy.cueLine; plate callout Elbows |
+| posture upper arms never back (c4) | copy.mistakeLine; curl-elbow zoom captions; plate callout cue |
+| posture body and chest still (c9) | setup[3] "Keep your chest and body still. Only your arms move." |
+| posture wrists straight (c8) | handling.gripLine; hand zoom caption; mistakes[0] |
+| posture lower slowly, tension at bottom (c10, c9) | setup[4] |
+| posture full range, not half reps (c6) | setup[4] "No half reps." |
+| mistake wrists bending (c8) | mistakes[0] |
+| mistake elbows back or forward (c5, c4) | mistakes[1]; feel row front-shoulder |
+| mistake swinging (c7) | mistakes[2]; setup[0] |
+##### ez_bar_curl
+| card claim | slot |
+|---|---|
+| posture elbows close (c4) | copy.mistakeLine; copy.cueLine; mistakes[1].fix; plate callout |
+| posture no drift forward at top (c4) | copy.mistakeLine; curl-elbow zoom captions |
+| posture body still (c4) | setup[3] |
+| posture wrists straight (c8) | handling.gripLine; hand zoom caption; mistakes[0] |
+| posture pause at top, lower slowly (c12) | setup[4] |
+| posture full range (c6) | setup[4] |
+| mistakes wrists (c8), elbows (c5, c4), swinging (c7) | mistakes[0..2] |
+##### cable_curl
+| card claim | slot |
+|---|---|
+| posture elbows close to torso (c3) | copy.setupLine; copy.cueLine; plate callout |
+| posture upper arms still or slightly forward, never back (c3) | mistakes[1]; copy.mistakeLine; curl-elbow zoom |
+| posture body still (c8) | copy.cueLine "body still"; plate callout cue |
+| posture wrists straight (c9) | handling.gripLine; hand zoom caption |
+| posture lower under control (c4) | setup[4] |
+| posture arm slightly bent at bottom (c13) | setup[4]; mistakes[0]; copy.mistakeLine |
+| mistakes straight (c13), back (c3, c7), swinging (c8) | mistakes[0..2] |
+##### preacher_curl
+| card claim | slot |
+|---|---|
+| posture arms pressed into pad (c4) | mistakes[0].fix; copy.mistakeLine; copy.cueLine; preacher-pad zoom |
+| posture body still (c4) | copy.mistakeLine |
+| posture upper body active, not hanging (c9) | copy.setupLine |
+| posture wrists straight (c8) | handling.gripLine; hand zoom caption |
+| posture lower past 90 degrees, stop short if uncomfortable (c7) | copy.mistakeLine; feel row elbow fix |
+| posture lower slowly (c6) | mistakes[2].fix; setup[4] |
+| mistakes arms off pad (c5, c4), seat (c3, c2), dropping fast (c6) | mistakes[0..2] |
+##### reverse_curl
+| card claim | slot |
+|---|---|
+| posture elbows close to sides (c3) | copy.setupLine; plate callout cue |
+| posture upper arms never back (c4) | copy.mistakeLine; curl-elbow zoom caption right |
+| posture wrists straight (c6) | handling.gripLine; mistakes[1]; feel row wrist |
+| posture stand tall, no arching (c8) | setup[3] |
+| posture tension at bottom (c13) | setup[4] |
+| mistakes swinging (c5), wrists (c6), elbows flaring (c7) | mistakes[0..2] |
+##### wrist_curl
+| card claim | slot |
+|---|---|
+| posture forearm on support (c1) | setup[1]; mistakes[1].fix; zoom caption right; copy.mistakeLine |
+| posture arms and body still, no leaning (c3) | mistakes[1]; zoom caption wrong; copy.mistakeLine |
+| posture grip closed both ways (c5) | handling.gripLine; mistakes[0]; setup[2] |
+| posture lower slowly, hold bottom briefly (c3) | setup[3] |
+| card hand-zoom claim: closed fist, weight not rolling to fingertips (c5) | handling.gripLine; mistakes[0]; risks[0]; copy.mistakeLine |
+| mistakes rolling (c5), leaning (c3, c1), heavy (c6, c7) | mistakes[0..2] |
+
+#### For the supervisor
+- wrist_curl's wrist is `{ exempt, claim }`. If the flip's lib-ship.test.ts runs `checkConventionGrip` (contact AND ext range) on GRIP (c) curl rows, its ext compare must skip wrist_curl (Q-W5-7: contact only), or it goes red. Not a sheet change.
+
+### G5 notes (lb05): dumbbell_overhead_triceps_extension, single_arm_triceps_pushdown, straight_bar_triceps_pushdown
+
+Checks: `IDS=<each> npx vitest run tests/howto/zz-w5-draft.test.ts` clean for all three (single_arm too: the validator
+does not read the back box's appliesTo). `layers.mjs 05 <3 ids>` builds (lb05-lib_dumbbell_overhead_triceps_extension.layers.html).
+
+#### D-TEXT-GOLDEN: claim -> visible slot
+
+##### dumbbell_overhead_triceps_extension
+| card point / mistake (claim) | visible slot |
+|---|---|
+| posture: upper arms vertical and still, elbows shoulder-width, no flaring (c6, c12) | plate callout 'Arms vertical' + cue; mistake 2 title and fix |
+| posture: spotter for heavy sets supports the elbows (c13) | setup 5 (kind safety) |
+| posture: lower slowly behind the head to about 90°, not touching (c5) | plate callout 'Stop at 90°' + cue ("clear of the back of your head") |
+| posture: torso braced, don't arch (c9, c3) | setup 4 ("Brace."), plate callout 'Braced torso' cue, mistake 1 |
+| posture: head, torso, wrists and feet still (c7) | mistake 3 fix; Grip wrist line (wrists still) |
+| posture: straighten without locking (c4) | setup 4 ("elbows forward, not locked") |
+| mistake: arching the back (c9, c3) | mistakes[0] |
+| mistake: elbows flare, upper arms move (c6, c5, c12) | mistakes[1] |
+| mistake: swinging with momentum (c10, c12) | mistakes[2] |
+| hand zoom db-oh-hands right (c1, c4) | Grip line; setup 3 |
+| posture zoom db-oh-elbows (c5, c6), TEXT checkpoint | posture `depth`; Right = plate callouts; Wrong = mistake 2 ("upper arms move") + 'Stop at 90°' cue (clear of the head) |
+| card setup c3 rest (shoulders down and back, head in line) | plate callout 'Braced torso' cue (setup 4 and 5 merged to make room for the spotter) |
+
+##### single_arm_triceps_pushdown
+| card point / mistake (claim) | visible slot |
+|---|---|
+| working elbow next to the side (c5) | setup 4; zoom captions/callouts; plate callout |
+| shoulders and hips square, no twisting (c4) | setup 3; mistake 3; plate callout 'Square torso' |
+| torso braced and upright (c16) | setup 4 ("Brace, torso upright.") |
+| wrist neutral (c9) | Grip line + wrist line; plate callout |
+| straighten fully without locking (c8) | setup 5 (replaces the card's load step; c13 stays visible as risk 2) |
+| return until the elbow starts forward (c7) | mistake 2 fix ("Stop the return at upper-chest level") |
+| mistakes lean (c17), elbow forward (c6, c5, c7), turning (c4) | mistakes[0..2] |
+| hand zoom right (c9, c2) | Grip line; setup 2 |
+
+##### straight_bar_triceps_pushdown
+| card point / mistake (claim) | visible slot |
+|---|---|
+| elbows close to the sides (c5) | setup 4; zoom; plate callout |
+| back straight, lean from the hips (c4, c3) | plate callout 'Hip lean only'; mistake 1 fix |
+| wrists neutral (c9) | Grip line + wrist line; plate callout |
+| shoulders down and back (c19) | setup 4 |
+| straight down to straight arms, no lockout (c8) | setup 5; plate measure 'Elbow not locked' |
+| lean slightly so the bar clears (c10, c4) | setup 5 (replaces the card's load step; c16 stays visible as mistake 3 fix and risk 3) |
+| mistakes lean, elbows forward, too heavy | mistakes[0..2] |
+| hand zoom pushdown-wrist right (c9, c2; Q-W5-3) | Grip line; setup 2 |
+
+#### Q-W2-12
+None: no `none` card in G5.
+
+#### Text checkpoints (D-SHIP-TEXTZOOM)
+- dumbbell_overhead_triceps_extension `db-oh-elbows` -> posture `depth`. Its Wrong (upper arms dropped back, dumbbell
+  touching the head) cannot be drawn: probed with the engine, at the spec's 90° bottom the dumbbell sits ~24 cm behind
+  the occiput; raising shoulder flex above 178 (arms back) moves it further away, deeper elbow bends move it to the
+  neck/upper back, never onto the head. Sheet has zooms: [].
+
+#### Drawing values / data-only values
+- straight_bar, single_arm: elbows-forward Wrong = the spec's own Mistake arm (shoulder flex 25, elbow 75), precedent
+  lib_triceps_pushdown (D-SHIP-DRAWVAL comment in each sheet). Contact 'heel' and wrist ext [0, 15] derived from
+  CONVENTIONS ga:push-heel (GRIP (c), never printed).
+- dumbbell_overhead_triceps_extension: wrist ext [0, 15] from ga:push-heel (c7 gives no degrees; CONVENTION, data only).
+  contact 'mid-palm': judgement mapping of card grip.handContact "both hands around the handle" (no palm zone named);
+  data only, not drawn, not printed. orientation left out (palms up overhead names no enum rotation).
+- single_arm: orientation left out (card grip.type: orientation unstated).
+
+#### Other
+- Card NHS data-only sources (straight_bar c20/c21, single_arm c18/c19) not listed in SOURCES: the 'Back pain (NHS)' cite
+  trips C19 (names the back box heading); parent form kept (box sources nhs-back, nhs-elbow-pain).
+- straight_bar and single_arm: faults [] (card hand-zoom wrong null, LR-25); the parent's "Wrists bent back over the bar"
+  alt is not carried (straight_bar's card says no read source names it).
+
