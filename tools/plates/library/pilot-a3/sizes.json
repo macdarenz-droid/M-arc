@@ -123,6 +123,11 @@
     "value": 0.03,
     "unit": "m",
     "basis": "convention: the engine bench primitive's default (vendor/engine/equipment.mjs:158-177), the bench of dumbbell_bench_press (pilot A); drawn as pitched world polys (panel mx4 R2): the foot bar 1.5 cm half height, so 3 cm"
+   },
+   "AXIS_PAST": {
+    "value": 2,
+    "unit": "hand lengths",
+    "basis": "decision: LIB-PLATEFIX-2 plates panel pf4 R5 (#395): the grey dashed forearm axis runs straight through the wrist into the dumbbell, 2 hand lengths past the wrist, so the neutral hand and its hexagon (far corner 1.69 hand lengths out) sit on it; c13"
    }
   }
  }

@@ -116,13 +116,10 @@ const M_SHRUG = 10;                                      // cm, scap elevation. 
 const mistakePose = { scap: { elev: M_SHRUG, pro: PRO_END } };
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
 const PITCH = 26;                                        // front plate camera pitch (deg), LIB-PLATEFIX-1 (see the plate below)
-// Drawing values of the front plate's shrug contour (pf2 R5/R11, #385 6637293768), plate px (x 2 at the 780-px card):
-const TRAP_RISE = 6;                                     // drawing value: the displaced trapezius contour's crest, this far above the straight line from the displaced cap to the head's side (LIB-PLATEFIX-2: a hump that reads as bunched; 0 is a straight line)
-const HEAD_MEET = 11.8;                                  // drawing value: the contour meets the head oval this far above the head landmark (card y 612, pf2 R5; the oval's side is 9.5 px from its axis there, read from the engine's head outline)
-const SHRUG_PX = 13;                                     // drawing value (LIB-PLATEFIX-2 card fix, pf3 R5): the red dashed caps and trapezius contour moved this far toward the ear, closing the shoulder-head gap
-const HEAD_SIDE = 9.5;                                   // the head oval's half width at ear height (plate px), read from the engine's head outline (as HEAD_MEET)
 const DB_HEAD_R = 0.119 / 2, DB_CORE_R = 0.0158;        // the dumbbell primitive's end-on hex (head/2 across the corners) and core ring (vendor/engine/equipment.mjs), for the start ghost
-export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG, PITCH, TRAP_RISE, HEAD_MEET, SHRUG_PX, BACK_OUT: 0.02, BACK_EXT: 0.15 };
+const POSTURE_R = 68;                                    // drawing value (pf4 R11): the side-profile zoom's circle radius (plate px; 148 card px), so the whole bent-over body from the head to the knees reads at k 1
+const SHRUG_K = 2;                                       // drawing value (pf4 R5): the Mistake side-profile zoom's k; the shoulder, the neck gap and the ear fill the circle
+export const SIZES = { FOOT_X, INCL, SPINE, KNEE, ELBOW, IN, PRO_START, PRO_END, TOP, M_SHRUG, PITCH, BACK_OUT: 0.02, BACK_EXT: 0.15, POSTURE_R, SHRUG_K };
 
 const G0 = landmarksOf(start, H)['grip.r'], HZ = 0.135, HY = 0.119 * 0.866 / 2;
 const HH = 0.065, HR = 0.008;                          // handle half-length, half-thickness (m)
@@ -196,37 +193,30 @@ export const SIDE = {
 // are the engine's own outline. The zoom's source ring sits on the shoulder-head gap (pf2 R11).
 const PC = Math.cos(PITCH * R), PS = Math.sin(PITCH * R), PXM = 256 / 1.75;   // the engine's reference scale (vendor/engine/plate.mjs REF_CAMERA; QA reads pxPerM 146.3)
 const FRONT_POSES = { start: pose(ROOT_Y, ROOT_Z, 0), via: [15, 30, 45, 60, 75].map(a => pose(ROOT_Y, ROOT_Z, a)), end: pose(ROOT_Y, ROOT_Z, 90) };
-const CAP_R = 7.68;                                      // the engine's shoulder-cap radius at plate scale (the svg's shcap circle r), so the contour starts on the faulty cap
-// The contour's points are world points (plate px offsets turned into metres on the plate camera), so the zoom, drawn at
-// k x the camera, scales the red overlay with the outline (pf2 R11); px offsets would stay 1:1 inside the zoom.
-const lmE = landmarksOf(FRONT_POSES.end, H), lmM = landmarksOf({ ...FRONT_POSES.end, scap: { ...FRONT_POSES.end.scap, ...mistakePose.scap } }, H);
+const lmE = landmarksOf(FRONT_POSES.end, H);
 const W = (w, dx, dy) => [w[0] + dx / PXM, w[1] - dy / (PXM * PC), w[2]];   // world point at plate offset (dx right, dy down) on the pitched camera
-const P = w => [195 + w[0] * PXM, 339 - (w[1] * PC - w[2] * PS) * PXM];     // plate px on this camera (makeCamera, pitched)
-// pf3 R5 (LIB-PLATEFIX-2): the shrug as a DISPLACEMENT. On each side a red dashed shoulder cap (the engine's cap radius)
-// moved SHRUG_PX toward the ear from the correct cap, and the trapezius contour from that cap over a crest to the head's
-// side, so the gap between shoulder and head visibly closes. The engine's own projection of the shrug is a few px.
-const toEar = s => { const a = P(lmE[`shoulder.${s}`]), b = P(lmE.ear), d = Math.hypot(b[0] - a[0], b[1] - a[1]); return [(b[0] - a[0]) / d * SHRUG_PX, (b[1] - a[1]) / d * SHRUG_PX]; };
-const shrugSide = (s, sg) => {
-  const [dx, dy] = toEar(s), S = lmE[`shoulder.${s}`];
-  const cap = Array.from({ length: 25 }, (_, i) => W(S, dx + CAP_R * Math.cos(i * Math.PI / 12), dy + CAP_R * Math.sin(i * Math.PI / 12)));
-  const a = [dx + sg * CAP_R * 0.71, dy - CAP_R * 0.71], hs = P(lmE.head), e = [hs[0] - sg * HEAD_SIDE - P(S)[0], hs[1] - HEAD_MEET - P(S)[1]];
-  return [{ kind: 'dashed', pts: cap },
-    { kind: 'dashed', smooth: true, pts: [W(S, ...a), W(S, (a[0] + e[0]) / 2, (a[1] + e[1]) / 2 - TRAP_RISE), W(S, ...e)] }];
-};
-// pf3 R11: the Mistake ring holds the correct shoulder's joint marker, its cap top and the head's side; its centre is the
-// midpoint of the cap top and the head's side (the far pair). The tell anchor is moved there from the cap top.
-const RING_C = (() => { const sh = P(lmE['shoulder.r']), hs = P(lmE.head); return [(sh[0] + hs[0] - HEAD_SIDE) / 2, (sh[1] - CAP_R + P(lmE.ear)[1]) / 2]; })();
-const TELL_OFF = (() => { const a = P(lmE['shoulderTop.r']), b = P(lmM['shoulderTop.r']); return [RING_C[0] - (a[0] + b[0]) / 2, RING_C[1] - (a[1] + b[1]) / 2].map(v => +v.toFixed(2)); })();
-export const R11 = { ring: RING_C, joint: P(lmE['shoulder.r']), capTop: [P(lmE['shoulder.r'])[0], P(lmE['shoulder.r'])[1] - CAP_R], headSide: [P(lmE.head)[0] - HEAD_SIDE, P(lmE.ear)[1]] };
 // pf3 R7 note: the start dumbbell as a dashed end-on hexagon (the primitive's own end-on face) with its core ring, at the start grip
 const lmS = landmarksOf(FRONT_POSES.start, H);
 const startDb = G => [Array.from({ length: 7 }, (_, i) => W(G, DB_HEAD_R * PXM * Math.cos(i * Math.PI / 3), DB_HEAD_R * PXM * Math.sin(i * Math.PI / 3))),
   Array.from({ length: 17 }, (_, i) => W(G, DB_CORE_R * PXM * Math.cos(i * Math.PI / 8), DB_CORE_R * PXM * Math.sin(i * Math.PI / 8)))];
-// pf3 R1 (D-PF2-POSTZOOM): the hinge and flat back in a side-projection posture zoom of the start pose, against a straight
-// grey dashed line along the back (sacrum -> upper back, BACK_OUT out of the back, BACK_EXT past each end)
-const BACK_REF = (() => { const a = lmS.sacrum, b = lmS.backUpper, d = [0, b[1] - a[1], b[2] - a[2]], L = Math.hypot(...d), n = [0, -d[2] / L, d[1] / L];
+// pf3 R1, pf4 R11 (D-PF2-POSTZOOM): the hinge and flat back in a side-projection posture zoom of the end pose (the main
+// view's moment), the whole bent-over body from the head to the knees, against a straight grey dashed line along the back
+// (sacrum -> upper back, BACK_OUT out of the back, BACK_EXT past each end)
+const BACK_REF = (() => { const a = lmE.sacrum, b = lmE.backUpper, d = [0, b[1] - a[1], b[2] - a[2]], L = Math.hypot(...d), n = [0, -d[2] / L, d[1] / L];
   const o = n[1] < 0 ? -1 : 1, off = i => o * n[i] * SIZES.BACK_OUT, ext = SIZES.BACK_EXT;
   return [[a[0], a[1] - d[1] * ext + off(1), a[2] - d[2] * ext + off(2)], [b[0], b[1] + d[1] * ext + off(1), b[2] + d[2] * ext + off(2)]]; })();
+// pf4 R5: the faulty shoulder in the side-profile Mistake zoom (the start pose with the Mistake shoulder blades): a red
+// dashed shoulder cap (the engine's cap radius, CAP_R plate px) and upper-trapezius line from the cap top over the trap to
+// the neck, in the side plane through the near shoulder, so the zoom draws them in its own projection
+const CAP_R = 7.68 / PXM;                                // the engine's shoulder-cap radius (the svg's shcap circle r 7.68 at the reference scale), in metres
+// The front Mistake is the elevation alone: merged into the end pose (scap pro PRO_END) it is the same pose as the side
+// drawing's mistakePose, and merged into the start pose (the side-profile Mistake zoom) it adds no blade squeeze
+const FRONT_MISTAKE = { scap: { elev: M_SHRUG } };
+const lmSM = landmarksOf({ ...FRONT_POSES.start, scap: { ...FRONT_POSES.start.scap, ...FRONT_MISTAKE.scap } }, H);
+const SHRUG_SIDE = (() => { const c = lmSM['shoulder.r'], x = c[0];
+  return [{ kind: 'dashed', pts: Array.from({ length: 25 }, (_, i) => [x, c[1] + CAP_R * Math.sin(i * Math.PI / 12), c[2] + CAP_R * Math.cos(i * Math.PI / 12)]) },
+    { kind: 'dashed', smooth: true, pts: [lmSM['shoulderTop.r'], [x, lmSM['trap.r'][1], lmSM['trap.r'][2]], [x, (lmSM['trap.r'][1] + lmSM.ear[1]) / 2, (lmSM['trap.r'][2] + lmSM.ear[2]) / 2]] },
+    { kind: 'arrow', from: { at: 'shoulderTop.r', pose: 'end' }, to: { at: 'shoulderTop.r', pose: 'mistake' } }]; })();
 export default {
   ...SIDE,
   view: 'front', facing: undefined,
@@ -243,19 +233,21 @@ export default {
   datum: [{ y: 'shoulder.r', from: 'grip.r', to: 'grip.l' }],   // shoulder level: the hands finish on it (c3)
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'slight bend, held' },   // c2
   callouts: SIDE.callouts.map(c => ({ ...c, prefer: undefined })),
+  // pf4 R5: from the front the shrug runs along the trunk, nearly at the camera, so the front Mistake draws no extra rings
+  // (the engine's faulty caps only); the shrug is drawn in the side-profile Mistake zoom, where elevation reads: the grey
+  // neck gap between shoulder and ear, the red dashed faulty shoulder moved toward the head, and a red arrow
   mistake: {
-    pose: mistakePose,
+    pose: FRONT_MISTAKE,
     parts: ['shcap.l', 'shcap.r'],   // the faulty shoulder caps only (H7: the faulty trunk outline too made 154.6 KB)
-    guides: [...shrugSide('r', 1), ...shrugSide('l', -1)],
+    guides: [],
     tells: [
-      // anchored on the faulty cap top, moved to RING_C so the zoom ring holds the R11 points (pf3 R11)
-      { key: 'shrug', text: 'Shoulders<br>shrug', anchor: { at: 'shoulderTop.r', pose: 'mistake', off: TELL_OFF }, cue: 'The shoulders hike up toward the ears as the dumbbells rise.' },   // c3
+      { key: 'shrug', text: 'Shoulders<br>shrug', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, cue: 'The shoulders hike up toward the ears as the dumbbells rise.' },   // c3
     ],
   },
   zoom: [
-    // pf3 R1: the hinge and flat back, side-on (D-PF2-POSTZOOM)
-    { view: 'normal', k: 1, focus: { region: ['buttock', 'hip.r', 'sacrum', 'backUpper', 'shoulder.r'], pose: 'start' }, project: 'side', ref: BACK_REF },
-    // pf3 R11 (D-PF2-SHRUG10, D-PF2-PLACE): k 3 so the ring (17.3 px) holds the R11 points; off the body axis
-    { view: 'mistake', k: 3, place: 'outer' }],
+    { view: 'normal', k: 1, r: POSTURE_R, focus: { region: ['head', 'backUpper', 'sacrum', 'buttock', 'hip.r', 'shoulder.r'], pose: 'end' }, project: 'side', ref: BACK_REF },
+    // pf4 R5 (D-PF2-SHRUG10, D-PF2-PLACE): the shrug side-on, off the body axis, with the arms hanging (start): at the
+    // end pose the arms point at the camera and cover the shoulder and neck
+    { view: 'mistake', k: SHRUG_K, r: POSTURE_R, focus: { region: ['shoulder.r', 'trap.r', 'ear', 'backUpper'], pose: 'start' }, project: 'side', place: 'outer', guides: SHRUG_SIDE }],
   alt: 'Bent-over dumbbell rear delt fly, front view. Hinged forward at the hips with a straight spine, the lifter raises two dumbbells from hanging under the chest out to the sides until the arms are about level with the body, elbows slightly bent.',
 };

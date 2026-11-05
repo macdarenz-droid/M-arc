@@ -28,7 +28,8 @@ afterAll(() => { if (mirror) qaEng.dropMirror(mirror); });
 const zoomKeys = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => /^H\d\.zoom/.test(k));
 const qa = (c: any) => qaIdx.runQa(c, { engine: E, pins });
 const withZoom = (view: string, z: string) => ({ ...c0, plate: { ...c0.plate, zoom: { ...c0.plate.zoom, [view]: z } } });
-const moveRing = (z: string, x: number, y: number) => z.replace(/(<circle (?:class="pz-(?:bg|ring)" )?)cx="[\d.]+" cy="[\d.]+" r="52"/g, `$1cx="${x}" cy="${y}" r="52"`);
+const moveRing = (z: string, x: number, y: number) => { const r = qz.circlesOf(z).ring.r;
+  return z.replace(new RegExp(`(<circle (?:class="pz-(?:bg|ring)" )?)cx="[\\d.]+" cy="[\\d.]+" r="${r}"`, 'g'), `$1cx="${x}" cy="${y}" r="${r}"`); };
 
 describe('PF2 (a): existing zooms are byte-equal', { timeout: T }, () => {
   it('the 36 zoom entries of every other spec render the svg, focus, circle, source and link they rendered before (a)', async () => {
@@ -52,11 +53,17 @@ describe('PF2 (a): the field rows', () => {
     expect(zoom.zoomFieldProblems(N)).toEqual([]);
     expect(zoom.zoomFieldProblems({ ...N, project: 'side', ref: [[0, 1, 0], [0, 1, 0.3]], place: 'outer' })).toEqual([]);
     expect(zoom.zoomFieldProblems({ view: 'mistake', k: 3, place: 'outer' })).toEqual([]);
+    // pf4 fix round: an own radius, and a posture entry on the Mistake view with its own guides
+    expect(zoom.zoomFieldProblems({ ...N, r: 68 })).toEqual([]);
+    expect(zoom.zoomFieldProblems({ ...N, view: 'mistake', k: 2, guides: [{ kind: 'arrow', from: 'a', to: 'b' }] })).toEqual([]);
   });
   it('each bad field is named', () => {
     expect(zoom.zoomFieldProblems({ ...N, k: 0.9 })).toEqual(['zoom.k 0.9 is outside 1-4']);
     expect(zoom.zoomFieldProblems({ ...N, tell: 'x' })).toEqual(['zoom: unknown key tell']);
-    expect(zoom.zoomFieldProblems({ ...N, view: 'mistake', k: 3 })).toEqual(['zoom.focus is for a normal entry, not the mistake view']);
+    expect(zoom.zoomFieldProblems({ ...N, r: 40 })).toEqual(['zoom.r 40 is outside 52-90']);
+    expect(zoom.zoomFieldProblems({ ...N, r: 91 })).toEqual(['zoom.r 91 is outside 52-90']);
+    expect(zoom.zoomFieldProblems({ ...N, guides: [] })).toEqual(['zoom.guides is a list, for a Mistake entry only']);
+    expect(zoom.zoomFieldProblems({ view: 'mistake', k: 3, r: 68 })).toEqual(['zoom: unknown key r']);   // the fault zoom keeps its radius
     expect(zoom.zoomFieldProblems({ ...N, focus: { region: [], pose: 'start' } })).toEqual(['zoom.focus.region must list 1-8 landmark names']);
     expect(zoom.zoomFieldProblems({ ...N, focus: { region: Array(9).fill('hip.r'), pose: 'start' } })).toEqual(['zoom.focus.region must list 1-8 landmark names']);
     expect(zoom.zoomFieldProblems({ ...N, focus: { region: ['hip.r'], pose: 'mistake' } })).toEqual(["zoom.focus.pose \"mistake\" is not 'start' or 'end'"]);
@@ -73,13 +80,14 @@ describe('PF2 (a): the field rows', () => {
 
 describe('PF2 (a): the rear delt fly plate, clean', { timeout: T }, () => {
   it('both zooms are drawn and no zoom row is red', async () => {
-    expect(c0.plate.zoom.normal).toMatch(/^<g class="plate-zoom" data-view="normal" data-k="1" data-c="[\d. ]+" data-src="[\d. ]+" data-focus="start" data-project="side">/);
-    expect(c0.plate.zoom.mistake).toMatch(/^<g class="plate-zoom" data-view="mistake" data-k="3"/);
+    expect(c0.plate.zoom.normal).toMatch(/^<g class="plate-zoom" data-view="normal" data-k="1" data-c="[\d. ]+" data-src="[\d. ]+" data-focus="end" data-project="side">/);
+    expect(c0.plate.zoom.mistake).toMatch(/^<g class="plate-zoom" data-view="mistake" data-k="2" data-c="[\d. ]+" data-src="[\d. ]+" data-focus="start" data-project="side">/);
+    expect(qz.circlesOf(c0.plate.zoom.normal).ring.r).toBe(68);
     const r = await qa(c0);
     expect(zoomKeys(r)).toEqual([]);
     expect(r.metrics.traceLen).toBeGreaterThanOrEqual(pins.envelope.traceLenMin);
   });
-  it('the posture zoom draws the start pose side-on with the ref line, and no trace or text', () => {
+  it('the posture zoom draws the end pose side-on with the ref line, and no trace or text', () => {
     const z = c0.plate.zoom.normal;
     expect(z).toMatch(/<path class="eq-line m-line" d="M[\d.]+ [\d.]+L[\d.]+ [\d.]+"\/>/);   // the ref: one straight dashed segment
     expect(z).not.toMatch(/class="trace/);
@@ -87,13 +95,13 @@ describe('PF2 (a): the rear delt fly plate, clean', { timeout: T }, () => {
   });
   it('the Mistake circle sits beyond its source ring from the body midline (place outer)', () => {
     const m = qz.circlesOf(c0.plate.zoom.mistake);
-    expect(m.ring.c[0]).toBeLessThanOrEqual(m.src.c[0] - 52);
+    expect(m.ring.c[0]).toBeLessThanOrEqual(m.src.c[0] - m.ring.r);
     expect(m.src.c[0]).toBeLessThan(195);
   });
 });
 
 describe('PF2 (a): each row turns red on its planted fault', { timeout: T }, () => {
-  const posture = (over: any) => zoom.zoomList(spec.zoom).map((z: any) => (z.view === 'normal' ? { ...z, ...over } : z));
+  const posture = (over: any, view = 'normal') => zoom.zoomList(spec.zoom).map((z: any) => (z.view === view ? { ...z, ...over } : z));
   it('hold: the region drawn at k 2 no longer fits the circle', async () => {
     const s2 = { ...spec, zoom: posture({ k: 2 }) }, z2 = zoom.zoomOf(s2, { prefix: 'bent-over-dumbbell-rear-delt-fly', view: 'normal' }).svg;
     const r = await qa({ ...withZoom('normal', z2), spec: s2 });
@@ -130,9 +138,22 @@ describe('PF2 (a): each row turns red on its planted fault', { timeout: T }, () 
     expect(zoomKeys(r)).toContain('H4.zoom:place:mistake');
   });
   it('place: the placement search honours outer (the circle without the key sits elsewhere)', () => {
-    const free = zoom.zoomOf({ ...spec, zoom: [{ view: 'mistake', k: 3 }] }, { view: 'mistake' }), outer = zoom.zoomOf(spec, { view: 'mistake' });
+    const { place, ...me } = zoom.zoomFor(spec, 'mistake');
+    expect(place).toBe('outer');
+    const free = zoom.zoomOf({ ...spec, zoom: [me] }, { view: 'mistake' }), outer = zoom.zoomOf(spec, { view: 'mistake' });
     expect(free.circle.c).not.toEqual(outer.circle.c);
-    expect(zoom.outerOk(free.circle.c, free.focus, 195, 52)).toBe(false);
-    expect(zoom.outerOk(outer.circle.c, outer.focus, 195, 52)).toBe(true);
+    expect(zoom.outerOk(free.circle.c, free.focus, 195, free.circle.r)).toBe(false);
+    expect(zoom.outerOk(outer.circle.c, outer.focus, 195, outer.circle.r)).toBe(true);
+  });
+  it('deviation: a Mistake posture zoom whose shrug is 1 cm moves the tell under the bar inside the zoom', async () => {
+    const r = await qa({ ...c0, spec: { ...spec, mistake: { ...spec.mistake, pose: { scap: { elev: 1 } } } } });
+    expect(zoomKeys(r)).toContain('H3.zoom:posture:deviation');
+    const r0 = await qa(c0);
+    expect(zoomKeys(r0)).not.toContain('H3.zoom:posture:deviation');
+  });
+  it('deviation: a tell anchored off a landmark cannot be measured and is red', async () => {
+    const tells = [{ ...spec.mistake.tells[0], anchor: [0, 1, 0] }];
+    const r = await qa({ ...c0, spec: { ...spec, mistake: { ...spec.mistake, tells } } });
+    expect(zoomKeys(r)).toContain('H3.zoom:posture:deviation');
   });
 });

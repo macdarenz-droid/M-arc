@@ -146,6 +146,7 @@ const unit = a => mul(a, 1 / Math.hypot(...a)), cross = (a, b) => [a[1] * b[2] -
 const dot = (a, b) => a.reduce((t, v, i) => t + v * b[i], 0);
 const rotate = (v, k, th) => add(add(mul(v, Math.cos(th)), mul(cross(k, v), Math.sin(th))), mul(k, dot(k, v) * (1 - Math.cos(th))));   // Rodrigues
 const MIS_AXIS = {}, MISTAKE_HANDS = [], NEUTRAL_LINES = [], TURN = {};
+const AXIS_PAST = 2;                                  // pf4 R5: the grey forearm axis runs 2 hand lengths past the wrist, straight through the neutral hand and its hexagon (far corner at 1.69)
 // The straight-arm line (LIB-PLATEFIX-1, W2 panel: the arm read as straight): from the end elbow along shoulder -> elbow,
 // the forearm-plus-grip length, so the slight bend (ELBOW) reads as the forearm leaving it. A datum proving the Soft elbows checkpoint.
 const ELBOW_LINE = (() => { const E = lmEnd['elbow.r'], u = unit(sub(E, lmEnd['shoulder.r'])); return [[...E], add(E, mul(u, L2))]; })();
@@ -159,24 +160,26 @@ for (const s of ['l', 'r']) {
   // pf1 R5: the forearm axis continued past the wrist in grey dashes (the correct plate's line style, drawn on the
   // Mistake plate only), the faulty hand outline in red dashes turned M_WRIST about the wrist joint with its dumbbell,
   // and a small red angle arc at the wrist from the axis to the bent hand
-  // pf2 R5: the reference line runs along the forearm axis from mid-forearm through the wrist and one and a half hand lengths past it
+  // pf2 R5: the reference line runs along the forearm axis from mid-forearm through the wrist and AXIS_PAST hand lengths past it
   const E = lmMis[`elbow.${s}`], Wm = add(E, mul(sub(W, E), 0.5));
-  NEUTRAL_LINES.push({ type: 'line', pts: [Wm, add(W, mul(fore, hl * 1.5))], cls: 'eq-line m-line', z: 'front', part: `axis.${s}` });
-  // pf3 R5 (LIB-PLATEFIX-2): the faulty hand as a full red dashed hand block (the drawn hand poly, wrist -> bent grip, at
-  // its drawn length) plus its end-on hexagon and core ring, both turned with the hand about the wrist joint (TURN: the
-  // screen angle of the bend, 32.2 deg toward the floor at pitch 0); the correct grey hand and dumbbell stay as drawn
-  const G = lmMis[`grip.${s}`], tw = (a1 - a0) * R, rot = ([x, y]) => [x * Math.cos(tw) - y * Math.sin(tw), x * Math.sin(tw) + y * Math.cos(tw)];
-  const at = ([x, y]) => [G[0] + x, G[1] + y, G[2]], block = handPoly(W, G).pts;
+  NEUTRAL_LINES.push({ type: 'line', pts: [Wm, add(W, mul(fore, hl * AXIS_PAST))], cls: 'eq-line m-line', z: 'front', part: `axis.${s}` });
+  // pf3 R5, pf4 R5 (LIB-PLATEFIX-2): the faulty hand as ONE rigid red dashed piece: the grey neutral hand block (the drawn
+  // hand poly, wrist -> neutral grip, the same length) and its end-on hexagon, turned together about the wrist joint by
+  // TURN (the screen angle of the bend, 32.2 deg toward the floor at pitch 0; a screen turn of tw is a world turn of -tw
+  // about the view axis z). No core ring: the engine's faulty fist is the one red ring.
+  const Ge = lmEnd[`grip.${s}`], tw = (a1 - a0) * R, c = Math.cos(-tw), sn = Math.sin(-tw);
+  const turn = p => [W[0] + (p[0] - W[0]) * c - (p[1] - W[1]) * sn, W[1] + (p[0] - W[0]) * sn + (p[1] - W[1]) * c, p[2]];
+  const block = handPoly(W, Ge).pts, hex = startDb(Ge)[0];
   TURN[s] = +(a1 - a0).toFixed(1);
   MISTAKE_HANDS.push(
-    { kind: 'dashed', pts: [...block, block[0]] },
-    ...startDb([0, 0, 0]).map(ps => ({ kind: 'dashed', pts: ps.map(([x, y]) => at(rot([x, -y]).map((v, i) => (i ? -v : v)))) })),
+    { kind: 'dashed', pts: [...block, block[0]].map(turn) },
+    { kind: 'dashed', pts: hex.map(turn) },
     { kind: 'arc-arrow', center: [...W], r: 9, a0: +a0.toFixed(1), a1: +a1.toFixed(1) });
 }
 
 export const FLY_TURN = TURN;
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
-export const SIZES = { BENCH_TOP, FOOT_Z, FOOT_X, ELBOW, SHOULDER_W, ARC_DZ, PITCH, M_WRIST, HAND_W, PAD_W, PAD_T, LEG_IN, POST, FOOT_HALF, FOOT_T };
+export const SIZES = { BENCH_TOP, FOOT_Z, FOOT_X, ELBOW, SHOULDER_W, ARC_DZ, PITCH, M_WRIST, HAND_W, PAD_W, PAD_T, LEG_IN, POST, FOOT_HALF, FOOT_T, AXIS_PAST };
 
 /** The fly plate in `view` ('front' = the card, 'side' = the former view, kept as the alternate); `id` for the file. */
 export function makeFly(view, id) {

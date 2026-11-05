@@ -147,27 +147,12 @@
    "M_SHRUG": {
     "value": 10,
     "unit": "cm",
-    "basis": "decision: D-PF2-SHRUG10 (LIB-PLATEFIX-2, PLATEFIX-2 PLAN RULED #395): sized to read, matching the drawn 13 px displacement (SHRUG_PX; pf3 R5/R11, #385 6638551153), as the plank SAG precedent: a drawing value larger than a real range is allowed when no number appears in copy; was 8 (LIB-PLATEFIX-1) and 5 (golden A dumbbell_lateral_raise's shrug, ref-src/plate.mjs:147); c3 'don't shrug'"
+    "basis": "decision: D-PF2-SHRUG10 (LIB-PLATEFIX-2, PLATEFIX-2 PLAN RULED #395): sized to read, as the plank SAG precedent: a drawing value larger than a real range is allowed when no number appears in copy; side-on in the Mistake posture zoom it moves the shoulder 14.6 plate px toward the head at k 1 (pf3 R5/R11, pf4 R5); was 8 (LIB-PLATEFIX-1) and 5 (golden A dumbbell_lateral_raise's shrug, ref-src/plate.mjs:147); c3 'don't shrug'"
    },
    "PITCH": {
     "value": 26,
     "unit": "deg",
     "basis": "decision: LIB-PLATEFIX-1, D-SPIKE-hinge camera pitch for the card's front view; plates panel pf1 (#385 6636073314 R1) read 40 as the trunk pitched at the viewer with a short hanging arm; rendered at 0, 12, 24 and 26 (0 and 12 read as standing upright); 26 keeps the back readable"
-   },
-   "TRAP_RISE": {
-    "value": 6,
-    "unit": "px",
-    "basis": "stated reason (LIB-PLATEFIX-2, pf3 R5): the displaced trapezius contour's crest, 6 plate px above the straight line from the displaced cap to the head's side, so it reads as a bunched contour (0 draws a straight line); c3"
-   },
-   "HEAD_MEET": {
-    "value": 11.8,
-    "unit": "px",
-    "basis": "stated reason: pf2 R5 'meets the head oval at about y 612' (card px): the contour meets the engine's head outline 11.8 plate px above the head landmark; c3"
-   },
-   "SHRUG_PX": {
-    "value": 13,
-    "unit": "px",
-    "basis": "decision: LIB-PLATEFIX-2 card fix and PLAN RULED #395 (pf3 R5, #385 6638551153: 'caps displaced 12-15 px toward the ears'): the red dashed caps and trapezius contour moved 13 plate px from the correct caps toward the ear, closing the shoulder-head gap from about 16 to about 3 px; c3"
    },
    "BACK_OUT": {
     "value": 0.02,
@@ -178,6 +163,16 @@
     "value": 0.15,
     "unit": "fraction",
     "basis": "stated reason (LIB-PLATEFIX-2 R1): the reference runs 15% of the sacrum -> upper-back length past each end, inside the zoom circle (H3.zoom:posture:ref); c2"
+   },
+   "POSTURE_R": {
+    "value": 68,
+    "unit": "px",
+    "basis": "decision: LIB-PLATEFIX-2 plates panel pf4 R11 (#395: 'a larger circle, r about 125-130' card px): the side-profile posture zoom's radius, 68 plate px (148 card px), the smallest that holds the head, back, sacrum, buttock, hip and shoulder at k 1 with the 4 px inset; c2"
+   },
+   "SHRUG_K": {
+    "value": 2,
+    "unit": "x",
+    "basis": "stated reason (LIB-PLATEFIX-2 pf4 R5): the Mistake side-profile zoom's magnification (circle POSTURE_R), so the shoulder, the neck gap and the ear all sit inside the circle and span over 0.6 of it (H3.zoom:posture:fill), and the shrug reads as elevation toward the head; c3"
    }
   }
  }
