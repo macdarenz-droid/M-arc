@@ -4760,6 +4760,7 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **W3 Q-W3-14** (#384 6647625183): D-SHIP-W3-MCLIMB.
   - **PLATEFIX LAYERS READY** (#385 6647771285): D-PLATEFIX-PINS extended; PIN GO after the layers panel.
   - Card **RESEARCH-ROUTES-1** (`verify/research-routes-card.md`): one research lane for D-SHIP-BACKBOX, F-W4-INHERIT and F-CARD-FRONTSQ-SETUP (part 1), and for the held-id routes (part 2).
+  - **W7** (#394 6647954465): D-SHIP-W7-B3, -ROPES (battle_ropes held until the owner answers: grip as text only, or a later update), D-SHIP-HANDW7, -SCRATCH and -MOVES. Card **F-SCRATCH-SYNTH** (`verify/f-scratch-synth-card.md`): synthetic scratch ids for the LIB-4b and LIB-4c sets. W3's Q-W3-6 swap folds into it, and W4 and W6 swap lib7b:19/:20 to synthetic ids.
   - Train 68 (#396): W2 #379 @ `84360f00` (PASS 6647793612). Its lows go to W3.
 - **D-OWNER-PARALLEL** (owner, 11-05 ~02:00 UTC: "Make work faster and do more parallel agents"). This amends lib-ship-card ruling 1 and D-LIB-LANE-ACTIVE.
   - All wave lanes W3-W7 build at once, plus LIB-PLATEFIX-2, so up to **9 active LIB builders**. Merges stay strictly in order (W2 → W3 → … → W7).
