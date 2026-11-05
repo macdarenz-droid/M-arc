@@ -10,12 +10,13 @@
 //
 // D-TEXT-GOLDEN (claim -> slot):
 //   posture upright, core tight (c3, c6, c13, c14) -> posture 'upright', zoom torso-upright
-//   posture hips level and square (c6)          -> posture 'hips'
-//   posture standing leg steady (c12)           -> posture 'stance'
-//   posture knee travels straight (c6, c2)      -> posture 'knee'
-//   zoom ankle-cuff (Wrong null, LR-25; an equipment placement) -> T: posture 'cuff' (D-SHIP-TEXTZOOM)
-//   handlingMistakes (Q-W2-12): leaning back (c7, c12, c5) -> posture 'upright'; swinging (c7, c6, c3) -> posture
-//   'swing'; stack slamming (c7, c4) -> posture 'slam'
+//   posture hips level and square (c6)          -> setup step 3 (D-TEXT-PRINTED), posture 'hips'
+//   posture standing leg steady (c12)           -> plate cue 'tall', posture 'stance'
+//   posture knee travels straight (c6, c2)      -> setup step 4 (D-TEXT-PRINTED), posture 'knee'
+//   zoom ankle-cuff (Wrong null, LR-25; an equipment placement) -> T: setup steps 1-2, posture 'cuff' (D-SHIP-TEXTZOOM)
+//   handlingMistakes (Q-W2-12): leaning back (c7, c12, c5) -> zoom torso-upright Wrong, risk 'arch',
+//   posture 'upright'; swinging (c7, c6, c3) -> setup step 4, posture 'swing'; stack slamming (c7, c4) -> setup step 5,
+//   posture 'slam' (D-TEXT-PRINTED)
 //   variant line: the band setup (c13), cited in the copy comment
 import plateSpec from '../specs/resisted_hip_flexion.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -46,9 +47,9 @@ const CL = {
   c12: C(W, [KO], 'card c12'),
   cuff: C(W, [MO, KO], 'card c1, c2'),
   face: C(W, [MO, KO], 'card c1, c2'),
-  tall: C(W, [MO, KO], 'card c3, c12'),
-  drive: C(W, [KO, MO], 'card c2, c5'),
-  lower: C(W, [MO, KO], 'card c3, c4'),
+  tall: C(W, [MO, KO], 'card c3, c12, c6'),
+  drive: C(W, [KO, MO], 'card c2, c5, c6, c7'),
+  lower: C(W, [MO, KO], 'card c3, c4, c7'),
   knee: C(W, [MO, KO], 'card c6, c2'),
   uprightLean: C(['CONSENSUS', 'WEAK'], [MO, OU, KO], 'card c3, c6, c13, c14, c7, c12, c5'),
   swing: C(W, [KO, MO], 'card c7, c6, c3'),
@@ -131,9 +132,9 @@ export default {
   setup: [
     { kind: 'adjust', text: 'Strap the cuff to one ankle on a low cable.', claim: CL.cuff },
     { kind: 'grip', text: 'Face away from the machine, a little tension. Hold the frame.', claim: CL.face },
-    { kind: 'brace', text: 'Brace your trunk and stand tall.', zoom: 'torso-upright', claim: CL.tall },
-    { kind: 'position', text: 'Drive the knee up and forward until your thigh is about level.', claim: CL.drive },
-    { kind: 'finish', text: 'Pause briefly, then lower with control. Switch legs after the set.', claim: CL.lower },
+    { kind: 'brace', text: 'Brace your trunk, stand tall, hips level and square.', zoom: 'torso-upright', claim: CL.tall },
+    { kind: 'position', text: "Drive the knee straight up and forward, thigh about level. Don't swing.", claim: CL.drive },
+    { kind: 'finish', text: 'Pause briefly. Lower with control, never letting the stack slam. Switch legs.', claim: CL.lower },
   ],
   posture: [
     // Q-W2-12: handlingMistake 'Leaning back to lift higher' (c7, c12, c5) merged here, its fix added

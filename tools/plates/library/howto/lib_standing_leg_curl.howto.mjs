@@ -18,7 +18,7 @@
 //   card posture 'Lower slowly and straighten the leg fully' (c5, c4) -> setup 5
 //   card posture 'Control the weight. Don't swing your leg' (c9) -> copy.cueLine, risk 'load'
 //   T pad-heel Right 'Pad just above the heel' (c1)             -> setup 1, posture 'pad'
-//   handlingMistake 'Dropping the weight down' (c7, c5)         -> copy.mistakeLine, posture 'drop'
+//   handlingMistake 'Dropping the weight down' (c7, c5)         -> setup 5 (D-TEXT-PRINTED), copy.mistakeLine, posture 'drop'
 //   handlingMistake 'Arching your lower back' (c13)             -> feel row 'low-back', risk 'arch', posture 'arch'
 //   handlingMistake 'Cutting the range short' (c8)              -> zoom top Wrong, posture 'top'
 //   card setup 'Start with a lighter weight' (c1), c11 (one leg, then switch) -> copy.setupLine, setup 5
@@ -55,7 +55,7 @@ const CL = {
   c13: C(['CONSENSUS', 'WEAK'], ['hl-hc'], 'card c13'),
   c14: C(['CONSENSUS', 'WEAK'], ['hl-hc'], 'card c14'),
   curl: C(['CONSENSUS'], [HV, SL], 'card c4, c16'),
-  lower: C(['CONSENSUS'], [HV, SL], 'card c5, c4, c11'),
+  lower: C(['CONSENSUS'], [HV, SL], 'card c7, c5, c4, c11'),
   top: C(['CONSENSUS'], [HV], 'card c4, c8'),
   drop: C(['CONSENSUS'], [HV, SL], 'card c7, c5'),
   light: C(['CONSENSUS'], [SL, HV], 'card c1'),
@@ -165,7 +165,7 @@ export default {
     { kind: 'grip', text: 'Thighs against the support pad. Hold the handles for balance.', claim: CL.c2 },
     { kind: 'position', text: 'Plant your other foot firmly. Keep your upper body still.', claim: CL.c3 },
     { kind: 'position', text: 'Curl until your foot is higher than your knee. Hold a second.', claim: CL.curl },
-    { kind: 'finish', text: 'Lower slowly and straighten fully. Finish one leg, then switch.', claim: CL.lower },
+    { kind: 'finish', text: "Don't drop it: lower slowly, straighten fully. Finish one leg, then switch.", claim: CL.lower },
   ],
   posture: [
     // D-SHIP-TEXTZOOM: the card zoom pad-heel as a text checkpoint (its wrong is null, LR-25)

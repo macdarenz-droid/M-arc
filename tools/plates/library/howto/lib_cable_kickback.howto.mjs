@@ -3,19 +3,19 @@
 // docs/research/howto/cards/cable_kickback.json; its claim ids are named on each field's claim.
 // Handling (D-SHIP-GRIP case (b)): the card's grip.thumb, grip.handContact and grip.wrist are all empty (hand archetype
 // balance: the hands hold the machine for support), so there is no hand claim to draw: NoHandling, no hand zoom (the
-// card has none). The card's grip.type (c2, c4) is setup step 3.
+// card has none). The card's grip.type (c2, c4) is setup step 2.
 // No variant line (equipment 'Cable').
 // Red flags: the card's redFlags (back): LIB-5's back box (shared/back-box.mjs), linked by the lower-back row.
 //
 // D-TEXT-GOLDEN (claim -> slot):
-//   posture c4 brace, body still                 -> setup step 5
-//   posture c8 belly button in, back flat        -> posture 'back', zoom braced-back
-//   posture c5 leg long, knee slightly bent      -> posture 'leg'
-//   posture c6/c13 drive back as far as you can  -> posture 'drive'
-//   posture c6 squeeze, pause a second           -> posture 'squeeze'
-//   posture c6 return slowly                     -> posture 'return'
-//   zoom hips-square (a rotation unseen in the side view) -> T: posture 'hips' (D-SHIP-TEXTZOOM); its Wrong shown as the 'hips' detail
-//   handlingMistakes (Q-W2-12): arching (c7) -> posture 'back'; swinging (c9, c8) -> posture 'swing'; twisting (c10) -> posture 'hips'
+//   posture c4 brace, body still                 -> setup step 3
+//   posture c8 belly button in, back flat        -> feel row 'low-back' fix, posture 'back', zoom braced-back
+//   posture c5 leg long, knee slightly bent      -> setup step 4 (D-TEXT-PRINTED), plate label 'Leg long', posture 'leg'
+//   posture c6/c13 drive back as far as you can  -> setup step 5 (D-TEXT-PRINTED), posture 'drive'
+//   posture c6 squeeze, pause a second           -> setup step 5 (D-TEXT-PRINTED), tempo 'Hold 1 s', posture 'squeeze'
+//   posture c6 return slowly                     -> setup step 5 (D-TEXT-PRINTED), posture 'return'
+//   zoom hips-square (a rotation unseen in the side view) -> T: Right setup step 4, Wrong risk 'twist' (D-TEXT-PRINTED); posture 'hips' (D-SHIP-TEXTZOOM)
+//   handlingMistakes (Q-W2-12): arching (c7) -> zoom braced-back Wrong, posture 'back'; swinging (c9, c8) -> risk 'swing', posture 'swing'; twisting (c10) -> risk 'twist', posture 'hips'
 import plateSpec from '../specs/cable_kickback.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
@@ -43,13 +43,12 @@ const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) }
 const BB = 'bb-gk', PG = 'pg-ck', SL = 'sl-ck', FB = 'fb-che';
 const CL = {
   c1: C(['CONSENSUS'], [BB, PG, SL], 'card c1'),
-  c2: C(['CONSENSUS'], [PG, BB], 'card c2'),
   c4: C(['CONSENSUS'], [BB, SL, FB], 'card c4'),
   c5: C(['CONSENSUS'], [BB, FB], 'card c5'),
   c6: C(['CONSENSUS'], [PG, SL, BB], 'card c6'),
-  c8: C(['CONSENSUS'], [PG], 'card c8'),
   c10: C(['CONSENSUS'], [FB], 'card c10'),
   c11: C(['CONSENSUS'], [BB], 'card c11'),
+  legHips: C(['CONSENSUS'], [BB, FB], 'card c5, c10'),
   hold: C(['CONSENSUS'], [PG, BB, SL, FB], 'card c2, c4'),
   drive: C(['CONSENSUS', 'WEAK'], [PG, SL, BB, 'pg-gkhub'], 'card c6, c13'),
   swing: C(['CONSENSUS'], [BB, PG], 'card c9, c8'),
@@ -115,6 +114,9 @@ const feel = {
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
   { key: 'heavy', text: 'Heavy loading breaks your form down quickly on this long lever.', claim: CL.c11 },
+  // D-TEXT-PRINTED: the handlingMistakes swinging (c9) and twisting (c10, the hips-square Wrong) as printed faults.
+  { key: 'swing', text: "Can't lift without swinging the leg? Drop the weight.", claim: CL.swing },
+  { key: 'twist', text: 'Twisting your hips lifts the leg higher but makes it less effective.', claim: CL.c10 },
 ];
 
 export default {
@@ -122,14 +124,14 @@ export default {
   id: 'lib_cable_kickback',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b): the card gives no thumb, contact or wrist claim; its grip type (c2, c4) is setup step 3.' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b): the card gives no thumb, contact or wrist claim; its grip type (c2, c4) is setup step 2.' },
   contacts: ['standing-feet'],   // the card's archetype.contact
   setup: [
-    { kind: 'adjust', text: 'Set the pulley to its lowest setting.', claim: CL.c1 },
-    { kind: 'adjust', text: 'Strap the ankle cuff around your working ankle.', claim: CL.c1 },
-    { kind: 'grip', text: 'Face the machine and hold it for support.', claim: CL.hold },
-    { kind: 'position', text: 'Hinge forward at the hips, most weight on the other leg.', claim: CL.c2 },
+    { kind: 'adjust', text: 'Set the pulley lowest. Strap the cuff around your working ankle.', claim: CL.c1 },
+    { kind: 'grip', text: 'Face and hold the machine. Hinge forward, weight on the other leg.', claim: CL.hold },
     { kind: 'brace', text: 'Brace your trunk. Use your hands and free leg to stay still.', zoom: 'braced-back', claim: CL.c4 },
+    { kind: 'position', text: 'Leg long, knee slightly bent. Hips level, toe pointing straight down.', claim: CL.legHips },
+    { kind: 'position', text: 'Drive back as far as you can. Squeeze, pause, return slowly.', claim: CL.drive },
   ],
   posture: [
     // Q-W2-12: handlingMistake 'Not bracing, lower back arching' (c7) merged here, its fix added

@@ -5,23 +5,23 @@
 // balance: the hands steady the body), so there is no hand claim to draw: NoHandling, and no hand zoom (the card has
 // none). The card's grip.type and grip.width (c5, the handles on the machine) are setup step 4.
 // Zooms (section 17): hips-pad DV (the end pose with the pelvis lifted off the pad). knee-axis T (D-SHIP-TEXTZOOM: its
-// wrong is null, LR-25): posture checkpoint `axis`, setup step 2. roller T (D-SHIP-TEXTZOOM: its Wrong, the roller on the
-// heel or Achilles, is an equipment placement the crop cannot draw): posture checkpoint `roller`, setup step 3,
+// wrong is null, LR-25): posture checkpoint `axis`, setup step 1. roller T (D-SHIP-TEXTZOOM: its Wrong, the roller on the
+// heel or Achilles, is an equipment placement the crop cannot draw): posture checkpoint `roller`, setup step 2,
 // copy.mistakeLine.
 // Red flags: the card's redFlags (knee, back): golden B's knee block and LIB-5's back box (shared/back-box.mjs).
 // No variant line (equipment 'Machine').
 //
 // D-TEXT-GOLDEN (claim -> slot):
-//   card posture 'Knees start nearly straight, not forced locked' (c6) -> copy.setupLine
-//   card posture 'Hips stay on the pad the whole set' (c5, c8)  -> setup 4, zoom hips-pad Right, plate cue 'hips'
-//   card posture 'Abs braced. Don't arch your lower back' (c9)  -> feel row 'low-back' fix, plate cue 'back'
-//   card posture 'Curl toward your glutes. Stop before your hips lift' (c7) -> setup 5
-//   card posture 'Breathe out as you curl, in as you lower' (c12) -> setup 5
-//   card posture 'Lower under control. Don't let the stack touch' (c11) -> copy.cueLine
-//   T knee-axis Right 'Knee in line with the machine's axis' (c1) -> setup 2, plate cue 'axis', posture 'axis'
-//   T roller Right 'Roller on the lower calf, just above the heel' (c3) -> setup 3, posture 'roller'
-//   T roller Wrong 'Roller pressing into the heel or Achilles tendon' (c4) -> copy.mistakeLine (as a mistake), posture 'roller'
-//   handlingMistake 'Knees off the machine's axis' (c2, c1)     -> copy.mistakeLine, risk 'axis', posture 'axis'
+//   card posture 'Knees start nearly straight, not forced locked' (c6) -> setup 4 (D-TEXT-PRINTED), copy.setupLine
+//   card posture 'Hips stay on the pad the whole set' (c5, c8)  -> zoom hips-pad Right, plate cue 'hips'
+//   card posture 'Abs braced. Don't arch your lower back' (c9)  -> setup 3, feel row 'low-back' fix, plate cue 'back'
+//   card posture 'Curl toward your glutes. Stop before your hips lift' (c7) -> setup 4, setup 5
+//   card posture 'Breathe out as you curl, in as you lower' (c12) -> setup 3
+//   card posture 'Lower under control. Don't let the stack touch' (c11) -> setup 5 (D-TEXT-PRINTED), copy.cueLine
+//   T knee-axis Right 'Knee in line with the machine's axis' (c1) -> setup 1, plate cue 'axis', posture 'axis'
+//   T roller Right 'Roller on the lower calf, just above the heel' (c3) -> setup 2, posture 'roller'
+//   T roller Wrong 'Roller pressing into the heel or Achilles tendon' (c4) -> setup 2 (as a fault, D-TEXT-PRINTED), copy.mistakeLine (as a mistake), posture 'roller'
+//   handlingMistake 'Knees off the machine's axis' (c2, c1)     -> setup 1, copy.mistakeLine, risk 'axis', posture 'axis'
 //   handlingMistake 'Arching your lower back' (c9, c10)         -> feel row 'low-back', risk 'arch', posture 'arch'
 //   handlingMistake 'Hips lifting off the pad' (c8)             -> zoom hips-pad Wrong, posture 'hips'
 import plateSpec from '../specs/lying_leg_curl.mjs';
@@ -60,14 +60,11 @@ const FV = 'fv-llc', MO = 'mo-llc', LI = 'lifto-llc', ACE = 'ace-llc', NA = 'nas
 const CL = {
   c1: C(['CONSENSUS'], [FV, ACE, SL], 'card c1'),
   c2: C(['CONSENSUS'], [MO, FV], 'card c2'),
-  c3: C(['CONSENSUS'], [FV, LI, MO, ACE], 'card c3'),
   c6: C(['CONSENSUS'], [FV, MO], 'card c6'),
   c10: C(['CONSENSUS', 'WEAK'], ['hl-hc'], 'card c10'),
   c11: C(['CONSENSUS'], [FV, LI, MO], 'card c11'),
   c15: C(['CONSENSUS', 'WEAK'], ['hl-hc'], 'card c15'),
   c16: C(['CONSENSUS'], [FV], 'card c16'),
-  hold: C(['CONSENSUS'], [FV, MO, NA], 'card c5'),
-  curl: C(['CONSENSUS'], [MO, LI, FV, ACE], 'card c12, c7'),
   hips: C(['CONSENSUS'], [FV, MO, NA, LI], 'card c5, c8'),
   lift: C(['CONSENSUS'], [FV, LI, MO], 'card c8'),
   arch: C(['CONSENSUS', 'WEAK'], [ACE, LI, MO, FV, 'hl-hc'], 'card c9, c10'),
@@ -75,6 +72,9 @@ const CL = {
   roller: C(['CONSENSUS'], [FV, LI, MO, ACE], 'card c3, c4'),
   setupMis: C(['CONSENSUS'], [MO, FV], 'card c2, c4'),
   ham: C(['CONSENSUS'], [FV, NA], 'card c17, c16'),
+  breath: C(['CONSENSUS'], [FV, MO, NA, LI], 'card c5, c12'),
+  start: C(['CONSENSUS'], [FV, MO, LI, ACE], 'card c6, c7'),
+  lower: C(['CONSENSUS'], [FV, LI, MO], 'card c7, c8, c11'),
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
@@ -173,11 +173,11 @@ export default {
   handling: { archetype: 'none', why: 'D-SHIP-GRIP (b): the card gives no thumb, contact or wrist claim; its grip type and width (c5) are setup step 4.' },
   contacts: ['pivot-pad'],   // the card's archetype.contact
   setup: [
-    { kind: 'get-in', text: 'Lie face down, knees close to the bench edge.', claim: CL.c1 },
-    { kind: 'adjust', text: "Line your knees up with the machine's axis.", claim: CL.c1 },
-    { kind: 'adjust', text: 'Roller on your lower calf, just above the heel.', claim: CL.c3 },
-    { kind: 'grip', text: 'Hold the handles, tighten your abs, press your hips into the pad.', claim: CL.hold },
-    { kind: 'position', text: 'Breathe out and curl toward your glutes. Stop before your hips lift.', claim: CL.curl },
+    { kind: 'get-in', text: 'Lie face down, knees near the bench edge, aligned with the axis.', claim: CL.c1 },
+    { kind: 'adjust', text: 'Roller on your lower calf, not pressing your heel or Achilles.', claim: CL.roller },
+    { kind: 'grip', text: 'Hold the handles, abs tight. Breathe out to curl, in to lower.', claim: CL.breath },
+    { kind: 'position', text: 'Start knees nearly straight, not forced locked. Curl toward your glutes.', claim: CL.start },
+    { kind: 'position', text: 'Stop before your hips lift. Lower with control, stack never touching.', claim: CL.lower },
   ],
   posture: [
     // D-SHIP-TEXTZOOM: the card zoom knee-axis as a text checkpoint (its wrong is null, LR-25); Q-W2-12: handlingMistake

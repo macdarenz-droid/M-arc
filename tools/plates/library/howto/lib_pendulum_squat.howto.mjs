@@ -12,16 +12,16 @@
 //
 // D-TEXT-GOLDEN (claim -> slot):
 //   card posture 'Back against the pad' (c3)                    -> setup 2, plate cue 'back'
-//   card posture 'Torso upright' (c5)                           -> setup 4
+//   card posture 'Torso upright' (c5)                           -> setup 5
 //   card posture 'Knees over the toes' (c6)                     -> feel row 'knee' fix, plate cue 'knees'
 //   card posture 'Heels flat' (c9)                              -> zoom heels-flat Right
-//   card posture 'Extend fully at the top, without locking out hard' (c21) -> copy.cueLine
+//   card posture 'Extend fully at the top, without locking out hard' (c21) -> setup 5 (D-TEXT-PRINTED), copy.cueLine
 //   T knee-track Right 'Knees in line with the toes' (c8)       -> feel row 'knee' fix, posture 'knee-track'
 //   T knee-track Wrong 'Knees caving inward' (c8)               -> feel row 'knee' means (as a fault), risk 'cave'
-//   handlingMistake 'Dropping into the bottom' (c10, c20)       -> copy.mistakeLine, posture 'drop'
-//   handlingMistake 'Heels lifting off the platform' (c15)      -> zoom heels-flat Wrong, risk 'heels', posture 'heels'
+//   handlingMistake 'Dropping into the bottom' (c10, c20)       -> setup 4 (D-TEXT-PRINTED), copy.mistakeLine, posture 'drop'
+//   handlingMistake 'Heels lifting off the platform' (c15)      -> zoom heels-flat Wrong, risk 'cave', posture 'heels'
 //   handlingMistake 'Knees cave inward' (c8)                    -> feel row 'knee', risk 'cave', posture 'knee-track'
-//   card setup 'If you fail a rep, the safety catch gives you an out' (c22, c17) -> copy.setupLine
+//   card setup 'If you fail a rep, the safety catch gives you an out' (c22, c17) -> risk 'way' (D-TEXT-PRINTED), copy.setupLine
 import plateSpec from '../specs/pendulum_squat.mjs';
 import { RED_FLAG, RED_FLAG_KNEE } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_KNEE };
@@ -58,8 +58,8 @@ const CL = {
   c21: C(['CONSENSUS', 'WEAK'], [YR, XC], 'card c21'),
   feet: C(['CONSENSUS'], [SL, WFF, YR], 'card c2, c3'),
   grip: C(['CONSENSUS', 'WEAK'], [XC, SL], 'card c16, c4'),
-  lower: C(['CONSENSUS'], [WFF, SL], 'card c10, c5, c4, c6'),
-  finish: C(['CONSENSUS'], [SL, WFF, BOX, YR], 'card c5, c7, c17'),
+  lower: C(['CONSENSUS'], [WFF, SL, YR], 'card c10, c20, c4'),
+  top: C(['CONSENSUS', 'WEAK'], [SL, YR, XC], 'card c5, c21'),
   drop: C(['CONSENSUS'], [WFF, YR], 'card c10, c20'),
   heels: C(['CONSENSUS', 'WEAK'], [WFF, XC], 'card c9, c15'),
   knee: C(['CONSENSUS', 'WEAK'], [XC, WFF], 'card c15, c8'),
@@ -125,9 +125,10 @@ const feel = {
 
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
-  { key: 'cave', text: 'Knees caving in on the way up stresses the knee joints.', claim: CL.c15 },
-  { key: 'heels', text: 'Heels lifting shifts your weight forward and strains your knees.', claim: CL.c15 },
+  // D-TEXT-PRINTED: the card's two knee risks (c15) share one row, so the way-out line (c22, c17) has a printed home.
+  { key: 'cave', text: 'Knees caving in or heels lifting strains your knees.', claim: CL.c15 },
   { key: 'bounce', text: 'Bouncing out of the bottom can cause injury.', claim: CL.c15 },
+  { key: 'way', text: 'Failed rep? Use the safety catch. To finish, lock it, check it holds.', claim: CL.way },
 ];
 
 export default {
@@ -141,8 +142,8 @@ export default {
     { kind: 'adjust', text: 'Set the machine: shoulders under the pads, feet on the platform.', claim: CL.c1 },
     { kind: 'position', text: 'Feet hip- to shoulder-width. Brace and press your back into the pad.', claim: CL.feet },
     { kind: 'grip', text: 'Grip the handles firmly, then release the safety latch.', claim: CL.grip },
-    { kind: 'position', text: 'Lower over two to three seconds, torso upright, thighs at least parallel.', claim: CL.lower },
-    { kind: 'finish', text: 'Push up through your whole foot. Lock the safety, check it holds.', claim: CL.finish },
+    { kind: 'position', text: "Don't drop: lower over two to three seconds to at least parallel.", claim: CL.lower },
+    { kind: 'finish', text: 'Push up, torso upright. Extend fully without locking out hard.', claim: CL.top },
   ],
   posture: [
     { key: 'back', label: 'Back on pad', detail: 'Back pressed against the pad.', anchor: { landmark: 'sacrum', pose: 'end' }, claim: CL.c3 },

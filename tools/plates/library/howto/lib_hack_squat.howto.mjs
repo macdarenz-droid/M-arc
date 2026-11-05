@@ -19,7 +19,7 @@
 //   T feet-plate Right 'Feet shoulder-width, middle of the plate' (c12) -> setup 2, posture 'feet'
 //   T feet-plate Wrong 'Feet too high on the plate' (c9)        -> feel row 'low-back' means (as a fault), posture 'feet'
 //   handlingMistake 'Lower back off the pad' (c8, c9, c2)       -> zoom back-pad Wrong, feel row 'low-back', risk 'back', posture 'lift'
-//   handlingMistake 'Cutting the squat short' (c5)              -> copy.mistakeLine, posture 'short'
+//   handlingMistake 'Cutting the squat short' (c5)              -> setup 4 (printed, D-TEXT-PRINTED), copy.mistakeLine, posture 'short'
 //   handlingMistake 'Feet too close together' (c12)             -> feel row 'knee' means, risk 'knees', posture 'narrow'
 //   card setup 'Lock the safety lever ... Too heavy? ...' (c16) -> setup 5
 import plateSpec, { HS } from '../specs/hack_squat.mjs';
@@ -188,7 +188,7 @@ export default {
     { kind: 'get-in', text: 'Shoulders under the pads, back and hips on the pad.', claim: CL.setup1 },
     { kind: 'position', text: 'Feet shoulder-width, mid-plate, toes slightly out, knees in line with them.', claim: CL.feet },
     { kind: 'safety', text: "Hold the handles, don't push. Straighten up, release the safety.", claim: CL.safety },
-    { kind: 'position', text: 'Lower to at least parallel. Push up through your whole foot.', claim: CL.depth },
+    { kind: 'position', text: "Don't stop short of parallel. Push up through your whole foot.", claim: CL.depth },
     { kind: 'finish', text: 'Re-lock the safety to finish. Too heavy? Use the safety locks.', claim: CL.c16 },
   ],
   posture: [

@@ -10,17 +10,17 @@
 // No variant line (equipment 'Machine').
 //
 // D-TEXT-GOLDEN (claim -> slot):
-//   card posture 'Brace your abs. Keep your back on the pad' (c4) -> setup 4, feel row 'low-back' fix, plate cue 'back'
-//   card posture 'Lift with your quads. Don't kick' (c9)        -> setup 5, copy.mistakeLine
+//   card posture 'Brace your abs. Keep your back on the pad' (c4) -> setup 3, feel row 'low-back' fix, plate cue 'back'
+//   card posture 'Lift with your quads. Don't kick' (c9)        -> setup 4, copy.mistakeLine
 //   card posture 'Straighten your legs without locking your knees' (c7, c8) -> zoom top Right, plate cue 'soft'
-//   card posture 'Pause briefly at the top' (c18)               -> copy.cueLine
-//   card posture 'Lower slowly with control' (c11)              -> copy.cueLine
-//   card posture 'Breathe out as you lift, in as you lower' (c12) -> setup 5
+//   card posture 'Pause briefly at the top' (c18)               -> setup 4 (D-TEXT-PRINTED), copy.cueLine
+//   card posture 'Lower slowly with control' (c11)              -> setup 5 (D-TEXT-PRINTED), copy.cueLine
+//   card posture 'Breathe out as you lift, in as you lower' (c12) -> setup 4, setup 5
 //   T knee-pivot Right 'Knee level with the machine's pivot' (c1) -> setup 1, plate cue 'pivot', posture 'pivot'
-//   T shin-pad Right 'Pad on the lower shins, just above the ankles' (c2) -> setup 2, posture 'shin-pad'
+//   T shin-pad Right 'Pad on the lower shins, just above the ankles' (c2) -> setup 1, posture 'shin-pad'
 //   handlingMistake 'Arching your back' (c5, c6, c4)            -> feel row 'low-back' means, risk 'arch', posture 'arch'
 //   handlingMistake 'Locking knees at the top' (c8, c7)         -> zoom top Wrong, risk 'lock', posture 'top'
-//   handlingMistake 'Kicking up with momentum' (c9, c10)        -> copy.mistakeLine, posture 'kick'
+//   handlingMistake 'Kicking up with momentum' (c9, c10)        -> setup 4 + risk 'load' (D-TEXT-PRINTED), copy.mistakeLine, posture 'kick'
 //   card setup 'Start with a lower weight' (c17)                -> copy.setupLine
 import plateSpec from '../specs/leg_extension.mjs';
 import { RED_FLAG, RED_FLAG_KNEE } from '../../layers/howto/shared.mjs';
@@ -61,11 +61,13 @@ const CL = {
   c17: C(['CONSENSUS'], [FV], 'card c17'),
   seat: C(['CONSENSUS'], [BB, LI, MO], 'card c3, c4'),
   grip: C(['CONSENSUS'], [BB, LI, MO], 'card c3, c4'),
-  lift: C(['CONSENSUS'], [MO, LI, BB, FV], 'card c12, c9'),
   top: C(['CONSENSUS'], [BB, MO, FV, LI, SL], 'card c7, c8'),
   arch: C(['CONSENSUS'], [BB, SL, MO, LI], 'card c5, c6, c4'),
   kick: C(['CONSENSUS'], [BB, FV, SL, MO, LI], 'card c9, c10'),
   cue: C(['CONSENSUS'], [MO, LI, FV, BB], 'card c18, c11'),
+  pads: C(['CONSENSUS'], [SL, MO, LI, FV], 'card c1, c2'),
+  up: C(['CONSENSUS'], [MO, LI, BB, FV], 'card c12, c9, c18'),
+  down: C(['CONSENSUS'], [MO, LI, FV, BB], 'card c12, c11'),
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
@@ -133,7 +135,7 @@ const feel = {
 const RISKS = [
   { key: 'lock', text: 'Locking your knees at the top can add stress to the knee.', claim: CL.c8 },
   { key: 'arch', text: 'Arching your lower back can lead to discomfort.', claim: CL.c6 },
-  { key: 'load', text: 'Too much weight can increase the risk of injury.', claim: CL.c10 },
+  { key: 'load', text: 'Too much weight adds momentum and can increase the risk of injury.', claim: CL.c10 },
 ];
 
 export default {
@@ -144,11 +146,11 @@ export default {
   handling: { archetype: 'none', why: 'D-SHIP-GRIP (b): the card gives no thumb, contact or wrist claim; its grip type and width (c3) are setup step 4.' },
   contacts: ['seat-back', 'pivot-pad'],   // the card's archetype.contact
   setup: [
-    { kind: 'adjust', text: 'Set the seat so your knees line up with the pivot.', claim: CL.c1 },
-    { kind: 'adjust', text: 'Pad on your lower shins, just above the ankles.', claim: CL.c2 },
+    { kind: 'adjust', text: 'Knees at the pivot. Pad on your lower shins, just above ankles.', claim: CL.pads },
     { kind: 'position', text: 'Sit back against the pad, knees bent about 90 degrees.', claim: CL.seat },
     { kind: 'grip', text: 'Hold the handles at your sides. Brace your abs.', claim: CL.grip },
-    { kind: 'brace', text: 'Breathe out and lift with your quads. Breathe in as you lower.', claim: CL.lift },
+    { kind: 'position', text: "Breathe out and lift with your quads, don't kick. Pause briefly.", claim: CL.up },
+    { kind: 'position', text: 'Breathe in and lower slowly with control.', claim: CL.down },
   ],
   posture: [
     // D-SHIP-TEXTZOOM: the card zooms knee-pivot and shin-pad as text checkpoints (their wrong is null, LR-25)

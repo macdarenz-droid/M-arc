@@ -9,15 +9,15 @@
 //
 // D-TEXT-GOLDEN (claim -> slot):
 //   posture c3 breathe out up, in down          -> setup step 4
-//   posture c3/c11 press the heels               -> posture 'heels' (the T checkpoint heels-down, below)
-//   posture c9 drive with the hips               -> posture 'drive'
+//   posture c3/c11 press the heels               -> feel row 'quads' fix, posture 'heels' (the T checkpoint heels-down, below)
+//   posture c9 drive with the hips               -> setup step 4 (D-TEXT-PRINTED), posture 'drive'
 //   posture c4 straight line at the top          -> posture 'line', zoom spine-top Right
 //   posture c5 squeeze, hold the top a second    -> setup step 5
-//   posture c12 knees in line with the toes      -> posture 'knees' (with c1's toes facing away)
-//   zoom heels-down (Wrong null, LR-25)          -> T: posture 'heels' (D-SHIP-TEXTZOOM)
+//   posture c12 knees in line with the toes      -> setup step 1 (D-TEXT-PRINTED), posture 'knees' (with c1's toes facing away)
+//   zoom heels-down (Wrong null, LR-25)          -> T: setup step 1 (feet flat), feel row 'quads' fix, posture 'heels' (D-SHIP-TEXTZOOM)
 //   handlingMistake overarching (c7, c6, c2)     -> posture 'back' (Q-W2-12), its fix the detail; zoom spine-top Wrong
-//   handlingMistake feet in the wrong place      -> posture 'feet' (Q-W2-12), its fix the detail
-//   handlingMistake hips pushed too high         -> posture 'line' (Q-W2-12), its fix the detail
+//   handlingMistake feet in the wrong place      -> risk 'feet' (c8, D-TEXT-PRINTED), plate label 'Knees at 90', posture 'feet' (Q-W2-12), its fix the detail
+//   handlingMistake hips pushed too high         -> zoom spine-top Wrong, risk 'high', posture 'line' (Q-W2-12), its fix the detail
 import plateSpec from '../specs/glute_bridge.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
@@ -45,9 +45,7 @@ export const SOURCES = {
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });
 const CL = {
-  c1: C(['CONSENSUS'], ['pg-gb', 'ace-gb'], 'card c1'),
   c2: C(['CONSENSUS'], ['pg-gb', 'ace-gb', 'sl-gb'], 'card c2'),
-  c3: C(['CONSENSUS'], ['ace-gb'], 'card c3'),
   c6: C(['CONSENSUS'], ['ace-gb', 'pg-gb'], 'card c6'),
   c7: C(['CONSENSUS'], ['pg-gbhub', 'pg-gb'], 'card c7'),
   c9: C(['CONSENSUS'], ['pg-gbhub'], 'card c9'),
@@ -61,6 +59,9 @@ const CL = {
   feet: C(['CONSENSUS'], ['pg-gbhub', 'pg-gb', 'hl-gb'], 'card c8, c4'),
   line: C(['CONSENSUS'], ['ace-gb', 'pg-gb', 'hl-gb'], 'card c4, c6'),
   zoom: C(['CONSENSUS'], ['pg-gb', 'ace-gb', 'sl-gb', 'hl-gb'], 'card c2, c4, c6, c12'),
+  lie: C(['CONSENSUS'], ['pg-gb', 'ace-gb', 'hl-gb'], 'card c1, c12'),
+  drive: C(['CONSENSUS'], ['ace-gb', 'pg-gbhub'], 'card c3, c9'),
+  c8: C(['CONSENSUS'], ['pg-gbhub'], 'card c8'),
   lowBack: C(['CONSENSUS'], ['pg-gbhub', 'pg-gb', 'ace-gb', 'sl-gb'], 'card c7, c2'),
 };
 
@@ -131,6 +132,7 @@ const feel = {
 const RISKS = [
   { key: 'overextend', text: 'Overextending your back can lead to lower back pain.', claim: CL.c7 },
   { key: 'high', text: 'Pushing the hips too high increases the arch in your low back.', claim: CL.c6 },
+  { key: 'feet', text: 'Back tension may mean wrong foot position or an overarched back.', claim: CL.c8 },
 ];
 
 export default {
@@ -141,10 +143,10 @@ export default {
   handling: { archetype: 'none', why: 'D-SHIP-GRIP (b2): the card archetype.hand is none; its grip claims (c1, c14) are on setup step 2.' },
   contacts: ['floor-body'],
   setup: [
-    { kind: 'position', text: 'Lie on your back, knees bent, feet flat and hip-width apart.', claim: CL.c1 },
+    { kind: 'position', text: 'Lie on your back, feet flat, hip-width, knees in line with toes.', claim: CL.lie },
     { kind: 'position', text: 'Arms straight by your sides, or grip a barbell overhand.', claim: CL.arms },
     { kind: 'brace', text: 'Pull your belly button in. Tuck your pelvis, low back flat.', claim: CL.c2 },
-    { kind: 'position', text: 'Breathe out and press your hips up. Breathe in as you lower.', zoom: 'spine-top', claim: CL.c3 },
+    { kind: 'position', text: 'Exhale and drive with your hips, not your feet. Inhale to lower.', zoom: 'spine-top', claim: CL.drive },
     { kind: 'finish', text: 'Squeeze your glutes, hold the top for a second, lower slowly.', claim: CL.hold },
   ],
   posture: [
