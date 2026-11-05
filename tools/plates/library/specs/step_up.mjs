@@ -134,5 +134,6 @@ export default {
     ],
   },
   tempo: [{ phase: 'Rise', move: true }, { phase: 'Lower', move: true, word: 'Controlled' }],   // tempoOf(strip/rows.json step_up)
-  alt: 'Step-up with dumbbells, side view. One whole foot on a knee-high box and the other on the floor, dumbbells hanging at the sides, the lifter stands up on the box with the top leg, torso upright.',
+  // D-SHIP-W5-PLATETEXT (#392 6652647984): 'knee-high' out of the alt (no card claim gives the box height); text only
+  alt: 'Step-up with dumbbells, side view. One whole foot on a box and the other on the floor, dumbbells hanging at the sides, the lifter stands up on the box with the top leg, torso upright.',
 };

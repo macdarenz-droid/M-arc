@@ -114,7 +114,7 @@ export default {
     guides: [],
     tells: [
       { key: 'knee', text: 'Knee slides<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The front knee slides forward and the shin tips well past vertical.' },   // c2
-      { key: 'shin', text: 'Shin tips<br>forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' }, cue: 'The front shin tips past vertical, the knee ahead of the toes.' },
+      { key: 'shin', text: 'Shin tips<br>forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' }, cue: 'The front shin tips well past vertical.' },   // c2; D-SHIP-W5-PLATETEXT (#392 6652647984): text only, no card claim names the toes
     ],
   },
   tempo: [{ phase: 'Lower', move: true, word: 'Smooth' }, { phase: 'Rise', move: true, word: 'Smooth' }],

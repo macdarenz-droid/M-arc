@@ -1,7 +1,7 @@
 {
  "rows": {
   "lib_alternating_dumbbell_curl": {
-   "entry": "795e78a109ac4d7529e7560ec2cfd50cc8e62e97356510f0d316150e08bcd161",
+   "entry": "1b4a041f64984561de380f3029f1a5afe8868dc354be87084c97293c21f57683",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -87,7 +87,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -109,7 +109,7 @@
    }
   },
   "lib_barbell_curl": {
-   "entry": "9bda74638a09f1d7ea00e0ed35fdc0b2a344162e5f86325ebdae62eff9924a25",
+   "entry": "1e98e0b0c0ab1396725c446750e304d199f47a5ab008b8eee84b8cdd875e16a2",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -195,7 +195,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -415,7 +415,7 @@
    }
   },
   "lib_bayesian_cable_curl": {
-   "entry": "1714788cf60e36de7ea73af65aa334ff2c29d2d9a6c3c2a6685528b80bb27293",
+   "entry": "d035a0b3cf37fde3ce6d5e02a584a2fa23685f2951fd0d1eaf8538513b252429",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -498,7 +498,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -587,7 +587,7 @@
    }
   },
   "lib_bodyweight_lunge": {
-   "entry": "04ec159774564e7fb6a8c9dc90847b8b0cb3439de154343c0d699bcb308ce668",
+   "entry": "96bc818ed81276fa928296c8f596b77543cbdf6bd439b2efe4f9b6b0b9ad4fb0",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -652,16 +652,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -678,7 +678,7 @@
    }
   },
   "lib_bodyweight_split_squat": {
-   "entry": "3353972f106ee5f75bb673715291cf1493f2a8cc4e3dc58d26344ba681ea44f5",
+   "entry": "de76ead3b212d7e7a2b1482cd01679f194e6f2d6119246f7ece0e0d9311fba88",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -743,16 +743,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -769,7 +769,7 @@
    }
   },
   "lib_bodyweight_squat": {
-   "entry": "fb21881c09118779818ba7a8340c5670c929d0c3708530b07196bcd5f6379442",
+   "entry": "92971d64526b0642ed96ebc617c4f510b371ea968fc94fd6a7431080f5b185bb",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -834,16 +834,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -927,7 +927,7 @@
    }
   },
   "lib_bulgarian_split_squat": {
-   "entry": "73cbc4f76f73d1bc0e56751d0c0c7b3b0bc310287694ab83c8df56a74b24454c",
+   "entry": "fb3c22f44d261e9a1339c52eccc89a08164552e15a0b54ce5c31aaecb0038e9c",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -992,16 +992,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -1018,7 +1018,7 @@
    }
   },
   "lib_cable_curl": {
-   "entry": "638190aadd1b6529b9a59a355e063b085f65a54c1bf7a8f286c40b642001be32",
+   "entry": "2e66d4dd01bae729cd0be3edc9f67cdf846a31cd4cb11f928c0c2cd7bf5736c6",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -1104,7 +1104,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -1200,7 +1200,7 @@
    }
   },
   "lib_concentration_curl": {
-   "entry": "8d1d5c4975f0bc3687e22abc44f24a424edd23c6ab5161b81d7de32e87039c3d",
+   "entry": "343d6f271f0be4c1d599403b54a2780b49ae3ed6a71b9e4c156640cd9b43f28e",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -1283,7 +1283,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -1305,7 +1305,7 @@
    }
   },
   "lib_cross_body_hammer_curl": {
-   "entry": "2dcab96e4c5e7fa902fa27435308ae456bdf3cf025ff2181f49ca74fe9c18ad4",
+   "entry": "a691f2720991d3e8cd383bd1e7af1c75c4a85318f10b9d47133b0b4070571f54",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -1391,7 +1391,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -1747,7 +1747,7 @@
    }
   },
   "lib_dumbbell_overhead_triceps_extension": {
-   "entry": "d59e96183c814856f0fc4e2b5186c67168981e7baf6e695762df57d8a6e9edde",
+   "entry": "ca1747c6368cd2bae668a774edafbcb6fa82e5e4e00e420f791bb248d77d74aa",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -1830,7 +1830,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -1951,7 +1951,7 @@
    }
   },
   "lib_ez_bar_curl": {
-   "entry": "bb2b68d835c788a562d99e898fd103f2f0b9af1b3a86c42b3ff3dccd23c041e6",
+   "entry": "e27e56ac504e6d61080148b79f0997a8669b46ef963c56133a9bdf8d83bd2309",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2037,7 +2037,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -2059,7 +2059,7 @@
    }
   },
   "lib_forward_lunge": {
-   "entry": "1e3fe69a2fb202f6c07c667aebb2975fa61be4ef6c51e1c9d9f7d3cd6922405d",
+   "entry": "e8410cb54505e98481b552e2270745e3b11d447747d91eb3a27c1bf2064c1a56",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2124,16 +2124,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -2150,7 +2150,7 @@
    }
   },
   "lib_front_squat": {
-   "entry": "b8ad871c4be006572ee2b142afc9e68d38b282f587df19b9433deda61ba974d6",
+   "entry": "8f3b71b0372b2ec8d9fa07f969298a1594d192c93cebe6de14c0a5866bf73425",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2215,16 +2215,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -2241,7 +2241,7 @@
    }
   },
   "lib_goblet_squat": {
-   "entry": "205f46427fa1d94c6ce67fdb6180df61b471eeceea2c27a1d3b20d4e01f7e04f",
+   "entry": "c7f1410f370b6e5c75cd4405ad79fbdd8d238a56c147ad29e7e8a3f828be3af7",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2306,16 +2306,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -2332,7 +2332,7 @@
    }
   },
   "lib_hammer_curl": {
-   "entry": "ff96e8e018276e557a0ba802d0eecd43ecd6259c03a61b82b71be84466747a7b",
+   "entry": "989ce3f2648d9d06e8be12a83141fa0c329aad15d432fa1d167873ff494f861d",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2418,7 +2418,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -2440,7 +2440,7 @@
    }
   },
   "lib_incline_dumbbell_curl": {
-   "entry": "1b60ce568520b24d934afbe095ce8637ba955497219d7384da551661bcd81b19",
+   "entry": "0299c02b9419066464e1d05c6cfbfb6b1f010cd2c3a5184c6d4f353c6c2a213c",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2526,7 +2526,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -2548,7 +2548,7 @@
    }
   },
   "lib_jump_squat": {
-   "entry": "87fe61af8119fcd97788e22f21bd15540e25e2a79b27d9f7dd8fc5557168b9e5",
+   "entry": "3eb530d62b75dafe24881543004c17f71cfd41da80723434208f7f2b7f9cb2e6",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2613,16 +2613,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -2844,7 +2844,7 @@
    }
   },
   "lib_pistol_squat": {
-   "entry": "f1569bc3fe67b3ee2e6803e860115af39d1eb8de300de8ebd5789175b42f32e1",
+   "entry": "a7bae335bbe9c34dacce91f53bf344b41ef6fd6163b7c7194b019d363e8690cd",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2909,16 +2909,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -3034,7 +3034,7 @@
    }
   },
   "lib_preacher_curl": {
-   "entry": "3e61d9b9dd9a0d9c4a5fd97d1f8bb0bd2fa5e02025b0fbf30ff5c9237be0e125",
+   "entry": "e831d49e2dfee5256d44dd9065d3cbb65223e7040437249abd39c7c50209ddf9",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -3120,7 +3120,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -3223,7 +3223,7 @@
    }
   },
   "lib_reverse_curl": {
-   "entry": "74c1de1f76254d9ff91f3ff6ca946053e23de6085723a889edd84e04dbddaacf",
+   "entry": "c9e1395574fb7115e003ad8c45e2809f30ade623c650a23b88b25db064eaf79e",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -3309,7 +3309,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -3673,7 +3673,7 @@
    }
   },
   "lib_single_arm_triceps_pushdown": {
-   "entry": "512c9444e1e5c97b439b2534ef27ea77dae1c5769c2eb621cee02866be044713",
+   "entry": "86a1e27fdba2759b9270a59e5eee0336805177338f9807a8894148ffaa59f653",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -3756,7 +3756,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -3951,7 +3951,7 @@
    }
   },
   "lib_step_up": {
-   "entry": "083ca33da6d37ebd0584fd3763f84af9996de3202a6189b37c05d8af2e60d6ff",
+   "entry": "a86e83eece5583366649796b0eb2f47a480cb79e4b43d64a8e3fc98b0c3328d9",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -4016,16 +4016,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -4042,7 +4042,7 @@
    }
   },
   "lib_straight_bar_triceps_pushdown": {
-   "entry": "2f8857e8ccc044cb1e79ec4cec2f67e03d42881ee548b49275d7cf38516b6138",
+   "entry": "1784d4b97a8863f28862d2bde02bad1754c8496fa33a4146a1a7a0d0fd83f46d",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -4125,7 +4125,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
@@ -4345,7 +4345,7 @@
    }
   },
   "lib_walking_lunge": {
-   "entry": "35aedde888e2a436c7692c4764dc36b5d22455c619c686d84f54c1005d2ce7ef",
+   "entry": "29032d165d7f1d5a0a95ccac463da9b0deb3734a14f0b2c9047a14a238a65ae1",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -4410,16 +4410,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -4436,7 +4436,7 @@
    }
   },
   "lib_wall_sit": {
-   "entry": "27fb6ec05ed54f1d97a0b30c44cd5d84328b2b5c0822fc98502a3dc855f6693a",
+   "entry": "8c1896390db3bb4d3befbe1841672fac7e0ffee1d3eb6a74a0250fda47f8ac38",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -4501,16 +4501,16 @@
     "tools/plates/library/render/legacy.mjs": "aff64a8281c7ae4f9ddcfca9d76974ed8f4f5a0cd0820c7e20bf8ae9a1a9b46d",
     "tools/plates/library/render/region-fix.mjs": "3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8",
     "tools/plates/library/shared/back-box.mjs": "af310578e441a3a396f2f76388d14d25785de05859befc4e416cea31834cc0fa",
-    "tools/plates/library/specs/bodyweight_lunge.mjs": "2628084b04d26959f1a93e0e1aa51398b2233a4e3ba753e1c8428067bcb12fa7",
-    "tools/plates/library/specs/bodyweight_split_squat.mjs": "023716e3b37f4f35aa796dd567620dfe8a875e224c6a802977654a6f5dadfa6f",
+    "tools/plates/library/specs/bodyweight_lunge.mjs": "fb9db5ac949a9f28c3efd999d7224aab4a98b8c44e77ac9f8b73713d76970569",
+    "tools/plates/library/specs/bodyweight_split_squat.mjs": "83789977bca8b6b1debba0944b8fa48d1e42af73144f30feb530f5efc245e7c2",
     "tools/plates/library/specs/bodyweight_squat.mjs": "8561e89956a74ed834a1205f48b66a5a28fde4feeacb7a9ad98446ce0a8aeade",
     "tools/plates/library/specs/bulgarian_split_squat.mjs": "cd293790e54dc1bf8c494a17677ebf014ed4a957000a84ffca99d855e6b60f3b",
-    "tools/plates/library/specs/forward_lunge.mjs": "e5c7effa39ec8c8845aed3174dd6cd787a2ee4fd179b851c2a46b6831d86ee87",
+    "tools/plates/library/specs/forward_lunge.mjs": "3c4a003a72116d6900bcb3a749925deb96e4622438c073cff5d969c8b9a3a128",
     "tools/plates/library/specs/front_squat.mjs": "9c1c3f041a040a340638ef53bf9f4d7c7c6129ed3839594d236c5d7692975f26",
     "tools/plates/library/specs/goblet_squat.mjs": "cd365806eeb638a322bd6b30e038f44c818fb3f55b7e4e96476495c96064e196",
     "tools/plates/library/specs/jump_squat.mjs": "11432284f3f8bd319869718b8c2947aa0e4339fc88ae8f9edf4a0d035edc2875",
     "tools/plates/library/specs/pistol_squat.mjs": "06516a123557248d53c552e01a14dcb18945c1f5dd101bb9192024d5529e7f44",
-    "tools/plates/library/specs/step_up.mjs": "cf050a6f2beeaa59adf99f6219a471f3f44b3a839ecb9b3aabea36d9e8fc842b",
+    "tools/plates/library/specs/step_up.mjs": "40b35b1f456148a59ef6aa6fdecede309de3dfe5e51c52fa1142beb796f660ee",
     "tools/plates/library/specs/walking_lunge.mjs": "518023efe76ae0d2560fab69240536513684724518b4ba36f0ea21b8db74ba5e",
     "tools/plates/library/specs/wall_sit.mjs": "44da523a56d526b3ca2773623aab424c8a9d620b8ca091afb9f52da832624a79",
     "tools/plates/library/strip/tempo-strip.mjs": "c8ba440a33b9798a580f0183a0d097938aa094204edac6fa141560bf5c4158a9",
@@ -4527,7 +4527,7 @@
    }
   },
   "lib_wrist_curl": {
-   "entry": "ae9d53ec883fcdf57d5cf2aff41dbed6508978aa80a70993edd8f883b90ce1d6",
+   "entry": "567646b9f47eb2979efef675e65b9f5de92aedef8e04ee67f25195abe2049496",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -4610,7 +4610,7 @@
     "tools/plates/library/specs/dumbbell_overhead_triceps_extension.mjs": "ab40e6a0532afef9a43b993bc1591c872b3ef84ea3f7c35c66f50277715f538d",
     "tools/plates/library/specs/ez_bar_curl.mjs": "4a893f36a23a5a8e7b8798c18861d53c5e8c933c7f144f7d021907854261e906",
     "tools/plates/library/specs/hammer_curl.mjs": "016d3b29897962fb357e9cf4e6c4cd3611eb2743432d11a1b25959d70707fc2f",
-    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "f359ef2e26ad3f552d6d6eb066e8c081df7bab53b53b097e3ce85bd9761dd1cc",
+    "tools/plates/library/specs/incline_dumbbell_curl.mjs": "5993f24b6c13f104d8ce8afe19d780c5a8c20dcbae5c9bcb39c96c7bc19af679",
     "tools/plates/library/specs/preacher_curl.mjs": "f6eeb2ecf669e1aa63b5f91a0c5e0b3356113c169beb0d89c9d43ecd66344a15",
     "tools/plates/library/specs/reverse_curl.mjs": "25e50f64251b9761b6d606d6c72364b07b6169ca976b91d24ddf6ee258d4a0c5",
     "tools/plates/library/specs/single_arm_triceps_pushdown.mjs": "ce012c683b6c0d33ec38a739eb1907ee66a4642f0b11deb991582d89803a0e53",
