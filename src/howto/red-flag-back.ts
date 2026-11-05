@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/library-gate.mjs). inputsSha256=3c95c096f90e8b577d91169deeb27e44c04364eb3ddeef06f643c92788ed2c31
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/library-gate.mjs). inputsSha256=9cbf56cbfb1e629a1ad9cd9ae37ba3251c3aff385c9b8c20f8a0fa083d6b038c
 import type { RedFlagBlock } from './content-types';
 
 // GENERATED from docs/research/howto/shared/back-pain-box.json through tools/plates/library/shared/back-box.mjs (LIB-5
