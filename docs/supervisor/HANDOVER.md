@@ -837,6 +837,17 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Owner answers: D-OWNER-FLAGS (approve; crunch was added under the ruling, so the corrected count of 58 goes to the owner with the next APK) and D-OWNER-RELEASE-ALL.
   - Owner items for the release candidate: F-SHEET-COPY (the "not medical advice" closing line vs the AGENTS UI-copy rule), golden-B follow-ups 30-36, F-PLATE-OVERLAP-W2, and the box_jump ankle box.
   - Panel scratch: lyr-w2a/b/c, k1, k2 and s, with keys in lyr-w2-private.
+- **Update 11-05 ~03:05 UTC** (weekly meter 0.56 and rising fast with about 12 lanes; owner rule: no pause until the Fri 08:00 reset). Rulings are in `verify/lib4-cards.md` section 48.
+  - **Train 68 (#396), W2's 8 ids:** CI is queued behind the lanes. Local run: 281 files, 5823 tests. When it merges, an APK goes to the owner, with the battle_ropes question and the later-update list (goblet_squat, jump_squat, bench_dip, renegade_row, dumbbell_fly, the rear delt fly, pec_fly and concentration_curl, unless their routes land).
+  - **W3 #384:** layers panel VALID (6648454032); a fix round is running. Content findings are in `verify/panels/w3-content-findings.md`.
+  - **PLATEFIX #385:** layers panel VALID (6648438434); a fix round is running (RDL, plus OHP including a plate tweak).
+  - **PLATEFIX-2 #395:** plates panel pf4 is building.
+  - **W4 #391, W6 #393 and W7 #394:** PLANs ruled; building to LAYERS READY.
+  - **W5 #392:** LAYERS READY; its panel sets are building.
+  - **F-ZOOM-NONE #388:** delta PASS; merges after W2.
+  - **F-SCRATCH-SYNTH #397:** PLAN ruled; building.
+  - **RESEARCH-ROUTES #398:** part 1 ready. Its research head, #399 into claude/libht-research, waits on its guard check, then the supervisor merges it. Part 2 record: the held ids stay held.
+  - **New rules:** D-FEEL-MEANS-CAUSAL and D-TEXT-GOLDEN. F-SHEET-COPY (template headings and the "not medical advice" line) is one sweep after W7, because it touches golden B and every pin.
 - **D-OWNER-PARALLEL 11-05 ~02:00 UTC** (owner: "Make work faster and do more parallel agents"). The cap is up to 9 active LIB builders; merges stay in wave order, and builders may merge W2's READY head to build ahead. New lanes:
 
   | lane | session |
