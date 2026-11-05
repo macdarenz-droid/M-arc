@@ -151,8 +151,8 @@ const feel = {
 const MISTAKES = [
   { key: 'bend', title: 'Bending the elbows', zoom: 'elbow', claim: CL.bend,
     fix: 'Keep the same slight elbow bend all set.' },
-  { key: 'heavy', title: 'Too much weight', claim: CL.c7,
-    fix: 'Lower the weight until you can pause at the bottom.' },
+  { key: 'heavy', title: 'Too much weight', claim: C(['CONSENSUS'], [ATH, ACE], 'c7, c8'),   // D-TEXT-PRINTED: posture 'return' (c8)
+    fix: 'Lower the weight. Pause at the bottom, let the bar rise slowly.' },
   { key: 'arch', title: 'Arching the lower back', zoom: 'trunk', claim: CL.arch,
     fix: 'Brace the stomach and move only the arms.' },
 ];
@@ -205,7 +205,7 @@ export default {
   zooms,
   chips: ['elbow', 'trunk', 'feel'],
   copy: {
-    // D-TEXT-GOLDEN (#379 6637607604): posture 'return' (c8: slow way back up) is shown here.
+    // D-TEXT-GOLDEN / D-TEXT-PRINTED (#384 6652657067): posture 'return' (c8) is printed in the 'heavy' mistake fix.
     setupLine: 'Stand a step back from a high pulley, cable taut. Brace, then let the bar rise slowly.',
     mistakeLine: "Don't bend your elbows to push the bar down. Keep the same slight bend.",
     cueLine: 'Arms long, bar to thighs.',

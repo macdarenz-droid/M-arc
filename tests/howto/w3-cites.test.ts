@@ -27,10 +27,14 @@ function citeProblems(id: string, H: any, ids = cardIds(id)): string[] {
   return out;
 }
 
-const PINS: Record<string, { grip: string[]; zooms: Record<string, { right: string[]; wrong: string[] }> }> = {
+const PINS: Record<string, { grip?: string[]; zooms: Record<string, { right: string[]; wrong: string[] }> }> = {
   assisted_pull_up: { grip: ['c1', 'c12', 'c14'], zooms: { 'knee-pad': { right: ['c8', 'c1'], wrong: ['c8', 'c1'] }, shoulders: { right: ['c7', 'c8'], wrong: ['c7', 'c8'] } } },
   inverted_row: { grip: ['c2', 'c10', 'c14', 'c15'], zooms: { 'body-line': { right: ['c3'], wrong: ['c3'] }, top: { right: ['c4'], wrong: ['c4'] } } },
   single_arm_lat_pulldown: { grip: ['c1', 'c16'], zooms: { bottom: { right: ['c2', 'c3'], wrong: ['c10', 'c13'] } } },
+  // W3 second recheck (#384 6653062201) content rows
+  chin_up: { grip: ['c1', 'c21', 'c25'], zooms: {} },
+  horizontal_leg_press: { grip: ['c2'], zooms: {} },
+  close_grip_pulldown: { zooms: { pad: { right: ['c2', 'c3'], wrong: ['c2', 'c3'] } } },
 };
 
 describe('LIB-SHIP W3 cites (#384 6650401348): zooms[].cite and handling.gripCite carry card claim ids', () => {

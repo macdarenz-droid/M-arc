@@ -6,10 +6,8 @@
       "ids": [
         "lib_chin_up",
         "lib_hanging_knee_raise",
-        "lib_assisted_pull_up",
         "lib_inverted_row",
         "lib_close_grip_pulldown",
-        "lib_underhand_lat_pulldown",
         "lib_single_arm_lat_pulldown",
         "lib_straight_arm_pulldown",
         "lib_chest_supported_row",
@@ -44,21 +42,6 @@
       "optionsKey": "hanging_knee_raise",
       "pair": "bar-hang-over"
     },
-    "lib_assisted_pull_up": {
-      "optionsKey": "assisted_pull_up",
-      "pair": "bar-hang-over",
-      "pairFaults": [
-        "curled"
-      ],
-      "pairWords": {
-        "curled": {
-          "right": {
-            "text": "Overhand, thumb wrapped, wrist not curled.",
-            "source": "docs/research/howto/cards/assisted_pull_up.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
-          }
-        }
-      }
-    },
     "lib_inverted_row": {
       "optionsKey": "inverted_row",
       "pair": "bar-row-over",
@@ -85,21 +68,6 @@
           "right": {
             "text": "Neutral grip on the V-handle, wrists not curled.",
             "source": "docs/research/howto/cards/close_grip_pulldown.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
-          }
-        }
-      }
-    },
-    "lib_underhand_lat_pulldown": {
-      "optionsKey": "underhand_lat_pulldown",
-      "pair": "bar-pulldown-under",
-      "pairFaults": [
-        "curled"
-      ],
-      "pairWords": {
-        "curled": {
-          "right": {
-            "text": "Palms facing you, wrists not curled.",
-            "source": "docs/research/howto/cards/underhand_lat_pulldown.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
           }
         }
       }

@@ -165,8 +165,8 @@ const feel = {
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
 const MISTAKES = [
-  { key: 'past', title: 'Pulling past the end', zoom: 'bottom', claim: CL.past,
-    fix: 'Stop when the handle just passes your chin.' },
+  { key: 'past', title: 'Pulling past the end', zoom: 'bottom', claim: C(['CONSENSUS'], [BB, PG], 'c10, c2, c4, c5'),   // D-TEXT-PRINTED: posture 'top' (c4, c5)
+    fix: 'Stop when the handle just passes your chin. Return slowly.' },
   { key: 'twist', title: 'Twisting the torso', claim: CL.c6,
     fix: 'Brace the trunk. Still twisting? Lower the load.' },
   { key: 'lean', title: 'Leaning into each rep', claim: C(['CONSENSUS'], [BB, PG], 'c11, c6'),
@@ -224,7 +224,7 @@ export default {
   chips: ['hand', 'bottom', 'feel'],
   copy: {
     setupLine: 'Sit with your thighs pinned and lean back slightly. Brace so your torso stays square.',
-    // D-TEXT-GOLDEN (#379 6637607604): posture 'top' (c4, c5: tension kept, slow return) is shown here; the stop point (c10, c2) stays.
+    // D-TEXT-GOLDEN / D-TEXT-PRINTED (#384 6652657067): posture 'top' (c4, c5) is printed in the 'past' mistake fix.
     mistakeLine: 'Stop when the handle passes your chin. Return slowly, never let it fly up.',
     cueLine: 'Shoulder down, elbow to pocket.',
   },

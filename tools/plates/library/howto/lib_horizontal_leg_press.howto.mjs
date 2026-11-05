@@ -190,14 +190,15 @@ export default {
     wrist: { ext: [0, 20], dev: [-10, 10], limitText: '', claim: CL.c2 },   // W3 PANEL FIX 2: no unsourced wrist line (c2 only)
     pose: RIGHT_POSE,
     faults: [PUSH_ON_KNEES],
-    gripLine: 'Hold the handles lightly.',   // c2 (W3 PANEL FIX 2: the unsourced knee line is dropped)
+    gripLine: 'Hold the handles lightly.',   // W3 PANEL FIX 2: the unsourced knee line is dropped
+    gripCite: ['c2'],
     cue: 'Light hands, never on your knees.',
   },
   contacts: ['foot-platform', 'seat-back'],
   setup: [
     { kind: 'get-in', text: 'Sit back, back and tailbone flat against the pad.', claim: CL.c1 },
     { kind: 'position', text: 'Feet flat on the plate, toes forward.', claim: CL.c1 },
-    { kind: 'adjust', text: 'Set the seat so your knees start at about 90 degrees.', claim: CL.c1 },
+    { kind: 'adjust', text: 'Set the seat: knees at about 90 degrees, thighs clear of ribs.', claim: CL.c1 },
     { kind: 'grip', text: 'Hold the handles lightly and brace your stomach.', claim: CL.c2 },
     { kind: 'brace', text: 'Breathe out as you push. Control the plate on the way back.', claim: C(['CONSENSUS', 'DATA', 'MECH'], [ACE, WM, 'macdougall1985'], 'c3, c11, c5') },
   ],
@@ -227,7 +228,7 @@ export default {
   zooms,
   chips: ['knee-top', 'feel'],   // the zoom shell's chip row: the zoom keys, then feel
   copy: {
-    // D-TEXT-GOLDEN (#379 6637607604): posture 'seat'/'return' (c5: thighs clear of the ribs) is shown here.
+    // D-TEXT-GOLDEN / D-TEXT-PRINTED (#384 6652657067): posture 'seat' (c5: thighs clear of the ribs) is printed in setup step 3; 'return' in step 5.
     setupLine: 'Sit back, tailbone flat on the pad. Feet flat, knees at about 90 degrees, thighs clear of your ribs.',
     mistakeLine: 'Keep a small bend at the top. Never lock your knees.',
     cueLine: 'Heels pressed, soft knees.',

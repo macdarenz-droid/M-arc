@@ -3,7 +3,7 @@
     {
       "id": "pilot-a",
       "title": "Pilot A",
-      "ids": ["lib_dumbbell_biceps_curl", "lib_plank", "lib_rope_triceps_pushdown", "lib_barbell_row", "lib_dumbbell_bench_press", "lib_dumbbell_shoulder_press", "lib_upright_row", "lib_mountain_climbers"]
+      "ids": ["lib_dumbbell_biceps_curl", "lib_plank", "lib_rope_triceps_pushdown", "lib_barbell_row", "lib_dumbbell_bench_press", "lib_dumbbell_shoulder_press", "lib_upright_row"]
     }
   ],
   "optionsModule": "tools/plates/library/pages/pilot-a.closeups.mjs",
@@ -14,8 +14,7 @@
     "lib_barbell_row": { "optionsKey": "barbell_row" },
     "lib_dumbbell_bench_press": { "optionsKey": "dumbbell_bench_press" },
     "lib_dumbbell_shoulder_press": { "optionsKey": "dumbbell_shoulder_press" },
-    "lib_upright_row": { "optionsKey": "upright_row" },
-    "lib_mountain_climbers": { "optionsKey": "mountain_climbers", "pair": "palm-flat-floor-over", "pairFaults": ["hand-ahead"] }
+    "lib_upright_row": { "optionsKey": "upright_row" }
   },
   "jump": null
 }

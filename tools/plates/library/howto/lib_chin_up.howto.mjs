@@ -270,7 +270,8 @@ export default {
     wrist: { ext: V.wristRange, limitText: 'Keep your wrist straight, in line with your forearm, not curled.', claim: CL.wrist },
     pose: RIGHT_POSE,
     faults: FAULTS,
-    gripLine: 'Palms facing you, bar just below the base of your fingers, thumbs wrapped.',   // c1, c25 (the wrist line is limitText, c3)
+    gripLine: 'Palms facing you, bar just below the base of your fingers, thumbs wrapped.',   // the wrist line is limitText, c3
+    gripCite: ['c1', 'c21', 'c25'],
     cue: 'Thumbs wrapped, wrists straight.',   // c1, c3
   },
   contacts: ['hang-support'],

@@ -202,8 +202,8 @@ export default {
   },
   contacts: ['seat-back'],
   setup: [
-    { kind: 'adjust', text: 'Set the seat: handles at or just above shoulder height.', claim: CL.c1 },
-    { kind: 'position', text: 'Sit back against the pad, feet planted. Breathe out as you press.', claim: C(['CONSENSUS', 'DATA'], [ACE, 'macdougall1985'], 'c4, c5, c11') },
+    { kind: 'adjust', text: 'Handles at or just above shoulder height, elbows slightly in front.', claim: C(['CONSENSUS'], [ACE], 'c1, c3') },   // D-TEXT-PRINTED: posture 'elbows' (c3) from copy.setupLine
+    { kind: 'position', text: 'Sit back, feet planted. Breathe out as you press, head in line.', claim: C(['CONSENSUS', 'DATA'], [ACE, 'macdougall1985'], 'c4, c5, c11') },
     { kind: 'grip', text: 'Full grip, thumbs round, wrists straight.', zoom: 'hand', claim: CL.c2 },
     { kind: 'brace', text: 'Brace, keep the natural low-back curve, shoulders back and down.', zoom: 'low-back', claim: CL.c4 },
     { kind: 'load', text: 'One or two reps over target? Add 2 to 10 percent.', claim: CL.c13 },
@@ -227,7 +227,7 @@ export default {
   zooms,
   chips: ['hand', 'low-back', 'feel'],   // the zoom shell's chip row; the same keys and order as the default
   copy: {
-    // D-TEXT-GOLDEN (#379 6637607604): posture 'elbows' (c3) and 'head' (c5) are shown here; feet planted and brace stay in setup steps 2 and 4.
+    // D-TEXT-GOLDEN / D-TEXT-PRINTED (#384 6652657067): posture 'elbows' (c3) and 'head' (c5) are printed in setup steps 1 and 2 (copy.setupLine is not printed on the layers page).
     setupLine: 'Handles at or just above shoulder height, elbows slightly in front. Back on the pad, head in line.',
     mistakeLine: 'Never let the handles drop on the way down. Draw them down slowly with your back muscles.',
     cueLine: 'Back on the pad.',

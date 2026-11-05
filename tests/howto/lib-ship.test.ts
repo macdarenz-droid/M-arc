@@ -264,7 +264,7 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
   const BACK = 'docs/research/howto/shared/back-pain-box.json';
   // LIB-SHIP W3 (D-SHIP-A5BACK-CARDS): lb01.layers.json's pairWords rows (W3 layers fix, #384 6648454032) and
   // pilot-a.layers.json's mountain_climbers pairFaults row (Q-W3-14, F-PAIR-FAULTS #386), sorted by path
-  const PAIR_CARDS = ['assisted_pull_up', 'chin_up', 'close_grip_pulldown', 'inverted_row', 'mountain_climbers', 'single_arm_lat_pulldown', 'underhand_lat_pulldown']
+  const PAIR_CARDS = ['chin_up', 'close_grip_pulldown', 'inverted_row', 'single_arm_lat_pulldown']
     .map(id => `docs/research/howto/cards/${id}.json`);
   const ht4 = async (): Promise<any> => import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/fidelity/twins/ht4.mjs')).href);
   const pilotA = async (): Promise<string[]> => {
@@ -451,7 +451,7 @@ describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batc
     for (const order of [all, front]) {
       const spec: any = layersSpecOf('tools/plates/library/batches/lb01.json', { stageDir: mkdtempSync(join(tmpdir(), 'w3-leftout-')), all: order });
       expect(JSON.stringify(spec)).not.toContain('leg_press_calf_raise');
-      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(12);
+      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(10);   // 12 drawn LB1 rows less the 2 staged (underhand LIB-PLATEFIX-3, assisted_pull_up #384 6653062201)
     }
   }, 120_000);
 });

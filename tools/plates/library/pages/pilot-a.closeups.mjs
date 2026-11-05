@@ -17,7 +17,4 @@ export const CLOSEUP_OPTIONS = {
   barbell_row: ZOOM,
   dumbbell_bench_press: ZOOM,
   dumbbell_shoulder_press: ZOOM,
-  // LIB-SHIP W3 (Q-W3-14, F-PAIR-FAULTS #386): the palm-flat key's hand zoom, its own note and panel height
-  // (hands/hand-palm-flat.mjs: rightNote 'Whole hand down', panelHeight 170); the page swaps it for the pair panel.
-  mountain_climbers: { ...ZOOM, hand: { layout: 'single', uid: 'mc', rightNote: 'Whole hand down', panelHeight: 170 } },
 };

@@ -139,6 +139,8 @@ const zooms = [
   // are lat_pulldown's own numbers (its HIPS_UP root and PAD_GAP), written out so the family check sees equal leaves.
   {
     key: 'pad', chip: 'Knee pad', heading: 'Knee pad: right and wrong', kind: 'posture',
+    // `cite` (W3 second recheck, #384 6653062201): the pad halves cite c2, c3 (the hips-lifting text is not sourced, so it is dropped).
+    cite: { right: ['c2', 'c3'], wrong: ['c2', 'c3'] },
     crop: { center: { at: 'thighTop.r', off: [-8, 12] }, sizePx: 140 },
     right: 'end',
     wrong: { base: 'end', pose: { root: { at: [0, 0.5772146132970393, 0.027283355026593428] } }, parts: ['trunk', 'leg.r', 'leg.l'], equipment: { kneePad: { dy: 0.06 } } },
@@ -148,7 +150,7 @@ const zooms = [
       wrong: { text: 'Pad<br>too high', anchor: { at: [0, 0.5647817206547646, 0.38121249356203657], off: [0, 1] }, prefer: 'right' },
     },
     caption: { right: 'Pad firm on the thighs, hips down.',
-      wrong: 'Pad too high, hips lifting.' },
+      wrong: 'Pad too high, gap above the thighs.' },
     alt: {
       right: 'Side view of the thighs, knee pad and seat. The pad presses on the tops of the thighs, just above the knees. Feet flat, hips down on the seat.',
       wrong: 'The pad set too high, with a gap above the thighs. Drawn dashed over the right position.',

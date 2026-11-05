@@ -61,7 +61,6 @@ const CL = {
   c10: C(['DATA'], ['escamilla-2006'], 'c10'),
   c13: C(['CONSENSUS'], [YS, SL], 'c13'),
   c14: C(['MECH', 'WEAK'], ['mcgill-2015'], 'c14'),
-  spine: C(['MECH', 'WEAK', 'CONSENSUS'], ['mcgill-2015', YS, SL], 'c14, c13 (plain words: straight legs measured, bent knees inferred lower)'),
   c15: C(['MECH'], ['prinold-2016'], 'c15'),
   c17: C(['MECH', 'WEAK'], ['bullbar-calluses'], 'c17'),
   c19: C(['MECH', 'WEAK'], ['bullbar-calluses'], 'c19'),
@@ -195,10 +194,10 @@ const feel = {
     { key: 'grip', where: 'Forearms give out first', at: { muscles: ['forearms'] },
       // D-FEEL-MEANS-CAUSAL (#384 6649416891): the card states no cause for the grip giving out, so no means label.
       means: '',
-      fix: 'Use arm straps (ab slings).',
+      fix: 'Try the arm-strap (ab sling) version.',
       claim: CL.c10 },
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'Straight legs load the spine more, bent knees likely less.',
+      means: '',   // D-FEEL-MEANS-CAUSAL: the card states no cause
       fix: 'Keep the knees bent.',
       zoom: 'body-line', redFlag: 'back', claim: CL.backRow },
     { key: 'shoulder', where: 'Shoulder', at: {},   // pain, not a muscle taking over: no map mark (golden B pull_up)
@@ -220,7 +219,7 @@ const MISTAKES = [
     fix: 'Lower the legs with control.' },
 ];
 const RISKS = [
-  { key: 'spine', text: 'Straight legs load the spine more, bent knees likely less.', claim: CL.spine },
+  { key: 'spine', text: 'The straight-leg version measured about 3000 N of spine load. Bent knees likely less.', claim: CL.c14 },
   { key: 'shoulder', text: 'A long hang with arms overhead narrows the space under the shoulder roof.', claim: CL.c15 },
 ];
 
