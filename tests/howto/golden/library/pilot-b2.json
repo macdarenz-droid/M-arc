@@ -61,6 +61,22 @@
       "date": "2026-11-04",
       "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row).",
       "prev": "ba72467d084a841c0ff8895df693cfe05e68fbefb59244a9fc2fb891df5c73ae"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B2",
+      "ids": [
+        "lib_crunch"
+      ],
+      "pageSha256": "b656e4dfd8fc79fbdca88db345753465352631c4314d42cb754b8334bc383a6e",
+      "bytes": 339146,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W3-LAYERSZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6686326673 @ 4a0c0bec7c4f1e1adff7f91ba0672af8471bd1e6",
+      "date": "2026-11-06",
+      "why": "D-SHIP-W3-LAYERSZOOM (#384 6686326673; approvedBy supervisor under D-LIB-O5 point 4, superseding the supervisor's D-SHIP-W2-STAMP entry): build-layers-page.mjs applies applyZooms to the mirror specs, as build-page.mjs does. The rebuild equals the superseded page (7c66d68e) plus ZOOM_CSS once after <style> and crunch's normal and Mistake zoom groups, nothing else.",
+      "supersedes": 2,
+      "prev": "0b659af46e873d927980bb2c68ec683780ace4d1056bcf89a18f6f3114fae225"
     }
   ]
 }

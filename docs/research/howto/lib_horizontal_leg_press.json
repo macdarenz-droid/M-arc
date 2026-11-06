@@ -1,0 +1,24 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ee5a4905de4cf4ac5f58eeb06c90cb5d9ca31e6c9d617a0345a472439736c8bf
+{
+  "id": "lib_horizontal_leg_press",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/horizontal_leg_press.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-seated-leg-press",
+    "webmd-seated-leg-press",
+    "barnds2019",
+    "tassi1998",
+    "tassi1999",
+    "escamilla2001",
+    "macdougall1985",
+    "nhs-knee-pain",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "knee",
+    "back"
+  ]
+}

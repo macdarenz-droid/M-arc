@@ -9519,7 +9519,7 @@ if (gate.runs('LIB-ZOOM'))
   const mirror = makeMirror();
   try {
     const E = await loadEngine(mirror), env = loadPins().envelope;
-    const c = await candidateOf('lib_horizontal_leg_press', { all, platesHtml: html, engine: E, authoring: true });
+    const c = await candidateOf('lib_horizontal_leg_press', { all, platesHtml: html, engine: E });   // D-SHIP-W3-GATEZOOM (#384 6684076429): shipped, so the pinned candidate (authoring QA is refused at shipped)
     if (!c.plate.zoom?.mistake) errors.push(`${tag}: horizontal_leg_press has no Mistake zoom on its page`);
     const h5 = async css => (await browserResults(browser, html, [c], E, env, { widths: [390], css })).get(c.id).H5.map(p => p.key);
     const clean = await h5(null), planted = await h5('.plate .pz-ring { stroke: var(--surface-2); }');
@@ -9713,6 +9713,18 @@ if (gate.runs('LIB-SHIP'))
   if (errors.length === e0) console.log(`${tag}: ${SHIP.join(', ')} open their How-to; the owner's ${ELEVEN.length} named rows show none; Silent Black and Paper`);
 }
 
+
+// LIB-SHIP W3 D-SHIP-W3-PAUSEDSKIP (#384 6687335829): harness.mjs settle and settleApp skip an animation only when it is
+// paused AND fully outside the viewport. A running animation and a paused one in view still block; a paused one fully
+// below the viewport no longer does; the predicate without the viewport condition would let the in-view one through.
+if (gate.runs('LIB-SHIP-W3-PAUSEDSKIP'))
+{
+  const tag = 'LIB-SHIP-W3-PAUSEDSKIP';
+  const { pausedSkip } = await import('../tools/plates/fidelity/paused-skip.mjs');
+  const r = await pausedSkip(browser, await import('../tools/plates/fidelity/harness.mjs'));
+  for (const p of r.problems) errors.push(`${tag}: ${p}`);
+  if (!r.problems.length) console.log(`${tag}: ${r.rows.length} rows: running and paused-in-view animations block settle and settleApp, a paused one fully off screen does not, the no-viewport mutation is caught`);
+}
 
 // LIB-12: the hand views (palm-flat, cupped, front-rack, ball-contact) and the battle-rope pair (card LIB-12; plan 2.3;
 // tools/plates/library/hands/gate-lib12.mjs). Every LIB-12 drawn pair in 5 themes at 390, 360 and 340 px: no horizontal

@@ -862,6 +862,172 @@ Ruled acceptable (#379 6627240712). Each row: the card line verbatim, the sheet 
 | crunch | feel.rows[2].fix | Slow down; keep your low back on the mat. | Slow down. Keep your low back on the mat. | split at semicolon (9→9 words) |
 | crunch | copy.cueLine | Breathe out and curl your ribs toward your hips. | Ribs toward your hips. | cut 9→4 words |
 
+## 12. W3 PLAN update (base main 8d596fab, train 64; W2 #379 @ c5bd9439 read for precedent)
+
+W3 is 13 rows: the 12 drawn LB1 rows and horizontal_leg_press move into `batches/lb01.json` and `batches/zoom.json`
+(D-SHIP-MOVE as amended by Q-W2-10: the moved row is the old row except `stage` and `sources` = sourceLines(card)).
+leg_press_calf_raise moves to `batches/lb01.json` at stage `left-out:D-OWNER-LIB142`, with no pages and no pin (ruling 14).
+Columns are read from each card, spec and hand key on this base. GRIP is the D-SHIP-GRIP case (section 10 key); `inh` =
+the card delegates the field to its parent through INHERIT_MAP. Posture zooms: `M` = the card's Wrong is the plate's own
+drawn fault (its Mistake pose is reused); `DV` = a one-joint drawing value from the plate's poses (D-SHIP-DRAWVAL, no
+number in copy); `T` = a text checkpoint (D-SHIP-TEXTZOOM). Flags: lb1/DESIGN.md:84-91 (no EXPECTED for lb1/zoom); all
+raised ones are approved by D-OWNER-FLAGS, and each pin's why cites it.
+
+| id | file | tier | arch. | GRIP | hand zoom / no-zoom entry | posture zooms (M / DV / T) | flags | way-out (tier A) | inherit (parent) | other |
+|---|---|---|---|---|---|---|---|---|---|---|
+| chin_up | lb01 | A | hang | full | key bar `hang`/under (hand-bar.mjs:34) | body line M; shoulders DV (scap elevation) | — | dismount gap → safety checker (Q-W2-3) | pull_up: THUMB; zooms[key=hand] (**Q-W3-1**) | — |
+| hanging_knee_raise | lb01 | A | hang | full | key bar `hang`/over (:35) | body line M; top position DV (hip flexion short of hip height) | — | dismount gap → safety checker | hanging_leg_raise: THUMB | back box: in appliesTo |
+| assisted_pull_up | lb01 | A | hang | a (contact ← ga:hang-base) | key bar `hang`/over (:36) | knee pad M; shoulders DV (scap elevation) | F7 (D-OWNER-FLAGS) | get-off-pad gap → safety checker (selector-pin covers the pin only) | — | — |
+| inverted_row | lb01 | C | pull | a (contact ← ga:pull-base) | key bar `row`/over (:38) | body line M; top position DV (elbow short) | — | — | — | back box: in |
+| close_grip_pulldown | lb01 | C | pull | a (contact ← ga:pull-base) | key v-handle `pull` (hand-v-handle.mjs:15) | bottom position M; pad inherited | — | — | lat_pulldown: zooms[key=pad] (**Q-W3-3**) | variant line required (section 7) |
+| underhand_lat_pulldown | lb01 | C | pull | a (contact ← ga:pull-base) | key bar `pulldown`/under (:39) | torso DV (trunk tilt; card's 30° never in copy); pad inherited | — | — | lat_pulldown: posture[key=path] (**Q-W3-2**); zooms[key=pad] (**Q-W3-3**) | variant line required; fixture id (**Q-W3-6**) |
+| single_arm_lat_pulldown | lb01 | C | pull | a (contact ← ga:pull-base) | key d-handle `pull` (hand-d-handle.mjs:17) | bottom position M; top position T (no tension: a cable state, not a pose) | — | — | lat_pulldown: setup[kind=position,zoom=path].text (**Q-W3-2**) | — |
+| straight_arm_pulldown | lb01 | C | hold | c (thumb, contact, wrist are GA hold defaults; type c1) → cable_fly hold-default precedent (Q-W2-9) | card-no-zoom | elbow M; trunk DV (lumbar extension) | — | — | — | back box: in |
+| chest_supported_row | lb01 | C | pull | c (thumb, contact GA pull defaults; wrist c3) → **Q-W3-4** | card-no-zoom | chest pad M; elbow finish DV (shoulder extension short) | — | — | — | back box: in; fixture id (**Q-W3-6**) |
+| resistance_band_row | lb01 | C | pull | full, but no HandleProfile/HandContact value names a band wrap → **Q-W3-5** | card-no-zoom (hand-band.mjs:5 also lists it in GAPS) | back line M; shoulder blades DV (scap retraction short); band on feet T (band position on the sole) | F1, F7 (D-OWNER-FLAGS) | — | — | back box: in |
+| incline_machine_press | lb01 | C | push | inh (handle, thumb, contact, wrist) | inherited: machine_chest_press's hand zoom (36 leaves) | shoulder blades M; start height T ('Start depth' precedent) | — | — | machine_chest_press: 7 fields (table below) | hint A (inherited text, no new hint) |
+| shoulder_press | lb01 | A | push | inh (thumb, contact, wrist); handle from its own c2/c7 | inherited: machine_chest_press's hand zoom | low back M; seat height T ('Start depth' precedent) | F7 (D-OWNER-FLAGS) | fail-a-rep gap → safety checker (get-in-out and selector-pin cover entry and pin only) | machine_chest_press: 4 fields | hint A; back box: in |
+| horizontal_leg_press | zoom | B | balance | inh (whole `handling`) | forced by inherited posture `hands` → **Q-W3-2** | knee at the top M; seat set DV (hip flexion) | none raised [unverified until the batch qa runs at the move; LAYERS READY lists the measured set] | — | leg_press: handling + 4 postures (**Q-W3-2**) | approved plate zoom (zoom/approved.json, A2 pin); back box: in |
+| leg_press_calf_raise | lb01 | B | — | — | — | — | — | — | never ships | `left-out:D-OWNER-LIB142`, no spec, no pages, no pin |
+
+Counts: 13 to ship; 7 hand zooms drawn by a pair key (bar 5, v-handle 1, d-handle 1); 2 inherited hand zooms; 3
+card-no-zoom entries (D-SHIP-C3); 5 GRIP (a), 2 GRIP (c), 3 `inh`, 2 full, 1 full-with-enum question. No new gap-ruled
+hand zoom. Red flags: shoulder, elbow, back, wrist, knee only; every one has a box (7 back links, all in the back box's
+appliesTo). Tier-A way-out gaps: chin_up, hanging_knee_raise, assisted_pull_up, shoulder_press (section 7 marked only
+shoulder_press; the other 3 carry the same dismount gap on their cards, so all 4 go to the safety checker per Q-W2-3).
+Hints: incline_machine_press and shoulder_press reuse text A (shipped), so ids.ts gains no distinct text; bytes are
+re-measured in the READY. Gate: lib_assisted_pull_up (screenshot-gate.mjs:797, workout seeds) and lib_horizontal_leg_press
+(:9522, candidateOf) are named; the gate runs on the finished head and any screen change is settled add-only.
+
+**Inherit map (D-SHIP-FAMILY): the 8 ruled D-LIB9a-MAP entries, used for the first time.** Every path was resolved with
+`atPath` on the parent's shipped golden-B content on this base (scratch script; leaf counts below). All parents are
+among the 8, so the resolver from W2 (library-gate.mjs:56, #379) finds them in every head.
+
+| child | card field | path(s) | parent leaves | status |
+|---|---|---|---|---|
+| chin_up | grip.thumb (wrapped, never thumbless by default) | THUMB | 1 + 1 ('wrapped') | clean |
+| chin_up | zooms.hand (full grip, thumb around the bar, is the only grip shown) | zooms[key=hand] | 49 (pull_up: wrist ext 15, Wrong = fingertip-slip, palm-deep) | **Q-W3-1** |
+| close_grip_pulldown | zooms: seat height / thigh pad crop | zooms[key=pad] | 43 (crop on thighTop.r, Wrong pose root.at and callout at lat_pulldown's world coordinates, feelRow low-back) | **Q-W3-3** |
+| hanging_knee_raise | grip.thumb (wrapped every set) | THUMB | 1 + 1 | clean |
+| incline_machine_press | grip.type / grip.thumb / grip.handContact / grip.wrist | handling.handle; THUMB; handling.contact; handling.wrist | 1; 1 + 1; 1; 5 | clean |
+| incline_machine_press | posture['Straight wrist, forearm behind the handle'] / ['Feet flat, hips back'] | posture[key=wrist] (zoom 'hand', anchor end/grip.r); posture[key=feet] (anchor end/ankle.r) | 6; 5 | clean: anchors exist on the child plate (landmarksOf), zoom 'hand' comes inherited |
+| incline_machine_press | zooms['hand'] | zooms[key=hand] | 36 (press-horizontal handle, Wrong wrist bent back) | clean (heading 'Hand: right and wrong' byte-equal, D-SHIP-Q3) |
+| shoulder_press | grip.thumb / grip.handContact / grip.wrist / zooms['hand'] | THUMB; handling.contact; handling.wrist; zooms[key=hand] | 1 + 1; 1; 5; 36 | clean; the zoom's 'Horizontal handle' alt and 'Vertical handles: the same rule.' note are the parent's words, inherited as ruled |
+| single_arm_lat_pulldown | setup: lean back only slightly (about 30 degrees at most) … | setup[kind=position,zoom=path].text | 1 ('Lean back slightly, about 30 degrees at most.') | **Q-W3-2** |
+| underhand_lat_pulldown | posture: bar comes down in front of the face, never behind the head | posture[key=path] | 5 (zoom 'path', anchor chin) | **Q-W3-2** |
+| underhand_lat_pulldown | zooms: seat height / thigh pad crop | zooms[key=pad] | 43 | **Q-W3-3** |
+| horizontal_leg_press | grip | handling | 41 (pad-handle, light squeeze, faults, gripLine, cue) | clean |
+| horizontal_leg_press | posture['Tailbone…'] / ['Whole foot flat…'] / ['Soft knees at the top'] / ['Hands light…'] | posture[key=back] (zoom back-on-pad); [key=feet] (zoom foot); [key=soft]; [key=hands] (zoom hand) | 6; 6; 5; 6 | **Q-W3-2** (anchors sacrum, heel.r, knee.r, grip.r and stills start/end exist on the child plate) |
+| leg_press_calf_raise | (3 fields) | — | — | never ships; its entry stays and is never read |
+
+### W3 questions (for 'SHIP W3 PLAN RULED')
+
+- **Q-W3-1 chin_up's inherited hand zoom contradicts its card and its key.** zooms[key=hand] makes the child's hand
+  zoom leaf-equal to pull_up's: Right wrist ext 15 ("Wrist tipped back a little"), Wrong pages fingertip-slip and
+  palm-deep. The chin_up card's own zoom `hand` says "wrist straight in line with the forearm" (c3) and Wrong "Wrist
+  curled forward" (c20), and the bar key draws chin_up `hang`/under with the `curled` fault, "never golden B's slip pose
+  (follow-up 11)" (hand-bar.mjs:13-14). Both cannot hold. **Proposal:** amend chin_up's entry to what the inherit field
+  states ("full grip, thumb around the bar"): `zooms.hand` → `['zooms[key=hand].hand.right.thumb']` alongside THUMB, and
+  draw the zoom from the bar key with the card's words. Mutation: thumb 'over' in the child zoom is red. Other options:
+  copy pull_up's zoom (drops c3/c20 from the zoom: S2), or hold chin_up (S3).
+- **Q-W3-2 Mapped paths that carry a zoom link force zooms the child's card does not have.** underhand_lat_pulldown's
+  posture[key=path] holds `zoom: 'path'`; single_arm_lat_pulldown's selector `setup[kind=position,zoom=path]` only matches
+  a step linked to a 'path' zoom; horizontal_leg_press's posture back/feet/hands hold `zoom` back-on-pad, foot, hand.
+  None of these zooms is on the child's card (cards list hand + torso; hand + bottom + top position; knee at the top +
+  seat set), and the parents' zooms are built on the parents' plates (leg_press's sled is not the horizontal press).
+  **Proposal (map amendment, D-LIB9a-MAP form):** compare the checkpoint's words and anchor, not its zoom link:
+  underhand → `posture[key=path].label`, `.detail`, `.anchor`; horizontal_leg_press → the same three leaves for back,
+  feet and hands (soft already has no zoom); single_arm → `setup[kind=position].text` (lat_pulldown has exactly one
+  `position` step, howto.mjs:192, so the selector stays unique on both sides). The child checkpoints carry no zoom link
+  (or link a zoom of their own card). Each amended entry gets a red: one inherited word changed. Other option: copy the
+  parents' zooms as new map entries (plate-specific crops and poses on another plate; not recommended), or hold.
+- **Q-W3-3 The inherited pad zoom carries lat_pulldown's world coordinates.** close_grip and underhand plates use the
+  same seat and roller (spec comments; SEAT_TOP 0.42, roller r 0.055), but their end root is (0, 0.5162, 0.0307) at tilt
+  −8 against the parent's (0, 0.5172, 0.0273) at −10, so the copied Wrong `root.at` lifts the hips 6.1 cm and moves them
+  3.4 mm, and the copied callout anchor is a parent world point. The zoom's `feelRow: 'low-back'` also needs a low-back
+  feel row on the child. **Proposal:** accept the copy as ruled (=== is the rule), list the values as drawing values in
+  LAYERS READY and let the panel judge; if the panel fails it, narrow the entry to the caption/alt/callout text leaves
+  by a ruling. If either child card has no low-back feel claim, that is an S3 question at LAYERS READY.
+- **Q-W3-4 chest_supported_row GRIP (c).** Thumb and contact are "pull archetype default (GA 3.1), no exercise-specific
+  source"; wrist is c3. **Proposal:** contact `finger-base` from `ga:pull-base` (Q-W2-2 form, CONVENTION, never shown)
+  and thumb `wrapped` from golden B's pull default (seated_cable_row and lat_pulldown handling: thumb wrapped), cited
+  CONVENTION as cable_fly cites `hold-default` (Q-W2-9), with a derived pin and a red. card-no-zoom entry. Other: S3.
+- **Q-W3-5 resistance_band_row's band wrap has no type value.** The card claims the wrap (c11, c12) and a straight wrist,
+  but HandleProfile has no band and HandContact no wrap (content-types.ts:68-74). **Proposal:** `handle` omitted
+  (optional), contact `mid-palm` from c11 "band flat in the palm", thumb `wrapped` from c11 "grasped firmly", the wrap
+  steps in setup copy citing c11/c12; card-no-zoom (no hand zoom drawn). Other: S3 until a band contact exists.
+- **Q-W3-6 Fixture ids (ruling 15 / D-SHIP-Q8).** lib_underhand_lat_pulldown and lib_chest_supported_row are LIB-4b's
+  scratch targets (tools/plates/library/fidelity/fixture.mjs:27-28, with expected QA lines :41-43) and `TAKEN` in
+  ci/scratch.mjs:32. **Proposal:** ruling 15 covers them: swapped to never-shipping ids in the push that moves LB1, the
+  fixture tests re-run, the changed lines listed. tests/howto/lib-zoom.test.ts reads zoom/rows.json (:76-80); its reads
+  move to batches/zoom.json with the lbN tests' reads (write_scope line "lbN-plates.test.ts reads of rows.json").
+
+**Order of work after the ruling.** Q6-form local scratch flip of the 13 first (every red listed); then the moves with
+the A9 guard replacements (lb1-plates.test.ts:968, library-lint.test.ts SHIPPED and its INHERIT_MAP coverage lines);
+sheets; LAYERS READY for `lb01` and `zoom` pages; panel; stamps; flip; generate; budgets at N; QA; merge W2's main and
+regenerate; READY.
+
+### W3 D-TEXT-GOLDEN inventory
+
+Rule (D-TEXT-GOLDEN, #379 6637607604): the app prints no posture section, so every posture checkpoint and every card
+handlingMistake must show in an existing slot. Each row below gives the claim, the slot where it shows, and the claim ids.
+Rows marked **moved** had their text added to that slot in this commit; every other claim was already visible. Plate
+slots are the spec's callouts and mistake tells (cue text). Card posture points that the sheet has no checkpoint for
+(chest_supported_row c6 "head still", hanging_knee_raise c9 "brief hold", inverted_row c7) are listed under "card".
+
+| id | claim | slot | claim ids |
+|---|---|---|---|
+| chin_up | hang | copy.setupLine, mistakes[1].fix | c18, c7 |
+| chin_up | shoulders | setup[3], zoom shoulders caption | c4 |
+| chin_up | wrists | gripLine, zoom hand caption | c3 |
+| chin_up | elbows | plate callout "Elbows in front" | c5 |
+| chin_up | line | zoom body-line caption, mistakes[0] | c6 |
+| chin_up | chin | mistakes[1].fix, plate callout "Chin to bar" | c7 |
+| chin_up | 3 handlingMistakes | mistakes[0-2] | c6 c17, c7, c24 c4 |
+| hanging_knee_raise | still, knees, curl, lower | setup[2], plate callouts, zoom top caption, cueLine, mistakes[2] | c4, c5, c7 c6, c8 |
+| hanging_knee_raise | wrists | wrist limitText | c16 |
+| hanging_knee_raise | card: brief hold | plate callout "Knees above hips" cue | c9 |
+| hanging_knee_raise | 3 handlingMistakes | mistakes[0-2] | c4 c8, c6, c8 |
+| assisted_pull_up | straight, chin | zoom knee-pad caption, mistakes[1].fix | c3 |
+| assisted_pull_up | blades | setup[3], zoom shoulders caption | c7 |
+| assisted_pull_up | **elbows (moved)** | setup[3] "…then pull elbows to ribs…" | c7 |
+| assisted_pull_up | **chest (moved)** | setup[3] "…chest up." | c2 |
+| assisted_pull_up | still | mistakes[2] | c8 c5 |
+| assisted_pull_up | 3 handlingMistakes | mistakes[0-2] | c16, c8 c5, c5 |
+| inverted_row | line, arms, chest, blades, lower, wrists | setup[2], mistakes[0-2], zoom top caption, setup[3], gripLine | c3, c4, c5, c15 |
+| inverted_row | card: horizontal body as you get stronger | setup[4] | c7 |
+| inverted_row | 3 handlingMistakes | mistakes[0-2] | c3 c7, c4 c7, c5 |
+| close_grip_pulldown | thighs, lean, elbows, stop, return | setup[1], setup[3], plate callouts, mistakes[0-2] | c3, c4, c5, c7, c8 |
+| close_grip_pulldown | card: blades down first | setup[4] | c9 |
+| close_grip_pulldown | 3 handlingMistakes | mistakes[0-2] | c6 c7 c5, c4 c8, c8 |
+| underhand_lat_pulldown | thighs, lean, elbows, stop | setup[0], setup[2], plate callout, mistakes[0] | c4, c7, c6, c11 |
+| underhand_lat_pulldown | **path (moved)** | copy.mistakeLine "…behind your head or past your chin…" | inherit[0], c6, c8 |
+| underhand_lat_pulldown | card: blades, return | setup[3], mistakes[2] | c10, c9 |
+| underhand_lat_pulldown | 3 handlingMistakes | mistakes[0-2] | c8 c6, c7, c9 |
+| single_arm_lat_pulldown | square, shoulder, pocket, stop | setupLine, plate callouts, mistakes[0] | c1 c7, c3, c2, c13 c2 |
+| single_arm_lat_pulldown | **top (moved)** | copy.mistakeLine "Return slowly, never let it fly up." | c4, c5 |
+| single_arm_lat_pulldown | 3 handlingMistakes | mistakes[0-2] | c10 c2, c6, c11 c6 |
+| straight_arm_pulldown | elbows, arc, trunk, chest | mistakes[0], cueLine, plate callouts, zoom trunk caption | c4, c5, c9 c7, c5 |
+| straight_arm_pulldown | **return (moved)** | copy.setupLine "…let the bar rise slowly." | c8 |
+| straight_arm_pulldown | 3 handlingMistakes | mistakes[0-2] | c6 c4, c7, c9 c10 |
+| chest_supported_row | upright, chest, elbows, return, wrists | setup[3], mistakes[0-1], plate callouts, gripLine | c7, c4, c3 |
+| chest_supported_row | **finish (moved)** | zoom elbow-finish caption "…then a short pause." | c5 |
+| chest_supported_row | 2 handlingMistakes | mistakes[0-1] | c6 c4, c7 |
+| resistance_band_row | tall, shoulders, elbows, squeeze, band | plate callouts, setup[4], zoom blades caption, mistakes[2] | c3, c4, c2 |
+| resistance_band_row | **breathe (moved)** | feelLine "Breathe out as you pull." (slow return: mistakes[0]) | c5 |
+| resistance_band_row | 3 handlingMistakes | mistakes[0-2] | c5, c3 c6, c2 |
+| incline_machine_press | start, top, blades, soft, wrist, feet | setup[0], zoom blades caption, mistakes[0], mistakes[2], gripLine, setup[1] | c1, c2, c5, c3, inherited |
+| incline_machine_press | 3 handlingMistakes | mistakes[0-2] | c5, c4, c3 |
+| shoulder_press | height, back, soft | setup[0], plate callout, zoom low-back caption, mistakes[2] | c1, c4 c5, c6 |
+| shoulder_press | **elbows, head (moved)** | copy.setupLine "…elbows slightly in front… head in line." | c3, c5 |
+| shoulder_press | **breath (moved)** | feelLine "Breathe out as you press." | c5, c11 |
+| shoulder_press | 3 handlingMistakes | mistakes[0-2] | c6, c5 c4, c6 |
+| horizontal_leg_press | back, feet, soft, hands, top, knees-line, seat | setup[0-3], cueLine, mistakes[0], mistakes[2], gripLine | c1, c3, c4, c2, c7, c6 |
+| horizontal_leg_press | **seat/return (moved)** | copy.setupLine "…thighs clear of your ribs." and feelLine "Control the plate on the way back." | c5 |
+| horizontal_leg_press | 3 handlingMistakes | mistakes[0-2] | c7, c4 c2 c1, c6 |
+
+Moved: 10 claims across 8 ids. None failed to fit. Every moved line passes the copy lint and the word caps; inherited leaves are unchanged.
+
 ## 17. W7 PLAN (base main 8bb433bd, train 67, with W2 #379 @ 84360f00 merged to build ahead)
 
 W7 is 29 rows: lb8/rows.json (8), lb9/rows.json (9) and lb10/rows.json (12) move into `batches/lb08.json`,
