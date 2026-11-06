@@ -88,7 +88,6 @@ export const HEEL_UP = solve(a => landmarksOf(misAt(a), H)['heel.r'][1] - HEEL_R
 const MIS = misAt(HEEL_UP);
 const mistakePose = { root: MIS.root, plant: MIS.plant };
 const LE = landmarksOf(end, H), LM = landmarksOf({ ...end, ...mistakePose }, H);
-const KNEE_M = LM['knee.r'];
 // Panel mx1 item 2: the lifted foot's whole outline, dashed, drawn over the solid foot (the engine masks the faulty
 // outline where it runs inside the end figure, which hid the gap under the heel).
 const PXM = 146.28571428571428, X0 = 170, CAM = { view: 'side', near: 'r', facing: 'right', pxm: PXM, P: w => [X0 + w[2] * PXM, 339 - w[1] * PXM] };
@@ -127,21 +126,23 @@ export default {
   tempo: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Drive up', move: true, word: 'Slow' }],
   mistake: {
     pose: mistakePose,
-    // Dashed guides only (drawn over the solid figure, never hidden): the lifted sole, heel to ball, and a plumb from
-    // the faulty knee to the floor, which lands past the toes.
+    // Dashed guides only (drawn over the solid figure, never hidden): the lifted sole, heel to ball. LIB-PLATEFIX-3 item 5
+    // (#405 6682844211): the knee plumb went with the `knee` tell (p8 names the knee caving in, not the knee forward; K1).
     guides: [
       { kind: 'dashed', pts: [{ at: 'heel.r', pose: 'mistake' }, { at: 'ball.r', pose: 'mistake' }] },
       { kind: 'dashed', pts: MIST_FOOT },
       { kind: 'arrow', from: toW([HEEL_ARROW_X, 339]), to: toW([HEEL_ARROW_X, HEEL_PX[1]]) },
-      { kind: 'dashed', pts: [{ at: 'knee.r', pose: 'mistake' }, [0, 0, KNEE_M[2]]] },
     ],
     tells: [
-      { key: 'heel', text: 'Heel lifts', anchor: { at: 'heel.r', pose: 'mistake' }, cue: 'The standing heel comes off the floor at the bottom.' },
-      { key: 'knee', text: 'Knee forward', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 246, top: 246 }, cue: 'The knee drives forward as the weight rolls onto the toes.' },
+      // box: the spot the placer chose with the knee tell gone (11.17 %, 84.08 % of 358), pinned so the plate keeps two
+      // boxed labels (F4's approved range [2, 6]; LIB-PLATEFIX-3 item 5)
+      { key: 'heel', text: 'Heel lifts', anchor: { at: 'heel.r', pose: 'mistake' }, box: { left: 40, top: 301 }, cue: 'The standing heel comes off the floor at the bottom.' },
     ],
   },
-  // No zoom (panel lb4p item 5 asked for one): the knee tell moves 12.9 px at plate scale, so H3 passes there and
-  // QA forbids a Mistake zoom on it (H3.zoom:not-needed:mistake, qa/zoom.mjs:97). Conflict posted on #289.
+  // LIB-PLATEFIX-3 item 5 (#405 6682844211, the D-LIB15R2-ZOOM form): with the `knee` tell dropped, the heel tell moves
+  // 5.13 px at plate scale, under the 11.39 px bar, so a Mistake zoom: k 2.5, the smallest k on the library's half-step
+  // grid with 5.13 k >= 11.39 (k 2 gives 10.3). The pose is unchanged; nothing is enlarged.
+  zoom: { view: 'mistake', k: 2.5 },
   pilot: { drawableFault: 'Top fault: bouncing out of the bottom (p8), seen only as speed; the knee cave needs a front view; the plate draws the next listed fault, the standing heel lifting (p8).' },
   alt: 'Pistol squat, side view. Standing on one leg with the arms reaching forward and the other leg lifted in front, the lifter sits the hips back and bends the standing knee fully, the standing foot flat and the free leg straight and hovering forward.',
 };
