@@ -99,10 +99,10 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     const PAIRS = 'tools/plates/library/hands/pairs.mjs', pr = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => PAIRS in r.files);
     expect(pr).toHaveLength(22);
     for (const r of pr) { expect(r.files[PAIRS]).toBe(sha(rd(PAIRS))); r.files[PAIRS] = 'X'; }
-    // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs key and build-layers-page.mjs key is re-pinned there and pinned exactly by
+    // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs and build-layers-page.mjs keys are re-pinned there and pinned exactly by
     // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
-    const BM: Record<string, string> = { 'tools/plates/library/render/region-fix.mjs': '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8',
-      'tools/plates/library/build-layers-page.mjs': '2d123a0121e145bfd2c3f2d366cfcfb93fd1b55087f96cea28b7a2cefbeea4fb' };
+    // (build-layers-page.mjs's key is checked against its current file and put back by lessW3 above, a W3 key too)
+    const BM: Record<string, string> = { 'tools/plates/library/render/region-fix.mjs': '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8' };
     for (const r of Object.values<any>(m.rows)) for (const [k, v] of Object.entries(BM)) if (k in r.files) { expect(r.files[k]).toBe(sha(rd(k))); r.files[k] = v; }
     // main e623d3ef's MANIFEST.json with the same entries blanked (was f0ec7bd5… on main 8bb433bd, daf6779b… with BOX alone; re-measure if a later re-pin merges first)
     expect(sha(JSON.stringify(m))).toBe('a97a39e2402296337bf8c9947dc0b4e6d266d7732292caefbd0796fd5a49386f');

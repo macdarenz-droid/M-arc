@@ -193,7 +193,7 @@ describe('F-BODYMAP-FRONTDELT applyBodymapFix', () => {
 
 /* every committed page that draws the front map: library pages carry the fix, golden B's pages keep the vendored map */
 const LIBRARY_PAGES = ['tests/howto/golden/library/pilot-a.layers.html', 'tests/howto/golden/library/pilot-b.layers.html',
-  'tests/howto/golden/library/pilot-b2.layers.html'];
+  'tests/howto/golden/library/pilot-b2.layers.html', 'tests/howto/golden/library/lb01.layers.html', 'tests/howto/golden/library/zoom.layers.html'];
 const GOLDEN_B_PAGES = ['tests/howto/golden/howto-layers.html', 'tools/plates/layers/artifact/technical-plates.html'];
 describe('F-BODYMAP-FRONTDELT pages', () => {
   for (const f of LIBRARY_PAGES) {
