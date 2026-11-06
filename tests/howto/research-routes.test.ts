@@ -102,7 +102,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
     for (const r of Object.values<any>(m.rows)) r.files['tools/plates/library/render/closeup/zoom.mjs'] = 'X';
     // main e623d3ef's MANIFEST.json with the same entries blanked (was f0ec7bd5… on main 8bb433bd, daf6779b… with BOX alone; re-measure if a later re-pin merges first)
-    expect(sha(JSON.stringify(m))).toBe('3f504bf3ce8cab6d9b93bded5068e7b8af75e177867f8f37d15e44f78df44429');   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was a97a39e2…386f (research-routes-3), now with zoom.mjs's key also blanked
+    expect(sha(JSON.stringify(m))).toBe('3804f49d92287abee80e42877f50daf86562bbfe76165ba1cca07d3f7ca1eee4');   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18; re-measured after W3, D-PF3-W3MERGE): was a97a39e2…386f (main 62d3dcb6), now with zoom.mjs's key also blanked; main 62d3dcb6's MANIFEST with the same blanks gives 3804f49d too
   });
 });
 

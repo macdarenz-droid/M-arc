@@ -56,12 +56,13 @@ describe('PF3 E2: path guides get the path CSS (Silent Black arrowheads)', () =>
 // LIB-PLATEFIX-3 E1/E2 [golden update] (#405 6684669717 item 18, D-BODYMAP-LIB form): the 22 library MANIFEST rows re-pin
 // exactly the two builder files this card changes; crop-projection.test.ts and lib-shapes.test.ts blank zoom.mjs's key on
 // the strength of this block (build-layers-page.mjs's key is already checked against its file there).
+// D-PF3-W3MERGE: after W3 (main 62d3dcb6) the library MANIFEST has 35 rows (W3's 13 added); was 22, now 35, each row still checked
 describe('PF3 E1/E2 MANIFEST re-pin', () => {
-  it('every one of the 22 rows pins the current render/closeup/zoom.mjs and build-layers-page.mjs', () => {
+  it('every one of the 35 rows pins the current render/closeup/zoom.mjs and build-layers-page.mjs', () => {
     const sha = (p: string) => createHash('sha256').update(readFileSync(p)).digest('hex');
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
     const rows = Object.entries<any>(m.rows);
-    expect(rows).toHaveLength(22);
+    expect(rows).toHaveLength(35);
     for (const k of ['tools/plates/library/render/closeup/zoom.mjs', 'tools/plates/library/build-layers-page.mjs'])
       for (const [id, r] of rows) expect(r.files[k], `${id} ${k}`).toBe(sha(k));
   });
