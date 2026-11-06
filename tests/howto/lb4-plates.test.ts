@@ -1442,7 +1442,7 @@ describe('LIB-SMALL: jump-squat as approved in panel mx17 (#358, head c176723d) 
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was bb63e833, now 9c960084 (items 3-7 redraw; the plates panel re-approves)
       "normalOverlay": "9c960084fddf64db93bc114f03df87707fc7d19da676f6bc086e61ae14410e81",
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 1ea9bbb0, now e0adfb20 (items 3-7 redraw; the plates panel re-approves)
-      "mistakeSvg": "020d59705d53ae2cf2f8a1650324340c64da3eca39786973dd42f141fb09bdf8",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was e0adfb20…
+      "mistakeSvg": "020d59705d53ae2cf2f8a1650324340c64da3eca39786973dd42f141fb09bdf8",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was e0adfb20… (main 1ea9bbb0)
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was e32160ac, now 5515e408 (items 3-7 redraw; the plates panel re-approves)
       "mistakeOverlay": "5515e4085a2ca8c654b025f950500469c55e4f1868a983b51c22c807ecbdccfa",
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was e2b1b056, now ee850f65 (items 3-7 redraw; the plates panel re-approves)
@@ -1789,10 +1789,8 @@ describe('LIB-SPLIT A4 and A6: runQa node half on the 6 plates, H3 pinned at the
   it('clean: every hard check\'s node half passes on all 6; Trace and deviation pinned; only the Bulgarian plate carries a zoom (Mistake, k 1.5)', async () => {
     const got: Record<string, [number, number]> = {};
     for (const id of IDS6) { const r = await qa(await candOf(id)); expect(node(r), id).toEqual([]); got[id] = [+r.metrics.traceLen.toFixed(2), +r.metrics.deviation.toFixed(2)]; }
-    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was the plate-scale Trace >= 22.11 on all 6, now the Trace at the scale it is
-    // drawn (x the normal zoom's k, bulgarian's ruled k 1.5: 31.4 px) >= 22.11; the deviation bar unchanged
-    const kOf = (id: string) => (S[id.slice(4)].zoom?.view === 'normal' ? S[id.slice(4)].zoom.k : 1);
-    for (const id of IDS6) { expect(got[id]![0] * kOf(id), id).toBeGreaterThanOrEqual(22.11); expect(got[id]![1], id).toBeGreaterThanOrEqual(11.39); }
+    // LIB-PLATEFIX-3 review Low 1 (#405): main's plate-scale bar, unchanged (the round-1 x-zoom-k scaling is gone; no SPLIT plate has a zoom, so a zoom can never shorten it)
+    for (const id of IDS6) { expect(got[id]![0], id).toBeGreaterThanOrEqual(22.11); expect(got[id]![1], id).toBeGreaterThanOrEqual(11.39); }
     for (const [id, [t, d]] of Object.entries(PIN)) { expect(got[id]![0], `${id} trace`).toBeCloseTo(t, 2); expect(got[id]![1], `${id} deviation`).toBeCloseTo(d, 2); }
     expect(Object.keys(PIN).sort(), JSON.stringify(got)).toEqual([...IDS6].sort());
     // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7 R11): was bulgarian's normal k 1.5 (D-PF3-BSSZOOM), now no zoom on any SPLIT plate again
@@ -1864,11 +1862,11 @@ describe('LIB-SPLIT A2: the 5 rows approved in panel mx28 (#364 6585103107, head
   const APPROVED: Record<string, Record<string, string>> = {
     "step-up": {
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 9bffea48, now d57e08db (items 3-7 redraw; the plates panel re-approves)
-      "normalSvg": "5741cf81859366bcc4a531f3ae003ce1f68d8ad0428d3641d296b0e59328b7de",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was d57e08db…
+      "normalSvg": "5741cf81859366bcc4a531f3ae003ce1f68d8ad0428d3641d296b0e59328b7de",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was d57e08db… (main 9bffea48)
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 1f4d76a5, now caa8424a (items 3-7 redraw; the plates panel re-approves)
       "normalOverlay": "caa8424aec975cb93f4b548e82f53b92b72d01ceb932c93721ae2c2201b9388d",
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 4fa8a2a2, now c898eeec (items 3-7 redraw; the plates panel re-approves)
-      "mistakeSvg": "fc0ad80a09cba4077be84ebbcd0f91b12f443fea2d96c30744cfebd399ae8cf3",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was c898eeec…
+      "mistakeSvg": "fc0ad80a09cba4077be84ebbcd0f91b12f443fea2d96c30744cfebd399ae8cf3",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was c898eeec… (main 4fa8a2a2)
       "mistakeOverlay": "18fd4b60ff86004583339b2c0fa95ff89130559bcf4518de6fea4166fe8de979",
       "tells": "8fdf4a24934b50822201a42f062bbfcfa873afa15727fcc42a54eaac84cc017f",
       "tempo": "cfa4a0ab2667ca0875d0232447ce76260179fb165b22bf6932aa7cdc38ca9970",
@@ -1943,7 +1941,7 @@ describe('LIB-SPLIT A2: bulgarian_split_squat as approved in panel mx31 (#364 65
   const APPROVED: Record<string, Record<string, string>> = {
     "bulgarian-split-squat": {
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was fbd896b8, now 0efaa081 (items 3-7 redraw; the plates panel re-approves)
-      "normalSvg": "b8641280af27c84ff07e411858d3112e7821077033cff00701f82b6768ffb5e7",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was 0efaa081…
+      "normalSvg": "b8641280af27c84ff07e411858d3112e7821077033cff00701f82b6768ffb5e7",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was 0efaa081… (main fbd896b8)
       "normalOverlay": "d5f3b567f68d8fe33c9001a17707fb81bd67d4986d72548ad280861ef845ee40",
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 268dca12, now 6c3b648a (items 3-7 redraw; the plates panel re-approves)
       "mistakeSvg": "6c3b648a9bcf1b032374b1182dea86a49f70fc48b0f75033543b1daff31cb3ae",
