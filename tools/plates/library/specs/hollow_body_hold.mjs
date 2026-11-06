@@ -99,8 +99,9 @@ export default {
   // line and the hip-to-ankle line in the hold (lb9/sizes.json LEG's measure), at the hip (mx27 R7)
   measure: { vertex: 'hip.r', from: { dir: [1, 0] }, to: 'ankle.r', radius: 132, title: 'Legs', value: 'about 15°', expect: 15, box: { left: 286, top: 196 } },   // mx27 R7: the house angle arc at the hip
   callouts: [
-    { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 130, top: 196 }, cue: 'Press your low back flat to the floor the whole hold.' },
-    { key: 'legs', text: 'Legs low', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 210, top: 196 }, cue: 'Legs straight and off the floor, no higher than about 30 degrees.' },
+    { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 130, top: 196 }, cue: 'Press your low back flat to the floor the whole hold.' },   // c1 c2 (LIB-PLATEFIX-3 W7, #394 6682923012)
+    // c4, the legs low and off the floor: carried by the "Legs about 15°" measure alone (LIB-PLATEFIX-3, #394 6683570453:
+    // the "Legs low" callout duplicated it and read against the Mistake's "Legs too low")
     { key: 'shoulders', text: 'Shoulders up', anchor: { at: 'shoulderTop.r', off: [0, -3] }, box: { left: 16, top: 214 }, cue: 'Lift your shoulders and arms off the floor, biceps by your ears.' },
   ],
   mistake: {
@@ -109,7 +110,7 @@ export default {
       { kind: 'arrow', from: { along: ['knee.r', 'ankle.r'], t: 0.85, pose: 'end', off: [0, 6] }, to: { along: ['knee.r', 'ankle.r'], t: 0.85, pose: 'mistake', off: [0, -2] } },
     ],
     tells: [
-      { key: 'low', text: 'Legs too<br>low', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 252, top: 200 }, cue: 'Your legs sink too low, so the hip flexors take over.' },
+      { key: 'low', text: 'Legs too<br>low', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 252, top: 200 }, cue: 'Your legs sink too low, which might put too much stress on the hip flexors.' },   // c5; LIB-PLATEFIX-3 W7 (#394 6682923012): was 'so the hip flexors take over'
     ],
   },
   alt: 'Hollow body hold, side view. Lying on the back with the low back pressed to the floor, the lifter lifts the shoulders, arms by the ears, and the straight legs about 15 degrees off the floor, and holds the crescent.',

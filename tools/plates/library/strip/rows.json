@@ -588,13 +588,13 @@
    "claim": "c14",
    "rows": [
     {
-     "phase": "Lower",
+     "phase": "Lift",
      "move": true,
      "blank": true,
      "claim": "c14"
     },
     {
-     "phase": "Lift",
+     "phase": "Lower",
      "move": true,
      "blank": true,
      "claim": "c14"

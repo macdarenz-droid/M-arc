@@ -27,7 +27,7 @@
 import { landmarksOf, fk, resolve, normPose, bodyShapes } from '../engine.mjs';
 
 const H = 1.75, BODY = { height: H };
-export const SIZES = Object.freeze({ PELVIS_TUCK: 15, KNEE_DEG: 90, GAP: 0.02, MIS_TILT: 14 });
+export const SIZES = Object.freeze({ PELVIS_TUCK: 15, KNEE_DEG: 90, GAP: 0, MIS_TILT: 14 });
 const { PELVIS_TUCK, KNEE_DEG: KNEE, GAP, MIS_TILT } = SIZES;
 const OCCIPUT = [0, 0.955, -0.056];                    // back of the skull on the side head outline (head frame, H): crunch's
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
@@ -132,14 +132,17 @@ export default {
   callouts: [
     { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 138, top: 194 }, cue: 'Keep your low back flat on the mat every rep.' },
     { key: 'knees', text: 'Knees over<br>hips', anchor: { at: 'knee.r', off: [8, -6] }, box: { left: 258, top: 186 }, cue: 'Knees bent 90 degrees, right over your hips.' },
-    { key: 'opposite', text: 'Opposite<br>limbs', anchor: { along: ['knee.l', 'ankle.l'], t: 0.5, off: [0, -6] }, box: { left: 214, top: 270 }, cue: 'Lower one arm and the opposite leg together, just above the floor.' },
+    { key: 'opposite', text: 'Opposite<br>limbs', anchor: { along: ['knee.l', 'ankle.l'], t: 0.5, off: [0, -6] }, box: { left: 214, top: 270 }, cue: 'Lower one arm and the opposite leg together until hand and heel lightly touch.' },   // c4; LIB-PLATEFIX-3 W7 (#394 6682923012): was 'just above the floor'
   ],
   mistake: {
     pose: mistakePose,
-    guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }, { kind: 'dashed', pts: ARCH_UNDER.map(q => [...q]) }],
+    // LIB-PLATEFIX-3 W7 (#394 6682923012 L5, c6; ruled #405 6683319630): only the arched trunk is outlined (the limbs'
+    // re-solved few px read as stray dashed offsets), and the floor-to-low-back gap is a red up-arrow (was a dashed tick).
+    parts: ['torso'],
+    guides: [{ kind: 'arrow', from: gapBot, to: gapTop }, { kind: 'dashed', pts: ARCH_UNDER.map(q => [...q]) }],
     tells: [
       { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake', off: [0, -1] }, box: { left: 138, top: 206 }, cue: 'Your low back arches off the mat as the arm and leg lower.' },
     ],
   },
-  alt: 'Dead bug, side view. Lying on the back with the low back on the mat, knees over the hips at 90 degrees and arms straight up, the lifter lowers one arm overhead and the opposite leg until hand and heel are just above the floor, then returns.',
+  alt: 'Dead bug, side view. Lying on the back with the low back on the mat, knees over the hips at 90 degrees and arms straight up, the lifter lowers one arm overhead and the opposite leg until hand and heel lightly touch the floor, then returns.',
 };

@@ -474,9 +474,9 @@
     "basis": "claim: c3 'knees bent 90 degrees directly over the hips'; the engine's knee flexion"
    },
    "GAP": {
-    "value": 0.02,
+    "value": 0,
     "unit": "m",
-    "basis": "claim: c4 'until the hand and heel lightly touch it without resting' (plate.end 'just above the floor, not resting'); 2 cm from the drawn fist and heel to the floor, 2.96 px at 148.18 px/m, the D-SUPCORE-CLEAR 2 px gap with the least room above it; no source gives a height"
+    "basis": "claim: c4 'until the hand and heel lightly touch it without resting'; the drawn fist and heel touch the floor (LIB-PLATEFIX-3 W7, #394 6682923012, ruled #405 6683319630; was 0.02 m, plate.end's 'just above the floor')"
    },
    "MIS_TILT": {
     "value": 14,
