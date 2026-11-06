@@ -187,7 +187,7 @@ export default {
   trace: { point: 'heel.r', trim: TRACE_TRIM },
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   callouts: [
-    { key: 'knee', text: 'Knee<br>steady', anchor: { at: 'knee.r', off: [7.5, 0] }, box: { left: 182, top: 290 }, cue: 'Keep your knee steady as it bends and straightens.' },   // round 2: (228, 292) -> (182, 290), between the standing leg and the new column
+    { key: 'knee', text: 'Knee<br>steady', anchor: { at: 'knee.r', off: [7.5, 0] }, box: { left: 194, top: 290 }, cue: 'Keep your knee steady as it bends and straightens.' },   // round 2: (228, 292) -> (194, 290), between the standing leg and the new column
     { key: 'still', text: 'Upper body<br>still', anchor: 'backUpper', box: { left: 60, top: 110 }, cue: 'Thighs on the pad, upper body still.' },
     { key: 'foot', text: 'Foot above<br>knee', anchor: { at: 'heel.r', pose: 'end' }, box: { left: 30, top: 184 }, cue: 'Curl until your foot is higher than your knee.' },
   ],
