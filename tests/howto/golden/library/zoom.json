@@ -51,31 +51,15 @@
       "ids": [
         "lib_horizontal_leg_press"
       ],
-      "pageSha256": "6961dcdc55878bac8ebce642516e8e97b2d4222ea174e81f507667e61e3a83f5",
-      "bytes": 236380,
-      "approvedBy": "supervisor",
-      "decision": "D-SHIP-W3-LAYERS",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653343780 @ 2f5d0652402435477f57feb5c357ea48531da774",
-      "date": "2026-11-06",
-      "supersedes": null,
-      "why": "W3 layers approved (#384): the calibrated layers panel 6648454032 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6648733957 and 6649856513, focused rechecks 6649416891 and 6653062201, and the delta check with PIN GO 6653343780 (exactly the 3 ruled strings at 2f5d0652). assisted_pull_up, underhand_lat_pulldown held (LIB-PLATEFIX-3).",
-      "prev": "16082f61fe45dec2db5ee1ad6d0f033b7b9261ab1a9ee231e056277bf693d382"
-    },
-    {
-      "kind": "layers-page",
-      "batch": "ZOOM",
-      "ids": [
-        "lib_horizontal_leg_press"
-      ],
       "pageSha256": "a42991add7cb548d0fe9cb04b6f3bfe5ded277c612f68ee4fdabf21a394227f8",
       "bytes": 288036,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W3-LAYERSZOOM",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6686326673 @ 4a0c0bec7c4f1e1adff7f91ba0672af8471bd1e6",
       "date": "2026-11-06",
-      "why": "D-SHIP-W3-LAYERSZOOM (#384 6686326673): build-layers-page.mjs applies applyZooms to the mirror specs, as build-page.mjs does, so the layers page's Mistake plate carries the zoom circle its pinned plate (and the app chunk) has. The rebuild equals the superseded page plus ZOOM_CSS once after <style> and horizontal_leg_press's Mistake zoom group, nothing else.",
-      "supersedes": 2,
-      "prev": "2fc056cea934bd20c5d66c07067bc017d077224d2299ef9e4a7954bd37c20c34"
+      "supersedes": null,
+      "why": "D-SHIP-W3-LAYERSZOOM (#384 6686326673): build-layers-page.mjs applies applyZooms to the mirror specs, as build-page.mjs does, so the layers page's Mistake plate carries the zoom circle its pinned plate (and the app chunk) has. The rebuild equals the superseded page plus ZOOM_CSS once after <style> and horizontal_leg_press's Mistake zoom group, nothing else. Folded in place into this lane's unmerged first layers-page entry (D-REPIN-UNMERGED point 1; review #384 6694475595, supervisor 6694482130); it replaces the D-SHIP-W3-LAYERS pin 6961dcdc (236380 B, approval 6653343780).",
+      "prev": "16082f61fe45dec2db5ee1ad6d0f033b7b9261ab1a9ee231e056277bf693d382"
     }
   ]
 }
