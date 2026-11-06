@@ -103,6 +103,24 @@ describe('F-SCRATCH-SYNTH: ci/scratch.mjs check and seed run on the built tree (
     expect(C.builtProblems(C.SCRATCH_4C, r)).toEqual([]);
     expect(C.setProblems(C.SCRATCH_4C, r)).toContain('lib_scratch_fourc_a is a row of batches/zz-lib4b.json');
   });
+  it('every setProblems refusal is kept on a built tree (only the build\'s own zz-lib4b row and exercises.json entry are dropped)', () => {
+    const r = built(), base = C.SCRATCH_4C as any[], with0 = (patch: object) => base.map((s, i) => (i === 0 ? { ...s, ...patch } : s));
+    const cases: [string, any[], string][] = [
+      ['shared key', base.map((s, i) => (i === 1 ? { ...s, key: base[0].key } : s)), 'a pair key is shared'],
+      ['duplicate id', [...base, base[0]], 'an id is listed twice'],
+      ['LB1', with0({ id: `lib_${C.LB1[0]}` }), `lib_${C.LB1[0]} is an LB1 id (D-LIB-SCRATCHIDS)`],
+      ['LB2', with0({ id: `lib_${C.LB2[1]}` }), `lib_${C.LB2[1]} is an LB2 id (D-LIB-SCRATCHIDS)`],
+      ['TAKEN', with0({ id: C.TAKEN[0] }), `${C.TAKEN[0]} is another fixture's id`],
+      ['pilot A', with0({ id: 'lib_barbell_row' }), 'lib_barbell_row is a pilot A id (D-LIB11-SCRATCHIDS)'],
+      ['pilot B', with0({ id: 'lib_seated_leg_curl' }), 'lib_seated_leg_curl is a pilot B id (D-LIB11-SCRATCHIDS)'],
+      ['PILOT-A2', with0({ id: 'lib_box_jump' }), 'lib_box_jump is a PILOT-A2 id (D-LIB11-SCRATCHIDS)'],
+      ['PILOT-A3', with0({ id: 'lib_reverse_lunge' }), 'lib_reverse_lunge is a PILOT-A3 id (D-LIB11-SCRATCHIDS)'],
+      ['real id outside exercises.json', with0({ id: 'lib_zz_nowhere', copyOf: undefined }), 'lib_zz_nowhere is not in src/data/exercises.json'],
+      ['missing copyOf', with0({ copyOf: 'lib_zz_nowhere' }), `${base[0].id}: copyOf lib_zz_nowhere is not in src/data/exercises.json`],
+    ];
+    expect(C.builtProblems(base, r)).toEqual([]);
+    for (const [name, set, want] of cases) expect([name, C.builtProblems(set, r)]).toEqual([name, expect.arrayContaining([want])]);
+  });
   it('mutations: an id missing from the scratch batch, an id in a shipped batch, an id missing from exercises.json are each red', () => {
     expect(C.builtProblems(C.SCRATCH_4C, built(zz => { delete zz.rows.lib_scratch_fourc_a; }))).toEqual([`lib_scratch_fourc_a is not a row of ${FX.BATCH}`]);
     expect(C.builtProblems(C.SCRATCH_4C, built((_, o) => { o.rows.lib_scratch_fourc_b = {}; }))).toEqual(['lib_scratch_fourc_b is a row of batches/zz-move.json']);

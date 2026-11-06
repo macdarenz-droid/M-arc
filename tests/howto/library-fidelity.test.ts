@@ -306,7 +306,7 @@ describe('LIB-4b B5: the scratch fixture sources (D-LIB4-FIXTURE, lib4-cards 11.
           if (a[i] === b[i]) continue;
           const ma = a[i]!.match(imp), mb = b[i]!.match(imp);
           if (ma && mb && ma[1] === mb[1] && ma[3] === mb[3]) { why.push('import'); continue; }
-          if (kind === 'spec' && a[i]!.replace(/\bid: '[a-z0-9_]+', name: '[^']*'/, '') === b[i]!.replace(/\bid: '[a-z0-9_]+', name: '[^']*'/, '') && b[i]!.includes(`id: '${P.card}', name: '`)) { why.push('id'); continue; }
+          if (kind === 'spec' && a[i]!.replace(/\bid: '[a-z_]+', name: '[^']*'/, '') === b[i]!.replace(/\bid: '[a-z_]+', name: '[^']*'/, '') && b[i]!.includes(`id: '${P.card}', name: '`)) { why.push('id'); continue; }
           const e = edits.find((e: string[]) => a[i]!.replace(e[0]!, e[1]!) === b[i]);
           if (kind === 'spec' && e) { why.push('edit'); continue; }
           if (kind === 'howto' && a[i]!.replace(`id: 'lib_${s.from}'`, `id: '${s.id}'`) === b[i]) { why.push('id'); continue; }

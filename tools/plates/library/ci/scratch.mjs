@@ -97,15 +97,20 @@ export function seamed(text) {
 const sh = (root, cmd, args) => execFileSync(cmd, args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'], maxBuffer: 1 << 28 }).trim();
 const commit = (root, msg) => { sh(root, 'git', ['add', '-A']); sh(root, 'git', ['commit', '-q', '-m', msg]); return sh(root, 'git', ['rev-parse', 'HEAD']); };
 
-/** F-SCRATCH-SYNTH: a built scratch tree's set problems: each id is in exercises.json (its copyOf's copy) and a row of
- *  the scratch batch only, never of a shipped batches/ file. */
+/** F-SCRATCH-SYNTH: the set problems on a built scratch tree (the check and seed steps). Every setProblems refusal is
+ *  kept (LB1/LB2, TAKEN, the pilot ids, an id outside exercises.json, a batches/ row, a missing copyOf, a duplicate id, a
+ *  shared pair key) except the two that the build itself makes true for each synthetic id:
+ *    - "<id> is a row of batches/zz-lib4b.json": the build writes the scratch batch;
+ *    - "<id> is in src/data/exercises.json (a copyOf id is synthetic)": addSynthetic writes the entry.
+ *  In their place the built state is required: each id in exercises.json and a row of the scratch batch. */
 export function builtProblems(set, root = ROOT) {
-  const known = new Set(JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8')).map(e => e.id)), out = [];
-  for (const p of scratchTargetProblems(set.map(s => ({ ...s, copyOf: undefined })), root)) if (!p.endsWith(` is a row of batches/${BATCH.split('/').pop()}`)) out.push(p);
+  const own = new Set(set.flatMap(s => [`${s.id} is a row of batches/${BATCH.split('/').pop()}`, `${s.id} is in src/data/exercises.json (a copyOf id is synthetic)`]));
+  const out = setProblems(set, root).filter(p => !own.has(p));
+  const known = new Set(JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8')).map(e => e.id));
+  const rows = Object.keys(JSON.parse(readFileSync(join(root, BATCH), 'utf8')).rows ?? {});
   for (const s of set) {
     if (!known.has(s.id)) out.push(`${s.id} is not in the built tree's src/data/exercises.json`);
-    if (s.copyOf && !known.has(s.copyOf)) out.push(`${s.id}: copyOf ${s.copyOf} is not in src/data/exercises.json`);
-    if (!Object.keys(JSON.parse(readFileSync(join(root, BATCH), 'utf8')).rows ?? {}).includes(s.id)) out.push(`${s.id} is not a row of ${BATCH}`);
+    if (!rows.includes(s.id)) out.push(`${s.id} is not a row of ${BATCH}`);
   }
   return out;
 }
@@ -191,7 +196,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.log(`scratch tree: ${commit(root, '[do not merge] [golden update] LIB-4c scratch: 6 source-level scratch ids and their MANIFEST.json rows (D-LIB4c-1 a)')}`);
   } else if (step === 'check') {
     const c = copyProblems(root);
-    console.log(`C16 set: ${SCRATCH_4C.map(s => s.id).join(', ')}: outside LB1 and LB2, none taken, own keys`);
+    console.log(`C16 set (built tree): ${SCRATCH_4C.map(s => s.id).join(', ')}: every setProblems rule but the build's own zz-lib4b rows and exercises.json entries; each id a zz-lib4b row and in exercises.json`);
     console.log(c.length ? `C16 copy diff FAIL:\n${c.join('\n')}` : 'C16 copy diff: only id, name, research-card and import lines and the ruled COPY_EDITS differ');
     process.exit(c.length ? 1 : 0);
   } else if (step === 'seed') {
