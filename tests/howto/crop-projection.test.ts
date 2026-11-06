@@ -138,7 +138,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
   });
   it('every pinned row pins the current crop.mjs and hand.mjs, and every other entry equals main 8d596fab', () => {
-    const m = lessW3(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8')), [KEYS[0]]);   // LIB-SHIP W3
+    const m = lessW3(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8')), [KEYS[0]!]);   // LIB-SHIP W3
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
     expect(Object.keys(m.rows)).toContain('lib_crunch');
