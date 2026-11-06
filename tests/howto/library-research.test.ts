@@ -31,8 +31,8 @@ const PINS: Record<string, string> = {
   'shared/palm-flat.json': 'fb4e54fd3f6cf3f91b15cb0d17cf0297743962141b4c695d9e46a1eee1414d11',
   'shared/prone-checkpoints.json': 'e5a5e3dbecd12a8de0f51dba8cd6ac53b520e928376c2143cf8f8afcca6a85a6',
   'shared/rope-rule.json': 'eb0727e069d46e9e780fa76bab7a299d4ab241ade8d8ca484dfa333ef0759010',
-  // RESEARCH-ROUTES-1 F-STOPLINE-CLAIM (D-RR-HEAD; ruled #400 6681126219): copied from research eaaa9478 (#401)
-  'shared/stop-line.json': '585e3c9f296cf0c2dd6a51840951140a801ecda32a076e59ac8a6b24bba4a3ba',
+  // RESEARCH-ROUTES-1 F-STOPLINE-CLAIM (D-RR-HEAD; ruled #400 6681126219): copied from research 5981080e (#401)
+  'shared/stop-line.json': 'a29315e498b484f84b7372c9ca15503e131e57302cb61bb2ff064de99cea75db',
   'shared/selector-pin.json': 'af4316219601c66beda13c2dbbacea6d3f592e30a6fbda3d3c9309d417c6abb9',
   'shared/unrack-rerack.json': '6f54cb7135f79212eb013812161774f4bf6662ca904a2ba3b62332788ef0025b',
   'shared/wrist-curl-exemption.json': '236c2b2cd91684ab119fbc29d0bf8e526762ee11265c61e25433b64ea10bcd9b',

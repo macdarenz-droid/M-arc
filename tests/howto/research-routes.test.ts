@@ -79,6 +79,9 @@ describe('RESEARCH-ROUTES-1 F-STOPLINE-CLAIM: the safety-line kind and the stop-
     expect(c.kind).toBe('safety-line');
     expect(c.line).toEqual({ text: "Stop the set. Don't train through the pain.", claim: ['c1', 'c2', 'c3'] });
     expect(c.appliesTo).toHaveLength(67);
+    // review FIX (#400): c1 names its source scope, as c2 and c3 do; never plain "elbow pain"
+    expect(c.claims[0].text).toBe('NHS self-care advice for wrist pain, back pain and tennis elbow is to stop or cut down activities that cause pain or make it worse (written for those conditions, applied here to training).');
+    for (const x of c.claims) expect(x.text, x.id).toMatch(/written for /);
     for (const id of ['box_jump', 'hollow_body_hold']) expect(c.appliesTo).not.toContain(id);
   });
   it('mutation: a safety-line card without its line is red, as is an unknown kind', async () => {
