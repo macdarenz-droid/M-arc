@@ -63,7 +63,11 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
     expect(rows).toHaveLength(16);
     for (const r of rows) { expect(r.files[BOX]).toBe(sha(rd(BOX))); r.files[BOX] = 'X'; }
-    // main e623d3ef's MANIFEST.json with the same one entry blanked (was f0ec7bd5… on main 8bb433bd; re-measure if a later re-pin merges first)
-    expect(sha(JSON.stringify(m))).toBe('daf6779bd9505c07f28f805fac904bd0acd6408c78a65a8ce966691814502e69');
+    // F-SCRATCH-SYNTH (#397, D-SCRATCH-SYNTH-KEYIDX) re-pins hands/pairs.mjs in its 22 rows: each pins the current file, blanked too
+    const PAIRS = 'tools/plates/library/hands/pairs.mjs', pr = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => PAIRS in r.files);
+    expect(pr).toHaveLength(22);
+    for (const r of pr) { expect(r.files[PAIRS]).toBe(sha(rd(PAIRS))); r.files[PAIRS] = 'X'; }
+    // main e623d3ef's MANIFEST.json with the same entries blanked (was f0ec7bd5… on main 8bb433bd, daf6779b… with BOX alone; re-measure if a later re-pin merges first)
+    expect(sha(JSON.stringify(m))).toBe('a97a39e2402296337bf8c9947dc0b4e6d266d7732292caefbd0796fd5a49386f');
   });
 });
