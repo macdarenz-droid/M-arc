@@ -528,20 +528,28 @@ describe('LIB-14 bulk (LB4 BULK GO, 6341498444): bodyweight_squat, goblet_squat,
   });
   it('step_up c1, c6: the whole lead foot on the box top in both poses; the trailing foot flat on the floor at the step position and clear of the box when standing tall', () => {
     const r = rep(S.step_up);
-    for (const [k, p] of [['heel.r', 'start'], ['ball.r', 'start'], ['heel.r', 'end'], ['ball.r', 'end'], ['heel.l', 'end'], ['ball.l', 'end']]) {
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was heel.l/ball.l at 'end' and the standing-tall check at 'start', now 'start' and
+    // 'end' (item 4 swapped the poses: start = the step position, end = standing tall); the same 6 checks, the same 0.5 cm
+    for (const [k, p] of [['heel.r', 'start'], ['ball.r', 'start'], ['heel.r', 'end'], ['ball.r', 'end'], ['heel.l', 'start'], ['ball.l', 'start']]) {
       const c = r.checks.find((x: any) => x.landmark === k && x.pose === p && x.cm != null);
       expect(c?.cm, `${p} ${k}`).toBeLessThanOrEqual(0.5);
     }
-    const l = lmOf(S.step_up, 'start');
+    const l = lmOf(S.step_up, 'end');
     expect(Math.min(l['heel.l'][1], l['toe.l'][1])).toBeGreaterThan(0.45);
   });
   it('step_up c6, c7: the torso upright in both poses (hip-to-shoulder line within 10 deg of vertical)', () => {
     for (const p of ['start', 'end']) { const l = lmOf(S.step_up, p); expect(Math.abs(fromV(l.hips, l.shoulders)), p).toBeLessThanOrEqual(10); }
   });
-  it('step_up c1 Mistake: the trunk at least 25 deg further forward with the hips held; the trailing heel up 3.5 cm on its toe pad (±0.5 px)', () => {
-    const e = lmOf(S.step_up, 'end'), m = lmOf(S.step_up, 'mistake');
+  it('step_up c1 Mistake: the trunk at least 25 deg further forward than at the step position, mid-rise (lead knee 90 deg); the trailing heel up 3.5 cm on its toe pad (±0.5 px)', () => {
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was against 'end' (the step position) with the hips held (<= 0.5 cm), now against
+    // 'start' (the step position after item 4's swap) with the lead knee at the ruled mid-rise 90 deg (±0.5; the hips rise
+    // by design). Mutation: the step position itself (main's Mistake hips) bends the knee 105 deg and is red (last line).
+    const e = lmOf(S.step_up, 'start'), m = lmOf(S.step_up, 'mistake');
     expect(fromV(m.hips, m.shoulders) - fromV(e.hips, e.shoulders)).toBeGreaterThanOrEqual(25);
-    expect(Math.hypot(e['hip.r'][1] - m['hip.r'][1], e['hip.r'][2] - m['hip.r'][2])).toBeLessThanOrEqual(0.005);
+    const kneeAt = (l: any) => { const a = [0, 1, 2].map(i => l['hip.r'][i] - l['knee.r'][i]), b = [0, 1, 2].map(i => l['ankle.r'][i] - l['knee.r'][i]);
+      return 180 - Math.acos((a[0]! * b[0]! + a[1]! * b[1]! + a[2]! * b[2]!) / Math.hypot(...a) / Math.hypot(...b)) * 180 / Math.PI; };
+    expect(Math.abs(kneeAt(m) - 90)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(kneeAt(e) - 90)).toBeGreaterThan(0.5);
     expect(m['heel.l'][1]).toBeCloseTo(0.035, 4);
     expect(Math.abs(sink(S.step_up, 'foot.l'))).toBeLessThanOrEqual(0.5);
   });
@@ -580,7 +588,9 @@ describe('LIB-14 slice Mistakes, tells, cues, callouts and tempo (DESIGN.md sect
     forward_lunge: 'knee', walking_lunge: 'chest', bodyweight_lunge: 'knee', bodyweight_split_squat: 'knee', bulgarian_split_squat: 'knee' };   // LIB-SPLIT (DESIGN.md 17.2; bulgarian 17.11)
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells, the first carrying the proposed key', () => {
-    const ONE_TELL = ['bulgarian_split_squat'];   // D-SPLIT-BSSHOVER (#364 6592673388): one tell, on the resting rear knee, exactly 1
+    const ONE_TELL = ['bulgarian_split_squat', 'pistol_squat', 'jump_squat'];   // D-SPLIT-BSSHOVER (#364 6592673388): one tell, on the resting rear knee, exactly 1
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was ['bulgarian_split_squat'], now + pistol_squat (the knee
+    // tell dropped, K1 p8; item 5) and jump_squat ("Hips high" j5-unsupported; item 6), each exactly 1, as ruled 6682844211
     for (const id of specsDrawn()) { expect(keyProblems(S[id])).toEqual([]); if (ONE_TELL.includes(id)) { expect(S[id].mistake.tells.length, id).toBe(1); continue; } expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3); }
   });
   it('mutation: the first tell key swapped is red', () => {
@@ -927,7 +937,9 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     bulgarian_split_squat: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Stand', move: true }],
   };
   // The ruled pose map (D-LIB14-STEPUP-POSE; DESIGN.md section 9): the spec pose each card pose is drawn as.
-  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB4.map(id => [id, id === 'step_up' ? { start: 'end', end: 'start' } : { start: 'start', end: 'end' }]));
+  // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was step_up { start: 'end', end: 'start' } (D-LIB14-STEPUP-POSE), now the identity for
+  // every id: item 4 (ruled #405 6682844211) draws the card's start as the spec start (the Trace rises onto the box)
+  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB4.map(id => [id, { start: 'start', end: 'end' }]));
   const KEYS = ['plateFacts', 'tempo', 'topFault'];
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
   const quoteText = (id: string, claim: string) => readJson(`docs/research/howto/quotes/${id}.json`).quotes.filter((q: any) => q.claim === claim).map((q: any) => q.text).join(' ');
@@ -1005,11 +1017,12 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     const d = cardOf('wall_sit'); d.topFault = 'knees';
     expect(topFaultProblems(d, 'feet')).toEqual(['drawable:true but topFault is not the drawn fault']);
   });
-  it('D-LIB14-STEPUP-POSE: step_up\'s card start is the step position (not standing on the box) and its end is standing tall on the box (c1, c6), so the map swaps them', () => {
+  it('step_up\'s card start is the step position (not standing on the box) and its end is standing tall on the box (c1, c6); since LIB-PLATEFIX-3 item 4 the spec draws them in that order, so the map is the identity', () => {
     const p = cardOf('step_up').plate;
     expect(p.start).toMatch(/on the box, the other on the floor/);
     expect(p.end).toMatch(/^Standing tall on the box/);
-    expect(POSE_MAP.step_up).toEqual({ start: 'end', end: 'start' });
+  // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was { start: 'end', end: 'start' }, now the identity (item 4); a fact under the old swap is red (mutation below)
+    expect(POSE_MAP.step_up).toEqual({ start: 'start', end: 'end' });
   });
   /** 14.7 rules 10, 15, D-LIB9-CARDFIELDS and the pose map: kind, one form, a claim of its own card, and a pose that is
    *  the map's image of a card pose. */
@@ -1028,9 +1041,13 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     bodyweight_squat: C(['heel.r', 'ball.r', 'heel.l', 'ball.l'], 'end', 'end', 'b7'),
     wall_sit: [{ kind: 'angle', joint: 'knee.r', pose: 'end', cardPose: 'end', deg: 90, claim: 'w2' }, { kind: 'angle', joint: 'hip.r.flex', pose: 'end', cardPose: 'end', deg: 90, claim: 'w2' },
       ...C(['backUpper', 'buttock'], 'start', 'start', 'w5'), ...C(['backUpper', 'buttock'], 'end', 'end', 'w5')],
-    step_up: [...C(['heel.r', 'ball.r'], 'end', 'start', 'c6'), ...C(['heel.l', 'ball.l'], 'end', 'start', 'c1'), ...C(['wrist.r', 'wrist.l'], 'end', 'start', 'c5'), ...C(['heel.r', 'ball.r'], 'start', 'end', 'c1')],
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was each step_up fact's pose the swap's image ('end' for card start, 'start' for card end), now
+    // the identity (item 4; the card edit in the same commit, plateFacts being a machine key outside cards.sha.json)
+    step_up: [...C(['heel.r', 'ball.r'], 'start', 'start', 'c6'), ...C(['heel.l', 'ball.l'], 'start', 'start', 'c1'), ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c5'), ...C(['heel.r', 'ball.r'], 'end', 'end', 'c1')],
     pistol_squat: C(['heel.r', 'ball.r'], 'end', 'end', 'p3'),
-    jump_squat: [...C(['heel.l', 'heel.r'], 'start', 'start', 'j2'), ...C(['sole.r'], 'end', 'end', 'j4')],   // LIB-SMALL PLAN (lb4/DESIGN.md 16); cfsmall: j4 names one mid-foot, so the near side only (#358 6547988428)
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was + the two j2 heel contacts at the start (the take-off crouch), now j4 only: item 6
+    // (ruled 6682844211) draws the start as the touchdown on the balls, heels up, so no drawn pose carries j2's fact
+    jump_squat: [...C(['sole.r'], 'end', 'end', 'j4')],   // LIB-SMALL PLAN (lb4/DESIGN.md 16); cfsmall: j4 names one mid-foot, so the near side only (#358 6547988428)
     // LIB-SPLIT facts plan (lb4/DESIGN.md 17.3): setup hand quotes at the start, kneecap contacts at the end
     // cfsp D-SPLIT-FRONTFOOT (#364 6584536292): the front foot pressed into the floor at the bottom, heel.r and ball.r at the end
     forward_lunge: [...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c5'), ...C(['heel.r', 'ball.r'], 'end', 'end', 'c1')],
@@ -1038,7 +1055,8 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     bodyweight_lunge: [],
     bodyweight_split_squat: C(['knee.l'], 'end', 'end', 'c1'),
     // D-SPLIT-BSSHOVER (#364 6592673388): knee.l's end fact is the kneecap 3 cm above the floor (joint centre 0.049 + 0.03 m)
-    bulgarian_split_squat: [{ kind: 'height', landmark: 'knee.l', pose: 'end', cardPose: 'end', m: 0.079, claim: 'c3' }, ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c9'), ...C(['heel.r', 'ball.r'], 'end', 'end', 'c3')],
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was m 0.079 (0.049 + 0.03), now 0.118 (0.049 + 0.069: D-SPLIT-BSSHOVER amended, item 3)
+    bulgarian_split_squat: [{ kind: 'height', landmark: 'knee.l', pose: 'end', cardPose: 'end', m: 0.118, claim: 'c3' }, ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c9'), ...C(['heel.r', 'ball.r'], 'end', 'end', 'c3')],
   };
   it('every card\'s plateFacts is the ruled set (D-LIB14-FACTS)', () => {
     for (const id of LB4) { expect(cardOf(id).plateFacts, id).toEqual(FACTS[id]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
@@ -1053,8 +1071,10 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
   it('mutations: a fact with both joint and measure: true, and a start fact named with the unmapped pose, are red', () => {
     const c = cardOf('wall_sit'); c.plateFacts.push({ kind: 'angle', joint: 'knee.r', measure: true, deg: 90, claim: 'w2' });
     expect(factProblems('wall_sit', c)).toEqual([`${c.plateFacts.length - 1}: both joint and measure`]);
-    const p = cardOf('step_up'); p.plateFacts.push({ kind: 'contact', landmark: 'heel.r', pose: 'start', cardPose: 'start', claim: 'c6' });
-    expect(factProblems('step_up', p)).toEqual([`${p.plateFacts.length - 1}: pose start is not the map's image of card start`]);
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was a card-start fact named 'start' (unmapped under the swap), now one named 'end'
+    // (unmapped under the identity), the same single red
+    const p = cardOf('step_up'); p.plateFacts.push({ kind: 'contact', landmark: 'heel.r', pose: 'end', cardPose: 'start', claim: 'c6' });
+    expect(factProblems('step_up', p)).toEqual([`${p.plateFacts.length - 1}: pose end is not the map's image of card start`]);
   });
   const h6 = (spec: any, research: any) => {
     const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
@@ -1144,7 +1164,12 @@ describe('LIB-14 panel lb4p fix round (#289 6410190090): items 1-7 on drawn item
     const d = z.zoomOf(s).fault.d;
     expect(d * s.zoom.k).toBeGreaterThanOrEqual(bar);
     expect(d * (s.zoom.k - 0.5)).toBeLessThan(bar);
-    expect(S.pistol_squat.zoom).toBeUndefined();
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was "pistol_squat has no zoom", now its heel zoom at the smallest 0.5 step that
+    // reaches the bar (item 5: the knee tell dropped, the heel moves 5.13 px), the same two-sided test as bodyweight_squat's
+    const p = S.pistol_squat, dp = z.zoomOf(p).fault.d;
+    expect(p.zoom).toEqual({ view: 'mistake', k: 2.5 });
+    expect(dp * p.zoom.k).toBeGreaterThanOrEqual(bar);
+    expect(dp * (p.zoom.k - 0.5)).toBeLessThan(bar);
   });
   /** Items 1 and 3: a callout's anchor point (end pose, px) and whether it lies on the chest front: forward of the shoulder joint. */
   const anchorPx = (spec: any, key: string) => { const c = spec.callouts.find((x: any) => x.key === key), L = lmOf(spec, 'end'), a = c.anchor;
@@ -1232,7 +1257,8 @@ describe('LIB-14 panel mx1 second round (#289 6414220426, D-LIB13-PANEL2): goble
   it('item 2: pistol_squat draws the lifted foot dashed over the solid foot and a red arrow from the floor up to the lifted heel; the lift stays 3.5 cm and there is no zoom; mutations: the dashed foot removed, or the arrow pointing down, are red', () => {
     const s = S.pistol_squat;
     expect(heelProblems(s)).toEqual([]);
-    expect(s.zoom).toBeUndefined();
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was no zoom, now the item-5 heel zoom (k 2.5; its bar test is item 7's above)
+    expect(s.zoom).toEqual({ view: 'mistake', k: 2.5 });
     const noFoot = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.filter((x: any) => !(x.kind === 'dashed' && x.pts.length > 3)) } };
     expect(heelProblems(noFoot)).toContain('no dashed outline of the lifted foot');
     const down = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.map((x: any) => (x.kind === 'arrow' ? { ...x, from: x.to, to: x.from } : x)) } };
@@ -1292,8 +1318,10 @@ describe('LIB-SMALL A2: the 5 approved LB4 plates stay byte-identical (page 9a2b
       "mistakeAlt": "4c1080c5d586575992fc5f2335502870ce17d710b6523f43201370aaae2b44ec"
     },
     "wall-sit": {
-      "normalSvg": "d6faa81fdefb536e723412e0603a74dc1032298138380e6b87e37bf7142046a1",
-      "normalOverlay": "852988543a8323793fe7f3e9012d8ee0e0549a93a181d51e282802d9e93f5914",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was d6faa81f, now 63a3b6b9 (items 3-7 redraw; the plates panel re-approves)
+      "normalSvg": "63a3b6b9def7bb5fac54ec1fea37cd0a3cd44b0c013e8e8c1360fe3e0455d013",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 85298854, now 5366f785 (items 3-7 redraw; the plates panel re-approves)
+      "normalOverlay": "5366f785ae31d635905ae0d24b8842bf62ccaf404a8d79de0087d7afabd23e44",
       "mistakeSvg": "b404d79c3eceed9cf9f457142f5efbcfca5951cfd4f804102f9a0874a273c94e",
       "mistakeOverlay": "3de65ebc6d6c6aaf5be2ea15ce77a0effe3d2cd967d0a05c6892491efe6ca52c",
       "tells": "f0ad3f0505aac7d01987d6ca5c1ed1cdfa7de61e2da200efffbc9f12a6f14a55",
@@ -1305,11 +1333,15 @@ describe('LIB-SMALL A2: the 5 approved LB4 plates stay byte-identical (page 9a2b
     "pistol-squat": {
       "normalSvg": "51de53e3dfd2b0203eb326147fa442a580606073484564abce36ec60ac276d98",
       "normalOverlay": "699fb9e05a0bbbbed8e456368ef7bc3bb8b9cacd7754f220ff7b88bbe41c1170",
-      "mistakeSvg": "c22880be11bb10c0411e4347449b5a5fb84e6af401dfb845c6c6e96a7fc3f48a",
-      "mistakeOverlay": "4a380d2cd466a1b10b02c5730ce331ada3f472ef06fb5b09e0a7735cc141c155",
-      "tells": "b40836900804079ba12aa800b24966a5200143226487d83a91bd2864cebcf034",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was c22880be, now 009446f5 (items 3-7 redraw; the plates panel re-approves)
+      "mistakeSvg": "009446f56e83a2cbe07d9fe424383ee4c638771deaa04c245346878268731a14",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 4a380d2c, now d5773260 (items 3-7 redraw; the plates panel re-approves)
+      "mistakeOverlay": "d5773260d40382d64f76b42b62b84c05856cf6cd236889f933e8ba39539993f3",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was b4083690, now c535e0c7 (items 3-7 redraw; the plates panel re-approves)
+      "tells": "c535e0c7fa3edb4dd8c2febf90c9f03339fff38124d0b8fd69794228082df710",
       "tempo": "084d452f3c34dde94f33b3f5dab5818fabd0787de9efc3c137121848c1fb6473",
-      "cues": "1e3786aaa540f36af51990152086657abcb611c2b36737fa9dd678e6d3cbb69c",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 1e3786aa, now 6c2064f9 (items 3-7 redraw; the plates panel re-approves)
+      "cues": "6c2064f9963d12c804d28ac3bd109a26452f6cd91e41e89cf3b88ebcbda6df82",
       "alt": "26daf096ae0c52b1e9f61c567c30ae3b8d4b6f238fa12855d0f22dca9065d4d9",
       "mistakeAlt": "125a86e4557fcbb4f9b352bac40d3e99cc096883bcad8c54290441ff075dc2b3"
     }
@@ -1349,15 +1381,19 @@ describe('LIB-SMALL A4 and A6: jump_squat\'s drawn poses are card-true and airbo
     const D = drawn(s), L = Object.fromEntries(Object.entries(drawn(s)).map(([k, p]) => [k, eng.landmarksOf(p, H)])) as Record<string, any>, out: string[] = [];
     // A6: no drawn pose has both feet off every support (the floor is the only support)
     for (const [k, l] of Object.entries(L)) if (!FEET.some(f => cm(l[f][1]) <= 0.5)) out.push(`${k}: both feet off the floor`);
-    // start (j2): heels and balls on the floor at the take-off crouch, knees bent past 90, back flat
-    for (const f of FEET) if (cm(L.start[f][1]) > 0.5) out.push(`start ${f} ${cm(L.start[f][1]).toFixed(2)} cm off the floor`);
-    if (!(kneeOf(L.start) > 90)) out.push(`start knee ${kneeOf(L.start).toFixed(1)}`);
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was the start = the take-off crouch (j2: heels and balls
+    // down, knees past 90) and the ghost = full extension on the balls (j3); now (item 6, one open path, ruled 6682844211)
+    // the start = the touchdown at full extension on the balls, with the old ghost's four checks unchanged (balls within
+    // 0.5 cm, heels up > 3 cm, knees < 10, hips > 160: start 4.0 / 169.8 deg), and the ghost = mid-absorb, rolling back
+    // to the heels (j4): every heel and ball within 0.5 cm, its knee bend strictly between the start's and the end's
+    // (12.6 between 4.0 and 80.1 deg). The back-bend check stays on start and end.
+    for (const f of ['ball.l', 'ball.r']) if (cm(L.start[f][1]) > 0.5) out.push(`start ${f} ${cm(L.start[f][1]).toFixed(2)} cm`);
+    for (const f of ['heel.l', 'heel.r']) if (!(L.start[f][1] > 0.03)) out.push(`start ${f} not up`);
+    if (!(kneeOf(L.start) < 10)) out.push(`start knee ${kneeOf(L.start).toFixed(1)}`);
+    if (!(hipOf(L.start) > 160)) out.push(`start hip ${hipOf(L.start).toFixed(1)}`);
     for (const k of ['start', 'end'] as const) if (!(Math.abs(lumbarOf(D[k])) <= 10)) out.push(`${k} back bend ${lumbarOf(D[k])}`);
-    // ghost (j3): on the balls (each within 0.5 cm), heels up, knees straight, hips extended
-    for (const f of ['ball.l', 'ball.r']) if (cm(L.ghost[f][1]) > 0.5) out.push(`ghost ${f} ${cm(L.ghost[f][1]).toFixed(2)} cm`);
-    for (const f of ['heel.l', 'heel.r']) if (!(L.ghost[f][1] > 0.03)) out.push(`ghost ${f} not up`);
-    if (!(kneeOf(L.ghost) < 10)) out.push(`ghost knee ${kneeOf(L.ghost).toFixed(1)}`);
-    if (!(hipOf(L.ghost) > 160)) out.push(`ghost hip ${hipOf(L.ghost).toFixed(1)}`);
+    for (const f of FEET) if (cm(L.ghost[f][1]) > 0.5) out.push(`ghost ${f} ${cm(L.ghost[f][1]).toFixed(2)} cm off the floor`);
+    if (!(kneeOf(L.ghost) > kneeOf(L.start) && kneeOf(L.ghost) < kneeOf(L.end))) out.push(`ghost knee ${kneeOf(L.ghost).toFixed(1)}`);
     // end (j4, j8): mid-foot (and heel, ball) on the floor, knees bent, hips back of the ankles, trunk slightly forward
     for (const f of [...FEET, 'sole.l', 'sole.r']) if (cm(L.end[f][1]) > 0.5) out.push(`end ${f} off the floor`);
     if (!(kneeOf(L.end) > 45)) out.push(`end knee ${kneeOf(L.end).toFixed(1)}`);
@@ -1380,12 +1416,14 @@ describe('LIB-SMALL A4 and A6: jump_squat\'s drawn poses are card-true and airbo
     const L = eng.landmarksOf(drawn(S.jump_squat).ghost, H);
     console.log(`LIB-SMALL jump_squat: ghost balls ${cm(L['ball.l'][1]).toFixed(3)} / ${cm(L['ball.r'][1]).toFixed(3)} cm`);
   });
-  it('mutations: the ghost root raised 2 cm, the start heels 2 cm up, the landing knees straight, a rounded start back and the arms swung back (no j10) are red', () => {
+  it('mutations: the ghost root raised 2 cm, the start raised 2 cm off its balls, the landing knees straight, a rounded start back and the arms swung back (no j10) are red', () => {
     const s = S.jump_squat, mid = (s.poses.via.length - 1) / 2;
     const ghostUp = { ...s, poses: { ...s.poses, via: s.poses.via.map((p: any, i: number) => (i === mid ? { ...p, plant: undefined, root: { ...p.root, at: p.root.at.map((x: number, k: number) => x + (k === 1 ? 0.02 : 0)) } } : p)) } };
     expect(problems(ghostUp).some(x => x.startsWith('ghost ball'))).toBe(true);
     const startUp = { ...s, poses: { ...s.poses, start: { ...shift(s.poses.start, [0, 0.02, 0]), plant: undefined } } };
-    expect(problems(startUp).some(x => x.startsWith('start heel'))).toBe(true);
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 'start heel' (the crouch's heels down), now 'start ball'
+    // (the touchdown's balls down, item 6); the same 2 cm lift
+    expect(problems(startUp).some(x => x.startsWith('start ball'))).toBe(true);
     const stiff = { ...s, poses: { ...s.poses, end: { ...s.poses.end, ...s.mistake.pose } } };
     expect(problems(stiff).some(x => x.startsWith('end knee'))).toBe(true);
     const swing = { ...s, poses: { ...s.poses, start: { ...s.poses.start, reach: undefined, shoulder: { ext: 25 }, elbow: 5 } } };
@@ -1399,14 +1437,21 @@ describe('LIB-SMALL: jump-squat as approved in panel mx17 (#358, head c176723d) 
   // golden.mjs fragmentsOf of the approved plate (9 fragments) on its lb4 page at c176723d.
   const APPROVED: Record<string, Record<string, string>> = {
     "jump-squat": {
-      "normalSvg": "261fdd1fc5dae187d4b23675e6b3036ad4c5a6e298c1dcc80c56fdccfae11d27",
-      "normalOverlay": "bb63e83356ad6d587f14cae6bd8c7c1c29de2770af6825474913d5c6a6e386eb",
-      "mistakeSvg": "1ea9bbb067b48cf8ea9f8eab43555bf289c5f22b7b126f806ae09c4fb44a5fcc",
-      "mistakeOverlay": "e32160ac1318bee2bffcce5cb95c16b187bb89d54866b7539a4b01e0d3d91762",
-      "tells": "e2b1b056c56b5416c8e119610e95cd7ae522c05efbe265ca5b87150fdcba0a87",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 261fdd1f, now 9eb94e71 (items 3-7 redraw; the plates panel re-approves)
+      "normalSvg": "9eb94e71ee02c397528c91b8c3612d8c2482beeb0fffd2452c7e2c1a17586cf0",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was bb63e833, now 9c960084 (items 3-7 redraw; the plates panel re-approves)
+      "normalOverlay": "9c960084fddf64db93bc114f03df87707fc7d19da676f6bc086e61ae14410e81",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 1ea9bbb0, now e0adfb20 (items 3-7 redraw; the plates panel re-approves)
+      "mistakeSvg": "e0adfb203c85c43b9484b30ab928429f20dde1ab8ed58c903b52491b72cbad92",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was e32160ac, now 5515e408 (items 3-7 redraw; the plates panel re-approves)
+      "mistakeOverlay": "5515e4085a2ca8c654b025f950500469c55e4f1868a983b51c22c807ecbdccfa",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was e2b1b056, now ee850f65 (items 3-7 redraw; the plates panel re-approves)
+      "tells": "ee850f657afc73c354e8b22ee5abdb4c08e6bfaf139122275fdd176e1db29610",
       "tempo": "23b25a80e39f1ca89dfc529fddc2a9c0ea19947ecd0b2237521e26b15592f452",
-      "cues": "703146d98c5acf26e14a51cd93c3f774a83de22a4e1433b8e2af743ea3991f0f",
-      "alt": "c68932b65e7726c17b92fdfd8d853cc7a1af86e8e9dcc54c1a70b3db17a7c5f1",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 703146d9, now 26cd3aa6 (items 3-7 redraw; the plates panel re-approves)
+      "cues": "26cd3aa659da153773380702f110607d2900168a9a7e379fc8526d8374012407",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was c68932b6, now ad877e07 (items 3-7 redraw; the plates panel re-approves)
+      "alt": "ad877e07d554a9ca60d13b86d79bb1dd7e3f528d9fa6d7f4fa542f2ed7f5d836",
       "mistakeAlt": "c1a9d7a7c34aa82a265ead272d52372f300b2fdf079249332705458f10c59351"
     }
   };
@@ -1566,20 +1611,23 @@ describe('LIB-SPLIT A3: card-true poses (DESIGN.md 17.2, 17.6; PLAN RULED Q1, Q2
   /** D-SPLIT-BSSHOVER (#364 6592673388): the end kneecap 3 cm above the floor (±0.5 cm; the height fact), the Mistake's
    *  kneecap resting on the floor, one tell on the resting rear knee, no zoom (the knee's move passes the bar). */
   const hoverProblems = (s: any) => { const e = lmOf(s, 'end')['knee.l'][1] - KC, m = lmOf(s, 'mistake')['knee.l'][1] - KC, t = s.mistake.tells, bad: string[] = [];
-    if (Math.abs(e - 0.03) > 0.005) bad.push(`end kneecap gap ${(e * 100).toFixed(2)} cm`);
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0.03 (3 cm), now 0.069 (6.9 cm: D-SPLIT-BSSHOVER amended, item 3); the same ±0.5 cm
+    if (Math.abs(e - 0.069) > 0.005) bad.push(`end kneecap gap ${(e * 100).toFixed(2)} cm`);
     if (Math.abs(m) > 0.005) bad.push(`Mistake kneecap gap ${(m * 100).toFixed(2)} cm`);
     if (t.length !== 1 || t[0].key !== 'knee' || t[0].anchor?.at !== 'knee.l' || t[0].anchor?.pose !== 'mistake') bad.push('not one tell on the Mistake rear knee');
-    if (s.zoom) bad.push('a zoom');
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was "no zoom", now exactly the ruled normal zoom k 1.5 (D-PF3-BSSZOOM: the Trace 20.9 px is
+    // under the 22.11 bar at plate scale); any other zoom, or none, is red
+    if (JSON.stringify(s.zoom) !== JSON.stringify({ view: 'normal', k: 1.5 })) bad.push('not the ruled zoom');
     return bad; };
-  it('bulgarian_split_squat: the end kneecap 3 cm above the floor, the Mistake kneecap resting on it, one rear-knee tell', () => {
+  it('bulgarian_split_squat: the end kneecap 6.9 cm above the floor, the Mistake kneecap resting on it, one rear-knee tell', () => {
     expect(hoverProblems(S.bulgarian_split_squat)).toEqual([]);
   });
-  it('mutations: the end kneecap at 0 cm (on the floor) and at +1 cm (4 cm), and the mx30 tells (front knee, shin) with the zoom, are red', () => {
+  it('mutations: the end kneecap at 0 cm (on the floor) and at +1 cm (7.9 cm), and the mx30 tells (front knee, shin) with the zoom, are red', () => {
     const b = S.bulgarian_split_squat, at = (dy: number) => ({ ...b, poses: { ...b.poses, end: { ...b.poses.end, root: { ...b.poses.end.root, at: [b.poses.end.root.at[0], b.poses.end.root.at[1] + dy, b.poses.end.root.at[2]] } } } });
     expect(hoverProblems({ ...b, poses: { ...b.poses, end: b.mistake.pose } }).filter(x => x.startsWith('end kneecap gap')).length).toBe(1);
     expect(hoverProblems(at(0.01)).some(x => x.startsWith('end kneecap gap'))).toBe(true);
     const old = { ...b, zoom: { view: 'mistake', k: 1.5, tell: 'knee' }, mistake: { ...b.mistake, tells: [{ key: 'knee', text: 'Front knee forward', anchor: { at: 'knee.r', pose: 'mistake' } }, { key: 'shin', text: 'Shin tips forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' } }] } };
-    expect(hoverProblems(old)).toEqual(['not one tell on the Mistake rear knee', 'a zoom']);
+    expect(hoverProblems(old)).toEqual(['not one tell on the Mistake rear knee', 'not the ruled zoom']);
   });
   /** R3 (mx30): the near hand and forearm drawn over the near dumbbell (draw order only; the goblet_squat item 1 form). */
   const handOverDbR = (spec: any) => { const v = plate.renderPlate(spec, { id: 'x' }).svg, db = v.lastIndexOf('class="disc"');
@@ -1600,7 +1648,11 @@ describe('LIB-SPLIT A3: card-true poses (DESIGN.md 17.2, 17.6; PLAN RULED Q1, Q2
   };
   const PLANTED: Record<string, string[]> = { forward_lunge: ['heel.l', 'ball.l', 'toe.l'], bodyweight_lunge: ['heel.l', 'ball.l', 'toe.l'], bodyweight_split_squat: ['heel.l', 'ball.l', 'toe.l'], walking_lunge: [], bulgarian_split_squat: ['heel.r', 'ball.r', 'toe.r'] };
   // the front knee holds within 1 mm (the engine's leg solve against the analytic hip: 0.93 mm, 0.14 px)
-  const NEAR: Record<string, string[]> = { bulgarian_split_squat: ['knee.r'] };
+  // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was bulgarian knee.r held within 1 mm, now none: item 3's
+  // ruled Mistake lowers the hips by the kneecap's full 6.9 cm drop, which the two fixed knees cannot give, so the front
+  // shin tips to the SOLVED MIS_SHIN; the front knee is pinned instead by that shin angle (12.68 ±0.05 deg, below) with the
+  // front ankle, heel and ball still held (STILL, PLANTED)
+  const NEAR: Record<string, string[]> = {};
   const stillProblems = (s: any) => { const e = lmOf(s, 'end'), m = lmOf(s, 'mistake');
     return [...STILL[s.id]!.filter(k => dist(e[k], m[k]) > 1e-9), ...PLANTED[s.id]!.filter(k => dist(e[k], m[k]) > 0.0005), ...(NEAR[s.id] ?? []).filter(k => dist(e[k], m[k]) > 0.001)]; };
   it('each Mistake moves only what its card names: the listed landmarks unmoved', () => {
@@ -1610,9 +1662,10 @@ describe('LIB-SPLIT A3: card-true poses (DESIGN.md 17.2, 17.6; PLAN RULED Q1, Q2
     for (const id of ['forward_lunge', 'bodyweight_lunge', 'bodyweight_split_squat']) expect(shinDeg(lmOf(S[id], 'mistake')), id).toBeCloseTo(29.2, 1);
     expect(trunkDeg(lmOf(S.walking_lunge, 'mistake'))).toBeCloseTo(26.9, 1);
     const b = S.bulgarian_split_squat, e = lmOf(b, 'end'), m = lmOf(b, 'mistake');
-    expect(e['knee.l'][1] - m['knee.l'][1]).toBeCloseTo(0.03, 6);   // D-SPLIT-BSSHOVER: the kneecap drops its 3 cm gap
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was a 0.03 drop and the shin at 6 deg (±0.5), now 0.069 and 12.68 (±0.05; item 3)
+    expect(e['knee.l'][1] - m['knee.l'][1]).toBeCloseTo(0.069, 6);   // D-SPLIT-BSSHOVER (amended): the kneecap drops its 6.9 cm gap
     expect(m['knee.l'][1] - KC).toBeCloseTo(0, 3);
-    expect(shinDeg(m)).toBeCloseTo(6, 0);
+    expect(shinDeg(m)).toBeCloseTo(12.68, 1);
   });
   it('mutation: forward_lunge\'s Mistake moving the front foot 2 cm is red', () => {
     const s = S.forward_lunge, m = s.mistake.pose;
@@ -1648,16 +1701,19 @@ describe('LIB-SPLIT A5: clearance (D-SPLIT-CLEAR; DESIGN.md 17.4)', { timeout: T
     const rows = clear(S.step_up, 'box', /^foot\.r$/);
     expect(rows.length).toBeGreaterThan(30);
     for (const [p, k, d] of rows) expect(d, `${p} ${k}`).toBeGreaterThanOrEqual(2);
-    expect(minOf(rows.filter(r => r[1] === 'foot.l'), 'start')).toBeCloseTo(2.42, 1);
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was at 'start', now 'end' (item 4: standing tall is the spec end); 2.42 px as before
+    expect(minOf(rows.filter(r => r[1] === 'foot.l'), 'end')).toBeCloseTo(2.42, 1);
   });
-  it('mutation: step_up\'s start trailing hip back at 15 (main\'s) is red', () => {
-    const s = S.step_up, st = { ...s.poses.start, hip: { ...s.poses.start.hip, l: 15 } };
-    expect(minOf(clear({ ...s, poses: { ...s.poses, start: st } }, 'box', /^foot\.r$/), 'start')).toBeLessThan(2);
+  it('mutation: step_up\'s standing-tall trailing hip back at 15 (main\'s) is red', () => {
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was poses.start and 'start', now poses.end and 'end' (item 4's swap)
+    const s = S.step_up, st = { ...s.poses.end, hip: { ...s.poses.end.hip, l: 15 } };
+    expect(minOf(clear({ ...s, poses: { ...s.poses, end: st } }, 'box', /^foot\.r$/), 'end')).toBeLessThan(2);
   });
-  it('bulgarian_split_squat: the bench clears every body outline but the rear foot (the c2 contact) by 2 px or more in every pose (end 3.09, Mistake 2.26 px)', () => {
+  it('bulgarian_split_squat: the bench clears every body outline but the rear foot (the c2 contact) by 2 px or more in every pose (end 3.64, Mistake 2.26 px)', () => {
     const rows = clear(S.bulgarian_split_squat, 'bench', /^foot\.l$/);
     for (const [p, k, d] of rows) expect(d, `${p} ${k}`).toBeGreaterThanOrEqual(2);
-    expect(minOf(rows, 'end')).toBeCloseTo(3.09, 1);
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 3.09, now 3.64 px (item 3: the 6.9 cm gap lifts the end), still >= 2
+    expect(minOf(rows, 'end')).toBeCloseTo(3.64, 1);
     expect(minOf(rows, 'mistake')).toBeCloseTo(2.26, 1);
   });
   it('mutation: the Bulgarian rear foot 2 cm back (the instep on the bench edge) is red', () => {
@@ -1681,10 +1737,13 @@ describe('LIB-SPLIT A5: clearance (D-SPLIT-CLEAR; DESIGN.md 17.4)', { timeout: T
         return +(headGap(sd === 'l' ? [G[0] + toward * dx, G[1], G[2]] : G, lm[`hip.${sd}`], lm[`knee.${sd}`], (t: number) => thR(t) * H) * 100).toFixed(2); }); }); };
   // [start, via..., end, Mistake] x [db.l, db.r], cm, measured on this head (DESIGN.md 17.4)
   const LISTED: Record<string, number[][]> = {
-    step_up: [[0.91, 1.14], [0.42, 10.15], [11.85, 20.63]],
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was step_up [[0.91, 1.14], [0.42, 10.15], [11.85, 20.63]], now the start and
+    // end rows swapped (item 4) and the mid-rise Mistake's [12.21, 19.84]; bulgarian was [.., [0.98, 9.7], [0.43, 9.7]],
+    // now [2.17, 9.02] and [0.45, 9.7] (item 3); each still >= 0, each pinned ±0.05 cm
+    step_up: [[0.42, 10.15], [0.91, 1.14], [12.21, 19.84]],
     forward_lunge: [[1.47, 1.47], [1.52, 0.38], [0.85, 1.78], [0.11, 9.7], [1.74, 8.59]],
     walking_lunge: [[1.47, 1.47], [1.52, 0.39], [0.9, 1.88], [0.09, 9.7], [10.56, 15.18]],
-    bulgarian_split_squat: [[0.73, 0.3], [0.98, 9.7], [0.43, 9.7]],   // D-SPLIT-BSSHOVER
+    bulgarian_split_squat: [[0.73, 0.3], [2.17, 9.02], [0.45, 9.7]],   // D-SPLIT-BSSHOVER as amended (item 3)
   };
   it('every dumbbell clears the thighs in 3D in every drawn pose (listed, each ≥ 0)', () => {
     for (const [id, want] of Object.entries(LISTED)) { const got = dbListing(S[id]);
@@ -1700,8 +1759,10 @@ describe('LIB-SPLIT A4 and A6: runQa node half on the 6 plates, H3 pinned at the
   const IDS6 = ['step_up', ...SPLIT].map(i => `lib_${i}`);
   // traceLen and deviation (px) at the PLAN sizes, from runQa's metrics on this head (DESIGN.md 17.10)
   const PIN: Record<string, [number, number]> = {
-    lib_step_up: [59.07, 30.24], lib_forward_lunge: [86.14, 25.32], lib_walking_lunge: [91.06, 42.36], lib_bodyweight_lunge: [91.1, 18.83],
-    lib_bodyweight_split_squat: [32.12, 25.32], lib_bulgarian_split_squat: [24, 11.63],   // D-SPLIT-BSSHOVER: the rear knee's drop
+    lib_step_up: [59.08, 98.27], lib_forward_lunge: [86.14, 25.32], lib_walking_lunge: [91.06, 42.36], lib_bodyweight_lunge: [91.1, 18.83],
+    lib_bodyweight_split_squat: [32.12, 25.32], lib_bulgarian_split_squat: [20.94, 22.21],   // D-SPLIT-BSSHOVER: the rear knee's drop
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was lib_step_up [59.07, 30.24] and bulgarian [24, 11.63], now
+    // [59.08, 98.27] (item 4: the mid-rise lurch) and [20.94, 22.21] (item 3: the 6.9 cm gap, the Mistake's full drop)
   };
   let build: any, cand: any, muts: any, golden: any, mirror: any, E: any, all: any, html: string;
   beforeAll(async () => {
@@ -1727,10 +1788,15 @@ describe('LIB-SPLIT A4 and A6: runQa node half on the 6 plates, H3 pinned at the
   it('clean: every hard check\'s node half passes on all 6; Trace and deviation pinned; only the Bulgarian plate carries a zoom (Mistake, k 1.5)', async () => {
     const got: Record<string, [number, number]> = {};
     for (const id of IDS6) { const r = await qa(await candOf(id)); expect(node(r), id).toEqual([]); got[id] = [+r.metrics.traceLen.toFixed(2), +r.metrics.deviation.toFixed(2)]; }
-    for (const id of IDS6) { expect(got[id]![0], id).toBeGreaterThanOrEqual(22.11); expect(got[id]![1], id).toBeGreaterThanOrEqual(11.39); }
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was the plate-scale Trace >= 22.11 on all 6, now the Trace at the scale it is
+    // drawn (x the normal zoom's k, bulgarian's ruled k 1.5: 31.4 px) >= 22.11; the deviation bar unchanged
+    const kOf = (id: string) => (S[id.slice(4)].zoom?.view === 'normal' ? S[id.slice(4)].zoom.k : 1);
+    for (const id of IDS6) { expect(got[id]![0] * kOf(id), id).toBeGreaterThanOrEqual(22.11); expect(got[id]![1], id).toBeGreaterThanOrEqual(11.39); }
     for (const [id, [t, d]] of Object.entries(PIN)) { expect(got[id]![0], `${id} trace`).toBeCloseTo(t, 2); expect(got[id]![1], `${id} deviation`).toBeCloseTo(d, 2); }
     expect(Object.keys(PIN).sort(), JSON.stringify(got)).toEqual([...IDS6].sort());
-    for (const id of SPLIT) expect(S[id].zoom ?? null, id).toEqual(null);   // D-SPLIT-BSSHOVER: bulgarian's knee move passes the bar
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was no zoom on every SPLIT plate, now bulgarian exactly the ruled normal k 1.5
+    // (D-PF3-BSSZOOM) and every other SPLIT plate none
+    for (const id of SPLIT) expect(S[id].zoom ?? null, id).toEqual(id === 'bulgarian_split_squat' ? { view: 'normal', k: 1.5 } : null);   // D-SPLIT-BSSHOVER: bulgarian's knee move passes the bar
   });
   it('mutations: a Mistake zoom added to bulgarian_split_squat (D-SPLIT-BSSHOVER) and to bodyweight_split_squat (H3.zoom:not-needed:mistake; walking_lunge\'s Mistake plate has no zoom place at all), are red', async () => {
     const b = await mutated('lib_bulgarian_split_squat', '(s) => ({ ...s, zoom: { view: \'mistake\', k: 1.5 } })');
@@ -1797,9 +1863,12 @@ describe('LIB-SPLIT A2: the 5 rows approved in panel mx28 (#364 6585103107, head
   // LB4 page a3d8098e…f366 built at 9f772a09 (45 fragments; the LIB-SMALL A2 form).
   const APPROVED: Record<string, Record<string, string>> = {
     "step-up": {
-      "normalSvg": "9bffea48f5e857b37e7ae199d9dabe0d4d26115fac1250ca0291ffb1a2f86324",
-      "normalOverlay": "1f4d76a592d00187cdfdcffb67e8f6a4e1563c57aae988a4df40be2427315eea",
-      "mistakeSvg": "4fa8a2a236aeaaaa59245089c9105bcd22ab3478c78dde1b4cc60f74158e9fc5",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 9bffea48, now d57e08db (items 3-7 redraw; the plates panel re-approves)
+      "normalSvg": "d57e08db863da46a6db11c16db9e90db31437873e236a0cbf6b1b118c78e4e05",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 1f4d76a5, now caa8424a (items 3-7 redraw; the plates panel re-approves)
+      "normalOverlay": "caa8424aec975cb93f4b548e82f53b92b72d01ceb932c93721ae2c2201b9388d",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 4fa8a2a2, now c898eeec (items 3-7 redraw; the plates panel re-approves)
+      "mistakeSvg": "c898eeeca5f505dce5061438c36fa1ce22078c01ada8f07120e440373af0aafa",
       "mistakeOverlay": "18fd4b60ff86004583339b2c0fa95ff89130559bcf4518de6fea4166fe8de979",
       "tells": "8fdf4a24934b50822201a42f062bbfcfa873afa15727fcc42a54eaac84cc017f",
       "tempo": "cfa4a0ab2667ca0875d0232447ce76260179fb165b22bf6932aa7cdc38ca9970",
@@ -1873,9 +1942,11 @@ describe('LIB-SPLIT A2: bulgarian_split_squat as approved in panel mx31 (#364 65
   // golden.mjs fragmentsOf of bulgarian_split_squat on the LB4 page 38750fee…67e4 built at 7f8afd68 (9 fragments).
   const APPROVED: Record<string, Record<string, string>> = {
     "bulgarian-split-squat": {
-      "normalSvg": "fbd896b85d8bf04d32185ff85e6cd802e29e61d10615f58e7454e9c214a01946",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was fbd896b8, now 0efaa081 (items 3-7 redraw; the plates panel re-approves)
+      "normalSvg": "0efaa08197b5ddff6bb0d9318c27c27f7b13bd601678330aab03bdd83c747460",
       "normalOverlay": "d5f3b567f68d8fe33c9001a17707fb81bd67d4986d72548ad280861ef845ee40",
-      "mistakeSvg": "268dca12faffd1fa6b92bd340737073ef038c9473cb1aa32923d77e685c60d29",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 268dca12, now 6c3b648a (items 3-7 redraw; the plates panel re-approves)
+      "mistakeSvg": "6c3b648a9bcf1b032374b1182dea86a49f70fc48b0f75033543b1daff31cb3ae",
       "mistakeOverlay": "f6aca0d82dfc5e31dd0fe3b608745a3028cb60bdcadde81dd7bbd954c9f275e5",
       "tells": "c7aaf7b87df630811b7faf9bbb63bb8fcf6323e6fc7fb4a453e8663af7751887",
       "tempo": "a50b50e7ec7b35d22bc21c16497750d5d5ee1a1096921e8fed7a370cf92e305a",
