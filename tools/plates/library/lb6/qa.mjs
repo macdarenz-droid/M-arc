@@ -50,7 +50,7 @@ export const EXPECTED = id => ['F5', ...(['lib_machine_crunch', 'lib_cable_chest
  *  (0.6) and the squat (0.177); F3 named on high_to_low_cable_fly (90.3; low_to_high's 46.3 cleared at the panel fix,
  *  now 74.3) and on rear_delt_fly (118.5, proposed at PLATES READY 2). */
 export const R2_EXPECTED = {
-  lib_low_to_high_cable_fly: ['F2', 'F7'], lib_high_to_low_cable_fly: ['F2', 'F3', 'F7'], lib_smith_machine_squat: ['F2'],
+  lib_low_to_high_cable_fly: ['F2', 'F7'], lib_high_to_low_cable_fly: ['F2', 'F3', 'F7'], lib_smith_machine_squat: [],   // LIB-PLATEFIX-3 (#405 6688665575 R2): the full-height rails lift the squat's coverage 0.177 -> 0.214, inside F2's envelope, so its named F2 is withdrawn (an exemption removed)
   lib_smith_machine_shoulder_press: [], lib_smith_machine_incline_press: [],
   lib_hip_abduction: ['F7'], lib_hip_adduction: ['F7'], lib_machine_lateral_raise: ['F7'], lib_rear_delt_fly: ['F3', 'F7'],
 };
