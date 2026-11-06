@@ -658,8 +658,12 @@ describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn
     const segs = spec.mistake.guides.filter((g: any) => g.kind === 'dashed').flatMap((g: any) => { const q = g.pts.map(cam.P); return q.slice(1).map((v: number[], i: number) => [q[i], v]); });
     const near = (p: number[]) => segs.some(([u, v]: number[][]) => { const dx = v![0]! - u![0]!, dy = v![1]! - u![1]!, L2 = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((p[0]! - u![0]!) * dx + (p[1]! - u![1]!) * dy) / L2)); return Math.hypot(p[0]! - u![0]! - t * dx, p[1]! - u![1]! - t * dy) <= 0.5; });
     const out: string[] = [];
-    for (const sh of arm) { const miss = sh.poly.filter((q: number[]) => !arm.some((o: any) => o !== sh && inPoly(o.poly, q)) && !near(q)).length; if (miss) out.push(`${sh.key}: ${miss} outline points untraced`); }
-    const G = cam.P(itemsIn(spec, 'mistake').lm['grip.r']);
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was near(q) and G at the pose's own place, now both moved by
+    // the drawn offset O (the 'short' tell's anchor off = the spec's MIST_OFF, [-6, 12]: the offset dashed-arm fallback,
+    // #405 6683319630 item 7); every outline point still within 0.5 px of a guide. Mutation: O = [0, 0] is red (all untraced).
+    const O: number[] = spec.mistake.tells.find((t: any) => t.key === 'short')?.anchor?.off ?? [0, 0], sh2 = (q: number[]) => [q[0]! + O[0]!, q[1]! + O[1]!];
+    for (const sh of arm) { const miss = sh.poly.filter((q: number[]) => !arm.some((o: any) => o !== sh && inPoly(o.poly, q)) && !near(sh2(q))).length; if (miss) out.push(`${sh.key}: ${miss} outline points untraced`); }
+    const G = sh2(cam.P(itemsIn(spec, 'mistake').lm['grip.r']));
     if (!spec.mistake.guides.some((g: any) => g.kind === 'dashed' && g.pts.length === 7 && g.pts.every((w: number[]) => Math.abs(Math.hypot(cam.P(w)[0]! - G[0]!, cam.P(w)[1]! - G[1]!) - 0.0595 * PXM) < 0.5))) out.push('no dumbbell guide');
     const svg: string = plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
     if (!(svg.indexOf('class="m-pose"') > 0 && svg.indexOf('class="mistake-layer"') > svg.indexOf('class="m-pose"'))) out.push('guides not above the m-pose');
@@ -1206,7 +1210,8 @@ describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d
     "one-arm-dumbbell-row": {
       "normalSvg": "4bb20c3d141733f389b2c100c1b4fe7df1fd5c28d787015a04adbff91dff3466",
       "normalOverlay": "880027edac5bd42c9e3efb28b5173fff83681732e860b0d89235d2ee2402acdf",
-      "mistakeSvg": "2dc08147f5865e93d2075ba11648b5370f8aef7e6c457df7e5e21fb85ce2ebc2",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 2dc08147, now f52d64eb (item 17 sumo / one_arm_dumbbell_row offset arm; the plates panel re-approves)
+      "mistakeSvg": "f52d64ebffa0b1d2762566ad9ccb717107f43a9560e985d8835b67e82bf22e98",
       "mistakeOverlay": "175a7442fe23358b7ae59138ed6b260c24015d04f4216375e072dc2b0f621410",
       "tells": "b666789c21305b66eee9157ce009a2cece7b27dedfb58a236d843b968a0cfe99",
       "tempo": "20977979ba2d5b41227e085fd7f83ef86468ab3e175170f6b056cd3dad40b579",
@@ -1237,9 +1242,11 @@ describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d
       "mistakeAlt": "2d6d1d4c634533ebdd4a6c0802a3f797f56479abd0b4a516ac3c92904fca2a05"
     },
     "sumo-deadlift": {
-      "normalSvg": "9a2f2b0e2a325dc698d0acdff5a59c203cef3013f9b230610601bf686f50868a",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 9a2f2b0e, now ee55b650 (item 17 sumo / one_arm_dumbbell_row offset arm; the plates panel re-approves)
+      "normalSvg": "ee55b650f8705adc245caef424651ab44cf235aba1877ac0d2c242b8bb734a05",
       "normalOverlay": "87101be011d94c7212ea7a710cf4b05ab97eabab45dcef76680296d025b777bb",
-      "mistakeSvg": "da50e75c5094ff2476f3be0685b24f9cdb1c1c3c6a83b9c0137b2b5586a3acc4",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was da50e75c, now b795deeb (item 17 sumo / one_arm_dumbbell_row offset arm; the plates panel re-approves)
+      "mistakeSvg": "b795deeb0d541bd9ed5b8fa29584d5b367cbd6b819dfd1b5094f274704224c06",
       "mistakeOverlay": "bbb6d492d7107a6d080b9f51da800e55678069b25cef2777cc5169b4f1e478b5",
       "tells": "09075a3625dea0c893795e6b758e8992ab92e904971970a35676b82c49288095",
       "tempo": "37010198d446f18f117df876fee4dc108ccbdbe147775b8c915f627e8611d468",
@@ -1269,7 +1276,8 @@ describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d
     expect(Object.values(APPROVED).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(63);
     expect(fragProblems(await pageHtml())).toEqual([]);
     const seven = await pageHtml(drawn().map(i => `lib_${i}`));
-    expect(sha(seven)).toBe('6ff09d4c144f90d7210f951eb23fe81b42f55d20478bc4b8bb1d2b3980d008c6');
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 6ff09d4c, now 51cff901 (item 17 sumo / one_arm_dumbbell_row offset arm; the plates panel re-approves)
+    expect(sha(seven)).toBe('51cff901710e78088140cf9ef84810adb3327615a4d9f7304dc6127ad858c958');
   });
   it("mutation: one byte changed in landmine_row's alt is red", async () => {
     const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'landmine-row');
