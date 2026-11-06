@@ -600,11 +600,12 @@ describe('LIB-10 incline_dumbbell_press (D-LIB10-IDP, D-LIB10-IDP-A): the Mistak
     const r = plate.renderPlate(idp, { id: 'x', mistake: true }).report;
     for (const lmk of ['seat', 'backUpper', 'buttock']) expect(r.checks.find((c: any) => c.landmark === lmk && c.pose === 'mistake').cm, lmk).toBeLessThanOrEqual(1);
   });
-  it("its card is pilot A's verified copy byte for byte; without the three keys it is the research copy at 0d832e18; the quotes are a byte copy", () => {
+  it("its card is pilot A's verified copy byte for byte; without the three keys it is the research copy at 42858a64 (RESEARCH-ROUTES-1; was 0d832e18); the quotes are a byte copy", () => {
     const cs = readJson('tools/plates/library/lb2/cards.sha.json'), KEYS3 = ['plateFacts', 'tempo', 'topFault'];
     const raw = readFileSync(`docs/research/howto/cards/${IDP}.json`), card = JSON.parse(raw.toString('utf8')), o = { ...card };
     for (const k of KEYS3) delete o[k];
-    expect(cs.researchHeads[IDP]).toBe('0d832e18a2c52ec091a37b654572db5f0468913b');
+    // RESEARCH-ROUTES-1 F-CARD-INCLINEDB-RISK (D-RR-HEAD): re-copied from research 42858a64 (was 0d832e18)
+    expect(cs.researchHeads[IDP]).toBe('42858a641cab97048f9dbbf8c4d9fe939563c8ac');
     expect(sha(`${JSON.stringify(o, null, 2)}\n`)).toBe(cs.cards[IDP]);
     expect(sha(raw)).toBe(cs.pilotACards[IDP]);
     expect(sha(readFileSync(`docs/research/howto/quotes/${IDP}.json`))).toBe(cs.quotes[IDP]);
