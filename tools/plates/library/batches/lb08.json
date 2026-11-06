@@ -135,6 +135,42 @@
     "9 Hip Flexor Exercises to Improve Your Athletic Performance (Outside, Amber Sayer, certified personal trainer) (2025). https://www.outsideonline.com/health/training-performance/hip-flexor-exercises/"
    ],
    "stage": "approved-plate"
+  },
+  "lib_seated_calf_raise": {
+   "src": "library/specs/seated_calf_raise.mjs",
+   "slug": "seated-calf-raise",
+   "prefix": "seated-calf-raise",
+   "chromeId": "seated-calf-raise",
+   "mode": "H",
+   "view": "side",
+   "stage": "left-out:D-OWNER-LIB142"
+  },
+  "lib_standing_calf_raise": {
+   "src": "library/specs/standing_calf_raise.mjs",
+   "slug": "standing-calf-raise",
+   "prefix": "standing-calf-raise",
+   "chromeId": "standing-calf-raise",
+   "mode": "H",
+   "view": "side",
+   "stage": "left-out:D-OWNER-LIB142"
+  },
+  "lib_bodyweight_calf_raise": {
+   "src": "library/specs/bodyweight_calf_raise.mjs",
+   "slug": "bodyweight-calf-raise",
+   "prefix": "bodyweight-calf-raise",
+   "chromeId": "bodyweight-calf-raise",
+   "mode": "H",
+   "view": "side",
+   "stage": "left-out:D-OWNER-LIB142"
+  },
+  "lib_hip_thrust": {
+   "src": "library/specs/hip_thrust.mjs",
+   "slug": "hip-thrust",
+   "prefix": "hip-thrust",
+   "chromeId": "hip-thrust",
+   "mode": "H",
+   "view": "side",
+   "stage": "left-out:D-OWNER-LIB142"
   }
  }
 }

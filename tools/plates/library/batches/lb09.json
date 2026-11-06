@@ -148,6 +148,42 @@
     "Electromyographic response of the abdominal musculature to varying abdominal exercises. (2010). https://pubmed.ncbi.nlm.nih.gov/21088553/ PMID 21088553"
    ],
    "stage": "approved-plate"
+  },
+  "lib_pallof_press": {
+   "src": "library/specs/pallof_press.mjs",
+   "slug": "pallof-press",
+   "prefix": "pallof-press",
+   "chromeId": "pallof-press",
+   "mode": "H",
+   "view": "side",
+   "stage": "left-out:D-OWNER-LIB142"
+  },
+  "lib_russian_twist": {
+   "src": "library/specs/russian_twist.mjs",
+   "slug": "russian-twist",
+   "prefix": "russian-twist",
+   "chromeId": "russian-twist",
+   "mode": "H",
+   "view": "front",
+   "stage": "left-out:D-OWNER-LIB142"
+  },
+  "lib_flutter_kicks": {
+   "src": "library/specs/flutter_kicks.mjs",
+   "slug": "flutter-kicks",
+   "prefix": "flutter-kicks",
+   "chromeId": "flutter-kicks",
+   "mode": "H",
+   "view": "side",
+   "stage": "left-out:D-OWNER-LIB142"
+  },
+  "lib_bicycle_crunch": {
+   "src": "library/specs/bicycle_crunch.mjs",
+   "slug": "bicycle-crunch",
+   "prefix": "bicycle-crunch",
+   "chromeId": "bicycle-crunch",
+   "mode": "H",
+   "view": "front",
+   "stage": "left-out:D-OWNER-LIB142"
   }
  }
 }

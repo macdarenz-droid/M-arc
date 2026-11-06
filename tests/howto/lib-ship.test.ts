@@ -486,7 +486,8 @@ describe('LIB-SHIP W7 D-SHIP-HANDW7 (#394 6647954465, Q-W7-3/Q-W7-4): gap-ruled 
 
 describe('LIB-SHIP W7 D-SHIP-W7-NOREDFLAG (#394 6648497703, = D-SHIP-W6-NOREDFLAG #393 6648157060): riskFlags [] rows', () => {
   const NO_RED_FLAG = ['lib_high_knees', 'lib_battle_ropes', 'lib_jumping_jacks'];
-  const W7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.keys(json(`tools/plates/library/batches/${b}.json`).rows));
+  // Q-W7-7 (D-SHIP-LEFTOUT-CLOSURE): the left-out rows (no How-to sheet) are not W7 sheets; every other row still is.
+  const W7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
   it('the W7 sheets with riskFlags [] are exactly the 3 pinned ids, each card names no red flag, and none is red', async () => {
     const empty: string[] = [];
     for (const id of W7) {
@@ -555,6 +556,59 @@ describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batc
       expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(8);   // 12 drawn LB1 rows less the 4 staged (underhand LIB-PLATEFIX-3, assisted_pull_up #384 6653062201, incline_machine_press and shoulder_press D-SHIP-W3-NOPAIR #384 6681221802)
     }
   }, 120_000);
+});
+
+// LIB-SHIP W7 Q-W7-7 D-SHIP-LEFTOUT-CLOSURE (ruling 14): the owner's left-out W7 ids are rows of lb08.json and lb09.json at
+// left-out:D-OWNER-LIB142 (W3's leg_press_calf_raise form). No MANIFEST row, layers spec or plates page names them, and the
+// lb8/lb9 drawnIds skip them although their specs exist (bicycle_crunch has none).
+describe('LIB-SHIP W7 Q-W7-7 D-SHIP-LEFTOUT-CLOSURE: the 8 left-out W7 rows stay out', () => {
+  const LEFT: Record<string, string[]> = {
+    lb08: ['lib_seated_calf_raise', 'lib_standing_calf_raise', 'lib_bodyweight_calf_raise', 'lib_hip_thrust'],
+    lb09: ['lib_pallof_press', 'lib_russian_twist', 'lib_flutter_kicks', 'lib_bicycle_crunch'],
+  };
+  const ALL = Object.values(LEFT).flat(), bare = (id: string) => id.slice(4);
+  const named = (text: string) => ALL.filter(id => new RegExp(`\\b${bare(id)}\\b|\\b${bare(id).replace(/_/g, '-')}\\b`).test(text));
+  it('each is in its batch file at left-out:D-OWNER-LIB142, after the existing rows, in the HELD row form (no pages, sources or pin); no MANIFEST row or file names it', async () => {
+    const { rows } = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const { MANIFEST } = await import(/* @vite-ignore */ url('tools/plates/library/ci/manifest.mjs'));
+    const all = rows(), VIEW: Record<string, string> = { lib_russian_twist: 'front', lib_bicycle_crunch: 'front' };
+    for (const [b, ids] of Object.entries(LEFT)) {
+      const file = `tools/plates/library/batches/${b}.json`, j = json(file);
+      expect(Object.keys(j.rows).slice(-ids.length), b).toEqual(ids);
+      expect(named(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), `${b} pin`).toEqual([]);   // no pin
+      for (const id of ids) {
+        const s = bare(id).replace(/_/g, '-');
+        expect(j.rows[id], id).toEqual({ src: `library/specs/${bare(id)}.mjs`, slug: s, prefix: s, chromeId: s, mode: 'H', view: VIEW[id] ?? 'side', stage: 'left-out:D-OWNER-LIB142' });
+        expect(json(`docs/research/howto/cards/${bare(id)}.json`).plate.view, id).toBe(j.rows[id].view);
+        expect(all.find((r: any) => r.id === id)?.batchFile, id).toBe(file);
+      }
+    }
+    const m = json(MANIFEST);
+    for (const id of ALL) expect(Object.keys(m.rows), id).not.toContain(id);
+    for (const r of Object.values(m.rows) as any[]) expect(named(Object.keys(r.files).join('\n'))).toEqual([]);
+  });
+  it('the lb08 and lb09 layers specs stage none of them (layers-spec.mjs filter)', async () => {
+    const { layersSpecOf } = await import(/* @vite-ignore */ url('tools/plates/library/layers-spec.mjs'));
+    const { mkdtempSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    for (const b of Object.keys(LEFT)) {
+      const spec: any = layersSpecOf(`tools/plates/library/batches/${b}.json`, { stageDir: mkdtempSync(join(tmpdir(), `w7-leftout-${b}-`)) });
+      expect(named(JSON.stringify(spec)), b).toEqual([]);
+    }
+  }, 120_000);
+  it('the lb8 and lb9 plates pages draw none of them; red: with the stage off left-out, drawnIds takes the id (its spec exists)', async () => {
+    const [L8, L9] = await Promise.all(['lb8', 'lb9'].map(n => import(/* @vite-ignore */ url(`tools/plates/library/${n}/build.mjs`))));
+    for (const [b, B, build] of [['lb08', L8, 'buildLb8Page'], ['lb09', L9, 'buildLb9Page']] as const) {
+      const ids: string[] = B.drawnIds();
+      expect(ids.filter(id => ALL.includes(id)), b).toEqual([]);
+      const html = (await B[build]()).html.toString('utf8');
+      expect(LEFT[b]!.filter(id => html.includes(`id="card-${bare(id).replace(/_/g, '-')}"`)), b).toEqual([]);
+      const data = json(`tools/plates/library/batches/${b}.json`), id = LEFT[b]![0]!;
+      expect(B.drawnIds(undefined, { ...data, rows: { ...data.rows, [id]: { ...data.rows[id], stage: 'drawing' } } }), b).toContain(id);
+    }
+    // bicycle_crunch has no spec: the existence filter alone keeps it out, as for leg_press_calf_raise
+    expect(L9.drawnIds(undefined, { rows: { lib_bicycle_crunch: { ...json('tools/plates/library/batches/lb09.json').rows.lib_bicycle_crunch, stage: 'drawing' } } })).toEqual([]);
+  }, 300_000);
 });
 
 describe('LIB-SHIP W3 Q-W3-13: zoom/ink-check.mjs probes a pinned row through its pinned (non-authoring) candidate', () => {

@@ -41,8 +41,8 @@ export function lb8All(root = ROOT, data = lb8Data(root)) {
   return rows(root, { batches: batchFiles(root).map(p => [p, p === LB8_BATCH ? data : read(root, p)]) });
 }
 
-/** The LB8 ids whose spec file exists, in rows.json order. */
-export const drawnIds = (root = ROOT, data = read(root, rowsFile(root))) => Object.entries(data.rows).filter(([, r]) => existsSync(join(root, 'tools/plates', r.src))).map(([id]) => id);
+/** The LB8 ids whose spec file exists, in rows.json order. LIB-SHIP W7 Q-W7-7 (D-SHIP-LEFTOUT-CLOSURE): a `left-out:` row is never drawn. */
+export const drawnIds = (root = ROOT, data = read(root, rowsFile(root))) => Object.entries(data.rows).filter(([, r]) => !/^left-out:/.test(r.stage) && existsSync(join(root, 'tools/plates', r.src))).map(([id]) => id);
 
 /** The LB8 plates page bytes ({ html: Buffer, warnings }) for `ids` (default: every drawn id). */
 export async function buildLb8Page({ root = ROOT, all = lb8All(root), ids = drawnIds(root) } = {}) {
@@ -87,7 +87,10 @@ export function heldData(root = ROOT, only = null) {
 /** The held page ({ html, data, ids }): a separate page of the held rows only, in memory; never evidence (Do 5). */
 export async function buildHeldPage(root = ROOT, only = null) {
   const data = heldData(root, only), withSources = lb8Data(root, data), ids = Object.keys(data.rows);
-  const all = rows(root, { batches: [...batchFiles(root).map(p => [p, read(root, p)]), ['tools/plates/library/lb8/held (memory)', withSources]] });
+  // LIB-SHIP W7 Q-W7-7 (D-SHIP-LEFTOUT-CLOSURE): a held id is also a `left-out:` row of the batch file; the held page reads
+  // its in-memory row instead, so that batch row is dropped here (else the registry refuses the id twice).
+  const noLeftHeld = b => ({ ...b, rows: Object.fromEntries(Object.entries(b.rows).filter(([id, r]) => !(id in data.rows && /^left-out:/.test(r.stage)))) });
+  const all = rows(root, { batches: [...batchFiles(root).map(p => [p, noLeftHeld(read(root, p))]), ['tools/plates/library/lb8/held (memory)', withSources]] });
   const { html } = await buildPlatesPage(await groupsConfig({ groups: [{ id: 'lb8-held', title: 'LB8 held', ids }] }, all, 'tools/plates/library/lb8/held (memory)'));
   return { html, data, ids, all };
 }

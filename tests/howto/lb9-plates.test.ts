@@ -77,8 +77,23 @@ describe('LIB-21 A11 (Do 6 a): the 8 cards and quotes are byte copies of the LB9
   });
 });
 
+// LIB-SHIP W7 Q-W7-7 (D-SHIP-LEFTOUT-CLOSURE, ruling 14): the owner's left-out ids are rows of the batch file at
+// left-out:D-OWNER-LIB142 (no page, never drawn). The rows-file checks read the raw text without exactly those row
+// blocks; each block must be there once at that stage, and any other occurrence of the id stays in the text (equally strict).
+const LEFT_OUT_W7 = ['pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch'];
+const withoutLeftOut = (text: string) => {
+  let t = text;
+  for (const id of LEFT_OUT_W7) {
+    const re = new RegExp(`,\\n  "lib_${id}": \\{\\n(?:   [^\\n]*\\n)*?   "stage": "left-out:D-OWNER-LIB142"\\n  \\}`);
+    if (!re.test(t)) throw new Error(`Q-W7-7: no left-out row lib_${id}`);
+    t = t.replace(re, '');
+  }
+  return t;
+};
+
 describe('LIB-21 A5 (first push): rows.json holds no row before a spec is drawn; tempo.json is the proposed map', () => {
-  const rows = readJson('tools/plates/library/batches/lb09.json'), t = readJson('tools/plates/library/lb9/tempo.json');
+  const rows = JSON.parse(withoutLeftOut(readFileSync('tools/plates/library/batches/lb09.json', 'utf8'))),   // Q-W7-7: less the left-out rows
+    t = readJson('tools/plates/library/lb9/tempo.json');
   it('batch LB9, censusRef 4a9fd86; no plank, crunch, T or (b) id in any LB9 rows file; no plank, crunch, T id or bicycle_crunch (before \'LB9 ER5 GO\') in tempo.json', () => {
     expect(rows.batch).toBe('LB9');
     expect(rows.censusRef).toBe('4a9fd86');
@@ -932,7 +947,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
     expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_dead_bug', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_side_plank', 'lib_superman', 'lib_v_up']);   // LIB-SUPCORE: 4 SUPCORE rows (flutter_kicks held, D-SUPCORE-FLUTTERHOLD)   // cable_crunch at resume 3 (LIB-21R3); side_plank at the resume; superman at resume 2 (D-LIB21-SUPERMAN); HELD-B released none
-    expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
+    expect(a5(withoutLeftOut(readFileSync(ROWS, 'utf8')), want())).toEqual([]);   // Q-W7-7: less the left-out rows
   });
   it('plank, crunch, the 5 T ids, russian_twist and bicycle_crunch (held) are in no lb9/ file as a row; bicycle_crunch has no spec', () => {
     for (const f of readdirSync('tools/plates/library/lb9').filter(n => n.endsWith('.json'))) {
@@ -947,7 +962,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
     const RULING: Record<string, string> = { pallof_press: 'D-HELDB-PALLOF2', russian_twist: 'D-HELDB-RTSIT', flutter_kicks: 'D-SUPCORE-FLUTTERHOLD' };   // each held id's own ruling
     for (const id of HELD) expect(new RegExp(`\\| ${id} \\| ${RULING[id]}\\b`).test(design), id).toBe(true);
-    for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
+    for (const id of HELD) expect(withoutLeftOut(readFileSync(ROWS, 'utf8')).includes(`lib_${id}`), id).toBe(false);   // Q-W7-7: less the left-out rows
   });
   it('mutations: a dropped row, a duplicated row, a held id, plank, crunch, flutter_kicks, side_plank and one mode set to D are red', () => {
     const row = { src: 'library/specs/x.mjs', mode: 'H', stage: 'drawing', view: 'side' };
@@ -963,7 +978,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     expect(a5(JSON.stringify({ ...j, rows: { ...j.rows, [w[0]!]: { ...row, mode: 'D' } } }, null, 1), w)).toEqual(['mode D']);
   });
   it('every row points at its own spec file and carries the census view; batch LB9, censusRef 4a9fd86', () => {
-    const j = readJson(ROWS);
+    const j = JSON.parse(withoutLeftOut(readFileSync(ROWS, 'utf8')));   // Q-W7-7: less the left-out rows (lib-ship.test.ts pins their form)
     for (const [id, r] of Object.entries<any>(j.rows)) {
       expect(r.src).toBe(`library/specs/${id.slice(4)}.mjs`);
       expect(r.chromeId).toBe(id.slice(4).replace(/_/g, '-'));
@@ -2055,7 +2070,8 @@ describe('LIB-SUPCORE A10 / A1: the 5 cards and quotes, the rows and the waits',
     expect(readFileSync(ROWS, 'utf8').includes('lib_crunch')).toBe(false);
   });
   it('A1 mutations: crunch added to rows.json, a row set to T, and a SUPCORE row dropped, are red', () => {
-    const rows = readJson(ROWS).rows, a1 = (r: Record<string, any>) => [...('lib_crunch' in r ? ['crunch'] : []), ...Object.entries(r).filter(([, x]) => x.mode !== 'H').map(([k]) => k), ...SUP_WAIT.filter(i => `lib_${i}` in r)];
+    const rows = JSON.parse(withoutLeftOut(readFileSync(ROWS, 'utf8'))).rows,   // Q-W7-7: less the left-out rows
+    a1 = (r: Record<string, any>) => [...('lib_crunch' in r ? ['crunch'] : []), ...Object.entries(r).filter(([, x]) => x.mode !== 'H').map(([k]) => k), ...SUP_WAIT.filter(i => `lib_${i}` in r)];
     expect(a1(rows)).toEqual([]);
     expect(a1({ ...rows, lib_crunch: { mode: 'H' } })).toEqual(['crunch']);
     expect(a1({ ...rows, lib_v_up: { ...rows.lib_v_up, mode: 'T' } })).toEqual(['lib_v_up']);

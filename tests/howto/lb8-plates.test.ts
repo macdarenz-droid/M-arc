@@ -53,6 +53,19 @@ const H6_MISSES: Record<string, string[]> = { seated_calf_raise: ['H6.fact:5:con
 const DRAWN_NOW = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
 // LIB-SHIP W7 (D-SHIP-MOVE): the LB8 rows moved into batches/lb08.json; lb8/rows.json is gone.
 const ROWS = 'tools/plates/library/batches/lb08.json';
+// LIB-SHIP W7 Q-W7-7 (D-SHIP-LEFTOUT-CLOSURE, ruling 14): the owner's left-out ids are rows of the batch file at
+// left-out:D-OWNER-LIB142 (no page, never drawn). The rows-file checks read the raw text without exactly those row
+// blocks; each block must be there once at that stage, and any other occurrence of the id stays in the text (equally strict).
+const LEFT_OUT_W7 = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust'];
+const withoutLeftOut = (text: string) => {
+  let t = text;
+  for (const id of LEFT_OUT_W7) {
+    const re = new RegExp(`,\\n  "lib_${id}": \\{\\n(?:   [^\\n]*\\n)*?   "stage": "left-out:D-OWNER-LIB142"\\n  \\}`);
+    if (!re.test(t)) throw new Error(`Q-W7-7: no left-out row lib_${id}`);
+    t = t.replace(re, '');
+  }
+  return t;
+};
 const RESEARCH_HEAD = '596dbe0748f11d13b431ee11d38d1742771925f1';
 const COMPOSERS = ['hackSled', 'pendulum', 'legExtMachine', 'calfMachine', 'ankleCuff'];
 // Each composer's exported size constants (A17).
@@ -148,7 +161,7 @@ describe('LIB-18 A5: lb8/rows.json holds exactly the drawn, non-held LB8 H ids, 
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H', () => {
     expect(want()).toEqual(ON_ROWS.map(i => `lib_${i}`));
-    expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
+    expect(a5(withoutLeftOut(readFileSync(ROWS, 'utf8')), want())).toEqual([]);   // Q-W7-7: less the left-out rows
   });
   it('seated_leg_curl (pilot B\'s plate) is in no lb8/ file, and the two leg curls are in no rows file before their spec exists', () => {
     for (const f of readdirSync('tools/plates/library/lb8').filter(n => n.endsWith('.json'))) {
@@ -163,8 +176,9 @@ describe('LIB-18 A5: lb8/rows.json holds exactly the drawn, non-held LB8 H ids, 
     const table = design.split('## 15. Held ids')[1]!.split('\n## ')[0]!;
     for (const id of HELD) {
       expect(table.split('\n').some(l => l.startsWith(`| ${id} |`) && /D-LIB8-shrug|D-LIB18-CALF|D-LIB8M-CARDTRUE/.test(l)), id).toBe(true);
-      for (const f of reg.batchFiles()) expect(readFileSync(f, 'utf8').includes(`lib_${id}`), `${f}: ${id}`).toBe(false);
-      expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
+      // Q-W7-7: lb08.json read less its left-out rows
+      for (const f of reg.batchFiles()) expect((f === ROWS ? withoutLeftOut : (t: string) => t)(readFileSync(f, 'utf8')).includes(`lib_${id}`), `${f}: ${id}`).toBe(false);
+      expect(withoutLeftOut(readFileSync(ROWS, 'utf8')).includes(`lib_${id}`), id).toBe(false);
     }
   });
   it('mutations: a dropped row, a duplicated row, a held id, seated_leg_curl and lying_leg_curl added, and one mode set to D are red', () => {
