@@ -155,7 +155,7 @@ const feel = {
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
 const MISTAKES = [
-  { key: 'arch', title: 'Lower back arching', zoom: 'back-line', claim: C(['CONSENSUS'], [GGR, MO, ACE, HL], 'card c8, c7'),
+  { key: 'arch', title: 'Back arching as leg rises', zoom: 'back-line', claim: C(['CONSENSUS'], [GGR, MO, ACE, HL], 'card c8, c7'),
     fix: 'Raise the limbs only as high as your low back holds.' },
   { key: 'head', title: 'Head lifted to look forward', zoom: 'head', claim: C(['CONSENSUS'], [GGR, ACE], 'card c9, c6'),
     fix: 'Keep your eyes on the floor, head in line with your spine.' },

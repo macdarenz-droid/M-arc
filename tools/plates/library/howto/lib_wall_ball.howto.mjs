@@ -127,7 +127,7 @@ const feel = {
     // The card's first two rows (thighs and glutes; shoulders and upper chest) have no fix, so they are left out: the
     // feel line says them.
     { key: 'shoulder', where: 'Shoulders', at: { muscles: ['front_delts'] },
-      means: 'Wrong wall distance: the right one takes strain off your shoulders.',   // card c4 (W7 panel #394 K4)
+      means: 'The right distance from the wall takes strain off them.',   // card c4 (W7 recheck #394 6683570453: c4 supports only this)
       fix: 'Hold your arms out, ball touching the wall: stand there.',
       redFlag: 'shoulder', claim: CL.row },
   ],

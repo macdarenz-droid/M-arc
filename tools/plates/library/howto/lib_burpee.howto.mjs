@@ -171,7 +171,7 @@ const zooms = [
       wrong: 'Lower back sagging.',
     },
     alt: {
-      right: 'Side view, straight-arm plank. Head, hips and heels on one line, hands flat, shoulder-width apart.',   // c6, c2
+      right: 'Side view, straight-arm plank. Head, hips and heels on one line, hands flat, shoulder-width apart.',   // c6, c3, c2
       wrong: 'Side view, straight-arm plank. The lower back sags, so the hips drop below the line.',
     },
   },

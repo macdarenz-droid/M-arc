@@ -172,7 +172,7 @@ const feel = {
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
 const MISTAKES = [
-  { key: 'rush', title: 'Rushing the walk', claim: C(['CONSENSUS'], [GG, FV], 'card c7, c17'), fix: "Slow down. Don't rush for distance. Turn in small steps, no pivot." },   // c7 (no speeding up for distance), c17
+  { key: 'rush', title: 'Rushing the walk', claim: C(['CONSENSUS'], [GG, FV], 'card c7, c17'), fix: "Don't rush for distance. Turn in small steps, not a sharp pivot." },   // c7 (no speeding up for distance), c17
   { key: 'long', title: 'Steps too long', claim: C(CL.long.tags, [...new Set([...CL.long.sources, ...CL.out.sources])], `${CL.long.note}, c15`), fix: 'Take short, deliberate steps. Steps out of control? End the carry.' },
   { key: 'shrug', title: 'Shrugging as you tire', zoom: 'shoulders', claim: C(['CONSENSUS'], [BB, FV, SL], 'card c5, c15'), fix: 'Keep your shoulders back and down. Posture changing? End the carry.' },
 ];

@@ -177,7 +177,7 @@ export default {
     { kind: 'safety', text: 'Check the space around you is safe.', claim: CL.c9 },   // W7 panel (#394 SAFETY): the space check comes before the slam
     { kind: 'position', text: 'Feet about shoulder-width apart, knees slightly bent.', claim: CL.c1 },
     { kind: 'grip', text: 'Hold the ball firmly in both hands at chest height.', claim: CL.hold },
-    { kind: 'brace', text: 'Brace, then exhale and slam it down hard between your feet.', claim: C(['CONSENSUS'], [SL, BOD, ACE, BB, VIT, 'im-slam'], 'card c1, c3, c7, c16') },
+    { kind: 'brace', text: 'Ball overhead, arms straight. Brace, exhale, slam it hard between your feet.', claim: C(['CONSENSUS'], [SL, BOD, ACE, BB, VIT, 'im-slam'], 'card c1, c2, c3, c7, c16') },
   ],
   posture: [
     { key: 'top', label: 'Ball overhead', detail: 'Rise onto your toes, arms straight, ball overhead.',
