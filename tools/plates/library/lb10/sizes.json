@@ -453,6 +453,16 @@
     "value": -10,
     "unit": "deg",
     "basis": "approved plate plus claims (D-HELD6-JUMPROPE, #368; D-LIB22-AIRBORNE 'box_jump's method'): box_jump.mjs's flight ankle -10 deg on its approved airborne frame, for c11 'The basic jump comes from the ankles and calves' and c10 'land softly on the balls of the feet'; HOP stays the lowest foot point"
+   },
+   "M_TUCK": {
+    "value": 60,
+    "unit": "deg",
+    "basis": "stated reason: LIB-PLATEFIX-3 (W7 #394 6682923012, ruled #405 6683319630) L5 [3,3,2] 'tuck the knees': the knees flexed 60 deg, half of it at the hips, in the too-high jump (c9); front view, so the tuck shows as shortened legs"
+   },
+   "M_OFF": {
+    "value": 0.55,
+    "unit": "m",
+    "basis": "stated reason: LIB-PLATEFIX-3 (W7 #394 6682923012, ruled #405 6683319630) L5 'offset the dashed figure clear of the solid one': the Mistake figure set 0.55 m to the side (a drawing offset); 0.45 left the faulty right hand on the solid left hand"
    }
   },
   "jumpRope": {
@@ -486,7 +496,7 @@
    "KNEE_SOFT": {
     "value": 15,
     "unit": "deg",
-    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout', D-LIB16-LOCK) for c2 'keeping your knees soft': the straightest knee of the step (the stepped-back knee in the end and the Mistake)"
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout', D-LIB16-LOCK) for c2 'keeping your knees soft': the straightest knee of the step (the stepped-back knee in the end and the Mistake) [unused since LIB-PLATEFIX-3 (W7 #394 6682923012, ruled #405 6683319630): Q_KNEE sets the height]"
    },
    "ELBOW_BEND": {
     "value": 18,
@@ -561,7 +571,7 @@
    "HIP_Y": {
     "value": "solved",
     "unit": "m",
-    "basis": "claim: c2 'quarter squat ... knees soft': the hips' one height through the step (hands and rope keep theirs, Q9) at which the end's stepped-back knee is KNEE_SOFT; the start knees come out at 29.4 deg"
+    "basis": "claim: c2 'quarter-squat': the hips' one height through the step (hands and rope keep theirs, Q9) at which the start knees bend Q_KNEE (LIB-PLATEFIX-3, #405 6683319630; was: the end's stepped-back knee at KNEE_SOFT)"
    },
    "DRAG": {
     "value": "solved",
@@ -581,12 +591,17 @@
    "M_Y": {
     "value": "solved",
     "unit": "m",
-    "basis": "the Mistake's root height: the stepped-back knee at KNEE_SOFT"
+    "basis": "the Mistake's root height: the stepped-back knee at the end's (LIB-PLATEFIX-3; was KNEE_SOFT)"
    },
    "trace": {
     "value": "ball.r",
     "unit": "point",
     "basis": "claim: plate.frames 'the rear foot stepped back' / ruling Q9 'Trace the stepping foot'"
+   },
+   "Q_KNEE": {
+    "value": 42,
+    "unit": "deg",
+    "basis": "claim: c2 'quarter-squat'; LIB-PLATEFIX-3 (W7 #394 6682923012, ruled #405 6683319630) L1 [4,3,3] '40-45 degrees of knee bend (30-45 acceptable)': the start knees, which set the hips' one height HIP_Y (was the stepped-back knee KNEE_SOFT in the end, which left the start at 29.4 deg)"
    }
   },
   "farmer_s_carry": {

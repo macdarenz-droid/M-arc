@@ -157,7 +157,7 @@ export default {
   },
   tempo: [{ phase: 'Squat down', move: true, word: 'Controlled' }, { phase: 'Kick back', move: true }, { phase: 'Jump in', move: true }, { phase: 'Jump up', move: true }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)
   zoom: { view: 'mistake', k: 2 },   // D-LIBZOOM-EXTEND (lib4-cards §41; DESIGN.md §21): the landing tell (knee.r), 14.2 px at k 2 (bar at the zoom's scale)
-  alt: 'Burpee, side view. From a straight-arm plank, hands flat under the shoulders and the body in one line, the feet jump in under the body and the lifter stands tall, landing softly on slightly bent knees.',
+  alt: 'Burpee, side view. From a straight-arm plank, hands flat and shoulder-width apart and the body in one line, the feet jump in under the body and the lifter stands tall, landing softly on slightly bent knees.',   // c2; LIB-PLATEFIX-3 (W7 #394 6682923012): was 'hands flat under the shoulders'
 };
 export const info = { QP, QV, FOOT_Z, pose: Object.fromEntries([['start', start], ['via', via[0]], ['end', end], ['mistake', mistakeFull]].map(([k, p]) => { const lm = landmarksOf(p, H);
   return [k, { com: com(lm).map(v => +v.toFixed(3)), kneeR: +kneeOf(lm, 'r').toFixed(1), hip: lm['hip.r'].map(v => +v.toFixed(3)), knee: lm['knee.r'].map(v => +v.toFixed(3)), heel: +lm['heel.r'][2].toFixed(3), toe: +lm['toe.r'][2].toFixed(3), wrist: lm['wrist.r'].map(v => +v.toFixed(3)) }]; })) };
