@@ -54,9 +54,6 @@ export function chunkMaps(shippedRows, has, pairOf = {}) {
  *  unless its archetype is 'none', its hand-<c> chunk or a hand pair. Runs before any text is built, so no loaders.ts
  *  line can point at a chunk that is not written. */
 export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}, hasFile, sheets = {}, textZoom = new Set()) {
-  // W4 merge of W2 (6th: sheets) and F-ZOOM-NONE #388 (6th: textZoom): a Set in 6th place is #388's form; the lane
-  // merged second settles one argument order (the #388/W2 'whoever merges second' rule).
-  if (sheets instanceof Set) [sheets, textZoom] = [{}, sheets];
   for (const r of shippedRows) {
     const c = r.chromeId;
     // F-ZOOM-NONE: a row ruled in tools/plates/library/text-zooms.json (checked by gen/zooms.mjs, which runs first) has no posture chunk

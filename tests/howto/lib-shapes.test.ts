@@ -273,7 +273,11 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of [...F_CROP, ...F_PAIR]) r.files[k] = 'X'; }
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
-    expect(sha(JSON.stringify(lessW2(m, [BLP])))).toBe('3882bf3eb1690fd260bd5b02351a7bf93684946cdb7a05cd0ca1acb0c19f2a68');
+    // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts;
+    // each row that still lists it after lessW2 must pin the current file, then it is blanked too
+    const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync('docs/research/howto/shared/back-pain-box.json'))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
+    // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
+    expect(sha(JSON.stringify(rrBox(lessW2(m, [BLP]))))).toBe('99d9824be548ecd2454a92bb35c43c1339eca13f8d6731660c6140f2d30e882e');
   });
 });
 
