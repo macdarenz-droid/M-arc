@@ -1376,9 +1376,9 @@
     "basis": "stated reason: the floor beam reaches 10 cm behind the heels so it carries the pivot post and the standing foot stands on it"
    },
    "BEAM_FRONT": {
-    "value": 0.4,
+    "value": 0.7,
     "unit": "m",
-    "basis": "convention: pilot B's anchor spec (#278, specs/ :68) (base to PIVOT z + 0.16, the floor beam's reach past the pivot); LIB-PLATEFIX-3 round 2 (#405 6685743439 R2): 0.40, the beam reaches the machine's column"
+    "basis": "convention: pilot B's anchor spec (#278, specs/ :68) (base to PIVOT z + 0.16, the floor beam's reach past the pivot); LIB-PLATEFIX-3 round 2 (#405 6685743439 R2): 0.70, the beam reaches the machine's column"
    },
    "UPRIGHT_T": {
     "value": 0.04,
@@ -1386,9 +1386,9 @@
     "basis": "convention: eq/legCurlMachine.mjs:20 (the lever 4 cm tube) for the handle strut"
    },
    "COLUMN_DZ": {
-    "value": 0.06,
+    "value": 0.35,
     "unit": "m",
-    "basis": "stated reason (framing): LIB-PLATEFIX-3 round 2 (#405 6685743439 standing_leg_curl R2 [2,2,3]): the machine's column 6 cm in front of the handles, clear of the grip and the toes; no source gives the frame"
+    "basis": "stated reason (framing): LIB-PLATEFIX-3 round 2 (#405 6685743439 standing_leg_curl R2 [2,2,3]): the machine's column 35 cm in front of the handles, clear of the grip, the toes and the 'Knee steady' label and leader, which sit between the standing leg and the column; no source gives the frame"
    },
    "ANKLE_L": {
     "value": "solved",

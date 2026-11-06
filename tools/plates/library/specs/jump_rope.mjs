@@ -66,9 +66,9 @@ const start = asAngles(0), end = asAngles(liftTo(HOP), FLY);
 // Right's HOP), the figure set M_OFF to the side so the dashed figure is clear of the solid one (a drawing offset).
 // LIB-PLATEFIX-3 round 2 (#405 6685743439 jump_rope R5 [4,3,3], c2 c3): the red figure is the main airborne body,
 // unchanged, raised so its lowest foot is M_HOP up: M_TUCK 60 -> 0, since the tucked legs read as a 12 % shorter figure
-// whose head sat only 13 px over the main one; M_HOP 0.15 -> 0.2 m so the copy's head is 19 px over the main head (was 12). The
+// whose head sat only 13 px over the main one; M_HOP 0.15 -> 0.2 m so the copy's head is 24 px over the main head (was 12). The
 // floor line runs on under it.
-const TUCK = { hip: { l: { ...q.hip.l, flex: (q.hip.l.flex ?? 0) + M_TUCK / 2 }, r: { ...q.hip.r, flex: (q.hip.r.flex ?? 0) + M_TUCK / 2 } }, knee: { l: M_TUCK, r: M_TUCK } };
+const TUCK = { hip: { l: { ...q.hip.l, flex: (q.hip.l.flex ?? 0) + M_TUCK / 2 }, r: { ...q.hip.r, flex: (q.hip.r.flex ?? 0) + M_TUCK / 2 } }, knee: { l: q.knee.l + M_TUCK, r: q.knee.r + M_TUCK } };   // round 2: on top of the airborne knees (was M_TUCK alone, which straightened them)
 const tucked = dy => ({ ...asAngles(dy, FLY), ...TUCK, root: { at: [M_OFF, STAND.root.at[1] + dy, STAND.root.at[2]], tilt: 0 } });
 const lowTuck = dy => Math.min(...FOOT_LMS.map(n => landmarksOf(tucked(dy), H)[n][1]));
 const M_DY = bisect(dy => lowTuck(dy) - M_HOP, 0, 0.6, `the tucked lift to ${M_HOP} m`);

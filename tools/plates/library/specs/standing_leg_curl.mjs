@@ -59,7 +59,7 @@ import { legCurlMachine, LEG_CURL_ITEMS } from '../eq/legCurlMachine.mjs';
 
 const H = 1.75;
 export const SIZES = Object.freeze({ LEAN: 10, STANCE_KNEE: 5, START_KNEE: 5, END_KNEE: 110, ANKLE_T: 0.85, M_ARCH: 12, HANDLE: [0.22, 0.10, 0.30],
-  BEAM_BACK: 0.10, BEAM_FRONT: 0.40, UPRIGHT_T: 0.04, TRACE_TRIM: [6, 8] , COLUMN_DZ: 0.06 });
+  BEAM_BACK: 0.10, BEAM_FRONT: 0.70, UPRIGHT_T: 0.04, TRACE_TRIM: [6, 8] , COLUMN_DZ: 0.35 });
 const { LEAN, STANCE_KNEE, START_KNEE, END_KNEE, ANKLE_T, M_ARCH, HANDLE, BEAM_BACK, BEAM_FRONT, UPRIGHT_T, TRACE_TRIM, COLUMN_DZ } = SIZES;
 
 // The drawn outlines in world metres: a side camera at 1 px/m, screen y down (superman.mjs:57-58).
@@ -132,15 +132,15 @@ export const rigOf = lm => { const ap = anklePadOf(lm);
 const PAD_C = [0, THIGH[1] + THIGH_N[1] * 0.055, THIGH[2] + THIGH_N[2] * 0.055];
 const UPRIGHT = { ...sideBar([0, PAD_C[1] + 0.055, PAD_C[2]], [0, GRIP(-1)[1] - 0.10, GRIP(-1)[2] - 0.02], UPRIGHT_T, { z: 'back' }), part: 'upright' };
 // LIB-PLATEFIX-3 round 2 (#405 6685743439 standing_leg_curl R2 [2,2,3]): the machine's frame. A column from the floor beam
-// COLUMN_DZ in front of the handles (clear of the grip and the toes) up to the handle height, with short arms to the handle,
-// the thigh pad and the pivot boss, so nothing floats; the floor beam reaches the column (BEAM_FRONT 0.16 -> 0.40). Static
-// frame, drawn behind the figure; no body change.
+// COLUMN_DZ in front of the handles (clear of the grip, the toes and the 'Knee steady' label and leader, which sit between
+// the standing leg and the column) up to the handle height, with arms to the handle and the thigh pad (whose bracket
+// carries the pivot boss), so nothing floats; the floor beam reaches the column (BEAM_FRONT 0.16 -> 0.70). Static frame,
+// drawn behind the figure; no body change.
 const COL_Z = GRIP(-1)[2] + COLUMN_DZ, COL_TOP = GRIP(-1)[1] + 0.04;
 const FRAME = [
   sideBar([0, 0.05, COL_Z], [0, COL_TOP, COL_Z], UPRIGHT_T, { z: 'back' }),                       // column
   sideBar([0, GRIP(-1)[1], COL_Z], [0, GRIP(-1)[1], GRIP(-1)[2]], UPRIGHT_T * 0.75, { z: 'back' }),  // handle arm
   sideBar([0, PAD_C[1], COL_Z], [0, PAD_C[1], PAD_C[2]], UPRIGHT_T * 0.75, { z: 'back' }),          // thigh-pad arm
-  sideBar([0, PIVOT[1], COL_Z], [0, PIVOT[1], PIVOT[2]], UPRIGHT_T * 0.75, { z: 'back' }),          // pivot bracket
 ];
 // The roller's contact with the lower leg (leg_extension.mjs:180-188), as two planes through the drawn ankle pad of a
 // pose: across the shank at the pad's foot on the shank axis less (1 - ANKLE_T) of the shank (the ankle joint lies on
@@ -170,8 +170,8 @@ export default {
     { type: 'floor', from: BASE[0] - 0.05, to: BASE[1] + 0.05 },
     ...perItem(lm => rigOf(lm), KEEP.length),
     UPRIGHT,
-    ...FRAME,
     (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-line m-line', pts: START_PAD, z: 'front', part: 'startpad' } : null),
+    ...FRAME,   // round 2 R2: appended, so the earlier items keep their indices
   ],
   checks: [
     { landmark: 'knee.r', at: LS['knee.r'], pose: 'all', tol: 1 },                                   // c6: the knee steady at the axis
@@ -187,23 +187,26 @@ export default {
   trace: { point: 'heel.r', trim: TRACE_TRIM },
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   callouts: [
-    { key: 'knee', text: 'Knee<br>steady', anchor: { at: 'knee.r', off: [7.5, 0] }, box: { left: 244, top: 292 }, cue: 'Keep your knee steady as it bends and straightens.' },   // round 2: left 228 -> 244, clear of the new column
+    { key: 'knee', text: 'Knee<br>steady', anchor: { at: 'knee.r', off: [7.5, 0] }, box: { left: 182, top: 290 }, cue: 'Keep your knee steady as it bends and straightens.' },   // round 2: (228, 292) -> (182, 290), between the standing leg and the new column
     { key: 'still', text: 'Upper body<br>still', anchor: 'backUpper', box: { left: 60, top: 110 }, cue: 'Thighs on the pad, upper body still.' },
     { key: 'foot', text: 'Foot above<br>knee', anchor: { at: 'heel.r', pose: 'end' }, box: { left: 30, top: 184 }, cue: 'Curl until your foot is higher than your knee.' },
   ],
   // LIB-ZOOM's inline zoom circle (D-LIBZOOM-EXTEND, #325 6405116791): the Mistake's fault drawn again at k 3.5, the smallest of
   // 1.5-4 whose tell-anchor move reaches deviationMin 11.39 px at the zoom's own scale (12.0 px); zoom/inline.mjs places it.
-  zoom: { view: 'mistake', k: 3.5 },
+  // LIB-PLATEFIX-3 round 2: the tell now sits on the lumbar landmark, which moves 4.10 px on the spread spine, so the
+  // smallest ladder k that reaches 11.39 px is 3 (12.30 px; 2.5 gives 10.25). Was k 3.5 on backMid's 3.4 px.
+  zoom: { view: 'mistake', k: 3 },
   mistake: {
     pose: mistakePose,
     parts: ['head'],   // the back is the one red dashed guide below (panel lb8q, #325 6410306586 item 1)
     guides: [
       { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'lumbar', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
       // the low back sinking in: a red arrow from behind the back onto the arched lumbar (LIB-PLATEFIX-3 W7, c13)
-      { kind: 'arrow', from: { at: 'lumbar', pose: 'mistake', off: [-18, 0] }, to: { at: 'lumbar', pose: 'mistake', off: [-5, 0] } },   // round 2: onto the hollow's apex
+      { kind: 'arrow', from: { at: 'lumbar', pose: 'mistake', off: [-27, 0] }, to: { at: 'lumbar', pose: 'mistake', off: [-13, 0] } },   // round 2: at the hollow's apex, its tip 6 px clear of the solid back (A15)
     ],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, box: { left: 100, top: 90 }, cue: 'Your lower back arches as your leg curls.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, box: { left: 78, top: 90 },   // round 2: left 100 -> 78 with the scene (the wider machine moved it 21.9 px left)
+        cue: 'Your lower back arches as your leg curls.' },
     ],
   },
   alt: 'Standing leg curl, side view. Leaning on the machine with the thighs on the support pad, the hands on the handles and the left foot planted, the lifter curls the right heel toward the glutes until the foot is above the knee.',

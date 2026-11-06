@@ -407,7 +407,7 @@
    "M_HOP": {
     "value": 0.2,
     "unit": "m",
-    "basis": "stated reason: c9 'you aren't in a high jump competition': a jump about four times c9's 2 in top, the height of a tuck-free vertical hop (NOTE RULED 5). LIB-PLATEFIX-3 round 2 (#405 6685743439 jump_rope R5 c2 c3): 0.2 m, so the raised copy's head sits 19 px over the main head (it was 12 px, read as the same height); still unsized by the card"
+    "basis": "stated reason: c9 'you aren't in a high jump competition': a jump about four times c9's 2 in top, the height of a tuck-free vertical hop (NOTE RULED 5). LIB-PLATEFIX-3 round 2 (#405 6685743439 jump_rope R5 c2 c3): 0.2 m, so the raised copy's head sits 24 px over the main head (it was 12 px, read as the same height); still unsized by the card"
    },
    "HAND_OUT": {
     "value": 0.12,
