@@ -843,7 +843,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
 - **Update 11-06 ~21:45 UTC.**
-  - **Train 73 MERGED:** W3 #384 @ `db4a5281` → main `62d3dcb6` (9 How-tos; the app has 26). Review PASS at `27b2562c` with 2 Highs (zoom.json in place under D-REPIN-UNMERGED, PR body), then the fix delta PASS. APK: main gate run 42297822143 is running; send the owner the APK when its fingerprint step passes.
+  - **Train 73 MERGED:** W3 #384 @ `db4a5281` → main `62d3dcb6` (9 How-tos; the app has 26). **APK SENT** ~22:4x: run 42297822143, artifact MARC-DEBUG-APK 13545331897, fingerprint step success. **Last APK sent: `62d3dcb6`** (Relay PROJECT_STATE line owed, 8.5). Review PASS at `27b2562c` with 2 Highs (zoom.json in place under D-REPIN-UNMERGED, PR body), then the fix delta PASS. APK: main gate run 42297822143 is running; send the owner the APK when its fingerprint step passes.
   - Reviews PASS, waiting their turn: #405 (Lows: drop `kOf`, cite main's values), #404 (two doc Mediums), #385 (COACHING-DECISIONS Medium), #395 (Medium → F-PECFLY-FEELROW).
   - **Order:** #400 (merged main @ `09265d41`, delta identical, CI running) → #405 → #404 → #385 → #395. W4 is flipping in parallel (6 ids).
 - **Update 11-06 ~19:45 UTC** (weekly 0.46 at 19:35, flat).
