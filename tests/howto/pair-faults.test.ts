@@ -43,7 +43,14 @@ const PANEL_MAIN: Record<string, string> = {
 describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws on main', () => {
   it('pairPanel(key) is byte-equal to main for every pair key', async () => {
     expect([...P.keysOf()].sort()).toEqual(Object.keys(PANEL_MAIN).sort());
-    for (const [k, want] of Object.entries(PANEL_MAIN)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);
+    // LIB-SHIP W5 D-SHIP-W5-EZWORDS (#392 6654996739): ez-curl-over's Right note is 'Wrist straight' (reverse_curl c1, c6); its
+    // panel equals main's exactly once that one note is put back, and 'Middle of palm' is gone from it. Every other key: byte-equal.
+    for (const [k, want] of Object.entries(PANEL_MAIN)) {
+      const h = await P.pairPanel(k);
+      if (k !== 'ez-curl-over') { expect([k, sha(h)]).toEqual([k, want]); continue; }
+      expect([k, h.includes('Middle of palm'), h.includes('Wrist straight')]).toEqual([k, false, true]);
+      expect([k, sha(h.replaceAll('Wrist straight', 'Middle of palm'))]).toEqual([k, want]);
+    }
   }, 60_000);
 });
 

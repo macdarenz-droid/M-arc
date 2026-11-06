@@ -429,7 +429,7 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     // exactly, except front_squat's setup[2], which goes to research (D-SHIP-W5-GOLDENFEET) and stays unmapped
     for (const id of W5) {
       const card = JSON.parse(readFileSync(join(ROOT, `docs/research/howto/cards/${id.slice(4)}.json`), 'utf8'));
-      const open = id === 'lib_front_squat' ? ['setup[2] (load the plates evenly, collars on)'] : [];
+      const open: string[] = [];   // LIB-SHIP W5: front_squat's setup[2] left its card (F-CARD-FRONTSQ-SETUP, #398), so no field stays open
       expect([id, typeof card.parent, FM.unmappedFields(id, card)]).toEqual([id, 'string', open]);
       expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).filter((f: string) => !open.includes(f)).sort()]);
     }

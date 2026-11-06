@@ -451,9 +451,14 @@ describe('LIB-SHIP W5 D-SHIP-W5-GOLDENFEET and D-SHIP-W5-WALLSIT: squat children
   const run = (c: any, card: any, parent: any) => FAM.familyRefusal(c.id, c, () => card, (id: string) => (id === parent.id ? parent : undefined));
   const feet = (c: any) => c.posture.find((p: any) => p.key === 'feet');
   const shows = (c: any, s: string) => L.shownCopyFields(c).some((f: any) => f.text.includes(s));
-  it('front_squat: still refused for the unmapped setup[2]; the feet label is golden\'s, the golden detail is not on the child', () => {
+  // F-CARD-FRONTSQ-SETUP landed on main (RESEARCH-ROUTES-1 #398): the card's inherit[] no longer names setup[2], so the
+  // family check now passes on the real card; the old setup[2] entry put back is still refused (unmapped).
+  it('front_squat: passes with the research card (setup[2] gone); setup[2] put back is refused; the feet label is golden\'s, the golden detail is not on the child', () => {
     const card = json('docs/research/howto/cards/front_squat.json');
-    expect(run(fs, card, bb)).toBe('lib_front_squat: family: docs/research/howto/cards/front_squat.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)');
+    expect(card.inherit.map((e: any) => e.field)).toEqual(['posture[3] (feet flat, knees follow the toes)']);
+    expect(run(fs, card, bb)).toBeNull();
+    const back = { ...card, inherit: [{ field: 'setup[2] (load the plates evenly, collars on)', why: 'red: the old field' }, ...card.inherit] };
+    expect(run(fs, back, bb)).toBe('lib_front_squat: family: docs/research/howto/cards/front_squat.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)');
     expect([feet(fs).label, feet(bb).label]).toEqual(['Knees follow toes', 'Knees follow toes']);
     expect([shows(fs, feet(bb).detail), feet(fs).detail]).toEqual([false, 'Whole-foot balance, knees in line with the feet.']);
     const mapped = { ...card, inherit: card.inherit.filter((e: any) => !e.field.startsWith('setup[2]')) };
