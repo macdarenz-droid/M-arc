@@ -1560,3 +1560,32 @@ None: no `none` card in G5.
 - straight_bar and single_arm: faults [] (card hand-zoom wrong null, LR-25); the parent's "Wrists bent back over the bar"
   alt is not carried (straight_bar's card says no read source names it).
 
+
+## W5. Flip set (D-SHIP-W5-FLIPSET, #392 6682188871)
+
+Flip (9): front_squat, bodyweight_squat, bodyweight_lunge, bodyweight_split_squat (lb04); hammer_curl,
+alternating_dumbbell_curl, barbell_curl, ez_bar_curl, reverse_curl (lb05). Only these stay on lb04/lb05.layers.json; held
+ids keep their panel records and sheets (every 6681869167 fix applied) and return with a delta check in their wave.
+
+| held id | reason |
+|---|---|
+| goblet_squat | S3 (Q-W5-7) |
+| jump_squat | box_jump held, plate.frames unruled (Q-W5-2) |
+| single_arm_triceps_pushdown, straight_bar_triceps_pushdown | parent triceps_pushdown in #385 (D-SHIP-W5-PARENTS); straight_bar also H10 (#395) |
+| forward_lunge, walking_lunge | parent reverse_lunge in #385 |
+| bulgarian_split_squat | parent in #385; Mistake overlay LIB-PLATEFIX-3 |
+| wall_sit, dumbbell_overhead_triceps_extension, incline_dumbbell_curl | LIB-PLATEFIX-3 (6654466055) |
+| pistol_squat (tell), step_up (trace), cross_body_hammer_curl, bayesian_cable_curl, cable_curl, wrist_curl | LIB-PLATEFIX-3 (6652647984 item 2) |
+| preacher_curl | front-delt region, F-BODYMAP-FRONTDELT (D-SHIP-W5-FRONTDELT) |
+| concentration_curl | Q1 (F-CARD-CONCCURL-RISK) |
+
+Proof: every remaining card (article block and its `.hx-<id>` rules) is byte-equal to the full-page build of the same
+head; against the 28169cc4 approved pages it differs only by the ruled lines (front_squat bail fix, ez/barbell wrist
+risk, reverse_curl's drawn note) and, for barbell_curl, by D-LIB7b-PAGEDUP's named rewrite (its curl-bar-under panel is
+now the page's first copy). Dry run: a scratch worktree with the flip set shipped, scratch stamps (LIB5-SCRATCH-ROOT)
+and provisional layers-page entries for STAMP: `generate` wrote 155 files, `generate --check` PASS.
+
+D-SHIP-W5-NEWFIND (bulgarian): LIB-SHAPES (build-layers-page.mjs:131-132) refuses handling mistakes on an archetype
+'none' sheet, so the three card mistakes sit in printed slots: rear knee resting -> the Rear knee zoom Wrong caption and
+setup step 4 (c3, c8); knee in or out -> setup step 3 and risk knee-drift (c4); crashing into the bottom -> risk crash
+"Crashing into the bottom. Use a weight you can move smoothly." (c8).

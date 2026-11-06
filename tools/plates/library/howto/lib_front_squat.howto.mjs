@@ -148,7 +148,7 @@ const MISTAKES = [
   // Tier A way out (card tierA.wayOut, c14, c25): setup step 1 sets the safeties or a spotter, this fix is the bail
   // sequence, and risks[no-safeties] carries 'practise bailing light' (c25)
   { key: 'safeties', title: 'Bailing with no safeties set', claim: C(['CONSENSUS', 'MECH'], [REP], 'c14, c25'),
-    fix: 'To bail, let go, drop it forward onto the safeties, step back.' },
+    fix: 'Set the safeties. Let go, drop it forward onto them, step back.' },   // c14, c25 (#392 6681869167; fix cap 12 words)
 ];
 const RISKS = [
   { key: 'no-safeties', text: 'A failed rep with no safeties set. Practise bailing light.', claim: C(['CONSENSUS', 'MECH'], [REP], 'c14, c25') },

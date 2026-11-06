@@ -6,15 +6,8 @@
       "ids": [
         "lib_front_squat",
         "lib_bodyweight_squat",
-        "lib_wall_sit",
-        "lib_pistol_squat",
-        "lib_jump_squat",
-        "lib_step_up",
-        "lib_forward_lunge",
-        "lib_walking_lunge",
         "lib_bodyweight_lunge",
-        "lib_bodyweight_split_squat",
-        "lib_bulgarian_split_squat"
+        "lib_bodyweight_split_squat"
       ]
     }
   ],
@@ -26,32 +19,11 @@
     "lib_bodyweight_squat": {
       "optionsKey": "bodyweight_squat"
     },
-    "lib_wall_sit": {
-      "optionsKey": "wall_sit"
-    },
-    "lib_pistol_squat": {
-      "optionsKey": "pistol_squat"
-    },
-    "lib_jump_squat": {
-      "optionsKey": "jump_squat"
-    },
-    "lib_step_up": {
-      "optionsKey": "step_up"
-    },
-    "lib_forward_lunge": {
-      "optionsKey": "forward_lunge"
-    },
-    "lib_walking_lunge": {
-      "optionsKey": "walking_lunge"
-    },
     "lib_bodyweight_lunge": {
       "optionsKey": "bodyweight_lunge"
     },
     "lib_bodyweight_split_squat": {
       "optionsKey": "bodyweight_split_squat"
-    },
-    "lib_bulgarian_split_squat": {
-      "optionsKey": "bulgarian_split_squat"
     }
   },
   "jump": null

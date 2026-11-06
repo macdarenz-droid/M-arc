@@ -164,7 +164,7 @@ const MISTAKES = [
     fix: 'Take weight off and lift with control.' },
 ];
 const RISKS = [
-  { key: 'wrist', text: 'Bent wrists put extra load on them and can lead to discomfort.', claim: CL.c8 },
+  { key: 'wrist', text: 'Bent wrists put extra load on them and can lead to discomfort, even injury.', claim: CL.c8 },   // c8 risk entry (#392 6681869167)
 ];
 
 export default {

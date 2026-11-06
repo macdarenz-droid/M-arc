@@ -4,18 +4,8 @@
       "id": "lb5",
       "title": "LB5",
       "ids": [
-        "lib_preacher_curl",
-        "lib_cable_curl",
-        "lib_bayesian_cable_curl",
-        "lib_concentration_curl",
-        "lib_dumbbell_overhead_triceps_extension",
-        "lib_cross_body_hammer_curl",
-        "lib_wrist_curl",
         "lib_hammer_curl",
         "lib_alternating_dumbbell_curl",
-        "lib_single_arm_triceps_pushdown",
-        "lib_incline_dumbbell_curl",
-        "lib_straight_bar_triceps_pushdown",
         "lib_barbell_curl",
         "lib_ez_bar_curl",
         "lib_reverse_curl"
@@ -24,46 +14,12 @@
   ],
   "optionsModule": "tools/plates/library/pages/lb05.closeups.mjs",
   "closeups": {
-    "lib_preacher_curl": {
-      "optionsKey": "preacher_curl",
-      "pair": "ez-curl-under"
-    },
-    "lib_cable_curl": {
-      "optionsKey": "cable_curl",
-      "pair": "curl-bar-under"
-    },
-    "lib_bayesian_cable_curl": {
-      "optionsKey": "bayesian_cable_curl"
-    },
-    "lib_concentration_curl": {
-      "optionsKey": "concentration_curl"
-    },
-    "lib_dumbbell_overhead_triceps_extension": {
-      "optionsKey": "dumbbell_overhead_triceps_extension"
-    },
-    "lib_cross_body_hammer_curl": {
-      "optionsKey": "cross_body_hammer_curl",
-      "pair": "curl-dumbbell-neutral"
-    },
-    "lib_wrist_curl": {
-      "optionsKey": "wrist_curl"
-    },
     "lib_hammer_curl": {
       "optionsKey": "hammer_curl"
     },
     "lib_alternating_dumbbell_curl": {
       "optionsKey": "alternating_dumbbell_curl",
       "pair": "curl-dumbbell-under"
-    },
-    "lib_single_arm_triceps_pushdown": {
-      "optionsKey": "single_arm_triceps_pushdown"
-    },
-    "lib_incline_dumbbell_curl": {
-      "optionsKey": "incline_dumbbell_curl",
-      "pair": "curl-dumbbell-under"
-    },
-    "lib_straight_bar_triceps_pushdown": {
-      "optionsKey": "straight_bar_triceps_pushdown"
     },
     "lib_barbell_curl": {
       "optionsKey": "barbell_curl",

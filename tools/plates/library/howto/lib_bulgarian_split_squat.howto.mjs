@@ -83,11 +83,11 @@ const zooms = [
       wrong: { text: 'Knee rests', anchor: { at: 'knee.l', pose: 'mistake' } },
     },
     caption: {
-      right: 'Rear knee just above or lightly touching the floor.',
+      right: 'Rear knee just above or lightly touching the floor.',   // c3
       wrong: 'Rear knee resting on the floor.',
     },
     alt: {
-      right: 'Side view, bottom of the split squat. The rear knee is just above the floor, the rear foot on the bench.',
+      right: 'Side view, bottom of the split squat. The rear knee is just above the floor, the rear foot on the bench.',   // c3, c2 (C01, #392 6681869167)
       wrong: 'Side view, bottom of the split squat. The hips have sunk and the rear knee rests on the floor.',
     },
   },
@@ -117,7 +117,9 @@ const feel = {
 
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
-  { key: 'crash', text: 'Too heavy a load ends in a crash into the bottom.', claim: CL.c8 },
+  // D-SHIP-W5-NEWFIND (#392 6681869167): the card's handlingMistake 'Crashing into the bottom.' with its fix (c8), in a
+  // printed slot: LIB-SHAPES (build-layers-page.mjs:131-132) refuses handling mistakes on an archetype 'none' sheet
+  { key: 'crash', text: 'Crashing into the bottom. Use a weight you can move smoothly.', claim: CL.c8 },
   { key: 'knee-drift', text: 'Front knee drifting inward or outward.', claim: CL.c4 },
 ];
 
