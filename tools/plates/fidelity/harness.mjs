@@ -59,7 +59,7 @@ export const nothingToWaitFor = () => document.getAnimations().every(a => {
 /** Fonts loaded, no animation or transition left (D-SHIP-W3-PAUSEDSKIP: but a paused one fully off screen), two frames painted. */
 export async function settle(page) {
   await page.evaluate(() => document.fonts.ready);
-  await page.waitForFunction(nothingToWaitFor, null, { timeout: 5000 });   // D-SHIP-W3-PAUSEDSKIP
+  await page.waitForFunction(nothingToWaitFor, null, { timeout: 8000 });   // D-SHIP-W3-PAUSEDSKIP; D-SHIP-W3-GOLDWAIT (#384 Q-W3-21): 8000 as settleApp (feel-sweep runs 5200 ms)
   await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
 }
 
