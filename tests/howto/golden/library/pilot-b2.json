@@ -61,6 +61,22 @@
       "date": "2026-11-04",
       "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row).",
       "prev": "ba72467d084a841c0ff8895df693cfe05e68fbefb59244a9fc2fb891df5c73ae"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B2",
+      "ids": [
+        "lib_crunch"
+      ],
+      "pageSha256": "34f593ba8264767d05a52dcc3afe3d6d3fb52e6a4c5e9c70637811869cf24c0f",
+      "bytes": 265444,
+      "approvedBy": "supervisor",
+      "decision": "D-BODYMAP-LIB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/404#issuecomment-6682755661 @ 89c74521d8d85e9f4bface6a70bd8156f777d04b",
+      "date": "2026-11-06",
+      "supersedes": 2,
+      "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-LIB-O5 point 4): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow pain parts on every front feel map; nothing else on the page moves except the shimmer band of a map whose main muscles include front_delts. Built twice, equal sha256.",
+      "prev": "0b659af46e873d927980bb2c68ec683780ace4d1056bcf89a18f6f3114fae225"
     }
   ]
 }

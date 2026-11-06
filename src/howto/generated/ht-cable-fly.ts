@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=326802aedf1c04a0afb230d47fdbbeb2804878e6ea61ec870eb0045c498c00a7
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=52cf253b716c8db693ae8e2228f23053c534b11ff9a64a974ebbf1c1a59df3a0
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_cable_fly",
   name: "Cable Fly",
-  hashes: { inputsSha256: "326802aedf1c04a0afb230d47fdbbeb2804878e6ea61ec870eb0045c498c00a7", golden: "227beb75c13476c1e3e52f778e9cde006e473b3658f3c6765dea82069e750b3e" },
+  hashes: { inputsSha256: "52cf253b716c8db693ae8e2228f23053c534b11ff9a64a974ebbf1c1a59df3a0", golden: "227beb75c13476c1e3e52f778e9cde006e473b3658f3c6765dea82069e750b3e" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
