@@ -43,7 +43,7 @@
 //  Ankle pad (c1 "the pad rests just above the heel of the working leg"): on the back of the lower leg at ANKLE_T of the
 //   shank from the knee, on the drawn calf (seated_leg_curl.mjs ANKLE_T).
 //  Hands (c2 "grab the handles"): the fists on the handles ahead of the hips, elbows bent.
-//  Mistake (c13; hanging_leg_raise.mjs:69): the end pose with the lumbar extended M_ARCH (trunk -M_ARCH); the pelvis,
+//  Mistake (c13; hanging_leg_raise.mjs:69): the end pose with the lumbar extended M_ARCH (trunk.bow M_ARCH, round 2); the pelvis,
 //   the thighs on the pad and the feet keep their places; the hands keep the handles. The faulty back contour is a red
 //   dashed guide.
 //  Balance (D-LIB18-BALANCE): the centre of mass between the standing foot and the thigh pad.
@@ -59,8 +59,8 @@ import { legCurlMachine, LEG_CURL_ITEMS } from '../eq/legCurlMachine.mjs';
 
 const H = 1.75;
 export const SIZES = Object.freeze({ LEAN: 10, STANCE_KNEE: 5, START_KNEE: 5, END_KNEE: 110, ANKLE_T: 0.85, M_ARCH: 12, HANDLE: [0.22, 0.10, 0.30],
-  BEAM_BACK: 0.10, BEAM_FRONT: 0.16, UPRIGHT_T: 0.04, TRACE_TRIM: [6, 8] });
-const { LEAN, STANCE_KNEE, START_KNEE, END_KNEE, ANKLE_T, M_ARCH, HANDLE, BEAM_BACK, BEAM_FRONT, UPRIGHT_T, TRACE_TRIM } = SIZES;
+  BEAM_BACK: 0.10, BEAM_FRONT: 0.40, UPRIGHT_T: 0.04, TRACE_TRIM: [6, 8] , COLUMN_DZ: 0.06 });
+const { LEAN, STANCE_KNEE, START_KNEE, END_KNEE, ANKLE_T, M_ARCH, HANDLE, BEAM_BACK, BEAM_FRONT, UPRIGHT_T, TRACE_TRIM, COLUMN_DZ } = SIZES;
 
 // The drawn outlines in world metres: a side camera at 1 px/m, screen y down (superman.mjs:57-58).
 const CAM = { view: 'side', near: 'r', pxm: 1, P: w => [w[2], -w[1]] };
@@ -80,7 +80,8 @@ function root1(g, a, b, what) {
 }
 
 // ---- the body: both thighs plumb (LEAN), the standing foot flat on the floor ----
-const legs = (knee, ankleL, y) => ({ root: { at: [0, y, 0], tilt: LEAN }, trunk: 0, neck: 0, hip: { l: LEAN, r: LEAN }, knee: { l: STANCE_KNEE, r: knee },
+const legs = (knee, ankleL, y) => ({ root: { at: [0, y, 0], tilt: LEAN }, trunk: { flex: 0 },   // object form (D-SPINE-MIX), the same pose
+  neck: 0, hip: { l: LEAN, r: LEAN }, knee: { l: STANCE_KNEE, r: knee },
   ankle: { l: ankleL, r: ankleL } });
 // the standing ankle: heel and ball level (the foot flat)
 export const ANKLE_L = root1(a => { const lm = landmarksOf(legs(START_KNEE, a, 1), H); return lm['heel.l'][1] - lm['ball.l'][1]; }, -20, 20, 'the standing foot flat');
@@ -93,7 +94,12 @@ const hands = { l: { at: GRIP(1), pole: [1, -0.3, 0] }, r: { at: GRIP(-1), pole:
 const pose = knee => ({ ...legs(knee, ANKLE_L, ROOT_Y), reach: hands });
 export const start = pose(START_KNEE);
 export const end = pose(END_KNEE);
-export const mistakePose = { trunk: -M_ARCH };
+// LIB-PLATEFIX-3 round 2 (#405 6685743439 standing_leg_curl R5 [3,3,3], R11 [3,2,3]): the same M_ARCH 12 deg of lumbar
+// extension, drawn on LIB-SPINE's spread spine (trunk.bow) instead of a whole-trunk extension: the thorax stays, so the
+// head no longer slides 20.1 px back (it read as a lean), and the lumbar curve deepens 3.9 px at the lumbar landmark
+// (9.4 -> 13.3 px off the upper-back-to-buttock line). The dashed back runs through the lumbar landmark, the arrow and
+// the tell sit on it, so the zoom rings the low back. M_ARCH is not enlarged.
+export const mistakePose = { trunk: { flex: 0, bow: M_ARCH } };
 export const LS = landmarksOf(start, H), LE = landmarksOf(end, H), LM = landmarksOf({ ...end, ...mistakePose }, H);
 
 // ---- the machine ----
@@ -125,6 +131,17 @@ export const rigOf = lm => { const ap = anklePadOf(lm);
 // eq/legCurlMachine.mjs:43), so the handle is carried by the frame through the thigh pad's bracket (D-LIB18-FRAME).
 const PAD_C = [0, THIGH[1] + THIGH_N[1] * 0.055, THIGH[2] + THIGH_N[2] * 0.055];
 const UPRIGHT = { ...sideBar([0, PAD_C[1] + 0.055, PAD_C[2]], [0, GRIP(-1)[1] - 0.10, GRIP(-1)[2] - 0.02], UPRIGHT_T, { z: 'back' }), part: 'upright' };
+// LIB-PLATEFIX-3 round 2 (#405 6685743439 standing_leg_curl R2 [2,2,3]): the machine's frame. A column from the floor beam
+// COLUMN_DZ in front of the handles (clear of the grip and the toes) up to the handle height, with short arms to the handle,
+// the thigh pad and the pivot boss, so nothing floats; the floor beam reaches the column (BEAM_FRONT 0.16 -> 0.40). Static
+// frame, drawn behind the figure; no body change.
+const COL_Z = GRIP(-1)[2] + COLUMN_DZ, COL_TOP = GRIP(-1)[1] + 0.04;
+const FRAME = [
+  sideBar([0, 0.05, COL_Z], [0, COL_TOP, COL_Z], UPRIGHT_T, { z: 'back' }),                       // column
+  sideBar([0, GRIP(-1)[1], COL_Z], [0, GRIP(-1)[1], GRIP(-1)[2]], UPRIGHT_T * 0.75, { z: 'back' }),  // handle arm
+  sideBar([0, PAD_C[1], COL_Z], [0, PAD_C[1], PAD_C[2]], UPRIGHT_T * 0.75, { z: 'back' }),          // thigh-pad arm
+  sideBar([0, PIVOT[1], COL_Z], [0, PIVOT[1], PIVOT[2]], UPRIGHT_T * 0.75, { z: 'back' }),          // pivot bracket
+];
 // The roller's contact with the lower leg (leg_extension.mjs:180-188), as two planes through the drawn ankle pad of a
 // pose: across the shank at the pad's foot on the shank axis less (1 - ANKLE_T) of the shank (the ankle joint lies on
 // it), and along the shank axis (the ankle joint, on the axis, lies on it while the pad rests on the calf).
@@ -153,6 +170,7 @@ export default {
     { type: 'floor', from: BASE[0] - 0.05, to: BASE[1] + 0.05 },
     ...perItem(lm => rigOf(lm), KEEP.length),
     UPRIGHT,
+    ...FRAME,
     (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-line m-line', pts: START_PAD, z: 'front', part: 'startpad' } : null),
   ],
   checks: [
@@ -169,7 +187,7 @@ export default {
   trace: { point: 'heel.r', trim: TRACE_TRIM },
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   callouts: [
-    { key: 'knee', text: 'Knee<br>steady', anchor: { at: 'knee.r', off: [7.5, 0] }, box: { left: 228, top: 292 }, cue: 'Keep your knee steady as it bends and straightens.' },
+    { key: 'knee', text: 'Knee<br>steady', anchor: { at: 'knee.r', off: [7.5, 0] }, box: { left: 244, top: 292 }, cue: 'Keep your knee steady as it bends and straightens.' },   // round 2: left 228 -> 244, clear of the new column
     { key: 'still', text: 'Upper body<br>still', anchor: 'backUpper', box: { left: 60, top: 110 }, cue: 'Thighs on the pad, upper body still.' },
     { key: 'foot', text: 'Foot above<br>knee', anchor: { at: 'heel.r', pose: 'end' }, box: { left: 30, top: 184 }, cue: 'Curl until your foot is higher than your knee.' },
   ],
@@ -180,12 +198,12 @@ export default {
     pose: mistakePose,
     parts: ['head'],   // the back is the one red dashed guide below (panel lb8q, #325 6410306586 item 1)
     guides: [
-      { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
+      { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'lumbar', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
       // the low back sinking in: a red arrow from behind the back onto the arched lumbar (LIB-PLATEFIX-3 W7, c13)
-      { kind: 'arrow', from: { along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake', off: [-18, 0] }, to: { along: ['backMid', 'sacrum'], t: 0.5, pose: 'mistake', off: [-5, 0] } },
+      { kind: 'arrow', from: { at: 'lumbar', pose: 'mistake', off: [-18, 0] }, to: { at: 'lumbar', pose: 'mistake', off: [-5, 0] } },   // round 2: onto the hollow's apex
     ],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 100, top: 90 }, cue: 'Your lower back arches as your leg curls.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, box: { left: 100, top: 90 }, cue: 'Your lower back arches as your leg curls.' },
     ],
   },
   alt: 'Standing leg curl, side view. Leaning on the machine with the thighs on the support pad, the hands on the handles and the left foot planted, the lifter curls the right heel toward the glutes until the foot is above the knee.',
