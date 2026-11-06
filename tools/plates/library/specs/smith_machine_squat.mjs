@@ -68,7 +68,7 @@ const LS = landmarksOf(start, H), LE = landmarksOf(end, H);
 const barAt = lm => [0, lm.grips[1], RAIL_Z];
 export const BAR_LOW = barAt(LE)[1];
 export const STOP_Y = BAR_LOW - BAR_R - STOP_BELOW;      // the stop's top (c8)
-const rigOf = lm => smith({ railZ: RAIL_Z, bar: barAt(lm), stopY: STOP_Y, stop: { w: STOP_W, h: STOP_H }, stopZ: 'front', base: [RAIL_Z - BASE_BACK, RAIL_Z + BASE_FRONT] });   // the floor beam centred under the rails, behind and under the feet (a frame part beside the body; panel mx12 R2)
+const rigOf = lm => smith({ railZ: RAIL_Z, bar: barAt(lm), stopY: STOP_Y, stop: { w: STOP_W, h: STOP_H }, stopZ: 'back', base: [RAIL_Z - BASE_BACK, RAIL_Z + BASE_FRONT] });   // the floor beam centred under the rails, behind and under the feet (a frame part beside the body; panel mx12 R2)
 const START_BAR = barAt(LS);
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, START_BAR[1] + BAR_R * Math.sin(k * Math.PI / 8), START_BAR[2] + BAR_R * Math.cos(k * Math.PI / 8)]);
 export const info = () => { const m = landmarksOf({ ...end, ...mistakePose }, H);

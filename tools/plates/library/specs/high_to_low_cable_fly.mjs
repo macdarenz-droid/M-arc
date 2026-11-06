@@ -88,7 +88,9 @@ const capsule = (a, b, r, n = 8) => {
   return [...pts, pts[0]].map(([x, y]) => [x, y, b[2]]);
 };
 const ring = (c, r, n = 16) => Array.from({ length: n + 1 }, (_, k) => [c[0] + r * Math.cos(2 * Math.PI * k / n), c[1] + r * Math.sin(2 * Math.PI * k / n), c[2]]);
-const GHOSTS = ['l', 'r'].flatMap(sd => [capsule(lmMis[`shoulder.${sd}`], lmMis[`elbow.${sd}`], 0.046), capsule(lmMis[`elbow.${sd}`], lmMis[`grip.${sd}`], 0.036)]);
+// LIB-PLATEFIX-3 round 2 (pf7 R5 [3,3,4], #405 6685743439): only the crossed forearms and hands are drawn red; the
+// dashed upper-arm outlines traced over the solid upper arms and made the knot (both critics' fix), so they are gone.
+const GHOSTS = ['l', 'r'].map(sd => capsule(lmMis[`elbow.${sd}`], lmMis[`grip.${sd}`], 0.036));
 
 // ---- equipment ----
 const lmBase = landmarksOf(start, H);
@@ -149,11 +151,13 @@ export default {
   tempo: [{ phase: 'Close', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Open', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
+    parts: ['fore.r', 'fore.l', 'fist.r', 'fist.l'],   // round 2: the forearms and hands only (no upper-arm outline)
     guides: [
       ...GHOSTS.map(pts => ({ kind: 'dashed', pts })),                                               // the crossed arms (ghosts)
       ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: ring(lmMis[`grip.${sd}`], FIST_R) })),                       // each faulty hand's ring
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [0, -10] }, to: { at: 'grip.r', pose: 'mistake', off: [0, -10] } },   // each hand crosses over
-      { kind: 'arrow', from: { at: 'grip.l', pose: 'end', off: [0, 10] }, to: { at: 'grip.l', pose: 'mistake', off: [0, 10] } },
+      // round 2: the two opposing arrows run under the hands, clear of the arms (were across the chest at -10 and +10 px)
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [0, 14] }, to: { at: 'grip.r', pose: 'mistake', off: [0, 14] } },   // each hand crosses over
+      { kind: 'arrow', from: { at: 'grip.l', pose: 'end', off: [0, 22] }, to: { at: 'grip.l', pose: 'mistake', off: [0, 22] } },
     ],
     tells: [
       { key: 'cross', text: 'Hands<br>cross', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'Your hands cross past each other at the front.' },

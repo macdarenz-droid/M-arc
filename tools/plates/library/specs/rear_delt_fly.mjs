@@ -28,7 +28,7 @@
 import { landmarksOf, rootOnSeat, REF_CAMERA } from '../engine.mjs';
 import { pecDeck } from '../eq/pecDeck.mjs';
 
-export const SIZES = { SEAT_TOP: 0.45, TILT: 0, ELBOW: 20, CLOSE_GAP: 0.05, END_ANGLE: 10, TOP: 1.45, PAD_LEN: 0.7, MIS_ELEV: 5, ZOOM_K: 1.5 };
+export const SIZES = { SEAT_TOP: 0.45, TILT: 0, ELBOW: 20, CLOSE_GAP: 0.05, END_ANGLE: 10, TOP: 1.45, PAD_LEN: 0.7, MIS_ELEV: 5, ZOOM_K: 3 };   // ZOOM_K: round 2, the tell half-way up the trapezius line moves 4.03 px, so k 3 (12.1 px; 2.5 gives 10.1)
 const H = 1.75;
 const R = Math.PI / 180;
 const { SEAT_TOP, TILT, ELBOW, CLOSE_GAP, END_ANGLE, TOP, PAD_LEN, MIS_ELEV, ZOOM_K } = SIZES;
@@ -90,6 +90,13 @@ const START_PHANTOM = (() => {
 
 const mistakePose = { scap: { elev: MIS_ELEV, pro: 0 } };   // c17 the shrug; the hands stay on the handles
 const LE = landmarksOf(end, H), LM = landmarksOf({ ...end, ...mistakePose }, H);
+// LIB-PLATEFIX-3 round 2 (pf7 R5 [3,3,3] and R11 [3,4,3], #405 6685743439; c17 "shoulders shrug up toward the ears"):
+// the shrug is drawn where it happens, as the trapezius line from each raised shoulder cap up to the side of the neck
+// below the ear (red dashed), instead of the changed-parts outline along the whole arms (which read as the arms lifting).
+// The neck point is fixed (the head does not move): NECK_X off the mid-line (inside the head's 12 px half width) at the
+// height half-way from the chin to the ear. NECK_X is a drawing value (unsourced). The pose is unchanged (MIS_ELEV).
+const NECK_X = 0.075;
+const NECK = sd => [(sd === 'l' ? 1 : -1) * NECK_X, (LM.chin[1] + LM.ear[1]) / 2, LM[`shoulderTop.${sd}`][2]];
 export const info = () => ({ shrugCm: +((LM['shoulderTop.r'][1] - LE['shoulderTop.r'][1]) * 100).toFixed(2), closeAngle: +CLOSE_ANGLE.toFixed(1),
   endElbowFwdCm: +((LE['elbow.r'][2] - LE['shoulder.r'][2]) * 100).toFixed(1), startGripGap: +(lmS['grip.l'][0] - lmS['grip.r'][0]).toFixed(3) });
 export default {
@@ -125,11 +132,15 @@ export default {
   tempo: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 3, move: true }],
   mistake: {
     pose: mistakePose,
+    parts: ['torso'],   // round 2: the raised shoulder line only, no changed-parts outline along the arms (R5, all three critics)
     guides: [
+      ...['r', 'l'].map(sd => ({ kind: 'dashed', pts: [{ at: `shoulderTop.${sd}`, pose: 'mistake' }, NECK(sd)] })),   // the trapezius line, cap to neck
       { kind: 'arrow', from: { at: 'shoulderTop.r', pose: 'end', off: [-6, 0] }, to: { at: 'shoulderTop.r', pose: 'mistake', off: [-6, 0] } },   // the shoulders rise
       { kind: 'arrow', from: { at: 'shoulderTop.l', pose: 'end', off: [6, 0] }, to: { at: 'shoulderTop.l', pose: 'mistake', off: [6, 0] } },
     ],
-    tells: [{ key: 'shrug', text: 'Shoulders<br>shrug', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, box: { left: 30, top: 222 }, cue: 'Your shoulders shrug up toward your ears as the arms open.' }],
+    // round 2: the tell ends half-way along the red trapezius line, so the zoom (the tell's two poses) frames the shoulder
+    // and the side of the neck (R11), not the arm root, the post and the lever.
+    tells: [{ key: 'shrug', text: 'Shoulders<br>shrug', anchor: { along: [{ at: 'shoulderTop.r', pose: 'mistake' }, NECK('r')], t: 0.5, pose: 'mistake' }, box: { left: 30, top: 222 }, cue: 'Your shoulders shrug up toward your ears as the arms open.' }],
   },
   zoom: { view: 'mistake', k: ZOOM_K },
   alt: 'Rear delt fly on a pec deck set to reverse fly, front view. Seated upright with the chest on the pad, the lifter pulls the handles from in front at shoulder height out to the sides in a wide arc until the arms line up with the shoulders, elbows slightly bent.',
