@@ -24,7 +24,7 @@ beforeAll(async () => {
   E = await qaEng.loadEngine(mirror);
   all = build.zoomAll();
   html = (await build.buildZoomPage({ all })).html.toString('utf8');
-  c0 = await cand.candidateOf(LID, { all, platesHtml: html, engine: E, authoring: true });
+  c0 = await cand.candidateOf(LID, { all, platesHtml: html, engine: E });
 }, T);
 afterAll(() => { if (mirror) qaEng.dropMirror(mirror); });
 
@@ -38,7 +38,7 @@ const mutated = async (fn: string, arg: any = null) => {
   try {
     const spec = (await import(/* @vite-ignore */ pathToFileURL(file).href)).default;
     const { html: h } = await bp.buildPlatesPage({ groups: [{ id: 'z', title: 'Z', ids: [ID] }], sources: { [ID]: ['mutation'] }, specs: { [ID]: file } });
-    return { ...(await cand.candidateOf(LID, { all, platesHtml: h.toString('utf8'), engine: E, authoring: true })), spec };
+    return { ...(await cand.candidateOf(LID, { all, platesHtml: h.toString('utf8'), engine: E })), spec };
   } finally { rmSync(dir, { recursive: true, force: true }); }
 };
 // the Mistake zoom markup with its ring, clip and bg circles moved to (x, y)
