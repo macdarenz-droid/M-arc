@@ -637,7 +637,7 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
   // LIB-SHIP W2 (ruling 3, D-SHIP-W2-STAMP, #379 6636105974): pilot A's layers page is re-pinned for the 7 W2 ids it adds
   // (it supersedes the W1 pin), and pilot B's layers page (cable_fly, push_up) and PILOT-B2's page and layers page
   // (D-LIB-PILOTB2, crunch held at approved-plate) are added; every other entry is unchanged
-  // F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, #404 6682755661): the three layers pages are re-pinned in place for the library
+  // F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, #404 6682755661): the three layers pages are re-pinned by appended entries (D-BODYMAP-APPEND) for the library
   // body-map fix; every other entry is unchanged
   it('the pinned-page list is pilot A\'s (page and layers page), PILOT-A2\'s, PILOT-A3\'s, pilot B\'s (page and layers page) and PILOT-B2\'s (page and layers page) on this tree and sha256 is the pin hash', () => {
     expect(pinnedPages(ROOT)).toEqual({ pages: [
