@@ -111,7 +111,7 @@ export default {
     ],
     tells: [
       { key: 'under', text: 'Feet under<br>bar', anchor: { at: 'ball.r', pose: 'mistake' }, cue: 'Your feet are right under the bar, so your knees travel far forward.' },
-      { key: 'knees', text: 'Knees far<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 252, top: 214 }, cue: 'Your knees push far past your toes.' },
+      { key: 'knees', text: 'Knees far<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 252, top: 214 }, cue: 'Your knees travel too far forward.' },   // LIB-PLATEFIX-3 K1 (#393 6683164302; c3 names no landmark): was 'Your knees push far past your toes.'
     ],
   },
   alt: 'Smith machine squat, side view. The bar rests on the upper traps, feet a few inches ahead of the bar. The lifter sits the hips back and bends the knees until the thighs are parallel, chest up and heels down, the bar moving straight down to just above the stops.',

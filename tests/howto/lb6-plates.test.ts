@@ -521,10 +521,26 @@ describe('LIB-16 A2: pulloverMachine on machine_pullover, per drawn pose (13.1)'
     const st = s.poses.start;
     expect(contactProblems({ ...s, poses: { ...s.poses, start: { ...st, neck: st.neck + 8 } } }).some(p => p.startsWith('start: head'))).toBe(true);
   });
-  it('c8 Mistake: the low back, upper back and head forward of the pad (at least 2 cm), the arm at the end', () => {
-    const l = lmOf(S[ID], 'mistake'), pad = M[ID].PM.pad, off = (p: number[]) => (p[1]! - pad.point[1]) * pad.normal[1] + (p[2]! - pad.point[2]) * pad.normal[2];
-    for (const k of ['backMid', 'backUpper']) expect(off(l[k]), k).toBeGreaterThan(0.02);
-    expect(lmOf(S[ID], 'mistake').head[2] - lmOf(S[ID], 'end').head[2]).toBeGreaterThan(0.04);
+  // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was "the low back and upper back forward of the pad (at
+  // least 2 cm)" (backMid and backUpper > 0.02 m: the old Mistake slid the whole torso off the pad); now the low back
+  // arches off the pad (backMid > 0.02 m and lumbar > 0.10 m) with the upper back kept on it (|backUpper| <= 0.005 m),
+  // #393 6683164302 L5. The head check is unchanged. Mutation below: the old slide pose is red.
+  const c8Problems = (l: any, e: any) => {
+    const pad = M[ID].PM.pad, off = (p: number[]) => (p[1]! - pad.point[1]) * pad.normal[1] + (p[2]! - pad.point[2]) * pad.normal[2], bad: string[] = [];
+    if (!(off(l.backMid) > 0.02)) bad.push(`backMid ${off(l.backMid).toFixed(3)}`);
+    if (!(off(l.lumbar) > 0.10)) bad.push(`lumbar ${off(l.lumbar).toFixed(3)}`);
+    if (!(Math.abs(off(l.backUpper)) <= 0.005)) bad.push(`backUpper ${off(l.backUpper).toFixed(3)} off the pad`);
+    if (!(l.head[2] - e.head[2] > 0.04)) bad.push('head');
+    return bad;
+  };
+  it('c8 Mistake: the low back arches off the pad (backMid > 2 cm, lumbar > 10 cm) with the upper back on it, the head forward, the arm at the end', () => {
+    expect(c8Problems(lmOf(S[ID], 'mistake'), lmOf(S[ID], 'end'))).toEqual([]);
+  });
+  it('mutation: the old Mistake (the pelvis tipped 12 deg with the trunk counter-rotated: the torso slid off the pad) is red', async () => {
+    const { landmarksOf, rootOnSeat } = await import(/* @vite-ignore */ lib('engine.mjs'));
+    const e = S[ID].poses.end, seat = [0, M[ID].SIZES.SEAT_TOP, 0];
+    const old = { ...e, root: { at: rootOnSeat(seat, 12, 1.75), tilt: 12 }, trunk: -12, neck: M[ID].NECK + 12 };
+    expect(c8Problems(landmarksOf(old, 1.75), lmOf(S[ID], 'end')).some(b => /backUpper/.test(b))).toBe(true);
   });
   /** Panel fix (#297 6353020731, R2): the seat cushion and the back pad each join the frame through drawn parts. Two
    *  static shapes join when their outlines come within 1 px or one holds a point of the other; the seat pad (the seat
@@ -1337,10 +1353,10 @@ describe('LIB-16 resume: the approved LB6 plates stay byte-identical (page 2668c
   // golden.mjs fragmentsOf of machine_pullover and machine_crunch on main's LB6 page 2668c838…e84e (both approved, #297).
   const APPROVED: Record<string, Record<string, string>> = {
     "machine-pullover": {
-      "normalSvg": "90b18786547aede0c06fa694bbf48a91868721bf17f37625fea5b04760a867a6",
+      "normalSvg": "fc4506504817886a881c63cdec40fe976d31935e9f04b36e4e3b9b9c0072bc77",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): normalSvg was 90b18786, now fc450650
       "normalOverlay": "9716f8050db626def56b9342914e5d38fefa2a6fe7978f29066605dc62cfcc80",
-      "mistakeSvg": "a452764ab7f5f89dfa7dc223c9ee4397f08313358d0407549f1151f529d65d11",
-      "mistakeOverlay": "742c20ff35b94de8f842dc7e2aa0d8ddc32bbb1c1bb35e6ec18ae7fcf47175ca",
+      "mistakeSvg": "73ced42ed51f615c37723c8bb9acb753a3b5cbed7a3d68bfda326944ee858040",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was a452764a, now 73ced42e
+      "mistakeOverlay": "eac7c7efe8cc19912bc409ee2f4ea3ec8a7773a1b2480a4280ae7d212f9fa170",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeOverlay was 742c20ff, now eac7c7ef
       "tells": "491dfaa9fec824f16a2290510510b6fa5d9a4f4c9ea8f38a9e4d3f0a0359ed3a",
       "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
       "cues": "59c4002969a558f75c224b1af3682a555fbc0c6c73ee981e9640354810010be3",
@@ -1919,23 +1935,23 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
       tells: '974fd5d7ae64e02e87f859bccdabbb824add81f8cc501ed38abe50e0a29b6b25', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
       cues: 'e57bcb073136e623bc0c4c7fe2a2c2743dd31dabd42ec1e7451ec62f46699c01', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
       mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
-    'high-to-low-cable-fly': { normalSvg: '9b35cfa8ac033cf03223f5aa482b2c4efa341f8e6c4dfac4b00c781ecdfd487b', normalOverlay: '1f0d451386e2e12cc6b8e8c4fd6db326ccc0b6dc981d383312e41bbcce5ef6e1',
-      mistakeSvg: '9eb229e0544fb487f59e4910d293c6da9c05ba0d1cf6242be3104ab7d975e402', mistakeOverlay: 'e954e9ff44fd970595ba91dcbb8f18038510a7bbcc73aee5d3fee8ce056b2e85',
+    'high-to-low-cable-fly': { normalSvg: 'f3a6b677430bd396e616e93aa4899b45a35d447403c67f790d5e49659e09593d', normalOverlay: '036bbcc274a219453265d5aba76983ce959ee516a20d499d8f9e78179d26acea',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): normalSvg was 9b35cfa8, now f3a6b677; normalOverlay was 1f0d4513, now 036bbcc2
+      mistakeSvg: '8b5c975b6bd76b41e24d5b381a4c8ee542d383091091d49bcbff707c9f09589b', mistakeOverlay: 'bc9310ff4cefaf0d1d11f75ae567f4a48f899b6c86bfbf9477f71ce81aa35ae2',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 9eb229e0, now 8b5c975b; mistakeOverlay was e954e9ff, now bc9310ff
       tells: '60d21de24772caa0dc87995218a1b8517e433b1e7927fc0b358aa4c869e34eb5', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
       cues: 'acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2', alt: '8776483a58ccce47ccf95121cf10720cb66e845ee4937aeb58497a071cfc8f30',
       mistakeAlt: 'ea2b604a94dd9d4bc75eb13615124126151b487f2dc7d4d674576c173dd7bdfe' },
     'smith-machine-squat': { normalSvg: 'e28a7ef099a60aca269a5239828dd4d3e6ceca3ca638250fcbb5f605969b6530', normalOverlay: 'c50a52e7cf6c3d6bcd744619888c859b920b707b1ed59d9c10bf68b4e16ae881',
-      mistakeSvg: 'fa64b6806adc834a53ff43e128ea52cfa694389ddd82ec27d99a1e17694273a0', mistakeOverlay: 'c3206135bcbe197bc7e0e143f609acd2cbed988619a9b99d89e4ac4ba072f585',
-      tells: '73ff3249de7184e3fb37bb728c933043d1f686c3b413e71c4cd8fbaaca73a9dc', tempo: 'f886198ba7e406367703d407e46cd3f5178dc9b2b21e53921aaeb03899df9faf',
-      cues: 'fe51224cbe5e669a6cf6562164cacff337ed44eaa011307f5edfdd426c5c4244', alt: '727ac3352572b1cdb5596b3420ef9effb4e7b77bf2d25ada54e49e4a675fd5c8',
+      mistakeSvg: 'fa64b6806adc834a53ff43e128ea52cfa694389ddd82ec27d99a1e17694273a0', mistakeOverlay: '923d11ec1c947c18eefd4f7b861dbc6298321b3923f425149634056fa6884f1b',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeOverlay was c3206135, now 923d11ec
+      tells: 'aa721c4cc5e68c7dde50216ef79fe26b6f2a4c87784d32ea4823f97c7db9e8a7', tempo: 'f886198ba7e406367703d407e46cd3f5178dc9b2b21e53921aaeb03899df9faf',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): tells was 73ff3249, now aa721c4c
+      cues: '6fbef077bb173990c7478d2394c036ce3be0975e58ad9058cdb03659643091d8', alt: '727ac3352572b1cdb5596b3420ef9effb4e7b77bf2d25ada54e49e4a675fd5c8',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): cues was fe51224c, now 6fbef077
       mistakeAlt: '73dd0a9bd8699833121d3a342e1343db9270ef4331a5d92ef81df0a500fad4b8' },
     'machine-lateral-raise': { normalSvg: '740a132c3606d27e2ee332dbe3ea92d4248d3e09efa2395b5716ab13b3b8b604', normalOverlay: '3bc5f556d7b8e27bca45e7b69ac33c2731256195438076cfeb929ea6485aa784',
       mistakeSvg: '4c1de8ec1371858e94f294757084de37ae124d9343cd08a57521c84e0d2fc846', mistakeOverlay: 'fd411a91ade4f941e202d4e3ccc96940b5ee4a9d833a0cf7dca1954456832a89',
       tells: '687f416bd5dcdd39848f1dc1f9235c29f119151695de3723096f95497b30b92e', tempo: '0c3cfc803ccdd653f9beff83d552c129a8c4ce03a4f119808d72520aff159fbc',
       cues: '6220387ee2b29600bbd9b45e643e5193056ddda986ddc15b6d018bddbff05d07', alt: '74f3769e116308b416bf6d9b55d70d3579b21d3abcac3bf70ca79a82483fdd34',
       mistakeAlt: 'dadbe7b7bf2003b5b4312403ff066b86b940daa384e6d372ee6fd5548c38c2f7' },
-    'rear-delt-fly': { normalSvg: '386cba4a876bbdf5d69c930c8207d8e5d6350c64ebd7fb9ac2c0645bfff054c8', normalOverlay: '1b8f37bc2cabd0a02acffe75dfd7ef6a15423878044d49cf576854d6e7dd0b64',
-      mistakeSvg: '51a69e4ca2a27c0eea6ac484e6efed62709c6396009c2c7e5b2f78f5b266acca', mistakeOverlay: '66398edde3c915b54979bc6f9db8c88847674a3e38f767db5934d42fa55919ba',
+    'rear-delt-fly': { normalSvg: '3ae3c37eca03ee45125c2743e237fdc9f41e441f6138acca7e3ef4123f246f39', normalOverlay: '1b8f37bc2cabd0a02acffe75dfd7ef6a15423878044d49cf576854d6e7dd0b64',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): normalSvg was 386cba4a, now 3ae3c37e
+      mistakeSvg: '309876b150cf2532be6cfb374367d9bbdf45d2d03a3292c4d19a0530889ea8ec', mistakeOverlay: '66398edde3c915b54979bc6f9db8c88847674a3e38f767db5934d42fa55919ba',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 51a69e4c, now 309876b1
       tells: '9a2df2d60b2c5ee135a32b5694de1574f7cd55188fa9d77e146044b06c7569e4', tempo: '4fea38d8fe037c637a77ae44b4191a339e8fd1215cc41789124a37fcb95730ad',
       cues: 'cffb083b22876cc09fff21e99a198a14e75ccdf1334e12a0a70e7eea4f4ae435', alt: 'f54a914422b3e1be44f3991a289859a7b089c5c3b520f2407df73ec1d71c8d1b',
       mistakeAlt: '8025a402e572b5643fe4d0a851f73e5ac4d7de82c2544a4d4310038d05c31c01' },

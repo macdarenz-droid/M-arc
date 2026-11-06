@@ -247,9 +247,9 @@
     "basis": "stated reason: the floor line runs 30 cm past the feet (layout)"
    },
    "M_ARCH": {
-    "value": 12,
+    "value": 25,
     "unit": "deg",
-    "basis": "convention: hanging_leg_raise.mjs:69 (the 8), its Mistake arches the low back 12 deg (trunk -12): here the pelvis tips forward 12 deg and the lumbar spine extends 12 deg (c8)"
+    "basis": "convention: dumbbell_overhead_triceps_extension.mjs M_ARCH (#290 6343237796, the ruled library arch), drawn as trunk.bow on LIB-SPINE's spread spine so the low back curves off the pad with the upper back and buttock on it (c8; LIB-PLATEFIX-3, #393 6683164302 L5, ruled #405 6683319630); was 12 (hanging_leg_raise.mjs:69, a pelvis tilt that slid the torso)"
    },
    "M_NECK": {
     "value": 12,
