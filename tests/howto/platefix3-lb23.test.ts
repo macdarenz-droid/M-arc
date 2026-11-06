@@ -92,7 +92,7 @@ describe('LIB-PLATEFIX-3 item 17 and one_arm_dumbbell_row', { timeout: T }, () =
   });
   it('sumo: the higher-hips Mistake is re-solved from the new floor start (hips up, the bar still reached)', () => {
     const P = px(S.sumo_deadlift);
-    expect(P('end', 'hip.r')[1] - P('mistake', 'hip.r')[1]).toBeGreaterThan(10);
+    expect(P('end', 'hip.r')[1]! - P('mistake', 'hip.r')[1]!).toBeGreaterThan(10);
     expect(trunk(P, 'mistake')).toBeGreaterThan(trunk(P, 'end') + 5);
   });
   const segd = (p: number[], a: number[], b: number[]) => { const ab = [b[0]! - a[0]!, b[1]! - a[1]!], t = Math.max(0, Math.min(1, ((p[0]! - a[0]!) * ab[0]! + (p[1]! - a[1]!) * ab[1]!) / (ab[0]! ** 2 + ab[1]! ** 2)));
