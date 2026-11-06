@@ -37,15 +37,23 @@ const ELBOW_BOTTOM = 90, ELBOW_TOP = 8;                // about 90 degrees (c5);
 const DB = { handle: 0.13, headLen: 0.07 };            // vendor dumbbell defaults
 
 const feet = { l: { at: [0.10, 0, STEP / 2 + 0.03] }, r: { at: [-0.10, 0, -STEP / 2 + 0.03] } };
-const base = { root: { at: ROOT, tilt: 0 }, trunk: 0, neck: 0, scap: { elev: 0, pro: -1 }, plant: feet, wrist: 0, shoulder: { flex: SH_FLEX, rot: 0 } };
+const base = { root: { at: ROOT, tilt: 0 }, trunk: { flex: 0 }, neck: 0, scap: { elev: 0, pro: -1 }, plant: feet, wrist: 0, shoulder: { flex: SH_FLEX, rot: 0 } };
 const start = { ...base, elbow: ELBOW_BOTTOM };
 const end = { ...base, elbow: ELBOW_TOP };
 
 // Mistake (card plate.mistake, c9): "Back arching as the dumbbell is pressed up." c9 gives no size: LB3
 // dumbbell_romanian_deadlift's arch (#274 a6f4bd07, specs/dumbbell_romanian_deadlift.mjs:109, M_ARCH 25), as ruled for
 // this card (#290 6343237796): the pelvis tips M_ARCH forward and the lumbar spine extends M_ARCH. Never sized to pass H3.
-const M_ARCH = 25;
-const mistakePose = { root: { at: ROOT, tilt: M_ARCH }, trunk: -M_ARCH };
+// LIB-PLATEFIX-3 item 14 (#392 6654466055 L5 [3,4,3] "BACK ARCHES barely changes the back outline"; ruling #405
+// 6682844211): the same 25 deg of lumbar extension, drawn on LIB-SPINE's spread spine instead of a pelvis tilt under a
+// counter-rotated trunk (which slid the whole upper back 10.4 px forward, inside the solid figure). M_ARCH splits into
+// M_BOW 13 (trunk.bow: the pelvis tips under the thorax, the lumbar curve deepens) and M_RIB 12 (trunk extension: the
+// ribcage tips back), so the dashed back runs behind the solid one. Drawn outline (plate px): lumbar depth 6.57 (Right)
+// -> 13.33 (was 12.68), upper back 6.6 px behind the solid (was 10.3 px in front), ribcage 12 deg back (was 0). The
+// split is a drawing value (c9 gives no size); the total is never above the ruled 25. The trunk is in the object form in
+// every pose (D-SPINE-MIX).
+const M_ARCH = 25, M_BOW = 13, M_RIB = M_ARCH - M_BOW;
+const mistakePose = { trunk: { flex: -M_RIB, bow: M_BOW } };
 const LM_M = landmarksOf({ ...end, ...mistakePose }, H);
 // The arch as a dashed curve (sacrum -> lumbar -> backMid -> backUpper of the faulty pose, 2 cm up), and an arrow
 // pointing forward into the lumbar from behind, its tip 15 cm behind the faulty lumbar point (13.1's 6 px clearance;
