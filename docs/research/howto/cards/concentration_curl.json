@@ -321,6 +321,23 @@
      "where": "How to, step 3"
     }
    ]
+  },
+  {
+   "id": "c15",
+   "text": "Keep the wrists straight through the lift; bent wrists put extra load on them and can cause discomfort (StrengthLog, written for the dumbbell curl, applied to this dumbbell curl).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-dbcurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dbcurl",
+     "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+     "where": "Common mistakes, not locking your wrists"
+    }
+   ]
   }
  ],
  "sources": [
@@ -363,6 +380,16 @@
    "pmid": 19204579,
    "access": "abstract",
    "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-dbcurl",
+   "url": "https://www.strengthlog.com/dumbbell-curl/",
+   "title": "How to Dumbbell Curl: Muscles Worked & Proper Form",
+   "kind": "coach",
+   "year": 2020,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-11-05"
   }
  ],
  "plate": {
@@ -526,8 +553,15 @@
    }
   ]
  },
- "risks": [],
- "redFlags": [],
+ "risks": [
+  {
+   "risk": "Bent wrists under load can cause wrist discomfort.",
+   "claim": "c15"
+  }
+ ],
+ "redFlags": [
+  "wrist"
+ ],
  "zooms": [
   {
    "key": "conc-brace",
@@ -551,7 +585,8 @@
  },
  "anchorSource": "bb-concentration",
  "notes": [
-  "F-LB5-2: under D-LIB15-MIRROR the plate may draw the mirror image of c1's named side (the right arm braced on the right inner thigh, the free hand on the left knee), because c14 states that each side is trained in turn."
+  "F-LB5-2: under D-LIB15-MIRROR the plate may draw the mirror image of c1's named side (the right arm braced on the right inner thigh, the free hand on the left knee), because c14 states that each side is trained in turn.",
+  "RESEARCH-ROUTES-1 part 2 (F-CARD-CONCCURL-RISK; #398 6648427172, ruled #403 6683127888): risks and redFlags were empty. No concentration-curl page read states a wrist, elbow or injury risk (sl-concentration, bb-concentration, ace-bicepsstudy; NASM 404, ExRx 403, Healthline 404, Verywell 402). c15 takes StrengthLog's dumbbell-curl wrist line (sl-dbcurl, dumbbell_biceps_curl c6; page read 2026-11-05, HTTP 200), so risks[0] uses dumbbell_biceps_curl's wording and redFlags is wrist. No source names an elbow risk, so the elbow box stays off."
  ],
  "plateFacts": [
   {
