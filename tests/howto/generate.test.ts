@@ -138,7 +138,7 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
       const h = core.parseHeader(readFileSync(p, 'utf8'));
       expect(h.hash, p).toBe(core.inputsSha256(h.writers, await inputsOf(h.writers, p)));
     }
-  });
+  }, 60_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): walks every generated file, which grows with every wave
 
   it('the inputs are the core, the vendored files, the font, golden.mjs, css.mjs, plates.json and GOLDEN.json', () => {
     const ins: string[] = plates.inputs();

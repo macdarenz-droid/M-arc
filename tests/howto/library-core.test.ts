@@ -93,7 +93,7 @@ describe('L2-A4: a new library batch row stales none of the 8\'s generated files
     expect(hashLineProblems(paths, base, withRow)).toEqual([]);
     for (const p of ID_FILES) expect(withRow.get(p)!.text.split('\n')[0], p).not.toBe(base.get(p)!.text.split('\n')[0]);
     expect(hashLineProblems([], base, withRow)).toEqual(['no files compared']);
-  }, 180_000);
+  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): the walk grows with every wave; the library timeout, as #385
 });
 
 describe('L2-A4 core: per-output inputs (HT-2 core, design 6.1)', () => {
