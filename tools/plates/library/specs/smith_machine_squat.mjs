@@ -22,7 +22,7 @@
 //   plate.mistake c3 (key `under`); tempo = plate.tempo (up 1, down 3, pause 0): Lower 3, Drive up 1 (Motra's 1 s
 //   bottom pause, c22, is named, not drawn).
 // Unsourced numbers: SIZES below, each with its basis in lb6/sizes.json (r2).
-import { bodyShapes, fk, landmarksOf, normPose, resolve } from '../engine.mjs';
+import { landmarksOf } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
 import { smith, SMITH_ITEMS } from '../eq/smith.mjs';
 
@@ -64,43 +64,11 @@ const feetUnder = { l: { ...feetStart.l, at: [FOOT_X, 0, RAIL_Z] }, r: { ...feet
 const misFull = key(END_HIP_Y, END_INCL, 0, END_SPINE, { plant: feetUnder });
 const mistakePose = { root: misFull.root, plant: feetUnder, reach: misFull.reach };
 
-// LIB-PLATEFIX-3 last recheck (#405 6688665575, R5 [4,2,3]; pf8-findings c2, c3): the faulty near leg (thigh, kneecap,
-// shank, foot) is drawn whole as red dashed outlines over the solid figure, from the engine's own side-view shapes of the
-// Mistake pose (assisted_pull_up's MIS_ARM form), so the foot under the bar reads; the changed-parts outline left only
-// fragments outside the solid body fill. Segment lengths are the body's own.
-const cr = (ps, k = 8) => {
-  const n = ps.length, g = i => ps[(i + n) % n], out = [];
-  for (let i = 0; i < n; i++) {
-    const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
-    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
-    for (let j = 0; j < k; j++) { const t = j / k, u = 1 - t;
-      out.push([0, 1].map(d => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d])); }
-  }
-  return out;
-};
-const MIS_LEG = (() => {
-  const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
-  const keys = ['thigh.r', 'kneecap.r', 'shank.r', 'foot.r'];
-  return bodyShapes(fk(resolve(normPose({ ...end, ...mistakePose }, bd), bd).q, bd), probe).filter(sh => keys.includes(sh.key))
-    .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly)).map(([x, y]) => [0, -y / 1000, x / 1000]));
-})();
 const LS = landmarksOf(start, H), LE = landmarksOf(end, H);
 const barAt = lm => [0, lm.grips[1], RAIL_Z];
 export const BAR_LOW = barAt(LE)[1];
 export const STOP_Y = BAR_LOW - BAR_R - STOP_BELOW;      // the stop's top (c8)
-// LIB-PLATEFIX-3 last recheck (#405 6688665575, R2 [3,4,3]; pf8-findings c1, c3): the rod and the hook rail are drawn in
-// the end layer's `center` level, behind the trunk and the near limbs but over the start figure and the ghosts, so they
-// run the full height from the top member to the floor beam (in the static back layer the opaque start figure cut them
-// off at its head). The safety stop (c8) is a horizontal arm on the rail, its top STOP_BELOW under the bar's lowest drawn
-// point, reaching STOP_ARM back from the rod's back face, STOP_ARM_H tall, in the same level (over the plate disc, which
-// is in the back level; it was a 25 x 5 cm box behind the disc that showed as a ~15 px fragment). The composer
-// (eq/smith.mjs) is unchanged: only this spec re-layers its items. STOP_ARM and STOP_ARM_H are drawing values.
-export const STOP_ARM = 0.18, STOP_ARM_H = 0.025;
-const RAIL_ITEMS = [3, 4];                                // smith(): [carriage, hook, stop, rod, hook rail, top member, floor beam]
-const STOP_ARM_Z = [RAIL_Z - 0.015 - STOP_ARM, RAIL_Z + 0.015];   // from STOP_ARM behind the rod's back face to its front face
-const stopArm = { type: 'box', at: [0, STOP_Y - STOP_ARM_H / 2, (STOP_ARM_Z[0] + STOP_ARM_Z[1]) / 2], w: STOP_ARM_Z[1] - STOP_ARM_Z[0], h: STOP_ARM_H, z: 'center' };
-const rigOf = lm => smith({ railZ: RAIL_Z, bar: barAt(lm), stopY: STOP_Y, stop: { w: STOP_W, h: STOP_H }, stopZ: 'back', base: [RAIL_Z - BASE_BACK, RAIL_Z + BASE_FRONT] })
-  .map((it, i) => (i === 2 ? stopArm : RAIL_ITEMS.includes(i) ? { ...it, z: 'center' } : it));   // the floor beam centred under the rails, behind and under the feet (a frame part beside the body; panel mx12 R2)
+const rigOf = lm => smith({ railZ: RAIL_Z, bar: barAt(lm), stopY: STOP_Y, stop: { w: STOP_W, h: STOP_H }, stopZ: 'front', base: [RAIL_Z - BASE_BACK, RAIL_Z + BASE_FRONT] });   // the floor beam centred under the rails, behind and under the feet (a frame part beside the body; panel mx12 R2)
 const START_BAR = barAt(LS);
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, START_BAR[1] + BAR_R * Math.sin(k * Math.PI / 8), START_BAR[2] + BAR_R * Math.cos(k * Math.PI / 8)]);
 export const info = () => { const m = landmarksOf({ ...end, ...mistakePose }, H);
@@ -132,20 +100,18 @@ export default {
   callouts: [
     { key: 'feet', text: 'Feet<br>ahead', anchor: 'ball.r', box: { left: 268, top: 300 }, cue: 'Set your feet a few inches in front of the bar, not under it.' },
     { key: 'depth', text: 'Thighs<br>parallel', anchor: 'knee.r', box: { left: 236, top: 246 }, cue: 'Squat until your thighs are at least parallel to the floor.' },
-    { key: 'stops', text: 'Stops<br>set', anchor: [0, STOP_Y - STOP_ARM_H / 2, STOP_ARM_Z[0] + 0.01], cue: 'Set the safety stops just below your squat depth before you unrack.' },   // anchor: the stop arm's back end (R2 fix)
+    { key: 'stops', text: 'Stops<br>set', anchor: [0, STOP_Y - STOP_H / 2, RAIL_Z - STOP_W / 2], cue: 'Set the safety stops just below your squat depth before you unrack.' },
   ],
   tempo: [{ phase: 'Lower', s: 3, move: true }, { phase: 'Drive up', s: 1, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['leg.l', 'arm.r', 'arm.l'],   // the near leg is drawn whole by MIS_LEG below (R5)
     guides: [
-      ...MIS_LEG.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),
       { kind: 'arrow', from: { at: 'ball.r', pose: 'end', off: [0, 8] }, to: { at: 'ball.r', pose: 'mistake', off: [0, 8] } },   // the feet slide back under the bar
       { kind: 'dashed', pts: [[0, 0, RAIL_Z], [0, BAR_LOW, RAIL_Z]] },                                                         // the bar's line down to the feet
     ],
     tells: [
       { key: 'under', text: 'Feet under<br>bar', anchor: { at: 'ball.r', pose: 'mistake' }, cue: 'Your feet are right under the bar, so your knees travel far forward.' },
-      { key: 'knees', text: 'Knees far<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 252, top: 214 }, cue: 'Your knees travel too far forward.' },   // LIB-PLATEFIX-3 K1 (#393 6683164302; c3 names no landmark): was 'Your knees push far past your toes.'
+      { key: 'knees', text: 'Knees far<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 252, top: 214 }, cue: 'Your knees push far past your toes.' },
     ],
   },
   alt: 'Smith machine squat, side view. The bar rests on the upper traps, feet a few inches ahead of the bar. The lifter sits the hips back and bends the knees until the thighs are parallel, chest up and heels down, the bar moving straight down to just above the stops.',

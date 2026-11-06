@@ -6,14 +6,13 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
-let plate: any, body: any, eq: any, qaEng: any, mp: any, mpMod: any, rdf: any, htl: any, sms: any, lth: any;
+let plate: any, body: any, eq: any, qaEng: any, mp: any, mpMod: any, rdf: any, htl: any, lth: any;
 beforeAll(async () => {
   [plate, body, eq, qaEng] = await Promise.all(['../vendor/engine/plate.mjs', '../vendor/engine/body.mjs', '../vendor/engine/equipment.mjs', 'qa/engine.mjs']
     .map(f => import(/* @vite-ignore */ lib(f))));
   mpMod = await import(/* @vite-ignore */ lib('specs/machine_pullover.mjs')); mp = mpMod.default;
   rdf = (await import(/* @vite-ignore */ lib('specs/rear_delt_fly.mjs'))).default;
   htl = (await import(/* @vite-ignore */ lib('specs/high_to_low_cable_fly.mjs'))).default;
-  sms = (await import(/* @vite-ignore */ lib('specs/smith_machine_squat.mjs'))).default;
   lth = (await import(/* @vite-ignore */ lib('specs/low_to_high_cable_fly.mjs'))).default;
 }, 600_000);
 const Eng = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body });
@@ -45,11 +44,7 @@ const backGap = (pose: any, pxm: number) => {
 
 // high_to_low_cable_fly: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 
-describe('PF3 W6 smith_machine_squat: the knees tell names no landmark (c3)', () => {
-  it('the knees tell cue is "Your knees travel too far forward."', () => {
-    expect(sms.mistake.tells.find((t: any) => t.key === 'knees').cue).toBe('Your knees travel too far forward.');
-  });
-});
+// smith_machine_squat: HELD (D-LIB13-PANEL2, #405 6688665575 last check: R3 regressed); its tests went with its drawing (e1e9a0c7).
 
 // W6b: low_to_high_cable_fly (#393 6683164302 L5 "the tangled press arms and crossed hands"; ruled #405 6683319630)
 describe('PF3 W6b low_to_high_cable_fly: the press hands stay apart, clear of the solid meeting hands (c11)', () => {
@@ -122,49 +117,6 @@ describe('PF3 round 2 low_to_high_cable_fly R5: the press elbows drop outside th
   });
 });
 
-describe('PF3 round 2 smith_machine_squat R3: the stop is drawn behind the lifter (c8)', () => {
-  it('the safety stop is behind the trunk and the near limbs in the start and end poses (main: front, over the traps and the arm)', () => {
-    const L = qaEng.poseLandmarks(Eng(), sms);
-    for (const pose of ['start', 'end']) {
-      const ctx = { pose, start: L.lm.start, mistake: false, body: L.body };
-      const items = sms.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(L.lm[pose], ctx) ?? [] : e)).filter(Boolean);
-      // LIB-PLATEFIX-3 last recheck (#405 6688665575 R2): the stop is now the arm on the rail, in the center level (behind
-      // the trunk and the near limbs, as R3 asks); was the 25 x 5 cm box in the back level
-      const stop = items.find((it: any) => it.type === 'box' && Math.abs(it.h - 0.025) < 1e-9);
-      expect(stop, pose).toBeTruthy();
-      expect(stop.z, pose).toBe('center');
-      expect(items.some((it: any) => it.z === 'front' && it.type === 'box'), pose).toBe(false);
-    }
-  });
-});
+// smith_machine_squat: HELD (D-LIB13-PANEL2, #405 6688665575 last check: R3 regressed); its tests went with its drawing (e1e9a0c7).
 
-describe('PF3 last recheck smith_machine_squat R2, R5 (#405 6688665575; D-SHIP-W5-NEWFIND)', () => {
-  const itemsOf = (pose: string) => {
-    const L = qaEng.poseLandmarks(Eng(), sms), ctx = { pose, start: L.lm.start, mistake: false, body: L.body };
-    return sms.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(L.lm[pose], ctx) ?? [] : e)).filter(Boolean);
-  };
-  it('R2: the rod and the hook rail are drawn in the end layer (center level), not the static back level the start figure covers', () => {
-    const items = itemsOf('end');
-    // equipment order: floor, then smith()'s [carriage, hook, stop, rod, hook rail, top member, floor beam]
-    const rod = items[4], upright = items[5], member = items[6];
-    expect(upright.type).toBe('rackUpright');
-    expect(member.z).toBe('back');
-    expect(upright?.z).toBe('center');
-    expect(rod?.z).toBe('center');
-  });
-  it('R2: the stop is a horizontal arm on the rail, top just under the bar, reaching at least 15 px behind the rod and at most 5 px tall', () => {
-    const r = plate.renderPlate(sms, { id: 'pf3s' }), cam = qaEng.cameraOf(sms, r.report), stop = itemsOf('end').find((it: any) => it.type === 'box' && it.z === 'center');
-    const back = cam.P([0, stop.at[1], stop.at[2] - stop.w / 2]), rail = cam.P([0, stop.at[1], -0.11]);
-    expect(rail[0]! - back[0]!).toBeGreaterThanOrEqual(15);
-    expect(stop.h * cam.pxm).toBeLessThanOrEqual(5);
-    expect(stop.w).toBeGreaterThan(stop.h * 4);
-  });
-  it('R5: the faulty near leg is drawn whole as dashed outlines over the solid figure, its foot under the bar line', () => {
-    expect(sms.mistake.parts).not.toContain('leg.r');
-    const dashed = sms.mistake.guides.filter((g: any) => g.kind === 'dashed');
-    expect(dashed.length).toBe(5);   // thigh, kneecap, shank, foot + the bar's line
-    const foot = dashed[3].pts, zs = foot.map((p: number[]) => p[2]!);
-    expect(Math.min(...zs)).toBeLessThanOrEqual(-0.11);   // the foot reaches the rail's line (z -0.11) under the bar
-    expect(Math.max(...zs)).toBeGreaterThanOrEqual(-0.11);
-  });
-});
+// smith_machine_squat: HELD (D-LIB13-PANEL2, #405 6688665575 last check: R3 regressed); its tests went with its drawing (e1e9a0c7).
