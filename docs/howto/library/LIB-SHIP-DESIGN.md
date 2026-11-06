@@ -1563,7 +1563,8 @@ None: no `none` card in G5.
 
 ## W5. Flip set (D-SHIP-W5-FLIPSET, #392 6682188871)
 
-Flip (9): front_squat, bodyweight_squat, bodyweight_lunge, bodyweight_split_squat (lb04); hammer_curl,
+Flip (10): front_squat, bodyweight_squat, bodyweight_lunge, bodyweight_split_squat (lb04); preacher_curl
+(D-SHIP-W5-PREACHER, #392 6683213580: the shared front-delt map, #404, holds no single id), hammer_curl,
 alternating_dumbbell_curl, barbell_curl, ez_bar_curl, reverse_curl (lb05). Only these stay on lb04/lb05.layers.json; held
 ids keep their panel records and sheets (every 6681869167 fix applied) and return with a delta check in their wave.
 
@@ -1576,7 +1577,6 @@ ids keep their panel records and sheets (every 6681869167 fix applied) and retur
 | bulgarian_split_squat | parent in #385; Mistake overlay LIB-PLATEFIX-3 |
 | wall_sit, dumbbell_overhead_triceps_extension, incline_dumbbell_curl | LIB-PLATEFIX-3 (6654466055) |
 | pistol_squat (tell), step_up (trace), cross_body_hammer_curl, bayesian_cable_curl, cable_curl, wrist_curl | LIB-PLATEFIX-3 (6652647984 item 2) |
-| preacher_curl | front-delt region, F-BODYMAP-FRONTDELT (D-SHIP-W5-FRONTDELT) |
 | concentration_curl | Q1 (F-CARD-CONCCURL-RISK) |
 
 Proof: every remaining card (article block and its `.hx-<id>` rules) is byte-equal to the full-page build of the same

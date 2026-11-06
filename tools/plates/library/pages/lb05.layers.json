@@ -4,6 +4,7 @@
       "id": "lb5",
       "title": "LB5",
       "ids": [
+        "lib_preacher_curl",
         "lib_hammer_curl",
         "lib_alternating_dumbbell_curl",
         "lib_barbell_curl",
@@ -14,6 +15,10 @@
   ],
   "optionsModule": "tools/plates/library/pages/lb05.closeups.mjs",
   "closeups": {
+    "lib_preacher_curl": {
+      "optionsKey": "preacher_curl",
+      "pair": "ez-curl-under"
+    },
     "lib_hammer_curl": {
       "optionsKey": "hammer_curl"
     },
