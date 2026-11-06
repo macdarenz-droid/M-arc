@@ -7,6 +7,7 @@ import { dirname, join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 // @ts-expect-error plain .mjs build tool, no types
 import { MANIFEST, manifestOf, manifestProblems } from '../../tools/plates/library/ci/manifest.mjs';
+import { W4_MANIFEST_ROWS } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = join(__dirname, '..', '..');
@@ -39,9 +40,13 @@ describe('C0: L0-lib on this tree', { timeout: 300_000 }, () => {   // F-C0-TIME
   const PILOT_A3 = ['dumbbell_fly', 'reverse_lunge'].map(id => `lib_${id}`);
   // LIB-SHIP W2 (D-SHIP-MOVE, D-LIB-PILOTB2): PILOT-B2's pin adds exactly its 1 row (crunch, held at approved-plate)
   const PILOT_B2 = ['lib_crunch'];
-  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2 and PILOT-B2\'s 1 here, and no problem', async () => {
+  // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): the lb02 and lb03 pins add exactly their 8 and 12 rows
+  // (checks/ship-w4.ts: shipped and waiting, every row of both batch files)
+  const LB2_LB3 = W4_MANIFEST_ROWS;
+  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2, PILOT-B2\'s 1 and LB2\'s 8 and LB3\'s 12 here, and no problem', async () => {
     const file = JSON.parse(readFileSync(join(ROOT, MANIFEST), 'utf8'));
-    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2].sort());
+    expect(LB2_LB3).toHaveLength(20);
+    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2, ...LB2_LB3].sort());
     expect(await manifestOf(ROOT)).toEqual(file);
     expect(await manifestProblems(ROOT)).toEqual([]);
   });

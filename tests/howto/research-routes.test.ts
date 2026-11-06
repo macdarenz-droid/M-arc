@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { lessW4 } from './checks/ship-w4';
 
 const ROOT = join(new URL('.', import.meta.url).pathname, '..', '..');
 const rd = (p: string) => readFileSync(join(ROOT, p), 'utf8');
@@ -59,11 +60,13 @@ describe('RESEARCH-ROUTES-1 P1-b/P1-c: the ruled fields left inherit[] (F-W4-INH
 // that one key; every other entry equals main e623d3ef.
 describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-box.json', () => {
   it('every row that lists it pins the current file, and every other entry equals main e623d3ef', () => {
-    const m = JSON.parse(rd('tools/plates/library/MANIFEST.json'));
+    // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): lessW4 (checks/ship-w4.ts) removes the 20 lb02/lb03 rows
+    // (each must be present) and blanks the W4-moved keys (each must pin its current file); the rest is main's rows as before
+    const m = lessW4(JSON.parse(rd('tools/plates/library/MANIFEST.json')), k => sha(readFileSync(join(ROOT, k))));
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
     expect(rows).toHaveLength(16);
     for (const r of rows) { expect(r.files[BOX]).toBe(sha(rd(BOX))); r.files[BOX] = 'X'; }
     // main e623d3ef's MANIFEST.json with the same one entry blanked (was f0ec7bd5… on main 8bb433bd; re-measure if a later re-pin merges first)
-    expect(sha(JSON.stringify(m))).toBe('daf6779bd9505c07f28f805fac904bd0acd6408c78a65a8ce966691814502e69');
+    expect(sha(JSON.stringify(m))).toBe('be1e42287875c555263c2ee00fc166a373dcd4175280d09e53d8b4fe3a8c52f1');   // LIB-SHIP W4: main's with the W4-moved keys also blanked (re-measured on main 05f27be9; was daf6779b…)
   });
 });

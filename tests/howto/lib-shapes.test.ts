@@ -11,7 +11,7 @@ import { gripHtml, handContentOf } from '@/slices/howto/sections/Hand';
 import legPress from '@/howto/generated/ht-leg-press';
 import chestPress from '@/howto/generated/ht-machine-chest-press';
 import type { BuiltHowTo } from '@/howto/types';
-import { W4_IDS } from './checks/ship-w4';
+import { W4_IDS, lessW4 } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -267,7 +267,9 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     return m;
   };
   it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main c4c34d75 (re-measured after train 63)', () => {
-    const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
+    // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): lessW4 (checks/ship-w4.ts) removes the 20 lb02/lb03 rows
+    // (each must be present) and blanks the W4-moved keys (each must pin its current file); the rest is main's rows as before
+    const m = lessW4(JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8')), k => sha(readFileSync(k)));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
     expect(Object.keys(m.rows)).toContain('lib_crunch');
@@ -282,7 +284,7 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync('docs/research/howto/shared/back-pain-box.json'))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
     // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
-    expect(sha(JSON.stringify(rrBox(lessW2(m, [BLP]))))).toBe('99d9824be548ecd2454a92bb35c43c1339eca13f8d6731660c6140f2d30e882e');
+    expect(sha(JSON.stringify(rrBox(lessW2(m, [BLP]))))).toBe('2dc601781aca3e3f03ebe12587116e5fab0ac84fdd4afa48df3638b22e9be3ac');   // LIB-SHIP W4: main's with the W4-moved keys also blanked (re-measured on main 05f27be9; was 99d9824b…)
   });
 });
 

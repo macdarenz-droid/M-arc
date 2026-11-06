@@ -5,6 +5,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { lessW4 } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -191,7 +192,8 @@ const W2_ADDED: Record<string, string[]> = {
 // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
 // research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef).
 const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
-const MANIFEST_BLANKED_MAIN_W2 = '5a51002ef2a7fb2a551601cc78f1b9d338d45f87c6f5be63b23d4853eebf0532';
+// LIB-SHIP W4: main's with the W4-moved keys also blanked by lessW4 (re-measured on main 05f27be9; was 5a51002e…)
+const MANIFEST_BLANKED_MAIN_W2 = '9fc5552f9986c383ff479938789ad0b90b831425d148907232bacd81f3b82882';
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
@@ -204,22 +206,34 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     }
     return m;
   };
-  const current = () => JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
+  // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): lessW4 removes the 20 lb02/lb03 rows and blanks the
+  // W4-moved keys ('' as blanked() does), each checked first
+  const raw = () => JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
+  const current = () => lessW4(raw(), k => sha(read(k)), '');
   it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
     const m = current();
     // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out
     expect(blanked(lessW2(m), [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN_W2);
-    for (const k of MOVED) for (const r of Object.values<any>(current().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
+    for (const k of MOVED) for (const r of Object.values<any>(raw().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
     const m = lessW2(current()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX)!;
     row.files[other] = '0'.repeat(64);
     expect(blanked(m, [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
-    expect(blanked(lessW2(current()), [MOVED[0]!, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    // (LIB-SHIP W4: lessW4 blanks pairs.mjs too, so its key is put back to its pin first, as if left out of every blank list)
+    const unPair = (x: any) => { for (const r of Object.values<any>(x.rows)) if (MOVED[1]! in r.files) r.files[MOVED[1]!] = sha(read(MOVED[1]!)); return x; };
+    expect(blanked(unPair(lessW2(current())), [MOVED[0]!, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
     // LIB-SHIP W2: a W2 key that does not pin its file, or a crunch row missing, is red
     const bad = current(); (Object.values<any>(bad.rows).find(r => W2_MOVED[0]! in r.files)).files[W2_MOVED[0]!] = '0'.repeat(64);
     expect(() => lessW2(bad)).toThrow();
     const noCrunch = current(); delete noCrunch.rows.lib_crunch;
     expect(() => lessW2(noCrunch)).toThrow();
+    // LIB-SHIP W4: a W4 row missing, a W4-moved key that does not pin its file, and an extra row are red
+    const noW4 = raw(); delete noW4.rows.lib_pendlay_row;
+    expect(() => lessW4(noW4, k => sha(read(k)), '')).toThrow(/W4 row lib_pendlay_row missing/);
+    const stale = raw(); stale.rows.lib_cable_fly.files['tools/plates/library/howto/lib_smith_machine_bench_press.howto.mjs'] = '0'.repeat(64);
+    expect(() => lessW4(stale, k => sha(read(k)), '')).toThrow(/lib_cable_fly .* does not pin its current file/);
+    const extra = raw(); extra.rows.lib_zz = structuredClone(extra.rows.lib_plank);
+    expect(blanked(lessW2(lessW4(extra, k => sha(read(k)), '')), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
   });
 });

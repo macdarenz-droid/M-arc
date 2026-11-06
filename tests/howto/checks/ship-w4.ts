@@ -49,3 +49,20 @@ export const sheetProblems = (h: any, id: string): string[] => [
   ...(h?.research?.card === `docs/research/howto/cards/${id}.json` ? [] : [`${id}: research.card ${JSON.stringify(h?.research?.card)}`]),
   ...SHEET_SECTIONS.filter(k => h?.[k] === undefined || h[k] === null || (NON_EMPTY.includes(k) && empty(h[k]))).map(k => `${id}: no ${k} (a stub)`),
 ];
+
+/** LIB-SHIP W4 (D-SHIP-W4-PIN, D-SHIP-W4-FLIPSET; supervisor approved the W2-form MANIFEST widening, #391): the library
+ *  MANIFEST rows W4 adds (every lb02 and lb03 row, pinned under D-SHIP-W4-PIN) and the keys it re-pins in main's rows
+ *  (hands/pairs.mjs, from the W4 press sheets' hand pairs; the smith sheet, in pilot B's rows). */
+export const W4_MANIFEST_ROWS: string[] = [LB02, LB03].flatMap(f => [...w4Of(f), ...waitOf(f)]).sort();
+export const W4_MANIFEST_MOVED = ['tools/plates/library/hands/pairs.mjs', 'tools/plates/library/howto/lib_smith_machine_bench_press.howto.mjs'];
+/** The manifest less W4's changes, in place: each W4 row must be present and is removed; each W4-moved key must pin
+ *  `shaOf(key)` (its file's current sha) and is blanked to `blank`. Throws on a missing W4 row or a stale W4 key. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const lessW4 = (m: any, shaOf: (key: string) => string, blank = 'X') => {
+  for (const id of W4_MANIFEST_ROWS) { if (!(id in m.rows)) throw new Error(`MANIFEST: W4 row ${id} missing`); delete m.rows[id]; }
+  for (const [id, r] of Object.entries<any>(m.rows)) for (const k of W4_MANIFEST_MOVED) if (k in r.files) {   // eslint-disable-line @typescript-eslint/no-explicit-any
+    if (r.files[k] !== shaOf(k)) throw new Error(`MANIFEST: ${id} ${k} does not pin its current file`);
+    r.files[k] = blank;
+  }
+  return m;
+};
