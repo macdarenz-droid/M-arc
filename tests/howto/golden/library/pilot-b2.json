@@ -68,14 +68,14 @@
       "ids": [
         "lib_crunch"
       ],
-      "pageSha256": "82c31f8ae6a6fcf9409e1657d8eea7e0a231742ff216913e8b65205c871567ec",
-      "bytes": 265698,
+      "pageSha256": "b656e4dfd8fc79fbdca88db345753465352631c4314d42cb754b8334bc383a6e",
+      "bytes": 339146,
       "approvedBy": "supervisor",
-      "decision": "D-BODYMAP-LIB",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/404#issuecomment-6688047379 @ 0e3115a4e19e35c28887ff5364f3d0ddc0c367fb",
+      "decision": "D-SHIP-W3-LAYERSZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6686326673 @ 4a0c0bec7c4f1e1adff7f91ba0672af8471bd1e6",
       "date": "2026-11-06",
+      "why": "D-SHIP-W3-LAYERSZOOM (#384 6686326673; approvedBy supervisor under D-LIB-O5 point 4, superseding the supervisor's D-SHIP-W2-STAMP entry): build-layers-page.mjs applies applyZooms to the mirror specs, as build-page.mjs does. The rebuild equals the superseded page (7c66d68e) plus ZOOM_CSS once after <style> and crunch's normal and Mistake zoom groups, nothing else.",
       "supersedes": 2,
-      "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-BODYMAP-APPEND #404 6688047379; supervisor under D-LIB-O5 point 4: golden-B design kinds only, superseding a supervisor entry): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow and back-of-knee pain parts. Byte proof: with the fix paths undone, this page equals the superseded entry page byte for byte, except the shimmer band of a feel map whose main muscles include front_delts. Built twice, equal sha256.",
       "prev": "0b659af46e873d927980bb2c68ec683780ace4d1056bcf89a18f6f3114fae225"
     }
   ]

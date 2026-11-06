@@ -300,6 +300,8 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     const after = file.entries.slice(i + 1).map((x: any) => [x.kind, x.id ?? null, x.decision, x.approvedBy, x.supersedes]);
     if (JSON.stringify(after) !== JSON.stringify([['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', i]])) out.push(`after W2: ${JSON.stringify(after)}`);
     const cur = file.entries[file.entries.length - 1];
+    // W2 review follow-up (#384 6647873082): the approval link in golden.mjs's APPROVAL form, on W2's entry and the re-pin
+    for (const x of new Set([e, cur])) if (typeof x.approval !== 'string' || !/^https:\/\/github\.com\/macdarenz-droid\/M-arc\/(pull|issues)\/\d+#issuecomment-\d+ @ [0-9a-f]{40}$/.test(x.approval)) out.push('layers-page approval link');
     for (const x of new Set([e, cur])) if (JSON.stringify(x.ids) !== JSON.stringify(SHIPPED_RULED)) out.push(`layers-page ids ${x.ids}`);
     if (cur.pageSha256 !== createHash('sha256').update(layersPage).digest('hex') || cur.bytes !== layersPage.length) out.push('layers-page pin');
     return out;
@@ -380,6 +382,8 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     expect(layersPinProblems(ls, lpage)).toEqual(['layers-page entry supersedes']);
     const lt = structuredClone(g); lt.entries[last].supersedes = 0;
     expect(layersPinProblems(lt, lpage)).toEqual([`after W2: ${JSON.stringify([['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', 0]])}`]);
+    const la = structuredClone(g); la.entries[last].approval = la.entries[last].approval.replace(/ @ .*/, ' @ main');
+    expect(layersPinProblems(la, lpage)).toEqual(['layers-page approval link']);
   });
   it('mutations: an existing layers file and a pinned id in another golden file are red', () => {
     const p = readJson(ROWS).pages;
