@@ -3,6 +3,7 @@
 // sheet whose zooms draw a `path` guide gets the path CSS (render/closeup/zoom.mjs cssFor), so its head takes the
 // accent or fault token instead of the browser's black. Every committed library layers page rebuilds byte-equal with
 // both (pilot-a afd5d413…, pilot-b ae7fd155…, pilot-b2 7c66d68e…; recorded on the PR).
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
 
@@ -49,5 +50,19 @@ describe('PF3 E2: path guides get the path CSS (Silent Black arrowheads)', () =>
     expect(zoom.cssFor(o, noPath)).toBe(o);
     expect(zoom.cssFor(p, withPath)).toBe(p);
     expect(zoom.cssFor(undefined, { zooms: [] })).toBe(undefined);
+  });
+});
+
+// LIB-PLATEFIX-3 E1/E2 [golden update] (#405 6684669717 item 18, D-BODYMAP-LIB form): the 22 library MANIFEST rows re-pin
+// exactly the two builder files this card changes; crop-projection.test.ts and lib-shapes.test.ts blank zoom.mjs's key on
+// the strength of this block (build-layers-page.mjs's key is already checked against its file there).
+describe('PF3 E1/E2 MANIFEST re-pin', () => {
+  it('every one of the 22 rows pins the current render/closeup/zoom.mjs and build-layers-page.mjs', () => {
+    const sha = (p: string) => createHash('sha256').update(readFileSync(p)).digest('hex');
+    const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
+    const rows = Object.entries<any>(m.rows);
+    expect(rows).toHaveLength(22);
+    for (const k of ['tools/plates/library/render/closeup/zoom.mjs', 'tools/plates/library/build-layers-page.mjs'])
+      for (const [id, r] of rows) expect(r.files[k], `${id} ${k}`).toBe(sha(k));
   });
 });
