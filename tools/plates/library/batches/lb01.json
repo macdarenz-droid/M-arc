@@ -28,7 +28,7 @@
     "How to Use a Pull-Up Assist Machine Correctly (Beginner's Guide) (Bullbar Fit, manufacturer blog). https://bullbarfit.com/blogs/q-as/how-to-use-a-pull-up-assist-machine-correctly-for-beginners-at-the-gym",
     "How to Grip the Bar Without Getting Calluses (Bullbar Fit, manufacturer blog). https://bullbarfit.com/blogs/q-as/what-is-the-correct-way-to-grip-the-bar-to-avoid-calluses"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_hanging_knee_raise": {
    "src": "library/specs/hanging_knee_raise.mjs",
@@ -49,7 +49,7 @@
     "How to Grip the Bar Without Getting Calluses (Bullbar Fit, manufacturer blog). https://bullbarfit.com/blogs/q-as/what-is-the-correct-way-to-grip-the-bar-to-avoid-calluses",
     "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog). https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_assisted_pull_up": {
    "src": "library/specs/assisted_pull_up.mjs",
@@ -88,7 +88,7 @@
     "Activation of Spinal Stabilizers and Shoulder Complex Muscles During an Inverted Row Using a Portable Pull-up Device and Body Weight Resistance (Youdas et al., J Strength Cond Res) (2016). https://pubmed.ncbi.nlm.nih.gov/26422610/ PMID 26422610",
     "Scapular muscle balance and spinal stabilizer recruitment during an inverted row (Youdas et al., Physiother Theory Pract) (2020). https://pubmed.ncbi.nlm.nih.gov/29944029/ PMID 29944029"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_close_grip_pulldown": {
    "src": "library/specs/close_grip_pulldown.mjs",
@@ -108,7 +108,7 @@
     "How to Do Neutral Close-Grip Lat Pulldown: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/neutral-close-grip-lat-pulldown/",
     "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_underhand_lat_pulldown": {
    "src": "library/specs/underhand_lat_pulldown.mjs",
@@ -143,7 +143,7 @@
     "Single Arm Lat Pulldown (PureGym exercise guide). https://www.puregym.com/exercises/back/lat-exercises/single-arm-lat-pulldown/",
     "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_straight_arm_pulldown": {
    "src": "library/specs/straight_arm_pulldown.mjs",
@@ -159,7 +159,7 @@
     "Electromyographic Analysis of Latissimus Dorsi Activation During Common Resistance Training Exercises: A Narrative Review (2026). https://pubmed.ncbi.nlm.nih.gov/42647355/ PMID 42647355",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_chest_supported_row": {
    "src": "library/specs/chest_supported_row.mjs",
@@ -177,7 +177,7 @@
     "The Effect of Performing Bi- and Unilateral Row Exercises on Core Muscle Activation (2015). https://pubmed.ncbi.nlm.nih.gov/26134664/ PMID 26134664",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_resistance_band_row": {
    "src": "library/specs/resistance_band_row.mjs",
@@ -196,7 +196,7 @@
     "Instruction Manual, Resistance Bands and Tubing (The Hygenic Corporation). https://www.theraband.com/static/version1771453261/frontend/Theraband/default/en_US/instructions/Resistance_Band-Tubing_Instruction_Manual(1).pdf",
     "Seated Row With Band To Strengthen Upper Back - Sit and Be Fit. https://www.sitandbefit.org/seated-row-band-upper-body-strengthening/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_incline_machine_press": {
    "src": "library/specs/incline_machine_press.mjs",
@@ -211,7 +211,7 @@
     "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise (2020). https://pubmed.ncbi.nlm.nih.gov/33049982/ PMID 33049982",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_shoulder_press": {
    "src": "library/specs/shoulder_press.mjs",
@@ -229,7 +229,7 @@
     "Arterial blood pressure response to heavy resistance exercise (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_leg_press_calf_raise": {
    "src": "library/specs/leg_press_calf_raise.mjs",
