@@ -80,10 +80,18 @@ beforeAll(async () => {
 });
 
 describe('F-ZOOM-NONE A2: textZoomRow, the zero-zoom guard', () => {
-  it('a ruled zero-zoom row gives its entry; a row with posture zooms and no entry gives null; the real list is empty on main', () => {
+  // LIB-SHIP W4 (ruling 3; SHIP W4 QUESTION 1 RULED, #391 6648250079, D-SHIP-TEXTZOOM): replaces "the real list is empty
+  // on main": W4 adds exactly these three lb02 entries (the rows wait at approved-plate under D-SHIP-W4-FLIPSET)
+  const W4_TEXT_ZOOMS = {
+    lib_barbell_bench_press: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'hips-on-bench': 'hips' } },
+    lib_decline_bench_press: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'feet-hooked': 'feet' } },
+    lib_incline_dumbbell_press: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'incline-angle': 'angle' } },
+  };
+  it('a ruled zero-zoom row gives its entry; a row with posture zooms and no entry gives null; the real list is exactly the W4 ruled set', () => {
     expect(ok()).toEqual(ENTRY);
     expect(Z.textZoomRow('lib_y', { ...SHEET, zooms: [{ key: 'back', kind: 'posture' }] }, CARD, {})).toBeNull();
-    expect(Z.readTextZooms()).toEqual({});
+    expect(Z.readTextZooms()).toStrictEqual(W4_TEXT_ZOOMS);
+    expect({ ...Z.readTextZooms(), lib_pendlay_row: W4_TEXT_ZOOMS.lib_barbell_bench_press }).not.toStrictEqual(W4_TEXT_ZOOMS);   // LIB-SHIP W4 mutation: an extra entry is red
     expect(I.TEXT_ZOOMS).toBe(Z.TEXT_ZOOMS);
     expect([...Z.TEXT_ZOOM_RULINGS]).toEqual(['D-SHIP-TEXTZOOM']);
   });

@@ -489,7 +489,9 @@ describe('LIB-11 A10, A6 and Q1 (Do 5 b): the card fields, the ruled tempo map a
     ...(f.kind === 'contact' && f.cardPose !== CARD_POSE[id]?.[f.claim] ? [`${i}: cardPose ${f.cardPose}`] : []),
     ...(f.pose === specPose(id, f.cardPose ?? CARD_POSE[id]?.[f.claim] ?? '') ? [] : [`${i}: pose ${f.pose}`]),
   ]);
-  const W2_SHEETS = ['seated_leg_curl', 'cable_fly', 'push_up'];
+  // LIB-SHIP W4 (ruling 3; D-LIB9a-HOWTOID replaced as in W2): W4 wrote smith_machine_bench_press's sheet (it waits at
+  // approved-plate for LIB-PLATEFIX-3, D-SHIP-W4-FLIPSET), so it holds the full sheet at schema 1 and rev 1 too
+  const W2_SHEETS = ['seated_leg_curl', 'cable_fly', 'push_up', 'smith_machine_bench_press'];
   it('every plate fact has a kind, one form, a claim of its own card and the ruled pose; each How-to names its card', async () => {
     for (const id of DRAWN) {
       expect(factProblems(id, cardOf(id)), id).toEqual([]);
@@ -499,6 +501,7 @@ describe('LIB-11 A10, A6 and Q1 (Do 5 b): the card fields, the ruled tempo map a
       if (W2_SHEETS.includes(id)) expect([h.id, h.schema, h.research]).toEqual([`lib_${id}`, 1, { card: `docs/research/howto/cards/${id}.json`, rev: 1 }]);
       else expect(h).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
+    expect(DRAWN.filter(id => !W2_SHEETS.includes(id))).toEqual([]);   // LIB-SHIP W4: no drawn pilot-B id is still a stub
     // the ruled contact set (CARD FIELDS RULED @ 24d2b68, #278 6272494659): landmark@pose per card, nothing more or less
     const RULED_CONTACTS: Record<string, string[]> = {
       smith_machine_bench_press: ['chest@end', 'backUpper@start', 'buttock@start', 'grip.r@start', 'grip.l@start', 'sole.r@start', 'sole.l@start'],

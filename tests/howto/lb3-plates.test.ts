@@ -749,14 +749,16 @@ describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn
 
 describe('LIB-13 H slice Mistakes, tells, cues and tempo (DESIGN.md sections 8-9)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { pendlay_row: 'round', landmine_row: 'round', one_arm_dumbbell_row: 'short', dumbbell_romanian_deadlift: 'arch', conventional_deadlift: 'round', sumo_deadlift: 'hips', back_extension: 'round' };
+  // LIB-SHIP W4 D-SHIP-W4-TEMPO (#391 6681756394; ruling 3): pendlay_row, sumo_deadlift and conventional_deadlift in
+  // execution order (the lift first), as lb3/tempo.json and their cards; the other four as proposed
   const TEMPO: Record<string, any[]> = {
-    pendlay_row: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Pull', s: 1, move: true }],
+    pendlay_row: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
     dumbbell_romanian_deadlift: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Stand', s: 1, move: true }],
-    sumo_deadlift: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Lift', s: 1, move: true }],
+    sumo_deadlift: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
     back_extension: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Raise', s: 1, move: true }, { phase: 'Hold', s: 1 }],
     landmine_row: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
     one_arm_dumbbell_row: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Lower', s: 2, move: true }],
-    conventional_deadlift: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Lift', s: 1, move: true }],
+    conventional_deadlift: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each slice plate draws its Mistake with 2-3 tells, the first carrying the proposed key', () => {
@@ -774,6 +776,9 @@ describe('LIB-13 H slice Mistakes, tells, cues and tempo (DESIGN.md sections 8-9
   });
   it('the tempo strips are the proposed arrays (DESIGN.md section 8)', () => {
     for (const id of SLICE) expect(S[id].tempo, id).toEqual(TEMPO[id]);
+  });
+  it('LIB-SHIP W4 D-SHIP-W4-TEMPO mutation: a reordered spec in the pre-ruling order (Lower first) is red', () => {
+    for (const id of ['pendlay_row', 'conventional_deadlift', 'sumo_deadlift']) expect([...S[id].tempo].reverse(), id).not.toEqual(TEMPO[id]);
   });
   /** Q-D5-6 cue table: every callout and tell cue is one sentence of at most 15 words with no semicolon. */
   const cueProblems = (spec: any) => [...spec.callouts, ...spec.mistake.tells].flatMap((c: any) => {
@@ -878,6 +883,20 @@ const childPage = async (ids: string[] | null) => {
   return Buffer.from(stdout.trim(), 'base64').toString('utf8');
 };
 const pageHtml = (ids: string[] | null = null) => (pageCache[JSON.stringify(ids)] ??= childPage(ids));
+/** LIB-SHIP W4 (D-SHIP-W4-PIN, re-pinned in place under D-REPIN-UNMERGED): each listed plate's fragments on `html`
+ *  against its latest plate entry in tests/howto/golden/library/lb03.json; one line per fragment that differs. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const lb03PinProblems = (golden: any, html: string, chromeIds: string[]) => {
+  const latest = golden.latestEntries(JSON.parse(readFileSync('tests/howto/golden/library/lb03.json', 'utf8')).entries);
+  return chromeIds.flatMap(c => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), e = [...latest.values()].find((x: any) => x.kind === 'plate' && x.chromeId === c);
+    if (!p || !e) return [`${c}: ${p ? 'no pin' : 'not drawn'}`];
+    const f = golden.fragmentsOf(p);
+    return Object.keys(e.fragments).filter(k => f[k] !== e.fragments[k]).map(k => `${c} ${k} != pin`);
+  });
+};
+const LB03_PAGE_PIN = 'd6241cf65a6be261cfa688ebba27549cded6761f2a1a0a00b55d58b0f1f91f90';   // lb03.json's page entry (D-SHIP-W4-PIN)
 /** Two builds of every drawn row, one after the other in ONE awaited child process (so module state left by the first
  *  build would change the second, as in the old in-worker test): the two pages' sha256. */
 const childTwice = async () => {
@@ -1325,11 +1344,21 @@ describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d
     const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
     return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
   });
-  it('63 fragments of the 7 approved plates on this head equal main\'s, and the 7 alone still build page 6ff09d4c', async () => {
+  // LIB-SHIP W4 (ruling 3): replaces "63 fragments … equal main's, and the 7 alone still build page 6ff09d4c". The W4
+  // rulings changed exactly these fragments: the three tempos (D-SHIP-W4-TEMPO, #391 6681756394, execution order) and the
+  // two deadlift alts (D-SHIP-W5-PLATETEXT go, #391 6681022221). Every other of the 63 still equals main's approval; every
+  // fragment of the 7 equals its re-pinned lb03.json plate entry; the whole page is lb03.json's page pin.
+  const CHANGED_W4 = ['pendlay-row tempo', 'conventional-deadlift tempo', 'conventional-deadlift alt', 'sumo-deadlift tempo', 'sumo-deadlift alt'];
+  it('of the 63 approved fragments exactly the ruled W4 ones differ from main\'s; each of the 7 equals its lb03.json pin, and the page is the lb03 page pin', async () => {
     expect(Object.values(APPROVED).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(63);
-    expect(fragProblems(await pageHtml())).toEqual([]);
-    const seven = await pageHtml(drawn().map(i => `lib_${i}`));
-    expect(sha(seven)).toBe('6ff09d4c144f90d7210f951eb23fe81b42f55d20478bc4b8bb1d2b3980d008c6');
+    const html = await pageHtml();
+    expect(fragProblems(html)).toEqual(CHANGED_W4);
+    expect(lb03PinProblems(golden, html, Object.keys(APPROVED))).toEqual([]);
+    expect(sha(html)).toBe(LB03_PAGE_PIN);
+  });
+  it('LIB-SHIP W4 mutation: a ruled fragment off its pin (conventional tempo, the first of the two equal deadlift tempos) is red', async () => {
+    const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'conventional-deadlift');
+    expect(lb03PinProblems(golden, html.replace(p.tempo, p.tempo.replace('Lift', 'Lifts')), Object.keys(APPROVED))).toEqual(['conventional-deadlift tempo != pin']);
   });
   it("mutation: one byte changed in landmine_row's alt is red", async () => {
     const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'landmine-row');
@@ -1434,13 +1463,21 @@ describe('LIB-13s: dumbbell_shrug and smith_machine_shrug stay byte-identical to
   beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
   const diff = (html: string) => Object.entries(WANT).flatMap(([c, want]) => { const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
     return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`); });
-  it('their 18 fragments on this head equal the approved ones', async () => {
+  // LIB-SHIP W4 (ruling 3): replaces "their 18 fragments on this head equal the approved ones". smith_machine_shrug's alt
+  // is the ruled one (focused recheck #391 6682615402, accepted in D-SHIP-W4-FLIPSET 6682985023: "Only the shoulders lift,
+  // straight up toward the ears."); the other 17 still equal mx20, and both plates equal their lb03.json pins.
+  const CHANGED_W4 = ['smith-machine-shrug alt'];
+  it('of their 18 fragments exactly the ruled smith alt differs from the approval; both equal their lb03.json pins', async () => {
     expect(Object.values(WANT).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(18);
-    expect(diff(await pageHtml())).toEqual([]);
+    const html = await pageHtml();
+    expect(diff(html)).toEqual(CHANGED_W4);
+    expect(lb03PinProblems(golden, html, Object.keys(WANT))).toEqual([]);
   });
-  it("mutation: one byte in smith_machine_shrug's Mistake alt is red", async () => {
+  it("mutation: one byte in smith_machine_shrug's Mistake alt is red (against the approval and its pin)", async () => {
     const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'smith-machine-shrug');
-    expect(diff(html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E')))).toEqual(['smith-machine-shrug mistakeAlt']);
+    const m = html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E'));
+    expect(diff(m)).toEqual([...CHANGED_W4, 'smith-machine-shrug mistakeAlt']);
+    expect(lb03PinProblems(golden, m, Object.keys(WANT))).toEqual(['smith-machine-shrug mistakeAlt != pin']);
   });
 });
 
