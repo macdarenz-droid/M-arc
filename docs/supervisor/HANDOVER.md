@@ -842,6 +842,17 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-06 ~16:45 UTC** (weekly 0.44 at 16:27, about 4 %/h; pause plan unchanged).
+  - **Train 72 MERGED:** #403 RESEARCH-ROUTES part 2 → main `484d4552` (research only, no APK). Research head #402 merged into `claude/libht-research` (`9d35705c`).
+  - **Owner (11-06 ~14:10):** D-OWNER-REPIN and D-OWNER-RECOMMENDED (see below). The 9 vs 17 correction was sent: the app on main has 17 guides; W3 makes 26.
+  - **W3 #384** (next train, then the APK): Q-W3-20 → D-SHIP-W3-PAUSEDSKIP, Q-W3-21 → D-SHIP-W3-GOLDWAIT; zooms.mjs write scope granted; HT-10 A3 outlier noted (no dispatch re-run; F-HT10-A3-WARMUP). Head `f4affb3a`; waiting for SHIP W3 FLIPPED, then a fresh reviewer.
+  - **#400** train-ready @ `5674425b` (28/28, review PASS, merge delta checked) but rides the train **after W3** so W3 is not sent back for another main merge. Then #401 into the research branch.
+  - **PF1 #385:** STAMP confirmed (21 shipped). D-PF1-AFTERW3: merges after W3 (pilot-a3 layers rebuilt through W3's applyZooms, strip-back proof). L2-A4 Manila timeout: measure, then 600 s if near the limit.
+  - **PF2 #395:** STAMP confirmed; unit-tz fix `7fcf7d1b`; READY pending, then a reviewer. D-PLATEFIX-SECOND covers the shared pilot pages (#385, #395, #384, #404).
+  - **PF3 #405:** pf8 VALID: 24 approved; held high_to_low_cable_fly, one_arm_dumbbell_row, burpee, machine_pullover, pendulum_squat, cable_curl, rear_delt_fly and smith_machine_squat (R3 regressed in its one allowed fix, pf9); incline_barbell → 3b. Pins, main merge and READY next. **W6 now ships 7.**
+  - **#404:** L4 panel VALID (front delts 5,5,5); D-BODYMAP-APPEND pin fix pushed `4fa1d1ec`; READY, then a reviewer.
+  - **W7:** side_plank L5 round 2 failed → HELD; W7 ships 12. New golden-B follow-up 44 (leg_press back pad).
+  - Rulings: lib4-cards 48 @ `d8f80dbd`; findings `panels/pf8-findings.md`.
 - **Update 11-06 ~13:50 UTC** (weekly 0.34 at 13:22, about 5 %/h; the pause plan is unchanged: no new panels from 0.70, WAITING at 0.79).
   - **Train 71 MERGED:** F-SCRATCH-SYNTH #397 → main `05f27be9`. Scratch tooling only, so no APK.
   - **W3 #384:** the flip is still in progress (last push `07fce63f` at 10:57; a status message was sent at 13:45). Rulings: D-SHIP-W3-F3SAL, D-SHIP-W3-NOPAIR (9 ids), D-SHIP-W3-ZOOMAPPROVED, and D-SHIP-W3-GATEZOOM (a narrow exception for LIB-ZOOM's gate block, plan risk 22). W3 is the first train in line.
