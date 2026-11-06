@@ -455,3 +455,29 @@ describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batc
     }
   }, 120_000);
 });
+
+describe('LIB-SHIP W3 Q-W3-13: zoom/ink-check.mjs probes a pinned row through its pinned (non-authoring) candidate', () => {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const href = async (p: string) => (await import('node:url')).pathToFileURL(join(process.cwd(), p)).href;
+  const ink = async (): Promise<any> => import(/* @vite-ignore */ await href('tools/plates/library/zoom/ink-check.mjs'));
+  it('pinned stages take the pinned candidate, drawing and review the authoring one; horizontal_leg_press is pinned', async () => {
+    const I = await ink(), { rows }: any = await import(/* @vite-ignore */ await href('tools/plates/library/registry.mjs'));
+    expect(['approved-plate', 'shipped', 'drawing', 'review'].map(stage => I.authoringFor({ stage }))).toEqual([false, false, true, true]);
+    expect(I.authoringFor(rows().find((r: any) => r.id === I.ID))).toBe(false);
+  });
+  it('red 1: the authoring candidate the check used before is refused for the pinned row (the gate red Q-W3-13 fixes)', async () => {
+    const { candidateOf }: any = await import(/* @vite-ignore */ await href('tools/plates/library/candidate.mjs'));
+    await expect(candidateOf('lib_horizontal_leg_press', { platesHtml: '', authoring: true })).rejects.toThrow(/authoring QA is refused at stage (approved-plate|shipped) \(D-LIB9-AUTHORQA\)/);
+  });
+  it('red 2: PAGE_SHA is the zoom batch\'s pinned plates page; the stale main sha is not', async () => {
+    const I = await ink(), g = JSON.parse(readFileSync(join(process.cwd(), 'tests/howto/golden/library/zoom.json'), 'utf8'));
+    const page = [...g.entries].reverse().find((e: any) => e.kind === 'page');
+    expect(I.PAGE_SHA).toBe(page.pageSha256);
+    expect(page.pageSha256).not.toBe('a0ef8eabc3b6935193531cd9236a27c5e67b5102f8b9f9c9ec7f3de031ccece0');
+  });
+  it('red 3: the check never hard-codes the authoring candidate again', async () => {
+    const src = readFileSync(join(process.cwd(), 'tools/plates/library/zoom/ink-check.mjs'), 'utf8');
+    expect(src).not.toMatch(/authoring: true/);
+    expect(src).toMatch(/authoring: authoringFor\(/);
+  });
+});
