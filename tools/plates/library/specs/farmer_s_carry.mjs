@@ -158,7 +158,7 @@ export default {
     guides: dbOutline(landmarksOf(mistake, H)['grip.r']).map(pts => ({ kind: 'dashed', pts })),
     tells: [
       { key: 'long', text: 'Steps too long', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 224, top: 280 }, cue: 'A regular-sized step, too long for a beginner.' },
-      { key: 'short', text: 'Long stride', anchor: { at: 'knee.r', pose: 'mistake', off: [7, 0] }, box: { left: 224, top: 232 }, cue: 'The stride reaches past a short, deliberate step.' },
+      // LIB-PLATEFIX-3 (W7 #394 6682923012): the second tell 'Long stride' is dropped (no claim; it restated 'Steps too long')
     ],
   },
   tempo: [{ phase: 'Walk', move: true, word: 'Controlled' }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)

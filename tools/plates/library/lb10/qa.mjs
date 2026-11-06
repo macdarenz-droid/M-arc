@@ -52,7 +52,9 @@ export const F1_IDS = ['lib_bear_crawl'];
 export const F2_IDS = ['lib_battle_ropes'];
 /** Named F3 (D-HELDA-JRF3, #368 6579170603; the D-LIB18-F3KICK form): jump_rope's longest leader 45.9 px against F3's
  *  49.33 px floor, the compact front-view figure's short leaders; no box moved to dodge it. */
-export const F3_IDS = ['lib_jump_rope'];
+// LIB-PLATEFIX-3 (#405 6683319630): jump_rope's Mistake tell moved with its offset figure; its longest leader is now
+// 49.7 px, over F3's 49.33 px floor, so the named F3 is withdrawn (an exemption removed, the set stricter).
+export const F3_IDS = [];
 export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(F1_IDS.includes(id) ? ['F1'] : []), ...(F2_IDS.includes(id) ? ['F2'] : []), ...(F3_IDS.includes(id) ? ['F3'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, or F5 at any value other than 3.57. */

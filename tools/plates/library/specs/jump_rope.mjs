@@ -18,15 +18,16 @@
 //  The rope (eq/jumpRope.mjs) is one `poly` strand from handle tip to handle tip; its length is c1's (ROPE_LEN), and
 //   the overhead arc's width is solved so the drawn arc is that long (a projection is never longer than the rope);
 //   under the feet the arc is shorter (the rope's loop then turns out of the frontal plane).
-// Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): FOOT_X, KNEE_SOFT, HOP, M_HOP, HAND_OUT,
+// Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): FOOT_X, KNEE_SOFT, HOP, M_HOP, M_TUCK and M_OFF
+//  (LIB-PLATEFIX-3: the W7 panel's "knees tucked" and "offset clear"; drawing values), HAND_OUT,
 //  HAND_FWD, OVER_CLEAR, UNDER_W, FLOOR_GAP; solved: ROPE_LEN, OVER_W.
 import { landmarksOf, RADII, normPose, resolve } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
 import { jumpRope, ropeLine, lineLength, JUMP_ROPE, JUMP_ROPE_ITEMS } from '../eq/jumpRope.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.05, KNEE_SOFT: 15, HOP: 0.038, M_HOP: 0.15, HAND_OUT: 0.12, HAND_FWD: 0.05, OVER_CLEAR: 0.10, UNDER_W: 0.32, FLOOR_GAP: 0.004, FLIGHT_ANKLE: -10 });
-const { FOOT_X, KNEE_SOFT, HOP, M_HOP, HAND_OUT, HAND_FWD, OVER_CLEAR, UNDER_W, FLOOR_GAP, FLIGHT_ANKLE } = SIZES;
+export const SIZES = Object.freeze({ FOOT_X: 0.05, KNEE_SOFT: 15, HOP: 0.038, M_HOP: 0.15, M_TUCK: 60, M_OFF: 0.55, HAND_OUT: 0.12, HAND_FWD: 0.05, OVER_CLEAR: 0.10, UNDER_W: 0.32, FLOOR_GAP: 0.004, FLIGHT_ANKLE: -10 });
+const { FOOT_X, KNEE_SOFT, HOP, M_HOP, M_TUCK, M_OFF, HAND_OUT, HAND_FWD, OVER_CLEAR, UNDER_W, FLOOR_GAP, FLIGHT_ANKLE } = SIZES;
 export const bisect = (f, a, b, what) => {
   let fa = f(a), fb = f(b), side = 0;
   if (!(fa * fb <= 0)) throw new Error(`jump_rope: no root for ${what} in [${a}, ${b}] (${fa}, ${fb})`);
@@ -60,7 +61,16 @@ const FOOT_LMS = ['heel.l', 'heel.r', 'ball.l', 'ball.r', 'toe.l', 'toe.r'];
 const lowFoot = dy => Math.min(...FOOT_LMS.map(n => landmarksOf(asAngles(dy, FLY), H)[n][1]));
 const liftTo = h => bisect(dy => lowFoot(dy) - h, 0, 0.4, `the lift to ${h} m`);
 const start = asAngles(0), end = asAngles(liftTo(HOP), FLY);
-const mistake = { root: { at: [0, STAND.root.at[1] + liftTo(M_HOP), STAND.root.at[2]], tilt: 0 } };
+// Mistake (c9; LIB-PLATEFIX-3, W7 #394 6682923012 L5 [3,3,2], ruled #405 6683319630): the too-high jump with the
+// knees tucked (M_TUCK at the knee, half of it at the hip), the lowest foot landmark M_HOP over the floor (3.9x the
+// Right's HOP), the figure set M_OFF to the side so the dashed figure is clear of the solid one (a drawing offset).
+const TUCK = { hip: { l: { ...q.hip.l, flex: (q.hip.l.flex ?? 0) + M_TUCK / 2 }, r: { ...q.hip.r, flex: (q.hip.r.flex ?? 0) + M_TUCK / 2 } }, knee: { l: M_TUCK, r: M_TUCK } };
+const tucked = dy => ({ ...asAngles(dy, FLY), ...TUCK, root: { at: [M_OFF, STAND.root.at[1] + dy, STAND.root.at[2]], tilt: 0 } });
+const lowTuck = dy => Math.min(...FOOT_LMS.map(n => landmarksOf(tucked(dy), H)[n][1]));
+const M_DY = bisect(dy => lowTuck(dy) - M_HOP, 0, 0.6, `the tucked lift to ${M_HOP} m`);
+const { shoulder: _s, elbow: _e, ...mistake } = tucked(M_DY);
+// the hop height arrow: up from the floor beside the faulty feet to the faulty soles' height (LIB-PLATEFIX-3)
+const LMM = landmarksOf({ ...end, ...mistake }, H), ARROW_X = LMM['sole.l'][0] + 0.12;
 const HEAD_TOP = L0.head[1];
 // c1: standing on its middle, the handle ends reach the armpits (the shoulder joint's height less the upper arm's
 // proximal radius); the rope runs from the floor up each side to the handles' rope tips, and across under the feet.
@@ -80,7 +90,7 @@ const START_PHANTOMS = START_ITEMS.map(it => ({ type: 'line', cls: 'eq-line m-li
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   id: 'jump_rope', name: 'Jump Rope', view: 'front',
-  camera: { x0: 179, y0: 339 },
+  camera: { x0: 165, y0: 339 },   // LIB-PLATEFIX-3: 14 px left (was 179) so the offset Mistake figure and its tell fit
   poses: { start, end },
   armsFront: true,
   equipment: [{ type: 'floor', from: -0.6, to: 0.6 }, ...perItem((lm, ctx) => ropeAt(lm, ctx), JUMP_ROPE_ITEMS),
@@ -97,13 +107,14 @@ export default {
   callouts: [
     { key: 'elbows', text: 'Elbows in', anchor: 'elbow.r', box: { left: 24, top: 152 }, cue: 'Elbows stay close to your ribs.' },
     { key: 'hands', text: 'Hands by hips', anchor: 'grip.l', box: { left: 240, top: 172 }, cue: 'Hands at about hip height, slightly away from your body.' },
-    { key: 'hop', text: 'Low hop', anchor: 'ankle.r', box: { left: 80, top: 304 }, cue: 'Feet just clear the rope, about 1 to 2 inches.' },
+    { key: 'hop', text: 'Low hop', anchor: 'ankle.r', box: { left: 50, top: 304 }, cue: 'Feet just clear the rope, about 1 to 2 inches.' },
   ],
   mistake: {
     pose: mistake,
     // the raised feet lie over the solid legs (masked): an arrow from the right hop's sole to the faulty one, outside
-    guides: [{ kind: 'arrow', from: { at: 'sole.l', pose: 'end', off: [24, 0] }, to: { at: 'sole.l', pose: 'mistake', off: [24, 0] } }],
-    tells: [{ key: 'high', text: 'Too high', anchor: { at: 'sole.l', pose: 'mistake' }, box: { left: 208, top: 304 }, cue: 'Jumping far higher than the rope needs.' }],
+    // LIB-PLATEFIX-3: the dashed figure is set M_OFF aside, so the arrow rises from the floor beside it to its soles
+    guides: [{ kind: 'arrow', from: [ARROW_X, 0.005, LMM['sole.l'][2]], to: [ARROW_X, LMM['sole.l'][1], LMM['sole.l'][2]] }],
+    tells: [{ key: 'high', text: 'Too high', anchor: { at: 'sole.l', pose: 'mistake' }, box: { left: 278, top: 296 }, cue: 'Jumping far higher than the rope needs.' }],
   },
   alt: 'Jump rope, front view. Feet together, elbows in by the ribs, hands at hip height turning the rope. A low hop about an inch and a half off the floor, the rope passing just under the feet.',
 };
