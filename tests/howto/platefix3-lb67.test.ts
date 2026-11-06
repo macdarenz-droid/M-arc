@@ -126,3 +126,103 @@ describe('PF3 W6b low_to_high_cable_fly: the press hands stay apart, clear of th
     expect(d(P('mistake', 'grip.r'), P('mistake', 'grip.l'))).toBeLessThan(40);
   });
 });
+
+// ---- LIB-PLATEFIX-3 round 2 (plates panel pf7, #405 6685743439; D-LIB13-PANEL2) ----
+const r2px = (spec: any) => {
+  const r = plate.renderPlate(spec, { id: 'pf3r2' }), cam = qaEng.cameraOf(spec, r.report), L = qaEng.poseLandmarks(Eng(), spec);
+  return { cam, L, P: (pose: string, k: string) => cam.P(L.lm[pose][k]) as number[] };
+};
+const r2seg = (p: number[], a: number[], b: number[]) => {
+  const ab = [b[0]! - a[0]!, b[1]! - a[1]!], t = Math.max(0, Math.min(1, ((p[0]! - a[0]!) * ab[0]! + (p[1]! - a[1]!) * ab[1]!) / (ab[0]! ** 2 + ab[1]! ** 2)));
+  return Math.hypot(p[0]! - a[0]! - t * ab[0]!, p[1]! - a[1]! - t * ab[1]!);
+};
+const r2resolve = (spec: any, ref: any, pose: string) => {
+  const { cam, L } = r2px(spec);
+  return qaEng.resolvePoint(qaEng.anchorInPose(ref, pose), pose, L.lm, cam) as number[];
+};
+
+describe('PF3 round 2 machine_pullover R5, R11: the low back is the tell and the zoom (c8)', () => {
+  const archAt = () => r2resolve(mp, mp.mistake.tells.find((t: any) => t.key === 'arch').anchor, 'mistake');
+  it('R5: the "Back arches" leader ends on the dashed bow (within 1 px), at least 25 px under the upper back (main: on the upper back)', () => {
+    const { cam, P } = r2px(mp), bow = mp.mistake.guides.find((g: any) => g.kind === 'dashed').pts.map((w: number[]) => cam.P(w)), a = archAt();
+    expect(Math.min(...bow.slice(1).map((q: number[], i: number) => r2seg(a, bow[i], q)))).toBeLessThanOrEqual(1);
+    expect(a[1]! - P('mistake', 'backUpper')[1]!).toBeGreaterThanOrEqual(25);
+  });
+  it('R11: the Mistake zoom shows the arch tell (the low back), not the largest move (the head), at k 2.5', () => {
+    expect(mp.zoom).toEqual({ view: 'mistake', k: 2.5, tell: 'arch' });
+  });
+  it('mutation: the old upper-back anchor is red on the R5 block', () => {
+    const at = r2resolve(mp, { at: 'backUpper', pose: 'mistake' }, 'mistake'), { P } = r2px(mp);
+    expect(at[1]! - P('mistake', 'backUpper')[1]!).toBeLessThan(25);
+  });
+});
+
+describe('PF3 round 2 rear_delt_fly R5, R11: the shrug drawn at the neck (c17)', () => {
+  const traps = () => rdf.mistake.guides.filter((g: any) => g.kind === 'dashed' && g.pts.length === 2);
+  it('R5: no changed-parts outline along the arms (parts: torso only)', () => {
+    expect(rdf.mistake.parts).toEqual(['torso']);
+  });
+  it('R5: one red trapezius line per side, from the raised shoulder cap up at least 8 px to beside the head (within 13 px of the mid-line)', () => {
+    const { cam, P } = r2px(rdf), mid = cam.P([0, 0, 0])[0]!;
+    expect(traps().length).toBe(2);
+    for (const g of traps()) {
+      const a = r2resolve(rdf, g.pts[0], 'mistake'), b = cam.P(g.pts[1]), sd = g.pts[0].at.slice(-1);
+      expect(Math.hypot(a[0]! - P('mistake', `shoulderTop.${sd}`)[0]!, a[1]! - P('mistake', `shoulderTop.${sd}`)[1]!)).toBeLessThanOrEqual(0.01);
+      expect(a[1]! - b[1]!, sd).toBeGreaterThanOrEqual(8);
+      expect(Math.abs(b[0]! - mid), sd).toBeLessThanOrEqual(13);
+    }
+  });
+  it('R11: the shrug tell sits half-way up the trapezius line, and the zoom is at k 3 (the smallest rung over the bar)', () => {
+    const t = rdf.mistake.tells[0], a = r2resolve(rdf, t.anchor, 'mistake'), { cam, P } = r2px(rdf);
+    const g = traps().find((x: any) => x.pts[0].at === 'shoulderTop.r'), n = cam.P(g.pts[1]), s = P('mistake', 'shoulderTop.r');
+    expect(Math.hypot(a[0]! - (s[0]! + n[0]!) / 2, a[1]! - (s[1]! + n[1]!) / 2)).toBeLessThanOrEqual(0.01);
+    expect(rdf.zoom).toEqual({ view: 'mistake', k: 3 });
+  });
+});
+
+describe('PF3 round 2 high_to_low_cable_fly R5: only the crossed forearms and hands are red (c8)', () => {
+  it('the Mistake outlines the forearms and fists only, and no dashed upper-arm capsule is drawn', () => {
+    expect(htl.mistake.parts).toEqual(['fore.r', 'fore.l', 'fist.r', 'fist.l']);
+    expect(htl.mistake.guides.filter((g: any) => g.kind === 'dashed').length).toBe(4);   // 2 forearm capsules + 2 hand rings (main: 4 capsules + 2 rings)
+  });
+  it('both crossing arrows run under the hands, at least 10 px below them', () => {
+    const { P } = r2px(htl);
+    for (const g of htl.mistake.guides.filter((x: any) => x.kind === 'arrow')) {
+      const a = r2resolve(htl, g.from, 'end'), b = r2resolve(htl, g.to, 'mistake'), sd = g.to.at.slice(-1);
+      expect(a[1]! - P('end', `grip.${sd}`)[1]!).toBeGreaterThanOrEqual(10);
+      expect(b[1]! - P('mistake', `grip.${sd}`)[1]!).toBeGreaterThanOrEqual(10);
+    }
+  });
+});
+
+describe('PF3 round 2 low_to_high_cable_fly R5: the press elbows drop outside the body (c11)', () => {
+  it('each Mistake elbow is at least 15 px outside its shoulder (main 8.7), the forearm upright over it (hand within 2 px of the elbow vertical)', () => {
+    const { P } = r2px(lth);
+    for (const sd of ['r', 'l']) {
+      const out = (sd === 'r' ? -1 : 1) * (P('mistake', `elbow.${sd}`)[0]! - P('end', `shoulder.${sd}`)[0]!);
+      expect(out, sd).toBeGreaterThanOrEqual(15);
+      expect(Math.abs(P('mistake', `grip.${sd}`)[0]! - P('mistake', `elbow.${sd}`)[0]!), sd).toBeLessThanOrEqual(2);
+    }
+  });
+  it('the two arrows are short and sit outside the Mistake elbows (not across the arms)', () => {
+    const { P } = r2px(lth);
+    for (const g of lth.mistake.guides.filter((x: any) => x.kind === 'arrow')) {
+      const a = r2resolve(lth, g.from, 'mistake'), b = r2resolve(lth, g.to, 'mistake'), sd = g.to.at.slice(-1), e = P('mistake', `elbow.${sd}`);
+      expect(Math.hypot(b[0]! - a[0]!, b[1]! - a[1]!)).toBeLessThanOrEqual(16);
+      expect((sd === 'r' ? -1 : 1) * (b[0]! - e[0]!)).toBeGreaterThanOrEqual(8);
+    }
+  });
+});
+
+describe('PF3 round 2 smith_machine_squat R3: the stop is drawn behind the lifter (c8)', () => {
+  it('the safety stop box (25 x 5 cm) is in the back layer in the start and end poses (main: front, over the traps and the arm)', () => {
+    const L = qaEng.poseLandmarks(Eng(), sms);
+    for (const pose of ['start', 'end']) {
+      const ctx = { pose, start: L.lm.start, mistake: false, body: L.body };
+      const items = sms.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(L.lm[pose], ctx) ?? [] : e)).filter(Boolean);
+      const stop = items.find((it: any) => it.type === 'box' && it.w === 0.25 && it.h === 0.05);
+      expect(stop, pose).toBeTruthy();
+      expect(stop.z, pose).toBe('back');
+    }
+  });
+});

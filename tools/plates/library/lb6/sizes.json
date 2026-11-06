@@ -920,9 +920,9 @@
      "basis": "claim: c17 shrugging the shoulders; convention: resistance_band_pull_apart.mjs M_SHRUG 5 (LB7 on main), the scapulae 5 cm up"
     },
     "ZOOM_K": {
-     "value": 1.5,
+     "value": 3,
      "unit": "k",
-     "basis": "ruling: D-LIBZOOM-EXTEND, PLAN RULED (#354 6543628951): the smallest ladder rung at which the shrug reads"
+     "basis": "ruling: D-LIBZOOM-EXTEND, PLAN RULED (#354 6543628951): the smallest ladder rung at which the shrug reads; LIB-PLATEFIX-3 round 2 (pf7 R11, #405 6685743439): the tell moved half-way up the drawn trapezius line (4.03 px), so the smallest rung is 3 (12.1 px; 2.5 gives 10.1); was 1.5"
     }
    }
   },

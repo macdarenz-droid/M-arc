@@ -211,7 +211,10 @@ export default {
   ghosts: { count: 2, parts: ['arm.r', 'arm'] },
   // PLATEFIX-3: on the spread spine the tells' anchors move 8.6 px (lumbar) and 9.3 px (head), under the 11.39 px bar, so a
   // Mistake zoom at k 1.5, the smallest half-step over it (D-LIB15R2-ZOOM form): 12.9 px. Nothing is enlarged.
-  zoom: { view: 'mistake', k: 1.5 },
+  // LIB-PLATEFIX-3 round 2 (pf7 R11 [4,3,3], #405 6685743439): the zoom showed the head (the largest tell move, 9.3 px),
+  // the secondary tell; it now shows the low back (`tell: 'arch'`, the lower bow, 5.12 px), at k 2.5, the smallest
+  // half-step over the bar there (12.8 px; k 2 gives 10.2). D-LIB15R2-ZOOM form: nothing enlarged.
+  zoom: { view: 'mistake', k: 2.5, tell: 'arch' },
   trace: { point: 'elbow.r', trim: [10, 12] },   // D-LIB16-PULLOVER-TRACE: the elbows drive the pads (c3); the grip's wider arc closed the pivot and the elbow cue in
   callouts: [
     { key: 'pivot', text: 'Shoulders<br>at pivot', anchor: PIVOT_DROP, box: { left: 214, top: 24 }, cue: 'Set the seat so your shoulders sit just below the machine\'s pivot.' },
@@ -224,7 +227,11 @@ export default {
     parts: ['trunk'],   // the fault is the back and head; the arms and legs follow the hips by a few mm
     guides: [{ kind: 'dashed', pts: BACK_ARCH }],   // PLATEFIX-3: the arched back edge, over the figure
     tells: [
-      { key: 'arch', text: 'Back arches', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 22, top: 174 }, cue: 'The lower back arches away from the pad.' },
+      // LIB-PLATEFIX-3 round 2 (pf7 R5 [3,4,3]): the leader ends on the red bow (half-way from the buttock to the sacrum,
+      // on the dashed edge, about 13 px under its deepest point), not above it on the upper back. The deepest point sits
+      // 10.5 px inside the solid end figure, past A15's 8 px leader allowance (a leader there crosses the figure), and from
+      // the sacrum the leader meets the belt or the buttock (A15 6 px / crossing), so the lower bow is the nearest end.
+      { key: 'arch', text: 'Back arches', anchor: { along: [{ at: 'buttock', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }], t: 0.5, pose: 'mistake' }, box: { left: 22, top: 228 }, cue: 'The lower back arches away from the pad.' },
       { key: 'head', text: 'Head off pad', anchor: { at: 'head', pose: 'mistake' }, box: { left: 236, top: 120 },   // PLATEFIX-3: clear of the zoom ring and its source circle (was 166, 84)
         cue: 'The head pulls forward off the pad.' },
     ],

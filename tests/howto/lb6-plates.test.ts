@@ -1355,8 +1355,8 @@ describe('LIB-16 resume: the approved LB6 plates stay byte-identical (page 2668c
     "machine-pullover": {
       "normalSvg": "fc4506504817886a881c63cdec40fe976d31935e9f04b36e4e3b9b9c0072bc77",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): normalSvg was 90b18786, now fc450650
       "normalOverlay": "9716f8050db626def56b9342914e5d38fefa2a6fe7978f29066605dc62cfcc80",
-      "mistakeSvg": "73ced42ed51f615c37723c8bb9acb753a3b5cbed7a3d68bfda326944ee858040",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was a452764a, now 73ced42e
-      "mistakeOverlay": "eac7c7efe8cc19912bc409ee2f4ea3ec8a7773a1b2480a4280ae7d212f9fa170",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeOverlay was 742c20ff, now eac7c7ef
+      "mistakeSvg": "b14d7707d103986ef41ecac8381210b1057aa11a4f9e4b7a1f0a9f9037064f90",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was a452764a, now 73ced42e; round 2 (pf7, #405 6685743439): mistakeSvg was 73ced42e, now b14d7707
+      "mistakeOverlay": "25351a3befaf756cc996c46142bb2b819672a6443127639078575c359e01dfe2",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeOverlay was 742c20ff, now eac7c7ef; round 2 (pf7, #405 6685743439): mistakeOverlay was eac7c7ef, now 25351a3b
       "tells": "491dfaa9fec824f16a2290510510b6fa5d9a4f4c9ea8f38a9e4d3f0a0359ed3a",
       "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
       "cues": "59c4002969a558f75c224b1af3682a555fbc0c6c73ee981e9640354810010be3",
@@ -1885,7 +1885,7 @@ describe('LIB-16R2 A6: rear_delt_fly\'s Mistake zoom (D-LIBZOOM-EXTEND; PLAN RUL
   it('clean: the Mistake zoom at k 1.5 (the ladder\'s lowest rung) meets the deviation bar (12.07 px; 8.0 px at plate scale), no node-half problem, no text or angle in it', async () => {
     const c = await candOf(), r = await qa(c), z = r.metrics.zoom.mistake, env = pins().envelope;
     expect(node(r)).toEqual([]);
-    expect(z.k).toBe(1.5);
+    expect(z.k).toBe(3);   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6685743439 pf7 R11): was 1.5, now 3 (the tell half-way up the trapezius line, 4.03 px)
     expect(r.metrics.deviation).toBeLessThan(env.deviationMin);
     expect(z.deviation).toBeGreaterThanOrEqual(env.deviationMin);
     expect(+z.deviation.toFixed(2)).toBe(12.07);
@@ -1931,17 +1931,17 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
   // specs and composers are unchanged since then.
   const APPROVED: Record<string, Record<string, string>> = {
     'low-to-high-cable-fly': { normalSvg: '57eb29aeb02e58342a999ae4a7a1bdf2acd55c644ac8041855342159d56429b9', normalOverlay: '11ae46b8a9bcee9faac4f0ac0c11db8f9f2bcb1ae13280cdf00ca5c0b941cb6a',
-      mistakeSvg: 'f73ac55eaa75471946666a3934e41dd7ff20358d8ae8e72f4246fbbfcfc26bed', mistakeOverlay: 'b807c7979d08aa843a732e30b140e8423f20b6efb939dddcbf0b8f0a64f1191e',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 4d5243c5, now f73ac55e; mistakeOverlay was 82ce4b5b, now b807c797 (W6b: press hands at the shoulders, 'press' box pinned)
+      mistakeSvg: '2de2fc05a76a92281721f94f320bed20b2e5d3f536838d41cfb464bcfc4112ad', mistakeOverlay: 'b807c7979d08aa843a732e30b140e8423f20b6efb939dddcbf0b8f0a64f1191e',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 4d5243c5, now f73ac55e; mistakeOverlay was 82ce4b5b, now b807c797 (W6b: press hands at the shoulders, 'press' box pinned); round 2 (pf7, #405 6685743439): mistakeSvg was f73ac55e, now 2de2fc05
       tells: '974fd5d7ae64e02e87f859bccdabbb824add81f8cc501ed38abe50e0a29b6b25', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
       cues: 'e57bcb073136e623bc0c4c7fe2a2c2743dd31dabd42ec1e7451ec62f46699c01', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
       mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
     'high-to-low-cable-fly': { normalSvg: 'f3a6b677430bd396e616e93aa4899b45a35d447403c67f790d5e49659e09593d', normalOverlay: '036bbcc274a219453265d5aba76983ce959ee516a20d499d8f9e78179d26acea',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): normalSvg was 9b35cfa8, now f3a6b677; normalOverlay was 1f0d4513, now 036bbcc2
-      mistakeSvg: '8b5c975b6bd76b41e24d5b381a4c8ee542d383091091d49bcbff707c9f09589b', mistakeOverlay: 'bc9310ff4cefaf0d1d11f75ae567f4a48f899b6c86bfbf9477f71ce81aa35ae2',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 9eb229e0, now 8b5c975b; mistakeOverlay was e954e9ff, now bc9310ff
+      mistakeSvg: '811f291487a4adcabd368da27e4997b31c6266608e47b89e57d5eac0a4fe68a5', mistakeOverlay: 'bc9310ff4cefaf0d1d11f75ae567f4a48f899b6c86bfbf9477f71ce81aa35ae2',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 9eb229e0, now 8b5c975b; mistakeOverlay was e954e9ff, now bc9310ff; round 2 (pf7, #405 6685743439): mistakeSvg was 8b5c975b, now 811f2914
       tells: '60d21de24772caa0dc87995218a1b8517e433b1e7927fc0b358aa4c869e34eb5', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
       cues: 'acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2', alt: '8776483a58ccce47ccf95121cf10720cb66e845ee4937aeb58497a071cfc8f30',
       mistakeAlt: 'ea2b604a94dd9d4bc75eb13615124126151b487f2dc7d4d674576c173dd7bdfe' },
-    'smith-machine-squat': { normalSvg: 'e28a7ef099a60aca269a5239828dd4d3e6ceca3ca638250fcbb5f605969b6530', normalOverlay: 'c50a52e7cf6c3d6bcd744619888c859b920b707b1ed59d9c10bf68b4e16ae881',
-      mistakeSvg: 'fa64b6806adc834a53ff43e128ea52cfa694389ddd82ec27d99a1e17694273a0', mistakeOverlay: '923d11ec1c947c18eefd4f7b861dbc6298321b3923f425149634056fa6884f1b',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeOverlay was c3206135, now 923d11ec
+    'smith-machine-squat': { normalSvg: 'b387046da90c98397900081bb95bcedfa2b6712ee339821d26321d587c25334c', normalOverlay: 'c50a52e7cf6c3d6bcd744619888c859b920b707b1ed59d9c10bf68b4e16ae881',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): round 2 (pf7, #405 6685743439): normalSvg was e28a7ef0, now b387046d
+      mistakeSvg: '8d05ddb9a8b3add07a7862d37129358545bfa04bb8461d5cdb2752128bb18c81', mistakeOverlay: '923d11ec1c947c18eefd4f7b861dbc6298321b3923f425149634056fa6884f1b',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeOverlay was c3206135, now 923d11ec; round 2 (pf7, #405 6685743439): mistakeSvg was fa64b680, now 8d05ddb9
       tells: 'aa721c4cc5e68c7dde50216ef79fe26b6f2a4c87784d32ea4823f97c7db9e8a7', tempo: 'f886198ba7e406367703d407e46cd3f5178dc9b2b21e53921aaeb03899df9faf',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): tells was 73ff3249, now aa721c4c
       cues: '6fbef077bb173990c7478d2394c036ce3be0975e58ad9058cdb03659643091d8', alt: '727ac3352572b1cdb5596b3420ef9effb4e7b77bf2d25ada54e49e4a675fd5c8',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): cues was fe51224c, now 6fbef077
       mistakeAlt: '73dd0a9bd8699833121d3a342e1343db9270ef4331a5d92ef81df0a500fad4b8' },
@@ -1951,7 +1951,7 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
       cues: '6220387ee2b29600bbd9b45e643e5193056ddda986ddc15b6d018bddbff05d07', alt: '74f3769e116308b416bf6d9b55d70d3579b21d3abcac3bf70ca79a82483fdd34',
       mistakeAlt: 'dadbe7b7bf2003b5b4312403ff066b86b940daa384e6d372ee6fd5548c38c2f7' },
     'rear-delt-fly': { normalSvg: '3ae3c37eca03ee45125c2743e237fdc9f41e441f6138acca7e3ef4123f246f39', normalOverlay: '1b8f37bc2cabd0a02acffe75dfd7ef6a15423878044d49cf576854d6e7dd0b64',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): normalSvg was 386cba4a, now 3ae3c37e
-      mistakeSvg: '309876b150cf2532be6cfb374367d9bbdf45d2d03a3292c4d19a0530889ea8ec', mistakeOverlay: '66398edde3c915b54979bc6f9db8c88847674a3e38f767db5934d42fa55919ba',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 51a69e4c, now 309876b1
+      mistakeSvg: 'dd886fa2a4624308fb62c9805df9fc2e1d9b208584bf6d25a3c1f1ece20c82e8', mistakeOverlay: '66398edde3c915b54979bc6f9db8c88847674a3e38f767db5934d42fa55919ba',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 51a69e4c, now 309876b1; round 2 (pf7, #405 6685743439): mistakeSvg was 309876b1, now dd886fa2
       tells: '9a2df2d60b2c5ee135a32b5694de1574f7cd55188fa9d77e146044b06c7569e4', tempo: '4fea38d8fe037c637a77ae44b4191a339e8fd1215cc41789124a37fcb95730ad',
       cues: 'cffb083b22876cc09fff21e99a198a14e75ccdf1334e12a0a70e7eea4f4ae435', alt: 'f54a914422b3e1be44f3991a289859a7b089c5c3b520f2407df73ec1d71c8d1b',
       mistakeAlt: '8025a402e572b5643fe4d0a851f73e5ac4d7de82c2544a4d4310038d05c31c01' },
