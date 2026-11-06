@@ -842,6 +842,10 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-06 ~19:45 UTC** (weekly 0.46 at 19:35, flat).
+  - **W3 #384 FLIPPED @ `27b2562c`** (9 ids, 37/37 green, contains `484d4552`; D-SHIP-W3-WALKTIME: L2-A4 600 s, HT2-A2 60 s). Reviewer session_018Pv5bLvtLzFdYSa6ewwfGR running. On PASS: train 73, then the APK to the owner (26 guides).
+  - **Queue after W3** (each merges main and reconciles shared pilot pages under D-PLATEFIX-SECOND): #400 (train-ready), #404 (review PASS; rebuild three pilot layers pages through applyZooms with a strip-back proof; two doc Mediums), PF1 #385 (review PASS; pilot-a3 re-pin, shard 8 turns green, COACHING-DECISIONS Medium), PF2 #395 (READY `b74ef75e`, reviewer session_018Pv5bLJiyFDTkSgWHdCx9o), PF3 #405 (READY `d5aba5e7`, 24 approved, reviewer session_018Pv5bJC5KWqjukGceg16do), then W4, W5, W6 (7), W7 (12). Research heads #401 after #400 and #407 after #405 merge into `claude/libht-research`.
+  - Follow-ups added: F-CI-APT-STALL (apt mirror stalls on fonts-wqy-zenhei hit two lanes), F-GEN-WALK-SPEED, F-HT10-A3-WARMUP.
 - **Update 11-06 ~16:45 UTC** (weekly 0.44 at 16:27, about 4 %/h; pause plan unchanged).
   - **Train 72 MERGED:** #403 RESEARCH-ROUTES part 2 → main `484d4552` (research only, no APK). Research head #402 merged into `claude/libht-research` (`9d35705c`).
   - **Owner (11-06 ~14:10):** D-OWNER-REPIN and D-OWNER-RECOMMENDED (see below). The 9 vs 17 correction was sent: the app on main has 17 guides; W3 makes 26.
