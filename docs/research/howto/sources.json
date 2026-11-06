@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=28cba2c95cab98757f9d3735c98cd5f80f2c31870bbe6c9ef0046827d2d62997
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=062e4ca075e665f10aa496d991cc539f8f9dc85042773417712917cfc737125d
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -142,7 +142,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": "2026-10-19"
+    "checked": "2026-10-17"
   },
   "andersen2008": {
     "id": "andersen2008",
@@ -190,7 +190,7 @@
     "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
     "kind": "textbook",
     "access": "full",
-    "checked": "2026-10-19"
+    "checked": "2026-09-30"
   },
   "barbell-logic-grip": {
     "id": "barbell-logic-grip",

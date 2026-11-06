@@ -27,14 +27,14 @@ export const SOURCES = {
   'ggr-t-bar': { cite: 'T-Bar Row: How To, Benefits, Muscles Worked (Garage Gym Reviews)', url: 'https://www.garagegymreviews.com/t-bar-row',
     kind: 'coach', access: 'full', checked: '2026-10-19', use: 'CONSENSUS' },
   acsm2009: { cite: 'American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.', url: 'https://pubmed.ncbi.nlm.nih.gov/19204579/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-19', use: 'CONSENSUS' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-17', use: 'CONSENSUS' },
   // cite as docs/research/howto/sources.json already holds it (as lib_barbell_row)
   macdougall1985: { cite: 'MacDougall JD et al. Arterial blood pressure response to heavy resistance exercise. J Appl Physiol 1985;58(3):785-90', url: 'https://pubmed.ncbi.nlm.nih.gov/3980383/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-19', use: 'DATA' },
   fenwick2009: { cite: 'Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness.', url: 'https://pubmed.ncbi.nlm.nih.gov/19620925/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-19', use: 'WEAK' },
   'baechle-grip': { cite: 'Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)', url: 'https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location',
-    kind: 'textbook', access: 'full', checked: '2026-10-19', use: 'CONSENSUS' },
+    kind: 'textbook', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
   odriscoll1992: { cite: 'The relationship between wrist position, grasp size, and grip strength.', url: 'https://pubmed.ncbi.nlm.nih.gov/1538102/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-19', use: 'MECH' },
   // The back box's own source (shared/back-box.mjs boxClaim), as lib_barbell_row lists it: the card's redFlags 'back'

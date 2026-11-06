@@ -29,9 +29,9 @@ export const SOURCES = {
   'sl-pendlay': { cite: 'How to Do Pendlay Row: Muscles Worked & Proper Form (StrengthLog)', url: 'https://www.strengthlog.com/pendlay-row/',
     kind: 'coach', access: 'full', checked: '2026-10-19', use: 'CONSENSUS' },
   acsm2009: { cite: 'American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.', url: 'https://pubmed.ncbi.nlm.nih.gov/19204579/',
-    kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-19', use: 'CONSENSUS' },
+    kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-17', use: 'CONSENSUS' },
   'baechle-grip': { cite: 'Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)', url: 'https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location',
-    kind: 'textbook', access: 'full', checked: '2026-10-19', use: 'CONSENSUS' },
+    kind: 'textbook', access: 'full', checked: '2026-09-30', use: 'CONSENSUS' },
   // cite as docs/research/howto/sources.json already holds it (as lib_barbell_row)
   macdougall1985: { cite: 'MacDougall JD et al. Arterial blood pressure response to heavy resistance exercise. J Appl Physiol 1985;58(3):785-90', url: 'https://pubmed.ncbi.nlm.nih.gov/3980383/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-19', use: 'DATA' },
