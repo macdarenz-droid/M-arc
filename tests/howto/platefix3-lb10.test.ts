@@ -42,17 +42,38 @@ describe('PF3 W7 burpee copy (c2)', () => {
   });
 });
 
-describe('PF3 W7 jump_rope: the too-high jump, tucked and clear (c9, L5)', () => {
-  it('the lowest Mistake foot is at least 3x the Right hop over the floor; knees tucked 60 deg (+-1)', () => {
-    const { L } = pxOf(S.jump_rope);
+describe('PF3 W7 jump_rope: the too-high jump, raised and clear (c9, L5; round 2 R5)', () => {
+  // round 2 (#405 6685743439 jump_rope R5 c2 c3): the red figure is the airborne body raised unchanged (was tucked 60 deg)
+  it('the lowest Mistake foot is at least 5x the Right hop over the floor; the knees are the airborne knees (no tuck); the head is >= 18 px over the main head', () => {
+    const { L, P } = pxOf(S.jump_rope);
     const low = (pose: string) => Math.min(...FOOT.map(k => L.lm[pose][k][1]));
-    expect(low('mistake')).toBeGreaterThanOrEqual(3 * low('end'));
-    expect(Math.abs(L.q.mistake.knee.r - 60)).toBeLessThanOrEqual(1);
+    expect(low('mistake')).toBeGreaterThanOrEqual(5 * low('end'));
+    expect(Math.abs(L.q.mistake.knee.r - L.q.end.knee.r)).toBeLessThanOrEqual(0.5);
+    expect(P('end', 'head')[1]! - P('mistake', 'head')[1]!).toBeGreaterThanOrEqual(18);
   });
   it('the dashed figure is clear of the solid one: hips at least 60 px apart, the faulty right hip outside the solid left hip', () => {
     const { P } = pxOf(S.jump_rope);
     expect(Math.abs(P('mistake', 'hips')[0]! - P('end', 'hips')[0]!)).toBeGreaterThanOrEqual(60);
     expect(P('mistake', 'hip.r')[0]).toBeGreaterThan(P('end', 'hip.l')[0]!);
+  });
+});
+
+describe('PF3 round 2 (#405 6685743439): sled_pull R7 and burpee R1/R5/R11', () => {
+  it('sled_pull: every svg coordinate stays at least 10 px inside the 358 px frame on the right (the dashed start sled was clipped at 359.2)', () => {
+    for (const mistake of [false, true]) {
+      const svg = plate.renderPlate(S.sled_pull, { id: 'x', mistake }).svg;
+      const xs = [...svg.matchAll(/[ML ](-?\d+\.?\d*)[ ,](-?\d+\.?\d*)/g)].map(a => +a[1]!);
+      expect(Math.max(...xs), String(mistake)).toBeLessThanOrEqual(348);
+    }
+  });
+  it('burpee: the landing knee is bent 25 deg (+-1; was 15) and the stiff knee stands >= 10 px from it; no solid axis line, no zoom', () => {
+    const { L, P } = pxOf(S.burpee);
+    const flexOf = (pose: string) => { const l = L.lm[pose], u = [0, 1, 2].map(i => l['hip.r'][i] - l['knee.r'][i]), w = [0, 1, 2].map(i => l['ankle.r'][i] - l['knee.r'][i]);
+      const c = u.reduce((a, v, i) => a + v * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w); return 180 - Math.acos(Math.max(-1, Math.min(1, c))) * 180 / Math.PI; };
+    expect(Math.abs(flexOf('end') - 25)).toBeLessThanOrEqual(1);
+    expect(Math.hypot(...[0, 1].map(i => P('end', 'knee.r')[i]! - P('mistake', 'knee.r')[i]!))).toBeGreaterThanOrEqual(10);
+    expect(S.burpee.mistake.guides.filter((g: any) => g.kind === 'line')).toEqual([]);
+    expect(S.burpee.zoom).toBeUndefined();
   });
 });
 

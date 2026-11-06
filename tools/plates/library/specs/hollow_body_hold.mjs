@@ -25,7 +25,7 @@
 import { landmarksOf, fk, resolve, normPose, bodyShapes } from '../engine.mjs';
 
 const H = 1.75, BODY = { height: H };
-export const SIZES = Object.freeze({ PELVIS_TUCK: 15, TOE: -40, CURL: 25, LEG: 15, ARM: 185, ARM_PLANE: 80, NECK: 10, M_LEG: 5 });
+export const SIZES = Object.freeze({ PELVIS_TUCK: 15, TOE: -50, CURL: 25, LEG: 15, ARM: 185, ARM_PLANE: 80, NECK: 10, M_LEG: 5 });
 const { PELVIS_TUCK, TOE, CURL, LEG, ARM, ARM_PLANE, NECK, M_LEG } = SIZES;
 const OCCIPUT = [0, 0.955, -0.056];                    // back of the skull on the side head outline (head frame, H): crunch's
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
@@ -92,15 +92,21 @@ export default {
     { landmark: 'heel.r', above: FLOOR, pose: 'end' },
   ],
   startParts: ['torso', 'head', 'arm.r', 'leg.r'],
-  ghosts: { count: 1, parts: ['leg.r', 'arm.r'] },
+  // LIB-PLATEFIX-3 round 2 (#405 6685743439 hollow_body_hold R1 [3,3,4], c1): the one via ghost (legs about 5 deg, arms
+  // about 7 deg, halfway from the entry) read as a far leg and arm apart from the near ones, on the Mistake's own leg line;
+  // it is dropped (was count 1, parts leg.r and arm.r). Both sides are drawn from the same angles, so far and near limbs
+  // are together. The start layer and the heel Trace still show the movement from the entry.
+  ghosts: { count: 0 },
   trace: { point: 'heel.r', trim: [4, 6] },
   tempo: [{ phase: 'Hold', s: 'max 30' }],   // D-SUPCORE-HOLDMAX (#366 6570379460): c12's "up to 30 seconds" as an upper bound
   // D-SUPCORE-HOLLOWLEG (#366 6575342285): c4's 15 deg, the card's one measure fact, drawn as the angle between the floor
   // line and the hip-to-ankle line in the hold (lb9/sizes.json LEG's measure), at the hip (mx27 R7)
-  measure: { vertex: 'hip.r', from: { dir: [1, 0] }, to: 'ankle.r', radius: 132, title: 'Legs', value: 'about 15°', expect: 15, box: { left: 286, top: 196 } },   // mx27 R7: the house angle arc at the hip
+  // LIB-PLATEFIX-3 round 2 (hollow R1 c2): radius 132 -> 142, clear of the pointed toe (135.0 px from the hip at TOE -50)
+  measure: { vertex: 'hip.r', from: { dir: [1, 0] }, to: 'ankle.r', radius: 142, title: 'Legs', value: 'about 15°', expect: 15, box: { left: 286, top: 196 } },   // mx27 R7: the house angle arc at the hip
   callouts: [
     { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 130, top: 196 }, cue: 'Press your low back flat to the floor the whole hold.' },   // c1 c2 (LIB-PLATEFIX-3 W7, #394 6682923012)
-    { key: 'legs', text: 'Legs low', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 210, top: 196 }, cue: 'Legs straight and off the floor, no higher than about 30 degrees.' },
+    // LIB-PLATEFIX-3 (#394 6683570453; card edit research-routes-3 2c82a0ca): the 'Legs low' callout is dropped (it
+    // duplicated the Mistake's 'Legs too low'); the one leg label is the 'Legs about 15°' measure (c4).
     { key: 'shoulders', text: 'Shoulders up', anchor: { at: 'shoulderTop.r', off: [0, -3] }, box: { left: 16, top: 214 }, cue: 'Lift your shoulders and arms off the floor, biceps by your ears.' },
   ],
   mistake: {

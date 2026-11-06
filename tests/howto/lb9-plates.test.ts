@@ -1082,7 +1082,7 @@ console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;
 const APPROVED_FRAGS: Record<string, string> = { 'ab-wheel-rollout': 'e0e6d3b9aaeaa902',
   'bird-dog': 'cb84c0b750a2a2fe',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 4ae4f8913f726103, now cb84c0b750a2a2fe (the c7 cue copy)
   'side-plank': '18e0fb027e416a05', superman: '2ed02b364e72c3a4', 'cable-crunch': '17c013e5d7d341ba',
-  'hollow-body-hold': '79aa43e1938e2a9a',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was f1e3f6990bc6dd7a, now 79aa43e1938e2a9a (the c5 cue copy)
+  'hollow-body-hold': '3840726c16580b8c',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was f1e3f6990bc6dd7a, then 79aa43e1938e2a9a (the c5 cue copy); round 2 (#405 6685743439): 3840726c16580b8c (R1: no via ghost, TOE -50, arc 142; the 'Legs low' callout dropped with the card)
   'reverse-crunch': '8d189ceca9f17ee7',
   'dead-bug': '142b6445a08aa467',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was dffcec3c1d6655c0, now 142b6445a08aa467 (c4 copy, trunk-only Mistake, gap arrow)
   'v-up': 'cacf69b14e44fa08' };   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 55c3ecd9f47f2a30, now cacf69b14e44fa08 (tempo lift-first, trunk-only Mistake, gap arrow)

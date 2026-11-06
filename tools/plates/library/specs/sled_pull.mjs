@@ -45,7 +45,9 @@ import { sled, SLED, SLED_ITEMS } from '../eq/sled.mjs';
 import { strandOutline } from '../eq/rope.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ PX_PER_M: 126, FOOT_X: 0.145, KNEE_SOFT: 15, ELBOW_BEND: 18, GRIP_GAP: 0.07, SLED_Z: 0.9, FOOT_CLEAR: 0.025,
+// LIB-PLATEFIX-3 round 2 (#405 6685743439 sled_pull R7 [3,3,3]): SLED_Z 0.9 -> 0.78, the sled group 15 px left, so the
+// dashed start sled ends 13.9 px inside the frame (it was clipped at 358); no body change.
+export const SIZES = Object.freeze({ PX_PER_M: 126, FOOT_X: 0.145, KNEE_SOFT: 15, ELBOW_BEND: 18, GRIP_GAP: 0.07, SLED_Z: 0.78, FOOT_CLEAR: 0.025,
   COIL_D: 0.266, COIL_TURNS: 3, ROPE_T: 0.028, ROPE_SAG: 0.006, M_TILT: -14, M_ARCH: -12, Q_KNEE: 42, LOOP_H: 0.044, LOOP_DZ: 0.05, TAIL_SAG: 0.04 });
 const { FOOT_X, KNEE_SOFT, ELBOW_BEND, GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH, Q_KNEE, LOOP_H, LOOP_DZ, TAIL_SAG } = SIZES;
 

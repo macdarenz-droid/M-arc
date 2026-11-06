@@ -32,7 +32,9 @@
 import { landmarksOf, RADII, WINTER, REF } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.15, KNEE_SOFT: 15, M_KNEE: 1, VIA_DROP: 0.02 });
+// LIB-PLATEFIX-3 round 2 (#405 6685743439 burpee R1 [2,3,2], c11 c16): KNEE_SOFT 15 -> 25, the landing knee visibly bent (the
+// critics: 25-32 deg; 15 read as locked); R5/R11: the solid red axis line is dropped, the dashed straight leg is the fault.
+export const SIZES = Object.freeze({ FOOT_X: 0.15, KNEE_SOFT: 25, M_KNEE: 1, VIA_DROP: 0.02 });
 const { FOOT_X, KNEE_SOFT, M_KNEE, VIA_DROP } = SIZES;
 const WRIST_Y = RADII.fore[2] * H;   // flat palm (LIB-26): the wrist sits the forearm's distal radius above the floor (mountain_climbers.mjs)
 const WRIST = 90;                    // arms plumb, so the wrist extends 90 deg and the palm lies flat (mountain_climbers.mjs)
@@ -150,13 +152,18 @@ export default {
     // the locked leg's axis, hip joint -> knee -> ankle (panel mx2 item 5; D-LIB22-AXIS, #331): the capsule outline keeps
     // its knee taper and reads bent; one straight solid line shows the leg straight, in the plate and the Mistake zoom
     // (the D-LIB16-AXIS form of cable_chest_press)
-    guides: [{ kind: 'line', pts: ['hip.r', 'knee.r', 'ankle.r'].map(at => ({ at, pose: 'mistake' })) }],
+    // LIB-PLATEFIX-3 round 2 (#405 6685743439 burpee R5 c1, R11 c2 c3): the solid red axis line is dropped. With the
+    // landing knee at 25 deg the dashed straight leg stands 11.9 px behind the bent solid knee, so the outline alone
+    // shows the fault, in the plate and in the zoom.
+    guides: [],
     tells: [
       { key: 'landing', text: 'Stiff landing', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 64, top: 228 }, cue: 'A hard landing, without the knees slightly bent.' },
     ],
   },
   tempo: [{ phase: 'Squat down', move: true, word: 'Controlled' }, { phase: 'Kick back', move: true }, { phase: 'Jump in', move: true }, { phase: 'Jump up', move: true }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)
-  zoom: { view: 'mistake', k: 2 },   // D-LIBZOOM-EXTEND (lib4-cards §41; DESIGN.md §21): the landing tell (knee.r), 14.2 px at k 2 (bar at the zoom's scale)
+  // LIB-PLATEFIX-3 round 2 (#405 6685743439 burpee R11): no zoom. With the landing knee at 25 deg the landing tell moves
+  // 12.2 px at plate scale, over the 11.39 bar, so QA forbids a Mistake zoom (H3.zoom:not-needed:mistake); the knee
+  // reads in the plate itself. Was { view: 'mistake', k: 2 } (D-LIBZOOM-EXTEND, 14.2 px at k 2).
   alt: 'Burpee, side view. From a straight-arm plank, hands flat and shoulder-width apart and the body in one line, the feet jump in under the body and the lifter stands tall, landing softly on slightly bent knees.',   // c2; LIB-PLATEFIX-3 (W7 #394 6682923012): was 'hands flat under the shoulders'
 };
 export const info = { QP, QV, FOOT_Z, pose: Object.fromEntries([['start', start], ['via', via[0]], ['end', end], ['mistake', mistakeFull]].map(([k, p]) => { const lm = landmarksOf(p, H);

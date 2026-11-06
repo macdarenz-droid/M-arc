@@ -1302,11 +1302,16 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   it('every drawn plate: no solid red arrow comes within 6 px of the solid end figure', async () => {
     for (const id of specsDrawn()) { expect(clearance(S[id]), id).toEqual([]); await yieldNow(); }
   });
-  it('D-LIB22-AXIS: burpee draws its axis line, hip.r to ankle.r within 0.5 px, in the plate and inside the Mistake zoom', async () => {
+  // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): burpee R5/R11 drop the axis line and the zoom. The landing knee is
+  // bent 25 deg, so the dashed straight leg stands >= 10 px behind the solid knee (was: one axis path, also inside the zoom).
+  it('D-LIB22-AXIS (round 2): burpee draws no axis line and no zoom; its dashed straight knee is >= 10 px behind the solid bent knee', async () => {
     const svg = plate.renderPlate(S.burpee, { id: 'x', mistake: true }).svg, paths = [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].map(m => xy(m[1]!));
-    expect(paths.filter(p => isAxisPath(S.burpee, p)).length).toBe(1);
-    const z = (await import(/* @vite-ignore */ lib('zoom/inline.mjs'))).zoomOf(S.burpee), inner = z.svg.split('class="pz-in"')[1] ?? '';
-    expect(/<path class="m-arrow"/.test(inner)).toBe(true);
+    expect(paths.filter(p => isAxisPath(S.burpee, p)).length).toBe(0);
+    expect(S.burpee.zoom).toBeUndefined();
+    const gap = (sp: any) => { const cam = camOf(sp), a = cam.P(lmOf(sp, 'end')['knee.r']), b = cam.P(lmOf(sp, 'mistake')['knee.r']); return Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!); };
+    expect(gap(S.burpee)).toBeGreaterThanOrEqual(10);
+    const m = await import(/* @vite-ignore */ lib('specs/burpee.mjs'));
+    expect(m.SIZES.KNEE_SOFT).toBe(25);
   });
   it('D-LIB22-AXIS mutations: the axis removed, the same axis on sled_push, and an axis to the knee only are red', () => {
     const b = S.burpee, none = { ...b, mistake: { ...b.mistake, guides: [] } };
@@ -1705,7 +1710,7 @@ describe('LIB-22 resume: the zoom circles (D-LIBZOOM-EXTEND, lib4-cards §41; DE
   // drawn circle; the tell deviation x k). k rule (section 21): the smallest k in steps of 0.5 from 1.5 whose
   // zoom-scale value clears its bar by at least 10 %.
   const ZOOMS: Record<string, { view: string; k: number }> = {
-    sled_pull: { view: 'normal', k: 3 }, burpee: { view: 'mistake', k: 2 }, bear_crawl: { view: 'normal', k: 4 },
+    sled_pull: { view: 'normal', k: 3 }, bear_crawl: { view: 'normal', k: 4 },   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): burpee's { view: 'mistake', k: 2 } dropped (its tell moves 12.2 px at plate scale; QA forbids a not-needed zoom)
     jumping_jacks: { view: 'mistake', k: 2.5 },
     jump_rope: { view: 'normal', k: 3 },   // HELD-A (D-HELD6-JUMPROPE): the flight ankle's sole.r Trace, 28.1 px; k 2.5 gives 23.4 px, under the bar + 10 %   // LIB-SMALL (D-SMALL-JJZOOM; D-LIB22-RINGFIT: at k 1.5 and 2 the source ring around the toes crosses the frame's bottom): the `toes` tell, 24.0 px
   };
@@ -1761,10 +1766,10 @@ describe('LIB-22 resume: the zoom circles (D-LIBZOOM-EXTEND, lib4-cards §41; DE
   it('D-LIB22-RINGFIT mutation: sled_pull at k 1.5 and 2.5 (its source ring runs past the plate\'s bottom edge) is red', () => {
     for (const k of [1.5, 2.5]) expect(ruleProblems('sled_pull', { ...S.sled_pull, zoom: { view: 'normal', k } }), String(k)).toContain('sled_pull: the source ring is clipped by the plate frame');
   });
-  it('mutations: bear_crawl at k 3.5 (under the margin), sled_pull at k 1 (field), burpee at k 2.5 (not the smallest), a zoom on the wrong view are red', async () => {
+  it('mutations: bear_crawl at k 3.5 (under the margin), sled_pull at k 1 (field), jumping_jacks at k 3 (not the smallest), a zoom on the wrong view are red', async () => {
     expect(ruleProblems('bear_crawl', { ...S.bear_crawl, zoom: { view: 'normal', k: 3.5 } })).toEqual(['bear_crawl: zoom {"view":"normal","k":3.5}', 'bear_crawl: 24.1 px under the bar + 10 %']);
     expect(zi.zoomFieldProblems({ view: 'normal', k: 1 })).toEqual(['zoom.k 1 is outside 1.5-4']);
-    expect(ruleProblems('burpee', { ...S.burpee, zoom: { view: 'mistake', k: 2.5 } })).toEqual(['burpee: zoom {"view":"mistake","k":2.5}', 'burpee: k 2 already clears']);
+    expect(ruleProblems('jumping_jacks', { ...S.jumping_jacks, zoom: { view: 'mistake', k: 3 } })).toEqual(['jumping_jacks: zoom {"view":"mistake","k":3}', 'jumping_jacks: k 2.5 already clears']);   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): burpee has no zoom now; the same not-the-smallest mutation on jumping_jacks
     await yieldNow();
     expect(ruleProblems('sled_pull', { ...S.sled_pull, zoom: { view: 'mistake', k: 1.5 } })[0]).toBe('sled_pull: zoom {"view":"mistake","k":1.5}');
   });
@@ -1929,9 +1934,9 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
       "mistakeAlt": "2e69b29b78f143b879610dca51a51496b5c280b56c434009ad2effa67b4e53de"
     },
     "sled-pull": {
-      "normalSvg": "01f23201e9293a7c1cc6bfa25a5daff716bcf568040ed020edec38051538ae7b",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8638526e, now the PF3 drawing
+      "normalSvg": "b637dac6064cef002d48619511d9646455d05bd9e064f16622b9dbd353a89e01",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8638526e, then 01f23201; round 2 (#405 6685743439 R7): SLED_Z 0.78
       "normalOverlay": "81d2c0e5266c292688179b5f90c636c69c78fbe167103a0d979893567a2db815",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0ef9d6fd, now the PF3 drawing
-      "mistakeSvg": "40510f2ae40c07ca3cf5f8579cbb0787f275f2015d4c05de4a94ee383c0eaa9e",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, now the PF3 drawing
+      "mistakeSvg": "1122a78495799f0069d0bfbfdb1c525727034a5d97c3b406177512c652aecae9",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, then 40510f2a; round 2 (#405 6685743439 R7): SLED_Z 0.78
       "mistakeOverlay": "f488c63b0fa31e3e936d99f2f834dece424d62bee06595b56b14a89a09b8bd54",
       "tells": "6a7d6e8c622a2a5df7035e2823688a13decbfcb9a4a203b54ce05909b257705d",
       "tempo": "1551a4913b7c557d03dca51a61ca2c49605243ea59da71e831c285dc1b0cc523",
@@ -1940,9 +1945,9 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
       "mistakeAlt": "be9ede9165e06339963ad1695d2003d48602984f4e55019246c8262815ad1649"
     },
     "burpee": {
-      "normalSvg": "b9e847afb39224dd693ea7f418027eb38afefee9cf25eb81c3f07bde3e990b45",
+      "normalSvg": "2c7864a71d17999ca4eeb0d3b068c3dcff1d18f4dc4109da8432020f7d27a97a",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): was b9e847af (burpee R1: landing knee 25 deg)
       "normalOverlay": "e3c89090799ce76c2437b37779998651e7123e12997fde817963a0506b8f87d8",
-      "mistakeSvg": "91b2d48c2e1dbd1147be6e3cae1e258aacb5200b40b4391b7a38345eb66b1b89",
+      "mistakeSvg": "40676a6580934421c2846dfc22ca9cdadba1e04f6785d19e49831fe1ba1cf1cf",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): was 91b2d48c (burpee R1/R5/R11: knee 25 deg, no axis line, no zoom)
       "mistakeOverlay": "107d2344980b1349a067ca514ee91586d1c3c16fa78eef07b8f1c067860947e2",
       "tells": "134b6cfb952197c5af6282bf263e7de5a496a7466ab48314522369fa047fa345",
       "tempo": "b2ed144340ec709250cf45c430226108bf62f134311680699505ad2efa4252eb",
