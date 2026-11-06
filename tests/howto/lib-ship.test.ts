@@ -15,9 +15,13 @@ const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 const json = (p: string) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
 const EIGHT = Object.keys(json('tools/plates/plates.json'));
 /** The library ids ruled to ship on this head, in registry order (W1: D-SHIP-W1-LAYERS #376 6616230145; W2: the 9 of
- *  D-SHIP-W2-STAMP #379 6636105974, less crunch and seated_leg_curl held by Q6/Q7 6636501505, 6636616603). */
-const RULED_SHIPPED = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
-  'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
+ *  D-SHIP-W2-STAMP #379 6636105974, less crunch and seated_leg_curl held by Q6/Q7 6636501505, 6636616603; W3: the 9 of
+ *  #384 6653062201, less assisted_pull_up and underhand_lat_pulldown (LIB-PLATEFIX-3) and incline_machine_press and
+ *  shoulder_press (D-SHIP-W3-NOPAIR 6681221802); registry order puts lb01 first and zoom last). */
+const W3_SHIPPED = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
+  'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'];
+const RULED_SHIPPED = [...W3_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
+  'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
 let reg: any, content: any, P: any, keyMods: any[];
 beforeAll(async () => {
@@ -245,7 +249,9 @@ describe('LIB-SHIP D-SHIP-PAIR-NOZOOM (#379 6637870829): pairsOf leaves out ids 
   it('red 2: an unlisted keyed id keeps its pair (the curl)', () => {
     const { pairOf, keys } = HP.pairsOf(pairs, R.shippedIds());
     expect(pairOf['dumbbell-biceps-curl']).toBe('curl-dumbbell-under');
-    expect(keys).toEqual(['curl-dumbbell-under']);
+    // LIB-SHIP W3: W3's 5 pair rows (registry order, lb01 first) carry their sub-keys; the curl's key stays last
+    expect(keys).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead',
+      'd-handle-pull-only-curled-unstated', 'curl-dumbbell-under']);
     expect(HP.noZoomIds()).not.toContain('lib_dumbbell_biceps_curl');
   });
   it('red 3: hands.mjs\'s no-zoom check runs for rope and push_up (their sheets name D-SHIP-C3; a sheet naming none is refused)', async () => {
