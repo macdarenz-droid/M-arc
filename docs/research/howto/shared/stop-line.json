@@ -1,0 +1,151 @@
+{
+  "key": "stop-line",
+  "kind": "safety-line",
+  "appliesTo": [
+    "alternating_dumbbell_curl",
+    "arnold_press",
+    "assisted_pull_up",
+    "back_extension",
+    "barbell_bench_press",
+    "barbell_curl",
+    "barbell_overhead_press",
+    "barbell_row",
+    "barbell_shrug",
+    "bodyweight_lunge",
+    "bodyweight_split_squat",
+    "bodyweight_squat",
+    "box_jump",
+    "bulgarian_split_squat",
+    "cable_curl",
+    "cable_external_rotation",
+    "cable_fly",
+    "cable_lateral_raise",
+    "cable_shrug",
+    "chin_up",
+    "close_grip_bench_press",
+    "conventional_deadlift",
+    "decline_bench_press",
+    "dumbbell_bench_press",
+    "dumbbell_biceps_curl",
+    "dumbbell_fly",
+    "dumbbell_overhead_triceps_extension",
+    "dumbbell_pullover",
+    "dumbbell_romanian_deadlift",
+    "dumbbell_shoulder_press",
+    "dumbbell_shrug",
+    "ez_bar_curl",
+    "face_pull",
+    "forward_lunge",
+    "front_squat",
+    "hollow_body_hold",
+    "incline_barbell_bench_press",
+    "incline_dumbbell_curl",
+    "incline_dumbbell_press",
+    "landmine_row",
+    "lying_leg_curl",
+    "one_arm_dumbbell_row",
+    "pec_fly",
+    "pendlay_row",
+    "pistol_squat",
+    "preacher_curl",
+    "push_up",
+    "rear_delt_fly",
+    "resistance_band_pull_apart",
+    "reverse_lunge",
+    "romanian_deadlift",
+    "rope_triceps_pushdown",
+    "shoulder_press",
+    "single_arm_triceps_pushdown",
+    "single_leg_romanian_deadlift",
+    "skull_crusher",
+    "smith_machine_bench_press",
+    "smith_machine_shoulder_press",
+    "smith_machine_shrug",
+    "smith_machine_squat",
+    "standing_leg_curl",
+    "step_up",
+    "straight_bar_triceps_pushdown",
+    "sumo_deadlift",
+    "superman",
+    "t_bar_row",
+    "triceps_pushdown",
+    "upright_row",
+    "walking_lunge"
+  ],
+  "appliesToWhy": "RESEARCH-ROUTES-1 part 2 (D-STOPLINE-CLAIM, #391 6681022221): every library sheet with a stop line (\"Stop the set. Don't train through the pain.\" or \"Stop and don't train through the pain.\") on main 5023f5c6 and on claude/lib-ship-w3b, w4, w5, w6 and w7 (grep of tools/plates/library/howto, 2026-11-06).",
+  "line": {
+    "text": "Stop the set. Don't train through the pain.",
+    "claim": "c1"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "NHS self-care advice for wrist, back and elbow pain is to stop or cut down activities that cause pain or make it worse (NHS advice, applied here to training).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-wrist-pain",
+        "nhs-back",
+        "nhs-tennis-elbow"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-wrist-pain",
+          "text": "stop or cut down activities that are causing the pain",
+          "where": "How you can ease wrist pain yourself: Do"
+        },
+        {
+          "source": "nhs-back",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        },
+        {
+          "source": "nhs-tennis-elbow",
+          "text": "avoid or reduce activities that make your symptoms worse",
+          "where": "Things you can do to help ease tennis elbow: Do"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "nhs-wrist-pain",
+      "url": "https://www.nhs.uk/symptoms/hand-pain/wrist-pain/",
+      "title": "Wrist pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-11-06"
+    },
+    {
+      "id": "nhs-back",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain",
+      "kind": "guideline",
+      "year": 2026,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-11-06"
+    },
+    {
+      "id": "nhs-tennis-elbow",
+      "url": "https://www.nhs.uk/conditions/tennis-elbow/",
+      "title": "Tennis elbow (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-11-06"
+    }
+  ],
+  "gaps": [
+    "Knee: the NHS knee-pain page (fetched 2026-11-06, 200) has no stop-on-pain line, only \"put as little weight as possible on your knee\".",
+    "Shoulder: the NHS shoulder-pain page says \"do not completely stop using your shoulder\"; it gives no stop-on-pain line for exercise.",
+    "Finucane 2020 (JOSPT, PMID 32438853), behind the app's pain_red_flags entry, is a red-flag framework for serious spinal pathology; its abstract was not used, as it does not address stopping a set."
+  ],
+  "notes": [
+    "All three pages fetched by curl on 2026-11-06 (HTTP 200); each quote is a verbatim substring of the page text."
+  ]
+}

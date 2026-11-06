@@ -1,0 +1,31 @@
+{
+ "id": "shared-stop-line",
+ "checked": "2026-11-06",
+ "fetcher": "opus builder (RESEARCH-ROUTES-1)",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "nhs-wrist-pain",
+   "text": "stop or cut down activities that are causing the pain",
+   "status": "verbatim",
+   "closest": "stop or cut down activities that are causing the pain",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nhs-back",
+   "text": "But stop if your pain gets worse and see a GP for advice.",
+   "status": "verbatim",
+   "closest": "But stop if your pain gets worse and see a GP for advice.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nhs-tennis-elbow",
+   "text": "avoid or reduce activities that make your symptoms worse",
+   "status": "verbatim",
+   "closest": "avoid or reduce activities that make your symptoms worse",
+   "note": ""
+  }
+ ]
+}
