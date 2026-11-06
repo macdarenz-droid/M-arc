@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=d19e93402a5b2915ddf438f94b44f9099da718b1b5d0496dae6c25065bd303ac
+{
+  "id": "lib_resistance_band_row",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/resistance_band_row.json",
+    "rev": 1
+  },
+  "sources": [
+    "sweat-bandrow",
+    "physitrack-longsitrow",
+    "thomas2005",
+    "lehman2004",
+    "fischer2025",
+    "theraband-manual",
+    "sabf-bandrow",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

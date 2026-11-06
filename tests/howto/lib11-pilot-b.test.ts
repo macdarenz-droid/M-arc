@@ -296,6 +296,8 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     if (i !== file.entries.length - 1) out.push('layers-page entry is not last');
     if (e.supersedes != null) out.push('layers-page entry supersedes');
     if (e.approvedBy !== 'supervisor' || e.decision !== 'D-SHIP-W2-STAMP') out.push('layers-page approval');
+    // W2 review follow-up (#384 6647873082): the approval link in golden.mjs's APPROVAL form
+    if (typeof e.approval !== 'string' || !/^https:\/\/github\.com\/macdarenz-droid\/M-arc\/(pull|issues)\/\d+#issuecomment-\d+ @ [0-9a-f]{40}$/.test(e.approval)) out.push('layers-page approval link');
     if (JSON.stringify(e.ids) !== JSON.stringify(SHIPPED_RULED)) out.push(`layers-page ids ${e.ids}`);
     if (e.pageSha256 !== createHash('sha256').update(layersPage).digest('hex') || e.bytes !== layersPage.length) out.push('layers-page pin');
     return out;
@@ -369,6 +371,8 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     expect(layersPinProblems(li, lpage)).toEqual(['layers-page ids lib_cable_fly,lib_push_up,lib_seated_leg_curl']);
     const ls = structuredClone(g); ls.entries[last].supersedes = 0;
     expect(layersPinProblems(ls, lpage)).toEqual(['layers-page entry supersedes']);
+    const la = structuredClone(g); la.entries[last].approval = la.entries[last].approval.replace(/ @ .*/, ' @ main');
+    expect(layersPinProblems(la, lpage)).toEqual(['layers-page approval link']);
   });
   it('mutations: an existing layers file and a pinned id in another golden file are red', () => {
     const p = readJson(ROWS).pages;
