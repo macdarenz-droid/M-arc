@@ -8,9 +8,9 @@
 //   - `zdots`: the page's one hidden dot pattern (`ZDOTS`, howto-layers.mjs) that most crops fill their background
 //     with (`url(#zdots)`), proven to be in the page verbatim; Posture.tsx mounts it once per document;
 //   - an import of `css/zoom-<chromeId>.css` (HT-6 generates it: the exercise's scoped close-up rules). Never duplicated.
-import { goldenInputs, goldenRows } from '../library/registry.mjs';
+import { goldenInputs, goldenRows, sourceOf } from '../library/registry.mjs';
 import { layersPage, pagesOf } from '../library/batch-golden.mjs';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT, sha256 } from '../lib/inputs.mjs';
@@ -72,6 +72,66 @@ export function posturePanels(html, id) {
   return out;
 }
 
+// ---- F-ZOOM-NONE (card f-zoom-none-card.md, PLAN RULED on #388): a library row with no drawn posture close-up ----
+// Allowed only when every posture zoom of the row's card is a ruled text checkpoint, named in TEXT_ZOOMS with its
+// ruling. Such a row writes no posture-<chromeId>.ts; every other row runs the code below it unchanged.
+export const TEXT_ZOOMS = 'tools/plates/library/text-zooms.json';
+export const TEXT_ZOOM_RULINGS = Object.freeze(['D-SHIP-TEXTZOOM']);
+/** The text-zooms entries ({ <lib id>: { ruling, checkpoints: { <card zoom key>: <posture checkpoint key> } } }). */
+export const readTextZooms = (root = ROOT) => JSON.parse(readFileSync(join(root, TEXT_ZOOMS), 'utf8')).entries ?? {};
+/** The row's entry when its sheet has no posture zoom and the entry holds; null when the sheet has posture zooms and no
+ *  entry. Throws on every F-ZOOM-NONE red. sheet: the How-to content; card: its research card. */
+export function textZoomRow(rowId, sheet, card, list) {
+  const e = list[rowId], drawn = (sheet.zooms ?? []).filter(z => z.kind !== 'hand');
+  if (drawn.length) {
+    if (e) throw new Error(`zooms: ${rowId}: has posture zooms [${drawn.map(z => z.key)}], but ${TEXT_ZOOMS} names it`);
+    return null;
+  }
+  if (!e) throw new Error(`zooms: ${rowId}: no posture zoom, and no ${TEXT_ZOOMS} entry rules its card zooms text checkpoints`);
+  if (!TEXT_ZOOM_RULINGS.includes(e.ruling)) throw new Error(`zooms: ${rowId}: ${TEXT_ZOOMS} ruling ${JSON.stringify(e.ruling)} is not one of ${TEXT_ZOOM_RULINGS}`);
+  const cardZooms = (card.zooms ?? []).filter(z => z.kind === 'posture'), keys = new Set((sheet.posture ?? []).map(p => p.key)), map = e.checkpoints ?? {};
+  for (const z of cardZooms) {
+    if (!(z.key in map)) throw new Error(`zooms: ${rowId}: card zoom ${z.key} is drawable: ${TEXT_ZOOMS} maps it to no text checkpoint`);
+    if (!keys.has(map[z.key])) throw new Error(`zooms: ${rowId}: card zoom ${z.key} maps to checkpoint ${map[z.key]}, which the sheet's posture does not hold`);
+  }
+  for (const k of Object.keys(map)) if (!cardZooms.some(z => z.key === k)) throw new Error(`zooms: ${rowId}: ${TEXT_ZOOMS} names card zoom ${k}, which the card's posture zooms do not hold`);
+  // no link may open a close-up the sheet does not have (a setup, posture, mistake or feel "Show me")
+  const own = new Set((sheet.zooms ?? []).map(z => z.key)), links = [];
+  const walk = x => { if (Array.isArray(x)) x.forEach(walk); else if (x && typeof x === 'object') for (const [k, v] of Object.entries(x)) { if (k === 'zoom' && typeof v === 'string') links.push(v); else walk(v); } };
+  for (const k of ['setup', 'posture', 'mistakes', 'feel']) walk(sheet[k]);
+  const dangling = [...new Set(links.filter(z => !own.has(z)))];
+  if (dangling.length) throw new Error(`zooms: ${rowId}: links to close-ups the sheet does not have: ${dangling}`);
+  return e;
+}
+/** F-ZOOM-NONE: a ruled row's page must hold no posture close-up, and its card no control that opens a close-up the
+ *  sheet does not have (`own`: the sheet's zoom keys). */
+export function textZoomPageCheck(rowId, html, chromeId, file, own = ['hand']) {
+  const left = posturePanelKeys(html, chromeId);
+  if (left.length) throw new Error(`zooms: ${rowId}: ruled in ${TEXT_ZOOMS}, but ${file} holds posture close-ups [${left}]`);
+  const a = html.indexOf(`<article class="sheet-card" id="card-${chromeId}"`), b = a < 0 ? -1 : html.indexOf('</article>', a);
+  if (a < 0 || b < 0) throw new Error(`zooms: ${rowId}: no card ${chromeId} on ${file}`);
+  const opens = [...new Set([...html.slice(a, b).matchAll(/data-zoom="([a-z0-9-]+)"/g)].map(m => m[1]).filter(k => !own.includes(k)))];
+  if (opens.length) throw new Error(`zooms: ${rowId}: ruled in ${TEXT_ZOOMS}, but its card on ${file} opens close-ups it does not have [${opens}]`);
+}
+/** The posture close-up keys a page holds for `id` (posturePanels without its throw). */
+export const posturePanelKeys = (html, id) => [...html.matchAll(new RegExp(`<div class="zx" id="${id}-zoom-([a-z0-9-]+)" data-zoom="([a-z0-9-]+)"`, 'g'))].map(m => m[2]).filter(k => k !== 'hand');
+/** F-ZOOM-NONE: textZoomRow for a loaded sheet; null at once for a row with a drawn posture zoom and no entry, before the
+ *  card is read (the zero-zoom path only). readCard(path) gives the parsed research card. */
+export function textZoomOfSheet(rowId, sheet, list, readCard) {
+  if ((sheet.zooms ?? []).some(z => z.kind !== 'hand') && !(rowId in list)) return null;
+  const cardFile = sheet.research?.card;
+  const e = textZoomRow(rowId, sheet, readCard(cardFile), list);
+  return e && { entry: e, own: sheet.zooms.map(z => z.key) };
+}
+/** F-ZOOM-NONE: the row's text-zooms entry (checked) and its sheet's zoom keys, or null. */
+async function textZoomOf(row, list) {
+  const sheet = (await import(pathToFileURL(join(ROOT, sourceOf(row.id))).href)).default;
+  return textZoomOfSheet(row.id, sheet, list, cardFile => {
+    if (typeof cardFile !== 'string' || !existsSync(join(ROOT, cardFile))) throw new Error(`zooms: ${row.id}: no research card ${cardFile}`);
+    return JSON.parse(readFileSync(join(ROOT, cardFile), 'utf8'));
+  });
+}
+
 const lit = s => JSON.stringify(s);
 /** The module text. With `packed` (HT-11, the shipped form) the panels and zdots are path-encoded
  *  (tools/plates/gen/codec/delta.mjs) and decoded once at import by a copy of src/howto/delta.js's unpack, so the
@@ -128,12 +188,15 @@ async function outputsOf() {
     }
     const postureCss = postureCssOf(style, chrome);
     out.push({ path: 'src/slices/howto/css/posture.css', text: postureCss });
-    const base = styleWithout(style, goldenRows());
+    const base = styleWithout(style, goldenRows()), textZooms = readTextZooms();
     for (const row of libraryRows()) {
       const page = layersPage(row), file = pagesOf(row).layers, id = row.chromeId, lib = galleryCss(page);
       if (page.split(L.ZDOTS).length !== 2) throw new Error(`zooms: ${row.id}: ZDOTS is not in ${file} exactly once`);
       if (styleWithout(lib, libraryRows().filter(r => pagesOf(r).layers === file)) !== base) throw new Error(`zooms: ${row.id}: ${file}'s style, without its own .hx- rules, is not golden B's`);
       if (postureCssOf(lib, howtoCss(readFileSync(join(LAYERS, 'artifact', 'build-page.mjs'), 'utf8'), lib)) !== postureCss) throw new Error(`zooms: ${row.id}: ${file} does not rebuild posture.css byte for byte`);
+      // F-ZOOM-NONE: a ruled text-checkpoint row writes no posture chunk, and its page holds no posture close-up
+      const ruled = await textZoomOf(row, textZooms);
+      if (ruled) { textZoomPageCheck(row.id, page, id, file, ruled.own); continue; }
       const panels = posturePanels(page, id);
       out.push({ path: `src/howto/generated/posture-${id}.ts`, text: postureText(id, panels, L.ZDOTS, true) });
     }
