@@ -671,3 +671,27 @@ describe('LIB-SHIP W5 D-SHIP-W5-CONVCONTACT (#392 6654347642): dumbbell_overhead
     expect(named({ ...c, handling: { ...c.handling, gripLine: `${c.handling.gripLine} Handle on the heel of the palm.` } })).toEqual(['handling.gripLine']);
   });
 });
+
+describe('LIB-SHIP W5 D-SHIP-W5-EZNOTE (#392 6681700725): reverse_curl\'s close-up on lb05 draws "Wrist straight", never the old note', () => {
+  const START = '<div class="zx" id="hp-ez-curl-over-zoom-hand"';
+  const problems = async (html: string) => {
+    const { divAt } = await import(/* @vite-ignore */ url('tools/plates/library/build-layers-page.mjs'));
+    const at = html.indexOf(START);
+    if (at < 0 || html.indexOf(START, at + 1) >= 0) return ['reverse_curl close-up not on the page exactly once'];
+    const block = divAt(html, at), bad: string[] = [];
+    if (/middle of palm/i.test(block)) bad.push('reverse_curl close-up says "Middle of palm"');
+    if (!block.includes('>WRIST STRAIGHT<')) bad.push('reverse_curl close-up draws no "WRIST STRAIGHT" note');
+    return bad;
+  };
+  const page = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb05.layers.html'), 'utf8');
+  it('lb05.layers.html: the block is there once, draws WRIST STRAIGHT and has no "middle of palm" in any case', async () => {
+    expect(await problems(page())).toEqual([]);
+  });
+  it('mutations: the drawn note put back, the panel note put back, or the block gone is red', async () => {
+    const h = page(), at = h.indexOf(START);
+    const inBlock = (from: string, to: string) => h.slice(0, at) + h.slice(at).replace(from, to);
+    expect(await problems(inBlock('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'))).toContain('reverse_curl close-up says "Middle of palm"');
+    expect(await problems(inBlock('Wrist straight', 'Middle of palm'))).toContain('reverse_curl close-up says "Middle of palm"');
+    expect(await problems(h.replace(START, '<div class="zx" id="gone"'))).toEqual(['reverse_curl close-up not on the page exactly once']);
+  });
+});

@@ -48,8 +48,9 @@ describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws
     for (const [k, want] of Object.entries(PANEL_MAIN)) {
       const h = await P.pairPanel(k);
       if (k !== 'ez-curl-over') { expect([k, sha(h)]).toEqual([k, want]); continue; }
-      expect([k, h.includes('Middle of palm'), h.includes('Wrist straight')]).toEqual([k, false, true]);
-      expect([k, sha(h.replaceAll('Wrist straight', 'Middle of palm'))]).toEqual([k, want]);
+      // D-SHIP-W5-EZNOTE (#392 6681700725): the drawn note too (svg caps 'WRIST STRAIGHT'), so neither case of the old note is left
+      expect([k, /middle of palm/i.test(h), h.includes('Wrist straight'), h.includes('>WRIST STRAIGHT<')]).toEqual([k, false, true, true]);
+      expect([k, sha(h.replaceAll('Wrist straight', 'Middle of palm').replaceAll('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'))]).toEqual([k, want]);
     }
   }, 60_000);
 });

@@ -88,6 +88,20 @@ export const MODULES = await loadKeyModules();
 { const d = declarationsOf(MODULES); Object.assign(CONVENTIONS, d.CONVENTIONS); Object.assign(ORIENTATIONS, d.ORIENTATIONS); Object.assign(CAMERA_TEXT, d.CAMERA_TEXT); }
 export const INDEX = indexOf(MODULES);
 
+// LIB-SHIP W5 D-SHIP-W5-EZNOTE (#392 6681700725): a named pair key draws its words file's one Right text as the Right
+// note (ez-curl-over: "Wrist straight", reverse_curl c1, c6); a cfg.rightNote on any other key is refused, and every
+// other pair draws its variant's note exactly as before
+export const WORDS_NOTE_KEYS = Object.freeze(['ez-curl-over']);
+export function noteOf(mod, cfg, V) {
+  const k = `${mod.KEY}-${cfg.variant}-${cfg.orientation}`;
+  if (!WORDS_NOTE_KEYS.includes(k)) {
+    if (cfg.rightNote !== undefined) throw new Error(`hand pairs: ${k}: rightNote on a key not named in WORDS_NOTE_KEYS (D-SHIP-W5-EZNOTE)`);
+    return V.rightNote;
+  }
+  const t = [...new Set(Object.values(readWords(k).keys[k].faults).map(f => f.right.text))];
+  if (t.length !== 1) throw new Error(`hand pairs: ${k}: words Right texts differ (${t.join(' | ')})`);
+  return cfg.rightNote ?? t[0];
+}
 /** The pair record of one drawn id: camera, poses, faults, notes, alt and extras. */
 export function pairSpec(id, index = INDEX) {
   const e = index.drawn.get(id);
@@ -102,7 +116,7 @@ export function pairSpec(id, index = INDEX) {
   return {
     id, key: mod.KEY, variant: cfg.variant, pair: `${mod.KEY}/${cfg.variant}`, mod, orientation: cfg.orientation,
     camera, loadAxis: V.loadAxis, wristRange: V.wristRange, contact: V.contact, handle: H,
-    right, rightNote: V.rightNote, altRight: V.alt, panelHeight: V.panelHeight,
+    right, rightNote: noteOf(mod, cfg, V), altRight: V.alt, panelHeight: V.panelHeight,
     wrong: cfg.faults.map(k => ({ key: k, ...V.faults[k] })),
     extras: { ...(V.loadLine === false ? { stripLoadLine: true } : {}), ...(radial && H?.plain ? { plainHandle: true } : {}),
       ...(radial && H?.knobMm ? { knobMm: H.knobMm } : {}), ...(radial && V.loadThroughPivot ? { loadThroughPivot: true } : {}), ...(radial && V.rightLoad === false ? { rightNoLoad: true } : {}), ...(radial && CAMERA_TEXT[cfg.orientation] ? { cameraText: CAMERA_TEXT[cfg.orientation] } : {}),
