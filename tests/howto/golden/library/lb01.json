@@ -6,13 +6,13 @@
   "entries": [
     {
       "kind": "page",
-      "pageSha256": "242262d4589782b44a8d0a47ce4b928de733fdd16b90bcd781b98bb334960e7c",
-      "bytes": 1282099,
+      "pageSha256": "e439371646e3e1bcac8a65a0bcbe3b036b63c97df47b11f1a804b2c9208f4a56",
+      "bytes": 1278254,
       "approvedBy": "supervisor",
       "decision": "D-LIB-LB1ZOOM",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
-      "date": "2026-11-04",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): the lb01 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page.",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653062201 @ 2f5d0652402435477f57feb5c357ea48531da774",
+      "date": "2026-11-06",
+      "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): the LB01 plates page as rebuilt at 2f5d0652. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
       "supersedes": null,
       "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -43,7 +43,7 @@
       "date": "2026-11-04",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_chin_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "2f538b8c1a011bbec7fc00117f23848f1e3710098c2707dbacbb043275aed41b"
+      "prev": "f1ebfd2c366c1c32e5554b46330525ee8f298225e7d9ee4a8c13696b89293c00"
     },
     {
       "kind": "plate",
@@ -72,7 +72,7 @@
       "date": "2026-11-04",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_hanging_knee_raise's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "6605871b51cd9b02790b8db42f597baaf488a80fb12def63cf0b852ce60ef410"
+      "prev": "31598bede9d96ae7b6d90a6dd4d58b77f7583972b4979b7aa5ae2dfd43586ddc"
     },
     {
       "kind": "plate",
@@ -84,7 +84,7 @@
       "fragments": {
         "normalSvg": "4209a50ad8779c6079d4c674f9a2ddc1fef80a9386c9f86cf787cf80a2c1b922",
         "normalOverlay": "9b800f8a3e71509d9bef4f61cab2fddbe50c8e646448922469408d6326695d49",
-        "mistakeSvg": "5779382f820287ad4f30e1670627a4708cc5a8d4e1f50331a7dd915618ca8bab",
+        "mistakeSvg": "8f48a3c9a78f87bb87d2cad58442eab3d2a52f873887ab7a7228cf8274cd282e",
         "mistakeOverlay": "320a951685802edc4a7f2a7e050c4b4b0b8de2badf157091212f6ed64f0205bf",
         "tells": "70d5487ffa28853fad1df2cf1349eee89e56451409e0e2f02f2e0154535f8bdd",
         "tempo": "c5d7c44a59ad194e22dff64691b360c0b4a857d66dbc429a90c67ac0d73f034b",
@@ -98,11 +98,11 @@
       ],
       "approvedBy": "supervisor",
       "decision": "D-LIB-LB1ZOOM",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
-      "date": "2026-11-04",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_assisted_pull_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653062201 @ 2f5d0652402435477f57feb5c357ea48531da774",
+      "date": "2026-11-06",
+      "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): lib_assisted_pull_up's fragments mistakeSvg. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
       "supersedes": null,
-      "prev": "c9ea36c83105a15de568a4afc72dcd77ee7e9d6c6fe2723dee77eea53e07d14b"
+      "prev": "d70501061137604970655a151d9c9a77d024ab6ec8d0afde2aa394d957da8ff8"
     },
     {
       "kind": "plate",
@@ -131,7 +131,7 @@
       "date": "2026-11-04",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_inverted_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "1db8bf10d707917216a0ea85da411a30b6ca1921b15ce61e411c418dbf0b19fd"
+      "prev": "2bc7da75c742cca9df6a1878b0da245666c841da8c0e9e243a8473c906439bf2"
     },
     {
       "kind": "plate",
@@ -160,7 +160,7 @@
       "date": "2026-11-04",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_close_grip_pulldown's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "69301997e9f68186589784864bdf29c47eb8a1ed05445067aeccb7317aa3d8f9"
+      "prev": "4043caf52cfd29954d705c0ad2512e997d46b55523faec0d72f79cb4e6758c33"
     },
     {
       "kind": "plate",
@@ -177,7 +177,7 @@
         "tells": "fc848a24a1103e46232a9d98689684ed06d86fc24456deafd8c42c952437ccbb",
         "tempo": "796fbe7b0fe12e3121ae343b598ed832ad0ba73c2d14d43c8680ad5536220bc2",
         "cues": "6a65646abb9d895e96a16f95a031131ab06baa7d0bdfd6d0c3d1cdb3614a8ed6",
-        "alt": "0dcc4cacce15bcaaaac12efadbd047f9f0bcb5250d367d7195bbda2dcc2c1102",
+        "alt": "f64f7b07a26d9fe86be9dee09826abd689df626ce78db15c48d0033610bd8996",
         "mistakeAlt": "7592ba4f3573bbae58c16859b7b3a7da5481de9bf0b601e4ac9dbb740a6b4519"
       },
       "exemptions": [
@@ -185,11 +185,11 @@
       ],
       "approvedBy": "supervisor",
       "decision": "D-LIB-LB1ZOOM",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
-      "date": "2026-11-04",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_underhand_lat_pulldown's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653062201 @ 2f5d0652402435477f57feb5c357ea48531da774",
+      "date": "2026-11-06",
+      "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): lib_underhand_lat_pulldown's fragments alt. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
       "supersedes": null,
-      "prev": "be85f022c3b75cc85e471e5b8882e232b4e989c42e50cab792fadc6120113adc"
+      "prev": "95f7a0239cbfc9b7b4247e482a546635e2f588d1df1008e7a488e64033b8f5ac"
     },
     {
       "kind": "plate",
@@ -199,10 +199,10 @@
       "prefix": "single-arm-lat-pulldown",
       "chromeId": "single-arm-lat-pulldown",
       "fragments": {
-        "normalSvg": "0220ee55339b0a0171df31bd874b3f595e77ea8d9c0d63d2a1b9e745f2247f48",
-        "normalOverlay": "468a9e032f2848031ed03174ccb5e5326f56aab1cb9ecb6388393f0346f57c58",
-        "mistakeSvg": "dc7eaa722017516f1d4a05bf9be4bee7d239ca08a02a5be25f69eb01f8e794a3",
-        "mistakeOverlay": "8bf8fd04f44fa36a0e14e60e143e24fe4b527880ff96229bfcd9ee3e02b1951c",
+        "normalSvg": "b2aee693bec77185551b76861f5fcc5d75e18ec1a744bf3378ae5bcafc5a0009",
+        "normalOverlay": "5a0f12d272505c5e70eb754e165a0f6d2de49587f28faa0d41c7b861c29b0125",
+        "mistakeSvg": "0819d5fa920183f35f7f12f3506db6e52a665738745c78a1c6b9534b24f6cacd",
+        "mistakeOverlay": "0adf18cdb45fe60f6df40b51506690725d053acf8cb62a75af474e965fbe7fe2",
         "tells": "87d905cdb9ebb5742b983bdd5aede3e654347595ffd66dd3afa8a36fa56d4a00",
         "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
         "cues": "b45b90278b629fed7c919ea9017dc7a8a7610d201a6054ef892718834972a6ac",
@@ -214,11 +214,11 @@
       ],
       "approvedBy": "supervisor",
       "decision": "D-LIB-LB1ZOOM",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
-      "date": "2026-11-04",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_single_arm_lat_pulldown's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653062201 @ 2f5d0652402435477f57feb5c357ea48531da774",
+      "date": "2026-11-06",
+      "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): lib_single_arm_lat_pulldown's fragments normalSvg, normalOverlay, mistakeSvg, mistakeOverlay. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
       "supersedes": null,
-      "prev": "f3504dc74ad9001e7a3e5c08c4aee5131f58d9746dd7893051442c775200f2e8"
+      "prev": "d96ed1bf728e147e67364018160cf651c33150627f1fe84f43ab66d4d5d1e398"
     },
     {
       "kind": "plate",
@@ -231,10 +231,10 @@
         "normalSvg": "7b870a9e08b1ca8e31513657ea38f99394392bca77b0e6e22e6d32342943b0ac",
         "normalOverlay": "fd7716b031338bc45d1f764b81f572b618385dd26a20127a1e524253783513c9",
         "mistakeSvg": "1d54ebbaa0ae3e08b7067c5dd77d2ad6d1c631730505900ce3a519ed93c78e02",
-        "mistakeOverlay": "f64e135840a3956de1aeac74c27a8fb4816fc3ecbf64474306ee758d192b40ec",
-        "tells": "fc50973a676ea0a35eba82dca177a3840029efe398d5e303f3b39ca1e1ab9341",
+        "mistakeOverlay": "6952d32851dd9afc202ef4732377b0ebef8aba3d0fe621a4c15352151f7d4541",
+        "tells": "c56c4ac4c03f58e6276e79b9ada71db7ca421981be6a2073d994894b722b7ee7",
         "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
-        "cues": "cd56a81fa80dcd29762ed9ce8cb896048072ff090c9b02674ca6661bbcbcc107",
+        "cues": "49b1521096ad0e09e4b16b8fbcca66d4f0b686af39069737f67d6680c1ad9fdd",
         "alt": "27fe5247c0b803cd3c6bd470f71b332c99d6e7687637d81c44ce8bd1788decac",
         "mistakeAlt": "86d114facb827120c222908c70d4c88389d25d105fa98e415af73eafaebb9e19"
       },
@@ -243,11 +243,11 @@
       ],
       "approvedBy": "supervisor",
       "decision": "D-LIB-LB1ZOOM",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
-      "date": "2026-11-04",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_straight_arm_pulldown's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653062201 @ 2f5d0652402435477f57feb5c357ea48531da774",
+      "date": "2026-11-06",
+      "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): lib_straight_arm_pulldown's fragments mistakeOverlay, tells, cues. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
       "supersedes": null,
-      "prev": "eb25a84f0b7da792d158536daa06cfdaaba24a5a9dfbc242a292ccbbff1cfce0"
+      "prev": "5cd9dcb7625f9f6669e316d3c882d6695b1ac67c412517a9f9b0e3ba5612cc9b"
     },
     {
       "kind": "plate",
@@ -276,7 +276,7 @@
       "date": "2026-11-04",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_chest_supported_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "94a1af9a907cd6ebeb3569f5f68c44cc14fc800b1948995266bf91fd1a0c1366"
+      "prev": "4ac29fef78ffacc65f4a13e3c6265311df4110ed880e4e2bbbf37a781956bd82"
     },
     {
       "kind": "plate",
@@ -307,7 +307,7 @@
       "date": "2026-11-04",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_resistance_band_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F1, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "b1ca3ac169076ab4ed952655a9b5601330b899e418a8392ec4233c7ea3aefad3"
+      "prev": "2a1463c7ca78ee6193e3e36f1c10cb3f12c3f18113e68b36516f6046c75f3a6e"
     },
     {
       "kind": "plate",
@@ -336,7 +336,7 @@
       "date": "2026-11-04",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_incline_machine_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "67672bd209eeba5f1794c29d89deecb7a9eb24812ac2e9830ad5d410dea15236"
+      "prev": "98151d14adcf7bafd575209288b7929b8b949de3b16e16af964308cf7bf2768f"
     },
     {
       "kind": "plate",
@@ -349,10 +349,10 @@
         "normalSvg": "1fe4db4d655287a9a61f7ad604d908b12d266372922c7c64658b8e0ab8a1b492",
         "normalOverlay": "b842c2465bbef2f22707cde902c1018bdefb5bf797ea71dc8aefb03fa2c9b316",
         "mistakeSvg": "8c9d82602843e16d87654111838ed5326fc6032d54cf1b4d33567eab73127bad",
-        "mistakeOverlay": "256c62f7584fccbb3dc99945ebb27cebd1d83f6e9d8bf7ee62860ea0fa69b226",
-        "tells": "e50fc69f6bad8a042539da5cd093e961fb43ddd3d6b47b8f501fc13c91d0883a",
+        "mistakeOverlay": "a3c4b7c96e68924ffd8df6040c589c7358ce42574811a7981160067faa457b08",
+        "tells": "6dbf821fc36bc7ddd614b2e9966450606982c14b0d4316ece1904471aefcd7b2",
         "tempo": "5472d1d641b3a34dbd529cb0be7506dd93281fc12d368b58f46c54a75e0cc5e8",
-        "cues": "550097473d3e6a2492ae48e8ef6ac9bccb251c740db82bde3eea081974c6003e",
+        "cues": "6961e1fdb9b82b610296f83cbc073ef1bd6856d93eda08a0c3d01ed4ca033392",
         "alt": "6e21da4c3f910474ecd4491b36cdbe5bbe6b4ec464b7257c255e6fbb7b0b725d",
         "mistakeAlt": "9033f2d8c1dc77817fae2e86d4f6ad445b57d73ce0b586aced4086b73d08324d"
       },
@@ -362,11 +362,36 @@
       ],
       "approvedBy": "supervisor",
       "decision": "D-LIB-LB1ZOOM",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
-      "date": "2026-11-04",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_shoulder_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653062201 @ 2f5d0652402435477f57feb5c357ea48531da774",
+      "date": "2026-11-06",
+      "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): lib_shoulder_press's fragments mistakeOverlay, tells, cues. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
       "supersedes": null,
-      "prev": "b0ff644ed4dcb7845fab343b172e6dcbd969bc3b17acadff50432ea4ba4e2a93"
+      "prev": "c65582d6e172424fc5c927a70b104799c91a4f9dacc74ece73f9df07572239aa"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB01",
+      "ids": [
+        "lib_chin_up",
+        "lib_hanging_knee_raise",
+        "lib_inverted_row",
+        "lib_close_grip_pulldown",
+        "lib_single_arm_lat_pulldown",
+        "lib_straight_arm_pulldown",
+        "lib_chest_supported_row",
+        "lib_resistance_band_row",
+        "lib_incline_machine_press",
+        "lib_shoulder_press"
+      ],
+      "pageSha256": "594144d0004f6851baaefa6695cb664d98693d9babc2c35d644dcf3ac6f062ab",
+      "bytes": 2634659,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W3-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653343780 @ 2f5d0652402435477f57feb5c357ea48531da774",
+      "date": "2026-11-06",
+      "supersedes": null,
+      "why": "W3 layers approved (#384): the calibrated layers panel 6648454032 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6648733957 and 6649856513, focused rechecks 6649416891 and 6653062201, and the delta check with PIN GO 6653343780 (exactly the 3 ruled strings at 2f5d0652). assisted_pull_up, underhand_lat_pulldown held (LIB-PLATEFIX-3).",
+      "prev": "d91cd50162daec8f0f19db2822c3a842fad5fd725855d01207175535f6e33e99"
     }
   ]
 }

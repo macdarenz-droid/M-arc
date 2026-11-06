@@ -6,13 +6,13 @@
   "entries": [
     {
       "kind": "page",
-      "pageSha256": "a0ef8eabc3b6935193531cd9236a27c5e67b5102f8b9f9c9ec7f3de031ccece0",
+      "pageSha256": "5e4d3b43fced120e3e94f0ddc36af6ec1b1f974688da3a8d39fcacb759a179ce",
       "bytes": 182316,
       "approvedBy": "supervisor",
       "decision": "D-LIB-LB1ZOOM",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
-      "date": "2026-11-04",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): the zoom plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page.",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653062201 @ 2f5d0652402435477f57feb5c357ea48531da774",
+      "date": "2026-11-06",
+      "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): the ZOOM plates page as rebuilt at 2f5d0652. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
       "supersedes": null,
       "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -31,7 +31,7 @@
         "tells": "cb31438195b705c447b302b48b21599a6bbbce3bc54a082d1ca0c0ec0d9bbc50",
         "tempo": "5472d1d641b3a34dbd529cb0be7506dd93281fc12d368b58f46c54a75e0cc5e8",
         "cues": "1047a0ef67ccdc9e9c00f5acc437a261f2db1f06a513e1d0276036f77153fcc5",
-        "alt": "11fdbc38ac485614fd0fa093ffd73e5037c43c6e3414357c7802990837ef8a7a",
+        "alt": "bbb0e48ca48ed60ecfda0c4caa3beb9ff836dc906e5ab7d10be2a0608c8fc655",
         "mistakeAlt": "d47372d48dc4f04e1d6b64799522bc993959934f6fbfa93bc6ea91757a2f38eb"
       },
       "exemptions": [
@@ -39,11 +39,27 @@
       ],
       "approvedBy": "supervisor",
       "decision": "D-LIB-LB1ZOOM",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/383#issuecomment-6632248800 @ 2b6ee62d3a318c09a0419638ddc64596531860b2",
-      "date": "2026-11-04",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_horizontal_leg_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653062201 @ 2f5d0652402435477f57feb5c357ea48531da774",
+      "date": "2026-11-06",
+      "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): lib_horizontal_leg_press's fragments alt. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
       "supersedes": null,
-      "prev": "636423bf9d4cf4ffd985e5baf060dcd2c1c154f8804e8e450b715b65340ca302"
+      "prev": "600eb6eaf15ada48b2b872c6cee78b66df5971d45f1f20406198af01bc5a0b63"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "ZOOM",
+      "ids": [
+        "lib_horizontal_leg_press"
+      ],
+      "pageSha256": "6961dcdc55878bac8ebce642516e8e97b2d4222ea174e81f507667e61e3a83f5",
+      "bytes": 236380,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W3-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653343780 @ 2f5d0652402435477f57feb5c357ea48531da774",
+      "date": "2026-11-06",
+      "supersedes": null,
+      "why": "W3 layers approved (#384): the calibrated layers panel 6648454032 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6648733957 and 6649856513, focused rechecks 6649416891 and 6653062201, and the delta check with PIN GO 6653343780 (exactly the 3 ruled strings at 2f5d0652). assisted_pull_up, underhand_lat_pulldown held (LIB-PLATEFIX-3).",
+      "prev": "16082f61fe45dec2db5ee1ad6d0f033b7b9261ab1a9ee231e056277bf693d382"
     }
   ]
 }
