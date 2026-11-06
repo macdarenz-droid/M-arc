@@ -108,6 +108,31 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
   });
 });
 
+// RESEARCH-ROUTES-1 part 2, F-STOPLINE-CLAIM (D-STOPLINE-CLAIM, #391 6681022221; ruled #400 6681126219): the shared
+// stop-line card and its kind.
+describe('RESEARCH-ROUTES-1 F-STOPLINE-CLAIM: the safety-line kind and the stop-line card', () => {
+  const STOP = 'docs/research/howto/shared/stop-line.json', QUOTES = 'docs/research/howto/quotes/shared-stop-line.json';
+  const V = () => import(/* @vite-ignore */ new URL('../../tools/plates/library/research/validate.mjs', import.meta.url).href);
+  it('shared/stop-line.json validates; its line cites c1-c3; box_jump and hollow_body_hold are left out', async () => {
+    const v: any = await V(), c = JSON.parse(rd(STOP));
+    expect(v.validateSharedFile('stop-line.json')).toEqual([]);
+    expect(c.kind).toBe('safety-line');
+    expect(c.line).toEqual({ text: "Stop the set. Don't train through the pain.", claim: ['c1', 'c2', 'c3'] });
+    expect(c.appliesTo).toHaveLength(67);
+    // review FIX (#400): c1 names its source scope, as c2 and c3 do; never plain "elbow pain"
+    expect(c.claims[0].text).toBe('NHS self-care advice for wrist pain, back pain and tennis elbow is to stop or cut down activities that cause pain or make it worse (written for those conditions, applied here to training).');
+    for (const x of c.claims) expect(x.text, x.id).toMatch(/written for /);
+    for (const id of ['box_jump', 'hollow_body_hold']) expect(c.appliesTo).not.toContain(id);
+  });
+  it('mutation: a safety-line card without its line is red, as is an unknown kind', async () => {
+    const v: any = await V(), c = JSON.parse(rd(STOP)), q = JSON.parse(rd(QUOTES));
+    delete c.line;
+    expect(v.validateShared(c, q, { file: 'stop-line.json' })).toEqual(['shared/stop-line.json: safety-line card lacks line']);
+    const k = JSON.parse(rd(STOP)); k.kind = 'stop-line';
+    expect(v.validateShared(k, q, { file: 'stop-line.json' })).toEqual(['shared/stop-line.json: unknown kind "stop-line"']);
+  });
+});
+
 // RESEARCH-ROUTES-1 part 2, F-CARD-INCLINEDB-RISK (#391 6653791551, 6681022221): the card's dropped-weights risk says
 // no more than c15 (Kerr 2010: the most common mechanism of US emergency-department weight-training injuries).
 describe('RESEARCH-ROUTES-1 F-CARD-INCLINEDB-RISK: incline_dumbbell_press risks[0]', () => {
