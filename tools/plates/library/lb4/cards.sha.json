@@ -2,7 +2,7 @@
  "note": "sha256 per LB4 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\"; and sha256 of each quotes file, a byte copy from the same head.",
  "researchHead": "3812989f59c000705731f7944d7a1a275e86045d",
  "cards": {
-  "front_squat": "fa7498d5b7208d53071b6f2eb384694a837ff643325fa7b1e1224ec6ba5f8071",
+  "front_squat": "da6e7f8e34cab598fac9bb01253fbd1838ae09cfe5052933f713c7df3b11c6c3",
   "goblet_squat": "1c5e23749753c8864abdd71ec0ac73800753f89ef82c8e2e8bf3b6e53274042c",
   "bodyweight_squat": "ce851976ceace13070cc4882f3eb0283418b31fde0d0c081a858b98e6e65764f",
   "wall_sit": "49ce8fe900fd181d1a8d9bc3f87ff17624da71eb31e09c503d2b15a1eda8cd35",
@@ -28,5 +28,11 @@
   "bodyweight_lunge": "cd99237b8d3c818226179145d4b6a4d42d03f64d9c09ac802f76975debe9587a",
   "bodyweight_split_squat": "8ddb901ea7fc6dde8caf414835e7bb11d58cc08c73f23485747cdaa06296a83c",
   "bulgarian_split_squat": "9fab40856ddd9601e2edf436e7db407d61fc65f0fe1cecbed837a58f1343f3d0"
+ },
+ "recopied": {
+  "front_squat": {
+   "researchHead": "fa24858988ecb7745fd3b4b7554f781e716a51eb",
+   "why": "RESEARCH-ROUTES-1 (D-RR-HEAD, #398 6648297602; F-CARD-FRONTSQ-SETUP, #392 Q-W5-5(b)): re-copied from research fa248589 (#399 merged). Only inherit[] and notes[] changed; quotes file unchanged. The other entries stay at their heads."
+  }
  }
 }

@@ -336,7 +336,8 @@ describe('LIB-8R A2, A3, A12, A13: the PILOT-A2 pin (Do 7) and the untouched pil
   });
   it('A13: the scratch set refuses PILOT-A2 ids (mutation: target lib_box_jump)', () => {
     expect(scratch.setProblems(scratch.SCRATCH_4C)).toEqual([]);
-    const set = scratch.SCRATCH_4C.map((s: any) => (s.key === 'lib4c-scratch-a' ? { ...s, id: 'lib_box_jump' } : s));
-    expect(scratch.setProblems(set)).toEqual(['lib_box_jump is a PILOT-A2 id (D-LIB11-SCRATCHIDS)']);
+    // F-SCRATCH-SYNTH (#397): the real id as the target (no copyOf); its batches/ row is now refused too
+    const set = scratch.SCRATCH_4C.map((s: any) => (s.key === 'lib4c-scratch-a' ? { id: 'lib_box_jump', from: s.from, key: s.key } : s));
+    expect(scratch.setProblems(set)).toEqual(['lib_box_jump is a PILOT-A2 id (D-LIB11-SCRATCHIDS)', 'lib_box_jump is a row of batches/pilot-a2.json']);
   });
 });
