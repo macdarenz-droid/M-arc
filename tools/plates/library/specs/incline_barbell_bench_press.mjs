@@ -221,5 +221,5 @@ export default {
       { key: 'level', text: 'Level with<br>shoulders', anchor: { at: 'shoulder.r', pose: 'mistake' }, box: { left: 8, top: 198 }, cue: 'Your upper arms come up level with your shoulders instead of staying below them.' },
     ],
   },
-  alt: 'Incline barbell bench press, side view. On a bench set to 30 degrees in a rack, head, shoulders and hips on the pad and feet flat, the lifter lowers the bar from straight arms over the shoulders to the upper chest, forearms vertical, then presses back up.',
+  alt: 'Incline barbell bench press, side view. On a bench set to 30 degrees in a rack, head, shoulders and hips on the pad and feet flat, the lifter lowers the bar from straight arms over the shoulders to the upper chest, elbows about 45-75 degrees from the torso, then presses back up.',   // c7
 };

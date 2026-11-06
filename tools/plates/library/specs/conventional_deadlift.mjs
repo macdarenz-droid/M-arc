@@ -190,7 +190,7 @@ export default {
     { key: 'back', text: 'Flat back', anchor: 'backUpper', box: { left: 30, top: 146 }, cue: 'Keep your back neutral from the floor to lockout.' },
     { key: 'close', text: 'Bar close', anchor: 'grip.r', box: { left: 214, top: 252 }, cue: 'Keep the bar close to your legs all the way up.' },
   ],
-  tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Lift', s: 1, move: true }],
+  tempo: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],   // c22 c23 c12
   mistake: {
     pose: mistakePose,
     guides: [
@@ -202,5 +202,5 @@ export default {
       { key: 'tuck', text: 'Hips tuck<br>under', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 12, top: 226 }, cue: 'The hips tuck under and the back curls over the bar.' },
     ],
   },
-  alt: 'Conventional deadlift, side view. From standing tall with the bar against the thighs, the lifter lowers the bar to the floor over the middle of the foot, shins close to the bar, arms straight and vertical, back flat, and lifts it back up close to the legs.',
+  alt: 'Conventional deadlift, side view. With the bar on the floor over the middle of the foot, shins close, arms straight and vertical, back flat, the lifter pulls the bar up close to the legs to stand tall, then lowers it back to the floor.',   // c1 c6 c22 c23
 };

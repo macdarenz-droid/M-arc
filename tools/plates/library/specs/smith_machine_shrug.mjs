@@ -169,5 +169,5 @@ export default {
       { key: 'chin', text: 'Chin drops', anchor: { at: 'chin', pose: 'mistake', off: [6, -5] }, cue: 'The chin drops instead of the head staying level.' },
     ],
   },
-  alt: 'Smith machine shrug, side view. Standing tall with soft knees, the Smith bar hangs at mid-thigh on long arms with a slight elbow bend. Only the shoulders lift straight up the rails toward the ears and lower again. The head stays level.',
+  alt: 'Smith machine shrug, side view. Standing tall, the Smith bar hangs at mid-thigh on long arms with a slight elbow bend. Only the shoulders lift straight up the rails toward the ears and lower again. The head stays level.',   // c1
 };

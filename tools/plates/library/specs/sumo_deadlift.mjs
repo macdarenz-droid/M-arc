@@ -172,7 +172,7 @@ export default {
     { key: 'chest', text: 'Chest up', anchor: 'sternum', box: { left: 222, top: 172 }, cue: 'Keep your chest up and your back straight, trunk more upright.' },
     { key: 'legs', text: 'Legs drive<br>first', anchor: 'knee.r', box: { left: 40, top: 282 }, cue: 'Push with your legs to break the bar from the floor.' },
   ],
-  tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Lift', s: 1, move: true }],
+  tempo: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],   // c11 c21
   mistake: {
     pose: mistakePose,
     guides: [
@@ -183,5 +183,5 @@ export default {
       { key: 'chest', text: 'Chest<br>drops', anchor: { at: 'sternum', pose: 'mistake' }, box: { left: 232, top: 178 }, cue: 'The chest drops toward the bar and the back takes the lift.' },
     ],
   },
-  alt: 'Sumo deadlift, side view. From standing tall, the lifter lowers the bar to the floor with hands inside the knees, the bar against the shins and the chest up, the trunk more upright than a conventional pull, and lifts it by driving with the legs.',
+  alt: 'Sumo deadlift, side view. With the bar on the floor against the shins, hands inside the knees, chest up and the trunk more upright than a conventional pull, the lifter drives with the legs to stand tall, then lowers the bar back to the floor.',   // c11 c14
 };

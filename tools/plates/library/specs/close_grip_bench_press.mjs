@@ -30,7 +30,7 @@
 //  - Scale: reference 146.29 px/m.
 // Plate labels (card, 2b6747f8): callouts = plate.checkpoints c2 (Elbows to ribs), c4 (Low-chest touch), c3 (Hips
 //   pressed down); Mistake = plate.mistake c2 (elbows drift from the ribs, the bar lands high on the chest, never the
-//   neck; key `flare`); tempo = plate.tempo c9 (up 1, down 2, no pause): Lower 2, Press 1 (D-LIB10-NOTE section 9).
+//   neck; key `flare`; tell `high` cites c4, the low-chest touch); tempo = plate.tempo c9 (up 1, down 2, no pause): Lower 2, Press 1 (D-LIB10-NOTE section 9).
 // Unsourced numbers (no card claim gives them; 13.3 must-fix 14): BENCH_TOP, BENCH_LEN, BENCH_Z and FOOT_Z (the
 //   anchor's), TOP_ELBOW (the anchor's), BOT_POLE (the elbow's aim), RACK_ELBOW 25 and the bar over the brow (as
 //   decline_bench_press), RACK_DEPTH (1.6 m, a deep power rack: the foot-side upright stands clear of the labels), RACK_H, SAFETY_BELOW, PLATE_D (45 cm, as the 8), MIS_CHEST and MIS_POLE (the
@@ -52,7 +52,7 @@ const RACK_H = 1.5;                                   // upright height (m)
 const RACK_DEPTH = 1.6;                               // upright to upright, front to back (m): a deep power rack, its foot-side upright clear of the labels
 const SAFETY_BELOW = 0.03;                            // safety pin top under the bar's underside at the touch (m)
 const PLATE_D = 0.45;                                 // plate diameter (m)
-const MIS_CHEST = 0.77;                               // Mistake: thorax height (H) of the high touch (c2: high on the chest)
+const MIS_CHEST = 0.77;                               // Mistake: thorax height (H) of the high touch (c4: the touch is low, so high is the fault)
 const MIS_POLE = [1, -0.35, 0.15];                    // Mistake: the elbow's aim, out to the side (c2: away from the ribs)
 const OCCIPUT = [0, 0.955, -0.056];                   // back of the skull on the side head outline (head frame, H)
 const FOREHEAD = [0, 0.95, 0.06];                     // brow top on the side head outline (head frame, H)
@@ -168,7 +168,7 @@ export default {
     ],
     tells: [
       { key: 'flare', text: 'Elbows<br>flare out', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 208, top: 198 }, cue: 'Your elbows drift away from your ribs.' },
-      { key: 'high', text: 'Lands<br>high', anchor: [0, BARM[1] + 0.03, BARM[2] - 0.03], box: { left: 16, top: 198 }, cue: 'The bar touches high on your chest instead of low.' },
+      { key: 'high', text: 'Lands<br>high', anchor: [0, BARM[1] + 0.03, BARM[2] - 0.03], box: { left: 16, top: 198 }, cue: 'The bar touches high on your chest instead of low.' },   // c4: the low-chest touch (its opposite)
     ],
   },
   alt: 'Close-grip bench press, side view. Lying on a flat bench in a rack, hands in line with the shoulders, feet flat and hips down, the lifter lowers the bar from straight arms to the low chest where the ribs end, elbows close to the ribs, then presses back up.',
