@@ -10,7 +10,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 const ROOT = join(new URL('.', import.meta.url).pathname, '..', '..');
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 type Part = { id: string; muscle: string | null; d: string };
-type Pt = [number, number];
+type Pt = any;   // [x, y]; loose so indexed reads type-check under noUncheckedIndexedAccess
 let RF: any, VENDORED: Part[], BACK: Part[];
 beforeAll(async () => {
   RF = await import(/* @vite-ignore */ url('tools/plates/library/render/region-fix.mjs'));
@@ -22,14 +22,14 @@ const AXIS = 15.83629;   // the map's mirror axis (every left/right pair: x_left
 
 /* ---- geometry: subpaths as polygons (m/l/h/v/c/z; a curve contributes its end point) ---- */
 function polys(d: string): Pt[][] {
-  const tok = d.match(/[a-zA-Z]|-?\d*\.?\d+(?:e-?\d+)?/g)!;
-  const A: Record<string, number> = { m: 2, l: 2, h: 1, v: 1, c: 6, z: 0 };
+  const tok: any = d.match(/[a-zA-Z]|-?\d*\.?\d+(?:e-?\d+)?/g);
+  const A: any = { m: 2, l: 2, h: 1, v: 1, c: 6, z: 0 };
   const out: Pt[][] = []; let i = 0, cmd = 'M', x = 0, y = 0, sx = 0, sy = 0, cur: Pt[] = [];
   while (i < tok.length) {
     if (/[a-zA-Z]/.test(tok[i])) cmd = tok[i++];
     const lc = cmd.toLowerCase(), rel = cmd !== cmd.toUpperCase();
     if (lc === 'z') { x = sx; y = sy; continue; }
-    const a = Array.from({ length: A[lc] }, () => +tok[i++]), ox = rel ? x : 0, oy = rel ? y : 0;
+    const a: any = Array.from({ length: A[lc] }, () => +tok[i++]), ox = rel ? x : 0, oy = rel ? y : 0;
     if (lc === 'm') { x = ox + a[0]; y = oy + a[1]; sx = x; sy = y; cur = [[x, y]]; out.push(cur); cmd = rel ? 'l' : 'L'; continue; }
     if (lc === 'h') x = ox + a[0]; else if (lc === 'v') y = oy + a[0];
     else if (lc === 'c') { x = ox + a[4]; y = oy + a[5]; } else { x = ox + a[0]; y = oy + a[1]; }
@@ -64,7 +64,7 @@ const part = (P: Part[], id: string) => { const p = P.find(x => x.id === id); if
    right of upper_chest's outer edge, left of side_delts' inner edge, below the neck-to-shoulder strip, above the biceps */
 const deltoidArea = (P: Part[], s: 'left' | 'right') => {
   const m = (q: Pt): Pt => (s === 'left' ? q : [2 * AXIS - q[0], q[1]]);
-  const uc = polys(part(P, `chest-upper-${s}`).d)[0], sd = polys(part(P, `shoulder-side-${s}`).d)[1];
+  const uc: any = polys(part(P, `chest-upper-${s}`).d)[0], sd: any = polys(part(P, `shoulder-side-${s}`).d)[1];
   // upper_chest outer edge: its first two vertices (the apex and the outer corner); side_delts inner piece: its
   // vertices 0 → 5 (its top edge) and 5 → 4 (its inner edge), as drawn by the vendored path
   return { ucA: uc[0], ucB: uc[1], sdTop: [sd[0], sd[5]] as [Pt, Pt], sdIn: [sd[5], sd[4]] as [Pt, Pt], strip: 15.2, biceps: 21.1, m };
@@ -119,7 +119,7 @@ describe('F-BODYMAP-FRONTDELT inner elbow', () => {
       expect(me.muscle).toBeNull();
       for (const q of P) if (q !== me) expect(overlaps(me.d, q.d), q.id).toBe(false);
       // the crease: right of the biceps' lower piece's inner edge and left of the forearm's top edge (left arm; mirrored)
-      const bi = polys(part(P, `biceps-${s}`).d)[0], fa = polys(part(P, `forearm-${s}`).d)[0], flip = s === 'left' ? 1 : -1;
+      const bi: any = polys(part(P, `biceps-${s}`).d)[0], fa: any = polys(part(P, `forearm-${s}`).d)[0], flip = s === 'left' ? 1 : -1;
       for (const p of verts(me.d)) {
         expect(flip * side(p, bi[2], bi[1])).toBeGreaterThan(0);
         expect(flip * side(p, fa[4], fa[0])).toBeLessThan(0);
