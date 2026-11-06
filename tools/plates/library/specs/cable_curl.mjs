@@ -17,14 +17,15 @@
 // Geometry decisions:
 //  - Standing tall: feet hip width (c2), knees soft, the root solved from the knee angle (dumbbell_biceps_curl's).
 //  - Upper arms vertical in both poses (c3: "keep it still"), so only the elbow moves; ELBOW_TOP fully bent (c3),
-//    ELBOW_BOTTOM the soft bottom (c13 "slightly bent"): 18 deg, machine_chest_press.mjs:45's soft-elbow precedent
-//    (the 8, main; #290 6343211054 item 7).
+//    ELBOW_BOTTOM the soft bottom (c13 "slightly bent"): 20 deg (LIB-PLATEFIX-3 item 10, #392 6649453813 L5: the panel's
+//    "a visible bend of about 20 deg"; was 18, machine_chest_press.mjs:45's soft-elbow precedent), so the fully straight
+//    Wrong (0 deg) reads apart from the Right.
 //  - The bar: a 28 mm straight bar seen end-on, its centre between the fists (both hands, shoulder width, c1), drawn as a
-//    `poly` disc so it outlines in the Mistake (PQ-H9); the cable from the low pulley's upper tangent to the bar, with a
-//    thin `poly` twin in the Mistake pose (eq/rope.mjs's pattern).
+//    `poly` disc so it outlines in the Mistake (PQ-H9); the cable from the low pulley's upper tangent to the bar (the
+//    Mistake's thin `poly` cable twin is dropped: LIB-PLATEFIX-3 item 10, #392 6649453813 L5, the unlabelled zigzag).
 //  - Column in front of the lifter, the low pulley PULLEY_GAP ahead of the toes ("a step back", c1); the stack lifts by
 //    the cable paid out (1:1), 3 cm pre-lift.
-// Unsourced numbers (13.3 must-fix 14): KNEE_SOFT, FOOT_X, ELBOW_TOP (the card says "fully bent"), the column, stack and
+// Unsourced numbers (13.3 must-fix 14): KNEE_SOFT, ELBOW_BOTTOM (20, a drawing value for c13's "slightly bent"), FOOT_X, ELBOW_TOP (the card says "fully bent"), the column, stack and
 //  pulley sizes (lat_pulldown's), the low pulley height (16 cm, "lowest position"), PULLEY_GAP, the bar diameter.
 // Callouts, Mistake, tempo: the 3 checkpoints are the callouts (c3, c9, c8); the Mistake is the card's plate.mistake
 //  (c13, drawable true): the elbows go fully straight at the bottom, drawn against the spec's end (the bottom).
@@ -37,7 +38,7 @@ const FOOT_X = 0.11;                                   // mid-soles hip width (c
 const FOOT_Z = REF.mid * H;
 const LEG = (() => { const a = WINTER.thigh * H, b = WINTER.shank * H, k = KNEE_SOFT * R; return Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(k)); })();
 const ROOT_Y = Math.sqrt(LEG * LEG - (FOOT_X - REF.hjcX * H) ** 2) + WINTER.ankleH * H;
-const ELBOW_TOP = 140, ELBOW_BOTTOM = 18;              // fully bent (c3; dumbbell_biceps_curl :55); slightly bent (c13; machine_chest_press.mjs:45)
+const ELBOW_TOP = 140, ELBOW_BOTTOM = 20;              // fully bent (c3; dumbbell_biceps_curl :55); slightly bent (c13; LIB-PLATEFIX-3 item 10)
 const SCAP = { elev: -1, pro: -1 };                    // shoulders set, as dumbbell_biceps_curl (c8 still body)
 
 const feet = { l: { at: [FOOT_X, 0, FOOT_Z] }, r: { at: [-FOOT_X, 0, FOOT_Z] } };
@@ -87,9 +88,6 @@ function lowTangent(b) {
 const barOf = lm => [0, lm.grips[1], lm.grips[2]];
 const cableLen = lm => { const b = barOf(lm), t = lowTangent(b); return Math.hypot(b[1] - t[1], b[2] - t[2]); };
 const disc = (c, r, n = 12) => Array.from({ length: n }, (_, k) => [0, c[1] + r * Math.sin(2 * Math.PI * k / n), c[2] + r * Math.cos(2 * Math.PI * k / n)]);
-// a thin poly twin of a cable a -> b (side plane, 2 mm either side), drawn only in the Mistake pose (PQ-H9)
-const twin = (a, b, t = 0.002) => { const dy = b[1] - a[1], dz = b[2] - a[2], L = Math.hypot(dy, dz), ny = -dz / L * t, nz = dy / L * t;
-  return [[0, a[1] + ny, a[2] + nz], [0, b[1] + ny, b[2] + nz], [0, b[1] - ny, b[2] - nz], [0, a[1] - ny, a[2] - nz]]; };
 const LEN_BOTTOM = cableLen(landmarksOf(end, H));
 
 export default {
@@ -115,7 +113,6 @@ export default {
       ];
     },
     lm => ({ type: 'cable', from: lowTangent(barOf(lm)), to: barOf(lm), z: 'center', part: 'bar' }),
-    (lm, ctx) => (ctx.pose === 'mistake' ? { type: 'poly', cls: 'eq', z: 'center', part: 'bar', pts: twin(lowTangent(barOf(lm)), barOf(lm)) } : null),
     lm => ({ type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'bar', pts: disc(barOf(lm), BAR_R) }),
   ],
   checks: [
