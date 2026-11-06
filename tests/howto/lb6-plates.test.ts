@@ -1931,7 +1931,7 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
   // specs and composers are unchanged since then.
   const APPROVED: Record<string, Record<string, string>> = {
     'low-to-high-cable-fly': { normalSvg: '57eb29aeb02e58342a999ae4a7a1bdf2acd55c644ac8041855342159d56429b9', normalOverlay: '11ae46b8a9bcee9faac4f0ac0c11db8f9f2bcb1ae13280cdf00ca5c0b941cb6a',
-      mistakeSvg: '4d5243c528601e5a445356e7ca6fa5c49b2d4275f3cf806645f4b7221fc1b631', mistakeOverlay: '82ce4b5b905fdbd1b2bbfa1057946658c81beee880bcda835361a60dd8994f4e',
+      mistakeSvg: 'f73ac55eaa75471946666a3934e41dd7ff20358d8ae8e72f4246fbbfcfc26bed', mistakeOverlay: 'b807c7979d08aa843a732e30b140e8423f20b6efb939dddcbf0b8f0a64f1191e',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 4d5243c5, now f73ac55e; mistakeOverlay was 82ce4b5b, now b807c797 (W6b: press hands at the shoulders, 'press' box pinned)
       tells: '974fd5d7ae64e02e87f859bccdabbb824add81f8cc501ed38abe50e0a29b6b25', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
       cues: 'e57bcb073136e623bc0c4c7fe2a2c2743dd31dabd42ec1e7451ec62f46699c01', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
       mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
