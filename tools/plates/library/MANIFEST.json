@@ -1,7 +1,7 @@
 {
  "rows": {
   "lib_arnold_press": {
-   "entry": "9c0df084e37ae6e0abfc8df2f192aade90fe855902c0e8c94dd19681e300dbc3",
+   "entry": "9a616bf7f16edf14a6a96500e436027dc13fb538bae625ec56898acbd3863d89",
    "files": {
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
@@ -66,7 +66,7 @@
     "tools/plates/library/specs/close_grip_bench_press.mjs": "70db6e4a5e2e3128711b214ef3c1a2dd8d422522fb7079634fab89c057fe6037",
     "tools/plates/library/specs/decline_bench_press.mjs": "352b3029feeebd7929df061281c1b958cc30ba052fa70d3c05fec90286df6101",
     "tools/plates/library/specs/dumbbell_pullover.mjs": "35af11d9fa14a25379b1dd3e748737d965226cec4955e4ac9c70602272e13a61",
-    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "0e1abcf880a983fc6af40ba2685fec1c32c016f9b3c597a98e8424fda6272a83",
+    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "8de878837cc3d3cff28f0537894aabc60af4be3a359714018d8fd82c1fd2a8bb",
     "tools/plates/library/specs/incline_dumbbell_press.mjs": "55b2fdf841233dd67bf3dd5b73679035efc27d099064a126a30c17d0262f71fe",
     "tools/plates/library/specs/incline_dumbbell_press__lb2.mjs": "37c99a440b577ad4c3adc43f7e2b77f8dd11fb6f09b07080edcd0ececd61477a",
     "tools/plates/library/specs/skull_crusher.mjs": "f354a26f3ef67d57c5c458dd8733f90a2c1f2bbb16bac17b5ac809fe290347bd",
@@ -177,7 +177,7 @@
    }
   },
   "lib_barbell_bench_press": {
-   "entry": "6a75c7a89b05f7f2c1975dc1aa38f333d6bb2ea62a9579b1bfab9ee0cb86015d",
+   "entry": "3608e160087e28e3061e9442f349e9b445d2e46a5e844aa3c46c741dc73552d1",
    "files": {
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
@@ -242,7 +242,7 @@
     "tools/plates/library/specs/close_grip_bench_press.mjs": "70db6e4a5e2e3128711b214ef3c1a2dd8d422522fb7079634fab89c057fe6037",
     "tools/plates/library/specs/decline_bench_press.mjs": "352b3029feeebd7929df061281c1b958cc30ba052fa70d3c05fec90286df6101",
     "tools/plates/library/specs/dumbbell_pullover.mjs": "35af11d9fa14a25379b1dd3e748737d965226cec4955e4ac9c70602272e13a61",
-    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "0e1abcf880a983fc6af40ba2685fec1c32c016f9b3c597a98e8424fda6272a83",
+    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "8de878837cc3d3cff28f0537894aabc60af4be3a359714018d8fd82c1fd2a8bb",
     "tools/plates/library/specs/incline_dumbbell_press.mjs": "55b2fdf841233dd67bf3dd5b73679035efc27d099064a126a30c17d0262f71fe",
     "tools/plates/library/specs/incline_dumbbell_press__lb2.mjs": "37c99a440b577ad4c3adc43f7e2b77f8dd11fb6f09b07080edcd0ececd61477a",
     "tools/plates/library/specs/skull_crusher.mjs": "f354a26f3ef67d57c5c458dd8733f90a2c1f2bbb16bac17b5ac809fe290347bd",
@@ -852,7 +852,7 @@
    }
   },
   "lib_close_grip_bench_press": {
-   "entry": "7ed1deb81f49007ed68cdc614f7547145b11c009c4b485658347bab0daf952bb",
+   "entry": "fad69fa44e13d9af2bc575b1f556155a82363fbb88129b88cc3bcf19f0dd6d00",
    "files": {
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
@@ -917,7 +917,7 @@
     "tools/plates/library/specs/close_grip_bench_press.mjs": "70db6e4a5e2e3128711b214ef3c1a2dd8d422522fb7079634fab89c057fe6037",
     "tools/plates/library/specs/decline_bench_press.mjs": "352b3029feeebd7929df061281c1b958cc30ba052fa70d3c05fec90286df6101",
     "tools/plates/library/specs/dumbbell_pullover.mjs": "35af11d9fa14a25379b1dd3e748737d965226cec4955e4ac9c70602272e13a61",
-    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "0e1abcf880a983fc6af40ba2685fec1c32c016f9b3c597a98e8424fda6272a83",
+    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "8de878837cc3d3cff28f0537894aabc60af4be3a359714018d8fd82c1fd2a8bb",
     "tools/plates/library/specs/incline_dumbbell_press.mjs": "55b2fdf841233dd67bf3dd5b73679035efc27d099064a126a30c17d0262f71fe",
     "tools/plates/library/specs/incline_dumbbell_press__lb2.mjs": "37c99a440b577ad4c3adc43f7e2b77f8dd11fb6f09b07080edcd0ececd61477a",
     "tools/plates/library/specs/skull_crusher.mjs": "f354a26f3ef67d57c5c458dd8733f90a2c1f2bbb16bac17b5ac809fe290347bd",
@@ -1095,7 +1095,7 @@
    }
   },
   "lib_decline_bench_press": {
-   "entry": "547c3057f8d4803a02df33614969155e8677fc2730427f81c290369ef1c630c2",
+   "entry": "72f32bbdcfef5c19dc88399eee9d96e92afa49984743d273bd2505d3dd3634c0",
    "files": {
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
@@ -1160,7 +1160,7 @@
     "tools/plates/library/specs/close_grip_bench_press.mjs": "70db6e4a5e2e3128711b214ef3c1a2dd8d422522fb7079634fab89c057fe6037",
     "tools/plates/library/specs/decline_bench_press.mjs": "352b3029feeebd7929df061281c1b958cc30ba052fa70d3c05fec90286df6101",
     "tools/plates/library/specs/dumbbell_pullover.mjs": "35af11d9fa14a25379b1dd3e748737d965226cec4955e4ac9c70602272e13a61",
-    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "0e1abcf880a983fc6af40ba2685fec1c32c016f9b3c597a98e8424fda6272a83",
+    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "8de878837cc3d3cff28f0537894aabc60af4be3a359714018d8fd82c1fd2a8bb",
     "tools/plates/library/specs/incline_dumbbell_press.mjs": "55b2fdf841233dd67bf3dd5b73679035efc27d099064a126a30c17d0262f71fe",
     "tools/plates/library/specs/incline_dumbbell_press__lb2.mjs": "37c99a440b577ad4c3adc43f7e2b77f8dd11fb6f09b07080edcd0ececd61477a",
     "tools/plates/library/specs/skull_crusher.mjs": "f354a26f3ef67d57c5c458dd8733f90a2c1f2bbb16bac17b5ac809fe290347bd",
@@ -1445,7 +1445,7 @@
    }
   },
   "lib_dumbbell_pullover": {
-   "entry": "c646e0d9d49003106076e485071cb78eba48e8479d3768e07cfccae3d48cbea4",
+   "entry": "cd460a04497e1238539c63c3133e24dbb00fddd3df79a91faac0323a5faaafd9",
    "files": {
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
@@ -1510,7 +1510,7 @@
     "tools/plates/library/specs/close_grip_bench_press.mjs": "70db6e4a5e2e3128711b214ef3c1a2dd8d422522fb7079634fab89c057fe6037",
     "tools/plates/library/specs/decline_bench_press.mjs": "352b3029feeebd7929df061281c1b958cc30ba052fa70d3c05fec90286df6101",
     "tools/plates/library/specs/dumbbell_pullover.mjs": "35af11d9fa14a25379b1dd3e748737d965226cec4955e4ac9c70602272e13a61",
-    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "0e1abcf880a983fc6af40ba2685fec1c32c016f9b3c597a98e8424fda6272a83",
+    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "8de878837cc3d3cff28f0537894aabc60af4be3a359714018d8fd82c1fd2a8bb",
     "tools/plates/library/specs/incline_dumbbell_press.mjs": "55b2fdf841233dd67bf3dd5b73679035efc27d099064a126a30c17d0262f71fe",
     "tools/plates/library/specs/incline_dumbbell_press__lb2.mjs": "37c99a440b577ad4c3adc43f7e2b77f8dd11fb6f09b07080edcd0ececd61477a",
     "tools/plates/library/specs/skull_crusher.mjs": "f354a26f3ef67d57c5c458dd8733f90a2c1f2bbb16bac17b5ac809fe290347bd",
@@ -1813,7 +1813,7 @@
    }
   },
   "lib_incline_barbell_bench_press": {
-   "entry": "53c2a0d2879e72f725b5f75a032e113fb0200979f47f72adf13fdd0d23ab7258",
+   "entry": "fccee0a10d861c735d94142182c596006f2f6294f020e0b1b47a5ac87eba71c0",
    "files": {
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
@@ -1878,7 +1878,7 @@
     "tools/plates/library/specs/close_grip_bench_press.mjs": "70db6e4a5e2e3128711b214ef3c1a2dd8d422522fb7079634fab89c057fe6037",
     "tools/plates/library/specs/decline_bench_press.mjs": "352b3029feeebd7929df061281c1b958cc30ba052fa70d3c05fec90286df6101",
     "tools/plates/library/specs/dumbbell_pullover.mjs": "35af11d9fa14a25379b1dd3e748737d965226cec4955e4ac9c70602272e13a61",
-    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "0e1abcf880a983fc6af40ba2685fec1c32c016f9b3c597a98e8424fda6272a83",
+    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "8de878837cc3d3cff28f0537894aabc60af4be3a359714018d8fd82c1fd2a8bb",
     "tools/plates/library/specs/incline_dumbbell_press.mjs": "55b2fdf841233dd67bf3dd5b73679035efc27d099064a126a30c17d0262f71fe",
     "tools/plates/library/specs/incline_dumbbell_press__lb2.mjs": "37c99a440b577ad4c3adc43f7e2b77f8dd11fb6f09b07080edcd0ececd61477a",
     "tools/plates/library/specs/skull_crusher.mjs": "f354a26f3ef67d57c5c458dd8733f90a2c1f2bbb16bac17b5ac809fe290347bd",
@@ -1896,7 +1896,7 @@
    }
   },
   "lib_incline_dumbbell_press": {
-   "entry": "45275bbb01ec94fcfff93761bc965eb949240d280e4fe9f3c26098b95bf864d6",
+   "entry": "2d181208fe8be7eaa040fc354c1a5799ade0db9d5e51b8372d36fdd83781ba8e",
    "files": {
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
@@ -1961,7 +1961,7 @@
     "tools/plates/library/specs/close_grip_bench_press.mjs": "70db6e4a5e2e3128711b214ef3c1a2dd8d422522fb7079634fab89c057fe6037",
     "tools/plates/library/specs/decline_bench_press.mjs": "352b3029feeebd7929df061281c1b958cc30ba052fa70d3c05fec90286df6101",
     "tools/plates/library/specs/dumbbell_pullover.mjs": "35af11d9fa14a25379b1dd3e748737d965226cec4955e4ac9c70602272e13a61",
-    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "0e1abcf880a983fc6af40ba2685fec1c32c016f9b3c597a98e8424fda6272a83",
+    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "8de878837cc3d3cff28f0537894aabc60af4be3a359714018d8fd82c1fd2a8bb",
     "tools/plates/library/specs/incline_dumbbell_press.mjs": "55b2fdf841233dd67bf3dd5b73679035efc27d099064a126a30c17d0262f71fe",
     "tools/plates/library/specs/incline_dumbbell_press__lb2.mjs": "37c99a440b577ad4c3adc43f7e2b77f8dd11fb6f09b07080edcd0ececd61477a",
     "tools/plates/library/specs/skull_crusher.mjs": "f354a26f3ef67d57c5c458dd8733f90a2c1f2bbb16bac17b5ac809fe290347bd",
@@ -3084,7 +3084,7 @@
    }
   },
   "lib_skull_crusher": {
-   "entry": "63e42fcd978c7424e5a5ea1a79e84fdda9edce34091bd49814bf4745abf5db23",
+   "entry": "6629aeb11f95e4a5f4eb19d60d87da52b06ab73666fa9a3dd871f5e0a2c1c47a",
    "files": {
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
@@ -3149,7 +3149,7 @@
     "tools/plates/library/specs/close_grip_bench_press.mjs": "70db6e4a5e2e3128711b214ef3c1a2dd8d422522fb7079634fab89c057fe6037",
     "tools/plates/library/specs/decline_bench_press.mjs": "352b3029feeebd7929df061281c1b958cc30ba052fa70d3c05fec90286df6101",
     "tools/plates/library/specs/dumbbell_pullover.mjs": "35af11d9fa14a25379b1dd3e748737d965226cec4955e4ac9c70602272e13a61",
-    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "0e1abcf880a983fc6af40ba2685fec1c32c016f9b3c597a98e8424fda6272a83",
+    "tools/plates/library/specs/incline_barbell_bench_press.mjs": "8de878837cc3d3cff28f0537894aabc60af4be3a359714018d8fd82c1fd2a8bb",
     "tools/plates/library/specs/incline_dumbbell_press.mjs": "55b2fdf841233dd67bf3dd5b73679035efc27d099064a126a30c17d0262f71fe",
     "tools/plates/library/specs/incline_dumbbell_press__lb2.mjs": "37c99a440b577ad4c3adc43f7e2b77f8dd11fb6f09b07080edcd0ececd61477a",
     "tools/plates/library/specs/skull_crusher.mjs": "f354a26f3ef67d57c5c458dd8733f90a2c1f2bbb16bac17b5ac809fe290347bd",
