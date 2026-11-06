@@ -1,4 +1,4 @@
-// LIB-5 S1: the 38 shared research files (19 cards, 19 quote files) are byte copies of the named research head
+// LIB-5 S1: the 40 shared research files (20 cards, 20 quote files; 19 + 19 before RESEARCH-ROUTES-1 F-STOPLINE-CLAIM) are byte copies of the named research head
 // (claude/libht-research @ 9eaa248, lib4-cards.md 14.5: the one re-copy, after 9dbc7e0 of 14.2); the back box at 0393aac9 (Do 9), re-copied at fa248589 (RESEARCH-ROUTES-1).
 import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -31,6 +31,8 @@ const PINS: Record<string, string> = {
   'shared/palm-flat.json': 'fb4e54fd3f6cf3f91b15cb0d17cf0297743962141b4c695d9e46a1eee1414d11',
   'shared/prone-checkpoints.json': 'e5a5e3dbecd12a8de0f51dba8cd6ac53b520e928376c2143cf8f8afcca6a85a6',
   'shared/rope-rule.json': 'eb0727e069d46e9e780fa76bab7a299d4ab241ade8d8ca484dfa333ef0759010',
+  // RESEARCH-ROUTES-1 F-STOPLINE-CLAIM (D-RR-HEAD; ruled #400 6681126219): copied from research eaaa9478 (#401)
+  'shared/stop-line.json': '585e3c9f296cf0c2dd6a51840951140a801ecda32a076e59ac8a6b24bba4a3ba',
   'shared/selector-pin.json': 'af4316219601c66beda13c2dbbacea6d3f592e30a6fbda3d3c9309d417c6abb9',
   'shared/unrack-rerack.json': '6f54cb7135f79212eb013812161774f4bf6662ca904a2ba3b62332788ef0025b',
   'shared/wrist-curl-exemption.json': '236c2b2cd91684ab119fbc29d0bf8e526762ee11265c61e25433b64ea10bcd9b',
@@ -50,12 +52,13 @@ const PINS: Record<string, string> = {
   'quotes/shared-palm-flat.json': '3abb7518f0f41b73673bfeb1f333c4445c0fbe8bea723cb0ee787519977199fa',
   'quotes/shared-prone-checkpoints.json': '2eaf5be6e456c20af2a11633b1d635c831fa5327e3d7865fdcb2b9b766b6a7ef',
   'quotes/shared-rope-rule.json': '1814127c0ef6101fbac08270b3d9fd54afa6ee556eeb79693567edfed23cc3a5',
+  'quotes/shared-stop-line.json': '3b165f8f93efbe1ad86d9fb9da405359893bfcff5f4c697f0d1aea4bd6f687be',
   'quotes/shared-selector-pin.json': 'db2b7d8c76511a2d93d2bf0c00eba72bf391b1dbeacb657a3464b79f326174e9',
   'quotes/shared-unrack-rerack.json': '5e66a6857549da2aed64b6481cdd6920108e319362e4424aa161d2f28cd9b474',
   'quotes/shared-wrist-curl-exemption.json': '125993ded83e0a95685291c20bcec259dc147856019fdb4c4699ca2f08ff2a88',
 };
 
-/** Every difference between `root`'s 38 shared files and the pins: changed, missing or extra. */
+/** Every difference between `root`'s 40 shared files and the pins: changed, missing or extra. */
 function s1Problems(root: string): string[] {
   const bad: string[] = [];
   const onDisk = [
@@ -81,10 +84,10 @@ function copy(): string {
 }
 afterAll(() => { for (const t of temps) rmSync(t, { recursive: true, force: true }); });
 
-describe(`LIB-5 S1: the 38 shared research files equal the named research heads ${RESEARCH_HEAD.slice(0, 7)} and ${BOX_HEAD.slice(0, 7)} (back box)`, () => {
-  it('19 cards and 19 quote files, each byte-equal to its pin', () => {
-    expect(Object.keys(PINS).filter(p => p.startsWith('shared/')).length).toBe(19);
-    expect(Object.keys(PINS).filter(p => p.startsWith('quotes/shared-')).length).toBe(19);
+describe(`LIB-5 S1: the 40 shared research files equal the named research heads ${RESEARCH_HEAD.slice(0, 7)} and ${BOX_HEAD.slice(0, 7)} (back box)`, () => {
+  it('20 cards and 20 quote files, each byte-equal to its pin (19 before RESEARCH-ROUTES-1 F-STOPLINE-CLAIM)', () => {
+    expect(Object.keys(PINS).filter(p => p.startsWith('shared/')).length).toBe(20);
+    expect(Object.keys(PINS).filter(p => p.startsWith('quotes/shared-')).length).toBe(20);
     expect(s1Problems(ROOT)).toEqual([]);
   });
   it('mutation: one byte changed is red', () => {
@@ -98,7 +101,7 @@ describe(`LIB-5 S1: the 38 shared research files equal the named research heads 
     rmSync(join(t, HOWTO, 'quotes/shared-curl.json'));
     expect(s1Problems(t)).toEqual(['quotes/shared-curl.json: missing']);
   });
-  it('mutation: a 20th card is red', () => {
+  it('mutation: a 21st card is red', () => {
     const t = copy();
     writeFileSync(join(t, HOWTO, 'shared/extra.json'), '{}\n');
     expect(s1Problems(t)).toEqual(['shared/extra.json: not pinned']);
@@ -111,10 +114,10 @@ const rd = (p: string) => JSON.parse(readFileSync(join(ROOT, HOWTO, p), 'utf8'))
 const clone = <T>(x: T): T => JSON.parse(JSON.stringify(x));
 
 describe('LIB-5 S2: every shared card is valid (tools/plates/library/research/validate.mjs)', () => {
-  it('the 19 copied cards pass with no problem', async () => {
+  it('the 20 copied cards pass with no problem', async () => {
     V = await import(/* @vite-ignore */ new URL('../../tools/plates/library/research/validate.mjs', import.meta.url).href);
     const files = readdirSync(join(ROOT, HOWTO, 'shared'));
-    expect(files.length).toBe(19);
+    expect(files.length).toBe(20);
     for (const f of files) expect([f, V.validateSharedFile(f)]).toEqual([f, []]);
   });
   it('mutation: an orphan source is red', () => {
@@ -170,9 +173,9 @@ describe('LIB-5 S2: every shared card is valid (tools/plates/library/research/va
 });
 
 describe('LIB-5 S9: the source registry is consistent', () => {
-  it('one id, one URL across sources.json and the 19 shared cards; no URL in src/howto or src/slices/howto (C17)', async () => {
+  it('one id, one URL across sources.json and the 20 shared cards (19 before RESEARCH-ROUTES-1 F-STOPLINE-CLAIM); no URL in src/howto or src/slices/howto (C17)', async () => {
     const sets = V.registrySets();
-    expect(sets.length).toBe(20);
+    expect(sets.length).toBe(21);
     expect(sets.reduce((a: number, s: any) => a + s.sources.length, 0)).toBeGreaterThan(100);
     expect(V.registryProblems(sets)).toEqual([]);
     const { checkC17 } = await import('./checks/c17');

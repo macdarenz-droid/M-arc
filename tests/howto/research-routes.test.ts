@@ -67,3 +67,25 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     expect(sha(JSON.stringify(m))).toBe('daf6779bd9505c07f28f805fac904bd0acd6408c78a65a8ce966691814502e69');
   });
 });
+
+// RESEARCH-ROUTES-1 part 2, F-STOPLINE-CLAIM (D-STOPLINE-CLAIM, #391 6681022221; ruled #400 6681126219): the shared
+// stop-line card and its kind.
+describe('RESEARCH-ROUTES-1 F-STOPLINE-CLAIM: the safety-line kind and the stop-line card', () => {
+  const STOP = 'docs/research/howto/shared/stop-line.json', QUOTES = 'docs/research/howto/quotes/shared-stop-line.json';
+  const V = () => import(/* @vite-ignore */ new URL('../../tools/plates/library/research/validate.mjs', import.meta.url).href);
+  it('shared/stop-line.json validates; its line cites c1-c3; box_jump and hollow_body_hold are left out', async () => {
+    const v: any = await V(), c = JSON.parse(rd(STOP));
+    expect(v.validateSharedFile('stop-line.json')).toEqual([]);
+    expect(c.kind).toBe('safety-line');
+    expect(c.line).toEqual({ text: "Stop the set. Don't train through the pain.", claim: ['c1', 'c2', 'c3'] });
+    expect(c.appliesTo).toHaveLength(67);
+    for (const id of ['box_jump', 'hollow_body_hold']) expect(c.appliesTo).not.toContain(id);
+  });
+  it('mutation: a safety-line card without its line is red, as is an unknown kind', async () => {
+    const v: any = await V(), c = JSON.parse(rd(STOP)), q = JSON.parse(rd(QUOTES));
+    delete c.line;
+    expect(v.validateShared(c, q, { file: 'stop-line.json' })).toEqual(['shared/stop-line.json: safety-line card lacks line']);
+    const k = JSON.parse(rd(STOP)); k.kind = 'stop-line';
+    expect(v.validateShared(k, q, { file: 'stop-line.json' })).toEqual(['shared/stop-line.json: unknown kind "stop-line"']);
+  });
+});

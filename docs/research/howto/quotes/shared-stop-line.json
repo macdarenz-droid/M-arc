@@ -26,6 +26,30 @@
    "status": "verbatim",
    "closest": "avoid or reduce activities that make your symptoms worse",
    "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "hl-hc",
+   "text": "Stop doing hamstring curls if you feel pain in your knees, hips, or back.",
+   "status": "verbatim",
+   "closest": "Stop doing hamstring curls if you feel pain in your knees, hips, or back.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "motra-smith-ohp",
+   "text": "Stop if shoulder pain occurs",
+   "status": "verbatim",
+   "closest": "Stop if shoulder pain occurs",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "mo-cable-er",
+   "text": "Stop if shoulder pain occurs",
+   "status": "verbatim",
+   "closest": "Stop if shoulder pain occurs",
+   "note": ""
   }
  ]
 }

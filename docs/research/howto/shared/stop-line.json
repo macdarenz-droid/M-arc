@@ -14,7 +14,6 @@
     "bodyweight_lunge",
     "bodyweight_split_squat",
     "bodyweight_squat",
-    "box_jump",
     "bulgarian_split_squat",
     "cable_curl",
     "cable_external_rotation",
@@ -37,7 +36,6 @@
     "face_pull",
     "forward_lunge",
     "front_squat",
-    "hollow_body_hold",
     "incline_barbell_bench_press",
     "incline_dumbbell_curl",
     "incline_dumbbell_press",
@@ -72,10 +70,14 @@
     "upright_row",
     "walking_lunge"
   ],
-  "appliesToWhy": "RESEARCH-ROUTES-1 part 2 (D-STOPLINE-CLAIM, #391 6681022221): every library sheet with a stop line (\"Stop the set. Don't train through the pain.\" or \"Stop and don't train through the pain.\") on main 5023f5c6 and on claude/lib-ship-w3b, w4, w5, w6 and w7 (grep of tools/plates/library/howto, 2026-11-06).",
+  "appliesToWhy": "RESEARCH-ROUTES-1 part 2 (D-STOPLINE-CLAIM, #391 6681022221; ruled #400 6681126219): every library sheet with a stop-on-pain line (\"Don't train through the pain\", or a pain row whose fix is \"Stop the set.\") on main 5023f5c6 and on claude/lib-ship-w3b, w4, w5, w6 and w7 (git grep of tools/plates/library/howto, 2026-11-06). Each such row is a wrist, back, elbow, knee or shoulder row, which c1-c3 cover. box_jump (\"Stop the set. Keep reps low with full rest.\", tired legs) and hollow_body_hold (\"Stop the set if it lifts\", form) stop for other reasons and are left out.",
   "line": {
     "text": "Stop the set. Don't train through the pain.",
-    "claim": "c1"
+    "claim": [
+      "c1",
+      "c2",
+      "c3"
+    ]
   },
   "claims": [
     {
@@ -106,12 +108,52 @@
           "where": "Things you can do to help ease tennis elbow: Do"
         }
       ]
+    },
+    {
+      "id": "c2",
+      "text": "Healthline tells lifters to stop hamstring curls if they feel pain in the knees (written for hamstring curls, applied here to training).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hc"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hc",
+          "text": "Stop doing hamstring curls if you feel pain in your knees, hips, or back.",
+          "where": "Things to keep in mind"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Motra's exercise guides tell lifters to stop if shoulder pain occurs (written for the Smith machine shoulder press and the cable external rotation, applied here to training).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-ohp",
+        "mo-cable-er"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-ohp",
+          "text": "Stop if shoulder pain occurs",
+          "where": "Safety, Safety Notes"
+        },
+        {
+          "source": "mo-cable-er",
+          "text": "Stop if shoulder pain occurs",
+          "where": "Safety, Safety Notes"
+        }
+      ]
     }
   ],
   "sources": [
     {
       "id": "nhs-wrist-pain",
-      "url": "https://www.nhs.uk/symptoms/hand-pain/wrist-pain/",
+      "url": "https://www.nhs.uk/conditions/hand-pain/wrist-pain/",
       "title": "Wrist pain (NHS)",
       "kind": "guideline",
       "year": null,
@@ -138,14 +180,43 @@
       "pmid": null,
       "access": "full",
       "checked": "2026-11-06"
+    },
+    {
+      "id": "hl-hc",
+      "url": "https://www.healthline.com/health/hamstring-curls",
+      "title": "5 Types of Hamstring Curls for Stronger Thighs (Healthline)",
+      "kind": "coach",
+      "year": 2019,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-11-06"
+    },
+    {
+      "id": "motra-smith-ohp",
+      "url": "https://www.motra.com/exercises/smithMachineShoulderPress",
+      "title": "Smith Machine Shoulder Press - Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-11-06"
+    },
+    {
+      "id": "mo-cable-er",
+      "url": "https://motra.com/exercises/cableExternalShoulderRotation",
+      "title": "Cable External Shoulder Rotation: Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-11-06"
     }
   ],
   "gaps": [
-    "Knee: the NHS knee-pain page (fetched 2026-11-06, 200) has no stop-on-pain line, only \"put as little weight as possible on your knee\".",
-    "Shoulder: the NHS shoulder-pain page says \"do not completely stop using your shoulder\"; it gives no stop-on-pain line for exercise.",
-    "Finucane 2020 (JOSPT, PMID 32438853), behind the app's pain_red_flags entry, is a red-flag framework for serious spinal pathology; its abstract was not used, as it does not address stopping a set."
+    "No general (all-exercise) stop-on-pain source was found for the knee or the shoulder: the NHS knee-pain page has only \"put as little weight as possible on your knee\", and the NHS shoulder-pain page says \"do not completely stop using your shoulder\". c2 and c3 are exercise-specific lines applied to training.",
+    "Finucane 2020 (JOSPT, PMID 32438853), behind the app's pain_red_flags entry, is a red-flag framework for serious spinal pathology and does not address stopping a set, so it is not used."
   ],
   "notes": [
-    "All three pages fetched by curl on 2026-11-06 (HTTP 200); each quote is a verbatim substring of the page text."
+    "All six pages fetched by curl on 2026-11-06 (HTTP 200); each quote is a verbatim substring of the page text. nhs-wrist-pain keeps sources.json's URL (conditions/hand-pain/wrist-pain/), which redirects to symptoms/hand-pain/wrist-pain/ (the page read)."
   ]
 }
