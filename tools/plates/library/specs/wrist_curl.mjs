@@ -77,10 +77,7 @@ const mistakePose = { root: { at: rootOnSeat(SEAT, TILT + MIS_LEAN, H), tilt: TI
 
 export default {
   id: 'wrist_curl', name: 'Wrist Curl', view: 'side', facing: 'right',
-  // LIB-PLATEFIX-3 item 11 (#392 6649453813 L7 "the working wrist is about 30 px wide in a half-empty plate"; ruling #405
-  // 6682844211): the house maxScale 1.35 (D-LIB8-floor's), so the fit fills the plate: 146.29 -> 195.04 px/m, the
-  // largest scale at which the seated figure and bench still fit. The hand close-up is follow-up F-HAND-FINGERTIP.
-  camera: { fit: true, maxScale: 1.35 },
+  camera: { fit: true },
   poses: { start, end },
   equipment: [
     { type: 'floor', from: -0.75, to: 0.75 },

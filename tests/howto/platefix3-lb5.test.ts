@@ -1,6 +1,6 @@
-// LIB-PLATEFIX-3 (card verify/lib-platefix-3-card.md; PLAN RULED #405 6682844211): the lb5 plate fixes, items 9, 10, 11
-// and 14. Each test reads what the engine draws (svg, report, landmarks) and fails on main's spec (5023f5c6); the
-// before values are in each test's name or comment. Items 8, 12 and 13 are not built (reported on #405).
+// LIB-PLATEFIX-3 (card verify/lib-platefix-3-card.md; PLAN RULED #405 6682844211): the lb5 plate fixes, items 9, 10 and
+// 14. Each test reads what the engine draws (svg, report, landmarks) and fails on main's spec (5023f5c6); the
+// before values are in each test's name or comment. Items 8, 11, 12 and 13 are not built (reported on #405).
 import { beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -12,7 +12,7 @@ let plate: any, body: any, eq: any, qa: any;
 const S: Record<string, any> = {};
 beforeAll(async () => {
   [plate, body, eq, qa] = await Promise.all([vendor('plate.mjs'), vendor('body.mjs'), vendor('equipment.mjs'), lib('qa/engine.mjs')].map(f => import(/* @vite-ignore */ f)));
-  for (const id of ['bayesian_cable_curl', 'cable_curl', 'wrist_curl', 'dumbbell_overhead_triceps_extension']) S[id] = (await import(/* @vite-ignore */ lib(`specs/${id}.mjs`))).default;
+  for (const id of ['bayesian_cable_curl', 'cable_curl', 'dumbbell_overhead_triceps_extension']) S[id] = (await import(/* @vite-ignore */ lib(`specs/${id}.mjs`))).default;
 }, T);
 
 const E = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body });
@@ -79,14 +79,6 @@ describe('PF3 item 10 cable_curl: a visible bottom bend, the straight Wrong apar
   });
   it('the Mistake draws no thin cable twin (main: a poly twin, the unlabelled zigzag)', () => {
     expect(itemsIn(S.cable_curl, 'mistake').some((it: any) => it.type === 'poly' && it.cls === 'eq')).toBe(false);
-  });
-});
-
-describe('PF3 item 11 wrist_curl: the plate scaled to the figure (#392 6649453813 L7)', () => {
-  it('the fit fills the plate at >= 195 px/m (main: 146.29, the maxScale 1 cap)', () => {
-    const r = render(S.wrist_curl);
-    expect(S.wrist_curl.camera).toEqual({ fit: true, maxScale: 1.35 });
-    expect(r.report.camera.pxPerM).toBeGreaterThanOrEqual(195);
   });
 });
 

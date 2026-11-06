@@ -82,7 +82,10 @@ export default {
   ],
   ghosts: { count: 3, parts: ['arm.r', 'db'] },
   trace: { point: 'grip.r', trim: [10, 12] },
-  zoom: { view: 'mistake', k: 1.5 },   // D-LIB15R2-ZOOM (lib4-cards §48): the `arch` tell, 15.85 px at k 1.5 (bar 11.39 at the zoom's scale)
+  // LIB-PLATEFIX-3 item 14: on the spread spine the `arch` tell's anchor (lumbar) moves 4.30 px (was 10.57: the whole
+  // back slid), so the zoom goes from k 1.5 to 3, the smallest of 2, 2.5, 3 at which it clears the bar: 12.90 px (bar 11.39
+  // at the zoom's scale; D-LIB15R2-ZOOM form, reverse_lunge's k 3 for its 4.10 px lumbar).
+  zoom: { view: 'mistake', k: 3 },
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: { at: 'wrist.r', pose: 'start' }, radius: 24, title: 'Elbow', value: 'about 90°', expect: 90 },
   callouts: [
     { key: 'vertical', text: 'Arms<br>vertical', anchor: 'elbow.r', cue: 'Keep the upper arms vertical and still. Only the elbows bend.' },
