@@ -38,7 +38,6 @@ describe('PF3 W7 plate copy (lb8, lb9)', () => {
     expect(S.dead_bug.alt).toContain('until hand and heel lightly touch the floor');
     expect(S.dead_bug.alt).not.toContain('just above the floor');
   });
-  });
 });
 
 describe('PF3 W7 v_up tempo [Lift, Lower] (D-SHIP-W4-TEMPO form: card, spec and strip row in one commit)', () => {
