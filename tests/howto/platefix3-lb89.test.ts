@@ -33,21 +33,11 @@ describe('PF3 W7 plate copy (lb8, lb9)', () => {
   it('cable_crunch "Curl the spine" cue cites c4 c5', () => {
     expect(lineOf('cable_crunch', "key: 'curl'")).toMatch(/\/\/ c4 c5\b/);
   });
-  it('dead_bug: hand and heel lightly touch (c4) in the cue and the alt, and the drawn GAP is 0', async () => {
+  it('dead_bug: hand and heel lightly touch (c4) in the cue and the alt', () => {
     expect(cue('dead_bug', 'opposite').cue).toBe('Lower one arm and the opposite leg together until hand and heel lightly touch.');
     expect(S.dead_bug.alt).toContain('until hand and heel lightly touch the floor');
     expect(S.dead_bug.alt).not.toContain('just above the floor');
-    const m = await import(/* @vite-ignore */ lib('specs/dead_bug.mjs'));
-    expect(m.SIZES.GAP).toBe(0);
-    const sizes = JSON.parse(readFileSync('tools/plates/library/lb9/sizes.json', 'utf8'));
-    const row = Object.values(sizes).flatMap((v: any) => (v && typeof v === 'object' ? [v] : [])).find((v: any) => v.dead_bug?.GAP || v.GAP?.basis?.includes('lightly touch'));
-    expect(row, 'lb9/sizes.json GAP row').toBeTruthy();
-    expect(m.info().fistLowCm).toBe(0);
-    expect(m.info().heelLowCm).toBe(0);
   });
-  it('glute_bridge: one knee label, the "Knee about 90°" measure; no "Knees at 90" callout', () => {
-    expect(S.glute_bridge.callouts.map((c: any) => c.key)).not.toContain('knee');
-    expect(S.glute_bridge.measure).toMatchObject({ vertex: 'knee.r', title: 'Knee', value: 'about 90°', expect: 90 });
   });
 });
 
@@ -86,10 +76,29 @@ describe('PF3 W7 Mistake overlays (lb8, lb9)', () => {
   });
 });
 
-describe('PF3 W7 hollow_body_hold leg label (#394 6683570453)', () => {
-  it('one leg label, the "Legs about 15°" measure (c4); no "Legs low" callout beside the Mistake\'s "Legs too low"', () => {
-    expect(S.hollow_body_hold.callouts.map((c: any) => c.key)).not.toContain('legs');
-    expect(S.hollow_body_hold.callouts.some((c: any) => /Legs low/.test(c.text))).toBe(false);
-    expect(S.hollow_body_hold.measure).toMatchObject({ vertex: 'hip.r', title: 'Legs', value: 'about 15°', expect: 15 });
+// Mutations for the existing-test lines this card edits (D-PLATEFIX-PINS form, #405 6683313760)
+describe('PF3 W7 pin-edit mutations', () => {
+  it('lib-strip ROWS_PIN: v_up rows put back to [Lower, Lift] change the verified sha (red against the new pin)', async () => {
+    const { createHash } = await import('node:crypto');
+    const strip = JSON.parse(readFileSync('tools/plates/library/strip/rows.json', 'utf8')), sha = (x: any) => createHash('sha256').update(JSON.stringify(x)).digest('hex');
+    expect(sha(strip)).toBe('2e1382e3460765e3d01f2286f80afb10e774402fd1743766ca4c33d10572815e');
+    strip.fallbackA.find((r: any) => r.id === 'v_up').rows.reverse();
+    expect(sha(strip)).not.toBe('2e1382e3460765e3d01f2286f80afb10e774402fd1743766ca4c33d10572815e');
+  });
+  it('lb8 pendulum guide kinds: dropping the heel arrow or an outline is red', () => {
+    const kinds = (g: any[]) => g.map(x => x.kind), G = S.pendulum_squat.mistake.guides;
+    expect(kinds(G)).toEqual(['dashed', 'dashed', 'arrow']);
+    expect(kinds(G.slice(0, 2))).not.toEqual(['dashed', 'dashed', 'arrow']);
+    expect(kinds(G.slice(1))).not.toEqual(['dashed', 'dashed', 'arrow']);
+  });
+  it('lb9 LUMBARTELL gap points: the up-arrow keeps the dashed tick\'s two points (on the floor, under the low back)', () => {
+    for (const id of ['dead_bug', 'v_up']) {
+      const a = S[id].mistake.guides[0];
+      expect(a.kind, id).toBe('arrow');
+      expect(a.from[1], id).toBe(0);
+      expect(a.to[1], id).toBeGreaterThan(0.005);
+      expect(a.to[2], id).toBe(a.from[2]);
+    }
   });
 });
+

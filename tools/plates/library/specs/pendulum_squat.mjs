@@ -238,7 +238,7 @@ export default {
     guides: [
       ...MIS_FOOT.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),
       // the heel rising: a red up-arrow from the flat heel to the raised one (LIB-PLATEFIX-3 W7, c9)
-      { kind: 'arrow', from: { at: 'heel.r', pose: 'end', off: [-6, 0] }, to: { at: 'heel.r', pose: 'mistake', off: [-6, 0] } },
+      { kind: 'arrow', from: { at: 'heel.r', pose: 'end', off: [-12, 0] }, to: { at: 'heel.r', pose: 'mistake', off: [-12, 0] } },   // 12 px behind the heel: >= 6 px clear of the solid end figure (LIB-18 A15)
     ],
     tells: [
       // c9 "Heels rising", c15 "Lifting heels off the platform": on the raised heel

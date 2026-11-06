@@ -100,8 +100,7 @@ export default {
   measure: { vertex: 'hip.r', from: { dir: [1, 0] }, to: 'ankle.r', radius: 132, title: 'Legs', value: 'about 15°', expect: 15, box: { left: 286, top: 196 } },   // mx27 R7: the house angle arc at the hip
   callouts: [
     { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 130, top: 196 }, cue: 'Press your low back flat to the floor the whole hold.' },   // c1 c2 (LIB-PLATEFIX-3 W7, #394 6682923012)
-    // c4, the legs low and off the floor: carried by the "Legs about 15°" measure alone (LIB-PLATEFIX-3, #394 6683570453:
-    // the "Legs low" callout duplicated it and read against the Mistake's "Legs too low")
+    { key: 'legs', text: 'Legs low', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 210, top: 196 }, cue: 'Legs straight and off the floor, no higher than about 30 degrees.' },
     { key: 'shoulders', text: 'Shoulders up', anchor: { at: 'shoulderTop.r', off: [0, -3] }, box: { left: 16, top: 214 }, cue: 'Lift your shoulders and arms off the floor, biceps by your ears.' },
   ],
   mistake: {

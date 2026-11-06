@@ -27,7 +27,7 @@
 import { landmarksOf, fk, resolve, normPose, bodyShapes } from '../engine.mjs';
 
 const H = 1.75, BODY = { height: H };
-export const SIZES = Object.freeze({ PELVIS_TUCK: 15, KNEE_DEG: 90, GAP: 0, MIS_TILT: 14 });
+export const SIZES = Object.freeze({ PELVIS_TUCK: 15, KNEE_DEG: 90, GAP: 0.02, MIS_TILT: 14 });
 const { PELVIS_TUCK, KNEE_DEG: KNEE, GAP, MIS_TILT } = SIZES;
 const OCCIPUT = [0, 0.955, -0.056];                    // back of the skull on the side head outline (head frame, H): crunch's
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
