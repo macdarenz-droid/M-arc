@@ -138,10 +138,12 @@ const feel = {
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
 const MISTAKES = [
-  { key: 'hips', title: 'Hips shooting up first', zoom: 'sumo-start', claim: CL.c12,
-    fix: 'Be patient and keep driving with the legs.' },
-  { key: 'rush', title: 'Rushing the setup', claim: CL.c17,
-    fix: 'Set feet, grip and brace before each pull.' },
+  // W4 recheck 2: posture c14 (knees and hips lock out together) moved here from setup step 3.
+  { key: 'hips', title: 'Hips shooting up first', zoom: 'sumo-start', claim: C(['CONSENSUS'], [BB], 'c12, c14'),
+    fix: 'Be patient, drive with the legs. Lock knees and hips together.' },
+  // W4 recheck 2: posture c16 (lower the bar with control) moved here from setup step 3.
+  { key: 'rush', title: 'Rushing the setup', claim: C(['CONSENSUS'], [BB, SLS], 'c17, c16'),
+    fix: 'Set feet, grip and brace before each pull. Lower with control.' },
   { key: 'drift', title: 'Bar drifting off the shins', claim: CL.c13,
     fix: 'Chest up and keep the bar against the shins.' },
 ];
@@ -177,9 +179,10 @@ export default {
     { kind: 'position', text: 'Wide stance, toes out, bar over mid-foot, shins vertical from the front.',
       claim: C(['CONSENSUS', 'DATA'], [SLS, BB, 'escamilla2000'], 'c1, c2') },
     { kind: 'grip', text: 'Arms inside the knees, not outside as in a conventional pull.', claim: CL.c3 },
-    // W4 D-TEXT-PRINTED: c13 (chest up, bar on the shins) stays printed in the plate cue, the sumo-start caption and the
-    // bar-drift fix; this slot carries posture c14 (lockout together) and c16 (lower with control).
-    { kind: 'position', text: 'Lock knees and hips out together. Lower the bar with control.', claim: C(['CONSENSUS'], [BB, SLS], 'c14, c16') },
+    // W4 recheck 2 (L2): the card's step 3 (c13) is back in the facts' order, so the brace (c10) comes before the lift.
+    // Posture c14 (lockout together) and c16 (lower with control) moved out of setup into the hips and rush mistake
+    // fixes (W4 D-TEXT-PRINTED keeps them printed).
+    { kind: 'position', text: 'Chest up, bar against your shins.', claim: CL.c13 },
     { kind: 'brace', text: 'Build tension, then take a full breath into the belly.', claim: CL.c10 },
     { kind: 'load', text: 'Practise with light weight. Add load in small steps.', claim: CL.c18 },
   ],

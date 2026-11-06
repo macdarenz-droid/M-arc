@@ -157,7 +157,7 @@ export default {
       // === the parent's faults[key=thumbless] (card zoom shrug-grip wrong, inherit:2). Not drawn (no hand zoom).
       { key: 'thumbless', label: 'Thumb not wrapped', pose: {}, markers: [], alt: 'Thumb not wrapped around the bar.' },
     ],
-    gripLine: 'Overhand, hands slightly wider than your shoulders, thumbs wrapped around the bar.',   // c1, inherit:0 (W4 content K4)
+    gripLine: 'Overhand, hands slightly wider than your shoulders, thumbs wrapped around the bar.',   // cites c1 (overhand, slightly wider than the shoulders) and inherit:0 (card inherit[0] grip.thumb: the parent's c10, thumbs wrapped; this card's c10 is blood pressure); W4 content K4, recheck 2
     cue: 'Arms long, head level.',   // c1, c3
   },
   contacts: ['standing-feet'],

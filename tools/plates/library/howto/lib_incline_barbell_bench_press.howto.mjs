@@ -156,7 +156,7 @@ const MISTAKES = [
 const RISKS = [
   { key: 'face', text: 'Bar over face and neck: wrap thumbs. Use a spotter or safety pins.',
     claim: C(['DATA', 'MECH', 'CONSENSUS'], ['jumbelic2007', BCX, BC], 'c15, c6, inherit:0, inherit:3') },
-  { key: 'dropped', text: 'Weights dropping on the lifter are a leading cause of weight-training injuries.', claim: CL.c16 },
+  { key: 'dropped', text: 'In US hospital data, dropped weights are the top cause of lifting injuries.', claim: CL.c16 },
   { key: 'shoulder', text: 'Shoulder injuries are linked to poor technique. Flared elbows strain the shoulder.',
     claim: C(['DATA', 'CONSENSUS'], ['kolber2010', BC], 'c17, c8') },
 ];

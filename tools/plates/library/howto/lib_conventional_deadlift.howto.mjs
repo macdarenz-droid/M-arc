@@ -84,10 +84,31 @@ const SHOOT_DY = halve(dy => kneeR(landmarksOf(at(dy, END.root.tilt), H)) - SHOO
 const armGap = tilt => { const lm = landmarksOf(at(SHOOT_DY, tilt), H); return Math.hypot(...[0, 1, 2].map(i => LE['grip.r'][i] - lm['shoulder.r'][i])) - ARM; };
 const SHOOT_TILT = halve(armGap, END.root.tilt, END.root.tilt + 40);
 const ROUND = plateSpec.mistake.pose, SHOOT = { root: at(SHOOT_DY, SHOOT_TILT).root };
+// 'away' (card zoom dl-start Wrong, c8 + c1: "Rounded lower back, bar away from the shins"; W4 recheck 2, L5): the spec's
+// Mistake pose (the hips where they were, the pelvis tucked, the lower back rounded) with the bar moved BAR_FWD forward
+// of where it sits against the shins, and the spine flexion SOLVED (bracket the spec's flexion to +30 deg) so the
+// straight arm reaches it again. It is drawn dashed over the Right start (the house Mistake overlay).
+// DRAWING VALUE (D-SHIP-DRAWVAL): BAR_FWD 8 cm is a Wrong-pose size no card gives; no number from it appears in user copy.
+const BAR_FWD = 0.08;
+const AWAY_REACH = Object.fromEntries(Object.entries(ROUND.reach).map(([k, r]) => [k, { ...r, at: [r.at[0], r.at[1], r.at[2] + BAR_FWD] }]));
+const awayGap = sp => { const S = landmarksOf({ ...END, root: ROUND.root, trunk: sp, reach: AWAY_REACH }, H)['shoulder.r'], g = AWAY_REACH.r.at;
+  return Math.hypot(S[1] - g[1], S[2] - g[2]) - ARM; };
+const AWAY = { root: ROUND.root, trunk: halve(awayGap, ROUND.trunk, ROUND.trunk + 30), reach: AWAY_REACH };
+// The rounded back as one dashed arc, the spec's own HUMP method (romanian_deadlift's): from the faulty sacrum to the
+// faulty neck, its middle HUMP (the spec's 9.4 cm, a drawing value) above the middle of the correct flat back.
+const AWAY_HUMP = (() => {
+  const LM = landmarksOf({ ...END, ...AWAY }, H), A = LM.sacrum, B = LM.neck, flat = LE.sacrum.map((v, i) => (v + LE.backUpper[i]) / 2);
+  const d = [0, LE.backUpper[1] - LE.sacrum[1], LE.backUpper[2] - LE.sacrum[2]], L = Math.hypot(...d);
+  let n = [0, -d[2] / L, d[1] / L];
+  if (n[1] < 0) n = n.map(v => -v);
+  const P = flat.map((v, i) => v + n[i] * 0.094), C = P.map((v, i) => 2 * v - (A[i] + B[i]) / 2);
+  return Array.from({ length: 17 }, (_, k) => { const t = k / 16; return A.map((v, i) => (1 - t) ** 2 * v + 2 * t * (1 - t) * C[i] + t * t * B[i]); });
+})();
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
   round: { pose: { ...END, ...ROUND } },
+  away: { pose: { ...END, ...AWAY } },
   shoot: { pose: { ...END, ...SHOOT } },
 };
 
@@ -97,20 +118,21 @@ export const stills = {
 const zooms = [
   {
     key: 'dl-start', chip: 'Start', heading: 'Start position', kind: 'posture',
-    crop: { center: { at: 'backMid', pose: 'right', off: [0, 20] }, sizePx: 200 },
+    crop: { center: { at: 'backMid', pose: 'right', off: [10, 40] }, sizePx: 240 },   // W4 recheck 2: wide enough for the forward bar's dashed plate
     right: 'end',
-    wrong: { base: 'end', pose: ROUND, solid: true },
+    wrong: { base: 'end', pose: AWAY },   // W4 recheck 2 (L5): dashed Wrong over the Right start (the plate's Mistake overlay)
+    guides: [{ kind: 'dashed', pts: AWAY_HUMP }],   // the rounded back arc (the plate Mistake's guide form)
     callout: {
       right: { text: 'Flat back', anchor: 'backMid' },
-      wrong: { text: 'Back rounds', anchor: 'lumbar' },
+      wrong: { text: 'Back rounds', anchor: { at: 'lumbar', pose: 'mistake' } },   // c8 (the dot on the rounded lower back)
     },
     caption: {
-      right: 'Bar over mid-foot, shins near it, arms straight, back flat.',
-      wrong: 'Lower back rounds as the bar leaves the floor.',
+      right: 'Bar over mid-foot, shins near it, arms straight, back flat.',   // c1, c4, c7
+      wrong: 'Rounded lower back, bar away from the shins.',                  // c8, c1 (the card zoom's Wrong)
     },
     alt: {
       right: 'Side view, bar on the floor. The bar is over mid-foot, shins close, arms straight and vertical, back flat.',
-      wrong: 'Side view. The lower back rounds as the bar breaks from the floor.',
+      wrong: 'Side view, bar on the floor. The lower back rounds and the bar sits forward, away from the shins.',
     },
     feelRow: 'low-back-over',
   },
@@ -207,11 +229,12 @@ export default {
   },
   contacts: ['standing-feet'],   // inherited (card inherit[3] archetype.contact)
   setup: [
-    { kind: 'get-in', text: 'Load the bar on the floor with full-size plates.', claim: CL.c23 },
-    { kind: 'position', text: 'Bar over mid-foot, feet hip to shoulder width, toes slightly out.',
-      claim: C(['CONSENSUS'], [SL, ACE], 'c1, c2') },
-    // W4 D-TEXT-PRINTED: the grip step's c3/c4 stay printed in the Grip line, the dl-start caption and the arms fix;
-    // its slot carries posture c10 (tall finish) and c11 (lowering) instead, and the brace and tension steps merge.
+    // W4 recheck 2 (L2): the card's grip step is back as step 2, in the facts' order (load and place the bar, grip,
+    // brace and tension). The card's load and bar steps merge (c23, c1, c2) so posture c10 (tall finish) and c11
+    // (lowering) keep their printed steps (W4 D-TEXT-PRINTED); the brace and tension steps stay merged.
+    { kind: 'get-in', text: 'Load full-size plates. Bar over mid-foot, feet about hip width.',
+      claim: C(['CONSENSUS'], [SL, ACE], 'c23, c1, c2') },
+    { kind: 'grip', text: 'Grip about shoulder width, arms straight outside the knees.', claim: CL.c3 },
     { kind: 'brace', text: 'Breathe in and brace. Build tension slowly before liftoff.', claim: C(['CONSENSUS'], [SL], 'c5, c22') },
     { kind: 'position', text: 'Finish tall: hips and knees locked, shoulders back.', claim: CL.c10 },
     { kind: 'position', text: 'To lower, push hips back first. Bend knees once the bar passes.', claim: CL.c11 },

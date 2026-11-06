@@ -138,7 +138,7 @@ const MISTAKES = [
 ];
 const RISKS = [
   { key: 'face', text: 'Dumbbell over the face: grip it securely and use a spotter.', claim: CL.face },
-  { key: 'dropped', text: 'Weights dropping on the lifter are a leading cause of weight-training injuries.', claim: CL.c19 },
+  { key: 'dropped', text: 'In US hospital data, dropped weights are the top cause of lifting injuries.', claim: CL.c19 },
   { key: 'jumps', text: 'Small weight jumps load the shoulders hard. Start light, add weight in small steps.', claim: CL.jumps },
 ];
 

@@ -204,9 +204,11 @@ export default {
     { kind: 'get-in', text: 'New to lifting? Start with seated or chest-supported rows first.', claim: CL.c13 },
     // W4 D-TEXT-PRINTED: posture c10 (both feet flat) moved into this step.
     { kind: 'position', text: 'Bar on the floor. Stand over it, feet flat, shoulder width.', claim: CL.c10 },
-    // W4 D-TEXT-PRINTED: posture c5 (brace before each pull) moved into this step; overhand is the Grip line (c1).
-    { kind: 'grip', text: 'Hips a little above deadlift height. Grip slightly wider than shoulders. Brace.',
-      claim: C(['CONSENSUS'], [BB, GGR, 'baechle-grip'], 'c1, c16, c5') },
+    // W4 D-TEXT-PRINTED: posture c5 (brace before each pull) moved into this step. W4 recheck 2: the card step's overhand
+    // grip (c1) is back; the ruled 'thumbs wrapped' would make the step 15 words (SETUP_STEP_MAX_WORDS 12), so the
+    // thumb (c16) stays printed in the Grip line and this step cites c1 and c5 only.
+    { kind: 'grip', text: 'Hips a little above deadlift height. Overhand, slightly wider than shoulders. Brace.',
+      claim: C(['CONSENSUS'], [BB, GGR], 'c1, c5') },
     { kind: 'position', text: 'Back rounds to reach it? Raise the bar on blocks or plates.', zoom: 'pendlay-start', claim: CL.c8 },
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c7 },
   ],

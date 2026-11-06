@@ -184,7 +184,7 @@ export default {
   setup: [
     { kind: 'position', text: 'Feet shoulder width. Dumbbells on thighs, not hanging away from the legs.',
       claim: C(['CONSENSUS'], [SW, FB], 'c1, c4') },
-    { kind: 'brace', text: 'Shoulder blades down and back. Breathe in and brace before each rep.',
+    { kind: 'brace', text: 'Shoulder blades down and back. Breathe in, brace slightly before each rep.',   // c11 'brace your core slightly' (W4 recheck 2)
       claim: C(['CONSENSUS'], [SW, SL], 'c2, c11') },
     // W4 D-TEXT-PRINTED: posture c6 (knees behind the toes) and c7 (eyes to the floor) moved into this step.
     { kind: 'posture', text: 'Knees behind the toes. Eyes to the floor as you lower.', claim: C(['CONSENSUS'], [SW], 'c6, c7') },

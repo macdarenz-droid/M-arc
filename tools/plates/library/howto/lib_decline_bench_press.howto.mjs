@@ -56,6 +56,7 @@ const CL = {
   c15: C(['DATA'], ['kolber2010'], 'c15'),
   // card inherit[]: the field is barbell_bench_press's, true here by the card's own inherit reason (MECH)
   thumb: C(['MECH'], [], 'card inherit grip.thumb (inherit:0): the bar still travels over the face, neck and chest (barbell_bench_press thumb rule).'),
+  wrist: C(['MECH'], [], 'card inherit grip.wrist (inherit:2): the wrist sits under the same bar in the same way (barbell_bench_press wrist rule).'),
   hand: C(['MECH'], [], 'card inherit grip.handContact, grip.wrist, zooms.bar-low-palm (inherit:1, 2, 3): same bar and overhand grip (c3) (barbell_bench_press wrist and contact rule).'),
 };
 
@@ -110,7 +111,7 @@ const RISKS = [
   { key: 'face', text: 'Bar over face and neck: touch low. Wrap thumbs. Set the safety racks.',
     claim: C(['DATA', 'MECH', 'CONSENSUS'], ['jumbelic2007', WL, SLG], 'c12, c6, inherit:0') },
   { key: 'pec', text: 'Pec tendon rupture while lowering the bar.', claim: CL.c14 },
-  { key: 'dropped', text: 'Weights dropping on the lifter are a leading cause of weight-training injuries.', claim: CL.c13 },
+  { key: 'dropped', text: 'In US hospital data, dropped weights are the top cause of lifting injuries.', claim: CL.c13 },
 ];
 
 export default {
@@ -128,7 +129,7 @@ export default {
     thumb: { mode: 'wrapped', claim: CL.thumb },   // inherited (grip.thumb)
     contact: 'heel',                               // inherited (grip.handContact)
     // inherited (grip.wrist): the parent's ext range (pairs.mjs CONVENTIONS ga:push-heel, a convention) and words.
-    wrist: { ext: [0, 15], limitText: 'Bar over the wrist, wrist not bent back.', claim: CL.hand },
+    wrist: { ext: [0, 15], limitText: 'Bar over the wrist, wrist not bent back.', claim: CL.wrist },   // its own cite: inherit:2 only (recheck2)
     faults: [
       // inherited (zooms.bar-low-palm): the parent's bent-back fault, the card zoom's Wrong. Not drawn.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar high toward the fingers, wrist bent back.' },

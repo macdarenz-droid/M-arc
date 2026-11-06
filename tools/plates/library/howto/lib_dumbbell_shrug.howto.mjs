@@ -16,6 +16,7 @@
 // Red flags: the card's redFlags (shoulder): the shared shoulder box, linked by the pain row's redFlag: 'shoulder'.
 // No variant line (equipment 'Dumbbells'). Not cited: c10 (a range comparison with the barbell shrug, no checkpoint).
 import plateSpec from '../specs/dumbbell_shrug.mjs';
+import { landmarksOf } from '../engine.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER };
 
@@ -69,9 +70,19 @@ const CL = {
 // over it, as the engine draws it (card plate.mistake c6: the elbows bend to pull the dumbbells up). The card zoom
 // dshrug-top Wrong is the plate's drawn fault (posture zoom M).
 const MIS = plateSpec.mistake.pose;
+// 'top' (card zoom dshrug-top Right, c2 c3; W4 recheck 2, L1: the top must read): the spec's end pose with both shoulders
+// raised TOP_ELEV and each grip raised by the same amount, so the arms stay straight; the low position (the spec's start
+// shoulder line) is drawn as a dashed level across both crops.
+// DRAWING VALUE (D-SHIP-DRAWVAL): TOP_ELEV 12 cm (the spec draws 5) is a Right-pose size no card gives ("as high as
+// possible", c2); no number from it appears in user copy.
+const H = 1.75, END = plateSpec.poses.end, TOP_ELEV = 12, DY = (TOP_ELEV - END.scap.elev) / 100;
+const TOP = { scap: { ...END.scap, elev: TOP_ELEV },
+  reach: Object.fromEntries(Object.entries(END.reach).map(([k, r]) => [k, { ...r, at: [r.at[0], r.at[1] + DY, r.at[2]] }])) };
+const LOW = landmarksOf(plateSpec.poses.start, H)['shoulderTop.l'];
 export const stills = {
   start: { pose: plateSpec.poses.start },
-  end: { pose: plateSpec.poses.end },
+  end: { pose: END },
+  top: { pose: { ...END, ...TOP } },
   pull: { pose: { ...plateSpec.poses.end, ...MIS } },
 };
 
@@ -83,8 +94,9 @@ const zooms = [
   {
     key: 'dshrug-top', chip: 'Top', heading: 'Top position', kind: 'posture',
     crop: { center: { at: 'navel', pose: 'right', off: [0, -10] }, sizePx: 200 },   // W4 panel L8: on the midline, wide enough for both arms and dumbbells
-    right: 'end',
+    right: { base: 'end', pose: TOP },   // W4 recheck 2 (L1): both shoulders clearly raised, arms straight
     wrong: { base: 'end', pose: MIS, solid: true },
+    guides: [{ kind: 'level', at: LOW }],   // the low position: the shoulder line before the lift, dashed
     callout: {
       right: { text: 'Arms straight', anchor: 'elbow.l' },
       wrong: { text: 'Elbows bent', anchor: 'elbow.l' },

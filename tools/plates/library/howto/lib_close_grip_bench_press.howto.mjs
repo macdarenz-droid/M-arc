@@ -8,9 +8,11 @@
 // familyRefusal, `===`); each claim cites this card's inherit[] entry, not the parent.
 // No hand zoom (D-SHIP-HANDW4, gap-ruled on tools/plates/library/hands/no-zoom.json): bar-low-palm, inherited, is a push
 // heel-of-palm pair golden B's engine cannot draw (D-LIB7-19). Its Right words are the gripLine, its Wrong the fault alt.
-// Posture zoom `elbows-to-ribs` (c2): M, the Wrong is the plate's own Mistake (elbows flare, bar lands high).
+// Posture zoom `elbows-to-ribs` (c2): DV, the plate's own Mistake (bar lands high) with one drawing value, the elbow's
+// aim (FLARE_POLE, below), so the flare reads in side view (W4 panel round 2, recheck2 L5).
 // Red flags: the card's redFlags (shoulder), golden B's shared shoulder box.
 import plateSpec from '../specs/close_grip_bench_press.mjs';
+import { landmarksOf } from '../engine.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER };
 
@@ -56,7 +58,7 @@ const CL = {
   c12: C(['DATA'], ['kolber2010'], 'c12'),
   // card inherit[]: the field is barbell_bench_press's, true here by the card's own inherit reason (MECH)
   thumb: C(['MECH'], [], 'card inherit grip.thumb (inherit:0): the bar still travels over the face, neck and chest (barbell_bench_press thumb rule).'),
-  hand: C(['MECH'], [], 'card inherit grip.handContact, grip.wrist, zooms.bar-low-palm (inherit:1, 2, 5): same straight bar from the base of the palm (barbell_bench_press wrist and contact rule).'),
+  wrist: C(['MECH'], [], 'card inherit grip.wrist (inherit:2): the low-palm, straight-wrist rule is where the bar sits in the hand, which a narrower grip does not change (barbell_bench_press wrist rule).'),
   pins: C(['MECH'], [], 'card inherit setup.safety-pins (inherit:3): same flat bench in the same rack (barbell_bench_press pins step).'),
   spotter: C(['MECH'], [], 'card inherit setup.spotter (inherit:4): same J-hooks over the face (barbell_bench_press spotter step).'),
 };
@@ -64,26 +66,45 @@ const CL = {
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses: the end (bar on the low chest, elbows by the ribs; c4, c2) and the spec's Mistake
 // pose merged over it, as the engine draws it (elbows drift from the ribs, the bar lands high; card plate.mistake, c2).
-// The card zoom elbows-to-ribs Wrong is that drawn fault, so no drawing value is added. The zoom draws it solid, on its
-// own (wrong.solid): dashed over the end pose the engine masked it inside the body and the Wrong read as the Right
-// (W4 layers panel L1/L5, #391 6653540190).
-const MIS = plateSpec.mistake.pose;
+// The zoom's Wrong (W4 panel round 2, recheck2 L5, #391 6682615402): the spec's Mistake aims the elbow straight out to
+// the side, which a side view folds into a small knot over the shoulder. The Wrong keeps the spec's high bar (MIS reach
+// `at`, c4 opposite) and changes one joint, the elbow: FLARE_POLE is a DRAWING VALUE (no card number; never in copy),
+// the elbow's aim out and toward the feet, so it lands at shoulder height, about a quarter metre out from the shoulder
+// (c2: away from the ribs). It is drawn as the plate's Mistake overlay: the Right (end) pose stays under it, the flared
+// arm is a full red dashed upper arm and forearm (closed capsules, as the spec's own ghost arm), the high bar a dashed ring.
+const MIS = plateSpec.mistake.pose, H = 1.75;
+const FLARE_POLE = [1, 0, 1];   // drawing value: elbow aim (x out per side, y up, z footward)
+const flareReach = side => ({ ...MIS.reach[side], pole: [(side === 'l' ? 1 : -1) * FLARE_POLE[0], FLARE_POLE[1], FLARE_POLE[2]] });
+const FLARE = { reach: { l: flareReach('l'), r: flareReach('r') } };
+const LF = landmarksOf({ ...plateSpec.poses.end, ...FLARE }, H);
+// capsule outline of a limb between two side-view points (radii as the spec's ghost arm), closed
+const capsule = (a, b, ra, rb, n = 8) => { const u = [b[1] - a[1], b[2] - a[2]], k = Math.hypot(...u), t = [u[0] / k, u[1] / k], nn = [-t[1], t[0]], pts = [];
+  const ang0 = Math.atan2(nn[0], nn[1]);
+  for (let i = 0; i <= n; i++) { const q = ang0 - Math.PI * i / n; pts.push([0, b[1] + rb * Math.cos(q), b[2] + rb * Math.sin(q)]); }
+  for (let i = 0; i <= n; i++) { const q = ang0 + Math.PI - Math.PI * i / n; pts.push([0, a[1] + ra * Math.cos(q), a[2] + ra * Math.sin(q)]); }
+  return [...pts, pts[0]]; };
+const FLARE_GUIDES = [
+  { kind: 'dashed', pts: capsule(LF['shoulder.r'], LF['elbow.r'], 0.052, 0.040) },   // the flared upper arm, elbow at shoulder height
+  { kind: 'dashed', pts: capsule(LF['elbow.r'], LF['grip.r'], 0.040, 0.026) },       // its forearm up to the high bar
+  plateSpec.mistake.guides[0],                                                       // the spec's high-bar ring (c4 opposite)
+];
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: plateSpec.poses.end },
-  flare: { pose: { ...plateSpec.poses.end, ...MIS } },
+  flare: { pose: { ...plateSpec.poses.end, ...FLARE } },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except the hand zoom `bar-low-palm` (D-SHIP-HANDW4, above). Zoom shell shape (callout with an anchor
 // at the landmark it names, no guide mark): crop centre on the right pose's elbow for both halves; the Wrong is the
-// spec's Mistake pose (`stills.flare`) drawn solid: the bar high on the chest, the upper arm out from the ribs.
+// flared overlay above (`stills.flare`) over the Right pose: the bar high on the chest, the upper arm out from the ribs.
 const zooms = [
   {
     key: 'elbows-to-ribs', chip: 'Elbows', heading: 'Elbow path', kind: 'posture',
     crop: { center: { at: 'elbow.r', pose: 'right', off: [20, -10] }, sizePx: 180 },
     right: 'end',
-    wrong: { base: 'end', pose: MIS, solid: true },
+    wrong: { base: 'end', pose: FLARE, parts: ['arm.r', 'bar'] },
+    guides: FLARE_GUIDES,
     callout: {
       right: { text: 'Elbows to ribs', anchor: 'elbow.r' },
       wrong: { text: 'Elbows flare', anchor: { at: 'elbow.r', pose: 'mistake' } },
@@ -94,7 +115,7 @@ const zooms = [
     },
     alt: {
       right: 'Side view, bottom of the press. The elbows stay close to the ribs. The bar touches the low chest, where the ribs end.',
-      wrong: 'Side view, bottom of the press. The elbows drift away from the ribs and the bar lands high on the chest.',
+      wrong: 'Side view, bottom of the press. The elbows drift out from the ribs to shoulder height. The bar lands high on the chest.',
     },
     feelRow: 'front-shoulder',
   },
@@ -135,7 +156,7 @@ const MISTAKES = [
 const RISKS = [
   { key: 'face', text: 'Bar over face and neck: touch low. Wrap thumbs. Use pins or a spotter.',
     claim: C(['DATA', 'MECH', 'CONSENSUS'], ['jumbelic2007', SLG, 'sbs-bench'], 'c10, c4, inherit:0, inherit:3, inherit:4') },
-  { key: 'dropped', text: 'Weights dropping on the lifter are a leading cause of weight-training injuries.', claim: CL.c11 },
+  { key: 'dropped', text: 'In US hospital data, dropped weights are the top cause of lifting injuries.', claim: CL.c11 },
   { key: 'shoulder', text: 'Shoulder injuries are common in lifting and linked to poor technique.', claim: CL.c12 },
 ];
 
@@ -154,7 +175,7 @@ export default {
     thumb: { mode: 'wrapped', claim: CL.thumb },   // inherited (grip.thumb)
     contact: 'heel',                               // inherited (grip.handContact)
     // inherited (grip.wrist): the parent's ext range (pairs.mjs CONVENTIONS ga:push-heel, a convention) and words.
-    wrist: { ext: [0, 15], limitText: 'Bar over the wrist, wrist not bent back.', claim: CL.hand },
+    wrist: { ext: [0, 15], limitText: 'Bar over the wrist, wrist not bent back.', claim: CL.wrist },   // its own cite: inherit:2 only (recheck2)
     faults: [
       // inherited (zooms.bar-low-palm): the parent's bent-back fault, the card zoom's Wrong. Not drawn.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Bar high toward the fingers, wrist bent back.' },
