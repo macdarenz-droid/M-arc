@@ -492,9 +492,9 @@
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 17,
-      "rawMax": 10662,
-      "gzMax": 2544,
+      "n": 23,
+      "rawMax": 14425,
+      "gzMax": 3441,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -504,8 +504,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 3096068,
-      "gzMax": 780288,
+      "rawMax": 4188798,
+      "gzMax": 1055684,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

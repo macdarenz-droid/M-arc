@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=51a1da1f74af2ba623bcca1f1f2d302d235625a549fabe11c009ec3de37507b6
+{
+  "id": "lib_barbell_shrug",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/barbell_shrug.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-shrug",
+    "sl-barbell-shrug",
+    "acsm2009",
+    "macdougall1985",
+    "baechle-grip",
+    "kolber2010",
+    "hold-default",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

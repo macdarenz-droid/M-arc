@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=aa625cd927280d641d77a85ec0b42fda2d0f50d991b205016fa22df3d0bb7b23
+{
+  "id": "lib_smith_machine_shrug",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/smith_machine_shrug.json",
+    "rev": 1
+  },
+  "sources": [
+    "motra-smith-shrug",
+    "eos-smith",
+    "acsm2009",
+    "kolber2010",
+    "macdougall1985",
+    "baechle-grip",
+    "hold-default",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=561920a83e38b1f4ec3a4cf20966c94a68336e191b284d50168c66c2a3a38c15
+{
+  "id": "lib_t_bar_row",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/t_bar_row.json",
+    "rev": 1
+  },
+  "sources": [
+    "ggr-t-bar",
+    "barbend-t-bar",
+    "acsm2009",
+    "macdougall1985",
+    "baechle-grip",
+    "odriscoll1992",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

@@ -282,6 +282,96 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W2-STAMP",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
+    },
+    {
+      "scope": "lib_pendlay_row",
+      "hash": "056e461513cd1b009a612acda7af7ba2428efb3dc81e4b0f62c504611a19b6a1",
+      "date": "2026-11-06",
+      "fetcher": "LIB-SHIP W4: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/pendlay_row.json",
+      "critic": "LIB-SHIP W4: fresh Opus content critics on card and quotes (the W4 panel's three content sets, #391 6653540190, then the focused recheck 6682615402; every planted error caught); findings fixed in fix rounds 1 and 2 and diff-checked by the supervisor (#391)",
+      "safety": "LIB-SHIP W4: tier A; fresh Opus safety checker at the W4 panel (18 tier-A sheets) and the focused recheck (planted unsafe line caught): nothing unsafe; way-out question answered yes where asked (D-SHIP-WAYOUT)",
+      "reviewer": "LIB-SHIP W4: calibrated W4 layers panel of 3 fresh Opus critics per set at 390 px (golden-B anchors machine_chest_press and seated_cable_row, every plant caught; #391 6653540190), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more",
+      "findings": [
+        "D-SHIP-W4-FLIPSET: step 3's deviation from the 12-word step cap accepted (c1, c16, c5); the thumbs stay in the Grip line (c16); recorded"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-FLIPSET",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758"
+    },
+    {
+      "scope": "lib_landmine_row",
+      "hash": "fa5aba22b61c0789627e9b2ba65f4ab54d4bc2eb818d9f803d80abe996fd34ca",
+      "date": "2026-11-06",
+      "fetcher": "LIB-SHIP W4: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/landmine_row.json",
+      "critic": "LIB-SHIP W4: fresh Opus content critics on card and quotes (the W4 panel's three content sets, #391 6653540190, then the focused recheck 6682615402; every planted error caught); findings fixed in fix rounds 1 and 2 and diff-checked by the supervisor (#391)",
+      "safety": "LIB-SHIP W4: tier A; fresh Opus safety checker at the W4 panel (18 tier-A sheets) and the focused recheck (planted unsafe line caught): nothing unsafe; way-out question answered yes where asked (D-SHIP-WAYOUT)",
+      "reviewer": "LIB-SHIP W4: calibrated W4 layers panel of 3 fresh Opus critics per set at 390 px (golden-B anchors machine_chest_press and seated_cable_row, every plant caught; #391 6653540190), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-FLIPSET",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758"
+    },
+    {
+      "scope": "lib_t_bar_row",
+      "hash": "f285b7ba0d4d581083d7ea9207e7a00bebfc3c56d762fd17cf232d27c250fd69",
+      "date": "2026-11-06",
+      "fetcher": "LIB-SHIP W4: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/t_bar_row.json",
+      "critic": "LIB-SHIP W4: fresh Opus content critics on card and quotes (the W4 panel's three content sets, #391 6653540190, then the focused recheck 6682615402; every planted error caught); findings fixed in fix rounds 1 and 2 and diff-checked by the supervisor (#391)",
+      "safety": "LIB-SHIP W4: tier A; fresh Opus safety checker at the W4 panel (18 tier-A sheets) and the focused recheck (planted unsafe line caught): nothing unsafe; way-out question answered yes where asked (D-SHIP-WAYOUT)",
+      "reviewer": "LIB-SHIP W4: calibrated W4 layers panel of 3 fresh Opus critics per set at 390 px (golden-B anchors machine_chest_press and seated_cable_row, every plant caught; #391 6653540190), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-FLIPSET",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758"
+    },
+    {
+      "scope": "lib_barbell_shrug",
+      "hash": "098c64d5d2a2a3b2cdce8a517e38f89d00dcd24bd1beac2271fe8e6818461f35",
+      "date": "2026-11-06",
+      "fetcher": "LIB-SHIP W4: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/barbell_shrug.json",
+      "critic": "LIB-SHIP W4: fresh Opus content critics on card and quotes (the W4 panel's three content sets, #391 6653540190, then the focused recheck 6682615402; every planted error caught); findings fixed in fix rounds 1 and 2 and diff-checked by the supervisor (#391)",
+      "safety": "LIB-SHIP W4: tier A; fresh Opus safety checker at the W4 panel (18 tier-A sheets) and the focused recheck (planted unsafe line caught): nothing unsafe; way-out question answered yes where asked (D-SHIP-WAYOUT)",
+      "reviewer": "LIB-SHIP W4: calibrated W4 layers panel of 3 fresh Opus critics per set at 390 px (golden-B anchors machine_chest_press and seated_cable_row, every plant caught; #391 6653540190), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more",
+      "findings": [
+        "D-SHIP-W4-FLIPSET: the gripLine cites {c1, c10}, each source comment confirmed; recorded"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-FLIPSET",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758"
+    },
+    {
+      "scope": "lib_cable_shrug",
+      "hash": "e265f9dcc4d784da577b6541c2aeeabb3e2896d8907ef4771c956c539ce11b92",
+      "date": "2026-11-06",
+      "fetcher": "LIB-SHIP W4: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/cable_shrug.json",
+      "critic": "LIB-SHIP W4: fresh Opus content critics on card and quotes (the W4 panel's three content sets, #391 6653540190, then the focused recheck 6682615402; every planted error caught); findings fixed in fix rounds 1 and 2 and diff-checked by the supervisor (#391)",
+      "safety": "LIB-SHIP W4: tier B, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-SHIP W4: calibrated W4 layers panel of 3 fresh Opus critics per set at 390 px (golden-B anchors machine_chest_press and seated_cable_row, every plant caught; #391 6653540190), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-FLIPSET",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758"
+    },
+    {
+      "scope": "lib_smith_machine_shrug",
+      "hash": "dbec1bfd8c34df1f34733353b83a5bc74b81e5b0f356c35c8703e767cfbdee63",
+      "date": "2026-11-06",
+      "fetcher": "LIB-SHIP W4: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/smith_machine_shrug.json",
+      "critic": "LIB-SHIP W4: fresh Opus content critics on card and quotes (the W4 panel's three content sets, #391 6653540190, then the focused recheck 6682615402; every planted error caught); findings fixed in fix rounds 1 and 2 and diff-checked by the supervisor (#391)",
+      "safety": "LIB-SHIP W4: tier B, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-SHIP W4: calibrated W4 layers panel of 3 fresh Opus critics per set at 390 px (golden-B anchors machine_chest_press and seated_cable_row, every plant caught; #391 6653540190), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more",
+      "findings": [
+        "D-SHIP-W4-FLIPSET: the gripLine cites {c1, inherit:0}, each source comment confirmed; the alt \"Only the shoulders lift, straight up toward the ears.\" (c2) accepted; recorded"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-FLIPSET",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758"
     }
   ]
 }

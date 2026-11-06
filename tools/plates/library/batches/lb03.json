@@ -25,7 +25,7 @@
     "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/",
     "The relationship between wrist position, grasp size, and grip strength. (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_landmine_row": {
    "src": "library/specs/landmine_row.mjs",
@@ -46,7 +46,7 @@
     "The relationship between wrist position, grasp size, and grip strength. (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
     "How to Do the T-Bar Row: Best Landmine Move to Build Your Back (Kate Neudecker, Men's Health UK, updated 2024-10-02) (2024). https://www.menshealth.com/uk/how-tos/a735444/t-bar-row/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_one_arm_dumbbell_row": {
    "src": "library/specs/one_arm_dumbbell_row.mjs",
@@ -164,7 +164,7 @@
     "The relationship between wrist position, grasp size, and grip strength. (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
     "How to Do the T-Bar Row: Best Landmine Move to Build Your Back (Kate Neudecker, Men's Health UK, updated 2024-10-02) (2024). https://www.menshealth.com/uk/how-tos/a735444/t-bar-row/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_barbell_shrug": {
    "src": "library/specs/barbell_shrug.mjs",
@@ -182,7 +182,7 @@
     "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
     "Shoulder injuries attributed to resistance training: a brief review. (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_cable_shrug": {
    "src": "library/specs/cable_shrug.mjs",
@@ -204,7 +204,7 @@
     "Muscle activation during selected strength exercises in women with chronic neck muscle pain. (2008). https://pubmed.ncbi.nlm.nih.gov/18339796/ PMID 18339796",
     "Shoulder pain (NHS). https://www.nhs.uk/conditions/shoulder-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_dumbbell_shrug": {
    "src": "library/specs/dumbbell_shrug.mjs",
@@ -241,7 +241,7 @@
     "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
     "Arterial blood pressure response to heavy resistance exercise (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   }
  }
 }

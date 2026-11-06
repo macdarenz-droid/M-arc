@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { W4_STAGED, sheetProblems, w4Of } from './checks/ship-w4';
+import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -122,9 +122,9 @@ describe('LIB-13 A5: lb3/rows.json holds exactly the drawn, non-held LB3 ids', (
   });
 });
 
-// LIB-SHIP W4 (D-SHIP-A9, ruling 3; SHIP W4 PLAN RULED #391 6647760116): replaces "LIB-13 A9: nothing ships"
+// LIB-SHIP W4 (D-SHIP-A9, ruling 3; D-SHIP-W4-FLIPSET #391 6682985023): replaces "LIB-13 A9: nothing ships"
 // (D-LIB13-AHEAD). The LB3 rows (LIB-13's 8 and LIB-13s's 4 shrugs) moved into batches/lb03.json (D-SHIP-MOVE); the ruled
-// ids (checks/ship-w4.ts) ship there and the staged ones (W4_STAGED) stay at approved-plate. The old reds stay (a row at
+// 6 (checks/ship-w4.ts W4_SHIPPED) ship there and the other 6 (W4_WAITING, each with its reason) stay at approved-plate. The old reds stay (a row at
 // another stage, an LB3 id in another batch or golden file, the rows file read as one more batch, a reused id outside
 // pilot A); new reds: an id at shipped that is not ruled, a ruled id with its stamp removed, and the rows copied back into
 // lb3/rows.json.
@@ -135,10 +135,12 @@ describe('LIB-SHIP W4 A9 (replaces LIB-13 A9, D-LIB13-AHEAD): exactly the ruled 
   /** One line per row off the ruled state: a ruled id not shipped, an unruled id at any stage but approved-plate. */
   const shipProblems = (rows: Record<string, any>, ruled = RULED()) => Object.entries(rows).flatMap(([id, r]) =>
     ruled.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
-  it('every ruled LB3 row is at stage shipped and every other one (the staged ids) at approved-plate', () => {
+  it('every ruled LB3 row is at stage shipped and every other one (the waiting ids) at approved-plate', () => {
     const rows = readJson(ROWS).rows;
     expect(RULED().filter(id => !ALL.includes(id))).toEqual([]);
-    expect(Object.keys(rows).filter(id => !RULED().includes(id)).sort()).toEqual([...W4_STAGED].filter(id => ALL.includes(id)).sort());
+    expect(RULED()).toEqual(Object.keys(rows).filter(id => RULED().includes(id)));   // row order
+    expect(RULED()).toHaveLength(6);
+    expect(Object.keys(rows).filter(id => !RULED().includes(id))).toEqual(waitOf(ROWS));
     expect(shipProblems(rows)).toEqual([]);
   });
   it('mutations: an unruled id at shipped, a ruled id held back, and a row at drawing are red', () => {

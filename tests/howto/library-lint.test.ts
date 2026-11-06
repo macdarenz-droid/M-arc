@@ -416,12 +416,13 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
   const SLRDL = 'lib_single_leg_romanian_deadlift';
   // LIB-SHIP W4 (ruling 3; D-SHIP-FAMILY W4, #391 6647760116): the shipped rows are the 8, then the W1/W2 ids and the W4
-  // ids (checks/ship-w4.ts) in registry order; the map adds one entry per W4 child, each covering its card's inherit[]
-  // except the fields D-SHIP-W4-ROUTE leaves unmapped until F-W4-INHERIT (asserted exactly, so they stay refused).
+  // ids (checks/ship-w4.ts) in registry order; the map adds one entry per W4 child (shipped or waiting), each covering its
+  // card's inherit[] exactly. F-W4-INHERIT (RESEARCH-ROUTES-1 part 1, e00a7036) dropped the fields D-SHIP-W4-ROUTE left
+  // unmapped (W4_ROUTED); put back, each is refused again.
   const W4_CHILDREN = ['arnold_press', 'close_grip_bench_press', 'decline_bench_press', 'incline_barbell_bench_press', 'incline_dumbbell_press',
     'smith_machine_bench_press', 'cable_shrug', 'dumbbell_shrug', 'smith_machine_shrug', 'conventional_deadlift', 'dumbbell_romanian_deadlift',
     'sumo_deadlift', 'landmine_row', 'pendlay_row', 't_bar_row'].map(c => `lib_${c}`);
-  const W4_UNMAPPED: Record<string, string[]> = { lib_cable_shrug: ['grip.wrist', 'grip.width'], lib_dumbbell_shrug: ['grip.wrist'],
+  const W4_ROUTED: Record<string, string[]> = { lib_cable_shrug: ['grip.wrist', 'grip.width'], lib_dumbbell_shrug: ['grip.wrist'],
     lib_sumo_deadlift: ['plate.equipment (bar on the floor with full-size plates, parent c23)'] };
   it('the map covers every inherit[] field of the 9 cards exactly, and no field is unmapped', () => {
     const order = (SHIPPED as any[]).map(r => r.id), regOrder = (rowsOf() as any[]).map(r => r.id);
@@ -437,14 +438,18 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     const slrdl = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/cards/single_leg_romanian_deadlift.json'), 'utf8'));
     expect([slrdl.parent, FM.unmappedFields(SLRDL, slrdl)]).toEqual(['romanian_deadlift', []]);
     expect(Object.keys(FM.INHERIT_MAP[SLRDL]).sort()).toEqual(slrdl.inherit.map((e: any) => e.field).sort());
-    // LIB-SHIP W4: each W4 child's card names its parent; its mapped fields are its card's inherit[] less exactly the ruled
-    // unmapped ones (cable_shrug, dumbbell_shrug and sumo stay refused by familyRefusal until F-W4-INHERIT)
+    // LIB-SHIP W4: each W4 child's card names its parent and its mapped fields are exactly its card's inherit[]; mutation:
+    // a routed field put back (the pre-F-W4-INHERIT card) is unmapped and refused by familyRefusal
     for (const id of W4_CHILDREN) {
       const card = JSON.parse(readFileSync(join(ROOT, `docs/research/howto/cards/${id.slice(4)}.json`), 'utf8'));
       expect([id, card.inherit.length > 0, typeof card.parent]).toEqual([id, true, 'string']);
-      expect([id, FM.unmappedFields(id, card)]).toEqual([id, W4_UNMAPPED[id] ?? []]);
-      expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).filter((f: string) => !(W4_UNMAPPED[id] ?? []).includes(f)).sort()]);
-      if (W4_UNMAPPED[id]) expect([id, FM.familyRefusal(id, { research: { card: `docs/research/howto/cards/${id.slice(4)}.json` } }, () => card, () => ({}))]).toEqual([id, UNRULED(id)]);
+      expect([id, FM.unmappedFields(id, card)]).toEqual([id, []]);
+      expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).sort()]);
+      if (W4_ROUTED[id]) {
+        const back = { ...card, inherit: [...card.inherit, ...W4_ROUTED[id].map(field => ({ field, why: 'pre-F-W4-INHERIT' }))] };
+        expect([id, FM.unmappedFields(id, back)]).toEqual([id, W4_ROUTED[id]]);
+        expect([id, FM.familyRefusal(id, { research: { card: `docs/research/howto/cards/${id.slice(4)}.json` } }, () => back, () => ({}))]).toEqual([id, UNRULED(id)]);
+      }
     }
     expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys(), SLRDL, ...W4_CHILDREN].sort());
   });

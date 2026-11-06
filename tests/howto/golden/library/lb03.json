@@ -372,6 +372,27 @@
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_smith_machine_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
       "supersedes": null,
       "prev": "0250c6c071c5ce80422e245533108dadde6a3ae1271887a983fc7d7dfcf344d6"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB3",
+      "ids": [
+        "lib_pendlay_row",
+        "lib_landmine_row",
+        "lib_t_bar_row",
+        "lib_barbell_shrug",
+        "lib_cable_shrug",
+        "lib_smith_machine_shrug"
+      ],
+      "pageSha256": "0b421cf6de6b016ca93b321fa503add509d657157aa50916b3cf538cee64c984",
+      "bytes": 1039277,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W4-FLIPSET",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
+      "date": "2026-11-06",
+      "why": "W4 LAYERS APPROVED for the flip set (D-SHIP-W4-FLIPSET, #391 6682985023): the W4 layers panel (#391 6653540190; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more. The page holds exactly the 6 shipped ids, each card byte-equal to the 2af8092c build.",
+      "supersedes": null,
+      "prev": "355dfe176c29cce7b6d70e9365db8c8f5faa6c42c82bb0445860295d1868df91"
     }
   ]
 }

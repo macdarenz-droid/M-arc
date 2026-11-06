@@ -10,7 +10,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { RULED, checkC3Library, checkConventionGrip, checkGripLibrary } from './checks/c3-library';
 import { checkC3 } from './checks/c3';
 import { checkC1 } from './checks/c1';
-import { W4_IDS, W4_STAGED } from './checks/ship-w4';
+import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
 import exercises from '../../src/data/exercises.json';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -31,11 +31,11 @@ const gapKeyOf = (id: string) => keyMods.find((m: any) => m.GAPS && id in m.GAPS
 
 describe('LIB-SHIP A1: the shipped set', () => {
   it('shippedIds() is the 8 then exactly the ruled library ids; none of the owner\'s 11 ships', () => {
-    // LIB-SHIP W4 (ruling 3): then the W4 ids (checks/ship-w4.ts), all in registry order; no W4 staged id ships
+    // LIB-SHIP W4 (ruling 3): then the W4 ids (checks/ship-w4.ts), all in registry order; no W4 waiting id ships
     const ruled = [...RULED_SHIPPED, ...W4_IDS];
     expect(reg.shippedIds()).toEqual([...EIGHT, ...reg.rows().map((r: any) => r.id).filter((id: string) => ruled.includes(id))]);
     expect(ruled.filter(id => !reg.shippedIds().includes(id))).toEqual([]);
-    expect(reg.shippedIds().filter((id: string) => W4_STAGED.includes(id))).toEqual([]);
+    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.includes(id))).toEqual([]);
     const eleven = ['hip_thrust', 'pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch', 'overhead_cable_triceps_extension',
       'cable_rear_delt_fly', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'leg_press_calf_raise'].map(s => `lib_${s}`);
     expect(reg.shippedIds().filter((id: string) => eleven.includes(id))).toEqual([]);
@@ -393,10 +393,10 @@ describe('LIB-SHIP W4: the family rulings (D-SHIP-W4-THUMB, -GAPZOOM, -PADZOOM, 
   const parentOf = (id: string) => `lib_${cardOf(id).parent}`;
   beforeAll(async () => {
     FAM = await import(/* @vite-ignore */ url('tools/plates/library/lint/family.mjs'));
-    const ids = Object.keys(FAM.INHERIT_MAP).filter(id => W4_IDS.includes(id) || W4_STAGED.includes(id));
+    const ids = Object.keys(FAM.INHERIT_MAP).filter(id => W4_IDS.includes(id) || W4_WAITING_IDS.includes(id));
     for (const id of new Set([...ids, ...ids.map(parentOf)])) C[id] = (await content.loadContent(id)).content;
   });
-  const W4 = () => Object.keys(C).filter(id => id in FAM.INHERIT_MAP && (W4_IDS.includes(id) || W4_STAGED.includes(id)));
+  const W4 = () => Object.keys(C).filter(id => id in FAM.INHERIT_MAP && (W4_IDS.includes(id) || W4_WAITING_IDS.includes(id)));
   /** familyRefusal of `id` (or of `child`) against `parent` (default: its real parent sheet). `onlyMapped` reads the card
    *  with its unmapped fields dropped (the probe the design ran for cable_shrug, dumbbell_shrug and sumo). */
   const refuse = (id: string, { child = C[id], parent = C[parentOf(id)], onlyMapped = false, only }: { child?: any; parent?: any; onlyMapped?: boolean; only?: string } = {}) => {
@@ -433,11 +433,17 @@ describe('LIB-SHIP W4: the family rulings (D-SHIP-W4-THUMB, -GAPZOOM, -PADZOOM, 
     .filter(([, paths]) => JSON.stringify(paths) === THUMB_STAR)
     .flatMap(([f]) => ([[parentOf(id), 'parent'], [id, 'child']] as [string, string][]).filter(([x]) => sheet(x).handling?.pose !== undefined).map(([x, who]) => `${id}: ${f}: THUMB* but the ${who} ${x} has handling.pose (D-SHIP-W4-THUMB)`)));
 
-  it('every W4 child passes the family check against its real parent sheet (the 3 D-SHIP-W4-ROUTE ones on their mapped fields)', () => {
-    const ROUTE = ['lib_cable_shrug', 'lib_dumbbell_shrug', 'lib_sumo_deadlift'];
-    expect(W4().sort()).toEqual([...W4_IDS, ...W4_STAGED].filter(id => id in FAM.INHERIT_MAP).sort());
-    for (const id of W4()) expect([id, refuse(id, { onlyMapped: ROUTE.includes(id) })]).toEqual([id, null]);
-    for (const id of ROUTE) expect([id, refuse(id)]).toEqual([id, `${id}: family: docs/research/howto/cards/${id.slice(4)}.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`]);
+  // F-W4-INHERIT (RESEARCH-ROUTES-1 part 1, e00a7036) dropped the D-SHIP-W4-ROUTE fields from the 3 cards: each W4 child now
+  // passes on its full card; the routed field put back is refused again.
+  it('every W4 child passes the family check against its real parent sheet on its full card; red: a D-SHIP-W4-ROUTE field put back', () => {
+    const ROUTE: Record<string, string> = { lib_cable_shrug: 'grip.wrist', lib_dumbbell_shrug: 'grip.wrist', lib_sumo_deadlift: 'plate.equipment (bar on the floor with full-size plates, parent c23)' };
+    expect(W4().sort()).toEqual([...W4_IDS, ...W4_WAITING_IDS].filter(id => id in FAM.INHERIT_MAP).sort());
+    expect(W4_IDS.filter(id => !(id in FAM.INHERIT_MAP))).toEqual(['lib_barbell_shrug']);   // the one W4 shipped id with no parent
+    for (const id of W4()) expect([id, refuse(id)]).toEqual([id, null]);
+    for (const [id, field] of Object.entries(ROUTE)) {
+      const card = cardOf(id), back = { ...card, inherit: [...card.inherit, { field, why: 'pre-F-W4-INHERIT' }] };
+      expect([id, FAM.familyRefusal(id, C[id], () => back, (x: string) => (x === parentOf(id) ? C[parentOf(id)] : undefined))]).toEqual([id, `${id}: family: docs/research/howto/cards/${id.slice(4)}.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`]);
+    }
   });
 
   describe('D-SHIP-W4-THUMB', () => {

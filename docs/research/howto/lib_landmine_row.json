@@ -1,0 +1,23 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=2d8052a724cf9e2af8335f6088b861fe270264807d12e6625877093e8cb4b54a
+{
+  "id": "lib_landmine_row",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/landmine_row.json",
+    "rev": 1
+  },
+  "sources": [
+    "rep-landmine-row",
+    "cissik-landmine",
+    "ggr-t-bar",
+    "acsm2009",
+    "macdougall1985",
+    "fenwick2009",
+    "baechle-grip",
+    "odriscoll1992",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

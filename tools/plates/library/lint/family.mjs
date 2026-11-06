@@ -46,13 +46,13 @@ export const INHERIT_MAP = {
     'zooms.bar-low-palm': ['handling.thumb.mode', 'handling.contact', 'handling.wrist.ext', 'handling.faults[key=bent-back]'], 'setup.safety-pins': ['setup[kind=safety]'] },
   lib_incline_dumbbell_press: { 'grip.thumb': THUMB_NOPOSE, 'grip.wrist': ['handling.wrist'], 'zooms.wrist-neutral-press': ['handling.thumb.mode', 'handling.wrist', 'handling.faults[key=bent-back]'] },
   lib_smith_machine_bench_press: { 'grip.thumb': THUMB_NOPOSE, 'grip.type': ['handling.orientation'], 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], 'zooms.bar-low-palm': BENCH_ZOOM },
-  // cable_shrug grip.wrist / grip.width and dumbbell_shrug grip.wrist: unmapped until F-W4-INHERIT drops them (D-SHIP-W4-ROUTE)
+  // cable_shrug grip.wrist / grip.width and dumbbell_shrug grip.wrist (D-SHIP-W4-ROUTE): dropped from the cards by F-W4-INHERIT (e00a7036)
   lib_cable_shrug: { 'grip.thumb': THUMB_NOPOSE, 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'], 'grip.type': ['handling.orientation'] },
   lib_dumbbell_shrug: { 'grip.thumb': THUMB_NOPOSE, 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },
   lib_smith_machine_shrug: { 'grip.thumb': THUMB_NOPOSE, 'grip.handContact': ['handling.contact'], 'zooms.shrug-grip': ['handling.thumb.mode', 'handling.faults[key=thumbless]'] },
   lib_conventional_deadlift: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], 'archetype.contact': ['contacts'] },
   lib_dumbbell_romanian_deadlift: { 'grip.wrist': ['handling.wrist'], 'posture: knees fixed at a slight bend, movement at the hips (parent c4)': ROW.map(l => `posture[key=knees].${l}`) },
-  // sumo plate.equipment: unmapped until F-W4-INHERIT drops it (D-SHIP-W4-ROUTE, Q-W4-9)
+  // sumo plate.equipment (D-SHIP-W4-ROUTE, Q-W4-9): dropped from the card by F-W4-INHERIT (e00a7036)
   lib_sumo_deadlift: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], 'archetype.contact': ['contacts'] },
   lib_landmine_row: { 'grip.type': ['handling.orientation'], 'grip.thumb': THUMB_NOPOSE, 'posture[back neutral]': ['posture[key=back]'], 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },
   lib_pendlay_row: { 'grip.type': ['handling.orientation', 'handling.handle'], 'grip.thumb': THUMB_NOPOSE, 'grip.handContact': ['handling.contact'], 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=a14e55f8d7d943d09798149fb5f0dc76b5a93e7fb4f7e390a96997e17529a10a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=28cba2c95cab98757f9d3735c98cd5f80f2c31870bbe6c9ef0046827d2d62997
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -112,6 +112,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-shrug": {
+    "id": "ace-shrug",
+    "cite": "ACE Exercise Library: Shrug",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/72/shrug/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "ace-standing-fly": {
     "id": "ace-standing-fly",
     "cite": "Standing Chest Fly (ACE Exercise Library)",
@@ -134,7 +142,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": "2026-10-17"
+    "checked": "2026-10-19"
   },
   "andersen2008": {
     "id": "andersen2008",
@@ -182,7 +190,7 @@
     "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
     "kind": "textbook",
     "access": "full",
-    "checked": "2026-09-30"
+    "checked": "2026-10-19"
   },
   "barbell-logic-grip": {
     "id": "barbell-logic-grip",
@@ -199,6 +207,22 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "barbend-pendlay": {
+    "id": "barbend-pendlay",
+    "cite": "How to Do the Pendlay Row for Back Size and Stronger Lifts (BarBend)",
+    "url": "https://barbend.com/pendlay-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
+  "barbend-t-bar": {
+    "id": "barbend-t-bar",
+    "cite": "How to Do the T-Bar Row (BarBend)",
+    "url": "https://barbend.com/t-bar-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "barnds2019": {
     "id": "barnds2019",
@@ -312,6 +336,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "cissik-landmine": {
+    "id": "cissik-landmine",
+    "cite": "Landmine Bent Over Rows (Improving Athletic Performance blog, John Cissik)",
+    "url": "https://www.cissik.com/blog/?p=7015",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "clark2012": {
     "id": "clark2012",
     "cite": "Clark DR, Lambert MI, Hunter AM. Muscle activation in the loaded free barbell squat: a brief review. J Strength Cond Res 2012;26(4):1169-78",
@@ -400,6 +432,22 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "ekstrom2003": {
+    "id": "ekstrom2003",
+    "cite": "Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/12774999/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-19"
+  },
+  "eos-smith": {
+    "id": "eos-smith",
+    "cite": "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness)",
+    "url": "https://www.eosfitness.com/blog/how-to-use-smith-machine",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "escamilla2001": {
     "id": "escamilla2001",
     "cite": "Escamilla RF et al. A three-dimensional biomechanical analysis of the squat during varying stance widths. Med Sci Sports Exerc 2001;33(6):984-98",
@@ -432,6 +480,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "exercise-com-cable-shrug": {
+    "id": "exercise-com-cable-shrug",
+    "cite": "Cable Shrug (Exercise.com exercise library)",
+    "url": "https://www.exercise.com/exercises/cable-shrug",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "fees1998": {
     "id": "fees1998",
     "cite": "Fees M, Decker T, Snyder-Mackler L, Axe MJ. Upper extremity weight-training modifications for the injured athlete. Am J Sports Med 1998;26(5):732-42",
@@ -463,6 +519,22 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "ggr-pendlay": {
+    "id": "ggr-pendlay",
+    "cite": "Pendlay Row: How To, Benefits, and Variations (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/pendlay-row",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
+  "ggr-t-bar": {
+    "id": "ggr-t-bar",
+    "cite": "T-Bar Row: How To, Benefits, Muscles Worked (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/t-bar-row",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "glassbrook2017": {
     "id": "glassbrook2017",
@@ -736,6 +808,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "motra-smith-shrug": {
+    "id": "motra-smith-shrug",
+    "cite": "Smith Machine Shrug - Exercise Guide (Motra)",
+    "url": "https://www.motra.com/exercises/smithMachineShrug",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "muyor2023": {
     "id": "muyor2023",
     "cite": "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM. Muscle activity, horizontal bench press vs seated chest press, several grips. J Hum Kinet 2023;87:23-34",
@@ -912,6 +992,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "rep-landmine-row": {
+    "id": "rep-landmine-row",
+    "cite": "How to do a Landmine Row: Technique, Variations, and Benefits (REP Fitness)",
+    "url": "https://repfitness.com/blogs/training/how-to-do-a-landmine-row-technique-variations-and-benefits",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "rogue-false-grip": {
     "id": "rogue-false-grip",
     "cite": "Rogue Fitness, False Grips",
@@ -1000,6 +1088,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "sl-barbell-shrug": {
+    "id": "sl-barbell-shrug",
+    "cite": "How to Do Barbell Shrug: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/barbell-shrug/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "sl-cable-fly": {
     "id": "sl-cable-fly",
     "cite": "How to Do Standing Cable Chest Fly: Muscles Worked & Proper Form (StrengthLog)",
@@ -1015,6 +1111,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "sl-pendlay": {
+    "id": "sl-pendlay",
+    "cite": "How to Do Pendlay Row: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/pendlay-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "sl-pushdown": {
     "id": "sl-pushdown",

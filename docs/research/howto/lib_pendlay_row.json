@@ -1,0 +1,23 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=b7ca593bb20dbbd24389cc0be8abc01f03beecc49fdf0d8e6254606f9c995915
+{
+  "id": "lib_pendlay_row",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/pendlay_row.json",
+    "rev": 1
+  },
+  "sources": [
+    "barbend-pendlay",
+    "ggr-pendlay",
+    "sl-pendlay",
+    "acsm2009",
+    "baechle-grip",
+    "macdougall1985",
+    "fenwick2009",
+    "odriscoll1992",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}
