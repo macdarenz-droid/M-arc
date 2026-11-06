@@ -17,6 +17,10 @@ Several wave rulings route a card-level fix to research. Wave builders never edi
 Each edit keeps every claim and quote. Removing a field from `inherit[]` changes no claim text, so the child's own claims then stand.
 
 ## Part 2: routes for held ids (new sources; the 10 % re-fetch applies)
+**First, before the held ids (supervisor 11-06, D-STOPLINE-CLAIM, #391 6681022221):**
+- **F-STOPLINE-CLAIM:** add one shared card under `docs/research/howto/shared/` (in the existing shared-card form) holding a claim that supports "Stop the set. Don't train through the pain.", with a fetched quote. Candidate sources: the one behind the app's `pain_red_flags` entry in `src/data/knowledge.json` (Finucane 2020, JOSPT, PMID 32438853), or the NHS pages the how-to red flags already cite. If no fetched quote supports stopping on pain, record "no source" and stop there. Never invent. Its `appliesTo` lists every library id with a stop line, on main and in W4-W7 (grep the sheets for "train through the pain" and "Stop the set"). Post it as its own READY as soon as it is done, so it can ride a train ahead of the rest of part 2.
+- **F-CARD-INCLINEDB-RISK:** incline_dumbbell's own risk text overstates its source (#391 6653791551). Correct the claim text to what the quote supports.
+
 These ids are held (S3) and on the owner's later-update list. Find sources so that each can return in a later wave. If no source supports a field, record "no source" and the id stays held. Never invent.
 - bench_dip: thumb placement on the bench edge (F-CARD-BENCHDIP-HAND, #393 Q-W6-5).
 - renegade_row: hand archetype and handle grip (F-CARD-RENEGADE-HAND, #393 Q-W6-6), plus its way-out.
