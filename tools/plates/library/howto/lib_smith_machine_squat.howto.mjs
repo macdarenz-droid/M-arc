@@ -13,7 +13,7 @@
 // Red flags: the card's redFlags (back, knee): LIB-5's back box (tools/plates/library/shared/back-box.mjs), linked by
 // the low-back row's redFlag: 'back'; golden B's shared knee box, linked by the knee row.
 // No variant line (equipment 'Smith Machine').
-import plateSpec from '../specs/smith_machine_squat.mjs';
+import plateSpec, { BAR_LOW, RAIL_Z } from '../specs/smith_machine_squat.mjs';
 import { RED_FLAG, RED_FLAG_KNEE } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_KNEE };
 
@@ -100,11 +100,16 @@ export const stills = {
 const zooms = [
   {
     key: 'smith-squat-feet', chip: 'Feet', heading: 'Foot position', kind: 'posture',
-    // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's knee, low enough to hold the feet; the Wrong
-    // is the spec's Mistake dashed over the end pose, as `stills.under`.
+    // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's knee, low enough to hold the feet. W6 panel L5
+    // (#393): the Wrong is the spec's Mistake drawn alone (solid, `stills.under`), so the feet under the bar are the main
+    // stroke (the dashed overlay hid behind the solid Right legs). The Wrong draws the bar's line down to the feet, the
+    // spec's own mistake guide (specs/smith_machine_squat.mjs mistake.guides[1]: RAIL_Z, BAR_LOW to the floor), as the
+    // crop's drop arrow, so "directly under the bar" (c3) reads. (A bar line in both halves needs the crop's path style,
+    // which this page's css options do not carry: LIB-PLATEFIX-3.)
     crop: { center: { at: 'knee.r', pose: 'right', off: [0, 30] }, sizePx: 190 },
     right: 'end',
-    wrong: { base: 'end', pose: MIS },
+    wrong: { base: 'end', pose: MIS, solid: true },
+    guides: [{ kind: 'drop', from: [0, BAR_LOW, RAIL_Z], to: [0, 0, RAIL_Z] }],
     callout: {
       right: { text: 'Feet ahead', anchor: 'ball.r' },
       wrong: { text: 'Feet under bar', anchor: { at: 'ball.r', pose: 'mistake' } },

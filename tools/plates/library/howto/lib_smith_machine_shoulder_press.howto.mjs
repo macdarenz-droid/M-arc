@@ -160,8 +160,11 @@ export default {
   setup: [
     // card zoom smith-ohp-bench (D-SHIP-TEXTZOOM): its Right is this step (c1, c3)
     { kind: 'adjust', text: 'Bench at about 70 degrees. The bar should just clear your nose.', claim: CL.bench },
-    // way-out (Q-W6-8, D-SHIP-W6-WAYOUT): the card's setup[1], c7
-    { kind: 'safety', text: 'Set the safety stops just below the lowest point of the press.', claim: CL.c7 },
+    // way-out (Q-W6-8, D-SHIP-W6-WAYOUT): the card's setup[1], c7. W6 panel SAFETY b (#393): the card has no tierA.wayOut
+    // field; its c7 is the way out itself ("rack the bar at any time"; eos-smith "safety stops ... to catch the bar if
+    // needed"), so the step also says what ends a failed rep, in eos-smith's own words ("Set the safety stops just below
+    // your lowest movement point to catch the bar if needed"). Risks hold at most 3 and a setup step at most 12 words.
+    { kind: 'safety', text: 'Set stops just below the lowest point to catch a missed rep.', claim: CL.c7 },
     { kind: 'position', text: 'Sit back, feet flat, upper back pressed into the pad, core braced.', claim: CL.c4 },
     { kind: 'grip', text: 'Grip wider than shoulders, thumbs wrapped. Rotate the bar off the hooks.', claim: CL.grip },
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c15 },

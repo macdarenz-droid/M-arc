@@ -67,14 +67,16 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except add-back (a text checkpoint, above); the card has no hand zoom. Zoom shell form
-// (render/closeup/crop.mjs): callouts anchored at the landmark they name, no guide mark; the Wrong is drawn alone
-// (solid), as `stills.wide`.
+// (render/closeup/crop.mjs): callouts anchored at the landmark they name, no guide mark; the Wrong (`stills.wide`)
+// is dashed over the solid Right.
 const zooms = [
   {
     key: 'add-start', chip: 'Start width', heading: 'Start width', kind: 'posture',
     crop: { center: { at: 'hips', pose: 'right', off: [0, 10] }, sizePx: 260 },
     right: 'start',
-    wrong: { base: 'start', pose: MIS, solid: true },
+    // W6 panel L5 (#393): the Wrong is drawn as the dashed mistake over the solid Right (not alone), so the fault reads
+    // against the correct pose in one panel.
+    wrong: { base: 'start', pose: MIS },
     callout: {
       right: { text: 'Light stretch', anchor: 'knee.r' },
       wrong: { text: 'Too wide', anchor: 'knee.r' },
@@ -138,7 +140,7 @@ export default {
     // D-SHIP-W6-WRISTEXEMPT: the card delegates grip.wrist; no range, nothing printed. c1 stays in gripLine and the grip step.
     wrist: { exempt: 'Card grip.wrist: balance archetype default only; no source gives a wrist range for this exercise.', claim: CONV_WRIST },
     faults: [],                // the card names no hand fault
-    gripLine: 'Hold the side handles. Keep your back flat against the pad.',
+    gripLine: 'Hold the side handles. Keep your back flat against the pad.',   // c1, c4
     cue: 'Light stretch, then squeeze.',   // c2, c3
   },
   contacts: ['seat-back', 'pivot-pad'],   // the card's archetype.contact

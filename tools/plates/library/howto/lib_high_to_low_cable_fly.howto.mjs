@@ -75,13 +75,20 @@ const CONV = C(['CONVENTION'], ['hold-default'], 'card grip.thumb and grip.handC
 // plate.mistake c8: the hands cross).
 // 'lean' (card zoom htl-trunk Wrong, c7: "Trunk tipped forward toward the hands"): the plan proposed M, but the plate's
 // Mistake is the crossing hands (c8; the lean is the card's topFault, drawable false in this front view), so the lean is
-// built here: the end pose with the pelvis pitched LEAN forward (root tilt), the hands held at the end grips (reach IK).
+// built here: the end pose with the pelvis pitched LEAN forward (root tilt). W6 panel L5 (#393): the hands are no longer
+// held at the end grips (that bent the elbows, which c3's fixed soft bend forbids); each reach target and its pole turn
+// with the trunk about the root (the engine's tilt pivot), so the arms keep the end pose's shape and the lean is the only
+// change. A level line at the Right's shoulders runs through both halves, so the dropped head and shoulders of
+// the lean read against it in this front view.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent lib_reverse_lunge's LEAN 30): LEAN 30 deg sizes the lean; no
 // card gives it, no number appears in user copy; the layers panel judges it. Risk: in this front view the lean shows
 // only as a lower head and shoulders (see the W6 report).
 const LEAN = 30;
 const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
-const LEANED = { root: { ...END.root, tilt: LEAN } };
+const ROT = (() => { const a = LEAN * Math.PI / 180, c = Math.cos(a), s = Math.sin(a), o = END.root.at;
+  const turn = (v, p = [0, 0, 0]) => [v[0], p[1] + (v[1] - p[1]) * c - (v[2] - p[2]) * s, p[2] + (v[1] - p[1]) * s + (v[2] - p[2]) * c];
+  return r => ({ ...r, at: turn(r.at, o), ...(r.pole ? { pole: turn(r.pole) } : {}) }); })();   // rotX(LEAN) about the root
+const LEANED = { root: { ...END.root, tilt: LEAN }, reach: { l: ROT(END.reach.l), r: ROT(END.reach.r) } };
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
@@ -100,6 +107,7 @@ const zooms = [
     crop: { center: { at: 'sternum', pose: 'right', off: [0, 10] }, sizePx: 200 },
     right: 'end',
     wrong: { base: 'end', pose: LEANED, solid: true },
+    guides: [{ kind: 'level', at: { at: 'shoulders', pose: 'right' } }],   // the Right's shoulder line
     callout: {
       right: { text: 'Trunk upright', anchor: 'sternum' },
       wrong: { text: 'Tipped forward', anchor: { at: 'sternum', pose: 'mistake' } },
@@ -124,13 +132,15 @@ const feel = {
   feelLine: 'You should feel this in your chest.',
   rows: [
     // The card's first row (chest) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
-    { key: 'shoulder', where: 'Shoulder pain', at: { muscles: ['front_delts'] },
+    // W6 panel K1/K3 (#393): the card's row title 'Shoulder' (where you feel it), not 'Shoulder pain'; redFlag 'shoulder'
+    // links the shoulder stop box.
+    { key: 'shoulder', where: 'Shoulder', at: { muscles: ['front_delts'] },
       means: 'Leaning forward raises stress in the shoulder joint.',
       fix: 'Lower the weight and stand tall.',
       zoom: 'htl-trunk', redFlag: 'shoulder', claim: CL.c7 },
     { key: 'low-back', where: 'Low back', at: { muscles: ['lower_back'] },
       means: 'You are arching your low back.',
-      fix: 'Brace your abs.',
+      fix: 'Brace your abs.',   // c2
       claim: CL.c2 },
   ],
   claim: C(['DATA', 'MECH', 'WEAK'], [TOP3, ACE, 'rabello-2024', 'coratella-2020-bench'], 'c10, c11'),
@@ -167,7 +177,7 @@ export default {
     // c3 keeps the wrists straight and gives no range
     wrist: { exempt: 'c3: the wrists stay straight, in line with the forearms; no source gives a range.', claim: CL.c3 },
     faults: [],
-    gripLine: 'One single handle in each hand, held firmly. Keep your wrists straight, in line with your forearms.',
+    gripLine: 'One single handle in each hand, held firmly. Keep your wrists straight, in line with your forearms.',   // c1, c3
     cue: 'Soft elbows, hands meet low.',   // c3, c5 (below chest level)
   },
   contacts: ['standing-feet'],

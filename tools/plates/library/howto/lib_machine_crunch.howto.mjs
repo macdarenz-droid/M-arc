@@ -76,10 +76,11 @@ const CONV_WRIST = C(['CONVENTION'], ['balance-default'], 'card grip.wrist: bala
 //   slide (card zoom crunch-hips Wrong, c2 "Hips sliding forward off the seat back"): the end pose with the pelvis moved
 //         forward along the seat by SLIDE.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): the
-// hinge reuses the spec's CURL (no new number); SLIDE 0.10 m sizes the slide (golden B's machine_chest_press seatDrop
-// 0.12 m scale). No card gives them, no number from them appears in user copy; the layers panel judges them.
+// hinge reuses the spec's CURL (no new number); SLIDE 0.15 m sizes the slide (golden B's machine_chest_press seatDrop
+// 0.12 m scale; W6 panel L5, #393: 0.10 m left a gap that did not read at phone size). No card gives them, no number
+// from them appears in user copy; the layers panel judges them.
 const H = 1.75, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose, SEAT = [0, SIZES.SEAT_TOP, 0];
-const SLIDE = 0.10;
+const SLIDE = 0.15;
 const HINGE = { root: { at: rootOnSeat(SEAT, SIZES.CURL, H), tilt: SIZES.CURL }, trunk: 0 };
 const SLID = (() => { const at = END.root.at; return { root: { at: [at[0], at[1], at[2] + SLIDE], tilt: END.root.tilt } }; })();
 export const stills = {
@@ -136,7 +137,9 @@ const zooms = [
   },
   {
     key: 'crunch-hips', chip: 'Hips', heading: 'Hips back', kind: 'posture',
-    crop: WIDE,
+    // W6 panel L5 (#393): cropped to the pelvis and the seat back, so the gap the slide opens reads (c2). No slide arrow:
+    // the crop's path guide has no style on this page (pages/lb06.closeups.mjs css has no `path`; LIB-PLATEFIX-3).
+    crop: { center: { at: 'buttock', pose: 'right', off: [10, -10] }, sizePx: 140 },
     right: 'end',
     wrong: { base: 'end', pose: SLID, solid: true },
     callout: {
@@ -209,7 +212,7 @@ export default {
     // D-SHIP-W6-WRISTEXEMPT: the card delegates grip.wrist; no range, nothing printed. c3/c14 stay in gripLine and setup 4.
     wrist: { exempt: 'Card grip.wrist: balance archetype default only; no source gives a wrist range for this exercise.', claim: CONV_WRIST },
     faults: [],                // the card names no hand fault
-    gripLine: 'Hold the handles in both hands. Start the crunch with your abs, not your arms.',
+    gripLine: 'Hold the handles in both hands. Start the crunch with your abs, not your arms.',   // c3, c14
     cue: 'Start the crunch with your abs.',   // c14
   },
   contacts: ['seat-back'],   // the card's archetype.contact

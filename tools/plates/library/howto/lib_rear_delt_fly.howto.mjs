@@ -81,11 +81,11 @@ const CONV_WRIST = C(['CONVENTION'], ['pull-default'], 'card grip.wrist: pull ar
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // 'bent' (card zoom `rdf-elbows` Wrong, c3: "Elbows bent sharply as the arms open"): the spec's end pose with each grip
 // target pulled in toward its shoulder to BENT_REACH of the end's shoulder-to-grip distance, so only the elbow bend
-// changes (the handles follow the grips, as the spec's deckOf draws them). At 0.8 the right elbow's inside angle is
-// about 104 deg against the end's 160 deg, and the grip moves about 19 px in on the plate (landmarksOf, REF_CAMERA).
+// changes (the handles follow the grips, as the spec's deckOf draws them). At 0.72 the elbow's inside angle is about
+// 90 deg against the end's 160 deg (landmarksOf; W6 panel L1/L5, #393: 0.8 gave 104 deg, which did not read as sharp).
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop):
-// BENT_REACH 0.8 is a Wrong-pose size no card gives; no number from it appears in user copy; the layers panel judges it.
-const H = 1.75, BENT_REACH = 0.8, END = plateSpec.poses.end;
+// BENT_REACH 0.72 is a Wrong-pose size no card gives (c3 "bent sharply" names no angle); no number from it appears in user copy; the layers panel judges it.
+const H = 1.75, BENT_REACH = 0.72, END = plateSpec.poses.end;
 const bent = (() => {
   const L = landmarksOf(END, H), reach = {};
   for (const s of ['l', 'r']) {
@@ -103,13 +103,15 @@ export const stills = {
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except the hand zoom `rdf-grip` (D-SHIP-HANDW6) and `rdf-chestpad` (D-SHIP-TEXTZOOM, header).
 // Zoom shell form (render/closeup/crop.mjs): callouts anchored at the landmark they name, no guide mark; the Wrong is
-// drawn alone (solid).
+// dashed over the solid Right (`stills.bent`).
 const zooms = [
   {
     key: 'rdf-elbows', chip: 'Elbows', heading: 'Elbow bend', kind: 'posture',   // card zoom key: rdf-elbows
     crop: { center: { at: 'elbow.l', pose: 'right', off: [10, 0] }, sizePx: 170 },
     right: 'end',
-    wrong: { base: 'end', pose: bent, solid: true },
+    // W6 panel L5 (#393): the Wrong is drawn as the dashed mistake over the solid Right (not alone), so the fault reads
+    // against the correct pose in one panel.
+    wrong: { base: 'end', pose: bent },
     callout: {
       right: { text: 'Fixed bend', anchor: 'elbow.l' },
       wrong: { text: 'Bent sharply', anchor: 'elbow.l' },
@@ -136,7 +138,8 @@ const feel = {
   // The card's first row (backs of the shoulders, c11) has no fix, so it is left off the rows (D-SHIP-Q16).
   feelLine: 'You should feel this in the backs of your shoulders.',
   rows: [
-    { key: 'blades', where: 'Between the shoulder blades', at: { muscles: ['mid_back'] },
+    // W6 panel K1 (#393): the card's row title keeps 'not shoulders' (the fault is feeling it there instead of the rear delts).
+    { key: 'blades', where: 'Between the shoulder blades, not shoulders', at: { muscles: ['mid_back'] },
       means: 'Other upper-back muscles are doing more than the rear delts.',
       fix: 'Shorten the range. Stop at the shoulder line.',
       claim: CL.c5 },
@@ -156,7 +159,7 @@ const MISTAKES = [
   { key: 'momentum', title: 'Momentum, chest off the pad', claim: CL.momentum,
     fix: 'Lower the weight and keep your chest on the pad.' },
   { key: 'heavy', title: 'Too heavy, traps take over', claim: CL.c8,
-    fix: 'Lower the weight.' },
+    fix: 'Lower the weight.' },   // c8
 ];
 const RISKS = [
   { key: 'shoulder', text: 'Sharp pain at the front of the shoulder means stop.', claim: CL.c9 },

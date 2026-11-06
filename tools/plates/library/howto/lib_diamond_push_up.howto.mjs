@@ -77,10 +77,11 @@ const KEY_WRIST_RANGE = null;   // VARIANTS.floor.wristRange (hand-palm-flat.mjs
 //   rolled  (card zoom shoulder-blades Wrong, c4 "shoulders rolled forward at the bottom"): the same, the blades
 //           ROLL cm forward.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): PINCH -3
-// and ROLL +2 are chest_supported_row's spec blade values (specs/chest_supported_row.mjs:69, :73: pro 2 at the start,
-// arms forward; 2 - 5 = -3 at the end, blades back); weighted_dip's SCAP_PRO is also -3. No card gives them, no number
-// from them appears in user copy; the layers panel judges them.
-const H = 1.75, PINCH = -3, ROLL = 2;
+// is chest_supported_row's spec blade-back value (specs/chest_supported_row.mjs:73: 2 - 5 = -3 at the end, blades back;
+// weighted_dip's SCAP_PRO is also -3). ROLL +7 is a Wrong-pose size no card gives (c4 names the roll, no size): W6 panel
+// L1/L5 found chest_supported_row's +2 (arms forward) did not read; at +7 the shoulder joint sits 10 cm nearer the
+// floor than in the Right (landmarksOf). No number from them appears in user copy; the layers panel judges them.
+const H = 1.75, PINCH = -3, ROLL = 7;
 const START = plateSpec.poses.start, WY = landmarksOf(START, H)['wrist.r'][1];
 function solve(p0, make, res, iters = 40) {   // Newton with finite differences (the spec's own solver, copied); throws
   const keys = Object.keys(p0); const p = { ...p0 };
@@ -112,17 +113,21 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per posture card zoom, same keys and kinds (the hand zoom is gap-ruled, see the header). Zoom shell shape
-// (callout with an anchor at the landmark it names, no guide mark; pilot-a.closeups.mjs); each Wrong is its still drawn
-// alone (solid); the shoulder-blades Right is its still as a pose override (golden B's pull_up `right: { base, pose }`).
+// (callout with an anchor at the landmark it names; pilot-a.closeups.mjs); each Wrong is its still drawn over the Right
+// (W6 panel, below); the shoulder-blades Right is its still as a pose override (golden B's pull_up `right: { base, pose }`).
 const zooms = [
   {
     key: 'hip-line', chip: 'Hip line', heading: 'Hip line', kind: 'posture',
-    crop: { center: { at: 'hip.r', pose: 'right', off: [0, 0] }, sizePx: 170 },
+    // W6 panel L1/L5: the Wrong is not solid: the straight Right body is drawn, the sag dashed red over it with the
+    // plate Mistake's own arrow (navel down to the sagged navel), as the plate's Mistake view; the window is wider so
+    // the head stays inside (sizePx, off: drawing values).
+    crop: { center: { at: 'hip.r', pose: 'right', off: [20, 0] }, sizePx: 210 },
     right: 'end',
-    wrong: { base: 'end', pose: plateSpec.mistake.pose, solid: true },
+    wrong: { base: 'end', pose: plateSpec.mistake.pose },
+    guides: plateSpec.mistake.guides,
     callout: {
       right: { text: 'Body in line', anchor: 'hip.r' },
-      wrong: { text: 'Hips sag', anchor: 'hip.r' },   // c6
+      wrong: { text: 'Hips sag', anchor: { at: 'hip.r', pose: 'mistake' } },   // c6
     },
     caption: {
       right: 'Torso and legs rigid in one line.',
@@ -135,12 +140,15 @@ const zooms = [
   },
   {
     key: 'shoulder-blades', chip: 'Shoulder blades', heading: 'Shoulder blades', kind: 'posture',
-    crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, 0] }, sizePx: 140 },
+    // W6 panel L1/L5: the Wrong is not solid: the pinched Right is drawn, the rolled shoulder dashed red over it, and a
+    // red drop arrow runs from the Right shoulder down to the rolled one (offsets, plate px, are drawing values).
+    crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, 4] }, sizePx: 140 },
     right: { base: 'start', pose: PINCHED_POSE },
-    wrong: { base: 'start', pose: ROLLED_POSE, solid: true },
+    wrong: { base: 'start', pose: ROLLED_POSE },
+    guides: [{ kind: 'drop', from: { at: 'shoulder.r', pose: 'right', off: [0, -4] }, to: { at: 'shoulder.r', pose: 'mistake', off: [0, 0] } }],
     callout: {
       right: { text: 'Blades back', anchor: 'shoulder.r' },
-      wrong: { text: 'Shoulders forward', anchor: 'shoulder.r' },   // c4
+      wrong: { text: 'Shoulders forward', anchor: { at: 'shoulder.r', pose: 'mistake' } },   // c4
     },
     caption: {
       right: 'Shoulder blades pinched back at the bottom.',

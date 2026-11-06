@@ -17,7 +17,7 @@
 // and the plate callout `tight`.
 // Front-view plate (card plate.view): the posture crops are cut in the plate's own view (no `view` override).
 // No variant line (equipment 'Cable').
-import plateSpec, { END_ROT } from '../specs/cable_lateral_raise.mjs';
+import plateSpec from '../specs/cable_lateral_raise.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER };
 
@@ -80,13 +80,16 @@ const CONV = C(['CONVENTION'], ['hold-default'], 'card grip.thumb, grip.handCont
 // From the plate spec's own poses: the start (arm hanging, cable tight; c3, c4), the end (upper arm level, elbow slightly
 // bent and leading; c7, c9, c6, c13) and the spec's Mistake merged over the end, as the engine draws it (card
 // plate.mistake c19, c7: the arm above shoulder height). The card zoom clr-top-height Wrong is that drawn fault (M).
-// 'pulled' (card zoom clr-elbow-lead Wrong, c13: "Handle pulled straight up"): the end pose with the working shoulder's
-// rotation mirrored (-END_ROT), so the hand rises above the elbow line by the spec's own LEAD instead of trailing it.
-// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2): the mirrored rotation reuses the spec's END_ROT
-// (solved for LEAD 8, specs/cable_lateral_raise.mjs SIZES); no card gives it, no number appears in user copy; the layers
-// panel judges it.
+// 'pulled' (card zoom clr-elbow-lead Wrong, c13: "Don't pull the handle up"): the end pose with the hand driving the
+// handle up past the elbow: the working shoulder turned so the elbow's bend points the forearm straight up (PULL_ROT) and
+// the elbow bending to pull (PULL_BEND), so the hand sits well above the elbow instead of trailing it (c6, c13).
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2): PULL_ROT 90 deg turns the bend plane vertical;
+// PULL_BEND 35 deg is the elbow bend of the pull (the forearm about 35 deg above level). No card gives either; c9's
+// slight bend is the Right's cue and the card names no Wrong bend, so neither contradicts it. No number appears in user
+// copy; the layers panel judges them (W6 panel L5: the lead read 8 deg, too small to see).
 const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
-const PULLED = { shoulder: { ...END.shoulder, l: { ...END.shoulder.l, rot: -END_ROT } } };
+const PULL_ROT = 90, PULL_BEND = 35;
+const PULLED = { shoulder: { ...END.shoulder, l: { ...END.shoulder.l, rot: PULL_ROT } }, elbow: { ...END.elbow, l: PULL_BEND } };
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
@@ -121,10 +124,13 @@ const zooms = [
   },
   {
     key: 'clr-elbow-lead', chip: 'Elbow', heading: 'Elbow lead', kind: 'posture',
-    // zoom shell: crop centre on the right pose's working elbow; the Wrong is the pulled still drawn alone (solid).
-    crop: { center: { at: 'elbow.l', pose: 'right', off: [10, 0] }, sizePx: 150 },
+    // zoom shell: crop centre on the right pose's working elbow. W6 panel L5: the Wrong is not solid: the Right arm is
+    // drawn, the pulled arm dashed red over it, and a red drop arrow runs from the Right hand up to the pulled hand
+    // (c13, the handle pulled up). The arrow offsets (plate px) are drawing values that keep it off the hand's outline.
+    crop: { center: { at: 'elbow.l', pose: 'right', off: [10, -8] }, sizePx: 150 },
     right: 'end',
-    wrong: { base: 'end', pose: PULLED, solid: true },
+    wrong: { base: 'end', pose: PULLED },
+    guides: [{ kind: 'drop', from: { at: 'grip.l', pose: 'right', off: [0, -6] }, to: { at: 'grip.l', pose: 'mistake', off: [0, 8] } }],
     callout: {
       right: { text: 'Elbow leads', anchor: 'elbow.l' },
       wrong: { text: 'Handle pulled up', anchor: { at: 'grip.l', pose: 'mistake' } },
@@ -162,7 +168,7 @@ const feel = {
     // The card row's means is empty, so the row has none (D-FEEL-NOMEANS).
     { key: 'sharp', where: 'Sharp pain in the shoulder', at: { muscles: ['side_delts'] },
       means: '',
-      fix: 'Stop the set.',
+      fix: 'Stop the set.',   // c21 (the row's claim)
       redFlag: 'shoulder', claim: CL.c21 },
   ],
   claim: C(['CONSENSUS', 'DATA'], [MO, SL, 'larsen2025'], 'c15, c16'),
@@ -201,7 +207,7 @@ export default {
     // card grip.wrist: "Not given by any source read"; no printed text comes from the default (D-SHIP-CONVCOPY)
     wrist: { exempt: 'Card grip.wrist: not given by any source read; no wrist position or range is sourced.', claim: CONV },
     faults: [],
-    gripLine: 'One single handle in your outside hand, the one farther from the machine.',
+    gripLine: 'One single handle in your outside hand, the one farther from the machine.',   // c2
     cue: 'Elbow leads, stop at shoulder height.',   // c6, c13, c7
   },
   contacts: ['standing-feet'],

@@ -73,12 +73,12 @@ const feel = {
     { muscleId: 'rear_delts', plain: 'The backs of the shoulders help.' },
     { muscleId: 'chest', plain: 'The chest may also work.' },
   ],
-  watch: [{ muscleId: 'lower_back', plain: 'Arching puts too much pressure on your lower back.' }],
+  watch: [{ muscleId: 'lower_back', plain: 'Arching puts too much pressure on your lower back.' }],   // c8
   feelLine: 'You should feel this along the sides of your back.',
   rows: [
     // The card's first row (along the sides of the back) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
-      means: 'Arching puts too much pressure on your lower back.',
+      means: 'Arching puts too much pressure on your lower back.',   // c8
       fix: 'Keep your back on the pad.',
       claim: CL.arch },
     { key: 'neck', where: 'Neck and tops of the shoulders', at: { parts: ['neck-left', 'neck-right'] },
@@ -124,7 +124,7 @@ export default {
       // card zoom pullover-hands wrong (c6). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'fist', label: 'Fist gripping', pose: {}, markers: [], alt: 'A fist grips the bar and the hands pull.' },
     ],
-    gripLine: 'No grip: open hands on the bar, fingers extended. Push with your elbows.',
+    gripLine: 'No grip: open hands on the bar, fingers extended. Push with your elbows.',   // c3, c6
     cue: 'Push with your elbows.',   // c6
   },
   contacts: ['seat-back'],   // the card's archetype.contact

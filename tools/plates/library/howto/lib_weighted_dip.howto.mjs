@@ -89,11 +89,13 @@ const CONV_THUMB = C(['CONVENTION'], ['push-default'], 'card grip.thumb is blank
 //   deep  (card zoom depth Wrong, c4 "shoulders sunk far below the elbows"): the bottom's body (the spec's poseFor at
 //         depth 1: the same lean and legs) with the shoulder DEEP below the parallel line, its z solved for balance with
 //         the spec's own loadedCom and bisect (D-LIB17-DIPBAL), the hands on the bars.
-// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SHRUG 4 cm
-// is incline_push_up's spec M_SHRUG (its shrug Mistake); DEEP 0.15 m is the deepest 5 cm step (the spec's BAR_Y step)
-// that keeps the hanging plate above the floor (0.20 m puts it 3 cm under). No card gives them, no number from them
-// appears in user copy; the layers panel judges them.
-const H = 1.75, SHRUG = 4, DEEP = 0.15;
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): SHRUG 7 cm
+// is a Wrong-pose size no card gives (c6 names the shrug, no size): W6 panel L5 found incline_push_up's M_SHRUG 4 cm did
+// not read; at 7 the ear-to-shoulder-top gap closes by about 10 cm (landmarksOf). DEEP 0.15 m is the deepest 5 cm
+// step (the spec's BAR_Y step) that keeps the hanging plate above the floor (0.20 m puts it 3 cm under); it puts the
+// upper arm about 12 deg past level against the Right's 14 deg above (landmarksOf). No card gives them, no number from
+// them appears in user copy; the layers panel judges them.
+const H = 1.75, SHRUG = 7, DEEP = 0.15;
 const END = plateSpec.poses.end, SH = landmarksOf(END, H)['shoulder.r'];
 const shrugBase = { ...END, scap: { elev: SHRUG, pro: END.scap.pro } };
 const SH1 = landmarksOf(shrugBase, H)['shoulder.r'];
@@ -109,14 +111,18 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per drawable card zoom, same keys and kinds (`plate` is a text checkpoint, see the header). Zoom shell shape
-// (callout with an anchor at the landmark it names, no guide mark; pilot-a.closeups.mjs); each Wrong is its still
-// drawn alone (solid).
+// (callout with an anchor at the landmark it names; pilot-a.closeups.mjs); each Wrong is its still drawn alone
+// (solid), with the guides each zoom names.
 const zooms = [
   {
     key: 'shoulders', chip: 'Shoulders', heading: 'Shoulders down', kind: 'posture',
-    crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, 0] }, sizePx: 140 },
+    // W6 panel L5: both windows sit at the same place under the ear (the right pose's in Right, the shrug's in Wrong),
+    // so the head stays put and the Wrong shoulder is seen rising toward the ear, with a red up arrow on the shoulder
+    // top (`off`, plate px: drawing values that place the window and the arrow).
+    crop: { center: { at: 'ear', pose: 'right', off: [0, 30] }, centerWrong: { at: 'ear', pose: 'mistake', off: [0, 30] }, sizePx: 140 },
     right: 'end',
     wrong: { base: 'end', pose: SHRUG_POSE, solid: true },
+    guides: [{ kind: 'drop', from: { at: 'shoulderTop.r', pose: 'mistake', off: [0, 16] }, to: { at: 'shoulderTop.r', pose: 'mistake', off: [0, -3] } }],
     callout: {
       right: { text: 'Shoulders down', anchor: 'shoulderTop.r' },
       wrong: { text: 'Shrugged', anchor: 'shoulderTop.r' },   // c6
@@ -132,9 +138,15 @@ const zooms = [
   },
   {
     key: 'depth', chip: 'Depth', heading: 'Depth', kind: 'posture',
+    // W6 panel L1/L5: a dashed level line at each panel's own elbow height (the parallel reference, c4) and, in the
+    // Wrong, a red drop arrow from where the Right's shoulder sits down to the sunk shoulder (offsets: drawing values).
     crop: { center: { at: 'elbow.r', pose: 'right', off: [0, 0] }, sizePx: 160 },
     right: 'end',
     wrong: { base: 'end', pose: DEEP_POSE, solid: true },
+    guides: [
+      { kind: 'level', at: 'elbow.r', own: true },
+      { kind: 'drop', from: { at: 'shoulder.r', pose: 'right' }, to: { at: 'shoulder.r', pose: 'mistake', off: [0, -4] } },
+    ],
     callout: {
       right: { text: 'Upper arm level', anchor: 'elbow.r' },
       wrong: { text: 'Too deep', anchor: 'shoulder.r' },   // c4
@@ -164,7 +176,7 @@ const feel = {
     // out: the feel line says it (D-SHIP-Q16).
     { key: 'breastbone', where: 'Breastbone, new to dips', at: { muscles: ['chest'] },
       means: 'Dips can feel stressful here at first.',
-      fix: 'Add sets gradually.', claim: CL.c10 },
+      fix: 'Add sets gradually.', claim: CL.c10 },   // c10 (the row's claim)
     { key: 'shoulder', where: 'Front of the shoulder', at: { muscles: ['front_delts'] },
       means: 'Your form may be off: shrug, lean or depth.',
       fix: 'Keep shoulders down, torso upright, depth at parallel. If it still hurts, swap to pushdowns.',   // c10 names close-grip bench press too
@@ -206,7 +218,7 @@ export default {
     wrist: { ext: EXT, limitText: 'Drive through your palms back to the top.',
       claim: C(['CONSENSUS', 'CONVENTION'], [BB, 'ga-push-heel'], 'card c5. The ext range is pairs.mjs CONVENTIONS ga:push-heel, a convention, not a card number; the card has no grip.wrist.') },
     faults: [],                // the card names no hand fault
-    gripLine: 'Hands even on the bars, about shoulder-width. Grip the bars hard.',
+    gripLine: 'Hands even on the bars, about shoulder-width. Grip the bars hard.',   // c1, c2
     cue: 'Drive through the palms.',   // hint J (c5)
   },
   contacts: ['hang-support'],   // the card's archetype.contact

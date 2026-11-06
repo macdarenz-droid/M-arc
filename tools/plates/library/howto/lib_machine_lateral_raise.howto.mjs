@@ -131,7 +131,7 @@ const MISTAKES = [
   { key: 'shrug', title: 'Shrugging the shoulders', zoom: 'latm-shrug', claim: CL.lighter,
     fix: 'Keep your shoulders down. Go lighter if needed.' },
   { key: 'heavy', title: 'Too heavy for shoulder height', claim: CL.c7,
-    fix: 'Lower the weight.' },
+    fix: 'Lower the weight.' },   // c7
 ];
 const RISKS = [
   { key: 'swing', text: 'Swinging the body to finish a rep can lead to injury.', claim: CL.c8 },
@@ -154,7 +154,7 @@ export default {
     // card grip.wrist: "Neutral (c3)". No tolerance given: neutral itself.
     wrist: { ext: [0, 0], limitText: 'Keep your wrists neutral.', claim: CL.c3 },
     faults: [],                // the card names no hand fault
-    gripLine: 'Hold the handles, pads just above the elbows. Lead with the elbows.',
+    gripLine: 'Hold the handles, pads just above the elbows. Lead with the elbows.',   // c3, c4
     cue: 'Lead with the elbows.',   // c4
   },
   contacts: ['seat-back'],   // the card's archetype.contact

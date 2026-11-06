@@ -155,7 +155,7 @@ const feel = {
       redFlag: 'back', claim: CL.c10 },
     { key: 'pain', where: 'Shoulder pain', at: {},   // pain, not a muscle taking over: no map mark (golden B)
       means: '',   // the card's row has no means; D-FEEL-NOMEANS prints no label
-      fix: 'Stop the set.',
+      fix: 'Stop the set.',   // c12 (the row's claim)
       redFlag: 'shoulder', claim: CL.c12 },
   ],
   libraryDiff: { add: ['mid_back', 'rotator_cuff'], why: 'card libraryDiff: Motra names the rhomboids and mid traps (c13); the study measured the infraspinatus (c14; text-only).' },

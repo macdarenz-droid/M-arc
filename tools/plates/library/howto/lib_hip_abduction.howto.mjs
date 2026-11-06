@@ -71,14 +71,16 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except abd-pivot (a text checkpoint, above); the card has no hand zoom. Zoom shell form
-// (render/closeup/crop.mjs): callouts anchored at the landmark they name, no guide mark; the Wrong is drawn alone
-// (solid), as `stills.short`.
+// (render/closeup/crop.mjs): callouts anchored at the landmark they name, no guide mark; the Wrong (`stills.short`)
+// is dashed over the solid Right.
 const zooms = [
   {
     key: 'abd-range', chip: 'Range', heading: 'Full range', kind: 'posture',
     crop: { center: { at: 'hips', pose: 'right', off: [0, 10] }, sizePx: 260 },
     right: 'end',
-    wrong: { base: 'end', pose: MIS, solid: true },
+    // W6 panel L5 (#393): the Wrong is drawn as the dashed mistake over the solid Right (not alone), so the fault reads
+    // against the correct pose in one panel.
+    wrong: { base: 'end', pose: MIS },
     callout: {
       right: { text: 'Comfortably wide', anchor: 'knee.r' },
       wrong: { text: 'Short range', anchor: 'knee.r' },
@@ -118,7 +120,7 @@ const MISTAKES = [
   { key: 'jerk', title: 'Jerking the weight', claim: CL.jerk,
     fix: 'Keep your upper body still. Lower the weight.' },
   { key: 'heavy', title: 'Weight too heavy for form', claim: CL.c6,
-    fix: 'Lower the weight.' },
+    fix: 'Lower the weight.' },   // c6
   { key: 'range', title: 'Incomplete range', zoom: 'abd-range', claim: CL.range,
     fix: 'Open the legs to a full, comfortable range.' },
 ];
@@ -143,7 +145,7 @@ export default {
     // D-SHIP-W6-WRISTEXEMPT: the card delegates grip.wrist; no range, nothing printed. c2 stays in gripLine and the grip step.
     wrist: { exempt: 'Card grip.wrist: balance archetype default only; no source gives a wrist range for this exercise.', claim: CONV_WRIST },
     faults: [],                // the card names no hand fault
-    gripLine: 'Hold the side handles for stability and brace your trunk.',
+    gripLine: 'Hold the side handles for stability and brace your trunk.',   // c2
     cue: 'Knees in line with the pivot.',   // c1
   },
   contacts: ['seat-back', 'pivot-pad'],   // the card's archetype.contact

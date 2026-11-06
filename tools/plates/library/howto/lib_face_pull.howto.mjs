@@ -110,7 +110,7 @@ const zooms = [
       wrong: 'Elbows below shoulder height.',
     },
     alt: {
-      right: 'Side view, end of the pull. The hands are by the ears and the elbows sit above the shoulders.',
+      right: 'Side view, end of the pull. Hands by the ears, elbows high, at least level with the shoulders.',   // c5, c7, c9
       wrong: 'Side view. The elbows have dropped below the shoulders and the hands are down at the chin.',
     },
     feelRow: 'pinch',
@@ -153,7 +153,7 @@ const feel = {
       zoom: 'fp-elbows', redFlag: 'shoulder', claim: CL.c9 },
     { key: 'pain', where: 'Shoulder pain', at: {},
       means: '',   // the card's row has no means; D-FEEL-NOMEANS prints no label
-      fix: 'Stop the set.',
+      fix: 'Stop the set.',   // c13 (the row's claim)
       redFlag: 'shoulder', claim: CL.c13 },
   ],
   claim: C(['CONSENSUS', 'DATA', 'WEAK'], [MO, SL, BB, 'zhu-2025'], 'c14, c15 (primary), c14 (secondary), c6 (feel line)'),
@@ -166,7 +166,7 @@ const MISTAKES = [
   { key: 'low', title: 'Pulling too low', zoom: 'fp-height', claim: CL.c10,
     fix: 'Pull toward your face, not your chest or chin.' },
   { key: 'momentum', title: 'Momentum from the torso', claim: CL.momentum,
-    fix: 'Start light and keep your whole body still.' },
+    fix: 'Start light and keep your whole body still.' },   // c11, c4 (CL.momentum)
 ];
 const RISKS = [
   { key: 'pinch', text: 'Dropped elbows can pinch the shoulder.', claim: CL.c9 },
@@ -205,8 +205,10 @@ export default {
   posture: [
     { key: 'elbows', label: 'Elbows high', detail: 'Keep your elbows high and wide.',
       anchor: { at: 'elbow.r', pose: 'end' }, zoom: 'fp-elbows', claim: C(['CONSENSUS'], [MO, SL, BB], 'c5, c9') },
+    // W6 K2: the plate callout `face` cue adds 'not the chin' (c10), so this key cites c5 and c10, as the card's plate
+    // checkpoint 'Rope to face' does.
     { key: 'face', label: 'Rope to face', detail: 'Pull toward your face at eye level.',
-      anchor: { at: 'grip.r', pose: 'end' }, zoom: 'fp-height', claim: C(['CONSENSUS'], [MO, SL], 'c5') },
+      anchor: { at: 'grip.r', pose: 'end' }, zoom: 'fp-height', claim: CL.zoom },
     { key: 'apart', label: 'Ends apart', detail: 'Pull the rope ends apart as you pull.', anchor: { at: 'grip.r', pose: 'end' }, claim: C(['CONSENSUS'], [MO, BB, SL], 'c6') },
     { key: 'squeeze', label: 'Blades together', detail: 'Squeeze the shoulder blades together.', anchor: { at: 'backUpper', pose: 'end' }, claim: C(['CONSENSUS'], [MO, BB, SL], 'c6') },
     { key: 'still', label: 'Body still', detail: 'Keep your whole body still.', anchor: { at: 'chest', pose: 'end' }, claim: C(['CONSENSUS'], [MO, SL], 'c4') },

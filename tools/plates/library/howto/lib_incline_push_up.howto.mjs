@@ -71,7 +71,7 @@ const KEY_WRIST_RANGE = null;   // VARIANTS.floor.wristRange (hand-palm-flat.mjs
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses (spec end = card plate.start, the top; the pose map is the spec's):
 //   shrug (card zoom shoulders Wrong, c10): the spec's Mistake pose, the plate's drawn fault (feet walked in, the
-//         shoulder blades raised).
+//         shoulder blades raised), with a larger shrug (SHRUG, below).
 //   drop  (card zoom hip-line Wrong, c12 "low back dropped, chest still up"): the top with push_up's sag (push_up.mjs:49
 //         SAG_HIP, copied by diamond_push_up's spec): the hip extends SAG_HIP and the low back extends with it, root,
 //         pelvis tilt and lumbar angle solved so the shoulder and the toe tip stay on their spots; the straight arm's
@@ -105,10 +105,22 @@ const DQ = solve({ y: END.root.at[1] - 0.05, z: END.root.at[2], tilt: END.root.t
 const DA = solve({ f: END.shoulder.flex, w: END.wrist }, a => dropPose({ ...DQ, ...a }),
   lm => [lm['wrist.r'][2] - WT[2], lm['grip.r'][1] - lm['wrist.r'][1]]);
 const DROP_POSE = dropPose({ ...DQ, ...DA });
+// shrug (W6 panel L5): the spec's Mistake (feet walked in, c10) with the shoulder blades raised SHRUG cm instead of the
+// spec's M_SHRUG 4, root, pelvis tilt and shoulder flexion re-solved so the wrist and the toe tip stay on the Mistake's
+// spots, then the wrist so the palm lies level (the drop's method above).
+// DRAWING VALUE (D-SHIP-DRAWVAL): SHRUG 8 cm is a Wrong-pose size no card gives (c10 names the shrug, no size); the W6
+// panel found the spec's 4 cm did not read in the close-up. No number from it appears in user copy.
+const SHRUG = 8, MIS = plateSpec.mistake.pose, LM = landmarksOf(MIS, H), WM = LM['wrist.r'], TM = LM['toe.r'];
+const shrugPose = q => ({ ...MIS, root: { at: [0, q.y, q.z], tilt: q.tilt }, scap: { ...MIS.scap, elev: SHRUG },
+  shoulder: { flex: q.f ?? MIS.shoulder.flex }, wrist: q.w ?? MIS.wrist });
+const SQ = solve({ y: MIS.root.at[1], z: MIS.root.at[2], tilt: MIS.root.tilt, f: MIS.shoulder.flex }, shrugPose,
+  lm => [lm['wrist.r'][1] - WM[1], lm['wrist.r'][2] - WM[2], lm['toe.r'][1] - TM[1], lm['toe.r'][2] - TM[2]]);
+const SW = solve({ w: MIS.wrist }, a => shrugPose({ ...SQ, ...a }), lm => [lm['grip.r'][1] - lm['wrist.r'][1]]);
+const SHRUG_POSE = shrugPose({ ...SQ, ...SW });
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
-  shrug: { pose: plateSpec.mistake.pose },
+  shrug: { pose: SHRUG_POSE },
   drop: { pose: DROP_POSE },
 };
 
@@ -118,9 +130,13 @@ export const stills = {
 const zooms = [
   {
     key: 'shoulders', chip: 'Shoulders', heading: 'Shoulders down', kind: 'posture',
-    crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, 0] }, sizePx: 150 },
+    // W6 panel L5: both windows sit at the same place by the ear (the right pose's in Right, the shrug's in Wrong), so
+    // the head stays put and the Wrong shoulder is seen hiked toward the ear, with a red up arrow on the shoulder
+    // (`off`, plate px: drawing values that place the window and the arrow).
+    crop: { center: { at: 'ear', pose: 'right', off: [-6, 26] }, centerWrong: { at: 'ear', pose: 'mistake', off: [-6, 26] }, sizePx: 150 },
     right: 'end',
-    wrong: { base: 'end', pose: plateSpec.mistake.pose, solid: true },
+    wrong: { base: 'end', pose: SHRUG_POSE, solid: true },
+    guides: [{ kind: 'drop', from: { at: 'shoulderTop.r', pose: 'mistake', off: [-20, 12] }, to: { at: 'shoulderTop.r', pose: 'mistake', off: [-20, -6] } }],
     callout: {
       right: { text: 'Shoulders down', anchor: 'shoulder.r' },
       wrong: { text: 'Shoulders shrug', anchor: 'shoulder.r' },   // c10
@@ -217,7 +233,7 @@ export default {
     // KEY_WRIST_RANGE is null: no range given, so the wrist is exempt (lib_push_up form). Never shown.
     wrist: { exempt: `Palm flat on the bench: the palm-flat key records no wrist range (${KEY_WRIST_RANGE}).`, claim: C(['CONVENTION'], ['hand-key-palm-flat'], 'hand-palm-flat.mjs:14 VARIANTS.floor.wristRange null; the card has no grip.wrist') },
     faults: [],                      // the key's faults claim no line of this card (see the header)
-    gripLine: 'Both hands on top of the bench, shoulder-width or a little wider.',
+    gripLine: 'Both hands on top of the bench, shoulder-width or a little wider.',   // c1
     cue: 'Shoulders down, away from your ears.',   // c10
   },
   contacts: ['floor-body'],   // the card's archetype.contact

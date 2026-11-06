@@ -57,7 +57,6 @@ const CL = {
   c10: C(['CONSENSUS'], [FV], 'c10'),
   hips: C(['CONSENSUS'], [FV, GG, NA], 'c2, c3'),
   elbows: C(['CONSENSUS'], [FV, NA, GG], 'c3, c7'),
-  flare: C(['CONSENSUS'], [GG, NA, FV], 'c7, c3'),
   head: C(['CONSENSUS'], [GG, FV, NA], 'c6, c5'),
   pikeZoom: C(['CONSENSUS'], [FV, GG, NA], 'c2, c9'),
   base: C(['CONSENSUS'], [FV], 'c10'),
@@ -186,10 +185,10 @@ const feel = {
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
 const MISTAKES = [
-  // D-TEXT-GOLDEN: posture 'elbows' (c3: about 45 degrees from the body) is shown in this fix; c7's scale-back is in
-  // the shoulder feel row.
-  { key: 'flare', title: 'Elbows flaring out', claim: CL.flare,
-    fix: 'Tuck your elbows in, about 45 degrees from your body.' },
+  // W6 K3: the top fault's fix is the card's own (card handlingMistakes[0].fix, c7), with its regression; the 45 degrees
+  // (c3) stays in posture 'elbows' and the mistake line (the fix's 12-word cap leaves no room for both).
+  { key: 'flare', title: 'Elbows flaring out', claim: CL.c7,
+    fix: 'Tuck your elbows in. Too hard? Go back to standard push-ups.' },   // c7
   // D-TEXT-GOLDEN: posture 'neck' (c5: neck neutral, chin slightly tucked) is shown in this fix.
   { key: 'head', title: 'Moving only your head down', zoom: 'head-path', claim: CL.head,
     fix: 'Chin slightly tucked. Move your head forward and down.' },
@@ -220,7 +219,7 @@ export default {
     // KEY_WRIST_RANGE is null: no range given, so the wrist is exempt (lib_push_up form). Never shown.
     wrist: { exempt: `Palm flat on the floor: the palm-flat key records no wrist range (${KEY_WRIST_RANGE}).`, claim: C(['CONVENTION'], ['hand-key-palm-flat'], 'hand-palm-flat.mjs:14 VARIANTS.floor.wristRange null; the card\'s wrist line (c12) is a handle tip, shown in the wrist feel row') },
     faults: [],                      // the key's faults claim no line of this card (see the header)
-    gripLine: 'Hands about shoulder-width. Spread your fingers for a stable base.',
+    gripLine: 'Hands about shoulder-width. Spread your fingers for a stable base.',   // c1, c10
     cue: 'Hips high, head forward and down.',   // c3, c5
   },
   contacts: ['floor-body'],   // the card's archetype.contact

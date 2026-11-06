@@ -86,11 +86,13 @@ const CONV_WRIST = C(['CONVENTION'], ['pull-default'], 'card grip.wrist: not giv
 // c3, c6) and the spec's Mistake pose merged over it, as the engine draws it (card plate.mistake c9: the working
 // shoulder abducts and the elbow leaves the side). The card zoom `cer-elbow` Wrong is that drawn fault, so no new pose.
 // 'twist' (card zoom `cer-turn` Wrong, c8: "Torso twisting to move the handle"): the end pose with the trunk turned
-// TWIST deg (trunk.yaw, the engine's trunk rotation; russian_twist.mjs's form), the working shoulder going back, so the
-// torso carries the handle out (landmarksOf: grip.l 16.6 px further out, sternum 9.6 px across, shoulder.l 8.2 cm back).
-// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and lib_plank's SAG 20 deg): TWIST 20 deg is a
-// Wrong-pose size no card gives; no number from it appears in user copy; the layers panel judges it.
-const TWIST = 20, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
+// TWIST deg (trunk.yaw, the engine's thorax rotation over a square pelvis; russian_twist.mjs's form), the working
+// shoulder going back, so the torso carries the handle out (landmarksOf at 35: grip.l 16 cm further out, chest 11 cm
+// across, shoulder.l 14 cm back, the hips unmoved).
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and lib_plank's SAG 20 deg): TWIST 35 deg is a
+// Wrong-pose size no card gives (c8 names the twist, no size); W6 panel L1/L5: 20 deg did not read in the front view.
+// No number from it appears in user copy; the layers panel judges it.
+const TWIST = 35, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
 const TWISTED = { trunk: { flex: 0, yaw: TWIST } };
 export const stills = {
   start: { pose: plateSpec.poses.start },
@@ -98,10 +100,14 @@ export const stills = {
   flare: { pose: { ...END, ...MIS } },
   twist: { pose: { ...END, ...TWISTED } },
 };
+// The cer-turn Wrong's rotation arrow (W6 panel L1/L5, c8: the torso turning): the plate engine's mistake guide
+// 'arc-arrow' (vendor/engine/plate.mjs) around the turned chest, under it, running toward the working side, the way the
+// chest turns. Its radius TURN_R (plate px) and angles TURN_A (screen deg, 90 = straight down) are drawing values.
+const TURN_R = 24, TURN_A = [155, 25];
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom (the card has no hand zoom). Zoom shell form (render/closeup/crop.mjs): callouts anchored at the
-// landmark they name, no guide mark; the Wrong is drawn alone (solid).
+// landmark they name; cer-elbow's Wrong is drawn alone (solid), cer-turn's over the Right (below).
 const zooms = [
   {
     key: 'cer-elbow', chip: 'Elbow', heading: 'Elbow at side', kind: 'posture',   // card zoom key: cer-elbow
@@ -113,7 +119,7 @@ const zooms = [
       wrong: { text: 'Drifts out', anchor: 'elbow.l' },
     },
     caption: {
-      right: 'Upper arm against your side, elbow bent 90 degrees.',
+      right: 'Upper arm against your side, elbow bent 90 degrees.',   // c3, c9
       wrong: 'Elbow drifting out, away from the side.',
     },
     alt: {
@@ -123,9 +129,14 @@ const zooms = [
   },
   {
     key: 'cer-turn', chip: 'Torso', heading: 'Torso still', kind: 'posture',   // card zoom key: cer-turn
+    // W6 panel L1/L5: the Wrong is not solid: the square Right torso is drawn, the twisted torso dashed red over it,
+    // with the rotation arrow (TURN_R, TURN_A) in the Wrong only.
+    // The Right is the end pose with its trunk 0 written as an object (the same pose), since the engine refuses a number
+    // trunk under an object one (D-LIB20-TRUNK).
     crop: { center: { at: 'chest', pose: 'right', off: [20, 0] }, sizePx: 200 },
-    right: 'end',
-    wrong: { base: 'end', pose: TWISTED, solid: true },
+    right: { base: 'end', pose: { trunk: { flex: 0, yaw: 0 } } },
+    wrong: { base: 'end', pose: TWISTED },
+    guides: [{ kind: 'arc-arrow', center: 'chest', r: TURN_R, a0: TURN_A[0], a1: TURN_A[1] }],
     callout: {
       right: { text: 'Torso still', anchor: 'chest' },
       wrong: { text: 'Torso twists', anchor: 'chest' },
@@ -158,7 +169,7 @@ const feel = {
       claim: CL.c11 },
     { key: 'pain', where: 'Shoulder pain', at: {},   // pain, not a muscle taking over: no map mark (golden B)
       means: '',   // the card's row has no means; D-FEEL-NOMEANS prints no label
-      fix: 'Stop the set.',
+      fix: 'Stop the set.',   // c17 (the row's claim)
       redFlag: 'shoulder', claim: CL.c17 },
   ],
   claim: C(['CONSENSUS', 'WEAK'], [SL, MO, 'sl-cuff-article'], 'c14, c15 (rotator cuff, feel line), c16 (rear delts, WEAK)'),
@@ -210,7 +221,7 @@ export default {
     { key: 'out', label: 'Turn out', detail: 'Breathe out and turn the handle out, away from your body.',
       anchor: { at: 'grip.l', pose: 'end' }, claim: C(['CONSENSUS'], [MO, SL], 'c5') },
     { key: 'elbow', label: 'Elbow at side', detail: 'Keep your elbow against your side the whole rep.',
-      anchor: { at: 'elbow.l', pose: 'end' }, zoom: 'cer-elbow', claim: C(['CONSENSUS'], [MO, SL, 'sl-cuff-article'], 'c9, c5') },
+      anchor: { at: 'elbow.l', pose: 'end' }, zoom: 'cer-elbow', claim: C(['CONSENSUS'], [MO, SL, ACE, 'sl-cuff-article'], 'c9, c5, c3') },   // W6 K2: the plate callout `elbow` cue adds 'elbow bent 90 degrees' (c3)
     { key: 'level', label: 'Forearm level', detail: 'Keep your forearm parallel to the floor.', anchor: { at: 'wrist.l', pose: 'end' }, claim: CL.c10 },
     { key: 'pause', label: 'Pause', detail: 'Pause for one second at the end of the turn.', anchor: { at: 'grip.l', pose: 'end' }, claim: C(['CONSENSUS'], [ACE, MO], 'c18') },
     { key: 'return', label: 'Slow return', detail: 'Breathe in and slowly return the handle across your body.',

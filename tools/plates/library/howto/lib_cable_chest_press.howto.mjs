@@ -17,6 +17,7 @@
 // redFlag: 'back'.
 // No variant line (equipment 'Cable').
 import plateSpec from '../specs/cable_chest_press.mjs';
+import { landmarksOf } from '../engine.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER };
 
@@ -97,16 +98,23 @@ const CONV_THUMB = C(['CONVENTION'], ['push-default'], 'card grip.thumb: "Not gi
 // From the plate spec's own poses: the start (staggered stance, handles at the nipple line; c2, c3, c4), the end (arms
 // almost straight; c3, c5) and the spec's Mistake merged over the end, as the engine draws it (card plate.mistake c17,
 // c5: the elbows locked straight).
-// 'arch' (card zoom cable-press-stance Wrong, c6: "Lower back arched"): the start pose with the lumbar spine extended
-// ARCH (trunk -ARCH; the hands held at the start handles by reach IK, the feet planted), so only the back changes. The
-// card Wrong's second half ("handles up at the collarbone", c4) is not drawn; it is shown in the plate callout
-// `height`'s cue ("not the collarbone").
+// 'arch' (card zoom cable-press-stance Wrong, c6 "Lower back arched", c4 "handles up at the collarbone"): the start pose
+// with the lumbar spine extended ARCH (trunk -ARCH) over a pelvis tipped forward PELVIS (root tilt), so the low back
+// hollows and the chest tips back over the hips (c6); the feet stay planted. The handles go up to the collarbone (c4:
+// "near the collarbone is too high"): each reach target is raised to the arched pose's own sternum landmark height (the
+// top of the breastbone, where the collarbones meet), at the start handles' depth, so the elbows open.
+// W6 panel L1/L5 (#393): the Wrong is drawn as the dashed mistake over the solid Right (not solid), so the arch and the
+// raised handles read against the neutral start.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent golden B's hanging_leg_raise PELVIS_WRONG trunk -10 to
-// -15 and lib_plank's SAG): ARCH 15 deg sizes the arch; no card gives it, no number appears in user copy; the layers
-// panel judges it.
-const ARCH = 15;
+// -15 and lib_plank's SAG): ARCH 25 deg and PELVIS 10 deg size the arch (the chest leans back 15 deg, as before, the low
+// back bends 25); no card gives them, no number appears in user copy; the layers panel judges them. The handle height is
+// a landmark (c4's collarbone), not a number.
+const ARCH = 25, PELVIS = 10;
 const START = plateSpec.poses.start, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
-const ARCHED = { trunk: -ARCH };
+const ARCH_BODY = { root: { ...START.root, tilt: PELVIS }, trunk: -ARCH };
+const COLLAR_Y = landmarksOf({ ...START, ...ARCH_BODY }, plateSpec.body?.height ?? 1.75).sternum[1];   // c4 collarbone
+const atCollar = r => ({ ...r, at: [r.at[0], COLLAR_Y, r.at[2]] });
+const ARCHED = { ...ARCH_BODY, reach: { l: atCollar(START.reach.l), r: atCollar(START.reach.r) } };
 export const stills = {
   start: { pose: START },
   end: { pose: END },
@@ -121,21 +129,21 @@ const zooms = [
   {
     key: 'cable-press-stance', chip: 'Back', heading: 'Back position', kind: 'posture',
     // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's low back for both halves; the Wrong is the
-    // arch still drawn alone (solid), as `stills.arch`.
+    // arch still (`stills.arch`) dashed in the mistake colour over the solid Right (W6 panel L1/L5).
     crop: { center: { at: 'lumbar', pose: 'right', off: [0, -10] }, sizePx: 190 },
     right: 'start',
-    wrong: { base: 'start', pose: ARCHED, solid: true },
+    wrong: { base: 'start', pose: ARCHED },
     callout: {
       right: { text: 'Spine neutral', anchor: 'lumbar' },
       wrong: { text: 'Low back arched', anchor: { at: 'lumbar', pose: 'mistake' } },
     },
     caption: {
       right: 'Staggered stance, spine neutral, handles at nipple height.',   // c2, c6, c4
-      wrong: 'Lower back arched.',                                          // c6
+      wrong: 'Lower back arched, handles up at the collarbone.',            // c6, c4 (the card zoom's Wrong)
     },
     alt: {
       right: 'Side view, start of the press. Staggered stance, the back neutral, handles at the nipple line.',
-      wrong: 'Side view, start of the press. The lower back arches, so the chest tips back over the hips.',
+      wrong: 'Side view, start of the press. The lower back arches and the chest tips back. The handles rise to the collarbone.',
     },
     feelRow: 'lower-back',
   },
@@ -160,7 +168,9 @@ const feel = {
       means: 'You are arching your back.',
       fix: 'Keep your spine neutral and brace your abs.',
       zoom: 'cable-press-stance', redFlag: 'back', claim: CL.c6 },
-    { key: 'shoulder', where: 'Shoulder pain', at: { muscles: ['front_delts'] },
+    // W6 panel K1/K3 (#393): the card's row title 'Shoulder' (where you feel it), not 'Shoulder pain'; redFlag 'shoulder'
+    // links the shoulder stop box.
+    { key: 'shoulder', where: 'Shoulder', at: { muscles: ['front_delts'] },
       means: 'You grip much wider than shoulder width, or flare your elbows.',
       fix: 'Keep your elbows at a 45-degree angle.',
       redFlag: 'shoulder', claim: CL.flare },
@@ -204,7 +214,7 @@ export default {
       // card zoom cable-press-handle wrong (c3). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'wrist-bent', label: 'Wrist bent', pose: {}, markers: [], alt: 'Wrist bent out of line with the elbow.' },
     ],
-    gripLine: 'Single handles, neutral grip, just outside shoulder width. Press straight ahead, pushing through the palms.',
+    gripLine: 'Single handles, neutral grip, just outside shoulder width. Press straight ahead, pushing through the palms.',   // c3
     cue: 'Push through the palms.',   // c3
   },
   contacts: ['standing-feet'],
