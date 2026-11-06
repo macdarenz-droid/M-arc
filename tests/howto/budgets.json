@@ -486,6 +486,168 @@
       "measuredGz": 7359,
       "setBy": "LIB-SHIP",
       "reason": "LIB-SHIP W2: the 9 ship (#379 D-SHIP-W2-STAMP); measured + 10 % on claude/lib-ship-w2 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-pendlay-row-*.js",
+      "rawMax": 35919,
+      "gzMax": 9133,
+      "measuredRaw": 32653,
+      "measuredGz": 8302,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-pendlay-row-*.js",
+      "rawMax": 32322,
+      "gzMax": 6289,
+      "measuredRaw": 29383,
+      "measuredGz": 5717,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-pendlay-row-*.js",
+      "rawMax": 26288,
+      "gzMax": 8117,
+      "measuredRaw": 23898,
+      "measuredGz": 7379,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-landmine-row-*.js",
+      "rawMax": 34719,
+      "gzMax": 9259,
+      "measuredRaw": 31562,
+      "measuredGz": 8417,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-landmine-row-*.js",
+      "rawMax": 27751,
+      "gzMax": 5766,
+      "measuredRaw": 25228,
+      "measuredGz": 5241,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-landmine-row-*.js",
+      "rawMax": 28019,
+      "gzMax": 8260,
+      "measuredRaw": 25471,
+      "measuredGz": 7509,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-t-bar-row-*.js",
+      "rawMax": 47838,
+      "gzMax": 13896,
+      "measuredRaw": 43489,
+      "measuredGz": 12632,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-t-bar-row-*.js",
+      "rawMax": 26479,
+      "gzMax": 5672,
+      "measuredRaw": 24071,
+      "measuredGz": 5156,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-t-bar-row-*.js",
+      "rawMax": 26262,
+      "gzMax": 8166,
+      "measuredRaw": 23874,
+      "measuredGz": 7423,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-barbell-shrug-*.js",
+      "rawMax": 38427,
+      "gzMax": 9932,
+      "measuredRaw": 34933,
+      "measuredGz": 9029,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-barbell-shrug-*.js",
+      "rawMax": 17525,
+      "gzMax": 4545,
+      "measuredRaw": 15931,
+      "measuredGz": 4131,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-barbell-shrug-*.js",
+      "rawMax": 23096,
+      "gzMax": 7901,
+      "measuredRaw": 20996,
+      "measuredGz": 7182,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-cable-shrug-*.js",
+      "rawMax": 42132,
+      "gzMax": 11053,
+      "measuredRaw": 38301,
+      "measuredGz": 10048,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-cable-shrug-*.js",
+      "rawMax": 19145,
+      "gzMax": 5060,
+      "measuredRaw": 17404,
+      "measuredGz": 4600,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-cable-shrug-*.js",
+      "rawMax": 24055,
+      "gzMax": 8034,
+      "measuredRaw": 21868,
+      "measuredGz": 7303,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-smith-machine-shrug-*.js",
+      "rawMax": 44972,
+      "gzMax": 11149,
+      "measuredRaw": 40883,
+      "measuredGz": 10135,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-smith-machine-shrug-*.js",
+      "rawMax": 20941,
+      "gzMax": 5198,
+      "measuredRaw": 19037,
+      "measuredGz": 4725,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-smith-machine-shrug-*.js",
+      "rawMax": 23198,
+      "gzMax": 7928,
+      "measuredRaw": 21089,
+      "measuredGz": 7207,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
     }
   ],
   "perId": [

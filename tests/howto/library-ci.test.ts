@@ -29,6 +29,7 @@ import { wwwHash as gateWwwHash } from '../../scripts/gate-split.mjs';
 import { LIB_P, wwwHash as libWwwHash, inputProblems } from '../../scripts/howto-shard.mjs';
 // @ts-expect-error plain .mjs build tool, no types
 import { LIB_ONCE, libraryTuples, parseState } from '../../tools/plates/library/fidelity/tuples.mjs';
+import { W4_IDS } from './checks/ship-w4';
 // @ts-expect-error plain .mjs build tool, no types
 import { rows as registryRows } from '../../tools/plates/library/registry.mjs';
 
@@ -306,8 +307,10 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     // handpair-curl-dumbbell-under, zoom css, docs/research/howto/lib_dumbbell_biceps_curl.json) join the 61 of the 8.
     // LIB-SHIP W2 (ruling 3): the 8 W2 ids (pec_fly held, D-SHIP-PECFLY-HOLD) add 5 outputs each (ht-, feel-, posture-, zoom css, research json); none has a
     // hand pair (rope and push_up are on the pinned no-zoom list, D-SHIP-PAIR-NOZOOM; the rest have no hand chunk).
-    expect(real.inputs.size).toBe(61 + 6 + 8 * 5);
+    // LIB-SHIP W4 (ruling 3; D-SHIP-W4-FLIPSET): the 6 W4 ids add the same 5 outputs each; none has a hand pair.
+    expect(real.inputs.size).toBe(61 + 6 + 8 * 5 + 6 * 5);
     const W2 = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up'];
+    for (const c of W4_IDS.map(id => id.slice(4).replace(/_/g, '-'))) for (const p of [`src/howto/generated/ht-${c}.ts`, `src/howto/generated/feel-${c}.ts`, `src/howto/generated/posture-${c}.ts`, `src/slices/howto/css/zoom-${c}.css`, `docs/research/howto/lib_${c.replace(/-/g, '_')}.json`]) expect(real.inputs.has(p), p).toBe(true);
     for (const c of W2) for (const p of [`src/howto/generated/ht-${c}.ts`, `src/howto/generated/feel-${c}.ts`, `src/howto/generated/posture-${c}.ts`, `src/slices/howto/css/zoom-${c}.css`]) expect(real.inputs.has(p), p).toBe(true);
     expect([...real.inputs.keys()].filter((p: string) => p.includes('/handpair-'))).toEqual(['src/howto/generated/handpair-curl-dumbbell-under.ts']);
     const r = await run(tree, ['--input-type=module', '-e', "import { inputsMap } from './tools/plates/library/ci/affected.mjs'; const m = await inputsMap(); console.log('@@' + JSON.stringify({ proven: m.proven, why: m.why, n: m.inputs.size }));"]);
@@ -373,31 +376,38 @@ const clone = (x: any): any => JSON.parse(JSON.stringify(x));
 // LIB-SHIP W2 (ruling 3): the ruled set is the W1 id plus the 8 W2 flips (pec_fly held), in registry order. At the fixture times
 // (280.8 s each, target 900 s) that is K = 3 shards of 3 ids each; the W1 asserts are kept at K = 3 (shard 1
 // holds the 4 run rows; every shard holds its own 2 once-rows and its ids' tuples), and a ruled id left out of the proofs is red.
-const SHIP_LIB = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
-describe('C6, C8: the shipped library ids on this tree (LIB-SHIP W2: the ruled nine)', { timeout: 300_000 }, () => {
+// LIB-SHIP W4 (ruling 3; D-SHIP-W4-FLIPSET): the 6 W4 ids (checks/ship-w4.ts; lb03 rows, first in registry order), then
+// the nine: 15 ids at 280.8 s is K = 5 shards of 3; the tuples are the nine's 2551 plus the W4 6's 1661 (measured on the flip).
+const SHIP_LIB = [...W4_IDS, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
+describe('C6, C8: the shipped library ids on this tree (LIB-SHIP W2: the ruled nine; LIB-SHIP W4: plus the 6)', { timeout: 300_000 }, () => {
   const times = { default: 280.8, c0: 30, once: { run: 0, shard: 0 }, ids: {} };
   const verdict = (s: any, over: any = {}) => libraryVerdict({ lib: s.lib, rebuild: s.rebuild, gate: s.gate, sha: SHA, ref: 'refs/heads/main', event: 'push', needs: NEEDS, root: ROOT, times, ...over });
-  it('C6: the proven ids are exactly the ruled nine; K = 3, every shard holds its 2 once-rows and its ids\' tuples, shard 1 also the 4 run rows, and the family is green', async () => {
+  it('C6: the proven ids are exactly the ruled 15; K = 5, every shard holds its 2 once-rows and its ids\' tuples, shard 1 also the 4 run rows, and the family is green', async () => {
     expect(libraryIds()).toEqual(SHIP_LIB);
     const s = await greenSet(ROOT, { ids: SHIP_LIB, times });
-    expect(s.plan.K).toBe(3);
-    expect([1, 2, 3].map(k => idsOfShard(s.plan, k).length)).toEqual([3, 3, 3]);
-    expect((await libraryTuples(SHIP_LIB, { root: ROOT })).length).toBe(2551);   // the nine's tuples (measured on W2, pec_fly held)
+    expect(SHIP_LIB).toHaveLength(15);
+    expect(s.plan.K).toBe(5);
+    expect([1, 2, 3, 4, 5].map(k => idsOfShard(s.plan, k).length)).toEqual([3, 3, 3, 3, 3]);
+    expect((await libraryTuples(SHIP_LIB.slice(6), { root: ROOT })).length).toBe(2551);   // the nine's tuples (measured on W2, pec_fly held), unchanged
+    expect((await libraryTuples(W4_IDS, { root: ROOT })).length).toBe(1661);   // the W4 6's tuples (measured on the W4 flip)
+    expect((await libraryTuples(SHIP_LIB, { root: ROOT })).length).toBe(4212);
     expect((await libraryTuples(['lib_dumbbell_biceps_curl'], { root: ROOT })).length).toBe(324);   // W1's id, unchanged
-    expect(s.lib.reduce((n: number, p: any) => n + p.rows.length, 0)).toBe(3 * 2 + 4 + 2551);
+    expect(s.lib.reduce((n: number, p: any) => n + p.rows.length, 0)).toBe(5 * 2 + 4 + 4212);
     expect(LIB_ONCE.run).toHaveLength(4);
     const v = await verdict(s);
     expect(v.problems).toEqual([]);
-    expect(v.line).toBe('library: full (9 of 9)');   // ids proven of ids shipped
+    expect(v.line).toBe('library: full (15 of 15)');   // ids proven of ids shipped
   });
   it('C6: every shard proof missing is red; a skipped or missing needed job is red; a ruled id left out of the proofs is red', async () => {
     const s = await greenSet(ROOT, { ids: SHIP_LIB, times });
-    expect((await verdict({ ...s, lib: [] })).problems.join('\n')).toMatch(/expected shard proofs 1\.\.3 of 3/);
+    expect((await verdict({ ...s, lib: [] })).problems.join('\n')).toMatch(/expected shard proofs 1\.\.5 of 5/);
     expect((await verdict({ ...s, lib: s.lib.slice(1) })).problems.length).toBeGreaterThan(0);
     expect((await verdict(s, { needs: { ...NEEDS, 'howto-shard': { result: 'skipped' } } })).problems).toContain('library: needed job howto-shard ended skipped');
     expect((await verdict(s, { needs: { 'howto-rebuild': { result: 'success' } } })).problems).toContain('library: needed job howto-shard is missing from MARC_NEEDS');
     const eight = await greenSet(ROOT, { ids: SHIP_LIB.filter(id => id !== 'lib_push_up'), times });
     expect((await verdict(eight)).problems.length).toBeGreaterThan(0);
+    const noW4 = await greenSet(ROOT, { ids: SHIP_LIB.filter(id => id !== 'lib_cable_shrug'), times });   // LIB-SHIP W4: a W4 id left out
+    expect((await verdict(noW4)).problems.length).toBeGreaterThan(0);
   });
   it('C8: the 4 LIB_ONCE.run rows exactly once, in shard 1: a failed selftest, a run row also in shard 2, or a dropped run row is red', async () => {
     const s = await greenSet(ROOT, { ids: SHIP_LIB, times });
@@ -523,7 +533,7 @@ describe('C7: C-TZ, no Date, Intl or toLocale in the How-to code or its built ch
     expect(b.code, b.out).toBe(0);
     const chunks = readdirSync(join(out, 'assets')).filter(n => /^(HowToSheet|ht|hand|handpair|feel|posture|zoom|loaders)-.+\.js$/.test(n));
     expect(chunks.filter(n => n.startsWith('HowToSheet-')).length).toBe(1);
-    expect(chunks.filter(n => n.startsWith('ht-')).length).toBe(8 + 1 + 8);   // LIB-SHIP W1: the 8 plus dumbbell_biceps_curl; LIB-SHIP W2 (ruling 3): plus the 8 W2 ids (pec_fly held)
+    expect(chunks.filter(n => n.startsWith('ht-')).length).toBe(8 + 1 + 8 + 6);   // LIB-SHIP W4 (ruling 3): plus the 6 W4 ids   // LIB-SHIP W1: the 8 plus dumbbell_biceps_curl; LIB-SHIP W2 (ruling 3): plus the 8 W2 ids (pec_fly held)
     expect(chunks.flatMap(n => tzProblems(n, readFileSync(join(out, 'assets', n), 'utf8')))).toEqual([]);
   });
   it('the scan bites: a fixture file with new Date() and a chunk with toLocaleString are red; Date.now() is allowed', () => {
@@ -637,8 +647,13 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
   // LIB-SHIP W2 (ruling 3, D-SHIP-W2-STAMP, #379 6636105974): pilot A's layers page is re-pinned for the 7 W2 ids it adds
   // (it supersedes the W1 pin), and pilot B's layers page (cable_fly, push_up) and PILOT-B2's page and layers page
   // (D-LIB-PILOTB2, crunch held at approved-plate) are added; every other entry is unchanged
-  it('the pinned-page list is pilot A\'s (page and layers page), PILOT-A2\'s, PILOT-A3\'s, pilot B\'s (page and layers page) and PILOT-B2\'s (page and layers page) on this tree and sha256 is the pin hash', () => {
+  // LIB-SHIP W4 (D-SHIP-W4-PIN, D-SHIP-W4-FLIPSET): lb02's plates page (no layers page: nothing in lb02 ships) and lb03's
+  // plates and layers pages join, first in file order
+  it('the pinned-page list is LB2\'s page, LB3\'s (page and layers page), pilot A\'s (page and layers page), PILOT-A2\'s, PILOT-A3\'s, pilot B\'s (page and layers page) and PILOT-B2\'s (page and layers page) on this tree and sha256 is the pin hash', () => {
     expect(pinnedPages(ROOT)).toEqual({ pages: [
+      { id: 'tests/howto/golden/library/lb02.json#page', file: 'tests/howto/golden/library/lb02.json', kind: 'page', pageSha256: 'e3978e93d73a3094edb3722e41c0e803bc7b66b8d7ac1a5016a87398f547d186', bytes: 796241 },
+      { id: 'tests/howto/golden/library/lb03.json#page', file: 'tests/howto/golden/library/lb03.json', kind: 'page', pageSha256: 'd6241cf65a6be261cfa688ebba27549cded6761f2a1a0a00b55d58b0f1f91f90', bytes: 1186023 },
+      { id: 'tests/howto/golden/library/lb03.json#layers-page', file: 'tests/howto/golden/library/lb03.json', kind: 'layers-page', pageSha256: '0b421cf6de6b016ca93b321fa503add509d657157aa50916b3cf538cee64c984', bytes: 1039277 },
       { id: 'tests/howto/golden/library/pilot-a.json#page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'page', pageSha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 },
       { id: 'tests/howto/golden/library/pilot-a.json#layers-page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'layers-page', pageSha256: 'afd5d4136ee57fd74f831ae0ad35d09e4708d747fcf3d9e266c10ee39f65e3e1', bytes: 1375425 },
       { id: 'tests/howto/golden/library/pilot-a2.json#page', file: 'tests/howto/golden/library/pilot-a2.json', kind: 'page', pageSha256: '3e225bc12531e6c395e5a532a77736ebaeb9cdc276c55709d8ac4c73ef78bb0b', bytes: 280533 },

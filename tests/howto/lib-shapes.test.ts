@@ -11,6 +11,7 @@ import { gripHtml, handContentOf } from '@/slices/howto/sections/Hand';
 import legPress from '@/howto/generated/ht-leg-press';
 import chestPress from '@/howto/generated/ht-machine-chest-press';
 import type { BuiltHowTo } from '@/howto/types';
+import { W4_IDS } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -69,7 +70,9 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     for (const p of list) { const t = readFileSync(p, 'utf8'); h.update(`${p}\0${sha(body ? t.slice(t.indexOf('\n') + 1) : t)}\n`); }
     return h.digest('hex');
   };
-  const W2_IDS = ['barbell_row', 'dumbbell_bench_press', 'dumbbell_shoulder_press', 'upright_row', 'rope_triceps_pushdown', 'plank', 'cable_fly', 'push_up'];
+  // LIB-SHIP W4 (ruling 3; D-SHIP-W4-FLIPSET): loaders.ts also adds the W4 ids (checks/ship-w4.ts W4_IDS), 4 lines each
+  const W2_IDS = ['barbell_row', 'dumbbell_bench_press', 'dumbbell_shoulder_press', 'upright_row', 'rope_triceps_pushdown', 'plank', 'cable_fly', 'push_up',
+    ...W4_IDS.map(id => id.slice(4))];
   const W2_LINE = new RegExp(`^  (?:"lib_(?:${W2_IDS.join('|')})",|lib_(?:${W2_IDS.join('|')}): \\(\\) => |"(?:${W2_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   /** loaders.ts's body (all but line 1) without the W2 lines: how many were taken out, and the rest's sha. */
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
@@ -84,13 +87,15 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // the W2 lines taken out (4 per id: HOWTO_IDS, LOADERS, POSTURE, FEEL; no HAND line, D-SHIP-PAIR-NOZOOM) is main's
     // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
-    expect(w2Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'))).toEqual({ removed: 32, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
+    expect(W4_IDS).toHaveLength(6);
+    expect(w2Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'))).toEqual({ removed: 32 + 24, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
   });
   it('LIB-SHIP W2 mutations: a HAND line for a W2 id, a W2 line dropped, and another line changed in loaders.ts are red', () => {
     const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(t);
     expect(w2Less(t.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(ok.sha);
-    expect(w2Less(t.replace('  "plank": () => import(\'./posture-plank\'),\n', '')).removed).toBe(31);
-    expect(w2Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"plank\": () => import('./hand-plank'),\n")).removed).toBe(33);
+    expect(w2Less(t.replace('  "plank": () => import(\'./posture-plank\'),\n', '')).removed).toBe(55);
+    expect(w2Less(t.replace('  "t-bar-row": () => import(\'./feel-t-bar-row\'),\n', '')).removed).toBe(55);   // LIB-SHIP W4: a W4 line dropped
+    expect(w2Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"plank\": () => import('./hand-plank'),\n")).removed).toBe(57);
   });
 
   // F-PLATE-ZOOMCSS (D-ZOOMCSS-PINS, #387 6637398953): gen/plates.mjs is the 8 ht- files' hashed writer, so only their

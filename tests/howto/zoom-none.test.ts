@@ -7,6 +7,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { child, IN_CHILD } from '../child-test';
+import { W4_IDS } from './checks/ship-w4';
 
 const GEN = join(__dirname, '../../src/howto/generated');
 const sha = (s: string) => createHash('sha256').update(s).digest('hex');
@@ -34,11 +35,32 @@ const BODY_MAIN: Record<string, string> = {
   'posture-upright-row.ts': '4ea58d5ad84139b2e9226623f9bd27235b79963c3945fc2f226636d522d5dcfd',
 };
 
+// LIB-SHIP W4 (ruling 3; D-SHIP-W4-FLIPSET): the 6 W4 ids add one posture chunk each (bodies measured on the W4 flip) and
+// 4 loaders.ts lines each; main's chunks stay byte-equal, and loaders.ts's body with exactly the W4 lines taken out is main's.
+const BODY_W4: Record<string, string> = {
+  'posture-pendlay-row.ts': 'd575d913098ad3a1b626616bab30a0391c3b1996ec2cc98919babce1cb25f1fb',
+  'posture-landmine-row.ts': '54626afb23bb0f2d82a1af2e316bceb2bb69f19fbdf54174bd9a69cbe42a61bf',
+  'posture-t-bar-row.ts': '62bf33d2043ae4acacf44390a87a3dbe4fbea53af6aa92638b52e0b2e427170c',
+  'posture-barbell-shrug.ts': '838528fb18d8fa95329c41ae41834187587472f0ac2a88e7a264088d5aeb0c6c',
+  'posture-cable-shrug.ts': 'c0e41411c66a685bafb9765b65b3e97800bd3c08298ab16cf3ba003697b29cc8',
+  'posture-smith-machine-shrug.ts': '0dd2be769e5c7992b65707cac2ec021ac2536b6809b3a491757a417c62fd4006',
+};
+const W4_SLUGS = W4_IDS.map(id => id.slice(4));
+const W4_LINE = new RegExp(`^  (?:"lib_(?:${W4_SLUGS.join('|')})",|lib_(?:${W4_SLUGS.join('|')}): \\(\\) => |"(?:${W4_SLUGS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+const w4Less = (t: string) => { const lines = t.split('\n'), kept = lines.filter(l => !W4_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
+
 describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on main', () => {
-  it('every posture chunk and loaders.ts body is byte-equal to main', () => {
+  it('every posture chunk and loaders.ts body is byte-equal to main (LIB-SHIP W4: plus the W4 chunks, and loaders.ts less the W4 lines)', () => {
     const now = readdirSync(GEN).filter(n => /^posture-.*\.ts$|^loaders\.ts$/.test(n)).sort();
-    expect(now).toEqual(Object.keys(BODY_MAIN).sort());
-    for (const [n, want] of Object.entries(BODY_MAIN)) expect([n, sha(body(n))]).toEqual([n, want]);
+    expect(now).toEqual([...Object.keys(BODY_MAIN), ...Object.keys(BODY_W4)].sort());
+    for (const [n, want] of Object.entries({ ...BODY_MAIN, ...BODY_W4 })) if (n !== 'loaders.ts') expect([n, sha(body(n))]).toEqual([n, want]);
+    expect(w4Less(body('loaders.ts'))).toEqual({ removed: 24, sha: BODY_MAIN['loaders.ts'] });
+  });
+  it('LIB-SHIP W4 mutations: a W4 loaders line dropped, another loaders line changed, and a W4 posture byte changed are red', () => {
+    const t = body('loaders.ts');
+    expect(w4Less(t.replace('  "t-bar-row": () => import(\'./feel-t-bar-row\'),\n', '')).removed).toBe(23);
+    expect(w4Less(t.replace('export const FEEL', 'export const FEEL_X')).sha).not.toBe(BODY_MAIN['loaders.ts']);
+    expect(sha(`${body('posture-cable-shrug.ts')} `)).not.toBe(BODY_W4['posture-cable-shrug.ts']);
   });
 });
 

@@ -43,7 +43,9 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
     const keys = S.mapKeys(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
     // LIB-SHIP W2 (ruling 3, D-SHIP-IDS-NOPAIR): the 8 W2 ids ship (pec_fly held, D-SHIP-PECFLY-HOLD) with no hand chunk and no hand pair (gap-ruled or on the
     // pinned no-zoom list), so HAND holds exactly the other shipped chrome ids, in order; POSTURE and FEEL hold all of them
-    const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up'];
+    // LIB-SHIP W4 (ruling 3; D-SHIP-W4-FLIPSET): the 6 W4 ids ship with no hand chunk and no hand pair too
+    const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up',
+      'pendlay-row', 'landmine-row', 't-bar-row', 'barbell-shrug', 'cable-shrug', 'smith-machine-shrug'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     expect(handIds).toHaveLength(9);   // the 8 and dumbbell_biceps_curl
