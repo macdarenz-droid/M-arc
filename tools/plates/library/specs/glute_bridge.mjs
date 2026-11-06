@@ -165,8 +165,8 @@ export default {
     { key: 'tuck', text: 'Pelvis<br>tucked', anchor: { at: 'hips', off: [-5.9, -14] }, box: { left: 70, top: 215 }, cue: 'Keep the core tight and the pelvis tucked so the low back does not arch.' },
     // c4: on the thigh's top edge, on the shoulder-hip-knee line, from the open space above
     { key: 'line', text: 'Straight<br>line', anchor: { along: ['hip.r', 'knee.r'], t: 0.55, off: [0, -11] }, box: { left: 180, top: 205 }, cue: 'At the top your shoulders, hips and knees form a straight line.' },
-    // c4: the knee at the top
-    { key: 'knee', text: 'Knees<br>at 90', anchor: { at: 'knee.r', pose: 'end' }, box: { left: 262, top: 205 }, cue: 'At the top your shin and thigh form roughly a right angle.' },
+    // LIB-PLATEFIX-3 (ruled #405 6684669717 item 15; card edit research-routes-3 2c82a0ca): the 'Knees at 90' callout is
+    // dropped, the card's checkpoints are 'Pelvis tucked' and 'Straight line'; the knee angle is the 'Knee about 90°' measure.
   ],
   tempo: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
