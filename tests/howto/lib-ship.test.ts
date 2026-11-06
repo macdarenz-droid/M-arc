@@ -515,6 +515,21 @@ describe('LIB-SHIP W3 D-SHIP-LAYERSZOOM: a layers page carries the zoom its pinn
       expect([b, bad.some((p: string) => p.startsWith(`${e.chromeId}: mistakeSvg sha256 `))]).toEqual([b, true]);
     }
   });
+  // Q-W3-20 (#384 6687335829): gen/zooms.mjs lessZoomCss takes ZOOM_CSS out of a zoomed layers page's style exactly once
+  // before the golden B comparison; every other byte is compared. Its 4 reds, and the clean case.
+  it('lessZoomCss: clean on a zoomed page; red on the CSS altered by one character, twice, on a page with no zoom, missing on a zoom page', async () => {
+    const Z = await import(/* @vite-ignore */ url('tools/plates/gen/zooms.mjs')), { ZOOM_CSS } = await import(/* @vite-ignore */ url('tools/plates/library/zoom/inline.mjs'));
+    const REST = '.plate .x { fill: none; }\n', G = '<g class="plate-zoom" data-view="mistake"></g>';
+    const page = (css: string, zoom = true) => `<style>${css}${REST}</style><svg>${zoom ? G : ''}</svg>`;
+    expect(Z.lessZoomCss(ZOOM_CSS + REST, page(ZOOM_CSS), 'lib_x')).toBe(REST);
+    expect(Z.lessZoomCss(REST, page('', false), 'lib_x')).toBe(REST);   // no zoom, no CSS: the style as it is
+    const one = ZOOM_CSS.replace('stroke-width: 1.25', 'stroke-width: 1.35');
+    expect(one).not.toBe(ZOOM_CSS);
+    expect(() => Z.lessZoomCss(one + REST, page(one), 'lib_x')).toThrow(/must carry ZOOM_CSS once, right after <style>/);
+    expect(() => Z.lessZoomCss(ZOOM_CSS + ZOOM_CSS + REST, page(ZOOM_CSS + ZOOM_CSS), 'lib_x')).toThrow(/must carry ZOOM_CSS once/);
+    expect(() => Z.lessZoomCss(ZOOM_CSS + REST, page(ZOOM_CSS, false), 'lib_x')).toThrow(/ZOOM_CSS on a layers page with no plate zoom/);
+    expect(() => Z.lessZoomCss(REST, page(''), 'lib_x')).toThrow(/must carry ZOOM_CSS once/);
+  });
   it('the builder applies applyZooms to the mirror specs after the build', () => {
     const src = readFileSync(join(ROOT, 'tools/plates/library/build-layers-page.mjs'), 'utf8');
     expect(src).toContain("import { applyZooms } from './zoom/inline.mjs';");
