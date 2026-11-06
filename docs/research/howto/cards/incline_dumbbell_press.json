@@ -624,7 +624,7 @@
   },
   "risks": [
     {
-      "risk": "Dropped weights cause most bad lifting injuries. Have a spotter hold your wrists.",
+      "risk": "In US hospital data, dropped weights are the top cause of lifting injuries. Have a spotter hold your wrists.",
       "claim": [
         "c15",
         "c10"
@@ -659,5 +659,8 @@
     "remove": [],
     "why": "exercises.json: upper_chest primary; front_delts, triceps, chest secondary. c2 supports upper_chest and front_delts, and triceps (Rodríguez-Ridao: similar triceps activity at all inclines, barbell data); c12 supports chest. No change."
   },
-  "anchorSource": "ace-incline-press"
+  "anchorSource": "ace-incline-press",
+  "notes": [
+    "RESEARCH-ROUTES-1 part 2 (F-CARD-INCLINEDB-RISK; #391 6653791551, 6681022221): risks[0] read \"Dropped weights cause most bad lifting injuries.\", wider than c15 (Kerr 2010: the most common mechanism of US emergency-department weight-training injuries). It now reads as the W4 sheet prints it (#391 6682975122), with c15's scope: \"In US hospital data, dropped weights are the top cause of lifting injuries.\" No claim text changes."
+  ]
 }
