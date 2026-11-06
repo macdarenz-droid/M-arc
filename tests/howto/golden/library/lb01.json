@@ -391,6 +391,29 @@
       "supersedes": null,
       "why": "W3 layers approved (#384): the calibrated layers panel 6648454032 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6648733957 and 6649856513, focused rechecks 6649416891 and 6653062201, and the delta check with PIN GO 6653343780 (exactly the 3 ruled strings at 2f5d0652). assisted_pull_up, underhand_lat_pulldown held (LIB-PLATEFIX-3). Rebuilt for 8 ids under D-SHIP-W3-NOPAIR (#384 6681221802): incline_machine_press and shoulder_press staged (no LIB-7 hand pair; F-HAND-MACHINEPUSH); the other 8 cards byte-equal.",
       "prev": "89df12e38b494d9329a82a732e8062e339ff421f69fc70f21c8f5ac785beb6d8"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB01",
+      "ids": [
+        "lib_chin_up",
+        "lib_hanging_knee_raise",
+        "lib_inverted_row",
+        "lib_close_grip_pulldown",
+        "lib_single_arm_lat_pulldown",
+        "lib_straight_arm_pulldown",
+        "lib_chest_supported_row",
+        "lib_resistance_band_row"
+      ],
+      "pageSha256": "a1c714a30ab211d4ae05c2f5f49e7bcd48fe3275e55733ae930753c43c7a1678",
+      "bytes": 2195374,
+      "approvedBy": "supervisor",
+      "decision": "D-BODYMAP-LIB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/404#issuecomment-6688047379 @ 8f6da6d940e1cf58467fcfb6077161d62f138269",
+      "date": "2026-11-06",
+      "supersedes": 13,
+      "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-BODYMAP-APPEND #404 6688047379; supervisor under D-LIB-O5 point 4: golden-B design kinds only, superseding a supervisor entry): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow and back-of-knee pain parts. Byte proof: with the fix paths undone, this page equals the superseded entry page byte for byte, except the shimmer band of a feel map whose main muscles include front_delts. Built twice, equal sha256.",
+      "prev": "57f886567c33e8d29ddedf6b1ee352c340053c98d0cd489bbc85063593388f16"
     }
   ]
 }

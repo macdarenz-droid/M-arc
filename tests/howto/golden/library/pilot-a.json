@@ -443,6 +443,28 @@
       "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row), and the D-TEXT-GOLDEN placements (#379 6637739563), which move posture-only card lines into visible setup and risk slots, and plank's harder checkpoint removed (D-TEXT-PROGRESSION, #379 6638023726), and the content check's two line fixes (#379 6638098178); pec_fly held and taken off this page (D-SHIP-PECFLY-HOLD, #379 6641008259), the other 7 cards byte-equal.",
       "supersedes": 14,
       "prev": "4843e6969fbdc4a84772767d1d15f8d59ba083ec7547967c80d6609ec9714a6f"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-A",
+      "ids": [
+        "lib_dumbbell_biceps_curl",
+        "lib_plank",
+        "lib_rope_triceps_pushdown",
+        "lib_barbell_row",
+        "lib_dumbbell_bench_press",
+        "lib_dumbbell_shoulder_press",
+        "lib_upright_row"
+      ],
+      "pageSha256": "11a93d164777c2b0ae47f72d391573aed38a209d63b03bad72e3e30004ff5ff9",
+      "bytes": 1378217,
+      "approvedBy": "supervisor",
+      "decision": "D-BODYMAP-LIB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/404#issuecomment-6688047379 @ 8f6da6d940e1cf58467fcfb6077161d62f138269",
+      "date": "2026-11-06",
+      "supersedes": 15,
+      "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-BODYMAP-APPEND #404 6688047379; supervisor under D-LIB-O5 point 4: golden-B design kinds only, superseding a supervisor entry): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow and back-of-knee pain parts. Byte proof: with the fix paths undone, this page equals the superseded entry page byte for byte, except the shimmer band of a feel map whose main muscles include front_delts. Built twice, equal sha256.",
+      "prev": "715d3f61c4997a3227aa9136523d83452759d7c65b8b8b7286427e0695415975"
     }
   ]
 }
