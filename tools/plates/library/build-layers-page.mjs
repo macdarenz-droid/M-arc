@@ -59,6 +59,7 @@ const between = (src, name, start, endMark) => {
  * spec.optionsUrl: module exporting `CLOSEUP_OPTIONS` (required when any exercise uses the renderer);
  * spec.files: { 'exercises/<id>.mjs': absPath, … } copied into the mirror (a new exercise's plate and howto sources);
  * spec.jump: the header's jump-link line (default golden B's; null drops it); spec.regionFix (default true).
+ * spec.bodymapFix (default false; layersSpecOf sets it for every batch page): F-BODYMAP-FRONTDELT's map fix.
  */
 export function planOf(spec) {
   const cards = spec.groups.flatMap(g => g.ids), ids = cards.map(howtoIdOf);
@@ -80,7 +81,7 @@ export function planOf(spec) {
   const noZoom = spec.noZoom ?? [];
   if (!Array.isArray(noZoom) || new Set(noZoom).size !== noZoom.length) throw new Error('layers page: noZoom must be a list of distinct ids');
   for (const id of noZoom) if (!ids.includes(id)) throw new Error(`layers page: noZoom: ${id} is not on the page`);
-  return { ids, legacy, labels, keys, optionsUrl: spec.optionsUrl ?? null, regionFix: spec.regionFix !== false, noZoom };
+  return { ids, legacy, labels, keys, optionsUrl: spec.optionsUrl ?? null, regionFix: spec.regionFix !== false, bodymapFix: spec.bodymapFix === true, noZoom };
 }
 
 /** The patched howto-layers.mjs source. */
@@ -97,7 +98,9 @@ export function patchHowtoLayers(src, plan) {
     + `  if (mods.some(M => (M.default.riskFlags ?? []).includes('back'))) __BACK.backBox = (await import(${JSON.stringify(BACK_BOX_URL)})).backBox;   // LIB-6-PM: D-LIB6PM-ANCHORS\n`
     + `  for (const id of HOWTO_IDS) apis[id] = LEGACY[id] ? await loadRenderer(id)\n`
     + `    : __lib.closeupApi((await import(pathToFileURL(join(root, 'exercises', \`\${id}.howto.mjs\`)).href)), __opts[__keys[id]], { root, specFile: __lib.specFileOf(root, id), engine: await __lib.engineOf(__lib.specFileOf(root, id), { root }) });\n`
-    + (plan.regionFix ? `  (await import(${JSON.stringify(REGION_FIX_URL)})).applyRegionFix((await import('../engine/bodymap-parts.mjs')).FRONT_PARTS);\n` : ''));
+    + (plan.regionFix ? `  (await import(${JSON.stringify(REGION_FIX_URL)})).applyRegionFix((await import('../engine/bodymap-parts.mjs')).FRONT_PARTS);\n` : '')
+    // F-BODYMAP-FRONTDELT (D-BODYMAP-LIB): batch pages only; golden B's spec never sets it, so its page stays byte-equal
+    + (plan.bodymapFix ? `  (await import(${JSON.stringify(REGION_FIX_URL)})).applyBodymapFix((await import('../engine/bodymap-parts.mjs')).FRONT_PARTS);\n` : ''));
   // D-LIB5-PAGE, D-LIB6PM-ANCHORS: the back box. RF links a back-flagged row; FLAG's `back` getter reads the box from the
   // holder, which the dispatch above fills only when a sheet on the page is back-flagged (risksSection is synchronous).
   src = patchOnce(src, 'back holder', "import { lintAll, formatViolations, FEEL_ROWS_MAX, SETUP_MAX_STEPS } from './copy-lint.mjs';\n",

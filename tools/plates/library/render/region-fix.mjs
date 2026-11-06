@@ -22,3 +22,34 @@ export function applyRegionFix(FRONT_PARTS) {
   }
   return true;
 }
+
+// F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, #404 6682755661): golden B's body map draws front_delts on the strip between
+// the neck and the shoulder cap, where it reads as the upper traps, and has no inner-elbow part. Library layers pages
+// redraw both front_delts parts on the front of the shoulder cap (between side_delts and upper_chest, above the
+// biceps) and add an inner-elbow pain part on each arm. Golden B's own page keeps the vendored map (byte-locked); the
+// owner's golden-B update F-GOLDENB-FRONTDELT would move it. Right = left mirrored about x = 15.83629 (the map's axis).
+export const BODYMAP_FIX = {
+  replace: {
+    'shoulder-front-left': { muscle: 'front_delts', d: 'M 20.300,15.300 L 22.500,15.480 L 20.959,16.531 L 22.712,19.750 L 22.000,19.750 L 20.392,16.876 L 20.000,16.400 Z' },
+    'shoulder-front-right': { muscle: 'front_delts', d: 'M 11.373,15.300 L 9.173,15.480 L 10.714,16.531 L 8.961,19.750 L 9.673,19.750 L 11.281,16.876 L 11.673,16.400 Z' },
+  },
+  add: [
+    { id: 'elbow-inner-left', muscle: null, d: 'M 25.311,29.900 L 27.206,32.550 L 26.877,32.550 L 25.087,29.900 Z' },
+    { id: 'elbow-inner-right', muscle: null, d: 'M 6.362,29.900 L 4.467,32.550 L 4.796,32.550 L 6.586,29.900 Z' },
+  ],
+};
+
+export const bodymapFixApplied = FRONT_PARTS => FRONT_PARTS.some(x => x.id === BODYMAP_FIX.add[0].id);
+
+/** Applies BODYMAP_FIX once (idempotent: false when already applied); throws on a missing part or the wrong muscle. */
+export function applyBodymapFix(FRONT_PARTS) {
+  if (bodymapFixApplied(FRONT_PARTS)) return false;
+  for (const [id, { muscle }] of Object.entries(BODYMAP_FIX.replace)) {
+    const q = FRONT_PARTS.find(x => x.id === id);
+    if (!q || q.muscle !== muscle) throw new Error(`bodymap fix: ${id} not ${muscle}`);
+  }
+  for (const { id } of BODYMAP_FIX.add) if (FRONT_PARTS.some(x => x.id === id)) throw new Error(`bodymap fix: ${id} already exists`);
+  for (const [id, { d }] of Object.entries(BODYMAP_FIX.replace)) FRONT_PARTS.find(x => x.id === id).d = d;
+  for (const p of BODYMAP_FIX.add) FRONT_PARTS.push({ ...p });
+  return true;
+}

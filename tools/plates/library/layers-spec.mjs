@@ -100,7 +100,7 @@ export function layersSpecOf(batchFile, { stageDir, root = ROOT, all = rows(root
   const listed = JSON.parse(readFileSync(join(root, NO_ZOOM_LIST), 'utf8')).entries ?? {};
   const noZoom = ids.filter(id => Object.hasOwn(listed, id)).map(id => howtoIdOf(cardIdOf(byId.get(id))));
   return {
-    groups, closeups, files, ...(noZoom.length ? { noZoom } : {}),
+    groups, closeups, files, bodymapFix: true, ...(noZoom.length ? { noZoom } : {}),   // F-BODYMAP-FRONTDELT (D-BODYMAP-LIB)
     ...(cfg.optionsModule ? { optionsUrl: pathToFileURL(join(root, cfg.optionsModule)).href } : {}),
     ...('jump' in cfg ? { jump: cfg.jump } : {}),
   };
