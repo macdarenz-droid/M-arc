@@ -1047,7 +1047,7 @@ describe('LIB-9a A8 (Do 4, D-LIB9-AUTHORQA): the authoring option', { timeout: T
     expect(c.research.topFault).toBe('low');
     const pinned = await cand.candidateOf('lib_close_grip_pulldown', { all, platesHtml: html, engine: E });
     expect(pinned.exemptions).toEqual(JSON.parse(readFileSync('tests/howto/golden/library/lb01.json', 'utf8')).entries.find((e: any) => e.id === 'lib_close_grip_pulldown').exemptions);
-    const unpinned = drawing('lib_close_grip_pulldown', { batchFile: 'tools/plates/library/batches/no-such-batch.json' });
+    const unpinned = drawing().map((r: any) => r.id === 'lib_close_grip_pulldown' ? { ...r, batchFile: 'tools/plates/library/batches/no-such-batch.json' } : r);
     await expect(cand.candidateOf('lib_close_grip_pulldown', { all: unpinned, platesHtml: html, engine: E })).rejects.toThrow(/batch golden|golden file|pin/i);
   });
   it('mutations: authoring on a shipped row and on an approved-plate row both throw', async () => {

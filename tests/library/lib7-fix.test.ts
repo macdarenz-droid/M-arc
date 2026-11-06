@@ -80,7 +80,13 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
   // keys are exactly the ruled set: an unruled keyed row shipped, or a ruled one dropped, is red.
   it('pairPanel(key) is a zx panel; LIB-SHIP: the shipped rows with a key are exactly the ruled ones; a fresh import does not throw', async () => {
     for (const k of P.keysOf()) expect((await P.pairPanel(k)).startsWith('<div class="zx"')).toBe(true);
-    expect(hp.pairsOf(P, reg.shippedIds())).toEqual({ pairOf: { 'dumbbell-biceps-curl': 'curl-dumbbell-under' }, keys: ['curl-dumbbell-under'] });
+    // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's 5 pair ids join the curl on their ruled sub-keys, in registry order
+    expect(hp.pairsOf(P, reg.shippedIds())).toEqual({
+      pairOf: { 'chin-up': 'bar-hang-only-curled-under', 'hanging-knee-raise': 'bar-hang-over', 'inverted-row': 'bar-row-only-curled-over',
+        'close-grip-pulldown': 'v-handle-pull-only-curled-neutral-overhead', 'single-arm-lat-pulldown': 'd-handle-pull-only-curled-unstated',
+        'dumbbell-biceps-curl': 'curl-dumbbell-under' },
+      keys: ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated', 'curl-dumbbell-under'],
+    });
     const fresh = await import(/* @vite-ignore */ `${url('tools/plates/library/hands/pairs.mjs')}?lib7fix=${Date.now()}`);
     expect(fresh.HAND_OF_ID).toEqual(P.HAND_OF_ID);
   }, 60_000);
