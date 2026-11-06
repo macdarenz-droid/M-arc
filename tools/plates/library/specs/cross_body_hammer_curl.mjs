@@ -122,7 +122,11 @@ export default {
     ],
     tells: [
       { key: 'shrug', text: 'Shoulder<br>shrugs', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, cue: 'Your working shoulder hikes up toward your ear as the dumbbell rises.' },
-      { key: 'ear', text: 'Shoulder<br>near ear', anchor: { at: 'trap.r', pose: 'mistake' }, box: { left: 84, top: 58 }, cue: 'The gap between your shoulder and ear closes.' },
+      // LIB-PLATEFIX-3 item 8 (#392 6649453813 L5 "merge the two tells into one (c5)"; ruled #405 6683313760 (a)): the
+      // 'ear' tell ("Shoulder near ear", on trap.r, which does not move in the Mistake) is merged into 'shrug'. Option (b),
+      // a ring between the shoulder and the ear, was measured first: the smallest source ring holding the end and Mistake
+      // shoulder tops and the ear has radius 21.4 px, so k <= 52 / 21.4 = 2.43 and the shrug reads 7.31 x 2.43 = 17.8 px,
+      // under the ruling's 20 px, so (a) is built and the zoom stays k 2 (14.63 px).
     ],
   },
   pilot: { drawableFault: 'top fault: the arm fully straight at the bottom (c15), a small elbow bend toward the camera the front view cannot show; drawn: the next fault, the working shoulder shrugging (c5, c6)' },

@@ -168,20 +168,6 @@
   "plateFacts": [
     {
       "kind": "contact",
-      "landmark": "heel.l",
-      "pose": "start",
-      "cardPose": "start",
-      "claim": "j2"
-    },
-    {
-      "kind": "contact",
-      "landmark": "heel.r",
-      "pose": "start",
-      "cardPose": "start",
-      "claim": "j2"
-    },
-    {
-      "kind": "contact",
       "landmark": "sole.r",
       "pose": "end",
       "cardPose": "end",

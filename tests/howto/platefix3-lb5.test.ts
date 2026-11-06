@@ -1,6 +1,7 @@
 // LIB-PLATEFIX-3 (card verify/lib-platefix-3-card.md; PLAN RULED #405 6682844211): the lb5 plate fixes, items 9, 10 and
 // 14. Each test reads what the engine draws (svg, report, landmarks) and fails on main's spec (5023f5c6); the
-// before values are in each test's name or comment. Items 8, 11, 12 and 13 are not built (reported on #405).
+// before values are in each test's name or comment. Item 8 (the tell merge, ruled 6683313760) is the last block; items
+// 11, 12 and 13 have no spec change (reported on #405).
 import { beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -114,5 +115,29 @@ describe('PF3 item 14 dumbbell_overhead_triceps_extension: a deeper lumbar curve
     const m = S.dumbbell_overhead_triceps_extension.mistake.pose;
     expect(m.trunk.bow - m.trunk.flex).toBe(25);
     expect(m.root).toBeUndefined();
+  });
+});
+
+// LIB-PLATEFIX-3 item 8 (ruled #405 6683313760: (b) measured first, then (a)): the two shrug tells merged into one (c5).
+describe('PF3 item 8 cross_body_hammer_curl: one shrug tell (c5; #392 6649453813 L5)', () => {
+  let cb: any;
+  beforeAll(async () => { cb = (await import(/* @vite-ignore */ lib('specs/cross_body_hammer_curl.mjs'))).default; }, T);
+  const tellProblems = (spec: any) => {
+    const bad: string[] = [], t = spec.mistake.tells;
+    if (t.length !== 1) bad.push(`${t.length} tells (main 2: shrug + ear)`);
+    if (t[0]?.key !== 'shrug' || t[0]?.anchor?.at !== 'shoulderTop.r') bad.push('the tell is not the shrug on shoulderTop.r');
+    return bad;
+  };
+  it('the Mistake has one tell, "Shoulder shrugs", on the moving shoulder top', () => { expect(tellProblems(cb)).toEqual([]); });
+  it('mutation: main\'s second tell (ear, on trap.r) is red', () => {
+    const m = { ...cb, mistake: { ...cb.mistake, tells: [...cb.mistake.tells, { key: 'ear', text: 'Shoulder<br>near ear', anchor: { at: 'trap.r', pose: 'mistake' } }] } };
+    expect(tellProblems(m).length).toBeGreaterThan(0);
+  });
+  it('option (b) as measured: the smallest ring holding the shoulder tops and the ear allows k <= 2.43, a shrug under 20 px', () => {
+    const cam = camOf(cb), L = lmOf(cb);
+    const se = cam.P(L.end['shoulderTop.r']), sm = cam.P(L.mistake['shoulderTop.r']), ear = cam.P(L.end.ear);
+    const kMax = 52 / (dist(se, ear) / 2), shrug = dist(se, sm);
+    expect(kMax).toBeLessThan(2.5);
+    expect(shrug * kMax).toBeLessThan(20);
   });
 });

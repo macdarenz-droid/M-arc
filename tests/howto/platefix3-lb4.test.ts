@@ -1,6 +1,7 @@
 // LIB-PLATEFIX-3 (docs/supervisor/verify/lib-platefix-3-card.md; plan ruled on #405 6682844211): the lb4 plate fixes,
 // items 3-7. Each block reads what is drawn (the engine's landmarks, report and svg of the spec), and each is red on the
 // spec as it stood on main 5023f5c6 (proof listed in the PR).
+import { readFileSync } from 'node:fs';
 import { describe, expect, it, beforeAll } from 'vitest';
 
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -103,5 +104,45 @@ describe('LIB-PLATEFIX-3 item 7: wall_sit (the hip checkpoint on the hip crease)
     // the thigh's top outline: thighTop.r's offset from the hip-knee axis
     const off = (q: number[]) => { const ux = knee[0] - hip[0], uy = knee[1] - hip[1], n = Math.hypot(ux, uy); return ((q[0]! - hip[0]) * uy - (q[1]! - hip[1]) * ux) / n; };
     expect(Math.abs(off(p) - off(top)), 'on the thigh top outline (px)').toBeLessThanOrEqual(0.5);
+  });
+});
+
+// LIB-PLATEFIX-3 (ruled #405 6683313760 "lb4 H6 reds from card facts"): plateFacts is a machine key (lb4/cards.sha.json
+// hashes each card with plateFacts, tempo and topFault removed), so the card facts move with the specs (D-SHIP-W4-TEMPO
+// form). Each fact must hold on the drawn pose it names.
+describe('LIB-PLATEFIX-3 lb4 card facts follow the re-posed plates', () => {
+  const card = (id: string) => JSON.parse(readFileSync(`docs/research/howto/cards/${id}.json`, 'utf8'));
+  /** Each plateFacts row checked on the drawn landmarks: contact = on the floor or the box top (y 0 or 0.45 m, 0.5 cm),
+   *  height = its m within 0.5 cm. */
+  const factProblems = (id: string, facts: any[]) => {
+    const L = lmOf(id), bad: string[] = [];
+    for (const f of facts) {
+      const y = L[f.pose]?.[f.landmark]?.[1];
+      if (y == null) { bad.push(`${f.landmark} has no ${f.pose} pose`); continue; }
+      if (f.kind === 'height' && Math.abs(y - f.m) > 0.005) bad.push(`${f.landmark} ${f.pose} ${y.toFixed(3)} m, fact ${f.m}`);
+      if (f.kind === 'contact' && f.landmark.match(/heel|ball|sole/) && Math.min(Math.abs(y), Math.abs(y - 0.45)) > 0.005) bad.push(`${f.landmark} ${f.pose} ${y.toFixed(3)} m off its support`);
+    }
+    return bad;
+  };
+  it('bulgarian: the knee.l height fact is the drawn 6.9 cm gap (0.118 m; was 0.079, the 3 cm gap)', () => {
+    const f = card('bulgarian_split_squat').plateFacts;
+    expect(f.find((x: any) => x.landmark === 'knee.l').m).toBe(0.118);
+    expect(factProblems('bulgarian_split_squat', f)).toEqual([]);
+    expect(factProblems('bulgarian_split_squat', f.map((x: any) => (x.landmark === 'knee.l' ? { ...x, m: 0.079 } : x))).length).toBe(1);   // mutation: main's value
+  });
+  it('step_up: every fact names the spec pose that now draws its card pose (start = card start)', () => {
+    const f = card('step_up').plateFacts;
+    expect(f.every((x: any) => x.pose === x.cardPose)).toBe(true);
+    expect(factProblems('step_up', f)).toEqual([]);
+    // mutation: main's pose names (swapped) are red
+    const old = f.map((x: any) => ({ ...x, pose: x.cardPose === 'start' ? 'end' : 'start' }));
+    expect(factProblems('step_up', old).length).toBeGreaterThan(0);
+  });
+  it('jump_squat: no heels-down fact at the start (the touchdown is on the balls; the take-off crouch is not drawn)', () => {
+    const f = card('jump_squat').plateFacts;
+    expect(f.some((x: any) => x.pose === 'start' && /^heel/.test(x.landmark))).toBe(false);
+    expect(factProblems('jump_squat', f)).toEqual([]);
+    const old = [{ kind: 'contact', landmark: 'heel.l', pose: 'start', cardPose: 'start', claim: 'j2' }, ...f];   // mutation: main's j2 fact
+    expect(factProblems('jump_squat', old).length).toBe(1);
   });
 });
