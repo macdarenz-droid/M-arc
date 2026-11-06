@@ -189,7 +189,10 @@ const W2_ADDED: Record<string, string[]> = {
   'tools/plates/library/pages/pilot-b.closeups.mjs': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
   'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
 };
-const MANIFEST_BLANKED_MAIN_W2 = '499096034a25f3dc2cfe80c48f341ec31614ed6184226527af1d39c4b819d37b';
+// RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
+// research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef).
+const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
+const MANIFEST_BLANKED_MAIN_W2 = '5a51002ef2a7fb2a551601cc78f1b9d338d45f87c6f5be63b23d4853eebf0532';
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
@@ -207,14 +210,14 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     const m = current();
     // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out
     // LIB-SHIP W5: with W5's 27 rows also taken out (lessW5: each must be present), the same hash
-    expect(blanked(lessW2(lessW5(m)))).toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW5(m)), [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN_W2);
     for (const k of MOVED) for (const r of Object.values<any>(current().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
-    const m = lessW2(lessW5(current())), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k))!;
+    const m = lessW2(lessW5(current())), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX)!;
     row.files[other] = '0'.repeat(64);
-    expect(blanked(m)).not.toBe(MANIFEST_BLANKED_MAIN_W2);
-    expect(blanked(lessW2(lessW5(current())), MOVED.slice(0, 1))).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(m, [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW5(current())), [MOVED[0]!, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
     // LIB-SHIP W2: a W2 key that does not pin its file, or a crunch row missing, is red
     const bad = current(); (Object.values<any>(bad.rows).find(r => W2_MOVED[0]! in r.files)).files[W2_MOVED[0]!] = '0'.repeat(64);
     expect(() => lessW2(bad)).toThrow();
@@ -224,6 +227,8 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     const noW5 = current(); delete noW5.rows[W5[26]!];
     expect(() => lessW5(noW5)).toThrow(/has no row/);
     const extra = current(); extra.rows.lib_unlisted = structuredClone(extra.rows[W5[0]!]);
-    expect(blanked(lessW2(lessW5(extra)))).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    // control first: the same tree without the extra row matches, so the red below is the extra row alone
+    expect(blanked(lessW2(lessW5(current())), [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW5(extra)), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
   });
 });
