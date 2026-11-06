@@ -99,7 +99,12 @@ export default {
   equipment: [
     { type: 'floor', from: -0.62, to: 0.62 },
     // one equipment entry per composer item (pec_fly's: the engine keys items by entry index + type + index)
-    ...Array.from({ length: DECK_N }, (_, k) => lm => deckOf(lm)[k]),
+    // LIB-PLATEFIX-3 (#393 6683164302 L1 [2,2,2]; addendum ruled #405 6683319630): the chest pad (composer item 1,
+    // pecDeck's backPad) is drawn in front of the torso, as the lifter faces it (c1, c6), so the chest visibly presses on
+    // it and the figure lines behind it are hidden (was z 'back': it read as a backrest, a pec-deck setup). pecDeck is
+    // unedited; only this plate's copy of the item moves layer. The column and housing stay behind (above the pad they
+    // would cross the head).
+    ...Array.from({ length: DECK_N }, (_, k) => lm => (k === 1 ? { ...deckOf(lm)[k], z: 'front' } : deckOf(lm)[k])),
     // the start levers (closed, in front) redrawn as dashed phantom outlines in the end layer (pec_fly's convention)
     (lm, ctx) => (ctx.pose === 'end' ? START_PHANTOM : null),
   ],
