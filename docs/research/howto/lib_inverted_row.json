@@ -1,0 +1,25 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=0c096c6153d53274d4c4db8638b41dde2e28cbd21640f2e7f45d42be45cd91f8
+{
+  "id": "lib_inverted_row",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/inverted_row.json",
+    "rev": 1
+  },
+  "sources": [
+    "strengthlog-inverted-row",
+    "ace-best-back",
+    "catalyst-inverted-row",
+    "catalyst-ring-row",
+    "youdas-2016",
+    "fenwick-2009",
+    "youdas-2020",
+    "hk-baechle-grip",
+    "odriscoll-1992",
+    "hand-key-bar",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

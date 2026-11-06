@@ -30,12 +30,12 @@ export const INHERIT_MAP = {
   // W3 (#384 6648733957, 6653343780): the pad halves' caption and alt are the child's own (a V-handle; no hips-lifting claim)
   lib_close_grip_pulldown: { 'zooms: seat height / thigh pad crop': PAD.filter(p => !p.endsWith('.alt') && !p.endsWith('.caption')) },
   lib_hanging_knee_raise: { 'grip.thumb (wrapped every set)': THUMB },
-  // W3 (Q-W3-7): own wrist limitText (card c1); the range stays the parent's
-  lib_incline_machine_press: { 'grip.type': ['handling.handle'], 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': WRIST,
+  // incline_machine_press and shoulder_press are staged off W3 (D-SHIP-W3-NOPAIR, #384 6681221802): their entries stay as
+  // ruled for D-LIB9a-MAP; the W3-ruled amendments (grip.wrist: WRIST; shoulder_press zooms['hand'] minus feelRow) land
+  // with the wave that ships them, since the family check runs only on shipped rows.
+  lib_incline_machine_press: { 'grip.type': ['handling.handle'], 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'],
     "posture['Straight wrist, forearm behind the handle']": ['posture[key=wrist]'], "posture['Feet flat, hips back']": ['posture[key=feet]'], "zooms['hand']": ['zooms[key=hand]'] },
-  // W3 (Q-W3-7; #384 6648733957): own wrist limitText; the hand zoom has no wrist feelRow (the card has no wrist row)
-  lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': WRIST,
-    "zooms['hand']": ['key', 'chip', 'chipCaption', 'heading', 'kind', 'hand', 'caption', 'alt'].map(k => `zooms[key=hand].${k}`) },
+  lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], "zooms['hand']": ['zooms[key=hand]'] },
   // D-SHIP-FAMILY (LIB-SHIP W2, #379 6625803515): the dumbbell child of romanian_deadlift, parent first in the same head. Neither RDL ships in W2: both ship through #385.
   lib_single_leg_romanian_deadlift: { 'grip.thumb': THUMB, 'grip.wrist': ['handling.wrist'] },
   // W3 (#384 6648454032 L2, accepted 6648753200): the card's own setup steps replace the inherited lean (upright torso, c7,

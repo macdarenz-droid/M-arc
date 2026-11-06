@@ -211,7 +211,7 @@
     "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise (2020). https://pubmed.ncbi.nlm.nih.gov/33049982/ PMID 33049982",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "shipped"
+   "stage": "approved-plate"
   },
   "lib_shoulder_press": {
    "src": "library/specs/shoulder_press.mjs",
@@ -229,7 +229,7 @@
     "Arterial blood pressure response to heavy resistance exercise (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "shipped"
+   "stage": "approved-plate"
   },
   "lib_leg_press_calf_raise": {
    "src": "library/specs/leg_press_calf_raise.mjs",
