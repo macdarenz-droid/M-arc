@@ -624,7 +624,7 @@
   },
   "risks": [
     {
-      "risk": "Dropped weights: a leading cause of weight-training injuries. Have a spotter hold your wrists.",
+      "risk": "In US hospital data, dropped weights are the top cause of lifting injuries. Have a spotter hold your wrists.",
       "claim": [
         "c15",
         "c10"
@@ -661,6 +661,6 @@
   },
   "anchorSource": "ace-incline-press",
   "notes": [
-    "RESEARCH-ROUTES-1 part 2 (F-CARD-INCLINEDB-RISK; #391 6653791551, 6681022221): risks[0] read \"Dropped weights cause most bad lifting injuries.\", wider than c15 (Kerr 2010: the most common mechanism of US emergency-department weight-training injuries). It now reads as the W4 sheet prints it: \"Dropped weights: a leading cause of weight-training injuries.\" No claim text changes."
+    "RESEARCH-ROUTES-1 part 2 (F-CARD-INCLINEDB-RISK; #391 6653791551, 6681022221): risks[0] read \"Dropped weights cause most bad lifting injuries.\", wider than c15 (Kerr 2010: the most common mechanism of US emergency-department weight-training injuries). It now reads as the W4 sheet prints it (#391 6682975122), with c15's scope: \"In US hospital data, dropped weights are the top cause of lifting injuries.\" No claim text changes."
   ]
 }
