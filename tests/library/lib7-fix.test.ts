@@ -287,6 +287,8 @@ describe('LIB-7-FIX F7: L2-A21\'s covering proof (D-LIB7FIX-A21)', () => {
 });
 
 // ---- D-LIB7FIX-PERKEY (lib4-cards section 19): adding a key never edits a file that a pinned row lists ----
+// LIB-SHIP W5 addendum D-SHIP-W5-EZWORDS (#392 6654996739): the fixture's ez-curl-over Right notes read 'Wrist straight' (reverse_curl
+// c1, c6), amended with hands/words/ez-curl-over.json; every other key is byte-equal to da65b13a's words. PK1's deep-equal is unchanged.
 const WORDS_FIXTURE = JSON.parse(readFileSync('tests/library/fixtures/lib7fix/panel-words-da65b13a.json', 'utf8'));   // panel-words.json at da65b13a, parsed
 const fixtureWords = (k: string) => ({ chrome: WORDS_FIXTURE.chrome, keys: { [k]: WORDS_FIXTURE.keys[k] } });
 const pagesOf = (k: string, index = P.INDEX) => { const id = P.keyIndexOf(index).keys.get(k).ids[0]; return P.pairSpec(id, index).wrong.map((w: any) => ({ fault: w.key, svg: P.renderPair(id, { fault: w.key, uid: `hp-${k}-${w.key}`, index }).svg })); };

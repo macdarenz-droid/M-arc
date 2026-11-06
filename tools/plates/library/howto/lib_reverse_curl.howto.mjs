@@ -105,7 +105,7 @@ const zooms = [
       camera: 'side',               // the pair's camera (pairs.mjs pairSpec)
       panelHeight: V.panelHeight,
       // The pair key's own panel words (words/ez-curl-over.json, first page bent-back), drawn by the key.
-      notes: { right: 'Middle of palm', wrong: 'Wrist bent back' },
+      notes: { right: 'Wrist straight', wrong: 'Wrist bent back' },   // D-SHIP-W5-EZWORDS (#392 6654996739): words/ez-curl-over.json, c1, c6
     },
     caption: {
       right: 'Overhand grip, hand in line with the forearm.',      // card zoom right (c6)

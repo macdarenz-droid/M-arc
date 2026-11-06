@@ -23,5 +23,5 @@ export const CLOSEUP_OPTIONS = {
   straight_bar_triceps_pushdown: ZOOM,
   barbell_curl: { ...ZOOM, hand: { layout: 'single', uid: 'bc', rightNote: 'Middle of palm', panelHeight: 282 } },
   ez_bar_curl: { ...ZOOM, hand: { layout: 'single', uid: 'ebc', rightNote: 'Middle of palm', panelHeight: 282 } },
-  reverse_curl: { ...ZOOM, hand: { layout: 'single', uid: 'rc', rightNote: 'Middle of palm', panelHeight: 282 } },
+  reverse_curl: { ...ZOOM, hand: { layout: 'single', uid: 'rc', rightNote: 'Wrist straight', panelHeight: 282 } },
 };
