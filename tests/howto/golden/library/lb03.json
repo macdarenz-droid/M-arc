@@ -6,13 +6,13 @@
   "entries": [
     {
       "kind": "page",
-      "pageSha256": "a660c957cc4817ff11f78cd60faffa0b6da6960fd1cb84ae2b8475a7202c891c",
-      "bytes": 1186031,
+      "pageSha256": "d6241cf65a6be261cfa688ebba27549cded6761f2a1a0a00b55d58b0f1f91f90",
+      "bytes": 1186023,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): the lb03 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page; re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): the lb03 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page; re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
       "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -42,9 +42,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_pendlay_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_pendlay_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "df99fa41b32ecd6486f9045c07c79bb6212631d5436cd7755047ac698f2eabdc"
+      "prev": "6ece4e562596059f74df807e108706d4c2d12301545e6ab49a04e841cacef101"
     },
     {
       "kind": "plate",
@@ -71,9 +71,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_landmine_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_landmine_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "b5666089bf1ab756c0677e6061b81230651b0a01f738b08de4a18c9cac44c5f1"
+      "prev": "512eabda8c556437e84185591139f7c5c3d52cc647f8c04c38444cb9f948cba0"
     },
     {
       "kind": "plate",
@@ -101,9 +101,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_one_arm_dumbbell_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_one_arm_dumbbell_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "a78486e46ab683a4077de95e3c1720e442f55f2493b21beacd6e26ae732fcc7f"
+      "prev": "2f50d2c6e61a63a19d347a8bf529e2940bea7d308d01116d3f0ce3bb8b268c91"
     },
     {
       "kind": "plate",
@@ -130,9 +130,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_romanian_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_romanian_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "dc0356c89f61b1c490f3036dca20aa53d1295e08b0a98c182b4d5a651448fc65"
+      "prev": "217af6c3679c17b77acfe09c9bb27a5ea6c13617269f72d0720aaae899492e6c"
     },
     {
       "kind": "plate",
@@ -159,9 +159,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_conventional_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_conventional_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "6934c02b578acd20e7b96d1f844646df0245b6f88787794b48a7e4d203be3e80"
+      "prev": "947f8c9806fc7e0512f2307d3a71471a8ed22f7db6007492fbcd5a47c6acbd99"
     },
     {
       "kind": "plate",
@@ -188,9 +188,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_sumo_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_sumo_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "58396bd8afc8586b35a626fed4df2f12bc3ea01b715387f9b9e65f38cec65749"
+      "prev": "7829d37e7b0bbc837b9fc412d7c7adb44738bd52c693937e691359da4df2931c"
     },
     {
       "kind": "plate",
@@ -217,9 +217,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_back_extension's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_back_extension's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "2b2b3ea024ddc7e83838ddbfa031762f7fec60cfdd773e03f199ddbc2c9828b4"
+      "prev": "3ed3ebf79533425c882b42aef9ca36b76b4632bebe6d1f40b1daaca228bfa620"
     },
     {
       "kind": "plate",
@@ -246,9 +246,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_t_bar_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_t_bar_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "012be49019ff1f4723681992bdc2867f27b619977d1b2038f4007de26df84782"
+      "prev": "9ee599c9c9b81bcc702f1fb3d4bd40b19024c882c5139a40f2135ed3aeae5800"
     },
     {
       "kind": "plate",
@@ -279,9 +279,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_barbell_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F3, F4, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_barbell_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F3, F4, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "2ddcab07f0c60ae7c28b8510eaaba71042b3ef2159c57a927e0dd47d2513957a"
+      "prev": "050325fe945b780f078f7813ff22829d784f882faeb013a6e56b1ab44414ff59"
     },
     {
       "kind": "plate",
@@ -308,9 +308,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_cable_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_cable_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "eee5e0aac13e8e07e9215d43d996248589af20b0ba591e9262572ff41e4ec2f8"
+      "prev": "66fa7944da95c99f446e7138db989dc5a3b9ba933513a8b0cc782e96c108195e"
     },
     {
       "kind": "plate",
@@ -339,9 +339,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F4, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F4, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "2e6d44cd02eb80a4292b7b16933dcb85a86371739ec89003af2b10e75aadf82d"
+      "prev": "779647b0152df5839d20496936a1163579271e5430f6732206b959843162472e"
     },
     {
       "kind": "plate",
@@ -358,7 +358,7 @@
         "tells": "38462db5023058bcbeff4229212930b944f53a8741d596a08a4152c0af7f82fd",
         "tempo": "9dddaf8a1a7ac621957def9a5b63268a33a0c8f1e54fe49a8e69b7ed5e12d0ea",
         "cues": "5312985a5fe57a54e51272373c456fab67fb3109769833cedc04ca2af92f883b",
-        "alt": "3b235e22e5fa4c0e6628fc6ec98dabff09bfddc1c4abb09d4622aa4dbe636dcd",
+        "alt": "0d0659407c73fc2894d3a775b9aef127632d61d6a1958a5ddd76239dfb1d5203",
         "mistakeAlt": "249c7ff4ca7f963b3eb821c974e46575af6049c16902021ec50bf68856b15b47"
       },
       "exemptions": [
@@ -369,9 +369,9 @@
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219",
       "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_smith_machine_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6649217767 @ 9d1efdaf88b13da4d47939d39bbf11096a0b2125, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_smith_machine_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): first pin 6681022221 @ 66925aacce6a206abc7e9843901a5faaa8275219, W4 panel (#391 6653540190), fix rounds 71643485 and 66925aac (6653791551), PLATETEXT go (6681022221); the focused recheck runs on the W4 PLATETEXT head.",
       "supersedes": null,
-      "prev": "cd226069a8dc91d4c857228270bb75d4a1073e8c128bf2cc116eeb3041b27204"
+      "prev": "9f1329222849d29215b27626c4f6619360b368f16f64d80df7fbe1fe18e6ec18"
     }
   ]
 }
