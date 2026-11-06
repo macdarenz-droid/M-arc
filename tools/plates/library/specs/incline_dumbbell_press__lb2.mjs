@@ -214,7 +214,9 @@ export default {
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['leg.r', 'leg.l'],                                                         // the trunk's arch is the one dashed back curve below
+    // LIB-PLATEFIX-3 item 20 (W4 L5 [3,3,3], w4-findings set c T01, c8): the faulted trunk is drawn as a full dashed outline
+    // too (was legs only), so the belly and hips pushing up and the trunk leaving the pad read with the arch curve below.
+    parts: ['torso', 'leg.r', 'leg.l'],
     guides: [
       { kind: 'dashed', pts: ARCH_PTS, smooth: true },                                     // the arched low back, off the pad
       { kind: 'dashed', pts: [gapFrom, gapTo] }, tick(gapFrom), tick(gapTo),                // the gap marker, pad to back
