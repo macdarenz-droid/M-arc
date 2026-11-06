@@ -191,7 +191,9 @@ const W2_ADDED: Record<string, string[]> = {
 // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
 // research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef).
 const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
-const MANIFEST_BLANKED_MAIN_W2 = '5a51002ef2a7fb2a551601cc78f1b9d338d45f87c6f5be63b23d4853eebf0532';
+// LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
+const PF3_ZOOM = 'tools/plates/library/render/closeup/zoom.mjs';
+const MANIFEST_BLANKED_MAIN_W2 = '4be0cf0d01505bc457e956d9df266a7c4076365f29ec1e3565de829754e26b2d';   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was 5a51002e…0532, now with zoom.mjs's key also blanked
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
@@ -208,14 +210,15 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
     const m = current();
     // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out
-    expect(blanked(lessW2(m), [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(m), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form): + PF3_ZOOM
     for (const k of MOVED) for (const r of Object.values<any>(current().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
-    const m = lessW2(current()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX)!;
+    const m = lessW2(current()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX && k !== PF3_ZOOM)!;
     row.files[other] = '0'.repeat(64);
-    expect(blanked(m, [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
-    expect(blanked(lessW2(current()), [MOVED[0]!, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(m, [...MOVED, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(current()), [MOVED[0]!, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(current()), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-PLATEFIX-3: zoom.mjs left out of the blank list is red
     // LIB-SHIP W2: a W2 key that does not pin its file, or a crunch row missing, is red
     const bad = current(); (Object.values<any>(bad.rows).find(r => W2_MOVED[0]! in r.files)).files[W2_MOVED[0]!] = '0'.repeat(64);
     expect(() => lessW2(bad)).toThrow();
