@@ -67,3 +67,13 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     expect(sha(JSON.stringify(m))).toBe('daf6779bd9505c07f28f805fac904bd0acd6408c78a65a8ce966691814502e69');
   });
 });
+
+// RESEARCH-ROUTES-1 part 2, F-CARD-INCLINEDB-RISK (#391 6653791551, 6681022221): the card's dropped-weights risk says
+// no more than c15 (Kerr 2010: the most common mechanism of US emergency-department weight-training injuries).
+describe('RESEARCH-ROUTES-1 F-CARD-INCLINEDB-RISK: incline_dumbbell_press risks[0]', () => {
+  it('reads as the W4 sheet prints it and cites c15, c10; the old wider wording is gone', () => {
+    const c = card('incline_dumbbell_press');
+    expect(c.risks[0]).toEqual({ risk: 'Dropped weights: a leading cause of weight-training injuries. Have a spotter hold your wrists.', claim: ['c15', 'c10'] });
+    expect(c.risks.map((r: { risk: string }) => r.risk).join(' ')).not.toContain('cause most bad lifting injuries');
+  });
+});
