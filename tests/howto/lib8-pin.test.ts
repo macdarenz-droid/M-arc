@@ -14,8 +14,8 @@ const url = (p: string) => new URL('../../' + p, import.meta.url).href;
 // barbell_row's and romanian_deadlift's cards at 2dd60ae0 (F-LB3-1, R-LB3-11: one risks[breath] line each)
 const BLOBS: Record<string, [string, string]> = {
   dumbbell_bench_press: ['0909c439a381bd3e4f811c73e5ca2b86a4f3a3d6', '10e7af71570695df876660d7ae5c1a9939e87999'],
-  // RESEARCH-ROUTES-1 F-CARD-INCLINEDB-RISK (D-RR-HEAD): card re-copied from research b6b6ae11 (was 8a98fb1a at f57e7944)
-  incline_dumbbell_press: ['b41dc75ad05f52f547fd1c31e6600a7ebffa1576', 'dcfab01e746a8742569e4b6f17a79482b5600f83'],
+  // RESEARCH-ROUTES-1 F-CARD-INCLINEDB-RISK (D-RR-HEAD): card re-copied from research 42858a64 (was 8a98fb1a at f57e7944)
+  incline_dumbbell_press: ['7cfca7de3c65abbe29bd7850fbf5e15dfe84441d', 'dcfab01e746a8742569e4b6f17a79482b5600f83'],
   dumbbell_shoulder_press: ['a147b41c3b1a94308d0f30f63b5121778a4ddcf7', '34902cba78c352df7fb58b180cb4a153e394a9e8'],
   barbell_overhead_press: ['58bae6ec014446e79f09e8aa3840c669c1224788', 'f5a6a8578119f24165fc636c09b7e2e4e7cd9af0'],
   barbell_row: ['dc61ba764ea04eb61be857317a6e49b5fd6d658e', '39b3664967f02e85e60a43603fc67ee12d99003a'],
