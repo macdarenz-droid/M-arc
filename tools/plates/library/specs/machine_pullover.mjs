@@ -31,7 +31,7 @@ import { perItem } from '../eq/parts.mjs';
 const H = 1.75, R = Math.PI / 180, B = { height: H };
 export const SIZES = Object.freeze({ SEAT_TOP: 0.46, SEAT_Z: 0.10, FEET_X: 0.10, FEET_Z: 0.47, PIVOT_UP: 0.03, ELBOW_FLEX: 90, BAR_BEHIND: 0.03,
   BAR_OVER_BELT: 0.03, BELT_T: 0.25, PAD_LEN: 1.0, PAD_BELOW: 0.08, FRAME_BACK: 0.15, FOOT_BAR_UP: 0.30, FOOT_BAR_FWD: 0.10,
-  BEAM_OUT: 0.10, FLOOR_BACK: 0.20, FLOOR_FRONT: 0.30, M_ARCH: 25, M_NECK: 12 });
+  BEAM_OUT: 0.10, FLOOR_BACK: 0.20, FLOOR_FRONT: 0.30, M_ARCH: 12, M_NECK: 12 });
 const { SEAT_TOP, SEAT_Z, FEET_X, FEET_Z, PIVOT_UP, ELBOW_FLEX, BAR_BEHIND, BAR_OVER_BELT, BELT_T, PAD_LEN, PAD_BELOW, FRAME_BACK, FOOT_BAR_UP,
   FOOT_BAR_FWD, BEAM_OUT, FLOOR_BACK, FLOOR_FRONT, M_ARCH, M_NECK } = SIZES;
 
@@ -49,7 +49,7 @@ export const bisect = (f, a, b) => {
 
 const SEAT = [0, SEAT_TOP, 0];
 const feet = { l: { at: [FEET_X, 0, FEET_Z] }, r: { at: [-FEET_X, 0, FEET_Z] } };
-const trunkOnly = (neck, tilt = 0) => ({ root: { at: rootOnSeat(SEAT, tilt, H), tilt }, trunk: { flex: -tilt }, neck, plant: feet });   // object form in every pose (D-SPINE-MIX): the Mistake bows
+const trunkOnly = (neck, tilt = 0) => ({ root: { at: rootOnSeat(SEAT, tilt, H), tilt }, trunk: -tilt, neck, plant: feet });
 const L0 = landmarksOf(trunkOnly(0), H);
 // Back pad: tangent to the upper back and the buttock of the upright body (the 8's chest press method).
 const padU = [0, L0.backUpper[1], L0.backUpper[2]], padL = [0, L0.buttock[1], L0.buttock[2]];
@@ -97,37 +97,11 @@ const reach = th => { const a = armAt(th), f = dir(th + ELBOW_FLEX), w = wristTa
 const pose = (th, tilt = 0) => ({ ...trunkOnly(NECK, tilt), reach: reach(th) });
 const start = pose(THETA0), end = pose(THETA1);
 const via = [1 / 3, 2 / 3].map(t => pose(THETA0 + (THETA1 - THETA0) * t));
-// Mistake (c8): the lower back arches away from the pad. LIB-PLATEFIX-3 (#393 6683164302 L5 [4,3,3]; addendum ruled #405
-// 6683319630): drawn on LIB-SPINE's spread spine, trunk.bow M_ARCH, so the pelvis tips under the held thorax and the
-// lumbar curve opens a gap behind it while the upper back and the buttock stay on the pad (was: the pelvis tipped M_ARCH
-// 12 with the trunk counter-rotated, which slid the whole torso 7.6 px off the pad as one piece and read as a lean).
-// The back outline's largest gap to the pad face: 6.8 px (Right) -> 15.3 px (was 14.2 as a slide). M_ARCH 25 is
-// dumbbell_overhead_triceps_extension's ruled arch (#290 6343237796; c8 gives no size). The neck bends M_NECK forward
-// from the start's, so the head pulls off the pad too (c7).
-const M_BODY = { trunk: { flex: 0, bow: M_ARCH }, neck: NECK + M_NECK };
-// The bow tips the pelvis (the seat landmark with it) about the hip axis, lifting the seat 2.7 cm off the seat top: the
-// root drops by that much so the seat stays on the seat (H1 contact); the back stays on the near-vertical pad.
-const M_DY = landmarksOf({ ...end, ...M_BODY }, H).seat[1] - SEAT_TOP;
-const mistakePose = { ...M_BODY, root: { ...end.root, at: [end.root.at[0], end.root.at[1] - M_DY, end.root.at[2]] } };
-// The arched back runs inside the solid end figure (the gap opens forward, away from the pad), where the changed-parts
-// outline is masked, so the Mistake's back edge from the buttock to the upper back is redrawn as a dashed guide over the
-// figure (the misArm method: the engine's own torso outline of the Mistake pose, back edge only).
-const BACK_ARCH = (() => {
-  const P = { ...end, ...mistakePose }, sk = fk(resolve(normPose(P, B), B).q, B), lm = landmarksOf(P, H);
-  const torso = bodyShapes(sk, probe).find(sh => sh.key === 'torso').poly;
-  const out = [];
-  for (let y = lm.buttock[1]; y <= lm.backUpper[1] + 1e-9; y += 0.01) {
-    let best = null;
-    for (let i = 0; i < torso.length; i++) {
-      const a = torso[i], b = torso[(i + 1) % torso.length], ya = -a[1], yb = -b[1];
-      if ((ya - y) * (yb - y) > 0 || ya === yb) continue;
-      const z = a[0] + (b[0] - a[0]) * (y - ya) / (yb - ya);
-      if (best == null || padOff([0, y, z]) < padOff([0, y, best])) best = z;
-    }
-    if (best != null) out.push([0, y, best]);
-  }
-  return out;
-})();
+// Mistake (c8): the pelvis tips forward M_ARCH on the seat (the low back hollows) and the lumbar spine extends as much,
+// so the thorax keeps its angle but sits forward of the pad (the back off the pad); the neck bends M_NECK forward from
+// the start's, so the head pulls off the pad too.
+const M_ROOT = trunkOnly(NECK, M_ARCH).root;
+const mistakePose = { root: M_ROOT, trunk: -M_ARCH, neck: NECK + M_NECK };
 
 // Hidden start parts (DRAWING-GUIDE section 4; slice look #297 6346404542 item 2): the start bar and the open hands on it
 // sit behind the head, so they are redrawn in the end pose as a dashed phantom outline (the 8's startArmPhantom method).
@@ -168,18 +142,10 @@ const machine = (lm, ctx) => {
     footBar: FOOT_BAR, pivot: PIVOT, arm: armAt(th), frameZ: FRAME_Z, floorZ: [FRAME_Z - BEAM_OUT, FOOT_BAR[2] + BEAM_OUT] });
 };
 
-// The drop that carries the pivot hub, at its front edge above the head: the hub itself sits inside the shoulder's
-// outline (every rim point measured inside the end figure), so no leader reaches it without crossing the figure (A15),
-// and the leader stays on the drop (D-LIB16-PIVOT-ANCHOR). PLATEFIX-3 draws the hub in front (below); moving the leader
-// onto it needs an A15 ruling.
+// The drop that carries the pivot hub, at its front edge above the head: the hub itself sits behind the shoulder, so
+// the end figure and the elbow Trace close it in, and no leader reaches it from open space (D-LIB16-PIVOT-ANCHOR).
 const DROP_AT = 1.84;   // world height on the drop, between the head top and the top beam
 const PIVOT_DROP = [0, DROP_AT, PIVOT[2] + PULLOVER_MACHINE.tubeT / 2];
-// LIB-PLATEFIX-3 (#393 6683164302 L1 [3,3,2]; addendum ruled #405 6683319630): the composer's hub (z mid) is hidden by
-// the end figure, so the plate showed no axis at the shoulder and read as a seat set far too low (c1). The hub's rim
-// and axle are redrawn in front of the figure at the pivot (PIVOT_UP above the shoulder joint, c1 "slightly below the
-// axis"). Outline only (no fill), so the shoulder stays visible inside it.
-const HUB_RIM = Array.from({ length: 25 }, (_, k) => [0, PIVOT[1] + PULLOVER_MACHINE.hubR * Math.sin(2 * Math.PI * k / 24), PIVOT[2] + PULLOVER_MACHINE.hubR * Math.cos(2 * Math.PI * k / 24)]);
-const AXLE = Array.from({ length: 13 }, (_, k) => [0, PIVOT[1] + 0.008 * Math.sin(2 * Math.PI * k / 12), PIVOT[2] + 0.008 * Math.cos(2 * Math.PI * k / 12)]);
 export const PM = { padL, pivot: PIVOT, theta: [THETA0, THETA1], armAt, belt, pad: PAD, neck: NECK, elbowPlane, footBar: FOOT_BAR };
 export default {
   id: 'machine_pullover', name: 'Machine Pullover', view: 'side', facing: 'right',
@@ -189,7 +155,6 @@ export default {
   equipment: [
     { type: 'floor', from: FRAME_Z - FLOOR_BACK, to: FEET_Z + FLOOR_FRONT },
     ...perItem(machine, PULLOVER_MACHINE_ITEMS),
-    { type: 'line', pts: HUB_RIM, cls: 'eq-line', z: 'front' }, { type: 'poly', pts: AXLE, cls: 'eq-solid', z: 'front' },   // the pivot hub, in front, in every pose (it never moves; PLATEFIX-3)
     (lm, ctx) => (ctx.pose === 'end' ? START_PHANTOM : null),   // the hidden start bar and hand, dashed
   ],
   checks: [
@@ -209,12 +174,6 @@ export default {
   ],
   startParts: ['arm.r', 'arm'],
   ghosts: { count: 2, parts: ['arm.r', 'arm'] },
-  // PLATEFIX-3: on the spread spine the tells' anchors move 8.6 px (lumbar) and 9.3 px (head), under the 11.39 px bar, so a
-  // Mistake zoom at k 1.5, the smallest half-step over it (D-LIB15R2-ZOOM form): 12.9 px. Nothing is enlarged.
-  // LIB-PLATEFIX-3 round 2 (pf7 R11 [4,3,3], #405 6685743439): the zoom showed the head (the largest tell move, 9.3 px),
-  // the secondary tell; it now shows the low back (`tell: 'arch'`, the lower bow, 5.12 px), at k 2.5, the smallest
-  // half-step over the bar there (12.8 px; k 2 gives 10.2). D-LIB15R2-ZOOM form: nothing enlarged.
-  zoom: { view: 'mistake', k: 2.5, tell: 'arch' },
   trace: { point: 'elbow.r', trim: [10, 12] },   // D-LIB16-PULLOVER-TRACE: the elbows drive the pads (c3); the grip's wider arc closed the pivot and the elbow cue in
   callouts: [
     { key: 'pivot', text: 'Shoulders<br>at pivot', anchor: PIVOT_DROP, box: { left: 214, top: 24 }, cue: 'Set the seat so your shoulders sit just below the machine\'s pivot.' },
@@ -225,15 +184,10 @@ export default {
   mistake: {
     pose: mistakePose,
     parts: ['trunk'],   // the fault is the back and head; the arms and legs follow the hips by a few mm
-    guides: [{ kind: 'dashed', pts: BACK_ARCH }],   // PLATEFIX-3: the arched back edge, over the figure
+    guides: [],
     tells: [
-      // LIB-PLATEFIX-3 round 2 (pf7 R5 [3,4,3]): the leader ends on the red bow (half-way from the buttock to the sacrum,
-      // on the dashed edge, about 13 px under its deepest point), not above it on the upper back. The deepest point sits
-      // 10.5 px inside the solid end figure, past A15's 8 px leader allowance (a leader there crosses the figure), and from
-      // the sacrum the leader meets the belt or the buttock (A15 6 px / crossing), so the lower bow is the nearest end.
-      { key: 'arch', text: 'Back arches', anchor: { along: [{ at: 'buttock', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }], t: 0.5, pose: 'mistake' }, box: { left: 22, top: 228 }, cue: 'The lower back arches away from the pad.' },
-      { key: 'head', text: 'Head off pad', anchor: { at: 'head', pose: 'mistake' }, box: { left: 236, top: 120 },   // PLATEFIX-3: clear of the zoom ring and its source circle (was 166, 84)
-        cue: 'The head pulls forward off the pad.' },
+      { key: 'arch', text: 'Back arches', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 22, top: 174 }, cue: 'The lower back arches away from the pad.' },
+      { key: 'head', text: 'Head off pad', anchor: { at: 'head', pose: 'mistake' }, box: { left: 166, top: 84 }, cue: 'The head pulls forward off the pad.' },
     ],
   },
   alt: 'Machine pullover, side view. Seated with the belt on and the back and head on the pad, the lifter drives the elbow pads from overhead down to the waist, open hands resting on the bar, until the bar sits close to the seat belt.',

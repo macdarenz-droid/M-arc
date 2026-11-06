@@ -247,9 +247,9 @@
     "basis": "stated reason: the floor line runs 30 cm past the feet (layout)"
    },
    "M_ARCH": {
-    "value": 25,
+    "value": 12,
     "unit": "deg",
-    "basis": "convention: dumbbell_overhead_triceps_extension.mjs M_ARCH (#290 6343237796, the ruled library arch), drawn as trunk.bow on LIB-SPINE's spread spine so the low back curves off the pad with the upper back and buttock on it (c8; LIB-PLATEFIX-3, #393 6683164302 L5, ruled #405 6683319630); was 12 (hanging_leg_raise.mjs:69, a pelvis tilt that slid the torso)"
+    "basis": "convention: hanging_leg_raise.mjs:69 (the 8), its Mistake arches the low back 12 deg (trunk -12): here the pelvis tips forward 12 deg and the lumbar spine extends 12 deg (c8)"
    },
    "M_NECK": {
     "value": 12,
@@ -920,9 +920,9 @@
      "basis": "claim: c17 shrugging the shoulders; convention: resistance_band_pull_apart.mjs M_SHRUG 5 (LB7 on main), the scapulae 5 cm up"
     },
     "ZOOM_K": {
-     "value": 3,
+     "value": 1.5,
      "unit": "k",
-     "basis": "ruling: D-LIBZOOM-EXTEND, PLAN RULED (#354 6543628951): the smallest ladder rung at which the shrug reads; LIB-PLATEFIX-3 round 2 (pf7 R11, #405 6685743439): the tell moved half-way up the drawn trapezius line (4.03 px), so the smallest rung is 3 (12.1 px; 2.5 gives 10.1); was 1.5"
+     "basis": "ruling: D-LIBZOOM-EXTEND, PLAN RULED (#354 6543628951): the smallest ladder rung at which the shrug reads"
     }
    }
   },

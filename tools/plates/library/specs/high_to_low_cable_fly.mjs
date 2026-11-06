@@ -12,7 +12,7 @@
 // Geometry decisions:
 //  - Stance (c3): mid-soles FOOT_X off the midline and STAGGER apart front to back (depth only in this view); the root
 //    height is the highest at which both feet sit within 0.3 cm (scanned down in 2 mm steps; throws if none).
-//  - Arms: each grip moves on its shoulder's sphere (the drop eased out, the sweep in eased in: PLATEFIX-3) from the start direction (OPEN_UP
+//  - Arms: each grip moves on the great circle (slerp) of its shoulder's sphere from the start direction (OPEN_UP
 //    above level, OPEN_ANGLE ahead of the side line; the hands under the pulleys) to the end grip (CLOSE_GAP off the
 //    midline, END_DROP below the chest landmark).
 //  - Pulleys (c1): at the crown's height (the `head` landmark) of the start pose, at the columns' inner faces.
@@ -54,13 +54,7 @@ const norm = v => { const k = Math.hypot(...v); return v.map(x => x / k); };
 const U0 = [-Math.cos(OPEN_UP * R) * Math.cos(OPEN_ANGLE * R), Math.sin(OPEN_UP * R), Math.cos(OPEN_UP * R) * Math.sin(OPEN_ANGLE * R)];
 const U1 = (() => { const dx = -CLOSE_GAP - S[0], dy = END_Y - S[1], h2 = D * D - dx * dx - dy * dy; if (!(h2 > 0)) throw new Error('high_to_low_cable_fly: no end grip'); return norm([dx, dy, Math.sqrt(h2)]); })();
 const OMEGA = Math.acos(U0.reduce((s, v, i) => s + v * U1[i], 0));
-// LIB-PLATEFIX-3 (#393 6683164302 L1 [3,3,3]; addendum ruled #405 6683319630; c6 "down first, then in, in a wide arc"):
-// on the same sphere, the drop leads (elevation eased out) and the sweep in follows (heading eased in), so the hands go
-// down first, then in, on one smooth arc (was one great circle, which drew the Trace as a straight diagonal).
-const sph = u => ({ el: Math.asin(u[1]), az: Math.atan2(u[2], u[0]) });
-const A0 = sph(U0), A1 = sph(U1);
-const dirAt = t => { const el = A0.el + (A1.el - A0.el) * Math.sin(t * Math.PI / 2), az = A0.az + (A1.az - A0.az) * (1 - Math.cos(t * Math.PI / 2));
-  return [Math.cos(el) * Math.cos(az), Math.sin(el), Math.cos(el) * Math.sin(az)]; };
+const dirAt = t => U0.map((v, i) => (Math.sin((1 - t) * OMEGA) * v + Math.sin(t * OMEGA) * U1[i]) / Math.sin(OMEGA));   // great circle (slerp)
 const gripAt = t => dirAt(t).map((v, i) => S[i] + D * v);
 const poleAt = t => {                                  // behind the direction of travel, out and down (cable_fly's form)
   const a = dirAt(Math.max(0, t - 0.01)), b = dirAt(Math.min(1, t + 0.01)), tan = norm(b.map((v, i) => v - a[i]));
@@ -88,9 +82,7 @@ const capsule = (a, b, r, n = 8) => {
   return [...pts, pts[0]].map(([x, y]) => [x, y, b[2]]);
 };
 const ring = (c, r, n = 16) => Array.from({ length: n + 1 }, (_, k) => [c[0] + r * Math.cos(2 * Math.PI * k / n), c[1] + r * Math.sin(2 * Math.PI * k / n), c[2]]);
-// LIB-PLATEFIX-3 round 2 (pf7 R5 [3,3,4], #405 6685743439): only the crossed forearms and hands are drawn red; the
-// dashed upper-arm outlines traced over the solid upper arms and made the knot (both critics' fix), so they are gone.
-const GHOSTS = ['l', 'r'].map(sd => capsule(lmMis[`elbow.${sd}`], lmMis[`grip.${sd}`], 0.036));
+const GHOSTS = ['l', 'r'].flatMap(sd => [capsule(lmMis[`shoulder.${sd}`], lmMis[`elbow.${sd}`], 0.046), capsule(lmMis[`elbow.${sd}`], lmMis[`grip.${sd}`], 0.036)]);
 
 // ---- equipment ----
 const lmBase = landmarksOf(start, H);
@@ -144,20 +136,17 @@ export default {
   trace: { point: 'grip.r', trim: [12, 12] },
   callouts: [
     { key: 'upright', text: 'Trunk<br>upright', anchor: 'sternum', box: { left: 232, top: 80 }, cue: 'Keep your trunk vertical, with no lean toward the hands.' },
-    { key: 'elbows', text: 'Soft<br>elbows', anchor: { at: 'elbow.l', pose: 'start', off: [0, 5] }, box: { left: 164, top: 80 },   // PLATEFIX-3: the placer's spot (45.81 %, 22.35 % of 358) with the new arc, pinned so F4 keeps two boxed labels (was 252, 168, now on the ghosts)
-      cue: 'Hold a slight, fixed bend in the elbows the whole time.' },
+    { key: 'elbows', text: 'Soft<br>elbows', anchor: { at: 'elbow.l', pose: 'start', off: [0, 5] }, box: { left: 252, top: 168 }, cue: 'Hold a slight, fixed bend in the elbows the whole time.' },
     { key: 'below', text: 'Below<br>chest', anchor: 'grips', cue: 'Bring your hands together below chest level.' },
   ],
   tempo: [{ phase: 'Close', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Open', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['fore.r', 'fore.l', 'fist.r', 'fist.l'],   // round 2: the forearms and hands only (no upper-arm outline)
     guides: [
       ...GHOSTS.map(pts => ({ kind: 'dashed', pts })),                                               // the crossed arms (ghosts)
       ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: ring(lmMis[`grip.${sd}`], FIST_R) })),                       // each faulty hand's ring
-      // round 2: the two opposing arrows run under the hands, clear of the arms (were across the chest at -10 and +10 px)
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [0, 14] }, to: { at: 'grip.r', pose: 'mistake', off: [0, 14] } },   // each hand crosses over
-      { kind: 'arrow', from: { at: 'grip.l', pose: 'end', off: [0, 22] }, to: { at: 'grip.l', pose: 'mistake', off: [0, 22] } },
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [0, -10] }, to: { at: 'grip.r', pose: 'mistake', off: [0, -10] } },   // each hand crosses over
+      { kind: 'arrow', from: { at: 'grip.l', pose: 'end', off: [0, 10] }, to: { at: 'grip.l', pose: 'mistake', off: [0, 10] } },
     ],
     tells: [
       { key: 'cross', text: 'Hands<br>cross', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'Your hands cross past each other at the front.' },

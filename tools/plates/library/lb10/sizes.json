@@ -673,9 +673,9 @@
     "basis": "claim: c1 pg-burpee 'Stand tall with feet shoulder width apart' (one source hip-width, one feet together): the widest stance at which the rigid foot's plant contacts stay within 0.5 cm (0.15 m: 0.5 cm; 0.16 m: 0.6 cm), as kettlebell_swing 0.18 and medicine_ball_slam 0.12; the side view does not show the width"
    },
    "KNEE_SOFT": {
-    "value": 25,
+    "value": 15,
     "unit": "deg",
-    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c11 fv-burpee 'Always land on slightly bent knees'. LIB-PLATEFIX-3 round 2 (#405 6685743439 burpee R1 [2,3,2]): 25, the low end of the critics' 25-32 deg, since 15 read as a locked knee next to the stiff-landing fault"
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c11 fv-burpee 'Always land on slightly bent knees'"
    },
    "M_KNEE": {
     "value": 1,

@@ -102,13 +102,6 @@ const PXM = 146.28571428571428, CAM = { view: 'side', near: 'r', facing: 'right'
 const toW = ([x, y]) => [0, (339 - y) / PXM, (x - 150) / PXM];
 const inPoly = (poly, [x, y]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
 const ARM_KEYS = ['shcap.r', 'upper.r', 'elbowcap.r', 'fore.r'];
-// LIB-PLATEFIX-3 (#391 6682975122; ruled #405 6683319630 item 7, the offset dashed-arm fallback): at the ruled elbow point
-// (D-LIB13-PANEL3) the red elbow sits 1.0 px from the support arm, and no swing that keeps it behind the shoulder clears
-// 10 px (swing 25 -> 0 deg: 1.0 -> 8.3 px; only 5 deg in front of plumb reaches 11.1). So the red arm and dumbbell are
-// drawn offset by MIST_OFF plate px (the smallest offset tried whose elbow, wrist and grip all clear the support arm by
-// >= 10 px: 14.1 / 23.0 / 35.6 px), the pose unchanged; the tells' leaders and the arrow move with it, onto the red arm.
-export const MIST_OFF = [-6, 12];
-const offW = ([x, y]) => toW([x + MIST_OFF[0], y + MIST_OFF[1]]);
 export const MIST_ARM = (() => {
   const b = { height: H }, pose = { ...end, ...mistakePose };
   const shapes = bodyShapes(fk(resolve(normPose(pose, b), b).q, b), CAM).filter(x => ARM_KEYS.includes(x.key) && x.poly);
@@ -121,12 +114,12 @@ export const MIST_ARM = (() => {
     for (let k = 1; k <= sh.poly.length; k++) { const i = (start + k) % sh.poly.length; if (keep[i]) cur.push(sh.poly[i]); else if (cur.length) { runs.push(cur); cur = []; } }
     if (cur.length) runs.push(cur);
   }
-  return runs.filter(r => r.length > 1).map(r => r.map(offW));
+  return runs.filter(r => r.length > 1).map(r => r.map(toW));
 })();
 const LM_MIST = landmarksOf({ ...end, ...mistakePose }, H), MIST_GRIP = LM_MIST['grip.r'];
 // The arrow runs from the dumbbell's edge down to the straight-arm dumbbell (the start grip, under the shoulder).
-const ARROW_OFF = (() => { const a = CAM.P(MIST_GRIP), b = CAM.P(START_GRIP), L = Math.hypot(b[0] - a[0], b[1] - a[1]), r = 0.119 / 2 * PXM + 1; return [+((b[0] - a[0]) / L * r + MIST_OFF[0]).toFixed(2), +((b[1] - a[1]) / L * r + MIST_OFF[1]).toFixed(2)]; })();
-export const MIST_BELL = (() => { const c = CAM.P(MIST_GRIP), r = 0.119 / 2 * PXM; return [0, 60, 120, 180, 240, 300, 360].map(a => offW([c[0] + r * Math.cos(a * Math.PI / 180), c[1] + r * Math.sin(a * Math.PI / 180)])); })();
+const ARROW_OFF = (() => { const a = CAM.P(MIST_GRIP), b = CAM.P(START_GRIP), L = Math.hypot(b[0] - a[0], b[1] - a[1]), r = 0.119 / 2 * PXM + 1; return [+((b[0] - a[0]) / L * r).toFixed(2), +((b[1] - a[1]) / L * r).toFixed(2)]; })();
+export const MIST_BELL = (() => { const c = CAM.P(MIST_GRIP), r = 0.119 / 2 * PXM; return [0, 60, 120, 180, 240, 300, 360].map(a => toW([c[0] + r * Math.cos(a * Math.PI / 180), c[1] + r * Math.sin(a * Math.PI / 180)])); })();
 
 const LS = landmarksOf(start, H);
 const BENCH_Z0 = LS['knee.l'][2] - 0.25, BENCH_Z1 = LS['wrist.l'][2] + 0.15;
@@ -167,8 +160,8 @@ export default {
       { kind: 'arrow', from: { at: 'grip.r', pose: 'mistake', off: ARROW_OFF }, to: { at: 'grip.r', pose: 'start' } },   // down to the straight-arm bottom
     ],
     tells: [
-      { key: 'short', text: 'Arm not<br>straight', anchor: { at: 'elbow.r', pose: 'mistake', off: MIST_OFF }, box: { left: 246, top: 234 }, cue: 'The arm never straightens at the bottom.' },
-      { key: 'lower', text: 'Not<br>lowered', anchor: { at: 'grip.r', pose: 'mistake', off: MIST_OFF }, box: { left: 276, top: 300 }, cue: 'The dumbbell never comes all the way down.' },
+      { key: 'short', text: 'Arm not<br>straight', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 246, top: 234 }, cue: 'The arm never straightens at the bottom.' },
+      { key: 'lower', text: 'Not<br>lowered', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 276, top: 300 }, cue: 'The dumbbell never comes all the way down.' },
     ],
   },
   pilot: { drawableFault: 'Top fault: excessive momentum (c10), seen only as speed; the plate draws the next fault on the same list, the short range (c10).' },

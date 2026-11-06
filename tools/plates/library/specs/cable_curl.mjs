@@ -17,15 +17,14 @@
 // Geometry decisions:
 //  - Standing tall: feet hip width (c2), knees soft, the root solved from the knee angle (dumbbell_biceps_curl's).
 //  - Upper arms vertical in both poses (c3: "keep it still"), so only the elbow moves; ELBOW_TOP fully bent (c3),
-//    ELBOW_BOTTOM the soft bottom (c13 "slightly bent"): 20 deg (LIB-PLATEFIX-3 item 10, #392 6649453813 L5: the panel's
-//    "a visible bend of about 20 deg"; was 18, machine_chest_press.mjs:45's soft-elbow precedent), so the fully straight
-//    Wrong (0 deg) reads apart from the Right.
+//    ELBOW_BOTTOM the soft bottom (c13 "slightly bent"): 18 deg, machine_chest_press.mjs:45's soft-elbow precedent
+//    (the 8, main; #290 6343211054 item 7).
 //  - The bar: a 28 mm straight bar seen end-on, its centre between the fists (both hands, shoulder width, c1), drawn as a
-//    `poly` disc so it outlines in the Mistake (PQ-H9); the cable from the low pulley's upper tangent to the bar (the
-//    Mistake's thin `poly` cable twin is dropped: LIB-PLATEFIX-3 item 10, #392 6649453813 L5, the unlabelled zigzag).
+//    `poly` disc so it outlines in the Mistake (PQ-H9); the cable from the low pulley's upper tangent to the bar, with a
+//    thin `poly` twin in the Mistake pose (eq/rope.mjs's pattern).
 //  - Column in front of the lifter, the low pulley PULLEY_GAP ahead of the toes ("a step back", c1); the stack lifts by
 //    the cable paid out (1:1), 3 cm pre-lift.
-// Unsourced numbers (13.3 must-fix 14): KNEE_SOFT, ELBOW_BOTTOM (20, a drawing value for c13's "slightly bent"), FOOT_X, ELBOW_TOP (the card says "fully bent"), the column, stack and
+// Unsourced numbers (13.3 must-fix 14): KNEE_SOFT, FOOT_X, ELBOW_TOP (the card says "fully bent"), the column, stack and
 //  pulley sizes (lat_pulldown's), the low pulley height (16 cm, "lowest position"), PULLEY_GAP, the bar diameter.
 // Callouts, Mistake, tempo: the 3 checkpoints are the callouts (c3, c9, c8); the Mistake is the card's plate.mistake
 //  (c13, drawable true): the elbows go fully straight at the bottom, drawn against the spec's end (the bottom).
@@ -38,7 +37,7 @@ const FOOT_X = 0.11;                                   // mid-soles hip width (c
 const FOOT_Z = REF.mid * H;
 const LEG = (() => { const a = WINTER.thigh * H, b = WINTER.shank * H, k = KNEE_SOFT * R; return Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(k)); })();
 const ROOT_Y = Math.sqrt(LEG * LEG - (FOOT_X - REF.hjcX * H) ** 2) + WINTER.ankleH * H;
-const ELBOW_TOP = 140, ELBOW_BOTTOM = 20;              // fully bent (c3; dumbbell_biceps_curl :55); slightly bent (c13; LIB-PLATEFIX-3 item 10)
+const ELBOW_TOP = 140, ELBOW_BOTTOM = 18;              // fully bent (c3; dumbbell_biceps_curl :55); slightly bent (c13; machine_chest_press.mjs:45)
 const SCAP = { elev: -1, pro: -1 };                    // shoulders set, as dumbbell_biceps_curl (c8 still body)
 
 const feet = { l: { at: [FOOT_X, 0, FOOT_Z] }, r: { at: [-FOOT_X, 0, FOOT_Z] } };
@@ -47,15 +46,7 @@ const start = { ...base, elbow: ELBOW_TOP };            // card end: the top
 const end = { ...base, elbow: ELBOW_BOTTOM };           // card start: the bottom
 // Mistake (card plate.mistake, c13): "Arms fully extended at the bottom, so the biceps lose tension between reps." The
 // elbows straighten fully (0 deg) at the bottom; nothing else changes. 0 deg is the card's "fully extended", not a size.
-// LIB-PLATEFIX-3 round 2 (pf7 R5 [3,3,4], c1 c2: the straight arm hung plumb, so its bar sat inside the thighs, where a
-// straight bar cannot be): the locked arm is straight from the shoulder, flexed at the shoulder just enough (MIS_FLEX,
-// solved) that its bar rests on the front of the thighs at the end bar's z. Nothing is sized: 0 deg stays the card's
-// "fully extended", and the shoulder angle is the smallest that keeps the bar out of the thighs.
-const MIS_FLEX = (() => {
-  const zEnd = landmarksOf(end, H)['grip.r'][2], zAt = f => landmarksOf({ ...end, elbow: 0, shoulder: { flex: f, rot: 0 } }, H)['grip.r'][2];
-  let lo = 0, hi = 40; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (zAt(m) < zEnd) lo = m; else hi = m; } return (lo + hi) / 2;
-})();
-const mistakePose = { elbow: 0, shoulder: { flex: MIS_FLEX, rot: 0 } };
+const mistakePose = { elbow: 0 };
 // The faulty arm on top (#290 6343211054 item 5): the engine masks its outline inside the end figure, so it is redrawn as
 // Mistake guides (dashed outlines, not masked), dumbbell_biceps_curl's misArm (pilot A): engine body shapes on a
 // 1000 px/m probe camera, on the engine's Catmull-Rom spline, mapped back to world metres.
@@ -71,17 +62,11 @@ const cr = (ps, k = 8) => {
 };
 function misArm() {
   const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
-  const keys = ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'];   // round 2 (c1 c2): the whole straight arm, shoulder to bar
+  const keys = ['fore.r', 'fist.r'];
   return bodyShapes(fk(resolve(normPose({ ...end, ...mistakePose }, bd), bd).q, bd), probe).filter(sh => keys.includes(sh.key))
-    .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
+    .map(sh => cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8).map(([x, y]) => [0, -y / 1000, x / 1000]));
 }
 const MIS_ARM = misArm();
-// round 2 (pf7 R5 c2): a thin straight guide through the locked arm's shoulder, elbow and grip, 15 px (0.1025 m at the
-// plate's 146.29 px/m) past each end, so 'straight' reads against the solid bent arm.
-const MIS_LINE = (() => {
-  const L = landmarksOf({ ...end, ...mistakePose }, H), a = L['shoulder.r'], b = L['grip.r'], d = b.map((v, i) => v - a[i]), n = Math.hypot(...d), u = d.map(v => v / n), e = 15 / 146.29;
-  return [a.map((v, i) => v - u[i] * e), b.map((v, i) => v + u[i] * e)];
-})();
 
 // Column in front of the lifter (world z > 0), lat_pulldown tower sizes.
 const TOE_Z = landmarksOf(end, H)['toe.r'][2];
@@ -102,6 +87,9 @@ function lowTangent(b) {
 const barOf = lm => [0, lm.grips[1], lm.grips[2]];
 const cableLen = lm => { const b = barOf(lm), t = lowTangent(b); return Math.hypot(b[1] - t[1], b[2] - t[2]); };
 const disc = (c, r, n = 12) => Array.from({ length: n }, (_, k) => [0, c[1] + r * Math.sin(2 * Math.PI * k / n), c[2] + r * Math.cos(2 * Math.PI * k / n)]);
+// a thin poly twin of a cable a -> b (side plane, 2 mm either side), drawn only in the Mistake pose (PQ-H9)
+const twin = (a, b, t = 0.002) => { const dy = b[1] - a[1], dz = b[2] - a[2], L = Math.hypot(dy, dz), ny = -dz / L * t, nz = dy / L * t;
+  return [[0, a[1] + ny, a[2] + nz], [0, b[1] + ny, b[2] + nz], [0, b[1] - ny, b[2] - nz], [0, a[1] - ny, a[2] - nz]]; };
 const LEN_BOTTOM = cableLen(landmarksOf(end, H));
 
 export default {
@@ -127,6 +115,7 @@ export default {
       ];
     },
     lm => ({ type: 'cable', from: lowTangent(barOf(lm)), to: barOf(lm), z: 'center', part: 'bar' }),
+    (lm, ctx) => (ctx.pose === 'mistake' ? { type: 'poly', cls: 'eq', z: 'center', part: 'bar', pts: twin(lowTangent(barOf(lm)), barOf(lm)) } : null),
     lm => ({ type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'bar', pts: disc(barOf(lm), BAR_R) }),
   ],
   checks: [
@@ -137,10 +126,6 @@ export default {
     ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', plane: { point: [0, 0, SCAP.pro / 100], normal: [0, 0, 1] }, pose, tol: 0.5 })),
   ],
   ghosts: { count: 3, parts: ['arm.r', 'bar'] },
-  // round 2: the straight arm's bar now rests where the bent arm's does, so the `straight` tell's anchor (the elbow,
-  // pf7 c2) moves 8.4 px at plate scale, under the 11.39 px bar (H3.deviation): a Mistake zoom in the D-LIB15R2-ZOOM
-  // form, k 1.5, the smallest half-step k that clears it (12.6 px). Nothing is enlarged.
-  zoom: { view: 'mistake', k: 1.5 },
   trace: { point: 'grip.r', trim: [10, 12] },
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'slightly bent', box: { left: 174, top: 98 } },
   callouts: [
@@ -152,9 +137,9 @@ export default {
   mistake: {
     pose: mistakePose,
     parts: ['bar'],
-    guides: [...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })), { kind: 'dashed', pts: MIS_LINE }],   // the straight arm, on top, and its line
+    guides: MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the straightened forearm and fist, on top
     tells: [
-      { key: 'straight', text: 'Arms locked<br>straight', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 16, top: 198 }, cue: 'Your arms go fully straight at the bottom, so the biceps lose tension.' },
+      { key: 'straight', text: 'Arms locked<br>straight', anchor: { at: 'wrist.r', pose: 'mistake' }, box: { left: 16, top: 198 }, cue: 'Your arms go fully straight at the bottom, so the biceps lose tension.' },
     ],
   },
   alt: 'Cable curl, side view. Standing a step back from a low cable pulley with a straight bar in both hands, palms up, the elbows at the sides. The lifter lowers the bar from the shoulders to the thighs, stopping with the elbows slightly bent.',
