@@ -11,9 +11,7 @@
         "lib_single_arm_lat_pulldown",
         "lib_straight_arm_pulldown",
         "lib_chest_supported_row",
-        "lib_resistance_band_row",
-        "lib_incline_machine_press",
-        "lib_shoulder_press"
+        "lib_resistance_band_row"
       ]
     }
   ],
@@ -95,12 +93,6 @@
     },
     "lib_resistance_band_row": {
       "optionsKey": "resistance_band_row"
-    },
-    "lib_incline_machine_press": {
-      "optionsKey": "incline_machine_press"
-    },
-    "lib_shoulder_press": {
-      "optionsKey": "shoulder_press"
     }
   },
   "jump": null

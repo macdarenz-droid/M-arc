@@ -451,7 +451,7 @@ describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batc
     for (const order of [all, front]) {
       const spec: any = layersSpecOf('tools/plates/library/batches/lb01.json', { stageDir: mkdtempSync(join(tmpdir(), 'w3-leftout-')), all: order });
       expect(JSON.stringify(spec)).not.toContain('leg_press_calf_raise');
-      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(10);   // 12 drawn LB1 rows less the 2 staged (underhand LIB-PLATEFIX-3, assisted_pull_up #384 6653062201)
+      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(8);   // 12 drawn LB1 rows less the 4 staged (underhand LIB-PLATEFIX-3, assisted_pull_up #384 6653062201, incline_machine_press and shoulder_press D-SHIP-W3-NOPAIR #384 6681221802)
     }
   }, 120_000);
 });

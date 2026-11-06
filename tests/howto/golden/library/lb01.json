@@ -210,13 +210,14 @@
         "mistakeAlt": "7ada03532aed383634f940b528e43d1522a98d2494adef5af679eb28a23b3429"
       },
       "exemptions": [
-        "F5"
+        "F5",
+        "F3"
       ],
       "approvedBy": "supervisor",
       "decision": "D-LIB-LB1ZOOM",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653062201 @ 2f5d0652402435477f57feb5c357ea48531da774",
       "date": "2026-11-06",
-      "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): lib_single_arm_lat_pulldown's fragments normalSvg, normalOverlay, mistakeSvg, mistakeOverlay. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
+      "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): lib_single_arm_lat_pulldown's fragments normalSvg, normalOverlay, mistakeSvg, mistakeOverlay. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780. Exemption F3 named under D-SHIP-W3-F3SAL (#384 6681221802): the redrawn plate's longest leader (37.2) is below the approved range [49.3, 82.3]; the panel approved the plate.",
       "supersedes": null,
       "prev": "d96ed1bf728e147e67364018160cf651c33150627f1fe84f43ab66d4d5d1e398"
     },
@@ -247,7 +248,7 @@
       "date": "2026-11-06",
       "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): lib_straight_arm_pulldown's fragments mistakeOverlay, tells, cues. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
       "supersedes": null,
-      "prev": "5cd9dcb7625f9f6669e316d3c882d6695b1ac67c412517a9f9b0e3ba5612cc9b"
+      "prev": "0d86d1672ad8ce55a9b86cef79149d052a7b2a1f94d71b76e4008dc408a63145"
     },
     {
       "kind": "plate",
@@ -276,7 +277,7 @@
       "date": "2026-11-04",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_chest_supported_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "4ac29fef78ffacc65f4a13e3c6265311df4110ed880e4e2bbbf37a781956bd82"
+      "prev": "91d28a6104ce2be7364c8bec6464040f0b85f8c7507e262e4b0d32d4c88e86e4"
     },
     {
       "kind": "plate",
@@ -307,7 +308,7 @@
       "date": "2026-11-04",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_resistance_band_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F1, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "2a1463c7ca78ee6193e3e36f1c10cb3f12c3f18113e68b36516f6046c75f3a6e"
+      "prev": "466038638dedc285716e2af6887e91279a94d70cf7275e7c77085388a87eb2d8"
     },
     {
       "kind": "plate",
@@ -336,7 +337,7 @@
       "date": "2026-11-04",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB01 + ZOOM PIN GO (supervisor, 2026-11-04, #383 6632248800): lib_incline_machine_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "98151d14adcf7bafd575209288b7929b8b949de3b16e16af964308cf7bf2768f"
+      "prev": "e168f4fec5705a5bed5ba8559c772daed6b99d8d6cd508548e17527058845dbf"
     },
     {
       "kind": "plate",
@@ -366,7 +367,7 @@
       "date": "2026-11-06",
       "why": "Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514; the earlier D-LIB-LB1ZOOM pin was this lane's own unmerged first entry): lib_shoulder_press's fragments mistakeOverlay, tells, cues. W3 layers panel (#384 6648454032), fix rounds 6648733957 and 6649856513 with focused rechecks 6649416891 and 6653062201 (final result), delta check and PIN GO 6653343780.",
       "supersedes": null,
-      "prev": "c65582d6e172424fc5c927a70b104799c91a4f9dacc74ece73f9df07572239aa"
+      "prev": "e897fea1ad088913f0d2b16892d527ba7bdd26688e99d83d7ac84a69703b1d4d"
     },
     {
       "kind": "layers-page",
@@ -379,19 +380,17 @@
         "lib_single_arm_lat_pulldown",
         "lib_straight_arm_pulldown",
         "lib_chest_supported_row",
-        "lib_resistance_band_row",
-        "lib_incline_machine_press",
-        "lib_shoulder_press"
+        "lib_resistance_band_row"
       ],
-      "pageSha256": "594144d0004f6851baaefa6695cb664d98693d9babc2c35d644dcf3ac6f062ab",
-      "bytes": 2634659,
+      "pageSha256": "8d3be69e50ca8a649e9c39dccd76d8affd558b6e30ddc3adb4b3e3ac975eb791",
+      "bytes": 2192110,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W3-LAYERS",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653343780 @ 2f5d0652402435477f57feb5c357ea48531da774",
       "date": "2026-11-06",
       "supersedes": null,
-      "why": "W3 layers approved (#384): the calibrated layers panel 6648454032 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6648733957 and 6649856513, focused rechecks 6649416891 and 6653062201, and the delta check with PIN GO 6653343780 (exactly the 3 ruled strings at 2f5d0652). assisted_pull_up, underhand_lat_pulldown held (LIB-PLATEFIX-3).",
-      "prev": "d91cd50162daec8f0f19db2822c3a842fad5fd725855d01207175535f6e33e99"
+      "why": "W3 layers approved (#384): the calibrated layers panel 6648454032 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6648733957 and 6649856513, focused rechecks 6649416891 and 6653062201, and the delta check with PIN GO 6653343780 (exactly the 3 ruled strings at 2f5d0652). assisted_pull_up, underhand_lat_pulldown held (LIB-PLATEFIX-3). Rebuilt for 8 ids under D-SHIP-W3-NOPAIR (#384 6681221802): incline_machine_press and shoulder_press staged (no LIB-7 hand pair; F-HAND-MACHINEPUSH); the other 8 cards byte-equal.",
+      "prev": "89df12e38b494d9329a82a732e8062e339ff421f69fc70f21c8f5ac785beb6d8"
     }
   ]
 }
