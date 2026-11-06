@@ -9714,6 +9714,18 @@ if (gate.runs('LIB-SHIP'))
 }
 
 
+// LIB-SHIP W3 D-SHIP-W3-PAUSEDSKIP (#384 6687335829): harness.mjs settle and settleApp skip an animation only when it is
+// paused AND fully outside the viewport. A running animation and a paused one in view still block; a paused one fully
+// below the viewport no longer does; the predicate without the viewport condition would let the in-view one through.
+if (gate.runs('LIB-SHIP-W3-PAUSEDSKIP'))
+{
+  const tag = 'LIB-SHIP-W3-PAUSEDSKIP';
+  const { pausedSkip } = await import('../tools/plates/fidelity/paused-skip.mjs');
+  const r = await pausedSkip(browser, await import('../tools/plates/fidelity/harness.mjs'));
+  for (const p of r.problems) errors.push(`${tag}: ${p}`);
+  if (!r.problems.length) console.log(`${tag}: ${r.rows.length} rows: running and paused-in-view animations block settle and settleApp, a paused one fully off screen does not, the no-viewport mutation is caught`);
+}
+
 // LIB-12: the hand views (palm-flat, cupped, front-rack, ball-contact) and the battle-rope pair (card LIB-12; plan 2.3;
 // tools/plates/library/hands/gate-lib12.mjs). Every LIB-12 drawn pair in 5 themes at 390, 360 and 340 px: no horizontal
 // scroll, SVG and text inside the plate (H4); each ink class's contrast >= golden B's minimum for it, measured in the
@@ -9801,18 +9813,6 @@ if (gate.runs('LIB-STRIP'))
     rmStrip(dir, { recursive: true, force: true });
     rmStrip(mirror, { recursive: true, force: true });
   }
-}
-
-// LIB-SHIP W3 D-SHIP-W3-PAUSEDSKIP (#384 6687335829): harness.mjs settle and settleApp skip an animation only when it is
-// paused AND fully outside the viewport. A running animation and a paused one in view still block; a paused one fully
-// below the viewport no longer does; the predicate without the viewport condition would let the in-view one through.
-if (gate.runs('LIB-SHIP-W3-PAUSEDSKIP'))
-{
-  const tag = 'LIB-SHIP-W3-PAUSEDSKIP';
-  const { pausedSkip } = await import('../tools/plates/fidelity/paused-skip.mjs');
-  const r = await pausedSkip(browser, await import('../tools/plates/fidelity/harness.mjs'));
-  for (const p of r.problems) errors.push(`${tag}: ${p}`);
-  if (!r.problems.length) console.log(`${tag}: ${r.rows.length} rows: running and paused-in-view animations block settle and settleApp, a paused one fully off screen does not, the no-viewport mutation is caught`);
 }
 
 await gate.done();
