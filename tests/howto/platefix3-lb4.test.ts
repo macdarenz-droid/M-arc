@@ -32,8 +32,19 @@ describe('LIB-PLATEFIX-3 item 3: bulgarian_split_squat (D-SPLIT-BSSHOVER amended
     // the front foot stays where it was (flat, same heel and ball)
     for (const k of ['heel.r', 'ball.r']) expect(Math.hypot(...[0, 1, 2].map(i => L.mistake[k][i] - L.end[k][i]))).toBeLessThanOrEqual(0.005);
   });
-  it('the shorter Trace (under the bar at plate scale) gets the k 1.5 normal zoom, the smallest half-step k', () => {
-    expect(S.bulgarian_split_squat.zoom).toEqual({ view: 'normal', k: 1.5 });
+  // round 2 (#405 6685743439 pf7 R11 [2,2,2]): the k 1.5 Trace zoom showed no nameable part, so it is removed; the trims
+  // [8, 10] (was [10, 12]) keep the drawn Trace over the 22.11 px bar at plate scale (H3.trace)
+  const chordOf = (s: any) => { const d = plate.renderPlate(s, { id: 'x' }).svg.match(/<path class="trace"[^>]* d="([^"]*)"/)![1]!;
+    const pts = [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
+    return Math.hypot(pts.at(-1)![0]! - pts[0]![0]!, pts.at(-1)![1]! - pts[0]![1]!); };
+  it('round 2: no zoom; the Trace (trims [8, 10]) clears the 22.11 px bar at plate scale', () => {
+    expect(S.bulgarian_split_squat.zoom).toBeUndefined();
+    expect(S.bulgarian_split_squat.trace).toEqual({ point: 'hip.r', trim: [8, 10] });
+    const c = chordOf(S.bulgarian_split_squat);
+    expect(c, `trace chord ${c.toFixed(2)} px`).toBeGreaterThanOrEqual(22.11);
+  });
+  it('round 2 mutation: the old trims [10, 12] put the Trace under the bar', () => {
+    expect(chordOf({ ...S.bulgarian_split_squat, trace: { point: 'hip.r', trim: [10, 12] } })).toBeLessThan(22.11);
   });
 });
 
@@ -144,5 +155,33 @@ describe('LIB-PLATEFIX-3 lb4 card facts follow the re-posed plates', () => {
     expect(factProblems('jump_squat', f)).toEqual([]);
     const old = [{ kind: 'contact', landmark: 'heel.l', pose: 'start', cardPose: 'start', claim: 'j2' }, ...f];   // mutation: main's j2 fact
     expect(factProblems('jump_squat', old).length).toBe(1);
+  });
+});
+
+// LIB-PLATEFIX-3 round 2 (plates panel #405 6685743439, pf7 findings @ ec54cbad; D-LIB13-PANEL2, the last round).
+describe('PF3 round 2 step_up R3: the mid-rise ghosts keep the trailing foot out of the box', () => {
+  const B = { height: 1.75 }, BOX = { z0: -0.15, top: 0.45 };
+  /** Trailing-foot points inside the box (past its near face z0 and under its top) at the ghost times t = 1/3, 2/3. */
+  const inBox = (s: any) => { const keys = [s.poses.start, ...(s.poses.via ?? []), s.poses.end].map((p: any) => body.normPose(p, B));
+    return [1 / 3, 2 / 3].flatMap(t => { const lm = body.landmarks(body.fk(body.poseAt(keys, t, B).q, B));
+      return ['toe.l', 'heel.l', 'ball.l'].filter(k => lm[k][2] > BOX.z0 && lm[k][1] < BOX.top).map(k => `${t.toFixed(2)} ${k}`); }); };
+  it('no trailing-foot landmark of either ghost is inside the box (main: the 2/3 ghost toe at z 0.005, y 0.319)', () => {
+    expect(inBox(S.step_up)).toEqual([]);
+  });
+  it('mutation: without the via keys the 2/3 ghost toe is inside the box', () => {
+    expect(inBox({ ...S.step_up, poses: { start: S.step_up.poses.start, end: S.step_up.poses.end } })).toContain('0.67 toe.l');
+  });
+});
+
+describe('PF3 round 2 jump_squat R5: the Mistake view carries no upright start or ghost outline', () => {
+  const has = (s: any, mg: any) => /<g class="(pose-start|ghost)\b/.test(mg.mistakeSvg(s, plate.renderPlate(s, { id: 'm', mistake: true }).svg));
+  it('mistakeGhosts is false, and the Mistake svg after the library post-step has no pose-start or ghost group', async () => {
+    const mg = await import(/* @vite-ignore */ lib('mistake-ghosts.mjs'));
+    expect(S.jump_squat.mistakeGhosts).toBe(false);
+    expect(has(S.jump_squat, mg)).toBe(false);
+  });
+  it('mutation: without the field the start pose and the ghost stay in the Mistake view', async () => {
+    const mg = await import(/* @vite-ignore */ lib('mistake-ghosts.mjs'));
+    expect(has({ ...S.jump_squat, mistakeGhosts: undefined }, mg)).toBe(true);
   });
 });

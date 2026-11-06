@@ -86,6 +86,21 @@ const topAt = z => withArms(topBody(solve(y => knees(topBody(y, z)).r - 5, BOX_H
 const TOP_Z = solve(z => com(landmarksOf(topAt(z), H), dbs(landmarksOf(topAt(z), H)))[2], -0.3, 0.2);
 const top = topAt(TOP_Z);
 const start = step, end = top;
+// LIB-PLATEFIX-3 round 2 (pf7 R3 [4,3,3], c2 c3: the interpolated mid-rise ghosts swung the trailing foot through the
+// box's near face): two via keys at the ghost times t = 1/3 and 2/3. Each takes the root, trunk and trailing hip on the
+// straight start-to-top interpolation (so the hip trace is unchanged) and only bends the trailing knee further
+// (VIA_KNEE), so the trailing foot stays behind the box face (z < -BOX_Z0) until it is above the box top. The trailing
+// leg keeps its drawn lengths; VIA_KNEE is a drawing value (unsourced).
+const VIA_KNEE = [60, 95];
+const lerp = (a, b, t) => a + (b - a) * t;
+const viaAt = (t, kneeL) => {
+  const qs = resolve(normPose(start, B), B).q, qt = resolve(normPose(top, B), B).q;
+  const p = { root: { at: start.root.at.map((v, i) => lerp(v, top.root.at[i], t)), tilt: lerp(start.root.tilt, top.root.tilt, t) },
+    trunk: lerp(start.trunk, top.trunk, t), neck: lerp(start.neck, top.neck, t),
+    hip: { l: lerp(qs.hip.l.flex, qt.hip.l.flex, t) }, knee: { l: kneeL }, ankle: { l: lerp(qs.ankle.l, qt.ankle.l, t) }, plant: { r: lead } };
+  return withArms(p);
+};
+const via = [viaAt(1 / 3, VIA_KNEE[0]), viaAt(2 / 3, VIA_KNEE[1])];
 // Mistake (c1, c4): mid-rise, the trunk thrown forward over the lead thigh; the trailing foot pushes off its toes. The
 // heel lift is solved at the step position (as before), then the root is re-solved so the lead knee is MID_KNEE with the
 // trailing knee TRAIL_KNEE on the pushing foot.
@@ -107,7 +122,7 @@ const inHand = s => {
 export default {
   id: 'step_up', name: 'Step-Up', view: 'side', facing: 'right',
   camera: { pxPerM: 128, x0: 196, y0: 339 },   // 128 px/m (inside the 8's 123.9-146.3): standing tall on the box fits under the header
-  poses: { start, end },
+  poses: { start, via, end },
   equipment: [
     { type: 'floor', from: -0.85, to: 0.75 },
     { type: 'box', at: [0, BOX_H / 2, -BOX_Z0 + BOX_D / 2], w: BOX_D, h: BOX_H, z: 'back' },
