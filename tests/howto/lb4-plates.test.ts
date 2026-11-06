@@ -1627,7 +1627,7 @@ describe('LIB-SPLIT A3: card-true poses (DESIGN.md 17.2, 17.6; PLAN RULED Q1, Q2
     expect(hoverProblems({ ...b, poses: { ...b.poses, end: b.mistake.pose } }).filter(x => x.startsWith('end kneecap gap')).length).toBe(1);
     expect(hoverProblems(at(0.01)).some(x => x.startsWith('end kneecap gap'))).toBe(true);
     const old = { ...b, zoom: { view: 'mistake', k: 1.5, tell: 'knee' }, mistake: { ...b.mistake, tells: [{ key: 'knee', text: 'Front knee forward', anchor: { at: 'knee.r', pose: 'mistake' } }, { key: 'shin', text: 'Shin tips forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' } }] } };
-    expect(hoverProblems(old)).toEqual(['not one tell on the Mistake rear knee', 'not the ruled zoom']);
+    expect(hoverProblems(old)).toEqual(['not one tell on the Mistake rear knee', 'a zoom']);   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, pf7 R11): was 'not the ruled zoom', the message of the edited zoom line
   });
   /** R3 (mx30): the near hand and forearm drawn over the near dumbbell (draw order only; the goblet_squat item 1 form). */
   const handOverDbR = (spec: any) => { const v = plate.renderPlate(spec, { id: 'x' }).svg, db = v.lastIndexOf('class="disc"');

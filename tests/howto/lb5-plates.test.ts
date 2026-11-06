@@ -1002,7 +1002,7 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
       normalSvg: '4cd54f499a4dd4634c948129df9472747eef077cd10e9d6514c46cd1af051644',
       normalOverlay: '5bdf60a30bfadea64e1b4f1b3e01c8418ed585ef3904814fcf9efdc022c53f0d',
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was b479dcca, now 9a0028be (items 8-14 redraw; the plates panel re-approves)
-      mistakeSvg: 'a54c70494c20ad5c97df846759aacb12b647876ae65d902fd2a36f8ba454c030',   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was 9a0028be…
+      mistakeSvg: '6c75b9c74eb2f04d51332496db8b20a9c14987c98551fe5667edac24132c1607',   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was 9a0028be…
       mistakeOverlay: 'dca9ffb85af31565b5c48a4d7efb0c4dbadc0c947837bf960c579ac509a2cf02',
       tells: '5ca2dca05a483d50450554fda1874c76ad12597445482884932e1c0a9a5e023c',
       tempo: '73dd8f8f94901608bf64b800d986bfb05e0019ffdec860438d9058b37cbd7634',

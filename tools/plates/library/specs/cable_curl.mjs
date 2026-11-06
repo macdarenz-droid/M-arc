@@ -137,6 +137,10 @@ export default {
     ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', plane: { point: [0, 0, SCAP.pro / 100], normal: [0, 0, 1] }, pose, tol: 0.5 })),
   ],
   ghosts: { count: 3, parts: ['arm.r', 'bar'] },
+  // round 2: the straight arm's bar now rests where the bent arm's does, so the `straight` tell's anchor (the elbow,
+  // pf7 c2) moves 8.4 px at plate scale, under the 11.39 px bar (H3.deviation): a Mistake zoom in the D-LIB15R2-ZOOM
+  // form, k 1.5, the smallest half-step k that clears it (12.6 px). Nothing is enlarged.
+  zoom: { view: 'mistake', k: 1.5 },
   trace: { point: 'grip.r', trim: [10, 12] },
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'slightly bent', box: { left: 174, top: 98 } },
   callouts: [
