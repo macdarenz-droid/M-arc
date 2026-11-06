@@ -443,6 +443,47 @@
       "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row), and the D-TEXT-GOLDEN placements (#379 6637739563), which move posture-only card lines into visible setup and risk slots, and plank's harder checkpoint removed (D-TEXT-PROGRESSION, #379 6638023726), and the content check's two line fixes (#379 6638098178); pec_fly held and taken off this page (D-SHIP-PECFLY-HOLD, #379 6641008259), the other 7 cards byte-equal.",
       "supersedes": 14,
       "prev": "4843e6969fbdc4a84772767d1d15f8d59ba083ec7547967c80d6609ec9714a6f"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_pec_fly",
+      "src": "library/specs/pec_fly.mjs",
+      "slug": "pec-fly",
+      "prefix": "pec-fly",
+      "chromeId": "pec-fly",
+      "fragments": {
+        "normalSvg": "9c0c4680f63ef86670d199c886c4390cee2485f75f91e0234d62a27070a139c0",
+        "normalOverlay": "deb73cdc8db6af0ad3d13d36470620927b339d60198e4b1c33c3d0809c5f6d6b",
+        "mistakeSvg": "df4589fdf2e5b2aa94f2fe11d32449a8dce24935cac0fc7a09a86660e8287cfb",
+        "mistakeOverlay": "6c307eefb1e4a6e3e08cb71f9680a73b6cfa7256226c70bb59be020daf04cd8c",
+        "tells": "be6ed8624011a4d06e62d2e13426831ee7c79f885b36eb4fd3314a04798b78db",
+        "tempo": "85cfc3fa1c2c7b57a8c9a688489c6f2b0376e60f66c4a3ac924f6391c139e0e8",
+        "cues": "cccc988a77260dbf39f21d6ce952e9a915d9c1080dcb77e88c253513b80a51bc",
+        "alt": "9002465a2b55518dea8739de92aaa444fcb4533a082700d48b92af2ed29aab39",
+        "mistakeAlt": "dd4f725b0a71169e836dfe665bb866201fdc578c65fafab0bb296704090beef3"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/395#issuecomment-6686721403 @ fc6ae84c7293de202aba1d39867f7139e23afdb7",
+      "date": "2026-11-06",
+      "why": "Owner answer, verbatim, in chat on 2026-11-06 (relayed by the supervisor, #395 6686721403, D-OWNER-REPIN): \"Do all whats recommended. Whan u have question, answer urself via recommended\". It approves option 1: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version (D-LIB-O5, plan 14.8 point 5). The pf4 panel passed pec_fly (#395 6648800268, PLATEFIX-2 PLATES PANEL RESULT @ 24100cff: \"Approved: pec_fly (PQ-H4 overlap fixed)\"). LIB-PLATEFIX-2 moved the height callout box from top 244 to top 260 (D-SHIP-PECFLY-HOLD, PQ-H4); only normalSvg and normalOverlay change. Exemptions as entry 8.",
+      "supersedes": 8,
+      "prev": "715d3f61c4997a3227aa9136523d83452759d7c65b8b8b7286427e0695415975"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "7b88c36508f2d14d422cfe84c786031f81700581c00ecfaa912b8fc2e853ff0b",
+      "bytes": 1325644,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/395#issuecomment-6686721403 @ fc6ae84c7293de202aba1d39867f7139e23afdb7",
+      "date": "2026-11-06",
+      "why": "Owner answer, verbatim, in chat on 2026-11-06 (relayed by the supervisor, #395 6686721403, D-OWNER-REPIN): \"Do all whats recommended. Whan u have question, answer urself via recommended\". It approves option 1: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version (D-LIB-O5, plan 14.8 point 5). The pf4 panel passed pec_fly (#395 6648800268, PLATEFIX-2 PLATES PANEL RESULT @ 24100cff: \"Approved: pec_fly (PQ-H4 overlap fixed)\"). The pilot-a plates page rebuilt with pec_fly's moved height box (entry 16); the other cards are byte-equal.",
+      "supersedes": 0,
+      "prev": "4eea8066396d3e766061a8d907ea570035fde6f82d65a0b82fa034515ca8664a"
     }
   ]
 }

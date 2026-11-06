@@ -43,7 +43,8 @@ const MOVED_A3 = ['reverse_lunge', 'dumbbell_fly'];
 // census views (claude/howto-options 4a9fd86, docs/howto/library/inputs/census.json blob 70553d5d)
 const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id === 'upright_row' || id === 'pec_fly' ? 'front' : 'side']));
 // the pilot A page the registry builds (build.mjs's page at the Do 6 head); the pin's page entry must equal it
-const PAGE = { sha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 };
+// LIB-PLATEFIX-2 (D-OWNER-REPIN, #395 6686721403): pec_fly's height box moved (PQ-H4); 5d0e562f superseded by 7b88c365
+const PAGE = { sha256: '7b88c36508f2d14d422cfe84c786031f81700581c00ecfaa912b8fc2e853ff0b', bytes: 1325644 };
 const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
 // Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
 const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
@@ -142,7 +143,9 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     expect(lp).toHaveLength(2);
     expect(lp.map(({ e }: any) => e.decision)).toEqual(['D-SHIP-W1-LAYERS', 'D-SHIP-W2-STAMP']);
     expect(lp[1].e.supersedes).toBe(lp[0].i);
-    expect(lp[1].i).toBe(entries.length - 1);
+    // LIB-PLATEFIX-2 (D-OWNER-REPIN, #395 6686721403): after it come exactly the owner's pec_fly plate and page entries
+    expect(entries.slice(lp[1].i + 1).map((e: any) => [e.kind, e.id ?? null, e.decision, e.approvedBy, e.supersedes])).toEqual([
+      ['plate', 'lib_pec_fly', 'D-OWNER-REPIN', 'owner', 8], ['page', null, 'D-OWNER-REPIN', 'owner', 0]]);
     const page = readFileSync(ROOT + batch.pages.layers);
     expect([[...lp[1].e.ids].sort(), lp[1].e.ids.length, lp[1].e.pageSha256, lp[1].e.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
