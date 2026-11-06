@@ -24,10 +24,11 @@ export function applyRegionFix(FRONT_PARTS) {
 }
 
 // F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, #404 6682755661): golden B's body map draws front_delts on the strip between
-// the neck and the shoulder cap, where it reads as the upper traps, and has no inner-elbow part. Library layers pages
-// redraw both front_delts parts on the front of the shoulder cap (between side_delts and upper_chest, above the
-// biceps) and add an inner-elbow pain part on each arm. Golden B's own page keeps the vendored map (byte-locked); the
-// owner's golden-B update F-GOLDENB-FRONTDELT would move it. Right = left mirrored about x = 15.83629 (the map's axis).
+// the neck and the shoulder cap, where it reads as the upper traps, and has no inner-elbow or back-of-knee part.
+// Library layers pages redraw both front_delts parts on the front of the shoulder cap (between side_delts and
+// upper_chest, above the biceps), add an inner-elbow pain part on each arm and, on the back view, a back-of-knee pain
+// part on each leg. Golden B's own page keeps the vendored map (byte-locked); the owner's golden-B update
+// F-GOLDENB-FRONTDELT would move it. Front: right = left mirrored about x = 15.83629 (the map's axis).
 export const BODYMAP_FIX = {
   replace: {
     'shoulder-front-left': { muscle: 'front_delts', d: 'M 20.300,15.300 L 22.500,15.480 L 20.959,16.531 L 22.712,19.750 L 22.000,19.750 L 20.392,16.876 L 20.000,16.400 Z' },
@@ -37,13 +38,24 @@ export const BODYMAP_FIX = {
     { id: 'elbow-inner-left', muscle: null, d: 'M 25.311,29.900 L 27.206,32.550 L 26.877,32.550 L 25.087,29.900 Z' },
     { id: 'elbow-inner-right', muscle: null, d: 'M 6.362,29.900 L 4.467,32.550 L 4.796,32.550 L 6.586,29.900 Z' },
   ],
+  // back view (lying_leg_curl "Behind the knee", #394 6682923012): the crease between the hamstrings and the calves.
+  // The vendored knee-back-* parts sit on the sides of the knee. Right = left mirrored about x = 52.598 (back axis).
+  addBack: [
+    { id: 'knee-pit-left', muscle: null, d: 'M 47.600,66.820 L 48.680,66.920 L 49.500,67.050 L 49.750,67.220 L 48.600,67.200 L 47.500,67.020 Z' },
+    { id: 'knee-pit-right', muscle: null, d: 'M 57.596,66.820 L 56.516,66.920 L 55.696,67.050 L 55.446,67.220 L 56.596,67.200 L 57.696,67.020 Z' },
+  ],
 };
 
 export const bodymapFixApplied = FRONT_PARTS => FRONT_PARTS.some(x => x.id === BODYMAP_FIX.add[0].id);
 
-/** Applies BODYMAP_FIX once (idempotent: false when already applied); throws on a missing part or the wrong muscle. */
-export function applyBodymapFix(FRONT_PARTS) {
-  if (bodymapFixApplied(FRONT_PARTS)) return false;
+/** Applies BODYMAP_FIX once to both views (idempotent: false when already applied); throws on a missing view or part,
+ *  the wrong muscle, or a view fixed without the other. */
+export function applyBodymapFix(FRONT_PARTS, BACK_PARTS) {
+  if (!Array.isArray(FRONT_PARTS) || !Array.isArray(BACK_PARTS)) throw new Error('bodymap fix: needs FRONT_PARTS and BACK_PARTS');
+  const front = bodymapFixApplied(FRONT_PARTS), back = BACK_PARTS.some(x => x.id === BODYMAP_FIX.addBack[0].id);
+  if (front !== back) throw new Error('bodymap fix: applied to one view only');
+  if (front) return false;
+  for (const { id } of BODYMAP_FIX.addBack) if (BACK_PARTS.some(x => x.id === id)) throw new Error(`bodymap fix: ${id} already exists`);
   for (const [id, { muscle }] of Object.entries(BODYMAP_FIX.replace)) {
     const q = FRONT_PARTS.find(x => x.id === id);
     if (!q || q.muscle !== muscle) throw new Error(`bodymap fix: ${id} not ${muscle}`);
@@ -51,5 +63,6 @@ export function applyBodymapFix(FRONT_PARTS) {
   for (const { id } of BODYMAP_FIX.add) if (FRONT_PARTS.some(x => x.id === id)) throw new Error(`bodymap fix: ${id} already exists`);
   for (const [id, { d }] of Object.entries(BODYMAP_FIX.replace)) FRONT_PARTS.find(x => x.id === id).d = d;
   for (const p of BODYMAP_FIX.add) FRONT_PARTS.push({ ...p });
+  for (const p of BODYMAP_FIX.addBack) BACK_PARTS.push({ ...p });
   return true;
 }

@@ -17,7 +17,8 @@ beforeAll(async () => {
   const B = await import(/* @vite-ignore */ url('tools/plates/layers/engine/bodymap-parts.mjs'));
   VENDORED = B.FRONT_PARTS; BACK = B.BACK_PARTS;
 });
-const fixed = (): Part[] => { const P = structuredClone(VENDORED); RF.applyBodymapFix(P); return P; };
+const both = () => { const F = structuredClone(VENDORED), B = structuredClone(BACK); RF.applyBodymapFix(F, B); return { F, B }; };
+const fixed = (): Part[] => both().F;
 const AXIS = 15.83629;   // the map's mirror axis (every left/right pair: x_left + x_right = 31.67258)
 
 /* ---- geometry: subpaths as polygons (m/l/h/v/c/z; a curve contributes its end point) ---- */
@@ -134,19 +135,53 @@ describe('F-BODYMAP-FRONTDELT inner elbow', () => {
   });
 });
 
+const BACK_AXIS = 52.598;   // the back view's mirror axis (knee-back, calves pairs: x_left + x_right = 105.196)
+describe('F-BODYMAP-FRONTDELT back of the knee (lying_leg_curl)', () => {
+  it('red before: the vendored back view has no back-of-knee part between the hamstrings and the calves', () => {
+    expect(BACK.some(p => /^knee-pit-/.test(p.id))).toBe(false);
+  });
+  for (const s of ['left', 'right'] as const) {
+    it(`${s}: a pain part (muscle null) in the crease below the hamstrings and above the calves, overlapping nothing`, () => {
+      const { B } = both(), me = part(B, `knee-pit-${s}`);
+      expect(me.muscle).toBeNull();
+      for (const q of B) if (q !== me) expect(overlaps(me.d, q.d), q.id).toBe(false);
+      // the crease: at every vertex's x, the hamstrings' outline is above it and the calves' outline below it
+      const V = verts(me.d), x0 = Math.min(...V.map((p: Pt) => p[0])), x1 = Math.max(...V.map((p: Pt) => p[0]));
+      const near = (ids: string[], x: number) => ids.flatMap(id => samples(polys(part(B, id).d))).filter((q: Pt) => Math.abs(q[0] - x) < 0.15 && q[1] > 60).map((q: Pt) => q[1]);
+      for (const [x, y] of V) {
+        const ham = near([`hamstrings-medial-${s}`, `hamstrings-lateral-${s}`], x), calf = near([`calves-gastroc-medial-${s}`, `calves-gastroc-lateral-${s}`], x);
+        expect(ham.length, `hamstrings above x ${x}`).toBeGreaterThan(0); expect(calf.length, `calves below x ${x}`).toBeGreaterThan(0);
+        expect(Math.max(...ham)).toBeLessThan(y); expect(Math.min(...calf)).toBeGreaterThan(y);
+      }
+      // and between the side parts golden B calls knee-back (they sit on the sides of the knee)
+      const kb = polys(part(B, `knee-back-${s}`).d).flat().map((p: Pt) => p[0]);
+      expect(x0).toBeGreaterThan(Math.min(...kb)); expect(x1).toBeLessThan(Math.max(...kb));
+    });
+  }
+  it('left and right are mirror images within 0.05 units; the pain label is "knees" (/^knee-/)', () => {
+    const { B } = both(), L = verts(part(B, 'knee-pit-left').d), R = verts(part(B, 'knee-pit-right').d);
+    expect(L.length).toBe(R.length);
+    expect(L.every(([x, y]: Pt) => R.some(([u, v]: Pt) => Math.hypot(2 * BACK_AXIS - x - u, y - v) <= 0.05))).toBe(true);
+    expect(readFileSync(join(ROOT, 'tools/plates/layers/artifact/howto-layers.mjs'), 'utf8')).toContain("[/^knee-/, 'knees']");
+  });
+});
+
 describe('F-BODYMAP-FRONTDELT applyBodymapFix', () => {
   it('idempotent, after or before the stomach fix; throws on a missing part or the wrong muscle', () => {
-    const P = structuredClone(VENDORED);
+    const P = structuredClone(VENDORED), Q = structuredClone(BACK);
     expect(RF.applyRegionFix(P)).toBe(true);
-    expect(RF.applyBodymapFix(P)).toBe(true);
-    const once = JSON.stringify(P);
-    expect(RF.applyBodymapFix(P)).toBe(false);
-    expect(JSON.stringify(P)).toBe(once);
+    expect(RF.applyBodymapFix(P, Q)).toBe(true);
+    const once = JSON.stringify([P, Q]);
+    expect(RF.applyBodymapFix(P, Q)).toBe(false);
+    expect(JSON.stringify([P, Q])).toBe(once);
     expect(P.filter(p => /^elbow-inner-/.test(p.id))).toHaveLength(2);
+    expect(Q.filter(p => /^knee-pit-/.test(p.id))).toHaveLength(2);
     const gone = structuredClone(VENDORED).filter(p => p.id !== 'shoulder-front-left');
-    expect(() => RF.applyBodymapFix(gone)).toThrow(/shoulder-front-left not front_delts/);
+    expect(() => RF.applyBodymapFix(gone, structuredClone(BACK))).toThrow(/shoulder-front-left not front_delts/);
     const wrong = structuredClone(VENDORED); part(wrong, 'shoulder-front-right').muscle = 'side_delts';
-    expect(() => RF.applyBodymapFix(wrong)).toThrow(/shoulder-front-right not front_delts/);
+    expect(() => RF.applyBodymapFix(wrong, structuredClone(BACK))).toThrow(/shoulder-front-right not front_delts/);
+    expect(() => RF.applyBodymapFix(structuredClone(VENDORED))).toThrow(/needs FRONT_PARTS and BACK_PARTS/);
+    expect(() => RF.applyBodymapFix(P, structuredClone(BACK))).toThrow(/one view only/);
   });
   it('the build applies it to batch pages only: golden B\'s spec never sets bodymapFix, layersSpecOf always does', () => {
     const blp = readFileSync(join(ROOT, 'tools/plates/library/build-layers-page.mjs'), 'utf8');
@@ -162,7 +197,7 @@ const LIBRARY_PAGES = ['tests/howto/golden/library/pilot-a.layers.html', 'tests/
 const GOLDEN_B_PAGES = ['tests/howto/golden/howto-layers.html', 'tools/plates/layers/artifact/technical-plates.html'];
 describe('F-BODYMAP-FRONTDELT pages', () => {
   for (const f of LIBRARY_PAGES) {
-    it(`${f}: every front map draws the fixed front_delts and the inner elbows, none the vendored strip`, () => {
+    it(`${f}: every front map draws the fixed front_delts and the inner elbows, every back map the knee pits, none the vendored strip`, () => {
       const page = readFileSync(join(ROOT, f), 'utf8');
       const maps = page.split('class="feel-view"').length - 1;
       expect(maps).toBeGreaterThan(0);
@@ -172,6 +207,9 @@ describe('F-BODYMAP-FRONTDELT pages', () => {
       expect(fronts).toBeGreaterThan(0);
       for (const id of ['shoulder-front-left', 'shoulder-front-right']) expect(count(RF.BODYMAP_FIX.replace[id].d)).toBeGreaterThanOrEqual(fronts);
       for (const p of RF.BODYMAP_FIX.add) expect(count(p.d)).toBeGreaterThanOrEqual(fronts);
+      const backs = count(part(BACK, 'spine').d);   // one spine per back view
+      expect(backs).toBeGreaterThan(0);
+      for (const p of RF.BODYMAP_FIX.addBack) expect(count(p.d)).toBeGreaterThanOrEqual(backs);
     });
   }
   for (const f of GOLDEN_B_PAGES) {
@@ -179,6 +217,7 @@ describe('F-BODYMAP-FRONTDELT pages', () => {
       const page = readFileSync(join(ROOT, f), 'utf8');
       expect(page).toContain(part(VENDORED, 'shoulder-front-left').d);
       expect(page).not.toContain(RF.BODYMAP_FIX.replace['shoulder-front-left'].d);
+      expect(page).not.toContain(RF.BODYMAP_FIX.addBack[0].d);
     });
   }
 });
