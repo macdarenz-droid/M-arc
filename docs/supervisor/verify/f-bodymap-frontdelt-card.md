@@ -23,3 +23,7 @@ Redraw both `front_delts` polygons on the anterior deltoid: the front of the sho
 ## Steps
 1. Read `.claude/skills/builder/SKILL.md` and this card. Open a draft PR and post `F-BODYMAP-FRONTDELT PLAN @ <sha>`, with the new path data and a crop of the front view before and after. Wait for the ruling.
 2. Build, then post `F-BODYMAP-FRONTDELT READY @ <full sha>`. A fresh reviewer follows. It merges before W5. Whichever of it and a wave lands second merges main and keeps both sides.
+
+## Added 11-06 (supervisor)
+- dumbbell_pullover (W4, #391 6653791551 L4): the body map has no inner-elbow part. Add it in the same `layers/engine/bodymap-parts.mjs` change, with a red-before, green-after test, and re-pin every page that shows it.
+

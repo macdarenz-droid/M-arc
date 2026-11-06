@@ -1,6 +1,6 @@
 # LIB-PLATEFIX-3: plate faults found in the wave panels
 
-Status `ready` (supervisor, 11-05 ~08:45 UTC). Base: latest origin/main; branch `claude/lib-platefix-3`. Model: Opus. Form: LIB-PLATEFIX-1 and -2 (plate fixes, plates panel, then a layers check of the sheets that use the plates).
+Status `ready` (supervisor, 11-05 ~08:45 UTC; W4 rows 11-06). Base: latest origin/main; branch `claude/lib-platefix-3`. Model: Opus. Form: LIB-PLATEFIX-1 and -2 (plate fixes, plates panel, then a layers check of the sheets that use the plates).
 
 ## Items (each id waits for this card; the wave posts give the critics' places and fixes)
 | id | plate | fault | source |
@@ -20,7 +20,16 @@ Status `ready` (supervisor, 11-05 ~08:45 UTC). Base: latest origin/main; branch 
 | incline_dumbbell_curl | lb5 | the incline back pad stops in mid-air on its own post; extend it along its line to meet the seat (equipment, R2 [3,3,5]) | #392 W5 recheck plates |
 | dumbbell_overhead_triceps_extension | lb5 | the Mistake BACK ARCHES barely changes the back outline: draw a clearly deeper dashed lumbar curve behind the solid back, ribcage tipped back | #392 W5 recheck |
 | wall_sit | lb4 | two 90° labels: the "90 DEGREES" checkpoint becomes "HIPS about 90°" with its leader on the hip crease (w2), or is removed | #392 W5 recheck |
-| W4 items | lb02/lb03 | the list the W4 PANEL FIX post gives | #391 |
+| incline_barbell_bench_press | lb02 | plate Mistake: the flared elbow is a knot on the shoulder (R5 [2,2,3]); draw a full red dashed upper arm out from the shoulder; layers L5 (elbow overlay) and L7 (duplicate "BENCH AT 30°"/"BENCH 30°" labels) | #391 6682615402, 6653791551 |
+| smith_machine_bench_press | pilot-b | elbow flare does not read in side view (L5 [3,3,3]): a head-end inset or close-up, Right about 45° vs Wrong level with the shoulders (c3, c7) | #391 6682615402 |
+| back_extension | lb03 | Pad height Wrong: the pad must sit above the hip, on the belly (c2); Right below the hip crease (c1) (L5 [3,3,3]) | #391 6682615402 |
+| sumo_deadlift (staged) | lb03 | start trunk visibly more upright than conventional (c4, c13): hips closer to the bar, chest up (L1 [3,3,3]); higher hips Mistake follows it | #391 6682615402, 6653791551 |
+| landmine_row, t_bar_row | lb03 | none now: both passed the W4 recheck (6682615402) | — |
+| dumbbell_pullover | lb02 | the body map has no inner-elbow part (L4): goes with F-BODYMAP-FRONTDELT (same file) | #391 6653791551 |
+| barbell_bench_press | pilot-a | L7 Hand gap-ruled (HANDW4); hips-lifted close-up needs a multi-joint pose | #391 6653791551 |
+| incline_dumbbell_press | lb02 | plate Mistake overlay (L5); L7 Hand (HANDW2) and the bench-angle panel geometry | #391 6653791551 |
+| decline_bench_press | lb02 | L7 Hand, and the feet-loose geometry | #391 6653791551 |
+| W6 and W7 items | lb06-lb10 | the lists their PANEL FIX posts give | #393, #394 |
 
 ## Rules
 - Fix only the listed elements. Each change cites its claim and gets a red-before, green-after test.
@@ -32,3 +41,7 @@ Status `ready` (supervisor, 11-05 ~08:45 UTC). Base: latest origin/main; branch 
 ## Steps
 1. Read `.claude/skills/builder/SKILL.md`. Post `LIB-PLATEFIX-3 PLAN @ <sha>` on a draft PR, with the measured current and target values per item. Wait for the ruling.
 2. Build in item order. Post `PLATES READY @ <sha>` with the plates page shas.
+
+## Pins (supervisor 11-06)
+- A plate whose earlier entry exists only in an unmerged wave chain is re-pinned in place there by the wave (D-REPIN-UNMERGED). Once a wave has merged, a changed plate needs a superseding entry, which is `'owner'` with his words (D-LIB-O5 point 5). The supervisor posts his words on this PR when they exist. Until then, build and panel the fixes, and hold only the pin commit.
+
