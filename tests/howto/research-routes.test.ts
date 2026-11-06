@@ -69,6 +69,8 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
   const W3_MOVED: Record<string, string> = {
     'tools/plates/library/render/closeup/crop.mjs': 'df61d973c2933021554e3d89c9834d01f1f171c35dd10d5cd1c7a11b946985d9',
     'tools/plates/library/render/closeup/zoom-css.mjs': '37836f22478605ef8162af3c05e515385d03034d090279b6c91f4248adce2fdf',
+    // D-SHIP-W3-LAYERSZOOM (#384 6686326673): build-layers-page.mjs applies applyZooms (the other MANIFEST tests blank its key themselves)
+    'tools/plates/library/build-layers-page.mjs': '2d123a0121e145bfd2c3f2d366cfcfb93fd1b55087f96cea28b7a2cefbeea4fb',
   };
   const lessW3 = (m: any, keep: string[] = []) => {
     for (const id of W3_ROWS) { expect(Object.keys(m.rows), id).toContain(id); delete m.rows[id]; }

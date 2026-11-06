@@ -656,9 +656,9 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
       { id: 'tests/howto/golden/library/pilot-b.json#page', file: 'tests/howto/golden/library/pilot-b.json', kind: 'page', pageSha256: 'ff3e017c98f73b6d049808a6ffea057a7fa350eed764d9ceedb9a582fa22583f', bytes: 409765 },
       { id: 'tests/howto/golden/library/pilot-b.json#layers-page', file: 'tests/howto/golden/library/pilot-b.json', kind: 'layers-page', pageSha256: 'ae7fd1553f1a3ffe132b0e509eacae06cac42ef6f2ea18d69b4f5cd5ad39275e', bytes: 425305 },
       { id: 'tests/howto/golden/library/pilot-b2.json#page', file: 'tests/howto/golden/library/pilot-b2.json', kind: 'page', pageSha256: 'cb06cf9c6aeffe863b6c12fc1382b81021a34b8bbc65d5b54f31f1180b2924f4', bytes: 190740 },
-      { id: 'tests/howto/golden/library/pilot-b2.json#layers-page', file: 'tests/howto/golden/library/pilot-b2.json', kind: 'layers-page', pageSha256: '7c66d68e69d3d1c8c3e0fc6b5ec65fb164a9db8596556a092fcf797034e1f112', bytes: 265290 },
+      { id: 'tests/howto/golden/library/pilot-b2.json#layers-page', file: 'tests/howto/golden/library/pilot-b2.json', kind: 'layers-page', pageSha256: 'b656e4dfd8fc79fbdca88db345753465352631c4314d42cb754b8334bc383a6e', bytes: 339146 },   // D-SHIP-W3-LAYERSZOOM re-pin (was 7c66d68e, 265290)
       { id: 'tests/howto/golden/library/zoom.json#page', file: 'tests/howto/golden/library/zoom.json', kind: 'page', pageSha256: '5e4d3b43fced120e3e94f0ddc36af6ec1b1f974688da3a8d39fcacb759a179ce', bytes: 182316 },
-      { id: 'tests/howto/golden/library/zoom.json#layers-page', file: 'tests/howto/golden/library/zoom.json', kind: 'layers-page', pageSha256: '6961dcdc55878bac8ebce642516e8e97b2d4222ea174e81f507667e61e3a83f5', bytes: 236380 },
+      { id: 'tests/howto/golden/library/zoom.json#layers-page', file: 'tests/howto/golden/library/zoom.json', kind: 'layers-page', pageSha256: 'a42991add7cb548d0fe9cb04b6f3bfe5ded277c612f68ee4fdabf21a394227f8', bytes: 288036 },   // D-SHIP-W3-LAYERSZOOM re-pin (was 6961dcdc, 236380)
     ], unknown: [] });
     expect(sha256('')).toHaveLength(64);
   });

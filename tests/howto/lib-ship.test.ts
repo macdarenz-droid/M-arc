@@ -487,3 +487,37 @@ describe('LIB-SHIP W3 Q-W3-13: zoom/ink-check.mjs probes a pinned row through it
     expect(src).toMatch(/authoring: authoringFor\(/);
   });
 });
+
+// LIB-SHIP W3 D-SHIP-W3-LAYERSZOOM (#384 6686326673): build-layers-page.mjs applies applyZooms to the mirror specs, so a
+// layers page draws each opted-in plate with the zoom circle its pinned plate has (HT4-A5 compares the two, byte for byte).
+describe('LIB-SHIP W3 D-SHIP-LAYERSZOOM: a layers page carries the zoom its pinned plate has', () => {
+  const ZOOMED: [string, string][] = [['zoom', 'lib_horizontal_leg_press'], ['pilot-b2', 'lib_crunch']];
+  const pinOf = (b: string, id: string) => json(`tests/howto/golden/library/${b}.json`).entries.filter((e: any) => e.kind === 'plate' && e.id === id).at(-1);
+  const page = (b: string) => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`), 'utf8');
+  /** The page with every zoom group taken out of `chrome`'s plate (what the layers page drew before this ruling). */
+  const unzoomed = (h: string, chrome: string) => {
+    const fit = h.indexOf(`<div class="plate-fit" id="${chrome}-plate">`), stop = h.indexOf('<div class="plate-fit"', fit + 1);
+    let card = h.slice(fit, stop < 0 ? undefined : stop);
+    for (let i; (i = card.indexOf('<g class="plate-zoom"')) >= 0;) card = card.slice(0, i) + card.slice(card.indexOf('</svg>', i));
+    return h.slice(0, fit) + card + (stop < 0 ? '' : h.slice(stop));
+  };
+  it('the committed zoom and pilot-b2 layers pages draw their zoomed plates byte-equal to the pinned plate entries', async () => {
+    const gb = await import(/* @vite-ignore */ url('tools/plates/fidelity/goldenB.mjs'));
+    for (const [b, id] of ZOOMED) {
+      expect([b, gb.fragmentProblems(page(b), [pinOf(b, id)])]).toEqual([b, []]);
+      expect(page(b)).toContain('<g class="plate-zoom" data-view="mistake"');
+    }
+  });
+  it('red: a layers page whose Mistake plate lacks the zoom its pinned plate has', async () => {
+    const gb = await import(/* @vite-ignore */ url('tools/plates/fidelity/goldenB.mjs'));
+    for (const [b, id] of ZOOMED) {
+      const e = pinOf(b, id), bad = gb.fragmentProblems(unzoomed(page(b), e.chromeId), [e]);
+      expect([b, bad.some((p: string) => p.startsWith(`${e.chromeId}: mistakeSvg sha256 `))]).toEqual([b, true]);
+    }
+  });
+  it('the builder applies applyZooms to the mirror specs after the build', () => {
+    const src = readFileSync(join(ROOT, 'tools/plates/library/build-layers-page.mjs'), 'utf8');
+    expect(src).toContain("import { applyZooms } from './zoom/inline.mjs';");
+    expect(src).toContain("const page = await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs);");
+  });
+});

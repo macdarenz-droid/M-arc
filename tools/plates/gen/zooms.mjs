@@ -16,6 +16,7 @@ import { pathToFileURL } from 'node:url';
 import { ROOT, sha256 } from '../lib/inputs.mjs';
 import { LAYERS, PAGE_SHA256, buildLayerPage, cleanupMirror, makeMirror, readManifest } from '../layers.mjs';
 import { galleryCss, parse } from '../css.mjs';
+import { ZOOM_CSS } from '../library/zoom/inline.mjs';   // D-SHIP-W3-LAYERSZOOM
 import { chromeRules, divAt, howtoCss, libraryInputs, libraryRows, rewrite } from './hands.mjs';
 import { CODEC, decoderSource, pack } from './codec/delta.mjs';
 import { configPairOf } from './handpairs.mjs';   // LIB-7b (D-LIB7b-ZOOMS)
@@ -156,6 +157,17 @@ export function postureCssOf(style, chrome) {
   const plate = cropPlateCss(style), zdot = rewrite(chromeRules(chrome, POSTURE_SELECTORS));
   return `${plate}${zdot.slice(zdot.indexOf('/* ht-tokens:end */\n') + 20)}`;
 }
+/** D-SHIP-W3-LAYERSZOOM (#384 6686326673): a layers page that draws a plate zoom carries applyZooms' ZOOM_CSS once, right after
+ *  <style> (the plates page's rules, not golden B's); it is taken out exactly once before the golden B comparison. A page
+ *  with no plate zoom must not carry it, and a zoomed page must carry it exactly once at that place. */
+export function lessZoomCss(css, page, id) {
+  const zoomed = page.includes('<g class="plate-zoom"'), n = page.split(ZOOM_CSS).length - 1;
+  if (!zoomed) { if (n) throw new Error(`zooms: ${id}: ZOOM_CSS on a layers page with no plate zoom`); return css; }
+  if (n !== 1 || !page.includes(`<style>${ZOOM_CSS}`)) throw new Error(`zooms: ${id}: a zoomed layers page must carry ZOOM_CSS once, right after <style>`);
+  if (css.split(ZOOM_CSS).length !== 2) throw new Error(`zooms: ${id}: ZOOM_CSS is not in the page's gallery style exactly once`);
+  return css.replace(ZOOM_CSS, '');
+}
+
 /** A layers page's style with comments, blank lines and the given rows' own `.hx-<chromeId> ` rules removed (D-LIB2b-CSS): what every
  *  page must share with golden B's. */
 export function styleWithout(style, rowsOf) {
@@ -190,7 +202,7 @@ async function outputsOf() {
     out.push({ path: 'src/slices/howto/css/posture.css', text: postureCss });
     const base = styleWithout(style, goldenRows()), textZooms = readTextZooms();
     for (const row of libraryRows()) {
-      const page = layersPage(row), file = pagesOf(row).layers, id = row.chromeId, lib = galleryCss(page);
+      const page = layersPage(row), file = pagesOf(row).layers, id = row.chromeId, lib = lessZoomCss(galleryCss(page), page, row.id);
       if (page.split(L.ZDOTS).length !== 2) throw new Error(`zooms: ${row.id}: ZDOTS is not in ${file} exactly once`);
       if (styleWithout(lib, libraryRows().filter(r => pagesOf(r).layers === file)) !== base) throw new Error(`zooms: ${row.id}: ${file}'s style, without its own .hx- rules, is not golden B's`);
       if (postureCssOf(lib, howtoCss(readFileSync(join(LAYERS, 'artifact', 'build-page.mjs'), 'utf8'), lib)) !== postureCss) throw new Error(`zooms: ${row.id}: ${file} does not rebuild posture.css byte for byte`);
