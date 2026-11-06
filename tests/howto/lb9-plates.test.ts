@@ -2373,7 +2373,7 @@ describe('LIB-SUPCORE D-SUPCORE-LUMBARTELL: the arch tell on the lumbar point (#
   it('each Mistake zoom (k 2) rings the floor line and the daylight under the low back', async () => {
     for (const id of ARCH) {
       await yieldNow();
-      const s = S[id], z = Z.zoomOf(s, { E: Eng(), view: 'mistake' }), P = camOf(s).P, r = z.src, floorY = P([0, 0, 0])[1]!, gap = s.mistake.guides[0].pts.map(P);
+      const s = S[id], z = Z.zoomOf(s, { E: Eng(), view: 'mistake' }), P = camOf(s).P, r = z.src, floorY = P([0, 0, 0])[1]!, gap = ((g: any) => g.pts ?? [g.from, g.to])(s.mistake.guides[0]).map(P);   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was guides[0].pts; dead_bug and v_up now draw the same two points as an up-arrow (from, to)
       expect(z.k, id).toBe(2);
       expect(Math.abs(floorY - r.c[1]) < r.r, `${id} floor line`).toBe(true);
       for (const q of gap) expect(Math.hypot(q[0] - r.c[0], q[1] - r.c[1]) < r.r, `${id} gap ${q}`).toBe(true);

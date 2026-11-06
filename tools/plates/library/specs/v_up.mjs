@@ -152,7 +152,7 @@ export default {
   startParts: ['torso', 'head', 'arm.r', 'leg.r'],
   ghosts: { count: 0 },
   trace: { point: 'wrist.r', trim: [4, 6] },
-  tempo: [{ phase: 'Lower', move: true }, { phase: 'Lift', move: true }],   // fallbackA (D-STRIP-AFALL; PLAN RULED Q3, c14 contested), written after #358
+  tempo: [{ phase: 'Lift', move: true }, { phase: 'Lower', move: true }],   // fallbackA (D-STRIP-AFALL; PLAN RULED Q3, c14 contested); LIB-PLATEFIX-3 W7 (#405 6683319630, D-SHIP-W4-TEMPO form): the rep lifts first (c3, c4)
   callouts: [
     { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 64, top: 262 }, cue: 'Keep your low back touching the floor at the start and return.' },
     { key: 'reach', text: 'Reach to<br>toes', anchor: { at: 'grip.r', pose: 'start' }, box: { left: 196, top: 150 }, cue: 'Lift legs and torso together, hands reaching toward your toes.' },
@@ -160,10 +160,14 @@ export default {
   ],
   mistake: {
     pose: mistakePose,
-    guides: [{ kind: 'dashed', pts: [gapBot, gapTop] }, { kind: 'dashed', pts: ARCH_UNDER.map(q => [...q]) }],
+    // LIB-PLATEFIX-3 W7 (#394 6682923012 L5, c5 c6; ruled #405 6683319630): only the arched trunk is outlined (the legs'
+    // re-solved hover read as stray dashed fragments), and the floor-to-low-back gap is a red up-arrow (was a dashed tick)
+    parts: ['torso'],
+    guides: [{ kind: 'arrow', from: gapBot, to: gapTop }, { kind: 'dashed', pts: ARCH_UNDER.map(q => [...q]) }],
     tells: [
       { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake', off: [0, -1] }, box: { left: 72, top: 258 }, cue: 'Your low back arches off the floor at the start of the rep.' },
     ],
   },
+  mistakeGhosts: false,   // LIB-PLATEFIX-3 W7 (#394 6682923012 L5): D-HELD6-MGHOST, the Mistake view without the V start layer
   alt: 'V-up, side view. From lying face up with the arms overhead and the heels just off the floor, the lifter lifts the straight legs and the torso together into a V, hands reaching toward the toes, then lowers.',
 };

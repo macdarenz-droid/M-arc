@@ -55,7 +55,7 @@
 //  TILT_START, TILT_END, NECK, HEEL_LIFT, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, ARM_AT, LATCH_Y,
 //  FLOOR_BACK, FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM, PAD_Y; the composer's PENDULUM constants; the roots,
 //  the pivot and BALL_LIFT solved.
-import { WINTER, REF, normPose, resolve, fk, landmarks } from '../engine.mjs';
+import { WINTER, REF, normPose, resolve, fk, landmarks, bodyShapes } from '../engine.mjs';
 import { add, mul, sub, perItem } from '../eq/parts.mjs';
 import { pendulum, swing, shoulderPadPts, PENDULUM, PENDULUM_ITEMS } from '../eq/pendulum.mjs';
 
@@ -145,6 +145,12 @@ const heelsUp = lift => {
 const toePadLow = lift => { const sk = skOf({ ...end, plant: heelsUp(lift) }); return Math.min(...FOREFOOT.map(([z, y]) => sk.foot('r', [0, y, z])[1])) - PLAT_Y; };
 export const BALL_LIFT = bisect(toePadLow, -0.002, 0.03, 'the ball lift that rests the toe pad on the platform');
 const mistakePose = { plant: heelsUp(BALL_LIFT) };
+// LIB-PLATEFIX-3 W7 (#394 6682923012 L5, c9 c15; ruled #405 6683319630): the faulty near shank and foot as their own red
+// dashed outlines (the knee comes forward over the lifted heel), from the engine's side shapes of the Mistake pose; the
+// changed-parts outline is off, so the thigh's sub-pixel shift no longer draws an extra dashed thigh line.
+const MIS_FOOT = (() => { const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
+  return bodyShapes(fk(resolve(normPose({ ...end, ...mistakePose }, bd), bd).q, bd), probe).filter(sh => ['shank.r', 'foot.r'].includes(sh.key))
+    .map(sh => sh.poly.map(([x, y]) => [0, -y / 1000, x / 1000])); })();
 
 const C = PENDULUM;
 const PLATFORM = { top: PLAT_Y, z: 0 };                 // centred under the mid-soles
@@ -228,10 +234,11 @@ export default {
   zoom: { view: 'mistake', k: 2.5 },
   mistake: {
     pose: mistakePose,
-    parts: ['leg.r', 'leg.l'],
+    parts: ['leg.l'],   // LIB-PLATEFIX-3 W7: the near shank and foot are drawn by MIS_FOOT below (was ['leg.r', 'leg.l'])
     guides: [
-      // the lifted sole: a dashed red line along it from the ball back past the raised heel
-      { kind: 'dashed', pts: [{ at: 'ball.r', pose: 'mistake' }, { at: 'heel.r', pose: 'mistake' }] },
+      ...MIS_FOOT.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),
+      // the heel rising: a red up-arrow from the flat heel to the raised one (LIB-PLATEFIX-3 W7, c9)
+      { kind: 'arrow', from: { at: 'heel.r', pose: 'end', off: [-12, 0] }, to: { at: 'heel.r', pose: 'mistake', off: [-12, 0] } },   // 12 px behind the heel: >= 6 px clear of the solid end figure (LIB-18 A15)
     ],
     tells: [
       // c9 "Heels rising", c15 "Lifting heels off the platform": on the raised heel
