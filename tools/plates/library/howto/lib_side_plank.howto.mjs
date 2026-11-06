@@ -17,6 +17,7 @@
 //   handlingMistakes (Q-W2-12): holding the breath (c6) -> posture 'breathe', risks[breath] (W7 printed); hips sinking
 //   (c5, c9, c2) -> posture 'hips', zoom hip-line Wrong, risks[sink] (W7 printed); shrugging the bottom shoulder (c7) -> posture 'shoulder' (zoom shoulder Wrong)
 import plateSpec from '../specs/side_plank.mjs';
+import { landmarksOf } from '../engine.mjs';
 import { RED_FLAG, RED_FLAG_KNEE } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_KNEE };
 
@@ -57,24 +58,46 @@ const CL = {
 //   sink  (card zoom hip-line Wrong, c5): the spec's Mistake merged over the end, as the engine draws it (the hips sink
 //         toward the floor).
 //   shrug (card zoom shoulder Wrong, c7 "shoulder shrugged up toward the ear"): the end pose with the shoulder girdle
-//         elevated by SHRUG 6 cm (scap elev, one joint, farmer_s_carry's SHRUG; the spec's end is the resting girdle, scap 0, c7). The bottom hand
-//         stays on its floor spot (the spec's reach IK).
+//         elevated by SHRUG_ELEV (scap elev, one joint, farmer_s_carry's SHRUG; the spec's end is the resting girdle,
+//         scap 0, c7). The bottom arm keeps its place: root x, root y and roll solved (Newton) so the shoulder joint stays
+//         over the elbow, the elbow on the mat and the bottom ankle at its height (the spec's held-pose constraints), so
+//         the trunk and head drop toward the shoulder and the shoulder rises toward the ear (W7 fix round #394 L5).
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop):
-// SHRUG (scap elevation) sizes the shoulder Wrong; no card gives it, no number from it appears in user copy; the layers
-// panel judges it.
+// SHRUG_ELEV 14 cm (scap elevation; W7 fix round #394 L5: 6 -> 14 with the arm held in place, so the shrug reads) sizes
+// the shoulder Wrong, and the shoulder crop window (centre offset, sizePx) frames the head and the bottom shoulder;
+// no card gives them, no number from them appears in user copy; the layers panel judges them.
 const MIS = plateSpec.mistake.pose, END = plateSpec.poses.end;
-const SHRUG = { scap: { elev: 6 } };
+const H = 1.75, SHRUG_ELEV = 14, L_END = landmarksOf(END, H);
+const shrugAt = ([x, y, roll]) => ({ ...END, scap: { elev: SHRUG_ELEV }, root: { ...END.root, at: [x, y, END.root.at[2]], roll } });
+const SHRUG_Q = (() => {
+  const f = q => { const l = landmarksOf(shrugAt(q), H);
+    return [l['shoulder.r'][0] - L_END['elbow.r'][0], l['elbow.r'][1] - L_END['elbow.r'][1], l['ankle.r'][1] - L_END['ankle.r'][1]]; };
+  let q = [END.root.at[0], END.root.at[1], END.root.roll];
+  for (let it = 0; it < 60; it++) {
+    const r = f(q); if (Math.hypot(...r) < 1e-8) return q;
+    const J = [0, 1, 2].map(k => { const d = 1e-6, qq = [...q]; qq[k] += d; return f(qq).map((v, i) => (v - r[i]) / d); });
+    const M = [0, 1, 2].map(i => [...[0, 1, 2].map(k => J[k][i]), -r[i]]);
+    for (let c = 0; c < 3; c++) {
+      let m = c; for (let i = c + 1; i < 3; i++) if (Math.abs(M[i][c]) > Math.abs(M[m][c])) m = i;
+      [M[c], M[m]] = [M[m], M[c]];
+      for (let i = 0; i < 3; i++) if (i !== c) { const t = M[i][c] / M[c][c]; for (let k = c; k < 4; k++) M[i][k] -= t * M[c][k]; }
+    }
+    q = q.map((v, i) => v + M[i][3] / M[i][i]);
+  }
+  throw new Error('lib_side_plank: the shrug does not converge');
+})();
+const SHRUG_POSE = shrugAt(SHRUG_Q);
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
   sink: { pose: { ...END, ...MIS } },
-  shrug: { pose: { ...END, ...SHRUG } },
+  shrug: { pose: SHRUG_POSE },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // Zoom shell form (render/closeup/crop.mjs). hip-line (M): the plate's own Mistake dashed red over the right pose, with
-// the plate's Mistake guide (the arrow at the sinking hip). shoulder (DV): the `shrug` still dashed red over the right
-// pose. The crop windows (centre offset, sizePx) are drawing values.
+// the plate's Mistake guide (the arrow at the sinking hip). shoulder (DV): the `shrug` still drawn alone (solid, as
+// lib_hollow_body_hold's arch), framed on the head and the bottom shoulder. The crop windows (centre offset, sizePx) are drawing values.
 const zooms = [
   {
     key: 'hip-line', chip: 'Hips', heading: 'Hip line', kind: 'posture',
@@ -97,9 +120,10 @@ const zooms = [
   },
   {
     key: 'shoulder', chip: 'Shoulder', heading: 'Bottom shoulder', kind: 'posture',
-    crop: { center: { at: 'shoulder.r', pose: 'right', off: [-30, -10] }, sizePx: 180 },
+    // claims: Right (callout, caption, alt) card c1, c7; Wrong card c7 (alt: c1, c7)
+    crop: { center: { at: 'shoulder.r', pose: 'right', off: [-16, -12] }, sizePx: 170 },
     right: 'end',
-    wrong: { base: 'end', pose: SHRUG },
+    wrong: { base: 'end', pose: SHRUG_POSE, solid: true },   // DV: the shrug still drawn alone
     callout: {
       right: { text: 'Shoulder down', anchor: 'shoulder.r' },
       wrong: { text: 'Shrugged', anchor: { at: 'shoulder.r', pose: 'mistake' } },
@@ -110,7 +134,7 @@ const zooms = [
     },
     alt: {
       right: 'Front view, side plank. The bottom elbow sits under the shoulder, the shoulder down, away from the ear.',
-      wrong: 'Front view. The bottom shoulder shrugs up toward the ear. Drawn dashed over the right position.',
+      wrong: 'Front view. The bottom shoulder shrugs up toward the ear, the elbow still under it.',
     },
     feelRow: 'shoulder',
   },
@@ -131,7 +155,7 @@ const feel = {
       means: 'The shoulder is shrugging up.',
       fix: 'Pull your shoulder down and pad the elbow.',
       zoom: 'shoulder', claim: CL.c7 },
-    { key: 'knee', where: 'Top knee or foot', at: { parts: ['knee-left', 'knee-right'] },
+    { key: 'knee', where: 'Inside top knee or foot', at: { parts: ['knee-left', 'knee-right'] },
       means: 'Too much pressure on that joint.',   // card row (c8) as worded (D-FEEL-MEANS-CAUSAL)
       fix: 'Stop the exercise.',
       redFlag: 'knee', claim: CL.c8 },

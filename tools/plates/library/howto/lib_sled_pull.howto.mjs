@@ -139,7 +139,7 @@ const feel = {
 const MISTAKES = [
   { key: 'lean', title: 'Leaning back', zoom: 'torso-stack', claim: J('c8', 'c2', 'c9'),
     fix: 'Keep your torso braced, shoulders over hips. Go lighter.' },
-  { key: 'yank', title: 'Yanking with the arms', claim: CL.c6,
+  { key: 'yank', title: 'Yanking with the arms', claim: C(['CONSENSUS'], ['gs-sled'], 'card c6: the fault and its fix (lead with the legs)'),
     fix: 'Lead with your legs.' },
   { key: 'pile', title: 'Rope piled at your feet', claim: CL.c5,
     fix: 'Flick or step it aside between steps.' },
@@ -168,7 +168,7 @@ export default {
     faults: [],                // the card hand zoom has no Wrong
     // card zoom rope-grip Right (c1, c4): the wrists are the grey line under it (wrist.limitText), so the lead does not
     // repeat them (W2 panel form, as lib_dumbbell_bench_press).
-    gripLine: 'Both hands on the rope, one over the other.',
+    gripLine: 'Both hands on the rope, one over the other.',   // card c1 (the line's claim; the grip width above cites it)
     cue: 'Shoulders over hips.',   // c2
   },
   contacts: ['standing-feet'],

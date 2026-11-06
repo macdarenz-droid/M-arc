@@ -115,7 +115,7 @@ const feel = {
 const RISKS = [
   { key: 'heavy', text: 'Heavy loading breaks your form down quickly on this long lever.', claim: CL.c11 },
   // D-TEXT-PRINTED: the handlingMistakes swinging (c9) and twisting (c10, the hips-square Wrong) as printed faults.
-  { key: 'swing', text: "Can't lift without swinging the leg? Drop the weight.", claim: CL.swing },
+  { key: 'swing', text: "Can't lift without swinging the leg? Use a lighter weight.", claim: CL.swing },
   { key: 'twist', text: 'Twisting your hips lifts the leg higher but makes it less effective.', claim: CL.c10 },
 ];
 

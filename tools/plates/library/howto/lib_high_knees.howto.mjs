@@ -119,7 +119,7 @@ export default {
   posture: [
     { key: 'chest', label: 'Chest tall', detail: 'Chest tall, eyes ahead.', anchor: { landmark: 'sternum', pose: 'start' }, claim: CL.c1 },
     { key: 'thigh', label: 'Thigh to hip', detail: 'Thigh up to about hip height.',
-      anchor: { landmark: 'knee.r', pose: 'end' }, zoom: 'knee-height', claim: CL.c3 },
+      anchor: { landmark: 'knee.r', pose: 'end' }, zoom: 'knee-height', claim: J('c2', 'c3') },   // the plate checkpoint 'Thigh to hip' cites c2, c3
     // Q-W2-12: handlingMistake 'Knees so high your back arches' (c5, c3) merged here, its fix added
     { key: 'back', label: 'Braced trunk', detail: "Lower back doesn't arch. Brace your trunk, knee at hip height.",
       anchor: { landmark: 'lumbar', pose: 'end' }, claim: J('c5', 'c3') },

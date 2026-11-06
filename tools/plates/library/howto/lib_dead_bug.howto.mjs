@@ -52,26 +52,28 @@ const CL = {
 // From the plate spec's own poses:
 //   arch  (card zoom low-back Wrong, c6): the spec's Mistake pose (the pelvis tips forward and the low back arches off
 //         the mat as the arm and leg lower), drawn as the plate's Mistake view draws it (its guides: the gap under the low back).
-//   crane (card zoom neck Wrong, c8 "neck craned to look at the legs"): the end pose with the neck flexed NECK_CRANE deg
-//         further, so the head lifts off the mat and turns toward the legs; nothing else moves (one joint).
+//   crane (card zoom neck Wrong, c8 "neck craned to look at the legs"): the start pose (both arms straight up) with the
+//         neck flexed NECK_CRANE deg further, so the head lifts off the mat and turns toward the legs; nothing else moves
+//         (one joint). W7 fix round (#394 L5): the neck zoom is drawn on the start, not the end, so the lowered arm no
+//         longer lies over the head (the spec's own pose; no drawing value changed).
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): NECK_CRANE
 // 35 deg is a Wrong-pose size no card gives; no number from it appears in user copy; the layers panel judges it.
-const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose, NECK_CRANE = 35;
-const CRANE = { neck: END.neck + NECK_CRANE };
+const START = plateSpec.poses.start, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose, NECK_CRANE = 35;
+const CRANE = { neck: START.neck + NECK_CRANE };
 export const stills = {
-  start: { pose: plateSpec.poses.start },
+  start: { pose: START },
   end: { pose: END },
   arch: { pose: MIS },
-  crane: { pose: { ...END, ...CRANE } },
+  crane: { pose: { ...START, ...CRANE } },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
-// Zoom shell (pilot-a.closeups.mjs form). Both crops are centred off the right pose's hip so the trunk, the head and the
-// mat line fill the panel (`off` and `sizePx` are drawing values).
+// Zoom shell (pilot-a.closeups.mjs form). Both crops are framed so the head, the trunk and the mat line read (W7 fix
+// round #394 L5/L7: widened; `off` and `sizePx` are drawing values).
 const zooms = [
   {
     key: 'low-back', chip: 'Low back', heading: 'Low back', kind: 'posture',
-    crop: { center: { at: 'lumbar', pose: 'right', off: [-18, -8] }, sizePx: 120 },
+    crop: { center: { at: 'lumbar', pose: 'right', off: [-30, -34] }, sizePx: 220 },
     right: 'end',
     wrong: { base: 'end', pose: MIS },   // M: the plate's own Mistake, dashed red over the right pose (lib_crunch form)
     guides: plateSpec.mistake.guides,
@@ -91,9 +93,9 @@ const zooms = [
   },
   {
     key: 'neck', chip: 'Neck', heading: 'Neck', kind: 'posture',
-    crop: { center: { at: 'ear', pose: 'right', off: [8, -12] }, sizePx: 100 },
-    right: 'end',
-    wrong: { base: 'end', pose: CRANE, solid: true },   // DV: the crane still drawn alone
+    crop: { center: { at: 'ear', pose: 'right', off: [22, -28] }, sizePx: 150 },
+    right: 'start',
+    wrong: { base: 'start', pose: CRANE, solid: true },   // DV: the crane still drawn alone
     callout: {
       right: { text: 'Eyes up', anchor: 'head' },
       wrong: { text: 'Neck craned', anchor: { at: 'head', pose: 'mistake' } },

@@ -14,7 +14,7 @@
 //
 // D-TEXT-GOLDEN (claim -> slot):
 //   posture c3 hands under shoulders, knees under hips -> posture 'hands', setup 1
-//   posture c8 knees hover                             -> posture 'knees', setup 2 (c3)
+//   posture c8 knees hover                             -> posture 'knees' (c3, c8, the plate label), setup 2 (c3)
 //   posture c4, c7 back flat, not arched               -> posture 'back', mistakes[1]
 //   posture c2 hips at shoulder height                 -> posture 'hips', zoom hip-line, setup 4
 //   handlingMistake hips rise (c5)                     -> mistakes[0] (zoom hip-line, the plate's Mistake)
@@ -38,8 +38,8 @@ export const SOURCES = {
   'nance-2017': { cite: 'Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study (2017)', url: 'https://pubmed.ncbi.nlm.nih.gov/29085728/',
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'MECH' },
   // The palm-flat key's own source for the thumb and the hand contact (the card has neither): a drawing convention.
-  'hand-key-palm-flat': { cite: 'LIB-12 hand pair key palm-flat (floor): whole hand down, thumb on the floor beside the index', url: 'tools/plates/library/hands/hand-palm-flat.mjs',
-    kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
+  'hand-key-palm-flat': { cite: 'LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index', url: 'tools/plates/library/hands/hand-palm-flat.mjs',
+    kind: 'secondary', access: 'full', checked: '2026-11-04', use: 'CONVENTION' },
   // RED_FLAG's own source (layers/howto/shared.mjs), as golden B's machine_chest_press lists it: the card's redFlags 'wrist'.
   'nhs-wrist-pain': { cite: 'NHS, Wrist pain', url: 'https://www.nhs.uk/conditions/hand-pain/wrist-pain/',
     kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When wrist pain needs a check.' },
@@ -61,6 +61,10 @@ const CL = {
   step: C(['CONSENSUS'], [ACE, SH], 'card c2, c4'),
   back: C(['CONSENSUS'], [SH, BB], 'card c4, c7'),
   width: C(['CONSENSUS'], [ACE, SH], 'card c1, c3'),
+  knees: C(['CONSENSUS'], [SH, BB], 'card c3, c8'),   // the plate checkpoint 'Knees hover' (c3 about 2 inches, c8 never touching)
+  mArch: C(['CONSENSUS'], [BB], 'card c7: the fault and its fix (tighten the core)'),
+  mSway: C(['CONSENSUS'], [BB], 'card c6: the fault and its fix (shorten the steps)'),
+  wristRow: C(['MECH', 'WEAK'], [SH, 'nance-2017'], 'card c11 (the means); the fix only points to the wrist box (card fixNote), no claim'),
   conv: C(['CONVENTION'], ['hand-key-palm-flat'], 'the palm-flat key\'s drawing (the card has no grip.thumb or grip.handContact)'),
 };
 
@@ -132,7 +136,7 @@ const feel = {
     { key: 'wrist', where: 'Back-of-wrist pain', at: { parts: ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'] },   // hanging_leg_raise's wrist parts
       means: 'With this pain under load, scans often find a wrist problem.',   // card feel row 4 (c11), shortened to 11 words at its strength
       fix: 'Check the wrist box below.',   // card fixNote: the shared wrist box carries what to do
-      redFlag: true, claim: CL.c11 },
+      redFlag: true, claim: CL.wristRow },
   ],
   libraryDiff: { add: ['abs', 'obliques'], why: 'BarBend names the rectus abdominis and the obliques as the core muscles worked (card c9).' },
   claim: CL.c9,
@@ -142,8 +146,8 @@ const feel = {
 const MISTAKES = [
   { key: 'hips-rise', title: 'Hips rise as you crawl', zoom: 'hip-line', claim: CL.c5,
     fix: 'Keep hips in line with the back. Bear plank until you can.' },
-  { key: 'arch', title: 'Back arches', claim: CL.c7, fix: 'Tighten your trunk.' },
-  { key: 'sway', title: 'Hips sway side to side', claim: CL.c6, fix: 'Take shorter steps.' },
+  { key: 'arch', title: 'Back arches', claim: CL.mArch, fix: 'Tighten your trunk.' },
+  { key: 'sway', title: 'Hips sway side to side', claim: CL.mSway, fix: 'Take shorter steps.' },
 ];
 const RISKS = [
   { key: 'wrist', text: 'Pain on the back of the wrist in the loaded, bent-back position.', claim: CL.c11 },
@@ -183,7 +187,7 @@ export default {
     { key: 'hands', label: 'Hands under shoulders', detail: 'Hands under shoulders, knees under hips.',
       anchor: { landmark: 'shoulder.r', pose: 'start' }, claim: CL.c3 },
     { key: 'knees', label: 'Knees hover', detail: 'Knees hover just off the floor, never touching it.',
-      anchor: { landmark: 'knee.r', pose: 'start' }, claim: CL.c8 },
+      anchor: { landmark: 'knee.r', pose: 'start' }, claim: CL.knees },
     { key: 'back', label: 'Back flat', detail: 'Back flat, not arched.', anchor: { landmark: 'backMid', pose: 'end' }, claim: CL.back },
     { key: 'hips', label: 'Hips level', detail: 'Hips at shoulder height.', anchor: { landmark: 'hip.r', pose: 'end' }, zoom: 'hip-line', claim: CL.c2 },
   ],

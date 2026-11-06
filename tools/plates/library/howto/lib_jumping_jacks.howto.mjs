@@ -122,7 +122,7 @@ export default {
   handling: { archetype: 'none' },
   contacts: ['standing-feet'],
   setup: [
-    { kind: 'safety', text: 'Use a flat, even surface. Rubber or grass absorbs shock best.', claim: CL.c11 },
+    { kind: 'safety', text: 'Use flat, even ground. Rubber or grass absorbs shock better than concrete.', claim: CL.c11 },
     { kind: 'position', text: 'Stand with your feet together and your arms at your sides.', claim: CL.c1 },
     { kind: 'position', text: 'Jump your feet apart as your arms go overhead.', claim: CL.c2 },
     { kind: 'position', text: 'Land softly, knees slightly bent.', claim: CL.c5 },

@@ -157,8 +157,10 @@ const feel = {
     // The card's first two rows (forearms, traps) have no fix, so they are left out: the feel line says them.
     // Tier-A way out (card tierA.wayOut c15, c16).
     { key: 'hands', where: 'Hands', at: { muscles: ['forearms'] },
+      // W7 panel (#394): the means stays the card row's own ("A handle starts slipping.", c15, c16); the panel's c19
+      // means is the card's forearms row, not this one. The set-down names the weights (SAFETY, c16).
       means: 'A handle starts slipping.',
-      fix: 'End the carry. Bend hips and knees, lower them beside you, feet clear.',
+      fix: 'End the carry. Bend your hips and knees, lower the weights beside you, feet clear.',
       claim: CL.out },
     { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
       means: 'Not bracing your trunk.',   // card row means ("Fault: not bracing your core.")
@@ -170,7 +172,7 @@ const feel = {
 
 /* ---------------------------------------------------------------- handling mistakes, risks (card handlingMistakes, risks) */
 const MISTAKES = [
-  { key: 'rush', title: 'Rushing the walk', claim: C(['CONSENSUS'], [GG, FV], 'card c7, c17'), fix: "Slow down, don't speed up. Turn with small steps, not a pivot." },
+  { key: 'rush', title: 'Rushing the walk', claim: C(['CONSENSUS'], [GG, FV], 'card c7, c17'), fix: "Slow down. Don't rush for distance. Turn in small steps, no pivot." },   // c7 (no speeding up for distance), c17
   { key: 'long', title: 'Steps too long', claim: C(CL.long.tags, [...new Set([...CL.long.sources, ...CL.out.sources])], `${CL.long.note}, c15`), fix: 'Take short, deliberate steps. Steps out of control? End the carry.' },
   { key: 'shrug', title: 'Shrugging as you tire', zoom: 'shoulders', claim: C(['CONSENSUS'], [BB, FV, SL], 'card c5, c15'), fix: 'Keep your shoulders back and down. Posture changing? End the carry.' },
 ];

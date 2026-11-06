@@ -144,7 +144,7 @@ export default {
     { kind: 'position', text: 'Set the wheel on the floor just in front of your knees.', claim: CL.c1 },
     { kind: 'brace', text: 'Brace and squeeze your glutes. Start with your trunk, not your arms.', zoom: 'back-line', claim: CL.brace },
     { kind: 'safety', text: 'New? Kneel, not standing, and roll toward a wall that stops you.', claim: CL.standing },
-    { kind: 'position', text: 'Keep roll-outs short and fully controlled. Pull back with your lats.',
+    { kind: 'position', text: 'Start short, roll further as strength grows. Pull back with your lats.',
       claim: C(['CONSENSUS'], [BBR, BBA, SLW], 'card c7, c4') },
   ],
   posture: [

@@ -120,7 +120,7 @@ const zooms = [
       wrong: { text: 'Heel down', anchor: { at: 'heel.r', pose: 'mistake' } },
     },
     caption: {
-      right: 'Short, powerful steps on the balls of your feet.',   // card zoom right (c8), c10 (D-TEXT-PRINTED)
+      right: 'Short, powerful steps on the balls of your feet.',   // card c8, c10: zoom right (c8, balls of the feet) and short, powerful steps (c10, D-TEXT-PRINTED)
       wrong: 'Heel down on the floor.',                // card zoom wrong (c8)
     },
     alt: {
@@ -157,7 +157,7 @@ const feel = {
 // Q-W2-12 (#379 6628699724, the NoHandling form): the card's handlingMistakes are posture checkpoints hm-round,
 // hm-heels, hm-angle (label = the mistake, detail = the card's fix); mistakeLine repeats the rounded back.
 const RISKS = [
-  { key: 'round', text: 'A rounded back will not favor your spine.', claim: CL.c7 },
+  { key: 'round', text: 'Pushing with a rounded back is not good for your spine.', claim: CL.c7 },
   { key: 'bent', text: 'Bent arms may cause some discomfort in your elbows and shoulders.', claim: CL.c5 },
   // D-TEXT-PRINTED (W7, #394): handlingMistake c9 (posture hm-angle is not printed)
   { key: 'angle', text: 'Hips rising or chest dropping as you tire? Keep the same body angle.', claim: CL.c9 },

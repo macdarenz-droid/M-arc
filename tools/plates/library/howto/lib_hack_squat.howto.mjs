@@ -126,7 +126,7 @@ const zooms = [
   {
     key: 'knee-lock', chip: 'Knees', heading: 'Knee lockout', kind: 'posture',
     // claims: Right and Wrong (callout, caption, alt) card c7
-    crop: { center: { at: 'knee.r', pose: 'right', off: [0, 0] }, sizePx: 120 },
+    crop: { center: { at: 'knee.r', pose: 'right', off: [0, 0] }, sizePx: 200 },
     right: 'start',
     wrong: { base: 'start', pose: LOCK, solid: true },
     callout: {

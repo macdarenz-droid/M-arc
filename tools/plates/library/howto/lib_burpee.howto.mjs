@@ -94,11 +94,13 @@ const THUMB = 'beside';   // CONVENTION (D-SHIP-GRIP (a)): the key's drawn thumb
 //   stiff (card zoom landing Wrong, c11): the spec's Mistake over the end (the knees straight on landing).
 //   sag   (card zoom plank Wrong, c6 "lower back sagging"): the plank with the trunk joint bent SAG deg so the hips drop
 //         below the head-to-heel line; root height, depth and pelvis tilt solved so each shoulder joint stays on its
-//         spot and the hand stays under it (the arm keeps the start's angle on the thorax); the feet stay on their
-//         planted spots (the spec's plant targets). Solver: lib_plank's Newton with finite differences.
-// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and lib_plank's SAG): SAG 25 deg is a Wrong-pose
-// size no card gives; no number from it appears in user copy; the layers panel judges it.
-const H = 1.75, SAG = 25;
+//         spot and the hand stays under it (the arm keeps the start's angle on the thorax); the shorter hip line moves
+//         the feet about 11 cm forward and 2 cm up at SAG 50 (the solver holds the shoulder and hand only). Solver:
+//         lib_plank's Newton with finite differences.
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and lib_plank's SAG): SAG 50 deg is a Wrong-pose
+// size no card gives (W7 panel #394: deepened from 25 so the hips sit clearly below the shoulder-to-heel line); no
+// number from it appears in user copy; the layers panel judges it.
+const H = 1.75, SAG = 50;
 const START = plateSpec.poses.start, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose, LS = landmarksOf(START, H);
 function solve(p0, make, res, iters = 30) {   // Newton with finite differences (lib_plank's solver)
   const keys = Object.keys(p0); const p = { ...p0 };
@@ -133,9 +135,9 @@ export const stills = {
 const zooms = [
   {
     key: 'landing', chip: 'Landing', heading: 'Landing', kind: 'posture',
-    // zoom shell: a tight crop on the knee so the slight bend reads; `spine` is the straight hip-to-ankle reference on
-    // the RIGHT pose (the closeup css option `spine`, as lib_plank's hip-line): the bent knee sits off it, the locked leg on it.
-    crop: { center: { at: 'knee.r', pose: 'right', off: [0, 0] }, sizePx: 110 },
+    // zoom shell: hip to foot with the floor (W7 panel #394); `spine` is the straight hip-to-ankle reference on the
+    // RIGHT pose (the closeup css option `spine`, as lib_plank's hip-line): the bent knee sits off it, the locked leg on it.
+    crop: { center: { at: 'knee.r', pose: 'right', off: [0, 20] }, sizePx: 200 },
     guides: [{ kind: 'spine', from: { at: 'ankle.r', pose: 'right' }, to: { at: 'hip.r', pose: 'right' }, extend: [0.04, 0.04] }],
     right: 'end',
     wrong: { base: 'end', pose: MIS, solid: true },
@@ -148,13 +150,16 @@ const zooms = [
       wrong: 'Hard landing, knees not bent.',
     },
     alt: {
-      right: 'Side view, after the jump. Feet flat, knees slightly bent to absorb the landing.',
+      right: 'Side view, after the jump. Knees slightly bent to absorb the landing.',   // c11
       wrong: 'Side view, after the jump. The legs land straight, knees not bent.',
     },
   },
   {
     key: 'plank', chip: 'Plank', heading: 'Plank line', kind: 'posture',
-    crop: { center: { at: 'hip.r', pose: 'right', off: [10, 0] }, sizePx: 220 },
+    // zoom shell: head to heels with the hands, feet and floor (W7 panel #394); `spine` is the straight ankle-to-shoulder
+    // reference on the RIGHT pose (c6 head to heels): the sagging hips drop below it.
+    crop: { center: { at: 'hip.r', pose: 'right', off: [10, 10] }, sizePx: 300 },
+    guides: [{ kind: 'spine', from: { at: 'ankle.r', pose: 'right' }, to: { at: 'shoulder.r', pose: 'right' }, extend: [0.04, 0.04] }],
     right: 'start',
     wrong: { base: 'start', pose: SAG_POSE, solid: true },
     callout: {
@@ -166,7 +171,7 @@ const zooms = [
       wrong: 'Lower back sagging.',
     },
     alt: {
-      right: 'Side view, straight-arm plank. Head, hips and heels on one line, hands under the shoulders.',
+      right: 'Side view, straight-arm plank. Head, hips and heels on one line, hands flat, shoulder-width apart.',   // c6, c2
       wrong: 'Side view, straight-arm plank. The lower back sags, so the hips drop below the line.',
     },
   },

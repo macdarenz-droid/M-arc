@@ -154,7 +154,7 @@ const RISKS = [
   { key: 'tuck', text: 'Tucking your knees too far brings your weight onto your upper back and neck.', claim: CL.c11 },
   { key: 'arch', text: 'If your lower back arches, it can strain your lower back.', claim: CL.c12 },
   // W7 D-TEXT-PRINTED: handlingMistake 'Knees moving past your hips on the way down' (c7) as a fault, with its fix
-  { key: 'legs', text: 'Knees going past your hips add low-back stress. Return them over your hips.', claim: CL.c7 },
+  { key: 'legs', text: 'Lowering? Keep your knees over your hips, not past, to spare your low back.', claim: CL.c7 },
 ];
 
 export default {

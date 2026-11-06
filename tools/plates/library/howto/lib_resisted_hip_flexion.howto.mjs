@@ -35,7 +35,7 @@ export const SOURCES = {
   'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
     kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
 };
-// Not cited: c8 (tempo, plate only), c9 and c16 (sets and band progression, D-TEXT-PROGRESSION), c15 (the band's
+// Not cited: c8 (tempo, plate only), c9 and c16's sets and band progression (D-TEXT-PROGRESSION; c16's switch-after-the-set is setup 5), c15 (the band's
 // 2-3 s hold, plate tempo only), c17, c18 (the same muscles and mistakes as c10 and c7).
 
 const C = (tags, sources, note) => ({ tags, sources, ...(note ? { note } : {}) });
@@ -50,11 +50,13 @@ const CL = {
   tall: C(W, [MO, KO], 'card c3, c12, c6'),
   drive: C(W, [KO, MO], 'card c2, c5, c6, c7'),
   lower: C(W, [MO, KO], 'card c3, c4, c7'),
+  finish: C(W, [MO, KO, OU], 'card c3, c4, c7, c2, c16'),
   knee: C(W, [MO, KO], 'card c6, c2'),
   uprightLean: C(['CONSENSUS', 'WEAK'], [MO, OU, KO], 'card c3, c6, c13, c14, c7, c12, c5'),
   swing: C(W, [KO, MO], 'card c7, c6, c3'),
   slam: C(W, [KO, MO], 'card c7, c4'),
   arch: C(W, [KO, MO], 'card c7, c5'),
+  archRisk: C(W, [KO, MO], 'card c7, c5, c11'),
   lowBack: C(W, [KO, MO], 'card c7, c6, c11'),
 };
 
@@ -117,7 +119,7 @@ const feel = {
 
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
-  { key: 'arch', text: 'Arching the lower back to lift higher.', claim: CL.arch },
+  { key: 'arch', text: "Don't arch your lower back to lift higher. Keep a neutral spine.", claim: CL.archRisk },
   { key: 'pain', text: 'Acute hip or lower-back pain? Skip this exercise.', claim: CL.c11 },
   { key: 'balance', text: 'Stop if balance causes strain.', claim: CL.c11 },
 ];
@@ -134,7 +136,7 @@ export default {
     { kind: 'grip', text: 'Face away from the machine, a little tension. Hold the frame.', claim: CL.face },
     { kind: 'brace', text: 'Brace your trunk, stand tall, hips level and square.', zoom: 'torso-upright', claim: CL.tall },
     { kind: 'position', text: "Drive the knee straight up and forward, thigh about level. Don't swing.", claim: CL.drive },
-    { kind: 'finish', text: 'Pause briefly. Lower with control, never letting the stack slam. Switch legs.', claim: CL.lower },
+    { kind: 'finish', text: 'Pause, lower with control, no stack slam. Switch legs after the set.', claim: CL.finish },
   ],
   posture: [
     // Q-W2-12: handlingMistake 'Leaning back to lift higher' (c7, c12, c5) merged here, its fix added

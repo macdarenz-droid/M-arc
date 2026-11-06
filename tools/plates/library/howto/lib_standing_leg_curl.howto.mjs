@@ -50,6 +50,7 @@ const CL = {
   c1: C(['CONSENSUS'], [SL, HV], 'card c1'),
   c2: C(['CONSENSUS'], [HV, SL], 'card c2'),
   c3: C(['CONSENSUS'], [HV, SL], 'card c3'),
+  still: C(['CONSENSUS'], [HV, SL], 'card c3, c2'),
   c6: C(['CONSENSUS'], [HV], 'card c6'),
   c9: C(['CONSENSUS'], [HV, SL], 'card c9'),
   c13: C(['CONSENSUS', 'WEAK'], ['hl-hc'], 'card c13'),
@@ -70,9 +71,9 @@ const CL = {
 //         at the axis (the bent-knee half of c6's travel; the knee bend, the standing leg and the trunk unchanged).
 //   short (card zoom top Wrong, c8 "Range cut short"): the working knee bent only KNEE_SHORT, so the foot stays below
 //         the knee (the spec's end bends it END_KNEE, the foot above the knee).
-// DRAWING VALUES (D-SHIP-DRAWVAL): KNEE_DRIFT 15 deg and KNEE_SHORT 70 deg are Wrong-pose sizes no card gives; no number
+// DRAWING VALUES (D-SHIP-DRAWVAL): KNEE_DRIFT 30 deg and KNEE_SHORT 70 deg are Wrong-pose sizes no card gives; no number
 // from them appears in user copy.
-const KNEE_DRIFT = 15, KNEE_SHORT = 70;
+const KNEE_DRIFT = 30, KNEE_SHORT = 70;
 const END = plateSpec.poses.end;
 const DRIFT = { hip: { ...END.hip, r: END.hip.r - KNEE_DRIFT } };
 const SHORT = { knee: { ...END.knee, r: KNEE_SHORT } };
@@ -170,7 +171,7 @@ export default {
   posture: [
     // D-SHIP-TEXTZOOM: the card zoom pad-heel as a text checkpoint (its wrong is null, LR-25)
     { key: 'pad', label: 'Pad above heel', detail: 'Pad just above the heel.', anchor: { landmark: 'heel.r', pose: 'start' }, claim: CL.c1 },
-    { key: 'still', label: 'Upper body still', detail: 'Keep your upper body still.', anchor: { landmark: 'backUpper', pose: 'end' }, claim: CL.c3 },
+    { key: 'still', label: 'Upper body still', detail: 'Thighs on the pad, upper body still.', anchor: { landmark: 'backUpper', pose: 'end' }, claim: CL.still },
     { key: 'knee', label: 'Knee steady', detail: 'Keep your knee steady as you curl and lower.', anchor: { landmark: 'knee.r', pose: 'end' }, zoom: 'knee-steady', claim: CL.c6 },
     // Q-W2-12: handlingMistakes 'Cutting the range short' (c8), 'Dropping the weight down' (c7, c5) and 'Arching your
     // lower back' (c13) merged here, their fixes as the detail

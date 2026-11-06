@@ -92,7 +92,7 @@ const zooms = [
     key: 'wall-distance', chip: 'Distance', heading: 'Wall distance', kind: 'posture',
     // zoom shell: crop centre on the right pose's knee, wide enough for the body and the wall; the Wrong is the spec's
     // Mistake drawn alone (solid).
-    crop: { center: { at: 'knee.r', pose: 'right', off: [8, -20] }, sizePx: 270 },
+    crop: { center: { at: 'knee.r', pose: 'right', off: [-10, -20] }, sizePx: 320 },   // W7 panel (#394): wide enough for the whole Wrong figure
     right: 'end',
     wrong: { base: 'end', pose: MIS, solid: true },
     callout: {
@@ -127,11 +127,11 @@ const feel = {
     // The card's first two rows (thighs and glutes; shoulders and upper chest) have no fix, so they are left out: the
     // feel line says them.
     { key: 'shoulder', where: 'Shoulders', at: { muscles: ['front_delts'] },
-      means: 'The right distance from the wall takes strain off them.',
+      means: 'Wrong wall distance: the right one takes strain off your shoulders.',   // card c4 (W7 panel #394 K4)
       fix: 'Hold your arms out, ball touching the wall: stand there.',
       redFlag: 'shoulder', claim: CL.row },
   ],
-  claim: CL.c13,
+  claim: C(['CONSENSUS'], [BB, GG, PG, HL], 'card c13, c14'),   // the feel line: thighs and glutes (c13), shoulders and upper chest (c14)
 };
 
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
@@ -163,7 +163,7 @@ export default {
     { key: 'drive', label: 'Drive up', detail: 'Drive up through your heels and throw the ball to the target.', anchor: { landmark: 'knee.r', pose: 'start' }, claim: CL.c7 },
     { key: 'close', label: 'Ball close', detail: 'Keep the ball close to your body.', anchor: { landmark: 'grip.r', pose: 'end' }, claim: CL.c9 },
     // D-SHIP-TEXTZOOM (header): the card zoom catch-timing as text (Right here; its Wrong is hm-early)
-    { key: 'catch', label: 'Catch, then squat', detail: 'Catch with hips and arms extended, then squat.', anchor: { landmark: 'grip.r', pose: 'start' }, claim: CL.c8 },
+    { key: 'catch', label: 'Catch, then squat', detail: 'Catch with hips and arms extended, then squat.', anchor: { landmark: 'grip.r', pose: 'start' }, claim: C(['CONSENSUS'], [BR, BL, PG, BB], 'card c8, c9') },   // the plate checkpoint 'Catch, then squat' (c8, c9)
     { key: 'breathe', label: 'Breathe', detail: 'Breathe in as you squat, out as you throw.', anchor: { landmark: 'chest', pose: 'start' }, claim: CL.c11 },
     // Q-W2-12 (NoHandling): the card's handlingMistakes as checkpoints, label = the mistake, detail = the card's fix
     { key: 'hm-far', label: 'Too far back', detail: 'Arms out, ball touching the wall: stand there.',

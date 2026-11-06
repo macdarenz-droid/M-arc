@@ -42,7 +42,7 @@ export const SOURCES = {
     kind: 'peer-reviewed', access: 'abstract', checked: '2026-10-22', use: 'DATA' },
   // The palm-flat key's own source for the thumb (the card has no grip.thumb): a drawing convention.
   'hand-key-palm-flat': { cite: 'LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index', url: 'tools/plates/library/hands/hand-palm-flat.mjs',
-    kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
+    kind: 'secondary', access: 'full', checked: '2026-11-04', use: 'CONVENTION' },
   // The back box's own source (shared/back-box.mjs boxClaim), as lib_plank lists it: the card's redFlags 'back'.
   'nhs-back': { cite: 'NHS, Back pain', url: 'https://www.nhs.uk/conditions/back-pain/',
     kind: 'guideline', access: 'full', checked: '2026-10-02', use: 'CONSENSUS', note: 'When back pain needs a check.' },
@@ -157,7 +157,7 @@ const feel = {
 const MISTAKES = [
   { key: 'arch', title: 'Lower back arching', zoom: 'back-line', claim: C(['CONSENSUS'], [GGR, MO, ACE, HL], 'card c8, c7'),
     fix: 'Raise the limbs only as high as your low back holds.' },
-  { key: 'head', title: 'Head lifted to look', zoom: 'head', claim: C(['CONSENSUS'], [GGR, ACE], 'card c9, c6'),
+  { key: 'head', title: 'Head lifted to look forward', zoom: 'head', claim: C(['CONSENSUS'], [GGR, ACE], 'card c9, c6'),
     fix: 'Keep your eyes on the floor, head in line with your spine.' },
   { key: 'hips', title: 'Hips tilting or rotating', claim: CL.press,
     fix: 'Press down with your unmoving hand, knee and toes. Hips level.' },

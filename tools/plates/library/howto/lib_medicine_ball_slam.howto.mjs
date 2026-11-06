@@ -3,7 +3,7 @@
 // claim, cN = card claim id).
 // Handling: D-SHIP-GRIP (b3) (D-SHIP-W7-B3; tests/howto/checks/c3-library.ts B3_PINS): NoHandling. The card's grip.thumb,
 // grip.handContact and grip.wrist are "Not given" statements (pinned as kind 'none'), never printed; the width ("Not
-// given beyond both hands on the ball") is not printed either. The card's grip.claims c15 and c1 are cited on setup 3,
+// given beyond both hands on the ball") is not printed either. The card's grip.claims c15 and c1 are cited on setup 4,
 // which also carries the hand zoom `ball-grip` Right (c15; its Wrong is null, LR-25).
 // Back box: the card's redFlags hold 'back' (riskFlags ['back'], source nhs-back, as lib_plank).
 // Way out: none. The card's tierA.wayOut is null (card gaps[0], LIB-WAYOUT); the rebound and ball choice are risks.
@@ -19,9 +19,9 @@
 //   handlingMistake slamming too softly (c16, c3) -> posture 'hm-soft' (Q-W2-12: label = mistake, detail = fix)
 //   handlingMistake arms only (c4, c3)         -> posture 'hm-arms' (Q-W2-12), zoom slam-hips (the plate's Mistake), mistakeLine
 //   handlingMistake rounding the back (c5)     -> posture 'hm-round' (Q-W2-12), zoom pickup-back (DV)
-//   hand zoom `ball-grip` Right (c15)          -> setup 3; Wrong null (LR-25), nothing to show
+//   hand zoom `ball-grip` Right (c15)          -> setup 4; Wrong null (LR-25), nothing to show
 //   T checkpoints                              -> none (both posture zooms drawn)
-// D-TEXT-PRINTED (W7, #394): c3 slam between the feet, c7 exhale, handlingMistake too softly (c16, c3) -> setup 4.
+// D-TEXT-PRINTED (W7, #394): c3 slam between the feet, c7 exhale, handlingMistake too softly (c16, c3) -> setup 5. W7 panel (#394 SAFETY): the space check (c9) moved to setup 2, before the slam.
 // D-TEXT-PROGRESSION: c11 (ball weight, start at 10 pounds and work up) is a progression, not on the sheet.
 import plateSpec from '../specs/medicine_ball_slam.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -170,14 +170,14 @@ export default {
   id: 'lib_medicine_ball_slam',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3): the card gives no thumb, hand contact or wrist (pinned "Not given" statements); grip claims c15 and c1 and the hand zoom Right are on setup 3.' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3): the card gives no thumb, hand contact or wrist (pinned "Not given" statements); grip claims c15 and c1 and the hand zoom Right are on setup 4.' },
   contacts: ['standing-feet'],
   setup: [
     { kind: 'load', text: 'Use a soft ball without much bounce.', claim: CL.ball },
+    { kind: 'safety', text: 'Check the space around you is safe.', claim: CL.c9 },   // W7 panel (#394 SAFETY): the space check comes before the slam
     { kind: 'position', text: 'Feet about shoulder-width apart, knees slightly bent.', claim: CL.c1 },
     { kind: 'grip', text: 'Hold the ball firmly in both hands at chest height.', claim: CL.hold },
     { kind: 'brace', text: 'Brace, then exhale and slam it down hard between your feet.', claim: C(['CONSENSUS'], [SL, BOD, ACE, BB, VIT, 'im-slam'], 'card c1, c3, c7, c16') },
-    { kind: 'safety', text: 'Check the space around you is safe.', claim: CL.c9 },
   ],
   posture: [
     { key: 'top', label: 'Ball overhead', detail: 'Rise onto your toes, arms straight, ball overhead.',

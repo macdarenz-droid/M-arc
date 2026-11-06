@@ -64,9 +64,12 @@ const CL = {
 //   extension was solved and drawn, but in this side view the near arm lies by the ear over the head (c1), so the
 //   head's angle does not read in the crop. Its Right and Wrong are on posture 'head', feel row 'neck' and risks 'neck'.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop):
-// ARCH_TILT 20 deg is a Wrong-pose size no card gives (the dead_bug spec's MIS_TILT 14 deg on the same floor class,
-// raised so the gap reads at panel size); no number from them appears in user copy; the layers panel judges them.
-const H = 1.75, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose, ARCH_TILT = 20;
+// ARCH_TILT 38 deg is a Wrong-pose size no card gives (the dead_bug spec's MIS_TILT 14 deg on the same floor class,
+// raised so the gap reads at panel size; W7 fix round #394 L5: 20 -> 38 so the gap under the low back reads in the
+// wider crop; 45 does not converge); no number from them appears in user copy; the layers panel judges them.
+// The low-back crop window (centre offset, sizePx) is a drawing value: W7 fix round #394 L5 widened it to shoulders
+// to thighs plus the floor.
+const H = 1.75, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose, ARCH_TILT = 38;
 const SH_E = landmarksOf(END, H)['shoulder.r'], F = END.trunk.flex;
 const archAt = ([y, z, l3]) => ({ ...END, hip: END.hip + ARCH_TILT,
   trunk: { flex: [F[0], l3, F[2] + F[1] - ARCH_TILT - l3, F[3]] }, root: { at: [0, y, z], tilt: END.root.tilt + ARCH_TILT } });
@@ -125,7 +128,7 @@ const zooms = [
   },
   {
     key: 'low-back', chip: 'Low back', heading: 'Low back', kind: 'posture',
-    crop: { center: { at: 'lumbar', pose: 'right', off: [0, -4] }, sizePx: 70 },
+    crop: { center: { at: 'lumbar', pose: 'right', off: [-6, -24] }, sizePx: 115 },
     right: 'end',
     wrong: { base: 'end', pose: ARCH, solid: true },   // DV: the arch still drawn alone
     guides: GAP,

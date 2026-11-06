@@ -104,7 +104,8 @@ const zooms = [
   },
   {
     key: 'lift-height', chip: 'Lift height', heading: 'Lift height', kind: 'posture',
-    crop: { center: { at: 'lumbar', pose: 'right', off: [0, -10] }, sizePx: 260 },
+    // W7 fix round (#394 L7): cropped to the trunk and arms so the lift reads (`off`, `sizePx` drawing values)
+    crop: { center: { at: 'shoulder.r', pose: 'right', off: [12, -10] }, sizePx: 130 },
     right: 'end',
     wrong: { base: 'end', pose: HIGH },
     callout: {

@@ -131,7 +131,7 @@ const feel = {
 /* ---------------------------------------------------------------- risks (card risks; handlingMistakes are posture, Q-W2-12) */
 const RISKS = [
   { key: 'overextend', text: 'Overextending your back can lead to lower back pain.', claim: CL.c7 },
-  { key: 'high', text: 'Pushing the hips too high increases the arch in your low back.', claim: CL.c6 },
+  { key: 'high', text: 'Pushing the hips too high generally increases the arch in your low back.', claim: CL.c6 },
   { key: 'feet', text: 'Back tension may mean wrong foot position or an overarched back.', claim: CL.c8 },
 ];
 

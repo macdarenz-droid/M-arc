@@ -16,10 +16,10 @@
 //   card posture 'Chin stays tucked' (c12)                              -> feel row 'neck' fix
 //   card posture 'Breathe in and straighten slowly ...' (c6, c7)        -> copy.setupLine; setup 5 (W7 printed)
 //   handlingMistake 'Moving your hips to pull' (c8, c3)                 -> zoom 'hips' Wrong, copy.mistakeLine, feel row 'hips'
-//   handlingMistake 'Yanking with your arms' (c9, c11)                  -> copy.mistakeLine, plate cue 'rope', risks 'load' (W7: the fault printed)
+//   handlingMistake 'Yanking with your arms' (c9, c11)                  -> copy.mistakeLine, plate cue 'rope', setup 3 (fault + fix), risks 'load' (c11)
 //   handlingMistake 'Rounding your lower back' (c13, c5)                -> feel row 'low-back' (means and fix)
 //   hand zoom rope Right (c2)                                           -> setup step 3
-//   hand zoom rope Wrong (c2, c9)                                       -> copy.mistakeLine (a fault), risks 'load' (W7 printed)
+//   hand zoom rope Wrong (c2, c9)                                       -> copy.mistakeLine (a fault), setup step 3 (a fault, printed)
 //   card zoom hips (M)                                                  -> zoom 'hips'
 import plateSpec from '../specs/cable_crunch.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
@@ -123,9 +123,8 @@ const feel = {
 const RISKS = [
   { key: 'neck', text: 'Keep the movement controlled to avoid neck strain.', claim: CL.c12 },
   { key: 'acute', text: 'Acute lower back pain? Avoid this exercise.', claim: CL.c13 },
-  // W7 D-TEXT-PRINTED: handlingMistake 'Yanking with your arms' (c9) and hand zoom rope Wrong (c2, c9) as a fault, merged
-  // with the card risk c11 (copy.mistakeLine is not printed)
-  { key: 'load', text: 'Arms yanking the rope. Too much weight risks overloading traps, arms and back.', claim: CL.arms },
+  // W7 fix round (#394 L6, K4): the card risk c11 alone; the yanking fault and its c9 fix moved to setup step 3
+  { key: 'load', text: 'Too much weight risks overloading your traps, arms and back instead of your abs.', claim: CL.c11 },
 ];
 
 export default {
@@ -133,14 +132,16 @@ export default {
   id: 'lib_cable_crunch',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3): the card archetype.hand is on-body with no thumb or wrist given; its handContact and grip claim (c2) are on setup step 3, its rope zoom Wrong (c2, c9) on the mistake line and risk load.' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3): the card archetype.hand is on-body with no thumb or wrist given; its handContact and grip claim (c2) are on setup step 3, its rope zoom Wrong (c2, c9) as a fault on the mistake line and setup step 3.' },
   contacts: ['floor-body'],
   setup: [
     { kind: 'load', text: 'Fix a rope to the high pulley. Choose a light-to-moderate weight.', claim: CL.c1 },
     // W7 D-TEXT-PRINTED: the card's steps 2 and 3 (c1) merged to make room for step 5
     { kind: 'position', text: 'Kneel a few feet from the machine, facing it, stance about hip-to-shoulder-width.', claim: CL.c1 },
-    // card hand zoom rope Right (c2); the pinned handContact and grip.claims c2
-    { kind: 'grip', text: 'Hold the rope ends on either side of your head.', claim: CL.c2 },
+    // card hand zoom rope Right (c2); the pinned handContact and grip.claims c2. W7 fix round (#394 L6): handlingMistake
+    // 'Yanking with your arms' and the rope zoom Wrong (c9, c2) as a fault with the card fix (c9)
+    { kind: 'grip', text: 'Hold rope ends either side of your head. Yanking? Arms only hold.',
+      claim: C(['CONSENSUS'], [BB, SL, MO], 'card c2, c9') },
     { kind: 'position', text: 'Hinge back slightly from your hips to raise them. Tuck your chin.', zoom: 'hips', claim: CL.c3 },
     // W7 D-TEXT-PRINTED (copy.setupLine is not printed): card posture 'Brace, breathe out and curl your spine' (c4, c7)
     // and 'Breathe in and straighten slowly. Keep tension on your abs' (c6, c7)

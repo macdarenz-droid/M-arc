@@ -69,8 +69,9 @@ export const stills = {
 const zooms = [
   {
     key: 'low-back', chip: 'Low back', heading: 'Low back', kind: 'posture',
-    // zoom shell: the window centred off the lying pose's lumbar (`off`, `sizePx` drawing values)
-    crop: { center: { at: 'lumbar', pose: 'right', off: [0, -8] }, sizePx: 120 },
+    // zoom shell: the window centred off the lying pose's lumbar, framed head to thighs plus the floor (W7 fix round #394
+    // L5/L7: widened; `off`, `sizePx` drawing values)
+    crop: { center: { at: 'lumbar', pose: 'right', off: [-28, -36] }, sizePx: 160 },
     right: 'end',
     wrong: { base: 'end', pose: MIS },   // M: the plate's own Mistake, dashed red over the right pose (lib_crunch form)
     guides: plateSpec.mistake.guides,

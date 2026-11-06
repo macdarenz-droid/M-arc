@@ -90,7 +90,7 @@ export const stills = {
 const zooms = [
   {
     key: 'hop', chip: 'Hop', heading: 'Hop height', kind: 'posture',
-    crop: { center: { at: 'knee.r', pose: 'right', off: [0, 20] }, sizePx: 200 },
+    crop: { center: { at: 'hip.r', pose: 'right', off: [0, 40] }, sizePx: 340 },   // W7 panel (#394): wider, so more of the body shows
     right: 'end',
     wrong: { base: 'end', pose: MIS, solid: true },
     callout: {

@@ -125,7 +125,7 @@ const feel = {
       redFlag: 'back', claim: CL.arch },
     { key: 'knee', where: 'Knee', at: { parts: ['knee-left', 'knee-right'] },
       means: 'Feeling it here, not in the quads, can mean a form error.',
-      fix: 'Stop if the pain is sharp. Reassess your form.',
+      fix: 'Stop if you feel pain or discomfort. Reassess your form.',
       zoom: 'top', redFlag: 'knee', claim: CL.c14 },
   ],
   claim: CL.c13,
@@ -135,7 +135,7 @@ const feel = {
 const RISKS = [
   { key: 'lock', text: 'Locking your knees at the top can add stress to the knee.', claim: CL.c8 },
   { key: 'arch', text: 'Arching your lower back can lead to discomfort.', claim: CL.c6 },
-  { key: 'load', text: 'Too much weight adds momentum and can increase the risk of injury.', claim: CL.c10 },
+  { key: 'load', text: 'Too much weight can increase injury risk and likely leads to excess momentum.', claim: CL.c10 },
 ];
 
 export default {
