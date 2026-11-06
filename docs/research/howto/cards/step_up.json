@@ -582,56 +582,56 @@
     {
       "kind": "contact",
       "landmark": "heel.r",
-      "pose": "end",
+      "pose": "start",
       "cardPose": "start",
       "claim": "c6"
     },
     {
       "kind": "contact",
       "landmark": "ball.r",
-      "pose": "end",
+      "pose": "start",
       "cardPose": "start",
       "claim": "c6"
     },
     {
       "kind": "contact",
       "landmark": "heel.l",
-      "pose": "end",
+      "pose": "start",
       "cardPose": "start",
       "claim": "c1"
     },
     {
       "kind": "contact",
       "landmark": "ball.l",
-      "pose": "end",
+      "pose": "start",
       "cardPose": "start",
       "claim": "c1"
     },
     {
       "kind": "contact",
       "landmark": "wrist.r",
-      "pose": "end",
+      "pose": "start",
       "cardPose": "start",
       "claim": "c5"
     },
     {
       "kind": "contact",
       "landmark": "wrist.l",
-      "pose": "end",
+      "pose": "start",
       "cardPose": "start",
       "claim": "c5"
     },
     {
       "kind": "contact",
       "landmark": "heel.r",
-      "pose": "start",
+      "pose": "end",
       "cardPose": "end",
       "claim": "c1"
     },
     {
       "kind": "contact",
       "landmark": "ball.r",
-      "pose": "start",
+      "pose": "end",
       "cardPose": "end",
       "claim": "c1"
     }

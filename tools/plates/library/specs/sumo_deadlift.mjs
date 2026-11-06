@@ -16,8 +16,9 @@
 //   deg toe-out; the limit is 0.5 cm). The card's text and setup carry the stance (card variantLine).
 //  Grip (c3): hands inside the knees, closer than conventional: 36 cm apart (unsourced; the card gives no width).
 //  Bar (inherited plate.equipment, parent c23): 45 cm plates on the floor line, bar centre 22.5 cm up.
-//  End = the floor start (c1, c3, c4, c13, c15): the trunk 60.1 deg from vertical, 7.5 deg more upright than
-//   conventional_deadlift's drawn 67.6 (c4: 5-10 deg, its midpoint; a drawn-item test compares the two); the back flat
+//  End = the floor start (c1, c3, c4, c13, c15): the trunk FLOOR_INCL 57.65 (drawn 56.65 deg from vertical), 9.96 deg more upright than
+//   conventional_deadlift's drawn 67.6 (c4: 5-10 deg, its maximum: LIB-PLATEFIX-3 item 17, #391 6682615402 L1, ruled
+//   #405 6683313760 (a); was 60.1, the midpoint; a drawn-item test compares the two); the back flat
 //   (lumbar 3 deg); the bar over mid-foot, the straight arms reaching it (sumo's card asks for straight arms, not plumb
 //   ones); the root SOLVED so the bar is 5 mm in front of the near shin (c13).
 //  Start = standing tall with knees and hips locked together (c14, c15): as conventional_deadlift's top.
@@ -74,12 +75,12 @@ function plumb(barY, spine, zr) {
   const incl = bisect(i => legGap(landmarksOf(at(i), H), [0, barY, 0]) - BAR_GAP, ...zr);
   return { ...at(incl), reach: hands([0, barY, 0]), incl };
 }
-// The floor start (c4): the trunk FLOOR_INCL from vertical, 7.5 deg more upright than conventional_deadlift's drawn
-// floor trunk (67.6 deg there; c4 "5-10 degrees greater vertical trunk", its midpoint). The bar sits over mid-foot at
+// The floor start (c4): the trunk FLOOR_INCL from vertical, 10 deg more upright than conventional_deadlift's drawn
+// floor trunk (67.6 deg there; c4 "5-10 degrees greater vertical trunk", its maximum: LIB-PLATEFIX-3 item 17). The bar sits over mid-foot at
 // the plates' height; for a root z the root height is SOLVED (bracket 0.3-0.9) so the straight arm reaches the bar,
 // and the root z is SOLVED (bracket -0.55..-0.40: the hips-back root, the bar in front of the shins) so the bar is 5 mm
 // in front of the near shin (against the shins, c13).
-const FLOOR_INCL = 60.1;
+const FLOOR_INCL = 57.65;                              // was 60.1 (LIB-PLATEFIX-3 item 17): the drawn difference 9.96 deg, c4 10 max
 const FLOOR_BAR = [0, PLATE_R, 0];
 const reachY = z => bisect(y => { const S = landmarksOf(body(y, z, FLOOR_INCL, FLOOR_SPINE), H)['shoulder.r']; return Math.hypot(S[1] - FLOOR_BAR[1], S[2] - FLOOR_BAR[2]) - armDrop(S); }, 0.3, 0.9);
 const FLOOR_Z = bisect(z => legGap(landmarksOf(body(reachY(z), z, FLOOR_INCL, FLOOR_SPINE), H), FLOOR_BAR) - BAR_GAP, -0.55, -0.4);

@@ -236,6 +236,7 @@ of the one fault. Claims read on the copied quotes files:
 | ez_bar_curl | the elbows drifting forward at the top | c4, c5 | no second sign stated |
 | reverse_curl | swinging the bar up with momentum | c5 | no second sign stated |
 | alternating_dumbbell_curl | the working elbow swinging forward | c5, c4 | no second sign stated |
+| cross_body_hammer_curl | the working shoulder shrugging as the dumbbell rises | c5, c6 | no second sign stated (the 'ear' tell drew the same shrug on a point that does not move; merged, LIB-PLATEFIX-3 item 8, #405 6683313760) |
 
 ## 10. Facts plan (D-LIB8M-FACTS, 22's scope; D-LIB13-FACTS2) and unsourced numbers
 

@@ -484,7 +484,10 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   // One-tell plates: a second tell is drawn only if a claim states it (#290 6343211054 item 2); per-id ruling asked on #290.
   const ONE_TELL = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cable_curl', 'bayesian_cable_curl', 'concentration_curl',
-    'straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'barbell_curl', 'ez_bar_curl', 'reverse_curl', 'alternating_dumbbell_curl'];   // + LIB-15R2
+    'straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'barbell_curl', 'ez_bar_curl', 'reverse_curl', 'alternating_dumbbell_curl',   // + LIB-15R2
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was absent, now 'cross_body_hammer_curl' (item 8: its two
+    // shrug tells merged into one, c5); its section-9 record is required by the test above, as for every ONE_TELL id
+    'cross_body_hammer_curl'];
   /** #290 6349640307 R7: the Trace is one smooth arc: no turn between its consecutive sample chords over 6 deg or 2.5x their median. */
   const traceKinks = (spec: any) => {
     const d = /<path class="trace"[^>]* d="([^"]+)"/.exec(plate.renderPlate(spec, { id: 'x' }).svg)![1]!, n = [...d.matchAll(/-?[\d.]+/g)].map(m => +m[0]);
@@ -895,7 +898,8 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
 // ---- LIB-15R2 wave 1 (D-LIB15R2-ZOOM, -WRISTBOX; DESIGN.md 17.1-17.2): the three zoom rows ----
 describe('LIB-15R2 A3, A4: the zoom rows', { timeout: T }, () => {
   const ZOOMED: Record<string, { view: string, k: number, value: number }> = {
-    dumbbell_overhead_triceps_extension: { view: 'mistake', k: 1.5, value: 15.85 },
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was k 1.5 / 15.85 px, now k 3 / 12.90 px (item 14: the arch on the spread spine; the bar 11.39 and the smaller-k reds unchanged)
+    dumbbell_overhead_triceps_extension: { view: 'mistake', k: 3, value: 12.90 },
     cross_body_hammer_curl: { view: 'mistake', k: 2, value: 14.63 },
     wrist_curl: { view: 'normal', k: 3, value: 34.97 },
   };
@@ -944,8 +948,10 @@ describe('LIB-15R2 A3, A4: the zoom rows', { timeout: T }, () => {
   });
   // A4: each zoom row's export without `zoom`, its ruled boxes and its re-keyed field equals its sha256 at 151de0b8
   const RULED: Record<string, { boxes: string[], drop: string[], sha: string }> = {
-    dumbbell_overhead_triceps_extension: { boxes: [], drop: [], sha: '70e215671161f875e53da823646e0a599a2477ef9ce48dea9e42e91799eface0' },
-    cross_body_hammer_curl: { boxes: ['shoulders', 'ear'], drop: ['via'], sha: '8c2443f5d268ab4965bf44d0bd8135e8d0fbd31da1bc652be075c931e6a5cc04' },
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 70e21567, now 0ea9c631 (item 14's Mistake pose; the same canon, a pinned export)
+    dumbbell_overhead_triceps_extension: { boxes: [], drop: [], sha: '0ea9c631a15f35b2b102eb88bb37876404daee67dbe944403066c469f997c2b6' },
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8c2443f5, now 7426699d (item 8: the ear tell merged into shrug, its box (30, 70))
+    cross_body_hammer_curl: { boxes: ['shoulders', 'ear'], drop: ['via'], sha: '7426699d943869b40cbe39fd4770737cb010d5d542c762eb15323a55e5328695' },
     wrist_curl: { boxes: ['forearm'], drop: ['samples'], sha: '2e2338f16f303debb7e3d1288f396828483a327fefab713c78c109304b364f77' },
   };
   const canon = (id: string, spec: any) => {
@@ -992,9 +998,11 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
       mistakeAlt: 'beb1eff4e8d2d51ac40fbbc8568522c442ec2270297c697ec0bc8da429c8737a'
     },
     'cable-curl': {
-      normalSvg: '6b9f1d4a3e28c34124fff69c9e2995205fed21c40fda3b2cfa792c79f21754e2',
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 6b9f1d4a, now 4cd54f49 (items 8-14 redraw; the plates panel re-approves)
+      normalSvg: '4cd54f499a4dd4634c948129df9472747eef077cd10e9d6514c46cd1af051644',
       normalOverlay: '5bdf60a30bfadea64e1b4f1b3e01c8418ed585ef3904814fcf9efdc022c53f0d',
-      mistakeSvg: 'b479dcca4aa4d74f37dec4170f92c0495e0f66a37e26f32ad0da4a72e2a66420',
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was b479dcca, now 9a0028be (items 8-14 redraw; the plates panel re-approves)
+      mistakeSvg: '9a0028be90bc980e382bd2652ea142311fe19bad1b0392be2787de3e690e71e2',
       mistakeOverlay: 'dca9ffb85af31565b5c48a4d7efb0c4dbadc0c947837bf960c579ac509a2cf02',
       tells: '5ca2dca05a483d50450554fda1874c76ad12597445482884932e1c0a9a5e023c',
       tempo: '73dd8f8f94901608bf64b800d986bfb05e0019ffdec860438d9058b37cbd7634',
@@ -1003,9 +1011,11 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
       mistakeAlt: '37772e1fc5273a70c86482d6aca38cd019cd21ffcf690f5f5b48bdbf3f4e48bc'
     },
     'bayesian-cable-curl': {
-      normalSvg: '0b88777b6b7e7b1393630f16f3e0dde44520c4fd224be13ae309935c058f9b7b',
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0b88777b, now 96f7cd85 (items 8-14 redraw; the plates panel re-approves)
+      normalSvg: '96f7cd850ba9cc3f93a8d6943db0a1ef9534c90005a5aff2e61495bedf9b5480',
       normalOverlay: 'cd62cecbdf2d3748286585dcf09afe4adfd8a38950cc21be3b9ca24dac2ce42d',
-      mistakeSvg: '86707fc1501da15ccabf5afb7dc4128bd34dbb5e8d247a04b8220d4018d56940',
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 86707fc1, now ce7aad2c (items 8-14 redraw; the plates panel re-approves)
+      mistakeSvg: 'ce7aad2cbc1428221c3e6e39aff6d4e204fba9140874000a0625fe0f60ea1f30',
       mistakeOverlay: 'df26cd83e17c00e96d7a46168f09f0a0d8db7f7007cf1b74c942115deb5e8b30',
       tells: '049e70c9576dbd8bf121c231342e360bb44562a4fd34b26eedff595bb2ee7ebe',
       tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
@@ -1028,8 +1038,10 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
     'dumbbell-overhead-triceps-extension': {
       normalSvg: 'aaa4a21044e5f6da578a4ad3721c19e1327c6cf4b4789683170d6d429b855838',
       normalOverlay: '7e6866805c0a8435321715979fd92584b8285834f416e60eb125e70c7023f8c8',
-      mistakeSvg: '0109f6b1d8c3bdc87232bcfd040a27d7033e8fe31c9d6be93df0a176ad77f4c1',
-      mistakeOverlay: '1dbcff201458b650dd3e272101176fd2ed0322a28c0041150d7c717e178162da',
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0109f6b1, now 88ab5c19 (items 8-14 redraw; the plates panel re-approves)
+      mistakeSvg: '88ab5c19b5cde31dbb5abfbb79392a613b6d763fac2b00501e79c0f5eaf81fe0',
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 1dbcff20, now a99563b1 (items 8-14 redraw; the plates panel re-approves)
+      mistakeOverlay: 'a99563b13c95a966ac0f5e093dd695c05e0c3539a2ac5b7a1cf37e7fc0166e41',
       tells: 'f54952f77e3a16cf7b46700de9555151b0c02cf5250e4b872ae6fea4f54f5cd9',
       tempo: 'dddad8d714b29d378423e6eb0693413e83f20772a2de9912c4f7870f59dab928',
       cues: '409b12c2b15b8f2ef81d1db2b335ce3b842c65f8916e64bad295f61bdd096a29',
@@ -1039,11 +1051,15 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
     'cross-body-hammer-curl': {
       normalSvg: 'e9069c14f985afec228af963a1ded8a185de2abb27af91640ae60866a8827542',
       normalOverlay: '512e7dee8dbfadd02c28c0132d9a89f5b9c8cb588e17332f4d8c615b8883594a',
-      mistakeSvg: '6e87968c617c4c6771f671080e80201d428dd1a44eb594c1ebdc934608e61685',
-      mistakeOverlay: 'c946d1b1504c3a43453c7288e31e005c08c306c6f0fce3da163256c71dd00c50',
-      tells: '1baa27129c58a73264a0b47e2777f505ccd5f70fe91076ae9345b22a97580227',
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 6e87968c, now 8eb47d05 (items 8-14 redraw; the plates panel re-approves)
+      mistakeSvg: '8eb47d05f822ffb409e9258b80d0ce0ac13df50fb70eed5b2009415afceaa0f8',
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was c946d1b1, now 9a134492 (items 8-14 redraw; the plates panel re-approves)
+      mistakeOverlay: '9a134492e6bdc6f3b1cd433d3e5f1aa1ad75f5c614f6aae76cd87de519c4265d',
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 1baa2712, now 7d3d27a9 (items 8-14 redraw; the plates panel re-approves)
+      tells: '7d3d27a92915143c8f3453222735128da9c6d74296f0a9d309c84646bc87b1cd',
       tempo: 'ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3',
-      cues: '5f6eb027f4dbfa4a075a048afb2b75a829a9baa6dc93bdae906a68e7990712f0',
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 5f6eb027, now 2f0f9c37 (items 8-14 redraw; the plates panel re-approves)
+      cues: '2f0f9c37fed682fad875edc910b26858e35e8b92ca7d9b191f733aaa3e00771a',
       alt: 'fe90f6133c93e0353074af741c2c8676db617c16f35efa18cec13ff1c655ab54',
       mistakeAlt: '29d08724988ebf854bd30392d28668f63230bd0e1b1a929fd8244853c2686b6a'
     },

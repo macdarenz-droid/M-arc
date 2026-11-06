@@ -73,3 +73,41 @@ describe('LIB-PLATEFIX-3 item 20: incline_dumbbell_press Mistake trunk outlined'
     expect(archProblems(idpMod.default, info).some(b => /lumbar gap/.test(b))).toBe(true);
   });
 });
+
+// Items 17 (sumo_deadlift, ruled #405 6683313760 (a)) and the W4 addition one_arm_dumbbell_row (#391 6682975122; ruled
+// #405 6683319630 item 7): measured on the drawn landmarks with the render's own camera.
+describe('LIB-PLATEFIX-3 item 17 and one_arm_dumbbell_row', { timeout: T }, () => {
+  let qe: any, bd: any, eqm: any; const S: Record<string, any> = {};
+  beforeAll(async () => {
+    [bd, eqm, qe] = await Promise.all(['../vendor/engine/body.mjs', '../vendor/engine/equipment.mjs', 'qa/engine.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    for (const id of ['sumo_deadlift', 'conventional_deadlift', 'one_arm_dumbbell_row']) S[id] = (await import(/* @vite-ignore */ lib(`specs/${id}.mjs`))).default;
+  }, T);
+  const px = (spec: any) => { const cam = qe.cameraOf(spec, plate.renderPlate(spec, { id: 'x' }).report), L = qe.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eqm.PRIMITIVES, body: bd }, spec).lm;
+    return (pose: string, k: string) => cam.P(L[pose][k]) as number[]; };
+  const trunk = (P: any, pose: string) => { const s = P(pose, 'shoulder.r'), h = P(pose, 'hip.r'); return Math.atan2(Math.abs(s[0] - h[0]), h[1] - s[1]) * 180 / Math.PI; };
+  it('sumo: the floor trunk is 9-11 deg more upright than conventional\'s (c4 "5-10 degrees", its maximum; main 7.5)', () => {
+    const d = trunk(px(S.conventional_deadlift), 'end') - trunk(px(S.sumo_deadlift), 'end');
+    expect(d, `${d.toFixed(2)} deg`).toBeGreaterThanOrEqual(9);
+    expect(d).toBeLessThanOrEqual(11);
+  });
+  it('sumo: the higher-hips Mistake is re-solved from the new floor start (hips up, the bar still reached)', () => {
+    const P = px(S.sumo_deadlift);
+    expect(P('end', 'hip.r')[1] - P('mistake', 'hip.r')[1]).toBeGreaterThan(10);
+    expect(trunk(P, 'mistake')).toBeGreaterThan(trunk(P, 'end') + 5);
+  });
+  const segd = (p: number[], a: number[], b: number[]) => { const ab = [b[0]! - a[0]!, b[1]! - a[1]!], t = Math.max(0, Math.min(1, ((p[0]! - a[0]!) * ab[0]! + (p[1]! - a[1]!) * ab[1]!) / (ab[0]! ** 2 + ab[1]! ** 2)));
+    return Math.hypot(p[0]! - a[0]! - t * ab[0]!, p[1]! - a[1]! - t * ab[1]!); };
+  /** The red arm as drawn: its joints moved by the spec's MIST_OFF, each >= 10 px from the support arm (main: elbow 1.0). */
+  const offProblems = (spec: any, off: number[]) => {
+    const P = px(spec), s = P('end', 'shoulder.l'), e = P('end', 'elbow.l'), w = P('end', 'wrist.l'), bad: string[] = [];
+    for (const k of ['elbow.r', 'wrist.r', 'grip.r']) { const q = P('mistake', k), p = [q[0]! + off[0]!, q[1]! + off[1]!], d = Math.min(segd(p, s, e), segd(p, e, w)); if (d < 10) bad.push(`${k} ${d.toFixed(1)} px`); }
+    const t = spec.mistake.tells.find((x: any) => x.key === 'short');
+    if (JSON.stringify(t.anchor.off) !== JSON.stringify(off)) bad.push('the "Arm not straight" leader is not on the red arm');
+    return bad;
+  };
+  it('one_arm_dumbbell_row: the red arm clears the support arm by >= 10 px at the elbow, wrist and grip, its leader on it', async () => {
+    const m = await import(/* @vite-ignore */ lib('specs/one_arm_dumbbell_row.mjs'));
+    expect(offProblems(S.one_arm_dumbbell_row, m.MIST_OFF)).toEqual([]);
+    expect(offProblems(S.one_arm_dumbbell_row, [0, 0]).some(b => /elbow\.r/.test(b))).toBe(true);   // mutation: main's unshifted arm
+  });
+});
