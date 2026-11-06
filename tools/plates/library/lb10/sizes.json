@@ -405,9 +405,9 @@
     "basis": "claim: c9 'roughly 1-2 inches off the ground': the midpoint, 1.5 in (the range is 1 in wide: a size, not a fact, PANELS.md 7)"
    },
    "M_HOP": {
-    "value": 0.15,
+    "value": 0.2,
     "unit": "m",
-    "basis": "stated reason: c9 'you aren't in a high jump competition': a jump about four times c9's 2 in top, the height of a tuck-free vertical hop (NOTE RULED 5)"
+    "basis": "stated reason: c9 'you aren't in a high jump competition': a jump about four times c9's 2 in top, the height of a tuck-free vertical hop (NOTE RULED 5). LIB-PLATEFIX-3 round 2 (#405 6685743439 jump_rope R5 c2 c3): 0.2 m, so the raised copy's head sits 19 px over the main head (it was 12 px, read as the same height); still unsized by the card"
    },
    "HAND_OUT": {
     "value": 0.12,
@@ -455,9 +455,9 @@
     "basis": "approved plate plus claims (D-HELD6-JUMPROPE, #368; D-LIB22-AIRBORNE 'box_jump's method'): box_jump.mjs's flight ankle -10 deg on its approved airborne frame, for c11 'The basic jump comes from the ankles and calves' and c10 'land softly on the balls of the feet'; HOP stays the lowest foot point"
    },
    "M_TUCK": {
-    "value": 60,
+    "value": 0,
     "unit": "deg",
-    "basis": "stated reason: LIB-PLATEFIX-3 (W7 #394 6682923012, ruled #405 6683319630) L5 [3,3,2] 'tuck the knees': the knees flexed 60 deg, half of it at the hips, in the too-high jump (c9); front view, so the tuck shows as shortened legs"
+    "basis": "stated reason: LIB-PLATEFIX-3 (W7 #394 6682923012, ruled #405 6683319630) L5 [3,3,2] 'tuck the knees': the knees flexed 60 deg, half of it at the hips, in the too-high jump (c9); front view, so the tuck shows as shortened legs. LIB-PLATEFIX-3 round 2 (#405 6685743439 jump_rope R5 c2 c3): 0, the main airborne body raised unchanged, since the tucked legs read as a shorter figure, not a higher jump"
    },
    "M_OFF": {
     "value": 0.55,
@@ -509,9 +509,9 @@
     "basis": "claim: c1 'one stacked over the other': the two drawn fists touching (2 x RADII.fist 0.02 H, body.mjs:27)"
    },
    "SLED_Z": {
-    "value": 0.9,
+    "value": 0.78,
     "unit": "m",
-    "basis": "stated reason (framing): the sled's rear edge 0.9 m ahead of the start soles, clear of the coil and the step, with room for the labels on the left; the Trace does not depend on it"
+    "basis": "stated reason (framing): the sled's rear edge 0.9 m ahead of the start soles, clear of the coil and the step, with room for the labels on the left; the Trace does not depend on it. LIB-PLATEFIX-3 round 2 (#405 6685743439 sled_pull R7 [3,3,3]): 0.9 -> 0.78 m, so the dashed start sled ends at x 344.1, 13.9 px inside the 358 px frame (it ran to 359.2 and was clipped); the rope's run follows (ROPE_RUN is solved), no body change"
    },
    "FOOT_CLEAR": {
     "value": 0.025,

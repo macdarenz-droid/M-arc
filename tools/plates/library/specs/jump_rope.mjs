@@ -26,7 +26,7 @@ import { perItem } from '../eq/parts.mjs';
 import { jumpRope, ropeLine, lineLength, JUMP_ROPE, JUMP_ROPE_ITEMS } from '../eq/jumpRope.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.05, KNEE_SOFT: 15, HOP: 0.038, M_HOP: 0.15, M_TUCK: 60, M_OFF: 0.55, HAND_OUT: 0.12, HAND_FWD: 0.05, OVER_CLEAR: 0.10, UNDER_W: 0.32, FLOOR_GAP: 0.004, FLIGHT_ANKLE: -10 });
+export const SIZES = Object.freeze({ FOOT_X: 0.05, KNEE_SOFT: 15, HOP: 0.038, M_HOP: 0.2, M_TUCK: 0, M_OFF: 0.55, HAND_OUT: 0.12, HAND_FWD: 0.05, OVER_CLEAR: 0.10, UNDER_W: 0.32, FLOOR_GAP: 0.004, FLIGHT_ANKLE: -10 });
 const { FOOT_X, KNEE_SOFT, HOP, M_HOP, M_TUCK, M_OFF, HAND_OUT, HAND_FWD, OVER_CLEAR, UNDER_W, FLOOR_GAP, FLIGHT_ANKLE } = SIZES;
 export const bisect = (f, a, b, what) => {
   let fa = f(a), fb = f(b), side = 0;
@@ -62,8 +62,12 @@ const lowFoot = dy => Math.min(...FOOT_LMS.map(n => landmarksOf(asAngles(dy, FLY
 const liftTo = h => bisect(dy => lowFoot(dy) - h, 0, 0.4, `the lift to ${h} m`);
 const start = asAngles(0), end = asAngles(liftTo(HOP), FLY);
 // Mistake (c9; LIB-PLATEFIX-3, W7 #394 6682923012 L5 [3,3,2], ruled #405 6683319630): the too-high jump with the
-// knees tucked (M_TUCK at the knee, half of it at the hip), the lowest foot landmark M_HOP over the floor (3.9x the
+// knees tucked (M_TUCK at the knee, half of it at the hip), the lowest foot landmark M_HOP over the floor (5.3x the
 // Right's HOP), the figure set M_OFF to the side so the dashed figure is clear of the solid one (a drawing offset).
+// LIB-PLATEFIX-3 round 2 (#405 6685743439 jump_rope R5 [4,3,3], c2 c3): the red figure is the main airborne body,
+// unchanged, raised so its lowest foot is M_HOP up: M_TUCK 60 -> 0, since the tucked legs read as a 12 % shorter figure
+// whose head sat only 13 px over the main one; M_HOP 0.15 -> 0.2 m so the copy's head is 19 px over the main head (was 12). The
+// floor line runs on under it.
 const TUCK = { hip: { l: { ...q.hip.l, flex: (q.hip.l.flex ?? 0) + M_TUCK / 2 }, r: { ...q.hip.r, flex: (q.hip.r.flex ?? 0) + M_TUCK / 2 } }, knee: { l: M_TUCK, r: M_TUCK } };
 const tucked = dy => ({ ...asAngles(dy, FLY), ...TUCK, root: { at: [M_OFF, STAND.root.at[1] + dy, STAND.root.at[2]], tilt: 0 } });
 const lowTuck = dy => Math.min(...FOOT_LMS.map(n => landmarksOf(tucked(dy), H)[n][1]));
@@ -93,7 +97,8 @@ export default {
   camera: { x0: 165, y0: 339 },   // LIB-PLATEFIX-3: 14 px left (was 179) so the offset Mistake figure and its tell fit
   poses: { start, end },
   armsFront: true,
-  equipment: [{ type: 'floor', from: -0.6, to: 0.6 }, ...perItem((lm, ctx) => ropeAt(lm, ctx), JUMP_ROPE_ITEMS),
+  equipment: [{ type: 'floor', from: -0.6, to: 0.8 },   // to 0.8 (was 0.6): under the raised figure set M_OFF aside (round 2, c2)
+    ...perItem((lm, ctx) => ropeAt(lm, ctx), JUMP_ROPE_ITEMS),
     (lm, ctx) => (ctx.pose === 'end' ? START_PHANTOMS : null)],
   checks: [
     ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: landmarksOf(start, H)[landmark], pose: 'start', tol: 0.5 })),   // c2 fact: the hands on the handles
