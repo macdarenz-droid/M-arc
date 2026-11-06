@@ -842,6 +842,25 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-06 ~13:50 UTC** (weekly 0.34 at 13:22, about 5 %/h; the pause plan is unchanged: no new panels from 0.70, WAITING at 0.79).
+  - **Train 71 MERGED:** F-SCRATCH-SYNTH #397 → main `05f27be9`. Scratch tooling only, so no APK.
+  - **W3 #384:** the flip is still in progress (last push `07fce63f` at 10:57; a status message was sent at 13:45). Rulings: D-SHIP-W3-F3SAL, D-SHIP-W3-NOPAIR (9 ids), D-SHIP-W3-ZOOMAPPROVED, and D-SHIP-W3-GATEZOOM (a narrow exception for LIB-ZOOM's gate block, plan risk 22). W3 is the first train in line.
+  - **Flip sets ruled:**
+    - W4: 6 (D-SHIP-W4-FLIPSET; Q4 D-SHIP-W4-SRCDATE).
+    - W5: 10 (D-SHIP-W5-FLIPSET, -PREACHER).
+    - W6: 8 (rechecks 6683879377 and 6683994736).
+    - W7: 12 (recheck 6683570453; side_plank's L5 round 2 is batched with the PLATEFIX-3 recheck).
+    - Each wave posts READY after the previous train, and I check its delta myself.
+  - **LIB-PLATEFIX-3 #405:**
+    - Plates panel VALID (6685743439): 14 approved, 18 in the last round (`panels/pf7-findings.md`).
+    - E1/E2 engine merged; part 3's card edits carried in (D-RR3-CARRY, #406 closed).
+    - PLATEFIX-3b (items 15 inset, 22, 23) waits for #395 and #385, so for the owner's answer.
+  - **F-BODYMAP-FRONTDELT #404:** D-BODYMAP-LIB, D-BODYMAP-NOCUFF (cuff and core stay text-only: follow-ups F-GOLDENB-CUFF and F-GOLDENB-TEXTONLY for the owner). Building.
+  - **Research:**
+    - #400 F-STOPLINE-CLAIM: FIX @ 66a74df0 after a CHANGES NEEDED on c1's scope; reviewer session_018Pv5bJerdEXrX7ngreWR7k is re-checking.
+    - #403 part 2 @ 1b03a67f: the first reviewer failed on a short-sha source; a new reviewer is running, session_018Pv5bKcwZvWKduu4Q6NmYq.
+  - **Owner question** (superseding pins) is still open; asked again 11-06 ~10:25. Nothing merged depends on it yet.
+  - **Follow-ups added:** F-STOPLINE-MAIN, F-HAND-MACHINEPUSH, F-HAND-ROTATION, F-HAND-FINGERTIP, F-PLATE-CROP, F-GOLDENB-FRONTDELT, F-MUSCLEMAP-FRONTDELT, F-GOLDENB-CUFF/TEXTONLY, and golden-B 43.
 - **Update 11-06 ~10:45 UTC** (weekly 0.20 at 10:38, rising about 11 %/h with full panels; stop launching new panels at 0.70; at 0.75-0.79 tell every session to finish its step, push once and post WAITING, disable the hourly tick, and set a one-shot resume after Fri 11-13 08:00).
   - **Owner question asked again** (11-06 ~10:25): a standing OK for superseding pins after a full panel. It now blocks PLATEFIX #385, PLATEFIX-2 #395, PLATEFIX-3's pins of merged plates, and every wave id whose parent is in #385.
   - **Panels posted:** W5 second recheck (#392 6681869167), W7 panel (#394 6682487876, `panels/w7-findings.md`), W6 panel (#393 6682570363, `panels/w6-findings.md`), W4 recheck (#391 6682615402). All VALID.
