@@ -58,7 +58,7 @@ describe('7b-A1: a pair row\'s hand block is its pair panel (D-LIB9-HANDPAGE, D-
   it('the fixture page: one block per pair row, === pairPanel(key) (the repeat under its namespace), refs moved, CSS once per key', async () => {
     expect(await a1Problems(page)).toEqual([]);
     // the push row's ht-also button moved with the chip
-    expect(hp.cardOf(page, 'smith-machine-shoulder-press')).toContain('class="ht-also-btn" id="smith-machine-shoulder-press-also-hand" data-zoom="hand" aria-controls="hp-rope-push-neutral-zoom-hand"');
+    expect(hp.cardOf(page, 'scratch-sevenb-press')).toContain('class="ht-also-btn" id="scratch-sevenb-press-also-hand" data-zoom="hand" aria-controls="hp-rope-push-neutral-zoom-hand"');
   });
   it('a config with no pair field (= the hook off): every block is the renderer\'s, and 7b-A1 is red', async () => {
     for (const s of F.SCRATCH_7B) expect(raw).toContain(`<div class="zx" id="${s.pre}-zoom-hand" data-zoom="hand"`);
@@ -72,16 +72,16 @@ describe('7b-A1: a pair row\'s hand block is its pair panel (D-LIB9-HANDPAGE, D-
     expect((await a1Problems(twice)).join('\n')).toMatch(/repeated ids|hand blocks/);
   });
   it('PAGEDUP check (3) mutations: an un-prefixed id in copy 2; an idref prefixed that the reverse does not restore; a byte changed in copy 2', async () => {
-    const at = page.indexOf('<div class="zx" id="t-bar-row-hp-curl-dumbbell-under-zoom-hand"'), copy2 = B.divAt(page, at);
+    const at = page.indexOf('<div class="zx" id="scratch-sevenb-row-hp-curl-dumbbell-under-zoom-hand"'), copy2 = B.divAt(page, at);
     const put = (c: string) => page.slice(0, at) + c + page.slice(at + copy2.length);
     expect(await B.pairPanelProblems(put(copy2))).toEqual([]);
-    const unPrefixed = copy2.replace('id="t-bar-row-hp-curl-dumbbell-under-zoom-hand-h"', 'id="hp-curl-dumbbell-under-zoom-hand-h"');
+    const unPrefixed = copy2.replace('id="scratch-sevenb-row-hp-curl-dumbbell-under-zoom-hand-h"', 'id="hp-curl-dumbbell-under-zoom-hand-h"');
     expect((await B.pairPanelProblems(put(unPrefixed))).join('\n')).toMatch(/repeated ids/);
-    const m = copy2.match(/url\(#t-bar-row-(hp-curl-dumbbell-under-[a-z0-9-]+)\)/)!;
-    const badRef = copy2.replace(m[0], `url(#zz-t-bar-row-${m[1]})`);
-    expect((await B.pairPanelProblems(put(badRef))).join('\n')).toMatch(/t-bar-row on curl-dumbbell-under: not pairPanel/);
+    const m = copy2.match(/url\(#scratch-sevenb-row-(hp-curl-dumbbell-under-[a-z0-9-]+)\)/)!;
+    const badRef = copy2.replace(m[0], `url(#zz-scratch-sevenb-row-${m[1]})`);
+    expect((await B.pairPanelProblems(put(badRef))).join('\n')).toMatch(/scratch-sevenb-row on curl-dumbbell-under: not pairPanel/);
     const byte = copy2.replace('Hand: right and wrong', 'Hand: right and wronG');
-    expect((await B.pairPanelProblems(put(byte))).join('\n')).toMatch(/t-bar-row on curl-dumbbell-under: not pairPanel/);
+    expect((await B.pairPanelProblems(put(byte))).join('\n')).toMatch(/scratch-sevenb-row on curl-dumbbell-under: not pairPanel/);
   });
   it('a bad pair value in a layers config is refused by layersSpecOf, naming the id', () => {
     expect(() => node(tree, `
@@ -154,7 +154,7 @@ describe('7b-A2: handpairs.mjs pair-row checks', () => {
     expect(() => hp.pairRowCheck(row, 'curl-dumbbell-under', 'curl-dumbbell-under', 'none', page)).toThrow(/archetype 'none', but x.layers.json names pair/);
     expect(() => hp.pairRowCheck(row, undefined, undefined, 'none', page)).toThrow(/archetype 'none', but its card on x.layers.html holds a pair panel/);
     expect(() => hp.pairRowCheck(row, undefined, undefined, 'none', raw)).not.toThrow();
-    expect(() => hp.pairRowCheck({ ...row, id: 'lib_t_bar_row', chromeId: 't-bar-row' }, undefined, undefined, 'none', page)).toThrow(/holds a pair panel/);   // the namespaced copy
+    expect(() => hp.pairRowCheck({ ...row, id: 'lib_scratch_sevenb_row', chromeId: 'scratch-sevenb-row' }, undefined, undefined, 'none', page)).toThrow(/holds a pair panel/);   // the namespaced copy
   });
   it('D-LIB7b-ZOOMS: styleWithout drops exactly the named keys\' pairCss lines; an extra, a foreign or a changed .hx-hp- line is red', () => {
     const run = (mut: string) => node(tree, `
@@ -167,9 +167,9 @@ describe('7b-A2: handpairs.mjs pair-row checks', () => {
       console.log(styleWithout(style, rows().filter(r => r.batchFile === BATCH)) === styleWithout(golden, goldenRows()) ? 'EQUAL' : 'DIFFERENT');
     `).trim();
     expect(run('')).toBe('EQUAL');
-    expect(() => run("style = style.replace('.hx-hp-curl-dumbbell-under .zoom', '.hx-hp-curl-dumbbell-under .zoom{}\\n.hx-hp-curl-dumbbell-under .zoom');")).toThrow(/zooms: lib_scratch_pull_row, lib_t_bar_row: the page's .hx-hp-curl-dumbbell-under rules are not pairCss\(curl-dumbbell-under\) exactly/);
+    expect(() => run("style = style.replace('.hx-hp-curl-dumbbell-under .zoom', '.hx-hp-curl-dumbbell-under .zoom{}\\n.hx-hp-curl-dumbbell-under .zoom');")).toThrow(/zooms: lib_scratch_pull_row, lib_scratch_sevenb_row: the page's .hx-hp-curl-dumbbell-under rules are not pairCss\(curl-dumbbell-under\) exactly/);
     expect(run("style = style + '\\n.hx-hp-zz-none .zoom{color:red}';")).toBe('DIFFERENT');
-    expect(() => run("style = style.replace(/(\\.hx-hp-rope-push-neutral [^{]*\\{[^}]*?)(\\d)/, (m, a, d) => a + (d === '1' ? '2' : '1'));")).toThrow(/lib_smith_machine_shoulder_press: the page's .hx-hp-rope-push-neutral rules are not pairCss/);
+    expect(() => run("style = style.replace(/(\\.hx-hp-rope-push-neutral [^{]*\\{[^}]*?)(\\d)/, (m, a, d) => a + (d === '1' ? '2' : '1'));")).toThrow(/lib_scratch_sevenb_press: the page's .hx-hp-rope-push-neutral rules are not pairCss/);
   }, 120_000);
 });
 
@@ -181,7 +181,7 @@ describe('7b-A2 on a scratch tree: the real pipeline with the scratch rows shipp
       import { render } from './tools/plates/generate.mjs';
       const out = await render(), o = {};
       for (const [p, v] of out) { mkdirSync(dirname(p), { recursive: true }); writeFileSync(p, v.text); }   // the tree's generated files (D-LIB7b-TUPLES reads them)
-      for (const [p, v] of out) if (/zoom-(scratch-pull-row|t-bar-row|smith-machine-shoulder-press)\\.css$|handpair-/.test(p)) o[p] = { writers: v.writers, text: v.text };
+      for (const [p, v] of out) if (/zoom-(scratch-pull-row|scratch-sevenb-row|scratch-sevenb-press)\\.css$|handpair-/.test(p)) o[p] = { writers: v.writers, text: v.text };
       console.log(JSON.stringify(o));
     `, tree)).trim().split('\n').pop()!);
     // LIB-SHIP W3 (D-SHIP-A9 guard replacement): the tree's own shipped W3 pair rows write their 5 sub-key files beside the curl's and the scratch rows'
@@ -202,9 +202,9 @@ describe('D-LIB7b-TUPLES: the HT-6 twin expects the pages of the panel a keyed i
     const got = JSON.parse(node(tree, `
       import { sourceFacts } from './tools/plates/library/fidelity/tuples.mjs';
       const o = {};
-      for (const id of ['lib_scratch_pull_row', 'lib_t_bar_row', 'lib_smith_machine_shoulder_press', 'lib_lat_pulldown', 'lib_seated_cable_row']) o[id] = (await sourceFacts(id)).hand?.pages ?? null;
+      for (const id of ['lib_scratch_pull_row', 'lib_scratch_sevenb_row', 'lib_scratch_sevenb_press', 'lib_lat_pulldown', 'lib_seated_cable_row']) o[id] = (await sourceFacts(id)).hand?.pages ?? null;
       console.log(JSON.stringify(o));
     `).trim().split('\n').pop());
-    expect(got).toEqual({ lib_scratch_pull_row: 2, lib_t_bar_row: 2, lib_smith_machine_shoulder_press: 1, lib_lat_pulldown: 3, lib_seated_cable_row: 1 });
+    expect(got).toEqual({ lib_scratch_pull_row: 2, lib_scratch_sevenb_row: 2, lib_scratch_sevenb_press: 1, lib_lat_pulldown: 3, lib_seated_cable_row: 1 });
   }, 120_000);
 });
