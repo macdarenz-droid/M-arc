@@ -61,7 +61,11 @@ describe('F-ZOOM-NONE A2: textZoomRow, the zero-zoom guard', () => {
   it('a ruled zero-zoom row gives its entry; a row with posture zooms and no entry gives null; the real list is empty on main', () => {
     expect(ok()).toEqual(ENTRY);
     expect(Z.textZoomRow('lib_y', { ...SHEET, zooms: [{ key: 'back', kind: 'posture' }] }, CARD, {})).toBeNull();
-    expect(Z.readTextZooms()).toEqual({});
+    // LIB-SHIP W6 (#393 6653994390, D-SHIP-W6-ZOOMNONE): was toEqual({}) on main; the wave that ships a row adds its entry
+    expect(Z.readTextZooms()).toEqual({
+      lib_machine_pullover: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'pullover-pivot': 'pivot' } },
+      lib_smith_machine_shoulder_press: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'smith-ohp-bench': 'bench' } },
+    });
     expect(I.TEXT_ZOOMS).toBe(Z.TEXT_ZOOMS);
     expect([...Z.TEXT_ZOOM_RULINGS]).toEqual(['D-SHIP-TEXTZOOM']);
   });

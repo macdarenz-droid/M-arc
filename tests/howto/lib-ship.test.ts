@@ -510,8 +510,13 @@ describe('LIB-SHIP W6 D-SHIP-W6-BACKREACH: a shipped library row flagged back is
     const sheets = await Promise.all(lib.map(async (i: string) => (await content.loadContent(i)).content));
     expect(problems(sheets, applies)).toEqual([]);
   });
-  it('red: cable_chest_press (back, not in the 35) shipped', async () => {
+  it('the 3 W6 back ids are in the back box\'s appliesTo (RESEARCH-ROUTES-1 part 1, #398)', () => {
     const applies = json('docs/research/howto/shared/back-pain-box.json').appliesTo as string[];
+    expect(['cable_chest_press', 'smith_machine_shoulder_press', 'resistance_band_pull_apart'].filter(i => !applies.includes(i))).toEqual([]);
+  });
+  // was: red on the live appliesTo (35 ids, cable_chest_press not in it); #398 added it, so the red takes it out of the list
+  it('red: cable_chest_press (back) shipped with cable_chest_press not in appliesTo', async () => {
+    const applies = (json('docs/research/howto/shared/back-pain-box.json').appliesTo as string[]).filter(i => i !== 'cable_chest_press');
     const { content: c } = await content.loadContent('lib_cable_chest_press');
     expect(problems([c], applies)).toEqual(['lib_cable_chest_press: back flag outside the back box\'s appliesTo']);
   });
