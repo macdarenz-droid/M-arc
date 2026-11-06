@@ -161,7 +161,7 @@ const feel = {
       means: 'You are shrugging the shoulder as the arm rises.',
       fix: 'Keep your shoulder down as the arm rises.',
       claim: CL.c10 },
-    { key: 'above', where: 'Shoulder, at the top', at: { muscles: ['side_delts'] },
+    { key: 'above', where: 'Shoulder, arm above level', at: { muscles: ['side_delts'] },
       means: 'You are raising the arm above shoulder height.',
       fix: 'Stop when your arm is parallel with the floor.',
       zoom: 'clr-top-height', redFlag: 'shoulder', claim: CL.above },
@@ -185,9 +185,8 @@ const MISTAKES = [
     fix: 'Keep your shoulder down as the arm rises.' },
 ];
 const RISKS = [
-  { key: 'above', text: 'Shoulder: raises above shoulder height are linked with signs of shoulder pinching.', claim: CL.c19 },
-  { key: 'forward', text: 'Shoulder: some lifters felt pain raising straight sideways, and raised a little forward.', claim: CL.c20 },
-  { key: 'heavy', text: 'It is easy to pick a weight that is too heavy.', claim: CL.c14 },
+  { key: 'above', text: 'Raises above shoulder height are linked with signs of shoulder pinching.', claim: CL.c19 },
+  { key: 'forward', text: 'Raising straight out to the side hurts? Raise a little forward.', claim: CL.c20 },
 ];
 
 export default {
