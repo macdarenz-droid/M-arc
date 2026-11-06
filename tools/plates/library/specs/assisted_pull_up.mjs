@@ -24,11 +24,17 @@
 //    92 deg, the shins lie back along the pad, the feet hang off its rear edge.
 //  - The pad rises with the lifter on its lever; the pivot sits half-way between the top and hang lever heights, so the
 //    knees keep the same distance from the tower at the bottom and at the top.
-//  - Mistake (card plate.mistake, c8): the half hang. The lowering stops with the elbows about 105 deg bent, the pad
-//    part-way up. The trunk is the hang's (tilt 0, trunk 0), so it cannot read as a swing (c8); the knees sit 6.6 cm
-//    further from the tower only because the pad, mid-way on its lever arc, is further from the pivot line.
+//  - Mistake (card plate.mistake, c8): the half hang. The lowering stops with the elbows about 90 deg bent, the pad
+//    part-way up. The trunk is the hang's (tilt 0, trunk 0), so it cannot read as a swing (c8); the knees sit further
+//    from the tower only because the pad, mid-way on its lever arc, is further from the pivot line.
+//    LIB-PLATEFIX-3 item 2 (#384 6653062201 R5 [3,4,3]; ruled #405 6682844211): the elbow is 90 deg (was 106), the root
+//    and pad re-solved for it as above (root 1.1441 / -0.1155, pad top 0.6674), the IK pole [0.2, -1, 0.5] puts the
+//    fault elbow 21.3 px in front of the solid arm (was 14.9), and the whole bent arm (upper arm, elbow cap, forearm,
+//    fist) is drawn as its own red dashed outlines over the solid figure (bayesian_cable_curl's misArm form), so it no
+//    longer merges into the changed-parts outline. The fault wrist stays on the solid wrist: both hands hold the bar.
 import { assistMachine, KNEE_R, ASSIST_ITEMS } from '../eq/assistMachine.mjs';
 import { perItem } from '../eq/parts.mjs';
+import { bodyShapes, fk, normPose, resolve } from '../engine.mjs';
 
 const H = 1.75;
 const BAR = [0, 2.07, 0];
@@ -40,11 +46,31 @@ const grip = pole => ({ l: { at: [GX, BAR[1], BAR[2]], pole: [pole[0], pole[1], 
 
 // Pad-top heights per pose (m) and the roots solved onto them (knee joint KNEE_R * H over the pad top, 6 cm behind
 // the pad's front edge).
-export const PAD_TOP = { start: 1.0264, end: 0.4703, mistake: 0.7433 };
-const ROOT = { start: [0, 1.50, -0.0847], end: [0, 0.947, -0.0549], mistake: [0, 1.22, -0.1207] };
+export const PAD_TOP = { start: 1.0264, end: 0.4703, mistake: 0.6674 };
+const ROOT = { start: [0, 1.50, -0.0847], end: [0, 0.947, -0.0549], mistake: [0, 1.1441, -0.1155] };
 const start = { root: { at: ROOT.start, tilt: -4 }, trunk: -6, neck: -14, scap: { elev: -3, pro: -3 }, ...LEGS, reach: grip([0.3, -1, 0]) };
 const end = { root: { at: ROOT.end, tilt: 0 }, trunk: 0, scap: { elev: -1, pro: -2 }, ...LEGS, reach: grip([0.5, 0, 0.3]) };
-const misBody = { root: { at: ROOT.mistake, tilt: 0 }, trunk: 0, scap: { elev: 0, pro: -1 }, reach: grip([0.4, -1, 0.15]) };
+const misBody = { root: { at: ROOT.mistake, tilt: 0 }, trunk: 0, scap: { elev: 0, pro: -1 }, reach: grip([0.2, -1, 0.5]) };
+export const MIS_ELBOW = 90;   // deg, the half hang's elbow (R5 fix "elbow about 90°"; c8 gives no number: unsourced)
+
+// The faulty arm on top (bayesian_cable_curl's misArm, copied: D-LIB15-CLONE): dashed outlines of the bent upper arm,
+// elbow cap, forearm and fist, from the engine's own side-view shapes of the Mistake pose.
+const cr = (ps, k = 8) => {
+  const n = ps.length, g = i => ps[(i + n) % n], out = [];
+  for (let i = 0; i < n; i++) {
+    const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    for (let j = 0; j < k; j++) { const t = j / k, u = 1 - t;
+      out.push([0, 1].map(d => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d])); }
+  }
+  return out;
+};
+const MIS_ARM = (() => {
+  const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
+  const keys = ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'];
+  return bodyShapes(fk(resolve(normPose({ ...end, ...misBody }, bd), bd).q, bd), probe).filter(sh => keys.includes(sh.key))
+    .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
+})();
 
 // Machine: pad 32 cm long, 8 cm thick, on a 6 cm bracket; lever 62 cm, pivot half-way between the top and hang lever
 // heights; the cable leaves the lever 5 cm from the pivot.
@@ -77,8 +103,9 @@ export default {
   tempo: [{ phase: 'Lower', s: 3, move: true }, { phase: 'Pull', s: 2, move: true }, { phase: 'Hold', s: 1 }],
   mistake: {
     pose: misBody,
-    parts: ['torso', 'head', 'arm.r', 'leg.r', 'pad'],
+    parts: ['torso', 'head', 'leg.r', 'pad'],   // the arm is drawn whole by MIS_ARM below (item 2)
     guides: [
+      ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),
       // the missing range: from the half hang down to the straight-arm hang, behind the back
       { kind: 'arrow', from: { at: 'sacrum', pose: 'mistake', off: [-18, 0] }, to: { at: 'sacrum', pose: 'end', off: [-18, 0] } },
     ],
