@@ -478,11 +478,6 @@
         "label": "Straight line",
         "what": "Shoulders, hips and knees in a straight line at the top.",
         "claim": "c4"
-      },
-      {
-        "label": "Knees at 90",
-        "what": "Shin and thigh at roughly 90 degrees at the top.",
-        "claim": "c4"
       }
     ],
     "mistake": {
@@ -722,7 +717,8 @@
     "Shared card: floor-body (shared/floor-body.json) lists glute_bridge in appliesTo, but its gaps say lying face up has no shared checkpoint (\"They stay per exercise, as GA 3.2 says.\"). Nothing is taken from it; this card's checkpoints rest on its own claims.",
     "Arms: the bodyweight plate draws the arms straight by the sides on the floor (c1); the barbell version holds the bar (c14).",
     "Healthline's variations page gives one quick-pointer list for all bridge variations (c4, c12) and per-variation steps; only the shared pointers, the heel/toe contrast (c11) and the sets (c13) are used.",
-    "Healthline's \"If you feel your form suffering, take a break and recuperate so that you can regain your strength and perform it correctly.\" is a rest line, not a stop line for pain; no row uses it."
+    "Healthline's \"If you feel your form suffering, take a break and recuperate so that you can regain your strength and perform it correctly.\" is a rest line, not a stop line for pain; no row uses it.",
+    "RESEARCH-ROUTES-1 part 3 (LIB-PLATEFIX-3, #405 6684644686, 6684669717): the \"Knees at 90\" checkpoint is removed: it repeated the plate's knee measure, which stays (c4). No claim or quote text changes."
   ],
   "plateFacts": [
     {

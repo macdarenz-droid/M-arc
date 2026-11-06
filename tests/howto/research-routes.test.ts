@@ -63,9 +63,13 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
     expect(rows).toHaveLength(16);
     for (const r of rows) { expect(r.files[BOX]).toBe(sha(rd(BOX))); r.files[BOX] = 'X'; }
+    // F-SCRATCH-SYNTH (#397, D-SCRATCH-SYNTH-KEYIDX) re-pins hands/pairs.mjs in its 22 rows: each pins the current file, blanked too
+    const PAIRS = 'tools/plates/library/hands/pairs.mjs', pr = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => PAIRS in r.files);
+    expect(pr).toHaveLength(22);
+    for (const r of pr) { expect(r.files[PAIRS]).toBe(sha(rd(PAIRS))); r.files[PAIRS] = 'X'; }
     // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
     for (const r of Object.values<any>(m.rows)) r.files['tools/plates/library/render/closeup/zoom.mjs'] = 'X';
-    // main e623d3ef's MANIFEST.json with the same one entry blanked (was f0ec7bd5… on main 8bb433bd; re-measure if a later re-pin merges first)
-    expect(sha(JSON.stringify(m))).toBe('f3b939dfb7ee3808d209a17805fd9041833e2e4edd976bf3c520d59d89dcc2b9');   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was daf6779b…2e69, now with zoom.mjs's key also blanked
+    // main e623d3ef's MANIFEST.json with the same entries blanked (was f0ec7bd5… on main 8bb433bd, daf6779b… with BOX alone; re-measure if a later re-pin merges first)
+    expect(sha(JSON.stringify(m))).toBe('3f504bf3ce8cab6d9b93bded5068e7b8af75e177867f8f37d15e44f78df44429');   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was a97a39e2…386f (research-routes-3), now with zoom.mjs's key also blanked
   });
 });
