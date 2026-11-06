@@ -58,8 +58,40 @@ describe('RESEARCH-ROUTES-1 P1-b/P1-c: the ruled fields left inherit[] (F-W4-INH
 // The D-CROP-PIN form (#380 6627881461): MANIFEST.json pins back-pain-box.json in 16 rows (13 before main e623d3ef), so this lane re-pins exactly
 // that one key; every other entry equals main e623d3ef.
 describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-box.json', () => {
+  const w3Read = (p: string) => rd(p);
+  // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows (the 9 shipped and the 4 staged
+  // at approved-plate), and W3 PANEL FIX 2 (f561ff71, #384 6649416891) moves crop.mjs and zoom-css.mjs in every row. Each
+  // W3 row must be there and each moved key must pin its current file; with the rows removed and main 5023f5c6's sha put
+  // back (`keep`: keys the caller checks and blanks itself), every other entry is untouched for the checks below
+  const W3_ROWS = ['assisted_pull_up', 'chest_supported_row', 'chin_up', 'close_grip_pulldown', 'hanging_knee_raise', 'horizontal_leg_press',
+    'incline_machine_press', 'inverted_row', 'resistance_band_row', 'shoulder_press', 'single_arm_lat_pulldown', 'straight_arm_pulldown',
+    'underhand_lat_pulldown'].map(id => `lib_${id}`);
+  const W3_MOVED: Record<string, string> = {
+    'tools/plates/library/render/closeup/crop.mjs': 'df61d973c2933021554e3d89c9834d01f1f171c35dd10d5cd1c7a11b946985d9',
+    'tools/plates/library/render/closeup/zoom-css.mjs': '37836f22478605ef8162af3c05e515385d03034d090279b6c91f4248adce2fdf',
+    // D-SHIP-W3-LAYERSZOOM (#384 6686326673): build-layers-page.mjs applies applyZooms (the other MANIFEST tests blank its key themselves)
+    'tools/plates/library/build-layers-page.mjs': '2d123a0121e145bfd2c3f2d366cfcfb93fd1b55087f96cea28b7a2cefbeea4fb',
+  };
+  const lessW3 = (m: any, keep: string[] = []) => {
+    for (const id of W3_ROWS) { expect(Object.keys(m.rows), id).toContain(id); delete m.rows[id]; }
+    for (const [id, r] of Object.entries<any>(m.rows)) for (const [k, main] of Object.entries(W3_MOVED)) {
+      if (keep.includes(k)) continue;
+      expect(r.files[k], `${id} ${k}`).toBe(sha(w3Read(k)));
+      r.files[k] = main;
+    }
+    return m;
+  };
+  it('LIB-SHIP W3 mutations: a W3 row missing, a moved key not at its current file, and a non-W3 row changed are red', () => {
+    const m = () => JSON.parse(w3Read('tools/plates/library/MANIFEST.json'));
+    const a = m(); delete a.rows.lib_chin_up;
+    expect(() => lessW3(a)).toThrow(/lib_chin_up/);
+    const b = m(); b.rows.lib_plank.files['tools/plates/library/render/closeup/zoom-css.mjs'] = 'f'.repeat(64);
+    expect(() => lessW3(b)).toThrow(/lib_plank/);
+    const c = m(); c.rows.lib_plank.entry = 'f'.repeat(64);
+    expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
+  });
   it('every row that lists it pins the current file, and every other entry equals main e623d3ef', () => {
-    const m = JSON.parse(rd('tools/plates/library/MANIFEST.json'));
+    const m = lessW3(JSON.parse(rd('tools/plates/library/MANIFEST.json')));   // LIB-SHIP W3
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
     expect(rows).toHaveLength(16);
     for (const r of rows) { expect(r.files[BOX]).toBe(sha(rd(BOX))); r.files[BOX] = 'X'; }

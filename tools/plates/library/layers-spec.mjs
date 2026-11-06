@@ -46,7 +46,8 @@ export const NO_ZOOM_LIST = 'tools/plates/library/hands/no-zoom.json';
 
 export function layersSpecOf(batchFile, { stageDir, root = ROOT, all = rows(root) } = {}) {
   if (!stageDir) throw new Error('layers-spec: no stageDir');
-  const batchRows = all.filter(r => r.batchFile === batchFile);
+  // D-SHIP-LEFTOUT-CLOSURE (#383 6632352291): a `left-out:` row (no page, maybe no spec) is never staged.
+  const batchRows = all.filter(r => r.batchFile === batchFile && !/^left-out:/.test(r.stage));
   if (!batchRows.length) throw new Error(`layers-spec: ${batchFile} has no rows`);
   const pages = batchRows[0].pages;
   if (!pages?.layersConfig) throw new Error(`layers-spec: ${batchFile}: no pages.layersConfig`);

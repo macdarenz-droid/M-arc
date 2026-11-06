@@ -17,6 +17,7 @@ import { PLATE_CSS } from '../layers/engine/index.mjs';   // LIB-7b
 import { HAND_CSS } from '../layers/engine/hand.mjs';   // LIB-7b
 import { FEEL_CSS } from '../layers/engine/feelmap.mjs';   // LIB-7b
 import { VENDOR_STRIP, NOSECS_STRIP } from './strip/tempo-strip.mjs';   // LIB-STRIP
+import { applyZooms } from './zoom/inline.mjs';   // D-SHIP-W3-LAYERSZOOM: the plates page's zoom circle
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const RENDERER_URL = pathToFileURL(join(HERE, 'render', 'closeups.mjs')).href;
@@ -178,7 +179,11 @@ export async function buildLayersPage(spec) {
     writeFileSync(hl, patchHowtoLayers(readFileSync(hl, 'utf8'), plan));
     writeFileSync(bp, patchBuildPage(readFileSync(bp, 'utf8'), spec));
     await runNode(mirror, 'artifact/build-page.mjs');
-    const page = readFileSync(join(mirror, 'artifact', 'technical-plates.html'));
+    // D-SHIP-W3-LAYERSZOOM (#384 6686326673): the plates page draws a spec's opt-in zoom circle (build-page.mjs applyZooms),
+    // so the layers page, which draws the same plates, applies the same step to the mirror's specs; no zoom spec: the same bytes
+    const specs = Object.fromEntries(Object.keys(spec.files ?? {}).map(rel => rel.match(/^exercises\/([a-z0-9_]+)\.mjs$/)?.[1]).filter(Boolean)
+      .map(id => [id, join(mirror, 'exercises', `${id}.mjs`)]));
+    const page = await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs);
     return pairRowsOf(spec).length ? Buffer.from(await withPairPanels(page.toString('utf8'), spec)) : page;   // LIB-7b
   } finally { cleanupMirror(mirror); }
 }
