@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=f0638bd8014fd9e1d11f16d6e9cdea56f047ebb152732c322c8a61af0a570362
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=03ca323a4a7f2c3ea6b3217d91b1a11585dd760b3e16074f248b0e559b543d0d
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_upright_row",
   name: "Upright Row",
-  hashes: { inputsSha256: "f0638bd8014fd9e1d11f16d6e9cdea56f047ebb152732c322c8a61af0a570362", golden: "2b666e31dc19be0f4a7524d22836ddde13f4b4cee35b08a883098f01e78d15fd" },
+  hashes: { inputsSha256: "03ca323a4a7f2c3ea6b3217d91b1a11585dd760b3e16074f248b0e559b543d0d", golden: "2b666e31dc19be0f4a7524d22836ddde13f4b4cee35b08a883098f01e78d15fd" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

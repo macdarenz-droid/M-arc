@@ -77,6 +77,22 @@
       "supersedes": 2,
       "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-LIB-O5 point 4): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow pain parts on every front feel map; nothing else on the page moves except the shimmer band of a map whose main muscles include front_delts. Built twice, equal sha256.",
       "prev": "0b659af46e873d927980bb2c68ec683780ace4d1056bcf89a18f6f3114fae225"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B2",
+      "ids": [
+        "lib_crunch"
+      ],
+      "pageSha256": "82c31f8ae6a6fcf9409e1657d8eea7e0a231742ff216913e8b65205c871567ec",
+      "bytes": 265698,
+      "approvedBy": "supervisor",
+      "decision": "D-BODYMAP-LIB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/404#issuecomment-6682755661 @ fe95a286d150daa22c50928e5fec42e0339afe9b",
+      "date": "2026-11-06",
+      "supersedes": 3,
+      "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-LIB-O5 point 4): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow pain parts on every front feel map and the back-of-knee pain parts (knee-pit-*, lying_leg_curl, #394 6682923012) on every back feel map; nothing else on the page moves except the shimmer band of a map whose main muscles include front_delts. Built twice, equal sha256.",
+      "prev": "74adf525e0a668b6789e393b7fa4ac5b96b1f16b2d2eca59055ffa64e20ee915"
     }
   ]
 }
