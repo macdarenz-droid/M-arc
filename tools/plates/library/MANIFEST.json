@@ -2985,7 +2985,7 @@
    }
   },
   "lib_underhand_lat_pulldown": {
-   "entry": "c45b1488d61529f4fc5f221b86aaf7798d5902fd9e7090d7d3050023582b6657",
+   "entry": "2d267f6812d93cf00b1694b70a65a0381e067f4f0c520ccaad6b39e2697d3fb3",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
