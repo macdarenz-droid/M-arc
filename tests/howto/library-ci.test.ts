@@ -637,16 +637,18 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
   // LIB-SHIP W2 (ruling 3, D-SHIP-W2-STAMP, #379 6636105974): pilot A's layers page is re-pinned for the 7 W2 ids it adds
   // (it supersedes the W1 pin), and pilot B's layers page (cable_fly, push_up) and PILOT-B2's page and layers page
   // (D-LIB-PILOTB2, crunch held at approved-plate) are added; every other entry is unchanged
+  // F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, #404 6682755661): the three layers pages are re-pinned in place for the library
+  // body-map fix; every other entry is unchanged
   it('the pinned-page list is pilot A\'s (page and layers page), PILOT-A2\'s, PILOT-A3\'s, pilot B\'s (page and layers page) and PILOT-B2\'s (page and layers page) on this tree and sha256 is the pin hash', () => {
     expect(pinnedPages(ROOT)).toEqual({ pages: [
       { id: 'tests/howto/golden/library/pilot-a.json#page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'page', pageSha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 },
-      { id: 'tests/howto/golden/library/pilot-a.json#layers-page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'layers-page', pageSha256: 'afd5d4136ee57fd74f831ae0ad35d09e4708d747fcf3d9e266c10ee39f65e3e1', bytes: 1375425 },
+      { id: 'tests/howto/golden/library/pilot-a.json#layers-page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'layers-page', pageSha256: '11a93d164777c2b0ae47f72d391573aed38a209d63b03bad72e3e30004ff5ff9', bytes: 1378217 },
       { id: 'tests/howto/golden/library/pilot-a2.json#page', file: 'tests/howto/golden/library/pilot-a2.json', kind: 'page', pageSha256: '3e225bc12531e6c395e5a532a77736ebaeb9cdc276c55709d8ac4c73ef78bb0b', bytes: 280533 },
       { id: 'tests/howto/golden/library/pilot-a3.json#page', file: 'tests/howto/golden/library/pilot-a3.json', kind: 'page', pageSha256: 'bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878', bytes: 465732 },
       { id: 'tests/howto/golden/library/pilot-b.json#page', file: 'tests/howto/golden/library/pilot-b.json', kind: 'page', pageSha256: 'ff3e017c98f73b6d049808a6ffea057a7fa350eed764d9ceedb9a582fa22583f', bytes: 409765 },
-      { id: 'tests/howto/golden/library/pilot-b.json#layers-page', file: 'tests/howto/golden/library/pilot-b.json', kind: 'layers-page', pageSha256: 'ae7fd1553f1a3ffe132b0e509eacae06cac42ef6f2ea18d69b4f5cd5ad39275e', bytes: 425305 },
+      { id: 'tests/howto/golden/library/pilot-b.json#layers-page', file: 'tests/howto/golden/library/pilot-b.json', kind: 'layers-page', pageSha256: 'a6e41569876766ab7982f51fb7321eeeb93610e25d86ca8664c106152567bfb6', bytes: 426121 },
       { id: 'tests/howto/golden/library/pilot-b2.json#page', file: 'tests/howto/golden/library/pilot-b2.json', kind: 'page', pageSha256: 'cb06cf9c6aeffe863b6c12fc1382b81021a34b8bbc65d5b54f31f1180b2924f4', bytes: 190740 },
-      { id: 'tests/howto/golden/library/pilot-b2.json#layers-page', file: 'tests/howto/golden/library/pilot-b2.json', kind: 'layers-page', pageSha256: '7c66d68e69d3d1c8c3e0fc6b5ec65fb164a9db8596556a092fcf797034e1f112', bytes: 265290 },
+      { id: 'tests/howto/golden/library/pilot-b2.json#layers-page', file: 'tests/howto/golden/library/pilot-b2.json', kind: 'layers-page', pageSha256: '82c31f8ae6a6fcf9409e1657d8eea7e0a231742ff216913e8b65205c871567ec', bytes: 265698 },
     ], unknown: [] });
     expect(sha256('')).toHaveLength(64);
   });
