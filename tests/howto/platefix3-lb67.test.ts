@@ -6,7 +6,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
-let plate: any, body: any, eq: any, qaEng: any, mp: any, mpMod: any, rdf: any, htl: any, sms: any;
+let plate: any, body: any, eq: any, qaEng: any, mp: any, mpMod: any, rdf: any, htl: any, sms: any, lth: any;
 beforeAll(async () => {
   [plate, body, eq, qaEng] = await Promise.all(['../vendor/engine/plate.mjs', '../vendor/engine/body.mjs', '../vendor/engine/equipment.mjs', 'qa/engine.mjs']
     .map(f => import(/* @vite-ignore */ lib(f))));
@@ -14,6 +14,7 @@ beforeAll(async () => {
   rdf = (await import(/* @vite-ignore */ lib('specs/rear_delt_fly.mjs'))).default;
   htl = (await import(/* @vite-ignore */ lib('specs/high_to_low_cable_fly.mjs'))).default;
   sms = (await import(/* @vite-ignore */ lib('specs/smith_machine_squat.mjs'))).default;
+  lth = (await import(/* @vite-ignore */ lib('specs/low_to_high_cable_fly.mjs'))).default;
 });
 const Eng = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body });
 const H = 1.75, B = { height: H };
@@ -91,5 +92,37 @@ describe('PF3 W6 high_to_low_cable_fly: the Trace drops first, then sweeps in (c
 describe('PF3 W6 smith_machine_squat: the knees tell names no landmark (c3)', () => {
   it('the knees tell cue is "Your knees travel too far forward."', () => {
     expect(sms.mistake.tells.find((t: any) => t.key === 'knees').cue).toBe('Your knees travel too far forward.');
+  });
+});
+
+// W6b: low_to_high_cable_fly (#393 6683164302 L5 "the tangled press arms and crossed hands"; ruled #405 6683319630)
+describe('PF3 W6b low_to_high_cable_fly: the press hands stay apart, clear of the solid meeting hands (c11)', () => {
+  const pxOf = (spec: any) => {
+    const r = plate.renderPlate(spec, { id: 'pf3' }), cam = qaEng.cameraOf(spec, r.report), L = qaEng.poseLandmarks(Eng(), spec);
+    return (pose: string, k: string) => cam.P(L.lm[pose][k]) as number[];
+  };
+  const d = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!);
+  it('the two Mistake hands are at least 40 px apart (main 12.4: they met over the solid hands)', () => {
+    const P = pxOf(lth);
+    expect(d(P('mistake', 'grip.r'), P('mistake', 'grip.l'))).toBeGreaterThanOrEqual(40);
+  });
+  it('each Mistake hand is at least 15 px from both solid hands (main 0.0: on top of them)', () => {
+    const P = pxOf(lth);
+    for (const s of ['r', 'l']) for (const t of ['r', 'l']) expect(d(P('mistake', `grip.${s}`), P('end', `grip.${t}`)), `${s}->${t}`).toBeGreaterThanOrEqual(15);
+  });
+  it('the press is kept: elbows at 90 deg (+-1), below the end elbows by at least 15 px', () => {
+    const r = plate.renderPlate(lth, { id: 'pf3' }), L = qaEng.poseLandmarks(Eng(), lth), P = pxOf(lth);
+    void r;
+    for (const s of ['r', 'l']) {
+      expect(Math.abs(L.q.mistake.elbow[s] - 90), s).toBeLessThanOrEqual(1);
+      expect(P('mistake', `elbow.${s}`)[1]! - P('end', `elbow.${s}`)[1]!, s).toBeGreaterThanOrEqual(15);
+    }
+  });
+  it('mutation: hands meeting again (the old -CLOSE_GAP grip) is red on the first block', () => {
+    const m = lth.mistake.pose, g = m.reach.r.at, gap = 0.05, sh = Math.abs(g[0]);
+    void sh;
+    const old = { ...lth, mistake: { ...lth.mistake, pose: { reach: { r: { ...m.reach.r, at: [-gap, g[1], g[2]] }, l: { ...m.reach.l, at: [gap, g[1], g[2]] } } } } };
+    const P = pxOf(old);
+    expect(d(P('mistake', 'grip.r'), P('mistake', 'grip.l'))).toBeLessThan(40);
   });
 });
