@@ -9519,7 +9519,7 @@ if (gate.runs('LIB-ZOOM'))
   const mirror = makeMirror();
   try {
     const E = await loadEngine(mirror), env = loadPins().envelope;
-    const c = await candidateOf('lib_horizontal_leg_press', { all, platesHtml: html, engine: E, authoring: true });
+    const c = await candidateOf('lib_horizontal_leg_press', { all, platesHtml: html, engine: E });   // D-SHIP-W3-GATEZOOM (#384 6684076429): shipped, so the pinned candidate (authoring QA is refused at shipped)
     if (!c.plate.zoom?.mistake) errors.push(`${tag}: horizontal_leg_press has no Mistake zoom on its page`);
     const h5 = async css => (await browserResults(browser, html, [c], E, env, { widths: [390], css })).get(c.id).H5.map(p => p.key);
     const clean = await h5(null), planted = await h5('.plate .pz-ring { stroke: var(--surface-2); }');
