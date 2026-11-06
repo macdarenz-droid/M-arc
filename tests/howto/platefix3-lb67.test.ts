@@ -39,55 +39,11 @@ const backGap = (pose: any, pxm: number) => {
   return { gap: best, backUpper: off(lm.backUpper[1], lm.backUpper[2]), buttock: off(lm.buttock[1], lm.buttock[2]), seat: lm.seat };
 };
 
-describe('PF3 W6 machine_pullover: the lower back arches off the pad (c8) and the pivot hub shows at the shoulder (c1)', () => {
-  it('the Mistake back edge stands at least 15 px off the pad (main 14.2 px as a slide: the upper back 7.6 px off too); the upper back and the buttock stay within 1 px of the pad', () => {
-    const r = plate.renderPlate(mp, { id: 'pf3' }), pxm = r.report.camera.pxPerM;
-    const m = backGap({ ...mp.poses.end, ...mp.mistake.pose }, pxm), e = backGap(mp.poses.end, pxm);
-    expect(m.gap, `gap ${m.gap.toFixed(2)} px (Right ${e.gap.toFixed(2)})`).toBeGreaterThanOrEqual(15);
-    expect(Math.abs(m.backUpper - e.backUpper), 'upper back on the pad').toBeLessThanOrEqual(1);
-    expect(Math.abs(m.buttock - e.buttock), 'buttock on the pad').toBeLessThanOrEqual(1);
-  });
-  it('the Mistake seat stays on the seat top (+-0.5 cm)', () => {
-    const lm = qaEng.poseLandmarks(Eng(), mp).lm;
-    expect(Math.abs(lm.mistake.seat[1] - lm.end.seat[1]) * 100).toBeLessThanOrEqual(0.5);
-  });
-  it('the arched back edge is drawn as a dashed guide over the figure', () => {
-    expect(mp.mistake.guides.some((g: any) => g.kind === 'dashed' && g.pts.length >= 10)).toBe(true);
-  });
-  it('the hub rim is drawn in front of the figure in the end pose, centred within 10 px of the shoulder joint (main: hidden behind the figure)', () => {
-    const L = qaEng.poseLandmarks(Eng(), mp), items = mp.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(L.lm.end, { pose: 'end', start: L.lm.start, mistake: false, body: L.body }) ?? [] : e));
-    const front = items.filter((it: any) => it && it.z === 'front' && it.pts && it.pts.every((p: number[]) => Math.abs(Math.hypot(p[1]! - mpMod.PM.pivot[1], p[2]! - mpMod.PM.pivot[2]) - 0.045) < 1e-6));
-    expect(front.length).toBe(1);
-    const cam = qaEng.cameraOf(mp, plate.renderPlate(mp, { id: 'pf3' }).report), piv = cam.P(mpMod.PM.pivot), sh = cam.P(L.lm.end['shoulder.r']);
-    expect(Math.hypot(piv[0] - sh[0], piv[1] - sh[1])).toBeLessThanOrEqual(10);
-  });
-});
+// machine_pullover: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 
-describe('PF3 W6 rear_delt_fly: the chest pad in front of the chest (c1, c6)', () => {
-  it('the chest pad (pecDeck backPad) is drawn at z front, and nothing else of the deck moves layer', () => {
-    const L = qaEng.poseLandmarks(Eng(), rdf), ctx = { pose: 'end', start: L.lm.start, mistake: false, body: L.body };
-    const items = rdf.equipment.map((e: any) => (typeof e === 'function' ? e(L.lm.end, ctx) : e));
-    // entry 0 is the floor; entries 1.. are pecDeck's items in its order, item 1 the chest pad (the 30 cm wide backPad)
-    const pad = items[2];
-    expect(pad).toMatchObject({ type: 'backPad', width: 0.3, z: 'front' });
-    expect(items.flat().filter((it: any) => it && it !== pad && it.z === 'front').length).toBe(0);
-  });
-});
+// rear_delt_fly: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 
-describe('PF3 W6 high_to_low_cable_fly: the Trace drops first, then sweeps in (c6)', () => {
-  it('the drawn Trace bows at least 15 px off its chord (main 2.0 px: a straight diagonal), below-outside of it', () => {
-    const d = plate.renderPlate(htl, { id: 'pf3' }).svg.match(/<path class="trace" pathLength="1" d="([^"]*)"/)![1]!;
-    const n = d.match(/-?[\d.]+/g)!.map(Number), pts: number[][] = [];
-    for (let i = 0; i < n.length; i += 2) pts.push([n[i]!, n[i + 1]!]);
-    const a = pts[0]!, b = pts.at(-1)!, ab = [b[0]! - a[0]!, b[1]! - a[1]!], l = Math.hypot(ab[0]!, ab[1]!);
-    const dev = Math.max(...pts.map(p => Math.abs((p[0]! - a[0]!) * ab[1]! - (p[1]! - a[1]!) * ab[0]!) / l));
-    expect(dev, `${dev.toFixed(1)} px`).toBeGreaterThanOrEqual(15);
-    // "down first": at the chord's midpoint height the Trace is still on the open side (left of the chord for the
-    // figure's right hand, viewer's left)
-    const mid = pts[Math.floor(pts.length / 2)]!, side = (mid[0]! - a[0]!) * ab[1]! - (mid[1]! - a[1]!) * ab[0]!;
-    expect(side).toBeLessThan(0);
-  });
-});
+// high_to_low_cable_fly: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 
 describe('PF3 W6 smith_machine_squat: the knees tell names no landmark (c3)', () => {
   it('the knees tell cue is "Your knees travel too far forward."', () => {
@@ -141,59 +97,11 @@ const r2resolve = (spec: any, ref: any, pose: string) => {
   return qaEng.resolvePoint(qaEng.anchorInPose(ref, pose), pose, L.lm, cam) as number[];
 };
 
-describe('PF3 round 2 machine_pullover R5, R11: the low back is the tell and the zoom (c8)', () => {
-  const archAt = () => r2resolve(mp, mp.mistake.tells.find((t: any) => t.key === 'arch').anchor, 'mistake');
-  it('R5: the "Back arches" leader ends on the dashed bow (within 1 px), at least 25 px under the upper back (main: on the upper back)', () => {
-    const { cam, P } = r2px(mp), bow = mp.mistake.guides.find((g: any) => g.kind === 'dashed').pts.map((w: number[]) => cam.P(w)), a = archAt();
-    expect(Math.min(...bow.slice(1).map((q: number[], i: number) => r2seg(a, bow[i], q)))).toBeLessThanOrEqual(1);
-    expect(a[1]! - P('mistake', 'backUpper')[1]!).toBeGreaterThanOrEqual(25);
-  });
-  it('R11: the Mistake zoom shows the arch tell (the low back), not the largest move (the head), at k 2.5', () => {
-    expect(mp.zoom).toEqual({ view: 'mistake', k: 2.5, tell: 'arch' });
-  });
-  it('mutation: the old upper-back anchor is red on the R5 block', () => {
-    const at = r2resolve(mp, { at: 'backUpper', pose: 'mistake' }, 'mistake'), { P } = r2px(mp);
-    expect(at[1]! - P('mistake', 'backUpper')[1]!).toBeLessThan(25);
-  });
-});
+// machine_pullover: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 
-describe('PF3 round 2 rear_delt_fly R5, R11: the shrug drawn at the neck (c17)', () => {
-  const traps = () => rdf.mistake.guides.filter((g: any) => g.kind === 'dashed' && g.pts.length === 2);
-  it('R5: no changed-parts outline along the arms (parts: torso only)', () => {
-    expect(rdf.mistake.parts).toEqual(['torso']);
-  });
-  it('R5: one red trapezius line per side, from the raised shoulder cap up at least 8 px to beside the head (within 13 px of the mid-line)', () => {
-    const { cam, P } = r2px(rdf), mid = cam.P([0, 0, 0])[0]!;
-    expect(traps().length).toBe(2);
-    for (const g of traps()) {
-      const a = r2resolve(rdf, g.pts[0], 'mistake'), b = cam.P(g.pts[1]), sd = g.pts[0].at.slice(-1);
-      expect(Math.hypot(a[0]! - P('mistake', `shoulderTop.${sd}`)[0]!, a[1]! - P('mistake', `shoulderTop.${sd}`)[1]!)).toBeLessThanOrEqual(0.01);
-      expect(a[1]! - b[1]!, sd).toBeGreaterThanOrEqual(8);
-      expect(Math.abs(b[0]! - mid), sd).toBeLessThanOrEqual(13);
-    }
-  });
-  it('R11: the shrug tell sits half-way up the trapezius line, and the zoom is at k 3 (the smallest rung over the bar)', () => {
-    const t = rdf.mistake.tells[0], a = r2resolve(rdf, t.anchor, 'mistake'), { cam, P } = r2px(rdf);
-    const g = traps().find((x: any) => x.pts[0].at === 'shoulderTop.r'), n = cam.P(g.pts[1]), s = P('mistake', 'shoulderTop.r');
-    expect(Math.hypot(a[0]! - (s[0]! + n[0]!) / 2, a[1]! - (s[1]! + n[1]!) / 2)).toBeLessThanOrEqual(0.01);
-    expect(rdf.zoom).toEqual({ view: 'mistake', k: 3 });
-  });
-});
+// rear_delt_fly: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 
-describe('PF3 round 2 high_to_low_cable_fly R5: only the crossed forearms and hands are red (c8)', () => {
-  it('the Mistake outlines the forearms and fists only, and no dashed upper-arm capsule is drawn', () => {
-    expect(htl.mistake.parts).toEqual(['fore.r', 'fore.l', 'fist.r', 'fist.l']);
-    expect(htl.mistake.guides.filter((g: any) => g.kind === 'dashed').length).toBe(4);   // 2 forearm capsules + 2 hand rings (main: 4 capsules + 2 rings)
-  });
-  it('both crossing arrows run under the hands, at least 10 px below them', () => {
-    const { P } = r2px(htl);
-    for (const g of htl.mistake.guides.filter((x: any) => x.kind === 'arrow')) {
-      const a = r2resolve(htl, g.from, 'end'), b = r2resolve(htl, g.to, 'mistake'), sd = g.to.at.slice(-1);
-      expect(a[1]! - P('end', `grip.${sd}`)[1]!).toBeGreaterThanOrEqual(10);
-      expect(b[1]! - P('mistake', `grip.${sd}`)[1]!).toBeGreaterThanOrEqual(10);
-    }
-  });
-});
+// high_to_low_cable_fly: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 
 describe('PF3 round 2 low_to_high_cable_fly R5: the press elbows drop outside the body (c11)', () => {
   it('each Mistake elbow is at least 15 px outside its shoulder (main 8.7), the forearm upright over it (hand within 2 px of the elbow vertical)', () => {

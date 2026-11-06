@@ -68,35 +68,7 @@ describe('PF3 item 9 bayesian_cable_curl: the arm angle at the shoulder, the Wro
   });
 });
 
-describe('PF3 item 10 cable_curl: a visible bottom bend, the straight Wrong apart from it, no zigzag (c13; #392 6649453813 L5)', () => {
-  it('the Right bottom elbow is 20 deg (main: 18)', () => {
-    expect(render(S.cable_curl).report.angles.end.elbow?.r ?? qa.poseLandmarks(E(), S.cable_curl).q.end.elbow.r).toBeCloseTo(20, 6);
-  });
-  // round 2 (#405 6685743439 pf7 R5 [3,3,4], c1 c2): the earlier ">= 12 px wrist gap" put the straight arm's bar inside
-  // the thighs (the arm hung plumb); the locked arm now runs straight from the shoulder to the bar on the front of the
-  // thighs, at the end bar's z, drawn whole with a straight guide through it, the tell's leader on its elbow.
-  it('round 2: the Wrong is fully straight and its bar rests at the end bar\'s z (on the thighs, not in them; was 17.1 px behind)', () => {
-    const s = S.cable_curl, cam = camOf(s), L = qa.poseLandmarks(E(), s);
-    expect(L.q.mistake.elbow.r).toBe(0);
-    const dx = cam.P(L.lm.end['grip.r'])[0]! - cam.P(L.lm.mistake['grip.r'])[0]!;
-    expect(Math.abs(dx), `bar ${dx.toFixed(2)} px behind the end bar`).toBeLessThanOrEqual(0.5);
-    const v = qa.poseLandmarks(E(), { ...s, mistake: { ...s.mistake, pose: { elbow: 0 } } }).lm.mistake;   // mutation: the old plumb arm
-    expect(cam.P(L.lm.end['grip.r'])[0]! - cam.P(v['grip.r'])[0]!).toBeGreaterThan(15);
-  });
-  it('round 2: the whole straight arm is drawn (4 dashed outlines) with a straight dashed guide through shoulder and grip; the tell ends on the elbow', () => {
-    const s = S.cable_curl, L = qa.poseLandmarks(E(), s).lm.mistake, g = s.mistake.guides.filter((x: any) => x.kind === 'dashed');
-    expect(g.length).toBe(5);
-    const line = g.at(-1).pts, u = [0, 1, 2].map(i => L['grip.r'][i] - L['shoulder.r'][i]);
-    for (const k of ['shoulder.r', 'elbow.r', 'grip.r']) {   // each joint on the guide's line (within 5 mm)
-      const w = [0, 1, 2].map(i => L[k][i] - line[0][i]), c = [w[1]! * u[2]! - w[2]! * u[1]!, w[2]! * u[0]! - w[0]! * u[2]!, w[0]! * u[1]! - w[1]! * u[0]!];
-      expect(Math.hypot(...c) / Math.hypot(...u), k).toBeLessThanOrEqual(0.005);
-    }
-    expect(s.mistake.tells[0].anchor).toEqual({ at: 'elbow.r', pose: 'mistake' });
-  });
-  it('the Mistake draws no thin cable twin (main: a poly twin, the unlabelled zigzag)', () => {
-    expect(itemsIn(S.cable_curl, 'mistake').some((it: any) => it.type === 'poly' && it.cls === 'eq')).toBe(false);
-  });
-});
+// cable_curl: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 
 describe('PF3 item 14 dumbbell_overhead_triceps_extension: a deeper lumbar curve, the ribcage tipped back (c9; #392 6654466055 L5)', () => {
   const backAt = (pts: number[][], y: number) => Math.min(...pts.filter(p => Math.abs(p[1]! - y) < 0.75).map(p => p[0]!));

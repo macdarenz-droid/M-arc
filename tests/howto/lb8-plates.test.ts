@@ -4052,7 +4052,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
     };
     it('no solid red part within 6 px of the solid end figure (the lifted sole is a dashed guide)', () => {
       expect(clearance(s())).toEqual([]);
-      expect(s().mistake.guides.map((g: any) => g.kind)).toEqual(['dashed', 'dashed', 'arrow']);   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was ['dashed'] (the lifted sole), now the shank and foot outlines and the heel arrow, the arrow held >= 6 px clear by the line above
+      expect(s().mistake.guides.map((g: any) => g.kind)).toEqual(['dashed']);
     });
     it('mutation: an arrow from the end heel to the Mistake heel (inside the figure) is red', () => {
       const guides = [...s().mistake.guides, { kind: 'arrow', from: { at: 'heel.r', pose: 'end' }, to: { at: 'heel.r', pose: 'mistake' } }];

@@ -35,12 +35,7 @@ describe('PF3 W7 copy (c5; the second farmer tell)', () => {
   });
 });
 
-describe('PF3 W7 burpee copy (c2)', () => {
-  it('the alt says shoulder-width apart (c2), not "under the shoulders"', () => {
-    expect(S.burpee.alt).toMatch(/shoulder-width apart/);
-    expect(S.burpee.alt).not.toMatch(/under the shoulders/);
-  });
-});
+// burpee: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 
 describe('PF3 W7 jump_rope: the too-high jump, raised and clear (c9, L5; round 2 R5)', () => {
   // round 2 (#405 6685743439 jump_rope R5 c2 c3): the red figure is the airborne body raised unchanged (was tucked 60 deg)
@@ -66,15 +61,7 @@ describe('PF3 round 2 (#405 6685743439): sled_pull R7 and burpee R1/R5/R11', () 
       expect(Math.max(...xs), String(mistake)).toBeLessThanOrEqual(348);
     }
   });
-  it('burpee: the landing knee is bent 25 deg (+-1; was 15) and the stiff knee stands >= 10 px from it; no solid axis line, no zoom', () => {
-    const { L, P } = pxOf(S.burpee);
-    const flexOf = (pose: string) => { const l = L.lm[pose], u = [0, 1, 2].map(i => l['hip.r'][i] - l['knee.r'][i]), w = [0, 1, 2].map(i => l['ankle.r'][i] - l['knee.r'][i]);
-      const c = u.reduce((a, v, i) => a + v * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w); return 180 - Math.acos(Math.max(-1, Math.min(1, c))) * 180 / Math.PI; };
-    expect(Math.abs(flexOf('end') - 25)).toBeLessThanOrEqual(1);
-    expect(Math.hypot(...[0, 1].map(i => P('end', 'knee.r')[i]! - P('mistake', 'knee.r')[i]!))).toBeGreaterThanOrEqual(10);
-    expect(S.burpee.mistake.guides.filter((g: any) => g.kind === 'line')).toEqual([]);
-    expect(S.burpee.zoom).toBeUndefined();
-  });
+  // burpee: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 });
 
 describe('PF3 W7 sled_pull: a quarter squat (c2, L1)', () => {
