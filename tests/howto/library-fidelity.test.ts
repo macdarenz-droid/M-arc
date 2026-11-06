@@ -291,7 +291,9 @@ describe('LIB-4b B5: the scratch fixture sources (D-LIB4-FIXTURE, lib4-cards 11.
         // `    variantLine: '<second kind>.',`, directly after the clone's one `  copy: {` line; it is taken out here, so
         // every other line keeps the comparison below. Any other target carries none (the line count catches one).
         if (kind === 'howto') {
-          const kinds = String(JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).find((e: { id: string }) => e.id === s.id)?.equipment ?? '').split('/').map(k => k.trim());
+          // F-SCRATCH-SYNTH (D-SCRATCH-SYNTH-COPYOF): a synthetic id reads its copyOf's entry, as transformSources does
+          const ex = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')) as { id: string; equipment?: string }[];
+          const kinds = String((ex.find(e => e.id === s.id) ?? ex.find(e => e.id === (s as { copyOf?: string }).copyOf))?.equipment ?? '').split('/').map(k => k.trim());
           const at = b.flatMap((l: string, i: number) => (l === '  copy: {' ? [i] : []));
           expect(at, `${s.id} howto: one copy line`).toHaveLength(1);
           if (kinds.length > 1) {
