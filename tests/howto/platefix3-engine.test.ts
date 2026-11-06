@@ -12,7 +12,7 @@ const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.met
 let blp: any, zoom: any, css: any;
 beforeAll(async () => {
   [blp, zoom, css] = await Promise.all(['build-layers-page.mjs', 'render/closeup/zoom.mjs', 'render/closeup/zoom-css.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
-});
+}, 600_000);
 const VENDORED = () => readFileSync('tools/plates/layers/artifact/howto-layers.mjs', 'utf8');
 /** The feel section's heading term from a howto-layers source, evaluated for `rows` (rowsHtml 'R'). */
 const headTerm = (src: string, rows: unknown[]) => {

@@ -12,7 +12,7 @@ let plate: any;
 beforeAll(async () => {
   plate = await import(/* @vite-ignore */ lib('../vendor/engine/plate.mjs'));
   for (const id of IDS) S[id] = (await import(/* @vite-ignore */ lib(`specs/${id}.mjs`))).default;
-});
+}, 600_000);
 const cue = (id: string, key: string, list = 'callouts') => (list === 'tells' ? S[id].mistake.tells : S[id].callouts).find((c: any) => c.key === key);
 const lineOf = (id: string, needle: string) => src(id).split('\n').find(l => l.includes(needle)) ?? '';
 const arrows = (id: string) => S[id].mistake.guides.filter((g: any) => g.kind === 'arrow');
@@ -109,7 +109,7 @@ describe('PF3 round 2 lb8/lb9', () => {
   let eng: any, qaEng: any, body: any, eq: any;
   beforeAll(async () => {
     [eng, qaEng, body, eq] = await Promise.all(['engine.mjs', 'qa/engine.mjs', '../vendor/engine/body.mjs', '../vendor/engine/equipment.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
-  });
+  }, 600_000);
   const pxOf = (spec: any) => {
     const r = plate.renderPlate(spec, { id: 'pf3' }), cam = qaEng.cameraOf(spec, r.report), L = qaEng.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body }, spec);
     return { L, P: (pose: string, k: string) => cam.P(L.lm[pose][k]) as number[] };

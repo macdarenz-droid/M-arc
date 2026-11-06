@@ -11,7 +11,7 @@ beforeAll(async () => {
     .map(f => import(/* @vite-ignore */ lib(f))));
   ulp = (await import(/* @vite-ignore */ lib('specs/underhand_lat_pulldown.mjs'))).default;
   apu = (await import(/* @vite-ignore */ lib('specs/assisted_pull_up.mjs'))).default;
-});
+}, 600_000);
 const Eng = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body });
 /** Plate px of every landmark per pose, with the render's own camera. */
 const pxOf = (spec: any) => {

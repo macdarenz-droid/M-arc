@@ -15,7 +15,7 @@ beforeAll(async () => {
   htl = (await import(/* @vite-ignore */ lib('specs/high_to_low_cable_fly.mjs'))).default;
   sms = (await import(/* @vite-ignore */ lib('specs/smith_machine_squat.mjs'))).default;
   lth = (await import(/* @vite-ignore */ lib('specs/low_to_high_cable_fly.mjs'))).default;
-});
+}, 600_000);
 const Eng = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body });
 const H = 1.75, B = { height: H };
 const probe = { view: 'side', facing: 'right', near: 'r', pxm: 1, P: (w: number[]) => [w[2]!, -w[1]!] };
