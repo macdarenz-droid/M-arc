@@ -291,13 +291,17 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
    *  key (no supersedes), the supervisor's under D-SHIP-W2-STAMP, naming exactly the ruled ids, pinning the page. */
   const layersPinProblems = (file: any, layersPage: Buffer) => {
     const lp = file.entries.map((e: any, i: number) => ({ e, i })).filter(({ e }: any) => e.kind === 'layers-page'), out: string[] = [];
-    if (lp.length !== 1) return [`layers-page entries: ${lp.length}`];
+    if (!lp.length) return ['layers-page entries: 0'];
     const { e, i } = lp[0];
-    if (i !== file.entries.length - 1) out.push('layers-page entry is not last');
     if (e.supersedes != null) out.push('layers-page entry supersedes');
     if (e.approvedBy !== 'supervisor' || e.decision !== 'D-SHIP-W2-STAMP') out.push('layers-page approval');
-    if (JSON.stringify(e.ids) !== JSON.stringify(SHIPPED_RULED)) out.push(`layers-page ids ${e.ids}`);
-    if (e.pageSha256 !== createHash('sha256').update(layersPage).digest('hex') || e.bytes !== layersPage.length) out.push('layers-page pin');
+    // F-BODYMAP-FRONTDELT (D-BODYMAP-APPEND, #404 6688047379): after W2's entry comes exactly the body-map re-pin,
+    // superseding it; it is the current entry, so the ids and the page pin are checked on it
+    const after = file.entries.slice(i + 1).map((x: any) => [x.kind, x.id ?? null, x.decision, x.approvedBy, x.supersedes]);
+    if (JSON.stringify(after) !== JSON.stringify([['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', i]])) out.push(`after W2: ${JSON.stringify(after)}`);
+    const cur = file.entries[file.entries.length - 1];
+    for (const x of new Set([e, cur])) if (JSON.stringify(x.ids) !== JSON.stringify(SHIPPED_RULED)) out.push(`layers-page ids ${x.ids}`);
+    if (cur.pageSha256 !== createHash('sha256').update(layersPage).digest('hex') || cur.bytes !== layersPage.length) out.push('layers-page pin');
     return out;
   };
   /** The golden file against the built page and the GO: [problems]. */
@@ -355,7 +359,9 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     expect(pinProblems(g, html.replace('Smith Machine Bench Press', 'Smith Machine Bench Pres'))).toContain('page entry');
     const ap = structuredClone(g); ap.entries[4].approval = ap.entries[4].approval.replace('6393170019', '6393188049');
     // LIB-SHIP W2: the layers-page entry now follows entry 4, so the chain names the edit too
-    expect(pinProblems(ap, html)).toEqual(['entry 5 (layers-page): prev does not match the entries before it (an older entry was edited)', 'lib_push_up: approval is not the GO']);
+    // F-BODYMAP-FRONTDELT: the body-map re-pin (entry 6) follows, so the chain names it too
+    expect(pinProblems(ap, html)).toEqual(['entry 5 (layers-page): prev does not match the entries before it (an older entry was edited)',
+      'entry 6 (layers-page): prev does not match the entries before it (an older entry was edited)', 'lib_push_up: approval is not the GO']);
     const pa = structuredClone(g); pa.entries[0].approval = pa.entries[0].approval.replace('1d7f28d2', '8ae48ed9');
     expect(pinProblems(pa, html)).toContain('page: approval is not the GO');
     const ow = structuredClone(g); ow.entries[1].approvedBy = 'owner';
@@ -363,12 +369,17 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     // LIB-SHIP W2: a second layers-page entry, a changed page byte, an unruled id named, and a superseding entry are red
     const lpage = readFileSync(readJson(ROWS).pages.layers), last = g.entries.length - 1;
     const lp = structuredClone(g); lp.entries.push({ ...lp.entries[last] });
-    expect(layersPinProblems(lp, lpage)).toEqual(['layers-page entries: 2']);
+    expect(layersPinProblems(lp, lpage)).toEqual([`after W2: ${JSON.stringify([['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', last - 1], ['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', last - 1]])}`]);
+    // F-BODYMAP-FRONTDELT: the body-map re-pin taken out (W2's entry current again) is red
+    const lw = structuredClone(g); lw.entries.pop();
+    expect(layersPinProblems(lw, lpage)).toEqual(['after W2: []', 'layers-page pin']);
     expect(layersPinProblems(g, Buffer.concat([lpage, Buffer.from(' ')]))).toEqual(['layers-page pin']);
     const li = structuredClone(g); li.entries[last].ids = [...li.entries[last].ids, 'lib_seated_leg_curl'];
     expect(layersPinProblems(li, lpage)).toEqual(['layers-page ids lib_cable_fly,lib_push_up,lib_seated_leg_curl']);
-    const ls = structuredClone(g); ls.entries[last].supersedes = 0;
+    const ls = structuredClone(g); ls.entries[last - 1].supersedes = 0;
     expect(layersPinProblems(ls, lpage)).toEqual(['layers-page entry supersedes']);
+    const lt = structuredClone(g); lt.entries[last].supersedes = 0;
+    expect(layersPinProblems(lt, lpage)).toEqual([`after W2: ${JSON.stringify([['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', 0]])}`]);
   });
   it('mutations: an existing layers file and a pinned id in another golden file are red', () => {
     const p = readJson(ROWS).pages;
