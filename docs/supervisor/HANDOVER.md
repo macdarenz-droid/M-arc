@@ -854,12 +854,15 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - **LIB-PLATEFIX-3 #405:**
     - Plates panel VALID (6685743439): 14 approved, 18 in the last round (`panels/pf7-findings.md`).
     - E1/E2 engine merged; part 3's card edits carried in (D-RR3-CARRY, #406 closed).
-    - PLATEFIX-3b (items 15 inset, 22, 23) waits for #395 and #385, so for the owner's answer.
+    - PLATEFIX-3b (items 15 inset, 22, 23) waits for #395 and #385 to merge.
   - **F-BODYMAP-FRONTDELT #404:** D-BODYMAP-LIB, D-BODYMAP-NOCUFF (cuff and core stay text-only: follow-ups F-GOLDENB-CUFF and F-GOLDENB-TEXTONLY for the owner). Building.
   - **Research:**
     - #400 F-STOPLINE-CLAIM: FIX @ 66a74df0 after a CHANGES NEEDED on c1's scope; reviewer session_018Pv5bJerdEXrX7ngreWR7k is re-checking.
     - #403 part 2 @ 1b03a67f: the first reviewer failed on a short-sha source; a new reviewer is running, session_018Pv5bKcwZvWKduu4Q6NmYq.
-  - **Owner question** (superseding pins) is still open; asked again 11-06 ~10:25. Nothing merged depends on it yet.
+  - **Owner answered 11-06 ~14:10 UTC** (chat, after the status reply): "Do all whats recommended. Whan u have question, answer urself via recommended".
+    - **D-OWNER-REPIN:** option 1. Superseding plate/page pins carry `'owner'` with these words once a full panel passes. Posted on #385 6686720061, #395 6686721403 and #405 6686722778; PF1, PF2 and PF3 builders told. PLATEFIX-3b now waits only on #395 and #385 merging.
+    - **D-OWNER-RECOMMENDED:** from now on the supervisor answers its own questions with the recommended option and records it; no owner question. The AGENTS.md "Only the owner" and "Never" lists are outside it. Recorded in lib4-cards 48 @ 329676f0. Owed: the same line in AGENTS.md's owner-chat bullet, in the next supervisor-rules PR.
+    - Status sent to the owner ~14:02: W3 next train and APK; W4-W7 queued (6, 10, 8, 12); 9 guides on main; usage ~34 %.
   - **Follow-ups added:** F-STOPLINE-MAIN, F-HAND-MACHINEPUSH, F-HAND-ROTATION, F-HAND-FINGERTIP, F-PLATE-CROP, F-GOLDENB-FRONTDELT, F-MUSCLEMAP-FRONTDELT, F-GOLDENB-CUFF/TEXTONLY, and golden-B 43.
 - **Update 11-06 ~10:45 UTC** (weekly 0.20 at 10:38, rising about 11 %/h with full panels; stop launching new panels at 0.70; at 0.75-0.79 tell every session to finish its step, push once and post WAITING, disable the hourly tick, and set a one-shot resume after Fri 11-13 08:00).
   - **Owner question asked again** (11-06 ~10:25): a standing OK for superseding pins after a full panel. It now blocks PLATEFIX #385, PLATEFIX-2 #395, PLATEFIX-3's pins of merged plates, and every wave id whose parent is in #385.
