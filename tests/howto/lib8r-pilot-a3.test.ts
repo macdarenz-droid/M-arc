@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
+import { MAIN_GOLDEN, pfTailProblems } from './platefix-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -16,6 +17,7 @@ const T = 600_000;
 const IDS = ['reverse_lunge', 'dumbbell_fly'];   // PILOT-A3's rows (D-A3-BATCH)
 const A2_ROWS = ['box_jump', 'bent_over_dumbbell_rear_delt_fly'];   // PILOT-A2's pinned rows
 const STILL_HELD = ['barbell_shrug', 'incline_dumbbell_press'];   // D-LIB8R-SCOPE: routed to LIB-13s and LB2
+const SHIPPED_RULED = ['lib_reverse_lunge'];   // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221): the PILOT-A3 id ruled to ship
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const copy = (x: any) => JSON.parse(JSON.stringify(x));
@@ -75,7 +77,8 @@ describe('PILOT-A3 A1: the rows hold exactly the two ids; no PILOT-A2 file names
       if (r.mode !== 'H') bad.push(`${id}: mode ${r.mode}`);
       if (r.src !== `library/specs/${id.slice(4)}.mjs`) bad.push(`${id}: src ${r.src}`);
       if (IDS.includes(id.slice(4)) && r.view !== cardOf(id.slice(4)).plate.view) bad.push(`${id}: view ${r.view} is not the census view`);
-      if (r.stage !== (pinned() ? 'approved-plate' : 'drawing')) bad.push(`${id}: stage ${r.stage}`);
+      // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP; D-PLATEFIX-PINS / PIN GO): reverse_lunge ships; dumbbell_fly stays approved-plate
+      if (r.stage !== (pinned() ? (SHIPPED_RULED.includes(id) ? 'shipped' : 'approved-plate') : 'drawing')) bad.push(`${id}: stage ${r.stage}`);
     }
     if (j.batch !== 'PILOT-A3' || j.censusRef !== '4a9fd86') bad.push('batch/censusRef');
     return bad;
@@ -86,7 +89,7 @@ describe('PILOT-A3 A1: the rows hold exactly the two ids; no PILOT-A2 file names
     'tools/plates/library/pilot-a2/cards.sha.json', 'tools/plates/library/pages/pilot-a2.json', 'tests/howto/golden/library/pilot-a2.json'];
   const a2Problems = (files: Record<string, string>) => Object.entries(files).flatMap(([f, t]) => IDS.filter(id => new RegExp(`\\b(lib_)?${id}\\b`).test(t)).map(id => `${f} names ${id}`));
   const a2Files = () => Object.fromEntries(A2_FILES.map(f => [f, readFileSync(f, 'utf8')]));
-  it('the rows file: the 2 ids once each, mode H, census view, stage drawing (approved-plate after the pin); no PILOT-A2 file names them', async () => {
+  it('the rows file: the 2 ids once each, mode H, census view, stage drawing (after the pin: reverse_lunge shipped, dumbbell_fly approved-plate); no PILOT-A2 file names them', async () => {
     expect(problems(text())).toEqual([]);
     expect(a2Problems(a2Files())).toEqual([]);
     expect(Object.keys((await import(/* @vite-ignore */ lib('pilot-a2/qa.mjs'))).EXPECTED)).toEqual(A2_ROWS.map(i => `lib_${i}`));
@@ -100,6 +103,11 @@ describe('PILOT-A3 A1: the rows hold exactly the two ids; no PILOT-A2 file names
   it('mutations: box_jump added, a duplicated row, and either id written into batches/pilot-a2.json are red', () => {
     const j = JSON.parse(text()); j.rows.lib_box_jump = { ...j.rows.lib_reverse_lunge, src: 'library/specs/box_jump.mjs' };
     expect(problems(JSON.stringify(j, null, 1)).length).toBeGreaterThan(0);
+    // LIB-PLATEFIX-1 A9: dumbbell_fly at shipped, or reverse_lunge held at approved-plate, is red
+    const fly = JSON.parse(text()); fly.rows.lib_dumbbell_fly.stage = 'shipped';
+    expect(problems(JSON.stringify(fly, null, 1))).toEqual(['lib_dumbbell_fly: stage shipped']);
+    const held = JSON.parse(text()); held.rows.lib_reverse_lunge.stage = 'approved-plate';
+    expect(problems(JSON.stringify(held, null, 1))).toEqual(['lib_reverse_lunge: stage approved-plate']);
     expect(problems(text().replace('"lib_dumbbell_fly": {', '"lib_reverse_lunge_dup": { "x": "lib_reverse_lunge" },\n  "lib_dumbbell_fly": {')).length).toBeGreaterThan(0);
     for (const id of IDS) {
       const f = a2Files(), b = JSON.parse(f[A2_FILES[0]!]!); b.rows[`lib_${id}`] = b.rows.lib_box_jump;
@@ -220,25 +228,37 @@ describe('PILOT-A3 A5: reverse_lunge normal plate (moved from :162-174; D-A3-REV
   };
   const EXPORT = '026964f91f030268d49bc52cf1adf46c265d9fcd27349e01e30c6f3bc87cc0dd';
   const NORMAL = { svg: '0744dcf3b2b2ffaae46452a9921adfe09ff45f61f268f98353791e63998b2df9', overlay: 'cbf84381abccc3ff48d647c82c3e691717d347dfbc561ef2c2ee3d65027888c3' };
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update], superseding plate entry 4): the layers fix rounds
+  // (e7c5e612, ae37b940) changed only the 'weight' checkpoint's cue (and its cite c3) and the alt, so the export sha
+  // moved to 013ad603; with those three restored it is main's 026964f9 exactly, and the normal render is main's bytes.
+  const EXPORT_PF = '013ad603a882d3cc66ee830f10592af3b28ae8b06146af2973c3ebb93a8e014f';
+  const OLD_ALT = 'Reverse lunge with dumbbells, side view. From standing tall, one leg steps back and the body lowers until the front thigh is parallel and the rear knee hovers just above the floor, front shin near vertical, front foot flat, rear foot on the ball, trunk upright, dumbbells hanging at the sides.';
+  const mainText = (s: any) => ({ ...s, alt: OLD_ALT, callouts: s.callouts.map((c: any) => { if (c.key !== 'weight') return c; const { cite, ...r } = c; void cite; return { ...r, cue: 'Share the weight about evenly between both feet.' }; }) });
   it("reverse_lunge's normal plate is main's: export sha (normalised), a Mistake-view zoom only, and the normal render bytes", () => {
     const s = spec('reverse_lunge');
     for (const p of [s.poses.start, ...s.poses.via, s.poses.end]) expect(p.trunk).toEqual({ flex: 0 });
-    expect(exportSha(s)).toBe(EXPORT);
+    expect(exportSha(s)).toBe(EXPORT_PF);
+    expect(exportSha(mainText(s))).toBe(EXPORT);
     expect(s.zoom).toEqual({ view: 'mistake', k: 3 });
     const n = plate.renderPlate(s, { id: 'x-n' });
     expect({ svg: sha(n.svg), overlay: sha(n.overlay) }).toEqual(NORMAL);
   });
   it('mutation: REAR_HEEL 45 -> 46 moves the export sha and the normal render', async () => {
     const m = await variant('reverse_lunge', src => src.replace('const REAR_HEEL = 45;', 'const REAR_HEEL = 46;'));
-    expect(exportSha(m.default)).not.toBe(EXPORT);
+    expect(exportSha(m.default)).not.toBe(EXPORT_PF);
+    expect(exportSha(mainText(m.default))).not.toBe(EXPORT);   // LIB-PLATEFIX-1: the restore does not hide a pose change
     expect(sha(plate.renderPlate(m.default, { id: 'x-n' }).svg)).not.toBe(NORMAL.svg);
   });
   it('mutations: a trunk that is not exactly { flex: x } ({ flex: 0, bow: 1 } or { flex: 0, yaw: 0 } in one key pose) moves the export sha', () => {
     const s = spec('reverse_lunge');
     for (const trunk of [{ flex: 0, bow: 1 }, { flex: 0, yaw: 0 }]) {
-      expect(exportSha({ ...s, poses: { ...s.poses, end: { ...s.poses.end, trunk } } }), JSON.stringify(trunk)).not.toBe(EXPORT);
-      expect(exportSha({ ...s, poses: { ...s.poses, via: [{ ...s.poses.via[0], trunk }, s.poses.via[1]] } }), JSON.stringify(trunk)).not.toBe(EXPORT);
+      expect(exportSha({ ...s, poses: { ...s.poses, end: { ...s.poses.end, trunk } } }), JSON.stringify(trunk)).not.toBe(EXPORT_PF);
+      expect(exportSha({ ...s, poses: { ...s.poses, via: [{ ...s.poses.via[0], trunk }, s.poses.via[1]] } }), JSON.stringify(trunk)).not.toBe(EXPORT_PF);
+      expect(exportSha(mainText({ ...s, poses: { ...s.poses, end: { ...s.poses.end, trunk } } })), JSON.stringify(trunk)).not.toBe(EXPORT);
     }
+    // LIB-PLATEFIX-1: a text change beyond the three restored (the 'chest' cue) still moves both shas
+    const chest = { ...s, callouts: s.callouts.map((c: any) => (c.key === 'chest' ? { ...c, cue: `${c.cue} ` } : c)) };
+    expect([exportSha(chest) === EXPORT_PF, exportSha(mainText(chest)) === EXPORT]).toEqual([false, false]);
   });
 });
 
@@ -633,7 +653,7 @@ describe('PILOT-A3 A2 (part), A3 (pre-pin part): PILOT-A2 rebuilds to its pin; t
   });
 });
 
-describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped', { timeout: T }, () => {
+describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and exactly the ruled id shipped (LIB-PLATEFIX-1)', { timeout: T }, () => {
   let G: any, reg: any, scratch: any, all: any;
   beforeAll(async () => {
     [G, reg, scratch] = await Promise.all(['../golden.mjs', 'registry.mjs', 'ci/scratch.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
@@ -643,6 +663,7 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped'
   const file = () => readJson('tests/howto/golden/library/pilot-a3.json');
   const LAYERS_CFG = 'tools/plates/library/pages/pilot-a3.layers.json', LAYERS_PAGE = 'tests/howto/golden/library/pilot-a3.layers.html';
   // The layers page is pinned by the later [golden update] commit; its existence check lands with that pin commit.
+  // LIB-PLATEFIX-1 ([golden update]): it is pinned now, and A11 checks that it exists.
   const readLayersPage = () => (existsSync(LAYERS_PAGE) ? readFileSync(LAYERS_PAGE, 'utf8') : null);
   /** D-PLATEFIX-PINS: the config exists with groups' ids exactly [lib_reverse_lunge]; the page, when present, holds exactly the reverse-lunge card. */
   const layersProblems = (cfg: any, page: string | null) => {
@@ -655,28 +676,33 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped'
     }
     return bad;
   };
-  /** A11: chain, the page entry equal to the built page, each plate entry's 9 fragments equal to extractPlates of it. */
+  /** A11: chain, the page entry equal to the built page, each plate entry's 9 fragments equal to extractPlates of it.
+   *  LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]): those checks now run on the PILOT-A3 pin's own entries
+   *  (main's 3, byte-equal, so their page and fragments are still the bebd7730 build's), and the golden update's tail is
+   *  checked against today's build: a page entry superseding 0, reverse_lunge's plate superseding 1, and one layers-page
+   *  entry for exactly lib_reverse_lunge pinning the committed layers page (pfTailProblems). */
   const chainProblems = async (f: any) => {
     const bad = [...G.verifyBatchChain(f, GOLDEN())];
-    const pages = f.entries.filter((e: any) => e.kind === 'page'), html = (await build.buildPa3Page()).html;
-    if (pages.length !== 1 || pages[0].pageSha256 !== sha(html) || pages[0].bytes !== html.length) bad.push('page entry != the built page');
-    if (f.entries.some((e: any) => e.kind === 'layers-page')) bad.push('a layers-page entry');
-    const plates = G.extractPlates(html.toString('utf8'));
-    for (const e of f.entries.filter((x: any) => x.kind === 'plate')) {
-      const p = plates.find((x: any) => x.chromeId === e.chromeId);
-      if (!p || JSON.stringify(G.fragmentsOf(p)) !== JSON.stringify(e.fragments)) bad.push(`${e.id}: fragments`);
+    const html = (await build.buildPa3Page()).html, pin = f.entries.slice(0, MAIN_GOLDEN['pilot-a3']!.n);
+    const pages = pin.filter((e: any) => e.kind === 'page');
+    if (pages.length !== 1 || pages[0].pageSha256 !== 'bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878' || pages[0].bytes !== 465732) bad.push('page entry != the pinned build');
+    if (pin.some((e: any) => e.kind === 'layers-page')) bad.push('a layers-page entry');
+    for (const e of pin.filter((x: any) => x.kind === 'plate')) {
       if (e.approvedBy !== 'supervisor' || e.decision !== 'D-LIB-PILOTA3' || e.supersedes !== null) bad.push(`${e.id}: approval`);
     }
-    if (JSON.stringify(f.entries.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)) !== JSON.stringify(IDS.map(i => `lib_${i}`))) bad.push('plate ids');
+    if (JSON.stringify(pin.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)) !== JSON.stringify(IDS.map(i => `lib_${i}`))) bad.push('plate ids');
+    bad.push(...pfTailProblems(f, 'pilot-a3', { G, html, page: 0, plates: { lib_reverse_lunge: 1 }, layers: { supersedes: null, ids: ['lib_reverse_lunge'], page: existsSync(LAYERS_PAGE) ? readFileSync(LAYERS_PAGE) : Buffer.alloc(0) } }));
     const text = JSON.stringify(f) + readFileSync(rowsPath(), 'utf8') + readFileSync('tools/plates/library/pages/pilot-a3.json', 'utf8');
     for (const id of [...all.filter((r: any) => r.batchFile && !r.batchFile.endsWith('/pilot-a3.json')).map((r: any) => r.id),
       ...[...scratch.PILOT_A, ...scratch.PILOT_B, ...scratch.PILOT_A2].map((n: string) => `lib_${n}`)]) if (new RegExp(`\\b${id}\\b`).test(text)) bad.push(`names ${id}`);
     return bad;
   };
-  it('A11: the chain is valid, the page entry is the two-build page (bebd7730, 465,732 B), each plate entry equals its fragments, no layers entry; the layers config and page hold exactly lib_reverse_lunge', async () => {
+  it('A11: the chain is valid, the page entry is the two-build page (bebd7730, 465,732 B), each plate entry equals its fragments, no layers entry; LIB-PLATEFIX-1: its tail pins today\'s page (476bff3a), reverse_lunge\'s plate and the layers page; the layers config and page hold exactly lib_reverse_lunge', async () => {
     expect(pinned()).toBe(true);
+    expect(existsSync(LAYERS_PAGE)).toBe(true);
     expect(await chainProblems(file())).toEqual([]);
     expect(file().entries[0].pageSha256).toBe('bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878');
+    expect(file().entries.filter((e: any) => e.kind === 'page').at(-1).pageSha256).toBe('476bff3ac865d176fc90fc1618184ed6e54e3d704a8c3b7753fb57770ff69000');
     expect(file().base).toEqual(readJson('tests/howto/golden/library/pilot-a2.json').base);
     // D-PLATEFIX-PINS: the pilot-a3 layers config and page exist and hold exactly [lib_reverse_lunge].
     expect(layersProblems(readJson(LAYERS_CFG), readLayersPage())).toEqual([]);
@@ -697,6 +723,16 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped'
     expect((await chainProblems(lay)).length).toBeGreaterThan(0);
     const named = copy(f0); named.entries[1].why += ' "lib_crunch"';
     expect((await chainProblems(named)).some((p: string) => /lib_crunch/.test(p))).toBe(true);
+    // LIB-PLATEFIX-1: a tail plate fragment edited, a tail plate superseding the fly's entry, a layers-page entry in the pin's
+    // own entries, and the layers-page entry naming the fly are red
+    const n = MAIN_GOLDEN['pilot-a3']!.n, tf = copy(f0); tf.entries[n + 1].fragments.mistakeSvg = '0'.repeat(64);
+    expect(await chainProblems(tf)).toContain('lib_reverse_lunge: fragments');
+    const ts = copy(f0); ts.entries[n + 1].supersedes = 2;
+    expect(await chainProblems(ts)).toContain('pilot-a3: plate 0: lib_reverse_lunge supersedes 2');
+    const tl = copy(f0); tl.entries[n + 2].ids = ['lib_reverse_lunge', 'lib_dumbbell_fly'];
+    expect(await chainProblems(tl)).toContain('pilot-a3: layers-page ids lib_reverse_lunge,lib_dumbbell_fly');
+    const tp = copy(f0); tp.entries.splice(2, 0, { kind: 'layers-page' });
+    expect(await chainProblems(tp)).toContain('a layers-page entry');
   });
   it('A12: the scratch set refuses PILOT-A3 ids (mutation: target lib_reverse_lunge)', () => {
     expect(scratch.setProblems(scratch.SCRATCH_4C)).toEqual([]);
@@ -704,12 +740,26 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped'
     const set = scratch.SCRATCH_4C.map((s: any) => (s.key === 'lib4c-scratch-a' ? { id: 'lib_reverse_lunge', from: s.from, key: s.key } : s));
     expect(scratch.setProblems(set)).toEqual(['lib_reverse_lunge is a PILOT-A3 id (D-LIB11-SCRATCHIDS)', 'lib_reverse_lunge is a row of batches/pilot-a3.json']);
   });
-  it('A14: no PILOT-A3 row is shipped; mutation: one row set to shipped is caught', () => {
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221; D-PLATEFIX-PINS / PIN GO): was "no PILOT-A3 row is shipped"; exactly the
+  // ruled lib_reverse_lunge ships (in the registry too) with its stamp, dumbbell_fly stays approved-plate; the old red is kept
+  // (a row set to shipped is caught) and the A9 reds are added.
+  it('A14: exactly lib_reverse_lunge is shipped (registry and stamp too); mutations: dumbbell_fly shipped, reverse_lunge held, and its stamp removed are red', async () => {
     const stages = (t: any) => Object.values(t.rows).map((r: any) => r.stage);
-    expect(stages(readJson(rowsPath()))).toEqual(['approved-plate', 'approved-plate']);
-    const m = readJson(rowsPath()); m.rows.lib_reverse_lunge.stage = 'shipped';
+    const shipProblems = (t: any) => Object.entries<any>(t.rows).flatMap(([id, r]) => (r.stage === (SHIPPED_RULED.includes(id) ? 'shipped' : 'approved-plate') ? [] : [`${id}: ${r.stage}`]));
+    expect(stages(readJson(rowsPath()))).toEqual(['shipped', 'approved-plate']);
+    expect(shipProblems(readJson(rowsPath()))).toEqual([]);
+    expect(reg.shippedIds(all).filter((id: string) => IDS.includes(id.slice(4)))).toEqual(SHIPPED_RULED);
+    const m = readJson(rowsPath()); m.rows.lib_dumbbell_fly.stage = 'shipped';
     expect(stages(m).includes('shipped')).toBe(true);
-  });
+    expect(shipProblems(m)).toEqual(['lib_dumbbell_fly: shipped']);
+    const h = readJson(rowsPath()); h.rows.lib_reverse_lunge.stage = 'approved-plate';
+    expect(shipProblems(h)).toEqual(['lib_reverse_lunge: approved-plate']);
+    const S = await import(/* @vite-ignore */ lib('research/stamps.mjs'));
+    expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);
+    const st = await S.stampOf('lib_reverse_lunge'), rv = S.readReviews();
+    const cut = { ...rv, entries: rv.entries.filter((e: any) => !(e.scope === st.scope && e.hash === st.hash)) };
+    expect(await S.stampProblems(SHIPPED_RULED, { reviews: cut })).toEqual([`LIB-5 stamp: lib_reverse_lunge: no reviews.json entry for scope ${st.scope} hash ${st.hash.slice(0, 12)}…`]);
+  }, T);
 });
 
 describe('PILOT-A3 A13: the moved assertions (D-A3-TESTHOME map)', () => {

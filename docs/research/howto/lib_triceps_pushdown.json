@@ -1,0 +1,23 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=0002d919a047b16a92c6b1e0e7ee8dff9b880ce6220f7b039c4fba20a7a60c75
+{
+  "id": "lib_triceps_pushdown",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/triceps_pushdown.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-pushdown",
+    "ace-pressdown",
+    "sl-pushdown",
+    "hussain-2020",
+    "acsm-2009",
+    "ga-push-heel",
+    "nhs-elbow-pain",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "elbow",
+    "back"
+  ]
+}

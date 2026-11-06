@@ -8,6 +8,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = new URL('../../', import.meta.url);
@@ -121,8 +122,26 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts;
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync(path('docs/research/howto/shared/back-pain-box.json')))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
-    // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
-    expect(sha(JSON.stringify(rrBox(lessW2(m))))).toBe('99d9824be548ecd2454a92bb35c43c1339eca13f8d6731660c6140f2d30e882e');
+    // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef: 99d9824b)
+    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 05f27be9, both sides kept): its moved keys,
+    // added keys and superseded entries each pin their current value (pfProblems), then are blanked too (blankPF); with
+    // RESEARCH-ROUTES-1's key also blanked, the rest is main 05f27be9's MANIFEST.json with the same blanks.
+    expect(pfProblems(m)).toEqual([]);
+    expect(sha(JSON.stringify(rrBox(lessW2(blankPF(m, 'X')))))).toBe('d832b3b651ab5ef5e7ac3fcc656686961cf9bfb870ce88b1755f12cab1606f57');
+  });
+  it('LIB-PLATEFIX-1 mutations: a moved key, an added key or a superseded entry off its current value is red, and so is any other key moved', () => {
+    const cur = () => JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'));
+    const m1 = cur(); (Object.values<any>(m1.rows).find(r => PF_MOVED[2]! in r.files)).files[PF_MOVED[2]!] = '0'.repeat(64);
+    expect(pfProblems(m1)).toHaveLength(1);
+    const m2 = cur(); m2.rows.lib_reverse_lunge.files['tools/plates/library/pages/pilot-a3.layers.json'] = '0'.repeat(64);
+    expect(pfProblems(m2)).toHaveLength(1);
+    const m3 = cur(); m3.rows.lib_romanian_deadlift.entry = '0'.repeat(64);
+    expect(pfProblems(m3)).toEqual([`lib_romanian_deadlift: entry ${'0'.repeat(64)} != ${cur().rows.lib_romanian_deadlift.entry}`]);
+    const m4 = cur(); m4.rows.lib_plank.entry = '0'.repeat(64);   // an entry this card does not supersede
+    for (const r of Object.values<any>(m4.rows)) for (const k of [...KEYS, 'tools/plates/library/hands/pairs.mjs']) r.files[k] = 'X';
+    expect(pfProblems(m4)).toEqual([]);
+    const rr = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; return x; };
+    expect(sha(JSON.stringify(rr(lessW2(blankPF(m4, 'X')))))).not.toBe('d832b3b651ab5ef5e7ac3fcc656686961cf9bfb870ce88b1755f12cab1606f57');
   });
 });
 

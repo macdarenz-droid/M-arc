@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { PF_W2_KEYS, blankPF, pfProblems, pfW2Problems } from './platefix-pins';
 
 const ROOT = join(new URL('.', import.meta.url).pathname, '..', '..');
 const rd = (p: string) => readFileSync(join(ROOT, p), 'utf8');
@@ -57,6 +58,8 @@ describe('RESEARCH-ROUTES-1 P1-b/P1-c: the ruled fields left inherit[] (F-W4-INH
 
 // The D-CROP-PIN form (#380 6627881461): MANIFEST.json pins back-pain-box.json in 16 rows (13 before main e623d3ef), so this lane re-pins exactly
 // that one key; every other entry equals main e623d3ef.
+// LIB-PLATEFIX-1: main 05f27be9's MANIFEST.json with BOX, PAIRS and the PLATEFIX keys and entries blanked
+const PF_RR_PIN = '1f739ae5bf068fae06d6a4651c921f82b0fa677fd0bc4b09ad52b5dfd1998fbb';
 describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-box.json', () => {
   it('every row that lists it pins the current file, and every other entry equals main e623d3ef', () => {
     const m = JSON.parse(rd('tools/plates/library/MANIFEST.json'));
@@ -68,6 +71,24 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     expect(pr).toHaveLength(22);
     for (const r of pr) { expect(r.files[PAIRS]).toBe(sha(rd(PAIRS))); r.files[PAIRS] = 'X'; }
     // main e623d3ef's MANIFEST.json with the same entries blanked (was f0ec7bd5… on main 8bb433bd, daf6779b… with BOX alone; re-measure if a later re-pin merges first)
-    expect(sha(JSON.stringify(m))).toBe('a97a39e2402296337bf8c9947dc0b4e6d266d7732292caefbd0796fd5a49386f');
+    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 05f27be9, both sides kept): was
+    // a97a39e2 (main 05f27be9 with BOX and PAIRS blanked). Its moved keys, added keys and superseded entries (pfProblems)
+    // and the moved keys the W2 lists hold elsewhere (pfW2Problems: build-layers-page.mjs, pilot A's batch, sheets, closeups and
+    // layers config) each pin their current value, then are blanked too: the rest is main 05f27be9's with the same blanks.
+    expect(pfProblems(m)).toEqual([]);
+    blankPF(m, 'X');
+    expect(pfW2Problems(m, 'X')).toEqual([]);
+    expect(sha(JSON.stringify(m))).toBe(PF_RR_PIN);
+  });
+  it('LIB-PLATEFIX-1 mutations: a PLATEFIX key off its file, or another key moved, is red', () => {
+    const m = JSON.parse(rd('tools/plates/library/MANIFEST.json')), row: any = Object.values(m.rows).find((r: any) => PF_W2_KEYS[0]! in r.files);
+    row.files[PF_W2_KEYS[0]!] = '0'.repeat(64);
+    expect(pfW2Problems(m, 'X')).toHaveLength(1);
+    const o = JSON.parse(rd('tools/plates/library/MANIFEST.json'));
+    for (const r of Object.values<any>(o.rows)) { if (BOX in r.files) r.files[BOX] = 'X'; if ('tools/plates/library/hands/pairs.mjs' in r.files) r.files['tools/plates/library/hands/pairs.mjs'] = 'X'; }
+    blankPF(o, 'X'); pfW2Problems(o, 'X');
+    expect(sha(JSON.stringify(o))).toBe(PF_RR_PIN);
+    o.rows.lib_plank.entry = '0'.repeat(64);
+    expect(sha(JSON.stringify(o))).not.toBe(PF_RR_PIN);
   });
 });

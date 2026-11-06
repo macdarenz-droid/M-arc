@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=444185a849b237b15efdd4cb8ae8db7d8cb95a024dbddfe4d858cd562357b37d
+{
+  "id": "lib_reverse_lunge",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/reverse_lunge.json",
+    "rev": 1
+  },
+  "sources": [
+    "cat-revlunge",
+    "ace-revlunge",
+    "bezerra-2021",
+    "nhs-knee",
+    "pel-revlunge",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}

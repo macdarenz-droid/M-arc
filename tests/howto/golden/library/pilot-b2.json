@@ -61,6 +61,65 @@
       "date": "2026-11-04",
       "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row).",
       "prev": "ba72467d084a841c0ff8895df693cfe05e68fbefb59244a9fc2fb891df5c73ae"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "8fc40115ab7bd6b1ccd9c5eca0a9b00352ef0e0574c93282e821ae1217978bb1",
+      "bytes": 190727,
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "why": "LIB-PLATEFIX-1: the plates page with this batch's fixed plates, approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "supersedes": 0,
+      "prev": "0b659af46e873d927980bb2c68ec683780ace4d1056bcf89a18f6f3114fae225"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_crunch",
+      "src": "library/specs/crunch.mjs",
+      "slug": "crunch",
+      "prefix": "crunch",
+      "chromeId": "crunch",
+      "fragments": {
+        "normalSvg": "1f4e1b4fe784ca3c5042d4c62a8c8a687f3a958e1bfd0bfdb88ab114fc5908f0",
+        "normalOverlay": "c40e584c1969b6e1005d4dc0854029191b1eb444956359f52d08b08a1cd14af5",
+        "mistakeSvg": "2809d4d320ff9cd35bfbf7f9bfa17ac79f244f92f40e8543f296e0fe13cdbfe6",
+        "mistakeOverlay": "aed65954198cd2d93758acfc3c21f86990bb023907960db75ccb024b706b35ae",
+        "tells": "321bba25aa962437d750fc70157f4e3747fbfc97bbafe062b29cc88e72201986",
+        "tempo": "ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3",
+        "cues": "66dab1fc6678d2aa1fb4d2ac2d83f95a11316ee364e2140c05f97ff83f4b8c7f",
+        "alt": "7dabec950a17628c1a76b830c7d401ec033f9d2a6659e950e5b6a85924f829a9",
+        "mistakeAlt": "eaab91db60719c62f79e1fa47bfcd85451e7b2062f7214ecec3090cd6b7dc778"
+      },
+      "exemptions": [
+        "F1",
+        "F3",
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "why": "LIB-PLATEFIX-1: lib_crunch's plate fixed from the W2 layers panel (#379 6633524031), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "supersedes": 1,
+      "prev": "1d4b2dacf4e0501d2c6260ff4eb1dfcea21918bb23d193cac523f17b35bde0a0"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B2",
+      "ids": [
+        "lib_crunch"
+      ],
+      "pageSha256": "0ab56e32f26663ee46a6300cde85a68711be481b69a60dfad3376d3fb7b81ea6",
+      "bytes": 265275,
+      "approvedBy": "supervisor",
+      "decision": "D-PLATEFIX-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6648438434 @ f573d31322a421e169ea732e6cf948fbb41f66d0",
+      "date": "2026-11-06",
+      "why": "O5; LIB-PLATEFIX-1 layers page, golden-B design kinds alone, approved by the calibrated layers panel and rechecks (#385); D-PF-PAINNAMES-LIB names",
+      "supersedes": 2,
+      "prev": "8de5b59ddcdc069000a4662e382f4c272cad53c830c30c338b308250da055c26"
     }
   ]
 }

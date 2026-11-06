@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { PF_LAYERS_DECISION } from './platefix-pins';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const read = (p: string) => readFileSync(ROOT + p, 'utf8');
@@ -43,7 +44,9 @@ const MOVED_A3 = ['reverse_lunge', 'dumbbell_fly'];
 // census views (claude/howto-options 4a9fd86, docs/howto/library/inputs/census.json blob 70553d5d)
 const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id === 'upright_row' || id === 'pec_fly' ? 'front' : 'side']));
 // the pilot A page the registry builds (build.mjs's page at the Do 6 head); the pin's page entry must equal it
-const PAGE = { sha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 };
+// LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]): was 5d0e562f (1,325,644 B); the page with its fixed
+// barbell_row, barbell_overhead_press, romanian_deadlift and triceps_pushdown plates (the superseding page entry 16)
+const PAGE = { sha256: 'd38e8b3315af11e9ebe5bcc4534054b0c02ad25ea3773f690a943863b8f26429', bytes: 1316144 };
 const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
 // Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
 const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
@@ -107,17 +110,28 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
   // not shipped is red.
   // LIB-SHIP W2 (D-SHIP-W2-STAMP, #379 6636105974): the 7 W2 pilot A ids join the curl; the 6 held rows (PLATEFIX and
   // F-PAIR-FAULTS) stay at approved-plate
-  const SHIPPED_RULED = ['lib_dumbbell_biceps_curl', 'lib_plank', 'lib_rope_triceps_pushdown', 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row'];
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221; D-PLATEFIX-PINS / PIN GO): romanian_deadlift, single_leg_romanian_deadlift
+  // and triceps_pushdown join them (layers-page order); barbell_overhead_press (D-LIB13-PANEL2), mountain_climbers and pec_fly stay held
+  const SHIPPED_RULED = ['lib_dumbbell_biceps_curl', 'lib_plank', 'lib_rope_triceps_pushdown', 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press',
+    'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift', 'lib_triceps_pushdown', 'lib_upright_row'];
   /** LIB-SHIP W2: one line per row off the ruled state (an unruled id shipped, a ruled id not shipped, another stage). */
   const shipProblems = (rows: Record<string, any>) => Object.entries(rows).flatMap(([id, r]: [string, any]) =>
     SHIPPED_RULED.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
   it('LIB-SHIP W2 A9 mutations: an unruled id at shipped, a ruled id held back, and a ruled id\'s stamp removed are red', async () => {
-    expect(shipProblems({ ...batch.rows, lib_triceps_pushdown: { ...batch.rows.lib_triceps_pushdown, stage: 'shipped' } })).toEqual(['lib_triceps_pushdown: unruled, at shipped']);
+    // LIB-PLATEFIX-1: triceps_pushdown is ruled now, so the unruled id is the held barbell_overhead_press
+    expect(shipProblems({ ...batch.rows, lib_barbell_overhead_press: { ...batch.rows.lib_barbell_overhead_press, stage: 'shipped' } })).toEqual(['lib_barbell_overhead_press: unruled, at shipped']);
     expect(shipProblems({ ...batch.rows, lib_plank: { ...batch.rows.lib_plank, stage: 'approved-plate' } })).toEqual(['lib_plank: ruled, at approved-plate']);
+    // LIB-PLATEFIX-1 A9: a PLATEFIX id held back is red
+    expect(shipProblems({ ...batch.rows, lib_romanian_deadlift: { ...batch.rows.lib_romanian_deadlift, stage: 'approved-plate' } })).toEqual(['lib_romanian_deadlift: ruled, at approved-plate']);
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     const { scope, hash } = await S.stampOf('lib_plank'), rv = S.readReviews();
     const cut = { ...rv, entries: rv.entries.filter((e: any) => !(e.scope === scope && e.hash === hash)) };
     expect(await S.stampProblems(SHIPPED_RULED, { reviews: cut })).toEqual([`LIB-5 stamp: lib_plank: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`]);
+    // LIB-PLATEFIX-1 A9: a PLATEFIX id's stamp removed, and barbell_row's PLATEFIX re-stamp removed (its W2 stamp no longer matches), are red
+    for (const id of ['lib_triceps_pushdown', 'lib_barbell_row']) {
+      const st = await S.stampOf(id), cutPf = { ...rv, entries: rv.entries.filter((e: any) => !(e.scope === st.scope && e.hash === st.hash)) };
+      expect(await S.stampProblems(SHIPPED_RULED, { reviews: cutPf })).toEqual([`LIB-5 stamp: ${id}: no reviews.json entry for scope ${st.scope} hash ${st.hash.slice(0, 12)}…`]);
+    }
   }, 120_000);
   it('batches/pilot-a.json holds exactly the 13 pinned ids, each once, mode H, census view; LIB-SHIP: exactly the ruled ids shipped, the rest approved-plate', () => {
     for (const id of PINNED) expect(raw.split(`"lib_${id}"`).length - 1).toBe(1);
@@ -138,13 +152,16 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     // LIB-SHIP W2: W1's layers-page entry (index 14) is superseded by W2's; the one current entry (no later entry
     // supersedes it) is the last, names exactly the ruled ids and pins the page. A second current entry, a supersedes
     // naming anything but the earlier layers-page entry, or a W1 entry left current is red.
+    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): W2's entry (index 15) is superseded by PLATEFIX's, the last entry;
+    // the current entry is now the third
     const lp = entries.map((e: any, i: number) => ({ e, i })).filter(({ e }: any) => e.kind === 'layers-page');
-    expect(lp).toHaveLength(2);
-    expect(lp.map(({ e }: any) => e.decision)).toEqual(['D-SHIP-W1-LAYERS', 'D-SHIP-W2-STAMP']);
+    expect(lp).toHaveLength(3);
+    expect(lp.map(({ e }: any) => e.decision)).toEqual(['D-SHIP-W1-LAYERS', 'D-SHIP-W2-STAMP', PF_LAYERS_DECISION]);
     expect(lp[1].e.supersedes).toBe(lp[0].i);
-    expect(lp[1].i).toBe(entries.length - 1);
+    expect(lp[2].e.supersedes).toBe(lp[1].i);
+    expect(lp[2].i).toBe(entries.length - 1);
     const page = readFileSync(ROOT + batch.pages.layers);
-    expect([[...lp[1].e.ids].sort(), lp[1].e.ids.length, lp[1].e.pageSha256, lp[1].e.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
+    expect([[...lp[2].e.ids].sort(), lp[2].e.ids.length, lp[2].e.pageSha256, lp[2].e.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);

@@ -282,6 +282,102 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W2-STAMP",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf"
+    },
+    {
+      "scope": "lib_romanian_deadlift",
+      "hash": "57cc9c836118d7b303cc5430772390abe9b8ab0a51369e2c57f0215e627a7c7a",
+      "date": "2026-11-05",
+      "fetcher": "LIB-PLATEFIX-1: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/romanian_deadlift.json",
+      "critic": "LIB-PLATEFIX-1: fresh Opus content critics on card and quotes (layers panel pflk, rechecks on e7c5e612 and 7971bce1; every planted error caught); findings fixed and diff-checked by the supervisor (#385)",
+      "safety": "LIB-PLATEFIX-1: tier A; fresh Opus safety checker (planted unsafe line caught): nothing unsafe; way-out question answered yes (D-SHIP-WAYOUT, 6648438434)",
+      "reviewer": "LIB-PLATEFIX-1: calibrated plates panels (pf1 6636073314 @ e46466bb, pf2 6637293768 @ 3a969627) and layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (6648438434 @ f573d313; rechecks 6649655218 @ e7c5e612 and 6653693122 @ 7971bce1), plants caught, golden-B anchors; every median 4 or more",
+      "findings": [
+        "The pain row fix stays \"Stop. Don't train through the pain.\"; \"Get it checked\" lives in the linked back box (C8 RED_FLAG_WORDING, OWN_RED_FLAG); ruled (#385 6654532221)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-PLATEFIX-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6654532221 @ e1419e2616a6cd7a048a6a09d81fadee83ccdd2d"
+    },
+    {
+      "scope": "lib_single_leg_romanian_deadlift",
+      "hash": "266dd74d6b703b9668a4b1f6892b898dee7922996de9529e544b25b158292bd2",
+      "date": "2026-11-05",
+      "fetcher": "LIB-PLATEFIX-1: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/single_leg_romanian_deadlift.json",
+      "critic": "LIB-PLATEFIX-1: fresh Opus content critics on card and quotes (layers panel pflk, rechecks on e7c5e612 and 7971bce1; every planted error caught); findings fixed and diff-checked by the supervisor (#385)",
+      "safety": "LIB-PLATEFIX-1: tier A; fresh Opus safety checker (planted unsafe line caught): nothing unsafe; way-out question answered yes (D-SHIP-WAYOUT, 6648438434)",
+      "reviewer": "LIB-PLATEFIX-1: calibrated plates panels (pf1 6636073314 @ e46466bb, pf2 6637293768 @ 3a969627) and layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (6648438434 @ f573d313; rechecks 6649655218 @ e7c5e612 and 6653693122 @ 7971bce1), plants caught, golden-B anchors; every median 4 or more",
+      "findings": [
+        "SLRDL spec comment cites c9 for the mid-shin line where c9 and c3 apply; outside this card's write scope; recorded"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-PLATEFIX-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6654532221 @ e1419e2616a6cd7a048a6a09d81fadee83ccdd2d"
+    },
+    {
+      "scope": "lib_triceps_pushdown",
+      "hash": "9c6e9fb2912d4618d6b07dcb7c5a3930718c9f2e3ebdaa6dcdaefc25470533a0",
+      "date": "2026-11-05",
+      "fetcher": "LIB-PLATEFIX-1: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/triceps_pushdown.json",
+      "critic": "LIB-PLATEFIX-1: fresh Opus content critics on card and quotes (layers panel pflk, rechecks on e7c5e612 and 7971bce1; every planted error caught); findings fixed and diff-checked by the supervisor (#385)",
+      "safety": "LIB-PLATEFIX-1: tier C, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-PLATEFIX-1: calibrated plates panels (pf1 6636073314 @ e46466bb, pf2 6637293768 @ 3a969627) and layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (6648438434 @ f573d313; rechecks 6649655218 @ e7c5e612 and 6653693122 @ 7971bce1), plants caught, golden-B anchors; every median 4 or more",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-PLATEFIX-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6654532221 @ e1419e2616a6cd7a048a6a09d81fadee83ccdd2d"
+    },
+    {
+      "scope": "lib_reverse_lunge",
+      "hash": "b9fd75cd4a7406c9f9960c95145e5b1f534c1d65abcf57cec5f9df6f9915b6d5",
+      "date": "2026-11-05",
+      "fetcher": "LIB-PLATEFIX-1: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/reverse_lunge.json",
+      "critic": "LIB-PLATEFIX-1: fresh Opus content critics on card and quotes (layers panel pflk, rechecks on e7c5e612 and 7971bce1; every planted error caught); findings fixed and diff-checked by the supervisor (#385)",
+      "safety": "LIB-PLATEFIX-1: tier B, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-PLATEFIX-1: calibrated plates panels (pf1 6636073314 @ e46466bb, pf2 6637293768 @ 3a969627) and layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (6648438434 @ f573d313; rechecks 6649655218 @ e7c5e612 and 6653693122 @ 7971bce1), plants caught, golden-B anchors; every median 4 or more",
+      "findings": [
+        "The knee box keeps the shared RED_FLAG_KNEE \"today\" (copy-lint.mjs:337); the panel's \"now\" was advice; ruled (#385 6654532221)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-PLATEFIX-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6654532221 @ e1419e2616a6cd7a048a6a09d81fadee83ccdd2d"
+    },
+    {
+      "scope": "lib_barbell_row",
+      "hash": "45b20cd66670851e41ec8da4dd173f7f0e1e609348e24e907b6bf337ab50c0ce",
+      "date": "2026-11-05",
+      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/barbell_row.json",
+      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
+      "safety": "LIB-SHIP W2: tier A; fresh Opus safety checker (planted unsafe line caught): nothing unsafe; way-out question answered yes where asked (D-SHIP-WAYOUT)",
+      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
+      "findings": [
+        "F-CARD-ROWBACK: the card's row-back zoom claim is c4 only, while its Wrong is the c7 swing; recorded",
+        "Q-W2-15: fixed in LIB-PLATEFIX-1 (#385)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-PLATEFIX-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6654532221 @ e1419e2616a6cd7a048a6a09d81fadee83ccdd2d"
+    },
+    {
+      "scope": "lib_cable_fly",
+      "hash": "6979b81442ace0a0b2949558adfa1789e73e2bb20c669700c57458579080337b",
+      "date": "2026-11-05",
+      "fetcher": "LIB-SHIP W2: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/cable_fly.json",
+      "critic": "LIB-SHIP W2: fresh Opus content critics on card and quotes (sets k1/k2, then focused rechecks kr/kr2; every planted error caught); findings fixed and diff-checked by the supervisor (#379)",
+      "safety": "LIB-SHIP W2: tier B, no tier-A safety check required; risks and red flags checked by the content critic",
+      "reviewer": "LIB-SHIP W2: calibrated layers panel of 3 fresh Opus critics at 390 px in Silent Black and Paper (2 plants caught per set, 2 golden-B anchors), with focused rechecks where needed; every median 4 or more, or a recorded exception",
+      "findings": [
+        "Golden-B follow-up 36 (front_delts region); recorded",
+        "Q-W2-15: fixed in LIB-PLATEFIX-1 (#385)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-PLATEFIX-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6654532221 @ e1419e2616a6cd7a048a6a09d81fadee83ccdd2d"
     }
   ]
 }

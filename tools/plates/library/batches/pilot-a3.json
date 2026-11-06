@@ -22,7 +22,7 @@
     "Five levels of reverse lunge (Fit&Well; Amber Woolcock, certified personal trainer). https://www.fitandwell.com/exercise/bodyweight-exercises/five-levels-of-reverse-lunge-to-build-more-strength-balance-and-power-without-weights",
     "Reverse Lunge: How to Do It, Benefits, & Variations (Peloton; Rebecca Schumer, physical therapist). https://www.onepeloton.com/blog/reverse-lunge"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_dumbbell_fly": {
    "src": "library/specs/dumbbell_fly.mjs",

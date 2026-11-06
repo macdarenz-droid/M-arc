@@ -5,6 +5,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -189,13 +190,18 @@ const W2_ADDED: Record<string, string[]> = {
   'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
 };
 // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
-// research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef).
+// research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef: 5a51002e).
 const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
-const MANIFEST_BLANKED_MAIN_W2 = '5a51002ef2a7fb2a551601cc78f1b9d338d45f87c6f5be63b23d4853eebf0532';
+// LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 05f27be9, both sides kept): its moved keys,
+// added keys and superseded entries each pin their current value (pfProblems), then are blanked too (blankPF), so this is
+// main 05f27be9's MANIFEST.json with MOVED, W2, RR_BOX and PLATEFIX blanked.
+const MANIFEST_BLANKED_MAIN_W2 = '622ad94a4b84d9524babfceb811546bd6b564c0cf9b6b26d048636b535673408';
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
   const lessW2 = (m: any) => {
+    expect(pfProblems(m)).toEqual([]);
+    blankPF(m, '');
     expect(Object.keys(m.rows)).toContain('lib_crunch');
     delete m.rows.lib_crunch;
     for (const [id, r] of Object.entries<any>(m.rows)) {
@@ -221,5 +227,12 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     expect(() => lessW2(bad)).toThrow();
     const noCrunch = current(); delete noCrunch.rows.lib_crunch;
     expect(() => lessW2(noCrunch)).toThrow();
+    // LIB-PLATEFIX-1: a PLATEFIX moved key, added key or superseded entry off its current value is red
+    const pfKey = current(); (Object.values<any>(pfKey.rows).find(r => PF_MOVED[0]! in r.files)).files[PF_MOVED[0]!] = '0'.repeat(64);
+    expect(() => lessW2(pfKey)).toThrow();
+    const pfAdd = current(); delete pfAdd.rows.lib_reverse_lunge.files['tools/plates/library/pages/pilot-a3.closeups.mjs'];
+    expect(() => lessW2(pfAdd)).toThrow();
+    const pfEntry = current(); pfEntry.rows.lib_triceps_pushdown.entry = '0'.repeat(64);
+    expect(() => lessW2(pfEntry)).toThrow();
   });
 });

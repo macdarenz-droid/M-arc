@@ -148,6 +148,65 @@
       "date": "2026-11-04",
       "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row), and the D-TEXT-GOLDEN placements (#379 6637739563), which move posture-only card lines into visible setup and risk slots, and plank's harder checkpoint removed (D-TEXT-PROGRESSION, #379 6638023726), and the content check's two line fixes (#379 6638098178).",
       "prev": "252297287c2608f77972271a27a8de10ed861cd434334bd1cf1aae94bde6790b"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "128e6112335957d2ff7a0fa1dd3491067f6fc3fc7de2d3852fb9ea05957ad971",
+      "bytes": 409805,
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "why": "LIB-PLATEFIX-1: the plates page with this batch's fixed plates, approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "supersedes": 0,
+      "prev": "5ae57c9629fbbd2e78c3f4d1e4cd7a1f23bd602ebb126027da61dad74ea90d27"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_cable_fly",
+      "src": "library/specs/cable_fly.mjs",
+      "slug": "cable-fly",
+      "prefix": "cable-fly",
+      "chromeId": "cable-fly",
+      "fragments": {
+        "normalSvg": "e2e49d0e04f36430f0f21aeb5cbe5c07c125652a9878c1c317bb4020b08fea42",
+        "normalOverlay": "3137714d3a5abc3ef3d1421cde9d46e6c5fb25cfc3903d5a669d0d3775be65fc",
+        "mistakeSvg": "6df75bef82b934697c5ab36d468fb3b6368bbf531b363d596daecb37ca8f8a4b",
+        "mistakeOverlay": "0f0022b11e6a3c85e50603ec11488d24b679c0e40693e0b29d633766924bace8",
+        "tells": "4ef6ef619c62ecbb1c5269c11f4f37c7c9a747f7f194ae7a2e8954acae188c59",
+        "tempo": "b2657c960dfa57843b9f26e0e07fb3a38c22b2fe8e87482c84ff8f71d7c986a3",
+        "cues": "e372c0f19a6e3375cfde0f54fffda41a5a8bfcab9788ba9795f30f767c0bae6f",
+        "alt": "93644c0fb43782336edd088638b29a704bed7d378dbf81c587f493571d0cbec8",
+        "mistakeAlt": "bc452797282e7c4a85fee282036bc6337b5d604b952b79eef3a0af8af6ce8287"
+      },
+      "exemptions": [
+        "F2",
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "why": "LIB-PLATEFIX-1: lib_cable_fly's plate fixed from the W2 layers panel (#379 6633524031), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "supersedes": 3,
+      "prev": "0cf85708439c1b19595ed34ff82950d71ddcf3806af796b1f3c9813c8b681b52"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B",
+      "ids": [
+        "lib_cable_fly",
+        "lib_push_up"
+      ],
+      "pageSha256": "ae12bc47a4b5a1c023b1ed149a32f41197c3d56fc55c32b70ac6db8b7a359b27",
+      "bytes": 425345,
+      "approvedBy": "supervisor",
+      "decision": "D-PLATEFIX-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6648438434 @ f573d31322a421e169ea732e6cf948fbb41f66d0",
+      "date": "2026-11-06",
+      "why": "O5; LIB-PLATEFIX-1 layers page, golden-B design kinds alone, approved by the calibrated layers panel and rechecks (#385); D-PF-PAINNAMES-LIB names",
+      "supersedes": 5,
+      "prev": "aedb023aa510d864885d70f7111af6763fd15b2dc78e96dbfc51c32e05359227"
     }
   ]
 }

@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=65d3124d39fd8473142a9e8ff363f6851eb2feb8e055be0f45ca4ea9ea8e21ff
+{
+  "id": "lib_single_leg_romanian_deadlift",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/single_leg_romanian_deadlift.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-sl-rdl",
+    "sl-sl-rdl",
+    "gentilcore-slrdl",
+    "mo2023",
+    "acsm2009",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

@@ -2,6 +2,7 @@
 // stamps.mjs) compute exactly c15's contentHash over a row's full content and its 9 plate fragments, and an empty,
 // missing or unparsable reviews.json fails every id (never c15's stub pass). Main holds no scratch marker or stamp.
 import { execFileSync, spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -78,15 +79,32 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   const W1_RULE = ['D-SHIP-W1-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/376#issuecomment-6616230145 @ 26593a92bdbe428f12186949c7842b35d9f47dec'];
   const W2_RULE = ['D-SHIP-W2-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/379#issuecomment-6636105974 @ 91ee3dfa68c60f825dad53077358bcc0056c4ecf'];
   const W2_STAMPED = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
-  const RULING: Record<string, string[]> = { lib_dumbbell_biceps_curl: W1_RULE, ...Object.fromEntries(W2_STAMPED.map(id => [id, W2_RULE])) };
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221 @ e1419e26, the re-stamp at the merge of main 05f27be9; D-PLATEFIX-PINS / PIN GO): the 4 it ships are stamped
+  // under its ruling, and barbell_row and cable_fly, whose plates it changed, are re-stamped after their W2 stamps (kept
+  // as main's history, byte-equal). RULING now lists each id's rulings in stamp order; the last one is the current stamp.
+  const PF_RULE = ['D-PLATEFIX-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6654532221 @ e1419e2616a6cd7a048a6a09d81fadee83ccdd2d'];
+  const PF_STAMPED = ['lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift', 'lib_triceps_pushdown', 'lib_reverse_lunge'];
+  const PF_RESTAMPED = ['lib_barbell_row', 'lib_cable_fly'];
+  const RULING: Record<string, string[][]> = { lib_dumbbell_biceps_curl: [W1_RULE], ...Object.fromEntries(W2_STAMPED.map(id => [id, [W2_RULE]])),
+    ...Object.fromEntries(PF_STAMPED.map(id => [id, [PF_RULE]])), ...Object.fromEntries(PF_RESTAMPED.map(id => [id, [W2_RULE, PF_RULE]])) };
+  /** main 98eaec86's 17 reviews.json entries (sha256 of their JSON.stringify): LIB-PLATEFIX-1 only appends. */
+  const sha = (t: string) => createHash('sha256').update(t).digest('hex');
+  const MAIN_ENTRIES = { n: 17, sha: '0445f39e7b277ef6e0708c69cabaa060095193b5bfd3e2be7e1dc1b1ccf55e5b' };
   const clone = (x: any) => JSON.parse(JSON.stringify(x));
-  /** The library entries against RULING: every ruled id stamped once under its own decision, no unruled id stamped. */
+  /** The library entries against RULING: every ruled id stamped once per ruling, in order, under that decision; no
+   *  unruled id stamped. */
   const stampedProblems = (entries: any[]) => {
     const lib = entries.filter(e => !e.scratch && !EIGHT.includes(e.scope)), bad: string[] = [];
-    for (const id of Object.keys(RULING)) if (!lib.some(e => e.scope === id)) bad.push(`${id}: ruled, not stamped`);
+    for (const id of Object.keys(RULING)) {
+      const n = lib.filter(e => e.scope === id).length;
+      if (!n) bad.push(`${id}: ruled, not stamped`);
+      else if (n < RULING[id]!.length) bad.push(`${id}: ruled ${RULING[id]!.length} stamps, has ${n}`);
+    }
+    const seen: Record<string, number> = {};
     for (const e of lib) {
-      const ruled = RULING[e.scope];
-      if (!ruled) bad.push(`${e.scope}: stamped, not ruled`);
+      const ruled = RULING[e.scope]?.[(seen[e.scope] = (seen[e.scope] ?? -1) + 1)];
+      if (!RULING[e.scope]) bad.push(`${e.scope}: stamped, not ruled`);
+      else if (!ruled) bad.push(`${e.scope}: stamped again, not ruled`);
       else if (e.decision !== ruled[0]) bad.push(`${e.scope}: decision ${e.decision}, ruled ${ruled[0]}`);
     }
     return bad;
@@ -102,12 +120,18 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   it('one approved entry per id of the 8, each matching stampOf; LIB-SHIP: then one per ruled shipped library id; every committed entry is the supervisor\'s', async () => {
     const r = reviews();
     // LIB-SHIP W2 (ruling 3; D-SHIP-W2-STAMP #379 6636105974): the W1 id, then the 9 W2 ids in shipping (registry) order
-    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED]);
+    // LIB-PLATEFIX-1: then its 4 in registry order, then the 2 re-stamps; main's 17 entries unchanged
+    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED]);
+    expect(sha(JSON.stringify(r.entries.slice(0, MAIN_ENTRIES.n)))).toBe(MAIN_ENTRIES.sha);
     expect(stampedProblems(r.entries)).toEqual([]);
     expect(entryProblems(r.entries)).toEqual([]);
-    for (const e of r.entries.filter((x: any) => !EIGHT.includes(x.scope))) {   // LIB-SHIP: each library stamp matches its sheet and its ruling
-      expect([e.scope, e.hash]).toEqual([e.scope, (await S.stampOf(e.scope)).hash]);
-      expect([e.scope, e.decision, e.approval]).toEqual([e.scope, ...(RULING[e.scope] ?? ['no ruling', ''])]);
+    const lib = r.entries.filter((x: any) => !EIGHT.includes(x.scope));
+    for (const [i, e] of lib.entries()) {   // LIB-SHIP: each library stamp matches its sheet and its ruling
+      const k = lib.slice(0, i).filter((x: any) => x.scope === e.scope).length, last = !lib.slice(i + 1).some((x: any) => x.scope === e.scope);
+      // LIB-PLATEFIX-1: a superseded stamp (main's, byte-equal above) no longer matches the changed sheet; the last one does
+      if (last) expect([e.scope, e.hash]).toEqual([e.scope, (await S.stampOf(e.scope)).hash]);
+      else expect([e.scope, e.hash === (await S.stampOf(e.scope)).hash]).toEqual([e.scope, false]);
+      expect([e.scope, e.decision, e.approval]).toEqual([e.scope, ...(RULING[e.scope]?.[k] ?? ['no ruling', ''])]);
     }
     for (const e of r.entries.filter((x: any) => EIGHT.includes(x.scope))) {
       expect([e.scope, e.hash]).toEqual([e.scope, (await S.stampOf(e.scope)).hash]);
@@ -123,6 +147,17 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     expect(stampedProblems([...es, { ...es[es.length - 1], scope: 'lib_crunch' }])).toEqual(['lib_crunch: stamped, not ruled']);
     const w1 = clone(es); w1.find((e: any) => e.scope === 'lib_push_up').decision = 'D-SHIP-W1-STAMP';
     expect(stampedProblems(w1)).toEqual(['lib_push_up: decision D-SHIP-W1-STAMP, ruled D-SHIP-W2-STAMP']);
+    // LIB-PLATEFIX-1 A9: a PLATEFIX id's stamp removed; a re-stamp removed; a PLATEFIX id under the W2 ruling; a third stamp
+    expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_reverse_lunge'))).toEqual(['lib_reverse_lunge: ruled, not stamped']);
+    const noRe = es.filter((e: any) => !(e.scope === 'lib_cable_fly' && e.decision === 'D-PLATEFIX-STAMP'));
+    expect(stampedProblems(noRe)).toEqual(['lib_cable_fly: ruled 2 stamps, has 1']);
+    const pfW2 = clone(es); pfW2.find((e: any) => e.scope === 'lib_triceps_pushdown').decision = 'D-SHIP-W2-STAMP';
+    expect(stampedProblems(pfW2)).toEqual(['lib_triceps_pushdown: decision D-SHIP-W2-STAMP, ruled D-PLATEFIX-STAMP']);
+    expect(stampedProblems([...es, { ...es[es.length - 1] }])).toEqual(['lib_cable_fly: stamped again, not ruled']);
+    // the re-stamp's order matters: the PLATEFIX stamp before the W2 one is red
+    const swapped = clone(es), a = swapped.findIndex((e: any) => e.scope === 'lib_barbell_row'), b = swapped.map((e: any) => e.scope).lastIndexOf('lib_barbell_row');
+    [swapped[a], swapped[b]] = [swapped[b], swapped[a]];
+    expect(stampedProblems(swapped)).toEqual(['lib_barbell_row: decision D-PLATEFIX-STAMP, ruled D-SHIP-W2-STAMP', 'lib_barbell_row: decision D-SHIP-W2-STAMP, ruled D-PLATEFIX-STAMP']);
   });
   it('mutations, each red: \'owner\'; approvedBy missing; open: 1', () => {
     const e = reviews().entries[0], { approvedBy: _a, ...noBy } = e;

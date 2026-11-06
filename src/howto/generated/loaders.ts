@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=6171d14d48b2573a4975f41e50e453a5bcb8838d5114dadf57688c8490742199
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=e0fe5d182662ce342ec61a98ccd912e8650f9067454d69e060deeb66df3e3f64
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
@@ -14,10 +14,14 @@ export const HOWTO_IDS = [
   "lib_barbell_row",
   "lib_dumbbell_bench_press",
   "lib_dumbbell_shoulder_press",
+  "lib_romanian_deadlift",
+  "lib_single_leg_romanian_deadlift",
   "lib_upright_row",
   "lib_dumbbell_biceps_curl",
   "lib_rope_triceps_pushdown",
   "lib_plank",
+  "lib_triceps_pushdown",
+  "lib_reverse_lunge",
   "lib_cable_fly",
   "lib_push_up",
 ] as const;
@@ -35,10 +39,14 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
   lib_barbell_row: () => import('./ht-barbell-row'),
   lib_dumbbell_bench_press: () => import('./ht-dumbbell-bench-press'),
   lib_dumbbell_shoulder_press: () => import('./ht-dumbbell-shoulder-press'),
+  lib_romanian_deadlift: () => import('./ht-romanian-deadlift'),
+  lib_single_leg_romanian_deadlift: () => import('./ht-single-leg-romanian-deadlift'),
   lib_upright_row: () => import('./ht-upright-row'),
   lib_dumbbell_biceps_curl: () => import('./ht-dumbbell-biceps-curl'),
   lib_rope_triceps_pushdown: () => import('./ht-rope-triceps-pushdown'),
   lib_plank: () => import('./ht-plank'),
+  lib_triceps_pushdown: () => import('./ht-triceps-pushdown'),
+  lib_reverse_lunge: () => import('./ht-reverse-lunge'),
   lib_cable_fly: () => import('./ht-cable-fly'),
   lib_push_up: () => import('./ht-push-up'),
 };
@@ -68,10 +76,14 @@ export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: R
   "barbell-row": () => import('./posture-barbell-row'),
   "dumbbell-bench-press": () => import('./posture-dumbbell-bench-press'),
   "dumbbell-shoulder-press": () => import('./posture-dumbbell-shoulder-press'),
+  "romanian-deadlift": () => import('./posture-romanian-deadlift'),
+  "single-leg-romanian-deadlift": () => import('./posture-single-leg-romanian-deadlift'),
   "upright-row": () => import('./posture-upright-row'),
   "dumbbell-biceps-curl": () => import('./posture-dumbbell-biceps-curl'),
   "rope-triceps-pushdown": () => import('./posture-rope-triceps-pushdown'),
   "plank": () => import('./posture-plank'),
+  "triceps-pushdown": () => import('./posture-triceps-pushdown'),
+  "reverse-lunge": () => import('./posture-reverse-lunge'),
   "cable-fly": () => import('./posture-cable-fly'),
   "push-up": () => import('./posture-push-up'),
 };
@@ -87,10 +99,14 @@ export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { r
   "barbell-row": () => import('./feel-barbell-row'),
   "dumbbell-bench-press": () => import('./feel-dumbbell-bench-press'),
   "dumbbell-shoulder-press": () => import('./feel-dumbbell-shoulder-press'),
+  "romanian-deadlift": () => import('./feel-romanian-deadlift'),
+  "single-leg-romanian-deadlift": () => import('./feel-single-leg-romanian-deadlift'),
   "upright-row": () => import('./feel-upright-row'),
   "dumbbell-biceps-curl": () => import('./feel-dumbbell-biceps-curl'),
   "rope-triceps-pushdown": () => import('./feel-rope-triceps-pushdown'),
   "plank": () => import('./feel-plank'),
+  "triceps-pushdown": () => import('./feel-triceps-pushdown'),
+  "reverse-lunge": () => import('./feel-reverse-lunge'),
   "cable-fly": () => import('./feel-cable-fly'),
   "push-up": () => import('./feel-push-up'),
 };
