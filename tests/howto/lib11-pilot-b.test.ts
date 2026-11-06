@@ -382,9 +382,11 @@ describe('LIB-11 D-LIB11-SCRATCHIDS (a) and D-LIB11-SCRATCHA: no scratch target 
   it('the scratch set is clean; a set targeting lib_barbell_row (pilot A) or lib_smith_machine_bench_press (pilot B) is refused', async () => {
     const C = await import(/* @vite-ignore */ lib('ci/scratch.mjs'));
     expect(C.setProblems(C.SCRATCH_4C)).toEqual([]);
-    const swap = (key: string, id: string) => C.SCRATCH_4C.map((s: any) => (s.key === key ? { ...s, id } : s));
-    expect(C.setProblems(swap('lib4c-scratch-a', 'lib_barbell_row'))).toEqual(['lib_barbell_row is a pilot A id (D-LIB11-SCRATCHIDS)']);
-    expect(C.setProblems(swap('lib4c-scratch-e', 'lib_smith_machine_bench_press'))).toEqual(['lib_smith_machine_bench_press is a pilot B id (D-LIB11-SCRATCHIDS)']);
+    // F-SCRATCH-SYNTH (#397): the swap targets the real id itself (no copyOf), as the set did before; the pilot refusal
+    // stays, and its batches/ row is now refused too
+    const swap = (key: string, id: string) => C.SCRATCH_4C.map((s: any) => (s.key === key ? { id, from: s.from, key } : s));
+    expect(C.setProblems(swap('lib4c-scratch-a', 'lib_barbell_row'))).toEqual(['lib_barbell_row is a pilot A id (D-LIB11-SCRATCHIDS)', 'lib_barbell_row is a row of batches/pilot-a.json']);
+    expect(C.setProblems(swap('lib4c-scratch-e', 'lib_smith_machine_bench_press'))).toEqual(['lib_smith_machine_bench_press is a pilot B id (D-LIB11-SCRATCHIDS)', 'lib_smith_machine_bench_press is a row of batches/pilot-b.json']);
     expect(C.PILOT_A.map((i: string) => `lib_${i}`).sort()).toEqual(Object.keys(readJson('tools/plates/library/batches/pilot-a.json').rows).sort());
   });
 });
