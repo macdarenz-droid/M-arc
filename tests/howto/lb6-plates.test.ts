@@ -521,26 +521,10 @@ describe('LIB-16 A2: pulloverMachine on machine_pullover, per drawn pose (13.1)'
     const st = s.poses.start;
     expect(contactProblems({ ...s, poses: { ...s.poses, start: { ...st, neck: st.neck + 8 } } }).some(p => p.startsWith('start: head'))).toBe(true);
   });
-  // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was "the low back and upper back forward of the pad (at
-  // least 2 cm)" (backMid and backUpper > 0.02 m: the old Mistake slid the whole torso off the pad); now the low back
-  // arches off the pad (backMid > 0.02 m and lumbar > 0.10 m) with the upper back kept on it (|backUpper| <= 0.005 m),
-  // #393 6683164302 L5. The head check is unchanged. Mutation below: the old slide pose is red.
-  const c8Problems = (l: any, e: any) => {
-    const pad = M[ID].PM.pad, off = (p: number[]) => (p[1]! - pad.point[1]) * pad.normal[1] + (p[2]! - pad.point[2]) * pad.normal[2], bad: string[] = [];
-    if (!(off(l.backMid) > 0.02)) bad.push(`backMid ${off(l.backMid).toFixed(3)}`);
-    if (!(off(l.lumbar) > 0.10)) bad.push(`lumbar ${off(l.lumbar).toFixed(3)}`);
-    if (!(Math.abs(off(l.backUpper)) <= 0.005)) bad.push(`backUpper ${off(l.backUpper).toFixed(3)} off the pad`);
-    if (!(l.head[2] - e.head[2] > 0.04)) bad.push('head');
-    return bad;
-  };
-  it('c8 Mistake: the low back arches off the pad (backMid > 2 cm, lumbar > 10 cm) with the upper back on it, the head forward, the arm at the end', () => {
-    expect(c8Problems(lmOf(S[ID], 'mistake'), lmOf(S[ID], 'end'))).toEqual([]);
-  });
-  it('mutation: the old Mistake (the pelvis tipped 12 deg with the trunk counter-rotated: the torso slid off the pad) is red', async () => {
-    const { landmarksOf, rootOnSeat } = await import(/* @vite-ignore */ lib('engine.mjs'));
-    const e = S[ID].poses.end, seat = [0, M[ID].SIZES.SEAT_TOP, 0];
-    const old = { ...e, root: { at: rootOnSeat(seat, 12, 1.75), tilt: 12 }, trunk: -12, neck: M[ID].NECK + 12 };
-    expect(c8Problems(landmarksOf(old, 1.75), lmOf(S[ID], 'end')).some(b => /backUpper/.test(b))).toBe(true);
+  it('c8 Mistake: the low back, upper back and head forward of the pad (at least 2 cm), the arm at the end', () => {
+    const l = lmOf(S[ID], 'mistake'), pad = M[ID].PM.pad, off = (p: number[]) => (p[1]! - pad.point[1]) * pad.normal[1] + (p[2]! - pad.point[2]) * pad.normal[2];
+    for (const k of ['backMid', 'backUpper']) expect(off(l[k]), k).toBeGreaterThan(0.02);
+    expect(lmOf(S[ID], 'mistake').head[2] - lmOf(S[ID], 'end').head[2]).toBeGreaterThan(0.04);
   });
   /** Panel fix (#297 6353020731, R2): the seat cushion and the back pad each join the frame through drawn parts. Two
    *  static shapes join when their outlines come within 1 px or one holds a point of the other; the seat pad (the seat
@@ -1353,10 +1337,10 @@ describe('LIB-16 resume: the approved LB6 plates stay byte-identical (page 2668c
   // golden.mjs fragmentsOf of machine_pullover and machine_crunch on main's LB6 page 2668c838…e84e (both approved, #297).
   const APPROVED: Record<string, Record<string, string>> = {
     "machine-pullover": {
-      "normalSvg": "fc4506504817886a881c63cdec40fe976d31935e9f04b36e4e3b9b9c0072bc77",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): normalSvg was 90b18786, now fc450650
+      "normalSvg": "90b18786547aede0c06fa694bbf48a91868721bf17f37625fea5b04760a867a6",
       "normalOverlay": "9716f8050db626def56b9342914e5d38fefa2a6fe7978f29066605dc62cfcc80",
-      "mistakeSvg": "b14d7707d103986ef41ecac8381210b1057aa11a4f9e4b7a1f0a9f9037064f90",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was a452764a, now 73ced42e; round 2 (pf7, #405 6685743439): mistakeSvg was 73ced42e, now b14d7707
-      "mistakeOverlay": "25351a3befaf756cc996c46142bb2b819672a6443127639078575c359e01dfe2",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeOverlay was 742c20ff, now eac7c7ef; round 2 (pf7, #405 6685743439): mistakeOverlay was eac7c7ef, now 25351a3b
+      "mistakeSvg": "a452764ab7f5f89dfa7dc223c9ee4397f08313358d0407549f1151f529d65d11",
+      "mistakeOverlay": "742c20ff35b94de8f842dc7e2aa0d8ddc32bbb1c1bb35e6ec18ae7fcf47175ca",
       "tells": "491dfaa9fec824f16a2290510510b6fa5d9a4f4c9ea8f38a9e4d3f0a0359ed3a",
       "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
       "cues": "59c4002969a558f75c224b1af3682a555fbc0c6c73ee981e9640354810010be3",
@@ -1885,7 +1869,7 @@ describe('LIB-16R2 A6: rear_delt_fly\'s Mistake zoom (D-LIBZOOM-EXTEND; PLAN RUL
   it('clean: the Mistake zoom at k 1.5 (the ladder\'s lowest rung) meets the deviation bar (12.07 px; 8.0 px at plate scale), no node-half problem, no text or angle in it', async () => {
     const c = await candOf(), r = await qa(c), z = r.metrics.zoom.mistake, env = pins().envelope;
     expect(node(r)).toEqual([]);
-    expect(z.k).toBe(3);   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6685743439 pf7 R11): was 1.5, now 3 (the tell half-way up the trapezius line, 4.03 px)
+    expect(z.k).toBe(1.5);
     expect(r.metrics.deviation).toBeLessThan(env.deviationMin);
     expect(z.deviation).toBeGreaterThanOrEqual(env.deviationMin);
     expect(+z.deviation.toFixed(2)).toBe(12.07);
@@ -1935,8 +1919,8 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
       tells: '974fd5d7ae64e02e87f859bccdabbb824add81f8cc501ed38abe50e0a29b6b25', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
       cues: 'e57bcb073136e623bc0c4c7fe2a2c2743dd31dabd42ec1e7451ec62f46699c01', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
       mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
-    'high-to-low-cable-fly': { normalSvg: 'f3a6b677430bd396e616e93aa4899b45a35d447403c67f790d5e49659e09593d', normalOverlay: '036bbcc274a219453265d5aba76983ce959ee516a20d499d8f9e78179d26acea',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): normalSvg was 9b35cfa8, now f3a6b677; normalOverlay was 1f0d4513, now 036bbcc2
-      mistakeSvg: '811f291487a4adcabd368da27e4997b31c6266608e47b89e57d5eac0a4fe68a5', mistakeOverlay: 'bc9310ff4cefaf0d1d11f75ae567f4a48f899b6c86bfbf9477f71ce81aa35ae2',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 9eb229e0, now 8b5c975b; mistakeOverlay was e954e9ff, now bc9310ff; round 2 (pf7, #405 6685743439): mistakeSvg was 8b5c975b, now 811f2914
+    'high-to-low-cable-fly': { normalSvg: '9b35cfa8ac033cf03223f5aa482b2c4efa341f8e6c4dfac4b00c781ecdfd487b', normalOverlay: '1f0d451386e2e12cc6b8e8c4fd6db326ccc0b6dc981d383312e41bbcce5ef6e1',
+      mistakeSvg: '9eb229e0544fb487f59e4910d293c6da9c05ba0d1cf6242be3104ab7d975e402', mistakeOverlay: 'e954e9ff44fd970595ba91dcbb8f18038510a7bbcc73aee5d3fee8ce056b2e85',
       tells: '60d21de24772caa0dc87995218a1b8517e433b1e7927fc0b358aa4c869e34eb5', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
       cues: 'acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2', alt: '8776483a58ccce47ccf95121cf10720cb66e845ee4937aeb58497a071cfc8f30',
       mistakeAlt: 'ea2b604a94dd9d4bc75eb13615124126151b487f2dc7d4d674576c173dd7bdfe' },
@@ -1950,8 +1934,8 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
       tells: '687f416bd5dcdd39848f1dc1f9235c29f119151695de3723096f95497b30b92e', tempo: '0c3cfc803ccdd653f9beff83d552c129a8c4ce03a4f119808d72520aff159fbc',
       cues: '6220387ee2b29600bbd9b45e643e5193056ddda986ddc15b6d018bddbff05d07', alt: '74f3769e116308b416bf6d9b55d70d3579b21d3abcac3bf70ca79a82483fdd34',
       mistakeAlt: 'dadbe7b7bf2003b5b4312403ff066b86b940daa384e6d372ee6fd5548c38c2f7' },
-    'rear-delt-fly': { normalSvg: '3ae3c37eca03ee45125c2743e237fdc9f41e441f6138acca7e3ef4123f246f39', normalOverlay: '1b8f37bc2cabd0a02acffe75dfd7ef6a15423878044d49cf576854d6e7dd0b64',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): normalSvg was 386cba4a, now 3ae3c37e
-      mistakeSvg: 'dd886fa2a4624308fb62c9805df9fc2e1d9b208584bf6d25a3c1f1ece20c82e8', mistakeOverlay: '66398edde3c915b54979bc6f9db8c88847674a3e38f767db5934d42fa55919ba',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 51a69e4c, now 309876b1; round 2 (pf7, #405 6685743439): mistakeSvg was 309876b1, now dd886fa2
+    'rear-delt-fly': { normalSvg: '386cba4a876bbdf5d69c930c8207d8e5d6350c64ebd7fb9ac2c0645bfff054c8', normalOverlay: '1b8f37bc2cabd0a02acffe75dfd7ef6a15423878044d49cf576854d6e7dd0b64',
+      mistakeSvg: '51a69e4ca2a27c0eea6ac484e6efed62709c6396009c2c7e5b2f78f5b266acca', mistakeOverlay: '66398edde3c915b54979bc6f9db8c88847674a3e38f767db5934d42fa55919ba',
       tells: '9a2df2d60b2c5ee135a32b5694de1574f7cd55188fa9d77e146044b06c7569e4', tempo: '4fea38d8fe037c637a77ae44b4191a339e8fd1215cc41789124a37fcb95730ad',
       cues: 'cffb083b22876cc09fff21e99a198a14e75ccdf1334e12a0a70e7eea4f4ae435', alt: 'f54a914422b3e1be44f3991a289859a7b089c5c3b520f2407df73ec1d71c8d1b',
       mistakeAlt: '8025a402e572b5643fe4d0a851f73e5ac4d7de82c2544a4d4310038d05c31c01' },

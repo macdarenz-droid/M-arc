@@ -105,9 +105,5 @@ describe('LIB-PLATEFIX-3 item 17 and one_arm_dumbbell_row', { timeout: T }, () =
     if (JSON.stringify(t.anchor.off) !== JSON.stringify(off)) bad.push('the "Arm not straight" leader is not on the red arm');
     return bad;
   };
-  it('one_arm_dumbbell_row: the red arm clears the support arm by >= 10 px at the elbow, wrist and grip, its leader on it', async () => {
-    const m = await import(/* @vite-ignore */ lib('specs/one_arm_dumbbell_row.mjs'));
-    expect(offProblems(S.one_arm_dumbbell_row, m.MIST_OFF)).toEqual([]);
-    expect(offProblems(S.one_arm_dumbbell_row, [0, 0]).some(b => /elbow\.r/.test(b))).toBe(true);   // mutation: main's unshifted arm
-  });
+  // one_arm_dumbbell_row: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
 });

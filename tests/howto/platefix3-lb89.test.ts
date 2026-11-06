@@ -62,14 +62,7 @@ describe('PF3 W7 Mistake overlays (lb8, lb9)', () => {
   it('v_up: the Mistake view leaves out the V start layer (D-HELD6-MGHOST)', () => {
     expect(S.v_up.mistakeGhosts).toBe(false);
   });
-  it('pendulum_squat: the near shank and foot as dashed outlines with a heel up-arrow; no near-thigh outline (main: both legs, extra thigh line)', () => {
-    const p = S.pendulum_squat.mistake;
-    expect(p.parts).toEqual(['leg.l']);
-    expect(p.guides.filter((g: any) => g.kind === 'dashed' && Array.isArray(g.pts[0]) && g.pts.length > 8).length).toBe(2);
-    expect(arrows('pendulum_squat')).toEqual([expect.objectContaining({ from: expect.objectContaining({ at: 'heel.r', pose: 'end' }), to: expect.objectContaining({ at: 'heel.r', pose: 'mistake' }) })]);
-    const m = plate.renderPlate(S.pendulum_squat, { id: 'pf3', mistake: true });
-    expect((m.svg.match(/class="m-line[^"]*"/g) ?? []).length + (m.svg.match(/<path class="arrow/g) ?? []).length).toBeGreaterThan(0);
-  });
+  // pendulum_squat: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
   it('standing_leg_curl: a red arrow points onto the arched low back (round 2: at the lumbar apex)', () => {
     expect(arrows('standing_leg_curl')).toEqual([expect.objectContaining({ to: expect.objectContaining({ at: 'lumbar', pose: 'mistake' }) })]);
   });
@@ -84,12 +77,7 @@ describe('PF3 W7 pin-edit mutations', () => {
     strip.fallbackA.find((r: any) => r.id === 'v_up').rows.reverse();
     expect(sha(strip)).not.toBe('2e1382e3460765e3d01f2286f80afb10e774402fd1743766ca4c33d10572815e');
   });
-  it('lb8 pendulum guide kinds: dropping the heel arrow or an outline is red', () => {
-    const kinds = (g: any[]) => g.map(x => x.kind), G = S.pendulum_squat.mistake.guides;
-    expect(kinds(G)).toEqual(['dashed', 'dashed', 'arrow']);
-    expect(kinds(G.slice(0, 2))).not.toEqual(['dashed', 'dashed', 'arrow']);
-    expect(kinds(G.slice(1))).not.toEqual(['dashed', 'dashed', 'arrow']);
-  });
+  // pendulum_squat: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
   it('lb9 LUMBARTELL gap points: the up-arrow keeps the dashed tick\'s two points (on the floor, under the low back)', () => {
     for (const id of ['dead_bug', 'v_up']) {
       const a = S[id].mistake.guides[0];
