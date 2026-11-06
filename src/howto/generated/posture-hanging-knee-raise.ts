@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=483c5f7f85489e5328cb2bf99e0250574fc3d6c06b1983a150144972c55230a4
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=285d1c4ee0acbcd27c70aa20f609e55a3baf6c69447b5e48fba280322be0c604
 // The hanging-knee-raise posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-hanging-knee-raise.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives
