@@ -17,10 +17,6 @@
       "why": "true for this child because the Baechle and Earle rule covers all grips (see the thumb claim)."
     },
     {
-      "field": "grip.wrist",
-      "why": "true for this child because it is the same hold archetype with the load hanging from straight arms; same O’Driscoll 1992 cue (see the wrist claim)."
-    },
-    {
       "field": "risks[breath]",
       "why": "true for this child because heavy shrugs are also heavy lifts; same MacDougall 1985 line."
     },
@@ -708,7 +704,8 @@
   "anchorSource": "sl-dumbbell-shrug",
   "notes": [
     "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Handle across the middle of the palm, fingers wrapped (hold archetype); straps allowed when the grip limits the load.\") and the drawn palm direction (the dumbbell primitive's natural grip; no source states it, grip.type) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3).",
-    "The NHS shoulder \"Don't\" list also says \"do not completely stop using your shoulder\". The shown row stops only the set, so it does not conflict; a later writer must not widen it to stopping all shoulder use."
+    "The NHS shoulder \"Don't\" list also says \"do not completely stop using your shoulder\". The shown row stops only the set, so it does not conflict; a later writer must not widen it to stopping all shoulder use.",
+    "RESEARCH-ROUTES-1 (F-W4-INHERIT, #391 Q-W4-5 6647760116): grip.wrist leaves inherit[]. A ruled map cannot hold the conflict with barbell_shrug, so this card's own wrist claims stand. No claim text changes."
   ],
   "plateFacts": [
     {

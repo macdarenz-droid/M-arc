@@ -89,7 +89,7 @@
   "lib_barbell_overhead_press": {
    "entry": "2ab752bed00f9b8b87993fd6b6990972450c03fd409f4d5ce8e03f73ce1d47f7",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -188,7 +188,7 @@
   "lib_barbell_row": {
    "entry": "c632740ce86dab4d29e7812a76fc19bb07fd2f150e2301264df8d73443881e80",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -493,7 +493,7 @@
   "lib_bent_over_dumbbell_rear_delt_fly": {
    "entry": "cdc14419f1c51b3e47fb926a192e78deea8d03160ff9a127ffb9108bcd964845",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -653,7 +653,7 @@
   "lib_box_jump": {
    "entry": "3ae1f31d30d022d04f98cd8bee552868992cdbdb62253638ccd263cc24a0dc59",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -1071,7 +1071,7 @@
   "lib_crunch": {
    "entry": "38c1f8e77e84719b92ebfa71ea54752cbc7c70bada96944f2120aebf11318cf4",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -1224,7 +1224,7 @@
   "lib_dumbbell_bench_press": {
    "entry": "1fdce73a7431d1f10e18e54140184df37c1fb89902bde18dcd460c817365635c",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -1323,7 +1323,7 @@
   "lib_dumbbell_biceps_curl": {
    "entry": "fdf17f62f6bbd30a28078072aafa42a5106e5a80c1e9f9334471cbed21709070",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -1491,7 +1491,7 @@
   "lib_dumbbell_shoulder_press": {
    "entry": "d3694df987b64f503bd39b3fd70abc50c499dc480d144791bd0b0a1fb873c893",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -2606,7 +2606,7 @@
   "lib_mountain_climbers": {
    "entry": "f30d6abf2dc7d68a402c6a8e5149399719a86af6f7cfac15216ccfeb74fad56f",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -2712,7 +2712,7 @@
   "lib_pec_fly": {
    "entry": "d9aac21e853c01cb74f6cf188823d6c2c62d71c808492fd69c793e7e199e2c1f",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -2898,7 +2898,7 @@
   "lib_plank": {
    "entry": "6f7e82190f975b620d641ca3a096032bfb8e7ebe7f7d5ba72ba4309e3ddffa6d",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -3317,7 +3317,7 @@
   "lib_romanian_deadlift": {
    "entry": "dc7df70767f513697fa588d6c1056f7a10438060dcc781ecdec7ab0aeb95eaac",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -3416,7 +3416,7 @@
   "lib_rope_triceps_pushdown": {
    "entry": "011653bb9934915c32da9ddf07b9edea32a0ad3b2b8d749e954eb9556dbc2a06",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -3679,7 +3679,7 @@
   "lib_single_leg_romanian_deadlift": {
    "entry": "89603e90a7b941b73e069727c0c3c4f342ea519d42cec3c4398a88d25c3d073c",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -4219,7 +4219,7 @@
   "lib_triceps_pushdown": {
    "entry": "aff61b66139fa7f74066c0dd8e601b993e551e5bff5b6c1d7dbf979b49ee5e46",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
@@ -4318,7 +4318,7 @@
   "lib_upright_row": {
    "entry": "2b666e31dc19be0f4a7524d22836ddde13f4b4cee35b08a883098f01e78d15fd",
    "files": {
-    "docs/research/howto/shared/back-pain-box.json": "eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4",
+    "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
     "tools/plates/layers.mjs": "7c2c9f05aba10076d8865da2caa6bb277b54f1b07d62868cb23051d8aea8fb4b",
     "tools/plates/layers/MANIFEST.json": "c70b1f287876a1adbd4cf7ba0d751d8e3d79534426032a0c31a03608aa635181",
