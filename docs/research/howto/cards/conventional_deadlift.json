@@ -960,13 +960,13 @@
   ],
   "tempo": [
     {
-      "phase": "Lower",
-      "s": 2,
+      "phase": "Lift",
+      "s": 1,
       "move": true
     },
     {
-      "phase": "Lift",
-      "s": 1,
+      "phase": "Lower",
+      "s": 2,
       "move": true
     }
   ],

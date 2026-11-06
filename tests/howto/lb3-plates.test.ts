@@ -940,12 +940,13 @@ describe('LIB-13 A4: runQa node half on an LB3 plate (lib_conventional_deadlift)
 
 describe('LIB-13 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the pose map and the plate facts', { timeout: T }, () => {
   // The ruled table (LB3 NOTE RULED, #274 comment 6264733030; DESIGN.md section 8): phase names, order and source per
-  // id. Copied from the ruling, never read from tempo.json or a spec. No constants.
+  // id. Copied from the ruling, never read from tempo.json or a spec. No constants. pendlay_row, conventional_deadlift and
+  // sumo_deadlift are in execution order (D-SHIP-W4-TEMPO, #391 6681756394).
   const RULED: Record<string, [string, string][]> = {
-    pendlay_row: [['Lower', 'down'], ['Pull', 'up']], t_bar_row: [['Pull', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
+    pendlay_row: [['Pull', 'up'], ['Lower', 'down']], t_bar_row: [['Pull', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
     landmine_row: [['Pull', 'up'], ['Lower', 'down']], one_arm_dumbbell_row: [['Pull', 'up'], ['Lower', 'down']],
-    dumbbell_romanian_deadlift: [['Lower', 'down'], ['Stand', 'up']], conventional_deadlift: [['Lower', 'down'], ['Lift', 'up']],
-    sumo_deadlift: [['Lower', 'down'], ['Lift', 'up']], back_extension: [['Lower', 'down'], ['Raise', 'up'], ['Hold', 'pause']],
+    dumbbell_romanian_deadlift: [['Lower', 'down'], ['Stand', 'up']], conventional_deadlift: [['Lift', 'up'], ['Lower', 'down']],
+    sumo_deadlift: [['Lift', 'up'], ['Lower', 'down']], back_extension: [['Lower', 'down'], ['Raise', 'up'], ['Hold', 'pause']],
   };
   // The ruled pose map (DESIGN.md section 9): the spec pose each card pose is drawn as.
   const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB3.map(id => [id,
@@ -986,6 +987,9 @@ describe('LIB-13 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
       expect(red(s => { const rows = s.tj.ids[id].rows.filter((r: any) => r.from !== 'pause'); setAll(s, id, rows, built(rows, s.cards[id].plate.tempo)); }), `(v) Hold removed: ${id}`).toBe(true);
     expect(red(s => { const rows = s.tj.ids.conventional_deadlift.rows.map((r: any) => ({ ...r, from: r.from === 'up' ? 'down' : r.from === 'down' ? 'up' : r.from })); setAll(s, 'conventional_deadlift', rows, built(rows, s.cards.conventional_deadlift.plate.tempo)); }), '(vi) up/down swapped').toBe(true);
     expect(red(s => { s.cards.one_arm_dumbbell_row.tempo[0].s = 3; }), 'one tempo second').toBe(true);
+    // D-SHIP-W4-TEMPO: a card (and its spec) still in the old Lower-first order, against the new map, is red
+    for (const id of ['pendlay_row', 'conventional_deadlift', 'sumo_deadlift'])
+      expect(red(s => { const old = [...s.cards[id].tempo].reverse(); s.cards[id].tempo = old; if (s.specs[id]) s.specs[id] = { ...s.specs[id], tempo: old }; }), `old order: ${id}`).toBe(true);
   });
   const cardsSha = readJson('tools/plates/library/lb3/cards.sha.json');
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
