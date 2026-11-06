@@ -842,6 +842,14 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-06 ~10:45 UTC** (weekly 0.20 at 10:38, rising about 11 %/h with full panels; stop launching new panels at 0.70; at 0.75-0.79 tell every session to finish its step, push once and post WAITING, disable the hourly tick, and set a one-shot resume after Fri 11-13 08:00).
+  - **Owner question asked again** (11-06 ~10:25): a standing OK for superseding pins after a full panel. It now blocks PLATEFIX #385, PLATEFIX-2 #395, PLATEFIX-3's pins of merged plates, and every wave id whose parent is in #385.
+  - **Panels posted:** W5 second recheck (#392 6681869167), W7 panel (#394 6682487876, `panels/w7-findings.md`), W6 panel (#393 6682570363, `panels/w6-findings.md`), W4 recheck (#391 6682615402). All VALID.
+  - **Flip sets:** W3 ships 9 (D-SHIP-W3-NOPAIR); W4 ships 6 (D-SHIP-W4-FLIPSET); W5 ships its approved ids whose parents pass (D-SHIP-W5-FLIPSET, FIX 4 pending).
+  - **New lanes:** LIB-PLATEFIX-3 #405 (session_018Pv5bJ9MboAZCwYbWYT8KT; PLAN ruled 6682844211, split 3 / 3b), F-BODYMAP-FRONTDELT #404 (session_018Pv5bK6YDMBABSVZAvnnnu; D-BODYMAP-LIB 6682755661), F-STOPLINE-CLAIM #400/#401 and F-CARD-INCLINEDB-RISK #402/#403 (research session_018Pv5bMhM3JHpPCHARPBvjC).
+  - **#397:** FIX @ 66216bdd; fresh reviewer session_018Pv5bKm7Sie9n9JbyN7PVK.
+  - **Next:** W3 FLIPPED → reviewer → train 71 → APK. Then W4 READY (6). W7 small recheck set building (lyr-w7r, lyr-w7rk @ dde40eb3). W6 fix round, W5 FIX 4, the PLATEFIX-3 plates panels.
+  - Rulings are in lib4-cards 48 @ `2d1d617e`; the working notes are in the scratchpad `notes-resume-0740.md`.
 - **Update 11-06 ~09:10 UTC** (the weekly window reset at 08:00 and was 0 at 08:45; the next reset is Fri 11-13 08:00. **The 80 % pause rule applies now** (PANELS.md section 9).)
   - **D-REPIN-UNMERGED** (#384 6681018514): entries whose earlier version exists only in the lane's own unmerged chain are edited in place as `'supervisor'` first pins. This **unblocks W3** with no owner entry; W4 and W5 re-pin the same way. The owner question (a standing OK for superseding pins) now covers only PLATEFIX #385 and PLATEFIX-2 #395, whose entries supersede pilot pins on main. Raise it again with the next APK message if he has not answered.
   - **W4 rulings** (#391 6681022221): PLATETEXT go; **D-STOPLINE-CLAIM**: stop lines stay; RESEARCH-ROUTES part 2 adds one shared stop-on-pain claim first (card @ sup-lib4-cards `0c065edb`); stop lines merged without the cite join follow-up F-STOPLINE-MAIN.
