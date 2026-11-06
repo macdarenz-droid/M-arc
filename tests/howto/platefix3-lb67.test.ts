@@ -215,14 +215,48 @@ describe('PF3 round 2 low_to_high_cable_fly R5: the press elbows drop outside th
 });
 
 describe('PF3 round 2 smith_machine_squat R3: the stop is drawn behind the lifter (c8)', () => {
-  it('the safety stop box (25 x 5 cm) is in the back layer in the start and end poses (main: front, over the traps and the arm)', () => {
+  it('the safety stop is behind the trunk and the near limbs in the start and end poses (main: front, over the traps and the arm)', () => {
     const L = qaEng.poseLandmarks(Eng(), sms);
     for (const pose of ['start', 'end']) {
       const ctx = { pose, start: L.lm.start, mistake: false, body: L.body };
       const items = sms.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(L.lm[pose], ctx) ?? [] : e)).filter(Boolean);
-      const stop = items.find((it: any) => it.type === 'box' && it.w === 0.25 && it.h === 0.05);
+      // LIB-PLATEFIX-3 last recheck (#405 6688665575 R2): the stop is now the arm on the rail, in the center level (behind
+      // the trunk and the near limbs, as R3 asks); was the 25 x 5 cm box in the back level
+      const stop = items.find((it: any) => it.type === 'box' && Math.abs(it.h - 0.025) < 1e-9);
       expect(stop, pose).toBeTruthy();
-      expect(stop.z, pose).toBe('back');
+      expect(stop.z, pose).toBe('center');
+      expect(items.some((it: any) => it.z === 'front' && it.type === 'box'), pose).toBe(false);
     }
+  });
+});
+
+describe('PF3 last recheck smith_machine_squat R2, R5 (#405 6688665575; D-SHIP-W5-NEWFIND)', () => {
+  const itemsOf = (pose: string) => {
+    const L = qaEng.poseLandmarks(Eng(), sms), ctx = { pose, start: L.lm.start, mistake: false, body: L.body };
+    return sms.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(L.lm[pose], ctx) ?? [] : e)).filter(Boolean);
+  };
+  it('R2: the rod and the hook rail are drawn in the end layer (center level), not the static back level the start figure covers', () => {
+    const items = itemsOf('end');
+    // equipment order: floor, then smith()'s [carriage, hook, stop, rod, hook rail, top member, floor beam]
+    const rod = items[4], upright = items[5], member = items[6];
+    expect(upright.type).toBe('rackUpright');
+    expect(member.z).toBe('back');
+    expect(upright?.z).toBe('center');
+    expect(rod?.z).toBe('center');
+  });
+  it('R2: the stop is a horizontal arm on the rail, top just under the bar, reaching at least 15 px behind the rod and at most 5 px tall', () => {
+    const r = plate.renderPlate(sms, { id: 'pf3s' }), cam = qaEng.cameraOf(sms, r.report), stop = itemsOf('end').find((it: any) => it.type === 'box' && it.z === 'center');
+    const back = cam.P([0, stop.at[1], stop.at[2] - stop.w / 2]), rail = cam.P([0, stop.at[1], -0.11]);
+    expect(rail[0]! - back[0]!).toBeGreaterThanOrEqual(15);
+    expect(stop.h * cam.pxm).toBeLessThanOrEqual(5);
+    expect(stop.w).toBeGreaterThan(stop.h * 4);
+  });
+  it('R5: the faulty near leg is drawn whole as dashed outlines over the solid figure, its foot under the bar line', () => {
+    expect(sms.mistake.parts).not.toContain('leg.r');
+    const dashed = sms.mistake.guides.filter((g: any) => g.kind === 'dashed');
+    expect(dashed.length).toBe(5);   // thigh, kneecap, shank, foot + the bar's line
+    const foot = dashed[3].pts, zs = foot.map((p: number[]) => p[2]!);
+    expect(Math.min(...zs)).toBeLessThanOrEqual(-0.11);   // the foot reaches the rail's line (z -0.11) under the bar
+    expect(Math.max(...zs)).toBeGreaterThanOrEqual(-0.11);
   });
 });
