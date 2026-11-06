@@ -68,6 +68,12 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     expect(pr).toHaveLength(22);
     for (const r of pr) { expect(r.files[PAIRS]).toBe(sha(rd(PAIRS))); r.files[PAIRS] = 'X'; }
     // main e623d3ef's MANIFEST.json with the same entries blanked (was f0ec7bd5… on main 8bb433bd, daf6779b… with BOX alone; re-measure if a later re-pin merges first)
-    expect(sha(JSON.stringify(m))).toBe('a97a39e2402296337bf8c9947dc0b4e6d266d7732292caefbd0796fd5a49386f');
+    // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN): specs/pec_fly.mjs's and zoom/inline.mjs's keys and lib_pec_fly's entry are re-pinned
+    // there; each key pins its current file and the entry hashes pilot A's latest pec_fly plate entry, then all are blanked
+    // (main 05f27be9's MANIFEST.json differs from this PR's in exactly these; re-measured with them blanked)
+    const pf2 = (x: any) => { for (const [id, r] of Object.entries<any>(x.rows)) for (const k of ['tools/plates/library/specs/pec_fly.mjs', 'tools/plates/library/zoom/inline.mjs']) if (k in r.files) { expect([id, k, r.files[k]]).toEqual([id, k, sha(rd(k))]); r.files[k] = 'X'; }
+      const pe = JSON.parse(rd('tests/howto/golden/library/pilot-a.json').toString()).entries.filter((e: any) => e.id === 'lib_pec_fly').at(-1);
+      expect(x.rows.lib_pec_fly.entry).toBe(sha(JSON.stringify(pe))); x.rows.lib_pec_fly.entry = 'X'; return x; };
+    expect(sha(JSON.stringify(pf2(m)))).toBe('aaa284e0b4e46f00c43b887fc69a5230aa8b52ccd78bc05e3da0d851e1a50512');   // was a97a39e2… before LIB-PLATEFIX-2
   });
 });

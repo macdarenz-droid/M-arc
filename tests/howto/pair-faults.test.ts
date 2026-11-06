@@ -191,7 +191,8 @@ const W2_ADDED: Record<string, string[]> = {
 // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
 // research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef).
 const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
-const MANIFEST_BLANKED_MAIN_W2 = '5a51002ef2a7fb2a551601cc78f1b9d338d45f87c6f5be63b23d4853eebf0532';
+// LIB-PLATEFIX-2 (#395): re-measured with its keys and lib_pec_fly's entry blanked too (was 5a51002e…)
+const MANIFEST_BLANKED_MAIN_W2 = '9a7d0dc0d976e01210eb35552033b6b86c9025f147867ab623d991d8706ce3b9';
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
@@ -208,7 +209,13 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
     const m = current();
     // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out
-    expect(blanked(lessW2(m), [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN_W2);
+    // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN): specs/pec_fly.mjs's and zoom/inline.mjs's keys and lib_pec_fly's entry are re-pinned
+    // there; each key pins its current file and the entry hashes pilot A's latest pec_fly plate entry, then all are blanked
+    // (main 05f27be9's MANIFEST.json differs from this PR's in exactly these; re-measured with them blanked)
+    const pf2 = (x: any) => { for (const [id, r] of Object.entries<any>(x.rows)) for (const k of ['tools/plates/library/specs/pec_fly.mjs', 'tools/plates/library/zoom/inline.mjs']) if (k in r.files) { expect([id, k, r.files[k]]).toEqual([id, k, sha(read(k))]); r.files[k] = 'X'; }
+      const pe = JSON.parse(read('tests/howto/golden/library/pilot-a.json').toString()).entries.filter((e: any) => e.id === 'lib_pec_fly').at(-1);
+      expect(x.rows.lib_pec_fly.entry).toBe(sha(JSON.stringify(pe))); x.rows.lib_pec_fly.entry = 'X'; return x; };
+    expect(blanked(pf2(lessW2(m)), [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN_W2);
     for (const k of MOVED) for (const r of Object.values<any>(current().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {

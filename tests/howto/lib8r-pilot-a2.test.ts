@@ -321,7 +321,10 @@ describe('LIB-8R A2, A3, A12, A13: the PILOT-A2 pin (Do 7) and the untouched pil
     for (const b of ['pilot-a', 'pilot-b']) {
       const row = all.find((r: any) => r.batchFile === `tools/plates/library/batches/${b}.json`), html = await BG.platesPage(row, all);
       const plates = G.extractPlates(html), g = readJson(`tests/howto/golden/library/${b}.json`);
-      for (const e of g.entries.filter((x: any) => x.kind === 'plate')) {
+      // LIB-PLATEFIX-2 (D-OWNER-REPIN, #395): each id's latest plate entry; the only superseded plate entry is pilot A's pec_fly (8)
+      const sup = g.entries.filter((x: any) => x.kind === 'plate' && x.supersedes != null).map((x: any) => [x.id, x.supersedes]);
+      expect(sup).toEqual(b === 'pilot-a' ? [['lib_pec_fly', 8]] : []);
+      for (const e of [...G.latestEntries(g.entries).values()].filter((x: any) => x.kind === 'plate')) {
         const p = plates.find((x: any) => x.chromeId === e.chromeId);
         for (const [k, v] of Object.entries(G.fragmentsOf(p))) { expect(v, `${e.id} ${k}`).toBe(e.fragments[k]); n++; }
       }

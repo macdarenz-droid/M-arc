@@ -277,7 +277,13 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync('docs/research/howto/shared/back-pain-box.json'))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
     // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
-    expect(sha(JSON.stringify(rrBox(lessW2(m, [BLP]))))).toBe('99d9824be548ecd2454a92bb35c43c1339eca13f8d6731660c6140f2d30e882e');
+    // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN): specs/pec_fly.mjs's and zoom/inline.mjs's keys and lib_pec_fly's entry are re-pinned
+    // there; each key pins its current file and the entry hashes pilot A's latest pec_fly plate entry, then all are blanked
+    // (main 05f27be9's MANIFEST.json differs from this PR's in exactly these; re-measured with them blanked)
+    const pf2 = (x: any) => { for (const [id, r] of Object.entries<any>(x.rows)) for (const k of ['tools/plates/library/specs/pec_fly.mjs', 'tools/plates/library/zoom/inline.mjs']) if (k in r.files) { expect([id, k, r.files[k]]).toEqual([id, k, sha(readFileSync(k))]); r.files[k] = 'X'; }
+      const pe = JSON.parse(readFileSync('tests/howto/golden/library/pilot-a.json').toString()).entries.filter((e: any) => e.id === 'lib_pec_fly').at(-1);
+      expect(x.rows.lib_pec_fly.entry).toBe(sha(JSON.stringify(pe))); x.rows.lib_pec_fly.entry = 'X'; return x; };
+    expect(sha(JSON.stringify(pf2(rrBox(lessW2(m, [BLP])))))).toBe('b625fc40476a4f82270db165f7fcdf06f3cca3a17a588e4236ba5100ad3fd58b');   // was 99d9824b… before LIB-PLATEFIX-2
   });
 });
 
