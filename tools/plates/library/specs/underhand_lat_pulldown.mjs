@@ -164,5 +164,5 @@ export default {
       { key: 'back', text: 'Elbows<br>go back', anchor: 'elbow.r', box: { left: 4, top: 236 }, cue: 'The elbows start to travel back behind the body.' },
     ],
   },
-  alt: 'Underhand lat pulldown, side view. Seated with the thighs under the knee pad, palms facing in about shoulder width, the bar is pulled from straight arms overhead to just below the chin, elbows down and back.',
+  alt: 'Underhand lat pulldown, side view. Seated with the thighs under the knee pad, palms facing you about shoulder width, the bar is pulled from straight arms overhead to just below the chin, elbows down and back.',
 };

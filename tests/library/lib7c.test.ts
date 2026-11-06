@@ -79,7 +79,8 @@ function keyProblems(mods: any[], wordFiles: string[]) {
 }
 const WORD_FILES = () => readdirSync('tools/plates/library/hands/words');
 // LIB-12's 2 keys came first on main (lib7-fix.test.ts:69 '8 + 2', D-LIB12FIX-R8-GAPS); LIB-7c adds its |D| after them
-const LINE69 = (src: string, d: number) => src.split('\n')[68]!.includes(`C.sweep(P.keysOf(), 8 + 2 + ${d}, 'pair keys')`);
+// LIB-SHIP W3 (D-SHIP-A9 guard replacement): the line sweeps keysOf() less W3's sub-keys (lib7-fix.test.ts baseKeys)
+const LINE69 = (src: string, d: number) => src.split('\n')[68]!.includes(`C.sweep(baseKeys(), 8 + 2 + ${d}, 'pair keys')`);
 
 describe('LIB-7c 7c-A1: modules and keys (D-LIB7c-KEYS, D-LIB7FIX-KEY)', () => {
   it('2 modules, 4 variants, drawn ids + gap ids = the six, disjoint; archetypes = census; gaps as ruled', () => {
@@ -91,7 +92,12 @@ describe('LIB-7c 7c-A1: modules and keys (D-LIB7c-KEYS, D-LIB7FIX-KEY)', () => {
     expect(keyProblems(P.MODULES, WORD_FILES())).toEqual([]);
     const mapped = Object.keys(P.HAND_OF_ID).map(l => l.slice(4)).filter(id => SIX.includes(id)).sort();
     expect(mapped).toEqual([...lib7cDrawn()].sort());
-    for (const id of lib7cDrawn()) expect(P.HAND_OF_ID[`lib_${id}`]).toBe(RULED[id]);
+    // LIB-SHIP W3 (D-SHIP-A9 guard replacement): chin_up, inverted_row, close_grip_pulldown and single_arm_lat_pulldown ship with pairFaults, so
+    // HAND_OF_ID names their sub-key of the ruled key; the key index still puts them on it
+    const W3_SUB: Record<string, string> = { chin_up: 'bar-hang-only-curled-under', inverted_row: 'bar-row-only-curled-over', single_arm_lat_pulldown: 'd-handle-pull-only-curled-unstated',
+      close_grip_pulldown: 'v-handle-pull-only-curled-neutral-overhead' };
+    for (const id of lib7cDrawn()) expect([id, P.HAND_OF_ID[`lib_${id}`]]).toEqual([id, W3_SUB[id] ?? RULED[id]]);
+    for (const id of lib7cDrawn()) expect([id, P.keyIndexOf().keyOf.get(id)]).toEqual([id, RULED[id]]);
   });
   it('lib7-fix.test.ts:69 is the exact sweep 8 + |D|', () => {
     const D = new Set(lib7cDrawn().map(id => RULED[id])).size;
@@ -112,8 +118,8 @@ describe('LIB-7c 7c-A1: modules and keys (D-LIB7c-KEYS, D-LIB7FIX-KEY)', () => {
     const gapped = withMods(m => { const b = key(m, 'bar'); b.GAPS.chin_up = 'planted'; delete b.IDS.chin_up; });
     expect(keyProblems(gapped, WORD_FILES()).join('\n')).toMatch(/words files .* are not the drawn keys/);
     const src = readFileSync('tests/library/lib7-fix.test.ts', 'utf8').split('\n');
-    src[68] = src[68]!.replace(/C\.sweep\(P\.keysOf\(\), 8 \+ 2 \+ \d+,/, 'C.sweep(P.keysOf(), 8 + 2,');
-    expect(src[68]).toContain('C.sweep(P.keysOf(), 8 + 2, ');
+    src[68] = src[68]!.replace(/C\.sweep\(baseKeys\(\), 8 \+ 2 \+ \d+,/, 'C.sweep(baseKeys(), 8 + 2,');   // LIB-SHIP W3: baseKeys()
+    expect(src[68]).toContain('C.sweep(baseKeys(), 8 + 2, ');
     expect(LINE69(src.join('\n'), new Set(lib7cDrawn().map(id => RULED[id])).size)).toBe(false);
   });
 });
