@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=6f6a97f914aac88ff5d1c468f8b2572871b43bef96c965abbc8ba2831acb6d53
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=aa81d450997f64e75cd26b789d0dee12d3b4c466f395f45e0dbbb8c5ee856594
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_landmine_row",
   name: "Landmine Row",
-  hashes: { inputsSha256: "6f6a97f914aac88ff5d1c468f8b2572871b43bef96c965abbc8ba2831acb6d53", golden: "c53912fab6be0530171c54350f0a8c16341942057d6d05e0b469f5dc8382d433" },
+  hashes: { inputsSha256: "aa81d450997f64e75cd26b789d0dee12d3b4c466f395f45e0dbbb8c5ee856594", golden: "c53912fab6be0530171c54350f0a8c16341942057d6d05e0b469f5dc8382d433" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

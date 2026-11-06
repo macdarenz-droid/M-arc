@@ -1,0 +1,30 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=a0ff9bba563be27047f9a0cdd38d936c913b0394d26293bcbaed4fc75dd48748
+{
+  "id": "lib_chin_up",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/chin_up.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-chin-ups",
+    "strengthlog-chin-up",
+    "nasm-chin-pull",
+    "barbend-chin-up",
+    "ace-best-back",
+    "youdas-2010",
+    "prinold-2016",
+    "mcgill-2014",
+    "odriscoll-1992",
+    "hk-baechle-grip",
+    "bullbar-assist-beginner",
+    "bullbar-calluses",
+    "hand-key-bar",
+    "nhs-shoulder-pain",
+    "nhs-elbow-pain"
+  ],
+  "riskFlags": [
+    "shoulder",
+    "elbow"
+  ]
+}

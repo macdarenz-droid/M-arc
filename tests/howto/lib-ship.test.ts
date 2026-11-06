@@ -18,9 +18,13 @@ const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 const json = (p: string) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
 const EIGHT = Object.keys(json('tools/plates/plates.json'));
 /** The library ids ruled to ship on this head, in registry order (W1: D-SHIP-W1-LAYERS #376 6616230145; W2: the 9 of
- *  D-SHIP-W2-STAMP #379 6636105974, less crunch and seated_leg_curl held by Q6/Q7 6636501505, 6636616603). */
-const RULED_SHIPPED = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
-  'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up'];
+ *  D-SHIP-W2-STAMP #379 6636105974, less crunch and seated_leg_curl held by Q6/Q7 6636501505, 6636616603; W3: the 9 of
+ *  #384 6653062201, less assisted_pull_up and underhand_lat_pulldown (LIB-PLATEFIX-3) and incline_machine_press and
+ *  shoulder_press (D-SHIP-W3-NOPAIR 6681221802); registry order puts lb01 first and zoom last). */
+const W3_SHIPPED = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
+  'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'];
+const RULED_SHIPPED = [...W3_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
+  'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
 let reg: any, content: any, P: any, keyMods: any[];
 beforeAll(async () => {
@@ -252,7 +256,9 @@ describe('LIB-SHIP D-SHIP-PAIR-NOZOOM (#379 6637870829): pairsOf leaves out ids 
   it('red 2: an unlisted keyed id keeps its pair (the curl)', () => {
     const { pairOf, keys } = HP.pairsOf(pairs, R.shippedIds());
     expect(pairOf['dumbbell-biceps-curl']).toBe('curl-dumbbell-under');
-    expect(keys).toEqual(['curl-dumbbell-under']);
+    // LIB-SHIP W3: W3's 5 pair rows (registry order, lb01 first) carry their sub-keys; the curl's key stays last
+    expect(keys).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead',
+      'd-handle-pull-only-curled-unstated', 'curl-dumbbell-under']);
     expect(HP.noZoomIds()).not.toContain('lib_dumbbell_biceps_curl');
   });
   it('red 3: hands.mjs\'s no-zoom check runs for rope and push_up (their sheets name D-SHIP-C3; a sheet naming none is refused)', async () => {
@@ -269,6 +275,10 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
   // makes shared/back-box.mjs read docs/research/howto/shared/back-pain-box.json, so the mirror must carry it
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const BACK = 'docs/research/howto/shared/back-pain-box.json';
+  // LIB-SHIP W3 (D-SHIP-A5BACK-CARDS): lb01.layers.json's pairWords rows (W3 layers fix, #384 6648454032) and
+  // pilot-a.layers.json's mountain_climbers pairFaults row (Q-W3-14, F-PAIR-FAULTS #386), sorted by path
+  const PAIR_CARDS = ['chin_up', 'close_grip_pulldown', 'inverted_row', 'single_arm_lat_pulldown']
+    .map(id => `docs/research/howto/cards/${id}.json`);
   const ht4 = async (): Promise<any> => import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/fidelity/twins/ht4.mjs')).href);
   const pilotA = async (): Promise<string[]> => {
     const reg: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/registry.mjs')).href);
@@ -284,7 +294,8 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
   };
   it('pilot-a\'s pinned extras are exactly the back box research file, and the real tree builds pilot-a in the mirror', async () => {
     const ids = await pilotA();
-    expect((await ht4()).mirrorExtras(process.cwd(), ids)).toEqual([BACK]);
+    // D-SHIP-A5BACK-CARDS (#384 6648753200): then the research card of every layers-config row naming pairFaults or pairWords
+    expect((await ht4()).mirrorExtras(process.cwd(), ids)).toEqual([BACK, ...PAIR_CARDS]);
     expect((await build(process.cwd(), ids)).calls.length).toBeGreaterThan(0);
   }, 300_000);
   it('red (the copy step removed, i.e. no ids reach it): the ENOENT crash on the back-flagged rows', async () => {
@@ -298,6 +309,32 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
       cpSync('src/data', join(R, 'src/data'), { recursive: true });
       symlinkSync(join(process.cwd(), 'node_modules'), join(R, 'node_modules'));
       await expect(build(R, await pilotA())).rejects.toThrow(`HT4-A5: ${BACK} is pinned in MANIFEST.json for this batch but missing from the tree`);
+    } finally { rmSync(R, { recursive: true, force: true }); }
+  }, 300_000);
+});
+
+describe('LIB-SHIP W3 D-SHIP-A5BACK-CARDS (#384 6648753200): the HT4 mirror carries the pair rows\' research cards', () => {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const BACK = 'docs/research/howto/shared/back-pain-box.json', CARD = 'docs/research/howto/cards/inverted_row.json';
+  const ht4 = async (): Promise<any> => import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/fidelity/twins/ht4.mjs')).href);
+  const pilotA = async (): Promise<string[]> => {
+    const reg: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/registry.mjs')).href);
+    return reg.rows().filter((r: any) => r.batchFile === 'tools/plates/library/batches/pilot-a.json').map((r: any) => r.id);
+  };
+  it('red (a pair row\'s card dropped from the tree): the mirror build throws, naming it', async () => {
+    const { cpSync, mkdtempSync, mkdirSync, rmSync, symlinkSync } = await import('node:fs'), { tmpdir } = await import('node:os'), { dirname } = await import('node:path');
+    const { pathToFileURL } = await import('node:url');
+    const R = mkdtempSync(join(tmpdir(), 'a5cards-root-'));
+    try {
+      cpSync('tools/plates', join(R, 'tools/plates'), { recursive: true });
+      cpSync('src/data', join(R, 'src/data'), { recursive: true });
+      for (const p of [BACK, ...(await ht4()).pairCardsOf(process.cwd())].filter(p => p !== CARD)) { mkdirSync(dirname(join(R, p)), { recursive: true }); cpSync(p, join(R, p)); }
+      symlinkSync(join(process.cwd(), 'node_modules'), join(R, 'node_modules'));
+      const ids = await pilotA();
+      await expect((await ht4()).captureLayersBuild(R, async (T: string) => {
+        const { layersSpecOf }: any = await import(/* @vite-ignore */ pathToFileURL(join(T, 'tools/plates/library/layers-spec.mjs')).href);
+        return layersSpecOf('tools/plates/library/batches/pilot-a.json', { stageDir: mkdtempSync(join(tmpdir(), 'a5cards-stage-')), root: T });
+      }, ids)).rejects.toThrow(`HT4-A5: ${CARD} is a pair row's research card (D-SHIP-A5BACK-CARDS) but missing from the tree`);
     } finally { rmSync(R, { recursive: true, force: true }); }
   }, 300_000);
 });
@@ -617,5 +654,128 @@ describe('LIB-SHIP W4 barbell_shrug contact from golden B\'s hold default (as ca
   it('red 2: the sheet\'s contact changes', async () => {
     const [{ content: sh }, { content: src }] = await Promise.all(['lib_barbell_shrug', 'lib_dumbbell_lateral_raise'].map(id => content.loadContent(id)));
     expect(contactProblems({ ...sh, handling: { ...sh.handling, contact: 'heel' } }, src)).toEqual(['hold-default: lib_barbell_shrug contact heel is not lib_dumbbell_lateral_raise\'s mid-palm']);
+  });
+});
+
+// LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE (#383 6632352291): a `left-out:` row in a batch file (leg_press_calf_raise, no spec)
+// is never staged or listed by the batch closure (ci/manifest.mjs filesOf); a non-left-out row with no spec still throws.
+describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batch closure', () => {
+  const LEFT = 'lib_leg_press_calf_raise';
+  it('the left-out row is in lb01.json at left-out:D-OWNER-LIB142, and no MANIFEST row or file names it', async () => {
+    const { rows } = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const { manifestOf } = await import(/* @vite-ignore */ url('tools/plates/library/ci/manifest.mjs'));
+    const row = rows().find((r: any) => r.id === LEFT);
+    expect(row?.stage).toBe('left-out:D-OWNER-LIB142');
+    expect(row?.batchFile).toBe('tools/plates/library/batches/lb01.json');
+    const m: any = await manifestOf();
+    expect(Object.keys(m.rows)).not.toContain(LEFT);
+    for (const r of Object.values(m.rows) as any[]) expect(Object.keys(r.files).filter(p => p.includes('leg_press_calf_raise'))).toEqual([]);
+  }, 120_000);
+  it('the pinned MANIFEST sets are byte-equal to the committed file', async () => {
+    const { manifestOf, manifestText, MANIFEST } = await import(/* @vite-ignore */ url('tools/plates/library/ci/manifest.mjs'));
+    expect(manifestText(await manifestOf())).toBe(readFileSync(join(ROOT, MANIFEST), 'utf8'));
+  }, 120_000);
+  it('a row that is not left-out with a missing spec still throws', async () => {
+    const { rows } = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const { filesOf } = await import(/* @vite-ignore */ url('tools/plates/library/ci/manifest.mjs'));
+    const all = rows().map((r: any) => (r.id === LEFT ? { ...r, stage: 'approved-plate' } : r));
+    const chin = all.find((r: any) => r.id === 'lib_chin_up');
+    await expect(filesOf(chin, { all })).rejects.toThrow(/leg_press_calf_raise\.mjs does not exist/);
+  }, 120_000);
+  it('the lb01 layers spec stages no file of the left-out row (layers-spec.mjs filter)', async () => {
+    const { layersSpecOf } = await import(/* @vite-ignore */ url('tools/plates/library/layers-spec.mjs'));
+    const { mkdtempSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { rows } = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    // the left-out row (no pages, no spec) first in the batch: unfiltered, the spec would read its missing pages
+    const { writeFileSync } = await import('node:fs');
+    const { relative } = await import('node:path');
+    // a scratch config that lists the left-out row, given to that row only and put first: unfiltered, layersSpecOf reads
+    // the first batch row's config and stages the left-out row (its spec does not exist, so it throws)
+    const dir = mkdtempSync(join(tmpdir(), 'w3-leftout-cfg-')), cfgPath = join(dir, 'lb01.layers.json');
+    const cfg = json('tools/plates/library/pages/lb01.layers.json');
+    writeFileSync(cfgPath, JSON.stringify({ ...cfg, groups: cfg.groups.map((g: any) => ({ ...g, ids: [...g.ids, 'lib_leg_press_calf_raise'] })) }));
+    const all = rows(), left = all.find((r: any) => r.id === 'lib_leg_press_calf_raise');
+    const front = [{ ...left, pages: { ...left.pages, layersConfig: relative(ROOT, cfgPath) } }, ...all.filter((r: any) => r !== left)];
+    for (const order of [all, front]) {
+      const spec: any = layersSpecOf('tools/plates/library/batches/lb01.json', { stageDir: mkdtempSync(join(tmpdir(), 'w3-leftout-')), all: order });
+      expect(JSON.stringify(spec)).not.toContain('leg_press_calf_raise');
+      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(8);   // 12 drawn LB1 rows less the 4 staged (underhand LIB-PLATEFIX-3, assisted_pull_up #384 6653062201, incline_machine_press and shoulder_press D-SHIP-W3-NOPAIR #384 6681221802)
+    }
+  }, 120_000);
+});
+
+describe('LIB-SHIP W3 Q-W3-13: zoom/ink-check.mjs probes a pinned row through its pinned (non-authoring) candidate', () => {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const href = async (p: string) => (await import('node:url')).pathToFileURL(join(process.cwd(), p)).href;
+  const ink = async (): Promise<any> => import(/* @vite-ignore */ await href('tools/plates/library/zoom/ink-check.mjs'));
+  it('pinned stages take the pinned candidate, drawing and review the authoring one; horizontal_leg_press is pinned', async () => {
+    const I = await ink(), { rows }: any = await import(/* @vite-ignore */ await href('tools/plates/library/registry.mjs'));
+    expect(['approved-plate', 'shipped', 'drawing', 'review'].map(stage => I.authoringFor({ stage }))).toEqual([false, false, true, true]);
+    expect(I.authoringFor(rows().find((r: any) => r.id === I.ID))).toBe(false);
+  });
+  it('red 1: the authoring candidate the check used before is refused for the pinned row (the gate red Q-W3-13 fixes)', async () => {
+    const { candidateOf }: any = await import(/* @vite-ignore */ await href('tools/plates/library/candidate.mjs'));
+    await expect(candidateOf('lib_horizontal_leg_press', { platesHtml: '', authoring: true })).rejects.toThrow(/authoring QA is refused at stage (approved-plate|shipped) \(D-LIB9-AUTHORQA\)/);
+  });
+  it('red 2: PAGE_SHA is the zoom batch\'s pinned plates page; the stale main sha is not', async () => {
+    const I = await ink(), g = JSON.parse(readFileSync(join(process.cwd(), 'tests/howto/golden/library/zoom.json'), 'utf8'));
+    const page = [...g.entries].reverse().find((e: any) => e.kind === 'page');
+    expect(I.PAGE_SHA).toBe(page.pageSha256);
+    expect(page.pageSha256).not.toBe('a0ef8eabc3b6935193531cd9236a27c5e67b5102f8b9f9c9ec7f3de031ccece0');
+  });
+  it('red 3: the check never hard-codes the authoring candidate again', async () => {
+    const src = readFileSync(join(process.cwd(), 'tools/plates/library/zoom/ink-check.mjs'), 'utf8');
+    expect(src).not.toMatch(/authoring: true/);
+    expect(src).toMatch(/authoring: authoringFor\(/);
+  });
+});
+
+// LIB-SHIP W3 D-SHIP-W3-LAYERSZOOM (#384 6686326673): build-layers-page.mjs applies applyZooms to the mirror specs, so a
+// layers page draws each opted-in plate with the zoom circle its pinned plate has (HT4-A5 compares the two, byte for byte).
+describe('LIB-SHIP W3 D-SHIP-LAYERSZOOM: a layers page carries the zoom its pinned plate has', () => {
+  const ZOOMED: [string, string][] = [['zoom', 'lib_horizontal_leg_press'], ['pilot-b2', 'lib_crunch']];
+  const pinOf = (b: string, id: string) => json(`tests/howto/golden/library/${b}.json`).entries.filter((e: any) => e.kind === 'plate' && e.id === id).at(-1);
+  const page = (b: string) => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`), 'utf8');
+  /** The page with every zoom group taken out of `chrome`'s plate (what the layers page drew before this ruling). */
+  const unzoomed = (h: string, chrome: string) => {
+    const fit = h.indexOf(`<div class="plate-fit" id="${chrome}-plate">`), stop = h.indexOf('<div class="plate-fit"', fit + 1);
+    let card = h.slice(fit, stop < 0 ? undefined : stop);
+    for (let i; (i = card.indexOf('<g class="plate-zoom"')) >= 0;) card = card.slice(0, i) + card.slice(card.indexOf('</svg>', i));
+    return h.slice(0, fit) + card + (stop < 0 ? '' : h.slice(stop));
+  };
+  it('the committed zoom and pilot-b2 layers pages draw their zoomed plates byte-equal to the pinned plate entries', async () => {
+    const gb = await import(/* @vite-ignore */ url('tools/plates/fidelity/goldenB.mjs'));
+    for (const [b, id] of ZOOMED) {
+      expect([b, gb.fragmentProblems(page(b), [pinOf(b, id)])]).toEqual([b, []]);
+      expect(page(b)).toContain('<g class="plate-zoom" data-view="mistake"');
+    }
+  });
+  it('red: a layers page whose Mistake plate lacks the zoom its pinned plate has', async () => {
+    const gb = await import(/* @vite-ignore */ url('tools/plates/fidelity/goldenB.mjs'));
+    for (const [b, id] of ZOOMED) {
+      const e = pinOf(b, id), bad = gb.fragmentProblems(unzoomed(page(b), e.chromeId), [e]);
+      expect([b, bad.some((p: string) => p.startsWith(`${e.chromeId}: mistakeSvg sha256 `))]).toEqual([b, true]);
+    }
+  });
+  // Q-W3-20 (#384 6687335829): gen/zooms.mjs lessZoomCss takes ZOOM_CSS out of a zoomed layers page's style exactly once
+  // before the golden B comparison; every other byte is compared. Its 4 reds, and the clean case.
+  it('lessZoomCss: clean on a zoomed page; red on the CSS altered by one character, twice, on a page with no zoom, missing on a zoom page', async () => {
+    const Z = await import(/* @vite-ignore */ url('tools/plates/gen/zooms.mjs')), { ZOOM_CSS } = await import(/* @vite-ignore */ url('tools/plates/library/zoom/inline.mjs'));
+    const REST = '.plate .x { fill: none; }\n', G = '<g class="plate-zoom" data-view="mistake"></g>';
+    const page = (css: string, zoom = true) => `<style>${css}${REST}</style><svg>${zoom ? G : ''}</svg>`;
+    expect(Z.lessZoomCss(ZOOM_CSS + REST, page(ZOOM_CSS), 'lib_x')).toBe(REST);
+    expect(Z.lessZoomCss(REST, page('', false), 'lib_x')).toBe(REST);   // no zoom, no CSS: the style as it is
+    const one = ZOOM_CSS.replace('stroke-width: 1.25', 'stroke-width: 1.35');
+    expect(one).not.toBe(ZOOM_CSS);
+    expect(() => Z.lessZoomCss(one + REST, page(one), 'lib_x')).toThrow(/must carry ZOOM_CSS once, right after <style>/);
+    expect(() => Z.lessZoomCss(ZOOM_CSS + ZOOM_CSS + REST, page(ZOOM_CSS + ZOOM_CSS), 'lib_x')).toThrow(/must carry ZOOM_CSS once/);
+    expect(() => Z.lessZoomCss(ZOOM_CSS + REST, page(ZOOM_CSS, false), 'lib_x')).toThrow(/ZOOM_CSS on a layers page with no plate zoom/);
+    expect(() => Z.lessZoomCss(REST, page(''), 'lib_x')).toThrow(/must carry ZOOM_CSS once/);
+  });
+  it('the builder applies applyZooms to the mirror specs after the build', () => {
+    const src = readFileSync(join(ROOT, 'tools/plates/library/build-layers-page.mjs'), 'utf8');
+    expect(src).toContain("import { applyZooms } from './zoom/inline.mjs';");
+    expect(src).toContain("const page = await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs);");
   });
 });

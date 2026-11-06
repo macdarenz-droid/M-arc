@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=062e4ca075e665f10aa496d991cc539f8f9dc85042773417712917cfc737125d
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=8ce6797c3d01d042032d7f91c537250e030e127ae5d210dcaf48eae000a83966
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -24,10 +24,26 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-best-back": {
+    "id": "ace-best-back",
+    "cite": "ACE-Sponsored Research: What Is the Best Back Exercise? (Edelburg, Porcari, Camic, Kovacs, Foster, with Green; ACE Certified, December 2018)",
+    "url": "https://www.acefitness.org/continuing-education/certified/december-2018/7138/ace-sponsored-research-what-is-the-best-back-exercise/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "ace-chest-press": {
     "id": "ace-chest-press",
     "cite": "ACE Exercise Library, Seated Chest Press",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-chin-ups": {
+    "id": "ace-chin-ups",
+    "cite": "Chin-ups (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/190/chin-ups/",
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
@@ -88,10 +104,34 @@
     "access": "full",
     "checked": "2026-10-02"
   },
+  "ace-row-machine": {
+    "id": "ace-row-machine",
+    "cite": "Seated Row (ACE exercise library; row machine with chest pad)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-sap": {
+    "id": "ace-sap",
+    "cite": "Straight Arm Pressdown (ACE exercise library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/334/straight-arm-pressdown/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "ace-seated-curl": {
     "id": "ace-seated-curl",
     "cite": "Seated Biceps Curl (ACE Exercise Library)",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-seated-leg-press": {
+    "id": "ace-seated-leg-press",
+    "cite": "Seated Leg Press (ACE exercise library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/154/seated-leg-press/",
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
@@ -138,11 +178,19 @@
   },
   "acsm2009": {
     "id": "acsm2009",
-    "cite": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+    "cite": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
     "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
-    "kind": "peer-reviewed",
+    "kind": "guideline",
     "access": "abstract",
     "checked": "2026-10-17"
+  },
+  "andersen-2014": {
+    "id": "andersen-2014",
+    "cite": "Effects of grip width on muscle strength and activation in the lat pull-down (Andersen et al., J Strength Cond Res)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24662157/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
   },
   "andersen2008": {
     "id": "andersen2008",
@@ -166,6 +214,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/9118976/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "athlean-sap": {
+    "id": "athlean-sap",
+    "cite": "How To Do The Straight Arm Pulldown",
+    "url": "https://learn.athleanx.com/articles/back-for-men/how-to-do-a-straight-arm-pulldown",
+    "kind": "coach",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "axler1997": {
@@ -208,6 +264,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "barbend-chin-up": {
+    "id": "barbend-chin-up",
+    "cite": "Chin-up exercise guide (BarBend)",
+    "url": "https://barbend.com/chin-up/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "barbend-pendlay": {
     "id": "barbend-pendlay",
     "cite": "How to Do the Pendlay Row for Back Size and Stronger Lifts (BarBend)",
@@ -215,6 +279,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-19"
+  },
+  "barbend-single-arm-lat-pulldown": {
+    "id": "barbend-single-arm-lat-pulldown",
+    "cite": "How to Do the Single-Arm Lat Pulldown for Spectacular Back Development (BarBend)",
+    "url": "https://barbend.com/single-arm-lat-pulldown/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
   },
   "barbend-t-bar": {
     "id": "barbend-t-bar",
@@ -254,6 +326,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/23604798/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "bullbar-assist-beginner": {
+    "id": "bullbar-assist-beginner",
+    "cite": "How to Use a Pull-Up Assist Machine Correctly (Beginner's Guide) (Bullbar Fit, manufacturer blog)",
+    "url": "https://bullbarfit.com/blogs/q-as/how-to-use-a-pull-up-assist-machine-correctly-for-beginners-at-the-gym",
+    "kind": "coach",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "bullbar-calluses": {
@@ -304,6 +384,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "catalyst-inverted-row": {
+    "id": "catalyst-inverted-row",
+    "cite": "Inverted Row (Catalyst Athletics exercise library)",
+    "url": "https://catalystathletics.com/exercise/852/Inverted-Row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "catalyst-neutral": {
     "id": "catalyst-neutral",
     "cite": "Catalyst Athletics, Neutral Grip Pull-Up",
@@ -316,6 +404,22 @@
     "id": "catalyst-pullup",
     "cite": "Catalyst Athletics, Pull-up",
     "url": "https://www.catalystathletics.com/exercise/39/Pull-up/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "catalyst-ring-row": {
+    "id": "catalyst-ring-row",
+    "cite": "Ring Row (Catalyst Athletics exercise library)",
+    "url": "https://catalystathletics.com/exercise/879/Ring-Row",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "catalyst-sap": {
+    "id": "catalyst-sap",
+    "cite": "Straight-Arm Pulldown (Catalyst Athletics exercise library)",
+    "url": "https://www.catalystathletics.com/exercise/907/Straight-Arm-Pulldown/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
@@ -448,6 +552,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "escamilla-2006": {
+    "id": "escamilla-2006",
+    "cite": "Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training (Escamilla et al., Phys Ther)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16649890/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "escamilla2001": {
     "id": "escamilla2001",
     "cite": "Escamilla RF et al. A three-dimensional biomechanical analysis of the squat during varying stance widths. Med Sci Sports Exerc 2001;33(6):984-98",
@@ -496,10 +608,26 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "fenwick-2009": {
+    "id": "fenwick-2009",
+    "cite": "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness (Fenwick, Brown, McGill, J Strength Cond Res)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19620925/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "fenwick2009": {
     "id": "fenwick2009",
     "cite": "Fenwick CM, Brown SH, McGill SM (2009) Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness. J Strength Cond Res 23(2):350-8",
     "url": "https://pubmed.ncbi.nlm.nih.gov/19197209/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "fischer2025": {
+    "id": "fischer2025",
+    "cite": "Impact of different ranges of motion in the prone barbell row on muscle excitation",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40513198/",
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
@@ -519,6 +647,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "ga-pull-base": {
+    "id": "ga-pull-base",
+    "cite": "LIB-7 pull hand convention, pairs.mjs CONVENTIONS ga:pull-base: base of the fingers and top edge of the palm",
+    "url": "tools/plates/library/hands/pairs.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-04"
   },
   "ggr-pendlay": {
     "id": "ggr-pendlay",
@@ -560,6 +696,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "hand-key-bar": {
+    "id": "hand-key-bar",
+    "cite": "LIB-7c hand pair key bar (hang), CONVENTIONS ga:hang-base: top of the palm where the fingers start; extension 0 to 35",
+    "url": "tools/plates/library/hands/hand-bar.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-04"
+  },
   "hand-key-curl": {
     "id": "hand-key-curl",
     "cite": "LIB-7 hand pair key curl (dumbbell), CONVENTIONS ga:curl-mid: across the middle of the palm",
@@ -568,10 +712,26 @@
     "access": "full",
     "checked": "2026-11-03"
   },
+  "hand-key-d-handle": {
+    "id": "hand-key-d-handle",
+    "cite": "LIB-7 hand pair key d-handle (pull), CONVENTIONS ga:pull-base: base of the fingers and top edge of the palm",
+    "url": "tools/plates/library/hands/hand-d-handle.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-04"
+  },
   "hand-key-palm-flat": {
     "id": "hand-key-palm-flat",
     "cite": "LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index",
     "url": "tools/plates/library/hands/hand-palm-flat.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-04"
+  },
+  "hand-key-v-handle": {
+    "id": "hand-key-v-handle",
+    "cite": "LIB-7c hand pair key v-handle (pull), CONVENTIONS ga:pull-base: base of the fingers and top edge of the palm",
+    "url": "tools/plates/library/hands/hand-v-handle.mjs",
     "kind": "secondary",
     "access": "full",
     "checked": "2026-11-04"
@@ -583,6 +743,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
+  },
+  "hk-baechle-grip": {
+    "id": "hk-baechle-grip",
+    "cite": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
+    "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "kind": "textbook",
+    "access": "full",
+    "checked": "2026-09-30"
   },
   "hk-db-bench": {
     "id": "hk-db-bench",
@@ -800,6 +968,22 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "mcgill-2014": {
+    "id": "mcgill-2014",
+    "cite": "Muscle activity and spine load during pulling exercises: influence of stable and labile contact surfaces and technique coaching (McGill, Cannon, Andersen, J Electromyogr Kinesiol)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25066518/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "mcgill-2015": {
+    "id": "mcgill-2015",
+    "cite": "Muscle activity and spine load during anterior chain whole body linkage exercises: the body saw, hanging leg raise and walkout from a push-up (McGill, Andersen, Cannon, J Sports Sci)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25111163/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "mcgill2015": {
     "id": "mcgill2015",
     "cite": "McGill S, Andersen J, Cannon J (2015) Muscle activity and spine load during anterior chain whole body linkage exercises: the body saw, hanging leg raise and walkout from a push-up. J Sports Sci 33(4):419-26",
@@ -830,6 +1014,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/29085728/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "nasm-chin-pull": {
+    "id": "nasm-chin-pull",
+    "cite": "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog)",
+    "url": "https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked",
+    "kind": "guideline",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "nasm-chinup": {
@@ -920,6 +1112,14 @@
     "access": "summary",
     "checked": "2026-09-30"
   },
+  "odriscoll-1992": {
+    "id": "odriscoll-1992",
+    "cite": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "odriscoll1992": {
     "id": "odriscoll1992",
     "cite": "O'Driscoll SW et al. (1992) The relationship between wrist position, grasp size, and grip strength. J Hand Surg Am 17(1):169-77",
@@ -976,6 +1176,22 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "physitrack-longsitrow": {
+    "id": "physitrack-longsitrow",
+    "cite": "Resisted long-sit row (Physitrack home exercise library)",
+    "url": "https://us.physitrack.com/home-exercise-video/resisted-long-sit-row",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "prinold-2016": {
+    "id": "prinold-2016",
+    "cite": "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26383875/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "prinold2016": {
     "id": "prinold2016",
     "cite": "Prinold JA, Bull AM (2016) Scapula kinematics of pull-up techniques: avoiding impingement risk with training changes. J Sci Med Sport 19(8):629-35",
@@ -984,10 +1200,34 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "pull-default": {
+    "id": "pull-default",
+    "cite": "Golden B pull archetype default (lat_pulldown and seated_cable_row handling: thumb wrapped)",
+    "url": "tools/plates/layers/exercises/seated_cable_row.howto.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-04"
+  },
   "puregym-cable-fly": {
     "id": "puregym-cable-fly",
     "cite": "How To Do Cable Flyes (PureGym)",
     "url": "https://www.puregym.com/exercises/chest/chest-fly/cable-flyes/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "puregym-close-grip-lat-pulldown": {
+    "id": "puregym-close-grip-lat-pulldown",
+    "cite": "Close Grip Lat Pulldown (PureGym exercise guide)",
+    "url": "https://www.puregym.com/exercises/back/lat-exercises/close-grip-lat-pulldown/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "puregym-single-arm-lat-pulldown": {
+    "id": "puregym-single-arm-lat-pulldown",
+    "cite": "Single Arm Lat Pulldown (PureGym exercise guide)",
+    "url": "https://www.puregym.com/exercises/back/lat-exercises/single-arm-lat-pulldown/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
@@ -1015,6 +1255,14 @@
     "kind": "coach",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "sabf-bandrow": {
+    "id": "sabf-bandrow",
+    "cite": "Seated Row With Band To Strengthen Upper Back - Sit and Be Fit",
+    "url": "https://www.sitandbefit.org/seated-row-band-upper-body-strengthening/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-02"
   },
   "saeterbakken2011": {
     "id": "saeterbakken2011",
@@ -1070,6 +1318,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/35202059/",
     "kind": "peer-reviewed",
     "access": "full",
+    "checked": "2026-09-30"
+  },
+  "signorile-2002": {
+    "id": "signorile-2002",
+    "cite": "A comparative electromyographical investigation of muscle utilization patterns using various hand positions during the lat pull-down (Signorile, Zink, Szwed, J Strength Cond Res)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/12423182/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
     "checked": "2026-09-30"
   },
   "signorile2002": {
@@ -1208,12 +1464,84 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "strengthlog-chin-up": {
+    "id": "strengthlog-chin-up",
+    "cite": "How to Do Chin-Up: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/chin-up/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "strengthlog-hanging-knee-raise": {
+    "id": "strengthlog-hanging-knee-raise",
+    "cite": "How to Do Hanging Knee Raise: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/hanging-knee-raise/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "strengthlog-hlr": {
     "id": "strengthlog-hlr",
     "cite": "StrengthLog, Hanging Leg Raise",
     "url": "https://www.strengthlog.com/hanging-leg-raise/",
     "kind": "coach",
     "access": "full",
+    "checked": "2026-09-30"
+  },
+  "strengthlog-inverted-row": {
+    "id": "strengthlog-inverted-row",
+    "cite": "How to Do Inverted Row: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/inverted-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "strengthlog-neutral-close-grip-lat-pulldown": {
+    "id": "strengthlog-neutral-close-grip-lat-pulldown",
+    "cite": "How to Do Neutral Close-Grip Lat Pulldown: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/neutral-close-grip-lat-pulldown/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "sweat-bandrow": {
+    "id": "sweat-bandrow",
+    "cite": "Seated Resistance Band Row (Sweat exercise library)",
+    "url": "https://www.sweat.com/exercises/seated-resistance-band-row",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "tassi1998": {
+    "id": "tassi1998",
+    "cite": "Electromyographic evaluation of the rectus femoris muscle during exercises performed on the horizontal leg press",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/9651694/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "tassi1999": {
+    "id": "tassi1999",
+    "cite": "Electromyographic behaviour of the gastrocnemius muscle during knee extension and flexion on the horizontal leg press",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/10499208/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "theraband-manual": {
+    "id": "theraband-manual",
+    "cite": "Instruction Manual, Resistance Bands and Tubing (The Hygenic Corporation)",
+    "url": "https://www.theraband.com/static/version1771453261/frontend/Theraband/default/en_US/instructions/Resistance_Band-Tubing_Instruction_Manual(1).pdf",
+    "kind": "manufacturer",
+    "access": "full",
+    "checked": "2026-10-02"
+  },
+  "thomas2005": {
+    "id": "thomas2005",
+    "cite": "Quantification of tension in Thera-Band and Cando tubing at different strains and starting lengths",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16355080/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
     "checked": "2026-09-30"
   },
   "unmc-cable-row": {
@@ -1238,6 +1566,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/31198105/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "webmd-seated-leg-press": {
+    "id": "webmd-seated-leg-press",
+    "cite": "How to Do Seated Leg Presses (WebMD, medically reviewed)",
+    "url": "https://www.webmd.com/fitness-exercise/how-to-do-seated-leg-presses",
+    "kind": "coach",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "weiss1995": {
@@ -1272,6 +1608,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "workman-2008": {
+    "id": "workman-2008",
+    "cite": "Influence of pelvis position on the activation of abdominal and hip flexor muscles (Workman et al., J Strength Cond Res)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/18714231/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "workman2008": {
     "id": "workman2008",
     "cite": "Workman JC, Docherty D, Parfrey KC, Behm DG (2008) Influence of pelvis position on the activation of abdominal and hip flexor muscles. J Strength Cond Res 22(5):1563-9",
@@ -1296,12 +1640,44 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "yessis-hanging-knee-leg-raise": {
+    "id": "yessis-hanging-knee-leg-raise",
+    "cite": "Hanging Knee Leg Raise (Dr. Michael Yessis)",
+    "url": "https://doctoryessis.com/2013/01/01/hanging-knee-leg-raise/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "yessis-hlr": {
     "id": "yessis-hlr",
     "cite": "Yessis M, Hanging Leg Raise",
     "url": "https://doctoryessis.com/2013/01/01/hanging-leg-raise/",
     "kind": "coach",
     "access": "full",
+    "checked": "2026-09-30"
+  },
+  "youdas-2010": {
+    "id": "youdas-2010",
+    "cite": "Surface electromyographic activation patterns and elbow joint motion during a pull-up, chin-up, or perfect-pullup rotational exercise (Youdas et al., J Strength Cond Res)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21068680/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "youdas-2016": {
+    "id": "youdas-2016",
+    "cite": "Activation of Spinal Stabilizers and Shoulder Complex Muscles During an Inverted Row Using a Portable Pull-up Device and Body Weight Resistance (Youdas et al., J Strength Cond Res)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26422610/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "youdas-2020": {
+    "id": "youdas-2020",
+    "cite": "Scapular muscle balance and spinal stabilizer recruitment during an inverted row (Youdas et al., Physiother Theory Pract)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29944029/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
     "checked": "2026-09-30"
   },
   "youdas2010": {

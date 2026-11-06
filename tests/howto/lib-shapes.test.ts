@@ -75,6 +75,11 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     ...W4_IDS.map(id => id.slice(4))];
   const W2_LINE = new RegExp(`^  (?:"lib_(?:${W2_IDS.join('|')})",|lib_(?:${W2_IDS.join('|')}): \\(\\) => |"(?:${W2_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   /** loaders.ts's body (all but line 1) without the W2 lines: how many were taken out, and the rest's sha. */
+  // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's 9 ids add 4 lines each (HOWTO_IDS, LOADERS, POSTURE, FEEL) and the 5 pair
+  // ids a HAND line each (handpair-<key>), 41 lines; with exactly those taken out, the W2 check below holds unchanged
+  const W3_IDS = ['chin_up', 'hanging_knee_raise', 'inverted_row', 'close_grip_pulldown', 'single_arm_lat_pulldown', 'straight_arm_pulldown', 'chest_supported_row', 'resistance_band_row', 'horizontal_leg_press'];
+  const W3_LINE = new RegExp(`^  (?:"lib_(?:${W3_IDS.join('|')})",|lib_(?:${W3_IDS.join('|')}): \\(\\) => |"(?:${W3_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+  const w3Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W3_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
   it('the 27 header-moved files: each body (all but line 1) equals main c4c34d75 (re-measured after train 63)', () => {
     const list = [...ROWS.map(i => `src/howto/generated/hand-${i}.ts`), ...ROWS.map(i => `src/howto/generated/posture-${i}.ts`),
@@ -88,7 +93,17 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
     expect(W4_IDS).toHaveLength(6);
-    expect(w2Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'))).toEqual({ removed: 32 + 24, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
+    const w3 = w3Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    expect(w3.removed).toBe(41);
+    // merge of main 62d3dcb6: W3's 41 lines out first, then W2's 32 and W4's 24 (W4's ids ride in W2_IDS)
+    expect(w2Less(w3.text)).toEqual({ removed: 32 + 24, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
+  });
+  it('LIB-SHIP W3 mutations: a W3 line dropped, a HAND line for a no-pair W3 id, and another line changed are red', () => {
+    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(t).text);
+    expect(t).toContain('  "chin-up": () => import(\'./posture-chin-up\'),\n');
+    expect(w3Less(t.replace('  "chin-up": () => import(\'./posture-chin-up\'),\n', '')).removed).toBe(40);
+    expect(w3Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"straight-arm-pulldown\": () => import('./hand-straight-arm-pulldown'),\n")).removed).toBe(42);
+    expect(w2Less(w3Less(t.replace('export const HAND', 'export const HAND_X')).text).sha).not.toBe(ok.sha);
   });
   it('LIB-SHIP W2 mutations: a HAND line for a W2 id, a W2 line dropped, and another line changed in loaders.ts are red', () => {
     const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(t);
@@ -266,10 +281,41 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     }
     return m;
   };
+  const w3Read = (p: string) => readFileSync(p, 'utf8');
+  // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows (the 9 shipped and the 4 staged
+  // at approved-plate), and W3 PANEL FIX 2 (f561ff71, #384 6649416891) moves crop.mjs and zoom-css.mjs in every row. Each
+  // W3 row must be there and each moved key must pin its current file; with the rows removed and main 5023f5c6's sha put
+  // back (`keep`: keys the caller checks and blanks itself), every other entry is untouched for the checks below
+  const W3_ROWS = ['assisted_pull_up', 'chest_supported_row', 'chin_up', 'close_grip_pulldown', 'hanging_knee_raise', 'horizontal_leg_press',
+    'incline_machine_press', 'inverted_row', 'resistance_band_row', 'shoulder_press', 'single_arm_lat_pulldown', 'straight_arm_pulldown',
+    'underhand_lat_pulldown'].map(id => `lib_${id}`);
+  const W3_MOVED: Record<string, string> = {
+    'tools/plates/library/render/closeup/crop.mjs': 'df61d973c2933021554e3d89c9834d01f1f171c35dd10d5cd1c7a11b946985d9',
+    'tools/plates/library/render/closeup/zoom-css.mjs': '37836f22478605ef8162af3c05e515385d03034d090279b6c91f4248adce2fdf',
+  };
+  const lessW3 = (m: any, keep: string[] = []) => {
+    for (const id of W3_ROWS) { expect(Object.keys(m.rows), id).toContain(id); delete m.rows[id]; }
+    for (const [id, r] of Object.entries<any>(m.rows)) for (const [k, main] of Object.entries(W3_MOVED)) {
+      if (keep.includes(k)) continue;
+      expect(r.files[k], `${id} ${k}`).toBe(sha(w3Read(k)));
+      r.files[k] = main;
+    }
+    return m;
+  };
+  it('LIB-SHIP W3 mutations: a W3 row missing, a moved key not at its current file, and a non-W3 row changed are red', () => {
+    const m = () => JSON.parse(w3Read('tools/plates/library/MANIFEST.json'));
+    const a = m(); delete a.rows.lib_chin_up;
+    expect(() => lessW3(a)).toThrow(/lib_chin_up/);
+    const b = m(); b.rows.lib_plank.files['tools/plates/library/render/closeup/zoom-css.mjs'] = 'f'.repeat(64);
+    expect(() => lessW3(b)).toThrow(/lib_plank/);
+    const c = m(); c.rows.lib_plank.entry = 'f'.repeat(64);
+    expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
+  });
   it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main c4c34d75 (re-measured after train 63)', () => {
     // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): lessW4 (checks/ship-w4.ts) removes the 20 lb02/lb03 rows
-    // (each must be present) and blanks the W4-moved keys (each must pin its current file); the rest is main's rows as before
-    const m = lessW4(JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8')), k => sha(readFileSync(k)));
+    // (each must be present) and blanks the W4-moved keys (each must pin its current file); LIB-SHIP W3's lessW3 then takes
+    // out W3's 13 rows and puts main's moved shas back (merge of main 62d3dcb6: both lanes kept)
+    const m = lessW3(lessW4(JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8')), k => sha(readFileSync(k))));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
     expect(Object.keys(m.rows)).toContain('lib_crunch');
