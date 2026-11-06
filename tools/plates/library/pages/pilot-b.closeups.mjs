@@ -9,5 +9,4 @@ const ZOOM = {
 export const CLOSEUP_OPTIONS = {
   cable_fly: ZOOM,
   push_up: ZOOM,
-  smith_machine_bench_press: ZOOM,   // LIB-SHIP W4
 };
