@@ -93,7 +93,10 @@ describe('L2-A4: a new library batch row stales none of the 8\'s generated files
     expect(hashLineProblems(paths, base, withRow)).toEqual([]);
     for (const p of ID_FILES) expect(withRow.get(p)!.text.split('\n')[0], p).not.toBe(base.get(p)!.text.split('\n')[0]);
     expect(hashLineProblems([], base, withRow)).toEqual(['no files compared']);
-  }, 180_000);
+    // D-PF1-AFTERW3 point 2 (#385 6689539540): the child generates the whole library twice; at 21 shipped ids it took
+    // 168 s in CI (149 s at main 05f27be9) and passed 180 s on one runner, so it gets the library's 600 s timeout, as #405
+    // gave the beforeAll hooks. No assertion changed.
+  }, 600_000);
 });
 
 describe('L2-A4 core: per-output inputs (HT-2 core, design 6.1)', () => {
