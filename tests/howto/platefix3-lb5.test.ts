@@ -72,11 +72,26 @@ describe('PF3 item 10 cable_curl: a visible bottom bend, the straight Wrong apar
   it('the Right bottom elbow is 20 deg (main: 18)', () => {
     expect(render(S.cable_curl).report.angles.end.elbow?.r ?? qa.poseLandmarks(E(), S.cable_curl).q.end.elbow.r).toBeCloseTo(20, 6);
   });
-  it('the Wrong is fully straight and its wrist >= 12 px from the Right wrist (main: 11.67 px)', () => {
+  // round 2 (#405 6685743439 pf7 R5 [3,3,4], c1 c2): the earlier ">= 12 px wrist gap" put the straight arm's bar inside
+  // the thighs (the arm hung plumb); the locked arm now runs straight from the shoulder to the bar on the front of the
+  // thighs, at the end bar's z, drawn whole with a straight guide through it, the tell's leader on its elbow.
+  it('round 2: the Wrong is fully straight and its bar rests at the end bar\'s z (on the thighs, not in them; was 17.1 px behind)', () => {
     const s = S.cable_curl, cam = camOf(s), L = qa.poseLandmarks(E(), s);
     expect(L.q.mistake.elbow.r).toBe(0);
-    const d = dist(cam.P(L.lm.end['wrist.r']), cam.P(L.lm.mistake['wrist.r']));
-    expect(d, `wrist gap ${d.toFixed(2)} px`).toBeGreaterThanOrEqual(12);
+    const dx = cam.P(L.lm.end['grip.r'])[0]! - cam.P(L.lm.mistake['grip.r'])[0]!;
+    expect(Math.abs(dx), `bar ${dx.toFixed(2)} px behind the end bar`).toBeLessThanOrEqual(0.5);
+    const v = qa.poseLandmarks(E(), { ...s, mistake: { ...s.mistake, pose: { elbow: 0 } } }).lm.mistake;   // mutation: the old plumb arm
+    expect(cam.P(L.lm.end['grip.r'])[0]! - cam.P(v['grip.r'])[0]!).toBeGreaterThan(15);
+  });
+  it('round 2: the whole straight arm is drawn (4 dashed outlines) with a straight dashed guide through shoulder and grip; the tell ends on the elbow', () => {
+    const s = S.cable_curl, L = qa.poseLandmarks(E(), s).lm.mistake, g = s.mistake.guides.filter((x: any) => x.kind === 'dashed');
+    expect(g.length).toBe(5);
+    const line = g.at(-1).pts, u = [0, 1, 2].map(i => L['grip.r'][i] - L['shoulder.r'][i]);
+    for (const k of ['shoulder.r', 'elbow.r', 'grip.r']) {   // each joint on the guide's line (within 5 mm)
+      const w = [0, 1, 2].map(i => L[k][i] - line[0][i]), c = [w[1]! * u[2]! - w[2]! * u[1]!, w[2]! * u[0]! - w[0]! * u[2]!, w[0]! * u[1]! - w[1]! * u[0]!];
+      expect(Math.hypot(...c) / Math.hypot(...u), k).toBeLessThanOrEqual(0.005);
+    }
+    expect(s.mistake.tells[0].anchor).toEqual({ at: 'elbow.r', pose: 'mistake' });
   });
   it('the Mistake draws no thin cable twin (main: a poly twin, the unlabelled zigzag)', () => {
     expect(itemsIn(S.cable_curl, 'mistake').some((it: any) => it.type === 'poly' && it.cls === 'eq')).toBe(false);

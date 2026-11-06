@@ -142,6 +142,10 @@ export default {
     ...['l', 'r'].map(s => ({ landmark: `ball.${s}`, plane: FLOOR, pose: 'start', tol: 0.5 })),   // the touchdown on the balls (j3)
   ],
   ghosts: { count: 1 },                                   // t = 0.5: the mid-absorb key (via[5])
+  // LIB-PLATEFIX-3 round 2 (pf7 R5 [3,4,3], c1 c3: the red straight-knee landing merged with the upright start and
+  // ghost outlines): the Mistake view drops the start pose and the ghost (D-HELD6-MGHOST), so the only upright outline
+  // there is the red one, on the landing's foot contact.
+  mistakeGhosts: false,
   trace: { point: 'hip.r', trim: [10, 12] },
   callouts: [
     { key: 'hips', text: 'Hips back', anchor: { at: 'hip.r', pose: 'end' }, cue: 'Send the hips back, then down, keeping the back flat.' },

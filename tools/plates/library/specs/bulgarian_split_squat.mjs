@@ -140,11 +140,11 @@ export default {
     inHand('l'), inHand('r'),                                                           // the hands on the dumbbells at the start
   ],
   ghosts: { count: 2, parts: ['leg.r', 'leg.l', 'trunk', 'arm.r', 'db'] },
-  trace: { point: 'hip.r', trim: [10, 12] },
-  // LIB-PLATEFIX-3 item 3: with END_GAP 0.069 the hip travels 4.4 px less, so the Trace is 20.9 px at plate scale, under
-  // the 22.11 px bar (H3.trace). A Trace zoom in the D-LIB15R2-ZOOM form, at k 1.5, the smallest k on the library's
-  // half-step grid; the pose is the ruled one and nothing is enlarged (PROPOSED: needs the supervisor's ruling).
-  zoom: { view: 'normal', k: 1.5 },
+  // LIB-PLATEFIX-3 round 2 (pf7 R11 [2,2,2]: the k 1.5 Trace zoom showed no part the eye can name, and its ring added
+  // clutter): the zoom is removed. With END_GAP 0.069 the hip travels 4.4 px less; the trace's end trims go from
+  // [10, 12] to [8, 10] (step_up's, inside the engine default [8, 12]), so the drawn Trace clears the 22.11 px bar
+  // (H3.trace) at plate scale. The pose and the hip path are unchanged; only less of the path is cut at its ends.
+  trace: { point: 'hip.r', trim: [8, 10] },
   callouts: [
     { key: 'foot', text: 'Foot on<br>bench', anchor: 'ankle.l', cue: 'Rest the top of the rear foot on a bench about knee height.' },
     { key: 'stance', text: 'Long stance', anchor: 'toe.r', cue: 'Put the front foot about three foot-lengths ahead of the bench.' },

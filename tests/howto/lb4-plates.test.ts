@@ -1442,7 +1442,7 @@ describe('LIB-SMALL: jump-squat as approved in panel mx17 (#358, head c176723d) 
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was bb63e833, now 9c960084 (items 3-7 redraw; the plates panel re-approves)
       "normalOverlay": "9c960084fddf64db93bc114f03df87707fc7d19da676f6bc086e61ae14410e81",
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 1ea9bbb0, now e0adfb20 (items 3-7 redraw; the plates panel re-approves)
-      "mistakeSvg": "e0adfb203c85c43b9484b30ab928429f20dde1ab8ed58c903b52491b72cbad92",
+      "mistakeSvg": "020d59705d53ae2cf2f8a1650324340c64da3eca39786973dd42f141fb09bdf8",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was e0adfb20…
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was e32160ac, now 5515e408 (items 3-7 redraw; the plates panel re-approves)
       "mistakeOverlay": "5515e4085a2ca8c654b025f950500469c55e4f1868a983b51c22c807ecbdccfa",
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was e2b1b056, now ee850f65 (items 3-7 redraw; the plates panel re-approves)
@@ -1615,9 +1615,9 @@ describe('LIB-SPLIT A3: card-true poses (DESIGN.md 17.2, 17.6; PLAN RULED Q1, Q2
     if (Math.abs(e - 0.069) > 0.005) bad.push(`end kneecap gap ${(e * 100).toFixed(2)} cm`);
     if (Math.abs(m) > 0.005) bad.push(`Mistake kneecap gap ${(m * 100).toFixed(2)} cm`);
     if (t.length !== 1 || t[0].key !== 'knee' || t[0].anchor?.at !== 'knee.l' || t[0].anchor?.pose !== 'mistake') bad.push('not one tell on the Mistake rear knee');
-    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was "no zoom", now exactly the ruled normal zoom k 1.5 (D-PF3-BSSZOOM: the Trace 20.9 px is
-    // under the 22.11 bar at plate scale); any other zoom, or none, is red
-    if (JSON.stringify(s.zoom) !== JSON.stringify({ view: 'normal', k: 1.5 })) bad.push('not the ruled zoom');
+    // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7 R11 [2,2,2]): was the normal zoom k 1.5 (D-PF3-BSSZOOM), now no zoom again
+    // (the Trace's trims [8, 10] keep it over the 22.11 bar); any zoom is red
+    if (s.zoom !== undefined) bad.push('a zoom');
     return bad; };
   it('bulgarian_split_squat: the end kneecap 6.9 cm above the floor, the Mistake kneecap resting on it, one rear-knee tell', () => {
     expect(hoverProblems(S.bulgarian_split_squat)).toEqual([]);
@@ -1627,7 +1627,7 @@ describe('LIB-SPLIT A3: card-true poses (DESIGN.md 17.2, 17.6; PLAN RULED Q1, Q2
     expect(hoverProblems({ ...b, poses: { ...b.poses, end: b.mistake.pose } }).filter(x => x.startsWith('end kneecap gap')).length).toBe(1);
     expect(hoverProblems(at(0.01)).some(x => x.startsWith('end kneecap gap'))).toBe(true);
     const old = { ...b, zoom: { view: 'mistake', k: 1.5, tell: 'knee' }, mistake: { ...b.mistake, tells: [{ key: 'knee', text: 'Front knee forward', anchor: { at: 'knee.r', pose: 'mistake' } }, { key: 'shin', text: 'Shin tips forward', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, pose: 'mistake' } }] } };
-    expect(hoverProblems(old)).toEqual(['not one tell on the Mistake rear knee', 'not the ruled zoom']);
+    expect(hoverProblems(old)).toEqual(['not one tell on the Mistake rear knee', 'a zoom']);   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, pf7 R11): was 'not the ruled zoom', the message of the edited zoom line
   });
   /** R3 (mx30): the near hand and forearm drawn over the near dumbbell (draw order only; the goblet_squat item 1 form). */
   const handOverDbR = (spec: any) => { const v = plate.renderPlate(spec, { id: 'x' }).svg, db = v.lastIndexOf('class="disc"');
@@ -1740,7 +1740,8 @@ describe('LIB-SPLIT A5: clearance (D-SPLIT-CLEAR; DESIGN.md 17.4)', { timeout: T
     // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was step_up [[0.91, 1.14], [0.42, 10.15], [11.85, 20.63]], now the start and
     // end rows swapped (item 4) and the mid-rise Mistake's [12.21, 19.84]; bulgarian was [.., [0.98, 9.7], [0.43, 9.7]],
     // now [2.17, 9.02] and [0.45, 9.7] (item 3); each still >= 0, each pinned ±0.05 cm
-    step_up: [[0.42, 10.15], [0.91, 1.14], [12.21, 19.84]],
+    // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7 R3): the two via keys add their rows [1.28, 5.21], [2.44, 0.78]
+    step_up: [[0.42, 10.15], [1.28, 5.21], [2.44, 0.78], [0.91, 1.14], [12.21, 19.84]],
     forward_lunge: [[1.47, 1.47], [1.52, 0.38], [0.85, 1.78], [0.11, 9.7], [1.74, 8.59]],
     walking_lunge: [[1.47, 1.47], [1.52, 0.39], [0.9, 1.88], [0.09, 9.7], [10.56, 15.18]],
     bulgarian_split_squat: [[0.73, 0.3], [2.17, 9.02], [0.45, 9.7]],   // D-SPLIT-BSSHOVER as amended (item 3)
@@ -1760,7 +1761,7 @@ describe('LIB-SPLIT A4 and A6: runQa node half on the 6 plates, H3 pinned at the
   // traceLen and deviation (px) at the PLAN sizes, from runQa's metrics on this head (DESIGN.md 17.10)
   const PIN: Record<string, [number, number]> = {
     lib_step_up: [59.08, 98.27], lib_forward_lunge: [86.14, 25.32], lib_walking_lunge: [91.06, 42.36], lib_bodyweight_lunge: [91.1, 18.83],
-    lib_bodyweight_split_squat: [32.12, 25.32], lib_bulgarian_split_squat: [20.94, 22.21],   // D-SPLIT-BSSHOVER: the rear knee's drop
+    lib_bodyweight_split_squat: [32.12, 25.32], lib_bulgarian_split_squat: [25.49, 22.21],   // D-SPLIT-BSSHOVER: the rear knee's drop; LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, pf7 R11): Trace was 20.94 (trims [10, 12]), now 25.49 (trims [8, 10], no zoom)
     // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was lib_step_up [59.07, 30.24] and bulgarian [24, 11.63], now
     // [59.08, 98.27] (item 4: the mid-rise lurch) and [20.94, 22.21] (item 3: the 6.9 cm gap, the Mistake's full drop)
   };
@@ -1794,9 +1795,8 @@ describe('LIB-SPLIT A4 and A6: runQa node half on the 6 plates, H3 pinned at the
     for (const id of IDS6) { expect(got[id]![0] * kOf(id), id).toBeGreaterThanOrEqual(22.11); expect(got[id]![1], id).toBeGreaterThanOrEqual(11.39); }
     for (const [id, [t, d]] of Object.entries(PIN)) { expect(got[id]![0], `${id} trace`).toBeCloseTo(t, 2); expect(got[id]![1], `${id} deviation`).toBeCloseTo(d, 2); }
     expect(Object.keys(PIN).sort(), JSON.stringify(got)).toEqual([...IDS6].sort());
-    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was no zoom on every SPLIT plate, now bulgarian exactly the ruled normal k 1.5
-    // (D-PF3-BSSZOOM) and every other SPLIT plate none
-    for (const id of SPLIT) expect(S[id].zoom ?? null, id).toEqual(id === 'bulgarian_split_squat' ? { view: 'normal', k: 1.5 } : null);   // D-SPLIT-BSSHOVER: bulgarian's knee move passes the bar
+    // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7 R11): was bulgarian's normal k 1.5 (D-PF3-BSSZOOM), now no zoom on any SPLIT plate again
+    for (const id of SPLIT) expect(S[id].zoom ?? null, id).toEqual(null);   // D-SPLIT-BSSHOVER: bulgarian's knee move passes the bar
   });
   it('mutations: a Mistake zoom added to bulgarian_split_squat (D-SPLIT-BSSHOVER) and to bodyweight_split_squat (H3.zoom:not-needed:mistake; walking_lunge\'s Mistake plate has no zoom place at all), are red', async () => {
     const b = await mutated('lib_bulgarian_split_squat', '(s) => ({ ...s, zoom: { view: \'mistake\', k: 1.5 } })');
@@ -1864,11 +1864,11 @@ describe('LIB-SPLIT A2: the 5 rows approved in panel mx28 (#364 6585103107, head
   const APPROVED: Record<string, Record<string, string>> = {
     "step-up": {
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 9bffea48, now d57e08db (items 3-7 redraw; the plates panel re-approves)
-      "normalSvg": "d57e08db863da46a6db11c16db9e90db31437873e236a0cbf6b1b118c78e4e05",
+      "normalSvg": "5741cf81859366bcc4a531f3ae003ce1f68d8ad0428d3641d296b0e59328b7de",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was d57e08db…
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 1f4d76a5, now caa8424a (items 3-7 redraw; the plates panel re-approves)
       "normalOverlay": "caa8424aec975cb93f4b548e82f53b92b72d01ceb932c93721ae2c2201b9388d",
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 4fa8a2a2, now c898eeec (items 3-7 redraw; the plates panel re-approves)
-      "mistakeSvg": "c898eeeca5f505dce5061438c36fa1ce22078c01ada8f07120e440373af0aafa",
+      "mistakeSvg": "fc0ad80a09cba4077be84ebbcd0f91b12f443fea2d96c30744cfebd399ae8cf3",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was c898eeec…
       "mistakeOverlay": "18fd4b60ff86004583339b2c0fa95ff89130559bcf4518de6fea4166fe8de979",
       "tells": "8fdf4a24934b50822201a42f062bbfcfa873afa15727fcc42a54eaac84cc017f",
       "tempo": "cfa4a0ab2667ca0875d0232447ce76260179fb165b22bf6932aa7cdc38ca9970",
@@ -1943,7 +1943,7 @@ describe('LIB-SPLIT A2: bulgarian_split_squat as approved in panel mx31 (#364 65
   const APPROVED: Record<string, Record<string, string>> = {
     "bulgarian-split-squat": {
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was fbd896b8, now 0efaa081 (items 3-7 redraw; the plates panel re-approves)
-      "normalSvg": "0efaa08197b5ddff6bb0d9318c27c27f7b13bd601678330aab03bdd83c747460",
+      "normalSvg": "b8641280af27c84ff07e411858d3112e7821077033cff00701f82b6768ffb5e7",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was 0efaa081…
       "normalOverlay": "d5f3b567f68d8fe33c9001a17707fb81bd67d4986d72548ad280861ef845ee40",
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 268dca12, now 6c3b648a (items 3-7 redraw; the plates panel re-approves)
       "mistakeSvg": "6c3b648a9bcf1b032374b1182dea86a49f70fc48b0f75033543b1daff31cb3ae",
