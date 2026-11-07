@@ -208,12 +208,14 @@ const tailMarks = (a, b) => {
     return [v3.add(p, v3.mul(nrm(u), ROPE_T / 2)), v3.sub(q, v3.mul(nrm(w), ROPE_T / 2))];
   });
 };
+// LIB-PLATEFIX-3b (D-PF3B-ROPEGHOST): the lay marks are texture of their band (`layOf` names it; each band carries
+// `band`), not moving parts: the dashed start copy draws the band outlines only (A15's named lay-mark exception).
 const ropeItems = (lm, rearZ) => { const h = hitchOf(lm['grip.r'], rearZ);
-  return [{ type: 'poly', cls: 'eq-solid', z: 'mid', part: 'rope', pts: band(h, lm['grip.r']) },   // the three pieces first, as before
-    { type: 'poly', cls: 'eq-solid', z: 'mid', part: 'rope', pts: band(lm['grip.r'], lm['grip.l']) },
-    { type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'rope', pts: tail(lm['grip.l'], COIL_TOP) },
-    ...layMarks(h, lm['grip.r']).map(pts => ({ type: 'line', cls: 'eq-thin', z: 'mid', part: 'rope', pts })),
-    ...tailMarks(lm['grip.l'], COIL_TOP).map(pts => ({ type: 'line', cls: 'eq-thin', z: 'mid', part: 'rope', pts }))]; };
+  return [{ type: 'poly', cls: 'eq-solid', z: 'mid', part: 'rope', band: 'run', pts: band(h, lm['grip.r']) },   // the three pieces first, as before
+    { type: 'poly', cls: 'eq-solid', z: 'mid', part: 'rope', band: 'link', pts: band(lm['grip.r'], lm['grip.l']) },
+    { type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'rope', band: 'tail', pts: tail(lm['grip.l'], COIL_TOP) },
+    ...layMarks(h, lm['grip.r']).map(pts => ({ type: 'line', cls: 'eq-thin', z: 'mid', part: 'rope', layOf: 'run', pts })),
+    ...tailMarks(lm['grip.l'], COIL_TOP).map(pts => ({ type: 'line', cls: 'eq-thin', z: 'mid', part: 'rope', layOf: 'tail', pts }))]; };
 const N_ROPE = Math.max(...[start, ...via, end].map(p => ropeItems(landmarksOf(p, H), SLED_Z).length));   // the most rope items a pose draws
 // One loop: a flattened ring of rope (outer ellipse COIL_D by LOOP_H, the band ROPE_T wide at its ends and half that at
 // its top and bottom, as a loop lying on the floor reads from a low side view), one closed outline: the outer ellipse,
@@ -231,7 +233,7 @@ const outline = it => (it.pts ? [...it.pts, it.pts[0]] : (() => {   // a sideBar
 })());
 const LS = landmarksOf(start, H), LE = landmarksOf(end, H);
 const START_SLED = sled({ rearZ: SLED_Z, form: 'pull' }).map(it => ({ type: 'line', cls: 'eq-line m-line', pts: outline(it), z: 'back', part: 'startsled' }));
-const START_ROPE = ropeItems(LS, SLED_Z).map(it => ({ type: 'line', cls: 'eq-line m-line', pts: [...it.pts, it.pts[0]], z: 'back', part: 'startrope' }));
+const START_ROPE = ropeItems(LS, SLED_Z).filter(it => !it.layOf).map(it => ({ type: 'line', cls: 'eq-line m-line', pts: [...it.pts, it.pts[0]], z: 'back', part: 'startrope' }));
 
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {

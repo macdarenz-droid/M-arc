@@ -72,7 +72,9 @@ describe('PF2 (a): existing zooms are byte-equal', { timeout: T }, () => {
     // (per-file hashes compared on both trees)
     // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 43478914…, now 33e0f85f… (D-PF3B-ROPE: sled_pull's rope items in its zoom;
     // the same loop with sled_pull's spec from dfb47999 gives 43478914… again, so no other entry moved)
-    expect(h.digest('hex')).toBe('33e0f85fd3e23ff0512cceb3dc641ec0342cba3598f40c400d299d8e4dd11115');
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 33e0f85f…, now 63317a89… (D-PF3B-ROPEGHOST: sled_pull's start copy drops its
+    // lay-mark ghosts; main 6227bd8e's zoom/inline.mjs gives this same hash over this set)
+    expect(h.digest('hex')).toBe('63317a8944300bdba486e98c9e37008fcd2300007a42efcef2fcb9d7a69f3d89');
   });
 });
 
