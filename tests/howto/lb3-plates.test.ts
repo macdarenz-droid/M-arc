@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -20,7 +21,8 @@ const SHRUGS = ['dumbbell_shrug', 'cable_shrug', 'barbell_shrug', 'smith_machine
 const RELEASED = ['t_bar_row', 'barbell_shrug', 'cable_shrug', 'dumbbell_shrug', 'smith_machine_shrug'];
 const HELD_SHRUGS = SHRUGS.filter(id => !RELEASED.includes(id));
 const VIEW13S: Record<string, string> = { dumbbell_shrug: 'front' };
-const ROWS = 'tools/plates/library/lb3/rows.json';
+// LIB-SHIP W4 (D-SHIP-MOVE, Q-W2-10; W3's lb1 form): the LB3 rows moved into batches/lb03.json; lb3/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb03.json';
 const RESEARCH_HEAD = '892d6516c4dcd88f7b7e22b8cbbf19dc762a8342';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -120,21 +122,50 @@ describe('LIB-13 A5: lb3/rows.json holds exactly the drawn, non-held LB3 ids', (
   });
 });
 
-describe('LIB-13 A9: nothing ships (D-LIB13-AHEAD)', { timeout: T }, () => {
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => !['drawing', 'review'].includes(r.stage)).map(([id, r]) => `${id}: ${r.stage}`);
-  const someRow = { src: 'library/specs/landmine_row.mjs', slug: 'landmine-row', prefix: 'landmine-row', chromeId: 'landmine-row', mode: 'H', stage: 'drawing', view: 'side' };
-  it('every LB3 row is at stage drawing or review', () => {
-    expect(stageProblems(readJson(ROWS).rows)).toEqual([]);
+// LIB-SHIP W4 (D-SHIP-A9, ruling 3; D-SHIP-W4-FLIPSET #391 6682985023): replaces "LIB-13 A9: nothing ships"
+// (D-LIB13-AHEAD). The LB3 rows (LIB-13's 8 and LIB-13s's 4 shrugs) moved into batches/lb03.json (D-SHIP-MOVE); the ruled
+// 6 (checks/ship-w4.ts W4_SHIPPED) ship there and the other 6 (W4_WAITING, each with its reason) stay at approved-plate. The old reds stay (a row at
+// another stage, an LB3 id in another batch or golden file, the rows file read as one more batch, a reused id outside
+// pilot A); new reds: an id at shipped that is not ruled, a ruled id with its stamp removed, and the rows copied back into
+// lb3/rows.json.
+describe('LIB-SHIP W4 A9 (replaces LIB-13 A9, D-LIB13-AHEAD): exactly the ruled LB3 ids ship, from batches/lb03.json', { timeout: T }, () => {
+  const OLD_ROWS = 'tools/plates/library/lb3/rows.json';
+  const ALL = [...IDS, ...SHRUGS.map(s => `lib_${s}`)];
+  const RULED = () => w4Of(ROWS);
+  /** One line per row off the ruled state: a ruled id not shipped, an unruled id at any stage but approved-plate. */
+  const shipProblems = (rows: Record<string, any>, ruled = RULED()) => Object.entries(rows).flatMap(([id, r]) =>
+    ruled.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
+  it('every ruled LB3 row is at stage shipped and every other one (the waiting ids) at approved-plate', () => {
+    const rows = readJson(ROWS).rows;
+    expect(RULED().filter(id => !ALL.includes(id))).toEqual([]);
+    expect(RULED()).toEqual(Object.keys(rows).filter(id => RULED().includes(id)));   // row order
+    expect(RULED()).toHaveLength(6);
+    expect(Object.keys(rows).filter(id => !RULED().includes(id))).toEqual(waitOf(ROWS));
+    expect(shipProblems(rows)).toEqual([]);
   });
-  it('mutations: one row set to shipped and one to approved-plate are red', () => {
-    const rows = { ...readJson(ROWS).rows, lib_landmine_row: someRow };
-    expect(stageProblems({ ...rows, lib_landmine_row: { ...someRow, stage: 'shipped' } })).toEqual(['lib_landmine_row: shipped']);
-    expect(stageProblems({ ...rows, lib_landmine_row: { ...someRow, stage: 'approved-plate' } })).toEqual(['lib_landmine_row: approved-plate']);
+  it('mutations: an unruled id at shipped, a ruled id held back, and a row at drawing are red', () => {
+    const rows = readJson(ROWS).rows;
+    expect(shipProblems(rows, RULED().filter(id => id !== 'lib_landmine_row'))).toEqual(['lib_landmine_row: unruled, at shipped']);
+    expect(shipProblems({ ...rows, lib_sumo_deadlift: { ...rows.lib_sumo_deadlift, stage: 'shipped' } })).toEqual(['lib_sumo_deadlift: unruled, at shipped']);
+    expect(shipProblems({ ...rows, lib_landmine_row: { ...rows.lib_landmine_row, stage: 'approved-plate' } })).toEqual(['lib_landmine_row: ruled, at approved-plate']);
+    expect(shipProblems({ ...rows, lib_landmine_row: { ...rows.lib_landmine_row, stage: 'drawing' } })).toEqual(['lib_landmine_row: ruled, at drawing']);
   });
-  it('no LB3 drawn id or shrug is shipped, even with lb3/rows.json read as a batch file', () => {
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(rows.filter((r: any) => [...IDS, ...RELEASED.map(i => `lib_${i}`)].includes(r.id)).length).toBe(drawn().length + RELEASED.length);
-    expect(reg.shippedIds(rows).filter((i: string) => [...IDS, ...SHRUGS.map(s => `lib_${s}`)].includes(i))).toEqual([]);
+  it('each ruled id has its C15 stamp; mutation: a ruled id\'s stamp removed is red', async () => {
+    const St = await import(/* @vite-ignore */ lib('research/stamps.mjs'));
+    expect(await St.stampProblems(RULED())).toEqual([]);
+    const { scope, hash } = await St.stampOf('lib_landmine_row'), rv = St.readReviews();
+    const cut = { ...rv, entries: rv.entries.filter((e: any) => !(e.scope === scope && e.hash === hash)) };
+    expect(await St.stampProblems(RULED(), { reviews: cut })).toEqual([`LIB-5 stamp: lib_landmine_row: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`]);
+  }, 120_000);
+  it('the registry holds each LB3 id once, from batches/lb03.json; lb3/rows.json is gone, and its rows copied back are refused (a row in two places)', () => {
+    const rows = reg.rows();
+    for (const id of ALL) expect([id, rows.filter((r: any) => r.id === id).map((r: any) => r.batchFile)]).toEqual([id, [ROWS]]);
+    expect(reg.shippedIds().filter((i: string) => ALL.includes(i))).toEqual(RULED());
+    expect(existsSync(OLD_ROWS)).toBe(false);
+    const back = (ids: string[]) => () => reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]),
+      [OLD_ROWS, { ...readJson(ROWS), rows: Object.fromEntries(ids.map(id => [id, readJson(ROWS).rows[id]])) }]] });
+    expect(back(ALL)).toThrow(/registry: tools\/plates\/library\/lb3\/rows\.json: id lib_pendlay_row already used by tools\/plates\/library\/batches\/lb03\.json/);
+    expect(back(['lib_sumo_deadlift'])).toThrow(/id lib_sumo_deadlift already used by/);
   });
   /** An id or its slug as a whole token in a file's name or text. */
   const tokenHits = (ids: string[], name: string, text: string) => ids.flatMap(id => {
@@ -143,29 +174,38 @@ describe('LIB-13 A9: nothing ships (D-LIB13-AHEAD)', { timeout: T }, () => {
     if (new RegExp(`(^|[^a-z0-9-])${slug}([^a-z0-9-]|$)`).test(s)) out.push(`${name}: ${slug}`);
     return out;
   });
-  // Before pilot A is on main, the 4 reused ids are in no batches/ or golden file either; once it is, they sit in pilot
-  // A's batch file only (B1 of LIB-10's critic, carried).
-  const pilotAOnMain = () => readdirSync('tools/plates/library/batches').some(n => /pilot/i.test(n));
-  const watched = () => [...LB3, ...SHRUGS, ...(pilotAOnMain() ? [] : REUSED)];
-  const batchProblems = (files: [string, string][]) => files.flatMap(([f, text]) => [
-    ...(/lb3/i.test(f) ? [`${f}: an LB3 batch file name`] : []),
-    ...(/"batch"\s*:\s*"LB3"/.test(text) ? [`${f}: names batch LB3`] : []),
-    ...tokenHits(watched(), f, text),
-  ]);
+  // pilot A is on main: the 4 reused ids sit in pilot A's batch file only (B1 of LIB-10's critic, carried)
+  const watched = () => [...LB3, ...SHRUGS];
+  const ruledBare = () => RULED().map(i => i.slice(4));
+  /** Each LB3 id or slug in every `want` file (those in `ruledOnly` for the ruled ids only) and in no other file. */
+  const placeProblems = (files: [string, string][], want: string[], ruledOnly: string[] = []) => [
+    ...files.filter(([f]) => !want.includes(f) && !ruledOnly.includes(f)).flatMap(([f, text]) => tokenHits(watched(), f, text)),
+    ...[...want, ...ruledOnly].flatMap(w => {
+      const t = files.find(([f]) => f === w)?.[1];
+      return t === undefined ? [`${w}: missing`] : (want.includes(w) ? watched() : ruledBare()).filter(id => !tokenHits([id], w, t).length).map(id => `${w}: no ${id}`);
+    }),
+  ];
+  const nameProblems = (files: [string, string][], allowed: string[]) => files.filter(([f]) => !allowed.includes(f)).flatMap(([f, text]) => [
+    ...(/lb0?3\b/i.test(f) ? [`${f}: an LB3 batch file name`] : []), ...(/"batch"\s*:\s*"LB3"/.test(text) ? [`${f}: names batch LB3`] : [])]);
   const dirFiles = (dir: string): [string, string][] => (existsSync(dir) ? readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : []);
-  it('no LB3 id, slug or batch is in any tools/plates/library/batches/ file', () => {
+  const batchProblems = (files: [string, string][]) => [...nameProblems(files, ['lb03.json']), ...placeProblems(files, ['lb03.json'])];
+  const GOLDEN = ['lb03.json'], GOLDEN_RULED = ['lb03.layers.html'];
+  const goldenProblems = (files: [string, string][]) => [...nameProblems(files, [...GOLDEN, ...GOLDEN_RULED]), ...placeProblems(files, GOLDEN, GOLDEN_RULED)];
+  it('the LB3 ids, slugs and batch are in batches/lb03.json and in no other tools/plates/library/batches/ file', () => {
     expect(batchProblems(dirFiles('tools/plates/library/batches'))).toEqual([]);
   });
-  it('no LB3 id, slug or batch is in tests/howto/golden/library/', () => {
-    expect(batchProblems(dirFiles('tests/howto/golden/library'))).toEqual([]);
+  it('the LB3 ids, slugs and batch are in tests/howto/golden/library/ lb03.json (and the ruled ids in lb03.layers.html) only', () => {
+    expect(goldenProblems(dirFiles('tests/howto/golden/library'))).toEqual([]);
   });
-  it('mutations: rows.json copied into batches/, a golden file naming an LB3 id, a page-only lb3.json, back-extension.layers.html and lib_upright_row in batches/ before pilot A are red', () => {
-    const rowsText = JSON.stringify({ batch: 'LB3', rows: { lib_landmine_row: someRow } }, null, 1);
-    expect(batchProblems([['zz.json', rowsText]]).length).toBeGreaterThanOrEqual(2);
-    expect(batchProblems([['x.json', '{"id":"lib_conventional_deadlift"}']])).toEqual(['x.json: conventional_deadlift']);
-    expect(batchProblems([['lb3.json', '{"entries":[{"kind":"page","batch":"LB3"}]}']]).length).toBe(2);
-    expect(batchProblems([['back-extension.layers.html', '<div data-id="back-extension"></div>']])).toEqual(['back-extension.layers.html: back-extension']);
-    if (!pilotAOnMain()) expect(batchProblems([['p.json', '{"rows":{"lib_upright_row":{}}}']])).toEqual(['p.json: upright_row']);
+  it('mutations: the rows copied into a second batches/ file, a golden file naming an LB3 id, a page-only lb3.json, back-extension.layers.html, an id dropped from lb03.json and a ruled id dropped from lb03.layers.html are red', () => {
+    const b = dirFiles('tools/plates/library/batches'), g = dirFiles('tests/howto/golden/library');
+    expect(batchProblems([...b, ['zz.json', JSON.stringify({ batch: 'LB3', rows: { lib_landmine_row: readJson(ROWS).rows.lib_landmine_row } }, null, 1)]]).length).toBeGreaterThanOrEqual(2);
+    expect(goldenProblems([...g, ['x.json', '{"id":"lib_conventional_deadlift"}']])).toEqual(['x.json: conventional_deadlift']);
+    expect(goldenProblems([...g, ['lb3.json', '{"entries":[{"kind":"page","batch":"LB3"}]}']]).length).toBe(2);
+    expect(goldenProblems([...g, ['back-extension.layers.html', '<div data-id="back-extension"></div>']])).toEqual(['back-extension.layers.html: back-extension']);
+    const drop = (file: string, id: string) => g.map(([n, t]): [string, string] => [n, n === file ? t.replace(new RegExp(`(lib_)?${id}|${id.replace(/_/g, '-')}`, 'g'), 'x') : t]);
+    expect(goldenProblems(drop('lb03.json', 'sumo_deadlift'))).toEqual(['lb03.json: no sumo_deadlift']);
+    expect(goldenProblems(drop('lb03.layers.html', 'landmine_row'))).toEqual(['lb03.layers.html: no landmine_row']);
   });
   it('controls: a file naming only lib_romanian_deadlift and lib_single_leg_romanian_deadlift stays green against the 8 drawn ids', () => {
     const scan = (text: string) => tokenHits(LB3, 'p.json', text);
@@ -177,11 +217,12 @@ describe('LIB-13 A9: nothing ships (D-LIB13-AHEAD)', { timeout: T }, () => {
     expect(ex.filter((e: string) => IDS.some(id => e !== id && e.includes(id.slice(4))))).toEqual([]);
     for (const id of IDS) expect(ex, id).toContain(id);
   });
+  // LIB-SHIP W4: the LB3 rows are the registry's own batch file now (read once; the copy-back is the red above)
   it('once pilot A is on main, each reused id has exactly one registry row, in pilot A\'s batch file, and no lb3/ file names it', () => {
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
+    const rows = reg.rows();
     for (const id of REUSED) {
       const hits = rows.filter((r: any) => r.id === `lib_${id}`);
-      if (pilotAOnMain()) { expect(hits.length, id).toBe(1); expect(hits[0].batchFile, id).toMatch(/pilot/i); } else expect(hits, id).toEqual([]);
+      expect(hits.length, id).toBe(1); expect(hits[0].batchFile, id).toMatch(/pilot/i);
     }
     for (const f of readdirSync('tools/plates/library/lb3').filter(n => n.endsWith('.json'))) for (const id of REUSED)
       expect(new RegExp(`"(lib_)?${id}"`).test(readFileSync(join('tools/plates/library/lb3', f), 'utf8')), `${f}: ${id}`).toBe(false);
@@ -221,11 +262,16 @@ describe('LIB-13 A11 (Do 6 a): the 8 cards and quotes are byte copies of the LB3
     const c = cardOf('landmine_row'); c.plate.view = 'front';
     expect(sha(canon(c))).not.toBe(cardsSha.cards.landmine_row);
   });
-  it('the How-to source of each LB3 id holds only its id and research card (D-LIB9a-HOWTOID)', async () => {
+  // LIB-SHIP W4 (ruling 3): replaces "the How-to source of each LB3 id holds only its id and research card
+  // (D-LIB9a-HOWTOID)": the sheets are written
+  it('the How-to sheet of each LB3 id names its research card and is not a stub (replaces D-LIB9a-HOWTOID); mutation: the old stub is red', async () => {
     for (const id of LB3) {
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
-      expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+      expect(sheetProblems(h, id)).toEqual([]);
+      expect(sheetProblems({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } }, id).length, `${id}: the stub`).toBeGreaterThan(0);
     }
+    const t = (await import(/* @vite-ignore */ lib('howto/lib_t_bar_row.howto.mjs'))).default;
+    expect(sheetProblems({ ...t, research: { ...t.research, card: 'docs/research/howto/cards/barbell_row.json' } }, 't_bar_row')).toEqual(['t_bar_row: research.card "docs/research/howto/cards/barbell_row.json"']);
   });
 });
 
@@ -703,14 +749,16 @@ describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn
 
 describe('LIB-13 H slice Mistakes, tells, cues and tempo (DESIGN.md sections 8-9)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { pendlay_row: 'round', landmine_row: 'round', one_arm_dumbbell_row: 'short', dumbbell_romanian_deadlift: 'arch', conventional_deadlift: 'round', sumo_deadlift: 'hips', back_extension: 'round' };
+  // LIB-SHIP W4 D-SHIP-W4-TEMPO (#391 6681756394; ruling 3): pendlay_row, sumo_deadlift and conventional_deadlift in
+  // execution order (the lift first), as lb3/tempo.json and their cards; the other four as proposed
   const TEMPO: Record<string, any[]> = {
-    pendlay_row: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Pull', s: 1, move: true }],
+    pendlay_row: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
     dumbbell_romanian_deadlift: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Stand', s: 1, move: true }],
-    sumo_deadlift: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Lift', s: 1, move: true }],
+    sumo_deadlift: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
     back_extension: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Raise', s: 1, move: true }, { phase: 'Hold', s: 1 }],
     landmine_row: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
     one_arm_dumbbell_row: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Lower', s: 2, move: true }],
-    conventional_deadlift: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Lift', s: 1, move: true }],
+    conventional_deadlift: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each slice plate draws its Mistake with 2-3 tells, the first carrying the proposed key', () => {
@@ -728,6 +776,9 @@ describe('LIB-13 H slice Mistakes, tells, cues and tempo (DESIGN.md sections 8-9
   });
   it('the tempo strips are the proposed arrays (DESIGN.md section 8)', () => {
     for (const id of SLICE) expect(S[id].tempo, id).toEqual(TEMPO[id]);
+  });
+  it('LIB-SHIP W4 D-SHIP-W4-TEMPO mutation: a reordered spec in the pre-ruling order (Lower first) is red', () => {
+    for (const id of ['pendlay_row', 'conventional_deadlift', 'sumo_deadlift']) expect([...S[id].tempo].reverse(), id).not.toEqual(TEMPO[id]);
   });
   /** Q-D5-6 cue table: every callout and tell cue is one sentence of at most 15 words with no semicolon. */
   const cueProblems = (spec: any) => [...spec.callouts, ...spec.mistake.tells].flatMap((c: any) => {
@@ -832,6 +883,20 @@ const childPage = async (ids: string[] | null) => {
   return Buffer.from(stdout.trim(), 'base64').toString('utf8');
 };
 const pageHtml = (ids: string[] | null = null) => (pageCache[JSON.stringify(ids)] ??= childPage(ids));
+/** LIB-SHIP W4 (D-SHIP-W4-PIN, re-pinned in place under D-REPIN-UNMERGED): each listed plate's fragments on `html`
+ *  against its latest plate entry in tests/howto/golden/library/lb03.json; one line per fragment that differs. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const lb03PinProblems = (golden: any, html: string, chromeIds: string[]) => {
+  const latest = golden.latestEntries(JSON.parse(readFileSync('tests/howto/golden/library/lb03.json', 'utf8')).entries);
+  return chromeIds.flatMap(c => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), e = [...latest.values()].find((x: any) => x.kind === 'plate' && x.chromeId === c);
+    if (!p || !e) return [`${c}: ${p ? 'no pin' : 'not drawn'}`];
+    const f = golden.fragmentsOf(p);
+    return Object.keys(e.fragments).filter(k => f[k] !== e.fragments[k]).map(k => `${c} ${k} != pin`);
+  });
+};
+const LB03_PAGE_PIN = '5a2c55c0682da6b37ff637b9ab9b94746209321e0212e998b607b63ac9ca4b2e';   // lb03.json's page entry (D-SHIP-W4-PIN; re-pinned in place under D-REPIN-UNMERGED for LIB-PLATEFIX-3 item 17, was d6241cf6…)
 /** Two builds of every drawn row, one after the other in ONE awaited child process (so module state left by the first
  *  build would change the second, as in the old in-worker test): the two pages' sha256. */
 const childTwice = async () => {
@@ -852,6 +917,12 @@ describe('LIB-13 A10: the LB3 plates page is deterministic (PQ-H7)', { timeout: 
 });
 
 describe('LIB-13 A4: runQa node half on an LB3 plate (lib_conventional_deadlift), LIB-3 M1-M7 and a colour literal', { timeout: T }, () => {
+  it('LIB-SHIP W4: authoring QA on the row is refused at its stage (D-LIB9-AUTHORQA)', async () => {
+    const [b, c] = await Promise.all(['lb3/build.mjs', 'candidate.mjs'].map(f => import(/* @vite-ignore */ lib(f)))), a = b.lb3All();
+    const stage = a.find((r: any) => r.id === 'lib_conventional_deadlift').stage;
+    expect(c.AUTHORING_REFUSED).toContain(stage);
+    await expect(c.candidateOf('lib_conventional_deadlift', { all: a, platesHtml: '', authoring: true })).rejects.toThrow(`authoring QA is refused at stage ${stage} (D-LIB9-AUTHORQA)`);
+  });
   const ID = 'lib_conventional_deadlift', cg = () => S.conventional_deadlift;
   let build: any, cand: any, muts: any, golden: any, mirror: any, E: any, all: any, html: string;
   beforeAll(async () => {
@@ -862,7 +933,9 @@ describe('LIB-13 A4: runQa node half on an LB3 plate (lib_conventional_deadlift)
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
-  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W4 (D-LIB-LB1ZOOM route; D-LIB9-AUTHORQA refuses authoring QA at approved-plate and shipped): after the pin
+  // (SHIP W4 PIN GO, #391 6649217767) the default path, no authoring flag: the pinned exemptions apply. Mutations kept red.
+  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E });
   const MUT = (id: string) => muts.SPEC_MUTATIONS.find((m: any) => m.id.startsWith(`${id} `));
   // A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn.
   const mutated = async (fn: string, arg: any = null) => {
@@ -940,12 +1013,13 @@ describe('LIB-13 A4: runQa node half on an LB3 plate (lib_conventional_deadlift)
 
 describe('LIB-13 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the pose map and the plate facts', { timeout: T }, () => {
   // The ruled table (LB3 NOTE RULED, #274 comment 6264733030; DESIGN.md section 8): phase names, order and source per
-  // id. Copied from the ruling, never read from tempo.json or a spec. No constants.
+  // id. Copied from the ruling, never read from tempo.json or a spec. No constants. pendlay_row, conventional_deadlift and
+  // sumo_deadlift are in execution order (D-SHIP-W4-TEMPO, #391 6681756394).
   const RULED: Record<string, [string, string][]> = {
-    pendlay_row: [['Lower', 'down'], ['Pull', 'up']], t_bar_row: [['Pull', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
+    pendlay_row: [['Pull', 'up'], ['Lower', 'down']], t_bar_row: [['Pull', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
     landmine_row: [['Pull', 'up'], ['Lower', 'down']], one_arm_dumbbell_row: [['Pull', 'up'], ['Lower', 'down']],
-    dumbbell_romanian_deadlift: [['Lower', 'down'], ['Stand', 'up']], conventional_deadlift: [['Lower', 'down'], ['Lift', 'up']],
-    sumo_deadlift: [['Lower', 'down'], ['Lift', 'up']], back_extension: [['Lower', 'down'], ['Raise', 'up'], ['Hold', 'pause']],
+    dumbbell_romanian_deadlift: [['Lower', 'down'], ['Stand', 'up']], conventional_deadlift: [['Lift', 'up'], ['Lower', 'down']],
+    sumo_deadlift: [['Lift', 'up'], ['Lower', 'down']], back_extension: [['Lower', 'down'], ['Raise', 'up'], ['Hold', 'pause']],
   };
   // The ruled pose map (DESIGN.md section 9): the spec pose each card pose is drawn as.
   const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB3.map(id => [id,
@@ -986,6 +1060,9 @@ describe('LIB-13 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
       expect(red(s => { const rows = s.tj.ids[id].rows.filter((r: any) => r.from !== 'pause'); setAll(s, id, rows, built(rows, s.cards[id].plate.tempo)); }), `(v) Hold removed: ${id}`).toBe(true);
     expect(red(s => { const rows = s.tj.ids.conventional_deadlift.rows.map((r: any) => ({ ...r, from: r.from === 'up' ? 'down' : r.from === 'down' ? 'up' : r.from })); setAll(s, 'conventional_deadlift', rows, built(rows, s.cards.conventional_deadlift.plate.tempo)); }), '(vi) up/down swapped').toBe(true);
     expect(red(s => { s.cards.one_arm_dumbbell_row.tempo[0].s = 3; }), 'one tempo second').toBe(true);
+    // D-SHIP-W4-TEMPO: a card (and its spec) still in the old Lower-first order, against the new map, is red
+    for (const id of ['pendlay_row', 'conventional_deadlift', 'sumo_deadlift'])
+      expect(red(s => { const old = [...s.cards[id].tempo].reverse(); s.cards[id].tempo = old; if (s.specs[id]) s.specs[id] = { ...s.specs[id], tempo: old }; }), `old order: ${id}`).toBe(true);
   });
   const cardsSha = readJson('tools/plates/library/lb3/cards.sha.json');
   const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
@@ -1077,7 +1154,9 @@ describe('LIB-13 A4: F7 on one_arm_dumbbell_row (drawable false) is raised; topF
     try {
       const E = await qaEng.loadEngine(mirror), all = build.lb3All(), ID = 'lib_one_arm_dumbbell_row';
       const html = (await build.buildLb3Page({ all, ids: [ID] })).html.toString('utf8');
-      const c = await cand.candidateOf(ID, { all, platesHtml: html, engine: E, authoring: true });
+      // LIB-SHIP W4: the pinned path (D-LIB-LB1ZOOM route); authoring QA is refused at this stage (D-LIB9-AUTHORQA)
+      await expect(cand.candidateOf(ID, { all, platesHtml: html, engine: E, authoring: true })).rejects.toThrow(/authoring QA is refused at stage (approved-plate|shipped) \(D-LIB9-AUTHORQA\)/);
+      const c = await cand.candidateOf(ID, { all, platesHtml: html, engine: E });
       const raised = async (cc: any) => { const r = await qaIdx.runQa(cc, { engine: E, pins }); return qaIdx.FLAGS.filter((f: string) => !['F2', 'F5'].includes(f) && r.flags[f].raised); };
       const expected = ['F7'];
       expect(await raised(c)).toEqual(expected);
@@ -1267,12 +1346,21 @@ describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d
     const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
     return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`);
   });
-  it('63 fragments of the 7 approved plates on this head equal main\'s, and the 7 alone still build page 6ff09d4c', async () => {
+  // LIB-SHIP W4 (ruling 3): replaces "63 fragments … equal main's, and the 7 alone still build page 6ff09d4c". The W4
+  // rulings changed exactly these fragments: the three tempos (D-SHIP-W4-TEMPO, #391 6681756394, execution order) and the
+  // two deadlift alts (D-SHIP-W5-PLATETEXT go, #391 6681022221). Every other of the 63 still equals main's approval; every
+  // fragment of the 7 equals its re-pinned lb03.json plate entry; the whole page is lb03.json's page pin.
+  const CHANGED_W4 = ['pendlay-row tempo', 'conventional-deadlift tempo', 'conventional-deadlift alt', 'sumo-deadlift tempo', 'sumo-deadlift alt'];
+  it('of the 63 approved fragments exactly the ruled W4 ones differ from main\'s; each of the 7 equals its lb03.json pin, and the page is the lb03 page pin', async () => {
     expect(Object.values(APPROVED).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(63);
-    expect(fragProblems(await pageHtml())).toEqual([]);
-    const seven = await pageHtml(drawn().map(i => `lib_${i}`));
-    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 6ff09d4c, now 5fe25d73 (item 17 sumo, approved #405 6688665575; one_arm_dumbbell_row held at main's)
-    expect(sha(seven)).toBe('5fe25d73e6fb4b5316573f8fefb2901dd9c688d3c970e05cb567c01cb4a78479');
+    const html = await pageHtml();
+    expect(fragProblems(html)).toEqual(CHANGED_W4);
+    expect(lb03PinProblems(golden, html, Object.keys(APPROVED))).toEqual([]);
+    expect(sha(html)).toBe(LB03_PAGE_PIN);   // LIB-PLATEFIX-3's 7-alone page check (5fe25d73, item 17 sumo) stays replaced by the lb03 page pin (W4 ruling 3)
+  });
+  it('LIB-SHIP W4 mutation: a ruled fragment off its pin (conventional tempo, the first of the two equal deadlift tempos) is red', async () => {
+    const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'conventional-deadlift');
+    expect(lb03PinProblems(golden, html.replace(p.tempo, p.tempo.replace('Lift', 'Lifts')), Object.keys(APPROVED))).toEqual(['conventional-deadlift tempo != pin']);
   });
   it("mutation: one byte changed in landmine_row's alt is red", async () => {
     const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'landmine-row');
@@ -1377,13 +1465,21 @@ describe('LIB-13s: dumbbell_shrug and smith_machine_shrug stay byte-identical to
   beforeAll(async () => { golden = await import(/* @vite-ignore */ lib('../golden.mjs')); }, T);
   const diff = (html: string) => Object.entries(WANT).flatMap(([c, want]) => { const p = golden.extractPlates(html).find((x: any) => x.chromeId === c), got = p ? golden.fragmentsOf(p) : {};
     return Object.keys(want).filter(k => got[k] !== want[k]).map(k => `${c} ${k}`); });
-  it('their 18 fragments on this head equal the approved ones', async () => {
+  // LIB-SHIP W4 (ruling 3): replaces "their 18 fragments on this head equal the approved ones". smith_machine_shrug's alt
+  // is the ruled one (focused recheck #391 6682615402, accepted in D-SHIP-W4-FLIPSET 6682985023: "Only the shoulders lift,
+  // straight up toward the ears."); the other 17 still equal mx20, and both plates equal their lb03.json pins.
+  const CHANGED_W4 = ['smith-machine-shrug alt'];
+  it('of their 18 fragments exactly the ruled smith alt differs from the approval; both equal their lb03.json pins', async () => {
     expect(Object.values(WANT).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(18);
-    expect(diff(await pageHtml())).toEqual([]);
+    const html = await pageHtml();
+    expect(diff(html)).toEqual(CHANGED_W4);
+    expect(lb03PinProblems(golden, html, Object.keys(WANT))).toEqual([]);
   });
-  it("mutation: one byte in smith_machine_shrug's Mistake alt is red", async () => {
+  it("mutation: one byte in smith_machine_shrug's Mistake alt is red (against the approval and its pin)", async () => {
     const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'smith-machine-shrug');
-    expect(diff(html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E')))).toEqual(['smith-machine-shrug mistakeAlt']);
+    const m = html.replace(p.mistakeAlt, p.mistakeAlt.replace(/e/, 'E'));
+    expect(diff(m)).toEqual([...CHANGED_W4, 'smith-machine-shrug mistakeAlt']);
+    expect(lb03PinProblems(golden, m, Object.keys(WANT))).toEqual(['smith-machine-shrug mistakeAlt != pin']);
   });
 });
 
@@ -1603,8 +1699,17 @@ describe('LIB-13s A6: runQa node half on the wave-1 plates (zoom keys, H1 feet, 
     return () => qaEng.dropMirror(mirror);
   }, T);
   const keys = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
-  const candOf = (id: string, page = html) => cand.candidateOf(id, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W4 (D-LIB-LB1ZOOM route): after the pin the default path; D-LIB9-AUTHORQA refuses authoring QA at this stage
+  const candOf = (id: string, page = html) => cand.candidateOf(id, { all, platesHtml: page, engine: E });
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
+  it('LIB-SHIP W4: authoring QA on each released row is refused at its stage (D-LIB9-AUTHORQA); the pinned path reads each pin\'s exemptions', async () => {
+    const pinned = JSON.parse(readFileSync('tests/howto/golden/library/lb03.json', 'utf8')).entries;
+    for (const id of RELEASED.map(i => `lib_${i}`)) {
+      const stage = all.find((r: any) => r.id === id).stage;
+      await expect(cand.candidateOf(id, { all, platesHtml: html, engine: E, authoring: true }), id).rejects.toThrow(`authoring QA is refused at stage ${stage} (D-LIB9-AUTHORQA)`);
+      expect([id, (await candOf(id)).exemptions]).toEqual([id, pinned.filter((e: any) => e.kind === 'plate' && e.id === id).at(-1).exemptions ?? []]);
+    }
+  });
   // H6 reads the card's three keys; until CARD FIELDS lands on barbell_shrug's card it reports H6:no-card (DESIGN.md 16.8)
   const keyed = (id: string) => 'plateFacts' in readJson(`docs/research/howto/cards/${id}.json`);
   it('clean: no node-half hard problem on any released plate; the node flags F3 and F4 are the ruled set (qa.mjs EXPECTED)', async () => {

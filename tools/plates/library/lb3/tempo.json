@@ -1,5 +1,5 @@
 {
- "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. No Rest. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 9 pose map). Ruled: LB3 NOTE RULED, #274 comment 6264733030.",
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. No Rest. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 9 pose map). Ruled: LB3 NOTE RULED, #274 comment 6264733030. Reordered to execution order for pendlay_row, conventional_deadlift and sumo_deadlift: D-SHIP-W4-TEMPO (#391 6681756394).",
  "research": "claude/libht-research 892d6516c4dcd88f7b7e22b8cbbf19dc762a8342 (landmine_row, t_bar_row) and 2dd60ae0349b06a4aac88a11347edac5536f8424 (the other 6, byte-identical at 892d6516)",
  "constants": {},
  "ids": {
@@ -7,13 +7,13 @@
    "claim": "c14",
    "rows": [
     {
-     "phase": "Lower",
-     "from": "down",
+     "phase": "Pull",
+     "from": "up",
      "move": true
     },
     {
-     "phase": "Pull",
-     "from": "up",
+     "phase": "Lower",
+     "from": "down",
      "move": true
     }
    ]
@@ -86,13 +86,13 @@
    "claim": "c12",
    "rows": [
     {
-     "phase": "Lower",
-     "from": "down",
+     "phase": "Lift",
+     "from": "up",
      "move": true
     },
     {
-     "phase": "Lift",
-     "from": "up",
+     "phase": "Lower",
+     "from": "down",
      "move": true
     }
    ]
@@ -101,13 +101,13 @@
    "claim": "c21",
    "rows": [
     {
-     "phase": "Lower",
-     "from": "down",
+     "phase": "Lift",
+     "from": "up",
      "move": true
     },
     {
-     "phase": "Lift",
-     "from": "up",
+     "phase": "Lower",
+     "from": "down",
      "move": true
     }
    ]

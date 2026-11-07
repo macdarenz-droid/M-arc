@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { lessW4 } from './checks/ship-w4';
 import { PF_W2_KEYS, blankPF, pfProblems, pfW2Problems } from './platefix-pins';
 import { pf2Problems, restorePF2 } from './platefix2-pins';
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
@@ -64,7 +65,8 @@ describe('RESEARCH-ROUTES-1 P1-b/P1-c: the ruled fields left inherit[] (F-W4-INH
 // The D-CROP-PIN form (#380 6627881461): MANIFEST.json pins back-pain-box.json in 16 rows (13 before main e623d3ef), so this lane re-pins exactly
 // that one key; every other entry equals main e623d3ef.
 // LIB-PLATEFIX-1: main 8841246c's MANIFEST.json with the pin test's blanks and the PLATEFIX keys and entries blanked (measured on main 8841246c's own MANIFEST)
-const PF_RR_PIN = 'ba58cd17905addfc3c1dcf83f29d245cf1182ce2d1fbd6691905ce29973fa48c';
+// LIB-SHIP W4 (merge of main 7e060e83): main's ba58cd17… with lessW4's blanks too (W4's rows out, the smith-sheet key blanked)
+const PF_RR_PIN = '5bbb3e21878f954658228b7840ecd9d176151ad2f7e507114231d67c83610a02';
 describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-box.json', () => {
   const w3Read = (p: string) => rd(p);
   // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows (the 9 shipped and the 4 staged
@@ -91,6 +93,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
   };
   /** LIB-PLATEFIX-1: the pin test's blanks below, without its checks (for the mutations). */
   const rrBlanked = (m: any) => {
+    lessW4(m, k => sha(readFileSync(join(ROOT, k))));   // LIB-SHIP W4 (merge of main 7e060e83): W4's rows out first
     lessW3(m, [PF_W2_KEYS[0]!]);
     for (const r of Object.values<any>(m.rows)) {
       for (const k of [BOX, 'tools/plates/library/hands/pairs.mjs', 'tools/plates/library/render/closeup/zoom.mjs']) if (k in r.files || k.endsWith('zoom.mjs')) r.files[k] = 'X';
@@ -109,14 +112,18 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
   });
   it('every row that lists it pins the current file, and every other entry equals main e623d3ef', () => {
-    const m = lessW3(pf2Main(JSON.parse(rd('tools/plates/library/MANIFEST.json'))), [PF_W2_KEYS[0]!]);   // LIB-SHIP W3 (LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems)
+    // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): lessW4 (checks/ship-w4.ts) removes the 20 lb02/lb03 rows
+    // (each must be present) and blanks the W4-moved keys (each must pin its current file); LIB-SHIP W3's lessW3 then takes
+    // out W3's 13 rows and puts main's crop.mjs / zoom-css.mjs / build-layers-page.mjs shas back (merge of main 62d3dcb6: both lanes kept)
+    // LIB-PLATEFIX-2 (#395): pf2Main then checks its moved keys and entry and puts main 7e060e83's back (merge of main 6227bd8e)
+    const m = lessW3(pf2Main(lessW4(JSON.parse(rd('tools/plates/library/MANIFEST.json')), k => sha(readFileSync(join(ROOT, k))))), [PF_W2_KEYS[0]!]);   // LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
     expect(rows).toHaveLength(16);
     for (const r of rows) { expect(r.files[BOX]).toBe(sha(rd(BOX))); r.files[BOX] = 'X'; }
     // F-SCRATCH-SYNTH (#397, D-SCRATCH-SYNTH-KEYIDX) re-pins hands/pairs.mjs in its 22 rows: each pins the current file, blanked too
     const PAIRS = 'tools/plates/library/hands/pairs.mjs', pr = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => PAIRS in r.files);
     expect(pr).toHaveLength(22);
-    for (const r of pr) { expect(r.files[PAIRS]).toBe(sha(rd(PAIRS))); r.files[PAIRS] = 'X'; }
+    for (const r of pr) { expect(r.files[PAIRS]).toBe('X'); }   // LIB-SHIP W4: lessW4 above already checked each pins the current file and blanked it
     // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs and build-layers-page.mjs keys are re-pinned there and pinned exactly by
     // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
     // (build-layers-page.mjs's key is checked against its current file and put back by lessW3 above, a W3 key too)
