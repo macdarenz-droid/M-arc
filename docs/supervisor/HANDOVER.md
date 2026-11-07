@@ -842,6 +842,17 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-07 ~02:45 UTC.**
+  - **Train 76:** #404 F-BODYMAP-FRONTDELT → main `8841246c`. It is app-visible (the front delts on the body map); the APK goes out after main's gate run, combined with PF1's if PF1 merges close behind.
+  - **Layers check of the PF3-plate sheets** (pfc, VALID; `panels/pfc-findings.md` @ `b5065795`; D-PFC-ROUND1):
+    - W7 adds hollow_body_hold and high_knees, and bird_dog and farmer_s_carry pass with their new copy (W7 is now 16).
+    - The sheet fixes are with W7.
+    - sled_pull, lying_leg_curl's arch and v_up's L7 go to 3b.
+    - low_to_high_cable_fly is HELD (D-PF3B-LTHHOLD, follow-up F-LTH-VIEW); W6 ships 7.
+    - Golden-B follow-up 45: leg_press sheet-vs-card conflicts.
+  - **3b #408** carries items A, B (D-PF3B-SLEDSQUAT), C, D, 15, 22 and 23, with one plates panel.
+  - **W6** Q7: lb06 in place (D-REPIN-UNMERGED). **W4** E5 exception ruled; its READY is pending.
+  - **Next trains:** #385 (pushed `04028a6`, post-W3), #395, then W4, W5, W6, W7.
 - **Update 11-07 ~00:45 UTC.**
   - **Train 74:** #400 → main `9e2b4486`. **Train 75:** #405 PLATEFIX-3 → main `c2f267a7` (24 plates; D-PF3-W3MERGE: assisted_pull_up held to main's W3 version, underhand `'owner'` D-OWNER-REPIN entries). Research heads #401 and #407 merged into `claude/libht-research`. Neither train is app-visible.
   - **#393 (W6) was closed by accident** at train 75: #405 commit `8c45ede2` says "W6 PANEL FIX #393", which GitHub reads as a closing keyword. It is reopened (6699630564). **Train checklist addition:** before each merge, grep the PR's commits and body for `(close|fix|resolve)[sd]?:? #N`. Follow-up F-COMMIT-KEYWORDS (guard check).
