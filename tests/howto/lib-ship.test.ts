@@ -618,11 +618,16 @@ describe('LIB-SHIP W4: the family rulings (D-SHIP-W4-THUMB, -GAPZOOM, -PADZOOM, 
   });
 
   describe('E5 (amended D-SHIP-W5-PLATEONLY): no INHERIT_MAP field maps to []', () => {
-    /** `plateCompared`: the `${id}#${field}` plate.* fields that have their own plate-compare red (none in W4). */
+    /** `plateCompared`: the `${id}#${field}` plate.* fields that have their own plate-compare red (none in W4; W5's 10 below). */
     // D-SHIP-W4-E5W3 (#391 6697811266 ruled (a)): W3's ruled empty field, exactly this one id#field (#384 6648454032 L2,
     // accepted 6648753200: the card's own setup steps replace the inherited lean). Every other [] stays red.
     const E5_RULED = new Set(['lib_single_arm_lat_pulldown#setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull']);
-    const emptyProblems = (map: Record<string, Record<string, string[]>>, plateCompared: Set<string> = new Set(), ruled: Set<string> = E5_RULED) => Object.entries(map).flatMap(([id, e]) =>
+    // LIB-SHIP W5 (merge of main 05382042; the #391 6647902684 amendment): W5's 10 plate.* [] fields, each with its own
+    // plate-compare red in this file: the 9 plate.view children in 'LIB-SHIP W5 D-SHIP-W5-PLATEONLY' (card and spec view ===
+    // the parent's; a changed child view is red) and straight_bar's plate.equipment in 'D-SHIP-W5-EQUIPDRAWN' (drawn equipment deep-equal)
+    const W5_PLATE_COMPARED = new Set([...['alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'forward_lunge', 'walking_lunge',
+      'bulgarian_split_squat', 'single_arm_triceps_pushdown', 'straight_bar_triceps_pushdown'].map(s => `lib_${s}#plate.view`), 'lib_straight_bar_triceps_pushdown#plate.equipment']);
+    const emptyProblems = (map: Record<string, Record<string, string[]>>, plateCompared: Set<string> = W5_PLATE_COMPARED, ruled: Set<string> = E5_RULED) => Object.entries(map).flatMap(([id, e]) =>
       Object.entries(e).filter(([f, paths]) => paths.length === 0 && !ruled.has(`${id}#${f}`) && !(f.startsWith('plate.') && plateCompared.has(`${id}#${f}`))).map(([f]) => `${id}: ${f}: mapped to [] (E5)`));
     it('the real map has none but the one ruled W3 field (D-SHIP-W4-E5W3)', () => { expect(emptyProblems(FAM.INHERIT_MAP)).toEqual([]); });
     it('D-SHIP-W4-E5W3 reds: a second, unruled [] field is caught; the exception widened to the id (any field) is red; without the exception the W3 field is red', () => {
@@ -630,17 +635,19 @@ describe('LIB-SHIP W4: the family rulings (D-SHIP-W4-THUMB, -GAPZOOM, -PADZOOM, 
       expect(FAM.INHERIT_MAP[W3][W3F]).toEqual([]);
       expect(emptyProblems({ ...FAM.INHERIT_MAP, [W3]: { ...FAM.INHERIT_MAP[W3], 'grip.thumb': [] } })).toEqual([`${W3}: grip.thumb: mapped to [] (E5)`]);
       // widen to the id: an id-level exception would hide that second field; the real one is exactly id#field, so it is caught
-      const widened = (map: Record<string, Record<string, string[]>>) => Object.entries(map).flatMap(([id, e]) => Object.entries(e).filter(([, p]) => p.length === 0 && id !== W3).map(([f]) => `${id}: ${f}`));
+      const widened = (map: Record<string, Record<string, string[]>>) => Object.entries(map).flatMap(([id, e]) => Object.entries(e).filter(([f, p]) => p.length === 0 && id !== W3 && !W5_PLATE_COMPARED.has(`${id}#${f}`)).map(([f]) => `${id}: ${f}`));   // LIB-SHIP W5: its plate-compared fields left out, as emptyProblems does
       expect(widened({ ...FAM.INHERIT_MAP, [W3]: { ...FAM.INHERIT_MAP[W3], 'grip.thumb': [] } })).toEqual([]);   // what a widened exception would let through
       expect([...E5_RULED].every(k => /^lib_[a-z_]+#.+/.test(k))).toBe(true);
-      expect(emptyProblems(FAM.INHERIT_MAP, new Set(), new Set())).toEqual([`${W3}: ${W3F}: mapped to [] (E5)`]);
+      expect(emptyProblems(FAM.INHERIT_MAP, W5_PLATE_COMPARED, new Set())).toEqual([`${W3}: ${W3F}: mapped to [] (E5)`]);
       expect([...E5_RULED]).toEqual([`${W3}#${W3F}`]);
     });
     it('red: a sheet field mapped to []; a plate.* field mapped to [] with no plate-compare red; control: one that has its red', () => {
       expect(emptyProblems({ ...FAM.INHERIT_MAP, lib_t_bar_row: { ...FAM.INHERIT_MAP.lib_t_bar_row, 'grip.thumb': [] } })).toEqual(['lib_t_bar_row: grip.thumb: mapped to [] (E5)']);
       const plate = { ...FAM.INHERIT_MAP, lib_sumo_deadlift: { ...FAM.INHERIT_MAP.lib_sumo_deadlift, 'plate.equipment': [] } };
       expect(emptyProblems(plate)).toEqual(['lib_sumo_deadlift: plate.equipment: mapped to [] (E5)']);
-      expect(emptyProblems(plate, new Set(['lib_sumo_deadlift#plate.equipment']))).toEqual([]);
+      expect(emptyProblems(plate, new Set([...W5_PLATE_COMPARED, 'lib_sumo_deadlift#plate.equipment']))).toEqual([]);
+      // LIB-SHIP W5: without the plate-compare set, W5's 10 plate.* [] fields are each red
+      expect(emptyProblems(FAM.INHERIT_MAP, new Set())).toEqual([...W5_PLATE_COMPARED].map(k => `${k.replace('#', ': ')}: mapped to [] (E5)`));
       // why it is needed: familyRefusal compares nothing for [] and passes
       const card = cardOf('lib_t_bar_row');
       FAM.INHERIT_MAP.lib_e5 = { f: [] };
