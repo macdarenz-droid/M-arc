@@ -332,7 +332,10 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync('docs/research/howto/shared/back-pain-box.json'))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
     // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
-    expect(sha(JSON.stringify(rrBox(lessW2(m, [BLP]))))).toBe('a5e9489da523e1cb04631fa6018429b55b71aa20dbddb7b9a637f8519131097a');   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): main's with zoom.mjs's key also blanked was f8074fd0…; LIB-SHIP W4: with the W4-moved keys also blanked (re-measured on the merge of main c2f267a7; was 2dc60178… on main 05f27be9)
+    // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs key is re-pinned there and pinned exactly by
+    // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
+    const bmFix = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) { expect(r.files['tools/plates/library/render/region-fix.mjs']).toBe(sha(readFileSync('tools/plates/library/render/region-fix.mjs'))); r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; } return x; };
+    expect(sha(JSON.stringify(rrBox(lessW2(bmFix(m), [BLP]))))).toBe('a5e9489da523e1cb04631fa6018429b55b71aa20dbddb7b9a637f8519131097a');   // F-BODYMAP-FRONTDELT (#404): region-fix.mjs put back by bmFix, so unchanged by the merge of main 8841246c; LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): main's with zoom.mjs's key also blanked was f8074fd0…; LIB-SHIP W4: with the W4-moved keys also blanked (re-measured on the merge of main c2f267a7; was 2dc60178… on main 05f27be9)
   });
 });
 
