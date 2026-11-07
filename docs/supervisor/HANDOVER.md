@@ -842,6 +842,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-07 ~08:45 UTC** (weekly 0.67 at 08:45; no new panels from 0.70).
+  - **APK sent** for train 77 (main `7e060e83`, run 42340563534, artifact 13562219906, fingerprint step success; 30 How-tos).
+  - **Train 78:** #395 PLATEFIX-2 → main `6227bd8e` (pilot-a second; no APK).
+  - **W4** @ `4c8389b6`: review code PASS, High = stale PR body. It merged `7e060e83` and added 2 code commits after review (LOADERS_PF placeholder, painnames walk timeout); told to merge `6227bd8e` and list post-review commits. The supervisor checks that delta, then train 79 and the APK (6 guides).
+  - **W5** preparing its flip (10) on `6227bd8e`. **W6 READY** @ `f33aff7b` (ships 7); reviewer session_018Pv5bK6xXFwKNME3ZstWb9. **W7** @ `565c8c15` (ships 17).
+  - **3b #408 PLATES READY** @ `388db2e4` (A, B, C, D, 15, 22, 23; E held). Panel pf10 running: plates set critic-pf10 (3 critics) and a layers set lyr-pf10 on a scratch merge of W7 + 3b (v_up, lying_leg_curl, sled_pull). Layers result: VALID; lying_leg_curl and sled_pull pass; v_up L1/L7 fail again → held (D-LIB13-PANEL2). Plates result pending. The builder holds pushes until the result.
+  - **Next trains:** W4, W5, W6, W7, then 3b.
 - **Update 11-07 ~05:45 UTC** (weekly 0.59 at 04:43).
   - **APK sent** for train 76 (main `8841246c`, run 42328056957, artifact 13558655197, fingerprint step success).
   - **Train 77:** #385 PLATEFIX-1 → main `7e060e83`. It adds 4 How-tos, so the app has 30. Its APK goes out after main's gate run 42340563534.
