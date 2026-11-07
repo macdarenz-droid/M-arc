@@ -139,7 +139,7 @@ const feel = {
       means: 'An arched lower back lets your hip flexors take over.',
       fix: 'Keep your lower back flat on the floor.',
       zoom: 'low-back', claim: CL.c5 },
-    { key: 'low-back', where: 'Low back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Low back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Arching your back could bring discomfort or pain here.',
       fix: 'Brace, and keep your lower back touching the floor.',
       redFlag: 'back', claim: C(['CONSENSUS'], [WH, FV], 'card c6, c2') },

@@ -167,7 +167,7 @@ const feel = {
       means: 'Driving through the toes makes the quads do more.',
       fix: 'Press through your heels.',
       claim: CL.c11 },
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Overextending your back can lead to pain here.',
       fix: 'Pull your belly button in and tuck your pelvis.',
       zoom: 'spine-top', redFlag: 'back', claim: CL.lowBack },

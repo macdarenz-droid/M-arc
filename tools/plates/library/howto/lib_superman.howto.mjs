@@ -138,7 +138,7 @@ const feel = {
       means: 'Lifting your head too high strains your neck.',
       fix: 'Keep your eyes down and your neck neutral.',
       zoom: 'neck', claim: CL.neck },
-    { key: 'pain', where: 'Sharp pain', at: { muscles: ['lower_back'] },
+    { key: 'pain', where: 'Sharp pain', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: '',                            // the card's row has no means; D-FEEL-NOMEANS prints no label
       fix: 'Stop the set.',
       redFlag: 'back', claim: CL.c17 },

@@ -195,11 +195,11 @@ const feel = {
   rows: [
     // The card's first two rows (chest; front of the thighs and glutes) have no fix, so they are left out: the feel
     // line says them.
-    { key: 'knees', where: 'Knees', at: { muscles: ['quads'] },
+    { key: 'knees', where: 'Knees', at: { muscles: ['quads'], parts: ['knee-left', 'knee-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'A hard landing: the impact could hurt them.',
       fix: 'Land softly on slightly bent knees. Stop if pain occurs.',
       redFlag: 'knee', claim: J('c11', 'c22') },
-    { key: 'wrists', where: 'Wrists', at: { muscles: ['forearms'] },
+    { key: 'wrists', where: 'Wrists', at: { muscles: ['forearms'], parts: ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Diving onto your hands may hurt your wrists.',
       fix: 'Place your hands on the floor first. Stop if you feel pain.',
       redFlag: true, claim: J('c12', 'c3', 'c22') },   // true = the shared wrist RED_FLAG

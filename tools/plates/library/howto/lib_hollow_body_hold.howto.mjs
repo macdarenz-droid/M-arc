@@ -160,7 +160,7 @@ const feel = {
       means: 'Your hip flexors are working overtime.',
       fix: 'Lift your legs off the floor, but no higher than about 30 degrees.',
       zoom: 'leg-height', claim: C(['CONSENSUS'], [BB, FV, GGR], 'card c14, c5, c4') },
-    { key: 'low-back', where: 'Low back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Low back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Your lower back is lifting off the floor.',
       fix: 'Stop the set, or use an easier version.',
       zoom: 'low-back', redFlag: 'back', claim: C(['CONSENSUS'], [BB, GGR, FV], 'card c7, c11') },

@@ -145,7 +145,7 @@ const feel = {
   feelLine: 'You should feel this in your thighs, glutes and calves.',
   rows: [
     // The card's first three rows (thighs, glutes, calves) have no fix, so they are left out: the feel line says them.
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'A rounded back.',                          // card row means ("Fault: a rounded back.")
       fix: 'Hinge at your hips and keep your back flat.',
       redFlag: 'back', claim: CL.back },

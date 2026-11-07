@@ -157,7 +157,7 @@ const feel = {
   // The card's thigh and glute rows have no fix, so they are left out: the feel line says them (D-SHIP-Q16).
   feelLine: 'You should feel this mostly in the front of your thighs, and in your glutes.',
   rows: [
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Lower back lifting off the pad at the bottom.',   // card row (c8), its own strength (D-FEEL-MEANS-CAUSAL)
       fix: "Keep your hips and back on the pad. Don't set your feet too high.",
       zoom: 'back-pad', redFlag: 'back', claim: CL.back },

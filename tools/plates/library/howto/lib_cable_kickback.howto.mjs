@@ -103,7 +103,7 @@ const feel = {
   feelLine: 'You should feel this in the glute of your working leg.',
   rows: [
     // The card's first row (glute of the working leg) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Poor form can bring in the lower back.',
       fix: 'Pull your belly button in and flatten your back.',
       zoom: 'braced-back', redFlag: 'back', claim: CL.lowBack },

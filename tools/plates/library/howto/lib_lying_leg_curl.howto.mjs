@@ -146,14 +146,14 @@ const feel = {
   // The card's first row (back of the thighs) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
   feelLine: 'You should feel this in the back of your thighs.',
   rows: [
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Arching the lower back can cause back pain and discomfort.',
       fix: 'Brace your abs. Use a lighter weight if your low back moves.',
       redFlag: 'back', claim: CL.arch },
     // D-PFC-ROUND1 L6 (D-FEEL-NOMEANS): the card row's means is a stop rule, not a cause, so no means is printed; its
-    // 'sharp pain ... a reason to stop' (c16) is in the fix. L4 (knee-pit-* parts) held: tests/howto/checks/c2.ts takes
-    // part ids from src/svg/bodyMuscles.ts only, which has no knee-pit part (they exist only in render/region-fix.mjs).
-    { key: 'knee', where: 'Behind the knee', at: { parts: ['knee-left', 'knee-right'] },
+    // 'sharp pain ... a reason to stop' (c16) is in the fix. L4: the back view's own knee-back-* parts
+    // (src/svg/bodyMuscles.ts, so the app map has them too; knee-pit-* exist only in render/region-fix.mjs).
+    { key: 'knee', where: 'Behind the knee', at: { parts: ['knee-back-left', 'knee-back-right'] },
       means: '',
       fix: 'Stop if the pain is sharp. Try a lighter load or a different pad position.',
       redFlag: 'knee', claim: CL.c16 },

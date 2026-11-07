@@ -162,7 +162,7 @@ const feel = {
       means: 'A handle starts slipping.',
       fix: 'End the carry. Bend your hips and knees, lower the weights beside you, feet clear.',
       claim: CL.out },
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Not bracing your trunk.',   // card row means ("Fault: not bracing your core.")
       fix: 'Brace before you lift. Stop if you feel pain.',
       redFlag: 'back', claim: CL.back },

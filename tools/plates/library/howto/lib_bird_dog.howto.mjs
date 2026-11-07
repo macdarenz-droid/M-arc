@@ -144,7 +144,7 @@ const feel = {
   rows: [
     // The card's first two rows (low back working, glutes of the raised leg) have no fix, so they are left out: the feel
     // line says them.
-    { key: 'low-back', where: 'Low back pain', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Low back pain', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Arching the back can lead to lower back pain.',
       fix: 'Stop if any pain occurs. Keep your back flat.',
       zoom: 'back-line', redFlag: 'back', claim: C(['CONSENSUS'], [GGR, MO, HL, ACE], 'card c8, c19, c3') },

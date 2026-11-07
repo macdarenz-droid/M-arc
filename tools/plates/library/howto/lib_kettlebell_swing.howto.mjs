@@ -169,7 +169,7 @@ const feel = {
     { key: 'grip', where: 'Wrists and forearms', at: { muscles: ['forearms'] },
       means: 'A crush grip can stress them.',
       fix: 'Grip firmly, not too tightly: an easy hook grip.', claim: CL.c4 },
-    { key: 'low-back', where: 'Lower back discomfort', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back discomfort', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Your form may be breaking down.',
       fix: 'Stop or reset your form.',
       redFlag: 'back', claim: CL.c20 },

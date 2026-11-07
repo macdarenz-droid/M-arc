@@ -109,7 +109,7 @@ const feel = {
   feelLine: 'You should feel this in the front of your hip and your lower belly.',
   rows: [
     // The card's first two rows (front of the hip, lower belly) have no fix, so they are left out: the feel line says them.
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Leaning back or arching to lift higher.',
       fix: 'Stand tall, core tight.',
       zoom: 'torso-upright', redFlag: 'back', claim: CL.lowBack },

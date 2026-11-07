@@ -110,7 +110,7 @@ const feel = {
       means: 'Reps not controlled, or chin not tucked.',
       fix: 'Keep the movement controlled and your chin tucked.',
       claim: CL.c12 },
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Rounding your lower back.',
       fix: 'Stop at elbows near thighs, without rounding your lower back excessively.',
       redFlag: 'back', claim: CL.round },

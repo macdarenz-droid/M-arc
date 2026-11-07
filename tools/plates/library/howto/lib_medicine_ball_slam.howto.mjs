@@ -150,7 +150,7 @@ const feel = {
   feelLine: 'You should feel this in your abs and lats.',
   rows: [
     // The card's first two rows (abs, lats) have no fix, so they are left out: the feel line says them.
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Rounding the back as you slam or pick up the ball.',   // card row means ("Fault: ...")
       fix: 'Keep your back flat and hinge from the hips.',
       redFlag: 'back', claim: CL.row },

@@ -140,7 +140,7 @@ const feel = {
       means: 'Knees tucked too far, weight rolling toward your neck.',
       fix: 'Keep your knees at 90 degrees. Stop if sharp pain occurs.',
       zoom: 'knees', claim: C(['CONSENSUS', 'WEAK'], [BB, MO], 'card c11, c18') },
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Your lower back arching can strain it.',
       fix: "Brace so it doesn't arch. Stop if sharp pain occurs.",
       redFlag: 'back', claim: C(['CONSENSUS', 'WEAK'], [PG, MO], 'card c12, c17, c18') },

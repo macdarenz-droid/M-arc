@@ -685,3 +685,58 @@ describe('LIB-SHIP W3 D-SHIP-LAYERSZOOM: a layers page carries the zoom its pinn
     expect(src).toContain("const page = await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs);");
   });
 });
+
+// LIB-SHIP W7 D-PFR-L4 (#394 6701937875, D-SHIP-W5-NEWFIND): every W7 red-flag feel row marks the body-map pain region
+// its flag names ("Where it may hurt"), as the reference sheets do. The regions are bodyMuscles.ts parts (so the app map
+// has them too); a knee row may name the back of the knee (lying_leg_curl 'Behind the knee', knee-back-*).
+describe('LIB-SHIP W7 D-PFR-L4: red-flag feel rows mark their pain region', () => {
+  const REGIONS: Record<string, string[][]> = {
+    back: [['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right']],
+    knee: [['knee-left', 'knee-right'], ['knee-back-left', 'knee-back-right']],
+    true: [['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right']],
+    shoulder: [['shoulder-front-left', 'shoulder-front-right']],
+    elbow: [['elbow-left', 'elbow-right']],
+  };
+  const W7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
+  const painProblems = (id: string, rows: any[]) => rows.filter(r => r.redFlag).flatMap(r => {
+    const want = REGIONS[String(r.redFlag)], got = r.at?.parts ?? [];
+    if (!want) return [`${id}: row ${r.key} red flag ${r.redFlag} has no region`];
+    return want.some(g => g.every(p => got.includes(p))) ? [] : [`${id}: row ${r.key} (${r.redFlag}) does not mark ${want.map(g => g.join('+')).join(' or ')}`];
+  });
+  const sheet = async (id: string) => (await import(/* @vite-ignore */ url(`tools/plates/library/howto/${id}.howto.mjs`))).default;
+  it('every red-flag row of the 29 W7 sheets names its region parts', async () => {
+    expect(W7).toHaveLength(29);
+    const bad: string[] = [];
+    for (const id of W7) bad.push(...painProblems(id, (await sheet(id)).feel.rows));
+    expect(bad).toEqual([]);
+  }, 60_000);
+  it('mutation: dropping dead_bug\'s low-back mapping, or standing_leg_curl\'s, is red', async () => {
+    for (const id of ['lib_dead_bug', 'lib_standing_leg_curl']) {
+      const rows = (await sheet(id)).feel.rows.map((r: any) => r.key === 'low-back' ? { ...r, at: { muscles: r.at.muscles } } : r);
+      expect(painProblems(id, rows)).toEqual([`${id}: row low-back (back) does not mark lower-back-erectors-left+lower-back-ql-left+lower-back-erectors-right+lower-back-ql-right`]);
+    }
+  });
+  it('on the committed lb08/lb09/lb10 layers pages each such row opens with its region outlined and the "Where it may hurt" key', async () => {
+    const pages = ['lb08', 'lb09', 'lb10'].map(b => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`), 'utf8'));
+    const { FRONT_PARTS, BACK_PARTS } = await import('../../src/svg/bodyMuscles');
+    // the library pages draw the map with F-BODYMAP-FRONTDELT's fix applied (shoulder-front-* moved), so compare with that
+    const { applyBodymapFix } = await import(/* @vite-ignore */ url('tools/plates/library/render/region-fix.mjs'));
+    const F = FRONT_PARTS.map(p => ({ ...p })), B = BACK_PARTS.map(p => ({ ...p }));
+    applyBodymapFix(F, B);
+    const dOf = new Map([...F, ...B].map(p => [p.id, p.d]));
+    const bad: string[] = [];
+    for (const id of W7) {
+      const pre = id.slice(4).replace(/_/g, '-'), page = pages.find(p => p.includes(`id="${pre}-feel-map"`));
+      if (!page) { bad.push(`${id}: not on a W7 layers page`); continue; }
+      const a = page.indexOf(`id="${pre}-feel-map"`), feel = page.slice(a, page.indexOf(`id="${pre}-row-`, a));
+      for (const r of (await sheet(id)).feel.rows.filter((x: any) => x.redFlag)) {
+        // both views: each '<g class="feel-mark" data-row=KEY>' group's feel-pain paths, front and back
+        const pain = feel.split(`<g class="feel-mark" data-row="${r.key}">`).slice(1).map(s => s.split('<g class="feel-mark"')[0].match(/<g class="feel-pain">[\s\S]*?<\/g>/)?.[0] ?? '').join('');
+        if (!(r.at.parts as string[]).every(p => pain.includes(`d="${dOf.get(p)}"`))) bad.push(`${id}: ${r.key} not outlined`);
+        if (!page.includes(`id="${pre}-row-${r.key}"`) || !new RegExp(`id="${pre}-row-${r.key}"[^>]*data-pain`).test(page)) bad.push(`${id}: ${r.key} button has no data-pain`);
+      }
+      if (!feel.includes('Where it may hurt')) bad.push(`${id}: no "Where it may hurt" key`);
+    }
+    expect(bad).toEqual([]);
+  }, 60_000);
+});

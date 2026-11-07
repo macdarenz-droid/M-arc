@@ -135,7 +135,7 @@ const feel = {
   // The card's first row (back of the thigh) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
   feelLine: 'You should feel this in the back of your thigh, strongest at the top.',
   rows: [
-    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Lower back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'Arching the lower back can cause back pain and discomfort.',
       fix: 'Avoid arching: contract your abs.',
       redFlag: 'back', claim: CL.c13 },

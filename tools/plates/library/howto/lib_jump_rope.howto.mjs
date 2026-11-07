@@ -152,7 +152,7 @@ const feel = {
     { key: 'shoulders', where: 'Shoulders', at: { muscles: ['front_delts'] },
       means: 'Feeling the turn here means it starts in the wrong place.',
       fix: 'Turn the rope with your wrists, elbows in.', claim: J('c7', 'c5') },
-    { key: 'wrists', where: 'Wrists', at: { muscles: ['forearms'] },
+    { key: 'wrists', where: 'Wrists', at: { muscles: ['forearms'], parts: ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'An ache here usually comes from the arms turning the rope.',
       fix: 'Keep your elbows close to your ribs. Turn the rope with your wrists.',
       redFlag: true, claim: J('c6', 'c5') },   // true = the shared wrist RED_FLAG (content-types FeelRow)

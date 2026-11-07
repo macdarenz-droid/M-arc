@@ -114,7 +114,7 @@ const feel = {
   feelLine: 'You should feel this in the front of your belly and under your arms.',
   rows: [
     // The card's first two rows (front of the belly, under the arms) have no fix, so they are left out: the feel line says them.
-    { key: 'low-back', where: 'Low back', at: { muscles: ['lower_back'] },
+    { key: 'low-back', where: 'Low back', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region
       means: 'An arching low back can result in injury.',
       fix: 'Roll out less far and slower.',
       zoom: 'back-line', redFlag: 'back', claim: CL.lowBack },
