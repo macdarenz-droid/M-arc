@@ -703,7 +703,7 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
       { id: 'tests/howto/golden/library/lb07.json#page', file: 'tests/howto/golden/library/lb07.json', kind: 'page', pageSha256: '29fae61a694072fc184e7537fdd4e384ff408a356840d0eee4a217af0278286e', bytes: 1269653 },
       // LIB-SHIP W6 (D-SHIP-W6-LAYERS, #393 6689822595 @ d939496e): the lb06 and lb07 layers pages (the flip set's cards only); each file's page entry first
       { id: 'tests/howto/golden/library/lb06.json#layers-page', file: 'tests/howto/golden/library/lb06.json', kind: 'layers-page', pageSha256: 'fcc5dcd5171e15e295baf08397d05ddab8ba59014e8336255353030dc4aa2969', bytes: 526950 },
-      { id: 'tests/howto/golden/library/lb07.json#layers-page', file: 'tests/howto/golden/library/lb07.json', kind: 'layers-page', pageSha256: '7e9e2c480d845030c4ebb6ac65ea97d5f8f0e36fbeea9e3d4385d6efa3222760', bytes: 1174857 },
+      { id: 'tests/howto/golden/library/lb07.json#layers-page', file: 'tests/howto/golden/library/lb07.json', kind: 'layers-page', pageSha256: 'de6cd80693b1c0649dca3804a3b5385fdc88e25aff5398394eae80c295f5592d', bytes: 1174841 },   // D-SHIP-W6-F2 re-pin in place, after main 7e060e83 (was 7e9e2c48, 1174857)
     ]).sort((a, b) => (a.file < b.file ? -1 : a.file > b.file ? 1 : 0)), unknown: [] });   // files sort (goldenFiles); a file's own order kept (stable sort)
     expect(sha256('')).toHaveLength(64);
   });
