@@ -5,10 +5,10 @@
   "front_squat": "da6e7f8e34cab598fac9bb01253fbd1838ae09cfe5052933f713c7df3b11c6c3",
   "goblet_squat": "1c5e23749753c8864abdd71ec0ac73800753f89ef82c8e2e8bf3b6e53274042c",
   "bodyweight_squat": "ce851976ceace13070cc4882f3eb0283418b31fde0d0c081a858b98e6e65764f",
-  "wall_sit": "49ce8fe900fd181d1a8d9bc3f87ff17624da71eb31e09c503d2b15a1eda8cd35",
+  "wall_sit": "c74697ab0c464f6dd63d6e312726d21d65c56d387aa287571230f2da8023521a",
   "step_up": "9e4f43a0a0a20ee1ecf020e7a549b72808261fa116b9d01db1898075befc53b3",
   "pistol_squat": "625b3039b37c6cb955329b29d376338d9e4ec68a55a5d13320bb5ec478acae11",
-  "jump_squat": "f6726e58bc80b06abb7bba7bed4a0851f09dc6d3c7f0f2bda774906466b306c9",
+  "jump_squat": "e0f39580ca6685a891dba9a28ac29e4be86d7ce83e2d74af332c5c148a98656d",
   "forward_lunge": "c6821c04c08d654673d58e72ccfb7e4a2aca57a5e3266dd18ebfabc1051533df",
   "walking_lunge": "6f27c35f671d9b9940cabe012b139464bdfd1fee47b4a6b3c99dca43cac5600d",
   "bodyweight_lunge": "84e3bf1b6a424a713b1754ba63a5e5e4b8b73fc179adc495a18796fbf0c85f44",
@@ -33,6 +33,14 @@
   "front_squat": {
    "researchHead": "fa24858988ecb7745fd3b4b7554f781e716a51eb",
    "why": "RESEARCH-ROUTES-1 (D-RR-HEAD, #398 6648297602; F-CARD-FRONTSQ-SETUP, #392 Q-W5-5(b)): re-copied from research fa248589 (#399 merged). Only inherit[] and notes[] changed; quotes file unchanged. The other entries stay at their heads."
+  },
+  "wall_sit": {
+   "researchHead": "2ca00f0ccee161d025934c7f194d2b3cfb419e8a",
+   "why": "RESEARCH-ROUTES-1 part 3 (LIB-PLATEFIX-3, #405 6684644686, 6684669717): re-copied from research 2ca00f0c; plate text only (checkpoint labels, plate.start), no claim or quote text changes; quotes file unchanged. The other entries stay at their heads."
+  },
+  "jump_squat": {
+   "researchHead": "2ca00f0ccee161d025934c7f194d2b3cfb419e8a",
+   "why": "RESEARCH-ROUTES-1 part 3 (LIB-PLATEFIX-3, #405 6684644686, 6684669717): re-copied from research 2ca00f0c; plate text only (checkpoint labels, plate.start), no claim or quote text changes; quotes file unchanged. The other entries stay at their heads."
   }
  }
 }

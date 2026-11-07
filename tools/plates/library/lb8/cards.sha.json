@@ -11,7 +11,7 @@
   "standing_calf_raise": "f13868e9746f7e2cb200334e6ebefafbbbb00cf159ed0b4113099aaf153188b2",
   "bodyweight_calf_raise": "02055d4f9c6594d5f74792d0775bf0602323856d7d4bccbca428e5881be2dab5",
   "hip_thrust": "4d766ad50ceb607377b292b848d88f5c59e2730f74ddcdd23440be98f65dc045",
-  "glute_bridge": "797288337bc6938c4c594c14e4d429f5f475daa68c8c258e33b64cb84a85c68e",
+  "glute_bridge": "2c88de214bff6b0f1a39b2698853c0fd7db76f20044455b2dec9f7f1c1d25388",
   "cable_kickback": "637499cc45b95b32ad787a45f6d043ea6a2b6bcf12c91432c2628d6eedfd4d83",
   "resisted_hip_flexion": "463189524f04eb57ef651c26441cf8cdf1925eb8052abd62b52123ea4a5ea432"
  },
@@ -28,5 +28,11 @@
   "glute_bridge": "59138b48252e0f158b77c419db2c620df1bdfe767c28040b0ef24c68047ff212",
   "cable_kickback": "8207b1f9b63b86e8a10d9d7ced11d0f4cacdcfef9f9b4cd0cb9de4950b7a288c",
   "resisted_hip_flexion": "f5a618895d3dc35ecda67af5b2af5c81384714dc7491d657f9909fee4f9d1aca"
+ },
+ "recopied": {
+  "glute_bridge": {
+   "researchHead": "2ca00f0ccee161d025934c7f194d2b3cfb419e8a",
+   "why": "RESEARCH-ROUTES-1 part 3 (LIB-PLATEFIX-3, #405 6684644686, 6684669717): re-copied from research 2ca00f0c; plate text only (checkpoint labels, plate.start), no claim or quote text changes; quotes file unchanged. The other entries stay at their heads."
+  }
  }
 }

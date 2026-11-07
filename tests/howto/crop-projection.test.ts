@@ -146,6 +146,9 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     // F-PAIR-FAULTS (#386): build-layers-page.mjs's and pairs.mjs's keys are re-pinned there and pinned exactly by pair-faults.test.ts
     // (build-layers-page.mjs's key is checked against its file and blanked by lessW2, a W2 key too)
     for (const r of rows) r.files['tools/plates/library/hands/pairs.mjs'] = 'X';
+    // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): render/closeup/zoom.mjs's key is re-pinned there and pinned
+    // exactly by platefix3-engine.test.ts
+    for (const r of rows) r.files['tools/plates/library/render/closeup/zoom.mjs'] = 'X';
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
     // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts;
@@ -155,7 +158,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs key is re-pinned there and pinned exactly by
     // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
     const bmFix = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) { expect(r.files['tools/plates/library/render/region-fix.mjs']).toBe(sha(readFileSync(path('tools/plates/library/render/region-fix.mjs')))); r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; } return x; };
-    expect(sha(JSON.stringify(rrBox(lessW2(bmFix(m)))))).toBe('99d9824be548ecd2454a92bb35c43c1339eca13f8d6731660c6140f2d30e882e');
+    expect(sha(JSON.stringify(rrBox(lessW2(bmFix(m)))))).toBe('f8074fd0c651b9deb6ac87c2bb39f68a5d917b7a856f0823785179537b58ad33');   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was 99d9824b…e882e, now with zoom.mjs's key also blanked; the MANIFEST diff from main moves only zoom.mjs and build-layers-page.mjs keys
   });
 });
 

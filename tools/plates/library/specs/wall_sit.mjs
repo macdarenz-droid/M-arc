@@ -116,7 +116,10 @@ export default {
   callouts: [
     { key: 'back', text: 'Back on wall', anchor: 'backUpper', box: { left: 140, top: 164 }, cue: 'Keep your back and buttocks on the wall.' },
     { key: 'knees', text: 'Knees over<br>ankles', anchor: 'knee.r', box: { left: 226, top: 302 }, cue: 'Keep your shins vertical, knees right above the ankles.' },
-    { key: 'deg', text: '90 degrees', anchor: 'thighTop.r', box: { left: 236, top: 246 }, cue: 'Slide down until your hips and knees are at about 90 degrees.' },
+    // LIB-PLATEFIX-3 item 7 (#405 6682844211; #392 6654466055 L6, two 90° labels): the hip checkpoint (w2) on the hip
+    // crease, where the thigh's top outline meets the belly: 32 % of the way from the hip joint to the knee, lifted to the
+    // thigh's top outline (8.7 px above the hip-knee axis, the thighTop.r landmark's offset). The knee's 90 is the arc.
+    { key: 'deg', text: 'Hips<br>about 90°', anchor: { along: ['hip.r', 'knee.r'], t: 0.32, off: [0, -8.7] }, cue: 'Slide down until your hips and knees are at about 90 degrees.' },
   ],
   tempo: [{ phase: 'Hold', s: '30-60' }],
   mistake: {

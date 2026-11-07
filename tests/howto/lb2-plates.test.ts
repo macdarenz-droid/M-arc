@@ -595,8 +595,10 @@ describe('LIB-10 incline_dumbbell_press (D-LIB10-IDP, D-LIB10-IDP-A): the Mistak
     expect(curves[0].pts.some((p: number[]) => dist(p, marker[0].pts[1]) < 1e-9)).toBe(true);   // the marker ends on the curve
     expect(dist(marker[0].pts[0], marker[0].pts[1]) * 100).toBeGreaterThanOrEqual(10);
   });
-  it('the engine outlines only the legs in the Mistake (the trunk\'s arch is the one back curve); seat, upper back and buttocks stay on the pads', () => {
-    expect(idp.mistake.parts).toEqual(['leg.r', 'leg.l']);
+  it('the engine outlines the trunk and the legs in the Mistake (the trunk\'s arch is the one back curve); seat, upper back and buttocks stay on the pads', () => {
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was ['leg.r', 'leg.l'], now ['torso', 'leg.r', 'leg.l'] (item 20:
+    // the faulted trunk outlined; mutation in tests/howto/platefix3-lb23.test.ts "main's parts (legs only) are red")
+    expect(idp.mistake.parts).toEqual(['torso', 'leg.r', 'leg.l']);
     const r = plate.renderPlate(idp, { id: 'x', mistake: true }).report;
     for (const lmk of ['seat', 'backUpper', 'buttock']) expect(r.checks.find((c: any) => c.landmark === lmk && c.pose === 'mistake').cm, lmk).toBeLessThanOrEqual(1);
   });
