@@ -59,18 +59,50 @@ const LOADERS_PF = '3d77e3d4d1a3b1296e180f701f3af13ba55f8f71f1af7342e3e81e74c85b
 const PF_IDS = ['romanian_deadlift', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'reverse_lunge'];
 const PF_LINE = new RegExp(`^  (?:"lib_(?:${PF_IDS.join('|')})",|lib_(?:${PF_IDS.join('|')}): \\(\\) => |"(?:${PF_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
 const pfLess = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !PF_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
+// LIB-SHIP W6 (D-SHIP-A9 guard replacement; #393 6689822595 flip set, 6701002884 ships 7): loaders.ts gains W6's 7 ids,
+// 4 lines each (HOWTO_IDS, LOADERS, POSTURE, FEEL; no HAND line, all 7 on hands/no-zoom.json), 28 lines. With exactly those
+// taken out, loaders.ts's body is main 8841246c's (e7bc1d40…, computed from main 8841246c's own loaders.ts, which W3 pinned
+// above), so BODY_MAIN stays as it is. W6's 7 posture chunks are new files, pinned at the W6 flip b00d309a.
+const W6_IDS = ['machine_crunch', 'machine_lateral_raise', 'cable_lateral_raise', 'dumbbell_front_raise', 'face_pull', 'incline_push_up', 'pike_push_up'];
+const W6_LINE = new RegExp(`^  (?:"lib_(?:${W6_IDS.join('|')})",|lib_(?:${W6_IDS.join('|')}): \\(\\) => |"(?:${W6_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+/** A body without the W6 lines: how many were taken out, and the rest's sha. */
+const lessW6 = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !W6_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
+const BODY_W6: Record<string, string> = {
+  'posture-machine-crunch.ts': 'e9b8d7f7b2f5c90a60741641d118fb1d30901fbb81580476f5673b3fb248c923',
+  'posture-machine-lateral-raise.ts': 'afb073489bd4a86986900726af6bd04615c74dd2cc44f7e550ff35f9744e3321',
+  'posture-cable-lateral-raise.ts': '35772c7a9ed65012fe15df9d02b9adbacb636f368e2468fefda7873d42e5388b',
+  'posture-dumbbell-front-raise.ts': 'e942142605943f14f32430cd65b7707de22e0aa86e984ef23d4ad962bb22a7be',
+  'posture-face-pull.ts': 'c3641acfbb20dc2ad16692c9f11359cae4af2413a106757e31279b5bb2322724',
+  'posture-incline-push-up.ts': '28aa2a2479a8c7754ae806df17bd69bff60455f034b5a0f24b25235813333b0a',
+  'posture-pike-push-up.ts': 'e0ae2608e2b88787104eb48e0fc007aaa36300c0dc00d94acc436aa5d50c22b1',
+};
+// LIB-SHIP W6 (merge of main 7e060e83): W6's 7 posture chunks join PLATEFIX-1's 4; loaders.ts less W6's 28 lines is main
+// 7e060e83's body LOADERS_PF (3d77e3d4…, which LIB-PLATEFIX-1 pinned and is measured again from main 7e060e83's own
+// loaders.ts), and that less PLATEFIX's 16 lines is main 8841246c's BODY_MAIN, so both waves strip back in turn.
+const w6Kept = (b: string) => b.split('\n').filter(l => !W6_LINE.test(l)).join('\n');
 
 describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on main', () => {
   it('every posture chunk and loaders.ts body is byte-equal to main', () => {
     const now = readdirSync(GEN).filter(n => /^posture-.*\.ts$|^loaders\.ts$/.test(n)).sort();
-    expect(now).toEqual([...Object.keys(BODY_MAIN), ...Object.keys(BODY_PF)].sort());
+    expect(now).toEqual([...Object.keys(BODY_MAIN), ...Object.keys(BODY_PF), ...Object.keys(BODY_W6)].sort());   // LIB-SHIP W6: plus W6's 7 posture chunks
     for (const [n, want] of Object.entries(BODY_MAIN)) if (n !== 'loaders.ts') expect([n, sha(body(n))]).toEqual([n, want]);
     for (const [n, want] of Object.entries(BODY_PF)) expect([n, sha(body(n))]).toEqual([n, want]);
-    expect(sha(body('loaders.ts'))).toBe(LOADERS_PF);
-    expect(pfLess(body('loaders.ts'))).toEqual({ removed: 16, sha: BODY_MAIN['loaders.ts'] });
+    for (const [n, want] of Object.entries(BODY_W6)) expect([n, sha(body(n))]).toEqual([n, want]);
+    expect(lessW6(body('loaders.ts'))).toEqual({ removed: 28, sha: LOADERS_PF });   // LIB-SHIP W6: main 7e060e83's body less W6's 28 lines
+    expect(pfLess(w6Kept(body('loaders.ts')))).toEqual({ removed: 16, sha: BODY_MAIN['loaders.ts'] });
+  });
+  it('LIB-SHIP W6 mutations: a W6 loaders line dropped, a HAND line for a W6 id, and another loaders line changed are red', () => {
+    const b = body('loaders.ts'), drop = '  "face-pull": () => import(\'./posture-face-pull\'),\n';
+    expect(b).toContain(drop);
+    expect(lessW6(b.replace(drop, '')).removed).toBe(27);
+    const head = 'export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n';
+    expect(b).toContain(head);
+    expect(lessW6(b.replace(head, `${head}  "face-pull": () => import('./hand-face-pull'),\n`)).removed).toBe(29);
+    expect(lessW6(b.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(LOADERS_PF);   // LIB-SHIP W6 merge: was BODY_MAIN, main's body is now LOADERS_PF
+    expect(sha(body('posture-face-pull.ts').replace('posture', 'Posture'))).not.toBe(BODY_W6['posture-face-pull.ts']);
   });
   it('LIB-PLATEFIX-1 mutations: a PLATEFIX loaders line dropped, or another loaders line changed, is red', () => {
-    const b = body('loaders.ts');
+    const b = w6Kept(body('loaders.ts'));   // LIB-SHIP W6 merge: W6's lines taken out first
     expect(pfLess(b.replace('  "reverse-lunge": () => import(\'./posture-reverse-lunge\'),\n', '')).removed).toBe(15);
     expect(pfLess(b.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(BODY_MAIN['loaders.ts']);
   });
@@ -95,7 +127,11 @@ describe('F-ZOOM-NONE A2: textZoomRow, the zero-zoom guard', () => {
   it('a ruled zero-zoom row gives its entry; a row with posture zooms and no entry gives null; the real list is empty on main', () => {
     expect(ok()).toEqual(ENTRY);
     expect(Z.textZoomRow('lib_y', { ...SHEET, zooms: [{ key: 'back', kind: 'posture' }] }, CARD, {})).toBeNull();
-    expect(Z.readTextZooms()).toEqual({});
+    // LIB-SHIP W6 (#393 6653994390, D-SHIP-W6-ZOOMNONE): was toEqual({}) on main; the wave that ships a row adds its entry
+    expect(Z.readTextZooms()).toEqual({
+      lib_machine_pullover: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'pullover-pivot': 'pivot' } },
+      lib_smith_machine_shoulder_press: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'smith-ohp-bench': 'bench' } },
+    });
     expect(I.TEXT_ZOOMS).toBe(Z.TEXT_ZOOMS);
     expect([...Z.TEXT_ZOOM_RULINGS]).toEqual(['D-SHIP-TEXTZOOM']);
   });

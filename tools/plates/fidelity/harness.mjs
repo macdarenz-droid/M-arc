@@ -1255,13 +1255,16 @@ export async function ht10DomProbe([exempt, pats, words, disclaimer, expectRisks
   for (const el of dlg.querySelectorAll('[aria-label],[title],[alt]')) for (const a of ['aria-label', 'title', 'alt']) { const v = el.getAttribute(a); if (v) strings.push(v); }
   for (const s of strings) for (const re of res) { const m = s.match(re); if (m) problems.push(`C19: "${m[0]}" matches ${re}`); }
   const disc = [...dlg.querySelectorAll('.ht-disclaimer')];
-  if (expectRisks) {
+  if (expectRisks === true || typeof expectRisks === 'number') {   // D-SHIP-W6-RISKS: 0 is a row with no flags, still checked
     if (disc.length !== 1) problems.push(`C19: ${disc.length} .ht-disclaimer element(s), expected 1`);
     else {
       if (disc[0].textContent !== disclaimer) problems.push(`C19: disclaimer text "${disc[0].textContent}" is not the owner's`);
       const rf = [...dlg.querySelectorAll('.redflag')];
-      if (!rf.length) problems.push('C19: no .redflag block before the disclaimer');
-      else if (!(rf[rf.length - 1].compareDocumentPosition(disc[0]) & Node.DOCUMENT_POSITION_FOLLOWING)) problems.push('C19: the disclaimer is not after the last .redflag');
+      // D-SHIP-W6-RISKS (#393 6703065396): a number is the row's riskFlags.length, and exactly that many blocks must show
+      // (none for a row with no flags); `true` keeps the old rule, at least one block (golden B's 8, which all have flags)
+      if (typeof expectRisks === 'number' && rf.length !== expectRisks) problems.push(`C19: ${rf.length} .redflag block(s), expected ${expectRisks} (riskFlags)`);
+      else if (expectRisks === true && !rf.length) problems.push('C19: no .redflag block before the disclaimer');
+      if (rf.length && !(rf[rf.length - 1].compareDocumentPosition(disc[0]) & Node.DOCUMENT_POSITION_FOLLOWING)) problems.push('C19: the disclaimer is not after the last .redflag');
     }
   }
   // C11

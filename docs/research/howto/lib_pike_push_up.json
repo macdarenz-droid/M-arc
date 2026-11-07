@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=72a101d0312a0657f660e8cbe582001b7f52c6f3ff2a3ebb529b47af2bb1cf4b
+{
+  "id": "lib_pike_push_up",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/pike_push_up.json",
+    "rev": 1
+  },
+  "sources": [
+    "fv-pike",
+    "ggr-pike",
+    "nasm-pike",
+    "hand-key-palm-flat",
+    "nhs-shoulder-pain",
+    "nhs-wrist-pain"
+  ],
+  "riskFlags": [
+    "shoulder",
+    "wrist"
+  ]
+}

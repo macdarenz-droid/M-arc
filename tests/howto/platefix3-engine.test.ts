@@ -62,7 +62,11 @@ describe('PF3 E1/E2 MANIFEST re-pin', () => {
     const sha = (p: string) => createHash('sha256').update(readFileSync(p)).digest('hex');
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
     const rows = Object.entries<any>(m.rows);
-    expect(rows).toHaveLength(35);
+    // LIB-SHIP W6 (#393): + W6's 23 lb06/lb07 rows (was 35); every row, W6's included, is still checked below
+    const W6 = ['lb06', 'lb07'].flatMap(b => Object.keys(JSON.parse(readFileSync(`tools/plates/library/batches/${b}.json`, 'utf8')).rows));
+    expect(W6).toHaveLength(23);
+    for (const id of W6) expect(Object.keys(m.rows), id).toContain(id);
+    expect(rows).toHaveLength(35 + W6.length);
     for (const k of ['tools/plates/library/render/closeup/zoom.mjs', 'tools/plates/library/build-layers-page.mjs'])
       for (const [id, r] of rows) expect(r.files[k], `${id} ${k}`).toBe(sha(k));
   });

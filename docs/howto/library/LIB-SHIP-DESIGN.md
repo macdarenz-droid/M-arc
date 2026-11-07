@@ -92,6 +92,11 @@ Read from each id's pilot pin `exemptions` (pilots) or its batch qa.mjs `EXPECTE
 
 Until he answers, none of these 53 ids merges (ruling 11). W1 has none of them.
 
+**W6 additions (D-SHIP-W6-F2, #393 6703104795):** cable_lateral_raise (F2) and face_pull (F2). Both were recorded in
+lb7/DESIGN.md:714 but missing from the list of 53. They are named exemptions under the D-OWNER-FLAGS class (crunch
+precedent D-LIB-PILOTB2), in lb7/qa.mjs EXPECTED (F2_IDS) and on both lb07.json plate pins. The exemption count grows
+by 2. Red: tests/howto/ship-w6-f2.test.ts (F2 removed from either pin fails PQH).
+
 ## 7. Per-id table (134)
 
 Columns: W = wave. hand close-up: `key` = drawn by a pair key; `GAP` = a recorded gap of that key; `own` = a card hand zoom with neither (ruling 8). hint = section 4's letter. ¹ = lb1/lb2/zoom flag rule (section 6).
@@ -1027,3 +1032,244 @@ slots are the spec's callouts and mistake tells (cue text). Card posture points 
 | horizontal_leg_press | 3 handlingMistakes | mistakes[0-2] | c7, c4 c2 c1, c6 |
 
 Moved: 10 claims across 8 ids. None failed to fit. Every moved line passes the copy lint and the word caps; inherited leaves are unchanged.
+
+## 14. W6 PLAN update (base main 8bb433bd, train 67, + W2 #379 @ 84360f00 merged to build ahead)
+
+W6 is 23 rows: lb6/rows.json's 12 and lb7/rows.json's 11 move into `batches/lb06.json` and `batches/lb07.json`
+(D-SHIP-MOVE as amended by Q-W2-10: the moved row is the old row except `stage` and `sources` = sourceLines(card)).
+Section numbers 12, 13 and 15 are left for W4, W5 and W7 so parallel lanes do not collide in this file.
+Columns are read from each card, spec and hand key on this base (scratch scripts, nothing committed). GRIP uses the
+section 10 key plus `conv` = the card delegates the field to its archetype default ("(X archetype default)") and the
+value is golden B's default for that archetype, cited CONVENTION, never printed (cable_fly hold-default, Q-W3-4,
+D-SHIP-CONVCOPY). Posture zooms: `M` = the card's Wrong is the plate's own Mistake (topFault); `DV` = a one-joint drawing
+value (D-SHIP-DRAWVAL, no number in copy); `T` = a text checkpoint (D-SHIP-TEXTZOOM). M/DV/T are proposals here and are
+confirmed per zoom against the plate poses in LAYERS READY. Flags: every raised flag below is in section 6's 53 and is
+approved by D-OWNER-FLAGS; each pin's why cites it.
+
+Plates pages rebuilt here, twice each: **lb06 `8c7ede8a1c05b0eb74fc3f8435c944c9710c041bf5212fb04534e75d1b2b58db`**
+(1,398,781 B; equals the mx19-approved LB6 page `8c7ede8a…58db`, lib4-cards.md:4584) and **lb07
+`29fae61a694072fc184e7537fdd4e384ff408a356840d0eee4a217af0278286e`** (1,269,653 B; no recorded page sha found for LB7 R3,
+so the PIN GO needs the supervisor's rebuild, D-LIB-LB1ZOOM form).
+
+| id | file | tier | arch. | GRIP | hand zoom (card) / no-zoom entry | posture zooms | flags | way-out (tier A) | other |
+|---|---|---|---|---|---|---|---|---|---|
+| cable_chest_press | lb06 | C | push | conv thumb (machine_chest_press: wrapped); contact heel ← c3 "push through the palms"; wrist c3 | cable-press-handle → gap-key (hand-d-handle.mjs GAPS, c3 names no bend direction) | stance DV (lumbar arch) | F2 | — | hint H; back link **not in box** (Q-W6-1); LIB-4b fixture id (Q-W6-10) |
+| machine_pullover | lb06 | B | balance | thumb `spread` ← "not wrapped; fingers extended"; contact `palm-flat` ← "palms open"; conv wrist (Q-W6-4) | pullover-hands, no key → gap-ruled D-SHIP-HANDW6 (no pose numbers) | pivot T (seat setting, 'Start depth' precedent) | — | — | get-in-out, foot-bar, selector-pin in appliesTo |
+| machine_crunch | lb06 | B | balance | conv ×3 or (b) (Q-W6-3) | none on the card | arms M; curl DV (spine flexion); hips DV (pelvis slide) | F2 | — | back box: in |
+| low_to_high_cable_fly | lb06 | C | hold | conv thumb + contact (hold-default, cable_fly precedent); wrist c4/c6 | fly-handle → gap-key (hand-d-handle.mjs GAPS) | trunk M | F2, F7 | — | front plate (crops after F-CROP-FRONT) |
+| high_to_low_cable_fly | lb06 | B | hold | conv thumb + contact (hold-default); wrist card line | none → card-no-zoom | trunk M; back-limit DV (arms past the armpits) | F2, F3, F7 | — | front plate |
+| smith_machine_squat | lb06 | A | on-body | conv thumb + contact (barbell_back_squat on-body: wrapped, heel); wrist c5 | smith-squat-hands, no key → gap-ruled D-SHIP-HANDW6 (no on-body key variant) | feet M | F2 | unrack-rerack `smith` variant (Q-W6-8) | back box: in; knee box |
+| smith_machine_shoulder_press | lb06 | A | push | full | smith-ohp-grip, no key → gap-ruled (push heel-of-palm, D-LIB7-19) | bench T (bench angle setting) | — | unrack-rerack `smith` (Q-W6-8) | hint B; back link **not in box** (Q-W6-1); LIB-7b fixture id (Q-W6-10) |
+| smith_machine_incline_press | lb06 | A | push | inh (type, thumb, contact, wrist) from incline_barbell_bench_press (W4) | inherited bar-low-palm: follows W4's ruling on the parent (Q-W6-9) | position T (bench 30-45°) | — | unrack-rerack `smith` (Q-W6-8) | hint C (inherited); LIB-4c scratch id (Q-W6-10); inherit 5 fields |
+| hip_abduction | lb06 | C | balance | conv ×3 or (b) (Q-W6-3) | none | pivot T; range DV (abduction short) | F7 | — | front plate |
+| hip_adduction | lb06 | C | balance | conv ×3 or (b) (Q-W6-3) | none | start DV (abduction too wide); back DV (trunk off the pad) | F7 | — | front plate |
+| machine_lateral_raise | lb06 | C | balance | conv thumb + contact (leg_press balance default); wrist c3 | none → card-no-zoom | shrug DV (scap elevation); pivot T | F7 | — | front plate |
+| rear_delt_fly | lb06 | C | pull | conv ×3 (lat_pulldown pull default; ga:pull-base) or (b) (Q-W6-3) | rdf-grip (orientation only, Wrong null), no key → gap-ruled D-SHIP-HANDW6, or text in setup under (b) | chestpad DV (chest off the pad); elbows DV (elbow flexion) | F3, F7 | — | gate seeds lib_rear_delt_fly (screenshot-gate.mjs:9382, :9439, :9459): the pill appears there |
+| cable_lateral_raise | lb07 | C | hold | (b) NoHandling (no field delegated; all "Not given") | none | top-height M (topFault "above"); cable-tight T (a cable state, single_arm_lat_pulldown precedent); elbow-lead DV | — | — | child of dumbbell_lateral_raise (inherit [], no map entry); `TAKEN` in ci/scratch.mjs:32 (Q-W6-10) |
+| dumbbell_front_raise | lb07 | C | hold | c: contact "Not given" → hold-default mid-palm (its own card parent dumbbell_lateral_raise) (Q-W6-7); thumb c1; wrist c9 | dfr-hand-top (Wrong null), no key → gap-ruled D-SHIP-HANDW6 | top-height DV; hips M | — | — | child of dumbbell_lateral_raise (inherit []) |
+| face_pull | lb07 | C | pull | conv thumb + wrist (lat_pulldown; ga:pull-base range); contact finger-base ← ga:pull-base, c2 kept in copy (Q-W6-11) | fp-grip (Wrong null) → gap-ruled D-SHIP-HANDW6 (the rope key's GAPS reason "no research card" is stale; the card refuses rope-rule c1) | elbows M; height DV | — | — | — |
+| cable_external_rotation | lb07 | C | pull | (b) NoHandling | none | elbow DV (elbow drifts out); turn DV (trunk twist) | F7 | — | **empty feel.primary** (Q-W6-2) |
+| resistance_band_pull_apart | lb07 | C | pull | conv ×3 with `handle` omitted (Q-W3-5 form) or (b) (Q-W6-3) | bpa-grip (Wrong null) → gap-key (hand-band.mjs GAPS) or text under (b) | shoulders M; elbows DV | — | — | back link **not in box** (Q-W6-1) |
+| renegade_row | lb07 | A | **null** (card handNote) | thumb unsourced (card gap), contact blank | dumbbell-grip, no key (palm-flat GAPS) | row-path DV | — | way-out gap → safety checker | **Q-W6-6** (S3 proposed) |
+| weighted_dip | lb07 | A | push | c: thumb, wrist blank (not delegated); contact c5 (Q-W6-5) | none → card-no-zoom | shoulders DV; depth M; plate T (a swinging plate is motion) | — | way-out gap (loaded mount/dismount) → safety checker | hint J |
+| bench_dip | lb07 | B | palm-flat | c: thumb, wrist blank; contact c2; the palm-flat key excludes it (Q-W6-5) | hands → gap-key (hand-palm-flat.mjs GAPS) | depth DV; elbows M | F7 | — | — |
+| incline_push_up | lb07 | C | palm-flat | a (thumb, wrist from the live key, push_up precedent) | none → card-no-zoom (push_up precedent; D-SHIP-PAIR-NOZOOM: no pair) | shoulders M; hip-line DV | — | — | child of push_up (inherit []) |
+| diamond_push_up | lb07 | C | palm-flat | full (thumb c1, contact c1, wrist c1/c11; wrist range from the key) | hand (thumbs and first fingers touch) → Q-W6-12 | hip-line M; shoulder-blades DV | — | — | child of push_up (inherit []); wrist red flag box |
+| pike_push_up | lb07 | A | palm-flat | a (card: "no thumb line"; wrist is a handle tip, not a range → key values) | none → card-no-zoom | head-path DV; pike DV (hips sag) | F7 | way-out gap → safety checker | wrist red flag box |
+
+Counts: 23 rows; proposed 22 ship and renegade_row is held (Q-W6-6). Hand zooms: none drawn by a pair key in this wave
+(the only key ids, the palm-flat three, have no card hand zoom or need Q-W6-12). Gap-key 4 (cable_chest_press,
+low_to_high_cable_fly, bench_dip, resistance_band_pull_apart); gap-ruled up to 6 (machine_pullover, smith_machine_squat,
+smith_machine_shoulder_press, rear_delt_fly, dumbbell_front_raise, face_pull); card-no-zoom 5 (high_to_low_cable_fly,
+machine_lateral_raise, weighted_dip, incline_push_up, pike_push_up); NoHandling (b) 2 to 7 (Q-W6-3). Red flags: shoulder,
+back, knee, wrist only, and every one has a box; three back links are outside the back box's appliesTo (Q-W6-1). No
+variant line: every equipment string names one kind (exercises.json; no slash). Children: 5 (cable_lateral_raise and
+dumbbell_front_raise → dumbbell_lateral_raise, incline_push_up and diamond_push_up → push_up, all with `inherit []`;
+smith_machine_incline_press → incline_barbell_bench_press with 5 fields). Section 3's W6 note "standing_leg_curl →
+lying_leg_curl" is not a W6 pair (neither id is in lb6/lb7). Hints: H and J are new distinct texts, B and C are shared;
+ids.ts bytes are measured in READY. Way-out: 3 Smith ids by the unrack-rerack card, 3 by the safety checker.
+
+**Inherit map (D-SHIP-FAMILY), section 8's W6 table.** smith_machine_incline_press → incline_barbell_bench_press:
+grip.type → ['handling.orientation','handling.handle']; grip.thumb → THUMB; grip.handContact → ['handling.contact'];
+grip.wrist → ['handling.wrist'] (the parent's limitText must not say "bar" only if the child holds a different
+implement; both hold a straight bar, so "bar" is fine); zooms.bar-low-palm → ['zooms[key=bar-low-palm]']. The parent
+and grandparent sheets are W4's and are not written on this base, so the field-by-field leaf table (path, parent
+leaves, child value, status) is posted from W4's head (Q-W6-9). No other W6 child has an inherit[].
+
+### W6 questions (for 'SHIP W6 PLAN RULED')
+
+- **Q-W6-1 Back links outside the back box.** cable_chest_press, smith_machine_shoulder_press and
+  resistance_band_pull_apart link `back` (card redFlags) but are not in back-pain-box.json appliesTo (35 ids, same on
+  claude/libht-research @ `a48b0594`). Ruling 6 puts the appliesTo edit on the research branch before W5. No code
+  checks appliesTo at ship time (lint/index.mjs sheetWords takes the box by flag), so the sheets would build.
+  **Proposal:** write the three sheets with riskFlags in card order; they merge only after the ruling-6 edit has
+  landed on main. Other: hold the three until then.
+- **Q-W6-2 cable_external_rotation's empty feel.primary.** The card's primary is [] and its secondary is rotator_cuff
+  (c14, c15; C2's NO_REGION set allows it text-only, golden-B brachialis precedent) and rear_delts (c16). No shipped
+  sheet has an empty primary. **Proposal:** primary [] as the card says; rotator_cuff text-only in secondary;
+  rear_delts drawn as secondary; the scratch flip shows C1-C18, the feel map and the gate screen with an empty primary.
+  If anything refuses or breaks, CER is held (S3) with research follow-up F-CARD-CER-PRIMARY. No app change, and no
+  muscle is promoted to primary (that would be a claim the card does not make).
+- **Q-W6-3 Cards that delegate every hand field to the archetype default.** machine_crunch, hip_abduction,
+  hip_adduction (balance; no hand zoom), rear_delt_fly and resistance_band_pull_apart (pull; a hand zoom that claims
+  only orientation and width, Wrong null). W2's seated_leg_curl took (b) with blank fields; cable_fly and Q-W3-4 took
+  the convention where the card says "(archetype default)". **Proposal:** balance ×3 → (b) NoHandling (hands only
+  steady the body, as seated_leg_curl; the handle line goes to setup copy). rear_delt_fly → conv ×3 + gap-ruled
+  D-SHIP-HANDW6 (its machine handles carry the load; the zoom's orientation claim stays in gripLine). Band → (b)
+  (no band HandleProfile or contact value, Q-W3-5) with the zoom's c1 words in setup copy (D-TEXT-GOLDEN), the card hand
+  zoom not drawn. Each with the (b)/(c) reds of D-SHIP-GRIP. cable_lateral_raise and cable_external_rotation say
+  "Not given" with no delegation, so they take (b) like seated_leg_curl.
+- **Q-W6-4 machine_pullover's wrist** says "(balance archetype default)". **Proposal:** conv from golden B's balance
+  default (leg_press handling.wrist), cited CONVENTION, never shown; thumb `spread` and contact `palm-flat` from the
+  card's own lines (c3, c6). Gap-ruled hand zoom (no key, and the card gives no pose numbers, ruling 8).
+- **Q-W6-5 Blank thumb and wrist with no delegation.** weighted_dip (push; contact c5) and bench_dip (palm-flat;
+  contact c2; the palm-flat key leaves it out: "hands on a bench edge, no source read"). **Proposal:** weighted_dip
+  thumb + wrist from the push convention (machine_chest_press thumb, ga:push-heel range, Q-W2-2 form), card-no-zoom.
+  bench_dip held (S3: research route for thumb and wrist, or a palm-flat appliesTo by research), since no convention
+  covers a bench edge. Other: both held, or both by convention.
+- **Q-W6-6 renegade_row.** Card archetype.hand is null (handNote: palm-flat does not apply; it proposes a closed
+  handle-grip key), the thumb is a card gap, contact is blank, and it is tier A with a way-out gap. **Proposal:** held
+  (S3), owner later-update item, research route: archetype and a handle-grip key. Other: archetype `hold` with the hold
+  default (dumbbell_lateral_raise) and the safety checker, which assigns an archetype no card claims.
+- **Q-W6-7 dumbbell_front_raise contact.** thumb c1 and wrist c9 are claimed, contact "Not given". **Proposal:**
+  mid-palm from golden B's hold default, which is also this card's parent (dumbbell_lateral_raise), cited CONVENTION,
+  never shown, with a derived pin and a red.
+- **Q-W6-8 Smith way-out through unrack-rerack.** All three Smith ids are in the card's `smith` variant, whose steps
+  include "Set stops just below your lowest point. Test with a light rep." (c20) and "You can rack the bar on the hooks
+  at any point." W2 and W3 cited only each sheet's own card. **Proposal:** the two safety steps go into each Smith
+  sheet's setup (within the 5-step limit), cited to shared/unrack-rerack.json as moves.mjs exports them, which meets
+  D-SHIP-WAYOUT's "shared equipment-move card". If a sheet may not cite a shared card claim, the safety checker rules
+  per id instead. Selector-pin and get-in-out (12 W6 ids) are not added, as in W3.
+- **Q-W6-9 smith_machine_incline_press depends on W4.** Its parent incline_barbell_bench_press and grandparent
+  barbell_bench_press are W4 sheets, not written on this base, and the family check compares against them in the same
+  head. **Proposal:** write its sheet last, after merging W4's READY head; post the leaf table then; its hand zoom
+  follows W4's ruling on bar-low-palm. If W4 holds the parent, it is held with it.
+- **Q-W6-10 Fixture and scratch ids (ruling 15).** lib_smith_machine_incline_press (ci/scratch.mjs:26,
+  lib4c-scratch-f), lib_smith_machine_shoulder_press (tests/library/fixtures/lib7b/fixture.mjs:20, rope-push-neutral),
+  lib_cable_chest_press (fidelity/fixture.mjs:29, lib4b-scratch-c, and `TAKEN` scratch.mjs:32), lib_cable_lateral_raise
+  (`TAKEN` scratch.mjs:32). **Proposal:** each is swapped to a never-shipping id in the push that moves its row, with
+  the fixture tests re-run and the changed lines listed; W3 edits the same files for its two ids, so both sides are kept.
+- **Q-W6-11 face_pull contact.** c2 says "hands on the ends of the rope" and the card refuses rope-rule c1. HandContact
+  has no "rope end". **Proposal:** contact finger-base from ga:pull-base (CONVENTION, never shown), c2's words kept in
+  setup copy; hand zoom gap-ruled D-SHIP-HANDW6 (the rope key's GAPS reason "no research card" is stale, so no gap-key
+  entry cites it).
+- **Q-W6-12 diamond_push_up's hand zoom.** The card zoom shows two hands (thumbs and first fingers touch to make a
+  diamond, c1); the palm-flat key draws one hand (`floor`, faults cupped-palm and hand-ahead from shared/palm-flat.json
+  c1/c2). The pair cannot show the diamond. **Proposal:** gap-ruled D-SHIP-HANDW6 (no pair, D-SHIP-PAIR-NOZOOM), the
+  diamond in the setup grip step and gripLine (c1). Other: draw the key's pair with pairFaults per F-PAIR-FAULTS
+  (drops the card zoom's own claim: S2).
+
+**Order of work after the ruling.** Q6-form local scratch flip of the W6 ids (every red listed); moves with the A9
+guard replacements (lb6-plates.test.ts:181, :1476; lb7-plates.test.ts:174) and the ruling-15 swaps; 21 sheets
+(smith_machine_incline_press last, from W4's head); lb06/lb07 layers pages; LAYERS READY with the D-TEXT-GOLDEN
+inventory and the M/DV/T confirmation; panel; stamps; flip; generate; budgets at N; QA; merge main and regenerate; READY.
+
+### 14.1 W6 layers evidence (LAYERS READY)
+
+Rulings applied: SHIP W6 PLAN RULED (#393 6647923934), its Q-W6-10 addition (6647967860), QUESTIONS 1-3 RULED (6648157060:
+D-SHIP-W6-NOREDFLAG, -LB06FIRST, -WRISTEXEMPT) and QUESTION 4 (ownRowsTree no-zoom removal, lib7b swap).
+
+**Pages (each built twice, same sha256).** Plates: lb06 `5cea2ed7…79cd` (PIN GO 8c7ede8a plus F-ELBOWS-DROP-LTH; first chain
+entry under D-SHIP-W6-LB06FIRST once the focused plates check passes), lb07 `29fae61a…286e` (= PIN GO). Layers: lb06 and lb07,
+shas in the LAYERS READY comment. On the layers pages: lb06 11 ids (smith_machine_incline_press waits for W4, Q-W6-9);
+lb07 9 ids (renegade_row and bench_dip held, S3).
+
+**Held (owner later-update list with the next APK):** renegade_row (F-CARD-RENEGADE-HAND), bench_dip (F-CARD-BENCHDIP-HAND).
+**Staged:** smith_machine_incline_press (written from W4's READY head; its leaf table comes then).
+**Own flip commit (D-SHIP-W6-BACKREACH):** cable_chest_press, smith_machine_shoulder_press, resistance_band_pull_apart.
+
+**Flags, re-derived from lb6/lb7 qa.mjs EXPECTED (F5 on all, left out):** cable_chest_press F2; machine_crunch F2;
+low_to_high_cable_fly F2+F7; high_to_low_cable_fly F2+F3+F7; smith_machine_squat F2; hip_abduction F7; hip_adduction F7;
+machine_lateral_raise F7; rear_delt_fly F3+F7; cable_external_rotation F7; bench_dip F7; pike_push_up F7. All 12 are in
+section 6's 53 (D-OWNER-FLAGS); none is outside them.
+
+**Posture zooms, confirmed against the plate poses (M = the plate's Mistake; DV = drawing value, D-SHIP-DRAWVAL, no number
+in copy; T = text checkpoint).** Differences from the PLAN are marked *.
+
+| id | zooms |
+|---|---|
+| cable_chest_press | stance DV (lumbar arch 15°, start pose; the card Wrong's "handles at the collarbone" is the plate cue `height`) |
+| machine_pullover | pivot T (no zooms) |
+| machine_crunch | arms M; curl DV (spine straight, pelvis tipped by the spec's own CURL 40°); hips DV (pelvis slid 0.10 m; golden B machine_chest_press 0.12 m seat-drop precedent) |
+| low_to_high_cable_fly | trunk DV* (lean 30°; the plate's Mistake is the press, c11, not the lean) |
+| high_to_low_cable_fly | trunk DV* (lean 30°; the plate's Mistake is the crossing hands, c8); back-limit T* (20-30° behind the side line moves the grip 3-8 px in the front view) |
+| smith_machine_squat | feet M |
+| smith_machine_shoulder_press | bench T (no zooms) |
+| hip_abduction | range M* (the spec's MIS_ABD); pivot T |
+| hip_adduction | start M* (MIS_ABD 45 over the start); back T* (a front-to-back move, front-view plate) |
+| machine_lateral_raise | shrug DV (blades raised 8 cm; golden B pull_up shrug precedent); pivot T |
+| rear_delt_fly | elbows DV (grip pulled in to 0.8 of the reach: inside elbow angle 160° → 104°); chestpad T* (depth only; the card's viewWhy) |
+| cable_lateral_raise | top-height M; cable-tight T; elbow-lead DV (working shoulder's rotation mirrored, the spec's END_ROT) |
+| dumbbell_front_raise | hips M; top-height DV (shoulder flexion 120° with the spec's ARM_ROT and ELBOW_BEND) |
+| face_pull | elbows M; height DV (the Mistake's hand targets with the end pose's elbow poles) |
+| cable_external_rotation | elbow M* (the plate's Mistake draws the flaring elbow, c9); turn DV (trunk yaw 20°) |
+| resistance_band_pull_apart | shoulders M; elbows DV (elbows bent 60° instead of 18°) |
+| weighted_dip | shoulders DV (blades up 4 cm, incline_push_up spec M_SHRUG); depth DV* (0.15 m below parallel: the card Wrong is the opposite of the plate's half-rep Mistake; the deepest 5 cm step with the plate above the floor); plate T |
+| incline_push_up | shoulders M; hip-line DV (push_up's SAG_HIP -20; hips drop 15 cm, wrist and toe fixed) |
+| diamond_push_up | hip-line M; shoulder-blades DV (pro -3 / +2, chest_supported_row spec values) |
+| pike_push_up | head-path M* (the spec's own Mistake); pike DV (hip flexion 40° less; no source, sized to read, lib_plank precedent) |
+
+**Text checkpoints (ruling extra 8), each visible:** machine_pullover pivot → setup 1 and plate "Shoulders at pivot" (c1);
+smith_machine_shoulder_press bench → setup 1 and plate "Bar misses nose" (c1, c2, c3); hip_abduction pivot → setup 1 and plate
+"Knees at pivot" (c1); machine_lateral_raise pivot → setup 1 and plate "Shoulders at pivot" (c1); cable_lateral_raise
+cable-tight → setup 3 and plate "tight" (c3); weighted_dip plate → setup 2, mistakes 3, risks 3 (c8);
+smith_machine_incline_press position → with its sheet (W4 head). Extra T from the table above: high_to_low back-limit →
+mistakes 2 fix (c8, c4); hip_adduction back → plate "Back on pad", mistakes 1 fix (c4); rear_delt_fly chestpad → plate cue,
+setup 3, mistakes 2 fix (c6).
+
+**Gap-ruled and gap-key hand zooms: where each zoom's claims show.** cable_chest_press (gap-key) c3 → limitText, setup 4;
+low_to_high_cable_fly (gap-key) c4/c6 → gripLine; machine_pullover c3/c6 → gripLine; smith_machine_squat c5 → gripLine,
+limitText, setup 5; smith_machine_shoulder_press c5/c13 → gripLine, setup 4, fault label; rear_delt_fly c10/c3 → gripLine,
+setup 4; dumbbell_front_raise c1/c7/c9 → gripLine, limitText; face_pull c2 → setup 2, gripLine; resistance_band_pull_apart c1
+→ gripLine; diamond_push_up c1 → setup 2, gripLine.
+
+**Moved words:** face_pull c2 (setup 2, gripLine) and c6 (gripLine, after WRISTEXEMPT); resistance_band_pull_apart c6
+(gripLine); diamond_push_up c1 (setup 2, gripLine); Smith way-out steps: smith_machine_squat c8 (setup 2, risk 3 with c21),
+smith_machine_shoulder_press c7 (setup 2).
+
+**D-TEXT-GOLDEN inventory per sheet** (card posture checkpoint or handlingMistake → slot → claim ids). Every handlingMistake
+of every sheet is in `mistakes[0..2]` with the card's claims (the Grip block), so the table lists the posture points.
+
+| id | posture claims → slot |
+|---|---|
+| cable_chest_press | stagger → setup 3, plate `stance` (c2); spine and brace → setup 5, plate `spine`, zoom (c6); nipple height → plate `height`, zoom (c4); wrists → limitText, setup 4 (c3); shoulders down → setup 5 (c7) |
+| machine_pullover | torso and head on pad → plate "Back on pad", mistakes 1 (c7); no arch → low-back row, risk 1 (c8); open hands → gripLine, plate (c6); shoulders relaxed → neck row (c10); bar at belt → setup 4 (c4) |
+| machine_crunch | hips back → plate, zoom, setup 2 (c2); curl → plate, zoom, hips row (c4, c11); stack → mistakes 3 (c5, c14); breathe, neck → setup 5 (c7, c14) |
+| low_to_high_cable_fly | trunk → zoom, setup 2, mistakes 1 (c6, c7); brace → setup 3 (c2); soft elbows → plate (c6); wrists → gripLine (c4, c6); armpits → mistakes 3 (c4) |
+| high_to_low_cable_fly | trunk → zoom, plate, mistakes 1 (c7); no arch → setup 3 (c2); soft elbows → plate (c3); wrists → gripLine (c3); armpits → mistakes 2 (c8, c4); arc → setup 5 (c6) |
+| smith_machine_squat | traps → setup 3, neck row (c1, c9); elbows, wrists, chest → gripLine, limitText (c5); spine → mistakes 3, low-back row (c11, c12); knees → mistakes 2 (c10); heels → zoom (c2, c6); no lockout → feelLine (c7) |
+| smith_machine_shoulder_press | back on pad → setup 3, plate (c4); brace → mistakes 2, low-back row (c9, c4); elbows → mistakes 1, mistakeLine (c10, c5); depth → feelLine (c6); no lockout → mistakes 3 (c10, c6) |
+| hip_abduction | back flat, still → plate cue, mistakes 1 (c5); range → plate, zoom (c4); return → setup 5 (c3) |
+| hip_adduction | back flat → plate, gripLine (c4); light stretch → plate, zoom, setup 3 (c2); pads meet → plate (c3); return → setup 5 (c3) |
+| machine_lateral_raise | back on pad → setup 2 (c2); elbows lead → plate, gripLine (c4); elbows level → plate (c5); no shrug → zoom, mistakes 2, traps row (c6); lower slowly → setup 5 (c9) |
+| rear_delt_fly | chest on pad → plate cue, setup 3, mistakes 2 (c6); sit tall, neck → setup 3 (c7); fixed bend → plate, zoom (c3); shoulders height → plate, row (c5); stack off rest → setup 5 (c13) |
+| cable_lateral_raise | elbow leads → zoom, plate (c6, c13); parallel → plate, zoom, mistakes 1 (c7); slight bend → zoom, setup 4 (c9); upright → setup 2 (c12); lower slowly → mistakes 2 (c8) |
+| dumbbell_front_raise | elbows lead, breathe → setupLine, plate (c5); width, soft elbows → gripLine, setup 3 (c6, c2); edge up → gripLine, risk 2 (c7); shoulder level → mistakes 3, zoom, plate (c8); upright, wrists → mistakes 2, limitText (c9, c4); lower slowly → mistakeLine (c10, c11) |
+| face_pull | elbows high, rope to face, body still → plate, zooms (c5, c9, c4); ends apart, blades → gripLine (c6); spine → setup 5 (c12) |
+| cable_external_rotation | torso still, elbow at side, forearm level → plate, zooms (c8, c3, c9, c10); turn, pause, return → setup 5 (c5, c18, c7); card setup c4 → setup 3 |
+| resistance_band_pull_apart | arms level, soft elbows, shoulders down → plate, setup 4, zooms (c7, c5, c9, c3, c8); squeeze → setup 5 (c4); return → gripLine (c6); tall, no arch → setup 2, low-back row, mistakes 3 (c1, c10) |
+| weighted_dip | shoulders down → setup 5, plate (c3, c6); elbows back → plate, mistakes 3 (c4); depth → plate, mistakes 1 (c4); torso → shoulder row (c5); plate still → setup 2, mistakes 3, risk 3 (c8); palms → limitText, cue (c5) |
+| incline_push_up | line → setup 4, plate (c2, c3); shoulders → setup 5 (c10); chest to bench → plate cue (c3); hips → mistakes 3 (c3, c6); elbows 45 → mistakes 2 (c4); gaze → neck row (c5); glutes → setup 4 (c6); breathe → feelLine (c8) |
+| diamond_push_up | line → setup 5, plate (c2, c3); hands under chest → setup 1, gripLine (c1); elbows → plate cue (c3); blades → mistakes 2 (c4, c9); reach → mistakes 2 (c5); breathe → feelLine (c3, c5) |
+| pike_push_up | hips high → setup 3, plate (c2, c3); head forward → plate, mistakes 2 (c5, c6); head near floor → plate cue (c3); elbows 45 → mistakes 1 (c3, c7); neck → mistakes 2 (c5); breathe → mistakes 3 (c8); abs → setup 5 (c10) |
+
+Notes for the panel: copy.setupLine and copy.mistakeLine are counted as visible (the app shows them; W3 shoulder_press
+precedent). diamond_push_up's thumb is `spread` (c1, thumbs held out to touch), data only: no ThumbMode means "thumbs
+touching" and the key's `beside` contradicts the diamond. pike_push_up's 40° hip value has no source (a drawing value sized to
+read, lib_plank precedent).
+
+**Q-W6-10 grep list (every use of the four ids on this head).**
+- lib_smith_machine_shoulder_press: tests/library/fixtures/lib7b/fixture.mjs:20 and lib7b.test.ts (6 lines) → swapped to
+  the synthetic lib_scratch_push_press (collides: the row is in batches/lb06.json); lib7b 14/14 green.
+- lib_smith_machine_incline_press: ci/scratch.mjs:26 and ci/times.json:13 → F-SCRATCH-SYNTH's (#393 6647967860), not W6's.
+  times.json is a measured time, not a fixture, and does not collide.
+- lib_cable_chest_press: fidelity/fixture.mjs:29 and ci/scratch.mjs:32 TAKEN → F-SCRATCH-SYNTH's.
+- lib_cable_lateral_raise: LIB-2b's E1 (tests/howto/fixtures/lib2b and its users, including tests/library/layers-back.test.ts:35
+  and layers-engine.test.ts:45) → no swap; the collision was the no-zoom entry, removed in the tree by ownRowsTree (QUESTION 4).
+  ci/scratch.mjs:32 TAKEN → F-SCRATCH-SYNTH's.
+
+**F-ELBOWS-DROP-LTH evidence.** specs/low_to_high_cable_fly.mjs:152 `drop` tell: "Elbows<br>drop" → "Becomes<br>a press",
+cue "Bending the elbows more than slightly turns the fly into a press." (c11). The figure is not redrawn: normalSvg,
+normalOverlay, tempo, alt and mistakeAlt are byte-equal to mx14. mistakeSvg moves only the label's leader end (M156.53 185.94
+L151.5 250 → L151.39 254); mistakeOverlay, tells and cues carry the text. The lb6 mx14 APPROVED line is re-pinned in the
+D-PLATEFIX-PINS form, with a red that puts the old text back. lb06 page 8c7ede8a → 5cea2ed7 (both built twice).

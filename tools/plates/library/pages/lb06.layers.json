@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "id": "lb6",
+      "title": "LB6",
+      "ids": [
+        "lib_machine_crunch",
+        "lib_machine_lateral_raise"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb06.closeups.mjs",
+  "closeups": {
+    "lib_machine_crunch": {
+      "optionsKey": "machine_crunch"
+    },
+    "lib_machine_lateral_raise": {
+      "optionsKey": "machine_lateral_raise"
+    }
+  },
+  "jump": null
+}

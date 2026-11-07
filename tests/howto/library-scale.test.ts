@@ -47,7 +47,10 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
     // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): its 4 shipped ids have no hand chunk or pair either (registry order)
     const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'romanian-deadlift', 'single-leg-romanian-deadlift', 'upright-row',
       'rope-triceps-pushdown', 'plank', 'triceps-pushdown', 'reverse-lunge', 'cable-fly', 'push-up',
-      'straight-arm-pulldown', 'chest-supported-row', 'resistance-band-row', 'horizontal-leg-press'];
+      'straight-arm-pulldown', 'chest-supported-row', 'resistance-band-row', 'horizontal-leg-press',
+      // LIB-SHIP W6 (ruling 3; #393 6689822595 / 6701002884): all 7 shipped W6 ids are on hands/no-zoom.json (5 card-no-zoom,
+      // dumbbell_front_raise and face_pull gap-ruled D-SHIP-HANDW6), so none carries a hand; HAND stays the 14
+      'machine-crunch', 'machine-lateral-raise', 'cable-lateral-raise', 'dumbbell-front-raise', 'face-pull', 'incline-push-up', 'pike-push-up'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     expect(handIds).toHaveLength(14);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown

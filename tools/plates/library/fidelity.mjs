@@ -184,13 +184,20 @@ export async function g7Tell(page, bad) {
   return true;
 }
 
+/** D-SHIP-W6-RISKS: the number of red-flag blocks a library row's sheet draws (Risks.tsx: one per riskFlags entry). */
+export async function riskCountOf(root, lib) {
+  const sheet = (await import(pathToFileURL(join(root, `tools/plates/library/howto/${lib}.howto.mjs`)).href)).default;
+  if (!Array.isArray(sheet.riskFlags)) throw new Error(`${lib}: the sheet has no riskFlags array`);
+  return sheet.riskFlags.length;
+}
 /** HT10 (HT10_PER_ID): the sweep and the reduced-motion sweep (ht10Sweep, reused), and A2 (the plate compare after the script). */
 async function ht10Job(ctx, { lib, chrome, index, theme }) {
   const { browser, port, R, pages, order, custom, golden } = ctx;
   const html = pages[lib].layers;
   if (!golden.has(html)) golden.set(html, ht10GoldenCounts(browser, { html, ids: extractChromeIds(html) }));
   const counts = await golden.get(html);
-  const expectRisks = existsSync(join(ctx.root, 'src/slices/howto/sections/Risks.tsx'));
+  // D-SHIP-W6-RISKS (#393 6703065396): the row's own riskFlags.length, so a row with no red flag expects no block
+  const expectRisks = existsSync(join(ctx.root, 'src/slices/howto/sections/Risks.tsx')) && await riskCountOf(ctx.root, lib);
   for (const [state, reduced] of [['sweep', false], ['reduced', true]]) {
     const r = await ht10Sweep(browser, port, theme, { ids: [chrome], reduced, expectRisks, golden: counts, order, custom, indexOf: () => index, inject: reduced ? null : ctx.fixtures.inject?.[lib] ?? null });
     const bad = [...r.problems];
