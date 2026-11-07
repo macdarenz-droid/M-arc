@@ -51,7 +51,7 @@ const moveRing = (z: string, x: number, y: number) => { const r = qz.circlesOf(z
   return z.replace(new RegExp(`(<circle (?:class="pz-(?:bg|ring)" )?)cx="[\\d.]+" cy="[\\d.]+" r="${r}"`, 'g'), `$1cx="${x}" cy="${y}" r="${r}"`); };
 
 describe('PF2 (a): existing zooms are byte-equal', { timeout: T }, () => {
-  it('the 36 zoom entries of every other spec render the svg, focus, circle, source and link they rendered before (a)', async () => {
+  it('the 37 zoom entries of every other spec render the svg, focus, circle, source and link they rendered before (a)', async () => {
     const dir = join(process.cwd(), 'tools/plates/library/specs'), h = createHash('sha256');
     let n = 0;
     for (const f of readdirSync(dir).sort()) {
@@ -60,9 +60,10 @@ describe('PF2 (a): existing zooms are byte-equal', { timeout: T }, () => {
       if (s?.zoom == null) continue;
       for (const z of zoom.zoomList(s.zoom)) { const o = zoom.zoomOf(s, { prefix: f, view: z.view }); h.update(f + o.svg + JSON.stringify([o.focus, o.circle, o.src, o.link])); n++; }
     }
-    expect(n).toBe(36);
-    // measured on origin/main 8bb433bd (before (a)) with the same loop
-    expect(h.digest('hex')).toBe('f7df419a752d0604201a847818293addffd9bff073fe383df0ea1e7ceb9c972d');
+    expect(n).toBe(37);
+    // was 36 entries, f7df419a… (origin/main 8bb433bd, before (a)); re-measured after main 7e060e83 (train 77; one more
+    // zoom entry): the same loop over these specs with main 7e060e83's zoom/inline.mjs (no (a)) gives this same hash
+    expect(h.digest('hex')).toBe('89e7482e3c12d43c3650c5e7e167166695a81444f0a9d59f8e85796f38fb0cd4');
   });
 });
 
