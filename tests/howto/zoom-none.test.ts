@@ -71,7 +71,7 @@ const BODY_PF: Record<string, string> = {
   'posture-triceps-pushdown.ts': '67a7f7694b3ca03143e8926e0e4e352c63897f27a0782d5bd8f6ce1bf665a8fa',
 };
 // merge of main 7e060e83: loaders.ts's body with W4's 24 lines too (was main's 3d77e3d4 alone); less W4's and PLATEFIX's lines it is BODY_MAIN's
-const LOADERS_PF = 'PH_LD';
+const LOADERS_PF = 'c96dafb8daa463b7e5ea7da81c3d2a199d7df9cb77bbc7ec0f50c16ed82d484c';
 const PF_IDS = ['romanian_deadlift', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'reverse_lunge'];
 const PF_LINE = new RegExp(`^  (?:"lib_(?:${PF_IDS.join('|')})",|lib_(?:${PF_IDS.join('|')}): \\(\\) => |"(?:${PF_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
 const pfLess = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !PF_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
