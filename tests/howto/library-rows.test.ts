@@ -379,7 +379,10 @@ async function feelChecks(base: string, row: any) {
   expect(section.replace('stop-opacity="0.62"', 'stop-opacity="0.63"') === feel.feelSectionOf(page, pre)).toBe(false);
 }
 
-describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get', { timeout: 180_000 }, () => {
+// LIB-PLATEFIX-1 (D-PF1-AFTERW3 point 2's form, #385 6689539540): the walk over the shipped rows grows with every wave; at 22
+// library ids it passed 180 s here but timed out in CI (America/New_York, run 42330723701), so it gets the library's 600 s
+// timeout, as L2-A4 and #405's beforeAll hooks did. No assertion changed.
+describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get', { timeout: 600_000 }, () => {
   it('for the repo\'s shipped library rows and the E1 tree\'s: section === feelSectionOf(its pinned page); rest map, every row\'s marks and the legend are golden B\'s renderer output; no is-playing', async () => {
     const cases = await libraryCases();
     expect(cases.at(-1)!.row.id).toBe(F.ID);

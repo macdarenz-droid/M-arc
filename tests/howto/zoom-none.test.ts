@@ -46,15 +46,16 @@ const BODY_MAIN: Record<string, string> = {
 };
 
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]): its 4 shipped ids add their posture chunks (bodies
-// measured at this head) and 16 loaders.ts lines (4 per id: HOWTO_IDS, LOADERS, POSTURE, FEEL); loaders.ts's body is 767f919c,
-// and with exactly those 16 lines taken out it is main's a168345b. Every other posture body stays main's.
+// measured at this head) and 16 loaders.ts lines (4 per id: HOWTO_IDS, LOADERS, POSTURE, FEEL); loaders.ts's body is 3d77e3d4
+// (was 767f919c before merging main 8841246c), and with exactly those 16 lines taken out it is main 8841246c's e7bc1d40
+// (BODY_MAIN, W3's). Every other posture body stays main's.
 const BODY_PF: Record<string, string> = {
   'posture-reverse-lunge.ts': '3eaee76ff32b753caddf525338c1735fd8e6fdb39e5f5948440d28a9441471e2',
   'posture-romanian-deadlift.ts': 'adae74d8d6b23020a6002e8fb0e781b9f623e7b4185a007aa160b8c8b7f08c32',
   'posture-single-leg-romanian-deadlift.ts': '8534eb908642a3145373c2e8c30d8b8ea0bf01f5bfe0eb3daefa30b50fed1c57',
   'posture-triceps-pushdown.ts': '67a7f7694b3ca03143e8926e0e4e352c63897f27a0782d5bd8f6ce1bf665a8fa',
 };
-const LOADERS_PF = '767f919cb53f9ea842e82f9d165604a28836d5d6df2f57d214d4902b7006e0b9';
+const LOADERS_PF = '3d77e3d4d1a3b1296e180f701f3af13ba55f8f71f1af7342e3e81e74c85b4dd3';
 const PF_IDS = ['romanian_deadlift', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'reverse_lunge'];
 const PF_LINE = new RegExp(`^  (?:"lib_(?:${PF_IDS.join('|')})",|lib_(?:${PF_IDS.join('|')}): \\(\\) => |"(?:${PF_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
 const pfLess = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !PF_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
