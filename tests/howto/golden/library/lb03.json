@@ -384,13 +384,13 @@
         "lib_cable_shrug",
         "lib_smith_machine_shrug"
       ],
-      "pageSha256": "05c2c1b4219d4d80e6cb1e762388bc10b2d02fd7f421809719a8400c1a70677f",
-      "bytes": 1126570,
+      "pageSha256": "6d64a6649a431db56e3883f1028ff206fd15345b09cdfb8d893edc32ce55a652",
+      "bytes": 1129018,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-FLIPSET",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
       "date": "2026-11-06",
-      "why": "W4 LAYERS APPROVED for the flip set (D-SHIP-W4-FLIPSET, #391 6682985023): the W4 layers panel (#391 6653540190; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more. The page holds exactly the 6 shipped ids, each card byte-equal to the 2af8092c build. Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514) after W3 train 73: build-layers-page.mjs now applies the plates page zoom circles (D-SHIP-W3-LAYERSZOOM, #384 6686326673); the diff only adds zoom groups and defs.",
+      "why": "W4 LAYERS APPROVED for the flip set (D-SHIP-W4-FLIPSET, #391 6682985023): the W4 layers panel (#391 6653540190; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more. The page holds exactly the 6 shipped ids, each card byte-equal to the 2af8092c build. Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514) after W3 train 73: build-layers-page.mjs now applies the plates page zoom circles (D-SHIP-W3-LAYERSZOOM, #384 6686326673); the diff only adds zoom groups and defs; merge of main 8841246c takes F-BODYMAP-FRONTDELT (#404): re-pinned in place again, the diff is exactly #404 BODYMAP_FIX (both front_delts paths redrawn, the inner-elbow and knee-pit parts added).",
       "supersedes": null,
       "prev": "66b8e356415efe8b3f8845126997968b77d3f2eb4bddbdddf3431fc504ae0c10"
     }
