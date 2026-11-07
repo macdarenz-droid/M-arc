@@ -5,6 +5,11 @@ import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { PF_W2_KEYS, blankPF, pfProblems, pfW2Problems } from './platefix-pins';
+import { pf2Problems, restorePF2 } from './platefix2-pins';
+// LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
+// lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
+// every pin below, measured on main, still holds
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); return restorePF2(x); };
 
 const ROOT = join(new URL('.', import.meta.url).pathname, '..', '..');
 const rd = (p: string) => readFileSync(join(ROOT, p), 'utf8');
@@ -104,7 +109,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
   });
   it('every row that lists it pins the current file, and every other entry equals main e623d3ef', () => {
-    const m = lessW3(JSON.parse(rd('tools/plates/library/MANIFEST.json')), [PF_W2_KEYS[0]!]);   // LIB-SHIP W3 (LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems)
+    const m = lessW3(pf2Main(JSON.parse(rd('tools/plates/library/MANIFEST.json'))), [PF_W2_KEYS[0]!]);   // LIB-SHIP W3 (LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems)
     // LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows, each listing the box; taken out again by lessW7 before the sha
     const W7_ROWS = ['lib_hack_squat', 'lib_pendulum_squat', 'lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion', 'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_side_plank', 'lib_superman', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug', 'lib_v_up', 'lib_kettlebell_swing', 'lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry', 'lib_jumping_jacks', 'lib_wall_ball'];
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
@@ -138,7 +143,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     const m = JSON.parse(rd('tools/plates/library/MANIFEST.json')), row: any = Object.values(m.rows).find((r: any) => PF_W2_KEYS[0]! in r.files);
     row.files[PF_W2_KEYS[0]!] = '0'.repeat(64);
     expect(pfW2Problems(m, 'X')).toHaveLength(1);
-    const o = rrBlanked(JSON.parse(rd('tools/plates/library/MANIFEST.json')));
+    const o = rrBlanked(pf2Main(JSON.parse(rd('tools/plates/library/MANIFEST.json'))));
     // LIB-SHIP W7 (PIN GO #394 6649092340): the 29 W7 rows are taken out before main's sha, as in the test above
     const w7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(JSON.parse(rd(`tools/plates/library/batches/${b}.json`)).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
     expect(w7).toHaveLength(29);

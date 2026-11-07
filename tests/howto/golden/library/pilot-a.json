@@ -621,6 +621,47 @@
       "why": "O5; LIB-PLATEFIX-1 layers page rebuilt on main 8841246c (D-PLATEFIX-SECOND point 4): its LIB-PLATEFIX-1 content approved by the calibrated layers panel and rechecks (D-PLATEFIX-STAMP, #385 6653693122 @ 7971bce1b863ccfb3ea20444a7bf53b952905912); cardcmp: every card's plate fragments byte-equal to the approved plates page; strip-back: with the inline zoom groups and ZOOM_CSS taken out it is the 3-way merge of base, the approved page and main's page plus only #404's body-map hunks; zoom groups byte-equal to the plates page's",
       "supersedes": 16,
       "prev": "aee72cd6d71040e2991805586f021c0628225ec70e0482a2a42e654e128dad47"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "032ce649154ec63e6492d7044b86d8fde63639cc504a74a83ffe7fa25ae03191",
+      "bytes": 1316144,
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #395 6686721403 and #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-07",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-2 golden update (plan 2.8, D-PLATEFIX-SECOND form); pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09; pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918; OHP plate focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d",
+      "why": "LIB-PLATEFIX-2 after LIB-PLATEFIX-1 (main 7e060e83): #385's page (entry 17, d38e8b33) with pec_fly's height box moved to top 260 (PQ-H4, D-SHIP-PECFLY-HOLD), approved by pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09; the other 12 cards are byte-equal to their latest plate entries (cardcmp), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918; OHP plate focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d and D-LIB-PILOTA. Two builds give the same sha.",
+      "supersedes": 17,
+      "prev": "fceca9b5d2192f4a39e0ed470a964117a2a8772e6cbe1603582fa18da80b8be2"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_pec_fly",
+      "src": "library/specs/pec_fly.mjs",
+      "slug": "pec-fly",
+      "prefix": "pec-fly",
+      "chromeId": "pec-fly",
+      "fragments": {
+        "normalSvg": "9c0c4680f63ef86670d199c886c4390cee2485f75f91e0234d62a27070a139c0",
+        "normalOverlay": "deb73cdc8db6af0ad3d13d36470620927b339d60198e4b1c33c3d0809c5f6d6b",
+        "mistakeSvg": "df4589fdf2e5b2aa94f2fe11d32449a8dce24935cac0fc7a09a86660e8287cfb",
+        "mistakeOverlay": "6c307eefb1e4a6e3e08cb71f9680a73b6cfa7256226c70bb59be020daf04cd8c",
+        "tells": "be6ed8624011a4d06e62d2e13426831ee7c79f885b36eb4fd3314a04798b78db",
+        "tempo": "85cfc3fa1c2c7b57a8c9a688489c6f2b0376e60f66c4a3ac924f6391c139e0e8",
+        "cues": "cccc988a77260dbf39f21d6ce952e9a915d9c1080dcb77e88c253513b80a51bc",
+        "alt": "9002465a2b55518dea8739de92aaa444fcb4533a082700d48b92af2ed29aab39",
+        "mistakeAlt": "dd4f725b0a71169e836dfe665bb866201fdc578c65fafab0bb296704090beef3"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-2 golden update (plan 2.8); pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #395 6686721403 and #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-07",
+      "why": "LIB-PLATEFIX-2: lib_pec_fly's plate with the height callout box at top 260 (was 244; PQ-H4, D-SHIP-PECFLY-HOLD), approved by pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09; only normalSvg and normalOverlay change. Exemptions as entry 8.",
+      "supersedes": 8,
+      "prev": "81186d0958353d54f203729e652b877388269c487b843abae50289d78834a088"
     }
   ]
 }
