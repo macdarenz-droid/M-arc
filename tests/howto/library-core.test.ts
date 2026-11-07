@@ -14,7 +14,7 @@ beforeAll(async () => {
   core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
   bodies = await import(/* @vite-ignore */ url('tools/plates/library/bodies.mjs'));
   out = await gen.render();
-}, 180_000);
+}, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663) form: generate grows with every wave (W6: 37 shipped ids)
 
 const fixture = () => JSON.parse(readFileSync('tests/howto/fixtures/generated-bodies.json', 'utf8')) as { count: number; bodies: Record<string, string> };
 
