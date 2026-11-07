@@ -138,7 +138,7 @@ export default {
   id: 'lib_bodyweight_lunge',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP: the card archetype.hand is none; it gives no thumb, contact or wrist claim.' },   // D-SHIP-A6NOGRIP: names the ruling (no Grip block)
   contacts: ['standing-feet'],
   setup: [
     { kind: 'brace', text: 'Stand with feet together, shoulders down and back, trunk braced.', claim: CL.c1 },

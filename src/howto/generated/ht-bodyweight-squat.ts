@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=fdf29f4fd5d33eb7de104821f5f5277f4d6882047aea57b75dd300aa33b7d2aa
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=967e15ca9f778e0d35e2a0f5b74223ea512a52d962fe982c43a019dc0a7044de
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_bodyweight_squat",
   name: "Bodyweight Squat",
-  hashes: { inputsSha256: "fdf29f4fd5d33eb7de104821f5f5277f4d6882047aea57b75dd300aa33b7d2aa", golden: "a8d93efd5910b060fbb03de0bc9d0eef981aa2a4588c49f7a47c1e91b5d44779" },
+  hashes: { inputsSha256: "967e15ca9f778e0d35e2a0f5b74223ea512a52d962fe982c43a019dc0a7044de", golden: "a8d93efd5910b060fbb03de0bc9d0eef981aa2a4588c49f7a47c1e91b5d44779" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -85,7 +85,8 @@ export default {
   })(),
   rev: 1,
   handling: {
-    "archetype": "none"
+    "archetype": "none",
+    "why": "D-SHIP-GRIP: the card archetype.hand is none; it gives no thumb, contact or wrist claim."
   },
   contacts: [
     "standing-feet"

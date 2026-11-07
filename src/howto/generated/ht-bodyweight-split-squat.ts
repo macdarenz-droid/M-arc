@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=1113b3e410a500b1e5738fc54a67578e1741e7a60c2d5e0961c561c71f4270b7
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=fdad2076e22c626abc4ba46a069cd25e6920bb60b8cd4cba001676a84f473e90
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_bodyweight_split_squat",
   name: "Bodyweight Split Squat",
-  hashes: { inputsSha256: "1113b3e410a500b1e5738fc54a67578e1741e7a60c2d5e0961c561c71f4270b7", golden: "b236382b5ca7b8f99bce1ab4d6fdabbf66cbb27a94ba41c8cb06b0f0b3fa0a63" },
+  hashes: { inputsSha256: "fdad2076e22c626abc4ba46a069cd25e6920bb60b8cd4cba001676a84f473e90", golden: "b236382b5ca7b8f99bce1ab4d6fdabbf66cbb27a94ba41c8cb06b0f0b3fa0a63" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -85,7 +85,8 @@ export default {
   })(),
   rev: 1,
   handling: {
-    "archetype": "none"
+    "archetype": "none",
+    "why": "D-SHIP-GRIP: the card archetype.hand is none; it gives no thumb, contact or wrist claim."
   },
   contacts: [
     "standing-feet"

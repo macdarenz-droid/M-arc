@@ -163,7 +163,7 @@ export default {
   id: 'lib_jump_squat',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP: the card archetype.hand is none; it gives no thumb, contact or wrist claim.' },   // D-SHIP-A6NOGRIP: names the ruling (no Grip block)
   contacts: ['standing-feet'],
   setup: [
     { kind: 'safety', text: 'Learn to squat and land first. Start with small jumps.', claim: CL.j7 },
