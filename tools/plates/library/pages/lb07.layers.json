@@ -7,11 +7,7 @@
         "lib_cable_lateral_raise",
         "lib_dumbbell_front_raise",
         "lib_face_pull",
-        "lib_cable_external_rotation",
-        "lib_resistance_band_pull_apart",
-        "lib_weighted_dip",
         "lib_incline_push_up",
-        "lib_diamond_push_up",
         "lib_pike_push_up"
       ]
     }
@@ -27,20 +23,8 @@
     "lib_face_pull": {
       "optionsKey": "face_pull"
     },
-    "lib_cable_external_rotation": {
-      "optionsKey": "cable_external_rotation"
-    },
-    "lib_resistance_band_pull_apart": {
-      "optionsKey": "resistance_band_pull_apart"
-    },
-    "lib_weighted_dip": {
-      "optionsKey": "weighted_dip"
-    },
     "lib_incline_push_up": {
       "optionsKey": "incline_push_up"
-    },
-    "lib_diamond_push_up": {
-      "optionsKey": "diamond_push_up"
     },
     "lib_pike_push_up": {
       "optionsKey": "pike_push_up"
