@@ -14,8 +14,7 @@ beforeAll(async () => {
   core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
   bodies = await import(/* @vite-ignore */ url('tools/plates/library/bodies.mjs'));
   out = await gen.render();
-  // LIB-SHIP W5: render() covers 40 shipped ids now (231 files, ~127 s alone here); the unit-tz job ran past 180 s. Time limit only.
-}, 600_000);
+}, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): render() walks every shipped id (40 now, 231 files); ran past 180 s on 3c6efe61 unit-tz America/New_York; the library timeout, as #385
 
 const fixture = () => JSON.parse(readFileSync('tests/howto/fixtures/generated-bodies.json', 'utf8')) as { count: number; bodies: Record<string, string> };
 
