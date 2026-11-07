@@ -386,7 +386,7 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
     const cases = await libraryCases();
     expect(cases.at(-1)!.row.id).toBe(F.ID);
     for (const { base, row } of cases) await feelChecks(base, row);
-  });
+  }, 600_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): 32 shipped rows; timed out at 180 s on 824d8456's unit-tz (Asia/Manila) CI; no assertion change
   it('LIB-SHIP W2: NO_MARK is exactly the shipped library ids whose feel draws no mark; a mark-drawing id on it, or a no-mark id off it, is red', async () => {
     const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
     expect(await noMarkIds(repo, LIBRARY.map(r => r.id))).toEqual(NO_MARK);
