@@ -35,7 +35,7 @@
 //  Camera: reference floor line, scale set so the rack top (2.4 m, above the lockout plate) is 16 px under the plate
 //   edge: 134.6 px/m (92% of the reference, inside the 8's 123.9-146.3; pull_up and lat_pulldown also scale down).
 //  Labels: the rack leaves two label columns, left of the rear upright and right of the front one; "Forearms
-//   vertical", "Head through" and the measure label are boxed there (3 boxes), leaders <= 77 px.
+//   vertical" and "Head through" are boxed there (2 boxes; the measure label was dropped, LIB-PLATEFIX-3b item 23), leaders <= 77 px.
 //  Rack (verified card plate.equipment/start, c1, c11: press INSIDE a power rack, safety arms set below the bar's
 //   rack position so a normal rep never touches them): the `safetyArms` composer, z 'back'. Uprights at RACK_BACK /
 //   RACK_FRONT (1.2 m apart, the composer's typical rack depth), so the lifter, the whole bar path, the 45 cm plate
@@ -55,6 +55,15 @@
 //  of the start arm and head phantoms. "Head through" is boxed beside the face (auto placement gave a 75 px leader
 //  across the arm). Card verified (claude/libht-research e2a70bc).
 //  Coverage 0.183 with the rack (inside the 8's range).
+// LIB-PLATEFIX-3b item 23 (rulings, supervisor on #405 6682844211 and PLAN on #408):
+//  (a) the "Forearms vertical" pill and the measure "Forearm vertical" named the same start forearm (one knot): the
+//   measure is dropped (no arc, no label), the pill stays; the measure history in the lines above is superseded.
+//  (b) the start forearm (29.9 plate px, elbow to wrist) did not read through the start layer's fade: besides the filled
+//   dashed START_ARM phantom it is drawn as a dashed overlay guide on its axis, start elbow to start wrist (START_FORE).
+//  (c) the lockout head/arm crossing is NOT changed here: the target (head outline >= 3 px from the near arm's outline)
+//   is unreachable by a head pose (the arm's 14.8 px side outline lies wholly inside the head's 27.4 px x span at every
+//   neck angle from -10 to 40 deg; the scratch sweep is in the PR), so NECK_END stays 8 and the case goes back to the
+//   supervisor with the numbers.
 // CARD: lean-back angle (LEAN_START, c6 "slightly"), head tilt at the start (NECK_START, not in the card; sets the
 //  face clearance), grip width (GRIP_X, c2), bar rest height (BAR_T, c2 "front of the shoulders"), stance width
 //  (FOOT_X, c10), head forward at lockout (NECK_END, c6), shrug at lockout (SCAP_TOP, not in the card: 0).
@@ -149,8 +158,12 @@ function armShapes(pose, keys) {
 // phantom ON TOP ('eq-solid m-line': the engine's light equipment fill, dashed --text-2 outline), the engine's own
 // start-pose shapes in place (no offset): upper arm from the start shoulder, elbow cap, forearm, fist; with the start
 // bar dot. Drawn only over the lockout figure (atLockout below), so a close-up crop of another pose gets none. The
-// FOREARMS VERTICAL leader and the Forearm measure end on this forearm's lower half, below the lockout shoulder.
+// FOREARMS VERTICAL leader ends on this forearm's lower half, below the lockout shoulder.
+const LM_S0 = landmarksOf(start, H);
 const START_ARM = armShapes(start, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']).map(pts => ({ type: 'poly', pts, cls: 'eq-solid m-line', z: 'front', part: 'startarm' }));
+// LIB-PLATEFIX-3b item 23 (b): the start forearm's axis as a dashed overlay guide over the START_ARM phantom, the engine's
+// own start landmarks (elbow.r to wrist.r), so the vertical forearm the pill names reads as a line.
+const START_FORE = { type: 'line', cls: 'eq-line m-line', pts: [LM_S0['elbow.r'], LM_S0['wrist.r']], z: 'front', part: 'startfore' };
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 // Mistake (card plate.mistake, c5): elbows back, forearms tilted, so the bar curves forward away from the face.
 // LIB-PLATEFIX-1 (panel R5 [3,3,4], PR #385 comment 6636073314): the fault is drawn AT THE START, where it begins: the
@@ -248,7 +261,7 @@ export default {
       ...(ctx.pose === 'end' && ctx.mistake && atLockout(lm) ? FADE_ARM : []),
       { type: 'pulley', at: [0, lm.grips[1], lm.grips[2]], r: 0.025, part: 'bar', z: 'front' },
       // start bar dot, dashed, in front: the lockout arm covers the start layer (barbell_back_squat's workaround)
-      ...(ctx.pose === 'end' && atLockout(lm) ? [...(ctx.mistake ? [] : START_ARM), { type: 'line', cls: 'eq-line m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
+      ...(ctx.pose === 'end' && atLockout(lm) ? [...(ctx.mistake ? [] : [...START_ARM, START_FORE]), { type: 'line', cls: 'eq-line m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
     ].filter(Boolean),
   ],
   checks: [
@@ -264,9 +277,8 @@ export default {
   ghosts: { count: 2, parts: ['arm.r', 'bar'] },
   trace: { point: 'grip.r', trim: [12, 12] },
   datum: [{ x: [0, 0, 0], from: 349, to: 20 }],
-  // LIB-PLATEFIX-1: the start forearm against vertical (c5), no number (the card gives none). The former lockout shoulder
-  // arc ("straight up", no card number) crossed the chest and the start arm (W2 panel L7).
-  measure: { vertex: { at: 'elbow.r', pose: 'start' }, from: 'up', to: { at: 'grip.r', pose: 'start' }, radius: 12, title: 'Forearm', value: 'vertical', box: { left: 258, top: 172 } },
+  // LIB-PLATEFIX-3b item 23 (a): no measure. It was the start forearm against vertical ('Forearm' / 'vertical', box 258,172),
+  // the same claim and the same forearm as the 'Forearms vertical' pill (c5).
   callouts: [
     { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: [{ at: 'elbow.r', pose: 'start' }, { at: 'grip.r', pose: 'start' }], t: 0.5 }, box: { left: 22, top: 118 }, cue: 'Keep your elbows under the bar so your forearms point straight up.' },
     // 'Head through' and its cue: c6 (card plate.checkpoints 'Head clear'; W2 fix round, #385 6648438434)
