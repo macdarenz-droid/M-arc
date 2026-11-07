@@ -139,6 +139,10 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     row.files[PF_W2_KEYS[0]!] = '0'.repeat(64);
     expect(pfW2Problems(m, 'X')).toHaveLength(1);
     const o = rrBlanked(JSON.parse(rd('tools/plates/library/MANIFEST.json')));
+    // LIB-SHIP W7 (PIN GO #394 6649092340): the 29 W7 rows are taken out before main's sha, as in the test above
+    const w7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(JSON.parse(rd(`tools/plates/library/batches/${b}.json`)).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
+    expect(w7).toHaveLength(29);
+    for (const id of w7) { expect(Object.keys(o.rows), id).toContain(id); delete o.rows[id]; }
     expect(sha(JSON.stringify(o))).toBe(PF_RR_PIN);
     o.rows.lib_plank.entry = '0'.repeat(64);
     expect(sha(JSON.stringify(o))).not.toBe(PF_RR_PIN);
