@@ -842,6 +842,14 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-07 ~05:45 UTC** (weekly 0.59 at 04:43).
+  - **APK sent** for train 76 (main `8841246c`, run 42328056957, artifact 13558655197, fingerprint step success).
+  - **Train 77:** #385 PLATEFIX-1 → main `7e060e83`. It adds 4 How-tos, so the app has 30. Its APK goes out after main's gate run 42340563534.
+  - **W7 now ships 17** after the pfr recheck and the L4 check: glute_bridge, dead_bug and standing_leg_curl join; jump_rope is out (F-JUMPROPE-HAND).
+  - **W4 READY** @ `f75df35e`; reviewer session_018Pv5bLtLodq5nafU76Lsr4. W4 must merge main `7e060e83` before its train.
+  - **PF2 #395** is reconciling pilot-a as the second (D-PLATEFIX-SECOND).
+  - **3b #408:** A, B, C, D and 23 are built (rulings D-PF3B-SLEDSQUAT, -SLEDLEADER, -SLEDTELL, -LLCARCH, -OHPHEAD, -LTHHOLD). 15 and 22 wait for #395, then one plates panel.
+  - **Next trains:** #395, then W4, W5, W6 (7) and W7 (17).
 - **Update 11-07 ~02:45 UTC.**
   - **Train 76:** #404 F-BODYMAP-FRONTDELT → main `8841246c`. It is app-visible (the front delts on the body map); the APK goes out after main's gate run, combined with PF1's if PF1 merges close behind.
   - **Layers check of the PF3-plate sheets** (pfc, VALID; `panels/pfc-findings.md` @ `b5065795`; D-PFC-ROUND1):
