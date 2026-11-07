@@ -14,7 +14,8 @@ beforeAll(async () => {
   core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
   bodies = await import(/* @vite-ignore */ url('tools/plates/library/bodies.mjs'));
   out = await gen.render();
-}, 180_000);
+  // LIB-SHIP W5: render() covers 40 shipped ids now (231 files, ~127 s alone here); the unit-tz job ran past 180 s. Time limit only.
+}, 600_000);
 
 const fixture = () => JSON.parse(readFileSync('tests/howto/fixtures/generated-bodies.json', 'utf8')) as { count: number; bodies: Record<string, string> };
 
