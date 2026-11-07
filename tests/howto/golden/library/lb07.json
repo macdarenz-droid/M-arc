@@ -354,7 +354,7 @@
       "decision": "D-SHIP-W6-LAYERS",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/393#issuecomment-6689822595 @ d939496e22e7d0d9e858662e3ac2b719bec47c20",
       "date": "2026-11-07",
-      "why": "W6 layers approved (#393): the calibrated layers panel 6682570363 (3 fresh Opus critics per set, plants caught, golden-B anchors), the fix round ruled 6683193992 (D-SHIP-W6-ROUTE), the focused recheck 6683879377, cable_lateral_raise's copy check 6683994736 and the flip set 6689822595 (smith_machine_squat held, D-LIB13-PANEL2); low_to_high_cable_fly stays held (6701002884, PLATEFIX-3b). Built in the D-SHIP-W5-FLIPSET form on main 8841246c (#404 F-BODYMAP-FRONTDELT merged): only the flip set stays on lb07.layers.json, and every kept card (article block and its .hx-<slug> rules) is byte-equal to the full-page build of the same head; built twice, equal sha256.",
+      "why": "W6 layers approved (#393): the calibrated layers panel 6682570363 (3 fresh Opus critics per set, plants caught, golden-B anchors), the fix round ruled 6683193992 (D-SHIP-W6-ROUTE), the focused recheck 6683879377, cable_lateral_raise's copy check 6683994736 and the flip set 6689822595. Built in the D-SHIP-W5-FLIPSET form on main 8841246c (#404 F-BODYMAP-FRONTDELT merged): only the flip set stays on lb07.layers.json, and every kept card (article block and its .hx-<slug> rules) is byte-equal to the full-page build of the same head; built twice, equal sha256.",
       "supersedes": null,
       "prev": "71139f3c1b9aa68e82a6a34a714afd6dfe17ef18bedb0e12a727cd5e3caa1973"
     }
