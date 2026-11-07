@@ -2047,11 +2047,13 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
     // LIB-SHIP W6 (F-ELBOWS-DROP-LTH, #393 6647923934; D-PLATEFIX-PINS form): the 'drop' tell reads "Becomes a press" (c11),
     // so mistakeSvg (the label's leader end), mistakeOverlay, tells and cues are re-measured from buildLb6Page() on this
     // head; every other fragment is the mx14 value. Was: mistakeSvg 4d5243c5…, mistakeOverlay 82ce4b5b…, tells 974fd5d7…,
-    // cues e57bcb07… (the mutation below keeps each old value red).
+    // cues e57bcb07… (the mutation below keeps each old value red). D-SHIP-W6-LTHTELL (#393, after PLATEFIX-3): the tell
+    // reapplied on PF3's approved plate; only mistakeOverlay (b807c797… -> f5c43ff4…), tells (974fd5d7… -> 4ef6ef61…) and
+    // cues (e57bcb07… -> 95a9069c…) move, re-pinned in place; the other six PF3 values are unchanged.
     'low-to-high-cable-fly': { normalSvg: '57eb29aeb02e58342a999ae4a7a1bdf2acd55c644ac8041855342159d56429b9', normalOverlay: '11ae46b8a9bcee9faac4f0ac0c11db8f9f2bcb1ae13280cdf00ca5c0b941cb6a',
-      mistakeSvg: '2de2fc05a76a92281721f94f320bed20b2e5d3f536838d41cfb464bcfc4112ad', mistakeOverlay: 'b807c7979d08aa843a732e30b140e8423f20b6efb939dddcbf0b8f0a64f1191e',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 4d5243c5, now f73ac55e; mistakeOverlay was 82ce4b5b, now b807c797 (W6b: press hands at the shoulders, 'press' box pinned); round 2 (pf7, #405 6685743439): mistakeSvg was f73ac55e, now 2de2fc05
-      tells: '974fd5d7ae64e02e87f859bccdabbb824add81f8cc501ed38abe50e0a29b6b25', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
-      cues: 'e57bcb073136e623bc0c4c7fe2a2c2743dd31dabd42ec1e7451ec62f46699c01', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
+      mistakeSvg: '2de2fc05a76a92281721f94f320bed20b2e5d3f536838d41cfb464bcfc4112ad', mistakeOverlay: 'f5c43ff4507131b4f97fa148ebaa719e5e5b175e58ebb1f2e6fdd1d4af8af457',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): mistakeSvg was 4d5243c5, now f73ac55e; mistakeOverlay was 82ce4b5b, now b807c797 (W6b: press hands at the shoulders, 'press' box pinned); round 2 (pf7, #405 6685743439): mistakeSvg was f73ac55e, now 2de2fc05
+      tells: '4ef6ef619c62ecbb1c5269c11f4f37c7c9a747f7f194ae7a2e8954acae188c59', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
+      cues: '95a9069cb601c2e76e0505e2ad2c27e09b9c318c4f9be10b8f05981cd0d59860', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
       mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
     'high-to-low-cable-fly': { normalSvg: '9b35cfa8ac033cf03223f5aa482b2c4efa341f8e6c4dfac4b00c781ecdfd487b', normalOverlay: '1f0d451386e2e12cc6b8e8c4fd6db326ccc0b6dc981d383312e41bbcce5ef6e1',
       mistakeSvg: '9eb229e0544fb487f59e4910d293c6da9c05ba0d1cf6242be3104ab7d975e402', mistakeOverlay: 'e954e9ff44fd970595ba91dcbb8f18038510a7bbcc73aee5d3fee8ce056b2e85',
