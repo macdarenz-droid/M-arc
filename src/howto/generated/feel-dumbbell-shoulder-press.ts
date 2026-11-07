@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=28debc0a161ae48f1895ac4dbd40f2b85da17d0e0ae3f07b5c1c7ca8fd80c4e1
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=0040b04f2a1729da6ac5e321a051f16cb4cb1c3bb34c4baf5ad1b56889f1aa03
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_dumbbell_shoulder_press",

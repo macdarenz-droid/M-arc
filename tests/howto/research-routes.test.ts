@@ -6,6 +6,11 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { lessW4 } from './checks/ship-w4';
 import { PF_W2_KEYS, blankPF, pfProblems, pfW2Problems } from './platefix-pins';
+import { pf2Problems, restorePF2 } from './platefix2-pins';
+// LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
+// lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
+// every pin below, measured on main, still holds
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); return restorePF2(x); };
 
 const ROOT = join(new URL('.', import.meta.url).pathname, '..', '..');
 const rd = (p: string) => readFileSync(join(ROOT, p), 'utf8');
@@ -110,7 +115,8 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): lessW4 (checks/ship-w4.ts) removes the 20 lb02/lb03 rows
     // (each must be present) and blanks the W4-moved keys (each must pin its current file); LIB-SHIP W3's lessW3 then takes
     // out W3's 13 rows and puts main's crop.mjs / zoom-css.mjs / build-layers-page.mjs shas back (merge of main 62d3dcb6: both lanes kept)
-    const m = lessW3(lessW4(JSON.parse(rd('tools/plates/library/MANIFEST.json')), k => sha(readFileSync(join(ROOT, k)))), [PF_W2_KEYS[0]!]);   // LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems
+    // LIB-PLATEFIX-2 (#395): pf2Main then checks its moved keys and entry and puts main 7e060e83's back (merge of main 6227bd8e)
+    const m = lessW3(pf2Main(lessW4(JSON.parse(rd('tools/plates/library/MANIFEST.json')), k => sha(readFileSync(join(ROOT, k))))), [PF_W2_KEYS[0]!]);   // LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
     expect(rows).toHaveLength(16);
     for (const r of rows) { expect(r.files[BOX]).toBe(sha(rd(BOX))); r.files[BOX] = 'X'; }
@@ -141,7 +147,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     const m = JSON.parse(rd('tools/plates/library/MANIFEST.json')), row: any = Object.values(m.rows).find((r: any) => PF_W2_KEYS[0]! in r.files);
     row.files[PF_W2_KEYS[0]!] = '0'.repeat(64);
     expect(pfW2Problems(m, 'X')).toHaveLength(1);
-    const o = rrBlanked(JSON.parse(rd('tools/plates/library/MANIFEST.json')));
+    const o = rrBlanked(pf2Main(JSON.parse(rd('tools/plates/library/MANIFEST.json'))));
     expect(sha(JSON.stringify(o))).toBe(PF_RR_PIN);
     o.rows.lib_plank.entry = '0'.repeat(64);
     expect(sha(JSON.stringify(o))).not.toBe(PF_RR_PIN);
