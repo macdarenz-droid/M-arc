@@ -1,0 +1,169 @@
+{
+ "batch": "LB2",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/lb02.json",
+  "layers": "tests/howto/golden/library/lb02.layers.html",
+  "layersConfig": "tools/plates/library/pages/lb02.layers.json"
+ },
+ "rows": {
+  "lib_barbell_bench_press": {
+   "src": "library/specs/barbell_bench_press.mjs",
+   "slug": "barbell-bench-press",
+   "prefix": "barbell-bench-press",
+   "chromeId": "barbell-bench-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Bench Press with Proper Form: The Definitive Guide (StrongLifts). https://stronglifts.com/bench-press/",
+    "A step by step guide for a proper bench press (Human Kinetics excerpt from Youth Strength Training, Faigenbaum and Westcott). https://us.humankinetics.com/blogs/excerpt/a-step-by-step-guide-for-a-proper-bench-press",
+    "Chest Press (barbell), ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/5/chest-press/",
+    "How to Bench Press: The Definitive Guide (Stronger by Science). https://www.strongerbyscience.com/how-to-bench/",
+    "The Effect of Grip Width on Muscle Strength and Electromyographic Activity in Bench Press among Novice- and Resistance-Trained Men (2021). https://pubmed.ncbi.nlm.nih.gov/34198674/ PMID 34198674",
+    "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise (2020). https://pubmed.ncbi.nlm.nih.gov/33049982/ PMID 33049982",
+    "Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders (2020). https://pubmed.ncbi.nlm.nih.gov/31397215/ PMID 31397215",
+    "Pectoralis Major Rupture: Evaluation and Management (2022). https://pubmed.ncbi.nlm.nih.gov/35025841/ PMID 35025841",
+    "Traumatic asphyxia in weightlifters (2007). https://pubmed.ncbi.nlm.nih.gov/17456099/ PMID 17456099",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_incline_barbell_bench_press": {
+   "src": "library/specs/incline_barbell_bench_press.mjs",
+   "slug": "incline-barbell-bench-press",
+   "prefix": "incline-barbell-bench-press",
+   "chromeId": "incline-barbell-bench-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Incline Bench Press Exercise Guide (Boostcamp). https://www.boostcamp.app/blogs/incline-bench-press-exercise-guide",
+    "Incline Bench Press (Barbell) exercise page (Boostcamp). https://www.boostcamp.app/exercises/incline-bench-press-barbell",
+    "How to Do Incline Bench Press: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/incline-bench-press/",
+    "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise (2020). https://pubmed.ncbi.nlm.nih.gov/33049982/ PMID 33049982",
+    "Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders (2020). https://pubmed.ncbi.nlm.nih.gov/31397215/ PMID 31397215",
+    "Influence of bench angle on upper extremity muscular activation during bench press exercise (2016). https://pubmed.ncbi.nlm.nih.gov/25799093/ PMID 25799093",
+    "Traumatic asphyxia in weightlifters (2007). https://pubmed.ncbi.nlm.nih.gov/17456099/ PMID 17456099",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_incline_dumbbell_press": {
+   "src": "library/specs/incline_dumbbell_press__lb2.mjs",
+   "slug": "incline-dumbbell-press",
+   "prefix": "incline-dumbbell-press",
+   "chromeId": "incline-dumbbell-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Incline Chest Press, ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/",
+    "How to perform a dumbbell bench press (Human Kinetics excerpt). https://us.humankinetics.com/blogs/excerpt/how-to-perform-a-dumbbell-bench-press",
+    "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise (2020). https://pubmed.ncbi.nlm.nih.gov/33049982/ PMID 33049982",
+    "Dumbbell Incline Bench Press (Liftosaur exercise guide). https://liftosaur.com/exercises/dumbbell-incline-bench-press",
+    "Influence of bench angle on upper extremity muscular activation during bench press exercise (2016). https://pubmed.ncbi.nlm.nih.gov/25799093/ PMID 25799093",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_close_grip_bench_press": {
+   "src": "library/specs/close_grip_bench_press.mjs",
+   "slug": "close-grip-bench-press",
+   "prefix": "close-grip-bench-press",
+   "chromeId": "close-grip-bench-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Close-grip Bench Press, ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/311/close-grip-bench-press/",
+    "How to Do Close-Grip Bench Press: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/close-grip-bench-press/",
+    "How to Bench Press: The Definitive Guide (Stronger by Science). https://www.strongerbyscience.com/how-to-bench/",
+    "The Effect of Grip Width on Muscle Strength and Electromyographic Activity in Bench Press among Novice- and Resistance-Trained Men (2021). https://pubmed.ncbi.nlm.nih.gov/34198674/ PMID 34198674",
+    "An Investigation of the Mechanics and Sticking Region of a One-Repetition Maximum Close-Grip Bench Press versus the Traditional Bench Press (2017). https://pubmed.ncbi.nlm.nih.gov/29910406/ PMID 29910406",
+    "Traumatic asphyxia in weightlifters (2007). https://pubmed.ncbi.nlm.nih.gov/17456099/ PMID 17456099",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_decline_bench_press": {
+   "src": "library/specs/decline_bench_press.mjs",
+   "slug": "decline-bench-press",
+   "prefix": "decline-bench-press",
+   "chromeId": "decline-bench-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Decline Barbell Bench Press exercise guide (WorkoutLabs). https://workoutlabs.com/exercise-guide/decline-barbell-bench-press/",
+    "How to Do Decline Bench Press: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/decline-bench-press/",
+    "Influence of bench angle on upper extremity muscular activation during bench press exercise (2016). https://pubmed.ncbi.nlm.nih.gov/25799093/ PMID 25799093",
+    "Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders (2020). https://pubmed.ncbi.nlm.nih.gov/31397215/ PMID 31397215",
+    "Pectoralis Major Rupture: Evaluation and Management (2022). https://pubmed.ncbi.nlm.nih.gov/35025841/ PMID 35025841",
+    "Traumatic asphyxia in weightlifters (2007). https://pubmed.ncbi.nlm.nih.gov/17456099/ PMID 17456099",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_arnold_press": {
+   "src": "library/specs/arnold_press.mjs",
+   "slug": "arnold-press",
+   "prefix": "arnold-press",
+   "chromeId": "arnold-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Arnold Press: Video Tutorial and Exercise Guide (The Fit Father Project, Stuart Carter). https://www.fitfatherproject.com/arnold-press-tutorial",
+    "How to Do an Arnold Press (The Gym Group). https://www.thegymgroup.com/exercises/arms-and-shoulders-exercises/how-to-do-an-arnold-press/",
+    "How to Do Arnold Press: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/arnold-press/",
+    "Seated Overhead Press (dumbbell), ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/45/seated-overhead-press/",
+    "Effects of body position and loading modality on muscle activity and strength in shoulder presses (2013). https://pubmed.ncbi.nlm.nih.gov/23096062/ PMID 23096062",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_skull_crusher": {
+   "src": "library/specs/skull_crusher.mjs",
+   "slug": "skull-crusher",
+   "prefix": "skull-crusher",
+   "chromeId": "skull-crusher",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Lying Barbell Triceps Extensions, ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/36/lying-barbell-triceps-extensions/",
+    "How to Do Lying Triceps Extension with EZ bar (StrengthLog). https://www.strengthlog.com/lying-triceps-extension/",
+    "The complete skull crushers guide: how to do them right and which bar to use (Strength Shop blog; equipment retailer). https://strengthshop.eu/blogs/news/the-complete-skull-crushers-guide-how-to-do-them-right-and-which-bar-to-use",
+    "Triceps Tendon Ruptures: Risk Factors, Treatment, and Rehabilitation (2020). https://pubmed.ncbi.nlm.nih.gov/32539261/ PMID 32539261",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Skull Crushers Exercise Tutorial (Form, Variations, and Benefits) (The Fit Father Project, Stuart Carter) (2024). https://www.fitfatherproject.com/skull-crushers/"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_dumbbell_pullover": {
+   "src": "library/specs/dumbbell_pullover.mjs",
+   "slug": "dumbbell-pullover",
+   "prefix": "dumbbell-pullover",
+   "chromeId": "dumbbell-pullover",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do the Dumbbell Pullover for Upper Body Muscle and Mobility (Breaking Muscle, Dr. Merrick Lincoln). https://breakingmuscle.com/dumbbell-pullover/",
+    "How to Do Dumbbell Pullover: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/dumbbell-pullover/",
+    "Effects of the pullover exercise on the pectoralis major and latissimus dorsi muscles as evaluated by EMG (2011). https://pubmed.ncbi.nlm.nih.gov/21975179/ PMID 21975179",
+    "Differences Between Pullover and Pulldown Exercises on Maximal Isometric Force and Myoelectric Activity in Recreationally-Trained Men (2022). https://pubmed.ncbi.nlm.nih.gov/35992501/ PMID 35992501",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}

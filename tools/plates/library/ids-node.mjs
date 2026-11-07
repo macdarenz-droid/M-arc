@@ -1,7 +1,7 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=00dc43a8618a6ffd59cff0f46fa6b3466a01a40c2cdfb715980bfdbe620418bb
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=d5433031cac59602ac9c7c7c33898d689ddf8a03269929eced2c302e07c75e60
 // Node twin of src/howto/ids.ts (tests and the gate's harness): the same literals and decoder template, emitted
 // together by tools/plates/gen/ids.mjs (D-LIB2-hints).
-const S = "2eTgEhDkUMbG`?G=;OVKR?oeeYPaW@NI22\\X@@[:2`_N8@HYhf\\Qc3;MnWZC5\\CXiQi]D28A3H^9CJNAPYedPcYPRC0kM>dL18f@U\\R=nLUTH@YoZg4J8hf>";
+const S = "2eTgEhDkUMbG`?G=;OVKR?oeeYPaW@NI22\\X@@[:2`_N8@HYhf\\Qc3;MnWZC5\\CXiQi]D28A3H^9CJNAR^_<XSB6EPK8JcA97j_QlaHDPYedPcYPRC0kM>dL18f@U\\R=nLUTH@YoZg4J8hf>";
 const H = ["Heel of palm, wrist straight.","Handle firm in palm, wrist neutral.","Hands against the rope knobs.","Wrist in line with the forearm."];
 const O = "ABBCD";
 function at(s) {

@@ -1,0 +1,18 @@
+{
+ "groups": [
+  {
+   "id": "lb2",
+   "title": "LB2",
+   "ids": [
+    "lib_barbell_bench_press",
+    "lib_incline_barbell_bench_press",
+    "lib_incline_dumbbell_press",
+    "lib_close_grip_bench_press",
+    "lib_decline_bench_press",
+    "lib_arnold_press",
+    "lib_skull_crusher",
+    "lib_dumbbell_pullover"
+   ]
+  }
+ ]
+}

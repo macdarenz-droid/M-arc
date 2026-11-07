@@ -7,6 +7,7 @@ import { dirname, join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 // @ts-expect-error plain .mjs build tool, no types
 import { MANIFEST, manifestOf, manifestProblems } from '../../tools/plates/library/ci/manifest.mjs';
+import { W4_MANIFEST_ROWS } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = join(__dirname, '..', '..');
@@ -46,9 +47,13 @@ describe('C0: L0-lib on this tree', { timeout: 300_000 }, () => {   // F-C0-TIME
   const LB01 = ['chin_up', 'hanging_knee_raise', 'assisted_pull_up', 'inverted_row', 'close_grip_pulldown', 'underhand_lat_pulldown', 'single_arm_lat_pulldown',
     'straight_arm_pulldown', 'chest_supported_row', 'resistance_band_row', 'incline_machine_press', 'shoulder_press'].map(id => `lib_${id}`);
   const ZOOM = ['lib_horizontal_leg_press'];
-  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2, PILOT-B2\'s 1, lb01\'s 12, zoom\'s 1 and LIB-SHIP W7\'s 29 here, and no problem', async () => {
+  // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): the lb02 and lb03 pins add exactly their 8 and 12 rows
+  // (checks/ship-w4.ts: shipped and waiting, every row of both batch files)
+  const LB2_LB3 = W4_MANIFEST_ROWS;
+  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2, PILOT-B2\'s 1, lb01\'s 12, zoom\'s 1 and LB2\'s 8, LB3\'s 12 and LIB-SHIP W7\'s 29 here, and no problem', async () => {
     const file = JSON.parse(readFileSync(join(ROOT, MANIFEST), 'utf8'));
-    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2, ...LB01, ...ZOOM, ...W7].sort());
+    expect(LB2_LB3).toHaveLength(20);
+    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2, ...LB01, ...ZOOM, ...LB2_LB3, ...W7].sort());   // merge of main 62d3dcb6: W3's 13 and W4's 20; LIB-SHIP W7's 29 (PIN GO #394 6649092340)
     expect(Object.keys(file.rows)).not.toContain('lib_leg_press_calf_raise');   // LIB-SHIP W3: the left-out row has none
     expect(await manifestOf(ROOT)).toEqual(file);
     expect(await manifestProblems(ROOT)).toEqual([]);
