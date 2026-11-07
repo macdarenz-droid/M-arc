@@ -8,6 +8,12 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
+import { pf2Problems, restorePF2 } from './platefix2-pins';
+// LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
+// lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
+// every pin below, measured on main, still holds
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); return restorePF2(x); };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = new URL('../../', import.meta.url);
@@ -107,8 +113,40 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     }
     return m;
   };
+  const w3Read = (p: string) => readFileSync(path(p), 'utf8');
+  // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows (the 9 shipped and the 4 staged
+  // at approved-plate), and W3 PANEL FIX 2 (f561ff71, #384 6649416891) moves crop.mjs and zoom-css.mjs in every row. Each
+  // W3 row must be there and each moved key must pin its current file; with the rows removed and main 5023f5c6's sha put
+  // back (`keep`: keys the caller checks and blanks itself), every other entry is untouched for the checks below
+  const W3_ROWS = ['assisted_pull_up', 'chest_supported_row', 'chin_up', 'close_grip_pulldown', 'hanging_knee_raise', 'horizontal_leg_press',
+    'incline_machine_press', 'inverted_row', 'resistance_band_row', 'shoulder_press', 'single_arm_lat_pulldown', 'straight_arm_pulldown',
+    'underhand_lat_pulldown'].map(id => `lib_${id}`);
+  const W3_MOVED: Record<string, string> = {
+    'tools/plates/library/render/closeup/crop.mjs': 'df61d973c2933021554e3d89c9834d01f1f171c35dd10d5cd1c7a11b946985d9',
+    'tools/plates/library/render/closeup/zoom-css.mjs': '37836f22478605ef8162af3c05e515385d03034d090279b6c91f4248adce2fdf',
+  };
+  const lessW3 = (m: any, keep: string[] = []) => {
+    for (const id of W3_ROWS) { expect(Object.keys(m.rows), id).toContain(id); delete m.rows[id]; }
+    for (const [id, r] of Object.entries<any>(m.rows)) for (const [k, main] of Object.entries(W3_MOVED)) {
+      if (keep.includes(k)) continue;
+      expect(r.files[k], `${id} ${k}`).toBe(sha(w3Read(k)));
+      r.files[k] = main;
+    }
+    return m;
+  };
+  it('LIB-SHIP W3 mutations: a W3 row missing, a moved key not at its current file, and a non-W3 row changed are red', () => {
+    const m = () => JSON.parse(w3Read('tools/plates/library/MANIFEST.json'));
+    const a = m(); delete a.rows.lib_chin_up;
+    expect(() => lessW3(a)).toThrow(/lib_chin_up/);
+    const b = m(); b.rows.lib_plank.files['tools/plates/library/render/closeup/zoom-css.mjs'] = 'f'.repeat(64);
+    expect(() => lessW3(b)).toThrow(/lib_plank/);
+    const c = m(); c.rows.lib_plank.entry = 'f'.repeat(64);
+    expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
+  });
+  // LIB-PLATEFIX-1: main 8841246c's MANIFEST.json with the pin test's blanks and the PLATEFIX keys and entries blanked
+  const PF_CP_PIN = '3e72651489c837482a01225f43b9a0e16afdf119d07465e11c0ef8d186289393';
   it('every pinned row pins the current crop.mjs and hand.mjs, and every other entry equals main 8d596fab', () => {
-    const m = JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'));
+    const m = lessW3(pf2Main(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'))), [KEYS[0]!]);   // LIB-SHIP W3
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
     expect(Object.keys(m.rows)).toContain('lib_crunch');
@@ -116,19 +154,47 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     // F-PAIR-FAULTS (#386): build-layers-page.mjs's and pairs.mjs's keys are re-pinned there and pinned exactly by pair-faults.test.ts
     // (build-layers-page.mjs's key is checked against its file and blanked by lessW2, a W2 key too)
     for (const r of rows) r.files['tools/plates/library/hands/pairs.mjs'] = 'X';
+    // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): render/closeup/zoom.mjs's key is re-pinned there and pinned
+    // exactly by platefix3-engine.test.ts
+    for (const r of rows) r.files['tools/plates/library/render/closeup/zoom.mjs'] = 'X';
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
     // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts;
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync(path('docs/research/howto/shared/back-pain-box.json')))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
     // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
-    // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN): specs/pec_fly.mjs's and zoom/inline.mjs's keys and lib_pec_fly's entry are re-pinned
-    // there; each key pins its current file and the entry hashes pilot A's latest pec_fly plate entry, then all are blanked
-    // (main 05f27be9's MANIFEST.json differs from this PR's in exactly these; re-measured with them blanked)
-    const pf2 = (x: any) => { for (const [id, r] of Object.entries<any>(x.rows)) for (const k of ['tools/plates/library/specs/pec_fly.mjs', 'tools/plates/library/zoom/inline.mjs']) if (k in r.files) { expect([id, k, r.files[k]]).toEqual([id, k, sha(readFileSync(path(k)))]); r.files[k] = 'X'; }
-      const pe = JSON.parse(readFileSync(path('tests/howto/golden/library/pilot-a.json')).toString()).entries.filter((e: any) => e.id === 'lib_pec_fly').at(-1);
-      expect(x.rows.lib_pec_fly.entry).toBe(sha(JSON.stringify(pe))); x.rows.lib_pec_fly.entry = 'X'; return x; };
-    expect(sha(JSON.stringify(pf2(rrBox(lessW2(m)))))).toBe('b625fc40476a4f82270db165f7fcdf06f3cca3a17a588e4236ba5100ad3fd58b');   // was 99d9824b… before LIB-PLATEFIX-2
+    // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs key is re-pinned there and pinned exactly by
+    // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
+    const bmFix = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) { expect(r.files['tools/plates/library/render/region-fix.mjs']).toBe(sha(readFileSync(path('tools/plates/library/render/region-fix.mjs')))); r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; } return x; };
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was 99d9824b…e882e, then f8074fd0 with zoom.mjs's key also blanked.
+    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 8841246c, both sides kept): its moved keys,
+    // added keys and superseded entries each pin their current value (pfProblems), then are blanked too (blankPF): every key
+    // and entry where this MANIFEST differs from main 8841246c's is blanked by one of these, so the rest is main 8841246c's
+    // MANIFEST.json with the same blanks (measured on main 8841246c's own MANIFEST).
+    expect(pfProblems(m)).toEqual([]);
+    expect(sha(JSON.stringify(rrBox(lessW2(bmFix(blankPF(m, 'X'))))))).toBe(PF_CP_PIN);
+  });
+  it('LIB-PLATEFIX-1 mutations: a moved key, an added key or a superseded entry off its current value is red, and so is any other key moved', () => {
+    const cur = () => pf2Main(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8')));
+    const m1 = cur(); (Object.values<any>(m1.rows).find(r => PF_MOVED[2]! in r.files)).files[PF_MOVED[2]!] = '0'.repeat(64);
+    expect(pfProblems(m1)).toHaveLength(1);
+    const m2 = cur(); m2.rows.lib_reverse_lunge.files['tools/plates/library/pages/pilot-a3.layers.json'] = '0'.repeat(64);
+    expect(pfProblems(m2)).toHaveLength(1);
+    const m3 = cur(); m3.rows.lib_romanian_deadlift.entry = '0'.repeat(64);
+    expect(pfProblems(m3)).toEqual([`lib_romanian_deadlift: entry ${'0'.repeat(64)} != ${cur().rows.lib_romanian_deadlift.entry}`]);
+    // the pin test's blanks, without its checks: the current MANIFEST gives the pin, one other entry moved does not
+    const all = (x: any) => {
+      lessW3(x, [KEYS[0]!]);
+      for (const r of Object.values<any>(x.rows)) for (const k of [...KEYS, 'tools/plates/library/hands/pairs.mjs', 'tools/plates/library/render/closeup/zoom.mjs']) r.files[k] = 'X';
+      for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8';
+      const y = lessW2(blankPF(x, 'X'));
+      for (const r of Object.values<any>(y.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) r.files['docs/research/howto/shared/back-pain-box.json'] = 'X';
+      return sha(JSON.stringify(y));
+    };
+    expect(all(cur())).toBe(PF_CP_PIN);
+    const m4 = cur(); m4.rows.lib_plank.entry = '0'.repeat(64);   // an entry this card does not supersede
+    expect(pfProblems(m4)).toEqual([]);
+    expect(all(m4)).not.toBe(PF_CP_PIN);
   });
 });
 

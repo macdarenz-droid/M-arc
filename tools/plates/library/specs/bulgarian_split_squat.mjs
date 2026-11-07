@@ -24,11 +24,11 @@
 // Mistake (D-SPLIT-BSSHOVER; plate.mistake c3, c8 "dropping into the bottom and resting the rear knee on the floor"):
 //  the hips sink until the rear kneecap rests on the floor, the rear knee swung down about the bench-fixed rear foot
 //  and the hip where the two thighs meet (front shin FRONT_SHIN unchanged: no free slide). One tell, on the resting rear
-//  knee. The kneecap's move is 11.63 px at plate scale, at or over the 11.39 px bar, so the plate carries no zoom
+//  knee. The kneecap's move is 22.21 px at plate scale (LIB-PLATEFIX-3; was 11.63), over the 11.39 px bar, so no zoom
 //  (H3.zoom:not-needed:mistake).
 // Tempo: the strip without seconds, exactly tempoOf(strip/rows.json bulgarian_split_squat) (D-STRIP-ROWS).
 // Unsourced numbers: BENCH_TOP 0.42 m, the bench depth (the vendor 0.29 m), OVERHANG 0.02 m, STANCE (3 foot-lengths of
-//  the engine foot, 0.266 m each), as reverse_lunge's (FOOT_X, FRONT_SHIN, TRUNK_LEAN, ELBOW), START_KNEE, END_GAP 0.03 m.
+//  the engine foot, 0.266 m each), as reverse_lunge's (FOOT_X, FRONT_SHIN, TRUNK_LEAN, ELBOW), START_KNEE, END_GAP 0.069 m.
 import { landmarksOf, normPose, resolve } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180, B = { height: H };
@@ -46,7 +46,9 @@ const OVERHANG = 0.02;            // instep point ahead of the bench's front edg
 const FOOT_LEN = (0.120 + 0.032) * H;   // engine foot, heel to toe tip (FOOT_SIDE)
 const STANCE = 3 * FOOT_LEN;      // front toe tip ahead of the bench's front edge (c2)
 const KNEECAP = 0.028 * H;        // kneecap radius (body.mjs RADII.kneeCap)
-const END_GAP = 0.03;             // end: the rear kneecap this far above the floor (m), D-SPLIT-BSSHOVER, unsourced
+const END_GAP = 0.069;            // end: the rear kneecap this far above the floor (m), D-SPLIT-BSSHOVER as amended by
+                                  // LIB-PLATEFIX-3 (#405 6682844211: 0.03 -> 0.069, the layers close-up's gap, still c3's
+                                  // "just above the floor"), unsourced
 
 // Bracketed root finder (Illinois regula falsi, copied from step_up.mjs): throws when f(a) and f(b) have the same sign.
 const solve = (f, a, b) => {
@@ -94,12 +96,17 @@ const knees = p => resolve(normPose(p, B), B).q.knee;
 // Start: the hips straight above the end hips, the height SOLVED so the front knee is START_KNEE.
 const START_Y = solve(y => knees(pose(y, HIP[1], TRUNK_LEAN)).r - START_KNEE, HIP[0] + 0.1, HIP[0] + 0.42);
 const start = pose(START_Y, HIP[1], TRUNK_LEAN);
-// Mistake: the rear knee swung down onto the floor (kneecap resting), the front knee where it was; the hip where the
-// two thighs meet.
-const HIP_M = meet(kneeF, kneeRest);
+// Mistake: the rear knee swung down onto the floor (kneecap resting); the hips lower by the same drop as the kneecap
+// (LIB-PLATEFIX-3 item 3, #405 6682844211: "the hips lower by the same drop", c3, c8 "dropping into the bottom"). The
+// front foot stays flat where it was and the front shin tips forward (MIS_SHIN, SOLVED) until the hip where the two
+// thighs meet sits DROP below the end hip.
+const DROP = kneeB[0] - kneeRest[0];
+const kneeFAt = sh => [ankF[0] + L_SH * Math.cos(sh * R), ankF[1] + L_SH * Math.sin(sh * R)];
+const MIS_SHIN = solve(sh => meet(kneeFAt(sh), kneeRest)[0] - (HIP[0] - DROP), FRONT_SHIN, FRONT_SHIN + 30);   // bracket [6, 36] deg
+const HIP_M = meet(kneeFAt(MIS_SHIN), kneeRest);
 const MISTAKE = pose(HIP_M[0], HIP_M[1], TRUNK_LEAN);
 export const SIZES = { FOOT_X, REAR_X, FRONT_SHIN, TRUNK_LEAN, ELBOW, START_KNEE, BENCH_TOP, BENCH_W, OVERHANG, STANCE, END_GAP };
-export const bssInfo = { EDGE_Z, INSTEP, ANKLE_B, HIP, HIP_M, kneeB, kneeRest, START_Y, PHI: PHI / R };
+export const bssInfo = { EDGE_Z, INSTEP, ANKLE_B, HIP, HIP_M, kneeB, kneeRest, START_Y, PHI: PHI / R, DROP, MIS_SHIN };
 const SHIN_TOP = 0.12;
 const SHIN_PLUMB = [[0, 0, ankF[1]], [0, kneeF[0] + SHIN_TOP, ankF[1]]];
 const bells = lm => [
@@ -133,7 +140,11 @@ export default {
     inHand('l'), inHand('r'),                                                           // the hands on the dumbbells at the start
   ],
   ghosts: { count: 2, parts: ['leg.r', 'leg.l', 'trunk', 'arm.r', 'db'] },
-  trace: { point: 'hip.r', trim: [10, 12] },
+  // LIB-PLATEFIX-3 round 2 (pf7 R11 [2,2,2]: the k 1.5 Trace zoom showed no part the eye can name, and its ring added
+  // clutter): the zoom is removed. With END_GAP 0.069 the hip travels 4.4 px less; the trace's end trims go from
+  // [10, 12] to [8, 10] (step_up's, inside the engine default [8, 12]), so the drawn Trace clears the 22.11 px bar
+  // (H3.trace) at plate scale. The pose and the hip path are unchanged; only less of the path is cut at its ends.
+  trace: { point: 'hip.r', trim: [8, 10] },
   callouts: [
     { key: 'foot', text: 'Foot on<br>bench', anchor: 'ankle.l', cue: 'Rest the top of the rear foot on a bench about knee height.' },
     { key: 'stance', text: 'Long stance', anchor: 'toe.r', cue: 'Put the front foot about three foot-lengths ahead of the bench.' },

@@ -137,5 +137,5 @@ export default {
     ],
   },
   zoom: { view: 'mistake', k: 2 },
-  alt: 'Horizontal leg press, side view. Seated with the back and tailbone on a reclined pad and the feet flat on a vertical plate, the lifter pushes the sled along a level rail from knees at about 90 degrees until the knees are relaxed and nearly straight, never locked.',
+  alt: 'Horizontal leg press, side view. Seated with the back and tailbone on an upright pad and the feet flat on a vertical plate, the lifter pushes the sled along a level rail from knees at about 90 degrees until the knees are relaxed and nearly straight, never locked.',
 };

@@ -61,6 +61,97 @@
       "date": "2026-11-04",
       "why": "W2 LAYERS APPROVED with STAMP (#379 6636105974, D-SHIP-W2-STAMP): the calibrated layers panel (#379 6633524031; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6633952175, 6635013518, 6636061065 and their focused rechecks; every median 4 or more or a recorded exception. Built at the approved head 91ee3dfa plus the granted D-FEEL-NOMEANS-PAGE patch, which only drops empty 'Usually means' labels (pilot-a: plank's low-back row).",
       "prev": "ba72467d084a841c0ff8895df693cfe05e68fbefb59244a9fc2fb891df5c73ae"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B2",
+      "ids": [
+        "lib_crunch"
+      ],
+      "pageSha256": "b656e4dfd8fc79fbdca88db345753465352631c4314d42cb754b8334bc383a6e",
+      "bytes": 339146,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W3-LAYERSZOOM",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6686326673 @ 4a0c0bec7c4f1e1adff7f91ba0672af8471bd1e6",
+      "date": "2026-11-06",
+      "why": "D-SHIP-W3-LAYERSZOOM (#384 6686326673; approvedBy supervisor under D-LIB-O5 point 4, superseding the supervisor's D-SHIP-W2-STAMP entry): build-layers-page.mjs applies applyZooms to the mirror specs, as build-page.mjs does. The rebuild equals the superseded page (7c66d68e) plus ZOOM_CSS once after <style> and crunch's normal and Mistake zoom groups, nothing else.",
+      "supersedes": 2,
+      "prev": "0b659af46e873d927980bb2c68ec683780ace4d1056bcf89a18f6f3114fae225"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B2",
+      "ids": [
+        "lib_crunch"
+      ],
+      "pageSha256": "141738e738fa7deec225c75a3d116af1c48a53505cdcf415fcbad8c85c1cdae1",
+      "bytes": 339554,
+      "approvedBy": "supervisor",
+      "decision": "D-BODYMAP-LIB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/404#issuecomment-6688047379 @ 797bf0a05394b78fe32a43859987fd40b7b2c73f",
+      "date": "2026-11-06",
+      "supersedes": 3,
+      "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-BODYMAP-APPEND #404 6688047379; supervisor under D-LIB-O5 point 4: golden-B design kinds only, superseding a supervisor entry): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow and back-of-knee pain parts. Byte proof: with the fix paths undone, this page equals the superseded entry page byte for byte, except the shimmer band of a feel map whose main muscles include front_delts. Built twice, equal sha256.",
+      "prev": "4c8a217200ea77ed8398c288020a30a0ea1f9e6c510a27101d3796515ec0049e"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "8fc40115ab7bd6b1ccd9c5eca0a9b00352ef0e0574c93282e821ae1217978bb1",
+      "bytes": 190727,
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "why": "LIB-PLATEFIX-1: the plates page with this batch's fixed plates, approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "supersedes": 0,
+      "prev": "1298648547414644e34362713c7ef0b3fa417208108b704369f62e22bc515114"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_crunch",
+      "src": "library/specs/crunch.mjs",
+      "slug": "crunch",
+      "prefix": "crunch",
+      "chromeId": "crunch",
+      "fragments": {
+        "normalSvg": "1f4e1b4fe784ca3c5042d4c62a8c8a687f3a958e1bfd0bfdb88ab114fc5908f0",
+        "normalOverlay": "c40e584c1969b6e1005d4dc0854029191b1eb444956359f52d08b08a1cd14af5",
+        "mistakeSvg": "2809d4d320ff9cd35bfbf7f9bfa17ac79f244f92f40e8543f296e0fe13cdbfe6",
+        "mistakeOverlay": "aed65954198cd2d93758acfc3c21f86990bb023907960db75ccb024b706b35ae",
+        "tells": "321bba25aa962437d750fc70157f4e3747fbfc97bbafe062b29cc88e72201986",
+        "tempo": "ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3",
+        "cues": "66dab1fc6678d2aa1fb4d2ac2d83f95a11316ee364e2140c05f97ff83f4b8c7f",
+        "alt": "7dabec950a17628c1a76b830c7d401ec033f9d2a6659e950e5b6a85924f829a9",
+        "mistakeAlt": "eaab91db60719c62f79e1fa47bfcd85451e7b2062f7214ecec3090cd6b7dc778"
+      },
+      "exemptions": [
+        "F1",
+        "F3",
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "why": "LIB-PLATEFIX-1: lib_crunch's plate fixed from the W2 layers panel (#379 6633524031), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "supersedes": 1,
+      "prev": "dc5a5883b6947070339f2aa52f13906e05fffa3ce2240c6bedca3697786ed12b"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B2",
+      "ids": [
+        "lib_crunch"
+      ],
+      "pageSha256": "20efb9e446aa6d06f966e3b25c586c65fc84daa3f6f4488d3be8c86ac3f0800c",
+      "bytes": 339521,
+      "approvedBy": "supervisor",
+      "decision": "D-PLATEFIX-SECOND",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6687946433 @ 8f1afa59131a7efec8da40cbc75118e77d3e7f1f",
+      "date": "2026-11-07",
+      "why": "O5; LIB-PLATEFIX-1 layers page rebuilt on main 8841246c (D-PLATEFIX-SECOND point 4): its LIB-PLATEFIX-1 content approved by the calibrated layers panel and rechecks (D-PLATEFIX-STAMP, #385 6648438434 @ f573d31322a421e169ea732e6cf948fbb41f66d0); cardcmp: every card's plate fragments byte-equal to the approved plates page; strip-back: with the inline zoom groups and ZOOM_CSS taken out it is the 3-way merge of base, the approved page and main's page plus only #404's body-map hunks; zoom groups byte-equal to the plates page's",
+      "supersedes": 4,
+      "prev": "12af9561a944f804a933912b39aeb9d469577a0ee647541c5ae9126e2967b8f4"
     }
   ]
 }

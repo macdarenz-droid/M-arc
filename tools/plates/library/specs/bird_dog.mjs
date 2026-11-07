@@ -159,7 +159,7 @@ export default {
     ],
     tells: [
       { key: 'arch', text: 'Low back<br>arches', anchor: { along: ['sacrum', 'backMid'], t: 0.85, pose: 'mistake' }, box: { left: 150, top: 186 }, cue: 'The low back sags into an arch as the leg rises.' },
-      { key: 'high', text: 'Leg too high', anchor: { along: ['knee.l', 'ankle.l'], t: 0.4, pose: 'mistake', off: [0, -7] }, box: { left: 20, top: 160 }, cue: 'The leg lifts too high, past parallel to the floor.' },
+      { key: 'high', text: 'Leg too high', anchor: { along: ['knee.l', 'ankle.l'], t: 0.4, pose: 'mistake', off: [0, -7] }, box: { left: 20, top: 160 }, cue: 'The leg lifts higher than the low back can hold.' },   // c7; LIB-PLATEFIX-3 W7 (#394 6682923012): was 'past parallel to the floor'
     ],
   },
   tempo: [{ phase: 'Reach', s: 3, move: true }, { phase: 'Hold', s: 3 }, { phase: 'Return', s: 3, move: true }],

@@ -16,19 +16,37 @@ const UNRULED = (id, field) => `${id}: family: ${field}: inherited-string map no
  *  parent's shipped How-to content that must match. A field missing here is unmapped and refused; shoulder_press's
  *  setup['Pick the weight…'] left inherit[] in F-LB1-SETUP (#318): machine_chest_press ships no such line. */
 const THUMB = ['handling.thumb.mode', 'handling.pose.thumb'];
+// LIB-SHIP W3 amendments (SHIP W3 PLAN RULED Q-W3-1/Q-W3-2; layers fix rounds #384 6648454032, 6649416891, 6653062201,
+// accepted with reds in this table): a child keeps the parent's leaves except the ones its own card or a panel fix
+// changed. TXT: a posture checkpoint's label, detail and anchor; PAD: the parent's knee-pad zoom leaves; HANDLING: the
+// parent's handling leaves; WRIST: the parent's wrist range (the child's own limitText).
+const TXT = k => [`posture[key=${k}].label`, `posture[key=${k}].detail`, `posture[key=${k}].anchor`];
+const PAD = ['key', 'chip', 'heading', 'kind', 'crop', 'right', 'wrong', 'guides', 'callout', 'caption', 'alt'].map(k => `zooms[key=pad].${k}`);
+const HANDLING = ['archetype', 'handle', 'loadAxis', 'width', 'thumb', 'contact', 'wrist', 'pose', 'faults', 'gripLine', 'cue'].map(k => `handling.${k}`);
+const WRIST = ['handling.wrist.ext', 'handling.wrist.dev'];
 export const INHERIT_MAP = {
-  lib_chin_up: { 'grip.thumb (wrapped, never thumbless by default)': THUMB, 'zooms.hand (full grip, thumb around the bar, is the only grip shown)': ['zooms[key=hand]'] },
-  lib_close_grip_pulldown: { 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
+  // W3 (Q-W3-1): the hand zoom's own leaves differ (underhand pair, card c1/c3); the inherited claim is the wrapped thumb
+  lib_chin_up: { 'grip.thumb (wrapped, never thumbless by default)': THUMB, 'zooms.hand (full grip, thumb around the bar, is the only grip shown)': ['zooms[key=hand].hand.right.thumb'] },
+  // W3 (#384 6648733957, 6653343780): the pad halves' caption and alt are the child's own (a V-handle; no hips-lifting claim)
+  lib_close_grip_pulldown: { 'zooms: seat height / thigh pad crop': PAD.filter(p => !p.endsWith('.alt') && !p.endsWith('.caption')) },
   lib_hanging_knee_raise: { 'grip.thumb (wrapped every set)': THUMB },
+  // incline_machine_press and shoulder_press are staged off W3 (D-SHIP-W3-NOPAIR, #384 6681221802): their entries stay as
+  // ruled for D-LIB9a-MAP; the W3-ruled amendments (grip.wrist: WRIST; shoulder_press zooms['hand'] minus feelRow) land
+  // with the wave that ships them, since the family check runs only on shipped rows.
   lib_incline_machine_press: { 'grip.type': ['handling.handle'], 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'],
     "posture['Straight wrist, forearm behind the handle']": ['posture[key=wrist]'], "posture['Feet flat, hips back']": ['posture[key=feet]'], "zooms['hand']": ['zooms[key=hand]'] },
   lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], "zooms['hand']": ['zooms[key=hand]'] },
-  // D-SHIP-FAMILY (LIB-SHIP W2, #379 6625803515): the dumbbell child of romanian_deadlift; both ship in W2, parent first.
+  // D-SHIP-FAMILY (LIB-SHIP W2, #379 6625803515): the dumbbell child of romanian_deadlift, parent first in the same head. Neither RDL ships in W2: both ship through #385.
   lib_single_leg_romanian_deadlift: { 'grip.thumb': THUMB, 'grip.wrist': ['handling.wrist'] },
-  lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': ['setup[kind=position,zoom=path].text'] },
+  // W3 (#384 6648454032 L2, accepted 6648753200): the card's own setup steps replace the inherited lean (upright torso, c7,
+  // c11), so the field maps to no path
+  lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': [] },
   lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path]'], 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
-  lib_horizontal_leg_press: { grip: ['handling'], "posture['Tailbone and lower back flat on the pad']": ['posture[key=back]'], "posture['Whole foot flat, mid-platform']": ['posture[key=feet]'],
-    "posture['Soft knees at the top']": ['posture[key=soft]'], "posture['Hands light on the side handles']": ['posture[key=hands]'] },
+  // W3 (Q-W3-1/Q-W3-9; #384 6649416891): the grip line is c2 only and the wrist note is dropped; checkpoints keep the
+  // parent's label/detail/anchor (the soft-knee anchor is the child's own pose)
+  lib_horizontal_leg_press: { grip: [...HANDLING.filter(p => p !== 'handling.gripLine' && p !== 'handling.wrist'), ...WRIST],
+    "posture['Tailbone and lower back flat on the pad']": TXT('back'), "posture['Whole foot flat, mid-platform']": TXT('feet'),
+    "posture['Soft knees at the top']": ['posture[key=soft].label', 'posture[key=soft].detail'], "posture['Hands light on the side handles']": TXT('hands') },
   lib_leg_press_calf_raise: { grip: ['handling'], "setup['After the last rep, pause at the top, turn the handles back in, and let the sled settle on the catches before you take your feet off or let go.']": ['setup[kind=finish]'],
     "posture['Hands light on the side handles']": ['posture[key=hands]'] },
 };

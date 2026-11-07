@@ -45,10 +45,21 @@ export async function routeOffline(ctx, pages, font = FONT) {
   return { blocked };
 }
 
-/** Fonts loaded, no animation or transition left, two frames painted. */
+/** D-SHIP-W3-PAUSEDSKIP (#384 6687335829): true when no animation is left that a settle waits for. An animation is skipped
+ *  only when its playState is 'paused' AND its target is fully outside the viewport (it cannot change a pixel `capture`
+ *  takes); every other animation, a running one or a paused one in view, still blocks. Self-contained: runs in the page. */
+export const nothingToWaitFor = () => document.getAnimations().every(a => {
+  if (a.playState !== 'paused') return false;
+  const t = a.effect && a.effect.target;
+  if (!t || typeof t.getBoundingClientRect !== 'function') return false;
+  const r = t.getBoundingClientRect();
+  return r.bottom <= 0 || r.top >= innerHeight || r.right <= 0 || r.left >= innerWidth;
+});
+
+/** Fonts loaded, no animation or transition left (D-SHIP-W3-PAUSEDSKIP: but a paused one fully off screen), two frames painted. */
 export async function settle(page) {
   await page.evaluate(() => document.fonts.ready);
-  await page.waitForFunction(() => document.getAnimations().length === 0, null, { timeout: 5000 });
+  await page.waitForFunction(nothingToWaitFor, null, { timeout: 8000 });   // D-SHIP-W3-PAUSEDSKIP; D-SHIP-W3-GOLDWAIT (#384 Q-W3-21): 8000 as settleApp (feel-sweep runs 5200 ms)
   await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
 }
 
@@ -216,10 +227,11 @@ export function htSeed([theme, ids, custom]) {
   }));
 }
 
-/** No animation of any kind left on the page (the sheet-in, scrim, theme and Trace ones included), two frames painted. */
+/** No animation of any kind left on the page (the sheet-in, scrim, theme and Trace ones included; D-SHIP-W3-PAUSEDSKIP: but a
+ *  paused one fully off screen), two frames painted. */
 export async function settleApp(page) {
   await page.evaluate(() => document.fonts.ready);
-  await page.waitForFunction(() => document.getAnimations().length === 0, null, { timeout: 8000 });
+  await page.waitForFunction(nothingToWaitFor, null, { timeout: 8000 });   // D-SHIP-W3-PAUSEDSKIP
   await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
 }
 

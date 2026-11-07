@@ -1,0 +1,23 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=cc44c6ab9a930f71d30a4e1f8ba7a1b2be4259f316ba80e5ee8f6227bd9d54cf
+{
+  "id": "lib_chest_supported_row",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/chest_supported_row.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-row-machine",
+    "lehman2004",
+    "fischer2025",
+    "fenwick2009",
+    "saeterbakken2015",
+    "acsm2009",
+    "ga-pull-base",
+    "pull-default",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

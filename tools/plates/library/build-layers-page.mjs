@@ -17,6 +17,7 @@ import { PLATE_CSS } from '../layers/engine/index.mjs';   // LIB-7b
 import { HAND_CSS } from '../layers/engine/hand.mjs';   // LIB-7b
 import { FEEL_CSS } from '../layers/engine/feelmap.mjs';   // LIB-7b
 import { VENDOR_STRIP, NOSECS_STRIP } from './strip/tempo-strip.mjs';   // LIB-STRIP
+import { applyZooms } from './zoom/inline.mjs';   // D-SHIP-W3-LAYERSZOOM: the plates page's zoom circle
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const RENDERER_URL = pathToFileURL(join(HERE, 'render', 'closeups.mjs')).href;
@@ -59,6 +60,7 @@ const between = (src, name, start, endMark) => {
  * spec.optionsUrl: module exporting `CLOSEUP_OPTIONS` (required when any exercise uses the renderer);
  * spec.files: { 'exercises/<id>.mjs': absPath, … } copied into the mirror (a new exercise's plate and howto sources);
  * spec.jump: the header's jump-link line (default golden B's; null drops it); spec.regionFix (default true).
+ * spec.bodymapFix (default false; layersSpecOf sets it for every batch page): F-BODYMAP-FRONTDELT's map fix.
  */
 export function planOf(spec) {
   const cards = spec.groups.flatMap(g => g.ids), ids = cards.map(howtoIdOf);
@@ -80,9 +82,11 @@ export function planOf(spec) {
   const noZoom = spec.noZoom ?? [];
   if (!Array.isArray(noZoom) || new Set(noZoom).size !== noZoom.length) throw new Error('layers page: noZoom must be a list of distinct ids');
   for (const id of noZoom) if (!ids.includes(id)) throw new Error(`layers page: noZoom: ${id} is not on the page`);
-  return { ids, legacy, labels, keys, optionsUrl: spec.optionsUrl ?? null, regionFix: spec.regionFix !== false, noZoom };
+  return { ids, legacy, labels, keys, optionsUrl: spec.optionsUrl ?? null, regionFix: spec.regionFix !== false, bodymapFix: spec.bodymapFix === true, noZoom };
 }
 
+/** The vendored feel-rows heading and list (howto-layers.mjs feelSection), as one concatenated template term. */
+export const FEEL_ROWS_HEAD = '+ `<h5 class="eyebrow fr-head">If you feel it in…</h5><ul class="fr-list">${rowsHtml}</ul>`';
 /** The patched howto-layers.mjs source. */
 export function patchHowtoLayers(src, plan) {
   src = patchOnce(src, 'HOWTO_IDS', between(src, 'HOWTO_IDS', 'export const HOWTO_IDS = [', '];\n'),
@@ -97,7 +101,9 @@ export function patchHowtoLayers(src, plan) {
     + `  if (mods.some(M => (M.default.riskFlags ?? []).includes('back'))) __BACK.backBox = (await import(${JSON.stringify(BACK_BOX_URL)})).backBox;   // LIB-6-PM: D-LIB6PM-ANCHORS\n`
     + `  for (const id of HOWTO_IDS) apis[id] = LEGACY[id] ? await loadRenderer(id)\n`
     + `    : __lib.closeupApi((await import(pathToFileURL(join(root, 'exercises', \`\${id}.howto.mjs\`)).href)), __opts[__keys[id]], { root, specFile: __lib.specFileOf(root, id), engine: await __lib.engineOf(__lib.specFileOf(root, id), { root }) });\n`
-    + (plan.regionFix ? `  (await import(${JSON.stringify(REGION_FIX_URL)})).applyRegionFix((await import('../engine/bodymap-parts.mjs')).FRONT_PARTS);\n` : ''));
+    + (plan.regionFix ? `  (await import(${JSON.stringify(REGION_FIX_URL)})).applyRegionFix((await import('../engine/bodymap-parts.mjs')).FRONT_PARTS);\n` : '')
+    // F-BODYMAP-FRONTDELT (D-BODYMAP-LIB): batch pages only; golden B's spec never sets it, so its page stays byte-equal
+    + (plan.bodymapFix ? `  (await import(${JSON.stringify(REGION_FIX_URL)})).applyBodymapFix((await import('../engine/bodymap-parts.mjs')).FRONT_PARTS, (await import('../engine/bodymap-parts.mjs')).BACK_PARTS);\n` : ''));
   // D-LIB5-PAGE, D-LIB6PM-ANCHORS: the back box. RF links a back-flagged row; FLAG's `back` getter reads the box from the
   // holder, which the dispatch above fills only when a sheet on the page is back-flagged (risksSection is synchronous).
   src = patchOnce(src, 'back holder', "import { lintAll, formatViolations, FEEL_ROWS_MAX, SETUP_MAX_STEPS } from './copy-lint.mjs';\n",
@@ -135,8 +141,21 @@ export function patchHowtoLayers(src, plan) {
   // D-FEEL-NOMEANS-PAGE (#379 6636105974): a feel row with an empty or missing `means` prints no "Usually means" label,
   // as gen/feel.mjs dropEmptyMeans does for the app. Rows with a means print the vendored bytes unchanged.
   src = patchOnce(src, 'feel no means', '<p><b>Usually means</b>${esc(r.means)}</p>', '${r.means ? `<p><b>Usually means</b>${esc(r.means)}</p>` : \'\'}');
+  // LIB-PLATEFIX-3 E1 (W7 #394 6682923012: high_knees L7 [4,3,3], jumping_jacks L7 [3,3,3]; ruled #405 6683319630): a
+  // feel section with no rows prints no "If you feel it in…" heading and no empty list (two divider lines, nothing under
+  // them). A section with rows prints the vendored bytes unchanged.
+  src = patchOnce(src, 'feel no rows', FEEL_ROWS_HEAD, '+ (F.rows.length ? `' + FEEL_ROWS_HEAD.slice(3, -1) + '` : \'\')');
+  src = painNamesPatch(src);
   return src;
 }
+
+/** D-PF-PAINNAMES-LIB (#385 6657422689): golden B's PAIN_NAMES (artifact/howto-layers.mjs, byte-locked) names only the
+ *  hands, elbows, knees and nape, so a library pain row on another part printed raw part ids in its map label ("Marked:
+ *  lower-back-erectors-left and …"). The mirror copy gets the library's names appended, add-only; golden B's own rows
+ *  mark only those four regions, so its page stays byte-equal. The app's library feel chunks are cut from these pages
+ *  (gen/feel.mjs librarySection), so they carry the same names. */
+export const LIBRARY_PAIN_NAMES = "[/^lower-back-/, 'lower back'], [/^shoulder-front-/, 'front shoulders'], [/^neck-/, 'neck'], [/^foot-/, 'feet']";
+export const painNamesPatch = src => patchOnce(src, 'pain names', "[/^nape$/, 'back of the neck']];", `[/^nape$/, 'back of the neck'], ${LIBRARY_PAIN_NAMES}];`);
 
 /** The vendored specExercise head the 'plate engine' patch (D-LIB6PM-PLATE) replaces. */
 export const PLATE_ENGINE_ANCHOR = "const specExercise = async id => {\n  const spec = (await import(pathToFileURL(join(root, 'exercises', `${id}.mjs`)).href)).default;\n  const pre = id.replace(/_/g, '-');\n";
@@ -172,7 +191,11 @@ export async function buildLayersPage(spec) {
     writeFileSync(hl, patchHowtoLayers(readFileSync(hl, 'utf8'), plan));
     writeFileSync(bp, patchBuildPage(readFileSync(bp, 'utf8'), spec));
     await runNode(mirror, 'artifact/build-page.mjs');
-    const page = readFileSync(join(mirror, 'artifact', 'technical-plates.html'));
+    // D-SHIP-W3-LAYERSZOOM (#384 6686326673): the plates page draws a spec's opt-in zoom circle (build-page.mjs applyZooms),
+    // so the layers page, which draws the same plates, applies the same step to the mirror's specs; no zoom spec: the same bytes
+    const specs = Object.fromEntries(Object.keys(spec.files ?? {}).map(rel => rel.match(/^exercises\/([a-z0-9_]+)\.mjs$/)?.[1]).filter(Boolean)
+      .map(id => [id, join(mirror, 'exercises', `${id}.mjs`)]));
+    const page = await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs);
     return pairRowsOf(spec).length ? Buffer.from(await withPairPanels(page.toString('utf8'), spec)) : page;   // LIB-7b
   } finally { cleanupMirror(mirror); }
 }

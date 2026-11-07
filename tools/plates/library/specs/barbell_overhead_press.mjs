@@ -29,7 +29,7 @@
 //   The `checks` prove the ends: chin 2.9 cm behind the bar surface at the start, head 31 cm under the bar at lockout.
 //  Drawn: the 45 cm plate outline at lockout only (four plate circles over the head hid it), the 50 mm sleeve dot in
 //   every pose (start dashed, 2 ghosts, end), trace of the grip (the vertical bar path), mid-foot plumb line (datum,
-//   as the squat). The lockout arm and trunk cover the whole start arm, so it is redrawn over the end figure as a
+//   as the squat). The lockout arm and trunk cover the whole start arm, so it is redrawn over the end figure as a filled
 //   dashed outline (START_ARM, critic 10-03 R1/R7) with the start bar dot (the squat's workaround); the leaning start
 //   trunk and head show as the engine's own dashed start pose behind the figure.
 //  Camera: reference floor line, scale set so the rack top (2.4 m, above the lockout plate) is 16 px under the plate
@@ -39,8 +39,8 @@
 //  Rack (verified card plate.equipment/start, c1, c11: press INSIDE a power rack, safety arms set below the bar's
 //   rack position so a normal rep never touches them): the `safetyArms` composer, z 'back'. Uprights at RACK_BACK /
 //   RACK_FRONT (1.2 m apart, the composer's typical rack depth), so the lifter, the whole bar path, the 45 cm plate
-//   and the Mistake bar and its drift ring (sleeve front edge at z 0.45) sit between them (front upright face 1.2 cm
-//   clear of that ring). Upright height RACK_H 2.4 m (tall commercial racks are 2.3-2.4 m): at 2.3 m the top
+//   and the Mistake bar and its drift ring (LIB-PLATEFIX-1: sleeve front edge at z 0.35) sit between them (front
+//   upright face 15 cm clear of that ring). Upright height RACK_H 2.4 m (tall commercial racks are 2.3-2.4 m): at 2.3 m the top
 //   cross-member would overlap the lockout plate in this projection and read as a collision (in 3D the plates sit
 //   outside the rack's width). Safety arms top at ARM_Y, 8 cm under the front-rack bar centre (6.6 cm under the
 //   shaft). J-hooks (verified card plate.equipment "power rack with hooks at about shoulder height", setup c11): one
@@ -70,7 +70,8 @@ const NECK_START = -10;                                // deg head flexion at th
 const LEAN_VIA2 = 3;                                   // torso moving forward under the bar once it passes the head (c6)
 const KNEE_LOCK = 2;                                   // deg: knees locked (c9), 2 deg keeps the IK off full extension
 const SCAP_TOP = 0;                                    // cm shrug at lockout: not in the card
-const NECK_END = 8;                                    // deg: head forward under the bar at lockout ("through the window", c6)
+const NECK_END = 8;                                    // deg: head forward under the bar at lockout ("through the window", c6). LIB-PLATEFIX-1:
+// the face's front is 9.8 px ahead of the lockout arm's front edge (>= 8 px; ruling #385 6635051630 keeps 8)
 const ARM = (WINTER.upperArm + WINTER.forearm + REF.gripOff) * H;   // shoulder to grip centre, wrist straight
 
 const feet = { l: { at: [FOOT_X, 0, 0] }, r: { at: [-FOOT_X, 0, 0] } };
@@ -142,25 +143,32 @@ function armShapes(pose, keys) {
   return bodyShapes(fk(resolve(normPose(pose, bd), bd).q, bd), probe).filter(sh => keys.includes(sh.key))
     .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
 }
-// R1/R7 (critic 10-03): the start (front-rack) arm redrawn over the lockout figure as the dashed, unfilled start-pose
-// outline (every other plate's start convention): upper arm to the elbow ahead of the chest, vertical forearm up to
-// the racked bar. Unfilled, so the head and the solid lockout arm stay visible (a filled patch read as a third limb).
-// The FOREARMS VERTICAL leader ends on this forearm.
-const START_ARM = armShapes(start, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']).map(pts => ({ type: 'line', pts: [...pts, pts[0]], cls: 'eq-line m-line', z: 'front', part: 'startarm' }));
+// R1/R7 (critic 10-03): the start (front-rack) arm redrawn over the lockout figure, because the lockout arm and trunk
+// cover the whole start arm. LIB-PLATEFIX-1 (W2 panel L7 [3,3,3], PR #385 6648438434: the unfilled dashed forearm
+// lay in line with the lockout upper arm inside the torso and read as nothing): the start arm is drawn as a filled
+// phantom ON TOP ('eq-solid m-line': the engine's light equipment fill, dashed --text-2 outline), the engine's own
+// start-pose shapes in place (no offset): upper arm from the start shoulder, elbow cap, forearm, fist; with the start
+// bar dot. Drawn only over the lockout figure (atLockout below), so a close-up crop of another pose gets none. The
+// FOREARMS VERTICAL leader and the Forearm measure end on this forearm's lower half, below the lockout shoulder.
+const START_ARM = armShapes(start, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']).map(pts => ({ type: 'poly', pts, cls: 'eq-solid m-line', z: 'front', part: 'startarm' }));
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
-// Mistake (card plate.mistake, c5): elbows back, forearms tilted, so the bar curves forward away from the face. Drawn
-// ON THE DRAWN (lockout) FIGURE, mid-press (critic on ab0c553, R5: the red upper arm began at the torso's back edge,
-// because the faulty pose used the leaning start trunk while the figure shown is the upright lockout trunk, and the
-// arm crossed itself inside the torso): the end body (same trunk, so the faulty arm's shoulder end sits on the drawn
-// shoulder joint, checked in tests/howto/lib8-pilot-a.test.ts), the bar MIS_BAR in front of the face. The elbow IK pole
-// (MIS_POLE) points down and out, so the elbow sits just above shoulder height in front of the chest: the upper arm
-// runs from the shoulder joint forward, and the whole forearm, tilted ~30 deg, lies in front of the chest and face,
-// outside the torso fill and above the safety arms (misInfo). The engine's own faulty-arm outline is masked inside
-// the faulty body, so the faulty arm is drawn as Mistake guides, which are not masked (dashed red outline polylines).
-// The drift is the light part: a short dashed path from the faulty bar curving up and forward to a sleeve-size ring,
-// with an arrowhead (the card gives no distance).
-const MIS_BAR = [0, 1.80, 0.38];                       // m: the faulty bar, in front of the face (mid-press)
-const MIS_POLE = [0.5, -0.3, 0];                       // elbow IK pole (left side; mirrored in x for the right): down and out
+// Mistake (card plate.mistake, c5): elbows back, forearms tilted, so the bar curves forward away from the face.
+// LIB-PLATEFIX-1 (panel R5 [3,3,4], PR #385 comment 6636073314): the fault is drawn AT THE START, where it begins: the
+// mid-press arm it replaces had its elbow ~60 px in front of the shoulder, so "Elbows back" pointed at an elbow that
+// read as forward. Drawn ON THE DRAWN (lockout) FIGURE (critic on ab0c553, R5: the faulty pose uses the end body, the
+// same upright trunk, so the faulty arm's shoulder end sits on the drawn shoulder joint): the bar MIS_BAR on the front
+// delts, the elbow IK pole (MIS_POLE) down and back, so the elbow sits straight under the shoulder joint (not forward
+// under the bar as in the correct start, c5) and the forearm tilts ~21 deg forward to the bar (misInfo). The engine's
+// own faulty-arm outline is masked inside the faulty body, so the faulty arm is drawn as Mistake guides, which are not
+// masked (dashed red outline polylines). The drift is the light part: a dashed path from the faulty bar curving up,
+// then forward away from the face, to a sleeve-size ring, with an arrowhead along it (the card gives no distance).
+// Probe (scratch, camera below, 780 px plate cut = 2x plate units): shoulder (378, 468), elbow (379, 556), bar
+// (412, 470); upper arm 87.6 px, forearm 92.0 px, forearm 21.0 deg off vertical.
+const MIS_BAR = [0, 1.39, 0.125];                      // m: the faulty bar on the front delts at shoulder height (start): centre ~1 cm in
+                                                       // front of the end torso outline (0.123 m at y 1.36, 0.102 m at y 1.42), so the
+                                                       // 14 mm sleeve rests on it; y/z set so the elbow lands under the shoulder
+const MIS_POLE = [-0.1, -1, -0.6];                     // elbow IK pole (left side; mirrored in x for the right): down and back,
+                                                       // x -0.1 keeps the elbow in the arm's own plane (no flare, full-length upper arm)
 const mistakePose = { ...endBody, reach: {
   l: { at: [GRIP_X, MIS_BAR[1], MIS_BAR[2]], pole: MIS_POLE },
   r: { at: [-GRIP_X, MIS_BAR[1], MIS_BAR[2]], pole: [-MIS_POLE[0], MIS_POLE[1], MIS_POLE[2]] } } };
@@ -168,13 +176,19 @@ const LM_MIS = landmarksOf({ ...end, ...mistakePose }, H), LM_S = landmarksOf(st
 const tiltOf = lm => +(Math.atan2(lm['grip.r'][2] - lm['elbow.r'][2], lm['grip.r'][1] - lm['elbow.r'][1]) / R).toFixed(1);
 export const misInfo = {
   elbowBehindBarCm: +((LM_MIS['grip.r'][2] - LM_MIS['elbow.r'][2]) * 100).toFixed(1), elbowBelowBarCm: +((LM_MIS['grip.r'][1] - LM_MIS['elbow.r'][1]) * 100).toFixed(1),
+  elbowAheadOfShoulderCm: +((LM_MIS['elbow.r'][2] - LM_MIS['shoulder.r'][2]) * 100).toFixed(1),
   forearmTiltDeg: tiltOf(LM_MIS), startForearmTiltDeg: tiltOf(LM_S), sideForearmCm: +(Math.hypot(LM_MIS['grip.r'][1] - LM_MIS['elbow.r'][1], LM_MIS['grip.r'][2] - LM_MIS['elbow.r'][2]) * 100).toFixed(1),
   shoulderOffsetCm: +(Math.hypot(...LM_MIS['shoulder.r'].map((v, i) => v - LM_E['shoulder.r'][i])) * 100).toFixed(2),
 };
 const MB = MIS_BAR;                                   // the faulty bar
-const DRIFT_END = [0, MB[1] + 0.12, MB[2] + 0.045];         // the drift ring: up and forward, inside the rack's front upright
+const RING_R = 0.025;                                 // sleeve-size ring (the 50 mm sleeve dot)
+const DRIFT_C = [0, MB[1] + 0.15, MB[2] + 0.03];      // control point: the drift starts nearly straight up (clears the chin)
+const DRIFT_END = [0, MB[1] + 0.30, MB[2] + 0.20];    // the drift ring: 30 cm up and 20 cm forward (illustrative, no card
+                                                       // number), away from the face, inside the rack's front upright
+const DU = (() => { const dy = DRIFT_END[1] - DRIFT_C[1], dz = DRIFT_END[2] - DRIFT_C[2], l = Math.hypot(dy, dz); return [0, dy / l, dz / l]; })();   // end tangent
+const DRIFT_TO = [0, DRIFT_END[1] - RING_R * DU[1], DRIFT_END[2] - RING_R * DU[2]];   // the path stops on the ring's edge
 const DRIFT = Array.from({ length: 13 }, (_, k) => { const t = k / 12;   // quadratic from the faulty bar: up first, then forward
-  return [0, (1 - t) ** 2 * MB[1] + 2 * t * (1 - t) * DRIFT_END[1] + t * t * DRIFT_END[1], (1 - t) ** 2 * MB[2] + 2 * t * (1 - t) * MB[2] + t * t * (DRIFT_END[2] - 0.025)]; });   // ends at the ring (RING_R)
+  return [0, 1, 2].map(i => i === 0 ? 0 : (1 - t) ** 2 * MB[i] + 2 * t * (1 - t) * DRIFT_C[i] + t * t * DRIFT_TO[i]); });
 // R5 (critic 10-03, twice): in the Mistake view the lockout arm is faded to the start-pose ghost look: each arm part
 // redrawn over it, grown 1.5 plate px (GROW) so the body's 2 px outline is covered, as a card-coloured fill with a thin
 // dashed outline ('eq m-line', end layer, Mistake only). The start arm is not drawn there.
@@ -188,9 +202,26 @@ function grow(pts) {                                  // offsets a closed side-v
 }
 const FADE_ARM = [...armShapes(end, ARM_KEYS('l')), ...armShapes(end, ARM_KEYS('r'))].map(pts => ({ type: 'poly', pts: grow(pts), cls: 'eq m-line', z: 'front', part: 'fadearm' }));
 const MIS_ARM = armShapes({ ...end, ...mistakePose }, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']);
-const RING_R = 0.025;
 const MB_RING = Array.from({ length: 17 }, (_, k) => [0, MB[1] + RING_R * Math.sin(k * Math.PI / 8), MB[2] + RING_R * Math.cos(k * Math.PI / 8)]);
 const DRIFT_RING = Array.from({ length: 17 }, (_, k) => [0, DRIFT_END[1] + RING_R * Math.sin(k * Math.PI / 8), DRIFT_END[2] + RING_R * Math.cos(k * Math.PI / 8)]);
+// The close-up's Wrong (How-to zoom ohp-forearm-vertical; W2 panel L5 [4,3,3], PR #385 6648438434): the same start pose
+// as the Right (start body: lean, head, hips, feet) with one change, the plate's Mistake arm: the faulty bar keeps its
+// Mistake offset from the shoulder joint (12.5 cm ahead, 0.6 cm under), moved onto the start shoulder, and the same
+// elbow IK pole, so the elbow sits under the shoulder, behind the bar, and the forearm tilts ~21 deg (c5). The plate's
+// Mistake (end body) is unchanged. Its dashed outlines, bar ring and forward drift are the plate's, built the same way
+// from this bar (the drift's offsets are DRIFT_C / DRIFT_END's: illustrative, the card gives no distance).
+const ZW_BAR = (() => { const s0 = LM_S['shoulder.r'], d = [1, 2].map(i => LM_MIS['grip.r'][i] - LM_E['shoulder.r'][i]); return [0, s0[1] + d[0], s0[2] + d[1]]; })();
+const ZW_REACH = {
+  l: { at: [GRIP_X, ZW_BAR[1], ZW_BAR[2]], pole: MIS_POLE },
+  r: { at: [-GRIP_X, ZW_BAR[1], ZW_BAR[2]], pole: [-MIS_POLE[0], MIS_POLE[1], MIS_POLE[2]] } };
+const ringAt = (c, r = RING_R) => Array.from({ length: 17 }, (_, k) => [0, c[1] + r * Math.sin(k * Math.PI / 8), c[2] + r * Math.cos(k * Math.PI / 8)]);
+const ZW_END = [0, ZW_BAR[1] + (DRIFT_END[1] - MB[1]), ZW_BAR[2] + (DRIFT_END[2] - MB[2])], ZW_C = [0, ZW_BAR[1] + (DRIFT_C[1] - MB[1]), ZW_BAR[2] + (DRIFT_C[2] - MB[2])];
+const ZW_TO = [0, ZW_END[1] - RING_R * DU[1], ZW_END[2] - RING_R * DU[2]];
+export const ZOOM_WRONG = {
+  reach: ZW_REACH,
+  outlines: [...armShapes({ ...start, reach: ZW_REACH }, ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r']).map(pts => [...pts, pts[0]]), ringAt(ZW_BAR), ringAt(ZW_END)],
+  drift: Array.from({ length: 13 }, (_, k) => { const t = k / 12; return [0, 1, 2].map(i => i === 0 ? 0 : (1 - t) ** 2 * ZW_BAR[i] + 2 * t * (1 - t) * ZW_C[i] + t * t * ZW_TO[i]); }),
+};
 // Camera: the reference floor line (plate y 339) and the largest scale that keeps the 45 cm plate at lockout 16 px
 // under the plate top (the engine's `fit` measures every pose with the start context, so it cannot see an item drawn
 // in the end pose only). 141 px/m, 96% of the reference.
@@ -198,6 +229,8 @@ const RACK_FRONT = 0.50, RACK_BACK = -0.50, RACK_H = 2.40;   // power rack uprig
 const ARM_Y = BAR0[1] - 0.08;                                 // safety arms: 8 cm under the front-rack bar (c11)
 const HOOK_Y = BAR0[1] - BAR_R;                               // J-hook bearing surface: the front-rack bar's underside (c1, c11)
 export { H, ARM_Y };
+// The start phantoms and the faded arm belong over the lockout figure only (a close-up crop draws its own pose as 'end').
+const atLockout = lm => Math.hypot(lm.grips[1] - BAR1[1], lm.grips[2] - BAR1[2]) < 0.01;
 const PLATE_TOP = Math.max(BAR1[1] + 0.225, RACK_H), TOP_PX = 16;
 const CAMERA = { pxPerM: Math.min(REF_CAMERA.pxPerM, (REF_CAMERA.y0 - TOP_PX) / PLATE_TOP), x0: 179, y0: REF_CAMERA.y0 };
 
@@ -212,10 +245,10 @@ export default {
     // in every pose, so the start, ghosts and end bar positions read along the vertical path
     (lm, ctx) => [
       ctx.pose === 'end' ? { type: 'barbell', at: [0, lm.grips[1], lm.grips[2]], plates: [0.045], part: 'plate', z: 'back' } : null,
-      ...(ctx.pose === 'end' && ctx.mistake ? FADE_ARM : []),
+      ...(ctx.pose === 'end' && ctx.mistake && atLockout(lm) ? FADE_ARM : []),
       { type: 'pulley', at: [0, lm.grips[1], lm.grips[2]], r: 0.025, part: 'bar', z: 'front' },
       // start bar dot, dashed, in front: the lockout arm covers the start layer (barbell_back_squat's workaround)
-      ...(ctx.pose === 'end' ? [...(ctx.mistake ? [] : START_ARM), { type: 'line', cls: 'eq-line m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
+      ...(ctx.pose === 'end' && atLockout(lm) ? [...(ctx.mistake ? [] : START_ARM), { type: 'line', cls: 'eq-line m-line', pts: START_DOT, z: 'front', part: 'startbar' }] : []),
     ].filter(Boolean),
   ],
   checks: [
@@ -223,7 +256,7 @@ export default {
     { landmark: 'ball.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'start', tol: 0.5 },        // bar over mid-foot
     { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'end', tol: 0.5 },
-    { landmark: 'grips', plane: { point: [0, 0, MIS_BAR[2]], normal: [0, 0, 1] }, pose: 'mistake', tol: 0.5 },   // fault: bar in front of the face
+    { landmark: 'grips', plane: { point: [0, 0, MIS_BAR[2]], normal: [0, 0, 1] }, pose: 'mistake', tol: 0.5 },   // fault: bar on the front delts, ahead of mid-foot
     { landmark: 'chin', above: { point: [0, 0, -BAR_R], normal: [0, 0, -1] }, pose: 'start' },            // chin behind the bar
     { landmark: 'head', above: { point: [0, BAR1[1] - BAR_R, 0], normal: [0, -1, 0] }, pose: 'end' },      // bar over the head
   ],
@@ -231,10 +264,13 @@ export default {
   ghosts: { count: 2, parts: ['arm.r', 'bar'] },
   trace: { point: 'grip.r', trim: [12, 12] },
   datum: [{ x: [0, 0, 0], from: 349, to: 20 }],
-  measure: { vertex: 'shoulder.r', from: 'down', to: 'elbow.r', radius: 20, title: 'Shoulder', value: 'straight up', box: { left: 258, top: 172 } },
+  // LIB-PLATEFIX-1: the start forearm against vertical (c5), no number (the card gives none). The former lockout shoulder
+  // arc ("straight up", no card number) crossed the chest and the start arm (W2 panel L7).
+  measure: { vertex: { at: 'elbow.r', pose: 'start' }, from: 'up', to: { at: 'grip.r', pose: 'start' }, radius: 12, title: 'Forearm', value: 'vertical', box: { left: 258, top: 172 } },
   callouts: [
-    { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: [{ at: 'elbow.r', pose: 'start' }, { at: 'grip.r', pose: 'start' }], t: 0.45 }, box: { left: 22, top: 118 }, cue: 'Keep your elbows under the bar so your forearms point straight up.' },
-    { key: 'head', text: 'Head<br>through', anchor: 'chin', cue: 'Lean back slightly from the hips, then move under the bar as it passes.',
+    { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: [{ at: 'elbow.r', pose: 'start' }, { at: 'grip.r', pose: 'start' }], t: 0.5 }, box: { left: 22, top: 118 }, cue: 'Keep your elbows under the bar so your forearms point straight up.' },
+    // 'Head through' and its cue: c6 (card plate.checkpoints 'Head clear'; W2 fix round, #385 6648438434)
+    { key: 'head', text: 'Head<br>through', anchor: 'chin', cue: 'Lean back slightly from the hips, then move under the bar as it passes.', cite: ['c6'],
       guide: [{ at: 'ear', pose: 'start' }, 'ear'], box: { left: 258, top: 96 } },
     { key: 'midfoot', text: 'Over<br>mid-foot', anchor: { at: 'grip.r', off: [6, -2] }, cue: 'Lock out with the bar over your shoulders and mid-foot.' },
   ],
@@ -243,11 +279,11 @@ export default {
     pose: mistakePose,
     parts: ['arm.r', 'arm.l'],
     guides: [
-      ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the faulty arm: elbow behind the bar, forearm tilted
-      { kind: 'dashed', pts: MB_RING },                 // the faulty bar (sleeve), in front of the face
+      ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the faulty start arm: elbow under the shoulder, behind the bar; forearm tilted
+      { kind: 'dashed', pts: MB_RING },                 // the faulty bar (sleeve), on the front delts
       { kind: 'dashed', pts: DRIFT },                      // light: the bar's forward drift away from the face
       { kind: 'dashed', pts: DRIFT_RING },
-      { kind: 'arrow', from: [0, DRIFT_END[1], DRIFT_END[2] - 0.09], to: [0, DRIFT_END[1], DRIFT_END[2] - RING_R] },   // arrowhead: the drift's direction
+      { kind: 'arrow', from: [0, DRIFT_END[1] - 0.09 * DU[1], DRIFT_END[2] - 0.09 * DU[2]], to: DRIFT_TO },   // arrowhead along the drift's end tangent
     ],
     tells: [
       { key: 'elbows', text: 'Elbows back', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'The elbows sit behind the bar, so your forearms tilt.' },

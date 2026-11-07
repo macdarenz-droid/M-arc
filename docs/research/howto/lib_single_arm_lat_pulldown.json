@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=b6d29106b2c4657c283af8ce161b76148c0177dabeb788c9817051056a8e014b
+{
+  "id": "lib_single_arm_lat_pulldown",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/single_arm_lat_pulldown.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-lat-pulldown",
+    "barbend-single-arm-lat-pulldown",
+    "odriscoll-1992",
+    "puregym-single-arm-lat-pulldown",
+    "hk-baechle-grip",
+    "hand-key-d-handle",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

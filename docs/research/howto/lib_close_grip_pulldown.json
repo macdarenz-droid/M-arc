@@ -1,0 +1,24 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=039081bf6b41d86f1b4d48c50fe04f6bc7494bbf950f99b9b6051d7d0dabcf29
+{
+  "id": "lib_close_grip_pulldown",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/close_grip_pulldown.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-lat-pulldown",
+    "andersen-2014",
+    "odriscoll-1992",
+    "puregym-close-grip-lat-pulldown",
+    "signorile-2002",
+    "strengthlog-neutral-close-grip-lat-pulldown",
+    "hk-baechle-grip",
+    "hand-key-v-handle",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

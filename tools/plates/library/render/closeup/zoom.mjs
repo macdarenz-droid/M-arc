@@ -8,6 +8,15 @@ import { LAYERS_ENGINE, engineCrop, refSrcCrop } from './crop.mjs';
 import { handZoomOf } from './hand.mjs';
 import { zoomCss } from './zoom-css.mjs';
 
+/**
+ * LIB-PLATEFIX-3 E2 (W7 #394 6682923012 jumping_jacks L8, hollow_body_hold; supervisor #394 6683570453; W6 #393
+ * 6683164302 lb06 crunch): a sheet whose posture zooms draw a `path` guide gets the path rules (zoom-css `path`) even
+ * when its page options leave them out, so the path and its head take the accent or fault token instead of the
+ * browser's default black (invisible on Silent Black). A sheet with no path guide, or whose options already set `path`,
+ * gets its options unchanged, so its bytes do not move.
+ */
+export const cssFor = (css, howto) => (!css?.path && (howto.zooms ?? []).some(z => (z.guides ?? []).some(g => g.kind === 'path')) ? { ...css, path: true } : css);
+
 export function zoomApi(mod, o, engine = LAYERS_ENGINE) {
   const howto = mod.default;
   const { handZoom, PAGES } = handZoomOf(mod, o.hand, o.thumb);
@@ -26,5 +35,5 @@ export function zoomApi(mod, o, engine = LAYERS_ENGINE) {
     ${z.camLabel ? `<div class="th-cam eyebrow z-cam">${esc(z.camLabel)}</div>` : ''}<div class="z-pair${z.camLabel ? ' has-cam' : ''}"><div>${head(true)}${c(z, 'right')}</div><div>${head(false)}${c(z, 'wrong')}</div></div>
     ${captions(z.caption)}${feelLink(z)}</section>`;
   }
-  return { handZoom, postureZoom, zoomSection: undefined, chipRow: chipRowOf(howto, o.chipText), PAGES, CSS: zoomCss(o.css), ZCSS: undefined, howto };
+  return { handZoom, postureZoom, zoomSection: undefined, chipRow: chipRowOf(howto, o.chipText), PAGES, CSS: zoomCss(cssFor(o.css, howto)), ZCSS: undefined, howto };
 }

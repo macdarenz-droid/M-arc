@@ -638,11 +638,11 @@
  ],
  "tempo": [
   {
-   "phase": "Lower",
+   "phase": "Lift",
    "move": true
   },
   {
-   "phase": "Lift",
+   "phase": "Lower",
    "move": true
   }
  ],

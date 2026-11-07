@@ -9,7 +9,7 @@
 //   plate    1 px apart, clean then red on plate ink outside the circle
 // Used by tests/gate/zoom-ink.mjs and the gate block F-ZOOM-INK.
 import { makeMirror } from '../../golden.mjs';
-import { candidateOf } from '../candidate.mjs';
+import { AUTHORING_REFUSED, candidateOf } from '../candidate.mjs';
 import { browserResults } from '../qa/browser.mjs';
 import { dropMirror, loadEngine } from '../qa/engine.mjs';
 import { loadPins } from '../qa/index.mjs';
@@ -17,7 +17,11 @@ import { buildZoomPage, zoomAll } from './build.mjs';
 import { sha256 } from '../lb1/build.mjs';
 
 export const ID = 'lib_horizontal_leg_press', TELL = 'horizontal-leg-press-m-lock', CIRCLE = { c: [166, 130], r: 52 };
-export const PAGE_SHA = 'a0ef8eabc3b6935193531cd9236a27c5e67b5102f8b9f9c9ec7f3de031ccece0';
+// LIB-SHIP W3: the zoom plates page re-pinned under D-REPIN-UNMERGED (#384 6681018514; horizontal_leg_press's alt text)
+export const PAGE_SHA = '5e4d3b43fced120e3e94f0ddc36af6ec1b1f974688da3a8d39fcacb759a179ce';
+/** LIB-SHIP W3 Q-W3-13: a pinned row (approved-plate or shipped) is probed through its pinned, non-authoring candidate
+ *  (its pin's exemptions); only a row still in drawing or review takes the authoring candidate (D-LIB9-AUTHORQA). */
+export const authoringFor = row => !AUTHORING_REFUSED.includes(row?.stage);
 const BARE = '.plate .pz-bg { fill: none; } .plate .pz-ring { stroke: none; }';
 export const PROBES = [
   { case: 'clipped', at: [270, 60], want: 'clean' },
@@ -47,7 +51,7 @@ export async function zoomInk(browser, { reverted = false } = {}) {
   try {
     const E = await loadEngine(mirror), env = loadPins().envelope;
     const h1 = async (html, css = null) => {
-      const c = await candidateOf(ID, { all, platesHtml: html, engine: E, authoring: true });
+      const c = await candidateOf(ID, { all, platesHtml: html, engine: E, authoring: authoringFor(all.find(r => r.id === ID)) });
       if (!c.plate.zoom?.mistake) throw new Error('zoom-ink: horizontal_leg_press has no Mistake zoom on its page');
       // 390 px only: the 360 and 340 px rows report 'not measured' and are left out
       return (await browserResults(browser, html, [c], E, env, { widths: [390], css })).get(c.id).H1.map(p => p.text).filter(t => !/: not measured$/.test(t));

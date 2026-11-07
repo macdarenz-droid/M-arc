@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=b98372c3739c443c3d0f0a97c78d54f6c3b7a9721c4871d71115bc777e1e024c
+{
+  "id": "lib_straight_arm_pulldown",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/straight_arm_pulldown.json",
+    "rev": 1
+  },
+  "sources": [
+    "athlean-sap",
+    "catalyst-sap",
+    "ace-sap",
+    "difonza2026",
+    "hold-default",
+    "nhs-back",
+    "nhs-wrist-pain"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

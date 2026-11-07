@@ -66,21 +66,33 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
       .toThrow(/lib_dumbbell_lateral_raise is one of the 8/);
   });
   it('inputsFor(key) and inputsFor(id) are equal and non-empty for every id on a key, with the key\'s module file and no other', () => {
-    for (const k of C.sweep(P.keysOf(), 8 + 2 + 5, 'pair keys')) {   // LIB-7's 8 + LIB-12's 2 (D-LIB12FIX-R8-GAPS, #191 6274835211) + LIB-7c 5 (D-LIB7c-SCOPE)
-      const byKey = P.inputsFor(k), file = P.INDEX.drawn.get(idsOfKey(k)[0]).mod.FILE;
+    for (const k of C.sweep(baseKeys(), 8 + 2 + 5, 'pair keys')) {   // LIB-7's 8 + LIB-12's 2 (D-LIB12FIX-R8-GAPS, #191 6274835211) + LIB-7c 5 (D-LIB7c-SCOPE); LIB-SHIP W3: + W3's 4 sub-keys below
+      const byKey = P.inputsFor(k), file = P.INDEX.drawn.get(idsOrSub(k)[0]).mod.FILE;
       expect(byKey.length).toBeGreaterThan(0);
       expect(byKey).toContain(file);
       expect(byKey).toContain('tools/plates/library/hands/panel.mjs');
       expect(byKey.filter((f: string) => f === PN.WORDS_DIR || f.startsWith(`${PN.WORDS_DIR}/`))).toEqual([PN.CHROME_WORDS, PN.wordsFileOf(k)].sort());   // PK2: its own words file only (inputsFor sorts: D-LIB12FIX-ORDER)
       expect(byKey.filter((f: string) => /library\/hands\/hand-[a-z0-9-]+\.mjs$/.test(f))).toEqual([file]);
-      for (const id of idsOfKey(k)) expect([k, id, P.inputsFor(id)]).toEqual([k, id, byKey]);
+      for (const id of idsOrSub(k)) expect([k, id, P.inputsFor(id)]).toEqual([k, id, byKey]);
+    }
+    // LIB-SHIP W3: a sub-key reads its base key's files, the layers config that names it and its row's card; its one id reads the base's
+    for (const [s, b] of Object.entries(W3_SUB_BASE)) {
+      expect([s, idsOfKey(s)]).toEqual([s, [W3_SUB_ID[s]]]);
+      expect([s, P.inputsFor(s)]).toEqual([s, [...new Set([...P.inputsFor(b), W3_LAYERS, `docs/research/howto/cards/${W3_SUB_ID[s]}.json`])].sort()]);
+      expect([s, P.inputsFor(W3_SUB_ID[s])]).toEqual([s, P.inputsFor(b)]);
     }
   });
   // LIB-SHIP (D-SHIP-A9, ruling 3; D-SHIP-W1-LAYERS #376 6616230145): replaces "no shipped row has a key". The shipped rows'
   // keys are exactly the ruled set: an unruled keyed row shipped, or a ruled one dropped, is red.
   it('pairPanel(key) is a zx panel; LIB-SHIP: the shipped rows with a key are exactly the ruled ones; a fresh import does not throw', async () => {
     for (const k of P.keysOf()) expect((await P.pairPanel(k)).startsWith('<div class="zx"')).toBe(true);
-    expect(hp.pairsOf(P, reg.shippedIds())).toEqual({ pairOf: { 'dumbbell-biceps-curl': 'curl-dumbbell-under' }, keys: ['curl-dumbbell-under'] });
+    // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's 5 pair ids join the curl on their ruled sub-keys, in registry order
+    expect(hp.pairsOf(P, reg.shippedIds())).toEqual({
+      pairOf: { 'chin-up': 'bar-hang-only-curled-under', 'hanging-knee-raise': 'bar-hang-over', 'inverted-row': 'bar-row-only-curled-over',
+        'close-grip-pulldown': 'v-handle-pull-only-curled-neutral-overhead', 'single-arm-lat-pulldown': 'd-handle-pull-only-curled-unstated',
+        'dumbbell-biceps-curl': 'curl-dumbbell-under' },
+      keys: ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated', 'curl-dumbbell-under'],
+    });
     const fresh = await import(/* @vite-ignore */ `${url('tools/plates/library/hands/pairs.mjs')}?lib7fix=${Date.now()}`);
     expect(fresh.HAND_OF_ID).toEqual(P.HAND_OF_ID);
   }, 60_000);
@@ -100,12 +112,46 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
   }, 60_000);
 });
 
+// LIB-SHIP W3 (D-SHIP-A9 guard replacement; F-PAIR-FAULTS sub-keys, #386): W3's 4 pair rows name pairFaults in
+// lb01.layers.json, so HAND_OF_ID maps each to a sub-key drawn from its base key (pairs.mjs: the base key's files plus the
+// config and the row's card; words = the base key's file with the row's pairWords over it). The base keys keep their
+// key-index ids but no HAND_OF_ID id; every other key is as on main. Used from F1 on (module scope, read at test time).
+const W3_SUB_BASE: Record<string, string> = {
+  'bar-hang-only-curled-under': 'bar-hang-under', 'bar-row-only-curled-over': 'bar-row-over',
+  'v-handle-pull-only-curled-neutral-overhead': 'v-handle-pull-neutral-overhead', 'd-handle-pull-only-curled-unstated': 'd-handle-pull-unstated',
+};
+const W3_SUB_ID: Record<string, string> = {
+  'bar-hang-only-curled-under': 'chin_up', 'bar-row-only-curled-over': 'inverted_row',
+  'v-handle-pull-only-curled-neutral-overhead': 'close_grip_pulldown', 'd-handle-pull-only-curled-unstated': 'single_arm_lat_pulldown',
+};
+const W3_LAYERS = 'tools/plates/library/pages/lb01.layers.json';
+/** keysOf() less W3's sub-keys: the LIB-7, LIB-12 and LIB-7c keys. Red unless keysOf() is exactly these, then W3's 4. */
+const baseKeys = (): string[] => {
+  const all = P.keysOf(), base = all.filter((k: string) => !(k in W3_SUB_BASE));
+  expect(all).toEqual([...base, ...Object.keys(W3_SUB_BASE)]);
+  return base;
+};
+/** A key's HAND_OF_ID ids; a W3 base key's are its sub-key's (red for any other key with none). */
+const idsOrSub = (k: string) => {
+  const own = idsOfKey(k), sub = Object.keys(W3_SUB_BASE).find(s => W3_SUB_BASE[s] === k);
+  if (own.length) return own;
+  expect(sub, `${k}: no ids`).toBeTruthy();
+  return idsOfKey(sub!);
+};
+/** The words a W3 sub-key's panel shows: its base key's file with the row's pairWords slots over it (pairs.mjs subPanel). */
+const subWords = (sub: string) => {
+  const all = PN.allWords(), kw = all.keys[W3_SUB_BASE[sub]!], row = JSON.parse(readFileSync(W3_LAYERS, 'utf8')).closeups[`lib_${W3_SUB_ID[sub]}`];
+  return { chrome: all.chrome, keys: { ...all.keys, [sub]: { ...kw, faults: Object.fromEntries(row.pairFaults.map((f: string) => [f, { ...kw.faults[f], ...(row.pairWords?.[f] ?? {}) }])) } } };
+};
+
 describe('LIB-7-FIX F2: key identity (D-LIB7FIX-KEY)', () => {
   it('8 keys over the 12 LIB-7 ids, 7 distinct pictures; one ordered fault list per key; the panel is the same through each of its ids', async () => {
     const lib7Keys = new Set(lib7Drawn().map(id => P.HAND_OF_ID[`lib_${id}`]));
     C.sweep(lib7Keys, 8, 'LIB-7 pair keys');
     C.sweep(S.tiles(P.INDEX).filter((t: any) => t.spec.mod.OWNER === 'LIB-7'), 7, 'LIB-7 distinct pictures');
-    for (const k of P.keysOf()) {
+    // LIB-SHIP W3: the keys with no HAND_OF_ID id are exactly W3's 4 base keys (their panels are pinned to main by pair-faults.test.ts A1)
+    expect(baseKeys().filter(k => !idsOfKey(k).length).sort()).toEqual(Object.values(W3_SUB_BASE).sort());
+    for (const k of baseKeys().filter(k => idsOfKey(k).length)) {
       const list = idsOfKey(k);
       const faults = new Set(list.map(id => P.pairSpec(id).wrong.map((w: any) => w.key).join(',')));
       expect([k, faults.size]).toEqual([k, 1]);
@@ -114,6 +160,13 @@ describe('LIB-7-FIX F2: key identity (D-LIB7FIX-KEY)', () => {
         const via = PN.panelHtml(k, P.pairSpec(id).wrong.map((w: any) => ({ fault: w.key, svg: P.renderPair(id, { fault: w.key, uid: `hp-${k}-${w.key}` }).svg })));
         expect([k, id, via === panel]).toEqual([k, id, true]);
       }
+    }
+    // LIB-SHIP W3: a sub-key draws its one id for exactly the row's pairFaults, with the row's words over its base key's
+    for (const s of Object.keys(W3_SUB_BASE)) {
+      const id = W3_SUB_ID[s]!, row = JSON.parse(readFileSync(W3_LAYERS, 'utf8')).closeups[`lib_${id}`];
+      expect([s, P.pairSpec(id).wrong.map((w: any) => w.key)]).toEqual([s, row.pairFaults]);
+      const via = PN.panelHtml(s, row.pairFaults.map((f: string) => ({ fault: f, svg: P.renderPair(id, { fault: f, uid: `hp-${s}-${f}` }).svg })), subWords(s));
+      expect([s, via === await P.pairPanel(s)]).toEqual([s, true]);
     }
   }, 60_000);
   it('mutations: faults reordered on one id, a repeated key string, a dash-prefixed key, a key equal to a drawn id each throw naming both', () => {
@@ -178,9 +231,9 @@ describe('LIB-7-FIX F3: exercise-neutral panels, approved words (D-LIB7FIX-WORDS
     for (const k of P.keysOf()) {
       const h = await P.pairPanel(k);
       expect(neutralProblems(k, h)).toEqual([]);
-      expect(wordProblems(k, h)).toEqual([]);
+      expect(wordProblems(k, h, k in W3_SUB_BASE ? subWords(k) : PN.allWords())).toEqual([]);   // LIB-SHIP W3: a sub-key's words are its base's with its row's pairWords
     }
-    expect(Object.keys(PN.allWords().keys).sort()).toEqual([...P.keysOf()].sort());   // the key files under hands/words/ equal keysOf(): no words for a key that is not drawn
+    expect(Object.keys(PN.allWords().keys).sort()).toEqual([...baseKeys()].sort());   // LIB-SHIP W3: a sub-key has no words file (its row's pairWords)   // the key files under hands/words/ equal keysOf(): no words for a key that is not drawn
   }, 60_000);
   it('mutations: a uid from an id, an 11-word caption, a caption with no source, a heading taken from a card are each red', async () => {
     const k = 'curl-dumbbell-neutral', id = 'hammer_curl', faults = P.pairSpec(id).wrong.map((w: any) => w.key);
@@ -217,11 +270,21 @@ const FROZEN: Record<string, string> = {
   'tools/plates/library/hands/sheet.mjs': '2949e66b68d3c4de9e8e6ce800af4cfa6a50094b9f2fdd869ecd273703f543e2',
   'tools/plates/library/render/closeup/zoom-css.mjs': '37836f22478605ef8162af3c05e515385d03034d090279b6c91f4248adce2fdf',
 };
+const W3_ZC = 'tools/plates/library/render/closeup/zoom-css.mjs', W3_FADE = '` : \'\'}${o.fade ? `.z-crop .z-fade { opacity: .35; }\n';
+const lessFade = (s: string) => { const parts = s.split(W3_FADE); if (parts.length !== 2) throw new Error(`zoom-css.mjs: the W3 fade line ${parts.length - 1} times`); return parts.join(''); };
 const panelSvgs = (h: string) => [...h.matchAll(/<div class="hand-plate">([\s\S]*?)<\/div><div class="zoom-caps">/g)].map(m => m[1]!);
 
 describe('LIB-7-FIX F4: the 12 approvals carry (D-LIB7FIX-CARRY)', () => {
   it('the frozen files are byte-identical to the approved heads', () => {
-    for (const [f, h] of Object.entries(FROZEN)) expect([f, sha(readFileSync(f))]).toEqual([f, h]);
+    // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3 PANEL FIX 2 (f561ff71, #384 6649416891) adds one line to zoom-css.mjs, gated on
+    // o.fade, which no hand panel sets (the panel SVG test below is unchanged); with exactly that line out it is the approved head
+    for (const [f, h] of Object.entries(FROZEN)) expect([f, sha(f === W3_ZC ? lessFade(readFileSync(f, 'utf8')) : readFileSync(f))]).toEqual([f, h]);
+  });
+  it('LIB-SHIP W3 mutations: zoom-css.mjs without the fade line, with it twice, or with another change is red', () => {
+    const src = readFileSync(W3_ZC, 'utf8');
+    expect(() => lessFade(src.replace(W3_FADE, ''))).toThrow();
+    expect(() => lessFade(src.replace(W3_FADE, W3_FADE + W3_FADE))).toThrow();
+    expect(sha(lessFade(src.replace('.z-cap {', '.z-capx {')))).not.toBe(FROZEN[W3_ZC]);
   });
   it('for each approved id and fault, the panel\'s SVG === renderPair(id, { fault }).svg with hp-<id>-<fault> swapped for the panel uid, after splitHalves (22 pages)', async () => {
     let n = 0;
@@ -326,7 +389,7 @@ describe('LIB-7-FIX PK1: words split per key, panels unchanged', () => {
     for (const k of lib7) expect([k, (await P.pairPanel(k)) === PN.panelHtml(k, pagesOf(k), fixtureWords(k))]).toEqual([k, true]);
     const all = PN.allWords();
     expect({ ...wordsSplit(all), keys: Object.fromEntries(lib7.map((k: string) => [k, all.keys[k]])) }).toEqual(WORDS_FIXTURE);
-    expect(Object.keys(PN.allWords().keys)).toEqual([...P.keysOf()].sort());
+    expect(Object.keys(PN.allWords().keys)).toEqual([...baseKeys()].sort());   // LIB-SHIP W3: a sub-key has no words file (its row's pairWords)
   }, 60_000);
   it('no tool, script or test file names panel-words.json, apart from this reader', () => {
     const hits: string[] = [], walk = (d: string) => { for (const n of readdirSync(d)) { const p = `${d}/${n}`; if (n === 'node_modules' || n === '.gen') continue; if (statSync(p).isDirectory()) walk(p); else if (/\.(mjs|js|ts|json)$/.test(n) && readFileSync(p, 'utf8').includes('panel-words.json')) hits.push(p); } };
@@ -346,7 +409,9 @@ describe('LIB-7-FIX PK1: words split per key, panels unchanged', () => {
 
 describe('LIB-7-FIX PK2: inputs per key', () => {
   it('each key lists chrome.json and its own words file only under hands/words/, and only files', () => {
-    for (const k of P.keysOf()) expect(wordsInputProblems(k, P.inputsFor(k))).toEqual([]);
+    for (const k of baseKeys()) expect(wordsInputProblems(k, P.inputsFor(k))).toEqual([]);
+    // LIB-SHIP W3: a sub-key's words inputs are its base key's (its own words are its row's pairWords, in the config it lists)
+    for (const [s, b] of Object.entries(W3_SUB_BASE)) expect(wordsInputProblems(b, P.inputsFor(s))).toEqual([]);
   });
   it('mutations: inputsFor listing every words file, or WORDS_DIR, is red', () => {
     const k = 'rope-push-neutral', base = P.inputsFor(k);
@@ -463,7 +528,8 @@ describe('LIB-7-FIX PK4: adding a key moves no existing key\'s files', () => {
     await withDeclared([...P.MODULES, fx], async () => {
       const idx2 = synthIdx([...P.MODULES, fx]);
       expect(P.keysOf(idx2)).toContain('zz-fix-pull-zz');
-      for (const k of P.keysOf()) {
+      // LIB-SHIP W3: W3's 4 sub-keys resolve on the repo index only (pairs.mjs inputsFor, pairPanel); their base keys are here, and (b) covers them
+      for (const k of baseKeys()) {
         expect([k, P.inputsFor(k, idx2)]).toEqual([k, P.inputsFor(k)]);
         expect([k, (await P.pairPanel(k, idx2)) === (await P.pairPanel(k))]).toEqual([k, true]);
       }
@@ -474,7 +540,7 @@ describe('LIB-7-FIX PK4: adding a key moves no existing key\'s files', () => {
     const wt = join(tmpdir(), `lib7fix-pk4-${process.pid}-${Date.now()}`), git = (...a: string[]) => execFileSync('git', a, { stdio: 'pipe' }).toString();
     try {
       git('worktree', 'add', '--detach', '--no-checkout', wt, 'HEAD');
-      git('-C', wt, 'checkout', 'HEAD', '--', 'tools/plates', 'src/data');
+      git('-C', wt, 'checkout', 'HEAD', '--', 'tools/plates', 'src/data', 'docs/research/howto');   // LIB-SHIP W3: a sub-key reads its row's card
       // D-SCRATCH-SYNTH-KEYIDX: the synthetic row is added to this scratch worktree's exercises.json only
       writeFileSync(join(wt, 'src/data/exercises.json'), JSON.stringify([...REAL_EX, { ...REAL_EX[0], id: SYNTH }], null, 2));
       writeFileSync(join(wt, 'tools/plates/library/hands/hand-zz-dummy.mjs'), DUMMY_MODULE);

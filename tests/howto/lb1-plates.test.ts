@@ -20,7 +20,8 @@ const IDS = LB1.map(i => `lib_${i}`);
 // LIB-ZOOM (#279) re-adds it with its approved zoom. Its spec, card and tempo stay; it still must never ship.
 const HELD = ['lib_horizontal_leg_press'];
 const ROW_IDS = IDS.filter(i => !HELD.includes(i));
-const ROWS = 'tools/plates/library/lb1/rows.json';
+// LIB-SHIP W3 (Q-W3-6): the LB1 rows moved into batches/lb01.json (D-SHIP-MOVE); lb1/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb01.json';
 const COMPOSERS = ['assistMachine', 'chestRowMachine', 'band', 'dHandle', 'polybar'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -966,19 +967,37 @@ describe('LIB-9a A5: lb1/rows.json holds exactly the 13 LB1 ids not held, all mo
 });
 
 describe('LIB-9a A9: nothing ships (D-LIB4-ENTRY-2)', { timeout: T }, () => {
-  it('every LB1 row is at stage drawing or review', () => {
-    for (const [id, r] of Object.entries<any>(readJson(ROWS).rows)) expect(['drawing', 'review'], id).toContain(r.stage);
+  // LIB-SHIP W3 (D-SHIP-A9, ruling 3): replaces "every LB1 row is at stage drawing or review", "no LB1 id is shipped",
+  // "no LB1 id is in any batches/ file" and "no LB1 id ... in golden/library/" with the W3 ruled set as positive asserts:
+  // exactly W3's 9 ship (#384 6653062201; D-SHIP-W3-NOPAIR 6681221802); the other LB1 ids stay approved-plate
+  // (assisted_pull_up, underhand_lat_pulldown LIB-PLATEFIX-3; incline_machine_press, shoulder_press D-SHIP-W3-NOPAIR) or
+  // left-out (leg_press_calf_raise, D-OWNER-LIB142); every LB1 id lives in lb01.json or zoom.json and nowhere else.
+  const W3 = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
+    'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', 'lib_horizontal_leg_press'];
+  const stageWant = (id: string) => (W3.includes(id) ? 'shipped' : id === 'lib_leg_press_calf_raise' ? /^left-out:/ : 'approved-plate');
+  const stageProblems = (rows: any[]) => IDS.flatMap(id => {
+    const r = rows.find((x: any) => x.id === id), want = stageWant(id);
+    if (!r) return [`${id}: no row`];
+    return (typeof want === 'string' ? r.stage === want : want.test(r.stage)) ? [] : [`${id}: ${r.stage}`];
   });
-  it('no LB1 id is shipped, even with lb1/rows.json read as a batch file', () => {
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(13);
-    expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
+  it('every LB1 row is at its ruled stage: W3\'s 9 shipped, the rest approved-plate or left-out', () => {
+    expect(stageProblems(reg.rows())).toEqual([]);
+  });
+  it('red: a W3 id back at approved-plate, or a held id shipped, is red', () => {
+    const rows = reg.rows();
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_chin_up' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_chin_up: approved-plate']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_shoulder_press' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_shoulder_press: shipped']);
+  });
+  it('the shipped LB1 ids are exactly W3\'s 9, in registry order', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W3);
   });
   /** Problems of a batches/ listing [[name, text]]: an LB1 id as a whole token. */
   const batchProblems = (files: [string, string][]) => files.flatMap(([f, text]) => IDS.filter(id => new RegExp(`\\b${id}\\b`).test(text)).map(id => `${f}: ${id}`));
-  it('no LB1 id is in any tools/plates/library/batches/ file', () => {
+  it('LIB-SHIP W3: the LB1 ids are in lb01.json and zoom.json only (D-SHIP-MOVE)', () => {
     const dir = 'tools/plates/library/batches';
-    expect(batchProblems(readdirSync(dir).filter(n => n.endsWith('.json')).map(f => [f, readFileSync(join(dir, f), 'utf8')]))).toEqual([]);
+    const files = readdirSync(dir).filter(n => n.endsWith('.json')).map(f => [f, readFileSync(join(dir, f), 'utf8')] as [string, string]);
+    expect(batchProblems(files.filter(([f]) => f !== 'lb01.json' && f !== 'zoom.json'))).toEqual([]);
+    expect(batchProblems(files.filter(([f]) => f === 'lb01.json' || f === 'zoom.json')).length).toBe(IDS.length);
   });
   it('mutations: a batches/ file naming lib_chin_up is red; one naming only lib_dumbbell_shoulder_press stays green', () => {
     expect(batchProblems([['zz.json', '{"rows":{"lib_chin_up":{}}}']])).toEqual(['zz.json: lib_chin_up']);
@@ -999,10 +1018,11 @@ describe('LIB-9a A9: nothing ships (D-LIB4-ENTRY-2)', { timeout: T }, () => {
     }
     return bad;
   };
-  it('no LB1 id, slug or batch is in tests/howto/golden/library/', () => {
-    const dir = 'tests/howto/golden/library';
-    const files: [string, string][] = existsSync(dir) ? readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : [];
+  it('LIB-SHIP W3: no LB1 id, slug or batch is in tests/howto/golden/library/ outside the lb01 and zoom pins and pages', () => {
+    const dir = 'tests/howto/golden/library', mine = ['lb01.json', 'zoom.json', 'lb01.layers.html', 'zoom.layers.html'];
+    const files: [string, string][] = existsSync(dir) ? readdirSync(dir).filter(f => !mine.includes(f)).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : [];
     expect(goldenProblems(files)).toEqual([]);
+    for (const f of mine) expect([f, existsSync(join(dir, f))]).toEqual([f, true]);
   });
   it('mutations: a page-only lb1.json and chin-up.layers.html are red; a file naming only lib_dumbbell_shoulder_press stays green', () => {
     expect(goldenProblems([['lb1.json', '{"entries":[{"kind":"page","batch":"LB1"}]}']]).length).toBeGreaterThan(0);
@@ -1018,11 +1038,17 @@ describe('LIB-9a A9: nothing ships (D-LIB4-ENTRY-2)', { timeout: T }, () => {
 });
 
 describe('LIB-9a A8 (Do 4, D-LIB9-AUTHORQA): the authoring option', { timeout: T }, () => {
-  it('returns the candidate with exemptions [] and reads no pin; the default path with no pin still throws', async () => {
-    const c = await cand.candidateOf('lib_close_grip_pulldown', { all, platesHtml: html, engine: E, authoring: true });
+  // LIB-SHIP W3 (D-SHIP-A9, ruling 3; authoring QA to the pinned path): close_grip is pinned and shipped, so the authoring
+  // option runs on an in-memory copy at stage drawing; the default path reads the pin's exemptions; a row with no pin still throws
+  const drawing = (id = 'lib_close_grip_pulldown', patch: any = {}) => { const data = build.lb1Data(); data.rows[id] = { ...data.rows[id], stage: 'drawing', ...patch }; return build.lb1All(undefined, data); };
+  it('returns the candidate with exemptions [] and reads no pin; the default path reads the pin; a row with no pin still throws', async () => {
+    const c = await cand.candidateOf('lib_close_grip_pulldown', { all: drawing(), platesHtml: html, engine: E, authoring: true });
     expect(c.exemptions).toEqual([]);
     expect(c.research.topFault).toBe('low');
-    await expect(cand.candidateOf('lib_close_grip_pulldown', { all, platesHtml: html, engine: E })).rejects.toThrow(/batch golden|golden file|pin/i);
+    const pinned = await cand.candidateOf('lib_close_grip_pulldown', { all, platesHtml: html, engine: E });
+    expect(pinned.exemptions).toEqual(JSON.parse(readFileSync('tests/howto/golden/library/lb01.json', 'utf8')).entries.find((e: any) => e.id === 'lib_close_grip_pulldown').exemptions);
+    const unpinned = drawing().map((r: any) => r.id === 'lib_close_grip_pulldown' ? { ...r, batchFile: 'tools/plates/library/batches/no-such-batch.json' } : r);
+    await expect(cand.candidateOf('lib_close_grip_pulldown', { all: unpinned, platesHtml: html, engine: E })).rejects.toThrow(/batch golden|golden file|pin/i);
   });
   it('mutations: authoring on a shipped row and on an approved-plate row both throw', async () => {
     for (const stage of ['shipped', 'approved-plate']) {
@@ -1039,8 +1065,9 @@ describe('LIB-9a Q-A (#245): candidate.mjs resolves the How-to source exactly as
   // batch file through the registry's own test hook, for the 13 LB1 rows.
   it('equal to sourceOf for every main row and the 13 LB1 rows', () => {
     for (const r of reg.rows()) expect(cand.howtoOf(r.id, undefined, all), r.id).toBe(reg.sourceOf(r.id));
-    reg.__setExtraBatches([ROWS]);
-    try { for (const id of ROW_IDS) expect(cand.howtoOf(id, undefined, all), id).toBe(reg.sourceOf(id)); } finally { reg.__setExtraBatches([]); }
+    // LIB-SHIP W3 (D-SHIP-MOVE): the LB1 rows are registry rows now (batches/lb01.json and zoom.json), so the loop above
+    // covers them; reading lb01.json again as an extra batch would name each id twice
+    for (const id of ROW_IDS) expect(reg.rows().some((r: any) => r.id === id), id).toBe(true);
   });
   // The changed-path mutation is a source mutation (candidate.mjs howto/ -> how-to/), listed red on the PR.
   it('an unknown id throws', () => {
@@ -1051,7 +1078,8 @@ describe('LIB-9a Q-A (#245): candidate.mjs resolves the How-to source exactly as
 describe('LIB-9a A4, A6 and Q1: runQa node half on the LB1 slice', { timeout: T }, () => {
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
-  const candOf = (id: string, page = html, a = all) => cand.candidateOf(id, { all: a, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W3 (authoring QA to the pinned path): the LB1 rows are pinned, so the node half runs on the pinned candidate
+  const candOf = (id: string, page = html, a = all) => cand.candidateOf(id, { all: a, platesHtml: page, engine: E });
   // F7 is raised exactly where the card is drawable:false (lib4-cards 13 Q1(a)): assisted_pull_up at research head 9eaa248 (LR-31)
   it('clean: both slice plates have no node-half problem; F7 is raised only on a drawable:false card, and only F5 waits on the browser half', async () => {
     for (const id of ['lib_close_grip_pulldown', 'lib_assisted_pull_up']) {
@@ -1142,7 +1170,7 @@ describe('LIB-9a Q5 / A7 and A4 (H10): the D path on an in-memory D copy of lib_
   // carries a test-only envelope row for camera.maxScale, LIB-3b/3c's TEST_ENV row; nothing is written.
   const TEST_ENV = { 'camera.maxScale': [0.9, 1.1] };
   const h10 = async (params: any, change?: (c: any) => any, ctx: any = { envelope: TEST_ENV }) => {
-    let c = await cand.candidateOf('lib_close_grip_pulldown', { all: dAll(params), platesHtml: html, engine: E, authoring: true });
+    let c = await cand.candidateOf('lib_close_grip_pulldown', { all: dAll(params), platesHtml: html, engine: E });   // LIB-SHIP W3: the pinned path
     if (change) c = change(c);
     if (ctx.keepChild !== true && c.derivation) {   // the copy is close_grip's own H drawing, so LIB-3c's child proof is pinned on its own below
       const own = golden.fragmentsOf(c.plate);
@@ -1280,7 +1308,8 @@ describe('LIB-9a A11 and Q3: the card fields and the ruled tempo map', () => {
       for (const f of c.plateFacts) expect(claims.has(f.claim), `${id} ${f.claim}`).toBe(true);
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
       // `id` too: the synthetic N = 153 measurement (library/scale/synthetic.mjs) reads any existing How-to source and checks its id
-      expect(h).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+      // LIB-SHIP W3 (D-SHIP-A9, ruling 3): the stubs are full sheets now (W3); each still names its id and its own card
+      expect(h).toMatchObject({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
   });
 });

@@ -196,5 +196,5 @@ export default {
       { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 150, top: 180 }, cue: 'Your lower back arches as your legs curl.' },
     ],
   },
-  alt: 'Lying leg curl, side view. Face down on the bench with the hips on the pad, the knees just past the bench edge and in line with the machine axis and the roller just above the heels, the lifter curls the heels toward the glutes.',
+  alt: 'Lying leg curl, side view. Face down on the bench with the hips on the pad, the knees close to the bench edge and in line with the machine axis and the roller just above the heels, the lifter curls the heels toward the glutes.',
 };

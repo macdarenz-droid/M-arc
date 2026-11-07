@@ -118,6 +118,9 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
       if (/^src\/slices\/howto\/css\/zoom-[a-z0-9-]+\.css$/.test(p)) {
         expect(w, p).toEqual(['tools/plates/gen/handpairs.mjs', 'tools/plates/gen/hands.mjs']);
         const hp = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs')), reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+        // LIB-SHIP W3: W3's pair rows name pairFaults (F-PAIR-FAULTS), so configPairOf needs the repo's pair loader, as
+        // gen/hands.mjs loads it before any reader in generate
+        await hp.loadPairs();
         expect(hp.after ?? [], `${p}: handpairs.mjs must run after hands.mjs`).toContain('tools/plates/gen/hands.mjs');
         const row = reg.rows().find((r: any) => p === `src/slices/howto/css/zoom-${r.chromeId}.css`);
         expect(row && hp.configPairOf(row), `${p}: a second writer for a row whose layers config names no pair`).toBeTruthy();
@@ -135,7 +138,7 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
       const h = core.parseHeader(readFileSync(p, 'utf8'));
       expect(h.hash, p).toBe(core.inputsSha256(h.writers, await inputsOf(h.writers, p)));
     }
-  });
+  }, 60_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): walks every generated file, which grows with every wave
 
   it('the inputs are the core, the vendored files, the font, golden.mjs, css.mjs, plates.json and GOLDEN.json', () => {
     const ins: string[] = plates.inputs();

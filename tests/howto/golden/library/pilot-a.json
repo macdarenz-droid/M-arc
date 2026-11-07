@@ -445,6 +445,196 @@
       "prev": "4843e6969fbdc4a84772767d1d15f8d59ba083ec7547967c80d6609ec9714a6f"
     },
     {
+      "kind": "layers-page",
+      "batch": "PILOT-A",
+      "ids": [
+        "lib_dumbbell_biceps_curl",
+        "lib_plank",
+        "lib_rope_triceps_pushdown",
+        "lib_barbell_row",
+        "lib_dumbbell_bench_press",
+        "lib_dumbbell_shoulder_press",
+        "lib_upright_row"
+      ],
+      "pageSha256": "11a93d164777c2b0ae47f72d391573aed38a209d63b03bad72e3e30004ff5ff9",
+      "bytes": 1378217,
+      "approvedBy": "supervisor",
+      "decision": "D-BODYMAP-LIB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/404#issuecomment-6688047379 @ 797bf0a05394b78fe32a43859987fd40b7b2c73f",
+      "date": "2026-11-06",
+      "supersedes": 15,
+      "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-BODYMAP-APPEND #404 6688047379; supervisor under D-LIB-O5 point 4: golden-B design kinds only, superseding a supervisor entry): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow and back-of-knee pain parts. Byte proof: with the fix paths undone, this page equals the superseded entry page byte for byte, except the shimmer band of a feel map whose main muscles include front_delts. Built twice, equal sha256.",
+      "prev": "715d3f61c4997a3227aa9136523d83452759d7c65b8b8b7286427e0695415975"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "d38e8b3315af11e9ebe5bcc4534054b0c02ad25ea3773f690a943863b8f26429",
+      "bytes": 1316144,
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918; OHP plate focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d",
+      "why": "LIB-PLATEFIX-1: the plates page with this batch's fixed plates, approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918; OHP plate focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d",
+      "supersedes": 0,
+      "prev": "9bcdd07ba54c7031d90ced0eac580ab6aa6e355366dc0f8033df5a822e6c6f87"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_barbell_row",
+      "src": "library/specs/barbell_row.mjs",
+      "slug": "barbell-row",
+      "prefix": "barbell-row",
+      "chromeId": "barbell-row",
+      "fragments": {
+        "normalSvg": "82b80c739a5797025aa39521b6665afdb3f28de70e81244b0783f1b02fc5b38d",
+        "normalOverlay": "306f71122ce0cb642329bfb04391e8879d0a8e1decab278a8f6f47fc9127a1fe",
+        "mistakeSvg": "bedb815857e07ed0c0676df32055547a75874258a965c1fc4fa263cd8fd76c35",
+        "mistakeOverlay": "5e4d2d3deb44f53dbf5bb78bac6eb42499f41218235ead64dc5512f24c31b87c",
+        "tells": "66d3799abf0a2c916a25f7d11de5074a1c4ee8bc5d28b22424076e935edccca7",
+        "tempo": "85464aff27287f56375923a2ea166aab9e5aab3fac8821ace0063acb9b3a3e0f",
+        "cues": "422a2726372f17374c70eed3d9aa0fe80e49b8caa54fb2e95d954f803302fc1c",
+        "alt": "632b389f75492687ab11d6c0e93b858bae3ce77a52635706df2253cefb7be726",
+        "mistakeAlt": "3e43ff2a241cb5d2c3e9c6409efcaaf0fff97640011bbedf5eeed94612d30ee1"
+      },
+      "exemptions": [
+        "F4",
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "why": "LIB-PLATEFIX-1: lib_barbell_row's plate fixed from the W2 layers panel (#379 6633524031), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "supersedes": 1,
+      "prev": "d183e2f442f33c1ac1c4d8c8b6b192882332b1ae1d19f3e3115dc8e701ed076d"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_barbell_overhead_press",
+      "src": "library/specs/barbell_overhead_press.mjs",
+      "slug": "barbell-overhead-press",
+      "prefix": "barbell-overhead-press",
+      "chromeId": "barbell-overhead-press",
+      "fragments": {
+        "normalSvg": "70d11c3046f14148887cf4029833ec3207867a80ff0144a143ddb12393af98b0",
+        "normalOverlay": "da0748da622e6e30794f8768be268cbf225cb68295ab658d925df7addb089119",
+        "mistakeSvg": "a48b731de42e05959e6a83cbe252e48fea0191d3e47a7a0bb5391950bc466a09",
+        "mistakeOverlay": "df0028a88bb9975ad1fa88a683fa8f28b8b651c8de4ad9e9741decb7103a4e1c",
+        "tells": "1504a47356e13d0a5cef4f3b112cc3a551f0ed5786e68910448b67bf4b250202",
+        "tempo": "dddad8d714b29d378423e6eb0693413e83f20772a2de9912c4f7870f59dab928",
+        "cues": "5653964f3b42d7a707d911ba96747448682aa6bd4ad038f856a7a2d2f189cfe0",
+        "alt": "8ad0444bcfa4dac2e6ca83a35afde56a3eab283b7a913f60bec127e579fb3dbb",
+        "mistakeAlt": "7a8dc57add59738a9e2756c47d0dd4af942d397338cee692e31e2ef23a2aa5f1"
+      },
+      "exemptions": [
+        "F2",
+        "F3",
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d",
+      "why": "LIB-PLATEFIX-1: lib_barbell_overhead_press's plate fixed from the W2 layers panel (#379 6633524031), approved by focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d",
+      "supersedes": 4,
+      "prev": "81050d55f9646bdb2afddf754b5a2c006c4ddf5b74bd166eea6736b607c5b347"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_romanian_deadlift",
+      "src": "library/specs/romanian_deadlift.mjs",
+      "slug": "romanian-deadlift",
+      "prefix": "romanian-deadlift",
+      "chromeId": "romanian-deadlift",
+      "fragments": {
+        "normalSvg": "46bdd83cbf2e319564e11ea8e049b170e25d02dc250968879673809868461da4",
+        "normalOverlay": "5fb582a6376b81a11e10ba3ccc6d7f564e0321dda8a279bfd2acf0b832bcc7d4",
+        "mistakeSvg": "90822affb49bdb64c9d71167b0c9d29dc40f7ca61a06563e4a69331a2593930f",
+        "mistakeOverlay": "ad537fbdd1881930c44ebd0d27412df27ba79efa761709e2cf91c74ca94c35b0",
+        "tells": "bfc930796de6b2a90b7d4a6d776a3baa69defddc7659925e9c94364ef70d4efc",
+        "tempo": "d779228da386025e8d7f2ba40e2cd2eeb7440d2dcd29882ce9633f0e2d38d8ee",
+        "cues": "77d06414ad9a7ed503ab84c85c6c6201dace82d768fc3766efdeab7ce024bc1d",
+        "alt": "b30ebaa71b131126888c987cd9599d4220671faa0be689725750e75ef37687d3",
+        "mistakeAlt": "85c5a7bccb5090dd40c43f505954306ce8131e1b587616e6bf391d7e16694b2d"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "why": "LIB-PLATEFIX-1: lib_romanian_deadlift's plate fixed from the W2 layers panel (#379 6633524031), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "supersedes": 5,
+      "prev": "55014d49e73998b9f2e7fe2403ff80a213158be4c6c8b0580808d4e1f9f2c0f6"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_triceps_pushdown",
+      "src": "library/specs/triceps_pushdown.mjs",
+      "slug": "triceps-pushdown",
+      "prefix": "triceps-pushdown",
+      "chromeId": "triceps-pushdown",
+      "fragments": {
+        "normalSvg": "b1a52e1a6fe3d1170ea3bbde6261e7c28c8eccbf08e038dc371a8d5b8369d8ad",
+        "normalOverlay": "fb8471c5a40f6cb85805294a47e97e4061e2c76fef85b82fc173731b2bb201dd",
+        "mistakeSvg": "713e932495ef3d1f6f68e5724280ac5bae81c139534d51edccbc1977d7a19d45",
+        "mistakeOverlay": "78f161cd4f75fbd90b4862ec204e07e07f2bc283574edd850c127d610bcca184",
+        "tells": "17a605e0a471fcfe46aabba35b0873bfeb6644b1c6f950a659e564d9b4ebc490",
+        "tempo": "f0dc1b6cd544cc25b341b91f9c3276eaa45d732be8524bdb125f54ff1c3badd9",
+        "cues": "cd562f2b152d9d2f48f3e10842cc140578e21ef791ee651263f5864cb9a04908",
+        "alt": "e4d4fd0db2b377e43f0d5a1881aae4dad1ccde142512b7e07c979ca3dede0176",
+        "mistakeAlt": "12e39e893e08a1bdca66fb859d7cd3d3bed46dbad034f4392aabd404a71c1aa8"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-06",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "why": "LIB-PLATEFIX-1: lib_triceps_pushdown's plate fixed from the W2 layers panel (#379 6633524031), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
+      "supersedes": 13,
+      "prev": "3bed9c3a8520980d96900ed43cbd0d1e2aafdaf5cbf37be05b5ededf16e87b63"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-A",
+      "ids": [
+        "lib_dumbbell_biceps_curl",
+        "lib_plank",
+        "lib_rope_triceps_pushdown",
+        "lib_barbell_row",
+        "lib_dumbbell_bench_press",
+        "lib_dumbbell_shoulder_press",
+        "lib_romanian_deadlift",
+        "lib_single_leg_romanian_deadlift",
+        "lib_triceps_pushdown",
+        "lib_upright_row"
+      ],
+      "pageSha256": "ff1bd298c518eed4eb64214da4643b4d2360b40a24d772ee413a84a134c187de",
+      "bytes": 1965361,
+      "approvedBy": "supervisor",
+      "decision": "D-PLATEFIX-SECOND",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6687946433 @ 8f1afa59131a7efec8da40cbc75118e77d3e7f1f",
+      "date": "2026-11-07",
+      "why": "O5; LIB-PLATEFIX-1 layers page rebuilt on main 8841246c (D-PLATEFIX-SECOND point 4): its LIB-PLATEFIX-1 content approved by the calibrated layers panel and rechecks (D-PLATEFIX-STAMP, #385 6653693122 @ 7971bce1b863ccfb3ea20444a7bf53b952905912); cardcmp: every card's plate fragments byte-equal to the approved plates page; strip-back: with the inline zoom groups and ZOOM_CSS taken out it is the 3-way merge of base, the approved page and main's page plus only #404's body-map hunks; zoom groups byte-equal to the plates page's",
+      "supersedes": 16,
+      "prev": "aee72cd6d71040e2991805586f021c0628225ec70e0482a2a42e654e128dad47"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "032ce649154ec63e6492d7044b86d8fde63639cc504a74a83ffe7fa25ae03191",
+      "bytes": 1316144,
+      "approvedBy": "owner",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #395 6686721403 and #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-07",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-2 golden update (plan 2.8, D-PLATEFIX-SECOND form); pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09; pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918; OHP plate focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d",
+      "why": "LIB-PLATEFIX-2 after LIB-PLATEFIX-1 (main 7e060e83): #385's page (entry 17, d38e8b33) with pec_fly's height box moved to top 260 (PQ-H4, D-SHIP-PECFLY-HOLD), approved by pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09; the other 12 cards are byte-equal to their latest plate entries (cardcmp), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918; OHP plate focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d and D-LIB-PILOTA. Two builds give the same sha.",
+      "supersedes": 17,
+      "prev": "fceca9b5d2192f4a39e0ed470a964117a2a8772e6cbe1603582fa18da80b8be2"
+    },
+    {
       "kind": "plate",
       "id": "lib_pec_fly",
       "src": "library/specs/pec_fly.mjs",
@@ -466,24 +656,12 @@
         "F5"
       ],
       "approvedBy": "owner",
-      "decision": "D-OWNER-REPIN",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/395#issuecomment-6686721403 @ fc6ae84c7293de202aba1d39867f7139e23afdb7",
-      "date": "2026-11-06",
-      "why": "Owner answer, verbatim, in chat on 2026-11-06 (relayed by the supervisor, #395 6686721403, D-OWNER-REPIN): \"Do all whats recommended. Whan u have question, answer urself via recommended\". It approves option 1: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version (D-LIB-O5, plan 14.8 point 5). The pf4 panel passed pec_fly (#395 6648800268, PLATEFIX-2 PLATES PANEL RESULT @ 24100cff: \"Approved: pec_fly (PQ-H4 overlap fixed)\"). LIB-PLATEFIX-2 moved the height callout box from top 244 to top 260 (D-SHIP-PECFLY-HOLD, PQ-H4); only normalSvg and normalOverlay change. Exemptions as entry 8.",
+      "decision": "D-OWNER-REPIN; LIB-PLATEFIX-2 golden update (plan 2.8); pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09",
+      "approval": "Owner in chat, 2026-11-06 ~14:10 UTC: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #395 6686721403 and #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)",
+      "date": "2026-11-07",
+      "why": "LIB-PLATEFIX-2: lib_pec_fly's plate with the height callout box at top 260 (was 244; PQ-H4, D-SHIP-PECFLY-HOLD), approved by pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09; only normalSvg and normalOverlay change. Exemptions as entry 8.",
       "supersedes": 8,
-      "prev": "715d3f61c4997a3227aa9136523d83452759d7c65b8b8b7286427e0695415975"
-    },
-    {
-      "kind": "page",
-      "pageSha256": "7b88c36508f2d14d422cfe84c786031f81700581c00ecfaa912b8fc2e853ff0b",
-      "bytes": 1325644,
-      "approvedBy": "owner",
-      "decision": "D-OWNER-REPIN",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/395#issuecomment-6686721403 @ fc6ae84c7293de202aba1d39867f7139e23afdb7",
-      "date": "2026-11-06",
-      "why": "Owner answer, verbatim, in chat on 2026-11-06 (relayed by the supervisor, #395 6686721403, D-OWNER-REPIN): \"Do all whats recommended. Whan u have question, answer urself via recommended\". It approves option 1: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version (D-LIB-O5, plan 14.8 point 5). The pf4 panel passed pec_fly (#395 6648800268, PLATEFIX-2 PLATES PANEL RESULT @ 24100cff: \"Approved: pec_fly (PQ-H4 overlap fixed)\"). The pilot-a plates page rebuilt with pec_fly's moved height box (entry 16); the other cards are byte-equal.",
-      "supersedes": 0,
-      "prev": "4eea8066396d3e766061a8d907ea570035fde6f82d65a0b82fa034515ca8664a"
+      "prev": "81186d0958353d54f203729e652b877388269c487b843abae50289d78834a088"
     }
   ]
 }
