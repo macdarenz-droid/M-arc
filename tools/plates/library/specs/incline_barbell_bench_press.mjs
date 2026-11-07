@@ -151,18 +151,6 @@ const RING = Array.from({ length: 13 }, (_, k) => [0, lmM['elbow.r'][1] + JOINT_
 const RING_EDGE = (() => { const a = lmE['elbow.r'], b = lmM['elbow.r'], d = Math.hypot(b[1] - a[1], b[2] - a[2]);
   return [0, b[1] - (b[1] - a[1]) / d * JOINT_R, b[2] - (b[2] - a[2]) / d * JOINT_R]; })();
 const GHOST_UPPER = capsule(lmM['shoulder.r'], lmM['elbow.r'], 0.052, 0.040), GHOST_FORE = capsule(lmM['elbow.r'], lmM['grip.r'], 0.040, 0.026);
-// LIB-PLATEFIX-3b item 15 (#405 6682844211, #408 PLAN; card c7, c8, c9): the flared upper arm projects to 9.8 px in the side
-// view (a knot); the head inset (zoom/inline.mjs project 'head') shows it whole. Its ghost capsule (the radii above, as
-// smith_machine_bench_press's, copied) lies in the inset's plane: the lateral axis X and the end pose's sacrum -> upper
-// back line V (headPitch's screen-up), so it projects whole, as GHOST_UPPER does in the side view.
-const sub3 = (a, b) => a.map((v, i) => v - b[i]), dot3 = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0), unit3 = a => { const k = Math.hypot(...a); return a.map(v => v / k); };
-const headCapsule = (a, b, ra, rb, n = 8) => { const V = unit3(sub3(lmE.backUpper, lmE.sacrum)), uv = w => [w[0], dot3(w, V)];
-  const t = unit3(sub3(uv(b), uv(a))), ang0 = Math.atan2(t[0], -t[1]), at = (c, r, q) => c.map((v, i) => v + r * (Math.cos(q) * (i === 0 ? 1 : 0) + Math.sin(q) * V[i])), pts = [];
-  for (let i = 0; i <= n; i++) pts.push(at(b, rb, ang0 - Math.PI * i / n));
-  for (let i = 0; i <= n; i++) pts.push(at(a, ra, ang0 + Math.PI - Math.PI * i / n));
-  return [...pts, pts[0]]; };
-export const HEAD_GHOST = headCapsule(lmM['shoulder.r'], lmM['elbow.r'], 0.052, 0.040);
-const HEAD_INSET = ['neck', 'shoulder.r', 'elbow.r', 'hips'];   // the near half of the torso and the right upper arm
 export const info = () => { const e = lmE['elbow.r'], m = lmM['elbow.r'], along = p => (p[1] - S.r[1]) * UP[1] + (p[2] - S.r[2]) * UP[2];
   return { touch: +TOUCH.toFixed(4), touchBelowUpperChestCm: +((UPPER_CHEST - TOUCH) * H * 100).toFixed(1), endArmFromTorsoDeg: +armFromTorso(e).toFixed(1),
     misArmFromTorsoDeg: +armFromTorso(m).toFixed(1), misDip: +MIS_DIP.toFixed(1), misElbowAlongTorsoCm: +(along(m) * 100).toFixed(1),
@@ -239,13 +227,5 @@ export default {
       { key: 'level', text: 'Level with<br>shoulders', anchor: { at: 'shoulder.r', pose: 'mistake' }, box: { left: 8, top: 198 }, cue: 'Your upper arms come up level with your shoulders instead of staying below them.' },
     ],
   },
-  // LIB-PLATEFIX-3b item 15 (#405 6682844211): two head-end insets, plain insets of another view (ring false): the Right
-  // upper arm 60 deg from the torso (c7), and the Mistake's flared upper arm whole, a red dashed ghost level with the
-  // shoulders (c8, c9) over the solid Right arm, with an arrow from the Right elbow to the flared one. Labels unchanged.
-  zoom: [
-    { view: 'normal', k: 1, r: 62, ring: false, project: 'head', focus: { region: HEAD_INSET, pose: 'end' } },
-    { view: 'mistake', k: 1, r: 62, ring: false, project: 'head', focus: { region: HEAD_INSET, pose: 'end' },
-      guides: [{ kind: 'dashed', pts: HEAD_GHOST }, { kind: 'arrow', from: { at: 'elbow.r', pose: 'end' }, to: { at: 'elbow.r', pose: 'mistake' } }] },
-  ],
   alt: 'Incline barbell bench press, side view. On a bench set to 30 degrees in a rack, head, shoulders and hips on the pad and feet flat, the lifter lowers the bar from straight arms over the shoulders to the upper chest, forearms vertical, then presses back up.',
 };

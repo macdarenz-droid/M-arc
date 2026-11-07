@@ -28,18 +28,10 @@
 // Trace (fixed before any measure, DRAWING-GUIDE.md:29): wrist.r, the hands reaching (c3, checkpoint 'Reach to toes');
 //  trim [4, 6].
 // Unsourced numbers (SIZES; lb9/sizes.json holds each with its basis): HOVER, THORAX_V, CURL, MIS_TILT.
-// LIB-PLATEFIX-3b item D (pfc-findings b5065795 set a T01 L7; layers critics c2, c3): the V read as a small dashed ghost in
-//  the bottom 40 % of the plate (top at y 198, the hands 22.4 px off the toes). The V is drawn by plate.mjs's start layer
-//  (startParts: the torso, head, near arm and near leg as one dashed union per group, under the solid lying figure); a
-//  straight leg's thigh, kneecap and shank merge into one outline in that union (the engine draws no knee line), so the
-//  fix is the pose and the camera: THORAX_V 65 -> 76 (the legs then balance at 77.0 deg, the hands 11.8 px off the toes,
-//  c3 c8) and the floor trimmed to the drawn figure (-1.21 .. 0.94 m, was -1.3 .. 1.0), so the fit scale rises from the
-//  floor-limited 141.74 px/m to the reference 146.29 (maxScale 1: F1's envelope top, so F1 stays unraised); the drawing
-//  spans 179.9 px (61 % of the 295 px fit box). The Mistake's pose, overlays and tell box are unchanged (drawn at the new scale).
 import { landmarksOf, fk, resolve, normPose, bodyShapes } from '../engine.mjs';
 
 const H = 1.75, BODY = { height: H };
-export const SIZES = Object.freeze({ PELVIS_TUCK: 15, HOVER: 0.0762, THORAX_V: 76, CURL: 25, MIS_TILT: 14 });
+export const SIZES = Object.freeze({ PELVIS_TUCK: 15, HOVER: 0.0762, THORAX_V: 65, CURL: 25, MIS_TILT: 14 });
 const { PELVIS_TUCK, HOVER, THORAX_V, CURL, MIS_TILT } = SIZES;
 const OCCIPUT = [0, 0.955, -0.056];                    // back of the skull on the side head outline (head frame, H): crunch's
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
@@ -145,9 +137,9 @@ export const info = () => ({ TILT_V: +TILT_V.toFixed(3), HIP_V: +HIP_V.toFixed(3
 export default {
   hand: 'flat',
   id: 'v_up', name: 'V-Up', view: 'side', facing: 'right',
-  camera: { fit: true, maxScale: 1, y0: 339 },      // D-LIB8-floor: floor at y 339; LIB-PLATEFIX-3b D: scale <= x1 (146.29 px/m, F1's envelope), was <= x1.35 (never reached: the floor set 141.74)
+  camera: { fit: true, maxScale: 1.35, y0: 339 },      // D-LIB8-floor: floor at y 339, width-filling scale <= x1.35
   poses: { start, end },
-  equipment: [{ type: 'floor', from: -1.21, to: 0.94 }],   // LIB-PLATEFIX-3b D: the drawn figure's span (-1.194 .. 0.928 m) plus 1.2-1.6 cm, so the fit is set by the body
+  equipment: [{ type: 'floor', from: -1.3, to: 1.0 }],
   checks: [
     { landmark: 'buttock', plane: FLOOR, pose: 'end', tol: 1 },                 // low back on the floor lying (c4, c5)
     { landmark: 'backUpper', plane: FLOOR, pose: 'end', tol: 1 },
@@ -163,8 +155,8 @@ export default {
   tempo: [{ phase: 'Lift', move: true }, { phase: 'Lower', move: true }],   // fallbackA (D-STRIP-AFALL; PLAN RULED Q3, c14 contested); LIB-PLATEFIX-3 W7 (#405 6683319630, D-SHIP-W4-TEMPO form): the rep lifts first (c3, c4)
   callouts: [
     { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 64, top: 262 }, cue: 'Keep your low back touching the floor at the start and return.' },
-    { key: 'reach', text: 'Reach to<br>toes', anchor: { at: 'grip.r', pose: 'start' }, box: { left: 236, top: 118 }, cue: 'Lift legs and torso together, hands reaching toward your toes.' },   // LIB-PLATEFIX-3b D: above the higher V (was left 196, top 150, now on the hands)
-    { key: 'legs', text: 'Legs<br>together', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 266, top: 244 }, cue: 'Legs as straight as you can, toes pressed together.' },   // LIB-PLATEFIX-3b D: up 8 px, off the larger lying feet (was top 252)
+    { key: 'reach', text: 'Reach to<br>toes', anchor: { at: 'grip.r', pose: 'start' }, box: { left: 196, top: 150 }, cue: 'Lift legs and torso together, hands reaching toward your toes.' },
+    { key: 'legs', text: 'Legs<br>together', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 266, top: 252 }, cue: 'Legs as straight as you can, toes pressed together.' },
   ],
   mistake: {
     pose: mistakePose,

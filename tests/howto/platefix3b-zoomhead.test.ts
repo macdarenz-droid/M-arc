@@ -11,7 +11,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
-const OURS = /^(smith_machine_bench_press|incline_barbell_bench_press)\.mjs$/;   // PF3b's own new head entries
+const OURS = /^(smith_machine_bench_press)\.mjs$/;   // PF3b's own new head entries (incline_barbell held, D-PF3B-HOLD15)
 let zoom: any, alt: any;
 beforeAll(async () => {
   zoom = await import(/* @vite-ignore */ lib('zoom/inline.mjs'));
@@ -33,7 +33,9 @@ describe('PF3b head projection: existing zooms are byte-equal', { timeout: T }, 
     }
     expect(n).toBe(39);
     // the same loop with this branch's base zoom/inline.mjs (claude/lib-platefix-3b 2884b5a9, before the head projection)
-    expect(h.digest('hex')).toBe('007c6b342f58d4946ee4a3ed0fd8f0280890172efb3b341a29871271243754e7');
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 007c6b34…, now 539f6f9c… (incline_barbell is back to main's spec, D-PF3B-HOLD15,
+    // so its entries join the loop; main 6227bd8e's zoom/inline.mjs gives this same hash over this set)
+    expect(h.digest('hex')).toBe('539f6f9c6eb6f2ff1201c74c0916140b94c93c8f68feb996279885935ca4c4d0');
   });
   it('the side and plate-projection posture zooms (no main spec has one: PF2\'s rear delt fixture) render as before', () => {
     const fx = { ...alt, id: 'bent_over_dumbbell_rear_delt_fly', mistake: { ...alt.mistake, pose: { scap: { elev: 10 } }, guides: [] } };

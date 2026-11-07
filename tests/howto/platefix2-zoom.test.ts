@@ -14,9 +14,9 @@ const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.met
 const T = 600_000;
 const ID = 'bent_over_dumbbell_rear_delt_fly', LID = `lib_${ID}`;
 // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was /^(dumbbell_fly|bent_over_dumbbell_rear_delt_fly|pec_fly)(__alt)?\.mjs$/, now also
-// smith_machine_bench_press and incline_barbell_bench_press (their new head-inset entries are not existing zooms; the same 37
+// smith_machine_bench_press (incline_barbell held, D-PF3B-HOLD15, its spec is main's) (its new head-inset entries are not existing zooms; the same 37
 // entries and hash are checked; platefix3b-zoomhead.test.ts proves every existing zoom byte-equal across PF3b's change)
-const OURS = /^(dumbbell_fly|bent_over_dumbbell_rear_delt_fly|pec_fly|smith_machine_bench_press|incline_barbell_bench_press)(__alt)?\.mjs$/;
+const OURS = /^(dumbbell_fly|bent_over_dumbbell_rear_delt_fly|pec_fly|smith_machine_bench_press)(__alt)?\.mjs$/;
 let zoom: any, qz: any, qaIdx: any, qaEng: any, cand: any, bp: any, reg: any, golden: any, E: any, mirror = '', c0: any, spec: any, pins: any, dir = '';
 // the fixture: main's front-view rear delt (__alt), the shrug alone (10 cm), no plate guides, a side inset (normal) and a
 // side posture zoom off the body axis (Mistake)
@@ -66,10 +66,11 @@ describe('PF2 (a): existing zooms are byte-equal', { timeout: T }, () => {
     expect(n).toBe(37);
     // was 36 entries, f7df419a… (origin/main 8bb433bd, before (a)); re-measured after main 7e060e83 (train 77; one more
     // zoom entry): the same loop over these specs with main 7e060e83's zoom/inline.mjs (no (a)) gives this same hash
-    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 89e7482e… (main 6227bd8e), now cf303d5d… — the only entries that differ from
-    // main's are those of the three redrawn 3b plates (lying_leg_curl item C, sled_pull item B, v_up item D: poses and zoom
-    // k moved); every other spec's zoom output is byte-equal to main 6227bd8e's (per-file hashes compared on both trees)
-    expect(h.digest('hex')).toBe('cf303d5d9039568e4e04fdf8f0c7d13d7aba2d8b259829cc725ba224fb918fab');
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 89e7482e… (main 6227bd8e), now 43478914… — the only entries that differ from
+    // main's are those of the two redrawn 3b plates (lying_leg_curl item C, sled_pull item B: poses and zoom k moved); v_up and
+    // incline are main's bytes (D-PF3B-HOLDVUP, D-PF3B-HOLD15); every other spec's zoom output is byte-equal to main 6227bd8e's
+    // (per-file hashes compared on both trees)
+    expect(h.digest('hex')).toBe('43478914736ef99912a522ca123b78063f471ece540bc5cb7c02cf47e9ea394b');
   });
 });
 

@@ -139,7 +139,7 @@ const RC_BACK = 24.7;   // LIB-SUPCORE D-SUPCORE-RCBACK: px inside the end figur
 // LIB-SUPCORE D-SUPCORE-LUMBARTELL (#366 6580574917): each arch tell's leader, px inside the end and the Mistake figure
 // past its first 8 px (measured), entering from above through the trunk only; the anchor 1 px above `lumbar` keeps the
 // k 2 ring inside the frame (A8; at `lumbar` itself dead_bug's ring ends at 358.3 px and v_up's at 358.6)
-const LUMBAR_IN: Record<'flutter_kicks' | 'dead_bug' | 'v_up', [number, number]> & Record<string, [number, number] | undefined> = { flutter_kicks: [12.24, 18.36], dead_bug: [12.31, 18.47], v_up: [14.92, 17.64] };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was v_up [15.27, 16.66], now [14.92, 17.64] (item D: the floor trimmed to the figure, fit scale 141.74 -> 146.29 px/m, the x centre 200.3 -> 198.7; tell box and arch unchanged)
+const LUMBAR_IN: Record<'flutter_kicks' | 'dead_bug' | 'v_up', [number, number]> & Record<string, [number, number] | undefined> = { flutter_kicks: [12.24, 18.36], dead_bug: [12.31, 18.47], v_up: [15.27, 16.66] };
 const HELD: string[] = ['pallof_press', 'russian_twist', 'flutter_kicks'];   // flutter_kicks: D-SUPCORE-FLUTTERHOLD (#366 6588547503, panel mx29; route F-FLUTTER-ZOOM)   // HELD-B (#371): pallof_press held again (D-HELDB-PALLOF2, route F-PALLOF-VIEW); russian_twist held again after panel mx27 (D-HELDB-RTSIT, route F-RTWIST-SIT); cable_crunch joined rows.json at resume 3 (LIB-21R3, on LIB-SPINE's spine segments); russian_twist: F-RTWIST-TELL; side_plank joined rows.json at the resume, superman at resume 2 (D-LIB21-SUPERMAN, #337)   // pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn, then
 // the E-R5 slice at the resume.
@@ -1085,7 +1085,7 @@ const APPROVED_FRAGS: Record<string, string> = { 'ab-wheel-rollout': 'e0e6d3b9aa
   'hollow-body-hold': '3840726c16580b8c',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was f1e3f6990bc6dd7a, then 79aa43e1938e2a9a (the c5 cue copy); round 2 (#405 6685743439): 3840726c16580b8c (R1: no via ghost, TOE -50, arc 142; the 'Legs low' callout dropped with the card)
   'reverse-crunch': '8d189ceca9f17ee7',
   'dead-bug': '142b6445a08aa467',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was dffcec3c1d6655c0, now 142b6445a08aa467 (c4 copy, trunk-only Mistake, gap arrow)
-  'v-up': '01c5c42e8ecf6500' };   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 55c3ecd9f47f2a30, now cacf69b14e44fa08 (tempo lift-first, trunk-only Mistake, gap arrow); LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was cacf69b14e44fa08, now 01c5c42e8ecf6500 (item D: the V at THORAX_V 76, the floor trimmed, the reach and legs boxes moved)
+  'v-up': 'cacf69b14e44fa08' };   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 55c3ecd9f47f2a30, now cacf69b14e44fa08 (tempo lift-first, trunk-only Mistake, gap arrow)
 const FRAG_RE = '/<article [^>]*id="card-([a-z-]+)"[\\s\\S]*?<\\/article>/g';
 const fragProblems = (frags: Record<string, string>) => Object.entries(APPROVED_FRAGS).flatMap(([k, v]) => ((frags[k] ?? '').slice(0, 16) === v ? [] : [`${k}: ${(frags[k] ?? 'missing').slice(0, 16)} != approved ${v}`]));
 describe('LIB-21 A10: the LB9 plates page is deterministic (PQ-H7; built in an awaited child process)', { timeout: T }, () => {
@@ -2320,13 +2320,13 @@ describe('LIB-SUPCORE cfdv: dead_bug\'s start knees (#366 6587871953) and v_up\'
     const low = Math.max(...body.bodyShapes(body.fk(L.q.start, L.body), cam).filter((x: any) => x.key === 'torso' && x.poly).flatMap((x: any) => x.poly.map((q: number[]) => q[1])));
     return ((cam.y0 - low) / cam.pxPerM) * 100; };
   const vRoot = (dy: number) => { const v = S.v_up, st = v.poses.start; return { ...v, poses: { ...v.poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1] + dy, st.root.at[2]] } } } }; };
-  it('v_up: the V\'s fact is the torso outline (spec start, card end, c5), bound in outlineChecks at 0.5 cm; the outline is on the floor, the buttock landmark 2.77 cm up (a not-fact; LIB-PLATEFIX-3b: was 1.99); H6 is clean', () => {
+  it('v_up: the V\'s fact is the torso outline (spec start, card end, c5), bound in outlineChecks at 0.5 cm; the outline is on the floor, the buttock landmark 1.99 cm up (a not-fact); H6 is clean', () => {
     const c = readJson('docs/research/howto/cards/v_up.json');
     expect(c.plateFacts.filter((f: any) => f.outline != null)).toEqual([{ kind: 'contact', outline: 'torso', pose: 'start', cardPose: 'end', claim: 'c5' }]);
     expect(c.plateFacts.some((f: any) => f.landmark != null && f.pose === 'start')).toBe(false);
     expect(S.v_up.outlineChecks).toEqual([{ outline: 'torso', pose: 'start', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, tol: 0.5 }]);
     expect(Math.abs(vOutlineCm(S.v_up))).toBeLessThanOrEqual(0.05);
-    expect(qaEng.poseLandmarks(Eng(), S.v_up).lm.start.buttock[1] * 100).toBeCloseTo(2.77, 1);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 1.99, now 2.77 (item D: THORAX_V 65 -> 76 rocks the pelvis further back, TILT_V; the torso outline still on the floor at 0.00 cm)
+    expect(qaEng.poseLandmarks(Eng(), S.v_up).lm.start.buttock[1] * 100).toBeCloseTo(1.99, 1);
     expect(h6Keys(S.v_up).filter((k: string) => k.startsWith('H6.fact:'))).toEqual([]);   // the facts half of H6 (its tempo half reads the candidate's strip row, which lb9/qa.mjs runs)
   });
   it('mutations: v_up\'s V lifted 0.6 cm and dipped 0.6 cm are red in H6\'s outline branch', () => {

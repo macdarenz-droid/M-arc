@@ -504,9 +504,9 @@
     "basis": "claim: c4 'keeping the heels a few inches off the floor' (PLAN RULED Q2: heels hover, arms rest); 3 in = 7.62 cm, superman's reading of 'a few inches' (lb9/sizes.json superman LIFT); measured from the floor to the drawn heels"
    },
    "THORAX_V": {
-    "value": 76,
+    "value": 65,
     "unit": "deg",
-    "basis": "stated reason: c3 'lift the legs and torso together' (a V) gives no angle; the thorax 76 deg off the floor, the legs then solved so the Winter centre of mass sits over the buttock's floor contact (D-LIB21-BALANCE form; legs 77.0 deg); no source states it. LIB-PLATEFIX-3b item D (pfc-findings b5065795 set a T01 L7; was 65, legs 53.6): at 65 the drawing spanned 141.5 px (48 % of the 295 px fit box) with the hands 22.4 px off the toes; at 76, with the floor trimmed to the figure and the scale at the reference 146.29 px/m (F1's envelope top), it spans 179.9 px (61 %) with the hands 11.8 px off the toes (c3 'reach toward the toes'); 75 gave 177.1 px, on the 60 % line (177.0) with no margin"
+    "basis": "stated reason: c3 'lift the legs and torso together' (a V) gives no angle; the thorax 65 deg off the floor, the legs then solved so the Winter centre of mass sits over the buttock's floor contact (D-LIB21-BALANCE form; legs 53.6 deg); no source states it"
    },
    "CURL": {
     "value": 25,
