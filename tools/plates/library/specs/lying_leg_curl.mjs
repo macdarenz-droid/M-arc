@@ -42,9 +42,18 @@
 //   claim gives them.
 //  Hands (c5 "Hold the handles"): the fists on the side handles ahead of and below the shoulders, elbows bent out to the
 //   side.
-//  Mistake (c9, c10; hanging_leg_raise.mjs:69): the end pose with the lumbar extended M_ARCH (trunk -M_ARCH); the pelvis
-//   keeps its tilt and its place, so the hips stay on the pad (c8 is its own fault), and the chest lifts off the bench;
-//   the hands keep the handles. The faulty back contour is a red dashed guide.
+//  Mistake (c9, c10): the end pose with the lumbar extended M_ARCH (trunk -M_ARCH); the pelvis keeps its tilt and its
+//   place, so the hips stay on the pad (c8 is its own fault), and the chest lifts off the bench; the hands keep the
+//   handles. The faulty trunk outline is one red dashed guide.
+//  LIB-PLATEFIX-3b item C (pfc-findings b5065795 set b T03 L5, critics c2, c3: "Low back arches" did not read, the dashed
+//   back a few px off the solid one and nearly straight): M_ARCH 12 -> 27, so the chest and shoulders lift 17.8 deg off
+//   the pad (the hip-shoulder line, plate px; target 15-20) about the held pelvis, and the dashed guide is the Mistake
+//   torso's back outline from the rear of the hips at the hip joints' height, over the buttock and the back, to the back
+//   of the shoulders (cable_curl.mjs misArm: engine body shapes on the engine's Catmull-Rom spline, in world metres, not masked): the
+//   lower back hollow 13 px deep under its buttock-upper back chord (the Right's 6.8 px), never above the solid back.
+//   The zoom ring (k 1.5, the smallest ladder k for the larger backMid move) holds the hollow and the rise of the back
+//   against the Right. trunk.bow (reverse_lunge, standing_leg_curl) is not used: it tips the pelvis about the hip axis,
+//   which moves the navel 2.0-2.6 cm off the pad (the Mistake's hips-down check, tol 0.5 cm).
 // Labels: "Knee at axis" meets the pivot boss's upper rim; "Hips on pad" meets the front of the hips on the pad (the
 //  navel); "Low back still" meets the end pose's lower back (backMid). The Mistake's one tell (record in DESIGN.md
 //  section 10) meets the red dashed lower back.
@@ -57,7 +66,7 @@ import { perItem, sideBar } from '../eq/parts.mjs';
 import { legCurlMachine, LEG_CURL_ITEMS } from '../eq/legCurlMachine.mjs';
 
 const H = 1.75;
-export const SIZES = Object.freeze({ BENCH_TOP: 0.43, KNEE_OUT: 0.04, BENCH_LEN: 1.2, START_KNEE: 15, END_KNEE: 100, ANKLE_T: 0.85, M_ARCH: 12,
+export const SIZES = Object.freeze({ BENCH_TOP: 0.43, KNEE_OUT: 0.04, BENCH_LEN: 1.2, START_KNEE: 15, END_KNEE: 100, ANKLE_T: 0.85, M_ARCH: 27,
   HANDLE: [0.22, -0.12, 0.30], BEAM_BACK: 0.30, UPRIGHT_T: 0.04, TRACE_TRIM: [6, 8] });
 const { BENCH_TOP, KNEE_OUT, BENCH_LEN, START_KNEE, END_KNEE, ANKLE_T, M_ARCH, HANDLE, BEAM_BACK, UPRIGHT_T, TRACE_TRIM } = SIZES;
 
@@ -99,6 +108,31 @@ export const start = pose(START_KNEE);
 export const end = pose(END_KNEE);
 export const mistakePose = { trunk: -M_ARCH };
 export const LS = landmarksOf(start, H), LE = landmarksOf(end, H), LM = landmarksOf({ ...end, ...mistakePose }, H);
+// The faulty trunk as one dashed outline (LIB-PLATEFIX-3b item C; cable_curl.mjs misArm): the Mistake torso outline on the
+// engine's Catmull-Rom spline (copied from cable_curl.mjs cr), the one arc through the buttock that stays at or above the
+// hip joints (y >= hip.r) and at or behind the shoulder tops (z <= shoulderTop.r): the rear of the hips, the buttock, the
+// lower back hollow, the back and the back of the shoulders. Not masked, so it reads whole; the front (on the pad) stays
+// the solid figure's.
+const cr = (ps, k = 8) => {
+  const n = ps.length, g = i => ps[(i + n) % n], out = [];
+  for (let i = 0; i < n; i++) {
+    const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    for (let j = 0; j < k; j++) { const t = j / k, u = 1 - t;
+      out.push([0, 1].map(d => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d])); }
+  }
+  return out;
+};
+export const MIS_TRUNK = (() => {
+  const c = cr(shapesOf({ ...end, ...mistakePose }).find(s => s.key === 'torso').poly), n = c.length, at = i => c[((i % n) + n) % n];
+  const inn = i => at(i)[0] <= LM['shoulderTop.r'][2] && -at(i)[1] >= LM['hip.r'][1];
+  const b = LM.buttock, ib = c.reduce((m, v, i) => (Math.hypot(v[0] - b[2], v[1] + b[1]) < Math.hypot(at(m)[0] - b[2], at(m)[1] + b[1]) ? i : m), 0);
+  let lo = ib, hi = ib;
+  while (inn(lo - 1) && ib - lo < n) lo--;
+  while (inn(hi + 1) && hi - ib < n) hi++;
+  if (!inn(ib) || hi - lo >= n - 1) throw new Error('lying_leg_curl: the back outline is not one arc through the buttock');
+  return Array.from({ length: hi - lo + 1 }, (_, k) => at(lo + k)).map(([z, y]) => [0, -y, z]);
+})();
 
 // ---- the bench and the machine ----
 export const BENCH_END = LS['knee.r'][2] + KNEE_OUT;                   // the bench's foot end, KNEE_OUT ahead of the knee (c1)
@@ -185,15 +219,17 @@ export default {
   ],
   // LIB-ZOOM's inline zoom circle (D-LIBZOOM-EXTEND, #325 6405116791): the Mistake's fault drawn again at k 3.5, the smallest of
   // 1.5-4 whose tell-anchor move reaches deviationMin 11.39 px at the zoom's own scale (12.0 px); zoom/inline.mjs places it.
-  zoom: { view: 'mistake', k: 3.5 },
+  // LIB-PLATEFIX-3b item C: k 3.5 -> 1.5, the backMid move 3.4 -> 7.64 px (11.46 px at k 1.5); the 34.7 px source ring
+  // holds the lower back hollow and the back's rise off the Right.
+  zoom: { view: 'mistake', k: 1.5 },
   mistake: {
     pose: mistakePose,
-    parts: ['head'],   // the back is the one red dashed guide below (panel lb8q, #325 6410306586 item 1)
+    parts: ['head'],   // the trunk is the one red dashed guide below (panel lb8q, #325 6410306586 item 1)
     guides: [
-      { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
+      { kind: 'dashed', pts: MIS_TRUNK },   // LIB-PLATEFIX-3b item C: the faulty trunk's back outline, hips to shoulders
     ],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 150, top: 180 }, cue: 'Your lower back arches as your legs curl.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 112, top: 152 }, cue: 'Your lower back arches as your legs curl.' },   // LIB-PLATEFIX-3b item C: box was 150,180 (on the k 1.5 source ring: PQ-H1 ink), now 112,152, clear of the legs and the zoom
     ],
   },
   alt: 'Lying leg curl, side view. Face down on the bench with the hips on the pad, the knees close to the bench edge and in line with the machine axis and the roller just above the heels, the lifter curls the heels toward the glutes.',

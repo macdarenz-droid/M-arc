@@ -455,6 +455,48 @@
       "supersedes": 13,
       "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-BODYMAP-APPEND #404 6688047379; supervisor under D-LIB-O5 point 4: golden-B design kinds only, superseding a supervisor entry): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow and back-of-knee pain parts. Byte proof: with the fix paths undone, this page equals the superseded entry page byte for byte, except the shimmer band of a feel map whose main muscles include front_delts. Built twice, equal sha256.",
       "prev": "996d89adcf3ecc26c7b9b29b2d0bc52def8ca3c1a5758d3e678bc868e1604f1f"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_assisted_pull_up",
+      "src": "library/specs/assisted_pull_up.mjs",
+      "slug": "assisted-pull-up",
+      "prefix": "assisted-pull-up",
+      "chromeId": "assisted-pull-up",
+      "fragments": {
+        "normalSvg": "4209a50ad8779c6079d4c674f9a2ddc1fef80a9386c9f86cf787cf80a2c1b922",
+        "normalOverlay": "9b800f8a3e71509d9bef4f61cab2fddbe50c8e646448922469408d6326695d49",
+        "mistakeSvg": "5324dd0b14872b72dcc0b4186811e0b62cbc70b1decb4e62a5b4f386eff6c9fd",
+        "mistakeOverlay": "320a951685802edc4a7f2a7e050c4b4b0b8de2badf157091212f6ed64f0205bf",
+        "tells": "70d5487ffa28853fad1df2cf1349eee89e56451409e0e2f02f2e0154535f8bdd",
+        "tempo": "c5d7c44a59ad194e22dff64691b360c0b4a857d66dbc429a90c67ac0d73f034b",
+        "cues": "7ebb3b6745aa7ed5c2b95b6a3dcbceac59d777711b6ea68eb06552a3a8042687",
+        "alt": "4ea031136898be26e2a2e2994e9bf0f767f8f209acf2fa706da0aeeda6eddea8",
+        "mistakeAlt": "97a75ea21fffa795c78c6f0babd9a4d643123ed750e2750fc71f1029da45aedf"
+      },
+      "exemptions": [
+        "F5",
+        "F7"
+      ],
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/408#issuecomment-6704679655 @ 388db2e4145242a727795f1628627573826c3f78",
+      "date": "2026-11-07",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-3b item A (assisted_pull_up: PF3 item 2 and the W3 knee arrow): approved by the plates panel pf10 (#408 6704679655) at 388db2e4.",
+      "supersedes": 3,
+      "prev": "e650661faf5cbf24ea8d9be2ea6eedb23de2e6f2aaf5c1444f10706abe84d1da"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "c61b16c84a9034ba643db7cead9b5f82fabbdc266db2a6c01843a8d6321813ae",
+      "bytes": 1283484,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/408#issuecomment-6704679655 @ 388db2e4145242a727795f1628627573826c3f78",
+      "date": "2026-11-07",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb01 plates page rebuilt with LIB-PLATEFIX-3b's assisted_pull_up (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (this builder, and CI howto-rebuild on #408 at 2a78b893).",
+      "supersedes": 15,
+      "prev": "f8e7e3f457ff2583e7a09bebca49ba58a8b51b3ce2dacc4c1c00c7eb37125ec6"
     }
   ]
 }

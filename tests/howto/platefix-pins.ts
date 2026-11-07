@@ -71,20 +71,24 @@ export const MAIN_GOLDEN: Record<string, { n: number; sha: string }> = {
   'pilot-b2': { n: 5, sha: '1298648547414644e34362713c7ef0b3fa417208108b704369f62e22bc515114' },
 };
 /** The keys a superseding plate entry may change from the entry it supersedes. */
-const PLATE_MOVES = ['fragments', 'approvedBy', 'decision', 'approval', 'date', 'why', 'supersedes', 'prev'];
+export const PLATE_MOVES = ['fragments', 'approvedBy', 'decision', 'approval', 'date', 'why', 'supersedes', 'prev'];
 /** The golden update's tail of batch golden `file` (`batch`: a MAIN_GOLDEN key): main's entries unchanged, then exactly a
  *  page entry superseding `page` that pins `html`, one plate entry per `plates` id (in that order) superseding that id's
  *  entry and equal to its plate in `html` (`fragmentsOf(extractPlates(html))`), the rest of it unchanged, and last one
- *  layers-page entry (supersedes `layers.supersedes`, names exactly `layers.ids`, pins `layers.page`). [problems] */
-export function pfTailProblems(file: any, batch: string, o: { G: any; html: string | Buffer; page: number; plates: Record<string, number>; layers: { supersedes: number | null; ids: string[]; page: Buffer } }): string[] {
-  const bad: string[] = [], M0 = MAIN_GOLDEN[batch]!, E = file.entries as any[];
+ *  layers-page entry (supersedes `layers.supersedes`, names exactly `layers.ids`, pins `layers.page`). [problems]
+ *  LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was always the whole file and the built page; now `after` trailing entries (a later
+ *  golden update's, which the caller checks exactly) are left out, and `pagePin` (that update supersedes this page entry) is
+ *  the page entry's pin in place of the built page's. Both default to the old checks. */
+export function pfTailProblems(file: any, batch: string, o: { G: any; html: string | Buffer; page: number; plates: Record<string, number>; layers: { supersedes: number | null; ids: string[]; page: Buffer }; after?: number; pagePin?: { sha: string; bytes: number } }): string[] {
+  const bad: string[] = [], M0 = MAIN_GOLDEN[batch]!, E = (file.entries as any[]).slice(0, file.entries.length - (o.after ?? 0));
   if (sha(JSON.stringify(E.slice(0, M0.n))) !== M0.sha) bad.push(`${batch}: main's ${M0.n} entries changed`);
   const tail = E.slice(M0.n), ids = Object.keys(o.plates);
   const kinds = ['page', ...ids.map(() => 'plate'), 'layers-page'];
   if (JSON.stringify(tail.map(e => e.kind)) !== JSON.stringify(kinds)) return [...bad, `${batch}: tail kinds ${tail.map(e => e.kind)}`];
   const [pg, ...rest] = tail, lp = rest.pop(), html = o.html.toString();
   if (pg.supersedes !== o.page || E[o.page]?.kind !== 'page') bad.push(`${batch}: page supersedes ${pg.supersedes}`);
-  if (pg.pageSha256 !== sha(html) || pg.bytes !== Buffer.byteLength(html)) bad.push(`${batch}: page entry != the built page`);
+  const pin = o.pagePin ?? { sha: sha(html), bytes: Buffer.byteLength(html) };
+  if (pg.pageSha256 !== pin.sha || pg.bytes !== pin.bytes) bad.push(`${batch}: page entry != ${o.pagePin ? 'its pin' : 'the built page'}`);
   if (!ownerOk(pg)) bad.push(`${batch}: page approval`);
   const plates = o.G.extractPlates(html);
   rest.forEach((e, k) => {

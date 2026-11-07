@@ -1519,14 +1519,54 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     for (const part of ['bell', 'ball', 'rope', 'sled']) {
       const a0 = st.filter((i: any) => i.part === part && i.pts), b = en.filter((i: any) => i.part === part && i.pts);
       const moved = (i: any, k: number) => !b[k] || b[k].pts.length !== i.pts.length || Math.max(...i.pts.map((p: number[], j: number) => Math.hypot(...p.map((v, n) => v - b[k].pts[j][n])))) * pxm >= 6;
-      const a = a0.filter(moved);
-      if (!a.length) continue;
+      const all = a0.filter(moved);
+      if (!all.length) continue;
       const ph = en.filter((i: any) => i.part === `start${part}`);
-      const match = a.filter((i: any) => ph.some((q: any) => q.type === 'line' && /\bm-line\b/.test(q.cls) && JSON.stringify(q.pts) === JSON.stringify([...i.pts, i.pts[0]])));
+      const drawn = (i: any) => ph.some((q: any) => q.type === 'line' && /\bm-line\b/.test(q.cls) && JSON.stringify(q.pts) === JSON.stringify([...i.pts, i.pts[0]]));
+      // LIB-PLATEFIX-3b (D-PF3B-ROPEGHOST, named exception LAY_MARK): a lay mark (an eq-thin line naming its band in
+      // `layOf`) is texture of that band, not a moving part: it needs no start copy of its own, only while its parent band
+      // (the moved item whose `band` it names) has one; and it must not be drawn on the start copy. Nothing else is excused.
+      const lay = all.filter(LAY_MARK), a = all.filter((i: any) => !LAY_MARK(i));
+      const match = a.filter(drawn);
       if (match.length !== a.length) out.push(`${spec.id}: ${part} moves; ${match.length} of ${a.length} start outlines drawn dashed`);
+      const orphans = lay.filter((i: any) => !a.some((b0: any) => b0.band === i.layOf && drawn(b0)));
+      if (orphans.length) out.push(`${spec.id}: ${part}: ${orphans.length} lay marks whose band has no start copy`);
+      const ghosted = lay.filter(drawn);
+      if (ghosted.length) out.push(`${spec.id}: ${part}: ${ghosted.length} lay marks drawn on the start copy`);
     }
     return out;
   };
+  const LAY_MARK = (i: any) => i.type === 'line' && i.cls === 'eq-thin' && typeof i.layOf === 'string';
+  /** sled_pull with its end-pose start copy edited by `f` (items of part startrope; `S0` the start pose's rope items). */
+  const sledGhost = (f: (ph: any[], S0: any[]) => any[]) => {
+    const s = S.sled_pull, S0 = itemsIn(s, 'start').items.filter((i: any) => i.part === 'rope');
+    return { ...s, equipment: [...s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && [].concat(r).filter((it: any) => it?.part !== 'startrope'); } : e)),
+      (lm: any, ctx: any) => { if (ctx.pose !== 'end' || ctx.mistake) return null; const ph = itemsIn(s, 'end').items.filter((i: any) => i.part === 'startrope').map(({ entry, ...i }: any) => i); return f(ph, S0); }] };
+  };
+  const closed = (i: any) => ({ type: 'line', cls: 'eq-line m-line', pts: [...i.pts, i.pts[0]], z: 'back', part: 'startrope' });
+  it('D-PF3B-ROPEGHOST: sled_pull\'s lay marks are named lay-mark items with no start copy; their bands have theirs', () => {
+    const st = itemsIn(S.sled_pull, 'start').items, lay = st.filter(LAY_MARK);
+    expect(lay.length).toBeGreaterThan(10);
+    expect(new Set(lay.map((i: any) => i.layOf))).toEqual(new Set(['run', 'tail']));
+    expect(phantomMissing(S.sled_pull)).toEqual([]);
+    expect(phantomMissing(sledGhost(ph => ph))).toEqual([]);   // the harness itself changes nothing
+  });
+  it('D-PF3B-ROPEGHOST red 1: a lay mark whose parent band has no start copy (the run band\'s copy removed) is red', () => {
+    const S0 = itemsIn(S.sled_pull, 'start').items, run = S0.find((i: any) => i.band === 'run');
+    const out = phantomMissing(sledGhost(ph => ph.filter(q => JSON.stringify(q.pts) !== JSON.stringify([...run.pts, run.pts[0]]))));
+    expect(out).toContain('sled_pull: rope: ' + S0.filter((i: any) => LAY_MARK(i) && i.layOf === 'run').length + ' lay marks whose band has no start copy');
+  });
+  it('D-PF3B-ROPEGHOST red 2: any other moving item without a start copy is still red (a moving eq-thin line naming no band; the tail band\'s copy removed)', () => {
+    const s = S.sled_pull, noLayOf = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && [].concat(r).map((it: any) => (it?.layOf ? (({ layOf, ...x }) => x)(it) : it)); } : e)) };
+    expect(phantomMissing(noLayOf)[0]).toMatch(/^sled_pull: rope moves; 3 of \d+ start outlines drawn dashed$/);
+    const tail = itemsIn(s, 'start').items.find((i: any) => i.band === 'tail');
+    expect(phantomMissing(sledGhost(ph => ph.filter(q => JSON.stringify(q.pts) !== JSON.stringify([...tail.pts, tail.pts[0]])))))
+      .toEqual(expect.arrayContaining([expect.stringMatching(/^sled_pull: rope moves; 2 of 3 start outlines drawn dashed$/)]));
+  });
+  it('D-PF3B-ROPEGHOST red 3: the lay marks put back on the start copy are red', () => {
+    const out = phantomMissing(sledGhost((ph, S0) => [...ph, ...S0.filter(LAY_MARK).map(closed)]));
+    expect(out).toEqual([expect.stringMatching(/^sled_pull: rope: \d+ lay marks drawn on the start copy$/)]);
+  });
   it('every moving implement has its dashed start phantom in the end pose (kettlebell_swing, medicine_ball_slam, jump_rope)', async () => {
     const out: string[] = [];
     for (const id of specsDrawn()) { out.push(...phantomMissing(S[id])); await yieldNow(); }
@@ -1930,10 +1970,13 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
       "mistakeAlt": "2e69b29b78f143b879610dca51a51496b5c280b56c434009ad2effa67b4e53de"
     },
     "sled-pull": {
-      "normalSvg": "b637dac6064cef002d48619511d9646455d05bd9e064f16622b9dbd353a89e01",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8638526e, then 01f23201; round 2 (#405 6685743439 R7): SLED_Z 0.78
-      "normalOverlay": "81d2c0e5266c292688179b5f90c636c69c78fbe167103a0d979893567a2db815",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0ef9d6fd, now the PF3 drawing
-      "mistakeSvg": "1122a78495799f0069d0bfbfdb1c525727034a5d97c3b406177512c652aecae9",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, then 40510f2a; round 2 (#405 6685743439 R7): SLED_Z 0.78
-      "mistakeOverlay": "f488c63b0fa31e3e936d99f2f834dece424d62bee06595b56b14a89a09b8bd54",
+      "normalSvg": "ae3078dcaf2243902d3573217a25c1e129b6d907cdbf9f4e5430a665b428c9e9",   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was c7a19bf7, now ae3078dc (D-PF3B-ROPEGHOST: the start copy's lay-mark ghosts dropped, plate and zoom; every other byte equal)
+      // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was e7e3e90e, then c7a19bf7 (D-PF3B-ROPE: the rope items only, plate and zoom; every other element byte-equal)
+   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8638526e, then 01f23201; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was b637dac6, now e7e3e90e (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
+      "normalOverlay": "6f7086bb14c8e9965510f0c796faaa5ee487d99b1e660864f16b85ad240b7603",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0ef9d6fd, now the PF3 drawing; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 81d2c0e5, now 6f7086bb (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
+      "mistakeSvg": "a03e805ab1fe102b3a88bb82688158adb5a22fbdd2fb1147ccd96e5a448ce0b6",   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 57001cab, now a03e805a (D-PF3B-ROPE: the rope items only; every other element byte-equal)
+   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, then 40510f2a; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 1122a784, now 57001cab (the D-PF3B-SLEDSQUAT start squat, D-PF3B-SLEDLEADER boxes and the D-PF3B-SLEDTELL neck anchor and swapped tell boxes)
+      "mistakeOverlay": "c8d0ebbe22986ffaa0fdcee48d3424be20be733f61b1c2c72c03e166a3bec922",   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was f488c63b, now c8d0ebbe (the D-PF3B-SLEDTELL swapped tell boxes)
       "tells": "6a7d6e8c622a2a5df7035e2823688a13decbfcb9a4a203b54ce05909b257705d",
       "tempo": "1551a4913b7c557d03dca51a61ca2c49605243ea59da71e831c285dc1b0cc523",
       "cues": "5bb3d882981928ce56f4b69925a55a44792d986942da908c75f360ababa86bb1",
