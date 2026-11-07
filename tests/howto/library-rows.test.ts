@@ -330,7 +330,11 @@ async function libraryCases() {
 // LIB-SHIP W2 (ruling 3): the shipped library rows hands.mjs's noPairRuling rules to ship with no hand pair
 // LIB-SHIP W3 (ruling 3): plus W3's 4 card-no-zoom ids (hands/no-zoom.json, Q-W3-10), in registry order
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus its 4 shipped ids (none has a hand chunk or pair), in registry order
-const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row',
+// LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): plus front_squat (gap-key) and hammer_curl (hands/no-zoom.json,
+// D-SHIP-W5-HAMMER), both noPairRuling D-SHIP-C3, and the 3 bodyweight lower-body ids (archetype none, why names D-SHIP-GRIP,
+// D-SHIP-A6NOGRIP), in registry order after W3's
+const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', 'lib_front_squat', 'lib_bodyweight_squat',
+  'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_hammer_curl',
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
   'lib_horizontal_leg_press'];
@@ -359,13 +363,22 @@ async function feelChecks(base: string, row: any) {
   const Fs = (await content.loadContent(row.id)).content.feel;
   const rest = fm.renderFeelMap({ primary: Fs.primary, secondary: Fs.secondary, views: ['front', 'back'], id: `${pre}-feel`, shimmer: true });
   expect(section).toContain(`data-feel-map id="${pre}-feel-map" data-rest-label="${rest.label}">`);
+  // LIB-SHIP W5 (ruling 3; F-BODYMAP-FRONTDELT, D-BODYMAP-LIB #404 6682755661): every library layers page applies
+  // render/region-fix.mjs BODYMAP_FIX, which redraws both front_delts parts on the front of the shoulder cap; golden B's
+  // renderer keeps the vendored strip. preacher_curl is the first shipped row with a front_delts watch mark, so on a page
+  // that carries the fix the expected mark is the renderer's with exactly those two paths swapped for BODYMAP_FIX's.
+  const RF = await import(/* @vite-ignore */ F.url(base, 'tools/plates/library/render/region-fix.mjs'));
+  const vendored = (await import(/* @vite-ignore */ F.url(base, 'tools/plates/layers/engine/bodymap-parts.mjs'))).FRONT_PARTS;
+  const fixed = Object.entries<any>(RF.BODYMAP_FIX.replace).filter(() => page.includes(`d="${RF.BODYMAP_FIX.replace['shoulder-front-left'].d}"`))
+    .map(([id, f]) => [`d="${vendored.find((x: any) => x.id === id).d}"`, `d="${f.d}"`]);
+  const fixD = (t: string) => fixed.reduce((a, [from, to]) => a.split(from!).join(to!), t);
   let marks = 0;
   for (const r of Fs.rows) {
     const watch = (r.at?.muscles ?? []).filter((m: string) => Fs.watch.some((w: any) => w.muscleId === m) && !Fs.primary.some((p: any) => p.muscleId === m)), pain = r.at?.parts ?? [];
     if (!watch.length && !pain.length) { expect(section.includes(`<g class="feel-mark" data-row="${r.key}">`), `${row.id}/${r.key}`).toBe(false); continue; }
     const m = fm.renderFeelMap({ primary: Fs.primary, secondary: Fs.secondary, avoid: watch, pain, views: ['front', 'back'], id: `${pre}-feel-${r.key}`, shimmer: false });
     m.svg.split('</figure>').slice(0, 2).forEach((v: string) => {
-      const w = v.match(/<g class="feel-watch">[\s\S]*?<\/g>/)?.[0] ?? '', p = v.match(/<g class="feel-pain">[\s\S]*?<\/g>/)?.[0] ?? '';
+      const w = fixD(v.match(/<g class="feel-watch">[\s\S]*?<\/g>/)?.[0] ?? ''), p = fixD(v.match(/<g class="feel-pain">[\s\S]*?<\/g>/)?.[0] ?? '');
       if (w || p) { marks++; expect(section, `${row.id}/${r.key}`).toContain(`<g class="feel-mark" data-row="${r.key}">${w.replace('class="feel-watch"', 'class="feel-quiet"')}${p}${w}</g>`); }
     });
   }
@@ -554,6 +567,10 @@ describe('D-LIB2b-HANDCSS: a library row\'s HAND loader brings in its zoom css b
     const ruled: string[] = [];
     for (const r of LIBRARY) if (hands.noPairRuling((await import(/* @vite-ignore */ url(reg.sourceOf(r.id)))).default)) ruled.push(r.id);
     expect(ruled).toEqual(NO_HAND);
+    // LIB-SHIP W5: a HAND line for a bodyweight id is red too (the 0-lines assert above)
+    const bw = '  "bodyweight-squat": () => import(\'../../slices/howto/css/zoom-bodyweight-squat.css\').then(() => import(\'./handpair-curl-dumbbell-under\')),\n';
+    expect(handLineProblems(readFileSync('src/howto/generated/loaders.ts', 'utf8').replace('export const POSTURE', `${bw}export const POSTURE`), 'bodyweight-squat').problems).toEqual([]);
+    expect(handLineProblems(readFileSync('src/howto/generated/loaders.ts', 'utf8'), 'bodyweight-squat').problems).toEqual(['bodyweight-squat: 0 HAND lines']);
     const loaders = readFileSync('src/howto/generated/loaders.ts', 'utf8'), line = '  "barbell-row": () => import(\'../../slices/howto/css/zoom-barbell-row.css\').then(() => import(\'./handpair-curl-dumbbell-under\')),\n';
     const added = loaders.replace('export const POSTURE', `${line}export const POSTURE`);
     expect(handLineProblems(added, 'barbell-row').problems).toEqual([]);   // the line now passes the W1 shape, so the 0-lines assert above is red

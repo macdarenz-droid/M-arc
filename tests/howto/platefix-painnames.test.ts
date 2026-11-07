@@ -49,7 +49,7 @@ describe('D-PF-PAINNAMES: no data-label on a built page holds a raw body-map par
     }
     expect(parts.size).toBeGreaterThan(0);
     expect([...parts].filter(p => !named(p))).toEqual([]);
-  });
+  }, 60_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): imports every shipped sheet's pain rows; 7608 ms on 6f33ccd1 unit-tz America/New_York
   it('mutation: without the library mapping (golden B\'s table alone) the library parts have no name', () => {
     const bare = tableOf(VENDORED);
     expect(bare.length).toBeGreaterThan(0);

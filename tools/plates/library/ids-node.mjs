@@ -1,7 +1,7 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=3245d30d8a1ba682960757de2d9fa081718ca106ab2e33d562f612b3e9ef7da1
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=52be8d716753d15282ade1960725b126ee6e4ff3f8e3398f574c72c425b3b448
 // Node twin of src/howto/ids.ts (tests and the gate's harness): the same literals and decoder template, emitted
 // together by tools/plates/gen/ids.mjs (D-LIB2-hints).
-const S = "2eTgEhDkUMbG`?G=;OVKR?oeeYPaW@NI22\\X@@[:2`_N8@HYhf\\Qc3;MnWZC5\\CXiQi]D28A3H^9CJNAPYedPcYPRC0kM>dL18f@U\\R=nLUTH@YoZg4J8hf>";
+const S = "2eTgEhDkUMbG`?G=;OVKR?oeeYPaW@NI22\\X@@[:2`_N8@HYhf\\Qc3;MnWZC5\\CXiQi]D28A3H^9CJNAin<=1T<2<4Z3<2cCbhh:k=d?K=o^m`\\?c4GNk=dIPYedPcYPRC0kM>dL18f@U\\R=nLUTH@YoZg4J8hf>";
 const H = ["Heel of palm, wrist straight.","Handle firm in palm, wrist neutral.","Hands against the rope knobs.","Wrist in line with the forearm."];
 const O = "ABBCD";
 function at(s) {

@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=60abde97fcc084da9ba354d771dd687dbd4b074644b1c0635409183fdfc69f5b
+{
+  "id": "lib_alternating_dumbbell_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/alternating_dumbbell_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-hammer",
+    "nielasher-alt",
+    "sl-dbcurl",
+    "marcolin-2018",
+    "acsm-2009",
+    "hand-key-curl",
+    "nhs-wrist-pain"
+  ],
+  "riskFlags": [
+    "wrist"
+  ]
+}

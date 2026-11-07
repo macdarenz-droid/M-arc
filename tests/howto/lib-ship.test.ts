@@ -6,9 +6,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { RULED, checkC3Library, checkConventionGrip, checkGripLibrary } from './checks/c3-library';
 import { checkC3 } from './checks/c3';
+import { W5 } from './lib-ship-w5';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -22,7 +24,11 @@ const EIGHT = Object.keys(json('tools/plates/plates.json'));
 // single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge, in registry order (barbell_overhead_press held)
 const W3_SHIPPED = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
   'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'];
-const RULED_SHIPPED = [...W3_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+// LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET #392 6682188871 + D-SHIP-W5-PREACHER 6683213580): plus the 10 flipped lb04/lb05
+// ids, in registry order (lb04's 4, then lb05's 6, after W3's lb01-lb03 rows); the other 17 W5 rows are held
+const W5_SHIPPED = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat',
+  'lib_preacher_curl', 'lib_hammer_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];
+const RULED_SHIPPED = [...W3_SHIPPED, ...W5_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
 let reg: any, content: any, P: any, keyMods: any[];
@@ -38,6 +44,11 @@ describe('LIB-SHIP A1: the shipped set', () => {
     const eleven = ['hip_thrust', 'pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch', 'overhead_cable_triceps_extension',
       'cable_rear_delt_fly', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'leg_press_calf_raise'].map(s => `lib_${s}`);
     expect(reg.shippedIds().filter((id: string) => eleven.includes(id))).toEqual([]);
+    // LIB-SHIP W5 (D-SHIP-W5-FLIPSET, ruling 3): of the 27 W5 rows exactly the 10 ship; the 17 held stay approved-plate
+    const held = W5.filter(id => !W5_SHIPPED.includes(id));
+    expect(held).toHaveLength(17);
+    expect(reg.shippedIds().filter((id: string) => held.includes(id))).toEqual([]);
+    expect(held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(held.map(id => [id, 'approved-plate']));
   });
 });
 
@@ -252,8 +263,16 @@ describe('LIB-SHIP D-SHIP-PAIR-NOZOOM (#379 6637870829): pairsOf leaves out ids 
     const { pairOf, keys } = HP.pairsOf(pairs, R.shippedIds());
     expect(pairOf['dumbbell-biceps-curl']).toBe('curl-dumbbell-under');
     // LIB-SHIP W3: W3's 5 pair rows (registry order, lb01 first) carry their sub-keys; the curl's key stays last
+    // LIB-SHIP W5 (D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, ruling 3): lb05's 5 keyed curls follow in registry order
+    // (preacher ez-curl-under; alternating_dumbbell_curl takes the curl key first, so it moves up from last; barbell
+    // curl-bar-under; ez_bar ez-curl-angled; reverse ez-curl-over). hammer_curl is on the no-zoom list (D-SHIP-W5-HAMMER)
+    // and gets no pair; front_squat is gap-key and the 3 bodyweight ids are archetype none
     expect(keys).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead',
-      'd-handle-pull-only-curled-unstated', 'curl-dumbbell-under']);
+      'd-handle-pull-only-curled-unstated', 'ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
+    expect([pairOf['preacher-curl'], pairOf['alternating-dumbbell-curl'], pairOf['barbell-curl'], pairOf['ez-bar-curl'], pairOf['reverse-curl']])
+      .toEqual(['ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
+    for (const c of ['hammer-curl', 'front-squat', 'bodyweight-squat', 'bodyweight-lunge', 'bodyweight-split-squat']) expect([c, pairOf[c]]).toEqual([c, undefined]);
+    expect(HP.noZoomIds()).toContain('lib_hammer_curl');
     expect(HP.noZoomIds()).not.toContain('lib_dumbbell_biceps_curl');
   });
   it('red 3: hands.mjs\'s no-zoom check runs for rope and push_up (their sheets name D-SHIP-C3; a sheet naming none is refused)', async () => {
@@ -413,6 +432,327 @@ describe('LIB-SHIP D-SHIP-IDS-NOPAIR + D-SHIP-PAIR-NOZOOM: every pinned no-zoom 
     // red: the why with the route taken out
     const ohp = (await import(/* @vite-ignore */ pathToFileURL(join(process.cwd(), 'tools/plates/library/howto/lib_barbell_overhead_press.howto.mjs')).href)).default;
     expect(hands.noPairRuling({ ...ohp, handling: { ...ohp.handling, why: ohp.handling.why.replace('D-SHIP-C3 no-zoom list, ', '') } })).toBe(null);
+  });
+});
+
+// LIB-SHIP W5 (SHIP W5 PLAN RULED, #392 6647901307): the rulings' own checks, each red proven on an in-memory mutation.
+describe('LIB-SHIP W5 D-SHIP-W5-PLATEONLY: [] only on a plate.* field, plate.view equal on cards and specs', () => {
+  let FAM: any;
+  beforeAll(async () => { FAM = await import(/* @vite-ignore */ url('tools/plates/library/lint/family.mjs')); });
+  const FM = () => FAM.INHERIT_MAP as Record<string, Record<string, string[]>>;
+  // LIB-SHIP W3's one ruled non-plate [] (#384 6648454032 L2, accepted 6648753200; on main since train 73): named here, so
+  // any other non-plate [] is still red
+  const W3_RULED_EMPTY = ['lib_single_arm_lat_pulldown setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull'];
+  const emptyNonPlate = (map: Record<string, Record<string, string[]>>) => Object.entries(map).flatMap(([id, m]) =>
+    Object.entries(m).filter(([f, p]) => p.length === 0 && !f.startsWith('plate.') && !W3_RULED_EMPTY.includes(`${id} ${f}`)).map(([f]) => `${id}: ${f}: [] on a non-plate field (D-SHIP-W5-PLATEONLY)`));
+  const spec = async (id: string) => (await import(/* @vite-ignore */ url(`tools/plates/library/specs/${id}.mjs`))).default;
+  const viewProblems = (id: string, kid: any, par: any, kidSpec: any, parSpec: any) => [
+    ...(kid.plate.view === par.plate.view ? [] : [`${id}: card plate.view ${kid.plate.view} !== parent ${par.plate.view}`]),
+    ...(kidSpec.view === parSpec.view ? [] : [`${id}: spec view ${kidSpec.view} !== parent ${parSpec.view}`])];
+  it('the [] entries are exactly the 9 plate.view and straight_bar\'s plate.equipment; a [] on a non-plate field is red', () => {
+    const empties = Object.entries(FM()).flatMap(([id, m]) => Object.entries(m).filter(([, p]) => p.length === 0).map(([f]) => `${id} ${f}`));
+    expect(empties).toEqual([...['alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'forward_lunge', 'walking_lunge', 'bulgarian_split_squat',
+      'single_arm_triceps_pushdown'].map(s => `lib_${s} plate.view`), 'lib_straight_bar_triceps_pushdown plate.view', 'lib_straight_bar_triceps_pushdown plate.equipment', ...W3_RULED_EMPTY]);
+    expect(emptyNonPlate(FM())).toEqual([]);
+    expect(emptyNonPlate({ ...FM(), lib_wall_sit: { ...FM().lib_wall_sit, 'b10 / redFlags knee (NHS knee box)': [] } }))
+      .toEqual(['lib_wall_sit: b10 / redFlags knee (NHS knee box): [] on a non-plate field (D-SHIP-W5-PLATEONLY)']);
+  });
+  it('each plate.view child: card plate.view and spec view === the parent\'s (parents dumbbell_biceps_curl, reverse_lunge, triceps_pushdown); a changed child view is red', async () => {
+    const kids = Object.entries(FM()).filter(([, m]) => 'plate.view' in m).map(([id]) => id.slice(4));
+    expect(kids).toHaveLength(9);
+    for (const id of kids) {
+      const kid = json(`docs/research/howto/cards/${id}.json`), par = json(`docs/research/howto/cards/${kid.parent}.json`);
+      expect([id, kid.parent]).toEqual([id, { curl: 'dumbbell_biceps_curl', lunge: 'reverse_lunge', pushdown: 'triceps_pushdown' }[/curl/.test(id) ? 'curl' : /pushdown/.test(id) ? 'pushdown' : 'lunge']]);
+      const [ks, ps] = await Promise.all([spec(id), spec(kid.parent)]);
+      expect([id, viewProblems(id, kid, par, ks, ps)]).toEqual([id, []]);
+      expect(viewProblems(id, kid, par, { ...ks, view: 'front' }, ps)).toEqual([`${id}: spec view front !== parent ${ps.view}`]);
+      expect(viewProblems(id, { ...kid, plate: { ...kid.plate, view: 'front' } }, par, ks, ps)).toEqual([`${id}: card plate.view front !== parent ${par.plate.view}`]);
+    }
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-THUMB and D-SHIP-W5-SAWRIST: pushdown children against triceps_pushdown', () => {
+  let FAM: any, L: any, par: any;
+  const KIDS = ['lib_single_arm_triceps_pushdown', 'lib_straight_bar_triceps_pushdown'];
+  beforeAll(async () => {
+    [FAM, L] = await Promise.all(['tools/plates/library/lint/family.mjs', 'tools/plates/library/lint/index.mjs'].map(p => import(/* @vite-ignore */ url(p))));
+    par = (await content.loadContent('lib_triceps_pushdown')).content;
+  });
+  const run = (c: any) => FAM.familyRefusal(c.id, c, json, (id: string) => (id === par.id ? par : undefined));
+  const poseOnNoZoom = (c: any) => (!c.zooms.some((z: any) => z.kind === 'hand') && c.handling.pose !== undefined ? [`${c.id}: handling.pose on a no-zoom sheet (D-SHIP-W5-THUMB)`] : []);
+  it('both children pass the family check; neither they nor the parent carry handling.pose; a changed thumb mode is red', async () => {
+    expect(poseOnNoZoom(par)).toEqual([]);
+    expect(par.handling.pose).toBeUndefined();
+    for (const id of KIDS) {
+      const { content: c } = await content.loadContent(id);
+      expect([id, run(c), poseOnNoZoom(c)]).toEqual([id, null, []]);
+      expect(run({ ...c, handling: { ...c.handling, thumb: { ...c.handling.thumb, mode: 'thumbless' } } }))
+        .toBe(`${id}: family: grip.thumb: handling.thumb.mode "thumbless" !== parent lib_triceps_pushdown's "wrapped" (D-LIB5-FAMILY)`);
+      expect(poseOnNoZoom({ ...c, handling: { ...c.handling, pose: { thumb: 'wrapped' } } })).toEqual([`${id}: handling.pose on a no-zoom sheet (D-SHIP-W5-THUMB)`]);
+    }
+  });
+  it('single_arm: wrist.ext compared, its own limitText (c9), never the parent\'s plural line', async () => {
+    const { content: c } = await content.loadContent('lib_single_arm_triceps_pushdown'), PLURAL = 'Keep the wrists in line with the forearms.';
+    expect(par.handling.wrist.limitText).toBe(PLURAL);
+    const plural = (x: any) => L.shownCopyFields(x).filter((f: any) => f.text.includes(PLURAL)).map((f: any) => f.path);
+    expect([c.handling.wrist.limitText, plural(c)]).toEqual(['Keep the wrist in line with the forearm.', []]);
+    expect(plural({ ...c, handling: { ...c.handling, wrist: { ...c.handling.wrist, limitText: PLURAL } } }).length).toBeGreaterThan(0);
+    expect(run({ ...c, handling: { ...c.handling, wrist: { ...c.handling.wrist, ext: [0, 20] } } }))
+      .toBe('lib_single_arm_triceps_pushdown: family: grip.wrist: handling.wrist.ext[1] 20 !== parent lib_triceps_pushdown\'s 15 (D-LIB5-FAMILY)');
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-GOLDENFEET and D-SHIP-W5-WALLSIT: squat children', () => {
+  let FAM: any, L: any, fs: any, bb: any, ws: any, bw: any;
+  beforeAll(async () => {
+    [FAM, L] = await Promise.all(['tools/plates/library/lint/family.mjs', 'tools/plates/library/lint/index.mjs'].map(p => import(/* @vite-ignore */ url(p))));
+    [fs, bb, ws, bw] = await Promise.all(['lib_front_squat', 'lib_barbell_back_squat', 'lib_wall_sit', 'lib_bodyweight_squat'].map(async id => (await content.loadContent(id)).content));
+  });
+  const run = (c: any, card: any, parent: any) => FAM.familyRefusal(c.id, c, () => card, (id: string) => (id === parent.id ? parent : undefined));
+  const feet = (c: any) => c.posture.find((p: any) => p.key === 'feet');
+  const shows = (c: any, s: string) => L.shownCopyFields(c).some((f: any) => f.text.includes(s));
+  // F-CARD-FRONTSQ-SETUP landed on main (RESEARCH-ROUTES-1 #398): the card's inherit[] no longer names setup[2], so the
+  // family check now passes on the real card; the old setup[2] entry put back is still refused (unmapped).
+  it('front_squat: passes with the research card (setup[2] gone); setup[2] put back is refused; the feet label is golden\'s, the golden detail is not on the child', () => {
+    const card = json('docs/research/howto/cards/front_squat.json');
+    expect(card.inherit.map((e: any) => e.field)).toEqual(['posture[3] (feet flat, knees follow the toes)']);
+    expect(run(fs, card, bb)).toBeNull();
+    const back = { ...card, inherit: [{ field: 'setup[2] (load the plates evenly, collars on)', why: 'red: the old field' }, ...card.inherit] };
+    expect(run(fs, back, bb)).toBe('lib_front_squat: family: docs/research/howto/cards/front_squat.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)');
+    expect([feet(fs).label, feet(bb).label]).toEqual(['Knees follow toes', 'Knees follow toes']);
+    expect([shows(fs, feet(bb).detail), feet(fs).detail]).toEqual([false, 'Whole-foot balance, knees in line with the feet.']);
+    const mapped = { ...card, inherit: card.inherit.filter((e: any) => !e.field.startsWith('setup[2]')) };
+    expect(run(fs, mapped, bb)).toBeNull();
+    const withFeet = (p: any) => ({ ...fs, posture: fs.posture.map((x: any) => (x.key === 'feet' ? { ...x, ...p } : x)) });
+    expect(run(withFeet({ label: 'Feet flat' }), mapped, bb))
+      .toBe('lib_front_squat: family: posture[3] (feet flat, knees follow the toes): posture[key=feet].label "Feet flat" !== parent lib_barbell_back_squat\'s "Knees follow toes" (D-LIB5-FAMILY)');
+    expect(shows(withFeet({ detail: feet(bb).detail }), feet(bb).detail)).toBe(true);
+  });
+  const ownW4 = (c: any) => (c.posture.some((p: any) => p.key !== 'knees' && /\bw4\b/.test(p.claim?.note ?? '') && /Knees directly above the ankles/.test(p.detail)) ? [] : [`${c.id}: no own w4 checkpoint (D-SHIP-W5-WALLSIT)`]);
+  const overToes = (c: any) => (c.posture.find((p: any) => p.key === 'knees').label === 'Knees over toes' ? [`${c.id}: knees label is "Knees over toes" (D-SHIP-W5-WALLSIT)`] : []);
+  it('wall_sit: the parent\'s knees checkpoint exactly plus its own w4; bodyweight_squat\'s knees label is never "Knees over toes"', () => {
+    const card = json('docs/research/howto/cards/wall_sit.json'), knees = (c: any) => c.posture.find((p: any) => p.key === 'knees');
+    expect([run(ws, card, bw), ownW4(ws), overToes(bw)]).toEqual([null, [], []]);
+    expect([knees(ws).label, knees(ws).detail]).toEqual([knees(bw).label, knees(bw).detail]);
+    expect(ownW4({ ...ws, posture: ws.posture.filter((p: any) => p.key !== 'ankles') })).toEqual(['lib_wall_sit: no own w4 checkpoint (D-SHIP-W5-WALLSIT)']);
+    const relabel = (c: any, label: string) => ({ ...c, posture: c.posture.map((p: any) => (p.key === 'knees' ? { ...p, label } : p)) });
+    expect(run(relabel(ws, 'Knees out'), card, bw))
+      .toBe('lib_wall_sit: family: posture[1] (knees over the second toe, ankles not rolling): posture[key=knees].label "Knees out" !== parent lib_bodyweight_squat\'s "Knees follow toes" (D-LIB5-FAMILY)');
+    expect(overToes(relabel(bw, 'Knees over toes'))).toEqual(['lib_bodyweight_squat: knees label is "Knees over toes" (D-SHIP-W5-WALLSIT)']);
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-GRIPC: pushdown contacts from ga:push-heel, curl contacts from ga:curl-mid', () => {
+  const card = (id: string) => json(`docs/research/howto/cards/${id.slice(4)}.json`);
+  const src = (id: string) => readFileSync(join(ROOT, `tools/plates/library/howto/${id}.howto.mjs`), 'utf8');
+  for (const id of ['lib_single_arm_triceps_pushdown', 'lib_straight_bar_triceps_pushdown', 'lib_dumbbell_overhead_triceps_extension']) {
+    it(`${id}: the sheet takes PUSH_HEEL from the convention; red 1: the convention changes (zone or range)`, async () => {
+      const { content: c } = await content.loadContent(id), conv = P.CONVENTIONS['ga:push-heel'] as string;
+      expect(src(id)).toContain(`const PUSH_HEEL = ${JSON.stringify(conv).replace(/"/g, "'")};`);
+      expect(checkConventionGrip(c, null, conv)).toEqual([]);
+      expect(checkConventionGrip(c, null, conv.replace('heel of the palm', 'middle of the palm'))).toEqual([`GRIPC: ${id}: contact heel is not the convention's zone`]);
+      expect(checkConventionGrip(c, null, conv.replace(/extension \d+ to \d+/, 'extension 0 to 20'))).toEqual([`GRIPC: ${id}: wrist ext [0,15] is not the convention's range`]);
+    });
+  }
+  for (const id of ['lib_single_arm_triceps_pushdown', 'lib_straight_bar_triceps_pushdown']) {
+    it(`${id}: the card has no handContact; red 2: the card gains one that disagrees`, async () => {
+      const { content: c } = await content.loadContent(id), k = card(id), conv = P.CONVENTIONS['ga:push-heel'];
+      expect([k.grip.handContact, checkConventionGrip(c, k, conv)]).toEqual(['', []]);
+      expect(checkConventionGrip(c, { grip: { ...k.grip, handContact: 'Bar across the middle of the palm.' } }, conv)).toEqual([`GRIPC: ${id}: card grip.handContact disagrees with the convention`]);
+      expect(checkConventionGrip(c, { grip: { ...k.grip, handContact: 'Bar on the heel of the palm.' } }, conv)).toEqual([]);   // control
+    });
+  }
+  // ga:curl-mid's range is signed (-10 to +10), so the curl form reads it with a signed pattern, as the sheets do
+  const ZONE: Record<string, string> = { heel: 'heel of the palm', 'mid-palm': 'middle of the palm', 'finger-base': 'base of the fingers' };
+  const curlGripc = (c: any, conv: string, exempt: boolean) => {
+    const h = c.handling, out: string[] = [], ext = conv.match(/extension (-?\d+) to \+?(-?\d+)/)?.slice(1).map(Number);
+    const zone = ZONE[h.contact];
+    if (!zone || !conv.includes(zone)) out.push(`GRIPC: ${c.id}: contact ${h.contact} is not the convention's zone`);
+    if (exempt) { if (h.wrist.exempt === undefined || h.wrist.ext !== undefined) out.push(`GRIPC: ${c.id}: an exempt wrist carries the convention's range`); }
+    else if (JSON.stringify(h.wrist.ext) !== JSON.stringify(ext)) out.push(`GRIPC: ${c.id}: wrist ext ${JSON.stringify(h.wrist.ext)} is not the convention's range`);
+    return out;
+  };
+  for (const [id, exempt] of [['lib_concentration_curl', false], ['lib_wrist_curl', true]] as const) {
+    it(`${id}: contact from CURL_MID (${exempt ? 'contact only, the wrist exempt' : 'contact and range'}); reds: the zone changes${exempt ? ', the range on the exempt wrist' : ', the range changes'}`, async () => {
+      const { content: c } = await content.loadContent(id), conv = P.CONVENTIONS['ga:curl-mid'] as string;
+      expect(src(id)).toContain(`const CURL_MID = ${JSON.stringify(conv).replace(/"/g, "'")};`);
+      expect([card(id).grip.handContact, curlGripc(c, conv, exempt)]).toEqual(['', []]);
+      expect(curlGripc(c, conv.replace('middle of the palm', 'heel of the palm'), exempt)).toEqual([`GRIPC: ${id}: contact mid-palm is not the convention's zone`]);
+      if (exempt) expect(curlGripc({ ...c, handling: { ...c.handling, wrist: { ...c.handling.wrist, ext: [-10, 10] } } }, conv, true)).toEqual([`GRIPC: ${id}: an exempt wrist carries the convention's range`]);
+      else expect(curlGripc(c, conv.replace(/extension -?\d+ to \+?-?\d+/, 'extension 0 to 15'), false)).toEqual([`GRIPC: ${id}: wrist ext [-10,10] is not the convention's range`]);
+    });
+  }
+  it('wrist_curl: thumb wrapped is CONVENTION data, and no printed string names a thumb (red: one that does)', async () => {
+    const L: any = await import(/* @vite-ignore */ url('tools/plates/library/lint/index.mjs')), { content: c } = await content.loadContent('lib_wrist_curl');
+    const thumbs = (x: any) => L.shownCopyFields(x).filter((f: any) => /\bthumbs?\b/i.test(f.text)).map((f: any) => f.path);
+    expect([c.handling.thumb.mode, c.handling.thumb.claim.tags, thumbs(c)]).toEqual(['wrapped', ['CONVENTION'], []]);
+    expect(thumbs({ ...c, handling: { ...c.handling, gripLine: `${c.handling.gripLine} Thumbs wrapped round the bar.` } })).toEqual(['handling.gripLine']);
+  });
+  it('concentration_curl: thumb cites shared/curl.json thumbRule, whose appliesTo names it (red: the id removed from appliesTo)', async () => {
+    const { content: c } = await content.loadContent('lib_concentration_curl'), curl = json('docs/research/howto/shared/curl.json');
+    const sourced = (x: any, s: any) => [
+      ...(s.appliesTo.includes(x.id.slice(4)) ? [] : [`${x.id}: not in shared/curl.json appliesTo`]),
+      ...(x.handling.thumb.claim.note.includes('shared/curl.json thumbRule') && s.thumbRule.claim.every((k: string) => new RegExp(`\\b${k}\\b`).test(x.handling.thumb.claim.note)) ? [] : [`${x.id}: thumb does not cite shared/curl.json thumbRule`]),
+      ...(x.handling.thumb.mode === 'wrapped' && /thumbs wrapped/.test(s.thumbRule.text) ? [] : [`${x.id}: thumb mode is not the thumbRule's`])];
+    expect(sourced(c, curl)).toEqual([]);
+    expect(sourced(c, { ...curl, appliesTo: curl.appliesTo.filter((s: string) => s !== 'concentration_curl') })).toEqual(['lib_concentration_curl: not in shared/curl.json appliesTo']);
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-HAMMERWRONG: the hand-zoom Wrong caption never says twist; the twist claim keeps its slot', () => {
+  const problems = (c: any) => {
+    const z = c.zooms.find((x: any) => x.kind === 'hand'), out: string[] = [];
+    if (/twist/i.test(`${z.caption.right} ${z.caption.wrong}`)) out.push(`${c.id}: hand zoom caption says twist`);
+    const slot = c.id === 'lib_hammer_curl'
+      ? c.mistakes.some((m: any) => /twist/i.test(m.title) && /\bc5\b/.test(m.claim?.note ?? ''))
+      : /twist/i.test(c.handling.wrist.limitText) && /\bc7\b/.test(c.handling.wrist.claim.note);
+    if (!slot) out.push(`${c.id}: the twist claim is missing from its slot`);
+    return out;
+  };
+  // D-SHIP-W5-HAMMER (W5 focused recheck, #392 6654466055): hammer_curl has no hand zoom now; its block is below. cross_body unchanged.
+  for (const id of ['lib_cross_body_hammer_curl']) it(`${id}: green; reds: twist in the caption, the twist claim removed`, async () => {
+    const { content: c } = await content.loadContent(id);
+    expect(problems(c)).toEqual([]);
+    const cap = { ...c, zooms: c.zooms.map((z: any) => (z.kind === 'hand' ? { ...z, caption: { ...z.caption, wrong: 'Wrist twisting out of neutral.' } } : z)) };
+    expect(problems(cap)).toEqual([`${id}: hand zoom caption says twist`]);
+    const gone = id === 'lib_hammer_curl' ? { ...c, mistakes: c.mistakes.filter((m: any) => m.key !== 'twist') }
+      : { ...c, handling: { ...c.handling, wrist: { ...c.handling.wrist, limitText: 'Keep the wrist straight.' } } };
+    expect(problems(gone)).toEqual([`${id}: the twist claim is missing from its slot`]);
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-HAMMER (#392 6654466055): hammer_curl ships with no hand zoom, the twist in its c5 mistake row', () => {
+  const card = () => json('docs/research/howto/cards/hammer_curl.json'), list = () => json('tools/plates/library/hands/no-zoom.json').entries;
+  /** A flexion or extension Wrong for the hand (the curl key's curled / bent-back faults) in a printed string. */
+  const FLEXEXT = /\b(curled|bent (back|forward)|flex(ed|ion)|extension)\b/i;
+  const problems = (c: any, e: any) => {
+    const out: string[] = [];
+    if (c.zooms.some((z: any) => z.kind === 'hand')) out.push(`${c.id}: has a hand zoom`);
+    if (c.handling.pose !== undefined || c.handling.faults.length) out.push(`${c.id}: carries a hand pose or faults`);
+    if (!(e?.ruling === 'D-SHIP-W5-HAMMER' && e.reason === 'gap-ruled')) out.push(`${c.id}: entry is not gap-ruled D-SHIP-W5-HAMMER`);
+    if (!c.handling.why.startsWith('D-SHIP-C3 no-zoom list, D-SHIP-W5-HAMMER')) out.push(`${c.id}: why does not name D-SHIP-W5-HAMMER after the D-SHIP-C3 route`);
+    if (!c.mistakes.some((m: any) => /twist/i.test(m.title) && /\bc5\b/.test(m.claim?.note ?? ''))) out.push(`${c.id}: the twist claim is missing from its c5 mistake row`);
+    return out;
+  };
+  it('green on the tree: no hand zoom, pose or faults; gap-ruled entry; why; c5 twist row; C3L passes; no printed flexion/extension Wrong', async () => {
+    const L: any = await import(/* @vite-ignore */ url('tools/plates/library/lint/index.mjs')), { content: c } = await content.loadContent('lib_hammer_curl');
+    expect(problems(c, list().lib_hammer_curl)).toEqual([]);
+    expect(RULED.has('D-SHIP-W5-HAMMER')).toBe(true);
+    expect(checkC3Library(c, 'Dumbbells', { list: list(), card: card(), gapKeyOf })).toEqual([]);
+    const flexExt = (x: any) => L.shownCopyFields(x).filter((f: any) => FLEXEXT.test(f.text)).map((f: any) => f.path);
+    expect(flexExt(c)).toEqual([]);
+    expect(flexExt({ ...c, handling: { ...c.handling, cue: 'Wrist bent back is wrong.' } })).toEqual(['handling.cue']);
+  });
+  it('reds: a hand zoom added back (C3L and this check), the entry\'s ruling changed, the twist row removed', async () => {
+    const { content: c } = await content.loadContent('lib_hammer_curl'), e = list().lib_hammer_curl;
+    const zoomed = { ...c, zooms: [...c.zooms, { key: 'hand', kind: 'hand', chip: 'Wrist', heading: 'Wrist position' }] };
+    expect(checkC3Library(zoomed, 'Dumbbells', { list: list(), card: card(), gapKeyOf })).toContain('C3L: lib_hammer_curl is on the no-zoom list but has a hand zoom');
+    expect(problems(zoomed, e)).toEqual(['lib_hammer_curl: has a hand zoom']);
+    expect(problems(c, { ...e, ruling: 'D-SHIP-C3' })).toEqual(['lib_hammer_curl: entry is not gap-ruled D-SHIP-W5-HAMMER']);
+    expect(problems({ ...c, mistakes: c.mistakes.filter((m: any) => m.key !== 'twist') }, e)).toEqual(['lib_hammer_curl: the twist claim is missing from its c5 mistake row']);
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-HANDW5: straight_bar\'s no-zoom entry and why', () => {
+  const ok = (e: any, why: string) => [...(e?.ruling === 'D-SHIP-HANDW5' && e.reason === 'gap-ruled' ? [] : ['entry is not gap-ruled D-SHIP-HANDW5']),
+    ...(why.startsWith('D-SHIP-C3 no-zoom list') && why.includes('D-SHIP-HANDW5') ? [] : ['why does not begin with the D-SHIP-C3 route then name D-SHIP-HANDW5'])];
+  it('green on the tree; reds: the entry\'s ruling changed, the why reordered', async () => {
+    const e = json('tools/plates/library/hands/no-zoom.json').entries.lib_straight_bar_triceps_pushdown, { content: c } = await content.loadContent('lib_straight_bar_triceps_pushdown');
+    expect(ok(e, c.handling.why)).toEqual([]);
+    expect(ok({ ...e, ruling: 'D-SHIP-HANDW2' }, c.handling.why)).toEqual(['entry is not gap-ruled D-SHIP-HANDW5']);
+    expect(ok(e, c.handling.why.replace('D-SHIP-C3 no-zoom list, ', '') + ' D-SHIP-C3 no-zoom list')).toEqual(['why does not begin with the D-SHIP-C3 route then name D-SHIP-HANDW5']);
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-EQUIPDRAWN (#392 6654347642): straight_bar\'s spec equipment draws as triceps_pushdown\'s', () => {
+  // The cards' plate.equipment strings differ only by "(above head height)" on the parent: text, not equipment (no card change).
+  let E: any, kid: any, par: any;
+  beforeAll(async () => {
+    E = await import(/* @vite-ignore */ url('tools/plates/library/engine.mjs'));
+    [kid, par] = await Promise.all(['straight_bar_triceps_pushdown', 'triceps_pushdown'].map(async id => (await import(/* @vite-ignore */ url(`tools/plates/library/specs/${id}.mjs`))).default));
+  });
+  const merge = (a: any, b: any): any => (b === undefined ? a : a && b && typeof a === 'object' && typeof b === 'object' && !Array.isArray(a) && !Array.isArray(b)
+    ? { ...a, ...Object.fromEntries(Object.keys(b).map(k => [k, merge(a[k], b[k])])) } : b);   // vendor/engine/plate.mjs mergeDeep
+  /** Each function item's output on every pose the engine draws for `spec` (start, every via, end, the ghosts, the
+   *  Mistake), with the ctx renderPlate/drawPose pass: { pose, start, body, mistake, q }. */
+  const drawnArgs = (spec: any) => {
+    const body = { height: spec.body?.height ?? 1.75 }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => E.normPose(p, body));
+    const n = spec.ghosts?.count ?? 3, lmOf = (q: any) => E.landmarks(E.fk(q, body)), start = lmOf(E.poseAt(keys, 0, body).q);
+    const qs: [string, any, boolean][] = [...keys.map((k: any, i: number) => [i === 0 ? 'start' : i === keys.length - 1 ? 'end' : `via${i - 1}`, E.resolve(k, body).q, false] as [string, any, boolean]),
+      ...Array.from({ length: n }, (_, i) => [`ghost${i}`, E.poseAt(keys, (i + 1) / (n + 1), body).q, false] as [string, any, boolean]),
+      ...(spec.mistake?.pose ? [['mistake', E.resolve(E.normPose(merge(spec.poses.end, spec.mistake.pose), body), body).q, true] as [string, any, boolean]] : [])];
+    return qs.map(([pose, q, mistake]) => [pose, lmOf(q), { pose, start, body, mistake, q }] as const);
+  };
+  const equipProblems = (a: any, b: any) => {
+    const out: string[] = [];
+    if (a.equipment.length !== b.equipment.length) return [`length ${a.equipment.length} !== ${b.equipment.length}`];
+    a.equipment.forEach((x: any, i: number) => {
+      const y = b.equipment[i];
+      if (typeof x !== 'function' || typeof y !== 'function') { if (typeof x === 'function' || typeof y === 'function' || !isDeepStrictEqual(x, y)) out.push(`item ${i} differs`); return; }
+      for (const s of [a, b]) for (const [pose, lm, ctx] of drawnArgs(s)) if (!isDeepStrictEqual(x(lm, ctx), y(lm, ctx))) out.push(`item ${i} differs on ${s.id} ${pose}`);
+    });
+    return out;
+  };
+  it('items 0-11 deep-equal; items 12-13 are functions with deep-equal output on every drawn pose of both plates', () => {
+    expect(kid.equipment.map((x: any) => typeof x)).toEqual([...Array(12).fill('object'), 'function', 'function']);
+    for (let i = 0; i < 12; i++) expect([i, kid.equipment[i]]).toStrictEqual([i, par.equipment[i]]);
+    expect(drawnArgs(kid).map(([p]) => p)).toEqual(['start', ...Array.from({ length: kid.poses.via.length }, (_, i) => `via${i}`), 'end', 'ghost0', 'ghost1', 'ghost2', 'mistake']);
+    expect(equipProblems(kid, par)).toEqual([]);
+  });
+  it('red 1: one data item changed', () => {
+    const eq = [...kid.equipment]; eq[6] = { ...eq[6], r: eq[6].r + 0.01 };
+    expect(equipProblems({ ...kid, equipment: eq }, par)).toEqual(['item 6 differs']);
+  });
+  it('red 2: one closure\'s output changed on one pose', () => {
+    const eq = [...kid.equipment], f = eq[13];
+    eq[13] = (lm: any, ctx: any) => (ctx.pose === 'end' ? f(lm, ctx).map((o: any) => (o.type === 'latBar' ? { ...o, width: o.width + 0.01 } : o)) : f(lm, ctx));
+    expect(equipProblems({ ...kid, equipment: eq }, par)).toEqual(['item 13 differs on straight_bar_triceps_pushdown end', 'item 13 differs on triceps_pushdown end']);
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-CONVCONTACT (#392 6654347642): dumbbell_overhead_triceps_extension takes its zone from ga:push-heel', () => {
+  const ZONES = ['heel of the palm', 'middle of the palm', 'base of the fingers'];
+  /** The card's handContact may name no palm zone (the zone then comes from the convention, data only); a zone it names must be the convention's. */
+  const cardZone = (id: string, card: any, conv: string) => ZONES.filter(z => String(card.grip?.handContact ?? '').toLowerCase().includes(z) && !conv.includes(z))
+    .map(z => `CONVCONTACT: ${id}: card grip.handContact names ${z}, not the convention's zone`);
+  const ID = 'lib_dumbbell_overhead_triceps_extension', card = () => json('docs/research/howto/cards/dumbbell_overhead_triceps_extension.json');
+  it('the card names no zone and passes; red: a card naming another zone, through this check and through checkConventionGrip', async () => {
+    const { content: c } = await content.loadContent(ID), conv = P.CONVENTIONS['ga:push-heel'] as string, k = card();
+    expect([k.grip.handContact.length > 0, cardZone(ID, k, conv), c.handling.contact]).toEqual([true, [], 'heel']);
+    const mid = { ...k, grip: { ...k.grip, handContact: 'Both hands around the handle, across the middle of the palm.' } };
+    expect(cardZone(ID, mid, conv)).toEqual([`CONVCONTACT: ${ID}: card grip.handContact names middle of the palm, not the convention's zone`]);
+    expect(checkConventionGrip(c, mid, conv)).toEqual([`GRIPC: ${ID}: card grip.handContact disagrees with the convention`]);
+    expect(cardZone(ID, { ...k, grip: { ...k.grip, handContact: 'Handle on the heel of the palm.' } }, conv)).toEqual([]);   // control
+  });
+  it('no printed string of the sheet names the heel or a palm zone (red: one that does)', async () => {
+    const L: any = await import(/* @vite-ignore */ url('tools/plates/library/lint/index.mjs')), { content: c } = await content.loadContent(ID);
+    const named = (x: any) => L.shownCopyFields(x).filter((f: any) => /\bheel\b/i.test(f.text) || ZONES.some(z => f.text.toLowerCase().includes(z))).map((f: any) => f.path);
+    expect(named(c)).toEqual([]);
+    expect(named({ ...c, handling: { ...c.handling, gripLine: `${c.handling.gripLine} Handle on the heel of the palm.` } })).toEqual(['handling.gripLine']);
+  });
+});
+
+describe('LIB-SHIP W5 D-SHIP-W5-EZNOTE (#392 6681700725): reverse_curl\'s close-up on lb05 draws "Wrist straight", never the old note', () => {
+  const START = '<div class="zx" id="hp-ez-curl-over-zoom-hand"';
+  const problems = async (html: string) => {
+    const { divAt } = await import(/* @vite-ignore */ url('tools/plates/library/build-layers-page.mjs'));
+    const at = html.indexOf(START);
+    if (at < 0 || html.indexOf(START, at + 1) >= 0) return ['reverse_curl close-up not on the page exactly once'];
+    const block = divAt(html, at), bad: string[] = [];
+    if (/middle of palm/i.test(block)) bad.push('reverse_curl close-up says "Middle of palm"');
+    if (!block.includes('>WRIST STRAIGHT<')) bad.push('reverse_curl close-up draws no "WRIST STRAIGHT" note');
+    return bad;
+  };
+  const page = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb05.layers.html'), 'utf8');
+  it('lb05.layers.html: the block is there once, draws WRIST STRAIGHT and has no "middle of palm" in any case', async () => {
+    expect(await problems(page())).toEqual([]);
+  });
+  it('mutations: the drawn note put back, the panel note put back, or the block gone is red', async () => {
+    const h = page(), at = h.indexOf(START);
+    const inBlock = (from: string, to: string) => h.slice(0, at) + h.slice(at).replace(from, to);
+    expect(await problems(inBlock('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'))).toContain('reverse_curl close-up says "Middle of palm"');
+    expect(await problems(inBlock('Wrist straight', 'Middle of palm'))).toContain('reverse_curl close-up says "Middle of palm"');
+    expect(await problems(h.replace(START, '<div class="zx" id="gone"'))).toEqual(['reverse_curl close-up not on the page exactly once']);
   });
 });
 

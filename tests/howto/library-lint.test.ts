@@ -161,7 +161,7 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
         expect([r.id, f, lintTokens(L.boxReach(`redFlag(${f})`, B))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG: B, DISCLAIMER: shared.DISCLAIMER }, f))]);
       }
     }
-  });
+  }, 60_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): walks every shipped row's red-flag boxes; 5088 ms on 6f33ccd1 unit-tz America/New_York
 });
 
 describe('LIB-5 D-LIB5-VARIANT / VARIANT8: the variant-line rule', () => {
@@ -414,7 +414,11 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221; D-PLATEFIX-PINS / PIN GO): its 4 ids join them in registry order, so
   // single_leg_romanian_deadlift ships with its parent romanian_deadlift in the same head (D-SHIP-FAMILY ruling 4: the
   // resolver reads the parent from a row shipped in this head, gen/library-gate.mjs).
-  const RULED_LIB = [...W3_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+  // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET #392 6682188871 + D-SHIP-W5-PREACHER 6683213580): the 10 flipped lb04/lb05
+  // ids follow W3's in registry order (lb04's 4, then lb05's 6); the 17 held W5 rows stay out
+  const W5_LIB = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat',
+    'lib_preacher_curl', 'lib_hammer_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];
+  const RULED_LIB = [...W3_LIB, ...W5_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
     'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
     'lib_horizontal_leg_press'];
   // LIB-SHIP W3: the mapped children that ship now, in CHILDREN order; the rest of the map (incline_machine_press,
@@ -422,6 +426,10 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   // ships too (above). Another mapped child shipped, or SLRDL shipped without its parent, is red.
   const W3_CHILDREN = ['lib_chin_up', 'lib_close_grip_pulldown', 'lib_hanging_knee_raise', 'lib_single_arm_lat_pulldown', 'lib_horizontal_leg_press'];
   const SLRDL = 'lib_single_leg_romanian_deadlift';
+  const W5 = ['alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'forward_lunge', 'walking_lunge', 'bulgarian_split_squat',
+    'single_arm_triceps_pushdown', 'straight_bar_triceps_pushdown', 'front_squat', 'wall_sit'].map(s => `lib_${s}`);
+  // D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER (#392 6682188871, 6683213580): the W5 children in the flip set of 10
+  const W5_FLIP_CHILDREN = ['alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'front_squat'].map(s => `lib_${s}`);
   /** LIB-PLATEFIX-1: a mapped child among `ids` that W3 does not ship, or SLRDL among them without its parent. */
   const childProblems = (ids: string[]) => [...[...cards.keys()].filter(id => ids.includes(id) && !W3_CHILDREN.includes(id)).map(id => `${id}: a mapped child ships`),
     ...(ids.includes(SLRDL) && !ids.includes('lib_romanian_deadlift') ? [`${SLRDL}: ships without its parent lib_romanian_deadlift`] : [])];
@@ -444,7 +452,17 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     const slrdl = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/cards/single_leg_romanian_deadlift.json'), 'utf8'));
     expect([slrdl.parent, FM.unmappedFields(SLRDL, slrdl)]).toEqual(['romanian_deadlift', []]);
     expect(Object.keys(FM.INHERIT_MAP[SLRDL]).sort()).toEqual(slrdl.inherit.map((e: any) => e.field).sort());
-    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys(), SLRDL].sort());
+    // LIB-SHIP W5 (SHIP W5 PLAN RULED, #392 6647901307): the map also holds W5's 11 children, each card's inherit[] covered
+    // exactly, except front_squat's setup[2], which goes to research (D-SHIP-W5-GOLDENFEET) and stays unmapped
+    for (const id of W5) {
+      const card = JSON.parse(readFileSync(join(ROOT, `docs/research/howto/cards/${id.slice(4)}.json`), 'utf8'));
+      const open: string[] = [];   // LIB-SHIP W5: front_squat's setup[2] left its card (F-CARD-FRONTSQ-SETUP, #398), so no field stays open
+      expect([id, typeof card.parent, FM.unmappedFields(id, card)]).toEqual([id, 'string', open]);
+      expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).filter((f: string) => !open.includes(f)).sort()]);
+    }
+    // the LB1 children and SLRDL ship since W2/W3 (checked above); of W5's children only the ruled flip set ships
+    expect(W5.filter(id => SHIPPED.some(r => r.id === id))).toEqual(W5_FLIP_CHILDREN);
+    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys(), SLRDL, ...W5].sort());
   });
   /** D-LIB9a-MAP as ruled (#245 6393424755 on the tables of 6393419324), keyed by each card's exact field string. Literal:
    *  a narrowed or widened path in INHERIT_MAP turns this red. shoulder_press's setup line is not in it (F-LB1-SETUP). */
@@ -461,6 +479,20 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], "zooms['hand']": ['zooms[key=hand]'] },
     // LIB-SHIP W2 D-SHIP-FAMILY (#379 6625803515)
     lib_single_leg_romanian_deadlift: { 'grip.thumb': THUMB, 'grip.wrist': ['handling.wrist'] },
+    // LIB-SHIP W5 (SHIP W5 PLAN RULED, #392 6647901307): D-SHIP-W5-PLATEONLY, -THUMB, -SAWRIST, -GOLDENFEET, -WALLSIT
+    lib_alternating_dumbbell_curl: { 'grip.type': ['handling.orientation', 'handling.handle'], 'grip.thumb': THUMB, 'grip.width': ['handling.width.text'], 'plate.view': [], redFlags: ['riskFlags'] },
+    lib_barbell_curl: { 'plate.view': [], 'grip.thumb': THUMB, redFlags: ['riskFlags'] },
+    lib_ez_bar_curl: { 'plate.view': [], 'grip.thumb': THUMB, redFlags: ['riskFlags'] },
+    lib_hammer_curl: { 'plate.view': [], 'grip.width': ['handling.width.text'], redFlags: ['riskFlags'] },
+    lib_forward_lunge: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+    lib_walking_lunge: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+    lib_bulgarian_split_squat: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+    lib_single_arm_triceps_pushdown: { 'plate.view': [], 'grip.thumb': ['handling.thumb.mode'], 'grip.wrist': ['handling.wrist.ext'], redFlags: ['riskFlags'] },
+    lib_straight_bar_triceps_pushdown: { 'plate.view': [], 'plate.equipment': [], 'grip.thumb': ['handling.thumb.mode'], 'grip.wrist': ['handling.wrist'],
+      zooms: ['zooms[key=pushdown-elbow].chip', 'zooms[key=pushdown-elbow].heading', 'zooms[key=pushdown-elbow].caption', 'zooms[key=pushdown-elbow].callout.right.text',
+        'zooms[key=pushdown-elbow].callout.wrong.text', 'zooms[key=pushdown-elbow].alt'], redFlags: ['riskFlags'] },
+    lib_front_squat: { 'posture[3] (feet flat, knees follow the toes)': ['posture[key=feet].label'] },
+    lib_wall_sit: { 'posture[1] (knees over the second toe, ankles not rolling)': ['posture[key=knees].label', 'posture[key=knees].detail'], 'b10 / redFlags knee (NHS knee box)': ['riskFlags'] },
     lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': [] },
     lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path]'], 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
     lib_horizontal_leg_press: { grip: ['archetype', 'handle', 'loadAxis', 'width', 'thumb', 'contact', 'pose', 'faults', 'cue'].map(k => `handling.${k}`).concat(['handling.wrist.ext', 'handling.wrist.dev']),

@@ -8,6 +8,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { W5, lessW5 } from './lib-ship-w5';
 import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
 import { pf2Problems, restorePF2 } from './platefix2-pins';
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
@@ -148,7 +149,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
   it('every pinned row pins the current crop.mjs and hand.mjs, and every other entry equals main 8d596fab', () => {
     const m = lessW3(pf2Main(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'))), [KEYS[0]!]);   // LIB-SHIP W3
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
-    expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
+    expect(rows).toHaveLength(22 + W5.length);   // LIB-SHIP W2: + PILOT-B2's lib_crunch; LIB-SHIP W5: + lb04's and lb05's 27 rows (lessW5)
     expect(Object.keys(m.rows)).toContain('lib_crunch');
     for (const r of rows) for (const k of KEYS) { expect(r.files[k]).toBe(sha(readFileSync(path(k)))); r.files[k] = 'X'; }
     // F-PAIR-FAULTS (#386): build-layers-page.mjs's and pairs.mjs's keys are re-pinned there and pinned exactly by pair-faults.test.ts
@@ -159,6 +160,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     for (const r of rows) r.files['tools/plates/library/render/closeup/zoom.mjs'] = 'X';
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
+    // LIB-SHIP W5: with W5's 27 rows also taken out first (lessW5: each must be present), the same hash
     // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts;
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync(path('docs/research/howto/shared/back-pain-box.json')))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
@@ -172,7 +174,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     // and entry where this MANIFEST differs from main 8841246c's is blanked by one of these, so the rest is main 8841246c's
     // MANIFEST.json with the same blanks (measured on main 8841246c's own MANIFEST).
     expect(pfProblems(m)).toEqual([]);
-    expect(sha(JSON.stringify(rrBox(lessW2(bmFix(blankPF(m, 'X'))))))).toBe(PF_CP_PIN);
+    expect(sha(JSON.stringify(rrBox(lessW2(bmFix(blankPF(lessW5(m), 'X'))))))).toBe(PF_CP_PIN);   // LIB-SHIP W5: lessW5 first, as before the merge
   });
   it('LIB-PLATEFIX-1 mutations: a moved key, an added key or a superseded entry off its current value is red, and so is any other key moved', () => {
     const cur = () => pf2Main(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8')));
@@ -184,7 +186,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     expect(pfProblems(m3)).toEqual([`lib_romanian_deadlift: entry ${'0'.repeat(64)} != ${cur().rows.lib_romanian_deadlift.entry}`]);
     // the pin test's blanks, without its checks: the current MANIFEST gives the pin, one other entry moved does not
     const all = (x: any) => {
-      lessW3(x, [KEYS[0]!]);
+      lessW5(lessW3(x, [KEYS[0]!]));   // LIB-SHIP W5: W5's 27 rows out too
       for (const r of Object.values<any>(x.rows)) for (const k of [...KEYS, 'tools/plates/library/hands/pairs.mjs', 'tools/plates/library/render/closeup/zoom.mjs']) r.files[k] = 'X';
       for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8';
       const y = lessW2(blankPF(x, 'X'));

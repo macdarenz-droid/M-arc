@@ -32,9 +32,10 @@ const modeOf = (id: string) => (id.replace(/^lib_/, '') in T_ROWS ? 'T' : 'H');
 /** D-LIB15R2-TPARENT (#349 6540842602): A15's drawn-item tests bind an H row in full and a T child only in the parts its
  *  facts set (callouts, tells, cues, boxes); the template-fixed parts (Trace keys, Mistake guides and arrows, the measure
  *  arc and leader) are the pinned parent's. The scope is the row's mode in rows.json, which A5 holds to the ruled mode. */
-const rowMode = (id: string, rows = readJson('tools/plates/library/lb5/rows.json').rows) => rows[`lib_${id}`]?.mode ?? 'H';
+const rowMode = (id: string, rows = readJson(ROWS).rows) => rows[`lib_${id}`]?.mode ?? 'H';
 const fullScope = (id: string, rows?: any) => rowMode(id, rows) !== 'T';
-const ROWS = 'tools/plates/library/lb5/rows.json';
+// LIB-SHIP W5 (D-SHIP-MOVE): the LB5 rows moved into batches/lb05.json; lb5/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb05.json';
 const RESEARCH_HEAD = 'baf2ff09cf2e91232f536cfc6c766fdf68925217';   // F-LB5-2 (#302): concentration_curl's c14 and notes
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -152,20 +153,34 @@ describe('LIB-15 A5: lb5/rows.json holds exactly the drawn, non-held LB5 ids', (
 });
 
 describe('LIB-15 A9: nothing ships (D-LIB15-AHEAD)', { timeout: T }, () => {
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => !['drawing', 'review'].includes(r.stage)).map(([id, r]) => `${id}: ${r.stage}`);
+  // LIB-SHIP W5 (D-SHIP-A9, ruling 3; D-SHIP-W5-FLIPSET #392 6682188871, D-SHIP-W5-PREACHER #392 6683213580): replaces
+  // "every LB5 row is at stage drawing or review", its shipped/approved-plate mutations, "no LB5 id is shipped, even
+  // with lb5/rows.json read as a batch file", "no LB5 H id ... in any batches/ file" and "... in golden/library/" with the
+  // W5 ruled set as positive asserts: exactly W5's 6 LB5 ids ship; the other 9 drawn rows stay approved-plate (held);
+  // every LB5 id lives in batches/lb05.json and nowhere else in batches/ (D-SHIP-MOVE).
+  const W5 = ['lib_preacher_curl', 'lib_hammer_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];
+  const stageProblems = (rows: any[]) => drawn().map(i => `lib_${i}`).flatMap(id => {
+    const r = rows.find((x: any) => x.id === id), want = W5.includes(id) ? 'shipped' : 'approved-plate';
+    if (!r) return [`${id}: no row`];
+    return r.stage === want ? [] : [`${id}: ${r.stage}`];
+  });
   const someRow = { src: 'library/specs/preacher_curl.mjs', slug: 'preacher-curl', prefix: 'preacher-curl', chromeId: 'preacher-curl', mode: 'H', stage: 'drawing', view: 'side' };
-  it('every LB5 row is at stage drawing or review', () => {
-    expect(stageProblems(readJson(ROWS).rows)).toEqual([]);
+  it('LIB-SHIP W5: every LB5 row is at its ruled stage: W5\'s 6 shipped, the other 9 approved-plate', () => {
+    expect(drawn().length).toBe(15);
+    expect(stageProblems(reg.rows())).toEqual([]);
   });
-  it('mutations: one row set to shipped and one to approved-plate are red', () => {
-    const rows = { ...readJson(ROWS).rows, lib_preacher_curl: someRow };
-    expect(stageProblems({ ...rows, lib_preacher_curl: { ...someRow, stage: 'shipped' } })).toEqual(['lib_preacher_curl: shipped']);
-    expect(stageProblems({ ...rows, lib_preacher_curl: { ...someRow, stage: 'approved-plate' } })).toEqual(['lib_preacher_curl: approved-plate']);
+  it('LIB-SHIP W5 reds: a W5 id back at approved-plate, a held id shipped, a held id at drawing and a dropped row are red', () => {
+    const rows = reg.rows();
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_preacher_curl' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_preacher_curl: approved-plate']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_cable_curl' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_cable_curl: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_wrist_curl' ? { ...r, ...someRow, stage: 'drawing' } : r)))).toEqual(['lib_wrist_curl: drawing']);
+    expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_hammer_curl'))).toEqual(['lib_hammer_curl: no row']);
   });
-  it('no LB5 id is shipped, even with lb5/rows.json read as a batch file', () => {
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
+  it('LIB-SHIP W5: the shipped LB5 ids are exactly W5\'s 6, in registry order; each drawn LB5 id is one registry row (lb05.json read once)', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W5);
+    const rows = reg.rows();
+    for (const id of drawn()) expect(rows.filter((r: any) => r.id === `lib_${id}`).length, id).toBe(1);
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
-    expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
   });
   /** An id or its slug as a whole token in a file's name or text. */
   const tokenHits = (ids: string[], name: string, text: string, { substring = false } = {}) => ids.flatMap(id => {
@@ -180,11 +195,23 @@ describe('LIB-15 A9: nothing ships (D-LIB15-AHEAD)', { timeout: T }, () => {
     ...tokenHits(LB5, f, text),
   ]);
   const dirFiles = (dir: string): [string, string][] => (existsSync(dir) ? readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : []);
-  it('no LB5 H id, slug or batch is in any tools/plates/library/batches/ file', () => {
-    expect(batchProblems(dirFiles('tools/plates/library/batches'))).toEqual([]);
+  // LIB-SHIP W5 (D-SHIP-MOVE; D-SHIP-A9, ruling 3): the two guards below were "no LB5 H id, slug or batch is in any
+  // batches/ file" and "... in tests/howto/golden/library/"; the LB5 rows now live in batches/lb05.json and are pinned
+  // by golden lb05.json and its layers page, so every other file there is held to the same check, and lb05.json names
+  // each drawn id (8 of the 9 H ids: overhead_cable_triceps_extension has no spec and no row; and the 7 R2 ids)
+  it('LIB-SHIP W5: the LB5 ids, slugs and batch are in batches/lb05.json only, which names each drawn id (D-SHIP-MOVE)', () => {
+    const files = dirFiles('tools/plates/library/batches');
+    expect(batchProblems(files.filter(([f]) => f !== 'lb05.json'))).toEqual([]);
+    expect(files.filter(([f]) => f !== 'lb05.json').flatMap(([f, t]) => tokenHits(R2, f, t))).toEqual([]);
+    const own = files.find(([f]) => f === 'lb05.json')!;
+    expect(ALL.filter(id => tokenHits([id], own[0], own[1]).length > 0)).toEqual(drawn());
   });
-  it('no LB5 H id, slug or batch is in tests/howto/golden/library/', () => {
-    expect(batchProblems(dirFiles('tests/howto/golden/library'))).toEqual([]);
+  it('LIB-SHIP W5: no LB5 H id, slug or batch is in tests/howto/golden/library/ outside the lb05 pin and its layers page (one measured note)', () => {
+    const dir = 'tests/howto/golden/library', mine = ['lb05.json', 'lb05.layers.html'];
+    // measured on this head: golden lb04.json's W5 note names "RESEARCH-ROUTES-2's concentration_curl card (#403)"
+    // (text, not a row or entry); that exact hit is listed, so any other hit, or a second one, is red
+    expect(batchProblems(dirFiles(dir).filter(([f]) => !mine.includes(f)))).toEqual(['lb04.json: concentration_curl']);
+    for (const f of mine) expect([f, existsSync(join(dir, f))]).toEqual([f, true]);
   });
   it('mutations: rows.json copied into batches/, a golden file naming an LB5 H id, a page-only lb5.json and preacher-curl.layers.html are red', () => {
     const rowsText = JSON.stringify({ batch: 'LB5', rows: { lib_preacher_curl: someRow } }, null, 1);
@@ -205,10 +232,27 @@ describe('LIB-15 A9: nothing ships (D-LIB15-AHEAD)', { timeout: T }, () => {
     // mutation: the cable_curl matcher swapped for a plain substring test turns the bayesian row red
     expect(tokenHits(['cable_curl'], 'p.json', '{"lib_bayesian_cable_curl":1}', { substring: true })).toEqual(['p.json: cable_curl']);
   });
-  it('no LB5 spec, composer, How-to, script or test imports anything under hands/', () => {
+  // LIB-SHIP W5 (D-SHIP-A9, ruling 3): was "no LB5 spec, composer, How-to, script or test imports anything under hands/".
+  // The LB5 How-to sources are full W5 sheets now and cite their hand pair key (curl or ez, the shipped sheets' form, as
+  // lib_dumbbell_biceps_curl's), so the How-to half is replaced by the measured import set: each sheet imports exactly the
+  // hands/ modules listed here, nothing else. Specs, composer, build, qa and this test still import nothing under hands/.
+  const HANDS_RE = /from\s+['"][^'"]*\/hands\/|import\(\s*[^)]*\/hands\//;
+  const handsImports = (text: string) => [...text.matchAll(/(?:from\s+|import\(\s*)['"]([^'"]*\/hands\/[^'"]*)['"]/g)].map(m => m[1]);
+  const HOWTO_HANDS: Record<string, string[]> = {
+    cross_body_hammer_curl: ['../hands/hand-curl.mjs'], cable_curl: ['../hands/hand-curl.mjs'], preacher_curl: ['../hands/hand-ez.mjs'], incline_dumbbell_curl: ['../hands/hand-curl.mjs'],
+  };
+  it('LIB-SHIP W5: no LB5 spec, composer, script or test imports anything under hands/; each LB5 How-to imports exactly its measured hands/ set', () => {
     const files = [...specced().map(i => `tools/plates/library/specs/${i}.mjs`), 'tools/plates/library/eq/preacherPad.mjs',
-      ...LB5.map(i => `tools/plates/library/howto/lib_${i}.howto.mjs`), 'tools/plates/library/lb5/build.mjs', 'tools/plates/library/lb5/qa.mjs', 'tests/howto/lb5-plates.test.ts'];
-    for (const f of files) expect(readFileSync(f, 'utf8'), f).not.toMatch(/from\s+['"][^'"]*\/hands\/|import\(\s*[^)]*\/hands\//);
+      'tools/plates/library/lb5/build.mjs', 'tools/plates/library/lb5/qa.mjs', 'tests/howto/lb5-plates.test.ts'];
+    for (const f of files) expect(readFileSync(f, 'utf8'), f).not.toMatch(HANDS_RE);
+    for (const id of LB5) expect([id, handsImports(readFileSync(`tools/plates/library/howto/lib_${id}.howto.mjs`, 'utf8'))]).toEqual([id, HOWTO_HANDS[id] ?? []]);
+  });
+  it('LIB-SHIP W5 reds: a spec importing hands/, a How-to importing an unlisted hands/ module, and a dynamic hands/ import are red', () => {
+    const H = `..${'/'}hands/`;   // built, so this file's own scan (above) does not read these samples as imports
+    expect(`import { IDS } from '${H}hand-curl.mjs';`).toMatch(HANDS_RE);
+    expect(handsImports(`import { IDS } from '${H}hand-curl.mjs';\nimport x from '${H}no-zoom.json';`)).toEqual([`${H}hand-curl.mjs`, `${H}no-zoom.json`]);
+    expect(handsImports(`const m = await import('${H}hand-ez.mjs');`)).toEqual([`${H}hand-ez.mjs`]);
+    expect(handsImports("// tools/plates/library/hands/hand-ez.mjs IDS.preacher_curl")).toEqual([]);
   });
   child.it('generate --check is green, and no generated file is read from lb5/, the LB5 specs, the composer or How-to sources', async () => {
     const gen = await import(/* @vite-ignore */ new URL('../../tools/plates/generate.mjs', import.meta.url).href);
@@ -241,10 +285,13 @@ describe('LIB-15 A11 (Do 6 a): the 9 cards and quotes are byte copies of the LB5
     const c = cardOf('preacher_curl'); c.plate.view = 'front';
     expect(sha(canon(c))).not.toBe(cardsSha.cards.preacher_curl);
   });
-  it('the How-to source of each LB5 id holds only its id and research card (D-LIB9a-HOWTOID)', async () => {
+  it('the How-to source of each LB5 id names its id and research card (D-LIB9a-HOWTOID; LIB-SHIP W5: full sheets, the one stub exact)', async () => {
     for (const id of [...LB5, ...R2]) {
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
-      expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+      // LIB-SHIP W5 (D-SHIP-A9, ruling 3): the stubs are full sheets now (W5, schema 1); each still names its id and its own
+      // card. overhead_cable_triceps_extension has no W5 sheet, so its source stays exactly the stub (measured on this head)
+      if (id === 'overhead_cable_triceps_extension') { expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } }); continue; }
+      expect(h, id).toMatchObject({ schema: 1, id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
   });
 });
@@ -589,7 +636,7 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     expect(leaderGap(bad)).toBeLessThan(6);
   });
   it('D-LIB15R2-TPARENT mutations: an H row given the T scope is red (its rows.json mode must be the ruled one), and a T child\'s own callout moved onto the figure is red', () => {
-    const rows = readJson('tools/plates/library/lb5/rows.json').rows;
+    const rows = readJson(ROWS).rows;
     const modeMismatch = (r: any) => ALL.filter(id => r[`lib_${id}`] && r[`lib_${id}`].mode !== modeOf(id));
     expect(modeMismatch(rows)).toEqual([]);
     const flipped = { ...rows, lib_hammer_curl: { ...rows.lib_hammer_curl, mode: 'T' } };
@@ -698,7 +745,9 @@ describe('LIB-15 A4: runQa node half on an LB5 plate (lib_preacher_curl), LIB-3 
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run' && k !== 'H6:no-card');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
-  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W5 (D-SHIP-A9, ruling 3; authoring QA to the pinned path): preacher_curl is shipped (D-SHIP-W5-PREACHER) and
+  // pinned in golden lb05.json, so D-LIB9-AUTHORQA refuses authoring; the node half runs on the pinned candidate
+  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E });
   const MUT = (id: string) => muts.SPEC_MUTATIONS.find((m: any) => m.id.startsWith(`${id} `));
   // A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn.
   const mutated = async (fn: string, arg: any = null) => {
@@ -1118,14 +1167,15 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
       alt: 'eb4f43f3446fef05d8157b10793e37117b4ee6ac08b3c169b671f0b52427927a',
       mistakeAlt: '54506b31379e27f7e430dde847bf93cba5c2e9ffad3511e58bfc4635a0b52fae',
     },
+    // LIB-SHIP W5 D-SHIP-W5-PLATETEXT (#392 6652647984): text-only re-pin (tell label and cue); old values in the commit message
     'incline-dumbbell-curl': {
       normalSvg: '3122a8bffd0092fbf1e42be2b2ab731059033d357ee2c7dd2786ae44ded8fe73',
       normalOverlay: '2c704fb41c4d7fa4332fbe70a06630cf0b6a1a81402576d44ea038a9831bfc69',
       mistakeSvg: '54cbb3268626f3f898485ec40f640b9fca9b4f1cdee641a9ea0ec0cd99a1af98',
-      mistakeOverlay: '56a48242ea7b9c1e8a21faf4b07374fd80b27bfcf83a44e84ff3062260d36cac',
-      tells: 'a58526543420596675a545008be5d76506f615cab701d0edc7b2152a5e43a956',
+      mistakeOverlay: 'b50d7b0aa7bfe5ca735ad64f1af5c763d36b673c64b0031a6d0306730ab5eb87',
+      tells: '4365d53659bd02f970a93af741491e285d73bd1d060667e3ff6e93d91a478562',
       tempo: 'f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10',
-      cues: '662b115e46a9b91f02e3d64a5e6c4f338aea14d3bb68f28911407e907d506242',
+      cues: 'a159d8c8381d18c0d0728e61fa71a2ec1a80256baf5f69da8d827679fad4701e',
       alt: '99779b441c4a4a8384a9981c45b31a8ffcafe3206ef0d304718d38afbec3c221',
       mistakeAlt: '8acc3ab2335fa6c010e74e13ec8d48b35eb4ea0930ad8363f2030820f5c22d8e',
     },
@@ -1234,7 +1284,7 @@ describe('LIB-15R2 A5, A6: the templates and the T rows\' params', { timeout: T 
       for (const k of Object.keys(r.params ?? {})) if (!claimIds.includes(r.paramClaims?.[k])) out.push(`${id}: ${k} has no claim`);
       return out;
     };
-    const rows = readJson('tools/plates/library/lb5/rows.json').rows;
+    const rows = readJson(ROWS).rows;
     for (const id of Object.keys(T_ROWS)) expect(problems(id, rows[`lib_${id}`]), id).toEqual([]);
     const sb = rows.lib_straight_bar_triceps_pushdown;
     expect(problems('straight_bar_triceps_pushdown', { ...sb, params: { 'bar.kind': 'rope' } })).toEqual(['straight_bar_triceps_pushdown: bar.kind: rope is not an allowed value']);

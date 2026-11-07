@@ -131,7 +131,10 @@ describe('D-LIB7b-HALVES: the pair panel gets golden B\'s TalkBack halves, attri
     expect(Object.keys(PANEL_BEFORE).every(k => P.keysOf().includes(k))).toBe(true);
     for (const [k, want] of Object.entries(PANEL_BEFORE)) {
       const h = await P.pairPanel(k);
-      expect([k, sha(unsplit(h))]).toEqual([k, want]);
+      // LIB-SHIP W5 D-SHIP-W5-EZWORDS / -EZNOTE (#392 6654996739, 6681700725): ez-curl-over's Right note (words and drawn) is
+      // 'Wrist straight' (reverse_curl c1, c6); with that one note put back it is the panel before, byte for byte
+      const back = k !== 'ez-curl-over' ? h : (expect(/middle of palm/i.test(h)).toBe(false), h.replaceAll('Wrist straight', 'Middle of palm').replaceAll('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'));
+      expect([k, sha(unsplit(back))]).toEqual([k, want]);
       expect(h).toMatch(/role="img" aria-label="Right: /);
       expect(h).toMatch(/role="img" aria-label="Wrong: /);
       expect(H.splitHalves(unsplit(h), k)).toBe(h);
@@ -186,8 +189,11 @@ describe('7b-A2 on a scratch tree: the real pipeline with the scratch rows shipp
     `, tree)).trim().split('\n').pop()!);
     // LIB-SHIP W3 (D-SHIP-A9 guard replacement): the tree's own shipped W3 pair rows write their 5 sub-key files beside the curl's and the scratch rows'
     const W3_PAIRS = ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated'];
+    // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): and W5's 4 new pair keys (preacher, barbell, ez bar and
+    // reverse curl; alternating_dumbbell_curl shares the curl's file, hammer_curl is on the no-zoom list), 7 -> 11 files
+    const W5_PAIRS = ['ez-curl-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over'];
     expect(Object.keys(out).filter(p => p.includes('handpair-')).sort()).toEqual(['src/howto/generated/handpair-curl-dumbbell-under.ts', 'src/howto/generated/handpair-rope-push-neutral.ts',
-      ...W3_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`)].sort());
+      ...W3_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`), ...W5_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`)].sort());
     for (const s of F.SCRATCH_7B) {
       const o = out[`src/slices/howto/css/zoom-${s.pre}.css`];
       expect(o.writers).toEqual(['tools/plates/gen/handpairs.mjs', 'tools/plates/gen/hands.mjs']);

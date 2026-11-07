@@ -80,7 +80,7 @@ describe('HT7-A1: every posture panel === golden B', () => {
       expect(page.split(L.ZDOTS)).toHaveLength(2);
     }
     expect(n).toBe(want);
-  });
+  }, 60_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): walks every shipped library row; 5053 ms on 6f33ccd1 unit-tz America/New_York
   it.each(IDS)('%s: zdots === golden B\'s ZDOTS, which the page holds exactly once', id => {
     expect(chunks[id]!.zdots === L.ZDOTS).toBe(true);
     expect(FIXTURE.split(L.ZDOTS)).toHaveLength(2);
