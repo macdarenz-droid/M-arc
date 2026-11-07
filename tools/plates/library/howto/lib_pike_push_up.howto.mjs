@@ -35,8 +35,9 @@ export const SOURCES = {
   'nasm-pike': { cite: 'Pike Push-Up (NASM exercise library)', url: 'https://www.nasm.org/resource-center/exercise-library/pike-push-up',
     kind: 'guideline', access: 'full', checked: '2026-10-22', use: 'CONSENSUS' },
   // The palm-flat key's own source for the thumb and the wrist (the card has no thumb line and no wrist range): a drawing convention.
-  'hand-key-palm-flat': { cite: 'LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index; no wrist range', url: 'tools/plates/library/hands/hand-palm-flat.mjs',
-    kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
+  // the shared palm-flat key record, byte-equal to lib_push_up's (sources.json keeps one entry per id)
+  'hand-key-palm-flat': { cite: 'LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index', url: 'tools/plates/library/hands/hand-palm-flat.mjs',
+    kind: 'secondary', access: 'full', checked: '2026-11-04', use: 'CONVENTION' },
   // The joint blocks' own sources (layers/howto/shared.mjs): the card's redFlags 'shoulder', 'wrist'.
   'nhs-shoulder-pain': { cite: 'NHS, Shoulder pain', url: 'https://www.nhs.uk/conditions/shoulder-pain/',
     kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When shoulder pain needs a check.' },

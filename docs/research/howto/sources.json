@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=27bdc8cf768d665b125bebdd08339f396fdf3435418f7b2ef028e02e085e4205
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=4a994a08cac2eacbedef51a181c1043b1b00793a7e34ec8f94a6cab1e4f5cedb
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -746,11 +746,11 @@
   },
   "hand-key-palm-flat": {
     "id": "hand-key-palm-flat",
-    "cite": "LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index; no wrist range",
+    "cite": "LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index",
     "url": "tools/plates/library/hands/hand-palm-flat.mjs",
     "kind": "secondary",
     "access": "full",
-    "checked": "2026-11-05"
+    "checked": "2026-11-04"
   },
   "hand-key-v-handle": {
     "id": "hand-key-v-handle",

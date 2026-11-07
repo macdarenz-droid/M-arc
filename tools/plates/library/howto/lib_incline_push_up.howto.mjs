@@ -31,8 +31,9 @@ export const SOURCES = {
   'sl-incline': { cite: 'How to Do Incline Push-Up: Muscles Worked & Proper Form (StrengthLog)', url: 'https://www.strengthlog.com/incline-push-up/',
     kind: 'coach', access: 'full', checked: '2026-10-22', use: 'CONSENSUS' },
   // The palm-flat key's own source for the thumb and the wrist (the card has no grip.thumb or grip.wrist): a drawing convention.
-  'hand-key-palm-flat': { cite: 'LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index; no wrist range', url: 'tools/plates/library/hands/hand-palm-flat.mjs',
-    kind: 'secondary', access: 'full', checked: '2026-11-05', use: 'CONVENTION' },
+  // the shared palm-flat key record, byte-equal to lib_push_up's (sources.json keeps one entry per id)
+  'hand-key-palm-flat': { cite: 'LIB-12 hand pair key palm-flat (floor): the thumb lies on the floor beside the index', url: 'tools/plates/library/hands/hand-palm-flat.mjs',
+    kind: 'secondary', access: 'full', checked: '2026-11-04', use: 'CONVENTION' },
   // RED_FLAG_SHOULDER's own source (layers/howto/shared.mjs), as golden B's lateral raise lists it: the card's redFlags 'shoulder'.
   'nhs-shoulder-pain': { cite: 'NHS, Shoulder pain', url: 'https://www.nhs.uk/conditions/shoulder-pain/',
     kind: 'guideline', access: 'full', checked: '2026-09-30', use: 'CONSENSUS', note: 'When shoulder pain needs a check.' },

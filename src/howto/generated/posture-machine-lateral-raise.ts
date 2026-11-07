@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=10bd9346484e3d2c49c056bf909d9fe288e4d5edf529a9c2dc7a1ec7d51c49f8
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=10fd4c9ba250f58b1d5d93eda7dae96d54f9a0fd28de3f34cec69a9c4072e5bc
 // The machine-lateral-raise posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-machine-lateral-raise.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives
