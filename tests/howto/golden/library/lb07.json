@@ -337,6 +337,26 @@
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_pike_push_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
       "prev": "5529a59698163ea1d63fbd943acdc74ff40916ce1b44ace3b24139644d367064"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB7",
+      "ids": [
+        "lib_cable_lateral_raise",
+        "lib_dumbbell_front_raise",
+        "lib_face_pull",
+        "lib_incline_push_up",
+        "lib_pike_push_up"
+      ],
+      "pageSha256": "7e9e2c480d845030c4ebb6ac65ea97d5f8f0e36fbeea9e3d4385d6efa3222760",
+      "bytes": 1174857,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W6-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/393#issuecomment-6689822595 @ d939496e22e7d0d9e858662e3ac2b719bec47c20",
+      "date": "2026-11-07",
+      "why": "W6 layers approved (#393): the calibrated layers panel 6682570363 (3 fresh Opus critics per set, plants caught, golden-B anchors), the fix round ruled 6683193992 (D-SHIP-W6-ROUTE), the focused recheck 6683879377, cable_lateral_raise's copy check 6683994736 and the flip set 6689822595 (smith_machine_squat held, D-LIB13-PANEL2); low_to_high_cable_fly stays held (6701002884, PLATEFIX-3b). Built in the D-SHIP-W5-FLIPSET form on main 8841246c (#404 F-BODYMAP-FRONTDELT merged): only the flip set stays on lb07.layers.json, and every kept card (article block and its .hx-<slug> rules) is byte-equal to the full-page build of the same head; built twice, equal sha256.",
+      "supersedes": null,
+      "prev": "71139f3c1b9aa68e82a6a34a714afd6dfe17ef18bedb0e12a727cd5e3caa1973"
     }
   ]
 }
