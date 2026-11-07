@@ -4836,6 +4836,11 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
         expect(s().mistake.tells.map((t: any) => [t.key, t.anchor.at])).toEqual([['arch', id === 'standing_leg_curl' ? 'lumbar' : 'backMid']]);   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): standing_leg_curl's tell on the lumbar (was backMid)
         expect(s().mistake.tells.every(onIt)).toBe(true);
         expect(onIt({ anchor: { at: 'navel' } })).toBe(false);                  // mutation: an anchor on the navel -> red
+        // D-PF3B-LLCARCH: the helper change is the identity on every landmark-ref point (old cam.P(lm[p.at]) === new), and the
+        // world-point branch is taken only by lying_leg_curl's MIS_TRUNK outline (all world points, none a landmark ref)
+        const refs = g.pts.filter((p: any) => !Array.isArray(p)), worlds = g.pts.filter((p: any) => Array.isArray(p));
+        for (const p of refs) expect(cam.P(Array.isArray(p) ? p : lm[p.at])).toEqual(cam.P(lm[p.at]));
+        expect([refs.length > 0, worlds.length > 0]).toEqual(id === 'lying_leg_curl' ? [false, true] : [true, false]);
       });
       it('the start roller (dropped by the start layer) is redrawn as a dashed phantom in the end layer only', () => {
         const ph = (sp: any, p: string) => itemsIn(sp, p).items.filter((it: any) => it.part === 'startpad');
