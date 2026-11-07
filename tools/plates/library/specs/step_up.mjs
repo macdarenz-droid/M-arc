@@ -7,35 +7,38 @@
 //  (c6 Whole foot down, c7 Torso upright, c1 Top leg drives); Mistake = plate.mistake (c1, drawable). Tempo: the strip
 //  without seconds, exactly tempoOf(strip/rows.json step_up): Rise, Lower Controlled (D-STRIP-ROWS; LIB-SPLIT). variantLine: exercises.json lists Dumbbells / Bodyweight; the plate draws dumbbells at the
 //  sides (c5, c15).
-// Pose map (D-LIB14-STEPUP-POSE, #289 6338977366): the spec `start` is the card's end (standing tall on the box on the
-//  lead leg, c1) and the spec `end` is the card's start (one whole foot on the box, the other on the floor, c1, c6), so
-//  the Mistake, the trunk thrown forward to get up (c1), is drawn against the step position where the rise begins.
+// Pose map (LIB-PLATEFIX-3 item 4, #405 6682844211; replaces D-LIB14-STEPUP-POSE): the spec `start` is the card's start
+//  (one whole foot on the box, the other on the floor, c1, c6) and the spec `end` is the card's end (standing tall on the
+//  box on the lead leg, c1), so the Trace runs from the start hip up onto the box (c4; #392 6649453813 L1). The Mistake,
+//  the trunk thrown forward to get up (c1, c4), is re-posed mid-rise (MID_KNEE), where the lurch happens.
 // Clone source: single_leg_romanian_deadlift (#109 @ ff7c5c4f) for the hanging arms, the whole-body balance (Winter 2009
 //  masses) and its bracketed root finder; box_jump (#109) for the vendor box; the heel-lift convention of reverse_lunge
 //  (#109, :17-22) for the trailing foot's push; copied, never imported (D-LIB9-CLONE).
 // Geometry decisions (confirmed by the engine report `angles` and `checks`):
 //  Box: BOX_H tall, BOX_D deep, its rear edge BOX_Z0 behind the lead mid-foot. Lead leg = the figure's RIGHT (near):
 //   its whole foot flat on the box top in both poses (c6; checks, the contact facts c6 and c1). Trail leg = LEFT (far).
-//  End (the step position, card start): the trailing foot flat on the floor TRAIL_Z behind (c1 "the other on the
+//  Start (the step position, card start): the trailing foot flat on the floor TRAIL_Z behind (c1 "the other on the
 //   floor"; checks, contact fact c1); the root SOLVED (nested brackets) so the lead knee is LEAD_KNEE and the trailing knee
 //   TRAIL_KNEE; thorax END_INCL (torso upright, c6; "slightly forward", c7).
-//  Start (standing tall on the box, card end): the lead knee 5 deg soft, the trailing foot lifted beside the lead
+//  End (standing tall on the box, card end): the lead knee 5 deg soft, the trailing foot lifted beside the lead
 //   foot, clear of the box top by 2 px or more (above-check; trailing hip 21, LIB-SPLIT D-SPLIT-STEPUP: at 15 it
 //   cleared by 0.41 px); the root z SOLVED so the centre of mass (body plus dumbbells) is over the lead mid-foot;
 //   thorax 3 deg.
 //  Camera: 128 px/m (inside the 8's range) so the figure standing tall on the 45 cm box fits the plate.
 //  Arms hang plumb with a dumbbell in each hand, palms in (c5): the handle runs front to back, so the side view shows
 //   the handle and both heads; the far dumbbell sits behind the near one.
-//  Mistake (c1): at the step position the trunk is thrown forward (thorax M_INCL) with the hips held, and the trailing
-//   foot pushes off its toes (heel up TRAIL_PUSH about the ball, the toe pad on the floor: pistol_squat's convention).
+//  Mistake (c1, c4): mid-rise (the lead knee MID_KNEE, the root SOLVED by the same nested brackets as the step position)
+//   the trunk is thrown forward (thorax M_INCL) and the trailing foot pushes off its toes (heel up TRAIL_PUSH about the
+//   ball, the toe pad on the floor: pistol_squat's convention).
 // Unsourced numbers: BOX_H 0.45 m (the box_jump precedent; c11's 45.7 cm is in no quote, so it is not a fact), BOX_D 0.50 m,
 //  BOX_Z0 0.15 m, TRAIL_Z 0.50 m, LEAD_KNEE 105, TRAIL_KNEE 10, END_INCL 6, the start trailing foot (hip 21, knee 35),
-//  DB_MASS 0.12 per pair, M_INCL 40 and TRAIL_PUSH 0.035 m (the Mistake magnitudes, illustrative).
+//  DB_MASS 0.12 per pair, M_INCL 40, TRAIL_PUSH 0.035 m and MID_KNEE 90 (the Mistake magnitudes and its mid-rise,
+//  illustrative).
 import { landmarksOf, normPose, resolve } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180, B = { height: H };
 const BOX_H = 0.45, BOX_D = 0.50, BOX_Z0 = 0.15, LEAD_X = 0.09, TRAIL_Z = 0.50, LEAD_KNEE = 105, TRAIL_KNEE = 10, END_INCL = 6;
-const DB_MASS = 0.12, M_INCL = 40, TRAIL_PUSH = 0.035;
+const DB_MASS = 0.12, M_INCL = 40, TRAIL_PUSH = 0.035, MID_KNEE = 90;
 const REACH = (0.186 + 0.146 + 0.46 * 0.108) * H * 0.998; // shoulder to grip centre, arm straight (Winter; copied from SLRDL)
 const toeLift = a => -Math.min(...[[0.112, -0.036], [0.120, -0.028], [0.100, -0.038]].map(([z, y]) => ((z - 0.080) * -Math.sin(a * R) + (y + 0.039) * Math.cos(a * R)) * H));
 const lead = { at: [-LEAD_X, BOX_H, 0], toe: [0, 0, 1] };
@@ -75,31 +78,51 @@ const dbs = lm => [[DB_MASS / 2, lm['grip.l']], [DB_MASS / 2, lm['grip.r']]];
 const endBody = (y, z, incl, up = 0) => ({ root: { at: [0, y, z], tilt: incl - 3 }, trunk: 3, neck: -incl / 2, plant: { r: lead, l: trail(up) } });
 const endAt = z => { const y = solve(y => knees(endBody(y, z, END_INCL)).l - TRAIL_KNEE, 0.6, 1.0); return endBody(y, z, END_INCL); };
 const END_Z = solve(z => knees(endAt(z)).r - LEAD_KNEE, -0.6, -0.1);
-const end = withArms(endAt(END_Z));
+const step = withArms(endAt(END_Z));
 // Start (standing tall on the box on the lead leg): lead knee 5; the trailing foot lifted beside it by joint angles;
 // the root z SOLVED so the centre of mass with the dumbbells is over the lead mid-foot.
 const topBody = (y, z) => ({ root: { at: [0, y, z], tilt: 3 }, trunk: 0, neck: 0, hip: { l: 21 }, knee: { l: 35 }, ankle: { l: 10 }, plant: { r: lead } });
 const topAt = z => withArms(topBody(solve(y => knees(topBody(y, z)).r - 5, BOX_H + 0.7, BOX_H + 0.94), z));
 const TOP_Z = solve(z => com(landmarksOf(topAt(z), H), dbs(landmarksOf(topAt(z), H)))[2], -0.3, 0.2);
-const start = topAt(TOP_Z);
-// Mistake (c1): the trunk thrown forward over the lead thigh, the hips held; the trailing foot pushes off its toes.
-export const PUSH_UP = solve(a => landmarksOf({ ...end, plant: { r: lead, l: trail(a) } }, H)['heel.l'][1] - TRAIL_PUSH, 2, 30);
-const MB = { ...endBody(end.root.at[1], end.root.at[2], M_INCL, PUSH_UP) };
-const mistakePose = { root: MB.root, trunk: MB.trunk, neck: MB.neck, plant: MB.plant, reach: hang(landmarksOf(MB, H)) };
-const LS = landmarksOf(start, H), LE = landmarksOf(end, H), LM = landmarksOf({ ...end, ...mistakePose }, H);
-export const suInfo = { endZ: END_Z, topZ: TOP_Z, pushUp: PUSH_UP, trailClear: Math.min(LS['heel.l'][1], LS['toe.l'][1]) - BOX_H, mSternumFwd: LM.sternum[2] - LE.sternum[2] };
+const top = topAt(TOP_Z);
+const start = step, end = top;
+// LIB-PLATEFIX-3 round 2 (pf7 R3 [4,3,3], c2 c3: the interpolated mid-rise ghosts swung the trailing foot through the
+// box's near face): two via keys at the ghost times t = 1/3 and 2/3. Each takes the root, trunk and trailing hip on the
+// straight start-to-top interpolation (so the hip trace is unchanged) and only bends the trailing knee further
+// (VIA_KNEE), so the trailing foot stays behind the box face (z < -BOX_Z0) until it is above the box top. The trailing
+// leg keeps its drawn lengths; VIA_KNEE is a drawing value (unsourced).
+const VIA_KNEE = [60, 95];
+const lerp = (a, b, t) => a + (b - a) * t;
+const viaAt = (t, kneeL) => {
+  const qs = resolve(normPose(start, B), B).q, qt = resolve(normPose(top, B), B).q;
+  const p = { root: { at: start.root.at.map((v, i) => lerp(v, top.root.at[i], t)), tilt: lerp(start.root.tilt, top.root.tilt, t) },
+    trunk: lerp(start.trunk, top.trunk, t), neck: lerp(start.neck, top.neck, t),
+    hip: { l: lerp(qs.hip.l.flex, qt.hip.l.flex, t) }, knee: { l: kneeL }, ankle: { l: lerp(qs.ankle.l, qt.ankle.l, t) }, plant: { r: lead } };
+  return withArms(p);
+};
+const via = [viaAt(1 / 3, VIA_KNEE[0]), viaAt(2 / 3, VIA_KNEE[1])];
+// Mistake (c1, c4): mid-rise, the trunk thrown forward over the lead thigh; the trailing foot pushes off its toes. The
+// heel lift is solved at the step position (as before), then the root is re-solved so the lead knee is MID_KNEE with the
+// trailing knee TRAIL_KNEE on the pushing foot.
+export const PUSH_UP = solve(a => landmarksOf({ ...step, plant: { r: lead, l: trail(a) } }, H)['heel.l'][1] - TRAIL_PUSH, 2, 30);
+const midAt = z => { const y = solve(y => knees(endBody(y, z, M_INCL, PUSH_UP)).l - TRAIL_KNEE, 0.6, 1.1); return endBody(y, z, M_INCL, PUSH_UP); };
+const MID_Z = solve(z => knees(midAt(z)).r - MID_KNEE, -0.6, -0.2);
+const MB = midAt(MID_Z);
+const mistakePose = { root: MB.root, trunk: MB.trunk, neck: MB.neck, hip: null, knee: null, ankle: null, plant: MB.plant, reach: hang(landmarksOf(MB, H)) };
+const LS = landmarksOf(top, H), LE = landmarksOf(step, H), LM = landmarksOf(MB, H);
+export const suInfo = { endZ: END_Z, topZ: TOP_Z, midZ: MID_Z, pushUp: PUSH_UP, trailClear: Math.min(LS['heel.l'][1], LS['toe.l'][1]) - BOX_H, mSternumFwd: LM.sternum[2] - LE.sternum[2] };
 
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] }, boxTop = { point: [0, BOX_H, 0], normal: [0, 1, 0] };
 // The dumbbell in the hand (c5), checked at the wrist: the plane square to the hand (wrist to grip) through the wrist spot
-// that puts the grip on the dumbbell's handle centre, at the step position (spec end).
+// that puts the grip on the dumbbell's handle centre, at the step position (spec start).
 const inHand = s => {
   const d = [0, 1, 2].map(i => LE[`grip.${s}`][i] - LE[`wrist.${s}`][i]), L = Math.hypot(...d), n = d.map(v => v / L);
-  return { landmark: `wrist.${s}`, plane: { point: hang(LE)[s].at.map((v, i) => v - d[i]), normal: n }, pose: 'end', tol: 0.5 };
+  return { landmark: `wrist.${s}`, plane: { point: hang(LE)[s].at.map((v, i) => v - d[i]), normal: n }, pose: 'start', tol: 0.5 };
 };
 export default {
   id: 'step_up', name: 'Step-Up', view: 'side', facing: 'right',
   camera: { pxPerM: 128, x0: 196, y0: 339 },   // 128 px/m (inside the 8's 123.9-146.3): standing tall on the box fits under the header
-  poses: { start, end },
+  poses: { start, via, end },
   equipment: [
     { type: 'floor', from: -0.85, to: 0.75 },
     { type: 'box', at: [0, BOX_H / 2, -BOX_Z0 + BOX_D / 2], w: BOX_D, h: BOX_H, z: 'back' },
@@ -108,10 +131,10 @@ export default {
   checks: [
     { landmark: 'heel.r', plane: boxTop, pose: 'all', tol: 0.5 },     // c6: the whole lead foot on the box
     { landmark: 'ball.r', plane: boxTop, pose: 'all', tol: 0.5 },
-    { landmark: 'heel.l', plane: floor, pose: 'end', tol: 0.5 },      // c1: the other foot on the floor
-    { landmark: 'ball.l', plane: floor, pose: 'end', tol: 0.5 },
-    { landmark: 'heel.l', above: boxTop, pose: 'start' },              // standing tall: the trailing foot clear of the box
-    { landmark: 'toe.l', above: boxTop, pose: 'start' },
+    { landmark: 'heel.l', plane: floor, pose: 'start', tol: 0.5 },    // c1: the other foot on the floor
+    { landmark: 'ball.l', plane: floor, pose: 'start', tol: 0.5 },
+    { landmark: 'heel.l', above: boxTop, pose: 'end' },                // standing tall: the trailing foot clear of the box
+    { landmark: 'toe.l', above: boxTop, pose: 'end' },
     { landmark: 'toe.l', above: floor, pose: 'mistake' },              // the push: heel up, the toe pad on the floor
     inHand('r'), inHand('l'),                                          // c5: the dumbbells in both hands at the step position
   ],

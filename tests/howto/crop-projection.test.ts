@@ -146,13 +146,16 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     // F-PAIR-FAULTS (#386): build-layers-page.mjs's and pairs.mjs's keys are re-pinned there and pinned exactly by pair-faults.test.ts
     // (build-layers-page.mjs's key is checked against its file and blanked by lessW2, a W2 key too)
     for (const r of rows) r.files['tools/plates/library/hands/pairs.mjs'] = 'X';
+    // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): render/closeup/zoom.mjs's key is re-pinned there and pinned
+    // exactly by platefix3-engine.test.ts
+    for (const r of rows) r.files['tools/plates/library/render/closeup/zoom.mjs'] = 'X';
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
     // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts;
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync(path('docs/research/howto/shared/back-pain-box.json')))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
     // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
-    expect(sha(JSON.stringify(rrBox(lessW2(m))))).toBe('99d9824be548ecd2454a92bb35c43c1339eca13f8d6731660c6140f2d30e882e');
+    expect(sha(JSON.stringify(rrBox(lessW2(m))))).toBe('f8074fd0c651b9deb6ac87c2bb39f68a5d917b7a856f0823785179537b58ad33');   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was 99d9824b…e882e, now with zoom.mjs's key also blanked; the MANIFEST diff from main moves only zoom.mjs and build-layers-page.mjs keys
   });
 });
 

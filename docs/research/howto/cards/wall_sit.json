@@ -77,7 +77,7 @@
     "checkpoints": [
       { "label": "Back on wall", "what": "Back and buttocks stay on the wall.", "claim": "w5" },
       { "label": "Knees over ankles", "what": "Shins vertical, knees directly above the ankles.", "claim": "w4" },
-      { "label": "90 degrees", "what": "Hips and knees at about 90 degrees; shallower is easier.", "claim": ["w2", "w7"] }
+      { "label": "Hips about 90°", "what": "Hips and knees at about 90 degrees; shallower is easier.", "claim": ["w2", "w7"] }
     ],
     "mistake": {
       "what": "Feet too close to the wall, knees pushed forward past the toes.",

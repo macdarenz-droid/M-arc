@@ -1,0 +1,130 @@
+// LIB-PLATEFIX-3 (card verify/lib-platefix-3-card.md; PLAN RULED #405 6682844211): the lb5 plate fixes, items 9, 10 and
+// 14. Each test reads what the engine draws (svg, report, landmarks) and fails on main's spec (5023f5c6); the
+// before values are in each test's name or comment. Item 8 (the tell merge, ruled 6683313760) is the last block; items
+// 11, 12 and 13 have no spec change (reported on #405).
+import { beforeAll, describe, expect, it } from 'vitest';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
+const vendor = (f: string) => new URL(`../../tools/plates/vendor/engine/${f}`, import.meta.url).href;
+const T = 120_000;
+
+let plate: any, body: any, eq: any, qa: any;
+const S: Record<string, any> = {};
+beforeAll(async () => {
+  [plate, body, eq, qa] = await Promise.all([vendor('plate.mjs'), vendor('body.mjs'), vendor('equipment.mjs'), lib('qa/engine.mjs')].map(f => import(/* @vite-ignore */ f)));
+  for (const id of ['bayesian_cable_curl', 'cable_curl', 'dumbbell_overhead_triceps_extension']) S[id] = (await import(/* @vite-ignore */ lib(`specs/${id}.mjs`))).default;
+}, T);
+
+const E = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body });
+const render = (spec: any, mistake = false) => plate.renderPlate(spec, { id: 't', mistake });
+const camOf = (spec: any) => qa.cameraOf(spec, render(spec).report);
+const lmOf = (spec: any) => qa.poseLandmarks(E(), spec).lm;
+const dist = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!);
+/** Every equipment item a spec emits in one pose (functions called as the engine calls them). */
+const itemsIn = (spec: any, pose: string) => {
+  const L = qa.poseLandmarks(E(), spec), lm = L.lm[pose], ctx = { pose, start: L.lm.start, mistake: pose === 'mistake', body: L.body };
+  return spec.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(lm, ctx) ?? [] : e)).filter(Boolean);
+};
+/** Points of an svg path (M, L and C commands; each cubic sampled at 20 steps). */
+const pathPts = (d: string) => {
+  const out: number[][] = []; let cur: number[] = [0, 0];
+  for (const m of d.matchAll(/([MLCZ])([^MLCZ]*)/g)) {
+    const n = [...m[2]!.matchAll(/-?[\d.]+/g)].map(x => +x[0]);
+    if (m[1] === 'M' || m[1] === 'L') for (let i = 0; i + 1 < n.length; i += 2) { cur = [n[i]!, n[i + 1]!]; out.push(cur); }
+    else if (m[1] === 'C') for (let i = 0; i + 5 < n.length; i += 6) {
+      const p0 = cur, c1 = [n[i]!, n[i + 1]!], c2 = [n[i + 2]!, n[i + 3]!], p3 = [n[i + 4]!, n[i + 5]!];
+      for (let k = 1; k <= 20; k++) { const t = k / 20, u = 1 - t; out.push([0, 1].map(j => u * u * u * p0[j]! + 3 * u * u * t * c1[j]! + 3 * u * t * t * c2[j]! + t * t * t * p3[j]!)); }
+      cur = p3;
+    }
+  }
+  return out;
+};
+
+describe('PF3 item 9 bayesian_cable_curl: the arm angle at the shoulder, the Wrong cable to the Wrong handle (c3; #392 6649453813 L7)', () => {
+  it('the measure arc sits at the shoulder joint with radius <= 40 % of the drawn upper arm (main: 30 px of 43.5, 69 %)', () => {
+    const s = S.bayesian_cable_curl, cam = camOf(s), L = lmOf(s), svg = render(s).svg;
+    const m = svg.match(/<path class="arc measure" d="M([-\d.]+) ([-\d.]+)L[-\d.]+ [-\d.]+A([\d.]+) /)!;
+    const V = [+m[1]!, +m[2]!], r = +m[3]!, sh = cam.P(L.start['shoulder.r']), arm = dist(sh, cam.P(L.start['elbow.r']));
+    expect(dist(V, sh)).toBeLessThanOrEqual(0.5);
+    expect(r / arm, `radius ${r} of the ${arm.toFixed(1)} px upper arm`).toBeLessThanOrEqual(0.4);
+  });
+  it('a vertical datum runs down from the shoulder joint, past the arc (main: none)', () => {
+    const s = S.bayesian_cable_curl, sh = camOf(s).P(lmOf(s).end['shoulder.r']), svg = render(s).svg;
+    const d = [...svg.matchAll(/<path class="datum" d="M([-\d.]+) ([-\d.]+)L([-\d.]+) ([-\d.]+)"/g)].map(x => x.slice(1, 5).map(Number))
+      .filter(([x0, y0, x1, y1]) => Math.abs(x0! - x1!) <= 0.01 && dist([x0!, y0!], sh) <= 0.5 && y1! > y0!);
+    expect(d.length).toBe(1);
+    expect(d[0]![3]! - d[0]![1]!).toBeGreaterThanOrEqual(s.measure.radius + 5);
+    expect(render(s, true).svg.includes('class="datum"'), 'correct plate only').toBe(false);
+  });
+  it('the Wrong cable is a dashed Mistake guide ending on the Wrong handle ring, 0 px (main: an equipment twin under the pose mask)', () => {
+    const s = S.bayesian_cable_curl, cam = camOf(s), svg = render(s, true).svg;
+    const handle = itemsIn(s, 'mistake').find((it: any) => it.type === 'poly' && it.cls === 'eq-solid' && it.part === 'handle');
+    const ring = cam.P(handle.pts[0]);
+    const layer = svg.slice(svg.indexOf('<g class="mistake-layer">'));
+    const ends = [...layer.matchAll(/<path class="m-line" d="M[-\d.]+ [-\d.]+L([-\d.]+) ([-\d.]+)"/g)].map(x => [+x[1]!, +x[2]!]);
+    expect(Math.min(...ends.map(e => dist(e, ring))), 'a two-point dashed guide ends on the ring (within the report camera\'s 0.01 rounding)').toBeLessThanOrEqual(0.25);
+    expect(itemsIn(s, 'mistake').some((it: any) => it.type === 'poly' && it.cls === 'eq'), 'no equipment cable twin').toBe(false);
+  });
+});
+
+// cable_curl: held at main's drawing (D-LIB13-PANEL2, #405 6688665575); its PF3 tests leave with its drawing (kept in history at d8cd3ac7).
+
+describe('PF3 item 14 dumbbell_overhead_triceps_extension: a deeper lumbar curve, the ribcage tipped back (c9; #392 6654466055 L5)', () => {
+  const backAt = (pts: number[][], y: number) => Math.min(...pts.filter(p => Math.abs(p[1]! - y) < 0.75).map(p => p[0]!));
+  /** The drawn back outline's lumbar depth: the rear edge's furthest point forward of the chord from the backUpper height
+   *  to the buttock height (plate px; the figure faces right, so the back is the outline's least x). */
+  const depthOf = (svg: string, id: string, top: number, bot: number) => {
+    const pts = pathPts(svg.match(new RegExp(`id="${id}" d="([^"]*)"`))![1]!);
+    const ys = Array.from({ length: Math.floor(bot - top) + 1 }, (_, i) => top + i), rear = ys.map(y => [backAt(pts, y), y]);
+    const a = rear[0]!, b = rear.at(-1)!;
+    return Math.max(...rear.map(p => p[0]! - (a[0]! + (b[0]! - a[0]!) * (p[1]! - a[1]!) / (b[1]! - a[1]!))));
+  };
+  const facts = (s: any) => {
+    const svg = render(s, true).svg, cam = camOf(s), L = lmOf(s), P = (p: string, k: string) => cam.P(L[p][k]);
+    const rib = (p: string) => { const a = P(p, 'backUpper'), c = P(p, 'chest'); return Math.atan2(c[1]! - a[1]!, c[0]! - a[0]!) * 180 / Math.PI; };
+    return {
+      deepen: depthOf(svg, 't-m-torso', P('mistake', 'backUpper')[1]!, P('mistake', 'buttock')[1]!) - depthOf(svg, 't-e-torso', P('end', 'backUpper')[1]!, P('end', 'buttock')[1]!),
+      behind: P('end', 'backUpper')[0]! - P('mistake', 'backUpper')[0]!,
+      ribBack: rib('end') - rib('mistake'),
+    };
+  };
+  it('the Wrong lumbar curve is >= 6.5 px deeper than the Right (main: 6.11)', () => {
+    const f = facts(S.dumbbell_overhead_triceps_extension);
+    expect(f.deepen, `deepen ${f.deepen.toFixed(2)}`).toBeGreaterThanOrEqual(6.5);
+  });
+  it('the dashed upper back is >= 5 px behind the solid one (main: 10.35 px in front) and the ribcage tips back >= 10 deg (main: 0)', () => {
+    const f = facts(S.dumbbell_overhead_triceps_extension);
+    expect(f.behind, `behind ${f.behind.toFixed(2)}`).toBeGreaterThanOrEqual(5);
+    expect(f.ribBack, `rib ${f.ribBack.toFixed(2)}`).toBeGreaterThanOrEqual(10);
+  });
+  it('the arch is the ruled 25 deg, never more: bow + trunk extension, pelvis tilt unchanged', () => {
+    const m = S.dumbbell_overhead_triceps_extension.mistake.pose;
+    expect(m.trunk.bow - m.trunk.flex).toBe(25);
+    expect(m.root).toBeUndefined();
+  });
+});
+
+// LIB-PLATEFIX-3 item 8 (ruled #405 6683313760: (b) measured first, then (a)): the two shrug tells merged into one (c5).
+describe('PF3 item 8 cross_body_hammer_curl: one shrug tell (c5; #392 6649453813 L5)', () => {
+  let cb: any;
+  beforeAll(async () => { cb = (await import(/* @vite-ignore */ lib('specs/cross_body_hammer_curl.mjs'))).default; }, T);
+  const tellProblems = (spec: any) => {
+    const bad: string[] = [], t = spec.mistake.tells;
+    if (t.length !== 1) bad.push(`${t.length} tells (main 2: shrug + ear)`);
+    if (t[0]?.key !== 'shrug' || t[0]?.anchor?.at !== 'shoulderTop.r') bad.push('the tell is not the shrug on shoulderTop.r');
+    return bad;
+  };
+  it('the Mistake has one tell, "Shoulder shrugs", on the moving shoulder top', () => { expect(tellProblems(cb)).toEqual([]); });
+  it('mutation: main\'s second tell (ear, on trap.r) is red', () => {
+    const m = { ...cb, mistake: { ...cb.mistake, tells: [...cb.mistake.tells, { key: 'ear', text: 'Shoulder<br>near ear', anchor: { at: 'trap.r', pose: 'mistake' } }] } };
+    expect(tellProblems(m).length).toBeGreaterThan(0);
+  });
+  it('option (b) as measured: the smallest ring holding the shoulder tops and the ear allows k <= 2.43, a shrug under 20 px', () => {
+    const cam = camOf(cb), L = lmOf(cb);
+    const se = cam.P(L.end['shoulderTop.r']), sm = cam.P(L.mistake['shoulderTop.r']), ear = cam.P(L.end.ear);
+    const kMax = 52 / (dist(se, ear) / 2), shrug = dist(se, sm);
+    expect(kMax).toBeLessThan(2.5);
+    expect(shrug * kMax).toBeLessThan(20);
+  });
+});

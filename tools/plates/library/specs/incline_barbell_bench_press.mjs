@@ -175,6 +175,8 @@ const ring = (c, r, n = 16) => Array.from({ length: n + 1 }, (_, k) => [0, c[1] 
 // label and measure points on the back face of the back pad (PAD = 7 cm, the composer default)
 const PAD = 0.07, onPadBack = u => [0, HINGE[1] + UP[1] * u - NB[1] * PAD, HINGE[2] + UP[2] * u - NB[2] * PAD];
 const onPadFront = u => [0, HINGE[1] + UP[1] * u, HINGE[2] + UP[2] * u];   // on the pad face the back lies on
+const ARC_AT = 0.04, ARC_R = 28;                     // the measure arc's vertex along the pad (m) and radius (px), as approved
+const ARC_END = onPadBack(ARC_AT + ARC_R / 146.29);  // the arc's end on the pad line (the reference scale, 146.29 px/m)
 
 export default {
   id: 'incline_barbell_bench_press', name: 'Incline Barbell Bench Press', view: 'side', facing: 'right',
@@ -201,10 +203,14 @@ export default {
   startParts: ['arm.r', 'arm.l', 'bar'],
   ghosts: { count: 2, parts: ['arm.r', 'bar'] },
   trace: { point: 'grip.r', trim: [12, 12] },
-  measure: { vertex: onPadBack(0.04), from: 'back', to: { dir: [UP[2], UP[1]] }, radius: 28, title: 'Bench', value: '30°', expect: 90 - BACK, box: { left: 58, top: 260 } },
+  // LIB-PLATEFIX-3 item 15 (W4 L7 [3,3,3], w4-findings set b T08, c1): one bench-angle label. The arc keeps its '30°'
+  // value with no title (was 'Bench' + '30°', a second label for the 'Bench at 30°' checkpoint), and the checkpoint's
+  // leader ends on the arc (ARC_END: where the arc meets the pad), so the callout names the arc. Both boxes moved (was
+  // bench 40/214, arc 58/260) so no box covers the figure (PQ-H1) and no leader exceeds the approved length (F3).
+  measure: { vertex: onPadBack(ARC_AT), from: 'back', to: { dir: [UP[2], UP[1]] }, radius: ARC_R, title: '', value: '30°', expect: 90 - BACK, box: { left: 124, top: 262 } },
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }],
   callouts: [
-    { key: 'bench', text: 'Bench<br>at 30°', anchor: onPadBack(0.62), box: { left: 40, top: 214 }, cue: 'Set the back pad to about 30 degrees, never steeper than 45.' },
+    { key: 'bench', text: 'Bench<br>at 30°', anchor: ARC_END, box: { left: 56, top: 252 }, cue: 'Set the back pad to about 30 degrees, never steeper than 45.' },
     { key: 'chest', text: 'To upper<br>chest', anchor: 'grip.r', box: { left: 222, top: 176 }, cue: 'Lower the bar under control to the top of your chest, not your neck.' },
     { key: 'pad', text: 'Back<br>on pad', anchor: onPadFront(0.03), box: { left: 160, top: 286 }, cue: 'Keep your head, shoulders and hips on the bench, with no big arch.' },
   ],

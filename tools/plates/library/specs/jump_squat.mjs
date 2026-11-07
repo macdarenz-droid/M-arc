@@ -2,9 +2,11 @@
 // box_jump, but no PARAMS key removes the box, lands on the floor or sets the take-off depth).
 // View: side (card plate.view). The hips-back loading (j2), the triple extension (j3) and the landing knee and hip
 //  bend (j4, j5) are sagittal.
-// Airborne class (D-LIB8R-AIR, D-SMALL-JSAIR): the take-off crouch (dashed start, heels down, j2), one ghost at full
-//  extension on the balls (j3), the landing in place on the floor (solid end, j4; j9 "maximal vertical jump"). No body
-//  is drawn off every support; the Trace follows the near hip along the rise and fall.
+// Airborne class (D-LIB8R-AIR, D-SMALL-JSAIR), re-posed by LIB-PLATEFIX-3 item 6 (#405 6682844211; #392 6649453813 L7:
+//  "the trace is a closed loop over the torso; draw one open hip path, back then down"): the touchdown at full
+//  extension on the balls (dashed start, j3), one ghost mid-absorb, the landing in place on the floor (solid end, j4;
+//  j9 "maximal vertical jump"). No body is drawn off every support; the Trace follows the near hip from the touchdown
+//  back, then down into the landing (j4 "push your hips backwards and drop them downwards to absorb").
 // Sources: research card docs/research/howto/cards/jump_squat.json (research head a48b0594): callouts =
 //  plate.checkpoints (j2 Hips back, j3 Full extension, j4 Soft landing); Mistake = plate.mistake (j5, drawable).
 //  Tempo: tempoOf(strip/rows.json jump_squat): Lower Controlled (j9), Jump Explosive (j7).
@@ -13,12 +15,13 @@
 //  parabola, the straight-knee Mistake and its arrow. The box is removed; every frame stands on the floor at the same
 //  feet.
 // Geometry (confirmed by the report `checks` and the drawn-item tests):
-//  Start (j2, j3): the bottom of the countermovement, feet flat, the hip-joint centre TAKEOFF_HIP high, the thorax
-//   TAKEOFF_TRUNK from vertical (hips back, back flat: the thorax and lumbar in one line).
-//   (j10 names the arm swing as the default).
-//  Ghost (j3): the same feet on the balls (heels up EXT_HEEL), knees EXT_KNEE, hips straight, the body leaning EXT_LEAN
-//   (the centre of mass over the balls is not solved: the lean is box_jump's form, reduced for a vertical jump), arms
-//   up.
+//  The take-off crouch (TAKEOFF_HIP, TAKEOFF_TRUNK, j2) is no longer drawn; it only fixes the ball spot BALL0.
+//  Start (j3, the touchdown): the same feet on the balls (heels up EXT_HEEL), knees EXT_KNEE, hips straight, the body
+//   leaning EXT_LEAN (the centre of mass over the balls is not solved: the lean is box_jump's form, reduced for a
+//   vertical jump).
+//  Via (j4): ABSORB keys from the touchdown to the landing; the hip on a quadratic curve whose control point is at the
+//   touchdown hip height and the landing hip's z (back, then down); the heels come down over the first half; tilt and
+//   neck move linearly. The ghost (t 0.5) is the mid-absorb key.
 //  End (j4, j8): landed in place, both feet flat, hips back and down (LAND_HIP), knees bent, thorax LAND_TRUNK forward.
 //  Mistake (j5): the same feet, knees near locked (MISTAKE_HIP), thorax MISTAKE_TRUNK.
 //  Arms (j10, panel mx15 R1, #358 6547988428): in every key the hands rest loosely at the chest, HAND_FWD in front of the
@@ -105,7 +108,19 @@ const rise = k => chestHands({ root: { at: riseAt(k), tilt: start.root.tilt + (e
   trunk: 6, neck: -8, plant: k < 0.5 ? start.plant : ext.plant });
 const fly = t => chestHands({ root: { at: arc(t), tilt: 6 + 14 * t }, trunk: 6, neck: -8,
   hip: 10 + 30 * t, knee: 10 + 40 * t, ankle: -10 });
-const via = [...[1, 2, 3, 4, 5, 6].map(k => rise(k / 7)), ext, ...[1, 2, 3, 4, 5, 6].map(k => fly(k / 7))];
+void rise; void fly;   // the take-off rise and the flight are not drawn since LIB-PLATEFIX-3 (kept for the sizes they fix)
+// LIB-PLATEFIX-3 item 6: the absorb from the touchdown (ext) to the landing (end), back then down.
+const ABSORB = 12;
+const ABS_C = [0, ext.root.at[1], end.root.at[2]];   // control point: touchdown height, landing z
+const absorbAt = k => ext.root.at.map((v, i) => (1 - k) ** 2 * v + 2 * k * (1 - k) * ABS_C[i] + k * k * end.root.at[i]);
+const balls = a => { const th = a * Math.PI / 180, n = [0, Math.cos(th), Math.sin(th)], t = [0, -Math.sin(th), Math.cos(th)];
+  return { l: { at: [FOOT_X, 0, BALL0[2]], normal: n, toe: t, ref: 'ball' }, r: { at: [-FOOT_X, 0, BALL0[2]], normal: n, toe: t, ref: 'ball' } }; };
+const absorb = k => chestHands({ root: { at: absorbAt(k), tilt: ext.root.tilt + (end.root.tilt - ext.root.tilt) * k },
+  trunk: 6, neck: -6 + (-10 + 6) * k, plant: balls(EXT_HEEL * Math.max(0, 1 - 2 * k)) });
+const via = Array.from({ length: ABSORB - 1 }, (_, i) => absorb((i + 1) / ABSORB));
+// Every key plants the feet by the ball (the same spot as the landing's flat feet): the engine interpolates a plant's
+// fields, so a 'ball' key next to a 'mid' key would slide the foot.
+const landing = { ...end, plant: balls(0) };
 
 // Mistake (j5): landing with straight, locked knees; same feet, hips high, trunk nearly upright.
 const MISTAKE_HIP = 0.925, MISTAKE_TRUNK = 12;
@@ -120,30 +135,33 @@ export const POSES = { start, ext, end, mistake: MISTAKE };
 export default {
   id: 'jump_squat', name: 'Jump Squat', view: 'side', facing: 'right',
   camera: { x0: 180, y0: 339 },
-  poses: { start, via, end },
+  poses: { start: ext, via, end: landing },
   equipment: [{ type: 'floor', from: -0.75, to: 0.75 }],
   checks: [
-    ...['heel', 'ball', 'sole'].flatMap(p => ['l', 'r'].flatMap(s => ['start', 'end', 'mistake'].map(pose => ({ landmark: `${p}.${s}`, plane: FLOOR, pose, tol: 0.5 })))),
+    ...['heel', 'ball', 'sole'].flatMap(p => ['l', 'r'].flatMap(s => ['end', 'mistake'].map(pose => ({ landmark: `${p}.${s}`, plane: FLOOR, pose, tol: 0.5 })))),
+    ...['l', 'r'].map(s => ({ landmark: `ball.${s}`, plane: FLOOR, pose: 'start', tol: 0.5 })),   // the touchdown on the balls (j3)
   ],
-  ghosts: { count: 1 },                                   // t = 0.5: the full-extension take-off pose (via[6])
+  ghosts: { count: 1 },                                   // t = 0.5: the mid-absorb key (via[5])
+  // LIB-PLATEFIX-3 round 2 (pf7 R5 [3,4,3], c1 c3: the red straight-knee landing merged with the upright start and
+  // ghost outlines): the Mistake view drops the start pose and the ghost (D-HELD6-MGHOST), so the only upright outline
+  // there is the red one, on the landing's foot contact.
+  mistakeGhosts: false,
   trace: { point: 'hip.r', trim: [10, 12] },
   callouts: [
-    { key: 'hips', text: 'Hips back', anchor: { at: 'hip.r', pose: 'start' }, box: { left: 40, top: 296 }, cue: 'Send the hips back, then down, keeping the back flat.' },
+    { key: 'hips', text: 'Hips back', anchor: { at: 'hip.r', pose: 'end' }, cue: 'Send the hips back, then down, keeping the back flat.' },
     { key: 'extend', text: 'Full<br>extension', anchor: EXT_HEAD_PT, box: { left: 262, top: 84 }, cue: 'Jump by extending ankles, knees and hips together.' },
     { key: 'land', text: 'Soft landing', anchor: 'knee.r', box: { left: 250, top: 270 }, cue: 'Land quietly on the mid-foot, hips back and down, knees bent.' },
   ],
   mistake: {
-    pose: MISTAKE,
+    pose: { ...MISTAKE, plant: balls(0) },   // the landing's ball-ref plant (same spot as the mid-ref one)
     // box_jump's end→Mistake knee arrow is not copied: it starts inside the solid end figure, and LB4's A15 asks every
     // solid red part to clear the end figure by 6 px (lb4-plates.test.ts). The red Mistake legs and the tell carry it.
     guides: [],
     tells: [
+      // LIB-PLATEFIX-3 item 6: one tell; "Hips high" is gone (its cue is j5-unsupported, #392 6650499991).
       { key: 'straight', text: 'Knees straight', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 16, top: 306 }, cue: 'The knees stay straight and locked on the landing.' },
-      // The second visible sign of the same stiff landing (LB4's 2-3 tells): the hips stay high instead of dropping back
-      // and down (j4 "push your hips backwards and drop them downwards to absorb"; j11 the soft landing's hip and knee).
-      { key: 'hips', text: 'Hips high', anchor: { at: 'hip.r', pose: 'mistake' }, box: { left: 40, top: 196 }, cue: 'The hips stay high instead of dropping back and down.' },
     ],
   },
   tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Jump', move: true, word: 'Explosive' }],   // tempoOf(strip/rows.json jump_squat)
-  alt: 'Jump squat, side view. Take-off frame: hips back and down, heels flat, back flat, hands loosely at the chest. The hips rise straight up through full extension on the balls of the feet. Landing frame: in the same spot, feet flat, knees and hips bent, trunk slightly forward.',
+  alt: 'Jump squat, side view. Touchdown frame: full extension on the balls of the feet, hands loosely at the chest. On landing the hips go back, then down: in the same spot, feet flat, knees and hips bent, trunk slightly forward.',   // LIB-PLATEFIX-3 item 6 (j3, j4)
 };

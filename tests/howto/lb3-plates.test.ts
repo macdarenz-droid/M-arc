@@ -1237,9 +1237,11 @@ describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d
       "mistakeAlt": "2d6d1d4c634533ebdd4a6c0802a3f797f56479abd0b4a516ac3c92904fca2a05"
     },
     "sumo-deadlift": {
-      "normalSvg": "9a2f2b0e2a325dc698d0acdff5a59c203cef3013f9b230610601bf686f50868a",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 9a2f2b0e, now ee55b650 (item 17 sumo; the plates panel re-approves; one_arm_dumbbell_row held at main's, #405 6688665575)
+      "normalSvg": "ee55b650f8705adc245caef424651ab44cf235aba1877ac0d2c242b8bb734a05",
       "normalOverlay": "87101be011d94c7212ea7a710cf4b05ab97eabab45dcef76680296d025b777bb",
-      "mistakeSvg": "da50e75c5094ff2476f3be0685b24f9cdb1c1c3c6a83b9c0137b2b5586a3acc4",
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was da50e75c, now b795deeb (item 17 sumo; the plates panel re-approves; one_arm_dumbbell_row held at main's, #405 6688665575)
+      "mistakeSvg": "b795deeb0d541bd9ed5b8fa29584d5b367cbd6b819dfd1b5094f274704224c06",
       "mistakeOverlay": "bbb6d492d7107a6d080b9f51da800e55678069b25cef2777cc5169b4f1e478b5",
       "tells": "09075a3625dea0c893795e6b758e8992ab92e904971970a35676b82c49288095",
       "tempo": "37010198d446f18f117df876fee4dc108ccbdbe147775b8c915f627e8611d468",
@@ -1269,7 +1271,8 @@ describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d
     expect(Object.values(APPROVED).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(63);
     expect(fragProblems(await pageHtml())).toEqual([]);
     const seven = await pageHtml(drawn().map(i => `lib_${i}`));
-    expect(sha(seven)).toBe('6ff09d4c144f90d7210f951eb23fe81b42f55d20478bc4b8bb1d2b3980d008c6');
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 6ff09d4c, now 5fe25d73 (item 17 sumo, approved #405 6688665575; one_arm_dumbbell_row held at main's)
+    expect(sha(seven)).toBe('5fe25d73e6fb4b5316573f8fefb2901dd9c688d3c970e05cb567c01cb4a78479');
   });
   it("mutation: one byte changed in landmine_row's alt is red", async () => {
     const html = await pageHtml(), p = golden.extractPlates(html).find((x: any) => x.chromeId === 'landmine-row');

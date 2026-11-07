@@ -4794,27 +4794,34 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
         });
       }
       it('the Mistake is the end pose plus the 12° lumbar arch only (hanging_leg_raise.mjs:69): the pelvis, the legs and the grips stay', () => {
-        const ok = (sp: any) => { const a = rep(sp).angles; return JSON.stringify(sp.mistake.pose) === JSON.stringify({ trunk: -12 }) && a.mistake.trunk === -12 && a.mistake.tilt === a.end.tilt
+        // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): standing_leg_curl's 12 deg arch is now trunk.bow 12 on the spread spine (the thorax holds:
+        // trunk flex 0 in the report); was { trunk: -12 } for both ids. lying_leg_curl is unchanged.
+        const WANT = id === 'standing_leg_curl' ? { pose: { trunk: { flex: 0, bow: 12 } }, trunk: 0 } : { pose: { trunk: -12 }, trunk: -12 };
+        const ok = (sp: any) => { const a = rep(sp).angles; return JSON.stringify(sp.mistake.pose) === JSON.stringify(WANT.pose) && a.mistake.trunk === WANT.trunk && a.mistake.tilt === a.end.tilt
           && ['hips', 'knee.r', 'ankle.r', 'grip.l', 'grip.r'].every(k => yzCm(lmOf(sp, 'mistake')[k], lmOf(sp, 'end')[k]) <= 0.5); };
         expect(ok(s())).toBe(true);
-        expect(ok({ ...s(), mistake: { ...s().mistake, pose: { trunk: -12, root: { ...s().poses.end.root, tilt: s().poses.end.root.tilt - 5 } } } })).toBe(false);   // mutation: the pelvis tips too -> red
+        expect(ok({ ...s(), mistake: { ...s().mistake, pose: { ...WANT.pose, root: { ...s().poses.end.root, tilt: s().poses.end.root.tilt - 5 } } } })).toBe(false);   // mutation: the pelvis tips too -> red
+        expect(ok({ ...s(), mistake: { ...s().mistake, pose: id === 'standing_leg_curl' ? { trunk: { flex: -12 } } : { trunk: -11 } } })).toBe(false);   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): the other id's arch form -> red
       });
-      it('D-LIBZOOM-EXTEND: the `arch` tell anchor (backMid) moves 3.4 px (±0.1) at plate scale, drawn card-true and never enlarged; the Mistake zoom at k 3.5 brings it to >= 11.39 px', () => {
-        const dev = (sp: any) => { const cam = camOf(sp), a = cam.P(lmOf(sp, 'end').backMid), b = cam.P(lmOf(sp, 'mistake').backMid); return Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!); };
+      it('D-LIBZOOM-EXTEND: the `arch` tell anchor moves its pinned px (±0.1) at plate scale, drawn card-true and never enlarged; the Mistake zoom at its k is the smallest ladder k that brings it to >= 11.39 px', () => {
+        // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): standing_leg_curl's tell sits on the lumbar landmark of the spread-spine arch, 4.1 px, k 3
+        // (was backMid, 3.4 px, k 3.5, as lying_leg_curl still is).
+        const PIN = id === 'standing_leg_curl' ? { at: 'lumbar', d: 4.1, k: 3 } : { at: 'backMid', d: 3.4, k: 3.5 };
+        const dev = (sp: any) => { const cam = camOf(sp), a = cam.P(lmOf(sp, 'end')[PIN.at]), b = cam.P(lmOf(sp, 'mistake')[PIN.at]); return Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!); };
         const d = dev(s());
-        console.log(`LIB-18 ${id} H3 tell deviation (backMid): ${d.toFixed(2)} px; at k 3.5 ${(d * 3.5).toFixed(2)} px`);
-        expect(+d.toFixed(1)).toBe(3.4);
+        console.log(`LIB-18 ${id} H3 tell deviation (${PIN.at}): ${d.toFixed(2)} px; at k ${PIN.k} ${(d * PIN.k).toFixed(2)} px`);
+        expect(+d.toFixed(1)).toBe(PIN.d);
         expect(d).toBeLessThan(11.39);
-        expect(s().zoom).toEqual({ view: 'mistake', k: 3.5 });
+        expect(s().zoom).toEqual({ view: 'mistake', k: PIN.k });
         expect(d * s().zoom.k).toBeGreaterThanOrEqual(11.39);
-        expect(d * 3).toBeLessThan(11.39);                                       // k 3.5 is the smallest of the 1.5-4 ladder that reaches the bar
+        expect(d * (PIN.k - 0.5)).toBeLessThan(11.39);                           // the ruled k is the smallest of the 1.5-4 ladder that reaches the bar
         expect(m().SIZES.M_ARCH).toBe(12);
-        expect(+dev({ ...s(), mistake: { ...s().mistake, pose: { trunk: -30 } } }).toFixed(1)).not.toBe(3.4);   // mutation: a 30° arch changes the pinned value -> red
+        expect(+dev({ ...s(), mistake: { ...s().mistake, pose: id === 'standing_leg_curl' ? { trunk: { flex: 0, bow: 30 } } : { trunk: -30 } } }).toFixed(1)).not.toBe(PIN.d);   // mutation: a 30° arch changes the pinned value -> red
       });
       it('every unsourced number is in SIZES; the Trace is the heel (D-LIB18-TRACE) at the clone source trim (leg_press.mjs:132); the tempo strip is the card\'s', () => {
         expect(Object.keys(m().SIZES).sort()).toEqual(id === 'lying_leg_curl'
           ? ['ANKLE_T', 'BEAM_BACK', 'BENCH_LEN', 'BENCH_TOP', 'END_KNEE', 'HANDLE', 'KNEE_OUT', 'M_ARCH', 'START_KNEE', 'TRACE_TRIM', 'UPRIGHT_T']
-          : ['ANKLE_T', 'BEAM_BACK', 'BEAM_FRONT', 'END_KNEE', 'HANDLE', 'LEAN', 'M_ARCH', 'STANCE_KNEE', 'START_KNEE', 'TRACE_TRIM', 'UPRIGHT_T']);
+          : ['ANKLE_T', 'BEAM_BACK', 'BEAM_FRONT', 'COLUMN_DZ', 'END_KNEE', 'HANDLE', 'LEAN', 'M_ARCH', 'STANCE_KNEE', 'START_KNEE', 'TRACE_TRIM', 'UPRIGHT_T']);   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): + COLUMN_DZ (standing_leg_curl R2 frame)
         expect(s().trace).toEqual({ point: 'heel.r', trim: [6, 8] });
         expect(s().tempo).toEqual(cardOf(id).tempo);
         expect([...s().tempo, { phase: 'Pause', s: 1 }]).not.toEqual(cardOf(id).tempo);   // mutation (A7): a bottom pause added -> red
@@ -4826,7 +4833,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
         const cam = camOf(s()), lm = lmOf(s(), 'mistake'), g = s().mistake.guides[0], path = g.pts.map((p: any) => cam.P(lm[p.at]));
         const onIt = (t: any) => { const a = cam.P(lm[t.anchor.at]); return Math.min(...path.slice(1).map((q: number[], i: number) => segD(a, path[i]!, q))) <= 1; };
         expect(g.kind).toBe('dashed');
-        expect(s().mistake.tells.map((t: any) => [t.key, t.anchor.at])).toEqual([['arch', 'backMid']]);
+        expect(s().mistake.tells.map((t: any) => [t.key, t.anchor.at])).toEqual([['arch', id === 'standing_leg_curl' ? 'lumbar' : 'backMid']]);   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): standing_leg_curl's tell on the lumbar (was backMid)
         expect(s().mistake.tells.every(onIt)).toBe(true);
         expect(onIt({ anchor: { at: 'navel' } })).toBe(false);                  // mutation: an anchor on the navel -> red
       });
@@ -4881,7 +4888,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
 // ---- D-LIBZOOM-EXTEND ('LIB-18 resume'): the rows released with a Mistake-view LIB-ZOOM circle ----
 describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main)', { timeout: T }, () => {
   // k: the smallest of the ladder whose tell-anchor move reaches deviationMin at the zoom's scale (DESIGN.md section 18)
-  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, cable_kickback: 3 };   // hip_thrust: held after mx26; its route's ring (D-HELD6-RING, k 4) is measured below with RING
+  const ZOOMED: Record<string, number> = { pendulum_squat: 2.5, leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3, cable_kickback: 3 };   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): standing_leg_curl 3.5 -> 3   // hip_thrust: held after mx26; its route's ring (D-HELD6-RING, k 4) is measured below with RING
   const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], BAR = 11.39;
   let Z: any;
   beforeAll(async () => { Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); }, T);
