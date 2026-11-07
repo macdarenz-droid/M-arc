@@ -523,7 +523,7 @@
    }
   },
   "lib_cable_chest_press": {
-   "entry": "3199f74dcb68c6657db732393cb30441de22743efe813d0eb971a3885a9a4a64",
+   "entry": "96c319d09d3ac46961f103e09bf372999d947431211b805cd52b5e235b566010",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -1981,7 +1981,7 @@
    }
   },
   "lib_high_to_low_cable_fly": {
-   "entry": "ba3629eef7555bec80ee2b73c345c4f3ee3277875980e514536755fe4afb19c9",
+   "entry": "9ed3c1a8661e51824c8ac29c99ac47eeecf107d01b09b2b894d11fe0d3a5bbdc",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2078,7 +2078,7 @@
    }
   },
   "lib_hip_abduction": {
-   "entry": "4c0d1c9b5d9105a5ef4c5f58d209afef1b67d7eace171d835e90e785e9cec364",
+   "entry": "a8300f2aa7c6a6b6805e289d8660b4873e640ad733c31b603d897b7f2a580314",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2175,7 +2175,7 @@
    }
   },
   "lib_hip_adduction": {
-   "entry": "377b6bb9ede65ba70f4fb501ecaf3f57da0118fdd403e8025b940813fac01e14",
+   "entry": "0225580f97dac7fa38be7c1c78a229f4e0ac66f0f0bfdb03e9dfa68c070408f0",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2632,7 +2632,7 @@
    }
   },
   "lib_low_to_high_cable_fly": {
-   "entry": "4ce1f56198f2ce6757c5b1fc6e6891ca98e1ad9346cfd0d2f7ebd1039e533baf",
+   "entry": "ca85009bfb01b35792b21e1210c186965ac070ea6812e7ec11b01b312758303f",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2729,7 +2729,7 @@
    }
   },
   "lib_machine_crunch": {
-   "entry": "c2cba671156864604c0802201c1003f967adff4585b824af7ee77d4d037b46f6",
+   "entry": "7c82f539ff8f5768e65c23fad2655f5d9c67cee354bdc52f2cd6c5158ad89a4b",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2826,7 +2826,7 @@
    }
   },
   "lib_machine_lateral_raise": {
-   "entry": "e81302aa0a6d9ca82fcbda22889caddfca9f61fdc8a6c6bfd9407f5b1ca1086d",
+   "entry": "e1bb7fd0e005d42d57483772a72db9834632bc1a7cef3bce7081cbaf9c7ca9fa",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2923,7 +2923,7 @@
    }
   },
   "lib_machine_pullover": {
-   "entry": "0dc43e584d475047dbc39f626677c3a9640c09479d06a4442a2213eb7112d8cc",
+   "entry": "87d5be65b9c22fd6725e8648f2ac41b40f23d8b9e3578ea4db7fc150e0e64f4a",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -3502,7 +3502,7 @@
    }
   },
   "lib_rear_delt_fly": {
-   "entry": "94eb24e65e111ef271e57f99f258a1b761f2590da8e40b30b9d2b0761ae2a301",
+   "entry": "2375344f363b08df96b3c795b64458bb1f40bb8dc1e8b622d941990baac31889",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -4585,7 +4585,7 @@
    }
   },
   "lib_smith_machine_incline_press": {
-   "entry": "0b225a3257421d2e502ad6c33a5cf843598f772438e37571a309d31c7e4c5cac",
+   "entry": "781bf0c01eca3207e4c6cf09ab7115fd57ab7ed79de643c1da3085f0ed07a5cf",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -4682,7 +4682,7 @@
    }
   },
   "lib_smith_machine_shoulder_press": {
-   "entry": "bac55cf288bd5c934ee981fcc2002da1cf7a1c6d2797349c371f05b0af3a3d0f",
+   "entry": "b0fea52c1a270c6f997ed2d11445cea409ca381f97df40a19c1355d93fe1701d",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -4779,7 +4779,7 @@
    }
   },
   "lib_smith_machine_squat": {
-   "entry": "f608777afb45166db8fbe0417d5a56770318bb2fb46dcb82f4ca26f13f26f512",
+   "entry": "db9f593486d956189025a9f2a1ad48545af68d4888fcf42be1fda80a9d763337",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",

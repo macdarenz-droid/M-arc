@@ -6,13 +6,13 @@
   "entries": [
     {
       "kind": "page",
-      "pageSha256": "5cea2ed7ecc0b5bc210d2dbeb04fd79c467c9303a4d9f89628e25e7a47e879cd",
-      "bytes": 1398822,
+      "pageSha256": "20c6b054968ce1193e984a10f0ac0210a2b8826fe8a2df5dc36a4491a7041bf0",
+      "bytes": 1398849,
       "approvedBy": "supervisor",
       "decision": "SHIP W6 PIN GO",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/393#issuecomment-6647923934 @ d03ece2463c1e10afccc2dbf3b7e9d72a87492a2",
       "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): the lb06 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10): the PIN GO page 8c7ede8a with low_to_high_cable_fly's 'drop' tell made card-true (F-ELBOWS-DROP-LTH, c11), its first entry under D-SHIP-W6-LB06FIRST (#393 6648157060) after the focused plates check.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): the lb06 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10): the PIN GO page 8c7ede8a with low_to_high_cable_fly's 'drop' tell made card-true (F-ELBOWS-DROP-LTH, c11), its first entry under D-SHIP-W6-LB06FIRST (#393 6648157060) after the focused plates check. Re-pinned in place under D-REPIN-UNMERGED (supervisor, 2026-11-07, Q7 on #393) after PF3's low_to_high plate (LIB-PLATEFIX-3, #405 6688665575) and its 'drop' tell made card-true again under D-SHIP-W6-LTHTELL.",
       "supersedes": null,
       "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -44,7 +44,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_cable_chest_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "5620c5340fc1b8a5b07fc1f4761ffeb62051189a5c588452c5dd8f45ae5f121c"
+      "prev": "62895d7633a1f34e1e7865575e6d199cdd172211a6a33e4afcd058cb0c816e8a"
     },
     {
       "kind": "plate",
@@ -73,7 +73,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_machine_pullover's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "e08359a471ed45040c17fc3a63aa2fae93397c12c1bd8e60909216d1c62e36d2"
+      "prev": "94981e192e60b244767ec08b0faf438a5738bab829119f9b66c97bcc49e6e4b2"
     },
     {
       "kind": "plate",
@@ -103,7 +103,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_machine_crunch's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "e74a1c218e26976646f8a914fa5d721afadde70eccadbba05814fbc3827e909b"
+      "prev": "bd28aa29dc0a4d7562998431945b8dd2fa2eb0caeee580cef93dc379a8339d63"
     },
     {
       "kind": "plate",
@@ -115,8 +115,8 @@
       "fragments": {
         "normalSvg": "57eb29aeb02e58342a999ae4a7a1bdf2acd55c644ac8041855342159d56429b9",
         "normalOverlay": "11ae46b8a9bcee9faac4f0ac0c11db8f9f2bcb1ae13280cdf00ca5c0b941cb6a",
-        "mistakeSvg": "ef8fe288185a6ed0d38dad7f97982a8b04d5b27b67a4b76e41d97c7413f2b760",
-        "mistakeOverlay": "78994857a72ad54f252e0b57647baf1f64e5a0d9bf4d25ae32fe0a0f169d554b",
+        "mistakeSvg": "2de2fc05a76a92281721f94f320bed20b2e5d3f536838d41cfb464bcfc4112ad",
+        "mistakeOverlay": "f5c43ff4507131b4f97fa148ebaa719e5e5b175e58ebb1f2e6fdd1d4af8af457",
         "tells": "4ef6ef619c62ecbb1c5269c11f4f37c7c9a747f7f194ae7a2e8954acae188c59",
         "tempo": "3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901",
         "cues": "95a9069cb601c2e76e0505e2ad2c27e09b9c318c4f9be10b8f05981cd0d59860",
@@ -132,9 +132,9 @@
       "decision": "SHIP W6 PIN GO",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/393#issuecomment-6647923934 @ d03ece2463c1e10afccc2dbf3b7e9d72a87492a2",
       "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_low_to_high_cable_fly's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); the PIN GO page 8c7ede8a's fragments with the 'drop' tell 'Becomes a press' (F-ELBOWS-DROP-LTH, c11; D-SHIP-W6-LB06FIRST, #393 6648157060): mistakeSvg, mistakeOverlay, tells and cues re-measured; exemptions F2, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_low_to_high_cable_fly's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); the PIN GO page 8c7ede8a's fragments with the 'drop' tell 'Becomes a press' (F-ELBOWS-DROP-LTH, c11; D-SHIP-W6-LB06FIRST, #393 6648157060): mistakeSvg, mistakeOverlay, tells and cues re-measured; exemptions F2, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (supervisor, 2026-11-07, Q7 on #393) after PF3's low_to_high plate (LIB-PLATEFIX-3, #405 6688665575) and its 'drop' tell made card-true again under D-SHIP-W6-LTHTELL.",
       "supersedes": null,
-      "prev": "ef8120086c6c343b8468e6c57b09108ada4b22ec96903a874f2c7808d708d656"
+      "prev": "9b432ec63f453713432022bfc46f2501bf0a1252aa584df5e37892423ee631b1"
     },
     {
       "kind": "plate",
@@ -166,7 +166,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_high_to_low_cable_fly's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F3, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "a54eac9283fdf98ec4ae57578cdaf6081caf5bd3b2f41ddfe7d15f5d7352c9b6"
+      "prev": "9f6a81186c26da17ce45ef03dcff9235ced9fc683de37cb0bf0d9bd64ab2d050"
     },
     {
       "kind": "plate",
@@ -196,7 +196,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_smith_machine_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "6aa7c041fb9942031ffcd267bcbf9418339cd348377e5188c00880d1b37edac7"
+      "prev": "39f95639f151de13b7f8402c259213a310330719a2af15f3f887bab35d57669d"
     },
     {
       "kind": "plate",
@@ -225,7 +225,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_smith_machine_shoulder_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "61b01fc55e47723863b6d4b86897585504c9969481e8de80f3803dd5ebcbe279"
+      "prev": "cdcf2dd2c27e47e1d101df86dc70279e5bf7f8542ed8779dea5981bde7c73afb"
     },
     {
       "kind": "plate",
@@ -254,7 +254,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_smith_machine_incline_press's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "b97c51343723cba95227a19b3fe851fee2c80917baead2e85ac7f08ad61d4850"
+      "prev": "a0a89ded73505a8c79d269f988b22898bda3153a6af9bb9a937a9fd9bf1e7bc7"
     },
     {
       "kind": "plate",
@@ -284,7 +284,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_hip_abduction's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "6e201072bce659dd568387fc2bf54ab1a4286b7eb706f3a7db710593ff30e448"
+      "prev": "9deffd3215dab9d19ba339148291235e703903521f4da4b309f0b9c43821263c"
     },
     {
       "kind": "plate",
@@ -314,7 +314,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_hip_adduction's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "8de4066c2b929882ee965788499394e302acae021fcbad24367d09f964e30760"
+      "prev": "f3652c3acd0dcc44e05c444830fa5f62b56c17748b6eb1795b809a3254a0069a"
     },
     {
       "kind": "plate",
@@ -344,7 +344,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_machine_lateral_raise's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "c90fed54fcfa64e8277e40503698832ecc4bd058ed5177dbcb5c9ef80ef20772"
+      "prev": "445e1ed719c25e321d79406f25ac466dd51c33be6ebd2955a2f5d90555f51c0b"
     },
     {
       "kind": "plate",
@@ -375,7 +375,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB06 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_rear_delt_fly's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F3, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "06bd131ceca260a8d71f70969b8ad9e0af7a6b0adacc82c5ea7c0fff50c16db8"
+      "prev": "3aa554a157be6a023c852d027983e139593f46f60ec28b8b3fcce9fe2d602504"
     }
   ]
 }
