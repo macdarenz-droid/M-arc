@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=7859a4ec9ffc764fd478e9d84a984d7a50c18bde748522ebd4ec110cb3b5d79a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=13b09d64cf1ac4e6ab480603a8a3a34e4959f93b044dc0e2cd01ad062bdea28b
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_romanian_deadlift",
   name: "Romanian Deadlift",
-  hashes: { inputsSha256: "7859a4ec9ffc764fd478e9d84a984d7a50c18bde748522ebd4ec110cb3b5d79a", golden: "044db99b0b5d6f805b89e489ed2443a9bd0fea805b62d832a2d90c43a1cb4bf0" },
+  hashes: { inputsSha256: "13b09d64cf1ac4e6ab480603a8a3a34e4959f93b044dc0e2cd01ad062bdea28b", golden: "2f50b30c721954a4dddc15720a8da12a02d456a939bac4036d93e7d748809e59" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

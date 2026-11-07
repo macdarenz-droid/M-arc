@@ -79,13 +79,15 @@ export default {
     pose: misBody,
     parts: ['torso', 'head', 'arm.r', 'leg.r', 'pad'],
     guides: [
-      // the missing range: from the half hang down to the straight-arm hang, behind the back
-      { kind: 'arrow', from: { at: 'sacrum', pose: 'mistake', off: [-18, 0] }, to: { at: 'sacrum', pose: 'end', off: [-18, 0] } },
+      // W3 PANEL FIX 2 (#384 6649416891, L5; c8): the arrow matches PAD STAYS UP: up at the pad, from the straight-arm
+      // hang's knees to the half hang's (was: down the back, from the half hang to the hang, which read as lowering).
+      { kind: 'arrow', from: { at: 'knee.r', pose: 'end', off: [-22, 4] }, to: { at: 'knee.r', pose: 'mistake', off: [-22, 4] } },
     ],
     tells: [
       { key: 'partial', text: 'Arms<br>bent', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 58, top: 120 }, cue: 'The arms never straighten at the bottom: a half rep.' },
       { key: 'high', text: 'Pad<br>stays up', anchor: { at: 'knee.r', pose: 'mistake', off: [-30, 14] }, box: { left: 26, top: 294 }, cue: 'The pad never sinks to the dead hang.' },
     ],
   },
+  mistakeGhosts: false,   // W3 PANEL FIX 2 (#384 6649416891, L5): D-HELD6-MGHOST, the Mistake view without the start pose and ghosts
   alt: 'Assisted pull-up, side view. Kneeling on the machine pad, overhand grip a little wider than the shoulders. From the chin over the bar, the body lowers slowly to a straight-arm hang with the knees on the pad.',
 };

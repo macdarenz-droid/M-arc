@@ -126,13 +126,13 @@
       "ids": [
         "lib_reverse_lunge"
       ],
-      "pageSha256": "29482d89ffe878754d73eb4d573af2d7efacca05d57a906679b603c796212c04",
-      "bytes": 289080,
+      "pageSha256": "27dff9c975a5051f6475ecc7ca1fd160cc202b55a42562302726333dc612db87",
+      "bytes": 345470,
       "approvedBy": "supervisor",
-      "decision": "D-PLATEFIX-STAMP",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6648438434 @ f573d31322a421e169ea732e6cf948fbb41f66d0",
-      "date": "2026-11-06",
-      "why": "O5; LIB-PLATEFIX-1 layers page, golden-B design kinds alone, approved by the calibrated layers panel and rechecks (#385); D-PF-PAINNAMES-LIB names",
+      "decision": "D-PLATEFIX-SECOND",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6687946433 @ 8f1afa59131a7efec8da40cbc75118e77d3e7f1f",
+      "date": "2026-11-07",
+      "why": "O5; LIB-PLATEFIX-1 layers page rebuilt on main 8841246c (D-PLATEFIX-SECOND point 4): its LIB-PLATEFIX-1 content approved by the calibrated layers panel and rechecks (D-PLATEFIX-STAMP, #385 6648438434 @ f573d31322a421e169ea732e6cf948fbb41f66d0); cardcmp: every card's plate fragments byte-equal to the approved plates page; strip-back: with the inline zoom groups and ZOOM_CSS taken out it is the 3-way merge of base, the approved page and main's page plus only #404's body-map hunks; zoom groups byte-equal to the plates page's",
       "prev": "7c7b332ebd9392e034860e279f2c7f3ad1906e147c2925db11d56b8f82b18cad"
     }
   ]

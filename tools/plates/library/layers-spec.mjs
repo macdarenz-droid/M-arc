@@ -46,7 +46,8 @@ export const NO_ZOOM_LIST = 'tools/plates/library/hands/no-zoom.json';
 
 export function layersSpecOf(batchFile, { stageDir, root = ROOT, all = rows(root) } = {}) {
   if (!stageDir) throw new Error('layers-spec: no stageDir');
-  const batchRows = all.filter(r => r.batchFile === batchFile);
+  // D-SHIP-LEFTOUT-CLOSURE (#383 6632352291): a `left-out:` row (no page, maybe no spec) is never staged.
+  const batchRows = all.filter(r => r.batchFile === batchFile && !/^left-out:/.test(r.stage));
   if (!batchRows.length) throw new Error(`layers-spec: ${batchFile} has no rows`);
   const pages = batchRows[0].pages;
   if (!pages?.layersConfig) throw new Error(`layers-spec: ${batchFile}: no pages.layersConfig`);
@@ -100,7 +101,7 @@ export function layersSpecOf(batchFile, { stageDir, root = ROOT, all = rows(root
   const listed = JSON.parse(readFileSync(join(root, NO_ZOOM_LIST), 'utf8')).entries ?? {};
   const noZoom = ids.filter(id => Object.hasOwn(listed, id)).map(id => howtoIdOf(cardIdOf(byId.get(id))));
   return {
-    groups, closeups, files, ...(noZoom.length ? { noZoom } : {}),
+    groups, closeups, files, bodymapFix: true, ...(noZoom.length ? { noZoom } : {}),   // F-BODYMAP-FRONTDELT (D-BODYMAP-LIB)
     ...(cfg.optionsModule ? { optionsUrl: pathToFileURL(join(root, cfg.optionsModule)).href } : {}),
     ...('jump' in cfg ? { jump: cfg.jump } : {}),
   };

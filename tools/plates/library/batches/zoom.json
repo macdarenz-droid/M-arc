@@ -1,0 +1,30 @@
+{
+ "batch": "LIB-ZOOM",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/zoom.json",
+  "layers": "tests/howto/golden/library/zoom.layers.html",
+  "layersConfig": "tools/plates/library/pages/zoom.layers.json"
+ },
+ "rows": {
+  "lib_horizontal_leg_press": {
+   "src": "library/specs/horizontal_leg_press.mjs",
+   "slug": "horizontal-leg-press",
+   "prefix": "horizontal-leg-press",
+   "chromeId": "horizontal-leg-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Seated Leg Press (ACE exercise library). https://www.acefitness.org/resources/everyone/exercise-library/154/seated-leg-press/",
+    "How to Do Seated Leg Presses (WebMD, medically reviewed) (2024). https://www.webmd.com/fitness-exercise/how-to-do-seated-leg-presses",
+    "Simultaneous Bilateral Knee Dislocation During Weight Training: A Case Report and Review of the Literature (2019). https://pubmed.ncbi.nlm.nih.gov/30676343/ PMID 30676343",
+    "Electromyographic evaluation of the rectus femoris muscle during exercises performed on the leg press (1998). https://pubmed.ncbi.nlm.nih.gov/9651694/ PMID 9651694",
+    "Electromyographic behaviour of the gastrocnemius muscle during knee extension and flexion performed on the leg press (1999). https://pubmed.ncbi.nlm.nih.gov/10499208/ PMID 10499208",
+    "Effects of technique variations on knee biomechanics during the squat and leg press (2001). https://pubmed.ncbi.nlm.nih.gov/11528346/ PMID 11528346",
+    "Arterial blood pressure response to heavy resistance exercise (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "shipped"
+  }
+ }
+}

@@ -280,7 +280,8 @@ describe('PILOT-B2 A9 (node half), A2 (part): runQa, the expected flags, the pag
   // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]): pilot B's page moves with cable_fly's fixed plate
   // (was ff3e017c, 409,765 B), to its superseding page entry's 128e6112 (409,805 B); and the PILOT-B2 golden file's tail is
   // checked against this build: a page entry superseding 0, crunch's plate superseding 1, and one layers-page entry
-  // superseding W2's (2) for lib_crunch that pins the committed layers page (pfTailProblems)
+  // for lib_crunch that pins the committed layers page (pfTailProblems), superseding main 8841246c's current one, #404's
+  // body-map re-pin (4; D-PLATEFIX-SECOND)
   it('the PILOT-B2 page is deterministic, and pilot B\'s page is its golden update\'s (128e6112, 409,805 B); LIB-PLATEFIX-1: the PILOT-B2 tail pins this build', async () => {
     const r = await child(`const { createHash } = await import('node:crypto'), sha = x => createHash('sha256').update(x).digest('hex');
 const [b2, b] = await Promise.all([${JSON.stringify(lib('pilot-b2/build.mjs'))}, ${JSON.stringify(lib('pilot-b/build.mjs'))}].map(f => import(f)));
@@ -292,14 +293,14 @@ console.log(JSON.stringify({ x: sha(x.html), y: sha(y.html), ids: b2.drawnIds(),
     const pb = readJson('tests/howto/golden/library/pilot-b.json').entries.filter((e: any) => e.kind === 'page').at(-1);
     expect([pb.pageSha256, pb.bytes]).toEqual(r.pb);
     const G = await import(/* @vite-ignore */ lib('../golden.mjs')), f = readJson('tests/howto/golden/library/pilot-b2.json');
-    const tail = (file: any, html: string = r.html) => pfTailProblems(file, 'pilot-b2', { G, html, page: 0, plates: { lib_crunch: 1 }, layers: { supersedes: 2, ids: ['lib_crunch'], page: readFileSync('tests/howto/golden/library/pilot-b2.layers.html') } });
+    const tail = (file: any, html: string = r.html) => pfTailProblems(file, 'pilot-b2', { G, html, page: 0, plates: { lib_crunch: 1 }, layers: { supersedes: 4, ids: ['lib_crunch'], page: readFileSync('tests/howto/golden/library/pilot-b2.layers.html') } });
     expect(tail(f)).toEqual([]);
     // reds: a tail fragment edited, the built page off by a byte, and main's entries edited
-    const m1 = structuredClone(f); m1.entries[4].fragments.normalSvg = '0'.repeat(64);
+    const m1 = structuredClone(f); m1.entries[6].fragments.normalSvg = '0'.repeat(64);
     expect(tail(m1)).toEqual(['lib_crunch: fragments']);
     expect(tail(f, `${r.html} `)).toContain('pilot-b2: page entry != the built page');
     const m2 = structuredClone(f); m2.entries[1].why += ' ';
-    expect(tail(m2)).toEqual(["pilot-b2: main's 3 entries changed"]);
+    expect(tail(m2)).toEqual(["pilot-b2: main's 5 entries changed"]);
     console.log(`PILOT-B2 page sha256 ${r.x}`);
   });
   // LIB-SHIP W2 (ruling 3): replaces "the pre-pin rows file exists and the pin files do not yet": the pin files exist

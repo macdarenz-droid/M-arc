@@ -52,7 +52,8 @@ export function pinnedRows(root = ROOT, all = rows(root)) {
 /** The file set of one pinned row (repo-relative, existing, sorted). */
 export async function filesOf(row, { root = ROOT, all = rows(root) } = {}) {
   const set = new Set(), add = p => { if (p && existsSync(join(root, p))) set.add(p); };
-  const batch = all.filter(r => r.batchFile === row.batchFile), pages = row.pages ?? {};
+  // D-SHIP-LEFTOUT-CLOSURE (#383 6632352291): a `left-out:` row (no page, maybe no spec) is never staged or listed.
+  const batch = all.filter(r => r.batchFile === row.batchFile && !/^left-out:/.test(r.stage)), pages = row.pages ?? {};
   for (const p of closureOf([`tools/plates/${row.src}`], root)) add(p);
   for (const p of closureOf([sourceOf(row.id, root)], root)) add(p);
   let options = null;

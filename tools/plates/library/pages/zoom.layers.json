@@ -1,0 +1,18 @@
+{
+  "groups": [
+    {
+      "id": "zoom",
+      "title": "LIB-ZOOM",
+      "ids": [
+        "lib_horizontal_leg_press"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/zoom.closeups.mjs",
+  "closeups": {
+    "lib_horizontal_leg_press": {
+      "optionsKey": "horizontal_leg_press"
+    }
+  },
+  "jump": null
+}

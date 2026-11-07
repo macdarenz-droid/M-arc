@@ -23,6 +23,7 @@ export const SHARED_KINDS = {
   exemption: { required: ['exempts', 'reason', 'replacementRule', 'faults'], allowed: [] },
   checkpoints: { required: ['checkpoints'], allowed: [] },
   'red-flag-box': { required: ['box', 'status'], allowed: [] },
+  'safety-line': { required: ['line'], allowed: [] },   // RESEARCH-ROUTES-1 F-STOPLINE-CLAIM (D-STOPLINE-CLAIM; ruled #400 6681126219)
 };
 /** Keys whose values are research data, never shown (LR-28; the note's SPLIT data list), or identifiers. */
 export const DATA_KEYS = new Set(['key', 'kind', 'status', 'claims', 'sources', 'gaps', 'notes', 'appliesTo', 'appliesToWhy', 'claim',

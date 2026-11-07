@@ -40,10 +40,24 @@ const PANEL_MAIN: Record<string, string> = {
   'v-handle-pull-neutral-overhead': 'c73a6c0815d189f9c09d5f17ecae4db1d2439d36b57a434f7c3cb879fae58f13',
 };
 
+// LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's shipped pair rows name pairFaults (Q-W3 rulings), adding exactly these 4
+// row-filtered sub-keys, pinned at the W3 flip; every key above keeps its main panel
+const W3_SUBS: Record<string, string> = {
+  'bar-hang-only-curled-under': '61e929d39b0fe3d4d8e78542eecce712b195838044b14b7eae7eb71f3896413d',
+  'bar-row-only-curled-over': '33fd6896edc5abc5c3a2d250767abc94affcfb27d6e85c9593357b2e15dc04cf',
+  'd-handle-pull-only-curled-unstated': '634b3f7d1612b42a73f7dc183814ad75ebab70355502a204eddc43a597c070a9',
+  'v-handle-pull-only-curled-neutral-overhead': 'ff479a86d9c863463ad51238a364edd72182585445974dac98622a4add28c07c',
+};
+const W3_SUB_OF: Record<string, string> = {
+  lib_chin_up: 'bar-hang-only-curled-under', lib_close_grip_pulldown: 'v-handle-pull-only-curled-neutral-overhead',
+  lib_inverted_row: 'bar-row-only-curled-over', lib_single_arm_lat_pulldown: 'd-handle-pull-only-curled-unstated',
+};
+
 describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws on main', () => {
   it('pairPanel(key) is byte-equal to main for every pair key', async () => {
-    expect([...P.keysOf()].sort()).toEqual(Object.keys(PANEL_MAIN).sort());
+    expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS)].sort());   // LIB-SHIP W3
     for (const [k, want] of Object.entries(PANEL_MAIN)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);
+    for (const [k, want] of Object.entries(W3_SUBS)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);   // LIB-SHIP W3
   }, 60_000);
 });
 
@@ -129,8 +143,9 @@ describe('F-PAIR-FAULTS A1/A4: a row with pairFaults draws only those faults (la
     expect([[...subs.keys()], [...ofId]]).toEqual([[SUB], [['mountain_climbers', SUB]]]);
     expect(subs.get(SUB).config).toBe('x.layers.json');
     expect(() => P.subKeysOf([{ file: 'x', closeups: { lib_mountain_climbers: MC } }, { file: 'y', closeups: { lib_mountain_climbers: { ...MC, pairFaults: ['hand-ahead', 'hand-ahead'] } } }])).toThrow(/repeats/);
-    expect(Object.values(P.HAND_OF_ID).filter((k: any) => k.includes('-only-'))).toEqual([]);
-    expect([...P.keysOf()].sort()).toEqual(Object.keys(PANEL_MAIN).sort());
+    // LIB-SHIP W3: main named none; W3's 4 ruled rows name exactly their sub-keys
+    expect(Object.fromEntries(Object.entries(P.HAND_OF_ID).filter(([, k]: any) => k.includes('-only-')))).toEqual(W3_SUB_OF);
+    expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS)].sort());
   });
 });
 
@@ -192,10 +207,13 @@ const W2_ADDED: Record<string, string[]> = {
 // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
 // research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef: 5a51002e).
 const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
-// LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 05f27be9, both sides kept): its moved keys,
-// added keys and superseded entries each pin their current value (pfProblems), then are blanked too (blankPF), so this is
-// main 05f27be9's MANIFEST.json with MOVED, W2, RR_BOX and PLATEFIX blanked.
-const MANIFEST_BLANKED_MAIN_W2 = '622ad94a4b84d9524babfceb811546bd6b564c0cf9b6b26d048636b535673408';
+// LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
+const PF3_ZOOM = 'tools/plates/library/render/closeup/zoom.mjs';
+// LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was 5a51002e…0532, then 4be0cf0d with zoom.mjs's key also blanked.
+// LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 8841246c, both sides kept): its moved keys,
+// added keys and superseded entries each pin their current value (pfProblems, in lessW2), then are blanked too (blankPF), so
+// this is main 8841246c's MANIFEST.json with MOVED, W2, RR_BOX, PF3_ZOOM and PLATEFIX blanked (measured on main 8841246c's own MANIFEST).
+const MANIFEST_BLANKED_MAIN_W2 = '8fa7f1682537140aac355b42443591ff6b3a514265aec9be73a4065b4278acc5';
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
@@ -211,17 +229,41 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     return m;
   };
   const current = () => JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
+  // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows, and W3 PANEL FIX 2 (f561ff71,
+  // #384 6649416891) moves crop.mjs and zoom-css.mjs in every row. Each W3 row must be there and each moved key must pin
+  // its current file; with the rows removed and main 5023f5c6's sha put back, every other entry is main's
+  const W3_ROWS = ['assisted_pull_up', 'chest_supported_row', 'chin_up', 'close_grip_pulldown', 'hanging_knee_raise', 'horizontal_leg_press',
+    'incline_machine_press', 'inverted_row', 'resistance_band_row', 'shoulder_press', 'single_arm_lat_pulldown', 'straight_arm_pulldown',
+    'underhand_lat_pulldown'].map(id => `lib_${id}`);
+  const W3_MOVED: Record<string, string> = {
+    'tools/plates/library/render/closeup/crop.mjs': 'df61d973c2933021554e3d89c9834d01f1f171c35dd10d5cd1c7a11b946985d9',
+    'tools/plates/library/render/closeup/zoom-css.mjs': '37836f22478605ef8162af3c05e515385d03034d090279b6c91f4248adce2fdf',
+  };
+  const lessW3 = (m: any) => {
+    for (const id of W3_ROWS) { expect(Object.keys(m.rows), id).toContain(id); delete m.rows[id]; }
+    for (const [id, r] of Object.entries<any>(m.rows)) for (const [k, main] of Object.entries(W3_MOVED)) { expect([id, k, r.files[k]]).toEqual([id, k, sha(read(k))]); r.files[k] = main; }
+    return m;
+  };
   it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
     const m = current();
     // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out
-    expect(blanked(lessW2(m), [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN_W2);
+    // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs key is re-pinned there and pinned exactly by
+    // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
+    for (const r of Object.values<any>(m.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) { expect(r.files['tools/plates/library/render/region-fix.mjs']).toBe(sha(read('tools/plates/library/render/region-fix.mjs'))); r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; }
+    expect(blanked(lessW2(lessW3(m)), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-SHIP W3: W3 taken out first; LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, D-PF3-W3MERGE): + PF3_ZOOM
     for (const k of MOVED) for (const r of Object.values<any>(current().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
-    const m = lessW2(current()), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX)!;
+    const m = lessW2(lessW3(current())), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX && k !== PF3_ZOOM)!;
     row.files[other] = '0'.repeat(64);
-    expect(blanked(m, [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
-    expect(blanked(lessW2(current()), [MOVED[0]!, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(m, [...MOVED, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW3(current())), [MOVED[0]!, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW3(current())), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-PLATEFIX-3: zoom.mjs left out of the blank list is red
+    // LIB-SHIP W3: a W3 row missing, or a W3-moved key not at its current file, is red
+    const noChin = current(); delete noChin.rows.lib_chin_up;
+    expect(() => lessW3(noChin)).toThrow(/lib_chin_up/);
+    const badW3 = current(); badW3.rows.lib_plank.files['tools/plates/library/render/closeup/zoom-css.mjs'] = '0'.repeat(64);
+    expect(() => lessW3(badW3)).toThrow();
     // LIB-SHIP W2: a W2 key that does not pin its file, or a crunch row missing, is red
     const bad = current(); (Object.values<any>(bad.rows).find(r => W2_MOVED[0]! in r.files)).files[W2_MOVED[0]!] = '0'.repeat(64);
     expect(() => lessW2(bad)).toThrow();

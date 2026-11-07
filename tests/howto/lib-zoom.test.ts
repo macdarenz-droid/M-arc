@@ -24,7 +24,7 @@ beforeAll(async () => {
   E = await qaEng.loadEngine(mirror);
   all = build.zoomAll();
   html = (await build.buildZoomPage({ all })).html.toString('utf8');
-  c0 = await cand.candidateOf(LID, { all, platesHtml: html, engine: E, authoring: true });
+  c0 = await cand.candidateOf(LID, { all, platesHtml: html, engine: E });
 }, T);
 afterAll(() => { if (mirror) qaEng.dropMirror(mirror); });
 
@@ -38,7 +38,7 @@ const mutated = async (fn: string, arg: any = null) => {
   try {
     const spec = (await import(/* @vite-ignore */ pathToFileURL(file).href)).default;
     const { html: h } = await bp.buildPlatesPage({ groups: [{ id: 'z', title: 'Z', ids: [ID] }], sources: { [ID]: ['mutation'] }, specs: { [ID]: file } });
-    return { ...(await cand.candidateOf(LID, { all, platesHtml: h.toString('utf8'), engine: E, authoring: true })), spec };
+    return { ...(await cand.candidateOf(LID, { all, platesHtml: h.toString('utf8'), engine: E })), spec };
   } finally { rmSync(dir, { recursive: true, force: true }); }
 };
 // the Mistake zoom markup with its ring, clip and bg circles moved to (x, y)
@@ -78,6 +78,34 @@ describe('LIB-ZOOM approved bytes (supervisor recheck panel @ 9fbdfb5)', { timeo
     const pin = JSON.parse(readFileSync(join(process.cwd(), 'tools/plates/library/zoom/approved.json'), 'utf8'));
     const p = golden.extractPlates(html).find((x: any) => x.chromeId === pin.chromeId);
     expect(golden.fragmentsOf(p)).toEqual(pin.fragments);
+  });
+  // LIB-SHIP W3 (D-SHIP-W3-ZOOMAPPROVED, #384 6684076429): the in-place re-pin D-REPIN-UNMERGED (b1f08443) moved only the alt
+  // fragment; approved.json follows it for alt alone. Every other fragment stays as approved @ 9fbdfb5, and alt equals the
+  // zoom.json plate entry's re-pinned value: any other fragment moving is refused.
+  const APPROVED_9FBDFB5: Record<string, string> = {
+    normalSvg: '63b264a9c21c810e4b45ef5979f8ce354cb43352839c726caaaa0894d70ef627', normalOverlay: 'f9285069939c58575d275c956f75e1a150fb06be51e24c746e6ea73050f77d1d',
+    mistakeSvg: 'dad4efcda3dc8349a928657cb5bfe9501e7470146226ac5b5916b467498f776a', mistakeOverlay: '8188d344422d314148e8d86d8f84ec1bf49936dbe146460c2771c59317d535c5',
+    tells: 'cb31438195b705c447b302b48b21599a6bbbce3bc54a082d1ca0c0ec0d9bbc50', tempo: '5472d1d641b3a34dbd529cb0be7506dd93281fc12d368b58f46c54a75e0cc5e8',
+    cues: '1047a0ef67ccdc9e9c00f5acc437a261f2db1f06a513e1d0276036f77153fcc5', alt: '11fdbc38ac485614fd0fa093ffd73e5037c43c6e3414357c7802990837ef8a7a',
+    mistakeAlt: 'd47372d48dc4f04e1d6b64799522bc993959934f6fbfa93bc6ea91757a2f38eb',
+  };
+  const REPINNED_ALT = 'bbb0e48ca48ed60ecfda0c4caa3beb9ff836dc906e5ab7d10be2a0608c8fc655';
+  const approvedProblems = (pin: any) => {
+    const bad: string[] = [], keys = Object.keys(pin.fragments);
+    if (JSON.stringify(keys) !== JSON.stringify(Object.keys(APPROVED_9FBDFB5))) bad.push(`fragments ${keys}`);
+    for (const k of keys) if (k !== 'alt' && pin.fragments[k] !== APPROVED_9FBDFB5[k]) bad.push(`${k} moved`);
+    if (pin.fragments.alt !== REPINNED_ALT) bad.push('alt is not the re-pinned value');
+    if (pin.approvedAt !== '9fbdfb52cb0da33e37668db39dec606b0057aefe' || pin.chromeId !== 'horizontal-leg-press') bad.push('approval record changed');
+    return bad;
+  };
+  it('D-SHIP-W3-ZOOMAPPROVED: only alt moved from the 9fbdfb5 approval, to the zoom.json re-pinned value; any other fragment moving is red', () => {
+    const pin = JSON.parse(readFileSync(join(process.cwd(), 'tools/plates/library/zoom/approved.json'), 'utf8'));
+    expect(approvedProblems(pin)).toEqual([]);
+    const entry = JSON.parse(readFileSync(join(process.cwd(), 'tests/howto/golden/library/zoom.json'), 'utf8')).entries.filter((e: any) => e.id === LID).at(-1);
+    expect(entry.fragments.alt).toBe(REPINNED_ALT);
+    for (const k of Object.keys(APPROVED_9FBDFB5).filter(k => k !== 'alt')) expect(approvedProblems({ ...pin, fragments: { ...pin.fragments, [k]: '0'.repeat(64) } })).toEqual([`${k} moved`]);
+    expect(approvedProblems({ ...pin, fragments: { ...pin.fragments, alt: APPROVED_9FBDFB5.alt } })).toEqual(['alt is not the re-pinned value']);
+    expect(approvedProblems({ ...pin, approvedAt: 'f'.repeat(40) })).toEqual(['approval record changed']);
   });
 });
 

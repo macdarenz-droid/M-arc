@@ -14,7 +14,18 @@ const body = (n: string) => { const t = readFileSync(join(GEN, n), 'utf8'); retu
 
 // sha256 of each body on main e623d3ef (train 68, LIB-SHIP W2; re-pinned from cb9a6dae as ruled on #388)
 const BODY_MAIN: Record<string, string> = {
-  'loaders.ts': 'a168345b4256a2a167231e9caa85b21c96658a4ffe231dd36f03c0c198fabf40',
+  // LIB-SHIP W3 (D-SHIP-A9 guard replacement): loaders.ts gains W3's 9 ids (was a168345b… on main e623d3ef); the 16 main
+  // posture bodies below are unchanged, and W3's 9 posture chunks are pinned at the W3 flip
+  'loaders.ts': 'e7bc1d4076c810044e534195d8cc2f6af4a8fe7d1e36372b5a7aae364561029b',
+  'posture-chest-supported-row.ts': '9057b9c71faeb9b00d35e9762d832bde66d9c00d3792241a4b0d724ea1ede167',
+  'posture-chin-up.ts': '90335f3138f0ffb5cc86075cdf845aae859cb45910234bbc56e3733c71a45d8f',
+  'posture-close-grip-pulldown.ts': 'e1d097991fedb4e2fdbfec6b36ea15df0608ce732da6d1e41f4c35487e30442f',
+  'posture-hanging-knee-raise.ts': 'c07a0edc3af8d980c1a322f6d36c180bfb5d72bfbcc168d04c7cff70cd20b77a',
+  'posture-horizontal-leg-press.ts': 'a0192b1cfcbb3250bf732f9d7120e62c663dafc59878a5cd5f16f3f0990422cf',
+  'posture-inverted-row.ts': '09ee0c7337d380f4316230ba8dae440d4244688570f45c4f0937f1000663f15a',
+  'posture-resistance-band-row.ts': '0410b9130c5dd3d4f5b9a50af51d6fbed7b263b59a468eb97163770048ea5191',
+  'posture-single-arm-lat-pulldown.ts': 'a536a4027af2f9dae65f38620c408f2435a51c3101e86d7886d67dd6a3c27241',
+  'posture-straight-arm-pulldown.ts': '0a612d407a40d7c9f763530caa4f9b46ec3fedb5f12a21b31cfa5ed536b7c240',
   'posture-barbell-back-squat.ts': '8bdf3354ed3ce298e8bad7bb350da8b43d95518b760d9d5ffc70861ce94f49ff',
   'posture-barbell-row.ts': 'e850b0b614f48bba162455e1aa4184170c1bf1f055f8c9d27b7924ea49915076',
   'posture-cable-fly.ts': 'bc032278ce45e8254202c82398bdc26a4ba2cefde36f32b175d64b83cd6aba84',

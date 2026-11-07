@@ -445,6 +445,28 @@
       "prev": "4843e6969fbdc4a84772767d1d15f8d59ba083ec7547967c80d6609ec9714a6f"
     },
     {
+      "kind": "layers-page",
+      "batch": "PILOT-A",
+      "ids": [
+        "lib_dumbbell_biceps_curl",
+        "lib_plank",
+        "lib_rope_triceps_pushdown",
+        "lib_barbell_row",
+        "lib_dumbbell_bench_press",
+        "lib_dumbbell_shoulder_press",
+        "lib_upright_row"
+      ],
+      "pageSha256": "11a93d164777c2b0ae47f72d391573aed38a209d63b03bad72e3e30004ff5ff9",
+      "bytes": 1378217,
+      "approvedBy": "supervisor",
+      "decision": "D-BODYMAP-LIB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/404#issuecomment-6688047379 @ 797bf0a05394b78fe32a43859987fd40b7b2c73f",
+      "date": "2026-11-06",
+      "supersedes": 15,
+      "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-BODYMAP-APPEND #404 6688047379; supervisor under D-LIB-O5 point 4: golden-B design kinds only, superseding a supervisor entry): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow and back-of-knee pain parts. Byte proof: with the fix paths undone, this page equals the superseded entry page byte for byte, except the shimmer band of a feel map whose main muscles include front_delts. Built twice, equal sha256.",
+      "prev": "715d3f61c4997a3227aa9136523d83452759d7c65b8b8b7286427e0695415975"
+    },
+    {
       "kind": "page",
       "pageSha256": "d38e8b3315af11e9ebe5bcc4534054b0c02ad25ea3773f690a943863b8f26429",
       "bytes": 1316144,
@@ -454,7 +476,7 @@
       "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918; OHP plate focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d",
       "why": "LIB-PLATEFIX-1: the plates page with this batch's fixed plates, approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918; OHP plate focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d",
       "supersedes": 0,
-      "prev": "715d3f61c4997a3227aa9136523d83452759d7c65b8b8b7286427e0695415975"
+      "prev": "9bcdd07ba54c7031d90ced0eac580ab6aa6e355366dc0f8033df5a822e6c6f87"
     },
     {
       "kind": "plate",
@@ -484,7 +506,7 @@
       "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
       "why": "LIB-PLATEFIX-1: lib_barbell_row's plate fixed from the W2 layers panel (#379 6633524031), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
       "supersedes": 1,
-      "prev": "2636f3bc0b309e31fc50a02719f6295a18d53e40a47f94e352d28dae487cf04c"
+      "prev": "d183e2f442f33c1ac1c4d8c8b6b192882332b1ae1d19f3e3115dc8e701ed076d"
     },
     {
       "kind": "plate",
@@ -515,7 +537,7 @@
       "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d",
       "why": "LIB-PLATEFIX-1: lib_barbell_overhead_press's plate fixed from the W2 layers panel (#379 6633524031), approved by focused recheck #385 6649655218 @ e7c5e612b8d3639c5d9f65f712c3ec9816c12d2d",
       "supersedes": 4,
-      "prev": "a4c5994b3e95a6b7b0daeaa72e03683d89b71ac5963c850375803792c80edc7a"
+      "prev": "81050d55f9646bdb2afddf754b5a2c006c4ddf5b74bd166eea6736b607c5b347"
     },
     {
       "kind": "plate",
@@ -544,7 +566,7 @@
       "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
       "why": "LIB-PLATEFIX-1: lib_romanian_deadlift's plate fixed from the W2 layers panel (#379 6633524031), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
       "supersedes": 5,
-      "prev": "7c076f8750acd6fe40b9836a7d184e9a56e9a9f3a72e5151871f33e1d797f782"
+      "prev": "55014d49e73998b9f2e7fe2403ff80a213158be4c6c8b0580808d4e1f9f2c0f6"
     },
     {
       "kind": "plate",
@@ -573,7 +595,7 @@
       "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
       "why": "LIB-PLATEFIX-1: lib_triceps_pushdown's plate fixed from the W2 layers panel (#379 6633524031), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
       "supersedes": 13,
-      "prev": "9aa1e89d6c3581254e8fa3f382670230c09a9dfa9aeeafa2046885b4383ff79d"
+      "prev": "3bed9c3a8520980d96900ed43cbd0d1e2aafdaf5cbf37be05b5ededf16e87b63"
     },
     {
       "kind": "layers-page",
@@ -590,15 +612,15 @@
         "lib_triceps_pushdown",
         "lib_upright_row"
       ],
-      "pageSha256": "f8d253791515a76d1be354edb46470fd9f2d7f12ba5a9f7120b4b5ba5fafe840",
-      "bytes": 1961345,
+      "pageSha256": "ff1bd298c518eed4eb64214da4643b4d2360b40a24d772ee413a84a134c187de",
+      "bytes": 1965361,
       "approvedBy": "supervisor",
-      "decision": "D-PLATEFIX-STAMP",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6653693122 @ 7971bce1b863ccfb3ea20444a7bf53b952905912",
-      "date": "2026-11-06",
-      "why": "O5; LIB-PLATEFIX-1 layers page, golden-B design kinds alone, approved by the calibrated layers panel and rechecks (#385); D-PF-PAINNAMES-LIB names",
-      "supersedes": 15,
-      "prev": "e4c3980204940b4c70e15259b41a5ff197d63d40278dc2322065937c314198c8"
+      "decision": "D-PLATEFIX-SECOND",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6687946433 @ 8f1afa59131a7efec8da40cbc75118e77d3e7f1f",
+      "date": "2026-11-07",
+      "why": "O5; LIB-PLATEFIX-1 layers page rebuilt on main 8841246c (D-PLATEFIX-SECOND point 4): its LIB-PLATEFIX-1 content approved by the calibrated layers panel and rechecks (D-PLATEFIX-STAMP, #385 6653693122 @ 7971bce1b863ccfb3ea20444a7bf53b952905912); cardcmp: every card's plate fragments byte-equal to the approved plates page; strip-back: with the inline zoom groups and ZOOM_CSS taken out it is the 3-way merge of base, the approved page and main's page plus only #404's body-map hunks; zoom groups byte-equal to the plates page's",
+      "supersedes": 16,
+      "prev": "aee72cd6d71040e2991805586f021c0628225ec70e0482a2a42e654e128dad47"
     }
   ]
 }

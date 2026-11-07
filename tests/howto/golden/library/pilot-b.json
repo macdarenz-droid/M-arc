@@ -150,6 +150,23 @@
       "prev": "252297287c2608f77972271a27a8de10ed861cd434334bd1cf1aae94bde6790b"
     },
     {
+      "kind": "layers-page",
+      "batch": "PILOT-B",
+      "ids": [
+        "lib_cable_fly",
+        "lib_push_up"
+      ],
+      "pageSha256": "a6e41569876766ab7982f51fb7321eeeb93610e25d86ca8664c106152567bfb6",
+      "bytes": 426121,
+      "approvedBy": "supervisor",
+      "decision": "D-BODYMAP-LIB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/404#issuecomment-6688047379 @ 797bf0a05394b78fe32a43859987fd40b7b2c73f",
+      "date": "2026-11-06",
+      "supersedes": 5,
+      "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-BODYMAP-APPEND #404 6688047379; supervisor under D-LIB-O5 point 4: golden-B design kinds only, superseding a supervisor entry): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow and back-of-knee pain parts. Byte proof: with the fix paths undone, this page equals the superseded entry page byte for byte, except the shimmer band of a feel map whose main muscles include front_delts. Built twice, equal sha256.",
+      "prev": "5ae57c9629fbbd2e78c3f4d1e4cd7a1f23bd602ebb126027da61dad74ea90d27"
+    },
+    {
       "kind": "page",
       "pageSha256": "128e6112335957d2ff7a0fa1dd3491067f6fc3fc7de2d3852fb9ea05957ad971",
       "bytes": 409805,
@@ -159,7 +176,7 @@
       "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
       "why": "LIB-PLATEFIX-1: the plates page with this batch's fixed plates, approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
       "supersedes": 0,
-      "prev": "5ae57c9629fbbd2e78c3f4d1e4cd7a1f23bd602ebb126027da61dad74ea90d27"
+      "prev": "c7f4fbed76c7d8e0329cc09f9f81e16d2ff73ff49b42b45fed88390b9db935cc"
     },
     {
       "kind": "plate",
@@ -189,7 +206,7 @@
       "decision": "D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
       "why": "LIB-PLATEFIX-1: lib_cable_fly's plate fixed from the W2 layers panel (#379 6633524031), approved by pf1 plates panel #385 6636073314 @ e46466bb3f394c41fe8e1869123ff481824c5918",
       "supersedes": 3,
-      "prev": "0cf85708439c1b19595ed34ff82950d71ddcf3806af796b1f3c9813c8b681b52"
+      "prev": "9e3a3cb4d9c54c0e748fd522328fb6c0d6ce52fcc8649705f6d35888ccb7531f"
     },
     {
       "kind": "layers-page",
@@ -198,15 +215,15 @@
         "lib_cable_fly",
         "lib_push_up"
       ],
-      "pageSha256": "ae12bc47a4b5a1c023b1ed149a32f41197c3d56fc55c32b70ac6db8b7a359b27",
-      "bytes": 425345,
+      "pageSha256": "4e9685bc66d715c6ced72b794a868996436580016dd8fef18f658d707b62972e",
+      "bytes": 426161,
       "approvedBy": "supervisor",
-      "decision": "D-PLATEFIX-STAMP",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6648438434 @ f573d31322a421e169ea732e6cf948fbb41f66d0",
-      "date": "2026-11-06",
-      "why": "O5; LIB-PLATEFIX-1 layers page, golden-B design kinds alone, approved by the calibrated layers panel and rechecks (#385); D-PF-PAINNAMES-LIB names",
-      "supersedes": 5,
-      "prev": "aedb023aa510d864885d70f7111af6763fd15b2dc78e96dbfc51c32e05359227"
+      "decision": "D-PLATEFIX-SECOND",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6687946433 @ 8f1afa59131a7efec8da40cbc75118e77d3e7f1f",
+      "date": "2026-11-07",
+      "why": "O5; LIB-PLATEFIX-1 layers page rebuilt on main 8841246c (D-PLATEFIX-SECOND point 4): its LIB-PLATEFIX-1 content approved by the calibrated layers panel and rechecks (D-PLATEFIX-STAMP, #385 6648438434 @ f573d31322a421e169ea732e6cf948fbb41f66d0); cardcmp: every card's plate fragments byte-equal to the approved plates page; strip-back: with the inline zoom groups and ZOOM_CSS taken out it is the 3-way merge of base, the approved page and main's page plus only #404's body-map hunks; zoom groups byte-equal to the plates page's",
+      "supersedes": 6,
+      "prev": "743f02754d7faa2715fbadc0dbaabaf07b71b4ba88bd426a563aa3a09f1556ac"
     }
   ]
 }

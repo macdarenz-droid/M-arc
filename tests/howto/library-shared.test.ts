@@ -387,7 +387,7 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
     expect(src.length).toBeGreaterThan(100);
     expect(out.length).toBeGreaterThan(50);
     const keys = readdirSync(join(ROOT, 'docs/research/howto/shared')).map(f => f.slice(0, -5)).filter(k => k !== 'back-pain-box');
-    expect(keys).toHaveLength(18);
+    expect(keys).toHaveLength(19);   // 18 before RESEARCH-ROUTES-1 F-STOPLINE-CLAIM (shared/stop-line.json)
     let n = 0;
     // implement.text is a typed exercise id (D-LIB5-SPLIT-2 3): the only skip, and it must name an exercises.json row
     for (const k of keys) { const vals = dataValues(card(k), ['implement.text']); n += vals.length; expect([k, leaks(vals, [...src, ...out])]).toEqual([k, []]); }

@@ -58,11 +58,53 @@ describe('RESEARCH-ROUTES-1 P1-b/P1-c: the ruled fields left inherit[] (F-W4-INH
 
 // The D-CROP-PIN form (#380 6627881461): MANIFEST.json pins back-pain-box.json in 16 rows (13 before main e623d3ef), so this lane re-pins exactly
 // that one key; every other entry equals main e623d3ef.
-// LIB-PLATEFIX-1: main 05f27be9's MANIFEST.json with BOX, PAIRS and the PLATEFIX keys and entries blanked
-const PF_RR_PIN = '1f739ae5bf068fae06d6a4651c921f82b0fa677fd0bc4b09ad52b5dfd1998fbb';
+// LIB-PLATEFIX-1: main 8841246c's MANIFEST.json with the pin test's blanks and the PLATEFIX keys and entries blanked (measured on main 8841246c's own MANIFEST)
+const PF_RR_PIN = 'ba58cd17905addfc3c1dcf83f29d245cf1182ce2d1fbd6691905ce29973fa48c';
 describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-box.json', () => {
+  const w3Read = (p: string) => rd(p);
+  // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows (the 9 shipped and the 4 staged
+  // at approved-plate), and W3 PANEL FIX 2 (f561ff71, #384 6649416891) moves crop.mjs and zoom-css.mjs in every row. Each
+  // W3 row must be there and each moved key must pin its current file; with the rows removed and main 5023f5c6's sha put
+  // back (`keep`: keys the caller checks and blanks itself), every other entry is untouched for the checks below
+  const W3_ROWS = ['assisted_pull_up', 'chest_supported_row', 'chin_up', 'close_grip_pulldown', 'hanging_knee_raise', 'horizontal_leg_press',
+    'incline_machine_press', 'inverted_row', 'resistance_band_row', 'shoulder_press', 'single_arm_lat_pulldown', 'straight_arm_pulldown',
+    'underhand_lat_pulldown'].map(id => `lib_${id}`);
+  const W3_MOVED: Record<string, string> = {
+    'tools/plates/library/render/closeup/crop.mjs': 'df61d973c2933021554e3d89c9834d01f1f171c35dd10d5cd1c7a11b946985d9',
+    'tools/plates/library/render/closeup/zoom-css.mjs': '37836f22478605ef8162af3c05e515385d03034d090279b6c91f4248adce2fdf',
+    // D-SHIP-W3-LAYERSZOOM (#384 6686326673): build-layers-page.mjs applies applyZooms (the other MANIFEST tests blank its key themselves)
+    'tools/plates/library/build-layers-page.mjs': '2d123a0121e145bfd2c3f2d366cfcfb93fd1b55087f96cea28b7a2cefbeea4fb',
+  };
+  const lessW3 = (m: any, keep: string[] = []) => {
+    for (const id of W3_ROWS) { expect(Object.keys(m.rows), id).toContain(id); delete m.rows[id]; }
+    for (const [id, r] of Object.entries<any>(m.rows)) for (const [k, main] of Object.entries(W3_MOVED)) {
+      if (keep.includes(k)) continue;
+      expect(r.files[k], `${id} ${k}`).toBe(sha(w3Read(k)));
+      r.files[k] = main;
+    }
+    return m;
+  };
+  /** LIB-PLATEFIX-1: the pin test's blanks below, without its checks (for the mutations). */
+  const rrBlanked = (m: any) => {
+    lessW3(m, [PF_W2_KEYS[0]!]);
+    for (const r of Object.values<any>(m.rows)) {
+      for (const k of [BOX, 'tools/plates/library/hands/pairs.mjs', 'tools/plates/library/render/closeup/zoom.mjs']) if (k in r.files || k.endsWith('zoom.mjs')) r.files[k] = 'X';
+      if ('tools/plates/library/render/region-fix.mjs' in r.files) r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8';
+    }
+    blankPF(m, 'X'); pfW2Problems(m, 'X');
+    return m;
+  };
+  it('LIB-SHIP W3 mutations: a W3 row missing, a moved key not at its current file, and a non-W3 row changed are red', () => {
+    const m = () => JSON.parse(w3Read('tools/plates/library/MANIFEST.json'));
+    const a = m(); delete a.rows.lib_chin_up;
+    expect(() => lessW3(a)).toThrow(/lib_chin_up/);
+    const b = m(); b.rows.lib_plank.files['tools/plates/library/render/closeup/zoom-css.mjs'] = 'f'.repeat(64);
+    expect(() => lessW3(b)).toThrow(/lib_plank/);
+    const c = m(); c.rows.lib_plank.entry = 'f'.repeat(64);
+    expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
+  });
   it('every row that lists it pins the current file, and every other entry equals main e623d3ef', () => {
-    const m = JSON.parse(rd('tools/plates/library/MANIFEST.json'));
+    const m = lessW3(JSON.parse(rd('tools/plates/library/MANIFEST.json')), [PF_W2_KEYS[0]!]);   // LIB-SHIP W3 (LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems)
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
     expect(rows).toHaveLength(16);
     for (const r of rows) { expect(r.files[BOX]).toBe(sha(rd(BOX))); r.files[BOX] = 'X'; }
@@ -70,11 +112,20 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     const PAIRS = 'tools/plates/library/hands/pairs.mjs', pr = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => PAIRS in r.files);
     expect(pr).toHaveLength(22);
     for (const r of pr) { expect(r.files[PAIRS]).toBe(sha(rd(PAIRS))); r.files[PAIRS] = 'X'; }
+    // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs and build-layers-page.mjs keys are re-pinned there and pinned exactly by
+    // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
+    // (build-layers-page.mjs's key is checked against its current file and put back by lessW3 above, a W3 key too)
+    const BM: Record<string, string> = { 'tools/plates/library/render/region-fix.mjs': '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8' };
+    for (const r of Object.values<any>(m.rows)) for (const [k, v] of Object.entries(BM)) if (k in r.files) { expect(r.files[k]).toBe(sha(rd(k))); r.files[k] = v; }
+    // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
+    for (const r of Object.values<any>(m.rows)) r.files['tools/plates/library/render/closeup/zoom.mjs'] = 'X';
     // main e623d3ef's MANIFEST.json with the same entries blanked (was f0ec7bd5… on main 8bb433bd, daf6779b… with BOX alone; re-measure if a later re-pin merges first)
-    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 05f27be9, both sides kept): was
-    // a97a39e2 (main 05f27be9 with BOX and PAIRS blanked). Its moved keys, added keys and superseded entries (pfProblems)
-    // and the moved keys the W2 lists hold elsewhere (pfW2Problems: build-layers-page.mjs, pilot A's batch, sheets, closeups and
-    // layers config) each pin their current value, then are blanked too: the rest is main 05f27be9's with the same blanks.
+    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 8841246c, both sides kept): was
+    // 3804f49d (main 8841246c with the blanks above; LIB-PLATEFIX-3's re-measure after W3). Its moved keys, added keys and
+    // superseded entries (pfProblems) and the moved keys the W2 lists hold elsewhere (pfW2Problems: build-layers-page.mjs,
+    // pilot A's batch, sheets, closeups and layers config; build-layers-page.mjs is kept out of lessW3 above so that
+    // pfW2Problems checks it against its current file) each pin their current value, then are blanked too: every key and
+    // entry where this MANIFEST differs from main 8841246c's is one of them, so the rest is main 8841246c's with the same blanks.
     expect(pfProblems(m)).toEqual([]);
     blankPF(m, 'X');
     expect(pfW2Problems(m, 'X')).toEqual([]);
@@ -84,12 +135,35 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     const m = JSON.parse(rd('tools/plates/library/MANIFEST.json')), row: any = Object.values(m.rows).find((r: any) => PF_W2_KEYS[0]! in r.files);
     row.files[PF_W2_KEYS[0]!] = '0'.repeat(64);
     expect(pfW2Problems(m, 'X')).toHaveLength(1);
-    const o = JSON.parse(rd('tools/plates/library/MANIFEST.json'));
-    for (const r of Object.values<any>(o.rows)) { if (BOX in r.files) r.files[BOX] = 'X'; if ('tools/plates/library/hands/pairs.mjs' in r.files) r.files['tools/plates/library/hands/pairs.mjs'] = 'X'; }
-    blankPF(o, 'X'); pfW2Problems(o, 'X');
+    const o = rrBlanked(JSON.parse(rd('tools/plates/library/MANIFEST.json')));
     expect(sha(JSON.stringify(o))).toBe(PF_RR_PIN);
     o.rows.lib_plank.entry = '0'.repeat(64);
     expect(sha(JSON.stringify(o))).not.toBe(PF_RR_PIN);
+  });
+});
+
+// RESEARCH-ROUTES-1 part 2, F-STOPLINE-CLAIM (D-STOPLINE-CLAIM, #391 6681022221; ruled #400 6681126219): the shared
+// stop-line card and its kind.
+describe('RESEARCH-ROUTES-1 F-STOPLINE-CLAIM: the safety-line kind and the stop-line card', () => {
+  const STOP = 'docs/research/howto/shared/stop-line.json', QUOTES = 'docs/research/howto/quotes/shared-stop-line.json';
+  const V = () => import(/* @vite-ignore */ new URL('../../tools/plates/library/research/validate.mjs', import.meta.url).href);
+  it('shared/stop-line.json validates; its line cites c1-c3; box_jump and hollow_body_hold are left out', async () => {
+    const v: any = await V(), c = JSON.parse(rd(STOP));
+    expect(v.validateSharedFile('stop-line.json')).toEqual([]);
+    expect(c.kind).toBe('safety-line');
+    expect(c.line).toEqual({ text: "Stop the set. Don't train through the pain.", claim: ['c1', 'c2', 'c3'] });
+    expect(c.appliesTo).toHaveLength(67);
+    // review FIX (#400): c1 names its source scope, as c2 and c3 do; never plain "elbow pain"
+    expect(c.claims[0].text).toBe('NHS self-care advice for wrist pain, back pain and tennis elbow is to stop or cut down activities that cause pain or make it worse (written for those conditions, applied here to training).');
+    for (const x of c.claims) expect(x.text, x.id).toMatch(/written for /);
+    for (const id of ['box_jump', 'hollow_body_hold']) expect(c.appliesTo).not.toContain(id);
+  });
+  it('mutation: a safety-line card without its line is red, as is an unknown kind', async () => {
+    const v: any = await V(), c = JSON.parse(rd(STOP)), q = JSON.parse(rd(QUOTES));
+    delete c.line;
+    expect(v.validateShared(c, q, { file: 'stop-line.json' })).toEqual(['shared/stop-line.json: safety-line card lacks line']);
+    const k = JSON.parse(rd(STOP)); k.kind = 'stop-line';
+    expect(v.validateShared(k, q, { file: 'stop-line.json' })).toEqual(['shared/stop-line.json: unknown kind "stop-line"']);
   });
 });
 

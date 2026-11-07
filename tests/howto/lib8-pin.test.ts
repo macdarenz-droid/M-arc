@@ -156,13 +156,20 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): W2's entry (index 15) is superseded by PLATEFIX's, the last entry;
     // the current entry is now the third
     const lp = entries.map((e: any, i: number) => ({ e, i })).filter(({ e }: any) => e.kind === 'layers-page');
-    expect(lp).toHaveLength(3);
-    expect(lp.map(({ e }: any) => e.decision)).toEqual(['D-SHIP-W1-LAYERS', 'D-SHIP-W2-STAMP', PF_LAYERS_DECISION]);
+    expect(lp.slice(0, 2).map(({ e }: any) => e.decision)).toEqual(['D-SHIP-W1-LAYERS', 'D-SHIP-W2-STAMP']);
     expect(lp[1].e.supersedes).toBe(lp[0].i);
-    expect(lp[2].e.supersedes).toBe(lp[1].i);
-    expect(lp[2].i).toBe(entries.length - 1);
+    // F-BODYMAP-FRONTDELT (D-BODYMAP-APPEND, #404 6688047379): after W2's entry comes exactly the body-map re-pin,
+    // superseding it. LIB-PLATEFIX-1 (D-PLATEFIX-SECOND, #385 6687946433): then its owner page and plate entries, then its
+    // layers-page re-pin, superseding the body-map one; that entry is the current one (ids and page below)
+    expect(entries.slice(lp[1].i + 1).map((e: any) => [e.kind, e.id ?? null, e.decision.startsWith('D-OWNER-REPIN') ? 'D-OWNER-REPIN' : e.decision, e.approvedBy, e.supersedes])).toEqual([
+      ['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', lp[1].i],
+      ['page', null, 'D-OWNER-REPIN', 'owner', 0],
+      ...['lib_barbell_row', 'lib_barbell_overhead_press', 'lib_romanian_deadlift', 'lib_triceps_pushdown'].map(id => ['plate', id, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === id)]),
+      ['layers-page', null, PF_LAYERS_DECISION, 'supervisor', lp[1].i + 1]]);
+    const cur = entries[entries.length - 1];
+    expect(lp[lp.length - 1].i).toBe(entries.length - 1);
     const page = readFileSync(ROOT + batch.pages.layers);
-    expect([[...lp[2].e.ids].sort(), lp[2].e.ids.length, lp[2].e.pageSha256, lp[2].e.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
+    expect([[...cur.ids].sort(), cur.ids.length, cur.pageSha256, cur.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);

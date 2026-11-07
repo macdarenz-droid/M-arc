@@ -328,12 +328,16 @@ async function libraryCases() {
  *  pinned page); the rest map, each row's watch and pain marks and the legend are golden B's renderer output from that
  *  row's own How-to feel spec; no is-playing or is-focus. Throws on the first failed check. */
 // LIB-SHIP W2 (ruling 3): the shipped library rows hands.mjs's noPairRuling rules to ship with no hand pair
+// LIB-SHIP W3 (ruling 3): plus W3's 4 card-no-zoom ids (hands/no-zoom.json, Q-W3-10), in registry order
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus its 4 shipped ids (none has a hand chunk or pair), in registry order
-const NO_HAND = ['lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
-  'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up'];
+const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row',
+  'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+  'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
+  'lib_horizontal_leg_press'];
 // LIB-SHIP W2 (ruling 3): the shipped library ids whose feel draws no mark (card watch [] and no pain part in any row)
+// LIB-SHIP W3: plus single_arm_lat_pulldown (its card's watch is [] and its shoulder row names no part), in registry order
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus single_leg_romanian_deadlift (noMarkIds on this tree; the other 3 draw marks)
-const NO_MARK = ['lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
+const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
 /** LIB-SHIP W2: the ids among `ids` whose How-to feel has no watch-listed non-primary muscle and no pain part in any row. */
 async function noMarkIds(base: string, ids: string[]) {
   const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));

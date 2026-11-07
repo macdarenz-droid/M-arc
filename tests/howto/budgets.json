@@ -355,11 +355,11 @@
     {
       "chunk": "ht-romanian-deadlift-*.js",
       "rawMax": 44983,
-      "gzMax": 10950,
+      "gzMax": 10949,
       "measuredRaw": 40893,
-      "measuredGz": 9954,
+      "measuredGz": 9953,
       "setBy": "LIB-PLATEFIX-1",
-      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree, after 977f66f6 moved the grip cites to CITES.grip, and the real regenerate)."
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree, after 977f66f6 moved the grip cites to CITES.grip, and the real regenerate); re-measured after merging main 8841246c."
     },
     {
       "chunk": "posture-romanian-deadlift-*.js",
@@ -372,21 +372,21 @@
     },
     {
       "chunk": "feel-romanian-deadlift-*.js",
-      "rawMax": 27585,
-      "gzMax": 8341,
-      "measuredRaw": 25077,
-      "measuredGz": 7582,
+      "rawMax": 28034,
+      "gzMax": 8495,
+      "measuredRaw": 25485,
+      "measuredGz": 7722,
       "setBy": "LIB-PLATEFIX-1",
-      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate."
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
     },
     {
       "chunk": "ht-single-leg-romanian-deadlift-*.js",
       "rawMax": 51551,
-      "gzMax": 11284,
+      "gzMax": 11285,
       "measuredRaw": 46864,
-      "measuredGz": 10258,
+      "measuredGz": 10259,
       "setBy": "LIB-PLATEFIX-1",
-      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree, after 977f66f6 moved the grip cites to CITES.grip, and the real regenerate)."
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree, after 977f66f6 moved the grip cites to CITES.grip, and the real regenerate); re-measured after merging main 8841246c."
     },
     {
       "chunk": "posture-single-leg-romanian-deadlift-*.js",
@@ -399,12 +399,12 @@
     },
     {
       "chunk": "feel-single-leg-romanian-deadlift-*.js",
-      "rawMax": 25191,
-      "gzMax": 8076,
-      "measuredRaw": 22900,
-      "measuredGz": 7341,
+      "rawMax": 25639,
+      "gzMax": 8223,
+      "measuredRaw": 23308,
+      "measuredGz": 7475,
       "setBy": "LIB-PLATEFIX-1",
-      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate."
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
     },
     {
       "chunk": "ht-upright-row-*.js",
@@ -490,11 +490,11 @@
     {
       "chunk": "ht-triceps-pushdown-*.js",
       "rawMax": 36715,
-      "gzMax": 9185,
+      "gzMax": 9189,
       "measuredRaw": 33377,
-      "measuredGz": 8350,
+      "measuredGz": 8353,
       "setBy": "LIB-PLATEFIX-1",
-      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate."
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
     },
     {
       "chunk": "posture-triceps-pushdown-*.js",
@@ -507,21 +507,21 @@
     },
     {
       "chunk": "feel-triceps-pushdown-*.js",
-      "rawMax": 26177,
-      "gzMax": 8346,
-      "measuredRaw": 23797,
-      "measuredGz": 7587,
+      "rawMax": 26626,
+      "gzMax": 8491,
+      "measuredRaw": 24205,
+      "measuredGz": 7719,
       "setBy": "LIB-PLATEFIX-1",
-      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate."
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
     },
     {
       "chunk": "ht-reverse-lunge-*.js",
       "rawMax": 75584,
-      "gzMax": 19079,
+      "gzMax": 19080,
       "measuredRaw": 68712,
-      "measuredGz": 17344,
+      "measuredGz": 17345,
       "setBy": "LIB-PLATEFIX-1",
-      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate."
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
     },
     {
       "chunk": "posture-reverse-lunge-*.js",
@@ -534,12 +534,12 @@
     },
     {
       "chunk": "feel-reverse-lunge-*.js",
-      "rawMax": 28371,
-      "gzMax": 8387,
-      "measuredRaw": 25791,
-      "measuredGz": 7624,
+      "rawMax": 28819,
+      "gzMax": 8531,
+      "measuredRaw": 26199,
+      "measuredGz": 7755,
       "setBy": "LIB-PLATEFIX-1",
-      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate."
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
     },
     {
       "chunk": "ht-cable-fly-*.js",
@@ -594,15 +594,303 @@
       "measuredGz": 7359,
       "setBy": "LIB-SHIP",
       "reason": "LIB-SHIP W2: the 9 ship (#379 D-SHIP-W2-STAMP); measured + 10 % on claude/lib-ship-w2 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-chin-up-*.js",
+      "rawMax": 43999,
+      "gzMax": 11604,
+      "measuredRaw": 39999,
+      "measuredGz": 10549,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-chin-up-*.js",
+      "rawMax": 41433,
+      "gzMax": 8530,
+      "measuredRaw": 37666,
+      "measuredGz": 7754,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-chin-up-*.js",
+      "rawMax": 30104,
+      "gzMax": 8561,
+      "measuredRaw": 27367,
+      "measuredGz": 7782,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-hanging-knee-raise-*.js",
+      "rawMax": 47297,
+      "gzMax": 11466,
+      "measuredRaw": 42997,
+      "measuredGz": 10423,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-hanging-knee-raise-*.js",
+      "rawMax": 49560,
+      "gzMax": 7698,
+      "measuredRaw": 45054,
+      "measuredGz": 6998,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-hanging-knee-raise-*.js",
+      "rawMax": 28420,
+      "gzMax": 8519,
+      "measuredRaw": 25836,
+      "measuredGz": 7744,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-inverted-row-*.js",
+      "rawMax": 38458,
+      "gzMax": 9920,
+      "measuredRaw": 34961,
+      "measuredGz": 9018,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-inverted-row-*.js",
+      "rawMax": 47461,
+      "gzMax": 7748,
+      "measuredRaw": 43146,
+      "measuredGz": 7043,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-inverted-row-*.js",
+      "rawMax": 26390,
+      "gzMax": 8204,
+      "measuredRaw": 23990,
+      "measuredGz": 7458,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-close-grip-pulldown-*.js",
+      "rawMax": 47688,
+      "gzMax": 10426,
+      "measuredRaw": 43352,
+      "measuredGz": 9478,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-close-grip-pulldown-*.js",
+      "rawMax": 59260,
+      "gzMax": 8617,
+      "measuredRaw": 53872,
+      "measuredGz": 7833,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-close-grip-pulldown-*.js",
+      "rawMax": 27985,
+      "gzMax": 8292,
+      "measuredRaw": 25440,
+      "measuredGz": 7538,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-single-arm-lat-pulldown-*.js",
+      "rawMax": 48778,
+      "gzMax": 10610,
+      "measuredRaw": 44343,
+      "measuredGz": 9645,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-single-arm-lat-pulldown-*.js",
+      "rawMax": 34493,
+      "gzMax": 6627,
+      "measuredRaw": 31357,
+      "measuredGz": 6024,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-single-arm-lat-pulldown-*.js",
+      "rawMax": 24880,
+      "gzMax": 8143,
+      "measuredRaw": 22618,
+      "measuredGz": 7402,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-straight-arm-pulldown-*.js",
+      "rawMax": 41566,
+      "gzMax": 9162,
+      "measuredRaw": 37787,
+      "measuredGz": 8329,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-straight-arm-pulldown-*.js",
+      "rawMax": 53803,
+      "gzMax": 7231,
+      "measuredRaw": 48911,
+      "measuredGz": 6573,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-straight-arm-pulldown-*.js",
+      "rawMax": 27770,
+      "gzMax": 8426,
+      "measuredRaw": 25245,
+      "measuredGz": 7660,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-chest-supported-row-*.js",
+      "rawMax": 43884,
+      "gzMax": 10058,
+      "measuredRaw": 39894,
+      "measuredGz": 9143,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-chest-supported-row-*.js",
+      "rawMax": 34817,
+      "gzMax": 6459,
+      "measuredRaw": 31651,
+      "measuredGz": 5871,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-chest-supported-row-*.js",
+      "rawMax": 25929,
+      "gzMax": 8275,
+      "measuredRaw": 23571,
+      "measuredGz": 7522,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-resistance-band-row-*.js",
+      "rawMax": 40911,
+      "gzMax": 9339,
+      "measuredRaw": 37191,
+      "measuredGz": 8490,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-resistance-band-row-*.js",
+      "rawMax": 35126,
+      "gzMax": 7563,
+      "measuredRaw": 31932,
+      "measuredGz": 6875,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-resistance-band-row-*.js",
+      "rawMax": 25045,
+      "gzMax": 8182,
+      "measuredRaw": 22768,
+      "measuredGz": 7438,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-horizontal-leg-press-*.js",
+      "rawMax": 65055,
+      "gzMax": 15179,
+      "measuredRaw": 59140,
+      "measuredGz": 13799,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-horizontal-leg-press-*.js",
+      "rawMax": 19675,
+      "gzMax": 4971,
+      "measuredRaw": 17886,
+      "measuredGz": 4519,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-horizontal-leg-press-*.js",
+      "rawMax": 31172,
+      "gzMax": 8513,
+      "measuredRaw": 28338,
+      "measuredGz": 7739,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "handpair-bar-hang-only-curled-under-*.js",
+      "rawMax": 26404,
+      "gzMax": 7791,
+      "measuredRaw": 24003,
+      "measuredGz": 7082,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "handpair-bar-hang-over-*.js",
+      "rawMax": 24351,
+      "gzMax": 7707,
+      "measuredRaw": 22137,
+      "measuredGz": 7006,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "handpair-bar-row-only-curled-over-*.js",
+      "rawMax": 26141,
+      "gzMax": 7858,
+      "measuredRaw": 23764,
+      "measuredGz": 7143,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "handpair-v-handle-pull-only-curled-neutral-overhead-*.js",
+      "rawMax": 28470,
+      "gzMax": 8058,
+      "measuredRaw": 25881,
+      "measuredGz": 7325,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
+    },
+    {
+      "chunk": "handpair-d-handle-pull-only-curled-unstated-*.js",
+      "rawMax": 27319,
+      "gzMax": 7959,
+      "measuredRaw": 24835,
+      "measuredGz": 7235,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W3: the 9 ship (#384 D-SHIP-W3-STAMP; D-SHIP-W3-NOPAIR); measured + 10 % on claude/lib-ship-w3b after the pin, flip and generate."
     }
   ],
   "perId": [
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 21,
-      "rawMax": 13170,
-      "gzMax": 3142,
+      "n": 30,
+      "rawMax": 18815,
+      "gzMax": 4488,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -612,8 +900,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 3824555,
-      "gzMax": 963886,
+      "rawMax": 5463650,
+      "gzMax": 1376979,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

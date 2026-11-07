@@ -50,21 +50,25 @@ export function blankPF(m: any, blank: string): any {
 
 /** The approvals of the golden update's superseding batch-golden entries. Page and plate entries are the owner's
  *  (D-OWNER-REPIN, #385 6686720061): each decision starts with PF_ENTRY_DECISION and names its own panel after it, and the
- *  approval is PF_OWNER_APPROVAL exactly. Layers-page entries are the supervisor's under PF_LAYERS_DECISION. The pin guards
+ *  approval is PF_OWNER_APPROVAL exactly. Layers-page entries are the supervisor's under PF_LAYERS_DECISION (D-PLATEFIX-SECOND). The pin guards
  *  in lib8-pin, lib8r-pilot-a3, lib11-pilot-b and lib11-pilot-b2 read them from here. */
 export const PF_ENTRY_DECISION = 'D-OWNER-REPIN; LIB-PLATEFIX-1 golden update (plan 2.8); ';
 export const PF_OWNER_APPROVAL = 'Owner in chat, 2026-11-06 ~14:10 UTC: "Do all whats recommended. Whan u have question, answer urself via recommended" (D-OWNER-REPIN, #385 6686720061: a standing OK to supersede an approved plate or page pin once a full review panel passes the new version)';
-export const PF_LAYERS_DECISION = 'D-PLATEFIX-STAMP';
+// D-PLATEFIX-SECOND (#385 6687946433, point 4): the layers-page entries re-pinned after merging main 8841246c (was
+// D-PLATEFIX-STAMP, the layers panel's approval, now cited in each entry's why with the cardcmp and strip-back proofs)
+export const PF_LAYERS_DECISION = 'D-PLATEFIX-SECOND';
 const ownerOk = (e: any) => e.approvedBy === 'owner' && typeof e.decision === 'string' && e.decision.startsWith(PF_ENTRY_DECISION)
   && e.decision.length > PF_ENTRY_DECISION.length && e.approval === PF_OWNER_APPROVAL;
 
-/** main 05f27be9's entries of each batch golden file the golden update appends to: how many, and the sha256 of their
- *  JSON.stringify. The update only appends, so these stay byte-equal. */
+/** main 8841246c's entries of each batch golden file the golden update appends to: how many, and the sha256 of their
+ *  JSON.stringify. The update only appends (D-PLATEFIX-SECOND: after main's entries), so these stay byte-equal. Was main
+ *  05f27be9's (pilot-a 16 715d3f61, pilot-b 6 5ae57c96, pilot-b2 3 0b659af4); #404 (D-BODYMAP-LIB) and W3
+ *  (D-SHIP-W3-LAYERSZOOM) appended layers-page entries since. */
 export const MAIN_GOLDEN: Record<string, { n: number; sha: string }> = {
-  'pilot-a': { n: 16, sha: '715d3f61c4997a3227aa9136523d83452759d7c65b8b8b7286427e0695415975' },
-  'pilot-b': { n: 6, sha: '5ae57c9629fbbd2e78c3f4d1e4cd7a1f23bd602ebb126027da61dad74ea90d27' },
+  'pilot-a': { n: 17, sha: '9bcdd07ba54c7031d90ced0eac580ab6aa6e355366dc0f8033df5a822e6c6f87' },
+  'pilot-b': { n: 7, sha: 'c7f4fbed76c7d8e0329cc09f9f81e16d2ff73ff49b42b45fed88390b9db935cc' },
   'pilot-a3': { n: 3, sha: '75a9682eedebb43a3ed046f6d66e6fff6c7932ab803d8d97b1a24eb402f95e6b' },
-  'pilot-b2': { n: 3, sha: '0b659af46e873d927980bb2c68ec683780ace4d1056bcf89a18f6f3114fae225' },
+  'pilot-b2': { n: 5, sha: '1298648547414644e34362713c7ef0b3fa417208108b704369f62e22bc515114' },
 };
 /** The keys a superseding plate entry may change from the entry it supersedes. */
 const PLATE_MOVES = ['fragments', 'approvedBy', 'decision', 'approval', 'date', 'why', 'supersedes', 'prev'];
