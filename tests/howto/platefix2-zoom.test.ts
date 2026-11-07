@@ -66,7 +66,10 @@ describe('PF2 (a): existing zooms are byte-equal', { timeout: T }, () => {
     expect(n).toBe(37);
     // was 36 entries, f7df419a… (origin/main 8bb433bd, before (a)); re-measured after main 7e060e83 (train 77; one more
     // zoom entry): the same loop over these specs with main 7e060e83's zoom/inline.mjs (no (a)) gives this same hash
-    expect(h.digest('hex')).toBe('89e7482e3c12d43c3650c5e7e167166695a81444f0a9d59f8e85796f38fb0cd4');
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 89e7482e… (main 6227bd8e), now cf303d5d… — the only entries that differ from
+    // main's are those of the three redrawn 3b plates (lying_leg_curl item C, sled_pull item B, v_up item D: poses and zoom
+    // k moved); every other spec's zoom output is byte-equal to main 6227bd8e's (per-file hashes compared on both trees)
+    expect(h.digest('hex')).toBe('cf303d5d9039568e4e04fdf8f0c7d13d7aba2d8b259829cc725ba224fb918fab');
   });
 });
 
