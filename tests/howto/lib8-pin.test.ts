@@ -53,7 +53,7 @@ const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id
 // barbell_row, barbell_overhead_press, romanian_deadlift and triceps_pushdown plates (the superseding page entry 16)
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN, D-PLATEFIX-SECOND form): was d38e8b33 (1,316,144 B); with pec_fly's height box at
 // top 260 (PQ-H4), the superseding page entry 23
-const PAGE = { sha256: '6d3afb8313a20e4fb519c52e20c62de3f002724e9bb9facf30900b081118791d', bytes: 1315771 };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 032ce649 (1316144 B), now 6d3afb83 (1315771 B) (barbell_overhead_press's head-end inset; pilot A's 'owner' D-OWNER-REPIN page entry 26)
+const PAGE = { sha256: '6d3afb8313a20e4fb519c52e20c62de3f002724e9bb9facf30900b081118791d', bytes: 1315771 };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 032ce649 (1316144 B), now 6d3afb83 (1315771 B) (barbell_overhead_press's item 23 (a) and (b); pilot A's 'owner' D-OWNER-REPIN page entry 26)
 const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
 // Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
 const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
