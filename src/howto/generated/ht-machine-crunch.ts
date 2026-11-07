@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=db1d9454009b40bf1a593ffc02f0b4d92af37f556b5f3b009511a7c295e8807a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=c59f3cc15f9e467cb1c36a3fe0848e9bdab86e441c88289c484c1e5dcacacac5
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_machine_crunch",
   name: "Machine Crunch",
-  hashes: { inputsSha256: "db1d9454009b40bf1a593ffc02f0b4d92af37f556b5f3b009511a7c295e8807a", golden: "7c82f539ff8f5768e65c23fad2655f5d9c67cee354bdc52f2cd6c5158ad89a4b" },
+  hashes: { inputsSha256: "c59f3cc15f9e467cb1c36a3fe0848e9bdab86e441c88289c484c1e5dcacacac5", golden: "262bfccf870fcacb020b7d5645617ff55b3caebf2c4e44e21484cf3d9ff237a6" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
