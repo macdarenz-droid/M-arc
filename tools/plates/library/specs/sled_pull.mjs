@@ -15,9 +15,9 @@
 // Geometry (confirmed by the report's contacts and checks, and by tests on the drawn items):
 //  Feet: flat (ref 'mid'), FOOT_X out each side, toes forward: the widest stance whose rigid-foot plant keeps every
 //   report contact within 0.5 cm (c2 "shoulder-width"; D-LIB22-STANCE as corrected). The hips keep one height HIP_Y in
-//   start, via and end (solved: the stepped-back knee KNEE_SOFT short of straight in the end, the straightest knee of
-//   the step), so the hands and the rope keep theirs; the start knees then bend about 29 deg (c2 "quarter-squat,
-//   keeping your knees soft"). Trunk upright (tilt 0, spine and neck neutral: c2 "chest up", "shoulders over hips").
+//   start, via and end (solved: the start knees Q_KNEE 42 deg, c2 "quarter-squat", LIB-PLATEFIX-3; was the stepped-back
+//   knee KNEE_SOFT in the end, which left the start at 29 deg), so the hands and the rope keep theirs; the end's
+//   stepped-back knee then bends 33.7 deg (c2 "keeping your knees soft"). Trunk upright (tilt 0, spine and neck neutral: c2 "chest up", "shoulders over hips").
 //   Each pose's root z puts the Winter centre of mass over the soles' midpoint (the feet are the base, c2; the rope's
 //   light tension, c1, is not counted).
 //  Hands (c1): both fists on the one rope at the midline (x 0), each arm ELBOW_BEND short of straight (c1 "arms
@@ -35,7 +35,7 @@
 //  Mistake (c8): the pelvis tilts back M_TILT and the low back arches M_ARCH (hanging_leg_raise.mjs:69's approved lean
 //   and arch). The sled stays where the end left it (c8 "When the pull becomes too heavy"), the taut rope keeps its run
 //   and both arms keep their end direction in space, so the hips sag forward and down (c8 "don't let your hips sag":
-//   M_Z, M_Y solved) until the upper fist is back on the rope's run, the stepped-back knee kept at KNEE_SOFT.
+//   M_Z, M_Y solved) until the upper fist is back on the rope's run, the stepped-back knee kept at the end's.
 // Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): PX_PER_M, FOOT_X, KNEE_SOFT, ELBOW_BEND,
 //  GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH; solved: STEP, HIP_Y, DRAG,
 //  ROPE_RUN, M_Z, M_Y.
@@ -45,9 +45,11 @@ import { sled, SLED, SLED_ITEMS } from '../eq/sled.mjs';
 import { strandOutline } from '../eq/rope.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ PX_PER_M: 126, FOOT_X: 0.145, KNEE_SOFT: 15, ELBOW_BEND: 18, GRIP_GAP: 0.07, SLED_Z: 0.9, FOOT_CLEAR: 0.025,
-  COIL_D: 0.266, COIL_TURNS: 3, ROPE_T: 0.028, ROPE_SAG: 0.006, M_TILT: -14, M_ARCH: -12, LOOP_H: 0.044, LOOP_DZ: 0.05, TAIL_SAG: 0.04 });
-const { FOOT_X, KNEE_SOFT, ELBOW_BEND, GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH, LOOP_H, LOOP_DZ, TAIL_SAG } = SIZES;
+// LIB-PLATEFIX-3 round 2 (#405 6685743439 sled_pull R7 [3,3,3]): SLED_Z 0.9 -> 0.78, the sled group 15 px left, so the
+// dashed start sled ends 13.9 px inside the frame (it was clipped at 358); no body change.
+export const SIZES = Object.freeze({ PX_PER_M: 126, FOOT_X: 0.145, KNEE_SOFT: 15, ELBOW_BEND: 18, GRIP_GAP: 0.07, SLED_Z: 0.78, FOOT_CLEAR: 0.025,
+  COIL_D: 0.266, COIL_TURNS: 3, ROPE_T: 0.028, ROPE_SAG: 0.006, M_TILT: -14, M_ARCH: -12, Q_KNEE: 42, LOOP_H: 0.044, LOOP_DZ: 0.05, TAIL_SAG: 0.04 });
+const { FOOT_X, KNEE_SOFT, ELBOW_BEND, GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH, Q_KNEE, LOOP_H, LOOP_DZ, TAIL_SAG } = SIZES;
 
 export const bisect = (f, a, b, what) => {
   let fa = f(a), fb = f(b), side = 0;
@@ -105,9 +107,12 @@ const bodyAt = (y, z, feet) => ({ root: { at: [0, y, z], tilt: 0 }, trunk: 0, ne
 // The root's z in a pose: the centre of mass over the soles' midpoint (the feet are the base, c2; the rope's light
 // tension, c1, is not counted).
 const balanced = (y, feet, zc) => bisect(z => com(landmarksOf(bodyAt(y, z, feet), H))[2] - zc, -0.6, 0.4, 'balance');
-// The hips keep one height through the step, so the hands and the rope keep theirs (Q9): the height at which the
-// stepped-back leg, the straighter knee of the cycle, is KNEE_SOFT short of straight in the end (c2 "knees soft").
-export const HIP_Y = bisect(y => kneeOf(landmarksOf(bodyAt(y, balanced(y, FEET.end, -STEP / 2), FEET.end), H), 'r') - KNEE_SOFT, 0.7, 0.93, 'hip height');
+// The hips keep one height through the step, so the hands and the rope keep theirs (Q9). KNEE_SOFT no longer drives
+// the solve (it stays in SIZES and lb10/sizes.json with its record, unused).
+// LIB-PLATEFIX-3 (W7 #394 6682923012 L1 [4,3,3], ruled #405 6683319630; c2 "quarter-squat"): the height at which the
+// start knees bend Q_KNEE (was: the stepped-back knee KNEE_SOFT in the end, which left the start knees at 29.4 deg and
+// read as standing). The end's stepped-back knee then follows from that height (still soft, c2).
+export const HIP_Y = bisect(y => kneeOf(landmarksOf(bodyAt(y, balanced(y, FEET.start, 0), FEET.start), H), 'l') - Q_KNEE, 0.6, 0.93, 'hip height');
 const START_Z = balanced(HIP_Y, FEET.start, 0), END_Z = balanced(HIP_Y, FEET.end, -STEP / 2);
 const withHands = p => ({ ...p, reach: gripsAt(landmarksOf(p, H)) });
 const start = withHands(bodyAt(HIP_Y, START_Z, FEET.start));
@@ -127,12 +132,12 @@ export const ROPE_RUN = runOf(landmarksOf(start, H), SLED_Z);
 // the coil and both fists stay exactly where the end has them (the heavy sled holds; c8 "When the pull becomes too
 // heavy"), so the fists keep the end's grips by reach, each arm ELBOW_BEND short of straight as in the end (the near
 // shoulder REACH from its fist). The hips go forward and down (c8 "don't let your hips sag": M_Z and M_Y, solved) and
-// the shoulders back, the stepped-back knee kept at KNEE_SOFT.
+// the shoulders back, the stepped-back knee kept at the end's (END_KNEE_R).
 const EZ = SLED_Z + DRAG;
 const mBody = (y, z) => ({ root: { at: [0, y, z], tilt: M_TILT }, trunk: M_ARCH, neck: 0 });
 const mLm = (y, z) => landmarksOf({ ...end, ...mBody(y, z) }, H);
-const mY = z => bisect(y => kneeOf(mLm(y, z), 'r') - KNEE_SOFT, 0.5, HIP_Y + 0.05, 'the Mistake height');
-const LE0 = landmarksOf(end, H);
+const LE0 = landmarksOf(end, H), END_KNEE_R = kneeOf(LE0, 'r');   // the Mistake keeps the end's stepped-back knee (LIB-PLATEFIX-3)
+const mY = z => bisect(y => kneeOf(mLm(y, z), 'r') - END_KNEE_R, 0.4, HIP_Y + 0.05, 'the Mistake height');
 export const M_Z = bisect(z => Math.hypot(...v3.sub(mLm(mY(z), z)['shoulder.r'], LE0['grip.r'])) - REACH, END_Z - 0.1, END_Z + 0.3, 'the Mistake root');
 export const M_Y = mY(M_Z);
 const mistake = { ...mBody(M_Y, M_Z), reach: end.reach };
@@ -186,7 +191,8 @@ export default {
   trace: { point: 'ball.r', trim: [10, 12] },
   callouts: [
     { key: 'squat', text: 'Quarter<br>squat', anchor: 'knee.r', box: { left: 24, top: 240 }, cue: 'Knees soft in a quarter squat, chest up, core braced.' },
-    { key: 'stack', text: 'Shoulders<br>over hips', anchor: 'backUpper', box: { left: 24, top: 144 }, cue: 'Keep your shoulders over your hips, not leaning far back.' },
+    { key: 'stack', text: 'Shoulders<br>over hips', anchor: 'backUpper', box: { left: 24, top: 124 },   // LIB-PLATEFIX-3: 20 px higher with the quarter squat (was top 144)
+      cue: 'Keep your shoulders over your hips, not leaning far back.' },
     { key: 'steps', text: 'Short<br>steps<br>back', anchor: 'heel.r', box: { left: 8, top: 288 }, cue: 'Short, quick steps back, driving through the midfoot.' },
   ],
   mistake: {

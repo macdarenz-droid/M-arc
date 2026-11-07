@@ -64,11 +64,23 @@ const TS = Array.from({ length: SEG + 1 }, (_, i) => i / SEG);
 const [start, ...rest] = TS.map(t => ({ ...base, reach: armsAt(t) }));
 const end = rest.pop(), via = rest;
 
-// Mistake (c11): the press. The hands still meet at the end height, but the elbows bend to MIS_ELBOW: the grip is
-// pulled back toward the face to the depth that bend allows (solved, never set), the elbows drop under the hands.
+// Mistake (c11): the press. At the end height the elbows bend to MIS_ELBOW and the hands stay in line with the
+// shoulders (MIS_X, as in a press) instead of meeting: the grip is pulled back toward the face to the depth that bend
+// allows (solved, never set), the elbows drop under the hands. LIB-PLATEFIX-3 (#393 6683164302 L5, ruled #405
+// 6683319630): with the hands meeting (was -CLOSE_GAP) the dashed press arms and fists lay on the solid meeting hands
+// (wrists 3.9 px from the solid arm, the four fists within 12.4 px), so the arms tangled and the hands read as crossed;
+// now the fault hands are 56.2 px apart and 21.9 px from the solid hands. MIS_X is a drawing value (c11 gives none).
+// The 'press' tell box is pinned (236, 232) so its leader clears the figure and keeps F3 in range.
 const DM = Math.sqrt(L1 * L1 + L2 * L2 + 2 * L1 * L2 * Math.cos(MIS_ELBOW * R)), DY = END_Y - S[1];
-const MIS_Z = (() => { const dx = -CLOSE_GAP - S[0], h2 = DM * DM - DY * DY - dx * dx; if (!(h2 > 0)) throw new Error('low_to_high_cable_fly: no Mistake grip at MIS_ELBOW'); return S[2] + Math.sqrt(h2); })();
-const misGrip = [-CLOSE_GAP, END_Y, MIS_Z];
+// LIB-PLATEFIX-3 round 2 (pf7 R5 [4,3,3], #405 6685743439): the press arms were drawn inside the solid arms and
+// shoulders (the elbow 8.7 px out of the shoulder, the forearm slanting in). The hands now sit MIS_OUT outside the
+// shoulders, so with the same 90 deg bend and the same pole the forearm stands straight up over the dropped elbow
+// (hand 0.3 px off the elbow's vertical, 35.3 px above it) and the elbow sits 18.9 px outside the shoulder, clear of the
+// body (both critics: elbows out and under the hands). MIS_OUT is a drawing value (c11 gives none).
+const MIS_OUT = 0.15;
+const MIS_X = S[0] + MIS_OUT * Math.sign(S[0]);
+const MIS_Z = (() => { const dx = MIS_X - S[0], h2 = DM * DM - DY * DY - dx * dx; if (!(h2 > 0)) throw new Error('low_to_high_cable_fly: no Mistake grip at MIS_ELBOW'); return S[2] + Math.sqrt(h2); })();
+const misGrip = [MIS_X, END_Y, MIS_Z];
 const mistakePose = { reach: { r: { at: misGrip, pole: MIS_POLE }, l: { at: [-misGrip[0], misGrip[1], misGrip[2]], pole: [-MIS_POLE[0], MIS_POLE[1], MIS_POLE[2]] } } };
 const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
 // Ghost arms for the Mistake (the front-view capsule copied from pec_fly @ 013f84e): upper arm and forearm with the
@@ -144,11 +156,12 @@ export default {
     pose: mistakePose,
     guides: [
       ...GHOSTS.map(pts => ({ kind: 'dashed', pts })),                                               // the bent arms (ghosts)
-      { kind: 'arrow', from: { at: 'elbow.l', pose: 'end', off: [8, 0] }, to: { at: 'elbow.l', pose: 'mistake', off: [8, 0] } },   // the elbow drops
-      { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [-8, 0] }, to: { at: 'elbow.r', pose: 'mistake', off: [-8, 0] } },
+      // round 2 (c2): one short arrow outside each dropped elbow, pointing down (was end elbow -> Mistake elbow, across the arms)
+      { kind: 'arrow', from: { at: 'elbow.l', pose: 'mistake', off: [12, -14] }, to: { at: 'elbow.l', pose: 'mistake', off: [12, 0] } },   // the elbow drops
+      { kind: 'arrow', from: { at: 'elbow.r', pose: 'mistake', off: [-12, -14] }, to: { at: 'elbow.r', pose: 'mistake', off: [-12, 0] } },
     ],
     tells: [
-      { key: 'press', text: 'Elbows<br>bend', anchor: { at: 'elbow.l', pose: 'mistake' }, cue: 'Your elbows bend deeply, turning the fly into a press.' },
+      { key: 'press', text: 'Elbows<br>bend', anchor: { at: 'elbow.l', pose: 'mistake' }, box: { left: 236, top: 232 }, cue: 'Your elbows bend deeply, turning the fly into a press.' },
       { key: 'drop', text: 'Elbows<br>drop', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbows drop under your hands, as in a press.' },
     ],
   },

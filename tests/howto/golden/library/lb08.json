@@ -6,13 +6,13 @@
   "entries": [
     {
       "kind": "page",
-      "pageSha256": "95e9a1feaa526c005380b0aba6f49f7944ff79cb5d4887533b781ecb28487543",
-      "bytes": 1232830,
+      "pageSha256": "afd689668203154735e2fe86af7fbbd6a296f3df0ba95a37bbcac3d23b96a48f",
+      "bytes": 1236381,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W7-PIN",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6649092340 @ 8bb433bd756fdb992e326889b26bb37204300aa5",
-      "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): the lb08 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page.",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/405#issuecomment-6699614411 @ 19ff75e72c2057dff5ac5ae78fa9dd886f183b26",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): the lb08 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to LIB-PLATEFIX-3's posted lb08 page sha. Edited in place under D-REPIN-UNMERGED (#384 6681018514): LIB-PLATEFIX-3 (#405, train 75, 24 plates approved, 6699614411 @ 19ff75e7) redrew this plate; the W7 chain is unmerged, so its first entry carries the PF3-approved fragments.",
       "supersedes": null,
       "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -43,7 +43,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_hack_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "8396faa7e6cc29aa75bfdc41ec3c7c2b48dd7ec4810ff662a004bcbc51efe464"
+      "prev": "036d96a06b2962f6d1520830339ac522b85ac2f9fab114475d4a503dddaae440"
     },
     {
       "kind": "plate",
@@ -73,7 +73,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_pendulum_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "e1fad70d53c9d2cd5ec380c18f8a257649b7d4c3b6275059c60e43efa5263596"
+      "prev": "f7392cd50ec593dd63d4ade85b551bf0bbd09355e9014c59199cb721659e3b31"
     },
     {
       "kind": "plate",
@@ -102,7 +102,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_leg_extension's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "14192d9c51f9dae8997eed130f06214c7a22f82a04ba11f8b1d2dd4b857f5b70"
+      "prev": "8c6769deb0f5f1f10deea409687071808f044b05d21185b691a4d7616ba3f684"
     },
     {
       "kind": "plate",
@@ -119,7 +119,7 @@
         "tells": "31c921a0c54286c53bb6d846e4623a6a26e64f4225d70fea9af62b90d7ebf70b",
         "tempo": "361759b4008fec09deba3c3be6bc2aceff79c9b78ec1ebff220bd0d96bdb2a5c",
         "cues": "791d7f69133d1e876908e960e8c66491fb0f936644924c185df52c4634b617c7",
-        "alt": "ee5a65381f87fdf6d69c1756988b1980b30ed54115e3c3877866d561fd07e6bc",
+        "alt": "b19a29faded8b46a945b952affbf51bbcfc7b5b3d9351b4315a78b7fe9071ed5",
         "mistakeAlt": "9689df6722f95ebf809130d6c0050e6ee3d29905d08e76a52df0d55bdd0435a6"
       },
       "exemptions": [
@@ -128,11 +128,11 @@
       ],
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W7-PIN",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6649092340 @ 8bb433bd756fdb992e326889b26bb37204300aa5",
-      "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_lying_leg_curl's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/405#issuecomment-6699614411 @ 19ff75e72c2057dff5ac5ae78fa9dd886f183b26",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_lying_leg_curl's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108). Edited in place under D-REPIN-UNMERGED (#384 6681018514): LIB-PLATEFIX-3 (#405, train 75, 24 plates approved, 6699614411 @ 19ff75e7) redrew this plate; the W7 chain is unmerged, so its first entry carries the PF3-approved fragments.",
       "supersedes": null,
-      "prev": "8db993037bed4e108f34922cee1d694c7ff3dd719a1756a2347222eea3a68fee"
+      "prev": "7a33453745c26babffbc7eabb36d6728ba9e0cca441ae3d1341e1cb780a042f0"
     },
     {
       "kind": "plate",
@@ -142,10 +142,10 @@
       "prefix": "standing-leg-curl",
       "chromeId": "standing-leg-curl",
       "fragments": {
-        "normalSvg": "004618f17d7153d7656b1a8ececc7c6ec485078135315fb7dff874bf8032283c",
-        "normalOverlay": "c0c01f0e79ee134c5d00914fa26ee2c0920860e18c805f49f86170cd7afed756",
-        "mistakeSvg": "a4fcb8648c1de355e8e985ba419a581d5c1491be67e5fc31442a0e6abd7ee4d9",
-        "mistakeOverlay": "fa6dc2daf58b1cb54439ee0f396eb80fafcab842662160ad89a15eb48bdd62c6",
+        "normalSvg": "e523fd9b3df0c1d05f1ac6f3b64833bc51f7ee064b89bad720c5ff8052cb0f3a",
+        "normalOverlay": "50b393250632542937e9f9ec3a06d6b68f3528a6f553b550702aec337bbb3207",
+        "mistakeSvg": "d45d5d31eb2b1a8c17beeafc47f0b8b4b6e641e2ff1a738d532b1b744de2d63b",
+        "mistakeOverlay": "eb103af464babefc6a6e9977aa76f62e450704a14fddabdbb54606ecc968df81",
         "tells": "90e56e06fb3c38e93b319f3578d25872e0790072dd598c50b7649a65af7a2d97",
         "tempo": "ab8054e1c356e26158932de78f706f5b47374e04cc141ab7cd79685c9946bde3",
         "cues": "36c9b88769625d283cf8c977dac7c7fbd260aaf39bf522e18b165e26a5b09ed9",
@@ -158,11 +158,11 @@
       ],
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W7-PIN",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6649092340 @ 8bb433bd756fdb992e326889b26bb37204300aa5",
-      "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_standing_leg_curl's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/405#issuecomment-6699614411 @ 19ff75e72c2057dff5ac5ae78fa9dd886f183b26",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_standing_leg_curl's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108). Edited in place under D-REPIN-UNMERGED (#384 6681018514): LIB-PLATEFIX-3 (#405, train 75, 24 plates approved, 6699614411 @ 19ff75e7) redrew this plate; the W7 chain is unmerged, so its first entry carries the PF3-approved fragments.",
       "supersedes": null,
-      "prev": "9b3067d0ec95915a0596edd2c1ed78fde3151b3408766f0d1e9a7e771fe1bc3f"
+      "prev": "ce2f5846cb733ba2091a3bd2adeaeb614f738a77514f2326518ec1ac31346722"
     },
     {
       "kind": "plate",
@@ -172,13 +172,13 @@
       "prefix": "glute-bridge",
       "chromeId": "glute-bridge",
       "fragments": {
-        "normalSvg": "1625e1d25ac7f88c16923e679d55019f6995a4430ea77b79cd6482e6815c1745",
-        "normalOverlay": "06e41b97d988390259e482e19c17db39fc2faf3842632a7ee673d7b9313a55e5",
+        "normalSvg": "a752951f9a856e72facc855a4df8ca1f413a28fc2a839d21cd1b206e4c2e7c30",
+        "normalOverlay": "77a4d5fb44c840afe05d2394dbbb73eaaf7a281ad9542bb4b010b7272db162d5",
         "mistakeSvg": "76115255e11175d010ffa10fb7ede048b70f64d2ea227a9e80f779ea1faabe4c",
         "mistakeOverlay": "21e19fa5bf57ce68c2a8869111023710fa67836a7e733308770aab2575389b0e",
         "tells": "a1799d72144e501a867f57aefcfae5fe309b1708caef8b165cc57acd06d0cbe4",
         "tempo": "8c1a840e14fab09fb3181eebe48a482e98b8fab8f7e035855cb47ccee90d0474",
-        "cues": "7f8fe401ce0b98c1f6abb0b15f7036a07e8159ebabb9aa3f19d5844e5a0097bd",
+        "cues": "45acafd38a3c58f3f2762a0413797409714e9dd5f11f4abe7712a42a7da666b0",
         "alt": "aeb8c852370f1f2ea1a4da060241014d19dffb07d5006a81333377742479fab3",
         "mistakeAlt": "ff3690dbf0918831fcccdf562ac69bf38b8fec2683a8bbe749c89d4c9fb2af2d"
       },
@@ -188,11 +188,11 @@
       ],
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W7-PIN",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6649092340 @ 8bb433bd756fdb992e326889b26bb37204300aa5",
-      "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_glute_bridge's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/405#issuecomment-6699614411 @ 19ff75e72c2057dff5ac5ae78fa9dd886f183b26",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_glute_bridge's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108). Edited in place under D-REPIN-UNMERGED (#384 6681018514): LIB-PLATEFIX-3 (#405, train 75, 24 plates approved, 6699614411 @ 19ff75e7) redrew this plate; the W7 chain is unmerged, so its first entry carries the PF3-approved fragments.",
       "supersedes": null,
-      "prev": "6623bff45e95f4a1da2ff1ee823067cafbfb1cc518014168adfaa58ac215b4b1"
+      "prev": "20c2a3da0080f01c292ec086cfad20e76ed1af1d25ec289e28adc8b2152638a2"
     },
     {
       "kind": "plate",
@@ -223,7 +223,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_cable_kickback's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F3, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "ca3aeaeb484b1fed6be409ad4852ae47ad22d05bda6342e66e6aa682114a9441"
+      "prev": "6c55b127a6a2399a2ad9927ba10219bd1737d97f5c64d40f5f3f7a0c922eabf9"
     },
     {
       "kind": "plate",
@@ -252,7 +252,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_resisted_hip_flexion's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "76004ccae957d9fdb62007c7d885edf0779de77b43bfcd349406fe51476ab020"
+      "prev": "7e6f09ee016496d576d7beabaf77eb2c550642d4336e9d7ab6017428885433f8"
     }
   ]
 }
