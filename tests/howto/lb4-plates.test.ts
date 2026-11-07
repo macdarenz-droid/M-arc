@@ -135,21 +135,33 @@ describe('LIB-14 A5: lb4/rows.json holds exactly the drawn, non-held LB4 ids, al
 });
 
 describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => !['drawing', 'review'].includes(r.stage)).map(([id, r]) => `${id}: ${r.stage}`);
+  // LIB-SHIP W5 (D-SHIP-A9, ruling 3; D-SHIP-W5-FLIPSET #392 6682188871): replaces "every LB4 row is at stage drawing or
+  // review", its shipped/approved-plate mutations, "none of the 6 is shipped, even with lb4/rows.json read as a batch
+  // file", "no LB4 id ... in any batches/ file" and "no LB4 id ... in golden/library/" with the W5 ruled set as positive
+  // asserts: exactly W5's 4 LB4 ids ship; the other 8 stay approved-plate (held, goblet_squat included); every LB4 id
+  // lives in batches/lb04.json and nowhere else in batches/ (D-SHIP-MOVE).
+  const W5 = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat'];
+  const stageProblems = (rows: any[]) => drawn().map(i => `lib_${i}`).flatMap(id => {
+    const r = rows.find((x: any) => x.id === id), want = W5.includes(id) ? 'shipped' : 'approved-plate';
+    if (!r) return [`${id}: no row`];
+    return r.stage === want ? [] : [`${id}: ${r.stage}`];
+  });
   const someRow = { src: 'library/specs/wall_sit.mjs', slug: 'wall-sit', prefix: 'wall-sit', chromeId: 'wall-sit', mode: 'H', stage: 'drawing', view: 'side' };
-  it('every LB4 row is at stage drawing or review', () => {
-    expect(stageProblems(readJson(ROWS).rows)).toEqual([]);
+  it('LIB-SHIP W5: every LB4 row is at its ruled stage: W5\'s 4 shipped, the other 8 approved-plate', () => {
+    expect(stageProblems(reg.rows())).toEqual([]);
   });
-  it('mutations: one row set to shipped and one to approved-plate are red', () => {
-    const rows = readJson(ROWS).rows;
-    expect(stageProblems({ ...rows, lib_wall_sit: { ...someRow, stage: 'shipped' } })).toEqual(['lib_wall_sit: shipped']);
-    expect(stageProblems({ ...rows, lib_wall_sit: { ...someRow, stage: 'approved-plate' } })).toEqual(['lib_wall_sit: approved-plate']);
+  it('LIB-SHIP W5 reds: a W5 id back at approved-plate, a held id shipped, a held id at drawing and a dropped row are red', () => {
+    const rows = reg.rows();
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_front_squat' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_front_squat: approved-plate']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_wall_sit' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_wall_sit: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_goblet_squat' ? { ...r, ...someRow, stage: 'drawing' } : r)))).toEqual(['lib_goblet_squat: drawing']);
+    expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_wall_sit'))).toEqual(['lib_wall_sit: no row']);
   });
-  it('none of the 6 is shipped, even with lb4/rows.json read as a batch file', () => {
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
+  it('LIB-SHIP W5: the shipped LB4 ids are exactly W5\'s 4, in registry order; each drawn LB4 id is one registry row (lb04.json read once)', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W5);
+    const rows = reg.rows();
+    for (const id of drawn()) expect(rows.filter((r: any) => r.id === `lib_${id}`).length, id).toBe(1);
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
-    expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual([]);
   });
   /** An id or its slug as a whole token in a file's name or text. */
   const tokenHits = (ids: string[], name: string, text: string) => ids.flatMap(id => {
@@ -164,11 +176,20 @@ describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
     ...tokenHits(LB4, f, text),
   ]);
   const dirFiles = (dir: string): [string, string][] => (existsSync(dir) ? readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : []);
-  it('no LB4 id, slug or batch is in any tools/plates/library/batches/ file', () => {
-    expect(batchProblems(dirFiles('tools/plates/library/batches'))).toEqual([]);
+  // LIB-SHIP W5 (D-SHIP-MOVE; D-SHIP-A9, ruling 3): the two guards below were "no LB4 id, slug or batch is in any
+  // batches/ file" and "... in tests/howto/golden/library/"; the LB4 rows now live in batches/lb04.json and are pinned
+  // by golden lb04.json and its layers page, so every other file there is held to the same check, and lb04.json names
+  // each of the 12 drawn ids
+  it('LIB-SHIP W5: the LB4 ids, slugs and batch are in batches/lb04.json only, which names each drawn id (D-SHIP-MOVE)', () => {
+    const files = dirFiles('tools/plates/library/batches');
+    expect(batchProblems(files.filter(([f]) => f !== 'lb04.json'))).toEqual([]);
+    const own = files.find(([f]) => f === 'lb04.json')!;
+    expect(LB4.filter(id => tokenHits([id], own[0], own[1]).length > 0)).toEqual(drawn());
   });
-  it('no LB4 id, slug or batch is in tests/howto/golden/library/', () => {
-    expect(batchProblems(dirFiles('tests/howto/golden/library'))).toEqual([]);
+  it('LIB-SHIP W5: no LB4 id, slug or batch is in tests/howto/golden/library/ outside the lb04 pin and its layers page', () => {
+    const dir = 'tests/howto/golden/library', mine = ['lb04.json', 'lb04.layers.html'];
+    expect(batchProblems(dirFiles(dir).filter(([f]) => !mine.includes(f)))).toEqual([]);
+    for (const f of mine) expect([f, existsSync(join(dir, f))]).toEqual([f, true]);
   });
   it('mutations: rows.json copied into batches/, a golden file naming an LB4 id, a page-only lb4.json and front-squat.layers.html are red', () => {
     const rowsText = JSON.stringify({ batch: 'LB4', rows: { lib_wall_sit: someRow } }, null, 1);
@@ -226,10 +247,13 @@ describe('LIB-14 A11 (Do 6 a): the 6 cards and quotes are byte copies of the LB4
     const c = cardOf('wall_sit'); c.plate.view = 'front';
     expect(sha(canon(c))).not.toBe(cardsSha.cards.wall_sit);
   });
-  it('the How-to source of each LB4 id holds only its id and research card (D-LIB9a-HOWTOID)', async () => {
+  it('the How-to source of each LB4 id names its id and research card (D-LIB9a-HOWTOID; LIB-SHIP W5: full sheets, the one stub exact)', async () => {
     for (const id of LB4) {
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
-      expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+      // LIB-SHIP W5 (D-SHIP-A9, ruling 3): the stubs are full sheets now (W5, schema 1); each still names its id and its own
+      // card. goblet_squat has no W5 sheet, so its source stays exactly the stub (measured on this head)
+      if (id === 'goblet_squat') { expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } }); continue; }
+      expect(h, id).toMatchObject({ schema: 1, id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
   });
 });
@@ -574,12 +598,20 @@ describe('LIB-14 A8: the hold (D-LIB14-STEPUP; D-LIB14-NOSECS released for the o
     expect(hp.mutationE([])).toEqual(['held[0] (barbell_row) has no ruling']);
     expect(hp.mutationE([{ id: 'step_up', ruling: 'x' }])).toEqual(['held[0] (step_up) has no ruling']);   // a listed id: its own entry, as before
   });
-  it('every row resolves through candidateOf on the page built from rows.json (awaited child process)', async () => {
+  it('every row resolves through candidateOf on the pinned path on the page built from lb04.json; authoring is refused (awaited child process)', async () => {
     const [build, cand, golden] = await Promise.all(['lb4/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     const mirror = golden.makeMirror(), E = await qaEng.loadEngine(mirror);
     try {
       const ids = Object.keys(readJson(ROWS).rows), clean = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: ${JSON.stringify(ids)} })).html;`);
-      for (const id of ids) await expect(cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean, engine: E, authoring: true }), id).resolves.toBeTruthy();
+      // LIB-SHIP W5 (D-SHIP-A9, ruling 3; authoring QA to the pinned path): every row is approved-plate or shipped and pinned
+      // in golden lb04.json, so each resolves on the pinned path with the pin's exemptions, and authoring is refused (red)
+      const pin = readJson('tests/howto/golden/library/lb04.json').entries.filter((e: any) => e.kind === 'plate');
+      expect(pin.map((e: any) => e.id)).toEqual(ids);
+      for (const id of ids) {
+        const c = await cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean, engine: E });
+        expect(c.exemptions, id).toEqual(pin.find((e: any) => e.id === id).exemptions ?? []);
+        await expect(cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean, engine: E, authoring: true }), id).rejects.toThrow(/authoring QA is refused/);
+      }
     } finally { qaEng.dropMirror(mirror); }
   });
 });
@@ -824,7 +856,9 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
-  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W5 (D-SHIP-A9, ruling 3; authoring QA to the pinned path): wall_sit is approved-plate and pinned in golden
+  // lb04.json, so D-LIB9-AUTHORQA refuses authoring; the node half runs on the pinned candidate
+  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E });
   const MUT = (id: string) => muts.SPEC_MUTATIONS.find((m: any) => m.id.startsWith(`${id} `));
   // A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn.
   const mutated = async (fn: string, arg: any = null) => {
@@ -841,7 +875,7 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
   it('A4: pistol_squat (in rows.json since the strip release) raises F7 on its node half; its topFault set to its drawn key drops F7, so the ruled expected set fails', async () => {
     const lb4qa = await import(/* @vite-ignore */ lib('lb4/qa.mjs'));
     const P = 'lib_pistol_squat', ph = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: [${JSON.stringify(P)}] })).html;`);
-    const c = await cand.candidateOf(P, { all, platesHtml: ph, engine: E, authoring: true });
+    const c = await cand.candidateOf(P, { all, platesHtml: ph, engine: E });   // LIB-SHIP W5 (ruling 3): the pinned path
     const asReport = (r: any) => ({ id: P, flags: { ...r.flags, F2: { raised: false }, F5: { raised: true, value: 3.57 } } });
     const clean = await qa(c);
     expect([node(clean), clean.flags.F7.raised]).toEqual([[], true]);
@@ -1775,7 +1809,9 @@ describe('LIB-SPLIT A4 and A6: runQa node half on the 6 plates, H3 pinned at the
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
-  const candOf = (id: string, page = html) => cand.candidateOf(id, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W5 (D-SHIP-A9, ruling 3; authoring QA to the pinned path): the 6 rows are approved-plate or shipped
+  // (bodyweight_lunge, bodyweight_split_squat) and pinned in golden lb04.json, so the node half runs on the pinned candidate
+  const candOf = (id: string, page = html) => cand.candidateOf(id, { all, platesHtml: page, engine: E });
   /** A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn. */
   const mutated = async (id: string, fn: string, arg: any = null) => {
     const name = id.slice(4), dir = mkdtempSync(join(tmpdir(), 'lb4-split-mut-')), file = join(dir, `${name}.mjs`);
