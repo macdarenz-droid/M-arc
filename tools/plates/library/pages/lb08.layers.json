@@ -1,0 +1,46 @@
+{
+  "groups": [
+    {
+      "id": "lb8",
+      "title": "LB8",
+      "ids": [
+        "lib_hack_squat",
+        "lib_pendulum_squat",
+        "lib_leg_extension",
+        "lib_lying_leg_curl",
+        "lib_standing_leg_curl",
+        "lib_glute_bridge",
+        "lib_cable_kickback",
+        "lib_resisted_hip_flexion"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb08.closeups.mjs",
+  "closeups": {
+    "lib_hack_squat": {
+      "optionsKey": "hack_squat"
+    },
+    "lib_pendulum_squat": {
+      "optionsKey": "pendulum_squat"
+    },
+    "lib_leg_extension": {
+      "optionsKey": "leg_extension"
+    },
+    "lib_lying_leg_curl": {
+      "optionsKey": "lying_leg_curl"
+    },
+    "lib_standing_leg_curl": {
+      "optionsKey": "standing_leg_curl"
+    },
+    "lib_glute_bridge": {
+      "optionsKey": "glute_bridge"
+    },
+    "lib_cable_kickback": {
+      "optionsKey": "cable_kickback"
+    },
+    "lib_resisted_hip_flexion": {
+      "optionsKey": "resisted_hip_flexion"
+    }
+  },
+  "jump": null
+}

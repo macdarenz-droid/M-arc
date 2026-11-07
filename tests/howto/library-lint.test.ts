@@ -367,11 +367,14 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
       const BB = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), BACK = BB.backBox();
       const boxOf = (f: string) => (f === 'back' ? BACK : shared[CL.RED_FLAG_BLOCKS[f].exp]);
       for (const f of c.riskFlags ?? ['wrist']) expect(boxOf(f), `${r.id} ${f}`).toBeDefined();
-      const boxes = Object.fromEntries((c.riskFlags ?? ['wrist']).map((f: string) => [`RED_FLAG_${f.toUpperCase()}`, boxOf(f)]));
+      // LIB-SHIP W7 (D-SHIP-W6-NOREDFLAG, #393 6648157060; #394 6648497703): a riskFlags: [] row shows no box, so C19 checks
+      // every shared box and the back box, and the row is red when its card names a red flag
+      const boxes = (c.riskFlags ?? ['wrist']).length ? Object.fromEntries((c.riskFlags ?? ['wrist']).map((f: string) => [`RED_FLAG_${f.toUpperCase()}`, boxOf(f)]))
+        : C3L.allSharedBoxes(shared, BACK);
       const bad = [
         ...checkC1(c, known), ...checkC2(c), ...checkC4(c), ...checkC7(c),
         ...(r.mode === 'golden' ? checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '')
-          : (card => [...C3L.checkC3Library(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '', { list: noZoom, card, gapKeyOf }), ...C3L.checkGripLibrary(c, card)])(
+          : (card => [...C3L.checkC3Library(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '', { list: noZoom, card, gapKeyOf }), ...C3L.checkGripLibrary(c, card), ...C3L.noRedFlagProblems(c, card)])(
             JSON.parse(readFileSync(join(ROOT, c.research.card), 'utf8')))),
         ...checkC8(c, SOURCES), ...checkC15(c, plate, reviews), ...checkC16(c),
         ...C19.checkC19Copy(L.shownCopyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),

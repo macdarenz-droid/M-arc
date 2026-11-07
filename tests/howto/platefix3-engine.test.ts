@@ -62,7 +62,8 @@ describe('PF3 E1/E2 MANIFEST re-pin', () => {
     const sha = (p: string) => createHash('sha256').update(readFileSync(p)).digest('hex');
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
     const rows = Object.entries<any>(m.rows);
-    expect(rows).toHaveLength(35);
+    // LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows; each is checked below too
+    expect(rows).toHaveLength(35 + 29);
     for (const k of ['tools/plates/library/render/closeup/zoom.mjs', 'tools/plates/library/build-layers-page.mjs'])
       for (const [id, r] of rows) expect(r.files[k], `${id} ${k}`).toBe(sha(k));
   });

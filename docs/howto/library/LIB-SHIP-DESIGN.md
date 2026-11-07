@@ -1027,3 +1027,558 @@ slots are the spec's callouts and mistake tells (cue text). Card posture points 
 | horizontal_leg_press | 3 handlingMistakes | mistakes[0-2] | c7, c4 c2 c1, c6 |
 
 Moved: 10 claims across 8 ids. None failed to fit. Every moved line passes the copy lint and the word caps; inherited leaves are unchanged.
+
+## 17. W7 PLAN (base main 8bb433bd, train 67, with W2 #379 @ 84360f00 merged to build ahead)
+
+W7 is 29 rows: lb8/rows.json (8), lb9/rows.json (9) and lb10/rows.json (12) move into `batches/lb08.json`,
+`batches/lb09.json` and `batches/lb10.json` (D-SHIP-MOVE as amended by Q-W2-10). The other 10 named rows get stage
+`left-out:D-OWNER-LIB142` (ruling 14; placement Q-W7-7). Section 17 numbers past W3's section 11 so the lanes' sections
+never collide. Columns were read from each card, lbN/qa.mjs `EXPECTED`, `hands/*.mjs` IDS/GAPS (pairs.mjs indexOf) and
+`hands/no-zoom.json` on this base (scratch script, not committed). GRIP uses the section 10 key, plus `b2` (#379
+6628848012: a card with archetype.hand `none` that names a body contact). Posture zooms use the section 11 (W3) key:
+`M` = the card's Wrong is the plate's drawn Mistake, `DV` = a one-joint drawing value from the plate's poses (no number in
+copy), `T` = a text checkpoint (D-SHIP-TEXTZOOM; LR-25 null Wrong, equipment placement, rotation unseen in the view, or a
+timing fault). Every T and every handlingMistake goes to an existing visible slot (D-TEXT-GOLDEN); the per-id inventory
+comes with LAYERS READY. Flags are each id's EXPECTED minus F5; all raised ones are approved by D-OWNER-FLAGS.
+
+| id | file | tier | arch. | GRIP | hand zoom (card) / no-zoom entry | posture zooms | flags | way-out (A) | other |
+|---|---|---|---|---|---|---|---|---|---|
+| hack_squat | lb08 | B | balance | b (type c18) | — | back-pad M; knee-lock DV (knee ext at top); feet-plate T | — | — | back box: needs R6 |
+| pendulum_squat | lb08 | B | balance | b (type c16) | — | heels-flat M; knee-track T (knees caving is not seen from the side) | F7 | — | — |
+| leg_extension | lb08 | C | balance | b (type, width c3) | — | top DV (knee ext); knee-pivot T, shin-pad T (null Wrong) | — | — | back box: needs R6 |
+| lying_leg_curl | lb08 | C | balance | b (type, width c5) | — | hips-pad DV (pelvis lift); knee-axis T (null), roller T (equipment place) | F7 | — | back box: needs R6; parent of standing_leg_curl (first in lb08.json) |
+| standing_leg_curl | lb08 | C | balance | b (type, width c2) | — | knee-steady DV (thigh forward); top DV (knee flexion short); pad-heel T (null) | F7 | — | card parent lying_leg_curl, inherit [] (no map entry); back box: needs R6 |
+| glute_bridge | lb08 | C | none | b2 (contact c1; barbell type/width c14) | — | spine-top M; heels-down T (null) | F2 | — | variant line required (section 7); back box: needs R6 |
+| cable_kickback | lb08 | C | balance | b (type c2, c4) | — | braced-back M; hips-square T (hip twist is not seen from the side) | F2, F3 | — | back box: needs R6; selector-pin card applies |
+| resisted_hip_flexion | lb08 | C | balance | b (type c1, c2) | — | torso-upright M; ankle-cuff T (null) | — | — | variant line required; back box: in |
+| ab_wheel_rollout | lb09 | A | push | b (type, width c1) | — (GAP ab-wheel, unused: NoHandling) | back-line M; range T (null) | — | gap → safety checker | `core` in feel.primary → textOnly (D-SHIP-Q7); no hint (no cue); back box: in |
+| bird_dog | lb09 | C | palm-flat | a-values (push_up form) | hands (no Wrong) → gap-ruled D-SHIP-HANDW7 (**Q-W7-3**) | back-line M; head DV (neck ext) | F1, F3 | — | back box: needs R6 |
+| side_plank | lb09 | C | none | b2 (contact c1, c3) | — | hip-line M; shoulder DV (scap elevation), front view | F1, F7 | — | `core` secondary → textOnly; knee box |
+| superman | lb09 | C | none | none | — | neck M; lift-height DV (lumbar ext) | F2, F3 | — | back box: needs R6 |
+| cable_crunch | lb09 | B | on-body | c (contact c2; thumb, wrist none; no convention) → **Q-W7-5** | rope (GAP rope, hand-rope.mjs:34) | hips M | F2, F3 | — | GAP reason "no research card" is stale (card exists): follow-up F-GAP-REASONS; back box: needs R6 |
+| hollow_body_hold | lb09 | C | none | b2 (contact c1) | — | leg-height M; low-back DV (lumbar ext); head DV (neck ext) | F2 | — | parent of v_up (first in lb09.json); back box: needs R6 |
+| reverse_crunch | lb09 | C | none | b2 (contact c1, c19) | — | knees M; low-back DV (lumbar ext); hips DV (pelvis curl short) | F1 | — | card parent crunch (held in W2), inherit [] → **Q-W7-9**; back box: needs R6 |
+| dead_bug | lb09 | C | none | b2 (contact c3, c4) | — | low-back M; neck DV (neck flex) | F1 | — | back box: needs R6 |
+| v_up | lb09 | B | none | b2 (contact c1, c3) | — | low-back M; top-reach T (legs flopping is not a pose) | — | — | card parent hollow_body_hold, inherit [] (no map entry); back box: needs R6 |
+| kettlebell_swing | lb10 | A | implement | b (type, width c2; orientation c3; thumb/contact/wrist say "not stated/not copied") → **Q-W7-1** | kb-grip (GAP implement, hand-implement.mjs:5) → text | kb-top M; kb-back DV (lumbar flex) | — | gap → safety checker | back box: needs R6 |
+| high_knees | lb10 | C | none | none | — | knee-height M; ball-of-foot T (null) | — | — | `core` secondary → textOnly; no red flag |
+| jump_rope | lb10 | B | implement | c (contact c2, wrist c5; thumb none; key GAP: thumb-and-index is no ThumbMode) → **Q-W7-5** | grip (GAP implement, hand-implement.mjs:6) | hop M; elbows DV (shoulder abduction), front view | F3 | — | wrist box |
+| battle_ropes | lb10 | C | implement | b (type c4, c14) → **Q-W7-2** | rope-grip (no Wrong; key battle-rope draws it, unused) → text | shoulder-blades M | F2 | — | `core` secondary → textOnly; no red flag; D-LIB12FIX-ROPE camera moot under Q-W7-2 |
+| sled_pull | lb10 | B | pull | c (wrist c4; thumb, contact none) → Q-W3-4 form (**Q-W7-4**) | rope-grip (GAP implement, hand-implement.mjs:7) | torso-stack M | — | — | `core` secondary → textOnly; back box: in |
+| burpee | lb10 | B | palm-flat | a-values (push_up form) | hands (no Wrong) → gap-ruled D-SHIP-HANDW7 (**Q-W7-3**) | landing M; plank DV (lumbar ext) | F7 | — | knee, wrist boxes |
+| bear_crawl | lb10 | C | palm-flat | a-values (push_up form; wrist c11 own) | hand-under-shoulder (no Wrong) → gap-ruled D-SHIP-HANDW7 (**Q-W7-3**) | hip-line M | F1 | — | wrist box |
+| sled_push | lb10 | B | push | b (type, width c1) → **Q-W7-1** | hands (no Wrong, no key) → text | back M; feet DV (ankle) | — | — | no hint (no cue); scratch target (**Q-W7-8**); back box: needs R6 |
+| medicine_ball_slam | lb10 | A | implement | b (type c15; thumb/contact/wrist "not given") → **Q-W7-1** | ball-grip (no Wrong; GAP ball-contact, hand-ball-contact.mjs:28) → text | slam-hips M; pickup-back DV (lumbar flex) | F7 | gap → safety checker | back box: needs R6 |
+| farmer_s_carry | lb10 | A | hold | c (thumb, contact c13; wrist none) → Q-W2-9 hold-default form (**Q-W7-4**) | grip → gap-ruled D-SHIP-HANDW7 (no key holds a carry handle; wrist unsourced) | shoulders DV (scap elevation); torso DV (trunk flex) | F7 | fall gap → safety checker (the set-down c15, c16 is on the sheet) | variant line required; gate seeds it (6 lines); back box: needs R6 |
+| jumping_jacks | lb10 | C | none | none | — | toes-forward M; landing-knees DV (knee ext), front view | F7 | — | no red flag; scratch target (**Q-W7-8**) |
+| wall_ball | lb10 | A | implement | c (contact c9; thumb, wrist "not given") → **Q-W7-5** | catch-hands (GAP ball-contact, hand-ball-contact.mjs:28) | wall-distance M; catch-timing T (a timing fault) | — | gap → safety checker | shoulder box |
+
+Counts: 29. GRIP: none 3, b2 6, b 12 (incl. 3 under Q-W7-1, 1 under Q-W7-2), a-values 3, c 5 (2 with a precedent, 3
+without, cable_crunch among them). **No W7 row draws a hand pair**, so W7 adds no handpair- chunk or budget. No-zoom
+entries: 4 gap-ruled (D-SHIP-HANDW7: bird_dog, burpee, bear_crawl, farmer_s_carry), 1 gap-key (sled_pull), plus up to 3
+gap-key under Q-W7-5. Every id keeps at least one drawn posture zoom (M or DV), so none waits on F-ZOOM-NONE. `core` in a
+feel role: 5 ids, all textOnly (D-SHIP-Q7). Variant lines: glute_bridge, resisted_hip_flexion, farmer_s_carry. Hints:
+none (the two push ids are NoHandling), so ids.ts gains no text. Inherit: all 29 cards have `inherit: []`, so W7 adds no
+INHERIT_MAP entry and the family check returns null for each (family.mjs:73); parents come first in their batch file.
+Red flags: back 20, knee 7, wrist 3, shoulder 1, none 3. Boxes exist for knee, wrist and shoulder (layers/howto/shared.mjs).
+**17 back-linked ids are outside the back box's appliesTo** (marked "needs R6"); ruling 6's appliesTo edit is not yet on
+claude/libht-research (appliesTo still 35 at 0393aac9). W7 builds ahead; its flip waits for that edit on main.
+Gate: lib_farmer_s_carry is seeded by 6 lines (screenshot-gate.mjs:4861, :8729, :8764, :8832, :9388, :9450); "Ab Wheel
+Rollout" and "Cable Crunch" are named in workout seeds (:4070-4078). Any change is settled in the add-only LIB-SHIP block.
+
+**Way-out (tier A, D-SHIP-WAYOUT / Q-W2-3).** ab_wheel_rollout (can't roll back), kettlebell_swing (set-down, lost grip),
+medicine_ball_slam (lost grip overhead, rebound), wall_ball (missed catch), farmer_s_carry (dropping in a fall; the
+controlled set-down c15, c16 is sourced and goes on the sheet). None is in a shared move card's appliesTo (unrack-rerack,
+get-in-out, selector-pin read on this base). Each is a safety-checker item in the W7 layers review; no or unsure → S3.
+
+**Pallof_press (design open item).** It never ships (D-OWNER-LIB142): stage `left-out:D-OWNER-LIB142` in lb09.json.
+content.test.ts:246's C6 fixture drops lib_pallof_press from a good set and stays valid; crop-projection.test.ts:28 reads
+its spec only. Both re-run on the W7 head. No hold needed.
+
+**Order of work after the ruling.** Q6-form local scratch flip of the 29 first (every red listed); then the moves with the
+A9 guard replacements (lb8-plates.test.ts:200, lb9-plates.test.ts:977/:1037/:2067, lb10-plates.test.ts:273/:1059) and the
+scratch swaps (Q-W7-8) in the same push; sheets; LAYERS READY for lb08, lb09, lb10 pages; panel; stamps; flip (after R6's
+appliesTo is on main); generate; budgets at N; QA; merge main once W2-W6 land; READY.
+
+### W7 questions (for 'SHIP W7 PLAN RULED')
+
+- **Q-W7-1 GRIP (b) where the card fields say "not given".** kettlebell_swing and medicine_ball_slam fill
+  grip.thumb/handContact/wrist with "Not stated …"/"Not given …" strings, not claims (kettlebell contact names only the
+  handle tilt, c3, an orientation). sled_push leaves all three empty. **Proposal:** NoHandling, why D-SHIP-GRIP (b); the
+  card's type, width and orientation claims go on setup lines; checkGripLibrary reads a field as a claim only when it
+  cites a cN, so a "not given" string is no claim (red: a cN added to one is refused under (b)). Each card's hand zoom
+  becomes text (D-TEXT-GOLDEN): Right on a setup line, kettlebell's Wrong "Crush grip on the handle." as a setup
+  instruction citing the zoom's claims. Other option: S3 for each.
+- **Q-W7-2 battle_ropes.** The battle-rope key draws it (neutral, forearm 180, "Seen from above"), but its only fault,
+  "Too tight", cites shared/implement-battle-ropes.json c4, while the card's grip note says "No source on grip pressure"
+  and its hand zoom has no Wrong. F-PAIR-FAULTS' cardSupports refuses the fault (it cites no claim of the card).
+  **Proposal:** GRIP (b): NoHandling, "Handshake grip on each rope end" (c4, c14) on a setup line; hand-battle-rope.mjs
+  stays byte-equal and unused; D-LIB12FIX-ROPE stays deferred as a later-update follow-up (F-ROPES-PAIR). This needs no
+  camera choice from the owner. Other option: draw the full key with the shared card's fault (contradicts the card note).
+- **Q-W7-3 Palm-flat trio (bird_dog, burpee, bear_crawl).** The palm-flat key lists them, but its faults cupped-palm
+  (shared c2) and hand-ahead (shared c3, mountain_climbers c6) cite no claim of these cards, and each card's hand zoom
+  has no Wrong, so pairFaults cannot be set (pairs.mjs:369, :380). **Proposal:** push_up's form (W2): handling values
+  copied from the key with each value's key line, cited CONVENTION (source hand-key-palm-flat), never printed
+  (D-SHIP-CONVCOPY); the card's own claims (bird_dog contact c2, burpee contact c2, bear_crawl wrist c11) stay the cited
+  fields; hand zoom gap-ruled **D-SHIP-HANDW7** ("the key's faults are not supported by the card; the card's hand zoom has
+  no Wrong"), its Right line in gripLine. Reds: a key value edited; the gap entry removed. Other option: S3.
+- **Q-W7-4 Conventions with a precedent.** sled_pull: contact `finger-base` from `ga:pull-base` and thumb `wrapped` from
+  golden B's pull default (Q-W3-4 form), wrist from c4 "firm" with ext from ga:pull-base (0 to 25), derived pin + red;
+  gap-key (hand-implement.mjs:7). farmer_s_carry: wrist from the hold default as cable_fly (Q-W2-9), no wrist claim,
+  derived pin + red; hand zoom gap-ruled D-SHIP-HANDW7 (no key draws a carry handle). **Proposal:** accept both.
+- **Q-W7-5 GRIP (c) with no convention: cable_crunch, jump_rope, wall_ball.** Each card claims a contact (and jump_rope a
+  wrist), but no source places the thumb (and wall_ball the wrist), no GA convention covers on-body or implement thumbs,
+  and each hand key lists the id in GAPS. HandlingSpec requires thumb, contact and wrist (content-types.ts). **Proposal
+  (b3):** NoHandling with why D-SHIP-GRIP (b3), each claimed hand field on a cited setup or grip-copy line (b2's check
+  extended to these 3 listed ids only, never a blanket rule), the hand zoom's Right and Wrong as text; reds: an unlisted
+  non-none id under (b3); an uncited claim. Other options: (i) wrist `exempt` plus an invented thumb mode (no: guessing);
+  (ii) S3 hold, the 3 ids to the owner's later-update list.
+- **Q-W7-6 Way-out.** The 5 tier-A ids above go to the safety checker in the W7 layers review (Q-W2-3 form).
+  **Proposal:** accept; farmer_s_carry's sourced set-down (c15, c16) is its way-out line.
+- **Q-W7-7 Where the other 10 left-out rows go.** lb08.json: seated_calf_raise, standing_calf_raise,
+  bodyweight_calf_raise, hip_thrust (lb8/build.mjs:69 HELD); lb09.json: pallof_press, russian_twist, flutter_kicks
+  (lb9/build.mjs:70 HELD) and bicycle_crunch (lb9/qa.mjs:48; no spec); overhead_cable_triceps_extension (LB5,
+  lb5-plates.test.ts:49) and cable_rear_delt_fly (lb7/build.mjs:69 HELD) belong to W5's lb05.json and W6's lb07.json.
+  **Proposal:** W7 adds those 2 rows to lb05.json and lb07.json after W5 and W6 merge (W7 merges last), one row each,
+  nothing else in those files; the rows use each build's heldData row form plus the stage, with no pages and no pin
+  (D-SHIP-LEFTOUT-CLOSURE path, as leg_press_calf_raise). The HELD maps stay (held plate pages are their own tests);
+  the build that reads the batch file skips `left-out:` rows. Other option: W5 and W6 add their own left-out row.
+- **Q-W7-8 Scratch targets (ruling 15).** jumping_jacks and sled_push are LIB-4c targets (ci/scratch.mjs:21, :25). W4
+  (one_arm_dumbbell_row, t_bar_row, landmine_row) and W6 (smith_machine_incline_press) swap theirs too, and each needs a
+  distinct never-shipping id outside LB1 (setProblems). **Proposal (one assignment for all lanes):** W7 jumping_jacks →
+  lib_hip_thrust, sled_push → lib_flutter_kicks; the supervisor gives W4 and W6 three and one of russian_twist,
+  bicycle_crunch, pallof_press, seated_calf_raise, standing_calf_raise, bodyweight_calf_raise,
+  overhead_cable_triceps_extension, cable_rear_delt_fly. Each swap lands in the push that moves its row, with the fixture
+  test re-run and the changed lines listed.
+- **Q-W7-9 reverse_crunch's card parent crunch is held** (W2 Q6, F-PLATE-ZOOMCSS merged in train 67). reverse_crunch's
+  inherit[] is empty, so no copy is inherited and familyRefusal returns null. D-LIB10-PARENTS ties the card parent to
+  "copy inheritance and the comparator" only. **Proposal:** reverse_crunch ships in W7 whether or not crunch has
+  shipped by then. Other option: hold it with crunch.
+- **Q-W7-10 Plate pins.** **Proposal:** the D-LIB-LB1ZOOM form: the supervisor rebuilds main's lb08, lb09, lb10
+  build-ahead plates pages twice and posts PIN GO with each sha; the batch pins' exemptions cite D-OWNER-FLAGS; the
+  "nothing ships" guards turn red only at the flip and are replaced there (ruling 3).
+- **Q-W7-11 Back box (ruling 6).** 17 W7 ids need the appliesTo edit, which is not yet on the research branch.
+  **Proposal:** no change to W7; the flip commit waits for that edit on main, and LAYERS READY lists the box text each
+  of the 17 shows.
+
+### 17.1 W7 layers evidence (LAYERS READY)
+
+Rulings applied: SHIP W7 PLAN RULED (#394 6647954465), QUESTION 1 (no shared move steps, F-SHARED-MOVES), QUESTION 2
+(D-SHIP-W7-NOREDFLAG = D-SHIP-W6-NOREDFLAG plus the card-flag red; D-SHIP-W7-WRISTPTR), D-FEEL-MEANS-CAUSAL (#385).
+
+**Layers pages** (`tests/howto/golden/library/<batch>.layers.html`, two builds each, equal sha256; not pinned until the
+panel), after the pre-panel copy pass (#394 6648618730): lb08 `f5f14a4797ab152850be8f59e6a589615ee426652a81813017e471667c95f8b8`
+(8 ids, 1,614,814 B); lb09 `45bedf3de851880b32d1b685b75d1cfcde0fb1b1142e94035617db893fcf82e4` (9 ids, 1,978,444 B); lb10
+`81fd2d2ceeea3b9d54de244567b3cf5b97c65828c8e9be854c91a3d1a7b119ab` (12 ids incl. battle_ropes, held for the owner; 2,282,291 B).
+Plates pages rebuilt from the moved rows equal main 8bb433bd's build-ahead pages (lb8 95e9a1fe…, lb9 52bb57fd…, lb10 3459ad2d…).
+
+**(b3) pin table** (tests/howto/checks/c3-library.ts B3_PINS; reds in lib-ship.test.ts "D-SHIP-W7-B3"):
+
+| id | thumb | handContact | wrist | grip.claims cited on setup/posture |
+|---|---|---|---|---|
+| cable_crunch | — | claim c2 | — | c2 |
+| jump_rope | — | claim c2 | claim c5 | c2, c5, c8 |
+| wall_ball | none (card bytes) | claim c9 | none (card bytes) | c1, c9 |
+| kettlebell_swing | none (card bytes) | claim c3 (an orientation) | none (card bytes) | c2, c3, c4, c24 |
+| medicine_ball_slam | none | none | none | c15, c1 |
+
+**Shared move steps (D-SHIP-W7-MOVES, QUESTION 1 ruled):** none on any W7 sheet. Named but not shown: get-in-out on
+hack_squat, leg_extension, lying_leg_curl; selector-pin on leg_extension, cable_kickback, cable_crunch (F-SHARED-MOVES).
+
+**Generated files.** generate.mjs on a scratch flip stops at the first missing pin chain ("no batch golden file
+tests/howto/golden/library/lb08.json"): the plate pins wait for PIN GO, so no generated file list exists yet. No W7 row
+can produce a handpair chunk: pairsOf gives the 4 no-zoom ids and sled_pull no pair (lib-ship.test.ts "D-SHIP-HANDW7",
+with the held battle_ropes as the control that would pair); the b/b2/b3/none rows are archetype none. The list is
+re-derived at the flip and a new handpair-*.ts from W7 is red there.
+
+**Back box (17 ids, flip waits for ruling 6 on main).** Each of hack_squat, leg_extension, lying_leg_curl,
+standing_leg_curl, glute_bridge, cable_kickback, bird_dog, superman, cable_crunch, hollow_body_hold, reverse_crunch,
+dead_bug, v_up, kettlebell_swing, sled_push, medicine_ball_slam and farmer_s_carry shows the owner-approved back box
+(shared/back-box.mjs backBox(), 50 words): "Pain, numbness, tingling or weakness in both legs? Numb genitals or anus?
+Bladder, bowel or sexual changes? Chest pain? Serious accident? Get emergency help now. Sudden severe or fast-worsening
+pain? Hot, cold, shivery or unwell? See a doctor today." / "No better in a few weeks? See a doctor." (nhs-back).
+
+**No red flag (D-SHIP-W7-NOREDFLAG):** high_knees, battle_ropes, jumping_jacks (`riskFlags: []`, card redFlags []);
+the sweep checks every shared box plus the back box for them; red: `[]` on a card that names a flag.
+
+**Way-out (safety checker, Q-W7-6):** ab_wheel_rollout (wall range limiter c7, setup 5; card wayOut null),
+kettlebell_swing (c20, c21 low-back row and setup 5; c24 setup 5 and a risk), medicine_ball_slam (card wayOut null; no
+line), wall_ball (card wayOut null; no line), farmer_s_carry (set-down c15, c16 on the `hands` feel row).
+
+**Helper-recorded doubts for the panel:** pendulum_squat's card says `plate.mistake.drawable: false` but its approved
+plate draws the heel lift (used as M); lying_leg_curl hips-pad DV slides the chest ~5 cm along the pad; standing_leg_curl
+knee-steady draws only the backward half of c6; side_plank shoulder DV (scap elev 6 cm) is modest; superman lift-height
+lifts chest and arms only (one lumbar joint); hollow_body_hold head and reverse_crunch low-back fell to T (the arms hide
+the drawn joint); jumping_jacks landing-knees fell to T (front view: knee bend under 1 cm of hip travel); the low-back
+arches of dead_bug, v_up and hollow read but are small at panel size.
+
+#### D-TEXT-GOLDEN inventory (claim → visible slot)
+
+| id | claim | slot | claim ids |
+|---|---|---|---|
+| hack_squat | P Back and hips on the pad | setup[1], zoom back-pad Right, plate cue back | c2 |
+| hack_squat | P Knees in line with your toes | setup[2] | c13 |
+| hack_squat | P Push through your whole foot | setup[4] | c6 |
+| hack_squat | P Slight knee bend at the top | zoom knee-lock Right, copy.cueLine, plate cue soft | c7 |
+| hack_squat | P Hold the handles. Don't push with your arms | setup[3] | c18 |
+| hack_squat | T feet-plate Right: Feet shoulder-width, middle of the plate | setup[2], posture feet | c12, c9 |
+| hack_squat | T feet-plate Wrong: Feet too high on the plate | feel row low-back means (as a fault), posture feet | c12, c9 |
+| hack_squat | HM Lower back off the pad | zoom back-pad Wrong, feel row low-back, risks[back], posture lift | c8, c9, c2 |
+| hack_squat | HM Cutting the squat short | copy.mistakeLine, posture short | c5 |
+| hack_squat | HM Feet too close together | feel row knee means, risks[knees], posture narrow | c12 |
+| pendulum_squat | P Back against the pad | setup[2], plate cue back | c3 |
+| pendulum_squat | P Torso upright | setup[4] | c5 |
+| pendulum_squat | P Knees over the toes | feel row knee fix, plate cue knees | c6 |
+| pendulum_squat | P Heels flat | zoom heels-flat Right | c9 |
+| pendulum_squat | P Extend fully at the top, without locking out hard | copy.cueLine | c21 |
+| pendulum_squat | T knee-track Right: Knees in line with the toes | feel row knee fix, posture knee-track | c8 |
+| pendulum_squat | T knee-track Wrong: Knees caving inward | feel row knee means (as a fault), risks[cave] | c8 |
+| pendulum_squat | HM Dropping into the bottom | copy.mistakeLine, posture drop | c10, c20 |
+| pendulum_squat | HM Heels lifting off the platform | zoom heels-flat Wrong, risks[heels], posture heels | c15 |
+| pendulum_squat | HM Knees cave inward | feel row knee, risks[cave], posture knee-track | c8 |
+| leg_extension | P Brace your abs. Keep your back on the pad | setup[4], feel row low-back fix, plate cue back | c4 |
+| leg_extension | P Lift with your quads. Don't kick | setup[5], copy.mistakeLine | c9 |
+| leg_extension | P Straighten your legs without locking your knees | zoom top Right, plate cue soft | c7, c8 |
+| leg_extension | P Pause briefly at the top | copy.cueLine | c18 |
+| leg_extension | P Lower slowly with control | copy.cueLine | c11 |
+| leg_extension | P Breathe out as you lift, in as you lower | setup[5] | c12 |
+| leg_extension | T knee-pivot Right: Knee level with the machine's pivot | setup[1], plate cue pivot, posture pivot | c1 |
+| leg_extension | T shin-pad Right: Pad on the lower shins, just above the ankles | setup[2], posture shin-pad | c2 |
+| leg_extension | HM Arching your back | feel row low-back means, risks[arch], posture arch | c5, c6, c4 |
+| leg_extension | HM Locking knees at the top | zoom top Wrong, risks[lock], posture top | c8, c7 |
+| leg_extension | HM Kicking up with momentum | copy.mistakeLine, posture kick | c9, c10 |
+| lying_leg_curl | P Knees start nearly straight, not forced locked | copy.setupLine | c6 |
+| lying_leg_curl | P Hips stay on the pad the whole set | setup[4], zoom hips-pad Right, plate cue hips | c5, c8 |
+| lying_leg_curl | P Abs braced. Don't arch your lower back | feel row low-back fix, plate cue back | c9 |
+| lying_leg_curl | P Curl toward your glutes. Stop before your hips lift | setup[5] | c7 |
+| lying_leg_curl | P Breathe out as you curl, in as you lower | setup[5] | c12 |
+| lying_leg_curl | P Lower under control. Don't let the stack touch | copy.cueLine | c11 |
+| lying_leg_curl | T knee-axis Right: Knee in line with the machine's axis | setup[2], plate cue axis, posture axis | c1 |
+| lying_leg_curl | T roller Right: Roller on the lower calf, just above the heel | setup[3], posture roller | c3, c4 |
+| lying_leg_curl | T roller Wrong: Roller pressing into the heel or Achilles tendon | copy.mistakeLine (as a mistake), posture roller | c3, c4 |
+| lying_leg_curl | HM Knees off the machine's axis | copy.mistakeLine, risks[axis], posture axis | c2, c1 |
+| lying_leg_curl | HM Arching your lower back | feel row low-back, risks[arch], posture arch | c9, c10 |
+| lying_leg_curl | HM Hips lifting off the pad | zoom hips-pad Wrong, posture hips | c8 |
+| standing_leg_curl | P Keep your upper body still | setup[3], plate cue still | c3 |
+| standing_leg_curl | P Keep your knee steady as you curl and lower | zoom knee-steady Right, plate cue knee | c6 |
+| standing_leg_curl | P Curl until your foot is higher than your knee | setup[4], zoom top Right, plate cue foot | c4 |
+| standing_leg_curl | P Hold the top for a second | setup[4] | c16 |
+| standing_leg_curl | P Lower slowly and straighten the leg fully | setup[5] | c5, c4 |
+| standing_leg_curl | P Control the weight. Don't swing your leg | copy.cueLine, risks[load] | c9 |
+| standing_leg_curl | T pad-heel Right: Pad just above the heel | setup[1], posture pad | c1 |
+| standing_leg_curl | HM Dropping the weight down | copy.mistakeLine, posture drop | c7, c5 |
+| standing_leg_curl | HM Arching your lower back | feel row low-back, risks[arch], posture arch | c13 |
+| standing_leg_curl | HM Cutting the range short | zoom top Wrong, posture top | c8 |
+| glute_bridge | P Breathe out as you lift, in as you lower | setup[4] | c3 |
+| glute_bridge | P Press your heels into the floor | posture heels (T heels-down) | c3, c11 |
+| glute_bridge | P Drive with your hips, not your feet | posture drive | c9 |
+| glute_bridge | P Shoulders, hips and knees in a straight line at the top | posture line, zoom spine-top Right | c4 |
+| glute_bridge | P Squeeze your glutes and hold the top for a second | setup[5] | c5 |
+| glute_bridge | P Knees in line with your toes | posture knees (with c1's toes facing away) | c12 |
+| glute_bridge | T heels-down Right: Feet flat, heels pressing into the floor | posture heels (Wrong null, LR-25) | c1, c3 |
+| glute_bridge | HM Overarching the lower back | posture back (Q-W2-12; fix is the detail), zoom spine-top Wrong | c7, c6, c2 |
+| glute_bridge | HM Feet in the wrong place | posture feet (Q-W2-12; fix is the detail) | c8, c4 |
+| glute_bridge | HM Pushing the hips too high | posture line (Q-W2-12; fix is the detail) | c6, c4 |
+| cable_kickback | P Brace and keep your body still | setup[5] | c4 |
+| cable_kickback | P Pull your belly button in to keep your back flat | posture back, zoom braced-back | c8 |
+| cable_kickback | P Keep the working leg long, knee slightly bent | posture leg | c5 |
+| cable_kickback | P Drive the leg back as far as you can | posture drive | c6, c13 |
+| cable_kickback | P Squeeze your glute and pause for a second at the top | posture squeeze | c6 |
+| cable_kickback | P Return slowly | posture return | c6 |
+| cable_kickback | T hips-square Right: Hips level, toe pointing straight down | posture hips | c10 |
+| cable_kickback | T hips-square Wrong: Hips twisting to lift the leg higher | posture hips detail (shown as the 'hips' detail) | c10 |
+| cable_kickback | HM Not bracing, lower back arching | posture back (Q-W2-12) | c7 |
+| cable_kickback | HM Swinging the leg | posture swing (Q-W2-12) | c9, c8 |
+| cable_kickback | HM Twisting the hips | posture hips (Q-W2-12) | c10 |
+| resisted_hip_flexion | P Upright, core tight | posture upright, zoom torso-upright | c3, c6, c13, c14 |
+| resisted_hip_flexion | P Hips level and square | posture hips | c6 |
+| resisted_hip_flexion | P Standing leg steady | posture stance | c12 |
+| resisted_hip_flexion | P Knee travels straight forward | posture knee | c6, c2 |
+| resisted_hip_flexion | T ankle-cuff Right: Cuff around the ankle, slight cable tension | posture cuff (Wrong null, LR-25) | c1, c2 |
+| resisted_hip_flexion | HM Leaning back to lift higher | posture upright (Q-W2-12) | c7, c12, c5 |
+| resisted_hip_flexion | HM Swinging the leg up | posture swing (Q-W2-12) | c7, c6, c3 |
+| resisted_hip_flexion | HM Letting the stack slam down | posture slam (Q-W2-12) | c7, c4 |
+| ab_wheel_rollout | P Roll out slowly | posture slow | c2, c5 |
+| ab_wheel_rollout | P Knees to head in one straight line | posture line, zoom back-line Right | c2 |
+| ab_wheel_rollout | P Low back doesn't arch | posture back, zoom back-line Wrong | c3 |
+| ab_wheel_rollout | P Start with your core, not your arms | posture core | c5 |
+| ab_wheel_rollout | P Pull back with your lats, under control | posture return | c4 |
+| ab_wheel_rollout | T range Right: Short roll-out you fully control | posture range (Wrong null, LR-25) | c7 |
+| ab_wheel_rollout | HM Low back arching at the far end | posture back (Q-W2-12) | c3, c7 |
+| ab_wheel_rollout | HM Rolling out too fast | posture slow (Q-W2-12) | c5, c2 |
+| ab_wheel_rollout | HM Starting with the standing version | posture standing (Q-W2-12) | c6, c7 |
+| bird_dog | P Back flat: no sagging or arching | zoom back-line Right, setup[5], plate cue flat | c3 |
+| bird_dog | P Raise the limbs only as high as you can hold your low back | mistakes[0] fix | c7 |
+| bird_dog | P Keep your hips and shoulders level | plate cue level, mistakes[2] fix | c4, c5, c12 |
+| bird_dog | P Move slowly and keep breathing | copy.setupLine | c10, c13 |
+| bird_dog | P Head in line with your spine, eyes on the floor | zoom head Right, mistakes[1] fix | c6 |
+| bird_dog | P Press the floor with your unmoving hand, knee and toes | mistakes[2] fix | c11, c12 |
+| bird_dog | HM Arching the lower back as the leg rises | mistakes[0] (zoom back-line), copy.mistakeLine | c8, c7 |
+| bird_dog | HM Lifting your head to look forward | mistakes[1] (zoom head) | c9, c6 |
+| bird_dog | HM Hips tilting or rotating | mistakes[2] | c12, c11 |
+| bird_dog | Hand zoom hands Right: Hands under the shoulders, fingers facing forward | handling.gripLine, setup[3], plate cue under (T; Wrong null, LR-25) | c2 |
+| side_plank | P Head to feet in one straight line | posture line, zoom hip-line Right | c2 |
+| side_plank | P Hips up; don't let them sink | posture hips, zoom hip-line Wrong | c5 |
+| side_plank | P Bottom shoulder down, away from your ear | posture shoulder, zoom shoulder | c7 |
+| side_plank | P Keep breathing, slow and deep | posture breathe, setup[5] | c6 |
+| side_plank | P Easier: top foot in front, or bottom knee down | left off (D-TEXT-PROGRESSION) | c4 |
+| side_plank | HM Holding your breath | posture breathe (Q-W2-12) | c6 |
+| side_plank | HM Hips sinking | posture hips (Q-W2-12) | c5, c9, c2 |
+| side_plank | HM Shrugging the bottom shoulder | posture shoulder (zoom shoulder Wrong) | c7 |
+| superman | P Head and neck neutral, eyes down | posture neck, zoom neck Right | c5 |
+| superman | P Arms and legs straight, no rotation | posture limbs | c4 |
+| superman | P Shoulders down and back, away from your ears | posture shoulders | c9 |
+| superman | P Squeeze your glutes to lift your legs | posture glutes | c10 |
+| superman | P Lift 3-6 inches. Don't hyperextend your back | posture height, zoom lift-height Right | c3, c7 |
+| superman | P Breathe steadily through the hold | posture breathe | c13 |
+| superman | HM Lifting your head too high to look up | posture neck (zoom neck Wrong) | c6, c5 |
+| superman | HM Jerky, uncontrolled movements | posture control | c18 |
+| superman | HM Lifting too high | posture height (zoom lift-height Wrong) | c8, c3, c7 |
+| cable_crunch | P Brace, breathe out and curl your spine | copy.setupLine, plate cue curl | c4, c7 |
+| cable_crunch | P Elbows move toward your thighs | plate cue curl | c5 |
+| cable_crunch | P Hips stay still and raised | zoom hips Right, plate cue hips, copy.cueLine | c3 |
+| cable_crunch | P Chin stays tucked | feel row neck fix | c12 |
+| cable_crunch | P Breathe in and straighten slowly. Keep tension on your abs | copy.setupLine | c6, c7 |
+| cable_crunch | HM Moving your hips to pull | zoom hips Wrong, copy.mistakeLine, feel row hips | c8, c3 |
+| cable_crunch | HM Yanking with your arms | copy.mistakeLine, plate cue rope, risks[load] | c9, c11 |
+| cable_crunch | HM Rounding your lower back | feel row low-back (means and fix) | c13, c5 |
+| cable_crunch | Hand zoom rope Right: Rope ends held on either side of the head | setup[4] | c2, c9 |
+| cable_crunch | Hand zoom rope Wrong: Arms yanking the rope down | copy.mistakeLine (a fault); posture arms (Q-W2-12 form, per header) | c2, c9 |
+| hollow_body_hold | P Lower back and hips stay on the floor, body like a crescent | copy.cueLine, plate cue lowback | c3 |
+| hollow_body_hold | P Legs straight, off the floor, no higher than about 30 degrees | zoom leg-height Right, plate cue legs | c4, c5, c6 |
+| hollow_body_hold | P Lower your chin and look toward your feet. Don't tuck it | copy.setupLine, feel row neck fix | c9 |
+| hollow_body_hold | P Breathe shallowly. Don't hold your breath | copy.setupLine | c10 |
+| hollow_body_hold | P Easier: bend your knees | left off (D-TEXT-PROGRESSION) | c11 |
+| hollow_body_hold | T head Right: Chin lowered, eyes down toward your feet | copy.setupLine, feel row neck fix | c9 |
+| hollow_body_hold | T head Wrong: Neck hyperextended | feel row neck means, risks[neck] | c9 |
+| hollow_body_hold | HM Legs too low | zoom leg-height Wrong, copy.mistakeLine, feel row hips fix | c5, c4 |
+| hollow_body_hold | HM Lower back arching off the floor | zoom low-back Wrong, feel row low-back, risks[arch] | c7 |
+| hollow_body_hold | HM Shoulder blades and head dropping | risks[drop] | c8 |
+| reverse_crunch | P Breathe out and curl your hips toward your rib cage | zoom hips Right, plate cue hips, copy.setupLine | c3, c8, c17 |
+| reverse_crunch | P Keep your knees at 90 degrees | zoom knees Right, plate cue knees, copy.mistakeLine fix | c4 |
+| reverse_crunch | P Curl until your tailbone clears the floor | copy.setupLine | c5 |
+| reverse_crunch | P Hold briefly at the top | copy.setupLine (plate tempo Hold) | c5 |
+| reverse_crunch | P Breathe in and roll down slowly, vertebra by vertebra | copy.setupLine | c6, c10, c17 |
+| reverse_crunch | P Knees return over your hips, not past them | copy.mistakeLine fix, risks[legs] | c7 |
+| reverse_crunch | T low-back Right: Lower back flat on the floor | setup[4], plate cue back | c2, c12 |
+| reverse_crunch | T low-back Wrong: Lower back arching | feel row low-back, risks[arch] | c2, c12 |
+| reverse_crunch | HM Tucking your knees too far | zoom knees Wrong, copy.mistakeLine, feel row neck, risks[tuck] | c11, c4 |
+| reverse_crunch | HM Lower back arching | feel row low-back, risks[arch], plate cue back | c12, c17 |
+| reverse_crunch | HM Knees moving past your hips on the way down | copy.mistakeLine (a fault, with its fix) | c7 |
+| dead_bug | P Slowly lower one arm and the opposite leg toward the floor | plate label/cue opposite | c4 |
+| dead_bug | P Hand and heel lightly touch the floor without resting | copy.setupLine | c4 |
+| dead_bug | P Bring them back slowly, then switch sides | copy.setupLine (plate tempo Lower/Return Slow) | c4 |
+| dead_bug | P Breathe in as you reach out, breathe out as you return | copy.mistakeLine | c9, c4 |
+| dead_bug | P Stare straight up at the ceiling | zoom neck Right caption, feel row neck fix | c8 |
+| dead_bug | P Easier: start with hands and feet resting on the floor | left off (D-TEXT-PROGRESSION) | c10 |
+| dead_bug | HM Back arching off the mat | zoom low-back Wrong, setup[4], feel row low-back, risks[arch] | c6, c3, c7 |
+| dead_bug | HM Craning your neck to look at your legs | zoom neck Wrong, feel row neck, risks[neck] | c8 |
+| dead_bug | HM Holding your breath | copy.mistakeLine | c9 |
+| v_up | P Lift legs and torso together, reaching toward your toes | plate cue reach | c3 |
+| v_up | P Lead with your upper body, not your legs | copy.mistakeLine (its fix) | c7 |
+| v_up | P Keep your legs as straight as you can | plate cue legs | c8 |
+| v_up | P Lower back flat on the floor as you come down | zoom low-back Right, plate cue lowback, copy.setupLine | c5, c4 |
+| v_up | P Return with your heels a few inches off the floor | copy.setupLine | c4 |
+| v_up | P Easier: use a shorter range of motion | left off (D-TEXT-PROGRESSION) | c10 |
+| v_up | T top-reach Right: Hands reach toward your toes, legs straight and together | plate cues reach and legs | c3, c8, c9 |
+| v_up | T top-reach Wrong: Legs flopping around | copy.mistakeLine | c3, c8, c9 |
+| v_up | HM Lower back arching off the floor | zoom low-back Wrong, feel rows hips and low-back, risks[arch] | c6, c5, c2 |
+| v_up | HM Legs flopping around | copy.mistakeLine (fault with fix), setup[2] | c9 |
+| v_up | HM Legs starting the lift | copy.mistakeLine (fault with fix) | c7 |
+| kettlebell_swing | P Hinge at the hips; knees only slightly bent | posture hinge, plate callout hinge | c6 |
+| kettlebell_swing | P Keep your back flat | posture back, zoom kb-back caption.right | c13 |
+| kettlebell_swing | P Drive your hips forward; arms stay straight and loose | posture drive | c7 |
+| kettlebell_swing | P Swing to about chest height | posture height | c9 |
+| kettlebell_swing | P Feet planted; heels and toes stay down | posture feet | c17 |
+| kettlebell_swing | P Don't hold your breath: breathe out as you swing up, in as it comes down | posture breathe | c19 |
+| kettlebell_swing | HM Leaning back at the top | copy.mistakeLine, zoom kb-top caption.wrong, posture tall detail | c14 |
+| kettlebell_swing | HM Lower back rounds | posture back (zoom kb-back caption.wrong) | c12, c13, c20 |
+| kettlebell_swing | HM Lifting with the arms | posture drive, feel row arms | c16, c7 |
+| kettlebell_swing | Hand zoom kb-grip Right: Both hands side by side, palms down, bell tilted toward you | setup[2], setup[3] | c2, c3, c4 |
+| kettlebell_swing | Hand zoom kb-grip Wrong: Crush grip on the handle | posture crush (label 'Crush grip', detail "an easy hook grip, not a crush grip") | c2, c3, c4 |
+| high_knees | P Chest tall, eyes ahead | posture chest, setup[1] | c1 |
+| high_knees | P Thigh up to about hip height | posture thigh (zoom knee-height), setup[3] | c3 |
+| high_knees | P Lower back doesn't arch | posture back, zoom knee-height caption.wrong, risks[arch] | c5 |
+| high_knees | P On the balls of your feet | posture balls, setup[2] | c4 |
+| high_knees | T ball-of-foot Right: Standing foot on its ball, knee soft | posture balls, setup[2] (Wrong null, LR-25) | c4 |
+| high_knees | HM Knees so high your back arches | posture back (fix added), copy.mistakeLine | c5, c3 |
+| high_knees | HM Knee height slowly drops | posture drops | c6 |
+| high_knees | HM Legs turn out more and more as you tire | posture turn-out | c7 |
+| jump_rope | P Elbows in, close to your ribs | posture elbows (zoom elbows) | c5 |
+| jump_rope | P Turn the rope with your wrists, not your elbows or shoulders | posture wrists | c5 |
+| jump_rope | P Hands at about hip height, slightly away from your body | posture hands | c8 |
+| jump_rope | P Jump only about 1 to 2 inches off the floor | posture hop (zoom hop) | c9 |
+| jump_rope | P Knees slightly bent; land softly on the balls of your feet | posture knees | c10 |
+| jump_rope | P One jump per turn of the rope | posture one-jump | c12 |
+| jump_rope | HM Jumping too high | posture hop (fix), zoom hop caption.wrong, copy.mistakeLine | c9 |
+| jump_rope | HM Turning the rope with your arms | posture wrists (fix), zoom elbows caption.wrong, risks[arms] | c6, c5 |
+| jump_rope | HM Gripping the handles too tight | posture tight | c3, c2 |
+| jump_rope | Hand zoom grip Right: Relaxed grip toward the end of the handle | setup[2] | c2, c3 |
+| jump_rope | Hand zoom grip Wrong: Gripped far too tight, knuckles white | posture tight (label 'Tight grip', "Knuckles white?") | c2, c3 |
+| battle_ropes | P Feet planted, knees slightly bent | posture feet | c2, c13 |
+| battle_ropes | P Back straight, slight forward lean | posture lean, setup[3] | c4 |
+| battle_ropes | P Shoulder blades down and back | posture blades (zoom shoulder-blades) | c6 |
+| battle_ropes | P Arms in front of the body | posture arms | c5 |
+| battle_ropes | HM Shoulder blades lift or hunch forward | posture blades, zoom caption.wrong, copy.mistakeLine, feel row neck, risks | c6 |
+| battle_ropes | HM Holding your breath | posture breathe | c7 |
+| battle_ropes | HM Adding speed or a heavier rope too soon | posture form-first | c8 |
+| battle_ropes | Hand zoom rope-grip Right: Handshake grip on each rope end | setup[2] (Wrong null, LR-25; not drawn) | c4, c14 |
+| sled_pull | P Shoulders over hips | posture stack (zoom torso-stack) | c2 |
+| sled_pull | P Knees soft, quarter squat | posture squat, setup[3] | c2 |
+| sled_pull | P Chin level, eyes forward | posture head | c6 |
+| sled_pull | P Elbows tucked, wrists firm | posture elbows, gripLine | c4 |
+| sled_pull | HM Leaning back so the lower back takes the load | mistakes[lean] (zoom torso-stack), feel row low-back, risks[lean] | c8, c2, c9 |
+| sled_pull | HM Yanking the rope with the arms | mistakes[yank] | c6 |
+| sled_pull | HM Leaving the rope piled at your feet | mistakes[pile], setup[5], risks[slack] | c5 |
+| sled_pull | Hand zoom rope-grip Right: Both hands on the rope, one over the other, wrists firm | gripLine, setup[1] (Wrong null, LR-25) | c1, c4 |
+| burpee | P Body straight from head to heels in the plank | posture line (zoom plank) | c6 |
+| burpee | P Brace your core so your lower back doesn't sag | posture brace, mistakes[sag] | c6, c18 |
+| burpee | P Neck neutral; don't lower your head toward the floor | posture neck | c15 |
+| burpee | P Knees track over your toes | posture knees | c16 |
+| burpee | P Land softly on slightly bent knees | posture landing (zoom landing), mistakes[landing] | c11 |
+| burpee | P Keep breathing; don't hold your breath | posture breathe | c19 |
+| burpee | HM Rushing the transitions | mistakes[rush], risks[rush] | c9 |
+| burpee | HM Hard landing on the jump | mistakes[landing] (zoom landing) | c11 |
+| burpee | HM Lower back sagging in the plank | mistakes[sag] (zoom plank), copy.mistakeLine | c6, c18 |
+| burpee | Hand zoom hands Right: Hands flat on the floor, shoulder-width apart | handling.gripLine, setup[2] (Wrong null) | c2 |
+| bear_crawl | P Hands under shoulders, knees under hips | posture hands, setup[1] | c3 |
+| bear_crawl | P Knees hover just off the floor | posture knees, setup[2] (c3) | c8 |
+| bear_crawl | P Back flat, not arched | posture back, mistakes[1] | c4, c7 |
+| bear_crawl | P Hips at shoulder height | posture hips, zoom hip-line, setup[4] | c2 |
+| bear_crawl | HM Hips rise as you crawl | mistakes[0] (zoom hip-line) | c5 |
+| bear_crawl | HM Back arches | mistakes[1] | c7 |
+| bear_crawl | HM Hips sway side to side | mistakes[2] | c6 |
+| bear_crawl | Hand zoom hand-under-shoulder Right: Palm pressed into the floor, hand under the shoulder | handling.gripLine (Wrong null, LR-25) | c3 |
+| sled_push | P Shoulders straight behind your hands | posture shoulders, setup[4] | c3 |
+| sled_push | P Spine neutral, abs tight | posture spine, setup[5], zoom back Right | c6 |
+| sled_push | P Eyes just ahead of the sled | posture eyes | c6 |
+| sled_push | P Push through the balls of your feet | posture feet, zoom feet Right | c8 |
+| sled_push | P Short, powerful steps, not a jog | posture steps | c10 |
+| sled_push | P Keep your arms in the same position | posture arms | c11 |
+| sled_push | HM Rounded back | posture hm-round (Q-W2-12; zoom back), mistakeLine | c7 |
+| sled_push | HM Heels touching the floor | posture hm-heels (Q-W2-12; zoom feet) | c8 |
+| sled_push | HM Hips rising or chest dropping as you tire | posture hm-angle (Q-W2-12) | c9 |
+| sled_push | Hand zoom hands Right: Hands about halfway down the handles, arms straight | setup[2] (Wrong null, LR-25) | c1, c4 |
+| medicine_ball_slam | P Rise onto your toes, arms straight, ball overhead | posture top | c2 |
+| medicine_ball_slam | P Slam the ball straight down between your feet | posture slam | c3 |
+| medicine_ball_slam | P Press your hips back and bend your knees as you slam | posture hips, zoom slam-hips Right | c3 |
+| medicine_ball_slam | P Keep your back flat | posture back, zoom pickup-back Right | c5 |
+| medicine_ball_slam | P Squat down to pick up the ball | posture pickup, zoom pickup-back Right | c6 |
+| medicine_ball_slam | P Exhale as you slam the ball down | posture breathe | c7 |
+| medicine_ball_slam | HM Slamming too softly | posture hm-soft (Q-W2-12) | c16, c3 |
+| medicine_ball_slam | HM Slamming with the arms only | posture hm-arms (Q-W2-12), zoom slam-hips, mistakeLine | c4, c3 |
+| medicine_ball_slam | HM Rounding the back | posture hm-round (Q-W2-12), zoom pickup-back | c5 |
+| medicine_ball_slam | Hand zoom ball-grip Right: Both hands holding the ball firmly | setup[3] (Wrong null, LR-25) | c15 |
+| farmer_s_carry | P Torso upright, gaze ahead | posture torso, zoom torso Right | c4 |
+| farmer_s_carry | P Arms long at your sides | posture arms | c4 |
+| farmer_s_carry | P Shoulders back and down, not shrugged | posture shoulders, zoom shoulders Right | c5 |
+| farmer_s_carry | P Short, deliberate steps | posture steps, mistakes[1] fix | c8 |
+| farmer_s_carry | P Weights even, not shifting to one side | posture even | c9 |
+| farmer_s_carry | P Slow down and turn with small steps | posture turn | c17 |
+| farmer_s_carry | HM Rushing the walk | mistakes[0] | c7 |
+| farmer_s_carry | HM Steps too long for a beginner | mistakes[1] | c25, c8 |
+| farmer_s_carry | HM Shrugging your shoulders up as you tire | mistakes[2] (zoom shoulders) | c5 |
+| farmer_s_carry | Hand zoom grip Right: Palm pushed into the handle, thumb wrapped | handling.gripLine | c13 |
+| farmer_s_carry | Hand zoom grip Wrong: Held in the fingers only | copy.mistakeLine, handling.faults[0] | c13 |
+| jumping_jacks | P Upright, shoulders over hips | posture upright | c5 |
+| jumping_jacks | P Knees slightly bent, never locked | posture knees (T landing-knees), setup[4] | c5 |
+| jumping_jacks | P Toes pointing forward | posture toes, zoom toes-forward Right | c12 |
+| jumping_jacks | T landing-knees Right: Soft landing, knees slightly bent | posture knees, setup[4] | c5, c6 |
+| jumping_jacks | T landing-knees Wrong: Knees locked straight on landing | posture hm-knees, copy.mistakeLine | c5, c6 |
+| jumping_jacks | HM Jerky, uncontrolled landings | posture hm-jerky (Q-W2-12) | c6, c14, c5 |
+| jumping_jacks | HM Landing with straight knees | posture hm-knees (Q-W2-12), mistakeLine | c6, c5 |
+| jumping_jacks | HM Rushing the reps | posture hm-rush (Q-W2-12) | c6, c15 |
+| wall_ball | P Squat until your thighs are parallel to the floor or lower | posture depth | c6 |
+| wall_ball | P Keep your weight in your heels and your chest up | posture heels | c6 |
+| wall_ball | P Drive up through your heels and throw the ball to the target | posture drive | c7 |
+| wall_ball | P Keep the ball close to your body | posture close | c9 |
+| wall_ball | P Catch while still standing, then squat | posture catch (T catch-timing Right) | c8 |
+| wall_ball | P Breathe in as you squat, out as you throw | posture breathe | c11 |
+| wall_ball | T catch-timing Right: Catch with hips and arms extended, then squat | posture catch | c8 |
+| wall_ball | T catch-timing Wrong: Catching at the bottom of the squat | posture hm-early | c8 |
+| wall_ball | HM Standing too far from the wall | posture hm-far (Q-W2-12; zoom wall-distance), setupLine | c3, c2 |
+| wall_ball | HM Squatting before you catch the ball | posture hm-early (Q-W2-12) | c8 |
+| wall_ball | HM Squatting too shallow | posture hm-shallow (Q-W2-12) | c6 |
+| wall_ball | Hand zoom catch-hands Right: Hands under the ball, elbows high in front | setup[5] | c9 |
+| wall_ball | Hand zoom catch-hands Wrong: Hands sandwiching the ball, elbows out | posture hm-hands, copy.mistakeLine | c9 |
+
+#### Zooms and drawing values (D-SHIP-DRAWVAL)
+
+| id | zoom | M/DV/T | drawing values |
+|---|---|---|---|
+| hack_squat | back-pad | M | none |
+| hack_squat | knee-lock | DV | KNEE_LOCK 1 deg |
+| hack_squat | feet-plate | T | none |
+| pendulum_squat | knee-track | T | none |
+| pendulum_squat | heels-flat | M | none |
+| leg_extension | knee-pivot | T | none |
+| leg_extension | shin-pad | T | none |
+| leg_extension | top | DV | KNEE_HYPER -10 deg |
+| lying_leg_curl | knee-axis | T | none |
+| lying_leg_curl | roller | T | none |
+| lying_leg_curl | hips-pad | DV | HIP_LIFT 0.10 m |
+| standing_leg_curl | pad-heel | T | none |
+| standing_leg_curl | knee-steady | DV | KNEE_DRIFT 15 deg |
+| standing_leg_curl | top | DV | KNEE_SHORT 70 deg |
+| glute_bridge | spine-top | M | none |
+| glute_bridge | heels-down | T | none |
+| cable_kickback | braced-back | M | none |
+| cable_kickback | hips-square | T | none |
+| resisted_hip_flexion | torso-upright | M | none |
+| resisted_hip_flexion | ankle-cuff | T | none |
+| ab_wheel_rollout | back-line | M | none |
+| ab_wheel_rollout | range | T | none |
+| bird_dog | back-line | M | none |
+| bird_dog | head | DV | HEAD_UP 40 deg |
+| bird_dog | hands (hand zoom) | T | none (not drawn) |
+| side_plank | hip-line | M | none |
+| side_plank | shoulder | DV | SHRUG scap.elev 6 (const; header comment gives no number or unit) |
+| superman | neck | M | none |
+| superman | lift-height | DV | HIGH_TRUNK -30 deg |
+| cable_crunch | hips | M | none |
+| cable_crunch | rope (hand zoom) | T | none (not drawn) |
+| hollow_body_hold | leg-height | M | none |
+| hollow_body_hold | low-back | DV | ARCH_TILT 20 deg |
+| hollow_body_hold | head | T | none |
+| reverse_crunch | knees | M | none |
+| reverse_crunch | hips | DV | HINGE 35 deg |
+| reverse_crunch | low-back | T | none |
+| dead_bug | low-back | M | none |
+| dead_bug | neck | DV | NECK_CRANE 35 deg |
+| v_up | low-back | M | none (no new geometry) |
+| v_up | top-reach | T | none |
+| kettlebell_swing | kb-grip (hand zoom) | T | none (not drawn) |
+| kettlebell_swing | kb-back | DV | ROUND 35 deg |
+| kettlebell_swing | kb-top | M | none |
+| high_knees | knee-height | M | none (no new geometry) |
+| high_knees | ball-of-foot | T | none |
+| jump_rope | grip (hand zoom) | T | none (not drawn) |
+| jump_rope | elbows | DV | WIDE 50 deg |
+| jump_rope | hop | M | none |
+| battle_ropes | rope-grip (hand zoom) | T | none (not drawn) |
+| battle_ropes | shoulder-blades | M | none (no new geometry) |
+| sled_pull | rope-grip (hand zoom) | T | none (no hand zoom drawn) |
+| sled_pull | torso-stack | M | none (no new geometry) |
+| burpee | landing | M | none |
+| burpee | plank | DV | SAG 25 deg |
+| burpee | hands (hand zoom) | T | none (no hand zoom drawn) |
+| bear_crawl | hand-under-shoulder (hand zoom) | T | none (no hand zoom drawn) |
+| bear_crawl | hip-line | M | none (no drawing value added) |
+| sled_push | back | M | none |
+| sled_push | feet | DV | none added (heel-down foot is the floor itself, heel-up 0) |
+| sled_push | hands (hand zoom) | T | none |
+| medicine_ball_slam | slam-hips | M | none |
+| medicine_ball_slam | pickup-back | DV | ROUND 25 deg (= sled_push M_ROLL) |
+| medicine_ball_slam | ball-grip (hand zoom) | T | none |
+| farmer_s_carry | shoulders | DV | SHRUG 6 cm |
+| farmer_s_carry | torso | DV | LEAN 20 deg |
+| farmer_s_carry | grip (hand zoom) | T | none (no hand zoom drawn) |
+| jumping_jacks | landing-knees | T | none |
+| jumping_jacks | toes-forward | M | none |
+| wall_ball | wall-distance | M | none (no drawing value added) |
+| wall_ball | catch-hands (hand zoom) | T | none |
+| wall_ball | catch-timing | T | none |
+
+#### Not found
+
+none

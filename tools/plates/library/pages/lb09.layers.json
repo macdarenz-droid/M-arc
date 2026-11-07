@@ -1,0 +1,50 @@
+{
+  "groups": [
+    {
+      "id": "lb9",
+      "title": "LB9",
+      "ids": [
+        "lib_ab_wheel_rollout",
+        "lib_bird_dog",
+        "lib_side_plank",
+        "lib_superman",
+        "lib_cable_crunch",
+        "lib_hollow_body_hold",
+        "lib_reverse_crunch",
+        "lib_dead_bug",
+        "lib_v_up"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb09.closeups.mjs",
+  "closeups": {
+    "lib_ab_wheel_rollout": {
+      "optionsKey": "ab_wheel_rollout"
+    },
+    "lib_bird_dog": {
+      "optionsKey": "bird_dog"
+    },
+    "lib_side_plank": {
+      "optionsKey": "side_plank"
+    },
+    "lib_superman": {
+      "optionsKey": "superman"
+    },
+    "lib_cable_crunch": {
+      "optionsKey": "cable_crunch"
+    },
+    "lib_hollow_body_hold": {
+      "optionsKey": "hollow_body_hold"
+    },
+    "lib_reverse_crunch": {
+      "optionsKey": "reverse_crunch"
+    },
+    "lib_dead_bug": {
+      "optionsKey": "dead_bug"
+    },
+    "lib_v_up": {
+      "optionsKey": "v_up"
+    }
+  },
+  "jump": null
+}
