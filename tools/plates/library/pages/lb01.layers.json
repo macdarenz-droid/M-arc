@@ -1,0 +1,99 @@
+{
+  "groups": [
+    {
+      "id": "lb1",
+      "title": "LB1",
+      "ids": [
+        "lib_chin_up",
+        "lib_hanging_knee_raise",
+        "lib_inverted_row",
+        "lib_close_grip_pulldown",
+        "lib_single_arm_lat_pulldown",
+        "lib_straight_arm_pulldown",
+        "lib_chest_supported_row",
+        "lib_resistance_band_row"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb01.closeups.mjs",
+  "closeups": {
+    "lib_chin_up": {
+      "optionsKey": "chin_up",
+      "pair": "bar-hang-under",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Bar just below the finger base, thumb wrapped, wrist straight.",
+            "source": "docs/research/howto/cards/chin_up.json zooms[key=hand] (W3 PANEL FIX 2, #384 6649416891: card detail, not the sublabel) right; c25, c1, c3"
+          },
+          "wrong": {
+            "text": "Wrist curled forward, so the grip is weaker.",
+            "source": "docs/research/howto/cards/chin_up.json zooms[key=hand] (W3 PANEL FIX 2, #384 6649416891: card detail, not the sublabel) wrong; c20"
+          }
+        }
+      }
+    },
+    "lib_hanging_knee_raise": {
+      "optionsKey": "hanging_knee_raise",
+      "pair": "bar-hang-over"
+    },
+    "lib_inverted_row": {
+      "optionsKey": "inverted_row",
+      "pair": "bar-row-over",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Overhand, thumb wrapped, wrist not curled.",
+            "source": "docs/research/howto/cards/inverted_row.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
+          }
+        }
+      }
+    },
+    "lib_close_grip_pulldown": {
+      "optionsKey": "close_grip_pulldown",
+      "pair": "v-handle-pull-neutral-overhead",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Neutral grip on the V-handle, wrists not curled.",
+            "source": "docs/research/howto/cards/close_grip_pulldown.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
+          }
+        }
+      }
+    },
+    "lib_single_arm_lat_pulldown": {
+      "optionsKey": "single_arm_lat_pulldown",
+      "pair": "d-handle-pull-unstated",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Single handle, wrist not curled.",
+            "source": "docs/research/howto/cards/single_arm_lat_pulldown.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
+          }
+        }
+      }
+    },
+    "lib_straight_arm_pulldown": {
+      "optionsKey": "straight_arm_pulldown"
+    },
+    "lib_chest_supported_row": {
+      "optionsKey": "chest_supported_row"
+    },
+    "lib_resistance_band_row": {
+      "optionsKey": "resistance_band_row"
+    }
+  },
+  "jump": null
+}

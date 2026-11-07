@@ -161,7 +161,7 @@ export default {
     parts: ['arm.r', 'bar'],
     tells: [
       { key: 'bend', text: 'Elbows<br>bend', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 10, top: 170 }, cue: 'The elbows bend and the lift turns into a pushdown.' },
-      { key: 'close', text: 'Bar<br>pulled in', anchor: { at: 'grip.r', pose: 'mistake', off: [5, 5] }, box: { left: 200, top: 200 }, cue: 'The bar comes in close to the body, as in a bent-arm pulldown.' },
+      { key: 'close', text: 'Bar<br>pulled in', anchor: { at: 'grip.r', pose: 'mistake', off: [5, 5] }, box: { left: 200, top: 200 }, cue: 'The elbows bend as the bar comes down, turning it into a bent-arm pulldown.' },
     ],
   },
   alt: 'Straight-arm cable pulldown, side view. Standing a step back from a high pulley with a slight forward lean and soft knees, the lifter sweeps a straight bar from overhead down to the front of the thighs, elbows keeping one slight bend.',

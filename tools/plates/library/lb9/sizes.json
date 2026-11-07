@@ -359,9 +359,9 @@
     "basis": "convention: crunch.mjs:61 PELVIS_TUCK (PILOT-B2, panel mx25 APPROVED @ 716bf3b7; D-SUPCORE-ANCHOR, the floor-supine class's clone source): the pelvis tucked so the lower-trunk underside lies on the floor (crunch's mx24 R1/R3 fix); copied with flatLying"
    },
    "TOE": {
-    "value": -40,
+    "value": -50,
     "unit": "deg",
-    "basis": "stated reason: plate.start 'toes pointed' (c1) gives no angle; -40 deg ankle plantarflexion, a pointed foot that keeps the drawn heel the leg's lowest point on the floor at the entry; no source states it"
+    "basis": "stated reason: plate.start 'toes pointed' (c1) gives no angle; -50 deg ankle plantarflexion, the end of the normal plantar flexion range as lb8's calf-raise END_PF basis reads it (50 deg; no source opened for the number). LIB-PLATEFIX-3 round 2 (#405 6685743439 hollow R1 c2): was -40, whose foot rose 37 deg off the shin line and read as flexed; at -50 it is 27 deg off, the most the range allows (continuing the shin line would need about -77)"
    },
    "CURL": {
     "value": 25,

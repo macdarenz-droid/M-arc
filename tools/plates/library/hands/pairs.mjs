@@ -320,8 +320,10 @@ export const keyOfCfg = (mod, cfg) => `${mod.KEY}-${cfg.variant}-${cfg.orientati
 
 /** key -> { key, triple, faults, ids }, id -> key. A key is KEY x variant x orientation x the ordered fault list; throws
  *  when ids on one key differ in faults, two triples give one string, a key is not [a-z0-9-], one key + '-' starts
- *  another, a key equals a drawn id, a drawn id is not in src/data/exercises.json or is one of the 8. */
-export function keyIndexOf(index = INDEX) {
+ *  another, a key equals a drawn id, a drawn id is not in src/data/exercises.json or is one of the 8.
+ *  F-SCRATCH-SYNTH (D-SCRATCH-SYNTH-KEYIDX): `exerciseIds` defaults to src/data/exercises.json's ids. Production callers pass
+ *  nothing and indexOf sets no `exerciseIds`; only a test fixture index carries one (a synthetic scratch id). */
+export function keyIndexOf(index = INDEX, exerciseIds = index.exerciseIds ?? EXERCISE_IDS) {
   const keys = new Map(), keyOf = new Map();
   for (const [id, { mod, cfg }] of index.drawn) {
     const key = keyOfCfg(mod, cfg), triple = `${mod.KEY}/${cfg.variant}/${cfg.orientation}`, faults = cfg.faults.join(',');
@@ -338,7 +340,7 @@ export function keyIndexOf(index = INDEX) {
     for (const b of keys.keys()) if (a !== b && b.startsWith(`${a}-`)) throw new Error(`hand pairs: key ${a} + '-' starts key ${b}`);
   }
   for (const id of keyOf.keys()) {
-    if (!EXERCISE_IDS.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is not in src/data/exercises.json`);
+    if (!exerciseIds.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is not in src/data/exercises.json`);
     if (GOLDEN_IDS.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is one of the 8 (tools/plates/plates.json); it keeps its own hand`);
   }
   return { keys, keyOf };

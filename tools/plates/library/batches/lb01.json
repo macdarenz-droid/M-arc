@@ -1,0 +1,244 @@
+{
+ "batch": "LB1",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/lb01.json",
+  "layers": "tests/howto/golden/library/lb01.layers.html",
+  "layersConfig": "tools/plates/library/pages/lb01.layers.json"
+ },
+ "rows": {
+  "lib_chin_up": {
+   "src": "library/specs/chin_up.mjs",
+   "slug": "chin-up",
+   "prefix": "chin-up",
+   "chromeId": "chin-up",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "ACE-Sponsored Research: What Is the Best Back Exercise? (Edelburg, Porcari, Camic, Kovacs, Foster, with Green; ACE Certified, December 2018) (2018). https://www.acefitness.org/continuing-education/certified/december-2018/7138/ace-sponsored-research-what-is-the-best-back-exercise/",
+    "Chin-ups (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/190/chin-ups/",
+    "Chin-up exercise guide (BarBend). https://barbend.com/chin-up/",
+    "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Muscle activity and spine load during pulling exercises: influence of stable and labile contact surfaces and technique coaching (McGill, Cannon, Andersen, J Electromyogr Kinesiol) (2014). https://pubmed.ncbi.nlm.nih.gov/25066518/ PMID 25066518",
+    "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog). https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked",
+    "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am) (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport) (2016). https://pubmed.ncbi.nlm.nih.gov/26383875/ PMID 26383875",
+    "How to Do Chin-Up: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/chin-up/",
+    "Surface electromyographic activation patterns and elbow joint motion during a pull-up, chin-up, or perfect-pullup rotational exercise (Youdas et al., J Strength Cond Res) (2010). https://pubmed.ncbi.nlm.nih.gov/21068680/ PMID 21068680",
+    "How to Use a Pull-Up Assist Machine Correctly (Beginner's Guide) (Bullbar Fit, manufacturer blog). https://bullbarfit.com/blogs/q-as/how-to-use-a-pull-up-assist-machine-correctly-for-beginners-at-the-gym",
+    "How to Grip the Bar Without Getting Calluses (Bullbar Fit, manufacturer blog). https://bullbarfit.com/blogs/q-as/what-is-the-correct-way-to-grip-the-bar-to-avoid-calluses"
+   ],
+   "stage": "shipped"
+  },
+  "lib_hanging_knee_raise": {
+   "src": "library/specs/hanging_knee_raise.mjs",
+   "slug": "hanging-knee-raise",
+   "prefix": "hanging-knee-raise",
+   "chromeId": "hanging-knee-raise",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training (Escamilla et al., Phys Ther) (2006). https://pubmed.ncbi.nlm.nih.gov/16649890/ PMID 16649890",
+    "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Muscle activity and spine load during anterior chain whole body linkage exercises: the body saw, hanging leg raise and walkout from a push-up (McGill, Andersen, Cannon, J Sports Sci) (2015). https://pubmed.ncbi.nlm.nih.gov/25111163/ PMID 25111163",
+    "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am) (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport) (2016). https://pubmed.ncbi.nlm.nih.gov/26383875/ PMID 26383875",
+    "How to Do Hanging Knee Raise: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/hanging-knee-raise/",
+    "Influence of pelvis position on the activation of abdominal and hip flexor muscles (Workman et al., J Strength Cond Res) (2008). https://pubmed.ncbi.nlm.nih.gov/18714231/ PMID 18714231",
+    "Hanging Knee Leg Raise (Dr. Michael Yessis) (2013). https://doctoryessis.com/2013/01/01/hanging-knee-leg-raise/",
+    "How to Grip the Bar Without Getting Calluses (Bullbar Fit, manufacturer blog). https://bullbarfit.com/blogs/q-as/what-is-the-correct-way-to-grip-the-bar-to-avoid-calluses",
+    "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog). https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked"
+   ],
+   "stage": "shipped"
+  },
+  "lib_assisted_pull_up": {
+   "src": "library/specs/assisted_pull_up.mjs",
+   "slug": "assisted-pull-up",
+   "prefix": "assisted-pull-up",
+   "chromeId": "assisted-pull-up",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Use a Pull-Up Assist Machine Correctly (Beginner's Guide) (Bullbar Fit, manufacturer blog). https://bullbarfit.com/blogs/q-as/how-to-use-a-pull-up-assist-machine-correctly-for-beginners-at-the-gym",
+    "How to Use an Assisted Pull-Up Machine Without Hurting Yourself (Bullbar Fit, manufacturer blog). https://bullbarfit.com/blogs/q-as/how-do-i-correctly-use-an-assisted-pull-up-machine-at-the-gym-to-avoid-injury",
+    "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog). https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked",
+    "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am) (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport) (2016). https://pubmed.ncbi.nlm.nih.gov/26383875/ PMID 26383875",
+    "How to Do Assisted Pull-Ups: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/assisted-pull-up/",
+    "Surface electromyographic activation patterns and elbow joint motion during a pull-up, chin-up, or perfect-pullup rotational exercise (Youdas et al., J Strength Cond Res) (2010). https://pubmed.ncbi.nlm.nih.gov/21068680/ PMID 21068680"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_inverted_row": {
+   "src": "library/specs/inverted_row.mjs",
+   "slug": "inverted-row",
+   "prefix": "inverted-row",
+   "chromeId": "inverted-row",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "ACE-Sponsored Research: What Is the Best Back Exercise? (Edelburg, Porcari, Camic, Kovacs, Foster, with Green; ACE Certified, December 2018) (2018). https://www.acefitness.org/continuing-education/certified/december-2018/7138/ace-sponsored-research-what-is-the-best-back-exercise/",
+    "Inverted Row (Catalyst Athletics exercise library). https://catalystathletics.com/exercise/852/Inverted-Row/",
+    "Ring Row (Catalyst Athletics exercise library). https://catalystathletics.com/exercise/879/Ring-Row",
+    "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness (Fenwick, Brown, McGill, J Strength Cond Res) (2009). https://pubmed.ncbi.nlm.nih.gov/19620925/ PMID 19620925",
+    "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am) (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "How to Do Inverted Row: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/inverted-row/",
+    "Activation of Spinal Stabilizers and Shoulder Complex Muscles During an Inverted Row Using a Portable Pull-up Device and Body Weight Resistance (Youdas et al., J Strength Cond Res) (2016). https://pubmed.ncbi.nlm.nih.gov/26422610/ PMID 26422610",
+    "Scapular muscle balance and spinal stabilizer recruitment during an inverted row (Youdas et al., Physiother Theory Pract) (2020). https://pubmed.ncbi.nlm.nih.gov/29944029/ PMID 29944029"
+   ],
+   "stage": "shipped"
+  },
+  "lib_close_grip_pulldown": {
+   "src": "library/specs/close_grip_pulldown.mjs",
+   "slug": "close-grip-pulldown",
+   "prefix": "close-grip-pulldown",
+   "chromeId": "close-grip-pulldown",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Seated Lat Pulldown (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "Effects of grip width on muscle strength and activation in the lat pull-down (Andersen et al., J Strength Cond Res) (2014). https://pubmed.ncbi.nlm.nih.gov/24662157/ PMID 24662157",
+    "Electromyographic Analysis of Back Muscle Activation During Lat Pulldown Exercise: Effects of Grip Variations and Forearm Orientation (Buonsenso et al., J Funct Morphol Kinesiol) (2025). https://pubmed.ncbi.nlm.nih.gov/40981044/ PMID 40981044",
+    "Grip width and forearm orientation effects on muscle activity during the lat pull-down (Lusk, Hale, Russell, J Strength Cond Res) (2010). https://pubmed.ncbi.nlm.nih.gov/20543740/ PMID 20543740",
+    "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am) (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "Close Grip Lat Pulldown (PureGym exercise guide). https://www.puregym.com/exercises/back/lat-exercises/close-grip-lat-pulldown/",
+    "A comparative electromyographical investigation of muscle utilization patterns using various hand positions during the lat pull-down (Signorile, Zink, Szwed, J Strength Cond Res) (2002). https://pubmed.ncbi.nlm.nih.gov/12423182/ PMID 12423182",
+    "How to Do Neutral Close-Grip Lat Pulldown: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/neutral-close-grip-lat-pulldown/",
+    "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
+   ],
+   "stage": "shipped"
+  },
+  "lib_underhand_lat_pulldown": {
+   "src": "library/specs/underhand_lat_pulldown.mjs",
+   "slug": "underhand-lat-pulldown",
+   "prefix": "underhand-lat-pulldown",
+   "chromeId": "underhand-lat-pulldown",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Seated Lat Pulldown (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "How to Do the Reverse-Grip Lat Pulldown for Stronger Back and Biceps (BarBend). https://barbend.com/reverse-grip-lat-pulldown/",
+    "Electromyographic Analysis of Back Muscle Activation During Lat Pulldown Exercise: Effects of Grip Variations and Forearm Orientation (Buonsenso et al., J Funct Morphol Kinesiol) (2025). https://pubmed.ncbi.nlm.nih.gov/40981044/ PMID 40981044",
+    "Grip width and forearm orientation effects on muscle activity during the lat pull-down (Lusk, Hale, Russell, J Strength Cond Res) (2010). https://pubmed.ncbi.nlm.nih.gov/20543740/ PMID 20543740",
+    "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am) (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "Reverse Grip Lat Pulldown (PureGym exercise guide). https://www.puregym.com/exercises/back/lat-exercises/reverse-grip-lat-pulldown/",
+    "A comparative electromyographical investigation of muscle utilization patterns using various hand positions during the lat pull-down (Signorile, Zink, Szwed, J Strength Cond Res) (2002). https://pubmed.ncbi.nlm.nih.gov/12423182/ PMID 12423182"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_single_arm_lat_pulldown": {
+   "src": "library/specs/single_arm_lat_pulldown.mjs",
+   "slug": "single-arm-lat-pulldown",
+   "prefix": "single-arm-lat-pulldown",
+   "chromeId": "single-arm-lat-pulldown",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Seated Lat Pulldown (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "How to Do the Single-Arm Lat Pulldown for Spectacular Back Development (BarBend). https://barbend.com/single-arm-lat-pulldown/",
+    "Grip width and forearm orientation effects on muscle activity during the lat pull-down (Lusk, Hale, Russell, J Strength Cond Res) (2010). https://pubmed.ncbi.nlm.nih.gov/20543740/ PMID 20543740",
+    "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am) (1992). https://pubmed.ncbi.nlm.nih.gov/1538102/ PMID 1538102",
+    "Single Arm Lat Pulldown (PureGym exercise guide). https://www.puregym.com/exercises/back/lat-exercises/single-arm-lat-pulldown/",
+    "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
+   ],
+   "stage": "shipped"
+  },
+  "lib_straight_arm_pulldown": {
+   "src": "library/specs/straight_arm_pulldown.mjs",
+   "slug": "straight-arm-pulldown",
+   "prefix": "straight-arm-pulldown",
+   "chromeId": "straight-arm-pulldown",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How To Do The Straight Arm Pulldown. https://learn.athleanx.com/articles/back-for-men/how-to-do-a-straight-arm-pulldown",
+    "Straight-Arm Pulldown (Catalyst Athletics exercise library). https://www.catalystathletics.com/exercise/907/Straight-Arm-Pulldown/",
+    "Straight Arm Pressdown (ACE exercise library). https://www.acefitness.org/resources/everyone/exercise-library/334/straight-arm-pressdown/",
+    "Electromyographic Analysis of Latissimus Dorsi Activation During Common Resistance Training Exercises: A Narrative Review (2026). https://pubmed.ncbi.nlm.nih.gov/42647355/ PMID 42647355",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "shipped"
+  },
+  "lib_chest_supported_row": {
+   "src": "library/specs/chest_supported_row.mjs",
+   "slug": "chest-supported-row",
+   "prefix": "chest-supported-row",
+   "chromeId": "chest-supported-row",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Seated Row (ACE exercise library; row machine with chest pad). https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/",
+    "Seated High Back Rows (ACE exercise library). https://www.acefitness.org/resources/everyone/exercise-library/169/seated-high-back-rows/",
+    "Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: An experimental study (2004). https://pubmed.ncbi.nlm.nih.gov/15228624/ PMID 15228624",
+    "Impact of different ranges of motion in the prone barbell row on muscle excitation (2025). https://pubmed.ncbi.nlm.nih.gov/40513198/ PMID 40513198",
+    "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness (2009). https://pubmed.ncbi.nlm.nih.gov/19620925/ PMID 19620925",
+    "The Effect of Performing Bi- and Unilateral Row Exercises on Core Muscle Activation (2015). https://pubmed.ncbi.nlm.nih.gov/26134664/ PMID 26134664",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "shipped"
+  },
+  "lib_resistance_band_row": {
+   "src": "library/specs/resistance_band_row.mjs",
+   "slug": "resistance-band-row",
+   "prefix": "resistance-band-row",
+   "chromeId": "resistance-band-row",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Seated Resistance Band Row (Sweat exercise library). https://www.sweat.com/exercises/seated-resistance-band-row",
+    "Resisted long-sit row (Physitrack home exercise library). https://us.physitrack.com/home-exercise-video/resisted-long-sit-row",
+    "Quantification of tension in Thera-Band and Cando tubing at different strains and starting lengths (2005). https://pubmed.ncbi.nlm.nih.gov/16355080/ PMID 16355080",
+    "Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: An experimental study (2004). https://pubmed.ncbi.nlm.nih.gov/15228624/ PMID 15228624",
+    "Impact of different ranges of motion in the prone barbell row on muscle excitation (2025). https://pubmed.ncbi.nlm.nih.gov/40513198/ PMID 40513198",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Instruction Manual, Resistance Bands and Tubing (The Hygenic Corporation). https://www.theraband.com/static/version1771453261/frontend/Theraband/default/en_US/instructions/Resistance_Band-Tubing_Instruction_Manual(1).pdf",
+    "Seated Row With Band To Strengthen Upper Back - Sit and Be Fit. https://www.sitandbefit.org/seated-row-band-upper-body-strengthening/"
+   ],
+   "stage": "shipped"
+  },
+  "lib_incline_machine_press": {
+   "src": "library/specs/incline_machine_press.mjs",
+   "slug": "incline-machine-press",
+   "prefix": "incline-machine-press",
+   "chromeId": "incline-machine-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Seated Incline Cable Press (ACE exercise library). https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "Seated Chest Press (ACE exercise library). https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/",
+    "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise (2020). https://pubmed.ncbi.nlm.nih.gov/33049982/ PMID 33049982",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_shoulder_press": {
+   "src": "library/specs/shoulder_press.mjs",
+   "slug": "shoulder-press",
+   "prefix": "shoulder-press",
+   "chromeId": "shoulder-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Seated Shoulder Press (ACE exercise library; machine). https://www.acefitness.org/resources/everyone/exercise-library/186/seated-shoulder-press/",
+    "Seated Machine Close-Grip Shoulder Press (ACE exercise library). https://www.acefitness.org/resources/everyone/exercise-library/187/seated-machine-close-grip-shoulder-press/",
+    "Influence of different ranges of motion on selective recruitment of shoulder muscles in the sitting military press: an electromyographic study (2010). https://pubmed.ncbi.nlm.nih.gov/20508462/ PMID 20508462",
+    "Effects of Mind-Muscle Connection on Muscle Activity During Machine-Based Shoulder Press in Untrained Individuals (2026). https://pubmed.ncbi.nlm.nih.gov/42194886/ PMID 42194886",
+    "Electromyographic validation of the muscles deltoid (anterior portion) and pectoralis major (clavicular portion) in military press exercises with open grip (2010). https://pubmed.ncbi.nlm.nih.gov/20718330/ PMID 20718330",
+    "Arterial blood pressure response to heavy resistance exercise (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_leg_press_calf_raise": {
+   "src": "library/specs/leg_press_calf_raise.mjs",
+   "slug": "leg-press-calf-raise",
+   "prefix": "leg-press-calf-raise",
+   "chromeId": "leg-press-calf-raise",
+   "mode": "H",
+   "view": "side",
+   "stage": "left-out:D-OWNER-LIB142"
+  }
+ }
+}

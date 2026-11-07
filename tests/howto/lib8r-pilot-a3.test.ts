@@ -596,8 +596,9 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped'
   });
   it('A12: the scratch set refuses PILOT-A3 ids (mutation: target lib_reverse_lunge)', () => {
     expect(scratch.setProblems(scratch.SCRATCH_4C)).toEqual([]);
-    const set = scratch.SCRATCH_4C.map((s: any) => (s.key === 'lib4c-scratch-a' ? { ...s, id: 'lib_reverse_lunge' } : s));
-    expect(scratch.setProblems(set)).toEqual(['lib_reverse_lunge is a PILOT-A3 id (D-LIB11-SCRATCHIDS)']);
+    // F-SCRATCH-SYNTH (#397): the real id as the target (no copyOf); its batches/ row is now refused too
+    const set = scratch.SCRATCH_4C.map((s: any) => (s.key === 'lib4c-scratch-a' ? { id: 'lib_reverse_lunge', from: s.from, key: s.key } : s));
+    expect(scratch.setProblems(set)).toEqual(['lib_reverse_lunge is a PILOT-A3 id (D-LIB11-SCRATCHIDS)', 'lib_reverse_lunge is a row of batches/pilot-a3.json']);
   });
   it('A14: no PILOT-A3 row is shipped; mutation: one row set to shipped is caught', () => {
     const stages = (t: any) => Object.values(t.rows).map((r: any) => r.stage);

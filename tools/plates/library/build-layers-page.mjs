@@ -17,6 +17,7 @@ import { PLATE_CSS } from '../layers/engine/index.mjs';   // LIB-7b
 import { HAND_CSS } from '../layers/engine/hand.mjs';   // LIB-7b
 import { FEEL_CSS } from '../layers/engine/feelmap.mjs';   // LIB-7b
 import { VENDOR_STRIP, NOSECS_STRIP } from './strip/tempo-strip.mjs';   // LIB-STRIP
+import { applyZooms } from './zoom/inline.mjs';   // D-SHIP-W3-LAYERSZOOM: the plates page's zoom circle
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const RENDERER_URL = pathToFileURL(join(HERE, 'render', 'closeups.mjs')).href;
@@ -88,6 +89,8 @@ export function planOf(spec) {
   return { ids, legacy, labels, keys, optionsUrl: spec.optionsUrl ?? null, regionFix: spec.regionFix !== false, noZoom };
 }
 
+/** The vendored feel-rows heading and list (howto-layers.mjs feelSection), as one concatenated template term. */
+export const FEEL_ROWS_HEAD = '+ `<h5 class="eyebrow fr-head">If you feel it in…</h5><ul class="fr-list">${rowsHtml}</ul>`';
 /** The patched howto-layers.mjs source. */
 export function patchHowtoLayers(src, plan) {
   src = patchOnce(src, 'HOWTO_IDS', between(src, 'HOWTO_IDS', 'export const HOWTO_IDS = [', '];\n'),
@@ -144,6 +147,10 @@ export function patchHowtoLayers(src, plan) {
   // Main legend span, as gen/feel.mjs dropEmptyPrimary does for the app (FEEL_NOPRIMARY below equals its constants, pinned
   // by tests/howto/lib-ship.test.ts). A section with a primary is returned unchanged.
   src = patchOnce(src, 'feel no primary', 'function feelSection(pre, howto, M) {\n', `function feelSection(pre, howto, M) {\n  const s = feelSection0(pre, howto, M), [mark, clause, span] = ${JSON.stringify(FEEL_NOPRIMARY)};\n  return s.includes(mark) ? s.split(clause).join('').replace(span, '') : s;\n}\nfunction feelSection0(pre, howto, M) {\n`);
+  // LIB-PLATEFIX-3 E1 (W7 #394 6682923012: high_knees L7 [4,3,3], jumping_jacks L7 [3,3,3]; ruled #405 6683319630): a
+  // feel section with no rows prints no "If you feel it in…" heading and no empty list (two divider lines, nothing under
+  // them). A section with rows prints the vendored bytes unchanged.
+  src = patchOnce(src, 'feel no rows', FEEL_ROWS_HEAD, '+ (F.rows.length ? `' + FEEL_ROWS_HEAD.slice(3, -1) + '` : \'\')');
   return src;
 }
 
@@ -181,7 +188,11 @@ export async function buildLayersPage(spec) {
     writeFileSync(hl, patchHowtoLayers(readFileSync(hl, 'utf8'), plan));
     writeFileSync(bp, patchBuildPage(readFileSync(bp, 'utf8'), spec));
     await runNode(mirror, 'artifact/build-page.mjs');
-    const page = readFileSync(join(mirror, 'artifact', 'technical-plates.html'));
+    // D-SHIP-W3-LAYERSZOOM (#384 6686326673): the plates page draws a spec's opt-in zoom circle (build-page.mjs applyZooms),
+    // so the layers page, which draws the same plates, applies the same step to the mirror's specs; no zoom spec: the same bytes
+    const specs = Object.fromEntries(Object.keys(spec.files ?? {}).map(rel => rel.match(/^exercises\/([a-z0-9_]+)\.mjs$/)?.[1]).filter(Boolean)
+      .map(id => [id, join(mirror, 'exercises', `${id}.mjs`)]));
+    const page = await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs);
     return pairRowsOf(spec).length ? Buffer.from(await withPairPanels(page.toString('utf8'), spec)) : page;   // LIB-7b
   } finally { cleanupMirror(mirror); }
 }

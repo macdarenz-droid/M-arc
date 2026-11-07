@@ -13,23 +13,25 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ROOT } from '../../lib/inputs.mjs';
-import { COPY_EDITS, budgets, page, paths, pin, stage, transformSources } from '../fidelity/fixture.mjs';
+import { BATCH, COPY_EDITS, budgets, exerciseOf, page, paths, pin, scratchTargetProblems, stage, transformSources } from '../fidelity/fixture.mjs';
 import { manifestOf, manifestText, MANIFEST } from './manifest.mjs';
 
-/** The scratch set: two targets per usable pool source, each with its own pair key (D-LIB4c-1 (a)). */
+/** The scratch set: two targets per usable pool source, each with its own pair key (D-LIB4c-1 (a)). F-SCRATCH-SYNTH
+ *  (#397, D-LIB8M-SCRATCH7B form): each id is synthetic, a copy of `copyOf`'s exercises.json entry in the tree only;
+ *  copyOf is the real id the entry named before. */
 export const SCRATCH_4C = [
-  { id: 'lib_jumping_jacks', from: 'lat_pulldown', key: 'lib4c-scratch-a' },   // D-LIB11-SCRATCHA: was lib_barbell_row (pilot A)
-  { id: 'lib_one_arm_dumbbell_row', from: 'lat_pulldown', key: 'lib4c-scratch-b' },
-  { id: 'lib_t_bar_row', from: 'seated_cable_row', key: 'lib4c-scratch-c' },
-  { id: 'lib_landmine_row', from: 'seated_cable_row', key: 'lib4c-scratch-d' },
-  { id: 'lib_sled_push', from: 'machine_chest_press', key: 'lib4c-scratch-e' },   // D-LIB11-SCRATCHIDS (a): was lib_smith_machine_bench_press (pilot B)
-  { id: 'lib_smith_machine_incline_press', from: 'machine_chest_press', key: 'lib4c-scratch-f' },
+  { id: 'lib_scratch_fourc_a', copyOf: 'lib_jumping_jacks', archetype: 'pull', from: 'lat_pulldown', key: 'lib4c-scratch-a' },   // D-LIB11-SCRATCHA: was lib_barbell_row (pilot A)
+  { id: 'lib_scratch_fourc_b', copyOf: 'lib_one_arm_dumbbell_row', archetype: 'pull', from: 'lat_pulldown', key: 'lib4c-scratch-b' },
+  { id: 'lib_scratch_fourc_c', copyOf: 'lib_t_bar_row', archetype: 'pull', from: 'seated_cable_row', key: 'lib4c-scratch-c' },
+  { id: 'lib_scratch_fourc_d', copyOf: 'lib_landmine_row', archetype: 'pull', from: 'seated_cable_row', key: 'lib4c-scratch-d' },
+  { id: 'lib_scratch_fourc_e', copyOf: 'lib_sled_push', archetype: 'push', from: 'machine_chest_press', key: 'lib4c-scratch-e' },   // D-LIB11-SCRATCHIDS (a): was lib_smith_machine_bench_press (pilot B)
+  { id: 'lib_scratch_fourc_f', copyOf: 'lib_smith_machine_incline_press', archetype: 'push', from: 'machine_chest_press', key: 'lib4c-scratch-f' },
 ];
 /** docs/howto/library/arch/batchlines.md @ 4a9fd86 (D-LIB-SCRATCHIDS): never a scratch target. */
 export const LB1 = ['chin_up', 'hanging_knee_raise', 'assisted_pull_up', 'inverted_row', 'close_grip_pulldown', 'underhand_lat_pulldown', 'single_arm_lat_pulldown', 'straight_arm_pulldown', 'chest_supported_row', 'resistance_band_row', 'incline_machine_press', 'shoulder_press', 'horizontal_leg_press', 'leg_press_calf_raise'];
 export const LB2 = ['dumbbell_bench_press', 'barbell_bench_press', 'incline_dumbbell_press', 'incline_barbell_bench_press', 'decline_bench_press', 'close_grip_bench_press', 'dumbbell_shoulder_press', 'barbell_overhead_press', 'arnold_press', 'dumbbell_fly', 'skull_crusher', 'dumbbell_pullover'];
 /** Ids other fixtures use (LIB-2b's clone, LIB-4b's B5 set). */
-export const TAKEN = ['lib_cable_lateral_raise', 'lib_underhand_lat_pulldown', 'lib_chest_supported_row', 'lib_cable_chest_press'];
+export const TAKEN = ['lib_cable_lateral_raise', 'lib_scratch_fourb_a', 'lib_scratch_fourb_b', 'lib_scratch_fourb_c', 'lib_scratch_pull_row', 'lib_scratch_sevenb_row', 'lib_scratch_sevenb_press'];
 /** D-LIB11-SCRATCHIDS (a) and D-LIB11-SCRATCHA: pinned batches' ids (pilot B's held crunch included), never a scratch target. */
 export const PILOT_A = ['barbell_row', 'dumbbell_bench_press', 'dumbbell_shoulder_press', 'barbell_overhead_press', 'romanian_deadlift', 'single_leg_romanian_deadlift', 'upright_row', 'pec_fly', 'dumbbell_biceps_curl', 'rope_triceps_pushdown', 'plank', 'mountain_climbers', 'triceps_pushdown'];
 export const PILOT_B = ['smith_machine_bench_press', 'seated_leg_curl', 'cable_fly', 'push_up', 'crunch'];
@@ -48,8 +50,9 @@ export function setProblems(set, root = ROOT) {
     if (PILOT_A.includes(name) || PILOT_B.includes(name)) out.push(`${s.id} is a pilot ${PILOT_A.includes(name) ? 'A' : 'B'} id (D-LIB11-SCRATCHIDS)`);
     if (PILOT_A2.includes(name)) out.push(`${s.id} is a PILOT-A2 id (D-LIB11-SCRATCHIDS)`);
     if (PILOT_A3.includes(name)) out.push(`${s.id} is a PILOT-A3 id (D-LIB11-SCRATCHIDS)`);
-    if (!known.has(s.id)) out.push(`${s.id} is not in src/data/exercises.json`);
+    if (!s.copyOf && !known.has(s.id)) out.push(`${s.id} is not in src/data/exercises.json`);
   }
+  out.push(...scratchTargetProblems(set, root));   // F-SCRATCH-SYNTH: a batches/ row; a real synthetic id; a missing copyOf
   if (new Set(set.map(s => s.id)).size !== set.length) out.push('an id is listed twice');
   if (new Set(set.map(s => s.key)).size !== set.length) out.push('a pair key is shared');
   return out;
@@ -94,6 +97,24 @@ export function seamed(text) {
 const sh = (root, cmd, args) => execFileSync(cmd, args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'], maxBuffer: 1 << 28 }).trim();
 const commit = (root, msg) => { sh(root, 'git', ['add', '-A']); sh(root, 'git', ['commit', '-q', '-m', msg]); return sh(root, 'git', ['rev-parse', 'HEAD']); };
 
+/** F-SCRATCH-SYNTH: the set problems on a built scratch tree (the check and seed steps). Every setProblems refusal is
+ *  kept (LB1/LB2, TAKEN, the pilot ids, an id outside exercises.json, a batches/ row, a missing copyOf, a duplicate id, a
+ *  shared pair key) except the two that the build itself makes true for each synthetic id:
+ *    - "<id> is a row of batches/zz-lib4b.json": the build writes the scratch batch;
+ *    - "<id> is in src/data/exercises.json (a copyOf id is synthetic)": addSynthetic writes the entry.
+ *  In their place the built state is required: each id in exercises.json and a row of the scratch batch. */
+export function builtProblems(set, root = ROOT) {
+  const own = new Set(set.flatMap(s => [`${s.id} is a row of batches/${BATCH.split('/').pop()}`, `${s.id} is in src/data/exercises.json (a copyOf id is synthetic)`]));
+  const out = setProblems(set, root).filter(p => !own.has(p));
+  const known = new Set(JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8')).map(e => e.id));
+  const rows = Object.keys(JSON.parse(readFileSync(join(root, BATCH), 'utf8')).rows ?? {});
+  for (const s of set) {
+    if (!known.has(s.id)) out.push(`${s.id} is not in the built tree's src/data/exercises.json`);
+    if (!rows.includes(s.id)) out.push(`${s.id} is not a row of ${BATCH}`);
+  }
+  return out;
+}
+
 /**
  * C16 (part, node side): the copied sources differ from the 8's only in the id, name, research-card and import lines and
  * the ruled COPY_EDITS (a line diff of each clone against its source).
@@ -108,7 +129,7 @@ export function copyProblems(root, set = SCRATCH_4C) {
       // `    variantLine: '<second kind>.',`, directly after the clone's one `  copy: {` line; it is taken out here, so
       // every other line keeps the comparison below. Any other target carries none (the line count catches one).
       if (kind === 'howto') {
-        const kinds = String(JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8')).find(e => e.id === s.id)?.equipment ?? '').split('/').map(k => k.trim());
+        const kinds = String(exerciseOf(s, JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8'))).equipment ?? '').split('/').map(k => k.trim());   // F-SCRATCH-SYNTH
         const at = b.flatMap((l, i) => (l === '  copy: {' ? [i] : []));
         if (at.length !== 1) { out.push(`${s.id} howto: ${at.length} copy lines, want 1`); continue; }
         if (kinds.length > 1) {
@@ -149,7 +170,8 @@ export function seededShard(text, n) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const [step, ...rest] = process.argv.slice(2), root = ROOT;
-  const bad = setProblems(SCRATCH_4C, root);
+  // F-SCRATCH-SYNTH: check and seed run on the built tree, where the build has added each synthetic id and its batch row
+  const bad = ['check', 'seed'].includes(step) ? builtProblems(SCRATCH_4C, root) : setProblems(SCRATCH_4C, root);
   if (bad.length) { console.error(`scratch: refused:\n${bad.join('\n')}`); process.exit(1); }
   if (step === 'merge') {
     const [wiring, lib6] = rest;
@@ -174,7 +196,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.log(`scratch tree: ${commit(root, '[do not merge] [golden update] LIB-4c scratch: 6 source-level scratch ids and their MANIFEST.json rows (D-LIB4c-1 a)')}`);
   } else if (step === 'check') {
     const c = copyProblems(root);
-    console.log(`C16 set: ${SCRATCH_4C.map(s => s.id).join(', ')}: outside LB1 and LB2, none taken, own keys`);
+    console.log(`C16 set (built tree): ${SCRATCH_4C.map(s => s.id).join(', ')}: every setProblems rule but the build's own zz-lib4b rows and exercises.json entries; each id a zz-lib4b row and in exercises.json`);
     console.log(c.length ? `C16 copy diff FAIL:\n${c.join('\n')}` : 'C16 copy diff: only id, name, research-card and import lines and the ruled COPY_EDITS differ');
     process.exit(c.length ? 1 : 0);
   } else if (step === 'seed') {

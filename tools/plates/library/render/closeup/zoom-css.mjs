@@ -91,6 +91,7 @@ ${o.levelNeutral ? `.z-level { fill: none; stroke-width: 1; stroke-dasharray: 3 
 ` : ''}${o.outlines ? `.z-ol { fill: none; stroke-width: 1.25; stroke-linejoin: round; stroke-linecap: round; } .z-ol.ridge { stroke-width: .9; }
 ` : ''}${o.outlines ? `.z-ol.ok { stroke: var(--accent); } .z-ol.m { stroke: var(--mistake); stroke-dasharray: 3 2; }
 ` : ''}${o.outlines ? `.z-cam { padding: 12px 0 0; } .z-pair.has-cam { padding-top: 6px; }
+` : ''}${o.fade ? `.z-crop .z-fade { opacity: .35; }
 ` : ''}${o.cap ? `.z-cap { fill: none; stroke: var(--mistake); stroke-width: 1.25; stroke-dasharray: 3 2.5; }
 ` : ''}${o.path ? `.z-path { fill: none; stroke-width: 1.5; stroke-dasharray: 4 3; stroke-linecap: round; } .z-path.ok { stroke: var(--accent); } .z-path.m { stroke: var(--mistake); }
 ` : ''}${o.path ? `.z-path-head { fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; } .z-path-head.ok { stroke: var(--accent); } .z-path-head.m { stroke: var(--mistake); }

@@ -152,6 +152,22 @@
   "lib_cable_external_rotation": {
    "ruling": "D-SHIP-C3",
    "reason": "card-no-zoom"
+  },
+  "lib_straight_arm_pulldown": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_chest_supported_row": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_resistance_band_row": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_horizontal_leg_press": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
   }
  }
 }

@@ -1,0 +1,22 @@
+{
+ "groups": [
+  {
+   "id": "lb1",
+   "title": "LB1",
+   "ids": [
+    "lib_chin_up",
+    "lib_hanging_knee_raise",
+    "lib_assisted_pull_up",
+    "lib_inverted_row",
+    "lib_close_grip_pulldown",
+    "lib_underhand_lat_pulldown",
+    "lib_single_arm_lat_pulldown",
+    "lib_straight_arm_pulldown",
+    "lib_chest_supported_row",
+    "lib_resistance_band_row",
+    "lib_incline_machine_press",
+    "lib_shoulder_press"
+   ]
+  }
+ ]
+}

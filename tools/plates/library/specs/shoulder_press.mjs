@@ -156,7 +156,7 @@ export default {
     ],
     tells: [
       { key: 'arch', text: 'Back<br>arched', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 38, top: 220 }, cue: 'The low back arches off the pad to push the handles up.' },
-      { key: 'gap', text: 'Off<br>the pad', anchor: gapMid, box: { left: 34, top: 166 }, cue: 'A gap opens between the low back and the pad.' },
+      { key: 'gap', text: 'Off<br>the pad', anchor: gapMid, box: { left: 34, top: 166 }, cue: 'The low back arches further off the pad than its natural curve.' },
     ],
   },
   alt: 'Machine shoulder press, side view. Seated with the back on an upright pad and the feet planted, the lifter presses vertical handles from just above the shoulders straight up overhead until the elbows are straight but not locked, the low back keeping its natural curve against the pad.',

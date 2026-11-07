@@ -296,6 +296,8 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     if (i !== file.entries.length - 1) out.push('layers-page entry is not last');
     if (e.supersedes != null) out.push('layers-page entry supersedes');
     if (e.approvedBy !== 'supervisor' || e.decision !== 'D-SHIP-W2-STAMP') out.push('layers-page approval');
+    // W2 review follow-up (#384 6647873082): the approval link in golden.mjs's APPROVAL form
+    if (typeof e.approval !== 'string' || !/^https:\/\/github\.com\/macdarenz-droid\/M-arc\/(pull|issues)\/\d+#issuecomment-\d+ @ [0-9a-f]{40}$/.test(e.approval)) out.push('layers-page approval link');
     if (JSON.stringify(e.ids) !== JSON.stringify(SHIPPED_RULED)) out.push(`layers-page ids ${e.ids}`);
     if (e.pageSha256 !== createHash('sha256').update(layersPage).digest('hex') || e.bytes !== layersPage.length) out.push('layers-page pin');
     return out;
@@ -369,6 +371,8 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     expect(layersPinProblems(li, lpage)).toEqual(['layers-page ids lib_cable_fly,lib_push_up,lib_seated_leg_curl']);
     const ls = structuredClone(g); ls.entries[last].supersedes = 0;
     expect(layersPinProblems(ls, lpage)).toEqual(['layers-page entry supersedes']);
+    const la = structuredClone(g); la.entries[last].approval = la.entries[last].approval.replace(/ @ .*/, ' @ main');
+    expect(layersPinProblems(la, lpage)).toEqual(['layers-page approval link']);
   });
   it('mutations: an existing layers file and a pinned id in another golden file are red', () => {
     const p = readJson(ROWS).pages;
@@ -382,9 +386,11 @@ describe('LIB-11 D-LIB11-SCRATCHIDS (a) and D-LIB11-SCRATCHA: no scratch target 
   it('the scratch set is clean; a set targeting lib_barbell_row (pilot A) or lib_smith_machine_bench_press (pilot B) is refused', async () => {
     const C = await import(/* @vite-ignore */ lib('ci/scratch.mjs'));
     expect(C.setProblems(C.SCRATCH_4C)).toEqual([]);
-    const swap = (key: string, id: string) => C.SCRATCH_4C.map((s: any) => (s.key === key ? { ...s, id } : s));
-    expect(C.setProblems(swap('lib4c-scratch-a', 'lib_barbell_row'))).toEqual(['lib_barbell_row is a pilot A id (D-LIB11-SCRATCHIDS)']);
-    expect(C.setProblems(swap('lib4c-scratch-e', 'lib_smith_machine_bench_press'))).toEqual(['lib_smith_machine_bench_press is a pilot B id (D-LIB11-SCRATCHIDS)']);
+    // F-SCRATCH-SYNTH (#397): the swap targets the real id itself (no copyOf), as the set did before; the pilot refusal
+    // stays, and its batches/ row is now refused too
+    const swap = (key: string, id: string) => C.SCRATCH_4C.map((s: any) => (s.key === key ? { id, from: s.from, key } : s));
+    expect(C.setProblems(swap('lib4c-scratch-a', 'lib_barbell_row'))).toEqual(['lib_barbell_row is a pilot A id (D-LIB11-SCRATCHIDS)', 'lib_barbell_row is a row of batches/pilot-a.json']);
+    expect(C.setProblems(swap('lib4c-scratch-e', 'lib_smith_machine_bench_press'))).toEqual(['lib_smith_machine_bench_press is a pilot B id (D-LIB11-SCRATCHIDS)', 'lib_smith_machine_bench_press is a row of batches/pilot-b.json']);
     expect(C.PILOT_A.map((i: string) => `lib_${i}`).sort()).toEqual(Object.keys(readJson('tools/plates/library/batches/pilot-a.json').rows).sort());
   });
 });

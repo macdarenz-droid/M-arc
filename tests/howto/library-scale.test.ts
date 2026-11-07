@@ -43,10 +43,12 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
     const keys = S.mapKeys(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
     // LIB-SHIP W2 (ruling 3, D-SHIP-IDS-NOPAIR): the 8 W2 ids ship (pec_fly held, D-SHIP-PECFLY-HOLD) with no hand chunk and no hand pair (gap-ruled or on the
     // pinned no-zoom list), so HAND holds exactly the other shipped chrome ids, in order; POSTURE and FEEL hold all of them
-    const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up'];
+    // LIB-SHIP W3 (ruling 3): W3's 4 card-no-zoom ids (hands/no-zoom.json) join NO_HAND; its 5 pair ids carry a hand
+    const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up',
+      'straight-arm-pulldown', 'chest-supported-row', 'resistance-band-row', 'horizontal-leg-press'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
-    expect(handIds).toHaveLength(9);   // the 8 and dumbbell_biceps_curl
+    expect(handIds).toHaveLength(14);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
     expect(keys.HAND).toEqual(handIds);
     expect(mapProblems({ ...keys, HAND: keys.POSTURE }, chromeIds)).toEqual([]);
     expect(mapProblems(keys, chromeIds)).toEqual([`HAND: ${handIds.length} keys, not the ${chromeIds.length} shipped chrome ids in order`]);
