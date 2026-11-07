@@ -1,0 +1,19 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=b1256f2fbce11ceb532ad2cfe85cd4189490e15d326af337d867f358c60479de
+{
+  "id": "lib_machine_lateral_raise",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/machine_lateral_raise.json",
+    "rev": 1
+  },
+  "sources": [
+    "mo-lat-raise",
+    "vg-lat-raise",
+    "ace-lat-raise",
+    "laf-lat-raise",
+    "sl-lat-raise",
+    "rabello-2024",
+    "balance-default"
+  ],
+  "riskFlags": []
+}

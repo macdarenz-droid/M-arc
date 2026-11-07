@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=14dc557f1981a57112eb8c4c309e9a544b3b9cf202de405dd62b37b048e013f7
+{
+  "id": "lib_machine_crunch",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/machine_crunch.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-seated-crunch",
+    "mo-crunch",
+    "fb-crunch",
+    "sl-crunch",
+    "sundstrup-2012",
+    "balance-default",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}
