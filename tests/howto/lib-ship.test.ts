@@ -731,7 +731,7 @@ describe('LIB-SHIP W7 D-PFR-L4: red-flag feel rows mark their pain region', () =
       const a = page.indexOf(`id="${pre}-feel-map"`), feel = page.slice(a, page.indexOf(`id="${pre}-row-`, a));
       for (const r of (await sheet(id)).feel.rows.filter((x: any) => x.redFlag)) {
         // both views: each '<g class="feel-mark" data-row=KEY>' group's feel-pain paths, front and back
-        const pain = feel.split(`<g class="feel-mark" data-row="${r.key}">`).slice(1).map(s => s.split('<g class="feel-mark"')[0].match(/<g class="feel-pain">[\s\S]*?<\/g>/)?.[0] ?? '').join('');
+        const pain = feel.split(`<g class="feel-mark" data-row="${r.key}">`).slice(1).map(s => (s.split('<g class="feel-mark"')[0] ?? '').match(/<g class="feel-pain">[\s\S]*?<\/g>/)?.[0] ?? '').join('');
         if (!(r.at.parts as string[]).every(p => pain.includes(`d="${dOf.get(p)}"`))) bad.push(`${id}: ${r.key} not outlined`);
         if (!page.includes(`id="${pre}-row-${r.key}"`) || !new RegExp(`id="${pre}-row-${r.key}"[^>]*data-pain`).test(page)) bad.push(`${id}: ${r.key} button has no data-pain`);
       }
