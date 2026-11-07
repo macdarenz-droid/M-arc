@@ -96,6 +96,22 @@
    "ruling": "D-SHIP-W5-HAMMER",
    "reason": "gap-ruled",
    "note": "the card's hand fault is the wrist twisting toward palms-up (c5), a forearm rotation the curl key cannot draw; flexion or extension Wrongs are never shown (W5 focused recheck, #392 6654466055, D-SHIP-Q1 form); the grip copy carries c1 and c4, the twist is in the mistakes (c5)"
+  },
+  "lib_straight_arm_pulldown": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_chest_supported_row": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_resistance_band_row": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
+  },
+  "lib_horizontal_leg_press": {
+   "ruling": "D-SHIP-C3",
+   "reason": "card-no-zoom"
   }
  }
 }

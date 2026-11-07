@@ -22,8 +22,8 @@
 //    at the end (c4 "toward the shoulder"): dumbbell_biceps_curl's full curl, 140 deg (pilot A :55).
 //  - Free (far, left) hand on the hip (c7), placed by IK on the side of the pelvis.
 //  - Single handle: a D-handle drawn as a `poly` loop beside the fist (PQ-H9: it moves in the Mistake), the cable from the
-//    low pulley's upper tangent to the handle, beside the body (the arm is lateral to the trunk), with a thin `poly`
-//    twin in the Mistake pose.
+//    low pulley's upper tangent to the handle, beside the body (the arm is lateral to the trunk); in the Mistake the
+//    Wrong cable is a dashed guide to the Wrong handle (LIB-PLATEFIX-3 item 9).
 // Unsourced numbers (13.3 must-fix 14): STEP, the column, stack and pulley sizes (lat_pulldown's), the low pulley height
 //  (16 cm), PULLEY_GAP (the light-tension distance behind the heels), the handle size.
 // Callouts, Mistake, tempo: the 3 checkpoints are the callouts (c2, c5, c4); the Mistake is the card's plate.mistake (c5,
@@ -72,8 +72,6 @@ const handle = lm => {
 };
 const cableLen = lm => { const r = ringOf(lm), t = lowTangent(r); return Math.hypot(r[1] - t[1], r[2] - t[2]); };
 const LEN_START = cableLen(landmarksOf(start, H));
-const twin = (a, b, t = 0.002) => { const dy = b[1] - a[1], dz = b[2] - a[2], L = Math.hypot(dy, dz), ny = -dz / L * t, nz = dy / L * t;
-  return [[0, a[1] + ny, a[2] + nz], [0, b[1] + ny, b[2] + nz], [0, b[1] - ny, b[2] - nz], [0, a[1] - ny, a[2] - nz]]; };
 
 // The faulty arm on top: dumbbell_biceps_curl's misArm (pilot A), dashed outlines of the swung upper arm, forearm, fist.
 const cr = (ps, k = 8) => {
@@ -93,6 +91,8 @@ const MIS_ARM = (() => {
     .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
 })();
 const S_END = landmarksOf(end, H)['shoulder.r'];
+const RING_M = ringOf(landmarksOf({ ...end, ...mistakePose }, H));   // the Wrong handle's ring (cable end)
+const VREF = 26;                                       // px: the vertical datum's length below the shoulder joint
 
 export default {
   id: 'bayesian_cable_curl', name: 'Bayesian Cable Curl', view: 'side', facing: 'right',
@@ -117,7 +117,6 @@ export default {
       ];
     },
     lm => ({ type: 'cable', from: lowTangent(ringOf(lm)), to: ringOf(lm), z: 'mid', part: 'handle' }),
-    (lm, ctx) => (ctx.pose === 'mistake' ? { type: 'poly', cls: 'eq', z: 'mid', part: 'handle', pts: twin(lowTangent(ringOf(lm)), ringOf(lm)) } : null),
     lm => ({ type: 'poly', cls: 'eq-solid', z: 'front', part: 'handle', pts: handle(lm) }),
   ],
   checks: [
@@ -132,7 +131,12 @@ export default {
   startParts: ['arm.r'],
   ghosts: { count: 3, parts: ['arm.r', 'handle'] },
   trace: { point: 'grip.r', trim: [10, 12] },
-  measure: { vertex: 'shoulder.r', from: 'down', to: { at: 'elbow.r', pose: 'start' }, radius: 30, title: 'Upper arm', value: 'about 45°', expect: 45, box: { left: 280, top: 130 } },
+  // LIB-PLATEFIX-3 item 9 (#392 6649453813 L7; ruling #405 6682844211; c3 "about a 45-degree angle", measured against a
+  // vertical): radius 30 -> 16 (30 px spanned 69 % of the 43.5 px upper arm and ended 13.5 px from the elbow, so the arc
+  // read as an elbow arc), and a thin vertical datum from the shoulder joint (VREF px long) as the vertical it is read
+  // against. 16 and VREF are drawing values (unsourced).
+  datum: [{ x: 'shoulder.r', from: 'shoulder.r', to: { at: 'shoulder.r', off: [0, VREF] }, mistake: false }],
+  measure: { vertex: 'shoulder.r', from: 'down', to: { at: 'elbow.r', pose: 'start' }, radius: 16, title: 'Upper arm', value: 'about 45°', expect: 45, box: { left: 280, top: 130 } },
   callouts: [
     { key: 'behind', text: 'Arm behind<br>body', anchor: { at: 'elbow.r', off: [0, -4] }, box: { left: 120, top: 140 }, cue: 'Start with the working arm drawn back behind your torso, cable taut.' },
     { key: 'still', text: 'Upper arm<br>still', anchor: { at: 'shoulderTop.r', off: [-4, 0] }, box: { left: 130, top: 92 }, cue: 'Keep the upper arm still. Only the forearm travels.' },
@@ -144,6 +148,10 @@ export default {
     parts: ['handle'],
     guides: [
       ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),
+      // LIB-PLATEFIX-3 item 9 (#392 6649453813 L7): the Wrong cable, from the low pulley's upper tangent to the Wrong
+      // handle's ring, as a dashed guide in the Mistake layer (was an equipment twin under the pose mask, hidden where it
+      // crossed the solid end figure, so it read as ending about 70 px short of the dashed handle).
+      { kind: 'dashed', pts: [lowTangent(RING_M), RING_M] },
     ],
     tells: [
       { key: 'swing', text: 'Upper arm<br>swings', anchor: { at: 'elbow.r', pose: 'mistake', off: [0, 4] }, box: { left: 258, top: 198 }, cue: 'Your upper arm swings forward so the shoulder helps lift the handle.' },

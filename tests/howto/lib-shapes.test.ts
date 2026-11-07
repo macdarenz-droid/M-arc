@@ -6,12 +6,18 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { blankPF, pfProblems } from './platefix-pins';
 import { alsoRowHtml, chipKeys, chipRowHtml, noHandZoom, type ChipContent, type Registered } from '@/slices/howto/sections/LookCloser';
 import { gripHtml, handContentOf } from '@/slices/howto/sections/Hand';
 import legPress from '@/howto/generated/ht-leg-press';
 import chestPress from '@/howto/generated/ht-machine-chest-press';
 import type { BuiltHowTo } from '@/howto/types';
 import { W5, lessW5 } from './lib-ship-w5';
+import { pf2Problems, restorePF2 } from './platefix2-pins';
+// LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
+// lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
+// every pin below, measured on main, still holds
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); return restorePF2(x); };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -71,8 +77,15 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     return h.digest('hex');
   };
   const W2_IDS = ['barbell_row', 'dumbbell_bench_press', 'dumbbell_shoulder_press', 'upright_row', 'rope_triceps_pushdown', 'plank', 'cable_fly', 'push_up'];
-  const W2_LINE = new RegExp(`^  (?:"lib_(?:${W2_IDS.join('|')})",|lib_(?:${W2_IDS.join('|')}): \\(\\) => |"(?:${W2_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): its 4 shipped ids add their lines the same way (4 each, no HAND line)
+  const PF_IDS = ['romanian_deadlift', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'reverse_lunge'], LINE_IDS = [...W2_IDS, ...PF_IDS];
+  const W2_LINE = new RegExp(`^  (?:"lib_(?:${LINE_IDS.join('|')})",|lib_(?:${LINE_IDS.join('|')}): \\(\\) => |"(?:${LINE_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   /** loaders.ts's body (all but line 1) without the W2 lines: how many were taken out, and the rest's sha. */
+  // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's 9 ids add 4 lines each (HOWTO_IDS, LOADERS, POSTURE, FEEL) and the 5 pair
+  // ids a HAND line each (handpair-<key>), 41 lines; with exactly those taken out, the W2 check below holds unchanged
+  const W3_IDS = ['chin_up', 'hanging_knee_raise', 'inverted_row', 'close_grip_pulldown', 'single_arm_lat_pulldown', 'straight_arm_pulldown', 'chest_supported_row', 'resistance_band_row', 'horizontal_leg_press'];
+  const W3_LINE = new RegExp(`^  (?:"lib_(?:${W3_IDS.join('|')})",|lib_(?:${W3_IDS.join('|')}): \\(\\) => |"(?:${W3_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+  const w3Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W3_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
   it('the 27 header-moved files: each body (all but line 1) equals main c4c34d75 (re-measured after train 63)', () => {
     const list = [...ROWS.map(i => `src/howto/generated/hand-${i}.ts`), ...ROWS.map(i => `src/howto/generated/posture-${i}.ts`),
@@ -85,13 +98,26 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // the W2 lines taken out (4 per id: HOWTO_IDS, LOADERS, POSTURE, FEEL; no HAND line, D-SHIP-PAIR-NOZOOM) is main's
     // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
-    expect(w2Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'))).toEqual({ removed: 32, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
+    const w3 = w3Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    expect(w3.removed).toBe(41);
+    // LIB-PLATEFIX-1: with its 4 ids' 16 lines also taken out (48 in all), the body is still main's 00a18e3c
+    expect(w2Less(w3.text)).toEqual({ removed: 48, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
+  });
+  it('LIB-SHIP W3 mutations: a W3 line dropped, a HAND line for a no-pair W3 id, and another line changed are red', () => {
+    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(t).text);
+    expect(t).toContain('  "chin-up": () => import(\'./posture-chin-up\'),\n');
+    expect(w3Less(t.replace('  "chin-up": () => import(\'./posture-chin-up\'),\n', '')).removed).toBe(40);
+    expect(w3Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"straight-arm-pulldown\": () => import('./hand-straight-arm-pulldown'),\n")).removed).toBe(42);
+    expect(w2Less(w3Less(t.replace('export const HAND', 'export const HAND_X')).text).sha).not.toBe(ok.sha);
   });
   it('LIB-SHIP W2 mutations: a HAND line for a W2 id, a W2 line dropped, and another line changed in loaders.ts are red', () => {
     const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(t);
     expect(w2Less(t.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(ok.sha);
-    expect(w2Less(t.replace('  "plank": () => import(\'./posture-plank\'),\n', '')).removed).toBe(31);
-    expect(w2Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"plank\": () => import('./hand-plank'),\n")).removed).toBe(33);
+    expect(w2Less(t.replace('  "plank": () => import(\'./posture-plank\'),\n', '')).removed).toBe(47);
+    expect(w2Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"plank\": () => import('./hand-plank'),\n")).removed).toBe(49);
+    // LIB-PLATEFIX-1: a PLATEFIX line dropped, and a HAND line for a PLATEFIX id, are red
+    expect(w2Less(t.replace('  "reverse-lunge": () => import(\'./posture-reverse-lunge\'),\n', '')).removed).toBe(47);
+    expect(w2Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"triceps-pushdown\": () => import('./hand-triceps-pushdown'),\n")).removed).toBe(49);
   });
 
   // F-PLATE-ZOOMCSS (D-ZOOMCSS-PINS, #387 6637398953): gen/plates.mjs is the 8 ht- files' hashed writer, so only their
@@ -262,8 +288,38 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     }
     return m;
   };
+  const w3Read = (p: string) => readFileSync(p, 'utf8');
+  // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows (the 9 shipped and the 4 staged
+  // at approved-plate), and W3 PANEL FIX 2 (f561ff71, #384 6649416891) moves crop.mjs and zoom-css.mjs in every row. Each
+  // W3 row must be there and each moved key must pin its current file; with the rows removed and main 5023f5c6's sha put
+  // back (`keep`: keys the caller checks and blanks itself), every other entry is untouched for the checks below
+  const W3_ROWS = ['assisted_pull_up', 'chest_supported_row', 'chin_up', 'close_grip_pulldown', 'hanging_knee_raise', 'horizontal_leg_press',
+    'incline_machine_press', 'inverted_row', 'resistance_band_row', 'shoulder_press', 'single_arm_lat_pulldown', 'straight_arm_pulldown',
+    'underhand_lat_pulldown'].map(id => `lib_${id}`);
+  const W3_MOVED: Record<string, string> = {
+    'tools/plates/library/render/closeup/crop.mjs': 'df61d973c2933021554e3d89c9834d01f1f171c35dd10d5cd1c7a11b946985d9',
+    'tools/plates/library/render/closeup/zoom-css.mjs': '37836f22478605ef8162af3c05e515385d03034d090279b6c91f4248adce2fdf',
+  };
+  const lessW3 = (m: any, keep: string[] = []) => {
+    for (const id of W3_ROWS) { expect(Object.keys(m.rows), id).toContain(id); delete m.rows[id]; }
+    for (const [id, r] of Object.entries<any>(m.rows)) for (const [k, main] of Object.entries(W3_MOVED)) {
+      if (keep.includes(k)) continue;
+      expect(r.files[k], `${id} ${k}`).toBe(sha(w3Read(k)));
+      r.files[k] = main;
+    }
+    return m;
+  };
+  it('LIB-SHIP W3 mutations: a W3 row missing, a moved key not at its current file, and a non-W3 row changed are red', () => {
+    const m = () => JSON.parse(w3Read('tools/plates/library/MANIFEST.json'));
+    const a = m(); delete a.rows.lib_chin_up;
+    expect(() => lessW3(a)).toThrow(/lib_chin_up/);
+    const b = m(); b.rows.lib_plank.files['tools/plates/library/render/closeup/zoom-css.mjs'] = 'f'.repeat(64);
+    expect(() => lessW3(b)).toThrow(/lib_plank/);
+    const c = m(); c.rows.lib_plank.entry = 'f'.repeat(64);
+    expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
+  });
   it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main c4c34d75 (re-measured after train 63)', () => {
-    const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
+    const m = lessW3(pf2Main(JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'))));   // LIB-SHIP W3
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(22 + W5.length);   // LIB-SHIP W2: + PILOT-B2's lib_crunch; LIB-SHIP W5: + lb04's and lb05's 27 rows (lessW5)
     expect(Object.keys(m.rows)).toContain('lib_crunch');
@@ -271,7 +327,9 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     const F_CROP = ['tools/plates/library/render/closeup/crop.mjs', 'tools/plates/library/render/closeup/hand.mjs'];
     // F-PAIR-FAULTS (#386): pairs.mjs's key is re-pinned there and pinned exactly by pair-faults.test.ts
     const F_PAIR = ['tools/plates/library/hands/pairs.mjs'];
-    for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of [...F_CROP, ...F_PAIR]) r.files[k] = 'X'; }
+    // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
+    const PF3 = ['tools/plates/library/render/closeup/zoom.mjs'];
+    for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of [...F_CROP, ...F_PAIR, ...PF3]) r.files[k] = 'X'; }
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
     // LIB-SHIP W5: with W5's 27 rows also taken out first (lessW5: each must be present), the same hash
@@ -279,7 +337,16 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync('docs/research/howto/shared/back-pain-box.json'))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
     // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
-    expect(sha(JSON.stringify(rrBox(lessW2(lessW5(m), [BLP]))))).toBe('99d9824be548ecd2454a92bb35c43c1339eca13f8d6731660c6140f2d30e882e');
+    // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs key is re-pinned there and pinned exactly by
+    // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
+    const bmFix = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) { expect(r.files['tools/plates/library/render/region-fix.mjs']).toBe(sha(readFileSync('tools/plates/library/render/region-fix.mjs'))); r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; } return x; };
+    // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was 99d9824b…e882e, then f8074fd0 with zoom.mjs's key also blanked.
+    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 8841246c, both sides kept): its moved keys,
+    // added keys and superseded entries each pin their current value (pfProblems; reds in crop-projection.test.ts), then are
+    // blanked too; every key and entry where this MANIFEST differs from main 8841246c's is blanked, so the rest is main
+    // 8841246c's with the same blanks (the crop-projection value: the same blanks, measured on main 8841246c's own MANIFEST).
+    expect(pfProblems(m)).toEqual([]);
+    expect(sha(JSON.stringify(rrBox(lessW2(bmFix(blankPF(lessW5(m), 'X')), [BLP]))))).toBe('3e72651489c837482a01225f43b9a0e16afdf119d07465e11c0ef8d186289393');
   });
 });
 

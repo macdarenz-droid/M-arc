@@ -81,8 +81,10 @@ describe('HT-3c B3: tests/howto/budgets.json', () => {
     const entry = (k: string, raw: number, gz: number): Budget => ({ chunk: `handpair-${k}-*.js`, rawMax: raw, gzMax: gz, measuredRaw: raw, measuredGz: gz, setBy: 'LIB-7-FIX', reason: 'fixture entry, never written' });
     // LIB-SHIP W1: the real file now holds the curl key's entry (dumbbell_biceps_curl ships), so each fixture list starts
     // from the file without it; every fixture red is unchanged
-    const base = file.budgets.filter(b => b.chunk !== 'handpair-curl-dumbbell-under-*.js');
-    expect(base).toHaveLength(file.budgets.length - 1);
+    // LIB-SHIP W3 (D-SHIP-A9, ruling 3): the file also holds W3's 5 shipped pair keys, left out the same way
+    const W3_HP = ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated'].map(k => `handpair-${k}-*.js`);
+    const base = file.budgets.filter(b => b.chunk !== 'handpair-curl-dumbbell-under-*.js' && !W3_HP.includes(b.chunk));
+    expect(base).toHaveLength(file.budgets.length - 1 - W3_HP.length);
     expect(problems(['lib_dumbbell_biceps_curl'], base, fx('lib_dumbbell_biceps_curl')).bad).toEqual(['handpair-curl-dumbbell-under-*.js: no entry']);
     expect(problems([], [...base, entry('rope-push-neutral', 100, 50)], fx()).bad).toEqual(['handpair-rope-push-neutral-*.js: stale']);
     // LIB-SHIP W2 (D-SHIP-PAIR-NOZOOM): rope is on the pinned no-zoom list, so pairsOf gives it no pair; the over-the-cap red

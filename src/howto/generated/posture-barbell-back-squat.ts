@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=f93d9c7efc6ef3ee087a51b4225038fc8bdda92e5a6b2d10c2e472153f40892b
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=fc56f4a9f794bd9f24a84e134a86fcf0a2cd8d0a7dcbd4226a73c90f9446c8bc
 // The barbell-back-squat posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-barbell-back-squat.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

@@ -1197,7 +1197,7 @@ describe('LIB-22 A16: no other card\'s composer is copied, forked or imported (D
 describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (DESIGN.md sections 8-12)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { sled_push: 'round', sled_pull: 'lean', farmer_s_carry: 'long', burpee: 'landing', jumping_jacks: 'toes', high_knees: 'arch',
     jump_rope: 'high', battle_ropes: 'shrug', medicine_ball_slam: 'arms', wall_ball: 'far', bear_crawl: 'hips', kettlebell_swing: 'lean' };
-  const ONE_TELL = ['jump_rope', 'burpee', 'jumping_jacks'];
+  const ONE_TELL = ['jump_rope', 'burpee', 'jumping_jacks', 'farmer_s_carry'];   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was the three, now farmer_s_carry too (its second tell dropped)
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells (or one, with its record), the first carrying the ruled key', () => {
     for (const id of specsDrawn()) {
@@ -1631,9 +1631,9 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     expect(minGap(far).min, 'hop, box moved left: one crossing').toBeGreaterThanOrEqual(6);
     expect(minGap(withSecondLine(far, 'rope', -0.2)).min, 'hop: a second rope crossing').toBeLessThan(6);
     // high (Mistake view): its box moved right, so the leader runs on past the rope (green), then a second strand (red)
-    const farHigh = { ...jr, mistake: { ...jr.mistake, tells: jr.mistake.tells.map((x: any) => (x.key === 'high' ? { ...x, box: { left: 248, top: 304 } } : x)) } };
+    const farHigh = { ...jr, mistake: { ...jr.mistake, tells: jr.mistake.tells.map((x: any) => (x.key === 'high' ? { ...x, box: { left: 290, top: 304 } } : x)) } };   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was { left: 248, top: 304 }, now 290 (the Mistake figure and its tell moved 0.55 m aside)
     expect(minGap(farHigh).min, 'high, box moved right: one crossing').toBeGreaterThanOrEqual(6);
-    expect(minGap(withSecondLine(farHigh, 'rope', 0.2, 'mistake')).min, 'high: a second rope crossing').toBeLessThan(6);
+    expect(minGap(withSecondLine(farHigh, 'rope', -0.1, 'mistake')).min, 'high: a second rope crossing').toBeLessThan(6);   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was dx 0.2, now -0.1 (a strand between the moved box and the faulty sole)
     for (const [key, dx] of [['elbows', -0.07], ['hands', 0.07]] as const) {
       const bad = phantomProblems(withSecondLine(jr, 'startrope', dx));
       expect(bad.filter(x => x.startsWith(`jump_rope ${key}:`)), `${key}: a second phantom crossing`).toHaveLength(1);
@@ -1910,10 +1910,10 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
       "normalSvg": "bacc38bbd015e14ca1242861a2b59153b7034a2dbe8441d3465f2b061834196a",
       "normalOverlay": "ccd4a32137a4a358d025b7cf79c39ed06e62964d7f05ed6b44e099acee806207",
       "mistakeSvg": "b6edc38dbbde9fd5d911b6f5e2920a67f56a5e996f9303e1ff5ddf58c8f2ed7b",
-      "mistakeOverlay": "401f995336e94a44d3192658fd8e13bd14911b8a9113018cab27626ebf2f1c9f",
-      "tells": "1abe7532fefd9981d4ad92ccdc90bcb1ec4aeb2cc14d842976c95515cbebdfd7",
+      "mistakeOverlay": "d59d426f92afeabc4372cf37377292682ebd209f304f8f967948b52e99b783f1",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 401f9953, now the PF3 drawing
+      "tells": "ee628ee4d3e8b8e2c1620a1780d3674a05bb05189d820b0cd86f27835a4ce733",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 1abe7532, now the PF3 drawing
       "tempo": "5e6b30bd62d5477511099a7223e190982d6f2c365a411300e31fd5f75f1a8ebd",
-      "cues": "a81aeec88fa54afc6779e2a89254950df15abf80197e86a9e497c020419b61e7",
+      "cues": "75f8c94cd993ecc864845cd1ddd146d6f9ba2373617871362fcd9dd37bb4698a",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was a81aeec8, now the PF3 drawing
       "alt": "bae68e9da3ceffe04455a1e07a66f9391e98127962fba70fe06013dacd0b16e1",
       "mistakeAlt": "ae5f686adbcc72871bc4b68f69b149ebae772178cc8bba35dc77d97c40e2fca6"
     },
@@ -1929,9 +1929,9 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
       "mistakeAlt": "2e69b29b78f143b879610dca51a51496b5c280b56c434009ad2effa67b4e53de"
     },
     "sled-pull": {
-      "normalSvg": "8638526e2db679446f1450441f4965bde890f80115564732728e010dd2dde117",
-      "normalOverlay": "0ef9d6fd50ca07a21308b6285e88075c220254e8deec7e75f0db5c8d3a7be19f",
-      "mistakeSvg": "59508c62644c2c339d56a92b49ecf7594e0bda8a83673565e035bd025398745a",
+      "normalSvg": "b637dac6064cef002d48619511d9646455d05bd9e064f16622b9dbd353a89e01",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8638526e, then 01f23201; round 2 (#405 6685743439 R7): SLED_Z 0.78
+      "normalOverlay": "81d2c0e5266c292688179b5f90c636c69c78fbe167103a0d979893567a2db815",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0ef9d6fd, now the PF3 drawing
+      "mistakeSvg": "1122a78495799f0069d0bfbfdb1c525727034a5d97c3b406177512c652aecae9",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, then 40510f2a; round 2 (#405 6685743439 R7): SLED_Z 0.78
       "mistakeOverlay": "f488c63b0fa31e3e936d99f2f834dece424d62bee06595b56b14a89a09b8bd54",
       "tells": "6a7d6e8c622a2a5df7035e2823688a13decbfcb9a4a203b54ce05909b257705d",
       "tempo": "1551a4913b7c557d03dca51a61ca2c49605243ea59da71e831c285dc1b0cc523",
@@ -1986,11 +1986,11 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
     "farmer-s-carry": {
       "normalSvg": "a7ba22bc65f2902f298a0e03f9f36f429b73f73bea26d02e7036c1455ba507b8",
       "normalOverlay": "47a61d310240b9ee1abc8832f4aeb2da57a00e1a6e9d7dc938a6e7bba9a71b8b",
-      "mistakeSvg": "9fb279b9c8a3ee45cf5501fba91041ddb664f25b7eb9112b373aca1b76c2223c",
-      "mistakeOverlay": "4f8ac80d0d3af7f36d0b6e73812249abe40bc77329e02d803b762b5e1bc41713",
-      "tells": "bca679445acb31251ccb25b9c6ed0e660a098775107b7a2680e3853ce47e05bd",
+      "mistakeSvg": "1897a2fb2733dea91253b0ce4a071312493102a50ffb054056e905e2c6cdbc13",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 9fb279b9, now the PF3 drawing
+      "mistakeOverlay": "74ad63b1c01202259e966fdee1a80af9bfe71b6358b3fed325889e5be0e9adea",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 4f8ac80d, now the PF3 drawing
+      "tells": "7a11acabc494a28bfb5e0ae69e784fb7cb8e3215c78338a12a609d441bf96683",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was bca67944, now the PF3 drawing
       "tempo": "b58ebebbe455227a55ea306aec9d1c332cf92565622aa23bcd7b393922fd7cff",
-      "cues": "595acacf60a11834662cf06ce3705721b04a1c8948b1b945a7e74c0d5f940ff4",
+      "cues": "c1fc4c30658226ac32a2f4a4c7b04cfd533a45215bb24037ebfec157e36f23fd",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 595acacf, now the PF3 drawing
       "alt": "6982ec9e758712d1591a20ac2587f3523ca49b27555484835930f13a80b4b04d",
       "mistakeAlt": "71dc9a470ffb390a3a5fd780d2b9ce8fbd2d488844cfb007cca9379ba75f6ce2"
     }
@@ -2273,9 +2273,9 @@ describe('HELD-A D-HELDA-JRF3: the named F3 on jump_rope, exact both ways', () =
   const rep = (id: string, raised: string[]) => ({ id, flags: Object.fromEntries(['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7'].map(f => [f, { raised: raised.includes(f), value: f === 'F5' ? 3.57 : 0 }])) });
   it('F3 and F5 on jump_rope pass; jump_rope without F3, and F3 on kettlebell_swing, are red', async () => {
     const q = await import(/* @vite-ignore */ lib('lb10/qa.mjs'));
-    expect(q.F3_IDS).toEqual(['lib_jump_rope']);
-    expect(q.flagProblems([rep('lib_jump_rope', ['F3', 'F5'])])).toEqual([]);
-    expect(q.flagProblems([rep('lib_jump_rope', ['F5'])])).toEqual(['lib_jump_rope: flags F5 != ruled F3,F5']);
+    expect(q.F3_IDS).toEqual([]);   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was ['lib_jump_rope'], now [] (the named F3 withdrawn)
+    expect(q.flagProblems([rep('lib_jump_rope', ['F3', 'F5'])])).toEqual(['lib_jump_rope: flags F3,F5 != ruled F5']);   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was [] (F3 allowed), now red
+    expect(q.flagProblems([rep('lib_jump_rope', ['F5'])])).toEqual([]);   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was red (F3 required), now the ruled set
     expect(q.flagProblems([rep('lib_kettlebell_swing', ['F3', 'F5'])])).toEqual(['lib_kettlebell_swing: flags F3,F5 != ruled F5']);
   });
 });

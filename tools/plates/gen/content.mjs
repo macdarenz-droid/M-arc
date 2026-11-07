@@ -106,7 +106,10 @@ const ser = (value, pad) => JSON.stringify(value, null, 2).replace(/\n/g, `\n${p
  *  `zooms` is narrowed to descriptors; every other key is the content value as is. */
 export function baseFieldsText(content, pad = '  ') {
   return BASE_KEYS.filter(k => content[k] !== undefined).map(k => {
-    const value = k === 'zooms' ? zoomDescriptors(content.zooms) : content[k];
+    // LIB-SHIP W3 (#384 6650401348): handling.gripCite holds the grip line's card claim ids for the library lint (as
+    // zooms[].cite, which zoomDescriptors leaves out); it is review metadata, not app data, so the chunk never carries it
+    const value = k === 'zooms' ? zoomDescriptors(content.zooms)
+      : k === 'handling' && content.handling?.gripCite !== undefined ? (({ gripCite, ...h }) => h)(content.handling) : content[k];
     return `${pad}${k}: ${ser(value, pad)},\n`;
   }).join('');
 }

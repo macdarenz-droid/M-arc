@@ -15,15 +15,20 @@
 //    the head pulley; the cable line runs from the ring to the pulley's front tangent, as close_grip draws it.
 //  - Torso upright (c7, c11): pelvis tilt -3, trunk -2, about 5 deg back at the hip, the same in every pose.
 //  - Start (c4): near arm long overhead on the cable line, the near shoulder shrugged 3 cm toward the ear.
-//  - End (c2, c3): grip centre 12 cm under the chin and 5 cm in front of it, the shoulder drawn down 2 cm and back 1 cm,
-//    the elbow pole down, back and out, so the upper arm finishes near the side (about 19 deg forward).
+//  - End (c2, c3): grip centre 18 cm under the chin and 5 cm in front of it, the shoulder drawn down 2 cm and back 1 cm,
+//    the elbow pole down, back and out, so the upper arm finishes at the side, vertical (W3 PANEL FIX 2, #384 6649416891:
+//    the old 12 cm put the elbow about 19 deg in front of the shoulder; with the upper arm vertical the hand reaches only
+//    about shoulder height, so the grip comes down 6 cm; the fist top stays just under the chin, c2).
 //  - Free (far) hand rests on the far thigh behind the pad in every pose (not given by the card; hidden by the trunk
 //    in this view).
-//  - Mistake (card plate.mistake, c10, c13; lib4-cards 13.4 must-fix 1, Q-R2-1): the handle pulled on well past the
-//    end (grip 10 cm under and 4 cm behind the chest mark), the elbow driven back 13.8 cm behind the end backMid with its
-//    red cap 11.1 px clear of the solid end figure (targets: 10 cm, 6 px), and the near shoulder protracted 4 cm (rolled
-//    forward). The torso keeps the upright posture. The handle sits where the arm puts it, behind the solid torso, so
-//    the moving cable is drawn dashed from the Mistake ring to the head pulley, as close_grip draws it.
+//  - Mistake (card plate.mistake, c10, c13; lib4-cards 13.4 must-fix 1, Q-R2-1; W3 PANEL FIX 2, #384 6649416891): the
+//    handle pulled on past the end (grip 10 cm under the chest mark and level with its front, 14.7 cm under the end grip,
+//    in front of the trunk so the 'low' tell points at it), the elbow low and driven back 11.3 cm behind the end backMid
+//    (lb1-plates A2: at least 10 cm),
+//    and the near shoulder protracted 4 cm (rolled forward). The torso keeps the upright posture. The masked Mistake
+//    outline hides the forearm where it crosses the trunk, so the whole wrong forearm is drawn as a dashed guide
+//    (elbow -> wrist -> grip), and a short arrow runs from the end shoulder to the Mistake shoulder (c10, c13). The moving
+//    cable is drawn dashed from the Mistake ring to the head pulley, as close_grip draws it.
 //  - End handle height: the grip centre is 12 cm under the chin (the fist top at about mouth level), not at the chin
 //    itself; with the grip at the chin the elbow finishes 15 cm in front of the shoulder, not near the side (c3).
 //  - In-between keys (lib4-cards 13.3 must-fix 3): grip in even steps down the cable line at t = 1/4, 1/2, 3/4, the
@@ -37,9 +42,10 @@
 // CARD: thighs under the pads (c1), handle just past chin height (c2), upper arm at the side (c3), shoulder up at the
 //  top (c4), torso upright (c7, c11), tempo (c14). Unsourced numbers: GX 0.18 (handle under the near shoulder), REACH
 //  0.13 m (D-handle), TILT -3 / TRUNK -2 (card: "upright", no angle), START_Y 1.668 and the 3 cm start shrug (card: "the
-//  cable lifts the shoulder", no size), END_G 12 cm under and 5 cm in front of the chin, end scap -2/-1, MIS_G 10 cm
-//  under and 4 cm behind the chest mark, the Mistake elbow pole [-0.4, 0.3, -1], Mistake protraction 4 cm, the 'past' box
-//  top 236 px, the in-between poles (VIA_POLES), the free hand on the far thigh; the station sizes as
+//  cable lifts the shoulder", no size), END_G 18 cm under and 5 cm in front of the chin, end scap -2/-1, MIS_G 10 cm
+//  under the chest mark and 0.3 cm in front of it, the Mistake elbow pole [-0.1, -0.1, -1], Mistake protraction 4 cm, the 'past' box
+//  top 250 px (W3 PANEL FIX 2: was 236; the lower Mistake elbow left a 4 px leader), the 'pocket' box top 236 px (W3 PANEL FIX 2: was 262; with the vertical end arm
+//  236 gives the shortest clean leader, 30.9 px, no engine issue), the in-between poles (VIA_POLES), the free hand on the far thigh; the station sizes as
 //  close_grip_pulldown.
 import { rootOnSeat, landmarksOf } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
@@ -67,7 +73,7 @@ const reach = (c, pole) => ({ l: FREE, r: { at: [-GX, c[1], c[2]], pole } });
 const toward = g => { const d = [0, HEAD.y - g[1], HEAD.z - g[2]], L = Math.hypot(...d); return d.map(v => v / L); };
 const ringOf = g => dHandleRing(g, toward(g), REACH);
 // End: grip centre just past chin height (c2).
-const END_G = [0, lm0.chin[1] - 0.12, lm0.chin[2] + 0.05];
+const END_G = [0, lm0.chin[1] - 0.18, lm0.chin[2] + 0.05];   // W3 PANEL FIX 2: 12 -> 18 cm under the chin (upper arm vertical, c3)
 // Start: arm long overhead on the same cable line.
 const cd = toward(END_G);
 const START_Y = 1.668;
@@ -84,8 +90,10 @@ const via = VIA_POLES.map((pole, i) => {
   return { ...body, scap: { l: { elev: 0, pro: 0 }, r: { elev: 3 - 5 * f, pro: 1 - 2 * f } }, reach: reach(g, pole) };
 });
 // Mistake: pulled past the end, the elbow back behind the trunk, the shoulder rolled forward.
-const MIS_G = [0, lm0.chest[1] - 0.10, lm0.chest[2] - 0.04];
-const misBody = { scap: { l: { elev: 0, pro: 0 }, r: { elev: 0, pro: 4 } }, reach: reach(MIS_G, [-0.4, 0.3, -1]) };
+// W3 PANEL FIX 2: grip 10 cm under the chest mark and level with its front (was 4 cm behind it), pole [-0.1, -0.1, -1]
+// (was [-0.4, 0.3, -1]): the elbow low (at backMid height) and 11.3 cm behind the end backMid, the handle in front.
+const MIS_G = [0, lm0.chest[1] - 0.10, lm0.chest[2] + 0.003];
+const misBody = { scap: { l: { elev: 0, pro: 0 }, r: { elev: 0, pro: 4 } }, reach: reach(MIS_G, [-0.1, -0.1, -1]) };
 
 const PAD_AT = lm0['thighTop.r'];
 const PAD = { at: [0, PAD_AT[1], PAD_AT[2]], r: 0.055 };
@@ -139,7 +147,7 @@ export default {
   callouts: [
     { key: 'thighs', text: 'Thighs<br>pinned', anchor: { at: 'thighTop.r', off: [14, 0] }, box: { left: 188, top: 236 }, cue: 'Set the thighs tight under the pads.' },
     { key: 'shoulder', text: 'Shoulder<br>down first', anchor: 'shoulderTop.r', box: { left: 4, top: 181 }, cue: 'Drop the shoulder away from the ear before the elbow bends.' },
-    { key: 'pocket', text: 'Elbow<br>to pocket', anchor: 'elbow.r', box: { left: 4, top: 262 }, cue: 'Pull the elbow back and down toward the back pocket.' },
+    { key: 'pocket', text: 'Elbow<br>to pocket', anchor: 'elbow.r', box: { left: 4, top: 236 }, cue: 'Pull the elbow back and down toward the back pocket.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
   mistake: {
@@ -147,10 +155,15 @@ export default {
     parts: ['arm.r', 'handle'],
     guides: [
       { kind: 'dashed', pts: [ringOf(MIS_G), headTangent(ringOf(MIS_G))] },
+      // W3 PANEL FIX 2 (c10, c13): the whole wrong forearm, which the masked outline hides over the trunk
+      { kind: 'dashed', pts: [{ at: 'elbow.r' }, { at: 'wrist.r' }, { at: 'grip.r' }] },
+      // the shoulder rolled forward: the Mistake shoulder cap dashed, and a short arrow from the end shoulder to it
+      { kind: 'dashed', smooth: true, pts: [{ at: 'shoulder.r', off: [-9, -2] }, { at: 'shoulderTop.r', off: [0, -2] }, { at: 'shoulder.r', off: [9, -2] }] },
+      { kind: 'arrow', from: { at: 'shoulder.r', pose: 'end', off: [0, 0] }, to: { at: 'shoulder.r', off: [10, 0] } },
       { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [14, 0] }, to: { at: 'grip.r', off: [14, 0] } },
     ],
     tells: [
-      { key: 'past', text: 'Elbow<br>goes back', anchor: 'elbow.r', box: { left: 4, top: 236 }, cue: 'The elbow drives back behind the body past the end.' },
+      { key: 'past', text: 'Elbow<br>goes back', anchor: 'elbow.r', box: { left: 4, top: 250 }, cue: 'The elbow drives back behind the body past the end.' },
       { key: 'low', text: 'Pulled<br>too low', anchor: { at: 'grip.r', off: [14, 0] }, box: { left: 176, top: 222 }, cue: 'The handle keeps going down well past the chin.' },
     ],
   },

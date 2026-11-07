@@ -1,0 +1,28 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ded107cd0300059d01a13e4101dc82b3076513a28789d1afe7b0950e9604cbe2
+{
+  "id": "lib_hanging_knee_raise",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/hanging_knee_raise.json",
+    "rev": 1
+  },
+  "sources": [
+    "yessis-hanging-knee-leg-raise",
+    "strengthlog-hanging-knee-raise",
+    "hk-baechle-grip",
+    "workman-2008",
+    "escamilla-2006",
+    "mcgill-2015",
+    "odriscoll-1992",
+    "prinold-2016",
+    "bullbar-calluses",
+    "nasm-chin-pull",
+    "hand-key-bar",
+    "nhs-shoulder-pain",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back",
+    "shoulder"
+  ]
+}

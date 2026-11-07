@@ -46,7 +46,7 @@ export const tableOf = reports => [
 
 /** The raised flags per id (pilot-a3-card, measured on bf4b8d4d): F5 3.57 on both (D-LIB9-F5); F3 and F4 as measured. */
 export const EXPECTED = {
-  lib_reverse_lunge: ['F3', 'F4', 'F5'], lib_dumbbell_fly: ['F3', 'F5'],
+  lib_reverse_lunge: ['F5'], lib_dumbbell_fly: ['F3', 'F5'],   // reverse_lunge: LIB-PLATEFIX-1 pf1 cleared F3 and F4 (D-PLATEFIX-PINS, #385)
 };
 export const F5_EXEMPT = 3.57;
 /** Differences between the raised flags and EXPECTED, and an F5 value other than the exempt 3.57. */

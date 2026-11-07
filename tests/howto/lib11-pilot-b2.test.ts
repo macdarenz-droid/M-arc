@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { promisify } from 'node:util';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { pfTailProblems } from './platefix-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -178,10 +179,40 @@ describe('PILOT-B2 A4: the two zooms (D-LIBZOOM-EXTEND, D-LIB16-ZOOMVIEWS)', { t
 
 describe('PILOT-B2 A5: layout (D-SUPCORE-LAYOUT)', { timeout: T }, () => {
   const box = (s: any, key: string) => s.callouts.find((c: any) => c.key === key);
-  it('the blades box at {56, 216}; "Chin set" on one line at {24, 160}; the engine reports no issue in either view', () => {
-    expect(box(spec(), 'blades').box).toEqual({ left: 56, top: 216 });
+  /** D-PLATEFIX-PINS: the CHIN SET leader (the svg leader path ending at the chin label's ink box) against the blades label's ink box. */
+  const chinCrossesBlades = (s: any, mistake: boolean) => {
+    const r = plate.renderPlate(s, { id: 'x', mistake }), ink = (k: string) => r.report.labels.find((l: any) => l.key === k).ink;
+    const chin = ink('chin'), b = ink('blades');
+    const leaders = [...r.svg.matchAll(/<path class="leader" d="([^"]+)"/g)].map(m => {
+      const pts: number[][] = [];
+      for (const [, c, a, bb] of m[1]!.matchAll(/([MLH])([-\d.]+)(?: ([-\d.]+))?/g)) pts.push(c === 'H' ? [+a!, pts[pts.length - 1]![1]!] : [+a!, +bb!]);
+      return pts;
+    });
+    const ends = leaders.filter(p => { const [x, y] = p[p.length - 1]!; return Math.abs(x! - chin.x1) <= 2 && y! >= chin.y0 && y! <= chin.y1; });
+    if (ends.length !== 1) return [`${ends.length} leaders end at the chin label`];
+    const hit = (p: number[], q: number[]) => {   // Liang-Barsky: does segment p-q meet the box?
+      let t0 = 0, t1 = 1; const d = [q[0]! - p[0]!, q[1]! - p[1]!];
+      for (const [pp, dd, lo, hi] of [[p[0]!, d[0]!, b.x0, b.x1], [p[1]!, d[1]!, b.y0, b.y1]] as number[][]) {
+        if (dd === 0) { if (pp! < lo! || pp! > hi!) return false; continue; }
+        let a = (lo! - pp!) / dd!, c = (hi! - pp!) / dd!; if (a > c) [a, c] = [c, a];
+        t0 = Math.max(t0, a); t1 = Math.min(t1, c); if (t0 > t1) return false;
+      }
+      return true;
+    };
+    const p = ends[0]!;
+    return p.slice(1).some((q, i) => hit(p[i]!, q)) ? [`${mistake ? 'mistake' : 'normal'}: the CHIN SET leader crosses the blades label`] : [];
+  };
+  it('the blades box at {26, 216}; "Chin set" on one line at {24, 160}; the engine reports no issue in either view; the CHIN SET leader clears the blades label', () => {
+    expect(box(spec(), 'blades').box).toEqual({ left: 26, top: 216 });
     expect([box(spec(), 'chin').text, box(spec(), 'chin').box]).toEqual(['Chin set', { left: 24, top: 160 }]);
     for (const mistake of [false, true]) expect(plate.renderPlate(spec(), { id: 'x', mistake }).report.issues).toEqual([]);
+    expect(chinCrossesBlades(spec(), false)).toEqual([]);
+    // the Mistake view draws neither label (its labels: lowback, pelvis, meta), so there is no leader to cross there
+    expect(plate.renderPlate(spec(), { id: 'x', mistake: true }).report.labels.filter((l: any) => l.key === 'chin' || l.key === 'blades')).toEqual([]);
+  });
+  it('mutation (D-PLATEFIX-PINS): the blades box back at {56, 216} puts the CHIN SET leader across the blades label', () => {
+    const s = { ...spec(), callouts: spec().callouts.map((c: any) => (c.key === 'blades' ? { ...c, box: { left: 56, top: 216 } } : c)) };
+    expect(chinCrossesBlades(s, false)).toEqual(['normal: the CHIN SET leader crosses the blades label']);
   });
   it('mutation: the blades box back at {8, 300} is an engine issue on the figure', () => {
     const s = { ...spec(), callouts: spec().callouts.map((c: any) => (c.key === 'blades' ? { ...c, box: { left: 8, top: 300 } } : c)) };
@@ -246,14 +277,30 @@ describe('PILOT-B2 A9 (node half), A2 (part): runQa, the expected flags, the pag
     const r = await qaNode("s => ({ ...s, mistake: { ...s.mistake, tells: s.mistake.tells.filter(t => t.key !== 'lowback') } })");
     expect(Object.keys(r.flags)).toContain('F7');
   });
-  it('the PILOT-B2 page is deterministic, and pilot B\'s page is unchanged (ff3e017c, 409,765 B)', async () => {
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]): pilot B's page moves with cable_fly's fixed plate
+  // (was ff3e017c, 409,765 B), to its superseding page entry's 128e6112 (409,805 B); and the PILOT-B2 golden file's tail is
+  // checked against this build: a page entry superseding 0, crunch's plate superseding 1, and one layers-page entry
+  // for lib_crunch that pins the committed layers page (pfTailProblems), superseding main 8841246c's current one, #404's
+  // body-map re-pin (4; D-PLATEFIX-SECOND)
+  it('the PILOT-B2 page is deterministic, and pilot B\'s page is its golden update\'s (128e6112, 409,805 B); LIB-PLATEFIX-1: the PILOT-B2 tail pins this build', async () => {
     const r = await child(`const { createHash } = await import('node:crypto'), sha = x => createHash('sha256').update(x).digest('hex');
 const [b2, b] = await Promise.all([${JSON.stringify(lib('pilot-b2/build.mjs'))}, ${JSON.stringify(lib('pilot-b/build.mjs'))}].map(f => import(f)));
 const x = await b2.buildPb2Page(), y = await b2.buildPb2Page(), p = await b.buildPbPage();
-console.log(JSON.stringify({ x: sha(x.html), y: sha(y.html), ids: b2.drawnIds(), pb: [sha(p.html), p.html.length] }));`);
+console.log(JSON.stringify({ x: sha(x.html), y: sha(y.html), ids: b2.drawnIds(), pb: [sha(p.html), p.html.length], html: x.html.toString('utf8') }));`);
     expect(r.x).toBe(r.y);
     expect(r.ids).toEqual(['lib_crunch']);
-    expect(r.pb).toEqual(['ff3e017c98f73b6d049808a6ffea057a7fa350eed764d9ceedb9a582fa22583f', 409765]);
+    expect(r.pb).toEqual(['128e6112335957d2ff7a0fa1dd3491067f6fc3fc7de2d3852fb9ea05957ad971', 409805]);
+    const pb = readJson('tests/howto/golden/library/pilot-b.json').entries.filter((e: any) => e.kind === 'page').at(-1);
+    expect([pb.pageSha256, pb.bytes]).toEqual(r.pb);
+    const G = await import(/* @vite-ignore */ lib('../golden.mjs')), f = readJson('tests/howto/golden/library/pilot-b2.json');
+    const tail = (file: any, html: string = r.html) => pfTailProblems(file, 'pilot-b2', { G, html, page: 0, plates: { lib_crunch: 1 }, layers: { supersedes: 4, ids: ['lib_crunch'], page: readFileSync('tests/howto/golden/library/pilot-b2.layers.html') } });
+    expect(tail(f)).toEqual([]);
+    // reds: a tail fragment edited, the built page off by a byte, and main's entries edited
+    const m1 = structuredClone(f); m1.entries[6].fragments.normalSvg = '0'.repeat(64);
+    expect(tail(m1)).toEqual(['lib_crunch: fragments']);
+    expect(tail(f, `${r.html} `)).toContain('pilot-b2: page entry != the built page');
+    const m2 = structuredClone(f); m2.entries[1].why += ' ';
+    expect(tail(m2)).toEqual(["pilot-b2: main's 5 entries changed"]);
     console.log(`PILOT-B2 page sha256 ${r.x}`);
   });
   // LIB-SHIP W2 (ruling 3): replaces "the pre-pin rows file exists and the pin files do not yet": the pin files exist

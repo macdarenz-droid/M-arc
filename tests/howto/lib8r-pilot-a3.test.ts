@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
+import { MAIN_GOLDEN, pfTailProblems } from './platefix-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -16,6 +17,7 @@ const T = 600_000;
 const IDS = ['reverse_lunge', 'dumbbell_fly'];   // PILOT-A3's rows (D-A3-BATCH)
 const A2_ROWS = ['box_jump', 'bent_over_dumbbell_rear_delt_fly'];   // PILOT-A2's pinned rows
 const STILL_HELD = ['barbell_shrug', 'incline_dumbbell_press'];   // D-LIB8R-SCOPE: routed to LIB-13s and LB2
+const SHIPPED_RULED = ['lib_reverse_lunge'];   // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221): the PILOT-A3 id ruled to ship
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const copy = (x: any) => JSON.parse(JSON.stringify(x));
@@ -75,7 +77,8 @@ describe('PILOT-A3 A1: the rows hold exactly the two ids; no PILOT-A2 file names
       if (r.mode !== 'H') bad.push(`${id}: mode ${r.mode}`);
       if (r.src !== `library/specs/${id.slice(4)}.mjs`) bad.push(`${id}: src ${r.src}`);
       if (IDS.includes(id.slice(4)) && r.view !== cardOf(id.slice(4)).plate.view) bad.push(`${id}: view ${r.view} is not the census view`);
-      if (r.stage !== (pinned() ? 'approved-plate' : 'drawing')) bad.push(`${id}: stage ${r.stage}`);
+      // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP; D-PLATEFIX-PINS / PIN GO): reverse_lunge ships; dumbbell_fly stays approved-plate
+      if (r.stage !== (pinned() ? (SHIPPED_RULED.includes(id) ? 'shipped' : 'approved-plate') : 'drawing')) bad.push(`${id}: stage ${r.stage}`);
     }
     if (j.batch !== 'PILOT-A3' || j.censusRef !== '4a9fd86') bad.push('batch/censusRef');
     return bad;
@@ -86,7 +89,7 @@ describe('PILOT-A3 A1: the rows hold exactly the two ids; no PILOT-A2 file names
     'tools/plates/library/pilot-a2/cards.sha.json', 'tools/plates/library/pages/pilot-a2.json', 'tests/howto/golden/library/pilot-a2.json'];
   const a2Problems = (files: Record<string, string>) => Object.entries(files).flatMap(([f, t]) => IDS.filter(id => new RegExp(`\\b(lib_)?${id}\\b`).test(t)).map(id => `${f} names ${id}`));
   const a2Files = () => Object.fromEntries(A2_FILES.map(f => [f, readFileSync(f, 'utf8')]));
-  it('the rows file: the 2 ids once each, mode H, census view, stage drawing (approved-plate after the pin); no PILOT-A2 file names them', async () => {
+  it('the rows file: the 2 ids once each, mode H, census view, stage drawing (after the pin: reverse_lunge shipped, dumbbell_fly approved-plate); no PILOT-A2 file names them', async () => {
     expect(problems(text())).toEqual([]);
     expect(a2Problems(a2Files())).toEqual([]);
     expect(Object.keys((await import(/* @vite-ignore */ lib('pilot-a2/qa.mjs'))).EXPECTED)).toEqual(A2_ROWS.map(i => `lib_${i}`));
@@ -100,6 +103,11 @@ describe('PILOT-A3 A1: the rows hold exactly the two ids; no PILOT-A2 file names
   it('mutations: box_jump added, a duplicated row, and either id written into batches/pilot-a2.json are red', () => {
     const j = JSON.parse(text()); j.rows.lib_box_jump = { ...j.rows.lib_reverse_lunge, src: 'library/specs/box_jump.mjs' };
     expect(problems(JSON.stringify(j, null, 1)).length).toBeGreaterThan(0);
+    // LIB-PLATEFIX-1 A9: dumbbell_fly at shipped, or reverse_lunge held at approved-plate, is red
+    const fly = JSON.parse(text()); fly.rows.lib_dumbbell_fly.stage = 'shipped';
+    expect(problems(JSON.stringify(fly, null, 1))).toEqual(['lib_dumbbell_fly: stage shipped']);
+    const held = JSON.parse(text()); held.rows.lib_reverse_lunge.stage = 'approved-plate';
+    expect(problems(JSON.stringify(held, null, 1))).toEqual(['lib_reverse_lunge: stage approved-plate']);
     expect(problems(text().replace('"lib_dumbbell_fly": {', '"lib_reverse_lunge_dup": { "x": "lib_reverse_lunge" },\n  "lib_dumbbell_fly": {')).length).toBeGreaterThan(0);
     for (const id of IDS) {
       const f = a2Files(), b = JSON.parse(f[A2_FILES[0]!]!); b.rows[`lib_${id}`] = b.rows.lib_box_jump;
@@ -164,22 +172,36 @@ describe('PILOT-A3 cards, the tempo map and the strip rows (moved from :85-87 an
 
 describe('PILOT-A3 card truth, one tell per Mistake (moved from :134, :147-153, :157-158)', () => {
   const RULED: Record<string, string> = { reverse_lunge: 'flare', dumbbell_fly: 'wrists' };
+  // the ruled tells, in order: the fly one fault, one tell (D-LIB8R-BJTELL); the lunge's c18 fault two, the low back
+  // (the topFault) and the flared ribs (LIB-PLATEFIX-1, D-PLATEFIX-PINS: was one tell, 'flare')
+  const TELLS: Record<string, string[]> = { reverse_lunge: ['flare', 'ribs'], dumbbell_fly: ['wrists'] };
   const tellProblems = (id: string, s: any, card: any) => {
     const bad: string[] = [], tells = s.mistake.tells;
-    if (tells.length !== 1) bad.push(`${id}: ${tells.length} tells (one fault, one tell: D-LIB8R-BJTELL)`);
+    if (JSON.stringify(tells.map((t: any) => t.key)) !== JSON.stringify(TELLS[id])) bad.push(`${id}: tells ${tells.map((t: any) => t.key).join(',')} are not the ruled ${TELLS[id]!.join(',')}`);
     if (card.topFault !== RULED[id]) bad.push(`${id}: topFault ${card.topFault}`);
     if (!card.plate.mistake.drawable || tells[0].key !== card.topFault) bad.push(`${id}: first tell ${tells[0].key} vs topFault ${card.topFault}`);
     return bad;
   };
-  it('each Mistake has exactly one tell, the topFault key of a drawable card', () => {
+  it('each Mistake has its ruled tells (the fly one; the lunge flare and ribs, both c18), the first the topFault key of a drawable card', () => {
     for (const id of IDS) expect(tellProblems(id, spec(id), cardOf(id)), id).toEqual([]);
+    expect(cardOf('reverse_lunge').plate.mistake.claim).toBe('c18');
+    // mutations (D-PLATEFIX-PINS): the lunge's 'ribs' tell dropped, the two tells swapped, and a third tell are red
+    const rl = spec('reverse_lunge'), [flare, ribs] = rl.mistake.tells, withTells = (tells: any[]) => ({ ...rl, mistake: { ...rl.mistake, tells } });
+    for (const tells of [[flare], [ribs, flare], [flare, ribs, { ...ribs, key: 'lean' }]]) expect(tellProblems('reverse_lunge', withTells(tells), cardOf('reverse_lunge')).length, tells.map((t: any) => t.key).join(',')).toBeGreaterThan(0);
   });
   it("reverse_lunge's tell names c18's fault on the low back (D-A3-REVTELL); dumbbell_fly's names c13's", () => {
     const rl = spec('reverse_lunge').mistake.tells[0];
     expect(cardOf('reverse_lunge').plate.mistake.claim).toBe('c18');
-    expect(rl.text).toMatch(/Low back arches/);
-    expect(rl.anchor).toEqual({ at: 'lumbar', pose: 'mistake' });
-    expect(rl.cue).toBe('The ribcage flares and the pelvis stays untucked, arching the low back.');
+    // D-PLATEFIX-PINS (#385, layers panel 6648438434): the c18 label is "Pelvis untucked"; the old "Low back arches" is red
+    expect(rl.text).toBe('Pelvis untucked');
+    expect('Low back arches').not.toBe(rl.text);
+    // D-PLATEFIX-PINS (#385): the anchor is the faulty lumbar plus the pf1 R4 offset that ends the leader on the red lumbar curve
+    const REVTELL_ANCHOR = { at: 'lumbar', pose: 'mistake', off: [-9.75, -7.61] };
+    expect(rl.anchor).toEqual(REVTELL_ANCHOR);
+    // mutation: the offset dropped (the leader back on the lumbar landmark, inside the grey body) is red
+    expect({ at: 'lumbar', pose: 'mistake' }).not.toEqual(REVTELL_ANCHOR);
+    expect(rl.cue).toBe('The ribcage flares as you step back and the pelvis stays untucked.');
+    expect('The ribcage flares and the pelvis stays untucked, arching the low back.').not.toBe(rl.cue);   // mutation: the old cue is red
     expect(cardOf('reverse_lunge').claims.find((c: any) => c.id === 'c18').text).toMatch(/flaring the ribcage/);
     expect(cardOf('dumbbell_fly').plate.mistake.claim).toBe('c13');
     expect(spec('dumbbell_fly').mistake.tells[0].text).toMatch(/Wrists bend/);
@@ -206,43 +228,60 @@ describe('PILOT-A3 A5: reverse_lunge normal plate (moved from :162-174; D-A3-REV
   };
   const EXPORT = '026964f91f030268d49bc52cf1adf46c265d9fcd27349e01e30c6f3bc87cc0dd';
   const NORMAL = { svg: '0744dcf3b2b2ffaae46452a9921adfe09ff45f61f268f98353791e63998b2df9', overlay: 'cbf84381abccc3ff48d647c82c3e691717d347dfbc561ef2c2ee3d65027888c3' };
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update], superseding plate entry 4): the layers fix rounds
+  // (e7c5e612, ae37b940) changed only the 'weight' checkpoint's cue (and its cite c3) and the alt, so the export sha
+  // moved to 013ad603; with those three restored it is main's 026964f9 exactly, and the normal render is main's bytes.
+  const EXPORT_PF = '013ad603a882d3cc66ee830f10592af3b28ae8b06146af2973c3ebb93a8e014f';
+  const OLD_ALT = 'Reverse lunge with dumbbells, side view. From standing tall, one leg steps back and the body lowers until the front thigh is parallel and the rear knee hovers just above the floor, front shin near vertical, front foot flat, rear foot on the ball, trunk upright, dumbbells hanging at the sides.';
+  const mainText = (s: any) => ({ ...s, alt: OLD_ALT, callouts: s.callouts.map((c: any) => { if (c.key !== 'weight') return c; const { cite, ...r } = c; void cite; return { ...r, cue: 'Share the weight about evenly between both feet.' }; }) });
   it("reverse_lunge's normal plate is main's: export sha (normalised), a Mistake-view zoom only, and the normal render bytes", () => {
     const s = spec('reverse_lunge');
     for (const p of [s.poses.start, ...s.poses.via, s.poses.end]) expect(p.trunk).toEqual({ flex: 0 });
-    expect(exportSha(s)).toBe(EXPORT);
+    expect(exportSha(s)).toBe(EXPORT_PF);
+    expect(exportSha(mainText(s))).toBe(EXPORT);
     expect(s.zoom).toEqual({ view: 'mistake', k: 3 });
     const n = plate.renderPlate(s, { id: 'x-n' });
     expect({ svg: sha(n.svg), overlay: sha(n.overlay) }).toEqual(NORMAL);
   });
   it('mutation: REAR_HEEL 45 -> 46 moves the export sha and the normal render', async () => {
     const m = await variant('reverse_lunge', src => src.replace('const REAR_HEEL = 45;', 'const REAR_HEEL = 46;'));
-    expect(exportSha(m.default)).not.toBe(EXPORT);
+    expect(exportSha(m.default)).not.toBe(EXPORT_PF);
+    expect(exportSha(mainText(m.default))).not.toBe(EXPORT);   // LIB-PLATEFIX-1: the restore does not hide a pose change
     expect(sha(plate.renderPlate(m.default, { id: 'x-n' }).svg)).not.toBe(NORMAL.svg);
   });
   it('mutations: a trunk that is not exactly { flex: x } ({ flex: 0, bow: 1 } or { flex: 0, yaw: 0 } in one key pose) moves the export sha', () => {
     const s = spec('reverse_lunge');
     for (const trunk of [{ flex: 0, bow: 1 }, { flex: 0, yaw: 0 }]) {
-      expect(exportSha({ ...s, poses: { ...s.poses, end: { ...s.poses.end, trunk } } }), JSON.stringify(trunk)).not.toBe(EXPORT);
-      expect(exportSha({ ...s, poses: { ...s.poses, via: [{ ...s.poses.via[0], trunk }, s.poses.via[1]] } }), JSON.stringify(trunk)).not.toBe(EXPORT);
+      expect(exportSha({ ...s, poses: { ...s.poses, end: { ...s.poses.end, trunk } } }), JSON.stringify(trunk)).not.toBe(EXPORT_PF);
+      expect(exportSha({ ...s, poses: { ...s.poses, via: [{ ...s.poses.via[0], trunk }, s.poses.via[1]] } }), JSON.stringify(trunk)).not.toBe(EXPORT_PF);
+      expect(exportSha(mainText({ ...s, poses: { ...s.poses, end: { ...s.poses.end, trunk } } })), JSON.stringify(trunk)).not.toBe(EXPORT);
     }
+    // LIB-PLATEFIX-1: a text change beyond the three restored (the 'chest' cue) still moves both shas
+    const chest = { ...s, callouts: s.callouts.map((c: any) => (c.key === 'chest' ? { ...c, cue: `${c.cue} ` } : c)) };
+    expect([exportSha(chest) === EXPORT_PF, exportSha(mainText(chest)) === EXPORT]).toEqual([false, false]);
   });
 });
 
 describe('PILOT-A3 A3, A4: reverse_lunge bow true at true size, and the ring on the low back (were R5/R11, :176-217)', () => {
   const H = 1.75;
-  const STILL = ['head', 'chin', 'neck', 'shoulder.r', 'shoulderTop.r', 'elbow.r', 'grip.r', 'sternum', 'chest', 'backUpper',
-    'hips', 'hip.r', 'hip.l', 'knee.r', 'knee.l', 'ankle.r', 'ankle.l', 'toe.l', 'heel.r'];
-  const MOVES: Record<string, number> = { lumbar: 4.10, sacrum: 4.28, buttock: 4.30, navel: 4.65 };
+  // LIB-PLATEFIX-1 (D-PLATEFIX-PINS), re-measured on the new plate: the bow is 24 and the thorax flares back 8, so the
+  // upper landmarks, still at 12 (bow only), now move by the pinned px; the hips and legs stay still.
+  const STILL = ['hips', 'hip.r', 'hip.l', 'knee.r', 'knee.l', 'ankle.r', 'ankle.l', 'toe.l', 'heel.r'];
+  const MOVES: Record<string, number> = { lumbar: 8.16, sacrum: 8.51, buttock: 8.56, navel: 8.60, head: 13.65, chin: 9.52, neck: 8.42,
+    'shoulder.r': 6.59, 'shoulderTop.r': 7.64, 'elbow.r': 6.59, 'grip.r': 6.59, sternum: 7.53, chest: 5.99, backUpper: 4.78 };
   const pxMove = (a: number[], b: number[]) => Math.hypot(b[1]! - a[1]!, b[2]! - a[2]!) * PX;   // side view: z across, y up
   const bowProblems = (s: any, S: any, end = s.poses.end) => {
     const bad: string[] = [], m = { ...s.poses.end, ...s.mistake.pose };
-    if (JSON.stringify(m.trunk) !== JSON.stringify({ flex: 0, bow: S.M_ARCH }) || S.M_ARCH !== 12 || S.M_TILT !== 12) bad.push(`trunk ${JSON.stringify(m.trunk)}, M_ARCH ${S.M_ARCH}, M_TILT ${S.M_TILT}: not the true 12° bow`);
+    if (JSON.stringify(m.trunk) !== JSON.stringify({ flex: -S.M_FLARE, bow: S.M_ARCH }) || S.M_ARCH !== 24 || S.M_TILT !== 24 || S.M_FLARE !== 8) bad.push(`trunk ${JSON.stringify(m.trunk)}, M_ARCH ${S.M_ARCH}, M_TILT ${S.M_TILT}, M_FLARE ${S.M_FLARE}: not the true 24° bow with the 8° flare`);
+    if (JSON.stringify(m.shoulder) !== JSON.stringify({ flex: s.poses.end.root.tilt - S.M_FLARE })) bad.push(`shoulder ${JSON.stringify(m.shoulder)}: not the thorax lean (arms plumb)`);
     const a = eng.landmarksOf(end, H), b = eng.landmarksOf(m, H);
     for (const k of STILL) if (Math.hypot(...b[k].map((v: number, i: number) => v - a[k][i])) > 1e-9) bad.push(`${k} moved ${pxMove(a[k], b[k]).toFixed(2)} px`);
     for (const [k, px] of Object.entries(MOVES)) if (Math.abs(pxMove(a[k], b[k]) - px) > 0.05) bad.push(`${k} moved ${pxMove(a[k], b[k]).toFixed(2)} px, not ${px}`);
+    const plumb = (l: any) => (l['grip.r'][2] - l['shoulder.r'][2]) * PX;   // arms plumb: the grip keeps the end pose's 3.49 px in front of the shoulder
+    if (Math.abs(plumb(b) - plumb(a)) > 0.05) bad.push(`grip ${plumb(b).toFixed(2)} px from the shoulder, not the end pose's ${plumb(a).toFixed(2)}: the arms are not plumb`);
     return bad;
   };
-  it('A3: bow = M_ARCH = M_TILT = 12; upper landmarks, hips and legs still; lumbar 4.10, sacrum 4.28, buttock 4.30, navel 4.65 px; the same against { flex: 0, bow: 0 }', () => {
+  it('A3: bow = M_ARCH = M_TILT = 24, flare M_FLARE = 8, arms plumb; hips and legs still; lumbar 8.16, sacrum 8.51, buttock 8.56, navel 8.60, head 13.65 px (the upper body pinned); the same against { flex: 0, bow: 0 }', () => {
     const s = spec('reverse_lunge');
     expect(bowProblems(s, mods.reverse_lunge.SIZES)).toEqual([]);
     expect(bowProblems(s, mods.reverse_lunge.SIZES, { ...s.poses.end, trunk: { flex: 0, bow: 0 } })).toEqual([]);
@@ -254,30 +293,84 @@ describe('PILOT-A3 A3, A4: reverse_lunge bow true at true size, and the ring on 
     expect(bowProblems({ ...s, mistake: { ...s.mistake, pose: { ...s.mistake.pose, trunk: { flex: 0, bow: 16 } } } }, { ...mods.reverse_lunge.SIZES, M_ARCH: 16 }).length).toBeGreaterThan(0);
     expect(() => plate.renderPlate({ ...s, poses: { ...s.poses, end: { ...e, trunk: 0 } } }, { id: 'x' })).toThrow(/trunk\.bow needs the object form .*D-SPINE-MIX/);
   });
-  // A4: zoomOf's own fault and source ring: 12.31 px inside the zoom; the ring holds lumbar, sacrum and backMid in both
-  // poses, and the end pose's elbow dot (the hanging arm overlaps the waist in the side view).
+  it('A3 mutations (D-PLATEFIX-PINS): the old 12° bow, the 24° bow without the flare (head 0 px), and the flare with the arms not plumb are red', () => {
+    const s = spec('reverse_lunge'), e = s.poses.end, S = mods.reverse_lunge.SIZES, mis = (pose: any) => ({ ...s, mistake: { ...s.mistake, pose } });
+    expect(bowProblems(mis({ ...e, trunk: { flex: 0, bow: 12 } }), { ...S, M_ARCH: 12, M_TILT: 12 }).some((p: string) => /^lumbar moved 4\.10 px/.test(p))).toBe(true);
+    expect(bowProblems(mis({ ...s.mistake.pose, trunk: { flex: 0, bow: 24 }, shoulder: { flex: e.root.tilt } }), S).some((p: string) => /^head moved 0\.00 px/.test(p))).toBe(true);
+    expect(bowProblems(mis({ ...s.mistake.pose, shoulder: { flex: e.root.tilt } }), S).some((p: string) => /^grip 17\.04 px from the shoulder/.test(p))).toBe(true);
+  });
+  // A4: zoomOf's own fault and source ring: 24.49 px inside the zoom; the ring holds lumbar, sacrum and backMid in both
+  // poses. LIB-PLATEFIX-1 (panel R11, #385 6636073314; D-PLATEFIX-PINS): the ring sits on the lumbar outline with the
+  // end pose's elbow dot (plate.mjs circle.joint, r 2.25) wholly outside it (was: inside it).
+  const DOT = 2.25;
   const zoomProblems = (s: any) => {
     const z = Z.zoomOf(s, { prefix: 'x' }), cam = camOf(s), L = qe.poseLandmarks(ENG(), s), bad: string[] = [];
     if (z.fault.key !== 'flare' || !(z.fault.d * z.k >= 11.39)) bad.push(`deviation in the zoom ${(z.fault.d * z.k).toFixed(2)} px < 11.39`);
-    const pts: [string, number[]][] = [['elbow.r end', L.lm.end['elbow.r']], ...['lumbar', 'sacrum', 'backMid'].flatMap(k => (['end', 'mistake'] as const).map(p => [`${k} ${p}`, L.lm[p][k]] as [string, number[]]))];
+    const pts: [string, number[]][] = ['lumbar', 'sacrum', 'backMid'].flatMap(k => (['end', 'mistake'] as const).map(p => [`${k} ${p}`, L.lm[p][k]] as [string, number[]]));
     for (const [k, w] of pts) { const p = cam.P(w); if (Math.hypot(p[0] - z.src.c[0], p[1] - z.src.c[1]) > z.src.r) bad.push(`${k} outside the ring`); }
-    return { bad, dev: z.fault.d * z.k };
+    const el = cam.P(L.lm.end['elbow.r']), elbow = Math.hypot(el[0] - z.src.c[0], el[1] - z.src.c[1]) - z.src.r;
+    if (!(elbow > DOT)) bad.push(`the elbow dot is not outside the ring (centre ${elbow.toFixed(2)} px outside it, dot r ${DOT})`);
+    return { bad, dev: z.fault.d * z.k, elbow };
   };
-  it('A4: { view: mistake, k: 3 }, 12.31 px inside the zoom, the ring holds lumbar, sacrum and backMid in both poses and the elbow dot', () => {
+  it('A4: { view: mistake, k: 3 }, 24.49 px inside the zoom, the ring holds lumbar, sacrum and backMid in both poses, the elbow dot outside it (3.76 px)', () => {
     const s = spec('reverse_lunge'), r = zoomProblems(s);
     expect(s.zoom).toEqual({ view: 'mistake', k: 3 });
     expect(r.bad).toEqual([]);
-    expect(r.dev).toBeCloseTo(12.31, 2);
+    expect(r.dev).toBeCloseTo(24.49, 2);
+    expect(r.elbow).toBeCloseTo(3.76, 2);
   });
-  it('A4 mutations: k 2.5 (10.26 px) and the held anchor (sternum -> lumbar t 0.7) at k 3 (8.62 px) are red', () => {
+  it('A4 mutations: k 2.5 (20.41 px, the elbow dot on the ring, 0.29 px) and the held anchor (sternum -> lumbar t 0.7) at k 3 (12.65 px) are red', () => {
     const s = spec('reverse_lunge');
     const k25 = zoomProblems({ ...s, zoom: { view: 'mistake', k: 2.5 } });
-    expect(k25.bad.length).toBeGreaterThan(0); expect(k25.dev).toBeCloseTo(10.26, 2);
+    expect(k25.bad.length).toBeGreaterThan(0); expect(k25.dev).toBeCloseTo(20.41, 2); expect(k25.elbow).toBeCloseTo(0.29, 2);
     const held = zoomProblems({ ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((t: any) => ({ ...t, anchor: { along: ['sternum', 'lumbar'], t: 0.7, pose: 'mistake' } })) } });
-    expect(held.bad.length).toBeGreaterThan(0); expect(held.dev).toBeCloseTo(8.62, 2);
+    expect(held.bad.length).toBeGreaterThan(0); expect(held.dev).toBeCloseTo(12.65, 2);
   });
-  it('the chest arrow is gone: the Mistake draws no guide (the chest moves 0 px)', () => {
-    expect(spec('reverse_lunge').mistake.guides ?? []).toEqual([]);
+  // LIB-PLATEFIX-1 (panel R4/R5, #385 6636073314; D-PLATEFIX-PINS: was "the Mistake draws no guide"): the faulty trunk is
+  // two dashed smooth guides on the engine's own torso outline (body.mjs torsoSide vertices): the back line = the Mistake
+  // pose's vertices 0-5, then the grey (end) vertices 6-13 moved by the pinned plate px (the lumbar arched in, the buttock
+  // pushed back); the front line = the Mistake's 28-24, then the grey 23-18 moved (the lower ribs flared out); the hip
+  // arc-arrow (r 36) and the rib arrow up and out in front of vertices 21-22; the 'flare' leader ends on back vertex 7,
+  // the 'ribs' leader on the arrow tip.
+  const BACK_PX = [[-2, 1], [2, -1], [4.5, -2.5], [3, -1], [-4, 1.5], [-7, 2], [-9, 3], [-7.5, 5]];   // vertices 6-13, plate px (x forward, y down)
+  const FRONT_PX = [[0, -2], [7, -1], [8, -1], [7, 0], [4, 1], [2, 0.5]];   // vertices 23-18
+  const torso = (p: any) => {
+    const b = { height: H }, sk = eng.fk(eng.resolve(eng.normPose(p, b), b).q, b);
+    return eng.bodyShapes(sk, { view: 'side', near: 'r', pxm: 1, P: (w: number[]) => [w[2], w[1]] }).find((x: any) => x.key === 'torso').poly.map(([z, y]: number[]) => [0, y, z]);
+  };
+  const off = (w: number[], g: number[]) => [(w[2]! - g[2]!) * PX, -(w[1]! - g[1]!) * PX];   // world -> plate px from g
+  const guideProblems = (s: any) => {
+    const bad: string[] = [], g = s.mistake.guides ?? [], tE = torso(s.poses.end), tM = torso({ ...s.poses.end, ...s.mistake.pose });
+    const near = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!) <= 0.01;
+    if (JSON.stringify(g.map((x: any) => `${x.kind}${x.smooth ? ' smooth' : ''}`)) !== JSON.stringify(['dashed smooth', 'dashed smooth', 'arc-arrow', 'arrow'])) return [`guides ${g.map((x: any) => x.kind).join(',') || 'none'}: not the two dashed trunk lines, the arc-arrow and the rib arrow`];
+    const [back, front, arc, arrow] = g;
+    const line = (name: string, pts: number[][], own: number[], grey: number[], px: number[][]) => {
+      if (pts.length !== own.length + grey.length) { bad.push(`${name}: ${pts.length} points`); return; }
+      own.forEach((v, i) => { if (!near(off(pts[i]!, tM[v]), [0, 0])) bad.push(`${name} point ${i} is not the Mistake's vertex ${v}`); });
+      grey.forEach((v, i) => { const d = off(pts[own.length + i]!, tE[v]); if (!near(d, px[i]!)) bad.push(`${name} vertex ${v} moved ${d.map(n => n.toFixed(2))} px, not ${px[i]}`); });
+    };
+    line('back', back.pts, [0, 1, 2, 3, 4, 5], [6, 7, 8, 9, 10, 11, 12, 13], BACK_PX);
+    line('front', front.pts, [28, 27, 26, 25, 24], [23, 22, 21, 20, 19, 18], FRONT_PX);
+    if (JSON.stringify(arc) !== JSON.stringify({ kind: 'arc-arrow', center: { at: 'hips', pose: 'mistake' }, r: 36, a0: 145, a1: 195 })) bad.push(`arc ${JSON.stringify(arc)}`);
+    const rib = [0, 1, 2].map(i => (front.pts[7][i] + front.pts[6][i]) / 2);   // the moved vertices 21 and 22
+    if (!near(off(arrow.from, rib), [3, 11]) || !near(off(arrow.to, rib), [10, 2])) bad.push(`rib arrow ${off(arrow.from, rib).map(n => n.toFixed(2))} -> ${off(arrow.to, rib).map(n => n.toFixed(2))} px, not [3,11] -> [10,2] (up and out)`);
+    const lm = eng.landmarksOf({ ...s.poses.end, ...s.mistake.pose }, H), tip = (t: any) => [t.anchor.off[0], t.anchor.off[1]];
+    const [flare, ribs] = s.mistake.tells;
+    if (!near(off(back.pts[7], lm[flare.anchor.at]), tip(flare))) bad.push('the flare leader does not end on back vertex 7');
+    if (!near(off(arrow.to, lm[ribs.anchor.at]), tip(ribs))) bad.push('the ribs leader does not end on the rib arrow tip');
+    return bad;
+  };
+  it('the Mistake guides are the ruled faulty trunk: two dashed smooth contours, the hip arc-arrow (r 36) and the rib arrow; the leaders end on them', () => {
+    expect(guideProblems(spec('reverse_lunge'))).toEqual([]);
+    // mutations: no guides, the back line on the grey outline, the arc r 30, the rib arrow reversed, and the Mistake
+    // without the flare (the drawn neck and chest no longer the pose's) are red
+    const s = spec('reverse_lunge'), G = s.mistake.guides, mg = (guides: any[], pose = s.mistake.pose) => ({ ...s, mistake: { ...s.mistake, pose, guides } });
+    const tE = torso(s.poses.end);
+    expect(guideProblems(mg([]))).toEqual(['guides none: not the two dashed trunk lines, the arc-arrow and the rib arrow']);
+    expect(guideProblems(mg([{ ...G[0], pts: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(i => tE[i]) }, ...G.slice(1)])).some((p: string) => /^back vertex 8 moved 0\.00,/.test(p))).toBe(true);
+    expect(guideProblems(mg([G[0], G[1], { ...G[2], r: 30 }, G[3]])).some((p: string) => p.startsWith('arc '))).toBe(true);
+    expect(guideProblems(mg([G[0], G[1], G[2], { ...G[3], from: G[3].to, to: G[3].from }])).some((p: string) => p.startsWith('rib arrow '))).toBe(true);
+    expect(guideProblems(mg(G, { ...s.mistake.pose, trunk: { flex: 0, bow: 24 } })).some((p: string) => /^back point 0 is not/.test(p))).toBe(true);
   });
 });
 
@@ -469,7 +562,8 @@ describe('PILOT-A3 A8, A10: runQa node half on each plate, the zooms, the fly ch
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
   // the node-computed flags (F2 and F5 are the browser half's, pilot-a3/qa.mjs EXPECTED)
-  const NODE_FLAGS: Record<string, string[]> = { reverse_lunge: ['F3', 'F4'], dumbbell_fly: ['F3'] };
+  // LIB-PLATEFIX-1 (D-PLATEFIX-PINS): the redrawn lunge raises no node flag (F3 and F4 cleared; was ['F3', 'F4'])
+  const NODE_FLAGS: Record<string, string[]> = { reverse_lunge: [], dumbbell_fly: ['F3'] };
   const flagProblems = (id: string, r: any) => ['F1', 'F3', 'F4', 'F6', 'F7'].filter(f => r.flags[f].raised !== NODE_FLAGS[id]!.includes(f)).map(f => `${id}: ${f} ${r.flags[f].raised}`);
   child.it.each(IDS)('%s: every node hard check passes with zero exemptions; the node flags are the expected set', async id => {
     const r = await qa(await candOf(id));
@@ -492,8 +586,12 @@ describe('PILOT-A3 A8, A10: runQa node half on each plate, the zooms, the fly ch
       return { ...s, equipment: s.equipment.map((e, j) => (j === i ? (lm, ctx) => (ctx.pose === 'end' ? ['l', 'r'].flatMap(sd => three(st['grip.' + sd])).map(pts => ({ type: 'line', pts, cls: 'eq-line m-line', z: 'front' })) : null) : e)) }; }`;
     expect(node(await qa(await mutated('dumbbell_fly', fn)))).toContain('H7.chunk-raw');
   });
-  child.it('A4, A7 mutations: the next k down (reverse_lunge 2.5, dumbbell_fly 2) turns H3 red', async () => {
-    for (const [id, k] of [['reverse_lunge', 2.5], ['dumbbell_fly', 2]] as const) {
+  // LIB-PLATEFIX-1 (D-PLATEFIX-PINS): the lunge's Mistake moves 8.16 px at plate scale, so every legal k (1.5-4) clears
+  // H3.zoom:deviation (k 1.5: 12.24 px); its red is now the zoom being needed: removed, H3.deviation (was: k 2.5 red).
+  // Its ring's k is held by A4's elbow-dot check (k 2.5 red there).
+  child.it('A4, A7 mutations: the reverse_lunge zoom removed (8.16 px at plate scale) and the next k down (dumbbell_fly 2) turn H3 red', async () => {
+    expect(node(await qa(await mutated('reverse_lunge', 's => { const { zoom, ...r } = s; void zoom; return r; }'))), 'reverse_lunge').toContain('H3.deviation');
+    for (const [id, k] of [['dumbbell_fly', 2]] as const) {
       expect(node(await qa(await mutated(id, `s => ({ ...s, zoom: { ...s.zoom, k: ${k} } })`))), id).toContain('H3.zoom:deviation');
     }
   });
@@ -520,7 +618,13 @@ describe('PILOT-A3 A8, A10: runQa node half on each plate, the zooms, the fly ch
     expect(node(await qa(await mutated('reverse_lunge', 's => ({ ...s, trace: { ...s.trace, trim: [s.trace.trim[0], 60] } })')))).toContain('H3.trace');
   });
   child.it('A10 M4 the Mistake equal to the end pose, and M5 the start equal to the end, turn PQ-H3 red', async () => {
-    expect(node(await qa(await mutated('reverse_lunge', 's => ({ ...s, mistake: { ...s.mistake, pose: {}, guides: [] } })')))).toContain('H3.mistake-outline');
+    // LIB-PLATEFIX-1 (D-PLATEFIX-PINS): the lunge draws only the head as its m-pose part, which an end-equal Mistake
+    // still draws, so its red is the zoom's deviation (0 px), and it raises F3 (the node flag set red); with every part
+    // drawn (parts dropped) the old red, the empty outline, still applies
+    const m4 = await qa(await mutated('reverse_lunge', 's => ({ ...s, mistake: { ...s.mistake, pose: {}, guides: [] } })'));
+    expect(node(m4)).toContain('H3.zoom:deviation');
+    expect(flagProblems('reverse_lunge', m4)).toEqual(['reverse_lunge: F3 true']);
+    expect(node(await qa(await mutated('reverse_lunge', 's => { const { parts, ...m } = s.mistake; void parts; return { ...s, mistake: { ...m, pose: {}, guides: [] } }; }')))).toContain('H3.mistake-outline');
     // M5 on the fly: reverse_lunge's selected shin guide cannot be spliced into a page whose start equals its end
     expect(node(await qa(await mutated('dumbbell_fly', 's => ({ ...s, poses: { ...s.poses, start: s.poses.end, via: [] }, checks: s.checks.filter(k => k.pose !== "start") })')))).toContain('H3.start-is-end');
   });
@@ -549,7 +653,7 @@ describe('PILOT-A3 A2 (part), A3 (pre-pin part): PILOT-A2 rebuilds to its pin; t
   });
 });
 
-describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped', { timeout: T }, () => {
+describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and exactly the ruled id shipped (LIB-PLATEFIX-1)', { timeout: T }, () => {
   let G: any, reg: any, scratch: any, all: any;
   beforeAll(async () => {
     [G, reg, scratch] = await Promise.all(['../golden.mjs', 'registry.mjs', 'ci/scratch.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
@@ -557,31 +661,57 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped'
   }, T);
   const GOLDEN = () => JSON.parse(readFileSync('tests/howto/golden/GOLDEN.json', 'utf8')).entries;
   const file = () => readJson('tests/howto/golden/library/pilot-a3.json');
-  /** A11: chain, the page entry equal to the built page, each plate entry's 9 fragments equal to extractPlates of it. */
+  const LAYERS_CFG = 'tools/plates/library/pages/pilot-a3.layers.json', LAYERS_PAGE = 'tests/howto/golden/library/pilot-a3.layers.html';
+  // The layers page is pinned by the later [golden update] commit; its existence check lands with that pin commit.
+  // LIB-PLATEFIX-1 ([golden update]): it is pinned now, and A11 checks that it exists.
+  const readLayersPage = () => (existsSync(LAYERS_PAGE) ? readFileSync(LAYERS_PAGE, 'utf8') : null);
+  /** D-PLATEFIX-PINS: the config exists with groups' ids exactly [lib_reverse_lunge]; the page, when present, holds exactly the reverse-lunge card. */
+  const layersProblems = (cfg: any, page: string | null) => {
+    const bad: string[] = [];
+    const ids = (cfg?.groups ?? []).flatMap((g: any) => g.ids);
+    if (JSON.stringify(ids) !== JSON.stringify(['lib_reverse_lunge'])) bad.push(`layers config ids: ${JSON.stringify(ids)}`);
+    if (page !== null) {
+      const cards = [...page.matchAll(/<article [^>]*id="card-([a-z0-9-]+)"/g)].map(m => m[1]);
+      if (JSON.stringify(cards) !== JSON.stringify(['reverse-lunge'])) bad.push(`layers page cards: ${JSON.stringify(cards)}`);
+    }
+    return bad;
+  };
+  /** A11: chain, the page entry equal to the built page, each plate entry's 9 fragments equal to extractPlates of it.
+   *  LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]): those checks now run on the PILOT-A3 pin's own entries
+   *  (main's 3, byte-equal, so their page and fragments are still the bebd7730 build's), and the golden update's tail is
+   *  checked against today's build: a page entry superseding 0, reverse_lunge's plate superseding 1, and one layers-page
+   *  entry for exactly lib_reverse_lunge pinning the committed layers page (pfTailProblems). */
   const chainProblems = async (f: any) => {
     const bad = [...G.verifyBatchChain(f, GOLDEN())];
-    const pages = f.entries.filter((e: any) => e.kind === 'page'), html = (await build.buildPa3Page()).html;
-    if (pages.length !== 1 || pages[0].pageSha256 !== sha(html) || pages[0].bytes !== html.length) bad.push('page entry != the built page');
-    if (f.entries.some((e: any) => e.kind === 'layers-page')) bad.push('a layers-page entry');
-    const plates = G.extractPlates(html.toString('utf8'));
-    for (const e of f.entries.filter((x: any) => x.kind === 'plate')) {
-      const p = plates.find((x: any) => x.chromeId === e.chromeId);
-      if (!p || JSON.stringify(G.fragmentsOf(p)) !== JSON.stringify(e.fragments)) bad.push(`${e.id}: fragments`);
+    const html = (await build.buildPa3Page()).html, pin = f.entries.slice(0, MAIN_GOLDEN['pilot-a3']!.n);
+    const pages = pin.filter((e: any) => e.kind === 'page');
+    if (pages.length !== 1 || pages[0].pageSha256 !== 'bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878' || pages[0].bytes !== 465732) bad.push('page entry != the pinned build');
+    if (pin.some((e: any) => e.kind === 'layers-page')) bad.push('a layers-page entry');
+    for (const e of pin.filter((x: any) => x.kind === 'plate')) {
       if (e.approvedBy !== 'supervisor' || e.decision !== 'D-LIB-PILOTA3' || e.supersedes !== null) bad.push(`${e.id}: approval`);
     }
-    if (JSON.stringify(f.entries.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)) !== JSON.stringify(IDS.map(i => `lib_${i}`))) bad.push('plate ids');
+    if (JSON.stringify(pin.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)) !== JSON.stringify(IDS.map(i => `lib_${i}`))) bad.push('plate ids');
+    bad.push(...pfTailProblems(f, 'pilot-a3', { G, html, page: 0, plates: { lib_reverse_lunge: 1 }, layers: { supersedes: null, ids: ['lib_reverse_lunge'], page: existsSync(LAYERS_PAGE) ? readFileSync(LAYERS_PAGE) : Buffer.alloc(0) } }));
     const text = JSON.stringify(f) + readFileSync(rowsPath(), 'utf8') + readFileSync('tools/plates/library/pages/pilot-a3.json', 'utf8');
     for (const id of [...all.filter((r: any) => r.batchFile && !r.batchFile.endsWith('/pilot-a3.json')).map((r: any) => r.id),
       ...[...scratch.PILOT_A, ...scratch.PILOT_B, ...scratch.PILOT_A2].map((n: string) => `lib_${n}`)]) if (new RegExp(`\\b${id}\\b`).test(text)) bad.push(`names ${id}`);
     return bad;
   };
-  it('A11: the chain is valid, the page entry is the two-build page (bebd7730, 465,732 B), each plate entry equals its fragments, no layers entry or file', async () => {
+  it('A11: the chain is valid, the page entry is the two-build page (bebd7730, 465,732 B), each plate entry equals its fragments, no layers entry; LIB-PLATEFIX-1: its tail pins today\'s page (476bff3a), reverse_lunge\'s plate and the layers page; the layers config and page hold exactly lib_reverse_lunge', async () => {
     expect(pinned()).toBe(true);
+    expect(existsSync(LAYERS_PAGE)).toBe(true);
     expect(await chainProblems(file())).toEqual([]);
     expect(file().entries[0].pageSha256).toBe('bebd7730740e635c663db6dea19e65123c58b0f0c2622da07330f1c1f40a7878');
+    expect(file().entries.filter((e: any) => e.kind === 'page').at(-1).pageSha256).toBe('476bff3ac865d176fc90fc1618184ed6e54e3d704a8c3b7753fb57770ff69000');
     expect(file().base).toEqual(readJson('tests/howto/golden/library/pilot-a2.json').base);
-    expect(existsSync('tests/howto/golden/library/pilot-a3.layers.html')).toBe(false);
-    expect(existsSync('tools/plates/library/pages/pilot-a3.layers.json')).toBe(false);
+    // D-PLATEFIX-PINS: the pilot-a3 layers config and page exist and hold exactly [lib_reverse_lunge].
+    expect(layersProblems(readJson(LAYERS_CFG), readLayersPage())).toEqual([]);
+  });
+  it('A11 mutations (D-PLATEFIX-PINS): lib_dumbbell_fly added to the layers config, or a fly card in the layers page, is red', () => {
+    const cfg = readJson(LAYERS_CFG); cfg.groups[0].ids.push('lib_dumbbell_fly');
+    expect(layersProblems(cfg, readLayersPage())).toEqual(['layers config ids: ["lib_reverse_lunge","lib_dumbbell_fly"]']);
+    const page = '<article class="sheet-card" id="card-reverse-lunge"></article><article class="sheet-card" id="card-dumbbell-fly"></article>';
+    expect(layersProblems(readJson(LAYERS_CFG), page)).toEqual(['layers page cards: ["reverse-lunge","dumbbell-fly"]']);
   });
   it('A11 mutations: a second page entry superseding 0 by the supervisor, one fragment edited, a layers-page entry and "lib_crunch" are red', async () => {
     const f0 = file();
@@ -593,18 +723,43 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and nothing shipped'
     expect((await chainProblems(lay)).length).toBeGreaterThan(0);
     const named = copy(f0); named.entries[1].why += ' "lib_crunch"';
     expect((await chainProblems(named)).some((p: string) => /lib_crunch/.test(p))).toBe(true);
+    // LIB-PLATEFIX-1: a tail plate fragment edited, a tail plate superseding the fly's entry, a layers-page entry in the pin's
+    // own entries, and the layers-page entry naming the fly are red
+    const n = MAIN_GOLDEN['pilot-a3']!.n, tf = copy(f0); tf.entries[n + 1].fragments.mistakeSvg = '0'.repeat(64);
+    expect(await chainProblems(tf)).toContain('lib_reverse_lunge: fragments');
+    const ts = copy(f0); ts.entries[n + 1].supersedes = 2;
+    expect(await chainProblems(ts)).toContain('pilot-a3: plate 0: lib_reverse_lunge supersedes 2');
+    const tl = copy(f0); tl.entries[n + 2].ids = ['lib_reverse_lunge', 'lib_dumbbell_fly'];
+    expect(await chainProblems(tl)).toContain('pilot-a3: layers-page ids lib_reverse_lunge,lib_dumbbell_fly');
+    const tp = copy(f0); tp.entries.splice(2, 0, { kind: 'layers-page' });
+    expect(await chainProblems(tp)).toContain('a layers-page entry');
   });
   it('A12: the scratch set refuses PILOT-A3 ids (mutation: target lib_reverse_lunge)', () => {
     expect(scratch.setProblems(scratch.SCRATCH_4C)).toEqual([]);
-    const set = scratch.SCRATCH_4C.map((s: any) => (s.key === 'lib4c-scratch-a' ? { ...s, id: 'lib_reverse_lunge' } : s));
-    expect(scratch.setProblems(set)).toEqual(['lib_reverse_lunge is a PILOT-A3 id (D-LIB11-SCRATCHIDS)']);
+    // F-SCRATCH-SYNTH (#397): the real id as the target (no copyOf); its batches/ row is now refused too
+    const set = scratch.SCRATCH_4C.map((s: any) => (s.key === 'lib4c-scratch-a' ? { id: 'lib_reverse_lunge', from: s.from, key: s.key } : s));
+    expect(scratch.setProblems(set)).toEqual(['lib_reverse_lunge is a PILOT-A3 id (D-LIB11-SCRATCHIDS)', 'lib_reverse_lunge is a row of batches/pilot-a3.json']);
   });
-  it('A14: no PILOT-A3 row is shipped; mutation: one row set to shipped is caught', () => {
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221; D-PLATEFIX-PINS / PIN GO): was "no PILOT-A3 row is shipped"; exactly the
+  // ruled lib_reverse_lunge ships (in the registry too) with its stamp, dumbbell_fly stays approved-plate; the old red is kept
+  // (a row set to shipped is caught) and the A9 reds are added.
+  it('A14: exactly lib_reverse_lunge is shipped (registry and stamp too); mutations: dumbbell_fly shipped, reverse_lunge held, and its stamp removed are red', async () => {
     const stages = (t: any) => Object.values(t.rows).map((r: any) => r.stage);
-    expect(stages(readJson(rowsPath()))).toEqual(['approved-plate', 'approved-plate']);
-    const m = readJson(rowsPath()); m.rows.lib_reverse_lunge.stage = 'shipped';
+    const shipProblems = (t: any) => Object.entries<any>(t.rows).flatMap(([id, r]) => (r.stage === (SHIPPED_RULED.includes(id) ? 'shipped' : 'approved-plate') ? [] : [`${id}: ${r.stage}`]));
+    expect(stages(readJson(rowsPath()))).toEqual(['shipped', 'approved-plate']);
+    expect(shipProblems(readJson(rowsPath()))).toEqual([]);
+    expect(reg.shippedIds(all).filter((id: string) => IDS.includes(id.slice(4)))).toEqual(SHIPPED_RULED);
+    const m = readJson(rowsPath()); m.rows.lib_dumbbell_fly.stage = 'shipped';
     expect(stages(m).includes('shipped')).toBe(true);
-  });
+    expect(shipProblems(m)).toEqual(['lib_dumbbell_fly: shipped']);
+    const h = readJson(rowsPath()); h.rows.lib_reverse_lunge.stage = 'approved-plate';
+    expect(shipProblems(h)).toEqual(['lib_reverse_lunge: approved-plate']);
+    const S = await import(/* @vite-ignore */ lib('research/stamps.mjs'));
+    expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);
+    const st = await S.stampOf('lib_reverse_lunge'), rv = S.readReviews();
+    const cut = { ...rv, entries: rv.entries.filter((e: any) => !(e.scope === st.scope && e.hash === st.hash)) };
+    expect(await S.stampProblems(SHIPPED_RULED, { reviews: cut })).toEqual([`LIB-5 stamp: lib_reverse_lunge: no reviews.json entry for scope ${st.scope} hash ${st.hash.slice(0, 12)}…`]);
+  }, T);
 });
 
 describe('PILOT-A3 A13: the moved assertions (D-A3-TESTHOME map)', () => {
@@ -616,20 +771,20 @@ describe('PILOT-A3 A13: the moved assertions (D-A3-TESTHOME map)', () => {
     [':73-74 held ids added to PILOT-A2 rows are red (stricter: any PILOT-A2 file)', 'mutations: box_jump added, a duplicated row, and either id written into batches/pilot-a2.json are red'],
     [':85-87 the two ids\' plate facts', 'each card differs from its research copy (0d832e18) only in the three-key block'],
     [':128 seconds added to reverse_lunge\'s card and spec', "mutations: seconds added to reverse_lunge's card and spec, and dumbbell_fly's Lower seconds changed, are red"],
-    [':134 RULED topFault keys', 'each Mistake has exactly one tell, the topFault key of a drawable card'],
+    [':134 RULED topFault keys', 'each Mistake has its ruled tells (the fly one; the lunge flare and ribs, both c18), the first the topFault key of a drawable card'],
     [':147-153 the tells name c18\'s / c13\'s fault', "reverse_lunge's tell names c18's fault on the low back (D-A3-REVTELL); dumbbell_fly's names c13's"],
     [':157-158 the old deep tell first on the fly', "mutations: the old deep tell first on dumbbell_fly, and reverse_lunge's topFault set to another key, are red"],
     [':162-170 normal plate and export sha (D-A3-REVEXPORT)', "reverse_lunge's normal plate is main's: export sha (normalised), a Mistake-view zoom only, and the normal render bytes"],
     [':171-174 REAR_HEEL mutation', 'mutation: REAR_HEEL 45 -> 46 moves the export sha and the normal render'],
-    [':176-196 R5 the flare -> A3 the bow', 'A3: bow = M_ARCH = M_TILT = 12'],
+    [':176-196 R5 the flare -> A3 the bow', 'A3: bow = M_ARCH = M_TILT = 24, flare M_FLARE = 8'],
     [':197-202 R5 mutations -> A3 mutations', 'A3 mutations: the held #340 Mistake (tilt 15, trunk -12), a 16° bow, and a number trunk in the end pose are red'],
-    [':203-212 R11 the ring -> A4', 'A4: { view: mistake, k: 3 }, 12.31 px inside the zoom'],
-    [':213-216 R11 mutation -> A4 mutations', 'A4 mutations: k 2.5 (10.26 px) and the held anchor'],
+    [':203-212 R11 the ring -> A4', 'A4: { view: mistake, k: 3 }, 24.49 px inside the zoom'],
+    [':213-216 R11 mutation -> A4 mutations', 'A4 mutations: k 2.5 (20.41 px, the elbow dot on the ring, 0.29 px) and the held anchor'],
     [':246-264 the fly\'s views; makeFly', 'dumbbell_fly is the census front view; the alt imports'],
     [':259-263 the pitch and makeFly mutations', 'mutations: the pitch removed is red; makeFly renamed breaks the alt import'],
     [':266-278 sizes rows', 'each spec SIZES equals its pilot-a3/sizes.json row, both ways'],
     [':279-283 sizes mutations', 'mutations: M_WRIST 31 in the spec and a row dropped are red'],
-    [':330-331 the zoom k', 'A4, A7 mutations: the next k down (reverse_lunge 2.5, dumbbell_fly 2) turns H3 red'],
+    [':330-331 the zoom k', 'A4, A7 mutations: the reverse_lunge zoom removed (8.16 px at plate scale) and the next k down (dumbbell_fly 2) turn H3 red'],
   ];
   const mapProblems = (src: string) => MOVED.filter(([, t]) => !src.includes(`it('${t}`) && !src.includes(`it("${t}`)).map(([o]) => `${o}: no test here`);
   const own = () => readFileSync('tests/howto/lib8r-pilot-a3.test.ts', 'utf8');

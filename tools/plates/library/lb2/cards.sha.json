@@ -9,7 +9,7 @@
   "arnold_press": "7129ed35781e11e677c926c90bc2d8225f1cbfac603435666aa266073fadad94",
   "skull_crusher": "18e9ebcc1052c384b588947e4e228577d452bc6adaed57edeb0a0070af036f82",
   "dumbbell_pullover": "6cb9ae12aeb8a20807070a57156dd99595dac3408b1b3f81d0814856b24ced94",
-  "incline_dumbbell_press": "f2b21ee31263d90e772fb7a2c3dc4bfd87ec1eb4f854e0cc28b3f8f972100d05"
+  "incline_dumbbell_press": "bf3a0fa320c44a3b5719975fcfc9c15e702291abc8d5a26cf53814262d050297"
  },
  "quotes": {
   "barbell_bench_press": "c5a02cd4e5ba05fab0f664fedbb5450b90a4194686f5f739fd6c8ac9112a04b5",
@@ -23,10 +23,10 @@
  },
  "researchHeads": {
   "note": "D-LIB10-IDP: a card copied from a later research head than researchHead.",
-  "incline_dumbbell_press": "0d832e18a2c52ec091a37b654572db5f0468913b"
+  "incline_dumbbell_press": "42858a641cab97048f9dbbf8c4d9fe939563c8ac"
  },
  "pilotACards": {
   "note": "D-LIB10-IDP-A: the three machine keys are pilot A's verified copy byte for byte, so the whole card file equals origin/main 1edb3c6.",
-  "incline_dumbbell_press": "d586c0c4a0f893b17f3076da80f2704ae7ac1c28df8e97d0b4a26aa4253b6fc1"
+  "incline_dumbbell_press": "021766586e2d171207a419c509eb5bc255ba46a5366bc9923635f3374737c94b"
  }
 }

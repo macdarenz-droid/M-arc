@@ -4,7 +4,7 @@
 // For the 8 the layers build is the vendored golden B (tools/plates/layers) with HT-4's exact path (D-LIB4b-POSES (6)).
 // A library id's build is LIB-6's builder, captured through a shim on a mirror of tools/plates, and its pose rule is
 // derived from source (D-LIB4b-POSES (1)-(5), libraryA5); without LIB-6 in the tree its A5 rows fail: never a skip.
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -88,11 +88,27 @@ export function renderPlate(spec, opts) {
  */
 /** D-SHIP-A5BACK: the files MANIFEST.json pins for `ids` that lie outside tools/plates and src/data (sorted, unique). */
 export function mirrorExtras(root, ids = []) {
-  const f = join(root, 'tools/plates/library/MANIFEST.json');
-  if (!ids.length || !existsSync(f)) return [];
-  const m = JSON.parse(readFileSync(f, 'utf8')), out = new Set();
-  for (const id of ids) for (const p of Object.keys(m.rows?.[id]?.files ?? {})) if (!p.startsWith('tools/plates/') && !p.startsWith('src/data/')) out.add(p);
-  return [...out].sort();
+  // D-SHIP-A5BACK-CARDS: the MANIFEST-pinned files first (sorted), then the pair rows' research cards (sorted, not repeated)
+  const f = join(root, 'tools/plates/library/MANIFEST.json'), out = new Set();
+  if (ids.length && existsSync(f)) {
+    const m = JSON.parse(readFileSync(f, 'utf8'));
+    for (const id of ids) for (const p of Object.keys(m.rows?.[id]?.files ?? {})) if (!p.startsWith('tools/plates/') && !p.startsWith('src/data/')) out.add(p);
+  }
+  const pinned = [...out].sort();
+  return [...pinned, ...[...new Set(pairCardsOf(root))].filter(p => !out.has(p)).sort()];
+}
+/** LIB-SHIP W3 (D-SHIP-A5BACK-CARDS, #384 6648753200): hands/pairs.mjs checks, at import, every layers-config row that
+ *  names pairFaults or pairWords against its research card, so any batch's build reads those cards: the research card
+ *  of every such row in every pages/*.layers.json (the same dir and card path as pairs.mjs PAGES_DIR and cardFileOf). */
+export function pairCardsOf(root) {
+  const dir = join(root, 'tools/plates/library/pages'), out = [];
+  if (!existsSync(dir)) return out;
+  for (const n of readdirSync(dir).filter(x => x.endsWith('.layers.json')).sort()) {
+    for (const [howtoId, row] of Object.entries(JSON.parse(readFileSync(join(dir, n), 'utf8')).closeups ?? {})) {
+      if (row && (row.pairFaults !== undefined || row.pairWords !== undefined)) out.push(`docs/research/howto/cards/${howtoId.replace(/^lib_/, '')}.json`);
+    }
+  }
+  return out;
 }
 
 export async function captureLayersBuild(root, specOf, ids = []) {
@@ -105,8 +121,9 @@ export async function captureLayersBuild(root, specOf, ids = []) {
     // only the back box's research file, which shared/back-box.mjs reads for a back-flagged sheet). The mirror carries every
     // such file that MANIFEST.json pins for the batch's ids: the pinned list is manifest.mjs filesOf's output (manifestProblems
     // keeps them equal), and filesOf itself skips a missing file, so a pinned file that is missing fails loud by name here.
+    const cards = new Set(pairCardsOf(root));
     for (const p of mirrorExtras(root, ids)) {
-      if (!existsSync(join(root, p))) throw new Error(`HT4-A5: ${p} is pinned in MANIFEST.json for this batch but missing from the tree`);
+      if (!existsSync(join(root, p))) throw new Error(cards.has(p) ? `HT4-A5: ${p} is a pair row's research card (D-SHIP-A5BACK-CARDS) but missing from the tree` : `HT4-A5: ${p} is pinned in MANIFEST.json for this batch but missing from the tree`);
       mkdirSync(dirname(join(T, p)), { recursive: true });
       cpSync(join(root, p), join(T, p));
     }

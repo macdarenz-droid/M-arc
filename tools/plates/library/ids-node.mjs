@@ -1,9 +1,9 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=2c2dfcf1c15e597b875bb4b2983ed92661123ac98cff516d0f5d2a8064cfeec6
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=eb262be282c33f951b3712701f0d5d795e17f83b6a55e727391e281b680cde93
 // Node twin of src/howto/ids.ts (tests and the gate's harness): the same literals and decoder template, emitted
 // together by tools/plates/gen/ids.mjs (D-LIB2-hints).
-const S = "2eTgEhDkUMbG`?G=R?oeeYPaW@NI22\\X@@[:2`_N8@HYPYedM>dL18f@U\\R=H@YoZg4J";
-const H = ["Heel of palm, wrist straight.","Handle firm in palm, wrist neutral.","Hands against the rope knobs."];
-const O = "ABBC";
+const S = "2eTgEhDkUMbG`?G=;OVKR?oeeYPaW@NI22\\X@@[:2`_N8@HYhf\\Qc3;MnWZC5\\CXiQi]D28A3H^9CJNAPYedPcYPRC0kM>dL18f@U\\R=nLUTH@YoZg4J8hf>";
+const H = ["Heel of palm, wrist straight.","Handle firm in palm, wrist neutral.","Hands against the rope knobs.","Wrist in line with the forearm."];
+const O = "ABBCD";
 function at(s) {
   if (!s.startsWith('lib_')) return -1;
   let x = 0x811c9dc5, t = '';

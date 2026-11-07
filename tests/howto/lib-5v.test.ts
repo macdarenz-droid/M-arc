@@ -129,17 +129,17 @@ describe('LIB-5v V9: the B5 fixture inserts one one-word line on a "/" target on
     FX = await import(/* @vite-ignore */ url('tools/plates/library/fidelity/fixture.mjs'));
     C = await import(/* @vite-ignore */ url('tools/plates/library/ci/scratch.mjs'));
   });
-  it('lib_underhand_lat_pulldown and lib_t_bar_row get \'Machine.\' once, after the clone\'s copy line; the rest get none', () => {
+  it('lib_scratch_fourb_a and lib_scratch_fourc_c get \'Machine.\' once, after the clone\'s copy line; the rest get none', () => {
     const all = [...FX.SCRATCH, ...C.SCRATCH_4C];
     const got = Object.fromEntries(all.map((s: any) => [s.id, FX.transformSources(s, ROOT).howto.match(/^ {4}variantLine: .*$/gm) ?? []]));
-    expect(got).toEqual({ ...Object.fromEntries(all.map((s: any) => [s.id, []])), lib_underhand_lat_pulldown: ["    variantLine: 'Machine.',"], lib_t_bar_row: ["    variantLine: 'Machine.',"] });
-    for (const id of ['lib_underhand_lat_pulldown', 'lib_t_bar_row']) {
+    expect(got).toEqual({ ...Object.fromEntries(all.map((s: any) => [s.id, []])), lib_scratch_fourb_a: ["    variantLine: 'Machine.',"], lib_scratch_fourc_c: ["    variantLine: 'Machine.',"] });
+    for (const id of ['lib_scratch_fourb_a', 'lib_scratch_fourc_c']) {
       const h = FX.transformSources(all.find((s: any) => s.id === id), ROOT).howto;
       expect(h).toContain("\n  copy: {\n    variantLine: 'Machine.',\n");
       expect(CL.words('Machine.')).toBe(1);
     }
   });
-  it('LIB-4c C16 (copyProblems, D-LIB5v-FIXLINE) passes the 6 clones with lib_t_bar_row\'s line', () => {
+  it('LIB-4c C16 (copyProblems, D-LIB5v-FIXLINE) passes the 6 clones with lib_scratch_fourc_c\'s line', () => {
     expect(C.copyProblems(ROOT)).toEqual([]);
   });
 });

@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { PF_LAYERS_DECISION } from './platefix-pins';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const read = (p: string) => readFileSync(ROOT + p, 'utf8');
@@ -14,7 +15,8 @@ const url = (p: string) => new URL('../../' + p, import.meta.url).href;
 // barbell_row's and romanian_deadlift's cards at 2dd60ae0 (F-LB3-1, R-LB3-11: one risks[breath] line each)
 const BLOBS: Record<string, [string, string]> = {
   dumbbell_bench_press: ['0909c439a381bd3e4f811c73e5ca2b86a4f3a3d6', '10e7af71570695df876660d7ae5c1a9939e87999'],
-  incline_dumbbell_press: ['8a98fb1a4cf12e1ac629565fe13632e5aa9f09d6', 'dcfab01e746a8742569e4b6f17a79482b5600f83'],
+  // RESEARCH-ROUTES-1 F-CARD-INCLINEDB-RISK (D-RR-HEAD): card re-copied from research 42858a64 (was 8a98fb1a at f57e7944)
+  incline_dumbbell_press: ['7cfca7de3c65abbe29bd7850fbf5e15dfe84441d', 'dcfab01e746a8742569e4b6f17a79482b5600f83'],
   dumbbell_shoulder_press: ['a147b41c3b1a94308d0f30f63b5121778a4ddcf7', '34902cba78c352df7fb58b180cb4a153e394a9e8'],
   barbell_overhead_press: ['58bae6ec014446e79f09e8aa3840c669c1224788', 'f5a6a8578119f24165fc636c09b7e2e4e7cd9af0'],
   barbell_row: ['dc61ba764ea04eb61be857317a6e49b5fd6d658e', '39b3664967f02e85e60a43603fc67ee12d99003a'],
@@ -43,7 +45,11 @@ const MOVED_A3 = ['reverse_lunge', 'dumbbell_fly'];
 // census views (claude/howto-options 4a9fd86, docs/howto/library/inputs/census.json blob 70553d5d)
 const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id === 'upright_row' || id === 'pec_fly' ? 'front' : 'side']));
 // the pilot A page the registry builds (build.mjs's page at the Do 6 head); the pin's page entry must equal it
-const PAGE = { sha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 };
+// LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]): was 5d0e562f (1,325,644 B); the page with its fixed
+// barbell_row, barbell_overhead_press, romanian_deadlift and triceps_pushdown plates (the superseding page entry 16)
+// LIB-PLATEFIX-2 (#395, D-OWNER-REPIN, D-PLATEFIX-SECOND form): was d38e8b33 (1,316,144 B); with pec_fly's height box at
+// top 260 (PQ-H4), the superseding page entry 23
+const PAGE = { sha256: '032ce649154ec63e6492d7044b86d8fde63639cc504a74a83ffe7fa25ae03191', bytes: 1316144 };
 const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
 // Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
 const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
@@ -107,17 +113,28 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
   // not shipped is red.
   // LIB-SHIP W2 (D-SHIP-W2-STAMP, #379 6636105974): the 7 W2 pilot A ids join the curl; the 6 held rows (PLATEFIX and
   // F-PAIR-FAULTS) stay at approved-plate
-  const SHIPPED_RULED = ['lib_dumbbell_biceps_curl', 'lib_plank', 'lib_rope_triceps_pushdown', 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row'];
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221; D-PLATEFIX-PINS / PIN GO): romanian_deadlift, single_leg_romanian_deadlift
+  // and triceps_pushdown join them (layers-page order); barbell_overhead_press (D-LIB13-PANEL2), mountain_climbers and pec_fly stay held
+  const SHIPPED_RULED = ['lib_dumbbell_biceps_curl', 'lib_plank', 'lib_rope_triceps_pushdown', 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press',
+    'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift', 'lib_triceps_pushdown', 'lib_upright_row'];
   /** LIB-SHIP W2: one line per row off the ruled state (an unruled id shipped, a ruled id not shipped, another stage). */
   const shipProblems = (rows: Record<string, any>) => Object.entries(rows).flatMap(([id, r]: [string, any]) =>
     SHIPPED_RULED.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
   it('LIB-SHIP W2 A9 mutations: an unruled id at shipped, a ruled id held back, and a ruled id\'s stamp removed are red', async () => {
-    expect(shipProblems({ ...batch.rows, lib_triceps_pushdown: { ...batch.rows.lib_triceps_pushdown, stage: 'shipped' } })).toEqual(['lib_triceps_pushdown: unruled, at shipped']);
+    // LIB-PLATEFIX-1: triceps_pushdown is ruled now, so the unruled id is the held barbell_overhead_press
+    expect(shipProblems({ ...batch.rows, lib_barbell_overhead_press: { ...batch.rows.lib_barbell_overhead_press, stage: 'shipped' } })).toEqual(['lib_barbell_overhead_press: unruled, at shipped']);
     expect(shipProblems({ ...batch.rows, lib_plank: { ...batch.rows.lib_plank, stage: 'approved-plate' } })).toEqual(['lib_plank: ruled, at approved-plate']);
+    // LIB-PLATEFIX-1 A9: a PLATEFIX id held back is red
+    expect(shipProblems({ ...batch.rows, lib_romanian_deadlift: { ...batch.rows.lib_romanian_deadlift, stage: 'approved-plate' } })).toEqual(['lib_romanian_deadlift: ruled, at approved-plate']);
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     const { scope, hash } = await S.stampOf('lib_plank'), rv = S.readReviews();
     const cut = { ...rv, entries: rv.entries.filter((e: any) => !(e.scope === scope && e.hash === hash)) };
     expect(await S.stampProblems(SHIPPED_RULED, { reviews: cut })).toEqual([`LIB-5 stamp: lib_plank: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`]);
+    // LIB-PLATEFIX-1 A9: a PLATEFIX id's stamp removed, and barbell_row's PLATEFIX re-stamp removed (its W2 stamp no longer matches), are red
+    for (const id of ['lib_triceps_pushdown', 'lib_barbell_row']) {
+      const st = await S.stampOf(id), cutPf = { ...rv, entries: rv.entries.filter((e: any) => !(e.scope === st.scope && e.hash === st.hash)) };
+      expect(await S.stampProblems(SHIPPED_RULED, { reviews: cutPf })).toEqual([`LIB-5 stamp: ${id}: no reviews.json entry for scope ${st.scope} hash ${st.hash.slice(0, 12)}…`]);
+    }
   }, 120_000);
   it('batches/pilot-a.json holds exactly the 13 pinned ids, each once, mode H, census view; LIB-SHIP: exactly the ruled ids shipped, the rest approved-plate', () => {
     for (const id of PINNED) expect(raw.split(`"lib_${id}"`).length - 1).toBe(1);
@@ -138,13 +155,27 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     // LIB-SHIP W2: W1's layers-page entry (index 14) is superseded by W2's; the one current entry (no later entry
     // supersedes it) is the last, names exactly the ruled ids and pins the page. A second current entry, a supersedes
     // naming anything but the earlier layers-page entry, or a W1 entry left current is red.
+    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): W2's entry (index 15) is superseded by PLATEFIX's, the last entry;
+    // the current entry is now the third
     const lp = entries.map((e: any, i: number) => ({ e, i })).filter(({ e }: any) => e.kind === 'layers-page');
-    expect(lp).toHaveLength(2);
-    expect(lp.map(({ e }: any) => e.decision)).toEqual(['D-SHIP-W1-LAYERS', 'D-SHIP-W2-STAMP']);
+    expect(lp.slice(0, 2).map(({ e }: any) => e.decision)).toEqual(['D-SHIP-W1-LAYERS', 'D-SHIP-W2-STAMP']);
     expect(lp[1].e.supersedes).toBe(lp[0].i);
-    expect(lp[1].i).toBe(entries.length - 1);
+    // F-BODYMAP-FRONTDELT (D-BODYMAP-APPEND, #404 6688047379): after W2's entry comes exactly the body-map re-pin,
+    // superseding it. LIB-PLATEFIX-1 (D-PLATEFIX-SECOND, #385 6687946433): then its owner page and plate entries, then its
+    // layers-page re-pin, superseding the body-map one; that entry is the current one (ids and page below)
+    expect(entries.slice(lp[1].i + 1).map((e: any) => [e.kind, e.id ?? null, e.decision.startsWith('D-OWNER-REPIN') ? 'D-OWNER-REPIN' : e.decision, e.approvedBy, e.supersedes])).toEqual([
+      ['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', lp[1].i],
+      ['page', null, 'D-OWNER-REPIN', 'owner', 0],
+      ...['lib_barbell_row', 'lib_barbell_overhead_press', 'lib_romanian_deadlift', 'lib_triceps_pushdown'].map(id => ['plate', id, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === id)]),
+      ['layers-page', null, PF_LAYERS_DECISION, 'supervisor', lp[1].i + 1],
+      // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN, D-PLATEFIX-SECOND form): then exactly its owner page entry, superseding
+      // #385's, and its pec_fly plate entry, superseding entry 8; the layers page is not re-pinned (pec_fly is not on it)
+      ['page', null, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'page' && e.supersedes === 0)],
+      ['plate', 'lib_pec_fly', 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === 'lib_pec_fly')]]);
+    const cur = lp[lp.length - 1].e;
+    expect(lp[lp.length - 1].i).toBe(entries.length - 3);
     const page = readFileSync(ROOT + batch.pages.layers);
-    expect([[...lp[1].e.ids].sort(), lp[1].e.ids.length, lp[1].e.pageSha256, lp[1].e.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
+    expect([[...cur.ids].sort(), cur.ids.length, cur.pageSha256, cur.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);

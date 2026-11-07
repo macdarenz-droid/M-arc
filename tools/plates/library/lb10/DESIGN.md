@@ -268,6 +268,9 @@ each drawable-false card's handlingMistakes[0] is speed or a sign the plate cann
   is the knees not bent; no second sign stated (c13's flat feet are the take-off), so one tell.
 - jumping_jacks: fault c12 (toes twisted outward); claim ids read: c12 (both quotes), c5, c6, c14; no second visible
   sign stated ("slouching" in the same quote is a separate fault the front view cannot show), so one tell.
+- farmer_s_carry: fault c25, c8 (steps too long for a beginner); claim ids read: c25, c8 (plate.mistake's claims); the
+  second tell "Long stride" restated the same fault with no claim of its own, so it is dropped (LIB-PLATEFIX-3, W7 #394
+  6682923012; ruled #405 6683319630); no second visible sign stated, so one tell.
 
 ## 9. Card keys
 

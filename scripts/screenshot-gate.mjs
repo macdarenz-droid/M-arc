@@ -9519,7 +9519,7 @@ if (gate.runs('LIB-ZOOM'))
   const mirror = makeMirror();
   try {
     const E = await loadEngine(mirror), env = loadPins().envelope;
-    const c = await candidateOf('lib_horizontal_leg_press', { all, platesHtml: html, engine: E, authoring: true });
+    const c = await candidateOf('lib_horizontal_leg_press', { all, platesHtml: html, engine: E });   // D-SHIP-W3-GATEZOOM (#384 6684076429): shipped, so the pinned candidate (authoring QA is refused at shipped)
     if (!c.plate.zoom?.mistake) errors.push(`${tag}: horizontal_leg_press has no Mistake zoom on its page`);
     const h5 = async css => (await browserResults(browser, html, [c], E, env, { widths: [390], css })).get(c.id).H5.map(p => p.key);
     const clean = await h5(null), planted = await h5('.plate .pz-ring { stroke: var(--surface-2); }');
@@ -9713,6 +9713,65 @@ if (gate.runs('LIB-SHIP'))
   if (errors.length === e0) console.log(`${tag}: ${SHIP.join(', ')} open their How-to; the owner's ${ELEVEN.length} named rows show none; Silent Black and Paper`);
 }
 
+
+// LIB-PLATEFIX-2 (D-PF2-H4GATE, #395 6649895802): pec_fly's callout hit boxes (PQ-H4, D-SHIP-PECFLY-HOLD). The real card,
+// built from pilot-a's registry row on its own page, runs qa/browser.mjs browserResults at 390, 360 and 340 px in the 5
+// themes and must have no H4.overlap row; a seed (the same spec with the height box back at top 244, as approved before
+// LIB-PLATEFIX-2, and 20 px right at left 40) must turn H4.overlap red, so the block proves it can see the fault. The
+// shift is there because the 244 overlap is 11.58 px² on the CI runner's text and 0 on others: at left 40 the 44 px hit box
+// alone overlaps the meet box, whatever the text width.
+if (gate.runs('LIB-PLATEFIX-2'))
+{
+  const tag = 'LIB-PLATEFIX-2';
+  const t0 = Date.now(), e0 = errors.length;
+  const { mkdtempSync: mkdtempPf2, rmSync: rmPf2 } = await import('node:fs');
+  const { tmpdir: tmpdirPf2 } = await import('node:os');
+  const { pathToFileURL: urlPf2 } = await import('node:url');
+  const { rows: rowsPf2 } = await import('../tools/plates/library/registry.mjs');
+  const { groupsConfig } = await import('../tools/plates/library/plates-page.mjs');
+  const { buildPlatesPage } = await import('../tools/plates/library/build-page.mjs');
+  const { candidateOf } = await import('../tools/plates/library/candidate.mjs');
+  const { browserResults } = await import('../tools/plates/library/qa/browser.mjs');
+  const { loadPins } = await import('../tools/plates/library/qa/index.mjs');
+  const { loadEngine, dropMirror } = await import('../tools/plates/library/qa/engine.mjs');
+  const { makeMirror } = await import('../tools/plates/golden.mjs');
+  const dir = mkdtempPf2(join(tmpdirPf2(), 'pf2-h4-gate-')), mirror = makeMirror();
+  const pf2Browser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    const E = await loadEngine(mirror), envelope = loadPins().envelope, all = rowsPf2();
+    const seed = join(dir, 'pec_fly.mjs');
+    writeFileSync(seed, `import s from ${JSON.stringify(urlPf2(join(ROOT, 'tools/plates/library/specs/pec_fly.mjs')).href)};\nexport default { ...s, callouts: s.callouts.map(c => (c.key === 'height' ? { ...c, box: { ...c.box, left: 40, top: 244 } } : c)) };\n`);
+    const overlaps = async (specFile) => {
+      const cfg = await groupsConfig({ groups: [{ id: 'pf2', title: 'PF2', ids: ['lib_pec_fly'] }] }, all);
+      if (specFile) cfg.specs = { ...cfg.specs, pec_fly: specFile };
+      const html = (await buildPlatesPage(cfg)).html.toString('utf8');
+      const c = await candidateOf('lib_pec_fly', { all, platesHtml: html, engine: E, authoring: false });
+      const r = (await browserResults(pf2Browser, html, [c], E, envelope)).get('lib_pec_fly');
+      return { keys: r.H4.map(p => p.key).filter(k => k.startsWith('H4.overlap')), widths: new Set(r.H4.filter(p => p.key.startsWith('H4.overlap')).map(p => (p.text.match(/at (\d+) px/) ?? [])[1])) };
+    };
+    const real = await overlaps(null), planted = await overlaps(seed);
+    for (const k of real.keys) errors.push(`${tag}: pec_fly ${k}`);
+    if (!planted.keys.length) errors.push(`${tag}: the seed (height box at left 40, top 244) raised no H4.overlap row: the block cannot see the fault`);
+    if (errors.length === e0) console.log(`${tag}: pec_fly x 5 themes x 390/360/340 px: no H4.overlap; the seed at left 40, top 244 is red (${planted.keys.join(', ')} at ${[...planted.widths].join('/')} px) (${((Date.now() - t0) / 1000).toFixed(1)} s)`);
+  } finally {
+    await pf2Browser.close();
+    dropMirror(mirror);
+    rmPf2(dir, { recursive: true, force: true });
+  }
+}
+
+
+// LIB-SHIP W3 D-SHIP-W3-PAUSEDSKIP (#384 6687335829): harness.mjs settle and settleApp skip an animation only when it is
+// paused AND fully outside the viewport. A running animation and a paused one in view still block; a paused one fully
+// below the viewport no longer does; the predicate without the viewport condition would let the in-view one through.
+if (gate.runs('LIB-SHIP-W3-PAUSEDSKIP'))
+{
+  const tag = 'LIB-SHIP-W3-PAUSEDSKIP';
+  const { pausedSkip } = await import('../tools/plates/fidelity/paused-skip.mjs');
+  const r = await pausedSkip(browser, await import('../tools/plates/fidelity/harness.mjs'));
+  for (const p of r.problems) errors.push(`${tag}: ${p}`);
+  if (!r.problems.length) console.log(`${tag}: ${r.rows.length} rows: running and paused-in-view animations block settle and settleApp, a paused one fully off screen does not, the no-viewport mutation is caught`);
+}
 
 // LIB-12: the hand views (palm-flat, cupped, front-rack, ball-contact) and the battle-rope pair (card LIB-12; plan 2.3;
 // tools/plates/library/hands/gate-lib12.mjs). Every LIB-12 drawn pair in 5 themes at 390, 360 and 340 px: no horizontal

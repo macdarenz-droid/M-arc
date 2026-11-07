@@ -221,6 +221,15 @@
    "closest": "Re-establish tension and repeat for reps. Keep your reps even on both sides.",
    "note": "fetched by curl 2026-10-22 (F-LB5-2); 'reps' is a link in the HTML, rendered text unchanged",
    "where": "How to, step 3"
+  },
+  {
+   "claim": "c15",
+   "source": "sl-dbcurl",
+   "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "status": "verbatim",
+   "closest": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "note": "fetched by curl 2026-11-05 (HTTP 200), RESEARCH-ROUTES-1 F-CARD-CONCCURL-RISK",
+   "where": "Common mistakes, not locking your wrists"
   }
  ]
 }
