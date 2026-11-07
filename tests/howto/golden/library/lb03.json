@@ -6,13 +6,13 @@
   "entries": [
     {
       "kind": "page",
-      "pageSha256": "d6241cf65a6be261cfa688ebba27549cded6761f2a1a0a00b55d58b0f1f91f90",
-      "bytes": 1186023,
+      "pageSha256": "5a2c55c0682da6b37ff637b9ab9b94746209321e0212e998b607b63ac9ca4b2e",
+      "bytes": 1186062,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): the lb03 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page; re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): the lb03 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page; re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
       "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -41,10 +41,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_pendlay_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_pendlay_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "c9a2d47e99e7eae4a214af5ea891aebc2ad74483e6d8657f3613fd7b9a224111"
+      "prev": "d519f43d23f26fa16f596ae0a8b747307e998eb9781fc123c478eba4405952ef"
     },
     {
       "kind": "plate",
@@ -70,10 +70,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_landmine_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_landmine_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "557c60924eb425209082f1f97287fc7d79e601808fd407382d50418b11b5196c"
+      "prev": "84a4353bcdfc8cfbd413dbd17a747e72fb38aeb23d15752214c62ec0e6befe96"
     },
     {
       "kind": "plate",
@@ -100,10 +100,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_one_arm_dumbbell_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_one_arm_dumbbell_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "769b100ec05c6ce612ac6070af14ccf7bdfc8303c6d1605629925d7a20be4c17"
+      "prev": "124d21c15b891939d51d462d056ab77bf585dc03bc5ba399eb6c9ead3452fec0"
     },
     {
       "kind": "plate",
@@ -129,10 +129,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_romanian_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_romanian_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "c6497c3dc0783e0033b67f7869da7e92b98b32d5500508e78ab3e6a1b7d558ae"
+      "prev": "7b573e4bdf1f48d715691e9f7c08d7706d2a2b912807a5c1347b61ac65591f4e"
     },
     {
       "kind": "plate",
@@ -158,10 +158,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_conventional_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_conventional_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "9b036e5d92c9aa19a0dc6e45bdfa2bab4222016f965545e49b7d2ff369e2d74d"
+      "prev": "51226822bf8ddc1b0f51490fc54ba8673af1ed4bb47bd947dafbdcef7ee9207e"
     },
     {
       "kind": "plate",
@@ -171,9 +171,9 @@
       "prefix": "sumo-deadlift",
       "chromeId": "sumo-deadlift",
       "fragments": {
-        "normalSvg": "9a2f2b0e2a325dc698d0acdff5a59c203cef3013f9b230610601bf686f50868a",
+        "normalSvg": "ee55b650f8705adc245caef424651ab44cf235aba1877ac0d2c242b8bb734a05",
         "normalOverlay": "87101be011d94c7212ea7a710cf4b05ab97eabab45dcef76680296d025b777bb",
-        "mistakeSvg": "da50e75c5094ff2476f3be0685b24f9cdb1c1c3c6a83b9c0137b2b5586a3acc4",
+        "mistakeSvg": "b795deeb0d541bd9ed5b8fa29584d5b367cbd6b819dfd1b5094f274704224c06",
         "mistakeOverlay": "bbb6d492d7107a6d080b9f51da800e55678069b25cef2777cc5169b4f1e478b5",
         "tells": "09075a3625dea0c893795e6b758e8992ab92e904971970a35676b82c49288095",
         "tempo": "16fa92968d867844b0523f60f380e5bb4bc57a89d2543adcd24c7a35816a1e11",
@@ -187,10 +187,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_sumo_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_sumo_deadlift's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "5a0acf4e771fac75a15005c7242a8610b662d38ee09b75b569e33112d954d296"
+      "prev": "8305f225ef99574df66a664c70a60fc6023b4fa46172512d79d65f86c6393676"
     },
     {
       "kind": "plate",
@@ -216,10 +216,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_back_extension's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_back_extension's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "0900dfe6627a1dd40e4ce22c9744c8f809c1105c4377ce0e47eb81c014122950"
+      "prev": "9413271baafb83e2c507263a5adf94a618cb694bb30916b47039537a5738ebc1"
     },
     {
       "kind": "plate",
@@ -245,10 +245,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_t_bar_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_t_bar_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "ebde4a372469612a45f806798fdc8ae01c7e6feef26fdd7fc0451b03d6dbc3bd"
+      "prev": "e75bbd773c222e192cf49e031e244d609f837e5ee79f38d539f5b90e01d10ae3"
     },
     {
       "kind": "plate",
@@ -278,10 +278,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_barbell_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F3, F4, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_barbell_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F3, F4, F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "d6e20f337e709e8307ca0e96e32ea0081ec86d045b77740e98881a6fc6c8daa4"
+      "prev": "b353b5c0829598b5e747e7341cd95ca3c8016a2c165a24af39cb1210adef8bc2"
     },
     {
       "kind": "plate",
@@ -307,10 +307,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_cable_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_cable_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "9d44c8d513848753ce629c1ae555a85219f41848d44ceb733f162dbd131ffff5"
+      "prev": "0e97d82ed578201fa2146599f4bd47fa6eefc12ed6195f88732011ab5cda2ca4"
     },
     {
       "kind": "plate",
@@ -338,10 +338,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F4, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F4, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "370921fbea36aea29c22f58e1e9b50ab787f1fd403433a32f66ada1d7940536a"
+      "prev": "dd0caa71ff6d3321d67a3a49d0abe474f8e5948bd1eb1f7c9f38a48485944344"
     },
     {
       "kind": "plate",
@@ -368,10 +368,10 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W4-PIN",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758",
-      "date": "2026-11-06",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_smith_machine_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023).",
+      "date": "2026-11-07",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB03 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_smith_machine_shrug's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
-      "prev": "0250c6c071c5ce80422e245533108dadde6a3ae1271887a983fc7d7dfcf344d6"
+      "prev": "074782d589458b93ba876a4f37101677541ee51f038b717433d6c6649bf020b7"
     },
     {
       "kind": "layers-page",
@@ -392,7 +392,7 @@
       "date": "2026-11-06",
       "why": "W4 LAYERS APPROVED for the flip set (D-SHIP-W4-FLIPSET, #391 6682985023): the W4 layers panel (#391 6653540190; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more. The page holds exactly the 6 shipped ids, each card byte-equal to the 2af8092c build. Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514) after W3 train 73: build-layers-page.mjs now applies the plates page zoom circles (D-SHIP-W3-LAYERSZOOM, #384 6686326673); the diff only adds zoom groups and defs.",
       "supersedes": null,
-      "prev": "355dfe176c29cce7b6d70e9365db8c8f5faa6c42c82bb0445860295d1868df91"
+      "prev": "66b8e356415efe8b3f8845126997968b77d3f2eb4bddbdddf3431fc504ae0c10"
     }
   ]
 }

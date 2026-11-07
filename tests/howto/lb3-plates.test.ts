@@ -896,7 +896,7 @@ const lb03PinProblems = (golden: any, html: string, chromeIds: string[]) => {
     return Object.keys(e.fragments).filter(k => f[k] !== e.fragments[k]).map(k => `${c} ${k} != pin`);
   });
 };
-const LB03_PAGE_PIN = 'd6241cf65a6be261cfa688ebba27549cded6761f2a1a0a00b55d58b0f1f91f90';   // lb03.json's page entry (D-SHIP-W4-PIN)
+const LB03_PAGE_PIN = '5a2c55c0682da6b37ff637b9ab9b94746209321e0212e998b607b63ac9ca4b2e';   // lb03.json's page entry (D-SHIP-W4-PIN; re-pinned in place under D-REPIN-UNMERGED for LIB-PLATEFIX-3 item 17, was d6241cf6…)
 /** Two builds of every drawn row, one after the other in ONE awaited child process (so module state left by the first
  *  build would change the second, as in the old in-worker test): the two pages' sha256. */
 const childTwice = async () => {

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=33364c19bf71f37c273ab4287fc7c791d56cc305549903336e71d6e9c7ae6017
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=41a214737296f9f18bf407f6dd74448ccd1a19af8c497b8697dc653edb78c0d0
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_cable_shrug",
