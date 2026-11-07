@@ -67,7 +67,7 @@ describe.each(IDS)('PF3b %s: the head insets', id => {
   });
 });
 
-describe('PF3b item 22 smith_machine_bench_press: about 45 deg vs level with the shoulders (c3, c7)', () => {
+describe('PF3b item 22 smith_machine_bench_press: about 45 deg vs level with the shoulders (c3, c7)', { timeout: 60_000 }, () => {   // the W3 WALKTIME form (#384 6690918663): imports and renders several specs' zooms; timed out at the 5 s default on 05a2ebe7's source-gate; no assertion change
   it('Right: the upper arm 45 +-10 deg from the torso in the inset; Wrong: 90 +-10 deg', () => {
     const n = inset('smith_machine_bench_press', 'normal'), m = inset('smith_machine_bench_press', 'mistake');
     expect(Math.abs(angle(n.arm, n.torso) - 45), `Right ${angle(n.arm, n.torso).toFixed(1)}`).toBeLessThanOrEqual(10);
@@ -80,7 +80,7 @@ describe('PF3b item 22 smith_machine_bench_press: about 45 deg vs level with the
 const tag = (svg: string, cls: string) => { const m = svg.match(new RegExp(`<(circle|path) class="${cls}"([^>]*)/>`));
   return m ? { name: m[1]!, attrs: Object.fromEntries([...m[2]!.matchAll(/ ([\w-]+)="([^"]*)"/g)].map(a => [a[1]!, a[2]!])) } : null; };
 const form = (t: ReturnType<typeof tag>) => t && { name: t.name, keys: Object.keys(t.attrs).sort() };
-describe('PF3b item 22 smith_machine_bench_press: the inset\'s source ring (D-PF3B-INSETRING)', () => {
+describe('PF3b item 22 smith_machine_bench_press: the inset\'s source ring (D-PF3B-INSETRING)', { timeout: 60_000 }, () => {   // the W3 WALKTIME form (#384 6690918663): imports and renders several specs' zooms; timed out at the 5 s default on 05a2ebe7's source-gate; no assertion change
   const ID = 'smith_machine_bench_press';
   /** House zoom rings as other specs draw them: plate-projection zooms (barbell_shrug normal, bodyweight_squat Mistake)
    *  and PF2's ringed side-projection posture zoom (the rear delt fixture, as platefix3b-zoomhead renders it). */
