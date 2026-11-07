@@ -166,7 +166,10 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync(path('docs/research/howto/shared/back-pain-box.json')))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
     // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
-    expect(sha(JSON.stringify(rrBox(lessW2(m))))).toBe('f8074fd0c651b9deb6ac87c2bb39f68a5d917b7a856f0823785179537b58ad33');   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was 99d9824b…e882e, now with zoom.mjs's key also blanked; the MANIFEST diff from main moves only zoom.mjs and build-layers-page.mjs keys
+    // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs key is re-pinned there and pinned exactly by
+    // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
+    const bmFix = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) { expect(r.files['tools/plates/library/render/region-fix.mjs']).toBe(sha(readFileSync(path('tools/plates/library/render/region-fix.mjs')))); r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; } return x; };
+    expect(sha(JSON.stringify(rrBox(lessW2(bmFix(m)))))).toBe('f8074fd0c651b9deb6ac87c2bb39f68a5d917b7a856f0823785179537b58ad33');   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was 99d9824b…e882e, now with zoom.mjs's key also blanked; the MANIFEST diff from main moves only zoom.mjs and build-layers-page.mjs keys
   });
 });
 
