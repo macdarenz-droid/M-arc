@@ -14,8 +14,9 @@
 //   handlingMistake 'Back arching off the mat' (c6, c3, c7)        -> zoom 'low-back' Wrong, setup step 3, feel row 'low-back', risks 'arch'
 //   handlingMistake 'Craning your neck' (c8)                       -> zoom 'neck' Wrong, feel row 'neck', risks 'neck'
 //   handlingMistake 'Holding your breath' (c9)                     -> copy.mistakeLine, risks 'breath' (W7 printed)
-//   card zooms low-back (M), neck (DV)                             -> zooms
+//   card zooms low-back (M, drawn as DV: D-PFC-ROUND1 L5), neck (DV) -> zooms
 import plateSpec from '../specs/dead_bug.mjs';
+import { landmarksOf, fk, resolve, normPose, bodyShapes } from '../engine.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
 
@@ -50,20 +51,54 @@ const CL = {
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses:
-//   arch  (card zoom low-back Wrong, c6): the spec's Mistake pose (the pelvis tips forward and the low back arches off
-//         the mat as the arm and leg lower), drawn as the plate's Mistake view draws it (its guides: the gap under the low back).
+//   arch  (card zoom low-back Wrong, c6 "back arching off the mat"): the end with the pelvis tipped ARCH_TILT forward and
+//         L3 taking it back (the thorax keeps its angle, so the arms, the head and the shoulders are unchanged); root y,
+//         root z and L3 solved (Newton) so the buttock stays on the mat and the near shoulder keeps its place; both hips
+//         take the tip back so the legs keep their angle to the floor. The spec's own Mistake solve (specs/dead_bug.mjs
+//         archAt, ARCH), copied, with a larger tilt, drawn solid so the body itself lifts off the mat (PFC fix round,
+//         D-PFC-ROUND1 #394 6701001868 L5; hollow_body_hold's low-back form). Its guide is the spec's gap mark
+//         (specs/dead_bug.mjs gapBot, gapTop, `underside`, copied): from the mat up to the arched pose's drawn
+//         torso underside at its lumbar (a dashed path, lib_crunch's form).
 //   crane (card zoom neck Wrong, c8 "neck craned to look at the legs"): the start pose (both arms straight up) with the
 //         neck flexed NECK_CRANE deg further, so the head lifts off the mat and turns toward the legs; nothing else moves
 //         (one joint). W7 fix round (#394 L5): the neck zoom is drawn on the start, not the end, so the lowered arm no
 //         longer lies over the head (the spec's own pose; no drawing value changed).
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): NECK_CRANE
-// 35 deg is a Wrong-pose size no card gives; no number from it appears in user copy; the layers panel judges it.
-const START = plateSpec.poses.start, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose, NECK_CRANE = 35;
+// 35 deg and ARCH_TILT 38 deg (the spec's MIS_TILT 14 deg raised so the gap under the low back reads at panel size, as
+// hollow_body_hold's) are Wrong-pose sizes no card gives; the low-back crop window (centre offset, sizePx) is a drawing
+// value; no number from them appears in user copy; the layers panel judges them.
+const H = 1.75, START = plateSpec.poses.start, END = plateSpec.poses.end, NECK_CRANE = 35, ARCH_TILT = 38;
 const CRANE = { neck: START.neck + NECK_CRANE };
+const F = END.trunk.flex, LM_E = landmarksOf(END, H), SH_E = LM_E['shoulder.r'];
+const archAt = ([y, z, l3]) => ({ ...END, hip: { l: END.hip.l + ARCH_TILT, r: END.hip.r + ARCH_TILT },
+  trunk: { flex: [F[0], l3, F[2] + F[1] - ARCH_TILT - l3, F[3]] }, root: { at: [0, y, z], tilt: END.root.tilt + ARCH_TILT } });
+const ARCH_Q = (() => {
+  const f = q => { const l = landmarksOf(archAt(q), H); return [l.buttock[1] - LM_E.buttock[1], l['shoulder.r'][1] - SH_E[1], l['shoulder.r'][2] - SH_E[2]]; };
+  let q = [END.root.at[1], END.root.at[2], F[1] - ARCH_TILT];
+  for (let it = 0; it < 60; it++) {
+    const r = f(q); if (Math.hypot(...r) < 1e-8) return q;
+    const J = [0, 1, 2].map(k => { const d = 1e-6, qq = [...q]; qq[k] += d; return f(qq).map((v, i) => (v - r[i]) / d); });
+    const M = [0, 1, 2].map(i => [...[0, 1, 2].map(k => J[k][i]), -r[i]]);
+    for (let c = 0; c < 3; c++) {
+      let m = c; for (let i = c + 1; i < 3; i++) if (Math.abs(M[i][c]) > Math.abs(M[m][c])) m = i;
+      [M[c], M[m]] = [M[m], M[c]];
+      for (let i = 0; i < 3; i++) if (i !== c) { const k = M[i][c] / M[c][c]; for (let j = c; j < 4; j++) M[i][j] -= k * M[c][j]; }
+    }
+    q = q.map((v, i) => v + M[i][3] / M[i][i]);
+  }
+  throw new Error('lib_dead_bug: the arch does not converge');
+})();
+const ARCH = archAt(ARCH_Q);
+// the gap mark (dead_bug spec form): the drawn torso underside (world y) at the arched lumbar's floor position z
+const SIDE = { view: 'side', near: 'r', pxm: 1, P: w => [w[2], -w[1]] }, BODY = { height: H };
+const underside = (p, z) => { const pts = bodyShapes(fk(resolve(normPose(p, BODY), BODY).q, BODY), SIDE, { hand: 'flat' }).find(s => s.key === 'torso').poly; let lo = -Infinity;
+  for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; if ((a[0] - z) * (b[0] - z) > 0 || a[0] === b[0]) continue; lo = Math.max(lo, a[1] + (b[1] - a[1]) * (z - a[0]) / (b[0] - a[0])); }
+  return -lo; };
+const LZ = landmarksOf(ARCH, H).lumbar[2], GAP = [{ kind: 'path', role: 'wrong', pts: [[0, 0, LZ], [0, underside(ARCH, LZ), LZ]] }];
 export const stills = {
   start: { pose: START },
   end: { pose: END },
-  arch: { pose: MIS },
+  arch: { pose: ARCH },
   crane: { pose: { ...START, ...CRANE } },
 };
 
@@ -73,10 +108,10 @@ export const stills = {
 const zooms = [
   {
     key: 'low-back', chip: 'Low back', heading: 'Low back', kind: 'posture',
-    crop: { center: { at: 'lumbar', pose: 'right', off: [-30, -34] }, sizePx: 220 },
+    crop: { center: { at: 'lumbar', pose: 'right', off: [-12, -18] }, sizePx: 120 },
     right: 'end',
-    wrong: { base: 'end', pose: MIS },   // M: the plate's own Mistake, dashed red over the right pose (lib_crunch form)
-    guides: plateSpec.mistake.guides,
+    wrong: { base: 'end', pose: ARCH, solid: true },   // DV: the arch still drawn alone (D-PFC-ROUND1 L5; was the plate's Mistake)
+    guides: GAP,
     callout: {
       right: { text: 'Back down', anchor: 'lumbar' },
       wrong: { text: 'Back arches', anchor: { at: 'lumbar', pose: 'mistake' } },
@@ -140,8 +175,9 @@ const feel = {
 const RISKS = [
   { key: 'arch', text: 'Arching your back could contribute to a back injury.', claim: CL.c6 },
   { key: 'neck', text: 'Looking down at your legs strains your neck.', claim: CL.c8 },
-  // W7 D-TEXT-PRINTED: handlingMistake 'Holding your breath' (c9) as a fault (copy.mistakeLine is not printed)
-  { key: 'breath', text: 'Holding your breath during the reps is a mistake.', claim: CL.c9 },
+  // W7 D-TEXT-PRINTED: handlingMistake 'Holding your breath' (c9) as a fault (copy.mistakeLine is not printed);
+  // D-PFC-ROUND1 L6: worded as the handling mistake with the card's fix (was a bare 'is a mistake' with no fix)
+  { key: 'breath', text: 'Holding your breath? Breathe in as you reach out, out as you return.', claim: CL.c9 },
 ];
 
 export default {

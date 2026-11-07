@@ -24,7 +24,8 @@
 // D-TEXT-PRINTED (W7, #394): hand zoom grip Wrong / handlingMistake too tight (c3, as a fault) -> setup step 2;
 //   c9 1 to 2 inches, c12 one jump per turn -> setup step 4; c10 soft knees, land on the balls -> zoom hop caption.right.
 // Left off (D-TEXT-PROGRESSION): c16 (stepping over first, work and rest build-up); c17 cadence (not a form point).
-import plateSpec from '../specs/jump_rope.mjs';
+import plateSpec, { SIZES } from '../specs/jump_rope.mjs';
+import { landmarksOf } from '../engine.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
 
@@ -67,15 +68,28 @@ const J = (...ids) => C([...new Set(ids.flatMap(i => CL[i].tags))], [...new Set(
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses (the spec's arms are joint angles, so the rope follows the grips):
-//   high (card zoom hop Wrong, c9): the spec's Mistake over the end (the same body lifted much higher off the floor).
+//   high (card zoom hop Wrong, c9): the spec's Mistake over the end (the same body lifted much higher off the floor),
+//         set back over the end's own x and lifted so its lowest sole is M_LIFT up (PFC fix round, D-PFC-ROUND1 #394 6701001868 L5/L8: the plate sets its dashed
+//         copy M_OFF aside, a plate drawing offset; the zoom draws the Wrong alone, so it stands where the Right stands).
 //         The knee tuck of the card's Wrong does not show in the front view, so it stays text (posture knees, c10).
+//         The gap guides (both crops, D-PFC-ROUND1 L5): a dashed path with an arrow head from the floor up to the lower
+//         sole, GAP_X beside the feet (the spec's ARROW_X form), so the small gap (Right) and the large one (Wrong) are marked.
 //   wide (card zoom elbows Wrong, c5, c6 "elbows out wide"): the start with each shoulder's plane of elevation turned
 //         WIDE deg toward the frontal plane (abduction), elevation, rotation and elbow bend kept: the elbows swing out
 //         from the ribs and the hands stay near hip height.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2): WIDE 50 deg is a Wrong-pose size no card gives;
-// no number from it appears in user copy; the layers panel judges it.
-const WIDE = 50;
-const START = plateSpec.poses.start, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
+// M_LIFT 0.4 m (the Wrong's lowest sole over the floor; the plate's M_HOP 0.2 m read as a few px in the close-up,
+// D-PFC-ROUND1 second pass), GAP_X (the gap guides' offset beside the feet) and the hop crop window (HOP_CY, HOP_SIZE)
+// are drawing values;
+// no number from them appears in user copy; the layers panel judges them.
+const WIDE = 50, GAP_X = 0.12, H = 1.75, M_LIFT = 0.4, HOP_SIZE = 420, HOP_CY = 1.08;
+const START = plateSpec.poses.start, END = plateSpec.poses.end;
+const MIS = { ...plateSpec.mistake.pose, root: { ...plateSpec.mistake.pose.root, at: [END.root.at[0], END.root.at[1] + M_LIFT - SIZES.HOP, END.root.at[2]] } };
+const soleOf = p => { const l = landmarksOf(p, H); return [l['sole.l'], l['sole.r']].reduce((a, b) => (b[1] < a[1] ? b : a)); };
+const gapPath = (role, p) => { const s = soleOf(p); return { kind: 'path', role, pts: [[s[0] + GAP_X, 0.005, s[2]], [s[0] + GAP_X, s[1], s[2]]] }; };
+// plus a dashed level line at each crop's own lowest sole (the zoom shell's 'level' guide, own), so the gap between it
+// and the floor reads across the panel
+const HOP_GAP = [gapPath('right', END), gapPath('wrong', { ...END, ...MIS }), { kind: 'level', at: 'sole.l', own: true }];
 const WIDE_ARMS = { shoulder: Object.fromEntries(['l', 'r'].map(s => [s, { ...START.shoulder[s], plane: START.shoulder[s].plane + WIDE }])) };
 export const stills = {
   start: { pose: START },
@@ -90,9 +104,10 @@ export const stills = {
 const zooms = [
   {
     key: 'hop', chip: 'Hop', heading: 'Hop height', kind: 'posture',
-    crop: { center: { at: 'hip.r', pose: 'right', off: [0, 40] }, sizePx: 340 },   // W7 panel (#394): wider, so more of the body shows
+    crop: { center: [0, HOP_CY, END.root.at[2]], sizePx: HOP_SIZE },   // D-PFC-ROUND1 L5/L8: centred on the body's midline (x 0), head to rope with the raised Wrong inside
     right: 'end',
     wrong: { base: 'end', pose: MIS, solid: true },
+    guides: HOP_GAP,
     callout: {
       right: { text: 'Low hop', anchor: 'ankle.r' },
       wrong: { text: 'Too high', anchor: { at: 'ankle.r', pose: 'mistake' } },

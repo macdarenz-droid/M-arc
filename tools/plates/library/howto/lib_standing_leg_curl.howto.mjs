@@ -139,9 +139,11 @@ const feel = {
       means: 'Arching the lower back can cause back pain and discomfort.',
       fix: 'Avoid arching: contract your abs.',
       redFlag: 'back', claim: CL.c13 },
+    // D-PFC-ROUND1 L6 (D-FEEL-NOMEANS): the card row's means is a stop rule and c14 gives no cause, so no means is
+    // printed; the stop rule (c14 'stop ... if you feel pain in your knees') is the fix.
     { key: 'knee', where: 'Knee', at: { parts: ['knee-left', 'knee-right'] },
-      means: 'Pain here is a reason to stop.',
-      fix: 'Stop the set.',
+      means: '',
+      fix: 'Stop the set if you feel pain here.',
       redFlag: 'knee', claim: CL.c14 },
   ],
   claim: CL.ham,

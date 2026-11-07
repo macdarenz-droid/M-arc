@@ -16,10 +16,11 @@
 //   handlingMistake 'Lower back arching' (c6, c5, c2)           -> zoom 'low-back' Wrong, feel rows 'hips' and 'low-back', risks 'arch'
 //   handlingMistake 'Legs flopping around' (c9)                 -> copy.mistakeLine (a fault, with its fix), setup step 1 (its fix), risks 'legs' (W7 printed)
 //   handlingMistake 'Legs starting the lift' (c7)               -> copy.mistakeLine (a fault, with its fix), risks 'legs' (W7 printed)
-//   card zoom low-back (M)                                      -> zoom 'low-back'
+//   card zoom low-back (M, drawn as DV: D-PFC-ROUND1 L5)         -> zoom 'low-back'
 //   card zoom top-reach (T, D-SHIP-TEXTZOOM: its Wrong "legs flopping around" is a motion fault no still shows)
 //                                                               -> Right: plate cues 'reach' and 'legs', setup 4; Wrong: copy.mistakeLine, risks 'legs' (W7 printed)
 import plateSpec from '../specs/v_up.mjs';
+import { landmarksOf, fk, resolve, normPose, bodyShapes } from '../engine.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
 
@@ -55,14 +56,49 @@ const CL = {
 };
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
-// From the plate spec's own poses: arch (card zoom low-back Wrong, c6, c5) is the spec's Mistake pose (the lower back
-// arches off the floor at the start of the rep), drawn as the plate's Mistake view draws it (its guides: the gap under
-// the low back). No new geometry, so no drawing values.
-const LYING = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
+// From the plate spec's own poses: arch (card zoom low-back Wrong, c6 "lower back arched off the floor"): the lying pose
+// with the pelvis tipped ARCH_TILT forward and L3 taking it back (the thorax keeps its angle, so the arms, the head and
+// the shoulders are unchanged); root y, root z and L3 solved (Newton) so the buttock stays on the floor and the near
+// shoulder keeps its place; the hip takes the tip back so the legs keep their angle to the floor. The spec's own Mistake
+// solve (specs/v_up.mjs archAt, ARCH), copied, with a larger tilt, drawn solid so the body itself lifts off the floor
+// (PFC fix round, D-PFC-ROUND1 #394 6701001868 L5; hollow_body_hold's low-back form). Its guide is the spec's gap mark
+// (specs/v_up.mjs gapBot, gapTop, `underside`, copied): a dashed path (lib_crunch's form) from the floor up to the arched
+// pose's drawn torso underside at its lumbar.
+// DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop):
+// ARCH_TILT 38 deg (the spec's MIS_TILT 14 deg raised so the gap under the low back reads at panel size, as
+// hollow_body_hold's) is a Wrong-pose size no card gives; the low-back crop window (centre offset, sizePx) is a drawing
+// value; no number from them appears in user copy; the layers panel judges them.
+const H = 1.75, LYING = plateSpec.poses.end, ARCH_TILT = 38;
+const F = LYING.trunk.flex, LM_E = landmarksOf(LYING, H), SH_E = LM_E['shoulder.r'];
+const archAt = ([y, z, l3]) => ({ ...LYING, hip: LYING.hip + ARCH_TILT,
+  trunk: { flex: [F[0], l3, F[2] + F[1] - ARCH_TILT - l3, F[3]] }, root: { at: [0, y, z], tilt: LYING.root.tilt + ARCH_TILT } });
+const ARCH_Q = (() => {
+  const f = q => { const l = landmarksOf(archAt(q), H); return [l.buttock[1] - LM_E.buttock[1], l['shoulder.r'][1] - SH_E[1], l['shoulder.r'][2] - SH_E[2]]; };
+  let q = [LYING.root.at[1], LYING.root.at[2], F[1] - ARCH_TILT];
+  for (let it = 0; it < 60; it++) {
+    const r = f(q); if (Math.hypot(...r) < 1e-8) return q;
+    const J = [0, 1, 2].map(k => { const d = 1e-6, qq = [...q]; qq[k] += d; return f(qq).map((v, i) => (v - r[i]) / d); });
+    const M = [0, 1, 2].map(i => [...[0, 1, 2].map(k => J[k][i]), -r[i]]);
+    for (let c = 0; c < 3; c++) {
+      let m = c; for (let i = c + 1; i < 3; i++) if (Math.abs(M[i][c]) > Math.abs(M[m][c])) m = i;
+      [M[c], M[m]] = [M[m], M[c]];
+      for (let i = 0; i < 3; i++) if (i !== c) { const k = M[i][c] / M[c][c]; for (let j = c; j < 4; j++) M[i][j] -= k * M[c][j]; }
+    }
+    q = q.map((v, i) => v + M[i][3] / M[i][i]);
+  }
+  throw new Error('lib_v_up: the arch does not converge');
+})();
+const ARCH = archAt(ARCH_Q);
+// the gap mark (v_up spec form): the drawn torso underside (world y) at the arched lumbar's floor position z
+const SIDE = { view: 'side', near: 'r', pxm: 1, P: w => [w[2], -w[1]] }, BODY = { height: H };
+const underside = (p, z) => { const pts = bodyShapes(fk(resolve(normPose(p, BODY), BODY).q, BODY), SIDE, { hand: 'flat' }).find(s => s.key === 'torso').poly; let lo = -Infinity;
+  for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; if ((a[0] - z) * (b[0] - z) > 0 || a[0] === b[0]) continue; lo = Math.max(lo, a[1] + (b[1] - a[1]) * (z - a[0]) / (b[0] - a[0])); }
+  return -lo; };
+const LZ = landmarksOf(ARCH, H).lumbar[2], GAP = [{ kind: 'path', role: 'wrong', pts: [[0, 0, LZ], [0, underside(ARCH, LZ), LZ]] }];
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: LYING },
-  arch: { pose: MIS },
+  arch: { pose: ARCH },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
@@ -71,10 +107,10 @@ const zooms = [
     key: 'low-back', chip: 'Low back', heading: 'Low back', kind: 'posture',
     // zoom shell: the window centred off the lying pose's lumbar, framed head to thighs plus the floor (W7 fix round #394
     // L5/L7: widened; `off`, `sizePx` drawing values)
-    crop: { center: { at: 'lumbar', pose: 'right', off: [-28, -36] }, sizePx: 160 },
+    crop: { center: { at: 'lumbar', pose: 'right', off: [-10, -16] }, sizePx: 120 },
     right: 'end',
-    wrong: { base: 'end', pose: MIS },   // M: the plate's own Mistake, dashed red over the right pose (lib_crunch form)
-    guides: plateSpec.mistake.guides,
+    wrong: { base: 'end', pose: ARCH, solid: true },   // DV: the arch still drawn alone (D-PFC-ROUND1 L5; was the plate's Mistake)
+    guides: GAP,
     callout: {
       right: { text: 'Back down', anchor: 'lumbar' },
       wrong: { text: 'Back arches', anchor: { at: 'lumbar', pose: 'mistake' } },
@@ -117,8 +153,9 @@ const RISKS = [
   { key: 'arch', text: 'Arching your back could bring serious discomfort or pain in your lower back.', claim: CL.c6 },
   { key: 'speed', text: 'Control your speed and watch your low back to reduce the chance of injury.', claim: CL.c13 },
   // W7 D-TEXT-PRINTED: handlingMistakes 'Legs flopping around' (c9; T top-reach Wrong) and 'Legs starting the lift'
-  // (c7) as faults (copy.mistakeLine is not printed)
-  { key: 'legs', text: 'Legs flopping around cost you balance. Legs starting the lift is a mistake.',
+  // (c7) as faults (copy.mistakeLine is not printed); D-PFC-ROUND1 L6: each worded as the handling mistake with the
+  // card's fix (was a bare 'is a mistake' with no fix)
+  { key: 'legs', text: 'Legs flopping? Press toes together. Legs starting the lift? Lead with your upper body.',
     claim: C(['CONSENSUS'], [FV, WH], 'card c9, c7') },
 ];
 

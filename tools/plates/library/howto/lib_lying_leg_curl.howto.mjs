@@ -150,9 +150,12 @@ const feel = {
       means: 'Arching the lower back can cause back pain and discomfort.',
       fix: 'Brace your abs. Use a lighter weight if your low back moves.',
       redFlag: 'back', claim: CL.arch },
+    // D-PFC-ROUND1 L6 (D-FEEL-NOMEANS): the card row's means is a stop rule, not a cause, so no means is printed; its
+    // 'sharp pain ... a reason to stop' (c16) is in the fix. L4 (knee-pit-* parts) held: tests/howto/checks/c2.ts takes
+    // part ids from src/svg/bodyMuscles.ts only, which has no knee-pit part (they exist only in render/region-fix.mjs).
     { key: 'knee', where: 'Behind the knee', at: { parts: ['knee-left', 'knee-right'] },
-      means: 'Sharp pain here is a reason to stop.',
-      fix: 'Stop the set. Try a lighter load or a different pad position.',
+      means: '',
+      fix: 'Stop if the pain is sharp. Try a lighter load or a different pad position.',
       redFlag: 'knee', claim: CL.c16 },
   ],
   claim: CL.ham,
