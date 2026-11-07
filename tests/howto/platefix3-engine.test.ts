@@ -6,6 +6,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { W4_MANIFEST_ROWS } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -57,12 +58,15 @@ describe('PF3 E2: path guides get the path CSS (Silent Black arrowheads)', () =>
 // exactly the two builder files this card changes; crop-projection.test.ts and lib-shapes.test.ts blank zoom.mjs's key on
 // the strength of this block (build-layers-page.mjs's key is already checked against its file there).
 // D-PF3-W3MERGE: after W3 (main 62d3dcb6) the library MANIFEST has 35 rows (W3's 13 added); was 22, now 35, each row still checked
+// LIB-SHIP W4 (D-SHIP-W4-PIN; merge of main c2f267a7): plus W4's 20 lb02/lb03 rows (checks/ship-w4.ts), 55, each row still checked
 describe('PF3 E1/E2 MANIFEST re-pin', () => {
-  it('every one of the 35 rows pins the current render/closeup/zoom.mjs and build-layers-page.mjs', () => {
+  it('every one of the 35 rows (55 with W4\'s 20) pins the current render/closeup/zoom.mjs and build-layers-page.mjs', () => {
     const sha = (p: string) => createHash('sha256').update(readFileSync(p)).digest('hex');
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
     const rows = Object.entries<any>(m.rows);
-    expect(rows).toHaveLength(35);
+    expect(W4_MANIFEST_ROWS).toHaveLength(20);
+    expect(W4_MANIFEST_ROWS.every(id => id in m.rows)).toBe(true);
+    expect(rows).toHaveLength(35 + 20);
     for (const k of ['tools/plates/library/render/closeup/zoom.mjs', 'tools/plates/library/build-layers-page.mjs'])
       for (const [id, r] of rows) expect(r.files[k], `${id} ${k}`).toBe(sha(k));
   });
