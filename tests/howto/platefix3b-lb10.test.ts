@@ -12,10 +12,10 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
-let plate: any, body: any, eq: any, qaEng: any, M: any, S: any, KS: any;
+let plate: any, body: any, eq: any, qaEng: any, M: any, S: any, KS: any, qaNode: any, qaIdx: any;
 beforeAll(async () => {
-  [plate, body, eq, qaEng, M, KS] = await Promise.all(['../vendor/engine/plate.mjs', '../vendor/engine/body.mjs', '../vendor/engine/equipment.mjs', 'qa/engine.mjs',
-    'specs/sled_pull.mjs', 'specs/kettlebell_swing.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+  [plate, body, eq, qaEng, M, KS, qaNode, qaIdx] = await Promise.all(['../vendor/engine/plate.mjs', '../vendor/engine/body.mjs', '../vendor/engine/equipment.mjs', 'qa/engine.mjs',
+    'specs/sled_pull.mjs', 'specs/kettlebell_swing.mjs', 'qa/node.mjs', 'qa/index.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
   S = M.default;
 }, 600_000);
 const Eng = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body });
@@ -70,6 +70,22 @@ describe('LIB-PLATEFIX-3b B sled_pull: the quarter squat on the start pose (D-PF
         expect(k.cm, `${mistake} ${k.landmark} ${k.pose}`).toBeLessThanOrEqual(tol);
       }
     }
+  });
+});
+
+describe('LIB-PLATEFIX-3b B D-PF3B-SLEDTELL: the Mistake tell anchor moves past PQ-H3 (qa/node.mjs deviation)', () => {
+  const dev = (spec: any) => qaNode.deviation({ spec }, Eng(), { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) });
+  const withStack = (at: string) => ({ ...S, mistake: { ...S.mistake, tells: S.mistake.tells.map((t: any) => (t.key === 'stack' ? { ...t, anchor: { ...t.anchor, at } } : t)) } });
+  it('"Shoulders behind hips" anchors on the Mistake neck; the deviation is >= the envelope\'s deviationMin', () => {
+    const min = qaIdx.loadPins().envelope.deviationMin, d = dev(S);
+    console.log(`PF3b sled_pull deviation ${d.toFixed(1)} px (deviationMin ${min.toFixed(2)})`);
+    expect(S.mistake.tells.find((t: any) => t.key === 'stack').anchor).toEqual({ at: 'neck', pose: 'mistake', off: [-6, 0] });
+    expect(d).toBeGreaterThanOrEqual(min);
+  });
+  it('red: the same tell on backUpper (as before) falls under deviationMin', () => {
+    const min = qaIdx.loadPins().envelope.deviationMin, d = dev(withStack('backUpper'));
+    console.log(`PF3b sled_pull deviation on backUpper ${d.toFixed(1)} px`);
+    expect(d).toBeLessThan(min);
   });
 });
 

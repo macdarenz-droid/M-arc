@@ -29,7 +29,8 @@
 //   LEAN_TRUNK of vertical and the centre of mass at most LEAN_BACK behind the heels. The end keeps its step-back and
 //   drag: its hips sit DRAG (the value the balanced construction gave before, kept) behind the start's, and its centre
 //   of mass stays inside the heel-toe base. (Before: each pose's root z put the Winter centre of mass over the soles'
-//   midpoint, the rope's light tension, c1, not counted.)
+//   midpoint, the rope's light tension, c1, not counted.) The "Shoulders behind hips" tell anchors on the neck
+//   (D-PF3B-SLEDTELL), so the Mistake still moves its tell anchor past PQ-H3's smallest approved deviation.
 //  Hands (c1): both fists on the one rope at the midline (x 0), each arm ELBOW_BEND short of straight (c1 "arms
 //   slightly bent"), so each fist lies on its shoulder's circle in the side plane: the near fist at the hips' height
 //   (c3 "the rope close to your body"), the far fist GRIP_GAP (fists touching) below and behind it on the same circle
@@ -231,8 +232,15 @@ export default {
     // arrow between the two heads cannot clear the solid head by 6 px; the red outline carries the lean
     guides: [],
     tells: [
-      { key: 'lean', text: 'Torso<br>pitched<br>back', anchor: { at: 'backUpper', pose: 'mistake', off: [-5, -12] }, box: { left: 8, top: 136 }, cue: 'The torso pitches back and the lower back takes the load.' },
-      { key: 'stack', text: 'Shoulders<br>behind<br>hips', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 8, top: 208 }, cue: 'The shoulders are no longer over the hips, leaning too far back.' },
+      { key: 'lean', text: 'Torso<br>pitched<br>back', anchor: { at: 'backUpper', pose: 'mistake', off: [-5, -12] }, box: { left: 8, top: 208 },   // LIB-PLATEFIX-3b (D-PF3B-SLEDTELL): was top 136, the boxes of the two tells swapped (see below)
+        cue: 'The torso pitches back and the lower back takes the load.' },
+      // LIB-PLATEFIX-3b (D-PF3B-SLEDTELL, #408, ruling (a)): anchored on the neck (was backUpper): with the squat start the
+      // Mistake's backUpper moves 10.3 px from the end's, under PQ-H3's 11.39 px; the neck, at the shoulders, moves 12.2 px.
+      // off [-6, 0] (the back of the neck): the neck's centre lies inside the solid end trunk, so a leader to it crosses the
+      // end figure from every box; the offset is applied in both poses and leaves the deviation at 12.2 px; its box { left: 8, top: 208 } -> { left: 8, top: 136 } (the two tells swap boxes): the neck
+      // is above the lean anchor, so its leader comes from above and the lean's from below; no leader enters a figure, crosses the
+      // other or puts the two boxes' hit areas together
+      { key: 'stack', text: 'Shoulders<br>behind<br>hips', anchor: { at: 'neck', pose: 'mistake', off: [-6, 0] }, box: { left: 8, top: 136 }, cue: 'The shoulders are no longer over the hips, leaning too far back.' },
     ],
   },
   tempo: [{ phase: 'Walk', move: true, word: 'Quick' }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)

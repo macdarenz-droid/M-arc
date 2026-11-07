@@ -1931,8 +1931,8 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
     "sled-pull": {
       "normalSvg": "e7e3e90e017e5e582830b254a3d1da801cbf8970680f499a90b87a19969bf24f",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8638526e, then 01f23201; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was b637dac6, now e7e3e90e (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
       "normalOverlay": "6f7086bb14c8e9965510f0c796faaa5ee487d99b1e660864f16b85ad240b7603",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0ef9d6fd, now the PF3 drawing; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 81d2c0e5, now 6f7086bb (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
-      "mistakeSvg": "5b02fcbd4f8d02bdf1adcc178ccba45d50848e5f20160e652f7b322ae1162d9f",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, then 40510f2a; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 1122a784, now 5b02fcbd (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
-      "mistakeOverlay": "f488c63b0fa31e3e936d99f2f834dece424d62bee06595b56b14a89a09b8bd54",
+      "mistakeSvg": "57001cab9f517ddf98ec1ead5cac7dde9880252c748ba38fd913d1a5dfc932ad",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, then 40510f2a; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 1122a784, now 57001cab (the D-PF3B-SLEDSQUAT start squat, D-PF3B-SLEDLEADER boxes and the D-PF3B-SLEDTELL neck anchor and swapped tell boxes)
+      "mistakeOverlay": "c8d0ebbe22986ffaa0fdcee48d3424be20be733f61b1c2c72c03e166a3bec922",   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was f488c63b, now c8d0ebbe (the D-PF3B-SLEDTELL swapped tell boxes)
       "tells": "6a7d6e8c622a2a5df7035e2823688a13decbfcb9a4a203b54ce05909b257705d",
       "tempo": "1551a4913b7c557d03dca51a61ca2c49605243ea59da71e831c285dc1b0cc523",
       "cues": "5bb3d882981928ce56f4b69925a55a44792d986942da908c75f360ababa86bb1",
