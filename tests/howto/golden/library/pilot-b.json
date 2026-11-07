@@ -224,6 +224,47 @@
       "why": "O5; LIB-PLATEFIX-1 layers page rebuilt on main 8841246c (D-PLATEFIX-SECOND point 4): its LIB-PLATEFIX-1 content approved by the calibrated layers panel and rechecks (D-PLATEFIX-STAMP, #385 6648438434 @ f573d31322a421e169ea732e6cf948fbb41f66d0); cardcmp: every card's plate fragments byte-equal to the approved plates page; strip-back: with the inline zoom groups and ZOOM_CSS taken out it is the 3-way merge of base, the approved page and main's page plus only #404's body-map hunks; zoom groups byte-equal to the plates page's",
       "supersedes": 6,
       "prev": "743f02754d7faa2715fbadc0dbaabaf07b71b4ba88bd426a563aa3a09f1556ac"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_smith_machine_bench_press",
+      "src": "library/specs/smith_machine_bench_press.mjs",
+      "slug": "smith-machine-bench-press",
+      "prefix": "smith-machine-bench-press",
+      "chromeId": "smith-machine-bench-press",
+      "fragments": {
+        "normalSvg": "1e37512aab6251ed625465975209a05690e4b9da89b87828c8a066a94d4f4622",
+        "normalOverlay": "d0c930b1a6cce7fd86b3f7459b59d0e1d5803a283508d3dbdf54015536d1d02a",
+        "mistakeSvg": "1594ced4e6bbaaedac2de0e6c49b702915df7f2b6044dd7e7ad7f9b2a74ddf7d",
+        "mistakeOverlay": "2f09dc8ad42f7526ed160401eddc4a6aceec828dc655550e9cce2e7acc2f1860",
+        "tells": "bec9ba26ac2b7142fb443afae135952dc3055ce8db6fe3eb6191bca332eb777e",
+        "tempo": "9af9e6552a529e3708cf8dafa367dc90b5d5d8b5b1f51cedaf88fe48e65d10d8",
+        "cues": "5fb22e73fd62570d1e05ded46d901573ec0d668884423def727d92cc56b1d771",
+        "alt": "64b45d254409412052a95ee88e5e9395bd5d90101cce762c8a780b668f824c1b",
+        "mistakeAlt": "c99242ab8172809c00427bd65f767075a61bf35fef73da59e906155fa57fb1c4"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/408#issuecomment-6705141445 @ 2a78b893fc97ad820386f3c4901aa187fa84c33f",
+      "date": "2026-11-07",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-3b item 22 (smith head-end inset with its house source ring, D-PF3B-INSETRING): approved at the supervisor crop check (#408 6705141445) at 2a78b893, after pf10 (6704679655).",
+      "supersedes": 1,
+      "prev": "c69ca9fb5a9db1515c1fd7c84e3933e75c9edf4202ce9e416721ddb390323de9"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "00a7dad685cf7ad2c8ffcc84af5b01854236546e17c7d1c1e6c159f21a4eefbe",
+      "bytes": 460109,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/408#issuecomment-6705141445 @ 2a78b893fc97ad820386f3c4901aa187fa84c33f",
+      "date": "2026-11-07",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The pilot-b plates page rebuilt with LIB-PLATEFIX-3b's smith_machine_bench_press (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (this builder, and CI howto-rebuild on #408 at 2a78b893).",
+      "supersedes": 7,
+      "prev": "ab3cdbef66842cace939cafa2d2951bf985b84abbf5dbf573ec5a91d97596261"
     }
   ]
 }
