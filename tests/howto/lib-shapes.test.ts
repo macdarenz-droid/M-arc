@@ -12,6 +12,11 @@ import { gripHtml, handContentOf } from '@/slices/howto/sections/Hand';
 import legPress from '@/howto/generated/ht-leg-press';
 import chestPress from '@/howto/generated/ht-machine-chest-press';
 import type { BuiltHowTo } from '@/howto/types';
+import { pf2Problems, restorePF2 } from './platefix2-pins';
+// LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
+// lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
+// every pin below, measured on main, still holds
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); return restorePF2(x); };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -313,7 +318,7 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
   });
   it('every pinned row pins the current build-layers-page.mjs, and every other entry equals main c4c34d75 (re-measured after train 63)', () => {
-    const m = lessW3(JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8')));   // LIB-SHIP W3
+    const m = lessW3(pf2Main(JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'))));   // LIB-SHIP W3
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
     expect(Object.keys(m.rows)).toContain('lib_crunch');
