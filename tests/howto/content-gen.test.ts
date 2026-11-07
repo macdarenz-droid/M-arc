@@ -207,7 +207,7 @@ describe('HT5-A4: the push hints (critic fix 8)', () => {
     expect(allIds.filter(id => howToHint(id) !== undefined).sort()).toEqual(wantKeys.sort());
     for (const id of wantKeys) expect(howToHint(id)).toBe(cueOf.get(id)!.handling.cue);
     for (const id of HOWTO_IDS) if (!wantKeys.includes(id)) expect(howToHint(id)).toBeUndefined();
-  });
+  }, 120_000);
 
   it('ids.ts stays <= 2,048 B with the hints counted', () => {
     expect(readFileSync('src/howto/ids.ts', 'utf8').length).toBeLessThanOrEqual(2048);

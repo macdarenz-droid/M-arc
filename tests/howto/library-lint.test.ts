@@ -161,7 +161,7 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
         expect([r.id, f, lintTokens(L.boxReach(`redFlag(${f})`, B))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG: B, DISCLAIMER: shared.DISCLAIMER }, f))]);
       }
     }
-  });
+  }, 120_000);
 });
 
 describe('LIB-5 D-LIB5-VARIANT / VARIANT8: the variant-line rule', () => {

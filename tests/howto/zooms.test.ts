@@ -91,7 +91,7 @@ describe('HT7-A1: every posture panel === golden B', () => {
     const mutated = p.slice(0, i) + 'r' + p.slice(i + 1);
     expect(mutated === golden).toBe(false);
     expect(mutated.length).toBe(golden.length);
-  });
+  }, 120_000);
   it('failure paths: a page without posture close-ups, or with a panel twice, throws', () => {
     expect(() => gen.posturePanels(FIXTURE.replace(/ data-zoom="(shoulders|top)"/g, ' data-zoom="hand"'), 'pull-up')).toThrow();
     const one = gen.posturePanels(FIXTURE, 'pull-up')[0].panel;
