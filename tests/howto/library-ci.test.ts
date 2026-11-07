@@ -661,7 +661,7 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
       { id: 'tests/howto/golden/library/zoom.json#page', file: 'tests/howto/golden/library/zoom.json', kind: 'page', pageSha256: '5e4d3b43fced120e3e94f0ddc36af6ec1b1f974688da3a8d39fcacb759a179ce', bytes: 182316 },
       { id: 'tests/howto/golden/library/zoom.json#layers-page', file: 'tests/howto/golden/library/zoom.json', kind: 'layers-page', pageSha256: 'a42991add7cb548d0fe9cb04b6f3bfe5ded277c612f68ee4fdabf21a394227f8', bytes: 288036 },   // D-SHIP-W3-LAYERSZOOM re-pin (was 6961dcdc, 236380)
     ].concat([   // LIB-SHIP W6 (SHIP W6 PIN GO #393 6647923934, D-SHIP-W6-LB06FIRST 6648157060): the lb06 and lb07 plates pages
-      { id: 'tests/howto/golden/library/lb06.json#page', file: 'tests/howto/golden/library/lb06.json', kind: 'page', pageSha256: '5cea2ed7ecc0b5bc210d2dbeb04fd79c467c9303a4d9f89628e25e7a47e879cd', bytes: 1398822 },
+      { id: 'tests/howto/golden/library/lb06.json#page', file: 'tests/howto/golden/library/lb06.json', kind: 'page', pageSha256: '20c6b054968ce1193e984a10f0ac0210a2b8826fe8a2df5dc36a4491a7041bf0', bytes: 1398849 },   // D-REPIN-UNMERGED re-pin, Q7 #393 (was 5cea2ed7, 1398822)
       { id: 'tests/howto/golden/library/lb07.json#page', file: 'tests/howto/golden/library/lb07.json', kind: 'page', pageSha256: '29fae61a694072fc184e7537fdd4e384ff408a356840d0eee4a217af0278286e', bytes: 1269653 },
     ]).sort((a, b) => (a.file < b.file ? -1 : a.file > b.file ? 1 : 0)), unknown: [] });   // files sort (goldenFiles); a file's own order kept (stable sort)
     expect(sha256('')).toHaveLength(64);
