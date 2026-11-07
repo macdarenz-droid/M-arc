@@ -154,8 +154,17 @@ export function patchHowtoLayers(src, plan) {
   // feel section with no rows prints no "If you feel it in…" heading and no empty list (two divider lines, nothing under
   // them). A section with rows prints the vendored bytes unchanged.
   src = patchOnce(src, 'feel no rows', FEEL_ROWS_HEAD, '+ (F.rows.length ? `' + FEEL_ROWS_HEAD.slice(3, -1) + '` : \'\')');
+  src = painNamesPatch(src);
   return src;
 }
+
+/** D-PF-PAINNAMES-LIB (#385 6657422689): golden B's PAIN_NAMES (artifact/howto-layers.mjs, byte-locked) names only the
+ *  hands, elbows, knees and nape, so a library pain row on another part printed raw part ids in its map label ("Marked:
+ *  lower-back-erectors-left and …"). The mirror copy gets the library's names appended, add-only; golden B's own rows
+ *  mark only those four regions, so its page stays byte-equal. The app's library feel chunks are cut from these pages
+ *  (gen/feel.mjs librarySection), so they carry the same names. */
+export const LIBRARY_PAIN_NAMES = "[/^lower-back-/, 'lower back'], [/^shoulder-front-/, 'front shoulders'], [/^neck-/, 'neck'], [/^foot-/, 'feet']";
+export const painNamesPatch = src => patchOnce(src, 'pain names', "[/^nape$/, 'back of the neck']];", `[/^nape$/, 'back of the neck'], ${LIBRARY_PAIN_NAMES}];`);
 
 /** The vendored specExercise head the 'plate engine' patch (D-LIB6PM-PLATE) replaces. */
 export const PLATE_ENGINE_ANCHOR = "const specExercise = async id => {\n  const spec = (await import(pathToFileURL(join(root, 'exercises', `${id}.mjs`)).href)).default;\n  const pre = id.replace(/_/g, '-');\n";

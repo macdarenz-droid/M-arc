@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { PF_W2_KEYS, blankPF, pfProblems, pfW2Problems } from './platefix-pins';
 
 const ROOT = join(new URL('.', import.meta.url).pathname, '..', '..');
 const rd = (p: string) => readFileSync(join(ROOT, p), 'utf8');
@@ -76,6 +77,8 @@ const lessLayers = (m: any) => {
   }
   return m;
 };
+// LIB-PLATEFIX-1: main 8841246c's MANIFEST.json with the pin test's blanks and the PLATEFIX keys and entries blanked (measured on main 8841246c's own MANIFEST)
+const PF_RR_PIN = 'ba58cd17905addfc3c1dcf83f29d245cf1182ce2d1fbd6691905ce29973fa48c';
 describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-box.json', () => {
   const w3Read = (p: string) => rd(p);
   // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows (the 9 shipped and the 4 staged
@@ -100,6 +103,16 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     }
     return m;
   };
+  /** LIB-PLATEFIX-1: the pin test's blanks below, without its checks (for the mutations). */
+  const rrBlanked = (m: any) => {
+    lessW3(lessW6(m), [PF_W2_KEYS[0]!]);   // LIB-SHIP W6 merge: the 23 W6 rows checked and taken out first
+    for (const r of Object.values<any>(m.rows)) {
+      for (const k of [BOX, 'tools/plates/library/hands/pairs.mjs', 'tools/plates/library/render/closeup/zoom.mjs']) if (k in r.files || k.endsWith('zoom.mjs')) r.files[k] = 'X';
+      if ('tools/plates/library/render/region-fix.mjs' in r.files) r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8';
+    }
+    blankPF(m, 'X'); pfW2Problems(m, 'X');
+    return m;
+  };
   it('LIB-SHIP W3 mutations: a W3 row missing, a moved key not at its current file, and a non-W3 row changed are red', () => {
     const m = () => JSON.parse(w3Read('tools/plates/library/MANIFEST.json'));
     const a = m(); delete a.rows.lib_chin_up;
@@ -110,7 +123,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
   });
   it('every row that lists it pins the current file, and every other entry equals main e623d3ef', () => {
-    const m = lessW3(lessW6(JSON.parse(rd('tools/plates/library/MANIFEST.json'))), [LAYERS]);   // LIB-SHIP W6: the 23 W6 rows checked and taken out; LIB-SHIP W3 (build-layers-page.mjs: lessLayers below checks and blanks it)
+    const m = lessW3(lessW6(JSON.parse(rd('tools/plates/library/MANIFEST.json'))), [PF_W2_KEYS[0]!]);   // LIB-SHIP W6: the 23 W6 rows checked and taken out; LIB-SHIP W3 (LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems)
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
     expect(rows).toHaveLength(16);
     for (const r of rows) { expect(r.files[BOX]).toBe(sha(rd(BOX))); r.files[BOX] = 'X'; }
@@ -126,13 +139,30 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
     for (const r of Object.values<any>(m.rows)) r.files['tools/plates/library/render/closeup/zoom.mjs'] = 'X';
     // main e623d3ef's MANIFEST.json with the same entries blanked (was f0ec7bd5… on main 8bb433bd, daf6779b… with BOX alone; re-measure if a later re-pin merges first)
-    // LIB-SHIP W6 (#393, D-SHIP-W6-NOPRIMARY): build-layers-page.mjs's key is re-pinned in the 22 older rows; lessLayers checks each pins the
-    // current file and blanks it. Was daf6779b… (main e623d3ef, BOX blanked); re-measured on main 5023f5c6 with both keys blanked
-    // (BOX alone still gives daf6779b… there).
-    // Merge of main c2f267a7 (LIB-PLATEFIX-3 #405, both sides kept): main's PAIRS and zoom.mjs blanks with W6's lessLayers; re-measured
-    // on the merged tree (main's 3804f49d… blanks no build-layers-page.mjs key, W6's 61d86f58… blanks no PAIRS or zoom.mjs key);
-    // main c2f267a7's own MANIFEST.json with the same rows removed and the same keys blanked gives the same f8819492….
-    expect(sha(JSON.stringify(lessLayers(m)))).toBe('f8819492dc75924f205551a7ab4e03f954a34aa3624e95863964ef8115364f85');
+    // LIB-SHIP W6 (#393, D-SHIP-W6-NOPRIMARY; merge of main 7e060e83): build-layers-page.mjs's key is re-pinned in the older
+    // rows; pfW2Problems below checks each pins the current file and blanks it in every row (as W6's lessLayers does). W6's
+    // f8819492… (measured before LIB-PLATEFIX-1 merged) is superseded by main's PF_RR_PIN: with the 23 W6 rows taken out
+    // (lessW6 above), every other entry equals main 7e060e83's MANIFEST but for build-layers-page.mjs, so the rest is main
+    // 8841246c's with the same blanks, exactly as on main.
+    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 8841246c, both sides kept): was
+    // 3804f49d (main 8841246c with the blanks above; LIB-PLATEFIX-3's re-measure after W3). Its moved keys, added keys and
+    // superseded entries (pfProblems) and the moved keys the W2 lists hold elsewhere (pfW2Problems: build-layers-page.mjs,
+    // pilot A's batch, sheets, closeups and layers config; build-layers-page.mjs is kept out of lessW3 above so that
+    // pfW2Problems checks it against its current file) each pin their current value, then are blanked too: every key and
+    // entry where this MANIFEST differs from main 8841246c's is one of them, so the rest is main 8841246c's with the same blanks.
+    expect(pfProblems(m)).toEqual([]);
+    blankPF(m, 'X');
+    expect(pfW2Problems(m, 'X')).toEqual([]);
+    expect(sha(JSON.stringify(m))).toBe(PF_RR_PIN);
+  });
+  it('LIB-PLATEFIX-1 mutations: a PLATEFIX key off its file, or another key moved, is red', () => {
+    const m = JSON.parse(rd('tools/plates/library/MANIFEST.json')), row: any = Object.values(m.rows).find((r: any) => PF_W2_KEYS[0]! in r.files);
+    row.files[PF_W2_KEYS[0]!] = '0'.repeat(64);
+    expect(pfW2Problems(m, 'X')).toHaveLength(1);
+    const o = rrBlanked(JSON.parse(rd('tools/plates/library/MANIFEST.json')));
+    expect(sha(JSON.stringify(o))).toBe(PF_RR_PIN);
+    o.rows.lib_plank.entry = '0'.repeat(64);
+    expect(sha(JSON.stringify(o))).not.toBe(PF_RR_PIN);
   });
 });
 

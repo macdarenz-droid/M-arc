@@ -11,10 +11,16 @@ const ZOOM = {
 };
 export const CLOSEUP_OPTIONS = {
   upright_row: ZOOM,
+  // barbell_overhead_press: held from LIB-PLATEFIX-1 (D-LIB13-PANEL2, #385 6653693122); its plate items go to
+  // LIB-PLATEFIX-3, and it is off this layers page (seated_leg_curl form) until that card returns it.
   dumbbell_biceps_curl: { ...ZOOM, hand: { layout: 'single', uid: 'dbc', rightNote: 'Middle of palm', panelHeight: 282 } },
   plank: { ...ZOOM, css: { ...ZOOM.css, spine: true } },   // the hip-line crop's shoulder-heel reference (spine guide)
   rope_triceps_pushdown: ZOOM,
   barbell_row: ZOOM,
   dumbbell_bench_press: ZOOM,
   dumbbell_shoulder_press: ZOOM,
+  // LIB-PLATEFIX-1: back on the page with their fixed plates (#379 6633524031)
+  romanian_deadlift: ZOOM,
+  single_leg_romanian_deadlift: ZOOM,
+  triceps_pushdown: ZOOM,
 };

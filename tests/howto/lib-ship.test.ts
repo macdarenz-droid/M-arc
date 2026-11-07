@@ -18,13 +18,15 @@ const EIGHT = Object.keys(json('tools/plates/plates.json'));
  *  D-SHIP-W2-STAMP #379 6636105974, less crunch and seated_leg_curl held by Q6/Q7 6636501505, 6636616603; W3: the 9 of
  *  #384 6653062201, less assisted_pull_up and underhand_lat_pulldown (LIB-PLATEFIX-3) and incline_machine_press and
  *  shoulder_press (D-SHIP-W3-NOPAIR 6681221802); registry order puts lb01 first and zoom last). */
+// LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221; D-PLATEFIX-PINS / PIN GO): plus romanian_deadlift,
+// single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge, in registry order (barbell_overhead_press held)
 const W3_SHIPPED = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
   'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'];
 /** LIB-SHIP W6: the 7 of the flip set (#393 6689822595), ruled to ship (#393 6701002884), registry order (lb06 then lb07, after lb01). */
 const W6_SHIPPED = ['lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull',
   'lib_incline_push_up', 'lib_pike_push_up'];
-const RULED_SHIPPED = [...W3_SHIPPED, ...W6_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
-  'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
+const RULED_SHIPPED = [...W3_SHIPPED, ...W6_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+  'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
 let reg: any, content: any, P: any, keyMods: any[];
 beforeAll(async () => {

@@ -44,7 +44,9 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
     // LIB-SHIP W2 (ruling 3, D-SHIP-IDS-NOPAIR): the 8 W2 ids ship (pec_fly held, D-SHIP-PECFLY-HOLD) with no hand chunk and no hand pair (gap-ruled or on the
     // pinned no-zoom list), so HAND holds exactly the other shipped chrome ids, in order; POSTURE and FEEL hold all of them
     // LIB-SHIP W3 (ruling 3): W3's 4 card-no-zoom ids (hands/no-zoom.json) join NO_HAND; its 5 pair ids carry a hand
-    const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'upright-row', 'rope-triceps-pushdown', 'plank', 'cable-fly', 'push-up',
+    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): its 4 shipped ids have no hand chunk or pair either (registry order)
+    const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'romanian-deadlift', 'single-leg-romanian-deadlift', 'upright-row',
+      'rope-triceps-pushdown', 'plank', 'triceps-pushdown', 'reverse-lunge', 'cable-fly', 'push-up',
       'straight-arm-pulldown', 'chest-supported-row', 'resistance-band-row', 'horizontal-leg-press',
       // LIB-SHIP W6 (ruling 3; #393 6689822595 / 6701002884): all 7 shipped W6 ids are on hands/no-zoom.json (5 card-no-zoom,
       // dumbbell_front_raise and face_pull gap-ruled D-SHIP-HANDW6), so none carries a hand; HAND stays the 14

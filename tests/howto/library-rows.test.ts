@@ -331,15 +331,18 @@ async function libraryCases() {
 // LIB-SHIP W3 (ruling 3): plus W3's 4 card-no-zoom ids (hands/no-zoom.json, Q-W3-10), in registry order
 // LIB-SHIP W6 (ruling 3; #393 6689822595 / 6701002884): plus all 7 shipped W6 ids (hands/no-zoom.json: 5 card-no-zoom,
 // dumbbell_front_raise and face_pull gap-ruled D-SHIP-HANDW6), in registry order
+// LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus its 4 shipped ids (none has a hand chunk or pair), in registry order
 const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row',
   'lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_incline_push_up', 'lib_pike_push_up',
-  'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up',
+  'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+  'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
   'lib_horizontal_leg_press'];
 // LIB-SHIP W2 (ruling 3): the shipped library ids whose feel draws no mark (card watch [] and no pain part in any row)
 // LIB-SHIP W3: plus single_arm_lat_pulldown (its card's watch is [] and its shoulder row names no part), in registry order
 // LIB-SHIP W6 (#393 6689822595 / 6701002884): plus dumbbell_front_raise (watch [], its rows name only the primary
 // front_delts) and face_pull (watch [], its rows name no muscle or part), in registry order
-const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
+// LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus single_leg_romanian_deadlift (noMarkIds on this tree; the other 3 draw marks)
+const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
 /** LIB-SHIP W2: the ids among `ids` whose How-to feel has no watch-listed non-primary muscle and no pain part in any row. */
 async function noMarkIds(base: string, ids: string[]) {
   const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));
@@ -381,7 +384,10 @@ async function feelChecks(base: string, row: any) {
   expect(section.replace('stop-opacity="0.62"', 'stop-opacity="0.63"') === feel.feelSectionOf(page, pre)).toBe(false);
 }
 
-describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get', { timeout: 180_000 }, () => {
+// LIB-PLATEFIX-1 (D-PF1-AFTERW3 point 2's form, #385 6689539540): the walk over the shipped rows grows with every wave; at 22
+// library ids it passed 180 s here but timed out in CI (America/New_York, run 42330723701), so it gets the library's 600 s
+// timeout, as L2-A4 and #405's beforeAll hooks did. No assertion changed.
+describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get', { timeout: 600_000 }, () => {
   it('for the repo\'s shipped library rows and the E1 tree\'s: section === feelSectionOf(its pinned page); rest map, every row\'s marks and the legend are golden B\'s renderer output; no is-playing', async () => {
     const cases = await libraryCases();
     expect(cases.at(-1)!.row.id).toBe(F.ID);
