@@ -842,6 +842,12 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-07 ~14:15 UTC** (weekly 0.73 at 12:34; pause at 0.75-0.79 per the 80 % rule: WAITING to all, tick off, resume after the Fri 11-13 08:00 reset).
+  - **Train 79:** #391 W4 @ `7222161c` → main `05382042` (6 How-tos, the app has 36). Delta review PASS (the merges after `f75df35e`). D-SHIP-W3-WALKTIME now covers the walker tests that timed out at 5 s. **APK sent** (run 42377249121, artifact 13577533441, fingerprint step success).
+  - **W5 moved to #409** (`claude/lib-ship-w5-r`, D-SHIP-W5-REBRANCH: a MANIFEST commit lacked `[golden update]`, and the push hook blocks force-push). #392 is closed. Every ruling carries over. W5 is merging main, then READY.
+  - **W6** review PASS @ `f33aff7b`; follow-ups @ `8709105a`. W6 merges main at its turn, after W5.
+  - **3b #408 READY** @ `a8192e14`; reviewer session_018Pv5bJuRUTmjTZ6jcHvFjE. Approved: assisted_pull_up, sled_pull, lying_leg_curl, smith_machine_bench_press, barbell_overhead_press. Held: incline, v_up, low_to_high.
+  - **W7** ships 17, plus lying_leg_curl and sled_pull if 3b merges before W7's flip dry run (D-PF10-W7JOIN).
 - **Update 11-07 ~08:45 UTC** (weekly 0.67 at 08:45; no new panels from 0.70).
   - **APK sent** for train 77 (main `7e060e83`, run 42340563534, artifact 13562219906, fingerprint step success; 30 How-tos).
   - **Train 78:** #395 PLATEFIX-2 → main `6227bd8e` (pilot-a second; no APK).
