@@ -110,7 +110,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
   });
   it('every row that lists it pins the current file, and every other entry equals main e623d3ef', () => {
-    const m = lessW3(lessW6(JSON.parse(rd('tools/plates/library/MANIFEST.json'))));   // LIB-SHIP W6: the 23 W6 rows checked and taken out; LIB-SHIP W3
+    const m = lessW3(lessW6(JSON.parse(rd('tools/plates/library/MANIFEST.json'))), [LAYERS]);   // LIB-SHIP W6: the 23 W6 rows checked and taken out; LIB-SHIP W3 (build-layers-page.mjs: lessLayers below checks and blanks it)
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
     expect(rows).toHaveLength(16);
     for (const r of rows) { expect(r.files[BOX]).toBe(sha(rd(BOX))); r.files[BOX] = 'X'; }
@@ -125,8 +125,9 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     // current file and blanks it. Was daf6779b… (main e623d3ef, BOX blanked); re-measured on main 5023f5c6 with both keys blanked
     // (BOX alone still gives daf6779b… there).
     // Merge of main c2f267a7 (LIB-PLATEFIX-3 #405, both sides kept): main's PAIRS and zoom.mjs blanks with W6's lessLayers; re-measured
-    // on the merged tree (main's 3804f49d… blanks no build-layers-page.mjs key, W6's 61d86f58… blanks no PAIRS or zoom.mjs key).
-    expect(sha(JSON.stringify(lessLayers(m)))).toBe('RE_MEASURE');
+    // on the merged tree (main's 3804f49d… blanks no build-layers-page.mjs key, W6's 61d86f58… blanks no PAIRS or zoom.mjs key);
+    // main c2f267a7's own MANIFEST.json with the same rows removed and the same keys blanked gives the same f8819492….
+    expect(sha(JSON.stringify(lessLayers(m)))).toBe('f8819492dc75924f205551a7ab4e03f954a34aa3624e95863964ef8115364f85');
   });
 });
 
