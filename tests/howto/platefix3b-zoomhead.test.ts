@@ -35,7 +35,9 @@ describe('PF3b head projection: existing zooms are byte-equal', { timeout: T }, 
     // the same loop with this branch's base zoom/inline.mjs (claude/lib-platefix-3b 2884b5a9, before the head projection)
     // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 007c6b34…, now 539f6f9c… (incline_barbell is back to main's spec, D-PF3B-HOLD15,
     // so its entries join the loop; main 6227bd8e's zoom/inline.mjs gives this same hash over this set)
-    expect(h.digest('hex')).toBe('539f6f9c6eb6f2ff1201c74c0916140b94c93c8f68feb996279885935ca4c4d0');
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 539f6f9c…, now 4a1305c9… (sled_pull's rope redrawn, D-PF3B-ROPE: its zoom
+    // shows the rope; main 6227bd8e's zoom/inline.mjs gives this same hash over this set)
+    expect(h.digest('hex')).toBe('4a1305c96b4b4650ee5f53f32b500bc3ecdc03c0f6a3472c8382b3e5b8e0d118');
   });
   it('the side and plate-projection posture zooms (no main spec has one: PF2\'s rear delt fixture) render as before', () => {
     const fx = { ...alt, id: 'bent_over_dumbbell_rear_delt_fly', mistake: { ...alt.mistake, pose: { scap: { elev: 10 } }, guides: [] } };
