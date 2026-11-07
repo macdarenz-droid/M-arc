@@ -6,6 +6,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
+import { pf2Problems, restorePF2 } from './platefix2-pins';
+// LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
+// lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
+// every pin below, measured on main, still holds
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); return restorePF2(x); };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -228,7 +233,7 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     }
     return m;
   };
-  const current = () => JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
+  const current = () => pf2Main(JSON.parse(read('tools/plates/library/MANIFEST.json').toString()));
   // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows, and W3 PANEL FIX 2 (f561ff71,
   // #384 6649416891) moves crop.mjs and zoom-css.mjs in every row. Each W3 row must be there and each moved key must pin
   // its current file; with the rows removed and main 5023f5c6's sha put back, every other entry is main's
