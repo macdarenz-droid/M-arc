@@ -432,7 +432,7 @@ describe('LIB-SHIP W7 D-SHIP-W7-B3 (#394 6647954465, Q-W7-1/Q-W7-5): NoHandling 
       expect([id, c.handling.archetype, /D-SHIP-GRIP \(b3\)/.test(c.handling.why ?? '')]).toEqual([id, 'none', true]);
       expect([id, checkGripLibrary(c, card(id.slice(4)))]).toEqual([id, []]);
     }
-  });
+  }, 60_000);   // cold loadContent of 5 sheets timed out at the 5 s default in source-gate (ee259f73); the asserts are unchanged
   it('red 1: an unlisted handled card under (b3)', async () => {
     const { content: c } = await content.loadContent('lib_cable_fly');
     expect(checkGripLibrary({ ...c, handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3)' } }, card('cable_fly'))).toEqual(['GRIP: lib_cable_fly uses D-SHIP-GRIP (b3) but it is not one of the listed ids']);
