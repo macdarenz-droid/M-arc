@@ -295,7 +295,9 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     expect(() => lessW5(noW5)).toThrow(/has no row/);
     const extra = current(); extra.rows.lib_unlisted = structuredClone(extra.rows[W5[0]!]);
     // control first: the same tree without the extra row matches, so the red below is the extra row alone
-    expect(blanked(lessW2(lessW5(lessW3(current()))), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);
-    expect(blanked(lessW2(lessW5(lessW3(extra))), [...MOVED, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    // F-BODYMAP-FRONTDELT: region-fix.mjs's key put back to main 5023f5c6's value, as in the pin test above
+    const bm = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; return x; };
+    expect(blanked(lessW2(lessW5(lessW3(bm(current())))), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW5(lessW3(bm(extra)))), [...MOVED, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
   });
 });

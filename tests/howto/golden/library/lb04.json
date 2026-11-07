@@ -6,13 +6,13 @@
   "entries": [
     {
       "kind": "page",
-      "pageSha256": "cff17ef7a3c175c9c283cde50457353ec63da655c5a8d3fb7104e2ad2e5efeba",
-      "bytes": 1466599,
+      "pageSha256": "ac4ca955528322dd67ca6ef81d4432bab48403bbd0bddb391059a5f45cbcd0a4",
+      "bytes": 1507660,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W5-PLATETEXT",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/392#issuecomment-6652647984 @ 866f4d4c2b2188ae45008206d801944ef682f54b",
       "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): D-SHIP-W5-PLATETEXT (supervisor, 2026-11-05, #392 6652647984): card-false plate text fixed as text only (no geometry, size or position value changes); the lb04 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page.",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): D-SHIP-W5-PLATETEXT (supervisor, 2026-11-05, #392 6652647984): card-false plate text fixed as text only (no geometry, size or position value changes); the lb04 plates page as built from the rows moved under D-SHIP-MOVE (Q-W2-10), equal to the approved build-ahead page. Re-pinned in place after the merge of main 6227bd8e (D-REPIN-UNMERGED; supervisor 2026-11-07): with main's render files, the LIB-PLATEFIX-3 specs of the 8 held W5 ids (#405, train 75) and RESEARCH-ROUTES-2's concentration_curl card (#403) put back to 59ded9a1, the lb4 and lb5 plates pages are byte-equal to the PIN GO pages cff17ef7 and 36911d39 (strip-back proof); only the held ids' plate fragments move.",
       "supersedes": null,
       "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -44,7 +44,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_front_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "454629a34fdd63ec4ff61041c6423c8e0640a219915e77abe0acdfebd88ff1c1"
+      "prev": "23ba327fd7246eca756a693a09f9af9cbbafd72403a336bf7929753b19d36ada"
     },
     {
       "kind": "plate",
@@ -74,7 +74,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_goblet_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F2, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "a1ea4116cb6607b43499dccd8afce004774d0ab8ca91ff5ee7bc8b1cf08e076d"
+      "prev": "067525cae73e5a7f37fd3a76d5518a133417790c746a408361a5449f12bd56d6"
     },
     {
       "kind": "plate",
@@ -103,7 +103,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_bodyweight_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "e78f8bd8c0c32127f604985e8b3cb3ad576f2ba626fa337e38f791505963117e"
+      "prev": "2c0353e0e54248d94d2ed369c85ab280627308daa00fe15679e93de878cba93e"
     },
     {
       "kind": "plate",
@@ -113,8 +113,8 @@
       "prefix": "wall-sit",
       "chromeId": "wall-sit",
       "fragments": {
-        "normalSvg": "d6faa81fdefb536e723412e0603a74dc1032298138380e6b87e37bf7142046a1",
-        "normalOverlay": "852988543a8323793fe7f3e9012d8ee0e0549a93a181d51e282802d9e93f5914",
+        "normalSvg": "63a3b6b9def7bb5fac54ec1fea37cd0a3cd44b0c013e8e8c1360fe3e0455d013",
+        "normalOverlay": "5366f785ae31d635905ae0d24b8842bf62ccaf404a8d79de0087d7afabd23e44",
         "mistakeSvg": "b404d79c3eceed9cf9f457142f5efbcfca5951cfd4f804102f9a0874a273c94e",
         "mistakeOverlay": "3de65ebc6d6c6aaf5be2ea15ce77a0effe3d2cd967d0a05c6892491efe6ca52c",
         "tells": "f0ad3f0505aac7d01987d6ca5c1ed1cdfa7de61e2da200efffbc9f12a6f14a55",
@@ -130,9 +130,9 @@
       "decision": "Q-W5-10",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/392#issuecomment-6648851720 @ 3a369ae7b16083ac5470519aa08045d51aedc099",
       "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_wall_sit's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_wall_sit's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108). Re-pinned in place after the merge of main 6227bd8e (D-REPIN-UNMERGED; supervisor 2026-11-07): with main's render files, the LIB-PLATEFIX-3 specs of the 8 held W5 ids (#405, train 75) and RESEARCH-ROUTES-2's concentration_curl card (#403) put back to 59ded9a1, the lb4 and lb5 plates pages are byte-equal to the PIN GO pages cff17ef7 and 36911d39 (strip-back proof); only the held ids' plate fragments move.",
       "supersedes": null,
-      "prev": "470b41eebf20e9bed0c5531f66d3a404034d40b7033fe84890df5fdc13ed862b"
+      "prev": "8494115d4192998ffc614aa0d3bde042ed4e9fae6b356e70200765678218e180"
     },
     {
       "kind": "plate",
@@ -144,11 +144,11 @@
       "fragments": {
         "normalSvg": "51de53e3dfd2b0203eb326147fa442a580606073484564abce36ec60ac276d98",
         "normalOverlay": "699fb9e05a0bbbbed8e456368ef7bc3bb8b9cacd7754f220ff7b88bbe41c1170",
-        "mistakeSvg": "c22880be11bb10c0411e4347449b5a5fb84e6af401dfb845c6c6e96a7fc3f48a",
-        "mistakeOverlay": "4a380d2cd466a1b10b02c5730ce331ada3f472ef06fb5b09e0a7735cc141c155",
-        "tells": "b40836900804079ba12aa800b24966a5200143226487d83a91bd2864cebcf034",
+        "mistakeSvg": "009446f56e83a2cbe07d9fe424383ee4c638771deaa04c245346878268731a14",
+        "mistakeOverlay": "d5773260d40382d64f76b42b62b84c05856cf6cd236889f933e8ba39539993f3",
+        "tells": "c535e0c7fa3edb4dd8c2febf90c9f03339fff38124d0b8fd69794228082df710",
         "tempo": "084d452f3c34dde94f33b3f5dab5818fabd0787de9efc3c137121848c1fb6473",
-        "cues": "1e3786aaa540f36af51990152086657abcb611c2b36737fa9dd678e6d3cbb69c",
+        "cues": "6c2064f9963d12c804d28ac3bd109a26452f6cd91e41e89cf3b88ebcbda6df82",
         "alt": "26daf096ae0c52b1e9f61c567c30ae3b8d4b6f238fa12855d0f22dca9065d4d9",
         "mistakeAlt": "125a86e4557fcbb4f9b352bac40d3e99cc096883bcad8c54290441ff075dc2b3"
       },
@@ -160,9 +160,9 @@
       "decision": "Q-W5-10",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/392#issuecomment-6648851720 @ 3a369ae7b16083ac5470519aa08045d51aedc099",
       "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_pistol_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_pistol_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108). Re-pinned in place after the merge of main 6227bd8e (D-REPIN-UNMERGED; supervisor 2026-11-07): with main's render files, the LIB-PLATEFIX-3 specs of the 8 held W5 ids (#405, train 75) and RESEARCH-ROUTES-2's concentration_curl card (#403) put back to 59ded9a1, the lb4 and lb5 plates pages are byte-equal to the PIN GO pages cff17ef7 and 36911d39 (strip-back proof); only the held ids' plate fragments move.",
       "supersedes": null,
-      "prev": "145299704d0afd2732fd1f021324d41f3ac5af7c2ee6a6fc64dedd8375f16e8f"
+      "prev": "005455462634c403cbea8f9a7ee00c50834c03ead537c7b54d968695e20f8fea"
     },
     {
       "kind": "plate",
@@ -172,14 +172,14 @@
       "prefix": "jump-squat",
       "chromeId": "jump-squat",
       "fragments": {
-        "normalSvg": "261fdd1fc5dae187d4b23675e6b3036ad4c5a6e298c1dcc80c56fdccfae11d27",
-        "normalOverlay": "bb63e83356ad6d587f14cae6bd8c7c1c29de2770af6825474913d5c6a6e386eb",
-        "mistakeSvg": "1ea9bbb067b48cf8ea9f8eab43555bf289c5f22b7b126f806ae09c4fb44a5fcc",
-        "mistakeOverlay": "e32160ac1318bee2bffcce5cb95c16b187bb89d54866b7539a4b01e0d3d91762",
-        "tells": "e2b1b056c56b5416c8e119610e95cd7ae522c05efbe265ca5b87150fdcba0a87",
+        "normalSvg": "9eb94e71ee02c397528c91b8c3612d8c2482beeb0fffd2452c7e2c1a17586cf0",
+        "normalOverlay": "9c960084fddf64db93bc114f03df87707fc7d19da676f6bc086e61ae14410e81",
+        "mistakeSvg": "020d59705d53ae2cf2f8a1650324340c64da3eca39786973dd42f141fb09bdf8",
+        "mistakeOverlay": "5515e4085a2ca8c654b025f950500469c55e4f1868a983b51c22c807ecbdccfa",
+        "tells": "ee850f657afc73c354e8b22ee5abdb4c08e6bfaf139122275fdd176e1db29610",
         "tempo": "23b25a80e39f1ca89dfc529fddc2a9c0ea19947ecd0b2237521e26b15592f452",
-        "cues": "703146d98c5acf26e14a51cd93c3f774a83de22a4e1433b8e2af743ea3991f0f",
-        "alt": "c68932b65e7726c17b92fdfd8d853cc7a1af86e8e9dcc54c1a70b3db17a7c5f1",
+        "cues": "26cd3aa659da153773380702f110607d2900168a9a7e379fc8526d8374012407",
+        "alt": "ad877e07d554a9ca60d13b86d79bb1dd7e3f528d9fa6d7f4fa542f2ed7f5d836",
         "mistakeAlt": "c1a9d7a7c34aa82a265ead272d52372f300b2fdf079249332705458f10c59351"
       },
       "exemptions": [
@@ -189,9 +189,9 @@
       "decision": "Q-W5-10",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/392#issuecomment-6648851720 @ 3a369ae7b16083ac5470519aa08045d51aedc099",
       "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_jump_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_jump_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108). Re-pinned in place after the merge of main 6227bd8e (D-REPIN-UNMERGED; supervisor 2026-11-07): with main's render files, the LIB-PLATEFIX-3 specs of the 8 held W5 ids (#405, train 75) and RESEARCH-ROUTES-2's concentration_curl card (#403) put back to 59ded9a1, the lb4 and lb5 plates pages are byte-equal to the PIN GO pages cff17ef7 and 36911d39 (strip-back proof); only the held ids' plate fragments move.",
       "supersedes": null,
-      "prev": "2a86f049464fd9775a8f73b80aa7061eded13373562cd162c73af51cc1beebe5"
+      "prev": "5605f68ef33495ff932168bf86ad58d275aa33e2e809a8c2954109e19bf00e86"
     },
     {
       "kind": "plate",
@@ -201,9 +201,9 @@
       "prefix": "step-up",
       "chromeId": "step-up",
       "fragments": {
-        "normalSvg": "9bffea48f5e857b37e7ae199d9dabe0d4d26115fac1250ca0291ffb1a2f86324",
-        "normalOverlay": "1f4d76a592d00187cdfdcffb67e8f6a4e1563c57aae988a4df40be2427315eea",
-        "mistakeSvg": "4fa8a2a236aeaaaa59245089c9105bcd22ab3478c78dde1b4cc60f74158e9fc5",
+        "normalSvg": "5741cf81859366bcc4a531f3ae003ce1f68d8ad0428d3641d296b0e59328b7de",
+        "normalOverlay": "caa8424aec975cb93f4b548e82f53b92b72d01ceb932c93721ae2c2201b9388d",
+        "mistakeSvg": "fc0ad80a09cba4077be84ebbcd0f91b12f443fea2d96c30744cfebd399ae8cf3",
         "mistakeOverlay": "18fd4b60ff86004583339b2c0fa95ff89130559bcf4518de6fea4166fe8de979",
         "tells": "8fdf4a24934b50822201a42f062bbfcfa873afa15727fcc42a54eaac84cc017f",
         "tempo": "cfa4a0ab2667ca0875d0232447ce76260179fb165b22bf6932aa7cdc38ca9970",
@@ -219,9 +219,9 @@
       "decision": "D-SHIP-W5-PLATETEXT",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/392#issuecomment-6652647984 @ 866f4d4c2b2188ae45008206d801944ef682f54b",
       "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): D-SHIP-W5-PLATETEXT (supervisor, 2026-11-05, #392 6652647984): card-false plate text fixed as text only (no geometry, size or position value changes); lib_step_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F4, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): D-SHIP-W5-PLATETEXT (supervisor, 2026-11-05, #392 6652647984): card-false plate text fixed as text only (no geometry, size or position value changes); lib_step_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F4, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108). Re-pinned in place after the merge of main 6227bd8e (D-REPIN-UNMERGED; supervisor 2026-11-07): with main's render files, the LIB-PLATEFIX-3 specs of the 8 held W5 ids (#405, train 75) and RESEARCH-ROUTES-2's concentration_curl card (#403) put back to 59ded9a1, the lb4 and lb5 plates pages are byte-equal to the PIN GO pages cff17ef7 and 36911d39 (strip-back proof); only the held ids' plate fragments move.",
       "supersedes": null,
-      "prev": "f1adb40f2b9e44b6658da166f0f86c298c0b072ebb81e16f50b84324c5f894a1"
+      "prev": "a687dfc61832f32823aebb17a8a81043e97588dec4aeb90f4a959d145969a62d"
     },
     {
       "kind": "plate",
@@ -250,7 +250,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): D-SHIP-W5-PLATETEXT (supervisor, 2026-11-05, #392 6652647984): card-false plate text fixed as text only (no geometry, size or position value changes); lib_forward_lunge's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "653e0ba1febd6b9fa759eb41a75c1fcbf98facf75e3bb1623488f6c7a811ed1f"
+      "prev": "874e57001d9abefaa844a1140d22dc4b9ae17a46e494c61fbf4bcfa2aec7af5c"
     },
     {
       "kind": "plate",
@@ -279,7 +279,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_walking_lunge's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "ffb6b82bcd756b74404883b62084bdfddece15f7a456da5ab3838ee30f854c7d"
+      "prev": "9183390f7fbf9650ec04d137302b1aac31d383ac4bf06df8f30ae24e262cca78"
     },
     {
       "kind": "plate",
@@ -308,7 +308,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): D-SHIP-W5-PLATETEXT (supervisor, 2026-11-05, #392 6652647984): card-false plate text fixed as text only (no geometry, size or position value changes); lib_bodyweight_lunge's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "8839b6a3038ee165e6441a7c6a4d47aedba3876fefffadd4d9c9426b07c7ca97"
+      "prev": "6724e4deb2ae6ce52f9735ea4ced88898cb77c287b49b145705a6d475aab835b"
     },
     {
       "kind": "plate",
@@ -338,7 +338,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): D-SHIP-W5-PLATETEXT (supervisor, 2026-11-05, #392 6652647984): card-false plate text fixed as text only (no geometry, size or position value changes); lib_bodyweight_split_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F4, F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "3d809f4b65d1cbbccff92780052d1ff5389a38afd3532dae156133a5e03b4c2f"
+      "prev": "bf6ba8395bc89669464f0016446bd4b6bbefb8389bdeeb2587b8336dcd6a0106"
     },
     {
       "kind": "plate",
@@ -348,9 +348,9 @@
       "prefix": "bulgarian-split-squat",
       "chromeId": "bulgarian-split-squat",
       "fragments": {
-        "normalSvg": "fbd896b85d8bf04d32185ff85e6cd802e29e61d10615f58e7454e9c214a01946",
+        "normalSvg": "b8641280af27c84ff07e411858d3112e7821077033cff00701f82b6768ffb5e7",
         "normalOverlay": "d5f3b567f68d8fe33c9001a17707fb81bd67d4986d72548ad280861ef845ee40",
-        "mistakeSvg": "268dca12faffd1fa6b92bd340737073ef038c9473cb1aa32923d77e685c60d29",
+        "mistakeSvg": "6c3b648a9bcf1b032374b1182dea86a49f70fc48b0f75033543b1daff31cb3ae",
         "mistakeOverlay": "f6aca0d82dfc5e31dd0fe3b608745a3028cb60bdcadde81dd7bbd954c9f275e5",
         "tells": "c7aaf7b87df630811b7faf9bbb63bb8fcf6323e6fc7fb4a453e8663af7751887",
         "tempo": "a50b50e7ec7b35d22bc21c16497750d5d5ee1a1096921e8fed7a370cf92e305a",
@@ -365,9 +365,28 @@
       "decision": "Q-W5-10",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/392#issuecomment-6648851720 @ 3a369ae7b16083ac5470519aa08045d51aedc099",
       "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_bulgarian_split_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB04 + LB05 PIN GO (supervisor, 2026-11-05, #392 6648851720): lib_bulgarian_split_squat's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108). Re-pinned in place after the merge of main 6227bd8e (D-REPIN-UNMERGED; supervisor 2026-11-07): with main's render files, the LIB-PLATEFIX-3 specs of the 8 held W5 ids (#405, train 75) and RESEARCH-ROUTES-2's concentration_curl card (#403) put back to 59ded9a1, the lb4 and lb5 plates pages are byte-equal to the PIN GO pages cff17ef7 and 36911d39 (strip-back proof); only the held ids' plate fragments move.",
       "supersedes": null,
-      "prev": "c729a4646115bd88779b2d083db7927328e670c2b3c83ed34e5ffe435cced4eb"
+      "prev": "997428b3976d3fcca072ebf17272480020b836655668166fb129c4dc07f1e941"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB04",
+      "ids": [
+        "lib_front_squat",
+        "lib_bodyweight_squat",
+        "lib_bodyweight_lunge",
+        "lib_bodyweight_split_squat"
+      ],
+      "pageSha256": "de04d5af106dd4a7dcb76186a7013392e68699197e20ed98b0fa95d82d7bd95a",
+      "bytes": 890975,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W5-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/392#issuecomment-6683213580 @ 9d4d72cdd0cc1b5d288a22a2210462bf5c93c313",
+      "date": "2026-11-07",
+      "supersedes": null,
+      "why": "W5 layers approved (#392): the calibrated layers panel 6649453813 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds and focused rechecks 6654466055 and 6681869167 (every median 4 or more or a recorded exception: hammer_curl F-HAND-ROTATION), PANEL FIX 4 accepted 6683213580 with D-SHIP-W5-FLIPSET (6682188871) and D-SHIP-W5-PREACHER: the flip set only on the page. Re-pinned in place after the merge of main 6227bd8e (D-REPIN-UNMERGED): with main's render and layers-build files put back to 59ded9a1 the page is byte-equal to the accepted 59ded9a1 page (strip-back proof); the only differences are main's shared engine and body-map changes.",
+      "prev": "9786ef3704d972db3406b0a4047d4f57e525dc51285826c742edec728edbb671"
     }
   ]
 }

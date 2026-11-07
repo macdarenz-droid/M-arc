@@ -26,7 +26,7 @@
     "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/",
     "How to Squat with Proper Form: The Definitive Guide (StrongLifts). https://stronglifts.com/squat/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_goblet_squat": {
    "src": "library/specs/goblet_squat.mjs",
@@ -57,7 +57,7 @@
     "Effect of knee position on hip and knee torques during the barbell squat (2003). https://pubmed.ncbi.nlm.nih.gov/14636100/ PMID 14636100",
     "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_wall_sit": {
    "src": "library/specs/wall_sit.mjs",
@@ -174,7 +174,7 @@
     "Lunge (Exercise Library). https://www.catalystathletics.com/exercise/354/Lunge/",
     "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_bodyweight_split_squat": {
    "src": "library/specs/bodyweight_split_squat.mjs",
@@ -188,7 +188,7 @@
     "Effects of Step Length and Stride Variation During Forward Lunges on Lower-Extremity Muscle Activity (2025). https://pubmed.ncbi.nlm.nih.gov/39982282/ PMID 39982282",
     "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_bulgarian_split_squat": {
    "src": "library/specs/bulgarian_split_squat.mjs",

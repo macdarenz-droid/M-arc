@@ -131,7 +131,10 @@ describe('D-LIB7b-HALVES: the pair panel gets golden B\'s TalkBack halves, attri
     expect(Object.keys(PANEL_BEFORE).every(k => P.keysOf().includes(k))).toBe(true);
     for (const [k, want] of Object.entries(PANEL_BEFORE)) {
       const h = await P.pairPanel(k);
-      expect([k, sha(unsplit(h))]).toEqual([k, want]);
+      // LIB-SHIP W5 D-SHIP-W5-EZWORDS / -EZNOTE (#392 6654996739, 6681700725): ez-curl-over's Right note (words and drawn) is
+      // 'Wrist straight' (reverse_curl c1, c6); with that one note put back it is the panel before, byte for byte
+      const back = k !== 'ez-curl-over' ? h : (expect(/middle of palm/i.test(h)).toBe(false), h.replaceAll('Wrist straight', 'Middle of palm').replaceAll('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'));
+      expect([k, sha(unsplit(back))]).toEqual([k, want]);
       expect(h).toMatch(/role="img" aria-label="Right: /);
       expect(h).toMatch(/role="img" aria-label="Wrong: /);
       expect(H.splitHalves(unsplit(h), k)).toBe(h);

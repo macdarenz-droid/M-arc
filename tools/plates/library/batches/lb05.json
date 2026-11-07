@@ -24,7 +24,7 @@
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
     "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_cable_curl": {
    "src": "library/specs/cable_curl.mjs",
@@ -72,7 +72,8 @@
     "How to Do the Concentration Curl for Bigger Biceps | BarBend (2024). https://barbend.com/concentration-curl/",
     "How to Do Concentration Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/concentration-curl/",
     "ACE Research: Best Biceps Exercises for Strength | ProSource™ | ACE (2014). https://www.acefitness.org/continuing-education/prosource/august-2014/4933/ace-study-reveals-best-biceps-exercises/",
-    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "How to Dumbbell Curl: Muscles Worked & Proper Form (2020). https://www.strengthlog.com/dumbbell-curl/"
    ],
    "stage": "approved-plate"
   },
@@ -141,7 +142,7 @@
     "The Role of the Muscle Brachioradialis in Elbow Flexion: An Electromyographic Study (2018). https://pubmed.ncbi.nlm.nih.gov/29409427/ PMID 29409427",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_alternating_dumbbell_curl": {
    "src": "library/specs/alternating_dumbbell_curl.mjs",
@@ -157,7 +158,7 @@
     "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl (2018). https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/ PMID 30013836",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_single_arm_triceps_pushdown": {
    "src": "library/specs/single_arm_triceps_pushdown.mjs",
@@ -248,7 +249,7 @@
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
     "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_ez_bar_curl": {
    "src": "library/specs/ez_bar_curl.mjs",
@@ -272,7 +273,7 @@
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
     "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_reverse_curl": {
    "src": "library/specs/reverse_curl.mjs",
@@ -297,7 +298,7 @@
     "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy. (2023). https://pubmed.ncbi.nlm.nih.gov/36976950/ PMID 36976950",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   }
  }
 }

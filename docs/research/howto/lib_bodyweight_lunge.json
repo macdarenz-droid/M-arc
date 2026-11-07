@@ -1,0 +1,18 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=43722f93aa628f230db8674aaf7c9af2eaf53924caa5574fc24fb9108a38d7d3
+{
+  "id": "lib_bodyweight_lunge",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/bodyweight_lunge.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-fwdlunge-bw",
+    "cat-lunge",
+    "nhs-knee",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}

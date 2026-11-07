@@ -1,7 +1,7 @@
 {
  "rows": {
   "lib_alternating_dumbbell_curl": {
-   "entry": "1b4a041f64984561de380f3029f1a5afe8868dc354be87084c97293c21f57683",
+   "entry": "a4605f37272ea8ce2e5c03a6a5a48d9a6c704cb682913347d2743c6d6beab117",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -24,7 +24,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -209,7 +209,7 @@
    }
   },
   "lib_barbell_curl": {
-   "entry": "1e98e0b0c0ab1396725c446750e304d199f47a5ab008b8eee84b8cdd875e16a2",
+   "entry": "e05e06c74cd5f2487354d75fe14244597cd83f035e882a368ffc4d29510e6ab9",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -232,7 +232,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -515,7 +515,7 @@
    }
   },
   "lib_bayesian_cable_curl": {
-   "entry": "d035a0b3cf37fde3ce6d5e02a584a2fa23685f2951fd0d1eaf8538513b252429",
+   "entry": "178522ce263eee015d27df4703142d51626ab662e573754d2e7d157ea721870f",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -538,7 +538,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -687,7 +687,7 @@
    }
   },
   "lib_bodyweight_lunge": {
-   "entry": "96bc818ed81276fa928296c8f596b77543cbdf6bd439b2efe4f9b6b0b9ad4fb0",
+   "entry": "378d18b08efd3421035238e2883cd62e8a2533b32d9c775cd7356995d28c6696",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -710,7 +710,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -778,7 +778,7 @@
    }
   },
   "lib_bodyweight_split_squat": {
-   "entry": "de76ead3b212d7e7a2b1482cd01679f194e6f2d6119246f7ece0e0d9311fba88",
+   "entry": "b236382b5ca7b8f99bce1ab4d6fdabbf66cbb27a94ba41c8cb06b0f0b3fa0a63",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -801,7 +801,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -869,7 +869,7 @@
    }
   },
   "lib_bodyweight_squat": {
-   "entry": "92971d64526b0642ed96ebc617c4f510b371ea968fc94fd6a7431080f5b185bb",
+   "entry": "a8d93efd5910b060fbb03de0bc9d0eef981aa2a4588c49f7a47c1e91b5d44779",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -892,7 +892,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -1027,7 +1027,7 @@
    }
   },
   "lib_bulgarian_split_squat": {
-   "entry": "fb3c22f44d261e9a1339c52eccc89a08164552e15a0b54ce5c31aaecb0038e9c",
+   "entry": "ed5d55d44cdd2b85456d7d54c892e4465fc676de702f4cbf27f74d740c0350aa",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -1050,7 +1050,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -1118,7 +1118,7 @@
    }
   },
   "lib_cable_curl": {
-   "entry": "2e66d4dd01bae729cd0be3edc9f67cdf846a31cd4cb11f928c0c2cd7bf5736c6",
+   "entry": "0a7f58eba8db3b45fea00ecb810f83562dc66a076b850a5b35a8f970f3935ecf",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -1141,7 +1141,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -1597,7 +1597,7 @@
    }
   },
   "lib_concentration_curl": {
-   "entry": "343d6f271f0be4c1d599403b54a2780b49ae3ed6a71b9e4c156640cd9b43f28e",
+   "entry": "0dc4526fee107925059c79c3357e87afd5a8f2bf6914b6dd46f240d8249616c9",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -1620,7 +1620,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -1702,7 +1702,7 @@
    }
   },
   "lib_cross_body_hammer_curl": {
-   "entry": "a691f2720991d3e8cd383bd1e7af1c75c4a85318f10b9d47133b0b4070571f54",
+   "entry": "69845ad5f0fd1ab76f3f074c25f72e5e4240f7fa38cec4881db6b31824fa90a3",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -1725,7 +1725,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -2146,7 +2146,7 @@
    }
   },
   "lib_dumbbell_overhead_triceps_extension": {
-   "entry": "ca1747c6368cd2bae668a774edafbcb6fa82e5e4e00e420f791bb248d77d74aa",
+   "entry": "2692ff099b7a245ff2a67e99221ab9e37cfa485fa218678bccaafb401d76b295",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2169,7 +2169,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -2350,7 +2350,7 @@
    }
   },
   "lib_ez_bar_curl": {
-   "entry": "e27e56ac504e6d61080148b79f0997a8669b46ef963c56133a9bdf8d83bd2309",
+   "entry": "cb920dab74f64b2378717fb88c2ccb63ef1166cb87e573a6d7ef91a4f2ce4786",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2373,7 +2373,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -2458,7 +2458,7 @@
    }
   },
   "lib_forward_lunge": {
-   "entry": "e8410cb54505e98481b552e2270745e3b11d447747d91eb3a27c1bf2064c1a56",
+   "entry": "0fc4815385548e5d757fcbcab25d32a8a9eff375b618701de6890594aed5d2e8",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2481,7 +2481,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -2549,7 +2549,7 @@
    }
   },
   "lib_front_squat": {
-   "entry": "8f3b71b0372b2ec8d9fa07f969298a1594d192c93cebe6de14c0a5866bf73425",
+   "entry": "322b5fdbcb5dfbe4d31d7a9158860d5a92d78d1bb8f6f34daaf7f5d31c7c3a58",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2572,7 +2572,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -2640,7 +2640,7 @@
    }
   },
   "lib_goblet_squat": {
-   "entry": "c7f1410f370b6e5c75cd4405ad79fbdd8d238a56c147ad29e7e8a3f828be3af7",
+   "entry": "91f9cf5af3fb9d32fb8c2f183a44247ae9d3ef97152e8101a70c25a7ba08706c",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2663,7 +2663,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -2731,7 +2731,7 @@
    }
   },
   "lib_hammer_curl": {
-   "entry": "989ce3f2648d9d06e8be12a83141fa0c329aad15d432fa1d167873ff494f861d",
+   "entry": "a9861b4072e2e851de7315c5dc69af5c6848bf3c5fc64b75847f4d367c181baa",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -2754,7 +2754,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -3006,7 +3006,7 @@
    }
   },
   "lib_incline_dumbbell_curl": {
-   "entry": "0299c02b9419066464e1d05c6cfbfb6b1f010cd2c3a5184c6d4f353c6c2a213c",
+   "entry": "2eb86a430d77cf8b279f3e98936326556814ddcb2af65cddc0f214f201cc6431",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -3029,7 +3029,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -3310,7 +3310,7 @@
    }
   },
   "lib_jump_squat": {
-   "entry": "3eb530d62b75dafe24881543004c17f71cfd41da80723434208f7f2b7f9cb2e6",
+   "entry": "7b13bdf57ebb29e3bef3309bc1b836a1cdda2ad5f5abb096d16504079baad492",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -3333,7 +3333,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -3606,7 +3606,7 @@
    }
   },
   "lib_pistol_squat": {
-   "entry": "a7bae335bbe9c34dacce91f53bf344b41ef6fd6163b7c7194b019d363e8690cd",
+   "entry": "67c9cde15c3d5693735833cd3552ff18a72ffc98feeeb924eb0a43d9f87f8ec9",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -3629,7 +3629,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -3796,7 +3796,7 @@
    }
   },
   "lib_preacher_curl": {
-   "entry": "e831d49e2dfee5256d44dd9065d3cbb65223e7040437249abd39c7c50209ddf9",
+   "entry": "1f072026c2be27bd0d150d6a647244cc9cc405a705a451d16b6a5b98b23a758d",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -3819,7 +3819,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -4080,7 +4080,7 @@
    }
   },
   "lib_reverse_curl": {
-   "entry": "c9e1395574fb7115e003ad8c45e2809f30ade623c650a23b88b25db064eaf79e",
+   "entry": "8861b815418284537ee145df071917e8ffe296688ead80b2e1654b2872ef5137",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -4103,7 +4103,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -4728,7 +4728,7 @@
    }
   },
   "lib_single_arm_triceps_pushdown": {
-   "entry": "86a1e27fdba2759b9270a59e5eee0336805177338f9807a8894148ffaa59f653",
+   "entry": "0d169fd7fa5343a405a67a23f461135c46b9c61616022029ae18fb6f277c63cb",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -4751,7 +4751,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -5006,7 +5006,7 @@
    }
   },
   "lib_step_up": {
-   "entry": "a86e83eece5583366649796b0eb2f47a480cb79e4b43d64a8e3fc98b0c3328d9",
+   "entry": "8fd5967fb2e0a2e33fd8b9e2e0db9187ed6387e303283e2e58850a399a319f6d",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -5029,7 +5029,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -5192,7 +5192,7 @@
    }
   },
   "lib_straight_bar_triceps_pushdown": {
-   "entry": "1784d4b97a8863f28862d2bde02bad1754c8496fa33a4146a1a7a0d0fd83f46d",
+   "entry": "093bddfab5fa6182f19e438d4013a13e776609143b88420dd97420ac9974285b",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -5215,7 +5215,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -5595,7 +5595,7 @@
    }
   },
   "lib_walking_lunge": {
-   "entry": "29032d165d7f1d5a0a95ccac463da9b0deb3734a14f0b2c9047a14a238a65ae1",
+   "entry": "ef57e70296193923beb0e1d64d78df50bd51c9c181d9a0a42fb081c29ec01cfe",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -5618,7 +5618,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -5686,7 +5686,7 @@
    }
   },
   "lib_wall_sit": {
-   "entry": "8c1896390db3bb4d3befbe1841672fac7e0ffee1d3eb6a74a0250fda47f8ac38",
+   "entry": "f8b3fb477de3f79ba91cae6890030e6cbbcaa0b7c00fe396aeef5356e93ac563",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -5709,7 +5709,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb04.json": "b0654c087d189e0d088ebcbead41f2febec3589776c087312c9b42369f5ab318",
+    "tools/plates/library/batches/lb04.json": "ff98474d262f37e4bef445afb7b53dd3223f8cbeccbbfa61debbcaaa011194f4",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",
@@ -5777,7 +5777,7 @@
    }
   },
   "lib_wrist_curl": {
-   "entry": "567646b9f47eb2979efef675e65b9f5de92aedef8e04ee67f25195abe2049496",
+   "entry": "dbc11ec8e3b04cf9f080e7190b68d92582f5d6d2623d9d7732ad6038ffec56cb",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
@@ -5800,7 +5800,7 @@
     "tools/plates/layers/howto/shared.mjs": "60b52bc2e190e29dbd6a63bacbe38da26a7e94255c2a08fe94fde5143781c0d4",
     "tools/plates/layers/ref-src/plate.mjs": "9bd75197232e4c336528e139383891abb97b369d022648425d73a6ebfd64ee52",
     "tools/plates/lib/inputs.mjs": "80a2f363566cf764754b72fb970b354b8afa05f907cdd1a92e9a65788a51a430",
-    "tools/plates/library/batches/lb05.json": "e762c9dde853956fade4f7b80a9d75f674389d7a005b113f03bfb094894793ef",
+    "tools/plates/library/batches/lb05.json": "6f1a7f95dc315c1cddddcd98623d9908e830d3966e34593c2d1034fea484ae12",
     "tools/plates/library/build-layers-page.mjs": "2c379c58ffa4710026f4a34ce4e045cc9b428c27b1d31f7e86389fdedbe182a7",
     "tools/plates/library/build-page.mjs": "3ab525831fef93cb861aa0a77215b5f1e905b908ff59db30c5dbd80188969ad3",
     "tools/plates/library/engine.mjs": "bea006155fd34d02a3bc413da745390ae3768c04c26dcac91593bc739417a2cc",

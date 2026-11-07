@@ -1,0 +1,17 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=9d1ae88ca8507a8e5a31d521fda8a7ed97c8819d6fe9a539e02dc09f651deb80
+{
+  "id": "lib_bodyweight_split_squat",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/bodyweight_split_squat.json",
+    "rev": 1
+  },
+  "sources": [
+    "cat-splitsquat",
+    "nhs-knee",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}

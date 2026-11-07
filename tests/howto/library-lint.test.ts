@@ -424,6 +424,8 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   const SLRDL = 'lib_single_leg_romanian_deadlift';
   const W5 = ['alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'forward_lunge', 'walking_lunge', 'bulgarian_split_squat',
     'single_arm_triceps_pushdown', 'straight_bar_triceps_pushdown', 'front_squat', 'wall_sit'].map(s => `lib_${s}`);
+  // D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER (#392 6682188871, 6683213580): the W5 children in the flip set of 10
+  const W5_FLIP_CHILDREN: string[] = [];
   /** LIB-PLATEFIX-1: a mapped child among `ids` that W3 does not ship, or SLRDL among them without its parent. */
   const childProblems = (ids: string[]) => [...[...cards.keys()].filter(id => ids.includes(id) && !W3_CHILDREN.includes(id)).map(id => `${id}: a mapped child ships`),
     ...(ids.includes(SLRDL) && !ids.includes('lib_romanian_deadlift') ? [`${SLRDL}: ships without its parent lib_romanian_deadlift`] : [])];
@@ -454,7 +456,8 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
       expect([id, typeof card.parent, FM.unmappedFields(id, card)]).toEqual([id, 'string', open]);
       expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).filter((f: string) => !open.includes(f)).sort()]);
     }
-    expect([...cards.keys(), SLRDL, ...W5].filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
+    // the LB1 children and SLRDL ship since W2/W3 (checked above); of W5's children only the ruled flip set ships
+    expect(W5.filter(id => SHIPPED.some(r => r.id === id))).toEqual(W5_FLIP_CHILDREN);
     expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys(), SLRDL, ...W5].sort());
   });
   /** D-LIB9a-MAP as ruled (#245 6393424755 on the tables of 6393419324), keyed by each card's exact field string. Literal:

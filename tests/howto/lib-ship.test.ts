@@ -422,8 +422,11 @@ describe('LIB-SHIP W5 D-SHIP-W5-PLATEONLY: [] only on a plate.* field, plate.vie
   let FAM: any;
   beforeAll(async () => { FAM = await import(/* @vite-ignore */ url('tools/plates/library/lint/family.mjs')); });
   const FM = () => FAM.INHERIT_MAP as Record<string, Record<string, string[]>>;
+  // LIB-SHIP W3's one ruled non-plate [] (#384 6648454032 L2, accepted 6648753200; on main since train 73): named here, so
+  // any other non-plate [] is still red
+  const W3_RULED_EMPTY = ['lib_single_arm_lat_pulldown setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull'];
   const emptyNonPlate = (map: Record<string, Record<string, string[]>>) => Object.entries(map).flatMap(([id, m]) =>
-    Object.entries(m).filter(([f, p]) => p.length === 0 && !f.startsWith('plate.')).map(([f]) => `${id}: ${f}: [] on a non-plate field (D-SHIP-W5-PLATEONLY)`));
+    Object.entries(m).filter(([f, p]) => p.length === 0 && !f.startsWith('plate.') && !W3_RULED_EMPTY.includes(`${id} ${f}`)).map(([f]) => `${id}: ${f}: [] on a non-plate field (D-SHIP-W5-PLATEONLY)`));
   const spec = async (id: string) => (await import(/* @vite-ignore */ url(`tools/plates/library/specs/${id}.mjs`))).default;
   const viewProblems = (id: string, kid: any, par: any, kidSpec: any, parSpec: any) => [
     ...(kid.plate.view === par.plate.view ? [] : [`${id}: card plate.view ${kid.plate.view} !== parent ${par.plate.view}`]),
@@ -431,7 +434,7 @@ describe('LIB-SHIP W5 D-SHIP-W5-PLATEONLY: [] only on a plate.* field, plate.vie
   it('the [] entries are exactly the 9 plate.view and straight_bar\'s plate.equipment; a [] on a non-plate field is red', () => {
     const empties = Object.entries(FM()).flatMap(([id, m]) => Object.entries(m).filter(([, p]) => p.length === 0).map(([f]) => `${id} ${f}`));
     expect(empties).toEqual([...['alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'forward_lunge', 'walking_lunge', 'bulgarian_split_squat',
-      'single_arm_triceps_pushdown'].map(s => `lib_${s} plate.view`), 'lib_straight_bar_triceps_pushdown plate.view', 'lib_straight_bar_triceps_pushdown plate.equipment']);
+      'single_arm_triceps_pushdown'].map(s => `lib_${s} plate.view`), 'lib_straight_bar_triceps_pushdown plate.view', 'lib_straight_bar_triceps_pushdown plate.equipment', ...W3_RULED_EMPTY]);
     expect(emptyNonPlate(FM())).toEqual([]);
     expect(emptyNonPlate({ ...FM(), lib_wall_sit: { ...FM().lib_wall_sit, 'b10 / redFlags knee (NHS knee box)': [] } }))
       .toEqual(['lib_wall_sit: b10 / redFlags knee (NHS knee box): [] on a non-plate field (D-SHIP-W5-PLATEONLY)']);
@@ -732,6 +735,8 @@ describe('LIB-SHIP W5 D-SHIP-W5-EZNOTE (#392 6681700725): reverse_curl\'s close-
     expect(await problems(inBlock('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'))).toContain('reverse_curl close-up says "Middle of palm"');
     expect(await problems(inBlock('Wrist straight', 'Middle of palm'))).toContain('reverse_curl close-up says "Middle of palm"');
     expect(await problems(h.replace(START, '<div class="zx" id="gone"'))).toEqual(['reverse_curl close-up not on the page exactly once']);
+  });
+});
 
 // LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE (#383 6632352291): a `left-out:` row in a batch file (leg_press_calf_raise, no spec)
 // is never staged or listed by the batch closure (ci/manifest.mjs filesOf); a non-left-out row with no spec still throws.
