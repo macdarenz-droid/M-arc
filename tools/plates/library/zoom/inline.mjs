@@ -52,6 +52,12 @@ const isPoint = p => Array.isArray(p) && p.length === 3 && p.every(Number.isFini
 // view from above the chest, looking along the body from the head end, where the upper arm's angle from the torso reads
 // (elbow flare), which a side view cannot show. It is the engine's front view pitched by headPitch(); the equipment,
 // drawn for the plate's own view, stays out (an entry's `ref` is still drawn). Like side, it may be a plain inset (`ring: false`).
+// D-PF3B-INSETRING: the end pose's forearms and fists stay out of a head projection too: seen square to the back they point
+// at the viewer, to the bar the inset does not draw, and their foreshortened ends poke past the upper arm's edge as a stray bump.
+// D-PF3B-INSETRING: a side or head entry with its source ring may set `src: [names]` (1-8 landmarks): the ring holds those
+// focus-pose landmarks on the plate (the plate region the inset is of) instead of the focus region, and the circle is placed
+// as a plain inset's (ring false), so the inset draws the bytes it drew without the ring; the ring must then clear the
+// circle (else the build stops), and its link is drawn only where it clears every label box (the placement search's rule).
 export const PROJECTS = ['side', 'head'];
 export const POSTURE = Object.freeze({ kMin: 1, regionMax: 8, inset: 4, fill: 0.6, pad: 3, rMax: 90 });
 const isPosture = z => z != null && typeof z === 'object' && 'focus' in z;
@@ -63,7 +69,7 @@ export const outerOk = (at, focus, xm, r) => Math.sign(at[0] - xm) === Math.sign
 function entryProblems(z) {
   const out = [];
   if (typeof z !== 'object' || z === null || Array.isArray(z)) return ['zoom must be { view, k }'];
-  const posture = isPosture(z), keys = posture ? ['view', 'k', 'focus', 'project', 'ref', 'place', 'r', 'guides', 'ring'] : ['view', 'k', 'tell', 'pair', 'place'];
+  const posture = isPosture(z), keys = posture ? ['view', 'k', 'focus', 'project', 'ref', 'place', 'r', 'guides', 'ring', 'src'] : ['view', 'k', 'tell', 'pair', 'place'];
   for (const k of Object.keys(z)) if (!keys.includes(k)) out.push(`zoom: unknown key ${k}`);
   if (!VIEWS.includes(z.view)) out.push(`zoom.view ${JSON.stringify(z.view)} is not 'normal' or 'mistake'`);
   const kMin = posture ? POSTURE.kMin : ZOOM.kMin;
@@ -74,6 +80,8 @@ function entryProblems(z) {
     if ('r' in z && !(typeof z.r === 'number' && z.r >= ZOOM.r && z.r <= POSTURE.rMax)) out.push(`zoom.r ${JSON.stringify(z.r)} is outside ${ZOOM.r}-${POSTURE.rMax}`);
     if ('guides' in z && (z.view !== 'mistake' || !Array.isArray(z.guides))) out.push('zoom.guides is a list, for a Mistake entry only');
     if ('ring' in z && !(z.ring === false && PROJECTS.includes(z.project))) out.push("zoom.ring is false or absent, and false only with project 'side' or 'head' (an inset of another view)");
+    if ('src' in z && !(PROJECTS.includes(z.project) && z.ring !== false && Array.isArray(z.src) && z.src.length >= 1 && z.src.length <= POSTURE.regionMax && z.src.every(n => typeof n === 'string' && n)))
+      out.push(`zoom.src lists 1-${POSTURE.regionMax} landmark names, for a side or head entry with its source ring`);
     if (typeof f !== 'object' || f === null || Array.isArray(f) || Object.keys(f).some(k => !['region', 'pose'].includes(k))) out.push('zoom.focus must be { region, pose }');
     else {
       if (!(Array.isArray(f.region) && f.region.length >= 1 && f.region.length <= POSTURE.regionMax && f.region.every(n => typeof n === 'string' && n)))
@@ -178,9 +186,9 @@ export function focusLandmarks(spec, entry, E = ENGINE) {
   return landmarks(fk(resolve(normPose(spec.poses[entry.focus.pose], b), b).q, b));
 }
 /** The focus region's world points (throws on a name the engine does not draw). */
-export function focusPoints(spec, entry, E = ENGINE) {
+export function focusPoints(spec, entry, E = ENGINE, names = entry.focus.region) {
   const lm = focusLandmarks(spec, entry, E);
-  return entry.focus.region.map(n => { if (!isPoint(lm[n])) throw new Error(`${spec.id}: zoom.focus.region: no landmark ${n}`); return lm[n]; });
+  return names.map(n => { if (!isPoint(lm[n])) throw new Error(`${spec.id}: zoom.${names === entry.focus.region ? 'focus.region' : 'src'}: no landmark ${n}`); return lm[n]; });
 }
 /** project 'head': the front-view camera pitch (deg) that looks square to the back of the focus pose: the sacrum ->
  *  upper back line maps to screen up (screen-up = y cos p - z sin p, plate.mjs makeCamera). */
@@ -267,27 +275,47 @@ function postureZoomOf(spec, entry, { E, vid, plate, c, cam, m }) {
   const { k } = entry, r = entry.r ?? ZOOM.r, view = m ? 'mistake' : 'normal', pts = focusPoints(spec, entry, E);
   const onPlate = pts.map(w => cam.P(w)), focus = mid(onPlate);
   const side = entry.project === 'side', head = entry.project === 'head', hold = Math.max(...onPlate.map(p => Math.hypot(p[0] - focus[0], p[1] - focus[1]) + POSTURE.pad));
-  const inset = entry.ring === false, rs = inset ? 0 : side || head ? hold : Math.max(r / k, hold);
-  const placed = placeCircle(plate, focus, rs, midlineX(entry, cam, spec), r, !inset);
+  const inset = entry.ring === false, own = !inset && !!entry.src, rs = inset ? 0 : side || head ? hold : Math.max(r / k, hold);
+  // D-PF3B-INSETRING: an entry with `src` is placed as its plain inset (no ring in the search), then its ring is checked
+  const placed = placeCircle(plate, focus, inset || own ? 0 : rs, midlineX(entry, cam, spec), r, !inset && !own);
   if (!placed) throw new Error(`${spec.id}: no place on the ${view} plate keeps the zoom clear of ink, labels and leaders`);
-  const { C, d: best } = placed, uv = postureUV(entry, cam, spec, E), mc = mid(pts.map(uv)), s = c.pxPerM * k;
+  const { C } = placed, ring = own ? srcRing(spec, entry, E, cam) : { F: focus, rs }, best = Math.hypot(C[0] - ring.F[0], C[1] - ring.F[1]);
+  if (own && best < r + ring.rs + ZOOM.gap) throw new Error(`${spec.id}: the ${view} zoom overlaps its source ring (zoom.src)`);
+  // the house link runs along the centre line; the placement search never draws one across a label box, and a `src` ring's
+  // circle is fixed by its inset, so where that line crosses a label the ring is drawn without its link
+  const linked = !inset && !(own && labelBoxes(plate.overlay).some(b => linkHitsBox(ring.F, C, ring.rs, r, b)));
+  const uv = postureUV(entry, cam, spec, E), mc = mid(pts.map(uv)), s = c.pxPerM * k;
   const pitch = head ? { pitch: headPitch(spec, entry, E) } : !side && cam.pitch ? { pitch: cam.pitch } : {};
   const zs = { ...postureSpec(spec, entry), camera: { ...pitch, pxPerM: s, x0: C[0] - s * mc[0], y0: C[1] + s * mc[1] },
     callouts: [], datum: [], measure: undefined, checks: [], zoom: undefined, trace: undefined, ghosts: { count: 0 }, startParts: [],
     equipment: [...(head ? [] : spec.equipment ?? []), ...(entry.ref ? [{ type: 'line', pts: entry.ref, cls: 'eq-line m-line', z: 'front', part: 'pz-ref' }] : [])],
     ...(spec.mistake ? { mistake: { ...spec.mistake, tells: [], ...(entry.guides ? { guides: entry.guides } : {}) } } : {}) };
-  const zsvg = E.renderPlate(zs, { id: `${vid}-z`, mistake: m }).svg, inner = (m ? mistakeSvg(spec, zsvg) : zsvg)
-    .replace(/^<svg class="plate-svg"[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/<rect width="358" height="358" fill="url\(#[^)]*\)"\/>/, '');
-  const clip = `${vid}-zclip`, u = [(C[0] - focus[0]) / best, (C[1] - focus[1]) / best];
-  const link = `M${f(focus[0] + u[0] * rs)} ${f(focus[1] + u[1] * rs)}L${f(C[0] - u[0] * r)} ${f(C[1] - u[1] * r)}`;
-  const svg = `<g class="plate-zoom" data-view="${view}" data-k="${k}" data-c="${f(C[0])} ${f(C[1])}" data-src="${f(focus[0])} ${f(focus[1])}" data-focus="${entry.focus.pose}"${side || head ? ` data-project="${entry.project}"` : ''}${inset ? ' data-ring="none"' : ''}>`
+  const zsvg = E.renderPlate(zs, { id: `${vid}-z`, mistake: m }).svg, inner = noForearms((m ? mistakeSvg(spec, zsvg) : zsvg)
+    .replace(/^<svg class="plate-svg"[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/<rect width="358" height="358" fill="url\(#[^)]*\)"\/>/, ''), head ? `${vid}-z` : null);
+  const { F, rs: rr } = ring, clip = `${vid}-zclip`, u = [(C[0] - F[0]) / best, (C[1] - F[1]) / best];
+  const link = `M${f(F[0] + u[0] * rr)} ${f(F[1] + u[1] * rr)}L${f(C[0] - u[0] * r)} ${f(C[1] - u[1] * r)}`;
+  const svg = `<g class="plate-zoom" data-view="${view}" data-k="${k}" data-c="${f(C[0])} ${f(C[1])}" data-src="${f(F[0])} ${f(F[1])}" data-focus="${entry.focus.pose}"${side || head ? ` data-project="${entry.project}"` : ''}${inset ? ' data-ring="none"' : ''}>`
     + `<defs><clipPath id="${clip}"><circle cx="${f(C[0])}" cy="${f(C[1])}" r="${r}"/></clipPath></defs>`
-    + (inset ? '' : `<circle class="pz-src" cx="${f(focus[0])}" cy="${f(focus[1])}" r="${f(rs)}"/>`
-    + `<path class="pz-link" d="${link}"/>`)
+    + (inset ? '' : `<circle class="pz-src" cx="${f(F[0])}" cy="${f(F[1])}" r="${f(rr)}"/>`
+    + (linked ? `<path class="pz-link" d="${link}"/>` : ''))
     + `<circle class="pz-bg" cx="${f(C[0])}" cy="${f(C[1])}" r="${r}"/>`
     + `<g class="pz-in" clip-path="url(#${clip})">${inner}</g>`
     + `<circle class="pz-ring" cx="${f(C[0])}" cy="${f(C[1])}" r="${r}"/></g>`;
-  return { view, k, focus, circle: { c: C, r }, src: inset ? null : { c: focus, r: rs }, link: inset ? null : link, posture: { pose: entry.focus.pose, project: side || head ? entry.project : null }, svg };
+  return { view, k, focus, circle: { c: C, r }, src: inset ? null : { c: F, r: rr }, link: linked ? link : null, posture: { pose: entry.focus.pose, project: side || head ? entry.project : null }, svg };
+}
+
+/** D-PF3B-INSETRING: an entry's own source ring (`src`): its focus-pose landmarks on the plate, centre F and radius rs (the
+ *  farthest point + POSTURE.pad), as the focus region's ring is sized. */
+function srcRing(spec, entry, E, cam) {
+  const ps = focusPoints(spec, entry, E, entry.src).map(w => cam.P(w)), F = mid(ps);
+  return { F, rs: Math.max(...ps.map(p => Math.hypot(p[0] - F[0], p[1] - F[1]) + POSTURE.pad)) };
+}
+/** D-PF3B-INSETRING: a head projection's inner svg without the end pose's forearms and fists (their defs and uses; id
+ *  prefix `z`, e.g. 'p-n-z'); null: unchanged. */
+function noForearms(inner, z) {
+  if (!z) return inner;
+  const q = z.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return inner.replace(new RegExp(`<path id="${q}-e-(?:fore|fist)\\.[lr]" d="[^"]*"/>|<use href="#${q}-e-(?:fore|fist)\\.[lr]"/>`, 'g'), '');
 }
 
 /** The zoom classes, on the page's own theme tokens (the ring draws as ink: H5 holds it to the ink floor). */

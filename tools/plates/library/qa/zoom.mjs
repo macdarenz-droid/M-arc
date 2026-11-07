@@ -110,10 +110,11 @@ export function postureProblems(spec, want, m, ctx, R, M) {
   if (want.view === 'normal' && !(M.traceLen >= env.traceLenMin)) bad('trace', `Trace ${M.traceLen.toFixed(1)} px < the shortest approved ${env.traceLenMin.toFixed(1)} px: a posture zoom carries no trace, so the plate's own bar holds`);
   const report = R?.normal?.report;
   if (!report) { bad('source', 'no normal render to check the posture zoom against'); return out; }
-  let pts;
-  try { pts = focusPoints(spec, want, ctx.engine); } catch (e) { bad('source', e.message); return out; }
-  const cam = cameraOf(spec, report), onPlate = pts.map(w => cam.P(w));
-  if (want.ring !== false && onPlate.some(p => Math.hypot(p[0] - m.src.c[0], p[1] - m.src.c[1]) > m.src.r - 1)) bad('source', 'the source ring does not hold the focus region on the plate');
+  let pts, held;
+  // D-PF3B-INSETRING: an entry with `src` holds those landmarks in its ring, not the focus region
+  try { pts = focusPoints(spec, want, ctx.engine); held = want.src ? focusPoints(spec, want, ctx.engine, want.src) : pts; } catch (e) { bad('source', e.message); return out; }
+  const cam = cameraOf(spec, report), onPlate = held.map(w => cam.P(w));
+  if (want.ring !== false && onPlate.some(p => Math.hypot(p[0] - m.src.c[0], p[1] - m.src.c[1]) > m.src.r - 1)) bad('source', `the source ring does not hold ${want.src ? 'its src landmarks' : 'the focus region'} on the plate`);
   const uv = postureUV(want, cam, spec, ctx.engine), U = pts.map(uv), xs = U.map(q => q[0]), ys = U.map(q => q[1]);
   const mc = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2], s = cam.pxPerM * m.k;
   const inZoom = q => [m.ring.c[0] + s * (q[0] - mc[0]), m.ring.c[1] - s * (q[1] - mc[1])], Z = U.map(inZoom);
