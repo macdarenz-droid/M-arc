@@ -70,7 +70,9 @@ describe('PF2 (a): existing zooms are byte-equal', { timeout: T }, () => {
     // main's are those of the two redrawn 3b plates (lying_leg_curl item C, sled_pull item B: poses and zoom k moved); v_up and
     // incline are main's bytes (D-PF3B-HOLDVUP, D-PF3B-HOLD15); every other spec's zoom output is byte-equal to main 6227bd8e's
     // (per-file hashes compared on both trees)
-    expect(h.digest('hex')).toBe('43478914736ef99912a522ca123b78063f471ece540bc5cb7c02cf47e9ea394b');
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 43478914…, now 33e0f85f… (D-PF3B-ROPE: sled_pull's rope items in its zoom;
+    // the same loop with sled_pull's spec from dfb47999 gives 43478914… again, so no other entry moved)
+    expect(h.digest('hex')).toBe('33e0f85fd3e23ff0512cceb3dc641ec0342cba3598f40c400d299d8e4dd11115');
   });
 });
 

@@ -31,8 +31,11 @@ const trunkOf = (P: any, pose: string) => { const s = P(pose, 'shoulder.r'), h =
 const ropeSag = (spec: any, pose = 'start') => {
   const L = qaEng.poseLandmarks(Eng(), spec), ctx = { pose, mistake: false, start: L.lm.start, body: L.body };
   const run = spec.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(L.lm[pose], ctx) ?? [] : e)).filter((i: any) => i && i.part === 'rope')[0].pts as number[][];
-  // eq/rope.mjs strandOutline: the left side (k points), a 3-point stopper cap, the right side reversed
-  const n = (run.length - 3) / 2, c = run.slice(0, n).map((p, i) => p.map((v, j) => (v + run[run.length - 1 - i]![j]!) / 2));
+  // a closed outline: one side, (a cap,) the other side reversed; point i pairs with point length-1-i (eq/rope.mjs
+  // strandOutline: k + 3-point cap + k, the cap's ends pairing to its tip; LIB-PLATEFIX-3b D-PF3B-ROPE: the run is a
+  // 4-point band, its ends pairing to the centre line's ends; was (run.length - 3) / 2, which reads no point of a band)
+  const n = Math.floor(run.length / 2), c = run.slice(0, n).map((p, i) => p.map((v, j) => (v + run[run.length - 1 - i]![j]!) / 2));
+  if (n < 2) throw new Error(`ropeSag: the run outline has ${run.length} points`);
   const a = c[0]!, b = c[n - 1]!, u = [b[1]! - a[1]!, b[2]! - a[2]!], Lu = Math.hypot(u[0]!, u[1]!);
   return Math.max(...c.map(p => Math.abs((p[1]! - a[1]!) * u[1]! - (p[2]! - a[2]!) * u[0]!) / Lu));
 };
@@ -115,5 +118,93 @@ describe('LIB-PLATEFIX-3b B: the balance rule and its named exception (sled_pull
     const x = inputs(S, 'start');
     expect(M.balanceProblems({ ...x, pose: 'end' })).toEqual([expect.stringMatching(/outside the heel-toe base/)]);
     expect(M.balanceProblems({ ...x, id: KS.default.id })).toEqual([expect.stringMatching(/outside the heel-toe base/)]);
+  });
+});
+
+// LIB-PLATEFIX-3b B (ruling D-PF3B-ROPE): the taut run stays straight from the hands to the hitch but reads as rope (no
+// rounded tube ends); the hand-to-coil tail is slack rope that drops from the lower hand and sags into the coil. Every
+// value is read from the rendered svg (its path d strings and the plate css), the hands from the engine's landmarks with
+// the render's camera; never from a spec constant. The rope the solid figure holds is the end's (the Mistake keeps it).
+// Base (claude/lib-platefix-3b @ dfb47999) fails both: the run is a smoothed (C) tube with a domed end; the tail is a
+// near-straight bow off the hand.
+// Mutations (recorded in the PR): the run drawn `curve: true` (a smoothed outline, round ends) is red on the run row;
+// TAIL_SAG 0.07 -> 0.03 (a bow, not a slack sag) is red on the tail row.
+describe('LIB-PLATEFIX-3b B D-PF3B-ROPE: the sled rope reads as rope', () => {
+  type Pt = [number, number];
+  const pathsOf = (svg: string) => [...svg.matchAll(/<path class="([^"]*)" d="([^"]*)"\/>/g)].map(m => ({ cls: m[1]!, d: m[2]! }));
+  /** The knots of a path d (M/L points and each C or Q segment's end point). */
+  const knots = (d: string): Pt[] => {
+    const t = d.match(/[MLCQZ]|-?[\d.]+/g)!, out: Pt[] = [];
+    let cmd = '', k = 0;
+    for (let i = 0; i < t.length;) {
+      if (/[A-Z]/.test(t[i]!)) { cmd = t[i++]!; k = 0; continue; }
+      const p: Pt = [+t[i]!, +t[i + 1]!]; i += 2; k++;
+      if (cmd === 'C' ? k % 3 === 0 : cmd === 'Q' ? k % 2 === 0 : true) out.push(p);
+    }
+    return out;
+  };
+  const dist = (a: Pt, b: Pt) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  const views = () => [false, true].map(mistake => {
+    const { r, P } = view(S), svg = plate.renderPlate(S, { id: 'pf3b', mistake }).svg as string;
+    return { name: mistake ? 'mistake' : 'normal', paths: pathsOf(svg), hand: (k: string) => P('end', k) as unknown as Pt, floorY: qaEng.cameraOf(S, r.report).y0 as number };
+  });
+  /** The one solid eq path with a knot within 3.5 px of `hand` and one at least `far` px from it (the rope piece from that fist). */
+  const ropeFrom = (paths: any[], hand: Pt, far: number) => {
+    const hit = paths.filter(p => p.cls === 'eq-solid' && knots(p.d).some(q => dist(q, hand) <= 3.5) && knots(p.d).some(q => dist(q, hand) >= far));
+    if (hit.length !== 1) throw new Error(`${hit.length} rope pieces from the fist at ${hand}`);
+    return hit[0];
+  };
+  const roundCap = (cls: string) => /round/.test((plate.PLATE_CSS as string).match(new RegExp(`\\.plate \\.${cls} \\{([^}]*)\\}`))?.[1]?.match(/stroke-linecap:[^;]*/)?.[0] ?? '');
+  const ang = ([a, b]: [Pt, Pt]) => Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
+
+  /** The taut run (upper fist to hitch): problems with it reading as straight rope. */
+  const runProblems = (paths: any[], hand: Pt) => {
+    const out: string[] = [], run = ropeFrom(paths, hand, 60), k = knots(run.d);
+    if (!/^M[-\d. ]+(L[-\d. ]+)+Z$/.test(run.d)) out.push(`run not straight-edged (M/L/Z only): ${run.d.slice(0, 60)}`);
+    if (roundCap(run.cls)) out.push(`run class ${run.cls} has round caps`);
+    if (k.length !== 4) return [...out, `run has ${k.length} corners, not 4`];
+    const e = [0, 1, 2, 3].map(i => [k[i]!, k[(i + 1) % 4]!] as [Pt, Pt]), long = [e[0]!, e[2]!], ends = [e[1]!, e[3]!], len = (s: [Pt, Pt]) => dist(s[0], s[1]);
+    const L = Math.max(...long.map(len));
+    if (Math.min(...long.map(len)) < 60) out.push('run edges under 60 px');
+    if (Math.abs(((ang(long[0]!) - ang(long[1]!) + 360) % 360) - 180) > 0.5) out.push('run edges not parallel (not taut)');
+    for (const s of ends) {
+      const off = Math.abs(((ang(s) - ang(long[0]!) + 360) % 180) - 90);
+      if (off > 2) out.push(`run end cut ${off.toFixed(1)} deg off square`);
+      if (len(s) > 6) out.push(`run end ${len(s).toFixed(1)} px wide`);
+    }
+    // lay marks: single strokes with no round caps, each from one long edge to the other, slanted along the rope
+    const from = ([a, b]: [Pt, Pt]) => (p: Pt) => Math.abs((b[0] - a[0]) * (a[1] - p[1]) - (a[0] - p[0]) * (b[1] - a[1])) / dist(a, b);
+    const onA = from(long[0]!), onB = from(long[1]!), u = [Math.cos(ang(long[0]!) * Math.PI / 180), Math.sin(ang(long[0]!) * Math.PI / 180)];
+    const within = (p: Pt) => { const s = (p[0] - k[0]![0]) * u[0]! + (p[1] - k[0]![1]) * u[1]!; return s >= -1 && s <= L + 1; };
+    const marks = paths.filter(p => /^M[-\d. ]+L[-\d. ]+$/.test(p.d)).map(p => ({ cls: p.cls, k: knots(p.d) }))
+      .filter(m => ((onA(m.k[0]!) < 0.6 && onB(m.k[1]!) < 0.6) || (onB(m.k[0]!) < 0.6 && onA(m.k[1]!) < 0.6)) && m.k.every(within));
+    if (marks.length < Math.floor(L / 6)) out.push(`${marks.length} lay marks across the run (< ${Math.floor(L / 6)})`);
+    for (const m of marks) {
+      if (roundCap(m.cls)) out.push(`lay mark class ${m.cls} has round caps`);
+      if (Math.abs((m.k[1]![0] - m.k[0]![0]) * u[0]! + (m.k[1]![1] - m.k[0]![1]) * u[1]!) < 1) out.push('a lay mark not slanted along the rope');
+    }
+    return out;
+  };
+  /** The slack tail (lower fist to the coil): problems with it dropping from the hand and sagging into the coil. */
+  const tailProblems = (paths: any[], hand: Pt, floorY: number) => {
+    const out: string[] = [], k = knots(ropeFrom(paths, hand, 60).d), coil = k.reduce((a, b) => (dist(b, hand) > dist(a, hand) ? b : a));
+    const L = dist(hand, coil), s = coil[0] > hand[0] ? 1 : -1, n: Pt = [-s * (coil[1] - hand[1]) / L, s * (coil[0] - hand[0]) / L];   // n: the chord's screen-down side
+    const below = (p: Pt) => (p[0] - hand[0]) * n[0] + (p[1] - hand[1]) * n[1];
+    if (coil[1] > floorY || floorY - coil[1] > 10) out.push(`tail ends ${(floorY - coil[1]).toFixed(1)} px above the floor, not on the coil`);
+    const mid = k.filter(p => dist(p, hand) > 6 && dist(p, coil) > 6);
+    const above = mid.filter(p => !(below(p) > 0));
+    if (above.length) out.push(`${above.length} tail points on or above the hand-to-coil line`);
+    const sag = Math.max(...mid.map(below)) / L;
+    console.log(`PF3b sled_pull tail: chord ${L.toFixed(1)} px, greatest drop below it ${(sag * L).toFixed(1)} px (${(sag * 100).toFixed(1)} %)`);
+    if (sag < 0.08) out.push(`tail sags ${(sag * 100).toFixed(1)} % of its chord (< 8 %: a bow, not slack)`);
+    const drop = k.filter(p => dist(p, hand) >= 15 && dist(p, hand) <= 25).map(p => Math.atan2(Math.abs(p[0] - hand[0]), p[1] - hand[1]) * 180 / Math.PI);
+    if (!drop.length || Math.max(...drop) > 15) out.push(`tail leaves the hand ${Math.max(...drop).toFixed(1)} deg off plumb (> 15)`);
+    return out;
+  };
+  it('the taut run (upper fist to hitch): one straight band (M/L/Z, parallel edges), square-cut ends one rope width, crossed by slanted lay marks; no round caps; both views', () => {
+    for (const v of views()) expect(runProblems(v.paths, v.hand('grip.r')), v.name).toEqual([]);
+  });
+  it('the tail (lower fist to the coil): every point strictly below the hand-to-coil line, sagging >= 8 % of it, leaving the hand within 15 deg of plumb, ending on the coil; both views', () => {
+    for (const v of views()) expect(tailProblems(v.paths, v.hand('grip.l'), v.floorY), v.name).toEqual([]);
   });
 });

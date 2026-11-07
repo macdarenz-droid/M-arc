@@ -536,7 +536,7 @@
    "ROPE_SAG": {
     "value": 0.006,
     "unit": "m",
-    "basis": "convention: main's eq/rope.mjs default `sag`"
+    "basis": "convention: main's eq/rope.mjs default `sag` [unused since LIB-PLATEFIX-3b (D-PF3B-ROPE): the taut run is drawn straight]"
    },
    "M_TILT": {
     "value": -14,
@@ -559,9 +559,14 @@
     "basis": "stated reason: #331 panel mx2 item 3, 'overlapping' loops: each loop COIL_TURNS apart by under a fifth of COIL_D, so they overlap in the same place"
    },
    "TAIL_SAG": {
-    "value": 0.04,
+    "value": 0.07,
     "unit": "m",
-    "basis": "stated reason: #331 panel mx2 item 3, the slack tail 'hangs ... in a soft curve': a visible bow (about 5 px) on its about 0.3 m fall"
+    "basis": "stated reason: #331 panel mx2 item 3, the slack tail 'hangs ... in a soft curve'; LIB-PLATEFIX-3b (D-PF3B-ROPE): the tail is slack rope that drops plumb from the lower fist and meets the coil level, its centre line's greatest distance below the fist-to-coil chord (0.80 m start, 0.84 m end) 0.07 m (8.8 px, 2.5 rope widths: a slack sag, not a bow; was 0.04 m, a 5 px bow on a near-straight tube)"
+   },
+   "LAY": {
+    "value": 0.035,
+    "unit": "m",
+    "basis": "stated reason: LIB-PLATEFIX-3b (D-PF3B-ROPE) 'give it a rope look': a laid rope's strands cross its visible face about once per rope width (ROPE_T 0.028 m); one lay mark every 0.035 m (4.4 px at PX_PER_M) keeps the marks apart at the plate's 0.75 px eq-thin stroke"
    },
    "STEP": {
     "value": "solved",

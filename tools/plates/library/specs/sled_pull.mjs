@@ -34,7 +34,7 @@
 //  Hands (c1): both fists on the one rope at the midline (x 0), each arm ELBOW_BEND short of straight (c1 "arms
 //   slightly bent"), so each fist lies on its shoulder's circle in the side plane: the near fist at the hips' height
 //   (c3 "the rope close to your body"), the far fist GRIP_GAP (fists touching) below and behind it on the same circle
-//   (c1 "one stacked over the other"). The rope (main's eq/rope.mjs strandOutline) runs from the sled's hitch ring into
+//   (c1 "one stacked over the other"). The rope (drawn here, D-PF3B-ROPE; was main's eq/rope.mjs strandOutline) runs from the sled's hitch ring into
 //   the upper fist, down to the lower fist, and on to a short coil on the floor (plate.equipment, c5) centred under the
 //   start's lower fist, so the start tail hangs plumb onto it.
 //  End (plate.frames, c3): the near foot stepped STEP straight back (its toe at the far heel: the shortest step that
@@ -48,20 +48,19 @@
 //   and both arms keep their end direction in space, so the hips sag forward and down (c8 "don't let your hips sag":
 //   M_Z, M_Y solved) until the upper fist is back on the rope's run, the stepped-back knee kept at the end's.
 // Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): PX_PER_M, FOOT_X, KNEE_SOFT, ELBOW_BEND,
-//  GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH, Q_THIGH, TAUT_SAG (LEAN_TRUNK and
+//  GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG (unused since D-PF3B-ROPE), TAIL_SAG, LAY, M_TILT, M_ARCH, Q_THIGH, TAUT_SAG (LEAN_TRUNK and
 //  LEAN_BACK are ruled, D-PF3B-SLEDSQUAT); solved: STEP, HIP_Y, DRAG,
 //  ROPE_RUN, M_Z, M_Y.
 import { landmarksOf, WINTER, REF } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
 import { sled, SLED, SLED_ITEMS } from '../eq/sled.mjs';
-import { strandOutline } from '../eq/rope.mjs';
 
 const H = 1.75, R = Math.PI / 180;
 // LIB-PLATEFIX-3 round 2 (#405 6685743439 sled_pull R7 [3,3,3]): SLED_Z 0.9 -> 0.78, the sled group 15 px left, so the
 // dashed start sled ends 13.9 px inside the frame (it was clipped at 358); no body change.
 export const SIZES = Object.freeze({ PX_PER_M: 126, FOOT_X: 0.145, KNEE_SOFT: 15, ELBOW_BEND: 18, GRIP_GAP: 0.07, SLED_Z: 0.58, FOOT_CLEAR: 0.025,
-  COIL_D: 0.266, COIL_TURNS: 3, ROPE_T: 0.028, ROPE_SAG: 0.006, M_TILT: -14, M_ARCH: -12, Q_KNEE: 42, Q_THIGH: 31, LEAN_TRUNK: 10, LEAN_BACK: 0.1, TAUT_SAG: 0.01, LOOP_H: 0.044, LOOP_DZ: 0.05, TAIL_SAG: 0.04 });
-const { FOOT_X, KNEE_SOFT, ELBOW_BEND, GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH, Q_KNEE, Q_THIGH, LEAN_TRUNK, LEAN_BACK, TAUT_SAG, LOOP_H, LOOP_DZ, TAIL_SAG } = SIZES;
+  COIL_D: 0.266, COIL_TURNS: 3, ROPE_T: 0.028, ROPE_SAG: 0.006, M_TILT: -14, M_ARCH: -12, Q_KNEE: 42, Q_THIGH: 31, LEAN_TRUNK: 10, LEAN_BACK: 0.1, TAUT_SAG: 0.01, LOOP_H: 0.044, LOOP_DZ: 0.05, TAIL_SAG: 0.07, LAY: 0.035 });
+const { FOOT_X, KNEE_SOFT, ELBOW_BEND, GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, M_TILT, M_ARCH, Q_KNEE, Q_THIGH, LEAN_TRUNK, LEAN_BACK, TAUT_SAG, LOOP_H, LOOP_DZ, TAIL_SAG, LAY } = SIZES;
 
 export const bisect = (f, a, b, what) => {
   let fa = f(a), fb = f(b), side = 0;
@@ -163,8 +162,8 @@ export const M_Z = bisect(z => Math.hypot(...v3.sub(mLm(mY(z), z)['shoulder.r'],
 export const M_Y = mY(M_Z);
 const mistake = { ...mBody(M_Y, M_Z), reach: end.reach };
 
-// Rope items (main's eq/rope.mjs strandOutline, unedited): the run from the hitch into the upper fist, the short link
-// down to the lower fist, and the slack tail from it, hanging in a soft curve (TAIL_SAG) onto the coil; the coil is
+// Rope items (drawn below, D-PF3B-ROPE): the run from the hitch into the upper fist, the short link down to the lower
+// fist, and the slack tail from it, dropping and sagging (TAIL_SAG) onto the coil; the coil is
 // COIL_TURNS flattened rope loops lying on the floor, overlapping (plate.equipment "a short coil of rope at the feet", c5
 // "the rope piles up near your feet"; #331 panel mx2 item 3), centred under the start's lower fist, so the start tail
 // hangs onto it; the pile lies still while the lifter steps back.
@@ -172,9 +171,50 @@ const mistake = { ...mBody(M_Y, M_Z), reach: end.reach };
 // set just in front of the start toes instead (its nearest loop ROPE_T / 2 clear of them, the gap the coil had before,
 // 1.4 cm); the start tail then falls forward onto it in its soft curve.
 const COIL_Z = landmarksOf(start, H)['toe.l'][2] + (COIL_TURNS - 1) / 2 * LOOP_DZ + COIL_D / 2 + ROPE_T / 2, COIL_TOP = [0, LOOP_H, COIL_Z];
-const strand = (from, to, sag = ROPE_SAG) => strandOutline({ from, grip: to, dir: unit(v3.sub(to, from)), below: 0, thick: ROPE_T, knob: ROPE_T, knobLen: 0.002, sag, view: 'side' });
-const ropeItems = (lm, rearZ) => [[hitchOf(lm['grip.r'], rearZ), lm['grip.r']], [lm['grip.r'], lm['grip.l']], [lm['grip.l'], COIL_TOP, TAIL_SAG]]
-  .map(([a, b, sag]) => ({ type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'rope', pts: strand(a, b, sag) }));
+// LIB-PLATEFIX-3b (D-PF3B-ROPE): the rope reads as rope, not a tube with rounded ends (was: three eq/rope.mjs
+// strandOutline tubes, each a smoothed closed outline whose ends drew round, the tail a near-straight 4 cm bow).
+//  The taut run (hitch to the upper fist) and the link between the fists: straight bands ROPE_T wide with square-cut
+//  ends (plain polygons, no curve, no sag: the run is taut), the run crossed by lay marks: one thin diagonal across the
+//  band every LAY along it, each spanning ROPE_T along the rope (a laid rope's strands seen from the side; eq-thin, no
+//  round caps). The slack tail drops from the lower fist and sags into the coil: one cubic Bezier centre line that
+//  leaves the fist plumb and meets the coil's top level, its handles one fraction of the drop and of the run, solved
+//  so the line's greatest distance below the fist-to-coil chord is TAIL_SAG (a slack rope, not a bow).
+const nrm = u => [0, -u[2], u[1]];   // in the side plane, square to u
+const band = (a, b) => { const o = v3.mul(nrm(unit(v3.sub(b, a))), ROPE_T / 2); return [v3.add(a, o), v3.add(b, o), v3.sub(b, o), v3.sub(a, o)]; };
+const N_LAY = Math.floor((ROPE_RUN - ROPE_T) / LAY);
+const layMarks = (a, b) => { const u = unit(v3.sub(b, a)), o = v3.mul(nrm(u), ROPE_T / 2);
+  return Array.from({ length: N_LAY }, (_, k) => { const s = v3.add(a, v3.mul(u, (k + 0.5) * LAY)); return [v3.add(s, o), v3.sub(v3.add(s, v3.mul(u, ROPE_T)), o)]; }); };
+const bez = (P, t) => [0, 1, 2].map(i => (1 - t) ** 3 * P[0][i] + 3 * (1 - t) ** 2 * t * P[1][i] + 3 * (1 - t) * t * t * P[2][i] + t ** 3 * P[3][i]);
+const tailHandles = (a, b, k) => [a, [0, a[1] - k * (a[1] - b[1]), a[2]], [0, b[1], b[2] - k * (b[2] - a[2])], b];
+const TAIL_N = 16;
+/** The tail's greatest distance below the straight line from a (the fist) to b (the coil), handle fraction k. */
+const tailSag = (a, b, k) => { const P = tailHandles(a, b, k), n0 = nrm(unit(v3.sub(b, a))), n = n0[1] > 0 ? v3.mul(n0, -1) : n0;   // n: the chord's downward side
+  return Math.max(...Array.from({ length: 99 }, (_, i) => v3.sub(bez(P, (i + 1) / 100), a).reduce((s, v, j) => s + v * n[j], 0))); };
+const tailLine = (a, b, n) => { const P = tailHandles(a, b, bisect(x => tailSag(a, b, x) - TAIL_SAG, 0.01, 1, 'the tail handles'));
+  return Array.from({ length: n + 1 }, (_, i) => bez(P, i / n)); };
+const tail = (a, b) => {
+  const c = tailLine(a, b, TAIL_N);
+  const off = c.map((p, i) => v3.mul(nrm(unit(v3.sub(c[Math.min(i + 1, TAIL_N)], c[Math.max(i - 1, 0)]))), ROPE_T / 2));
+  const left = c.map((p, i) => v3.add(p, off[i])), right = c.map((p, i) => v3.sub(p, off[i])).reverse();
+  return [...left, c[TAIL_N], ...right, c[0]];   // the end midpoints keep each end square across the spline
+};
+// The tail's lay marks: the run's marks laid along the curve, one every LAY of its length from the fist.
+const tailMarks = (a, b) => {
+  const c = tailLine(a, b, 400), s = [0];
+  for (let i = 1; i < c.length; i++) s.push(s[i - 1] + Math.hypot(...v3.sub(c[i], c[i - 1])));
+  const at = d => { const i = Math.min(c.length - 2, s.findIndex(v => v >= d) - 1), t = (d - s[i]) / (s[i + 1] - s[i]); return [mid(c[i], c[i + 1], t), unit(v3.sub(c[i + 1], c[i]))]; };
+  return Array.from({ length: Math.floor((s[s.length - 1] - ROPE_T) / LAY) }, (_, k) => {
+    const [p, u] = at((k + 0.5) * LAY), [q, w] = at((k + 0.5) * LAY + ROPE_T);
+    return [v3.add(p, v3.mul(nrm(u), ROPE_T / 2)), v3.sub(q, v3.mul(nrm(w), ROPE_T / 2))];
+  });
+};
+const ropeItems = (lm, rearZ) => { const h = hitchOf(lm['grip.r'], rearZ);
+  return [{ type: 'poly', cls: 'eq-solid', z: 'mid', part: 'rope', pts: band(h, lm['grip.r']) },   // the three pieces first, as before
+    { type: 'poly', cls: 'eq-solid', z: 'mid', part: 'rope', pts: band(lm['grip.r'], lm['grip.l']) },
+    { type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'rope', pts: tail(lm['grip.l'], COIL_TOP) },
+    ...layMarks(h, lm['grip.r']).map(pts => ({ type: 'line', cls: 'eq-thin', z: 'mid', part: 'rope', pts })),
+    ...tailMarks(lm['grip.l'], COIL_TOP).map(pts => ({ type: 'line', cls: 'eq-thin', z: 'mid', part: 'rope', pts }))]; };
+const N_ROPE = Math.max(...[start, ...via, end].map(p => ropeItems(landmarksOf(p, H), SLED_Z).length));   // the most rope items a pose draws
 // One loop: a flattened ring of rope (outer ellipse COIL_D by LOOP_H, the band ROPE_T wide at its ends and half that at
 // its top and bottom, as a loop lying on the floor reads from a low side view), one closed outline: the outer ellipse,
 // then the inner one back the other way, joined at the loop's far end.
@@ -203,7 +243,7 @@ export default {
   poses: { start, via, end },
   equipment: [{ type: 'floor', from: -1.0, to: SLED_Z + SLED.len + 0.1 },   // the floor runs on under the whole start sled
     ...perItem((lm, ctx) => sled({ rearZ: sledZ(lm, ctx), form: 'pull' }), SLED_ITEMS),
-    ...perItem((lm, ctx) => ropeItems(ropeLm(lm, ctx), sledZ(lm, ctx)), 3),
+    ...perItem((lm, ctx) => ropeItems(ropeLm(lm, ctx), sledZ(lm, ctx)), N_ROPE),
     ...perItem(() => coil(), COIL_TURNS),
     ...perItem((lm, ctx) => (ctx.pose === 'end' && !ctx.mistake ? [...START_SLED, ...START_ROPE] : null), START_SLED.length + START_ROPE.length)],
   checks: [

@@ -1929,9 +1929,11 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
       "mistakeAlt": "2e69b29b78f143b879610dca51a51496b5c280b56c434009ad2effa67b4e53de"
     },
     "sled-pull": {
-      "normalSvg": "e7e3e90e017e5e582830b254a3d1da801cbf8970680f499a90b87a19969bf24f",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8638526e, then 01f23201; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was b637dac6, now e7e3e90e (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
+      "normalSvg": "c7a19bf789c918352f06647b4d22ab4e5768ecb9ef03717464b9f4a9a908fea2",   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was e7e3e90e, now c7a19bf7 (D-PF3B-ROPE: the rope items only, plate and zoom; every other element byte-equal)
+   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8638526e, then 01f23201; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was b637dac6, now e7e3e90e (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
       "normalOverlay": "6f7086bb14c8e9965510f0c796faaa5ee487d99b1e660864f16b85ad240b7603",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0ef9d6fd, now the PF3 drawing; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 81d2c0e5, now 6f7086bb (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
-      "mistakeSvg": "57001cab9f517ddf98ec1ead5cac7dde9880252c748ba38fd913d1a5dfc932ad",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, then 40510f2a; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 1122a784, now 57001cab (the D-PF3B-SLEDSQUAT start squat, D-PF3B-SLEDLEADER boxes and the D-PF3B-SLEDTELL neck anchor and swapped tell boxes)
+      "mistakeSvg": "a03e805ab1fe102b3a88bb82688158adb5a22fbdd2fb1147ccd96e5a448ce0b6",   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 57001cab, now a03e805a (D-PF3B-ROPE: the rope items only; every other element byte-equal)
+   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, then 40510f2a; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 1122a784, now 57001cab (the D-PF3B-SLEDSQUAT start squat, D-PF3B-SLEDLEADER boxes and the D-PF3B-SLEDTELL neck anchor and swapped tell boxes)
       "mistakeOverlay": "c8d0ebbe22986ffaa0fdcee48d3424be20be733f61b1c2c72c03e166a3bec922",   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was f488c63b, now c8d0ebbe (the D-PF3B-SLEDTELL swapped tell boxes)
       "tells": "6a7d6e8c622a2a5df7035e2823688a13decbfcb9a4a203b54ce05909b257705d",
       "tempo": "1551a4913b7c557d03dca51a61ca2c49605243ea59da71e831c285dc1b0cc523",
