@@ -4793,7 +4793,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
           expect(ok(mutPose(s(), 'end', { hip: { l: 25, r: 25 } }))).toBe(false); // mutation: the hips flexed 25 -> red
         });
       }
-      it('the Mistake is the end pose plus the 12° lumbar arch only (hanging_leg_raise.mjs:69): the pelvis, the legs and the grips stay', () => {
+      it('the Mistake is the end pose plus the lumbar arch only (lying 27°, LIB-PLATEFIX-3b, was 12°; standing 12°) (hanging_leg_raise.mjs:69): the pelvis, the legs and the grips stay', () => {
         // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6683313760; panel #405 6685743439): standing_leg_curl's 12 deg arch is now trunk.bow 12 on the spread spine (the thorax holds:
         // trunk flex 0 in the report); was { trunk: -12 } for both ids. lying_leg_curl is unchanged.
         const WANT = id === 'standing_leg_curl' ? { pose: { trunk: { flex: 0, bow: 12 } }, trunk: 0 } : { pose: { trunk: -27 }, trunk: -27 };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was { pose: { trunk: -12 }, trunk: -12 }, now -27 (lying_leg_curl item C: M_ARCH 27, chest and shoulders 17.8 deg off the pad)
