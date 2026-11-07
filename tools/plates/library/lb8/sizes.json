@@ -1275,9 +1275,9 @@
     "basis": "claim: c3 \"just above the heel rather than directly on the Achilles tendon\", c4 \"the lowest comfortable position on the calf\": the pad contact at 0.85 of the shank from the knee, 6.5 cm above the ankle joint, as pilot B's anchor spec (#278, specs/ :44) ANKLE_T (\"just above the shoes\")"
    },
    "M_ARCH": {
-    "value": 12,
+    "value": 27,
     "unit": "deg",
-    "basis": "convention: hanging_leg_raise.mjs:69 (trunk -12 lumbar arch) for c9, c10 \"arching your lower back\""
+    "basis": "stated reason: LIB-PLATEFIX-3b item C (pfc-findings b5065795 set b T03 L5, critics c2, c3) for c9, c10 \"arching your lower back\": the chest and shoulders lifted 15-20 deg off the pad with the hips held on it; the lumbar extension turns the hip-shoulder line 0.66 deg per deg about the held pelvis (engine landmarks, plate px), so 27 deg lifts it 17.8 deg, the whole degree nearest the band's middle 17.5 (was 12, hanging_leg_raise.mjs:69, a 7.9 deg lift that did not read)"
    },
    "HANDLE": {
     "value": [

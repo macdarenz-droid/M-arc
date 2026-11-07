@@ -11,7 +11,8 @@
 //                                  source ring holds the focus region on the plate (source), the circle holds it at k
 //                                  (hold), the region spans at least POSTURE.fill of the circle (fill: its magnification
 //                                  bar, with k >= POSTURE.kMin), a `ref` lies inside the circle (ref); on the Mistake view the
-//                                  tell's landmark moves at least the deviation bar inside the zoom (deviation)
+//                                  tell's landmark moves at least the deviation bar inside the zoom (deviation);
+//                                  LIB-PLATEFIX-3b: the rows read a project 'head' entry in its own projection (postureUV)
 //   H4.zoom:*                      node placement: 8 px margin and the meta band; 6 px gap to the figure and equipment;
 //                                  no leader or label crossing; the source ring apart from the circle; D-PF2-PLACE: an
 //                                  entry with place 'outer' sits beyond its source ring from the body midline (place)
@@ -109,11 +110,12 @@ export function postureProblems(spec, want, m, ctx, R, M) {
   if (want.view === 'normal' && !(M.traceLen >= env.traceLenMin)) bad('trace', `Trace ${M.traceLen.toFixed(1)} px < the shortest approved ${env.traceLenMin.toFixed(1)} px: a posture zoom carries no trace, so the plate's own bar holds`);
   const report = R?.normal?.report;
   if (!report) { bad('source', 'no normal render to check the posture zoom against'); return out; }
-  let pts;
-  try { pts = focusPoints(spec, want, ctx.engine); } catch (e) { bad('source', e.message); return out; }
-  const cam = cameraOf(spec, report), onPlate = pts.map(w => cam.P(w));
-  if (want.ring !== false && onPlate.some(p => Math.hypot(p[0] - m.src.c[0], p[1] - m.src.c[1]) > m.src.r - 1)) bad('source', 'the source ring does not hold the focus region on the plate');
-  const uv = postureUV(want, cam), U = pts.map(uv), xs = U.map(q => q[0]), ys = U.map(q => q[1]);
+  let pts, held;
+  // D-PF3B-INSETRING: an entry with `src` holds those landmarks in its ring, not the focus region
+  try { pts = focusPoints(spec, want, ctx.engine); held = want.src ? focusPoints(spec, want, ctx.engine, want.src) : pts; } catch (e) { bad('source', e.message); return out; }
+  const cam = cameraOf(spec, report), onPlate = held.map(w => cam.P(w));
+  if (want.ring !== false && onPlate.some(p => Math.hypot(p[0] - m.src.c[0], p[1] - m.src.c[1]) > m.src.r - 1)) bad('source', `the source ring does not hold ${want.src ? 'its src landmarks' : 'the focus region'} on the plate`);
+  const uv = postureUV(want, cam, spec, ctx.engine), U = pts.map(uv), xs = U.map(q => q[0]), ys = U.map(q => q[1]);
   const mc = [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2], s = cam.pxPerM * m.k;
   const inZoom = q => [m.ring.c[0] + s * (q[0] - mc[0]), m.ring.c[1] - s * (q[1] - mc[1])], Z = U.map(inZoom);
   const lim = m.ring.r - POSTURE.inset, far = Z.map((q, i) => [want.focus.region[i], Math.hypot(q[0] - m.ring.c[0], q[1] - m.ring.c[1])]).filter(([, d]) => d > lim);
@@ -155,7 +157,8 @@ export function zoomRows(c, ctx, R, M) {
     // PLATEFIX-2 pf5: a posture inset (ring: false) has a circle and no source ring; every other zoom has both
     const inset = want.ring === false;
     if (!m?.ring || (inset ? !!m?.src : !m?.src)) { H3.push(P(`H3.zoom:shape:${view}`, inset ? 'the inset has no circle, or has a source ring' : 'the zoom has no ring or no source ring')); continue; }
-    const posture = 'focus' in want, side = posture && want.project === 'side';
+    // LIB-PLATEFIX-3b (#405 6682844211): a head projection, like side, is another projection: its source ring is its own size
+    const posture = 'focus' in want, side = posture && (want.project === 'side' || want.project === 'head');
     // a posture zoom's source ring holds its region: in the plate's own projection never under r/k; in side projection its own size
     if (m.k !== want.k || (posture ? !side && m.src.r < m.ring.r / want.k - 0.01 : Math.abs(m.ring.r / m.src.r - want.k) > 0.01)) H3.push(P(`H3.zoom:k:${view}`, `the drawn zoom (k ${m.k}, ring ${m.ring.r}/${m.src?.r ?? "none"}) is not the spec's k ${want.k}`));
     // allowed only on a view that fails at plate scale; the bar at the zoom's own scale
