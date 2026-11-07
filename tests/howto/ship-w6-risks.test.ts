@@ -3,8 +3,6 @@
 // old "at least one" rule for golden B's 8. The four ruled reds run the real probe in Chromium on a minimal sheet.
 import { chromium, type Browser } from 'playwright';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { ht10DomProbe } from '../../tools/plates/fidelity/harness.mjs';
-import { riskCountOf } from '../../tools/plates/library/fidelity.mjs';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
 const DISC = 'Disclaimer text.';
@@ -14,8 +12,12 @@ const page = (blocks: string[], discFirst = false) => {
   const risks = `<section class="hw-sec risks"><ul class="rk-list"><li>r</li></ul>${blocks.join('')}</section>`;
   return `<!doctype html><dialog class="sheet ht" open><div class="sheet-panel">${discFirst ? disc + risks : risks + disc}</div></dialog>`;
 };
-let browser: Browser;
-beforeAll(async () => { browser = await chromium.launch({ executablePath: process.env.MARC_CHROMIUM || '/opt/pw-browsers/chromium' }); }, 60_000);
+let browser: Browser, ht10DomProbe: any;
+const riskCountOf = async (root: string, id: string): Promise<number> =>
+  (await import(/* @vite-ignore */ new URL('../../tools/plates/library/fidelity.mjs', import.meta.url).href)).riskCountOf(root, id);
+beforeAll(async () => {
+  ({ ht10DomProbe } = await import(/* @vite-ignore */ new URL('../../tools/plates/fidelity/harness.mjs', import.meta.url).href));
+  browser = await chromium.launch({ executablePath: process.env.MARC_CHROMIUM || '/opt/pw-browsers/chromium' }); }, 60_000);
 afterAll(async () => { await browser?.close(); });
 const c19 = async (html: string, expectRisks: number | boolean) => {
   const p = await browser.newPage();
