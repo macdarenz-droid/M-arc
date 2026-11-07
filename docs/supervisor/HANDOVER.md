@@ -842,6 +842,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-07 ~00:45 UTC.**
+  - **Train 74:** #400 → main `9e2b4486`. **Train 75:** #405 PLATEFIX-3 → main `c2f267a7` (24 plates; D-PF3-W3MERGE: assisted_pull_up held to main's W3 version, underhand `'owner'` D-OWNER-REPIN entries). Research heads #401 and #407 merged into `claude/libht-research`. Neither train is app-visible.
+  - **#393 (W6) was closed by accident** at train 75: #405 commit `8c45ede2` says "W6 PANEL FIX #393", which GitHub reads as a closing keyword. It is reopened (6699630564). **Train checklist addition:** before each merge, grep the PR's commits and body for `(close|fix|resolve)[sd]?:? #N`. Follow-up F-COMMIT-KEYWORDS (guard check).
+  - **Next trains:** #404 (merging main, post-W3 rebuild), #385, #395, then W4 (Q5 ruled D-SHIP-W4-E5W3; READY pending), W5, W6 (7 + layers check of PF3-plate ids after PLATES CARRIED), W7 (12 + the same).
+  - **PLATEFIX-3b #408** (session_018Pv5bJ9MboAZCwYbWYT8KT): PLAN accepted. Item A (assisted_pull_up merge) is built. 15 and 22 wait for #395, 23 for #385. One plates panel for all four (D-PF3B-ONEPANEL).
 - **Update 11-06 ~21:45 UTC.**
   - **Train 73 MERGED:** W3 #384 @ `db4a5281` → main `62d3dcb6` (9 How-tos; the app has 26). **APK SENT** ~22:4x: run 42297822143, artifact MARC-DEBUG-APK 13545331897, fingerprint step success. **Last APK sent: `62d3dcb6`** (Relay PROJECT_STATE line owed, 8.5). Review PASS at `27b2562c` with 2 Highs (zoom.json in place under D-REPIN-UNMERGED, PR body), then the fix delta PASS. APK: main gate run 42297822143 is running; send the owner the APK when its fingerprint step passes.
   - Reviews PASS, waiting their turn: #405 (Lows: drop `kOf`, cite main's values), #404 (two doc Mediums), #385 (COACHING-DECISIONS Medium), #395 (Medium → F-PECFLY-FEELROW).
