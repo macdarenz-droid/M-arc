@@ -425,7 +425,7 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   const W5 = ['alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'forward_lunge', 'walking_lunge', 'bulgarian_split_squat',
     'single_arm_triceps_pushdown', 'straight_bar_triceps_pushdown', 'front_squat', 'wall_sit'].map(s => `lib_${s}`);
   // D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER (#392 6682188871, 6683213580): the W5 children in the flip set of 10
-  const W5_FLIP_CHILDREN: string[] = [];
+  const W5_FLIP_CHILDREN = ['alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'front_squat'].map(s => `lib_${s}`);
   /** LIB-PLATEFIX-1: a mapped child among `ids` that W3 does not ship, or SLRDL among them without its parent. */
   const childProblems = (ids: string[]) => [...[...cards.keys()].filter(id => ids.includes(id) && !W3_CHILDREN.includes(id)).map(id => `${id}: a mapped child ships`),
     ...(ids.includes(SLRDL) && !ids.includes('lib_romanian_deadlift') ? [`${SLRDL}: ships without its parent lib_romanian_deadlift`] : [])];
