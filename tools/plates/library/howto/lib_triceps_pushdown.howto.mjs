@@ -74,13 +74,16 @@ const CONV = C(['CONVENTION'], ['ga-push-heel'], 'pairs.mjs CONVENTIONS ga:push-
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses. 'elbows-forward' (card zoom pushdown-elbow Wrong, c6: "Elbows drifted forward, upper
-// arms swung up"): the start pose with the arm of the spec's own Mistake pose (upper arm swung forward, elbow bend), the
-// trunk left as at the start, so only the elbows move.
+// arms swung up"): the start pose with the upper arm swung forward of the thorax and the elbow bent, the trunk left as
+// at the start, so only the arms move.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2, golden B's machine_chest_press seatDrop and
-// lib_rope_triceps_pushdown's elbows-forward): the spec's Mistake shoulder flex (MIS_SHOULDER 25) and elbow (MIS_ELBOW 75)
-// size the elbows-forward Wrong; no card gives them, no number appears in user copy; the layers panel judges them.
-const { start: START, end: END } = plateSpec.poses, MIS = plateSpec.mistake.pose;
-const ELBOWS_FORWARD = { reach: null, shoulder: { flex: MIS.shoulder.flex }, elbow: MIS.elbow, wrist: 0 };
+// lib_rope_triceps_pushdown's elbows-forward): EF_FLEX 50 and EF_ELBOW 95 size the elbows-forward Wrong; no card gives
+// them, no number appears in user copy; the layers panel judges them. LIB-PLATEFIX-1 (W2 panel L1, #379 6633524031:
+// "the elbow Wrong barely drifts"): they replace the spec's Mistake arm (shoulder 25, elbow 75), which belongs to the
+// leaning fault (c11) and left the elbow about 5 cm ahead of the right one; now it sits clearly ahead of the torso (c6).
+const { start: START, end: END } = plateSpec.poses;
+const EF_FLEX = 50, EF_ELBOW = 95;   // drawing values (above): upper arm forward of the thorax, elbow bend
+const ELBOWS_FORWARD = { reach: null, shoulder: { flex: EF_FLEX }, elbow: EF_ELBOW, wrist: 0 };
 export const stills = {
   start: { pose: START },
   end: { pose: END },
@@ -106,6 +109,9 @@ const zooms = [
       right: 'Elbows against the sides at the top of the return.',
       wrong: 'Elbows drifted forward, upper arms swung up.',
     },
+    // alt (W2 fix round, #385 6648438434): Right c5 (elbows at the sides), c7 (bar at upper chest); Wrong c6.
+    // `cite`: the card claim ids of each half's callout, caption and alt (lint/index.mjs zoomCites; #385 6649353130).
+    cite: { right: ['c5', 'c7'], wrong: ['c6'] },
     alt: {
       right: 'Side view, top of the pushdown. Upper arms hang down against the sides, bar at upper-chest level.',
       wrong: 'Side view, top of the pushdown. The upper arms swing forward and up, so the elbows leave the sides.',
@@ -123,11 +129,11 @@ const feel = {
   rows: [
     // The card's first row (back of the upper arm) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'lats', where: 'Sides of the back', at: { muscles: ['lats'] },
-      means: 'Your elbows drift forward, which brings in the lats.',
+      means: 'Elbows drifting forward brings in the lats.',   // D-FEEL-MEANS-CAUSAL: c6's cause, at its strength
       fix: 'Pin the elbows to your sides.',
       zoom: 'pushdown-elbow', claim: CL.c6 },
     { key: 'lower-back', where: 'Lower back pain', at: { muscles: ['lower_back'] },
-      means: 'You lean too far forward or arch your back.',
+      means: 'Leaning too far forward or arching the back strains the lower back.',   // D-FEEL-MEANS-CAUSAL: c11's words
       fix: "Stop and don't train through the pain. Stand taller, tilt only from the hips.",
       redFlag: 'back', claim: CL.lean },
     { key: 'elbows', where: 'Elbow discomfort or pain', at: { parts: ['elbow-left', 'elbow-right'] },
@@ -148,7 +154,7 @@ const MISTAKES = [
     fix: 'Go lighter and move with control.' },
 ];
 const RISKS = [
-  { key: 'lean', text: 'Leaning or arching strains the lower back.', claim: CL.c11 },
+  { key: 'lean', text: 'Leaning too far forward or arching the back strains the lower back.', claim: CL.c11 },   // c11's words (W2 panel)
   { key: 'elbows', text: 'Heavy loads feel uncomfortable in the elbows for many people.', claim: CL.c17 },
   { key: 'weight', text: 'Too much weight moved with momentum can lead to injury.', claim: CL.c16 },
 ];
@@ -174,17 +180,20 @@ export default {
       // card zoom wrong (c9). Not drawn (no hand zoom), so no pose or marker is set.
       { key: 'bent-back', label: 'Wrist bent back', pose: {}, markers: [], alt: 'Wrists bent back over the bar.' },
     ],
-    gripLine: 'Overhand full grip, hands about shoulder-width, thumbs wrapped. Wrists in line with the forearms.',
+    // c2. The wrist (c9) is the limitText line under it, so the gripLine no longer repeats it (W2 panel, #379 6633524031).
+    gripLine: 'Overhand full grip, hands about shoulder-width, thumbs wrapped.',
     cue: 'Wrist in line with the forearm.',   // the W2 hint text (c9)
   },
   contacts: ['standing-feet'],
   setup: [
-    { kind: 'adjust', text: 'Set the pulley at the top position and attach a straight bar.', claim: CL.c1 },
-    // CONVENTION (D-SHIP-GRIP (c)): 'bar on the heel of your palm' is the push key's ga:push-heel, source ga-push-heel.
-    { kind: 'grip', text: 'Grip overhand, hands shoulder-width, thumbs wrapped, bar on your palm heel.',
-      claim: C(['CONSENSUS', 'CONVENTION'], [ACE, 'hussain-2020', 'ga-push-heel'], 'card c2. The contact is pairs.mjs ga:push-heel (the card has no grip.handContact).') },
+    // The card's steps 1 and 2 share one step (c1, c2), so posture 'Straighten the arms fully at the bottom without a hard
+    // lockout.' (c8) gets a visible slot (D-TEXT-GOLDEN, #385 6637650243). The convention contact (ga:push-heel) is data
+    // only, not copy (D-SHIP-CONVCOPY, W2 panel, #379 6633524031), so 'bar on your palm heel' is gone.
+    { kind: 'adjust', text: 'Top pulley, straight bar. Grip overhand, hands shoulder-width, thumbs wrapped.',
+      claim: C(['CONSENSUS'], [ACE, 'ace-pressdown', 'hussain-2020'], 'card c1, c2') },
     { kind: 'position', text: 'Stand facing the machine, feet hip-width or staggered.', claim: CL.c3 },
     { kind: 'brace', text: 'Brace, shoulders down and back, elbows at sides, bar at upper chest.', zoom: 'pushdown-elbow', claim: CL.brace },
+    { kind: 'position', text: 'Straighten the arms fully at the bottom without a hard lockout.', claim: CL.c8 },
     { kind: 'load', text: 'Pick a weight you can move with control.', claim: CL.c16 },
   ],
   posture: [
