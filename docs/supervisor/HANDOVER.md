@@ -842,6 +842,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-07 ~17:45 UTC** (weekly 0.74 at 16:40).
+  - **Train 80:** #408 PLATEFIX-3b @ `4276d089` → main `8d5f4fd7`. Approved plates: assisted_pull_up, sled_pull, lying_leg_curl, smith_machine_bench_press, barbell_overhead_press. No app change, so no APK.
+  - **W5 READY** @ `d3f5e287` (#409, ships 10). Reviewer session_018Pv5bLiE6CbwmvLyLSLc1m. After the review, W5 merges `8d5f4fd7`; the supervisor checks the delta, then train 81 and the APK (46 guides).
+  - **W6** waits for its turn after W5. **W7** ships 19 (D-PF10-W7JOIN: 17 plus lying_leg_curl and sled_pull); it merges main and posts a card compare, with no flip yet.
+  - **Pause plan:** at 0.75-0.79, every session finishes its step and posts WAITING, the tick is disabled, and a one-shot resume is set after the Fri 11-13 08:00 reset.
 - **Update 11-07 ~14:15 UTC** (weekly 0.73 at 12:34; pause at 0.75-0.79 per the 80 % rule: WAITING to all, tick off, resume after the Fri 11-13 08:00 reset).
   - **Train 79:** #391 W4 @ `7222161c` → main `05382042` (6 How-tos, the app has 36). Delta review PASS (the merges after `f75df35e`). D-SHIP-W3-WALKTIME now covers the walker tests that timed out at 5 s. **APK sent** (run 42377249121, artifact 13577533441, fingerprint step success).
   - **W5 moved to #409** (`claude/lib-ship-w5-r`, D-SHIP-W5-REBRANCH: a MANIFEST commit lacked `[golden update]`, and the push hook blocks force-push). #392 is closed. Every ruling carries over. W5 is merging main, then READY.
