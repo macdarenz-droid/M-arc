@@ -10,6 +10,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 import { readHowTo } from './generated-module';
+import { W4_IDS } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -329,15 +330,20 @@ async function libraryCases() {
  *  row's own How-to feel spec; no is-playing or is-focus. Throws on the first failed check. */
 // LIB-SHIP W2 (ruling 3): the shipped library rows hands.mjs's noPairRuling rules to ship with no hand pair
 // LIB-SHIP W3 (ruling 3): plus W3's 4 card-no-zoom ids (hands/no-zoom.json, Q-W3-10), in registry order
+// LIB-SHIP W4 (ruling 3; D-SHIP-W4-FLIPSET): the 6 W4 ids (lb03 rows) ship with no hand pair too; merge of main 62d3dcb6:
+// both lanes' ids, in registry order (W3's lb01 rows, W4's lb03 rows, the W2 rows, W3's zoom row)
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus its 4 shipped ids (none has a hand chunk or pair), in registry order
-const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row',
+// (merge of main 7e060e83: both lanes' ids)
+const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', ...W4_IDS,
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
   'lib_horizontal_leg_press'];
 // LIB-SHIP W2 (ruling 3): the shipped library ids whose feel draws no mark (card watch [] and no pain part in any row)
 // LIB-SHIP W3: plus single_arm_lat_pulldown (its card's watch is [] and its shoulder row names no part), in registry order
+// LIB-SHIP W4: the three W4 shrugs (registry order, after W3's lb01 rows and before the W2 rows) draw no mark either
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus single_leg_romanian_deadlift (noMarkIds on this tree; the other 3 draw marks)
-const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
+const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug',
+  'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
 /** LIB-SHIP W2: the ids among `ids` whose How-to feel has no watch-listed non-primary muscle and no pain part in any row. */
 async function noMarkIds(base: string, ids: string[]) {
   const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));
@@ -387,7 +393,7 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
     const cases = await libraryCases();
     expect(cases.at(-1)!.row.id).toBe(F.ID);
     for (const { base, row } of cases) await feelChecks(base, row);
-  });
+  }, 600_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): 32 shipped rows; timed out at 180 s on 824d8456's unit-tz (Asia/Manila) CI; no assertion change
   it('LIB-SHIP W2: NO_MARK is exactly the shipped library ids whose feel draws no mark; a mark-drawing id on it, or a no-mark id off it, is red', async () => {
     const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
     expect(await noMarkIds(repo, LIBRARY.map(r => r.id))).toEqual(NO_MARK);
@@ -396,6 +402,12 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
     try { await expect(feelChecks(repo, rope)).rejects.toThrow(rope.id); } finally { NO_MARK.pop(); }
     const i = NO_MARK.indexOf(bench.id); NO_MARK.splice(i, 1);
     try { await expect(feelChecks(repo, bench)).rejects.toThrow(bench.id); } finally { NO_MARK.splice(i, 0, bench.id); }
+    // LIB-SHIP W4: a W4 mark-drawing id on it, and a W4 no-mark shrug off it, are red
+    const pendlay = LIBRARY.find(r => r.id === 'lib_pendlay_row')!, shrug = LIBRARY.find(r => r.id === 'lib_cable_shrug')!;
+    NO_MARK.push(pendlay.id);
+    try { await expect(feelChecks(repo, pendlay)).rejects.toThrow(pendlay.id); } finally { NO_MARK.pop(); }
+    const j = NO_MARK.indexOf(shrug.id); NO_MARK.splice(j, 1);
+    try { await expect(feelChecks(repo, shrug)).rejects.toThrow(shrug.id); } finally { NO_MARK.splice(j, 0, shrug.id); }
   });
   it('failure path: one row\'s mark moved to another muscle in the How-to source, without a page rebuild, is red', async () => {
     const m = mkdtempSync(join(tmpdir(), 'lib2b-feel-')); tmps.push(m);

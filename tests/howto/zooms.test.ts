@@ -80,7 +80,7 @@ describe('HT7-A1: every posture panel === golden B', () => {
       expect(page.split(L.ZDOTS)).toHaveLength(2);
     }
     expect(n).toBe(want);
-  });
+  }, 60_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): walks every shipped row (36 after main 7e060e83); timed out at the 5 s default on 76c2e190's unit-tz (Asia/Manila); no assertion change
   it.each(IDS)('%s: zdots === golden B\'s ZDOTS, which the page holds exactly once', id => {
     expect(chunks[id]!.zdots === L.ZDOTS).toBe(true);
     expect(FIXTURE.split(L.ZDOTS)).toHaveLength(2);
