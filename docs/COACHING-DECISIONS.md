@@ -3199,3 +3199,28 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   a zoom the crop engine cannot draw becomes a text checkpoint (golden B's "Start depth" precedent).
 - **Push hints are at most 6 words** (copy-lint `cue`); 11 shared texts fit ids.ts at 142 ids (1,977 of 2,048 B).
 - **The HT4-A5 twin records the vendor engine too**, since every library spec draws through it (D-LIB9-ENGINE).
+
+## LIB-PLATEFIX-1: plates fixed from the W2 layers panel (2026-11-04)
+
+- **Plan posted for ruling** on the LIB-PLATEFIX-1 PR ('PLATEFIX PLAN READY'). Card: lib-platefix-1-card.md on
+  claude/sup-lib4-cards; source: the W2 layers panel, #379 6633524031. Ids: dumbbell_fly,
+  bent_over_dumbbell_rear_delt_fly, reverse_lunge, romanian_deadlift (+ single_leg_romanian_deadlift held with it),
+  barbell_overhead_press, triceps_pushdown. Decisions are recorded here once ruled.
+- **Outcome (2026-11-07).** Ships romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge
+  (30 shipped with W3's). barbell_row, cable_fly and crunch are re-pinned only. barbell_overhead_press is held
+  (D-LIB13-PANEL2, plate items to LIB-PLATEFIX-3); dumbbell_fly and the rear delt fly are held for LIB-PLATEFIX-2.
+- **D-PLATEFIX-PINS** (#385 6635051630, extended 6647771285): only the listed lines of other tasks' test blocks were
+  edited, each re-measured, at least as strict, with a mutation, before/after listed.
+- **D-PLATEFIX-STAMP** (#385 6654532221): reviews.json stamps for the 4 ids and re-stamps of barbell_row and cable_fly;
+  the RDL pain-fix and lunge knee-box wording stay lint-conforming and are recorded as findings.
+- **D-PF-PAINNAMES-LIB** (#385 6657422689): golden B stays byte-locked; build-layers-page.mjs appends the library's pain
+  names (lower back, front shoulders, neck, feet) to the mirror's PAIN_NAMES, so no map label reads a raw part id.
+- **D-OWNER-REPIN** (#385 6686720061): the owner's standing OK ("Do all whats recommended. Whan u have question, answer
+  urself via recommended", 2026-11-06) approves superseding plate and page pins once a full panel passes the new version.
+- **D-PLATEFIX-SECOND** (#385 6687946433): merging after #384 and #404, this PR rebuilt the shared pages twice (equal
+  shas), appended its chain entries after main 8841246c's, proved every card fragment byte-equal to its approved plate
+  (cardcmp) and each layers page equal to the 3-way merge of base, the approved page and main's page plus only #404's
+  body-map hunks and the inline zoom groups (strip-back), then re-pinned: page and plate entries 'owner', layers pages
+  'supervisor'. Budgets were re-measured at 30 shipped.
+- **D-PF1-AFTERW3** (#385 6689539540): reverse_lunge stays flipped; PF1 merges after W3, whose layers build adds the
+  plate's inline zoom, so pilot-a3's layers page is re-pinned with the strip-back proof. L2-A4 gets the 600 s timeout.

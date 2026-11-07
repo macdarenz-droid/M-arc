@@ -145,7 +145,7 @@ export default {
   callouts: [
     { key: 'back', text: 'Flat back', anchor: { along: ['backMid', 'sacrum'], t: 0.5 }, cue: 'Keep the back flat, not rounded or arched, from start to finish.' },
     { key: 'knees', text: 'Soft knees', anchor: 'knee.r', cue: 'Keep the knees slightly bent and the hips hinged, not standing tall.' },
-    { key: 'bar', text: 'Bar to<br>belly', anchor: 'grip.r', cue: 'Pull the bar to the belly button or low chest, not the neck.' },
+    { key: 'bar', text: 'Bar to<br>belly', anchor: 'grip.r', cue: 'Pull the bar to the belly button or low chest.' },   // c5, c6 (LIB-PLATEFIX-1, Q-W2-15: 'not the neck' had no claim)
   ],
   tempo: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
@@ -159,5 +159,5 @@ export default {
       { key: 'hips', text: 'Hips throw', anchor: 'buttock', cue: 'The hips and lower back throw the weight up.' },
     ],
   },
-  alt: 'Barbell row, side view. Hinged at the hips with a flat back and slightly bent knees, the lifter pulls the bar from straight arms, over the middle of the foot, to the belly button or low chest, driving the elbows back.',
+  alt: 'Barbell row, side view. Hinged at the hips with a flat back and slightly bent knees, the lifter pulls the bar from straight arms to the belly button or low chest, driving the elbows back.',
 };

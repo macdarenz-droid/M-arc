@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=c9e0e4b76d047619a4e74cebf325473e8689f95add5b0e3cdae333b5a4b054ba
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=9d3be8a6d3e1a09be452f9d9598f6bb1a6a5f985d215a38d25814bec17474602
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -88,6 +88,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "ace-pressdown": {
+    "id": "ace-pressdown",
+    "cite": "How To Do a Tricep Pressdown (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/333/tricep-pressdown/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "ace-pushdown": {
     "id": "ace-pushdown",
     "cite": "Triceps Pushdowns (ACE Exercise Library)",
@@ -103,6 +111,22 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-10-02"
+  },
+  "ace-revlunge": {
+    "id": "ace-revlunge",
+    "cite": "ACE Exercise Library, Reverse Lunge",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/319/reverse-lunge/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-romanian-deadlift": {
+    "id": "ace-romanian-deadlift",
+    "cite": "ACE Exercise Library: Romanian Deadlift",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/317/romanian-deadlift/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
   },
   "ace-row-machine": {
     "id": "ace-row-machine",
@@ -148,6 +172,14 @@
     "id": "ace-seated-row",
     "cite": "ACE, Seated Row (machine version with a chest pad; torso, elbow and wrist cues carried over)",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-sl-rdl": {
+    "id": "ace-sl-rdl",
+    "cite": "ACE Exercise Library: Single-arm, Single-leg Romanian Dead Lift",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/127/single-arm-single-leg-romanian-dead-lift/",
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
@@ -296,6 +328,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "bezerra-2021": {
+    "id": "bezerra-2021",
+    "cite": "Influence of Trunk Position during Three Lunge Exercises on Muscular Activation in Trained Women",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34055138/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "bloomquist2013": {
     "id": "bloomquist2013",
     "cite": "Bloomquist K et al. Effect of range of motion in heavy load squatting on muscle and tendon adaptations. Eur J Appl Physiol 2013;113(8):2133-42",
@@ -350,6 +390,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/34864904/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "cat-revlunge": {
+    "id": "cat-revlunge",
+    "cite": "Catalyst Athletics, Reverse Lunge (Exercise Library)",
+    "url": "https://www.catalystathletics.com/exercise/735/Reverse-Lunge/",
+    "kind": "coach",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "catalyst-hlr": {
@@ -600,6 +648,22 @@
     "access": "full",
     "checked": "2026-11-04"
   },
+  "ga-push-heel": {
+    "id": "ga-push-heel",
+    "cite": "LIB-7 push hand convention, pairs.mjs CONVENTIONS ga:push-heel: heel of the palm, extension 0 to 15",
+    "url": "tools/plates/library/hands/pairs.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-04"
+  },
+  "gentilcore-slrdl": {
+    "id": "gentilcore-slrdl",
+    "cite": "Perfecting the 1-Legged RDL (Tony Gentilcore)",
+    "url": "https://tonygentilcore.com/2011/06/perfecting-the-1legged-rdl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "glassbrook2017": {
     "id": "glassbrook2017",
     "cite": "Glassbrook DJ et al. Biomechanical differences between the high-bar and low-bar back-squat. J Strength Cond Res 2017;31(9):2618-2634",
@@ -703,6 +767,14 @@
     "kind": "secondary",
     "access": "full",
     "checked": "2026-11-04"
+  },
+  "hussain-2020": {
+    "id": "hussain-2020",
+    "cite": "Muscle Fatigue in the Three Heads of Triceps Brachii During Intensity and Speed Variations of Triceps Push-Down Exercise",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7047337/",
+    "kind": "peer-reviewed",
+    "access": "full",
+    "checked": "2026-09-30"
   },
   "jakobsen2012": {
     "id": "jakobsen2012",
@@ -816,6 +888,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "lee2018": {
+    "id": "lee2018",
+    "cite": "An electromyographic and kinetic comparison of conventional and Romanian deadlifts.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30662500/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "lehman2004": {
     "id": "lehman2004",
     "cite": "Lehman GJ et al. (2004) Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: an experimental study. Dyn Med 3(1):4",
@@ -896,6 +976,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "mcallister2014": {
+    "id": "mcallister2014",
+    "cite": "Muscle activation during various hamstring exercises.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24149748/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "mcgill-2014": {
     "id": "mcgill-2014",
     "cite": "Muscle activity and spine load during pulling exercises: influence of stable and labile contact surfaces and technique coaching (McGill, Cannon, Andersen, J Electromyogr Kinesiol)",
@@ -916,6 +1004,14 @@
     "id": "mcgill2015",
     "cite": "McGill S, Andersen J, Cannon J (2015) Muscle activity and spine load during anterior chain whole body linkage exercises: the body saw, hanging leg raise and walkout from a push-up. J Sports Sci 33(4):419-26",
     "url": "https://pubmed.ncbi.nlm.nih.gov/25111163/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "mo2023": {
+    "id": "mo2023",
+    "cite": "Effects of loading positions on the activation of trunk and hip muscles during flywheel and dumbbell single-leg Romanian deadlift exercises.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38093908/",
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
@@ -960,6 +1056,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "nasm-rdl": {
+    "id": "nasm-rdl",
+    "cite": "Romanian Deadlift Barbell (NASM)",
+    "url": "https://blog.nasm.org/romanian-deadlift-basics",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "nfpt-rope": {
     "id": "nfpt-rope",
     "cite": "How to do Tricep Pushdowns with the Rope (Robert Bovee, NFPT, 2025)",
@@ -980,6 +1084,14 @@
     "id": "nhs-elbow-pain",
     "cite": "NHS, Elbow and arm pain",
     "url": "https://www.nhs.uk/symptoms/elbow-and-arm-pain/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "nhs-knee": {
+    "id": "nhs-knee",
+    "cite": "NHS, Knee pain",
+    "url": "https://www.nhs.uk/conditions/knee-pain/",
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
@@ -1095,6 +1207,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "pel-revlunge": {
+    "id": "pel-revlunge",
+    "cite": "Peloton (Rebecca Schumer, physical therapist), Reverse Lunge: How to Do It, Benefits, & Variations",
+    "url": "https://www.onepeloton.com/blog/reverse-lunge",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-03"
   },
   "physitrack-longsitrow": {
     "id": "physitrack-longsitrow",
@@ -1288,10 +1408,26 @@
     "access": "full",
     "checked": "2026-10-02"
   },
+  "sl-romanian-deadlift": {
+    "id": "sl-romanian-deadlift",
+    "cite": "How to Do Romanian Deadlift: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/romanian-deadlift/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "sl-rope": {
     "id": "sl-rope",
     "cite": "How to Do Tricep Pushdown With Rope: Muscles Worked & Proper Form (StrengthLog, 2023)",
     "url": "https://www.strengthlog.com/?p=2541",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "sl-sl-rdl": {
+    "id": "sl-sl-rdl",
+    "cite": "How to Do Single Leg Romanian Deadlift: Muscles Worked & Proper form (StrengthLog)",
+    "url": "https://www.strengthlog.com/single-leg-romanian-deadlift/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=3231e340d2bf25f69a62e81fb9360f7005bb63a835c2d7b0fc174b94c668d4b4
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=a7e34858eb1a16d4b8111daaa2e7aba9ba3e6e359811beeb1b5c1796d4ec89b2
 // The rope-triceps-pushdown posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-rope-triceps-pushdown.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives
