@@ -18,10 +18,12 @@ const EIGHT = Object.keys(json('tools/plates/plates.json'));
  *  D-SHIP-W2-STAMP #379 6636105974, less crunch and seated_leg_curl held by Q6/Q7 6636501505, 6636616603; W3: the 9 of
  *  #384 6653062201, less assisted_pull_up and underhand_lat_pulldown (LIB-PLATEFIX-3) and incline_machine_press and
  *  shoulder_press (D-SHIP-W3-NOPAIR 6681221802); registry order puts lb01 first and zoom last). */
+// LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221; D-PLATEFIX-PINS / PIN GO): plus romanian_deadlift,
+// single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge, in registry order (barbell_overhead_press held)
 const W3_SHIPPED = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
   'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'];
-const RULED_SHIPPED = [...W3_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
-  'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
+const RULED_SHIPPED = [...W3_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+  'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
 let reg: any, content: any, P: any, keyMods: any[];
 beforeAll(async () => {
@@ -739,4 +741,30 @@ describe('LIB-SHIP W7 D-PFR-L4: red-flag feel rows mark their pain region', () =
     }
     expect(bad).toEqual([]);
   }, 60_000);
+});
+
+// LIB-SHIP W7 F-PAIN-NAMES (supervisor, after #385 D-PF-PAINNAMES-LIB): no W7 feel row's map label names a raw body-map
+// part id ("Marked: lower-back-erectors-left …"); each marked part reads as a place name.
+describe('LIB-SHIP W7 F-PAIN-NAMES: feel-row labels name places, not part ids', () => {
+  const W7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
+  const rawIds = async () => { const { FRONT_PARTS, BACK_PARTS } = await import('../../src/svg/bodyMuscles'); return [...FRONT_PARTS, ...BACK_PARTS].map(p => p.id); };
+  const labelProblems = (page: string, pre: string, ids: string[]) => [...page.matchAll(new RegExp(`id="(${pre}-row-[a-z0-9-]+)"[^>]*data-label="([^"]*)"`, 'g'))]
+    .flatMap(([, btn, label]) => { const marked = /Marked: ([^.]*)\./.exec(label!)?.[1] ?? '';
+      return marked.split(/ and |, /).filter(x => ids.includes(x)).map(x => `${btn}: raw part id ${x}`); });
+  it('every W7 row label on the lb08/lb09/lb10 layers pages, and at least one W7 label carries a mark', async () => {
+    const ids = await rawIds(), pages = ['lb08', 'lb09', 'lb10'].map(b => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`), 'utf8'));
+    const bad: string[] = []; let marked = 0;
+    for (const id of W7) {
+      const pre = id.slice(4).replace(/_/g, '-'), page = pages.find(p => p.includes(`id="${pre}-feel-map"`))!;
+      bad.push(...labelProblems(page, pre, ids));
+      marked += [...page.matchAll(new RegExp(`id="${pre}-row-[^"]+"[^>]*data-label="[^"]*Marked: `, 'g'))].length;
+    }
+    expect(bad).toEqual([]);
+    expect(marked).toBeGreaterThan(30);
+  });
+  it('mutation: a label that names lower-back-erectors-left is red', async () => {
+    const ids = await rawIds();
+    const page = '<button type="button" class="fr-btn" id="dead-bug-row-low-back" aria-expanded="false" data-label="Main: abs. Marked: lower-back-erectors-left and lower back.">';
+    expect(labelProblems(page, 'dead-bug', ids)).toEqual(['dead-bug-row-low-back: raw part id lower-back-erectors-left']);
+  });
 });

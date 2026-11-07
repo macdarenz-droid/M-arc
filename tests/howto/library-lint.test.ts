@@ -414,15 +414,30 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   // LIB-SHIP W3 (ruling 3): W3's 9 (#384 6653062201; D-SHIP-W3-NOPAIR 6681221802), lb01 first and zoom last in registry order
   const W3_LIB = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
     'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'];
-  const RULED_LIB = [...W3_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
-    'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221; D-PLATEFIX-PINS / PIN GO): its 4 ids join them in registry order, so
+  // single_leg_romanian_deadlift ships with its parent romanian_deadlift in the same head (D-SHIP-FAMILY ruling 4: the
+  // resolver reads the parent from a row shipped in this head, gen/library-gate.mjs).
+  const RULED_LIB = [...W3_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+    'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
+    'lib_horizontal_leg_press'];
   // LIB-SHIP W3: the mapped children that ship now, in CHILDREN order; the rest of the map (incline_machine_press,
-  // shoulder_press, underhand_lat_pulldown, leg_press_calf_raise, single_leg_romanian_deadlift) is still held
+  // shoulder_press, underhand_lat_pulldown, leg_press_calf_raise) is still held. LIB-PLATEFIX-1: single_leg_romanian_deadlift
+  // ships too (above). Another mapped child shipped, or SLRDL shipped without its parent, is red.
   const W3_CHILDREN = ['lib_chin_up', 'lib_close_grip_pulldown', 'lib_hanging_knee_raise', 'lib_single_arm_lat_pulldown', 'lib_horizontal_leg_press'];
   const SLRDL = 'lib_single_leg_romanian_deadlift';
+  /** LIB-PLATEFIX-1: a mapped child among `ids` that W3 does not ship, or SLRDL among them without its parent. */
+  const childProblems = (ids: string[]) => [...[...cards.keys()].filter(id => ids.includes(id) && !W3_CHILDREN.includes(id)).map(id => `${id}: a mapped child ships`),
+    ...(ids.includes(SLRDL) && !ids.includes('lib_romanian_deadlift') ? [`${SLRDL}: ships without its parent lib_romanian_deadlift`] : [])];
+  it('LIB-PLATEFIX-1 mutations: a mapped child shipped, or single_leg_romanian_deadlift shipped without its parent, is red', () => {
+    const ids = SHIPPED.map(r => r.id), child = [...cards.keys()].find(id => !W3_CHILDREN.includes(id) && id !== SLRDL)!;
+    expect(childProblems([...ids, child])).toEqual([`${child}: a mapped child ships`]);
+    expect(childProblems(ids.filter(id => id !== 'lib_romanian_deadlift'))).toEqual([`${SLRDL}: ships without its parent lib_romanian_deadlift`]);
+  });
   it('the map covers every inherit[] field of the 9 cards exactly, and no field is unmapped', () => {
     expect(SHIPPED.map(r => r.id)).toEqual([...EIGHT, ...RULED_LIB]);
-    expect([...cards.keys(), SLRDL].filter(id => SHIPPED.some(r => r.id === id))).toEqual(W3_CHILDREN);
+    expect([...cards.keys(), SLRDL].filter(id => SHIPPED.some(r => r.id === id))).toEqual([...W3_CHILDREN, SLRDL]);
+    expect(childProblems(SHIPPED.map(r => r.id))).toEqual([]);
+    expect([SLRDL, 'lib_romanian_deadlift'].filter(id => SHIPPED.some(r => r.id === id))).toEqual([SLRDL, 'lib_romanian_deadlift']);
     for (const [id, card] of cards) {
       expect([id, card.inherit.length > 0, typeof card.parent]).toEqual([id, true, 'string']);
       expect([id, FM.unmappedFields(id, card)]).toEqual([id, []]);

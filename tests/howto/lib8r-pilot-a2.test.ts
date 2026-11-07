@@ -6,6 +6,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { MAIN_GOLDEN } from './platefix-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -316,17 +317,25 @@ describe('LIB-8R A2, A3, A12, A13: the PILOT-A2 pin (Do 7) and the untouched pil
     const named = copy(f0); named.entries[1].why += ' "lib_crunch"';
     expect((await chainProblems(named)).some((p: string) => /lib_crunch/.test(p))).toBe(true);
   });
+  // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]): superseding plate entries now follow main's (barbell_row,
+  // barbell_overhead_press, romanian_deadlift and triceps_pushdown in pilot A, cable_fly in pilot B), so each id's latest
+  // plate entry is compared (still 17 x 9 = 153); the 5 superseded entries stay main's, byte-equal (MAIN_GOLDEN).
   it('A2: pilot A and pilot B rebuild to their pinned pages, and each pinned plate equals its golden fragments (153 equalities)', async () => {
-    let n = 0;
+    let n = 0, superseded = 0;
     for (const b of ['pilot-a', 'pilot-b']) {
       const row = all.find((r: any) => r.batchFile === `tools/plates/library/batches/${b}.json`), html = await BG.platesPage(row, all);
       const plates = G.extractPlates(html), g = readJson(`tests/howto/golden/library/${b}.json`);
-      for (const e of g.entries.filter((x: any) => x.kind === 'plate')) {
+      expect(sha(JSON.stringify(g.entries.slice(0, MAIN_GOLDEN[b]!.n)))).toBe(MAIN_GOLDEN[b]!.sha);
+      const latest = [...G.latestEntries(g.entries).values()].filter((x: any) => x.kind === 'plate');
+      superseded += g.entries.filter((x: any) => x.kind === 'plate').length - latest.length;
+      expect(G.latestEntries(g.entries).get('page').pageSha256, b).toBe(sha(html));
+      for (const e of latest) {
         const p = plates.find((x: any) => x.chromeId === e.chromeId);
         for (const [k, v] of Object.entries(G.fragmentsOf(p))) { expect(v, `${e.id} ${k}`).toBe(e.fragments[k]); n++; }
       }
     }
     expect(n).toBe(153);
+    expect(superseded).toBe(5);
   });
   it('A12: no PILOT-A2 row is shipped; mutation: one row set to shipped is caught', () => {
     const rowsOf = (t: any) => Object.values(t.rows).map((r: any) => r.stage);

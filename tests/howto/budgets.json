@@ -353,6 +353,60 @@
       "reason": "LIB-SHIP W2: the 9 ship (#379 D-SHIP-W2-STAMP); measured + 10 % on claude/lib-ship-w2 after the pin, flip and generate."
     },
     {
+      "chunk": "ht-romanian-deadlift-*.js",
+      "rawMax": 44983,
+      "gzMax": 10949,
+      "measuredRaw": 40893,
+      "measuredGz": 9953,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree, after 977f66f6 moved the grip cites to CITES.grip, and the real regenerate); re-measured after merging main 8841246c."
+    },
+    {
+      "chunk": "posture-romanian-deadlift-*.js",
+      "rawMax": 32488,
+      "gzMax": 5770,
+      "measuredRaw": 29534,
+      "measuredGz": 5245,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate."
+    },
+    {
+      "chunk": "feel-romanian-deadlift-*.js",
+      "rawMax": 28034,
+      "gzMax": 8495,
+      "measuredRaw": 25485,
+      "measuredGz": 7722,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
+    },
+    {
+      "chunk": "ht-single-leg-romanian-deadlift-*.js",
+      "rawMax": 51551,
+      "gzMax": 11285,
+      "measuredRaw": 46864,
+      "measuredGz": 10259,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree, after 977f66f6 moved the grip cites to CITES.grip, and the real regenerate); re-measured after merging main 8841246c."
+    },
+    {
+      "chunk": "posture-single-leg-romanian-deadlift-*.js",
+      "rawMax": 37141,
+      "gzMax": 6658,
+      "measuredRaw": 33764,
+      "measuredGz": 6052,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate."
+    },
+    {
+      "chunk": "feel-single-leg-romanian-deadlift-*.js",
+      "rawMax": 25639,
+      "gzMax": 8223,
+      "measuredRaw": 23308,
+      "measuredGz": 7475,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
+    },
+    {
       "chunk": "ht-upright-row-*.js",
       "rawMax": 37464,
       "gzMax": 9598,
@@ -432,6 +486,60 @@
       "measuredGz": 7308,
       "setBy": "LIB-SHIP",
       "reason": "LIB-SHIP W2: the 9 ship (#379 D-SHIP-W2-STAMP); measured + 10 % on claude/lib-ship-w2 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-triceps-pushdown-*.js",
+      "rawMax": 36715,
+      "gzMax": 9189,
+      "measuredRaw": 33377,
+      "measuredGz": 8353,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
+    },
+    {
+      "chunk": "posture-triceps-pushdown-*.js",
+      "rawMax": 19759,
+      "gzMax": 4749,
+      "measuredRaw": 17962,
+      "measuredGz": 4317,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate."
+    },
+    {
+      "chunk": "feel-triceps-pushdown-*.js",
+      "rawMax": 26626,
+      "gzMax": 8491,
+      "measuredRaw": 24205,
+      "measuredGz": 7719,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
+    },
+    {
+      "chunk": "ht-reverse-lunge-*.js",
+      "rawMax": 75584,
+      "gzMax": 19080,
+      "measuredRaw": 68712,
+      "measuredGz": 17345,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
+    },
+    {
+      "chunk": "posture-reverse-lunge-*.js",
+      "rawMax": 31044,
+      "gzMax": 5920,
+      "measuredRaw": 28221,
+      "measuredGz": 5381,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate."
+    },
+    {
+      "chunk": "feel-reverse-lunge-*.js",
+      "rawMax": 28819,
+      "gzMax": 8531,
+      "measuredRaw": 26199,
+      "measuredGz": 7755,
+      "setBy": "LIB-PLATEFIX-1",
+      "reason": "LIB-PLATEFIX-1: romanian_deadlift, single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge ship (#385 D-PLATEFIX-STAMP); measured + 10 % on claude/lib-platefix-1 (main tree) after the pin, flip and the real regenerate; re-measured after merging main 8841246c."
     },
     {
       "chunk": "ht-cable-fly-*.js",
@@ -780,9 +888,9 @@
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 26,
-      "rawMax": 16306,
-      "gzMax": 3890,
+      "n": 30,
+      "rawMax": 18815,
+      "gzMax": 4488,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -792,8 +900,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 4735163,
-      "gzMax": 1193382,
+      "rawMax": 5463650,
+      "gzMax": 1376979,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

@@ -118,15 +118,19 @@ const feel = {
   secondary: [],
   watch: [{ muscleId: 'lower_back', plain: 'Leaning forward makes the lower back work harder.' }],
   // The card's first row (front of thighs and hips, c9) has no fix, so it is left off the rows (D-SHIP-Q16).
-  feelLine: 'You should feel this in the front of your thighs and your hips.',
+  feelLine: 'You should feel this in your legs and hips.',   // c9 (W2 fix round, #385 6648438434)
   rows: [
     { key: 'lower-back', where: 'Lower back', at: { muscles: ['lower_back'] },
+      // W2 fix round (#385 6648438434, D-FEEL-MEANS-CAUSAL): the card row's own means, at c8's strength ("can").
       means: 'Leaning the chest forward can make the lower-back muscles work harder.',
       fix: "Stay upright. Go lighter if you can't.",
       zoom: 'trunk', claim: C(['DATA', 'WEAK', 'CONSENSUS'], ['bezerra-2021', CAT], 'c8, c6') },
     { key: 'knee', where: 'Very painful, locking or giving-way knee', at: { parts: ['knee-left', 'knee-right'] },
-      means: 'Not a training feeling.',
-      fix: 'Stop the set.',
+      // W2 fix round (#385 6648438434, D-FEEL-MEANS-CAUSAL): the card's "Not a training feeling." names no cause, so it
+      // moves to the fix and no label prints. c13's urgent advice is the linked knee box's (C8: no red-flag wording in a
+      // row's fix).
+      means: '',
+      fix: "Stop the set. It's not a training feeling.",
       redFlag: 'knee', claim: CL.c13 },
   ],
   claim: CL.c9,
@@ -136,6 +140,9 @@ const feel = {
 const RISKS = [
   { key: 'heavy', text: 'Too heavy a load costs the upright trunk, the controlled descent and balance.', claim: CL.c6 },
   { key: 'crash', text: 'Crashing into the bottom position instead of lowering under control.', claim: CL.c7 },
+  // handlingMistake 'Flaring the ribcage' with its fix (c18): the W2 panel's dropped tuck fix, in the only visible slot
+  // left (D-TEXT-GOLDEN; the plate's two Mistake tells show the flare).
+  { key: 'flare', text: 'Flaring the ribcage. Tuck the pelvis under to protect the lower back.', claim: CL.c18 },
 ];
 
 export default {
@@ -149,7 +156,10 @@ export default {
     { kind: 'position', text: 'Dumbbells at your sides, feet about hip to shoulder width apart.',
       claim: C(['CONSENSUS'], [ACE, CAT], 'c1, c11 (card grip.type)') },
     { kind: 'position', text: 'Step one foot back, a full-length step.', claim: C(['CONSENSUS'], [ACE, CAT], 'c1, c7') },
-    { kind: 'position', text: 'Lower the back knee slowly toward the floor, chest up.', zoom: 'trunk', claim: CL.c4 },
+    // D-TEXT-GOLDEN (#385 6637650243) and the W2 panel: the posture checkpoint 'Weight even' (c3) is said here too; the
+    // plate's 'Weight even' cue now says "at the bottom" as well (W2 fix round, #385 6648438434).
+    { kind: 'position', text: 'Lower the back knee slowly, chest up. Weight even at the bottom.', zoom: 'trunk',
+      claim: C(['CONSENSUS'], [ACE, CAT], 'c4, c3') },
     { kind: 'position', text: 'Press the front foot down, swing the back leg forward to stand.', claim: CL.c5 },
     { kind: 'finish', text: 'Alternate legs, or finish all reps on one side before switching.', claim: CL.c12 },
   ],
@@ -164,7 +174,7 @@ export default {
       anchor: { landmark: 'chest', pose: 'end' }, claim: CL.c18 },
     { key: 'drop', label: 'Dropping fast', detail: 'Lower slowly. Use a weight that lets you move smoothly.',
       anchor: { landmark: 'hip.r', pose: 'end' }, claim: C(['CONSENSUS'], [CAT, PEL], 'c7, c16') },
-    { key: 'weight', label: 'Weight even', detail: 'Weight about even on both feet at the bottom.',
+    { key: 'weight', label: 'Weight even', detail: 'At the bottom, share the weight about evenly between both feet.',
       anchor: { landmark: 'buttock', pose: 'end' }, claim: CL.c3 },
   ],
   feel,

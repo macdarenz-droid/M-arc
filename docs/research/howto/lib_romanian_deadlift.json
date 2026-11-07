@@ -1,0 +1,24 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=5fe32280d2858a873a2604faad1c330a9ad7a604b46fb1f17f4cf2cb4faaa224
+{
+  "id": "lib_romanian_deadlift",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/romanian_deadlift.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-romanian-deadlift",
+    "sl-romanian-deadlift",
+    "nasm-rdl",
+    "mcallister2014",
+    "lee2018",
+    "acsm2009",
+    "macdougall1985",
+    "baechle-grip",
+    "hold-default",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}
