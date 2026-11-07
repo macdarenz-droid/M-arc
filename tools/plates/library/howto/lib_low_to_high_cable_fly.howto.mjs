@@ -139,16 +139,13 @@ const feel = {
   feelLine: 'You should feel this in your upper chest, under the collarbones.',
   rows: [
     // The card's first row (upper chest) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
-    { key: 'lean', where: 'Front shoulders, body leaning forward', at: { muscles: ['front_delts'] },
+    // W6 panel K1/K3 (#393): the card's row title 'Shoulder' (where you feel it), not 'Shoulder pain'; redFlag 'shoulder'
+    // links the shoulder stop box. W6 pfc L4 (#393 6701002884, D-PFC-ROUND1): the two c7 rows ('Front shoulders, body
+    // leaning forward' and 'Shoulder') said the same thing, so they are one row.
+    { key: 'lean', where: 'Shoulder', at: { muscles: ['front_delts'] },
       means: 'You are leaning forward, often because the weight is too heavy.',
       fix: 'Lower the weight and keep your trunk vertical.',
-      zoom: 'low-high-trunk', claim: CL.c7 },
-    // W6 panel K1/K3 (#393): the card's row title 'Shoulder' (where you feel it), not 'Shoulder pain'; redFlag 'shoulder'
-    // links the shoulder stop box.
-    { key: 'shoulder', where: 'Shoulder', at: { muscles: ['front_delts'] },
-      means: 'You are leaning forward.',
-      fix: 'Lower the weight. Keep your trunk vertical.',
-      redFlag: 'shoulder', claim: CL.c7 },
+      zoom: 'low-high-trunk', redFlag: 'shoulder', claim: CL.c7 },
   ],
   claim: C(['CONSENSUS', 'MECH'], [PG, SL], 'c8, c9'),
 };
@@ -197,8 +194,8 @@ export default {
     { kind: 'adjust', text: 'Set both handles low, between knee and hip height.', claim: CL.c1 },
     { kind: 'position', text: 'Take a handle in each hand. Staggered stance, trunk upright.', zoom: 'low-high-trunk', claim: CL.c3 },
     { kind: 'brace', text: "Brace your abs. Don't arch your low back.", claim: CL.c2 },
-    { kind: 'load', text: 'Choose a weight you can lift without leaning forward.', zoom: 'low-high-trunk', claim: CL.c7 },
-    { kind: 'load', text: 'Choose a weight that lets you keep a soft elbow bend.', claim: CL.c16 },
+    // W6 pfc L6 (#393 6701002884, D-PFC-ROUND1): steps 4 and 5 both said "Choose a weight…", so they are one step (c7, c16)
+    { kind: 'load', text: 'Choose a weight you can lift upright, with a soft elbow bend.', zoom: 'low-high-trunk', claim: C(['CONSENSUS'], [ACE, PG], 'c7, c16') },
   ],
   posture: [
     { key: 'trunk', label: 'Trunk vertical', detail: 'Trunk vertical, no forward lean.',
