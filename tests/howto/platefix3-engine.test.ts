@@ -6,6 +6,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { W5, lessW5 } from './lib-ship-w5';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -58,12 +59,18 @@ describe('PF3 E2: path guides get the path CSS (Silent Black arrowheads)', () =>
 // the strength of this block (build-layers-page.mjs's key is already checked against its file there).
 // D-PF3-W3MERGE: after W3 (main 62d3dcb6) the library MANIFEST has 35 rows (W3's 13 added); was 22, now 35, each row still checked
 describe('PF3 E1/E2 MANIFEST re-pin', () => {
+  // LIB-SHIP W5: the 35 rows and W5's 27 (62)
   it('every one of the 35 rows pins the current render/closeup/zoom.mjs and build-layers-page.mjs', () => {
     const sha = (p: string) => createHash('sha256').update(readFileSync(p)).digest('hex');
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
-    const rows = Object.entries<any>(m.rows);
+    // LIB-SHIP W5 (#392 Q-W5-10 PIN GO; lib-ship-w5.ts): the MANIFEST also holds W5's 27 rows (35 -> 62); the 35 are checked
+    // as before with W5's taken out by lessW5, and every one of the 62 must pin the same two current files
+    const rows = Object.entries<any>(lessW5(JSON.parse(JSON.stringify(m))).rows);
     expect(rows).toHaveLength(35);
+    const all = Object.entries<any>(m.rows);
+    expect(all).toHaveLength(35 + W5.length);
+    for (const id of W5) expect(id in m.rows, id).toBe(true);
     for (const k of ['tools/plates/library/render/closeup/zoom.mjs', 'tools/plates/library/build-layers-page.mjs'])
-      for (const [id, r] of rows) expect(r.files[k], `${id} ${k}`).toBe(sha(k));
+      for (const [id, r] of all) expect(r.files[k], `${id} ${k}`).toBe(sha(k));
   });
 });

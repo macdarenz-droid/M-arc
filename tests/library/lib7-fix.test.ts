@@ -90,8 +90,13 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
     expect(hp.pairsOf(P, reg.shippedIds())).toEqual({
       pairOf: { 'chin-up': 'bar-hang-only-curled-under', 'hanging-knee-raise': 'bar-hang-over', 'inverted-row': 'bar-row-only-curled-over',
         'close-grip-pulldown': 'v-handle-pull-only-curled-neutral-overhead', 'single-arm-lat-pulldown': 'd-handle-pull-only-curled-unstated',
+        // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): lb05's 5 keyed curls, in registry order; hammer_curl
+        // (hands/no-zoom.json, D-SHIP-W5-HAMMER), front_squat (gap-key) and the 3 bodyweight ids (archetype none) get no pair
+        'preacher-curl': 'ez-curl-under', 'alternating-dumbbell-curl': 'curl-dumbbell-under', 'barbell-curl': 'curl-bar-under', 'ez-bar-curl': 'ez-curl-angled', 'reverse-curl': 'ez-curl-over',
         'dumbbell-biceps-curl': 'curl-dumbbell-under' },
-      keys: ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated', 'curl-dumbbell-under'],
+      // LIB-SHIP W5: 6 -> 10 keys; the curl key now comes in at alternating_dumbbell_curl, ahead of the 3 new curl keys
+      keys: ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated',
+        'ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over'],
     });
     const fresh = await import(/* @vite-ignore */ `${url('tools/plates/library/hands/pairs.mjs')}?lib7fix=${Date.now()}`);
     expect(fresh.HAND_OF_ID).toEqual(P.HAND_OF_ID);

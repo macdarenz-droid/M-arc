@@ -10,6 +10,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { RULED, checkC3Library, checkConventionGrip, checkGripLibrary } from './checks/c3-library';
 import { checkC3 } from './checks/c3';
+import { W5 } from './lib-ship-w5';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -23,7 +24,11 @@ const EIGHT = Object.keys(json('tools/plates/plates.json'));
 // single_leg_romanian_deadlift, triceps_pushdown and reverse_lunge, in registry order (barbell_overhead_press held)
 const W3_SHIPPED = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
   'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'];
-const RULED_SHIPPED = [...W3_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+// LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET #392 6682188871 + D-SHIP-W5-PREACHER 6683213580): plus the 10 flipped lb04/lb05
+// ids, in registry order (lb04's 4, then lb05's 6, after W3's lb01-lb03 rows); the other 17 W5 rows are held
+const W5_SHIPPED = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat',
+  'lib_preacher_curl', 'lib_hammer_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];
+const RULED_SHIPPED = [...W3_SHIPPED, ...W5_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
 let reg: any, content: any, P: any, keyMods: any[];
@@ -39,6 +44,11 @@ describe('LIB-SHIP A1: the shipped set', () => {
     const eleven = ['hip_thrust', 'pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch', 'overhead_cable_triceps_extension',
       'cable_rear_delt_fly', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'leg_press_calf_raise'].map(s => `lib_${s}`);
     expect(reg.shippedIds().filter((id: string) => eleven.includes(id))).toEqual([]);
+    // LIB-SHIP W5 (D-SHIP-W5-FLIPSET, ruling 3): of the 27 W5 rows exactly the 10 ship; the 17 held stay approved-plate
+    const held = W5.filter(id => !W5_SHIPPED.includes(id));
+    expect(held).toHaveLength(17);
+    expect(reg.shippedIds().filter((id: string) => held.includes(id))).toEqual([]);
+    expect(held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(held.map(id => [id, 'approved-plate']));
   });
 });
 
@@ -253,8 +263,16 @@ describe('LIB-SHIP D-SHIP-PAIR-NOZOOM (#379 6637870829): pairsOf leaves out ids 
     const { pairOf, keys } = HP.pairsOf(pairs, R.shippedIds());
     expect(pairOf['dumbbell-biceps-curl']).toBe('curl-dumbbell-under');
     // LIB-SHIP W3: W3's 5 pair rows (registry order, lb01 first) carry their sub-keys; the curl's key stays last
+    // LIB-SHIP W5 (D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, ruling 3): lb05's 5 keyed curls follow in registry order
+    // (preacher ez-curl-under; alternating_dumbbell_curl takes the curl key first, so it moves up from last; barbell
+    // curl-bar-under; ez_bar ez-curl-angled; reverse ez-curl-over). hammer_curl is on the no-zoom list (D-SHIP-W5-HAMMER)
+    // and gets no pair; front_squat is gap-key and the 3 bodyweight ids are archetype none
     expect(keys).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead',
-      'd-handle-pull-only-curled-unstated', 'curl-dumbbell-under']);
+      'd-handle-pull-only-curled-unstated', 'ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
+    expect([pairOf['preacher-curl'], pairOf['alternating-dumbbell-curl'], pairOf['barbell-curl'], pairOf['ez-bar-curl'], pairOf['reverse-curl']])
+      .toEqual(['ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
+    for (const c of ['hammer-curl', 'front-squat', 'bodyweight-squat', 'bodyweight-lunge', 'bodyweight-split-squat']) expect([c, pairOf[c]]).toEqual([c, undefined]);
+    expect(HP.noZoomIds()).toContain('lib_hammer_curl');
     expect(HP.noZoomIds()).not.toContain('lib_dumbbell_biceps_curl');
   });
   it('red 3: hands.mjs\'s no-zoom check runs for rope and push_up (their sheets name D-SHIP-C3; a sheet naming none is refused)', async () => {

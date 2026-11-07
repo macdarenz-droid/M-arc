@@ -189,8 +189,11 @@ describe('7b-A2 on a scratch tree: the real pipeline with the scratch rows shipp
     `, tree)).trim().split('\n').pop()!);
     // LIB-SHIP W3 (D-SHIP-A9 guard replacement): the tree's own shipped W3 pair rows write their 5 sub-key files beside the curl's and the scratch rows'
     const W3_PAIRS = ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated'];
+    // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): and W5's 4 new pair keys (preacher, barbell, ez bar and
+    // reverse curl; alternating_dumbbell_curl shares the curl's file, hammer_curl is on the no-zoom list), 7 -> 11 files
+    const W5_PAIRS = ['ez-curl-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over'];
     expect(Object.keys(out).filter(p => p.includes('handpair-')).sort()).toEqual(['src/howto/generated/handpair-curl-dumbbell-under.ts', 'src/howto/generated/handpair-rope-push-neutral.ts',
-      ...W3_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`)].sort());
+      ...W3_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`), ...W5_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`)].sort());
     for (const s of F.SCRATCH_7B) {
       const o = out[`src/slices/howto/css/zoom-${s.pre}.css`];
       expect(o.writers).toEqual(['tools/plates/gen/handpairs.mjs', 'tools/plates/gen/hands.mjs']);

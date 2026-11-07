@@ -86,6 +86,12 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
   const W3_IDS = ['chin_up', 'hanging_knee_raise', 'inverted_row', 'close_grip_pulldown', 'single_arm_lat_pulldown', 'straight_arm_pulldown', 'chest_supported_row', 'resistance_band_row', 'horizontal_leg_press'];
   const W3_LINE = new RegExp(`^  (?:"lib_(?:${W3_IDS.join('|')})",|lib_(?:${W3_IDS.join('|')}): \\(\\) => |"(?:${W3_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w3Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W3_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
+  // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): W5's 10 ids add 4 lines each the same way, and its 5 pair
+  // curls (preacher, alternating dumbbell, barbell, ez bar, reverse) a HAND line each, 45 lines; front_squat, hammer_curl and
+  // the 3 bodyweight ids have none. With exactly those taken out, the W3 and W2 checks below hold unchanged
+  const W5_IDS = ['front_squat', 'bodyweight_squat', 'bodyweight_lunge', 'bodyweight_split_squat', 'preacher_curl', 'hammer_curl', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'reverse_curl'];
+  const W5_LINE = new RegExp(`^  (?:"lib_(?:${W5_IDS.join('|')})",|lib_(?:${W5_IDS.join('|')}): \\(\\) => |"(?:${W5_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+  const w5Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W5_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
   it('the 27 header-moved files: each body (all but line 1) equals main c4c34d75 (re-measured after train 63)', () => {
     const list = [...ROWS.map(i => `src/howto/generated/hand-${i}.ts`), ...ROWS.map(i => `src/howto/generated/posture-${i}.ts`),
@@ -98,10 +104,19 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // the W2 lines taken out (4 per id: HOWTO_IDS, LOADERS, POSTURE, FEEL; no HAND line, D-SHIP-PAIR-NOZOOM) is main's
     // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
-    const w3 = w3Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    const w5 = w5Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    expect(w5.removed).toBe(45);   // LIB-SHIP W5: W5's lines taken out first
+    const w3 = w3Less(w5.text);
     expect(w3.removed).toBe(41);
     // LIB-PLATEFIX-1: with its 4 ids' 16 lines also taken out (48 in all), the body is still main's 00a18e3c
     expect(w2Less(w3.text)).toEqual({ removed: 48, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
+  });
+  it('LIB-SHIP W5 mutations (ruling 3): a W5 line dropped, a HAND line for a no-pair W5 id, and another line changed are red', () => {
+    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(w5Less(t).text).text);
+    expect(t).toContain('  "preacher-curl": () => import(\'./posture-preacher-curl\'),\n');
+    expect(w5Less(t.replace('  "preacher-curl": () => import(\'./posture-preacher-curl\'),\n', '')).removed).toBe(44);
+    expect(w5Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"hammer-curl\": () => import('./hand-hammer-curl'),\n")).removed).toBe(46);
+    expect(w2Less(w3Less(w5Less(t.replace('export const HAND', 'export const HAND_X')).text).text).sha).not.toBe(ok.sha);
   });
   it('LIB-SHIP W3 mutations: a W3 line dropped, a HAND line for a no-pair W3 id, and another line changed are red', () => {
     const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(t).text);
