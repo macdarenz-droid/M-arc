@@ -151,7 +151,7 @@ const feel = {
       means: 'The elbows are dropping.',
       fix: 'Keep your elbows high.',
       zoom: 'fp-elbows', redFlag: 'shoulder', claim: CL.c9 },
-    { key: 'pain', where: 'Shoulder pain', at: {},
+    { key: 'pain', where: 'Any shoulder pain', at: {},   // D-SHIP-W6-F2 (#393 6703104795): not the red-flag block's own name 'Shoulder pain' (HT9/A3)
       means: '',   // the card's row has no means; D-FEEL-NOMEANS prints no label
       fix: 'Stop the set.',   // c13 (the row's claim)
       redFlag: 'shoulder', claim: CL.c13 },

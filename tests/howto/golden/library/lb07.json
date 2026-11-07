@@ -35,13 +35,14 @@
         "mistakeAlt": "4fdba69391641baf536b376c3de830165f628aab60452ad2d50332b0d5705452"
       },
       "exemptions": [
+        "F2",
         "F5"
       ],
       "approvedBy": "supervisor",
       "decision": "SHIP W6 PIN GO",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/393#issuecomment-6647923934 @ d03ece2463c1e10afccc2dbf3b7e9d72a87492a2",
       "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_cable_lateral_raise's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_cable_lateral_raise's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); F2 named as an exemption under D-SHIP-W6-F2 (#393 6703104795: the D-OWNER-FLAGS class, crunch precedent D-LIB-PILOTB2), re-pinned in place (D-REPIN-UNMERGED).",
       "supersedes": null,
       "prev": "b37ef6e35388185f98369a33003204607e33481fb9bf8ecf506b265ccced374d"
     },
@@ -72,7 +73,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_dumbbell_front_raise's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "9d290fa4a71a864b6ed211eb72fbd20a3720e260d98cc37de824cb68abc9a188"
+      "prev": "b0059d0b69d1b1dde67bcbeb67b6efa26463ed0ed65f6b3de156184f4a2c3191"
     },
     {
       "kind": "plate",
@@ -93,15 +94,16 @@
         "mistakeAlt": "e7b0ffc21a022fc7f0ef5181062fcce728e8b0c58a1448a44f62640140386c6d"
       },
       "exemptions": [
+        "F2",
         "F5"
       ],
       "approvedBy": "supervisor",
       "decision": "SHIP W6 PIN GO",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/393#issuecomment-6647923934 @ d03ece2463c1e10afccc2dbf3b7e9d72a87492a2",
       "date": "2026-11-05",
-      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_face_pull's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_face_pull's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); F2 named as an exemption under D-SHIP-W6-F2 (#393 6703104795: the D-OWNER-FLAGS class, crunch precedent D-LIB-PILOTB2), re-pinned in place (D-REPIN-UNMERGED).",
       "supersedes": null,
-      "prev": "dd8b622a958a676d33cae8e7d94943ad34d0e906bcd3dbc90d6c0918368c8fd1"
+      "prev": "8278196078396a0a375506cc672051797b7e7f1f4f844cb0b197856051e5b57d"
     },
     {
       "kind": "plate",
@@ -131,7 +133,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_cable_external_rotation's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "06d59a7096f133b4a9279ea80d7ff686fb2952ddfcfe0987c59e99e4cc93dd8f"
+      "prev": "b1a0dc46ad5e8ba5d9998d98da71aa92641457910bb74e9f44719702512599f1"
     },
     {
       "kind": "plate",
@@ -160,7 +162,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_resistance_band_pull_apart's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "f7a8370e11be3a42b41a704993ea5d92e23ae118b01b184b9d8fad1545cbdd20"
+      "prev": "f67537d4d4c96ea1ad4b3644818e72e7a0f7aa435080e9637a6d8ec4e90faf1b"
     },
     {
       "kind": "plate",
@@ -189,7 +191,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_renegade_row's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "f1872b26aa5b9aaf8438c2e3f94fdaabf0241b1dc088aa411aaf62fff5afb9d8"
+      "prev": "17cb7e2a841d61b15adc03e2952c81084ad9fb844d8f842aa62176b246d7825f"
     },
     {
       "kind": "plate",
@@ -218,7 +220,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_weighted_dip's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "83c7c3a4fa5d64906d5d6669fb26d6f5ba9898ddd6c6de7763dcea0de0d61e84"
+      "prev": "3a1f608047a214671cc493fc1c5f2f9ddfd807582a4b2010f8e933fd4a7e2757"
     },
     {
       "kind": "plate",
@@ -248,7 +250,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_bench_dip's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "09a9b73a92a066c2f9a8bc803585120ed83f5f9b5f5a86fcd03326524c06c9ac"
+      "prev": "4cbd984d13dbef6863acf75582fd51dea8320fee91c21ff2b8f9c26a18cde1aa"
     },
     {
       "kind": "plate",
@@ -277,7 +279,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_incline_push_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "5da999905f97072a1bf993a87700aab6271e20f0819932ec5858b0ca5ad8ea5a"
+      "prev": "75460e1211f0197a9387c1a00a0c96337633c16606d7b1d46a6f6b736f7884ec"
     },
     {
       "kind": "plate",
@@ -306,7 +308,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_diamond_push_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "673d0de72deeda058d876009a0ca91f52c8627e7dfaf71c2af27fb985e376d59"
+      "prev": "56543c503e48312ac674a60f753a9fed22fe4045467fb24a71d80600c6719f47"
     },
     {
       "kind": "plate",
@@ -336,7 +338,7 @@
       "date": "2026-11-05",
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB07 PIN GO (supervisor, 2026-11-05, #393 6647923934): lib_pike_push_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5, F7 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
-      "prev": "5529a59698163ea1d63fbd943acdc74ff40916ce1b44ace3b24139644d367064"
+      "prev": "29b966dcea278832f976800d81dcf12a05348969126fe927c6bd7a23cfb77d65"
     },
     {
       "kind": "layers-page",
@@ -348,15 +350,15 @@
         "lib_incline_push_up",
         "lib_pike_push_up"
       ],
-      "pageSha256": "7e9e2c480d845030c4ebb6ac65ea97d5f8f0e36fbeea9e3d4385d6efa3222760",
-      "bytes": 1174857,
+      "pageSha256": "de6cd80693b1c0649dca3804a3b5385fdc88e25aff5398394eae80c295f5592d",
+      "bytes": 1174841,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W6-LAYERS",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/393#issuecomment-6689822595 @ d939496e22e7d0d9e858662e3ac2b719bec47c20",
       "date": "2026-11-07",
-      "why": "W6 layers approved (#393): the calibrated layers panel 6682570363 (3 fresh Opus critics per set, plants caught, golden-B anchors), the fix round ruled 6683193992 (D-SHIP-W6-ROUTE), the focused recheck 6683879377, cable_lateral_raise's copy check 6683994736 and the flip set 6689822595. Built in the D-SHIP-W5-FLIPSET form on main 8841246c (#404 F-BODYMAP-FRONTDELT merged): only the flip set stays on lb07.layers.json, and every kept card (article block and its .hx-<slug> rules) is byte-equal to the full-page build of the same head; built twice, equal sha256.",
+      "why": "W6 layers approved (#393): the calibrated layers panel 6682570363 (3 fresh Opus critics per set, plants caught, golden-B anchors), the fix round ruled 6683193992 (D-SHIP-W6-ROUTE), the focused recheck 6683879377, cable_lateral_raise's copy check 6683994736 and the flip set 6689822595. Built in the D-SHIP-W5-FLIPSET form on main 8841246c (#404 F-BODYMAP-FRONTDELT merged): only the flip set stays on lb07.layers.json, and every kept card (article block and its .hx-<slug> rules) is byte-equal to the full-page build of the same head; built twice, equal sha256. Re-pinned in place after main 7e060e83 (D-PF-PAINNAMES-LIB: incline_push_up's neck mark reads 'neck') and D-SHIP-W6-F2 (face_pull's row 'Any shoulder pain', c13); the token diff from the earlier pin is exactly those two strings, and every kept card is byte-equal to the full build.",
       "supersedes": null,
-      "prev": "71139f3c1b9aa68e82a6a34a714afd6dfe17ef18bedb0e12a727cd5e3caa1973"
+      "prev": "4671d5ce6c47b2ae4ab707d38426b05c624dfbfdfc2698a8a79aa9e9b790e396"
     }
   ]
 }

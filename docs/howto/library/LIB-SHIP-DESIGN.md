@@ -92,6 +92,11 @@ Read from each id's pilot pin `exemptions` (pilots) or its batch qa.mjs `EXPECTE
 
 Until he answers, none of these 53 ids merges (ruling 11). W1 has none of them.
 
+**W6 additions (D-SHIP-W6-F2, #393 6703104795):** cable_lateral_raise (F2) and face_pull (F2). Both were recorded in
+lb7/DESIGN.md:714 but missing from the list of 53. They are named exemptions under the D-OWNER-FLAGS class (crunch
+precedent D-LIB-PILOTB2), in lb7/qa.mjs EXPECTED (F2_IDS) and on both lb07.json plate pins. The exemption count grows
+by 2. Red: tests/howto/ship-w6-f2.test.ts (F2 removed from either pin fails PQH).
+
 ## 7. Per-id table (134)
 
 Columns: W = wave. hand close-up: `key` = drawn by a pair key; `GAP` = a recorded gap of that key; `own` = a card hand zoom with neither (ruling 8). hint = section 4's letter. ¹ = lb1/lb2/zoom flag rule (section 6).

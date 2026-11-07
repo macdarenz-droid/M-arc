@@ -563,7 +563,7 @@
     },
     {
       "scope": "lib_face_pull",
-      "hash": "49110fc505a506aae5dd672fc1066f45bfa61b680399237dd1c0479c185f0518",
+      "hash": "f4f6d724b0006c70338b83eaa90eb7ce17204369fa61dff440c8593fad80cf23",
       "date": "2026-11-07",
       "fetcher": "LIB-SHIP W6: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/face_pull.json",
       "critic": "LIB-SHIP W6: fresh Opus content critics on card and quotes (the W6 layers panel #393 6682570363 and the focused recheck 6683879377; every planted error caught); findings fixed and checked by the supervisor (6683193992, 6683994736)",

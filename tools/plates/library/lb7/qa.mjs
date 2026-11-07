@@ -45,7 +45,10 @@ export const tableOf = reports => [
 /** The expected flags (DESIGN.md section 6, proposed for 'LB7 NOTE RULED'): F5 on every id at exactly the approved
  *  chrome's 3.57:1 (D-LIB9-F5, 14.4); F7 on the three drawable-false cards only (D-LIB17-F7). */
 export const F7_IDS = ['lib_cable_rear_delt_fly', 'lib_cable_external_rotation', 'lib_bench_dip', 'lib_pike_push_up'];   // + pike_push_up (D-LIB17R3-F7)
-export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : [])].sort();
+/** D-SHIP-W6-F2 (#393 6703104795; the D-OWNER-FLAGS class, crunch precedent D-LIB-PILOTB2): F2 (figure coverage above the
+ *  envelope) is a named exemption on these two, recorded since lb7/DESIGN.md:714. */
+export const F2_IDS = ['lib_cable_lateral_raise', 'lib_face_pull'];
+export const EXPECTED = id => ['F5', ...(F2_IDS.includes(id) ? ['F2'] : []), ...(F7_IDS.includes(id) ? ['F7'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, or F5 at any value other than 3.57. */
 export const flagProblems = reports => reports.flatMap(r => {

@@ -167,7 +167,7 @@ const feel = {
       means: 'You are shrugging the shoulder.',
       fix: "Keep your shoulder down. Don't shrug.",
       claim: CL.c11 },
-    { key: 'pain', where: 'Shoulder pain', at: {},   // pain, not a muscle taking over: no map mark (golden B)
+    { key: 'pain', where: 'Any shoulder pain', at: {},   // pain, not a muscle taking over: no map mark (golden B)
       means: '',   // the card's row has no means; D-FEEL-NOMEANS prints no label
       fix: 'Stop the set.',   // c17 (the row's claim)
       redFlag: 'shoulder', claim: CL.c17 },
