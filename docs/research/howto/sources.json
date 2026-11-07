@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=8c32ec5d8913e092c18c2927300f1a96171fe2e4769fb3f047e76bde8a640204
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=6de672ff01762232fb11498422ea0e9c87447c604e96dfb3fcc6515e8c8e320f
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -216,6 +216,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-shrug": {
+    "id": "ace-shrug",
+    "cite": "ACE Exercise Library: Shrug",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/72/shrug/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "ace-sl-rdl": {
     "id": "ace-sl-rdl",
     "cite": "ACE Exercise Library: Single-arm, Single-leg Romanian Dead Lift",
@@ -336,6 +344,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "barbend-pendlay": {
+    "id": "barbend-pendlay",
+    "cite": "How to Do the Pendlay Row for Back Size and Stronger Lifts (BarBend)",
+    "url": "https://barbend.com/pendlay-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "barbend-single-arm-lat-pulldown": {
     "id": "barbend-single-arm-lat-pulldown",
     "cite": "How to Do the Single-Arm Lat Pulldown for Spectacular Back Development (BarBend)",
@@ -343,6 +359,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "barbend-t-bar": {
+    "id": "barbend-t-bar",
+    "cite": "How to Do the T-Bar Row (BarBend)",
+    "url": "https://barbend.com/t-bar-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "barnds2019": {
     "id": "barnds2019",
@@ -552,6 +576,14 @@
     "access": "abstract",
     "checked": "2026-10-22"
   },
+  "cissik-landmine": {
+    "id": "cissik-landmine",
+    "cite": "Landmine Bent Over Rows (Improving Athletic Performance blog, John Cissik)",
+    "url": "https://www.cissik.com/blog/?p=7015",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "clark2012": {
     "id": "clark2012",
     "cite": "Clark DR, Lambert MI, Hunter AM. Muscle activation in the loaded free barbell squat: a brief review. J Strength Cond Res 2012;26(4):1169-78",
@@ -648,6 +680,22 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "ekstrom2003": {
+    "id": "ekstrom2003",
+    "cite": "Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/12774999/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-19"
+  },
+  "eos-smith": {
+    "id": "eos-smith",
+    "cite": "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness)",
+    "url": "https://www.eosfitness.com/blog/how-to-use-smith-machine",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "escamilla-2006": {
     "id": "escamilla-2006",
     "cite": "Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training (Escamilla et al., Phys Ther)",
@@ -687,6 +735,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "exercise-com-cable-shrug": {
+    "id": "exercise-com-cable-shrug",
+    "cite": "Cable Shrug (Exercise.com exercise library)",
+    "url": "https://www.exercise.com/exercises/cable-shrug",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "fees1998": {
     "id": "fees1998",
@@ -775,6 +831,22 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "ggr-pendlay": {
+    "id": "ggr-pendlay",
+    "cite": "Pendlay Row: How To, Benefits, and Variations (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/pendlay-row",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
+  "ggr-t-bar": {
+    "id": "ggr-t-bar",
+    "cite": "T-Bar Row: How To, Benefits, Muscles Worked (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/t-bar-row",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "glassbrook2017": {
     "id": "glassbrook2017",
@@ -1168,6 +1240,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "motra-smith-shrug": {
+    "id": "motra-smith-shrug",
+    "cite": "Smith Machine Shrug - Exercise Guide (Motra)",
+    "url": "https://www.motra.com/exercises/smithMachineShrug",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "muyor2023": {
     "id": "muyor2023",
     "cite": "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM. Muscle activity, horizontal bench press vs seated chest press, several grips. J Hum Kinet 2023;87:23-34",
@@ -1448,6 +1528,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "rep-landmine-row": {
+    "id": "rep-landmine-row",
+    "cite": "How to do a Landmine Row: Technique, Variations, and Benefits (REP Fitness)",
+    "url": "https://repfitness.com/blogs/training/how-to-do-a-landmine-row-technique-variations-and-benefits",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "rogue-false-grip": {
     "id": "rogue-false-grip",
     "cite": "Rogue Fitness, False Grips",
@@ -1552,6 +1640,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "sl-barbell-shrug": {
+    "id": "sl-barbell-shrug",
+    "cite": "How to Do Barbell Shrug: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/barbell-shrug/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "sl-bbcurl": {
     "id": "sl-bbcurl",
     "cite": "How to Do Barbell Curl: Muscles Worked & Proper Form (StrengthLog)",
@@ -1591,6 +1687,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
+  },
+  "sl-pendlay": {
+    "id": "sl-pendlay",
+    "cite": "How to Do Pendlay Row: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/pendlay-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "sl-preacher": {
     "id": "sl-preacher",

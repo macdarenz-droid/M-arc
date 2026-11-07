@@ -49,7 +49,7 @@ describe('D-PF-PAINNAMES: no data-label on a built page holds a raw body-map par
     }
     expect(parts.size).toBeGreaterThan(0);
     expect([...parts].filter(p => !named(p))).toEqual([]);
-  }, 60_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): imports every shipped sheet's pain rows; 7608 ms on 6f33ccd1 unit-tz America/New_York
+  }, 600_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): it imports every library sheet, 21 of which W4 fills (stubs on main); timed out at 5 s on the merge of main 7e060e83 (8 s alone); no assertion change
   it('mutation: without the library mapping (golden B\'s table alone) the library parts have no name', () => {
     const bare = tableOf(VENDORED);
     expect(bare.length).toBeGreaterThan(0);

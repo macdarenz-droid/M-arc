@@ -8,6 +8,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { W5 } from './lib-ship-w5';
 // @ts-expect-error plain .mjs build tool, no types
 import { MANIFEST, manifestOf, manifestProblems } from '../../tools/plates/library/ci/manifest.mjs';
+import { W4_MANIFEST_ROWS } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = join(__dirname, '..', '..');
@@ -45,11 +46,15 @@ describe('C0: L0-lib on this tree', { timeout: 300_000 }, () => {   // F-C0-TIME
   const LB01 = ['chin_up', 'hanging_knee_raise', 'assisted_pull_up', 'inverted_row', 'close_grip_pulldown', 'underhand_lat_pulldown', 'single_arm_lat_pulldown',
     'straight_arm_pulldown', 'chest_supported_row', 'resistance_band_row', 'incline_machine_press', 'shoulder_press'].map(id => `lib_${id}`);
   const ZOOM = ['lib_horizontal_leg_press'];
+  // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): the lb02 and lb03 pins add exactly their 8 and 12 rows
+  // (checks/ship-w4.ts: shipped and waiting, every row of both batch files)
   // LIB-SHIP W5 (Q-W5-10 PIN GO, #392): lb04's and lb05's pins add exactly their 27 rows (W5, read from batches/lb04.json and lb05.json)
-  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2, PILOT-B2\'s 1, lb01\'s 12, zoom\'s 1 and LIB-SHIP W5\'s 27 here, and no problem', async () => {
+  const LB2_LB3 = W4_MANIFEST_ROWS;
+  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2, PILOT-B2\'s 1, lb01\'s 12, zoom\'s 1, LB2\'s 8, LB3\'s 12 and LIB-SHIP W5\'s 27 here, and no problem', async () => {
     const file = JSON.parse(readFileSync(join(ROOT, MANIFEST), 'utf8'));
+    expect(LB2_LB3).toHaveLength(20);
     expect(W5).toHaveLength(27);
-    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2, ...LB01, ...ZOOM, ...W5].sort());
+    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2, ...LB01, ...ZOOM, ...LB2_LB3, ...W5].sort());   // merge of main 05382042: W4's 20 and W5's 27
     expect(Object.keys(file.rows)).not.toContain('lib_leg_press_calf_raise');   // LIB-SHIP W3: the left-out row has none
     expect(await manifestOf(ROOT)).toEqual(file);
     expect(await manifestProblems(ROOT)).toEqual([]);

@@ -44,10 +44,12 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
     // LIB-SHIP W2 (ruling 3, D-SHIP-IDS-NOPAIR): the 8 W2 ids ship (pec_fly held, D-SHIP-PECFLY-HOLD) with no hand chunk and no hand pair (gap-ruled or on the
     // pinned no-zoom list), so HAND holds exactly the other shipped chrome ids, in order; POSTURE and FEEL hold all of them
     // LIB-SHIP W3 (ruling 3): W3's 4 card-no-zoom ids (hands/no-zoom.json) join NO_HAND; its 5 pair ids carry a hand
-    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): its 4 shipped ids have no hand chunk or pair either (registry order)
+    // LIB-SHIP W4 (ruling 3; D-SHIP-W4-FLIPSET): the 6 W4 ids ship with no hand chunk and no hand pair too (merge of main 62d3dcb6: both lanes' ids)
+    // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): its 4 shipped ids have no hand chunk or pair either (merge of main 7e060e83: both)
     const NO_HAND = ['barbell-row', 'dumbbell-bench-press', 'dumbbell-shoulder-press', 'romanian-deadlift', 'single-leg-romanian-deadlift', 'upright-row',
       'rope-triceps-pushdown', 'plank', 'triceps-pushdown', 'reverse-lunge', 'cable-fly', 'push-up',
       'straight-arm-pulldown', 'chest-supported-row', 'resistance-band-row', 'horizontal-leg-press',
+      'pendlay-row', 'landmine-row', 't-bar-row', 'barbell-shrug', 'cable-shrug', 'smith-machine-shrug',
       // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): front_squat (gap-key) and hammer_curl (hands/no-zoom.json,
       // D-SHIP-W5-HAMMER) ship with no hand pair under D-SHIP-C3; the 3 bodyweight lower-body ids are archetype none
       'front-squat', 'hammer-curl', 'bodyweight-squat', 'bodyweight-lunge', 'bodyweight-split-squat'];
