@@ -1,3 +1,6 @@
+// LIB-SHIP W5 (D-SHIP-MOVE as amended by Q-W2-10; W3's lb1/build.mjs precedent): the rows now live in batches/lb05.json with
+// their sources lines, and lb5/rows.json is gone. A rows.json written back is read as one more batch file again, so a row
+// copied back there is refused (registry.mjs: a row in two places).
 // LIB-15 (lib-15-card Do 5, Do 8, A10): the LB5 plates page, built from lb5/rows.json read as if it were a batch file
 // (it never goes into batches/: D-LIB15-AHEAD). Each row's sources lines come from its research card (as pilot A's
 // sheet does), in memory only. The page holds every LB5 row whose spec exists (the build-ahead draws in steps).
@@ -17,27 +20,31 @@ import { groupsConfig } from '../plates-page.mjs';
 import { batchFiles, rows } from '../registry.mjs';
 
 export const LB5_ROWS = 'tools/plates/library/lb5/rows.json';
+export const LB5_BATCH = 'tools/plates/library/batches/lb05.json';
+/** The rows file: lb5/rows.json if it exists (a copy-back), else batches/lb05.json (LIB-SHIP W5, D-SHIP-MOVE). */
+export const rowsFile = (root = ROOT) => (existsSync(join(root, LB5_ROWS)) ? LB5_ROWS : LB5_BATCH);
 const read = (root, p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
 const cardOf = (root, id) => read(root, `docs/research/howto/cards/${id.slice(4)}.json`);
 /** A research card's source list as page lines (title, year, url, PMID). */
 export const sourceLines = card => card.sources.map(s => `${s.title}${s.year ? ` (${s.year})` : ''}. ${s.url}${s.pmid ? ` PMID ${s.pmid}` : ''}`);
 
 /** The LB5 rows data with each row's sources from its card (memory only). `data` defaults to lb5/rows.json. */
-export function lb5Data(root = ROOT, data = read(root, LB5_ROWS)) {
+export function lb5Data(root = ROOT, data = read(root, rowsFile(root))) {
   return { ...data, rows: Object.fromEntries(Object.entries(data.rows).map(([id, r]) => [id, { ...r, sources: sourceLines(cardOf(root, id)) }])) };
 }
 
 /** Every registry row: the 8, the batch files, then lb5/rows.json read as one more batch file (Do 4). */
 export function lb5All(root = ROOT, data = lb5Data(root)) {
-  return rows(root, { batches: [...batchFiles(root).map(p => [p, read(root, p)]), [LB5_ROWS, data]] });
+  if (rowsFile(root) === LB5_ROWS) return rows(root, { batches: [...batchFiles(root).map(p => [p, read(root, p)]), [LB5_ROWS, data]] });
+  return rows(root, { batches: batchFiles(root).map(p => [p, p === LB5_BATCH ? data : read(root, p)]) });
 }
 
 /** The LB5 ids whose spec file exists, in rows.json order. */
-export const drawnIds = (root = ROOT, data = read(root, LB5_ROWS)) => Object.entries(data.rows).filter(([, r]) => existsSync(join(root, 'tools/plates', r.src))).map(([id]) => id);
+export const drawnIds = (root = ROOT, data = read(root, rowsFile(root))) => Object.entries(data.rows).filter(([, r]) => existsSync(join(root, 'tools/plates', r.src))).map(([id]) => id);
 
 /** The LB5 plates page bytes ({ html: Buffer, warnings }) for `ids` (default: every drawn id). */
 export async function buildLb5Page({ root = ROOT, all = lb5All(root), ids = drawnIds(root) } = {}) {
-  return buildPlatesPage(await groupsConfig({ groups: [{ id: 'lb5', title: 'LB5', ids }] }, all, LB5_ROWS));
+  return buildPlatesPage(await groupsConfig({ groups: [{ id: 'lb5', title: 'LB5', ids }] }, all, rowsFile(root)));
 }
 
 export const sha256 = b => createHash('sha256').update(b).digest('hex');
@@ -45,7 +52,7 @@ export const sha256 = b => createHash('sha256').update(b).digest('hex');
 /** PNG screenshots of each card at 390 px in `theme`, `mode` 'mistake' or 'normal': [{ id, path }] in `dir`. */
 export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mistake', dir = mkdtempSync(join(tmpdir(), 'lb5-shots-')) } = {}) {
   const { launch } = await import('../qa/browser.mjs'), { openGolden, settle } = await import('../../fidelity/harness.mjs');
-  const { html } = await buildLb5Page({ ids }), data = read(ROOT, LB5_ROWS), browser = await launch(), out = [];
+  const { html } = await buildLb5Page({ ids }), data = read(ROOT, rowsFile()), browser = await launch(), out = [];
   try {
     const { ctx, page } = await openGolden(browser, theme, { viewport: { width: 390, height: 844 }, html });
     try {

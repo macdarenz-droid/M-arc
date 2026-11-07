@@ -1044,15 +1044,321 @@
       "measuredGz": 7207,
       "setBy": "LIB-SHIP",
       "reason": "LIB-SHIP W4: the 6 ship (#391 D-SHIP-W4-FLIPSET); measured + 10 % on the W4 flip dry run after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-front-squat-*.js",
+      "rawMax": 38597,
+      "gzMax": 10603,
+      "measuredRaw": 35088,
+      "measuredGz": 9639,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-front-squat-*.js",
+      "rawMax": 18609,
+      "gzMax": 4818,
+      "measuredRaw": 16917,
+      "measuredGz": 4380,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-front-squat-*.js",
+      "rawMax": 31995,
+      "gzMax": 8841,
+      "measuredRaw": 29086,
+      "measuredGz": 8037,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-bodyweight-squat-*.js",
+      "rawMax": 59728,
+      "gzMax": 16637,
+      "measuredRaw": 54298,
+      "measuredGz": 15124,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-bodyweight-squat-*.js",
+      "rawMax": 17343,
+      "gzMax": 4539,
+      "measuredRaw": 15766,
+      "measuredGz": 4126,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-bodyweight-squat-*.js",
+      "rawMax": 25966,
+      "gzMax": 8319,
+      "measuredRaw": 23605,
+      "measuredGz": 7562,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-bodyweight-lunge-*.js",
+      "rawMax": 49057,
+      "gzMax": 10857,
+      "measuredRaw": 44597,
+      "measuredGz": 9870,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-bodyweight-lunge-*.js",
+      "rawMax": 31793,
+      "gzMax": 6131,
+      "measuredRaw": 28902,
+      "measuredGz": 5573,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-bodyweight-lunge-*.js",
+      "rawMax": 27545,
+      "gzMax": 8404,
+      "measuredRaw": 25040,
+      "measuredGz": 7640,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-bodyweight-split-squat-*.js",
+      "rawMax": 52331,
+      "gzMax": 10456,
+      "measuredRaw": 47573,
+      "measuredGz": 9505,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-bodyweight-split-squat-*.js",
+      "rawMax": 33669,
+      "gzMax": 6142,
+      "measuredRaw": 30608,
+      "measuredGz": 5583,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-bodyweight-split-squat-*.js",
+      "rawMax": 25334,
+      "gzMax": 8236,
+      "measuredRaw": 23030,
+      "measuredGz": 7487,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-preacher-curl-*.js",
+      "rawMax": 37045,
+      "gzMax": 10172,
+      "measuredRaw": 33677,
+      "measuredGz": 9247,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-preacher-curl-*.js",
+      "rawMax": 18891,
+      "gzMax": 5031,
+      "measuredRaw": 17173,
+      "measuredGz": 4573,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-preacher-curl-*.js",
+      "rawMax": 30782,
+      "gzMax": 8671,
+      "measuredRaw": 27983,
+      "measuredGz": 7882,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-hammer-curl-*.js",
+      "rawMax": 36324,
+      "gzMax": 10183,
+      "measuredRaw": 33021,
+      "measuredGz": 9257,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-hammer-curl-*.js",
+      "rawMax": 17683,
+      "gzMax": 4702,
+      "measuredRaw": 16075,
+      "measuredGz": 4274,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-hammer-curl-*.js",
+      "rawMax": 27788,
+      "gzMax": 8410,
+      "measuredRaw": 25261,
+      "measuredGz": 7645,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-alternating-dumbbell-curl-*.js",
+      "rawMax": 38669,
+      "gzMax": 9320,
+      "measuredRaw": 35153,
+      "measuredGz": 8472,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-alternating-dumbbell-curl-*.js",
+      "rawMax": 20539,
+      "gzMax": 4985,
+      "measuredRaw": 18671,
+      "measuredGz": 4531,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-alternating-dumbbell-curl-*.js",
+      "rawMax": 27257,
+      "gzMax": 8347,
+      "measuredRaw": 24779,
+      "measuredGz": 7588,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-barbell-curl-*.js",
+      "rawMax": 36546,
+      "gzMax": 9756,
+      "measuredRaw": 33223,
+      "measuredGz": 8869,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-barbell-curl-*.js",
+      "rawMax": 16718,
+      "gzMax": 4124,
+      "measuredRaw": 15198,
+      "measuredGz": 3749,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-barbell-curl-*.js",
+      "rawMax": 28194,
+      "gzMax": 8463,
+      "measuredRaw": 25630,
+      "measuredGz": 7693,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-ez-bar-curl-*.js",
+      "rawMax": 35929,
+      "gzMax": 9730,
+      "measuredRaw": 32662,
+      "measuredGz": 8845,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-ez-bar-curl-*.js",
+      "rawMax": 17048,
+      "gzMax": 4133,
+      "measuredRaw": 15498,
+      "measuredGz": 3757,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-ez-bar-curl-*.js",
+      "rawMax": 28176,
+      "gzMax": 8466,
+      "measuredRaw": 25614,
+      "measuredGz": 7696,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-reverse-curl-*.js",
+      "rawMax": 37204,
+      "gzMax": 10175,
+      "measuredRaw": 33821,
+      "measuredGz": 9250,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-reverse-curl-*.js",
+      "rawMax": 17170,
+      "gzMax": 4395,
+      "measuredRaw": 15609,
+      "measuredGz": 3995,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-reverse-curl-*.js",
+      "rawMax": 31569,
+      "gzMax": 8572,
+      "measuredRaw": 28699,
+      "measuredGz": 7792,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "handpair-curl-bar-under-*.js",
+      "rawMax": 50527,
+      "gzMax": 13950,
+      "measuredRaw": 45933,
+      "measuredGz": 12681,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "handpair-ez-curl-angled-*.js",
+      "rawMax": 50562,
+      "gzMax": 13967,
+      "measuredRaw": 45965,
+      "measuredGz": 12697,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "handpair-ez-curl-over-*.js",
+      "rawMax": 50049,
+      "gzMax": 13969,
+      "measuredRaw": 45499,
+      "measuredGz": 12699,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "handpair-ez-curl-under-*.js",
+      "rawMax": 50288,
+      "gzMax": 13945,
+      "measuredRaw": 45716,
+      "measuredGz": 12677,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
     }
   ],
   "perId": [
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 36,
-      "rawMax": 22577,
-      "gzMax": 5386,
+      "n": 46,
+      "rawMax": 28849,
+      "gzMax": 6882,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -1062,8 +1368,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 6556379,
-      "gzMax": 1652375,
+      "rawMax": 8377596,
+      "gzMax": 2111368,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

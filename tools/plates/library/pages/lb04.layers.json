@@ -1,0 +1,30 @@
+{
+  "groups": [
+    {
+      "id": "lb4",
+      "title": "LB4",
+      "ids": [
+        "lib_front_squat",
+        "lib_bodyweight_squat",
+        "lib_bodyweight_lunge",
+        "lib_bodyweight_split_squat"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb04.closeups.mjs",
+  "closeups": {
+    "lib_front_squat": {
+      "optionsKey": "front_squat"
+    },
+    "lib_bodyweight_squat": {
+      "optionsKey": "bodyweight_squat"
+    },
+    "lib_bodyweight_lunge": {
+      "optionsKey": "bodyweight_lunge"
+    },
+    "lib_bodyweight_split_squat": {
+      "optionsKey": "bodyweight_split_squat"
+    }
+  },
+  "jump": null
+}

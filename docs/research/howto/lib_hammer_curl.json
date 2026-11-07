@@ -1,0 +1,19 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=10eaef54911a41d56d0cf09b252c83151517bc804d6224be0a95811fba19ec5d
+{
+  "id": "lib_hammer_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/hammer_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-hammer",
+    "sl-hammer",
+    "caufriez-2018",
+    "ga-curl-mid",
+    "nhs-wrist-pain"
+  ],
+  "riskFlags": [
+    "wrist"
+  ]
+}

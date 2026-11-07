@@ -1,0 +1,27 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=435ceca903ad6bd9938e9e67dc258bc5fe498bb0a737586b0d86b822dab5f87a
+{
+  "id": "lib_preacher_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/preacher_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-preacher",
+    "sl-preacher",
+    "oliveira-2009",
+    "nunes-2020",
+    "kassiano-2025",
+    "jukes-2022",
+    "acsm-2009",
+    "hand-key-ez",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain",
+    "nhs-elbow-pain"
+  ],
+  "riskFlags": [
+    "shoulder",
+    "elbow",
+    "wrist"
+  ]
+}

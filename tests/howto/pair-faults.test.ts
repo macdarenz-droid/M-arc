@@ -5,6 +5,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { W5, lessW5 } from './lib-ship-w5';
 import { lessW4 } from './checks/ship-w4';
 import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
 import { pf2Problems, restorePF2 } from './platefix2-pins';
@@ -63,7 +64,15 @@ const W3_SUB_OF: Record<string, string> = {
 describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws on main', () => {
   it('pairPanel(key) is byte-equal to main for every pair key', async () => {
     expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS)].sort());   // LIB-SHIP W3
-    for (const [k, want] of Object.entries(PANEL_MAIN)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);
+    // LIB-SHIP W5 D-SHIP-W5-EZWORDS (#392 6654996739): ez-curl-over's Right note is 'Wrist straight' (reverse_curl c1, c6); its
+    // panel equals main's exactly once that one note is put back, and 'Middle of palm' is gone from it. Every other key: byte-equal.
+    for (const [k, want] of Object.entries(PANEL_MAIN)) {
+      const h = await P.pairPanel(k);
+      if (k !== 'ez-curl-over') { expect([k, sha(h)]).toEqual([k, want]); continue; }
+      // D-SHIP-W5-EZNOTE (#392 6681700725): the drawn note too (svg caps 'WRIST STRAIGHT'), so neither case of the old note is left
+      expect([k, /middle of palm/i.test(h), h.includes('Wrist straight'), h.includes('>WRIST STRAIGHT<')]).toEqual([k, false, true, true]);
+      expect([k, sha(h.replaceAll('Wrist straight', 'Middle of palm').replaceAll('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'))]).toEqual([k, want]);
+    }
     for (const [k, want] of Object.entries(W3_SUBS)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);   // LIB-SHIP W3
   }, 60_000);
 });
@@ -263,18 +272,18 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs key is re-pinned there and pinned exactly by
     // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
     for (const r of Object.values<any>(m.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) { expect(r.files['tools/plates/library/render/region-fix.mjs']).toBe(sha(read('tools/plates/library/render/region-fix.mjs'))); r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; }
-    expect(blanked(lessW2(lessW3(m)), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-SHIP W3: W3 taken out first; LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, D-PF3-W3MERGE): + PF3_ZOOM
+    expect(blanked(lessW2(lessW5(lessW3(m))), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-SHIP W3: W3 taken out first; LIB-SHIP W5: then W5's 27 rows (lessW5); LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, D-PF3-W3MERGE): + PF3_ZOOM
     for (const k of MOVED) for (const r of Object.values<any>(raw().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
-    const m = lessW2(lessW3(current())), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX && k !== PF3_ZOOM)!;
+    const m = lessW2(lessW5(lessW3(current()))), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX && k !== PF3_ZOOM)!;
     row.files[other] = '0'.repeat(64);
     expect(blanked(m, [...MOVED, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
     // (LIB-SHIP W4: lessW4 blanks pairs.mjs too, so its key is put back to its pin first, as if left out of every blank list;
     // merge of main 62d3dcb6: W3 taken out as W3's own form of this mutation does)
     const unPair = (x: any) => { for (const r of Object.values<any>(x.rows)) if (MOVED[1]! in r.files) r.files[MOVED[1]!] = sha(read(MOVED[1]!)); return x; };
-    expect(blanked(unPair(lessW2(lessW3(current()))), [MOVED[0]!, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
-    expect(blanked(lessW2(lessW3(current())), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-PLATEFIX-3: zoom.mjs left out of the blank list is red
+    expect(blanked(unPair(lessW2(lessW5(lessW3(current())))), [MOVED[0]!, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW5(lessW3(current()))), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-PLATEFIX-3: zoom.mjs left out of the blank list is red
     // LIB-SHIP W3: a W3 row missing, or a W3-moved key not at its current file, is red
     const noChin = current(); delete noChin.rows.lib_chin_up;
     expect(() => lessW3(noChin)).toThrow(/lib_chin_up/);
@@ -291,7 +300,7 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     const stale = raw(); stale.rows.lib_cable_fly.files['tools/plates/library/howto/lib_smith_machine_bench_press.howto.mjs'] = '0'.repeat(64);
     expect(() => lessW4(stale, k => sha(read(k)), '')).toThrow(/lib_cable_fly .* does not pin its current file/);
     const extra = raw(); extra.rows.lib_zz = structuredClone(extra.rows.lib_plank);
-    expect(blanked(lessW2(lessW3(lessW4(extra, k => sha(read(k)), ''))), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // merge of main 62d3dcb6: W3 taken out too, so only the extra row differs
+    expect(blanked(lessW2(lessW5(lessW3(lessW4(extra, k => sha(read(k)), '')))), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // merge of main 62d3dcb6: W3 taken out too, so only the extra row differs (merge of main 05382042: W5 too)
     // LIB-PLATEFIX-1: a PLATEFIX moved key, added key or superseded entry off its current value is red
     const pfKey = current(); (Object.values<any>(pfKey.rows).find(r => PF_MOVED[0]! in r.files)).files[PF_MOVED[0]!] = '0'.repeat(64);
     expect(() => lessW2(pfKey)).toThrow();
@@ -299,5 +308,14 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     expect(() => lessW2(pfAdd)).toThrow();
     const pfEntry = current(); pfEntry.rows.lib_triceps_pushdown.entry = '0'.repeat(64);
     expect(() => lessW2(pfEntry)).toThrow();
+    // LIB-SHIP W5: a W5 row missing throws; an extra unlisted row moves the hash
+    const noW5 = current(); delete noW5.rows[W5[26]!];
+    expect(() => lessW5(noW5)).toThrow(/has no row/);
+    const extraW5 = current(); extraW5.rows.lib_unlisted = structuredClone(extraW5.rows[W5[0]!]);
+    // control first: the same tree without the extra row matches, so the red below is the extra row alone
+    // F-BODYMAP-FRONTDELT: region-fix.mjs's key put back to main 5023f5c6's value, as in the pin test above
+    const bm = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; return x; };
+    expect(blanked(lessW2(lessW5(lessW3(bm(current())))), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW5(lessW3(bm(extraW5)))), [...MOVED, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
   });
 });
