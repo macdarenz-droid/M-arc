@@ -163,7 +163,8 @@ export function patchHowtoLayers(src, plan) {
  *  lower-back-erectors-left and …"). The mirror copy gets the library's names appended, add-only; golden B's own rows
  *  mark only those four regions, so its page stays byte-equal. The app's library feel chunks are cut from these pages
  *  (gen/feel.mjs librarySection), so they carry the same names. */
-export const LIBRARY_PAIN_NAMES = "[/^lower-back-/, 'lower back'], [/^shoulder-front-/, 'front shoulders'], [/^neck-/, 'neck'], [/^foot-/, 'feet']";
+// LIB-SHIP W6 (#393): pike_push_up's head row (c11) marks the part 'head'; named, add-only (D-PF-PAINNAMES-LIB form)
+export const LIBRARY_PAIN_NAMES = "[/^lower-back-/, 'lower back'], [/^shoulder-front-/, 'front shoulders'], [/^neck-/, 'neck'], [/^foot-/, 'feet'], [/^head$/, 'head']";
 export const painNamesPatch = src => patchOnce(src, 'pain names', "[/^nape$/, 'back of the neck']];", `[/^nape$/, 'back of the neck'], ${LIBRARY_PAIN_NAMES}];`);
 
 /** The vendored specExercise head the 'plate engine' patch (D-LIB6PM-PLATE) replaces. */
