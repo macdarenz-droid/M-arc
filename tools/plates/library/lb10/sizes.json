@@ -509,9 +509,9 @@
     "basis": "claim: c1 'one stacked over the other': the two drawn fists touching (2 x RADII.fist 0.02 H, body.mjs:27)"
    },
    "SLED_Z": {
-    "value": 0.78,
+    "value": 0.58,
     "unit": "m",
-    "basis": "stated reason (framing): the sled's rear edge 0.9 m ahead of the start soles, clear of the coil and the step, with room for the labels on the left; the Trace does not depend on it. LIB-PLATEFIX-3 round 2 (#405 6685743439 sled_pull R7 [3,3,3]): 0.9 -> 0.78 m, so the dashed start sled ends at x 344.1, 13.9 px inside the 358 px frame (it ran to 359.2 and was clipped); the rope's run follows (ROPE_RUN is solved), no body change"
+    "basis": "stated reason (framing): the sled's rear edge 0.9 m ahead of the start soles, clear of the coil and the step, with room for the labels on the left; the Trace does not depend on it. LIB-PLATEFIX-3 round 2 (#405 6685743439 sled_pull R7 [3,3,3]): 0.9 -> 0.78 m, so the dashed start sled ends at x 344.1, 13.9 px inside the 358 px frame (it ran to 359.2 and was clipped); the rope's run follows (ROPE_RUN is solved), no body change; LIB-PLATEFIX-3b (D-PF3B-SLEDSQUAT, #408): 0.78 -> 0.58 m with the camera's x0 145 -> 170 px, so the sled stays where it was drawn (0.2 px off) while the start hips sit 0.2 m back"
    },
    "FOOT_CLEAR": {
     "value": 0.025,
@@ -571,12 +571,12 @@
    "HIP_Y": {
     "value": "solved",
     "unit": "m",
-    "basis": "claim: c2 'quarter-squat': the hips' one height through the step (hands and rope keep theirs, Q9) at which the start knees bend Q_KNEE (LIB-PLATEFIX-3, #405 6683319630; was: the end's stepped-back knee at KNEE_SOFT)"
+    "basis": "claim: c2 'quarter-squat': the hips' one height through the step (hands and rope keep theirs, Q9) at which the start knees bend Q_KNEE (LIB-PLATEFIX-3, #405 6683319630; was: the end's stepped-back knee at KNEE_SOFT); LIB-PLATEFIX-3b (D-PF3B-SLEDSQUAT, #408): the height at which the start knees bend Q_KNEE with the thighs Q_THIGH forward of vertical (the start depth solved with it; was: the height at which the balanced start's knees bend Q_KNEE)"
    },
    "DRAG": {
     "value": "solved",
     "unit": "m",
-    "basis": "ruling Q9 (#305 6355155831): the sled moves by the hips' z change, start to end"
+    "basis": "ruling Q9 (#305 6355155831): the sled moves by the hips' z change, start to end; LIB-PLATEFIX-3b (D-PF3B-SLEDSQUAT, #408): kept as it was (-0.124 m): the balanced construction's hips' z change at its own height, now applied to the squat start (the end keeps its step-back and drag)"
    },
    "ROPE_RUN": {
     "value": "solved",
@@ -602,6 +602,26 @@
     "value": 42,
     "unit": "deg",
     "basis": "claim: c2 'quarter-squat'; LIB-PLATEFIX-3 (W7 #394 6682923012, ruled #405 6683319630) L1 [4,3,3] '40-45 degrees of knee bend (30-45 acceptable)': the start knees, which set the hips' one height HIP_Y (was the stepped-back knee KNEE_SOFT in the end, which left the start at 29.4 deg)"
+   },
+   "Q_THIGH": {
+    "value": 31,
+    "unit": "deg",
+    "basis": "claim: c2 'quarter squat, knees soft, chest up' with the bend from the hips; LIB-PLATEFIX-3b (pfc-findings b5065795 set b T02 L1, critics c1-c3; ruled D-PF3B-SLEDSQUAT, #408) 'thigh >= 30 deg forward of vertical': the start thighs' lean toward the sled, 1 deg over the ruled floor so the drawn value clears it"
+   },
+   "LEAN_TRUNK": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "ruling D-PF3B-SLEDSQUAT (#408): the balance exception (sled_pull, start) holds only with the trunk within 10 deg of vertical"
+   },
+   "LEAN_BACK": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "ruling D-PF3B-SLEDSQUAT (#408): the balance exception (sled_pull, start) holds only with the centre of mass at most 10 cm behind the heels"
+   },
+   "TAUT_SAG": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "stated reason: ruling D-PF3B-SLEDSQUAT (#408) 'the rope taut in the start pose', read as the drawn hitch-to-fist run's centre line within 1 cm of its chord (the drawn ROPE_SAG is 0.6 cm; a slack rope bows several cm)"
    }
   },
   "farmer_s_carry": {
