@@ -842,6 +842,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-07 ~22:55 UTC: PAUSED until the Fri 11-13 08:00 UTC reset** (weekly 0.75; owner's 80 % rule).
+  - **Train 81:** #409 W5 @ `b7f416c4` → main `de91dd21` (10 How-tos; the app has 46). **APK sent** (run 42418699036, artifact 13593939140, fingerprint step success).
+  - **WAITING:** W6 #393 @ `8709105a` (session_018Pv5bJMLgYNrdFdvrC9BEE) and W7 #394 @ `a3e5b6e7` (session_018Pv5bK1RdhfbyRB1zk8cFT; flip set 19, card compare accepted). No other lane is open.
+  - **Tick** trig_01LFv2nEnoaWHf21JdLR1C6T is disabled. The resume one-shot trig_01LfYWeqdU81fUt6DL9UjyEP fires 11-13 08:10 UTC into this session.
+  - **Order after the reset:** F-GEN-WALK-SPEED first. The library walkers are at 309-377 s of a 600 s limit and grow each wave. Then W6 (merge main, delta, train), then W7 (flip 19, READY, review, train). An APK follows each app-visible train.
 - **Update 11-07 ~17:45 UTC** (weekly 0.74 at 16:40).
   - **Train 80:** #408 PLATEFIX-3b @ `4276d089` → main `8d5f4fd7`. Approved plates: assisted_pull_up, sled_pull, lying_leg_curl, smith_machine_bench_press, barbell_overhead_press. No app change, so no APK.
   - **W5 READY** @ `d3f5e287` (#409, ships 10). Reviewer session_018Pv5bLiE6CbwmvLyLSLc1m. After the review, W5 merges `8d5f4fd7`; the supervisor checks the delta, then train 81 and the APK (46 guides).
