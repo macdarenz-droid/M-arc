@@ -93,7 +93,7 @@
     "viewWhy": "Hips-back loading (j2), triple extension (j3) and the landing knee and hip bend (j4, j5) are sagittal.",
     "frames": "Airborne convention (architecture section 1): take-off and landing frames only, no mid-air pose.",
     "equipment": "None; floor line.",
-    "start": "Take-off frame: bottom of the squat, hips back, heels just about to lift, back flat (j2), about to extend ankles, knees and hips (j3).",
+    "start": "Touchdown frame: on the balls at full extension, about to roll back to the heels (j3, j4).",
     "end": "Landing frame: on the mid-foot rolling to the heels, hips pushed back and down, knees bent (j4), trunk tipped slightly forward, back flat (j8).",
     "checkpoints": [
       { "label": "Hips back", "what": "Load by sending the hips back, then down.", "claim": "j2" },
