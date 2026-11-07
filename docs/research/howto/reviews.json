@@ -521,7 +521,7 @@
     },
     {
       "scope": "lib_bodyweight_squat",
-      "hash": "650937908e815405a153b8b537635754462d1269f6a26ce399a5cfb4ce720c4a",
+      "hash": "dac8adc9dfb51d9300eaf028d0dfb542ae634a131fde2c4b05e646e8d66119af",
       "date": "2026-11-07",
       "fetcher": "LIB-SHIP W5: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/bodyweight_squat.json",
       "critic": "LIB-SHIP W5: fresh Opus content critics on card and quotes (the W5 content sets, then focused rechecks; every planted error caught); findings fixed and delta-checked by the supervisor (#392 6683213580)",
@@ -535,7 +535,7 @@
     },
     {
       "scope": "lib_bodyweight_lunge",
-      "hash": "6f7ebf664218825e3fc5a32652d80e0f318bafe8e4dccb57e5d4eb3651c285c9",
+      "hash": "63913ca622b519766cb687940bdeba3cbfcbee16adcafbb7905e80a133de0cf3",
       "date": "2026-11-07",
       "fetcher": "LIB-SHIP W5: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/bodyweight_lunge.json",
       "critic": "LIB-SHIP W5: fresh Opus content critics on card and quotes (the W5 content sets, then focused rechecks; every planted error caught); findings fixed and delta-checked by the supervisor (#392 6683213580)",
@@ -549,7 +549,7 @@
     },
     {
       "scope": "lib_bodyweight_split_squat",
-      "hash": "430687fc274e1d997d34e7b1fa539bda2241295d59939419ab82b09320a37b57",
+      "hash": "111bc6ccea6243fcc2e4a328e4552a7af386099aa713b8354a582a168456539c",
       "date": "2026-11-07",
       "fetcher": "LIB-SHIP W5: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/bodyweight_split_squat.json",
       "critic": "LIB-SHIP W5: fresh Opus content critics on card and quotes (the W5 content sets, then focused rechecks; every planted error caught); findings fixed and delta-checked by the supervisor (#392 6683213580)",

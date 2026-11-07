@@ -331,15 +331,13 @@ async function libraryCases() {
 // LIB-SHIP W3 (ruling 3): plus W3's 4 card-no-zoom ids (hands/no-zoom.json, Q-W3-10), in registry order
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus its 4 shipped ids (none has a hand chunk or pair), in registry order
 // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): plus front_squat (gap-key) and hammer_curl (hands/no-zoom.json,
-// D-SHIP-W5-HAMMER), both noPairRuling D-SHIP-C3, in registry order after W3's
-const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', 'lib_front_squat', 'lib_hammer_curl',
+// D-SHIP-W5-HAMMER), both noPairRuling D-SHIP-C3, and the 3 bodyweight lower-body ids (archetype none, why names D-SHIP-GRIP,
+// D-SHIP-A6NOGRIP), in registry order after W3's
+const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', 'lib_front_squat', 'lib_bodyweight_squat',
+  'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_hammer_curl',
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
   'lib_horizontal_leg_press'];
-// LIB-SHIP W5 (ruling 3): the 3 bodyweight lower-body ids ship with no hand at all by their coverage archetype 'none'
-// (tools/plates/library/coverage-archetypes.json; gen/hands.mjs refuses a hand close-up on their pages), not by a
-// noPairRuling; like NO_HAND they have no HAND line and no hand chunk. plank, also archetype none, is ruled (D-SHIP-GRIP).
-const NONE_ARCH = ['lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat'];
 // LIB-SHIP W2 (ruling 3): the shipped library ids whose feel draws no mark (card watch [] and no pain part in any row)
 // LIB-SHIP W3: plus single_arm_lat_pulldown (its card's watch is [] and its shoulder row names no part), in registry order
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus single_leg_romanian_deadlift (noMarkIds on this tree; the other 3 draw marks)
@@ -551,7 +549,7 @@ describe('D-LIB2b-HANDCSS: a library row\'s HAND loader brings in its zoom css b
     for (const { base, row } of cases) {
       const c = row.chromeId, loaders = readFileSync(join(base, 'src/howto/generated/loaders.ts'), 'utf8');
       // LIB-SHIP W2 (ruling 3; D-SHIP-C3, D-SHIP-GRIP): a row ruled to ship with no hand pair has no HAND line at all
-      if (base !== root && (NO_HAND.includes(row.id) || NONE_ARCH.includes(row.id))) {   // LIB-SHIP W5: or archetype none
+      if (base !== root && NO_HAND.includes(row.id)) {
         expect(handLineProblems(loaders, c).problems, row.id).toEqual([`${c}: 0 HAND lines`]);
         expect(existsSync(join(base, `src/howto/generated/hand-${c}.ts`)), row.id).toBe(false);
         continue;
@@ -569,10 +567,7 @@ describe('D-LIB2b-HANDCSS: a library row\'s HAND loader brings in its zoom css b
     const ruled: string[] = [];
     for (const r of LIBRARY) if (hands.noPairRuling((await import(/* @vite-ignore */ url(reg.sourceOf(r.id)))).default)) ruled.push(r.id);
     expect(ruled).toEqual(NO_HAND);
-    // LIB-SHIP W5: NONE_ARCH is exactly the shipped library rows with coverage archetype 'none' and no noPairRuling
-    const arch = JSON.parse(readFileSync('tools/plates/library/coverage-archetypes.json', 'utf8')).archetypes;
-    expect(LIBRARY.filter(r => arch[r.id] === 'none' && !ruled.includes(r.id)).map(r => r.id)).toEqual(NONE_ARCH);
-    // a HAND line for one of them is red too (the 0-lines assert above)
+    // LIB-SHIP W5: a HAND line for a bodyweight id is red too (the 0-lines assert above)
     const bw = '  "bodyweight-squat": () => import(\'../../slices/howto/css/zoom-bodyweight-squat.css\').then(() => import(\'./handpair-curl-dumbbell-under\')),\n';
     expect(handLineProblems(readFileSync('src/howto/generated/loaders.ts', 'utf8').replace('export const POSTURE', `${bw}export const POSTURE`), 'bodyweight-squat').problems).toEqual([]);
     expect(handLineProblems(readFileSync('src/howto/generated/loaders.ts', 'utf8'), 'bodyweight-squat').problems).toEqual(['bodyweight-squat: 0 HAND lines']);
