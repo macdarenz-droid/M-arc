@@ -1,11 +1,11 @@
 // LIB-PLATEFIX-3b item B (pfc-findings b5065795 set b T02 L1, critics c1-c3; ruled D-PF3B-SLEDSQUAT, #408): sled_pull's
-// "Quarter squat" checkpoint. The quarter squat is shown on the START pose only (the callout anchors on the start's
-// knee.r): knee 40-45 deg, the thigh at least 30 deg forward of vertical (toward the sled), the trunk within 10 deg of
+// "Quarter squat" checkpoint. The quarter squat is set on the START pose; the callout stays on the end's stepped-back
+// knee.r (D-PF3B-SLEDLEADER, ruling (b)), whose thigh must lean at least 23 deg forward (base 3.5 deg). The start: knee 40-45 deg, the thigh at least 30 deg forward of vertical (toward the sled), the trunk within 10 deg of
 // vertical, shoulders over hips. The rope may hold the lean back only as the named exception (sled_pull, start), under
 // all three of: the start rope taut, the trunk within 10 deg, the centre of mass at most 10 cm behind the heels.
 // Every value is read from the engine's own landmarks with the render's camera, never from a spec constant.
-// Base (claude/lib-platefix-3b @ e8615508) fails: start thigh 16.6 deg, the callout on the end's stepped-back knee
-// (thigh 3.5 deg), no balanceProblems export.
+// Base (claude/lib-platefix-3b @ e8615508) fails: start thigh 16.6 deg, end rear thigh 3.5 deg, no balanceProblems
+// export.
 // Mutation (recorded in the PR): restoring the base hip setting (the hips balanced over the soles' midpoint, START_Z
 // -0.014) puts the start thigh at 16.6 deg: the thigh block is red.
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -49,8 +49,11 @@ describe('LIB-PLATEFIX-3b B sled_pull: the quarter squat on the start pose (D-PF
     expect(trunkOf(P, 'start')).toBeLessThanOrEqual(10);
     expect(Math.abs(P('start', 'shoulder.r')[0]! - P('start', 'hip.r')[0]!)).toBeLessThanOrEqual(1);
   });
-  it('the "Quarter squat" callout anchors on the start pose\'s knee.r', () => {
-    expect(S.callouts.find((c: any) => c.key === 'squat').anchor).toEqual({ at: 'knee.r', pose: 'start' });
+  it('D-PF3B-SLEDLEADER: "Quarter squat" anchors on the end\'s stepped-back knee.r, whose thigh leans >= 23 deg forward of vertical (base 3.5)', () => {
+    const { P } = view(S), t = thighOf(P, 'end', 'r');
+    console.log(`PF3b sled_pull end r thigh ${t.toFixed(1)} deg`);
+    expect(S.callouts.find((c: any) => c.key === 'squat').anchor).toBe('knee.r');
+    expect(t).toBeGreaterThanOrEqual(23);
   });
   it('the end keeps its step-back and drag: the hips move back DRAG -12.4 cm (+-0.5 cm) start to end, at one height; shoulders over hips', () => {
     const { L, P } = view(S);

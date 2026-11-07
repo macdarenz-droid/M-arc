@@ -1929,9 +1929,9 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
       "mistakeAlt": "2e69b29b78f143b879610dca51a51496b5c280b56c434009ad2effa67b4e53de"
     },
     "sled-pull": {
-      "normalSvg": "b637dac6064cef002d48619511d9646455d05bd9e064f16622b9dbd353a89e01",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8638526e, then 01f23201; round 2 (#405 6685743439 R7): SLED_Z 0.78
-      "normalOverlay": "81d2c0e5266c292688179b5f90c636c69c78fbe167103a0d979893567a2db815",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0ef9d6fd, now the PF3 drawing
-      "mistakeSvg": "1122a78495799f0069d0bfbfdb1c525727034a5d97c3b406177512c652aecae9",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, then 40510f2a; round 2 (#405 6685743439 R7): SLED_Z 0.78
+      "normalSvg": "e7e3e90e017e5e582830b254a3d1da801cbf8970680f499a90b87a19969bf24f",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 8638526e, then 01f23201; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was b637dac6, now e7e3e90e (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
+      "normalOverlay": "6f7086bb14c8e9965510f0c796faaa5ee487d99b1e660864f16b85ad240b7603",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 0ef9d6fd, now the PF3 drawing; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 81d2c0e5, now 6f7086bb (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
+      "mistakeSvg": "5b02fcbd4f8d02bdf1adcc178ccba45d50848e5f20160e652f7b322ae1162d9f",   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 59508c62, then 40510f2a; round 2 (#405 6685743439 R7): SLED_Z 0.78; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 1122a784, now 5b02fcbd (the D-PF3B-SLEDSQUAT start squat and D-PF3B-SLEDLEADER boxes)
       "mistakeOverlay": "f488c63b0fa31e3e936d99f2f834dece424d62bee06595b56b14a89a09b8bd54",
       "tells": "6a7d6e8c622a2a5df7035e2823688a13decbfcb9a4a203b54ce05909b257705d",
       "tempo": "1551a4913b7c557d03dca51a61ca2c49605243ea59da71e831c285dc1b0cc523",

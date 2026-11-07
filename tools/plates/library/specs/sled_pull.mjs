@@ -20,8 +20,9 @@
 //   stepped-back knee then bends 33.7 deg (c2 "keeping your knees soft"). Trunk upright (tilt 0, spine and neck neutral: c2 "chest up", "shoulders over hips").
 //   LIB-PLATEFIX-3b (pfc-findings b5065795 set b T02 L1, critics c1-c3; ruled D-PF3B-SLEDSQUAT, #408): the "Quarter
 //   squat" checkpoint did not read (it anchored on the end's stepped-back knee, its thigh 3.5 deg from vertical; the
-//   start thigh was 16.6 deg, the bend coming from the shin). The quarter squat is now shown on the START pose only (the
-//   callout anchors on the start's knee.r): the start hips sit back and down until the knees bend Q_KNEE and the thighs
+//   start thigh was 16.6 deg, the bend coming from the shin). The quarter squat is now set on the START pose (the
+//   callout stays on the end's stepped-back knee, D-PF3B-SLEDLEADER ruling (b), whose thigh then leans 23.9 deg
+//   forward, since a leader to the start knee crosses the solid end figure or the end rope tail): the start hips sit back and down until the knees bend Q_KNEE and the thighs
 //   lean Q_THIGH forward of vertical (c2 "quarter squat, knees soft, chest up", the bend from the hips), trunk upright.
 //   That puts the start centre of mass behind the heels, held by the taut rope: the named balance exception
 //   (sled_pull, start) of balanceProblems below, only with the start rope taut (sag <= TAUT_SAG), the trunk within
@@ -215,11 +216,14 @@ export default {
   ghosts: { count: 1, parts: ['leg.r'] },
   trace: { point: 'ball.r', trim: [10, 12] },
   callouts: [
-    { key: 'squat', text: 'Quarter<br>squat', anchor: { at: 'knee.r', pose: 'start' },   // LIB-PLATEFIX-3b (D-PF3B-SLEDSQUAT): the squat is shown on the start (was the end's stepped-back knee)
-      box: { left: 24, top: 240 }, cue: 'Knees soft in a quarter squat, chest up, core braced.' },
-    { key: 'stack', text: 'Shoulders<br>over hips', anchor: 'backUpper', box: { left: 24, top: 124 },   // LIB-PLATEFIX-3: 20 px higher with the quarter squat (was top 144)
+    // LIB-PLATEFIX-3b (D-PF3B-SLEDLEADER, ruling (b)): on the end's stepped-back knee, as before (a leader to the start
+    // knee crosses the solid end figure or the end rope tail); that thigh now leans 23.9 deg forward (was 3.5)
+    { key: 'squat', text: 'Quarter<br>squat', anchor: 'knee.r', box: { left: 16, top: 240 },   // LIB-PLATEFIX-3b (D-PF3B-SLEDLEADER): was left 24; the end knee now sits forward and that leader clipped the rear thigh
+      cue: 'Knees soft in a quarter squat, chest up, core braced.' },
+    { key: 'stack', text: 'Shoulders<br>over hips', anchor: 'backUpper', box: { left: 20, top: 124 },   // LIB-PLATEFIX-3: 20 px higher with the quarter squat (was top 144); LIB-PLATEFIX-3b (D-PF3B-SLEDLEADER): left 24 -> 20, that leader clipped the back
       cue: 'Keep your shoulders over your hips, not leaning far back.' },
-    { key: 'steps', text: 'Short<br>steps<br>back', anchor: 'heel.r', box: { left: 8, top: 288 }, cue: 'Short, quick steps back, driving through the midfoot.' },
+    { key: 'steps', text: 'Short<br>steps<br>back', anchor: 'heel.r', box: { left: 50, top: 288 },   // LIB-PLATEFIX-3b (D-PF3B-SLEDLEADER): was { left: 8, top: 288 }; the end's rear heel now draws 25 px further right, so a steeper leader keeps 6 px off the floor
+      cue: 'Short, quick steps back, driving through the midfoot.' },
   ],
   mistake: {
     pose: mistake,
