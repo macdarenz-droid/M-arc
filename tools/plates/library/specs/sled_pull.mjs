@@ -18,8 +18,17 @@
 //   start, via and end (solved: the start knees Q_KNEE 42 deg, c2 "quarter-squat", LIB-PLATEFIX-3; was the stepped-back
 //   knee KNEE_SOFT in the end, which left the start at 29 deg), so the hands and the rope keep theirs; the end's
 //   stepped-back knee then bends 33.7 deg (c2 "keeping your knees soft"). Trunk upright (tilt 0, spine and neck neutral: c2 "chest up", "shoulders over hips").
-//   Each pose's root z puts the Winter centre of mass over the soles' midpoint (the feet are the base, c2; the rope's
-//   light tension, c1, is not counted).
+//   LIB-PLATEFIX-3b (pfc-findings b5065795 set b T02 L1, critics c1-c3; ruled D-PF3B-SLEDSQUAT, #408): the "Quarter
+//   squat" checkpoint did not read (it anchored on the end's stepped-back knee, its thigh 3.5 deg from vertical; the
+//   start thigh was 16.6 deg, the bend coming from the shin). The quarter squat is now shown on the START pose only (the
+//   callout anchors on the start's knee.r): the start hips sit back and down until the knees bend Q_KNEE and the thighs
+//   lean Q_THIGH forward of vertical (c2 "quarter squat, knees soft, chest up", the bend from the hips), trunk upright.
+//   That puts the start centre of mass behind the heels, held by the taut rope: the named balance exception
+//   (sled_pull, start) of balanceProblems below, only with the start rope taut (sag <= TAUT_SAG), the trunk within
+//   LEAN_TRUNK of vertical and the centre of mass at most LEAN_BACK behind the heels. The end keeps its step-back and
+//   drag: its hips sit DRAG (the value the balanced construction gave before, kept) behind the start's, and its centre
+//   of mass stays inside the heel-toe base. (Before: each pose's root z put the Winter centre of mass over the soles'
+//   midpoint, the rope's light tension, c1, not counted.)
 //  Hands (c1): both fists on the one rope at the midline (x 0), each arm ELBOW_BEND short of straight (c1 "arms
 //   slightly bent"), so each fist lies on its shoulder's circle in the side plane: the near fist at the hips' height
 //   (c3 "the rope close to your body"), the far fist GRIP_GAP (fists touching) below and behind it on the same circle
@@ -37,7 +46,8 @@
 //   and both arms keep their end direction in space, so the hips sag forward and down (c8 "don't let your hips sag":
 //   M_Z, M_Y solved) until the upper fist is back on the rope's run, the stepped-back knee kept at the end's.
 // Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): PX_PER_M, FOOT_X, KNEE_SOFT, ELBOW_BEND,
-//  GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH; solved: STEP, HIP_Y, DRAG,
+//  GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH, Q_THIGH, TAUT_SAG (LEAN_TRUNK and
+//  LEAN_BACK are ruled, D-PF3B-SLEDSQUAT); solved: STEP, HIP_Y, DRAG,
 //  ROPE_RUN, M_Z, M_Y.
 import { landmarksOf, WINTER, REF } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
@@ -47,9 +57,9 @@ import { strandOutline } from '../eq/rope.mjs';
 const H = 1.75, R = Math.PI / 180;
 // LIB-PLATEFIX-3 round 2 (#405 6685743439 sled_pull R7 [3,3,3]): SLED_Z 0.9 -> 0.78, the sled group 15 px left, so the
 // dashed start sled ends 13.9 px inside the frame (it was clipped at 358); no body change.
-export const SIZES = Object.freeze({ PX_PER_M: 126, FOOT_X: 0.145, KNEE_SOFT: 15, ELBOW_BEND: 18, GRIP_GAP: 0.07, SLED_Z: 0.78, FOOT_CLEAR: 0.025,
-  COIL_D: 0.266, COIL_TURNS: 3, ROPE_T: 0.028, ROPE_SAG: 0.006, M_TILT: -14, M_ARCH: -12, Q_KNEE: 42, LOOP_H: 0.044, LOOP_DZ: 0.05, TAIL_SAG: 0.04 });
-const { FOOT_X, KNEE_SOFT, ELBOW_BEND, GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH, Q_KNEE, LOOP_H, LOOP_DZ, TAIL_SAG } = SIZES;
+export const SIZES = Object.freeze({ PX_PER_M: 126, FOOT_X: 0.145, KNEE_SOFT: 15, ELBOW_BEND: 18, GRIP_GAP: 0.07, SLED_Z: 0.58, FOOT_CLEAR: 0.025,
+  COIL_D: 0.266, COIL_TURNS: 3, ROPE_T: 0.028, ROPE_SAG: 0.006, M_TILT: -14, M_ARCH: -12, Q_KNEE: 42, Q_THIGH: 31, LEAN_TRUNK: 10, LEAN_BACK: 0.1, TAUT_SAG: 0.01, LOOP_H: 0.044, LOOP_DZ: 0.05, TAIL_SAG: 0.04 });
+const { FOOT_X, KNEE_SOFT, ELBOW_BEND, GRIP_GAP, SLED_Z, FOOT_CLEAR, COIL_D, COIL_TURNS, ROPE_T, ROPE_SAG, M_TILT, M_ARCH, Q_KNEE, Q_THIGH, LEAN_TRUNK, LEAN_BACK, TAUT_SAG, LOOP_H, LOOP_DZ, TAIL_SAG } = SIZES;
 
 export const bisect = (f, a, b, what) => {
   let fa = f(a), fb = f(b), side = 0;
@@ -112,13 +122,22 @@ const balanced = (y, feet, zc) => bisect(z => com(landmarksOf(bodyAt(y, z, feet)
 // LIB-PLATEFIX-3 (W7 #394 6682923012 L1 [4,3,3], ruled #405 6683319630; c2 "quarter-squat"): the height at which the
 // start knees bend Q_KNEE (was: the stepped-back knee KNEE_SOFT in the end, which left the start knees at 29.4 deg and
 // read as standing). The end's stepped-back knee then follows from that height (still soft, c2).
-export const HIP_Y = bisect(y => kneeOf(landmarksOf(bodyAt(y, balanced(y, FEET.start, 0), FEET.start), H), 'l') - Q_KNEE, 0.6, 0.93, 'hip height');
-const START_Z = balanced(HIP_Y, FEET.start, 0), END_Z = balanced(HIP_Y, FEET.end, -STEP / 2);
+// LIB-PLATEFIX-3b (D-PF3B-SLEDSQUAT): that balanced construction now only gives the drag (the hips' shift through the
+// step, kept as it was); the start hips are set by the squat itself.
+const BAL_Y = bisect(y => kneeOf(landmarksOf(bodyAt(y, balanced(y, FEET.start, 0), FEET.start), H), 'l') - Q_KNEE, 0.6, 0.93, 'hip height');
+export const DRAG = balanced(BAL_Y, FEET.end, -STEP / 2) - balanced(BAL_Y, FEET.start, 0);
+// The thigh's lean from vertical in the side plane, + = the knee toward the sled.
+const thighOf = (lm, s) => Math.atan2(lm[`knee.${s}`][2] - lm[`hip.${s}`][2], lm[`hip.${s}`][1] - lm[`knee.${s}`][1]) / R;
+// LIB-PLATEFIX-3b (D-PF3B-SLEDSQUAT): the start hips at the height and depth where the knees bend Q_KNEE and the thighs
+// lean Q_THIGH forward (both legs alike: the feet side by side); the end's hips DRAG behind them at the same height.
+// (The knee falls steadily as the hips go back at these heights, the thigh's lean does not: the depth is solved on the
+// knee, the height on the thigh.)
+const startZ = y => bisect(z => kneeOf(landmarksOf(bodyAt(y, z, FEET.start), H), 'l') - Q_KNEE, -0.3, -0.05, 'the start depth');
+export const HIP_Y = bisect(y => thighOf(landmarksOf(bodyAt(y, startZ(y), FEET.start), H), 'l') - Q_THIGH, 0.845, 0.865, 'hip height');
+const START_Z = startZ(HIP_Y), END_Z = START_Z + DRAG;
 const withHands = p => ({ ...p, reach: gripsAt(landmarksOf(p, H)) });
 const start = withHands(bodyAt(HIP_Y, START_Z, FEET.start));
 const end = withHands(bodyAt(HIP_Y, END_Z, FEET.end));
-// The drag (Q9): the sled follows the hips' displacement.
-export const DRAG = END_Z - START_Z;
 // The Mistake is drawn against the end, with the sled where the end left it (static from the end on).
 const sledZ = (lm, ctx) => SLED_Z + ((ctx.pose === 'mistake' ? END_Z : lm.hips[2]) - ctx.start.hips[2]);
 // The rope's landmarks: the Mistake keeps the end's (its fists hold the end's grips; the rope does not move).
@@ -147,7 +166,10 @@ const mistake = { ...mBody(M_Y, M_Z), reach: end.reach };
 // COIL_TURNS flattened rope loops lying on the floor, overlapping (plate.equipment "a short coil of rope at the feet", c5
 // "the rope piles up near your feet"; #331 panel mx2 item 3), centred under the start's lower fist, so the start tail
 // hangs onto it; the pile lies still while the lifter steps back.
-const COIL_Z = landmarksOf(start, H)['grip.l'][2], COIL_TOP = [0, LOOP_H, COIL_Z];
+// LIB-PLATEFIX-3b (D-PF3B-SLEDSQUAT): with the start hips back the start's lower fist is over the toes, so the coil is
+// set just in front of the start toes instead (its nearest loop ROPE_T / 2 clear of them, the gap the coil had before,
+// 1.4 cm); the start tail then falls forward onto it in its soft curve.
+const COIL_Z = landmarksOf(start, H)['toe.l'][2] + (COIL_TURNS - 1) / 2 * LOOP_DZ + COIL_D / 2 + ROPE_T / 2, COIL_TOP = [0, LOOP_H, COIL_Z];
 const strand = (from, to, sag = ROPE_SAG) => strandOutline({ from, grip: to, dir: unit(v3.sub(to, from)), below: 0, thick: ROPE_T, knob: ROPE_T, knobLen: 0.002, sag, view: 'side' });
 const ropeItems = (lm, rearZ) => [[hitchOf(lm['grip.r'], rearZ), lm['grip.r']], [lm['grip.r'], lm['grip.l']], [lm['grip.l'], COIL_TOP, TAIL_SAG]]
   .map(([a, b, sag]) => ({ type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'rope', pts: strand(a, b, sag) }));
@@ -172,7 +194,10 @@ const START_ROPE = ropeItems(LS, SLED_Z).map(it => ({ type: 'line', cls: 'eq-lin
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   id: 'sled_pull', name: 'Sled Pull', view: 'side', facing: 'right',
-  camera: { pxPerM: SIZES.PX_PER_M, x0: 145, y0: 339 },
+  // LIB-PLATEFIX-3b (D-PF3B-SLEDSQUAT): x0 145 -> 170 (25 px, the start hips' 0.2 m move back at PX_PER_M) and SLED_Z
+  // 0.78 -> 0.58, so the figure, the hands, the rope and the sled stay where they were drawn and the labels keep their
+  // room; the feet and the coil are drawn 25 px further right.
+  camera: { pxPerM: SIZES.PX_PER_M, x0: 170, y0: 339 },
   poses: { start, via, end },
   equipment: [{ type: 'floor', from: -1.0, to: SLED_Z + SLED.len + 0.1 },   // the floor runs on under the whole start sled
     ...perItem((lm, ctx) => sled({ rearZ: sledZ(lm, ctx), form: 'pull' }), SLED_ITEMS),
@@ -190,7 +215,8 @@ export default {
   ghosts: { count: 1, parts: ['leg.r'] },
   trace: { point: 'ball.r', trim: [10, 12] },
   callouts: [
-    { key: 'squat', text: 'Quarter<br>squat', anchor: 'knee.r', box: { left: 24, top: 240 }, cue: 'Knees soft in a quarter squat, chest up, core braced.' },
+    { key: 'squat', text: 'Quarter<br>squat', anchor: { at: 'knee.r', pose: 'start' },   // LIB-PLATEFIX-3b (D-PF3B-SLEDSQUAT): the squat is shown on the start (was the end's stepped-back knee)
+      box: { left: 24, top: 240 }, cue: 'Knees soft in a quarter squat, chest up, core braced.' },
     { key: 'stack', text: 'Shoulders<br>over hips', anchor: 'backUpper', box: { left: 24, top: 124 },   // LIB-PLATEFIX-3: 20 px higher with the quarter squat (was top 144)
       cue: 'Keep your shoulders over your hips, not leaning far back.' },
     { key: 'steps', text: 'Short<br>steps<br>back', anchor: 'heel.r', box: { left: 8, top: 288 }, cue: 'Short, quick steps back, driving through the midfoot.' },
@@ -213,3 +239,22 @@ export const info = { START_Z, END_Z, HIP_Y, DRAG, ROPE_RUN, STEP, M_Z, M_Y, REA
   pose: Object.fromEntries([['start', start], ['via', via[0]], ['end', end], ['mistake', { ...end, ...mistake }]].map(([k, p]) => { const l = landmarksOf(p, H);
     return [k, { com: +com(l)[2].toFixed(3), heelR: +l['heel.r'][2].toFixed(3), heelL: +l['heel.l'][2].toFixed(3), toeR: +l['toe.r'][2].toFixed(3), toeL: +l['toe.l'][2].toFixed(3),
       kneeL: +kneeOf(l, 'l').toFixed(1), kneeR: +kneeOf(l, 'r').toFixed(1), hips: l.hips.map(v => +v.toFixed(3)), gripR: l['grip.r'].map(v => +v.toFixed(3)), gripL: l['grip.l'].map(v => +v.toFixed(3)) }]; })) };
+
+// LIB-PLATEFIX-3b (D-PF3B-SLEDSQUAT, #408): the balance rule. A standing pose's Winter centre of mass lies inside the
+// planted heel-toe base (the rearmost heel to the foremost toe). One named exception, (sled_pull, start): the taut rope
+// may hold the lean back, only with all three of the rope taut (the drawn run's sag <= TAUT_SAG), the trunk within
+// LEAN_TRUNK of vertical and the centre of mass at most LEAN_BACK behind the heels. Inputs are measured on the drawn
+// figure: lm the pose's engine landmarks, trunkDeg the shoulder-hip line's angle from vertical, ropeSag the drawn run's
+// greatest distance from its chord (m).
+export const LEAN_EXCEPTION = Object.freeze({ id: 'sled_pull', pose: 'start' });
+export function balanceProblems({ id, pose, lm, trunkDeg, ropeSag }) {
+  const c = com(lm)[2], heel = Math.min(lm['heel.l'][2], lm['heel.r'][2]), toe = Math.max(lm['toe.l'][2], lm['toe.r'][2]);
+  if (c >= heel && c <= toe) return [];
+  const where = `${id} ${pose}: centre of mass ${c.toFixed(3)} m outside the heel-toe base [${heel.toFixed(3)}, ${toe.toFixed(3)}]`;
+  if (!(id === LEAN_EXCEPTION.id && pose === LEAN_EXCEPTION.pose) || c > toe) return [where];
+  const out = [];
+  if (!(ropeSag <= TAUT_SAG)) out.push(`${id} ${pose}: rope not taut (sag ${(ropeSag * 100).toFixed(1)} cm > ${TAUT_SAG * 100} cm)`);
+  if (!(trunkDeg <= LEAN_TRUNK)) out.push(`${id} ${pose}: trunk ${trunkDeg.toFixed(1)} deg from vertical > ${LEAN_TRUNK} deg`);
+  if (!(heel - c <= LEAN_BACK)) out.push(`${id} ${pose}: centre of mass ${((heel - c) * 100).toFixed(1)} cm behind the heels > ${LEAN_BACK * 100} cm`);
+  return out;
+}
