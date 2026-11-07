@@ -77,6 +77,12 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
   const W3_IDS = ['chin_up', 'hanging_knee_raise', 'inverted_row', 'close_grip_pulldown', 'single_arm_lat_pulldown', 'straight_arm_pulldown', 'chest_supported_row', 'resistance_band_row', 'horizontal_leg_press'];
   const W3_LINE = new RegExp(`^  (?:"lib_(?:${W3_IDS.join('|')})",|lib_(?:${W3_IDS.join('|')}): \\(\\) => |"(?:${W3_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w3Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W3_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
+  // LIB-SHIP W6 (D-SHIP-A9 guard replacement; #393 6689822595 flip set, 6701002884 ships 7): W6's 7 ids add 4 lines each
+  // (HOWTO_IDS, LOADERS, POSTURE, FEEL; no HAND line, all 7 on hands/no-zoom.json), 28 lines; with exactly those taken out
+  // first, the W3 and W2 checks below hold unchanged
+  const W6_IDS = ['machine_crunch', 'machine_lateral_raise', 'cable_lateral_raise', 'dumbbell_front_raise', 'face_pull', 'incline_push_up', 'pike_push_up'];
+  const W6_LINE = new RegExp(`^  (?:"lib_(?:${W6_IDS.join('|')})",|lib_(?:${W6_IDS.join('|')}): \\(\\) => |"(?:${W6_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+  const w6Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W6_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
   it('the 27 header-moved files: each body (all but line 1) equals main c4c34d75 (re-measured after train 63)', () => {
     const list = [...ROWS.map(i => `src/howto/generated/hand-${i}.ts`), ...ROWS.map(i => `src/howto/generated/posture-${i}.ts`),
@@ -89,9 +95,19 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // the W2 lines taken out (4 per id: HOWTO_IDS, LOADERS, POSTURE, FEEL; no HAND line, D-SHIP-PAIR-NOZOOM) is main's
     // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
-    const w3 = w3Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    const w6 = w6Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    expect(w6.removed).toBe(28);   // LIB-SHIP W6
+    const w3 = w3Less(w6.text);
     expect(w3.removed).toBe(41);
     expect(w2Less(w3.text)).toEqual({ removed: 32, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
+  });
+  it('LIB-SHIP W6 mutations: a W6 line dropped, a HAND line for a no-pair W6 id, and another line changed are red', () => {
+    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(w6Less(t).text).text);
+    expect(ok.sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
+    expect(t).toContain('  "face-pull": () => import(\'./posture-face-pull\'),\n');
+    expect(w6Less(t.replace('  "face-pull": () => import(\'./posture-face-pull\'),\n', '')).removed).toBe(27);
+    expect(w6Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"face-pull\": () => import('./hand-face-pull'),\n")).removed).toBe(29);
+    expect(w2Less(w3Less(w6Less(t.replace('export const HAND', 'export const HAND_X')).text).text).sha).not.toBe(ok.sha);
   });
   it('LIB-SHIP W3 mutations: a W3 line dropped, a HAND line for a no-pair W3 id, and another line changed are red', () => {
     const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(t).text);

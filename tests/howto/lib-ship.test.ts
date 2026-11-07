@@ -20,7 +20,10 @@ const EIGHT = Object.keys(json('tools/plates/plates.json'));
  *  shoulder_press (D-SHIP-W3-NOPAIR 6681221802); registry order puts lb01 first and zoom last). */
 const W3_SHIPPED = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
   'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'];
-const RULED_SHIPPED = [...W3_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
+/** LIB-SHIP W6: the 7 of the flip set (#393 6689822595), ruled to ship (#393 6701002884), registry order (lb06 then lb07, after lb01). */
+const W6_SHIPPED = ['lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull',
+  'lib_incline_push_up', 'lib_pike_push_up'];
+const RULED_SHIPPED = [...W3_SHIPPED, ...W6_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
   'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
 let reg: any, content: any, P: any, keyMods: any[];

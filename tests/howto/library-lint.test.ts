@@ -435,7 +435,10 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   // LIB-SHIP W3 (ruling 3): W3's 9 (#384 6653062201; D-SHIP-W3-NOPAIR 6681221802), lb01 first and zoom last in registry order
   const W3_LIB = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
     'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'];
-  const RULED_LIB = [...W3_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
+  // LIB-SHIP W6 (ruling 3): the 7 of the flip set (#393 6689822595), ruled to ship (#393 6701002884), lb06 then lb07 in registry order
+  const W6_LIB = ['lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull',
+    'lib_incline_push_up', 'lib_pike_push_up'];
+  const RULED_LIB = [...W3_LIB, ...W6_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_upright_row',
     'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
   // LIB-SHIP W3: the mapped children that ship now, in CHILDREN order; the rest of the map (incline_machine_press,
   // shoulder_press, underhand_lat_pulldown, leg_press_calf_raise, single_leg_romanian_deadlift) is still held

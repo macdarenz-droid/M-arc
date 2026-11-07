@@ -46,6 +46,9 @@ const ROWS = 'tools/plates/library/batches/lb07.json', PRE_MOVE = 'tools/plates/
 const W6_RULED = ['cable_lateral_raise', 'dumbbell_front_raise', 'face_pull', 'cable_external_rotation', 'resistance_band_pull_apart', 'renegade_row',
   'weighted_dip', 'bench_dip', 'incline_push_up', 'diamond_push_up', 'pike_push_up'].map(i => `lib_${i}`);
 const W6_STUBS = ['renegade_row', 'bench_dip'];
+/** LIB-SHIP W6 flip (#393 6689822595, ships 7 by 6701002884): of the ruled LB7 rows, exactly these 5 are shipped; the other 6 stay approved-plate. */
+const W6_SHIPPED_LB7 = ['cable_lateral_raise', 'dumbbell_front_raise', 'face_pull', 'incline_push_up', 'pike_push_up'].map(i => `lib_${i}`);
+const w6StageOf = (id: string) => (W6_SHIPPED_LB7.includes(id) ? 'shipped' : 'approved-plate');
 /** LIB-SHIP W6: a ruled id's plate pin exemptions (its entry in lb07's golden chain), what the pinned candidate carries. */
 const pinExemptions = (id: string) => readJson(GOLD).entries.find((e: any) => e.kind === 'plate' && e.id === id)?.exemptions;
 const RESEARCH_HEAD = 'e5ed66ca1c7c7c2f6418001d262d053431b4c67f';
@@ -183,8 +186,9 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
   // LIB-SHIP W6 (D-SHIP-A9, ruling 3): the rows are pinned at approved-plate (SHIP W6 PIN GO, #393 6647923934); none
   // ships until the W6 flip. A row off the ruled list, a ruled row missing, or a ruled row at any stage but
   // approved-plate (shipped, or back at drawing or review) is red.
+  // LIB-SHIP W6 flip (#393 6689822595 / 6701002884): the ruled stage is per id: W6_SHIPPED_LB7 shipped, the other 6 approved-plate
   const stageProblems = (rows: Record<string, any>) => [
-    ...Object.entries(rows).filter(([id, r]) => !W6_RULED.includes(id) || r.stage !== 'approved-plate').map(([id, r]) => `${id}: ${r.stage}`),
+    ...Object.entries(rows).filter(([id, r]) => !W6_RULED.includes(id) || r.stage !== w6StageOf(id)).map(([id, r]) => `${id}: ${r.stage}`),
     ...W6_RULED.filter(id => !(id in rows)).map(id => `${id}: no row`)];
   /** LIB-SHIP W6: lb07's golden chain is valid and holds exactly one plate entry per row, in row order, naming the row's files. */
   const pinProblems = (rows: Record<string, any>, g: any, golden: any) => {
@@ -200,9 +204,12 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
   };
   const someRow = { src: 'library/specs/weighted_dip.mjs', slug: 'weighted-dip', prefix: 'weighted-dip', chromeId: 'weighted-dip', mode: 'H', stage: 'drawing', view: 'side' };
   // LIB-SHIP W6 (ruling 3): replaces "every LB7 row is at stage drawing or review"
-  it('LIB-SHIP W6: the batch rows are exactly the ruled 11 at stage approved-plate, each with its plate pin entry in lb07\'s golden chain', async () => {
+  // LIB-SHIP W6 flip (#393 6689822595 / 6701002884): "at stage approved-plate" becomes each row at its ruled stage
+  it('LIB-SHIP W6: the batch rows are exactly the ruled 11, the flip\'s 5 shipped and the other 6 at approved-plate, each with its plate pin entry in lb07\'s golden chain', async () => {
     const golden = await import(/* @vite-ignore */ lib('../golden.mjs')), rows = readJson(ROWS).rows;
     expect(Object.keys(rows)).toEqual(W6_RULED);
+    expect(Object.entries<any>(rows).filter(([, r]) => r.stage === 'shipped').map(([id]) => id)).toEqual(W6_SHIPPED_LB7);
+    expect(Object.entries<any>(rows).filter(([, r]) => r.stage === 'approved-plate').map(([id]) => id)).toEqual(W6_RULED.filter(id => !W6_SHIPPED_LB7.includes(id)));
     expect(stageProblems(rows)).toEqual([]);
     expect(pinProblems(rows, readJson(GOLD), golden)).toEqual([]);
   });
@@ -216,6 +223,9 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
     expect(stageProblems(Object.fromEntries(Object.entries(rows).filter(([id]) => id !== 'lib_weighted_dip')))).toEqual(['lib_weighted_dip: no row']);
     expect(stageProblems({ ...rows, lib_cable_rear_delt_fly: { ...someRow, stage: 'approved-plate' } }), 'the held id').toEqual(['lib_cable_rear_delt_fly: approved-plate']);
     expect(stageProblems({ ...rows, lib_push_up: { ...someRow, stage: 'shipped' } })).toEqual(['lib_push_up: shipped']);
+    // LIB-SHIP W6 flip: a shipped row (face_pull) put back at approved-plate, or at review, is red
+    expect(stageProblems({ ...rows, lib_face_pull: { ...rows.lib_face_pull, stage: 'approved-plate' } })).toEqual(['lib_face_pull: approved-plate']);
+    expect(stageProblems({ ...rows, lib_face_pull: { ...rows.lib_face_pull, stage: 'review' } })).toEqual(['lib_face_pull: review']);
     const g = readJson(GOLD), noPin = structuredClone(g); noPin.entries = noPin.entries.filter((e: any) => e.id !== 'lib_bench_dip');
     expect(pinProblems(rows, noPin, golden)).toContain('lib_bench_dip: 0 plate entries');
     const moved = structuredClone(g); moved.entries.find((e: any) => e.id === 'lib_face_pull').chromeId = 'face-pulls';
@@ -223,20 +233,25 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
   });
   // LIB-SHIP W6 (ruling 3): replaces "none of the 12 is shipped, even with lb7/rows.json read as a batch file". The
   // pre-move file is gone; a row copied back into it is refused by the registry (a row in two places).
-  it('LIB-SHIP W6: none of the 12 is shipped; the pre-move lb7/rows.json does not exist, and a row copied back into it is refused', async () => {
+  // LIB-SHIP W6 flip (#393 6689822595 / 6701002884): "none of the 12 is shipped" becomes "exactly the flip's 5 are"
+  it('LIB-SHIP W6: of the 12 exactly the flip\'s 5 are shipped; the pre-move lb7/rows.json does not exist, and a row copied back into it is refused', async () => {
     const build = await import(/* @vite-ignore */ lib('lb7/build.mjs'));
     expect(existsSync(PRE_MOVE)).toBe(false);
     const all = reg.rows();
-    expect(all.filter((r: any) => IDS.includes(r.id)).map((r: any) => [r.id, r.stage, r.batchFile])).toEqual(W6_RULED.map(id => [id, 'approved-plate', ROWS]));
-    expect(build.lb7All().filter((r: any) => IDS.includes(r.id)).map((r: any) => r.stage)).toEqual(W6_RULED.map(() => 'approved-plate'));
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual([]);
+    expect(all.filter((r: any) => IDS.includes(r.id)).map((r: any) => [r.id, r.stage, r.batchFile])).toEqual(W6_RULED.map(id => [id, w6StageOf(id), ROWS]));
+    expect(build.lb7All().filter((r: any) => IDS.includes(r.id)).map((r: any) => r.stage)).toEqual(W6_RULED.map(w6StageOf));
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W6_SHIPPED_LB7);
     // mutation: lib_renegade_row's row copied back into lb7/rows.json, read the way lb7All reads a copy-back
     const back = { batch: 'LB7', censusRef: '4a9fd86', rows: { lib_renegade_row: readJson(ROWS).rows.lib_renegade_row } };
     expect(() => reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [PRE_MOVE, back]] }))
       .toThrow(/registry: tools\/plates\/library\/lb7\/rows\.json: id lib_renegade_row already used by tools\/plates\/library\/batches\/lb07\.json lib_renegade_row/);
     // mutation: a ruled row set to shipped in the batch file is caught by shippedIds
     const j = readJson(ROWS); j.rows.lib_weighted_dip.stage = 'shipped';
-    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? j : readJson(p)]) })).filter((i: string) => IDS.includes(i))).toEqual(['lib_weighted_dip']);
+    // LIB-SHIP W6 flip: weighted_dip (held) lands among the 5 in row order; a shipped row set back drops out
+    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? j : readJson(p)]) })).filter((i: string) => IDS.includes(i)))
+      .toEqual(['lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_weighted_dip', 'lib_incline_push_up', 'lib_pike_push_up']);
+    const k = readJson(ROWS); k.rows.lib_pike_push_up.stage = 'approved-plate';
+    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? k : readJson(p)]) })).filter((i: string) => IDS.includes(i))).toEqual(W6_SHIPPED_LB7.slice(0, 4));
   });
   /** An id or its slug as a whole token in a file's name or text (the card's matcher). */
   const tokenHits = (ids: string[], name: string, text: string) => ids.flatMap(id => {

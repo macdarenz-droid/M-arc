@@ -82,8 +82,13 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   const W3_RULE = ['D-SHIP-W3-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/384#issuecomment-6653062201 @ af8e6e025798059495971c476e9d5a1585907c4f'];
   const W3_STAMPED = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
     'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', 'lib_horizontal_leg_press'];
+  // LIB-SHIP W6 (ruling 3; D-SHIP-W6-STAMP): the flip set of #393 6689822595, ruled to ship by #393 6701002884; the 7, registry order
+  const W6_RULE = ['D-SHIP-W6-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/393#issuecomment-6689822595 @ d939496e22e7d0d9e858662e3ac2b719bec47c20'];
+  const W6_STAMPED = ['lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull',
+    'lib_incline_push_up', 'lib_pike_push_up'];
   const RULING: Record<string, string[]> = { lib_dumbbell_biceps_curl: W1_RULE, ...Object.fromEntries(W2_STAMPED.map(id => [id, W2_RULE])),
-    ...Object.fromEntries(W3_STAMPED.map(id => [id, W3_RULE])) };
+    ...Object.fromEntries(W3_STAMPED.map(id => [id, W3_RULE])),
+    ...Object.fromEntries(W6_STAMPED.map(id => [id, W6_RULE])) };
   const clone = (x: any) => JSON.parse(JSON.stringify(x));
   /** The library entries against RULING: every ruled id stamped once under its own decision, no unruled id stamped. */
   // W2 review follow-up (#384 6647873082): cross-checked against the registry's shipped ids, so a shipped library id
@@ -113,8 +118,8 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   it('one approved entry per id of the 8, each matching stampOf; LIB-SHIP: then one per ruled shipped library id; every committed entry is the supervisor\'s', async () => {
     const r = reviews();
     // LIB-SHIP W2 (ruling 3; D-SHIP-W2-STAMP #379 6636105974): the W1 id, then the 9 W2 ids in shipping (registry) order
-    // LIB-SHIP W3: then W3's 9 (D-SHIP-W3-STAMP)
-    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED]);
+    // LIB-SHIP W3: then W3's 9 (D-SHIP-W3-STAMP); LIB-SHIP W6: then W6's 7 (D-SHIP-W6-STAMP, #393 6689822595 / 6701002884)
+    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...W6_STAMPED]);
     expect(stampedProblems(r.entries)).toEqual([]);
     expect(entryProblems(r.entries)).toEqual([]);
     for (const e of r.entries.filter((x: any) => !EIGHT.includes(x.scope))) {   // LIB-SHIP: each library stamp matches its sheet and its ruling
@@ -141,6 +146,13 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     const w2 = clone(es); w2.find((e: any) => e.scope === 'lib_horizontal_leg_press').decision = 'D-SHIP-W2-STAMP';
     expect(stampedProblems(w2)).toEqual(['lib_horizontal_leg_press: decision D-SHIP-W2-STAMP, ruled D-SHIP-W3-STAMP']);
     expect(stampedProblems(es, [...SHIPPED, 'lib_shoulder_press'])).toEqual(['lib_shoulder_press: shipped, not ruled']);
+    // LIB-SHIP W6 A9 reds (#393 6689822595 / 6701002884): a W6 id's stamp removed; a W6 id under the W3 ruling; an unruled
+    // id stamped; a held W6 id (approved-plate in lb06/lb07) shipped or stamped
+    expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_face_pull'))).toEqual(['lib_face_pull: ruled, not stamped']);
+    const w3 = clone(es); w3.find((e: any) => e.scope === 'lib_pike_push_up').decision = 'D-SHIP-W3-STAMP';
+    expect(stampedProblems(w3)).toEqual(['lib_pike_push_up: decision D-SHIP-W3-STAMP, ruled D-SHIP-W6-STAMP']);
+    expect(stampedProblems(es, [...SHIPPED, 'lib_hip_abduction'])).toEqual(['lib_hip_abduction: shipped, not ruled']);
+    expect(stampedProblems([...es, { ...es[es.length - 1], scope: 'lib_weighted_dip' }])).toEqual(['lib_weighted_dip: stamped, not ruled']);
   });
   it('mutations, each red: \'owner\'; approvedBy missing; open: 1', () => {
     const e = reviews().entries[0], { approvedBy: _a, ...noBy } = e;
