@@ -13,7 +13,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
 const ID = 'bent_over_dumbbell_rear_delt_fly', LID = `lib_${ID}`;
-const OURS = /^(dumbbell_fly|bent_over_dumbbell_rear_delt_fly|pec_fly)(__alt)?\.mjs$/;
+// LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was /^(dumbbell_fly|bent_over_dumbbell_rear_delt_fly|pec_fly)(__alt)?\.mjs$/, now also
+// smith_machine_bench_press and incline_barbell_bench_press (their new head-inset entries are not existing zooms; the same 37
+// entries and hash are checked; platefix3b-zoomhead.test.ts proves every existing zoom byte-equal across PF3b's change)
+const OURS = /^(dumbbell_fly|bent_over_dumbbell_rear_delt_fly|pec_fly|smith_machine_bench_press|incline_barbell_bench_press)(__alt)?\.mjs$/;
 let zoom: any, qz: any, qaIdx: any, qaEng: any, cand: any, bp: any, reg: any, golden: any, E: any, mirror = '', c0: any, spec: any, pins: any, dir = '';
 // the fixture: main's front-view rear delt (__alt), the shrug alone (10 cm), no plate guides, a side inset (normal) and a
 // side posture zoom off the body axis (Mistake)
@@ -84,14 +87,17 @@ describe('PF2 (a): the field rows', () => {
     expect(zoom.zoomFieldProblems({ ...N, r: 91 })).toEqual(['zoom.r 91 is outside 52-90']);
     expect(zoom.zoomFieldProblems({ ...N, guides: [] })).toEqual(['zoom.guides is a list, for a Mistake entry only']);
     expect(zoom.zoomFieldProblems({ view: 'mistake', k: 3, r: 68 })).toEqual(['zoom: unknown key r']);   // the fault zoom keeps its radius
-    expect(zoom.zoomFieldProblems({ ...N, ring: false })).toEqual(["zoom.ring is false or absent, and false only with project 'side' (an inset of another view)"]);
-    expect(zoom.zoomFieldProblems({ ...N, project: 'side', ring: true })).toEqual(["zoom.ring is false or absent, and false only with project 'side' (an inset of another view)"]);
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was "... false only with project 'side' (an inset of another view)", now "... 'side' or
+    // 'head' ..." (project 'head' is also an inset of another view, #405 6682844211); the same two inputs stay refused
+    expect(zoom.zoomFieldProblems({ ...N, ring: false })).toEqual(["zoom.ring is false or absent, and false only with project 'side' or 'head' (an inset of another view)"]);
+    expect(zoom.zoomFieldProblems({ ...N, project: 'side', ring: true })).toEqual(["zoom.ring is false or absent, and false only with project 'side' or 'head' (an inset of another view)"]);
     expect(zoom.zoomFieldProblems({ ...N, project: 'side', ring: false })).toEqual([]);
     expect(zoom.zoomFieldProblems({ ...N, focus: { region: [], pose: 'start' } })).toEqual(['zoom.focus.region must list 1-8 landmark names']);
     expect(zoom.zoomFieldProblems({ ...N, focus: { region: Array(9).fill('hip.r'), pose: 'start' } })).toEqual(['zoom.focus.region must list 1-8 landmark names']);
     expect(zoom.zoomFieldProblems({ ...N, focus: { region: ['hip.r'], pose: 'mistake' } })).toEqual(["zoom.focus.pose \"mistake\" is not 'start' or 'end'"]);
     expect(zoom.zoomFieldProblems({ ...N, focus: { region: ['hip.r'], pose: 'start', at: 1 } })).toEqual(['zoom.focus must be { region, pose }']);
-    expect(zoom.zoomFieldProblems({ ...N, project: 'top' })).toEqual(["zoom.project \"top\" is not 'side'"]);
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was "is not 'side'", now "is not 'side' or 'head'" (project 'head' added); 'top' stays refused
+    expect(zoom.zoomFieldProblems({ ...N, project: 'top' })).toEqual(["zoom.project \"top\" is not 'side' or 'head'"]);
     expect(zoom.zoomFieldProblems({ ...N, ref: [[0, 1, 0], [0, 1, 0]] })).toEqual(['zoom.ref must be two different points [x, y, z] of finite numbers']);
     expect(zoom.zoomFieldProblems({ view: 'mistake', k: 3, place: 'inner' })).toEqual(["zoom.place \"inner\" is not 'outer'"]);
     expect(zoom.zoomFieldProblems({ view: 'mistake', k: 1 })).toEqual(['zoom.k 1 is outside 1.5-4']);   // the fault zoom keeps its range
