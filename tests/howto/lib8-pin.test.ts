@@ -49,7 +49,7 @@ const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id
 // barbell_row, barbell_overhead_press, romanian_deadlift and triceps_pushdown plates (the superseding page entry 16)
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN, D-PLATEFIX-SECOND form): was d38e8b33 (1,316,144 B); with pec_fly's height box at
 // top 260 (PQ-H4), the superseding page entry 23
-const PAGE = { sha256: '032ce649154ec63e6492d7044b86d8fde63639cc504a74a83ffe7fa25ae03191', bytes: 1316144 };
+const PAGE = { sha256: '6d3afb8313a20e4fb519c52e20c62de3f002724e9bb9facf30900b081118791d', bytes: 1315771 };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 032ce649 (1316144 B), now 6d3afb83 (1315771 B) (barbell_overhead_press's head-end inset; pilot A's 'owner' D-OWNER-REPIN page entry 26)
 const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
 // Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
 const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
@@ -171,9 +171,12 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
       // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN, D-PLATEFIX-SECOND form): then exactly its owner page entry, superseding
       // #385's, and its pec_fly plate entry, superseding entry 8; the layers page is not re-pinned (pec_fly is not on it)
       ['page', null, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'page' && e.supersedes === 0)],
-      ['plate', 'lib_pec_fly', 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === 'lib_pec_fly')]]);
+      ['plate', 'lib_pec_fly', 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === 'lib_pec_fly')],
+      // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was the list ending at pec_fly's entry, now + its owner barbell_overhead_press plate entry (superseding #385's, 19) and owner page entry (superseding PF2's, 23); the layers page is not re-pinned
+      ['plate', 'lib_barbell_overhead_press', 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === 'lib_barbell_overhead_press' && e.supersedes != null)],
+      ['page', null, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'page' && e.supersedes === entries.findIndex((x: any) => x.kind === 'page' && x.supersedes === 0))]]);
     const cur = lp[lp.length - 1].e;
-    expect(lp[lp.length - 1].i).toBe(entries.length - 3);
+    expect(lp[lp.length - 1].i).toBe(entries.length - 5);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was entries.length - 3, now - 5 (its 2 owner entries follow PF2's 2)
     const page = readFileSync(ROOT + batch.pages.layers);
     expect([[...cur.ids].sort(), cur.ids.length, cur.pageSha256, cur.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);

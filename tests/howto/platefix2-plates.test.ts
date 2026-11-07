@@ -21,8 +21,10 @@ describe('PF2 pec_fly PQ-H4 (D-SHIP-PECFLY-HOLD)', () => {
 describe('PF2 pilot A re-pin: the owner page and pec_fly plate entries, and the MANIFEST guard helper', () => {
   const G = () => JSON.parse(readFileSync(new URL('../../tests/howto/golden/library/pilot-a.json', import.meta.url), 'utf8')).entries;
   it('the last two entries are the page entry (superseding #385\'s 17) and pec_fly\'s (superseding 8); pec_fly moves only normalSvg and normalOverlay', () => {
-    const E = G(), [pg, pf] = E.slice(-2), was = E[8];
-    expect([E.length, pg.kind, pg.supersedes, E[17].kind, pg.approvedBy, pf.kind, pf.id, pf.supersedes, pf.approvedBy]).toEqual([25, 'page', 17, 'page', 'owner', 'plate', 'lib_pec_fly', 8, 'owner']);
+    const E = G(), [pg, pf] = E.slice(23, 25), was = E[8];   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was E.slice(-2), now E.slice(23, 25) (its 2 owner entries follow; pinned below)
+    expect([E.length, pg.kind, pg.supersedes, E[17].kind, pg.approvedBy, pf.kind, pf.id, pf.supersedes, pf.approvedBy]).toEqual([27, 'page', 17, 'page', 'owner', 'plate', 'lib_pec_fly', 8, 'owner']);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was length 25, now 27 (its 2 owner entries)
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was nothing after pec_fly's entry, now exactly its owner barbell_overhead_press plate (superseding 19) and page (superseding PF2's 23)
+    expect(E.slice(25).map((e: any) => [e.kind, e.id ?? null, e.supersedes, e.approvedBy])).toEqual([['plate', 'lib_barbell_overhead_press', 19, 'owner'], ['page', null, 23, 'owner']]);
     for (const e of [pg, pf]) expect(e.decision).toMatch(/^D-OWNER-REPIN; LIB-PLATEFIX-2 golden update .*pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09/);
     expect(pg.decision).toContain('pf1 plates panel #385 6636073314');
     const moved = Object.keys(pf.fragments).filter(k => pf.fragments[k] !== was.fragments[k]);
@@ -46,5 +48,28 @@ describe('PF2 pilot A re-pin: the owner page and pec_fly plate entries, and the 
       for (const k of Object.keys(a.rows[id].files)) if (a.rows[id].files[k] !== b.rows[id].files[k]) diff.push(k);
     }
     expect([...new Set(diff)].sort()).toEqual(['lib_pec_fly entry', 'tools/plates/library/specs/pec_fly.mjs', 'tools/plates/library/zoom/inline.mjs']);
+  });
+});
+
+// LIB-PLATEFIX-3b (#408, D-OWNER-REPIN; D-PLATEFIX-PINS form): its MANIFEST guard helper (platefix3b-pins), red-capable
+describe('PF3b MANIFEST guard helper', () => {
+  it('pf3bProblems is red when a moved key or a moved entry is off its current value; restorePF3b changes only those', async () => {
+    const P = await import('./platefix3b-pins');
+    const cur = () => JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
+    expect(P.pf3bProblems(cur())).toEqual([]);
+    const m1 = cur(); m1.rows.lib_assisted_pull_up.files['tools/plates/library/specs/assisted_pull_up.mjs'] = '0'.repeat(64);
+    expect(P.pf3bProblems(m1)).toHaveLength(1);
+    const m2 = cur(); m2.rows.lib_smith_machine_bench_press.files['tools/plates/library/specs/smith_machine_bench_press.mjs'] = '0'.repeat(64);
+    expect(P.pf3bProblems(m2)).toHaveLength(1);
+    const m3 = cur(); m3.rows.lib_assisted_pull_up.entry = '0'.repeat(64);
+    expect(P.pf3bProblems(m3)).toHaveLength(1);
+    const m4 = cur(); m4.rows.lib_smith_machine_bench_press.entry = P.PF3B_MAIN_ENTRY.lib_smith_machine_bench_press!;
+    expect(P.pf3bProblems(m4)).toHaveLength(1);
+    const a = cur(), b = P.restorePF3b(cur()), diff: string[] = [];
+    for (const id of Object.keys(a.rows)) {
+      if (a.rows[id].entry !== b.rows[id].entry) diff.push(`${id} entry`);
+      for (const k of Object.keys(a.rows[id].files)) if (a.rows[id].files[k] !== b.rows[id].files[k]) diff.push(k);
+    }
+    expect([...new Set(diff)].sort()).toEqual(['lib_assisted_pull_up entry', 'lib_smith_machine_bench_press entry', 'tools/plates/library/specs/assisted_pull_up.mjs', 'tools/plates/library/specs/smith_machine_bench_press.mjs']);
   });
 });
