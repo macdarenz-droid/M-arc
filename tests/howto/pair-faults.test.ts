@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { lessW4 } from './checks/ship-w4';
+import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -205,17 +206,22 @@ const W2_ADDED: Record<string, string[]> = {
   'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
 };
 // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
-// research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef).
+// research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef: 5a51002e).
 const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
 // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
 const PF3_ZOOM = 'tools/plates/library/render/closeup/zoom.mjs';
-// LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): main's was 5a51002e…0532, then 4be0cf0d… with zoom.mjs's key also blanked;
-// LIB-SHIP W4: with the W4-moved keys also blanked by lessW4 (re-measured on the merge of main c2f267a7; was 9fc5552f… on main 05f27be9)
-const MANIFEST_BLANKED_MAIN_W2 = '1a636e0c4b56667044e30851ca9237800111902192cdf1c97db4890304bf7aaf';
+// LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): was 5a51002e…0532, then 4be0cf0d with zoom.mjs's key also blanked.
+// LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 8841246c, both sides kept): its moved keys,
+// added keys and superseded entries each pin their current value (pfProblems, in lessW2), then are blanked too (blankPF), so
+// this is main 8841246c's MANIFEST.json with MOVED, W2, RR_BOX, PF3_ZOOM and PLATEFIX blanked (measured on main 8841246c's own MANIFEST).
+// LIB-SHIP W4 (merge of main 7e060e83): main's 8fa7f168… with lessW4's blanks too (W4's rows out, the smith-sheet key blanked)
+const MANIFEST_BLANKED_MAIN_W2 = '0c2e20c4f717b0008c8ba5728aa86800caafa8bb03c6de6a4904eff61448ffef';
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
   const lessW2 = (m: any) => {
+    expect(pfProblems(m)).toEqual([]);
+    blankPF(m, '');
     expect(Object.keys(m.rows)).toContain('lib_crunch');
     delete m.rows.lib_crunch;
     for (const [id, r] of Object.entries<any>(m.rows)) {
@@ -279,5 +285,12 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     expect(() => lessW4(stale, k => sha(read(k)), '')).toThrow(/lib_cable_fly .* does not pin its current file/);
     const extra = raw(); extra.rows.lib_zz = structuredClone(extra.rows.lib_plank);
     expect(blanked(lessW2(lessW3(lessW4(extra, k => sha(read(k)), ''))), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // merge of main 62d3dcb6: W3 taken out too, so only the extra row differs
+    // LIB-PLATEFIX-1: a PLATEFIX moved key, added key or superseded entry off its current value is red
+    const pfKey = current(); (Object.values<any>(pfKey.rows).find(r => PF_MOVED[0]! in r.files)).files[PF_MOVED[0]!] = '0'.repeat(64);
+    expect(() => lessW2(pfKey)).toThrow();
+    const pfAdd = current(); delete pfAdd.rows.lib_reverse_lunge.files['tools/plates/library/pages/pilot-a3.closeups.mjs'];
+    expect(() => lessW2(pfAdd)).toThrow();
+    const pfEntry = current(); pfEntry.rows.lib_triceps_pushdown.entry = '0'.repeat(64);
+    expect(() => lessW2(pfEntry)).toThrow();
   });
 });

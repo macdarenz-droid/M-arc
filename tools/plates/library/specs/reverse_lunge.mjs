@@ -29,15 +29,16 @@
 //  Callouts = the 3 plate.checkpoints (c2 front shin vertical, with a plumb guide through the front ankle; c3 chest
 //   up; c3 weight even, pointing at the hips with a plumb guide to the floor midway between the feet).
 //  Mistake = plate.mistake (c18, drawable; PILOT-A3 redraw on LIB-SPINE, F-REVLUNGE-ARCH): the low back arches as the
-//   foot steps back (trunk.bow M_ARCH: the pelvis tips M_TILT under the held thorax), one tell 'flare' (the card's
-//   topFault) on the lumbar landmark, shown in a Mistake zoom on the low back (D-LIBZOOM-EXTEND, D-A3-REVZOOM).
+//   foot steps back (trunk.bow M_ARCH: the pelvis tips M_TILT under the thorax) and the ribcage flares (the thorax tips
+//   back M_FLARE; LIB-PLATEFIX-1), two tells: 'flare' (the card's topFault) on the lumbar landmark and 'ribs' on the
+//   chest, with the pelvis arc-arrow and the rib arrow, and a Mistake zoom on the low back (D-LIBZOOM-EXTEND, D-A3-REVZOOM).
 //  Measure: none. The card gives no angle ("roughly vertical"); the shin plumb guide shows the checkpoint instead.
 //  Tempo: the strip without seconds (D-STRIP-ROWS): Lower slow, Rise quicker (c16).
 // CARD (checked against card v2): from the card: FRONT_SHIN 6 deg ("roughly vertical", c2), TRUNK_LEAN 3 deg
 //  (upright, c3), weight about even (c3, centre of mass check above), full-length step (c7), FOOT_X (hip width, c1).
 //  Not in the card, left flagged: FRONT_THIGH (depth: the card says only "toward the floor", c4), REAR_KNEE_Y (how
 //  close the knee gets), REAR_HEEL (rear heel lift), MISTAKE_LEAN (how far the Mistake pitches).
-import { landmarksOf } from '../engine.mjs';
+import { REF_CAMERA, bodyShapes, fk, landmarksOf, normPose, resolve } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
 const L_TH = 0.245 * H, L_SH = 0.246 * H, ANK = 0.039 * H, MID = 0.044 * H, BALL = 0.080 * H;
@@ -85,10 +86,49 @@ const end = pose(HIP, TRUNK_LEAN, REAR);
 // trunk bows M_ARCH (LIB-SPINE trunk.bow), so the pelvis tips M_TILT under the held thorax, which is the M_ARCH lumbar
 // extension. The thorax, chest, arms and legs move 0 px; lumbar, sacrum, buttock and navel move about 4 px (DESIGN §0).
 // The trunk is an object in every key pose too (D-SPINE-MIX).
-const M_ARCH = 12, M_TILT = M_ARCH;
-const MISTAKE = { ...end, trunk: { flex: 0, bow: M_ARCH } };
+// LIB-PLATEFIX-1 (W2 panel, #379 6633524031: the Mistake read as the Right pose plus two ticks): M_ARCH 12 -> 24 (RDL's
+// illustrative M_TUCK 30 precedent), and the ribcage flares: the thorax tips back M_FLARE over the arched lumbar (trunk
+// flex -M_FLARE), the arms kept plumb (shoulder flexion = the thorax lean, as `arms`). Drawing values (D-SHIP-DRAWVAL).
+const M_ARCH = 24, M_TILT = M_ARCH, M_FLARE = 8;
+const MISTAKE = { ...end, trunk: { flex: -M_FLARE, bow: M_ARCH }, ...arms(TRUNK_LEAN - M_FLARE) };
+// LIB-PLATEFIX-1 fix round (#385 6636073314, R4/R5/R11): the engine's own faulty trunk outline differed from the
+// correct one by only 6-10 px in the 780 px shots, because the arched lumbar line runs inside the grey silhouette (the
+// rear thigh's top) where the mask hides it. The joints stay as above; only the red outline changes: the faulty trunk
+// is drawn as two dashed Mistake guides (guides are not masked; romanian_deadlift HUMP_PTS precedent), built from the
+// engine's torso outline vertices (body.mjs torsoSide, 29 vertices: 0 back of the neck, 5 upper back, 7-9 lumbar,
+// 11-12 buttock, 13-17 under the hips, 18-19 belly, 20-22 lower ribs, 23 chest, 28 front of the neck). The neck and
+// upper back (0-5, 24-28) are the Mistake pose's own vertices, so they meet the red head; the lumbar, buttock and
+// rib vertices are the correct (grey) pose's plus the offsets below, in plate px (x2 in the 780 px shots), world
+// points, so the zoom scales them. Drawing values (D-SHIP-DRAWVAL): the panel asked for a lumbar curve 15-30 px
+// deeper, the buttock pushed back and the rib front out ~15 px (c18).
+const PXM = REF_CAMERA.pxPerM;      // plate px per metre (spec camera: reference scale)
+const torsoWorld = p => {           // the side torso outline of a pose, world [0, y, z] (camera P = (z, y), 1 px per m)
+  const sk = fk(resolve(normPose(p, { height: H }), { height: H }).q, { height: H });
+  return bodyShapes(sk, { view: 'side', near: 'r', pxm: 1, P: w => [w[2], w[1]] }).find(s => s.key === 'torso').poly.map(([z, y]) => [0, y, z]);
+};
+const T_END = torsoWorld(end), T_MIS = torsoWorld(MISTAKE);
+const shiftPx = (w, [dx, dy]) => [0, w[1] - dy / PXM, w[2] + dx / PXM];   // plate px offset (x right = forward, y down)
+const BACK_OFF = {                  // lumbar arch (in = +x), then the buttock pushed back (-x), plate px vs the grey vertex
+  6: [-2, 1], 7: [2, -1], 8: [4.5, -2.5], 9: [3, -1], 10: [-4, 1.5], 11: [-7, 2], 12: [-9, 3], 13: [-7.5, 5],
+};
+const FRONT_OFF = {                 // lower ribs flared forward (+x, ~7-8 plate px = ~15 px), easing out to the belly and chest
+  18: [2, 0.5], 19: [4, 1], 20: [7, 0], 21: [8, -1], 22: [7, -1], 23: [0, -2],
+};
+const redV = (i, off) => shiftPx(T_END[i], off[i]);
+const M_BACK = [0, 1, 2, 3, 4, 5].map(i => T_MIS[i]).concat([6, 7, 8, 9, 10, 11, 12, 13].map(i => redV(i, BACK_OFF)));
+const M_FRONT = [28, 27, 26, 25, 24].map(i => T_MIS[i]).concat([23, 22, 21, 20, 19, 18].map(i => redV(i, FRONT_OFF)));
+// The 'flare' leader ends on the red lumbar curve (vertex 7): a fixed offset from the faulty lumbar landmark, as
+// romanian_deadlift ROUND_OFF; the zoom's source ring centres midway between the anchor's end and Mistake points.
+const LM_MIS = landmarksOf(MISTAKE, H);
+const toPx = (a, b) => [+((a[2] - b[2]) * PXM).toFixed(2), +(-(a[1] - b[1]) * PXM).toFixed(2)];
+const LUMBAR_OFF = toPx(redV(7, BACK_OFF), LM_MIS.lumbar);
+// The rib arrow: up and out just in front of the flared rib front (vertices 21-22), plate px from their midpoint; the
+// 'ribs' leader ends at its tip.
+const RIB = redV(21, FRONT_OFF).map((v, i) => (v + redV(22, FRONT_OFF)[i]) / 2);
+const RIB_FROM = shiftPx(RIB, [3, 11]), RIB_TO = shiftPx(RIB, [10, 2]);
+const RIBS_OFF = toPx(RIB_TO, LM_MIS.chest);
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
-export const SIZES = { FOOT_X, FRONT_SHIN, FRONT_THIGH, REAR_KNEE_Y, REAR_HEEL, TRUNK_LEAN, ELBOW, M_ARCH, M_TILT };
+export const SIZES = { FOOT_X, FRONT_SHIN, FRONT_THIGH, REAR_KNEE_Y, REAR_HEEL, TRUNK_LEAN, ELBOW, M_ARCH, M_TILT, M_FLARE };
 // Front shin plumb (c2), the shin callout's guide: a vertical through the front ankle, from the floor to SHIN_TOP m
 // above the knee, drawn when the callout is selected (a datum would sit under the dashed start figure, unseen).
 const SHIN_TOP = 0.12;
@@ -127,18 +167,36 @@ export default {
   callouts: [
     { key: 'shin', text: 'Front shin<br>vertical', anchor: { along: ['knee.r', 'ankle.r'], t: 0.45, off: [7, 0] }, guide: SHIN_PLUMB, cue: 'At the bottom, keep the front shin roughly vertical.' },
     { key: 'chest', text: 'Chest up', anchor: 'sternum', cue: 'Keep the trunk upright as the back knee lowers.' },
-    { key: 'weight', text: 'Weight even', anchor: 'buttock', guide: ['hips', MIDWAY], cue: 'Share the weight about evenly between both feet.' },
+    { key: 'weight', text: 'Weight even', anchor: 'buttock', guide: ['hips', MIDWAY], cue: 'At the bottom, share the weight about evenly between both feet.', cite: ['c3'] },
   ],
   mistake: {
     pose: MISTAKE,
-    // no guide: the chest moves 0 px (D-A3-REVBOW); the dashed outline and the zoom carry the fault
+    // LIB-PLATEFIX-1: the faulty head is the engine's own dashed outline (the plumb arms and dumbbells are left out, as
+    // triceps_pushdown's parts); the faulty trunk is drawn by the guides below (fix round, see M_BACK)
+    parts: ['head'],
+    guides: [
+      // the faulty trunk (fix round): back line (neck, upper back, the arched lumbar curve, the buttock pushed back) and
+      // front line (neck, chest, the flared lower ribs, belly), dashed, open under the hips (the legs cover it)
+      { kind: 'dashed', smooth: true, pts: M_BACK },
+      { kind: 'dashed', smooth: true, pts: M_FRONT },
+      // the pelvis tipping forward: arc-arrow round the back of the hips (clockwise = the pelvis top forward); r 36
+      // (was 30) keeps it clear of the pushed-back buttock line
+      { kind: 'arc-arrow', center: { at: 'hips', pose: 'mistake' }, r: 36, a0: 145, a1: 195 },
+      // the lower ribs lifting up and out
+      { kind: 'arrow', from: RIB_FROM, to: RIB_TO },
+    ],
     tells: [
-      { key: 'flare', text: 'Low back arches', anchor: { at: 'lumbar', pose: 'mistake' }, cue: 'The ribcage flares and the pelvis stays untucked, arching the low back.' },   // c18
+      // 'flare' box (fix round): left of the back, 10 px further left than the auto place, so the zoom link (focus up-left
+      // to the ring) clears the label; the leader ends on the red lumbar curve (LUMBAR_OFF)
+      { key: 'flare', text: 'Pelvis untucked', anchor: { at: 'lumbar', pose: 'mistake', off: LUMBAR_OFF }, box: { left: 20, top: 217 }, cue: 'The ribcage flares as you step back and the pelvis stays untucked.', cite: ['c18'] },   // c18 (first: the card's topFault, F7)
+      { key: 'ribs', text: 'Ribs flare', anchor: { at: 'chest', pose: 'mistake', off: RIBS_OFF }, box: { left: 266, top: 196 }, cue: 'The ribcage flares up instead of the pelvis tucking under.' },   // c18
     ],
   },
-  zoom: { view: 'mistake', k: 3 },   // the ring on the low back, holding the elbow dot; 3 is the smallest ladder k that passes (lumbar 4.10 px: 12.31 at k 3, 10.26 at k 2.5)
+  // the source ring on the red lumbar curve (midway between the 'flare' anchor's end and Mistake points; H3: they move
+  // 8.2 px at plate scale, under 11.4); 3 as before LIB-PLATEFIX-1 (ring r 52 / 3 = 17.3 plate px)
+  zoom: { view: 'mistake', k: 3 },
   // Tempo: no seconds in the card (c7, c16; 3 s down is a progression only, c15): the strip without seconds, exactly
   // tempoOf(strip/rows.json reverse_lunge) (D-STRIP-ROWS).
   tempo: [{ phase: 'Lower', move: true, word: 'Slow' }, { phase: 'Rise', move: true, word: 'Quicker' }],
-  alt: 'Reverse lunge with dumbbells, side view. From standing tall, one leg steps back and the body lowers until the front thigh is parallel and the rear knee hovers just above the floor, front shin near vertical, front foot flat, rear foot on the ball, trunk upright, dumbbells hanging at the sides.',
+  alt: 'Reverse lunge with dumbbells, side view. From standing tall, one leg steps back and the body lowers until the rear knee hovers just above the floor, front shin near vertical, front foot flat, rear foot on the ball, trunk upright, dumbbells hanging at the sides.',
 };
