@@ -14,7 +14,7 @@ beforeAll(async () => {
   core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
   bodies = await import(/* @vite-ignore */ url('tools/plates/library/bodies.mjs'));
   out = await gen.render();
-}, 180_000);
+}, 600_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): the hook generates every output for 32 shipped rows; it timed out at 180 s on b1f6b9ba's unit-tz (Asia/Manila) CI; no assertion change
 
 const fixture = () => JSON.parse(readFileSync('tests/howto/fixtures/generated-bodies.json', 'utf8')) as { count: number; bodies: Record<string, string> };
 

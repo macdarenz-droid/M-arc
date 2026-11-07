@@ -1,0 +1,25 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=9dcbe3a9e7dd7ab0c811fc81935c7111ca80174e5ca0175c4cc1931102eaa564
+{
+  "id": "lib_cable_shrug",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/cable_shrug.json",
+    "rev": 1
+  },
+  "sources": [
+    "exercise-com-cable-shrug",
+    "acsm2009",
+    "ace-shrug",
+    "sl-barbell-shrug",
+    "baechle-grip",
+    "odriscoll1992",
+    "macdougall1985",
+    "kolber2010",
+    "ekstrom2003",
+    "andersen2008",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}
