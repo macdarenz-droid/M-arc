@@ -2320,7 +2320,7 @@ describe('LIB-SUPCORE cfdv: dead_bug\'s start knees (#366 6587871953) and v_up\'
     const low = Math.max(...body.bodyShapes(body.fk(L.q.start, L.body), cam).filter((x: any) => x.key === 'torso' && x.poly).flatMap((x: any) => x.poly.map((q: number[]) => q[1])));
     return ((cam.y0 - low) / cam.pxPerM) * 100; };
   const vRoot = (dy: number) => { const v = S.v_up, st = v.poses.start; return { ...v, poses: { ...v.poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1] + dy, st.root.at[2]] } } } }; };
-  it('v_up: the V\'s fact is the torso outline (spec start, card end, c5), bound in outlineChecks at 0.5 cm; the outline is on the floor, the buttock landmark 1.99 cm up (a not-fact); H6 is clean', () => {
+  it('v_up: the V\'s fact is the torso outline (spec start, card end, c5), bound in outlineChecks at 0.5 cm; the outline is on the floor, the buttock landmark 2.77 cm up (a not-fact; LIB-PLATEFIX-3b: was 1.99); H6 is clean', () => {
     const c = readJson('docs/research/howto/cards/v_up.json');
     expect(c.plateFacts.filter((f: any) => f.outline != null)).toEqual([{ kind: 'contact', outline: 'torso', pose: 'start', cardPose: 'end', claim: 'c5' }]);
     expect(c.plateFacts.some((f: any) => f.landmark != null && f.pose === 'start')).toBe(false);
