@@ -662,6 +662,49 @@
       "why": "LIB-PLATEFIX-2: lib_pec_fly's plate with the height callout box at top 260 (was 244; PQ-H4, D-SHIP-PECFLY-HOLD), approved by pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09; only normalSvg and normalOverlay change. Exemptions as entry 8.",
       "supersedes": 8,
       "prev": "81186d0958353d54f203729e652b877388269c487b843abae50289d78834a088"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_barbell_overhead_press",
+      "src": "library/specs/barbell_overhead_press.mjs",
+      "slug": "barbell-overhead-press",
+      "prefix": "barbell-overhead-press",
+      "chromeId": "barbell-overhead-press",
+      "fragments": {
+        "normalSvg": "40f06826b367c45731292f76f787b79667d84e4f98d60a3968fa793f1b56e0d4",
+        "normalOverlay": "c81738ecbbbedf40540c0155996da54a58574f72b7c8271dc864e8161f100370",
+        "mistakeSvg": "a48b731de42e05959e6a83cbe252e48fea0191d3e47a7a0bb5391950bc466a09",
+        "mistakeOverlay": "df0028a88bb9975ad1fa88a683fa8f28b8b651c8de4ad9e9741decb7103a4e1c",
+        "tells": "1504a47356e13d0a5cef4f3b112cc3a551f0ed5786e68910448b67bf4b250202",
+        "tempo": "dddad8d714b29d378423e6eb0693413e83f20772a2de9912c4f7870f59dab928",
+        "cues": "5653964f3b42d7a707d911ba96747448682aa6bd4ad038f856a7a2d2f189cfe0",
+        "alt": "8ad0444bcfa4dac2e6ca83a35afde56a3eab283b7a913f60bec127e579fb3dbb",
+        "mistakeAlt": "7a8dc57add59738a9e2756c47d0dd4af942d397338cee692e31e2ef23a2aa5f1"
+      },
+      "exemptions": [
+        "F2",
+        "F3",
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/408#issuecomment-6704679655 @ 388db2e4145242a727795f1628627573826c3f78",
+      "date": "2026-11-07",
+      "decision": "D-OWNER-REPIN",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-3b item 23 (OHP, (a) and (b); (c) dropped, D-PF3B-OHPHEAD): approved by the plates panel pf10 (#408 6704679655) at 388db2e4.",
+      "supersedes": 19,
+      "prev": "5e5268660915d6daa42f6677f38861b44f659e0403b93ec21cf9b46032e10503"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "6d3afb8313a20e4fb519c52e20c62de3f002724e9bb9facf30900b081118791d",
+      "bytes": 1315771,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/408#issuecomment-6704679655 @ 388db2e4145242a727795f1628627573826c3f78",
+      "date": "2026-11-07",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The pilot-a plates page rebuilt with LIB-PLATEFIX-3b's barbell_overhead_press (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (this builder, and CI howto-rebuild on #408 at 2a78b893).",
+      "supersedes": 23,
+      "prev": "f8e8970fbecfa18b823e34c430b69d1dcb8f108e98d8f8d98b73421b7dafc686"
     }
   ]
 }

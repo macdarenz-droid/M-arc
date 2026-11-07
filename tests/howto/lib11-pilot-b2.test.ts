@@ -289,7 +289,7 @@ const x = await b2.buildPb2Page(), y = await b2.buildPb2Page(), p = await b.buil
 console.log(JSON.stringify({ x: sha(x.html), y: sha(y.html), ids: b2.drawnIds(), pb: [sha(p.html), p.html.length], html: x.html.toString('utf8') }));`);
     expect(r.x).toBe(r.y);
     expect(r.ids).toEqual(['lib_crunch']);
-    expect(r.pb).toEqual(['128e6112335957d2ff7a0fa1dd3491067f6fc3fc7de2d3852fb9ea05957ad971', 409805]);
+    expect(r.pb).toEqual(['00a7dad685cf7ad2c8ffcc84af5b01854236546e17c7d1c1e6c159f21a4eefbe', 460109]);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 128e6112 (409,805 B), now 00a7dad6 (460,109 B) (smith_machine_bench_press's head inset and src ring; pilot B's 'owner' D-OWNER-REPIN page entry 11)
     const pb = readJson('tests/howto/golden/library/pilot-b.json').entries.filter((e: any) => e.kind === 'page').at(-1);
     expect([pb.pageSha256, pb.bytes]).toEqual(r.pb);
     const G = await import(/* @vite-ignore */ lib('../golden.mjs')), f = readJson('tests/howto/golden/library/pilot-b2.json');

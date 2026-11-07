@@ -6,7 +6,7 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, wri
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { MAIN_GOLDEN, pfTailProblems } from './platefix-pins';
+import { MAIN_GOLDEN, PLATE_MOVES, pfTailProblems } from './platefix-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -296,6 +296,21 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
    *  (pfTailProblems) is a page entry superseding 0 that pins today's built page, cable_fly's plate superseding 3, and last
    *  one layers-page entry superseding the body-map one (6), naming exactly the ruled ids and pinning the committed layers page. */
   const BM_LAYERS = { sha: 'a6e41569876766ab7982f51fb7321eeeb93610e25d86ca8664c106152567bfb6', bytes: 426121 };
+  // LIB-PLATEFIX-3b (#408, D-OWNER-REPIN): its tail, the file's last 2 entries: smith_machine_bench_press's owner plate entry
+  // superseding 1 (equal to the built page's plate; only PLATE_MOVES keys differ from entry 1), then the owner page entry
+  // superseding PF1's 7 and pinning the built page. [problems]
+  const PF1_PAGE = { sha: '128e6112335957d2ff7a0fa1dd3491067f6fc3fc7de2d3852fb9ea05957ad971', bytes: 409805 };
+  const pf3bTail = (file: any, page: string) => {
+    const E = file.entries as any[], [pl, pg] = E.slice(-2), out: string[] = [], n = MAIN_GOLDEN['pilot-b']!.n;
+    const shape = E.slice(-2).map((e: any) => [e.kind, e.id ?? null, e.supersedes, e.approvedBy, e.decision]);
+    if (E.length !== n + 5 || JSON.stringify(shape) !== JSON.stringify([['plate', 'lib_smith_machine_bench_press', 1, 'owner', 'D-OWNER-REPIN'], ['page', null, n, 'owner', 'D-OWNER-REPIN']])) return [`pilot-b 3b: tail ${E.length} ${JSON.stringify(shape)}`];
+    for (const e of [pl, pg]) if (typeof e.approval !== 'string' || !LINK.test(e.approval)) out.push('pilot-b 3b: approval link');
+    const p = golden.extractPlates(page).find((x: any) => x.chromeId === pl.chromeId);
+    if (!p || JSON.stringify(golden.fragmentsOf(p)) !== JSON.stringify(pl.fragments)) out.push('pilot-b 3b: lib_smith_machine_bench_press: fragments');
+    for (const key of new Set([...Object.keys(pl), ...Object.keys(E[1])])) if (!PLATE_MOVES.includes(key) && JSON.stringify(pl[key]) !== JSON.stringify(E[1][key])) out.push(`pilot-b 3b: ${key} changed`);
+    if (pg.pageSha256 !== golden.sha256(page) || pg.bytes !== Buffer.byteLength(page)) out.push('pilot-b 3b: page entry != the built page');
+    return out;
+  };
   const LINK = /^https:\/\/github\.com\/macdarenz-droid\/M-arc\/(pull|issues)\/\d+#issuecomment-\d+ @ [0-9a-f]{40}$/;
   const layersPinProblems = (file: any, layersPage: Buffer, page: string = html) => {
     const n = MAIN_GOLDEN['pilot-b']!.n, main = file.entries.slice(0, n);
@@ -306,12 +321,15 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     if (e.approvedBy !== 'supervisor' || e.decision !== 'D-SHIP-W2-STAMP') out.push('layers-page approval');
     const after = main.slice(i + 1).map((x: any) => [x.kind, x.id ?? null, x.decision, x.approvedBy, x.supersedes]);
     if (JSON.stringify(after) !== JSON.stringify([['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', i]])) out.push(`after W2: ${JSON.stringify(after)}`);
-    const bm = main[n - 1], cur = file.entries[file.entries.length - 1];
+    const bm = main[n - 1], cur = file.entries[n + 2];   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was the last entry, now PF1's tail layers-page entry at n + 2 (3b's 2 entries follow)
     // W2 review follow-up (#384 6647873082): the approval link in golden.mjs's APPROVAL form, on W2's entry and the re-pins
     for (const x of new Set([e, bm, cur])) if (typeof x.approval !== 'string' || !LINK.test(x.approval)) out.push('layers-page approval link');
     for (const x of new Set([e, bm])) if (JSON.stringify(x.ids) !== JSON.stringify(SHIPPED_RULED)) out.push(`layers-page ids ${x.ids}`);
     if (bm.pageSha256 !== BM_LAYERS.sha || bm.bytes !== BM_LAYERS.bytes) out.push('layers-page pin');
-    out.push(...pfTailProblems(file, 'pilot-b', { G: golden, html: page, page: 0, plates: { lib_cable_fly: 3 }, layers: { supersedes: n - 1, ids: SHIPPED_RULED, page: layersPage } }));
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF1's tail last, checked against the built page; now 3b's 2 entries follow it
+    // (pf3bTail, exactly), and PF1's page entry 7 keeps its pin 128e6112 (409,805 B), superseded by 3b's page entry
+    out.push(...pfTailProblems(file, 'pilot-b', { G: golden, html: page, page: 0, plates: { lib_cable_fly: 3 }, layers: { supersedes: n - 1, ids: SHIPPED_RULED, page: layersPage }, after: 2, pagePin: PF1_PAGE }));
+    out.push(...pf3bTail(file, page));
     return out;
   };
   /** The golden file against the built page and the GO: [problems]. */
@@ -331,7 +349,8 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     if (pl.map((e: any) => e.id).join() !== plates.map((p: any) => `lib_${p.chromeId.replace(/-/g, '_')}`).join()) out.push('plate entries are not the page\'s plates in page order');
     for (const e of pl) {
       const p = plates.find((x: any) => `lib_${x.chromeId.replace(/-/g, '_')}` === e.id);
-      if (e.id !== 'lib_cable_fly' && (!p || JSON.stringify(e.fragments) !== JSON.stringify(golden.fragmentsOf(p)))) out.push(`${e.id}: fragments`);
+      if (!['lib_cable_fly', 'lib_smith_machine_bench_press'].includes(e.id) && (!p ||   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was cable_fly's only, now + smith's (main's entry 1, superseded by 3b's; pf3bTail checks that one against the build)
+         JSON.stringify(e.fragments) !== JSON.stringify(golden.fragmentsOf(p)))) out.push(`${e.id}: fragments`);
       if (JSON.stringify(e.exemptions) !== JSON.stringify(GO[e.id])) out.push(`${e.id}: exemptions ${e.exemptions}`);
       if (e.decision !== 'D-LIB-PILOTB' || e.approvedBy !== 'supervisor') out.push(`${e.id}: approval`);
     }
@@ -382,6 +401,9 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
       'entry 7 (page): prev does not match the entries before it (an older entry was edited)',
       'entry 8 (plate:lib_cable_fly): prev does not match the entries before it (an older entry was edited)',
       'entry 9 (layers-page): prev does not match the entries before it (an older entry was edited)',
+      // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was through entry 9, now + its 2 tail entries
+      'entry 10 (plate:lib_smith_machine_bench_press): prev does not match the entries before it (an older entry was edited)',
+      'entry 11 (page): prev does not match the entries before it (an older entry was edited)',
       'main entries changed', 'lib_push_up: approval is not the GO']);
     const pa = structuredClone(g); pa.entries[0].approval = pa.entries[0].approval.replace('1d7f28d2', '8ae48ed9');
     expect(pinProblems(pa, html)).toContain('page: approval is not the GO');
@@ -390,12 +412,14 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     // LIB-SHIP W2: a second layers-page entry, a changed page byte, an unruled id named, and a superseding entry are red
     // F-BODYMAP-FRONTDELT and LIB-PLATEFIX-1: W2's entry and the body-map re-pin are main's (bm = main's last); the same
     // reds hold on the tail's layers-page entry (last)
-    const lpage = readFileSync(readJson(ROWS).pages.layers), last = g.entries.length - 1, bm = MAIN_GOLDEN['pilot-b']!.n - 1, w2 = bm - 1;
+    const lpage = readFileSync(readJson(ROWS).pages.layers), last = g.entries.length - 3, bm = MAIN_GOLDEN['pilot-b']!.n - 1, w2 = bm - 1;
     const mainMoved = ["pilot-b: main's 7 entries changed"];
     const lp = structuredClone(g); lp.entries[bm] = { ...lp.entries[w2] };   // W2's entry twice among main's, no body-map re-pin
     expect(layersPinProblems(lp, lpage)).toEqual([`after W2: ${JSON.stringify([['layers-page', null, 'D-SHIP-W2-STAMP', 'supervisor', undefined]])}`, 'layers-page pin', ...mainMoved]);
-    const lpt = structuredClone(g); lpt.entries.push({ ...lpt.entries[last] });
-    expect(layersPinProblems(lpt, lpage)).toEqual(['pilot-b: tail kinds page,plate,layers-page,layers-page']);
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was last = the final entry and the copy pushed at the end, now last = PF1's tail
+    // layers-page entry (3b's 2 entries follow) and the copy put right after it
+    const lpt = structuredClone(g); lpt.entries.splice(last + 1, 0, { ...lpt.entries[last] });
+    expect(layersPinProblems(lpt, lpage)).toEqual(['pilot-b: tail kinds page,plate,layers-page,layers-page', `pilot-b 3b: tail 13 ${JSON.stringify([['plate', 'lib_smith_machine_bench_press', 1, 'owner', 'D-OWNER-REPIN'], ['page', null, 7, 'owner', 'D-OWNER-REPIN']])}`]);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was the first line only, now + 3b's tail check (13 entries)
     expect(layersPinProblems(g, Buffer.concat([lpage, Buffer.from(' ')]))).toEqual(['pilot-b: layers-page pin']);
     const li = structuredClone(g); li.entries[bm].ids = [...li.entries[bm].ids, 'lib_seated_leg_curl'];
     expect(layersPinProblems(li, lpage)).toEqual(['layers-page ids lib_cable_fly,lib_push_up,lib_seated_leg_curl', ...mainMoved]);
@@ -413,7 +437,17 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     expect(layersPinProblems(tf, lpage)).toContain('lib_cable_fly: fragments');
     const lw = structuredClone(g); lw.entries[bm].pageSha256 = '0'.repeat(64);
     expect(layersPinProblems(lw, lpage)).toContain('layers-page pin');
-    expect(layersPinProblems(g, lpage, html.replace('Smith Machine Bench Press', 'Smith Machine Bench Pres'))).toContain('pilot-b: page entry != the built page');
+    // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF1's page entry against the build, now 3b's (PF1's keeps its pin)
+    expect(layersPinProblems(g, lpage, html.replace('Smith Machine Bench Press', 'Smith Machine Bench Pres'))).toContain('pilot-b 3b: page entry != the built page');
+    // LIB-PLATEFIX-3b: PF1's page entry off its pin, 3b's smith fragment or src edited, and a third 3b entry are red
+    const p7 = structuredClone(g); p7.entries[MAIN_GOLDEN['pilot-b']!.n].bytes += 1;
+    expect(layersPinProblems(p7, lpage)).toEqual(['pilot-b: page entry != its pin']);
+    const sf = structuredClone(g); sf.entries[last + 1].fragments.normalSvg = '0'.repeat(64);
+    expect(layersPinProblems(sf, lpage)).toEqual(['pilot-b 3b: lib_smith_machine_bench_press: fragments']);
+    const ss = structuredClone(g); ss.entries[last + 1].src = 'x';
+    expect(layersPinProblems(ss, lpage)).toContain('pilot-b 3b: src changed');
+    const s3 = structuredClone(g); s3.entries.push({ ...s3.entries[last + 2] });
+    expect(layersPinProblems(s3, lpage).some(x => x.startsWith('pilot-b 3b: tail'))).toBe(true);
   });
   it('mutations: an existing layers file and a pinned id in another golden file are red', () => {
     const p = readJson(ROWS).pages;

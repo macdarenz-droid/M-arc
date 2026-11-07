@@ -140,6 +140,21 @@ const barOf = lm => [0, lm.grips[1], RAIL_Z];
 export const rigOf = lm => smith({ railZ: RAIL_Z, bar: barOf(lm), stopY: STOP_Y, stop: STOP_SIZE, stopZ: 'front', base: [RAIL_Z - 0.12, RAIL_Z + 0.45] });
 // The shoulder line (Mistake guide): straight out from the shoulder at 90 degrees to the torso, where the flared elbow sits.
 const SHOULDER_LINE = [[0, S.r[1] + 0.22, S.r[2]], [0, BENCH_TOP + 0.01, S.r[2]]];
+// LIB-PLATEFIX-3b item 22: the 'level' tell's anchor named as a landmark (the Mistake's shoulder joint), offset up the
+// screen to SHOULDER_LINE[0] (0.22 m above it, at the plate's REF_CAMERA scale, 256 px per 1.75 m), so its leader ends
+// where it ended and the head inset's deviation row can measure every tell (qa/zoom.mjs: each anchor is a landmark).
+const LEVEL_AT = { at: 'shoulder.r', pose: 'mistake', off: [0, -0.22 * 256 / H] };
+const HEAD_INSET = ['neck', 'shoulder.r', 'elbow.r', 'hips'];   // LIB-PLATEFIX-3b item 22: the near half of the torso and the right upper arm
+const SRC_RING = ['shoulder.r', 'elbow.r'];   // D-PF3B-INSETRING: the side view's shoulder and elbow dots, the region the head insets show
+// LIB-PLATEFIX-3b item 22: the flared upper arm's ghost capsule (the radii above) in the head inset's plane: the lateral
+// axis X and the end pose's sacrum -> upper back line V (zoom/inline.mjs headPitch's screen-up), so it projects whole
+// in the inset, as GHOST_UPPER does in the side view (the engine masks the fault outline where it crosses the solid arm).
+const headCapsule = (a, b, ra, rb, n = 8) => { const V = unit(sub(lmE.backUpper, lmE.sacrum)), uv = w => [w[0], dot(w, V)];
+  const t = unit(sub(uv(b), uv(a))), ang0 = Math.atan2(t[0], -t[1]), at = (c, r, q) => c.map((v, i) => v + r * (Math.cos(q) * (i === 0 ? 1 : 0) + Math.sin(q) * V[i])), pts = [];
+  for (let i = 0; i <= n; i++) pts.push(at(b, rb, ang0 - Math.PI * i / n));
+  for (let i = 0; i <= n; i++) pts.push(at(a, ra, ang0 + Math.PI - Math.PI * i / n));
+  return [...pts, pts[0]]; };
+export const HEAD_GHOST = headCapsule(lmM['shoulder.r'], lmM['elbow.r'], 0.052, 0.040);
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 
 export default {
@@ -184,8 +199,20 @@ export default {
     ],
     tells: [
       { key: 'flare', text: 'Elbows<br>flare wide', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 184, top: 200 }, cue: 'Your elbows flare out wide, level with your shoulders.' },
-      { key: 'level', text: 'Level with<br>shoulders', anchor: SHOULDER_LINE[0], box: { left: 30, top: 150 }, cue: 'Your upper arms stick straight out, not about 45 degrees from your sides.' },
+      { key: 'level', text: 'Level with<br>shoulders', anchor: LEVEL_AT, box: { left: 30, top: 150 }, cue: 'Your upper arms stick straight out, not about 45 degrees from your sides.' },
     ],
   },
+  // LIB-PLATEFIX-3b item 22 (#405 6682844211, #408 PLAN; card c3, c7): the elbow flare reads across the body, which the side
+  // view cannot show (main: the flared upper arm projects to 1.4 px side-on). Two head-end insets (zoom/inline.mjs project
+  // 'head': the bottom pose seen from above the chest, head at the top), each placed as a plain inset of another view; a
+  // dashed source ring on the side view marks the shoulder-elbow region it shows (src, D-PF3B-INSETRING): the
+  // Right upper arm about 45 deg from the torso (c3), the Mistake's level with the shoulders, about 90 deg (c7), drawn by
+  // the engine as the dashed fault outline over the solid Right arm, with the flared upper arm's ghost (HEAD_GHOST) and an
+  // arrow from the Right elbow to the flared one.
+  zoom: [
+    { view: 'normal', k: 1, r: 68, src: SRC_RING, project: 'head', focus: { region: HEAD_INSET, pose: 'end' } },
+    { view: 'mistake', k: 1, r: 68, src: SRC_RING, project: 'head', focus: { region: HEAD_INSET, pose: 'end' },
+      guides: [{ kind: 'dashed', pts: HEAD_GHOST }, { kind: 'arrow', from: { at: 'elbow.r', pose: 'end' }, to: { at: 'elbow.r', pose: 'mistake' } }] },
+  ],
   alt: 'Smith machine bench press, side view. Lying on a flat bench under the Smith bar, feet flat and shoulder blades together, the lifter lowers the bar straight down its rails to the middle of the chest, elbows about 45 degrees from the sides, stops set just below.',
 };
