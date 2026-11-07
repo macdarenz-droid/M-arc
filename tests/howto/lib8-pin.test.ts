@@ -140,12 +140,16 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     // supersedes it) is the last, names exactly the ruled ids and pins the page. A second current entry, a supersedes
     // naming anything but the earlier layers-page entry, or a W1 entry left current is red.
     const lp = entries.map((e: any, i: number) => ({ e, i })).filter(({ e }: any) => e.kind === 'layers-page');
-    expect(lp).toHaveLength(2);
-    expect(lp.map(({ e }: any) => e.decision)).toEqual(['D-SHIP-W1-LAYERS', 'D-SHIP-W2-STAMP']);
+    expect(lp.slice(0, 2).map(({ e }: any) => e.decision)).toEqual(['D-SHIP-W1-LAYERS', 'D-SHIP-W2-STAMP']);
     expect(lp[1].e.supersedes).toBe(lp[0].i);
-    expect(lp[1].i).toBe(entries.length - 1);
+    // F-BODYMAP-FRONTDELT (D-BODYMAP-APPEND, #404 6688047379): after W2's entry comes exactly the body-map re-pin,
+    // superseding it; that entry is the current one (ids and page below)
+    expect(entries.slice(lp[1].i + 1).map((e: any) => [e.kind, e.id ?? null, e.decision, e.approvedBy, e.supersedes])).toEqual([
+      ['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', lp[1].i]]);
+    const cur = entries[entries.length - 1];
+    expect(cur.ids).toEqual(lp[1].e.ids);
     const page = readFileSync(ROOT + batch.pages.layers);
-    expect([[...lp[1].e.ids].sort(), lp[1].e.ids.length, lp[1].e.pageSha256, lp[1].e.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
+    expect([[...cur.ids].sort(), cur.ids.length, cur.pageSha256, cur.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);
