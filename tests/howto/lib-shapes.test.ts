@@ -323,14 +323,16 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     const F_CROP = ['tools/plates/library/render/closeup/crop.mjs', 'tools/plates/library/render/closeup/hand.mjs'];
     // F-PAIR-FAULTS (#386): pairs.mjs's key is re-pinned there and pinned exactly by pair-faults.test.ts
     const F_PAIR = ['tools/plates/library/hands/pairs.mjs'];
-    for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of [...F_CROP, ...F_PAIR]) r.files[k] = 'X'; }
+    // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
+    const PF3 = ['tools/plates/library/render/closeup/zoom.mjs'];
+    for (const r of rows) { expect(r.files[BLP]).toBe(sha(readFileSync(BLP))); r.files[BLP] = 'X'; for (const k of [...F_CROP, ...F_PAIR, ...PF3]) r.files[k] = 'X'; }
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
     // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts;
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync('docs/research/howto/shared/back-pain-box.json'))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
     // (was 3882bf3e… without RESEARCH-ROUTES-1's key; re-measured by RESEARCH-ROUTES-1 on main e623d3ef)
-    expect(sha(JSON.stringify(rrBox(lessW2(m, [BLP]))))).toBe('2dc601781aca3e3f03ebe12587116e5fab0ac84fdd4afa48df3638b22e9be3ac');   // LIB-SHIP W4: main's with the W4-moved keys also blanked (re-measured on main 05f27be9; was 99d9824b…)
+    expect(sha(JSON.stringify(rrBox(lessW2(m, [BLP]))))).toBe('a5e9489da523e1cb04631fa6018429b55b71aa20dbddb7b9a637f8519131097a');   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): main's with zoom.mjs's key also blanked was f8074fd0…; LIB-SHIP W4: with the W4-moved keys also blanked (re-measured on the merge of main c2f267a7; was 2dc60178… on main 05f27be9)
   });
 });
 

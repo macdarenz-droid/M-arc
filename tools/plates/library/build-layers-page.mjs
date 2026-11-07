@@ -84,6 +84,8 @@ export function planOf(spec) {
   return { ids, legacy, labels, keys, optionsUrl: spec.optionsUrl ?? null, regionFix: spec.regionFix !== false, noZoom };
 }
 
+/** The vendored feel-rows heading and list (howto-layers.mjs feelSection), as one concatenated template term. */
+export const FEEL_ROWS_HEAD = '+ `<h5 class="eyebrow fr-head">If you feel it in…</h5><ul class="fr-list">${rowsHtml}</ul>`';
 /** The patched howto-layers.mjs source. */
 export function patchHowtoLayers(src, plan) {
   src = patchOnce(src, 'HOWTO_IDS', between(src, 'HOWTO_IDS', 'export const HOWTO_IDS = [', '];\n'),
@@ -136,6 +138,10 @@ export function patchHowtoLayers(src, plan) {
   // D-FEEL-NOMEANS-PAGE (#379 6636105974): a feel row with an empty or missing `means` prints no "Usually means" label,
   // as gen/feel.mjs dropEmptyMeans does for the app. Rows with a means print the vendored bytes unchanged.
   src = patchOnce(src, 'feel no means', '<p><b>Usually means</b>${esc(r.means)}</p>', '${r.means ? `<p><b>Usually means</b>${esc(r.means)}</p>` : \'\'}');
+  // LIB-PLATEFIX-3 E1 (W7 #394 6682923012: high_knees L7 [4,3,3], jumping_jacks L7 [3,3,3]; ruled #405 6683319630): a
+  // feel section with no rows prints no "If you feel it in…" heading and no empty list (two divider lines, nothing under
+  // them). A section with rows prints the vendored bytes unchanged.
+  src = patchOnce(src, 'feel no rows', FEEL_ROWS_HEAD, '+ (F.rows.length ? `' + FEEL_ROWS_HEAD.slice(3, -1) + '` : \'\')');
   return src;
 }
 

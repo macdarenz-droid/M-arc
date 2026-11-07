@@ -661,7 +661,8 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
   it('the pinned-page list is lb01\'s (page and layers page), LB2\'s page, LB3\'s (page and layers page), pilot A\'s (page and layers page), PILOT-A2\'s, PILOT-A3\'s, pilot B\'s (page and layers page), PILOT-B2\'s (page and layers page) and zoom\'s (page and layers page) on this tree and sha256 is the pin hash', () => {
     // LIB-SHIP W3: lb01's and zoom's plates and layers pages (D-REPIN-UNMERGED, #384 6681018514; lb01 layers page for the 8, 6681221802), file order
     expect(pinnedPages(ROOT)).toEqual({ pages: [
-      { id: 'tests/howto/golden/library/lb01.json#page', file: 'tests/howto/golden/library/lb01.json', kind: 'page', pageSha256: 'e439371646e3e1bcac8a65a0bcbe3b036b63c97df47b11f1a804b2c9208f4a56', bytes: 1278254 },
+      // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, D-PF3-W3MERGE): was e4393716… (1278254 B), now the lb01 'owner' D-OWNER-REPIN page entry (underhand_lat_pulldown)
+      { id: 'tests/howto/golden/library/lb01.json#page', file: 'tests/howto/golden/library/lb01.json', kind: 'page', pageSha256: '85989308be47d69c481a847db1d1e585c1372e4f73da8e5d76ba288cdd1903dd', bytes: 1278171 },
       { id: 'tests/howto/golden/library/lb01.json#layers-page', file: 'tests/howto/golden/library/lb01.json', kind: 'layers-page', pageSha256: '8d3be69e50ca8a649e9c39dccd76d8affd558b6e30ddc3adb4b3e3ac975eb791', bytes: 2192110 },
       { id: 'tests/howto/golden/library/lb02.json#page', file: 'tests/howto/golden/library/lb02.json', kind: 'page', pageSha256: 'e3978e93d73a3094edb3722e41c0e803bc7b66b8d7ac1a5016a87398f547d186', bytes: 796241 },
       { id: 'tests/howto/golden/library/lb03.json#page', file: 'tests/howto/golden/library/lb03.json', kind: 'page', pageSha256: 'd6241cf65a6be261cfa688ebba27549cded6761f2a1a0a00b55d58b0f1f91f90', bytes: 1186023 },

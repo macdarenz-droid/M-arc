@@ -1079,8 +1079,13 @@ console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;
  *  ab_wheel_rollout and bird_dog from the LB9 slice and bulk panels, side_plank from mx1 (#326 6414221457), superman
  *  from mx7 (#337 6540319980, at 1273e4f6). LIB-SUPCORE (review 6599286972, ruling 6599303605): cable_crunch from mx18
  *  (at d9e8085d), and hollow_body_hold, reverse_crunch, dead_bug and v_up from mx29 (#366 6588547503, at b6f7dd59). */
-const APPROVED_FRAGS: Record<string, string> = { 'ab-wheel-rollout': 'e0e6d3b9aaeaa902', 'bird-dog': '4ae4f8913f726103', 'side-plank': '18e0fb027e416a05', superman: '2ed02b364e72c3a4',
-  'cable-crunch': '17c013e5d7d341ba', 'hollow-body-hold': 'f1e3f6990bc6dd7a', 'reverse-crunch': '8d189ceca9f17ee7', 'dead-bug': 'dffcec3c1d6655c0', 'v-up': '55c3ecd9f47f2a30' };
+const APPROVED_FRAGS: Record<string, string> = { 'ab-wheel-rollout': 'e0e6d3b9aaeaa902',
+  'bird-dog': 'cb84c0b750a2a2fe',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 4ae4f8913f726103, now cb84c0b750a2a2fe (the c7 cue copy)
+  'side-plank': '18e0fb027e416a05', superman: '2ed02b364e72c3a4', 'cable-crunch': '17c013e5d7d341ba',
+  'hollow-body-hold': '3840726c16580b8c',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was f1e3f6990bc6dd7a, then 79aa43e1938e2a9a (the c5 cue copy); round 2 (#405 6685743439): 3840726c16580b8c (R1: no via ghost, TOE -50, arc 142; the 'Legs low' callout dropped with the card)
+  'reverse-crunch': '8d189ceca9f17ee7',
+  'dead-bug': '142b6445a08aa467',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was dffcec3c1d6655c0, now 142b6445a08aa467 (c4 copy, trunk-only Mistake, gap arrow)
+  'v-up': 'cacf69b14e44fa08' };   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 55c3ecd9f47f2a30, now cacf69b14e44fa08 (tempo lift-first, trunk-only Mistake, gap arrow)
 const FRAG_RE = '/<article [^>]*id="card-([a-z-]+)"[\\s\\S]*?<\\/article>/g';
 const fragProblems = (frags: Record<string, string>) => Object.entries(APPROVED_FRAGS).flatMap(([k, v]) => ((frags[k] ?? '').slice(0, 16) === v ? [] : [`${k}: ${(frags[k] ?? 'missing').slice(0, 16)} != approved ${v}`]));
 describe('LIB-21 A10: the LB9 plates page is deterministic (PQ-H7; built in an awaited child process)', { timeout: T }, () => {
@@ -2373,7 +2378,7 @@ describe('LIB-SUPCORE D-SUPCORE-LUMBARTELL: the arch tell on the lumbar point (#
   it('each Mistake zoom (k 2) rings the floor line and the daylight under the low back', async () => {
     for (const id of ARCH) {
       await yieldNow();
-      const s = S[id], z = Z.zoomOf(s, { E: Eng(), view: 'mistake' }), P = camOf(s).P, r = z.src, floorY = P([0, 0, 0])[1]!, gap = s.mistake.guides[0].pts.map(P);
+      const s = S[id], z = Z.zoomOf(s, { E: Eng(), view: 'mistake' }), P = camOf(s).P, r = z.src, floorY = P([0, 0, 0])[1]!, gap = ((g: any) => g.pts ?? [g.from, g.to])(s.mistake.guides[0]).map(P);   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was guides[0].pts; dead_bug and v_up now draw the same two points as an up-arrow (from, to)
       expect(z.k, id).toBe(2);
       expect(Math.abs(floorY - r.c[1]) < r.r, `${id} floor line`).toBe(true);
       for (const q of gap) expect(Math.hypot(q[0] - r.c[0], q[1] - r.c[1]) < r.r, `${id} gap ${q}`).toBe(true);

@@ -391,6 +391,47 @@
       "supersedes": null,
       "why": "W3 layers approved (#384): the calibrated layers panel 6648454032 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 6648733957 and 6649856513, focused rechecks 6649416891 and 6653062201, and the delta check with PIN GO 6653343780 (exactly the 3 ruled strings at 2f5d0652). assisted_pull_up, underhand_lat_pulldown held (LIB-PLATEFIX-3). Rebuilt for 8 ids under D-SHIP-W3-NOPAIR (#384 6681221802): incline_machine_press and shoulder_press staged (no LIB-7 hand pair; F-HAND-MACHINEPUSH); the other 8 cards byte-equal.",
       "prev": "89df12e38b494d9329a82a732e8062e339ff421f69fc70f21c8f5ac785beb6d8"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_underhand_lat_pulldown",
+      "src": "library/specs/underhand_lat_pulldown.mjs",
+      "slug": "underhand-lat-pulldown",
+      "prefix": "underhand-lat-pulldown",
+      "chromeId": "underhand-lat-pulldown",
+      "fragments": {
+        "normalSvg": "579d3f9de9aa4d3db6e6e9298ee92d748649193d5bcbc256286cbe00de014a09",
+        "normalOverlay": "4643838ceec33422a247e8aad845046e9495a95a543333bc475807ad34d23532",
+        "mistakeSvg": "d2638f679627b0b946f499e2a843975635dfe70af91a7caab4cf54d056733536",
+        "mistakeOverlay": "76b751f207f8a2aa15f71be5a6afff6ca7bb372f911f9a84b114b6b22fbf4bfa",
+        "tells": "fc848a24a1103e46232a9d98689684ed06d86fc24456deafd8c42c952437ccbb",
+        "tempo": "796fbe7b0fe12e3121ae343b598ed832ad0ba73c2d14d43c8680ad5536220bc2",
+        "cues": "6a65646abb9d895e96a16f95a031131ab06baa7d0bdfd6d0c3d1cdb3614a8ed6",
+        "alt": "f64f7b07a26d9fe86be9dee09826abd689df626ce78db15c48d0033610bd8996",
+        "mistakeAlt": "7592ba4f3573bbae58c16859b7b3a7da5481de9bf0b601e4ac9dbb740a6b4519"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/405#issuecomment-6685743439 @ d5aba5e742ae47ede3d89adfba4b177f66815679",
+      "date": "2026-11-06",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-3 item 1 (D-PF3-UNDERHAND): the plates panel passed this drawing (#405 6685743439 pf7; recheck 6688665575) at d5aba5e7. D-PF3-W3MERGE: after W3 its normalSvg, normalOverlay, mistakeSvg, mistakeOverlay, tells, tempo, cues and mistakeAlt equal that approved version, byte for byte; alt is W3's approved alt (palms facing you), the same hash as entry 6.",
+      "supersedes": 6,
+      "prev": "57f886567c33e8d29ddedf6b1ee352c340053c98d0cd489bbc85063593388f16"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "85989308be47d69c481a847db1d1e585c1372e4f73da8e5d76ba288cdd1903dd",
+      "bytes": 1278171,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/405#issuecomment-6685743439 @ d5aba5e742ae47ede3d89adfba4b177f66815679",
+      "date": "2026-11-06",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb01 plates page rebuilt with LIB-PLATEFIX-3's underhand_lat_pulldown (the plate entry above) and E1/E2 (D-PF3-W3MERGE); every other plate is its pinned version.",
+      "supersedes": 0,
+      "prev": "9df6d494e393473a05a30d7cb5ddb996931f35e9b39699d933b09cea62f1e56a"
     }
   ]
 }

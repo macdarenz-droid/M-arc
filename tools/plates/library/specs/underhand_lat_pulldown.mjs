@@ -15,8 +15,8 @@
 //    about the 45 cm shoulder-joint width, c1), on the straight centre, so the grips sit at the bar centre height; the
 //    near dropped end hangs outboard of the hand, drawn in front as lat_pulldown draws it.
 //  - The lean is the same at the start and the end (c5): pelvis tilt -8, trunk -3, a 13 deg lean at the hip.
-//  - End: bar centre 10 cm under the chin, 9 cm in front of it (just below chin height, c6); forearms vertical under
-//    the bar, elbows pulled down toward the hips.
+//  - End: bar centre 12 cm under the chin, 9 cm in front of it (just below chin height, c6); the elbows pulled down
+//    toward the hips, the upper arm 26 deg forward of vertical (PLATEFIX-3 item 1; was 10 cm and 34 deg).
 //  - Mistake (card plate.mistake, c6, c8, c11; LR-31): the bar pulled on down past the end (grip 14 cm under and 4 cm
 //    in front of the chest mark, 25.7 cm below the end bar) and the elbows driven back behind the trunk (7.4 cm behind
 //    the end backMid, the red elbow cap 8.9 px clear of the solid end figure). The lean stays the set lean (c5), so
@@ -26,7 +26,7 @@
 //    the body, from the open left side), close_grip's pair. The low bar's arm and a fist-sized ring round it are
 //    redrawn dashed over the solid figure and the arrow runs down the cable line onto it (lb1-critic-findings R5).
 // CARD: GX (c1, about shoulder width), the lean limit (c5, about 30 deg), tempo (card `tempo`). Unsourced numbers:
-//  END_BAR 10 cm under and 9 cm in front of the chin (card: "just below chin height"), START_Y 1.63 m, TILT -8 and
+//  END_BAR 12 cm under and 9 cm in front of the chin (card: "just below chin height"), START_Y 1.63 m, TILT -8 and
 //  TRUNK -3 (card: "slight lean"), MIS_BAR 14 cm under and 4 cm in front of the chest mark and the Mistake elbow pole
 //  [0, 0.5, -1] (card gives no size), the tell boxes (176, 222) and (4, 236); station sizes (SEAT_TOP 0.42 m, HEAD 2.08 m, COL 1.04/1.30 m,
 //  bar 1.22 m / 60 cm / 12 cm drop, 16 plates, LIFT0 3 cm) copied from close_grip_pulldown and lat_pulldown.
@@ -51,8 +51,11 @@ const grips = (c, pole) => ({
   l: { at: [GX, c[1], c[2]], pole: [pole[0], pole[1], pole[2]] },
   r: { at: [-GX, c[1], c[2]], pole: [-pole[0], pole[1], pole[2]] },
 });
-// End bar: centre 10 cm under the chin (just below chin height, at the top of the chest), 9 cm in front of it.
-const END_BAR = [0, lm0.chin[1] - 0.10, lm0.chin[2] + 0.09];
+// End bar: centre END_DROP under the chin (just below chin height, at the top of the chest), 9 cm in front of it.
+// LIB-PLATEFIX-3 item 1 (#384 6648454032 L1, c6; option A on #405 6682900616): 12 cm under the chin (was 10) with the
+// elbow pole down and back, so the elbows come down toward the hips instead of forward of the trunk.
+const END_DROP = 0.12;
+const END_BAR = [0, lm0.chin[1] - END_DROP, lm0.chin[2] + 0.09];
 // The bar hangs on the cable from the head pulley and travels along that line.
 const toward = b => { const d = [0, HEAD.y - b[1], HEAD.z - b[2]], L = Math.hypot(...d); return d.map(v => v / L); };
 const cd = toward(END_BAR);
@@ -60,7 +63,7 @@ const START_Y = 1.63;
 const START_BAR = [0, START_Y, END_BAR[2] + cd[2] / cd[1] * (START_Y - END_BAR[1])];
 
 const start = { ...body, scap: { elev: 0, pro: 0 }, reach: grips(START_BAR, [1, 0.1, 0.2]) };
-const end = { ...body, scap: { elev: -2, pro: -2 }, reach: grips(END_BAR, [0.2, -1, -0.3]) };
+const end = { ...body, scap: { elev: -2, pro: -2 }, reach: grips(END_BAR, [0, -1, -1]) };   // pole: item 1 (was [0.2, -1, -0.3])
 // Mistake (LR-31, card plate.mistake c6, c8, c11): the bar pulled on down past the end, so the elbows travel back behind
 // the trunk; the lean stays the set lean (c5).
 const MIS_BAR = [0, lm0.chest[1] - 0.14, lm0.chest[2] + 0.04];
@@ -146,7 +149,8 @@ export default {
   measure: { vertex: LEAN_V, from: 'down', to: LEAN_B, radius: 45, title: 'Lean back', value: 'under 30°' },
   callouts: [
     { key: 'thighs', text: 'Thighs<br>pinned', anchor: { at: 'thighTop.r', off: [14, 0] }, box: { left: 188, top: 236 }, cue: 'Set the pads tight on top of the thighs.' },
-    { key: 'elbows', text: 'Elbows<br>down, back', anchor: 'elbow.r', box: { left: 2, top: 180 }, cue: 'Pull the elbows down and back toward the glutes.' },
+    { key: 'elbows', text: 'Elbows<br>down, back', anchor: 'elbow.r', box: { left: 2, top: 222 },   // item 1: the leader meets the elbow from the side, not along the upper arm (was top 180)
+      cue: 'Pull the elbows down and back toward the glutes.' },
     { key: 'chin', text: 'Bar<br>below chin', anchor: 'grip.r', box: { left: 146, top: 174 }, cue: 'Stop when the bar passes just below chin height.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Return', s: 2, move: true }],

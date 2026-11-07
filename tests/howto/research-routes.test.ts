@@ -103,8 +103,10 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     const PAIRS = 'tools/plates/library/hands/pairs.mjs', pr = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => PAIRS in r.files);
     expect(pr).toHaveLength(22);
     for (const r of pr) { expect(r.files[PAIRS]).toBe('X'); }   // LIB-SHIP W4: lessW4 above already checked each pins the current file and blanked it
+    // LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
+    for (const r of Object.values<any>(m.rows)) r.files['tools/plates/library/render/closeup/zoom.mjs'] = 'X';
     // main e623d3ef's MANIFEST.json with the same entries blanked (was f0ec7bd5… on main 8bb433bd, daf6779b… with BOX alone; re-measure if a later re-pin merges first)
-    expect(sha(JSON.stringify(m))).toBe('be1e42287875c555263c2ee00fc166a373dcd4175280d09e53d8b4fe3a8c52f1');   // LIB-SHIP W4: main 484d4552's with the BOX, pairs.mjs and smith-sheet keys blanked (main's own value with BOX and pairs.mjs alone: a97a39e2…)
+    expect(sha(JSON.stringify(m))).toBe('9a94d946f3a0e2d78c681c1ce41c92b6fcb20e86bd815c327b3497f797993682');   // LIB-PLATEFIX-3: main c2f267a7's was 3804f49d… (BOX, pairs.mjs and zoom.mjs blanked); LIB-SHIP W4: with the smith-sheet key also blanked (re-measured on the merge of main c2f267a7; was be1e4228… on main 484d4552)
   });
 });
 

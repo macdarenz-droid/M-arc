@@ -207,8 +207,11 @@ const W2_ADDED: Record<string, string[]> = {
 // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is also blanked; it is re-pinned there and pinned exactly by
 // research-routes.test.ts (was 49909603… without it; re-measured on main e623d3ef).
 const RR_BOX = 'docs/research/howto/shared/back-pain-box.json';
-// LIB-SHIP W4: main's with the W4-moved keys also blanked by lessW4 (re-measured on main 05f27be9; was 5a51002e…)
-const MANIFEST_BLANKED_MAIN_W2 = '9fc5552f9986c383ff479938789ad0b90b831425d148907232bacd81f3b82882';
+// LIB-PLATEFIX-3 E2 (#405 6684669717 item 18, [golden update]): zoom.mjs's key is re-pinned there and pinned exactly by platefix3-engine.test.ts
+const PF3_ZOOM = 'tools/plates/library/render/closeup/zoom.mjs';
+// LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6684669717 item 18): main's was 5a51002e…0532, then 4be0cf0d… with zoom.mjs's key also blanked;
+// LIB-SHIP W4: with the W4-moved keys also blanked by lessW4 (re-measured on the merge of main c2f267a7; was 9fc5552f… on main 05f27be9)
+const MANIFEST_BLANKED_MAIN_W2 = '1a636e0c4b56667044e30851ca9237800111902192cdf1c97db4890304bf7aaf';
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
@@ -244,17 +247,18 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     const m = current();
     // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out
     // (merge of main 62d3dcb6: W4 taken out by current(), then W3, then W2)
-    expect(blanked(lessW2(lessW3(m)), [...MOVED, RR_BOX])).toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-SHIP W3: W3 taken out first
+    expect(blanked(lessW2(lessW3(m)), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-SHIP W3: W3 taken out first; LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, D-PF3-W3MERGE): + PF3_ZOOM
     for (const k of MOVED) for (const r of Object.values<any>(raw().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
-    const m = lessW2(lessW3(current())), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX)!;
+    const m = lessW2(lessW3(current())), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX && k !== PF3_ZOOM)!;
     row.files[other] = '0'.repeat(64);
-    expect(blanked(m, [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(m, [...MOVED, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
     // (LIB-SHIP W4: lessW4 blanks pairs.mjs too, so its key is put back to its pin first, as if left out of every blank list;
     // merge of main 62d3dcb6: W3 taken out as W3's own form of this mutation does)
     const unPair = (x: any) => { for (const r of Object.values<any>(x.rows)) if (MOVED[1]! in r.files) r.files[MOVED[1]!] = sha(read(MOVED[1]!)); return x; };
-    expect(blanked(unPair(lessW2(lessW3(current()))), [MOVED[0]!, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(unPair(lessW2(lessW3(current()))), [MOVED[0]!, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW3(current())), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-PLATEFIX-3: zoom.mjs left out of the blank list is red
     // LIB-SHIP W3: a W3 row missing, or a W3-moved key not at its current file, is red
     const noChin = current(); delete noChin.rows.lib_chin_up;
     expect(() => lessW3(noChin)).toThrow(/lib_chin_up/);
