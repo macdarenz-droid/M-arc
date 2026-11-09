@@ -85,7 +85,7 @@ describe('PF4 high_to_low_cable_fly (pf8 T03): the crossed forearms as one X und
     expect(measure(lines((e, g) => e.map((v, i) => v + (g[i]! - v) * 1.4))).lens.every((v: number) => v > 82)).toBe(true);
     const up = measure(lines((e, g) => [g[0]!, g[1]! + 0.25, g[2]!]));
     expect(up.X).not.toBeNull();
-    expect(up.X[1]).toBeLessThanOrEqual(up.fistBottom);
+    expect(up.X![1]).toBeLessThanOrEqual(up.fistBottom);
   });
   it('R5: the two forearm lines cross as an X below the solid fists', () => {
     expect(m.X).not.toBeNull();
