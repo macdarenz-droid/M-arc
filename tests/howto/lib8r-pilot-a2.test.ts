@@ -335,7 +335,7 @@ describe('LIB-8R A2, A3, A12, A13: the PILOT-A2 pin (Do 7) and the untouched pil
       }
     }
     expect(n).toBe(153);
-    expect(superseded).toBe(5);
+    expect(superseded).toBe(8);   // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN): + pilot A's pec_fly entry 8; LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 6, now 8 (+ pilot A's barbell_overhead_press entry 19 and pilot B's smith_machine_bench_press entry 1, superseded by their owner entries 25 and 10)
   });
   it('A12: no PILOT-A2 row is shipped; mutation: one row set to shipped is caught', () => {
     const rowsOf = (t: any) => Object.values(t.rows).map((r: any) => r.stage);

@@ -5,7 +5,15 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { W5, lessW5 } from './lib-ship-w5';
+import { lessW4 } from './checks/ship-w4';
 import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
+import { pf2Problems, restorePF2 } from './platefix2-pins';
+import { pf3bProblems, restorePF3b } from './platefix3b-pins';
+// LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
+// lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
+// every pin below, measured on main, still holds
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); return restorePF3b(restorePF2(x)); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -56,7 +64,15 @@ const W3_SUB_OF: Record<string, string> = {
 describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws on main', () => {
   it('pairPanel(key) is byte-equal to main for every pair key', async () => {
     expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS)].sort());   // LIB-SHIP W3
-    for (const [k, want] of Object.entries(PANEL_MAIN)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);
+    // LIB-SHIP W5 D-SHIP-W5-EZWORDS (#392 6654996739): ez-curl-over's Right note is 'Wrist straight' (reverse_curl c1, c6); its
+    // panel equals main's exactly once that one note is put back, and 'Middle of palm' is gone from it. Every other key: byte-equal.
+    for (const [k, want] of Object.entries(PANEL_MAIN)) {
+      const h = await P.pairPanel(k);
+      if (k !== 'ez-curl-over') { expect([k, sha(h)]).toEqual([k, want]); continue; }
+      // D-SHIP-W5-EZNOTE (#392 6681700725): the drawn note too (svg caps 'WRIST STRAIGHT'), so neither case of the old note is left
+      expect([k, /middle of palm/i.test(h), h.includes('Wrist straight'), h.includes('>WRIST STRAIGHT<')]).toEqual([k, false, true, true]);
+      expect([k, sha(h.replaceAll('Wrist straight', 'Middle of palm').replaceAll('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'))]).toEqual([k, want]);
+    }
     for (const [k, want] of Object.entries(W3_SUBS)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);   // LIB-SHIP W3
   }, 60_000);
 });
@@ -213,11 +229,13 @@ const PF3_ZOOM = 'tools/plates/library/render/closeup/zoom.mjs';
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]; merge of main 8841246c, both sides kept): its moved keys,
 // added keys and superseded entries each pin their current value (pfProblems, in lessW2), then are blanked too (blankPF), so
 // this is main 8841246c's MANIFEST.json with MOVED, W2, RR_BOX, PF3_ZOOM and PLATEFIX blanked (measured on main 8841246c's own MANIFEST).
-const MANIFEST_BLANKED_MAIN_W2 = '8fa7f1682537140aac355b42443591ff6b3a514265aec9be73a4065b4278acc5';
+// LIB-SHIP W4 (merge of main 7e060e83): main's 8fa7f168… with lessW4's blanks too (W4's rows out, the smith-sheet key blanked)
+const MANIFEST_BLANKED_MAIN_W2 = '0c2e20c4f717b0008c8ba5728aa86800caafa8bb03c6de6a4904eff61448ffef';
 // LIB-SHIP W6 (#393): W6 adds the 23 lb06/lb07 rows (D-SHIP-MOVE; [golden update] pin commits) and moves no key of an older
 // row past build-layers-page.mjs (already blanked as a W2 key). lessW6 checks each W6 row pins its files' current sha256
 // and removes it, so every other entry is still compared as before (merge of main 7e060e83: with the W6 rows out, every
-// older row equals main 7e060e83's MANIFEST but for build-layers-page.mjs, so main's value above stands unchanged).
+// older row equals main 7e060e83's MANIFEST but for build-layers-page.mjs, so main's value above stands unchanged; merge of
+// main de91dd21: the same, main de91dd21's 0c2e20c4… stands unchanged with lessW6 applied first).
 const W6_ROWS = [...Object.keys(JSON.parse(readFileSync(join(__dirname, '../..', 'tools/plates/library/batches/lb06.json'), 'utf8')).rows),
   ...Object.keys(JSON.parse(readFileSync(join(__dirname, '../..', 'tools/plates/library/batches/lb07.json'), 'utf8')).rows)];
 const lessW6 = (m: any) => {
@@ -242,7 +260,12 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     }
     return m;
   };
-  const current = () => lessW6(JSON.parse(read('tools/plates/library/MANIFEST.json').toString()));   // LIB-SHIP W6: the 23 W6 rows checked and taken out
+  // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): lessW4 removes the 20 lb02/lb03 rows and blanks the
+  // W4-moved keys ('' as blanked() does), each checked first
+  const raw = () => JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
+  // LIB-PLATEFIX-2 (#395): pf2Main then checks its moved keys and entry and puts main 7e060e83's back (merge of main 6227bd8e)
+  // LIB-SHIP W6 (merge of main de91dd21): lessW6 first, the 23 W6 rows checked and taken out, as before the merge
+  const current = () => pf2Main(lessW4(lessW6(raw()), k => sha(read(k)), ''));
   // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows, and W3 PANEL FIX 2 (f561ff71,
   // #384 6649416891) moves crop.mjs and zoom-css.mjs in every row. Each W3 row must be there and each moved key must pin
   // its current file; with the rows removed and main 5023f5c6's sha put back, every other entry is main's
@@ -261,18 +284,22 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   it('with the moved keys blanked, MANIFEST.json is main\'s; each moved key is its file\'s sha256', () => {
     const m = current();
     // was: blanked(m) === MANIFEST_BLANKED_MAIN (d7f80b6f, main cb9a6dae with MOVED blanked); LIB-SHIP W2: the same with W2 taken out
+    // (merge of main 62d3dcb6: W4 taken out by current(), then W3, then W2)
     // F-BODYMAP-FRONTDELT (#404, D-BODYMAP-LIB): its region-fix.mjs key is re-pinned there and pinned exactly by
     // tests/library/bodymap-frontdelt.test.ts; each must pin its current file, then it is put back to main 5023f5c6's value.
     for (const r of Object.values<any>(m.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) { expect(r.files['tools/plates/library/render/region-fix.mjs']).toBe(sha(read('tools/plates/library/render/region-fix.mjs'))); r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; }
-    expect(blanked(lessW2(lessW3(m)), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-SHIP W3: W3 taken out first; LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, D-PF3-W3MERGE): + PF3_ZOOM
-    for (const k of MOVED) for (const r of Object.values<any>(current().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
+    expect(blanked(lessW2(lessW5(lessW3(m))), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-SHIP W3: W3 taken out first; LIB-SHIP W5: then W5's 27 rows (lessW5); LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, D-PF3-W3MERGE): + PF3_ZOOM
+    for (const k of MOVED) for (const r of Object.values<any>(raw().rows)) if (k in r.files) expect([k, r.files[k]]).toEqual([k, sha(read(k))]);
   });
   it('mutations: one other key moved, or a moved key left out of the blank list, is red', () => {
-    const m = lessW2(lessW3(current())), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX && k !== PF3_ZOOM)!;
+    const m = lessW2(lessW5(lessW3(current()))), row: any = Object.values(m.rows)[0], other = Object.keys(row.files).find(k => !MOVED.includes(k) && !W2_MOVED.includes(k) && k !== RR_BOX && k !== PF3_ZOOM)!;
     row.files[other] = '0'.repeat(64);
     expect(blanked(m, [...MOVED, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
-    expect(blanked(lessW2(lessW3(current())), [MOVED[0]!, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
-    expect(blanked(lessW2(lessW3(current())), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-PLATEFIX-3: zoom.mjs left out of the blank list is red
+    // (LIB-SHIP W4: lessW4 blanks pairs.mjs too, so its key is put back to its pin first, as if left out of every blank list;
+    // merge of main 62d3dcb6: W3 taken out as W3's own form of this mutation does)
+    const unPair = (x: any) => { for (const r of Object.values<any>(x.rows)) if (MOVED[1]! in r.files) r.files[MOVED[1]!] = sha(read(MOVED[1]!)); return x; };
+    expect(blanked(unPair(lessW2(lessW5(lessW3(current())))), [MOVED[0]!, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW5(lessW3(current()))), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // LIB-PLATEFIX-3: zoom.mjs left out of the blank list is red
     // LIB-SHIP W3: a W3 row missing, or a W3-moved key not at its current file, is red
     const noChin = current(); delete noChin.rows.lib_chin_up;
     expect(() => lessW3(noChin)).toThrow(/lib_chin_up/);
@@ -283,6 +310,13 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     expect(() => lessW2(bad)).toThrow();
     const noCrunch = current(); delete noCrunch.rows.lib_crunch;
     expect(() => lessW2(noCrunch)).toThrow();
+    // LIB-SHIP W4: a W4 row missing, a W4-moved key that does not pin its file, and an extra row are red
+    const noW4 = raw(); delete noW4.rows.lib_pendlay_row;
+    expect(() => lessW4(noW4, k => sha(read(k)), '')).toThrow(/W4 row lib_pendlay_row missing/);
+    const stale = raw(); stale.rows.lib_cable_fly.files['tools/plates/library/howto/lib_smith_machine_bench_press.howto.mjs'] = '0'.repeat(64);
+    expect(() => lessW4(stale, k => sha(read(k)), '')).toThrow(/lib_cable_fly .* does not pin its current file/);
+    const extra = raw(); extra.rows.lib_zz = structuredClone(extra.rows.lib_plank);
+    expect(blanked(lessW2(lessW5(lessW3(lessW4(extra, k => sha(read(k)), '')))), [...MOVED, RR_BOX])).not.toBe(MANIFEST_BLANKED_MAIN_W2);   // merge of main 62d3dcb6: W3 taken out too, so only the extra row differs (merge of main 05382042: W5 too)
     // LIB-PLATEFIX-1: a PLATEFIX moved key, added key or superseded entry off its current value is red
     const pfKey = current(); (Object.values<any>(pfKey.rows).find(r => PF_MOVED[0]! in r.files)).files[PF_MOVED[0]!] = '0'.repeat(64);
     expect(() => lessW2(pfKey)).toThrow();
@@ -290,5 +324,14 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
     expect(() => lessW2(pfAdd)).toThrow();
     const pfEntry = current(); pfEntry.rows.lib_triceps_pushdown.entry = '0'.repeat(64);
     expect(() => lessW2(pfEntry)).toThrow();
+    // LIB-SHIP W5: a W5 row missing throws; an extra unlisted row moves the hash
+    const noW5 = current(); delete noW5.rows[W5[26]!];
+    expect(() => lessW5(noW5)).toThrow(/has no row/);
+    const extraW5 = current(); extraW5.rows.lib_unlisted = structuredClone(extraW5.rows[W5[0]!]);
+    // control first: the same tree without the extra row matches, so the red below is the extra row alone
+    // F-BODYMAP-FRONTDELT: region-fix.mjs's key put back to main 5023f5c6's value, as in the pin test above
+    const bm = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8'; return x; };
+    expect(blanked(lessW2(lessW5(lessW3(bm(current())))), [...MOVED, RR_BOX, PF3_ZOOM])).toBe(MANIFEST_BLANKED_MAIN_W2);
+    expect(blanked(lessW2(lessW5(lessW3(bm(extraW5)))), [...MOVED, RR_BOX, PF3_ZOOM])).not.toBe(MANIFEST_BLANKED_MAIN_W2);
   });
 });

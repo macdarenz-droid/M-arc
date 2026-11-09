@@ -162,7 +162,7 @@ export default {
     { key: 'still', text: 'Torso still', anchor: 'buttock', box: { left: 40, top: 150 }, cue: 'Move only the bar and your arms, never stand up to pull.' },
     { key: 'floor', text: 'Floor<br>each rep', anchor: 'grip.r', box: { left: 226, top: 300 }, cue: 'Set the bar down on the floor at a dead stop between reps.' },
   ],
-  tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Pull', s: 1, move: true }],
+  tempo: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],   // c3 c14
   mistake: {
     pose: mistakePose,
     guides: [

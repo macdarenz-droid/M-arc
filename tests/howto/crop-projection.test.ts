@@ -8,7 +8,15 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { W5, lessW5 } from './lib-ship-w5';
+import { lessW4 } from './checks/ship-w4';
 import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
+import { pf2Problems, restorePF2 } from './platefix2-pins';
+import { pf3bProblems, restorePF3b } from './platefix3b-pins';
+// LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
+// lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
+// every pin below, measured on main, still holds
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); return restorePF3b(restorePF2(x)); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = new URL('../../', import.meta.url);
@@ -150,11 +158,17 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     expect(JSON.stringify(lessW3(c))).not.toBe(JSON.stringify(lessW3(m())));
   });
   // LIB-PLATEFIX-1: main 8841246c's MANIFEST.json with the pin test's blanks and the PLATEFIX keys and entries blanked
-  const PF_CP_PIN = '3e72651489c837482a01225f43b9a0e16afdf119d07465e11c0ef8d186289393';
+  // LIB-SHIP W4 (merge of main 7e060e83): main's 3e726514… with lessW4's blanks too (W4's rows out, the smith-sheet key blanked)
+  const PF_CP_PIN = '0b7ad1294292f67bc7f9c074c01b2c0b28613b7f9194f186076f599865189435';
   it('every pinned row pins the current crop.mjs and hand.mjs, and every other entry equals main 8d596fab', () => {
-    const m = lessW3(lessW6(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'))), [KEYS[0]!]);   // LIB-SHIP W6: the 23 W6 rows checked and taken out; LIB-SHIP W3
+    // LIB-SHIP W6 (merge of main de91dd21): lessW6 first, the 23 W6 rows checked and taken out, as before the merge
+    // LIB-SHIP W4 (D-SHIP-W4-PIN; the W2-form widening, approved #391): lessW4 (checks/ship-w4.ts) removes the 20 lb02/lb03 rows
+    // (each must be present) and blanks the W4-moved keys (each must pin its current file); LIB-SHIP W3's lessW3 then takes
+    // out W3's 13 rows and puts main's crop.mjs / zoom-css.mjs shas back (merge of main 62d3dcb6: both lanes kept)
+    // LIB-PLATEFIX-2 (#395): pf2Main then checks its moved keys and entry and puts main 7e060e83's back (merge of main 6227bd8e)
+    const m = lessW3(pf2Main(lessW4(lessW6(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'))), k => sha(readFileSync(path(k))))), [KEYS[0]!]);
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
-    expect(rows).toHaveLength(22);   // LIB-SHIP W2: + PILOT-B2's lib_crunch
+    expect(rows).toHaveLength(22 + W5.length);   // LIB-SHIP W2: + PILOT-B2's lib_crunch; LIB-SHIP W5: + lb04's and lb05's 27 rows (lessW5)
     expect(Object.keys(m.rows)).toContain('lib_crunch');
     for (const r of rows) for (const k of KEYS) { expect(r.files[k]).toBe(sha(readFileSync(path(k)))); r.files[k] = 'X'; }
     // F-PAIR-FAULTS (#386): build-layers-page.mjs's and pairs.mjs's keys are re-pinned there and pinned exactly by pair-faults.test.ts
@@ -165,6 +179,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     for (const r of rows) r.files['tools/plates/library/render/closeup/zoom.mjs'] = 'X';
     // main cb9a6dae's MANIFEST.json with the same entries blanked was b126d854 (#386); LIB-SHIP W2 (merge of main cf28ab23,
     // both sides kept): with W2's changes also taken out, main cf28ab23's with the same blanks
+    // LIB-SHIP W5: with W5's 27 rows also taken out first (lessW5: each must be present), the same hash
     // RESEARCH-ROUTES-1 (#398, D-RR-HEAD): back-pain-box.json's key is re-pinned there and pinned exactly by research-routes.test.ts;
     // each row that still lists it after lessW2 must pin the current file, then it is blanked too
     const rrBox = (x: any) => { for (const r of Object.values<any>(x.rows)) if ('docs/research/howto/shared/back-pain-box.json' in r.files) { expect(r.files['docs/research/howto/shared/back-pain-box.json']).toBe(sha(readFileSync(path('docs/research/howto/shared/back-pain-box.json')))); r.files['docs/research/howto/shared/back-pain-box.json'] = 'X'; } return x; };
@@ -178,10 +193,11 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     // and entry where this MANIFEST differs from main 8841246c's is blanked by one of these, so the rest is main 8841246c's
     // MANIFEST.json with the same blanks (measured on main 8841246c's own MANIFEST).
     expect(pfProblems(m)).toEqual([]);
-    expect(sha(JSON.stringify(rrBox(lessW2(bmFix(blankPF(m, 'X'))))))).toBe(PF_CP_PIN);
+    expect(sha(JSON.stringify(rrBox(lessW2(bmFix(blankPF(lessW5(m), 'X'))))))).toBe(PF_CP_PIN);   // LIB-SHIP W5: lessW5 first, as before the merge
   });
   it('LIB-PLATEFIX-1 mutations: a moved key, an added key or a superseded entry off its current value is red, and so is any other key moved', () => {
-    const cur = () => JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'));
+    // LIB-SHIP W6 merge of main de91dd21: the 23 W6 rows checked and taken out before pf2Main puts main's PF values back
+    const cur = () => pf2Main(lessW6(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'))));
     const m1 = cur(); (Object.values<any>(m1.rows).find(r => PF_MOVED[2]! in r.files)).files[PF_MOVED[2]!] = '0'.repeat(64);
     expect(pfProblems(m1)).toHaveLength(1);
     const m2 = cur(); m2.rows.lib_reverse_lunge.files['tools/plates/library/pages/pilot-a3.layers.json'] = '0'.repeat(64);
@@ -190,7 +206,9 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     expect(pfProblems(m3)).toEqual([`lib_romanian_deadlift: entry ${'0'.repeat(64)} != ${cur().rows.lib_romanian_deadlift.entry}`]);
     // the pin test's blanks, without its checks: the current MANIFEST gives the pin, one other entry moved does not
     const all = (x: any) => {
-      lessW3(lessW6(x), [KEYS[0]!]);   // LIB-SHIP W6 merge: the 23 W6 rows checked and taken out first, as in the pin test
+      // LIB-SHIP W6 merge: the 23 W6 rows were checked and taken out by cur(), as in the pin test
+      lessW4(x, k => sha(readFileSync(path(k))));   // LIB-SHIP W4 (merge of main 7e060e83): W4's 20 rows out and its moved keys blanked first
+      lessW5(lessW3(x, [KEYS[0]!]));   // LIB-SHIP W5: W5's 27 rows out too (merge of main 05382042)
       for (const r of Object.values<any>(x.rows)) for (const k of [...KEYS, 'tools/plates/library/hands/pairs.mjs', 'tools/plates/library/render/closeup/zoom.mjs']) r.files[k] = 'X';
       for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8';
       const y = lessW2(blankPF(x, 'X'));

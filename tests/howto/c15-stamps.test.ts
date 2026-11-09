@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { checkC15, contentHash } from './checks/c15';
+import { W4_IDS } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -91,12 +92,21 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   // under its ruling, and barbell_row and cable_fly, whose plates it changed, are re-stamped after their W2 stamps (kept
   // as main's history, byte-equal), all after main 8841246c's entries. RULING lists each id's rulings in stamp order; the
   // last one is the current stamp.
+  // LIB-SHIP W4 (ruling 3; D-SHIP-W4-FLIPSET #391 6682985023): then the 6 W4 ids (checks/ship-w4.ts), in shipping order;
+  // merge of main 7e060e83: W4 merged after W3 and LIB-PLATEFIX-1, so W4's 6 follow main's entries
+  const W4_RULE = ['D-SHIP-W4-FLIPSET', 'https://github.com/macdarenz-droid/M-arc/pull/391#issuecomment-6682985023 @ 2af8092ca4343ef72bf908872ea7c362e9c24758'];
   const PF_RULE = ['D-PLATEFIX-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/385#issuecomment-6654532221 @ e1419e2616a6cd7a048a6a09d81fadee83ccdd2d'];
   const PF_STAMPED = ['lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift', 'lib_triceps_pushdown', 'lib_reverse_lunge'];
   const PF_RESTAMPED = ['lib_barbell_row', 'lib_cable_fly'];
+  // LIB-SHIP W5 (ruling 3; D-SHIP-W5-STAMP under D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, #392 6683213580 @ 9d4d72cd): the
+  // 10 flipped ids, stamped after LIB-PLATEFIX-1's entries in batch order (lb04's 4, then lb05's 6); the 17 held W5 rows
+  // (goblet_squat among them) stay unruled, so one shipped is red
+  const W5_RULE = ['D-SHIP-W5-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/392#issuecomment-6683213580 @ 9d4d72cdd0cc1b5d288a22a2210462bf5c93c313'];
+  const W5_STAMPED = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat',
+    'lib_preacher_curl', 'lib_hammer_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];
   const RULING: Record<string, string[][]> = { lib_dumbbell_biceps_curl: [W1_RULE], ...Object.fromEntries(W2_STAMPED.map(id => [id, [W2_RULE]])),
     ...Object.fromEntries(W3_STAMPED.map(id => [id, [W3_RULE]])), ...Object.fromEntries(PF_STAMPED.map(id => [id, [PF_RULE]])),
-    ...Object.fromEntries(PF_RESTAMPED.map(id => [id, [W2_RULE, PF_RULE]])),
+    ...Object.fromEntries(PF_RESTAMPED.map(id => [id, [W2_RULE, PF_RULE]])), ...Object.fromEntries(W4_IDS.map(id => [id, [W4_RULE]])), ...Object.fromEntries(W5_STAMPED.map(id => [id, [W5_RULE]])),
     ...Object.fromEntries(W6_STAMPED.map(id => [id, [W6_RULE]])) };
   /** main 8841246c's 26 reviews.json entries (sha256 of their JSON.stringify): LIB-PLATEFIX-1 only appends. */
   const sha = (t: string) => createHash('sha256').update(t).digest('hex');
@@ -104,6 +114,9 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   // LIB-SHIP W6: main 7e060e83's 32 entries (sha256 of their JSON.stringify, measured from 7e060e83's own reviews.json):
   // W6 only appends its 7 after them
   const MAIN_W6_ENTRIES = { n: 32, sha: '9d4bb7ff39b2d978a34b50829dc494b54225c88c3474b6e10ca9dbfcb698f63d' };
+  // LIB-SHIP W6, merge of main de91dd21 (trains 78-81): main de91dd21's 48 entries (sha256 of their JSON.stringify, measured
+  // from de91dd21's own reviews.json); W6 still only appends its 7 after them
+  const MAIN_W6_ENTRIES_DE91 = { n: 48, sha: '92449ae84b210bc6628f548f3ebd423690a1c2e8a94ac81397c26c5633216746' };
   const clone = (x: any) => JSON.parse(JSON.stringify(x));
   /** The library entries against RULING: every ruled id stamped once per ruling, in order, under that decision; no
    *  unruled id stamped. */
@@ -142,10 +155,14 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     // LIB-SHIP W2 (ruling 3; D-SHIP-W2-STAMP #379 6636105974): the W1 id, then the 9 W2 ids in shipping (registry) order
     // LIB-SHIP W3: then W3's 9 (D-SHIP-W3-STAMP)
     // LIB-PLATEFIX-1: then its 4 in registry order, then the 2 re-stamps; main 8841246c's 26 entries unchanged
-    // LIB-SHIP W6: then W6's 7 (D-SHIP-W6-STAMP, #393 6689822595 / 6701002884); main 7e060e83's 32 entries unchanged
-    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W6_STAMPED]);
+    // LIB-SHIP W4: then W4's 6 (D-SHIP-W4-FLIPSET), merged after main 7e060e83's 32
+    // LIB-SHIP W5 (D-SHIP-W5-STAMP, ruling 3): then W5's 10 (merge of main 05382042: after W4's 6)
+    // LIB-SHIP W6: then W6's 7 (D-SHIP-W6-STAMP, #393 6689822595 / 6701002884); main 7e060e83's 32 and main de91dd21's 48 entries unchanged
+    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED]);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_ENTRIES.n)))).toBe(MAIN_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES.n)))).toBe(MAIN_W6_ENTRIES.sha);
+    expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES_DE91.n)))).toBe(MAIN_W6_ENTRIES_DE91.sha);
+    expect(W4_IDS).toHaveLength(6);
     expect(stampedProblems(r.entries)).toEqual([]);
     expect(entryProblems(r.entries)).toEqual([]);
     const lib = r.entries.filter((x: any) => !EIGHT.includes(x.scope));
@@ -163,7 +180,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
       for (const f of e.findings) expect(f).toMatch(/recorded, not changed: golden B is locked \(plan 2\.8\)$/);
     }
     expect(await S.stampProblems(EIGHT)).toEqual([]);
-  });
+  }, 60_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): walks every shipped row (36 after main 7e060e83); timed out at the 5 s default on 76c2e190's unit-tz (Asia/Manila); no assertion change
   it('LIB-SHIP W2 A9 mutations, each red: a ruled id\'s stamp removed; an unruled id stamped; a W2 id under the W1 ruling', () => {
     const es = reviews().entries;
     expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_plank'))).toEqual(['lib_plank: ruled, not stamped']);
@@ -182,18 +199,28 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     expect(stampedProblems(noRe)).toEqual(['lib_cable_fly: ruled 2 stamps, has 1']);
     const pfW2 = clone(es); pfW2.find((e: any) => e.scope === 'lib_triceps_pushdown').decision = 'D-SHIP-W2-STAMP';
     expect(stampedProblems(pfW2)).toEqual(['lib_triceps_pushdown: decision D-SHIP-W2-STAMP, ruled D-PLATEFIX-STAMP']);
-    // LIB-SHIP W6 merge: W6's 7 now follow cable_fly's re-stamp, so the third stamp copies cable_fly's last entry by scope
-    // (was es[es.length - 1], cable_fly's before W6 appended)
-    expect(stampedProblems([...es, { ...es.filter((e: any) => e.scope === 'lib_cable_fly').pop() }])).toEqual(['lib_cable_fly: stamped again, not ruled']);
+    expect(stampedProblems([...es, { ...es.filter((e: any) => e.scope === 'lib_cable_fly').at(-1) }])).toEqual(['lib_cable_fly: stamped again, not ruled']);   // merge of main 7e060e83: cable_fly's re-stamp named (W4's 6, then W5's 10, then W6's 7, now end the list)
     // the re-stamp's order matters: the PLATEFIX stamp before the W2 one is red
     const swapped = clone(es), a = swapped.findIndex((e: any) => e.scope === 'lib_barbell_row'), b = swapped.map((e: any) => e.scope).lastIndexOf('lib_barbell_row');
     [swapped[a], swapped[b]] = [swapped[b], swapped[a]];
     expect(stampedProblems(swapped)).toEqual(['lib_barbell_row: decision D-PLATEFIX-STAMP, ruled D-SHIP-W2-STAMP', 'lib_barbell_row: decision D-SHIP-W2-STAMP, ruled D-PLATEFIX-STAMP']);
+    // LIB-SHIP W5 A9 reds (D-SHIP-W5-STAMP, ruling 3): a W5 id's stamp removed; a W5 id under the W3 ruling; a held W5 id
+    // (goblet_squat, approved-plate) shipped unruled; a ruled W5 id stamped twice
+    expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_preacher_curl'))).toEqual(['lib_preacher_curl: ruled, not stamped']);
+    const w3 = clone(es); w3.find((e: any) => e.scope === 'lib_front_squat').decision = 'D-SHIP-W3-STAMP';
+    expect(stampedProblems(w3)).toEqual(['lib_front_squat: decision D-SHIP-W3-STAMP, ruled D-SHIP-W5-STAMP']);
+    expect(stampedProblems(es, [...SHIPPED, 'lib_goblet_squat'])).toEqual(['lib_goblet_squat: shipped, not ruled']);
+    expect(stampedProblems([...es, clone(es.find((e: any) => e.scope === 'lib_hammer_curl'))])).toEqual(['lib_hammer_curl: stamped again, not ruled']);
+    // LIB-SHIP W4: a W4 stamp removed, a waiting W4 id stamped, and a W4 id under the W2 ruling are red
+    expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_cable_shrug'))).toEqual(['lib_cable_shrug: ruled, not stamped']);
+    expect(stampedProblems([...es, { ...es[es.length - 1], scope: 'lib_dumbbell_shrug' }])).toEqual(['lib_dumbbell_shrug: stamped, not ruled']);
+    const w2b = clone(es); w2b.find((e: any) => e.scope === 'lib_t_bar_row').decision = 'D-SHIP-W2-STAMP';
+    expect(stampedProblems(w2b)).toEqual(['lib_t_bar_row: decision D-SHIP-W2-STAMP, ruled D-SHIP-W4-FLIPSET']);
     // LIB-SHIP W6 A9 reds (#393 6689822595 / 6701002884): a W6 id's stamp removed; a W6 id under the W3 ruling; an unruled
     // id stamped; a held W6 id (approved-plate in lb06/lb07) shipped or stamped
     expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_face_pull'))).toEqual(['lib_face_pull: ruled, not stamped']);
-    const w3 = clone(es); w3.find((e: any) => e.scope === 'lib_pike_push_up').decision = 'D-SHIP-W3-STAMP';
-    expect(stampedProblems(w3)).toEqual(['lib_pike_push_up: decision D-SHIP-W3-STAMP, ruled D-SHIP-W6-STAMP']);
+    const w3w6 = clone(es); w3w6.find((e: any) => e.scope === 'lib_pike_push_up').decision = 'D-SHIP-W3-STAMP';   // merge of main de91dd21: renamed from w3 (W5's red holds w3)
+    expect(stampedProblems(w3w6)).toEqual(['lib_pike_push_up: decision D-SHIP-W3-STAMP, ruled D-SHIP-W6-STAMP']);
     expect(stampedProblems(es, [...SHIPPED, 'lib_hip_abduction'])).toEqual(['lib_hip_abduction: shipped, not ruled']);
     expect(stampedProblems([...es, { ...es[es.length - 1], scope: 'lib_weighted_dip' }])).toEqual(['lib_weighted_dip: stamped, not ruled']);
   });

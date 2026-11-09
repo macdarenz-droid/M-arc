@@ -39,7 +39,11 @@ const PINNED = CARDS.filter(id => id !== 'incline_dumbbell_press');
 // after their panels, routes F-FLY-START and F-REVLUNGE-ARCH, #340 6540319537).
 // PILOT-A3 (D-A3-PINLINES, A12): dumbbell_fly and reverse_lunge are pinned in PILOT-A3, in exactly batches/pilot-a3.json and
 // golden/library/pilot-a3.json (panel mx18, #362 6548838657).
-const STILL_HELD = ['barbell_shrug', 'incline_dumbbell_press'];
+// LIB-SHIP W4 (ruling 3; D-SHIP-MOVE, #391 6647760116): replaces STILL_HELD ['barbell_shrug', 'incline_dumbbell_press'].
+// The two are no longer held: each is pinned in exactly its LB batch's two files (batch file and golden chain).
+// The list of still-held ids is empty; a held id still names no batch or golden file (the A13 / PILOT-A3 reds below).
+const STILL_HELD: string[] = [];
+const MOVED_W4: [string, string][] = [['barbell_shrug', 'lb03'], ['incline_dumbbell_press', 'lb02']];
 const MOVED = ['box_jump', 'bent_over_dumbbell_rear_delt_fly'];
 const MOVED_A3 = ['reverse_lunge', 'dumbbell_fly'];
 // census views (claude/howto-options 4a9fd86, docs/howto/library/inputs/census.json blob 70553d5d)
@@ -47,7 +51,9 @@ const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id
 // the pilot A page the registry builds (build.mjs's page at the Do 6 head); the pin's page entry must equal it
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]): was 5d0e562f (1,325,644 B); the page with its fixed
 // barbell_row, barbell_overhead_press, romanian_deadlift and triceps_pushdown plates (the superseding page entry 16)
-const PAGE = { sha256: 'd38e8b3315af11e9ebe5bcc4534054b0c02ad25ea3773f690a943863b8f26429', bytes: 1316144 };
+// LIB-PLATEFIX-2 (#395, D-OWNER-REPIN, D-PLATEFIX-SECOND form): was d38e8b33 (1,316,144 B); with pec_fly's height box at
+// top 260 (PQ-H4), the superseding page entry 23
+const PAGE = { sha256: '6d3afb8313a20e4fb519c52e20c62de3f002724e9bb9facf30900b081118791d', bytes: 1315771 };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 032ce649 (1316144 B), now 6d3afb83 (1315771 B) (barbell_overhead_press's item 23 (a) and (b); pilot A's 'owner' D-OWNER-REPIN page entry 26)
 const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
 // Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
 const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
@@ -165,9 +171,16 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
       ['layers-page', null, 'D-BODYMAP-LIB', 'supervisor', lp[1].i],
       ['page', null, 'D-OWNER-REPIN', 'owner', 0],
       ...['lib_barbell_row', 'lib_barbell_overhead_press', 'lib_romanian_deadlift', 'lib_triceps_pushdown'].map(id => ['plate', id, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === id)]),
-      ['layers-page', null, PF_LAYERS_DECISION, 'supervisor', lp[1].i + 1]]);
-    const cur = entries[entries.length - 1];
-    expect(lp[lp.length - 1].i).toBe(entries.length - 1);
+      ['layers-page', null, PF_LAYERS_DECISION, 'supervisor', lp[1].i + 1],
+      // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN, D-PLATEFIX-SECOND form): then exactly its owner page entry, superseding
+      // #385's, and its pec_fly plate entry, superseding entry 8; the layers page is not re-pinned (pec_fly is not on it)
+      ['page', null, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'page' && e.supersedes === 0)],
+      ['plate', 'lib_pec_fly', 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === 'lib_pec_fly')],
+      // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was the list ending at pec_fly's entry, now + its owner barbell_overhead_press plate entry (superseding #385's, 19) and owner page entry (superseding PF2's, 23); the layers page is not re-pinned
+      ['plate', 'lib_barbell_overhead_press', 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === 'lib_barbell_overhead_press' && e.supersedes != null)],
+      ['page', null, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'page' && e.supersedes === entries.findIndex((x: any) => x.kind === 'page' && x.supersedes === 0))]]);
+    const cur = lp[lp.length - 1].e;
+    expect(lp[lp.length - 1].i).toBe(entries.length - 5);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was entries.length - 3, now - 5 (its 2 owner entries follow PF2's 2)
     const page = readFileSync(ROOT + batch.pages.layers);
     expect([[...cur.ids].sort(), cur.ids.length, cur.pageSha256, cur.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
@@ -178,14 +191,22 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     ...(existsSync(ROOT + 'tests/howto/golden/library') ? readdirSync(ROOT + 'tests/howto/golden/library').map(f => `tests/howto/golden/library/${f}`) : [])];
   const MOVED_TO = ['tools/plates/library/batches/pilot-a2.json', 'tests/howto/golden/library/pilot-a2.json'];
   const MOVED_A3_TO = ['tools/plates/library/batches/pilot-a3.json', 'tests/howto/golden/library/pilot-a3.json'];
-  /** A13 (PILOT-A3 A12): a still-held id in any batch or golden file, or a moved id anywhere but exactly its batch's two files. */
+  /** LIB-SHIP W4: each formerly held id's LB batch files: its batch file and its golden chain. */
+  const W4_TO = (b: string) => [`tools/plates/library/batches/${b}.json`, `tests/howto/golden/library/${b}.json`];
+  /** A13 (PILOT-A3 A12): a still-held id in any batch or golden file, or a moved id anywhere but exactly its batch's two
+   *  files (LIB-SHIP W4: its LB batch's two for barbell_shrug and incline_dumbbell_press). */
   const heldProblems = (text: (f: string) => string, held = STILL_HELD) => heldFiles().flatMap(f => [
     ...held.filter(id => new RegExp(`\\b(lib_)?${id}\\b`).test(text(f))).map(id => `${id} (held) in ${f}`),
-    ...([[MOVED, MOVED_TO], [MOVED_A3, MOVED_A3_TO]] as const).flatMap(([ids, to]) => ids.filter(id => new RegExp(`\\b(lib_)?${id}\\b`).test(text(f)) !== to.includes(f))
+    ...([[MOVED, MOVED_TO], [MOVED_A3, MOVED_A3_TO], ...MOVED_W4.map(([id, b]) => [[id], W4_TO(b)])] as const).flatMap(([ids, to]) => ids.filter(id => new RegExp(`\\b(lib_)?${id}\\b`).test(text(f)) !== to.includes(f))
       .map(id => `${id} (moved) ${to.includes(f) ? 'missing from' : 'in'} ${f}`)),
   ]);
   it('the still-held ids appear in no batch or library golden file; the moved ids are in exactly their batch\'s two files', () => {
     expect(heldProblems(read)).toEqual([]);
+  });
+  it('LIB-SHIP W4 mutations: barbell_shrug named in batches/lb02.json, incline_dumbbell_press dropped from golden lb02.json, and either put back on the held list are red', () => {
+    expect(heldProblems(f => (f.endsWith('batches/lb02.json') ? `${read(f)} lib_barbell_shrug` : read(f)))).toEqual(['barbell_shrug (moved) in tools/plates/library/batches/lb02.json']);
+    expect(heldProblems(f => (f === 'tests/howto/golden/library/lb02.json' ? read(f).replace(/\b(lib_)?incline_dumbbell_press\b/g, 'x') : read(f)))).toEqual(['incline_dumbbell_press (moved) missing from tests/howto/golden/library/lb02.json']);
+    for (const id of ['barbell_shrug', 'incline_dumbbell_press']) expect(heldProblems(read, [id]).length, id).toBe(2);
   });
   it('A13 mutations: a moved id added to batches/pilot-a.json, and a still-held id added to golden/library/pilot-a2.json, are red', () => {
     expect(heldProblems(f => (f.endsWith('batches/pilot-a.json') ? `${read(f)} lib_box_jump` : read(f))).length).toBeGreaterThan(0);

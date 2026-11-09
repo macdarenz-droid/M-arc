@@ -10,6 +10,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 import { readHowTo } from './generated-module';
+import { W4_IDS } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -329,20 +330,28 @@ async function libraryCases() {
  *  row's own How-to feel spec; no is-playing or is-focus. Throws on the first failed check. */
 // LIB-SHIP W2 (ruling 3): the shipped library rows hands.mjs's noPairRuling rules to ship with no hand pair
 // LIB-SHIP W3 (ruling 3): plus W3's 4 card-no-zoom ids (hands/no-zoom.json, Q-W3-10), in registry order
-// LIB-SHIP W6 (ruling 3; #393 6689822595 / 6701002884): plus all 7 shipped W6 ids (hands/no-zoom.json: 5 card-no-zoom,
-// dumbbell_front_raise and face_pull gap-ruled D-SHIP-HANDW6), in registry order
+// LIB-SHIP W4 (ruling 3; D-SHIP-W4-FLIPSET): the 6 W4 ids (lb03 rows) ship with no hand pair too; merge of main 62d3dcb6:
+// both lanes' ids, in registry order (W3's lb01 rows, W4's lb03 rows, the W2 rows, W3's zoom row)
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus its 4 shipped ids (none has a hand chunk or pair), in registry order
-const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row',
+// LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): plus front_squat (gap-key) and hammer_curl (hands/no-zoom.json,
+// D-SHIP-W5-HAMMER), both noPairRuling D-SHIP-C3, and the 3 bodyweight lower-body ids (archetype none, why names D-SHIP-GRIP,
+// D-SHIP-A6NOGRIP), in registry order after W4's (merge of main 05382042: both lanes' ids)
+// LIB-SHIP W6 (ruling 3; #393 6689822595 / 6701002884): plus all 7 shipped W6 ids (hands/no-zoom.json: 5 card-no-zoom,
+// dumbbell_front_raise and face_pull gap-ruled D-SHIP-HANDW6), in registry order (merge of main de91dd21: after W5's)
+const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', ...W4_IDS, 'lib_front_squat', 'lib_bodyweight_squat',
+  'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_hammer_curl',
   'lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_incline_push_up', 'lib_pike_push_up',
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
   'lib_horizontal_leg_press'];
 // LIB-SHIP W2 (ruling 3): the shipped library ids whose feel draws no mark (card watch [] and no pain part in any row)
 // LIB-SHIP W3: plus single_arm_lat_pulldown (its card's watch is [] and its shoulder row names no part), in registry order
+// LIB-SHIP W4: the three W4 shrugs (registry order, after W3's lb01 rows and before the W2 rows) draw no mark either
+// LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus single_leg_romanian_deadlift (noMarkIds on this tree; the other 3 draw marks)
 // LIB-SHIP W6 (#393 6689822595 / 6701002884): plus dumbbell_front_raise (watch [], its rows name only the primary
 // front_delts) and face_pull (watch [], its rows name no muscle or part), in registry order
-// LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus single_leg_romanian_deadlift (noMarkIds on this tree; the other 3 draw marks)
-const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
+const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug', 'lib_dumbbell_front_raise', 'lib_face_pull',
+  'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
 /** LIB-SHIP W2: the ids among `ids` whose How-to feel has no watch-listed non-primary muscle and no pain part in any row. */
 async function noMarkIds(base: string, ids: string[]) {
   const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));
@@ -364,13 +373,22 @@ async function feelChecks(base: string, row: any) {
   const Fs = (await content.loadContent(row.id)).content.feel;
   const rest = fm.renderFeelMap({ primary: Fs.primary, secondary: Fs.secondary, views: ['front', 'back'], id: `${pre}-feel`, shimmer: true });
   expect(section).toContain(`data-feel-map id="${pre}-feel-map" data-rest-label="${rest.label}">`);
+  // LIB-SHIP W5 (ruling 3; F-BODYMAP-FRONTDELT, D-BODYMAP-LIB #404 6682755661): every library layers page applies
+  // render/region-fix.mjs BODYMAP_FIX, which redraws both front_delts parts on the front of the shoulder cap; golden B's
+  // renderer keeps the vendored strip. preacher_curl is the first shipped row with a front_delts watch mark, so on a page
+  // that carries the fix the expected mark is the renderer's with exactly those two paths swapped for BODYMAP_FIX's.
+  const RF = await import(/* @vite-ignore */ F.url(base, 'tools/plates/library/render/region-fix.mjs'));
+  const vendored = (await import(/* @vite-ignore */ F.url(base, 'tools/plates/layers/engine/bodymap-parts.mjs'))).FRONT_PARTS;
+  const fixed = Object.entries<any>(RF.BODYMAP_FIX.replace).filter(() => page.includes(`d="${RF.BODYMAP_FIX.replace['shoulder-front-left'].d}"`))
+    .map(([id, f]) => [`d="${vendored.find((x: any) => x.id === id).d}"`, `d="${f.d}"`]);
+  const fixD = (t: string) => fixed.reduce((a, [from, to]) => a.split(from!).join(to!), t);
   let marks = 0;
   for (const r of Fs.rows) {
     const watch = (r.at?.muscles ?? []).filter((m: string) => Fs.watch.some((w: any) => w.muscleId === m) && !Fs.primary.some((p: any) => p.muscleId === m)), pain = r.at?.parts ?? [];
     if (!watch.length && !pain.length) { expect(section.includes(`<g class="feel-mark" data-row="${r.key}">`), `${row.id}/${r.key}`).toBe(false); continue; }
     const m = fm.renderFeelMap({ primary: Fs.primary, secondary: Fs.secondary, avoid: watch, pain, views: ['front', 'back'], id: `${pre}-feel-${r.key}`, shimmer: false });
     m.svg.split('</figure>').slice(0, 2).forEach((v: string) => {
-      const w = v.match(/<g class="feel-watch">[\s\S]*?<\/g>/)?.[0] ?? '', p = v.match(/<g class="feel-pain">[\s\S]*?<\/g>/)?.[0] ?? '';
+      const w = fixD(v.match(/<g class="feel-watch">[\s\S]*?<\/g>/)?.[0] ?? ''), p = fixD(v.match(/<g class="feel-pain">[\s\S]*?<\/g>/)?.[0] ?? '');
       if (w || p) { marks++; expect(section, `${row.id}/${r.key}`).toContain(`<g class="feel-mark" data-row="${r.key}">${w.replace('class="feel-watch"', 'class="feel-quiet"')}${p}${w}</g>`); }
     });
   }
@@ -392,7 +410,7 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
     const cases = await libraryCases();
     expect(cases.at(-1)!.row.id).toBe(F.ID);
     for (const { base, row } of cases) await feelChecks(base, row);
-  });
+  }, 600_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): 32 shipped rows; timed out at 180 s on 824d8456's unit-tz (Asia/Manila) CI; no assertion change
   it('LIB-SHIP W2: NO_MARK is exactly the shipped library ids whose feel draws no mark; a mark-drawing id on it, or a no-mark id off it, is red', async () => {
     const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
     expect(await noMarkIds(repo, LIBRARY.map(r => r.id))).toEqual(NO_MARK);
@@ -401,6 +419,12 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
     try { await expect(feelChecks(repo, rope)).rejects.toThrow(rope.id); } finally { NO_MARK.pop(); }
     const i = NO_MARK.indexOf(bench.id); NO_MARK.splice(i, 1);
     try { await expect(feelChecks(repo, bench)).rejects.toThrow(bench.id); } finally { NO_MARK.splice(i, 0, bench.id); }
+    // LIB-SHIP W4: a W4 mark-drawing id on it, and a W4 no-mark shrug off it, are red
+    const pendlay = LIBRARY.find(r => r.id === 'lib_pendlay_row')!, shrug = LIBRARY.find(r => r.id === 'lib_cable_shrug')!;
+    NO_MARK.push(pendlay.id);
+    try { await expect(feelChecks(repo, pendlay)).rejects.toThrow(pendlay.id); } finally { NO_MARK.pop(); }
+    const j = NO_MARK.indexOf(shrug.id); NO_MARK.splice(j, 1);
+    try { await expect(feelChecks(repo, shrug)).rejects.toThrow(shrug.id); } finally { NO_MARK.splice(j, 0, shrug.id); }
     // LIB-SHIP W6 A9 reds: a mark-drawing W6 id (machine_crunch) on the list, and a W6 no-mark id (face_pull) off it
     const crunch = LIBRARY.find(r => r.id === 'lib_machine_crunch')!, face = LIBRARY.find(r => r.id === 'lib_face_pull')!;
     NO_MARK.push(crunch.id);
@@ -565,6 +589,10 @@ describe('D-LIB2b-HANDCSS: a library row\'s HAND loader brings in its zoom css b
     const ruled: string[] = [];
     for (const r of LIBRARY) if (hands.noPairRuling((await import(/* @vite-ignore */ url(reg.sourceOf(r.id)))).default)) ruled.push(r.id);
     expect(ruled).toEqual(NO_HAND);
+    // LIB-SHIP W5: a HAND line for a bodyweight id is red too (the 0-lines assert above)
+    const bw = '  "bodyweight-squat": () => import(\'../../slices/howto/css/zoom-bodyweight-squat.css\').then(() => import(\'./handpair-curl-dumbbell-under\')),\n';
+    expect(handLineProblems(readFileSync('src/howto/generated/loaders.ts', 'utf8').replace('export const POSTURE', `${bw}export const POSTURE`), 'bodyweight-squat').problems).toEqual([]);
+    expect(handLineProblems(readFileSync('src/howto/generated/loaders.ts', 'utf8'), 'bodyweight-squat').problems).toEqual(['bodyweight-squat: 0 HAND lines']);
     const loaders = readFileSync('src/howto/generated/loaders.ts', 'utf8'), line = '  "barbell-row": () => import(\'../../slices/howto/css/zoom-barbell-row.css\').then(() => import(\'./handpair-curl-dumbbell-under\')),\n';
     const added = loaders.replace('export const POSTURE', `${line}export const POSTURE`);
     expect(handLineProblems(added, 'barbell-row').problems).toEqual([]);   // the line now passes the W1 shape, so the 0-lines assert above is red

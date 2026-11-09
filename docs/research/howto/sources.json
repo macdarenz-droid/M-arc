@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=27f2ce958c156d80f6d741dac0be1d2753a9fa9f48143fc12153b7a2cccd57a4
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=4d74fb723b40ba12304fd0efb1e527b342daa75d2fc543564f76613a41093fad
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -16,6 +16,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-bbcurl": {
+    "id": "ace-bbcurl",
+    "cite": "Bicep Curl (ACE Exercise Library; barbell)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "ace-bent-over-row": {
     "id": "ace-bent-over-row",
     "cite": "ACE Exercise Library: Bent-over Row",
@@ -28,6 +36,14 @@
     "id": "ace-best-back",
     "cite": "ACE-Sponsored Research: What Is the Best Back Exercise? (Edelburg, Porcari, Camic, Kovacs, Foster, with Green; ACE Certified, December 2018)",
     "url": "https://www.acefitness.org/continuing-education/certified/december-2018/7138/ace-sponsored-research-what-is-the-best-back-exercise/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-bwsquat": {
+    "id": "ace-bwsquat",
+    "cite": "Bodyweight Squat (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/135/bodyweight-squat/",
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
@@ -60,6 +76,22 @@
     "id": "ace-front-raise",
     "cite": "Front Raise (ACE exercise library)",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/54/front-raise/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "ace-fwdlunge-bw": {
+    "id": "ace-fwdlunge-bw",
+    "cite": "Forward Lunge (ACE Exercise Library, no equipment)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/94/forward-lunge/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-hammer": {
+    "id": "ace-hammer",
+    "cite": "Hammer Curl (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/",
     "kind": "guideline",
     "access": "full",
     "checked": "2026-10-22"
@@ -127,6 +159,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-10-02"
+  },
+  "ace-revcurl": {
+    "id": "ace-revcurl",
+    "cite": "Reverse Bicep Curl (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/310/reverse-bicep-curl/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "ace-revlunge": {
     "id": "ace-revlunge",
@@ -200,6 +240,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-shrug": {
+    "id": "ace-shrug",
+    "cite": "ACE Exercise Library: Shrug",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/72/shrug/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "ace-sl-rdl": {
     "id": "ace-sl-rdl",
     "cite": "ACE Exercise Library: Single-arm, Single-leg Romanian Dead Lift",
@@ -222,7 +270,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
     "kind": "guideline",
     "access": "abstract",
-    "checked": "2026-09-30"
+    "checked": "2026-10-22"
   },
   "acsm2009": {
     "id": "acsm2009",
@@ -328,6 +376,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "barbend-pendlay": {
+    "id": "barbend-pendlay",
+    "cite": "How to Do the Pendlay Row for Back Size and Stronger Lifts (BarBend)",
+    "url": "https://barbend.com/pendlay-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "barbend-single-arm-lat-pulldown": {
     "id": "barbend-single-arm-lat-pulldown",
     "cite": "How to Do the Single-Arm Lat Pulldown for Spectacular Back Development (BarBend)",
@@ -335,6 +391,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "barbend-t-bar": {
+    "id": "barbend-t-bar",
+    "cite": "How to Do the T-Bar Row (BarBend)",
+    "url": "https://barbend.com/t-bar-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "barnds2019": {
     "id": "barnds2019",
@@ -364,6 +428,14 @@
     "id": "bb-incline",
     "cite": "How To Do the Incline Push-Up for No-Equipment Chest Building (BarBend)",
     "url": "https://barbend.com/incline-push-up/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-preacher": {
+    "id": "bb-preacher",
+    "cite": "Learn the Preacher Curl to Build Strong and Inspiring Biceps (BarBend)",
+    "url": "https://barbend.com/preacher-curl/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
@@ -448,10 +520,42 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "cat-frontsquat": {
+    "id": "cat-frontsquat",
+    "cite": "Catalyst Athletics, Front Squat (Exercise Library)",
+    "url": "https://www.catalystathletics.com/exercise/78/Front-Squat/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "cat-lunge": {
+    "id": "cat-lunge",
+    "cite": "Catalyst Athletics, Lunge (Exercise Library)",
+    "url": "https://www.catalystathletics.com/exercise/354/Lunge/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "cat-rack": {
+    "id": "cat-rack",
+    "cite": "Catalyst Athletics, Clean Rack Position",
+    "url": "https://www.catalystathletics.com/video/1402/Clean-Rack-Position/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "cat-revlunge": {
     "id": "cat-revlunge",
     "cite": "Catalyst Athletics, Reverse Lunge (Exercise Library)",
     "url": "https://www.catalystathletics.com/exercise/735/Reverse-Lunge/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "cat-splitsquat": {
+    "id": "cat-splitsquat",
+    "cite": "Catalyst Athletics, Split Squat (Exercise Library)",
+    "url": "https://www.catalystathletics.com/exercise/174/Split-Squat/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
@@ -520,6 +624,22 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "caufriez-2018": {
+    "id": "caufriez-2018",
+    "cite": "The Role of the Muscle Brachioradialis in Elbow Flexion: An Electromyographic Study",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29409427/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
+  "cissik-landmine": {
+    "id": "cissik-landmine",
+    "cite": "Landmine Bent Over Rows (Improving Athletic Performance blog, John Cissik)",
+    "url": "https://www.cissik.com/blog/?p=7015",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "clark2012": {
     "id": "clark2012",
     "cite": "Clark DR, Lambert MI, Hunter AM. Muscle activation in the loaded free barbell squat: a brief review. J Strength Cond Res 2012;26(4):1169-78",
@@ -535,6 +655,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "coratella-2023": {
+    "id": "coratella-2023",
+    "cite": "Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/",
+    "kind": "peer-reviewed",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "coratella2020": {
     "id": "coratella2020",
@@ -608,6 +736,22 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "ekstrom2003": {
+    "id": "ekstrom2003",
+    "cite": "Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/12774999/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-19"
+  },
+  "eos-smith": {
+    "id": "eos-smith",
+    "cite": "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness)",
+    "url": "https://www.eosfitness.com/blog/how-to-use-smith-machine",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "escamilla-2006": {
     "id": "escamilla-2006",
     "cite": "Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training (Escamilla et al., Phys Ther)",
@@ -648,6 +792,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "exercise-com-cable-shrug": {
+    "id": "exercise-com-cable-shrug",
+    "cite": "Cable Shrug (Exercise.com exercise library)",
+    "url": "https://www.exercise.com/exercises/cable-shrug",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "fb-crunch": {
     "id": "fb-crunch",
     "cite": "Ab Crunch Machine: Form, Muscles Worked, Target Weight & Variations (Fitbod)",
@@ -684,6 +836,14 @@
     "id": "fischer2025",
     "cite": "Impact of different ranges of motion in the prone barbell row on muscle excitation",
     "url": "https://pubmed.ncbi.nlm.nih.gov/40513198/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "fry-2003": {
+    "id": "fry-2003",
+    "cite": "Effect of knee position on hip and knee torques during the barbell squat (2003)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/14636100/",
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
@@ -728,6 +888,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "ga-curl-mid": {
+    "id": "ga-curl-mid",
+    "cite": "LIB-7 curl hand convention, pairs.mjs CONVENTIONS ga:curl-mid: across the middle of the palm, extension -10 to +10",
+    "url": "tools/plates/library/hands/pairs.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-05"
+  },
   "ga-pull-base": {
     "id": "ga-pull-base",
     "cite": "LIB-7 pull hand convention, pairs.mjs CONVENTIONS ga:pull-base: base of the fingers and top edge of the palm",
@@ -752,6 +920,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ggr-pendlay": {
+    "id": "ggr-pendlay",
+    "cite": "Pendlay Row: How To, Benefits, and Variations (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/pendlay-row",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "ggr-pike": {
     "id": "ggr-pike",
     "cite": "How To Do Pike Push-Ups: Tips From An Expert (Garage Gym Reviews)",
@@ -759,6 +935,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
+  },
+  "ggr-t-bar": {
+    "id": "ggr-t-bar",
+    "cite": "T-Bar Row: How To, Benefits, Muscles Worked (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/t-bar-row",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "glassbrook2017": {
     "id": "glassbrook2017",
@@ -772,6 +956,14 @@
     "id": "graichen1999",
     "cite": "Graichen H et al. (1999) Subacromial space width changes during abduction and rotation, a 3-D MR imaging study. Surg Radiol Anat 21(1):59-64",
     "url": "https://pubmed.ncbi.nlm.nih.gov/10370995/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "hackett-2013": {
+    "id": "hackett-2013",
+    "cite": "The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23222073/",
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
@@ -798,7 +990,7 @@
     "url": "tools/plates/library/hands/pairs.mjs",
     "kind": "secondary",
     "access": "full",
-    "checked": "2026-11-03"
+    "checked": "2026-11-05"
   },
   "hand-key-d-handle": {
     "id": "hand-key-d-handle",
@@ -807,6 +999,14 @@
     "kind": "secondary",
     "access": "full",
     "checked": "2026-11-04"
+  },
+  "hand-key-ez": {
+    "id": "hand-key-ez",
+    "cite": "LIB-7 hand pair key ez (curl): right-pose thumb wrapped; CONVENTIONS ga:curl-mid, across the middle of the palm",
+    "url": "tools/plates/library/hands/hand-ez.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-05"
   },
   "hand-key-palm-flat": {
     "id": "hand-key-palm-flat",
@@ -844,6 +1044,14 @@
     "id": "hk-db-bench",
     "cite": "How to perform a dumbbell bench press (Human Kinetics excerpt)",
     "url": "https://us.humankinetics.com/blogs/excerpt/how-to-perform-a-dumbbell-bench-press",
+    "kind": "textbook",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "hk-frontsquat": {
+    "id": "hk-frontsquat",
+    "cite": "Learn this foundational exercise: front squat (excerpt from Powerlifting, 2nd ed., Austin and Mann)",
+    "url": "https://us.humankinetics.com/blogs/excerpt/learn-this-foundational-exercise-front-squat",
     "kind": "textbook",
     "access": "full",
     "checked": "2026-09-30"
@@ -888,6 +1096,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "jukes-2022": {
+    "id": "jukes-2022",
+    "cite": "Challenging the mechanism of distal biceps tendon rupture using a video analysis study",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36243942/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "jukic2021": {
     "id": "jukic2021",
     "cite": "Jukic I et al. (2021) Ergogenic effects of lifting straps on movement velocity, grip strength, perceived exertion and grip security during the deadlift exercise. Physiol Behav 229:113283",
@@ -895,6 +1111,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "kassiano-2025": {
+    "id": "kassiano-2025",
+    "cite": "Distinct muscle growth and strength adaptations after preacher and incline biceps curls",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39809454/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
   },
   "kerr-2010": {
     "id": "kerr-2010",
@@ -1046,7 +1270,7 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/",
     "kind": "peer-reviewed",
     "access": "full",
-    "checked": "2026-09-30"
+    "checked": "2026-10-22"
   },
   "martinfuentes2020": {
     "id": "martinfuentes2020",
@@ -1159,6 +1383,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "motra-smith-shrug": {
+    "id": "motra-smith-shrug",
+    "cite": "Smith Machine Shrug - Exercise Guide (Motra)",
+    "url": "https://www.motra.com/exercises/smithMachineShrug",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "muyor2023": {
     "id": "muyor2023",
@@ -1280,6 +1512,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "nielasher-alt": {
+    "id": "nielasher-alt",
+    "cite": "Alternating Dumbbell Curls (Niel Asher Education)",
+    "url": "https://nielasher.com/blogs/strength-and-conditioning/alternating-dumbbell-curls",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "nsca-ch15-summary": {
     "id": "nsca-ch15-summary",
     "cite": "NSCA CSCS Chapter 15 (Exercise Technique) study summary, PTPioneer",
@@ -1304,6 +1544,14 @@
     "access": "summary",
     "checked": "2026-09-30"
   },
+  "nunes-2020": {
+    "id": "nunes-2020",
+    "cite": "Placing Greater Torque at Shorter or Longer Muscle Lengths? Effects of Cable vs. Barbell Preacher Curl Training on Muscular Strength and Hypertrophy in Young Adults",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32823490/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "odriscoll-1992": {
     "id": "odriscoll-1992",
     "cite": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
@@ -1326,7 +1574,7 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3737788/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": "2026-09-30"
+    "checked": "2026-10-22"
   },
   "oranchuk2022": {
     "id": "oranchuk2022",
@@ -1440,6 +1688,22 @@
     "access": "abstract",
     "checked": "2026-10-22"
   },
+  "rep-fail": {
+    "id": "rep-fail",
+    "cite": "How to Safely Fail a Heavy Squat in the Gym (REP Fitness)",
+    "url": "https://repfitness.com/blogs/training/how-to-safely-fail-a-heavy-squat-in-the-gym",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "rep-landmine-row": {
+    "id": "rep-landmine-row",
+    "cite": "How to do a Landmine Row: Technique, Variations, and Benefits (REP Fitness)",
+    "url": "https://repfitness.com/blogs/training/how-to-do-a-landmine-row-technique-variations-and-benefits",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "rogue-false-grip": {
     "id": "rogue-false-grip",
     "cite": "Rogue Fitness, False Grips",
@@ -1544,6 +1808,22 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "sl-barbell-shrug": {
+    "id": "sl-barbell-shrug",
+    "cite": "How to Do Barbell Shrug: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/barbell-shrug/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "sl-bbcurl": {
+    "id": "sl-bbcurl",
+    "cite": "How to Do Barbell Curl: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/barbell-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "sl-cable-fly": {
     "id": "sl-cable-fly",
     "cite": "How to Do Standing Cable Chest Fly: Muscles Worked & Proper Form (StrengthLog)",
@@ -1570,11 +1850,19 @@
   },
   "sl-dbcurl": {
     "id": "sl-dbcurl",
-    "cite": "How to Dumbbell Curl: Muscles Worked & Proper Form",
+    "cite": "How to Dumbbell Curl: Muscles Worked & Proper Form (StrengthLog)",
     "url": "https://www.strengthlog.com/dumbbell-curl/",
     "kind": "coach",
     "access": "full",
-    "checked": "2026-09-30"
+    "checked": "2026-10-22"
+  },
+  "sl-ez": {
+    "id": "sl-ez",
+    "cite": "How to Do EZ Curls: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/ez-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "sl-face-pull": {
     "id": "sl-face-pull",
@@ -1588,6 +1876,14 @@
     "id": "sl-front-raise",
     "cite": "How to Do Dumbbell Front Raise: Muscles Worked & Proper Form (StrengthLog)",
     "url": "https://www.strengthlog.com/dumbbell-front-raise/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-hammer": {
+    "id": "sl-hammer",
+    "cite": "How to Do Hammer Curl: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/hammer-curl/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
@@ -1608,6 +1904,22 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "sl-pendlay": {
+    "id": "sl-pendlay",
+    "cite": "How to Do Pendlay Row: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/pendlay-row/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
+  "sl-preacher": {
+    "id": "sl-preacher",
+    "cite": "How to Do Barbell Preacher Curl: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/barbell-preacher-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "sl-pushdown": {
     "id": "sl-pushdown",
     "cite": "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (StrengthLog, 2023)",
@@ -1623,6 +1935,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-02"
+  },
+  "sl-revcurl": {
+    "id": "sl-revcurl",
+    "cite": "How to Do Reverse Barbell Curl: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/reverse-barbell-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "sl-romanian-deadlift": {
     "id": "sl-romanian-deadlift",
@@ -1752,6 +2072,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "stronglifts-squat": {
+    "id": "stronglifts-squat",
+    "cite": "How to Squat with Proper Form: The Definitive Guide (StrongLifts)",
+    "url": "https://stronglifts.com/squat/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-18"
+  },
   "sundstrup-2012": {
     "id": "sundstrup-2012",
     "cite": "Swiss ball abdominal crunch with added elastic resistance is an effective alternative to training machines",
@@ -1783,6 +2111,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "tg-revcurl": {
+    "id": "tg-revcurl",
+    "cite": "Reverse curls: how to do them, and the benefits for bulking your biceps (Tom's Guide)",
+    "url": "https://www.tomsguide.com/wellness/fitness/reverse-curls-how-to-do-them-and-the-benefits-for-bulking-your-biceps",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "theraband-manual": {
     "id": "theraband-manual",
@@ -1892,6 +2228,14 @@
     "id": "wretenberg1996",
     "cite": "Wretenberg P, Feng Y, Arborelius UP. High- and low-bar squatting techniques during weight-training. Med Sci Sports Exerc 1996;28(2):218-24",
     "url": "https://pubmed.ncbi.nlm.nih.gov/8775157/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "yavuz-2015": {
+    "id": "yavuz-2015",
+    "cite": "Kinematic and EMG activities during front and back squat variations in maximum loads",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25630691/",
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"

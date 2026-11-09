@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=9674c72fc742f1ad6ad5b07f074234c4de9c629b789065ab4279623232cedb01
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=9cc41e62bb411a5afb684e82b206174cbb4311a6dde5814ea204e3c033ef666e
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_close_grip_pulldown",

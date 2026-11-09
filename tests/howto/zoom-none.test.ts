@@ -7,6 +7,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { child, IN_CHILD } from '../child-test';
+import { W4_IDS } from './checks/ship-w4';
 
 const GEN = join(__dirname, '../../src/howto/generated');
 const sha = (s: string) => createHash('sha256').update(s).digest('hex');
@@ -45,6 +46,20 @@ const BODY_MAIN: Record<string, string> = {
   'posture-upright-row.ts': '4ea58d5ad84139b2e9226623f9bd27235b79963c3945fc2f226636d522d5dcfd',
 };
 
+// LIB-SHIP W4 (ruling 3; D-SHIP-W4-FLIPSET): the 6 W4 ids add one posture chunk each (bodies measured on the W4 flip) and
+// 4 loaders.ts lines each; main's chunks stay byte-equal, and loaders.ts's body with exactly the W4 lines taken out is main's.
+const BODY_W4: Record<string, string> = {
+  'posture-pendlay-row.ts': 'd575d913098ad3a1b626616bab30a0391c3b1996ec2cc98919babce1cb25f1fb',
+  'posture-landmine-row.ts': '54626afb23bb0f2d82a1af2e316bceb2bb69f19fbdf54174bd9a69cbe42a61bf',
+  'posture-t-bar-row.ts': '62bf33d2043ae4acacf44390a87a3dbe4fbea53af6aa92638b52e0b2e427170c',
+  'posture-barbell-shrug.ts': '838528fb18d8fa95329c41ae41834187587472f0ac2a88e7a264088d5aeb0c6c',
+  'posture-cable-shrug.ts': 'c0e41411c66a685bafb9765b65b3e97800bd3c08298ab16cf3ba003697b29cc8',
+  'posture-smith-machine-shrug.ts': '0dd2be769e5c7992b65707cac2ec021ac2536b6809b3a491757a417c62fd4006',
+};
+const W4_SLUGS = W4_IDS.map(id => id.slice(4));
+const W4_LINE = new RegExp(`^  (?:"lib_(?:${W4_SLUGS.join('|')})",|lib_(?:${W4_SLUGS.join('|')}): \\(\\) => |"(?:${W4_SLUGS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+const w4Less = (t: string) => { const lines = t.split('\n'), kept = lines.filter(l => !W4_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
+const w4Text = (t: string) => t.split('\n').filter(l => !W4_LINE.test(l)).join('\n');
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO; [golden update]): its 4 shipped ids add their posture chunks (bodies
 // measured at this head) and 16 loaders.ts lines (4 per id: HOWTO_IDS, LOADERS, POSTURE, FEEL); loaders.ts's body is 3d77e3d4
 // (was 767f919c before merging main 8841246c), and with exactly those 16 lines taken out it is main 8841246c's e7bc1d40
@@ -55,10 +70,31 @@ const BODY_PF: Record<string, string> = {
   'posture-single-leg-romanian-deadlift.ts': '8534eb908642a3145373c2e8c30d8b8ea0bf01f5bfe0eb3daefa30b50fed1c57',
   'posture-triceps-pushdown.ts': '67a7f7694b3ca03143e8926e0e4e352c63897f27a0782d5bd8f6ce1bf665a8fa',
 };
-const LOADERS_PF = '3d77e3d4d1a3b1296e180f701f3af13ba55f8f71f1af7342e3e81e74c85b4dd3';
+// merge of main 7e060e83: loaders.ts's body with W4's 24 lines too (was main's 3d77e3d4 alone); less W4's and PLATEFIX's lines it is BODY_MAIN's
+const LOADERS_PF = 'c96dafb8daa463b7e5ea7da81c3d2a199d7df9cb77bbc7ec0f50c16ed82d484c';
 const PF_IDS = ['romanian_deadlift', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'reverse_lunge'];
 const PF_LINE = new RegExp(`^  (?:"lib_(?:${PF_IDS.join('|')})",|lib_(?:${PF_IDS.join('|')}): \\(\\) => |"(?:${PF_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+// LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): its 10 shipped ids add their posture chunks (bodies measured
+// at claude/lib-ship-w5 0e1c73d9) and 45 loaders.ts lines (4 per id, plus a HAND line for each of its 5 pair curls); with exactly
+// those 45 lines taken out loaders.ts is LOADERS_PF (merge of main 05382042: main's body, with W4's and PLATEFIX's lines), so both checks hold as before
+const BODY_W5: Record<string, string> = {
+  'posture-front-squat.ts': '27f80279146bf18cac41b2b1f899fa2ec412b0916a3bcf907ff3f218b21d32f3',
+  'posture-bodyweight-squat.ts': '81820bf553e31b7fe176a50c85ff93ac2e8c964e5e246ab230bdfce0ae83c3a4',
+  'posture-bodyweight-lunge.ts': '4e1cc24d1756eb1b2c85ce31861dccffcc53fc1308453ba57b359d3c2aef1407',
+  'posture-bodyweight-split-squat.ts': '283ae12f31e14a22cc577f01e948fb492ccbb3b596ad841020c0b82f2567e201',
+  'posture-preacher-curl.ts': '9b54d6c3bdb8de0d5c4dd29a2e84def9f8461d6aa3e8d52734d60e59372cc87d',
+  'posture-hammer-curl.ts': 'cc2d7b6b068df23d931ea7c68fa0b8e47a3477bb1b3ab10eaf83862c2a111713',
+  'posture-alternating-dumbbell-curl.ts': '746f79ee7eefec23a5b56ae78bb14f585cd48104eba4717ec1f657070fd21858',
+  'posture-barbell-curl.ts': '04bc46dcdb80063aced49b085a6fb17226a219b0723dddfd685149d7929fc9c8',
+  'posture-ez-bar-curl.ts': '206cd8fe8416209d9899d5e74f682959b8738c7915ca7a63b559b3357c152c2a',
+  'posture-reverse-curl.ts': 'ad960439598f91b4d7d7cba9f8cb0325d32e128a8655a075e3cf3491341fc5a1',
+};
+const LOADERS_W5 = 'ecbc24965edfc8dfdbc1ec0e68cf87212e38cf4c8ec7eb393f8143aff944e96b';   // merge of main 05382042 (W4's lines too; was 9fe77e84)
+const W5_IDS = ['front_squat', 'bodyweight_squat', 'bodyweight_lunge', 'bodyweight_split_squat', 'preacher_curl', 'hammer_curl', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'reverse_curl'];
+const W5_LINE = new RegExp(`^  (?:"lib_(?:${W5_IDS.join('|')})",|lib_(?:${W5_IDS.join('|')}): \\(\\) => |"(?:${W5_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+const w5Less = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !W5_LINE.test(l)); return { removed: lines.length - kept.length, text: kept.join('\n') }; };
 const pfLess = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !PF_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
+const pfText = (b: string) => b.split('\n').filter(l => !PF_LINE.test(l)).join('\n');
 // LIB-SHIP W6 (D-SHIP-A9 guard replacement; #393 6689822595 flip set, 6701002884 ships 7): loaders.ts gains W6's 7 ids,
 // 4 lines each (HOWTO_IDS, LOADERS, POSTURE, FEEL; no HAND line, all 7 on hands/no-zoom.json), 28 lines. With exactly those
 // taken out, loaders.ts's body is main 8841246c's (e7bc1d40…, computed from main 8841246c's own loaders.ts, which W3 pinned
@@ -80,16 +116,25 @@ const BODY_W6: Record<string, string> = {
 // 7e060e83's body LOADERS_PF (3d77e3d4…, which LIB-PLATEFIX-1 pinned and is measured again from main 7e060e83's own
 // loaders.ts), and that less PLATEFIX's 16 lines is main 8841246c's BODY_MAIN, so both waves strip back in turn.
 const w6Kept = (b: string) => b.split('\n').filter(l => !W6_LINE.test(l)).join('\n');
+// merge of main de91dd21: loaders.ts less W6's 28 lines is main de91dd21's body LOADERS_W5 (ecbc2496…, measured again from main
+// de91dd21's own loaders.ts); W5's, W4's and PLATEFIX's lines then strip back in turn as on main.
 
 describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on main', () => {
-  it('every posture chunk and loaders.ts body is byte-equal to main', () => {
+  it('every posture chunk and loaders.ts body is byte-equal to main (LIB-SHIP W4: plus the W4 chunks, and loaders.ts less the W4 lines)', () => {
     const now = readdirSync(GEN).filter(n => /^posture-.*\.ts$|^loaders\.ts$/.test(n)).sort();
-    expect(now).toEqual([...Object.keys(BODY_MAIN), ...Object.keys(BODY_PF), ...Object.keys(BODY_W6)].sort());   // LIB-SHIP W6: plus W6's 7 posture chunks
-    for (const [n, want] of Object.entries(BODY_MAIN)) if (n !== 'loaders.ts') expect([n, sha(body(n))]).toEqual([n, want]);
+    expect(now).toEqual([...Object.keys(BODY_MAIN), ...Object.keys(BODY_W4), ...Object.keys(BODY_PF), ...Object.keys(BODY_W5), ...Object.keys(BODY_W6)].sort());   // LIB-SHIP W5: + its 10; LIB-SHIP W6: + its 7
+    for (const [n, want] of Object.entries({ ...BODY_MAIN, ...BODY_W4 })) if (n !== 'loaders.ts') expect([n, sha(body(n))]).toEqual([n, want]);
     for (const [n, want] of Object.entries(BODY_PF)) expect([n, sha(body(n))]).toEqual([n, want]);
+    for (const [n, want] of Object.entries(BODY_W5)) expect([n, sha(body(n))]).toEqual([n, want]);
     for (const [n, want] of Object.entries(BODY_W6)) expect([n, sha(body(n))]).toEqual([n, want]);
-    expect(lessW6(body('loaders.ts'))).toEqual({ removed: 28, sha: LOADERS_PF });   // LIB-SHIP W6: main 7e060e83's body less W6's 28 lines
-    expect(pfLess(w6Kept(body('loaders.ts')))).toEqual({ removed: 16, sha: BODY_MAIN['loaders.ts'] });
+    // LIB-SHIP W5: loaders.ts is LOADERS_W5; W5's 45 lines out gives LOADERS_PF (main 05382042's body), and then W4's and PLATEFIX's lines out give main's
+    // LIB-SHIP W6 (merge of main de91dd21): W6's 28 lines out gives LOADERS_W5 (main de91dd21's body), then W5's as before
+    expect(lessW6(body('loaders.ts'))).toEqual({ removed: 28, sha: LOADERS_W5 });
+    const w5 = w5Less(w6Kept(body('loaders.ts')));
+    expect([w5.removed, sha(w5.text)]).toEqual([45, LOADERS_PF]);
+    // merge of main 7e060e83: each lane's lines taken out after the other's, so each lane's own count and main's body still hold
+    expect(w4Less(pfText(w5.text))).toEqual({ removed: 24, sha: BODY_MAIN['loaders.ts'] });
+    expect(pfLess(w4Text(w5.text))).toEqual({ removed: 16, sha: BODY_MAIN['loaders.ts'] });
   });
   it('LIB-SHIP W6 mutations: a W6 loaders line dropped, a HAND line for a W6 id, and another loaders line changed are red', () => {
     const b = body('loaders.ts'), drop = '  "face-pull": () => import(\'./posture-face-pull\'),\n';
@@ -98,11 +143,23 @@ describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on
     const head = 'export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n';
     expect(b).toContain(head);
     expect(lessW6(b.replace(head, `${head}  "face-pull": () => import('./hand-face-pull'),\n`)).removed).toBe(29);
-    expect(lessW6(b.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(LOADERS_PF);   // LIB-SHIP W6 merge: was BODY_MAIN, main's body is now LOADERS_PF
+    expect(lessW6(b.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(LOADERS_W5);   // LIB-SHIP W6 merge: was BODY_MAIN, then LOADERS_PF; main de91dd21's body is LOADERS_W5
     expect(sha(body('posture-face-pull.ts').replace('posture', 'Posture'))).not.toBe(BODY_W6['posture-face-pull.ts']);
   });
-  it('LIB-PLATEFIX-1 mutations: a PLATEFIX loaders line dropped, or another loaders line changed, is red', () => {
+  it('LIB-SHIP W5 mutations (ruling 3): a W5 loaders line dropped, a HAND line for a no-pair W5 id, or another line changed, is red', () => {
     const b = w6Kept(body('loaders.ts'));   // LIB-SHIP W6 merge: W6's lines taken out first
+    expect(w5Less(b.replace('  "hammer-curl": () => import(\'./posture-hammer-curl\'),\n', '')).removed).toBe(44);
+    expect(w5Less(b.replace('export const HAND: ', '  "front-squat": () => import(\'./hand-front-squat\'),\nexport const HAND: ')).removed).toBe(46);
+    expect(sha(w5Less(b.replace('export const HAND', 'export const HAND_X')).text)).not.toBe(LOADERS_PF);
+  });
+  it('LIB-SHIP W4 mutations: a W4 loaders line dropped, another loaders line changed, and a W4 posture byte changed are red', () => {
+    const t = pfText(w5Less(w6Kept(body('loaders.ts'))).text);   // LIB-SHIP W6 merge: W6's lines taken out first
+    expect(w4Less(t.replace('  "t-bar-row": () => import(\'./feel-t-bar-row\'),\n', '')).removed).toBe(23);
+    expect(w4Less(t.replace('export const FEEL', 'export const FEEL_X')).sha).not.toBe(BODY_MAIN['loaders.ts']);
+    expect(sha(`${body('posture-cable-shrug.ts')} `)).not.toBe(BODY_W4['posture-cable-shrug.ts']);
+  });
+  it('LIB-PLATEFIX-1 mutations: a PLATEFIX loaders line dropped, or another loaders line changed, is red', () => {
+    const b = w4Text(w6Kept(body('loaders.ts')));   // LIB-SHIP W6 merge: W6's lines taken out first
     expect(pfLess(b.replace('  "reverse-lunge": () => import(\'./posture-reverse-lunge\'),\n', '')).removed).toBe(15);
     expect(pfLess(b.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(BODY_MAIN['loaders.ts']);
   });

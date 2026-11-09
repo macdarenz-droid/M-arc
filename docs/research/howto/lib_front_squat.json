@@ -1,0 +1,27 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=34b8fc395224944308eec6d0fbaafb344b45f2eb85966aa485005cf2e9af1eb0
+{
+  "id": "lib_front_squat",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/front_squat.json",
+    "rev": 1
+  },
+  "sources": [
+    "cat-frontsquat",
+    "cat-rack",
+    "hk-frontsquat",
+    "rep-fail",
+    "yavuz-2015",
+    "hackett-2013",
+    "stronglifts-squat",
+    "nhs-knee",
+    "nhs-wrist-pain",
+    "nhs-back",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "wrist",
+    "back",
+    "knee"
+  ]
+}

@@ -24,6 +24,12 @@ const TXT = k => [`posture[key=${k}].label`, `posture[key=${k}].detail`, `postur
 const PAD = ['key', 'chip', 'heading', 'kind', 'crop', 'right', 'wrong', 'guides', 'callout', 'caption', 'alt'].map(k => `zooms[key=pad].${k}`);
 const HANDLING = ['archetype', 'handle', 'loadAxis', 'width', 'thumb', 'contact', 'wrist', 'pose', 'faults', 'gripLine', 'cue'].map(k => `handling.${k}`);
 const WRIST = ['handling.wrist.ext', 'handling.wrist.dev'];
+// LIB-SHIP W4 D-SHIP-FAMILY W4 (SHIP W4 PLAN RULED, #391 6647760116): the W4 path lists.
+const THUMB_NOPOSE = ['handling.thumb.mode'];                 // D-SHIP-W4-THUMB: only where the parent has no handling.pose
+const BENCH_ZOOM = ['handling.thumb.mode', 'handling.contact', 'handling.wrist', 'handling.faults[key=bent-back]'];   // D-SHIP-W4-GAPZOOM
+const SEAT_PAD = ['key', 'kind', 'chip', 'heading', 'callout.right.text', 'callout.wrong.text', 'caption.right', 'caption.wrong'].map(l => `zooms[key=seat-back-contact].${l}`);   // D-SHIP-W4-PADZOOM (SEAT_PAD: renamed from W4's PAD at the W3 merge, since W3's PAD names the knee-pad zoom)
+const ROW = ['label', 'detail', 'anchor'];
+
 export const INHERIT_MAP = {
   // W3 (Q-W3-1): the hand zoom's own leaves differ (underhand pair, card c1/c3); the inherited claim is the wrapped thumb
   lib_chin_up: { 'grip.thumb (wrapped, never thumbless by default)': THUMB, 'zooms.hand (full grip, thumb around the bar, is the only grip shown)': ['zooms[key=hand].hand.right.thumb'] },
@@ -38,6 +44,25 @@ export const INHERIT_MAP = {
   lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], "zooms['hand']": ['zooms[key=hand]'] },
   // D-SHIP-FAMILY (LIB-SHIP W2, #379 6625803515): the dumbbell child of romanian_deadlift, parent first in the same head. Neither RDL ships in W2: both ship through #385.
   lib_single_leg_romanian_deadlift: { 'grip.thumb': THUMB, 'grip.wrist': ['handling.wrist'] },
+  // LIB-SHIP W5 (SHIP W5 PLAN RULED, #392 6647901307). D-SHIP-W5-PLATEONLY: `[]` only on a `plate.*` field (no sheet path
+  // holds it; the parent must still be shipped; lib-ship.test.ts compares the field on the two approved plate specs).
+  // D-SHIP-W5-THUMB: thumb mode only where the parent sheet has no handling.pose (triceps_pushdown, gap-ruled).
+  // D-SHIP-W5-SAWRIST: single_arm compares wrist.ext only (its own limitText, c9). Q-W3-2 text fields for the zooms.
+  // D-SHIP-W5-GOLDENFEET: front_squat compares the golden feet label only; its setup[2] goes to research
+  // (F-CARD-FRONTSQ-SETUP) and stays unmapped. D-SHIP-W5-WALLSIT: the parent's knees label and detail exactly.
+  lib_alternating_dumbbell_curl: { 'grip.type': ['handling.orientation', 'handling.handle'], 'grip.thumb': THUMB, 'grip.width': ['handling.width.text'], 'plate.view': [], redFlags: ['riskFlags'] },
+  lib_barbell_curl: { 'plate.view': [], 'grip.thumb': THUMB, redFlags: ['riskFlags'] },
+  lib_ez_bar_curl: { 'plate.view': [], 'grip.thumb': THUMB, redFlags: ['riskFlags'] },
+  lib_hammer_curl: { 'plate.view': [], 'grip.width': ['handling.width.text'], redFlags: ['riskFlags'] },
+  lib_forward_lunge: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+  lib_walking_lunge: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+  lib_bulgarian_split_squat: { 'plate.view': [], 'redFlags.knee': ['riskFlags'], grip: ['handling'] },
+  lib_single_arm_triceps_pushdown: { 'plate.view': [], 'grip.thumb': ['handling.thumb.mode'], 'grip.wrist': ['handling.wrist.ext'], redFlags: ['riskFlags'] },
+  lib_straight_bar_triceps_pushdown: { 'plate.view': [], 'plate.equipment': [], 'grip.thumb': ['handling.thumb.mode'], 'grip.wrist': ['handling.wrist'],
+    zooms: ['zooms[key=pushdown-elbow].chip', 'zooms[key=pushdown-elbow].heading', 'zooms[key=pushdown-elbow].caption', 'zooms[key=pushdown-elbow].callout.right.text',
+      'zooms[key=pushdown-elbow].callout.wrong.text', 'zooms[key=pushdown-elbow].alt'], redFlags: ['riskFlags'] },
+  lib_front_squat: { 'posture[3] (feet flat, knees follow the toes)': ['posture[key=feet].label'] },
+  lib_wall_sit: { 'posture[1] (knees over the second toe, ankles not rolling)': ['posture[key=knees].label', 'posture[key=knees].detail'], 'b10 / redFlags knee (NHS knee box)': ['riskFlags'] },
   // W3 (#384 6648454032 L2, accepted 6648753200): the card's own setup steps replace the inherited lean (upright torso, c7,
   // c11), so the field maps to no path
   lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': [] },
@@ -49,6 +74,27 @@ export const INHERIT_MAP = {
     "posture['Soft knees at the top']": ['posture[key=soft].label', 'posture[key=soft].detail'], "posture['Hands light on the side handles']": TXT('hands') },
   lib_leg_press_calf_raise: { grip: ['handling'], "setup['After the last rep, pause at the top, turn the handles back in, and let the sled settle on the catches before you take your feet off or let go.']": ['setup[kind=finish]'],
     "posture['Hands light on the side handles']": ['posture[key=hands]'] },
+  // LIB-SHIP W4: every entry from here to the end is D-SHIP-FAMILY W4 (SHIP W4 PLAN RULED, #391 6647760116), each child
+  // against its card parent.
+  lib_arnold_press: { 'grip.thumb': THUMB_NOPOSE, 'grip.wrist': ['handling.wrist'], 'setup.spotter': ['setup[kind=safety]'], 'zooms.seat-back-contact': SEAT_PAD },
+  lib_close_grip_bench_press: { 'grip.thumb': THUMB_NOPOSE, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'],
+    'setup.safety-pins': ['setup[kind=safety]'], 'setup.spotter': ['setup[kind=get-in]'], 'zooms.bar-low-palm': BENCH_ZOOM },
+  lib_decline_bench_press: { 'grip.thumb': THUMB_NOPOSE, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], 'zooms.bar-low-palm': BENCH_ZOOM },
+  lib_incline_barbell_bench_press: { 'grip.thumb': THUMB_NOPOSE, 'grip.handContact': ['handling.contact'],
+    'zooms.bar-low-palm': ['handling.thumb.mode', 'handling.contact', 'handling.wrist.ext', 'handling.faults[key=bent-back]'], 'setup.safety-pins': ['setup[kind=safety]'] },
+  lib_incline_dumbbell_press: { 'grip.thumb': THUMB_NOPOSE, 'grip.wrist': ['handling.wrist'], 'zooms.wrist-neutral-press': ['handling.thumb.mode', 'handling.wrist', 'handling.faults[key=bent-back]'] },
+  lib_smith_machine_bench_press: { 'grip.thumb': THUMB_NOPOSE, 'grip.type': ['handling.orientation'], 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], 'zooms.bar-low-palm': BENCH_ZOOM },
+  // cable_shrug grip.wrist / grip.width and dumbbell_shrug grip.wrist (D-SHIP-W4-ROUTE): dropped from the cards by F-W4-INHERIT (e00a7036)
+  lib_cable_shrug: { 'grip.thumb': THUMB_NOPOSE, 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'], 'grip.type': ['handling.orientation'] },
+  lib_dumbbell_shrug: { 'grip.thumb': THUMB_NOPOSE, 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },
+  lib_smith_machine_shrug: { 'grip.thumb': THUMB_NOPOSE, 'grip.handContact': ['handling.contact'], 'zooms.shrug-grip': ['handling.thumb.mode', 'handling.faults[key=thumbless]'] },
+  lib_conventional_deadlift: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], 'archetype.contact': ['contacts'] },
+  lib_dumbbell_romanian_deadlift: { 'grip.wrist': ['handling.wrist'], 'posture: knees fixed at a slight bend, movement at the hips (parent c4)': ROW.map(l => `posture[key=knees].${l}`) },
+  // sumo plate.equipment (D-SHIP-W4-ROUTE, Q-W4-9): dropped from the card by F-W4-INHERIT (e00a7036)
+  lib_sumo_deadlift: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], 'archetype.contact': ['contacts'] },
+  lib_landmine_row: { 'grip.type': ['handling.orientation'], 'grip.thumb': THUMB_NOPOSE, 'posture[back neutral]': ['posture[key=back]'], 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },
+  lib_pendlay_row: { 'grip.type': ['handling.orientation', 'handling.handle'], 'grip.thumb': THUMB_NOPOSE, 'grip.handContact': ['handling.contact'], 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },
+  lib_t_bar_row: { 'posture[trunk angle stays the same]': ROW.map(l => `posture[key=trunk].${l}`), 'grip.thumb': THUMB_NOPOSE, 'risks[breath]': ['risks[key=breath]'], redFlags: ['riskFlags'] },
 };
 
 /** The inherit[] fields of `card` that `id` has no ruled mapping for. */
