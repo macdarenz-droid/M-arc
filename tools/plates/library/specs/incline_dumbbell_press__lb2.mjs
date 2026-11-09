@@ -5,6 +5,10 @@
 // peak, the tell 'Off the pad', and the engine's faulty outline limited to the legs (`parts`), so the arch is the one
 // back curve. The normal plate renders byte-identical to pilot A's. Pilot A's file stays untouched: every pinned pilot A
 // row's MANIFEST closure holds it.
+// LIB-PLATEFIX-4 item 20b (D-PF4-20B): the back curve is now the Mistake torso's own lumbar outline (ARCH_PTS, no
+// separate ARCH bump), drawn from where it leaves the upper arm; its peak (13.7 cm, 20 px) carries the gap marker and
+// the 'Off the pad' leader (box at 68, 260, so the leader's diagonal runs along the pad normal, through the gap); the
+// gap fill sits under the arm.
 // View: SIDE (card): the bench angle, the elbow under the wrist and the back staying on the pad all read in the
 // sagittal plane.
 // Sources: research card docs/research/howto/cards/incline_dumbbell_press.json (branch claude/libht-research e2a70bc,
@@ -40,10 +44,10 @@
 // Plate labels (verified card): callouts = plate.checkpoints c2 (Bench at 45°), c7 (Elbows
 //   under wrists), c6 (To upper chest); measure = back-pad angle from vertical, expect 45 (c1); Mistake = plate.mistake
 //   c8 (low back arches off the pad: pelvis tips forward 36 deg, buttocks and upper back stay on the pads, one dashed
-//   back curve off the pad, peak 11 cm, golden B's gap marker; tells `arch` 'Off the pad' and `hips`); tempo = plate.tempo c14 (up 1, down 2, no pause: Lower then Press).
+//   back curve off the pad (the Mistake torso's lumbar outline), peak 13.7 cm, golden B's gap marker; tells `arch` 'Off the pad' and `hips`); tempo = plate.tempo c14 (up 1, down 2, no pause: Lower then Press).
 // CARD: bench angle (BACK), seat tilt (SEAT_TILT), seat height (SEAT_TOP), top grip over the shoulder joint (TOP_X, TOP_ELBOW),
 //   bottom flare/depth/width (BOTTOM_ABD, BOTTOM_DIP, BOTTOM_X), feet (FOOT_Z), scapular set (SCAP).
-import { landmarksOf, fk, resolve, normPose, rootOnSeat, WINTER, REF } from '../engine.mjs';
+import { landmarksOf, fk, resolve, normPose, rootOnSeat, WINTER, REF, bodyShapes } from '../engine.mjs';
 import { inclineBench, inclineFaces } from '../eq/inclineBench.mjs';
 
 const H = 1.75, BODY = { height: H };
@@ -152,33 +156,60 @@ const misReach = (() => { const E = landmarksOf(end, H), M = landmarksOf({ ...en
   return out; })();
 const mistakePose = { root: rootM, trunk: trunkM, neck: neckM, reach: misReach };
 const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
-// The engine blends the outline over the lumbar bend, so the drawn arch alone is small. The arched back is drawn as a
-// dashed red back outline (the Mistake style, as plank 'Low back sags'): it leaves the pad just below the shoulder
-// blades (backUpper on the pad), rises ARCH off the pad at the lumbar spine (ARCH_AT along the pad from the top) and
-// meets the pad again at the buttock, so a gap of background shows between the low back and the pad. An arrow runs
-// perpendicular to the pad from inside the gap to the peak.
-const ARCH = 0.11;                                    // lumbar peak off the pad (m): 16 px at the plate scale (32 px in the 712 px PNG),
-                                                      // outside the Mistake body's back (backMid 7 cm off the pad)
-const ARCH_AT = 0.72;                                 // peak position along the pad, backUpper (0) to buttock (1)
+// LIB-PLATEFIX-4 item 20b (D-PF4-20B, #410 6750587189; W4 L5 c2, c3, #391 6653540190): the Wrong low back is the
+// Mistake torso's own drawn back outline, not a separate bump under the upper arm. ARCH_PTS samples that outline
+// (the engine's body shape on a 1000 px/m side probe, through the same Catmull-Rom curve the engine strokes, mapped
+// back to world metres) from backUpper to the buttock, both on the pad (the checks). Its lumbar peak lies below the
+// elbow, clear of the upper arm. The points the near arm covers are left out of the dashed line, so the red curve
+// comes out from under the arm, and the gap fill sits under the arm (z 'mid'): background shows between the pad
+// and the lifted low back, and the solid back no longer lies on the pad there.
 const ARCH_MIN = 0.035;                               // the Mistake's backMid clears the pad by at least this (2.2 cm in the correct pose)
 const onPad = p => p.map((v, i) => v - F.back.normal[i] * padDist(p));
+const PROBE = 1000, probe = { view: 'side', near: 'r', pxm: PROBE, P: w => [w[2] * PROBE, -w[1] * PROBE] };
+const unprobe = ([x, y]) => [0, -y / PROBE, x / PROBE];
+const shapesOf = pose => bodyShapes(skOf(pose), probe);
+const curveOf = (ps, i0, i1) => {                     // the closed Catmull-Rom (geom.mjs spline) from vertex i0 forward to i1
+  const n = ps.length, g = i => ps[((i % n) + n) % n], out = [];
+  for (let i = i0; i !== i1; i = (i + 1) % n) {
+    const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    for (let k = 0; k < 8; k++) { const t = k / 8, s = 1 - t;
+      out.push([0, 1].map(j => s * s * s * p1[j] + 3 * s * s * t * c1[j] + 3 * s * t * t * c2[j] + t * t * t * p2[j])); }
+  }
+  return [...out, g(i1)];
+};
+const misPose = { ...end, ...mistakePose };
 const ARCH_PTS = (() => {
-  const B = onPad(lmMis.backUpper), A = onPad(lmMis.buttock);
-  return Array.from({ length: 25 }, (_, k) => { const t = k / 24, s = t < ARCH_AT ? t / ARCH_AT / 2 : 0.5 + (t - ARCH_AT) / (1 - ARCH_AT) / 2, h = ARCH * Math.sin(Math.PI * s);
-    return B.map((v, i) => v + (A[i] - v) * t + F.back.normal[i] * h); });
+  const tp = shapesOf(misPose).find(s => s.key === 'torso').poly, P = probe.P;
+  const near = w => tp.reduce((b, p, k) => (Math.hypot(p[0] - P(w)[0], p[1] - P(w)[1]) < Math.hypot(tp[b][0] - P(w)[0], tp[b][1] - P(w)[1]) ? k : b), 0);
+  const i0 = near(lmMis.backUpper), i1 = near(lmMis.buttock);
+  if (((i1 - i0 + tp.length) % tp.length) > tp.length / 2) throw new Error('incline_dumbbell_press: back outline runs the long way round');
+  return curveOf(tp, i0, i1).map(unprobe);
 })();
-const peak = ARCH_PTS[ARCH_PTS.reduce((b, p, k) => (padDist(p) > padDist(ARCH_PTS[b]) ? k : b), 0)];
+const inPoly = (p, t) => { let c = false; for (let i = 0, j = t.length - 1; i < t.length; j = i++) { const a = t[i], b = t[j];
+  if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; };
+const ARM = shapesOf(end).filter(s => s.group === 'near').map(s => s.poly);   // the near arm as the end layer draws it
+const underArm = w => ARM.some(t => inPoly(probe.P(w), t));
+const firstOut = ARCH_PTS.findIndex(w => !underArm(w));
+const armEdge = (() => {                              // where the back outline leaves the arm (bisected to 1e-9 m, outside)
+  if (firstOut < 1) return [];
+  let a = ARCH_PTS[firstOut - 1], b = ARCH_PTS[firstOut];
+  for (let k = 0; k < 40; k++) { const m = a.map((v, i) => (v + b[i]) / 2); if (underArm(m)) a = m; else b = m; }
+  return [b];
+})();
+const ARCH_LINE = [...armEdge, ...ARCH_PTS.slice(firstOut)];                    // the dashed Wrong back, from the arm's edge
+const peak = ARCH_PTS.reduce((b, p) => (padDist(p) > padDist(b) ? p : b), ARCH_PTS[0]);
 const gapTo = peak, gapFrom = onPad(peak);
 // Gap marker (golden B's, machine_chest_press): a dashed dimension from the pad face to the arched back at its peak,
 // with two 2 px ticks laid along the pad.
 const TICK = 2 / 146.29;
 const tick = p => ({ kind: 'dashed', pts: [[0, p[1] - UP[1] * TICK, p[2] - UP[2] * TICK], [0, p[1] + UP[1] * TICK, p[2] + UP[2] * TICK]] });
-const gapMid = gapFrom.map((v, i) => (v + gapTo[i]) / 2);
-// The gap itself: the region between the pad and the back outline is cleared to the card colour ('eq', end layer,
-// Mistake only), so the solid (correct) figure does not hide it.
-const GAP_FILL = { type: 'poly', pts: ARCH_PTS, cls: 'eq', z: 'front', part: 'archgap' };
+// The gap itself: the region between the pad and the Wrong back is cleared to the card colour ('eq', end layer,
+// Mistake only, under the near arm), so the solid (correct) back does not fill it.
+const GAP_FILL = { type: 'poly', pts: [...ARCH_PTS, onPad(ARCH_PTS[ARCH_PTS.length - 1]), onPad(ARCH_PTS[0])], cls: 'eq', z: 'mid', part: 'archgap' };
 export const mistakeInfo = () => ({ pelvisTiltDeg: MIS_TILT, slideCm: +(slideM * 100).toFixed(1), trunkDeg: +trunkM.toFixed(1), neckDeg: +neckM.toFixed(1),
   lowBackGapCm: +(padDist(gapTo) * 100).toFixed(1), backMidGapCm: +(padDist(lmMis.backMid) * 100).toFixed(1), buttockGapCm: +(padDist(lmMis.buttock) * 100).toFixed(1) });
+export const archInfo = () => ({ archPts: ARCH_PTS, archLine: ARCH_LINE, peak, padPoint: F.back.point, padNormal: F.back.normal });
 // label and measure points on the back face of the back pad (PAD = 7 cm, the composer default)
 const PAD = 0.07, onPadBack = u => [0, HINGE[1] + UP[1] * u - NB[1] * PAD, HINGE[2] + UP[2] * u - NB[2] * PAD];
 
@@ -218,12 +249,12 @@ export default {
     // too (was legs only), so the belly and hips pushing up and the trunk leaving the pad read with the arch curve below.
     parts: ['torso', 'leg.r', 'leg.l'],
     guides: [
-      { kind: 'dashed', pts: ARCH_PTS, smooth: true },                                     // the arched low back, off the pad
+      { kind: 'dashed', pts: ARCH_LINE },                                                  // the Wrong low back, off the pad below the arm
       { kind: 'dashed', pts: [gapFrom, gapTo] }, tick(gapFrom), tick(gapTo),                // the gap marker, pad to back
       { kind: 'arrow', from: { at: 'navel', pose: 'mistake', off: [2, -2] }, to: { at: 'navel', pose: 'mistake', off: [14, -14] } },   // belly pushes up
     ],
     tells: [
-      { key: 'arch', text: 'Off<br>the pad', anchor: gapMid, box: { left: 62, top: 252 }, cue: 'Your low back arches off the bench as you press.' },
+      { key: 'arch', text: 'Off<br>the pad', anchor: gapTo, box: { left: 68, top: 260 }, cue: 'Your low back arches off the bench as you press.' },
       { key: 'hips', text: 'Hips<br>tipping', anchor: { at: 'navel', pose: 'mistake' }, box: { left: 190, top: 174 }, cue: 'Your hips tip and your belly pushes up.' },
     ],
   },
