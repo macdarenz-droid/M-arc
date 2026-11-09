@@ -397,7 +397,7 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
     expect(dataValues(card('floor-body')).map(([p]) => p)).toContain('prone.see');
     const note = card('selector-pin').notes[0], planted = out.map(([p, t], i) => [p, i === 0 ? `${t}\n// ${note}\n` : t] as [string, string]);
     expect(leaks(dataValues(card('selector-pin')), planted)).toEqual([`${out[0]![0]}: notes[0]`]);
-  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): render() walks every shipped id's outputs; 285017 ms on d3f5e287's source-gate, past 300 s on 0a119989's; the library timeout, as #385
+  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): render() walks every shipped id's outputs; 285017 ms on d3f5e287's source-gate, past 300 s on 0a119989's; the library timeout, as #385. F-GEN-WALK-SPEED: kept, since renderOf() makes whichever caller comes first compute the run's render (lb6's took 208-295 s on 687d0a95's CI); a cache hit took 1.8-2.2 s
 });
 
 describe('LIB-5 S5 (Do 9): the app renders the back box', () => {
