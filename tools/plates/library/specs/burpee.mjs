@@ -23,7 +23,9 @@
 //   standing spot, hands on the plank's hand spots, the hip joints VIA_DROP below the knees, the elbows over the knees
 //   and the arms straight (root and tilt solved). Never drawn solid; carries no fact, tell or anchor.
 //  End (standing after the landing, c1, c11): feet flat FOOT_X out (c1 shoulder-width: the widest the rigid foot's plant
-//   allows with every contact within 0.5 cm), the toe tips at the wrists' line (c2: the palms in front of the feet), knees KNEE_SOFT (c11), trunk upright, arms at the sides
+//   allows with every contact within 0.5 cm), the toe tips at the wrists' line (c2: the palms in front of the feet), knees KNEE_SOFT (c11; LIB-PLATEFIX-4,
+//   pf8 T10 R5 #405 6688665575: about 30 deg, the knee clearly forward of the hip-ankle line and of the Mistake's straight
+//   leg; the fault then moves past the plate-scale bar, so the Mistake zoom left), trunk upright, arms at the sides
 //   (c1), root z solved so the centre of mass is over the mid-soles.
 //  Mistake (c11; drawable false, F7): the knees straight (M_KNEE short of the engine's singular full extension); the
 //   feet and the centre of mass stay. One tell (DESIGN.md one-tell record).
@@ -32,7 +34,7 @@
 import { landmarksOf, RADII, WINTER, REF } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.15, KNEE_SOFT: 15, M_KNEE: 1, VIA_DROP: 0.02 });
+export const SIZES = Object.freeze({ FOOT_X: 0.15, KNEE_SOFT: 30, M_KNEE: 1, VIA_DROP: 0.02 });
 const { FOOT_X, KNEE_SOFT, M_KNEE, VIA_DROP } = SIZES;
 const WRIST_Y = RADII.fore[2] * H;   // flat palm (LIB-26): the wrist sits the forearm's distal radius above the floor (mountain_climbers.mjs)
 const WRIST = 90;                    // arms plumb, so the wrist extends 90 deg and the palm lies flat (mountain_climbers.mjs)
@@ -156,7 +158,6 @@ export default {
     ],
   },
   tempo: [{ phase: 'Squat down', move: true, word: 'Controlled' }, { phase: 'Kick back', move: true }, { phase: 'Jump in', move: true }, { phase: 'Jump up', move: true }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)
-  zoom: { view: 'mistake', k: 2 },   // D-LIBZOOM-EXTEND (lib4-cards §41; DESIGN.md §21): the landing tell (knee.r), 14.2 px at k 2 (bar at the zoom's scale)
   alt: 'Burpee, side view. From a straight-arm plank, hands flat under the shoulders and the body in one line, the feet jump in under the body and the lifter stands tall, landing softly on slightly bent knees.',
 };
 export const info = { QP, QV, FOOT_Z, pose: Object.fromEntries([['start', start], ['via', via[0]], ['end', end], ['mistake', mistakeFull]].map(([k, p]) => { const lm = landmarksOf(p, H);

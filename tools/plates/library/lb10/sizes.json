@@ -693,9 +693,9 @@
     "basis": "claim: c1 pg-burpee 'Stand tall with feet shoulder width apart' (one source hip-width, one feet together): the widest stance at which the rigid foot's plant contacts stay within 0.5 cm (0.15 m: 0.5 cm; 0.16 m: 0.6 cm), as kettlebell_swing 0.18 and medicine_ball_slam 0.12; the side view does not show the width"
    },
    "KNEE_SOFT": {
-    "value": 15,
+    "value": 30,
     "unit": "deg",
-    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c11 fv-burpee 'Always land on slightly bent knees'"
+    "basis": "claim: c11 fv-burpee 'Always land on slightly bent knees'; LIB-PLATEFIX-4 (pf8 T10 R5, #405 6688665575; pf7 R1/R5 #405 6685743439, 'about 30 deg knee flexion'; PF3 addendum #405 6683300292): a bend that reads as bent at plate size, the knee clearly forward of the hip-ankle line and of the Mistake's straight leg (was 15, the leg_press.mjs:13 convention, which the critics read as straight)"
    },
    "M_KNEE": {
     "value": 1,
