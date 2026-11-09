@@ -32,6 +32,8 @@ export const PF4_MAIN: Record<string, string> = {
 /** The re-pinned rows' MANIFEST entries on main de91dd21 (one_arm_dumbbell_row: pf12 passed, #410 6751563503). */
 export const PF4_MAIN_ENTRY: Record<string, string> = {
   lib_one_arm_dumbbell_row: '97c67d42afb7002dd15992716837d7de4d314ec3504a46a9fd1f2823cb549eab',
+  lib_incline_dumbbell_press: 'f9865212f11f21912bbbaef8a51c831ee048ac4ddf5d30c865f703fe803a2491',   // pf13 passed, #410 6752705237
+  lib_straight_bar_triceps_pushdown: '093bddfab5fa6182f19e438d4013a13e776609143b88420dd97420ac9974285b',   // pf12 + crop check passed
 };
 const LATEST: Record<string, string> = Object.fromEntries(M.pinnedRows().map((p: any) => [p.row.id, M.entryHash(p.entry)]));
 

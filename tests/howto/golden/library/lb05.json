@@ -487,6 +487,35 @@
       "supersedes": null,
       "why": "W5 layers approved (#392): the calibrated layers panel 6649453813 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds and focused rechecks 6654466055 and 6681869167 (every median 4 or more or a recorded exception: hammer_curl F-HAND-ROTATION), PANEL FIX 4 accepted 6683213580 with D-SHIP-W5-FLIPSET (6682188871) and D-SHIP-W5-PREACHER: the flip set only on the page. Re-pinned in place after the merge of main 6227bd8e (D-REPIN-UNMERGED): with main's render and layers-build files put back to 59ded9a1 the page is byte-equal to the accepted 59ded9a1 page (strip-back proof); the only differences are main's shared engine and body-map changes.",
       "prev": "b5afe735a5a68dbcae50d9c4f073f1fe26f51b5d30c62eaa643cf89ced7fdcaa"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_straight_bar_triceps_pushdown",
+      "src": "library/specs/straight_bar_triceps_pushdown.mjs",
+      "slug": "straight-bar-triceps-pushdown",
+      "prefix": "straight-bar-triceps-pushdown",
+      "chromeId": "straight-bar-triceps-pushdown",
+      "exemptions": [
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "68b72cbac6806e2e8b7f4f50ef95b398bd2bb37e34a3d55131893e4b4272212d",
+        "normalOverlay": "9391fd00960ff6b8f1798d64d19e754d9e7eda5c8e8960515e2cd944e7929af0",
+        "mistakeSvg": "565ba27a5067a3a32a8a16803ec2391a9145ba42a0c20fb3e3c8df3e5a29055a",
+        "mistakeOverlay": "b17f9dc167bd2587f28096b16bbd2fdf9f716aff82842dca4aff5751246ab8f9",
+        "tells": "688f33d35e39d203028c60fb0b8d8badd38e7ce4789fdf5538fde8c736e501d4",
+        "tempo": "f0dc1b6cd544cc25b341b91f9c3276eaa45d732be8524bdb125f54ff1c3badd9",
+        "cues": "7908c3bf36c9744913691ccabf64630f7e794a684210dcc6bc4082cb3fa4c5b2",
+        "alt": "6e8f857d45ceeb6eebe0df34b404fdb3a31713fad32d523627f4fccb599cd5c0",
+        "mistakeAlt": "b0db19742b1cf041cc068337d303d66780decb5cd97b19c443e014844737facc"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237 @ 92491e58f488c9b2254ad34c0d03a5ebf49a2f61",
+      "date": "2026-11-09",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-4 straight_bar_triceps_pushdown (D-PF2-PUSHDOWN-T re-clone from PF1's parent, H10 []; pf12 R4 fix: the HIP LEAN ONLY leader on the hip): pf12 plates panel (#410 6751563503) and the supervisor's crop check (#410 6752705237).",
+      "supersedes": 12,
+      "prev": "ac0547bf9a2adab6d42d88005d9af250012f4055ea129b4cb54b239fa42690fe"
     }
   ]
 }

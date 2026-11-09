@@ -960,7 +960,8 @@ describe('LIB-SHIP W5 D-SHIP-W5-EQUIPDRAWN (#392 6654347642): straight_bar\'s sp
   it('items 0-11 deep-equal; items 12-13 are functions with deep-equal output on every drawn pose of both plates', () => {
     expect(kid.equipment.map((x: any) => typeof x)).toEqual([...Array(12).fill('object'), 'function', 'function']);
     for (let i = 0; i < 12; i++) expect([i, kid.equipment[i]]).toStrictEqual([i, par.equipment[i]]);
-    expect(drawnArgs(kid).map(([p]) => p)).toEqual(['start', ...Array.from({ length: kid.poses.via.length }, (_, i) => `via${i}`), 'end', 'ghost0', 'ghost1', 'ghost2', 'mistake']);
+    // LIB-PLATEFIX-4 (D-PF4-PINS D): 'ghost2' goes; PF1's parent draws 2 ghosts and the re-cloned template follows it (was ghost0-2)
+    expect(drawnArgs(kid).map(([p]) => p)).toEqual(['start', ...Array.from({ length: kid.poses.via.length }, (_, i) => `via${i}`), 'end', 'ghost0', 'ghost1', 'mistake']);
     expect(equipProblems(kid, par)).toEqual([]);
   });
   it('red 1: one data item changed', () => {
