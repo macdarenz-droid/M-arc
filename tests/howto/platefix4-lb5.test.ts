@@ -97,12 +97,13 @@ describe('PF4 lb05 plates page: every other plate is byte-equal to main\'s (de91
     'alternating-dumbbell-curl': '7bd06dbb017b8ee364bad7824fd0a59a17f927b655ea50e365baaedd0c810dd9',
     'single-arm-triceps-pushdown': 'b0f7bd7ab21be5f2b651104006056c9b4c7cc89c7e580fed67098bc1c2376323',
     'incline-dumbbell-curl': '868f4c652e7ecf9c56441307471ad8b8e6f7c57cbbd8646f5a79bd2190a859af',
-    'straight-bar-triceps-pushdown': 'd7e1b1afe3b26b65ad08f3e59cb932a4ec8860aa615008417c1eeae4b72f0a5f',
     'barbell-curl': 'ff95d0403a81e902cb5f413d9138a35aef8de7e3a64fd67260ac589702a02129',
     'ez-bar-curl': '854ed905f13e9216de90b4d5efee041f5ee1438d25721610de51528b5fc3d083',
     'reverse-curl': '1b9f2d838197a3ceb7e4b6ed8400fd264ddbd234b6ff28d18557b0fcd115d548',
   };
-  const OWN = ['cable-curl'];
+  // straight-bar-triceps-pushdown is PF4's own too (the PUSHDOWN re-clone, D-PF2-PUSHDOWN-T; its change is proven in
+  // platefix4-pushdown.test.ts); main's value was d7e1b1afe3b26b65ad08f3e59cb932a4ec8860aa615008417c1eeae4b72f0a5f.
+  const OWN = ['cable-curl', 'straight-bar-triceps-pushdown'];
   const shaOf = (p: any) => createHash('sha256').update(JSON.stringify(golden.fragmentsOf(p))).digest('hex');
   const problems = (html: string) => {
     const ps = golden.extractPlates(html), got = new Map(ps.map((p: any) => [p.chromeId, shaOf(p)]));
