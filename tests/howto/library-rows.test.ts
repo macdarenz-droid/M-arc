@@ -11,6 +11,7 @@ import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 import { readHowTo } from './generated-module';
 import { W4_IDS } from './checks/ship-w4';
+import { feelAllOf, renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -39,7 +40,7 @@ beforeAll(async () => {
   if (g.code !== 0) throw new Error(`generate failed in the E1 tree:\n${g.out}`);
   const eight = F.ownRowsTree();
   try { mainOut = await (await import(/* @vite-ignore */ F.url(eight, 'tools/plates/generate.mjs'))).render(); } finally { F.drop(eight); }
-  repoOut = await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render();
+  repoOut = await renderOf(new URL('../../', import.meta.url).pathname);   // F-GEN-WALK-SPEED: the repo's render(), once per run (tests/walk-cache.ts)
   treeOut = await (await import(/* @vite-ignore */ turl('tools/plates/generate.mjs'))).render();
 }, 600_000);
 afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
@@ -361,7 +362,7 @@ async function noMarkIds(base: string, ids: string[]) {
 async function feelChecks(base: string, row: any) {
   const feel = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/feel.mjs'));
   const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));
-  const fm = (await feel.renderAll()).fm, pre = row.chromeId, page = readFileSync(join(base, row.pages.layers), 'utf8');
+  const fm = (await feelAllOf(base)).fm, pre = row.chromeId, page = readFileSync(join(base, row.pages.layers), 'utf8');
   const text = readFileSync(join(base, `src/howto/generated/feel-${pre}.ts`), 'utf8');
   const section = JSON.parse(text.match(/\n {2}section: (".*"),\n/)![1]!) as string;
   expect(section === feel.feelSectionOf(page, pre), `${row.id}: section`).toBe(true);
