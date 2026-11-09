@@ -3,6 +3,9 @@
 // #391 6653540190, critics' fix: a 'Hips' chip, Right buttocks on the bench, Wrong hips lifted, low back over-arched,
 // with 'Show me' from the Hips lifting mistake). barbell_bench_press's sheet draws the card zoom `hips-on-bench` (c10).
 // Red on main de91dd21: the sheet has no zoom (`zooms = []`, the zoom was a text checkpoint).
+// LIB-PLATEFIX-4 item 21 (PF3 item 21, #391 6653791551; #405 6682819340; W4 panel L7 [4,3,3], #391 6653540190, critics c2,
+// c3: "Feet: both feet locked under the pads vs loose"): decline_bench_press's sheet draws the card zoom `feet-hooked` (c1).
+// Red on main de91dd21: no zoom. The rollers are the plate's (unchanged); the Wrong shin and foot clear them by >= 8 px.
 // Every other card of the lb02 layers page and the page outside the cards stay byte-equal to main de91dd21's.
 import { createHash } from 'node:crypto';
 import { mkdtempSync, rmSync } from 'node:fs';
@@ -12,9 +15,10 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
-let H: any, eng: any, plate: any, spec: any, crop: any;
+let H: any, eng: any, plate: any, spec: any, crop: any, D: any, DS: any;
 beforeAll(async () => {
-  [H, eng, plate, crop] = await Promise.all(['howto/lib_barbell_bench_press.howto.mjs', 'engine.mjs', '../vendor/engine/plate.mjs', 'render/closeup/crop.mjs']
+  [H, eng, plate, crop, D, DS] = await Promise.all(['howto/lib_barbell_bench_press.howto.mjs', 'engine.mjs', '../vendor/engine/plate.mjs', 'render/closeup/crop.mjs',
+    'howto/lib_decline_bench_press.howto.mjs', 'specs/decline_bench_press.mjs']
     .map(f => import(/* @vite-ignore */ lib(f))));
   spec = H.default.plate;
 }, 600_000);
@@ -91,10 +95,44 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
       'incline-barbell-bench-press': '07e934a7cb638cf91e9e2804367e227a459a893c13fcb760190dd925c3f19275',
       'incline-dumbbell-press': '6b0aaad5f2fcc0750b5e1ec36ad5eef44bcf71c4c8289b24d891ec0199a03539',
       'close-grip-bench-press': '1cd3bcd5a6a8df110adcd0858b8d3c894ecdaeab1bdae4ab3cb49844e86fb9f7',
-      'decline-bench-press': 'f238d19a2d61924550fc80bec2676e3a80b8c066444c2b6e46f791ffdb058ab3',
+      'decline-bench-press': expect.not.stringMatching(/^f238d19a2d61924550fc80bec2676e3a80b8c066444c2b6e46f791ffdb058ab3$/),
       'dumbbell-pullover': '94ba216267e5c7fc216546956484e0e2d997b273dd4a10a1812b50ef2650821e',
       OUTSIDE: '752d57aa05dd08fa82104eac3ad081ab7850628f973f3cb0d6cb7b4932e7ba25',
     });
     expect(html).toContain('id="barbell-bench-press-zoom-hips-on-bench"');
+    expect(html).toContain('id="decline-bench-press-zoom-feet-hooked"');
   }, 600_000);
+});
+
+describe('PF4 item 21: decline_bench_press draws the feet-hooked close-up', () => {
+  const dz = () => D.default.zooms.find((z: any) => z.key === 'feet-hooked');
+  /** Clearance (crop px) from the plate's foot-roller surface to the shin and foot (knee-ankle and ankle-toe segments, less
+   *  the engine's shin radius at the ankle). <= 0: the roller sits on the front of the ankle (hooked). */
+  const gapPx = (wrong: any) => {
+    const sp = D.default.plate, L = eng.landmarksOf({ ...sp.poses.end, ...wrong }, 1.75), hub = DS.info().hub;
+    const segD = (p: number[], a: number[], b: number[]) => { const u = [b[1]! - a[1]!, b[2]! - a[2]!], l = u[0]! ** 2 + u[1]! ** 2,
+      t = Math.max(0, Math.min(1, ((p[1]! - a[1]!) * u[0]! + (p[2]! - a[2]!) * u[1]!) / l)); return Math.hypot(p[1]! - a[1]! - t * u[0]!, p[2]! - a[2]! - t * u[1]!); };
+    const ppm = plate.renderPlate(sp, { id: 'pf4d' }).report.camera.pxPerM, k = crop.PANEL / dz().crop.sizePx;
+    const d = Math.min(segD(hub, L['knee.r'], L['ankle.r']), segD(hub, L['ankle.r'], L['toe.r']));
+    return (d - 0.055 - eng.RADII.shank[2] * 1.75) * ppm * k;
+  };
+  it('the sheet has the posture zoom feet-hooked (card c1 words), its chip first, and Show me links from the feet checkpoint and the position step', () => {
+    const z = dz(), h = D.default;
+    expect(z).toBeTruthy();
+    expect([z.kind, z.chip, z.heading, z.right, z.wrong.base, z.wrong.solid]).toEqual(['posture', 'Feet', 'Feet hooked', 'end', 'end', true]);
+    expect(z.caption).toEqual({ right: 'Both feet locked under the pads.', wrong: 'Feet loose, not locked under the pads.' });
+    expect(h.chips).toEqual(['feet-hooked', 'feel']);
+    expect(h.posture.find((p: any) => p.key === 'feet').zoom).toBe('feet-hooked');
+    expect(h.setup.find((p: any) => p.kind === 'position').zoom).toBe('feet-hooked');
+  });
+  it('Right: the roller on the front of the ankle (gap <= 0); Wrong: shin and foot clear the roller by >= 8 px, only the knee and ankle change', () => {
+    const r = gapPx({}), w = gapPx(dz().wrong.pose);
+    console.log(`PF4 21: roller gap Right ${r.toFixed(2)} px, Wrong ${w.toFixed(2)} px`);
+    expect(r).toBeLessThanOrEqual(0);
+    expect(w).toBeGreaterThanOrEqual(8);
+    expect(Object.keys(dz().wrong.pose).sort()).toEqual(['ankle', 'knee']);
+  });
+  it('mutation: the loose knee alone at the hooked 100 deg (ankle neutral) does not clear the roller', () => {
+    expect(gapPx({ knee: 100, ankle: dz().wrong.pose.ankle })).toBeLessThan(8);
+  });
 });
