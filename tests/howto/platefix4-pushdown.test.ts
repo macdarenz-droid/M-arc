@@ -38,3 +38,29 @@ describe('PF4 straight_bar: the PUSHDOWN template rebuilds PF1\'s approved paren
     expect(render({ ...t, mistake: { ...t.mistake, parts: ['torso', 'head', 'bar'] } }, true)).not.toBe(render(p, true));
   });
 });
+
+// LIB-PLATEFIX-4 straight_bar fix round (pf12 R4 [3,3,3], #410 6751563503): "The HIP LEAN ONLY dot sits on the upper back
+// at shoulder-blade height, about 105 px above the hip joint ... Give it a leader that ends on the hip or pelvis outline,
+// swapping slots with the ELBOWS chip if needed." The hips callout is anchored on hip.r, its box takes the slot under
+// ELBOWS PINNED (which moves to the top slot). Red on fd274f59: its leader ended on backUpper; no leader came within 22.9 px of the hip.
+describe('PF4 straight_bar pf12 R4: the HIP LEAN ONLY leader ends on the hip', () => {
+  const leaders = (spec: any) => {
+    const r = plate.renderPlate(spec, { id: 'sb' });
+    return { r, ends: [...r.svg.matchAll(/<path class="leader[^"]*"[^>]*d="M([\d.-]+) ([\d.-]+)L/g)].map(m => [+m[1]!, +m[2]!]) };
+  };
+  const projected = (spec: any, k: string, r: any) => { const L = E.landmarksOf(spec.poses.end, 1.75), c = r.report.camera; return [c.x0 + L[k][2] * c.pxPerM, c.y0 - L[k][1] * c.pxPerM]; };
+  let E: any;
+  beforeAll(async () => { E = await import(/* @vite-ignore */ lib('engine.mjs')); });
+  const near = (spec: any, k: string) => { const { r, ends } = leaders(spec), p = projected(spec, k, r); return Math.min(...ends.map(e => Math.hypot(e[0]! - p[0]!, e[1]! - p[1]!))); };
+  it('a leader ends within 0.5 px of the drawn hip joint, one within 0.5 px of the elbow, and the label layout has no issue', () => {
+    const c = child.default;
+    expect(c.callouts.find((x: any) => x.key === 'hips').anchor).toBe('hip.r');
+    expect(near(c, 'hip.r')).toBeLessThanOrEqual(0.5);
+    expect(near(c, 'elbow.r')).toBeLessThanOrEqual(0.5);
+    expect(leaders(c).r.report.issues).toEqual([]);
+  });
+  it('mutation: the hips callout back on backUpper leaves no leader within 15 px of the hip', () => {
+    const c = child.default, m = { ...c, callouts: c.callouts.map((x: any) => x.key === 'hips' ? { ...x, anchor: 'backUpper' } : x) };
+    expect(near(m, 'hip.r')).toBeGreaterThan(15);
+  });
+});
