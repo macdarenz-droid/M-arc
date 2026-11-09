@@ -1,7 +1,8 @@
 // LIB-PLATEFIX-4 (#410; D-PLATEFIX-PINS form, as platefix3b-pins.ts): the tools/plates/library/MANIFEST.json keys its
 // [golden update] commits move, for the MANIFEST blanked-keys tests (crop-projection, lib-shapes, pair-faults,
-// research-routes). No approving entry moves here (PF4 appends no golden entry before its panels pass). pf4Problems: each
-// moved key pins its file's current sha256. restorePF4: the same keys put back to main de91dd21's values (main's
+// research-routes). pf4Problems: each moved key pins its file's current sha256, and each re-pinned row's `entry` is the
+// hash of its latest plate entry in its batch golden file (an 'owner' D-OWNER-REPIN entry appended after its plates panel
+// passed). restorePF4: the same keys and entries put back to main de91dd21's values (main's
 // MANIFEST differs from this PR's in exactly these, plus render/closeup/crop.mjs), so each test's pin, measured on main,
 // holds. crop.mjs (PF4 item 20's opt-in wrong.equipmentList) is not listed: those tests already pin it to its current
 // file (F-CROP-FRONT D-CROP-PIN), so main's value is never restored for it.
@@ -11,6 +12,7 @@ import { readFileSync } from 'node:fs';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = new URL('../../', import.meta.url);
 const sha = (b: Buffer) => createHash('sha256').update(b).digest('hex');
+const M: any = await import(/* @vite-ignore */ new URL('tools/plates/library/ci/manifest.mjs', ROOT).href);
 
 /** The moved keys and main de91dd21's value of each (one value in every row that lists it). */
 export const PF4_MAIN: Record<string, string> = {
@@ -27,6 +29,12 @@ export const PF4_MAIN: Record<string, string> = {
   'tools/plates/library/howto/lib_one_arm_dumbbell_row.howto.mjs': '4ce964ab8171adca17283db950745f3e3012c3ab6ec26403bbda02d6f5709f68',
 };
 
+/** The re-pinned rows' MANIFEST entries on main de91dd21 (one_arm_dumbbell_row: pf12 passed, #410 6751563503). */
+export const PF4_MAIN_ENTRY: Record<string, string> = {
+  lib_one_arm_dumbbell_row: '97c67d42afb7002dd15992716837d7de4d314ec3504a46a9fd1f2823cb549eab',
+};
+const LATEST: Record<string, string> = Object.fromEntries(M.pinnedRows().map((p: any) => [p.row.id, M.entryHash(p.entry)]));
+
 /** Problems with `m`'s LIB-PLATEFIX-4 changes (empty when each moved key pins its file's current sha256). */
 export function pf4Problems(m: any): string[] {
   const bad: string[] = [];
@@ -34,10 +42,13 @@ export function pf4Problems(m: any): string[] {
     const now = sha(readFileSync(new URL(k, ROOT)));
     if (k in r.files && r.files[k] !== now) bad.push(`${id} ${k}: ${r.files[k]} != ${now}`);
   }
+  // a row an earlier step already took out (lessW4 removes the lb02/lb03 rows) has nothing left to check
+  for (const id of Object.keys(PF4_MAIN_ENTRY)) if (m.rows[id] && m.rows[id].entry !== LATEST[id]) bad.push(`${id}: entry ${m.rows[id].entry} != ${LATEST[id]}`);
   return bad;
 }
-/** `m` with the LIB-PLATEFIX-4 keys put back to main de91dd21's values; no checks. */
+/** `m` with the LIB-PLATEFIX-4 keys and entries put back to main de91dd21's values; no checks. */
 export function restorePF4(m: any): any {
   for (const r of Object.values<any>(m.rows)) for (const [k, v] of Object.entries(PF4_MAIN)) if (k in r.files) r.files[k] = v;
+  for (const [id, v] of Object.entries(PF4_MAIN_ENTRY)) if (m.rows[id]) m.rows[id].entry = v;
   return m;
 }

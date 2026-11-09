@@ -665,11 +665,22 @@ describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn
     const bench = itemsIn(s(), 'end').items.find(it => it.type === 'bench');
     expect(bench.at[1]).toBe(M.one_arm_dumbbell_row.oaInfo ? 0.42 : NaN);
   });
-  it('c3, c4: the back flat and level (thorax within 3 deg of horizontal, spine 0) in every pose', () => {
+  // LIB-PLATEFIX-4 (D-PF4-PINS D, #410 6751270618; pf12 approved, 6751563503): was "back flat and level (thorax within
+  // 3 deg of horizontal, spine 0)"; now flat (spine 0) and rising 10-25 deg toward the head: a straight support arm on a
+  // knee-and-hand bench cannot keep the back level (pf8 R1, pf7 c3). Measured 19.6 deg (was 0.0).
+  it('c3, c4: the back flat (spine 0) and rising 10-25 deg toward the head in every pose', () => {
     for (const p of posesOf(s())) {
       const l = lm(p), th = Math.atan2(l.backUpper[1] - l.sacrum[1], l.backUpper[2] - l.sacrum[2]) * 180 / Math.PI;   // the back line
-      expect(Math.abs(th), p).toBeLessThanOrEqual(3);
+      expect(Math.abs(th), p).toBeGreaterThanOrEqual(10);
+      expect(Math.abs(th), p).toBeLessThanOrEqual(25);
+      expect(s().poses[p]?.trunk ?? 0, p).toBe(0);
     }
+  });
+  it('LIB-PLATEFIX-4 mutation: a flexed spine (trunk 15 in every pose) is red, and so is the pre-PF4 level back', () => {
+    const sp = { ...s(), poses: Object.fromEntries(Object.entries(s().poses).map(([k, v]: [string, any]) => [k, { ...v, trunk: 15 }])) };
+    expect(Object.values(sp.poses).some((v: any) => (v.trunk ?? 0) !== 0)).toBe(true);
+    const thOf = (spec: any, p: string) => { const l = itemsIn(spec, p).lm; return Math.abs(Math.atan2(l.backUpper[1] - l.sacrum[1], l.backUpper[2] - l.sacrum[2]) * 180 / Math.PI); };
+    expect(posesOf(sp).some(p => thOf(sp, p) < 10 || thOf(sp, p) > 25)).toBe(true);   // the flexed spine also moves the back line out of the band
   });
   it('c5: at the start the working arm hangs straight down (elbow ≤ 8 deg, the wrist within 2 cm of under the shoulder)', () => {
     const r = plate.renderPlate(s(), { id: 'x' }).report, st = lm('start');
@@ -729,7 +740,9 @@ describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn
     const bend = Math.acos((u[0]! * f[0]! + u[1]! * f[1]!) / Math.hypot(u[0]!, u[1]!) / Math.hypot(f[0]!, f[1]!)) * 180 / Math.PI;
     const plumb = Math.abs(Math.atan2(u[1]!, -u[0]!)) * 180 / Math.PI, rise = l['grip.r'][1] - st['grip.r'][1];
     const back = u[1]! < 0;
-    return [...(back && Math.abs(plumb - 25) <= 3 ? [] : [`upper arm ${plumb.toFixed(0)} deg off the ruled 25 deg`]), ...(bend >= 30 && u[0]! * f[1]! - u[1]! * f[0]! < 0 ? [] : ['elbow not bent forward 30 deg']),
+    // LIB-PLATEFIX-4 (D-PF4-PINS D, D-PF4-OTHERPINS; pf12 approved): was D-LIB13-PANEL3's 25 deg ±3; now 35 deg ±3 (pf8 c3's
+    // point, the elbow about 50 px behind and 77 px below the shoulder)
+    return [...(back && Math.abs(plumb - 35) <= 3 ? [] : [`upper arm ${plumb.toFixed(0)} deg off the ruled 35 deg`]), ...(bend >= 30 && u[0]! * f[1]! - u[1]! * f[0]! < 0 ? [] : ['elbow not bent forward 30 deg']),
       ...(rise > 0 && rise <= 0.2 ? [] : [`dumbbell ${rise.toFixed(2)} m above the start`]), ...(spec.mistake.tells.some((t: any) => t.key === 'blade') ? ['blade tell'] : [])];
   };
   it('R5 (round 2): the red arm hangs from the shoulder, short of straight at the bottom, and no blade tell', () => {
@@ -896,7 +909,8 @@ const lb03PinProblems = (golden: any, html: string, chromeIds: string[]) => {
     return Object.keys(e.fragments).filter(k => f[k] !== e.fragments[k]).map(k => `${c} ${k} != pin`);
   });
 };
-const LB03_PAGE_PIN = '5a2c55c0682da6b37ff637b9ab9b94746209321e0212e998b607b63ac9ca4b2e';   // lb03.json's page entry (D-SHIP-W4-PIN; re-pinned in place under D-REPIN-UNMERGED for LIB-PLATEFIX-3 item 17, was d6241cf6…)
+// LIB-PLATEFIX-4 (D-PF4-PINS A/D): was 5a2c55c0…4b2e; now the 'owner' D-OWNER-REPIN page entry after pf12 passed one_arm_dumbbell_row
+const LB03_PAGE_PIN = '447e0330c4e6d2961a975034f984de76ce67a7b9726a1143ed8783567be207d0';   // lb03.json's page entry (D-SHIP-W4-PIN; re-pinned in place under D-REPIN-UNMERGED for LIB-PLATEFIX-3 item 17, was d6241cf6…)
 /** Two builds of every drawn row, one after the other in ONE awaited child process (so module state left by the first
  *  build would change the second, as in the old in-worker test): the two pages' sha256. */
 const childTwice = async () => {
@@ -1350,7 +1364,10 @@ describe('LIB-13s A2: the 7 approved LB3 plates stay byte-identical (page 6ff09d
   // rulings changed exactly these fragments: the three tempos (D-SHIP-W4-TEMPO, #391 6681756394, execution order) and the
   // two deadlift alts (D-SHIP-W5-PLATETEXT go, #391 6681022221). Every other of the 63 still equals main's approval; every
   // fragment of the 7 equals its re-pinned lb03.json plate entry; the whole page is lb03.json's page pin.
-  const CHANGED_W4 = ['pendlay-row tempo', 'conventional-deadlift tempo', 'conventional-deadlift alt', 'sumo-deadlift tempo', 'sumo-deadlift alt'];
+  // LIB-PLATEFIX-4 (D-PF4-PINS D): + one-arm-dumbbell-row's four drawn fragments (pf12 approved; its 'owner' plate entry pins them)
+  const CHANGED_W4 = ['pendlay-row tempo',
+    'one-arm-dumbbell-row normalSvg', 'one-arm-dumbbell-row normalOverlay', 'one-arm-dumbbell-row mistakeSvg', 'one-arm-dumbbell-row mistakeOverlay',
+    'conventional-deadlift tempo', 'conventional-deadlift alt', 'sumo-deadlift tempo', 'sumo-deadlift alt'];   // in APPROVED's order
   it('of the 63 approved fragments exactly the ruled W4 ones differ from main\'s; each of the 7 equals its lb03.json pin, and the page is the lb03 page pin', async () => {
     expect(Object.values(APPROVED).reduce((n, f) => n + Object.keys(f).length, 0)).toBe(63);
     const html = await pageHtml();

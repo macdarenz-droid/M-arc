@@ -4739,7 +4739,7 @@
    }
   },
   "lib_one_arm_dumbbell_row": {
-   "entry": "97c67d42afb7002dd15992716837d7de4d314ec3504a46a9fd1f2823cb549eab",
+   "entry": "11f797c0cf76973d4b15ffae5418e8c376926d97e981e9b4eb83b853bcf03dd1",
    "files": {
     "docs/research/howto/shared/back-pain-box.json": "464ba038a5534269aaf06152ec3b33d09057c6dccf046e98af9e2116c77074a8",
     "tools/plates/golden.mjs": "ff8665e4314992f329ec45b6c2654535cc9f7e5a6ab4881dc9d0ea5dd02fed32",
