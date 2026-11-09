@@ -88,11 +88,11 @@ describe('F-GEN-WALK-SPEED: each caller gets its own copy; one process computes 
   it('two calls for one key return equal values that share no object', async () => {
     const t = tree({ [SPEC]: 'a' });
     const get = () => memo('t-copy', t, async () => ({ rows: [{ id: 'lib_a', text: 'x' }] }), json.enc, json.dec);
-    const [a, b] = [await get(), await get()];
+    const [a, b, c] = [await get(), await get(), await get()];   // a computed here, b and c read from the stored file
     expect(a).toEqual(b);
-    expect(a).not.toBe(b);
-    expect(a.rows[0]).not.toBe(b.rows[0]);
-    a.rows[0]!.text = 'changed';
+    expect(b).toEqual(c);
+    for (const [x, y] of [[a, b], [b, c]]) { expect(x).not.toBe(y); expect(x.rows[0]).not.toBe(y.rows[0]); }
+    a.rows[0]!.text = 'changed'; b.rows[0]!.text = 'changed';
     expect((await get()).rows[0]!.text).toBe('x');
   });
   it('concurrent callers wait for the one computing; a lock left by a dead process is taken over', async () => {
