@@ -14,6 +14,7 @@ const sha = (b: Buffer) => createHash('sha256').update(b).digest('hex');
 
 /** The moved keys and main de91dd21's value of each (one value in every row that lists it). */
 export const PF4_MAIN: Record<string, string> = {
+  'tools/plates/library/specs/straight_bar_triceps_pushdown.mjs': 'f66fb9065b05a51336b08fc41ea8af058b3b7057563e4c9ad7855ad4429dc35f',
   'tools/plates/library/templates/PUSHDOWN.mjs': '556151597cf24f4ad768c01cd208ebf76c7dbc1a6ac954fdabcb2c999901d137',
   'tools/plates/library/specs/cable_curl.mjs': '4af768a54524b54e6d48c56b715ad9f5bbeffdb087daa934e2aa1542cc75a334',
   'tools/plates/library/specs/one_arm_dumbbell_row.mjs': '26dc7671aac51083d68f3afd0a0fb8ce01dc9dedf2d2e45b3664585245da7b11',
