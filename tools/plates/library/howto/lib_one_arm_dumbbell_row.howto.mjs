@@ -65,17 +65,19 @@ const CL = {
 // own method) so the support wrist stays on the bench where the end pose has it.
 // DRAWING VALUE (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): TWIST
 // 30 deg is a Wrong-pose size no card gives; no number from it appears in user copy; the layers panel judges it.
-const H = 1.75, TWIST = 30, END = plateSpec.poses.end, LE = landmarksOf(END, H);
+// LIB-PLATEFIX-4 (pf8 T05 R1): the spec's support arm is set by joint angles, so the twist's support hand starts its IK
+// from the end pose's palm point (grip.l), elbow pole back as the spec's earlier reach.
+const H = 1.75, TWIST = 30, END = plateSpec.poses.end, LE = landmarksOf(END, H), L_REACH = { at: LE['grip.l'], pole: [0, 0, -1] };
 const TWIST_POSE = (() => {
   const trunk = { flex: 0, yaw: -TWIST };
-  const S = landmarksOf({ ...END, trunk, reach: { l: END.reach.l } }, H)['shoulder.r'];
+  const S = landmarksOf({ ...END, trunk, reach: { l: L_REACH } }, H)['shoulder.r'];
   const r = { at: END.reach.r.at.map((v, i) => v + S[i] - LE['shoulder.r'][i]), pole: END.reach.r.pole };
-  let at = END.reach.l.at;
+  let at = L_REACH.at;
   for (let k = 0; k < 4; k++) {
-    const w = landmarksOf({ ...END, trunk, reach: { l: { ...END.reach.l, at }, r } }, H)['wrist.l'];
+    const w = landmarksOf({ ...END, trunk, reach: { l: { ...L_REACH, at }, r } }, H)['wrist.l'];
     at = at.map((v, i) => v + LE['wrist.l'][i] - w[i]);
   }
-  return { trunk, reach: { l: { ...END.reach.l, at }, r } };
+  return { trunk, reach: { l: { ...L_REACH, at }, r } };
 })();
 export const stills = {
   start: { pose: plateSpec.poses.start },
