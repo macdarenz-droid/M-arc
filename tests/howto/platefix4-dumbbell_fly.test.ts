@@ -1,21 +1,23 @@
-// LIB-PLATEFIX-4 dumbbell_fly (fresh round 1, held under D-LIB13-PANEL2 #395 6655186998: "four stacked red outlines and a
-// mis-scaled ghost read as a red blob around the dumbbell"; fix "one red hand-plus-hexagon piece at the hand's scale";
-// #395 6653868933 "the hand-plus-hexagon piece rotated ... about the wrist ... Remove the extra red circle"; #385
-// 6638551153 "The wrist bend still doesn't read"). Measured on what is drawn: the Mistake render's red dashed outlines
-// (the masked Mistake outline `.m-pose use` and the `m-line` guides) and the solid end hand, fist and dumbbell at the
-// render's camera, per hand region (22 px round the end grip), and in the Mistake zoom.
-// Base spec (main de91dd21) on these measures: 6 red dashed outlines per hand region (the fist, the hand poly, the handle
-// and two heads of the Mistake pose, and the dashed hand guide) and 6 in the zoom; no rigid turn of the solid hand-plus-
-// dumbbell lays them on it (best fit 20.1 deg, residual 0.99 mean / 5.30 max px). Its union was at the solid's scale
-// (diameter 1.000, hull area 1.016): the "mis-scaled ghost" of #395 6655186998 was the pitch-0 draft (2967c154), so the
-// scale row is guarded by its mutation, not red on the base. After: one piece per hand and one in the zoom, the solid
-// outline turned 23.0 deg about the wrist (the Mistake pose's own 30 deg bend, projected at pitch 45), residual 0.06 /
-// 0.12 px, diameter and hull area 1.000, the zoom piece at k x the plate piece.
+// LIB-PLATEFIX-4 dumbbell_fly, fix round after the pf12 plates panel (#410 6751563503: R1 [2,3,1], R2 [2,3,2], R3 [3,3,2],
+// R5 [2,3,3], R7 [3,3,3]): "The foot-end view reads as a standing or seated figure. Fix: delete the upright rectangle
+// behind the head; draw the flat pad end-on as a low band under the torso; keep each in-plane segment at its drawn length;
+// put the start ghosts straight above the shoulders on the same arm length. Draw every dumbbell end-on as a hex (about
+// 35 px, as in dumbbell_bench_press), centred on the grip. In the wrist zoom, bend the red hand about 30 deg off the
+// forearm at the wrist, not the dumbbell." Kept from the previous round (#395 6655186998, 6653868933): one red dashed
+// hand-plus-dumbbell outline per hand and one in the zoom, at k x the plate's.
+// Units: the panel's px are the 716 px screenshot's, 2 x the plate's svg px (#410 6751563503 names the hip joint at
+// (298,595) on a 358 svg; dumbbell_bench_press's hex is 17.4 svg px = 34.8 panel px, "about 35 px"). Every threshold
+// below is in panel px (PX = 2 x svg).
+// Measured at the render camera from the engine's landmarks and the rendered svg: the bench's `eq` paths, the arm
+// segments shoulder->elbow and elbow->wrist of the start arms (both), the one ghost (arm.r, t 0.5) and the end arms
+// (both), every drawn dumbbell (the `disc` paths: the end ones and the ghost's; the dashed start rings; the red ones in
+// the Mistake), and the Mistake zoom's red outline against the forearm's landmarks mapped into the zoom.
 import { beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
+const PX = 2;   // panel px per svg px
 let plate: any, body: any, equip: any, qe: any, Z: any, golden: any, build: any, S: any;
 beforeAll(async () => {
   [plate, body, equip, qe, Z, golden, build] = await Promise.all(['../vendor/engine/plate.mjs', '../vendor/engine/body.mjs', '../vendor/engine/equipment.mjs',
@@ -24,137 +26,203 @@ beforeAll(async () => {
 }, T);
 
 type V = number[];
-const RG = 22;   // the hand region: px round the end grip (the solid hand, fist and dumbbell lie within 16.0 px of it)
 const dist = (a: V, b: V) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!);
-/** The points of an svg path: L/M/Q number pairs, and a circle drawn as two relative arcs sampled every 10 deg. */
-const pathPts = (d: string): V[] => {
-  const c = d.match(/^M(-?[\d.]+) (-?[\d.]+)a([\d.]+) [\d.]+ 0 1 0 [\d.]+ 0/);
-  if (c) { const r = +c[3]!, cx = +c[1]! + r, cy = +c[2]!; return Array.from({ length: 37 }, (_, k) => [cx + r * Math.cos(k * Math.PI / 18), cy + r * Math.sin(k * Math.PI / 18)]); }
-  const n = [...d.matchAll(/-?\d+(?:\.\d+)?/g)].map(m => +m[0]), o: V[] = [];
-  for (let k = 0; k + 1 < n.length; k += 2) o.push([n[k]!, n[k + 1]!]);
-  return o;
+const ptsOf = (d: string): V[] => { const n = [...d.matchAll(/-?\d+(?:\.\d+)?/g)].map(m => +m[0]), o: V[] = []; for (let k = 0; k + 1 < n.length; k += 2) o.push([n[k]!, n[k + 1]!]); return o; };
+const paths = (svg: string, cls: string) => [...svg.matchAll(new RegExp(`<path class="${cls}" d="([^"]+)"`, 'g'))].map(m => ptsOf(m[1]!));
+const uniq = (p: V[]) => p.filter((q, i) => p.findIndex(r => dist(q, r) < 1e-3) === i);
+const deg = (a: number) => a * 180 / Math.PI;
+const mod60 = (a: number) => ((a % 60) + 60) % 60;
+const angDiff60 = (a: number, b: number) => { const d = Math.abs(mod60(a) - mod60(b)); return Math.min(d, 60 - d); };
+/** A drawn hex from its points: the 6 distinct corners, their centre, across-corners (panel px), the corner angle mod 60 (deg). */
+const hexOf = (p: V[]) => {
+  const c6 = uniq(p);
+  if (c6.length !== 6) return null;
+  const c = [c6.reduce((t, q) => t + q[0]!, 0) / 6, c6.reduce((t, q) => t + q[1]!, 0) / 6], r = c6.map(q => dist(q, c));
+  const rm = r.reduce((t, x) => t + x, 0) / 6, regular = Math.max(...r) - Math.min(...r) < 0.05 && c6.every((q, i) => Math.abs(dist(q, c6[(i + 1) % 6]!) - rm) < 0.05);
+  return regular ? { c, across: 2 * rm * PX, rot: mod60(deg(Math.atan2(c6[0]![1]! - c[1]!, c6[0]![0]! - c[0]!))) } : null;
 };
-const defsOf = (svg: string) => new Map([...svg.matchAll(/<path id="([^"]+)" d="([^"]+)"/g)].map(m => [m[1]!, m[2]!]));
-const groupAt = (svg: string, open: string) => {   // the markup of the first `<g …>` that starts with `open`, to its close
-  const i = svg.indexOf(open); if (i < 0) return '';
-  const re = /<g\b[^>]*?(\/?)>|<\/g>/g; re.lastIndex = i; let depth = 0, m;
-  while ((m = re.exec(svg))) { if (m[0] === '</g>') depth--; else if (!m[1]) depth++; if (!depth) return svg.slice(i, re.lastIndex); }
-  return svg.slice(i);
+/** The red Mistake drawing: the dashed guides (`m-line`: the bent hands) and the masked Mistake outline's uses (the hexes). */
+const redOf = (svg: string) => {
+  const D = new Map([...svg.matchAll(/<path id="([^"]+)" d="([^"]+)"/g)].map(m => [m[1]!, m[2]!])), i = svg.indexOf('<g class="m-pose"'), j = svg.indexOf('</g></g>', i);
+  return { hands: paths(svg, 'm-line'), hexes: i < 0 ? [] : [...svg.slice(i, j).matchAll(/<use href="#([^"]+)"/g)].map(m => ptsOf(D.get(m[1]!) ?? '')) };
 };
-/** Every red dashed outline drawn: the Mistake outline's uses and the dashed guides, as point lists. */
-const redDashed = (svg: string): V[][] => {
-  const D = defsOf(svg), mp = groupAt(svg, '<g class="m-pose"'), ml = groupAt(svg, '<g class="mistake-layer"');
-  return [...[...mp.matchAll(/<use href="#([^"]+)"/g)].map(m => pathPts(D.get(m[1]!) ?? '')), ...[...ml.matchAll(/<path class="m-line" d="([^"]+)"/g)].map(m => pathPts(m[1]!))];
-};
-/** The solid end pose's outlines: the body uses of `.pose-end` and the solid equipment drawn after it (hand polys, dumbbell bars and heads). */
-const solidEnd = (svg: string): V[][] => {
-  const D = defsOf(svg), i = svg.indexOf('<g class="pose-end"'), j = svg.indexOf('<mask', i), after = svg.slice(i, j < 0 ? undefined : j);
-  return [...[...groupAt(svg, '<g class="pose-end"').matchAll(/<use href="#([^"]+)"/g)].map(m => pathPts(D.get(m[1]!) ?? '')),
-    ...[...after.matchAll(/<path class="(?:eq-solid|disc)" d="([^"]+)"/g)].map(m => pathPts(m[1]!))];
-};
-/** Points every `step` px along a closed or open polyline. */
-const sample = (p: V[], step = 0.5): V[] => { const o: V[] = [];
-  for (let i = 0; i + 1 < p.length; i++) { const a = p[i]!, b = p[i + 1]!, n = Math.max(1, Math.ceil(dist(a, b) / step)); for (let k = 0; k < n; k++) o.push([a[0]! + (b[0]! - a[0]!) * k / n, a[1]! + (b[1]! - a[1]!) * k / n]); }
-  o.push(p.at(-1)!); return o; };
-const closed = (p: V[]) => (dist(p[0]!, p.at(-1)!) < 1e-6 ? p : [...p, p[0]!]);
-const diameter = (ps: V[]) => { let m = 0; for (const a of ps) for (const b of ps) m = Math.max(m, dist(a, b)); return m; };
-const hullArea = (ps: V[]) => {   // the convex hull's area (monotone chain)
-  const p = [...ps].sort((a, b) => a[0]! - b[0]! || a[1]! - b[1]!), cr = (o: V, a: V, b: V) => (a[0]! - o[0]!) * (b[1]! - o[1]!) - (a[1]! - o[1]!) * (b[0]! - o[0]!);
-  const half = (q: V[]) => { const h: V[] = []; for (const x of q) { while (h.length >= 2 && cr(h.at(-2)!, h.at(-1)!, x) <= 0) h.pop(); h.push(x); } h.pop(); return h; };
-  const h = [...half(p), ...half([...p].reverse())]; let a = 0; h.forEach((x, i) => { const y = h[(i + 1) % h.length]!; a += x[0]! * y[1]! - y[0]! * x[1]!; }); return Math.abs(a) / 2;
-};
-const turn = (p: V, c: V, deg: number): V => { const t = deg * Math.PI / 180, dx = p[0]! - c[0]!, dy = p[1]! - c[1]!; return [c[0]! + dx * Math.cos(t) - dy * Math.sin(t), c[1]! + dx * Math.sin(t) + dy * Math.cos(t)]; };
-/** The rigid turn about the wrist that best lays the red outlines on the solid ones: the angle (deg, screen, y down) and its mean / max residual (px). */
-const fitTurn = (red: V[], grey: V[], W: V) => {
-  let best = { deg: 0, mean: Infinity, max: Infinity };
-  for (let k = -450; k <= 450; k++) {
-    const deg = k / 10; let sum = 0, mx = 0;
-    for (const p of red) { const q = turn(p, W, -deg); let m = Infinity; for (const g of grey) { const d = (q[0]! - g[0]!) ** 2 + (q[1]! - g[1]!) ** 2; if (d < m) m = d; } m = Math.sqrt(m); sum += m; mx = Math.max(mx, m); }
-    if (sum / red.length < best.mean) best = { deg, mean: sum / red.length, max: mx };
-  }
-  return best;
+/** A bent hand guide [w+n, g+n, g-n, w-n, w+n]: its grip end (the middle of the two corners farthest from the wrist W). */
+const handEnd = (p: V[], W: V) => { const c = uniq(p).sort((a, b) => dist(b, W) - dist(a, W)).slice(0, 2); return [(c[0]![0]! + c[1]![0]!) / 2, (c[0]![1]! + c[1]![1]!) / 2]; };
+
+/** Everything the checks read. */
+const measure = (spec: any) => {
+  const rN = plate.renderPlate(spec, { id: 'pf4n' }), rM = plate.renderPlate(spec, { id: 'pf4m', mistake: true }), cam = qe.cameraOf(spec, rN.report);
+  const L = qe.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: equip.PRIMITIVES, body }, spec);
+  const B = { height: spec.body?.height ?? 1.75 }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, B));
+  const nG = spec.ghosts?.count ?? 3, ghosts = Array.from({ length: nG }, (_, i) => body.landmarks(body.fk(body.poseAt(keys, (i + 1) / (nG + 1), B).q, B)));
+  const P = (w: V) => cam.P(w) as V, lm = { start: L.lm.start, end: L.lm.end };
+  const seg = (l: any, s: string) => ({ up: dist(P(l[`shoulder.${s}`]), P(l[`elbow.${s}`])) * PX, fore: dist(P(l[`elbow.${s}`]), P(l[`wrist.${s}`])) * PX });
+  const arms = [...['l', 'r'].map(s => ({ who: `start ${s}`, s, ...seg(lm.start, s) })), ...ghosts.map((g: any, i: number) => ({ who: `ghost ${i} r`, s: 'r', ...seg(g, 'r') })),
+    ...['l', 'r'].map(s => ({ who: `end ${s}`, s, ...seg(lm.end, s) }))];
+  const startGrips = ['l', 'r'].map(s => ({ s, dx: (P(lm.start[`grip.${s}`])[0]! - P(lm.start[`shoulder.${s}`])[0]!) * PX, above: P(lm.start[`grip.${s}`])[1]! < P(lm.start[`shoulder.${s}`])[1]!,
+    reach: dist(P(lm.start[`shoulder.${s}`]), P(lm.start[`grip.${s}`])) * PX, endReach: dist(P(lm.end[`shoulder.${s}`]), P(lm.end[`grip.${s}`])) * PX }));
+  // bench: every `eq` path (uprights, feet, pad); the shoulders' and hips' screen y; the body midline
+  const eq = paths(rN.svg, 'eq'), shY = Math.min(...['l', 'r'].map(s => P(lm.end[`shoulder.${s}`])[1]!)), hipY = Math.max(...['l', 'r'].map(s => P(lm.end[`hip.${s}`])[1]!));
+  const shX = ['l', 'r'].map(s => P(lm.end[`shoulder.${s}`])[0]!), midX = P([0, 0, 0])[0]!;
+  const box = (p: V[]) => ({ x0: Math.min(...p.map(q => q[0]!)), x1: Math.max(...p.map(q => q[0]!)), y0: Math.min(...p.map(q => q[1]!)), y1: Math.max(...p.map(q => q[1]!)), n: uniq(p).length });
+  // dumbbells: the drawn `disc` paths (end and ghost), the dashed start rings, each with the grip it belongs to
+  const grips = [...['l', 'r'].map(s => ({ who: `end ${s}`, g: P(lm.end[`grip.${s}`]) })), ...ghosts.map((g: any, i: number) => ({ who: `ghost ${i} r`, g: P(g['grip.r']) })),
+    ...['l', 'r'].map(s => ({ who: `start ${s}`, g: P(lm.start[`grip.${s}`]) }))];
+  // the ghost layers draw their equipment as `<use>` of defs: the dumbbell defs with 6 or more points (the core circle has fewer)
+  const defs = new Map([...rN.svg.matchAll(/<path id="([^"]+)" d="([^"]+)"/g)].map(x => [x[1]!, x[2]!]));
+  const ghostDb = [...new Set([...rN.svg.matchAll(/<g class="ghost"[\s\S]*?(?=<g class="ghost"|<g class="pose-end")/g)]
+    .flatMap(g => [...g[0].matchAll(/<use href="#([^"]+dumbbell[^"]*)"/g)].map(u => u[1]!)))].map(id => ptsOf(defs.get(id) ?? '')).filter(p => p.length >= 6);
+  const discs = [...paths(rN.svg, 'disc'), ...ghostDb], rings = paths(rN.svg, 'eq-line m-line');
+  const dumbbells = [...discs, ...rings].map(p => { const h = hexOf(p), b = box(p), c = [(b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2];
+    const near = grips.reduce((x, y) => (dist(y.g, c) < dist(x.g, c) ? y : x)); return { who: near.who, hex: h, off: h ? dist(h.c, near.g) * PX : Infinity }; });
+  // Mistake: per hand region (22 px round the end grip) the red hand guides and red hexes; the same in the zoom circle,
+  // with the solid hex and the forearm mapped into it (zoom point = C + k (plate point - source centre))
+  const red = redOf(rM.svg), hands = ['l', 'r'].map(s => { const G = P(lm.end[`grip.${s}`]), near = (p: V[]) => p.some(q => dist(q, G) <= 22);
+    return { s, G, W: P(lm.end[`wrist.${s}`]), E: P(lm.end[`elbow.${s}`]), hands: red.hands.filter(near), hexes: red.hexes.filter(near) }; });
+  const z = Z.zoomOf(spec, { prefix: 'pf4' }), C = (z.svg.match(/data-c="(-?[\d.]+) (-?[\d.]+)"/) ?? []).slice(1).map(Number), F = (z.svg.match(/data-src="(-?[\d.]+) (-?[\d.]+)"/) ?? []).slice(1).map(Number);
+  const zmap = (p: V) => [C[0]! + z.k * (p[0]! - F[0]!), C[1]! + z.k * (p[1]! - F[1]!)];
+  const zred = redOf(z.svg), inZ = (p: V[]) => p.some(q => dist(q, C) <= 52), side = hands.reduce((a, b) => (dist(b.G, F) < dist(a.G, F) ? b : a));
+  const zDisc = paths(z.svg, 'disc').map(hexOf).filter(Boolean).find((h: any) => dist(h.c, zmap(side.G)) < 2) as any;
+  return { arms, startGrips, eq: eq.map(box), shY, hipY, shX, midX, pitch: cam.pitch, pxm: cam.pxm, dumbbells, hands,
+    zoom: { k: z.k, hands: zred.hands.filter(inZ), hexes: zred.hexes.filter(inZ), W: zmap(side.W), E: zmap(side.E), G: zmap(side.G), solidRot: zDisc?.rot ?? NaN, s: side.s } };
 };
 
-/** Everything the checks read: per hand, the red dashed outlines in its region, the solid outlines, the fit; the zoom's red outlines. */
-const measure = (spec: any) => {
-  const r = plate.renderPlate(spec, { id: 'pf4', mistake: true }), cam = qe.cameraOf(spec, r.report);
-  const L = qe.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: equip.PRIMITIVES, body }, spec);
-  const red = redDashed(r.svg), solid = solidEnd(r.svg);
-  const hands = ['l', 'r'].map(s => {
-    const G = cam.P(L.lm.end[`grip.${s}`]) as V, W = cam.P(L.lm.end[`wrist.${s}`]) as V;
-    const reds = red.filter(p => p.some(q => dist(q, G) <= RG)), greys = solid.filter(p => p.length && p.every(q => dist(q, G) <= RG));
-    return { s, G, W, reds, greys };
-  });
-  const z = Z.zoomOf(spec, { prefix: 'pf4' }), zc = z.svg.match(/data-c="(-?[\d.]+) (-?[\d.]+)"/)!, C = [+zc[1]!, +zc[2]!];
-  const zr = redDashed(z.svg).filter(p => p.some(q => dist(q, C) <= 52));
-  return { hands, zoom: { k: z.k, reds: zr } };
+/** One red hand and its hex against the forearm E -> W (any scale k; px out at plate scale): the bend off the forearm (deg),
+ *  the hex's turn against the solid hex (deg mod 60), its centre's offset from the hand's grip end, its size, the drop. */
+const bent = (hand: V[], hexPts: V[], E: V, W: V, solidRot: number, k: number) => {
+  if (uniq(hand).length < 2) return { hex: false, bend: NaN, drop: NaN, turn: NaN, off: NaN, across: NaN };
+  const h = hexOf(hexPts), g = handEnd(hand, W), f = Math.atan2(W[1]! - E[1]!, W[0]! - E[0]!), a = Math.atan2(g[1]! - W[1]!, g[0]! - W[0]!);
+  let b = Math.abs(deg(a - f)); if (b > 180) b = 360 - b;
+  return { hex: !!h, bend: b, drop: g[1]! - W[1]!, turn: h ? angDiff60(h.rot, solidRot) : NaN, off: h ? dist(h.c, g) / k * PX : NaN, across: h ? h.across / k : NaN };
 };
-/** The measures of one hand: count, the fit of the solid outline turned about the wrist, scale ratios, drop of the centre. */
-const handMeasures = (h: any) => {
-  const redPts = h.reds.flat(), greyPts = h.greys.flat();
-  const fit = fitTurn(h.reds.flatMap((p: V[]) => sample(closed(p), 1)), h.greys.flatMap((p: V[]) => sample(closed(p), 0.25)), h.W);
-  const cy = (ps: V[]) => ps.reduce((t, p) => t + p[1]!, 0) / ps.length;
-  return { n: h.reds.length, fit, dRatio: diameter(redPts) / diameter(greyPts), aRatio: hullArea(redPts) / hullArea(greyPts), drop: cy(redPts) - cy(greyPts), diam: diameter(redPts) };
-};
+const zoomPiece = (m: any) => bent(m.zoom.hands[0] ?? [], m.zoom.hexes[0] ?? [], m.zoom.E, m.zoom.W, m.zoom.solidRot, m.zoom.k);
+
 const problems = (m: any) => {
   const bad: string[] = [];
-  for (const h of m.hands) {
-    const x = handMeasures(h);
-    if (x.n !== 1) bad.push(`${h.s}: ${x.n} red dashed outlines in the hand region`);
-    if (!(x.fit.mean <= 0.6 && x.fit.max <= 1.6)) bad.push(`${h.s}: not the solid hand-plus-dumbbell turned about the wrist (residual ${x.fit.mean.toFixed(2)} / ${x.fit.max.toFixed(2)} px)`);
-    if (!(Math.abs(x.fit.deg) >= 20 && Math.abs(x.fit.deg) <= 35)) bad.push(`${h.s}: turned ${x.fit.deg.toFixed(1)} deg about the wrist`);
-    if (!(x.drop >= 2)) bad.push(`${h.s}: the turned piece not toward the floor (centre ${x.drop.toFixed(2)} px)`);
-    if (!(Math.abs(x.dRatio - 1) <= 0.1 && Math.abs(x.aRatio - 1) <= 0.1)) bad.push(`${h.s}: scale ${x.dRatio.toFixed(3)} (diameter) / ${x.aRatio.toFixed(3)} (hull area)`);
+  // 1. no upright rectangle behind the head: no bench path reaches above the shoulders
+  for (const b of m.eq) if (b.y0 < m.shY) bad.push(`bench: a ${((b.x1 - b.x0) * PX).toFixed(1)} x ${((b.y1 - b.y0) * PX).toFixed(1)} px shape reaches ${((m.shY - b.y0) * PX).toFixed(1)} px above the shoulders`);
+  // 2. the pad end-on: one low band (4 corners, 12-20 px high, at least 4x as wide), centred on the midline +-1 px,
+  //    between the shoulder joints, below the hip joints (under the torso)
+  const bands = m.eq.filter((b: any) => b.n === 4 && (b.x1 - b.x0) >= 4 * (b.y1 - b.y0) && (b.y1 - b.y0) * PX >= 12 && (b.y1 - b.y0) * PX <= 20
+    && Math.abs((b.x0 + b.x1) / 2 - m.midX) * PX <= 1 && b.x0 >= Math.min(...m.shX) && b.x1 <= Math.max(...m.shX) && b.y0 > m.hipY);
+  if (bands.length !== 1) bad.push(`pad: ${bands.length} low end-on bands under the torso`);
+  // 3. each arm segment at its drawn length: every start and ghost segment within 1 px of the end arm's
+  for (const a of m.arms.filter((x: any) => !x.who.startsWith('end'))) {
+    const e = m.arms.find((x: any) => x.who === `end ${a.s}`);
+    for (const k of ['up', 'fore']) if (Math.abs(a[k] - e[k]) > 1) bad.push(`${a.who} ${k}: ${a[k].toFixed(2)} px, end ${e[k].toFixed(2)} px`);
   }
-  if (m.zoom.reds.length !== 1) bad.push(`zoom: ${m.zoom.reds.length} red dashed outlines`);
+  // 4. the start grips straight above the shoulders (+-3 px) on the same arm length (shoulder to grip within 1 px of the end's)
+  for (const g of m.startGrips) {
+    if (!(g.above && Math.abs(g.dx) <= 3)) bad.push(`start ${g.s}: grip ${g.dx.toFixed(2)} px off the shoulder's vertical`);
+    if (Math.abs(g.reach - g.endReach) > 1) bad.push(`start ${g.s}: reach ${g.reach.toFixed(2)} px, end ${g.endReach.toFixed(2)} px`);
+  }
+  // 5. every dumbbell an end-on hex 32-38 px across, centred on its grip +-1.5 px: 2 end, the ghost's, 2 start rings
+  const want = ['end l', 'end r', ...m.arms.filter((a: any) => a.who.startsWith('ghost')).map((a: any) => a.who), 'start l', 'start r'];
+  for (const w of want) {
+    const ds = m.dumbbells.filter((d: any) => d.who === w);
+    if (ds.length !== 1) { bad.push(`${w}: ${ds.length} dumbbell drawings`); continue; }
+    const d = ds[0];
+    if (!d.hex) bad.push(`${w}: dumbbell not a hex`);
+    else {
+      if (!(d.hex.across >= 32 && d.hex.across <= 38)) bad.push(`${w}: hex ${d.hex.across.toFixed(2)} px across`);
+      if (d.off > 1.5) bad.push(`${w}: hex ${d.off.toFixed(2)} px off its grip`);
+    }
+  }
+  if (m.dumbbells.length !== want.length) bad.push(`${m.dumbbells.length} dumbbell drawings, not ${want.length}`);
+  // 6. the Mistake: per hand one red bent hand and one red hex; in the zoom one each
+  for (const h of m.hands) {
+    if (h.hands.length !== 1 || h.hexes.length !== 1) { bad.push(`${h.s}: ${h.hands.length} red hands and ${h.hexes.length} red hexes in the hand region`); continue; }
+    const x = bent(h.hands[0], h.hexes[0], h.E, h.W, 0, 1);
+    if (!x.hex) bad.push(`${h.s}: red dumbbell not a hex`);
+    else {
+      if (!(x.across >= 32 && x.across <= 38)) bad.push(`${h.s}: red hex ${x.across.toFixed(2)} px across`);
+      if (x.off > 1.5) bad.push(`${h.s}: red hex ${x.off.toFixed(2)} px off the hand's grip`);
+    }
+  }
+  if (m.zoom.hands.length !== 1 || m.zoom.hexes.length !== 1) bad.push(`zoom: ${m.zoom.hands.length} red hands and ${m.zoom.hexes.length} red hexes`);
   else {
-    const zl = m.hands.find((h: any) => h.reds.length).reds, zd = diameter(m.zoom.reds[0]) / diameter(zl.flat());
-    if (!(Math.abs(zd / m.zoom.k - 1) <= 0.1)) bad.push(`zoom: the piece at ${zd.toFixed(2)} x the plate piece, not k ${m.zoom.k}`);
+    // 7. in the zoom: the red hand bent 25-35 deg off the forearm at the wrist, toward the floor; the red dumbbell a hex
+    //    at the hand's grip (+-1.5 px), not turned against the solid hex (+-2 deg; the forearm is the solid's)
+    const z = zoomPiece(m);
+    if (!z.hex) bad.push('zoom: the red dumbbell is not a hex');
+    else {
+      if (!(z.bend >= 25 && z.bend <= 35)) bad.push(`zoom: red hand ${z.bend.toFixed(1)} deg off the forearm`);
+      if (!(z.drop > 0)) bad.push('zoom: the red hand not toward the floor');
+      if (z.turn > 2) bad.push(`zoom: red dumbbell turned ${z.turn.toFixed(1)} deg against the forearm`);
+      if (z.off > 1.5) bad.push(`zoom: red hex ${z.off.toFixed(2)} px off the hand's grip`);
+    }
   }
   return bad;
 };
 
-describe('PF4 dumbbell_fly: one red hand-plus-dumbbell piece at the hand\'s scale, turned about the wrist', { timeout: T }, () => {
+describe('PF4 dumbbell_fly (pf12 fix round): a lying figure seen from the feet, every dumbbell an end-on hex, the red hand bent at the wrist', { timeout: T }, () => {
   let m: any;
   beforeAll(() => {
     m = measure(S);
-    for (const h of m.hands) { const x = handMeasures(h); console.log(`PF4 dumbbell_fly ${h.s}: ${x.n} red dashed, turn ${x.fit.deg} deg (residual ${x.fit.mean.toFixed(2)} / ${x.fit.max.toFixed(2)} px), drop ${x.drop.toFixed(2)} px, diameter ${x.dRatio.toFixed(3)}, hull area ${x.aRatio.toFixed(3)}`); }
-    console.log(`PF4 dumbbell_fly zoom: ${m.zoom.reds.length} red dashed, k ${m.zoom.k}`);
+    console.log('PF4 fly arms', m.arms.map((a: any) => `${a.who} ${a.up.toFixed(2)}/${a.fore.toFixed(2)}`).join('; '));
+    console.log('PF4 fly start grips', m.startGrips.map((g: any) => `${g.s} dx ${g.dx.toFixed(2)} reach ${g.reach.toFixed(2)} (end ${g.endReach.toFixed(2)})`).join('; '));
+    console.log('PF4 fly bench', m.eq.map((b: any) => `${((b.x1 - b.x0) * PX).toFixed(1)}x${((b.y1 - b.y0) * PX).toFixed(1)}@${(b.y0 * PX).toFixed(1)}`).join(' '), `shoulders y ${(m.shY * PX).toFixed(1)} hips y ${(m.hipY * PX).toFixed(1)}`);
+    console.log('PF4 fly dumbbells', m.dumbbells.map((d: any) => `${d.who} ${d.hex ? `${d.hex.across.toFixed(2)} px, off ${d.off.toFixed(2)}` : 'not a hex'}`).join('; '));
+    console.log('PF4 fly zoom', JSON.stringify(zoomPiece(m)));
   }, T);
-  it('per hand ONE red dashed outline; in the zoom ONE', () => {
-    expect(m.hands.map((h: any) => h.reds.length)).toEqual([1, 1]);
-    expect(m.zoom.reds.length).toBe(1);
-  });
-  it('the piece is the solid hand, fist and dumbbell turned 23.0 deg about the wrist toward the floor (the wrist bend), residual <= 0.6 px', () => {
-    for (const h of m.hands) { const x = handMeasures(h); expect(Math.abs(x.fit.deg)).toBeCloseTo(23.0, 0); expect(x.fit.mean).toBeLessThanOrEqual(0.6); expect(x.drop).toBeGreaterThanOrEqual(2); }
-  });
-  it('the piece is at the hand\'s scale: diameter and hull area within 10% of the solid\'s; the zoom piece at k x the plate piece', () => {
+  it('every ruled measure holds', () => {
     expect(problems(m)).toEqual([]);
   });
-  it('mutations: an extra outline (the red fist back), the piece unturned, turned 45 deg, scaled 1.15, and the zoom piece at 2 x, are red', () => {
-    const one = (f: (x: any) => any) => problems(f(structuredClone(m)));
-    const onHands = (f: (h: any) => void) => (x: any) => { x.hands.forEach(f); return x; };
-    expect(one(onHands(h => h.reds.push(h.greys.find((p: V[]) => p.length === 37))))).toContain('l: 2 red dashed outlines in the hand region');
-    expect(one(x => { x.zoom.reds.push(x.zoom.reds[0]); return x; })).toContain('zoom: 2 red dashed outlines');
-    const unturned = one(onHands(h => { const d = handMeasures(h).fit.deg; h.reds = h.reds.map((p: V[]) => p.map(q => turn(q, h.W, -d))); }));
-    expect(unturned.some(p => /^l: turned 0\.0 deg/.test(p))).toBe(true);
-    const over = one(onHands(h => { const d = handMeasures(h).fit.deg; h.reds = h.reds.map((p: V[]) => p.map(q => turn(q, h.W, Math.sign(d) * 22))); }));
-    expect(over.some(p => /^l: turned -?45\.0 deg/.test(p))).toBe(true);
-    const big = one(onHands(h => { const c = h.reds[0].reduce((t: V, p: V) => [t[0]! + p[0]! / h.reds[0].length, t[1]! + p[1]! / h.reds[0].length], [0, 0]); h.reds = h.reds.map((p: V[]) => p.map(q => [c[0]! + (q[0]! - c[0]!) * 1.15, c[1]! + (q[1]! - c[1]!) * 1.15])); }));
-    expect(big.some(p => /^l: scale 1\.1/.test(p))).toBe(true);
-    const z2 = one(x => { const c = x.zoom.reds[0][0]; x.zoom.reds = [x.zoom.reds[0].map((q: V) => [c[0] + (q[0]! - c[0]) * 0.8, c[1] + (q[1]! - c[1]) * 0.8])]; return x; });
-    expect(z2.some(p => /^zoom: the piece at 2\.0\d x/.test(p))).toBe(true);
+  it('mutations: each threshold turns red', () => {
+    const one = (f: (x: any) => void) => { const x = structuredClone(m); f(x); return problems(x); };
+    // 1. an upright rectangle behind the head (the base's pad top face): a bench shape reaching above the shoulders
+    expect(one(x => x.eq.push({ x0: 158, x1: 200, y0: x.shY - 20, y1: x.shY + 10, n: 4 })).some(p => /^bench: .* above the shoulders/.test(p))).toBe(true);
+    // 2. the band 21 px high, 1.5 px off the midline, above the hips: each red
+    const band = (f: (b: any) => void) => one(x => { const b = x.eq.find((q: any) => q.n === 4 && q.y0 > x.hipY && (q.y1 - q.y0) * PX >= 12 && (q.y1 - q.y0) * PX <= 20); f(b); });
+    expect(band(b => { b.y1 = b.y0 + 21 / PX; })).toContain('pad: 0 low end-on bands under the torso');
+    expect(band(b => { b.y1 = b.y0 + 11 / PX; })).toContain('pad: 0 low end-on bands under the torso');
+    expect(band(b => { b.x0 += 1.5 / PX; b.x1 += 1.5 / PX; })).toContain('pad: 0 low end-on bands under the torso');
+    expect(one(x => { for (const b of x.eq) if (b.n === 4 && b.y0 > x.hipY) { const h = b.y1 - b.y0; b.y0 = x.hipY - 1; b.y1 = b.y0 + h; } })).toContain('pad: 0 low end-on bands under the torso');
+    // 3. a start segment 1.1 px short (the pitch's foreshortening)
+    expect(one(x => { x.arms[0].up -= 1.1 + (x.arms[0].up - x.arms.find((a: any) => a.who === 'end l').up); }).some(p => /^start l up/.test(p))).toBe(true);
+    expect(one(x => { const g = x.arms.find((a: any) => a.who.startsWith('ghost')); g.fore += 1.1 - (g.fore - x.arms.find((a: any) => a.who === 'end r').fore); }).some(p => /^ghost 0 r fore/.test(p))).toBe(true);
+    // 4. a start grip 3.1 px off the shoulder's vertical; its reach 1.1 px short
+    expect(one(x => { x.startGrips[1].dx = 3.1; }).some(p => /^start r: grip 3\.10 px off/.test(p))).toBe(true);
+    expect(one(x => { x.startGrips[0].reach = x.startGrips[0].endReach - 1.1; }).some(p => /^start l: reach/.test(p))).toBe(true);
+    // 5. a hex 31.9 and 38.1 px across, 1.6 px off its grip, a side-on drawing (no hex), one missing
+    const db = (w: string, f: (d: any) => void) => one(x => f(x.dumbbells.find((d: any) => d.who === w)));
+    expect(db('end r', d => { d.hex.across = 31.9; })).toContain('end r: hex 31.90 px across');
+    expect(db('start l', d => { d.hex.across = 38.1; })).toContain('start l: hex 38.10 px across');
+    expect(db('ghost 0 r', d => { d.off = 1.6; })).toContain('ghost 0 r: hex 1.60 px off its grip');
+    expect(db('start r', d => { d.hex = null; })).toContain('start r: dumbbell not a hex');
+    expect(one(x => { x.dumbbells = x.dumbbells.filter((d: any) => d.who !== 'end l'); })).toContain('end l: 0 dumbbell drawings');
+    // 6. a second red hand at a hand region and in the zoom; a red hex 31.9 px across, 1.6 px off the hand's grip, not a hex
+    expect(one(x => { x.hands[0].hands.push(x.hands[0].hands[0]); })).toContain('l: 2 red hands and 1 red hexes in the hand region');
+    expect(one(x => { x.zoom.hexes.push(x.zoom.hexes[0]); })).toContain('zoom: 1 red hands and 2 red hexes');
+    const scaleHex = (p: V[], f: number) => { const c = hexOf(p)!.c; return p.map(q => [c[0]! + (q[0]! - c[0]!) * f, c[1]! + (q[1]! - c[1]!) * f]); };
+    const a0 = bent(m.hands[1].hands[0], m.hands[1].hexes[0], m.hands[1].E, m.hands[1].W, 0, 1).across;
+    expect(one(x => { x.hands[1].hexes[0] = scaleHex(x.hands[1].hexes[0], 31.9 / a0); })).toContain('r: red hex 31.90 px across');
+    expect(one(x => { x.hands[0].hexes[0] = x.hands[0].hexes[0].map((q: V) => [q[0]! + 1.6 / PX, q[1]!]); }).some(p => /^l: red hex 1\.5[1-9] px off/.test(p))).toBe(true);
+    expect(one(x => { x.hands[0].hexes[0] = x.hands[0].hexes[0].slice(0, 4); })).toContain('l: red dumbbell not a hex');
+    // 7. the red hand at 24 and 36 deg (hand and hex turned about the wrist), bent up, the hex turned 3 deg about its centre,
+    //    the hex 1.6 px off the hand's grip, and the previous round's piece (the hex turned with the hand, 23 deg)
+    const turnAbout = (p: V[], c: V, d: number) => { const t = d * Math.PI / 180; return p.map(q => [c[0]! + (q[0]! - c[0]!) * Math.cos(t) - (q[1]! - c[1]!) * Math.sin(t), c[1]! + (q[0]! - c[0]!) * Math.sin(t) + (q[1]! - c[1]!) * Math.cos(t)]); };
+    const z0 = zoomPiece(m), g0 = handEnd(m.zoom.hands[0], m.zoom.W), f0 = Math.atan2(m.zoom.W[1] - m.zoom.E[1], m.zoom.W[0] - m.zoom.E[0]);
+    const sgn = Math.sign(Math.sin(Math.atan2(g0[1]! - m.zoom.W[1], g0[0]! - m.zoom.W[0]) - f0));   // the bend's screen sense
+    const both = (d: number) => one(x => { x.zoom.hands[0] = turnAbout(x.zoom.hands[0], x.zoom.W, d); x.zoom.hexes[0] = turnAbout(x.zoom.hexes[0], x.zoom.W, d); });
+    expect(both(sgn * (24 - z0.bend)).some(p => /^zoom: red hand 24\.0 deg/.test(p))).toBe(true);
+    expect(both(sgn * (36 - z0.bend)).some(p => /^zoom: red hand 36\.0 deg/.test(p))).toBe(true);
+    expect(both(-sgn * 2 * z0.bend).some(p => /^zoom: the red hand not toward the floor/.test(p))).toBe(true);
+    expect(one(x => { x.zoom.hexes[0] = turnAbout(x.zoom.hexes[0], hexOf(x.zoom.hexes[0])!.c, 3); })).toContain('zoom: red dumbbell turned 3.0 deg against the forearm');
+    expect(one(x => { x.zoom.hexes[0] = x.zoom.hexes[0].map((q: V) => [q[0]!, q[1]! + 1.6 / PX * x.zoom.k]); }).some(p => /^zoom: red hex 1\.60 px off/.test(p))).toBe(true);
+    expect(one(x => { x.zoom.hexes[0] = turnAbout(x.zoom.hexes[0], hexOf(x.zoom.hexes[0])!.c, 23); }).some(p => /^zoom: red dumbbell turned/.test(p))).toBe(true);
   });
-  it('mutation (the spec): the engine\'s red fists back in the Mistake outline is red (2 outlines per hand)', () => {
-    const fists = { ...S, mistake: { ...S.mistake, parts: [...S.mistake.parts, 'fist.l', 'fist.r'] } };
-    const p = problems(measure(fists));
-    expect(p).toContain('l: 2 red dashed outlines in the hand region');
+  it('mutation (the spec): the camera back at pitch 45 is red (segments, start reach, side-on dumbbells)', () => {
+    const p = problems(measure({ ...S, camera: { ...S.camera, pitch: 45 } }));
+    expect(p.some(x => /^start l up/.test(x))).toBe(true);
+    expect(p.some(x => /^start l: reach/.test(x))).toBe(true);
+    expect(p.some(x => /^end l: (dumbbell not a hex|[02-9] dumbbell drawings)$/.test(x))).toBe(true);
   });
 });
 
-// The other plate on PILOT-A3's plates page (reverse_lunge) and every dumbbell_fly fragment but the Mistake svg equal the
-// base page's (de91dd21, `howto-rebuild --page tests/howto/golden/library/pilot-a3.json page`, sha 476bff3a…9000).
-describe('PF4 dumbbell_fly: the rest of the pilot-a3 plates page is byte-equal to the base', { timeout: T }, () => {
+// The other plate on PILOT-A3's plates page (reverse_lunge) equals the base page's (claude/lib-platefix-4 @ b41db429,
+// `howto-rebuild --page tests/howto/golden/library/pilot-a3.json page`, sha 0ff2a970…5d0b7a).
+describe('PF4 dumbbell_fly: reverse_lunge on the pilot-a3 plates page is byte-equal to the base', { timeout: T }, () => {
   const BASE: Record<string, Record<string, string>> = {
     'reverse-lunge': {
       normalSvg: 'daef9d1853ad591429e164b58b585ded30d033815d2fdf325808142f098612be', normalOverlay: '6645b13ce61d9b41ff64f3783df4def786b61a1727ffe4259af0c34a6cc0b091',
@@ -163,14 +231,7 @@ describe('PF4 dumbbell_fly: the rest of the pilot-a3 plates page is byte-equal t
       cues: '1aafabb743a297bf7c4dbe6c5c9cb80f7a6686aa011524583e1cada148ea103d', alt: 'a1883259b099b3abe8c84d92f57e3a68286fef05761c15ceaca2b8e84d184f6c',
       mistakeAlt: '60290a011cf514287cd031deed5e9bd4b56cca18acd412b81c551576e06a70c0',
     },
-    'dumbbell-fly': {
-      normalSvg: 'c3a420c1295211b0acd2414742301abddd38a5be3968a247ff1798cdf1f71b14', normalOverlay: 'dadc494a76933872c833c0038c3dadde0ad6f6cc990a7cff7ce87e1dd2a85102',
-      mistakeOverlay: 'eef0d8304521e5e051823d8e7586a93321134bf4f4313a01f97dcd285cb74012', tells: '303f982e855c2d57e3ae65dcaa5373bbcfa3602ebb32ab20afa0bad8ccd99057',
-      tempo: '068b430b9f93540419c35cfda571eec309fa309590c663464f12ba0ef540d72c', cues: '48b33bc83e9836febc01b1ddd6d9cfc7a0d9438f1b71bd4e570101d8b1d5eb71',
-      alt: 'e140bcf8c1c9df67088b08c8acb87e03b2204df337d5acc30da8b0b175bc508d', mistakeAlt: 'b0e6a27253bf73061f153fdf8da1749854812c9b028b90e4528060e048600fb1',
-    },
   };
-  const BASE_FLY_MISTAKE_SVG = 'b223436c741d459358b99059abdd70dc1eff3a2dcf267327f2250fbb1a662035';
   let html = '';
   beforeAll(async () => { html = (await build.buildPa3Page()).html.toString('utf8'); }, T);
   const fragProblems = (h: string) => {
@@ -180,10 +241,8 @@ describe('PF4 dumbbell_fly: the rest of the pilot-a3 plates page is byte-equal t
       for (const k of Object.keys(want)) if (got[k] !== want[k]) bad.push(`${c} ${k}`); }
     return bad;
   };
-  it('reverse_lunge\'s 9 fragments and 8 of dumbbell_fly\'s equal the base; dumbbell_fly\'s Mistake svg is the one that moved', () => {
+  it('reverse_lunge\'s 9 fragments equal the base', () => {
     expect(fragProblems(html)).toEqual([]);
-    const fly = golden.fragmentsOf(golden.extractPlates(html).find((x: any) => x.chromeId === 'dumbbell-fly'));
-    expect(fly.mistakeSvg).not.toBe(BASE_FLY_MISTAKE_SVG);
   });
   it('mutation: one byte changed in reverse_lunge\'s Mistake alt is red', () => {
     const p = golden.extractPlates(html).find((x: any) => x.chromeId === 'reverse-lunge'), alt = p.mistakeAlt ?? '';
