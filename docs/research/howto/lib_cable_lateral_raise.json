@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=61c36204a7e28fd3e2c91a3b7579e78cc1dfaecb49564c1baccb9d7e6a563bcb
+{
+  "id": "lib_cable_lateral_raise",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/cable_lateral_raise.json",
+    "rev": 1
+  },
+  "sources": [
+    "mo-cable-lat-raise",
+    "sl-cable-lat-raise",
+    "fv-cable-lat-raise",
+    "larsen2025",
+    "kolber2014",
+    "hold-default",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

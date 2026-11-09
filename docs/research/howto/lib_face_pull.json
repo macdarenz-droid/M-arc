@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=69feb1df9c0036156fe12bd021cb2b02c99d38610b2a41f1b6313f02cbdc8356
+{
+  "id": "lib_face_pull",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/face_pull.json",
+    "rev": 1
+  },
+  "sources": [
+    "mo-face-pull",
+    "bb-face-pull",
+    "sl-face-pull",
+    "zhu-2025",
+    "ga-pull-base",
+    "pull-default",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

@@ -1,4 +1,17 @@
 {
  "about": "F-ZOOM-NONE (#388, D-SHIP-TEXTZOOM): the library rows that ship with no drawn posture close-up. A row may be listed only when its sheet has no posture zoom and every posture zoom of its research card is a ruled text checkpoint: checkpoints maps each card zoom key to the sheet's posture checkpoint key that carries it. ruling must be one of gen/zooms.mjs TEXT_ZOOM_RULINGS. Checked by gen/zooms.mjs textZoomRow. Entries are added by the wave that ships the row.",
- "entries": {}
+ "entries": {
+  "lib_machine_pullover": {
+   "ruling": "D-SHIP-TEXTZOOM",
+   "checkpoints": {
+    "pullover-pivot": "pivot"
+   }
+  },
+  "lib_smith_machine_shoulder_press": {
+   "ruling": "D-SHIP-TEXTZOOM",
+   "checkpoints": {
+    "smith-ohp-bench": "bench"
+   }
+  }
+ }
 }

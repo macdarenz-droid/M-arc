@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=c713774564b6bc8d5250eee308b2e638a7f6c2762e6f5af581e94a6e71feb993
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=9c7b2e0dca24e8732f969d0b291ec48a08864ec048a5532ccb995d946c05c6f0
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_front_squat",
