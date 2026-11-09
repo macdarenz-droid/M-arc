@@ -8,13 +8,14 @@
 // No hand zoom (D-SHIP-HANDW4, gap-ruled on tools/plates/library/hands/no-zoom.json): the card's hand zoom
 // `bar-low-palm` (c5) is a push heel-of-palm pair that golden B's engine cannot draw (D-LIB7-19). Its Right words are
 // the gripLine, its Wrong words the bent-back fault's alt.
-// Posture zoom `hips-on-bench` (c10): T, a text checkpoint (no zoom; the plate's Mistake is the bar path, c25). Its
-// Right and Wrong show in the hips mistake (fix and title; D-TEXT-PRINTED), and in copy.setupLine / copy.mistakeLine.
+// Posture zoom `hips-on-bench` (c10): drawn since LIB-PLATEFIX-4 item 19 (zooms below; it was T, a text checkpoint). Its
+// Right and Wrong also show in the hips mistake (fix and title; D-TEXT-PRINTED), and in copy.setupLine / copy.mistakeLine.
 // Way out (c6, c7): the shared equipment-move card docs/research/howto/shared/unrack-rerack.json (press-rack) covers this
 // id; no W2/W3 sheet imports a shared equipment-move card (lib_barbell_overhead_press writes its own rack steps), so the
 // pins and spotter steps are this card's own (c6, c7, c27).
 // Red flags: the card's redFlags (shoulder, wrist), golden B's shared boxes.
-import plateSpec from '../specs/barbell_bench_press.mjs';
+import plateSpec, { bisect } from '../specs/barbell_bench_press.mjs';
+import { landmarksOf, fk, resolve, normPose } from '../engine.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER };
 
@@ -83,9 +84,46 @@ export const stills = {
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
-// None: the hand zoom `bar-low-palm` is gap-ruled (D-SHIP-HANDW4, above) and the posture zoom `hips-on-bench` is a
-// text checkpoint (T, above).
-const zooms = [];
+// The hand zoom `bar-low-palm` is gap-ruled (D-SHIP-HANDW4, above). LIB-PLATEFIX-4 item 19 (PF3 item 19, #391
+// 6653791551): the posture zoom `hips-on-bench` (c10) is drawn, a multi-joint close-up pose. The plate's Mistake is the
+// bar path (c25), so the Wrong pose is the sheet's own: the end pose with the buttock HIPS_LIFT off the pad while the
+// upper back and the skull stay on it (root, trunk and neck solved together, the spec's supine class with the hips-up
+// `lift` of dumbbell_bench_press's supine(); the feet stay planted, so hips and knees follow). The Wrong is drawn solid
+// with a drop guide from the pad up to the lifted buttock, so the gap under the hips reads (smith_machine_bench_press's
+// approved `smith-bench-position` form, its card child).
+const HIPS_LIFT = 0.08;                               // buttock off the pad (m): dumbbell_bench_press's MISTAKE_LIFT (drawing value)
+const OCCIPUT = [0, 0.955, -0.056];                   // back of the skull on the side head outline (head frame, H): the spec's
+const hipsUp = (() => {
+  const H = plateSpec.body?.height ?? 1.75, body = { height: H }, top = plateSpec.equipment.find(e => e.type === 'bench').at[1];
+  const { tilt, at: [, , z] } = plateSpec.poses.end.root, at0 = { root: { at: [0, 0, z], tilt } };
+  const lm = p => landmarksOf(p, H), occ = p => fk(resolve(normPose(p, body), body).q, body).head(OCCIPUT);
+  const pad = lm(at0).buttock[1] - HIPS_LIFT;
+  const trunk = bisect(t => lm({ ...at0, trunk: t }).backUpper[1] - pad, -40, 30);
+  const neck = bisect(n => occ({ ...at0, trunk, neck: n })[1] - pad, -40, 60);
+  return { root: { at: [0, top - pad, z], tilt }, trunk, neck };
+})();
+export const HIPS_UP = hipsUp;
+const zooms = [
+  {
+    key: 'hips-on-bench', chip: 'Hips', heading: 'Hips on bench', kind: 'posture',
+    crop: { center: { at: 'buttock', pose: 'right', off: [0, -10] }, sizePx: 160 },
+    guides: [{ kind: 'drop', from: { at: 'buttock', pose: 'right', off: [0, 2] }, to: { at: 'buttock', pose: 'mistake', off: [0, 3] } }],
+    right: 'end',
+    wrong: { base: 'end', pose: HIPS_UP, solid: true },
+    callout: {
+      right: { text: 'Hips on bench', anchor: 'buttock' },
+      wrong: { text: 'Hips lifted', anchor: { at: 'buttock', pose: 'mistake' } },
+    },
+    caption: {
+      right: 'Buttocks on the bench, feet pressing the floor.',   // card zoom hips-on-bench Right (c10)
+      wrong: 'Hips lifted off the bench, low back over-arched.',  // card zoom hips-on-bench Wrong (c10)
+    },
+    alt: {
+      right: 'Side view, bottom of the press. Upper back and buttocks lie on the bench, both feet flat on the floor.',
+      wrong: 'Side view, bottom of the press. The hips lift off the bench and the low back arches. Feet stay flat.',
+    },
+  },
+];
 
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const HANDS = ['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right'];
@@ -123,7 +161,7 @@ const MISTAKES = [
     fix: 'Wrap your thumbs round the bar.' },
   // card handlingMistake c10 with the card zoom hips-on-bench (T) Wrong in the title and Right in the fix, and posture
   // point c1 (D-TEXT-PRINTED: copy.setupLine and copy.mistakeLine are not printed)
-  { key: 'hips', title: 'Hips lifting, low back over-arched', claim: CL.hips,
+  { key: 'hips', title: 'Hips lifting, low back over-arched', zoom: 'hips-on-bench', claim: CL.hips,
     fix: 'Buttocks down, feet pressing the floor. Lifted hips fail the rep.' },
 ];
 const RISKS = [
@@ -172,9 +210,9 @@ export default {
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c16 },
   ],
   posture: [
-    // card zoom hips-on-bench: T, a text checkpoint (Right and Wrong in mistakes[key=hips], D-TEXT-PRINTED).
+    // card zoom hips-on-bench: drawn (zooms above, PF4 item 19); Right and Wrong also in mistakes[key=hips].
     { key: 'hips', label: 'Hips down', detail: 'Buttocks on the bench, feet pressing the floor.',
-      anchor: { landmark: 'buttock', pose: 'end' }, claim: CL.hips },
+      anchor: { landmark: 'buttock', pose: 'end' }, zoom: 'hips-on-bench', claim: CL.hips },
     { key: 'blades', label: 'Blades together', detail: 'Shoulder blades together before you unrack.',
       anchor: { landmark: 'backUpper', pose: 'start' }, claim: CL.c12 },
     { key: 'elbows', label: 'Elbows tucked', detail: 'Elbows tucked in about 75 degrees as you lower.',
@@ -189,7 +227,7 @@ export default {
   ],
   feel,
   zooms,
-  chips: ['feel'],   // the zoom shell's chip row; no zoom on this sheet
+  chips: ['hips-on-bench', 'feel'],   // the zoom shell's chip row: the zoom key, then feel
   copy: {
     setupLine: 'Pins set. Buttocks on the bench, feet pressing the floor, blades together.',
     mistakeLine: "Hips lifted off the bench, low back over-arched? That rep counts as failed.",
