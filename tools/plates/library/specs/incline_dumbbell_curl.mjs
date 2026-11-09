@@ -148,7 +148,7 @@ export default {
     ],
     tells: [
       { key: 'elbows', text: 'Elbows<br>forward', anchor: { at: 'elbow.r', pose: 'mistake', off: [0, 7] }, cue: 'Your elbows drift forward as the dumbbells rise.' },
-      { key: 'shoulder', text: 'Shoulder<br>takes over', anchor: { at: 'shoulder.r', pose: 'mistake', off: [8, -2] }, cue: 'The arm comes forward and the shoulder takes the stretch off the biceps.' },
+      { key: 'shoulder', text: 'Arm comes<br>forward', anchor: { at: 'shoulder.r', pose: 'mistake', off: [8, -2] }, cue: 'The arm comes forward and the biceps lose stretch and tension.' },   // c4; D-SHIP-W5-PLATETEXT (#392 6652647984): text only
     ],
   },
   pilot: { drawableFault: 'top fault: the wrists bending (c11) cannot be seen side-on; drawn: the next fault, the elbows drifting forward (c4, c3)' },

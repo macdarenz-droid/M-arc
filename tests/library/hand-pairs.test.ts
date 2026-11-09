@@ -129,11 +129,34 @@ describe('LIB-7 A2: geometry of every drawn pair (G1-G9)', () => {
     // the pages the calibrated critic approved, sha256 over `id/fault\0svg\0` (computed on 23ac5bb before the fixes)
     const APPROVED = ['dumbbell_biceps_curl', 'alternating_dumbbell_curl', 'incline_dumbbell_curl', 'hammer_curl', 'cross_body_hammer_curl', 'barbell_curl', 'cable_curl', 'preacher_curl', 'reverse_curl', 'single_arm_lat_pulldown'];
     const h = createHash('sha256');
-    for (const id of APPROVED) for (const w of P.pairSpec(id).wrong) h.update(`${id}/${w.key}\0${P.renderPair(id, { fault: w.key }).svg}\0`);
+    // LIB-SHIP W5 D-SHIP-W5-EZNOTE (#392 6681700725): reverse_curl's drawn Right note is 'WRIST STRAIGHT' (c1, c6), once per
+    // svg and never 'MIDDLE OF PALM'; with that one note put back every APPROVED drawing hashes to the 10-03 pin, so no other
+    // id and nothing else of reverse_curl moved. The second pin is the drawings as they are now.
+    const now = createHash('sha256');
+    for (const id of APPROVED) for (const w of P.pairSpec(id).wrong) {
+      let svg = P.renderPair(id, { fault: w.key }).svg;
+      now.update(`${id}/${w.key}\0${svg}\0`);
+      if (id === 'reverse_curl') {
+        expect([w.key, svg.split('>WRIST STRAIGHT<').length - 1, /middle of palm/i.test(svg)]).toEqual([w.key, 1, false]);
+        svg = svg.replace('>WRIST STRAIGHT<', '>MIDDLE OF PALM<');
+      }
+      h.update(`${id}/${w.key}\0${svg}\0`);
+    }
     expect(h.digest('hex')).toBe('2f9d3b7fb5a560d5cfbaac2ca5cecfa73b8d356ccad837ed101081e1aa172829');
+    expect(now.digest('hex')).toBe('73468f08580e475632a4a10a23bdd66aaa9ac6daedbb9b7f17a0b4b7c957e4ba');
     const ez = P.renderPair('ez_bar_curl', { fault: 'curled' }).svg;
     expect(ez).toContain('>SEEN ALONG THE ANGLED GRIP<');
     expect(ez).toContain('aria-label="Seen along the angled grip.');
+  });
+  it('D-SHIP-W5-EZNOTE (#392 6681700725): only a named key draws its words Right text; a rightNote on any other key is refused', () => {
+    expect(P.WORDS_NOTE_KEYS).toEqual(['ez-curl-over']);
+    expect(P.pairSpec('reverse_curl').rightNote).toBe('Wrist straight');
+    for (const id of ['dumbbell_biceps_curl', 'hammer_curl', 'barbell_curl', 'ez_bar_curl']) expect([id, P.pairSpec(id).rightNote]).toEqual([id, P.pairSpec(id).mod.VARIANTS[P.pairSpec(id).variant].rightNote]);
+    const planted = withMods(m => { key(m, 'curl').IDS.hammer_curl.rightNote = 'Wrist straight'; });
+    expect(() => P.pairSpec('hammer_curl', P.indexOf(planted))).toThrow(/curl-dumbbell-neutral: rightNote on a key not named in WORDS_NOTE_KEYS/);
+    // the named key still takes a row's own note over its words text
+    const own = withMods(m => { key(m, 'ez').IDS.reverse_curl.rightNote = 'Planted note'; });
+    expect(P.pairSpec('reverse_curl', P.indexOf(own)).rightNote).toBe('Planted note');
   });
   it('G7: a rope with a handle core, or without its knob, fails', () => {
     const { spec, pages } = C.renderedPages('rope_triceps_pushdown');
@@ -401,8 +424,13 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
     const mine = C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'), 5, 'LIB-7 modules in the sheet pin');
     expect(mine.map((m: any) => m.KEY)).toEqual(['band', 'curl', 'd-handle', 'ez', 'rope']);
-    expect(sha256((await sheet.buildSheet({ mods: mine })).body)).toBe('fcd57af5c3721f4139208bd1e23d154dc4619e283c1fae4532b66b61affec919');
-    expect(sha256((await sheet.buildSheet({ critic: true, mods: mine })).body)).toBe('5feecaf0384735f0e6d7358c133bbda423da0d918874b5f691fd0e0348de6403');
+    // LIB-SHIP W5 D-SHIP-W5-EZNOTE (#392 6681700725): reverse_curl's two drawn Right notes read 'WRIST STRAIGHT'; with them put
+    // back the sheet is the approved one byte for byte, and the second pin of each pair is the sheet as it is now
+    const back = (b: string) => { expect(b.split('>WRIST STRAIGHT<').length - 1).toBe(2); return b.replaceAll('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'); };
+    const plain = (await sheet.buildSheet({ mods: mine })).body, critic = (await sheet.buildSheet({ critic: true, mods: mine })).body;
+    expect(sha256(back(plain))).toBe('fcd57af5c3721f4139208bd1e23d154dc4619e283c1fae4532b66b61affec919');
+    expect(sha256(back(critic))).toBe('5feecaf0384735f0e6d7358c133bbda423da0d918874b5f691fd0e0348de6403');
+    expect([sha256(plain), sha256(critic)]).toEqual(['6035e0e4ba7b1e942702141fb29011eead07efc573762a823ad0f3d48464eaec', 'abb48a3ab6b902529aa26b53b007c4f1546c65f6b87946a7ac983245e56d756f']);
     const own = (extra: any) => ({ KEY: 'zz-view', OWNER: 'LIB-12', VIEW: 'zz-view', FILE: 'x',
       render: ({ uid }: any) => ({ svg: `<svg class="hand-svg" viewBox="0 0 358 100" aria-label="View."><defs><path id="${uid}-r-a" d="M0 0Z"/></defs></svg>`, report: {} }),
       VARIANTS: { v: { archetype: 'palm-flat', wristRange: null, right: { view: 'zz-view' }, claims: { contact: ['shared/zz-view.json#c1'] },

@@ -1,0 +1,18 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ba93b4bb7d08898ff7898187772f725ddb463c23104d923289ae83cab2bbdf32
+{
+  "id": "lib_bodyweight_squat",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/bodyweight_squat.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-bwsquat",
+    "fry-2003",
+    "nhs-knee",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}

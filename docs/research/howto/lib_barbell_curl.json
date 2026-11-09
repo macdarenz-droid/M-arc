@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=32176e277c766714149302b759d05bc21b1df6afc94f237cf5be171e934849d7
+{
+  "id": "lib_barbell_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/barbell_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "sl-bbcurl",
+    "ace-bbcurl",
+    "marcolin-2018",
+    "sl-dbcurl",
+    "acsm-2009",
+    "hand-key-curl",
+    "nhs-wrist-pain"
+  ],
+  "riskFlags": [
+    "wrist"
+  ]
+}

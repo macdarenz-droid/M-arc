@@ -30,7 +30,8 @@ const HELD: string[] = [];
 // The released no-seconds ids: their tempo is tempoOf(LIB-STRIP's verified rows), D-STRIP-B / D-STRIP-AFALL.
 const RELEASED = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'pistol_squat', 'jump_squat',   // jump_squat: LIB-SMALL (strip cards row, j9 and j7)
   'step_up', ...SPLIT];   // LIB-SPLIT: the strip cards rows (D-STRIP-ROWS)
-const ROWS = 'tools/plates/library/lb4/rows.json';
+// LIB-SHIP W5 (D-SHIP-MOVE): the LB4 rows moved into batches/lb04.json; lb4/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb04.json';
 const RESEARCH_HEAD = '3812989f59c000705731f7944d7a1a275e86045d';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -134,21 +135,33 @@ describe('LIB-14 A5: lb4/rows.json holds exactly the drawn, non-held LB4 ids, al
 });
 
 describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => !['drawing', 'review'].includes(r.stage)).map(([id, r]) => `${id}: ${r.stage}`);
+  // LIB-SHIP W5 (D-SHIP-A9, ruling 3; D-SHIP-W5-FLIPSET #392 6682188871): replaces "every LB4 row is at stage drawing or
+  // review", its shipped/approved-plate mutations, "none of the 6 is shipped, even with lb4/rows.json read as a batch
+  // file", "no LB4 id ... in any batches/ file" and "no LB4 id ... in golden/library/" with the W5 ruled set as positive
+  // asserts: exactly W5's 4 LB4 ids ship; the other 8 stay approved-plate (held, goblet_squat included); every LB4 id
+  // lives in batches/lb04.json and nowhere else in batches/ (D-SHIP-MOVE).
+  const W5 = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat'];
+  const stageProblems = (rows: any[]) => drawn().map(i => `lib_${i}`).flatMap(id => {
+    const r = rows.find((x: any) => x.id === id), want = W5.includes(id) ? 'shipped' : 'approved-plate';
+    if (!r) return [`${id}: no row`];
+    return r.stage === want ? [] : [`${id}: ${r.stage}`];
+  });
   const someRow = { src: 'library/specs/wall_sit.mjs', slug: 'wall-sit', prefix: 'wall-sit', chromeId: 'wall-sit', mode: 'H', stage: 'drawing', view: 'side' };
-  it('every LB4 row is at stage drawing or review', () => {
-    expect(stageProblems(readJson(ROWS).rows)).toEqual([]);
+  it('LIB-SHIP W5: every LB4 row is at its ruled stage: W5\'s 4 shipped, the other 8 approved-plate', () => {
+    expect(stageProblems(reg.rows())).toEqual([]);
   });
-  it('mutations: one row set to shipped and one to approved-plate are red', () => {
-    const rows = readJson(ROWS).rows;
-    expect(stageProblems({ ...rows, lib_wall_sit: { ...someRow, stage: 'shipped' } })).toEqual(['lib_wall_sit: shipped']);
-    expect(stageProblems({ ...rows, lib_wall_sit: { ...someRow, stage: 'approved-plate' } })).toEqual(['lib_wall_sit: approved-plate']);
+  it('LIB-SHIP W5 reds: a W5 id back at approved-plate, a held id shipped, a held id at drawing and a dropped row are red', () => {
+    const rows = reg.rows();
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_front_squat' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_front_squat: approved-plate']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_wall_sit' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_wall_sit: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_goblet_squat' ? { ...r, ...someRow, stage: 'drawing' } : r)))).toEqual(['lib_goblet_squat: drawing']);
+    expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_wall_sit'))).toEqual(['lib_wall_sit: no row']);
   });
-  it('none of the 6 is shipped, even with lb4/rows.json read as a batch file', () => {
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
+  it('LIB-SHIP W5: the shipped LB4 ids are exactly W5\'s 4, in registry order; each drawn LB4 id is one registry row (lb04.json read once)', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W5);
+    const rows = reg.rows();
+    for (const id of drawn()) expect(rows.filter((r: any) => r.id === `lib_${id}`).length, id).toBe(1);
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
-    expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual([]);
   });
   /** An id or its slug as a whole token in a file's name or text. */
   const tokenHits = (ids: string[], name: string, text: string) => ids.flatMap(id => {
@@ -163,11 +176,20 @@ describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
     ...tokenHits(LB4, f, text),
   ]);
   const dirFiles = (dir: string): [string, string][] => (existsSync(dir) ? readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : []);
-  it('no LB4 id, slug or batch is in any tools/plates/library/batches/ file', () => {
-    expect(batchProblems(dirFiles('tools/plates/library/batches'))).toEqual([]);
+  // LIB-SHIP W5 (D-SHIP-MOVE; D-SHIP-A9, ruling 3): the two guards below were "no LB4 id, slug or batch is in any
+  // batches/ file" and "... in tests/howto/golden/library/"; the LB4 rows now live in batches/lb04.json and are pinned
+  // by golden lb04.json and its layers page, so every other file there is held to the same check, and lb04.json names
+  // each of the 12 drawn ids
+  it('LIB-SHIP W5: the LB4 ids, slugs and batch are in batches/lb04.json only, which names each drawn id (D-SHIP-MOVE)', () => {
+    const files = dirFiles('tools/plates/library/batches');
+    expect(batchProblems(files.filter(([f]) => f !== 'lb04.json'))).toEqual([]);
+    const own = files.find(([f]) => f === 'lb04.json')!;
+    expect(LB4.filter(id => tokenHits([id], own[0], own[1]).length > 0)).toEqual(drawn());
   });
-  it('no LB4 id, slug or batch is in tests/howto/golden/library/', () => {
-    expect(batchProblems(dirFiles('tests/howto/golden/library'))).toEqual([]);
+  it('LIB-SHIP W5: no LB4 id, slug or batch is in tests/howto/golden/library/ outside the lb04 pin and its layers page', () => {
+    const dir = 'tests/howto/golden/library', mine = ['lb04.json', 'lb04.layers.html'];
+    expect(batchProblems(dirFiles(dir).filter(([f]) => !mine.includes(f)))).toEqual([]);
+    for (const f of mine) expect([f, existsSync(join(dir, f))]).toEqual([f, true]);
   });
   it('mutations: rows.json copied into batches/, a golden file naming an LB4 id, a page-only lb4.json and front-squat.layers.html are red', () => {
     const rowsText = JSON.stringify({ batch: 'LB4', rows: { lib_wall_sit: someRow } }, null, 1);
@@ -225,10 +247,13 @@ describe('LIB-14 A11 (Do 6 a): the 6 cards and quotes are byte copies of the LB4
     const c = cardOf('wall_sit'); c.plate.view = 'front';
     expect(sha(canon(c))).not.toBe(cardsSha.cards.wall_sit);
   });
-  it('the How-to source of each LB4 id holds only its id and research card (D-LIB9a-HOWTOID)', async () => {
+  it('the How-to source of each LB4 id names its id and research card (D-LIB9a-HOWTOID; LIB-SHIP W5: full sheets, the one stub exact)', async () => {
     for (const id of LB4) {
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
-      expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+      // LIB-SHIP W5 (D-SHIP-A9, ruling 3): the stubs are full sheets now (W5, schema 1); each still names its id and its own
+      // card. goblet_squat has no W5 sheet, so its source stays exactly the stub (measured on this head)
+      if (id === 'goblet_squat') { expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } }); continue; }
+      expect(h, id).toMatchObject({ schema: 1, id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
   });
 });
@@ -573,12 +598,20 @@ describe('LIB-14 A8: the hold (D-LIB14-STEPUP; D-LIB14-NOSECS released for the o
     expect(hp.mutationE([])).toEqual(['held[0] (barbell_row) has no ruling']);
     expect(hp.mutationE([{ id: 'step_up', ruling: 'x' }])).toEqual(['held[0] (step_up) has no ruling']);   // a listed id: its own entry, as before
   });
-  it('every row resolves through candidateOf on the page built from rows.json (awaited child process)', async () => {
+  it('every row resolves through candidateOf on the pinned path on the page built from lb04.json; authoring is refused (awaited child process)', async () => {
     const [build, cand, golden] = await Promise.all(['lb4/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
     const mirror = golden.makeMirror(), E = await qaEng.loadEngine(mirror);
     try {
       const ids = Object.keys(readJson(ROWS).rows), clean = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: ${JSON.stringify(ids)} })).html;`);
-      for (const id of ids) await expect(cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean, engine: E, authoring: true }), id).resolves.toBeTruthy();
+      // LIB-SHIP W5 (D-SHIP-A9, ruling 3; authoring QA to the pinned path): every row is approved-plate or shipped and pinned
+      // in golden lb04.json, so each resolves on the pinned path with the pin's exemptions, and authoring is refused (red)
+      const pin = readJson('tests/howto/golden/library/lb04.json').entries.filter((e: any) => e.kind === 'plate');
+      expect(pin.map((e: any) => e.id)).toEqual(ids);
+      for (const id of ids) {
+        const c = await cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean, engine: E });
+        expect(c.exemptions, id).toEqual(pin.find((e: any) => e.id === id).exemptions ?? []);
+        await expect(cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean, engine: E, authoring: true }), id).rejects.toThrow(/authoring QA is refused/);
+      }
     } finally { qaEng.dropMirror(mirror); }
   });
 });
@@ -823,7 +856,9 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
-  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W5 (D-SHIP-A9, ruling 3; authoring QA to the pinned path): wall_sit is approved-plate and pinned in golden
+  // lb04.json, so D-LIB9-AUTHORQA refuses authoring; the node half runs on the pinned candidate
+  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E });
   const MUT = (id: string) => muts.SPEC_MUTATIONS.find((m: any) => m.id.startsWith(`${id} `));
   // A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn.
   const mutated = async (fn: string, arg: any = null) => {
@@ -840,7 +875,7 @@ describe('LIB-14 A4: runQa node half on an LB4 plate (lib_wall_sit), LIB-3 M1-M7
   it('A4: pistol_squat (in rows.json since the strip release) raises F7 on its node half; its topFault set to its drawn key drops F7, so the ruled expected set fails', async () => {
     const lb4qa = await import(/* @vite-ignore */ lib('lb4/qa.mjs'));
     const P = 'lib_pistol_squat', ph = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: [${JSON.stringify(P)}] })).html;`);
-    const c = await cand.candidateOf(P, { all, platesHtml: ph, engine: E, authoring: true });
+    const c = await cand.candidateOf(P, { all, platesHtml: ph, engine: E });   // LIB-SHIP W5 (ruling 3): the pinned path
     const asReport = (r: any) => ({ id: P, flags: { ...r.flags, F2: { raised: false }, F5: { raised: true, value: 3.57 } } });
     const clean = await qa(c);
     expect([node(clean), clean.flags.F7.raised]).toEqual([[], true]);
@@ -1774,7 +1809,9 @@ describe('LIB-SPLIT A4 and A6: runQa node half on the 6 plates, H3 pinned at the
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
-  const candOf = (id: string, page = html) => cand.candidateOf(id, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W5 (D-SHIP-A9, ruling 3; authoring QA to the pinned path): the 6 rows are approved-plate or shipped
+  // (bodyweight_lunge, bodyweight_split_squat) and pinned in golden lb04.json, so the node half runs on the pinned candidate
+  const candOf = (id: string, page = html) => cand.candidateOf(id, { all, platesHtml: page, engine: E });
   /** A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn. */
   const mutated = async (id: string, fn: string, arg: any = null) => {
     const name = id.slice(4), dir = mkdtempSync(join(tmpdir(), 'lb4-split-mut-')), file = join(dir, `${name}.mjs`);
@@ -1860,6 +1897,7 @@ describe('LIB-SPLIT A2: the 5 rows approved in panel mx28 (#364 6585103107, head
   // golden.mjs fragmentsOf of step_up, forward_lunge, walking_lunge, bodyweight_lunge and bodyweight_split_squat on the
   // LB4 page a3d8098e…f366 built at 9f772a09 (45 fragments; the LIB-SMALL A2 form).
   const APPROVED: Record<string, Record<string, string>> = {
+    // LIB-SHIP W5 D-SHIP-W5-PLATETEXT (#392 6652647984): text-only re-pin (tell cue or alt); old values in the commit message
     "step-up": {
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 9bffea48, now d57e08db (items 3-7 redraw; the plates panel re-approves)
       "normalSvg": "5741cf81859366bcc4a531f3ae003ce1f68d8ad0428d3641d296b0e59328b7de",   // LIB-PLATEFIX-3 round 2 (D-PLATEFIX-PINS form, #405 6685743439 pf7): was d57e08db… (main 9bffea48)
@@ -1871,17 +1909,18 @@ describe('LIB-SPLIT A2: the 5 rows approved in panel mx28 (#364 6585103107, head
       "tells": "8fdf4a24934b50822201a42f062bbfcfa873afa15727fcc42a54eaac84cc017f",
       "tempo": "cfa4a0ab2667ca0875d0232447ce76260179fb165b22bf6932aa7cdc38ca9970",
       "cues": "134191d38096b80886c14e3c9de6a67f13aa924cc3422dc4c755a61a21642eed",
-      "alt": "2b7a89b088e00be3a4d7d2eece0288433d2b448ee0ddf34a76bac6c01ba2eb64",
+      "alt": "3576fb6c9a405dede403c6365f14cd7792ffa0576312f98228c0ede52d2f7b12",
       "mistakeAlt": "3e23df00e6153acda6b1919000667b70c9745d0e62ef2b79b6063d7a34682625"
     },
+    // LIB-SHIP W5 D-SHIP-W5-PLATETEXT (#392 6652647984): text-only re-pin (tell cue or alt); old values in the commit message
     "forward-lunge": {
       "normalSvg": "397d5d8760d45fb95218f84bd7b3f836967478b77cc446163a096403c207a172",
       "normalOverlay": "f837eaa304167645cd85e865fd84f3994fadb64cd47598ca8d2e64b46da65b05",
       "mistakeSvg": "c8bdd35591de246d5ce2371321000ef54d18b55bdbcebb87fe910886569ce3ef",
-      "mistakeOverlay": "ac269346c5ceebf873779293043be1c3ef22f4e1b46f0e96963b9595ec82f6f6",
-      "tells": "a7017e3051dbe13d57596d99b3e21b6e8b17994be791a2e206c29c5dec5d3038",
+      "mistakeOverlay": "67dabeb65e0f53b9aa8d5d230c5c91dbbfe1aebef1e0255f241750dd1b9df8d5",
+      "tells": "14c34998bb55b5a5ecd9af299e045115cbe16300237452ef64dc928cb8d68098",
       "tempo": "7bb4525ced07b239847fa65721dcb1105745f498e178246dd223bc3de40c81fa",
-      "cues": "025f16cdb5f7da9e29dba05dbc34c548eb205ba7a1b8c8d9d38bc545c5534a3e",
+      "cues": "f4beea19450773660f258f16d9e4118e70f2c48fe9ef0d7ec26212d69eff3980",
       "alt": "606b11fe23466ab09e74207f576e1070ef2bf792c4ae86a839befbd396209f28",
       "mistakeAlt": "f373dc5ae08e7fe058d888006c743d13c1a45ec2ff1ddc55ba906970f9023b8e"
     },
@@ -1896,25 +1935,27 @@ describe('LIB-SPLIT A2: the 5 rows approved in panel mx28 (#364 6585103107, head
       "alt": "42c5a2f8812ad35841c21e940bc13b504db9928b6cede1474fdf6050c3b9747b",
       "mistakeAlt": "cc9d9faf06b2e4c55e3f6bec39cf6b159274d9e102c92ac08a0feabf72f37eee"
     },
+    // LIB-SHIP W5 D-SHIP-W5-PLATETEXT (#392 6652647984): text-only re-pin (tell cue or alt); old values in the commit message
     "bodyweight-lunge": {
       "normalSvg": "6c3ce14bf43527130456107938341c03e869888ade1badf9db2f0a982a66b7b2",
       "normalOverlay": "84b431a7e5f36b880761f8d0c833086d615fe23a69f41af6b82a5f7664651b47",
       "mistakeSvg": "6961bc1bbdae7fa3140c195ebda0ba283e462dc19904de796dc97e6288d086a6",
-      "mistakeOverlay": "ffe30a46452711bad24d95c7f1e1061f5a97d0af2b633b7651e21bc3c2899c00",
-      "tells": "a7017e3051dbe13d57596d99b3e21b6e8b17994be791a2e206c29c5dec5d3038",
+      "mistakeOverlay": "57ffe77b94f5528480fb56cbdeada59b427e59025045752f115e2952fc3260bc",
+      "tells": "14c34998bb55b5a5ecd9af299e045115cbe16300237452ef64dc928cb8d68098",
       "tempo": "52d36f0a4dbecdf89a0ca6c54a6231bd731998818468da0e17bfceac30615eef",
-      "cues": "841871aca4d1fc3e742ce35fb917ac6dafdf181c23d3960fc9dce8a44946051e",
+      "cues": "160a487e222398bdead0a9866f9eaa6ec0f6ec70012a6c9cabdde6720295e9b6",
       "alt": "77a929da36e03e0f778b3424828ca3e6bbbdd39d5b91e199517de2a8b3aed647",
       "mistakeAlt": "9e54baf15b72f997c5b8599aebe6ddd598e34812251626cc474e8c9e2cae7864"
     },
+    // LIB-SHIP W5 D-SHIP-W5-PLATETEXT (#392 6652647984): text-only re-pin (tell cue or alt); old values in the commit message
     "bodyweight-split-squat": {
       "normalSvg": "ed74798f818a70f3ceb9b89c451632678b885579d4bf79c70c7964958732e0d6",
       "normalOverlay": "9916b82b111da83bfe6568981e168784ebb73a509c6218e29cfe76dbe5006812",
       "mistakeSvg": "c52888e75843bc1e76e5e63de54ae9ebf8132721efd2546e40fa143873f85421",
-      "mistakeOverlay": "96dd2540bee7f098643816ef474281d05ef35b3d274e35c4eb99210937042584",
-      "tells": "74bcab68829d90f431aea0471490cde87fb216a9844ecd29d21195f9fd94b8d7",
+      "mistakeOverlay": "1e52b0d39a2119fe9eabb6c08c31a53307dba61107cf076a15c9cc43830326db",
+      "tells": "2a50d7cc346ffd5f09dec82ede2c67e548e4bd8deff642a875dac6d7d87bfa65",
       "tempo": "88229cbe363b3a7de7ddd1c67addcadf7b85cad1cf602121147bf73462a63a2d",
-      "cues": "a3ce996975a39a8dd6b7a1c146188b260db0c1a57dafa51ee34c15ca1b317400",
+      "cues": "930429a661da165a4b5705aa2c6681b34c0bd2775baeb4a9d7e6c5c31dac33ca",
       "alt": "1dfc876b56caf7c1256f0137bafad7a44e01ed0c88148b8c2dc95e41bfa06c27",
       "mistakeAlt": "f167659a4d7be13f31dc195b19920996863c0d616973bd09c125d3074991b404"
     }

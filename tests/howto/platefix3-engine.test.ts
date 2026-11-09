@@ -6,6 +6,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { W5, lessW5 } from './lib-ship-w5';
 import { W4_MANIFEST_ROWS } from './checks/ship-w4';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -60,15 +61,21 @@ describe('PF3 E2: path guides get the path CSS (Silent Black arrowheads)', () =>
 // D-PF3-W3MERGE: after W3 (main 62d3dcb6) the library MANIFEST has 35 rows (W3's 13 added); was 22, now 35, each row still checked
 // LIB-SHIP W4 (D-SHIP-W4-PIN; merge of main c2f267a7): plus W4's 20 lb02/lb03 rows (checks/ship-w4.ts), 55, each row still checked
 describe('PF3 E1/E2 MANIFEST re-pin', () => {
-  it('every one of the 35 rows (55 with W4\'s 20) pins the current render/closeup/zoom.mjs and build-layers-page.mjs', () => {
+  // LIB-SHIP W5: the 35 rows, W4's 20 and W5's 27 (82; merge of main 05382042)
+  it('every one of the 35 rows (55 with W4\'s 20, 82 with W5\'s 27) pins the current render/closeup/zoom.mjs and build-layers-page.mjs', () => {
     const sha = (p: string) => createHash('sha256').update(readFileSync(p)).digest('hex');
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
-    const rows = Object.entries<any>(m.rows);
+    // LIB-SHIP W5 (#392 Q-W5-10 PIN GO; lib-ship-w5.ts): the MANIFEST also holds W5's 27 rows; the 55 are checked as before
+    // with W5's taken out by lessW5, and every one of the 82 must pin the same two current files
+    const rows = Object.entries<any>(lessW5(JSON.parse(JSON.stringify(m))).rows);
     expect(W4_MANIFEST_ROWS).toHaveLength(20);
     expect(W4_MANIFEST_ROWS.every(id => id in m.rows)).toBe(true);
     // LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows; each is checked below too
     expect(rows).toHaveLength(35 + 20 + 29);
+    const all = Object.entries<any>(m.rows);
+    expect(all).toHaveLength(35 + 20 + W5.length + 29);
+    for (const id of W5) expect(id in m.rows, id).toBe(true);
     for (const k of ['tools/plates/library/render/closeup/zoom.mjs', 'tools/plates/library/build-layers-page.mjs'])
-      for (const [id, r] of rows) expect(r.files[k], `${id} ${k}`).toBe(sha(k));
+      for (const [id, r] of all) expect(r.files[k], `${id} ${k}`).toBe(sha(k));
   });
 });

@@ -1,0 +1,24 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=839b4048cf8d75424f648f09d3d0d1e7af319d32f39d8b75a858a7398f3450b3
+{
+  "id": "lib_reverse_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/reverse_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "sl-revcurl",
+    "ace-revcurl",
+    "tg-revcurl",
+    "caufriez-2018",
+    "coratella-2023",
+    "acsm-2009",
+    "hand-key-ez",
+    "nhs-wrist-pain",
+    "nhs-elbow-pain"
+  ],
+  "riskFlags": [
+    "wrist",
+    "elbow"
+  ]
+}
