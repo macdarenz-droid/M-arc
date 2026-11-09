@@ -34,7 +34,7 @@
 //   (D-LIBZOOM-EXTEND); the side alt keeps its former depth Mistake (c4). Tempo = plate.tempo c10 (2 s down, 2 s up,
 //   no pause). Trace = the grip: the arc (a press would trace a vertical line).
 // CARD: ELBOW (slight bend), SHOULDER_W (start width), END_LEVEL (stop height), ARC_DZ (arc plane over the chest).
-import { landmarksOf, fk, resolve, normPose, bodyShapes, WINTER, REF } from '../engine.mjs';
+import { landmarksOf, fk, resolve, normPose, bodyShapes, WINTER, REF, RADII } from '../engine.mjs';
 import { supine } from './dumbbell_bench_press.mjs';
 
 const H = 1.75, BODY = { height: H };
@@ -127,13 +127,56 @@ const startDb = c => {
   return [[-hx, -zo], [hx, -zo], [hx, -zi], [bx, -zi], [bx, zi], [hx, zi], [hx, zo], [-hx, zo], [-hx, zi], [-bx, zi], [-bx, -zi], [-hx, -zi], [-hx, -zo]]
     .map(([x, z]) => [c[0] + x, c[1], c[2] + z]);
 };
-// The faulty hands (PILOT-A3, F-FLY-START R5): the Mistake pose's own hand polys (wrist -> grip, bent M_WRIST), closed,
-// as Mistake `dashed` guides, drawn on top of the masked pose so the bend reads at its true size. The Mistake pose is
-// the end pose merged with wristPose, as the engine merges it (vendor/engine/plate.mjs:20-26, :48).
+// The faulty hand (LIB-PLATEFIX-4; #395 6655186998 "one red hand-plus-hexagon piece at the hand's scale", #395 6653868933
+// "the hand-plus-hexagon piece rotated ... about the wrist ... a short red angle arc with no number. Remove the extra red
+// circle", #385 6638551153 "the bent hand is only a thin dashed axis"): per side ONE closed outline, the union of the
+// drawn end hand poly, the engine's fist circle (RADII.fist) and the end dumbbell's side-on silhouette (the `dumbbell`
+// primitive's own sizes at this camera), turned rigidly on screen about the wrist by the drawn bend (the screen angle
+// from the end hand to the Mistake pose's hand, the engine's own M_WRIST bend). It is the Mistake pose's only changed
+// item (`mistake.parts`), so the engine draws it as the masked Mistake outline: no red fist, no stacked dumbbell boxes.
+// Built in a screen-aligned world frame (X = world x, U = screen up, depth D fixed) so the zoom projects it at its scale.
 const merge = (a, b) => (b === undefined ? a : a && b && typeof a === 'object' && typeof b === 'object' && !Array.isArray(a) && !Array.isArray(b)
   ? Object.fromEntries([...new Set([...Object.keys(a), ...Object.keys(b)])].map(k => [k, merge(a[k], b[k])])) : b);
 const lmMis = landmarksOf(merge(end, wristPose), H);
-const MISTAKE_HANDS = HANDS(lmMis).map(h => ({ kind: 'dashed', pts: [...h.pts, h.pts[0]] }));
+const PC = Math.cos(PITCH * R), PS = Math.sin(PITCH * R);
+const toXU = w => [w[0], w[1] * PC - w[2] * PS], depth = w => w[1] * PS + w[2] * PC;
+const toW = ([X, U], D) => [X, U * PC + D * PS, -U * PS + D * PC];
+const DBP = { head: 0.119, headLen: 0.07, handle: 0.13, core: 0.016 };   // the `dumbbell` primitive's defaults (vendor/engine/equipment.mjs:30-41)
+const FIST_R = RADII.fist * H;                                           // the engine's fist (vendor/engine/body.mjs:395)
+const arcPts = (r, a0, a1, n) => Array.from({ length: n + 1 }, (_, k) => { const a = a0 + (a1 - a0) * k / n; return [r * Math.cos(a), r * Math.sin(a)]; });
+const hit = (A, B, r) => {   // the point of segment A -> B (A outside, B inside) on the circle |p| = r
+  const d = [B[0] - A[0], B[1] - A[1]], a = d[0] * d[0] + d[1] * d[1], b = 2 * (A[0] * d[0] + A[1] * d[1]), c = A[0] * A[0] + A[1] * A[1] - r * r;
+  const t = (-b - Math.sqrt(b * b - 4 * a * c)) / (2 * a); return [A[0] + d[0] * t, A[1] + d[1] * t];
+};
+const ang = p => { let a = Math.atan2(p[1], p[0]); if (a < 0) a += 2 * Math.PI; return a; };
+export const FLY_PIECE = {};
+const PIECES = [], ARCS = [];
+for (const s of ['l', 'r']) {
+  const W = lmEnd[`wrist.${s}`], G = lmEnd[`grip.${s}`], D = depth(G), g = toXU(G);
+  const proj = Math.hypot(...toXU([0, 0, 0.1])) / 0.1;                   // the axis's screen length per metre (the primitive's proj)
+  const m = toXU(W)[0] < g[0] ? 1 : -1;                                  // mirror so the wrist is on the -X side
+  const loc = w => { const q = toXU(w); return [(q[0] - g[0]) * m, q[1] - g[1]]; };
+  const hand = handPoly(W, G).pts.map(loc);                              // [W+n, G+n, G-n, W-n]
+  const h = DBP.head * 0.866 / 2, t = DBP.core, a1 = DBP.handle / 2 * proj, a2 = (DBP.handle / 2 + DBP.headLen) * proj, r = FIST_R;
+  const e1 = [hit(hand[0], hand[1], r), hand[0]], e2 = [hit(hand[3], hand[2], r), hand[3]];
+  const [top, bot] = e1[0][1] > e2[0][1] ? [e1, e2] : [e2, e1];
+  const yc = Math.sqrt(r * r - t * t), b0 = Math.atan2(yc, t);
+  const outline = [[-h, a2], [h, a2], [h, a1], [t, a1],
+    ...arcPts(r, b0, -b0, 8),                                            // the fist's right side
+    [t, -a1], [h, -a1], [h, -a2], [-h, -a2], [-h, -a1], [-t, -a1],
+    ...arcPts(r, Math.PI + b0, ang(bot[0]), 4), bot[1], top[1],      // up the fist's left side to the hand, out to the wrist and back
+    ...arcPts(r, ang(top[0]), Math.PI - b0, 4), [-t, a1], [-h, a1], [-h, a2]];
+  // the drawn bend: the screen angle from the end hand (wrist -> grip) to the Mistake pose's hand, turned about the wrist
+  const w0 = loc(W), dirE = loc(G), dirM = loc(lmMis[`grip.${s}`]);
+  const th = Math.atan2(dirM[1] - w0[1], dirM[0] - w0[0]) - Math.atan2(dirE[1] - w0[1], dirE[0] - w0[0]);
+  const turn = ([x, y]) => { const dx = x - w0[0], dy = y - w0[1]; return [w0[0] + dx * Math.cos(th) - dy * Math.sin(th), w0[1] + dx * Math.sin(th) + dy * Math.cos(th)]; };
+  const world = ([x, y]) => toW([x * m + g[0], y + g[1]], D);
+  PIECES.push({ type: 'poly', pts: outline.slice(0, -1).map(turn).map(world), cls: 'eq-solid', z: 'front', part: `piece.${s}` });
+  // the angle arc (no number, no head): at the fist's edge (hand length - fist radius) from the end hand to the turned hand
+  const L = Math.hypot(dirE[0] - w0[0], dirE[1] - w0[1]), ra = L - r, aE = Math.atan2(dirE[1] - w0[1], dirE[0] - w0[0]);
+  ARCS.push({ kind: 'line', pts: arcPts(ra, aE, aE + th, 8).map(([x, y]) => world([w0[0] + x, w0[1] + y])) });
+  FLY_PIECE[s] = { turnDeg: +(th / R * m).toFixed(1), handPx: +(L * PX_M).toFixed(2) };
+}
 
 /** The unsourced sizes (pilot-a2/sizes.json, D-LIB17-SIZE form; LIB-8R). */
 export const SIZES = { BENCH_TOP, FOOT_Z, FOOT_X, ELBOW, SHOULDER_W, ARC_DZ, PITCH, M_WRIST, HAND_W, PAD_W, PAD_T, LEG_IN, POST, FOOT_HALF, FOOT_T };
@@ -160,6 +203,7 @@ function frontFly(id) {
       lm => HANDS(lm),
       lm => [{ type: 'dumbbell', at: lm['grip.l'], axis: [0, 0, 1], z: 'front', part: 'db.l' },
         { type: 'dumbbell', at: lm['grip.r'], axis: [0, 0, 1], z: 'front', part: 'db.r' }],
+      (lm, ctx) => (ctx.pose === 'mistake' ? PIECES : null),   // the faulty hand-plus-dumbbell pieces, last so the other items keep their ids (LIB-PLATEFIX-4)
     ],
     checks: CHECKS,
     marks: ['elbow.l', 'elbow.r'],
@@ -176,7 +220,8 @@ function frontFly(id) {
     tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Raise', s: 2, move: true }],
     mistake: {
       pose: wristPose,
-      guides: MISTAKE_HANDS,   // the faulty hands, dashed on top of the masked pose (F-FLY-START R5)
+      parts: ['piece.l', 'piece.r'],   // the Mistake outline is the two pieces only: no red fist, hand or dumbbell boxes (LIB-PLATEFIX-4)
+      guides: ARCS,   // the short plain red angle arcs at the wrists (#395 6653868933)
       tells: [
         { key: 'wrists', text: 'Wrists bend', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 12, top: 70 }, cue: 'Your wrists bend back out of line with the forearms as the dumbbells arc.' },   // c13
       ],
