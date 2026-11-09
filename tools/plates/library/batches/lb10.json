@@ -25,7 +25,7 @@
     "Kettlebell Swings (PureGym exercise guide). https://www.puregym.com/exercises/plyometrics/kettlebells/",
     "Kettlebell swing, snatch, and bottoms-up carry: back and hip muscle activation, motion, and low back loads. (2012). https://pubmed.ncbi.nlm.nih.gov/21997449/ PMID 21997449"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_high_knees": {
    "src": "library/specs/high_knees.mjs",
@@ -39,7 +39,7 @@
     "Learn How to Do High Knees to Step Up Your Leg & Core Game (BarBend) (2024). https://barbend.com/high-knees/",
     "Rev up Your Cardio With This 15-Minute Drill (ACE blog) (2015). https://www.acefitness.org/resources/everyone/blog/5430/rev-up-your-cardio-with-this-15-minute-drill/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_jump_rope": {
    "src": "library/specs/jump_rope.mjs",
@@ -82,7 +82,7 @@
     "Sled Pull Guide: How To Improve Your Technique, Training & Full-Body Strength | Gymshark Central (2025). https://row.gymshark.com/blog/article/how-to-sled-pull",
     "The metabolic, hormonal, biochemical, and neuromuscular function responses to a backward sled drag training session (2014). https://pubmed.ncbi.nlm.nih.gov/23575361/ PMID 23575361"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_burpee": {
    "src": "library/specs/burpee.mjs",
@@ -113,7 +113,7 @@
     "Build an Unstoppable Core and Upper Body with the Bear Crawl (BarBend) (2025). https://barbend.com/bear-crawl/",
     "Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study (2017). https://pubmed.ncbi.nlm.nih.gov/29085728/ PMID 29085728"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_sled_push": {
    "src": "library/specs/sled_push.mjs",
@@ -129,7 +129,7 @@
     "Sled Push Workout: Trainer Tips | Garage Gym Reviews (2023). https://www.garagegymreviews.com/sled-push-workout",
     "Lower-limb and trunk muscle activation with back squats and weighted sled apparatus (2014). https://pubmed.ncbi.nlm.nih.gov/25226330/ PMID 25226330"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_medicine_ball_slam": {
    "src": "library/specs/medicine_ball_slam.mjs",
@@ -150,7 +150,7 @@
     "How and Why You Should Use a Medicine Ball (PureGym) (2023). https://www.puregym.com/blog/how-and-why-you-should-use-a-medicine-ball/",
     "Slam Ball Exercises and Benefits (Healthline; medically reviewed by a CSCS) (2025). https://www.healthline.com/health/fitness-exercise/slam-ball-exercises"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_farmer_s_carry": {
    "src": "library/specs/farmer_s_carry.mjs",
@@ -172,7 +172,7 @@
     "Winwood PW, Cronin JB, Brown SR, Keogh JWL (2014) A biomechanical analysis of the farmers walk, and comparison with the deadlift and unloaded walk. Int J Sports Sci Coach 9(5):1127-1143 (Bond University repository copy) (2014). https://pure.bond.edu.au/ws/files/9659702/A_biomechanical_analysis_of_the_farmers_walk_and_comparison_with_the_deadlift_and_unloaded_walk.pdf",
     "Hindle BR et al. (2019) The Biomechanics and Applications of Strongman Exercises: a Systematic Review. Sports Med Open (Europe PMC full text, PMC6901656) (2019). https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6901656/fullTextXML PMID 31820223"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_jumping_jacks": {
    "src": "library/specs/jumping_jacks.mjs",

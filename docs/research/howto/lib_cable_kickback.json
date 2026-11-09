@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=c167171bb21ef3c27be9955255a2c59507b157ef5f1183651be79989a6b80465
+{
+  "id": "lib_cable_kickback",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/cable_kickback.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-gk",
+    "pg-ck",
+    "sl-ck",
+    "fb-che",
+    "pg-gkhub",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

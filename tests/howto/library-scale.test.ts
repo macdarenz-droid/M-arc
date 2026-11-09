@@ -52,10 +52,17 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
       'pendlay-row', 'landmine-row', 't-bar-row', 'barbell-shrug', 'cable-shrug', 'smith-machine-shrug',
       // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): front_squat (gap-key) and hammer_curl (hands/no-zoom.json,
       // D-SHIP-W5-HAMMER) ship with no hand pair under D-SHIP-C3; the 3 bodyweight lower-body ids are archetype none
-      'front-squat', 'hammer-curl', 'bodyweight-squat', 'bodyweight-lunge', 'bodyweight-split-squat'];
+      'front-squat', 'hammer-curl', 'bodyweight-squat', 'bodyweight-lunge', 'bodyweight-split-squat',
+      // LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615, after D-PF10-W7JOIN): no W7 row draws a hand pair
+      // (LIB-SHIP-DESIGN section 17), so the 19 ship with no hand chunk (bird_dog, bear_crawl and farmer_s_carry gap-ruled
+      // D-SHIP-HANDW7, sled_pull gap-key D-SHIP-C3 in hands/no-zoom.json; the other 15 draw no pair key either)
+      'leg-extension', 'lying-leg-curl', 'standing-leg-curl', 'glute-bridge', 'cable-kickback', 'resisted-hip-flexion',
+      'ab-wheel-rollout', 'bird-dog', 'cable-crunch', 'hollow-body-hold', 'reverse-crunch', 'dead-bug',
+      'kettlebell-swing', 'high-knees', 'sled-pull', 'bear-crawl', 'sled-push', 'medicine-ball-slam', 'farmer-s-carry'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     // LIB-SHIP W5: 14 -> 19, plus W5's 5 pair curls (preacher, alternating dumbbell, barbell, ez bar, reverse), registry order
+    // LIB-SHIP W7: stays 19 (W7 adds no hand pair)
     expect(handIds).toHaveLength(19);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
     expect(keys.HAND).toEqual(handIds);
     expect(mapProblems({ ...keys, HAND: keys.POSTURE }, chromeIds)).toEqual([]);

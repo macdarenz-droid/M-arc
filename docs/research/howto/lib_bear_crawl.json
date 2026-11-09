@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=f6d15998fde0904005a081b80d4e917fb3920ab82b64d466b876ab2d1397ca20
+{
+  "id": "lib_bear_crawl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/bear_crawl.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-bearcrawl",
+    "ace-bc-shape",
+    "bb-bc",
+    "nance-2017",
+    "hand-key-palm-flat",
+    "nhs-wrist-pain"
+  ],
+  "riskFlags": [
+    "wrist"
+  ]
+}

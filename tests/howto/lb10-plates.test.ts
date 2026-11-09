@@ -280,9 +280,34 @@ describe('LIB-22 A9 (D-LIB22-AHEAD): nothing ships', () => {
     const text = readFileSync(f, 'utf8');
     return [...names(text).map(id => `${f}: ${id}`), ...(/lb10/i.test(f.slice(dir.length)) ? [`${f}: file name`] : []), ...(/"batch":\s*"LB10"/.test(text) ? [`${f}: batch LB10`] : [])];
   });
-  it('no LB10 H id, slug or batch is in any tools/plates/library/batches/ file or in tests/howto/golden/library/', () => {
-    expect(offenders('tools/plates/library/batches')).toEqual([]);
-    expect(offenders('tests/howto/golden/library')).toEqual([]);
+  // LIB-SHIP W7 (D-SHIP-MOVE; D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19): was "no LB10 H id, slug or
+  // batch is in any tools/plates/library/batches/ file or in tests/howto/golden/library/". The LB10 rows now live in
+  // batches/lb10.json and are pinned by golden lb10.json and its layers page, so every other file there is held to the same
+  // check; lb10.json and golden lb10.json name all 12 (every row is pinned) and batch LB10; the layers page names exactly
+  // W7's 7 shipped ids.
+  const SHIPPED10 = ['kettlebell_swing', 'high_knees', 'sled_pull', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
+  const outside = (dir: string, mine: string[]) => offenders(dir).filter(s => !mine.some(f => s.startsWith(`${join(dir, f)}: `)));
+  it('LIB-SHIP W7: the LB10 ids, slugs and batch are in batches/lb10.json, golden lb10.json and lb10.layers.html only (two measured notes); each names its ruled set', () => {
+    expect(outside('tools/plates/library/batches', ['lb10.json'])).toEqual([]);
+    // measured on this head: golden lb08.json's and lb09.json's W7 notes name "the pf10 layers check of lying_leg_curl and
+    // sled_pull (#408 6704679655, D-PF10-W7JOIN)" (text, not a row or entry); those exact hits are listed, so any other
+    // hit, or a second one, is red
+    const G = 'tests/howto/golden/library';
+    expect(outside(G, ['lb10.json', 'lb10.layers.html'])).toEqual([`${join(G, 'lb08.json')}: sled_pull`, `${join(G, 'lb09.json')}: sled_pull`]);
+    for (const f of [ROWS, join(G, 'lb10.json')]) { const t = readFileSync(f, 'utf8'); expect([f, names(t), /"batch":\s*"LB10"/.test(t)]).toEqual([f, LB10, true]); }
+    expect(names(readFileSync(join(G, 'lb10.layers.html'), 'utf8'))).toEqual(LB10.filter(id => SHIPPED10.includes(id)));
+    expect(readJson(join(G, 'lb10.json')).entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => [...e.ids].sort())).toEqual([SHIPPED10.map(i => `lib_${i}`).sort()]);
+  });
+  it('LIB-SHIP W7 reds: lb10.json copied under another name, a third note hit, and a held id on the layers page are red', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'lb10-w7-'));
+    try {
+      writeFileSync(join(dir, 'lb10.json'), readFileSync(ROWS, 'utf8'));
+      writeFileSync(join(dir, 'zz.json'), readFileSync(ROWS, 'utf8'));
+      writeFileSync(join(dir, 'lb05.json'), '{"why":"the pf10 layers check of lying_leg_curl and sled_pull"}');
+      expect(outside(dir, ['lb10.json']).map(s => s.replace(`${dir}/`, '')).filter(s => s.startsWith('lb05'))).toEqual(['lb05.json: sled_pull']);
+      expect(outside(dir, ['lb10.json']).filter(s => s.includes('zz.json')).length).toBeGreaterThanOrEqual(LB10.length + 1);
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+    expect(names(`${readFileSync('tests/howto/golden/library/lb10.layers.html', 'utf8')}<div data-id="jump-rope"></div>`)).not.toEqual(LB10.filter(id => SHIPPED10.includes(id)));
   });
   it('the matcher is exact: over src/data/exercises.json no other real id contains one of the 12; it matches neither lib_kettlebell_swing_v2 nor single-arm-kettlebell-swing', () => {
     const ex = readJson('src/data/exercises.json') as any[];
@@ -1056,19 +1081,38 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
 });
 
 describe('LIB-22 A9 (D-LIB22-AHEAD): the rows never ship; generate is unchanged', { timeout: T }, () => {
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => !['drawing', 'review'].includes(r.stage)).map(([id, r]) => `${id}: ${r.stage}`);
-  it('every LB10 row is at stage drawing or review; mutations: shipped and approved-plate are red', () => {
-    const rows = readJson(ROWS).rows;
-    expect(stageProblems(rows)).toEqual([]);
-    expect(stageProblems({ ...rows, lib_kettlebell_swing: { ...rows.lib_kettlebell_swing, stage: 'shipped' } })).toEqual(['lib_kettlebell_swing: shipped']);
-    expect(stageProblems({ ...rows, lib_kettlebell_swing: { ...rows.lib_kettlebell_swing, stage: 'approved-plate' } })).toEqual(['lib_kettlebell_swing: approved-plate']);
+  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19): replaces "every LB10 row is at stage drawing
+  // or review", its shipped/approved-plate mutations and "none of the 12 is shipped, even with lb10/rows.json read as a
+  // batch file" with the W7 ruled set as positive asserts: exactly W7's 7 LB10 ids ship; jump_rope, battle_ropes, burpee,
+  // jumping_jacks and wall_ball stay approved-plate (held); LB10 has no left-out row; each id is one registry row.
+  const IDS = LB10.map(i => `lib_${i}`);
+  const W7 = ['lib_kettlebell_swing', 'lib_high_knees', 'lib_sled_pull', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
+  const W7_HELD = ['lib_jump_rope', 'lib_battle_ropes', 'lib_burpee', 'lib_jumping_jacks', 'lib_wall_ball'];
+  const stageProblems = (rows: any[]) => IDS.flatMap(id => {
+    const r = rows.find((x: any) => x.id === id);
+    const want = W7.includes(id) ? 'shipped' : W7_HELD.includes(id) ? 'approved-plate' : 'not in the flip set';
+    if (!r) return [`${id}: no row`];
+    return r.stage === want ? [] : [`${id}: ${r.stage}`];
   });
-  it('none of the 12 is shipped, even with lb10/rows.json read as a batch file', () => {
-    const IDS = LB10.map(i => `lib_${i}`);
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
-    expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual([]);
+  it('LIB-SHIP W7: every LB10 row is at its ruled stage: W7\'s 7 shipped, the other 5 approved-plate', () => {
+    expect([...W7, ...W7_HELD].sort()).toEqual([...IDS].sort());
+    expect(drawn().length).toBe(12);
+    expect(stageProblems(reg.rows())).toEqual([]);
+  });
+  it('LIB-SHIP W7 reds: a W7 id back at approved-plate, a held id shipped, a held id at drawing and a dropped row are red', () => {
+    const rows = reg.rows();
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_kettlebell_swing' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_kettlebell_swing: approved-plate']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_jump_rope' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_jump_rope: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_burpee' ? { ...r, stage: 'drawing' } : r)))).toEqual(['lib_burpee: drawing']);
+    expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_sled_push'))).toEqual(['lib_sled_push: no row']);
+  });
+  it('LIB-SHIP W7: the shipped LB10 ids are exactly W7\'s 7, in registry order; each LB10 id is one registry row (lb10.json read once)', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W7);
+    const rows = reg.rows();
+    for (const id of IDS) expect(rows.filter((r: any) => r.id === id).length, id).toBe(1);
+    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(IDS.length);
+    // red: lb10.json read twice (a copy in batches/) throws on the duplicate id
+    expect(() => reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), ['zz.json', readJson(ROWS)]] })).toThrow(/already used/);
   });
   it('mutation: rows.json copied into batches/ (read as a batch) would name batch LB10 and an LB10 id', () => {
     const text = readFileSync(ROWS, 'utf8');

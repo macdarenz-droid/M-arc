@@ -253,6 +253,27 @@
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_resisted_hip_flexion's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108).",
       "supersedes": null,
       "prev": "5c5ebdc9b2cee8a97beaa13c25ed509e2cd9a3e987d7ddf33444867c2138c313"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB8",
+      "ids": [
+        "lib_leg_extension",
+        "lib_lying_leg_curl",
+        "lib_standing_leg_curl",
+        "lib_glute_bridge",
+        "lib_cable_kickback",
+        "lib_resisted_hip_flexion"
+      ],
+      "pageSha256": "c9d24c6dacf0e097be1f6487f6eb557e4e3129976fa6e2ed76fc6f71a5379ff8",
+      "bytes": 1482714,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W7-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6711372615 @ a3e5b6e75d494041afbe674c1a5fe227b492f51c",
+      "date": "2026-11-09",
+      "supersedes": null,
+      "why": "W7 layers approved for the flip set (D-PF10-W7JOIN; supervisor RESUME 2026-11-09): the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception. The page holds exactly the 6 shipped ids, each card byte-equal to its card in the lb08 page judged at a3e5b6e7; the page head loses only the held ids' rules.",
+      "prev": "f56c02760c797efb5eaf8ccdb51eecc926a725ed901a2089571255a8a00efd81"
     }
   ]
 }

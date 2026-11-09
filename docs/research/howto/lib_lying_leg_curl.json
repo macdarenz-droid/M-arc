@@ -1,0 +1,24 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=2ea7af0831e1c7f3af0bdcc4a1423a481877cb20446582b9f9da1d4f4d077a82
+{
+  "id": "lib_lying_leg_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/lying_leg_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "fv-llc",
+    "mo-llc",
+    "lifto-llc",
+    "ace-llc",
+    "nasm-llc",
+    "sl-llc",
+    "hl-hc",
+    "nhs-knee-pain",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "knee",
+    "back"
+  ]
+}

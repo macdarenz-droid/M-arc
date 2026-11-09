@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=887c8e76a5df3c0f85a6e3310e3253cd28e9c7053923c02df9317bd1b6031ab4
+{
+  "id": "lib_sled_push",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/sled_push.json",
+    "rev": 1
+  },
+  "sources": [
+    "sl-sledpush",
+    "bb-sledpush",
+    "fv-sledpush",
+    "ggr-sledpush",
+    "maddigan-2014",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

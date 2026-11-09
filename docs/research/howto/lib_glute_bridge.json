@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=a2775dd33fae7e76e4ba84b75129ad56b1bd20a4eaa4d34d867495dfb46a92e6
+{
+  "id": "lib_glute_bridge",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/glute_bridge.json",
+    "rev": 1
+  },
+  "sources": [
+    "pg-gb",
+    "ace-gb",
+    "pg-gbhub",
+    "sl-gb",
+    "hl-gb",
+    "pg-bgb",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

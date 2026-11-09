@@ -107,7 +107,7 @@ export default {
   id: 'lib_high_knees',
   rev: 1,
   plate: plateSpec,
-  handling: { archetype: 'none', why: 'The card hand archetype is none: the arms pump freely (c2).' },
+  handling: { archetype: 'none', why: 'D-SHIP-GRIP: the card archetype.hand is none; it gives no thumb, contact or wrist claim.' },
   contacts: ['standing-feet'],
   setup: [
     { kind: 'position', text: 'Stand tall, feet about hip-width apart, arms at your sides.', claim: J('c1', 'c4') },

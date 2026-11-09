@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=6de672ff01762232fb11498422ea0e9c87447c604e96dfb3fcc6515e8c8e320f
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=7721406239c09221cae3224d897366937e48325d17adbf4e1f537e7b7cdeca5a
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -24,6 +24,22 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "ace-bc-shape": {
+    "id": "ace-bc-shape",
+    "cite": "How to Do the Bear Crawl Exercise to Boost Strength and Coordination (SHAPE, reprinted by ACE)",
+    "url": "https://www.acefitness.org/about-ace/press-room/in-the-news/8226/how-to-do-the-bear-crawl-exercise-to-boost-strength-and-coordination-shape/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "ace-bearcrawl": {
+    "id": "ace-bearcrawl",
+    "cite": "Bear Crawl (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/150/bear-crawl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "ace-bent-over-row": {
     "id": "ace-bent-over-row",
     "cite": "ACE Exercise Library: Bent-over Row",
@@ -40,6 +56,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-birddog": {
+    "id": "ace-birddog",
+    "cite": "Bird Dog, Exercise Library (ACE)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/14/bird-dog/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "ace-bwsquat": {
     "id": "ace-bwsquat",
     "cite": "Bodyweight Squat (ACE Exercise Library)",
@@ -47,6 +71,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "ace-cardio15": {
+    "id": "ace-cardio15",
+    "cite": "Rev up Your Cardio With This 15-Minute Drill (ACE blog)",
+    "url": "https://www.acefitness.org/resources/everyone/blog/5430/rev-up-your-cardio-with-this-15-minute-drill/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "ace-chest-press": {
     "id": "ace-chest-press",
@@ -72,6 +104,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-deadbug": {
+    "id": "ace-deadbug",
+    "cite": "Ab Exercises | Supine Dead Bug (ACE)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/147/supine-dead-bug/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "ace-fwdlunge-bw": {
     "id": "ace-fwdlunge-bw",
     "cite": "Forward Lunge (ACE Exercise Library, no equipment)",
@@ -80,11 +120,27 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-gb": {
+    "id": "ace-gb",
+    "cite": "Glute Bridge (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/49/glute-bridge/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "ace-hammer": {
     "id": "ace-hammer",
     "cite": "Hammer Curl (ACE Exercise Library)",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/10/hammer-curl/",
     "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "ace-heavy": {
+    "id": "ace-heavy",
+    "cite": "Heavy Slam Ball Workout (ACE blog, Shana Verstegen)",
+    "url": "https://www.acefitness.org/resources/everyone/blog/3801/heavy-slam-ball-workout/",
+    "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
   },
@@ -111,6 +167,22 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "ace-llc": {
+    "id": "ace-llc",
+    "cite": "Lying Hamstrings Curl (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/153/lying-hamstrings-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "ace-os": {
+    "id": "ace-os",
+    "cite": "Overhead Slams (ACE exercise library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/182/overhead-slams/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "ace-plank": {
     "id": "ace-plank",
@@ -143,6 +215,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-10-02"
+  },
+  "ace-revcrunch": {
+    "id": "ace-revcrunch",
+    "cite": "How To Do a Reverse Ab Crunch, Exercise Library (ACE)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/76/reverse-crunch/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "ace-revcurl": {
     "id": "ace-revcurl",
@@ -376,6 +456,102 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "bb-abrollouts": {
+    "id": "bb-abrollouts",
+    "cite": "The Benefits of Ab Rollouts and Progressions to Perform Them (BarBend)",
+    "url": "https://barbend.com/ab-rollouts/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-bc": {
+    "id": "bb-bc",
+    "cite": "Build an Unstoppable Core and Upper Body with the Bear Crawl (BarBend)",
+    "url": "https://barbend.com/bear-crawl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-bestab": {
+    "id": "bb-bestab",
+    "cite": "12 Best Ab Exercises and Workouts for Strength (BarBend)",
+    "url": "https://barbend.com/best-ab-exercises/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-birddog": {
+    "id": "bb-birddog",
+    "cite": "Master the Bird Dog to Give Your Core Routine Wings (BarBend)",
+    "url": "https://barbend.com/bird-dog-exercise/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-cablecrunch": {
+    "id": "bb-cablecrunch",
+    "cite": "Learn the Cable Crunch to Build Yourself a Strong, Supportive Core (BarBend)",
+    "url": "https://barbend.com/cable-crunch/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-farmers": {
+    "id": "bb-farmers",
+    "cite": "How to Do the Farmer’s Carry: Benefits and Expert Tips (BarBend)",
+    "url": "https://barbend.com/farmers-carry/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-fwbreak": {
+    "id": "bb-fwbreak",
+    "cite": "A Step by Step Breakdown of the Farmer’s Walk (BarBend)",
+    "url": "https://barbend.com/farmers-walk-breakdown/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-gk": {
+    "id": "bb-gk",
+    "cite": "How to Do Glute Kickbacks to Build Your Butt (BarBend)",
+    "url": "https://barbend.com/glute-kickbacks/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-hk": {
+    "id": "bb-hk",
+    "cite": "Learn How to Do High Knees to Step Up Your Leg & Core Game (BarBend)",
+    "url": "https://barbend.com/high-knees/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-hollow": {
+    "id": "bb-hollow",
+    "cite": "How to Do the Hollow Hold Position for Six-Pack Abs and Stronger Lifts (BarBend)",
+    "url": "https://barbend.com/hollow-hold/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-kb-swing": {
+    "id": "bb-kb-swing",
+    "cite": "Learn How to Do Picture Perfect Kettlebell Swings (BarBend)",
+    "url": "https://barbend.com/kettlebell-swings/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-le": {
+    "id": "bb-le",
+    "cite": "How to Use the Leg Extension Machine for Quad Growth & Strength (BarBend)",
+    "url": "https://barbend.com/leg-extension/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "bb-preacher": {
     "id": "bb-preacher",
     "cite": "Learn the Preacher Curl to Build Strong and Inspiring Biceps (BarBend)",
@@ -391,6 +567,38 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-02"
+  },
+  "bb-revcrunch": {
+    "id": "bb-revcrunch",
+    "cite": "Learn the Reverse Crunch to Fire Up Your Core Training (BarBend)",
+    "url": "https://barbend.com/reverse-crunch/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-slam": {
+    "id": "bb-slam",
+    "cite": "Lay the Smackdown on Your Core Workouts with Medicine Ball Slams (BarBend)",
+    "url": "https://barbend.com/medicine-ball-slams/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-slam-ben": {
+    "id": "bb-slam-ben",
+    "cite": "The Main Benefits of Medicine Ball Slams And How to Do Them (BarBend)",
+    "url": "https://barbend.com/benefits-of-medicine-ball-slams/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-sledpush": {
+    "id": "bb-sledpush",
+    "cite": "The Sled Push May Be the Ultimate Leg-Builder (BarBend)",
+    "url": "https://barbend.com/sled-push/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "bells-of-steel": {
     "id": "bells-of-steel",
@@ -416,6 +624,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "bodbot-mb-slam": {
+    "id": "bodbot-mb-slam",
+    "cite": "Medicine Ball Slam (BodBot)",
+    "url": "https://www.bodbot.com/Exercises/966/Medicine-Ball-Slam",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "bullbar-assist-beginner": {
     "id": "bullbar-assist-beginner",
     "cite": "How to Use a Pull-Up Assist Machine Correctly (Beginner's Guide) (Bullbar Fit, manufacturer blog)",
@@ -439,6 +655,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "calatayud-2019": {
+    "id": "calatayud-2019",
+    "cite": "Tolerability and Muscle Activity of Core Muscle Exercises in Chronic Low-back Pain (2019)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31547140/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
   },
   "calatayud2016": {
     "id": "calatayud2016",
@@ -744,6 +968,14 @@
     "access": "full",
     "checked": "2026-10-19"
   },
+  "fb-che": {
+    "id": "fb-che",
+    "cite": "Cable Hip Extension (also known as Cable Kickback): Form, Muscles Worked (Fitbod)",
+    "url": "https://fitbod.me/exercises/cable-hip-extension",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "fees1998": {
     "id": "fees1998",
     "cite": "Fees M, Decker T, Snyder-Mackler L, Axe MJ. Upper extremity weight-training modifications for the injured athlete. Am J Sports Med 1998;26(5):732-42",
@@ -800,6 +1032,54 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "fv-cablecrunch": {
+    "id": "fv-cablecrunch",
+    "cite": "The 10 Best Cable Crunch Alternatives for Stronger, More Defined Abs (Fitness Volt)",
+    "url": "https://fitnessvolt.com/cable-crunch/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "fv-farmers": {
+    "id": "fv-farmers",
+    "cite": "Farmer's Walk Guide: How-To, Muscles Worked, Variations, and Benefits (Fitness Volt)",
+    "url": "https://fitnessvolt.com/farmers-walk/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "fv-hollow": {
+    "id": "fv-hollow",
+    "cite": "Hollow Hold: Strengthen Your Core and Hip Flexors Efficiently (Fitness Volt)",
+    "url": "https://fitnessvolt.com/hollow-hold/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "fv-le": {
+    "id": "fv-le",
+    "cite": "Leg Extension: Mastering Quadriceps for Stronger Legs (Fitness Volt)",
+    "url": "https://fitnessvolt.com/leg-extension/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "fv-llc": {
+    "id": "fv-llc",
+    "cite": "Lying Leg Curl: Muscles Worked, Form, and Variations (Fitness Volt)",
+    "url": "https://fitnessvolt.com/24561/lying-leg-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "fv-sledpush": {
+    "id": "fv-sledpush",
+    "cite": "Sled Push: Ultimate Guide to Strengthen Your Legs and Core (Fitness Volt)",
+    "url": "https://fitnessvolt.com/sled-push-guide/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "ga-curl-mid": {
     "id": "ga-curl-mid",
     "cite": "LIB-7 curl hand convention, pairs.mjs CONVENTIONS ga:curl-mid: across the middle of the palm, extension -10 to +10",
@@ -832,6 +1112,46 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ggr-birddog": {
+    "id": "ggr-birddog",
+    "cite": "The Bird Dog Exercise: Your Ticket to a Strong Core (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/bird-dog-exercise",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "ggr-deadbug": {
+    "id": "ggr-deadbug",
+    "cite": "Try the Dead Bug Exercise for a Strong Core (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/dead-bug-exercise",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "ggr-farmers": {
+    "id": "ggr-farmers",
+    "cite": "How to Do the Farmer's Carry: Expert Tips (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/farmers-carry",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "ggr-hollow": {
+    "id": "ggr-hollow",
+    "cite": "Hollow Hold Workout: Expert Tips (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/hollow-hold-workout",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "ggr-kb-swing": {
+    "id": "ggr-kb-swing",
+    "cite": "Kettlebell Swings: How To, Benefits, and Who Should Do Them (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/kettlebell-swings",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "ggr-pendlay": {
     "id": "ggr-pendlay",
     "cite": "Pendlay Row: How To, Benefits, and Variations (Garage Gym Reviews)",
@@ -839,6 +1159,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-19"
+  },
+  "ggr-sledpush": {
+    "id": "ggr-sledpush",
+    "cite": "Sled Push Workout: Trainer Tips (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/sled-push-workout",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "ggr-t-bar": {
     "id": "ggr-t-bar",
@@ -863,6 +1191,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "gs-sled": {
+    "id": "gs-sled",
+    "cite": "Sled Pull Guide: How To Improve Your Technique, Training & Full-Body Strength | Gymshark Central",
+    "url": "https://row.gymshark.com/blog/article/how-to-sled-pull",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "hackett-2013": {
     "id": "hackett-2013",
@@ -936,6 +1272,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "hevy-stlc": {
+    "id": "hevy-stlc",
+    "cite": "Standing Leg Curls: How-to, Tips, Alternatives & More (Hevy)",
+    "url": "https://www.hevyapp.com/exercises/how-to-standing-leg-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "hk-baechle-grip": {
     "id": "hk-baechle-grip",
     "cite": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
@@ -960,6 +1304,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "hk-kb-swing": {
+    "id": "hk-kb-swing",
+    "cite": "Here’s How to Do a Kettlebell Swing (excerpt from Kettlebell Strength Training Anatomy, Michael Hartle; Human Kinetics)",
+    "url": "https://us.humankinetics.com/blogs/excerpt/here-s-how-to-do-a-kettlebell-swing",
+    "kind": "textbook",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "hk-squat": {
     "id": "hk-squat",
     "cite": "Broussal-Derval A. Squat technique. Human Kinetics, 2019",
@@ -967,6 +1319,46 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "hl-birddog": {
+    "id": "hl-birddog",
+    "cite": "Bird Dog Exercise: How to Do, Variations, and Muscles Targeted (Healthline)",
+    "url": "https://www.healthline.com/health/bird-dog-exercise",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "hl-gb": {
+    "id": "hl-gb",
+    "cite": "How to Perform 5 Variations of the Glute Bridge Exercise (Healthline)",
+    "url": "https://www.healthline.com/health/fitness-exercise/glute-bridge-variations",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "hl-hc": {
+    "id": "hl-hc",
+    "cite": "5 Types of Hamstring Curls for Stronger Thighs (Healthline)",
+    "url": "https://www.healthline.com/health/hamstring-curls",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "hl-hk": {
+    "id": "hl-hk",
+    "cite": "It's Time to Revisit the High Knees Exercise You Learned in PE (Healthline; medically reviewed by a NASM-CPT)",
+    "url": "https://www.healthline.com/health/fitness/high-knees-benefits",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "hl-slam": {
+    "id": "hl-slam",
+    "cite": "Slam Ball Exercises and Benefits (Healthline; medically reviewed by a CSCS)",
+    "url": "https://www.healthline.com/health/fitness-exercise/slam-ball-exercises",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "hold-default": {
     "id": "hold-default",
@@ -983,6 +1375,14 @@
     "kind": "peer-reviewed",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "im-slam": {
+    "id": "im-slam",
+    "cite": "How To Do Overhead Medicine Ball Slam (Iron Man Magazine)",
+    "url": "https://www.ironmanmagazine.com/how-to-do-overhead-medicine-ball-slam/",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "jakobsen2012": {
     "id": "jakobsen2012",
@@ -1080,6 +1480,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "kovo-hf": {
+    "id": "kovo-hf",
+    "cite": "Cable Standing Hip Flexion: How to Do It, Form & Muscles Worked (Kovo)",
+    "url": "https://www.kovofitness.com/exercises/cable-standing-hip-flexion",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "kowalczuk2022": {
     "id": "kowalczuk2022",
     "cite": "Pectoralis Major Rupture: Evaluation and Management",
@@ -1136,6 +1544,22 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "lifto-le": {
+    "id": "lifto-le",
+    "cite": "Leverage Machine Leg Extension - How To, Muscles Worked & Form Guide (Liftosaur)",
+    "url": "https://www.liftosaur.com/exercises/leverage-machine-leg-extension",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "lifto-llc": {
+    "id": "lifto-llc",
+    "cite": "Leverage Machine Lying Leg Curl - How To, Muscles Worked & Form Guide (Liftosaur)",
+    "url": "https://www.liftosaur.com/exercises/leverage-machine-lying-leg-curl",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "lusk2010": {
     "id": "lusk2010",
     "cite": "Lusk SJ, Hale BD, Russell DM (2010) Grip width and forearm orientation effects on muscle activity during the lat pull-down. J Strength Cond Res 24(7):1895-900",
@@ -1151,6 +1575,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "maddigan-2014": {
+    "id": "maddigan-2014",
+    "cite": "Lower-limb and trunk muscle activation with back squats and weighted sled apparatus (2014)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25226330/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
   },
   "marchetti2023": {
     "id": "marchetti2023",
@@ -1208,6 +1640,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "mcgill-2012": {
+    "id": "mcgill-2012",
+    "cite": "Kettlebell swing, snatch, and bottoms-up carry: back and hip muscle activation, motion, and low back loads.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21997449/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "mcgill-2014": {
     "id": "mcgill-2014",
     "cite": "Muscle activity and spine load during pulling exercises: influence of stable and labile contact surfaces and technique coaching (McGill, Cannon, Andersen, J Electromyogr Kinesiol)",
@@ -1232,6 +1672,46 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "mf-kb-swing": {
+    "id": "mf-kb-swing",
+    "cite": "Kettlebell Swing (Muscle & Fitness exercise library)",
+    "url": "https://www.muscleandfitness.com/exercise/kettlebell-swing/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "mo-birddog": {
+    "id": "mo-birddog",
+    "cite": "Bird Dog, Exercise Guide (Motra)",
+    "url": "https://www.motra.com/exercises/birdDog",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "mo-kb-swing": {
+    "id": "mo-kb-swing",
+    "cite": "Kettlebell Swing - Exercise Guide (Motra, formerly Train Fitness)",
+    "url": "https://motra.com/exercises/kettlebellSwing",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "mo-le": {
+    "id": "mo-le",
+    "cite": "Machine Leg Extension - Exercise Guide (Motra)",
+    "url": "https://www.motra.com/exercises/legExtension",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "mo-llc": {
+    "id": "mo-llc",
+    "cite": "Machine Leg / Hamstring Curl Prone (Motra)",
+    "url": "https://www.motra.com/exercises/machineLegCurlLying",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "mo2023": {
     "id": "mo2023",
     "cite": "Effects of loading positions on the activation of trunk and hip muscles during flywheel and dumbbell single-leg Romanian deadlift exercises.",
@@ -1239,6 +1719,30 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "motra-cablecrunch": {
+    "id": "motra-cablecrunch",
+    "cite": "Cable Crunch, Exercise Guide (Motra)",
+    "url": "https://motra.com/exercises/cableCrunch",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "motra-hf": {
+    "id": "motra-hf",
+    "cite": "Cable Standing Hip Flexor Raise: Exercise Guide (Motra)",
+    "url": "https://www.motra.com/exercises/cableStandingHipFlexorRaise",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "motra-revcrunch": {
+    "id": "motra-revcrunch",
+    "cite": "Reverse Crunch, Exercise Guide (Motra)",
+    "url": "https://motra.com/exercises/reverseCrunch",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "motra-smith-shrug": {
     "id": "motra-smith-shrug",
@@ -1255,6 +1759,14 @@
     "kind": "peer-reviewed",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "nance-2017": {
+    "id": "nance-2017",
+    "cite": "Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study (2017)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29085728/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
   },
   "nance2017": {
     "id": "nance2017",
@@ -1287,6 +1799,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "nasm-llc": {
+    "id": "nasm-llc",
+    "cite": "Lying Leg Curl (NASM exercise library)",
+    "url": "https://www.nasm.org/resource-center/exercise-library/lying-leg-curl",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "nasm-rdl": {
     "id": "nasm-rdl",
@@ -1360,6 +1880,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "nike-kb-swing": {
+    "id": "nike-kb-swing",
+    "cite": "Kettlebell Swings: How To Do Them, Muscles Worked, and Common Mistakes (Nike)",
+    "url": "https://www.nike.com/a/kettlebell-swings",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "nsca-ch15-summary": {
     "id": "nsca-ch15-summary",
     "cite": "NSCA CSCS Chapter 15 (Exercise Technique) study summary, PTPioneer",
@@ -1424,6 +1952,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "outside-hf": {
+    "id": "outside-hf",
+    "cite": "9 Hip Flexor Exercises to Improve Your Athletic Performance (Outside, Amber Sayer, certified personal trainer)",
+    "url": "https://www.outsideonline.com/health/training-performance/hip-flexor-exercises/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "padovan2024": {
     "id": "padovan2024",
     "cite": "Padovan R et al. (2024) High-density electromyography excitation in front vs. back lat pull-down prime movers. J Hum Kinet 91:47-60",
@@ -1463,6 +1999,78 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-03"
+  },
+  "pereira-2017": {
+    "id": "pereira-2017",
+    "cite": "Trunk Muscle EMG During Intermediate Pilates Mat Exercises in Beginner Healthy and Chronic Low Back Pain Individuals (2017)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28413116/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
+  "pg-bgb": {
+    "id": "pg-bgb",
+    "cite": "Barbell Glute Bridges (PureGym exercise guide)",
+    "url": "https://www.puregym.com/exercises/glutes/glute-bridge/barbell-glute-bridges/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "pg-ck": {
+    "id": "pg-ck",
+    "cite": "Cable Kickbacks (PureGym exercise guide)",
+    "url": "https://www.puregym.com/exercises/glutes/glute-kickbacks/cable-kickbacks/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "pg-gb": {
+    "id": "pg-gb",
+    "cite": "Glute Bridges (PureGym exercise guide)",
+    "url": "https://www.puregym.com/exercises/glutes/glute-bridge/glute-bridges/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "pg-gbhub": {
+    "id": "pg-gbhub",
+    "cite": "Glute Bridge Exercises (PureGym exercise guide)",
+    "url": "https://www.puregym.com/exercises/glutes/glute-bridge/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "pg-gkhub": {
+    "id": "pg-gkhub",
+    "cite": "Glute Kickback Variations (PureGym exercise guide)",
+    "url": "https://www.puregym.com/exercises/glutes/glute-kickbacks/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "pg-kb-swing": {
+    "id": "pg-kb-swing",
+    "cite": "Kettlebell Swings (PureGym exercise guide)",
+    "url": "https://www.puregym.com/exercises/plyometrics/kettlebells/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "pg-mb": {
+    "id": "pg-mb",
+    "cite": "How and Why You Should Use a Medicine Ball (PureGym)",
+    "url": "https://www.puregym.com/blog/how-and-why-you-should-use-a-medicine-ball/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "pg-revcrunch": {
+    "id": "pg-revcrunch",
+    "cite": "How To Do Reverse Crunches (PureGym)",
+    "url": "https://www.puregym.com/exercises/abs/reverse-crunches/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "physitrack-longsitrow": {
     "id": "physitrack-longsitrow",
@@ -1632,6 +2240,22 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "sl-abex": {
+    "id": "sl-abex",
+    "cite": "The 10 Best Ab Exercises for Muscle and Strength (StrengthLog)",
+    "url": "https://www.strengthlog.com/ab-exercises/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-abwheel": {
+    "id": "sl-abwheel",
+    "cite": "How to Do Kneeling Ab Wheel Roll-Out: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/kneeling-ab-wheel-roll-out/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "sl-barbell-row": {
     "id": "sl-barbell-row",
     "cite": "How to Do Barbell Rows: Muscles Worked & Proper Form (StrengthLog)",
@@ -1664,6 +2288,30 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "sl-cablecrunch": {
+    "id": "sl-cablecrunch",
+    "cite": "How to Do Cable Crunch: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/cable-crunch/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-ck": {
+    "id": "sl-ck",
+    "cite": "How to Do Cable Glute Kickback: Muscled Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/cable-glute-kickback/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-coreex": {
+    "id": "sl-coreex",
+    "cite": "The 10 Best Core Exercises for Muscle & Strength (StrengthLog)",
+    "url": "https://www.strengthlog.com/core-exercises/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "sl-dbcurl": {
     "id": "sl-dbcurl",
     "cite": "How to Dumbbell Curl: Muscles Worked & Proper Form (StrengthLog)",
@@ -1680,10 +2328,50 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "sl-farmers": {
+    "id": "sl-farmers",
+    "cite": "How to Do Farmers Walk: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/farmers-walk/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-gb": {
+    "id": "sl-gb",
+    "cite": "How to Do Glute Bridge: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/glute-bridge/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "sl-hammer": {
     "id": "sl-hammer",
     "cite": "How to Do Hammer Curl: Muscles Worked & Proper Form (StrengthLog)",
     "url": "https://www.strengthlog.com/hammer-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-kb-swing": {
+    "id": "sl-kb-swing",
+    "cite": "How to Do Kettlebell Swing: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/kettlebell-swing/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-le": {
+    "id": "sl-le",
+    "cite": "How to Do Leg Extension: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/leg-extension/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-llc": {
+    "id": "sl-llc",
+    "cite": "How to Do Lying Leg Curl: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/lying-leg-curl/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
@@ -1751,6 +2439,30 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "sl-slam": {
+    "id": "sl-slam",
+    "cite": "How to Do Ball Slams: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/ball-slams/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-sledpush": {
+    "id": "sl-sledpush",
+    "cite": "How to Do Sled Push: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/sled-push/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-stlc": {
+    "id": "sl-stlc",
+    "cite": "How to Do Standing Leg Curl: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/standing-leg-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "sl-upright-row": {
     "id": "sl-upright-row",
@@ -1936,6 +2648,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "vit-slam": {
+    "id": "vit-slam",
+    "cite": "How to Master the Medicine Ball Slam Throw Technique (Vitruve)",
+    "url": "https://vitruve.fit/blog/how-to-master-the-medicine-ball-slam-throw-technique/",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "webmd-seated-leg-press": {
     "id": "webmd-seated-leg-press",
     "cite": "How to Do Seated Leg Presses (WebMD, medically reviewed)",
@@ -1951,6 +2671,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "west-2014": {
+    "id": "west-2014",
+    "cite": "The metabolic, hormonal, biochemical, and neuromuscular function responses to a backward sled drag training session",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23575361/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
   },
   "wiki-hook-grip": {
     "id": "wiki-hook-grip",
@@ -1999,6 +2727,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "yamane-2023": {
+    "id": "yamane-2023",
+    "cite": "Spinal cord injury without radiological abnormality due to a fall while using an abdominal roller: A report of two cases.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37780607/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
   },
   "yavuz-2015": {
     "id": "yavuz-2015",

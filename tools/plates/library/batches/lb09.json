@@ -23,7 +23,7 @@
     "Electromyographic analysis of traditional and nontraditional abdominal exercises: implications for rehabilitation and training. (2006). https://pubmed.ncbi.nlm.nih.gov/16649890/ PMID 16649890",
     "Spinal cord injury without radiological abnormality due to a fall while using an abdominal roller: A report of two cases. (2023). https://pubmed.ncbi.nlm.nih.gov/37780607/ PMID 37780607"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_bird_dog": {
    "src": "library/specs/bird_dog.mjs",
@@ -40,7 +40,7 @@
     "Bird Dog - Exercise Guide | Motra. https://www.motra.com/exercises/birdDog",
     "Tolerability and Muscle Activity of Core Muscle Exercises in Chronic Low-back Pain. (2019). https://pubmed.ncbi.nlm.nih.gov/31547140/ PMID 31547140"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_side_plank": {
    "src": "library/specs/side_plank.mjs",
@@ -88,7 +88,7 @@
     "How to Do Cable Crunch: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/cable-crunch/",
     "The 10 Best Cable Crunch Alternatives for Stronger, More Defined Abs – Fitness Volt. https://fitnessvolt.com/cable-crunch/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_hollow_body_hold": {
    "src": "library/specs/hollow_body_hold.mjs",
@@ -102,7 +102,7 @@
     "Hollow Hold Workout: Expert Tips | Garage Gym Reviews (2023). https://www.garagegymreviews.com/hollow-hold-workout",
     "Hollow Hold: Strengthen Your Core and Hip Flexors Efficiently – Fitness Volt (2026). https://fitnessvolt.com/hollow-hold/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_reverse_crunch": {
    "src": "library/specs/reverse_crunch.mjs",
@@ -117,7 +117,7 @@
     "Reverse Crunch - Exercise Guide | Motra. https://motra.com/exercises/reverseCrunch",
     "How To Do Reverse Crunches | PureGym. https://www.puregym.com/exercises/abs/reverse-crunches/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_dead_bug": {
    "src": "library/specs/dead_bug.mjs",
@@ -132,7 +132,7 @@
     "Dead Bug Exercise: Strengthen Core and Improve Stability – Fitness Volt (2024). https://fitnessvolt.com/dead-bug-exercise/",
     "Trunk Muscle EMG During Intermediate Pilates Mat Exercises in Beginner Healthy and Chronic Low Back Pain Individuals. (2017). https://pubmed.ncbi.nlm.nih.gov/28413116/ PMID 28413116"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_v_up": {
    "src": "library/specs/v_up.mjs",

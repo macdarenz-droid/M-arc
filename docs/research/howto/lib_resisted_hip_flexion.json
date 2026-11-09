@@ -1,0 +1,18 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=692f55f8aa9e5f998845152cc32ae90b3e7900b0428aca7ffbf601d6de7d1f7e
+{
+  "id": "lib_resisted_hip_flexion",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/resisted_hip_flexion.json",
+    "rev": 1
+  },
+  "sources": [
+    "motra-hf",
+    "kovo-hf",
+    "outside-hf",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

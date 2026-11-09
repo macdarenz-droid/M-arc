@@ -287,6 +287,27 @@
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; SHIP W7 PIN GO (supervisor, 2026-11-05, #394 6649092340): lib_v_up's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108). Edited in place under D-REPIN-UNMERGED (#384 6681018514): LIB-PLATEFIX-3 (#405, train 75, 24 plates approved, 6699614411 @ 19ff75e7) redrew this plate; the W7 chain is unmerged, so its first entry carries the PF3-approved fragments.",
       "supersedes": null,
       "prev": "f7113f3b1137baae73cb6df20628d317b2d42dcdc4c60f462552195bd4cea789"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB9",
+      "ids": [
+        "lib_ab_wheel_rollout",
+        "lib_bird_dog",
+        "lib_cable_crunch",
+        "lib_hollow_body_hold",
+        "lib_reverse_crunch",
+        "lib_dead_bug"
+      ],
+      "pageSha256": "5a83c9439f23ebd3a82978e1f771306fe4be49d17985f5a2c13f773f876504c2",
+      "bytes": 1357684,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W7-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6711372615 @ a3e5b6e75d494041afbe674c1a5fe227b492f51c",
+      "date": "2026-11-09",
+      "supersedes": null,
+      "why": "W7 layers approved for the flip set (D-PF10-W7JOIN; supervisor RESUME 2026-11-09): the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception. The page holds exactly the 6 shipped ids, each card byte-equal to its card in the lb09 page judged at a3e5b6e7; the page head loses only the held ids' rules.",
+      "prev": "5f467043eb92c5e0b7d06dfe26e9e897af9d9bb6aa230234872bdf9579d79fad"
     }
   ]
 }

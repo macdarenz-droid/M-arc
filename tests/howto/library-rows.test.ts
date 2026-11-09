@@ -336,8 +336,14 @@ async function libraryCases() {
 // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): plus front_squat (gap-key) and hammer_curl (hands/no-zoom.json,
 // D-SHIP-W5-HAMMER), both noPairRuling D-SHIP-C3, and the 3 bodyweight lower-body ids (archetype none, why names D-SHIP-GRIP,
 // D-SHIP-A6NOGRIP), in registry order after W4's (merge of main 05382042: both lanes' ids)
+// LIB-SHIP W7 (ruling 3; D-PF10-W7JOIN, the flip set of 19): every W7 shipped row ships with no hand pair (D-SHIP-HANDW7
+// gap-ruled trio and farmer_s_carry, sled_pull gap-key, the rest archetype none under D-SHIP-GRIP), in registry order after W5's
+const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
+  'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
+  'lib_kettlebell_swing', 'lib_high_knees', 'lib_sled_pull', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
 const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', ...W4_IDS, 'lib_front_squat', 'lib_bodyweight_squat',
   'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_hammer_curl',
+  ...W7_SHIPPED,
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
   'lib_horizontal_leg_press'];
@@ -345,7 +351,8 @@ const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_re
 // LIB-SHIP W3: plus single_arm_lat_pulldown (its card's watch is [] and its shoulder row names no part), in registry order
 // LIB-SHIP W4: the three W4 shrugs (registry order, after W3's lb01 rows and before the W2 rows) draw no mark either
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus single_leg_romanian_deadlift (noMarkIds on this tree; the other 3 draw marks)
-const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug',
+// LIB-SHIP W7 (D-PF10-W7JOIN): plus high_knees (riskFlags [], D-SHIP-W7-NOREDFLAG; noMarkIds on this tree), in registry order
+const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug', 'lib_high_knees',
   'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
 /** LIB-SHIP W2: the ids among `ids` whose How-to feel has no watch-listed non-primary muscle and no pain part in any row. */
 async function noMarkIds(base: string, ids: string[]) {

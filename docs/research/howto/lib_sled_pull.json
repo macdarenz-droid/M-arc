@@ -1,0 +1,19 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=0ebd723c12085a7d3c2988b75013fbc04c99750a43934a5db341ac091b54454d
+{
+  "id": "lib_sled_pull",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/sled_pull.json",
+    "rev": 1
+  },
+  "sources": [
+    "gs-sled",
+    "west-2014",
+    "ga-pull-base",
+    "pull-default",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

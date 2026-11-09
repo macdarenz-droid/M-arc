@@ -1,0 +1,25 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=0a9df81216a82b7a1b40ac6456c61a65bc2ee524b25e83adc7a980fefd3a3c42
+{
+  "id": "lib_medicine_ball_slam",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/medicine_ball_slam.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-slam",
+    "bb-slam-ben",
+    "sl-slam",
+    "ace-os",
+    "ace-heavy",
+    "vit-slam",
+    "bodbot-mb-slam",
+    "im-slam",
+    "pg-mb",
+    "hl-slam",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

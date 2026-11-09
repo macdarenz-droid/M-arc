@@ -1000,9 +1000,33 @@ describe('LIB-21 A9 (D-LIB21-AHEAD): nothing ships', () => {
     const text = readFileSync(f, 'utf8');
     return [...names(text).map(id => `${f}: ${id}`), ...(/lb9/i.test(f.slice(dir.length)) ? [`${f}: file name`] : []), ...(/"batch":\s*"LB9"/.test(text) ? [`${f}: batch LB9`] : [])];
   });
-  it('no LB9 H id, slug or batch is in any tools/plates/library/batches/ file or in tests/howto/golden/library/', () => {
-    expect(offenders('tools/plates/library/batches')).toEqual([]);
-    expect(offenders('tests/howto/golden/library')).toEqual([]);
+  // LIB-SHIP W7 (D-SHIP-MOVE; D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19): was "no LB9 H id, slug or
+  // batch is in any tools/plates/library/batches/ file or in tests/howto/golden/library/". The LB9 rows now live in
+  // batches/lb09.json and are pinned by golden lb09.json and its layers page, so every other file there is held to the same
+  // check; lb09.json names all 8 (the 4 left-out rows at left-out:D-OWNER-LIB142 included) and batch LB9; golden
+  // lb09.json names exactly the 5 pinned LB9 plates and its layers page exactly the 3 shipped LB9 ids (the SUPCORE ids
+  // are held by LIB-SUPCORE A13 below).
+  const PINNED9 = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'side_plank'];
+  const SHIPPED9 = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog'];
+  const outside = (dir: string, mine: string[]) => offenders(dir).filter(s => !mine.some(f => s.startsWith(`${join(dir, f)}: `)));
+  it('LIB-SHIP W7: the LB9 ids, slugs and batch are in batches/lb09.json, golden lb09.json and lb09.layers.html only; each names its ruled set', () => {
+    expect(outside('tools/plates/library/batches', ['lb09.json'])).toEqual([]);
+    expect(outside('tests/howto/golden/library', ['lb09.json', 'lb09.layers.html'])).toEqual([]);
+    const own = readFileSync(ROWS, 'utf8');
+    expect([names(own), /"batch":\s*"LB9"/.test(own)]).toEqual([LB9, true]);
+    expect(names(readFileSync('tests/howto/golden/library/lb09.json', 'utf8'))).toEqual(LB9.filter(id => PINNED9.includes(id)));
+    expect(names(readFileSync('tests/howto/golden/library/lb09.layers.html', 'utf8'))).toEqual(LB9.filter(id => SHIPPED9.includes(id)));
+  });
+  it('LIB-SHIP W7 reds: lb09.json copied under another name, a left-out id in golden lb09.json, and a held id on the layers page are red', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'lb9-w7-'));
+    try {
+      writeFileSync(join(dir, 'lb09.json'), readFileSync(ROWS, 'utf8'));
+      writeFileSync(join(dir, 'zz.json'), readFileSync(ROWS, 'utf8'));
+      expect(outside(dir, ['lb09.json']).length).toBeGreaterThanOrEqual(LB9.length + 1);
+      expect(outside(dir, ['lb09.json', 'zz.json'])).toEqual([]);
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+    expect(names(`${readFileSync('tests/howto/golden/library/lb09.json', 'utf8')}{"id":"lib_pallof_press"}`)).not.toEqual(LB9.filter(id => PINNED9.includes(id)));
+    expect(names(`${readFileSync('tests/howto/golden/library/lb09.layers.html', 'utf8')}<div data-id="superman"></div>`)).not.toEqual(LB9.filter(id => SHIPPED9.includes(id)));
   });
   it('the matcher is exact: over src/data/exercises.json no other real id contains one of the 8; it matches neither lib_bird_dog_v2 nor single-arm-pallof-press', () => {
     const ex = readJson('src/data/exercises.json') as any[];
@@ -1051,19 +1075,39 @@ describe('LIB-21 A19 (D-LIB21-TESTS): test manners', () => {
 });
 
 describe('LIB-21 A9 (D-LIB21-AHEAD): the rows never ship; generate is unchanged', { timeout: T }, () => {
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => !['drawing', 'review'].includes(r.stage)).map(([id, r]) => `${id}: ${r.stage}`);
-  it('every LB9 row is at stage drawing or review; mutations: shipped and approved-plate are red', () => {
-    const rows = readJson(ROWS).rows;
-    expect(stageProblems(rows)).toEqual([]);
-    expect(stageProblems({ ...rows, lib_bird_dog: { ...rows.lib_bird_dog, stage: 'shipped' } })).toEqual(['lib_bird_dog: shipped']);
-    expect(stageProblems({ ...rows, lib_bird_dog: { ...rows.lib_bird_dog, stage: 'approved-plate' } })).toEqual(['lib_bird_dog: approved-plate']);
+  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19): replaces "every LB9 row is at stage drawing
+  // or review", its shipped/approved-plate mutations and "none of the 8 is shipped, even with lb9/rows.json read as a batch
+  // file" with the W7 ruled set as positive asserts: exactly W7's 6 LB9 ids ship (3 LB9, 3 SUPCORE); side_plank, superman
+  // and v_up stay approved-plate (held); the 4 left-out rows stay at left-out:D-OWNER-LIB142; each id is one registry row.
+  const IDS = [...LB9, ...SUP].map(i => `lib_${i}`);   // LIB-SUPCORE: the 5 SUPCORE rows too
+  const W7 = ['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug'];
+  const W7_HELD = ['lib_side_plank', 'lib_superman', 'lib_v_up'];
+  const stageProblems = (rows: any[]) => IDS.flatMap(id => {
+    const r = rows.find((x: any) => x.id === id);
+    const want = W7.includes(id) ? 'shipped' : W7_HELD.includes(id) ? 'approved-plate' : 'left-out:D-OWNER-LIB142';
+    if (!r) return [`${id}: no row`];
+    return r.stage === want ? [] : [`${id}: ${r.stage}`];
   });
-  it('none of the 8 is shipped, even with lb9/rows.json read as a batch file', () => {
-    const IDS = [...LB9, ...SUP].map(i => `lib_${i}`);   // LIB-SUPCORE: the 5 SUPCORE rows too
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
-    expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual([]);
+  it('LIB-SHIP W7: every LB9 row is at its ruled stage: W7\'s 6 shipped, side_plank, superman and v_up approved-plate, the 4 left-out at left-out:D-OWNER-LIB142', () => {
+    expect([...W7, ...W7_HELD].map(i => i.slice(4)).sort()).toEqual(drawn().sort());
+    expect(IDS.filter(id => ![...W7, ...W7_HELD].includes(id)).map(i => i.slice(4)).sort()).toEqual([...LEFT_OUT_W7].sort());
+    expect(stageProblems(reg.rows())).toEqual([]);
+  });
+  it('LIB-SHIP W7 reds: a W7 id back at approved-plate, a held id shipped, a held id at drawing, a left-out id shipped and a dropped row are red', () => {
+    const rows = reg.rows();
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_bird_dog' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_bird_dog: approved-plate']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_superman' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_superman: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_v_up' ? { ...r, stage: 'drawing' } : r)))).toEqual(['lib_v_up: drawing']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_pallof_press' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_pallof_press: shipped']);
+    expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_dead_bug'))).toEqual(['lib_dead_bug: no row']);
+  });
+  it('LIB-SHIP W7: the shipped LB9 ids are exactly W7\'s 6, in registry order; each LB9 id is one registry row (lb09.json read once)', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W7);
+    const rows = reg.rows();
+    for (const id of IDS) expect(rows.filter((r: any) => r.id === id).length, id).toBe(1);
+    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(IDS.length);
+    // red: lb09.json read twice (a copy in batches/) throws on the duplicate id
+    expect(() => reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), ['zz.json', readJson(ROWS)]] })).toThrow(/already used/);
   });
   it('mutation: rows.json copied into batches/ (read as a batch) would name batch LB9 and an LB9 id', () => {
     const text = readFileSync(ROWS, 'utf8');
@@ -2087,12 +2131,53 @@ describe('LIB-SUPCORE A10 / A1: the 5 cards and quotes, the rows and the waits',
 });
 
 describe('LIB-SUPCORE A13: the 5 never ship', () => {
-  it('no SUPCORE id is in any batches/ file, any library golden file or library/MANIFEST.json', () => {
-    const files = [...readdirSync('tools/plates/library/batches').map(f => `tools/plates/library/batches/${f}`), ...readdirSync('tests/howto/golden/library').map(f => `tests/howto/golden/library/${f}`), 'tools/plates/library/MANIFEST.json'];
-    for (const f of files) for (const id of SUP) expect(new RegExp(`\\blib_${id}\\b|"${id}"`).test(readFileSync(f, 'utf8')), `${f}: ${id}`).toBe(false);
+  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19): was "no SUPCORE id is in any batches/ file,
+  // any library golden file or library/MANIFEST.json". W7 ships hollow_body_hold, reverse_crunch and dead_bug, holds v_up
+  // at approved-plate and leaves flutter_kicks out (left-out:D-OWNER-LIB142), so the guard is the ruled set as positive
+  // asserts: the 5 are rows of batches/lb09.json only; golden lb09.json pins exactly the 4 drawn ones, its layers page and
+  // layers-page entry exactly the 3 shipped; MANIFEST.json holds a row for exactly the 4 pinned ones; flutter_kicks is named
+  // in no golden file and not in MANIFEST.json (it still never ships).
+  const SUP_SHIPPED = ['hollow_body_hold', 'reverse_crunch', 'dead_bug'], SUP_PINNED = [...SUP_SHIPPED, 'v_up'];
+  const hit = (id: string, text: string) => new RegExp(`\\blib_${id}\\b|"${id}"|(^|[^a-z0-9-])${id.replace(/_/g, '-')}([^a-z0-9-]|$)`).test(text);
+  const supIn = (text: string) => SUP.filter(id => hit(id, text));
+  const GD = 'tests/howto/golden/library';
+  const supProblems = (batches: [string, string][], golden: [string, string][], manifest: any, stages: Record<string, string>) => [
+    ...batches.flatMap(([f, t]) => (f === 'lb09.json' ? (supIn(t).join() === SUP.join() ? [] : [`${f}: ${supIn(t)}`]) : supIn(t).map(id => `${f}: ${id}`))),
+    ...golden.flatMap(([f, t]) => {
+      if (f === 'lb09.json') {
+        const j = JSON.parse(t), plates = j.entries.filter((e: any) => e.kind === 'plate').map((e: any) => e.id.slice(4)).filter((id: string) => SUP.includes(id));
+        const pages = j.entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => e.ids.map((i: string) => i.slice(4)).filter((id: string) => SUP.includes(id)));
+        return [...(plates.join() === SUP_PINNED.join() ? [] : [`${f}: plates ${plates}`]), ...(JSON.stringify(pages) === JSON.stringify([SUP_SHIPPED]) ? [] : [`${f}: layers-page ${pages}`]), ...(hit('flutter_kicks', t) ? [`${f}: flutter_kicks`] : [])];
+      }
+      if (f === 'lb09.layers.html') return supIn(t).join() === SUP_SHIPPED.join() ? [] : [`${f}: ${supIn(t)}`];
+      return supIn(t).map(id => `${f}: ${id}`);
+    }),
+    ...(Object.keys(manifest.rows).map(k => k.slice(4)).filter(id => SUP.includes(id)).sort().join() === [...SUP_PINNED].sort().join() ? [] : ['MANIFEST.json: rows']),
+    ...(hit('flutter_kicks', JSON.stringify(manifest)) ? ['MANIFEST.json: flutter_kicks'] : []),
+    ...SUP.filter(id => stages[id] !== (SUP_SHIPPED.includes(id) ? 'shipped' : id === 'v_up' ? 'approved-plate' : 'left-out:D-OWNER-LIB142')).map(id => `${id}: ${stages[id]}`),
+  ];
+  const live = () => ({
+    batches: readdirSync('tools/plates/library/batches').map(f => [f, readFileSync(`tools/plates/library/batches/${f}`, 'utf8')] as [string, string]),
+    golden: readdirSync(GD).map(f => [f, readFileSync(`${GD}/${f}`, 'utf8')] as [string, string]),
+    manifest: readJson('tools/plates/library/MANIFEST.json'),
+    stages: Object.fromEntries(reg.rows().filter((r: any) => SUP.includes(r.id.slice(4))).map((r: any) => [r.id.slice(4), r.stage])),
+  });
+  it('LIB-SHIP W7: the 5 ship only as ruled: in batches/lb09.json only, pinned and paged in golden lb09 only, MANIFEST rows exactly the 4 pinned; flutter_kicks named in no golden file nor MANIFEST.json', () => {
+    const L = live();
+    expect(supProblems(L.batches, L.golden, L.manifest, L.stages)).toEqual([]);
   });
   it('mutation: a golden text naming lib_v_up is red', () => {
     expect(new RegExp('\\blib_v_up\\b').test('{"id":"lib_v_up"}')).toBe(true);
+  });
+  it('LIB-SHIP W7 reds: lib_v_up in another golden file, flutter_kicks in golden lb09.json, a MANIFEST row for flutter_kicks, v_up on the layers page, v_up shipped, and a SUPCORE row in another batch file are red', () => {
+    const L = live(), sp = (p: Partial<typeof L>) => { const m = { ...L, ...p }; return supProblems(m.batches, m.golden, m.manifest, m.stages); };
+    const gold = (f: string, add: string) => L.golden.map(([n, t]) => [n, n === f ? `${t}${add}` : t] as [string, string]);
+    expect(sp({ golden: gold('lb08.json', '{"id":"lib_v_up"}') })).toEqual(['lb08.json: v_up']);
+    expect(sp({ golden: gold('lb09.json', '') .map(([n, t]) => [n, n === 'lb09.json' ? t.replace('"entries"', '"note":"lib_flutter_kicks","entries"') : t] as [string, string]) })).toEqual(['lb09.json: flutter_kicks']);
+    expect(sp({ manifest: { rows: { ...L.manifest.rows, lib_flutter_kicks: {} } } })).toEqual(['MANIFEST.json: rows', 'MANIFEST.json: flutter_kicks']);
+    expect(sp({ golden: gold('lb09.layers.html', '<div data-id="v-up"></div>') })).toEqual(['lb09.layers.html: hollow_body_hold,reverse_crunch,dead_bug,v_up']);
+    expect(sp({ stages: { ...L.stages, v_up: 'shipped' } })).toEqual(['v_up: shipped']);
+    expect(sp({ batches: [...L.batches, ['zz.json', '{"rows":{"lib_dead_bug":{}}}']] })).toEqual(['zz.json: dead_bug']);
   });
 });
 
