@@ -842,6 +842,16 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-09 ~21:45 UTC: RESUMED** under D-OWNER-MAXOUT (owner, 11-09: "continue untilaxxed out"). Weekly 0.86 at 21:25; work runs until the limit. Tick re-enabled; the resume one-shot (11-13 08:10) stays as a safety net.
+  - **W6 #393** @ `bb84f778`: merged main `de91dd21`. Supervisor delta check: both sides kept, MANIFEST main keys move only build-layers-page.mjs (W6's reviewed change). CI is running, then **train 82** and the APK (7 guides).
+  - **W7 #394** @ `5e21e50`: flipping 19 toward READY, then reviewer and train.
+  - **F-GEN-WALK-SPEED #411** (builder session_018Pv5bJum4g9TmQNXjSA2ak): library walkers share one render.
+  - **PF4 #410** (builder session_018Pv5bK4uF5PanuitLBN9c4):
+    - lyr-pf11 approved the close-ups 19, 21, 20 and 16.
+    - pf12 approved one_arm_dumbbell_row. cable_curl and dumbbell_fly are in their fix round; straight_bar has one leader fix, then a crop check.
+    - pf13 (20b, machine_pullover, high_to_low, smith_squat, burpee, jump_rope) is with the critics.
+    - Follow-ups: F-NOGRIP-MISTAKES, F-PLATE-CROP, F-VUP-SWAP. concentration_curl is held (D-PF4-CONCHOLD).
+  - **Plan:** `plan-w8.md` (W8a/b/c and RESEARCH-ROUTES-4) on sup-lib4-cards. Rulings are in lib4-cards 48 and on #410.
 - **Update 11-07 ~22:55 UTC: PAUSED until the Fri 11-13 08:00 UTC reset** (weekly 0.75; owner's 80 % rule).
   - **Train 81:** #409 W5 @ `b7f416c4` → main `de91dd21` (10 How-tos; the app has 46). **APK sent** (run 42418699036, artifact 13593939140, fingerprint step success).
   - **WAITING:** W6 #393 @ `8709105a` (session_018Pv5bJMLgYNrdFdvrC9BEE) and W7 #394 @ `a3e5b6e7` (session_018Pv5bK1RdhfbyRB1zk8cFT; flip set 19, card compare accepted). No other lane is open.
