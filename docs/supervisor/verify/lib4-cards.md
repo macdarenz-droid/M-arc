@@ -4865,3 +4865,15 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - **D-SHIP-W3-WALKTIME sweep** (#391 6706600671): every default-timeout walker over 2.5 s in a head's source-gate and unit-tz logs gets the WALKTIME form with its measured time, and the others are listed. W4 and W5 each applied it; W5 also gave library-shared S6 600 s. **Risk:** library-ci C4 (363 s), library-rows FEEL (377 s) and lib7b A2 (309 s) run under a 600 s limit and grow with every wave. **F-GEN-WALK-SPEED** is the first card after the reset, before W7.
   - **D-PF10-W7JOIN applied:** 3b merged before W7's flip dry run, so W7 ships 19. W7's card compare was accepted (#394 6711372615): lb08 is byte-equal to the judged page, and in lb10 only sled_pull's rope equipment lines differ (ROPE, ROPEGHOST).
   - **Pause** (owner's 80 % rule): at weekly 0.75, W6 and W7 posted WAITING (#393, #394). W5 finished its train. The tick is disabled until the Fri 11-13 08:00 UTC reset. **Order after it:** F-GEN-WALK-SPEED, then W6 (merge main, delta, train), then W7 (flip 19, READY, review, train).
+- **11-09 ~19:00 UTC (supervisor):**
+  - **D-OWNER-MAXOUT** (owner, 11-09, chat: "continue untilaxxed out"): the 80 % pause is lifted for this weekly window, and work runs until the limit, as under the owner's 10-31 rule. The tick is re-enabled. The resume one-shot for 11-13 08:10 UTC stays as a safety net.
+  - **Resumed:**
+    - W6 merges main `de91dd21`, then train 82.
+    - W7 builds ahead (merge main, flip 19, READY).
+    - **F-GEN-WALK-SPEED** card (`f-gen-walk-speed-card.md`, 5943a803) and its builder are started.
+  - **D-PLAN-W8** (`plan-w8.md`, d0c1e3a2): 70 rows are unshipped after W6 and W7: A 21, A2 8, A↑ 2, B 31, C 3, C/D 4, D 1. Plates work reaches 134; the last 8 need research or rulings.
+    - Lanes: W8a (pilot-a, pilot-b, pilot-b2, lb01; 7 rows), W8b (lb02-lb05; 17), W8c (the W6 A2 rows, after W6). Each changed sheet gets a layers check in the D-PFC-ROUND1 form.
+    - Merge order: W6 → W7 → W8a → W8b → W8c. Builds may run ahead.
+  - **D-PLAN-W8C** (D-OWNER-RECOMMENDED): the close-ups of cable_external_rotation, diamond_push_up and cable_chest_press, which scored [2,2,2] or [2,3,2], are redrawn in PF4 group 1 rather than rechecked as drawn. hip_abduction and weighted_dip are checked as drawn in W8c.
+  - **LIB-PLATEFIX-4** card (`lib-platefix-4-card.md`): groups 1, 4 and 5, with barbell_bench_press's close-up first; each held id gets a fresh round 1 (F-FLY-START). PF4b (head inset, views) and the F-HAND-* cards come later. 4 LIB builders are active.
+  - **Next, when a lane frees** (after W6 merges): RESEARCH-ROUTES-4 for the 8 C/D rows (arnold_press, skull_crusher, jump_squat, pendulum_squat frames, goblet_squat, bench_dip, renegade_row, box_jump's box), then W8a.
