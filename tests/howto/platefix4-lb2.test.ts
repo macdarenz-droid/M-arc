@@ -93,7 +93,7 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
     expect(got).toEqual({
       'barbell-bench-press': expect.not.stringMatching(/^0fb194c367499b05037fd1bdedb48f4040c7b328299664dc623ad83faea3fbe7$/),
       'incline-barbell-bench-press': '07e934a7cb638cf91e9e2804367e227a459a893c13fcb760190dd925c3f19275',
-      'incline-dumbbell-press': '6b0aaad5f2fcc0750b5e1ec36ad5eef44bcf71c4c8289b24d891ec0199a03539',
+      'incline-dumbbell-press': expect.not.stringMatching(/^6b0aaad5f2fcc0750b5e1ec36ad5eef44bcf71c4c8289b24d891ec0199a03539$/),
       'close-grip-bench-press': '1cd3bcd5a6a8df110adcd0858b8d3c894ecdaeab1bdae4ab3cb49844e86fb9f7',
       'decline-bench-press': expect.not.stringMatching(/^f238d19a2d61924550fc80bec2676e3a80b8c066444c2b6e46f791ffdb058ab3$/),
       'dumbbell-pullover': '94ba216267e5c7fc216546956484e0e2d997b273dd4a10a1812b50ef2650821e',
@@ -134,5 +134,60 @@ describe('PF4 item 21: decline_bench_press draws the feet-hooked close-up', () =
   });
   it('mutation: the loose knee alone at the hooked 100 deg (ankle neutral) does not clear the roller', () => {
     expect(gapPx({ knee: 100, ankle: dz().wrong.pose.ankle })).toBeLessThan(8);
+  });
+});
+
+// LIB-PLATEFIX-4 item 20 (PF3 item 20, #391 6653791551; #405 6682819340; W4 panel L7 [4,3,3], #391 6653540190, critics c2,
+// c3: "a bench-angle panel showing a 45-degree pad (Right) vs a near-upright pad (Wrong)"): incline_dumbbell_press's sheet
+// draws the card zoom `incline-angle` (c1, c2). Red on main de91dd21: no zoom.
+describe('PF4 item 20: incline_dumbbell_press draws the bench-angle close-up', () => {
+  let I: any, IS: any, IB: any;
+  beforeAll(async () => {
+    [I, IS, IB] = await Promise.all(['howto/lib_incline_dumbbell_press.howto.mjs', 'specs/incline_dumbbell_press.mjs', 'eq/inclineBench.mjs']
+      .map(f => import(/* @vite-ignore */ lib(f))));
+  }, 600_000);
+  const iz = () => I.default.zooms.find((z: any) => z.key === 'incline-angle');
+  /** Recline of the buttock-backUpper line from vertical (deg), as the spec's reclined() measures it. */
+  const recline = (L: any) => Math.atan2(-(L.backUpper[2] - L.buttock[2]), L.backUpper[1] - L.buttock[1]) * 180 / Math.PI;
+  it('the sheet has the posture zoom incline-angle (card c2 words), its chip first, and Show me links from setup step 1 and the angle checkpoint', () => {
+    const z = iz(), h = I.default;
+    expect(z).toBeTruthy();
+    expect([z.kind, z.chip, z.heading, z.right, z.wrong.base, z.wrong.solid]).toEqual(['posture', 'Bench', 'Bench angle', 'start', 'start', true]);
+    expect(z.caption).toEqual({ right: 'Back pad at about 45 degrees.', wrong: 'Back pad near upright.' });
+    expect(h.chips).toEqual(['incline-angle', 'feel']);
+    expect(h.setup[0].zoom).toBe('incline-angle');
+    expect(h.posture.find((p: any) => p.key === 'angle').zoom).toBe('incline-angle');
+  });
+  it('Right: back at 45 deg (+-1) on the plate\'s pad; Wrong: back at <= 20 deg from vertical, on the Wrong pad (upper back and occiput within 1 cm), arms as the Right\'s', () => {
+    const sp = I.default.plate, LR = eng.landmarksOf(sp.poses.start, 1.75), W = { ...sp.poses.start, ...iz().wrong.pose }, LW = eng.landmarksOf(W, 1.75);
+    const rr = recline(LR), rw = recline(LW);
+    console.log(`PF4 20: recline Right ${rr.toFixed(2)} deg, Wrong ${rw.toFixed(2)} deg`);
+    expect(Math.abs(rr - 45)).toBeLessThanOrEqual(1);
+    expect(rw).toBeLessThanOrEqual(20);
+    // the Wrong pad: the composer's back face at the Wrong angle, through the reclined() hinge
+    const rec = IS.reclined({ back: 15, seatTilt: 12, seatTop: 0.45, trunk: 0 }), f = IB.inclineFaces({ hinge: rec.hinge, back: 15, seatTilt: 12 }).back;
+    const off = (p: number[]) => ((p[1]! - f.point[1]) * f.normal[1] + (p[2]! - f.point[2]) * f.normal[2]) * 100;
+    expect(Math.abs(off(LW.backUpper))).toBeLessThanOrEqual(1);
+    // arms: each grip keeps the Right's offset from its shoulder (<= 0.5 cm)
+    for (const s of ['l', 'r']) expect(Math.hypot(...[0, 1, 2].map(i => (LW[`grip.${s}`][i] - LW[`shoulder.${s}`][i]) - (LR[`grip.${s}`][i] - LR[`shoulder.${s}`][i]))) * 100, s).toBeLessThanOrEqual(0.5);
+    // the Wrong crop's pad is the composer's at that angle (its back pad bar runs along the face's up direction)
+    const n = IB.inclineBench({ hinge: rec.hinge, back: 15, seatTilt: 12, backLen: 0.84, beamZ: [-0.72, 0.36] }).length;
+    expect(iz().wrong.equipmentList.slice(1, 1 + n)).toEqual(IB.inclineBench({ hinge: rec.hinge, back: 15, seatTilt: 12, backLen: 0.84, beamZ: [-0.72, 0.36] }));
+  });
+  it('the Wrong crop draws the upright pad (crop option equipmentList) and none of the 45 deg end-layer phantoms', () => {
+    const probe = { points: [], specs: [] as any[] };
+    const { CLOSEUP_OPTIONS } = { CLOSEUP_OPTIONS: { crop: { source: 'engine', landmarks: 'spec', solidPose: 'own', equipment: 'noRays' } } };
+    const cut = crop.engineCrop(I.default, CLOSEUP_OPTIONS.crop, { name: 'vendor', ...eng, renderPlate: plate.renderPlate }, probe);
+    cut(iz(), 'right'); cut(iz(), 'wrong');
+    const [r, w] = probe.specs;
+    expect(w.spec.equipment).toBe(iz().wrong.equipmentList);
+    expect(r.spec.equipment).not.toBe(iz().wrong.equipmentList);
+    const items = (w.spec.equipment as any[]).flatMap(e => typeof e === 'function' ? [].concat(e(eng.landmarksOf(w.spec.poses.end, 1.75), { pose: 'end', mistake: true }) ?? []) : [e]);
+    expect(items.filter((i: any) => i?.part === 'archgap' || String(i?.cls ?? '').includes('m-line'))).toEqual([]);
+  });
+  it('mutation: an equipmentList left off the Wrong crop falls back to the plate\'s 45 deg pad', () => {
+    const probe = { points: [], specs: [] as any[] }, z = { ...iz(), wrong: { ...iz().wrong, equipmentList: undefined } };
+    crop.engineCrop(I.default, { source: 'engine', landmarks: 'spec', solidPose: 'own', equipment: 'noRays' }, { name: 'vendor', ...eng, renderPlate: plate.renderPlate }, probe)(z, 'wrong');
+    expect(probe.specs[0].spec.equipment).not.toBe(iz().wrong.equipmentList);
   });
 });
