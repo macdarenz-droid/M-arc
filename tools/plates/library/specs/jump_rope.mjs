@@ -14,20 +14,20 @@
 //   of the hip joints, the elbows in (IK pole back); the rope over the head (plate.frames).
 //  End (c9, D-LIB22-AIRBORNE): the same body lifted HOP by root.at (the legs as joint angles, box_jump's method), the
 //   rope under the soles, its lowest point just over the floor. A mid-air frame, as the card's plate.end states.
-//  Mistake (c9): the same body lifted M_HOP; the rope stays under the feet, far below them.
+//  Mistake (c9): the same body lifted M_HOP, drawn over the Right pose; the rope is drawn on the Right pose only.
 //  The rope (eq/jumpRope.mjs) is one `poly` strand from handle tip to handle tip; its length is c1's (ROPE_LEN), and
 //   the overhead arc's width is solved so the drawn arc is that long (a projection is never longer than the rope);
 //   under the feet the arc is shorter (the rope's loop then turns out of the frontal plane).
-// Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): FOOT_X, KNEE_SOFT, HOP, M_HOP, M_TUCK and M_OFF
-//  (LIB-PLATEFIX-3: the W7 panel's "knees tucked" and "offset clear"; drawing values), HAND_OUT,
+// Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): FOOT_X, KNEE_SOFT, HOP, M_HOP, M_TUCK
+//  (LIB-PLATEFIX-3: the W7 panel's "knees tucked"; a drawing value), HAND_OUT,
 //  HAND_FWD, OVER_CLEAR, UNDER_W, FLOOR_GAP; solved: ROPE_LEN, OVER_W.
-import { landmarksOf, RADII, normPose, resolve } from '../engine.mjs';
+import { bodyShapes, fk, landmarksOf, RADII, normPose, resolve } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
 import { jumpRope, ropeLine, lineLength, JUMP_ROPE, JUMP_ROPE_ITEMS } from '../eq/jumpRope.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.05, KNEE_SOFT: 15, HOP: 0.038, M_HOP: 0.2, M_TUCK: 0, M_OFF: 0.55, HAND_OUT: 0.12, HAND_FWD: 0.05, OVER_CLEAR: 0.10, UNDER_W: 0.32, FLOOR_GAP: 0.004, FLIGHT_ANKLE: -10 });
-const { FOOT_X, KNEE_SOFT, HOP, M_HOP, M_TUCK, M_OFF, HAND_OUT, HAND_FWD, OVER_CLEAR, UNDER_W, FLOOR_GAP, FLIGHT_ANKLE } = SIZES;
+export const SIZES = Object.freeze({ FOOT_X: 0.05, KNEE_SOFT: 15, HOP: 0.038, M_HOP: 0.305, M_TUCK: 0, HAND_OUT: 0.12, HAND_FWD: 0.05, OVER_CLEAR: 0.10, UNDER_W: 0.32, FLOOR_GAP: 0.004, FLIGHT_ANKLE: -10 });
+const { FOOT_X, KNEE_SOFT, HOP, M_HOP, M_TUCK, HAND_OUT, HAND_FWD, OVER_CLEAR, UNDER_W, FLOOR_GAP, FLIGHT_ANKLE } = SIZES;
 export const bisect = (f, a, b, what) => {
   let fa = f(a), fb = f(b), side = 0;
   if (!(fa * fb <= 0)) throw new Error(`jump_rope: no root for ${what} in [${a}, ${b}] (${fa}, ${fb})`);
@@ -68,13 +68,29 @@ const start = asAngles(0), end = asAngles(liftTo(HOP), FLY);
 // unchanged, raised so its lowest foot is M_HOP up: M_TUCK 60 -> 0, since the tucked legs read as a 12 % shorter figure
 // whose head sat only 13 px over the main one; M_HOP 0.15 -> 0.2 m so the copy's head is 24 px over the main head (was 12). The
 // floor line runs on under it.
+// LIB-PLATEFIX-4 (#394 6701937875 D-PFR-JUMPROPE; pfc #394 6701001868 T02 c1 "Use the house overlay: draw the red dashed
+// figure at the same x as the solid one, lifted, with the gap arrow under the feet. Keep the rope loop on the solid figure
+// only."): M_OFF (0.55 m aside, about 80 px) is dropped, so the red figure is drawn over the Right pose at its x; M_HOP
+// 0.2 -> 0.305 m, pf7 R5 c2's "feet ~93 px (about 12 in) off the floor" (c3's "head top 42 px above the correct head" is
+// then met too: 41 px plate, 82 px critic), so the lifted copy clears the solid one.
 const TUCK = { hip: { l: { ...q.hip.l, flex: (q.hip.l.flex ?? 0) + M_TUCK / 2 }, r: { ...q.hip.r, flex: (q.hip.r.flex ?? 0) + M_TUCK / 2 } }, knee: { l: q.knee.l + M_TUCK, r: q.knee.r + M_TUCK } };   // round 2: on top of the airborne knees (was M_TUCK alone, which straightened them)
-const tucked = dy => ({ ...asAngles(dy, FLY), ...TUCK, root: { at: [M_OFF, STAND.root.at[1] + dy, STAND.root.at[2]], tilt: 0 } });
+const tucked = dy => ({ ...asAngles(dy, FLY), ...TUCK, root: { at: [0, STAND.root.at[1] + dy, STAND.root.at[2]], tilt: 0 } });
 const lowTuck = dy => Math.min(...FOOT_LMS.map(n => landmarksOf(tucked(dy), H)[n][1]));
 const M_DY = bisect(dy => lowTuck(dy) - M_HOP, 0, 0.6, `the tucked lift to ${M_HOP} m`);
 const { shoulder: _s, elbow: _e, ...mistake } = tucked(M_DY);
-// the hop height arrow: up from the floor beside the faulty feet to the faulty soles' height (LIB-PLATEFIX-3)
-const LMM = landmarksOf({ ...end, ...mistake }, H), ARROW_X = LMM['sole.l'][0] + 0.12;
+// the hop height arrow (LIB-PLATEFIX-4): up from the floor to the faulty feet's lowest point (M_HOP), beside the feet.
+// The pfc fix asks for it under the feet, but there it would lie on the solid feet, and the house rule (lb10 DESIGN.md
+// 13.1/13.4 must-fix 1) keeps every solid red arrow 6 px clear of the solid end figure. So it stands ARROW_CLEAR outside
+// the solid end figure's outer (screen-right) edge below the arrow's top: 6 px for the rule plus the 3 px arrowhead half
+// width and 1.5 px of margin, at the plate's 146.29 px/m (a drawing value).
+const LMM = landmarksOf({ ...end, ...mistake }, H);
+export const ARROW_CLEAR = 10.5 / 146.29;
+const SOLID_EDGE = (() => {
+  const bd = { height: H }, probe = { view: 'front', pxm: 1000, P: w => [w[0] * 1000, -w[1] * 1000] };
+  const pts = bodyShapes(fk(resolve(normPose(end, bd), bd).q, bd), probe, { armsFront: true }).flatMap(sh => sh.poly).map(([x, y]) => [x / 1000, -y / 1000]);
+  return Math.max(...pts.filter(([, y]) => y <= M_HOP + 0.01).map(([x]) => x));
+})();
+const ARROW_X = SOLID_EDGE + ARROW_CLEAR;
 const HEAD_TOP = L0.head[1];
 // c1: standing on its middle, the handle ends reach the armpits (the shoulder joint's height less the upper arm's
 // proximal radius); the rope runs from the floor up each side to the handles' rope tips, and across under the feet.
@@ -94,10 +110,10 @@ const START_PHANTOMS = START_ITEMS.map(it => ({ type: 'line', cls: 'eq-line m-li
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   id: 'jump_rope', name: 'Jump Rope', view: 'front',
-  camera: { x0: 165, y0: 339 },   // LIB-PLATEFIX-3: 14 px left (was 179) so the offset Mistake figure and its tell fit
+  camera: { x0: 165, y0: 339 },   // LIB-PLATEFIX-3: 14 px left (was 179); kept by PF4 (the Right plate is not this fix's)
   poses: { start, end },
   armsFront: true,
-  equipment: [{ type: 'floor', from: -0.6, to: 0.8 },   // to 0.8 (was 0.6): under the raised figure set M_OFF aside (round 2, c2)
+  equipment: [{ type: 'floor', from: -0.6, to: 0.8 },   // to 0.8 (was 0.6): LIB-PLATEFIX-3 round 2, kept by PF4 (the Right plate is not this fix's)
     ...perItem((lm, ctx) => ropeAt(lm, ctx), JUMP_ROPE_ITEMS),
     (lm, ctx) => (ctx.pose === 'end' ? START_PHANTOMS : null)],
   checks: [
@@ -116,9 +132,8 @@ export default {
   ],
   mistake: {
     pose: mistake,
-    // the raised feet lie over the solid legs (masked): an arrow from the right hop's sole to the faulty one, outside
-    // LIB-PLATEFIX-3: the dashed figure is set M_OFF aside, so the arrow rises from the floor beside it to its soles
-    guides: [{ kind: 'arrow', from: [ARROW_X, 0.005, LMM['sole.l'][2]], to: [ARROW_X, LMM['sole.l'][1], LMM['sole.l'][2]] }],
+    parts: ['trunk', 'arm.l', 'arm.r', 'leg.l', 'leg.r'],   // the body only: the rope loop stays on the solid figure (PF4)
+    guides: [{ kind: 'arrow', from: [ARROW_X, 0.005, LMM['sole.l'][2]], to: [ARROW_X, M_HOP, LMM['sole.l'][2]] }],
     tells: [{ key: 'high', text: 'Too high', anchor: { at: 'sole.l', pose: 'mistake' }, box: { left: 278, top: 296 }, cue: 'Jumping far higher than the rope needs.' }],
   },
   alt: 'Jump rope, front view. Feet together, elbows in by the ribs, hands at hip height turning the rope. A low hop about an inch and a half off the floor, the rope passing just under the feet.',
