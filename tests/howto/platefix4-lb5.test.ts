@@ -28,48 +28,73 @@ const itemsIn = (spec: any, pose: string) => {
   return spec.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(lm, ctx) ?? [] : e)).filter(Boolean);
 };
 
-describe('PF4 cable_curl: the inline zoom ring on the elbow, ~3.4x (pf8 T10 R11 [3,3,2]; #405 6688665575)', { timeout: T }, () => {
-  /** The zoom's source ring and circle, and both elbows, at the render camera. */
+// Fix round (pf12 panel, #410 6751563503; cable_curl R5 [4,3,3], R11 [3,3,3]). The critics' tiles are 704 px for the
+// 358 px plate (1.97 tile px per plate px: their 16 px elbow gap is the base's 8.38 plate px, and their elbow ~(318,532)
+// is the two elbows' midpoint, plate (142.7,183.1) on the base). R5: the Right bottom bend is 30 deg (was 20; c13
+// "slightly bent"), so the red straight arm's elbow sits >= 12 plate px (~24 tile px) from the solid elbow. R11: the
+// ring on that midpoint (<= 3 px), r 21-25 plate px (~45 tile px, mid upper arm to mid forearm), k 2.1-2.5 (~2.3x).
+describe('PF4 cable_curl fix round: elbows apart, ring on the elbow at ~2.3x (pf12 R5 [4,3,3], R11 [3,3,3]; #410 6751563503)', { timeout: T }, () => {
+  /** The critics' named elbow point in plate px: the base (d8cd3ac7 poses, 20 deg) end/Mistake elbow midpoint. */
+  const CRIT: V = [142.7, 183.1];
+  /** The zoom's source ring and circle, both elbows and their gap, at the render camera. */
   const ring = (spec: any) => {
     const z = Z.zoomOf(spec), cam = camOf(spec), L = qa.poseLandmarks(E(), spec).lm;
-    const el = cam.P(L.end['elbow.r']), elM = cam.P(L.mistake['elbow.r']);
-    return { z, el, elM, off: dist(z.src.c, el), inE: dist(z.src.c, el) <= z.src.r, inM: dist(z.src.c, elM) <= z.src.r };
+    const el = cam.P(L.end['elbow.r']), elM = cam.P(L.mistake['elbow.r']), mid = [(el[0]! + elM[0]!) / 2, (el[1]! + elM[1]!) / 2];
+    return { z, el, elM, sep: dist(el, elM), offMid: dist(z.src.c, mid), offCrit: dist(z.src.c, CRIT), inE: dist(z.src.c, el) <= z.src.r, inM: dist(z.src.c, elM) <= z.src.r };
+  };
+  /** The spec with the Right bottom elbow at `deg` (the Mistake re-solved as the spec does: its bar at the end bar's z). */
+  const withBottom = async (deg: number) => {
+    const [{ readFileSync, writeFileSync, mkdtempSync, rmSync }, { tmpdir }, { join }, { pathToFileURL }] = await Promise.all([import('node:fs'), import('node:os'), import('node:path'), import('node:url')]);
+    const txt = readFileSync(new URL('../../tools/plates/library/specs/cable_curl.mjs', import.meta.url), 'utf8');
+    const out = txt.replace(/ELBOW_BOTTOM = \d+;/, `ELBOW_BOTTOM = ${deg};`).replace("from '../engine.mjs'", `from '${lib('engine.mjs')}'`);
+    expect(out).toContain(`ELBOW_BOTTOM = ${deg};`);
+    expect(out).not.toContain("'../engine.mjs'");
+    const dir = mkdtempSync(join(tmpdir(), 'pf4cc-')), f = join(dir, `cable_curl_${deg}.mjs`);
+    writeFileSync(f, out);
+    try { return (await import(/* @vite-ignore */ pathToFileURL(f).href)).default; } finally { rmSync(dir, { recursive: true, force: true }); }
   };
   let m: any;
   beforeAll(() => {
     m = ring(S.cable_curl.default);
-    console.log(`PF4 cable_curl: k ${m.z.k}; ring c ${m.z.src.c.map((v: number) => v.toFixed(1))} r ${m.z.src.r.toFixed(2)}; circle c ${m.z.circle.c} r ${m.z.circle.r}; elbow ${m.el.map((v: number) => v.toFixed(1))} (off ${m.off.toFixed(2)}), Mistake elbow ${m.elM.map((v: number) => v.toFixed(1))} (off ${dist(m.z.src.c, m.elM).toFixed(2)})`);
+    console.log(`PF4 cable_curl fix: k ${m.z.k}; ring c ${m.z.src.c.map((v: number) => v.toFixed(1))} r ${m.z.src.r.toFixed(2)} (off mid ${m.offMid.toFixed(2)}, off critics' ${m.offCrit.toFixed(2)}); circle c ${m.z.circle.c} r ${m.z.circle.r}; elbow ${m.el.map((v: number) => v.toFixed(1))}, Mistake elbow ${m.elM.map((v: number) => v.toFixed(1))}, gap ${m.sep.toFixed(2)}`);
   }, T);
-  it('the ring is centred within 5 px of the elbow (main: no zoom; PF3 k 1.5 centred at the two elbows\' midpoint too)', () => {
-    expect(m.off).toBeLessThanOrEqual(5);
+  it('R5: the red straight elbow is >= 12 plate px (~24 tile px) from the solid elbow (base: 8.38, the critics\' ~16 tile px)', () => {
+    expect(m.sep).toBeGreaterThanOrEqual(12);
   });
-  it('the ring radius is 14-18 px (the critics\' r 28-36 at 2x; PF3: 34.67), magnification >= 3 (PF3: 1.5), the circle kept at r 52 (~103 at 2x)', () => {
-    expect(m.z.src.r).toBeGreaterThanOrEqual(14);
-    expect(m.z.src.r).toBeLessThanOrEqual(18);
-    expect(m.z.k).toBeGreaterThanOrEqual(3);
+  it('R5: the Right bottom stays slightly bent (c13): 30 deg, interior 150; the Wrong fully straight (0), its bar at the end bar\'s z (<= 0.5 px)', () => {
+    const s = S.cable_curl.default, cam = camOf(s), L = qa.poseLandmarks(E(), s);
+    expect(L.q.end.elbow.r).toBeCloseTo(30, 6);
+    expect(L.q.mistake.elbow.r).toBe(0);
+    expect(Math.abs(cam.P(L.lm.end['grip.r'])[0]! - cam.P(L.lm.mistake['grip.r'])[0]!)).toBeLessThanOrEqual(0.5);
+  });
+  it('R11: the ring centre is within 3 px of the elbows\' midpoint and of the critics\' named point', () => {
+    expect(m.offMid).toBeLessThanOrEqual(3);
+    expect(m.offCrit).toBeLessThanOrEqual(3);
+  });
+  it('R11: the ring radius is 21-25 px (~45 tile px), k 2.1-2.5, the circle kept at r 52; both elbows inside the ring', () => {
+    expect(m.z.src.r).toBeGreaterThanOrEqual(21);
+    expect(m.z.src.r).toBeLessThanOrEqual(25);
+    expect(m.z.k).toBeGreaterThanOrEqual(2.1);
+    expect(m.z.k).toBeLessThanOrEqual(2.5);
     expect(m.z.circle.r).toBe(52);
-  });
-  it('both the solid elbow and the red dashed (Mistake) elbow lie inside the ring', () => {
     expect(m.inE).toBe(true);
     expect(m.inM).toBe(true);
   });
-  it('mutations: PF3\'s k 1.5 ring is too big and too weak; k 4 is under the radius band; a ring moved to the grip misses the centre and both elbows', () => {
-    const s = S.cable_curl.default, v = ring({ ...s, zoom: { ...s.zoom, k: 1.5 } });
-    expect(v.z.src.r).toBeGreaterThan(18);
-    expect(v.z.k).toBeLessThan(3);
-    expect(ring({ ...s, zoom: { ...s.zoom, k: 4 } }).z.src.r).toBeLessThan(14);
+  it('mutations: the base 20 deg bottom is too close; k 3.5 (base) and k 2 miss the radius and k bands; a ring on the grips misses the centre', async () => {
+    const s = S.cable_curl.default;
+    expect(ring(await withBottom(20)).sep).toBeLessThan(12);
+    const v35 = ring({ ...s, zoom: { ...s.zoom, k: 3.5 } }), v2 = ring({ ...s, zoom: { ...s.zoom, k: 2 } });
+    expect(v35.z.src.r).toBeLessThan(21);
+    expect(v35.z.k).toBeGreaterThan(2.5);
+    expect(v2.z.src.r).toBeGreaterThan(25);
+    expect(v2.z.k).toBeLessThan(2.1);
     const L = qa.poseLandmarks(E(), s).lm, g = ring({ ...s, zoom: { ...s.zoom, pair: [L.end['grip.r'], L.mistake['grip.r']] } });
-    expect(g.off).toBeGreaterThan(5);
+    expect(g.offMid).toBeGreaterThan(3);
+    expect(g.offCrit).toBeGreaterThan(3);
     expect(g.inE).toBe(false);
-    expect(g.inM).toBe(false);
   });
-  // The drawing the critics scored (PF3 round 2 at d8cd3ac7, held to main's after pf8; c2, c3: "do not change" the poses):
-  // its PF3 item 10 checks come back with it (platefix3-lb5.test.ts at d8cd3ac7).
-  it('PF3 poses kept: the Right bottom elbow 20 deg; the Wrong fully straight, its bar at the end bar\'s z (<= 0.5 px)', () => {
-    const s = S.cable_curl.default, cam = camOf(s), L = qa.poseLandmarks(E(), s);
-    expect(L.q.end.elbow.r).toBeCloseTo(20, 6);
-    expect(L.q.mistake.elbow.r).toBe(0);
-    expect(Math.abs(cam.P(L.lm.end['grip.r'])[0]! - cam.P(L.lm.mistake['grip.r'])[0]!)).toBeLessThanOrEqual(0.5);
+  it('mutation: a 45 deg bottom moves the ring centre past 3 px of the critics\' point', async () => {
+    expect(ring(await withBottom(45)).offCrit).toBeGreaterThan(3);
   });
   it('PF3 overlay kept: 4 dashed arm outlines and a straight dashed guide through shoulder, elbow and grip (<= 5 mm); the tell on the elbow; no cable twin', () => {
     const s = S.cable_curl.default, L = qa.poseLandmarks(E(), s).lm.mistake, g = s.mistake.guides.filter((x: any) => x.kind === 'dashed');

@@ -17,15 +17,16 @@
 // Geometry decisions:
 //  - Standing tall: feet hip width (c2), knees soft, the root solved from the knee angle (dumbbell_biceps_curl's).
 //  - Upper arms vertical in both poses (c3: "keep it still"), so only the elbow moves; ELBOW_TOP fully bent (c3),
-//    ELBOW_BOTTOM the soft bottom (c13 "slightly bent"): 20 deg (LIB-PLATEFIX-3 item 10, #392 6649453813 L5: the panel's
-//    "a visible bend of about 20 deg"; was 18, machine_chest_press.mjs:45's soft-elbow precedent), so the fully straight
-//    Wrong (0 deg) reads apart from the Right.
+//    ELBOW_BOTTOM the soft bottom (c13 "slightly bent", "limit your range of motion"): 30 deg (LIB-PLATEFIX-4 fix round,
+//    pf12 R5 [4,3,3], #410 6751563503: the red locked arm lay on the solid arm, the elbows about 16 tile px = 8.4 plate px
+//    apart at 20 deg; 30 deg (interior 150) parts them 12.3 plate px, about 24 tile px; was 20, LIB-PLATEFIX-3 item 10;
+//    18 before that), so the fully straight Wrong (0 deg) reads apart from the Right.
 //  - The bar: a 28 mm straight bar seen end-on, its centre between the fists (both hands, shoulder width, c1), drawn as a
 //    `poly` disc so it outlines in the Mistake (PQ-H9); the cable from the low pulley's upper tangent to the bar (the
 //    Mistake's thin `poly` cable twin is dropped: LIB-PLATEFIX-3 item 10, #392 6649453813 L5, the unlabelled zigzag).
 //  - Column in front of the lifter, the low pulley PULLEY_GAP ahead of the toes ("a step back", c1); the stack lifts by
 //    the cable paid out (1:1), 3 cm pre-lift.
-// Unsourced numbers (13.3 must-fix 14): KNEE_SOFT, ELBOW_BOTTOM (20, a drawing value for c13's "slightly bent"), FOOT_X, ELBOW_TOP (the card says "fully bent"), the column, stack and
+// Unsourced numbers (13.3 must-fix 14): KNEE_SOFT, ELBOW_BOTTOM (30, a drawing value for c13's "slightly bent"), FOOT_X, ELBOW_TOP (the card says "fully bent"), the column, stack and
 //  pulley sizes (lat_pulldown's), the low pulley height (16 cm, "lowest position"), PULLEY_GAP, the bar diameter.
 // Callouts, Mistake, tempo: the 3 checkpoints are the callouts (c3, c9, c8); the Mistake is the card's plate.mistake
 //  (c13, drawable true): the elbows go fully straight at the bottom, drawn against the spec's end (the bottom).
@@ -38,7 +39,7 @@ const FOOT_X = 0.11;                                   // mid-soles hip width (c
 const FOOT_Z = REF.mid * H;
 const LEG = (() => { const a = WINTER.thigh * H, b = WINTER.shank * H, k = KNEE_SOFT * R; return Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(k)); })();
 const ROOT_Y = Math.sqrt(LEG * LEG - (FOOT_X - REF.hjcX * H) ** 2) + WINTER.ankleH * H;
-const ELBOW_TOP = 140, ELBOW_BOTTOM = 20;              // fully bent (c3; dumbbell_biceps_curl :55); slightly bent (c13; LIB-PLATEFIX-3 item 10)
+const ELBOW_TOP = 140, ELBOW_BOTTOM = 30;              // fully bent (c3; dumbbell_biceps_curl :55); slightly bent (c13; LIB-PLATEFIX-4 pf12 R5)
 const SCAP = { elev: -1, pro: -1 };                    // shoulders set, as dumbbell_biceps_curl (c8 still body)
 
 const feet = { l: { at: [FOOT_X, 0, FOOT_Z] }, r: { at: [-FOOT_X, 0, FOOT_Z] } };
@@ -144,7 +145,11 @@ export default {
   // ~3.4x; c2: r~35, x3, at the two elbows' midpoint): k 3.5 (was 1.5, a 34.7 px ring over the back, hip and cables). The
   // ring is 14.9 px at plate scale (29.7 px at the critics' ~2x tiles), centred on the end/Mistake elbow midpoint, 4.2 px
   // from each elbow; the circle stays r 52 (~103 at 2x). Poses kept (pf8 c2, c3: "do not change them").
-  zoom: { view: 'mistake', k: 3.5 },
+  // Fix round (pf12 R11 [3,3,3], #410 6751563503): the ring on the elbow (the critics' ~(318,532) tile px, the two
+  // elbows' midpoint), r ~45 tile px (mid upper arm to mid forearm), ~2.3x: k 2.3, so the ring is 52 / 2.3 = 22.6 plate
+  // px (~44.6 tile px at 1.97 tile px per plate px), centred on the end/Mistake elbow midpoint (6.2 px from each elbow at
+  // the 30 deg bottom).
+  zoom: { view: 'mistake', k: 2.3 },
   trace: { point: 'grip.r', trim: [10, 12] },
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'slightly bent', box: { left: 174, top: 98 } },
   callouts: [
