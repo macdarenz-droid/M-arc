@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=9ca175397314f48a3728b030035f310e0674bcc4bdd02101adc13ac4b24d1843
+{
+  "id": "lib_leg_extension",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/leg_extension.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-le",
+    "sl-le",
+    "mo-le",
+    "lifto-le",
+    "fv-le",
+    "nhs-knee-pain",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "knee",
+    "back"
+  ]
+}

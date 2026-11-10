@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=efc43538256cf26af8882e482a00ee62cc9526ff459dcaef04a4ad9486c920b1
+{
+  "id": "lib_farmer_s_carry",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/farmer_s_carry.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-farmers",
+    "ggr-farmers",
+    "fv-farmers",
+    "sl-farmers",
+    "bb-fwbreak",
+    "hold-default",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

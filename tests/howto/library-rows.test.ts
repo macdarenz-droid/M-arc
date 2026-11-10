@@ -339,9 +339,16 @@ async function libraryCases() {
 // D-SHIP-A6NOGRIP), in registry order after W4's (merge of main 05382042: both lanes' ids)
 // LIB-SHIP W6 (ruling 3; #393 6689822595 / 6701002884): plus all 7 shipped W6 ids (hands/no-zoom.json: 5 card-no-zoom,
 // dumbbell_front_raise and face_pull gap-ruled D-SHIP-HANDW6), in registry order (merge of main de91dd21: after W5's)
+// LIB-SHIP W7 (ruling 3; D-PF10-W7JOIN, the flip set of 19; 16 after D-SHIP-W7-SLEDHOLD (sled_pull held) and D-SHIP-W7-HOLD2
+// #394 6753333493 (glute_bridge and high_knees held)): every W7 shipped row ships with no hand pair (D-SHIP-HANDW7 gap-ruled trio and
+// farmer_s_carry, the rest archetype none under D-SHIP-GRIP), in registry order after W6's (merge of main dc058207: both lanes' ids)
+const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
+  'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
+  'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
 const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', ...W4_IDS, 'lib_front_squat', 'lib_bodyweight_squat',
   'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_hammer_curl',
   'lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_incline_push_up', 'lib_pike_push_up',
+  ...W7_SHIPPED,
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
   'lib_horizontal_leg_press'];

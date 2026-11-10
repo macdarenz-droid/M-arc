@@ -75,9 +75,10 @@ describe('PF3 E1/E2 MANIFEST re-pin', () => {
     const rows = Object.entries<any>(lessW5(JSON.parse(JSON.stringify(m))).rows).filter(([id]) => !W6.includes(id));
     expect(W4_MANIFEST_ROWS).toHaveLength(20);
     expect(W4_MANIFEST_ROWS.every(id => id in m.rows)).toBe(true);
-    expect(rows).toHaveLength(35 + 20);
+    // LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows; each is checked below too
+    expect(rows).toHaveLength(35 + 20 + 29);
     const all = Object.entries<any>(m.rows);
-    expect(all).toHaveLength(35 + 20 + W5.length + W6.length);
+    expect(all).toHaveLength(35 + 20 + W5.length + W6.length + 29);   // merge of main dc058207: W6's 23 and W7's 29 (PIN GO #394 6649092340; held W7 rows stay pinned)
     for (const id of W5) expect(id in m.rows, id).toBe(true);
     for (const k of ['tools/plates/library/render/closeup/zoom.mjs', 'tools/plates/library/build-layers-page.mjs'])
       for (const [id, r] of all) expect(r.files[k], `${id} ${k}`).toBe(sha(k));

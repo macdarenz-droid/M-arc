@@ -396,7 +396,7 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
       const bad = [
         ...checkC1(c, known), ...checkC2(c), ...checkC4(c), ...checkC7(c),
         ...(r.mode === 'golden' ? checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '')
-          : (card => [...C3L.checkC3Library(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '', { list: noZoom, card, gapKeyOf }), ...C3L.checkGripLibrary(c, card)])(
+          : (card => [...C3L.checkC3Library(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '', { list: noZoom, card, gapKeyOf }), ...C3L.checkGripLibrary(c, card), ...C3L.noRedFlagProblems(c, card)])(
             JSON.parse(readFileSync(join(ROOT, c.research.card), 'utf8')))),
         ...checkC8(c, SOURCES), ...checkC15(c, plate, reviews), ...checkC16(c),
         ...C19.checkC19Copy(L.shownCopyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),
@@ -449,7 +449,14 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   // ids follow W3's in registry order (lb04's 4, then lb05's 6); the 17 held W5 rows stay out
   const W5_LIB = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat',
     'lib_preacher_curl', 'lib_hammer_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];
-  const RULED_LIB = [...W3_LIB, ...W5_LIB, ...W6_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+  // LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615 @ a3e5b6e7, after D-PF10-W7JOIN): the 17 flipped lb08/lb09/lb10
+  // ids follow in registry order (lb08's 5, lb09's 6, lb10's 6); the 12 held W7 rows stay out (D-SHIP-W7-SLEDHOLD: sled_pull and
+  // D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge and high_knees among them). Every W7 card has inherit []
+  // (LIB-SHIP-DESIGN section 17), so the map gains no W7 entry (the INHERIT_MAP key check below stays exact)
+  const W7_LIB = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
+    'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
+    'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
+  const RULED_LIB = [...W3_LIB, ...W5_LIB, ...W6_LIB, ...W7_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
     'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
     'lib_horizontal_leg_press'];
   // LIB-SHIP W3: the mapped children that ship now, in CHILDREN order; the rest of the map (incline_machine_press,

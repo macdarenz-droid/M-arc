@@ -1,0 +1,18 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=992d92ab38c0866ec1743bdd991cb19103b9506e9b8a0db47a17a984ff3451c9
+{
+  "id": "lib_dead_bug",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/dead_bug.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-deadbug",
+    "ggr-deadbug",
+    "pereira-2017",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}
