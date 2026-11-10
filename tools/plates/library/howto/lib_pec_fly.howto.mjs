@@ -95,7 +95,7 @@ const feel = {
   watch: [],
   feelLine: 'You should feel this across your chest.',
   rows: [
-    { key: 'shoulder', where: 'Shoulder pain', at: { muscles: ['front_delts'] },
+    { key: 'shoulder', where: 'Shoulder', at: { muscles: ['front_delts'] },   // W8a F-PECFLY-FEELROW (Q-W8a-1, #413): not RED_FLAG_SHOULDER's name
       means: 'The pec deck puts the front shoulder in a vulnerable position.',   // c8 says it of the pec deck
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: CL.c8 },
