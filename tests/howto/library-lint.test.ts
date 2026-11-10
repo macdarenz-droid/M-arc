@@ -344,6 +344,30 @@ describe('LIB-5 D-LIB5-FAULTKEYS 4: the family reader over the 8, the shared mod
   });
 });
 
+/** The red-flag boxes the sweep hands checkC19Shared for one row: the boxes its riskFlags show (absent riskFlags means
+ *  golden B's ['wrist']). LIB-SHIP W6 (D-SHIP-W6-NOREDFLAG, #393 6648157060): a row whose card has no red flag
+ *  (riskFlags []) shows no box, so the sweep checks every shared box (the RED_FLAG_BLOCKS ones and the back box) instead:
+ *  more text checked, never less; c19.ts is unchanged. */
+export function sweepBoxes(riskFlags: string[] | undefined, boxOf: (f: string) => unknown, blockFlags: string[]) {
+  const flags = riskFlags === undefined ? ['wrist'] : riskFlags.length ? riskFlags : [...blockFlags, 'back'];
+  return Object.fromEntries(flags.map(f => [`RED_FLAG_${f.toUpperCase()}`, boxOf(f)]));
+}
+
+describe('LIB-SHIP W6 D-SHIP-W6-NOREDFLAG: the sweep\'s boxes for a row with no red flag', () => {
+  it('[] takes every shared box; a flagged row gets exactly its own; absent riskFlags is wrist', async () => {
+    const C19 = await import('./checks/c19');
+    const BB = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), BACK = BB.backBox();
+    const boxOf = (f: string) => (f === 'back' ? BACK : shared[CL.RED_FLAG_BLOCKS[f].exp]);
+    const flags = Object.keys(CL.RED_FLAG_BLOCKS);
+    expect(Object.keys(sweepBoxes([], boxOf, flags)).sort()).toEqual([...flags, 'back'].map(f => `RED_FLAG_${f.toUpperCase()}`).sort());
+    expect(Object.keys(sweepBoxes(['shoulder', 'back'], boxOf, flags))).toEqual(['RED_FLAG_SHOULDER', 'RED_FLAG_BACK']);
+    expect(Object.keys(sweepBoxes(undefined, boxOf, flags))).toEqual(['RED_FLAG_WRIST']);
+    expect(C19.checkC19Shared({ ...sweepBoxes([], boxOf, flags), DISCLAIMER: shared.DISCLAIMER }, 'x')).toEqual([]);
+    // red: a [] row whose shared boxes are all removed (boxOf finds none)
+    expect(C19.checkC19Shared({ ...sweepBoxes([], () => undefined, flags), DISCLAIMER: shared.DISCLAIMER }, 'x')).toEqual(['C19: x: no RED_FLAG box to check']);
+  });
+});
+
 describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and C19, with every red-flag box it shows', () => {
   it(`${SHIPPED.length} shipped rows, no finding`, async () => {
     const [{ checkC1 }, { checkC2 }, { checkC3 }, { checkC4 }, { checkC8 }, { checkC16 }, C19] = await Promise.all([
@@ -368,10 +392,7 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
       const BB = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), BACK = BB.backBox();
       const boxOf = (f: string) => (f === 'back' ? BACK : shared[CL.RED_FLAG_BLOCKS[f].exp]);
       for (const f of c.riskFlags ?? ['wrist']) expect(boxOf(f), `${r.id} ${f}`).toBeDefined();
-      // LIB-SHIP W7 (D-SHIP-W6-NOREDFLAG, #393 6648157060; #394 6648497703): a riskFlags: [] row shows no box, so C19 checks
-      // every shared box and the back box, and the row is red when its card names a red flag
-      const boxes = (c.riskFlags ?? ['wrist']).length ? Object.fromEntries((c.riskFlags ?? ['wrist']).map((f: string) => [`RED_FLAG_${f.toUpperCase()}`, boxOf(f)]))
-        : C3L.allSharedBoxes(shared, BACK);
+      const boxes = sweepBoxes(c.riskFlags, boxOf, Object.keys(CL.RED_FLAG_BLOCKS));   // LIB-SHIP W6 (D-SHIP-W6-NOREDFLAG)
       const bad = [
         ...checkC1(c, known), ...checkC2(c), ...checkC4(c), ...checkC7(c),
         ...(r.mode === 'golden' ? checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '')
@@ -418,6 +439,9 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   // LIB-SHIP W3 (ruling 3): W3's 9 (#384 6653062201; D-SHIP-W3-NOPAIR 6681221802), lb01 first and zoom last in registry order
   const W3_LIB = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
     'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'];
+  // LIB-SHIP W6 (ruling 3): the 7 of the flip set (#393 6689822595), ruled to ship (#393 6701002884), lb06 then lb07 in registry order
+  const W6_LIB = ['lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull',
+    'lib_incline_push_up', 'lib_pike_push_up'];
   // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221; D-PLATEFIX-PINS / PIN GO): its 4 ids join them in registry order, so
   // single_leg_romanian_deadlift ships with its parent romanian_deadlift in the same head (D-SHIP-FAMILY ruling 4: the
   // resolver reads the parent from a row shipped in this head, gen/library-gate.mjs).
@@ -425,13 +449,14 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   // ids follow W3's in registry order (lb04's 4, then lb05's 6); the 17 held W5 rows stay out
   const W5_LIB = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat',
     'lib_preacher_curl', 'lib_hammer_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];
-  // LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615 @ a3e5b6e7, after D-PF10-W7JOIN): the 18 flipped lb08/lb09/lb10
-  // ids follow in registry order (lb08's 6, lb09's 6, lb10's 6); the 11 held W7 rows stay out (D-SHIP-W7-SLEDHOLD: sled_pull among them). Every W7 card has inherit []
+  // LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615 @ a3e5b6e7, after D-PF10-W7JOIN): the 17 flipped lb08/lb09/lb10
+  // ids follow in registry order (lb08's 5, lb09's 6, lb10's 6); the 12 held W7 rows stay out (D-SHIP-W7-SLEDHOLD: sled_pull and
+  // D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge and high_knees among them). Every W7 card has inherit []
   // (LIB-SHIP-DESIGN section 17), so the map gains no W7 entry (the INHERIT_MAP key check below stays exact)
-  const W7_LIB = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
+  const W7_LIB = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
     'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
-    'lib_kettlebell_swing', 'lib_high_knees', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
-  const RULED_LIB = [...W3_LIB, ...W5_LIB, ...W7_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+    'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
+  const RULED_LIB = [...W3_LIB, ...W5_LIB, ...W6_LIB, ...W7_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
     'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
     'lib_horizontal_leg_press'];
   // LIB-SHIP W3: the mapped children that ship now, in CHILDREN order; the rest of the map (incline_machine_press,

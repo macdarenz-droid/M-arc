@@ -185,7 +185,7 @@ describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes only red-flag-back.ts and s
     const out = await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render();
     expect(gatePaths(out)).toEqual(['src/howto/red-flag-back.ts']);
     expect([...out].filter(([, o]) => o.text.slice(0, 600).includes('library-gate')).map(([p]) => p)).toEqual(['src/howto/red-flag-back.ts']);
-  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663), as S6's render() walk below: render() walks every shipped id's outputs (58 after the W7 flip and D-SHIP-W7-SLEDHOLD, 351 files; 59 and 356 when measured); 232218 ms here on claude/lib-ship-w7 (child run 231.6 s, 4 vitest files in parallel), red in the W7 post-flip run at 300 s; the library timeout, as #385; no assertion change
+  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663), as S6's render() walk below: render() walks every shipped id's outputs; it timed out at 300000 ms on ef67e7d7's source-gate (W6 merge, main dc058207) and in the W7 post-flip run; 232218 ms on claude/lib-ship-w7 with 59 ids (child run 231.6 s, 4 vitest files in parallel); 69 ids after the merge of main dc058207 and the holds; the library timeout, as #385; no assertion change
   it('inputsFor(red-flag-back.ts) is back-box.mjs, its static imports (node:* only) and the back-box card', async () => {
     const G = await import(/* @vite-ignore */ url(GATE));
     const imports = [...readFileSync(join(SHARED_DIR, 'back-box.mjs'), 'utf8').matchAll(/^import .* from '([^']+)';$/gm)].map(m => m[1]);
@@ -195,7 +195,7 @@ describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes only red-flag-back.ts and s
     expect(G.inputsFor('src/howto/ids.ts')).toBeUndefined();
     expect(G.after).toEqual(['tools/plates/gen/content.mjs']);
     for (const f of [GATE, 'tools/plates/library/shared/back-box.mjs']) expect(G.inputs()).toContain(f);
-  });
+  }, 60_000);   // D-SHIP-W3-WALKTIME (#384 6690918663) form: inputs() walks every library row's registry and content inputs; 4461 ms on ef67e7d7's source-gate (default 5000 ms)
   /** Two directories for checkC17 (it takes directories and skips a path it cannot read): the shared modules, and a
    *  temp copy of library-gate.mjs. */
   const c17Dirs = (plant?: 'gate' | 'shared') => {

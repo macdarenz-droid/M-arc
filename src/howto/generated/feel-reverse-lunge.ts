@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=779b4ee6efa13342b3cc16b934ba5e6951aa1db2b265c71b392cc708e7dfd784
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=12d6155a8fd3b32c736e90d8236d61e2a1f8c1fc86030bb28708e33a31631c36
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_reverse_lunge",

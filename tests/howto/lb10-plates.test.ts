@@ -280,14 +280,15 @@ describe('LIB-22 A9 (D-LIB22-AHEAD): nothing ships', () => {
     const text = readFileSync(f, 'utf8');
     return [...names(text).map(id => `${f}: ${id}`), ...(/lb10/i.test(f.slice(dir.length)) ? [`${f}: file name`] : []), ...(/"batch":\s*"LB10"/.test(text) ? [`${f}: batch LB10`] : [])];
   });
-  // LIB-SHIP W7 (D-SHIP-MOVE; D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 18 after D-SHIP-W7-SLEDHOLD): was "no LB10 H id, slug or
+  // LIB-SHIP W7 (D-SHIP-MOVE; D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 16 after D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2): was "no LB10 H id, slug or
   // batch is in any tools/plates/library/batches/ file or in tests/howto/golden/library/". The LB10 rows now live in
   // batches/lb10.json and are pinned by golden lb10.json and its layers page, so every other file there is held to the same
   // check; lb10.json and golden lb10.json name all 12 (every row is pinned) and batch LB10; the layers page names exactly
-  // W7's 6 shipped ids (D-SHIP-W7-SLEDHOLD: sled_pull held).
+  // W7's 5 shipped ids (D-SHIP-W7-SLEDHOLD: sled_pull held; D-SHIP-W7-HOLD2: high_knees held).
   // D-SHIP-W7-SLEDHOLD (#394 SHIP W7 QUESTION 4 option 1; follow-up F-SLEDPULL-S0): sled_pull is held at approved-plate
-  // (its open sheet is 795 elements, over the gate A3 S0 cap 700), so W7 ships 6 LB10 ids and the flip set is 18.
-  const SHIPPED10 = ['kettlebell_swing', 'high_knees', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
+  // (its open sheet is 795 elements, over the gate A3 S0 cap 700); D-SHIP-W7-HOLD2 (#394 6753333493; follow-up
+  // F-NOREDFLAG-GATE): high_knees is held too (its gate rows HT8/HT9 fail, the feel section never mounts). W7 ships 5 LB10 ids.
+  const SHIPPED10 = ['kettlebell_swing', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
   const outside = (dir: string, mine: string[]) => offenders(dir).filter(s => !mine.some(f => s.startsWith(`${join(dir, f)}: `)));
   it('LIB-SHIP W7: the LB10 ids, slugs and batch are in batches/lb10.json, golden lb10.json and lb10.layers.html only (two measured notes); each names its ruled set', () => {
     expect(outside('tools/plates/library/batches', ['lb10.json'])).toEqual([]);
@@ -312,6 +313,8 @@ describe('LIB-22 A9 (D-LIB22-AHEAD): nothing ships', () => {
     expect(names(`${readFileSync('tests/howto/golden/library/lb10.layers.html', 'utf8')}<div data-id="jump-rope"></div>`)).not.toEqual(LB10.filter(id => SHIPPED10.includes(id)));
     // D-SHIP-W7-SLEDHOLD: sled_pull (held) back on the layers page is red
     expect(names(`${readFileSync('tests/howto/golden/library/lb10.layers.html', 'utf8')}<div data-id="sled-pull"></div>`)).not.toEqual(LB10.filter(id => SHIPPED10.includes(id)));
+    // D-SHIP-W7-HOLD2: high_knees (held) back on the layers page is red
+    expect(names(`${readFileSync('tests/howto/golden/library/lb10.layers.html', 'utf8')}<div data-id="high-knees"></div>`)).not.toEqual(LB10.filter(id => SHIPPED10.includes(id)));
   });
   it('the matcher is exact: over src/data/exercises.json no other real id contains one of the 12; it matches neither lib_kettlebell_swing_v2 nor single-arm-kettlebell-swing', () => {
     const ex = readJson('src/data/exercises.json') as any[];
@@ -1085,35 +1088,38 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
 });
 
 describe('LIB-22 A9 (D-LIB22-AHEAD): the rows never ship; generate is unchanged', { timeout: T }, () => {
-  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 18 after D-SHIP-W7-SLEDHOLD): replaces "every LB10 row is at stage drawing
+  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 16 after D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2): replaces "every LB10 row is at stage drawing
   // or review", its shipped/approved-plate mutations and "none of the 12 is shipped, even with lb10/rows.json read as a
-  // batch file" with the W7 ruled set as positive asserts: exactly W7's 6 LB10 ids ship; jump_rope, battle_ropes, sled_pull
-  // (D-SHIP-W7-SLEDHOLD, #394 QUESTION 4 option 1; F-SLEDPULL-S0), burpee, jumping_jacks and wall_ball stay approved-plate
-  // (held); LB10 has no left-out row; each id is one registry row.
+  // batch file" with the W7 ruled set as positive asserts: exactly W7's 5 LB10 ids ship; high_knees (D-SHIP-W7-HOLD2,
+  // #394 6753333493; F-NOREDFLAG-GATE), jump_rope, battle_ropes, sled_pull (D-SHIP-W7-SLEDHOLD, #394 QUESTION 4 option 1;
+  // F-SLEDPULL-S0), burpee, jumping_jacks and wall_ball stay approved-plate (held); LB10 has no left-out row; each id is one
+  // registry row.
   const IDS = LB10.map(i => `lib_${i}`);
-  const W7 = ['lib_kettlebell_swing', 'lib_high_knees', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
-  const W7_HELD = ['lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_jumping_jacks', 'lib_wall_ball'];
+  const W7 = ['lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
+  const W7_HELD = ['lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_jumping_jacks', 'lib_wall_ball'];
   const stageProblems = (rows: any[]) => IDS.flatMap(id => {
     const r = rows.find((x: any) => x.id === id);
     const want = W7.includes(id) ? 'shipped' : W7_HELD.includes(id) ? 'approved-plate' : 'not in the flip set';
     if (!r) return [`${id}: no row`];
     return r.stage === want ? [] : [`${id}: ${r.stage}`];
   });
-  it('LIB-SHIP W7: every LB10 row is at its ruled stage: W7\'s 6 shipped, the other 6 approved-plate (sled_pull held, D-SHIP-W7-SLEDHOLD)', () => {
+  it('LIB-SHIP W7: every LB10 row is at its ruled stage: W7\'s 5 shipped, the other 7 approved-plate (sled_pull held, D-SHIP-W7-SLEDHOLD; high_knees held, D-SHIP-W7-HOLD2)', () => {
     expect([...W7, ...W7_HELD].sort()).toEqual([...IDS].sort());
     expect(drawn().length).toBe(12);
     expect(stageProblems(reg.rows())).toEqual([]);
   });
-  it('LIB-SHIP W7 reds: a W7 id back at approved-plate, a held id shipped, a held id at drawing, sled_pull shipped (D-SHIP-W7-SLEDHOLD) and a dropped row are red', () => {
+  it('LIB-SHIP W7 reds: a W7 id back at approved-plate, a held id shipped, a held id at drawing, sled_pull shipped (D-SHIP-W7-SLEDHOLD), high_knees shipped (D-SHIP-W7-HOLD2) and a dropped row are red', () => {
     const rows = reg.rows();
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_kettlebell_swing' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_kettlebell_swing: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_jump_rope' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_jump_rope: shipped']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_burpee' ? { ...r, stage: 'drawing' } : r)))).toEqual(['lib_burpee: drawing']);
     // D-SHIP-W7-SLEDHOLD: sled_pull shipped is red
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_sled_pull' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_sled_pull: shipped']);
+    // D-SHIP-W7-HOLD2: high_knees shipped is red
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_high_knees' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_high_knees: shipped']);
     expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_sled_push'))).toEqual(['lib_sled_push: no row']);
   });
-  it('LIB-SHIP W7: the shipped LB10 ids are exactly W7\'s 6, in registry order; each LB10 id is one registry row (lb10.json read once)', () => {
+  it('LIB-SHIP W7: the shipped LB10 ids are exactly W7\'s 5, in registry order; each LB10 id is one registry row (lb10.json read once)', () => {
     expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W7);
     const rows = reg.rows();
     for (const id of IDS) expect(rows.filter((r: any) => r.id === id).length, id).toBe(1);

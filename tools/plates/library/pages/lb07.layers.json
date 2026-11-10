@@ -1,0 +1,34 @@
+{
+  "groups": [
+    {
+      "id": "lb7",
+      "title": "LB7",
+      "ids": [
+        "lib_cable_lateral_raise",
+        "lib_dumbbell_front_raise",
+        "lib_face_pull",
+        "lib_incline_push_up",
+        "lib_pike_push_up"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/pages/lb07.closeups.mjs",
+  "closeups": {
+    "lib_cable_lateral_raise": {
+      "optionsKey": "cable_lateral_raise"
+    },
+    "lib_dumbbell_front_raise": {
+      "optionsKey": "dumbbell_front_raise"
+    },
+    "lib_face_pull": {
+      "optionsKey": "face_pull"
+    },
+    "lib_incline_push_up": {
+      "optionsKey": "incline_push_up"
+    },
+    "lib_pike_push_up": {
+      "optionsKey": "pike_push_up"
+    }
+  },
+  "jump": null
+}

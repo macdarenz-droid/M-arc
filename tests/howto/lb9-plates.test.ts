@@ -1000,7 +1000,7 @@ describe('LIB-21 A9 (D-LIB21-AHEAD): nothing ships', () => {
     const text = readFileSync(f, 'utf8');
     return [...names(text).map(id => `${f}: ${id}`), ...(/lb9/i.test(f.slice(dir.length)) ? [`${f}: file name`] : []), ...(/"batch":\s*"LB9"/.test(text) ? [`${f}: batch LB9`] : [])];
   });
-  // LIB-SHIP W7 (D-SHIP-MOVE; D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 18 after D-SHIP-W7-SLEDHOLD): was "no LB9 H id, slug or
+  // LIB-SHIP W7 (D-SHIP-MOVE; D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 16 after D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2): was "no LB9 H id, slug or
   // batch is in any tools/plates/library/batches/ file or in tests/howto/golden/library/". The LB9 rows now live in
   // batches/lb09.json and are pinned by golden lb09.json and its layers page, so every other file there is held to the same
   // check; lb09.json names all 8 (the 4 left-out rows at left-out:D-OWNER-LIB142 included) and batch LB9; golden
@@ -1075,7 +1075,7 @@ describe('LIB-21 A19 (D-LIB21-TESTS): test manners', () => {
 });
 
 describe('LIB-21 A9 (D-LIB21-AHEAD): the rows never ship; generate is unchanged', { timeout: T }, () => {
-  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 18 after D-SHIP-W7-SLEDHOLD): replaces "every LB9 row is at stage drawing
+  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 16 after D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2): replaces "every LB9 row is at stage drawing
   // or review", its shipped/approved-plate mutations and "none of the 8 is shipped, even with lb9/rows.json read as a batch
   // file" with the W7 ruled set as positive asserts: exactly W7's 6 LB9 ids ship (3 LB9, 3 SUPCORE); side_plank, superman
   // and v_up stay approved-plate (held); the 4 left-out rows stay at left-out:D-OWNER-LIB142; each id is one registry row.
@@ -2131,7 +2131,7 @@ describe('LIB-SUPCORE A10 / A1: the 5 cards and quotes, the rows and the waits',
 });
 
 describe('LIB-SUPCORE A13: the 5 never ship', () => {
-  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 18 after D-SHIP-W7-SLEDHOLD): was "no SUPCORE id is in any batches/ file,
+  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 16 after D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2): was "no SUPCORE id is in any batches/ file,
   // any library golden file or library/MANIFEST.json". W7 ships hollow_body_hold, reverse_crunch and dead_bug, holds v_up
   // at approved-plate and leaves flutter_kicks out (left-out:D-OWNER-LIB142), so the guard is the ruled set as positive
   // asserts: the 5 are rows of batches/lb09.json only; golden lb09.json pins exactly the 4 drawn ones, its layers page and

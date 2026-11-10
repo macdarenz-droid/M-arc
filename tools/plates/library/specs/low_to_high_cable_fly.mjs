@@ -162,7 +162,7 @@ export default {
     ],
     tells: [
       { key: 'press', text: 'Elbows<br>bend', anchor: { at: 'elbow.l', pose: 'mistake' }, box: { left: 236, top: 232 }, cue: 'Your elbows bend deeply, turning the fly into a press.' },
-      { key: 'drop', text: 'Elbows<br>drop', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbows drop under your hands, as in a press.' },
+      { key: 'drop', text: 'Becomes<br>a press', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Bending the elbows more than slightly turns the fly into a press.' },
     ],
   },
   alt: 'Low-to-high cable fly, front view. Standing staggered between two cable columns with the pulleys between knee and hip height, the lifter sweeps the arms from down and out up and in until the hands meet in front at chin height, elbows slightly bent.',

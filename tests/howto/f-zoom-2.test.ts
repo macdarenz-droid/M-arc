@@ -31,7 +31,7 @@ beforeAll(async () => {
   pins = qaIdx.loadPins();
   mirror = golden.makeMirror();
   E = await qaEng.loadEngine(mirror);
-  // renegade_row's registry row: lb7/rows.json since 'LIB-17 resume 2' (it left lb7/build.mjs HELD; D-LIB17-SPLIT)
+  // renegade_row's registry row: batches/lb07.json since LIB-SHIP W6 (D-SHIP-MOVE; lb7/rows.json from 'LIB-17 resume 2', D-LIB17-SPLIT)
   all = lb7.lb7All(process.cwd());
   c0 = await mutated(`(s, a) => ({ ...s, zoom: { view: 'mistake', k: 3, pair: a } })`, PAIR);
   r0 = await qa(c0);
@@ -47,7 +47,7 @@ async function mutated(fn: string, arg: any = null) {
   try {
     const spec = (await import(/* @vite-ignore */ pathToFileURL(file).href)).default;
     const { html: h } = await bp.buildPlatesPage({ groups: [{ id: 'z', title: 'Z', ids: [ID] }], sources: { [ID]: ['mutation'] }, specs: { [ID]: file } });
-    return { ...(await cand.candidateOf(LID, { all, platesHtml: h.toString('utf8'), engine: E, authoring: true })), spec };
+    return { ...(await cand.candidateOf(LID, { all, platesHtml: h.toString('utf8'), engine: E })), exemptions: [], spec };   // LIB-SHIP W6 (D-LIB9-AUTHORQA): pinned at approved-plate; exemptions [] is authoring's candidate
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
 const withPair = (pair: any, extra: any = {}) => ({ ...rr.default, tempo: TEMPO, zoom: { view: 'mistake', k: 3, pair, ...extra } });

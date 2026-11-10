@@ -39,7 +39,7 @@
     "Learn How to Do High Knees to Step Up Your Leg & Core Game (BarBend) (2024). https://barbend.com/high-knees/",
     "Rev up Your Cardio With This 15-Minute Drill (ACE blog) (2015). https://www.acefitness.org/resources/everyone/blog/5430/rev-up-your-cardio-with-this-15-minute-drill/"
    ],
-   "stage": "shipped"
+   "stage": "approved-plate"
   },
   "lib_jump_rope": {
    "src": "library/specs/jump_rope.mjs",

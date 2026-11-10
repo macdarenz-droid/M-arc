@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=028d47f53437b0847e401c3db6658937b710e4e906f12ce0a2a8f12b00c06da5
+{
+  "id": "lib_dumbbell_front_raise",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/dumbbell_front_raise.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-front-raise",
+    "mo-front-raise",
+    "bb-front-raise",
+    "sl-front-raise",
+    "fv-front-raise",
+    "coratella2020",
+    "hold-default",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

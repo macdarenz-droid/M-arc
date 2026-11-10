@@ -52,12 +52,16 @@ describe('C0: L0-lib on this tree', { timeout: 300_000 }, () => {   // F-C0-TIME
   // (checks/ship-w4.ts: shipped and waiting, every row of both batch files)
   // LIB-SHIP W5 (Q-W5-10 PIN GO, #392): lb04's and lb05's pins add exactly their 27 rows (W5, read from batches/lb04.json and lb05.json)
   const LB2_LB3 = W4_MANIFEST_ROWS;
-  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2, PILOT-B2\'s 1, lb01\'s 12, zoom\'s 1, LB2\'s 8, LB3\'s 12, LIB-SHIP W5\'s 27 and LIB-SHIP W7\'s 29 here, and no problem', async () => {
+  // LIB-SHIP W6: the 23 lb06/lb07 rows (pinned in their [golden update] commits)
+  const W6 = [...Object.keys(JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/batches/lb06.json'), 'utf8')).rows),
+    ...Object.keys(JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/batches/lb07.json'), 'utf8')).rows)];
+  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2, PILOT-B2\'s 1, lb01\'s 12, zoom\'s 1, LB2\'s 8, LB3\'s 12, LIB-SHIP W5\'s 27, W6\'s 23 and LIB-SHIP W7\'s 29 here, and no problem', async () => {
     const file = JSON.parse(readFileSync(join(ROOT, MANIFEST), 'utf8'));
     expect(LB2_LB3).toHaveLength(20);
     expect(W5).toHaveLength(27);
-    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2, ...LB01, ...ZOOM, ...LB2_LB3, ...W5, ...W7].sort());   // merge of main 05382042: W4's 20 and W5's 27; LIB-SHIP W7's 29 (PIN GO #394 6649092340; merge of main de91dd21)
+    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2, ...LB01, ...ZOOM, ...LB2_LB3, ...W5, ...W6, ...W7].sort());   // merge of main 05382042: W4's 20 and W5's 27; merge of main de91dd21: W6's 23; LIB-SHIP W7's 29 (PIN GO #394 6649092340; merge of main dc058207: both lanes, 134 rows; held W7 rows stay pinned)
     expect(Object.keys(file.rows)).not.toContain('lib_leg_press_calf_raise');   // LIB-SHIP W3: the left-out row has none
+    expect(W6).toHaveLength(23);
     expect(await manifestOf(ROOT)).toEqual(file);
     expect(await manifestProblems(ROOT)).toEqual([]);
   });

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=575f7a9a66ea45fc3ca9fdd972922dc78fccc32c8f9494ddebed347f12c59f22
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=28b7b2dfdcd1b616d6dfc2b505e737f054d2fe5c1b3afd585e0a8a46b15b6e13
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_bear_crawl",

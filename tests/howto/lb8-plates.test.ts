@@ -213,13 +213,14 @@ describe('LIB-18 A5: lb8/rows.json holds exactly the drawn, non-held LB8 H ids, 
 
 
 describe('LIB-18 A9: nothing ships (D-LIB18-AHEAD)', { timeout: T }, () => {
-  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 18 after D-SHIP-W7-SLEDHOLD): replaces "every LB8 row is at stage drawing
+  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 16 after D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2): replaces "every LB8 row is at stage drawing
   // or review", its shipped/approved-plate mutations, "none of the 12 is shipped, even with lb8/rows.json read as a batch
   // file", "no LB8 H id ... in any batches/ file" and "... in golden/library/" with the W7 ruled set as positive asserts:
-  // exactly W7's 6 LB8 ids ship; hack_squat and pendulum_squat stay approved-plate (held); the 4 left-out rows stay at
+  // exactly W7's 5 LB8 ids ship; hack_squat, pendulum_squat and glute_bridge (D-SHIP-W7-HOLD2 #394 6753333493: its open
+  // sheet 754 > the gate A3 S0 cap 700; follow-up F-GLUTEBRIDGE-S0) stay approved-plate (held); the 4 left-out rows stay at
   // left-out:D-OWNER-LIB142; every LB8 id lives in batches/lb08.json and nowhere else in batches/ (D-SHIP-MOVE).
-  const W7 = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion'];
-  const W7_HELD = ['lib_hack_squat', 'lib_pendulum_squat'];
+  const W7 = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion'];
+  const W7_HELD = ['lib_hack_squat', 'lib_pendulum_squat', 'lib_glute_bridge'];
   const stageProblems = (rows: any[]) => IDS.flatMap(id => {
     const r = rows.find((x: any) => x.id === id);
     const want = W7.includes(id) ? 'shipped' : W7_HELD.includes(id) ? 'approved-plate' : 'left-out:D-OWNER-LIB142';
@@ -227,20 +228,22 @@ describe('LIB-18 A9: nothing ships (D-LIB18-AHEAD)', { timeout: T }, () => {
     return r.stage === want ? [] : [`${id}: ${r.stage}`];
   });
   const someRow = { src: 'library/specs/hack_squat.mjs', slug: 'hack-squat', prefix: 'hack-squat', chromeId: 'hack-squat', mode: 'H', stage: 'drawing', view: 'side' };
-  it('LIB-SHIP W7: every LB8 row is at its ruled stage: W7\'s 6 shipped, hack_squat and pendulum_squat approved-plate, the 4 left-out at left-out:D-OWNER-LIB142', () => {
+  it('LIB-SHIP W7: every LB8 row is at its ruled stage: W7\'s 5 shipped, hack_squat, pendulum_squat and glute_bridge approved-plate, the 4 left-out at left-out:D-OWNER-LIB142', () => {
     expect([...W7, ...W7_HELD].map(i => i.slice(4)).sort()).toEqual([...ON_ROWS].sort());
     expect(IDS.filter(id => ![...W7, ...W7_HELD].includes(id)).map(i => i.slice(4))).toEqual(LEFT_OUT_W7);
     expect(stageProblems(reg.rows())).toEqual([]);
   });
-  it('LIB-SHIP W7 reds: a W7 id back at approved-plate, a held id shipped, a held id at drawing, a left-out id shipped and a dropped row are red', () => {
+  it('LIB-SHIP W7 reds: a W7 id back at approved-plate, a held id shipped, a held id at drawing, a left-out id shipped, glute_bridge shipped (D-SHIP-W7-HOLD2) and a dropped row are red', () => {
     const rows = reg.rows();
-    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_glute_bridge' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_glute_bridge: approved-plate']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_leg_extension' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_leg_extension: approved-plate']);
+    // D-SHIP-W7-HOLD2: glute_bridge shipped is red
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_glute_bridge' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_glute_bridge: shipped']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_hack_squat' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_hack_squat: shipped']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_pendulum_squat' ? { ...r, ...someRow, stage: 'drawing' } : r)))).toEqual(['lib_pendulum_squat: drawing']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_hip_thrust' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_hip_thrust: shipped']);
     expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_cable_kickback'))).toEqual(['lib_cable_kickback: no row']);
   });
-  it('LIB-SHIP W7: the shipped LB8 ids are exactly W7\'s 6, in registry order; each LB8 id is one registry row (lb08.json read once)', () => {
+  it('LIB-SHIP W7: the shipped LB8 ids are exactly W7\'s 5, in registry order; each LB8 id is one registry row (lb08.json read once)', () => {
     expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W7);
     const rows = reg.rows();
     for (const id of IDS) expect(rows.filter((r: any) => r.id === id).length, id).toBe(1);
@@ -267,7 +270,7 @@ describe('LIB-18 A9: nothing ships (D-LIB18-AHEAD)', { timeout: T }, () => {
   // tools/plates/library/batches/ file" and "... in tests/howto/golden/library/"; the LB8 rows now live in
   // batches/lb08.json and are pinned by golden lb08.json and its layers page, so every other file there is held to the
   // same check, lb08.json names all 12 ids (8 rows and the 4 left-out rows), golden lb08.json names exactly the 8 pinned
-  // plates, and its layers page and layers-page entry exactly W7's 6 shipped ids (D-PF10-W7JOIN).
+  // plates, and its layers page and layers-page entry exactly W7's 5 shipped ids (D-PF10-W7JOIN; D-SHIP-W7-HOLD2).
   it('LIB-SHIP W7: the LB8 ids, slugs and batch are in batches/lb08.json only, which names all 12 (D-SHIP-MOVE)', () => {
     const files = dirFiles('tools/plates/library/batches');
     expect(batchProblems(files.filter(([f]) => f !== 'lb08.json'))).toEqual([]);
@@ -361,7 +364,7 @@ describe('LIB-18 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
       if (!existsSync(f)) continue;
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
       // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394): was "holds only its id and research card" for every drawn id.
-      // The 8 batch rows (W7's 6 shipped, hack_squat and pendulum_squat approved-plate) are full sheets now (schema 1); each
+      // The 8 batch rows (W7's 5 shipped; hack_squat, pendulum_squat and glute_bridge approved-plate) are full sheets now (schema 1); each
       // still names its id and its own card. The 4 left-out ids (D-OWNER-LIB142) have no sheet, so their sources stay
       // exactly the stub (measured on this head)
       if (LEFT_OUT_W7.includes(id)) { expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } }); continue; }

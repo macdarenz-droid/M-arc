@@ -62,18 +62,23 @@ describe('PF3 E2: path guides get the path CSS (Silent Black arrowheads)', () =>
 // LIB-SHIP W4 (D-SHIP-W4-PIN; merge of main c2f267a7): plus W4's 20 lb02/lb03 rows (checks/ship-w4.ts), 55, each row still checked
 describe('PF3 E1/E2 MANIFEST re-pin', () => {
   // LIB-SHIP W5: the 35 rows, W4's 20 and W5's 27 (82; merge of main 05382042)
-  it('every one of the 35 rows (55 with W4\'s 20, 82 with W5\'s 27) pins the current render/closeup/zoom.mjs and build-layers-page.mjs', () => {
+  it('every one of the 35 rows (55 with W4\'s 20, 82 with W5\'s 27, 105 with W6\'s 23) pins the current render/closeup/zoom.mjs and build-layers-page.mjs', () => {
     const sha = (p: string) => createHash('sha256').update(readFileSync(p)).digest('hex');
     const m = JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'));
     // LIB-SHIP W5 (#392 Q-W5-10 PIN GO; lib-ship-w5.ts): the MANIFEST also holds W5's 27 rows; the 55 are checked as before
     // with W5's taken out by lessW5, and every one of the 82 must pin the same two current files
-    const rows = Object.entries<any>(lessW5(JSON.parse(JSON.stringify(m))).rows);
+    // LIB-SHIP W6 (#393; merge of main de91dd21): + W6's 23 lb06/lb07 rows, each present and taken out of the 55 too; every
+    // one of the 105 rows, W6's included, is still checked below
+    const W6 = ['lb06', 'lb07'].flatMap(b => Object.keys(JSON.parse(readFileSync(`tools/plates/library/batches/${b}.json`, 'utf8')).rows));
+    expect(W6).toHaveLength(23);
+    for (const id of W6) expect(Object.keys(m.rows), id).toContain(id);
+    const rows = Object.entries<any>(lessW5(JSON.parse(JSON.stringify(m))).rows).filter(([id]) => !W6.includes(id));
     expect(W4_MANIFEST_ROWS).toHaveLength(20);
     expect(W4_MANIFEST_ROWS.every(id => id in m.rows)).toBe(true);
     // LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows; each is checked below too
     expect(rows).toHaveLength(35 + 20 + 29);
     const all = Object.entries<any>(m.rows);
-    expect(all).toHaveLength(35 + 20 + W5.length + 29);
+    expect(all).toHaveLength(35 + 20 + W5.length + W6.length + 29);   // merge of main dc058207: W6's 23 and W7's 29 (PIN GO #394 6649092340; held W7 rows stay pinned)
     for (const id of W5) expect(id in m.rows, id).toBe(true);
     for (const k of ['tools/plates/library/render/closeup/zoom.mjs', 'tools/plates/library/build-layers-page.mjs'])
       for (const [id, r] of all) expect(r.files[k], `${id} ${k}`).toBe(sha(k));

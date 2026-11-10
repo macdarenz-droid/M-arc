@@ -1352,13 +1352,202 @@
       "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
     },
     {
+      "chunk": "ht-machine-crunch-*.js",
+      "rawMax": 43166,
+      "gzMax": 10353,
+      "measuredRaw": 39241,
+      "measuredGz": 9411,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-machine-crunch-*.js",
+      "rawMax": 60853,
+      "gzMax": 9298,
+      "measuredRaw": 55320,
+      "measuredGz": 8452,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-machine-crunch-*.js",
+      "rawMax": 26451,
+      "gzMax": 8402,
+      "measuredRaw": 24046,
+      "measuredGz": 7638,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-machine-lateral-raise-*.js",
+      "rawMax": 45821,
+      "gzMax": 10337,
+      "measuredRaw": 41655,
+      "measuredGz": 9397,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-machine-lateral-raise-*.js",
+      "rawMax": 20730,
+      "gzMax": 5134,
+      "measuredRaw": 18845,
+      "measuredGz": 4667,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-machine-lateral-raise-*.js",
+      "rawMax": 25401,
+      "gzMax": 8181,
+      "measuredRaw": 23091,
+      "measuredGz": 7437,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-cable-lateral-raise-*.js",
+      "rawMax": 43196,
+      "gzMax": 10008,
+      "measuredRaw": 39269,
+      "measuredGz": 9098,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-cable-lateral-raise-*.js",
+      "rawMax": 46093,
+      "gzMax": 6852,
+      "measuredRaw": 41902,
+      "measuredGz": 6229,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-cable-lateral-raise-*.js",
+      "rawMax": 27911,
+      "gzMax": 8455,
+      "measuredRaw": 25373,
+      "measuredGz": 7686,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-dumbbell-front-raise-*.js",
+      "rawMax": 42558,
+      "gzMax": 9465,
+      "measuredRaw": 38689,
+      "measuredGz": 8604,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-dumbbell-front-raise-*.js",
+      "rawMax": 50832,
+      "gzMax": 6801,
+      "measuredRaw": 46210,
+      "measuredGz": 6182,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-dumbbell-front-raise-*.js",
+      "rawMax": 25445,
+      "gzMax": 8308,
+      "measuredRaw": 23131,
+      "measuredGz": 7552,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-face-pull-*.js",
+      "rawMax": 38111,
+      "gzMax": 9410,
+      "measuredRaw": 34646,
+      "measuredGz": 8554,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-face-pull-*.js",
+      "rawMax": 32040,
+      "gzMax": 6010,
+      "measuredRaw": 29127,
+      "measuredGz": 5463,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-face-pull-*.js",
+      "rawMax": 24872,
+      "gzMax": 8238,
+      "measuredRaw": 22610,
+      "measuredGz": 7489,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-incline-push-up-*.js",
+      "rawMax": 39536,
+      "gzMax": 9619,
+      "measuredRaw": 35941,
+      "measuredGz": 8744,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-incline-push-up-*.js",
+      "rawMax": 31930,
+      "gzMax": 6307,
+      "measuredRaw": 29027,
+      "measuredGz": 5733,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-incline-push-up-*.js",
+      "rawMax": 25582,
+      "gzMax": 8413,
+      "measuredRaw": 23256,
+      "measuredGz": 7648,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-pike-push-up-*.js",
+      "rawMax": 36630,
+      "gzMax": 9163,
+      "measuredRaw": 33300,
+      "measuredGz": 8330,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-pike-push-up-*.js",
+      "rawMax": 31643,
+      "gzMax": 7041,
+      "measuredRaw": 28766,
+      "measuredGz": 6400,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-pike-push-up-*.js",
+      "rawMax": 27054,
+      "gzMax": 8483,
+      "measuredRaw": 24594,
+      "measuredGz": 7711,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
       "chunk": "ht-leg-extension-*.js",
       "rawMax": 55062,
       "gzMax": 13719,
       "measuredRaw": 50056,
       "measuredGz": 12471,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-leg-extension-*.js",
@@ -1367,7 +1556,7 @@
       "measuredRaw": 16671,
       "measuredGz": 4646,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-leg-extension-*.js",
@@ -1376,16 +1565,16 @@
       "measuredRaw": 25581,
       "measuredGz": 7704,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-lying-leg-curl-*.js",
       "rawMax": 50804,
-      "gzMax": 12439,
+      "gzMax": 12440,
       "measuredRaw": 46185,
-      "measuredGz": 11308,
+      "measuredGz": 11309,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-lying-leg-curl-*.js",
@@ -1394,7 +1583,7 @@
       "measuredRaw": 17295,
       "measuredGz": 4795,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-lying-leg-curl-*.js",
@@ -1403,16 +1592,16 @@
       "measuredRaw": 24322,
       "measuredGz": 7612,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-standing-leg-curl-*.js",
       "rawMax": 52486,
-      "gzMax": 12810,
+      "gzMax": 12811,
       "measuredRaw": 47714,
-      "measuredGz": 11645,
+      "measuredGz": 11646,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-standing-leg-curl-*.js",
@@ -1421,7 +1610,7 @@
       "measuredRaw": 29708,
       "measuredGz": 5578,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-standing-leg-curl-*.js",
@@ -1430,43 +1619,16 @@
       "measuredRaw": 24576,
       "measuredGz": 7573,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
-    },
-    {
-      "chunk": "ht-glute-bridge-*.js",
-      "rawMax": 83325,
-      "gzMax": 22502,
-      "measuredRaw": 75750,
-      "measuredGz": 20456,
-      "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
-    },
-    {
-      "chunk": "posture-glute-bridge-*.js",
-      "rawMax": 17528,
-      "gzMax": 4723,
-      "measuredRaw": 15934,
-      "measuredGz": 4293,
-      "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
-    },
-    {
-      "chunk": "feel-glute-bridge-*.js",
-      "rawMax": 26330,
-      "gzMax": 8378,
-      "measuredRaw": 23936,
-      "measuredGz": 7616,
-      "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-cable-kickback-*.js",
       "rawMax": 83613,
-      "gzMax": 25646,
+      "gzMax": 25645,
       "measuredRaw": 76011,
-      "measuredGz": 23314,
+      "measuredGz": 23313,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-cable-kickback-*.js",
@@ -1475,7 +1637,7 @@
       "measuredRaw": 28500,
       "measuredGz": 5932,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-cable-kickback-*.js",
@@ -1484,16 +1646,16 @@
       "measuredRaw": 23259,
       "measuredGz": 7505,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-resisted-hip-flexion-*.js",
       "rawMax": 42034,
-      "gzMax": 10688,
+      "gzMax": 10687,
       "measuredRaw": 38212,
-      "measuredGz": 9716,
+      "measuredGz": 9715,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-resisted-hip-flexion-*.js",
@@ -1502,7 +1664,7 @@
       "measuredRaw": 31949,
       "measuredGz": 6450,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-resisted-hip-flexion-*.js",
@@ -1511,7 +1673,7 @@
       "measuredRaw": 22773,
       "measuredGz": 7543,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-ab-wheel-rollout-*.js",
@@ -1520,7 +1682,7 @@
       "measuredRaw": 32264,
       "measuredGz": 7805,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-ab-wheel-rollout-*.js",
@@ -1529,7 +1691,7 @@
       "measuredRaw": 24750,
       "measuredGz": 5066,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-ab-wheel-rollout-*.js",
@@ -1538,7 +1700,7 @@
       "measuredRaw": 23887,
       "measuredGz": 7627,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-bird-dog-*.js",
@@ -1547,7 +1709,7 @@
       "measuredRaw": 26932,
       "measuredGz": 7337,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-bird-dog-*.js",
@@ -1556,7 +1718,7 @@
       "measuredRaw": 32549,
       "measuredGz": 6079,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-bird-dog-*.js",
@@ -1565,7 +1727,7 @@
       "measuredRaw": 25153,
       "measuredGz": 7638,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-cable-crunch-*.js",
@@ -1574,7 +1736,7 @@
       "measuredRaw": 38852,
       "measuredGz": 9564,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-cable-crunch-*.js",
@@ -1583,7 +1745,7 @@
       "measuredRaw": 26110,
       "measuredGz": 5553,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-cable-crunch-*.js",
@@ -1592,7 +1754,7 @@
       "measuredRaw": 25404,
       "measuredGz": 7784,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-hollow-body-hold-*.js",
@@ -1601,7 +1763,7 @@
       "measuredRaw": 27489,
       "measuredGz": 6888,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-hollow-body-hold-*.js",
@@ -1610,7 +1772,7 @@
       "measuredRaw": 34748,
       "measuredGz": 5483,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-hollow-body-hold-*.js",
@@ -1619,7 +1781,7 @@
       "measuredRaw": 25831,
       "measuredGz": 7832,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-reverse-crunch-*.js",
@@ -1628,7 +1790,7 @@
       "measuredRaw": 30818,
       "measuredGz": 7581,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-reverse-crunch-*.js",
@@ -1637,7 +1799,7 @@
       "measuredRaw": 33049,
       "measuredGz": 5656,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-reverse-crunch-*.js",
@@ -1646,7 +1808,7 @@
       "measuredRaw": 25839,
       "measuredGz": 7824,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-dead-bug-*.js",
@@ -1655,7 +1817,7 @@
       "measuredRaw": 43838,
       "measuredGz": 12376,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-dead-bug-*.js",
@@ -1664,7 +1826,7 @@
       "measuredRaw": 26284,
       "measuredGz": 5414,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-dead-bug-*.js",
@@ -1673,16 +1835,16 @@
       "measuredRaw": 24123,
       "measuredGz": 7662,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-kettlebell-swing-*.js",
       "rawMax": 41513,
-      "gzMax": 9797,
+      "gzMax": 9796,
       "measuredRaw": 37739,
-      "measuredGz": 8906,
+      "measuredGz": 8905,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-kettlebell-swing-*.js",
@@ -1691,7 +1853,7 @@
       "measuredRaw": 29854,
       "measuredGz": 6273,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-kettlebell-swing-*.js",
@@ -1700,43 +1862,16 @@
       "measuredRaw": 23563,
       "measuredGz": 7651,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
-    },
-    {
-      "chunk": "ht-high-knees-*.js",
-      "rawMax": 37260,
-      "gzMax": 9706,
-      "measuredRaw": 33872,
-      "measuredGz": 8823,
-      "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
-    },
-    {
-      "chunk": "posture-high-knees-*.js",
-      "rawMax": 18871,
-      "gzMax": 5498,
-      "measuredRaw": 17155,
-      "measuredGz": 4998,
-      "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
-    },
-    {
-      "chunk": "feel-high-knees-*.js",
-      "rawMax": 22756,
-      "gzMax": 7717,
-      "measuredRaw": 20687,
-      "measuredGz": 7015,
-      "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-bear-crawl-*.js",
       "rawMax": 67182,
-      "gzMax": 20786,
+      "gzMax": 20787,
       "measuredRaw": 61074,
-      "measuredGz": 18896,
+      "measuredGz": 18897,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-bear-crawl-*.js",
@@ -1745,7 +1880,7 @@
       "measuredRaw": 16128,
       "measuredGz": 4539,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-bear-crawl-*.js",
@@ -1754,16 +1889,16 @@
       "measuredRaw": 24862,
       "measuredGz": 7597,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-sled-push-*.js",
       "rawMax": 32331,
-      "gzMax": 8639,
+      "gzMax": 8644,
       "measuredRaw": 29391,
-      "measuredGz": 7853,
+      "measuredGz": 7858,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-sled-push-*.js",
@@ -1772,7 +1907,7 @@
       "measuredRaw": 27457,
       "measuredGz": 5773,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-sled-push-*.js",
@@ -1781,7 +1916,7 @@
       "measuredRaw": 25252,
       "measuredGz": 7596,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-medicine-ball-slam-*.js",
@@ -1790,7 +1925,7 @@
       "measuredRaw": 36453,
       "measuredGz": 8534,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-medicine-ball-slam-*.js",
@@ -1799,7 +1934,7 @@
       "measuredRaw": 29841,
       "measuredGz": 5575,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-medicine-ball-slam-*.js",
@@ -1808,16 +1943,16 @@
       "measuredRaw": 25097,
       "measuredGz": 7633,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "ht-farmer-s-carry-*.js",
       "rawMax": 40158,
-      "gzMax": 9723,
+      "gzMax": 9727,
       "measuredRaw": 36507,
-      "measuredGz": 8839,
+      "measuredGz": 8842,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "posture-farmer-s-carry-*.js",
@@ -1826,7 +1961,7 @@
       "measuredRaw": 28038,
       "measuredGz": 4850,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     },
     {
       "chunk": "feel-farmer-s-carry-*.js",
@@ -1835,16 +1970,16 @@
       "measuredRaw": 25481,
       "measuredGz": 7709,
       "setBy": "LIB-SHIP",
-      "reason": "LIB-SHIP W7: the 18 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD: sled_pull held); measured + 10 % on claude/lib-ship-w7 after the pin, flip, hold and generate."
+      "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
     }
   ],
   "perId": [
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 64,
-      "rawMax": 40137,
-      "gzMax": 9575,
+      "n": 69,
+      "rawMax": 43273,
+      "gzMax": 10323,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -1854,8 +1989,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 11655785,
-      "gzMax": 2937555,
+      "rawMax": 12566393,
+      "gzMax": 3167051,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

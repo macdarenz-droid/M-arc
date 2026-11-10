@@ -9773,6 +9773,19 @@ if (gate.runs('LIB-SHIP-W3-PAUSEDSKIP'))
   if (!r.problems.length) console.log(`${tag}: ${r.rows.length} rows: running and paused-in-view animations block settle and settleApp, a paused one fully off screen does not, the no-viewport mutation is caught`);
 }
 
+// LIB-SHIP W6 D-SHIP-W6-RISKS (#393 6703065396) and D-SHIP-W6-F2 (#393 6703104795): ht10DomProbe's C19 counts the row's
+// own red flags (the four ruled reds go red, the greens stay green); PQH is ok on cable_lateral_raise and face_pull with
+// their lb07 pins and red on F2 with F2 taken out (tools/plates/library/fidelity/ship-w6.mjs).
+if (gate.runs('LIB-SHIP-W6-RISKS-F2'))
+{
+  const tag = 'LIB-SHIP-W6-RISKS-F2';
+  const { risksRows, f2Rows } = await import('../tools/plates/library/fidelity/ship-w6.mjs');
+  const r = await risksRows(browser, await import('../tools/plates/fidelity/harness.mjs'));
+  const f = await f2Rows();
+  for (const p of [...r.problems, ...f.problems]) errors.push(`${tag}: ${p}`);
+  if (!r.problems.length && !f.problems.length) console.log(`${tag}: ${r.rows.length} C19 rows (4 ruled reds red), ${f.rows.length} PQH rows (F2 exempt ok, F2 removed red)`);
+}
+
 // LIB-12: the hand views (palm-flat, cupped, front-rack, ball-contact) and the battle-rope pair (card LIB-12; plan 2.3;
 // tools/plates/library/hands/gate-lib12.mjs). Every LIB-12 drawn pair in 5 themes at 390, 360 and 340 px: no horizontal
 // scroll, SVG and text inside the plate (H4); each ink class's contrast >= golden B's minimum for it, measured in the

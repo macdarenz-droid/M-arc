@@ -336,13 +336,17 @@ async function libraryCases() {
 // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): plus front_squat (gap-key) and hammer_curl (hands/no-zoom.json,
 // D-SHIP-W5-HAMMER), both noPairRuling D-SHIP-C3, and the 3 bodyweight lower-body ids (archetype none, why names D-SHIP-GRIP,
 // D-SHIP-A6NOGRIP), in registry order after W4's (merge of main 05382042: both lanes' ids)
-// LIB-SHIP W7 (ruling 3; D-PF10-W7JOIN, the flip set of 19, 18 after D-SHIP-W7-SLEDHOLD: sled_pull held): every W7 shipped row ships with no hand pair (D-SHIP-HANDW7
-// gap-ruled trio and farmer_s_carry, the rest archetype none under D-SHIP-GRIP), in registry order after W5's
-const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
+// LIB-SHIP W6 (ruling 3; #393 6689822595 / 6701002884): plus all 7 shipped W6 ids (hands/no-zoom.json: 5 card-no-zoom,
+// dumbbell_front_raise and face_pull gap-ruled D-SHIP-HANDW6), in registry order (merge of main de91dd21: after W5's)
+// LIB-SHIP W7 (ruling 3; D-PF10-W7JOIN, the flip set of 19; 16 after D-SHIP-W7-SLEDHOLD (sled_pull held) and D-SHIP-W7-HOLD2
+// #394 6753333493 (glute_bridge and high_knees held)): every W7 shipped row ships with no hand pair (D-SHIP-HANDW7 gap-ruled trio and
+// farmer_s_carry, the rest archetype none under D-SHIP-GRIP), in registry order after W6's (merge of main dc058207: both lanes' ids)
+const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
   'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
-  'lib_kettlebell_swing', 'lib_high_knees', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
+  'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
 const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', ...W4_IDS, 'lib_front_squat', 'lib_bodyweight_squat',
   'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_hammer_curl',
+  'lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_incline_push_up', 'lib_pike_push_up',
   ...W7_SHIPPED,
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
@@ -351,8 +355,9 @@ const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_re
 // LIB-SHIP W3: plus single_arm_lat_pulldown (its card's watch is [] and its shoulder row names no part), in registry order
 // LIB-SHIP W4: the three W4 shrugs (registry order, after W3's lb01 rows and before the W2 rows) draw no mark either
 // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): plus single_leg_romanian_deadlift (noMarkIds on this tree; the other 3 draw marks)
-// LIB-SHIP W7 (D-PF10-W7JOIN): plus high_knees (riskFlags [], D-SHIP-W7-NOREDFLAG; noMarkIds on this tree), in registry order
-const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug', 'lib_high_knees',
+// LIB-SHIP W6 (#393 6689822595 / 6701002884): plus dumbbell_front_raise (watch [], its rows name only the primary
+// front_delts) and face_pull (watch [], its rows name no muscle or part), in registry order
+const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug', 'lib_dumbbell_front_raise', 'lib_face_pull',
   'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
 /** LIB-SHIP W2: the ids among `ids` whose How-to feel has no watch-listed non-primary muscle and no pain part in any row. */
 async function noMarkIds(base: string, ids: string[]) {
@@ -427,6 +432,12 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
     try { await expect(feelChecks(repo, pendlay)).rejects.toThrow(pendlay.id); } finally { NO_MARK.pop(); }
     const j = NO_MARK.indexOf(shrug.id); NO_MARK.splice(j, 1);
     try { await expect(feelChecks(repo, shrug)).rejects.toThrow(shrug.id); } finally { NO_MARK.splice(j, 0, shrug.id); }
+    // LIB-SHIP W6 A9 reds: a mark-drawing W6 id (machine_crunch) on the list, and a W6 no-mark id (face_pull) off it
+    const crunch = LIBRARY.find(r => r.id === 'lib_machine_crunch')!, face = LIBRARY.find(r => r.id === 'lib_face_pull')!;
+    NO_MARK.push(crunch.id);
+    try { await expect(feelChecks(repo, crunch)).rejects.toThrow(crunch.id); } finally { NO_MARK.pop(); }
+    const k = NO_MARK.indexOf(face.id); NO_MARK.splice(k, 1);
+    try { await expect(feelChecks(repo, face)).rejects.toThrow(face.id); } finally { NO_MARK.splice(k, 0, face.id); }
   });
   it('failure path: one row\'s mark moved to another muscle in the How-to source, without a page rebuild, is red', async () => {
     const m = mkdtempSync(join(tmpdir(), 'lib2b-feel-')); tmps.push(m);
@@ -593,6 +604,10 @@ describe('D-LIB2b-HANDCSS: a library row\'s HAND loader brings in its zoom css b
     const added = loaders.replace('export const POSTURE', `${line}export const POSTURE`);
     expect(handLineProblems(added, 'barbell-row').problems).toEqual([]);   // the line now passes the W1 shape, so the 0-lines assert above is red
     expect(handLineProblems(loaders, 'barbell-row').problems).toEqual(['barbell-row: 0 HAND lines']);
+    // LIB-SHIP W6 A9 red: a HAND line added for a W6 no-pair id (face_pull) passes the W1 shape, so its 0-lines assert is red
+    const w6 = loaders.replace('export const POSTURE', `${line.replace(/barbell-row/g, 'face-pull')}export const POSTURE`);
+    expect(handLineProblems(w6, 'face-pull').problems).toEqual([]);
+    expect(handLineProblems(loaders, 'face-pull').problems).toEqual(['face-pull: 0 HAND lines']);
   });
   it('the 8\'s loaders.ts lines are unchanged by a library row: the tree\'s lines minus the library rows\' are the repo\'s (header aside)', () => {
     const lib = [...LIBRARY, { id: F.ID, chromeId: 'cable-lateral-raise' }];
