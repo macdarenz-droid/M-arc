@@ -630,7 +630,9 @@ describe('L2-A5: exercises.json is an input of ids.ts and its twin', () => {
     for (const p of ['src/howto/ids.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/coverage.ts']) expect(idsGen.inputsFor(p), p).toContain('src/data/exercises.json');
     const ids = out.get('src/howto/ids.ts')!;
     expect(ids.writers).toEqual(['tools/plates/gen/content.mjs', 'tools/plates/gen/ids.mjs']);
-  });
+  }, 12_000);   // F-L2A5-TIMEOUT (supervisor, the D-SHIP-W3-WALKTIME form): it ran on vitest's 5 s default and timed out in unit-tz
+  // America/New_York at 5728 ms (main f14283dc, run 42798501987 attempt 1) and 6401 ms (attempt 2), and on 058322ed's run; 12 s is
+  // 1.87x the worst measured time; no assertion change
 });
 
 describe('D-LIB2-layers: content.mjs narrows inputs per exercise', () => {
