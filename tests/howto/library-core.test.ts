@@ -4,7 +4,7 @@ import { cpSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 import { child, ownRowsTreeInChild } from '../child-test';
-import { LIBRARY } from './shipped-rows';
+import { LIBRARY, TEXT_ZOOM_SHIPPED } from './shipped-rows';
 import { renderOf } from '../walk-cache';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -86,11 +86,37 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     'sl-cablecrunch', 'sl-ck', 'sl-coreex', 'sl-farmers', 'sl-kb-swing', 'sl-le', 'sl-llc', 'sl-slam', 'sl-sledpush', 'sl-stlc',
     'vit-slam', 'yamane-2023'];
   const SOURCES_MAIN_DC05 = '3026024e51f90e898c673fd2ecb6fc7a4c5b5db7cdb0552409171291fea70d96';   // main dc058207 (train 82, W6 #393), from its own sources.json
-  const w7Back = (t: string) => {
+  // LIB-SHIP W8a (#413 D-SHIP-W8A-STAMP, ruling 3): sources.json moves from W7's 6dfbbc6c (main 07f5fbcf's body) to 4ffbe796
+  // (tests/howto/fixtures/generated-bodies.json): exactly the 5 W8a ids' 15 new sources, each cited by a W8a id's research
+  // json; with them taken out the body is main 07f5fbcf's, in main's key order. w7Back takes W8a's out first.
+  const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'seated_leg_curl', 'crunch', 'assisted_pull_up'];
+  const W8A_ADDED = ['ace-crunch', 'ace-standing-sp', 'ace-top3-chest', 'bb-crunch', 'bb-legcurl', 'bullbar-assist-safety', 'hl-pecdeck', 'juker-1998',
+    'maeo-2021', 'pinto-2025', 'sl-slc', 'soncin-2014', 'strengthlog-assisted-pull-up', 'stronglifts-ohp', 'vg-pecfly'];
+  const SOURCES_MAIN_07F5 = '6dfbbc6c2c4d48089b43078b5680f11ba16d9b15e45ea362397e7106c4ae1b70';   // main 07f5fbcf (train 85, W7 #394)
+  const w8aBack = (t: string) => {
+    const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
+    for (const k of W8A_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
+    return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
+  };
+  const w7Only = (t: string) => {
     const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
     for (const k of W7_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
     return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
   };
+  const w7Back = (t: string) => w7Only(w8aBack(t));
+  it('LIB-SHIP W8a: sources.json is main 07f5fbcf\'s body plus W8a\'s 15 named sources; each cited by a W8a id', () => {
+    const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
+    expect(new Set(W8A_ADDED).size).toBe(15);
+    expect(fixture().bodies[SRC]).toBe(bodies.bodySha(t));
+    expect(bodies.bodySha(w8aBack(t))).toBe(SOURCES_MAIN_07F5);
+    const cited = new Set(W8A_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
+    for (const k of W8A_ADDED) expect([k, cited.has(k)]).toEqual([k, true]);
+    // reds: an unnamed added source, a named one missing, another record changed
+    expect(bodies.bodySha(w8aBack(`${head}${JSON.stringify({ ...o, 'w8a-extra': { id: 'w8a-extra' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_07F5);
+    const { 'vg-pecfly': _gone, ...less } = o;
+    expect(() => w8aBack(`${head}${JSON.stringify(less, null, 2)}\n`)).toThrow('vg-pecfly: not in sources.json');
+    expect(bodies.bodySha(w8aBack(`${head}${JSON.stringify({ ...o, 'ace-abs': { ...o['ace-abs'], checked: '2099-01-01' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_07F5);
+  });
   it('LIB-SHIP W7: sources.json is main dc058207\'s body plus W7\'s 81 named sources; each cited by a W7 id', () => {
     const t = readFileSync(SRC, 'utf8');
     expect(W7_ADDED).toHaveLength(81);
@@ -102,7 +128,7 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     const o0 = JSON.parse(t.slice(t.indexOf('\n') + 1));
     for (const k of ['gs-sled', 'west-2014']) expect([k, k in o0]).toEqual([k, false]);
     expect(bodies.bodySha(w7Back(`${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify({ ...o0, 'gs-sled': { id: 'gs-sled' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_DC05);
-    expect(fixture().bodies[SRC]).toBe(bodies.bodySha(t));
+    expect(bodies.bodySha(w8aBack(t))).toBe(SOURCES_MAIN_07F5);   // LIB-SHIP W8a: the fixture pin moved to W8a's (checked above); W7's body is main 07f5fbcf's
     expect(bodies.bodySha(w7Back(t))).toBe(SOURCES_MAIN_DC05);
     const cited = new Set(W7_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
     for (const k of W7_ADDED) expect([k, cited.has(k)]).toEqual([k, true]);
@@ -365,7 +391,7 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
     // research card, plus one handpair-<key>.ts per distinct key the shipped rows use
     const hp = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs'));
     const { keys } = hp.pairsOf(await hp.loadPairs(), reg.shippedIds());
-    expect(out.size).toBe(61 + 5 * LIBRARY.length + new Set(keys).size);
+    expect(out.size).toBe(61 + 5 * LIBRARY.length - TEXT_ZOOM_SHIPPED.length + new Set(keys).size);   // LIB-SHIP W8a: a text-zoom row writes no posture- file (shipped-rows.ts)
     for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts', 'src/howto/red-flag-back.ts']) expect(out.has(p), p).toBe(true);
   });
 

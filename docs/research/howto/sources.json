@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=7d07d6ad64d4e20c0600e34f326e6801a13cc8d6a913022008c69275490c9a9f
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=c84f3b62b8b7e433158a07cb70ffef92bc0475cc5feadacd4bcb5008a9c02087
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -708,6 +708,14 @@
     "id": "bullbar-assist-beginner",
     "cite": "How to Use a Pull-Up Assist Machine Correctly (Beginner's Guide) (Bullbar Fit, manufacturer blog)",
     "url": "https://bullbarfit.com/blogs/q-as/how-to-use-a-pull-up-assist-machine-correctly-for-beginners-at-the-gym",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "bullbar-assist-safety": {
+    "id": "bullbar-assist-safety",
+    "cite": "How to Use an Assisted Pull-Up Machine Without Hurting Yourself (Bullbar Fit, manufacturer blog)",
+    "url": "https://bullbarfit.com/blogs/q-as/how-do-i-correctly-use-an-assisted-pull-up-machine-at-the-gym-to-avoid-injury",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
@@ -2750,6 +2758,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/33707987/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "strengthlog-assisted-pull-up": {
+    "id": "strengthlog-assisted-pull-up",
+    "cite": "How to Do Assisted Pull-Ups: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/assisted-pull-up/",
+    "kind": "coach",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "strengthlog-chin-up": {

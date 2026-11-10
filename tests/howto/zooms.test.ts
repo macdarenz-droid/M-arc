@@ -7,7 +7,7 @@ import { dirname, join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { INLINE_ALLOW, inlineVars, lint } from './css.test';
-import { LIBRARY, SHIPPED } from './shipped-rows';
+import { POSTURE_LIBRARY, POSTURE_SHIPPED, SHIPPED } from './shipped-rows';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -39,7 +39,7 @@ describe('HT7-A1: every posture panel === golden B', () => {
   });
   it('one chunk per exercise, keyed by the chrome id, and no other posture chunk', () => {
     const files = readdirSync('src/howto/generated').filter(f => f.startsWith('posture-')).sort();
-    expect(files).toEqual(SHIPPED.map(r => `posture-${r.chromeId}.ts`).sort());   // LIB-2b: the registry's shipped rows
+    expect(files).toEqual(POSTURE_SHIPPED.map(r => `posture-${r.chromeId}.ts`).sort());   // LIB-2b: the registry's shipped rows (LIB-SHIP W8a: less the text-zoom rows, shipped-rows.ts)
     expect(IDS).toHaveLength(8);
   });
   it.each(IDS)('%s: the panels are the page\'s posture close-ups, same keys, same order, each ===', id => {
@@ -63,7 +63,7 @@ describe('HT7-A1: every posture panel === golden B', () => {
   it('LIB-2b: each shipped library row\'s panels are its pinned page\'s posture close-ups (exact count), with its own source\'s keys and golden B\'s ZDOTS', async () => {
     const cg = await import(/* @vite-ignore */ url('tools/plates/gen/content.mjs'));
     let n = 0, want = 0;
-    for (const r of LIBRARY) {
+    for (const r of POSTURE_LIBRARY) {   // LIB-SHIP W8a: the text-zoom rows have no posture close-up (F-ZOOM-NONE checks them)
       const page = readFileSync(r.pages!.layers, 'utf8'), golden = gen.posturePanels(page, r.chromeId) as { key: string; panel: string }[];
       const chunk = await import(/* @vite-ignore */ url(`src/howto/generated/posture-${r.chromeId}.ts`));
       const zooms = (await cg.loadContent(r.id)).content.zooms.filter((z: any) => z.kind === 'posture');
@@ -192,7 +192,7 @@ describe('HT7-A2: no duplicate id in one How-to, none between two', () => {
 });
 
 describe('HT7-A5: each posture-<id> chunk is at most 24 KB gz and imports only its close-up CSS', () => {
-  it.each(SHIPPED.map(r => r.chromeId))('%s', id => {   // LIB-2b: every shipped row, the 24 KB ceiling included
+  it.each(POSTURE_SHIPPED.map(r => r.chromeId))('%s', id => {   // LIB-2b: every shipped row, the 24 KB ceiling included (LIB-SHIP W8a: with a posture chunk)
     expect(src(id).match(/^import .*$/gm)).toEqual([`import '../../slices/howto/css/zoom-${id}.css';`]);
     const s = readFileSync(`src/howto/generated/posture-${id}.ts`);
     expect(gzipSync(s, { level: 9 }).length).toBeLessThanOrEqual(24 * 1024);
@@ -204,7 +204,7 @@ describe('HT7-A5: each posture-<id> chunk is at most 24 KB gz and imports only i
     expect(hits('src').filter(p => !p.startsWith('src/howto/generated'))).toEqual([]);
     const inGen = readdirSync('src/howto/generated').filter(f => readFileSync(join('src/howto/generated', f), 'utf8').includes("import('./posture-"));
     expect(inGen).toEqual(['loaders.ts']);
-    expect(readFileSync('src/howto/generated/loaders.ts', 'utf8').match(/import\('\.\/posture-/g)).toHaveLength(SHIPPED.length);
+    expect(readFileSync('src/howto/generated/loaders.ts', 'utf8').match(/import\('\.\/posture-/g)).toHaveLength(POSTURE_SHIPPED.length);   // LIB-SHIP W8a: was SHIPPED.length; a text-zoom row has no POSTURE line
     expect(readFileSync('src/slices/howto/sections/Posture.tsx', 'utf8')).toMatch(/import\('\.\.\/\.\.\/\.\.\/howto\/generated\/loaders'\)\.then\(m => m\.POSTURE\[chromeId\]\)/);
   });
 });

@@ -14,7 +14,7 @@ import { gzipSync } from 'node:zlib';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { unpack } from '@/howto/delta';
 import { readHowTo } from './generated-module';
-import { SHIPPED } from './shipped-rows';
+import { POSTURE_SHIPPED, SHIPPED } from './shipped-rows';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -61,7 +61,7 @@ describe('HT-11 D1: the codec gives back every string byte for byte', () => {
   });
 
   it('every posture panel and zdots string of every shipped row decodes to itself', async () => {
-    for (const r of SHIPPED) {
+    for (const r of POSTURE_SHIPPED) {   // LIB-SHIP W8a: the rows with a posture chunk (shipped-rows.ts; text-zoom rows have none)
       const m = await import(/* @vite-ignore */ url(`${GEN}/posture-${r.chromeId}.ts`));
       const frags = [...Object.values(m.panels as Record<string, string>), m.zdots as string];
       expect(roundTrip(frags), r.chromeId).toEqual(frags);
@@ -122,7 +122,7 @@ export const dynamicCode = (t: string) => [...t.matchAll(/\beval\s*\(|\bnew\s+Fu
 describe('HT-11 D3 (stop 3): no eval, new Function or Function( in the packed modules or the decoder', () => {
   it('every generated ht-*.ts and posture-*.ts, and src/howto/delta.js, is clean', () => {
     const files = readdirSync(GEN).filter(f => /^(ht|posture)-.*\.ts$/.test(f));
-    expect(files.length).toBe(2 * SHIPPED.length);
+    expect(files.length).toBe(SHIPPED.length + POSTURE_SHIPPED.length);   // LIB-SHIP W8a: was 2 * SHIPPED.length; a text-zoom row writes no posture chunk
     for (const f of [...files.map(f => `${GEN}/${f}`), 'src/howto/delta.js']) expect(dynamicCode(readFileSync(f, 'utf8')), f).toEqual([]);
   });
   it('mutation: each banned form inserted into a module is found', () => {
@@ -136,10 +136,11 @@ describe('HT-11 D4: the decoder each module carries is src/howto/delta.js\'s', (
     const src: string = codec.decoderSource(), firstLine = src.slice(0, src.indexOf('\n'));
     expect(firstLine).toBe("function unpack(frags = [''], table = frags.slice(0, 0)) {");
     for (const r of SHIPPED) {
-      const ht = readFileSync(`${GEN}/ht-${r.slug}.ts`, 'utf8'), po = readFileSync(`${GEN}/posture-${r.chromeId}.ts`, 'utf8');
+      // LIB-SHIP W8a: a text-zoom row (shipped-rows.ts TEXT_ZOOM_SHIPPED) has no posture chunk; its ht- chunk is checked alone
+      const ht = readFileSync(`${GEN}/ht-${r.slug}.ts`, 'utf8'), po = POSTURE_SHIPPED.includes(r) ? readFileSync(`${GEN}/posture-${r.chromeId}.ts`, 'utf8') : null;
       expect(ht.split(src.replace(/\n/g, '\n    ')).length, r.slug).toBe(2);
-      expect(po.split(src).length, r.chromeId).toBe(2);
-      for (const t of [ht, po]) expect(t).not.toMatch(/^import .*delta|import\(.*delta/m);
+      if (po !== null) expect(po.split(src).length, r.chromeId).toBe(2);
+      for (const t of po === null ? [ht] : [ht, po]) expect(t).not.toMatch(/^import .*delta|import\(.*delta/m);
     }
   });
 });

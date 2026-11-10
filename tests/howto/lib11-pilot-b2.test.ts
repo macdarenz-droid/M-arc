@@ -83,8 +83,10 @@ describe('PILOT-B2 A1: the rows hold exactly lib_crunch; crunch is in no pilot B
   });
   // LIB-SHIP W2 (ruling 3, A9): crunch is held at approved-plate (Q6, F-PLATE-ZOOMCSS); the pre-pin rows file is gone, so
   // a row copied back into it is red
-  it('LIB-SHIP W2: lib_crunch is at approved-plate, and the pre-pin rows file does not exist', () => {
-    expect(readJson(ROWS).rows.lib_crunch.stage).toBe('approved-plate');
+  // LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, #413 6761492481): crunch ships (its plate.css route F-PLATE-ZOOMCSS merged);
+  // the row at any other stage is red
+  it('LIB-SHIP W8a: lib_crunch is shipped, and the pre-pin rows file does not exist', () => {
+    expect(readJson(ROWS).rows.lib_crunch.stage).toBe('shipped');
     expect(existsSync(PRE_PIN)).toBe(false);
   });
   it('crunch is in neither batches/pilot-b.json nor batches/lb09.json (LIB-SHIP W7: LB9 moved there)', () => {
@@ -263,7 +265,7 @@ describe('PILOT-B2 A9 (node half), A2 (part): runQa, the expected flags, the pag
     expect(r.keys).toEqual([]);
     // LIB-SHIP W2: the pin's exemptions are the GO's F1, F3, F5, and authoring QA is refused at approved-plate
     expect(r.pinned).toEqual(['F1', 'F3', 'F5']);
-    expect(r.refused).toMatch(/authoring QA is refused at stage approved-plate \(D-LIB9-AUTHORQA\)/);
+    expect(r.refused).toMatch(/authoring QA is refused at stage shipped \(D-LIB9-AUTHORQA\)/);   // LIB-SHIP W8a: was approved-plate
     // the node-computed flags (F2 and F5 are the browser half's: pilot-b2/qa.mjs EXPECTED)
     expect(Object.keys(r.flags).filter(f => ['F1', 'F3', 'F4', 'F6', 'F7'].includes(f)).sort()).toEqual(['F1', 'F3']);
     expect([+r.flags.F1.toFixed(2), +r.flags.F3.toFixed(1)]).toEqual([191.76, 142.9]);
@@ -364,20 +366,21 @@ describe('PILOT-B2 A1 (files), A13: crunch is in exactly the PILOT-B2 files and 
     const g = readJson('tests/howto/golden/library/pilot-b.json'); g.entries.push({ ...g.entries[1], id: 'lib_crunch' });
     expect(hits([['tests/howto/golden/library/pilot-b.json', JSON.stringify(g)]])).toEqual(['tests/howto/golden/library/pilot-b.json']);
   });
-  it('crunch is not shipped; mutation: its row at shipped is caught', async () => {
+  // LIB-SHIP W8a (ruling 3): replaces "crunch is not shipped" with the ruled state: shipped; its row held back is caught
+  it('crunch is shipped (LIB-SHIP W8a); mutation: its row at approved-plate is caught', async () => {
     const reg = await import(/* @vite-ignore */ lib('registry.mjs')), b2 = await import(/* @vite-ignore */ lib('pilot-b2/build.mjs'));
-    expect(reg.shippedIds(b2.pb2All()).includes('lib_crunch')).toBe(false);
+    expect(reg.shippedIds(b2.pb2All()).includes('lib_crunch')).toBe(true);
     // LIB-SHIP W2: ROWS is now one of the registry's batch files, so the mutation replaces it in place
     expect(reg.batchFiles()).toContain(ROWS);
-    const j = readJson(ROWS); j.rows.lib_crunch.stage = 'shipped';
-    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? j : readJson(p)]) })).includes('lib_crunch')).toBe(true);
+    const j = readJson(ROWS); j.rows.lib_crunch.stage = 'approved-plate';
+    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? j : readJson(p)]) })).includes('lib_crunch')).toBe(false);
   });
 });
 
 describe('PILOT-B2 A12: the moved assertions (D-SUPCORE-TESTHOME map)', () => {
   // lib11-pilot-b.test.ts @ 5bcbddcf line(s) -> the test here that carries it (verbatim or the named stricter form)
   const MOVED: [string, string][] = [
-    [':13 PILOT_B lists crunch (its shipped check, :309)', 'crunch is not shipped; mutation: its row at shipped is caught'],
+    [':13 PILOT_B lists crunch (its shipped check, :309; LIB-SHIP W8a ruling 3: now the shipped state)', 'crunch is shipped (LIB-SHIP W8a); mutation: its row at approved-plate is caught'],
     [':15 HELD = [crunch] (the held markers; the spec checks keep reading it there)', 'no other batch, page or golden file names crunch'],
     [':251-254 the held id is in DESIGN.md\'s held table', 'pilot-b/DESIGN.md keeps its held row (D-LIB11-SMALL) until the pin'],
     [':305-309 "the held crunch has no row" (stricter: lib_crunch once, in pilot-b2 only)', 'lib_crunch once, mode H, view side, no parent, template or params'],

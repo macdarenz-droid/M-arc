@@ -79,7 +79,7 @@ export const PLATE_MOVES = ['fragments', 'approvedBy', 'decision', 'approval', '
  *  LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was always the whole file and the built page; now `after` trailing entries (a later
  *  golden update's, which the caller checks exactly) are left out, and `pagePin` (that update supersedes this page entry) is
  *  the page entry's pin in place of the built page's. Both default to the old checks. */
-export function pfTailProblems(file: any, batch: string, o: { G: any; html: string | Buffer; page: number; plates: Record<string, number>; layers: { supersedes: number | null; ids: string[]; page: Buffer }; after?: number; pagePin?: { sha: string; bytes: number } }): string[] {
+export function pfTailProblems(file: any, batch: string, o: { G: any; html: string | Buffer; page: number; plates: Record<string, number>; layers: { supersedes: number | null; ids: string[]; page: Buffer; pin?: { sha: string; bytes: number } }; after?: number; pagePin?: { sha: string; bytes: number } }): string[] {
   const bad: string[] = [], M0 = MAIN_GOLDEN[batch]!, E = (file.entries as any[]).slice(0, file.entries.length - (o.after ?? 0));
   if (sha(JSON.stringify(E.slice(0, M0.n))) !== M0.sha) bad.push(`${batch}: main's ${M0.n} entries changed`);
   const tail = E.slice(M0.n), ids = Object.keys(o.plates);
@@ -102,7 +102,9 @@ export function pfTailProblems(file: any, batch: string, o: { G: any; html: stri
   if ((lp.supersedes ?? null) !== o.layers.supersedes || (o.layers.supersedes !== null && E[o.layers.supersedes]?.kind !== 'layers-page')) bad.push(`${batch}: layers-page supersedes ${lp.supersedes}`);
   if (lp.approvedBy !== 'supervisor' || lp.decision !== PF_LAYERS_DECISION || !/^https:\/\/github\.com\/macdarenz-droid\/M-arc\/pull\/385#issuecomment-\d+ @ [0-9a-f]{40}$/.test(lp.approval ?? '')) bad.push(`${batch}: layers-page approval`);
   if (JSON.stringify(lp.ids) !== JSON.stringify(o.layers.ids)) bad.push(`${batch}: layers-page ids ${lp.ids}`);
-  if (lp.pageSha256 !== sha(o.layers.page) || lp.bytes !== o.layers.page.length) bad.push(`${batch}: layers-page pin`);
+  // LIB-SHIP W8a: `layers.pin` (a later entry supersedes this layers page) is its pin in place of the committed page's
+  const lpin = o.layers.pin ?? { sha: sha(o.layers.page), bytes: o.layers.page.length };
+  if (lp.pageSha256 !== lpin.sha || lp.bytes !== lpin.bytes) bad.push(`${batch}: layers-page pin`);
   return bad;
 }
 

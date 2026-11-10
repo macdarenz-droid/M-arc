@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=d7c24804d8b1ca813264d25409f92b543fcda17a4946701ed262ee1f79fd60ce
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=964e6c4bb3eb0b8d283de570f3771bd693ffccba001616ff8cf1fb716cdedeea
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
@@ -13,6 +13,7 @@ export const HOWTO_IDS = [
   "lib_machine_chest_press",
   "lib_chin_up",
   "lib_hanging_knee_raise",
+  "lib_assisted_pull_up",
   "lib_inverted_row",
   "lib_close_grip_pulldown",
   "lib_single_arm_lat_pulldown",
@@ -90,6 +91,7 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
   lib_machine_chest_press: () => import('./ht-machine-chest-press'),
   lib_chin_up: () => import('./ht-chin-up'),
   lib_hanging_knee_raise: () => import('./ht-hanging-knee-raise'),
+  lib_assisted_pull_up: () => import('./ht-assisted-pull-up'),
   lib_inverted_row: () => import('./ht-inverted-row'),
   lib_close_grip_pulldown: () => import('./ht-close-grip-pulldown'),
   lib_single_arm_lat_pulldown: () => import('./ht-single-arm-lat-pulldown'),
@@ -168,6 +170,7 @@ export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: strin
   "machine-chest-press": () => import('./hand-machine-chest-press'),
   "chin-up": () => import('../../slices/howto/css/zoom-chin-up.css').then(() => import('./handpair-bar-hang-only-curled-under')),
   "hanging-knee-raise": () => import('../../slices/howto/css/zoom-hanging-knee-raise.css').then(() => import('./handpair-bar-hang-over')),
+  "assisted-pull-up": () => import('../../slices/howto/css/zoom-assisted-pull-up.css').then(() => import('./handpair-bar-hang-only-curled-over')),
   "inverted-row": () => import('../../slices/howto/css/zoom-inverted-row.css').then(() => import('./handpair-bar-row-only-curled-over')),
   "close-grip-pulldown": () => import('../../slices/howto/css/zoom-close-grip-pulldown.css').then(() => import('./handpair-v-handle-pull-only-curled-neutral-overhead')),
   "single-arm-lat-pulldown": () => import('../../slices/howto/css/zoom-single-arm-lat-pulldown.css').then(() => import('./handpair-d-handle-pull-only-curled-unstated')),
@@ -189,6 +192,7 @@ export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: R
   "machine-chest-press": () => import('./posture-machine-chest-press'),
   "chin-up": () => import('./posture-chin-up'),
   "hanging-knee-raise": () => import('./posture-hanging-knee-raise'),
+  "assisted-pull-up": () => import('./posture-assisted-pull-up'),
   "inverted-row": () => import('./posture-inverted-row'),
   "close-grip-pulldown": () => import('./posture-close-grip-pulldown'),
   "single-arm-lat-pulldown": () => import('./posture-single-arm-lat-pulldown'),
@@ -263,6 +267,7 @@ export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { r
   "machine-chest-press": () => import('./feel-machine-chest-press'),
   "chin-up": () => import('./feel-chin-up'),
   "hanging-knee-raise": () => import('./feel-hanging-knee-raise'),
+  "assisted-pull-up": () => import('./feel-assisted-pull-up'),
   "inverted-row": () => import('./feel-inverted-row'),
   "close-grip-pulldown": () => import('./feel-close-grip-pulldown'),
   "single-arm-lat-pulldown": () => import('./feel-single-arm-lat-pulldown'),

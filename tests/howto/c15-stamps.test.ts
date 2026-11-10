@@ -112,11 +112,17 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   const W7_STAMPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
     'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
     'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
+  // LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, #413 6761492481): the 5 flipped ids, stamped after W7's 16 in that order;
+  // pec_fly's names the ruling comment (its row changed after the panel); mountain_climbers and underhand_lat_pulldown are held
+  const W8A_PANEL = ['D-SHIP-W8A-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ 29e4af37a166b4a7e23c577c10386047da419b95'];
+  const W8A_RULED = ['D-SHIP-W8A-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6761492481 @ bb60cc574a8515dc6e67b3c80195b2cb2ffe6738'];
+  const W8A_STAMPED = ['lib_barbell_overhead_press', 'lib_pec_fly', 'lib_seated_leg_curl', 'lib_crunch', 'lib_assisted_pull_up'];
   const RULING: Record<string, string[][]> = { lib_dumbbell_biceps_curl: [W1_RULE], ...Object.fromEntries(W2_STAMPED.map(id => [id, [W2_RULE]])),
     ...Object.fromEntries(W3_STAMPED.map(id => [id, [W3_RULE]])), ...Object.fromEntries(PF_STAMPED.map(id => [id, [PF_RULE]])),
     ...Object.fromEntries(PF_RESTAMPED.map(id => [id, [W2_RULE, PF_RULE]])), ...Object.fromEntries(W4_IDS.map(id => [id, [W4_RULE]])), ...Object.fromEntries(W5_STAMPED.map(id => [id, [W5_RULE]])),
     ...Object.fromEntries(W6_STAMPED.map(id => [id, [W6_RULE]])),
-    ...Object.fromEntries(W7_STAMPED.map(id => [id, [W7_RULE]])) };
+    ...Object.fromEntries(W7_STAMPED.map(id => [id, [W7_RULE]])),
+    ...Object.fromEntries(W8A_STAMPED.map(id => [id, [id === 'lib_pec_fly' ? W8A_RULED : W8A_PANEL]])) };
   /** main 8841246c's 26 reviews.json entries (sha256 of their JSON.stringify): LIB-PLATEFIX-1 only appends. */
   const sha = (t: string) => createHash('sha256').update(t).digest('hex');
   const MAIN_ENTRIES = { n: 26, sha: '18060e4098c373dd9bdf3a0b5875cefddbc5af632814ceee9798aadb1d4c2e37' };
@@ -168,8 +174,9 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     // LIB-SHIP W5 (D-SHIP-W5-STAMP, ruling 3): then W5's 10 (merge of main 05382042: after W4's 6)
     // LIB-SHIP W6: then W6's 7 (D-SHIP-W6-STAMP, #393 6689822595 / 6701002884); main 7e060e83's 32 and main de91dd21's 48 entries unchanged
     // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): then W7's 16 (merge of main dc058207: after W6's 7; D-SHIP-W7-SLEDHOLD, D-SHIP-W7-HOLD2)
-    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED, ...W7_STAMPED]);
+    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED, ...W7_STAMPED, ...W8A_STAMPED]);   // LIB-SHIP W8a: + its 5
     expect(W7_STAMPED).toHaveLength(16);
+    expect(W8A_STAMPED).toHaveLength(5);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_ENTRIES.n)))).toBe(MAIN_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES.n)))).toBe(MAIN_W6_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES_DE91.n)))).toBe(MAIN_W6_ENTRIES_DE91.sha);
@@ -195,10 +202,13 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   it('LIB-SHIP W2 A9 mutations, each red: a ruled id\'s stamp removed; an unruled id stamped; a W2 id under the W1 ruling', () => {
     const es = reviews().entries;
     expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_plank'))).toEqual(['lib_plank: ruled, not stamped']);
-    expect(stampedProblems([...es, { ...es[es.length - 1], scope: 'lib_crunch' }])).toEqual(['lib_crunch: stamped, not ruled']);
+    // LIB-SHIP W8a: crunch is ruled now, so the unruled id is the held mountain_climbers; a W8a stamp under another ruling is red
+    expect(stampedProblems([...es, { ...es[es.length - 1], scope: 'lib_mountain_climbers' }])).toEqual(['lib_mountain_climbers: stamped, not ruled']);
+    const w8 = clone(es); w8.find((e: any) => e.scope === 'lib_crunch').decision = 'D-SHIP-W7-STAMP';
+    expect(stampedProblems(w8)).toEqual(['lib_crunch: decision D-SHIP-W7-STAMP, ruled D-SHIP-W8A-STAMP']);
     const w1 = clone(es); w1.find((e: any) => e.scope === 'lib_push_up').decision = 'D-SHIP-W1-STAMP';
     expect(stampedProblems(w1)).toEqual(['lib_push_up: decision D-SHIP-W1-STAMP, ruled D-SHIP-W2-STAMP']);
-    expect(stampedProblems(es, [...SHIPPED, 'lib_crunch'])).toEqual(['lib_crunch: shipped, not ruled']);
+    expect(stampedProblems(es, [...SHIPPED, 'lib_mountain_climbers'])).toEqual(['lib_mountain_climbers: shipped, not ruled']);   // LIB-SHIP W8a: crunch is ruled now; the held mountain_climbers
     // LIB-SHIP W3 A9 reds: a W3 id's stamp removed; a W3 id under the W2 ruling; a held W3-lane id shipped unruled
     expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_chin_up'))).toEqual(['lib_chin_up: ruled, not stamped']);
     const w2 = clone(es); w2.find((e: any) => e.scope === 'lib_horizontal_leg_press').decision = 'D-SHIP-W2-STAMP';

@@ -458,7 +458,10 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
   const RULED_LIB = [...W3_LIB, ...W5_LIB, ...W6_LIB, ...W7_LIB, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
     'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
-    'lib_horizontal_leg_press'];
+    'lib_horizontal_leg_press',
+    // LIB-SHIP W8a (ruling 3; #413 6761492481): its 5 (none is a mapped child: every W8a card has inherit [], and
+    // underhand_lat_pulldown, the mapped one, is held D-W8A-UNDERHANDHOLD)
+    'lib_barbell_overhead_press', 'lib_pec_fly', 'lib_seated_leg_curl', 'lib_crunch', 'lib_assisted_pull_up'];
   // LIB-SHIP W3: the mapped children that ship now, in CHILDREN order; the rest of the map (incline_machine_press,
   // shoulder_press, underhand_lat_pulldown, leg_press_calf_raise) is still held. LIB-PLATEFIX-1: single_leg_romanian_deadlift
   // ships too (above). Another mapped child shipped, or SLRDL shipped without its parent, is red.

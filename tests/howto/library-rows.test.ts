@@ -351,7 +351,9 @@ const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_re
   ...W7_SHIPPED,
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
-  'lib_horizontal_leg_press'];
+  'lib_horizontal_leg_press',
+  // LIB-SHIP W8a (ruling 3, #413 6761492481): OHP (no-zoom list, D-SHIP-Q1) and the 3 archetype-none ids get no HAND line
+  'lib_barbell_overhead_press', 'lib_pec_fly', 'lib_seated_leg_curl', 'lib_crunch'];
 // LIB-SHIP W2 (ruling 3): the shipped library ids whose feel draws no mark (card watch [] and no pain part in any row)
 // LIB-SHIP W3: plus single_arm_lat_pulldown (its card's watch is [] and its shoulder row names no part), in registry order
 // LIB-SHIP W4: the three W4 shrugs (registry order, after W3's lb01 rows and before the W2 rows) draw no mark either
@@ -359,7 +361,8 @@ const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_re
 // LIB-SHIP W6 (#393 6689822595 / 6701002884): plus dumbbell_front_raise (watch [], its rows name only the primary
 // front_delts) and face_pull (watch [], its rows name no muscle or part), in registry order
 const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug', 'lib_dumbbell_front_raise', 'lib_face_pull',
-  'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up'];   // pec_fly held (D-SHIP-PECFLY-HOLD)
+  'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row', 'lib_cable_fly', 'lib_push_up',
+  'lib_pec_fly'];   // LIB-SHIP W8a: pec_fly ships again (#413 6761492481); its feel marks nothing, as in W2
 /** LIB-SHIP W2: the ids among `ids` whose How-to feel has no watch-listed non-primary muscle and no pain part in any row. */
 async function noMarkIds(base: string, ids: string[]) {
   const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));
