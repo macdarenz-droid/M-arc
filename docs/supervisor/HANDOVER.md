@@ -842,6 +842,10 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-10 ~14:45 UTC.**
+  - **Train 87 merged:** #416 F-L2A5-TIMEOUT (supervisor) @ `5a1b61e6` → main `8a8ffab3`. L2-A5 gets an explicit 12 s timeout in the WALKTIME form: it timed out at 5728 and 6401 ms in unit-tz NY on main `f14283dc`, so it was red every time, not a flake. CI 80/80.
+  - Main `8a8ffab3`'s gate run gives the APK for train 86 (PF4: 4 close-ups and 9 redrawn plates; the app still has 69 guides). The APK waiter is running.
+  - **W8a #415** is merging main and goes to READY next. Its gate-shard 2/4 (Pacific/Auckland) was red once on `f38b45e1`, on the launch-skip O1 probe (300/700 ms timing). This is unproven; the final head decides.
 - **Update 11-10 ~11:45 UTC.**
   - **Train 86 merged:** #410 PF4 @ `058322ed` → main `f14283dc` (4 close-ups, 9 redrawn plates).
     - Review: the code checks passed (6762156516); the one Blocker, a stale PR body, was fixed and re-checked PASS. CI was 80/80 after a D-PF4-L2A5 re-run.
