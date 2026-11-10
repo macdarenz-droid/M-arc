@@ -103,6 +103,14 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
   const W6_IDS = ['machine_crunch', 'machine_lateral_raise', 'cable_lateral_raise', 'dumbbell_front_raise', 'face_pull', 'incline_push_up', 'pike_push_up'];
   const W6_LINE = new RegExp(`^  (?:"lib_(?:${W6_IDS.join('|')})",|lib_(?:${W6_IDS.join('|')}): \\(\\) => |"(?:${W6_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w6Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W6_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
+  // LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615, after D-PF10-W7JOIN): W7's 16 ids (D-SHIP-W7-SLEDHOLD: sled_pull held; D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge and high_knees held) add 4 lines
+  // each the same way (HOWTO_IDS, LOADERS, POSTURE, FEEL), 64 lines; no W7 row draws a hand pair, so none has a HAND line. With exactly those
+  // taken out first (merge of main dc058207: then W6's), the W5, W3 and W2 checks below hold unchanged
+  const W7_IDS = ['leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'cable_kickback', 'resisted_hip_flexion',
+    'ab_wheel_rollout', 'bird_dog', 'cable_crunch', 'hollow_body_hold', 'reverse_crunch', 'dead_bug',
+    'kettlebell_swing', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
+  const W7_LINE = new RegExp(`^  (?:"lib_(?:${W7_IDS.join('|')})",|lib_(?:${W7_IDS.join('|')}): \\(\\) => |"(?:${W7_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+  const w7Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W7_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
   it('the 27 header-moved files: each body (all but line 1) equals main c4c34d75 (re-measured after train 63)', () => {
     const list = [...ROWS.map(i => `src/howto/generated/hand-${i}.ts`), ...ROWS.map(i => `src/howto/generated/posture-${i}.ts`),
@@ -116,8 +124,10 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
     expect(W4_IDS).toHaveLength(6);
-    const w6 = w6Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
-    expect(w6.removed).toBe(28);   // LIB-SHIP W6: W6's lines taken out first (merge of main de91dd21)
+    const w7 = w7Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    expect(w7.removed).toBe(64);   // LIB-SHIP W7: W7's lines taken out first (16 x 4)
+    const w6 = w6Less(w7.text);
+    expect(w6.removed).toBe(28);   // LIB-SHIP W6: W6's lines taken out next (merge of main de91dd21; merge of main dc058207)
     const w5 = w5Less(w6.text);
     expect(w5.removed).toBe(45);   // LIB-SHIP W5: W5's lines taken out next
     const w3 = w3Less(w5.text);
@@ -125,6 +135,16 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // merge of main 62d3dcb6: W3's 41 lines out first, then W2's 32 and W4's 24 (W4's ids ride in W2_IDS); LIB-PLATEFIX-1:
     // with its 4 ids' 16 lines also taken out (merge of main 7e060e83: 32 + 24 + 16 = 72), the body is still main's 00a18e3c
     expect(w2Less(w3.text)).toEqual({ removed: 32 + 24 + 16, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
+  });
+  it('LIB-SHIP W7 mutations (ruling 3): a W7 line dropped, a HAND line for a W7 id, and another line changed are red', () => {
+    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(w5Less(w6Less(w7Less(t).text).text).text).text);
+    expect(t).toContain('  "sled-push": () => import(\'./posture-sled-push\'),\n');
+    expect(w7Less(t.replace('  "sled-push": () => import(\'./posture-sled-push\'),\n', '')).removed).toBe(63);
+    // D-SHIP-W7-SLEDHOLD: sled_pull is held, so loaders.ts has no line for it
+    expect(t).not.toMatch(/sled[-_]pull/);
+    expect(t).not.toMatch(/glute[-_]bridge|high[-_]knees/);   // D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge and high_knees held, no line
+    expect(w7Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"farmer-s-carry\": () => import('./hand-farmer-s-carry'),\n")).removed).toBe(65);
+    expect(w2Less(w3Less(w5Less(w6Less(w7Less(t.replace('export const HAND', 'export const HAND_X')).text).text).text).text).sha).not.toBe(ok.sha);
   });
   it('LIB-SHIP W5 mutations (ruling 3): a W5 line dropped, a HAND line for a no-pair W5 id, and another line changed are red', () => {
     const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(w5Less(t).text).text);
@@ -134,8 +154,9 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     expect(w2Less(w3Less(w5Less(t.replace('export const HAND', 'export const HAND_X')).text).text).sha).not.toBe(ok.sha);
   });
   it('LIB-SHIP W6 mutations: a W6 line dropped, a HAND line for a no-pair W6 id, and another line changed are red', () => {
-    // merge of main de91dd21: W5's lines are taken out too (w5Less after w6Less), as in the body test above
-    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(w5Less(w6Less(t).text).text).text);
+    // merge of main de91dd21: W5's lines are taken out too (w5Less after w6Less), as in the body test above; merge of main
+    // dc058207 (LIB-SHIP W7): W7's lines are taken out first
+    const t = w7Less(readFileSync('src/howto/generated/loaders.ts', 'utf8')).text, ok = w2Less(w3Less(w5Less(w6Less(t).text).text).text);
     expect(ok.sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
     expect(t).toContain('  "face-pull": () => import(\'./posture-face-pull\'),\n');
     expect(w6Less(t.replace('  "face-pull": () => import(\'./posture-face-pull\'),\n', '')).removed).toBe(27);
@@ -334,7 +355,12 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     'tools/plates/library/pages/pilot-b.layers.json': ['lib_cable_fly', 'lib_push_up', 'lib_seated_leg_curl', 'lib_smith_machine_bench_press'],
   };
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
+  // LIB-SHIP W7 (PIN GO #394 6649092340): the 29 W7 rows the pin adds; every other row and key is unchanged, so they are
+  // taken out (each must be present) before the W2 comparison below.
+  const W7_ROWS = ['lib_hack_squat', 'lib_pendulum_squat', 'lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion', 'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_side_plank', 'lib_superman', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug', 'lib_v_up', 'lib_kettlebell_swing', 'lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry', 'lib_jumping_jacks', 'lib_wall_ball'];
+  const lessW7 = (m: any) => { for (const id of W7_ROWS) { expect(Object.keys(m.rows), id).toContain(id); delete m.rows[id]; } return m; };
   const lessW2 = (m: any, blanked: string[] = []) => {   // blanked: keys the caller already checked and blanked
+    lessW7(m);
     delete m.rows.lib_crunch;
     for (const [id, r] of Object.entries<any>(m.rows)) {
       for (const k of W2_MOVED) if (k in r.files && !blanked.includes(k)) { expect(r.files[k], `${id} ${k}`).toBe(sha(readFileSync(k))); r.files[k] = 'X'; }
@@ -380,7 +406,7 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     // LIB-PLATEFIX-2 (#395): pf2Main then checks its moved keys and entry and puts main 7e060e83's back (merge of main 6227bd8e)
     const m = lessW3(pf2Main(lessW4(lessW6(JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'))), k => sha(readFileSync(k)))));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
-    expect(rows).toHaveLength(22 + W5.length);   // LIB-SHIP W2: + PILOT-B2's lib_crunch; LIB-SHIP W5: + lb04's and lb05's 27 rows (lessW5)
+    expect(rows).toHaveLength(22 + W5.length + W7_ROWS.length);   // LIB-SHIP W2: + PILOT-B2's lib_crunch; LIB-SHIP W5: + lb04's and lb05's 27 rows (lessW5); LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows, taken out again by lessW7
     expect(Object.keys(m.rows)).toContain('lib_crunch');
     // F-CROP-FRONT D-CROP-PIN / D-CROP-NONE (#380): crop.mjs's and hand.mjs's keys are re-pinned there and pinned exactly by crop-projection.test.ts
     const F_CROP = ['tools/plates/library/render/closeup/crop.mjs', 'tools/plates/library/render/closeup/hand.mjs'];

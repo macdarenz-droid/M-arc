@@ -51,7 +51,21 @@ const NEAR_MISSES: Record<string, string[]> = { glute_bridge: ['check:start:sacr
 const H6_MISSES: Record<string, string[]> = { seated_calf_raise: ['H6.fact:5:contact:toe.l', 'H6.fact:6:contact:toe.r'], standing_calf_raise: ['H6.fact:2:contact:toe.l', 'H6.fact:3:contact:toe.r'], bodyweight_calf_raise: ['H6.fact:4:contact:toe.l', 'H6.fact:5:contact:toe.r'] };
 // Every spec drawn now (the slice), held or not, in plan order.
 const DRAWN_NOW = ['hack_squat', 'pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
-const ROWS = 'tools/plates/library/lb8/rows.json';
+// LIB-SHIP W7 (D-SHIP-MOVE): the LB8 rows moved into batches/lb08.json; lb8/rows.json is gone.
+const ROWS = 'tools/plates/library/batches/lb08.json';
+// LIB-SHIP W7 Q-W7-7 (D-SHIP-LEFTOUT-CLOSURE, ruling 14): the owner's left-out ids are rows of the batch file at
+// left-out:D-OWNER-LIB142 (no page, never drawn). The rows-file checks read the raw text without exactly those row
+// blocks; each block must be there once at that stage, and any other occurrence of the id stays in the text (equally strict).
+const LEFT_OUT_W7 = ['seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust'];
+const withoutLeftOut = (text: string) => {
+  let t = text;
+  for (const id of LEFT_OUT_W7) {
+    const re = new RegExp(`,\\n  "lib_${id}": \\{\\n(?:   [^\\n]*\\n)*?   "stage": "left-out:D-OWNER-LIB142"\\n  \\}`);
+    if (!re.test(t)) throw new Error(`Q-W7-7: no left-out row lib_${id}`);
+    t = t.replace(re, '');
+  }
+  return t;
+};
 const RESEARCH_HEAD = '596dbe0748f11d13b431ee11d38d1742771925f1';
 const COMPOSERS = ['hackSled', 'pendulum', 'legExtMachine', 'calfMachine', 'ankleCuff'];
 // Each composer's exported size constants (A17).
@@ -147,7 +161,7 @@ describe('LIB-18 A5: lb8/rows.json holds exactly the drawn, non-held LB8 H ids, 
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H', () => {
     expect(want()).toEqual(ON_ROWS.map(i => `lib_${i}`));
-    expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
+    expect(a5(withoutLeftOut(readFileSync(ROWS, 'utf8')), want())).toEqual([]);   // Q-W7-7: less the left-out rows
   });
   it('seated_leg_curl (pilot B\'s plate) is in no lb8/ file, and the two leg curls are in no rows file before their spec exists', () => {
     for (const f of readdirSync('tools/plates/library/lb8').filter(n => n.endsWith('.json'))) {
@@ -162,8 +176,9 @@ describe('LIB-18 A5: lb8/rows.json holds exactly the drawn, non-held LB8 H ids, 
     const table = design.split('## 15. Held ids')[1]!.split('\n## ')[0]!;
     for (const id of HELD) {
       expect(table.split('\n').some(l => l.startsWith(`| ${id} |`) && /D-LIB8-shrug|D-LIB18-CALF|D-LIB8M-CARDTRUE/.test(l)), id).toBe(true);
-      for (const f of reg.batchFiles()) expect(readFileSync(f, 'utf8').includes(`lib_${id}`), `${f}: ${id}`).toBe(false);
-      expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
+      // Q-W7-7: lb08.json read less its left-out rows
+      for (const f of reg.batchFiles()) expect((f === ROWS ? withoutLeftOut : (t: string) => t)(readFileSync(f, 'utf8')).includes(`lib_${id}`), `${f}: ${id}`).toBe(false);
+      expect(withoutLeftOut(readFileSync(ROWS, 'utf8')).includes(`lib_${id}`), id).toBe(false);
     }
   });
   it('mutations: a dropped row, a duplicated row, a held id, seated_leg_curl and lying_leg_curl added, and one mode set to D are red', () => {
@@ -198,21 +213,43 @@ describe('LIB-18 A5: lb8/rows.json holds exactly the drawn, non-held LB8 H ids, 
 
 
 describe('LIB-18 A9: nothing ships (D-LIB18-AHEAD)', { timeout: T }, () => {
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => !['drawing', 'review'].includes(r.stage)).map(([id, r]) => `${id}: ${r.stage}`);
+  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 16 after D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2): replaces "every LB8 row is at stage drawing
+  // or review", its shipped/approved-plate mutations, "none of the 12 is shipped, even with lb8/rows.json read as a batch
+  // file", "no LB8 H id ... in any batches/ file" and "... in golden/library/" with the W7 ruled set as positive asserts:
+  // exactly W7's 5 LB8 ids ship; hack_squat, pendulum_squat and glute_bridge (D-SHIP-W7-HOLD2 #394 6753333493: its open
+  // sheet 754 > the gate A3 S0 cap 700; follow-up F-GLUTEBRIDGE-S0) stay approved-plate (held); the 4 left-out rows stay at
+  // left-out:D-OWNER-LIB142; every LB8 id lives in batches/lb08.json and nowhere else in batches/ (D-SHIP-MOVE).
+  const W7 = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion'];
+  const W7_HELD = ['lib_hack_squat', 'lib_pendulum_squat', 'lib_glute_bridge'];
+  const stageProblems = (rows: any[]) => IDS.flatMap(id => {
+    const r = rows.find((x: any) => x.id === id);
+    const want = W7.includes(id) ? 'shipped' : W7_HELD.includes(id) ? 'approved-plate' : 'left-out:D-OWNER-LIB142';
+    if (!r) return [`${id}: no row`];
+    return r.stage === want ? [] : [`${id}: ${r.stage}`];
+  });
   const someRow = { src: 'library/specs/hack_squat.mjs', slug: 'hack-squat', prefix: 'hack-squat', chromeId: 'hack-squat', mode: 'H', stage: 'drawing', view: 'side' };
-  it('every LB8 row is at stage drawing or review', () => {
-    expect(stageProblems(readJson(ROWS).rows)).toEqual([]);
+  it('LIB-SHIP W7: every LB8 row is at its ruled stage: W7\'s 5 shipped, hack_squat, pendulum_squat and glute_bridge approved-plate, the 4 left-out at left-out:D-OWNER-LIB142', () => {
+    expect([...W7, ...W7_HELD].map(i => i.slice(4)).sort()).toEqual([...ON_ROWS].sort());
+    expect(IDS.filter(id => ![...W7, ...W7_HELD].includes(id)).map(i => i.slice(4))).toEqual(LEFT_OUT_W7);
+    expect(stageProblems(reg.rows())).toEqual([]);
   });
-  it('mutations: one row set to shipped and one to approved-plate are red', () => {
-    const rows = readJson(ROWS).rows;
-    expect(stageProblems({ ...rows, lib_hack_squat: { ...someRow, stage: 'shipped' } })).toEqual(['lib_hack_squat: shipped']);
-    expect(stageProblems({ ...rows, lib_hack_squat: { ...someRow, stage: 'approved-plate' } })).toEqual(['lib_hack_squat: approved-plate']);
+  it('LIB-SHIP W7 reds: a W7 id back at approved-plate, a held id shipped, a held id at drawing, a left-out id shipped, glute_bridge shipped (D-SHIP-W7-HOLD2) and a dropped row are red', () => {
+    const rows = reg.rows();
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_leg_extension' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_leg_extension: approved-plate']);
+    // D-SHIP-W7-HOLD2: glute_bridge shipped is red
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_glute_bridge' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_glute_bridge: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_hack_squat' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_hack_squat: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_pendulum_squat' ? { ...r, ...someRow, stage: 'drawing' } : r)))).toEqual(['lib_pendulum_squat: drawing']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_hip_thrust' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_hip_thrust: shipped']);
+    expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_cable_kickback'))).toEqual(['lib_cable_kickback: no row']);
   });
-  it('none of the 12 is shipped, even with lb8/rows.json read as a batch file', () => {
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
-    expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual([]);
+  it('LIB-SHIP W7: the shipped LB8 ids are exactly W7\'s 5, in registry order; each LB8 id is one registry row (lb08.json read once)', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W7);
+    const rows = reg.rows();
+    for (const id of IDS) expect(rows.filter((r: any) => r.id === id).length, id).toBe(1);
+    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(IDS.length);
+    // red: lb08.json read twice (a copy in batches/) throws on the duplicate id
+    expect(() => reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), ['zz.json', readJson(ROWS)]] })).toThrow(/already used/);
   });
   /** An id or its slug as a whole token in a file's name or text (the card's matcher). */
   const tokenHits = (ids: string[], name: string, text: string) => ids.flatMap(id => {
@@ -228,17 +265,38 @@ describe('LIB-18 A9: nothing ships (D-LIB18-AHEAD)', { timeout: T }, () => {
     ...hits(LB8, f, text),
   ]);
   const dirFiles = (dir: string): [string, string][] => (existsSync(dir) ? readdirSync(dir).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : []);
-  it('no LB8 H id, slug or batch is in any tools/plates/library/batches/ file', () => {
-    expect(batchProblems(dirFiles('tools/plates/library/batches'))).toEqual([]);
+  const named = (name: string, text: string) => LB8.filter(id => tokenHits([id], name, text).length > 0);
+  // LIB-SHIP W7 (D-SHIP-MOVE; D-SHIP-A9, ruling 3): the two guards below were "no LB8 H id, slug or batch is in any
+  // tools/plates/library/batches/ file" and "... in tests/howto/golden/library/"; the LB8 rows now live in
+  // batches/lb08.json and are pinned by golden lb08.json and its layers page, so every other file there is held to the
+  // same check, lb08.json names all 12 ids (8 rows and the 4 left-out rows), golden lb08.json names exactly the 8 pinned
+  // plates, and its layers page and layers-page entry exactly W7's 5 shipped ids (D-PF10-W7JOIN; D-SHIP-W7-HOLD2).
+  it('LIB-SHIP W7: the LB8 ids, slugs and batch are in batches/lb08.json only, which names all 12 (D-SHIP-MOVE)', () => {
+    const files = dirFiles('tools/plates/library/batches');
+    expect(batchProblems(files.filter(([f]) => f !== 'lb08.json'))).toEqual([]);
+    const own = files.find(([f]) => f === 'lb08.json')!;
+    expect(named(own[0], own[1])).toEqual(LB8);
+    expect(/"batch"\s*:\s*"LB8"/.test(own[1])).toBe(true);
   });
-  it('no LB8 H id, slug or batch is in tests/howto/golden/library/', () => {
-    expect(batchProblems(dirFiles('tests/howto/golden/library'))).toEqual([]);
+  it('LIB-SHIP W7: no LB8 H id, slug or batch is in tests/howto/golden/library/ outside the lb08 pin and its layers page (two measured notes)', () => {
+    const dir = 'tests/howto/golden/library', mine = ['lb08.json', 'lb08.layers.html'];
+    // measured on this head: golden lb09.json's and lb10.json's W7 notes name "the pf10 layers check of lying_leg_curl and
+    // sled_pull (#408 6704679655, D-PF10-W7JOIN)" (text, not a row or entry); those exact hits are listed, so any other
+    // hit, or a second one, is red
+    expect(batchProblems(dirFiles(dir).filter(([f]) => !mine.includes(f)))).toEqual(['lb09.json: lying_leg_curl', 'lb10.json: lying_leg_curl']);
+    for (const f of mine) expect([f, existsSync(join(dir, f))]).toEqual([f, true]);
+    const g = readJson(join(dir, 'lb08.json'));
+    expect(g.entries.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)).toEqual(ON_ROWS.map(i => `lib_${i}`));
+    expect(g.entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => e.ids)).toEqual([W7]);
+    expect(named('lb08.layers.html', readFileSync(join(dir, 'lb08.layers.html'), 'utf8'))).toEqual(W7.map(i => i.slice(4)));
   });
-  it('mutations: rows.json copied into batches/, a golden file naming an LB8 H id, a page-only lb8.json and hip-thrust.layers.html are red', () => {
+  it('mutations: rows.json copied into batches/, a golden file naming an LB8 H id, a page-only lb8.json, hip-thrust.layers.html, a third note hit and a held id on the layers page are red', () => {
     expect(batchProblems([['zz.json', readFileSync(ROWS, 'utf8')]]).length).toBeGreaterThanOrEqual(2);
     expect(batchProblems([['x.json', '{"id":"lib_glute_bridge"}']])).toEqual(['x.json: glute_bridge']);
     expect(batchProblems([['lb8.json', '{"entries":[{"kind":"page","batch":"LB8"}]}']]).length).toBe(2);
     expect(batchProblems([['hip-thrust.layers.html', '<div data-id="hip-thrust"></div>']])).toEqual(['hip-thrust.layers.html: hip-thrust']);
+    expect(batchProblems([['lb05.json', '{"why":"the pf10 layers check of lying_leg_curl"}']])).toEqual(['lb05.json: lying_leg_curl']);
+    expect(named('lb08.layers.html', '<div data-id="hack-squat"></div><div data-id="leg-extension"></div>')).not.toEqual(W7.map(i => i.slice(4)));
   });
   it('the matcher is exact: it matches neither lib_hip_thrust_v2 nor single-leg-hip-thrust; mutation: a plain substring test is red on the _v2 control', () => {
     expect(tokenHits(LB8, 'p.json', '{"rows":{"lib_hip_thrust_v2":{}}}')).toEqual([]);
@@ -299,14 +357,29 @@ describe('LIB-18 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
   it('seated_leg_curl\'s card and quotes are not copied here (pilot B\'s)', () => {
     expect(Object.keys(cardsSha.cards)).not.toContain('seated_leg_curl');
   });
-  it('the How-to source of each drawn LB8 H id holds only its id and research card (D-LIB9a-HOWTOID); none for an id not drawn', async () => {
+  it('the How-to source of each drawn LB8 H id names its id and research card (D-LIB9a-HOWTOID; LIB-SHIP W7: full sheets on the 8 rows, the 4 left-out stubs exact); none for an id not drawn', async () => {
     for (const id of LB8) {
       const f = `tools/plates/library/howto/lib_${id}.howto.mjs`;
       expect(existsSync(f), id).toBe(existsSync(`tools/plates/library/specs/${id}.mjs`));
       if (!existsSync(f)) continue;
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
-      expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+      // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394): was "holds only its id and research card" for every drawn id.
+      // The 8 batch rows (W7's 5 shipped; hack_squat, pendulum_squat and glute_bridge approved-plate) are full sheets now (schema 1); each
+      // still names its id and its own card. The 4 left-out ids (D-OWNER-LIB142) have no sheet, so their sources stay
+      // exactly the stub (measured on this head)
+      if (LEFT_OUT_W7.includes(id)) { expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } }); continue; }
+      expect(ON_ROWS, id).toContain(id);
+      expect(h, id).toMatchObject({ schema: 1, id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
+  });
+  it('LIB-SHIP W7 reds: a row\'s sheet naming another card, a sheet with no schema, and a left-out stub with one more key are red', () => {
+    const full = { schema: 1, id: 'lib_glute_bridge', research: { card: 'docs/research/howto/cards/glute_bridge.json', rev: 1 } };
+    const sheet = (h: any) => expect(h).toMatchObject({ schema: 1, id: 'lib_glute_bridge', research: { card: 'docs/research/howto/cards/glute_bridge.json' } });
+    sheet(full);
+    expect(() => sheet({ ...full, research: { card: 'docs/research/howto/cards/hip_thrust.json' } })).toThrow();
+    expect(() => sheet({ ...full, schema: undefined })).toThrow();
+    const stub = { id: 'lib_hip_thrust', research: { card: 'docs/research/howto/cards/hip_thrust.json' } };
+    expect(() => expect({ ...stub, schema: 1 }).toEqual(stub)).toThrow();
   });
   it('research/validate.mjs validateCardFile: no problem on any of the 12 cards', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
@@ -732,7 +805,9 @@ fs.writeFileSync(${JSON.stringify(out)}, h);`;
   }, T);
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins: pins() });
-  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; authoring QA to the pinned path): hack_squat is approved-plate (held, D-PF10-W7JOIN
+  // #394) and pinned in golden lb08.json, so D-LIB9-AUTHORQA refuses authoring; the node half runs on the pinned candidate
+  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E });
   const MUT = (id: string) => muts.SPEC_MUTATIONS.find((m: any) => m.id.startsWith(`${id} `));
   // A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn.
   const mutated = async (fn: string, arg: any = null) => {
@@ -747,6 +822,14 @@ fs.writeFileSync(${JSON.stringify(out)}, h);`;
     const r = await qa(await candOf());
     expect(node(r)).toEqual([]);
     expect(r.flags.F7.raised).toBe(false);
+  });
+  it('LIB-SHIP W7: authoring QA on the row is refused at its stage (D-LIB9-AUTHORQA); the pinned path reads the pin\'s exemptions', async () => {
+    const stage = all.find((r: any) => r.id === ID).stage;
+    expect(stage).toBe('approved-plate');
+    expect(cand.AUTHORING_REFUSED).toContain(stage);
+    await expect(cand.candidateOf(ID, { all, platesHtml: html, engine: E, authoring: true })).rejects.toThrow(`authoring QA is refused at stage ${stage} (D-LIB9-AUTHORQA)`);
+    const pinned = readJson('tests/howto/golden/library/lb08.json').entries.filter((e: any) => e.kind === 'plate' && e.id === ID).at(-1);
+    expect((await candOf()).exemptions).toEqual(pinned.exemptions ?? []);
   });
   it('A8 mutation: the card copied with topFault set to its other tell key raises F7, and the expected-set check is red', async () => {
     const qaMod = await import(/* @vite-ignore */ lib('lb8/qa.mjs'));

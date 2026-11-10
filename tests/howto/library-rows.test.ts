@@ -11,6 +11,7 @@ import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 import { readHowTo } from './generated-module';
 import { W4_IDS } from './checks/ship-w4';
+import { feelAllOf, renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -39,7 +40,7 @@ beforeAll(async () => {
   if (g.code !== 0) throw new Error(`generate failed in the E1 tree:\n${g.out}`);
   const eight = F.ownRowsTree();
   try { mainOut = await (await import(/* @vite-ignore */ F.url(eight, 'tools/plates/generate.mjs'))).render(); } finally { F.drop(eight); }
-  repoOut = await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render();
+  repoOut = await renderOf(new URL('../../', import.meta.url).pathname);   // F-GEN-WALK-SPEED: the repo's render(), once per run (tests/walk-cache.ts)
   treeOut = await (await import(/* @vite-ignore */ turl('tools/plates/generate.mjs'))).render();
 }, 600_000);
 afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
@@ -338,9 +339,16 @@ async function libraryCases() {
 // D-SHIP-A6NOGRIP), in registry order after W4's (merge of main 05382042: both lanes' ids)
 // LIB-SHIP W6 (ruling 3; #393 6689822595 / 6701002884): plus all 7 shipped W6 ids (hands/no-zoom.json: 5 card-no-zoom,
 // dumbbell_front_raise and face_pull gap-ruled D-SHIP-HANDW6), in registry order (merge of main de91dd21: after W5's)
+// LIB-SHIP W7 (ruling 3; D-PF10-W7JOIN, the flip set of 19; 16 after D-SHIP-W7-SLEDHOLD (sled_pull held) and D-SHIP-W7-HOLD2
+// #394 6753333493 (glute_bridge and high_knees held)): every W7 shipped row ships with no hand pair (D-SHIP-HANDW7 gap-ruled trio and
+// farmer_s_carry, the rest archetype none under D-SHIP-GRIP), in registry order after W6's (merge of main dc058207: both lanes' ids)
+const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
+  'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
+  'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
 const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', ...W4_IDS, 'lib_front_squat', 'lib_bodyweight_squat',
   'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_hammer_curl',
   'lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_incline_push_up', 'lib_pike_push_up',
+  ...W7_SHIPPED,
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
   'lib_horizontal_leg_press'];
@@ -366,7 +374,7 @@ async function noMarkIds(base: string, ids: string[]) {
 async function feelChecks(base: string, row: any) {
   const feel = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/feel.mjs'));
   const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));
-  const fm = (await feel.renderAll()).fm, pre = row.chromeId, page = readFileSync(join(base, row.pages.layers), 'utf8');
+  const fm = (await feelAllOf(base)).fm, pre = row.chromeId, page = readFileSync(join(base, row.pages.layers), 'utf8');
   const text = readFileSync(join(base, `src/howto/generated/feel-${pre}.ts`), 'utf8');
   const section = JSON.parse(text.match(/\n {2}section: (".*"),\n/)![1]!) as string;
   expect(section === feel.feelSectionOf(page, pre), `${row.id}: section`).toBe(true);
@@ -410,7 +418,7 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
     const cases = await libraryCases();
     expect(cases.at(-1)!.row.id).toBe(F.ID);
     for (const { base, row } of cases) await feelChecks(base, row);
-  }, 600_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): 32 shipped rows; timed out at 180 s on 824d8456's unit-tz (Asia/Manila) CI; no assertion change
+  }, 90_000);   // F-GEN-WALK-SPEED: renderAll() once per worker (tests/walk-cache.ts); 46 shipped rows took 23.3 / 28.3 / 29.4 s (unit-tz New_York / Manila, source-gate) on 687d0a95's CI, 3x rounded up; was 600 s (LIB-SHIP W4, the W3 WALKTIME form, #384 6690918663); no assertion change
   it('LIB-SHIP W2: NO_MARK is exactly the shipped library ids whose feel draws no mark; a mark-drawing id on it, or a no-mark id off it, is red', async () => {
     const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
     expect(await noMarkIds(repo, LIBRARY.map(r => r.id))).toEqual(NO_MARK);

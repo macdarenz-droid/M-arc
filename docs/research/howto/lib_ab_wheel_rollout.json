@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=c1efd5ff98fef1bbf7e8ac9eb4ab657970a976c9913de8d054b1760249cdbf1b
+{
+  "id": "lib_ab_wheel_rollout",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/ab_wheel_rollout.json",
+    "rev": 1
+  },
+  "sources": [
+    "sl-abwheel",
+    "sl-abex",
+    "sl-coreex",
+    "bb-bestab",
+    "bb-abrollouts",
+    "escamilla-2006",
+    "yamane-2023",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

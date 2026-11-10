@@ -55,10 +55,18 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
       'front-squat', 'hammer-curl', 'bodyweight-squat', 'bodyweight-lunge', 'bodyweight-split-squat',
       // LIB-SHIP W6 (ruling 3; #393 6689822595 / 6701002884): all 7 shipped W6 ids are on hands/no-zoom.json (5 card-no-zoom,
       // dumbbell_front_raise and face_pull gap-ruled D-SHIP-HANDW6), so none carries a hand; HAND stays the 19 (merge of main de91dd21)
-      'machine-crunch', 'machine-lateral-raise', 'cable-lateral-raise', 'dumbbell-front-raise', 'face-pull', 'incline-push-up', 'pike-push-up'];
+      'machine-crunch', 'machine-lateral-raise', 'cable-lateral-raise', 'dumbbell-front-raise', 'face-pull', 'incline-push-up', 'pike-push-up',
+      // LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615, after D-PF10-W7JOIN): no W7 row draws a hand pair
+      // (LIB-SHIP-DESIGN section 17), so the 16 ship with no hand chunk (bird_dog, bear_crawl and farmer_s_carry gap-ruled
+      // D-SHIP-HANDW7 in hands/no-zoom.json; the other 13 draw no pair key either); D-SHIP-W7-SLEDHOLD: sled_pull held;
+      // D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge and high_knees held; merge of main dc058207: both lanes
+      'leg-extension', 'lying-leg-curl', 'standing-leg-curl', 'cable-kickback', 'resisted-hip-flexion',
+      'ab-wheel-rollout', 'bird-dog', 'cable-crunch', 'hollow-body-hold', 'reverse-crunch', 'dead-bug',
+      'kettlebell-swing', 'bear-crawl', 'sled-push', 'medicine-ball-slam', 'farmer-s-carry'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     // LIB-SHIP W5: 14 -> 19, plus W5's 5 pair curls (preacher, alternating dumbbell, barbell, ez bar, reverse), registry order
+    // LIB-SHIP W7: stays 19 (W7 adds no hand pair)
     expect(handIds).toHaveLength(19);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
     expect(keys.HAND).toEqual(handIds);
     expect(mapProblems({ ...keys, HAND: keys.POSTURE }, chromeIds)).toEqual([]);

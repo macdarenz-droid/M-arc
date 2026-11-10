@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
+import { renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -234,7 +235,7 @@ describe('LIB-SHIP W4 A9 (replaces LIB-13 A9, D-LIB13-AHEAD): exactly the ruled 
   });
   it('generate --check is green, and no generated file is read from lb3/, the LB3 specs, composers or How-to sources', async () => {
     const gen = await import(/* @vite-ignore */ new URL('../../tools/plates/generate.mjs', import.meta.url).href);
-    const t0 = Date.now(), out = await gen.render();
+    const t0 = Date.now(), out = await renderOf(new URL('../../', import.meta.url).pathname);   // F-GEN-WALK-SPEED: gen.render(), once per run (tests/walk-cache.ts)
     expect(gen.diff(out)).toEqual([]);
     console.log(`LIB-13 A9: generate --check render took ${((Date.now() - t0) / 1000).toFixed(1)} s`);
     for (const [p, { text }] of out) {

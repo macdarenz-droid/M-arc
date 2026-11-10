@@ -26,5 +26,7 @@ export default defineConfig({
     include: process.env.MARC_PERF ? ['tests/perf/**/*.test.ts'] : ['tests/**/*.test.ts'],
     exclude: process.env.MARC_PERF ? ['node_modules/**'] : ['node_modules/**', 'tests/perf/**'],
     environment: 'node',
+    // F-GEN-WALK-SPEED: one cache folder per run for tests/walk-cache.ts, removed when the run ends
+    globalSetup: ['tests/walk-cache-setup.ts'],
   },
 });

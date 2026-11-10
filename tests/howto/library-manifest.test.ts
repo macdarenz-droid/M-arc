@@ -41,6 +41,8 @@ describe('C0: L0-lib on this tree', { timeout: 300_000 }, () => {   // F-C0-TIME
   const PILOT_A3 = ['dumbbell_fly', 'reverse_lunge'].map(id => `lib_${id}`);
   // LIB-SHIP W2 (D-SHIP-MOVE, D-LIB-PILOTB2): PILOT-B2's pin adds exactly its 1 row (crunch, held at approved-plate)
   const PILOT_B2 = ['lib_crunch'];
+  // LIB-SHIP W7 (SHIP W7 PIN GO, #394 6649092340): the 29 LB8, LB9 and LB10 rows pinned in lb08/lb09/lb10.json (named, not read from the batches)
+  const W7 = ['lib_hack_squat', 'lib_pendulum_squat', 'lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion', 'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_side_plank', 'lib_superman', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug', 'lib_v_up', 'lib_kettlebell_swing', 'lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry', 'lib_jumping_jacks', 'lib_wall_ball'];
   // LIB-SHIP W3 (D-LIB-LB1ZOOM, D-SHIP-W3-NOPAIR): lb01's pin adds exactly its 12 rows (8 shipped, 4 at approved-plate) and
   // zoom's exactly its 1 (horizontal_leg_press); leg_press_calf_raise is left out (D-OWNER-LIB142) and has no row
   const LB01 = ['chin_up', 'hanging_knee_raise', 'assisted_pull_up', 'inverted_row', 'close_grip_pulldown', 'underhand_lat_pulldown', 'single_arm_lat_pulldown',
@@ -53,11 +55,11 @@ describe('C0: L0-lib on this tree', { timeout: 300_000 }, () => {   // F-C0-TIME
   // LIB-SHIP W6: the 23 lb06/lb07 rows (pinned in their [golden update] commits)
   const W6 = [...Object.keys(JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/batches/lb06.json'), 'utf8')).rows),
     ...Object.keys(JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/batches/lb07.json'), 'utf8')).rows)];
-  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2, PILOT-B2\'s 1, lb01\'s 12, zoom\'s 1, LB2\'s 8, LB3\'s 12, LIB-SHIP W5\'s 27 and W6\'s 23 here, and no problem', async () => {
+  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13, pilot B\'s 4, PILOT-A2\'s 2, PILOT-A3\'s 2, PILOT-B2\'s 1, lb01\'s 12, zoom\'s 1, LB2\'s 8, LB3\'s 12, LIB-SHIP W5\'s 27, W6\'s 23 and LIB-SHIP W7\'s 29 here, and no problem', async () => {
     const file = JSON.parse(readFileSync(join(ROOT, MANIFEST), 'utf8'));
     expect(LB2_LB3).toHaveLength(20);
     expect(W5).toHaveLength(27);
-    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2, ...LB01, ...ZOOM, ...LB2_LB3, ...W5, ...W6].sort());   // merge of main 05382042: W4's 20 and W5's 27; merge of main de91dd21: W6's 23
+    expect(Object.keys(file.rows)).toEqual([...PILOT_A, ...PILOT_B, ...PILOT_A2, ...PILOT_A3, ...PILOT_B2, ...LB01, ...ZOOM, ...LB2_LB3, ...W5, ...W6, ...W7].sort());   // merge of main 05382042: W4's 20 and W5's 27; merge of main de91dd21: W6's 23; LIB-SHIP W7's 29 (PIN GO #394 6649092340; merge of main dc058207: both lanes, 134 rows; held W7 rows stay pinned)
     expect(Object.keys(file.rows)).not.toContain('lib_leg_press_calf_raise');   // LIB-SHIP W3: the left-out row has none
     expect(W6).toHaveLength(23);
     expect(await manifestOf(ROOT)).toEqual(file);

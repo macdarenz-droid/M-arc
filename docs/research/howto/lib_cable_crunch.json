@@ -1,0 +1,19 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=95f008b17ebdc810d6e5441f522eee6f24afd3628044977b12f38e8ab6bf29cd
+{
+  "id": "lib_cable_crunch",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/cable_crunch.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-cablecrunch",
+    "motra-cablecrunch",
+    "sl-cablecrunch",
+    "fv-cablecrunch",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

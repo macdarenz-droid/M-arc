@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
+import { renderOf } from '../walk-cache';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 const SCRIPT = new URL('../../tools/plates/library/shared/check-bundle.mjs', import.meta.url).pathname;
@@ -182,10 +183,10 @@ describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes only red-flag-back.ts and s
   /** Paths render() attributes to the gate, and other files whose header names it. */
   const gatePaths = (out: Map<string, any>) => [...out].filter(([, o]) => o.writers.includes(GATE)).map(([p]) => p).sort();
   child.it('render(): the paths attributed to library-gate.mjs are exactly [src/howto/red-flag-back.ts], and no other header names it', async () => {
-    const out = await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render();
+    const out = await renderOf(ROOT);   // F-GEN-WALK-SPEED: the repo's render(), once per run (tests/walk-cache.ts)
     expect(gatePaths(out)).toEqual(['src/howto/red-flag-back.ts']);
     expect([...out].filter(([, o]) => o.text.slice(0, 600).includes('library-gate')).map(([p]) => p)).toEqual(['src/howto/red-flag-back.ts']);
-  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663) form: render() walks every shipped id's outputs; it timed out at 300000 ms on ef67e7d7's source-gate (W6 merge)
+  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663), as S6's render() walk below: render() walks every shipped id's outputs; it timed out at 300000 ms on ef67e7d7's source-gate (W6 merge, main dc058207) and in the W7 post-flip run; 232218 ms on claude/lib-ship-w7 with 59 ids (child run 231.6 s, 4 vitest files in parallel); 69 ids after the merge of main dc058207 and the holds; the library timeout, as #385; no assertion change
   it('inputsFor(red-flag-back.ts) is back-box.mjs, its static imports (node:* only) and the back-box card', async () => {
     const G = await import(/* @vite-ignore */ url(GATE));
     const imports = [...readFileSync(join(SHARED_DIR, 'back-box.mjs'), 'utf8').matchAll(/^import .* from '([^']+)';$/gm)].map(m => m[1]);
@@ -383,7 +384,7 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
   });
   child.it('no data value reaches src/** or a generator output (0 hits before these modules, recorded on #244); a notes string in a generated file is red', async () => {
     const src = walkFiles(join(ROOT, 'src')).map(f => [f.slice(ROOT.length), readFileSync(f, 'utf8')] as [string, string]);
-    const out = [...(await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render())].map(([p, o]: [string, any]) => [p, o.text] as [string, string]);
+    const out = [...(await renderOf(ROOT))].map(([p, o]: [string, any]) => [p, o.text] as [string, string]);
     expect(src.length).toBeGreaterThan(100);
     expect(out.length).toBeGreaterThan(50);
     const keys = readdirSync(join(ROOT, 'docs/research/howto/shared')).map(f => f.slice(0, -5)).filter(k => k !== 'back-pain-box');
@@ -396,7 +397,7 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
     expect(dataValues(card('floor-body')).map(([p]) => p)).toContain('prone.see');
     const note = card('selector-pin').notes[0], planted = out.map(([p, t], i) => [p, i === 0 ? `${t}\n// ${note}\n` : t] as [string, string]);
     expect(leaks(dataValues(card('selector-pin')), planted)).toEqual([`${out[0]![0]}: notes[0]`]);
-  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): render() walks every shipped id's outputs; 285017 ms on d3f5e287's source-gate, past 300 s on 0a119989's; the library timeout, as #385
+  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): render() walks every shipped id's outputs; 285017 ms on d3f5e287's source-gate, past 300 s on 0a119989's; the library timeout, as #385. F-GEN-WALK-SPEED: kept, since renderOf() makes whichever caller comes first compute the run's render (lb6's took 208-295 s on 687d0a95's CI); a cache hit took 1.8-2.2 s
 });
 
 describe('LIB-5 S5 (Do 9): the app renders the back box', () => {

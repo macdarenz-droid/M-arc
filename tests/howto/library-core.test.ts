@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 import { child, ownRowsTreeInChild } from '../child-test';
 import { LIBRARY } from './shipped-rows';
+import { renderOf } from '../walk-cache';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -13,7 +14,7 @@ beforeAll(async () => {
   gen = await import(/* @vite-ignore */ url('tools/plates/generate.mjs'));
   core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
   bodies = await import(/* @vite-ignore */ url('tools/plates/library/bodies.mjs'));
-  out = await gen.render();
+  out = await renderOf(new URL('../../', import.meta.url).pathname);   // F-GEN-WALK-SPEED: gen.render(), once per run (tests/walk-cache.ts)
 }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): render() walks every shipped id (40 now, 231 files); ran past 180 s on 3c6efe61 unit-tz America/New_York; the library timeout, as #385; LIB-SHIP W6: 53 shipped ids (budgets N) after the merge of main de91dd21
 
 const fixture = () => JSON.parse(readFileSync('tests/howto/fixtures/generated-bodies.json', 'utf8')) as { count: number; bodies: Record<string, string> };
@@ -62,6 +63,56 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     'marcolin-2018': { checked: '2026-09-30' }, 'oliveira-2009': { checked: '2026-09-30' }, 'sl-dbcurl': { checked: '2026-09-30', cite: 'How to Dumbbell Curl: Muscles Worked & Proper Form' } };
   const SOURCES_MAIN = 'cb4e7aa70f623cd9f1a601f856235fb53b6931a3147aefa97d449ed44df49667';   // merge of main 05382042 (W4 #391; was main 6227bd8e's 1f6cb7b5)
   const SRC = 'docs/research/howto/sources.json';
+  // LIB-SHIP W7 (#394, D-SHIP-W7-STAMP after D-PF10-W7JOIN, ruling 3): sources.json's fingerprint moved from main de91dd21's
+  // c2782a7a to 5b1ec7f8 (tests/howto/fixtures/generated-bodies.json). The move is exactly W7's new sources, each cited by a
+  // W7 id's research json; no earlier record changed. D-SHIP-W7-SLEDHOLD: sled_pull is held, so gs-sled and west-2014 (cited
+  // only by its research json) are not in the file (was a55b8162 with them). Merge of main dc058207 (W6 #393): main's body is
+  // 3026024e (de91dd21's plus W6's 30); D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge is held too, so its 6 own sources
+  // (ace-gb, hl-gb, pg-bgb, pg-gb, pg-gbhub, sl-gb) are out: high_knees is held as well (gate HT8/HT9, F-NOREDFLAG-GATE), so its 3
+  // own sources (ace-cardio15, bb-hk, hl-hk) are out too: W7 adds 81, and the file is 6dfbbc6c. With the 81 taken out the
+  // body is main dc058207's 3026024e, in main's key order, and the W6 and W5 checks below run on that body.
+  const W7_IDS = ['leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'cable_kickback', 'resisted_hip_flexion',
+    'ab_wheel_rollout', 'bird_dog', 'cable_crunch', 'hollow_body_hold', 'reverse_crunch', 'dead_bug',
+    'kettlebell_swing', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
+  const W7_ADDED = [
+    'ace-bc-shape', 'ace-bearcrawl', 'ace-birddog', 'ace-deadbug', 'ace-heavy', 'ace-llc', 'ace-os',
+    'ace-revcrunch', 'bb-abrollouts', 'bb-bc', 'bb-bestab', 'bb-birddog', 'bb-cablecrunch', 'bb-farmers', 'bb-fwbreak', 'bb-gk',
+    'bb-hollow', 'bb-kb-swing', 'bb-le', 'bb-revcrunch', 'bb-slam', 'bb-slam-ben', 'bb-sledpush', 'bodbot-mb-slam', 'calatayud-2019',
+    'fb-che', 'fv-cablecrunch', 'fv-farmers', 'fv-hollow', 'fv-le', 'fv-llc', 'fv-sledpush', 'ggr-birddog', 'ggr-deadbug', 'ggr-farmers',
+    'ggr-hollow', 'ggr-kb-swing', 'ggr-sledpush', 'hevy-stlc', 'hk-kb-swing', 'hl-birddog', 'hl-hc',
+    'hl-slam', 'im-slam', 'kovo-hf', 'lifto-le', 'lifto-llc', 'maddigan-2014', 'mcgill-2012', 'mf-kb-swing', 'mo-birddog', 'mo-kb-swing',
+    'mo-le', 'mo-llc', 'motra-cablecrunch', 'motra-hf', 'motra-revcrunch', 'nance-2017', 'nasm-llc', 'nike-kb-swing', 'outside-hf',
+    'pereira-2017', 'pg-ck', 'pg-gkhub', 'pg-kb-swing', 'pg-mb', 'pg-revcrunch', 'sl-abex', 'sl-abwheel',
+    'sl-cablecrunch', 'sl-ck', 'sl-coreex', 'sl-farmers', 'sl-kb-swing', 'sl-le', 'sl-llc', 'sl-slam', 'sl-sledpush', 'sl-stlc',
+    'vit-slam', 'yamane-2023'];
+  const SOURCES_MAIN_DC05 = '3026024e51f90e898c673fd2ecb6fc7a4c5b5db7cdb0552409171291fea70d96';   // main dc058207 (train 82, W6 #393), from its own sources.json
+  const w7Back = (t: string) => {
+    const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
+    for (const k of W7_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
+    return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
+  };
+  it('LIB-SHIP W7: sources.json is main dc058207\'s body plus W7\'s 81 named sources; each cited by a W7 id', () => {
+    const t = readFileSync(SRC, 'utf8');
+    expect(W7_ADDED).toHaveLength(81);
+    expect(new Set(W7_ADDED).size).toBe(81);
+    // D-SHIP-W7-HOLD2: the held glute_bridge's own sources are absent; one put back is an unnamed addition and red
+    for (const k of ['ace-gb', 'hl-gb', 'pg-bgb', 'pg-gb', 'pg-gbhub', 'sl-gb', 'ace-cardio15', 'bb-hk', 'hl-hk']) expect([k, k in JSON.parse(t.slice(t.indexOf('\n') + 1))]).toEqual([k, false]);
+    expect(bodies.bodySha(w7Back(`${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify({ ...JSON.parse(t.slice(t.indexOf('\n') + 1)), 'sl-gb': { id: 'sl-gb' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_DC05);
+    // D-SHIP-W7-SLEDHOLD: the held sled_pull's own sources are absent; put back, they are unnamed additions and red
+    const o0 = JSON.parse(t.slice(t.indexOf('\n') + 1));
+    for (const k of ['gs-sled', 'west-2014']) expect([k, k in o0]).toEqual([k, false]);
+    expect(bodies.bodySha(w7Back(`${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify({ ...o0, 'gs-sled': { id: 'gs-sled' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_DC05);
+    expect(fixture().bodies[SRC]).toBe(bodies.bodySha(t));
+    expect(bodies.bodySha(w7Back(t))).toBe(SOURCES_MAIN_DC05);
+    const cited = new Set(W7_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
+    for (const k of W7_ADDED) expect([k, cited.has(k)]).toEqual([k, true]);
+    // reds: an unnamed added source, a named one missing, another record changed
+    const o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
+    expect(bodies.bodySha(w7Back(`${head}${JSON.stringify({ ...o, 'w7-extra': { id: 'w7-extra' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_DC05);
+    const { 'sl-farmers': _gone, ...less } = o;
+    expect(() => w7Back(`${head}${JSON.stringify(less, null, 2)}\n`)).toThrow('sl-farmers: not in sources.json');
+    expect(bodies.bodySha(w7Back(`${head}${JSON.stringify({ ...o, 'ace-abs': { ...o['ace-abs'], checked: '2099-01-01' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_DC05);
+  });
   const w5Back = (t: string) => {
     const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
     for (const k of W5_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
@@ -82,7 +133,7 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
   };
   it('LIB-SHIP W6: sources.json is main de91dd21\'s body plus W6\'s 30 named sources; reds: one missing, an unnamed extra', () => {
-    const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
+    const t = w7Back(readFileSync(SRC, 'utf8')), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);   // LIB-SHIP W7 merge: W7's out first
     expect(W6_ADDED).toHaveLength(30);
     expect(bodies.bodySha(w6Back(t))).toBe(SOURCES_MAIN_DE91);
     const { 'sl-face-pull': _gone, ...less } = o;
@@ -90,9 +141,9 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     expect(bodies.bodySha(w6Back(`${head}${JSON.stringify({ ...o, 'w6-extra': { id: 'w6-extra' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_DE91);
   });
   it('LIB-SHIP W5: sources.json is main 05382042\'s body plus W5\'s 30 named sources and its 5 named later records; each cited by a W5 id', () => {
-    const t = readFileSync(SRC, 'utf8');
-    expect(fixture().bodies[SRC]).toBe(bodies.bodySha(t));
-    expect(bodies.bodySha(w5Back(w6Back(t)))).toBe(SOURCES_MAIN);   // LIB-SHIP W6 merge: W6's 30 taken out first
+    const t = w7Back(readFileSync(SRC, 'utf8'));   // LIB-SHIP W7 (merge of main dc058207): W7's taken out first (main dc058207's body, checked above)
+    expect(bodies.bodySha(t)).toBe(SOURCES_MAIN_DC05);
+    expect(bodies.bodySha(w5Back(w6Back(t)))).toBe(SOURCES_MAIN);   // LIB-SHIP W6 merge: W6's 30 taken out next
     const cited = new Set(W5_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
     for (const k of [...W5_ADDED, ...Object.keys(W5_MAIN_FIELDS)]) expect([k, cited.has(k)]).toEqual([k, true]);
     // reds: an unnamed added source, a named one missing, another record changed

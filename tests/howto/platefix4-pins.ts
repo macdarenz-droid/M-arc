@@ -2,7 +2,7 @@
 // [golden update] commits move, for the MANIFEST blanked-keys tests (crop-projection, lib-shapes, pair-faults,
 // research-routes). pf4Problems: each moved key pins its file's current sha256, and each re-pinned row's `entry` is the
 // hash of its latest plate entry in its batch golden file (an 'owner' D-OWNER-REPIN entry appended after its plates panel
-// passed). restorePF4: the same keys and entries put back to main's values (de91dd21; dc058207 for the lb06 rows; main's
+// passed). restorePF4: the same keys and entries put back to main's values (de91dd21; dc058207 for the lb06 rows, 07f5fbcf for lb09/lb10; main's
 // MANIFEST differs from this PR's in exactly these, plus render/closeup/crop.mjs), so each test's pin, measured on main,
 // holds. crop.mjs (PF4 item 20's opt-in wrong.equipmentList) is not listed: those tests already pin it to its current
 // file (F-CROP-FRONT D-CROP-PIN), so main's value is never restored for it.
@@ -29,6 +29,10 @@ export const PF4_MAIN: Record<string, string> = {
   'tools/plates/library/specs/machine_pullover.mjs': '1ba4bb1619a71bb80b7f9c564e5811a2404991d4ded63759f5ff6e00367a416b',
   'tools/plates/library/specs/high_to_low_cable_fly.mjs': '05a631b05bbd6137129867162aed039f859a5d4ff066f2cef3a338f838d2d6e3',
   'tools/plates/library/specs/smith_machine_squat.mjs': 'db07d45304b50f25af15c48562f1a59ff66f467f89f6ae778342572cfc7e2f9c',
+  // lb09/lb10's PF4 lane-bound specs (their rows are on main since W7, 07f5fbcf)
+  'tools/plates/library/specs/v_up.mjs': '9018f2650e4527ab94ba3124d627d41c5786c95e8562fafb585121f951c0579f',
+  'tools/plates/library/specs/burpee.mjs': 'd16e1f241d532ec51219ae2ef6256c0d531e10374c3b5d08df8d9be9c9fd7a9b',
+  'tools/plates/library/specs/jump_rope.mjs': '31418a4cdecadfe4b176b55c89559e8f3805bc1064667a3017fa8536f2b820b1',
 };
 
 /** The re-pinned rows' MANIFEST entries on main de91dd21 (one_arm_dumbbell_row: pf12 passed, #410 6751563503). */
@@ -40,6 +44,10 @@ export const PF4_MAIN_ENTRY: Record<string, string> = {
   lib_machine_pullover: 'd09492f774cc4f455faa911a6cb6520a647a41d431b2d20731cfe97f561918e6',
   lib_high_to_low_cable_fly: '5c9d42f081d4c519ee80621580383325653d42458c7d2f474b717557358e4982',
   lib_smith_machine_squat: '66f71fb55ce48cbd22afdd8121a8e211697613df1a87a43d5bfca70293c74f42',
+  // lb09/lb10 rows on main 07f5fbcf (pf13 passed, #410 6752705237; card compare: this tree builds the judged pages dac64077, 9498e8d3)
+  lib_v_up: '4b33189384c8de422e9e87fba680509a56ef62a857c573892686a23bd61ed226',
+  lib_burpee: '53c86c1d02a06a0b203338750f8c97171a9e9f64397739b0a6bf386e1f572537',
+  lib_jump_rope: '3e101b62cc4b8d527e38fe244eeb7322d99f93bb1ad1faa2ea70ace6f3050106',
 };
 const LATEST: Record<string, string> = Object.fromEntries(M.pinnedRows().map((p: any) => [p.row.id, M.entryHash(p.entry)]));
 
