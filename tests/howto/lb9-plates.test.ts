@@ -1456,9 +1456,12 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
   // D-SUPCORE-RCBACK (#366 6570379460): reverse_crunch's 'Back down' enters the near arm from the right to the end back's
   // roll-off point (the low back under the curled hips; the arm by the side lies along the floor in front of it)
   // russian_twist (D-HELD6-RTWIST, signed in held6-card.md's rulings): "Knees swing" on the red right knee's outline
+  // D-PF4-VUPLEADER (LIB-PLATEFIX-4 Q15, #410; the D-SUPCORE-RCBACK form): v_up's 'Low back down' enters the lying torso
+  // from above to its underside at the lumbar landmark (F-VUP-V's leader, pf13 passed #410 6752705237), 30.7 px inside
+  const VUP_LOWBACK = 30.7, VUP_UNDER = { left: 250, top: 345 };   // VUP_UNDER: a 'Legs together' box under the floor line, its leader up through the legs
   const FRONT_ENTRY: Record<string, number> = { 'side_plank mistake sink end': FE_SINK, 'reverse_crunch normal back end': RC_BACK,
     'flutter_kicks mistake arch end': LUMBAR_IN.flutter_kicks[0], 'flutter_kicks mistake arch Mistake': LUMBAR_IN.flutter_kicks[1], 'dead_bug mistake arch end': LUMBAR_IN.dead_bug[0], 'dead_bug mistake arch Mistake': LUMBAR_IN.dead_bug[1], 'v_up mistake arch end': LUMBAR_IN.v_up[0], 'v_up mistake arch Mistake': LUMBAR_IN.v_up[1],
-    'russian_twist mistake hips end': 3.42, 'russian_twist mistake hips Mistake': 6.84 };
+    'russian_twist mistake hips end': 3.42, 'russian_twist mistake hips Mistake': 6.84, 'v_up normal lowback end': VUP_LOWBACK };
   const insideLen = (p: number[][], polys: number[][][]) => {
     let len = 0;
     for (const [a, b] of segs(p)) { const L = Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!); for (let k = 0; k < 40; k++) {
@@ -1502,6 +1505,16 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
     const out: string[] = [];
     for (const id of specsDrawn()) { out.push(...crossProblems(S[id])); await yieldNow(); }
     expect(out).toEqual([]);
+  });
+  // D-PF4-VUPLEADER reds: a 32 px crossing, the entry renamed or removed, and a second crossing leader
+  it('D-PF4-VUPLEADER mutations: v_up\'s lowback entry at 32 px, renamed or removed, and a second v_up leader crossing the figure are red', () => {
+    expect(crossProblems(S.v_up)).toEqual([]);
+    expect(crossProblems(S.v_up, { ...FRONT_ENTRY, 'v_up normal lowback end': 32 })).toEqual([expect.stringMatching(/^v_up normal lowback end: named entry 30\.\d px != 32$/)]);
+    const { ['v_up normal lowback end']: _drop, ...rest } = FRONT_ENTRY;
+    expect(crossProblems(S.v_up, rest)).toEqual(['v_up normal lowback: crosses the end figure']);
+    expect(crossProblems(S.v_up, { ...rest, 'v_up normal lowback Mistake': VUP_LOWBACK })).toEqual(['v_up normal lowback: crosses the end figure']);
+    const s = S.v_up, two = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'legs' ? { ...x, box: VUP_UNDER } : x)) };
+    expect(crossProblems(two)).toEqual(['v_up normal legs: crosses the end figure']);
   });
   it('mutation: bird_dog\'s "Low back arches" box placed under the figure, so its leader crosses the Mistake figure, is red', () => {
     const s = S.bird_dog, bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => (x.key === 'arch' ? { ...x, box: { left: 150, top: 350 } } : x)) } };
@@ -2353,7 +2366,7 @@ const namedList = (src = readFileSync('tests/howto/lb9-plates.test.ts', 'utf8'))
   const i = src.indexOf('const FRONT_ENTRY:'), j = src.indexOf('};', i);
   return [...src.slice(i, j).matchAll(/'([a-z_]+ (?:normal|mistake) [a-z]+ (?:end|Mistake))'/g)].map(m => m[1]);
 };
-const NAMED = ['side_plank mistake sink end', 'reverse_crunch normal back end', ...['flutter_kicks', 'dead_bug', 'v_up'].flatMap(id => [`${id} mistake arch end`, `${id} mistake arch Mistake`]), 'russian_twist mistake hips end', 'russian_twist mistake hips Mistake'];   // russian_twist: HELD-B (D-HELD6-RTWIST)
+const NAMED = ['side_plank mistake sink end', 'reverse_crunch normal back end', ...['flutter_kicks', 'dead_bug', 'v_up'].flatMap(id => [`${id} mistake arch end`, `${id} mistake arch Mistake`]), 'russian_twist mistake hips end', 'russian_twist mistake hips Mistake', 'v_up normal lowback end'];   // russian_twist: HELD-B (D-HELD6-RTWIST); v_up lowback: D-PF4-VUPLEADER
 describe('LIB-SUPCORE D-SUPCORE-RCBACK: reverse_crunch\'s named \'Back down\' entry (#366 6570379460)', { timeout: T }, () => {
   const ARM = /^(upper|elbowcap|fore)\.[lr]$/;
   /** Per normal leader: px inside the solid end figure past its first 8 px, and the drawn shapes it passes through. */
