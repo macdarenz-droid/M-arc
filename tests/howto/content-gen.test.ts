@@ -203,7 +203,8 @@ describe('HT5-A4: the push hints (critic fix 8)', () => {
       if (c.handling?.archetype === 'push' && c.handling.cue) wantKeys.push(id);
     }
     // LIB-PLATEFIX-1 (#385, D-PLATEFIX-PINS / PIN GO): the shipped triceps_pushdown is a push sheet with a cue, so it joins them
-    expect(wantKeys.filter(id => !byId.has(id))).toEqual(['lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_rope_triceps_pushdown', 'lib_triceps_pushdown']);
+    // LIB-SHIP W8a (ruling 3; #413 6761492481): the shipped barbell_overhead_press is a push sheet with a cue too (registry order)
+    expect(wantKeys.filter(id => !byId.has(id))).toEqual(['lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_barbell_overhead_press', 'lib_rope_triceps_pushdown', 'lib_triceps_pushdown']);
     expect(allIds.filter(id => howToHint(id) !== undefined).sort()).toEqual(wantKeys.sort());
     for (const id of wantKeys) expect(howToHint(id)).toBe(cueOf.get(id)!.handling.cue);
     for (const id of HOWTO_IDS) if (!wantKeys.includes(id)) expect(howToHint(id)).toBeUndefined();
