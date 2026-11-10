@@ -76,10 +76,10 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
       for (const id of idsOrSub(k)) expect([k, id, P.inputsFor(id)]).toEqual([k, id, byKey]);
     }
     // LIB-SHIP W3: a sub-key reads its base key's files, the layers config that names it and its row's card; its one id reads the base's
-    for (const [s, b] of Object.entries(W3_SUB_BASE)) {
-      expect([s, idsOfKey(s)]).toEqual([s, [W3_SUB_ID[s]]]);
-      expect([s, P.inputsFor(s)]).toEqual([s, [...new Set([...P.inputsFor(b), W3_LAYERS, `docs/research/howto/cards/${W3_SUB_ID[s]}.json`])].sort()]);
-      expect([s, P.inputsFor(W3_SUB_ID[s])]).toEqual([s, P.inputsFor(b)]);
+    for (const [s, b] of Object.entries(SUB_BASE)) {
+      expect([s, idsOfKey(s)]).toEqual([s, [SUB_ID[s]]]);
+      expect([s, P.inputsFor(s)]).toEqual([s, [...new Set([...P.inputsFor(b), W3_LAYERS, `docs/research/howto/cards/${SUB_ID[s]}.json`])].sort()]);
+      expect([s, P.inputsFor(SUB_ID[s])]).toEqual([s, P.inputsFor(b)]);
     }
   });
   // LIB-SHIP (D-SHIP-A9, ruling 3; D-SHIP-W1-LAYERS #376 6616230145): replaces "no shipped row has a key". The shipped rows'
@@ -88,14 +88,15 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
     for (const k of P.keysOf()) expect((await P.pairPanel(k)).startsWith('<div class="zx"')).toBe(true);
     // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's 5 pair ids join the curl on their ruled sub-keys, in registry order
     expect(hp.pairsOf(P, reg.shippedIds())).toEqual({
-      pairOf: { 'chin-up': 'bar-hang-only-curled-under', 'hanging-knee-raise': 'bar-hang-over', 'inverted-row': 'bar-row-only-curled-over',
+      // LIB-SHIP W8a (ruling 3; #413 6761492481): assisted_pull_up on its sub-key, in registry order after hanging_knee_raise
+      pairOf: { 'chin-up': 'bar-hang-only-curled-under', 'hanging-knee-raise': 'bar-hang-over', 'assisted-pull-up': 'bar-hang-only-curled-over', 'inverted-row': 'bar-row-only-curled-over',
         'close-grip-pulldown': 'v-handle-pull-only-curled-neutral-overhead', 'single-arm-lat-pulldown': 'd-handle-pull-only-curled-unstated',
         // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): lb05's 5 keyed curls, in registry order; hammer_curl
         // (hands/no-zoom.json, D-SHIP-W5-HAMMER), front_squat (gap-key) and the 3 bodyweight ids (archetype none) get no pair
         'preacher-curl': 'ez-curl-under', 'alternating-dumbbell-curl': 'curl-dumbbell-under', 'barbell-curl': 'curl-bar-under', 'ez-bar-curl': 'ez-curl-angled', 'reverse-curl': 'ez-curl-over',
         'dumbbell-biceps-curl': 'curl-dumbbell-under' },
       // LIB-SHIP W5: 6 -> 10 keys; the curl key now comes in at alternating_dumbbell_curl, ahead of the 3 new curl keys
-      keys: ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated',
+      keys: ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-hang-only-curled-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated',
         'ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over'],
     });
     const fresh = await import(/* @vite-ignore */ `${url('tools/plates/library/hands/pairs.mjs')}?lib7fix=${Date.now()}`);
@@ -130,22 +131,30 @@ const W3_SUB_ID: Record<string, string> = {
   'v-handle-pull-only-curled-neutral-overhead': 'close_grip_pulldown', 'd-handle-pull-only-curled-unstated': 'single_arm_lat_pulldown',
 };
 const W3_LAYERS = 'tools/plates/library/pages/lb01.layers.json';
+// LIB-SHIP W8a (ruling 3; #413 6761492481, D-W8A-UNDERHANDHOLD): assisted_pull_up ships back on lb01 with pairFaults
+// ['curled'] over bar-hang-over, so HAND_OF_ID maps it to a 5th sub-key (keysOf order: after chin_up's, as in the config);
+// bar-hang-over keeps hanging_knee_raise. SUB_BASE / SUB_ID: W3's 4 and W8a's 1 in keysOf order.
+const W8A_SUB_BASE: Record<string, string> = { 'bar-hang-only-curled-over': 'bar-hang-over' };
+const W8A_SUB_ID: Record<string, string> = { 'bar-hang-only-curled-over': 'assisted_pull_up' };
+const SUB_ORDER = ['bar-hang-only-curled-under', 'bar-hang-only-curled-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated'];
+const SUB_BASE: Record<string, string> = Object.fromEntries(SUB_ORDER.map(s => [s, { ...W3_SUB_BASE, ...W8A_SUB_BASE }[s]!]));
+const SUB_ID: Record<string, string> = Object.fromEntries(SUB_ORDER.map(s => [s, { ...W3_SUB_ID, ...W8A_SUB_ID }[s]!]));
 /** keysOf() less W3's sub-keys: the LIB-7, LIB-12 and LIB-7c keys. Red unless keysOf() is exactly these, then W3's 4. */
 const baseKeys = (): string[] => {
-  const all = P.keysOf(), base = all.filter((k: string) => !(k in W3_SUB_BASE));
-  expect(all).toEqual([...base, ...Object.keys(W3_SUB_BASE)]);
+  const all = P.keysOf(), base = all.filter((k: string) => !(k in SUB_BASE));
+  expect(all).toEqual([...base, ...Object.keys(SUB_BASE)]);
   return base;
 };
 /** A key's HAND_OF_ID ids; a W3 base key's are its sub-key's (red for any other key with none). */
 const idsOrSub = (k: string) => {
-  const own = idsOfKey(k), sub = Object.keys(W3_SUB_BASE).find(s => W3_SUB_BASE[s] === k);
+  const own = idsOfKey(k), sub = Object.keys(SUB_BASE).find(s => SUB_BASE[s] === k);
   if (own.length) return own;
   expect(sub, `${k}: no ids`).toBeTruthy();
   return idsOfKey(sub!);
 };
 /** The words a W3 sub-key's panel shows: its base key's file with the row's pairWords slots over it (pairs.mjs subPanel). */
 const subWords = (sub: string) => {
-  const all = PN.allWords(), kw = all.keys[W3_SUB_BASE[sub]!], row = JSON.parse(readFileSync(W3_LAYERS, 'utf8')).closeups[`lib_${W3_SUB_ID[sub]}`];
+  const all = PN.allWords(), kw = all.keys[SUB_BASE[sub]!], row = JSON.parse(readFileSync(W3_LAYERS, 'utf8')).closeups[`lib_${SUB_ID[sub]}`];
   return { chrome: all.chrome, keys: { ...all.keys, [sub]: { ...kw, faults: Object.fromEntries(row.pairFaults.map((f: string) => [f, { ...kw.faults[f], ...(row.pairWords?.[f] ?? {}) }])) } } };
 };
 
@@ -167,8 +176,8 @@ describe('LIB-7-FIX F2: key identity (D-LIB7FIX-KEY)', () => {
       }
     }
     // LIB-SHIP W3: a sub-key draws its one id for exactly the row's pairFaults, with the row's words over its base key's
-    for (const s of Object.keys(W3_SUB_BASE)) {
-      const id = W3_SUB_ID[s]!, row = JSON.parse(readFileSync(W3_LAYERS, 'utf8')).closeups[`lib_${id}`];
+    for (const s of Object.keys(SUB_BASE)) {
+      const id = SUB_ID[s]!, row = JSON.parse(readFileSync(W3_LAYERS, 'utf8')).closeups[`lib_${id}`];
       expect([s, P.pairSpec(id).wrong.map((w: any) => w.key)]).toEqual([s, row.pairFaults]);
       const via = PN.panelHtml(s, row.pairFaults.map((f: string) => ({ fault: f, svg: P.renderPair(id, { fault: f, uid: `hp-${s}-${f}` }).svg })), subWords(s));
       expect([s, via === await P.pairPanel(s)]).toEqual([s, true]);
@@ -236,7 +245,7 @@ describe('LIB-7-FIX F3: exercise-neutral panels, approved words (D-LIB7FIX-WORDS
     for (const k of P.keysOf()) {
       const h = await P.pairPanel(k);
       expect(neutralProblems(k, h)).toEqual([]);
-      expect(wordProblems(k, h, k in W3_SUB_BASE ? subWords(k) : PN.allWords())).toEqual([]);   // LIB-SHIP W3: a sub-key's words are its base's with its row's pairWords
+      expect(wordProblems(k, h, k in SUB_BASE ? subWords(k) : PN.allWords())).toEqual([]);   // LIB-SHIP W3: a sub-key's words are its base's with its row's pairWords
     }
     expect(Object.keys(PN.allWords().keys).sort()).toEqual([...baseKeys()].sort());   // LIB-SHIP W3: a sub-key has no words file (its row's pairWords)   // the key files under hands/words/ equal keysOf(): no words for a key that is not drawn
   }, 60_000);
@@ -418,7 +427,7 @@ describe('LIB-7-FIX PK2: inputs per key', () => {
   it('each key lists chrome.json and its own words file only under hands/words/, and only files', () => {
     for (const k of baseKeys()) expect(wordsInputProblems(k, P.inputsFor(k))).toEqual([]);
     // LIB-SHIP W3: a sub-key's words inputs are its base key's (its own words are its row's pairWords, in the config it lists)
-    for (const [s, b] of Object.entries(W3_SUB_BASE)) expect(wordsInputProblems(b, P.inputsFor(s))).toEqual([]);
+    for (const [s, b] of Object.entries(SUB_BASE)) expect(wordsInputProblems(b, P.inputsFor(s))).toEqual([]);
   });
   it('mutations: inputsFor listing every words file, or WORDS_DIR, is red', () => {
     const k = 'rope-push-neutral', base = P.inputsFor(k);

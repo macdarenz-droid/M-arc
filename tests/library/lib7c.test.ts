@@ -95,7 +95,9 @@ describe('LIB-7c 7c-A1: modules and keys (D-LIB7c-KEYS, D-LIB7FIX-KEY)', () => {
     // LIB-SHIP W3 (D-SHIP-A9 guard replacement): chin_up, inverted_row, close_grip_pulldown and single_arm_lat_pulldown ship with pairFaults, so
     // HAND_OF_ID names their sub-key of the ruled key; the key index still puts them on it
     const W3_SUB: Record<string, string> = { chin_up: 'bar-hang-only-curled-under', inverted_row: 'bar-row-only-curled-over', single_arm_lat_pulldown: 'd-handle-pull-only-curled-unstated',
-      close_grip_pulldown: 'v-handle-pull-only-curled-neutral-overhead' };
+      close_grip_pulldown: 'v-handle-pull-only-curled-neutral-overhead',
+      // LIB-SHIP W8a (ruling 3; #413 6761492481): assisted_pull_up ships with pairFaults ['curled'] on bar-hang-over's sub-key
+      assisted_pull_up: 'bar-hang-only-curled-over' };
     for (const id of lib7cDrawn()) expect([id, P.HAND_OF_ID[`lib_${id}`]]).toEqual([id, W3_SUB[id] ?? RULED[id]]);
     for (const id of lib7cDrawn()) expect([id, P.keyIndexOf().keyOf.get(id)]).toEqual([id, RULED[id]]);
   });
