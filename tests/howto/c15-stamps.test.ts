@@ -176,7 +176,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): then W7's 16 (merge of main dc058207: after W6's 7; D-SHIP-W7-SLEDHOLD, D-SHIP-W7-HOLD2)
     expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED, ...W7_STAMPED, ...W8A_STAMPED]);   // LIB-SHIP W8a: + its 5
     expect(W7_STAMPED).toHaveLength(16);
-    expect(W8A_STAMPED).toHaveLength(5);
+    expect(W8A_STAMPED).toHaveLength(4);   // D-W8A-ASSISTEDHOLD (#415): assisted_pull_up held
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_ENTRIES.n)))).toBe(MAIN_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES.n)))).toBe(MAIN_W6_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES_DE91.n)))).toBe(MAIN_W6_ENTRIES_DE91.sha);

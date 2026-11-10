@@ -8,6 +8,7 @@
 import { readFileSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { TEXT_ZOOM_SHIPPED } from './shipped-rows';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -72,6 +73,12 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
     // LIB-SHIP W7: stays 19 (W7 adds no hand pair); LIB-SHIP W8a: stays 19 (W8a adds no hand pair)
     expect(handIds).toHaveLength(19);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
     expect(keys.HAND).toEqual(handIds);
+    // LIB-SHIP W8a (D-SHIP-TEXTZOOM, F-ZOOM-NONE; #413 6761492481): a ruled text-zoom row writes no posture chunk, so POSTURE
+    // holds every shipped chrome id but exactly those (seated_leg_curl), in order; with it put back the checks below hold
+    const tz = TEXT_ZOOM_SHIPPED.map(r => r.chromeId);
+    expect(tz).toEqual(['seated-leg-curl']);
+    expect(keys.POSTURE).toEqual(chromeIds.filter((c: string) => !tz.includes(c)));
+    keys.POSTURE = chromeIds;
     expect(mapProblems({ ...keys, HAND: keys.POSTURE }, chromeIds)).toEqual([]);
     expect(mapProblems(keys, chromeIds)).toEqual([`HAND: ${handIds.length} keys, not the ${chromeIds.length} shipped chrome ids in order`]);
     expect(mapProblems({ HAND: [...handIds, 'push-up'], POSTURE: handIds, FEEL: handIds }, handIds)).toEqual([`HAND: ${handIds.length + 1} keys, not the ${handIds.length} shipped chrome ids in order`]);   // a no-hand id with a HAND entry is red
