@@ -1086,20 +1086,6 @@
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6761492481 @ bb60cc574a8515dc6e67b3c80195b2cb2ffe6738"
     },
     {
-      "scope": "lib_seated_leg_curl",
-      "hash": "c4b1f86d571044f2ae5cbb0b49c3bf61e9d3ddb3d64751d8dce1bcfab00c4d6d",
-      "date": "2026-11-10",
-      "fetcher": "LIB-SHIP W8a: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/seated_leg_curl.json",
-      "critic": "LIB-SHIP W8a: blind fresh Opus content critic on the changed sheets with a plant (caught), #413 6760254084",
-      "safety": "LIB-SHIP W8a: earlier wave safety checks stand; no safety line changed in W8a",
-      "reviewer": "LIB-SHIP W8a: the D-PFC-ROUND1 layers panel (#413 6760254084; 3 fresh Opus critics, blind, golden-B anchors, 2 plants caught), the fix round and its rulings (6761492481); every median 4 or more or a ruled exception",
-      "findings": [],
-      "open": 0,
-      "approvedBy": "supervisor",
-      "decision": "D-SHIP-W8A-STAMP",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ 29e4af37a166b4a7e23c577c10386047da419b95"
-    },
-    {
       "scope": "lib_crunch",
       "hash": "e207294b18d55d84faadf15d86715bfcdd493a364f75ef6f120e1683f36ff41b",
       "date": "2026-11-10",

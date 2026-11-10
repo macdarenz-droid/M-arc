@@ -16,10 +16,11 @@ import { W5, lessW5 } from './lib-ship-w5';
 import { W4_IDS, lessW4 } from './checks/ship-w4';
 import { pf2Problems, restorePF2 } from './platefix2-pins';
 import { pf3bProblems, restorePF3b } from './platefix3b-pins';
+import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
-const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); return restorePF3b(restorePF2(x)); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); expect(pf4Problems(x)).toEqual([]); return restorePF4(restorePF3b(restorePF2(x))); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's; LIB-PLATEFIX-4 (#410, D-PLATEFIX-PINS form): + PF4's moved keys (platefix4-pins), each pinning its current value, then put back to main de91dd21's
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -110,9 +111,9 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     'kettlebell_swing', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
   const W7_LINE = new RegExp(`^  (?:"lib_(?:${W7_IDS.join('|')})",|lib_(?:${W7_IDS.join('|')}): \\(\\) => |"(?:${W7_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w7Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W7_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
-  // LIB-SHIP W8a (ruling 3; #413 6761492481, D-W8A-ASSISTEDHOLD #415): its 4 ids add 15 lines (HOWTO_IDS, LOADERS, FEEL each;
-  // POSTURE for all but the text-zoom seated_leg_curl; no HAND line). With exactly those taken out first, the W7 chain below holds
-  const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'seated_leg_curl', 'crunch'];
+  // LIB-SHIP W8a (ruling 3; #413 6761492481; D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD #415): its 3 ids add 12 lines (HOWTO_IDS,
+  // LOADERS, POSTURE and FEEL each; no HAND line). With exactly those taken out first, the W7 chain below holds
+  const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'crunch'];
   const W8A_LINE = new RegExp(`^  (?:"lib_(?:${W8A_IDS.join('|')})",|lib_(?:${W8A_IDS.join('|')}): \\(\\) => |"(?:${W8A_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w8aLess = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W8A_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
@@ -129,7 +130,7 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
     expect(W4_IDS).toHaveLength(6);
     const w8a = w8aLess(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
-    expect(w8a.removed).toBe(15);   // LIB-SHIP W8a: its lines taken out first
+    expect(w8a.removed).toBe(12);   // LIB-SHIP W8a: its lines taken out first
     const w7 = w7Less(w8a.text);
     expect(w7.removed).toBe(64);   // LIB-SHIP W7: W7's lines taken out next (16 x 4)
     const w6 = w6Less(w7.text);
@@ -142,13 +143,13 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // with its 4 ids' 16 lines also taken out (merge of main 7e060e83: 32 + 24 + 16 = 72), the body is still main's 00a18e3c
     expect(w2Less(w3.text)).toEqual({ removed: 32 + 24 + 16, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
   });
-  it('LIB-SHIP W8a mutations (ruling 3): a W8a line dropped, a POSTURE line for the text-zoom seated_leg_curl, and another line changed are red', () => {
+  it('LIB-SHIP W8a mutations (ruling 3): a W8a line dropped, a HAND line for a W8a id, and another line changed are red', () => {
     const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(t).text).text).text).text).text);
     expect(ok.sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
     expect(t).toContain('  "crunch": () => import(\'./posture-crunch\'),\n');
-    expect(w8aLess(t.replace('  "crunch": () => import(\'./posture-crunch\'),\n', '')).removed).toBe(14);
-    expect(w8aLess(t.replace('  "crunch": () => import(\'./posture-crunch\'),\n', '  "crunch": () => import(\'./posture-crunch\'),\n  "seated-leg-curl": () => import(\'./posture-seated-leg-curl\'),\n')).removed).toBe(16);
-    expect(t).not.toMatch(/mountain[-_]climbers|underhand[-_]lat[-_]pulldown|assisted[-_]pull[-_]up/);   // D-W8A-MCFEEL, D-W8A-UNDERHANDHOLD, D-W8A-ASSISTEDHOLD: held, no line
+    expect(w8aLess(t.replace('  "crunch": () => import(\'./posture-crunch\'),\n', '')).removed).toBe(11);
+    expect(w8aLess(t.replace('  "crunch": () => import(\'./posture-crunch\'),\n', '  "crunch": () => import(\'./posture-crunch\'),\n  "crunch": () => import(\'./hand-crunch\'),\n')).removed).toBe(13);
+    expect(t).not.toMatch(/mountain[-_]climbers|underhand[-_]lat[-_]pulldown|assisted[-_]pull[-_]up|seated[-_]leg[-_]curl/);   // D-W8A-MCFEEL, D-W8A-UNDERHANDHOLD, D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD: held, no line
     expect(w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(t.replace('export const HAND', 'export const HAND_X')).text).text).text).text).text).sha).not.toBe(ok.sha);
   });
   it('LIB-SHIP W7 mutations (ruling 3): a W7 line dropped, a HAND line for a W7 id, and another line changed are red', () => {
@@ -457,3 +458,15 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
   });
 });
 
+// LIB-PLATEFIX-4 (#410, D-PF4-PINS): the pf4 check above bites; one PF4 moved key off its file is red.
+describe('LIB-PLATEFIX-4 D-PF4-PINS mutation', () => {
+  it('one PF4 moved key off its file is red, naming the row and the key', () => {
+    const m = JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
+    expect(pf4Problems(m)).toEqual([]);
+    const k = Object.keys(PF4_MAIN)[0]!, ids = Object.keys(m.rows).filter(r => k in m.rows[r].files), id = ids[0]!;
+    m.rows[id].files[k] = '0'.repeat(64);
+    const bad = pf4Problems(m);
+    expect(bad.length).toBe(1);
+    expect(bad[0]!.startsWith(`${id} ${k}: ${'0'.repeat(64)} != `)).toBe(true);
+  });
+});

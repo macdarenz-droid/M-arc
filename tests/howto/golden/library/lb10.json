@@ -389,6 +389,77 @@
       "supersedes": null,
       "why": "W7 layers approved for the flip set (D-PF10-W7JOIN; supervisor RESUME 2026-11-09): the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception. The page holds exactly the 7 shipped ids, each card byte-equal to its card in the lb10 page judged at a3e5b6e7; the page head loses only the held ids' rules. Edited in place under D-REPIN-UNMERGED for D-SHIP-W7-SLEDHOLD (#394, SHIP W7 QUESTION 4 option 1): sled_pull held (its open sheet is over the A3 S0 cap, F-SLEDPULL-S0);  D-SHIP-W7-HOLD2 (#394 6753333493): high_knees held (its feel section never mounts in the gate, HT8/HT9, after main dc058207; F-NOREDFLAG-GATE); the page holds the 5, each card byte-equal to the 2c47d3ff build.",
       "prev": "f119e5f3fca0c7c8cb9ad04b4bfb45601efe8a05baf9876b2420f2cac4154ec9"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_jump_rope",
+      "src": "library/specs/jump_rope.mjs",
+      "slug": "jump-rope",
+      "prefix": "jump-rope",
+      "chromeId": "jump-rope",
+      "exemptions": [
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "6974bf85406c59aafbbd4a79f51aae23873c7942b48e9f9f5de2786644ea12dc",
+        "normalOverlay": "d810fe2c655f9ab3ef852ce68c731813a391f922d7b9066c5f1c3c125662b841",
+        "mistakeSvg": "4a395f5d84509d56e697476b04b259247f080511e9cefb18d50b123fe548033a",
+        "mistakeOverlay": "b47429b315c23411be3b3d8ad5e2aa2a2ee3a78a61371d0766674d77faf840ee",
+        "tells": "97faf1faa8ce1035a28136871a85c6a6895c462bf100521b99cf6e08673841e7",
+        "tempo": "ff3ac0d4a1296863a4d2df04bbeb3f5e15b39305e93837b412b69df14c269258",
+        "cues": "73e2036a46971e8be11c1864aad808fb98a1c07bed764e88ec24aeae74948b77",
+        "alt": "6bc7dbd9c1fa75ecb1c85ce7b08504a62ad1c6ef8c449320ca77d365e5dbe0b6",
+        "mistakeAlt": "f4716d037728bbd86800499a3024d447464c2edc9e6edaee51591091854e687f"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237@8dbb9a73",
+      "date": "2026-11-10",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lane-bound spec fix (D-PF4-LANESPEC), judged on the lb10 overlay page 9498e8d3 in pf13 (all 6 approved, #410 6752705237); card compare after W7's merge (main 07f5fbcf): this tree builds the same page byte for byte.",
+      "supersedes": 3,
+      "prev": "0e355c172eb1740350eadcd71ac3548a32eb6c4a1166a67e4f71a52d37dfb685"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_burpee",
+      "src": "library/specs/burpee.mjs",
+      "slug": "burpee",
+      "prefix": "burpee",
+      "chromeId": "burpee",
+      "exemptions": [
+        "F5",
+        "F7"
+      ],
+      "fragments": {
+        "normalSvg": "6cdc4f2534ba6924c86c492ca5c7ef6a54dddfa47430a6560ebce5e073495905",
+        "normalOverlay": "e3c89090799ce76c2437b37779998651e7123e12997fde817963a0506b8f87d8",
+        "mistakeSvg": "d90c73f1985e5000f3f700f9290b3a7dfa6bbdfde95bb058407c1796d24774fb",
+        "mistakeOverlay": "107d2344980b1349a067ca514ee91586d1c3c16fa78eef07b8f1c067860947e2",
+        "tells": "134b6cfb952197c5af6282bf263e7de5a496a7466ab48314522369fa047fa345",
+        "tempo": "b2ed144340ec709250cf45c430226108bf62f134311680699505ad2efa4252eb",
+        "cues": "86348937574e88cb80d41487f536bda3a9fba8da5ef32839c21d0c6197782afc",
+        "alt": "4dffaba9946aaac6a273565b383dfc1a7d908f7ea4bdbe9544702e97a1b27054",
+        "mistakeAlt": "f628b0ddff27cf621158b6e7531e9b86e167ada7406f1efd9320a44981dd2208"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237@8dbb9a73",
+      "date": "2026-11-10",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lane-bound spec fix (D-PF4-LANESPEC), judged on the lb10 overlay page 9498e8d3 in pf13 (all 6 approved, #410 6752705237); card compare after W7's merge (main 07f5fbcf): this tree builds the same page byte for byte.",
+      "supersedes": 6,
+      "prev": "b47972d23e69dfd50af64869a3315a890f5d2641d7bf1517a864a1c1846a7d69"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "9498e8d305e720c0848ca0fb81f9eaeeb20e63e4c8d80ebba85bb21386be1ea9",
+      "bytes": 1398689,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237@8dbb9a73",
+      "date": "2026-11-10",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lb10 plates page after main 07f5fbcf (W7): jump_rope and burpee as judged in pf13 (#410 6752705237; page 9498e8d3, built twice); the 10 other plates byte-equal to main's 88ab19b7.",
+      "supersedes": 0,
+      "prev": "101e59491a11d5c4493eb17d324477c4dd488c324f4395a23ce02873846686e5"
     }
   ]
 }

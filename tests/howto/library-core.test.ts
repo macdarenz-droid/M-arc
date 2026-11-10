@@ -4,7 +4,7 @@ import { cpSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 import { child, ownRowsTreeInChild } from '../child-test';
-import { LIBRARY, TEXT_ZOOM_SHIPPED } from './shipped-rows';
+import { LIBRARY } from './shipped-rows';
 import { renderOf } from '../walk-cache';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -87,11 +87,11 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     'vit-slam', 'yamane-2023'];
   const SOURCES_MAIN_DC05 = '3026024e51f90e898c673fd2ecb6fc7a4c5b5db7cdb0552409171291fea70d96';   // main dc058207 (train 82, W6 #393), from its own sources.json
   // LIB-SHIP W8a (#413 D-SHIP-W8A-STAMP, ruling 3): sources.json moves from W7's 6dfbbc6c (main 07f5fbcf's body) to 4ffbe796
-  // (tests/howto/fixtures/generated-bodies.json): exactly the 4 W8a ids' 13 new sources (assisted_pull_up held, D-W8A-ASSISTEDHOLD), each cited by a W8a id's research
+  // (tests/howto/fixtures/generated-bodies.json): exactly the 3 W8a ids' 10 new sources (assisted_pull_up and seated_leg_curl held, D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD), each cited by a W8a id's research
   // json; with them taken out the body is main 07f5fbcf's, in main's key order. w7Back takes W8a's out first.
-  const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'seated_leg_curl', 'crunch'];
-  const W8A_ADDED = ['ace-crunch', 'ace-standing-sp', 'ace-top3-chest', 'bb-crunch', 'bb-legcurl', 'hl-pecdeck', 'juker-1998',
-    'maeo-2021', 'pinto-2025', 'sl-slc', 'soncin-2014', 'stronglifts-ohp', 'vg-pecfly'];
+  const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'crunch'];
+  const W8A_ADDED = ['ace-crunch', 'ace-standing-sp', 'ace-top3-chest', 'bb-crunch', 'hl-pecdeck', 'juker-1998',
+    'pinto-2025', 'soncin-2014', 'stronglifts-ohp', 'vg-pecfly'];
   const SOURCES_MAIN_07F5 = '6dfbbc6c2c4d48089b43078b5680f11ba16d9b15e45ea362397e7106c4ae1b70';   // main 07f5fbcf (train 85, W7 #394)
   const w8aBack = (t: string) => {
     const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
@@ -104,9 +104,9 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
   };
   const w7Back = (t: string) => w7Only(w8aBack(t));
-  it('LIB-SHIP W8a: sources.json is main 07f5fbcf\'s body plus W8a\'s 13 named sources; each cited by a W8a id', () => {
+  it('LIB-SHIP W8a: sources.json is main 07f5fbcf\'s body plus W8a\'s 10 named sources; each cited by a W8a id', () => {
     const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
-    expect(new Set(W8A_ADDED).size).toBe(13);
+    expect(new Set(W8A_ADDED).size).toBe(10);
     expect(fixture().bodies[SRC]).toBe(bodies.bodySha(t));
     expect(bodies.bodySha(w8aBack(t))).toBe(SOURCES_MAIN_07F5);
     const cited = new Set(W8A_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
@@ -391,7 +391,7 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
     // research card, plus one handpair-<key>.ts per distinct key the shipped rows use
     const hp = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs'));
     const { keys } = hp.pairsOf(await hp.loadPairs(), reg.shippedIds());
-    expect(out.size).toBe(61 + 5 * LIBRARY.length - TEXT_ZOOM_SHIPPED.length + new Set(keys).size);   // LIB-SHIP W8a: a text-zoom row writes no posture- file (shipped-rows.ts)
+    expect(out.size).toBe(61 + 5 * LIBRARY.length + new Set(keys).size);
     for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts', 'src/howto/red-flag-back.ts']) expect(out.has(p), p).toBe(true);
   });
 

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=d7c24804d8b1ca813264d25409f92b543fcda17a4946701ed262ee1f79fd60ce
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=48b05e5e14739f59c16bfe39a9606d55b50dbf02c85acff1f16842e9e6eca32f
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
@@ -71,7 +71,6 @@ export const HOWTO_IDS = [
   "lib_plank",
   "lib_triceps_pushdown",
   "lib_reverse_lunge",
-  "lib_seated_leg_curl",
   "lib_cable_fly",
   "lib_push_up",
   "lib_crunch",
@@ -148,7 +147,6 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
   lib_plank: () => import('./ht-plank'),
   lib_triceps_pushdown: () => import('./ht-triceps-pushdown'),
   lib_reverse_lunge: () => import('./ht-reverse-lunge'),
-  lib_seated_leg_curl: () => import('./ht-seated-leg-curl'),
   lib_cable_fly: () => import('./ht-cable-fly'),
   lib_push_up: () => import('./ht-push-up'),
   lib_crunch: () => import('./ht-crunch'),
@@ -321,7 +319,6 @@ export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { r
   "plank": () => import('./feel-plank'),
   "triceps-pushdown": () => import('./feel-triceps-pushdown'),
   "reverse-lunge": () => import('./feel-reverse-lunge'),
-  "seated-leg-curl": () => import('./feel-seated-leg-curl'),
   "cable-fly": () => import('./feel-cable-fly'),
   "push-up": () => import('./feel-push-up'),
   "crunch": () => import('./feel-crunch'),

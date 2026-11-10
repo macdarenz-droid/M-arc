@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=7d07d6ad64d4e20c0600e34f326e6801a13cc8d6a913022008c69275490c9a9f
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=08c7b4f4bfbca9a40575222851416f9c5d091d57d9661b12eff264b625d0bbce
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -615,14 +615,6 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
-  },
-  "bb-legcurl": {
-    "id": "bb-legcurl",
-    "cite": "Master the Leg Curl for Stronger Hamstrings and Heavier Deadlifts (BarBend)",
-    "url": "https://barbend.com/leg-curls/",
-    "kind": "coach",
-    "access": "full",
-    "checked": "2026-10-02"
   },
   "bb-preacher": {
     "id": "bb-preacher",
@@ -1696,14 +1688,6 @@
     "access": "abstract",
     "checked": "2026-10-22"
   },
-  "maeo-2021": {
-    "id": "maeo-2021",
-    "cite": "Greater Hamstrings Muscle Hypertrophy but Similar Damage Protection after Training at Long versus Short Muscle Lengths.",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/33009197/",
-    "kind": "peer-reviewed",
-    "access": "abstract",
-    "checked": "2026-10-02"
-  },
   "marchetti2023": {
     "id": "marchetti2023",
     "cite": "Marchetti PH et al. Backseat inclination affects the myoelectric activation during the inclined leg press exercise in recreationally trained men. J Strength Cond Res 2023;37(10):e541-e545",
@@ -2655,14 +2639,6 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
-  },
-  "sl-slc": {
-    "id": "sl-slc",
-    "cite": "How to Do Seated Leg Curl: Muscles Worked & Proper Form (StrengthLog)",
-    "url": "https://www.strengthlog.com/seated-leg-curl/",
-    "kind": "coach",
-    "access": "full",
-    "checked": "2026-10-02"
   },
   "sl-sledpush": {
     "id": "sl-sledpush",

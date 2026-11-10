@@ -14,13 +14,3 @@ if (SHIPPED.length < 8 || JSON.stringify(SHIPPED.slice(0, 8).map(r => r.id)) !==
 }
 /** The shipped library rows (past the 8). */
 export const LIBRARY: readonly ShippedRow[] = SHIPPED.slice(8);
-// LIB-SHIP W8a (D-SHIP-TEXTZOOM, F-ZOOM-NONE; #413 6761492481): a shipped row named in text-zooms.json writes no posture
-// chunk. TEXT_ZOOM_SHIPPED is exactly the ruled shipped text-zoom rows (red here if the list and the registry disagree);
-// POSTURE_SHIPPED and POSTURE_LIBRARY are the rows that carry a posture-<chromeId> chunk.
-const TEXT_ZOOMS: string[] = Object.keys(JSON.parse(readFileSync(new URL('../../tools/plates/library/text-zooms.json', import.meta.url), 'utf8')).entries);
-export const TEXT_ZOOM_SHIPPED: readonly ShippedRow[] = SHIPPED.filter(r => TEXT_ZOOMS.includes(r.id));
-if (JSON.stringify(TEXT_ZOOM_SHIPPED.map(r => r.id)) !== JSON.stringify(['lib_seated_leg_curl'])) {
-  throw new Error(`shipped rows: the shipped text-zoom rows are ${TEXT_ZOOM_SHIPPED.map(r => r.id)}, ruled lib_seated_leg_curl (LIB-SHIP W8a)`);
-}
-export const POSTURE_SHIPPED: readonly ShippedRow[] = SHIPPED.filter(r => !TEXT_ZOOMS.includes(r.id));
-export const POSTURE_LIBRARY: readonly ShippedRow[] = LIBRARY.filter(r => !TEXT_ZOOMS.includes(r.id));

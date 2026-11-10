@@ -3,7 +3,6 @@
 // ceiling sits between its measured value and measured + 10 % (rounded up): a ceiling cannot be raised
 // without re-measuring the chunk and recording who did it and why.
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { SHIPPED } from './shipped-rows';
 
@@ -51,11 +50,8 @@ describe('HT-3c B3: tests/howto/budgets.json', () => {
 
   it('LIB-2b: every shipped row\'s posture- and feel- chunk has an entry, and none is stale', () => {
     const names = file.budgets.map(b => b.chunk);
-    // LIB-SHIP W8a (D-SHIP-TEXTZOOM, F-ZOOM-NONE; #413 6761492481): a shipped row listed in text-zooms.json writes no
-    // posture chunk, so it has no posture- entry (an entry for it is stale and red); every other shipped row keeps one
-    const textZoom = Object.keys(JSON.parse(readFileSync(join(process.cwd(), 'tools/plates/library/text-zooms.json'), 'utf8')).entries);
     for (const kind of ['posture', 'feel']) {
-      const want = SHIPPED.filter(r => kind !== 'posture' || !textZoom.includes(r.id)).map(r => `${kind}-${r.chromeId}-*.js`);
+      const want = SHIPPED.map(r => `${kind}-${r.chromeId}-*.js`);
       for (const c of want) expect(names, c).toContain(c);
       for (const n of names) if (n.startsWith(`${kind}-`)) expect(want, n).toContain(n);
     }

@@ -12,13 +12,6 @@
    "checkpoints": {
     "smith-ohp-bench": "bench"
    }
-  },
-  "lib_seated_leg_curl": {
-   "ruling": "D-SHIP-TEXTZOOM",
-   "checkpoints": {
-    "knee-pivot": "pivot",
-    "ankle-pad": "ankle-pad"
-   }
   }
  }
 }

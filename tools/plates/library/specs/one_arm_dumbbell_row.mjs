@@ -12,15 +12,17 @@
 // Support (c1, c2, c4): the far (left) knee and the far hand on a flat bench, the near (right) foot on the floor, the
 //  near arm working, so the moving arm is the near one.
 // Geometry decisions (confirmed by the engine report `angles` and `checks`):
-//  Trunk: the back level with the floor (c3, c4): spine 0, head in line, the pelvis tilt SOLVED (bracket 70-100 deg)
-//   so the drawn back line (sacrum to upper back) is horizontal.
+//  Trunk: the back flat (c3): spine 0, head in line. The pelvis tilt is SOLVED (bracket 50-100 deg, see Far arm), so the
+//   flat back rises about 20 deg toward the head (LIB-PLATEFIX-4, pf8 T05 R1 c2, c3, #405 6688665575): with the knee
+//   under the hip and the hand under the shoulder on one bench, a straight support arm is longer than the thigh, so the
+//   back cannot be both level and supported on a straight arm (pf7 c3); c4's "parallel" yields to c2 and c3.
 //  Far leg: thigh vertical (hip flex = the pelvis tilt: the knee straight under the hip, c2), knee 90 (the shin along the bench
 //   top), ankle -40 (toes off the pad). The root height is SOLVED so the far shin's underside at the knee rests on the
 //   bench top (a `checks` plane on knee.l).
-//  Far arm (c2): the flat palm (LIB-26 `hand.l: 'flat'`, wrist 90) on the bench straight under the far shoulder; the
-//   reach target is SOLVED (3 fixed-point steps) so the wrist sits the forearm's distal radius above the pad and under
-//   the shoulder (checks). With the knee under the hip, the hand under the shoulder and a level back on one flat bench,
-//   the support elbow bends (about 75 deg): the arm is longer than the thigh. Card-true, flagged for R1/R3.
+//  Far arm (c2): nearly straight, by joint angles (the reach IK bends the elbow at least the palm's wrist offset, about
+//   19 deg): the elbow SUP_FLEX, the shoulder flexion SOLVED so the wrist is straight under the shoulder, and the pelvis
+//   tilt SOLVED so that wrist sits the forearm's distal radius above the pad (checks); the flat palm (LIB-26
+//   `hand.l: 'flat'`) on the bench.
 //  Near leg: the foot planted on the floor beside the bench, 3 cm ahead of the hip, 14 cm out (IK; knee nearly straight).
 //  Working arm: start (c5): hanging straight down from the shoulder (joint angles: shoulder flexion = the pelvis tilt,
 //   so the arm is plumb; elbow 0), the dumbbell under it. End (c6, c9):
@@ -29,12 +31,14 @@
 //   back 4 cm at the top. Wrist bent back 35 deg into the pull grip (the card's recorded convention, R-LB3-5).
 //  Mistake (c10, short range, the bottom half: "arm not fully straight at the bottom"; panel fix 2, D-LIB13-PANEL2,
 //   D-LIB13-ONEARM-M): at the bottom the arm never straightens: the upper arm M_SWING behind plumb, the elbow bent
-//   M_ELBOW (the ruled elbow point, D-LIB13-PANEL3); the shoulder blade forward as at the start (pro 2 cm). The red
+//   M_ELBOW (pf8 T05 R5 c3: the elbow about 50 px behind and 77 px below the shoulder at 2x, was D-LIB13-PANEL3's 25 deg;
+//   the red elbow and dumbbell clear of the straight support arm and the dumbbell clear of the bottom one); the shoulder
+//   blade M_PRO, 1 cm short of the end's pull-back, so the red arm hangs from the drawn (end) shoulder joint (pf8 c2). The red
 //   arm and dumbbell are traced as dashed guides on top of the support arm and bench (panel fix 3). The top half (the
 //   blade not pulled back) is not drawn: the shoulder joint sits inside the torso outline, so it shows no still sign.
 //  Support hand flat on the bench (the engine's flat palm), the wrist angle SOLVED so the palm lies level (R3).
 // Unsourced numbers: BENCH_TOP 0.42 m (the low end of the vendor bench's 42-45 cm, so the near leg reaches the floor), the bench length and position, ankle -40, the
-//  near foot spot, END_DZ, END_DY, M_SWING 25, M_ELBOW 70, PRO 2 / -4 cm, WRIST -35 (convention).
+//  near foot spot, END_DZ, END_DY, M_SWING 35, M_ELBOW 46, M_PRO -3 cm, SUP_FLEX 5, PRO 2 / -4 cm, WRIST -35 (convention).
 import { landmarksOf, RADII, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 
 const H = 1.75;
@@ -42,7 +46,7 @@ const BENCH_TOP = 0.42, SHANK_R = RADII.shank[1] * H;
 const WRIST_Y = RADII.fore[2] * H;                       // flat palm: the wrist sits the forearm's distal radius up
 
 const PRO_START = 2, PRO_END = -4, WRIST = -35;
-const END_DZ = 0.40, END_DY = 0.28, M_SWING = 25, M_ELBOW = 70;
+const END_DZ = 0.40, END_DY = 0.28, M_SWING = 35, M_ELBOW = 46, M_PRO = PRO_END + 1, SUP_FLEX = 5;
 
 // Bracketed root finder (Illinois regula falsi): throws when f(a) and f(b) have the same sign (D-LIB9-CLONE b).
 export const solve = (f, a, b) => {
@@ -54,36 +58,32 @@ export const solve = (f, a, b) => {
   }
   return (a + b) / 2;
 };
-const body0 = (y, pro, tilt, wl = 90) => ({ root: { at: [0, y, 0], tilt }, trunk: 0, neck: 0, scap: { l: { pro: 0 }, r: { pro } },
+const body0 = (y, pro, tilt, wl = 90, phi = tilt) => ({ root: { at: [0, y, 0], tilt }, trunk: 0, neck: 0, scap: { l: { pro: 0 }, r: { pro } },
   hip: { l: tilt, r: 0 }, knee: { l: 90, r: 0 }, ankle: { l: -40, r: 0 }, wrist: { l: wl, r: WRIST },
-  plant: { r: { at: [-0.14, 0, 0.03] } } });
-// The drawn back level (c4 "parallel to the ground"): the pelvis tilt is SOLVED (bracket 70-100 deg) so the back line,
-// sacrum to upper back, is horizontal; the far hip flexes the same, so the far thigh stays vertical.
-const TILT = solve(t => { const l = landmarksOf(body0(1, PRO_START, t), H); return l.backUpper[1] - l.sacrum[1]; }, 70, 100);
-const base0 = (y, pro, wl) => body0(y, pro, TILT, wl);
-const ROOT_Y = solve(y => landmarksOf(base0(y, PRO_START), H)['knee.l'][1] - SHANK_R - BENCH_TOP, 0.7, 1.2);
-
-// The far palm: grip target moved until the wrist is WRIST_Y over the pad, straight under the far shoulder.
+  shoulder: { l: { flex: phi } }, elbow: { l: SUP_FLEX }, plant: { r: { at: [-0.14, 0, 0.03] } } });
+// The support arm nearly straight (pf8 T05 R1, #405 6688665575; c2 "hand under shoulder"): with the knee under the hip
+// and the hand under the shoulder on one flat bench, the arm is longer than the thigh, so the flat back rises toward the
+// head. The far arm is set by joint angles: the elbow bent SUP_FLEX (a soft elbow), the shoulder flexion SOLVED (phiFor,
+// bracket tilt +-30 deg) so the wrist sits straight under the shoulder (c2). The pelvis tilt is SOLVED (bracket 50-100
+// deg) so that wrist sits the forearm's distal radius over the pad (the flat palm); for each tilt the root height is
+// SOLVED so the far shin rests on the bench (rootFor). The spine stays 0 (the back flat, c3) and the far hip flexes the
+// same as the tilt, so the far thigh stays vertical (the knee under the hip).
+const rootFor = t => solve(y => landmarksOf(body0(y, PRO_START, t), H)['knee.l'][1] - SHANK_R - BENCH_TOP, 0.7, 1.2);
+const phiFor = (y, t) => solve(f => { const l = landmarksOf(body0(y, PRO_START, t, 90, f), H); return l['wrist.l'][2] - l['shoulder.l'][2]; }, t - 30, t + 30);
+const TILT = solve(t => { const y = rootFor(t); return landmarksOf(body0(y, PRO_START, t, 90, phiFor(y, t)), H)['wrist.l'][1] - BENCH_TOP - WRIST_Y; }, 50, 100);
+const ROOT_Y = rootFor(TILT), PHI = phiFor(ROOT_Y, TILT);
+const base0 = (y, pro, wl) => body0(y, pro, TILT, wl, PHI);
 const S_L = landmarksOf(base0(ROOT_Y, PRO_START), H)['shoulder.l'];
-const WRIST_AT = [S_L[0] - 0.03, BENCH_TOP + WRIST_Y, S_L[2]];
-const farHandFor = wl => {
-  let t = [WRIST_AT[0], WRIST_AT[1] + 0.05, WRIST_AT[2] + 0.07];
-  for (let k = 0; k < 4; k++) {
-    const w = landmarksOf({ ...base0(ROOT_Y, PRO_START, wl), reach: { l: { at: t, pole: [0, 0, -1] } } }, H)['wrist.l'];
-    t = t.map((v, i) => v + WRIST_AT[i] - w[i]);
-  }
-  return { at: t, pole: [0, 0, -1] };
-};
 // Palm flat on the bench (panel fix D-LIB13-PANEL1 R3; drawn with the engine's flat palm, spec `hand`): the far
-// wrist angle is SOLVED (bracket 0-90 deg) so the hand (wrist -> grip) lies level, pointing forward along the bench.
-const handRise = wl => { const l = landmarksOf({ ...base0(ROOT_Y, PRO_START, wl), reach: { l: farHandFor(wl) } }, H); return l['grip.l'][1] - l['wrist.l'][1]; };
-const WRIST_L = solve(handRise, 0, 90);
+// wrist angle is SOLVED (bracket 0-120 deg) so the hand (wrist -> grip) lies level, pointing forward along the bench.
+const handRise = wl => { const l = landmarksOf(base0(ROOT_Y, PRO_START, wl), H); return l['grip.l'][1] - l['wrist.l'][1]; };
+const WRIST_L = solve(handRise, 0, 120);
 const base = (y, pro) => base0(y, pro, WRIST_L);
-const farHand = farHandFor(WRIST_L);
-const withArms = (pro, near, pole) => ({ ...base(ROOT_Y, pro), reach: { l: farHand, r: { at: near, pole } } });
-// Start (c5): the working arm by joint angles, hanging plumb from the level trunk: shoulder flexion 90 (the trunk is
-// 90 deg forward), elbow 0; only the far hand uses IK.
-const hang = pro => ({ ...base(ROOT_Y, pro), shoulder: { r: { flex: TILT } }, elbow: { r: 0 }, reach: { l: farHand } });
+const FAR = { shoulder: { flex: PHI }, elbow: SUP_FLEX };
+const withArms = (pro, near, pole) => ({ ...base(ROOT_Y, pro), reach: { r: { at: near, pole } } });
+// Start (c5): the working arm by joint angles, hanging plumb from the trunk: shoulder flexion = the pelvis tilt (spine
+// 0), elbow 0; the far arm keeps its joint angles.
+const hang = pro => ({ ...base(ROOT_Y, pro), shoulder: { l: FAR.shoulder, r: { flex: TILT } }, elbow: { l: FAR.elbow, r: 0 } });
 const S_R = landmarksOf(base(ROOT_Y, PRO_START), H)['shoulder.r'];
 const start = hang(PRO_START);
 const START_GRIP = landmarksOf(start, H)['grip.r'];
@@ -91,10 +91,11 @@ const SE_R = landmarksOf(base(ROOT_Y, PRO_END), H)['shoulder.r'];
 const LB = landmarksOf(base(ROOT_Y, PRO_END), H);
 const END_GRIP = [SE_R[0] - 0.03, LB.backUpper[1] - END_DY, SE_R[2] - END_DZ];
 const end = withArms(PRO_END, END_GRIP, [-0.3, 1, -0.4]);
-// The arm short of straight at the bottom (panel fix 3, D-LIB13-PANEL3 #274 6335029737): by joint angles, the upper arm
-// M_SWING behind plumb (the ruled elbow, about 39 px behind and 84 px under the shoulder at 2x) and the elbow bent
-// M_ELBOW, the wrist ahead of the upper-arm line; the far hand stays on the bench (reach.r cleared from the end pose).
-const mistakePose = { scap: { l: { pro: 0 }, r: { pro: PRO_START } }, shoulder: { r: { flex: TILT - M_SWING } }, elbow: { r: M_ELBOW }, reach: { l: farHand, r: null } };
+// The arm short of straight at the bottom (panel fix 3, D-LIB13-PANEL3 #274 6335029737; pf8 T05 R5 c3): by joint
+// angles, the upper arm M_SWING behind plumb (the elbow about 54 px behind and 78 px under the shoulder at 2x) and the
+// elbow bent M_ELBOW, the wrist ahead of the upper-arm line, behind the straight support arm; the far arm keeps its
+// joint angles (reach.r cleared from the end pose).
+const mistakePose = { scap: { l: { pro: 0 }, r: { pro: M_PRO } }, shoulder: { l: FAR.shoulder, r: { flex: TILT - M_SWING } }, elbow: { l: FAR.elbow, r: M_ELBOW }, reach: { r: null } };
 // The engine masks the Mistake outline inside the faulty body, so where the red arm crosses the support arm only scraps
 // showed. The red working arm (shoulder cap, upper arm, elbow cap, forearm: its outer outline only) and the end-on
 // dumbbell are traced as dashed guides, which the engine draws in the Mistake layer above every figure and the bench.
@@ -161,7 +162,7 @@ export default {
     ],
     tells: [
       { key: 'short', text: 'Arm not<br>straight', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 246, top: 234 }, cue: 'The arm never straightens at the bottom.' },
-      { key: 'lower', text: 'Not<br>lowered', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 276, top: 300 }, cue: 'The dumbbell never comes all the way down.' },
+      { key: 'lower', text: 'Not<br>lowered', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 250, top: 290 }, cue: 'The dumbbell never comes all the way down.' },
     ],
   },
   pilot: { drawableFault: 'Top fault: excessive momentum (c10), seen only as speed; the plate draws the next fault on the same list, the short range (c10).' },

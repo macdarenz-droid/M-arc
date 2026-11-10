@@ -1145,7 +1145,7 @@ const APPROVED_FRAGS: Record<string, string> = { 'ab-wheel-rollout': 'e0e6d3b9aa
   'hollow-body-hold': '3840726c16580b8c',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was f1e3f6990bc6dd7a, then 79aa43e1938e2a9a (the c5 cue copy); round 2 (#405 6685743439): 3840726c16580b8c (R1: no via ghost, TOE -50, arc 142; the 'Legs low' callout dropped with the card)
   'reverse-crunch': '8d189ceca9f17ee7',
   'dead-bug': '142b6445a08aa467',   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was dffcec3c1d6655c0, now 142b6445a08aa467 (c4 copy, trunk-only Mistake, gap arrow)
-  'v-up': 'cacf69b14e44fa08' };   // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 55c3ecd9f47f2a30, now cacf69b14e44fa08 (tempo lift-first, trunk-only Mistake, gap arrow)
+  'v-up': '63109389a0622f6c' };   // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main 07f5fbcf): was cacf69b14e44fa08, now 63109389a0622f6c (the leader fix; equal to lb09.json's 'owner' entry). LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 55c3ecd9f47f2a30, now cacf69b14e44fa08 (tempo lift-first, trunk-only Mistake, gap arrow)
 const FRAG_RE = '/<article [^>]*id="card-([a-z-]+)"[\\s\\S]*?<\\/article>/g';
 const fragProblems = (frags: Record<string, string>) => Object.entries(APPROVED_FRAGS).flatMap(([k, v]) => ((frags[k] ?? '').slice(0, 16) === v ? [] : [`${k}: ${(frags[k] ?? 'missing').slice(0, 16)} != approved ${v}`]));
 describe('LIB-21 A10: the LB9 plates page is deterministic (PQ-H7; built in an awaited child process)', { timeout: T }, () => {
@@ -1456,9 +1456,12 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
   // D-SUPCORE-RCBACK (#366 6570379460): reverse_crunch's 'Back down' enters the near arm from the right to the end back's
   // roll-off point (the low back under the curled hips; the arm by the side lies along the floor in front of it)
   // russian_twist (D-HELD6-RTWIST, signed in held6-card.md's rulings): "Knees swing" on the red right knee's outline
+  // D-PF4-VUPLEADER (LIB-PLATEFIX-4 Q15, #410; the D-SUPCORE-RCBACK form): v_up's 'Low back down' enters the lying torso
+  // from above to its underside at the lumbar landmark (F-VUP-V's leader, pf13 passed #410 6752705237), 30.7 px inside
+  const VUP_LOWBACK = 30.7, VUP_UNDER = { left: 250, top: 345 };   // VUP_UNDER: a 'Legs together' box under the floor line, its leader up through the legs
   const FRONT_ENTRY: Record<string, number> = { 'side_plank mistake sink end': FE_SINK, 'reverse_crunch normal back end': RC_BACK,
     'flutter_kicks mistake arch end': LUMBAR_IN.flutter_kicks[0], 'flutter_kicks mistake arch Mistake': LUMBAR_IN.flutter_kicks[1], 'dead_bug mistake arch end': LUMBAR_IN.dead_bug[0], 'dead_bug mistake arch Mistake': LUMBAR_IN.dead_bug[1], 'v_up mistake arch end': LUMBAR_IN.v_up[0], 'v_up mistake arch Mistake': LUMBAR_IN.v_up[1],
-    'russian_twist mistake hips end': 3.42, 'russian_twist mistake hips Mistake': 6.84 };
+    'russian_twist mistake hips end': 3.42, 'russian_twist mistake hips Mistake': 6.84, 'v_up normal lowback end': VUP_LOWBACK };
   const insideLen = (p: number[][], polys: number[][][]) => {
     let len = 0;
     for (const [a, b] of segs(p)) { const L = Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!); for (let k = 0; k < 40; k++) {
@@ -1502,6 +1505,16 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
     const out: string[] = [];
     for (const id of specsDrawn()) { out.push(...crossProblems(S[id])); await yieldNow(); }
     expect(out).toEqual([]);
+  });
+  // D-PF4-VUPLEADER reds: a 32 px crossing, the entry renamed or removed, and a second crossing leader
+  it('D-PF4-VUPLEADER mutations: v_up\'s lowback entry at 32 px, renamed or removed, and a second v_up leader crossing the figure are red', () => {
+    expect(crossProblems(S.v_up)).toEqual([]);
+    expect(crossProblems(S.v_up, { ...FRONT_ENTRY, 'v_up normal lowback end': 32 })).toEqual([expect.stringMatching(/^v_up normal lowback end: named entry 30\.\d px != 32$/)]);
+    const { ['v_up normal lowback end']: _drop, ...rest } = FRONT_ENTRY;
+    expect(crossProblems(S.v_up, rest)).toEqual(['v_up normal lowback: crosses the end figure']);
+    expect(crossProblems(S.v_up, { ...rest, 'v_up normal lowback Mistake': VUP_LOWBACK })).toEqual(['v_up normal lowback: crosses the end figure']);
+    const s = S.v_up, two = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'legs' ? { ...x, box: VUP_UNDER } : x)) };
+    expect(crossProblems(two)).toEqual(['v_up normal legs: crosses the end figure']);
   });
   it('mutation: bird_dog\'s "Low back arches" box placed under the figure, so its leader crosses the Mistake figure, is red', () => {
     const s = S.bird_dog, bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => (x.key === 'arch' ? { ...x, box: { left: 150, top: 350 } } : x)) } };
@@ -2145,7 +2158,12 @@ describe('LIB-SUPCORE A13: the 5 never ship', () => {
     ...batches.flatMap(([f, t]) => (f === 'lb09.json' ? (supIn(t).join() === SUP.join() ? [] : [`${f}: ${supIn(t)}`]) : supIn(t).map(id => `${f}: ${id}`))),
     ...golden.flatMap(([f, t]) => {
       if (f === 'lb09.json') {
-        const j = JSON.parse(t), plates = j.entries.filter((e: any) => e.kind === 'plate').map((e: any) => e.id.slice(4)).filter((id: string) => SUP.includes(id));
+        // LIB-PLATEFIX-4 (D-PF4-PINS; pf13 passed, #410 6752705237): v_up's 'owner' D-OWNER-REPIN plate entry supersedes its own
+        // previous entry; the originals keep the exact-4 rule, and any other superseding SUP entry is red
+        const j = JSON.parse(t), plates = j.entries.filter((e: any) => e.kind === 'plate' && e.supersedes == null).map((e: any) => e.id.slice(4)).filter((id: string) => SUP.includes(id));
+        const repins = j.entries.filter((e: any) => e.kind === 'plate' && e.supersedes != null && SUP.includes(e.id.slice(4)))
+          .filter((e: any) => e.approvedBy !== 'owner' || e.decision !== 'D-OWNER-REPIN' || j.entries[e.supersedes]?.id !== e.id).map((e: any) => `${f}: re-pin ${e.id.slice(4)}`);
+        if (repins.length) return repins;
         const pages = j.entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => e.ids.map((i: string) => i.slice(4)).filter((id: string) => SUP.includes(id)));
         return [...(plates.join() === SUP_PINNED.join() ? [] : [`${f}: plates ${plates}`]), ...(JSON.stringify(pages) === JSON.stringify([SUP_SHIPPED]) ? [] : [`${f}: layers-page ${pages}`]), ...(hit('flutter_kicks', t) ? [`${f}: flutter_kicks`] : [])];
       }
@@ -2178,6 +2196,10 @@ describe('LIB-SUPCORE A13: the 5 never ship', () => {
     expect(sp({ golden: gold('lb09.layers.html', '<div data-id="v-up"></div>') })).toEqual(['lb09.layers.html: hollow_body_hold,reverse_crunch,dead_bug,v_up']);
     expect(sp({ stages: { ...L.stages, v_up: 'shipped' } })).toEqual(['v_up: shipped']);
     expect(sp({ batches: [...L.batches, ['zz.json', '{"rows":{"lib_dead_bug":{}}}']] })).toEqual(['zz.json: dead_bug']);
+    // LIB-PLATEFIX-4 (D-PF4-PINS): v_up's re-pin made by someone other than the owner is red
+    const notOwner = L.golden.map(([n, t]) => { if (n !== 'lb09.json') return [n, t] as [string, string];
+      const j = JSON.parse(t); j.entries.find((e: any) => e.kind === 'plate' && e.id === 'lib_v_up' && e.supersedes != null).approvedBy = 'supervisor'; return [n, JSON.stringify(j)] as [string, string]; });
+    expect(sp({ golden: notOwner })).toEqual(['lb09.json: re-pin v_up']);
   });
 });
 
@@ -2344,7 +2366,7 @@ const namedList = (src = readFileSync('tests/howto/lb9-plates.test.ts', 'utf8'))
   const i = src.indexOf('const FRONT_ENTRY:'), j = src.indexOf('};', i);
   return [...src.slice(i, j).matchAll(/'([a-z_]+ (?:normal|mistake) [a-z]+ (?:end|Mistake))'/g)].map(m => m[1]);
 };
-const NAMED = ['side_plank mistake sink end', 'reverse_crunch normal back end', ...['flutter_kicks', 'dead_bug', 'v_up'].flatMap(id => [`${id} mistake arch end`, `${id} mistake arch Mistake`]), 'russian_twist mistake hips end', 'russian_twist mistake hips Mistake'];   // russian_twist: HELD-B (D-HELD6-RTWIST)
+const NAMED = ['side_plank mistake sink end', 'reverse_crunch normal back end', ...['flutter_kicks', 'dead_bug', 'v_up'].flatMap(id => [`${id} mistake arch end`, `${id} mistake arch Mistake`]), 'russian_twist mistake hips end', 'russian_twist mistake hips Mistake', 'v_up normal lowback end'];   // russian_twist: HELD-B (D-HELD6-RTWIST); v_up lowback: D-PF4-VUPLEADER
 describe('LIB-SUPCORE D-SUPCORE-RCBACK: reverse_crunch\'s named \'Back down\' entry (#366 6570379460)', { timeout: T }, () => {
   const ARM = /^(upper|elbowcap|fore)\.[lr]$/;
   /** Per normal leader: px inside the solid end figure past its first 8 px, and the drawn shapes it passes through. */

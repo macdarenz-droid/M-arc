@@ -116,7 +116,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   // pec_fly's names the ruling comment (its row changed after the panel); mountain_climbers and underhand_lat_pulldown are held
   const W8A_PANEL = ['D-SHIP-W8A-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ 29e4af37a166b4a7e23c577c10386047da419b95'];
   const W8A_RULED = ['D-SHIP-W8A-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6761492481 @ bb60cc574a8515dc6e67b3c80195b2cb2ffe6738'];
-  const W8A_STAMPED = ['lib_barbell_overhead_press', 'lib_pec_fly', 'lib_seated_leg_curl', 'lib_crunch'];
+  const W8A_STAMPED = ['lib_barbell_overhead_press', 'lib_pec_fly', 'lib_crunch'];
   const RULING: Record<string, string[][]> = { lib_dumbbell_biceps_curl: [W1_RULE], ...Object.fromEntries(W2_STAMPED.map(id => [id, [W2_RULE]])),
     ...Object.fromEntries(W3_STAMPED.map(id => [id, [W3_RULE]])), ...Object.fromEntries(PF_STAMPED.map(id => [id, [PF_RULE]])),
     ...Object.fromEntries(PF_RESTAMPED.map(id => [id, [W2_RULE, PF_RULE]])), ...Object.fromEntries(W4_IDS.map(id => [id, [W4_RULE]])), ...Object.fromEntries(W5_STAMPED.map(id => [id, [W5_RULE]])),
@@ -176,7 +176,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): then W7's 16 (merge of main dc058207: after W6's 7; D-SHIP-W7-SLEDHOLD, D-SHIP-W7-HOLD2)
     expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED, ...W7_STAMPED, ...W8A_STAMPED]);   // LIB-SHIP W8a: + its 5
     expect(W7_STAMPED).toHaveLength(16);
-    expect(W8A_STAMPED).toHaveLength(4);   // D-W8A-ASSISTEDHOLD (#415): assisted_pull_up held
+    expect(W8A_STAMPED).toHaveLength(3);   // D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD (#415): assisted_pull_up and seated_leg_curl held
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_ENTRIES.n)))).toBe(MAIN_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES.n)))).toBe(MAIN_W6_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES_DE91.n)))).toBe(MAIN_W6_ENTRIES_DE91.sha);

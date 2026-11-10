@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=5e827841356876a77f3e71797fba9fd5e4ccc7f0d62e68410058693f98d09400
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=d10a693cd2131ef278894ea3f7fe7bdbd51924231d66baf32cec03056f04f6b5
 // The kettlebell-swing posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-kettlebell-swing.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

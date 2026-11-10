@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=3ee5a1cdb1f822cf0beddf5e5485066f4e13e7d848fbcdeff0bb6904ae95e7a9
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=c69106de66c8db64bf5ca807fb041a67e16c5d02bdbc5f517adb9ac534887369
 // The push-up posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-push-up.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

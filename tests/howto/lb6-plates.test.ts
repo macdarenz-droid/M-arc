@@ -199,7 +199,14 @@ describe('LIB-16 A9: nothing ships (D-LIB16-AHEAD)', { timeout: T }, () => {
   /** LIB-SHIP W6: lb06's golden chain is valid and holds exactly one plate entry per row, in row order, naming the row's files. */
   const pinProblems = (rows: Record<string, any>, g: any, golden: any) => {
     const out: string[] = [...golden.verifyBatchChain(g, readJson('tests/howto/golden/GOLDEN.json').entries)];
-    const plates = g.entries.filter((e: any) => e.kind === 'plate');
+    // LIB-PLATEFIX-4 (D-PF4-PINS): an 'owner' D-OWNER-REPIN plate entry that supersedes the same id's previous plate entry
+    // re-pins it (pf13, #410 6752705237); the original entries keep the one-per-row, row-order rule, and every other
+    // superseding plate entry is red.
+    const all = g.entries.filter((e: any) => e.kind === 'plate'), plates = all.filter((e: any) => e.supersedes == null);
+    for (const e of all.filter((x: any) => x.supersedes != null)) {
+      const prev = g.entries[e.supersedes];
+      if (e.approvedBy !== 'owner' || e.decision !== 'D-OWNER-REPIN' || prev?.kind !== 'plate' || prev.id !== e.id) out.push(`${e.id}: superseding entry`);
+    }
     if (plates.map((e: any) => e.id).join() !== Object.keys(rows).join()) out.push(`plate entries ${plates.map((e: any) => e.id).join()}`);
     for (const [id, r] of Object.entries<any>(rows)) {
       const e = plates.filter((x: any) => x.id === id);
@@ -235,6 +242,11 @@ describe('LIB-16 A9: nothing ships (D-LIB16-AHEAD)', { timeout: T }, () => {
     expect(pinProblems(rows, noPin, golden)).toContain('lib_rear_delt_fly: 0 plate entries');
     const moved = structuredClone(g); moved.entries.find((e: any) => e.id === 'lib_hip_adduction').chromeId = 'hip-adductor';
     expect(pinProblems(rows, moved, golden)).toContain('lib_hip_adduction: chromeId');
+    // LIB-PLATEFIX-4 (D-PF4-PINS): a re-pin not by the owner, or superseding another id's entry, is red
+    const notOwner = structuredClone(g); notOwner.entries.find((e: any) => e.kind === 'plate' && e.id === 'lib_machine_pullover' && e.supersedes != null).approvedBy = 'supervisor';
+    expect(pinProblems(rows, notOwner, golden)).toContain('lib_machine_pullover: superseding entry');
+    const wrongId = structuredClone(g); wrongId.entries.find((e: any) => e.kind === 'plate' && e.id === 'lib_smith_machine_squat' && e.supersedes != null).supersedes = wrongId.entries.findIndex((e: any) => e.id === 'lib_rear_delt_fly');
+    expect(pinProblems(rows, wrongId, golden)).toContain('lib_smith_machine_squat: superseding entry');
   });
   // LIB-SHIP W6 (ruling 3): replaces "none of the 3 is shipped, even with lb6/rows.json read as a batch file". The
   // pre-move file is gone; a row copied back into it is refused by the registry (a row in two places).
@@ -1443,10 +1455,11 @@ describe('LIB-16 resume: one zoom per view (D-LIB16-ZOOMVIEWS, #327 6405117790),
 describe('LIB-16 resume: the approved LB6 plates stay byte-identical (page 2668c838 on main 9c3287cd)', { timeout: T }, () => {
   // golden.mjs fragmentsOf of machine_pullover and machine_crunch on main's LB6 page 2668c838…e84e (both approved, #297).
   const APPROVED: Record<string, Record<string, string>> = {
+    // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main dc058207): machine-pullover's PF4 fix, equal to its lb06.json 'owner' entry. Was normalSvg 90b18786…, normalOverlay 9716f805…, mistakeSvg a452764a…; the other fragments unchanged.
     "machine-pullover": {
-      "normalSvg": "90b18786547aede0c06fa694bbf48a91868721bf17f37625fea5b04760a867a6",
-      "normalOverlay": "9716f8050db626def56b9342914e5d38fefa2a6fe7978f29066605dc62cfcc80",
-      "mistakeSvg": "a452764ab7f5f89dfa7dc223c9ee4397f08313358d0407549f1151f529d65d11",
+      "normalSvg": "6e8d87ab1b1192bb93cd9ffaa46295b0f192106ab75834ab7d323f6b0c0d318e",
+      "normalOverlay": "36c3f2bac94cf19f4b5babef980cad725942379dd1f387d2bcf2d34bc40f5bed",
+      "mistakeSvg": "143d0305f41f226e1cee479f57fc12987d2e360ac5812a302df05ccff63d3acb",
       "mistakeOverlay": "742c20ff35b94de8f842dc7e2aa0d8ddc32bbb1c1bb35e6ec18ae7fcf47175ca",
       "tells": "491dfaa9fec824f16a2290510510b6fa5d9a4f4c9ea8f38a9e4d3f0a0359ed3a",
       "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
@@ -1605,7 +1618,8 @@ describe('LIB-16R2 A9: nothing ships', { timeout: T }, () => {
     expect(stageProblems(rows)).toEqual([]);
     expect(ids().filter(id => rows[id]?.stage === 'shipped')).toEqual(['lib_machine_lateral_raise']);
     for (const id of ids()) expect([rows[id].mode, rows[id].parent, rows[id].template, rows[id].params], id).toEqual(['H', undefined, undefined, undefined]);
-    for (const id of ids()) expect(g.entries.filter((e: any) => e.kind === 'plate' && e.id === id && e.src === rows[id].src && e.chromeId === rows[id].chromeId).length, id).toBe(1);
+    // LIB-PLATEFIX-4 (D-PF4-PINS): one original plate entry per row; an 'owner' D-OWNER-REPIN re-pin (supersedes set) is checked in pinProblems
+    for (const id of ids()) expect(g.entries.filter((e: any) => e.kind === 'plate' && e.supersedes == null && e.id === id && e.src === rows[id].src && e.chromeId === rows[id].chromeId).length, id).toBe(1);
   });
   // LIB-SHIP W6 (ruling 3): replaces "mutation: one row set to shipped is red" (kept), + the old green stage and a dropped row
   it('LIB-SHIP W6 mutations: one row set to shipped, one set back to review, and one dropped are red', () => {
@@ -2077,13 +2091,15 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
       tells: '4ef6ef619c62ecbb1c5269c11f4f37c7c9a747f7f194ae7a2e8954acae188c59', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
       cues: '95a9069cb601c2e76e0505e2ad2c27e09b9c318c4f9be10b8f05981cd0d59860', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
       mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
-    'high-to-low-cable-fly': { normalSvg: '9b35cfa8ac033cf03223f5aa482b2c4efa341f8e6c4dfac4b00c781ecdfd487b', normalOverlay: '1f0d451386e2e12cc6b8e8c4fd6db326ccc0b6dc981d383312e41bbcce5ef6e1',
-      mistakeSvg: '9eb229e0544fb487f59e4910d293c6da9c05ba0d1cf6242be3104ab7d975e402', mistakeOverlay: 'e954e9ff44fd970595ba91dcbb8f18038510a7bbcc73aee5d3fee8ce056b2e85',
+    // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main dc058207): high-to-low-cable-fly's PF4 fix, equal to its lb06.json 'owner' entry. Was normalSvg 9b35cfa8…, normalOverlay 1f0d4513…, mistakeSvg 9eb229e0…, mistakeOverlay e954e9ff…; the other fragments unchanged.
+    'high-to-low-cable-fly': { normalSvg: '3c19a3758e608995463d7c86abb4f5a3eb8182afe8303c87dfa5afb368a4cf85', normalOverlay: '4601521314c637093c0c7769408f804c08c9d7c082f6837211ef2878a198d161',
+      mistakeSvg: '8ae30ac48ff4937dc83302c13399ef40f6cc65d6eb2fab8b364696b240eeba30', mistakeOverlay: 'c78cd3c5e8a8944490ed498a99e35c9db42ab31a9e32e85352cb675cdec3a135',
       tells: '60d21de24772caa0dc87995218a1b8517e433b1e7927fc0b358aa4c869e34eb5', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
       cues: 'acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2', alt: '8776483a58ccce47ccf95121cf10720cb66e845ee4937aeb58497a071cfc8f30',
       mistakeAlt: 'ea2b604a94dd9d4bc75eb13615124126151b487f2dc7d4d674576c173dd7bdfe' },
-    'smith-machine-squat': { normalSvg: 'e28a7ef099a60aca269a5239828dd4d3e6ceca3ca638250fcbb5f605969b6530', normalOverlay: 'c50a52e7cf6c3d6bcd744619888c859b920b707b1ed59d9c10bf68b4e16ae881',
-      mistakeSvg: 'fa64b6806adc834a53ff43e128ea52cfa694389ddd82ec27d99a1e17694273a0', mistakeOverlay: 'c3206135bcbe197bc7e0e143f609acd2cbed988619a9b99d89e4ac4ba072f585',
+    // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main dc058207): smith-machine-squat's PF4 fix, equal to its lb06.json 'owner' entry. Was normalSvg e28a7ef0…, normalOverlay c50a52e7…, mistakeSvg fa64b680…; the other fragments unchanged.
+    'smith-machine-squat': { normalSvg: '869674ecde19dc0acd16afbdfbffbf15f80941963081a5c5bd05298044bf3225', normalOverlay: '2e8097b1d915e10b701e7f1a61fa43d1def61e239174da96fc1e2dd9cefe4493',
+      mistakeSvg: '909db4ebd789ebb8e45bfc1b836eb9f1e83961a558d0426a9950091bd00c7dc4', mistakeOverlay: 'c3206135bcbe197bc7e0e143f609acd2cbed988619a9b99d89e4ac4ba072f585',
       tells: '73ff3249de7184e3fb37bb728c933043d1f686c3b413e71c4cd8fbaaca73a9dc', tempo: 'f886198ba7e406367703d407e46cd3f5178dc9b2b21e53921aaeb03899df9faf',
       cues: 'fe51224cbe5e669a6cf6562164cacff337ed44eaa011307f5edfdd426c5c4244', alt: '727ac3352572b1cdb5596b3420ef9effb4e7b77bf2d25ada54e49e4a675fd5c8',
       mistakeAlt: '73dd0a9bd8699833121d3a342e1343db9270ef4331a5d92ef81df0a500fad4b8' },

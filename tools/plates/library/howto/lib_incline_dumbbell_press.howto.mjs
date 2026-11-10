@@ -8,12 +8,14 @@
 // No hand zoom (D-SHIP-HANDW2, gap-ruled on tools/plates/library/hands/no-zoom.json): the inherited hand zoom
 // `wrist-neutral-press` is a push heel-of-palm pair that golden B's engine cannot draw (D-LIB7-19). Its Right is the grip
 // line, its Wrong the bent-back fault's alt.
-// Card zoom `incline-angle` (c2): a text checkpoint (D-SHIP-TEXTZOOM; machine_chest_press "Start depth" precedent): Right and
-// Wrong are setup step 1 and the `angle` checkpoint. So the sheet has no zoom.
+// Card zoom `incline-angle` (c2): drawn since LIB-PLATEFIX-4 item 20 (zooms below; it was a text checkpoint, D-SHIP-TEXTZOOM).
+// Its Right and Wrong also show in setup step 1 and the `angle` checkpoint, which link to it.
 // Way out: the spotter (c10) is in the dropped-weight risk; get-in and set-down are the shared dumbbell-kickup card's
 // bench variant (docs/research/howto/shared/dumbbell-kickup.json), not repeated here.
 // Red flags: the card's redFlags (shoulder), golden B's shared shoulder box.
-import plateSpec from '../specs/incline_dumbbell_press.mjs';
+import plateSpec, { reclined } from '../specs/incline_dumbbell_press.mjs';
+import { inclineBench } from '../eq/inclineBench.mjs';
+import { landmarksOf } from '../engine.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER };
 
@@ -64,15 +66,55 @@ const CL = {
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses: the start (arms straight, dumbbells over the shoulders, c17) and the end (dumbbells at
-// the upper chest, c6). No zoom, so no Wrong still.
+// the upper chest, c6). The incline-angle zoom's Wrong is the sheet's own pose (zooms below).
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: plateSpec.poses.end },
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
-// None: the hand zoom is on the no-zoom list (D-SHIP-HANDW2) and incline-angle is a text checkpoint (D-SHIP-TEXTZOOM).
-const zooms = [];
+// The hand zoom is on the no-zoom list (D-SHIP-HANDW2). LIB-PLATEFIX-4 item 20 (PF3 item 20, #391 6653791551; PF3 PLAN
+// #405 6682819340; W4 panel L7 [4,3,3], #391 6653540190, critics c2, c3: "a bench-angle panel showing a 45-degree pad
+// (Right) vs a near-upright pad (Wrong)"): the posture zoom `incline-angle` (c1, c2) is drawn. Right: the plate's start
+// (arms straight over the shoulders) on the 45 deg pad. Wrong: the same lifter on the pad set near upright, UPRIGHT deg
+// from vertical: the spec's reclined() solves root, trunk and neck on that pad, the bench is the spec's inclineBench at
+// that angle (crop option wrong.equipmentList), and each grip keeps its offset from its shoulder, so the arms are the
+// Right's. Drawn solid. UPRIGHT is a drawing value for the card's "near upright" (no card number).
+const UPRIGHT = 15;                                   // Wrong back pad from vertical (deg)
+const BENCH = { seatTilt: 12, seatTop: 0.45, trunk: 0, backLen: 0.84, beamZ: [-0.72, 0.36] };   // the spec's SEAT_TILT, SEAT_TOP, TRUNK, BACK_LEN, BEAM_Z
+const H_ = plateSpec.body?.height ?? 1.75;
+const UP_REC = reclined({ back: UPRIGHT, seatTilt: BENCH.seatTilt, seatTop: BENCH.seatTop, trunk: BENCH.trunk });
+const S0 = plateSpec.poses.start, lmS = landmarksOf(S0, H_), upPose = { ...S0, ...UP_REC.pose }, lmU = landmarksOf({ ...upPose, reach: undefined }, H_);
+const shift = (side, r) => ({ ...r, at: r.at.map((v, i) => v + lmU[`shoulder.${side}`][i] - lmS[`shoulder.${side}`][i]) });
+export const PAD_UPRIGHT = { ...UP_REC.pose, reach: { l: shift('l', S0.reach.l), r: shift('r', S0.reach.r) } };
+const benchOf = (hinge, back) => inclineBench({ hinge, back, seatTilt: BENCH.seatTilt, backLen: BENCH.backLen, beamZ: BENCH.beamZ });
+const N_BENCH = benchOf(UP_REC.hinge, UPRIGHT).length;
+// the plate's equipment with its inclineBench items (right after the floor, as the spec lists them) at the upright angle,
+// less the end layer's 45 deg phantoms (the Mistake's lumbar gap fill, part 'archgap', and the dashed start-dumbbell ring,
+// class m-line), which belong to the 45 deg pad and float off the upright one
+const noGap = e => typeof e !== 'function' ? e : (lm, ctx) => { const r = e(lm, ctx);
+  return Array.isArray(r) ? r.filter(i => i.part !== 'archgap' && !String(i.cls ?? '').includes('m-line')) : r; };
+export const UPRIGHT_EQ = [plateSpec.equipment[0], ...benchOf(UP_REC.hinge, UPRIGHT), ...plateSpec.equipment.slice(1 + N_BENCH).map(noGap)];
+const zooms = [
+  {
+    key: 'incline-angle', chip: 'Bench', heading: 'Bench angle', kind: 'posture',
+    crop: { center: { at: 'backMid', pose: 'right', off: [0, -14] }, sizePx: 240 },
+    right: 'start',
+    wrong: { base: 'start', pose: PAD_UPRIGHT, solid: true, equipmentList: UPRIGHT_EQ },
+    callout: {
+      right: { text: 'Pad about 45°', anchor: 'backMid' },
+      wrong: { text: 'Near upright', anchor: { at: 'backMid', pose: 'mistake' } },
+    },
+    caption: {
+      right: 'Back pad at about 45 degrees.',   // card zoom incline-angle Right (c2)
+      wrong: 'Back pad near upright.',          // card zoom incline-angle Wrong (c2)
+    },
+    alt: {
+      right: 'Side view, arms straight. The back pad and the back lean back at about 45 degrees.',
+      wrong: 'Side view, arms straight. The back pad is set near upright, so the lifter sits almost straight up.',
+    },
+  },
+];
 
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const feel = {
@@ -140,8 +182,8 @@ export default {
   },
   contacts: ['bench-lying'],
   setup: [
-    // card zoom incline-angle (c2): Right "Back pad at about 45 degrees", Wrong "Back pad near upright" (text checkpoint)
-    { kind: 'adjust', text: 'Set the back pad to about 45 degrees, not near upright.', claim: CL.angle },
+    // card zoom incline-angle (c2): Right "Back pad at about 45 degrees", Wrong "Back pad near upright" (drawn, PF4 item 20)
+    { kind: 'adjust', text: 'Set the back pad to about 45 degrees, not near upright.', zoom: 'incline-angle', claim: CL.angle },
     { kind: 'get-in', text: 'Dumbbells on your thighs, lie back and lift them to shoulder height.', claim: CL.c9 },
     // card posture point c4 (head, shoulders, buttocks and feet keep contact): D-TEXT-PRINTED, posture details are not printed
     { kind: 'brace', text: 'Shoulder blades down and back. Head, shoulders, buttocks and feet keep contact.', claim: CL.c4 },
@@ -150,7 +192,7 @@ export default {
   ],
   posture: [
     { key: 'angle', label: 'Bench angle', detail: 'Back pad at about 45 degrees. Steeper can shift work to the front shoulders.',
-      anchor: { landmark: 'backUpper', pose: 'start' }, claim: CL.angle },
+      anchor: { landmark: 'backUpper', pose: 'start' }, zoom: 'incline-angle', claim: CL.angle },
     { key: 'contact', label: 'Five points', detail: 'Head, shoulders, buttocks and feet keep contact.',
       anchor: { landmark: 'buttock', pose: 'end' }, claim: CL.c4 },
     { key: 'arch', label: 'No arch', detail: 'No low-back arch.',
@@ -161,6 +203,7 @@ export default {
   ],
   feel,
   zooms,
+  chips: ['incline-angle', 'feel'],   // the zoom shell's chip row: the zoom key, then feel
   copy: {
     setupLine: 'Back pad at about 45 degrees. Shoulder blades down and back, feet flat.',
     mistakeLine: 'Keep your low back on the bench, lowering and pressing.',

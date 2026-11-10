@@ -41,10 +41,11 @@ const W6_SHIPPED = ['lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cabl
 const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
   'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
   'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
-// LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, W8a LAYERS APPROVED #413 6761492481): plus the 4 flipped pilot-a, pilot-b and
-// pilot-b2 ids; mountain_climbers (D-W8A-MCFEEL, F-HAND-PALMFLAT-SIZE), underhand_lat_pulldown (D-W8A-UNDERHANDHOLD,
-// F-UNDERHAND-PQH1) and assisted_pull_up (D-W8A-ASSISTEDHOLD #415, F-LAYERS-MGHOST, F-HT4-UNDER) are held at approved-plate
-const W8A_SHIPPED = ['lib_barbell_overhead_press', 'lib_pec_fly', 'lib_seated_leg_curl', 'lib_crunch'];
+// LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, W8a LAYERS APPROVED #413 6761492481): plus the 3 flipped pilot-a and pilot-b2
+// ids; mountain_climbers (D-W8A-MCFEEL, F-HAND-PALMFLAT-SIZE), underhand_lat_pulldown (D-W8A-UNDERHANDHOLD,
+// F-UNDERHAND-PQH1), assisted_pull_up (D-W8A-ASSISTEDHOLD #415, F-LAYERS-MGHOST, F-HT4-UNDER) and seated_leg_curl (D-W8A-SEATEDHOLD #415,
+// F-HT10-TEXTZOOM) are held at approved-plate
+const W8A_SHIPPED = ['lib_barbell_overhead_press', 'lib_pec_fly', 'lib_crunch'];
 const RULED_SHIPPED = [...W3_SHIPPED, ...W5_SHIPPED, ...W6_SHIPPED, ...W7_SHIPPED, ...W8A_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
@@ -1085,7 +1086,8 @@ describe('LIB-SHIP W5 D-SHIP-W5-EQUIPDRAWN (#392 6654347642): straight_bar\'s sp
   it('items 0-11 deep-equal; items 12-13 are functions with deep-equal output on every drawn pose of both plates', () => {
     expect(kid.equipment.map((x: any) => typeof x)).toEqual([...Array(12).fill('object'), 'function', 'function']);
     for (let i = 0; i < 12; i++) expect([i, kid.equipment[i]]).toStrictEqual([i, par.equipment[i]]);
-    expect(drawnArgs(kid).map(([p]) => p)).toEqual(['start', ...Array.from({ length: kid.poses.via.length }, (_, i) => `via${i}`), 'end', 'ghost0', 'ghost1', 'ghost2', 'mistake']);
+    // LIB-PLATEFIX-4 (D-PF4-PINS D): 'ghost2' goes; PF1's parent draws 2 ghosts and the re-cloned template follows it (was ghost0-2)
+    expect(drawnArgs(kid).map(([p]) => p)).toEqual(['start', ...Array.from({ length: kid.poses.via.length }, (_, i) => `via${i}`), 'end', 'ghost0', 'ghost1', 'mistake']);
     expect(equipProblems(kid, par)).toEqual([]);
   });
   it('red 1: one data item changed', () => {

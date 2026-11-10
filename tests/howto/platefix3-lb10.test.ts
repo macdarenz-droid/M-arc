@@ -46,10 +46,13 @@ describe('PF3 W7 jump_rope: the too-high jump, raised and clear (c9, L5; round 2
     expect(Math.abs(L.q.mistake.knee.r - L.q.end.knee.r)).toBeLessThanOrEqual(0.5);
     expect(P('end', 'head')[1]! - P('mistake', 'head')[1]!).toBeGreaterThanOrEqual(18);
   });
-  it('the dashed figure is clear of the solid one: hips at least 60 px apart, the faulty right hip outside the solid left hip', () => {
+  // LIB-PLATEFIX-4 (D-PF4-PINS; D-PFR-JUMPROPE #394 6701937875, "the house overlay: the red dashed figure at the same x as
+  // the solid one, lifted"; pf13 passed, #410 6752705237): replaces "hips at least 60 px apart, the faulty right hip outside
+  // the solid left hip". The lift above (>= 5x the hop, head >= 18 px) still keeps the two figures apart; the full overlay
+  // rows are in platefix4-jump_rope.test.ts.
+  it('the dashed figure is the house overlay: hips within 3 px in x of the solid ones, both hips', () => {
     const { P } = pxOf(S.jump_rope);
-    expect(Math.abs(P('mistake', 'hips')[0]! - P('end', 'hips')[0]!)).toBeGreaterThanOrEqual(60);
-    expect(P('mistake', 'hip.r')[0]).toBeGreaterThan(P('end', 'hip.l')[0]!);
+    for (const k of ['hips', 'hip.l', 'hip.r']) expect(Math.abs(P('mistake', k)[0]! - P('end', k)[0]!), k).toBeLessThanOrEqual(3);
   });
 });
 

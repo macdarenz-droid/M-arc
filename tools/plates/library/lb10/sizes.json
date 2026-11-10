@@ -405,9 +405,9 @@
     "basis": "claim: c9 'roughly 1-2 inches off the ground': the midpoint, 1.5 in (the range is 1 in wide: a size, not a fact, PANELS.md 7)"
    },
    "M_HOP": {
-    "value": 0.2,
+    "value": 0.305,
     "unit": "m",
-    "basis": "stated reason: c9 'you aren't in a high jump competition': a jump about four times c9's 2 in top, the height of a tuck-free vertical hop (NOTE RULED 5). LIB-PLATEFIX-3 round 2 (#405 6685743439 jump_rope R5 c2 c3): 0.2 m, so the raised copy's head sits 24 px over the main head (it was 12 px, read as the same height); still unsized by the card"
+    "basis": "stated reason: c9 'you aren't in a high jump competition': a jump about four times c9's 2 in top, the height of a tuck-free vertical hop (NOTE RULED 5). LIB-PLATEFIX-3 round 2 (#405 6685743439 jump_rope R5 c2 c3): 0.2 m, so the raised copy's head sits 24 px over the main head (it was 12 px, read as the same height). LIB-PLATEFIX-4 (#394 6701937875 D-PFR-JUMPROPE, the red figure drawn over the Right pose): 0.305 m, pf7 R5 c2's 'feet ~93 px (about 12 in) off the floor', so the lifted copy clears the solid one; still unsized by the card"
    },
    "HAND_OUT": {
     "value": 0.12,
@@ -458,11 +458,6 @@
     "value": 0,
     "unit": "deg",
     "basis": "stated reason: LIB-PLATEFIX-3 (W7 #394 6682923012, ruled #405 6683319630) L5 [3,3,2] 'tuck the knees': the knees flexed 60 deg, half of it at the hips, in the too-high jump (c9); front view, so the tuck shows as shortened legs. LIB-PLATEFIX-3 round 2 (#405 6685743439 jump_rope R5 c2 c3): 0, the main airborne body raised unchanged, since the tucked legs read as a shorter figure, not a higher jump"
-   },
-   "M_OFF": {
-    "value": 0.55,
-    "unit": "m",
-    "basis": "stated reason: LIB-PLATEFIX-3 (W7 #394 6682923012, ruled #405 6683319630) L5 'offset the dashed figure clear of the solid one': the Mistake figure set 0.55 m to the side (a drawing offset); 0.45 left the faulty right hand on the solid left hand"
    }
   },
   "jumpRope": {
@@ -698,9 +693,9 @@
     "basis": "claim: c1 pg-burpee 'Stand tall with feet shoulder width apart' (one source hip-width, one feet together): the widest stance at which the rigid foot's plant contacts stay within 0.5 cm (0.15 m: 0.5 cm; 0.16 m: 0.6 cm), as kettlebell_swing 0.18 and medicine_ball_slam 0.12; the side view does not show the width"
    },
    "KNEE_SOFT": {
-    "value": 15,
+    "value": 30,
     "unit": "deg",
-    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c11 fv-burpee 'Always land on slightly bent knees'"
+    "basis": "claim: c11 fv-burpee 'Always land on slightly bent knees'; LIB-PLATEFIX-4 (pf8 T10 R5, #405 6688665575; pf7 R1/R5 #405 6685743439, 'about 30 deg knee flexion'; PF3 addendum #405 6683300292): a bend that reads as bent at plate size, the knee clearly forward of the hip-ankle line and of the Mistake's straight leg (was 15, the leg_press.mjs:13 convention, which the critics read as straight)"
    },
    "M_KNEE": {
     "value": 1,
