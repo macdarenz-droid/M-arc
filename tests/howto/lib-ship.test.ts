@@ -31,11 +31,12 @@ const W3_SHIPPED = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row',
 // ids, in registry order (lb04's 4, then lb05's 6, after W3's lb01-lb03 rows); the other 17 W5 rows are held
 const W5_SHIPPED = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat',
   'lib_preacher_curl', 'lib_hammer_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];
-// LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615 @ a3e5b6e7, after D-PF10-W7JOIN): plus the 19 flipped lb08/lb09/lb10
-// ids (lb08's 6, lb09's 6, lb10's 7); the other 10 drawn W7 rows are held (approved-plate), the 8 left-out rows stay out
+// LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615 @ a3e5b6e7, after D-PF10-W7JOIN): plus the 18 flipped lb08/lb09/lb10
+// ids (lb08's 6, lb09's 6, lb10's 6); the other 11 drawn W7 rows are held (approved-plate), the 8 left-out rows stay out;
+// D-SHIP-W7-SLEDHOLD (#394 SHIP W7 QUESTION 4 option 1; follow-up F-SLEDPULL-S0): sled_pull is held (its open sheet is over the gate A3 S0 cap)
 const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
   'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
-  'lib_kettlebell_swing', 'lib_high_knees', 'lib_sled_pull', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
+  'lib_kettlebell_swing', 'lib_high_knees', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
 const RULED_SHIPPED = [...W3_SHIPPED, ...W5_SHIPPED, ...W7_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
@@ -61,12 +62,14 @@ describe('LIB-SHIP A1: the shipped set', () => {
     expect(held).toHaveLength(17);
     expect(reg.shippedIds().filter((id: string) => held.includes(id))).toEqual([]);
     expect(held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(held.map(id => [id, 'approved-plate']));
-    // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): of the 29 drawn W7 rows exactly the 19 ship; the 10 held stay approved-plate
+    // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): of the 29 drawn W7 rows exactly the 18 ship; the 11 held stay approved-plate (D-SHIP-W7-SLEDHOLD: sled_pull among them)
     const w7Drawn = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
     expect(w7Drawn).toHaveLength(29);
     expect(W7_SHIPPED.filter(id => !w7Drawn.includes(id))).toEqual([]);
     const w7Held = w7Drawn.filter(id => !W7_SHIPPED.includes(id));
-    expect(w7Held).toHaveLength(10);
+    expect(w7Held).toHaveLength(11);
+    expect(w7Held).toContain('lib_sled_pull');   // D-SHIP-W7-SLEDHOLD
+    expect(reg.shippedIds()).not.toContain('lib_sled_pull');
     expect(reg.shippedIds().filter((id: string) => w7Held.includes(id))).toEqual([]);
     expect(w7Held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(w7Held.map(id => [id, 'approved-plate']));
   });
@@ -1346,9 +1349,9 @@ describe('LIB-SHIP W7 D-PFR-L4: red-flag feel rows mark their pain region', () =
     applyBodymapFix(F, B);
     const dOf = new Map([...F, ...B].map(p => [p.id, p.d]));
     const bad: string[] = [];
-    // D-SHIP-W7-LAYERS (#394 6711372615 @ a3e5b6e7): the committed pages hold only the 19 shipped W7 ids; every red-flag
-    // row of all 29 sheets is still checked above, and each of the 10 held ids is absent from every page
-    expect(W7_ON_PAGES).toHaveLength(19);
+    // D-SHIP-W7-LAYERS (#394 6711372615 @ a3e5b6e7): the committed pages hold only the 18 shipped W7 ids (D-SHIP-W7-SLEDHOLD:
+    // sled_pull held); every red-flag row of all 29 sheets is still checked above, and each of the 11 held ids is absent from every page
+    expect(W7_ON_PAGES).toHaveLength(18);
     for (const id of W7.filter(i => !W7_ON_PAGES.includes(i))) {
       const pre = id.slice(4).replace(/_/g, '-');
       if (pages.some(p => p.includes(`id="${pre}-feel-map"`) || p.includes(`id="${pre}-row-`))) bad.push(`${id}: held, but on a W7 layers page`);
@@ -1380,9 +1383,9 @@ describe('LIB-SHIP W7 F-PAIN-NAMES: feel-row labels name places, not part ids', 
   it('every W7 row label on the lb08/lb09/lb10 layers pages, and at least one W7 label carries a mark', async () => {
     const ids = await rawIds(), pages = ['lb08', 'lb09', 'lb10'].map(b => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`), 'utf8'));
     const bad: string[] = []; let marked = 0;
-    // D-SHIP-W7-LAYERS (#394 6711372615 @ a3e5b6e7): the pages hold only the 19 shipped W7 ids; the 10 held are on none
+    // D-SHIP-W7-LAYERS (#394 6711372615 @ a3e5b6e7): the pages hold only the 18 shipped W7 ids; the 11 held (sled_pull among them, D-SHIP-W7-SLEDHOLD) are on none
     const onPages = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => r.stage === 'shipped').map(([id]) => id));
-    expect(onPages).toHaveLength(19);
+    expect(onPages).toHaveLength(18);
     for (const id of W7.filter(i => !onPages.includes(i))) {
       const pre = id.slice(4).replace(/_/g, '-');
       if (pages.some(p => p.includes(`id="${pre}-row-`))) bad.push(`${id}: held, but on a W7 layers page`);
@@ -1394,9 +1397,10 @@ describe('LIB-SHIP W7 F-PAIN-NAMES: feel-row labels name places, not part ids', 
       marked += [...page.matchAll(new RegExp(`id="${pre}-row-[^"]+"[^>]*data-label="[^"]*Marked: `, 'g'))].length;
     }
     expect(bad).toEqual([]);
-    // D-SHIP-W7-LAYERS: was > 30 over the 29 ids' pages; the rebuilt pages hold the 19 shipped ids, whose labels carry exactly
-    // 25 marks (measured on the committed lb08/lb09/lb10 layers pages, c9d24c6d / 5a83c943 / 2c47d3ff); pinned exact, so a lost mark is red
-    expect(marked).toBe(25);
+    // D-SHIP-W7-LAYERS: was > 30 over the 29 ids' pages; the rebuilt pages hold the 18 shipped ids, whose labels carry exactly
+    // 24 marks (measured on the committed lb08/lb09/lb10 layers pages, c9d24c6d / 5a83c943 / 441992d3; 25 with sled_pull before
+    // D-SHIP-W7-SLEDHOLD); pinned exact, so a lost mark is red
+    expect(marked).toBe(24);
   });
   it('mutation: a label that names lower-back-erectors-left is red', async () => {
     const ids = await rawIds();

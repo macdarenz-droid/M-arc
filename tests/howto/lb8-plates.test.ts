@@ -213,7 +213,7 @@ describe('LIB-18 A5: lb8/rows.json holds exactly the drawn, non-held LB8 H ids, 
 
 
 describe('LIB-18 A9: nothing ships (D-LIB18-AHEAD)', { timeout: T }, () => {
-  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19): replaces "every LB8 row is at stage drawing
+  // LIB-SHIP W7 (D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394, the flip set of 19, 18 after D-SHIP-W7-SLEDHOLD): replaces "every LB8 row is at stage drawing
   // or review", its shipped/approved-plate mutations, "none of the 12 is shipped, even with lb8/rows.json read as a batch
   // file", "no LB8 H id ... in any batches/ file" and "... in golden/library/" with the W7 ruled set as positive asserts:
   // exactly W7's 6 LB8 ids ship; hack_squat and pendulum_squat stay approved-plate (held); the 4 left-out rows stay at

@@ -82,7 +82,7 @@
     "Sled Pull Guide: How To Improve Your Technique, Training & Full-Body Strength | Gymshark Central (2025). https://row.gymshark.com/blog/article/how-to-sled-pull",
     "The metabolic, hormonal, biochemical, and neuromuscular function responses to a backward sled drag training session (2014). https://pubmed.ncbi.nlm.nih.gov/23575361/ PMID 23575361"
    ],
-   "stage": "shipped"
+   "stage": "approved-plate"
   },
   "lib_burpee": {
    "src": "library/specs/burpee.mjs",

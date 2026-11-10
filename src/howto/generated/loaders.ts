@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=7f3a115e9e6afb3f3c44165f114e3cd15ba86967c4ffa54f93a6cf9ca4bd71d8
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=07404d80e9de051dcca0b54816722dc91661cea4268bb267200abd49106b390a
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
@@ -49,7 +49,6 @@ export const HOWTO_IDS = [
   "lib_dead_bug",
   "lib_kettlebell_swing",
   "lib_high_knees",
-  "lib_sled_pull",
   "lib_bear_crawl",
   "lib_sled_push",
   "lib_medicine_ball_slam",
@@ -118,7 +117,6 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
   lib_dead_bug: () => import('./ht-dead-bug'),
   lib_kettlebell_swing: () => import('./ht-kettlebell-swing'),
   lib_high_knees: () => import('./ht-high-knees'),
-  lib_sled_pull: () => import('./ht-sled-pull'),
   lib_bear_crawl: () => import('./ht-bear-crawl'),
   lib_sled_push: () => import('./ht-sled-push'),
   lib_medicine_ball_slam: () => import('./ht-medicine-ball-slam'),
@@ -209,7 +207,6 @@ export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: R
   "dead-bug": () => import('./posture-dead-bug'),
   "kettlebell-swing": () => import('./posture-kettlebell-swing'),
   "high-knees": () => import('./posture-high-knees'),
-  "sled-pull": () => import('./posture-sled-pull'),
   "bear-crawl": () => import('./posture-bear-crawl'),
   "sled-push": () => import('./posture-sled-push'),
   "medicine-ball-slam": () => import('./posture-medicine-ball-slam'),
@@ -276,7 +273,6 @@ export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { r
   "dead-bug": () => import('./feel-dead-bug'),
   "kettlebell-swing": () => import('./feel-kettlebell-swing'),
   "high-knees": () => import('./feel-high-knees'),
-  "sled-pull": () => import('./feel-sled-pull'),
   "bear-crawl": () => import('./feel-bear-crawl'),
   "sled-push": () => import('./feel-sled-push'),
   "medicine-ball-slam": () => import('./feel-medicine-ball-slam'),

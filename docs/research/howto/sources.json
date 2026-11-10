@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=7721406239c09221cae3224d897366937e48325d17adbf4e1f537e7b7cdeca5a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=2985a0afcdf5f255d46a103d844f1235e0f177a155f5b3e0143ef7f353c2b716
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -1191,14 +1191,6 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
-  },
-  "gs-sled": {
-    "id": "gs-sled",
-    "cite": "Sled Pull Guide: How To Improve Your Technique, Training & Full-Body Strength | Gymshark Central",
-    "url": "https://row.gymshark.com/blog/article/how-to-sled-pull",
-    "kind": "coach",
-    "access": "full",
-    "checked": "2026-10-22"
   },
   "hackett-2013": {
     "id": "hackett-2013",
@@ -2671,14 +2663,6 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
-  },
-  "west-2014": {
-    "id": "west-2014",
-    "cite": "The metabolic, hormonal, biochemical, and neuromuscular function responses to a backward sled drag training session",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/23575361/",
-    "kind": "peer-reviewed",
-    "access": "abstract",
-    "checked": "2026-10-22"
   },
   "wiki-hook-grip": {
     "id": "wiki-hook-grip",

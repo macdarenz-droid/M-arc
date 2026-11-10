@@ -778,20 +778,6 @@
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6711372615 @ a3e5b6e75d494041afbe674c1a5fe227b492f51c"
     },
     {
-      "scope": "lib_glute_bridge",
-      "hash": "3dd1cd0e0c7334b6e51b697fda283f655fcea252de231e27b949369f3476c100",
-      "date": "2026-11-09",
-      "fetcher": "LIB-SHIP W7: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/glute_bridge.json",
-      "critic": "LIB-SHIP W7: fresh Opus content critics on card and quotes (the W7 panel content sets, #394 6682487876, then the focused rechecks 6683570453, 6701001868 and 6701937875; every planted error caught); findings fixed and delta-checked by the supervisor (#394)",
-      "safety": "LIB-SHIP W7: fresh Opus safety checker at the W7 panel (planted unsafe line caught): nothing unsafe; way-out lines from the card (Q-W7-6)",
-      "reviewer": "LIB-SHIP W7: the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception",
-      "findings": [],
-      "open": 0,
-      "approvedBy": "supervisor",
-      "decision": "D-SHIP-W7-STAMP",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6711372615 @ a3e5b6e75d494041afbe674c1a5fe227b492f51c"
-    },
-    {
       "scope": "lib_cable_kickback",
       "hash": "d5161a84ef362326ef15127d93ca6c0ea16ac552c4ee7eaf740f605241ce61ab",
       "date": "2026-11-09",
@@ -922,20 +908,6 @@
       "hash": "b1708f377254d2fbcf934562939bb20749aea3911b64830366e9a7bd1fb71404",
       "date": "2026-11-09",
       "fetcher": "LIB-SHIP W7: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/high_knees.json",
-      "critic": "LIB-SHIP W7: fresh Opus content critics on card and quotes (the W7 panel content sets, #394 6682487876, then the focused rechecks 6683570453, 6701001868 and 6701937875; every planted error caught); findings fixed and delta-checked by the supervisor (#394)",
-      "safety": "LIB-SHIP W7: fresh Opus safety checker at the W7 panel (planted unsafe line caught): nothing unsafe; way-out lines from the card (Q-W7-6)",
-      "reviewer": "LIB-SHIP W7: the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception",
-      "findings": [],
-      "open": 0,
-      "approvedBy": "supervisor",
-      "decision": "D-SHIP-W7-STAMP",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6711372615 @ a3e5b6e75d494041afbe674c1a5fe227b492f51c"
-    },
-    {
-      "scope": "lib_sled_pull",
-      "hash": "27041064e118f6a6ddcb5270126a7ec4ef230d8c2a90691ba2152fa008f181f1",
-      "date": "2026-11-09",
-      "fetcher": "LIB-SHIP W7: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/sled_pull.json",
       "critic": "LIB-SHIP W7: fresh Opus content critics on card and quotes (the W7 panel content sets, #394 6682487876, then the focused rechecks 6683570453, 6701001868 and 6701937875; every planted error caught); findings fixed and delta-checked by the supervisor (#394)",
       "safety": "LIB-SHIP W7: fresh Opus safety checker at the W7 panel (planted unsafe line caught): nothing unsafe; way-out lines from the card (Q-W7-6)",
       "reviewer": "LIB-SHIP W7: the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception",

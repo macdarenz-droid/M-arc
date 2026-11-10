@@ -376,20 +376,19 @@
       "ids": [
         "lib_kettlebell_swing",
         "lib_high_knees",
-        "lib_sled_pull",
         "lib_bear_crawl",
         "lib_sled_push",
         "lib_medicine_ball_slam",
         "lib_farmer_s_carry"
       ],
-      "pageSha256": "2c47d3ff2adb24b985d8b168d63b2aea24dc7c4ab79fdc792a505886e197ff13",
-      "bytes": 1444431,
+      "pageSha256": "441992d3a366bb21e1791a4506da37f5c1bd1de57c7b814dca423a028ec057b4",
+      "bytes": 1211905,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W7-LAYERS",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6711372615 @ a3e5b6e75d494041afbe674c1a5fe227b492f51c",
       "date": "2026-11-09",
       "supersedes": null,
-      "why": "W7 layers approved for the flip set (D-PF10-W7JOIN; supervisor RESUME 2026-11-09): the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception. The page holds exactly the 7 shipped ids, each card byte-equal to its card in the lb10 page judged at a3e5b6e7; the page head loses only the held ids' rules.",
+      "why": "W7 layers approved for the flip set (D-PF10-W7JOIN; supervisor RESUME 2026-11-09): the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception. The page holds exactly the 7 shipped ids, each card byte-equal to its card in the lb10 page judged at a3e5b6e7; the page head loses only the held ids' rules. Edited in place under D-REPIN-UNMERGED for D-SHIP-W7-SLEDHOLD (#394, SHIP W7 QUESTION 4 option 1): sled_pull held (its open sheet is over the A3 S0 cap, F-SLEDPULL-S0); the page holds the 6, each card byte-equal to the 2c47d3ff build.",
       "prev": "f119e5f3fca0c7c8cb9ad04b4bfb45601efe8a05baf9876b2420f2cac4154ec9"
     }
   ]

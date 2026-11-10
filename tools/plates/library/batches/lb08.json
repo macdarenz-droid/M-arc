@@ -104,7 +104,7 @@
     "How to Perform 5 Variations of the Glute Bridge Exercise (Healthline) (2020). https://www.healthline.com/health/fitness-exercise/glute-bridge-variations",
     "Barbell Glute Bridges (PureGym exercise guide). https://www.puregym.com/exercises/glutes/glute-bridge/barbell-glute-bridges/"
    ],
-   "stage": "shipped"
+   "stage": "approved-plate"
   },
   "lib_cable_kickback": {
    "src": "library/specs/cable_kickback.mjs",

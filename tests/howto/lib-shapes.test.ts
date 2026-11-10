@@ -96,12 +96,12 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
   const W5_IDS = ['front_squat', 'bodyweight_squat', 'bodyweight_lunge', 'bodyweight_split_squat', 'preacher_curl', 'hammer_curl', 'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'reverse_curl'];
   const W5_LINE = new RegExp(`^  (?:"lib_(?:${W5_IDS.join('|')})",|lib_(?:${W5_IDS.join('|')}): \\(\\) => |"(?:${W5_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w5Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W5_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
-  // LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615, after D-PF10-W7JOIN): W7's 19 ids add 4 lines each the same way
-  // (HOWTO_IDS, LOADERS, POSTURE, FEEL), 76 lines; no W7 row draws a hand pair, so none has a HAND line. With exactly those
+  // LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615, after D-PF10-W7JOIN): W7's 18 ids (D-SHIP-W7-SLEDHOLD: sled_pull held) add 4 lines each the same way
+  // (HOWTO_IDS, LOADERS, POSTURE, FEEL), 72 lines; no W7 row draws a hand pair, so none has a HAND line. With exactly those
   // taken out first, the W5, W3 and W2 checks below hold unchanged
   const W7_IDS = ['leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion',
     'ab_wheel_rollout', 'bird_dog', 'cable_crunch', 'hollow_body_hold', 'reverse_crunch', 'dead_bug',
-    'kettlebell_swing', 'high_knees', 'sled_pull', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
+    'kettlebell_swing', 'high_knees', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
   const W7_LINE = new RegExp(`^  (?:"lib_(?:${W7_IDS.join('|')})",|lib_(?:${W7_IDS.join('|')}): \\(\\) => |"(?:${W7_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w7Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W7_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
@@ -118,7 +118,7 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
     expect(W4_IDS).toHaveLength(6);
     const w7 = w7Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
-    expect(w7.removed).toBe(76);   // LIB-SHIP W7: W7's lines taken out first (19 x 4)
+    expect(w7.removed).toBe(72);   // LIB-SHIP W7: W7's lines taken out first (18 x 4)
     const w5 = w5Less(w7.text);
     expect(w5.removed).toBe(45);   // LIB-SHIP W5: W5's lines taken out next
     const w3 = w3Less(w5.text);
@@ -129,9 +129,11 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
   });
   it('LIB-SHIP W7 mutations (ruling 3): a W7 line dropped, a HAND line for a W7 id, and another line changed are red', () => {
     const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(w5Less(w7Less(t).text).text).text);
-    expect(t).toContain('  "sled-pull": () => import(\'./posture-sled-pull\'),\n');
-    expect(w7Less(t.replace('  "sled-pull": () => import(\'./posture-sled-pull\'),\n', '')).removed).toBe(75);
-    expect(w7Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"farmer-s-carry\": () => import('./hand-farmer-s-carry'),\n")).removed).toBe(77);
+    expect(t).toContain('  "sled-push": () => import(\'./posture-sled-push\'),\n');
+    expect(w7Less(t.replace('  "sled-push": () => import(\'./posture-sled-push\'),\n', '')).removed).toBe(71);
+    // D-SHIP-W7-SLEDHOLD: sled_pull is held, so loaders.ts has no line for it
+    expect(t).not.toMatch(/sled[-_]pull/);
+    expect(w7Less(t.replace("export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n", "export const HAND: Readonly<Record<string, () => Promise<{ readonly panel: string }>>> = {\n  \"farmer-s-carry\": () => import('./hand-farmer-s-carry'),\n")).removed).toBe(73);
     expect(w2Less(w3Less(w5Less(w7Less(t.replace('export const HAND', 'export const HAND_X')).text).text).text).sha).not.toBe(ok.sha);
   });
   it('LIB-SHIP W5 mutations (ruling 3): a W5 line dropped, a HAND line for a no-pair W5 id, and another line changed are red', () => {

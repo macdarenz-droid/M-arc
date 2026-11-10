@@ -261,18 +261,17 @@
         "lib_leg_extension",
         "lib_lying_leg_curl",
         "lib_standing_leg_curl",
-        "lib_glute_bridge",
         "lib_cable_kickback",
         "lib_resisted_hip_flexion"
       ],
-      "pageSha256": "c9d24c6dacf0e097be1f6487f6eb557e4e3129976fa6e2ed76fc6f71a5379ff8",
-      "bytes": 1482714,
+      "pageSha256": "c7d017510e7611e095f0751e3993f9109493be4f8973291d023184216ea71c73",
+      "bytes": 1202715,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W7-LAYERS",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6711372615 @ a3e5b6e75d494041afbe674c1a5fe227b492f51c",
       "date": "2026-11-09",
       "supersedes": null,
-      "why": "W7 layers approved for the flip set (D-PF10-W7JOIN; supervisor RESUME 2026-11-09): the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception. The page holds exactly the 6 shipped ids, each card byte-equal to its card in the lb08 page judged at a3e5b6e7; the page head loses only the held ids' rules.",
+      "why": "W7 layers approved for the flip set (D-PF10-W7JOIN; supervisor RESUME 2026-11-09): the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception. The page holds exactly the 6 shipped ids, each card byte-equal to its card in the lb08 page judged at a3e5b6e7; the page head loses only the held ids' rules. Edited in place under D-REPIN-UNMERGED for D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge held (its open sheet is over the A3 S0 cap, F-GLUTEBRIDGE-S0); the page holds the 5, each card byte-equal to the c9d24c6d build.",
       "prev": "f56c02760c797efb5eaf8ccdb51eecc926a725ed901a2089571255a8a00efd81"
     }
   ]

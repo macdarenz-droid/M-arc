@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=9109c87c1bfe42b0a92b7c47ccc0af8f205b8ea924b376bd773fae29643eb821
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=575f7a9a66ea45fc3ca9fdd972922dc78fccc32c8f9494ddebed347f12c59f22
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_kettlebell_swing",
