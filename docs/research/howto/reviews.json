@@ -1056,6 +1056,48 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W7-STAMP",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/394#issuecomment-6711372615 @ a3e5b6e75d494041afbe674c1a5fe227b492f51c"
+    },
+    {
+      "scope": "lib_barbell_overhead_press",
+      "hash": "89ac9d8ef975bdebb0f156dc8fba5ff04e35972ed1db832ea317ebd65bd96e75",
+      "date": "2026-11-10",
+      "fetcher": "LIB-SHIP W8a: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/barbell_overhead_press.json",
+      "critic": "LIB-SHIP W8a: blind fresh Opus content critic on the changed sheets with a plant (caught), #413 6760254084",
+      "safety": "LIB-SHIP W8a: earlier wave safety checks stand; no safety line changed in W8a",
+      "reviewer": "LIB-SHIP W8a: the D-PFC-ROUND1 layers panel (#413 6760254084; 3 fresh Opus critics, blind, golden-B anchors, 2 plants caught), the fix round and its rulings (6761492481); every median 4 or more or a ruled exception",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8A-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ 29e4af37a166b4a7e23c577c10386047da419b95"
+    },
+    {
+      "scope": "lib_pec_fly",
+      "hash": "b9d4360723728babeb8da1eb79e9fa530e03a06dc7df49c3a88206716377bd92",
+      "date": "2026-11-10",
+      "fetcher": "LIB-SHIP W8a: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/pec_fly.json",
+      "critic": "LIB-SHIP W8a: blind fresh Opus content critic on the changed sheets with a plant (caught), #413 6760254084; the row label fix ruled in 6761492481",
+      "safety": "LIB-SHIP W8a: earlier wave safety checks stand; no safety line changed in W8a",
+      "reviewer": "LIB-SHIP W8a: the D-PFC-ROUND1 layers panel (#413 6760254084; 3 fresh Opus critics, blind, golden-B anchors, 2 plants caught), the fix round and its rulings (6761492481); every median 4 or more or a ruled exception",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8A-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6761492481 @ bb60cc574a8515dc6e67b3c80195b2cb2ffe6738"
+    },
+    {
+      "scope": "lib_crunch",
+      "hash": "e207294b18d55d84faadf15d86715bfcdd493a364f75ef6f120e1683f36ff41b",
+      "date": "2026-11-10",
+      "fetcher": "LIB-SHIP W8a: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/crunch.json",
+      "critic": "LIB-SHIP W8a: blind fresh Opus content critic on the changed sheets with a plant (caught), #413 6760254084",
+      "safety": "LIB-SHIP W8a: earlier wave safety checks stand; no safety line changed in W8a",
+      "reviewer": "LIB-SHIP W8a: the D-PFC-ROUND1 layers panel (#413 6760254084; 3 fresh Opus critics, blind, golden-B anchors, 2 plants caught); every median 4 or more or a ruled exception",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8A-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ 29e4af37a166b4a7e23c577c10386047da419b95"
     }
   ]
 }

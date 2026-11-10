@@ -1971,15 +1971,96 @@
       "measuredGz": 7709,
       "setBy": "LIB-SHIP",
       "reason": "LIB-SHIP W7: the 16 ship (#394 D-SHIP-W7-STAMP, after D-PF10-W7JOIN; D-SHIP-W7-LAYERS; D-SHIP-W7-SLEDHOLD and D-SHIP-W7-HOLD2: sled_pull, glute_bridge and high_knees held); measured + 10 % on claude/lib-ship-w7 after the merge of main dc058207 and generate."
+    },
+    {
+      "chunk": "ht-barbell-overhead-press-*.js",
+      "rawMax": 48619,
+      "gzMax": 12197,
+      "measuredRaw": 44199,
+      "measuredGz": 11088,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8a: the 3 ship (#413 D-SHIP-W8A-STAMP; D-SHIP-W8A-LAYERS; mountain_climbers held D-W8A-MCFEEL, underhand_lat_pulldown held D-W8A-UNDERHANDHOLD, assisted_pull_up held D-W8A-ASSISTEDHOLD and seated_leg_curl held D-W8A-SEATEDHOLD #415); measured + 10 % on claude/lib-ship-w8a after the merge of main 07f5fbcf and generate."
+    },
+    {
+      "chunk": "feel-barbell-overhead-press-*.js",
+      "rawMax": 27862,
+      "gzMax": 8459,
+      "measuredRaw": 25329,
+      "measuredGz": 7690,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8a: the 3 ship (#413 D-SHIP-W8A-STAMP; D-SHIP-W8A-LAYERS; mountain_climbers held D-W8A-MCFEEL, underhand_lat_pulldown held D-W8A-UNDERHANDHOLD, assisted_pull_up held D-W8A-ASSISTEDHOLD and seated_leg_curl held D-W8A-SEATEDHOLD #415); measured + 10 % on claude/lib-ship-w8a after the merge of main 07f5fbcf and generate."
+    },
+    {
+      "chunk": "posture-barbell-overhead-press-*.js",
+      "rawMax": 24045,
+      "gzMax": 5965,
+      "measuredRaw": 21859,
+      "measuredGz": 5422,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8a: the 3 ship (#413 D-SHIP-W8A-STAMP; D-SHIP-W8A-LAYERS; mountain_climbers held D-W8A-MCFEEL, underhand_lat_pulldown held D-W8A-UNDERHANDHOLD, assisted_pull_up held D-W8A-ASSISTEDHOLD and seated_leg_curl held D-W8A-SEATEDHOLD #415); measured + 10 % on claude/lib-ship-w8a after the merge of main 07f5fbcf and generate."
+    },
+    {
+      "chunk": "ht-pec-fly-*.js",
+      "rawMax": 42651,
+      "gzMax": 10892,
+      "measuredRaw": 38773,
+      "measuredGz": 9901,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8a: the 3 ship (#413 D-SHIP-W8A-STAMP; D-SHIP-W8A-LAYERS; mountain_climbers held D-W8A-MCFEEL, underhand_lat_pulldown held D-W8A-UNDERHANDHOLD, assisted_pull_up held D-W8A-ASSISTEDHOLD and seated_leg_curl held D-W8A-SEATEDHOLD #415); measured + 10 % on claude/lib-ship-w8a after the merge of main 07f5fbcf and generate."
+    },
+    {
+      "chunk": "feel-pec-fly-*.js",
+      "rawMax": 24272,
+      "gzMax": 8236,
+      "measuredRaw": 22065,
+      "measuredGz": 7487,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8a: the 3 ship (#413 D-SHIP-W8A-STAMP; D-SHIP-W8A-LAYERS; mountain_climbers held D-W8A-MCFEEL, underhand_lat_pulldown held D-W8A-UNDERHANDHOLD, assisted_pull_up held D-W8A-ASSISTEDHOLD and seated_leg_curl held D-W8A-SEATEDHOLD #415); measured + 10 % on claude/lib-ship-w8a after the merge of main 07f5fbcf and generate."
+    },
+    {
+      "chunk": "posture-pec-fly-*.js",
+      "rawMax": 19113,
+      "gzMax": 5550,
+      "measuredRaw": 17375,
+      "measuredGz": 5045,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8a: the 3 ship (#413 D-SHIP-W8A-STAMP; D-SHIP-W8A-LAYERS; mountain_climbers held D-W8A-MCFEEL, underhand_lat_pulldown held D-W8A-UNDERHANDHOLD, assisted_pull_up held D-W8A-ASSISTEDHOLD and seated_leg_curl held D-W8A-SEATEDHOLD #415); measured + 10 % on claude/lib-ship-w8a after the merge of main 07f5fbcf and generate."
+    },
+    {
+      "chunk": "ht-crunch-*.js",
+      "rawMax": 68870,
+      "gzMax": 19912,
+      "measuredRaw": 62609,
+      "measuredGz": 18101,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8a: the 3 ship (#413 D-SHIP-W8A-STAMP; D-SHIP-W8A-LAYERS; mountain_climbers held D-W8A-MCFEEL, underhand_lat_pulldown held D-W8A-UNDERHANDHOLD, assisted_pull_up held D-W8A-ASSISTEDHOLD and seated_leg_curl held D-W8A-SEATEDHOLD #415); measured + 10 % on claude/lib-ship-w8a after the merge of main 07f5fbcf and generate."
+    },
+    {
+      "chunk": "feel-crunch-*.js",
+      "rawMax": 27552,
+      "gzMax": 8495,
+      "measuredRaw": 25047,
+      "measuredGz": 7722,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8a: the 3 ship (#413 D-SHIP-W8A-STAMP; D-SHIP-W8A-LAYERS; mountain_climbers held D-W8A-MCFEEL, underhand_lat_pulldown held D-W8A-UNDERHANDHOLD, assisted_pull_up held D-W8A-ASSISTEDHOLD and seated_leg_curl held D-W8A-SEATEDHOLD #415); measured + 10 % on claude/lib-ship-w8a after the merge of main 07f5fbcf and generate."
+    },
+    {
+      "chunk": "posture-crunch-*.js",
+      "rawMax": 35549,
+      "gzMax": 6741,
+      "measuredRaw": 32317,
+      "measuredGz": 6128,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8a: the 3 ship (#413 D-SHIP-W8A-STAMP; D-SHIP-W8A-LAYERS; mountain_climbers held D-W8A-MCFEEL, underhand_lat_pulldown held D-W8A-UNDERHANDHOLD, assisted_pull_up held D-W8A-ASSISTEDHOLD and seated_leg_curl held D-W8A-SEATEDHOLD #415); measured + 10 % on claude/lib-ship-w8a after the merge of main 07f5fbcf and generate."
     }
   ],
   "perId": [
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 69,
-      "rawMax": 43273,
-      "gzMax": 10323,
+      "n": 72,
+      "rawMax": 45154,
+      "gzMax": 10772,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -1989,8 +2070,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 12566393,
-      "gzMax": 3167051,
+      "rawMax": 13112758,
+      "gzMax": 3304749,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=2c3c16d3391ae48add07fa313cef09687044b24f772ca79b8db4e79ee24e264a
+{
+  "id": "lib_pec_fly",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/pec_fly.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-top3-chest",
+    "vg-pecfly",
+    "hl-pecdeck",
+    "pinto-2025",
+    "soncin-2014",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

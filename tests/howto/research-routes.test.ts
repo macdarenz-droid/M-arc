@@ -10,6 +10,7 @@ import { pf2Problems, restorePF2 } from './platefix2-pins';
 import { lessW5 } from './lib-ship-w5';
 import { pf3bProblems, restorePF3b } from './platefix3b-pins';
 import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
+import { lessW8a } from './checks/ship-w8a';
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
@@ -70,6 +71,13 @@ describe('RESEARCH-ROUTES-1 P1-b/P1-c: the ruled fields left inherit[] (F-W4-INH
 // LIB-SHIP W6 (#393): the 23 lb06/lb07 rows (D-SHIP-MOVE; [golden update] pin commits); each must pin its files' current sha256,
 // then it is taken out (the lib-shapes / pair-faults form), so every other entry is compared as before.
 const W6_ROWS = ['lb06', 'lb07'].flatMap(b => Object.keys(JSON.parse(rd(`tools/plates/library/batches/${b}.json`)).rows));
+// LIB-SHIP W8a (ruling 3; #413 6761492481): the MANIFEST with W8a's moved keys checked against their files and put back to
+// main 07f5fbcf's values (checks/ship-w8a.ts); a problem is red
+const manifestLessW8a = () => {
+  const bad: string[] = [], m = lessW8a(JSON.parse(rd('tools/plates/library/MANIFEST.json')), k => sha(readFileSync(join(ROOT, k))), bad, PF_W2_KEYS);   // pilot A's PF keys: pfW2Problems checks and blanks them
+  if (bad.length) throw new Error(`LIB-SHIP W8a MANIFEST: ${bad.join('; ')}`);
+  return m;
+};
 const lessW6 = (m: any) => {
   for (const id of W6_ROWS) {
     if (!(id in m.rows)) throw new Error(`LIB-SHIP W6: ${id} has no MANIFEST row`);
@@ -141,7 +149,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     // (each must be present) and blanks the W4-moved keys (each must pin its current file); LIB-SHIP W3's lessW3 then takes
     // out W3's 13 rows and puts main's crop.mjs / zoom-css.mjs / build-layers-page.mjs shas back (merge of main 62d3dcb6: both lanes kept)
     // LIB-PLATEFIX-2 (#395): pf2Main then checks its moved keys and entry and puts main 7e060e83's back (merge of main 6227bd8e)
-    const m = lessW3(pf2Main(lessW4(lessW5(lessW6(JSON.parse(rd('tools/plates/library/MANIFEST.json')))), k => sha(readFileSync(join(ROOT, k))))), [PF_W2_KEYS[0]!]);   // LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems
+    const m = lessW3(pf2Main(lessW4(lessW5(lessW6(manifestLessW8a())), k => sha(readFileSync(join(ROOT, k))))), [PF_W2_KEYS[0]!]);   // LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems
     // LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows, each listing the box; taken out again by lessW7 before the sha
     const W7_ROWS = ['lib_hack_squat', 'lib_pendulum_squat', 'lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion', 'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_side_plank', 'lib_superman', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug', 'lib_v_up', 'lib_kettlebell_swing', 'lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry', 'lib_jumping_jacks', 'lib_wall_ball'];
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
@@ -180,7 +188,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     const m = lessW5(JSON.parse(rd('tools/plates/library/MANIFEST.json'))), row: any = Object.values(m.rows).find((r: any) => PF_W2_KEYS[0]! in r.files);   // LIB-SHIP W5: lessW5 first
     row.files[PF_W2_KEYS[0]!] = '0'.repeat(64);
     expect(pfW2Problems(m, 'X')).toHaveLength(1);
-    const o = rrBlanked(pf2Main(lessW5(lessW6(JSON.parse(rd('tools/plates/library/MANIFEST.json'))))));   // LIB-SHIP W5: W5's 27 rows out first; LIB-SHIP W6 merge: W6's 23 before them
+    const o = rrBlanked(pf2Main(lessW5(lessW6(manifestLessW8a()))));   // LIB-SHIP W8a: its moves put back first   // LIB-SHIP W5: W5's 27 rows out first; LIB-SHIP W6 merge: W6's 23 before them
     // LIB-SHIP W7 (PIN GO #394 6649092340): the 29 W7 rows are taken out before main's sha, as in the test above
     const w7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(JSON.parse(rd(`tools/plates/library/batches/${b}.json`)).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
     expect(w7).toHaveLength(29);

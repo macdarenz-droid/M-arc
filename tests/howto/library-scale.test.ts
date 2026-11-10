@@ -62,11 +62,14 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
       // D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge and high_knees held; merge of main dc058207: both lanes
       'leg-extension', 'lying-leg-curl', 'standing-leg-curl', 'cable-kickback', 'resisted-hip-flexion',
       'ab-wheel-rollout', 'bird-dog', 'cable-crunch', 'hollow-body-hold', 'reverse-crunch', 'dead-bug',
-      'kettlebell-swing', 'bear-crawl', 'sled-push', 'medicine-ball-slam', 'farmer-s-carry'];
+      'kettlebell-swing', 'bear-crawl', 'sled-push', 'medicine-ball-slam', 'farmer-s-carry',
+      // LIB-SHIP W8a (ruling 3; #413 6761492481): none of its 3 draws a hand pair (barbell_overhead_press on the no-zoom list,
+      // D-SHIP-Q1; pec_fly and crunch archetype none); assisted_pull_up and seated_leg_curl held (D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD #415)
+      'barbell-overhead-press', 'pec-fly', 'crunch'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     // LIB-SHIP W5: 14 -> 19, plus W5's 5 pair curls (preacher, alternating dumbbell, barbell, ez bar, reverse), registry order
-    // LIB-SHIP W7: stays 19 (W7 adds no hand pair)
+    // LIB-SHIP W7: stays 19 (W7 adds no hand pair); LIB-SHIP W8a: stays 19 (W8a adds no hand pair)
     expect(handIds).toHaveLength(19);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
     expect(keys.HAND).toEqual(handIds);
     expect(mapProblems({ ...keys, HAND: keys.POSTURE }, chromeIds)).toEqual([]);

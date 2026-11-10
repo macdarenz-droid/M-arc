@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=6cc23690d5caeab4b64c01964b76b660131d6d1f71da398b5ee653fd767141d2
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=ff5d2315ca5d9bc853aa75af95ff777a445ca5939160ca9e03f4a9e3e208bfde
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_triceps_pushdown",

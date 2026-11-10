@@ -2810,3 +2810,72 @@ cue "Bending the elbows more than slightly turns the fly into a press." (c11). T
 normalOverlay, tempo, alt and mistakeAlt are byte-equal to mx14. mistakeSvg moves only the label's leader end (M156.53 185.94
 L151.5 250 → L151.39 254); mistakeOverlay, tells and cues carry the text. The lb6 mx14 APPROVED line is re-pinned in the
 D-PLATEFIX-PINS form, with a red that puts the old text back. lb06 page 8c7ede8a → 5cea2ed7 (both built twice).
+
+## W8a PLAN (base main d7b650a3, train 84; plan-w8.md §1-3 W8a row, D-PLAN-W8)
+
+Seven ids on four pinned pages. Every page is pinned on main, so each re-pin is an appended superseding entry
+(`'supervisor'`, point 4 for layers-page; D-BODYMAP-APPEND), never an edit of main's entry. Every card here has
+`parent: null, inherit: []` except underhand_lat_pulldown (parent lat_pulldown, 2 fields, mapped at
+tools/plates/library/lint/family.mjs:69). None is in a later wave's list; none has a way-out gap (ruling 7 list).
+
+| id | batch, stage | plan-w8 blocker | gone on d7b650a3? | changed since last layers check | check |
+|---|---|---|---|---|---|
+| pec_fly | pilot-a, AP | D-SHIP-PECFLY-HOLD (PQ-H4 overlap); F-PECFLY-FEELROW | H4: yes, PF2 plate re-pin golden/library/pilot-a.json entries[24] (owner, pf4 #395 6648800268) and the LIB-PLATEFIX-2 gate block. FEELROW: **no**, lib_pec_fly.howto.mjs:98 `where: 'Shoulder pain'` = RED_FLAG_SHOULDER.name (layers/howto/shared.mjs:22), so HT9/A3 counts 2 | plate (W1 page 11-03; plate 11-07); sheet gets the row title | D-PFC-ROUND1 |
+| barbell_overhead_press | pilot-a, AP | PF1 hold, 3b item 23 | yes: pf10 approved (#408 6704679655), pilot-a.json entries[19], [25] (owner) | plate (last layers W2 entry [15] 11-04; plate 11-06, 11-07) | D-PFC-ROUND1 |
+| mountain_climbers | pilot-a, AP | L4 copy/map, L7 framing (#384 6653062201) | **no**: feelLine lib_mountain_climbers.howto.mjs:157 names shoulders and arms, the map shades abs, obliques, hip_flexors (:149-155); hip-line crop :128 (sizePx 170 on the buttock); hand panel 170 | sheet (plate unchanged since entries[12] 10-24) | D-PFC-ROUND1 |
+| seated_leg_curl | pilot-b, AP | Q-W2-7 hold: no posture zoom (gen/zooms.mjs:71 then) | yes: F-ZOOM-NONE (#388, train 69) gen/zooms.mjs:77-90 `textZoomRow`; needs its tools/plates/library/text-zooms.json entry (file rule: "added by the wave that ships the row") | neither: plate pilot-b.json entries[2] 10-25, sheet 17e689c2 (11-04, W2 content PASS #379) | delta check (W5-FLIPSET form) on the rebuilt pilot-b page |
+| crunch | pilot-b2, AP | Q-W2-6 hold: plate.css lacks pz-* | yes: src/slices/howto/css/plate.css:5-7 (F-PLATE-ZOOMCSS, train 67) | plate (W2 layers entries[2] 11-04; PF1 plate entries[6] 11-06); it is already on the pilot-b2 page (entries[7] D-PLATEFIX-SECOND) | D-PFC-ROUND1 |
+| underhand_lat_pulldown | lb01, AP | PF3 item 1 | yes: pf7 approved (#405 6685743439), lb01.json entries[14] (owner) after layers entries[13] | plate | D-PFC-ROUND1 |
+| assisted_pull_up | lb01, AP | W3 R5 hold, 3b item A | yes: pf10 approved (#408 6704679655), lb01.json entries[17] (owner) | plate (W3 layers approval stands) | D-PFC-ROUND1 |
+
+**Flip set (exact, if all pass):** pilot-a: barbell_overhead_press, pec_fly, mountain_climbers; pilot-b: seated_leg_curl;
+pilot-b2: crunch; lb01: underhand_lat_pulldown, assisted_pull_up. A second layers failure holds that id (D-LIB13-PANEL2)
+and drops it from the set.
+
+**Page work (step 3):**
+- pilot-a layers: add the 3 ids (OHP back from eea49fa3; pec_fly back from 70dff949; mountain_climbers in the c1ab9d5e
+  form: pair `palm-flat-floor-over`, pairFaults `['hand-ahead']`).
+- pilot-b layers: add seated_leg_curl (removed under Q-W2-7).
+- lb01 layers: add both ids (the config e351f554 removed: `KEYED('ulp', 282)`, `BACK(KEYED('apu', 250))` stay in lb01.closeups.mjs:26, :29).
+- pilot-b2 layers: no config change. Rebuild twice; re-pin only if a byte moves.
+- Sheets: pec_fly row title (Q-W8a-1); mountain_climbers L4, L7 and its screen-reader feel labels citing c11, c12 (Q-W8a-2, -3).
+
+**Flip work (step 4, after W8a LAYERS APPROVED):** reviews.json from the STAMP comment; stages; text-zooms.json entry
+`lib_seated_leg_curl: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'knee-pivot': 'pivot', 'ankle-pad': 'ankle-pad' } }`;
+generate; budgets at measured + 10 %; guards in the exact-ruled-set form (lib-ship.test.ts RULED_SHIPPED :37 and its
+header :22-27, the lb01 page count :1250, lib11-pilot-b and F-ZOOM-NONE A2 sets), old mutations still red.
+
+### W8a questions (for 'SHIP W8a PLAN RULED')
+- **Q-W8a-1 pec_fly row title (F-PECFLY-FEELROW).** The card's own row is titled "Shoulder pain" (cards/pec_fly.json
+  feel.rows[1]), so "the card's word" is c8's. Recommended: "Front of the shoulder" (c8: "a vulnerable position for the
+  front of the joint"; the row marks front_delts). `redFlag: 'shoulder'` stays. Red: the old title turns HT9/A3 red.
+  Alternative: "Shoulder" (the W6 cable_chest_press form).
+- **Q-W8a-2 mountain_climbers L4.** Recommended: the line matches the map: "You should feel this in your belly and the
+  front of your hips." (c11). Shading shoulders and arms would add muscle ids that are not in the card's feel lists,
+  which is a research edit. The "Belly, shoulders and arms" card row stays left out as now (no fix).
+- **Q-W8a-3 mountain_climbers L7.** Recommended: the hip-line crop is re-centred and sized to frame head to heels, with
+  the spine guide (plank's `css.spine`, pilot-a.closeups.mjs:17); the hand panel uses 282, the reference height of the
+  single-hand pages (lb01.closeups.mjs:18-29, lb05.closeups.mjs). Numbers are measured at build and listed in LAYERS
+  READY; the panel judges.
+- **Q-W8a-4 seated_leg_curl check form.** Recommended: a delta check (plate and sheet unchanged since W2's PASS), on the
+  rebuilt pilot-b page, plus the text-zooms entry above. The other option is a full D-PFC-ROUND1 check.
+- **Q-W8a-5 crunch page.** Recommended: no config change; pilot-b2's page is rebuilt twice and re-pinned only if its
+  sha256 moves. Its layers check runs on that page.
+
+### W8a rulings and holds (#413, #415)
+- Ships 3: barbell_overhead_press, pec_fly, crunch.
+- Held at approved-plate:
+  - mountain_climbers: D-W8A-MCFEEL, F-HAND-PALMFLAT-SIZE.
+  - underhand_lat_pulldown: D-W8A-UNDERHANDHOLD, F-UNDERHAND-PQH1.
+  - assisted_pull_up: D-W8A-ASSISTEDHOLD (#415 Q-W8a-8). lb01 stays on main's pin.
+  - seated_leg_curl: D-W8A-SEATEDHOLD (#415 Q-W8a-9). pilot-b stays on main's pin.
+- Follow-ups:
+  - **F-LAYERS-MGHOST:** the layers build never calls applyMistakeGhosts, so a spec with `mistakeGhosts: false` shows its
+    start pose and ghosts in the layers page's Mistake plate, and the page fails HT4/A5-fragments against the plates pin.
+  - **F-HT4-UNDER:** twins/ht4.mjs `sideOf` does not attribute the `<key>-under` call that crop.mjs draws for a
+    `wrong.under` zoom (the faded Right plate).
+  - **F-HT10-TEXTZOOM:** library/fidelity.mjs's HT10 sweep floor (15 script steps) is fixed for every row. A shipped
+    text-zoom row (no posture close-up) probes one step fewer, so it needs an exact, derived floor first.
+  - Also open: F-PLATE-SIDEVIEW, F-TEMPO-NOSECONDS, F-NOGRIP-MISTAKES.
+- Branch: the work moved to claude/lib-ship-w8a-2 (#415, D-SHIP-W8A-REBRANCH). Every MANIFEST commit there carries
+  `[golden update]`.

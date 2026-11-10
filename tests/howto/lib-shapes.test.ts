@@ -111,6 +111,11 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     'kettlebell_swing', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
   const W7_LINE = new RegExp(`^  (?:"lib_(?:${W7_IDS.join('|')})",|lib_(?:${W7_IDS.join('|')}): \\(\\) => |"(?:${W7_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w7Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W7_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
+  // LIB-SHIP W8a (ruling 3; #413 6761492481; D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD #415): its 3 ids add 12 lines (HOWTO_IDS,
+  // LOADERS, POSTURE and FEEL each; no HAND line). With exactly those taken out first, the W7 chain below holds
+  const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'crunch'];
+  const W8A_LINE = new RegExp(`^  (?:"lib_(?:${W8A_IDS.join('|')})",|lib_(?:${W8A_IDS.join('|')}): \\(\\) => |"(?:${W8A_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+  const w8aLess = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W8A_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
   it('the 27 header-moved files: each body (all but line 1) equals main c4c34d75 (re-measured after train 63)', () => {
     const list = [...ROWS.map(i => `src/howto/generated/hand-${i}.ts`), ...ROWS.map(i => `src/howto/generated/posture-${i}.ts`),
@@ -124,8 +129,10 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
     expect(W4_IDS).toHaveLength(6);
-    const w7 = w7Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
-    expect(w7.removed).toBe(64);   // LIB-SHIP W7: W7's lines taken out first (16 x 4)
+    const w8a = w8aLess(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    expect(w8a.removed).toBe(12);   // LIB-SHIP W8a: its lines taken out first
+    const w7 = w7Less(w8a.text);
+    expect(w7.removed).toBe(64);   // LIB-SHIP W7: W7's lines taken out next (16 x 4)
     const w6 = w6Less(w7.text);
     expect(w6.removed).toBe(28);   // LIB-SHIP W6: W6's lines taken out next (merge of main de91dd21; merge of main dc058207)
     const w5 = w5Less(w6.text);
@@ -136,8 +143,17 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // with its 4 ids' 16 lines also taken out (merge of main 7e060e83: 32 + 24 + 16 = 72), the body is still main's 00a18e3c
     expect(w2Less(w3.text)).toEqual({ removed: 32 + 24 + 16, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
   });
+  it('LIB-SHIP W8a mutations (ruling 3): a W8a line dropped, a HAND line for a W8a id, and another line changed are red', () => {
+    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(t).text).text).text).text).text);
+    expect(ok.sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
+    expect(t).toContain('  "crunch": () => import(\'./posture-crunch\'),\n');
+    expect(w8aLess(t.replace('  "crunch": () => import(\'./posture-crunch\'),\n', '')).removed).toBe(11);
+    expect(w8aLess(t.replace('  "crunch": () => import(\'./posture-crunch\'),\n', '  "crunch": () => import(\'./posture-crunch\'),\n  "crunch": () => import(\'./hand-crunch\'),\n')).removed).toBe(13);
+    expect(t).not.toMatch(/mountain[-_]climbers|underhand[-_]lat[-_]pulldown|assisted[-_]pull[-_]up|seated[-_]leg[-_]curl/);   // D-W8A-MCFEEL, D-W8A-UNDERHANDHOLD, D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD: held, no line
+    expect(w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(t.replace('export const HAND', 'export const HAND_X')).text).text).text).text).text).sha).not.toBe(ok.sha);
+  });
   it('LIB-SHIP W7 mutations (ruling 3): a W7 line dropped, a HAND line for a W7 id, and another line changed are red', () => {
-    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(w5Less(w6Less(w7Less(t).text).text).text).text);
+    const t = w8aLess(readFileSync('src/howto/generated/loaders.ts', 'utf8')).text, ok = w2Less(w3Less(w5Less(w6Less(w7Less(t).text).text).text).text);
     expect(t).toContain('  "sled-push": () => import(\'./posture-sled-push\'),\n');
     expect(w7Less(t.replace('  "sled-push": () => import(\'./posture-sled-push\'),\n', '')).removed).toBe(63);
     // D-SHIP-W7-SLEDHOLD: sled_pull is held, so loaders.ts has no line for it
@@ -156,7 +172,7 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
   it('LIB-SHIP W6 mutations: a W6 line dropped, a HAND line for a no-pair W6 id, and another line changed are red', () => {
     // merge of main de91dd21: W5's lines are taken out too (w5Less after w6Less), as in the body test above; merge of main
     // dc058207 (LIB-SHIP W7): W7's lines are taken out first
-    const t = w7Less(readFileSync('src/howto/generated/loaders.ts', 'utf8')).text, ok = w2Less(w3Less(w5Less(w6Less(t).text).text).text);
+    const t = w7Less(w8aLess(readFileSync('src/howto/generated/loaders.ts', 'utf8')).text).text, ok = w2Less(w3Less(w5Less(w6Less(t).text).text).text);   // LIB-SHIP W8a: its lines out first
     expect(ok.sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
     expect(t).toContain('  "face-pull": () => import(\'./posture-face-pull\'),\n');
     expect(w6Less(t.replace('  "face-pull": () => import(\'./posture-face-pull\'),\n', '')).removed).toBe(27);
