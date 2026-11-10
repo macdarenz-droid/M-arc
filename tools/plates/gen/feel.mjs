@@ -201,11 +201,27 @@ export function librarySection(row, r) {
 export const EMPTY_MEANS = Object.freeze(['<p><b>Usually means</b></p>', '<p><b>Usually means</b>undefined</p>']);
 export const dropEmptyMeans = section => EMPTY_MEANS.reduce((s, p) => s.split(p).join(''), section);
 
+/** D-SHIP-W6-NOPRIMARY (#393 6647923934): a sheet whose card gives no primary muscle (feel.primary []). Golden B's feel
+ *  map then speaks "Where you should feel it. Main: ." (layers/engine/feelmap.mjs label) and its legend always shows the
+ *  Main swatch. For such a section only (it carries NOPRIMARY_MARK, which a sheet with a drawn primary never does: C2
+ *  refuses a text-only primary), every " Main: ." clause and the one Main legend span are cut. Every other section is
+ *  returned unchanged, so the 8 and every shipped feel body stay byte-identical. build-layers-page.mjs applies the same
+ *  cut to the layers page (its 'feel no primary' patch reads these constants). */
+export const NOPRIMARY_MARK = 'aria-label="Where you should feel it. Main: .';
+export const NOPRIMARY_CLAUSE = ' Main: .';
+export const MAIN_LEGEND_SPAN = '<span><svg class="feel-sw sw-pri" viewBox="0 0 14 14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="3"/></svg>Main</span>';
+export const dropEmptyPrimary = section => {
+  if (!section.includes(NOPRIMARY_MARK)) return section;
+  const n = section.split(MAIN_LEGEND_SPAN).length - 1;
+  if (n !== 1) throw new Error(`feel: an empty-primary section has ${n} Main legend spans (expected 1)`);
+  return section.split(NOPRIMARY_CLAUSE).join('').replace(MAIN_LEGEND_SPAN, '');
+};
+
 async function outputsOf() {
   const r = await renderAll(), { sections, css } = r;
   return [
     ...sections.map(s => ({ path: `src/howto/generated/${chunkName(s.pre)}.ts`, text: moduleText(s.id, s.pre, dropEmptyMeans(s.section)) })),
-    ...libraryRows().map(row => ({ path: `src/howto/generated/${chunkName(row.chromeId)}.ts`, text: moduleText(row.id, row.chromeId, dropEmptyMeans(librarySection(row, r))) })),
+    ...libraryRows().map(row => ({ path: `src/howto/generated/${chunkName(row.chromeId)}.ts`, text: moduleText(row.id, row.chromeId, dropEmptyPrimary(dropEmptyMeans(librarySection(row, r)))) })),
     { path: CSS_OUT, text: css },
   ];
 }

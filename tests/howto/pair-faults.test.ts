@@ -232,6 +232,21 @@ const PF3_ZOOM = 'tools/plates/library/render/closeup/zoom.mjs';
 // this is main 8841246c's MANIFEST.json with MOVED, W2, RR_BOX, PF3_ZOOM and PLATEFIX blanked (measured on main 8841246c's own MANIFEST).
 // LIB-SHIP W4 (merge of main 7e060e83): main's 8fa7f168… with lessW4's blanks too (W4's rows out, the smith-sheet key blanked)
 const MANIFEST_BLANKED_MAIN_W2 = '0c2e20c4f717b0008c8ba5728aa86800caafa8bb03c6de6a4904eff61448ffef';
+// LIB-SHIP W6 (#393): W6 adds the 23 lb06/lb07 rows (D-SHIP-MOVE; [golden update] pin commits) and moves no key of an older
+// row past build-layers-page.mjs (already blanked as a W2 key). lessW6 checks each W6 row pins its files' current sha256
+// and removes it, so every other entry is still compared as before (merge of main 7e060e83: with the W6 rows out, every
+// older row equals main 7e060e83's MANIFEST but for build-layers-page.mjs, so main's value above stands unchanged; merge of
+// main de91dd21: the same, main de91dd21's 0c2e20c4… stands unchanged with lessW6 applied first).
+const W6_ROWS = [...Object.keys(JSON.parse(readFileSync(join(__dirname, '../..', 'tools/plates/library/batches/lb06.json'), 'utf8')).rows),
+  ...Object.keys(JSON.parse(readFileSync(join(__dirname, '../..', 'tools/plates/library/batches/lb07.json'), 'utf8')).rows)];
+const lessW6 = (m: any) => {
+  for (const id of W6_ROWS) {
+    if (!(id in m.rows)) throw new Error(`LIB-SHIP W6: ${id} has no MANIFEST row`);
+    for (const [k, v] of Object.entries<any>(m.rows[id].files)) if (v !== sha(readFileSync(join(__dirname, '../..', k)))) throw new Error(`LIB-SHIP W6: ${id} ${k} does not pin its file`);
+    delete m.rows[id];
+  }
+  return m;
+};
 describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   const read = (p: string) => readFileSync(join(__dirname, '../..', p));
   /** The manifest less W2's changes (red if a W2 key does not pin its current file, or an added key is missing). */
@@ -250,7 +265,8 @@ describe('F-PAIR-FAULTS A2: the MANIFEST blanked-keys test', () => {
   // W4-moved keys ('' as blanked() does), each checked first
   const raw = () => JSON.parse(read('tools/plates/library/MANIFEST.json').toString());
   // LIB-PLATEFIX-2 (#395): pf2Main then checks its moved keys and entry and puts main 7e060e83's back (merge of main 6227bd8e)
-  const current = () => pf2Main(lessW4(raw(), k => sha(read(k)), ''));
+  // LIB-SHIP W6 (merge of main de91dd21): lessW6 first, the 23 W6 rows checked and taken out, as before the merge
+  const current = () => pf2Main(lessW4(lessW6(raw()), k => sha(read(k)), ''));
   // LIB-SHIP W3 (D-SHIP-A9 guard replacement): W3's lb01 and zoom pins add these 13 rows, and W3 PANEL FIX 2 (f561ff71,
   // #384 6649416891) moves crop.mjs and zoom-css.mjs in every row. Each W3 row must be there and each moved key must pin
   // its current file; with the rows removed and main 5023f5c6's sha put back, every other entry is main's

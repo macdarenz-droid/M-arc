@@ -1350,15 +1350,204 @@
       "measuredGz": 12677,
       "setBy": "LIB-SHIP",
       "reason": "LIB-SHIP W5: the 10 ship (#392 D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, D-SHIP-W5-STAMP); measured + 10 % on claude/lib-ship-w5 after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-machine-crunch-*.js",
+      "rawMax": 43166,
+      "gzMax": 10353,
+      "measuredRaw": 39241,
+      "measuredGz": 9411,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-machine-crunch-*.js",
+      "rawMax": 60853,
+      "gzMax": 9298,
+      "measuredRaw": 55320,
+      "measuredGz": 8452,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-machine-crunch-*.js",
+      "rawMax": 26451,
+      "gzMax": 8402,
+      "measuredRaw": 24046,
+      "measuredGz": 7638,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-machine-lateral-raise-*.js",
+      "rawMax": 45821,
+      "gzMax": 10337,
+      "measuredRaw": 41655,
+      "measuredGz": 9397,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-machine-lateral-raise-*.js",
+      "rawMax": 20730,
+      "gzMax": 5134,
+      "measuredRaw": 18845,
+      "measuredGz": 4667,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-machine-lateral-raise-*.js",
+      "rawMax": 25401,
+      "gzMax": 8181,
+      "measuredRaw": 23091,
+      "measuredGz": 7437,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-cable-lateral-raise-*.js",
+      "rawMax": 43196,
+      "gzMax": 10008,
+      "measuredRaw": 39269,
+      "measuredGz": 9098,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-cable-lateral-raise-*.js",
+      "rawMax": 46093,
+      "gzMax": 6852,
+      "measuredRaw": 41902,
+      "measuredGz": 6229,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-cable-lateral-raise-*.js",
+      "rawMax": 27911,
+      "gzMax": 8455,
+      "measuredRaw": 25373,
+      "measuredGz": 7686,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-dumbbell-front-raise-*.js",
+      "rawMax": 42558,
+      "gzMax": 9465,
+      "measuredRaw": 38689,
+      "measuredGz": 8604,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-dumbbell-front-raise-*.js",
+      "rawMax": 50832,
+      "gzMax": 6801,
+      "measuredRaw": 46210,
+      "measuredGz": 6182,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-dumbbell-front-raise-*.js",
+      "rawMax": 25445,
+      "gzMax": 8308,
+      "measuredRaw": 23131,
+      "measuredGz": 7552,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-face-pull-*.js",
+      "rawMax": 38111,
+      "gzMax": 9410,
+      "measuredRaw": 34646,
+      "measuredGz": 8554,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-face-pull-*.js",
+      "rawMax": 32040,
+      "gzMax": 6010,
+      "measuredRaw": 29127,
+      "measuredGz": 5463,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-face-pull-*.js",
+      "rawMax": 24872,
+      "gzMax": 8238,
+      "measuredRaw": 22610,
+      "measuredGz": 7489,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-incline-push-up-*.js",
+      "rawMax": 39536,
+      "gzMax": 9619,
+      "measuredRaw": 35941,
+      "measuredGz": 8744,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-incline-push-up-*.js",
+      "rawMax": 31930,
+      "gzMax": 6307,
+      "measuredRaw": 29027,
+      "measuredGz": 5733,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-incline-push-up-*.js",
+      "rawMax": 25582,
+      "gzMax": 8413,
+      "measuredRaw": 23256,
+      "measuredGz": 7648,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "ht-pike-push-up-*.js",
+      "rawMax": 36630,
+      "gzMax": 9163,
+      "measuredRaw": 33300,
+      "measuredGz": 8330,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "posture-pike-push-up-*.js",
+      "rawMax": 31643,
+      "gzMax": 7041,
+      "measuredRaw": 28766,
+      "measuredGz": 6400,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
+    },
+    {
+      "chunk": "feel-pike-push-up-*.js",
+      "rawMax": 27054,
+      "gzMax": 8483,
+      "measuredRaw": 24594,
+      "measuredGz": 7711,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W6: the 7 ship (#393 6689822595 flip set, 6701002884 ships 7; D-SHIP-W6-STAMP); measured + 10 % on claude/lib-ship-w6 at b00d309a after the pin, flip and generate."
     }
   ],
   "perId": [
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 46,
-      "rawMax": 28849,
-      "gzMax": 6882,
+      "n": 53,
+      "rawMax": 33239,
+      "gzMax": 7929,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -1368,8 +1557,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 8377596,
-      "gzMax": 2111368,
+      "rawMax": 9652447,
+      "gzMax": 2432663,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

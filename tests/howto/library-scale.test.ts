@@ -52,7 +52,10 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
       'pendlay-row', 'landmine-row', 't-bar-row', 'barbell-shrug', 'cable-shrug', 'smith-machine-shrug',
       // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): front_squat (gap-key) and hammer_curl (hands/no-zoom.json,
       // D-SHIP-W5-HAMMER) ship with no hand pair under D-SHIP-C3; the 3 bodyweight lower-body ids are archetype none
-      'front-squat', 'hammer-curl', 'bodyweight-squat', 'bodyweight-lunge', 'bodyweight-split-squat'];
+      'front-squat', 'hammer-curl', 'bodyweight-squat', 'bodyweight-lunge', 'bodyweight-split-squat',
+      // LIB-SHIP W6 (ruling 3; #393 6689822595 / 6701002884): all 7 shipped W6 ids are on hands/no-zoom.json (5 card-no-zoom,
+      // dumbbell_front_raise and face_pull gap-ruled D-SHIP-HANDW6), so none carries a hand; HAND stays the 19 (merge of main de91dd21)
+      'machine-crunch', 'machine-lateral-raise', 'cable-lateral-raise', 'dumbbell-front-raise', 'face-pull', 'incline-push-up', 'pike-push-up'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     // LIB-SHIP W5: 14 -> 19, plus W5's 5 pair curls (preacher, alternating dumbbell, barbell, ez bar, reverse), registry order

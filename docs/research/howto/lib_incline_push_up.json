@@ -1,0 +1,19 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ede7e4d619867f7992804cd85af2f277fc0d95be0c48a77c0f5404d62bf3d98a
+{
+  "id": "lib_incline_push_up",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/incline_push_up.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-incline",
+    "nasm-incline",
+    "sl-incline",
+    "hand-key-palm-flat",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}
