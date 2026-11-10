@@ -277,7 +277,9 @@ describe('C4: the affected rule is ordered and fail-safe (real git repo)', { tim
   });
 });
 
-describe('C4 class 3: the per-output inputs map, proven against every generated header', { timeout: 600_000 }, () => {
+// LIB-SHIP W7 (D-SHIP-W7-C4, the D-SHIP-W3-WALKTIME form): 600 s -> 1200 s (2x); with 69 shipped rows "the map is proven" took
+// 540.1 s (unit-tz America/New_York), 538.8 s (source-gate), 297.8 s (unit-tz Asia/Manila) on 2917e021's CI, run 42756107480; no assertion change
+describe('C4 class 3: the per-output inputs map, proven against every generated header', { timeout: 1_200_000 }, () => {
   let F: any, tree: string, base: string;
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ new URL('./fixtures/lib2b/fixture.mjs', import.meta.url).href);
