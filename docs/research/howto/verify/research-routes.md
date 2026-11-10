@@ -85,6 +85,9 @@ PubMed: `"pendulum squat"`: 9 hits. None names the machine's pivot; 7595979 is a
   - The claim names the Primal Pendulum Squat, as the page does. c6 and c7 are not edited.
 - (b) No source names the pivot. wff-pend names the loading contact, not what rides the arc: "the shoulder pads or hip pads providing the loading contact point" and "The load is applied through the shoulders or at the hips depending on the machine design". So no claim is made.
 - Edit: in plate.frames, only "Trace follows the knee." changes, to "Trace follows the machine's pendulum arc (c23)." Which point the plate draws is PF4's call.
+- Fix round: c23's text now says only what its quotes say (#414 6759815425, fix 4).
+
+Finding F-RR4-4 (for PF4; no field change, since the field is outside this card): plate.equipment (pendulum_squat.json, the `equipment` line) says "swinging arm on a pivot" and cites c1 and c4. No read quote names a pivot (see (b)), so that word is a drawing convention, not a sourced fact.
 
 ### Q5 goblet_squat: NO SOURCE (thumb, wrist, way-out)
 
@@ -191,21 +194,21 @@ Finding F-RR4-3 (archetype, for the supervisor; Q-W6-6, LR-10): no source gives 
     - "you heard a snap, grinding or popping noise at the time of injury"
     - "you are not able to walk"
 - The page has no 999, A&E or urgent-GP tier.
-- New claims, each from nhs-ankle with CONSENSUS (c14 is not edited):
-  - **c18**: the 5th GP bullet (diabetes and foot pain).
-  - **c19**: the Important box (a suspected broken ankle → urgent help, as c14 words the 111 tier).
-- (b) The draft, in the LR-27 R1 form of the knee box:
+- New claim, from nhs-ankle with CONSENSUS (c14 is not edited):
+  - **c19**: the Important box. If you think you may have broken your ankle, do not try to treat it yourself; contact NHS 111 to find out what to do.
+  - c18 is retired, and its id is never reused. It held the 5th GP bullet (diabetes), and the fix round removed it (see "Left out" below).
+- (b) The draft, in the LR-27 R1 form of the knee box (fix round: wording from the tier-A safety checker):
   - name: "Ankle pain"
-  - now: "Severe pain, faint, dizzy or sick from it, changed shape or odd angle, heard a snap, grind or pop, can't walk, or maybe broken? Get it checked today."
-  - doctor: "Stops normal activities, worse or keeps coming back, no better after two weeks of home care, tingling or loss of feeling, or diabetes and foot pain? See a doctor."
+  - now: "Severe pain, faint, dizzy or sick from the pain, ankle or foot changed shape or at an odd angle, heard a snap, grind or pop, can't walk, or maybe broken? Get it checked today."
+  - doctor: "Stops normal activities, worse or keeps coming back, no better after two weeks of home care, or tingling or loss of feeling? See a doctor."
 
 Trigger to quote:
 
 | draft phrase | quote phrase | claim |
 |---|---|---|
 | Severe pain | "you have severe ankle pain" | c14 |
-| faint, dizzy or sick from it | "you feel faint, dizzy or sick from the pain" | c14 |
-| changed shape or odd angle | "your ankle or foot has changed shape or is at an odd angle" | c14 |
+| faint, dizzy or sick from the pain | "you feel faint, dizzy or sick from the pain" | c14 |
+| ankle or foot changed shape or at an odd angle | "your ankle or foot has changed shape or is at an odd angle" | c14 |
 | heard a snap, grind or pop | "you heard a snap, grinding or popping noise at the time of injury" | c14 |
 | can't walk | "you are not able to walk" | c14 |
 | maybe broken | "If you think you may have broken your ankle" | c19 |
@@ -213,14 +216,15 @@ Trigger to quote:
 | worse or keeps coming back | "the pain is getting worse or keeps coming back" | c14 |
 | no better after two weeks of home care | "the pain has not improved after treating it at home for 2 weeks" | c14 |
 | tingling or loss of feeling | "you have any tingling or loss of feeling in your foot" | c14 |
-| diabetes and foot pain | "you have diabetes and foot pain" | c18 |
 
-Every quoted trigger is in the draft, and none is left out. "at the time of injury" and "in your foot" are shortened, and "2 weeks" is written "two weeks", as in the wrist and shoulder boxes.
+**Left out:** "you have diabetes and foot pain – foot problems can be more serious if you have diabetes" (the 5th GP bullet). GA 8 (content.md 5.2) bans condition names. c14 left it out for the same reason (verify/w1.md:79), and the supervisor's verify upheld that (#414 6759815425).
 
-- Word counts, by words() in tests/howto/checks/c7.ts: name 2, now 28, doctor 29. now + doctor = 57; with the name, 59.
-- **R3**: every trigger is kept, so the box is over 30 words. The supervisor rules the cap with this count (ruling 5). No trigger is dropped and the cap is not raised here.
+Every other quoted trigger is in the draft. "at the time of injury" and "in your foot" are shortened, and "2 weeks" is written "two weeks", as in the wrist and shoulder boxes.
+
+- Word counts, by words() in tests/howto/checks/c7.ts: name 2, now 34, doctor 25. now + doctor = 59; with the name, 61.
+- **R3**: every allowed trigger is kept, so the box is over 30 words. The supervisor rules the cap with this count (ruling 5). No trigger is dropped to fit, and the cap is not raised here.
 - **R2 scan**: main's CONTACT_RE, SOURCE_RE, SOURCE_CS_RE and SAFETY_LINE_RE (copy-lint.mjs:149-153) find 0 hits on all three lines. There is no number, service, GP, call or link. The "111" in the c19 quote stays in the claim and is not drawn into the box.
-- (d) A RED_FLAG_BLOCKS ankle entry would match these trigger words: /severe/i, /faint|dizz|sick/i, /shape|angle/i, /snap|grind|pop/i, /can'?t walk|cannot walk/i, /broken/i, /normal activities/i, /worse|coming back/i, /two weeks/i, /tingl/i, /loss of feeling/i, /diabetes/i.
+- (d) A RED_FLAG_BLOCKS ankle entry would match these trigger words: /severe/i, /faint|dizz|sick/i, /shape|angle/i, /snap|grind|pop/i, /can'?t walk|cannot walk/i, /broken/i, /normal activities/i, /worse|coming back/i, /two weeks/i, /tingl/i, /loss of feeling/i.
 - appliesTo: [box_jump]. At `7f74d82d`, only box_jump's redFlags name "ankle" (["knee","ankle"]). jump_squat's unsourced[2] notes that its ankle row is not linked.
 
 ### Pre-push check (A9)
@@ -235,6 +239,6 @@ This is a scratchpad check (`check.mjs`) on the three changed cards: jump_squat,
 
 Result: 0 problems. Two mutations show the check bites, and each was restored:
 - frames "(c23)" changed to "(c99)": 1 problem;
-- one character added to the c18 text in the quotes file: 1 problem.
+- one character added to a box_jump quote text in the quotes file: 1 problem.
 
 The other five cards are unchanged.

@@ -346,25 +346,8 @@
       ]
     },
     {
-      "id": "c18",
-      "text": "NHS ankle pain page, the same see-a-GP list as c14: also see a doctor if you have diabetes and foot pain, as foot problems can be more serious with diabetes.",
-      "tags": [
-        "CONSENSUS"
-      ],
-      "sources": [
-        "nhs-ankle"
-      ],
-      "quotes": [
-        {
-          "source": "nhs-ankle",
-          "text": "you have diabetes and foot pain – foot problems can be more serious if you have diabetes",
-          "where": "Non-urgent advice box (see a GP if), 5th bullet"
-        }
-      ]
-    },
-    {
       "id": "c19",
-      "text": "NHS ankle pain page: if you think you may have broken your ankle, do not try to treat it yourself; get urgent help.",
+      "text": "NHS ankle pain page: if you think you may have broken your ankle, do not try to treat it yourself; contact NHS 111 to find out what to do.",
       "tags": [
         "CONSENSUS"
       ],
