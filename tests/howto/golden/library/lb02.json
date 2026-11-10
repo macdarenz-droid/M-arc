@@ -247,6 +247,47 @@
       "why": "Approved by the supervisor under the owner's 10-01 delegation and his 10-24 delegation of open library choices; LB02 PIN GO (supervisor, 2026-11-05, #391 6649217767): lib_dumbbell_pullover's fragments as built from the row moved under D-SHIP-MOVE (Q-W2-10); exemptions F5 approved by the owner as named exemptions (D-OWNER-FLAGS, #379 6627648108); re-pinned in place under D-REPIN-UNMERGED (#384 6681018514): W4 panel (#391 6653540190), fix round 1 (6653791551), PLATETEXT go (6681022221), focused recheck (6682615402), fix round 2 and D-SHIP-W4-FLIPSET (6682985023); merge of main c2f267a7 takes LIB-PLATEFIX-3 (#405) items 15, 17 and 20 (incline_bb arc label, sumo floor trunk, incline_db Mistake outline).",
       "supersedes": null,
       "prev": "cf3313e4b29e1af270504675020fb54cfbf36cb8334d41d53a8bf8d6b2bedfd7"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_incline_dumbbell_press",
+      "src": "library/specs/incline_dumbbell_press__lb2.mjs",
+      "slug": "incline-dumbbell-press",
+      "prefix": "incline-dumbbell-press",
+      "chromeId": "incline-dumbbell-press",
+      "exemptions": [
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "fc08cf61a71657c62ef83b989a6103ba5c01be4fb9c932fb4fe21de1c13861c6",
+        "normalOverlay": "4c218628d55b709c9be4048c006380778e4d114963c4009823bc2810bfa79a94",
+        "mistakeSvg": "d49662dbedf9567cb0806d88ff52281d3ad547397b18c29bc5a43757c9490b97",
+        "mistakeOverlay": "c2d10ab8762f548640029b565754991727ec85c73a876a529e9754234b739f77",
+        "tells": "8c5aa86dd3fea225b280a7071583450c25e3fcc715cfe8e250831fbb66ff315c",
+        "tempo": "9af9e6552a529e3708cf8dafa367dc90b5d5d8b5b1f51cedaf88fe48e65d10d8",
+        "cues": "2ee73dd579633223b173cc9e00f4b5cd27ecdbc0aaa808813e798c753a7f0e3b",
+        "alt": "b4983466e159517be873ff0cbfe04a0dc72ba3cfca0f9ffe05be5291f92b606f",
+        "mistakeAlt": "53db254eeb326efd40c65dbcdf02a0596bb083b97168ac5ebcdd2d6722187888"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237 @ 92491e58f488c9b2254ad34c0d03a5ebf49a2f61",
+      "date": "2026-11-09",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-4 item 20b incline_dumbbell_press (D-PF4-20B: the Wrong lumbar outline lifted off the pad with a visible gap, clear of the arm): approved by the plates panel pf13 (#410 6752705237) at 92491e58.",
+      "supersedes": 3,
+      "prev": "3c51f88b1a273e2597bf88fe0e84d06deebc4044288eb1f49540164b2b113e4f"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "ff87c1cd98bdcd70eb54b87120871984ef4cd68bb73e132e15a350ac8dcfec00",
+      "bytes": 796555,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237 @ 92491e58f488c9b2254ad34c0d03a5ebf49a2f61",
+      "date": "2026-11-09",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb02 plates page rebuilt with LIB-PLATEFIX-4's incline_dumbbell_press (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (#410 PLATES READY 6751284470).",
+      "supersedes": 0,
+      "prev": "fc33996b4ff7f3e9c404f1f206a36fa5da4d64d21bc8890d4136af11d8877922"
     }
   ]
 }

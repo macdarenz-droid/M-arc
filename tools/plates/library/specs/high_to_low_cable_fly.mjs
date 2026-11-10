@@ -16,7 +16,9 @@
 //    above level, OPEN_ANGLE ahead of the side line; the hands under the pulleys) to the end grip (CLOSE_GAP off the
 //    midline, END_DROP below the chest landmark).
 //  - Pulleys (c1): at the crown's height (the `head` landmark) of the start pose, at the columns' inner faces.
-//  - Mistake (c8): each grip goes on along its sphere to MIS_CROSS past the midline, the right hand MIS_DY above the
+//  - Mistake (c8): each forearm turns about its drawn elbow to a red fist past the midline, the two forearms an X under
+//    the solid fists (PF4 below; MIS_CROSS and MIS_DY stay in SIZES, lb6/sizes.json r2, but no longer set the pose).
+//    Was: each grip went on along its sphere to MIS_CROSS past the midline, the right hand MIS_DY above the
 //    left, so the forearms cross as an X (solved on the sphere, throws if none); a dashed ring at each faulty hand.
 //  - Scale: cable_fly's 124 px/m (the columns stand outside the open hands and fit the plate).
 // Plate labels: callouts = plate.checkpoints c7 (Trunk upright), c3 (Soft elbows), c5 (Below chest); Mistake =
@@ -28,7 +30,7 @@ import { WINTER, REF, REF_CAMERA, landmarksOf, resolve, normPose } from '../engi
 export const SIZES = { FOOT_X: 0.12, STAGGER: 0.2, KNEE_SOFT: 5, ELBOW: 20, OPEN_ANGLE: 10, OPEN_UP: 30, CLOSE_GAP: 0.05, END_DROP: 0.1,
   COL_X: 1.24, COL_W: 0.24, COL_H: 2.1, COL_Z: -0.35, MIS_CROSS: 0.11, MIS_DY: 0.06, FIST_R: 0.035, HANDLE: 0.12, CAM_PXM: 124 };
 const H = 1.75, R = Math.PI / 180;
-const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_UP, CLOSE_GAP, END_DROP, COL_X, COL_W, COL_H, COL_Z, MIS_CROSS, MIS_DY, FIST_R, HANDLE, CAM_PXM } = SIZES;
+const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_UP, CLOSE_GAP, END_DROP, COL_X, COL_W, COL_H, COL_Z, FIST_R, HANDLE, CAM_PXM } = SIZES;
 const SEG = 12;
 
 // ---- standing base (copied from upright_row @ 94c551f via cable_fly), feet staggered (c3) ----
@@ -65,24 +67,29 @@ const TS = Array.from({ length: SEG + 1 }, (_, i) => i / SEG);
 const [start, ...rest] = TS.map(t => ({ ...base, reach: armsAt(t) }));
 const end = rest.pop(), via = rest;
 
-// Mistake (c8): the hands cross past each other at the front. Each grip stays on its own sphere (the elbow keeps its
-// fixed bend) and goes on past the midline to MIS_CROSS on the other side; the right hand MIS_DY above the left, so
-// the two forearms cross as an X (panel mx12 R5, #354 6544652523).
-const crossAt = (x, y) => { const dx = x - S[0], dy = y - S[1], h2 = D * D - dx * dx - dy * dy; if (!(h2 > 0)) throw new Error('high_to_low_cable_fly: no crossed grip'); return [x, y, S[2] + Math.sqrt(h2)]; };
-const misR = crossAt(MIS_CROSS, END_Y + MIS_DY / 2), misL = (g => [-g[0], g[1], g[2]])(crossAt(MIS_CROSS, END_Y - MIS_DY / 2));
-const POLE1 = poleAt(1);
-const mistakePose = { reach: { r: { at: misR, pole: POLE1 }, l: { at: misL, pole: [-POLE1[0], POLE1[1], POLE1[2]] } } };
-const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
-// Ghost arms for the Mistake (the front-view capsule copied from pec_fly @ 013f84e): upper arm and forearm with the
-// engine's radii, as closed red dashed guides, since the engine masks the faulty outline inside the solid end arms.
-const capsule = (a, b, r, n = 8) => {
-  const au = Math.atan2(b[1] - a[1], b[0] - a[0]), pts = [];
-  for (let i = 0; i <= n; i++) { const t = au + Math.PI / 2 - Math.PI * i / n; pts.push([b[0] + r * Math.cos(t), b[1] + r * Math.sin(t)]); }
-  for (let i = 0; i <= n; i++) { const t = au - Math.PI / 2 - Math.PI * i / n; pts.push([a[0] + r * Math.cos(t), a[1] + r * Math.sin(t)]); }
-  return [...pts, pts[0]].map(([x, y]) => [x, y, b[2]]);
+// Mistake (c8): the hands cross past each other at the front. LIB-PLATEFIX-4 (pf8 #405 6688665575, tile T03 R5 c2,
+// c3): the crossed hands were a tangle of red dashed capsules and rings on top of the solid fists. Now each red forearm
+// turns about its own drawn elbow (the end pose's: the upper arm stays where the plate draws it) and is drawn as one
+// dashed line to a red fist past the midline; the two lines cross as an X below the solid fists (c3 "one step lower so
+// it clears the correct fists"). The forearm keeps its length (elbow to grip, |E - G| as the end pose); it points
+// MIS_DOWN below the plate's horizontal toward the midline, and its depth is set so its drawn (projected) length is
+// MIS_LEN (c2 "keep the red forearm length the plate already draws (about 76 px)" at the critics' 704-px tile of the
+// 358-px plate: 38.7 px at 124 px/m = 0.312 m). MIS_DOWN 45 deg: the steepest at which the two red fists, a FIST_R ring
+// each, still sit apart (9 px at 45 deg; 2 px of overlap at 50) with the X clear under the solid fists.
+export const PF4 = Object.freeze({ MIS_LEN: 0.312, MIS_DOWN: 45 });
+const LE = landmarksOf(end, H);
+const crossFist = sd => {
+  const E = LE[`elbow.${sd}`], L = dist(E, LE[`grip.${sd}`]), toMid = -Math.sign(E[0]), a = PF4.MIS_DOWN * R, s = PF4.MIS_LEN / L;
+  if (!(s < 1)) throw new Error('high_to_low_cable_fly: the red forearm cannot be drawn that long');
+  return [E[0] + L * s * Math.cos(a) * toMid, E[1] - L * s * Math.sin(a), E[2] + L * Math.sqrt(1 - s * s)];
 };
+const misR = crossFist('r'), misL = crossFist('l');
+// IK pole: from the shoulder-to-fist axis toward the end elbow, so the solved elbow is the drawn one (the lengths match)
+const poleTo = sd => { const Sx = LE[`shoulder.${sd}`], E = LE[`elbow.${sd}`], G = sd === 'r' ? misR : misL, ax = norm(G.map((v, i) => v - Sx[i])), e = E.map((v, i) => v - Sx[i]), k = e.reduce((t, v, i) => t + v * ax[i], 0);
+  return norm(e.map((v, i) => v - k * ax[i])); };
+const mistakePose = { reach: { r: { at: misR, pole: poleTo('r') }, l: { at: misL, pole: poleTo('l') } } };
+const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
 const ring = (c, r, n = 16) => Array.from({ length: n + 1 }, (_, k) => [c[0] + r * Math.cos(2 * Math.PI * k / n), c[1] + r * Math.sin(2 * Math.PI * k / n), c[2]]);
-const GHOSTS = ['l', 'r'].flatMap(sd => [capsule(lmMis[`shoulder.${sd}`], lmMis[`elbow.${sd}`], 0.046), capsule(lmMis[`elbow.${sd}`], lmMis[`grip.${sd}`], 0.036)]);
 
 // ---- equipment ----
 const lmBase = landmarksOf(start, H);
@@ -136,17 +143,18 @@ export default {
   trace: { point: 'grip.r', trim: [12, 12] },
   callouts: [
     { key: 'upright', text: 'Trunk<br>upright', anchor: 'sternum', box: { left: 232, top: 80 }, cue: 'Keep your trunk vertical, with no lean toward the hands.' },
-    { key: 'elbows', text: 'Soft<br>elbows', anchor: { at: 'elbow.l', pose: 'start', off: [0, 5] }, box: { left: 252, top: 168 }, cue: 'Hold a slight, fixed bend in the elbows the whole time.' },
+    // PF4 (pf8 #405 6688665575, T03 R4 c1, c2): SOFT ELBOWS shared TRUNK UPRIGHT's stub; now its own leader from the free
+    // space left of the body, under the right cable, to the drawn (end) elbow (was the start elbow, box 252, 168).
+    { key: 'elbows', text: 'Soft<br>elbows', anchor: { at: 'elbow.r', pose: 'end' }, box: { left: 60, top: 206 }, cue: 'Hold a slight, fixed bend in the elbows the whole time.' },
     { key: 'below', text: 'Below<br>chest', anchor: 'grips', cue: 'Bring your hands together below chest level.' },
   ],
   tempo: [{ phase: 'Close', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Open', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
+    parts: ['fist.r', 'fist.l'],   // PF4: the red fists only (no masked capsule outlines over the solid arms); the forearms are the guides
     guides: [
-      ...GHOSTS.map(pts => ({ kind: 'dashed', pts })),                                               // the crossed arms (ghosts)
-      ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: ring(lmMis[`grip.${sd}`], FIST_R) })),                       // each faulty hand's ring
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [0, -10] }, to: { at: 'grip.r', pose: 'mistake', off: [0, -10] } },   // each hand crosses over
-      { kind: 'arrow', from: { at: 'grip.l', pose: 'end', off: [0, 10] }, to: { at: 'grip.l', pose: 'mistake', off: [0, 10] } },
+      ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: [{ at: `elbow.${sd}`, pose: 'mistake' }, { at: `grip.${sd}`, pose: 'mistake' }] })),   // each red forearm: one line
+      ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: ring(lmMis[`grip.${sd}`], FIST_R) })),                       // each red fist
     ],
     tells: [
       { key: 'cross', text: 'Hands<br>cross', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'Your hands cross past each other at the front.' },

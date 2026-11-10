@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=28b7b2dfdcd1b616d6dfc2b505e737f054d2fe5c1b3afd585e0a8a46b15b6e13
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=31d4c53cda69760a618b4f3592975c689f13b8d130aa1b588eec5d9ca41eb183
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_medicine_ball_slam",

@@ -8,8 +8,8 @@
 // The setup steps are this card's own (its safety racks and spotter, c6, c7), not the parent's.
 // No hand zoom (D-SHIP-HANDW4, gap-ruled on tools/plates/library/hands/no-zoom.json): bar-low-palm, inherited, is a push
 // heel-of-palm pair golden B's engine cannot draw (D-LIB7-19). Its Right words are the gripLine, its Wrong the fault alt.
-// Posture zoom `feet-hooked` (c1): T, a text checkpoint (no zoom). Its Right shows in copy.setupLine, its Wrong in
-// copy.mistakeLine; the plate's callout "Feet hooked" marks it on the plate.
+// Posture zoom `feet-hooked` (c1): drawn since LIB-PLATEFIX-4 item 21 (zooms below; it was T, a text checkpoint). Its
+// Right also shows in copy.setupLine, its Wrong in copy.mistakeLine; the plate's callout "Feet hooked" marks it on the plate.
 // Red flags: the card's redFlags (shoulder), golden B's shared shoulder box.
 import plateSpec from '../specs/decline_bench_press.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
@@ -71,9 +71,34 @@ export const stills = {
 };
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
-// None: the hand zoom `bar-low-palm` is gap-ruled (D-SHIP-HANDW4, above) and the posture zoom `feet-hooked` is a text
-// checkpoint (T, above).
-const zooms = [];
+// The hand zoom `bar-low-palm` is gap-ruled (D-SHIP-HANDW4, above). LIB-PLATEFIX-4 item 21 (PF3 item 21, #391
+// 6653791551; PF3 PLAN #405 6682819340; W4 panel L7 [4,3,3], #391 6653540190, critics c2, c3: "Feet: both feet locked
+// under the pads vs loose"): the posture zoom `feet-hooked` (c1) is drawn. Right: the end pose, the rollers on the front
+// of the ankles. Wrong: the same body with the feet loose, the knees bent further (LOOSE_KNEE) and the ankles neutral,
+// so the shins and feet hang back clear of the rollers; drawn solid (the gap under the rollers reads), the plate's
+// rollers unchanged. LOOSE_KNEE and LOOSE_ANKLE are drawing values (no card number).
+const LOOSE_KNEE = 135, LOOSE_ANKLE = 10;            // deg: knee flexion and ankle of the loose feet
+export const FEET_LOOSE = { knee: LOOSE_KNEE, ankle: LOOSE_ANKLE };
+const zooms = [
+  {
+    key: 'feet-hooked', chip: 'Feet', heading: 'Feet hooked', kind: 'posture',
+    crop: { center: { at: 'ankle.r', pose: 'right', off: [-6, 4] }, sizePx: 160 },
+    right: 'end',
+    wrong: { base: 'end', pose: FEET_LOOSE, solid: true },
+    callout: {
+      right: { text: 'Feet locked', anchor: 'ankle.r' },
+      wrong: { text: 'Feet loose', anchor: { at: 'ankle.r', pose: 'mistake' } },
+    },
+    caption: {
+      right: 'Both feet locked under the pads.',          // card zoom feet-hooked Right (c1)
+      wrong: 'Feet loose, not locked under the pads.',    // card zoom feet-hooked Wrong (c1)
+    },
+    alt: {
+      right: 'Side view, decline bench. Both ankles press up under the foot pads at the high end.',
+      wrong: 'Side view, decline bench. The feet hang loose behind the foot pads, not touching them.',
+    },
+  },
+];
 
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const feel = {
@@ -147,15 +172,15 @@ export default {
     { kind: 'adjust', text: 'Set the bar where you can reach it without straightening your arms.', claim: CL.c7 },
     // card zoom feet-hooked Right and Wrong (c1), a text checkpoint (D-TEXT-PRINTED: copy.setupLine/mistakeLine are not printed)
     // (blades together and down, c4, shows on the plate's Blades callout cue)
-    { kind: 'position', text: 'Feet locked under the pads, not loose. Grip slightly wider than shoulders.',
+    { kind: 'position', text: 'Feet locked under the pads, not loose. Grip slightly wider than shoulders.', zoom: 'feet-hooked',
       claim: C(['CONSENSUS'], [WL, SLG], 'c1, c3') },
     { kind: 'get-in', text: 'New to it? Use a spotter. Lift out on locked arms.', claim: C(['CONSENSUS'], [SLG, WL], 'c6, c7') },
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c11 },
   ],
   posture: [
-    // card zoom feet-hooked: T, a text checkpoint (Right in copy.setupLine, Wrong in copy.mistakeLine).
+    // card zoom feet-hooked: drawn (zooms above, PF4 item 21); Right also in copy.setupLine, Wrong in copy.mistakeLine.
     { key: 'feet', label: 'Feet hooked', detail: 'Feet hooked under the pads.',
-      anchor: { landmark: 'ankle.r', pose: 'end' }, claim: CL.c1 },
+      anchor: { landmark: 'ankle.r', pose: 'end' }, zoom: 'feet-hooked', claim: CL.c1 },
     { key: 'blades', label: 'Blades together', detail: 'Shoulder blades together and down.',
       anchor: { landmark: 'backUpper', pose: 'start' }, claim: CL.c4 },
     { key: 'touch', label: 'Lower-chest touch', detail: 'Bar to the lower chest only.',
@@ -166,7 +191,7 @@ export default {
   ],
   feel,
   zooms,
-  chips: ['feel'],   // the zoom shell's chip row; no zoom on this sheet
+  chips: ['feet-hooked', 'feel'],   // the zoom shell's chip row: the zoom key, then feel
   copy: {
     setupLine: 'Both feet locked under the pads. Blades together and down, chest up.',
     mistakeLine: 'Feet loose, not locked under the pads? Hook them before you lie back.',

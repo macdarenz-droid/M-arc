@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=f26362d37f88f8c0df5a7a5a5fbf00904eb84a6ae5756a6f71d1f0d815083141
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=36f6a0dfeda947cfc79d2d87642d0609710788c41fb51a796cf6817d80c948df
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_ab_wheel_rollout",
   name: "Ab Wheel Rollout",
-  hashes: { inputsSha256: "f26362d37f88f8c0df5a7a5a5fbf00904eb84a6ae5756a6f71d1f0d815083141", golden: "4084a324508f46d7097ba2cd9bc401009c91c7ab09a84aa55d7dcddf2892563d" },
+  hashes: { inputsSha256: "36f6a0dfeda947cfc79d2d87642d0609710788c41fb51a796cf6817d80c948df", golden: "4084a324508f46d7097ba2cd9bc401009c91c7ab09a84aa55d7dcddf2892563d" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

@@ -393,6 +393,109 @@
       "why": "W6 layers approved (#393): the calibrated layers panel 6682570363 (3 fresh Opus critics per set, plants caught, golden-B anchors), the fix round ruled 6683193992 (D-SHIP-W6-ROUTE), the focused recheck 6683879377 and the flip set 6689822595 (smith_machine_squat held, D-LIB13-PANEL2); low_to_high_cable_fly stays held (6701002884, PLATEFIX-3b). Built in the D-SHIP-W5-FLIPSET form on main 8841246c (#404 F-BODYMAP-FRONTDELT merged): only the flip set stays on lb06.layers.json, and every kept card (article block and its .hx-<slug> rules) is byte-equal to the full-page build of the same head; built twice, equal sha256.",
       "supersedes": null,
       "prev": "5b4d67a49cc5ee0e244624598a9fd3d24b3718fce809b3897d69e3ead42b706a"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_machine_pullover",
+      "src": "library/specs/machine_pullover.mjs",
+      "slug": "machine-pullover",
+      "prefix": "machine-pullover",
+      "chromeId": "machine-pullover",
+      "exemptions": [
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "6e8d87ab1b1192bb93cd9ffaa46295b0f192106ab75834ab7d323f6b0c0d318e",
+        "normalOverlay": "36c3f2bac94cf19f4b5babef980cad725942379dd1f387d2bcf2d34bc40f5bed",
+        "mistakeSvg": "143d0305f41f226e1cee479f57fc12987d2e360ac5812a302df05ccff63d3acb",
+        "mistakeOverlay": "742c20ff35b94de8f842dc7e2aa0d8ddc32bbb1c1bb35e6ec18ae7fcf47175ca",
+        "tells": "491dfaa9fec824f16a2290510510b6fa5d9a4f4c9ea8f38a9e4d3f0a0359ed3a",
+        "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
+        "cues": "59c4002969a558f75c224b1af3682a555fbc0c6c73ee981e9640354810010be3",
+        "alt": "11812bcb66d9aca001d755e1aca82d34992fcd313475948ba06c316ec1de2ea3",
+        "mistakeAlt": "085e0256b6100a80433467822c8a375eb546239d5f548ba74126c05d54a056ac"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237@8dbb9a73",
+      "date": "2026-11-10",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lane-bound spec fix (D-PF4-LANESPEC), judged on the lb06 overlay page da4257d6 in pf13 (all 6 approved, #410 6752705237); card compare after W6's merge (main dc058207): this tree builds the same page byte for byte.",
+      "supersedes": 2,
+      "prev": "4eb4743b3ca5857b7b71cb1de9cbacf22be6e56253875cc3ea30b2feb5e0cab6"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_high_to_low_cable_fly",
+      "src": "library/specs/high_to_low_cable_fly.mjs",
+      "slug": "high-to-low-cable-fly",
+      "prefix": "high-to-low-cable-fly",
+      "chromeId": "high-to-low-cable-fly",
+      "exemptions": [
+        "F2",
+        "F3",
+        "F5",
+        "F7"
+      ],
+      "fragments": {
+        "normalSvg": "3c19a3758e608995463d7c86abb4f5a3eb8182afe8303c87dfa5afb368a4cf85",
+        "normalOverlay": "4601521314c637093c0c7769408f804c08c9d7c082f6837211ef2878a198d161",
+        "mistakeSvg": "8ae30ac48ff4937dc83302c13399ef40f6cc65d6eb2fab8b364696b240eeba30",
+        "mistakeOverlay": "c78cd3c5e8a8944490ed498a99e35c9db42ab31a9e32e85352cb675cdec3a135",
+        "tells": "60d21de24772caa0dc87995218a1b8517e433b1e7927fc0b358aa4c869e34eb5",
+        "tempo": "3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901",
+        "cues": "acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2",
+        "alt": "8776483a58ccce47ccf95121cf10720cb66e845ee4937aeb58497a071cfc8f30",
+        "mistakeAlt": "ea2b604a94dd9d4bc75eb13615124126151b487f2dc7d4d674576c173dd7bdfe"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237@8dbb9a73",
+      "date": "2026-11-10",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lane-bound spec fix (D-PF4-LANESPEC), judged on the lb06 overlay page da4257d6 in pf13 (all 6 approved, #410 6752705237); card compare after W6's merge (main dc058207): this tree builds the same page byte for byte.",
+      "supersedes": 5,
+      "prev": "8a7ee565f07e16e21bb7aa5c0d15fba3f4482bee34602e8a219ce35827951f3b"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_smith_machine_squat",
+      "src": "library/specs/smith_machine_squat.mjs",
+      "slug": "smith-machine-squat",
+      "prefix": "smith-machine-squat",
+      "chromeId": "smith-machine-squat",
+      "exemptions": [
+        "F2",
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "869674ecde19dc0acd16afbdfbffbf15f80941963081a5c5bd05298044bf3225",
+        "normalOverlay": "2e8097b1d915e10b701e7f1a61fa43d1def61e239174da96fc1e2dd9cefe4493",
+        "mistakeSvg": "909db4ebd789ebb8e45bfc1b836eb9f1e83961a558d0426a9950091bd00c7dc4",
+        "mistakeOverlay": "c3206135bcbe197bc7e0e143f609acd2cbed988619a9b99d89e4ac4ba072f585",
+        "tells": "73ff3249de7184e3fb37bb728c933043d1f686c3b413e71c4cd8fbaaca73a9dc",
+        "tempo": "f886198ba7e406367703d407e46cd3f5178dc9b2b21e53921aaeb03899df9faf",
+        "cues": "fe51224cbe5e669a6cf6562164cacff337ed44eaa011307f5edfdd426c5c4244",
+        "alt": "727ac3352572b1cdb5596b3420ef9effb4e7b77bf2d25ada54e49e4a675fd5c8",
+        "mistakeAlt": "73dd0a9bd8699833121d3a342e1343db9270ef4331a5d92ef81df0a500fad4b8"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237@8dbb9a73",
+      "date": "2026-11-10",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lane-bound spec fix (D-PF4-LANESPEC), judged on the lb06 overlay page da4257d6 in pf13 (all 6 approved, #410 6752705237); card compare after W6's merge (main dc058207): this tree builds the same page byte for byte.",
+      "supersedes": 6,
+      "prev": "f1f5fb21a49ce637d01c8898acd038739ed6a9fa1ef866c9c9d2810458ca3591"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "da4257d62805ed129fc94097e8e5d3dd24ecc8631a60d7cb95cfebded832ce01",
+      "bytes": 1407531,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237@8dbb9a73",
+      "date": "2026-11-10",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lb06 plates page after main dc058207 (W6): machine_pullover, high_to_low_cable_fly and smith_machine_squat as judged in pf13 (#410 6752705237; page da4257d6, built twice); the 9 other plates byte-equal to main's 20c6b054.",
+      "supersedes": 0,
+      "prev": "f28b755cd318e1b7141caf6172c7eb98cd64a915d4e5f2b94e62efac741cc246"
     }
   ]
 }

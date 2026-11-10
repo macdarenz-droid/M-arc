@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=e82094a72c5b32a8ede435db5a6aff8e219186f4daa038d9106ed780ac8e2d46
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=a74c0e48933c6b60d1d6308728b4ddeed86ca89d1f698fde94cc51bf1db702ca
 // The alternating-dumbbell-curl posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-alternating-dumbbell-curl.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

@@ -10,7 +10,9 @@
 // Red flags: the card's redFlags (back): LIB-5's back box (tools/plates/library/shared/back-box.mjs), linked by the
 // back-pain row's redFlag: 'back'. Tier-A way out: no read source says how to fail a stuck rep, so no way-out line.
 // Variant line (equipment 'Bodyweight / Machine'): the card's plate.variantLine, the drawn 45-degree bench.
-import plateSpec from '../specs/back_extension.mjs';
+import plateSpec, { BX } from '../specs/back_extension.mjs';
+import { ROMAN_CHAIR_ITEMS, romanChair } from '../eq/romanChair.mjs';
+import { perItem } from '../eq/parts.mjs';
 import { landmarksOf } from '../engine.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
@@ -80,12 +82,23 @@ export const stills = {
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom (no hand zoom: handling none). Zoom shell form (render/closeup/crop.mjs): the crop centre on the
 // right pose's mid-back for both halves; bext-pad's Wrong is drawn dashed over the Right (W4 panel L5); bext-top's alone (solid).
+// LIB-PLATEFIX-4 item 16 (PF3 item 16, #391 6653791551, 6682615402; PF3 PLAN #405 6682819340: "Wrong pad above the hip on
+// the belly, >= 8 px above hip.r"; W4 panel L5 [3,3,4], #391 6653540190, c2: "Redraw the Wrong pad higher: its top edge
+// above the hip-joint marker, under the lower belly"): bext-pad's Wrong crop draws the spec's Roman chair with the hip
+// pad moved onto the belly (crop option wrong.equipmentList). Its face keeps the plate pad's direction and normal and
+// passes through the Mistake pose's navel, so the contact sits above the hip joint; the foot plate and the frame's floor
+// span are the plate's (BX, the start pose's heel and sole). The Right crop keeps the plate's pad below the hip crease.
+const LS = landmarksOf(TOP, H), LW = landmarksOf({ ...plateSpec.poses.end, ...ROUND }, H);
+const chairAt = padAt => perItem(() => romanChair({ pad: { at: padAt, along: BX.pad.along, normal: BX.pad.normal },
+  foot: { at: LS['heel.r'], along: BX.plateU, normal: BX.plateN }, heel: BX.heel, floorZ: [LS['sole.r'][2] - 0.15, BX.pad.at[2] + 0.1] }), ROMAN_CHAIR_ITEMS);
+export const PAD_HIGH = [0, LW.navel[1], LW.navel[2]];
+export const CHAIR_EQ = { plate: chairAt(BX.pad.at), high: chairAt(PAD_HIGH) };   // plate: the spec's own chair, rebuilt (a test proves it equal)
 const zooms = [
   {
     key: 'bext-pad', chip: 'Pad', heading: 'Pad height', kind: 'posture',
     crop: { center: { at: 'backMid', pose: 'right', off: [0, 10] }, sizePx: 180 },
     right: 'end',
-    wrong: { base: 'end', pose: ROUND },   // W4 panel L5: dashed Wrong over the Right pose (the plate's Mistake overlay)
+    wrong: { base: 'end', pose: ROUND, equipmentList: [plateSpec.equipment[0], ...CHAIR_EQ.high] },   // W4 panel L5: dashed Wrong over the Right pose; PF4 16: the pad on the belly
     callout: {
       right: { text: 'Hips hinge', anchor: 'buttock' },
       wrong: { text: 'Back curls', anchor: { at: 'backMid', pose: 'mistake' } },   // c2, c6 (the spec's tell)

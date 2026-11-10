@@ -10,8 +10,8 @@ import { make } from '../templates/PUSHDOWN.mjs';
 export const facts = {
   id: 'straight_bar_triceps_pushdown', name: 'Straight-Bar Triceps Pushdown',
   callouts: [
-    { key: 'elbows', text: 'Elbows<br>pinned', anchor: 'elbow.r', cue: 'Keep the upper arms close to your sides. Only the forearms move.' },
-    { key: 'hips', text: 'Hip lean<br>only', anchor: 'backUpper', box: { left: 56, top: 124 }, cue: 'Keep the back straight, or tilt slightly from the hips without arching.' },
+    { key: 'elbows', text: 'Elbows<br>pinned', anchor: 'elbow.r', box: { left: 56, top: 124 }, cue: 'Keep the upper arms close to your sides. Only the forearms move.' },
+    { key: 'hips', text: 'Hip lean<br>only', anchor: 'hip.r', box: { left: 44, top: 172 }, cue: 'Keep the back straight, or tilt slightly from the hips without arching.' },   // PF4 pf12 R4 (#410 6751563503): the leader ends on the hip; slots swapped with ELBOWS
     { key: 'wrists', text: 'Neutral<br>wrists', anchor: 'wrist.r', box: { left: 40, top: 250 }, cue: 'Keep the hands in line with the forearms from top to bottom.' },
   ],
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],

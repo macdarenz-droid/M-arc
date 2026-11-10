@@ -393,6 +393,48 @@
       "why": "W4 LAYERS APPROVED for the flip set (D-SHIP-W4-FLIPSET, #391 6682985023): the W4 layers panel (#391 6653540190; 3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds 1 and 2, and the focused recheck (6682615402); every median 4 or more. The page holds exactly the 6 shipped ids, each card byte-equal to the 2af8092c build. Re-pinned in place under D-REPIN-UNMERGED (#384 6681018514) after W3 train 73: build-layers-page.mjs now applies the plates page zoom circles (D-SHIP-W3-LAYERSZOOM, #384 6686326673); the diff only adds zoom groups and defs; merge of main 8841246c takes F-BODYMAP-FRONTDELT (#404): re-pinned in place again, the diff is exactly #404 BODYMAP_FIX (both front_delts paths redrawn, the inner-elbow and knee-pit parts added).",
       "supersedes": null,
       "prev": "66b8e356415efe8b3f8845126997968b77d3f2eb4bddbdddf3431fc504ae0c10"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_one_arm_dumbbell_row",
+      "src": "library/specs/one_arm_dumbbell_row.mjs",
+      "slug": "one-arm-dumbbell-row",
+      "prefix": "one-arm-dumbbell-row",
+      "chromeId": "one-arm-dumbbell-row",
+      "exemptions": [
+        "F5",
+        "F7"
+      ],
+      "fragments": {
+        "normalSvg": "7dc1bd7107798ea810f3f4811cf90ed7cf55df7a5c54783ffaab0a8a7023acbf",
+        "normalOverlay": "91ff43e0652facb30f5ac9a22d49bcf45945adb17db4220f03e4548ce482799b",
+        "mistakeSvg": "d10b3e436906d6b897fcbe718f903f3a4092108a08501944ec21a4ea1726a261",
+        "mistakeOverlay": "e0b5ffa3b66fe6a38c2137bf618ba2775fa853ad60e6ad995bad941e3ef0eaa4",
+        "tells": "b666789c21305b66eee9157ce009a2cece7b27dedfb58a236d843b968a0cfe99",
+        "tempo": "20977979ba2d5b41227e085fd7f83ef86468ab3e175170f6b056cd3dad40b579",
+        "cues": "cc9a1ddf74bf2d8efae0769f36c548c9b95db75331d15a650c29d6902ae38872",
+        "alt": "db9324702c44f4f7937d8380891ebfa4d54ab883770ecc1427edc28f2f9a33c4",
+        "mistakeAlt": "d771c0785ceebae45ea330788f553fb08a7b6cc5525d06ce4b52be9d9378f0be"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6751563503 @ fd274f5968a1e9e47c20870312c1034d25502544",
+      "date": "2026-11-09",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-4 one_arm_dumbbell_row (pf8 R1, R5: straight support arm, the red arm from the shoulder): approved by the plates panel pf12 (#410 6751563503) at fd274f59.",
+      "supersedes": 3,
+      "prev": "240932a124030da13597501c36256af64394376ec8194317a8da9e8f345381e0"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "447e0330c4e6d2961a975034f984de76ce67a7b9726a1143ed8783567be207d0",
+      "bytes": 1186557,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6751563503 @ fd274f5968a1e9e47c20870312c1034d25502544",
+      "date": "2026-11-09",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb03 plates page rebuilt with LIB-PLATEFIX-4's one_arm_dumbbell_row (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (#410 PLATES READY 6750515618).",
+      "supersedes": 0,
+      "prev": "8760ebb764ce374b6390f7b3575448d6dc230086fb279e94a9f8e94f148ebf91"
     }
   ]
 }

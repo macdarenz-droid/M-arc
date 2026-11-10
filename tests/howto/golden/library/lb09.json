@@ -308,6 +308,47 @@
       "supersedes": null,
       "why": "W7 layers approved for the flip set (D-PF10-W7JOIN; supervisor RESUME 2026-11-09): the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception. The page holds exactly the 6 shipped ids, each card byte-equal to its card in the lb09 page judged at a3e5b6e7; the page head loses only the held ids' rules.",
       "prev": "5f467043eb92c5e0b7d06dfe26e9e897af9d9bb6aa230234872bdf9579d79fad"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_v_up",
+      "src": "library/specs/v_up.mjs",
+      "slug": "v-up",
+      "prefix": "v-up",
+      "chromeId": "v-up",
+      "exemptions": [
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "c6e06889ef777fa3040a3a176583c8271e589060bb1433b08ea1fec2fb00909c",
+        "normalOverlay": "ef048bf51b44c31af0a09bc646fe658a192e4f87dbb38c7f60b5e95e6f8940c9",
+        "mistakeSvg": "50bd5ee6c6b173fd1fd07f3eae84e7e314ab0525f785cd6e76b806e3d85c465e",
+        "mistakeOverlay": "a8a72e54b97e7b66e29df6c5d34275a5e40944b776ab761c9a3046888c2ad62f",
+        "tells": "9b20326bb777e00cf19c92f70c6ced972584a7e01e7cec4c091e00cca9e5b727",
+        "tempo": "22b0447eb593cfd41e308903179e2ca0b5c7058e20e037f85953d4a51e783fe5",
+        "cues": "597feb84ecc6db281fa85374c069142c7b9c267cb80fd2910ec6e54a1378ee79",
+        "alt": "18886b10df096b00f1d0d4663c19a1dd63ba874f57f012534c084945ffc744ab",
+        "mistakeAlt": "37c1864747783e7bc807a155a99c9e78b32a8c6c2f4e8ae098d5bd077b56cdeb"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237@8dbb9a73",
+      "date": "2026-11-10",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lane-bound spec fix (D-PF4-LANESPEC; v_up leader only), judged on the lb09 overlay page dac64077 in pf13 (all 6 approved, #410 6752705237); card compare after W7's merge (main 07f5fbcf): this tree builds the same page byte for byte.",
+      "supersedes": 9,
+      "prev": "87fba2c072ce95b67bedb5519b439016c490f91331b6f59c357aa83a4cbf6528"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "dac640771e3ae7f7a631237606b98d9929367e6d7e116584f8f2bcf022633a04",
+      "bytes": 931534,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/410#issuecomment-6752705237@8dbb9a73",
+      "date": "2026-11-10",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lb09 plates page after main 07f5fbcf (W7): v_up's leader as judged in pf13 (#410 6752705237; page dac64077, built twice); the 8 other plates byte-equal to main's 793f865e.",
+      "supersedes": 0,
+      "prev": "6ab9e497ac519c8019baab8d039aea64e2bfd0ee018b44faa84cafaa9d7ad38d"
     }
   ]
 }

@@ -123,6 +123,9 @@ const cm = v => +(v * 100).toFixed(2);
 const underside = (p, z) => { const pts = shapesOf(p).find(s => s.key === 'torso').poly; let lo = -Infinity;
   for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; if ((a[0] - z) * (b[0] - z) > 0 || a[0] === b[0]) continue; lo = Math.max(lo, a[1] + (b[1] - a[1]) * (z - a[0]) / (b[0] - a[0])); }
   return -lo; };
+// LIB-PLATEFIX-4 F-VUP-V (pf10 T09 R4, #408 6704679655): the LOW BACK DOWN leader ends where the lying low back meets the
+// floor: the drawn torso's underside at the lumbar landmark's z in the end pose (was the navel, on the belly side)
+export const LOWBACK = Object.freeze([0, underside(end, lmE.lumbar[2]), lmE.lumbar[2]]);
 const LUMBAR_Z = lmM.lumbar[2], gapTop = [0, underside(mistakePose, LUMBAR_Z), LUMBAR_Z], gapBot = [0, 0, LUMBAR_Z];
 // mx27 R5: the arched low back's drawn underside where it has left the floor (over 0.5 cm), every 5 mm, as a red dashed
 // line under the solid figure
@@ -154,7 +157,7 @@ export default {
   trace: { point: 'wrist.r', trim: [4, 6] },
   tempo: [{ phase: 'Lift', move: true }, { phase: 'Lower', move: true }],   // fallbackA (D-STRIP-AFALL; PLAN RULED Q3, c14 contested); LIB-PLATEFIX-3 W7 (#405 6683319630, D-SHIP-W4-TEMPO form): the rep lifts first (c3, c4)
   callouts: [
-    { key: 'lowback', text: 'Low back<br>down', anchor: 'navel', box: { left: 64, top: 262 }, cue: 'Keep your low back touching the floor at the start and return.' },
+    { key: 'lowback', text: 'Low back<br>down', anchor: [...LOWBACK], box: { left: 64, top: 262 }, cue: 'Keep your low back touching the floor at the start and return.' },
     { key: 'reach', text: 'Reach to<br>toes', anchor: { at: 'grip.r', pose: 'start' }, box: { left: 196, top: 150 }, cue: 'Lift legs and torso together, hands reaching toward your toes.' },
     { key: 'legs', text: 'Legs<br>together', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5, off: [0, -7] }, box: { left: 266, top: 252 }, cue: 'Legs as straight as you can, toes pressed together.' },
   ],
