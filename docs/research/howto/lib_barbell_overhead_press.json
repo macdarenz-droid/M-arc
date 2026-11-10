@@ -1,0 +1,25 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=0f09b8f6d141c7db500e4344d5982bbcb42eb859e5c123b97ebc43e7c73a174c
+{
+  "id": "lib_barbell_overhead_press",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/barbell_overhead_press.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-standing-sp",
+    "stronglifts-ohp",
+    "nsca-ch15-summary",
+    "saeterbakken2013",
+    "kolber2013",
+    "esenkaya2000",
+    "acsm2009",
+    "kolber2010",
+    "nhs-shoulder-pain",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "shoulder",
+    "back"
+  ]
+}

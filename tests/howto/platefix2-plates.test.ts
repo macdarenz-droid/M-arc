@@ -22,9 +22,10 @@ describe('PF2 pilot A re-pin: the owner page and pec_fly plate entries, and the 
   const G = () => JSON.parse(readFileSync(new URL('../../tests/howto/golden/library/pilot-a.json', import.meta.url), 'utf8')).entries;
   it('the last two entries are the page entry (superseding #385\'s 17) and pec_fly\'s (superseding 8); pec_fly moves only normalSvg and normalOverlay', () => {
     const E = G(), [pg, pf] = E.slice(23, 25), was = E[8];   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was E.slice(-2), now E.slice(23, 25) (its 2 owner entries follow; pinned below)
-    expect([E.length, pg.kind, pg.supersedes, E[17].kind, pg.approvedBy, pf.kind, pf.id, pf.supersedes, pf.approvedBy]).toEqual([27, 'page', 17, 'page', 'owner', 'plate', 'lib_pec_fly', 8, 'owner']);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was length 25, now 27 (its 2 owner entries)
+    expect([E.length, pg.kind, pg.supersedes, E[17].kind, pg.approvedBy, pf.kind, pf.id, pf.supersedes, pf.approvedBy]).toEqual([28, 'page', 17, 'page', 'owner', 'plate', 'lib_pec_fly', 8, 'owner']);   // LIB-SHIP W8a: was 27, now 28 (its appended layers-page entry, pinned below). LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was length 25, now 27 (its 2 owner entries)
     // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was nothing after pec_fly's entry, now exactly its owner barbell_overhead_press plate (superseding 19) and page (superseding PF2's 23)
-    expect(E.slice(25).map((e: any) => [e.kind, e.id ?? null, e.supersedes, e.approvedBy])).toEqual([['plate', 'lib_barbell_overhead_press', 19, 'owner'], ['page', null, 23, 'owner']]);
+    // LIB-SHIP W8a (D-BODYMAP-APPEND, #413 6761492481): then exactly its supervisor layers-page entry, superseding 22
+    expect(E.slice(25).map((e: any) => [e.kind, e.id ?? null, e.supersedes, e.approvedBy])).toEqual([['plate', 'lib_barbell_overhead_press', 19, 'owner'], ['page', null, 23, 'owner'], ['layers-page', null, 22, 'supervisor']]);
     for (const e of [pg, pf]) expect(e.decision).toMatch(/^D-OWNER-REPIN; LIB-PLATEFIX-2 golden update .*pf4 plates panel #395 6648800268 @ 24100cff74515ad865f044164bd8cb19c28b9c09/);
     expect(pg.decision).toContain('pf1 plates panel #385 6636073314');
     const moved = Object.keys(pf.fragments).filter(k => pf.fragments[k] !== was.fragments[k]);

@@ -41,7 +41,11 @@ const W6_SHIPPED = ['lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cabl
 const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
   'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
   'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
-const RULED_SHIPPED = [...W3_SHIPPED, ...W5_SHIPPED, ...W6_SHIPPED, ...W7_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+// LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, W8a LAYERS APPROVED #413 6761492481): plus the 5 flipped pilot-a, pilot-b,
+// pilot-b2 and lb01 ids; mountain_climbers (D-W8A-MCFEEL, F-HAND-PALMFLAT-SIZE) and underhand_lat_pulldown
+// (D-W8A-UNDERHANDHOLD, F-UNDERHAND-PQH1) are held at approved-plate
+const W8A_SHIPPED = ['lib_barbell_overhead_press', 'lib_pec_fly', 'lib_seated_leg_curl', 'lib_crunch', 'lib_assisted_pull_up'];
+const RULED_SHIPPED = [...W3_SHIPPED, ...W5_SHIPPED, ...W6_SHIPPED, ...W7_SHIPPED, ...W8A_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
 let reg: any, content: any, P: any, keyMods: any[];
@@ -299,7 +303,8 @@ describe('LIB-SHIP D-SHIP-PAIR-NOZOOM (#379 6637870829): pairsOf leaves out ids 
     // (preacher ez-curl-under; alternating_dumbbell_curl takes the curl key first, so it moves up from last; barbell
     // curl-bar-under; ez_bar ez-curl-angled; reverse ez-curl-over). hammer_curl is on the no-zoom list (D-SHIP-W5-HAMMER)
     // and gets no pair; front_squat is gap-key and the 3 bodyweight ids are archetype none
-    expect(keys).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead',
+    // LIB-SHIP W8a (ruling 3): assisted_pull_up's sub-key follows hanging_knee_raise's in lb01's registry order
+    expect(keys).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-hang-only-curled-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead',
       'd-handle-pull-only-curled-unstated', 'ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
     expect([pairOf['preacher-curl'], pairOf['alternating-dumbbell-curl'], pairOf['barbell-curl'], pairOf['ez-bar-curl'], pairOf['reverse-curl']])
       .toEqual(['ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
@@ -323,7 +328,7 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
   const BACK = 'docs/research/howto/shared/back-pain-box.json';
   // LIB-SHIP W3 (D-SHIP-A5BACK-CARDS): lb01.layers.json's pairWords rows (W3 layers fix, #384 6648454032) and
   // pilot-a.layers.json's mountain_climbers pairFaults row (Q-W3-14, F-PAIR-FAULTS #386), sorted by path
-  const PAIR_CARDS = ['chin_up', 'close_grip_pulldown', 'inverted_row', 'single_arm_lat_pulldown']
+  const PAIR_CARDS = ['assisted_pull_up', 'chin_up', 'close_grip_pulldown', 'inverted_row', 'single_arm_lat_pulldown']   // LIB-SHIP W8a: assisted_pull_up's pairWords row is back on lb01's config
     .map(id => `docs/research/howto/cards/${id}.json`);
   const ht4 = async (): Promise<any> => import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/fidelity/twins/ht4.mjs')).href);
   const pilotA = async (): Promise<string[]> => {
@@ -1365,7 +1370,7 @@ describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batc
     for (const order of [all, front]) {
       const spec: any = layersSpecOf('tools/plates/library/batches/lb01.json', { stageDir: mkdtempSync(join(tmpdir(), 'w3-leftout-')), all: order });
       expect(JSON.stringify(spec)).not.toContain('leg_press_calf_raise');
-      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(8);   // 12 drawn LB1 rows less the 4 staged (underhand LIB-PLATEFIX-3, assisted_pull_up #384 6653062201, incline_machine_press and shoulder_press D-SHIP-W3-NOPAIR #384 6681221802)
+      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(9);   // LIB-SHIP W8a: assisted_pull_up is back (#413 6761492481); 12 drawn LB1 rows less the 3 staged (underhand D-W8A-UNDERHANDHOLD, incline_machine_press and shoulder_press D-SHIP-W3-NOPAIR #384 6681221802)
     }
   }, 120_000);
 });

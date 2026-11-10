@@ -705,6 +705,33 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The pilot-a plates page rebuilt with LIB-PLATEFIX-3b's barbell_overhead_press (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (this builder, and CI howto-rebuild on #408 at 2a78b893).",
       "supersedes": 23,
       "prev": "f8e8970fbecfa18b823e34c430b69d1dcb8f108e98d8f8d98b73421b7dafc686"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-A",
+      "ids": [
+        "lib_barbell_overhead_press",
+        "lib_dumbbell_biceps_curl",
+        "lib_pec_fly",
+        "lib_plank",
+        "lib_rope_triceps_pushdown",
+        "lib_barbell_row",
+        "lib_dumbbell_bench_press",
+        "lib_dumbbell_shoulder_press",
+        "lib_romanian_deadlift",
+        "lib_single_leg_romanian_deadlift",
+        "lib_triceps_pushdown",
+        "lib_upright_row"
+      ],
+      "pageSha256": "91661d0e10bf9f3fb3b38d4ce1bd1e33e69b1b3271ba0f2e2632031ea53d6af7",
+      "bytes": 2353010,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8A-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ bb60cc574a8515dc6e67b3c80195b2cb2ffe6738",
+      "date": "2026-11-10",
+      "why": "O5; LIB-SHIP W8a layers page (D-PFC-ROUND1 panel 6760254084, W8a LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6761492481); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): barbell_overhead_press and pec_fly back on the page (mountain_climbers held, D-W8A-MCFEEL / F-HAND-PALMFLAT-SIZE); cardcmp: every card byte-equal to the judged page 708e7f7f8b3aaecb8e4ba6e26c7bb166e3523dd0c2e85be27108aba0320c7d05 except pec_fly's row label (F-PECFLY-FEELROW, ruled 6761492481); main's cards byte-equal (diff adds only)",
+      "supersedes": 22,
+      "prev": "74eed4f671fa395b7d71750ac3cbb749872347d61053d7688b23e2a4d5ac66aa"
     }
   ]
 }

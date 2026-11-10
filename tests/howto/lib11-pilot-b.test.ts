@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { MAIN_GOLDEN, PLATE_MOVES, pfTailProblems } from './platefix-pins';
+import { W8A_LAYERS, w8aLayersProblems } from './checks/ship-w8a';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -286,7 +287,10 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
   // LIB-SHIP W2 (D-SHIP-A9, ruling 3; D-SHIP-W2-STAMP #379 6636105974): cable_fly and push_up ship; smith and
   // seated_leg_curl (Q7, F-ZOOM-NONE) stay at approved-plate. Replaces "every row approved-plate": a ruled id at any
   // stage but shipped, or an unruled id at any stage but approved-plate, is red.
-  const SHIPPED_RULED = ['lib_cable_fly', 'lib_push_up'];
+  // LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, #413 6761492481): seated_leg_curl ships too (first, in pilot-b.json's row order);
+  // W2_IDS are the ids W2's and the later layers-page entries name, before W8a's appended entry
+  const W2_IDS = ['lib_cable_fly', 'lib_push_up'];
+  const SHIPPED_RULED = ['lib_seated_leg_curl', 'lib_cable_fly', 'lib_push_up'];
   const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([id, r]) => r.stage !== (SHIPPED_RULED.includes(id) ? 'shipped' : 'approved-plate')).map(([id, r]) => `${id}: ${r.stage}`);
   /** LIB-SHIP W2: the chain's layers-page entries against the committed layers page: exactly one, last, first of its
    *  key (no supersedes), the supervisor's under D-SHIP-W2-STAMP, naming exactly the ruled ids, pinning the page.
@@ -312,7 +316,10 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     return out;
   };
   const LINK = /^https:\/\/github\.com\/macdarenz-droid\/M-arc\/(pull|issues)\/\d+#issuecomment-\d+ @ [0-9a-f]{40}$/;
-  const layersPinProblems = (file: any, layersPage: Buffer, page: string = html) => {
+  const layersPinProblems = (all: any, layersPage: Buffer, page: string = html) => {
+    // LIB-SHIP W8a: the appended W8a entry is checked exactly (checks/ship-w8a.ts); the checks below run on the entries
+    // before it, with the layers page it supersedes held to that page's pin
+    const w8a = w8aLayersProblems(all, 'pilot-b', layersPage), file = { ...all, entries: all.entries.slice(0, -1) };
     const n = MAIN_GOLDEN['pilot-b']!.n, main = file.entries.slice(0, n);
     const lp = main.map((e: any, i: number) => ({ e, i })).filter(({ e }: any) => e.kind === 'layers-page'), out: string[] = [];
     if (!lp.length) return ['layers-page entries: 0'];
@@ -324,13 +331,13 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     const bm = main[n - 1], cur = file.entries[n + 2];   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was the last entry, now PF1's tail layers-page entry at n + 2 (3b's 2 entries follow)
     // W2 review follow-up (#384 6647873082): the approval link in golden.mjs's APPROVAL form, on W2's entry and the re-pins
     for (const x of new Set([e, bm, cur])) if (typeof x.approval !== 'string' || !LINK.test(x.approval)) out.push('layers-page approval link');
-    for (const x of new Set([e, bm])) if (JSON.stringify(x.ids) !== JSON.stringify(SHIPPED_RULED)) out.push(`layers-page ids ${x.ids}`);
+    for (const x of new Set([e, bm])) if (JSON.stringify(x.ids) !== JSON.stringify(W2_IDS)) out.push(`layers-page ids ${x.ids}`);
     if (bm.pageSha256 !== BM_LAYERS.sha || bm.bytes !== BM_LAYERS.bytes) out.push('layers-page pin');
     // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF1's tail last, checked against the built page; now 3b's 2 entries follow it
     // (pf3bTail, exactly), and PF1's page entry 7 keeps its pin 128e6112 (409,805 B), superseded by 3b's page entry
-    out.push(...pfTailProblems(file, 'pilot-b', { G: golden, html: page, page: 0, plates: { lib_cable_fly: 3 }, layers: { supersedes: n - 1, ids: SHIPPED_RULED, page: layersPage }, after: 2, pagePin: PF1_PAGE }));
+    out.push(...pfTailProblems(file, 'pilot-b', { G: golden, html: page, page: 0, plates: { lib_cable_fly: 3 }, layers: { supersedes: n - 1, ids: W2_IDS, page: layersPage, pin: W8A_LAYERS['pilot-b']!.was }, after: 2, pagePin: PF1_PAGE }));
     out.push(...pf3bTail(file, page));
-    return out;
+    return [...out, ...w8a];
   };
   /** The golden file against the built page and the GO: [problems]. */
   const pinProblems = (file: any, page: string) => {
@@ -385,7 +392,9 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     const rows = readJson(ROWS).rows, g = readJson(GOLD);
     expect(stageProblems({ ...rows, lib_cable_fly: { ...rows.lib_cable_fly, stage: 'review' } })).toEqual(['lib_cable_fly: review']);
     // LIB-SHIP W2 A9: an unruled id at shipped, and a ruled id held back, are red
-    expect(stageProblems({ ...rows, lib_seated_leg_curl: { ...rows.lib_seated_leg_curl, stage: 'shipped' } })).toEqual(['lib_seated_leg_curl: shipped']);
+    // LIB-SHIP W8a: seated_leg_curl is ruled now, so the unruled id is smith_machine_bench_press, and seated held back is red
+    expect(stageProblems({ ...rows, lib_smith_machine_bench_press: { ...rows.lib_smith_machine_bench_press, stage: 'shipped' } })).toEqual(['lib_smith_machine_bench_press: shipped']);
+    expect(stageProblems({ ...rows, lib_seated_leg_curl: { ...rows.lib_seated_leg_curl, stage: 'approved-plate' } })).toEqual(['lib_seated_leg_curl: approved-plate']);
     expect(stageProblems({ ...rows, lib_push_up: { ...rows.lib_push_up, stage: 'approved-plate' } })).toEqual(['lib_push_up: approved-plate']);
     const ex = structuredClone(g); ex.entries[1].exemptions = [...ex.entries[1].exemptions, 'F1'];
     expect(pinProblems(ex, html).some(p => p.endsWith('exemptions F5,F1'))).toBe(true);
@@ -404,6 +413,8 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
       // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was through entry 9, now + its 2 tail entries
       'entry 10 (plate:lib_smith_machine_bench_press): prev does not match the entries before it (an older entry was edited)',
       'entry 11 (page): prev does not match the entries before it (an older entry was edited)',
+      // LIB-SHIP W8a: + its appended layers-page entry
+      'entry 12 (layers-page): prev does not match the entries before it (an older entry was edited)',
       'main entries changed', 'lib_push_up: approval is not the GO']);
     const pa = structuredClone(g); pa.entries[0].approval = pa.entries[0].approval.replace('1d7f28d2', '8ae48ed9');
     expect(pinProblems(pa, html)).toContain('page: approval is not the GO');
@@ -412,7 +423,7 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     // LIB-SHIP W2: a second layers-page entry, a changed page byte, an unruled id named, and a superseding entry are red
     // F-BODYMAP-FRONTDELT and LIB-PLATEFIX-1: W2's entry and the body-map re-pin are main's (bm = main's last); the same
     // reds hold on the tail's layers-page entry (last)
-    const lpage = readFileSync(readJson(ROWS).pages.layers), last = g.entries.length - 3, bm = MAIN_GOLDEN['pilot-b']!.n - 1, w2 = bm - 1;
+    const lpage = readFileSync(readJson(ROWS).pages.layers), last = g.entries.length - 4, bm = MAIN_GOLDEN['pilot-b']!.n - 1, w2 = bm - 1;
     const mainMoved = ["pilot-b: main's 7 entries changed"];
     const lp = structuredClone(g); lp.entries[bm] = { ...lp.entries[w2] };   // W2's entry twice among main's, no body-map re-pin
     expect(layersPinProblems(lp, lpage)).toEqual([`after W2: ${JSON.stringify([['layers-page', null, 'D-SHIP-W2-STAMP', 'supervisor', undefined]])}`, 'layers-page pin', ...mainMoved]);
@@ -420,7 +431,17 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     // layers-page entry (3b's 2 entries follow) and the copy put right after it
     const lpt = structuredClone(g); lpt.entries.splice(last + 1, 0, { ...lpt.entries[last] });
     expect(layersPinProblems(lpt, lpage)).toEqual(['pilot-b: tail kinds page,plate,layers-page,layers-page', `pilot-b 3b: tail 13 ${JSON.stringify([['plate', 'lib_smith_machine_bench_press', 1, 'owner', 'D-OWNER-REPIN'], ['page', null, 7, 'owner', 'D-OWNER-REPIN']])}`]);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was the first line only, now + 3b's tail check (13 entries)
-    expect(layersPinProblems(g, Buffer.concat([lpage, Buffer.from(' ')]))).toEqual(['pilot-b: layers-page pin']);
+    // LIB-SHIP W8a: a changed page byte is now red on W8a's entry (PF1's tail entry keeps the superseded page's pin)
+    expect(layersPinProblems(g, Buffer.concat([lpage, Buffer.from(' ')]))).toEqual(['pilot-b W8a: page pin']);
+    const lps = structuredClone(g); lps.entries[last].bytes += 1;   // PF1's tail entry off the superseded page's pin
+    expect(layersPinProblems(lps, lpage)).toEqual(['pilot-b: layers-page pin', 'pilot-b W8a: superseded pin']);
+    // LIB-SHIP W8a: its entry with an id dropped, superseding another entry, or approved elsewhere is red
+    const wi = structuredClone(g); wi.entries.at(-1).ids = wi.entries.at(-1).ids.slice(1);
+    expect(layersPinProblems(wi, lpage)).toEqual(['pilot-b W8a: ids lib_cable_fly,lib_push_up']);
+    const wsu = structuredClone(g); wsu.entries.at(-1).supersedes = 6;
+    expect(layersPinProblems(wsu, lpage)).toEqual(['pilot-b W8a: supersedes 6']);
+    const wap = structuredClone(g); wap.entries.at(-1).approval = wap.entries.at(-1).approval.replace('6760254084', '6760254085');
+    expect(layersPinProblems(wap, lpage)).toEqual(['pilot-b W8a: last entry layers-page D-SHIP-W8A-LAYERS']);
     const li = structuredClone(g); li.entries[bm].ids = [...li.entries[bm].ids, 'lib_seated_leg_curl'];
     expect(layersPinProblems(li, lpage)).toEqual(['layers-page ids lib_cable_fly,lib_push_up,lib_seated_leg_curl', ...mainMoved]);
     const lit = structuredClone(g); lit.entries[last].ids = [...lit.entries[last].ids, 'lib_seated_leg_curl'];
@@ -446,7 +467,7 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     expect(layersPinProblems(sf, lpage)).toEqual(['pilot-b 3b: lib_smith_machine_bench_press: fragments']);
     const ss = structuredClone(g); ss.entries[last + 1].src = 'x';
     expect(layersPinProblems(ss, lpage)).toContain('pilot-b 3b: src changed');
-    const s3 = structuredClone(g); s3.entries.push({ ...s3.entries[last + 2] });
+    const s3 = structuredClone(g); s3.entries.splice(-1, 0, { ...s3.entries[last + 2] });   // LIB-SHIP W8a: before W8a's entry, which stays last
     expect(layersPinProblems(s3, lpage).some(x => x.startsWith('pilot-b 3b: tail'))).toBe(true);
   });
   it('mutations: an existing layers file and a pinned id in another golden file are red', () => {

@@ -120,13 +120,19 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
   // LIB-PLATEFIX-1 (#385, D-PLATEFIX-STAMP 6654532221; D-PLATEFIX-PINS / PIN GO): romanian_deadlift, single_leg_romanian_deadlift
   // and triceps_pushdown join them (layers-page order); barbell_overhead_press (D-LIB13-PANEL2), mountain_climbers and pec_fly stay held
   const SHIPPED_RULED = ['lib_dumbbell_biceps_curl', 'lib_plank', 'lib_rope_triceps_pushdown', 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press',
-    'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift', 'lib_triceps_pushdown', 'lib_upright_row'];
+    'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift', 'lib_triceps_pushdown', 'lib_upright_row',
+    // LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, #413 6761492481): barbell_overhead_press and pec_fly join them;
+    // mountain_climbers stays held (D-W8A-MCFEEL, F-HAND-PALMFLAT-SIZE)
+    'lib_barbell_overhead_press', 'lib_pec_fly'];
   /** LIB-SHIP W2: one line per row off the ruled state (an unruled id shipped, a ruled id not shipped, another stage). */
   const shipProblems = (rows: Record<string, any>) => Object.entries(rows).flatMap(([id, r]: [string, any]) =>
     SHIPPED_RULED.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
   it('LIB-SHIP W2 A9 mutations: an unruled id at shipped, a ruled id held back, and a ruled id\'s stamp removed are red', async () => {
     // LIB-PLATEFIX-1: triceps_pushdown is ruled now, so the unruled id is the held barbell_overhead_press
-    expect(shipProblems({ ...batch.rows, lib_barbell_overhead_press: { ...batch.rows.lib_barbell_overhead_press, stage: 'shipped' } })).toEqual(['lib_barbell_overhead_press: unruled, at shipped']);
+    // LIB-SHIP W8a: barbell_overhead_press is ruled now, so the unruled id is the held mountain_climbers
+    expect(shipProblems({ ...batch.rows, lib_mountain_climbers: { ...batch.rows.lib_mountain_climbers, stage: 'shipped' } })).toEqual(['lib_mountain_climbers: unruled, at shipped']);
+    // LIB-SHIP W8a A9: a W8a id held back is red
+    expect(shipProblems({ ...batch.rows, lib_pec_fly: { ...batch.rows.lib_pec_fly, stage: 'approved-plate' } })).toEqual(['lib_pec_fly: ruled, at approved-plate']);
     expect(shipProblems({ ...batch.rows, lib_plank: { ...batch.rows.lib_plank, stage: 'approved-plate' } })).toEqual(['lib_plank: ruled, at approved-plate']);
     // LIB-PLATEFIX-1 A9: a PLATEFIX id held back is red
     expect(shipProblems({ ...batch.rows, lib_romanian_deadlift: { ...batch.rows.lib_romanian_deadlift, stage: 'approved-plate' } })).toEqual(['lib_romanian_deadlift: ruled, at approved-plate']);
@@ -178,9 +184,12 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
       ['plate', 'lib_pec_fly', 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === 'lib_pec_fly')],
       // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was the list ending at pec_fly's entry, now + its owner barbell_overhead_press plate entry (superseding #385's, 19) and owner page entry (superseding PF2's, 23); the layers page is not re-pinned
       ['plate', 'lib_barbell_overhead_press', 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'plate' && e.id === 'lib_barbell_overhead_press' && e.supersedes != null)],
-      ['page', null, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'page' && e.supersedes === entries.findIndex((x: any) => x.kind === 'page' && x.supersedes === 0))]]);
+      ['page', null, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'page' && e.supersedes === entries.findIndex((x: any) => x.kind === 'page' && x.supersedes === 0))],
+      // LIB-SHIP W8a (D-BODYMAP-APPEND, 'supervisor' point 4; #413 6761492481): then exactly its layers-page entry,
+      // superseding PLATEFIX-1's; that entry is now the current one
+      ['layers-page', null, 'D-SHIP-W8A-LAYERS', 'supervisor', lp[3]?.i]]);
     const cur = lp[lp.length - 1].e;
-    expect(lp[lp.length - 1].i).toBe(entries.length - 5);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was entries.length - 3, now - 5 (its 2 owner entries follow PF2's 2)
+    expect(lp[lp.length - 1].i).toBe(entries.length - 1);   // LIB-SHIP W8a: was entries.length - 5 (LIB-PLATEFIX-3b), now the last entry (W8a's re-pin)
     const page = readFileSync(ROOT + batch.pages.layers);
     expect([[...cur.ids].sort(), cur.ids.length, cur.pageSha256, cur.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
