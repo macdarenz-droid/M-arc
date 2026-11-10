@@ -9,12 +9,13 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { promisify } from 'node:util';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { inputsMapOf } from '../walk-cache';
 // @ts-expect-error plain .mjs build tool, no types
 import { JOB_BUDGET_S, SHARD_TARGET_S as LIB_TARGET, idsOfShard, libraryIds, libraryPlan, planK, readTimes, shardLoads } from '../../tools/plates/library/ci/plan.mjs';
 // @ts-expect-error plain .mjs build tool, no types
 import { modeOf } from '../../tools/plates/library/ci/mode.mjs';
 // @ts-expect-error plain .mjs build tool, no types
-import { affectedIds, inputsMap, lazyClosure, staticClass } from '../../tools/plates/library/ci/affected.mjs';
+import { affectedIds, lazyClosure, staticClass } from '../../tools/plates/library/ci/affected.mjs';
 // @ts-expect-error plain .mjs build tool, no types
 import { collectLibrary, libraryVerdict, pinnedPages } from '../../tools/plates/library/ci/verdict.mjs';
 // @ts-expect-error plain .mjs build tool, no types
@@ -300,7 +301,7 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     } finally { git(tree, 'reset', '-q', '--hard', base); }
   };
   it('the map is proven on the real tree and on the fixture tree: every header equals inputsSha256(writers, collected inputs)', async () => {
-    const real = await inputsMap(ROOT);
+    const real = await inputsMapOf(ROOT);   // F-GEN-WALK-SPEED: affected.mjs inputsMap(ROOT), once per run (tests/walk-cache.ts)
     expect(real.why).toEqual([]);
     expect(real.proven).toBe(true);
     // LIB-SHIP W1 (D-SHIP-A9): the real tree ships dumbbell_biceps_curl, whose 6 generated outputs (ht-, feel-, posture-,

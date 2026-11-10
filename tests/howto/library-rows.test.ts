@@ -11,6 +11,7 @@ import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 import { readHowTo } from './generated-module';
 import { W4_IDS } from './checks/ship-w4';
+import { feelAllOf, renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -39,7 +40,7 @@ beforeAll(async () => {
   if (g.code !== 0) throw new Error(`generate failed in the E1 tree:\n${g.out}`);
   const eight = F.ownRowsTree();
   try { mainOut = await (await import(/* @vite-ignore */ F.url(eight, 'tools/plates/generate.mjs'))).render(); } finally { F.drop(eight); }
-  repoOut = await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render();
+  repoOut = await renderOf(new URL('../../', import.meta.url).pathname);   // F-GEN-WALK-SPEED: the repo's render(), once per run (tests/walk-cache.ts)
   treeOut = await (await import(/* @vite-ignore */ turl('tools/plates/generate.mjs'))).render();
 }, 600_000);
 afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
@@ -373,7 +374,7 @@ async function noMarkIds(base: string, ids: string[]) {
 async function feelChecks(base: string, row: any) {
   const feel = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/feel.mjs'));
   const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));
-  const fm = (await feel.renderAll()).fm, pre = row.chromeId, page = readFileSync(join(base, row.pages.layers), 'utf8');
+  const fm = (await feelAllOf(base)).fm, pre = row.chromeId, page = readFileSync(join(base, row.pages.layers), 'utf8');
   const text = readFileSync(join(base, `src/howto/generated/feel-${pre}.ts`), 'utf8');
   const section = JSON.parse(text.match(/\n {2}section: (".*"),\n/)![1]!) as string;
   expect(section === feel.feelSectionOf(page, pre), `${row.id}: section`).toBe(true);
@@ -417,9 +418,7 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
     const cases = await libraryCases();
     expect(cases.at(-1)!.row.id).toBe(F.ID);
     for (const { base, row } of cases) await feelChecks(base, row);
-  }, 1_200_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): 32 shipped rows; timed out at 180 s on 824d8456's unit-tz (Asia/Manila) CI; no assertion change
-  // LIB-SHIP W7 (D-SHIP-W3-WALKTIME form, supervisor ruling on #394 2026-11-10): 1200 s; 69 shipped rows after W6 and W7's 16; measured 507 s in
-  // e577e3a5's source-gate and timed out at 600 s in its unit-tz (America/New_York); no assertion change (F-GEN-WALK-SPEED is the speed fix)
+  }, 90_000);   // F-GEN-WALK-SPEED: renderAll() once per worker (tests/walk-cache.ts); 46 shipped rows took 23.3 / 28.3 / 29.4 s (unit-tz New_York / Manila, source-gate) on 687d0a95's CI, 3x rounded up; was 600 s (LIB-SHIP W4, the W3 WALKTIME form, #384 6690918663); no assertion change
   it('LIB-SHIP W2: NO_MARK is exactly the shipped library ids whose feel draws no mark; a mark-drawing id on it, or a no-mark id off it, is red', async () => {
     const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
     expect(await noMarkIds(repo, LIBRARY.map(r => r.id))).toEqual(NO_MARK);

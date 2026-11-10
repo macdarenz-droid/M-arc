@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 import { child, ownRowsTreeInChild } from '../child-test';
 import { LIBRARY } from './shipped-rows';
+import { renderOf } from '../walk-cache';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -13,7 +14,7 @@ beforeAll(async () => {
   gen = await import(/* @vite-ignore */ url('tools/plates/generate.mjs'));
   core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
   bodies = await import(/* @vite-ignore */ url('tools/plates/library/bodies.mjs'));
-  out = await gen.render();
+  out = await renderOf(new URL('../../', import.meta.url).pathname);   // F-GEN-WALK-SPEED: gen.render(), once per run (tests/walk-cache.ts)
 }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): render() walks every shipped id (40 now, 231 files); ran past 180 s on 3c6efe61 unit-tz America/New_York; the library timeout, as #385; LIB-SHIP W6: 53 shipped ids (budgets N) after the merge of main de91dd21
 
 const fixture = () => JSON.parse(readFileSync('tests/howto/fixtures/generated-bodies.json', 'utf8')) as { count: number; bodies: Record<string, string> };
