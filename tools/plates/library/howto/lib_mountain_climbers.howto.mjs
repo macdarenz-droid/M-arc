@@ -162,7 +162,7 @@ const feel = {
     { muscleId: 'hip_flexors', plain: 'The hip flexors lift the legs.', claim: CL.c11 },
   ],
   watch: [],
-  feelLine: 'You should feel this in your belly and the front of your hips.',   // W8a L4 (Q-W8a-2): the map's regions only (c11); hanging_knee_raise's words (lib_hanging_knee_raise.howto.mjs:188)
+  feelLine: 'You should feel this in your belly, shoulders, arms and the front of your hips.',   // W8a fix (#413 6760254084): main's line kept, it carries c11's row; L4 is exception D-W8A-MCFEEL
   rows: [
     // The card's first two rows (belly, shoulders and arms; front of the hips) have no fix, so they are left out: the
     // feel line says them (D-SHIP-Q16).
