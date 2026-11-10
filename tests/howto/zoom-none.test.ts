@@ -123,7 +123,7 @@ const LOADERS_W7 = 'ea5ce253ce0771c1bb5a5ea03193506952c30be0facf18aacbba5a1e499b
 // LIB-SHIP W8a (ruling 3; #413 6761492481; D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD #415): loaders.ts gains the 3 W8a ids'
 // 12 lines (HOWTO_IDS, LOADERS, POSTURE and FEEL each; no HAND line). With exactly those out, the body is LOADERS_W7.
 // The 3 new posture chunks are pinned at the W8a flip.
-const LOADERS_W8A = 'c1c6cdabb269d4f50522ec93e7e5da055d0a18f1a7261760e5746cdf7a5ddcea';
+const LOADERS_W8A = 'cb38a10df8e08364e19691dd845851facef1ee6e8c02102bb27c3edb6e0e0f5a';
 const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'crunch'];
 const W8A_LINE = new RegExp(`^  (?:"lib_(?:${W8A_IDS.join('|')})",|lib_(?:${W8A_IDS.join('|')}): \\(\\) => |"(?:${W8A_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
 const w8aLess = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !W8A_LINE.test(l)); return { removed: lines.length - kept.length, text: kept.join('\n') }; };
