@@ -8,9 +8,7 @@
   "archetype": { "hand": "none", "contact": ["standing-feet"] },
   "parent": "box_jump",
   "parentNote": "Supervisor's LB4A brief names box_jump (claude/libht-research-legs-core) as the template parent. Same hand archetype (none) and primary contact (standing-feet). content.md appendix A had jump_squat parenting box_jump; box_jump was written first, so the direction is reversed.",
-  "inherit": [
-    { "field": "plate.frames (airborne convention: take-off and landing frames only)", "why": "true for this child because architecture section 1 lists the jump squat under the airborne convention." }
-  ],
+  "inherit": [],
   "claims": [
     { "id": "j1", "text": "Stand with feet hip width, arms by the sides, shoulders down and back, trunk braced.",
       "tags": ["CONSENSUS"], "sources": ["ace-squatjumps"],
@@ -164,5 +162,8 @@
     "An EMG source for which muscles work most in the jump squat.",
     "Knee tracking on landing: only a jump-landing study in female athletes (j16, MECH/WEAK) was found; no jump-squat-specific source read.",
     "Ankle red-flag row: box_jump's ankle box now comes from the NHS ankle pain page (box_jump c14; nhs-sprains was dropped there, F21); not re-read here, so not linked. (W1 lows round 2026-10-03)"
+  ],
+  "notes": [
+    "RESEARCH-ROUTES-4 (D-RR4-JUMPSQ; Q-W7-9, #394 6647954465): plate.frames leaves inherit[]. This card's own plate.frames line equals box_jump's byte for byte and follows the ruled airborne convention (D-LIB8R-AIR), so the row no longer waits on box_jump. parent stays box_jump. No claim text changes."
   ]
 }
