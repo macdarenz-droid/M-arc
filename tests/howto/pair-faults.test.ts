@@ -56,8 +56,6 @@ const W3_SUBS: Record<string, string> = {
   'd-handle-pull-only-curled-unstated': '634b3f7d1612b42a73f7dc183814ad75ebab70355502a204eddc43a597c070a9',
   'v-handle-pull-only-curled-neutral-overhead': 'ff479a86d9c863463ad51238a364edd72182585445974dac98622a4add28c07c',
 };
-// LIB-SHIP W8a (ruling 3; #413 6761492481): assisted_pull_up's pairFaults row adds exactly this sub-key, pinned at the W8a flip
-const W8A_SUBS: Record<string, string> = { 'bar-hang-only-curled-over': '220b29cd96e71dd69f80726d07de9d8f58fb6ee2e82966cba9e0c1368a57fe80' };
 const W3_SUB_OF: Record<string, string> = {
   lib_chin_up: 'bar-hang-only-curled-under', lib_close_grip_pulldown: 'v-handle-pull-only-curled-neutral-overhead',
   lib_inverted_row: 'bar-row-only-curled-over', lib_single_arm_lat_pulldown: 'd-handle-pull-only-curled-unstated',
@@ -65,7 +63,7 @@ const W3_SUB_OF: Record<string, string> = {
 
 describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws on main', () => {
   it('pairPanel(key) is byte-equal to main for every pair key', async () => {
-    expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS), ...Object.keys(W8A_SUBS)].sort());   // LIB-SHIP W3; W8a
+    expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS)].sort());   // LIB-SHIP W3
     // LIB-SHIP W5 D-SHIP-W5-EZWORDS (#392 6654996739): ez-curl-over's Right note is 'Wrist straight' (reverse_curl c1, c6); its
     // panel equals main's exactly once that one note is put back, and 'Middle of palm' is gone from it. Every other key: byte-equal.
     for (const [k, want] of Object.entries(PANEL_MAIN)) {
@@ -75,7 +73,7 @@ describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws
       expect([k, /middle of palm/i.test(h), h.includes('Wrist straight'), h.includes('>WRIST STRAIGHT<')]).toEqual([k, false, true, true]);
       expect([k, sha(h.replaceAll('Wrist straight', 'Middle of palm').replaceAll('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'))]).toEqual([k, want]);
     }
-    for (const [k, want] of Object.entries({ ...W3_SUBS, ...W8A_SUBS })) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);   // LIB-SHIP W3; W8a
+    for (const [k, want] of Object.entries(W3_SUBS)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);   // LIB-SHIP W3
   }, 60_000);
 });
 
@@ -162,9 +160,8 @@ describe('F-PAIR-FAULTS A1/A4: a row with pairFaults draws only those faults (la
     expect(subs.get(SUB).config).toBe('x.layers.json');
     expect(() => P.subKeysOf([{ file: 'x', closeups: { lib_mountain_climbers: MC } }, { file: 'y', closeups: { lib_mountain_climbers: { ...MC, pairFaults: ['hand-ahead', 'hand-ahead'] } } }])).toThrow(/repeats/);
     // LIB-SHIP W3: main named none; W3's 4 ruled rows name exactly their sub-keys
-    // LIB-SHIP W8a: plus assisted_pull_up's
-    expect(Object.fromEntries(Object.entries(P.HAND_OF_ID).filter(([, k]: any) => k.includes('-only-')))).toEqual({ ...W3_SUB_OF, lib_assisted_pull_up: 'bar-hang-only-curled-over' });
-    expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS), ...Object.keys(W8A_SUBS)].sort());
+    expect(Object.fromEntries(Object.entries(P.HAND_OF_ID).filter(([, k]: any) => k.includes('-only-')))).toEqual(W3_SUB_OF);
+    expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS)].sort());
   });
 });
 

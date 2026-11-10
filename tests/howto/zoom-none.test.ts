@@ -120,18 +120,17 @@ const BODY_W7: Record<string, string> = {
 // was df31b275 with sled_pull's lines, then 54f783ad before the merge; D-SHIP-W7-HOLD2: glute_bridge's and high_knees' lines out too;
 // was a67a1966 before high_knees was held)
 const LOADERS_W7 = 'ea5ce253ce0771c1bb5a5ea03193506952c30be0facf18aacbba5a1e499bbf7f';
-// LIB-SHIP W8a (ruling 3; #413 6761492481): loaders.ts gains the 5 W8a ids' 20 lines (HOWTO_IDS, LOADERS and FEEL each;
-// POSTURE for all but seated_leg_curl, a ruled text-zoom row with no posture chunk; HAND for assisted_pull_up only). With
-// exactly those out, the body is LOADERS_W7. The 4 new posture chunks are pinned at the W8a flip.
+// LIB-SHIP W8a (ruling 3; #413 6761492481, D-W8A-ASSISTEDHOLD #415): loaders.ts gains the 4 W8a ids' 15 lines (HOWTO_IDS,
+// LOADERS and FEEL each; POSTURE for all but seated_leg_curl, a ruled text-zoom row with no posture chunk; no HAND line).
+// With exactly those out, the body is LOADERS_W7. The 3 new posture chunks are pinned at the W8a flip.
 const LOADERS_W8A = '27511784435e9e89fa10cb014237319396fc07ce3a190ae60d1202a83bd3b268';
-const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'seated_leg_curl', 'crunch', 'assisted_pull_up'];
+const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'seated_leg_curl', 'crunch'];
 const W8A_LINE = new RegExp(`^  (?:"lib_(?:${W8A_IDS.join('|')})",|lib_(?:${W8A_IDS.join('|')}): \\(\\) => |"(?:${W8A_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
 const w8aLess = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !W8A_LINE.test(l)); return { removed: lines.length - kept.length, text: kept.join('\n') }; };
 const BODY_W8A: Record<string, string> = {
   'posture-barbell-overhead-press.ts': 'b0a7fab35095f3a41a7265ec95035aaca64c03aff2e5c6eff95e059497718749',
   'posture-pec-fly.ts': '13f7f32c2e102066a128ff29d1274391c23354df1d31819e95b2517f8f9e3cff',
   'posture-crunch.ts': '68fc649cbb2468cecbb03203961e8d4283f71c0d0a75c465dae32e3e5e7b14c1',
-  'posture-assisted-pull-up.ts': '3f30244193a6f1f4b3e4af05928ffe781c991b03f1a760695cef72e833ebc400',
 };
 const LOADERS_DC05 = '1843ca08a1737174a024468871df55cb2316b4139cb6c9904e50c1c8ec30e23e';   // main dc058207's loaders.ts body (measured from its own file)
 const W7_IDS = ['leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'cable_kickback', 'resisted_hip_flexion',
@@ -178,10 +177,11 @@ describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on
     expect(now).not.toContain('posture-seated-leg-curl.ts');   // LIB-SHIP W8a: the text-zoom row writes no posture chunk
     expect(now).not.toContain('posture-underhand-lat-pulldown.ts');   // D-W8A-UNDERHANDHOLD
     expect(now).not.toContain('posture-mountain-climbers.ts');   // D-W8A-MCFEEL
-    // LIB-SHIP W8a: loaders.ts is LOADERS_W8A; W8a's 20 lines out gives LOADERS_W7, then the W7 chain below
+    expect(now).not.toContain('posture-assisted-pull-up.ts');   // D-W8A-ASSISTEDHOLD
+    // LIB-SHIP W8a: loaders.ts is LOADERS_W8A; W8a's 15 lines out gives LOADERS_W7, then the W7 chain below
     expect(sha(body('loaders.ts'))).toBe(LOADERS_W8A);
     const w8a = w8aLess(body('loaders.ts'));
-    expect([w8a.removed, sha(w8a.text)]).toEqual([20, LOADERS_W7]);
+    expect([w8a.removed, sha(w8a.text)]).toEqual([15, LOADERS_W7]);
     // LIB-SHIP W7 (merge of main dc058207): W7's 64 lines out gives main dc058207's body (LOADERS_DC05)
     const w7 = w7Less(w8a.text);
     expect([w7.removed, sha(w7.text)]).toEqual([64, LOADERS_DC05]);
@@ -199,8 +199,8 @@ describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on
   });
   it('LIB-SHIP W8a mutations (ruling 3): a W8a loaders line dropped, a POSTURE line for seated_leg_curl, another line changed, or a W8a posture byte changed, is red', () => {
     const b = body('loaders.ts');
-    expect(w8aLess(b.replace('  "pec-fly": () => import(\'./posture-pec-fly\'),\n', '')).removed).toBe(19);
-    expect(w8aLess(b.replace('  "pec-fly": () => import(\'./posture-pec-fly\'),\n', '  "pec-fly": () => import(\'./posture-pec-fly\'),\n  "seated-leg-curl": () => import(\'./posture-seated-leg-curl\'),\n')).removed).toBe(21);
+    expect(w8aLess(b.replace('  "pec-fly": () => import(\'./posture-pec-fly\'),\n', '')).removed).toBe(14);
+    expect(w8aLess(b.replace('  "pec-fly": () => import(\'./posture-pec-fly\'),\n', '  "pec-fly": () => import(\'./posture-pec-fly\'),\n  "seated-leg-curl": () => import(\'./posture-seated-leg-curl\'),\n')).removed).toBe(16);
     expect(sha(w8aLess(b.replace('export const HAND', 'export const HAND_X')).text)).not.toBe(LOADERS_W7);
     expect(sha(`${body('posture-crunch.ts')} `)).not.toBe(BODY_W8A['posture-crunch.ts']);
     // the held underhand_lat_pulldown's line put back is red: not W8A_LINE's, so the W7 chain no longer holds

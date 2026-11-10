@@ -110,9 +110,9 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     'kettlebell_swing', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
   const W7_LINE = new RegExp(`^  (?:"lib_(?:${W7_IDS.join('|')})",|lib_(?:${W7_IDS.join('|')}): \\(\\) => |"(?:${W7_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w7Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W7_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
-  // LIB-SHIP W8a (ruling 3; #413 6761492481): its 5 ids add 20 lines (HOWTO_IDS, LOADERS, FEEL each; POSTURE for all but the
-  // text-zoom seated_leg_curl; HAND for assisted_pull_up only). With exactly those taken out first, the W7 chain below holds
-  const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'seated_leg_curl', 'crunch', 'assisted_pull_up'];
+  // LIB-SHIP W8a (ruling 3; #413 6761492481, D-W8A-ASSISTEDHOLD #415): its 4 ids add 15 lines (HOWTO_IDS, LOADERS, FEEL each;
+  // POSTURE for all but the text-zoom seated_leg_curl; no HAND line). With exactly those taken out first, the W7 chain below holds
+  const W8A_IDS = ['barbell_overhead_press', 'pec_fly', 'seated_leg_curl', 'crunch'];
   const W8A_LINE = new RegExp(`^  (?:"lib_(?:${W8A_IDS.join('|')})",|lib_(?:${W8A_IDS.join('|')}): \\(\\) => |"(?:${W8A_IDS.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w8aLess = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W8A_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
@@ -129,7 +129,7 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
     expect(W4_IDS).toHaveLength(6);
     const w8a = w8aLess(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
-    expect(w8a.removed).toBe(20);   // LIB-SHIP W8a: its lines taken out first
+    expect(w8a.removed).toBe(15);   // LIB-SHIP W8a: its lines taken out first
     const w7 = w7Less(w8a.text);
     expect(w7.removed).toBe(64);   // LIB-SHIP W7: W7's lines taken out next (16 x 4)
     const w6 = w6Less(w7.text);
@@ -146,9 +146,9 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), ok = w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(t).text).text).text).text).text);
     expect(ok.sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
     expect(t).toContain('  "crunch": () => import(\'./posture-crunch\'),\n');
-    expect(w8aLess(t.replace('  "crunch": () => import(\'./posture-crunch\'),\n', '')).removed).toBe(19);
-    expect(w8aLess(t.replace('  "crunch": () => import(\'./posture-crunch\'),\n', '  "crunch": () => import(\'./posture-crunch\'),\n  "seated-leg-curl": () => import(\'./posture-seated-leg-curl\'),\n')).removed).toBe(21);
-    expect(t).not.toMatch(/mountain[-_]climbers|underhand[-_]lat[-_]pulldown/);   // D-W8A-MCFEEL, D-W8A-UNDERHANDHOLD: held, no line
+    expect(w8aLess(t.replace('  "crunch": () => import(\'./posture-crunch\'),\n', '')).removed).toBe(14);
+    expect(w8aLess(t.replace('  "crunch": () => import(\'./posture-crunch\'),\n', '  "crunch": () => import(\'./posture-crunch\'),\n  "seated-leg-curl": () => import(\'./posture-seated-leg-curl\'),\n')).removed).toBe(16);
+    expect(t).not.toMatch(/mountain[-_]climbers|underhand[-_]lat[-_]pulldown|assisted[-_]pull[-_]up/);   // D-W8A-MCFEEL, D-W8A-UNDERHANDHOLD, D-W8A-ASSISTEDHOLD: held, no line
     expect(w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(t.replace('export const HAND', 'export const HAND_X')).text).text).text).text).text).sha).not.toBe(ok.sha);
   });
   it('LIB-SHIP W7 mutations (ruling 3): a W7 line dropped, a HAND line for a W7 id, and another line changed are red', () => {

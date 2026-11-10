@@ -71,7 +71,7 @@ describe('RESEARCH-ROUTES-1 P1-b/P1-c: the ruled fields left inherit[] (F-W4-INH
 // then it is taken out (the lib-shapes / pair-faults form), so every other entry is compared as before.
 const W6_ROWS = ['lb06', 'lb07'].flatMap(b => Object.keys(JSON.parse(rd(`tools/plates/library/batches/${b}.json`)).rows));
 // LIB-SHIP W8a (ruling 3; #413 6761492481): the MANIFEST with W8a's moved keys checked against their files and put back to
-// main 07f5fbcf's values, and its added key checked and removed (checks/ship-w8a.ts); a problem is red
+// main 07f5fbcf's values (checks/ship-w8a.ts); a problem is red
 const manifestLessW8a = () => {
   const bad: string[] = [], m = lessW8a(JSON.parse(rd('tools/plates/library/MANIFEST.json')), k => sha(readFileSync(join(ROOT, k))), bad, PF_W2_KEYS);   // pilot A's PF keys: pfW2Problems checks and blanks them
   if (bad.length) throw new Error(`LIB-SHIP W8a MANIFEST: ${bad.join('; ')}`);

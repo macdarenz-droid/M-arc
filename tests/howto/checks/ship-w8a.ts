@@ -15,12 +15,6 @@ export const W8A_LAYERS: Record<string, { supersedes: number; ids: string[]; was
     ids: ['lib_seated_leg_curl', 'lib_cable_fly', 'lib_push_up'],
     was: { sha: '4e9685bc66d715c6ced72b794a868996436580016dd8fef18f658d707b62972e', bytes: 426161 },
   },
-  lb01: {
-    supersedes: 16,
-    ids: ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_assisted_pull_up', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
-      'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'],
-    was: { sha: 'a1c714a30ab211d4ae05c2f5f49e7bcd48fe3275e55733ae930753c43c7a1678', bytes: 2195374 },
-  },
 };
 const LINK = /^https:\/\/github\.com\/macdarenz-droid\/M-arc\/pull\/413#issuecomment-6760254084 @ [0-9a-f]{40}$/;
 
@@ -36,11 +30,9 @@ export function w8aLayersProblems(file: any, batch: string, page: Buffer): strin
   return bad;
 }
 
-/** LIB-SHIP W8a: the MANIFEST keys its flip moved (the 4 batch files, 3 layers configs, 2 closeups modules and pec_fly's
- *  sheet), each with its value on main 07f5fbcf, and the key it added (assisted_pull_up's card, its pairWords row). */
+/** LIB-SHIP W8a: the MANIFEST keys its flip moved (the 3 batch files, 2 layers configs, 2 closeups modules and pec_fly's
+ *  sheet), each with its value on main 07f5fbcf. lb01 is back on main's bytes (D-W8A-ASSISTEDHOLD, #415 Q-W8a-8). */
 export const W8A_MOVED: Record<string, string> = {
-  'tools/plates/library/batches/lb01.json': 'fdbb3d16fd996273f36c69df37f98ccc495880558edb308d4bc6d947af04db0b',
-  'tools/plates/library/pages/lb01.layers.json': '4cec30c9c996b19e44793ef680da391901f7305c15e97bf90b9ea8855794e5db',
   'tools/plates/library/pages/pilot-a.layers.json': '03a4c9d5b642c5bf247b77a0108f502a575c869a55ae7fda8bbe0a9f634352c2',
   'tools/plates/library/batches/pilot-a.json': '8839222fb48f7760833a9047894b9b3406b8fdb94ce6331ed0f5ddf5048915af',
   'tools/plates/library/howto/lib_pec_fly.howto.mjs': 'a4f8308e938ec094f1fc8524e71961a57e91634c39c11015aa99e7509a1729ec',
@@ -50,9 +42,8 @@ export const W8A_MOVED: Record<string, string> = {
   'tools/plates/library/pages/pilot-b.layers.json': '9ec640116fcd0f539f521f9080d5ef931319145a04116b168614811fc99ae85d',
   'tools/plates/library/batches/pilot-b2.json': 'c96824c618be9728083932c20a2072ab5fdd9b53709fc96b0043d71b43e2cf74',
 };
-export const W8A_ADDED_KEY = { row: 'lib_assisted_pull_up', key: 'docs/research/howto/cards/assisted_pull_up.json' };
 /** The MANIFEST with W8a's moves put back to main 07f5fbcf's values (in place; returned). Each moved key must pin its
- *  current file and the added key must be exactly where W8a put it, or a problem is pushed and the value is left. */
+ *  current file, or a problem is pushed and the value is left. */
 /** `keep`: moved keys a caller's later helper already checks against the current file and blanks (left as they are). */
 export function lessW8a(m: any, shaOfFile: (p: string) => string, problems: string[] = [], keep: readonly string[] = []): any {
   const cur = Object.fromEntries(Object.keys(W8A_MOVED).map(k => [k, shaOfFile(k)]));
@@ -60,8 +51,5 @@ export function lessW8a(m: any, shaOfFile: (p: string) => string, problems: stri
     if (r.files[k] !== cur[k]) { problems.push(`${id}: ${k} off its file`); continue; }
     r.files[k] = was;
   }
-  const row = m.rows[W8A_ADDED_KEY.row];
-  if (!row || !(W8A_ADDED_KEY.key in row.files) || row.files[W8A_ADDED_KEY.key] !== shaOfFile(W8A_ADDED_KEY.key)) problems.push(`${W8A_ADDED_KEY.row}: ${W8A_ADDED_KEY.key} not pinned`);
-  else delete row.files[W8A_ADDED_KEY.key];
   return m;
 }

@@ -975,29 +975,22 @@ describe('LIB-9a A9: nothing ships (D-LIB4-ENTRY-2)', { timeout: T }, () => {
   // left-out (leg_press_calf_raise, D-OWNER-LIB142); every LB1 id lives in lb01.json or zoom.json and nowhere else.
   const W3 = ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_single_arm_lat_pulldown',
     'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', 'lib_horizontal_leg_press'];
-  // LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, #413 6761492481): assisted_pull_up ships too; underhand_lat_pulldown stays
-  // held (D-W8A-UNDERHANDHOLD, F-UNDERHAND-PQH1)
-  const W8A = ['lib_assisted_pull_up'];
-  const SHIP = [...W3.slice(0, 2), ...W8A, ...W3.slice(2)];   // registry order: assisted_pull_up follows hanging_knee_raise in lb01.json
-  const stageWant = (id: string) => (SHIP.includes(id) ? 'shipped' : id === 'lib_leg_press_calf_raise' ? /^left-out:/ : 'approved-plate');
+  const stageWant = (id: string) => (W3.includes(id) ? 'shipped' : id === 'lib_leg_press_calf_raise' ? /^left-out:/ : 'approved-plate');
   const stageProblems = (rows: any[]) => IDS.flatMap(id => {
     const r = rows.find((x: any) => x.id === id), want = stageWant(id);
     if (!r) return [`${id}: no row`];
     return (typeof want === 'string' ? r.stage === want : want.test(r.stage)) ? [] : [`${id}: ${r.stage}`];
   });
-  it('every LB1 row is at its ruled stage: W3\'s 9 and W8a\'s 1 shipped, the rest approved-plate or left-out', () => {
+  it('every LB1 row is at its ruled stage: W3\'s 9 shipped, the rest approved-plate or left-out', () => {
     expect(stageProblems(reg.rows())).toEqual([]);
   });
   it('red: a W3 id back at approved-plate, or a held id shipped, is red', () => {
     const rows = reg.rows();
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_chin_up' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_chin_up: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_shoulder_press' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_shoulder_press: shipped']);
-    // LIB-SHIP W8a: the W8a id held back, or the held underhand_lat_pulldown shipped, is red
-    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_assisted_pull_up' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_assisted_pull_up: approved-plate']);
-    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_underhand_lat_pulldown' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_underhand_lat_pulldown: shipped']);
   });
-  it('the shipped LB1 ids are exactly W3\'s 9 and W8a\'s 1, in registry order', () => {
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(SHIP);
+  it('the shipped LB1 ids are exactly W3\'s 9, in registry order', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W3);
   });
   /** Problems of a batches/ listing [[name, text]]: an LB1 id as a whole token. */
   const batchProblems = (files: [string, string][]) => files.flatMap(([f, text]) => IDS.filter(id => new RegExp(`\\b${id}\\b`).test(text)).map(id => `${f}: ${id}`));

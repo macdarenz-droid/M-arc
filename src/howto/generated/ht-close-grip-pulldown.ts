@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=776e23731be535095ac4ce8d1764cad5c4c7beeffd417acefa2c74d6aaac77e3
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=9a4b1df55b67d03bd3061aea83da450d0e2d77e3d5c71f93d02e8a7d08d1d8ee
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_close_grip_pulldown",
   name: "Close-Grip Pulldown",
-  hashes: { inputsSha256: "776e23731be535095ac4ce8d1764cad5c4c7beeffd417acefa2c74d6aaac77e3", golden: "97a436e7c26a5fefe8c0573f21fa7d28cc7db909b6333b109498fd7f2714eb7c" },
+  hashes: { inputsSha256: "9a4b1df55b67d03bd3061aea83da450d0e2d77e3d5c71f93d02e8a7d08d1d8ee", golden: "97a436e7c26a5fefe8c0573f21fa7d28cc7db909b6333b109498fd7f2714eb7c" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

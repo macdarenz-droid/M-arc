@@ -2861,3 +2861,18 @@ header :22-27, the lb01 page count :1250, lib11-pilot-b and F-ZOOM-NONE A2 sets)
   rebuilt pilot-b page, plus the text-zooms entry above. The other option is a full D-PFC-ROUND1 check.
 - **Q-W8a-5 crunch page.** Recommended: no config change; pilot-b2's page is rebuilt twice and re-pinned only if its
   sha256 moves. Its layers check runs on that page.
+
+### W8a rulings and holds (#413, #415)
+- Ships 4: barbell_overhead_press, pec_fly, seated_leg_curl (text zoom, D-SHIP-TEXTZOOM), crunch.
+- Held at approved-plate:
+  - mountain_climbers: D-W8A-MCFEEL, F-HAND-PALMFLAT-SIZE.
+  - underhand_lat_pulldown: D-W8A-UNDERHANDHOLD, F-UNDERHAND-PQH1.
+  - assisted_pull_up: D-W8A-ASSISTEDHOLD (#415 Q-W8a-8). lb01 stays on main's pin.
+- Follow-ups:
+  - **F-LAYERS-MGHOST:** the layers build never calls applyMistakeGhosts, so a spec with `mistakeGhosts: false` shows its
+    start pose and ghosts in the layers page's Mistake plate, and the page fails HT4/A5-fragments against the plates pin.
+  - **F-HT4-UNDER:** twins/ht4.mjs `sideOf` does not attribute the `<key>-under` call that crop.mjs draws for a
+    `wrong.under` zoom (the faded Right plate).
+  - Also open: F-PLATE-SIDEVIEW, F-TEMPO-NOSECONDS, F-NOGRIP-MISTAKES.
+- Branch: the work moved to claude/lib-ship-w8a-2 (#415, D-SHIP-W8A-REBRANCH). Every MANIFEST commit there carries
+  `[golden update]`.
