@@ -842,6 +842,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-10 ~11:45 UTC.**
+  - **Train 86 merged:** #410 PF4 @ `058322ed` → main `f14283dc` (4 close-ups, 9 redrawn plates).
+    - Review: the code checks passed (6762156516); the one Blocker, a stale PR body, was fixed and re-checked PASS. CI was 80/80 after a D-PF4-L2A5 re-run.
+    - Main's gate run 42798501987 failed in unit-tz NY on the same L2-A5 5 s default timeout (5728 ms). The failed job was re-run, with this cause recorded. The APK goes out once it is green. Play AAB 37.1.0.193 is built (run 42798502127, artifact 13753689674).
+  - **F-L2A5-TIMEOUT is priority 1 after the reset.** It has now been seen twice, on PF4's head and on main. The fix is an explicit timeout for `library-core.test.ts:602` in the WALKTIME form, using CI-measured times.
+  - **W8a #415** @ `26935789` ships 3: OHP, pec_fly, crunch. Held: seated_leg_curl (F-HT10-TEXTZOOM), assisted_pull_up (F-LAYERS-MGHOST, F-HT4-UNDER), underhand_lat_pulldown (F-UNDERHAND-PQH1) and mountain_climbers (F-HAND-PALMFLAT-SIZE). READY is owed.
+  - W7, PF4, F-GEN and RR4 builders are stopped. The only active builder is W8a.
 - **Update 11-10 ~08:45 UTC.**
   - **Train 85 merged:** #394 W7 @ `5730fc16` → main `07f5fbcf` (16 guides; the app has 69).
     - Delta checks PASS: 2917e021 (its merge of main) and 5730fc16 (D-SHIP-W7-C4: C4 600 → 1200 s, 540 s measured; the 2x band was amended to the WALKTIME house value, #394 6760213813).
