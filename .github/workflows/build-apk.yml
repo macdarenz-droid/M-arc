@@ -32,7 +32,9 @@ jobs:
     # D-SUP-CI-3 (10-26, F-CI-4): test:tz (two more zones) moved out to job unit-tz, which runs in parallel; this job hit
     # its 90-min cap on #289 (88.4 min on 66c21034, 90.6 on 0bc29a84) with every step green. Nothing is dropped:
     # android-gate needs unit-tz, so nothing ships unless it passes.
-    timeout-minutes: 90
+    # D-SUP-CI-UNITTZ120 (11-10): 90 -> 150. On #412's bc68af2a the unit tests passed (306 files, 4459 s) and the job
+    # was cancelled at its 90-min cap in the later steps (job 129531925727). Runaway limit, not a check; F-GEN-WALK-SPEED is the speed fix.
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
