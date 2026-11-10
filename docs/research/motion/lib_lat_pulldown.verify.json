@@ -1,0 +1,524 @@
+{
+ "exercise": "lib_lat_pulldown",
+ "verdicts": [
+  {
+   "claim": "Model layout: selectorized cable station, lifter sits FACING the stack, head pulley on a boom slightly in front of the face, long bar with bent-down ends, roller thigh pads; 'layout seen in the Cybex drawing and the Precor photo'.",
+   "verdict": "corrected",
+   "correction": "Cybex 5601 drawing (manual p. 2-7) does show the lifter facing the machine column, pulley overhead and slightly toward the machine, roller pad on the thighs. NSCA also says 'sit down on the seat facing the machine'. But the Precor VSL026BP photo shows the weight stack BESIDE the seat (to the user's side), not in front. Facing-the-stack is one common layout, not the only one; cite Cybex/NSCA for it, not Precor.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf"
+   ]
+  },
+  {
+   "claim": "Thigh pads: 'Two pairs of padded rollers' (modelThis summary) vs 'Two cylindrical padded rollers (one per thigh)' (parts).",
+   "verdict": "corrected",
+   "correction": "The file contradicts itself. The Precor photo shows ONE pair of rollers (one per thigh) on one adjustable post. Model one pair. ACE: pad 'firmly against the top of your thighs'.",
+   "sources": [
+    "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf",
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/"
+   ]
+  },
+  {
+   "claim": "Matrix Aura G3-MS51 Lat Pulldown 140 x 120 x 252 cm, 134 kg stack.",
+   "verdict": "confirmed",
+   "correction": "Owner's guide spec table: 140 x 120 x 252 cm, weight stack 134 kg.",
+   "sources": [
+    "https://content.johnsonfit.com/inc/uploaded_media/0354bbc1b9de4b9c11347ee68d9cc67b/owners_guide/dd0bb4c30d82048733cd18ee18e06603.pdf"
+   ]
+  },
+  {
+   "claim": "Precor VSL026BP 200 x 131 x 220 cm, 100 kg stack + 2.5 kg add-on, thigh hold-down pad, extended seat, foot bar.",
+   "verdict": "confirmed",
+   "correction": "Sell sheet: 79 x 52 x 87 in / 200 x 131 x 220 cm; stack 100 kg; add-on 2.5 kg; thigh hold-down pad, extended seat and foot bar.",
+   "sources": [
+    "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf"
+   ]
+  },
+  {
+   "claim": "Technogym Selection Lat Machine 122 x 84.5 x 228.5 cm, 100 kg (130 kg option); Technogym muscle list (lats, biceps, rhomboids, lower trapezius).",
+   "verdict": "unverified",
+   "correction": "Product page returns 403. A search summary attributes 122 x 84.5 x 228.5 cm / 100 kg to the Selection 900 Lat Machine (MNLP), not the Selection 700 (MNLC) page the file cites. Muscle list not seen. Do not use as documented.",
+   "sources": [
+    "https://www.technogym.com/en-US/product/selection-700-lat-machine_MNLC.html",
+    "https://www.technogym.com/en-INT/product/selection-900-lat-machine_MNLP.html"
+   ]
+  },
+  {
+   "claim": "Life Fitness Insignia Pulldown 141 x 145 x 194 cm, 130 kg (152 kg option).",
+   "verdict": "unverified",
+   "correction": "Only retailer listings via search summaries (consistent: 141 x 145 x 194 cm, 130/152 kg); manufacturer page not opened. Low impact (contrast machine, not modelled).",
+   "sources": [
+    "https://www.fitshop.co.uk/life-fitness-insignia-series-pulldown-machine-sess4176"
+   ]
+  },
+  {
+   "claim": "Selector pin 11 mm and head-pulley diameters 11 cm and 15 cm (Life Fitness).",
+   "verdict": "corrected",
+   "correction": "The numbers are real but belong to the Life Fitness Signature Series ROW (CMRW, discontinued), not a lat pulldown. Label 'documented-by-similarity', not 'documented'.",
+   "sources": [
+    "https://www.lifefitness.com/en-us/catalog/strength-training/cable-motion/life-fitness/signature-series-row"
+   ]
+  },
+  {
+   "claim": "Cable ends in a carabiner plus short chain into the bar's centre swivel (Precor photo).",
+   "verdict": "confirmed",
+   "correction": "Precor photo shows a short chain from the cable to the bar centre; American Barbell bar has a multi-axis revolving swivel with eye-bolt.",
+   "sources": [
+    "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf",
+    "https://americanbarbell.com/products/revolving-lat-pulldown-bar-solid-48-with-rubber-head-protector"
+   ]
+  },
+  {
+   "claim": "Lat bar: 122 cm (48 in), 25.4 mm grip, straight centre, angled ends, rubber end caps, centre swivel with eye-bolt, knurled centre and angled ends.",
+   "verdict": "confirmed",
+   "correction": "American Barbell AT-LPB-E: Length 48 in; diameter 25.4 mm; 'precision knurling on the mid grip area and the angled ends'; rubber endcaps; swivel and eye-bolt. Also: usable angled-end handle length 5.5 in (14 cm). Bend angle and straight-section length not documented.",
+   "sources": [
+    "https://americanbarbell.com/products/revolving-lat-pulldown-bar-solid-48-with-rubber-head-protector"
+   ]
+  },
+  {
+   "claim": "ANSUR II means: biacromial 415.7/365.3 mm, bideltoid 510.4/450.3, acromion-radiale 335.2/311.2, forearm centre-of-grip 349.0/317.7, popliteal height 429.8/388.2 (male/female).",
+   "verdict": "confirmed",
+   "correction": "Recomputed from the public CSVs (male n=4082, female n=1986): identical values. Caveat for the derived angles: acromion-radiale + forearm centre-of-grip overstates shoulder-joint-centre-to-grip length by a few cm (acromion sits above the joint centre; centre-of-grip is measured from the back of the elbow).",
+   "sources": [
+    "https://www.openlab.psu.edu/ansur2/",
+    "http://tools.openlab.psu.edu/publicData/ANSUR_II_MALE_Public.csv"
+   ]
+  },
+  {
+   "claim": "Hand spacing 1.5 x biacromial = about 62 cm (male mean), 55 cm (female mean); the existing 68 cm is 1.63x.",
+   "verdict": "confirmed",
+   "correction": "1.5 x 41.57 = 62.4 cm; 1.5 x 36.53 = 54.8 cm; 68 / 41.57 = 1.64. Andersen, Buonsenso, Padovan 2024 and Lehman all used 1.5x biacromial as their 'wide/medium' grip.",
+   "sources": [
+    "https://www.openlab.psu.edu/ansur2/",
+    "https://pubmed.ncbi.nlm.nih.gov/24662157/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452428/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057623/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/"
+   ]
+  },
+  {
+   "claim": "Seat top about 43-48 cm lets a male-mean figure sit with thighs level (derived from popliteal height 43.0 cm).",
+   "verdict": "confirmed",
+   "correction": "Arithmetic holds. ANSUR popliteal height is measured barefoot; with shoes add a couple of cm (shoe allowance not sourced here).",
+   "sources": [
+    "https://www.openlab.psu.edu/ansur2/"
+   ]
+  },
+  {
+   "claim": "Flag: 15 deg lean is not measured; ACE gives a 30 deg ceiling; Cybex drawing roughly 15-20 deg.",
+   "verdict": "confirmed",
+   "correction": "ACE: 'Lean back slightly (no more than a 30 degree angle)'. My reading of the Cybex drawing is also about 15-20 deg. Cybex text: 'Lean back slightly at hips'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Setup 1-2: thigh pads firmly on the tops of the thighs; pick load with the pin.",
+   "verdict": "confirmed",
+   "correction": "ACE: 'adjusting the thigh pad to fit firmly against the top of your thighs'. Cybex: 'Adjust thigh pads...', 'Select appropriate resistance'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Setup 3-4: stand, take the bar with a closed overhand grip wider than the shoulders, sit, knees under pads, feet flat.",
+   "verdict": "confirmed",
+   "correction": "NSCA: 'Grasp the lat pulldown bar with a closed, pronated grip... wider than shoulder-width... Sit down... thighs under the pads with the feet flat'. Cybex: 'Grasp bar and sit down, securing knees under thigh pads'. ACE instead sits first and then 'reach[es] up to grasp the bar'; both are documented.",
+   "sources": [
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/"
+   ]
+  },
+  {
+   "claim": "Hands 'usually on or just inside the bends' of the bar.",
+   "verdict": "unverified",
+   "correction": "No source. Likely inconsistent with the 62 cm spacing: on a 122 cm bar whose angled ends carry 14 cm of usable grip each, the bends are probably 85-95 cm apart (derived; bend position not documented), so 62 cm hands sit well inside the straight section. Measure a real bar before using this wording.",
+   "sources": [
+    "https://americanbarbell.com/products/revolving-lat-pulldown-bar-solid-48-with-rubber-head-protector"
+   ]
+  },
+  {
+   "claim": "Setup 5: brace, avoid arching the low back, lean back slightly from the hips, no more than 30 deg.",
+   "verdict": "confirmed",
+   "correction": "ACE: 'Stiffen (brace) your abdominal muscles... avoid any arching of your low back... Lean back slightly (no more than a 30 degree angle)'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/"
+   ]
+  },
+  {
+   "claim": "Setup 6: draw the shoulders down (and slightly back) before the elbows bend.",
+   "verdict": "confirmed",
+   "correction": "ACE: 'initiate the downward pull by first depressing (lower) your scapulae'; also 'While your arms are extended overhead, depress and retract your scapulae... and attempt to hold this position'. Cybex: 'chest up and shoulders held back'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Head in line with the spine; gaze forward or slightly up.",
+   "verdict": "confirmed",
+   "correction": "ACE: 'Maintain your head aligned with your spine'. Gaze is not in any source (stays unverified).",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/"
+   ]
+  },
+  {
+   "claim": "Torso leans back 10-20 deg from vertical (model 15), held still.",
+   "verdict": "confirmed",
+   "correction": "Inside ACE's 30 deg ceiling; NSCA 'Lean the torso slightly backward... Maintain the slight torso backward lean'; Cybex 'Lean back slightly at hips and maintain position'; Padovan 2024 'trunk was allowed to slightly extend'. The 10-20 band itself is coaching consensus.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057623/"
+   ]
+  },
+  {
+   "claim": "Start shoulder elevation about 160-170 deg (derived: hands 13 cm outside the shoulder joint over 68.4 cm arm, asin(13/68) = 11 deg).",
+   "verdict": "corrected",
+   "correction": "The frontal-plane arithmetic is right, but it ignores the 15 deg backward lean. With the trunk tilted back 15 deg and the bar hanging under a pulley in front of the face, the arms sit about 15-20 deg forward of the trunk axis, so arm-to-trunk elevation is about 150-162 deg (derived: 180 - sqrt(11^2 + 15^2) = 161, less if the pulley is further forward). Key the hands to the bar under the pulley, not a trunk-relative 169.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "https://www.openlab.psu.edu/ansur2/"
+   ]
+  },
+  {
+   "claim": "Start: elbows fully straight; forearms pronated.",
+   "verdict": "confirmed",
+   "correction": "NSCA: 'Extend the elbows fully', 'closed, pronated grip'. ACE: return 'until your elbows are fully extended'.",
+   "sources": [
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/"
+   ]
+  },
+  {
+   "claim": "Wrist straight to 10-25 deg extension; O'Driscoll 1992: self-selected 35 deg extension and 7 deg ulnar deviation, at least 25 deg extension for optimum grip, 15 deg extension cuts grip to 2/3-3/4.",
+   "verdict": "confirmed",
+   "correction": "All four O'Driscoll numbers match the abstract. The 10-25 band is a coaching choice, correctly labelled; it sits below O'Driscoll's grip optimum.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/1538102/"
+   ]
+  },
+  {
+   "claim": "Start hip flexion about 75-85 deg (derived: 90 minus the 10-20 deg lean, thighs level).",
+   "verdict": "corrected",
+   "correction": "Arithmetic error: 90 - (10 to 20) = 70-80 deg, model 75 at a 15 deg lean. If the thighs rise toward the knees under the pads (as in the Cybex drawing), hip flexion rises accordingly.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Start knees about 90 deg under the pads (read from the Cybex drawing).",
+   "verdict": "confirmed",
+   "correction": "Cybex drawing shows knees bent about 90-100 deg with the knees under the roller and feet flat.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Feet flat on the floor.",
+   "verdict": "confirmed",
+   "correction": "NSCA: 'feet flat on the floor'.",
+   "sources": [
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf"
+   ]
+  },
+  {
+   "claim": "Mid position: bar 1-2 in above eye level with upper arms horizontal (about 90 deg elevation) AND elbows about 90 deg (Lehman 2004).",
+   "verdict": "corrected",
+   "correction": "Lehman does say '90 degrees of shoulder flexion and elbow flexion (Essentially a bar position which finds the bar 1-2 inches above eye level)' at 150% biacromial grip. But with a 62 cm grip and ANSUR segment lengths the three cannot hold together: eye level is about 24 cm above the shoulder joint (ANSUR sitting eye height 80.5 cm vs estimated sitting acromion height 60.3 cm), and with the bar there the elbow is about 115-125 deg flexed with the upper arm near horizontal; with elbows at 90 deg and upper arms horizontal the bar would be near the top of the head and the hands about 95-100 cm apart. Use the bar height (just above eye level) and solve the elbow with IK.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/",
+    "https://www.openlab.psu.edu/ansur2/"
+   ]
+  },
+  {
+   "claim": "End: bar at the top or middle of the chest, below the chin, in front of the face; touching optional.",
+   "verdict": "confirmed",
+   "correction": "ACE: 'towards the top or mid-section of your chest', 'until the bar nears or touches your chest'. NSCA: 'toward the upper chest... Touch the bar to the chest'. Cybex: 'in front to upper part of chest'. Padovan 2024: 'to the middle chest'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057623/"
+   ]
+  },
+  {
+   "claim": "End elbow flexion about 120-145 deg (derived from hand 20-22 cm from the shoulder joint).",
+   "verdict": "confirmed",
+   "correction": "Recomputed: hand about 13 cm lateral, 12 cm forward, 7 cm below the joint gives about 19 cm and an included angle of about 33-35 deg (145-147 deg flexion). Direction matches ACE ('elbows directly down towards the floor... towards the sides of your torso'). No kinematic study; still derived.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "https://www.openlab.psu.edu/ansur2/"
+   ]
+  },
+  {
+   "claim": "End shoulder elevation about 20-40 deg in frontal view.",
+   "verdict": "unverified",
+   "correction": "No measured source. Geometrically consistent with the grip and segment lengths (derived about 25-30 deg with forearms near vertical).",
+   "sources": [
+    "https://www.openlab.psu.edu/ansur2/"
+   ]
+  },
+  {
+   "claim": "End scapulae down and back, not shrugged; torso, head, hips, knees, feet unchanged.",
+   "verdict": "confirmed",
+   "correction": "ACE: depress scapulae, 'Avoid any additional backwards lean'. NSCA: 'Maintain the slight torso backward lean', 'Keep the torso in the same position'. Cybex: 'shoulders held back'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Grip: pronated, closed, thumbs wrapped, wider than shoulders.",
+   "verdict": "confirmed",
+   "correction": "NSCA: 'closed, pronated grip... wider than shoulder-width'. Baechle & Earle: 'Perform all grips with your thumbs around the bar'.",
+   "sources": [
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
+   ]
+  },
+  {
+   "claim": "1x to 2x biacromial grip gives similar lat activity.",
+   "verdict": "confirmed",
+   "correction": "Andersen 2014: similar latissimus EMG across widths for the whole movement. Nuance: in the eccentric phase the wide grip gave MORE latissimus activity than narrow (p <= 0.04).",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/24662157/"
+   ]
+  },
+  {
+   "claim": "Close neutral 'V' handle, hands about 15 cm apart: lat activity no different from wide grip (Sperandei 2009, Buonsenso 2025).",
+   "verdict": "corrected",
+   "correction": "Sperandei: LD showed no difference between front-of-neck and V-bar (confirmed). Buonsenso's 'narrow neutral grip' was at BIACROMIAL width (about 42 cm), not a 15 cm V-handle, so it does not support this. The 15 cm spacing is not stated in either source (unverified).",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/19855327/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452428/"
+   ]
+  },
+  {
+   "claim": "Supinated grip: less lat than pronated in Lusk 2010; no lat difference in Buonsenso 2025.",
+   "verdict": "confirmed",
+   "correction": "Lusk: 'a pronated grip elicited greater LD activity than a supinated grip'. Buonsenso: no differences across variants. Lehman 2004 also found 'forearm supination had no influence on latissimus dorsi activity'. Signorile 2002 found the wide anterior grip above supinated.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452428/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/",
+    "https://pubmed.ncbi.nlm.nih.gov/12423182/"
+   ]
+  },
+  {
+   "claim": "Wide neutral grip = same lat activity as wide pronated (Buonsenso 2025).",
+   "verdict": "confirmed",
+   "correction": "Buonsenso WNG at 1.5x biacromial; no significant difference across the seven variants.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452428/"
+   ]
+  },
+  {
+   "claim": "ROM: from straight elbows (shoulders rise slightly at top) to bar at chest or until elbows stop moving down.",
+   "verdict": "confirmed",
+   "correction": "ACE: '...or more importantly, you observe your elbows no longer moving downward, but now beginning to move backwards'; return 'until your elbows are fully extended, then allow your scapule to rise slightly'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/"
+   ]
+  },
+  {
+   "claim": "Study tempos: Lusk, Buonsenso, Padovan 2 s pull / 2 s return; Padovan 0.5 s stop at the bottom.",
+   "verdict": "confirmed",
+   "correction": "Lusk: '2-second concentric and 2-second eccentric'. Buonsenso: '2 s for the concentric... 2 s for the eccentric'. Padovan 2024: 'isometric stop of 0.5 s', phases 'lasting 2 s each as punctuated by a metronome'.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452428/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057623/"
+   ]
+  },
+  {
+   "claim": "Hypertrophy review: rep durations of about 2-8 s.",
+   "verdict": "confirmed",
+   "correction": "Androulakis-Korakakis 2024: 'repetition tempo between 2 and 8 s'.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/"
+   ]
+  },
+  {
+   "claim": "ACE: pause momentarily at the bottom, return slowly; breathe out as you pull.",
+   "verdict": "confirmed",
+   "correction": "ACE: 'Slowly exhale and initiate the downward pull', 'Pause momentarily, then slowly return'. Inhale on return is coaching consensus.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/"
+   ]
+  },
+  {
+   "claim": "Primary lats (teres major folded in); Cybex lists primary latissimus dorsi + teres major, secondary biceps, rhomboids, lower trapezius.",
+   "verdict": "confirmed",
+   "correction": "Cybex 5601 page 2-7, verbatim.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Add rear_delts to secondary: posterior deltoid recorded in Signorile, Sperandei, Padovan 2024, Buonsenso; higher with a 30 deg lean.",
+   "verdict": "confirmed",
+   "correction": "All four recorded PD. Buonsenso: PD higher in WPG30 than WPG (p=0.011) and WNG (p=0.017).",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/12423182/",
+    "https://pubmed.ncbi.nlm.nih.gov/19855327/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057623/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452428/"
+   ]
+  },
+  {
+   "claim": "Brachialis as a secondary highlight (anatomy only).",
+   "verdict": "unverified",
+   "correction": "No pulldown EMG study recorded brachialis (as the file says). Keep labelled as anatomy-based.",
+   "sources": []
+  },
+  {
+   "claim": "Pectoralis major and triceps long head measured active but not highlighted.",
+   "verdict": "confirmed",
+   "correction": "Signorile recorded PM and TLH; Sperandei and Padovan 2024 recorded PM. ('Sternal' head is not specified in the abstracts.)",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/12423182/",
+    "https://pubmed.ncbi.nlm.nih.gov/19855327/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057623/"
+   ]
+  },
+  {
+   "claim": "Abs: rectus abdominis more active in the lat pulldown than in chin-ups during the return phase (Doma 2013).",
+   "verdict": "confirmed",
+   "correction": "Doma: 'For the eccentric phase, RA during lat-pull down exercises was greater than chin-ups'.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/24245055/"
+   ]
+  },
+  {
+   "claim": "Mistake 'swing': torso rocks back to 35-45 deg; ACE avoid additional lean, NSCA do not jerk.",
+   "verdict": "confirmed",
+   "correction": "Fault and fix are documented (ACE, NSCA, Cybex 'maintain position'). The 35-45 deg number stays unverified.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Mistake 'behind the neck': no lat advantage (Sperandei); front pull gave more lat in the down phase (Padovan 2024); 'high-five' position associated with anterior instability (Kolber 2013).",
+   "verdict": "confirmed",
+   "correction": "Sperandei: 'For LD, there was no difference between techniques'. Padovan 2024: front-LPD more LD in the descending phase (ES 0.97), but back-LPD more LD in the ascending phase (ES 0.63). Kolber: association with 'high-five' exercises (behind-the-neck pulldowns, military press), not causation. Mayo also warns against it.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/19855327/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057623/",
+    "https://pubmed.ncbi.nlm.nih.gov/22836608/",
+    "https://health.yahoo.com/wellness/fitness/exercise/articles/mayo-clinic-warns-common-lat-170354873.html"
+   ]
+  },
+  {
+   "claim": "Mistake 'shrug': ACE starts the pull with the shoulder blades moving down.",
+   "verdict": "confirmed",
+   "correction": "ACE: 'first depressing (lower) your scapulae'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/"
+   ]
+  },
+  {
+   "claim": "Mistake 'overpull': elbows travelling back behind the torso; ACE says further pulling 'places additional stresses into the shoulder joint'.",
+   "verdict": "corrected",
+   "correction": "The ACE quote is real ('Avoid any further pulling as this places additiomnal stresses into the shoulder joint'). But other sources disagree: Mayo Clinic cues 'pull your elbows down and back' and 'squeeze your shoulder blades together', and NSCA requires the bar to touch the chest. Present it as ACE guidance (stop when the elbows start going back), not as a universal fault.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "https://health.yahoo.com/wellness/fitness/exercise/articles/mayo-clinic-warns-common-lat-170354873.html",
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf"
+   ]
+  },
+  {
+   "claim": "Mistake 'half-rep': NSCA and ACE return to fully straight elbows; the review favours training the stretched position.",
+   "verdict": "confirmed",
+   "correction": "NSCA 'Allow the elbows to slowly extend back to the beginning position'; ACE 'until your elbows are fully extended'; Androulakis: 'employ a ROM that allows a muscle to be fully stretched'.",
+   "sources": [
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/"
+   ]
+  },
+  {
+   "claim": "Mistake 'curl-wrist': a flexed wrist weakens grip (O'Driscoll 1992).",
+   "verdict": "confirmed",
+   "correction": "O'Driscoll: grip 'significantly less in any position of deviation from this self-selected position' (which is 35 deg extension). Link to the set ending early is coaching inference.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/1538102/"
+   ]
+  },
+  {
+   "claim": "Key fact: grip 1-2x biacromial gave the same lat activity; the widest grip lifted about 4% less (77.3 vs 80 kg for 6 reps).",
+   "verdict": "corrected",
+   "correction": "Andersen: 6RM narrow 80.3 kg, medium 80.0 kg, wide 77.3 kg, so the wide grip lifted 3.4-3.7% less: say 'about 3-4% less' or 'about 3 kg less'. Lat activity was similar over the whole rep, though higher with the wide grip in the lowering phase.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/24662157/"
+   ]
+  },
+  {
+   "claim": "Key fact: leaning back 30 deg did not change lat activity; it added rear-shoulder work.",
+   "verdict": "confirmed",
+   "correction": "Buonsenso: no significant LD difference; PD higher in WPG30 vs WPG and WNG.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452428/"
+   ]
+  },
+  {
+   "claim": "Key fact: pulling behind the neck gave no extra lat work and more rear-delt and biceps work than pulling to the front.",
+   "verdict": "corrected",
+   "correction": "True for Sperandei 2009 (PD and BB higher behind the neck). Padovan 2024 found the opposite for those muscles: the FRONT pull gave more biceps (ES 0.41) and posterior deltoid (ES 1.77) in the ascending phase. Safe wording: 'Pulling behind the neck gave no extra lat work.' Drop the rear-delt/biceps clause or say studies disagree.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/19855327/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057623/"
+   ]
+  },
+  {
+   "claim": "Key fact: wide, close, neutral and underhand grips all gave similar lat activity in 40 trained men.",
+   "verdict": "corrected",
+   "correction": "Buonsenso (40 physically active men, at least 5 years' training) found no differences, but its 'narrow' grips were at biacromial width (no close V-handle). Signorile 2002 (wide front grip highest) and Lusk 2010 (overhand above underhand) disagree. Say 'grip changed lat activity little in the largest study' and keep the disagreement note, naming Signorile too.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452428/",
+    "https://pubmed.ncbi.nlm.nih.gov/12423182/",
+    "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC13510307/"
+   ]
+  },
+  {
+   "claim": "Key fact: novices raised lat activity just by being coached to focus on the lats, without dropping biceps activity.",
+   "verdict": "confirmed",
+   "correction": "Snyder & Leech 2009: 8 women with little or no training, 30% max; LD rose (p=0.005), BB and TM unchanged. Small sample; fine as worded.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/19826307/"
+   ]
+  },
+  {
+   "claim": "Mayo: hands 'slightly wider than shoulder-width'; do not pull behind the neck.",
+   "verdict": "confirmed",
+   "correction": "Mayo page returns 403; wording confirmed through a news article quoting the Mayo video ('slightly wider than shoulder-width apart', 'don't bring the bar down behind your neck'). Secondary copy only.",
+   "sources": [
+    "https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/lat-pull-down/vid-20084683",
+    "https://health.yahoo.com/wellness/fitness/exercise/articles/mayo-clinic-warns-common-lat-170354873.html"
+   ]
+  }
+ ],
+ "would_look_wrong": [
+  "Start arms keyed at 160-170 deg elevation RELATIVE TO THE TRUNK while the trunk leans back 15 deg: the arms tilt back with the trunk and the bar ends up over or behind the head in side view, which reads as a behind-the-neck setup. The bar must hang under the head pulley, in front of the face, so the arms sit about 15-20 deg forward of the trunk axis (about 150-162 deg arm-to-trunk).",
+  "Mid frame keyed as 'upper arm horizontal + elbow 90 + bar just above eye level' cannot be built with a 62 cm grip: keying both angles puts the bar at the top of the head with hands about 1 m apart (the bar would have to stretch, or the IK snaps). Drive the hands along the bar path with IK; at eye level the elbow is about 115-125 deg.",
+  "Hands placed 'on the bends' instead of 62 cm apart: on a 122 cm bar the bends are likely 85-95 cm apart (unverified), which is about 2x biacromial, wider than the tested standard. At 62 cm the hands sit on the straight part.",
+  "Bottom elbow at 144-150 deg on a muscular mesh: the forearm will sink into the biceps. Cap around 135-140 deg or stop the bar at the collarbone line, just short of the chest (ACE allows 'nears or touches').",
+  "Bar and cable clearance: with the head neutral and a 15 deg lean the bar passes a few cm in front of the nose and chin; check for clipping, and keep the cable straight from pulley to bar centre without passing through the face.",
+  "Hip angle 75-85 deg at a 10-20 deg lean is 5 deg off (should be 70-80); keying 85 with a 15 deg lean pushes the thighs up into the pads.",
+  "Scapulae frozen: ACE has the blades rise slightly at full stretch and drop first on each pull. A rig that does not move the clavicle/shoulder bone will look robotic; a rig that keeps them raised through the pull shows the shrug fault.",
+  "Thigh pads: model one pair of rollers resting on the tops of the thighs just above the knees, slight compression, no gap. Two pairs would look wrong.",
+  "If a Precor-style combo frame is used, the stack sits beside the seat; do not draw a stack in front of the lifter on that frame."
+ ],
+ "summary": "57 claims checked: 41 confirmed, 11 corrected, 5 unverified, 0 refuted. Sources mostly exist and say what is cited. Main fixes: (1) mid-pull 90/90 at eye level (Lehman wording) is geometrically impossible with a 62 cm grip; use IK on the bar path (elbow about 115-125 at eye level); (2) start arm elevation must account for the 15 deg backward lean or the bar lands behind the head; (3) hip flexion arithmetic should be 70-80, not 75-85; (4) Andersen deficit is 3.4-3.7%, not 4%; (5) the behind-the-neck rear-delt/biceps claim is contradicted by Padovan 2024; (6) Buonsenso's 'narrow' grips were biacromial width, not a V-handle; (7) ACE's 'stop when elbows go back' conflicts with Mayo's 'elbows down and back'; (8) Life Fitness pulley/pin sizes are from a row machine; Technogym dimensions unverified and probably the Selection 900; (9) Precor's stack is beside the seat, and the file contradicts itself on one vs two pairs of thigh rollers."
+}

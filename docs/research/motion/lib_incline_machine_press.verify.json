@@ -1,0 +1,408 @@
+{
+ "exercise": "lib_incline_machine_press",
+ "verdicts": [
+  {
+   "claim": "appData: upper_chest primary; front_delts, triceps, chest secondary; pattern incline_push",
+   "verdict": "confirmed",
+   "correction": "Checked src/data/exercises.json.",
+   "sources": []
+  },
+  {
+   "claim": "Model: selectorized converging incline press, independent arms, easy-start bar, dual handgrips (Technogym M965); overhead pivot documented by Technogym and Cybex",
+   "verdict": "corrected",
+   "correction": "Technogym brochure/manual confirm converging arc ('similar to training with dumbbells'), independent arms, Easy Start, dual handgrips, and 'two fixed with indentations for the fingers; two rotating'. Overhead pivot is documented in text by Cybex ('Overhead pivot provides a natural path of motion in a 30° plane') and Hammer MTS, not by Technogym.",
+   "sources": [
+    "https://www.innovativefit.com/pdfs/900/Brochure%20-%20Technogym%20Selection.pdf",
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=4",
+    "https://www.strengthindustry.com/cybex-incline-presscybex-incline-presscybex-e-incline-press",
+    "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-mts-iso-lateral-incline-press"
+   ]
+  },
+  {
+   "claim": "Hammer Strength IL-IP: vertical handle option removed because 'the grip angle was not ergonomically optimal'",
+   "verdict": "confirmed",
+   "correction": "Verbatim in the LF FAQ.",
+   "sources": [
+    "https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded/plate-loaded-iso-lateral-incline-press"
+   ]
+  },
+  {
+   "claim": "Hammer MTS Iso-Lateral Incline: two 75 kg stacks, overhead pivot, angled seat back; 40x68x77 in, page says 296 cm (typo for 196)",
+   "verdict": "confirmed",
+   "correction": "Page: '102 x 173 x 296'; 77 in = 195.6 cm, so 296 is a typo. Overhead pivot 'natural arc', angled seat back for entry confirmed.",
+   "sources": [
+    "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-mts-iso-lateral-incline-press"
+   ]
+  },
+  {
+   "claim": "Hammer IL-IP: 117x140x191 cm, 147 kg, 3.6 kg start resistance per arm, max 5 x 20 kg plates per arm, 6 storage horns",
+   "verdict": "confirmed",
+   "correction": "All on the LF page.",
+   "sources": [
+    "https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded/plate-loaded-iso-lateral-incline-press"
+   ]
+  },
+  {
+   "claim": "Technogym M965 dims: 153 x 143 x 150 cm (brochure) vs height 166.6 cm (manual); stack 100/130 kg",
+   "verdict": "confirmed",
+   "correction": "Brochure 1530/1430/1500 mm; manual p.5 1666/1530/1433 mm; stacks 100/130 kg in both.",
+   "sources": [
+    "https://www.innovativefit.com/pdfs/900/Brochure%20-%20Technogym%20Selection.pdf",
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=5"
+   ]
+  },
+  {
+   "claim": "Technogym seat: adjust by sitting and lifting lever (A); body weight lowers it, stand to raise",
+   "verdict": "confirmed",
+   "correction": "Manual p.24 verbatim.",
+   "sources": [
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=24"
+   ]
+  },
+  {
+   "claim": "Technogym easy-start bar moves levers closer to facilitate the grip; end-of-set procedure",
+   "verdict": "confirmed",
+   "correction": "Manual p.4 and p.25 verbatim.",
+   "sources": [
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=4",
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=25"
+   ]
+  },
+  {
+   "claim": "Back pad angle: Gravitus 'between 30 and 45 degrees'; reference line not stated",
+   "verdict": "confirmed",
+   "correction": "Gravitus: 'If the back pad adjusts, set it between 30 and 45 degrees.' Unverified as an angle for the model, as the research says.",
+   "sources": [
+    "https://gravitus.com/guides/exercises/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Cybex path 'in a 30° plane'",
+   "verdict": "confirmed",
+   "correction": "Reseller page reproduces this. Cybex Dual Axis also lets the user 'define their own path', so the path is not fully fixed on that machine.",
+   "sources": [
+    "https://www.strengthindustry.com/cybex-incline-presscybex-incline-presscybex-e-incline-press"
+   ]
+  },
+  {
+   "claim": "Incline geometry rule: equivalent incline = path rise above horizontal - pad recline from vertical",
+   "verdict": "confirmed",
+   "correction": "Maths checks out (30 deg bench: 90 - 60 = 30; flat seated press: 0 - 0 = 0). The angle between the press and the chest normal is path rise minus recline. Derived, not sourced.",
+   "sources": []
+  },
+  {
+   "claim": "Target 30-45 deg equivalent incline (upper chest peaked at 30 deg in Rodriguez-Ridao 2020; higher at 44 than 28 deg in Trebs 2010; above 45 deg front delts take over)",
+   "verdict": "corrected",
+   "correction": "Each citation is accurate, but Rodriguez-Ridao also found no upper-chest difference between 0 and 45 deg, and its conclusion says front-delt activity rises 'for inclinations above 30°'. Trebs found front delts already higher at 28 deg than flat. Lauver 2016 found no whole-rep upper-chest difference at any angle. Best-supported target is ~30 deg (one study) to ~44 deg (another). The '30-45' range is fine as a range, but don't present 45 as equally good.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+    "https://pubmed.ncbi.nlm.nih.gov/20512064/",
+    "https://pubmed.ncbi.nlm.nih.gov/25799093/"
+   ]
+  },
+  {
+   "claim": "Setup step 2: handles at upper chest (HS 'at or slightly above mid-chest'; ACE 'level with your upper chest or shoulders'; Technogym 'chest high'; Gravitus 'just below the collarbones')",
+   "verdict": "confirmed",
+   "correction": "All quotes verified. ACE also says 'If adjustable, align the handles level with your shoulder', which the research left out.",
+   "sources": [
+    "https://www.manualslib.com/manual/1070990/Hammer-Strength-Iso-Lateral.html?page=18",
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=24",
+    "https://gravitus.com/guides/exercises/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Setup steps 3-6: back and shoulders on pad, chest up, head up; feet flat; wrists in line; elbows slightly below shoulders; brace without pressing low back; blades down and back",
+   "verdict": "confirmed",
+   "correction": "HS p.18 and ACE 167 verbatim. Technogym adds 'spread your legs for greater stability' (feet wider than hip width) and grip 'symmetrically, using the indentations'.",
+   "sources": [
+    "https://www.manualslib.com/manual/1070990/Hammer-Strength-Iso-Lateral.html?page=18",
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=24"
+   ]
+  },
+  {
+   "claim": "Shoulder: elbows slightly below shoulder height (HS); upper arm 45-60 deg from torso (Gravitus)",
+   "verdict": "confirmed",
+   "correction": "HS 'Position elbows slightly below shoulders'; Gravitus 'Your elbows sit 45 to 60 degrees out from your sides' (coach).",
+   "sources": [
+    "https://www.manualslib.com/manual/1070990/Hammer-Strength-Iso-Lateral.html?page=18",
+    "https://gravitus.com/guides/exercises/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Start elbow about 90 deg with hands at / lightly touching the upper chest",
+   "verdict": "corrected",
+   "correction": "Correctly marked unverified, but it is also physically inconsistent. Derived (Drillis & Contini ratios: upper arm 33.5 cm, elbow-to-grip ~32 cm on a 1.8 m body): with the grip touching or near the upper chest, the shoulder-joint-to-grip distance is ~15-30 cm, so the elbow is bent ~125-150 deg. At 90 deg the grip is ~46 cm from the shoulder joint, well away from the chest. Drive the arm by IK from the handle.",
+   "sources": [
+    "https://swordstem.com/2018/12/05/thibault-vs-modern-anthropometry/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/"
+   ]
+  },
+  {
+   "claim": "Forearm in line with press path; Technogym 'Keep your elbows, wrists and shoulders aligned'",
+   "verdict": "confirmed",
+   "correction": "Manual p.25.",
+   "sources": [
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=25"
+   ]
+  },
+  {
+   "claim": "Wrist neutral (ACE); 0-10 deg extension target by similarity (Weiss)",
+   "verdict": "confirmed",
+   "correction": "ACE 167; Weiss abstract 2 +/- 9 deg extension.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "https://pubmed.ncbi.nlm.nih.gov/7593079/"
+   ]
+  },
+  {
+   "claim": "Hips back, not lifting (Gravitus); knees ~90 deg",
+   "verdict": "unverified",
+   "correction": "Hips-not-lifting is confirmed (Gravitus common mistake 'Hips lifting off the seat'). Knee and hip angles have no source.",
+   "sources": [
+    "https://gravitus.com/guides/exercises/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Mid: elbows about 45 deg (halfway)",
+   "verdict": "corrected",
+   "correction": "Elbow angle is not linear in handle travel; at half travel the elbow is still ~90-100 deg bent (derived, same segment model). Use IK on the handle path.",
+   "sources": [
+    "https://swordstem.com/2018/12/05/thibault-vs-modern-anthropometry/"
+   ]
+  },
+  {
+   "claim": "End: hands to forehead or top-of-head level, extended not locked; ACE pause; blades on pad; hands converge",
+   "verdict": "confirmed",
+   "correction": "ACE 167 steps 2-3 verbatim; converging from Technogym. HS says 'fully extended' and Technogym 'without straining your elbows' (sources differ; research notes this).",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "https://www.manualslib.com/manual/1070990/Hammer-Strength-Iso-Lateral.html?page=18",
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=25",
+    "https://www.innovativefit.com/pdfs/900/Brochure%20-%20Technogym%20Selection.pdf"
+   ]
+  },
+  {
+   "claim": "Grip horizontal: pronated, full grip; thumb wrapped by similarity to ACE machine chest press",
+   "verdict": "confirmed",
+   "correction": "A closer similarity source exists: ACE incline dumbbell press asks for 'a closed, pronated grip (palms facing forward, thumbs wrapped around the handle)'. Heel of palm: Barbell Logic (coach, bench).",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/",
+    "https://barbell-logic.com/bench-press-grip-tips/"
+   ]
+  },
+  {
+   "claim": "Technogym incline: 'Placing your grip closer or wider permits you to vary the trajectory...'",
+   "verdict": "confirmed",
+   "correction": "Manual p.25 verbatim.",
+   "sources": [
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=25"
+   ]
+  },
+  {
+   "claim": "Vertical grip: only on some machines; no incline-machine EMG on grip; flat-machine grips similar (Muyor)",
+   "verdict": "confirmed",
+   "correction": "Muyor abstract.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/",
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=4"
+   ]
+  },
+  {
+   "claim": "ROM: start with handles lightly touching or close to the upper chest",
+   "verdict": "confirmed",
+   "correction": "ACE 167 step 3.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/"
+   ]
+  },
+  {
+   "claim": "Tempo: ACE pause then slow return; Technogym slower return; Gravitus lower over 2-3 s, plates not touching; Rodriguez-Ridao 2 s/2 s metronome; ACSM 1-2 s",
+   "verdict": "confirmed",
+   "correction": "All verified.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=25",
+    "https://gravitus.com/guides/exercises/incline-chest-press/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+    "https://pubmed.ncbi.nlm.nih.gov/19204579/"
+   ]
+  },
+  {
+   "claim": "Breathing: exhale on press (ACE 167); inhale on lowering (ACE 25)",
+   "verdict": "confirmed",
+   "correction": "Verbatim.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Muscles: upper_chest primary from bench-angle data (RR 2020 peak 30 deg; Trebs 44 > 0 and 28 deg; Coratella 45 deg barbell > machine)",
+   "verdict": "confirmed",
+   "correction": "All three abstracts confirm. Caveat stands: no incline-machine EMG found (my search found none either).",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+    "https://pubmed.ncbi.nlm.nih.gov/20512064/",
+    "https://pubmed.ncbi.nlm.nih.gov/31397215/"
+   ]
+  },
+  {
+   "claim": "Front delts rise with incline (Trebs 28/44/56 > flat; RR peak 60 deg); triceps similar at all angles (RR); chest lower as incline rises (RR, Trebs, Lauver)",
+   "verdict": "confirmed",
+   "correction": "Abstracts confirm. Lauver: lower pec lower only at 45 deg vs 0, -15 and 30 deg.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/20512064/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+    "https://pubmed.ncbi.nlm.nih.gov/25799093/"
+   ]
+  },
+  {
+   "claim": "Rotator cuff lower with retracted blades (Noteboom)",
+   "verdict": "confirmed",
+   "correction": "Bench model.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11224528/"
+   ]
+  },
+  {
+   "claim": "Agreement with exercises.json; HS lists 'Pectoralis Major, Anterior Deltoids & Triceps'; LF 'upper chest, shoulders, and triceps'",
+   "verdict": "confirmed",
+   "correction": "HS manual p.18; LF IL-IP page.",
+   "sources": [
+    "https://www.manualslib.com/manual/1070990/Hammer-Strength-Iso-Lateral.html?page=18",
+    "https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded/plate-loaded-iso-lateral-incline-press"
+   ]
+  },
+  {
+   "claim": "Highlight note: front delts should not look faint",
+   "verdict": "confirmed",
+   "correction": "Supported: Rodriguez-Ridao says flat press already gives similar pec and front-delt activity, and front delts rise with incline. Gravitus lists front delts as a primary.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+    "https://gravitus.com/guides/exercises/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Mistake roll-off-top",
+   "verdict": "confirmed",
+   "correction": "ACE 167 'avoid the rounding of your shoulder blades'; ACE 188 instability quote; Noteboom by similarity.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC11224528/"
+   ]
+  },
+  {
+   "claim": "Mistake seat-too-low: 'handles start at or above shoulder height; elbows above the handle line; press goes nearly straight up'",
+   "verdict": "corrected",
+   "correction": "Two problems. (1) ACE 167 allows the start at shoulder level ('align the handles level with your shoulder'; hands 'level with your upper chest or shoulders'). Only Gravitus calls handles 'at your collarbones or above' too low. Present it as handles clearly ABOVE the shoulders, citing Gravitus, and note that ACE differs. (2) 'Elbows above the handle line' is backwards: in a shoulder-press-like start the elbows sit BELOW the hands, forearms near vertical.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "https://gravitus.com/guides/exercises/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Mistake elbows-flared; Gravitus quote 'creates front shoulder strain'",
+   "verdict": "corrected",
+   "correction": "Position is confirmed (HS 'slightly below shoulders'). The current Gravitus wording is 'The front of the shoulder takes the strain', so fix the quote. The harm is a coach claim.",
+   "sources": [
+    "https://www.manualslib.com/manual/1070990/Hammer-Strength-Iso-Lateral.html?page=18",
+    "https://gravitus.com/guides/exercises/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Mistake arch-hips-up (ACE; Gravitus hips lifting flattens the incline)",
+   "verdict": "confirmed",
+   "correction": "ACE 'avoid arching your back'; Gravitus 'It flattens the incline you set'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "https://gravitus.com/guides/exercises/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Mistake wrist-bent-back; mistake lock-and-bounce",
+   "verdict": "confirmed",
+   "correction": "ACE wrists in line, 'not locked'; Gravitus 'without letting the plates touch'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/",
+    "https://gravitus.com/guides/exercises/incline-chest-press/",
+    "https://pubmed.ncbi.nlm.nih.gov/7593079/"
+   ]
+  },
+  {
+   "claim": "Key fact 1: upper chest works hardest at about 30-45 deg; steeper than 45 deg front delts take over",
+   "verdict": "corrected",
+   "correction": "Reword: 'Upper-chest activity peaked at 30 deg in one study and 44 deg in another; past that, the front delts take over.' Rodriguez-Ridao found 45 deg no better than flat for the upper chest, and Lauver found no whole-rep difference.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+    "https://pubmed.ncbi.nlm.nih.gov/20512064/",
+    "https://pubmed.ncbi.nlm.nih.gov/25799093/"
+   ]
+  },
+  {
+   "claim": "Key fact 2: expect to lift less than flat: bench 1RM 63.3 kg at 30 deg, 57.9 kg at 45 deg vs 81.4 kg flat (~78 %, ~71 %)",
+   "verdict": "corrected",
+   "correction": "Numbers and percentages are correct (Table 1), but they are barbell 1RMs. Machine pin numbers are not comparable between machines (cams and levers differ; Gravitus says so), so 'less than on the flat press' cannot be promised for two different machines. Say 'on a barbell, incline 1RM was ~78 % (30 deg) and ~71 % (45 deg) of flat'.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/",
+    "https://gravitus.com/guides/exercises/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Key fact 3: on a fixed machine, seat height is your incline",
+   "verdict": "confirmed",
+   "correction": "Gravitus states it, and the geometry holds: a lower seat moves the shoulders down relative to the fixed handle end-point. Add that Gravitus says no study has tested it and that the back pad angle (if adjustable) also sets it.",
+   "sources": [
+    "https://gravitus.com/guides/exercises/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Key fact 4: flat and incline do different jobs; 'the researchers say to do both'",
+   "verdict": "corrected",
+   "correction": "Only Trebs 2010 says it ('performing both the flat and incline chest press exercises is necessary'). Rodriguez-Ridao's practical applications do not. Attribute to Trebs.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/20512064/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/"
+   ]
+  },
+  {
+   "claim": "Key fact 5: upper-chest gain at 30 and 45 deg only during 26-50 % of the push (Lauver 2016)",
+   "verdict": "confirmed",
+   "correction": "Abstract: 30 deg 122.5 % and 45 deg 124 % MVIC vs flat 98.2 % in the 26-50 % window; no difference over the full concentric phase.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/25799093/"
+   ]
+  },
+  {
+   "claim": "Flag: ACE exercise 25 is a dumbbell press on a 45-60 deg bench and gives no 15 deg lockout figure",
+   "verdict": "confirmed",
+   "correction": "ACE 25 step 1 '45 and 60 degrees'; no 15 deg figure on the page.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/"
+   ]
+  },
+  {
+   "claim": "Reuse: ACE Seated Incline Cable Press quotes (also lists selectorized machines)",
+   "verdict": "confirmed",
+   "correction": "Page equipment: 'Resistance Bands/Cables, Weight Machines / Selectorized'. Quotes match.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/"
+   ]
+  }
+ ],
+ "would_look_wrong": [
+  "Elbow 90 deg at the start with handles touching the upper chest: impossible together. At the chest the elbow is ~125-150 deg bent (derived). Animate from the handle position by IK, not a target elbow angle.",
+  "Interpolating the elbow 90 -> 45 -> straight makes the hands leave the handle path; at half travel the elbow is still ~90-100 deg bent.",
+  "Pad recline and path rise must be chosen together (equivalent incline = path rise - pad recline). For example, an upright pad with a 45 deg rising path is a 45 deg incline, a 15 deg recline with a 45 deg path is a 30 deg incline, and a 30 deg recline with a vertical path is a 60 deg incline, where front delts dominate (Rodriguez-Ridao peak). Measure both from a side-on photo of the chosen machine before modelling.",
+  "Seat-too-low clip as written ('elbows above the handle line') would show an impossible arm. In a too-low seat the elbows are under the hands, forearms near vertical, like a shoulder press.",
+  "The finish should be up-and-forward to about forehead height with the hands converged but not touching or crossing. A finish straight overhead reads as a shoulder press.",
+  "Front delts must not look faint next to the upper chest. Lower chest (sternal) should be visibly weaker than at the flat press but still on.",
+  "Shoulder blades stay on the pad at the top. Reaching up off the pad belongs only in the roll-off mistake clip.",
+  "Feet: Technogym asks for legs spread for stability. Feet tucked together under the seat will look unstable.",
+  "Elbows stay a little below shoulder height with the upper arm 45-60 deg from the torso. Elbows straight out at 90 deg belong only in the flared-elbow mistake clip."
+ ],
+ "summary": "Equipment facts (Technogym M965, Hammer IL-IP and MTS, Cybex), set-up quotes (ACE 167, HS, Technogym, Gravitus), tempo, breathing, muscles and the incline-geometry formula all check out. Main corrections: (1) the 90 deg start elbow with handles at the upper chest is physically impossible (~125-150 deg is required), and the 45 deg mid elbow is wrong, so drive the animation by IK from the handle path; (2) the seat-too-low mistake has the elbows on the wrong side of the hands and conflicts with ACE, which allows shoulder-level handles; (3) the '30-45 deg' upper-chest target and key fact overstate 45 deg (Rodriguez-Ridao: 45 deg no better than flat for the upper chest); (4) the barbell 1RM percentages cannot be promised for machines; (5) 'do both' is Trebs only; (6) fix the Gravitus quote; (7) the overhead pivot is not in Technogym's text. Pad angle and path angle remain unverified and must be measured from a reference photo."
+}

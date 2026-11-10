@@ -1,0 +1,562 @@
+{
+ "exercise": "lib_seated_cable_row",
+ "verdicts": [
+  {
+   "claim": "Model: long flat bench, angled foot plate fixed to the frame, cable exiting a pulley just above the foot plate, stack beyond the foot plate in front of the lifter, close-grip V handle.",
+   "verdict": "confirmed",
+   "correction": "Cybex 5651/5302 start/stop drawings (manual p. 2-5) show exactly this: low bench on a floor rail, foot plate, pulley in a curved housing above the plate, column beyond.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "This layout 'matches ... the ACE cable page (narrow handle)'.",
+   "verdict": "corrected",
+   "correction": "ACE page 48 matches only the narrow handle. It says 'place the feet on the floor with knees bent', not on a foot plate. Do not cite it for the bench/foot-plate layout.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/48/seated-row/"
+   ]
+  },
+  {
+   "claim": "Combo stations (Precor VSL026BP) use the same bench + foot support + low pulley layout.",
+   "verdict": "unverified",
+   "correction": "Precor sell sheet confirms an 'extended seat and foot bar' and calls it a 'mid-row' position; it does not say or show where the row cable exits (low pulley not confirmed).",
+   "sources": [
+    "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf"
+   ]
+  },
+  {
+   "claim": "Matrix Aura G3-MS53 Low Row 230 x 71 x 240 cm, 134 kg stack.",
+   "verdict": "confirmed",
+   "correction": "Owner's guide spec table: 230 x 71 x 240 cm, 134 kg.",
+   "sources": [
+    "https://content.johnsonfit.com/inc/uploaded_media/0354bbc1b9de4b9c11347ee68d9cc67b/owners_guide/dd0bb4c30d82048733cd18ee18e06603.pdf"
+   ]
+  },
+  {
+   "claim": "Matrix Aura G3-MS53 has a 'foot bar for stability'.",
+   "verdict": "unverified",
+   "correction": "No foot-bar wording in the owner's guide text; diagrams not checked.",
+   "sources": [
+    "https://content.johnsonfit.com/inc/uploaded_media/0354bbc1b9de4b9c11347ee68d9cc67b/owners_guide/dd0bb4c30d82048733cd18ee18e06603.pdf"
+   ]
+  },
+  {
+   "claim": "Precor VSL026BP 200 x 131 x 220 cm, 100 kg stack.",
+   "verdict": "confirmed",
+   "correction": "Sell sheet specifications.",
+   "sources": [
+    "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf"
+   ]
+  },
+  {
+   "claim": "Life Fitness Signature Cable Motion Row CMRW 186 x 138 x 171 cm, 107 kg, 1:2 ratio, discontinued.",
+   "verdict": "confirmed",
+   "correction": "Life Fitness page: 186 x 138 x 171 cm, 220 lb (107 kg) stack, 1:2 independent pulleys, discontinued.",
+   "sources": [
+    "https://www.lifefitness.com/en-us/catalog/strength-training/cable-motion/life-fitness/signature-series-row"
+   ]
+  },
+  {
+   "claim": "Technogym Selection Low Row is a chest-pad machine (pad halfway up the breastbone), a different exercise.",
+   "verdict": "confirmed",
+   "correction": "Manual: 'adjust the height so that the chest pad (B) is halfway up your breastbone'.",
+   "sources": [
+    "https://www.manualslib.com/manual/1510291/Technogym-Selection-Low-Row.html"
+   ]
+  },
+  {
+   "claim": "Foot plate tilted about 60-70 deg from the floor (estimate from the Cybex drawing).",
+   "verdict": "confirmed",
+   "correction": "My reading of the same drawing is about 60 deg. Still a drawing estimate.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Pulley in a curved housing above the foot plate, about level with the hands at the finish, so the cable is near level at the end.",
+   "verdict": "confirmed",
+   "correction": "True in the Cybex stop drawing. Note the start drawing: hands sit higher than the pulley (about 14 cm by scale), so the cable slopes down to the pulley at the start and is level only at the finish.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "V handle: 'two parallel grips'; American Barbell 16.5 cm long x 15.2 cm wide, usable grip 11.4 cm, 25.4 mm diameter, knurled.",
+   "verdict": "corrected",
+   "correction": "Dimensions confirmed (6.5 in x 6 in, usable 4.5 in, 25.4 mm, knurled). But the grips are not strictly parallel: 'Handles curve slightly inward and have a wider top than base'.",
+   "sources": [
+    "https://americanbarbell.com/products/seat-row-chinning-handle-solid"
+   ]
+  },
+  {
+   "claim": "Grips about 15 cm apart (handle 15.2 cm wide; Lehman forearms '6 inches apart').",
+   "verdict": "corrected",
+   "correction": "15.2 cm is the handle's overall width; if that is outer-to-outer, hand centres are about 12.7 cm apart (15.2 - 2.54, derived). Lehman's 6 inches is forearm spacing. Use about 13-15 cm.",
+   "sources": [
+    "https://americanbarbell.com/products/seat-row-chinning-handle-solid",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/"
+   ]
+  },
+  {
+   "claim": "Setup 1: clip the V-handle to the low cable, pick the load.",
+   "verdict": "confirmed",
+   "correction": "ACE 48 'narrow handle'; Padovan 2025 'standard triangle handle'; Cybex 'Select appropriate resistance'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/48/seated-row/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Setup 2: sit facing the stack, both whole feet on the plate, hip width.",
+   "verdict": "confirmed",
+   "correction": "Cybex: 'position feet securely on foot plate'. UNMC: 'feet about hip width apart'.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt"
+   ]
+  },
+  {
+   "claim": "Setup 3: bend knees to reach, take the handle thumbs wrapped, palms facing (closed grip by similarity from the NSCA machine-row checklist).",
+   "verdict": "confirmed",
+   "correction": "Cybex 'Grasp handle'; NSCA machine row 'closed, pronated grip' (closed by similarity; NSCA's grip there is pronated, not neutral); Baechle 'thumbs around the bar'.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
+   ]
+  },
+  {
+   "claim": "Setup 4: slide back until arms are straight with knees slightly bent.",
+   "verdict": "confirmed",
+   "correction": "Cybex 'maintain a slight bend in the knees'; UNMC 'knees slightly bent'; Padovan 'fully extended elbows, a slightly flexed knee position'.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/"
+   ]
+  },
+  {
+   "claim": "Setup 5: sit tall, torso perpendicular, chest up, shoulders down and back.",
+   "verdict": "confirmed",
+   "correction": "UNMC 'chest is tall and pull the shoulders down and back'; de Abreu 'keep the trunk perpendicular to the floor' (MVIC instruction); Cybex 'keep back straight and upright'.",
+   "sources": [
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt",
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Setup 6: arms straight a little below shoulder height, cable near level; handle in line with the lower ribs/upper belly.",
+   "verdict": "corrected",
+   "correction": "Ronai's 'slightly below shoulder height' is known only from a search snippet (paywalled). The Cybex start drawing shows the hands about 20 cm below the shoulder joint (lower chest) with the cable sloping DOWN to the pulley; it is level only at the finish. 'Lower ribs/upper belly' at the start is lower than the drawing.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.researchgate.net/publication/333960893_Do_It_Right_The_Seated_Cable_Row_Exercise"
+   ]
+  },
+  {
+   "claim": "Head in line with the spine, eyes forward.",
+   "verdict": "unverified",
+   "correction": "No row source states head position or gaze (UNMC only says 'chest is tall'). Reasonable, but label coaching consensus.",
+   "sources": [
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt"
+   ]
+  },
+  {
+   "claim": "Torso upright, 0 deg (model 0-5 forward); no lean back past vertical.",
+   "verdict": "confirmed",
+   "correction": "Cybex 'back straight and upright'; Padovan 'upright torso'; de Abreu 'not to lean back or forward'; UNMC 'without leaning forward'; Mayo 'do not lean too far forward in the starting position'.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/",
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652",
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt",
+    "https://www.hancockhealth.org/mayo-health-library/video-seated-row-with-weight-machine/"
+   ]
+  },
+  {
+   "claim": "Scapulae: held back and down OR allowed forward at full reach; overall muscle activity similar both ways.",
+   "verdict": "corrected",
+   "correction": "Both styles are documented (Mayo 'shoulders stretched slightly forward'; ACE 168 'without rounding your shoulders forward', UNMC 'shoulders down and back'). But Padovan 2025 found holding the blades back raised middle trapezius (ES 0.67) and latissimus (ES 0.85) activity in the lowering phase and posterior deltoid (ES 0.66) in the pull; the authors still call the overall pattern comparable. Say 'similar overall, with some differences'.",
+   "sources": [
+    "https://www.hancockhealth.org/mayo-health-library/video-seated-row-with-weight-machine/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/",
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/"
+   ]
+  },
+  {
+   "claim": "Start shoulder flexion about 75-90 deg (read from the Cybex drawing; handle slightly below shoulder height).",
+   "verdict": "corrected",
+   "correction": "The Cybex start drawing reads about 70-75 deg (hands about 20 cm below the shoulder joint). With the handle finishing at the stomach and a near-level cable, start flexion is about 63-72 deg (derived: 90 - asin(20-30 cm / 66 cm)). 90 deg puts the hands at shoulder height. Use about 70.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.openlab.psu.edu/ansur2/"
+   ]
+  },
+  {
+   "claim": "Start shoulder abduction about 0-10 deg.",
+   "verdict": "confirmed",
+   "correction": "Close handle keeps the arms beside the body; de Abreu's PRO/SUP/NEU conditions were at 0 deg abduction. (With hands 13-15 cm apart and shoulder joints about 36 cm apart the arms angle slightly inward.)",
+   "sources": [
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652"
+   ]
+  },
+  {
+   "claim": "Start elbows fully straight; forearms neutral.",
+   "verdict": "confirmed",
+   "correction": "Padovan 'fully extended elbows'; de Abreu 'elbows fully extended'; Lehman 'forearms at a mid pronated position 6 inches apart'.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/",
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/"
+   ]
+  },
+  {
+   "claim": "Wrist neutral, 0-20 deg extension band.",
+   "verdict": "confirmed",
+   "correction": "ACE 168: 'maintain a neutral wrist position (i.e., wrist in line with your forearms)'. The 0-20 band is coaching consensus.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/"
+   ]
+  },
+  {
+   "claim": "Hips about 90-100 deg flexion (torso vertical, thighs level or rising slightly).",
+   "verdict": "confirmed",
+   "correction": "Matches the Cybex drawing (thigh about level, torso vertical).",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Knees slightly bent, about 20-45 deg, kept still.",
+   "verdict": "confirmed",
+   "correction": "Texts say 'slight bend' (Cybex, UNMC, Padovan). The Cybex drawing reads about 40-45 deg; the number stays a drawing estimate.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/"
+   ]
+  },
+  {
+   "claim": "Feet flat on the plate, hip width.",
+   "verdict": "confirmed",
+   "correction": "Cybex 'feet securely on foot plate'; UNMC 'hip width'.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt"
+   ]
+  },
+  {
+   "claim": "Mid position: elbow about 90 deg with shoulder flexion about 30-45 deg.",
+   "verdict": "corrected",
+   "correction": "Physically inconsistent with a straight cable line: upper arm at 30-45 deg flexion plus a 90 deg elbow puts the hand only about 5 cm below shoulder level, about 20-25 cm above the cable line. Elbow 90 deg occurs with the upper arm near vertical (shoulder about 0-10 deg): Lehman's hold was '0 degrees of flexion and 90 degrees of elbow flexion', and the Cybex stop drawing shows the same. Halfway along the path is about elbow 55-60 deg with shoulder about 30-35 deg (derived).",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.openlab.psu.edu/ansur2/"
+   ]
+  },
+  {
+   "claim": "End: handle touches or nearly touches the upper belly, below the lower ribs and above the navel.",
+   "verdict": "corrected",
+   "correction": "Sources say 'front of the stomach' (ACE 48), 'stomach' (UNMC), 'abdominal region' (Padovan), 'touched their torso' (de Abreu), 'to your waist' (Mayo). The Cybex stop drawing shows the hands at about navel height, a few cm short of the body. 'Above the navel' is not sourced; use stomach-to-waist height.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/48/seated-row/",
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/",
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652",
+    "https://www.hancockhealth.org/mayo-health-library/video-seated-row-with-weight-machine/",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "End elbow flexion about 90-125 deg (90 from Lehman's hold; up to 120-125 derived for handle touching).",
+   "verdict": "confirmed",
+   "correction": "Range holds: Cybex stop drawing shows about 90 deg; my recomputation for a handle touching the stomach gives about 120-125. Lehman's 90 deg was an isometric test point, not the end of the rep.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.openlab.psu.edu/ansur2/"
+   ]
+  },
+  {
+   "claim": "End shoulder extension about 15-45 deg (15-30 if the handle stops a few cm short as in the Cybex stop drawing), abduction 0-20.",
+   "verdict": "corrected",
+   "correction": "Direction confirmed (ACE 168 'until your elbows pass the sides of your body'). But the Cybex stop drawing shows the upper arm near vertical, about 0-10 deg extension, not 15-30. Use 0-45: about 0-10 with the handle short, about 35-45 when it touches.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652"
+   ]
+  },
+  {
+   "claim": "End scapulae back and down, not shrugged; torso, knees, feet unchanged.",
+   "verdict": "confirmed",
+   "correction": "UNMC 'shoulders down and back', 'keeping your body still'; Cybex 'back straight and upright' throughout.",
+   "sources": [
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "V-handle grip: neutral (palms facing), closed, thumbs wrapped, firm not maximal.",
+   "verdict": "confirmed",
+   "correction": "Lehman 'mid pronated' forearms; Padovan triangle handle; Baechle 'thumbs around the bar'. Squeeze level is coaching consensus.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/",
+    "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
+   ]
+  },
+  {
+   "claim": "Straight bar overhand or underhand at biacromial width: no force difference vs neutral at 0 deg; lat activity higher near 0 deg for all three.",
+   "verdict": "confirmed",
+   "correction": "de Abreu: PRO/SUP at biacromial width, NEU with two handles, all at 0 deg abduction; each produced more peak force than 60/90 deg and more latissimus activity than wider positions; no differences among the three reported.",
+   "sources": [
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652"
+   ]
+  },
+  {
+   "claim": "Wide bar (60-90 deg abduction): less force, more upper/middle trapezius and rear delt, less lat; pull goes to the chest.",
+   "verdict": "confirmed",
+   "correction": "de Abreu results confirm force and EMG. 'Pulled towards the chest' is from the paper's introduction (description of the wide-grip row), not a tested condition.",
+   "sources": [
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC13510307/"
+   ]
+  },
+  {
+   "claim": "Two single D-handles on one cable for the neutral condition (de Abreu).",
+   "verdict": "confirmed",
+   "correction": "de Abreu: 'For the NEU condition, two individual handles were attached to a single anchor point'.",
+   "sources": [
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652"
+   ]
+  },
+  {
+   "claim": "ROM: straight elbows to handle touching the stomach; de Abreu 'until it touched their torso'; Padovan to the abdomen with a 0.5 s pause at the end of the return.",
+   "verdict": "confirmed",
+   "correction": "de Abreu 'pulled the bar/handle until it touched their torso'; Padovan 'until the handle reached the abdominal region' and 'At the end of the lowering phase, the load was paused isometrically for approximately 0.5 s'.",
+   "sources": [
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/"
+   ]
+  },
+  {
+   "claim": "Study tempos: de Abreu 2 s / 2 s at 60 bpm; Padovan 2 s / 2 s / about 0.5 s.",
+   "verdict": "confirmed",
+   "correction": "Both verbatim in the methods.",
+   "sources": [
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/"
+   ]
+  },
+  {
+   "claim": "ACE cable row: pause one second at the stomach, then straighten slowly.",
+   "verdict": "confirmed",
+   "correction": "ACE 48: 'Pause for one second before slowly straightening the arms'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/48/seated-row/"
+   ]
+  },
+  {
+   "claim": "Hypertrophy review: about 2-8 s per rep.",
+   "verdict": "confirmed",
+   "correction": "Androulakis-Korakakis 2024: 'repetition tempo between 2 and 8 s'.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/"
+   ]
+  },
+  {
+   "claim": "Breathe out as you pull (ACE machine row, by similarity).",
+   "verdict": "confirmed",
+   "correction": "ACE 168: 'Gently exhale and perform a pulling movement'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/"
+   ]
+  },
+  {
+   "claim": "Primary mid_back AND lats; secondary biceps, rear_delts, brachialis.",
+   "verdict": "confirmed",
+   "correction": "Supported: Lehman (seated row gave the highest middle trapezius/rhomboid activity, and the slack-scapula row gave significantly MORE latissimus activity than both pulldowns: 30.1 vs 26.2 and 22.4 %MVC); de Abreu (latissimus higher near 0 deg); Padovan grip (narrow > wide for latissimus, ES 1.08, via Di Fonza); Cybex lists latissimus primary. Note Cybex also lists BICEPS as primary and names no mid-back muscle; brachialis remains anatomy-only.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/",
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC13510307/",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Lehman 2004: seated row gave the highest middle trapezius/rhomboid activity 'of four lat exercises'.",
+   "verdict": "corrected",
+   "correction": "The four were two pulldowns and two seated-row variants (scapula retracted vs slack). The row's MTR was significantly higher only than the reverse-grip pulldown; the retracted-row trend was not significant. Say 'highest of the tasks tested'.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/"
+   ]
+  },
+  {
+   "claim": "lower_back stabilizer: Cybex lists erector spinae secondary; Padovan recorded it; wide grip raised erector activity in the return phase.",
+   "verdict": "confirmed",
+   "correction": "Cybex p. 2-5 'Secondary - Erector Spinae'; Padovan 2025 recorded erector spinae; Di Fonza: wide grip raised erector spinae in the eccentric phase only (ES 0.65).",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC13510307/"
+   ]
+  },
+  {
+   "claim": "upper_traps keep quiet: lifters cut upper-trap activity about 10% with EMG feedback (dos Anjos 2024).",
+   "verdict": "confirmed",
+   "correction": "Abstract: about 10% lower upper trapezius AND serratus anterior with biofeedback; 8 men; WIDE-grip seated row. Fine for the 'keep quiet' note.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/39177899/"
+   ]
+  },
+  {
+   "claim": "Triceps long head recorded in Padovan 2025; not highlighted.",
+   "verdict": "confirmed",
+   "correction": "Padovan recorded triceps brachii.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/"
+   ]
+  },
+  {
+   "claim": "Mistake 'rock': torso tips forward 20-30 deg then back 10-15 deg past vertical; NSCA no jerking, torso still; Cybex upright.",
+   "verdict": "confirmed",
+   "correction": "NSCA (machine row): 'Do not jerk the torso for assistance', 'Keep the torso in the same position'; Cybex upright throughout. Angles unverified (as labelled). NSCA's checklist is for the chest-pad machine row.",
+   "sources": [
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf"
+   ]
+  },
+  {
+   "claim": "Mistake 'round-reach': Cybex 'avoid excessive bending of spine'; Mayo; Callaghan 2001 porcine model (weak).",
+   "verdict": "confirmed",
+   "correction": "Cybex note verbatim; Mayo 'do not lean too far forward in the starting position'. Callaghan used pig CERVICAL motion segments bent up to 86,400 times: weak for this lift, as labelled.",
+   "sources": [
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.hancockhealth.org/mayo-health-library/video-seated-row-with-weight-machine/",
+    "https://pubmed.ncbi.nlm.nih.gov/11114441/"
+   ]
+  },
+  {
+   "claim": "Mistake 'shrug': upper traps take over; 'dos Anjos 2024 measured this as a common excess'.",
+   "verdict": "corrected",
+   "correction": "dos Anjos did not measure how common the excess is; 'often excessively excited' is the paper's background statement, and its subjects did a wide-grip row. Keep UNMC 'shoulders down and back' as the support and cite dos Anjos only for the ~10% reduction with feedback.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/39177899/",
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt"
+   ]
+  },
+  {
+   "claim": "Mistake 'flare': elbows out lowers force and moves work from lats to upper back and rear delts (de Abreu 2023).",
+   "verdict": "corrected",
+   "correction": "de Abreu set 60/90 deg abduction by widening the HANDS on a bar, not by flaring the elbows on a V-handle. Label 'documented-by-similarity'. 'Handle drifts up toward the chest' is unverified.",
+   "sources": [
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652"
+   ]
+  },
+  {
+   "claim": "Mistake 'legs-drive': 'NSCA keeps the knees in the same position'.",
+   "verdict": "corrected",
+   "correction": "The NSCA seated-row checklist has no knee instruction (it is a chest-pad machine). 'Keep the torso and knees in the same position' is in the BENT-OVER ROW checklist. Support the fault with Cybex ('maintain a slight bend in the knees') and UNMC ('knees slightly bent', 'keeping your body still').",
+   "sources": [
+    "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+    "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt"
+   ]
+  },
+  {
+   "claim": "Mistake 'curl-wrist': bent wrist weakens grip; ACE neutral wrist.",
+   "verdict": "confirmed",
+   "correction": "O'Driscoll: grip lower in any deviation from the self-selected position; ACE 168 neutral wrist.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/"
+   ]
+  },
+  {
+   "claim": "Key fact: peak force came within the first 8% of the pull; 'the start is the hardest part'.",
+   "verdict": "corrected",
+   "correction": "Cronin 2007: peak force within 8.3% of the concentric DISPLACEMENT (and within 25% of movement time), in 8 Olympic rowers doing power-load testing at 30-100% 1RM. That is a fast, maximal-intent pull, not the app's 2 s controlled rep, and early peak force partly reflects accelerating the stack. Say 'In fast pulls by rowers, peak force came in the first 8% of the pull' and drop 'the start is the hardest part' (not tested).",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/18076253/"
+   ]
+  },
+  {
+   "claim": "Key fact: elbows close to the body gave the most force and lat activity; elbows out 60-90 deg shifted work to upper back and rear delts.",
+   "verdict": "confirmed",
+   "correction": "de Abreu results; Di Fonza summary agrees.",
+   "sources": [
+    "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC13510307/"
+   ]
+  },
+  {
+   "claim": "Key fact: a narrow grip gave more lat activity than a wide one; the wide grip loaded the traps and side delts more.",
+   "verdict": "confirmed",
+   "correction": "Di Fonza (reporting Padovan 2025 grip study, 14 trained men): narrow > wide for latissimus (ES 1.08); wide raised upper, middle and lower trapezius and LATERAL deltoid. Primary paper not opened; secondary source.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC13510307/"
+   ]
+  },
+  {
+   "claim": "Key fact: squeezing the shoulder blades did not raise mid-back activity; free blades gave similar overall activity.",
+   "verdict": "corrected",
+   "correction": "Lehman (isometric holds): retraction did not change middle trapezius/rhomboid activity, confirmed. Padovan 2025 (dynamic): holding the blades back raised middle trapezius (ES 0.67) and latissimus (ES 0.85) in the lowering phase. Say 'Squeezing the blades in a still hold did not raise mid-back activity; in moving reps, holding them back raised it a little on the way out.'",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/"
+   ]
+  },
+  {
+   "claim": "Key fact: being told to 'use your back' raised lat activity only in the first few reps of a set to failure.",
+   "verdict": "confirmed",
+   "correction": "Fujita 2020: 20 participants with little or no training; latissimus +15.2% on initial reps only. Sample was untrained.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/32448047/"
+   ]
+  },
+  {
+   "claim": "Mayo seated row: shoulders slightly forward at the start, pull to the waist, do not lean too far forward.",
+   "verdict": "confirmed",
+   "correction": "Mayo page returns 403; the Mayo-licensed transcript copy and search text: 'shoulders stretched slightly forward', 'pull the cable to your waist', 'do not lean too far forward in the starting position'.",
+   "sources": [
+    "https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/seated-row/vid-20084688",
+    "https://www.hancockhealth.org/mayo-health-library/video-seated-row-with-weight-machine/"
+   ]
+  },
+  {
+   "claim": "Ronai 2019: handle slightly below shoulder height.",
+   "verdict": "unverified",
+   "correction": "Paywalled; only a search summary ('trunk upright, scapulae slightly retracted and depressed, elbows fully extended... handlebar slightly below the shoulder height'). Note it also has the blades back at the start.",
+   "sources": [
+    "https://journals.lww.com/acsm-healthfitness/Fulltext/2019/07000/Do_It_Right__The_Seated_Cable_Row_Exercise.9.aspx",
+    "https://www.researchgate.net/publication/333960893_Do_It_Right_The_Seated_Cable_Row_Exercise"
+   ]
+  },
+  {
+   "claim": "Existing-content reuse note: UNMC transcript covers V-handle, facing the stack, feet on the plate.",
+   "verdict": "corrected",
+   "correction": "UNMC transcript mentions only: feet hip width, knees slightly bent, chest tall, shoulders down and back, body still, elbows back, handle to the stomach, return without leaning forward. No handle type, stack or foot plate.",
+   "sources": [
+    "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt"
+   ]
+  }
+ ],
+ "would_look_wrong": [
+  "Start shoulder flexion 75-90 deg puts the hands at chest-to-shoulder height; with the pulley near belly height the cable would angle steeply and the hands would drop during the pull. Use about 70 deg (Cybex), cable sloping slightly down to the pulley at the start and level at the finish.",
+  "Mid frame 'elbow 90 + shoulder flexion 30-45' lifts the handle about 20 cm above the line to the pulley, so the handle would arc up toward the chest and then drop to the belly, which looks like an upright row. Elbow 90 belongs with the upper arm near vertical; halfway is about elbow 55-60 / shoulder 30-35. Drive the hands along the cable line with IK.",
+  "The research's setup step 5 says 'shoulders down and back' but its start posture models the blades 'slightly forward'. The animation can only show one. Pick one style and keep the copy consistent; both are documented.",
+  "V-handle grip axis: with palms facing each other the grips must run roughly up and down (across the palm, at right angles to the forearm), thumbs on top, a little wider apart at the top than the bottom (American Barbell). Side-to-side horizontal grips would force an overhand hand shape and look wrong.",
+  "Hand centres about 13-15 cm apart, not 15+ (15.2 cm is the handle's overall width).",
+  "End position: if the handle touches the stomach, check fist and abdomen for clipping; the Cybex reference stops the hands a few cm short at navel height. Either works; keep elbows within about 0-20 deg of the body.",
+  "End shoulder extension 15-30 deg 'from the Cybex drawing' is too far back for that drawing (it shows about 0-10 deg). Do not mix a short handle position with 30+ deg extension, or the elbows will look jammed behind the back.",
+  "Knees 20-45 deg must stay still; if the bench-to-plate distance is wrong for the figure, IK will straighten or overbend the knees during the pull and read as the legs-drive mistake.",
+  "Torso vertical with hips at 90 deg and knees only slightly bent is near end range for tight hamstrings; a tucked pelvis or flat low back on the model will read as the 'round-reach' mistake. Keep a visible low-back curve."
+ ],
+ "summary": "61 claims checked: 41 confirmed, 16 corrected, 4 unverified, 0 refuted. Cited papers and manuals exist and mostly say what is claimed. Main fixes: (1) the mid pose (elbow 90 with shoulder 30-45) would lift the handle off the cable line; elbow 90 goes with the upper arm near vertical (Lehman, Cybex); (2) start shoulder flexion should be about 70, not 75-90 (Cybex drawing; the cable is level only at the finish); (3) the file wants blades both back (setup) and forward (start posture): pick one; (4) Padovan 2025 found holding the blades back raised mid-trap and lat activity in the lowering phase, so 'squeezing does nothing' is too strong; (5) Cronin's 8% figure is from fast pulls by 8 rowers, not controlled reps; (6) the NSCA 'knees in the same position' line is from the bent-over row checklist; (7) dos Anjos did not measure shrugging as common; (8) de Abreu's 60-90 deg data come from wider hand spacing, not elbow flare; (9) end height is stomach-to-waist (Cybex: navel), V-handle grips are not strictly parallel, and hand spacing is about 13-15 cm."
+}

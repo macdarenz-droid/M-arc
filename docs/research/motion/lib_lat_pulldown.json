@@ -1,0 +1,985 @@
+{
+ "id": "lib_lat_pulldown",
+ "name": "Lat Pulldown",
+ "researched": "2026-10-02",
+ "evidenceKey": {
+  "documented": "Stated by the cited source for this exercise or this machine.",
+  "documented-by-similarity": "Stated by the source for a close exercise and applied here.",
+  "range, coach consensus": "A range from coaching sources. No measurement found.",
+  "derived": "Worked out from cited numbers. The working is given.",
+  "unverified": "No source found. Do not show as fact. Check against a reference photo or a real machine."
+ },
+ "appData": {
+  "exercisesJson": {
+   "equipment": "Cable / Machine",
+   "primary": [
+    "lats"
+   ],
+   "secondary": [
+    "biceps",
+    "mid_back"
+   ],
+   "stabilizers": [],
+   "pattern": "vertical_pull",
+   "aliases": [
+    "wide grip pulldown",
+    "lat pull down"
+   ]
+  },
+  "muscleIdMap": {
+   "lats": "latissimus dorsi; the app has no teres major id, so teres major (Cybex lists it as primary) folds into lats",
+   "mid_back": "rhomboids and middle trapezius; Cybex also lists lower trapezius, which the app has no id for, so it folds into mid_back",
+   "rear_delts": "posterior deltoid",
+   "biceps": "biceps brachii",
+   "brachialis": "brachialis",
+   "forearms": "forearm flexors (grip)",
+   "chest": "pectoralis major (measured active as a shoulder adductor, see muscles.notHighlighted)"
+  },
+  "note": "The generated feel map (src/howto/generated/feel-lat-pulldown.ts) already says 'Also working: mid back, biceps, rear shoulders, forearms', which is more than exercises.json lists."
+ },
+ "existingRepoContent": {
+  "files": [
+   "docs/research/howto/lib_lat_pulldown.json",
+   "docs/research/howto/sources.json",
+   "src/howto/generated/ht-lat-pulldown.ts",
+   "src/howto/generated/feel-lat-pulldown.ts",
+   "tools/plates/layers/exercises/lat_pulldown.mjs"
+  ],
+  "reuse": [
+   "Setup: knee pad snug on the thighs, closed overhand grip, lean back slightly (30 deg at most), shoulders down then pull (ACE, re-read today, matches).",
+   "Bar in front to the upper chest, never behind the neck (Sperandei 2009, Signorile 2002, Padovan 2024, Kolber 2013; abstracts re-read; Padovan full text re-read).",
+   "End point: stop when the elbows stop going down and start going back (ACE wording, re-read today).",
+   "Wrist: back of hand in line with forearm or tipped back a little; bar at the base of the fingers (O'Driscoll 1992 abstract re-read; see flag on the number).",
+   "Mistakes already written (behind the neck, curling wrists, swinging back) are all supported."
+  ],
+  "flags": [
+   {
+    "where": "ht-lat-pulldown.ts handling.width, setup grip step, posture 'width'",
+    "issue": "Says 'about 1.5 times shoulder width'. The studies (Andersen 2014, Buonsenso 2025, Padovan 2024, Lehman 2004) use 1.5 times the BIACROMIAL distance (bone to bone, ANSUR II male mean 41.6 cm, female 36.5 cm), not outer shoulder width (bideltoid, male mean 51.0 cm). A lifter who reads 'shoulder width' as the outer shoulders would go to about 77 cm, close to the 2x biacromial 'wide' grip that cost about 4% load in Andersen 2014.",
+    "action": "Reword to 'a bit wider than your shoulders' (NSCA: 'wider than shoulder-width'; Mayo: 'slightly wider than shoulder-width'). For the 3D model use 1.5 x biacromial = about 62 cm (male mean) between hand centres."
+   },
+   {
+    "where": "tools/plates/layers/exercises/lat_pulldown.mjs header",
+    "issue": "Hands 68 cm apart is called '1.5x the 45 cm shoulder-joint width'. Studies measure acromion to acromion, not shoulder-joint centres. 68 cm is 1.63 x the ANSUR II male mean biacromial breadth: still inside the tested 1-2x range, but not 1.5x.",
+    "action": "Use 62 cm for a male-mean figure, or keep 68 cm and stop calling it 1.5x."
+   },
+   {
+    "where": "tools/plates/layers/exercises/lat_pulldown.mjs header (machine sizes)",
+    "issue": "'Seat pad top 46 cm, knee roller 11 cm, head pulley 2.16 m above the bar, 16 x 5 kg stack, bar 1.22 m, straight 60 cm centre, ends dropped 12 cm, 28 mm' are called typical commercial sizes but no source is given. Bar length 1.22 m (48 in) matches American Barbell. Grip diameter: American Barbell documents 25.4 mm, not 28 mm. The rest found in no source today.",
+    "action": "Treat as unverified except bar length; use 25.4 mm grip (documented) or flag 28 mm as a style choice."
+   },
+   {
+    "where": "ht-lat-pulldown.ts plate arc label 'Lean back about 15°' and posture note 'the measured lean (about 15 degrees)'",
+    "issue": "No source found for 15 degrees. ACE gives a ceiling (no more than 30 deg); Buonsenso 2025 compared upright with 30 deg. The Cybex manual drawing shows roughly 15-20 deg (my estimate from the drawing).",
+    "action": "Keep 15 deg as a modelling choice inside the documented 0-30 deg range; do not present it as measured."
+   },
+   {
+    "where": "ht-lat-pulldown.ts handling.wrist and pose.wrist.ext 10",
+    "issue": "O'Driscoll 1992 found grip strongest at a self-selected 35 deg extension and 7 deg ulnar deviation, with at least 25 deg extension needed for best grip, and 15 deg extension cutting grip to two-thirds to three-quarters. The app's 0-25 deg band and 10 deg pose are a 'straight wrist' coaching choice, not O'Driscoll's optimum. The existing note says this honestly.",
+    "action": "No change needed to the text. For the 3D hand, 10-25 deg extension looks right under load (range, coach consensus)."
+   },
+   {
+    "where": "exercises.json secondary",
+    "issue": "Lists only biceps and mid_back. Measured EMG shows posterior deltoid active in every study that recorded it (Signorile 2002, Sperandei 2009, Padovan 2024, Buonsenso 2025). The feel map already lists rear shoulders and forearms.",
+    "action": "Add rear_delts to secondary; forearms as a stabilizer (grip); brachialis as secondary by anatomy. See muscles."
+   },
+   {
+    "where": "docs/research/howto/sources.json buonsenso2025, difonza2026, padovan2024",
+    "issue": "Marked 'abstract' access. Full text is open on Europe PMC (read today).",
+    "action": "Can upgrade access to full."
+   }
+  ]
+ },
+ "equipment": {
+  "modelThis": {
+   "summary": "Selectorized cable lat pulldown station. One upright column holding a weight stack; the lifter sits on a fixed pad FACING the stack. A boom from the top of the column carries a head pulley above and slightly in front of the lifter's face. The cable drops from the head pulley to a long lat bar (about 122 cm) whose centre is straight and whose ends bend down and out. Two pairs of padded rollers (thigh pads) on an adjustable post press on the tops of the thighs just above the knees. Feet flat on the floor.",
+   "why": [
+    "It is the version the app already shows (side-view plate with thigh pad and long bent bar) and the one the app's text describes ('on or just inside the bar's bends').",
+    "It is the version in the NSCA proficiency checklist, the ACE page, the Cybex Modular manual drawing and the Precor Vitality product photo (all checked today).",
+    "One cable station serves several library exercises (pulldown variants with other attachments), so one asset scales.",
+    "Lever (plate or selectorized diverging) pulldowns exist (Life Fitness Insignia, Matrix Ultra) but have fixed handles, so the grip and bar path differ; model them later as separate assets if the library needs them."
+   ],
+   "src": [
+    "nsca-proficiencies",
+    "ace-lat-pulldown",
+    "cybex-modular-manual",
+    "precor-vsl026bp",
+    "matrix-aura-ms"
+   ],
+   "evidence": "documented (layout seen in the Cybex drawing and the Precor photo, viewed today)"
+  },
+  "variants": [
+   {
+    "name": "Selectorized cable lat pulldown (stand-alone)",
+    "notes": "Technogym Selection Lat Machine, Matrix Aura G3-MS51, Cybex Modular 5601. Bar on a cable from a head pulley.",
+    "src": [
+     "technogym-selection-lat",
+     "matrix-aura-ms",
+     "cybex-modular-manual"
+    ]
+   },
+   {
+    "name": "Combo pulldown / seated row",
+    "notes": "Precor Vitality VSL026BP: thigh hold-down pad, extended seat and foot bar so the same stack serves a low row.",
+    "src": [
+     "precor-vsl026bp"
+    ]
+   },
+   {
+    "name": "Selectorized lever 'diverging' pulldown",
+    "notes": "Life Fitness Insignia Series Pulldown, Matrix Ultra Diverging Lat Pulldown: two independent arms with fixed handles, no bar.",
+    "src": [
+     "lf-insignia-pulldown",
+     "matrix-ultra-pulldown"
+    ]
+   },
+   {
+    "name": "Dual-axis / plate-loaded pulldowns",
+    "notes": "Exist (Life Fitness Insignia Dual Axis Pulldown; Hammer Strength plate-loaded); not modelled now.",
+    "src": [
+     "lf-insignia-pulldown"
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "part": "Frame column + weight stack",
+    "detail": "Stack in front of the lifter, enclosed by a shroud on many models. Stacks documented: Technogym 100 kg (130 kg option); Matrix Aura MS51 134 kg; Precor VSL026BP 100 kg + 2.5 kg add-on.",
+    "src": [
+     "technogym-selection-lat",
+     "matrix-aura-ms",
+     "precor-vsl026bp"
+    ],
+    "evidence": "documented"
+   },
+   {
+    "part": "Selector pin",
+    "detail": "Pin through the stack picks the load (Cybex step 2; Life Fitness pin 11 mm diameter).",
+    "src": [
+     "cybex-modular-manual",
+     "lf-signature-row"
+    ],
+    "evidence": "documented"
+   },
+   {
+    "part": "Boom + head pulley",
+    "detail": "Boom from the column top carries the pulley over the lifter, slightly in front of the face, so the cable comes down at a slight angle from the machine side. Pulley diameters on Life Fitness Signature: 11 cm and 15 cm.",
+    "src": [
+     "cybex-modular-manual",
+     "precor-vsl026bp",
+     "lf-signature-row"
+    ],
+    "evidence": "documented (layout from drawing/photo; diameters from Life Fitness spec summary)"
+   },
+   {
+    "part": "Cable + carabiner/chain",
+    "detail": "Cable ends in a clip; Precor photo shows a carabiner plus a short chain into the bar's centre swivel.",
+    "src": [
+     "precor-vsl026bp",
+     "american-barbell-lat-bar"
+    ],
+    "evidence": "documented"
+   },
+   {
+    "part": "Lat bar",
+    "detail": "About 122 cm (48 in) long, 25.4 mm grip diameter, straight centre section, ends angled down and out, rubber end caps, centre swivel with eye-bolt. Knurled in the centre grip area and on the angled ends.",
+    "src": [
+     "american-barbell-lat-bar",
+     "precor-vsl026bp"
+    ],
+    "evidence": "documented (length, diameter, angled ends); bend angle and straight-section length unverified"
+   },
+   {
+    "part": "Seat",
+    "detail": "Fixed or height-adjustable flat pad. Seat height not documented by any manufacturer page read today.",
+    "src": [],
+    "evidence": "unverified"
+   },
+   {
+    "part": "Thigh pads",
+    "detail": "Two cylindrical padded rollers (one per thigh) on a height-adjustable post, pressing on the tops of the thighs just above the knees.",
+    "src": [
+     "ace-lat-pulldown",
+     "cybex-modular-manual",
+     "precor-vsl026bp",
+     "technogym-selection-lat"
+    ],
+    "evidence": "documented"
+   }
+  ],
+  "dimensions": {
+   "machines": [
+    {
+     "model": "Matrix Aura G3-MS51 Lat Pulldown",
+     "LxWxH_cm": "140 x 120 x 252",
+     "stack": "134 kg",
+     "src": [
+      "matrix-aura-ms"
+     ],
+     "evidence": "documented (owner's guide spec table)"
+    },
+    {
+     "model": "Technogym Selection Lat Machine",
+     "LxWxH_cm": "122 x 84.5 x 228.5",
+     "stack": "100 kg (130 kg option)",
+     "src": [
+      "technogym-selection-lat"
+     ],
+     "evidence": "documented (spec quoted in search summary; product page returned 403)"
+    },
+    {
+     "model": "Precor Vitality VSL026BP Pulldown/Seated Row",
+     "LxWxH_cm": "200 x 131 x 220",
+     "stack": "100 kg + 2.5 kg add-on",
+     "src": [
+      "precor-vsl026bp"
+     ],
+     "evidence": "documented (sell sheet)"
+    },
+    {
+     "model": "Life Fitness Insignia Pulldown (lever, for contrast)",
+     "LxWxH_cm": "141 x 145 x 194",
+     "stack": "130 kg (152 kg option)",
+     "src": [
+      "lf-insignia-pulldown"
+     ],
+     "evidence": "documented (search summary)"
+    }
+   ],
+   "rangeToModel": "Cable station about 120-140 cm deep, 85-130 cm wide, 220-250 cm tall.",
+   "attachment": {
+    "latBar": "122 cm long, 25.4 mm grip (American Barbell)",
+    "src": [
+     "american-barbell-lat-bar"
+    ]
+   },
+   "notDocumented": "Seat height, thigh-pad roller diameter, head-pulley height, bar bend angle and straight-section length. Measure from a reference photo or a real machine before modelling.",
+   "derivedSeatHeight": {
+    "text": "Seat top about 43-48 cm lets a male-mean figure sit with thighs level and feet flat (ANSUR II popliteal height: male mean 43.0 cm, female 38.8 cm).",
+    "src": [
+     "ansur2"
+    ],
+    "evidence": "derived"
+   }
+  },
+  "references": [
+   {
+    "url": "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf",
+    "shows": "Product photo: column with stack, boom and head pulley, long bar with bent-down ends on carabiner + chain, roller thigh pads, long seat, foot bar.",
+    "viewed": "viewed today (rendered page 1)"
+   },
+   {
+    "url": "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "shows": "Page 2-7 line drawing: lifter facing the machine, thighs under roller pads, slight lean back, bar in front of the face at chin level, elbows down at the sides.",
+    "viewed": "viewed today (rendered PDF page 31)"
+   },
+   {
+    "url": "https://content.johnsonfit.com/inc/uploaded_media/0354bbc1b9de4b9c11347ee68d9cc67b/owners_guide/dd0bb4c30d82048733cd18ee18e06603.pdf",
+    "shows": "Matrix Aura multi-station owner's guide with MS51 Lat Pulldown spec table and training-area diagram.",
+    "viewed": "text read today; diagrams not checked"
+   },
+   {
+    "url": "https://americanbarbell.com/products/revolving-lat-pulldown-bar-solid-48-with-rubber-head-protector",
+    "shows": "Lat bar specs and product photo (angled ends, centre swivel).",
+    "viewed": "specs read today; photo not checked"
+   }
+  ]
+ },
+ "setup": [
+  {
+   "step": 1,
+   "text": "Set the thigh pads so the knees slide under them and the pads sit firmly on the tops of the thighs.",
+   "landmark": "tops of the thighs, just above the knees",
+   "src": [
+    "ace-lat-pulldown",
+    "cybex-modular-manual"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "step": 2,
+   "text": "Pick the load with the selector pin.",
+   "landmark": null,
+   "src": [
+    "cybex-modular-manual"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "step": 3,
+   "text": "Stand, take the bar with a closed overhand grip, hands wider than the shoulders.",
+   "landmark": "hands about 1.5 x biacromial distance apart (about 62 cm male mean), usually on or just inside the bends",
+   "src": [
+    "nsca-proficiencies",
+    "andersen2014",
+    "buonsenso2025",
+    "ansur2"
+   ],
+   "evidence": "documented (grip type, 'wider than shoulder width', 1.5x biacromial as tested); 'on or just inside the bends' is existing app wording, unverified"
+  },
+  {
+   "step": 4,
+   "text": "Sit down holding the bar and lock the knees under the pads. Feet flat on the floor.",
+   "landmark": "knees under pads; feet flat, about hip width (width unverified)",
+   "src": [
+    "cybex-modular-manual",
+    "nsca-proficiencies"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "step": 5,
+   "text": "Brace the trunk, keep the low back from arching, and lean back slightly from the hips (no more than 30 degrees).",
+   "landmark": "hip joint is the pivot; head stays in line with the spine",
+   "src": [
+    "ace-lat-pulldown",
+    "cybex-modular-manual"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "step": 6,
+   "text": "Arms straight overhead. Draw the shoulders down and slightly back before the elbows bend.",
+   "landmark": "shoulders away from the ears",
+   "src": [
+    "ace-lat-pulldown"
+   ],
+   "evidence": "documented"
+  }
+ ],
+ "posture": {
+  "note": "Angles in degrees. Shoulder elevation is measured from the arm hanging at the side (0) to straight overhead (180). Elbow flexion 0 = straight. Torso lean is from vertical, measured at the hip joint.",
+  "start": {
+   "head": {
+    "text": "In line with the spine, eyes forward or slightly up toward the bar.",
+    "src": [
+     "ace-lat-pulldown"
+    ],
+    "evidence": "documented (head in line); gaze unverified"
+   },
+   "neck": {
+    "text": "Neutral, no chin jut.",
+    "src": [
+     "ace-lat-pulldown"
+    ],
+    "evidence": "documented-by-similarity (from 'head aligned with spine')"
+   },
+   "torso": {
+    "text": "Leaning back from the hips 10-20 deg (model 15). Chest up, low back in its normal curve, abs braced, no extra arch.",
+    "angles": {
+     "leanFromVerticalDeg": "10-20 (ceiling 30)"
+    },
+    "src": [
+     "ace-lat-pulldown",
+     "nsca-proficiencies",
+     "cybex-modular-manual",
+     "buonsenso2025"
+    ],
+    "evidence": "documented ceiling (ACE <= 30 deg); 10-20 range, coach consensus; Cybex drawing roughly 15-20 deg (estimate)"
+   },
+   "scapulae": {
+    "text": "At full stretch they ride up and rotate upward slightly; the first move is pulling them down (depression) and a little back.",
+    "src": [
+     "ace-lat-pulldown"
+    ],
+    "evidence": "documented"
+   },
+   "shoulder": {
+    "text": "Arms straight overhead in roughly the frontal/scapular plane, angled slightly forward toward the cable.",
+    "angles": {
+     "elevationDeg": "about 160-170"
+    },
+    "src": [
+     "ansur2",
+     "andersen2014"
+    ],
+    "evidence": "derived: hands 62 cm apart put each hand about 13 cm outside the shoulder joint (joint centre taken about 18 cm from the midline, an estimate); arm-to-grip length 68.4 cm (ANSUR II acromion-radiale 33.5 + forearm centre-of-grip 34.9); asin(13/68) = 11 deg off vertical, so about 169 deg; less with the forward cable angle. Not measured by a study."
+   },
+   "elbow": {
+    "text": "Fully straight.",
+    "angles": {
+     "flexionDeg": "0"
+    },
+    "src": [
+     "nsca-proficiencies",
+     "ace-lat-pulldown"
+    ],
+    "evidence": "documented"
+   },
+   "forearm": {
+    "text": "Pronated (palms face forward, away from the face).",
+    "src": [
+     "nsca-proficiencies"
+    ],
+    "evidence": "documented"
+   },
+   "wrist": {
+    "text": "Straight to slightly bent back; never curled forward.",
+    "angles": {
+     "extensionDeg": "10-25",
+     "deviationDeg": "about 0"
+    },
+    "src": [
+     "odriscoll1992"
+    ],
+    "evidence": "range, coach consensus (O'Driscoll's grip optimum is 35 deg extension, used here only to rule out flexion)"
+   },
+   "hips": {
+    "text": "Seated, hip flexion about 75-85 deg because of the lean back (about 90 when upright).",
+    "src": [],
+    "evidence": "derived (90 deg seated minus the 10-20 deg lean, thighs level)"
+   },
+   "knees": {
+    "text": "About 90 deg, under the pads.",
+    "angles": {
+     "flexionDeg": "about 90"
+    },
+    "src": [
+     "cybex-modular-manual"
+    ],
+    "evidence": "documented-by-similarity (read from the Cybex drawing; no number given)"
+   },
+   "feet": {
+    "text": "Flat on the floor.",
+    "src": [
+     "nsca-proficiencies"
+    ],
+    "evidence": "documented"
+   }
+  },
+  "mid": {
+   "text": "Bar passing just above eye level: upper arms near horizontal (about 90 deg elevation) and elbows about 90 deg. Lehman 2004 used this exact hold for the wide-grip pulldown ('bar 1-2 inches above eye level'). Torso lean unchanged.",
+   "angles": {
+    "shoulderElevationDeg": "about 90",
+    "elbowFlexionDeg": "about 90"
+   },
+   "src": [
+    "lehman2004",
+    "ace-lat-pulldown"
+   ],
+   "evidence": "documented (study isometric position)"
+  },
+  "end": {
+   "bar": {
+    "text": "At the top or middle of the chest, below the chin, in front of the face. Touching the chest is fine but not required.",
+    "src": [
+     "ace-lat-pulldown",
+     "nsca-proficiencies",
+     "cybex-modular-manual",
+     "padovan2024"
+    ],
+    "evidence": "documented (NSCA says touch the chest; ACE says nears or touches; Padovan pulled to mid chest)"
+   },
+   "elbow": {
+    "text": "Deeply bent, pointing at the floor, beside the ribs and a little in front of or level with the torso. Forearms near vertical seen from the front.",
+    "angles": {
+     "flexionDeg": "about 120-145"
+    },
+    "src": [
+     "ace-lat-pulldown",
+     "ansur2"
+    ],
+    "evidence": "documented direction (ACE: elbows straight down toward the floor, to the sides of the torso); angle derived: hand about 20-22 cm from the shoulder joint with upper arm 33.5 cm and forearm-to-grip 34.9 cm gives about 35-40 deg included angle (140-145 flexion) at bar-on-chest; the existing 2D plate uses 144. Not measured by a study."
+   },
+   "shoulder": {
+    "text": "Upper arms down by the sides, angled out a little.",
+    "angles": {
+     "elevationDeg": "about 20-40 (frontal view)"
+    },
+    "src": [],
+    "evidence": "unverified (range read from the Cybex drawing and coaching photos; no measurement found)"
+   },
+   "scapulae": {
+    "text": "Pulled down and back (depressed, retracted, rotated downward). Not shrugged.",
+    "src": [
+     "ace-lat-pulldown"
+    ],
+    "evidence": "documented"
+   },
+   "restUnchanged": "Torso lean, head, hips, knees and feet stay as at the start (ACE: avoid any additional backward lean; NSCA: maintain the slight lean)."
+  }
+ },
+ "grip": {
+  "standardBar": {
+   "orientation": "Pronated (overhand), closed.",
+   "width": "Wider than shoulder width. Studies use 1.5 x biacromial distance as the standard 'wide' grip; 1x-2x gives similar lat activity. Model: about 62 cm between hand centres for a male-mean figure (55 cm female mean).",
+   "inPalm": "Bar sits across the base of the fingers and the top of the palm, not deep in the palm and not out at the fingertips.",
+   "thumb": "Wrapped round the bar, opposite the fingers (closed grip). Thumb over the top is a comfort option only; not studied.",
+   "fingers": "All four fingers hooked round the bar, firm but not a white-knuckle squeeze.",
+   "wrist": "Stacked: back of the hand in line with the forearm or tipped back 10-25 deg; no sideways bend.",
+   "src": [
+    "nsca-proficiencies",
+    "andersen2014",
+    "buonsenso2025",
+    "lusk2010",
+    "ansur2",
+    "odriscoll1992",
+    "baechle-earle"
+   ],
+   "evidence": "documented (overhand, closed, wider than shoulders, 1.5x biacromial); finger/palm placement and squeeze level range, coach consensus (existing app content); thumb-over option unverified"
+  },
+  "otherHandles": [
+   {
+    "handle": "Close neutral 'V' handle",
+    "whatChanges": "Palms face each other, hands about 15 cm apart. Lat activity no different from wide grip in Sperandei 2009 and Buonsenso 2025.",
+    "src": [
+     "sperandei2009",
+     "buonsenso2025"
+    ],
+    "evidence": "documented"
+   },
+   {
+    "handle": "Supinated (underhand) grip at shoulder width",
+    "whatChanges": "Less lat activity than pronated in Lusk 2010; more biceps. Buonsenso 2025 found no lat difference.",
+    "src": [
+     "lusk2010",
+     "buonsenso2025"
+    ],
+    "evidence": "documented (studies disagree)"
+   },
+   {
+    "handle": "Wide neutral grip (bar with parallel handles)",
+    "whatChanges": "Same lat activity as wide pronated in Buonsenso 2025; a common swap for a sore wrist (existing app wording).",
+    "src": [
+     "buonsenso2025"
+    ],
+    "evidence": "documented (EMG); wrist advice coach consensus"
+   }
+  ]
+ },
+ "rangeOfMotion": {
+  "start": "Elbows fully straight overhead, shoulders allowed to rise slightly at the top.",
+  "end": "Bar near or on the upper/mid chest, or the point where the elbows stop moving down and start moving back, whichever comes first.",
+  "studyProtocol": "Padovan 2024: bar from highest point to mid chest with a 0.5 s stop at the bottom.",
+  "src": [
+   "ace-lat-pulldown",
+   "nsca-proficiencies",
+   "padovan2024"
+  ],
+  "evidence": "documented"
+ },
+ "tempo": {
+  "sources": [
+   {
+    "text": "Lusk 2010, Buonsenso 2025, Padovan 2024: 2 s pull, 2 s return, set by metronome; Padovan adds a 0.5 s stop at the bottom.",
+    "src": [
+     "lusk2010",
+     "buonsenso2025",
+     "padovan2024"
+    ],
+    "evidence": "documented (study protocols)"
+   },
+   {
+    "text": "Hypertrophy review: rep durations of about 2-8 s all work; lower under control.",
+    "src": [
+     "androulakis2024"
+    ],
+    "evidence": "documented (general review)"
+   },
+   {
+    "text": "ACE: pause momentarily at the bottom, return slowly.",
+    "src": [
+     "ace-lat-pulldown"
+    ],
+    "evidence": "documented"
+   }
+  ],
+  "animationChoice": "2 s pull, 0.5 s pause on the chest, 2 s return, 0.5 s at the top (loop 5 s). The current app tempo bar (1 s pull, 0.5 hold, 2 s return) is inside the 2-8 s range but faster than every study protocol found."
+ },
+ "breathing": {
+  "text": "Breathe out slowly as you pull down; breathe in as the bar goes back up.",
+  "src": [
+   "ace-lat-pulldown"
+  ],
+  "evidence": "documented (ACE: 'slowly exhale and initiate the downward pull'); inhale on return range, coach consensus"
+ },
+ "muscles": {
+  "primary": [
+   "lats"
+  ],
+  "secondary": [
+   "mid_back",
+   "biceps",
+   "rear_delts",
+   "brachialis"
+  ],
+  "stabilizersOptional": [
+   "forearms",
+   "abs"
+  ],
+  "notHighlighted": [
+   {
+    "id": "chest",
+    "why": "Sternal pectoralis major is measured active (Signorile 2002, Sperandei 2009, Padovan 2024) as an arm adductor, but it is not a training target here; highlighting it would mislead."
+   },
+   {
+    "id": "triceps",
+    "why": "Long head measured active (Signorile 2002) as a shoulder extensor; same reason."
+   }
+  ],
+  "disagreement": {
+   "topic": "exercises.json secondary list",
+   "for": "Keep as is: biceps and mid_back are the two most cited secondaries (Cybex manual: biceps, rhomboids, lower trapezius).",
+   "against": "Posterior deltoid was active in every EMG study that recorded it and rose further with a 30 deg lean (Buonsenso 2025). Biceps and brachialis both bend the elbow; the app's own muscles.ts says brachialis 'bends the elbows in any grip'. Grip work loads the forearms.",
+   "recommendation": "Primary lats; secondary mid_back, biceps, rear_delts, brachialis; forearms as a light stabilizer highlight. This matches the feel map already in the app (which lists rear shoulders and forearms). Brachialis is by anatomy only; no pulldown EMG study recorded it.",
+   "src": [
+    "cybex-modular-manual",
+    "signorile2002",
+    "sperandei2009",
+    "padovan2024",
+    "buonsenso2025",
+    "andersen2014"
+   ]
+  },
+  "abs": {
+   "text": "Rectus abdominis was more active in the lat pulldown than in chin-ups during the return phase (Doma 2013); the trunk is braced (ACE). Optional faint highlight only.",
+   "src": [
+    "doma2013",
+    "ace-lat-pulldown"
+   ],
+   "evidence": "documented (abstract)"
+  },
+  "makerLists": "Cybex: primary latissimus dorsi, teres major; secondary biceps, rhomboids, lower trapezius. Technogym: latissimus dorsi, biceps, rhomboids, lower trapezius.",
+  "makerSrc": [
+   "cybex-modular-manual",
+   "technogym-selection-lat"
+  ]
+ },
+ "mistakes": [
+  {
+   "key": "swing",
+   "name": "Swinging back to heave the bar",
+   "looksLike": "From the set lean of about 15 deg the torso rocks back to 35-45 deg as the bar comes down, then forward again on the way up. Hips stay on the seat; the bar lands low on the chest. Often paired with a shrug.",
+   "whyItMatters": "Momentum moves the load instead of the back; ACE says avoid any extra lean during the pull, NSCA says do not jerk the torso. The low back takes the swing.",
+   "fix": "Set a small lean and hold it still; lighten the load.",
+   "src": [
+    "ace-lat-pulldown",
+    "nsca-proficiencies"
+   ],
+   "evidence": "documented (fault and fix); swing angle unverified (existing plate uses about 40 deg)"
+  },
+  {
+   "key": "behind",
+   "name": "Pulling behind the neck",
+   "looksLike": "Head and chest tip forward, the bar passes behind the head and stops at the base of the neck. Upper arms wide and turned out (the 'high-five' position).",
+   "whyItMatters": "No lat advantage over the front pull (Sperandei 2009; Padovan 2024 found more lat activity in the front pull's down phase). Behind-the-neck pulling was associated with signs of front-shoulder looseness in lifters (Kolber 2013, association only).",
+   "fix": "Pull in front of the face to the upper chest.",
+   "src": [
+    "sperandei2009",
+    "padovan2024",
+    "kolber2013",
+    "difonza2026",
+    "mayo-lat-pulldown"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "key": "shrug",
+   "name": "Shrugging",
+   "looksLike": "As the bar comes down the shoulders lift toward the ears and stay up; the neck looks short; elbows drift forward instead of down.",
+   "whyItMatters": "ACE starts the pull with the shoulder blades moving down; a shrug skips that step and lets the upper traps and arms take over.",
+   "fix": "Pull the shoulders down first, then bend the elbows.",
+   "src": [
+    "ace-lat-pulldown"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "key": "overpull",
+   "name": "Pulling past the end point",
+   "looksLike": "After the bar reaches the chest the elbows keep travelling backward behind the torso and the shoulders roll forward; the bar is jammed into the chest or dragged lower.",
+   "whyItMatters": "ACE: once the elbows stop moving down and start moving back, further pulling 'places additional stresses into the shoulder joint'.",
+   "fix": "Stop when the elbows stop going down.",
+   "src": [
+    "ace-lat-pulldown"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "key": "half-rep",
+   "name": "Stopping short at the top",
+   "looksLike": "Between reps the bar only rises to forehead height; elbows never straighten; shoulders never rise.",
+   "whyItMatters": "NSCA and ACE both return to fully straight elbows; skipping the top cuts the stretched part of the lift, which the hypertrophy review favours.",
+   "fix": "Let the arms go fully straight every rep.",
+   "src": [
+    "nsca-proficiencies",
+    "ace-lat-pulldown",
+    "androulakis2024"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "key": "curl-wrist",
+   "name": "Curling the wrists and squeezing hard",
+   "looksLike": "Wrists flex so the knuckles tip back toward the face; fists clench hard with forearm tendons standing out; bar rolls toward the fingertips late in the set.",
+   "whyItMatters": "A flexed wrist weakens grip (O'Driscoll 1992), so the forearms tire before the back.",
+   "fix": "Keep the wrist straight; grip only as hard as needed.",
+   "src": [
+    "odriscoll1992"
+   ],
+   "evidence": "documented (grip strength); link to set ending early range, coach consensus"
+  }
+ ],
+ "keyFacts": [
+  {
+   "text": "Grip width from 1 to 2 times the distance between your shoulder bones gave the same lat activity; the widest grip lifted about 4% less (77.3 vs 80 kg for 6 reps).",
+   "src": [
+    "andersen2014"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "text": "Leaning back 30 degrees did not change lat activity; it added rear-shoulder work.",
+   "src": [
+    "buonsenso2025"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "text": "Pulling behind the neck gave no extra lat work and more rear-delt and biceps work than pulling to the front.",
+   "src": [
+    "sperandei2009"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "text": "Wide, close, neutral and underhand grips all gave similar lat activity in 40 trained men; pick the one that feels best on your wrists and shoulders.",
+   "src": [
+    "buonsenso2025"
+   ],
+   "evidence": "documented (Lusk 2010 found overhand slightly higher than underhand; studies disagree)"
+  },
+  {
+   "text": "Novices raised lat activity just by being coached to focus on the lats, without dropping biceps activity.",
+   "src": [
+    "snyder2009"
+   ],
+   "evidence": "documented"
+  }
+ ],
+ "visualReferences": [
+  {
+   "url": "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+   "shows": "Cybex Modular Lat Pulldown drawing (PDF page 31, printed 2-7): facing the machine, roller pads on thighs, lean back, bar in front of face, elbows at sides.",
+   "viewed": "viewed today"
+  },
+  {
+   "url": "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf",
+   "shows": "Machine photo: bar shape, carabiner/chain, thigh rollers, boom and head pulley.",
+   "viewed": "viewed today"
+  },
+  {
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452428/",
+   "shows": "Buonsenso 2025 Figure 2: photos of 7 grip/lean variants incl. 1.5x biacromial wide grip and 30 deg lean.",
+   "viewed": "text read via Europe PMC; figure not viewed (PMC page blocked by a captcha)"
+  },
+  {
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057623/",
+   "shows": "Padovan 2024 Figure 1: start position, end of front pulldown (bar to mid chest), end of behind-neck pulldown.",
+   "viewed": "text read via Europe PMC; figure not viewed"
+  },
+  {
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+   "shows": "ACE step photos of the seated lat pulldown.",
+   "viewed": "page text read; photos not checked"
+  },
+  {
+   "url": "https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/lat-pull-down/vid-20084683",
+   "shows": "Mayo Clinic video of the machine lat pulldown (hands slightly wider than shoulders, bar to chest, not behind the neck).",
+   "viewed": "not opened (403); content known from search snippet only"
+  }
+ ],
+ "openQuestions": [
+  "Seat height, thigh-roller size, head-pulley height and the bar's bend angle and straight-section length: no manufacturer document found. Measure from a real machine or a scaled product photo before the Meshy prompt fixes them.",
+  "Shoulder elevation at the bottom (about 20-40 deg) and elbow flexion at the bottom (about 120-145 deg) are derived or read from drawings; no kinematic study of the machine pulldown with joint angles was found.",
+  "Lean angle: 15 deg is a modelling choice inside ACE's 0-30 deg range, not a measured value.",
+  "Head pulley sits slightly in front of the lifter in both drawings checked; how far in front varies by model (unverified), which changes the cable angle in the animation.",
+  "Thumb over the bar: no study; keep wrapped as default.",
+  "Brachialis as a highlighted secondary rests on anatomy only; no pulldown EMG study recorded it.",
+  "Which body sex the single library figure uses decides hand spacing (62 cm male mean vs 55 cm female mean at 1.5x biacromial)."
+ ],
+ "sources": [
+  {
+   "id": "ace-lat-pulldown",
+   "cite": "ACE Exercise Library, Seated Lat Pulldown",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+   "kind": "guideline (certifying body)",
+   "read": "full page text, quoted"
+  },
+  {
+   "id": "nsca-proficiencies",
+   "cite": "NSCA Lifting Proficiencies for Various Strength Movements (Western Illinois University copy), Lat Pulldown checklist",
+   "url": "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+   "kind": "guideline (NSCA checklist, university-hosted copy)",
+   "read": "full text of the Lat Pulldown checklist"
+  },
+  {
+   "id": "cybex-modular-manual",
+   "cite": "Cybex Modular Owner's and Service Manual, part 55620, 5601 Modular Lat Pulldown (p. 2-7)",
+   "url": "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+   "kind": "manufacturer manual",
+   "read": "full text of p. 2-7 and its drawing viewed"
+  },
+  {
+   "id": "precor-vsl026bp",
+   "cite": "Precor Vitality Strength Selectorized Pulldown / Seated Row VSL026BP sell sheet (2025)",
+   "url": "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf",
+   "kind": "manufacturer spec sheet",
+   "read": "full text and product photo viewed"
+  },
+  {
+   "id": "matrix-aura-ms",
+   "cite": "Matrix Aura Series multi-station owner's guide (G3-MS24/MS51/MS52/MS53/MS20/MS40/MS50/MS80), part 1000417314",
+   "url": "https://content.johnsonfit.com/inc/uploaded_media/0354bbc1b9de4b9c11347ee68d9cc67b/owners_guide/dd0bb4c30d82048733cd18ee18e06603.pdf",
+   "kind": "manufacturer manual",
+   "read": "full text of the spec tables"
+  },
+  {
+   "id": "technogym-selection-lat",
+   "cite": "Technogym Selection Lat Machine, product data (dimensions, stack, thigh pad, muscles)",
+   "url": "https://www.technogym.com/en-US/product/selection-700-lat-machine_MNLC.html",
+   "kind": "manufacturer product page",
+   "read": "summary only (search result quoting the spec; page returned 403)"
+  },
+  {
+   "id": "lf-insignia-pulldown",
+   "cite": "Life Fitness Insignia Series Pulldown, product data",
+   "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/insignia-series-pulldown",
+   "kind": "manufacturer product page",
+   "read": "summary only (search result)"
+  },
+  {
+   "id": "matrix-ultra-pulldown",
+   "cite": "Matrix Ultra Diverging Lat Pulldown G7-S33, product data",
+   "url": "https://us.matrixfitness.com/eng/strength/single-station/g7-s33-diverging-lat-pulldown",
+   "kind": "manufacturer product page",
+   "read": "summary only (search result)"
+  },
+  {
+   "id": "lf-signature-row",
+   "cite": "Life Fitness Signature Series Row (CMRW), specifications (pulleys 11 and 15 cm, 11 mm selector pin)",
+   "url": "https://www.lifefitness.com/en-us/catalog/strength-training/cable-motion/life-fitness/signature-series-row",
+   "kind": "manufacturer product page",
+   "read": "summary only (search result)"
+  },
+  {
+   "id": "american-barbell-lat-bar",
+   "cite": "American Barbell Revolving Lat Pulldown Bar, Solid 48 in",
+   "url": "https://americanbarbell.com/products/revolving-lat-pulldown-bar-solid-48-with-rubber-head-protector",
+   "kind": "manufacturer product page",
+   "read": "full spec section"
+  },
+  {
+   "id": "ansur2",
+   "cite": "ANSUR II public data (US Army, 2012), Penn State OPEN Design Lab copy; means computed today from the male (n=4082) and female (n=1986) CSV files",
+   "url": "https://www.openlab.psu.edu/ansur2/",
+   "kind": "anthropometric dataset",
+   "read": "full data; computed biacromial 415.7/365.3 mm, bideltoid 510.4/450.3 mm, acromion-radiale 335.2/311.2 mm, forearm centre-of-grip 349.0/317.7 mm, popliteal height 429.8/388.2 mm (male/female)"
+  },
+  {
+   "id": "andersen2014",
+   "cite": "Andersen V et al. (2014) Effects of grip width on muscle strength and activation in the lat pull-down. J Strength Cond Res 28(4):1135-42",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24662157/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "lusk2010",
+   "cite": "Lusk SJ, Hale BD, Russell DM (2010) Grip width and forearm orientation effects on muscle activity during the lat pull-down. J Strength Cond Res 24(7):1895-900",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "signorile2002",
+   "cite": "Signorile JF, Zink AJ, Szwed SP (2002) A comparative electromyographical investigation of muscle utilization patterns using various hand positions during the lat pull-down. J Strength Cond Res 16(4):539-46",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/12423182/",
+   "kind": "peer-reviewed",
+   "read": "abstract (partly garbled in the database copy)"
+  },
+  {
+   "id": "sperandei2009",
+   "cite": "Sperandei S et al. (2009) Electromyographic analysis of three different types of lat pull-down. J Strength Cond Res 23(7):2033-8",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19855327/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "padovan2024",
+   "cite": "Padovan R et al. (2024) High-density electromyography excitation in front vs. back lat pull-down prime movers. J Hum Kinet 91:47-60",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057623/",
+   "kind": "peer-reviewed",
+   "read": "full text (Europe PMC), methods and discussion"
+  },
+  {
+   "id": "buonsenso2025",
+   "cite": "Buonsenso A et al. (2025) Electromyographic analysis of back muscle activation during lat pulldown exercise: effects of grip variations and forearm orientation. J Funct Morphol Kinesiol 10(3):345",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12452428/",
+   "kind": "peer-reviewed",
+   "read": "full text (Europe PMC), methods and discussion"
+  },
+  {
+   "id": "difonza2026",
+   "cite": "Di Fonza D et al. (2026) EMG analysis of latissimus dorsi activation during common resistance training exercises: a narrative review. J Funct Morphol Kinesiol 11(3):315",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13510307/",
+   "kind": "peer-reviewed review",
+   "read": "full text (Europe PMC), lat pull-down and seated row sections"
+  },
+  {
+   "id": "lehman2004",
+   "cite": "Lehman GJ et al. (2004) Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: an experimental study. Dyn Med 3(1):4",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/",
+   "kind": "peer-reviewed",
+   "read": "full text (Europe PMC), exercise definitions"
+  },
+  {
+   "id": "snyder2009",
+   "cite": "Snyder BJ, Leech JR (2009) Voluntary increase in latissimus dorsi muscle activity during the lat pull-down following expert instruction. J Strength Cond Res 23(8):2204-9",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19826307/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "doma2013",
+   "cite": "Doma K, Deakin GB, Ness KF (2013) Kinematic and electromyographic comparisons between chin-ups and lat-pull down exercises. Sports Biomech 12(3):302-13",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24245055/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "kolber2013",
+   "cite": "Kolber MJ, Corrao M, Hanney WJ (2013) Characteristics of anterior shoulder instability and hyperlaxity in the weight-training population. J Strength Cond Res 27(5):1333-9",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/22836608/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "odriscoll1992",
+   "cite": "O'Driscoll SW et al. (1992) The relationship between wrist position, grasp size, and grip strength. J Hand Surg Am 17(1):169-77",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "baechle-earle",
+   "cite": "Baechle TR, Earle RW, Weight Training: Steps to Success, grip selection excerpt (Human Kinetics)",
+   "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+   "kind": "guideline (NSCA editors, book excerpt)",
+   "read": "full excerpt; it says to perform all grips with thumbs around the bar"
+  },
+  {
+   "id": "androulakis2024",
+   "cite": "Androulakis Korakakis P, Wolf M, Coleman M et al. (2024) Optimizing resistance training technique to maximize muscle hypertrophy: a narrative review. J Funct Morphol Kinesiol 9(1):9",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/",
+   "kind": "peer-reviewed review",
+   "read": "full text (Europe PMC), tempo and range-of-motion sections"
+  },
+  {
+   "id": "mayo-lat-pulldown",
+   "cite": "Mayo Clinic, Video: Lat pull-down with weight machine",
+   "url": "https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/lat-pull-down/vid-20084683",
+   "kind": "health institution",
+   "read": "summary only (search snippet; page returned 403)"
+  }
+ ]
+}

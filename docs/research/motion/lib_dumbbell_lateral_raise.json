@@ -1,0 +1,852 @@
+{
+ "id": "lib_dumbbell_lateral_raise",
+ "name": "Dumbbell Lateral Raise",
+ "researchedOn": "2026-10-02",
+ "confidenceKey": {
+  "documented": "a source states it directly",
+  "derived": "calculated from a documented number; the method is given",
+  "range, coach consensus": "coaching sources agree on a range; no measured study",
+  "unverified": "no source found; do not show to users as fact"
+ },
+ "appData": {
+  "exercisesJson": {
+   "equipment": "Dumbbells",
+   "primary": [
+    "side_delts"
+   ],
+   "secondary": [
+    "upper_traps"
+   ],
+   "stabilizers": [],
+   "pattern": "shoulder_abduction",
+   "aliases": [
+    "lateral raise",
+    "side raise",
+    "db lateral raise"
+   ]
+  },
+  "existingHowto": "docs/research/howto/lib_dumbbell_lateral_raise.json (generated) and tools/plates/layers/exercises/dumbbell_lateral_raise.howto.mjs (content). Its grip line, thumb-level rule, shoulder-height stop, shrug/swing mistakes and the front_delts addition are supported by this research. Items to fix are listed under existingContentReview."
+ },
+ "equipment": {
+  "chosenModel": {
+   "what": "One pair of rubber-encased hexagonal-head dumbbells with a straight, chrome, knurled steel handle, about 10 kg each.",
+   "why": "Hex rubber dumbbells are sold by most commercial suppliers (Iron Company, Rogue, Torque, Titan, York) and their shape reads clearly at phone size. 10 kg sits in the 3-10 kg range Andersen 2008 reports for lateral raises (women, rehab context) and inside the light loads lateral raises use; the exact load is an art choice. Prevalence of hex vs round urethane dumbbells in commercial gyms is unverified.",
+   "dimensions": {
+    "handleDiameterMm": {
+     "value": 34,
+     "range": "33-35 for dumbbells of about 7 kg and up; 25-28 for 2.5-5 kg",
+     "src": [
+      "ironco-hex",
+      "rogue-kg-hex",
+      "benchfitness-hex"
+     ],
+     "confidence": "documented"
+    },
+    "handleGripLengthMm": {
+     "value": 133,
+     "range": "130-134 (5.125 to 5.25 in, inside distance between heads)",
+     "src": [
+      "ironco-hex",
+      "titan-hex"
+     ],
+     "confidence": "documented"
+    },
+    "overallLengthMm": {
+     "value": 311,
+     "note": "Torque 20 lb/9.1 kg = 311 mm; 25 lb/11.3 kg = 322.4 mm",
+     "src": [
+      "torque-hex"
+     ],
+     "confidence": "documented"
+    },
+    "headWidthMm": {
+     "value": 126,
+     "note": "Torque lists W 126.09 mm for 9.1 kg, 137.99 mm for 11.3 kg; whether W is across flats or corners is not stated",
+     "src": [
+      "torque-hex"
+     ],
+     "confidence": "documented (axis of measure unverified)"
+    },
+    "handleSurface": {
+     "value": "chrome, bands of medium diamond knurling",
+     "src": [
+      "ironco-hex"
+     ],
+     "confidence": "documented"
+    },
+    "headShape": {
+     "value": "regular hexagon, rubber over cast iron, weight number embossed on the end face",
+     "src": [
+      "ironco-hex",
+      "rogue-kg-hex"
+     ],
+     "confidence": "documented"
+    }
+   }
+  },
+  "alternatives": [
+   {
+    "what": "Round urethane 'pro-style' dumbbell",
+    "note": "Common in commercial gyms; not researched for dimensions here. Same grip and posture rules apply.",
+    "confidence": "unverified"
+   },
+   {
+    "what": "Seated on a flat or upright bench",
+    "note": "Coratella 2020 and Campos 2020 both ran the lateral raise seated to remove trunk swing.",
+    "src": [
+     "coratella2020",
+     "campos2020"
+    ],
+    "confidence": "documented"
+   }
+  ]
+ },
+ "setup": [
+  {
+   "step": 1,
+   "text": "Pick dumbbells you can raise for the planned reps without swinging or shrugging.",
+   "landmark": "none",
+   "src": [
+    "ace-lateral-raise"
+   ],
+   "confidence": "range, coach consensus"
+  },
+  {
+   "step": 2,
+   "text": "Stand with feet slightly wider than hip width, or in a split stance. Knees soft.",
+   "landmark": "feet under or just outside the hip joints",
+   "src": [
+    "ace-lateral-raise"
+   ],
+   "confidence": "documented"
+  },
+  {
+   "step": 3,
+   "text": "Hold one dumbbell in each hand with a closed, neutral grip (thumb wrapped, palms facing the body). Dumbbells at the sides, beside the outer thighs.",
+   "landmark": "handle beside the outer thigh at about mid-thigh height with arms hanging",
+   "src": [
+    "ace-lateral-raise"
+   ],
+   "confidence": "documented"
+  },
+  {
+   "step": 4,
+   "text": "Elbows straight or slightly bent; keep that bend for the whole set.",
+   "landmark": "elbow",
+   "src": [
+    "ace-lateral-raise",
+    "coratella2020"
+   ],
+   "confidence": "documented (ACE: 'extended or slightly bent'); a 10-20 degree number is range, coach consensus"
+  },
+  {
+   "step": 5,
+   "text": "Brace the trunk, pull the shoulders down and slightly back, head in line with the spine.",
+   "landmark": "ear over shoulder over hip",
+   "src": [
+    "ace-lateral-raise"
+   ],
+   "confidence": "documented"
+  },
+  {
+   "step": 6,
+   "text": "Angle the arms a little forward of straight out to the side.",
+   "landmark": "arms travel about 20-30 degrees forward of the frontal plane (scapular plane is defined as 30-45 degrees; Ludewig used 40)",
+   "src": [
+    "mccall-ace-2025",
+    "ludewig2009"
+   ],
+   "confidence": "range, coach consensus (the anatomical plane is documented; the cue to use it for this lift is consensus)"
+  }
+ ],
+ "posture": {
+  "start": {
+   "head_neck": {
+    "value": "neutral, eyes forward, chin level",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "documented"
+   },
+   "torso_spine": {
+    "value": "upright, 0 degrees lean, normal low-back curve, trunk braced",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "documented"
+   },
+   "scapulae": {
+    "value": "set down and slightly back (depressed, lightly retracted), not shrugged",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "documented"
+   },
+   "shoulder": {
+    "value": "about 0-10 degrees abduction, dumbbells just clear of the thighs; humerus in neutral rotation",
+    "src": [
+     "ace-lateral-raise",
+     "campos2020"
+    ],
+    "confidence": "range, coach consensus"
+   },
+   "elbow": {
+    "value": "10-20 degrees flexion, fixed",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "range, coach consensus"
+   },
+   "forearm": {
+    "value": "neutral (mid-position), palm faces the outer thigh, handle runs front to back",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "documented"
+   },
+   "wrist": {
+    "value": "neutral, 0 degrees flexion/extension and 0 degrees deviation; knuckles in line with forearm",
+    "src": [
+     "ace-lateral-raise",
+     "coratella2020"
+    ],
+    "confidence": "documented"
+   },
+   "hips": {
+    "value": "neutral, stacked over ankles",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "range, coach consensus"
+   },
+   "knees": {
+    "value": "soft, about 5-10 degrees flexion",
+    "src": [],
+    "confidence": "unverified (ACE gives no knee instruction; 'soft knees' is a common cue only)"
+   },
+   "feet": {
+    "value": "flat, slightly wider than hip width, toes forward or slightly out; or split stance",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "documented"
+   }
+  },
+  "mid": {
+   "description": "Arms at about 45 degrees abduction, rising together.",
+   "shoulder": {
+    "value": "about 45 degrees humerothoracic abduction in a plane 20-30 degrees forward of the frontal plane",
+    "src": [
+     "mccall-ace-2025"
+    ],
+    "confidence": "range, coach consensus"
+   },
+   "elbow": {
+    "value": "same bend as start; elbow at or slightly above the hand height",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "documented ('elbows and upper arms lead, slightly ahead of forearms')"
+   },
+   "forearm_rotation": {
+    "value": "palm turning from facing the thigh to facing the floor as the arm rises; humerus stays near neutral rotation",
+    "src": [
+     "coratella2020"
+    ],
+    "confidence": "documented (LR-neutral, 'thumbs forward')"
+   },
+   "scapulae": {
+    "value": "beginning to rotate upward; no elevation toward the ears",
+    "src": [
+     "ludewig2009",
+     "ace-lateral-raise"
+    ],
+    "confidence": "documented"
+   },
+   "torso": {
+    "value": "no change from start",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "documented"
+   }
+  },
+  "end": {
+   "description": "Top of the rep, held about 0.5 s.",
+   "shoulder": {
+    "value": "90 degrees humerothoracic abduction (upper arm parallel to the floor), no higher",
+    "src": [
+     "ace-lateral-raise",
+     "coratella2020",
+     "kolber2014"
+    ],
+    "confidence": "documented"
+   },
+   "shoulder_split": {
+    "value": "about 61 degrees glenohumeral elevation plus about 29 degrees scapular upward rotation",
+    "method": "90 degrees split by Ludewig 2009's average scapulohumeral rhythm of 2.1:1 for coronal abduction (90/3.1 = 29). Linear approximation; real rhythm varies by angle and person.",
+    "src": [
+     "ludewig2009"
+    ],
+    "confidence": "derived"
+   },
+   "humeral_rotation": {
+    "value": "neutral; thumb end of the dumbbell level with the little-finger end, or tipped slightly up. Never little finger above thumb.",
+    "src": [
+     "coratella2020",
+     "ace-lateral-raise",
+     "yanai2006"
+    ],
+    "confidence": "documented"
+   },
+   "elbow": {
+    "value": "same 10-20 degree bend; elbow level with or slightly above the wrist",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "range, coach consensus"
+   },
+   "forearm": {
+    "value": "palm facing the floor",
+    "src": [
+     "coratella2020"
+    ],
+    "confidence": "documented"
+   },
+   "wrist": {
+    "value": "neutral, not cocked up or dropped",
+    "src": [
+     "ace-lateral-raise",
+     "coratella2020"
+    ],
+    "confidence": "documented"
+   },
+   "scapulae": {
+    "value": "upwardly rotated about 29 degrees from rest (see shoulder_split); not elevated (no shrug)",
+    "src": [
+     "ludewig2009",
+     "ace-lateral-raise"
+    ],
+    "confidence": "derived + documented"
+   },
+   "head_neck": {
+    "value": "neutral; clear space between shoulders and ears",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "documented"
+   },
+   "torso_hips_knees_feet": {
+    "value": "unchanged from start; no lean back, no knee dip",
+    "src": [
+     "ace-lateral-raise"
+    ],
+    "confidence": "documented"
+   }
+  },
+  "animatorNotes": [
+   "The shoulder blade must rotate upward as the arm rises (about one third of the motion). 'Shoulders down' means no shrug, not a frozen shoulder blade. Source: ludewig2009.",
+   "Glenohumeral external rotation increases naturally during abduction (Ludewig 2009 reports about 41-51 degrees GH external rotation near 90 degrees elevation in their protocol, read via a summary of the full text; treat the exact value as unverified). Visible effect: the thumb end stays level or slightly up rather than the elbow pointing back.",
+   "Both arms move together and symmetrically."
+  ]
+ },
+ "grip": {
+  "orientation": {
+   "value": "neutral at the bottom (palms facing body), turning to palms down at the top",
+   "src": [
+    "ace-lateral-raise",
+    "coratella2020"
+   ],
+   "confidence": "documented"
+  },
+  "width": {
+   "value": "one dumbbell per hand at the sides; hands about hip width at the bottom",
+   "src": [
+    "ace-lateral-raise"
+   ],
+   "confidence": "documented"
+  },
+  "handleInPalm": {
+   "value": "handle runs diagonally across the middle of the palm, from the base of the index finger toward the heel of the hand on the little-finger side; hand centered on the handle so the dumbbell hangs level",
+   "src": [],
+   "confidence": "range, coach consensus (mid-palm grip; the existing app card states the same, sourced to ACE, which says only 'closed grip')"
+  },
+  "thumb": {
+   "value": "wrapped around the handle (closed grip)",
+   "src": [
+    "ace-lateral-raise"
+   ],
+   "confidence": "documented"
+  },
+  "fingers": {
+   "value": "all four fingers wrapped, firm but not maximal squeeze",
+   "src": [
+    "sporrong1995",
+    "sporrong1996"
+   ],
+   "confidence": "range, coach consensus; Sporrong studies are grip-gauge, not dumbbell, and show hard squeezing raises shoulder muscle activity"
+  },
+  "wrist": {
+   "value": "stacked: knuckles in line with forearm, 0 degrees flexion/extension",
+   "src": [
+    "ace-lateral-raise",
+    "coratella2020"
+   ],
+   "confidence": "documented"
+  },
+  "handleOptions": "Single fixed handle; no options. A thumbless grip is not described by any source read (no data).",
+  "fingerDetailForMeshy": "Hand closed around a 34 mm cylinder; fingertips reach roughly the base of the thumb; thumb crosses over the index and middle fingers. Finger contact geometry is unverified (anatomy-typical, no source)."
+ },
+ "rangeTempoBreathing": {
+  "rom": {
+   "value": "from arms at the sides (about 0-10 degrees abduction) to 90 degrees abduction",
+   "src": [
+    "coratella2020",
+    "campos2020",
+    "ace-lateral-raise",
+    "larsen2025"
+   ],
+   "confidence": "documented"
+  },
+  "tempo": {
+   "value": "2 s up, 0.5 s pause at top, 2 s down, 0.5 s pause at bottom",
+   "src": [
+    "coratella2020"
+   ],
+   "confidence": "documented (research protocol). Campos 2020 used 1 s up / 2 s down; Larsen 2025 about 1 s each way.",
+   "alsoSrc": [
+    "campos2020",
+    "larsen2025"
+   ]
+  },
+  "tempoRange": {
+   "value": "repetition durations of 0.5 to 8 s gave similar muscle growth",
+   "src": [
+    "schoenfeld2015"
+   ],
+   "confidence": "documented (meta-analysis, all exercises)"
+  },
+  "breathing": {
+   "value": "exhale while raising, inhale while lowering",
+   "src": [
+    "ace-lateral-raise"
+   ],
+   "confidence": "documented"
+  },
+  "resistanceCurve": {
+   "value": "Torque from a dumbbell is lowest at the bottom and highest at 90 degrees (ascending profile).",
+   "src": [
+    "larsen2025"
+   ],
+   "confidence": "documented"
+  }
+ },
+ "muscles": {
+  "proposed": {
+   "primary": [
+    "side_delts"
+   ],
+   "secondary": [
+    "upper_traps",
+    "front_delts",
+    "rear_delts"
+   ],
+   "stabilizers": [
+    "rotator_cuff"
+   ]
+  },
+  "evidence": [
+   {
+    "muscle": "side_delts",
+    "claim": "Medial deltoid 30.3% MVIC at 60% 1RM, seated (Campos 2020). Highest medial deltoid in the thumbs-forward version (Coratella 2020).",
+    "src": [
+     "campos2020",
+     "coratella2020"
+    ]
+   },
+   {
+    "muscle": "upper_traps",
+    "claim": "Upper trapezius reached 97 +/- 6% MVC during lateral raises with 3-10 kg (women with neck pain). Internal rotation (thumbs down) raises it further.",
+    "src": [
+     "andersen2008",
+     "coratella2020"
+    ]
+   },
+   {
+    "muscle": "front_delts",
+    "claim": "Anterior deltoid 21.2% MVIC in the lateral raise, similar to bench press (21.4%).",
+    "src": [
+     "campos2020"
+    ]
+   },
+   {
+    "muscle": "rear_delts",
+    "claim": "Posterior deltoid 24% MVIC in the lateral raise, higher than the shoulder press (11.4%). Rises sharply with internal rotation.",
+    "src": [
+     "campos2020",
+     "coratella2020"
+    ]
+   },
+   {
+    "muscle": "rotator_cuff",
+    "claim": "Supraspinatus is active in scapular-plane arm elevation (similar across full can, empty can and prone full can).",
+    "src": [
+     "reinold2007"
+    ],
+    "note": "Related movement, not the lateral raise itself."
+   }
+  ],
+  "disagreementWithExercisesJson": "exercises.json lists only upper_traps as secondary. EMG supports adding front_delts and rear_delts as light secondary muscles (Campos 2020) and rotator_cuff as a stabilizer (Reinold 2007, related movement). The serratus anterior and lower trapezius rotate the scapula upward (Ekstrom 2003) but the app has no muscle id for them (classifyMuscleText maps 'serratus' to core), so they are left out.",
+  "highlightPlan": "Solid highlight: side_delts. Lighter highlight: upper_traps, front_delts, rear_delts. rotator_cuff is deep and has no drawn region in the current app.",
+  "disagreementSrc": [
+   "campos2020",
+   "reinold2007",
+   "ekstrom2003"
+  ]
+ },
+ "mistakes": [
+  {
+   "key": "pinky-up",
+   "name": "Little finger up at the top",
+   "looksLike": "At the top the dumbbell tips like a pouring jug: little-finger end higher than the thumb end, upper arm rolled inward, elbow pointing back.",
+   "whyItMatters": "Internal rotation at 90 degrees abduction gave a mean impingement force of 21.3 N vs 3 N or less in neutral/external rotation (13 healthy shoulders). It also shifts work to the rear delts, upper traps and triceps without adding side-delt activity over thumbs-forward.",
+   "fix": "Keep the thumb end level with the little-finger end, or a touch higher.",
+   "src": [
+    "yanai2006",
+    "coratella2020",
+    "graichen1999",
+    "ace-lateral-raise"
+   ],
+   "confidence": "documented"
+  },
+  {
+   "key": "too-high",
+   "name": "Raising above shoulder height",
+   "looksLike": "Hands and elbows go above the shoulders, past 90 degrees, often with a shrug.",
+   "whyItMatters": "In 77 men, lateral raises and upright rows above 90 degrees were associated with signs of shoulder impingement (association, not cause). Acromiohumeral distance falls from 7.0 mm at 30 degrees to 3.9 mm at 120 degrees abduction.",
+   "fix": "Stop when the upper arms are parallel to the floor.",
+   "src": [
+    "kolber2014",
+    "graichen1999",
+    "ace-lateral-raise"
+   ],
+   "confidence": "documented"
+  },
+  {
+   "key": "shrug",
+   "name": "Shrugging",
+   "looksLike": "Shoulders ride up toward the ears as the dumbbells rise; neck shortens.",
+   "whyItMatters": "Upper traps already work near maximum in this lift; shrugging turns more of the lift into a trap exercise.",
+   "fix": "Shoulders down and slightly back before each rep; go lighter if they still rise.",
+   "src": [
+    "ace-lateral-raise",
+    "andersen2008"
+   ],
+   "confidence": "documented (setup cue) + range, coach consensus (effect)"
+  },
+  {
+   "key": "swing",
+   "name": "Swinging the body",
+   "looksLike": "Torso rocks back or the knees dip to throw the dumbbells up; dumbbells drop fast on the way down.",
+   "whyItMatters": "Momentum replaces deltoid work; research protocols sit lifters down to stop it.",
+   "fix": "Torso still, 2 s up and 2 s down; sit on a bench if the swing persists.",
+   "src": [
+    "ace-lateral-raise",
+    "coratella2020",
+    "campos2020"
+   ],
+   "confidence": "range, coach consensus"
+  },
+  {
+   "key": "elbow-change",
+   "name": "Bending and straightening the elbow",
+   "looksLike": "Elbows bend more on the way up (hands lead, almost an upright row or curl) or snap straight at the top.",
+   "whyItMatters": "Changing the elbow angle changes the lever and the muscles used; Coratella's bent-elbow version (90 degrees) gave less medial deltoid activity than the straight-arm thumbs-forward version.",
+   "fix": "Lock in a small bend and keep it; elbows lead, hands follow.",
+   "src": [
+    "ace-lateral-raise",
+    "coratella2020"
+   ],
+   "confidence": "documented"
+  },
+  {
+   "key": "fingertip-grip",
+   "name": "Handle in the fingers, wrist bent",
+   "looksLike": "The handle hangs in the fingertips, the hand bends down at the wrist under the load.",
+   "whyItMatters": "Bent wrists raise carpal-tunnel pressure (lowest near a straight wrist); sources for this lift are coaching and grip-gauge studies only.",
+   "fix": "Handle across mid-palm, thumb wrapped, wrist straight.",
+   "src": [
+    "weiss1995",
+    "sporrong1995",
+    "ace-lateral-raise"
+   ],
+   "confidence": "range, coach consensus (weak evidence)"
+  }
+ ],
+ "keyFacts": [
+  {
+   "text": "Thumbs-forward raises gave the highest side-delt activity; thumbs-up raised front-delt work, thumbs-down raised rear-delt, trap and triceps work.",
+   "src": [
+    "coratella2020"
+   ]
+  },
+  {
+   "text": "A dumbbell gives almost no resistance at the bottom and the most at shoulder height. Cable and dumbbell raises grew the side delts equally over 8 weeks.",
+   "src": [
+    "larsen2025"
+   ],
+   "note": "Larsen 2025: 24 trained men and women, one arm per method, 8 weeks, 2 sessions/week, 5 sets to failure; muscle thickness +3.3-4.6% in both.",
+   "confidence": "documented"
+  },
+  {
+   "text": "Rolling the arm inward at shoulder height multiplied the pinch force on the shoulder tendons about sevenfold (21.3 N vs 3 N or less).",
+   "src": [
+    "yanai2006"
+   ]
+  },
+  {
+   "text": "Lateral raises drive the upper traps close to a full shrug's activity with a fraction of the weight (97% vs 102% of max, 3-10 kg vs 20-30 kg).",
+   "src": [
+    "andersen2008"
+   ]
+  },
+  {
+   "text": "Above 90 degrees, lateral raises were linked with shoulder impingement signs in recreational lifters.",
+   "src": [
+    "kolber2014"
+   ]
+  }
+ ],
+ "visualReferences": [
+  {
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+   "shows": "ACE photo sequence: standing start with dumbbells at sides, top position at shoulder height.",
+   "useFor": "overall posture, stance, top height"
+  },
+  {
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+   "shows": "Coratella 2020 Figure 1: schematic of LR-external, LR-neutral, LR-internal, LR-flexed and frontal raise.",
+   "useFor": "humeral rotation (thumb) positions; pinky-up fault"
+  },
+  {
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/",
+   "shows": "Larsen 2025 dumbbell vs cable lateral raise; check figures for setup photos (not confirmed).",
+   "useFor": "frontal-plane, straight-arm research setup"
+  },
+  {
+   "url": "https://commercial.torquefitness.com/products/rubber-hexagon-dumbbell",
+   "shows": "Rubber hex dumbbell photos and per-weight length/width table.",
+   "useFor": "dumbbell model proportions"
+  },
+  {
+   "url": "https://www.ironcompany.com/rubber-hex-dumbbell-sets",
+   "shows": "Rubber hex dumbbell with contoured chrome knurled handle.",
+   "useFor": "handle shape, knurl bands"
+  },
+  {
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2657311/",
+   "shows": "Ludewig 2009 figures: scapula, clavicle and humerus angles through arm elevation.",
+   "useFor": "scapular upward rotation in the rig"
+  }
+ ],
+ "existingContentReview": [
+  {
+   "item": "howto.mjs setup step 'Keep your elbows soft, arms a little in front' and checkpoint 'Slightly forward 20-30 degrees' claim ACE",
+   "finding": "The ACE lateral raise page does not state a forward angle or a 10-20 degree elbow bend; it says 'extended or slightly bent'. The 20-30 degree forward plane and 10-20 degree bend are coach consensus. The anatomical scapular plane is 30-45 degrees (McCall, ACE 2025) or 40 degrees (Ludewig 2009). Re-tag these as CONSENSUS without ACE, or cite mccall-ace-2025 for the plane.",
+   "severity": "low"
+  },
+  {
+   "item": "howto.mjs setup 'Feet hip width'",
+   "finding": "ACE says 'slightly wider than hip-width apart' or a split stance. Minor wording mismatch.",
+   "severity": "low"
+  },
+  {
+   "item": "pinch line cites graichen1999 for 'little finger up can pinch'",
+   "finding": "Graichen found internal rotation at 90 degrees kept a slightly LARGER minimal gap (7.6 mm) than neutral (5.4 mm), but moved the closest contact onto the supraspinatus tendon's vulnerable part. The line is defensible but Yanai 2006 (direct force measure, 21.3 N vs 3 N or less) is the stronger source and should be added.",
+   "severity": "medium",
+   "src": [
+    "graichen1999",
+    "yanai2006"
+   ]
+  },
+  {
+   "item": "ACE top-position rotation",
+   "finding": "ACE tells lifters to rotate slightly outward ('dumbbell fronts angle up') past 60-70 degrees. The current 'thumb level or a touch higher' line matches. Longo 2017 (4 kg load) found more subacromial space with external rotation; Graichen 1999 (unloaded MRI) found less. Keep 'level or a touch higher', not 'thumbs up'.",
+   "severity": "info",
+   "src": [
+    "ace-lateral-raise",
+    "longo2017",
+    "graichen1999"
+   ]
+  },
+  {
+   "item": "libraryDiff adds front_delts",
+   "finding": "Supported by Campos 2020 (21.2% MVIC). Also add rear_delts (24% MVIC) and rotator_cuff as stabilizer.",
+   "severity": "low"
+  }
+ ],
+ "openQuestions": [
+  "Hex rubber vs round urethane dumbbell: which does the owner's gym use? Prevalence in commercial gyms is unverified.",
+  "Exact knee angle ('soft knees') has no source; model 5-10 degrees as an art choice or keep knees straight but unlocked.",
+  "Standing (ACE) vs seated (research protocols): the app card currently teaches standing. Model standing as primary unless the owner says otherwise.",
+  "Ludewig 2009 per-angle values (GH external rotation near 41-51 degrees, scapular internal rotation and tilt) came from a model summary of the full text; only the 2.1:1 rhythm and 40-degree plane were read verbatim.",
+  "Finger contact geometry on a 34 mm handle is not documented; needs a human-eye check against photos.",
+  "Whether Larsen 2025 figures include setup photos was not confirmed."
+ ],
+ "sources": [
+  {
+   "id": "ace-lateral-raise",
+   "cite": "American Council on Exercise, Exercise Library: Lateral Raise",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+   "kind": "guideline",
+   "read": "full"
+  },
+  {
+   "id": "mccall-ace-2025",
+   "cite": "McCall P (2025) A Pro's Guide to Muscle Mechanics: The Shoulders. ACE Certified, September 2025",
+   "url": "https://www.acefitness.org/continuing-education/certified/september-2025/8951/a-pro-s-guide-to-muscle-mechanics-the-shoulders/",
+   "kind": "guideline",
+   "read": "summary (fetched page, quoted passages)"
+  },
+  {
+   "id": "coratella2020",
+   "cite": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E (2020) An Electromyographic Analysis of Lateral Raise Variations and Frontal Raise in Competitive Bodybuilders. Int J Environ Res Public Health 17(17):6015",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+   "kind": "peer-reviewed EMG",
+   "read": "full (abstract + methods + discussion via Europe PMC full text)"
+  },
+  {
+   "id": "campos2020",
+   "cite": "Campos YAC et al. (2020) Different Shoulder Exercises Affect the Activation of Deltoid Portions in Resistance-Trained Individuals. J Hum Kinet 75:5-14",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677/",
+   "kind": "peer-reviewed EMG",
+   "read": "abstract + methods summary"
+  },
+  {
+   "id": "larsen2025",
+   "cite": "Larsen S, Wolf M, Schoenfeld BJ et al. (2025) Dumbbell versus cable lateral raises for lateral deltoid hypertrophy: an experimental study. Front Physiol 16:1611468",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/",
+   "kind": "peer-reviewed RCT (within-subject)",
+   "read": "abstract + summary of full text"
+  },
+  {
+   "id": "andersen2008",
+   "cite": "Andersen LL et al. (2008) Muscle activation during selected strength exercises in women with chronic neck muscle pain. Phys Ther 88(6):703-11",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/18339796/",
+   "kind": "peer-reviewed EMG",
+   "read": "abstract"
+  },
+  {
+   "id": "yanai2006",
+   "cite": "Yanai T, Fuss FK, Fukunaga T (2006) In vivo measurements of subacromial impingement: substantial compression develops in abduction with large internal rotation. Clin Biomech 21(7):692-700",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16632128/",
+   "kind": "peer-reviewed biomechanics",
+   "read": "abstract"
+  },
+  {
+   "id": "longo2017",
+   "cite": "Longo S et al. (2017) Ultrasound evaluation of the subacromial space in healthy subjects performing three different positions of shoulder abduction in both loaded and unloaded conditions. Phys Ther Sport 23:105-112",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27776926/",
+   "kind": "peer-reviewed imaging",
+   "read": "abstract"
+  },
+  {
+   "id": "graichen1999",
+   "cite": "Graichen H et al. (1999) Subacromial space width changes during abduction and rotation, a 3-D MR imaging study. Surg Radiol Anat 21(1):59-64",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/10370995/",
+   "kind": "peer-reviewed imaging",
+   "read": "abstract"
+  },
+  {
+   "id": "kolber2014",
+   "cite": "Kolber MJ, Cheatham SW, Salamh PA, Hanney WJ (2014) Characteristics of shoulder impingement in the recreational weight-training population. J Strength Cond Res 28(4):1081-9",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24077379/",
+   "kind": "peer-reviewed case-control",
+   "read": "abstract"
+  },
+  {
+   "id": "ludewig2009",
+   "cite": "Ludewig PM et al. (2009) Motion of the shoulder complex during multiplanar humeral elevation. J Bone Joint Surg Am 91(2):378-89",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2657311/",
+   "kind": "peer-reviewed kinematics (bone pins)",
+   "read": "full text (methods/results grep) + summary"
+  },
+  {
+   "id": "reinold2007",
+   "cite": "Reinold MM et al. (2007) Electromyographic analysis of the supraspinatus and deltoid muscles during 3 common rehabilitation exercises. J Athl Train 42(4):464-9",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2140071/",
+   "kind": "peer-reviewed EMG (fine wire)",
+   "read": "abstract"
+  },
+  {
+   "id": "ekstrom2003",
+   "cite": "Ekstrom RA, Donatelli RA, Soderberg GL (2003) Surface electromyographic analysis of exercises for the trapezius and serratus anterior muscles. J Orthop Sports Phys Ther 33(5):247-58",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/12774999/",
+   "kind": "peer-reviewed EMG",
+   "read": "abstract"
+  },
+  {
+   "id": "schoenfeld2015",
+   "cite": "Schoenfeld BJ, Ogborn DI, Krieger JW (2015) Effect of repetition duration during resistance training on muscle hypertrophy: a systematic review and meta-analysis. Sports Med 45(4):577-85",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25601394/",
+   "kind": "meta-analysis",
+   "read": "abstract"
+  },
+  {
+   "id": "sporrong1995",
+   "cite": "Sporrong H et al. (1995) Influences of handgrip on shoulder muscle activity. Eur J Appl Physiol 71(6):485-92",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/8983914/",
+   "kind": "peer-reviewed EMG",
+   "read": "not re-read this session (repo sources.json: abstract)"
+  },
+  {
+   "id": "sporrong1996",
+   "cite": "Sporrong H et al. (1996) Hand grip increases shoulder muscle activity. Acta Orthop Scand 67(5):485-90",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/8948256/",
+   "kind": "peer-reviewed EMG",
+   "read": "not re-read this session (repo sources.json: abstract)"
+  },
+  {
+   "id": "weiss1995",
+   "cite": "Weiss ND et al. (1995) Position of the wrist associated with the lowest carpal-tunnel pressure. J Bone Joint Surg Am 77(11):1695-9",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/7593079/",
+   "kind": "peer-reviewed",
+   "read": "not re-read this session (repo sources.json: abstract)"
+  },
+  {
+   "id": "ironco-hex",
+   "cite": "Iron Company, Rubber Hex Dumbbell Sets (product specifications)",
+   "url": "https://www.ironcompany.com/rubber-hex-dumbbell-sets",
+   "kind": "manufacturer/retailer spec",
+   "read": "full"
+  },
+  {
+   "id": "rogue-kg-hex",
+   "cite": "Rogue Fitness, KG Rubber Hex Dumbbells (product specifications)",
+   "url": "https://www.roguefitness.com/gb/rubber-hex-dumbbells-eu",
+   "kind": "manufacturer spec",
+   "read": "full"
+  },
+  {
+   "id": "benchfitness-hex",
+   "cite": "Bench Fitness, Hex Dumbbell 1-10 kg pairs",
+   "url": "https://benchfitness.com/products/hex-dumbbell-1-10kg-pairs",
+   "kind": "retailer spec",
+   "read": "full"
+  },
+  {
+   "id": "titan-hex",
+   "cite": "Titan Fitness, 10 lb Rubber Hex Dumbbells",
+   "url": "https://titan.fitness/strength/dumbbells/rubber-coated-hex/10-lb-rubber-hex-dumbbells/421010.html",
+   "kind": "manufacturer spec",
+   "read": "full"
+  },
+  {
+   "id": "torque-hex",
+   "cite": "Torque Fitness, Rubber Hexagon Dumbbell (dimension table)",
+   "url": "https://commercial.torquefitness.com/products/rubber-hexagon-dumbbell",
+   "kind": "manufacturer spec",
+   "read": "full"
+  }
+ ]
+}
