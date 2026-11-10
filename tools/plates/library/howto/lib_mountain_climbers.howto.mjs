@@ -125,15 +125,7 @@ const zooms = [
     key: 'hip-line', chip: 'Hip line', heading: 'Hip line', kind: 'posture',
     // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's buttock for both halves; the Wrong is the
     // spec's Mistake dashed over the end pose, as `stills.hike`.
-    // LIB-SHIP W8a (Q-W8a-3, #413; L7 of #384 6653062201): framed head to heels. At the plate camera (pxPerM 191.9) the
-    // end pose spans x 17 (heel.l) to 341 (head centre), y 203-339, so a 350 px window centred 5 px right of and 30 px
-    // below the buttock (179, 224) holds the whole body. The spine guide is the straight head-to-heel reference (c4,
-    // plank's form): the extended leg's heel to the shoulder on the RIGHT pose in both halves, extended to the head; in
-    // the Wrong the hiked hips rise above it. Its stroke needs the closeup css option `spine` (pilot-a.closeups.mjs).
-    crop: { center: { at: 'buttock', pose: 'right', off: [5, 30] }, sizePx: 350 },
-    guides: [
-      { kind: 'spine', from: { at: 'heel.l', pose: 'right' }, to: { at: 'shoulder.r', pose: 'right' }, extend: [0.04, 0.2] },
-    ],
+    crop: { center: { at: 'buttock', pose: 'right', off: [0, -10] }, sizePx: 170 },
     right: 'end',
     wrong: { base: 'end', pose: MIS },
     callout: {
@@ -162,7 +154,7 @@ const feel = {
     { muscleId: 'hip_flexors', plain: 'The hip flexors lift the legs.', claim: CL.c11 },
   ],
   watch: [],
-  feelLine: 'You should feel this in your belly, shoulders, arms and the front of your hips.',   // W8a fix (#413 6760254084): main's line kept, it carries c11's row; L4 is exception D-W8A-MCFEEL
+  feelLine: 'You should feel this in your belly, shoulders, arms and the front of your hips.',
   rows: [
     // The card's first two rows (belly, shoulders and arms; front of the hips) have no fix, so they are left out: the
     // feel line says them (D-SHIP-Q16).

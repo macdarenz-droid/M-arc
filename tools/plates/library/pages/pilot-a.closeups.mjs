@@ -25,9 +25,4 @@ export const CLOSEUP_OPTIONS = {
   romanian_deadlift: ZOOM,
   single_leg_romanian_deadlift: ZOOM,
   triceps_pushdown: ZOOM,
-  // LIB-SHIP W3 (Q-W3-14, F-PAIR-FAULTS #386): the palm-flat key's hand zoom, its own note and panel height
-  // (hands/hand-palm-flat.mjs: rightNote 'Whole hand down', panelHeight 170); the page swaps it for the pair panel, whose
-  // size the key sets (W8a: the page is byte-equal at 170 and 282). W8a (Q-W8a-3, #413): css.spine strokes the hip-line
-  // crop's head-to-heel guide.
-  mountain_climbers: { ...ZOOM, css: { ...ZOOM.css, spine: true }, hand: { layout: 'single', uid: 'mc', rightNote: 'Whole hand down', panelHeight: 170 } },
 };

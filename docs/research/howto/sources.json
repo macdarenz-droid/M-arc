@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=08cb61657db20e8cf827bbdd15ddf5664de048423445becab51e44665f7c79ef
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=7d07d6ad64d4e20c0600e34f326e6801a13cc8d6a913022008c69275490c9a9f
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -87,6 +87,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "ace-crunch": {
+    "id": "ace-crunch",
+    "cite": "Crunch, Exercise Library (ACE)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/52/crunch/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-02"
   },
   "ace-db-chest-press": {
     "id": "ace-db-chest-press",
@@ -328,6 +336,22 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-standing-sp": {
+    "id": "ace-standing-sp",
+    "cite": "Standing Shoulder Press (barbell), ACE Exercise Library",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/71/standing-shoulder-press/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-top3-chest": {
+    "id": "ace-top3-chest",
+    "cite": "What are the Top 3 Most Effective Chest Exercises? (Schanke, Porcari et al., ACE Certified News)",
+    "url": "https://www.acefitness.org/certifiednewsarticle/3003/what-are-the-top-3-most-effective-chest-exercises/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "acsm-2009": {
     "id": "acsm-2009",
     "cite": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
@@ -512,6 +536,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "bb-crunch": {
+    "id": "bb-crunch",
+    "cite": "How to Do Crunches: Proper Form, Variations, & Benefits (BarBend)",
+    "url": "https://barbend.com/crunches/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-02"
+  },
   "bb-face-pull": {
     "id": "bb-face-pull",
     "cite": "How to Do Face Pulls: Benefits & Variations (BarBend)",
@@ -583,6 +615,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
+  },
+  "bb-legcurl": {
+    "id": "bb-legcurl",
+    "cite": "Master the Leg Curl for Stronger Hamstrings and Heavier Deadlifts (BarBend)",
+    "url": "https://barbend.com/leg-curls/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-02"
   },
   "bb-preacher": {
     "id": "bb-preacher",
@@ -1400,6 +1440,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "hl-pecdeck": {
+    "id": "hl-pecdeck",
+    "cite": "How and Why to Use a Pec Deck Machine",
+    "url": "https://www.healthline.com/health/pec-deck",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "hl-slam": {
     "id": "hl-slam",
     "cite": "Slam Ball Exercises and Benefits (Healthline; medically reviewed by a CSCS)",
@@ -1439,6 +1487,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "juker-1998": {
+    "id": "juker-1998",
+    "cite": "Quantitative intramuscular myoelectric activity of lumbar portions of psoas and the abdominal wall during a wide variety of tasks.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/9502361/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-02"
   },
   "juker1998": {
     "id": "juker1998",
@@ -1639,6 +1695,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-10-22"
+  },
+  "maeo-2021": {
+    "id": "maeo-2021",
+    "cite": "Greater Hamstrings Muscle Hypertrophy but Similar Damage Protection after Training at Long versus Short Muscle Lengths.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33009197/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-02"
   },
   "marchetti2023": {
     "id": "marchetti2023",
@@ -2168,6 +2232,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "pinto-2025": {
+    "id": "pinto-2025",
+    "cite": "Pectoralis Clavicular and Sternocostal Thicknesses Increase Similarly in Response to One and Three Sets of Pec Deck Resistance Training in Untrained Young Men",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40266636/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "prinold-2016": {
     "id": "prinold-2016",
     "cite": "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport)",
@@ -2584,6 +2656,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "sl-slc": {
+    "id": "sl-slc",
+    "cite": "How to Do Seated Leg Curl: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/seated-leg-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-02"
+  },
   "sl-sledpush": {
     "id": "sl-sledpush",
     "cite": "How to Do Sled Push: Muscles Worked & Proper Form (StrengthLog)",
@@ -2630,6 +2710,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/22076100/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "soncin-2014": {
+    "id": "soncin-2014",
+    "cite": "Influence of exercise order on electromyographic activity during upper body resistance training",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4327372/",
+    "kind": "peer-reviewed",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "sperandei2009": {
@@ -2700,6 +2788,14 @@
     "id": "strengthlog-neutral-close-grip-lat-pulldown",
     "cite": "How to Do Neutral Close-Grip Lat Pulldown: Muscles Worked & Proper Form (StrengthLog)",
     "url": "https://www.strengthlog.com/neutral-close-grip-lat-pulldown/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "stronglifts-ohp": {
+    "id": "stronglifts-ohp",
+    "cite": "How to Overhead Press with Proper Form: The Definitive Guide (StrongLifts)",
+    "url": "https://stronglifts.com/overhead-press/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
@@ -2799,6 +2895,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
+  },
+  "vg-pecfly": {
+    "id": "vg-pecfly",
+    "cite": "Pectoral Fly Machine Video Exercise Guide (Virtuagym)",
+    "url": "https://exercises.virtuagym.com/exercise/pectoral-fly-machine/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
   },
   "vit-slam": {
     "id": "vit-slam",
