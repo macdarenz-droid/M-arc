@@ -842,6 +842,12 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-10 ~03:45 UTC.**
+  - **Train 83 merged:** #411 F-GEN-WALK-SPEED @ `4714058e` → main `0140b482`. Review PASS (0 blockers; Medium: C4 "map is proven" projects to about 595 s against 600 s at 72 rows). Test-only, so no APK.
+  - **D-SHIP-W7-C4** (#394 6757542335): after #412, W7 merges main and reads C4 on NY and Manila. If the worse time is over 450 s, W7 raises only C4's limit in the WALKTIME form (1.5-2x). F-C4-CACHE (tools-side cache) is a separate follow-up card.
+  - **#412** @ `42c10f8c` (merged main `0140b482`): CI is running, held back by the account's limit on parallel jobs.
+  - **W7 #394** @ `c9137d33`: **review PASS** (0B/0H; the Medium, a stale PR body, is fixed). On its own head the unit-tz and source-gate legs hit the old limits, which #412 raises. Next: merge main after #412, apply D-SHIP-W7-C4, supervisor delta check, CI green, then train 84 and the APK (16 guides).
+  - **PF4 #410** @ `578fecb5`: source-gate is red only in the lane-bound lb9/lb10 pins, which wait for W7's merge.
 - **Update 11-10 ~01:50 UTC.** Weekly 0.91 at 00:10; D-OWNER-MAXOUT still holds.
   - **Train 82 merged:** #393 W6 @ `bb84f778` → main `dc058207` (7 How-tos; the app has 53). Main's gate run 42713388532 was cancelled once: unit-tz Manila passed 306/306 in 74.8 min but hit the 75-min runaway limit. One rerun of the failed jobs, with that cause stated, went green. **APK sent** (artifact 13726513406, fingerprint step success).
   - **#412** (supervisor, `claude/sup-ci-unittz-limit` @ `86424674`, D-SUP-CI-UNITTZ120): unit-tz limit 75→120 min, source-gate 90→150 min (job 129531925727 ran 306 files in 4459 s and was cancelled at 90). Limits are runaway caps, not checks. It merges when CI is green; W7 merges main after it.
