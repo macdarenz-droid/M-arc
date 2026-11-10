@@ -31,7 +31,7 @@ describe('PF3b head projection: existing zooms are byte-equal', { timeout: T }, 
         h.update(f + o.svg + JSON.stringify([o.focus, o.circle, o.src, o.link, o.posture ?? null])); n++;
       }
     }
-    expect(n).toBe(39);
+    expect(n).toBe(38);   // LIB-PLATEFIX-4 (D-PF4-PINS): was 39; burpee's Mistake zoom is gone (platefix4-burpee)
     // the same loop with this branch's base zoom/inline.mjs (claude/lib-platefix-3b 2884b5a9, before the head projection)
     // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 007c6b34…, now 539f6f9c… (incline_barbell is back to main's spec, D-PF3B-HOLD15,
     // so its entries join the loop; main 6227bd8e's zoom/inline.mjs gives this same hash over this set)
@@ -39,7 +39,9 @@ describe('PF3b head projection: existing zooms are byte-equal', { timeout: T }, 
     // shows the rope; main 6227bd8e's zoom/inline.mjs gives this same hash over this set)
     // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 4a1305c9…, now 0d43adaa… (D-PF3B-ROPEGHOST: sled_pull's start copy drops its
     // lay-mark ghosts; main 6227bd8e's zoom/inline.mjs gives this same hash over this set)
-    expect(h.digest('hex')).toBe('0d43adaa312c32eeba5c9eac27b060d6fa2561aba9352f2b0d5d4016f0425c29');
+    // LIB-PLATEFIX-4 (D-PF4-PINS): was 0d43adaa…, now 86204f7e… — burpee's entry dropped; every other spec's per-file zoom output
+    // is byte-equal to main de91dd21's (per-file hashes compared on both trees)
+    expect(h.digest('hex')).toBe('86204f7efd181e1eef6bdef817394212e469282104066dc190b8207d581c4249');
   });
   it('the side and plate-projection posture zooms (no main spec has one: PF2\'s rear delt fixture) render as before', () => {
     const fx = { ...alt, id: 'bent_over_dumbbell_rear_delt_fly', mistake: { ...alt.mistake, pose: { scap: { elev: 10 } }, guides: [] } };

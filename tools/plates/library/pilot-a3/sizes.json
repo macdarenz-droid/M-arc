@@ -60,29 +60,34 @@
     "basis": "convention: dumbbell_bench_press.mjs (pilot A, the SUPINE anchor); dumbbell_fly as drawn on main c7bdad7a (pilot A #109); the arc, bench and body are unchanged by LIB-8R"
    },
    "FOOT_Z": {
-    "value": 0.55,
+    "value": 0.51,
     "unit": "m",
-    "basis": "LIB-PLATEFIX-4 pf12 fix round (#410 6751563503): claim c1 'feet firmly on the floor'; feet set wider and further out so the pad band shows between the knees in the foot-end view (drawing value)"
+    "basis": "claim: c1 'feet firmly on the floor'; dumbbell_fly as drawn on main c7bdad7a (pilot A #109); the arc, bench and body are unchanged by LIB-8R"
    },
    "FOOT_X": {
-    "value": 0.24,
+    "value": 0.16,
     "unit": "m",
-    "basis": "LIB-PLATEFIX-4 pf12 fix round (#410 6751563503): claim c1; 48 cm apart, toes out, so the pad band shows between the knees (drawing value; 26-30 cm put the foot contacts 1.3-1.8 cm off)"
+    "basis": "claim: c1; dumbbell_fly as drawn on main c7bdad7a (pilot A #109); the arc, bench and body are unchanged by LIB-8R"
    },
    "ELBOW": {
     "value": 20,
     "unit": "deg",
     "basis": "claim: c3, c5 'slight elbow bend'; dumbbell_fly as drawn on main c7bdad7a (pilot A #109); the arc, bench and body are unchanged by LIB-8R"
    },
-   "ARC_DZ": {
-    "value": 0.03,
+   "SHOULDER_W": {
+    "value": 0.44,
     "unit": "m",
-    "basis": "LIB-PLATEFIX-4 pf12 fix round (#410 6751563503): 'put the start ghosts straight above the shoulders on the same arm length' (drawing value)"
+    "basis": "claim: c3 'shoulder-width'; dumbbell_fly as drawn on main c7bdad7a (pilot A #109); the arc, bench and body are unchanged by LIB-8R"
+   },
+   "ARC_DZ": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "dumbbell_fly as drawn on main c7bdad7a (pilot A #109); the arc, bench and body are unchanged by LIB-8R"
    },
    "PITCH": {
-    "value": 13,
+    "value": 45,
     "unit": "deg",
-    "basis": "LIB-PLATEFIX-4 pf12 fix round (#410 6751563503): 'the foot-end view reads as a standing or seated figure ... draw the flat pad end-on as a low band'; at 13 deg the pad and dumbbells read end-on and the head and chest show above the knees (pitch 0 hides the torso). Supersedes D-SPIKE-pitch's 45 for this plate only, pending the supervisor's ruling"
+    "basis": "decision: D-SPIKE-pitch (COACHING-DECISIONS.md:2222), camera pitch about 45 deg for this front view"
    },
    "M_WRIST": {
     "value": 30,
@@ -123,11 +128,6 @@
     "value": 0.03,
     "unit": "m",
     "basis": "convention: the engine bench primitive's default (vendor/engine/equipment.mjs:158-177), the bench of dumbbell_bench_press (pilot A); drawn as pitched world polys (panel mx4 R2): the foot bar 1.5 cm half height, so 3 cm"
-   },
-   "START_TILT": {
-    "value": -0.09,
-    "unit": "m",
-    "basis": "LIB-PLATEFIX-4 pf12 fix round (#410 6751563503): the start arm leans 5.9 cm toward the head so its segments draw at the end arm's length ('keep each in-plane segment at its drawn length'; drawing value)"
    }
   }
  }

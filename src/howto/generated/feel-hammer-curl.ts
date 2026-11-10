@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=9d26addf75e6314e130ce354d6b03d43cfbcae4cee13186e19fe5bdbef99ba25
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=f113bd6b06c138f3d291167e9556be0202703bc84ddf9fa50cdbf16aaf1ec9bd
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_hammer_curl",

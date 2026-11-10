@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=b7d2c5bc546775939b199539d82ac590b6cd50e3d95524f8cc96a5e058205d43
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=8bf8caadfeb822529a51a586ebb5e06644b26da636c96d1c9b2ad78d327f5454
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_barbell_shrug",

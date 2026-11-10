@@ -63,7 +63,7 @@ describe('PF2 (a): existing zooms are byte-equal', { timeout: T }, () => {
       if (s?.zoom == null) continue;
       for (const z of zoom.zoomList(s.zoom)) { const o = zoom.zoomOf(s, { prefix: f, view: z.view }); h.update(f + o.svg + JSON.stringify([o.focus, o.circle, o.src, o.link])); n++; }
     }
-    expect(n).toBe(37);
+    expect(n).toBe(36);   // LIB-PLATEFIX-4 (D-PF4-PINS): was 37; burpee's Mistake zoom is gone (its fault clears the plate-scale bar, platefix4-burpee)
     // was 36 entries, f7df419a… (origin/main 8bb433bd, before (a)); re-measured after main 7e060e83 (train 77; one more
     // zoom entry): the same loop over these specs with main 7e060e83's zoom/inline.mjs (no (a)) gives this same hash
     // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 89e7482e… (main 6227bd8e), now 43478914… — the only entries that differ from
@@ -74,7 +74,9 @@ describe('PF2 (a): existing zooms are byte-equal', { timeout: T }, () => {
     // the same loop with sled_pull's spec from dfb47999 gives 43478914… again, so no other entry moved)
     // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was 33e0f85f…, now 63317a89… (D-PF3B-ROPEGHOST: sled_pull's start copy drops its
     // lay-mark ghosts; main 6227bd8e's zoom/inline.mjs gives this same hash over this set)
-    expect(h.digest('hex')).toBe('63317a8944300bdba486e98c9e37008fcd2300007a42efcef2fcb9d7a69f3d89');
+    // LIB-PLATEFIX-4 (D-PF4-PINS): was 63317a89…, now b42c1832… — burpee's entry dropped; every other spec's per-file zoom output
+    // is byte-equal to main de91dd21's (per-file hashes compared on both trees)
+    expect(h.digest('hex')).toBe('b42c1832d6f5d6effebb22ac6794c8982eb5ba06c6297587ea00abfeb0fc1e26');
   });
 });
 
