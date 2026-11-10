@@ -15,7 +15,7 @@ beforeAll(async () => {
   core = await import(/* @vite-ignore */ url('tools/plates/lib/inputs.mjs'));
   bodies = await import(/* @vite-ignore */ url('tools/plates/library/bodies.mjs'));
   out = await renderOf(new URL('../../', import.meta.url).pathname);   // F-GEN-WALK-SPEED: gen.render(), once per run (tests/walk-cache.ts)
-}, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): render() walks every shipped id (40 now, 231 files); ran past 180 s on 3c6efe61 unit-tz America/New_York; the library timeout, as #385
+}, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): render() walks every shipped id (40 now, 231 files); ran past 180 s on 3c6efe61 unit-tz America/New_York; the library timeout, as #385; LIB-SHIP W6: 53 shipped ids (budgets N) after the merge of main de91dd21
 
 const fixture = () => JSON.parse(readFileSync('tests/howto/fixtures/generated-bodies.json', 'utf8')) as { count: number; bodies: Record<string, string> };
 
@@ -69,18 +69,39 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     for (const [k, f] of Object.entries(W5_MAIN_FIELDS)) Object.assign(o[k], f);
     return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
   };
+  // LIB-SHIP W6 (#393, ruling 3; merge of main de91dd21): sources.json also gains the 7 shipped W6 ids' 30 sources, appended
+  // after main's keys; with exactly those taken out the body is main de91dd21's c2782a7a (measured from main de91dd21's own
+  // sources.json), so W5's strip-back below runs on that text and holds as before
+  const W6_ADDED = ['ace-front-raise', 'ace-lat-raise', 'ace-seated-crunch', 'balance-default', 'bb-face-pull', 'bb-front-raise', 'bb-incline', 'fb-crunch',
+    'fv-cable-lat-raise', 'fv-front-raise', 'fv-pike', 'ggr-pike', 'laf-lat-raise', 'mo-cable-lat-raise', 'mo-crunch', 'mo-face-pull', 'mo-front-raise',
+    'mo-lat-raise', 'nasm-incline', 'nasm-pike', 'rabello-2024', 'sl-cable-lat-raise', 'sl-crunch', 'sl-face-pull', 'sl-front-raise', 'sl-incline',
+    'sl-lat-raise', 'sundstrup-2012', 'vg-lat-raise', 'zhu-2025'];
+  const SOURCES_MAIN_DE91 = 'c2782a7a80a233ce610c5431a9d84cc919fafa9086e9118e1faaa0c0f3f238ee';
+  const w6Back = (t: string) => {
+    const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
+    for (const k of W6_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
+    return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
+  };
+  it('LIB-SHIP W6: sources.json is main de91dd21\'s body plus W6\'s 30 named sources; reds: one missing, an unnamed extra', () => {
+    const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
+    expect(W6_ADDED).toHaveLength(30);
+    expect(bodies.bodySha(w6Back(t))).toBe(SOURCES_MAIN_DE91);
+    const { 'sl-face-pull': _gone, ...less } = o;
+    expect(() => w6Back(`${head}${JSON.stringify(less, null, 2)}\n`)).toThrow('sl-face-pull: not in sources.json');
+    expect(bodies.bodySha(w6Back(`${head}${JSON.stringify({ ...o, 'w6-extra': { id: 'w6-extra' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_DE91);
+  });
   it('LIB-SHIP W5: sources.json is main 05382042\'s body plus W5\'s 30 named sources and its 5 named later records; each cited by a W5 id', () => {
     const t = readFileSync(SRC, 'utf8');
     expect(fixture().bodies[SRC]).toBe(bodies.bodySha(t));
-    expect(bodies.bodySha(w5Back(t))).toBe(SOURCES_MAIN);
+    expect(bodies.bodySha(w5Back(w6Back(t)))).toBe(SOURCES_MAIN);   // LIB-SHIP W6 merge: W6's 30 taken out first
     const cited = new Set(W5_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
     for (const k of [...W5_ADDED, ...Object.keys(W5_MAIN_FIELDS)]) expect([k, cited.has(k)]).toEqual([k, true]);
     // reds: an unnamed added source, a named one missing, another record changed
     const o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
-    expect(bodies.bodySha(w5Back(`${head}${JSON.stringify({ ...o, 'w5-extra': { id: 'w5-extra' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN);
+    expect(bodies.bodySha(w5Back(w6Back(`${head}${JSON.stringify({ ...o, 'w5-extra': { id: 'w5-extra' } }, null, 2)}\n`)))).not.toBe(SOURCES_MAIN);
     const { 'sl-ez': _gone, ...less } = o;
-    expect(() => w5Back(`${head}${JSON.stringify(less, null, 2)}\n`)).toThrow('sl-ez: not in sources.json');
-    expect(bodies.bodySha(w5Back(`${head}${JSON.stringify({ ...o, 'ace-abs': { ...o['ace-abs'], checked: '2099-01-01' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN);
+    expect(() => w5Back(w6Back(`${head}${JSON.stringify(less, null, 2)}\n`))).toThrow('sl-ez: not in sources.json');
+    expect(bodies.bodySha(w5Back(w6Back(`${head}${JSON.stringify({ ...o, 'ace-abs': { ...o['ace-abs'], checked: '2099-01-01' } }, null, 2)}\n`)))).not.toBe(SOURCES_MAIN);
   });
 
   it('the header and the hashes: line are the only lines ignored', () => {

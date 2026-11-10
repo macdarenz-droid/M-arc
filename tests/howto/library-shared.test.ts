@@ -186,7 +186,7 @@ describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes only red-flag-back.ts and s
     const out = await renderOf(ROOT);   // F-GEN-WALK-SPEED: the repo's render(), once per run (tests/walk-cache.ts)
     expect(gatePaths(out)).toEqual(['src/howto/red-flag-back.ts']);
     expect([...out].filter(([, o]) => o.text.slice(0, 600).includes('library-gate')).map(([p]) => p)).toEqual(['src/howto/red-flag-back.ts']);
-  }, 300_000);
+  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663) form: render() walks every shipped id's outputs; it timed out at 300000 ms on ef67e7d7's source-gate (W6 merge)
   it('inputsFor(red-flag-back.ts) is back-box.mjs, its static imports (node:* only) and the back-box card', async () => {
     const G = await import(/* @vite-ignore */ url(GATE));
     const imports = [...readFileSync(join(SHARED_DIR, 'back-box.mjs'), 'utf8').matchAll(/^import .* from '([^']+)';$/gm)].map(m => m[1]);
@@ -196,7 +196,7 @@ describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes only red-flag-back.ts and s
     expect(G.inputsFor('src/howto/ids.ts')).toBeUndefined();
     expect(G.after).toEqual(['tools/plates/gen/content.mjs']);
     for (const f of [GATE, 'tools/plates/library/shared/back-box.mjs']) expect(G.inputs()).toContain(f);
-  });
+  }, 60_000);   // D-SHIP-W3-WALKTIME (#384 6690918663) form: inputs() walks every library row's registry and content inputs; 4461 ms on ef67e7d7's source-gate (default 5000 ms)
   /** Two directories for checkC17 (it takes directories and skips a path it cannot read): the shared modules, and a
    *  temp copy of library-gate.mjs. */
   const c17Dirs = (plant?: 'gate' | 'shared') => {

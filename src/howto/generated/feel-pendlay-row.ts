@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=b7d2c5bc546775939b199539d82ac590b6cd50e3d95524f8cc96a5e058205d43
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=191a7871c3b7a8ea0e3114de7013e2a8b78e6bdb2a3a99afe1e709fdf7591c40
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_pendlay_row",

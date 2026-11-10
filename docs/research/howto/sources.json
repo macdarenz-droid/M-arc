@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=6de672ff01762232fb11498422ea0e9c87447c604e96dfb3fcc6515e8c8e320f
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=4d74fb723b40ba12304fd0efb1e527b342daa75d2fc543564f76613a41093fad
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -72,6 +72,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-front-raise": {
+    "id": "ace-front-raise",
+    "cite": "Front Raise (ACE exercise library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/54/front-raise/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "ace-fwdlunge-bw": {
     "id": "ace-fwdlunge-bw",
     "cite": "Forward Lunge (ACE Exercise Library, no equipment)",
@@ -95,6 +103,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "ace-lat-raise": {
+    "id": "ace-lat-raise",
+    "cite": "Lateral Shoulder Raise (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/295/lateral-shoulder-raise/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "ace-lateral-raise": {
     "id": "ace-lateral-raise",
@@ -183,6 +199,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "ace-seated-crunch": {
+    "id": "ace-seated-crunch",
+    "cite": "Seated Crunch (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/291/seated-crunch/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "ace-seated-curl": {
     "id": "ace-seated-curl",
@@ -320,6 +344,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "balance-default": {
+    "id": "balance-default",
+    "cite": "Golden B balance archetype default (leg_press handling: thumb wrapped, contact finger-base)",
+    "url": "tools/plates/layers/exercises/leg_press.howto.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-05"
+  },
   "barbell-logic-grip": {
     "id": "barbell-logic-grip",
     "cite": "Barbell Logic, Bench Press Grip Tips",
@@ -375,6 +407,30 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "bb-face-pull": {
+    "id": "bb-face-pull",
+    "cite": "How to Do Face Pulls: Benefits & Variations (BarBend)",
+    "url": "https://barbend.com/face-pulls/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-front-raise": {
+    "id": "bb-front-raise",
+    "cite": "How to Do the Dumbbell Front Raise for a Stronger Front Rack Position (BarBend, Mike Dewar)",
+    "url": "https://barbend.com/dumbbell-front-raise/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-incline": {
+    "id": "bb-incline",
+    "cite": "How To Do the Incline Push-Up for No-Equipment Chest Building (BarBend)",
+    "url": "https://barbend.com/incline-push-up/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "bb-preacher": {
     "id": "bb-preacher",
@@ -744,6 +800,14 @@
     "access": "full",
     "checked": "2026-10-19"
   },
+  "fb-crunch": {
+    "id": "fb-crunch",
+    "cite": "Ab Crunch Machine: Form, Muscles Worked, Target Weight & Variations (Fitbod)",
+    "url": "https://fitbod.me/exercises/ab-crunch-machine",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "fees1998": {
     "id": "fees1998",
     "cite": "Fees M, Decker T, Snyder-Mackler L, Axe MJ. Upper extremity weight-training modifications for the injured athlete. Am J Sports Med 1998;26(5):732-42",
@@ -800,6 +864,30 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "fv-cable-lat-raise": {
+    "id": "fv-cable-lat-raise",
+    "cite": "Cable Lateral Raise (Fitness Volt, Matthew Magnante)",
+    "url": "https://fitnessvolt.com/cable-lateral-raise/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "fv-front-raise": {
+    "id": "fv-front-raise",
+    "cite": "Dumbbell Front Raise: Build Strong Deltoids & Upper Chest (Fitness Volt, Matthew Magnante)",
+    "url": "https://fitnessvolt.com/dumbbell-front-raise/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "fv-pike": {
+    "id": "fv-pike",
+    "cite": "Pike Push-Ups: Target Your Deltoids and Build Upper Body Strength (Fitness Volt)",
+    "url": "https://fitnessvolt.com/pike-push-up/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "ga-curl-mid": {
     "id": "ga-curl-mid",
     "cite": "LIB-7 curl hand convention, pairs.mjs CONVENTIONS ga:curl-mid: across the middle of the palm, extension -10 to +10",
@@ -839,6 +927,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-19"
+  },
+  "ggr-pike": {
+    "id": "ggr-pike",
+    "cite": "How To Do Pike Push-Ups: Tips From An Expert (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/how-to-do-pike-push-ups",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "ggr-t-bar": {
     "id": "ggr-t-bar",
@@ -1096,6 +1192,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "laf-lat-raise": {
+    "id": "laf-lat-raise",
+    "cite": "How to use The Lateral Raise Machine (LA Fitness, Living Healthy blog)",
+    "url": "https://blog.lafitness.com/2016/03/31/how-to-use-a-lateral-raise-machine/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "lander1992": {
     "id": "lander1992",
     "cite": "Lander JE, Hundley JR, Simonton RL. The effectiveness of weight-belts during multiple repetitions of the squat exercise. Med Sci Sports Exerc 1992;24(5):603-9",
@@ -1232,6 +1336,46 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "mo-cable-lat-raise": {
+    "id": "mo-cable-lat-raise",
+    "cite": "Cable Single-Arm Lateral Raise: Exercise Guide (Motra, formerly Train Fitness)",
+    "url": "https://motra.com/exercises/cableSingleArmLateralRaise",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "mo-crunch": {
+    "id": "mo-crunch",
+    "cite": "Machine Ab Crunch: Exercise Guide (Motra, formerly Train Fitness)",
+    "url": "https://motra.com/exercises/abCrunchMachine",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "mo-face-pull": {
+    "id": "mo-face-pull",
+    "cite": "Cable Face Pull - Exercise Guide (Motra, formerly Train Fitness)",
+    "url": "https://motra.com/exercises/cableFacePull",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "mo-front-raise": {
+    "id": "mo-front-raise",
+    "cite": "Dumbbell Front Raise: Exercise Guide (Motra, formerly Train Fitness)",
+    "url": "https://motra.com/exercises/dumbbellFrontRaise",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "mo-lat-raise": {
+    "id": "mo-lat-raise",
+    "cite": "Machine Lateral Raise: Exercise Guide (Motra, formerly Train Fitness)",
+    "url": "https://motra.com/exercises/machineLateralRaise",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "mo2023": {
     "id": "mo2023",
     "cite": "Effects of loading positions on the activation of trunk and hip muscles during flywheel and dumbbell single-leg Romanian deadlift exercises.",
@@ -1280,6 +1424,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "nasm-incline": {
+    "id": "nasm-incline",
+    "cite": "Incline Push-Up (NASM exercise library)",
+    "url": "https://www.nasm.org/resource-center/exercise-library/incline-push-up",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "nasm-leg-press": {
     "id": "nasm-leg-press",
     "cite": "NASM Exercise Library, Leg Press",
@@ -1287,6 +1439,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "nasm-pike": {
+    "id": "nasm-pike",
+    "cite": "Pike Push-Up (NASM exercise library)",
+    "url": "https://www.nasm.org/resource-center/exercise-library/pike-push-up",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "nasm-rdl": {
     "id": "nasm-rdl",
@@ -1520,6 +1680,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "rabello-2024": {
+    "id": "rabello-2024",
+    "cite": "Activation of the three deltoid muscle portions during common strengthening exercises: A systematic review",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39593452/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "rep-fail": {
     "id": "rep-fail",
     "cite": "How to Safely Fail a Heavy Squat in the Gym (REP Fitness)",
@@ -1664,6 +1832,22 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "sl-cable-lat-raise": {
+    "id": "sl-cable-lat-raise",
+    "cite": "How to Do Cable Lateral Raise: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/cable-lateral-raise/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-crunch": {
+    "id": "sl-crunch",
+    "cite": "How to Do Machine Crunch: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/machine-crunch/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "sl-dbcurl": {
     "id": "sl-dbcurl",
     "cite": "How to Dumbbell Curl: Muscles Worked & Proper Form (StrengthLog)",
@@ -1680,10 +1864,42 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "sl-face-pull": {
+    "id": "sl-face-pull",
+    "cite": "How to Do Face Pull: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/face-pull/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-front-raise": {
+    "id": "sl-front-raise",
+    "cite": "How to Do Dumbbell Front Raise: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/dumbbell-front-raise/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "sl-hammer": {
     "id": "sl-hammer",
     "cite": "How to Do Hammer Curl: Muscles Worked & Proper Form (StrengthLog)",
     "url": "https://www.strengthlog.com/hammer-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-incline": {
+    "id": "sl-incline",
+    "cite": "How to Do Incline Push-Up: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/incline-push-up/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-lat-raise": {
+    "id": "sl-lat-raise",
+    "cite": "How to Do Machine Lateral Raise: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/machine-lateral-raise/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
@@ -1864,6 +2080,14 @@
     "access": "full",
     "checked": "2026-10-18"
   },
+  "sundstrup-2012": {
+    "id": "sundstrup-2012",
+    "cite": "Swiss ball abdominal crunch with added elastic resistance is an effective alternative to training machines",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/22893857/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "sweat-bandrow": {
     "id": "sweat-bandrow",
     "cite": "Seated Resistance Band Row (Sweat exercise library)",
@@ -1935,6 +2159,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "vg-lat-raise": {
+    "id": "vg-lat-raise",
+    "cite": "Lateral Raise Machine Video Exercise Guide (Virtuagym)",
+    "url": "https://exercises.virtuagym.com/exercise/lateral-raise-machine/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "webmd-seated-leg-press": {
     "id": "webmd-seated-leg-press",
@@ -2063,5 +2295,13 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "zhu-2025": {
+    "id": "zhu-2025",
+    "cite": "Biomechanical evaluation of posterior deltoid exercises and kinematic trajectory modeling",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41964926/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
   }
 }
