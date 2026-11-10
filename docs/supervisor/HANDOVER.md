@@ -842,6 +842,18 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-10 ~08:45 UTC.**
+  - **Train 85 merged:** #394 W7 @ `5730fc16` → main `07f5fbcf` (16 guides; the app has 69).
+    - Delta checks PASS: 2917e021 (its merge of main) and 5730fc16 (D-SHIP-W7-C4: C4 600 → 1200 s, 540 s measured; the 2x band was amended to the WALKTIME house value, #394 6760213813).
+    - **APK sent**, and it is the release candidate (D-OWNER-RELEASE-EARLY): gate run 42773800566 is green, artifact 13746585906, fingerprint step success. Play bundle **37.1.0.192** (versionCode 37000192), run 42773800401, artifact MARC-PLAY-AAB-UPLOAD-SIGNED 13743276686.
+    - The owner is to check it on the phone and upload it to Production himself. He was told that F-SHEET-COPY's "not medical advice" line is not a Play blocker and goes in the next update.
+  - **W8a:** #413 is closed and replaced by **#415** (`claude/lib-ship-w8a-2` @ `5fe00e47`, tree-equal to `953cd2bc`), under D-SHIP-W8A-REBRANCH: 23acf9b3 touched MANIFEST without `[golden update]`, so the guard was red.
+    - Ships 5: OHP (D-SHIP-Q1 gap), pec_fly (D-SHIP-Q14; "Front shoulder pain"), seated_leg_curl (LR-15 tempo; D-SHIP-TEXTZOOM, with the supervisor's app crop-check owed before review), crunch and assisted_pull_up.
+    - Held: mountain_climbers (F-HAND-PALMFLAT-SIZE; D-W8A-MCFEEL) and underhand_lat_pulldown (F-UNDERHAND-PQH1: PQ-H1 plus F3 at generate).
+    - READY is owed on #415.
+  - **PF4 #410** @ `058322ed` is READY. Reviewer session_018Pv5bKatHY6UQaqj1hYVt6 is running. D-PF4-VUPLEADER signs v_up's leader as a named entry at 30.7 px ±0.5.
+  - **Follow-ups added:** F-ANKLE-BOX (approved box text, D-RR4-ANKLECAP 59 words), F-PLATE-SIDEVIEW, F-TEMPO-NOSECONDS, F-C4-CACHE, F-HAND-PALMFLAT-SIZE, F-UNDERHAND-PQH1, Q-W7-7 left-out rows (lb05/lb07), and the fallback ruling for the 5 NO SOURCE rows (arnold_press, skull_crusher, goblet_squat, bench_dip, renegade_row).
+  - Weekly usage is about 0.96 or more. Most agent work stops at the limit, until Fri 11-13 08:00 UTC.
 - **Update 11-10 ~06:30 UTC. D-OWNER-RELEASE-EARLY** (owner, 11-10: "can I publish now the app in playstore? and we do the later updates when we finished?"). This answers the 11-03 question: release early, and the remaining guides follow as updates. This supersedes "library before the Play upload" (09-30) and the 11-02 FOCUS gate.
   - **Release candidate:** main after train 85 (W7; 69 guides). It gets the full regression on that exact commit, the APK and the signed .aab from "M/ARC Play bundle" (upload key `95:DC:ED:4A`), and the owner's phone check. Then the owner uploads it to Production. Only the owner publishes.
   - Unshipped exercises show no guide (`src/howto/coverage.ts` stage gate).
