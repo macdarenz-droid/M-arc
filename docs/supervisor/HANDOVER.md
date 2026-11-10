@@ -842,6 +842,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-10 ~06:30 UTC. D-OWNER-RELEASE-EARLY** (owner, 11-10: "can I publish now the app in playstore? and we do the later updates when we finished?"). This answers the 11-03 question: release early, and the remaining guides follow as updates. This supersedes "library before the Play upload" (09-30) and the 11-02 FOCUS gate.
+  - **Release candidate:** main after train 85 (W7; 69 guides). It gets the full regression on that exact commit, the APK and the signed .aab from "M/ARC Play bundle" (upload key `95:DC:ED:4A`), and the owner's phone check. Then the owner uploads it to Production. Only the owner publishes.
+  - Unshipped exercises show no guide (`src/howto/coverage.ts` stage gate).
+  - The owner was given the Play Console steps, and told that the trader status is "Not a trader" when the app makes no money; the code has no ads, billing or IAP. Its deadline is Feb 2027 and it does not block the release.
+  - **Meter 0.95 at 05:43:** W8a's fix round waits until W7 merges (D-SUP-BUDGET-W7FIRST). RESEARCH-ROUTES-4 merged (#414 → research head `207b8de8`). W8a panel VALID: 3 approved, 4 in the fix round (#413 6760254084).
 - **Update 11-10 ~03:45 UTC.**
   - **Train 83 merged:** #411 F-GEN-WALK-SPEED @ `4714058e` → main `0140b482`. Review PASS (0 blockers; Medium: C4 "map is proven" projects to about 595 s against 600 s at 72 rows). Test-only, so no APK.
   - **D-SHIP-W7-C4** (#394 6757542335): after #412, W7 merges main and reads C4 on NY and Manila. If the worse time is over 450 s, W7 raises only C4's limit in the WALKTIME form (1.5-2x). F-C4-CACHE (tools-side cache) is a separate follow-up card.
