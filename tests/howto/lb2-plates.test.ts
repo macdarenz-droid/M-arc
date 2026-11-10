@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
 import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
+import { renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -803,7 +804,7 @@ describe('LIB-SHIP W4 A9 (replaces LIB-10 A9, D-LIB10-AHEAD): no LB2 id ships in
   });
   child.it('generate --check is green, and no generated file is read from lb2/, the LB2 specs, composers or How-to sources', async () => {
     const gen = await import(/* @vite-ignore */ new URL('../../tools/plates/generate.mjs', import.meta.url).href);
-    const out = await gen.render();
+    const out = await renderOf(new URL('../../', import.meta.url).pathname);   // F-GEN-WALK-SPEED: gen.render(), once per run (tests/walk-cache.ts)
     expect(gen.diff(out)).toEqual([]);
     for (const [p, { text }] of out) {
       expect(text, p).not.toMatch(/library\/lb2\/|declineBench/);
