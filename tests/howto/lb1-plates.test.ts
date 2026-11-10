@@ -1022,8 +1022,16 @@ describe('LIB-9a A9: nothing ships (D-LIB4-ENTRY-2)', { timeout: T }, () => {
   it('LIB-SHIP W3: no LB1 id, slug or batch is in tests/howto/golden/library/ outside the lb01 and zoom pins and pages', () => {
     const dir = 'tests/howto/golden/library', mine = ['lb01.json', 'zoom.json', 'lb01.layers.html', 'zoom.layers.html'];
     const files: [string, string][] = existsSync(dir) ? readdirSync(dir).filter(f => !mine.includes(f)).map(f => [f, readFileSync(join(dir, f), 'utf8')]) : [];
-    expect(goldenProblems(files)).toEqual([]);
+    // LIB-SHIP W7 (D-SHIP-MOVE; D-SHIP-A9, ruling 3; D-PF10-W7JOIN #394): measured on this head, the LB10 pin and its
+    // layers page (lb10.json, lb10.layers.html) hit only the file-name check (/lb1/ inside "lb10"), no LB1 id, slug or
+    // batch; those exact two hits are listed, so any other hit, or an LB1 token in either file, is red
+    expect(goldenProblems(files)).toEqual(['lb10.json: an LB1 batch file name', 'lb10.layers.html: an LB1 batch file name']);
     for (const f of mine) expect([f, existsSync(join(dir, f))]).toEqual([f, true]);
+  });
+  it('LIB-SHIP W7 reds: an LB1 id in lb10.json, and an lb11.json, are red past the two listed name hits', () => {
+    expect(goldenProblems([['lb10.json', '{"why":"lib_chin_up"}']])).toEqual(['lb10.json: an LB1 batch file name', 'lb10.json: chin_up']);
+    expect(goldenProblems([['lb10.layers.html', '<div data-id="chin-up"></div>']])).toEqual(['lb10.layers.html: an LB1 batch file name', 'lb10.layers.html: chin-up']);
+    expect(goldenProblems([['lb11.json', '{}']])).toEqual(['lb11.json: an LB1 batch file name']);
   });
   it('mutations: a page-only lb1.json and chin-up.layers.html are red; a file naming only lib_dumbbell_shoulder_press stays green', () => {
     expect(goldenProblems([['lb1.json', '{"entries":[{"kind":"page","batch":"LB1"}]}']]).length).toBeGreaterThan(0);

@@ -303,6 +303,31 @@
    "ruling": "D-SHIP-C3",
    "reason": "card-no-zoom",
    "note": "the card has no hand zoom"
+  },
+  "lib_bird_dog": {
+   "ruling": "D-SHIP-HANDW7",
+   "reason": "gap-ruled",
+   "note": "the palm-flat key's faults (cupped-palm, hand-ahead) cite no claim of this card (F-PAIR-FAULTS cardSupports), and the card's hand zoom has no Wrong; the grip copy carries the card's claims"
+  },
+  "lib_burpee": {
+   "ruling": "D-SHIP-HANDW7",
+   "reason": "gap-ruled",
+   "note": "the palm-flat key's faults (cupped-palm, hand-ahead) cite no claim of this card (F-PAIR-FAULTS cardSupports), and the card's hand zoom has no Wrong; the grip copy carries the card's claims"
+  },
+  "lib_bear_crawl": {
+   "ruling": "D-SHIP-HANDW7",
+   "reason": "gap-ruled",
+   "note": "the palm-flat key's faults (cupped-palm, hand-ahead) cite no claim of this card (F-PAIR-FAULTS cardSupports), and the card's hand zoom has no Wrong; the grip copy carries the card's claims"
+  },
+  "lib_sled_pull": {
+   "ruling": "D-SHIP-C3",
+   "reason": "gap-key",
+   "at": "tools/plates/library/hands/hand-implement.mjs:7"
+  },
+  "lib_farmer_s_carry": {
+   "ruling": "D-SHIP-HANDW7",
+   "reason": "gap-ruled",
+   "note": "no pair key draws a carry handle (no key variant has a hold archetype), and the card gives no wrist; the grip copy carries c13"
   }
  }
 }

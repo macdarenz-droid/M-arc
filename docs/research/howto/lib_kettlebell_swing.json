@@ -1,0 +1,24 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=42dbd92708bbdce0590be44e5acc0ce7879cafbea19501dd4dbde7a1b4da1142
+{
+  "id": "lib_kettlebell_swing",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/kettlebell_swing.json",
+    "rev": 1
+  },
+  "sources": [
+    "mo-kb-swing",
+    "hk-kb-swing",
+    "nike-kb-swing",
+    "bb-kb-swing",
+    "ggr-kb-swing",
+    "sl-kb-swing",
+    "mf-kb-swing",
+    "pg-kb-swing",
+    "mcgill-2012",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

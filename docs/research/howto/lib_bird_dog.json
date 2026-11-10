@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=1e00751385db43be7f65264222e2635972b68f6feafc5a7eee2cc97a8513d221
+{
+  "id": "lib_bird_dog",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/bird_dog.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-birddog",
+    "bb-birddog",
+    "ggr-birddog",
+    "hl-birddog",
+    "mo-birddog",
+    "calatayud-2019",
+    "hand-key-palm-flat",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

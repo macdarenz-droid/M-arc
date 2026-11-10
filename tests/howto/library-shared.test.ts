@@ -186,7 +186,7 @@ describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes only red-flag-back.ts and s
     const out = await renderOf(ROOT);   // F-GEN-WALK-SPEED: the repo's render(), once per run (tests/walk-cache.ts)
     expect(gatePaths(out)).toEqual(['src/howto/red-flag-back.ts']);
     expect([...out].filter(([, o]) => o.text.slice(0, 600).includes('library-gate')).map(([p]) => p)).toEqual(['src/howto/red-flag-back.ts']);
-  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663) form: render() walks every shipped id's outputs; it timed out at 300000 ms on ef67e7d7's source-gate (W6 merge)
+  }, 600_000);   // D-SHIP-W3-WALKTIME (#384 6690918663), as S6's render() walk below: render() walks every shipped id's outputs; it timed out at 300000 ms on ef67e7d7's source-gate (W6 merge, main dc058207) and in the W7 post-flip run; 232218 ms on claude/lib-ship-w7 with 59 ids (child run 231.6 s, 4 vitest files in parallel); 69 ids after the merge of main dc058207 and the holds; the library timeout, as #385; no assertion change
   it('inputsFor(red-flag-back.ts) is back-box.mjs, its static imports (node:* only) and the back-box card', async () => {
     const G = await import(/* @vite-ignore */ url(GATE));
     const imports = [...readFileSync(join(SHARED_DIR, 'back-box.mjs'), 'utf8').matchAll(/^import .* from '([^']+)';$/gm)].map(m => m[1]);

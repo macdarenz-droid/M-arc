@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=34439fd85cc10d750d2c330c9a1e91cc43091bdba49194d226c6c7e184eadf8f
+{
+  "id": "lib_standing_leg_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/standing_leg_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "hevy-stlc",
+    "sl-stlc",
+    "hl-hc",
+    "nhs-knee-pain",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "knee",
+    "back"
+  ]
+}

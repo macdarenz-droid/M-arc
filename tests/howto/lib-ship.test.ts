@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { RULED, checkC3Library, checkConventionGrip, checkGripLibrary } from './checks/c3-library';
+import { B3_PINS, RULED, allSharedBoxes, checkC3Library, checkConventionGrip, checkGripB3, checkGripLibrary, noRedFlagProblems } from './checks/c3-library';
 import { checkC3 } from './checks/c3';
 import { W5 } from './lib-ship-w5';
 import { checkC1 } from './checks/c1';
@@ -34,7 +34,14 @@ const W5_SHIPPED = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_l
 /** LIB-SHIP W6: the 7 of the flip set (#393 6689822595), ruled to ship (#393 6701002884), registry order (lb06 then lb07, after lb01). */
 const W6_SHIPPED = ['lib_machine_crunch', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull',
   'lib_incline_push_up', 'lib_pike_push_up'];
-const RULED_SHIPPED = [...W3_SHIPPED, ...W5_SHIPPED, ...W6_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+// LIB-SHIP W7 (ruling 3; D-SHIP-W7-STAMP #394 6711372615 @ a3e5b6e7, after D-PF10-W7JOIN): plus the 16 flipped lb08/lb09/lb10
+// ids (lb08's 5, lb09's 6, lb10's 5); the other 13 drawn W7 rows are held (approved-plate), the 8 left-out rows stay out;
+// D-SHIP-W7-SLEDHOLD (#394 SHIP W7 QUESTION 4 option 1; follow-up F-SLEDPULL-S0): sled_pull is held (its open sheet is over the gate A3 S0 cap);
+// D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge is held too (F-GLUTEBRIDGE-S0); D-SHIP-W7-HOLD2 (gate HT8/HT9 after main dc058207; F-NOREDFLAG-GATE): high_knees held too
+const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
+  'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
+  'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
+const RULED_SHIPPED = [...W3_SHIPPED, ...W5_SHIPPED, ...W6_SHIPPED, ...W7_SHIPPED, 'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
   'lib_upright_row', 'lib_dumbbell_biceps_curl', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up', 'lib_horizontal_leg_press'];
 
 let reg: any, content: any, P: any, keyMods: any[];
@@ -59,6 +66,21 @@ describe('LIB-SHIP A1: the shipped set', () => {
     expect(held).toHaveLength(17);
     expect(reg.shippedIds().filter((id: string) => held.includes(id))).toEqual([]);
     expect(held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(held.map(id => [id, 'approved-plate']));
+    // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): of the 29 drawn W7 rows exactly the 16 ship; the 13 held stay approved-plate (D-SHIP-W7-SLEDHOLD: sled_pull, D-SHIP-W7-HOLD2:
+    // glute_bridge and high_knees among them)
+    const w7Drawn = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
+    expect(w7Drawn).toHaveLength(29);
+    expect(W7_SHIPPED.filter(id => !w7Drawn.includes(id))).toEqual([]);
+    const w7Held = w7Drawn.filter(id => !W7_SHIPPED.includes(id));
+    expect(w7Held).toHaveLength(13);
+    expect(w7Held).toContain('lib_high_knees');   // D-SHIP-W7-HOLD2 (F-NOREDFLAG-GATE)
+    expect(reg.shippedIds()).not.toContain('lib_high_knees');
+    expect(w7Held).toContain('lib_sled_pull');   // D-SHIP-W7-SLEDHOLD
+    expect(reg.shippedIds()).not.toContain('lib_sled_pull');
+    expect(w7Held).toContain('lib_glute_bridge');   // D-SHIP-W7-HOLD2 (#394 6753333493)
+    expect(reg.shippedIds()).not.toContain('lib_glute_bridge');
+    expect(reg.shippedIds().filter((id: string) => w7Held.includes(id))).toEqual([]);
+    expect(w7Held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(w7Held.map(id => [id, 'approved-plate']));
   });
 });
 
@@ -702,6 +724,102 @@ describe('LIB-SHIP W4 barbell_shrug contact from golden B\'s hold default (as ca
   });
 });
 
+describe('LIB-SHIP W7 D-SHIP-W7-B3 (#394 6647954465, Q-W7-1/Q-W7-5): NoHandling for 5 listed handled cards, fields pinned', () => {
+  const card = (id: string) => json(`docs/research/howto/cards/${id}.json`);
+  const B3 = ['lib_cable_crunch', 'lib_jump_rope', 'lib_wall_ball', 'lib_kettlebell_swing', 'lib_medicine_ball_slam'];
+  const strip = (c: any, cid: string) => ({ ...c, setup: c.setup.map((s: any) => ({ ...s, claim: s.claim && { ...s.claim, note: String(s.claim.note ?? '').replace(new RegExp(`\\b${cid}\\b`, 'g'), 'cX') } })),
+    posture: c.posture.map((s: any) => ({ ...s, claim: s.claim && { ...s.claim, note: String(s.claim.note ?? '').replace(new RegExp(`\\b${cid}\\b`, 'g'), 'cX') } })) });
+  it('the listed set is exactly the 5, and each pin names every non-empty card field', () => {
+    expect(Object.keys(B3_PINS)).toEqual(B3);
+    for (const id of B3) {
+      const g = card(id.slice(4)).grip, filled = (['thumb', 'handContact', 'wrist'] as const).filter(k => String(g[k] ?? '').trim() !== '');
+      expect([id, Object.keys(B3_PINS[id] ?? {}).sort()]).toEqual([id, [...filled].sort()]);
+    }
+  });
+  it('each listed sheet is NoHandling with why D-SHIP-GRIP (b3) and passes', async () => {
+    for (const id of B3) {
+      const { content: c } = await content.loadContent(id);
+      expect([id, c.handling.archetype, /D-SHIP-GRIP \(b3\)/.test(c.handling.why ?? '')]).toEqual([id, 'none', true]);
+      expect([id, checkGripLibrary(c, card(id.slice(4)))]).toEqual([id, []]);
+    }
+  }, 60_000);   // cold loadContent of 5 sheets timed out at the 5 s default in source-gate (ee259f73); the asserts are unchanged
+  it('red 1: an unlisted handled card under (b3)', async () => {
+    const { content: c } = await content.loadContent('lib_cable_fly');
+    expect(checkGripLibrary({ ...c, handling: { archetype: 'none', why: 'D-SHIP-GRIP (b3)' } }, card('cable_fly'))).toEqual(['GRIP: lib_cable_fly uses D-SHIP-GRIP (b3) but it is not one of the listed ids']);
+  });
+  it('red 2: a listed field whose card bytes differ from its pin', async () => {
+    const { content: c } = await content.loadContent('lib_wall_ball'), k = card('wall_ball');
+    expect(checkGripLibrary(c, { ...k, grip: { ...k.grip, thumb: 'Wrapped round the ball.' } })).toEqual(['GRIP: lib_wall_ball uses D-SHIP-GRIP (b3) but card grip.thumb differs from its pinned bytes']);
+  });
+  it('red 3: a pinned claim cited on no setup or posture line (and the grip.claims id with it)', async () => {
+    const { content: c } = await content.loadContent('lib_wall_ball');
+    expect(checkGripLibrary(strip(c, 'c9'), card('wall_ball'))).toEqual(['GRIP: lib_wall_ball uses D-SHIP-GRIP (b3) but pinned claim c9 (grip.handContact) is cited on no setup or posture line',
+      'GRIP: lib_wall_ball uses D-SHIP-GRIP (b3) but card claim c9 (grip.claims) is cited on no setup or posture line']);
+  });
+  it('red 4: a card grip.claims id cited nowhere, and a card field emptied while pinned', async () => {
+    const { content: c } = await content.loadContent('lib_kettlebell_swing'), k = card('kettlebell_swing');
+    expect(checkGripLibrary(strip(c, 'c24'), k)).toEqual(['GRIP: lib_kettlebell_swing uses D-SHIP-GRIP (b3) but card claim c24 (grip.claims) is cited on no setup or posture line']);
+    expect(checkGripB3(c, { ...k, grip: { ...k.grip, wrist: '' } }, ['thumb', 'handContact'])).toEqual(['GRIP: lib_kettlebell_swing uses D-SHIP-GRIP (b3) but card grip.wrist is empty and pinned']);
+  });
+  it('red 5: (b3) on a card whose archetype.hand is none, and plain (b) on a listed row (the b/b2 reds above still hold)', async () => {
+    const { content: c } = await content.loadContent('lib_jump_rope'), k = card('jump_rope');
+    expect(checkGripLibrary(c, { ...k, archetype: { hand: 'none' } })).toEqual(['GRIP: lib_jump_rope uses D-SHIP-GRIP (b3) but its card\'s archetype.hand is not a handled archetype (use (b2))']);
+    expect(checkGripLibrary({ ...c, handling: { archetype: 'none', why: 'D-SHIP-GRIP (b)' } }, k)).toEqual(['GRIP: lib_jump_rope uses D-SHIP-GRIP (b) but its card claims grip.handContact, grip.wrist']);
+  });
+});
+
+describe('LIB-SHIP W7 D-SHIP-HANDW7 (#394 6647954465, Q-W7-3/Q-W7-4): gap-ruled palm-flat trio and farmer_s_carry; no W7 hand pair', () => {
+  const nz = () => json('tools/plates/library/hands/no-zoom.json').entries as Record<string, any>;
+  const TRIO = ['bird_dog', 'burpee', 'bear_crawl'];
+  it('D-SHIP-HANDW7 is ruled; the trio and farmer_s_carry are gap-ruled under it, sled_pull gap-key at hand-implement.mjs:7', () => {
+    expect(RULED.has('D-SHIP-HANDW7')).toBe(true);
+    for (const id of [...TRIO, 'farmer_s_carry']) expect([id, nz()[`lib_${id}`]?.ruling, nz()[`lib_${id}`]?.reason]).toEqual([id, 'D-SHIP-HANDW7', 'gap-ruled']);
+    expect(nz().lib_sled_pull).toEqual({ ruling: 'D-SHIP-C3', reason: 'gap-key', at: 'tools/plates/library/hands/hand-implement.mjs:7' });
+  });
+  it('the trio stay in hand-palm-flat.mjs IDS and get no pair; bear_crawl keeps its own wrist claim (c11)', async () => {
+    const pf = keyMods.find((m: any) => m.KEY === 'palm-flat');
+    for (const id of TRIO) expect([id, id in pf.IDS]).toEqual([id, true]);
+    // pairsOf over the 4 no-zoom W7 ids and sled_pull (gap-key): none gets a pair (battle_ropes is held: HAND_OF_ID maps it,
+    // so it would get one; the supervisor's Q-W7-2 route stops its flip, D-SHIP-W7-ROPES)
+    const HP = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs'));
+    const W = [...TRIO, 'farmer_s_carry', 'sled_pull'].map(i => `lib_${i}`);
+    expect(HP.pairsOf(P, W).pairOf).toEqual({});
+    expect(Object.keys(HP.pairsOf(P, ['lib_battle_ropes']).pairOf)).toEqual(['battle-ropes']);   // control: the held id would pair
+    const { content: c } = await content.loadContent('lib_bear_crawl');
+    expect(String(c.handling.wrist.claim?.note ?? '')).toMatch(/\bc11\b/);
+  });
+  it('red: a gap-ruled trio entry removed turns C3 red', async () => {
+    const { content: c } = await content.loadContent('lib_bird_dog'), { lib_bird_dog: _drop, ...rest } = nz();
+    expect(checkC3Library(c, 'Bodyweight', { list: rest, card: json('docs/research/howto/cards/bird_dog.json'), gapKeyOf }).join('\n')).toMatch(/C3: handling.archetype is not none, and no hand zoom/);
+  });
+});
+
+describe('LIB-SHIP W7 D-SHIP-W7-NOREDFLAG (#394 6648497703, = D-SHIP-W6-NOREDFLAG #393 6648157060): riskFlags [] rows', () => {
+  const NO_RED_FLAG = ['lib_high_knees', 'lib_battle_ropes', 'lib_jumping_jacks'];
+  // Q-W7-7 (D-SHIP-LEFTOUT-CLOSURE): the left-out rows (no How-to sheet) are not W7 sheets; every other row still is.
+  const W7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
+  it('the W7 sheets with riskFlags [] are exactly the 3 pinned ids, each card names no red flag, and none is red', async () => {
+    const empty: string[] = [];
+    for (const id of W7) {
+      const { content: c } = await content.loadContent(id);
+      if (Array.isArray(c.riskFlags) && c.riskFlags.length === 0) empty.push(id);
+      expect([id, noRedFlagProblems(c, json(c.research.card))]).toEqual([id, []]);
+    }
+    expect(empty).toEqual(NO_RED_FLAG);
+  }, 60_000);
+  it('red: riskFlags [] on a card that names a red flag', async () => {
+    const { content: c } = await content.loadContent('lib_high_knees');
+    expect(noRedFlagProblems(c, { ...json(c.research.card), redFlags: ['knee'] })).toEqual(['RF: lib_high_knees: riskFlags is [] but its card names red flags knee']);
+  });
+  it('the C19 boxes for such a row are every shared box plus the back box; the disclaimer alone stays red', async () => {
+    const [shared, BB, C19] = await Promise.all([import(/* @vite-ignore */ url('tools/plates/layers/howto/shared.mjs')), import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), import('./checks/c19')]);
+    const boxes = allSharedBoxes(shared, BB.backBox());
+    expect(Object.values(boxes).every(b => b && typeof b === 'object')).toBe(true);
+    expect(C19.checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, 'lib_high_knees')).toEqual([]);
+    expect(C19.checkC19Shared({ DISCLAIMER: shared.DISCLAIMER }, 'lib_high_knees')).toEqual(['C19: lib_high_knees: no RED_FLAG box to check']);
+  });
+});
+
 // LIB-SHIP W5 (SHIP W5 PLAN RULED, #392 6647901307): the rulings' own checks, each red proven on an in-memory mutation.
 describe('LIB-SHIP W5 D-SHIP-W5-PLATEONLY: [] only on a plate.* field, plate.view equal on cards and specs', () => {
   let FAM: any;
@@ -1252,6 +1370,59 @@ describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batc
   }, 120_000);
 });
 
+// LIB-SHIP W7 Q-W7-7 D-SHIP-LEFTOUT-CLOSURE (ruling 14): the owner's left-out W7 ids are rows of lb08.json and lb09.json at
+// left-out:D-OWNER-LIB142 (W3's leg_press_calf_raise form). No MANIFEST row, layers spec or plates page names them, and the
+// lb8/lb9 drawnIds skip them although their specs exist (bicycle_crunch has none).
+describe('LIB-SHIP W7 Q-W7-7 D-SHIP-LEFTOUT-CLOSURE: the 8 left-out W7 rows stay out', () => {
+  const LEFT: Record<string, string[]> = {
+    lb08: ['lib_seated_calf_raise', 'lib_standing_calf_raise', 'lib_bodyweight_calf_raise', 'lib_hip_thrust'],
+    lb09: ['lib_pallof_press', 'lib_russian_twist', 'lib_flutter_kicks', 'lib_bicycle_crunch'],
+  };
+  const ALL = Object.values(LEFT).flat(), bare = (id: string) => id.slice(4);
+  const named = (text: string) => ALL.filter(id => new RegExp(`\\b${bare(id)}\\b|\\b${bare(id).replace(/_/g, '-')}\\b`).test(text));
+  it('each is in its batch file at left-out:D-OWNER-LIB142, after the existing rows, in the HELD row form (no pages, sources or pin); no MANIFEST row or file names it', async () => {
+    const { rows } = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const { MANIFEST } = await import(/* @vite-ignore */ url('tools/plates/library/ci/manifest.mjs'));
+    const all = rows(), VIEW: Record<string, string> = { lib_russian_twist: 'front', lib_bicycle_crunch: 'front' };
+    for (const [b, ids] of Object.entries(LEFT)) {
+      const file = `tools/plates/library/batches/${b}.json`, j = json(file);
+      expect(Object.keys(j.rows).slice(-ids.length), b).toEqual(ids);
+      expect(named(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), `${b} pin`).toEqual([]);   // no pin
+      for (const id of ids) {
+        const s = bare(id).replace(/_/g, '-');
+        expect(j.rows[id], id).toEqual({ src: `library/specs/${bare(id)}.mjs`, slug: s, prefix: s, chromeId: s, mode: 'H', view: VIEW[id] ?? 'side', stage: 'left-out:D-OWNER-LIB142' });
+        expect(json(`docs/research/howto/cards/${bare(id)}.json`).plate.view, id).toBe(j.rows[id].view);
+        expect(all.find((r: any) => r.id === id)?.batchFile, id).toBe(file);
+      }
+    }
+    const m = json(MANIFEST);
+    for (const id of ALL) expect(Object.keys(m.rows), id).not.toContain(id);
+    for (const r of Object.values(m.rows) as any[]) expect(named(Object.keys(r.files).join('\n'))).toEqual([]);
+  });
+  it('the lb08 and lb09 layers specs stage none of them (layers-spec.mjs filter)', async () => {
+    const { layersSpecOf } = await import(/* @vite-ignore */ url('tools/plates/library/layers-spec.mjs'));
+    const { mkdtempSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    for (const b of Object.keys(LEFT)) {
+      const spec: any = layersSpecOf(`tools/plates/library/batches/${b}.json`, { stageDir: mkdtempSync(join(tmpdir(), `w7-leftout-${b}-`)) });
+      expect(named(JSON.stringify(spec)), b).toEqual([]);
+    }
+  }, 120_000);
+  it('the lb8 and lb9 plates pages draw none of them; red: with the stage off left-out, drawnIds takes the id (its spec exists)', async () => {
+    const [L8, L9] = await Promise.all(['lb8', 'lb9'].map(n => import(/* @vite-ignore */ url(`tools/plates/library/${n}/build.mjs`))));
+    for (const [b, B, build] of [['lb08', L8, 'buildLb8Page'], ['lb09', L9, 'buildLb9Page']] as const) {
+      const ids: string[] = B.drawnIds();
+      expect(ids.filter(id => ALL.includes(id)), b).toEqual([]);
+      const html = (await B[build]()).html.toString('utf8');
+      expect(LEFT[b]!.filter(id => html.includes(`id="card-${bare(id).replace(/_/g, '-')}"`)), b).toEqual([]);
+      const data = json(`tools/plates/library/batches/${b}.json`), id = LEFT[b]![0]!;
+      expect(B.drawnIds(undefined, { ...data, rows: { ...data.rows, [id]: { ...data.rows[id], stage: 'drawing' } } }), b).toContain(id);
+    }
+    // bicycle_crunch has no spec: the existence filter alone keeps it out, as for leg_press_calf_raise
+    expect(L9.drawnIds(undefined, { rows: { lib_bicycle_crunch: { ...json('tools/plates/library/batches/lb09.json').rows.lib_bicycle_crunch, stage: 'drawing' } } })).toEqual([]);
+  }, 300_000);
+});
+
 describe('LIB-SHIP W3 Q-W3-13: zoom/ink-check.mjs probes a pinned row through its pinned (non-authoring) candidate', () => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const href = async (p: string) => (await import('node:url')).pathToFileURL(join(process.cwd(), p)).href;
@@ -1324,5 +1495,107 @@ describe('LIB-SHIP W3 D-SHIP-LAYERSZOOM: a layers page carries the zoom its pinn
     const src = readFileSync(join(ROOT, 'tools/plates/library/build-layers-page.mjs'), 'utf8');
     expect(src).toContain("import { applyZooms } from './zoom/inline.mjs';");
     expect(src).toContain("const page = await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs);");
+  });
+});
+
+// LIB-SHIP W7 D-PFR-L4 (#394 6701937875, D-SHIP-W5-NEWFIND): every W7 red-flag feel row marks the body-map pain region
+// its flag names ("Where it may hurt"), as the reference sheets do. The regions are bodyMuscles.ts parts (so the app map
+// has them too); a knee row may name the back of the knee (lying_leg_curl 'Behind the knee', knee-back-*).
+describe('LIB-SHIP W7 D-PFR-L4: red-flag feel rows mark their pain region', () => {
+  const REGIONS: Record<string, string[][]> = {
+    back: [['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right']],
+    knee: [['knee-left', 'knee-right'], ['knee-back-left', 'knee-back-right']],
+    true: [['hand-left', 'hand-right', 'hand-back-left', 'hand-back-right']],
+    shoulder: [['shoulder-front-left', 'shoulder-front-right']],
+    elbow: [['elbow-left', 'elbow-right']],
+  };
+  const W7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
+  const painProblems = (id: string, rows: any[]) => rows.filter(r => r.redFlag).flatMap(r => {
+    const want = REGIONS[String(r.redFlag)], got = r.at?.parts ?? [];
+    if (!want) return [`${id}: row ${r.key} red flag ${r.redFlag} has no region`];
+    return want.some(g => g.every(p => got.includes(p))) ? [] : [`${id}: row ${r.key} (${r.redFlag}) does not mark ${want.map(g => g.join('+')).join(' or ')}`];
+  });
+  // D-SHIP-W7-LAYERS: the W7 ids the committed layers pages hold, the shipped ones (batch file order)
+  const W7_ON_PAGES = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => r.stage === 'shipped').map(([id]) => id));
+  const sheet = async (id: string) => (await import(/* @vite-ignore */ url(`tools/plates/library/howto/${id}.howto.mjs`))).default;
+  it('every red-flag row of the 29 W7 sheets names its region parts', async () => {
+    expect(W7).toHaveLength(29);
+    const bad: string[] = [];
+    for (const id of W7) bad.push(...painProblems(id, (await sheet(id)).feel.rows));
+    expect(bad).toEqual([]);
+  }, 60_000);
+  it('mutation: dropping dead_bug\'s low-back mapping, or standing_leg_curl\'s, is red', async () => {
+    for (const id of ['lib_dead_bug', 'lib_standing_leg_curl']) {
+      const rows = (await sheet(id)).feel.rows.map((r: any) => r.key === 'low-back' ? { ...r, at: { muscles: r.at.muscles } } : r);
+      expect(painProblems(id, rows)).toEqual([`${id}: row low-back (back) does not mark lower-back-erectors-left+lower-back-ql-left+lower-back-erectors-right+lower-back-ql-right`]);
+    }
+  });
+  it('on the committed lb08/lb09/lb10 layers pages each such row opens with its region outlined and the "Where it may hurt" key', async () => {
+    const pages = ['lb08', 'lb09', 'lb10'].map(b => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`), 'utf8'));
+    const { FRONT_PARTS, BACK_PARTS } = await import('../../src/svg/bodyMuscles');
+    // the library pages draw the map with F-BODYMAP-FRONTDELT's fix applied (shoulder-front-* moved), so compare with that
+    const { applyBodymapFix } = await import(/* @vite-ignore */ url('tools/plates/library/render/region-fix.mjs'));
+    const F = FRONT_PARTS.map(p => ({ ...p })), B = BACK_PARTS.map(p => ({ ...p }));
+    applyBodymapFix(F, B);
+    const dOf = new Map([...F, ...B].map(p => [p.id, p.d]));
+    const bad: string[] = [];
+    // D-SHIP-W7-LAYERS (#394 6711372615 @ a3e5b6e7): the committed pages hold only the 16 shipped W7 ids (D-SHIP-W7-SLEDHOLD:
+    // sled_pull held; D-SHIP-W7-HOLD2: glute_bridge and high_knees held); every red-flag row of all 29 sheets is still checked above, and each of the 13 held ids is absent from every page
+    expect(W7_ON_PAGES).toHaveLength(16);
+    for (const id of W7.filter(i => !W7_ON_PAGES.includes(i))) {
+      const pre = id.slice(4).replace(/_/g, '-');
+      if (pages.some(p => p.includes(`id="${pre}-feel-map"`) || p.includes(`id="${pre}-row-`))) bad.push(`${id}: held, but on a W7 layers page`);
+    }
+    for (const id of W7_ON_PAGES) {
+      const pre = id.slice(4).replace(/_/g, '-'), page = pages.find(p => p.includes(`id="${pre}-feel-map"`));
+      if (!page) { bad.push(`${id}: not on a W7 layers page`); continue; }
+      const a = page.indexOf(`id="${pre}-feel-map"`), feel = page.slice(a, page.indexOf(`id="${pre}-row-`, a));
+      for (const r of (await sheet(id)).feel.rows.filter((x: any) => x.redFlag)) {
+        // both views: each '<g class="feel-mark" data-row=KEY>' group's feel-pain paths, front and back
+        const pain = feel.split(`<g class="feel-mark" data-row="${r.key}">`).slice(1).map(s => (s.split('<g class="feel-mark"')[0] ?? '').match(/<g class="feel-pain">[\s\S]*?<\/g>/)?.[0] ?? '').join('');
+        if (!(r.at.parts as string[]).every(p => pain.includes(`d="${dOf.get(p)}"`))) bad.push(`${id}: ${r.key} not outlined`);
+        if (!page.includes(`id="${pre}-row-${r.key}"`) || !new RegExp(`id="${pre}-row-${r.key}"[^>]*data-pain`).test(page)) bad.push(`${id}: ${r.key} button has no data-pain`);
+      }
+      if (!feel.includes('Where it may hurt')) bad.push(`${id}: no "Where it may hurt" key`);
+    }
+    expect(bad).toEqual([]);
+  }, 60_000);
+});
+
+// LIB-SHIP W7 F-PAIN-NAMES (supervisor, after #385 D-PF-PAINNAMES-LIB): no W7 feel row's map label names a raw body-map
+// part id ("Marked: lower-back-erectors-left …"); each marked part reads as a place name.
+describe('LIB-SHIP W7 F-PAIN-NAMES: feel-row labels name places, not part ids', () => {
+  const W7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
+  const rawIds = async () => { const { FRONT_PARTS, BACK_PARTS } = await import('../../src/svg/bodyMuscles'); return [...FRONT_PARTS, ...BACK_PARTS].map(p => p.id); };
+  const labelProblems = (page: string, pre: string, ids: string[]) => [...page.matchAll(new RegExp(`id="(${pre}-row-[a-z0-9-]+)"[^>]*data-label="([^"]*)"`, 'g'))]
+    .flatMap(([, btn, label]) => { const marked = /Marked: ([^.]*)\./.exec(label!)?.[1] ?? '';
+      return marked.split(/ and |, /).filter(x => ids.includes(x)).map(x => `${btn}: raw part id ${x}`); });
+  it('every W7 row label on the lb08/lb09/lb10 layers pages, and at least one W7 label carries a mark', async () => {
+    const ids = await rawIds(), pages = ['lb08', 'lb09', 'lb10'].map(b => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`), 'utf8'));
+    const bad: string[] = []; let marked = 0;
+    // D-SHIP-W7-LAYERS (#394 6711372615 @ a3e5b6e7): the pages hold only the 16 shipped W7 ids; the 13 held (sled_pull, D-SHIP-W7-SLEDHOLD, glute_bridge and high_knees, D-SHIP-W7-HOLD2, among them) are on none
+    const onPages = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => r.stage === 'shipped').map(([id]) => id));
+    expect(onPages).toHaveLength(16);
+    for (const id of W7.filter(i => !onPages.includes(i))) {
+      const pre = id.slice(4).replace(/_/g, '-');
+      if (pages.some(p => p.includes(`id="${pre}-row-`))) bad.push(`${id}: held, but on a W7 layers page`);
+    }
+    for (const id of onPages) {
+      const pre = id.slice(4).replace(/_/g, '-'), page = pages.find(p => p.includes(`id="${pre}-feel-map"`));
+      if (!page) { bad.push(`${id}: not on a W7 layers page`); continue; }
+      bad.push(...labelProblems(page, pre, ids));
+      marked += [...page.matchAll(new RegExp(`id="${pre}-row-[^"]+"[^>]*data-label="[^"]*Marked: `, 'g'))].length;
+    }
+    expect(bad).toEqual([]);
+    // D-SHIP-W7-LAYERS: was > 30 over the 29 ids' pages; the rebuilt pages hold the 16 shipped ids, whose labels carry exactly
+    // 23 marks (measured on the committed lb08/lb09/lb10 layers pages c7d01751 / 5a83c943 / 96411ab5; 25 with sled_pull and
+    // glute_bridge, 24 after D-SHIP-W7-SLEDHOLD, 23 after D-SHIP-W7-HOLD2's glute_bridge, still 23 with high_knees held: its rows carry no mark);
+    // pinned exact, so a lost mark is red
+    expect(marked).toBe(23);
+  });
+  it('mutation: a label that names lower-back-erectors-left is red', async () => {
+    const ids = await rawIds();
+    const page = '<button type="button" class="fr-btn" id="dead-bug-row-low-back" aria-expanded="false" data-label="Main: abs. Marked: lower-back-erectors-left and lower back.">';
+    expect(labelProblems(page, 'dead-bug', ids)).toEqual(['dead-bug-row-low-back: raw part id lower-back-erectors-left']);
   });
 });
