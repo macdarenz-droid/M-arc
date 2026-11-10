@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=2d02a12e2e2702705f0dad36c8623abdae4e3a0f69ae8f9be8f94e88597a53e0
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=ba7e80330fcf7cf1678bf0a82c7f5f413664ca3d3d9162e37a92307e870cb02c
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_pec_fly",
   name: "Pec Fly",
-  hashes: { inputsSha256: "2d02a12e2e2702705f0dad36c8623abdae4e3a0f69ae8f9be8f94e88597a53e0", golden: "e175cefedafaf1d27f6edbec6092bc99e8ec0a5442fa935b1f905012d1705680" },
+  hashes: { inputsSha256: "ba7e80330fcf7cf1678bf0a82c7f5f413664ca3d3d9162e37a92307e870cb02c", golden: "e175cefedafaf1d27f6edbec6092bc99e8ec0a5442fa935b1f905012d1705680" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

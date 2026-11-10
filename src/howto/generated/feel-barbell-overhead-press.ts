@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=e2b991c5317202c4aa4a6cccc166cdf0ac06175bb8e3781021677910a6f8ac3a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=ff5d2315ca5d9bc853aa75af95ff777a445ca5939160ca9e03f4a9e3e208bfde
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_barbell_overhead_press",
