@@ -842,6 +842,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-10 ~22:00 UTC: MAXED (weekly 0.99 at 20:49). Paused until Fri 11-13 08:00 UTC.**
+  - **Train 88 merged:** #415 W8a @ `ddbe0ae6` → main `e15e1c65` (3 guides: barbell_overhead_press, pec_fly, crunch; the app has 72). The first review FAILed on the approval sha in pilot-a.json:730; after the fix re-check it PASSed. CI 83/83. The APK goes out when main's gate is green.
+  - **No active builders.** W7, PF4, F-GEN, RR4 and W8a are all done and told to stop.
+  - **Hourly tick disabled.** The resume one-shot `trig_01LfYWeqdU81fUt6DL9UjyEP` (11-13 08:10) now carries the next-card order: F-SHEET-COPY, PF5, W8b, then the hands, layers and HT10 follow-ups, F-ANKLE-BOX, F-C4-CACHE, Q-W7-7, and the NO SOURCE fallback ruling.
+  - Rows toward 142: 72 shipped. Held and approved-plate: seated_leg_curl, assisted_pull_up, underhand_lat_pulldown, mountain_climbers, sled_pull, glute_bridge, high_knees, v_up and the PF4 holds.
 - **Update 11-10 ~14:45 UTC.**
   - **Train 87 merged:** #416 F-L2A5-TIMEOUT (supervisor) @ `5a1b61e6` → main `8a8ffab3`. L2-A5 gets an explicit 12 s timeout in the WALKTIME form: it timed out at 5728 and 6401 ms in unit-tz NY on main `f14283dc`, so it was red every time, not a flake. CI 80/80.
   - Main `8a8ffab3`'s gate run gives the APK for train 86 (PF4: 4 close-ups and 9 redrawn plates; the app still has 69 guides). The APK waiter is running.
