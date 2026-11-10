@@ -75,8 +75,8 @@
         { "source": "nhs-knee", "text": "your knee locks, gives way or painfully clicks – painless clicking is normal", "where": "Urgent advice box" } ] }
   ],
   "sources": [
-    { "id": "nasm-goblet", "url": "https://www.nasm.org/resource-center/exercise-library/goblet-squat", "title": "Goblet Squat (NASM Exercise Library)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
-    { "id": "ace-goblet", "url": "https://www.acefitness.org/resources/everyone/exercise-library/362/goblet-squat/", "title": "Goblet Squat (ACE Exercise Library)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "nasm-goblet", "url": "https://www.nasm.org/resource-center/exercise-library/goblet-squat", "title": "Goblet Squat (NASM Exercise Library)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-11-10" },
+    { "id": "ace-goblet", "url": "https://www.acefitness.org/resources/everyone/exercise-library/362/goblet-squat/", "title": "Goblet Squat (ACE Exercise Library)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-11-10" },
     { "id": "collins-2021", "url": "https://pubmed.ncbi.nlm.nih.gov/34341315/", "title": "Differences in Muscle Activity and Kinetics Between the Goblet Squat and Landmine Squat in Men and Women", "kind": "peer-reviewed", "year": 2021, "pmid": "34341315", "access": "abstract", "checked": "2026-09-30" },
     { "id": "hackett-2013", "url": "https://pubmed.ncbi.nlm.nih.gov/23222073/", "title": "The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise", "kind": "peer-reviewed", "year": 2013, "pmid": "23222073", "access": "abstract", "checked": "2026-09-30" },
     { "id": "nhs-back", "url": "https://www.nhs.uk/conditions/back-pain/", "title": "Back pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },

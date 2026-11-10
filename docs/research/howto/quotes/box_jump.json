@@ -218,6 +218,14 @@
       "status": "verbatim",
       "closest": "Reset your position and prepare for the next repetition. Allow adequate recovery between repetitions.",
       "note": "fetched by curl 2026-10-22 (LB4 fix round)"
+    },
+    {
+      "claim": "c19",
+      "source": "nhs-ankle",
+      "text": "If you think you may have broken your ankle, do not try to treat it yourself. Contact NHS 111 to find out what to do.",
+      "status": "verbatim",
+      "closest": "If you think you may have broken your ankle, do not try to treat it yourself. Contact NHS 111 to find out what to do.",
+      "note": "RESEARCH-ROUTES-4; fetched by curl 2026-11-10."
     }
   ]
 }

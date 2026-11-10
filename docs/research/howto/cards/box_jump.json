@@ -344,6 +344,23 @@
           "where": "Step 4"
         }
       ]
+    },
+    {
+      "id": "c19",
+      "text": "NHS ankle pain page: if you think you may have broken your ankle, do not try to treat it yourself; contact NHS 111 to find out what to do.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-ankle"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-ankle",
+          "text": "If you think you may have broken your ankle, do not try to treat it yourself. Contact NHS 111 to find out what to do.",
+          "where": "Important box (above the self-care section)"
+        }
+      ]
     }
   ],
   "sources": [
@@ -395,7 +412,7 @@
       "year": 2025,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-03"
+      "checked": "2026-11-10"
     }
   ],
   "plate": {
