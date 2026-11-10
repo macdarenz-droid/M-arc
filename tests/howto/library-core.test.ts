@@ -630,7 +630,7 @@ describe('L2-A5: exercises.json is an input of ids.ts and its twin', () => {
     for (const p of ['src/howto/ids.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/coverage.ts']) expect(idsGen.inputsFor(p), p).toContain('src/data/exercises.json');
     const ids = out.get('src/howto/ids.ts')!;
     expect(ids.writers).toEqual(['tools/plates/gen/content.mjs', 'tools/plates/gen/ids.mjs']);
-  }, 60_000);   // LIB-SHIP W8a (the W3 WALKTIME form, #384 6690918663): inputsFor walks every shipped row (64 now); timed out at the 5 s default on 26935789's unit-tz Asia/Manila (and locally under load); no assertion change
+  });
 });
 
 describe('D-LIB2-layers: content.mjs narrows inputs per exercise', () => {
