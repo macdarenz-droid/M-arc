@@ -6,6 +6,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { PF_LAYERS_DECISION } from './platefix-pins';
+import { W8A_LAYERS_APPROVAL, w8aLayersProblems } from './checks/ship-w8a';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const read = (p: string) => readFileSync(ROOT + p, 'utf8');
@@ -192,6 +193,15 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     expect(lp[lp.length - 1].i).toBe(entries.length - 1);   // LIB-SHIP W8a: was entries.length - 5 (LIB-PLATEFIX-3b), now the last entry (W8a's re-pin)
     const page = readFileSync(ROOT + batch.pages.layers);
     expect([[...cur.ids].sort(), cur.ids.length, cur.pageSha256, cur.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
+    // LIB-SHIP W8a (#415 review M): the W8a entry checked whole (checks/ship-w8a.ts): decision, approver, the panel's comment
+    // at the head it judged (exactly), supersedes, ids, the page pin and the superseded pin; reds: another approval sha,
+    // another comment id
+    const pilotA = JSON.parse(read('tests/howto/golden/library/pilot-a.json'));
+    expect(w8aLayersProblems(pilotA, 'pilot-a', page)).toEqual([]);
+    const withApproval = (a: string) => ({ ...pilotA, entries: [...pilotA.entries.slice(0, -1), { ...pilotA.entries[pilotA.entries.length - 1], approval: a }] });
+    expect(W8A_LAYERS_APPROVAL.endsWith(' @ 29e4af37a166b4a7e23c577c10386047da419b95')).toBe(true);
+    expect(w8aLayersProblems(withApproval(W8A_LAYERS_APPROVAL.replace('29e4af37a166b4a7e23c577c10386047da419b95', 'bb60cc574a8515dc6e67b3c80195b2cb2ffe6738')), 'pilot-a', page)).toHaveLength(1);
+    expect(w8aLayersProblems(withApproval(W8A_LAYERS_APPROVAL.replace('6760254084', '6761492481')), 'pilot-a', page)).toHaveLength(1);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);

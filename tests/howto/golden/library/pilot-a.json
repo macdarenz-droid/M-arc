@@ -727,7 +727,7 @@
       "bytes": 2353010,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W8A-LAYERS",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ bb60cc574a8515dc6e67b3c80195b2cb2ffe6738",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ 29e4af37a166b4a7e23c577c10386047da419b95",
       "date": "2026-11-10",
       "why": "O5; LIB-SHIP W8a layers page (D-PFC-ROUND1 panel 6760254084, W8a LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6761492481); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): barbell_overhead_press and pec_fly back on the page (mountain_climbers held, D-W8A-MCFEEL / F-HAND-PALMFLAT-SIZE); cardcmp: every card byte-equal to the judged page 708e7f7f8b3aaecb8e4ba6e26c7bb166e3523dd0c2e85be27108aba0320c7d05 except pec_fly's row label (F-PECFLY-FEELROW, ruled 6761492481); main's cards byte-equal (diff adds only)",
       "supersedes": 22,

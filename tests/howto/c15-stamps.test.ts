@@ -112,7 +112,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   const W7_STAMPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_cable_kickback', 'lib_resisted_hip_flexion',
     'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug',
     'lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
-  // LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, #413 6761492481): the 5 flipped ids, stamped after W7's 16 in that order;
+  // LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, #413 6761492481): the 3 shipped ids, stamped after W7's 16 in that order;
   // pec_fly's names the ruling comment (its row changed after the panel); mountain_climbers and underhand_lat_pulldown are held
   const W8A_PANEL = ['D-SHIP-W8A-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ 29e4af37a166b4a7e23c577c10386047da419b95'];
   const W8A_RULED = ['D-SHIP-W8A-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6761492481 @ bb60cc574a8515dc6e67b3c80195b2cb2ffe6738'];
@@ -174,7 +174,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     // LIB-SHIP W5 (D-SHIP-W5-STAMP, ruling 3): then W5's 10 (merge of main 05382042: after W4's 6)
     // LIB-SHIP W6: then W6's 7 (D-SHIP-W6-STAMP, #393 6689822595 / 6701002884); main 7e060e83's 32 and main de91dd21's 48 entries unchanged
     // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): then W7's 16 (merge of main dc058207: after W6's 7; D-SHIP-W7-SLEDHOLD, D-SHIP-W7-HOLD2)
-    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED, ...W7_STAMPED, ...W8A_STAMPED]);   // LIB-SHIP W8a: + its 5
+    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED, ...W7_STAMPED, ...W8A_STAMPED]);   // LIB-SHIP W8a: + its 3
     expect(W7_STAMPED).toHaveLength(16);
     expect(W8A_STAMPED).toHaveLength(3);   // D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD (#415): assisted_pull_up and seated_leg_curl held
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_ENTRIES.n)))).toBe(MAIN_ENTRIES.sha);

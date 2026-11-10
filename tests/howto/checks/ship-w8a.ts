@@ -11,12 +11,13 @@ export const W8A_LAYERS: Record<string, { supersedes: number; ids: string[]; was
     was: { sha: 'ff1bd298c518eed4eb64214da4643b4d2360b40a24d772ee413a84a134c187de', bytes: 1965361 },
   },
 };
-const LINK = /^https:\/\/github\.com\/macdarenz-droid\/M-arc\/pull\/413#issuecomment-6760254084 @ [0-9a-f]{40}$/;
+// The panel's comment at the head it judged (as on the D-SHIP-W8A-STAMP stamps), exactly
+export const W8A_LAYERS_APPROVAL = 'https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ 29e4af37a166b4a7e23c577c10386047da419b95';
 
 /** The W8a entry of `batch` against the committed layers page: the file's last entry, exactly. [problems] */
 export function w8aLayersProblems(file: any, batch: string, page: Buffer): string[] {
   const W = W8A_LAYERS[batch]!, E = file.entries as any[], e = E[E.length - 1], bad: string[] = [];
-  if (e?.kind !== 'layers-page' || e.decision !== 'D-SHIP-W8A-LAYERS' || e.approvedBy !== 'supervisor' || !LINK.test(e.approval ?? '')) return [`${batch} W8a: last entry ${e?.kind} ${e?.decision}`];
+  if (e?.kind !== 'layers-page' || e.decision !== 'D-SHIP-W8A-LAYERS' || e.approvedBy !== 'supervisor' || e.approval !== W8A_LAYERS_APPROVAL) return [`${batch} W8a: last entry ${e?.kind} ${e?.decision}`];
   if (e.supersedes !== W.supersedes || E[W.supersedes]?.kind !== 'layers-page') bad.push(`${batch} W8a: supersedes ${e.supersedes}`);
   if (JSON.stringify(e.ids) !== JSON.stringify(W.ids)) bad.push(`${batch} W8a: ids ${e.ids}`);
   if (e.pageSha256 !== createHash('sha256').update(page).digest('hex') || e.bytes !== page.length) bad.push(`${batch} W8a: page pin`);
