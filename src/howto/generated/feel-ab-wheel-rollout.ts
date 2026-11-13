@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=88ba6e865cda9a14a3bcae843c796cff7def86a508c07001818ff5d8e1cee87c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=43ce4806f9647eca33b996b9ca53dddd7ae3583f4dbc3d7f66d66e8155bb0c47
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_ab_wheel_rollout",

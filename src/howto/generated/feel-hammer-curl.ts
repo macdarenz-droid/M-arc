@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=5c5180b18f1d03495a96fcd2cacaaa0099041e68862a47b7729d5024d2a09f51
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=84feda5e34e6f2e3903386bd0d0d013c489e025407ab9c4c9090d370e8766db3
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_hammer_curl",

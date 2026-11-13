@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=8df3bfb00078a4c67f0037c10ff0600ed53f4312dbfa4917960500d2ad85d983
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=b840a1467d19afb6c4d631fe8e7a6758243cd53f134d9a858b9b575d3bda63b3
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_medicine_ball_slam",

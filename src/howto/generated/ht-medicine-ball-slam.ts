@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=5e1b964e5576ae24049f365f8dd320823879b04d97301723d7c6832f5fdfc349
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=507e2bb300103bcca383f38bd43929bbcc0d4b99afb9d7f1def7e2e27c9dc0b6
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_medicine_ball_slam",
   name: "Medicine Ball Slam",
-  hashes: { inputsSha256: "5e1b964e5576ae24049f365f8dd320823879b04d97301723d7c6832f5fdfc349", golden: "40d6af26e650158eab5d5809607bdcd4870f66f17b451c77a10ebf924d06377a" },
+  hashes: { inputsSha256: "507e2bb300103bcca383f38bd43929bbcc0d4b99afb9d7f1def7e2e27c9dc0b6", golden: "40d6af26e650158eab5d5809607bdcd4870f66f17b451c77a10ebf924d06377a" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

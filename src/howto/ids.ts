@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/ids.mjs). inputsSha256=185aae2e496135185f95cfcd8eb6001c4aba48c867480b37f3d338f6b45a4ffb
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/ids.mjs). inputsSha256=0ed5c8be46664c53030c4f251c3de72d60897bf0b10d2d97f2674e25ae926b5b
 // Main-bundle How-to module (plan 2.9, 5.2): 4-char hashes of the shipped ids, hinted ids first.
 export type HowToId = string & { readonly __howTo: true };
 export const HOWTO_LABEL = "How to do it";

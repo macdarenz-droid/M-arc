@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=bf9ffbcb75408a919d909584be01df04bccd13c59198d95d6543f84f52f437e8
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=59d86a356fc502c473f3a7163978a05146da8cfc34356b0707f84092bee0e2dd
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_hanging_leg_raise",

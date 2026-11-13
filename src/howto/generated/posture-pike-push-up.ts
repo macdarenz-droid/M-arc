@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=e5d762e67a1ea1c2ac317cf4812e20fe5ef4700b5cfcfeee081326379641fe25
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=68081fac2b24fe133c525f802fac125538d6c9935247ce2d92e2a0d9f1d492de
 // The pike-push-up posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-pike-push-up.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

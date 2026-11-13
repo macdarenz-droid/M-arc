@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=5edebde0dbfbc82b1b87b6f2334cbf77c559e3efc0f3605e9515081b3b23a726
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=c4a618275294812b6513ddad3d85142b6c0fbfdc1ce6d44fb874ea2905d3a69b
 // The reverse-lunge posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-reverse-lunge.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives
