@@ -7,8 +7,6 @@
         "lib_preacher_curl",
         "lib_bayesian_cable_curl",
         "lib_dumbbell_overhead_triceps_extension",
-        "lib_cross_body_hammer_curl",
-        "lib_wrist_curl",
         "lib_hammer_curl",
         "lib_alternating_dumbbell_curl",
         "lib_single_arm_triceps_pushdown",
@@ -30,13 +28,6 @@
     },
     "lib_dumbbell_overhead_triceps_extension": {
       "optionsKey": "dumbbell_overhead_triceps_extension"
-    },
-    "lib_cross_body_hammer_curl": {
-      "optionsKey": "cross_body_hammer_curl",
-      "pair": "curl-dumbbell-neutral"
-    },
-    "lib_wrist_curl": {
-      "optionsKey": "wrist_curl"
     },
     "lib_hammer_curl": {
       "optionsKey": "hammer_curl"

@@ -139,7 +139,8 @@ const MISTAKES = [
 const RISKS = [
   { key: 'face', text: 'Dumbbell over the face: grip it securely and use a spotter.', claim: CL.face },
   { key: 'dropped', text: 'In US hospital data, dropped weights are the top cause of lifting injuries.', claim: CL.c19 },
-  { key: 'jumps', text: 'Small weight jumps load the shoulders hard. Start light, add weight in small steps.', claim: CL.jumps },
+  // W8b fix round (#417 6856272493, L6): c12 names the jump as the danger at the bottom; 13 words (risk cap 14).
+  { key: 'jumps', text: 'Even small weight jumps load the shoulders hard at the bottom. Start light.', claim: CL.jumps },
 ];
 
 export default {

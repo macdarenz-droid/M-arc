@@ -1605,3 +1605,34 @@ describe('LIB-SHIP W7 F-PAIN-NAMES: feel-row labels name places, not part ids', 
     expect(labelProblems(page, 'dead-bug', ids)).toEqual(['dead-bug-row-low-back: raw part id lower-back-erectors-left']);
   });
 });
+
+/* ------------------------------------------------------- LIB-SHIP W8b fix round (W8b layers panel, #417 6856272493) */
+// dumbbell_pullover L6 [5,3,3]: the 'jumps' risk read as if small steps were the danger. The line restates card c12
+// ("Start light, and add weight in small steps: small jumps greatly increase the load on the shoulders at the bottom"):
+// the jump is the danger, at the bottom; start light is the fix. The risk stays within the library lint's 14 words.
+describe('LIB-SHIP W8b D-W8B-FIX L6: dumbbell_pullover\'s weight-jump risk names the jump as the danger (c12)', () => {
+  const JUMPS = 'Even small weight jumps load the shoulders hard at the bottom. Start light.';
+  const problems = async (risks: any[]) => {
+    const CL = await import(/* @vite-ignore */ url('tools/plates/layers/artifact/copy-lint.mjs'));
+    const r = risks.find(x => x.key === 'jumps'), bad: string[] = [];
+    if (!r) return ['no jumps risk'];
+    if (r.text !== JUMPS) bad.push(`jumps text ${JSON.stringify(r.text)}`);
+    if (!/\bat the bottom\b/.test(r.text) || !/^Even small weight jumps\b/.test(r.text)) bad.push('the jump is not named as the danger at the bottom (c12)');
+    for (const s of CL.sentences(r.text)) if (s.split(/\s+/).length > CL.MAX_SENTENCE_WORDS) bad.push(`sentence over ${CL.MAX_SENTENCE_WORDS} words: ${s}`);
+    if (!/'c12'|c12/.test(JSON.stringify(r.claim))) bad.push('claim is not c12');
+    return bad;
+  };
+  const risks = async () => (await import(/* @vite-ignore */ url('tools/plates/library/howto/lib_dumbbell_pullover.howto.mjs'))).default.risks;
+  it('the jumps risk is the c12 wording, each sentence within the copy lint, and the sheet lints clean', async () => {
+    expect(await problems(await risks())).toEqual([]);
+    const [L, shared, BB, M] = await Promise.all(['tools/plates/library/lint/index.mjs', 'tools/plates/layers/howto/shared.mjs',
+      'tools/plates/library/shared/back-box.mjs', 'tools/plates/library/howto/lib_dumbbell_pullover.howto.mjs'].map(p => import(/* @vite-ignore */ url(p))));
+    expect(L.lintLibraryRow(M, shared, { extraBoxes: { back: BB.backBox() }, boxKeys: { back: BB.BACK_BOX_KEY } })).toEqual([]);
+  });
+  it('mutations: the panel-failed wording, a sentence over 15 words and a dropped risk are red', async () => {
+    const rs = await risks(), set = (text: string) => rs.map((r: any) => (r.key === 'jumps' ? { ...r, text } : r));
+    expect(await problems(set('Small weight jumps load the shoulders hard. Start light, add weight in small steps.'))).toContain('the jump is not named as the danger at the bottom (c12)');
+    expect((await problems(set('Even small weight jumps load the shoulders very hard at the bottom of each and every single rep. Start light.'))).some(p => p.startsWith('sentence over 15 words'))).toBe(true);
+    expect(await problems(rs.filter((r: any) => r.key !== 'jumps'))).toEqual(['no jumps risk']);
+  });
+});
