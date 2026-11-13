@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=8faa7771d0a25d3afc0dc9c61da5801ed8ad31af18736331d98e6b196595d144
+{
+  "id": "lib_dumbbell_pullover",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/dumbbell_pullover.json",
+    "rev": 1
+  },
+  "sources": [
+    "bm-pullover",
+    "strengthlog-pullover",
+    "kerr2010",
+    "kolber2010",
+    "acsm2009",
+    "nhs-shoulder-pain",
+    "nhs-elbow-pain"
+  ],
+  "riskFlags": [
+    "shoulder",
+    "elbow"
+  ]
+}

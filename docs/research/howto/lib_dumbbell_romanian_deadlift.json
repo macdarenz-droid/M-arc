@@ -1,0 +1,23 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=06a256da6f581ca227a1ce253a0c9beaf8451b4a8d63bbc7e898a85d3c1ef2ba
+{
+  "id": "lib_dumbbell_romanian_deadlift",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/dumbbell_romanian_deadlift.json",
+    "rev": 1
+  },
+  "sources": [
+    "sweat-db-rdl",
+    "fitbod-db-rdl",
+    "sl-db-rdl",
+    "martinfuentes2020",
+    "macdougall1985",
+    "acsm2009",
+    "sl-deadlift",
+    "baechle-grip",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}
