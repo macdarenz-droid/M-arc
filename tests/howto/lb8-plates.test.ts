@@ -286,7 +286,9 @@ describe('LIB-18 A9: nothing ships (D-LIB18-AHEAD)', { timeout: T }, () => {
     expect(batchProblems(dirFiles(dir).filter(([f]) => !mine.includes(f)))).toEqual(['lb09.json: lying_leg_curl', 'lb10.json: lying_leg_curl']);
     for (const f of mine) expect([f, existsSync(join(dir, f))]).toEqual([f, true]);
     const g = readJson(join(dir, 'lb08.json'));
-    expect(g.entries.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)).toEqual(ON_ROWS.map(i => `lib_${i}`));
+    // LIB-PLATEFIX-5 (D-PF5-PINS, D-PF5-PENDHEEL #419 6852366101): was ON_ROWS once each, now + a second lib_pendulum_squat
+    // (its 'owner' D-OWNER-REPIN plate re-pin, Trace on hip.r, superseding the first) — the append-only re-pin, as lb02/lb05 carry
+    expect(g.entries.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)).toEqual([...ON_ROWS.map(i => `lib_${i}`), 'lib_pendulum_squat']);
     expect(g.entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => e.ids)).toEqual([W7]);
     expect(named('lb08.layers.html', readFileSync(join(dir, 'lb08.layers.html'), 'utf8'))).toEqual(W7.map(i => i.slice(4)));
   });
@@ -958,6 +960,10 @@ describe('LIB-18 A17: sizes and trace points are fixed in lb8/sizes.json and nev
         if (mod.default?.trace?.point !== r.value) out.push(`trace: spec ${mod.default?.trace?.point} != sizes.json ${r.value}`);
         // D-LIB18-TRIM: the trim is the trace row's, its basis the clone source's trim (file:line) or [10, 12]
         if (!mod.default?.trace || JSON.stringify(mod.default.trace.trim) !== JSON.stringify(r.trim)) out.push(`trace trim: spec ${JSON.stringify(mod.default?.trace?.trim)} != sizes.json ${JSON.stringify(r.trim)}`);
+        // LIB-PLATEFIX-5 (D-PF5-PINS, D-PF5-PENDTRIM, #419): one named exception, pendulum_squat's trim exactly [6, 6] with the
+        // D-PF5-PENDHIP reason (the arrowhead on the drawn end hip); every other spec, and any other pendulum trim, as before.
+        else if (mod.default?.id === 'pendulum_squat' && JSON.stringify(r.trim) === '[6,6]' && /^D-PF5-PENDHIP\b.*arrowhead ends on the drawn end hip/.test(r.basis)) { /* D-PF5-PENDTRIM */ }
+        else if (/D-PF5-PENDHIP|arrowhead ends on the drawn end hip/.test(r.basis)) out.push('trace trim: D-PF5-PENDTRIM is pendulum_squat [6, 6] only');
         else if (!/trim \[[\d, ]+\]: the clone source's trim, \w+\.mjs:\d+|trim \[10, 12\]/.test(r.basis)) out.push('trace trim: no clone-source basis');
         continue;
       }
@@ -980,6 +986,16 @@ describe('LIB-18 A17: sizes and trace points are fixed in lb8/sizes.json and nev
     const c = M.seated_calf_raise;
     expect(sizeProblems({ ...c, default: { ...c.default, trace: { ...c.default.trace, point: 'toe.r' } } }, sizes.ids.seated_calf_raise)).toEqual(['trace: spec toe.r != sizes.json heel.r']);
     expect(sizeProblems({ ...m, default: { ...m.default, trace: { ...m.default.trace, trim: [10, 12] } } }, t)).toEqual(['trace trim: spec [10,12] != sizes.json [6,8]']);
+  });
+  // LIB-PLATEFIX-5 (D-PF5-PENDTRIM, #419): the named exception's reds.
+  it('D-PF5-PENDTRIM mutations: another spec using the reason, a pendulum trim other than [6, 6], and a bare pendulum basis are red', () => {
+    const p = M.pendulum_squat, pt = JSON.parse(JSON.stringify(sizes.ids.pendulum_squat)), why = pt.trace.basis;
+    expect(sizeProblems(p, pt)).toEqual([]);
+    const m = M.hip_thrust, t = JSON.parse(JSON.stringify(sizes.ids.hip_thrust));
+    expect(sizeProblems(m, { ...t, trace: { ...t.trace, basis: why } })).toEqual(['trace trim: D-PF5-PENDTRIM is pendulum_squat [6, 6] only']);
+    const p68 = { ...p, default: { ...p.default, trace: { ...p.default.trace, trim: [6, 8] } } };
+    expect(sizeProblems(p68, { ...pt, trace: { ...pt.trace, trim: [6, 8] }, TRACE_TRIM: { ...pt.TRACE_TRIM, value: [6, 8] } }).filter(x => x.startsWith('trace trim'))).toEqual(['trace trim: D-PF5-PENDTRIM is pendulum_squat [6, 6] only']);
+    expect(sizeProblems(p, { ...pt, trace: { ...pt.trace, basis: 'trim [6, 6]' } })).toEqual(['trace trim: no clone-source basis']);
   });
 });
 
@@ -4382,9 +4398,11 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
       expect(s().tempo).toEqual(CARD().tempo);
     });
     it('mutation: a Hold added (pause 0) is red', () => { expect([...s().tempo, { phase: 'Hold', s: 1 }]).not.toEqual(tempoOf()); });
-    it('D-LIB18-TRACE, -TRIM: the Trace follows the knee (plate.frames) with the clone source\'s trim [6, 8] (leg_press.mjs:132)', () => {
-      expect(s().trace).toEqual({ point: 'knee.r', trim: [6, 8] });
-      expect(CARD().plate.frames).toMatch(/Trace follows the knee/);
+    // LIB-PLATEFIX-5 (D-PF5-PINS, PLAN RULED #419 6849391955; D-PF5-PENDHIP): was { point: 'knee.r', trim: [6, 8] } and
+    // /Trace follows the knee/ (D-LIB18-TRACE, -TRIM); research 207b8de8 re-words plate.frames to the pendulum arc (c23).
+    it('D-PF5-PENDHIP: the Trace follows the hip on the pendulum arc (plate.frames, c23) with trim [6, 6] (the arrowhead on the end hip)', () => {
+      expect(s().trace).toEqual({ point: 'hip.r', trim: [6, 6] });
+      expect(CARD().plate.frames).toMatch(/Trace follows the machine's pendulum arc \(c23\)/);
     });
     /** PQ-H3 node-side (qa/node.mjs nodeMetrics), against qa/envelope.json, at the ruled sizes. The Mistake is HELD
      *  (deviation below deviationMin at HEEL_LIFT 12; D-LIB18-SIZE: never enlarged); the Trace passes. */
