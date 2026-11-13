@@ -842,6 +842,18 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-13 ~12:50 UTC.** Weekly meter 0.11 (12:34).
+  - **Train 89 merged:** #418 F-W8A-ASSISTED → main `a4796243`, which frees assisted_pull_up.
+  - **#416** (L2-A5 12 s timeout, the root cause of the two main gate reds) merged earlier as train 87.
+  - **Lanes (4 LIB):**
+    - **W8b #417** (session_018Pv5bLh6s6DccoWNSqfdyZ): building toward LAYERS READY with its dry run.
+    - **PF5 #419** (session_018Pv5bMLcrWjZLsE4GBfSFj): the panels are done.
+      - Rulings: D-PF5-PENDHEEL (→ F-PEND-HEEL); D-PF5-HACKHOLD (→ F-HACK-PAD); D-PF5-HANDPAIR (no app bug; → F-LAYERS-HANDPAIR); D-PF5-DIAMONDCAM (shared floor camera, and the diamond hand is a GAP); side_plank abs accepted.
+      - The round-2 crop check passed @ `50a35bb6` (6853178277).
+      - Next: pins, READY. D-PF5-JJ: jumping_jacks goes in only if #420 has merged; otherwise it is held as F-JJ-TEXTZOOM.
+    - **F-HT10-TEXTZOOM #420** (session_018Pv5bNVVRRm5xrv6yizsU1): PLAN accepted; building.
+    - **F-SHEET-COPY #423** (session_018Pv5bN2SFFk2tUm3AbNFBB; rebranched from #421 after an untagged MANIFEST commit): COPY APPROVED @ `a4ed9e22`. It re-pins after W8b and PF5 merge. Its gate-line edits need AGENTS exception 5 (supervisor PR **#422**, CI running), which merges first.
+  - **Next lane:** F-W8A-HOLDS part 3 (F-HAND-PALMFLAT-SIZE, label only).
 - **Update 11-13 ~08:45 UTC: RESUMED after the weekly reset.** The meter read 0 at 08:11; the next reset is Fri 11-20 08:00 UTC, and the 80 % pause rule holds. The tick is re-enabled with a refreshed prompt, and the monitor is re-armed.
   - The APK for train 88 was sent on 11-10 (gate 42898934120; AAB 37.1.0.195, artifact 13801947024). Whether the owner published is unknown.
   - **Lanes (4 LIB, the maximum):**
