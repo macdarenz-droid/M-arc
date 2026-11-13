@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=9cc41e62bb411a5afb684e82b206174cbb4311a6dde5814ea204e3c033ef666e
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=532f480a75fe56b7cf27afa9afa498f61d98e543aaff561c4161a2e5cf3832f6
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_straight_arm_pulldown",
