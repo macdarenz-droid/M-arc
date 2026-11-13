@@ -186,8 +186,8 @@ export default {
       claim: C(['CONSENSUS'], [SW, FB], 'c1, c4') },
     { kind: 'brace', text: 'Shoulder blades down and back. Breathe in, brace slightly before each rep.',   // c11 'brace your core slightly' (W4 recheck 2)
       claim: C(['CONSENSUS'], [SW, SL], 'c2, c11') },
-    // W4 D-TEXT-PRINTED: posture c6 (knees behind the toes) and c7 (eyes to the floor) moved into this step.
-    { kind: 'posture', text: 'Knees behind the toes. Eyes to the floor as you lower.', claim: C(['CONSENSUS'], [SW], 'c6, c7') },
+    // W4 D-TEXT-PRINTED: posture c6 (knees behind the toes) and c7 (eyes to the floor) moved into this step. W8b: kind 'position' (a SetupStepKind; 'posture' failed the app typecheck in the W8b dry run)
+    { kind: 'position', text: 'Knees behind the toes. Eyes to the floor as you lower.', claim: C(['CONSENSUS'], [SW], 'c6, c7') },
     { kind: 'adjust', text: 'Want more range? Stand on a plate.', claim: CL.c12 },
     { kind: 'load', text: 'Add weight in small steps once you beat your target reps.', claim: CL.c21 },
   ],
