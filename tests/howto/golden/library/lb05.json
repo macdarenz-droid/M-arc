@@ -528,6 +528,47 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lb05 plates page with straight_bar_triceps_pushdown's approved PUSHDOWN re-clone and pf12 R4 leader fix (pf12 + crop check passed, #410 6752705237); cable_curl held at pf14 (#410 6756215536), its spec back to main's bytes, so every other plate is byte-equal to main de91dd21's page 7a2d5311.",
       "supersedes": 0,
       "prev": "aef9a57ff8aaf7715cfe551ab81c9a6f37dec539f10b50289f7bfe5f775c716a"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_cable_curl",
+      "src": "library/specs/cable_curl.mjs",
+      "slug": "cable-curl",
+      "prefix": "cable-curl",
+      "chromeId": "cable-curl",
+      "exemptions": [
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "e7bba6a811844b456813b5e123b7de6b6aef87fa059fe6d5478a0d3dcf713400",
+        "normalOverlay": "5bdf60a30bfadea64e1b4f1b3e01c8418ed585ef3904814fcf9efdc022c53f0d",
+        "mistakeSvg": "5bb1621ae96eeb7df3af311f9d7431607a83827215615fbfe139fdbdeaa308b0",
+        "mistakeOverlay": "dca9ffb85af31565b5c48a4d7efb0c4dbadc0c947837bf960c579ac509a2cf02",
+        "tells": "5ca2dca05a483d50450554fda1874c76ad12597445482884932e1c0a9a5e023c",
+        "tempo": "73dd8f8f94901608bf64b800d986bfb05e0019ffdec860438d9058b37cbd7634",
+        "cues": "9e5bcb0a7b89a6fab5ee22e2eae925159f18e31e6421245760cf5dbd0a78d761",
+        "alt": "471270d65cdec303b31fa126c20a0e521961174b58c1495e5fc11cb55f1c9963",
+        "mistakeAlt": "37772e1fc5273a70c86482d6aca38cd019cd21ffcf690f5f5b48bdbf3f4e48bc"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6851987591 @ f487c7971ddae190542e75e66abe2508c77234aa",
+      "date": "2026-11-13",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-5 item 3 cable_curl (the elbow tell, F-CURL-ELBOWZOOM): plates panel approved in round 1 (#419 6851987591 @ f487c797); its sheet cleared by D-PF5-HANDPAIR (#419 6852356177).",
+      "supersedes": 2,
+      "prev": "0dfb5a868a41ffaae776e2dc421b158b21e61ffe50f089de7565743e27463bd9"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "eb7efc2cbe57e33d8a34f7ef0ebf6cf47f34ccb1f71f5aabd6cac34c50a835b2",
+      "bytes": 1430145,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6851987591 @ f487c7971ddae190542e75e66abe2508c77234aa",
+      "date": "2026-11-13",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF5 lb05 plates page with cable_curl's approved plate (#419 6851987591); the other 14 plates are byte-equal to their pinned fragments (built twice, same bytes).",
+      "supersedes": 18,
+      "prev": "de1b9264ce2e3f5e5131ad1ccd7fb1c07a26743fc85c0c2fdece156a1166f74d"
     }
   ]
 }

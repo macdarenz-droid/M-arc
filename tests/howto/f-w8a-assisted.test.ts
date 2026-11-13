@@ -9,6 +9,7 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, wri
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { PF5_MAIN, restorePF5 } from './platefix5-pins';   // LIB-PLATEFIX-5 (D-PF5-PINS): put PF5's own [golden update] keys/entries back to main before the A1 blanked compare
 
 const ROOT = process.cwd();
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
@@ -137,7 +138,13 @@ describe('F-W8A-ASSISTED (Q1): v_up, ghosts off with a Mistake zoom, on a scratc
 // A1 MANIFEST (F-PAIR-FAULTS A2 form): MANIFEST.json, made by manifestOf in this card's [golden update] commit, moves only
 // build-layers-page.mjs's key. With that key blanked in every row, it is main e15e1c65's MANIFEST.json with the same blank
 // (134 rows carry the key), and each row pins the file's current sha256.
+// LIB-PLATEFIX-5 (D-PF5-PINS): PF5's own [golden update] also moves its re-pinned keys and entries; they are put back to
+// main a4796243's values first (restorePF5, plus crop.mjs which restorePF5 leaves to the D-CROP-PIN tests), so the blanked
+// hash is still main's MANIFEST_BLANKED_MAIN and this card's "only build-layers-page.mjs moved" pin, measured on main, holds.
 const MOVED = 'tools/plates/library/build-layers-page.mjs';
+const CROP = 'tools/plates/library/render/closeup/crop.mjs';
+const CROP_MAIN = '9c1fe67d96ce08f6f5df084ef3efe692260d09be9ca60eaf254a899c70dc03b3';   // crop.mjs on main a4796243 (PF5 moved it; the 4 D-CROP-PIN tests pin it to the current file instead)
+const toMain = (m: any) => { restorePF5(m); for (const r of Object.values<any>(m.rows)) if (CROP in r.files) r.files[CROP] = CROP_MAIN; return m; };
 const MANIFEST_BLANKED_MAIN = 'ab3f030b4f4be65d64ea3d0431000526c88e1feb5c48882c113605c9fa21ad95';
 const blanked = (m: any) => { const c = structuredClone(m); let n = 0; for (const r of Object.values<any>(c.rows)) if (MOVED in r.files) { r.files[MOVED] = ''; n++; } return { n, sha: sha(JSON.stringify(c)) }; };
 describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
@@ -145,12 +152,12 @@ describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
   it('only build-layers-page.mjs\'s key differs from main, and it pins the current file', () => {
     const m = raw(), now = sha(readFileSync(join(ROOT, MOVED)));
     for (const [id, r] of Object.entries<any>(m.rows)) if (MOVED in r.files) expect([id, r.files[MOVED]]).toEqual([id, now]);
-    expect(blanked(m)).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });
+    expect(blanked(toMain(m))).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });   // LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)) (PF5's re-pinned keys/entries put back to main first); same hash and n
   });
   it('red: any other key moved', () => {
-    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1)!;
-    const other = Object.keys(r.files).find(k => k !== MOVED)!;
+    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && !(k in PF5_MAIN)))!;
+    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && !(k in PF5_MAIN))!;   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
     m.rows[id].files[other] = '0'.repeat(64);
-    expect(blanked(m).sha).not.toBe(MANIFEST_BLANKED_MAIN);
+    expect(blanked(toMain(m)).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash
   });
 });

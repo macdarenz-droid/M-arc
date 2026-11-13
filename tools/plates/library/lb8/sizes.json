@@ -1102,10 +1102,10 @@
    "TRACE_TRIM": {
     "value": [
      6,
-     8
+     6
     ],
     "unit": "px",
-    "basis": "convention: leg_press.mjs:132, the clone source's Trace trim (D-LIB18-TRIM; the trace row carries it too)"
+    "basis": "D-PF5-PENDHIP (LIB-PLATEFIX-5 item 2): trimmed so the arrowhead ends on the drawn end hip (it sits 6 px past the last kept sample); was [6, 8], leg_press.mjs:132 (D-LIB18-TRIM). The trace row carries it too"
    },
    "PAD_Y": {
     "value": 0.842,
@@ -1153,11 +1153,11 @@
     "basis": "solved: the Mistake's ball lift (bisection) that rests the toe pad (the lowest forefoot outline point, body.mjs FOOT_SIDE) on the platform at HEEL_LIFT (reverse_lunge.mjs:19-22) (solves to 0.0064)"
    },
    "trace": {
-    "value": "knee.r",
-    "basis": "D-LIB18-TRACE: plate.frames 'Trace follows the knee' (c4 'bending your knees'); trim [6, 8]: the clone source's trim, leg_press.mjs:132 (D-LIB18-TRIM, fixed before any measurement)",
+    "value": "hip.r",
+    "basis": "D-PF5-PENDHIP: plate.frames 'Trace follows the machine's pendulum arc (c23)'; the hip rides the carriage's back pad (c3), so its path is the arc about the pivot; trim [6, 6] (TRACE_TRIM row) so the arrowhead ends on the drawn end hip (D-PF5-PENDTRIM). Was knee.r (D-LIB18-TRACE)",
     "trim": [
      6,
-     8
+     6
     ]
    }
   },

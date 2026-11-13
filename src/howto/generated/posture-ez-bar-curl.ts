@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=a74c0e48933c6b60d1d6308728b4ddeed86ca89d1f698fde94cc51bf1db702ca
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=811fe4687b8cddfd1a92a1a6e701bdafdc6863fa0f0797ee3ea0882d97c835e9
 // The ez-bar-curl posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-ez-bar-curl.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

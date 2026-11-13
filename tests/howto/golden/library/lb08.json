@@ -273,6 +273,48 @@
       "supersedes": null,
       "why": "W7 layers approved for the flip set (D-PF10-W7JOIN; supervisor RESUME 2026-11-09): the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception. The page holds exactly the 6 shipped ids, each card byte-equal to its card in the lb08 page judged at a3e5b6e7; the page head loses only the held ids' rules. Edited in place under D-REPIN-UNMERGED for D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge held (its open sheet is over the A3 S0 cap, F-GLUTEBRIDGE-S0); the page holds the 5, each card byte-equal to the c9d24c6d build.",
       "prev": "f56c02760c797efb5eaf8ccdb51eecc926a725ed901a2089571255a8a00efd81"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_pendulum_squat",
+      "src": "library/specs/pendulum_squat.mjs",
+      "slug": "pendulum-squat",
+      "prefix": "pendulum-squat",
+      "chromeId": "pendulum-squat",
+      "exemptions": [
+        "F5",
+        "F7"
+      ],
+      "fragments": {
+        "normalSvg": "19c2e4a1db08ad6318ac86ea5da1efb32f6c85eae9d89a200fc278db86e39017",
+        "normalOverlay": "22c1553515335ed9757e87adde27ab83274651f2f3a02b7841b1cd88b351bb8f",
+        "mistakeSvg": "3b4eb3279fe4806842c53dc8d425a914031fb7eb276730a8731877355717684c",
+        "mistakeOverlay": "895fd8e664a353ceaed318a97c38de6eff2da6102c221d5ae36f875607ce0da2",
+        "tells": "dc9fb3e90e6dc5521801956e2d0a995a7c1ec50942c47447d8420fa845be9fc6",
+        "tempo": "f9c4c9dce39e34c295af801c2266d8bc5126cea5e665bad803042cfc195501b4",
+        "cues": "822687bb3ed779a5b0d948145064ed53c5516842b6a83dccddae079f32fe8b94",
+        "alt": "dd0087db65f961288897dd5278c768b54bb799a7cd3ac62f050c45073eb715db",
+        "mistakeAlt": "8fbf3fcbf484406213d888c31c26cdd2513445ed3524358a4d2fab0b3a463f79"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6852366101 @ f487c7971ddae190542e75e66abe2508c77234aa",
+      "date": "2026-11-13",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-5 item 2 pendulum_squat (D-PF5-PENDHIP: the Trace on hip.r, the pendulum arc, c23): panel round 1 (#419 6851987591 @ f487c797) approved its layers sheet; D-PF5-PENDHEEL (#419 6852366101) keeps the Trace and pins it, and the R5 heel finding goes to F-PEND-HEEL; fix-round check passed (#419 6853178277).",
+      "supersedes": 2,
+      "prev": "afde1c9503dafcde77f1e5bc5b7996f40bc0436e972f94bd3d1c6d6d6a4e2193"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "c1e16b4e0358e9cb3999ff8def614d86ea0c4d8e62f7afdb402c5e20e8ee31f3",
+      "bytes": 1239100,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6852366101 @ f487c7971ddae190542e75e66abe2508c77234aa",
+      "date": "2026-11-13",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF5 lb08 plates page with pendulum_squat's Trace on hip.r (D-PF5-PENDHEEL, #419 6852366101); the other 7 plates are byte-equal to their pinned fragments (built twice, same bytes).",
+      "supersedes": 0,
+      "prev": "daefce9b21237cf24dbf35881af650be4e6e263f346cf4c36951c60015977c56"
     }
   ]
 }

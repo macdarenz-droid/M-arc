@@ -93,6 +93,29 @@ const LOCK_D = (() => {
   return (a + b) / 2;
 })();
 const LOCK = runOn(LOCK_D);
+// LIB-PLATEFIX-5 (D-PF4-W67LATER; W7 panel L5): the close-up's Right is the start pose run down the rail to SOFT_BEND
+// (critic c1's 15-20 deg, still "slight", card c7), so it reads apart from the locked Wrong; the plate start keeps
+// KNEE_TOP. SOFT_BEND (D-SHIP-DRAWVAL) is a zoom-only drawing size; no number from it appears in user copy.
+const SOFT_BEND = 18;
+const SOFT_D = (() => {
+  let a = -0.05, b = 0;
+  if (!(kneeBend(landmarksOf(runOn(a), H)) > SOFT_BEND && kneeBend(landmarksOf(runOn(b), H)) < SOFT_BEND)) throw new Error('lib_hack_squat: no bracket for the soft knee');
+  for (let i = 0; i < 50; i++) { const m = (a + b) / 2; if (kneeBend(landmarksOf(runOn(m), H)) > SOFT_BEND) a = m; else b = m; }
+  return (a + b) / 2;
+})();
+const SOFT = runOn(SOFT_D);
+// The knee guides (zoom `outlines`, both crops): a thin straight hip-to-ankle line (the soft knee bends off it, the locked
+// knee lies on it) and, where the knee bends (more than 5 deg: the Right only), an angle mark at the knee from the thigh
+// line run on past the knee to the shin, KNEE_ARC m out, no number. KNEE_ARC is a drawing size (D-SHIP-DRAWVAL).
+const KNEE_ARC = 0.08;
+const kneeArc = lm => {
+  const k = lm['knee.r'], u = sub(k, lm['hip.r']), v = sub(lm['ankle.r'], k), nu = Math.hypot(...u), nv = Math.hypot(...v);
+  const a = u.map(x => x / nu), b = v.map(x => x / nv), th = Math.acos(a.reduce((s, x, i) => s + x * b[i], 0));
+  const w = sub(b, mul(a, Math.cos(th))), nw = Math.hypot(...w), e = w.map(x => x / nw);
+  return Array.from({ length: 9 }, (_, i) => { const t = th * i / 8; return add(k, mul(add(mul(a, Math.cos(t)), mul(e, Math.sin(t))), KNEE_ARC)); });
+};
+const kneeGuides = lm => ({ points: {}, lines: [{ pts: [lm['hip.r'], lm['ankle.r']], kind: 'ridge' },
+  ...(kneeBend(lm) > 5 ? [{ pts: kneeArc(lm), kind: 'arc' }] : [])] });
 export const stills = {
   start: { pose: START },
   end: { pose: END },
@@ -126,9 +149,12 @@ const zooms = [
   {
     key: 'knee-lock', chip: 'Knees', heading: 'Knee lockout', kind: 'posture',
     // claims: Right and Wrong (callout, caption, alt) card c7
+    // LIB-PLATEFIX-5: Right the soft knee (SOFT, above), Wrong locked; the hip-to-ankle guide in both, the angle mark on
+    // the Right (kneeGuides; page css outlines)
     crop: { center: { at: 'knee.r', pose: 'right', off: [0, 0] }, sizePx: 200 },
-    right: 'start',
+    right: { base: 'start', pose: SOFT },
     wrong: { base: 'start', pose: LOCK, solid: true },
+    outlines: kneeGuides,
     callout: {
       right: { text: 'Slight bend', anchor: 'knee.r' },
       wrong: { text: 'Locked', anchor: 'knee.r' },
