@@ -109,12 +109,16 @@ const PINCHED_POSE = bladesPose(PINCH), ROLLED_POSE = bladesPose(ROLL);
 // spot and the rolled shoulder keeps its height, and the wrist re-solved so the palm lies level on its grip. The stills
 // are unchanged. DRAWING VALUES (D-SHIP-DRAWVAL): BACK 10 and NECK -20 are the PF5 PLAN's trial sizes (no card gives one);
 // no number from them appears in user copy.
-const BACK = 10, NECK = -20, LM_ROLLED = landmarksOf(ROLLED_POSE, H);
+// PF5 fix round (#419 6851987591 L5: the Wrong read as the chest sinking): the rolled shoulder is also carried forward,
+// toward the head past the wrist line: the blades ride up the ribs ELEV cm with their ROLL, and the body leans forward
+// over the toes (the ankles re-solved, the toe tips on their spot) so the shoulder sits AHEAD m further ahead of the
+// wrist than the Right's. DRAWING VALUES: ELEV 8, AHEAD 0.06 (no card gives a size).
+const BACK = 10, NECK = -20, ELEV = 8, AHEAD = 0.06, LM_ROLLED = landmarksOf(ROLLED_POSE, H), SH_Z = landmarksOf(PINCHED_POSE, H)['shoulder.r'][2];
 const roundedPose = q => ({ ...ROLLED_POSE, root: { ...ROLLED_POSE.root, at: [ROLLED_POSE.root.at[0], q.y, q.z], tilt: q.tilt },
-  trunk: { flex: [0, 0, BACK, BACK] }, neck: NECK, wrist: q.w });
-const ROUNDED_POSE = roundedPose(solve({ y: ROLLED_POSE.root.at[1], z: ROLLED_POSE.root.at[2], tilt: ROLLED_POSE.root.tilt, w: ROLLED_POSE.wrist },
+  scap: { elev: ELEV, pro: ROLL }, trunk: { flex: [0, 0, BACK, BACK] }, neck: NECK, ankle: q.a, wrist: q.w });
+const ROUNDED_POSE = roundedPose(solve({ y: ROLLED_POSE.root.at[1], z: ROLLED_POSE.root.at[2], tilt: ROLLED_POSE.root.tilt, a: 0, w: ROLLED_POSE.wrist },
   roundedPose, lm => [lm['toe.r'][1] - LM_ROLLED['toe.r'][1], lm['toe.r'][2] - LM_ROLLED['toe.r'][2],
-    lm['shoulder.r'][1] - LM_ROLLED['shoulder.r'][1], lm['wrist.r'][1] - WY]));
+    lm['shoulder.r'][1] - LM_ROLLED['shoulder.r'][1], lm['shoulder.r'][2] - SH_Z - AHEAD, lm['wrist.r'][1] - WY]));
 export const stills = {
   start: { pose: START },
   end: { pose: plateSpec.poses.end },
@@ -153,12 +157,13 @@ const zooms = [
   {
     key: 'shoulder-blades', chip: 'Shoulder blades', heading: 'Shoulder blades', kind: 'posture',
     // LIB-PLATEFIX-5 item 1 (W6 panel, D-PLAN-W8C): the Wrong (rolled shoulder, rounded upper back: ROUNDED_POSE) is drawn
-    // solid over the faded pinched Right (wrong.under, the page's css fade), and a red drop arrow runs from the Right
-    // shoulder down to the rolled one (offsets, plate px, are drawing values).
+    // solid over the faded pinched Right (wrong.under, the page's css fade). Fix round (#419 6851987591 L5): a curved red
+    // arrow rolls over the top of the Wrong shoulder and ends pointing forward (crop guide turn; r, a0, a1 are drawing
+    // values), and a grey dashed line marks the wrist (crop guide width), so the shoulder shows ahead of it.
     crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, 4] }, sizePx: 140 },
     right: { base: 'start', pose: PINCHED_POSE },
     wrong: { base: 'start', pose: ROUNDED_POSE, solid: true, under: true },
-    guides: [{ kind: 'drop', from: { at: 'shoulder.r', pose: 'right', off: [0, -4] }, to: { at: 'shoulder.r', pose: 'mistake', off: [0, 0] } }],
+    guides: [{ kind: 'turn', center: { at: 'shoulder.r', pose: 'mistake' }, r: 34, a0: -150, a1: -65 }, { kind: 'width', at: ['wrist.r'] }],
     callout: {
       right: { text: 'Blades back', anchor: 'shoulder.r' },
       wrong: { text: 'Shoulders forward', anchor: { at: 'shoulder.r', pose: 'mistake' } },   // c4
