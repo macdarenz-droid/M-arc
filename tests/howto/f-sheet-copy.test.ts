@@ -105,7 +105,7 @@ describe('F-SHEET-COPY: sheet headings follow the owner\'s heading rule', () => 
     const arche = readFileSync(join(ROOT, 'src/howto/archetypes.ts'), 'utf8');
     for (const o of ['DISCLAIMER', 'medical advice', 'Risks and when to stop']) if (arche.includes(o)) bad.push(`archetypes.ts: old string "${o}"`);
     expect(bad).toEqual([]);
-  });
+  }, 60_000);   // imports ~234 generated modules: ~3.5 s alone, past vitest's 5 s default under a full parallel run
 
   it('no old string in the app source (HOWTO_LABEL keeps "How to do it" for the Train button)', () => {
     const walk = (d: string): string[] => readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? (e.name === 'generated' ? [] : walk(join(d, e.name))) : /\.(tsx?|css)$/.test(e.name) ? [join(d, e.name)] : []);
