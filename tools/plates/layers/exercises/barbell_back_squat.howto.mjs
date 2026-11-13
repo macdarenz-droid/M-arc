@@ -174,12 +174,12 @@ export const stills = {
 // in A3 so every squat variant applies the same rule. Until then the chip stays off.
 const zooms = [
   {
-    key: 'hand', chip: 'Hand', heading: 'Hand: right and wrong', kind: 'hand',
+    key: 'hand', chip: 'Hand', heading: 'Hand', kind: 'hand',
     hand: {
       right: RIGHT_POSE,
       wrong: [WAITER_TRAY],
       camera: 'side',
-      inset: { label: 'Option: thumb over the bar', pose: THUMB_OVER, drawPose: THUMB_OVER_DRAW, camera: 'side',   // drawPose: mockup
+      inset: { label: 'Thumbless grip', pose: THUMB_OVER, drawPose: THUMB_OVER_DRAW, camera: 'side',   // drawPose: mockup
         crop: { u: [-42, 96], v: [-66, 40] },   // mockup: fist, wrist and the start of the forearm, hand-frame mm
         when: 'If a wrapped thumb bends your wrist back.' },   // mockup: printed beside the inset, under its label
       loadLine: { right: 'guide', wrong: 'force', inset: 'guide' },   // mockup (see the note above RIGHT_POSE)
@@ -196,7 +196,7 @@ const zooms = [
     feelRow: 'wrist',
   },
   {
-    key: 'bar-on-back', chip: 'Bar on back', heading: 'Bar on back: right and wrong', kind: 'posture',
+    key: 'bar-on-back', chip: 'Bar on back', heading: 'Bar on back', kind: 'posture',
     crop: { center: { landmark: 'neck', pose: 'start', dx: -4, dy: 8 }, sizePx: 84 },
     right: 'start',
     wrong: { still: 'bar-neck' },
@@ -216,7 +216,7 @@ const zooms = [
     // this close-up and in setup step 2.
   },
   {
-    key: 'depth', chip: 'Depth', heading: 'Depth: right and wrong', kind: 'posture',
+    key: 'depth', chip: 'Depth', heading: 'Depth', kind: 'posture',
     crop: { center: { landmark: 'hip.r', pose: 'end', dx: 30, dy: -12 }, sizePx: 116 },
     right: 'end',
     wrong: { still: 'short' },
