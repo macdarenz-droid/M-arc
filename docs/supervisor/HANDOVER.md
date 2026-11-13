@@ -842,6 +842,15 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-13 ~20:45 UTC.** Weekly meter 0.20 (19:41).
+  - **Train 91:** #420 F-HT10-TEXTZOOM → main `4ebc6d63` (review PASS 6859976481). No APK: tools and tests only.
+  - **Train 92:** #419 PF5 → main `5b7d6e80` (review PASS 6860694154 @ `463cd9fc`; the train head `2f6f867c` is main only, 83/83 green). No APK: src/ changed only inputsSha256 headers. jumping_jacks is held → F-JJ-TEXTZOOM.
+  - **Lanes (4 LIB):**
+    - **W8b #417** (session_018Pv5bLh6s6DccoWNSqfdyZ): step 4 for the 9, merging main `5b7d6e80` (lb05 re-pin). READY is next, then a reviewer.
+    - **F-SHEET-COPY #423** (session_018Pv5bN2SFFk2tUm3AbNFBB): re-pins after W8b merges.
+    - **F-HAND-PALMFLAT-SIZE #424** (session_018Pv5bKZvjmx5bv8esHcZY8, part 3): PANEL APPROVED by my own check (label "Under shoulder", Q-PFS-4). D-PFS-HEADERS covers 22 header-only src files. READY is next.
+    - **F-HT4-RIGHTPOSE #425** (session_018Pv5bKHt65UUnizshEavpX): part 1 of `verify/f-ht4-rightpose-card.md` (rulings at `abbaa4d0`: D-RP-SPLIT/SCOPE/NOFLIP/PINS). PLAN RULED. It frees dumbbell_shrug.
+  - **Next lane:** F-BSS-REARKNEE (part 2 of the same card; frees bulgarian, with a fresh panel). Then a ship wave flips seated_leg_curl, assisted_pull_up, mountain_climbers, shrug and bulgarian.
 - **Update 11-13 ~15:50 UTC.** Weekly meter 0.17 (15:17).
   - **Train 90 merged:** #422 (AGENTS.md screenshot-gate exception 5, F-SHEET-COPY) → main `123c7299`. No APK (docs only).
   - **W8b #417:**
