@@ -14,6 +14,14 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { PF4_LB02_SHA, PF4_LB02_TEXT, pf4Lb02Spec } from './checks/ship-w8b';
 const ROOT = new URL('../../', import.meta.url).pathname;
+/** LIB-SHIP W8b: the one sheet-card article for `slug` in a layers page (the same cut as the per-card loop below). */
+const cardOf = (html: string, slug: string): string => {
+  const at = html.indexOf(`<article class="sheet-card" id="card-${slug}"`);
+  if (at < 0) throw new Error(`card-${slug}: not in the page`);
+  const t = /<article\b|<\/article>/g; t.lastIndex = at; let d = 0;
+  for (let k; (k = t.exec(html));) { d += k[0] === '</article>' ? -1 : 1; if (!d) return html.slice(at, k.index + 10); }
+  throw new Error(`card-${slug}: not closed`);
+};
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -121,9 +129,21 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
       'incline-dumbbell-press': expect.not.stringMatching(/^6b0aaad5f2fcc0750b5e1ec36ad5eef44bcf71c4c8289b24d891ec0199a03539$/),
       'close-grip-bench-press': '1cd3bcd5a6a8df110adcd0858b8d3c894ecdaeab1bdae4ab3cb49844e86fb9f7',
       'decline-bench-press': expect.not.stringMatching(/^f238d19a2d61924550fc80bec2676e3a80b8c066444c2b6e46f791ffdb058ab3$/),
-      'dumbbell-pullover': '94ba216267e5c7fc216546956484e0e2d997b273dd4a10a1812b50ef2650821e',
+      // LIB-SHIP W8b (D-W8B-FIX L6, #417 panel round 2): pullover's jumps risk line is the ruled fix, so its card is the
+      // committed lb02.layers.html's card (checked below); with the pre-fix line put back it is the old pin 94ba2162, exactly
+      'dumbbell-pullover': 'e7f8e4e27e20adc7c4e93e20bf6ec97aa71d8ed835dbffdacd9e5c183ce1e493',
       OUTSIDE: '752d57aa05dd08fa82104eac3ad081ab7850628f973f3cb0d6cb7b4932e7ba25',
     });
+    const NEW_JUMPS = 'Even small weight jumps load the shoulders hard at the bottom. Start light.';
+    const OLD_JUMPS = 'Small weight jumps load the shoulders hard. Start light, add weight in small steps.';
+    const pull = cardOf(html, 'dumbbell-pullover');
+    expect(pull.split(NEW_JUMPS).length - 1).toBe(1);
+    expect(pull).not.toContain(OLD_JUMPS);
+    expect(sha(pull.replace(NEW_JUMPS, OLD_JUMPS))).toBe('94ba216267e5c7fc216546956484e0e2d997b273dd4a10a1812b50ef2650821e');   // the pre-fix card, unchanged
+    expect(sha(cardOf(readFileSync(join(ROOT, 'tests/howto/golden/library/lb02.layers.html'), 'utf8'), 'dumbbell-pullover'))).toBe(got['dumbbell-pullover']);
+    // reds: any other byte of the card changed, or the old line kept, is not the pin
+    expect(sha(pull.replace('</article>', ' </article>'))).not.toBe(got['dumbbell-pullover']);
+    expect(sha(pull.replace(NEW_JUMPS, `${NEW_JUMPS} `).replace(NEW_JUMPS, OLD_JUMPS))).not.toBe('94ba216267e5c7fc216546956484e0e2d997b273dd4a10a1812b50ef2650821e');
     expect(html).toContain('id="barbell-bench-press-zoom-hips-on-bench"');
     expect(html).toContain('id="decline-bench-press-zoom-feet-hooked"');
   }, 600_000);

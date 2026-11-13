@@ -93,6 +93,27 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
   const W8A_ADDED = ['ace-crunch', 'ace-standing-sp', 'ace-top3-chest', 'bb-crunch', 'hl-pecdeck', 'juker-1998',
     'pinto-2025', 'soncin-2014', 'stronglifts-ohp', 'vg-pecfly'];
   const SOURCES_MAIN_07F5 = '6dfbbc6c2c4d48089b43078b5680f11ba16d9b15e45ea362397e7106c4ae1b70';   // main 07f5fbcf (train 85, W7 #394)
+  // LIB-SHIP W8b (#417 D-SHIP-W8B-STAMP 6856507580, ruling 3): sources.json moves from main 123c7299's 62dfeed2 (W8a's body,
+  // in main's key order) to 4d99a143 (tests/howto/fixtures/generated-bodies.json): exactly the 9 W8b ids' 27 new sources, each
+  // cited by a W8b id's research json, and the W8b cards' later records of 4 shared sources (re-checked dates, sl-pushdown's
+  // cite and url), each cited by a W8b id. With the 27 taken out and the 4 put back as main has them, the body is main's
+  // 62dfeed2. w7Back takes W8b's out first, then W8a's.
+  const W8B_IDS = ['dumbbell_pullover', 'dumbbell_romanian_deadlift', 'wall_sit', 'pistol_squat', 'forward_lunge', 'walking_lunge',
+    'bayesian_cable_curl', 'dumbbell_overhead_triceps_extension', 'single_arm_triceps_pushdown'];
+  const W8B_ADDED = ['ace-fwdlunge-bb', 'ace-lunge-db', 'ace-oh-ext', 'ace-walk-twist', 'alves-2018', 'bb-bayesian', 'bm-pullover', 'cat-wallsit',
+    'centr-single', 'escamilla-2009', 'escamilla-2023', 'escamilla-2025', 'fitbod-db-rdl', 'gaviria-2020', 'goldring-2014', 'goulette-2021',
+    'healthline-ote', 'motra-db-oh', 'physitrack-pistol', 'physitrack-wallsit', 'rep-pistol', 'sl-bayesian', 'sl-db-rdl', 'sl-deadlift',
+    'strengthlog-pullover', 'sweat-db-rdl', 'watanabe-2022'];
+  const W8B_MAIN_FIELDS: Record<string, Record<string, string>> = { 'ace-pushdown': { checked: '2026-09-30' }, 'ga-push-heel': { checked: '2026-11-04' },
+    'kerr-2010': { checked: '2026-09-30' },
+    'sl-pushdown': { checked: '2026-09-30', cite: 'How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (StrengthLog, 2023)', url: 'https://www.strengthlog.com/tricep-pushdown/' } };
+  const SOURCES_MAIN_123C = '62dfeed212dcd3cc8569b7ad7f6972e4b4941e6df8c3249304a8674d88487b87';   // main 123c7299 (W8a #413), from its own sources.json
+  const w8bBack = (t: string) => {
+    const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
+    for (const k of W8B_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
+    for (const [k, f] of Object.entries(W8B_MAIN_FIELDS)) Object.assign(o[k], f);
+    return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
+  };
   const w8aBack = (t: string) => {
     const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
     for (const k of W8A_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
@@ -103,11 +124,26 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     for (const k of W7_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
     return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
   };
-  const w7Back = (t: string) => w7Only(w8aBack(t));
-  it('LIB-SHIP W8a: sources.json is main 07f5fbcf\'s body plus W8a\'s 10 named sources; each cited by a W8a id', () => {
+  const w7Back = (t: string) => w7Only(w8aBack(w8bBack(t)));
+  it('LIB-SHIP W8b: sources.json is main 123c7299\'s body plus W8b\'s 27 named sources and its 4 named later records; each cited by a W8b id', () => {
     const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
-    expect(new Set(W8A_ADDED).size).toBe(10);
+    expect(W8B_ADDED).toHaveLength(27);
+    expect(new Set(W8B_ADDED).size).toBe(27);
     expect(fixture().bodies[SRC]).toBe(bodies.bodySha(t));
+    expect(bodies.bodySha(w8bBack(t))).toBe(SOURCES_MAIN_123C);
+    const cited = new Set(W8B_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
+    for (const k of [...W8B_ADDED, ...Object.keys(W8B_MAIN_FIELDS)]) expect([k, cited.has(k)]).toEqual([k, true]);
+    // reds: an unnamed added source, a named one missing, another record changed, a held id's source put back
+    expect(bodies.bodySha(w8bBack(`${head}${JSON.stringify({ ...o, 'w8b-extra': { id: 'w8b-extra' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_123C);
+    const { 'bm-pullover': _gone, ...less } = o;
+    expect(() => w8bBack(`${head}${JSON.stringify(less, null, 2)}\n`)).toThrow('bm-pullover: not in sources.json');
+    expect(bodies.bodySha(w8bBack(`${head}${JSON.stringify({ ...o, 'ace-abs': { ...o['ace-abs'], checked: '2099-01-01' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_123C);
+    expect(bodies.bodySha(w8bBack(`${head}${JSON.stringify({ ...o, 'kerr-2010': { ...o['kerr-2010'], url: 'https://example.org/' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_123C);
+  });
+  it('LIB-SHIP W8a: sources.json is main 07f5fbcf\'s body plus W8a\'s 10 named sources; each cited by a W8a id', () => {
+    const t = w8bBack(readFileSync(SRC, 'utf8')), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
+    expect(new Set(W8A_ADDED).size).toBe(10);
+    expect(bodies.bodySha(t)).toBe(SOURCES_MAIN_123C);   // LIB-SHIP W8b: the fixture pin moved to W8b's (checked above); W8a's body is main 123c7299's
     expect(bodies.bodySha(w8aBack(t))).toBe(SOURCES_MAIN_07F5);
     const cited = new Set(W8A_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
     for (const k of W8A_ADDED) expect([k, cited.has(k)]).toEqual([k, true]);
@@ -128,7 +164,7 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     const o0 = JSON.parse(t.slice(t.indexOf('\n') + 1));
     for (const k of ['gs-sled', 'west-2014']) expect([k, k in o0]).toEqual([k, false]);
     expect(bodies.bodySha(w7Back(`${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify({ ...o0, 'gs-sled': { id: 'gs-sled' } }, null, 2)}\n`))).not.toBe(SOURCES_MAIN_DC05);
-    expect(bodies.bodySha(w8aBack(t))).toBe(SOURCES_MAIN_07F5);   // LIB-SHIP W8a: the fixture pin moved to W8a's (checked above); W7's body is main 07f5fbcf's
+    expect(bodies.bodySha(w8aBack(w8bBack(t)))).toBe(SOURCES_MAIN_07F5);   // LIB-SHIP W8b: W8b's out first; LIB-SHIP W8a: the fixture pin moved to W8a's (checked above); W7's body is main 07f5fbcf's
     expect(bodies.bodySha(w7Back(t))).toBe(SOURCES_MAIN_DC05);
     const cited = new Set(W7_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
     for (const k of W7_ADDED) expect([k, cited.has(k)]).toEqual([k, true]);
