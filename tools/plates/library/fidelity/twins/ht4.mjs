@@ -151,13 +151,21 @@ function faultPoses(z, { ref, family, stills, stillPose }) {
   return [poseOf(z.wrong), mergeDeep(poseOf(z.right), poseOf(z.wrong))].filter(p => p !== undefined).map(strip);
 }
 
+/** F-HT4-RIGHTPOSE (D-RP-SCOPE): a zoom-shell zoom's declared Right pose (`right: { base, pose }`), resolved as crop.mjs:45
+ *  resolves it; [] for a string Right and for the zbox shell (reference poses only on its Right side). */
+function rightPoses(z, { ref, family }) {
+  if (family !== 'zoom' || !z.right || typeof z.right !== 'object') return [];
+  return [mergeDeep(ref.poses?.[z.right.base], z.right.pose)].filter(p => p !== undefined).map(strip);
+}
+
 /**
  * HT4-A5 for a library id on LIB-6's build (D-LIB4b-POSES, amended): { protected, fragments, poses } problem lists.
  * calls: every captured renderPlate call; html: the built page; specId: the reference spec's id; ref: the reference spec
  * (functions stripped); howto: the id's How-to (its zooms); prefix: the plate's id prefix (`<prefix>-n`/`-m`); family:
  * LIB-6's close-up shell ('zoom': `<key>-right`/`-wrong` crops; 'zbox': `<key>-r`/`-w`); stills and stillPose (zbox):
  * the How-to's stills and still -> LIB-6's still spec pose; entry: the pinned plate entry. gb: goldenB.mjs (its
- * protectedFieldProblems and fragmentProblems).
+ * protectedFieldProblems and fragmentProblems). F-HT4-RIGHTPOSE: a zoom-shell zoom's declared Right pose is accepted,
+ * exactly, on the Right, `-under` and dashed-Wrong calls only (rule (3b) below).
  */
 export function libraryA5({ calls, html }, { specId, ref, howto, prefix, family, stills = null, stillPose = null, entry }, gb) {
   const out = { protected: [], fragments: [], poses: [] };
@@ -184,16 +192,28 @@ export function libraryA5({ calls, html }, { specId, ref, howto, prefix, family,
     return null;
   };
   // (3) every call not on a Wrong side: a reference pose; (4) a Wrong side may also draw its source-declared fault pose
+  // F-HT4-RIGHTPOSE (D-RP-SCOPE): (3b) a zoom-shell zoom's declared Right pose (rightPoses) is accepted as poses.start/end
+  // only on the calls whose crop draws it (crop.mjs cropSpec): the Right crop, the `<key>-under` crop and a dashed Wrong
+  // (neither wrong.solid nor wrongAlone); never for mistake.pose, base, cam, -n/-m or a solid Wrong. A declaration equal
+  // to one of the zoom's own fault poses is a poses problem and is not accepted (never the fault on the Right side).
   const refs = [ref.poses?.start, ref.poses?.end, ...(ref.mistake?.pose ? [mergeDeep(ref.poses?.end, ref.mistake.pose)] : [])].filter(p => p !== undefined);
   const mrefs = ref.mistake?.pose ? [ref.mistake.pose, mergeDeep(ref.poses?.end, ref.mistake.pose)] : [];
+  const declared = new Map(posture.map(z => {
+    const own = rightPoses(z, { ref, family }), faults = own.length ? faultPoses(z, { ref, family, stills, stillPose }) : [];
+    if (own.some(p => faults.some(f => same(p, f)))) { out.poses.push(`${specId}|${z.key}: declares a fault pose as its Right`); return [z, []]; }
+    return [z, own];
+  }));
+  const drawsRight = at => at.role === 'right' || at.role === 'under' || (at.role === 'wrong' && !(at.z.wrong?.solid || at.z.wrongAlone));
   for (const c of mine) {
     const id = c.opts?.id ?? '', at = sideOf(id);
     if (!at) { out.poses.push(`${specId}|${id}: a call that cannot be attributed to base, cam, the plate or a declared zoom side`); continue; }
     if (at.z) seen.set(`${at.z.key}|${at.role}`, seen.get(`${at.z.key}|${at.role}`) + 1);
     const fault = at.role === 'wrong' ? faultPoses(at.z, { ref, family, stills, stillPose }) : [];
+    const draws = !!at.z && drawsRight(at), right = draws ? declared.get(at.z) : [];
+    const rightText = draws && family === 'zoom' && at.z.right && typeof at.z.right === 'object' ? ' nor its declared Right pose' : '';
     for (const which of ['start', 'end']) {
       if (!c.spec.poses || !(which in c.spec.poses)) continue;
-      if (![...refs, ...fault].some(r => same(c.spec.poses[which], r))) out.poses.push(`${specId}|${id}: poses.${which} matches neither a reference pose${at.role === 'wrong' ? ' nor its declared fault pose' : ''} (${JSON.stringify(c.spec.poses[which]).slice(0, 200)})`);
+      if (![...refs, ...fault, ...right].some(r => same(c.spec.poses[which], r))) out.poses.push(`${specId}|${id}: poses.${which} matches neither a reference pose${at.role === 'wrong' ? ' nor its declared fault pose' : ''}${rightText} (${JSON.stringify(c.spec.poses[which]).slice(0, 200)})`);
     }
     if (c.spec.mistake?.pose && ![...mrefs, ...fault].some(r => same(c.spec.mistake.pose, r))) out.poses.push(`${specId}|${id}: mistake.pose matches neither the reference mistake pose${at.role === 'wrong' ? ' nor its declared fault pose' : ''} (${JSON.stringify(c.spec.mistake.pose).slice(0, 200)})`);
   }
