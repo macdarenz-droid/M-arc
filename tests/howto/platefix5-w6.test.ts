@@ -333,3 +333,32 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
     expect(all.digest('hex')).toBe('27ace3fb56ff7ef1c6eb4429ba4a278ad8d23930c8bddff2d7bcc70486ae3f58');
   });
 });
+
+// PF5 fix round (#419 6851987591, cable_chest_press L4 [3,3,4]): each red-flag feel row marks its pain region in the
+// D-PFR-L4 form (tests/howto/lib-ship.test.ts W7 block: the regions are bodyMuscles.ts parts): back -> the four lower-back
+// parts, shoulder -> both front shoulders; the map draws them as pain. Red on f487c797 (the rows named muscles only).
+describe('PF5 fix round cable_chest_press feel: red-flag rows mark their pain region (D-PFR-L4 form)', { timeout: T }, () => {
+  const REGIONS: Record<string, string[]> = {
+    back: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'],
+    shoulder: ['shoulder-front-left', 'shoulder-front-right'],
+  };
+  let F: any, fm: any;
+  beforeAll(async () => {
+    F = (await import(/* @vite-ignore */ lib('howto/lib_cable_chest_press.howto.mjs'))).default.feel;
+    fm = await import(/* @vite-ignore */ new URL('../../tools/plates/layers/engine/feelmap.mjs', import.meta.url).href);
+  });
+  const problems = (rows: any[]) => rows.filter(r => r.redFlag).flatMap(r => {
+    const want = REGIONS[String(r.redFlag)], got = r.at?.parts ?? [];
+    if (!want) return [`${r.key}: red flag ${r.redFlag} has no region`];
+    const pain = fm.renderFeelMap({ primary: F.primary, secondary: F.secondary, pain: got, views: ['front', 'back'], id: `ccp-${r.key}`, shimmer: false }).html;
+    const drawn = [...pain.matchAll(/<g class="feel-pain">([\s\S]*?)<\/g>/g)].flatMap(q => q[1]!.match(/<path /g) ?? []).length;   // pain paths, both views
+    return [...(want.every(p => got.includes(p)) ? [] : [`${r.key} (${r.redFlag}) does not mark ${want.join('+')}`]), ...(drawn >= want.length ? [] : [`${r.key}: ${drawn} pain paths drawn`])];
+  });
+  it('both red-flag rows (lower-back: back, shoulder: shoulder) name their region parts and the map draws them as pain', () => {
+    expect(F.rows.filter((r: any) => r.redFlag).map((r: any) => `${r.key}:${r.redFlag}`)).toEqual(['lower-back:back', 'shoulder:shoulder']);
+    expect(problems(F.rows)).toEqual([]);
+  });
+  it('mutation: dropping either row\'s parts (f487c797) is red', () => {
+    for (const k of ['lower-back', 'shoulder']) expect(problems(F.rows.map((r: any) => r.key === k ? { ...r, at: { muscles: r.at.muscles } } : r)), k).not.toEqual([]);
+  });
+});

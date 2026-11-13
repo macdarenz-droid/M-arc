@@ -180,13 +180,13 @@ const feel = {
   rows: [
     // The card's first two rows (the target muscles; the trunk working) have no fix, so they are left out: the feel
     // line and feel.textOnly say them (D-SHIP-Q16).
-    { key: 'lower-back', where: 'Lower back pain', at: { muscles: ['lower_back'] },
+    { key: 'lower-back', where: 'Lower back pain', at: { muscles: ['lower_back'], parts: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'] },   // D-PFR-L4: the red flag's pain region (PF5 fix round)
       means: 'You are arching your back.',
       fix: 'Keep your spine neutral and brace your abs.',
       zoom: 'cable-press-stance', redFlag: 'back', claim: CL.c6 },
     // W6 panel K1/K3 (#393): the card's row title 'Shoulder' (where you feel it), not 'Shoulder pain'; redFlag 'shoulder'
     // links the shoulder stop box.
-    { key: 'shoulder', where: 'Shoulder', at: { muscles: ['front_delts'] },
+    { key: 'shoulder', where: 'Shoulder', at: { muscles: ['front_delts'], parts: ['shoulder-front-left', 'shoulder-front-right'] },   // D-PFR-L4: the red flag's pain region (PF5 fix round)
       means: 'You grip much wider than shoulder width, or flare your elbows.',
       fix: 'Keep your elbows at a 45-degree angle.',
       redFlag: 'shoulder', claim: CL.flare },
