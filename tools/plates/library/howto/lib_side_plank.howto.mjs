@@ -3,7 +3,8 @@
 // docs/research/howto/cards/side_plank.json; its claim ids are named on each field's claim.
 // Handling (D-SHIP-GRIP (b2)): the card archetype.hand is none; its grip.handContact (bottom forearm on the floor, elbow
 // under the shoulder, c1; top hand on the hip, c3) is on setup steps 1 and 4. No hand zoom (the card has none).
-// Feel (D-SHIP-Q7): the card's secondary `core` is text only (feel.textOnly), as lib_plank.
+// Feel (D-SHIP-Q7): the card's secondary `core` is text only (feel.textOnly), as lib_plank; the abs it names (c10) are
+// shaded as feel.secondary (PF5 fix round).
 // Front view (card plate.view): the crops cut the front-view plate (F-CROP-FRONT).
 // No variant line (equipment 'Bodyweight'). D-TEXT-PROGRESSION: the card's easier versions (c4, c8) are left off.
 // Red flags: the card's redFlags (knee): the shared knee block (layers/howto/shared.mjs RED_FLAG_KNEE), linked by the
@@ -157,7 +158,9 @@ const zooms = [
 /* ------------------------------------------------------------------------------------------------ feel ---------- */
 const feel = {
   primary: [{ muscleId: 'obliques', plain: 'The obliques, at the sides of the waist, hold you up.', claim: CL.c10 }],
-  secondary: [],
+  // PF5 fix round (#419 6851987591 L4): the card's secondary abs (c10, StrengthLog "Secondary muscles worked: Abs") is
+  // shaded as Also working; the core note under the map stays (the card's secondary `core`, text only).
+  secondary: [{ muscleId: 'abs', plain: 'The abs help as a secondary muscle.', claim: CL.c10 }],
   textOnly: [   // named in the text, never painted (D-SHIP-Q7, as lib_plank)
     { muscleId: 'core', plain: 'The abs help as a secondary muscle.', claim: CL.c10 },
   ],
@@ -174,6 +177,8 @@ const feel = {
       fix: 'Stop the exercise.',
       redFlag: 'knee', claim: CL.c8 },
   ],
+  // PF5 fix round: feel.secondary paints abs, which the library row (secondary core) does not list (lib_bear_crawl form)
+  libraryDiff: { add: ['abs'], why: 'StrengthLog lists the abs as the secondary muscle (card c10); the map shades them.' },
   claim: C(['CONSENSUS', 'DATA'], [SL, BB, 'juker-1998'], 'card c10, c11'),
 };
 

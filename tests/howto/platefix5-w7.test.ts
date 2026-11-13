@@ -337,3 +337,27 @@ describe('PF5 W7 jumping_jacks', { timeout: T }, () => {
     expect(/(?:^|[^-\w])(?:#000(?:000)?\b|black\b)/.test(css.replace(/var\(--[^)]*\)/g, '')), 'no black literal in the path rules').toBe(false);
   });
 });
+
+// PF5 fix round (#419 6851987591, side_plank L4 [3,3,3]): the abs, the card's secondary (c10) that the note under the map
+// names, are shaded on the body map as Also working (feel.secondary), the note kept. Red on f487c797 (secondary []).
+describe('PF5 fix round side_plank feel: the abs shaded as Also working', { timeout: T }, () => {
+  let F: any, fm: any;
+  beforeAll(async () => {
+    F = (await import(/* @vite-ignore */ lib('howto/lib_side_plank.howto.mjs'))).default.feel;
+    fm = await import(/* @vite-ignore */ new URL('../../tools/plates/layers/engine/feelmap.mjs', import.meta.url).href);
+  });
+  const draw = (feel: any) => fm.renderFeelMap({ primary: feel.primary, secondary: feel.secondary, views: ['front', 'back'], id: 'sp-feel', shimmer: true });
+  it('feel.secondary is the abs (claim c10); the map draws them as secondary and the label says Also working; the core note stays', () => {
+    expect(F.secondary.map((m: any) => m.muscleId)).toEqual(['abs']);
+    expect(F.secondary[0].claim.note).toContain('c10');
+    const r = draw(F);
+    expect(r.drawn.secondary).toContain('abs');
+    expect(r.label).toMatch(/Also working: [^.]*abs/i);
+    expect(F.textOnly.map((m: any) => m.muscleId)).toEqual(['core']);
+  });
+  it('mutation: with feel.secondary [] (f487c797) nothing is drawn as secondary and no Also working', () => {
+    const r = draw({ ...F, secondary: [] });
+    expect(r.drawn.secondary).toEqual([]);
+    expect(r.label).not.toMatch(/Also working/);
+  });
+});
