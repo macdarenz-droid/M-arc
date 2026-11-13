@@ -842,6 +842,16 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-13 ~08:45 UTC: RESUMED after the weekly reset.** The meter read 0 at 08:11; the next reset is Fri 11-20 08:00 UTC, and the 80 % pause rule holds. The tick is re-enabled with a refreshed prompt, and the monitor is re-armed.
+  - The APK for train 88 was sent on 11-10 (gate 42898934120; AAB 37.1.0.195, artifact 13801947024). Whether the owner published is unknown.
+  - **Lanes (4 LIB, the maximum):**
+    - **W8b #417** (session_018Pv5bLh6s6DccoWNSqfdyZ): 17 ids on lb02-lb05. PLAN RULED 6847824876, with a dry run before LAYERS READY.
+    - **F-HT10-TEXTZOOM #420** (session_018Pv5bNVVRRm5xrv6yizsU1): part 2 of `verify/f-w8a-holds-card.md`; it frees seated_leg_curl and merges first.
+    - **F-W8A-ASSISTED #418** (session_018Pv5bLFH6XEbJF8KG5FLh5): part 1; it frees assisted_pull_up. PLAN RULED 6848063730.
+    - **PF5 #419** (session_018Pv5bMLcrWjZLsE4GBfSFj): `verify/lib-platefix-5-card.md` (d7d93c81), with D-PF5-PENDHIP, D-PF5-CONCSTAGED and jumping_jacks by text-zoom.
+  - **Ready, waiting for a lane:**
+    - F-SHEET-COPY (`verify/f-sheet-copy-card.md`, a870ffac): remove the closing line (owner 10-01 rule), shorten the template headings, AGENTS exception 5.
+    - F-W8A-HOLDS part 3 (mountain_climbers label), after part 1.
 - **Update 11-10 ~22:00 UTC: MAXED (weekly 0.99 at 20:49). Paused until Fri 11-13 08:00 UTC.**
   - **Train 88 merged:** #415 W8a @ `ddbe0ae6` → main `e15e1c65` (3 guides: barbell_overhead_press, pec_fly, crunch; the app has 72). The first review FAILed on the approval sha in pilot-a.json:730; after the fix re-check it PASSed. CI 83/83. The APK goes out when main's gate is green.
   - **No active builders.** W7, PF4, F-GEN, RR4 and W8a are all done and told to stop.
