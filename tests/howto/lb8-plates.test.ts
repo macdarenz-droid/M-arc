@@ -4382,9 +4382,11 @@ describe('LIB-18 glute_bridge (C; the bridge class; released at LIB-18 resume 2 
       expect(s().tempo).toEqual(CARD().tempo);
     });
     it('mutation: a Hold added (pause 0) is red', () => { expect([...s().tempo, { phase: 'Hold', s: 1 }]).not.toEqual(tempoOf()); });
-    it('D-LIB18-TRACE, -TRIM: the Trace follows the knee (plate.frames) with the clone source\'s trim [6, 8] (leg_press.mjs:132)', () => {
-      expect(s().trace).toEqual({ point: 'knee.r', trim: [6, 8] });
-      expect(CARD().plate.frames).toMatch(/Trace follows the knee/);
+    // LIB-PLATEFIX-5 (D-PF5-PINS, PLAN RULED #419 6849391955; D-PF5-PENDHIP): was { point: 'knee.r', trim: [6, 8] } and
+    // /Trace follows the knee/ (D-LIB18-TRACE, -TRIM); research 207b8de8 re-words plate.frames to the pendulum arc (c23).
+    it('D-PF5-PENDHIP: the Trace follows the hip on the pendulum arc (plate.frames, c23) with trim [6, 6] (the arrowhead on the end hip)', () => {
+      expect(s().trace).toEqual({ point: 'hip.r', trim: [6, 6] });
+      expect(CARD().plate.frames).toMatch(/Trace follows the machine's pendulum arc \(c23\)/);
     });
     /** PQ-H3 node-side (qa/node.mjs nodeMetrics), against qa/envelope.json, at the ruled sizes. The Mistake is HELD
      *  (deviation below deviationMin at HEEL_LIFT 12; D-LIB18-SIZE: never enlarged); the Trace passes. */

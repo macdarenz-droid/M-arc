@@ -8,7 +8,9 @@
 //  c4, c6 Thighs to parallel; c6, c8 Knees over toes); Mistake = plate.mistake (c9, c15: the heels lift off the
 //  platform at the bottom; drawable false, the top fault is dropping into the bottom, c10, c20, seen only as speed,
 //  so F7 stays raised); tempo = the card's tempo (down 3, c18; up 1, a drawing convention, c18; pause 0); Trace =
-//  plate.frames "Trace follows the knee" (D-LIB18-TRACE).
+//  plate.frames "Trace follows the machine's pendulum arc (c23)" (research 207b8de8): the hip, hip.r, which rides the
+//  carriage's back pad (c3; the pad on the buttock in every key pose, below), so its path is the arc (D-PF5-PENDHIP; was the knee,
+//  D-LIB18-TRACE).
 // Clone sources, copied, never imported (D-LIB9-CLONE): leg_press (main tools/plates/vendor/exercises/leg_press.mjs): the
 //  machine read back from the body (:56 `travelOf`, here the pad frame read from the back on the pad), the back pad
 //  tangent to the upper back and the buttock (:75-77), the heel lift about the ball (:95-101, HEEL_LIFT) and the trim
@@ -62,7 +64,7 @@ import { pendulum, swing, shoulderPadPts, PENDULUM, PENDULUM_ITEMS } from '../eq
 const H = 1.75, R = Math.PI / 180;
 export const SIZES = Object.freeze({ PLAT_Y: 0.15, FOOT_X: 0.13, TOE_OUT: 8, KNEE_TOP: 5, TILT_START: -8, TILT_END: 8, NECK: 5, HEEL_LIFT: 12,
   HANDLE_X: 0.25, HANDLE_N: 0.24, HANDLE_DOWN: 0.06, POLE_OUT: 0.6, PAD_BELOW: 0.10, ARM_AT: 0.25, LATCH_Y: 1.2,
-  FLOOR_BACK: 0.03, FLOOR_FRONT: 0, FLOOR_LINE: 0.02, TRACE_TRIM: [6, 8], PAD_Y: 0.842 });
+  FLOOR_BACK: 0.03, FLOOR_FRONT: 0, FLOOR_LINE: 0.02, TRACE_TRIM: [6, 6], PAD_Y: 0.842 });
 const { PLAT_Y, FOOT_X, TOE_OUT, KNEE_TOP, TILT_START, TILT_END, NECK, HEEL_LIFT, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, ARM_AT,
   LATCH_Y, FLOOR_BACK, FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM, PAD_Y } = SIZES;
 
@@ -216,7 +218,7 @@ export default {
     ...[['trap.l', 1], ['trap.r', -1]].flatMap(([landmark, sd]) => [['start', LS], ['end', LE]].map(([pose, l]) => ({ landmark, plane: padFace(sd, l), pose, tol: 0.5 }))),
   ],
   ghosts: { count: 3, parts: ['leg.r'] },
-  trace: { point: 'knee.r', trim: TRACE_TRIM },
+  trace: { point: 'hip.r', trim: TRACE_TRIM },   // D-PF5-PENDHIP (LIB-PLATEFIX-5 item 2; was knee.r)
   callouts: [
     { key: 'back', text: 'Back on<br>pad', anchor: 'sacrum', box: { left: 110, top: 222 }, cue: 'Core braced, back pressed against the backrest.' },
     { key: 'parallel', text: 'Thighs to<br>parallel', anchor: { along: ['hip.r', 'knee.r'], t: 0.4, off: [0, 10] }, box: { left: 134, top: 276 }, cue: 'Lower until your thighs are parallel or a little lower.' },
