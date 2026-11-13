@@ -1,7 +1,9 @@
 // LIB-6: posture close-ups (S3) of a zoom sheet: two crops of the plate at the plate's own camera, Right and Wrong,
 // from golden B's howto/render-*.mjs cropHalf()/postureZoom(). What a crop shows is the zoom's data (`*.howto.mjs`):
 // crop window (center, centerWrong, sizePx), wrong.solid / wrongAlone / trim / equipment shifts / equipmentList (LIB-PLATEFIX-4
-// item 20: the Wrong crop's whole equipment list, e.g. a bench at another angle; opt-in, no other zoom sets it), view 'back' with
+// item 20: the Wrong crop's whole equipment list, e.g. a bench at another angle; opt-in, no other zoom sets it; LIB-PLATEFIX-5
+// W7 fix: right.equipmentList, the same for the Right crop when `right` is a pose ref object, e.g. wall_ball's ball held at
+// the hands), view 'back' with
 // camLabel, and zoom-only guides: level (own, tone), drop, cap, path, spine, outlines (e.g. the shoulder blades),
 // pelvisGuide. The per-sheet differences are named options (`crop`):
 //   landmarks 'zoom' - point refs resolve on the zoom's right and wrong poses whatever the crop shows (pull-up);
@@ -73,6 +75,7 @@ export function engineCrop(howto, o, engine = LAYERS_ENGINE, probe = null) {
     const shown = solid ? (o.solidPose === 'merged' ? wrongPose(z) : poseOf(z.wrong)) : right;
     const spec = { ...p, camera: camOf(z), poses: { start: shown, end: shown },
       equipment: role === 'wrong' && z.wrong.equipmentList ? z.wrong.equipmentList
+        : role === 'right' && z.right?.equipmentList ? z.right.equipmentList
         : o.equipment === 'noRays' ? shiftEq(EQ, role === 'wrong' ? z.wrong.equipment : null) : z.equipment ?? p.equipment.filter(e => typeof e !== 'function'),
       callouts: [], ghosts: { count: 0 }, trace: undefined, measure: undefined, checks: [],
       datum: (o.datumZooms ?? []).includes(z.key) ? [p.datum[0]] : [], mistake: undefined,
