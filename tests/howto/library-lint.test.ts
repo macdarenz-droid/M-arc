@@ -121,7 +121,7 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
       for (const f of ['name', 'now', 'doctor']) expect(box[f]).not.toBe(back[f].text);
       for (const s of [box.now, box.doctor]) for (const x of CL.sentences(s)) expect(CL.words(x)).toBeLessThanOrEqual(15);
       const B = { ...box, claim: { tags: ['CONSENSUS'], sources: ['nhs-back'] } };
-      const got = lintTokens(L.boxReach('redFlag(back)', B)), ref = refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG_BACK: B, DISCLAIMER: shared.DISCLAIMER }, 'back'));
+      const got = lintTokens(L.boxReach('redFlag(back)', B)), ref = refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG_BACK: B }, 'back'));
       expect([name, got]).toEqual([name, want]);
       expect([name, ref]).toEqual([name, want]);
     }
@@ -129,7 +129,7 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
   it('S4 (Do 9): the answered back box under its key: lint === c7 (boxKey) + C19 === []; at the named limit + 1, both name the count', async () => {
     const back = (await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs'))).backBox();
     const { content: c } = await content.loadContent('lib_pull_up'), KEY = 'back-pain-box';
-    const both = (B: any) => [lintTokens(L.boxReach('redFlag(back)', B, [], KEY)), refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B, DISCLAIMER: shared.DISCLAIMER }, 'back'))];
+    const both = (B: any) => [lintTokens(L.boxReach('redFlag(back)', B, [], KEY)), refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B }, 'back'))];
     expect(CL.words([back.name, back.now, back.doctor].join(' '))).toBe(50);
     expect(both(back)).toEqual([[], []]);
     expect(L.backBoxRules('RED_FLAG_BACK', back)).toEqual([]);
@@ -154,12 +154,12 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
         // as the library gate lints it (gen/library-gate.mjs:61); every other flag is golden B's shared block
         if (f === 'back') {
           const BB = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), B = BB.backBox(), KEY = BB.BACK_BOX_KEY;
-          expect([r.id, f, lintTokens(L.boxReach('redFlag(back)', B, [], KEY))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B, DISCLAIMER: shared.DISCLAIMER }, 'back'))]);
+          expect([r.id, f, lintTokens(L.boxReach('redFlag(back)', B, [], KEY))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B }, 'back'))]);
           continue;
         }
         const B = shared[CL.RED_FLAG_BLOCKS[f].exp];
         expect(B, `${r.id} ${f}`).toBeDefined();
-        expect([r.id, f, lintTokens(L.boxReach(`redFlag(${f})`, B))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG: B, DISCLAIMER: shared.DISCLAIMER }, f))]);
+        expect([r.id, f, lintTokens(L.boxReach(`redFlag(${f})`, B))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG: B }, f))]);
       }
     }
   }, 60_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): walks every shipped row (36 after main 7e060e83); timed out at the 5 s default on 76c2e190's unit-tz (Asia/Manila); no assertion change
@@ -362,9 +362,9 @@ describe('LIB-SHIP W6 D-SHIP-W6-NOREDFLAG: the sweep\'s boxes for a row with no 
     expect(Object.keys(sweepBoxes([], boxOf, flags)).sort()).toEqual([...flags, 'back'].map(f => `RED_FLAG_${f.toUpperCase()}`).sort());
     expect(Object.keys(sweepBoxes(['shoulder', 'back'], boxOf, flags))).toEqual(['RED_FLAG_SHOULDER', 'RED_FLAG_BACK']);
     expect(Object.keys(sweepBoxes(undefined, boxOf, flags))).toEqual(['RED_FLAG_WRIST']);
-    expect(C19.checkC19Shared({ ...sweepBoxes([], boxOf, flags), DISCLAIMER: shared.DISCLAIMER }, 'x')).toEqual([]);
+    expect(C19.checkC19Shared({ ...sweepBoxes([], boxOf, flags) }, 'x')).toEqual([]);
     // red: a [] row whose shared boxes are all removed (boxOf finds none)
-    expect(C19.checkC19Shared({ ...sweepBoxes([], () => undefined, flags), DISCLAIMER: shared.DISCLAIMER }, 'x')).toEqual(['C19: x: no RED_FLAG box to check']);
+    expect(C19.checkC19Shared({ ...sweepBoxes([], () => undefined, flags) }, 'x')).toEqual(['C19: x: no RED_FLAG box to check']);
   });
 });
 
@@ -399,7 +399,7 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
           : (card => [...C3L.checkC3Library(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '', { list: noZoom, card, gapKeyOf }), ...C3L.checkGripLibrary(c, card), ...C3L.noRedFlagProblems(c, card)])(
             JSON.parse(readFileSync(join(ROOT, c.research.card), 'utf8')))),
         ...checkC8(c, SOURCES), ...checkC15(c, plate, reviews), ...checkC16(c),
-        ...C19.checkC19Copy(L.shownCopyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),
+        ...C19.checkC19Copy(L.shownCopyFields(c), r.id, names), ...checkC19Shared({ ...boxes }, r.id, names),
         ...L.lintLibraryRow(M, shared, { extraBoxes: { back: BACK }, boxKeys: { back: BB.BACK_BOX_KEY } }).map((x: any) => `lint: ${x.path}: ${x.rule}`),
       ];
       expect([r.id, bad]).toEqual([r.id, []]);

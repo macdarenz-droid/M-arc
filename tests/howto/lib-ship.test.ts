@@ -816,12 +816,12 @@ describe('LIB-SHIP W7 D-SHIP-W7-NOREDFLAG (#394 6648497703, = D-SHIP-W6-NOREDFLA
     const { content: c } = await content.loadContent('lib_high_knees');
     expect(noRedFlagProblems(c, { ...json(c.research.card), redFlags: ['knee'] })).toEqual(['RF: lib_high_knees: riskFlags is [] but its card names red flags knee']);
   });
-  it('the C19 boxes for such a row are every shared box plus the back box; the disclaimer alone stays red', async () => {
+  it('the C19 boxes for such a row are every shared box plus the back box; no boxes stays red', async () => {
     const [shared, BB, C19] = await Promise.all([import(/* @vite-ignore */ url('tools/plates/layers/howto/shared.mjs')), import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), import('./checks/c19')]);
     const boxes = allSharedBoxes(shared, BB.backBox());
     expect(Object.values(boxes).every(b => b && typeof b === 'object')).toBe(true);
-    expect(C19.checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, 'lib_high_knees')).toEqual([]);
-    expect(C19.checkC19Shared({ DISCLAIMER: shared.DISCLAIMER }, 'lib_high_knees')).toEqual(['C19: lib_high_knees: no RED_FLAG box to check']);
+    expect(C19.checkC19Shared({ ...boxes }, 'lib_high_knees')).toEqual([]);
+    expect(C19.checkC19Shared({}, 'lib_high_knees')).toEqual(['C19: lib_high_knees: no RED_FLAG box to check']);
   });
 });
 
@@ -1228,15 +1228,15 @@ describe('LIB-SHIP W6 D-SHIP-W6-NOPRIMARY: the empty-primary feel section (gen/f
     expect([...B.FEEL_NOPRIMARY]).toEqual([F.NOPRIMARY_MARK, F.NOPRIMARY_CLAUSE, F.MAIN_LEGEND_SPAN]);
   });
   it('an empty-primary section loses every " Main: ." clause and the Main span; a section with a primary is byte-equal', () => {
-    const empty = sec('Where you should feel it. Main: . Also working: rear delts.');
+    const empty = sec('Target muscles. Main: . Also working: rear delts.');
     const out = F.dropEmptyPrimary(empty);
     expect(out).not.toContain('Main');
-    expect(out).toContain('aria-label="Where you should feel it. Also working: rear delts."');
-    const full = sec('Where you should feel it. Main: chest.');
+    expect(out).toContain('aria-label="Target muscles. Also working: rear delts."');
+    const full = sec('Target muscles. Main: chest.');
     expect(F.dropEmptyPrimary(full)).toBe(full);
   });
   it('red: an empty-primary section with no Main span (or two) throws', () => {
-    expect(() => F.dropEmptyPrimary(sec('Where you should feel it. Main: .').replace(F.MAIN_LEGEND_SPAN, ''))).toThrow('0 Main legend spans');
+    expect(() => F.dropEmptyPrimary(sec('Target muscles. Main: .').replace(F.MAIN_LEGEND_SPAN, ''))).toThrow('0 Main legend spans');
   });
   it('cable_external_rotation: primary is exactly [] (no muscle promoted); rotator_cuff only as text; no row highlights it', async () => {
     const { content: c } = await content.loadContent('lib_cable_external_rotation'), k = json('docs/research/howto/cards/cable_external_rotation.json');

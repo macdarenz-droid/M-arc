@@ -80,7 +80,7 @@ describe('7b-A1: a pair row\'s hand block is its pair panel (D-LIB9-HANDPAGE, D-
     const m = copy2.match(/url\(#scratch-sevenb-row-(hp-curl-dumbbell-under-[a-z0-9-]+)\)/)!;
     const badRef = copy2.replace(m[0], `url(#zz-scratch-sevenb-row-${m[1]})`);
     expect((await B.pairPanelProblems(put(badRef))).join('\n')).toMatch(/scratch-sevenb-row on curl-dumbbell-under: not pairPanel/);
-    const byte = copy2.replace('Hand: right and wrong', 'Hand: right and wronG');
+    const byte = copy2.replace('-zoom-hand-h" tabindex="-1">Hand</h4>', '-zoom-hand-h" tabindex="-1">HanD</h4>');
     expect((await B.pairPanelProblems(put(byte))).join('\n')).toMatch(/scratch-sevenb-row on curl-dumbbell-under: not pairPanel/);
   });
   it('a bad pair value in a layers config is refused by layersSpecOf, naming the id', () => {

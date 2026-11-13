@@ -359,6 +359,26 @@
       "why": "W6 layers approved (#393): the calibrated layers panel 6682570363 (3 fresh Opus critics per set, plants caught, golden-B anchors), the fix round ruled 6683193992 (D-SHIP-W6-ROUTE), the focused recheck 6683879377, cable_lateral_raise's copy check 6683994736 and the flip set 6689822595. Built in the D-SHIP-W5-FLIPSET form on main 8841246c (#404 F-BODYMAP-FRONTDELT merged): only the flip set stays on lb07.layers.json, and every kept card (article block and its .hx-<slug> rules) is byte-equal to the full-page build of the same head; built twice, equal sha256. Re-pinned in place after main 7e060e83 (D-PF-PAINNAMES-LIB: incline_push_up's neck mark reads 'neck') and D-SHIP-W6-F2 (face_pull's row 'Any shoulder pain', c13); the token diff from the earlier pin is exactly those two strings, and every kept card is byte-equal to the full build.",
       "supersedes": null,
       "prev": "4671d5ce6c47b2ae4ab707d38426b05c624dfbfdfc2698a8a79aa9e9b790e396"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB7",
+      "ids": [
+        "lib_cable_lateral_raise",
+        "lib_dumbbell_front_raise",
+        "lib_face_pull",
+        "lib_incline_push_up",
+        "lib_pike_push_up"
+      ],
+      "pageSha256": "e432c23d61548e4a35c2c1100b293e8199a1e32ede5f3755a8e82e235f6767d2",
+      "bytes": 1173488,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ 5fa1795c531662da5d9c74a19c1c7cc5255b685a",
+      "date": "2026-11-13",
+      "supersedes": 12,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "prev": "39882b71918e5628e3e15a0641ce60ae3344900bf42dbc7b87382311d787f813"
     }
   ]
 }

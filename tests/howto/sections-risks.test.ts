@@ -1,4 +1,4 @@
-// HT-9 (HT9-A3): "Risks and when to stop". Risks.tsx has no hooks, so it's called directly and its VNode tree
+// HT-9 (HT9-A3): "Risks". Risks.tsx has no hooks, so it's called directly and its VNode tree
 // walked (project convention: no jsdom, same style as tests/error-boundary.test.ts / sections-setup.test.ts).
 // Runs against the real generated modules (HT-2/HT-5), not a synthetic fixture: proves the real 8 exercises, not
 // just a shape.
@@ -7,7 +7,7 @@ import { readdirSync } from 'node:fs';
 import type { VNode } from 'preact';
 import { renderRisks } from '@/slices/howto/sections/Risks';
 import { chromeIdOf } from '@/slices/howto/PlateView';
-import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER } from '@/howto/archetypes';
+import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW } from '@/howto/archetypes';
 import { RED_FLAG_BACK } from '@/howto/red-flag-back';
 import type { BuiltHowTo } from '@/howto/types';
 import type { RiskJoint } from '@/howto/content-types';
@@ -33,7 +33,7 @@ const FLAG: Readonly<Record<RiskJoint, { name: string; now: string; doctor: stri
   back: RED_FLAG_BACK,
 };
 
-describe('HT9-A3: Risks ("Risks and when to stop")', () => {
+describe('HT9-A3: Risks ("Risks")', () => {
   it('renders every risk row, and for all real exercises one red-flag block per riskFlags entry, golden-B order, with golden-B ids', async () => {
     const all = await Promise.all(modules());
     expect(all.length).toBeGreaterThanOrEqual(8);
@@ -57,28 +57,24 @@ describe('HT9-A3: Risks ("Risks and when to stop")', () => {
         expect(texts).toEqual([FLAG[f].name, FLAG[f].now, FLAG[f].doctor]);
       });
 
-      // owner decision LR-23: exactly one DISCLAIMER node per sheet, right after Risks (the "Where this comes
-      // from" section it used to sit with is gone).
-      const top = elements(tree);
-      const disclaimers = top.filter(v => hasClass(v, 'ht-disclaimer'));
-      expect(disclaimers).toHaveLength(1);
-      expect(disclaimers[0]!.props.id).toBe(`${pre}-disclaimer`);
-      expect(disclaimers[0]!.props.children).toBe(DISCLAIMER);
-      const riskSection = top.find(v => v.type === 'section' && hasClass(v, 'risks'))!;
-      expect(top.indexOf(disclaimers[0]!)).toBeGreaterThan(top.indexOf(riskSection));
+      // F-SHEET-COPY (R1, owner UI-copy rule 2026-10-01): no closing disclaimer line. The render is the Risks
+      // section alone, its heading is "Risks", and no node carries "medical advice".
+      expect(tree.type).toBe('section');
+      expect(hasClass(tree, 'risks')).toBe(true);
+      expect(elements(tree).filter(v => hasClass(v, 'ht-disclaimer'))).toHaveLength(0);
+      expect(byTag(tree, 'h4').map(v => v.props.children)).toEqual(['Risks']);
+      expect(JSON.stringify(elements(tree).map(v => v.props.children ?? null))).not.toMatch(/medical advice/i);
     }
   });
 
-  it('mutation: a disclaimer with the wrong text fails the content check (proves the test bites)', async () => {
+  it('mutation MB1: a render that puts the closing line back fails the absence check (proves the test bites)', async () => {
     const all = await Promise.all(modules());
     const h = all[0]!;
-    const top = elements(renderRisks(h) as AnyVNode);
-    const real = top.find(v => hasClass(v, 'ht-disclaimer'))!;
-    expect(real.props.children).toBe(DISCLAIMER);
-    // the mutation: pretend the disclaimer text got reworded, as a broken build might do
-    const mutated = { ...real.props, children: `${DISCLAIMER} `.trim() + '.' };
-    expect(mutated.children === DISCLAIMER).toBe(false);
-    expect(real.props.children === DISCLAIMER).toBe(true);
+    const real = renderRisks(h) as AnyVNode;
+    const back = { type: 'div', props: { children: [real, { type: 'p', props: { class: 'ht-disclaimer', children: 'General guidance, not medical advice.' } }] } } as unknown as AnyVNode;
+    expect(elements(real).filter(v => hasClass(v, 'ht-disclaimer'))).toHaveLength(0);
+    expect(elements(back).filter(v => hasClass(v, 'ht-disclaimer'))).toHaveLength(1);
+    expect(JSON.stringify(elements(back).map(v => v.props.children ?? null))).toMatch(/medical advice/i);
   });
 
   it('mutation: a component that always renders the wrist block, ignoring riskFlags, fails on a shoulder/elbow exercise (proves the test bites)', async () => {

@@ -3224,3 +3224,19 @@ Pilot A merged on main (1edb3c6), so incline_barbell_bench_press and arnold_pres
   'supervisor'. Budgets were re-measured at 30 shipped.
 - **D-PF1-AFTERW3** (#385 6689539540): reverse_lunge stays flipped; PF1 merges after W3, whose layers build adds the
   plate's inline zoom, so pilot-a3's layers page is re-pinned with the strip-back proof. L2-A4 gets the 600 s timeout.
+- **D-SHEETCOPY-1** (F-SHEET-COPY #421; card `docs/supervisor/verify/f-sheet-copy-card.md`, rulings R1-R5): the How-to
+  sheet headings follow the owner's heading rule (AGENTS.md, 2026-10-01): the sheet eyebrow "How to do it" becomes
+  "Technique" (`SHEET_EYEBROW`; the Train button keeps HOWTO_LABEL "How to do it", a control label), "Set it up" ->
+  "Setup", "Where you should feel it" -> "Target muscles" (map label "Target muscles. Main: …"), "If you feel it in…" ->
+  "Off-target feel", "Risks and when to stop" -> "Risks", "X: right and wrong" -> "X", "Option: thumb over the bar" ->
+  "Thumbless grip". copy-lint's `heading` kind and `tests/howto/f-sheet-copy.test.ts` hold the rule. Golden A, the page
+  kickers and the dev-only render-check scripts keep their old words.
+- **D-SHEETCOPY-2** (R1; supersedes D-COPY1-5's How-to safety line): the closing line "General guidance, not medical
+  advice. If something hurts, stop and get it checked." is removed from every sheet, with `shared.DISCLAIMER`, its node
+  and CSS. The owner's later rule (10-01) names this exact case ("Not medical advice" on a gym app); Play does not require
+  it in the app (answer/16679511, 13996367, 14738291); the store text keeps its lines (PLAY-SUBMISSION.md:20, 24). The
+  next APK post names the change.
+- **D-SHEETCOPY-3** (R3): HT-9's gate lines invert under AGENTS.md's fifth exception: no `.ht-disclaimer`, no "medical
+  advice" wording, every red flag inside Risks, the waits on `.risks`; the A1/A4 pair counts go from ">= 120" to exactly 80
+  (the disclaimer pair is gone; card section C lists :7942-7943). Mutations MB1-MB5 prove each edit at least as strict (MB5:
+  79 and 81 pairs each red).

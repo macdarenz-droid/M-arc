@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 import { hasHowTo } from '../library/ids-node.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+/** F-SHEET-COPY: the sheet's eyebrow, read from the app source (one literal, src/slices/howto/HowToSheet.tsx). */
+export const SHEET_EYEBROW = (() => { const m = readFileSync(join(ROOT, 'src/slices/howto/HowToSheet.tsx'), 'utf8').match(/export const SHEET_EYEBROW = '([^']+)';/); if (!m) throw new Error('no SHEET_EYEBROW in src/slices/howto/HowToSheet.tsx'); return m[1]; })();
 export const FONT = join(ROOT, 'node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2');
 export const GOLDEN_PAGE = join(ROOT, 'tests/howto/golden/technical-plates.html');
 
@@ -841,7 +843,7 @@ export async function ht3Behaviour(browser, port, theme = 'silent-black') {
     let st = await s0();
     stats.elementsS0 = st?.els;
     const firstKey = st?.pressed?.[0];
-    if (!st || st.els > 700 || st.mistakeFig || !st.normalShown || st.pressed.length !== 1 || st.mistakeOn !== 'false' || st.eyebrow !== 'How to do it' || st.title !== 'Dumbbell Lateral Raise' || !st.open) P(`A3: the first open is not S0 within 700 elements: ${JSON.stringify(st)}`);
+    if (!st || st.els > 700 || st.mistakeFig || !st.normalShown || st.pressed.length !== 1 || st.mistakeOn !== 'false' || st.eyebrow !== SHEET_EYEBROW || st.title !== 'Dumbbell Lateral Raise' || !st.open) P(`A3: the first open is not S0 within 700 elements: ${JSON.stringify(st)}`);
     for (const pill of [`#${id}-trace`, `#${id}-mistake`]) { const b = await box(page.locator(pill)); if (!b || b[0] < 44 || b[1] < 44) P(`A8: ${pill} is ${JSON.stringify(b)}, under 44x44`); }
     await page.locator(`#${id}-mistake`).click();
     if (!(await page.locator(`${dlg} .ht-plate[data-mode="mistake"]`).count())) P('A3: the first Mistake tap did not insert the mistake figure');
@@ -1194,8 +1196,8 @@ export const ht10Recorded = page => page.evaluate(() => { const r = window.__ht1
  * The DOM probe after each step (runs in the page). C10: every visible control in the sheet >= 44 x 44 and no two
  * hit boxes overlapping, except the exempt pairs (measured at scrollTop 0, so the sticky header sits at its own place;
  * the scroll is restored in the same task). C19 (LR-23, the HT-9 C19 sweep's checks): no link, target, source class,
- * evidence label or contact/source wording, and (once the Risks section is registered) exactly one disclaimer after the
- * last red-flag block. Reduced motion (C11): nothing running in the sheet and every feel band display:none.
+ * evidence label or contact/source wording, no .ht-disclaimer and no "medical advice" wording (F-SHEET-COPY R1), and (once
+ * the Risks section is registered) one Risks section holding every red-flag block. Reduced motion (C11): nothing running in the sheet and every feel band display:none.
  * Async: it first waits for the controls to come to rest (D-GF2-1, bounded by `settleMs`).
  */
 export async function ht10DomProbe([exempt, pats, words, disclaimer, expectRisks, reduced, settleMs = 3000]) {
@@ -1254,17 +1256,20 @@ export async function ht10DomProbe([exempt, pats, words, disclaimer, expectRisks
   const strings = [dlg.innerText];
   for (const el of dlg.querySelectorAll('[aria-label],[title],[alt]')) for (const a of ['aria-label', 'title', 'alt']) { const v = el.getAttribute(a); if (v) strings.push(v); }
   for (const s of strings) for (const re of res) { const m = s.match(re); if (m) problems.push(`C19: "${m[0]}" matches ${re}`); }
-  const disc = [...dlg.querySelectorAll('.ht-disclaimer')];
+  // F-SHEET-COPY (R1, owner UI-copy rule 2026-10-01): no closing disclaimer line, no "medical advice" wording anywhere
+  const disc = n('.ht-disclaimer');
+  if (disc) problems.push(`C19: ${disc} .ht-disclaimer element(s), expected 0`);
+  for (const s of strings) { const m = s.match(/medical advice/i); if (m) problems.push(`C19: "${m[0]}" wording in the sheet`); }
   if (expectRisks === true || typeof expectRisks === 'number') {   // D-SHIP-W6-RISKS: 0 is a row with no flags, still checked
-    if (disc.length !== 1) problems.push(`C19: ${disc.length} .ht-disclaimer element(s), expected 1`);
+    const risks = [...dlg.querySelectorAll('.risks')];
+    if (risks.length !== 1) problems.push(`C19: ${risks.length} .risks section(s), expected 1`);
     else {
-      if (disc[0].textContent !== disclaimer) problems.push(`C19: disclaimer text "${disc[0].textContent}" is not the owner's`);
       const rf = [...dlg.querySelectorAll('.redflag')];
       // D-SHIP-W6-RISKS (#393 6703065396): a number is the row's riskFlags.length, and exactly that many blocks must show
       // (none for a row with no flags); `true` keeps the old rule, at least one block (golden B's 8, which all have flags)
       if (typeof expectRisks === 'number' && rf.length !== expectRisks) problems.push(`C19: ${rf.length} .redflag block(s), expected ${expectRisks} (riskFlags)`);
-      else if (expectRisks === true && !rf.length) problems.push('C19: no .redflag block before the disclaimer');
-      if (rf.length && !(rf[rf.length - 1].compareDocumentPosition(disc[0]) & Node.DOCUMENT_POSITION_FOLLOWING)) problems.push('C19: the disclaimer is not after the last .redflag');
+      else if (expectRisks === true && !rf.length) problems.push('C19: no .redflag block in Risks');
+      if (rf.some(r => !risks[0].contains(r))) problems.push('C19: a .redflag sits outside the Risks section');
     }
   }
   // C11
@@ -1303,7 +1308,7 @@ export async function ht10AxNames(cdp) {
   return { problems, named };
 }
 
-/** C19 inputs, read as gate block HT-9 C19 reads them: the shared patterns and the owner's disclaimer. */
+/** C19 inputs, read as gate block HT-9 C19 reads them: the shared patterns (F-SHEET-COPY: no disclaimer any more). */
 export function ht10C19Inputs() {
   const nc = readFileSync(join(ROOT, 'tests/guards/no-contacts.ts'), 'utf8');
   const pats = ['CONTACT_RE', 'SOURCE_RE', 'SOURCE_CS_RE'].map(k => {
@@ -1311,9 +1316,9 @@ export function ht10C19Inputs() {
     if (!m) throw new Error(`HT-10: ${k} not found in tests/guards/no-contacts.ts`);
     return { source: m[1], flags: m[2] };
   });
-  const d = readFileSync(join(ROOT, 'src/howto/archetypes.ts'), 'utf8').match(/export const DISCLAIMER: string = "((?:[^"\\]|\\.)*)";/);
-  if (!d) throw new Error('HT-10: no DISCLAIMER in src/howto/archetypes.ts');
-  return { pats, words: ['Measured', 'Mechanics', 'Coaching consensus', 'Weak for this use'], disclaimer: JSON.parse(`"${d[1]}"`) };
+  // F-SHEET-COPY (R1): the closing disclaimer line is gone; its constant must not come back
+  if (/export const DISCLAIMER\b/.test(readFileSync(join(ROOT, 'src/howto/archetypes.ts'), 'utf8'))) throw new Error('HT-10: src/howto/archetypes.ts exports DISCLAIMER again (F-SHEET-COPY R1)');
+  return { pats, words: ['Measured', 'Mechanics', 'Coaching consensus', 'Weak for this use'] };
 }
 
 /**

@@ -497,6 +497,29 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb01 plates page rebuilt with LIB-PLATEFIX-3b's assisted_pull_up (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (this builder, and CI howto-rebuild on #408 at 2a78b893).",
       "supersedes": 15,
       "prev": "f8e7e3f457ff2583e7a09bebca49ba58a8b51b3ce2dacc4c1c00c7eb37125ec6"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB01",
+      "ids": [
+        "lib_chin_up",
+        "lib_hanging_knee_raise",
+        "lib_inverted_row",
+        "lib_close_grip_pulldown",
+        "lib_single_arm_lat_pulldown",
+        "lib_straight_arm_pulldown",
+        "lib_chest_supported_row",
+        "lib_resistance_band_row"
+      ],
+      "pageSha256": "f8a5f7b7152c1581d1db85621eb2332a0eaadb3fe1b4cf3bbf78976b16148888",
+      "bytes": 2193246,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ 5fa1795c531662da5d9c74a19c1c7cc5255b685a",
+      "date": "2026-11-13",
+      "supersedes": 16,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "prev": "b584ab3da1de86eca0e8ec15eace5dfcddd8edc1f7010c58b6ec35b27fe41dc2"
     }
   ]
 }
