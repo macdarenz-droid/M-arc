@@ -191,9 +191,11 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   "having your hips leave the backrest"; anchored on the hips: the Mistake `buttock`), second tell `round` ("Lower back
   rounds", c10 "your lower back rounds"; anchored on the lower back: the Mistake `sacrum`, on the dashed back contour;
   D-LIB18-ROUND applied to both tells);
-  topFault `lift`. The Mistake: leg_press's butt wink, the pelvis rolled M_ROLL 25° about the lumbar pivot (c10's "ever
-  so slightly" read with the convention, D-LIB18-SIZE); the faulty back contour is a dashed guide (sacrum 6.4 cm,
-  buttock 7.9 cm off the pad). Both tells are met from the front: the back lies on the pad with the carriage and rails
+  topFault `lift`. The Mistake: leg_press's butt wink, the rounding spread over the spine pivots, M_ROLL 35°
+  split M_SPLIT [0.3, 0.3, 0.4, 0] (L5/S1, L3, T12, T7) with the upper back kept on the pad (LIB-PLATEFIX-5, #405
+  6683300292: c8, c9 "lifts off the back pad"; was 25° about the lumbar pivot, leg_press's butt wink, D-LIB18-SIZE): a
+  wedge from the pad, 0 / 3.9 / 10.4 / 13.7 / 18.9 plate px at backUpper / backMid / lumbar / sacrum / buttock; the
+  faulty back contour is a dashed guide. Both tells are met from the front: the back lies on the pad with the carriage and rails
   behind it, and the Mistake buttock and sacrum lie inside the solid end figure (1.4 and 4.4 px), so neither tell has a
   leader that crosses no figure: the full box scan finds none for `lift`; `round`'s box behind the rail crosses the
   rail and pad. Both are posted with the slice for a ruling (D-LIB15-NIT1).
