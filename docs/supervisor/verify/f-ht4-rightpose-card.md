@@ -1,8 +1,20 @@
 # F-HT4-RIGHTPOSE: the HT4 twin's declared Right pose, and bulgarian's Rear knee panels
 
-Owner: supervisor (drafted 11-13; status `draft`, rulings asked below). Base: origin/main `5b7d6e80` (train 92). Every file:line below was read on that commit. Builder: Opus for both parts (the twin rule's strictness and the panel fix are judgement work). This is a tool and close-up card: no app screen changes, no stage flips.
+Owner: supervisor (drafted 11-13; status `ruled` 11-13). Base: origin/main `5b7d6e80` (train 92). Every file:line below was read on that commit. Builder: Opus for both parts (the twin rule's strictness and the panel fix are judgement work). This is a tool and close-up card: no app screen changes, no stage flips.
 
 Sources: W8b #417 (LAYERS READY 6854783313; panel ruling 6856272493, D-W8B-RIGHTPOSE), F-W8A-HOLDS part 1 (F-HT4-UNDER, merged in `176d0526`), `f-w8a-holds-card.md`, `lib-platefix-5-card.md`, `lib-ship-card.md`.
+
+## Supervisor rulings (2026-11-13; these win over the text below)
+1. **D-RP-SPLIT: accepted.**
+   - Part 1 (F-HT4-RIGHTPOSE) starts now.
+   - Part 2 (F-BSS-REARKNEE) starts when a LIB lane frees.
+   - Part 1 merges first.
+2. **D-RP-SCOPE: accepted.** The declared Right pose is accepted only where the crop draws it: the Right crop, the `-under` crop, and the base of a dashed Wrong. On those calls it is checked exactly, as `faultPoses` checks a Wrong. This is not loosening, so the card's mutations must prove that:
+   - a wrong declaration turns red;
+   - a call with no declaration keeps start, end or mistake only;
+   - every shipped row's accepted set is unchanged.
+3. **D-RP-NOFLIP: accepted.** Both ids flip in the next LIB-SHIP wave. dumbbell_shrug's W8b PASS carries over only if its card stays byte-equal to the card judged at `1fdf6975`.
+4. **D-RP-PINS: accepted,** in the D-PF5-PINS form.
 
 ## Rulings asked
 
