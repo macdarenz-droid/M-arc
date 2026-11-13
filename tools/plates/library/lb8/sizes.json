@@ -1154,7 +1154,7 @@
    },
    "trace": {
     "value": "hip.r",
-    "basis": "D-PF5-PENDHIP: plate.frames 'Trace follows the machine's pendulum arc (c23)'; the hip rides the carriage's back pad (c3), so its path is the arc about the pivot; trim [6, 6] (TRACE_TRIM row). Was knee.r (D-LIB18-TRACE)",
+    "basis": "D-PF5-PENDHIP: plate.frames 'Trace follows the machine's pendulum arc (c23)'; the hip rides the carriage's back pad (c3), so its path is the arc about the pivot; trim [6, 6] (TRACE_TRIM row) so the arrowhead ends on the drawn end hip (D-PF5-PENDTRIM). Was knee.r (D-LIB18-TRACE)",
     "trim": [
      6,
      6

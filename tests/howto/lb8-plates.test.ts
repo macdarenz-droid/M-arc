@@ -958,6 +958,10 @@ describe('LIB-18 A17: sizes and trace points are fixed in lb8/sizes.json and nev
         if (mod.default?.trace?.point !== r.value) out.push(`trace: spec ${mod.default?.trace?.point} != sizes.json ${r.value}`);
         // D-LIB18-TRIM: the trim is the trace row's, its basis the clone source's trim (file:line) or [10, 12]
         if (!mod.default?.trace || JSON.stringify(mod.default.trace.trim) !== JSON.stringify(r.trim)) out.push(`trace trim: spec ${JSON.stringify(mod.default?.trace?.trim)} != sizes.json ${JSON.stringify(r.trim)}`);
+        // LIB-PLATEFIX-5 (D-PF5-PINS, D-PF5-PENDTRIM, #419): one named exception, pendulum_squat's trim exactly [6, 6] with the
+        // D-PF5-PENDHIP reason (the arrowhead on the drawn end hip); every other spec, and any other pendulum trim, as before.
+        else if (mod.default?.id === 'pendulum_squat' && JSON.stringify(r.trim) === '[6,6]' && /^D-PF5-PENDHIP\b.*arrowhead ends on the drawn end hip/.test(r.basis)) { /* D-PF5-PENDTRIM */ }
+        else if (/D-PF5-PENDHIP|arrowhead ends on the drawn end hip/.test(r.basis)) out.push('trace trim: D-PF5-PENDTRIM is pendulum_squat [6, 6] only');
         else if (!/trim \[[\d, ]+\]: the clone source's trim, \w+\.mjs:\d+|trim \[10, 12\]/.test(r.basis)) out.push('trace trim: no clone-source basis');
         continue;
       }
@@ -980,6 +984,16 @@ describe('LIB-18 A17: sizes and trace points are fixed in lb8/sizes.json and nev
     const c = M.seated_calf_raise;
     expect(sizeProblems({ ...c, default: { ...c.default, trace: { ...c.default.trace, point: 'toe.r' } } }, sizes.ids.seated_calf_raise)).toEqual(['trace: spec toe.r != sizes.json heel.r']);
     expect(sizeProblems({ ...m, default: { ...m.default, trace: { ...m.default.trace, trim: [10, 12] } } }, t)).toEqual(['trace trim: spec [10,12] != sizes.json [6,8]']);
+  });
+  // LIB-PLATEFIX-5 (D-PF5-PENDTRIM, #419): the named exception's reds.
+  it('D-PF5-PENDTRIM mutations: another spec using the reason, a pendulum trim other than [6, 6], and a bare pendulum basis are red', () => {
+    const p = M.pendulum_squat, pt = JSON.parse(JSON.stringify(sizes.ids.pendulum_squat)), why = pt.trace.basis;
+    expect(sizeProblems(p, pt)).toEqual([]);
+    const m = M.hip_thrust, t = JSON.parse(JSON.stringify(sizes.ids.hip_thrust));
+    expect(sizeProblems(m, { ...t, trace: { ...t.trace, basis: why } })).toEqual(['trace trim: D-PF5-PENDTRIM is pendulum_squat [6, 6] only']);
+    const p68 = { ...p, default: { ...p.default, trace: { ...p.default.trace, trim: [6, 8] } } };
+    expect(sizeProblems(p68, { ...pt, trace: { ...pt.trace, trim: [6, 8] }, TRACE_TRIM: { ...pt.TRACE_TRIM, value: [6, 8] } }).filter(x => x.startsWith('trace trim'))).toEqual(['trace trim: D-PF5-PENDTRIM is pendulum_squat [6, 6] only']);
+    expect(sizeProblems(p, { ...pt, trace: { ...pt.trace, basis: 'trim [6, 6]' } })).toEqual(['trace trim: no clone-source basis']);
   });
 });
 
