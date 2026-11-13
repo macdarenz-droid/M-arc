@@ -21,7 +21,7 @@ const fakeCard = (id: string, t: Terms) => {
     '.zx-chip[data-zoom]': chipKeys.map(k => ({ dataset: { zoom: k } })), '.st-show': many(t.shows), '.zx-chip[data-feel]': many(t.feel),
     '.fr-more': many(t.more), '.fr-btn': many(t.rows), [`#${id}-also-hand`]: many(t.wrist),
   };
-  chipKeys.forEach((k, i) => { map[`.zx[data-zoom="${k}"] .zx-page`] = many(t.chips[i]); });
+  t.chips.forEach((p, i) => { map[`.zx[data-zoom="${chipKeys[i]}"] .zx-page`] = many(p); });
   return { querySelectorAll: (s: string) => map[s] ?? [], querySelector: (s: string) => (map[s] ?? [])[0] ?? null };
 };
 const fakeDoc = (cards: Record<string, Terms>) => ({ getElementById: (x: string) => { const id = x.replace(/^card-/, ''); return cards[id] ? fakeCard(id, cards[id]) : null; } });
