@@ -12,6 +12,7 @@ Owner: supervisor (written 11-13 against main `e15e1c65`). Branch: `claude/f-she
 3. **R3: accepted.** This is a fifth AGENTS.md exception, in the plan-risk-22 form. Add it verbatim to the `scripts/screenshot-gate.mjs` / `tests/theme.test.ts` row, after the fourth exception, and call it out in the PR:
    "A fifth exception (supervisor, 2026-11-13, plan risk 22, F-SHEET-COPY): F-SHEET-COPY edits only the lines of HT-9's blocks that its card's section C lists (`docs/supervisor/verify/f-sheet-copy-card.md`), each proven at least as strict by the card's mutations MB1-MB4."
 4. **Headings: accepted as proposed** ("Technique", "Setup", "Target muscles", "Off-target feel", "Risks"; "X: right and wrong" becomes "X"; "Thumbless grip"). The Train button keeps "How to do it", because it is a control label. The content critics judge the set, and a heading they fail gets one fix round.
+6. **Section C addition (supervisor, 2026-11-13, #421):** HT-9's count lines `scripts/screenshot-gate.mjs:7942-7943` (`stats.pairs`, `stats.copy`) are in section C. They go from 120 to 80, which is exactly the remaining pairs (Setup and Risks × 8 × 5) once the closing-line pair is gone. Proof that this is at least as strict: **MB5**, where 79 and 81 each turn red.
 5. **Order:** this lane starts when a LIB lane frees. It touches every sheet pin, so it merges after W8b and PF5 or rebases its re-pin onto them. Plan for one re-pin pass at the end, on the latest main.
 
 ## Problem
