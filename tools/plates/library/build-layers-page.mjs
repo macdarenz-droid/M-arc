@@ -18,6 +18,7 @@ import { HAND_CSS } from '../layers/engine/hand.mjs';   // LIB-7b
 import { FEEL_CSS } from '../layers/engine/feelmap.mjs';   // LIB-7b
 import { VENDOR_STRIP, NOSECS_STRIP } from './strip/tempo-strip.mjs';   // LIB-STRIP
 import { applyZooms } from './zoom/inline.mjs';   // D-SHIP-W3-LAYERSZOOM: the plates page's zoom circle
+import { applyMistakeGhosts } from './mistake-ghosts.mjs';   // F-LAYERS-MGHOST: the plates page's Mistake view
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const RENDERER_URL = pathToFileURL(join(HERE, 'render', 'closeups.mjs')).href;
@@ -203,9 +204,12 @@ export async function buildLayersPage(spec) {
     await runNode(mirror, 'artifact/build-page.mjs');
     // D-SHIP-W3-LAYERSZOOM (#384 6686326673): the plates page draws a spec's opt-in zoom circle (build-page.mjs applyZooms),
     // so the layers page, which draws the same plates, applies the same step to the mirror's specs; no zoom spec: the same bytes
+    // F-LAYERS-MGHOST (F-W8A-HOLDS part 1): and, before it, applyMistakeGhosts in build-page.mjs's order, so an opted-in
+    // spec's (`mistakeGhosts: false`) Mistake svg equals its plates pin; no opted-in spec on the page: the same Buffer. This is
+    // mistake-ghosts.mjs's fourth caller (its header names three), recorded here to keep that file's bytes.
     const specs = Object.fromEntries(Object.keys(spec.files ?? {}).map(rel => rel.match(/^exercises\/([a-z0-9_]+)\.mjs$/)?.[1]).filter(Boolean)
       .map(id => [id, join(mirror, 'exercises', `${id}.mjs`)]));
-    const page = await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs);
+    const page = await applyZooms(await applyMistakeGhosts(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs), specs);
     return pairRowsOf(spec).length ? Buffer.from(await withPairPanels(page.toString('utf8'), spec)) : page;   // LIB-7b
   } finally { cleanupMirror(mirror); }
 }
