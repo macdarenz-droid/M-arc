@@ -10,7 +10,6 @@
         "lib_hammer_curl",
         "lib_alternating_dumbbell_curl",
         "lib_single_arm_triceps_pushdown",
-        "lib_incline_dumbbell_curl",
         "lib_barbell_curl",
         "lib_ez_bar_curl",
         "lib_reverse_curl"
@@ -38,10 +37,6 @@
     },
     "lib_single_arm_triceps_pushdown": {
       "optionsKey": "single_arm_triceps_pushdown"
-    },
-    "lib_incline_dumbbell_curl": {
-      "optionsKey": "incline_dumbbell_curl",
-      "pair": "curl-dumbbell-under"
     },
     "lib_barbell_curl": {
       "optionsKey": "barbell_curl",

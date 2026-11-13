@@ -528,6 +528,30 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lb05 plates page with straight_bar_triceps_pushdown's approved PUSHDOWN re-clone and pf12 R4 leader fix (pf12 + crop check passed, #410 6752705237); cable_curl held at pf14 (#410 6756215536), its spec back to main's bytes, so every other plate is byte-equal to main de91dd21's page 7a2d5311.",
       "supersedes": 0,
       "prev": "aef9a57ff8aaf7715cfe551ab81c9a6f37dec539f10b50289f7bfe5f775c716a"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB5",
+      "ids": [
+        "lib_preacher_curl",
+        "lib_bayesian_cable_curl",
+        "lib_dumbbell_overhead_triceps_extension",
+        "lib_hammer_curl",
+        "lib_alternating_dumbbell_curl",
+        "lib_single_arm_triceps_pushdown",
+        "lib_barbell_curl",
+        "lib_ez_bar_curl",
+        "lib_reverse_curl"
+      ],
+      "pageSha256": "7d3b2ff9aad478e569d3de7c9aef3990435b84b6822e30767bd75e71ee4c5e6e",
+      "bytes": 1864348,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8B-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856272493 @ 1fdf6975d8e93c184ae77ad11daf1cf73505a15d",
+      "date": "2026-11-13",
+      "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): bayesian_cable_curl, dumbbell_overhead_triceps_extension, single_arm_triceps_pushdown on the page; wrist_curl held (F-HAND-FINGERTIP), cross_body_hammer_curl held (F-HAMMER-TWIST), incline_dumbbell_curl held (D-W8B-INCLINE; F-CURL-UNDER-NOTE, F-SEATED-CAM); cardcmp: every card byte-equal to the judged page at 1fdf6975 except dumbbell_pullover's jumps risk (L6, passed round 2 in 6856468001); main's cards byte-equal",
+      "supersedes": 16,
+      "prev": "0dfb5a868a41ffaae776e2dc421b158b21e61ffe50f089de7565743e27463bd9"
     }
   ]
 }

@@ -59,7 +59,7 @@
     "Comparison Between Shoulder Flexed and Extended Positions in Elbow Flexion Resistance Training on Regional Hypertrophy and Maximum Strength: Preacher versus Bayesian Cable Curls. (2025). https://pubmed.ncbi.nlm.nih.gov/40082069/ PMID 40082069",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_concentration_curl": {
    "src": "library/specs/concentration_curl.mjs",
@@ -93,7 +93,7 @@
     "Triceps Tendon Ruptures: Risk Factors, Treatment, and Rehabilitation (2020). https://pubmed.ncbi.nlm.nih.gov/32539261/ PMID 32539261",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_cross_body_hammer_curl": {
    "src": "library/specs/cross_body_hammer_curl.mjs",
@@ -175,7 +175,7 @@
     "Tennis elbow (NHS). https://www.nhs.uk/conditions/tennis-elbow/",
     "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_incline_dumbbell_curl": {
    "src": "library/specs/incline_dumbbell_curl.mjs",

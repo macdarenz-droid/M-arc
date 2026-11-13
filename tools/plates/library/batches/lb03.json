@@ -85,7 +85,7 @@
     "How to Deadlift: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/deadlift/",
     "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_conventional_deadlift": {
    "src": "library/specs/conventional_deadlift.mjs",

@@ -288,6 +288,22 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb02 plates page rebuilt with LIB-PLATEFIX-4's incline_dumbbell_press (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (#410 PLATES READY 6751284470).",
       "supersedes": 0,
       "prev": "fc33996b4ff7f3e9c404f1f206a36fa5da4d64d21bc8890d4136af11d8877922"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB2",
+      "ids": [
+        "lib_dumbbell_pullover"
+      ],
+      "pageSha256": "8fb801a88df17dabfa0be574e134753b08eaee8aacb541d94dc1670f167f73ff",
+      "bytes": 262166,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8B-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856272493 @ 1fdf6975d8e93c184ae77ad11daf1cf73505a15d",
+      "date": "2026-11-13",
+      "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); the first lb02 layers-page entry (D-SHIP-W4-FLIPSET kept lb02 off a layers page until now): dumbbell_pullover on the page; none held on lb02; cardcmp: every card byte-equal to the judged page at 1fdf6975 except dumbbell_pullover's jumps risk (L6, passed round 2 in 6856468001); main's cards byte-equal",
+      "supersedes": null,
+      "prev": "6f8ec5b2bce3d6d26a92f2781b5b43cd9444ed80b162dae1862b8b84728b9871"
     }
   ]
 }
