@@ -310,10 +310,10 @@ describe('PF5 W6 hip_adduction add-start: amplitude kept, red outward arrows, gr
 describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to main e15e1c65', { timeout: T }, () => {
   // Every posture close-up of every pages/*.closeups.mjs option (engine crops of the zoom shell) and each sheet's CSS, the
   // ids PF5 changes left out (the eight close-up sheets, and the specs PF5 moves: their crops follow the plate), hashed as
-  // scratch scripts-w6/allzooms.mjs; main e15e1c65 gives 156 zooms and this digest.
+  // scratch scripts-w6/allzooms.mjs; main e15e1c65 gives 157 zooms and this digest.
   const EX = new Set(['cable_external_rotation', 'diamond_push_up', 'cable_chest_press', 'hip_adduction',
-    'hack_squat', 'jumping_jacks', 'wall_ball', 'side_plank', 'pendulum_squat', 'cable_curl', 'underhand_lat_pulldown']);
-  it('156 zooms and every sheet\'s CSS hash to main\'s digest', async () => {
+    'hack_squat', 'wall_ball', 'side_plank', 'pendulum_squat', 'cable_curl', 'underhand_lat_pulldown']);
+  it('157 zooms and every sheet\'s CSS hash to main\'s digest', async () => {
     const root = join(process.cwd(), 'tools/plates/library'), all = createHash('sha256'), skipped: string[] = [];
     let n = 0;
     for (const pf of readdirSync(join(root, 'pages')).filter(f => f.endsWith('.closeups.mjs')).sort()) {
@@ -329,8 +329,8 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
       }
     }
     expect(skipped).toEqual([]);
-    expect(n).toBe(156);
-    expect(all.digest('hex')).toBe('27ace3fb56ff7ef1c6eb4429ba4a278ad8d23930c8bddff2d7bcc70486ae3f58');
+    expect(n).toBe(157);
+    expect(all.digest('hex')).toBe('a71e90f787b00a46624b857f324dba2bb739ecfb619f6e8b3f80cb5121c05576');
   });
 });
 

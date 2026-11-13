@@ -178,7 +178,7 @@ const feel = {
       redFlag: 'knee', claim: CL.c8 },
   ],
   // PF5 fix round: feel.secondary paints abs, which the library row (secondary core) does not list (lib_bear_crawl form)
-  libraryDiff: { add: ['abs'], why: 'StrengthLog lists the abs as the secondary muscle (card c10); the map shades them.' },
+  libraryDiff: { add: ['abs'], why: 'Abs added as Also working: StrengthLog lists the abs as the secondary muscle (card c10), and the line under the map names them; the card\'s own libraryDiff kept them text-only (LIB-PLATEFIX-5, #419 6853062926).' },
   claim: C(['CONSENSUS', 'DATA'], [SL, BB, 'juker-1998'], 'card c10, c11'),
 };
 
