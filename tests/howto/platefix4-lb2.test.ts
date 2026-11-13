@@ -8,10 +8,12 @@
 // Red on main de91dd21: no zoom. The rollers are the plate's (unchanged); the Wrong shin and foot clear them by >= 8 px.
 // Every other card of the lb02 layers page and the page outside the cards stay byte-equal to main de91dd21's.
 import { createHash } from 'node:crypto';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, relative } from 'node:path';
+import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { PF4_LB02_SHA, PF4_LB02_TEXT, pf4Lb02Spec } from './checks/ship-w8b';
+const ROOT = new URL('../../', import.meta.url).pathname;
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -23,19 +25,6 @@ beforeAll(async () => {
   spec = H.default.plate;
 }, 600_000);
 
-/** LIB-SHIP W8b (Q-W8b-1, #417 6847824876): main e15e1c65's lb02 layers config, the 6 ids PF4 judged. Its text is pinned
- *  to that file's sha256, and the committed config may differ from it only in the group's ids (the ruled W8b flip set). */
-const ROOT = new URL('../../', import.meta.url).pathname;
-const PF4_LB02_CONFIG = {
-  groups: [{ id: 'lb2', title: 'LB2', ids: ['lib_barbell_bench_press', 'lib_incline_barbell_bench_press', 'lib_incline_dumbbell_press',
-    'lib_close_grip_bench_press', 'lib_decline_bench_press', 'lib_dumbbell_pullover'] }],
-  optionsModule: 'tools/plates/library/pages/lb02.closeups.mjs',
-  closeups: Object.fromEntries(['barbell_bench_press', 'incline_barbell_bench_press', 'incline_dumbbell_press', 'close_grip_bench_press',
-    'decline_bench_press', 'dumbbell_pullover'].map(k => [`lib_${k}`, { optionsKey: k }])),
-  jump: null,
-};
-const PF4_LB02_TEXT = `${JSON.stringify(PF4_LB02_CONFIG, null, 2)}\n`;
-const PF4_LB02_SHA = 'e97790915467add04c0568ba5dac964dfaebc0552be7e83fa706df9d12f4c05c';   // git show e15e1c65:tools/plates/library/pages/lb02.layers.json | sha256sum
 const W8B_LB02_IDS = ['lib_dumbbell_pullover'];
 /** Drift lines: the in-test config off main's bytes, or the committed config off it in anything but the ruled group ids. */
 const lb02ConfigDrift = (text: string, committed: any) => {
@@ -112,17 +101,11 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
     expect(measure({ root: w.root, trunk: e.trunk, neck: e.neck }).backUpperCm).toBeGreaterThan(1);
   });
   it('lb02 layers page: only barbell_bench_press\'s card changes; every other card and the page outside the cards = main de91dd21\'s bytes', async () => {
-    const { layersSpecOf } = await import(/* @vite-ignore */ lib('layers-spec.mjs'));
     const { buildLayersPage } = await import(/* @vite-ignore */ lib('build-layers-page.mjs'));
-    const reg = await import(/* @vite-ignore */ lib('registry.mjs'));
     const stageDir = mkdtempSync(join(tmpdir(), 'pf4-lb02-'));
     let html: string;
-    // LIB-SHIP W8b (Q-W8b-1, #417 6847824876): the committed lb02 config lists only the W8b flip set, so this build reads
-    // main e15e1c65's 6-id config (PF4_LB02_CONFIG, sha-pinned below) through a scratch file; every pin below is unchanged.
-    const cfgPath = join(stageDir, 'lb02.layers.pf4.json');
-    writeFileSync(cfgPath, PF4_LB02_TEXT);
-    const all = reg.rows().map((r: any) => (r.batchFile === 'tools/plates/library/batches/lb02.json' ? { ...r, pages: { ...r.pages, layersConfig: relative(ROOT, cfgPath) } } : r));
-    try { html = (await buildLayersPage(layersSpecOf('tools/plates/library/batches/lb02.json', { stageDir, all }))).toString('utf8'); } finally { rmSync(stageDir, { recursive: true, force: true }); }
+    // LIB-SHIP W8b (Q-W8b-1, #417 6847824876): built from main e15e1c65's 6-id config (checks/ship-w8b.ts); every pin below is unchanged.
+    try { html = (await buildLayersPage(await pf4Lb02Spec(stageDir))).toString('utf8'); } finally { rmSync(stageDir, { recursive: true, force: true }); }
     const sha = (s: string) => createHash('sha256').update(s).digest('hex');
     const got: Record<string, string> = {};
     let rest = html;
