@@ -299,7 +299,7 @@
       "bytes": 262166,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W8B-LAYERS",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856272493 @ 1fdf6975d8e93c184ae77ad11daf1cf73505a15d",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652",
       "date": "2026-11-13",
       "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); the first lb02 layers-page entry (D-SHIP-W4-FLIPSET kept lb02 off a layers page until now): dumbbell_pullover on the page; none held on lb02; cardcmp: every card byte-equal to the judged page at 1fdf6975 except dumbbell_pullover's jumps risk (L6, passed round 2 in 6856468001); main's cards byte-equal",
       "supersedes": null,
