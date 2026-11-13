@@ -108,7 +108,7 @@ function card(e) {
   // ---- the How-to layers, all outside the plate block (below the tempo strip; plan 2.4) ----
   return `<article class="sheet-card" id="card-${id}" data-ex="${id}" data-sel-n="${n0?.key ?? ''}" data-sel-m="${m0?.key ?? ''}" aria-labelledby="${id}-title">
   <div class="sheet-grab" aria-hidden="true"></div>
-  <div class="sheet-head"><h3 id="${id}-title"><span class="eyebrow sheet-eyebrow">How to do it</span>${esc(e.name)}</h3></div>
+  <div class="sheet-head"><h3 id="${id}-title"><span class="eyebrow sheet-eyebrow">Technique</span>${esc(e.name)}</h3></div>
   <div class="plate-stage"><div class="plate-fit" id="${id}-plate">${figN}${figM}</div>${H ? H.zooms : ''}</div>
   <p class="cue-line" id="${id}-cue" aria-live="polite">${esc(n0?.cue ?? '')}</p>
   <div class="plate-controls">
@@ -214,8 +214,6 @@ const HOWTO_CSS = `
 .redflag:focus { outline: none; } .redflag:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .rf-link { justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--text); font-size: var(--fs-small); font-weight: var(--fw-medium); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--mistake) 50%, transparent); text-underline-offset: 3px; }
 .rf-link svg { color: var(--mistake); }
-/* the owner's safety line, once per sheet, small, last, after the risks */
-.ht-disclaimer { margin-top: var(--sp-2); font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); }
 .hw-sec { margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--border-subtle); }
 .hw-sec > h4.eyebrow { margin: 0; }
 .hw-sec h4:focus { outline: none; } .hw-sec h4:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }

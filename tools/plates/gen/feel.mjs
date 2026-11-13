@@ -207,7 +207,7 @@ export const dropEmptyMeans = section => EMPTY_MEANS.reduce((s, p) => s.split(p)
  *  refuses a text-only primary), every " Main: ." clause and the one Main legend span are cut. Every other section is
  *  returned unchanged, so the 8 and every shipped feel body stay byte-identical. build-layers-page.mjs applies the same
  *  cut to the layers page (its 'feel no primary' patch reads these constants). */
-export const NOPRIMARY_MARK = 'aria-label="Where you should feel it. Main: .';
+export const NOPRIMARY_MARK = 'aria-label="Target muscles. Main: .';
 export const NOPRIMARY_CLAUSE = ' Main: .';
 export const MAIN_LEGEND_SPAN = '<span><svg class="feel-sw sw-pri" viewBox="0 0 14 14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="3"/></svg>Main</span>';
 export const dropEmptyPrimary = section => {
