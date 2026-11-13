@@ -12,7 +12,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { extractPlates, fragmentsOf } from '../golden.mjs';
 import { ROOT } from '../lib/inputs.mjs';
 import { rows as registryRows } from './registry.mjs';
-import { HT_CUSTOM, HT_PLATES, HT_THEMES, fixtureLeakSection, fixtureSection, closeHowTo, openAppTrain, openCard, openHowTo, ht10GoldenCounts, ht10Script, ht10Sweep } from '../fidelity/harness.mjs';
+import { HT_CUSTOM, HT_PLATES, HT_THEMES, fixtureLeakSection, fixtureSection, closeHowTo, openAppTrain, openCard, openGolden, openHowTo, ht10GoldenCounts, ht10Script, ht10Sweep } from '../fidelity/harness.mjs';
 import { LIB_ONCE, NO_THEME, PQH_STATES, WIDTH, libraryTuples, pinnedPlate, sourceFacts } from './fidelity/tuples.mjs';
 import { recorder, stateOf } from './fidelity/rows.mjs';
 import { plateJob, plateStats } from './fidelity/plate.mjs';
@@ -198,16 +198,73 @@ async function ht10Job(ctx, { lib, chrome, index, theme }) {
   const counts = await golden.get(html);
   // D-SHIP-W6-RISKS (#393 6703065396): the row's own riskFlags.length, so a row with no red flag expects no block
   const expectRisks = existsSync(join(ctx.root, 'src/slices/howto/sections/Risks.tsx')) && await riskCountOf(ctx.root, lib);
+  // F-HT10-TEXTZOOM: the A1 floor is max(15, E), E counted on this row's own judged layers card; only a row ruled a
+  // text-zoom row (text-zooms.json, checked by textZoomRow) may go below 15, and then only to its own E
+  if (!golden.has(HT10_TERMS)) golden.set(HT10_TERMS, new Map());
+  const termsOf = golden.get(HT10_TERMS);
+  if (!termsOf.has(html)) termsOf.set(html, ht10PageTerms(browser, html));
+  const terms = (await termsOf.get(html))[chrome] ?? null, E = terms && ht10Expected(terms), ruled = await ht10Ruled(ctx.root, lib);
   for (const [state, reduced] of [['sweep', false], ['reduced', true]]) {
     const r = await ht10Sweep(browser, port, theme, { ids: [chrome], reduced, expectRisks, golden: counts, order, custom, indexOf: () => index, inject: reduced ? null : ctx.fixtures.inject?.[lib] ?? null });
     const bad = [...r.problems];
-    if (!reduced && r.stats.steps < 15) bad.push(`A1: only ${r.stats.steps} script steps probed, expected at least 15`);
+    if (!reduced) {
+      if (!terms) bad.push(`A1: no card-${chrome} on ${lib}'s layers page to count the expected steps`);
+      else {
+        const floor = ht10Floor(E, ruled);
+        console.error(`HT10 steps ${lib} ${theme}: ${r.stats.steps} probed, E ${E}, floor ${floor}${ruled ? ' (text-zoom row)' : ''} ${JSON.stringify(terms)}`);
+        if (r.stats.steps < floor) bad.push(`A1: only ${r.stats.steps} script steps probed, expected at least ${floor} (E ${E}${ruled ? ', a ruled text-zoom row' : ''})`);
+      }
+    }
     R.check(lib, theme, stateOf('HT10', state, WIDTH), bad);
   }
   const mutate = a2Mutate(ht10Script.toString());
   const st = { ...plateStats() }, a2 = stateOf('HT10', 'a2', WIDTH);
   await plateJob(browser, port, R, { lib, chrome, index, theme, html: pages[lib].plates, order, custom, full: false, widths: [], mutate, markup: false, as: a2, stats: st });
   if (st.pairs < 2) R.fail(lib, theme, a2, `A2: only ${st.pairs} plate pairs compared, expected at least 2`);
+}
+/** F-HT10-TEXTZOOM: today's fixed HT10-A1 floor, kept for every row that is not a ruled text-zoom row. */
+export const HT10_FLOOR = 15;
+const HT10_TERMS = Symbol('F-HT10-TEXTZOOM terms');
+/** F-HT10-TEXTZOOM: the terms of each card's step count, read from its own `#card-<id>` markup (runs in the page;
+ *  serialisable, it references nothing outside itself). Returns { <chrome id>: terms | null (no such card) }. */
+export function ht10TermsOfDoc(doc, ids) {
+  const terms = (card, pre) => {
+    if (!card) return null;
+    const n = s => card.querySelectorAll(s).length;
+    return {
+      callouts: n('figure[data-mode="normal"] .plate-callout'), tells: n('figure[data-mode="mistake"] .plate-callout'),
+      wrist: card.querySelector(`#${pre}-also-hand`) ? 1 : 0,
+      chips: [...card.querySelectorAll('.zx-chip[data-zoom]')].map(c => n(`.zx[data-zoom="${c.dataset.zoom}"] .zx-page`)),
+      shows: n('.st-show'), feel: n('.zx-chip[data-feel]') ? 1 : 0, more: n('.fr-more') ? 1 : 0, rows: n('.fr-btn'),
+    };
+  };
+  return Object.fromEntries(ids.map(id => [id, terms(doc.getElementById(`card-${id}`), id)]));
+}
+/** F-HT10-TEXTZOOM: E, the exact number of probes ht10Script (fidelity/harness.mjs) makes on a sheet with these terms:
+ *  every callout, Mistake on, every tell, the wrist line (2), Mistake off, Trace (2), each chip (open, its pages after
+ *  the first, closed), each "Show me" (2), Feel it, show more, each feel row, then everything expanded and closed (2). */
+export function ht10Expected(t) {
+  const chip = pages => 2 + Math.max(0, pages - 1);
+  return t.callouts + 1 + t.tells + 2 * t.wrist + 1 + 2 + t.chips.reduce((a, p) => a + chip(p), 0) + 2 * t.shows + t.feel + t.more + t.rows + 2;
+}
+/** F-HT10-TEXTZOOM: the A1 floor. A ruled text-zoom row is held to its own E; every other row to max(15, E). */
+export const ht10Floor = (E, ruled) => (ruled ? E : Math.max(HT10_FLOOR, E));
+/** F-HT10-TEXTZOOM: true only when `lib` has a text-zooms.json entry that gen/zooms.mjs textZoomRow accepts (a ruling in
+ *  TEXT_ZOOM_RULINGS, every card zoom a text checkpoint of the sheet); an entry that fails it keeps max(15, E). */
+export async function ht10Ruled(root, lib) {
+  const Z = await import('../gen/zooms.mjs'), list = Z.readTextZooms(root);
+  if (!(lib in list)) return false;
+  try {
+    const sheet = (await import(pathToFileURL(join(root, `tools/plates/library/howto/${lib}.howto.mjs`)).href)).default;
+    return !!Z.textZoomOfSheet(lib, sheet, list, f => JSON.parse(readFileSync(join(root, f), 'utf8')));
+  } catch { return false; }
+}
+/** F-HT10-TEXTZOOM: ht10TermsOfDoc for every card of a layers page, in one evaluate (cached per page by the caller). */
+export async function ht10PageTerms(browser, html) {
+  const g = await openGolden(browser, 'silent-black', { html });   // as ht10GoldenCounts opens it
+  try {
+    return await g.page.evaluate(([src, ids]) => (0, eval)(`(${src})`)(document, ids), [ht10TermsOfDoc.toString(), extractChromeIds(html)]);
+  } finally { await g.ctx.close(); }
 }
 /** HT10-A2's page mutation: HT-10's script, then (LIB-SHIP W2, D-SHIP-A2FEEL, #379 6640877874) the sheet's feel map scrolled
  *  into view. The script can start the feel sweep and end with the map off-screen, where the app's hold observer pauses
