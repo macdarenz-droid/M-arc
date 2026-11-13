@@ -10,9 +10,9 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const LAYERS = join(ROOT, 'tools/plates/layers');
-export const PAGE_SHA256 = '414fe997a638bf3f343942a0c4ef064caefef924029153771c4670dff97274c9';
+export const PAGE_SHA256 = '2e6a6648c2840521b36ffb5deca730803300ea52b320cee8d913bc8f1fd26fa4';
 /** The golden-B commit every vendored file and the page approval are pinned to (supervisor: the single constant). */
-export const GOLDEN_B_REF = '5fa1795c';
+export const GOLDEN_B_REF = '41174121';
 /** Where GOLDEN_B_REF holds the files. 6b86baa held them under docs/howto/golden-b/; F-SHEET-COPY edited them in
  *  place, so every entry now names its path in this folder at that commit (`git show <ref>:<dir>/<path>`). */
 export const GOLDEN_B_DIR = 'tools/plates/layers';
