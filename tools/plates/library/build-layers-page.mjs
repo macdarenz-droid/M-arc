@@ -209,7 +209,9 @@ export async function buildLayersPage(spec) {
     // mistake-ghosts.mjs's fourth caller (its header names three), recorded here to keep that file's bytes.
     const specs = Object.fromEntries(Object.keys(spec.files ?? {}).map(rel => rel.match(/^exercises\/([a-z0-9_]+)\.mjs$/)?.[1]).filter(Boolean)
       .map(id => [id, join(mirror, 'exercises', `${id}.mjs`)]));
-    const page = await applyZooms(await applyMistakeGhosts(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs), specs);
+    const plates = join(mirror, 'artifact', 'technical-plates.html');
+    writeFileSync(plates, await applyMistakeGhosts(readFileSync(plates), specs));   // F-LAYERS-MGHOST, in the mirror
+    const page = await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs);
     return pairRowsOf(spec).length ? Buffer.from(await withPairPanels(page.toString('utf8'), spec)) : page;   // LIB-7b
   } finally { cleanupMirror(mirror); }
 }

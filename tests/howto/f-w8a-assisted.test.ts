@@ -63,7 +63,8 @@ const withAssisted = (s: string) => {
 const withVup = (s: string) => { const c = JSON.parse(s); c.groups[0].ids.push('lib_v_up'); return `${JSON.stringify(c, null, 2)}\n`; };
 /** Replaces `a` (exactly once) by `b`. */
 const swap = (a: string, b: string) => (s: string) => { expect(s.split(a).length - 1, a).toBe(1); return s.replace(a, b); };
-const CALL = "await applyZooms(await applyMistakeGhosts(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs), specs)";
+// the step (the mirror's plates page rewritten through applyMistakeGhosts before applyZooms reads it, lib-ship.test.ts:1503)
+const CALL = "    writeFileSync(plates, await applyMistakeGhosts(readFileSync(plates), specs));   // F-LAYERS-MGHOST, in the mirror\n";
 
 /** HT4's runNode for one library id, in `T` with T's own modules (a child process); its rows and the batch's page. */
 function ht4(T: string, lib: string, chrome: string) {
@@ -99,7 +100,7 @@ describe('F-W8A-ASSISTED A2: assisted_pull_up passes HT4/A5 on a scratch tree th
     expect(got.mistake).toBe(PLATES_MISTAKE);
   }, 300_000);
   it('m1: without the applyMistakeGhosts call, the CI fragments line', () => {
-    const got = mutated(T, { [BUILDER]: swap(CALL, "await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs)") }, () => ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up'));
+    const got = mutated(T, { [BUILDER]: swap(CALL, '') }, () => ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up'));
     expect(got.problems).toEqual([`lib_assisted_pull_up * HT4/A5-fragments@*: ${CI_FRAGMENTS}`]);
   }, 300_000);
   it('m4: sideOf without the under branch, the CI poses line', () => {
