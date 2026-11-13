@@ -366,8 +366,8 @@ describe('F-HAND-PALMFLAT-SIZE: a row\'s own Right note on its sub-key', () => {
   it('C2: Right head UNDER SHOULDER (Q-PFS-4), Wrong head HAND AHEAD, the caption says directly under the shoulder; else the panel as without the note', async () => {
     const h = await P.pairPanel(SUB, P.INDEX, subsOf({ lib_mountain_climbers: MCN }));
     expect(pagesIn(h)).toBe(1);
-    expect(h.match(/<text [^>]*class="h-note"[^>]*>([^<]*)</g)!.map(t => t.slice(t.lastIndexOf('>') + 1, -1))).toEqual(['UNDER SHOULDER']);
-    expect(h.match(/<text [^>]*class="h-note m"[^>]*>([^<]*)</g)!.map(t => t.slice(t.lastIndexOf('>') + 1, -1))).toEqual(['HAND AHEAD']);
+    expect(h.match(/<text [^>]*class="h-note"[^>]*>([^<]*)</g)!.map((t: string) => t.slice(t.lastIndexOf('>') + 1, -1))).toEqual(['UNDER SHOULDER']);
+    expect(h.match(/<text [^>]*class="h-note m"[^>]*>([^<]*)</g)!.map((t: string) => t.slice(t.lastIndexOf('>') + 1, -1))).toEqual(['HAND AHEAD']);
     expect(h.includes('Hand directly under the shoulder')).toBe(true);
     expect(/whole hand down/i.test(h)).toBe(false);
     // the note is the only change: put the key's note back and it is the same row's panel without pairNote
