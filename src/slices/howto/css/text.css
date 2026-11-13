@@ -22,6 +22,7 @@
 .ht .risks { display: grid; gap: var(--sp-3); }
 .ht .rk-list { margin: 0; padding-left: 18px; display: grid; gap: var(--sp-2); font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text); }
 .ht .rk-list li::marker { color: var(--text-3); }
+.ht .rk-stop { margin: 0; font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text); }
 .ht .redflag { display: flex; gap: 8px; padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid color-mix(in srgb, var(--mistake) 35%, var(--border)); color: var(--text); font-size: var(--fs-small); line-height: var(--lh-small); }
 .ht .redflag:focus { outline: none; }
 .ht .redflag:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }

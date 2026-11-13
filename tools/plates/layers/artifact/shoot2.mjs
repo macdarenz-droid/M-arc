@@ -5,7 +5,7 @@
 // States (plan S-2 condition 5): hand zoom, each posture zoom, handling mistakes, feel map at rest, playing, each row
 // open, reduced motion, setup (all steps), risks, plus the Mistake view's wrist line (push).
 // LR-23 (owner 2026-09-30): no link, source list, evidence label or contact on any card. F-SHEET-COPY (R1): no closing
-// disclaimer line; Risks is the last layer node and holds every red-flag box.
+// disclaimer line; Risks is the last layer node, holds every red-flag box and ends on the stop line.
 import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -75,7 +75,7 @@ for (const theme of THEMES) {
       const c = document.querySelector(card), n = q => c.querySelectorAll(q).length;
       return { chips: n('.zx-chip'), zooms: n('.zx'), grip: n('.grip'), mistakes: n('.hm'), feel: n('.feel'), rows: n('.fr'), setup: n('.setup'), steps: n('.st-list li'),
         risks: n('.risks'), riskItems: n('.rk-list li'), redflags: n('.redflag'), links: n('a[href]'), srcUi: n('.srcs,.src-cite,.src-ev,.src-key,.ev'), disclaimer: n('.ht-disclaimer'),
-        also: n('.ht-also'), rfLinks: n('.rf-link'),
+        stop: [...c.querySelectorAll('.rk-stop')].map(e => (e.parentElement.matches('.risks') && !e.nextElementSibling ? '' : 'misplaced:') + e.textContent), also: n('.ht-also'), rfLinks: n('.rf-link'),
         blocks: [...c.querySelectorAll('.redflag')].map(e => e.id.replace(/^.*-redflag-/, '')).join(),
         linked: [...new Set([...c.querySelectorAll('.rf-link')].map(e => e.dataset.flag))].sort().join(),
         order: [...c.children].map(e => e.classList[0]).filter(Boolean).join(' > '),
@@ -90,6 +90,7 @@ for (const theme of THEMES) {
     for (const k of ['grip', 'feel', 'setup', 'risks']) if (s[k] !== 1) bad(`${id}: ${k} x${s[k]}`);
     if (s.disclaimer !== 0) bad(`${id}: ${s.disclaimer} .ht-disclaimer, expected none`);
     if (/medical advice/i.test(s.text)) bad(`${id}: "medical advice" wording in the card`);
+    if (JSON.stringify(s.stop) !== JSON.stringify(['If something hurts, stop and get it checked.'])) bad(`${id}: stop line ${JSON.stringify(s.stop)}, expected once, last in Risks (D-SHEETCOPY-STOPLINE)`);
     if (s.mistakes !== 3) bad(`${id}: ${s.mistakes} handling mistakes`);   // golden B compact copy (owner 2026-09-30): 3 per exercise, was 4
     if (!s.redflags || !s.riskItems) bad(`${id}: risks without items or red flag`);
     if (s.blocks !== FLAGS[id].join()) bad(`${id}: red-flag blocks ${s.blocks}, expected ${FLAGS[id]}`);

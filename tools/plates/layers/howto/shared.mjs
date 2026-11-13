@@ -1,4 +1,4 @@
-// Shared How-to copy: the red-flag blocks for every sheet (plan S-2 condition 4; architecture 4.2).
+// Shared How-to copy: the red-flag blocks and the stop line for every sheet (plan S-2 condition 4; architecture 4.2).
 // Every exercises/<id>.howto.mjs imports from here; no card carries its own copy (C8). The app generates
 // src/howto/archetypes.ts from this file (HT-5), so the wording lives in one place.
 
@@ -45,3 +45,7 @@ export const RED_FLAG_ELBOW = {
   claim: { tags: ['CONSENSUS'], sources: ['nhs-elbow-pain'] },
 };
 
+/** The stop line, the last line of Risks on every sheet (F-SHEET-COPY D-SHEETCOPY-STOPLINE, #423): the second sentence
+ *  of the owner's 09-30 safety line, kept when its "General guidance, not medical advice." was removed (R1). Its claim is
+ *  the shared stop-on-pain card (F-STOPLINE-CLAIM, D-STOPLINE-CLAIM): docs/research/howto/shared/stop-line.json c1-c3. */
+export const STOP_LINE = 'If something hurts, stop and get it checked.';

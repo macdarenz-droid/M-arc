@@ -211,6 +211,7 @@ const HOWTO_CSS = `
 .risks { display: grid; gap: var(--sp-3); }
 .rk-list { margin: 0; padding-left: 18px; display: grid; gap: var(--sp-2); font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text); }
 .rk-list li::marker { color: var(--text-3); }
+.rk-stop { margin: 0; font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text); }
 .redflag:focus { outline: none; } .redflag:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .rf-link { justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--text); font-size: var(--fs-small); font-weight: var(--fw-medium); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--mistake) 50%, transparent); text-underline-offset: 3px; }
 .rf-link svg { color: var(--mistake); }

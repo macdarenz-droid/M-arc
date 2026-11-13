@@ -179,7 +179,7 @@ const zooms = [
       right: RIGHT_POSE,
       wrong: [WAITER_TRAY],
       camera: 'side',
-      inset: { label: 'Thumbless grip', pose: THUMB_OVER, drawPose: THUMB_OVER_DRAW, camera: 'side',   // drawPose: mockup
+      inset: { label: 'Thumbless grip option', pose: THUMB_OVER, drawPose: THUMB_OVER_DRAW, camera: 'side',   // drawPose: mockup
         crop: { u: [-42, 96], v: [-66, 40] },   // mockup: fist, wrist and the start of the forearm, hand-frame mm
         when: 'If a wrapped thumb bends your wrist back.' },   // mockup: printed beside the inset, under its label
       loadLine: { right: 'guide', wrong: 'force', inset: 'guide' },   // mockup (see the note above RIGHT_POSE)

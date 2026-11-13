@@ -1,10 +1,10 @@
 // HT-9: "Risks" (plan 2.4 item 7), a line-for-line port of golden B's risksSection()
 // (tools/plates/layers/artifact/howto-layers.mjs). One shared red-flag block per entry in `howTo.riskFlags`,
 // golden B's own order, all four blocks generated into archetypes.ts by HT-5 (HT9-A3; O2 closed 2026-09-30).
-// F-SHEET-COPY (ruling R1, owner UI-copy rule 2026-10-01): no closing disclaimer line; the section ends the sheet.
+// F-SHEET-COPY (R1 amended, D-SHEETCOPY-STOPLINE): no "not medical advice" line; the section ends the sheet on STOP_LINE.
 import { chromeIdOf } from '../PlateView';
 import { iconBase } from '@/ui/icons';
-import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW } from '@/howto/archetypes';
+import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, STOP_LINE } from '@/howto/archetypes';
 import { RED_FLAG_BACK } from '@/howto/red-flag-back';
 import type { RedFlagBlock, RiskJoint } from '@/howto/content-types';
 import type { SectionProps } from './index';
@@ -45,6 +45,7 @@ export function renderRisks(howTo: SectionProps['howTo']) {
           </div>
         );
       })}
+      <p class="rk-stop">{STOP_LINE}</p>
     </section>
   );
 }

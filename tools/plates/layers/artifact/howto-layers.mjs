@@ -1,6 +1,6 @@
 // The How-to layers for the gallery cards (grip/GRIP-AND-FEEL-ARCHITECTURE.md 2.1-2.7, 5.2, 5.3):
-//   zoom chips ("Look closer"), hand and posture close-ups, "Target muscles", "Setup", "Risks" (F-SHEET-COPY: no
-//   closing disclaimer line, owner UI-copy rule 2026-10-01). No sources, evidence labels or contacts in the UI (owner 2026-09-30, LR-23).
+//   zoom chips ("Look closer"), hand and posture close-ups, "Target muscles", "Setup", "Risks" ending on the stop line
+//   (F-SHEET-COPY: no "not medical advice" line, owner UI-copy rule 2026-10-01; D-SHEETCOPY-STOPLINE). No sources, evidence labels or contacts in the UI (owner 2026-09-30, LR-23).
 // Imported by build-page.mjs. Content comes from exercises/<id>.howto.mjs (the verified cards). The close-up drawings
 // come from each exercise's own reviewed render script (exercises/<id>.howto-render.mjs or howto/render-<id>.mjs):
 // the script's drawing functions are loaded WITHOUT its screenshot run (the source is cut where the Playwright run
@@ -11,7 +11,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { renderFeelMap, renderFeelLegend, FEEL_CSS } from '../engine/feelmap.mjs';
 import { HAND_CSS } from '../engine/hand.mjs';
-import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW } from '../howto/shared.mjs';
+import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, STOP_LINE } from '../howto/shared.mjs';
 import * as SHARED from '../howto/shared.mjs';
 import { lintAll, formatViolations, FEEL_ROWS_MAX, SETUP_MAX_STEPS } from './copy-lint.mjs';
 // Supervisor 2026-09-30: with the compact caps every row and step shows; a red-flag row or a safety step never
@@ -278,7 +278,7 @@ function risksSection(pre, howto) {
     return `<div class="redflag" role="note" id="${pre}-redflag-${f}" tabindex="-1">${I.alert(16)}<div><p class="rf-name">${esc(F.name)}</p><p>${esc(F.now)}</p><p>${esc(F.doctor)}</p></div></div>`; };
   return `<section class="hw-sec risks" id="${pre}-risks" aria-labelledby="${pre}-risks-h"><h4 class="eyebrow" id="${pre}-risks-h">Risks</h4>`
     + `<ul class="rk-list">${howto.risks.map(r => `<li>${esc(r.text)}</li>`).join('')}</ul>`
-    + flags.map(block).join('') + `</section>`;
+    + flags.map(block).join('') + `<p class="rk-stop">${esc(STOP_LINE)}</p></section>`;
 }
 
 /** Mistake view, push exercises (architecture 2.1: load straight down the forearm, the wrist fault matters most): one

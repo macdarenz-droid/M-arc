@@ -154,12 +154,13 @@ export async function pushHints(ids = Object.keys(rowsOf())) {
 export function archetypesText(shared) {
   return `import type { RedFlagBlock } from './content-types';
 
-// GENERATED from tools/plates/layers/howto/shared.mjs (HT-5): the shared "Risks" copy, one block per joint.
-// No card carries its own red-flag wording (C8).
+// GENERATED from tools/plates/layers/howto/shared.mjs (HT-5): the shared "Risks" copy, one block per joint, and the
+// stop line that ends Risks (D-SHEETCOPY-STOPLINE). No card carries its own red-flag wording (C8).
 export const RED_FLAG: RedFlagBlock = ${ser(shared.RED_FLAG, '')};
 export const RED_FLAG_SHOULDER: RedFlagBlock = ${ser(shared.RED_FLAG_SHOULDER, '')};
 export const RED_FLAG_KNEE: RedFlagBlock = ${ser(shared.RED_FLAG_KNEE, '')};
 export const RED_FLAG_ELBOW: RedFlagBlock = ${ser(shared.RED_FLAG_ELBOW, '')};
+export const STOP_LINE: string = ${JSON.stringify(shared.STOP_LINE)};
 `;
 }
 
