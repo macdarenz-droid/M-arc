@@ -8,7 +8,7 @@ const ZOOM = {
   css: { thumb: 'plain' },
 };
 export const CLOSEUP_OPTIONS = {
-  cable_chest_press: ZOOM,
+  cable_chest_press: (r => ({ ...r, css: { ...r.css, fade: true, outlines: true } }))(ZOOM),   // LIB-PLATEFIX-5 item 1: Wrong over the faded Right, red low-back line
   machine_pullover: ZOOM,
   machine_crunch: ZOOM,
   low_to_high_cable_fly: ZOOM,

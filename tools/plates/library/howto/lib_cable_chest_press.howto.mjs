@@ -115,6 +115,21 @@ const ARCH_BODY = { root: { ...START.root, tilt: PELVIS }, trunk: -ARCH };
 const COLLAR_Y = landmarksOf({ ...START, ...ARCH_BODY }, plateSpec.body?.height ?? 1.75).sternum[1];   // c4 collarbone
 const atCollar = r => ({ ...r, at: [r.at[0], COLLAR_Y, r.at[2]] });
 const ARCHED = { ...ARCH_BODY, reach: { l: atCollar(START.reach.l), r: atCollar(START.reach.r) } };
+// LIB-PLATEFIX-5 item 1 (W6 panel L1/L5 c4/c6, D-PLAN-W8C): the cable-press-stance zoom's Wrong arches the low back per
+// pivot (LIB-SPINE array: the two lumbar pivots extended LUMBAR deg, the next LOWER_T, the top one 0) over a pelvis
+// tipped PELVIS_W deg, with the bow given as 0 (the engine bends the outline through the bow zone only when bow is set,
+// body.mjs:173), so the back outline hollows clearly (the engine's visible hollow tops out near this size); the
+// handles go up to this pose's own sternum height, as ARCHED's do. Drawn solid over the faded Right (wrong.under), which
+// the per-pivot trunk needs (a dashed Wrong may not mix it with the Right's number trunk, D-SPINE-MIX). The stills are
+// unchanged. DRAWING VALUES (D-SHIP-DRAWVAL): the PF5 PLAN's trial sizes; no number appears in user copy.
+const LUMBAR = -20, LOWER_T = -5, PELVIS_W = 15;
+const ARCH_BODY_W = { root: { ...START.root, tilt: PELVIS_W }, trunk: { flex: [LUMBAR, LUMBAR, LOWER_T, 0], bow: 0 } };   // bow 0 (set, not absent): the LIB-SPINE outline blend the PLAN measured
+const COLLAR_Y_W = landmarksOf({ ...START, ...ARCH_BODY_W }, plateSpec.body?.height ?? 1.75).sternum[1];   // c4 collarbone
+const atCollarW = r => ({ ...r, at: [r.at[0], COLLAR_Y_W, r.at[2]] });
+const ARCHED_W = { ...ARCH_BODY_W, reach: { l: atCollarW(START.reach.l), r: atCollarW(START.reach.r) } };
+// The red low-back mark (c6, W6 panel "a red mark on the low back"): the shown pose's back line sacrum -> lumbar -> backMid,
+// drawn by the crop's outlines (accent in the Right, dashed --mistake in the Wrong; the page's css outlines).
+const lowBack = lm => ({ points: {}, lines: [{ kind: 'low-back', pts: [lm.sacrum, lm.lumbar, lm.backMid] }] });
 export const stills = {
   start: { pose: START },
   end: { pose: END },
@@ -128,11 +143,12 @@ export const stills = {
 const zooms = [
   {
     key: 'cable-press-stance', chip: 'Back', heading: 'Back position', kind: 'posture',
-    // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's low back for both halves; the Wrong is the
-    // arch still (`stills.arch`) dashed in the mistake colour over the solid Right (W6 panel L1/L5).
+    // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's low back for both halves; LIB-PLATEFIX-5 item 1:
+    // the Wrong (ARCHED_W) is drawn solid over the faded Right (wrong.under, the page's css fade), with the low-back line.
     crop: { center: { at: 'lumbar', pose: 'right', off: [0, -10] }, sizePx: 190 },
     right: 'start',
-    wrong: { base: 'start', pose: ARCHED },
+    wrong: { base: 'start', pose: ARCHED_W, solid: true, under: true },
+    outlines: lowBack,
     callout: {
       right: { text: 'Spine neutral', anchor: 'lumbar' },
       wrong: { text: 'Low back arched', anchor: { at: 'lumbar', pose: 'mistake' } },

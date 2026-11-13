@@ -21,7 +21,8 @@ export const PANEL = 171, PH = 171;
 /** D-LIB9-ENGINE: golden B's layers engine, the default engine of every crop (the 8, LIB-2b's fixture, B5's clones). A
  *  spec that imports tools/plates/library/engine.mjs is cropped by the vendor engine instead (closeups.mjs engineOf). */
 export const LAYERS_ENGINE = Object.freeze({ name: 'layers', renderPlate, landmarksOf, legPressFace });
-const ZONLY = ['level', 'drop', 'cap'];
+// LIB-PLATEFIX-5 item 1 (W6): `turn` and `width` are crop-only guide kinds too (drawn by cropHalf, never sent to the engine).
+const ZONLY = ['level', 'drop', 'cap', 'turn', 'width'];
 
 /** The crop svg frame every posture crop shares. */
 const frame = (z, role, vx, vy, s, inner, overlay, label) => `<svg class="z-crop" viewBox="0 0 ${PANEL} ${PH}" role="img" aria-label="${esc(role === 'right' ? 'Right: ' + z.alt.right : 'Wrong: ' + z.alt.wrong)}" xmlns="http://www.w3.org/2000/svg">
@@ -163,12 +164,27 @@ export function engineCrop(howto, o, engine = LAYERS_ENGINE, probe = null) {
     const i0 = 2 + levels.length + 2 * drops.length;
     const cp = caps.map((g, i) => { const c = toPanel(anchors[i0 + 2 * i]), t = toPanel(anchors[i0 + 2 * i + 1]);
       return `<circle class="z-cap" cx="${f(c[0])}" cy="${f(c[1])}" r="${f(Math.hypot(t[0] - c[0], t[1] - c[1]))}"/>`; }).join('');
+    // LIB-PLATEFIX-5 item 1 (W6 panel, opt-in, Wrong only; no other zoom has these kinds, so no other crop's bytes move).
+    // They reuse rules every non-e1 zoom sheet already has, so no sheet's CSS changes:
+    // turn: a curved red arrow round a point of the shown pose ({ center, r, a0, a1 }: r in plate px, angles in screen
+    //       deg, clockwise positive, 90 = down; the engine's arc-arrow form), drawn as .z-drop + .z-drop-head;
+    // width: grey dashed vertical lines at the Right pose's x of each `at` landmark, full panel height (.z-level.m).
+    const turns = role === 'wrong' ? guides.filter(g => g.kind === 'turn') : [], widths = role === 'wrong' ? guides.filter(g => g.kind === 'width') : [];
+    const turnAt = turns.length ? resolveRefs(z, spec, turns.map(g => g.center)) : [];
+    const tn = turns.map((g, i) => { const c = toPanel(turnAt[i]), r = g.r * k, sg = Math.sign(g.a1 - g.a0), R = Math.PI / 180;
+      const p = a => [c[0] + r * Math.cos(a * R), c[1] + r * Math.sin(a * R)], e = p(g.a1), s0 = p(g.a1 - sg / (r * R)), pre = p(g.a1 - sg * 12);
+      const L = Math.hypot(e[0] - pre[0], e[1] - pre[1]) || 1, t = [(e[0] - pre[0]) / L, (e[1] - pre[1]) / L], q = [-t[1], t[0]];
+      return `<g class="z-turn"><path class="z-drop" d="M${p(g.a0).map(f).join(' ')}A${f(r)} ${f(r)} 0 ${Math.abs(g.a1 - g.a0) > 180 ? 1 : 0} ${sg > 0 ? 1 : 0} ${s0.map(f).join(' ')}"/>`
+        + `<path class="z-drop-head" d="M${f(e[0] - t[0] * 6 + q[0] * 4)} ${f(e[1] - t[1] * 6 + q[1] * 4)}L${f(e[0])} ${f(e[1])}L${f(e[0] - t[0] * 6 - q[0] * 4)} ${f(e[1] - t[1] * 6 - q[1] * 4)}Z"/></g>`; }).join('');
+    const rightPose = o.landmarks === 'zoom' ? 'end' : 'right';
+    const widthAt = widths.length ? resolveRefs(z, spec, widths.flatMap(g => g.at.map(at => ({ at, pose: rightPose })))) : [];
+    const wd = widthAt.map(q => `<path class="z-width z-level m" d="M${f(toPanel(q)[0])} 4V${PH - 4}"/>`).join('');
     // outlines of the pose this crop shows: accent in Right, --mistake in Wrong
     const olLms = !z.outlines ? null : o.landmarks === 'zoom' ? landmarks(z, spec)[role === 'wrong' ? 'mistake' : 'end'] : landmarksOf(spec.poses.end, H);
     const ol = z.outlines ? z.outlines(olLms).lines.map(q =>
       `<path class="z-ol ${q.kind} ${cls}" d="M${q.pts.map(w => toPanel(P(w)).map(f).join(' ')).join('L')}"/>`).join('') : '';
     const overlay = z.pelvisGuide ? pelvisOverlay(spec, role, toPanel, k, P) : '';
-    const label = lv + dr + cp + ol + `<circle class="z-anchor ${cls}" cx="${f(A[0])}" cy="${f(A[1])}" r="2.5"/>`;   // the words are the subtag under Right / Wrong
+    const label = lv + dr + cp + tn + wd + ol + `<circle class="z-anchor ${cls}" cx="${f(A[0])}" cy="${f(A[1])}" r="2.5"/>`;   // the words are the subtag under Right / Wrong
     return `<div class="plate z-wrap">${frame(z, role, vx, vy, s, inner, overlay, label)}</div>`;
   };
 }
