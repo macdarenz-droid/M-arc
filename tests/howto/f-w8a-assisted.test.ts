@@ -133,3 +133,24 @@ describe('F-W8A-ASSISTED (Q1): v_up, ghosts off with a Mistake zoom, on a scratc
     expect(got.problems).toEqual([]);
   }, 300_000);
 });
+
+// A1 MANIFEST (F-PAIR-FAULTS A2 form): MANIFEST.json, made by manifestOf in this card's [golden update] commit, moves only
+// build-layers-page.mjs's key. With that key blanked in every row, it is main e15e1c65's MANIFEST.json with the same blank
+// (134 rows carry the key), and each row pins the file's current sha256.
+const MOVED = 'tools/plates/library/build-layers-page.mjs';
+const MANIFEST_BLANKED_MAIN = 'ab3f030b4f4be65d64ea3d0431000526c88e1feb5c48882c113605c9fa21ad95';
+const blanked = (m: any) => { const c = structuredClone(m); let n = 0; for (const r of Object.values<any>(c.rows)) if (MOVED in r.files) { r.files[MOVED] = ''; n++; } return { n, sha: sha(JSON.stringify(c)) }; };
+describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
+  const raw = () => JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/MANIFEST.json'), 'utf8'));
+  it('only build-layers-page.mjs\'s key differs from main, and it pins the current file', () => {
+    const m = raw(), now = sha(readFileSync(join(ROOT, MOVED)));
+    for (const [id, r] of Object.entries<any>(m.rows)) if (MOVED in r.files) expect([id, r.files[MOVED]]).toEqual([id, now]);
+    expect(blanked(m)).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });
+  });
+  it('red: any other key moved', () => {
+    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1)!;
+    const other = Object.keys(r.files).find(k => k !== MOVED)!;
+    m.rows[id].files[other] = '0'.repeat(64);
+    expect(blanked(m).sha).not.toBe(MANIFEST_BLANKED_MAIN);
+  });
+});
