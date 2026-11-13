@@ -750,14 +750,14 @@
         "lib_triceps_pushdown",
         "lib_upright_row"
       ],
-      "pageSha256": "af5f2cae13950c02de8ce89ee2605177c745f16a684fd40230711b936e968a4f",
-      "bytes": 2350104,
+      "pageSha256": "7a7e2998ad918234e39feb9cc68725cfbcdacaf56a03a66a38059381d015359d",
+      "bytes": 2351010,
       "approvedBy": "supervisor",
       "decision": "F-SHEET-COPY",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ 5fa1795c531662da5d9c74a19c1c7cc5255b685a",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
       "date": "2026-11-13",
       "supersedes": 27,
-      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
       "prev": "f747b768f29d1a5e1c386a34d9880dd6ad32edcffdfde552260cba2d91015061"
     }
   ]

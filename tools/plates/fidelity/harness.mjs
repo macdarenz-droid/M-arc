@@ -1270,6 +1270,9 @@ export async function ht10DomProbe([exempt, pats, words, disclaimer, expectRisks
       if (typeof expectRisks === 'number' && rf.length !== expectRisks) problems.push(`C19: ${rf.length} .redflag block(s), expected ${expectRisks} (riskFlags)`);
       else if (expectRisks === true && !rf.length) problems.push('C19: no .redflag block in Risks');
       if (rf.some(r => !risks[0].contains(r))) problems.push('C19: a .redflag sits outside the Risks section');
+      // D-SHEETCOPY-STOPLINE: the stop line is the last line of Risks, once
+      const stop = dlg.querySelectorAll('.rk-stop');
+      if (stop.length !== 1 || risks[0].lastElementChild !== stop[0]) problems.push(`C19: ${stop.length} .rk-stop stop line(s), expected 1 as the last line of Risks`);
     }
   }
   // C11

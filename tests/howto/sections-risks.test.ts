@@ -7,7 +7,7 @@ import { readdirSync } from 'node:fs';
 import type { VNode } from 'preact';
 import { renderRisks } from '@/slices/howto/sections/Risks';
 import { chromeIdOf } from '@/slices/howto/PlateView';
-import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW } from '@/howto/archetypes';
+import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, STOP_LINE } from '@/howto/archetypes';
 import { RED_FLAG_BACK } from '@/howto/red-flag-back';
 import type { BuiltHowTo } from '@/howto/types';
 import type { RiskJoint } from '@/howto/content-types';
@@ -57,14 +57,22 @@ describe('HT9-A3: Risks ("Risks")', () => {
         expect(texts).toEqual([FLAG[f].name, FLAG[f].now, FLAG[f].doctor]);
       });
 
-      // F-SHEET-COPY (R1, owner UI-copy rule 2026-10-01): no closing disclaimer line. The render is the Risks
-      // section alone, its heading is "Risks", and no node carries "medical advice".
+      // F-SHEET-COPY (R1 as amended by D-SHEETCOPY-STOPLINE): no "not medical advice" line. The render is the Risks
+      // section alone, its heading is "Risks", no node carries "medical advice", and its last node is the stop line.
       expect(tree.type).toBe('section');
       expect(hasClass(tree, 'risks')).toBe(true);
       expect(elements(tree).filter(v => hasClass(v, 'ht-disclaimer'))).toHaveLength(0);
       expect(byTag(tree, 'h4').map(v => v.props.children)).toEqual(['Risks']);
       expect(JSON.stringify(elements(tree).map(v => v.props.children ?? null))).not.toMatch(/medical advice/i);
+      const kids = elements(tree.props.children);
+      const last = (tree.props.children as unknown[]).flat().filter(Boolean).at(-1) as AnyVNode;
+      expect([last.type, last.props.class, last.props.children]).toEqual(['p', 'rk-stop', STOP_LINE]);
+      expect(kids.filter(v => hasClass(v, 'rk-stop'))).toHaveLength(1);
     }
+  });
+
+  it('STOP_LINE is the owner\'s kept sentence, word for word (D-SHEETCOPY-STOPLINE)', () => {
+    expect(STOP_LINE).toBe('If something hurts, stop and get it checked.');
   });
 
   it('mutation MB1: a render that puts the closing line back fails the absence check (proves the test bites)', async () => {

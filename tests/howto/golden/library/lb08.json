@@ -284,14 +284,14 @@
         "lib_cable_kickback",
         "lib_resisted_hip_flexion"
       ],
-      "pageSha256": "aa4e56cc7ed9e0a82de6342dfcfbbf6f4b992f5b4f0251a51bd7826a37617399",
-      "bytes": 1201409,
+      "pageSha256": "3b09c695a3088402fabcb6e0bf060d784f31649b36773d03c0fe58510df36f86",
+      "bytes": 1201846,
       "approvedBy": "supervisor",
       "decision": "F-SHEET-COPY",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ 5fa1795c531662da5d9c74a19c1c7cc5255b685a",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
       "date": "2026-11-13",
       "supersedes": 9,
-      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
       "prev": "afde1c9503dafcde77f1e5bc5b7996f40bc0436e972f94bd3d1c6d6d6a4e2193"
     }
   ]

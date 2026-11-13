@@ -1,7 +1,8 @@
 // F-SHEET-COPY guard (card docs/supervisor/verify/f-sheet-copy-card.md, acceptance 1). The owner's heading rule
 // (AGENTS.md "UI copy", 2026-10-01): a heading is a short label of 1-3 words, a noun phrase; never a sentence, a
 // "What ..."/"How ..." question, a qualifier (", and when", ": right and wrong") or a leading The/This/About. And
-// the R1 ruling: no "not medical advice" closing line on any sheet (the 10-01 rule names this exact case).
+// the R1 ruling as amended (D-SHEETCOPY-STOPLINE, #423): no "General guidance, not medical advice." on any sheet (the 10-01
+// rule names this exact case), and "If something hurts, stop and get it checked." stays, once, the last line of Risks.
 // The walk covers the app (sheet eyebrow, every section's TSX headings, every generated string of every shipped id)
 // and the review pages (golden B and the 14 library layers pages). Exempt, with reasons: golden A
 // (tests/howto/golden/technical-plates.html, owner byte lock) and HOWTO_LABEL (the Train button names a control).
@@ -61,13 +62,15 @@ const stringsOf = (v: unknown, out: string[] = []): string[] => {
 };
 const sheetCards = (html: string) => [...html.matchAll(/<article class="sheet-card"[\s\S]*?<\/article>/g)].map(m => m[0]);
 
-const OLD = ['Set it up', 'Where you should feel it', 'If you feel it in…', 'Risks and when to stop', 'right and wrong', 'Option: thumb over the bar', 'not medical advice', 'ht-disclaimer'];
+const OLD = ['Set it up', 'Where you should feel it', 'If you feel it in…', 'Risks and when to stop', 'right and wrong', 'Option: thumb over the bar', 'medical advice', 'General guidance', 'ht-disclaimer'];
+const STOP = 'If something hurts, stop and get it checked.';
+const STOP_END = `<p class="rk-stop">${STOP}</p></section>`;
 
 describe('F-SHEET-COPY: sheet headings follow the owner\'s heading rule', () => {
   it('the rule itself: MA4-MA7 forms fail, the new headings pass', () => {
     for (const bad of ['Where you should feel', 'How it moves', 'The setup', 'Risks, and when', 'Hand: right and wrong', 'If you feel it in…'])
       expect([bad, headingProblems(bad).length > 0]).toEqual([bad, true]);
-    for (const ok of ['Technique', 'Setup', 'Target muscles', 'Off-target feel', 'Risks', 'Hand', 'Thumbless grip', 'Common handling mistakes'])
+    for (const ok of ['Technique', 'Setup', 'Target muscles', 'Off-target feel', 'Risks', 'Hand', 'Thumbless grip option', 'Common handling mistakes'])
       expect([ok, headingProblems(ok)]).toEqual([ok, []]);
   });
 
@@ -104,6 +107,7 @@ describe('F-SHEET-COPY: sheet headings follow the owner\'s heading rule', () => 
     }
     const arche = readFileSync(join(ROOT, 'src/howto/archetypes.ts'), 'utf8');
     for (const o of ['DISCLAIMER', 'medical advice', 'Risks and when to stop']) if (arche.includes(o)) bad.push(`archetypes.ts: old string "${o}"`);
+    if (!arche.includes(`export const STOP_LINE: string = ${JSON.stringify(STOP)};`)) bad.push('archetypes.ts: no STOP_LINE with the kept words (D-SHEETCOPY-STOPLINE)');
     expect(bad).toEqual([]);
   }, 60_000);   // imports ~234 generated modules: ~3.5 s alone, past vitest's 5 s default under a full parallel run
 
@@ -117,7 +121,13 @@ describe('F-SHEET-COPY: sheet headings follow the owner\'s heading rule', () => 
     expect(bad).toEqual([]);
   });
 
-  it('golden B and the 14 library layers pages: headings pass, no old string, no closing line', () => {
+  it('Risks.tsx ends the Risks section on the stop line (D-SHEETCOPY-STOPLINE)', () => {
+    const src = readFileSync(join(ROOT, 'src/slices/howto/sections/Risks.tsx'), 'utf8');
+    expect(src).toMatch(/<p class="rk-stop">\{STOP_LINE\}<\/p>\s*<\/section>/);
+    expect(src.split('rk-stop').length - 1).toBe(1);
+  });
+
+  it('golden B and the 14 library layers pages: headings pass, no old string, the stop line once and last in Risks', () => {
     const bad: string[] = [];
     let cards = 0;
     for (const p of PAGES) {
@@ -128,6 +138,8 @@ describe('F-SHEET-COPY: sheet headings follow the owner\'s heading rule', () => 
         for (const h of headingsOf(c)) for (const q of headingProblems(h)) bad.push(`${p}: "${h}": ${q}`);
         for (const o of OLD) if (c.includes(o)) bad.push(`${p}: old string "${o}"`);
         if (c.includes('How to do it')) bad.push(`${p}: card eyebrow "How to do it"`);
+        const risks = c.match(/<section class="hw-sec risks"[\s\S]*?<\/section>/g) ?? [];
+        if (risks.length !== 1 || !risks[0]!.endsWith(STOP_END) || c.split(STOP).length !== 2) bad.push(`${p}: a card without exactly one stop line ending its Risks section`);
       }
     }
     expect(cards).toBeGreaterThanOrEqual(72);

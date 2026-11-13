@@ -60,7 +60,8 @@ export function checkC19Shared(shared: Record<string, unknown>, label: string, n
       if (m) bad.push(`C19: ${label}: ${k}.${f}: ${RULE_SAFETY}: "${m[0]}"`);
     }
   }
-  if (shared.DISCLAIMER !== undefined) bad.push(`C19: ${label}: DISCLAIMER is back (F-SHEET-COPY R1: no closing disclaimer line)`);
+  if (shared.DISCLAIMER !== undefined) bad.push(`C19: ${label}: DISCLAIMER is back (F-SHEET-COPY R1: no "not medical advice" line)`);
+  if (typeof shared.STOP_LINE === 'string') bad.push(...textHits(`${label}: STOP_LINE`, shared.STOP_LINE, names));   // D-SHEETCOPY-STOPLINE
   return bad;
 }
 

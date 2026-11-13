@@ -511,14 +511,14 @@
         "lib_chest_supported_row",
         "lib_resistance_band_row"
       ],
-      "pageSha256": "f8a5f7b7152c1581d1db85621eb2332a0eaadb3fe1b4cf3bbf78976b16148888",
-      "bytes": 2193246,
+      "pageSha256": "0c9f31b5b3fb59d14e97b07649694ee70cdc64edc500e5db9f5e8c739ca77115",
+      "bytes": 2193884,
       "approvedBy": "supervisor",
       "decision": "F-SHEET-COPY",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ 5fa1795c531662da5d9c74a19c1c7cc5255b685a",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
       "date": "2026-11-13",
       "supersedes": 16,
-      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
       "prev": "b584ab3da1de86eca0e8ec15eace5dfcddd8edc1f7010c58b6ec35b27fe41dc2"
     }
   ]

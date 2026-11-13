@@ -141,14 +141,14 @@
       "ids": [
         "lib_reverse_lunge"
       ],
-      "pageSha256": "cfaeb2f6cf01eb352f2891cdd90156e18e1285907b29a5c317b051b339de5837",
-      "bytes": 345049,
+      "pageSha256": "0440193ecdbc0e4879c921415c300e7e50498046a3282782b92ae1c9c1479a4f",
+      "bytes": 345218,
       "approvedBy": "supervisor",
       "decision": "F-SHEET-COPY",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ 5fa1795c531662da5d9c74a19c1c7cc5255b685a",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
       "date": "2026-11-13",
       "supersedes": 5,
-      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
       "prev": "2b911032b63e3cff80235f02092afb54670257c1e5b0ac467b0a04d40eb21e6b"
     }
   ]

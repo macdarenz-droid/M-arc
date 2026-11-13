@@ -77,7 +77,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
   // Supervisor, PR #107 (the same condition HT-2 had, #105): the per-file check alone cannot catch a file and its
   // own MANIFEST entry being edited together and staying consistent with each other.
   it('the sorted path:sha256 list of MANIFEST.json, plus pageApproval, hashes to its pinned literal', () => {
-    expect(m.sha256(m.manifestPinList())).toBe('ce2f53d6780e88adcf7a56edac75e4759399383d50289e790e745beb3bc9c221');
+    expect(m.sha256(m.manifestPinList())).toBe('a3a916ad33179d43f0c8386a4713a6ab67a9926f47f8ec7c1305159d10cd6bd0');
   });
 
   it('fails when a vendored file and its own MANIFEST sha256 entry change together (consistently)', () => {
@@ -92,7 +92,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
     // the per-file check alone is fooled (both sides agree, source pin untouched)...
     expect(m.verifyLayers(d, manifest)).toEqual([]);
     // ...but the literal pin over the whole manifest is not
-    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('ce2f53d6780e88adcf7a56edac75e4759399383d50289e790e745beb3bc9c221');
+    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('a3a916ad33179d43f0c8386a4713a6ab67a9926f47f8ec7c1305159d10cd6bd0');
   });
 });
 

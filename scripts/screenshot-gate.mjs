@@ -7826,6 +7826,8 @@ if (gate.runs('HT-9'))
     }
     const d = texts.filter(n => /medical advice/i.test(n.textContent));
     if (d.length || dlg.querySelectorAll('.ht-disclaimer').length) bad.push(`a disclaimer line shows (${d.length} "medical advice" text node(s), ${dlg.querySelectorAll('.ht-disclaimer').length} .ht-disclaimer)`);
+    const stop = [...dlg.querySelectorAll('.rk-stop')];   // D-SHEETCOPY-STOPLINE: once, the last line of Risks
+    if (stop.length !== 1 || !stop[0].parentElement.matches('.risks') || stop[0].nextElementSibling) bad.push(`the stop line shows ${stop.length} times or is not the last line of Risks`);
     return bad;
   }, [flags, flagLines, APP]);
   const rectOf = (page, sel) => page.evaluate(s => { const r = document.querySelector(s).getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; }, sel);
@@ -7912,7 +7914,7 @@ if (gate.runs('HT-9'))
         const head = s => gold.page.evaluate(s => document.querySelector(s)?.textContent ?? null, s);
         const want = {
           setup: [await head(`#${id}-setup-h`), ...h.setup.flatMap((s, i) => [String(i + 1), s.text, ...(s.zoom && zoomChip(s.zoom) ? [`Show me the ${zoomChip(s.zoom).toLowerCase()}`] : [])])],
-          risks: [await head(`#${id}-risks-h`), ...h.risks.map(r => r.text), ...(h.riskFlags ?? ['wrist']).flatMap(f => flagLines[f])],
+          risks: [await head(`#${id}-risks-h`), ...h.risks.map(r => r.text), ...(h.riskFlags ?? ['wrist']).flatMap(f => flagLines[f]), C.STOP_LINE],   // D-SHEETCOPY-STOPLINE: Risks ends on the stop line
         };
         for (const [label, gSel] of pairs) {
           const [la, lg] = [await leaves(app.page, appSel(gSel, id)), await leaves(gold.page, gSel)];

@@ -71,7 +71,7 @@ const Q = '\\\\?"';   // a double quote, raw (HTML) or escaped inside a generate
 const stems = SC_STEMS.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
 /**
  * `text` with every F-SHEET-COPY copy replacement reversed: the old headings, the old map label and, for a layers page
- * (`page: true`), the closing line after each Risks section and its CSS rule. Applied to a file this PR changed, the
+ * (`page: true`), the closing line after each Risks section (from its stop line) and its CSS rule. Applied to a file this PR changed, the
  * result is main's bytes exactly when only the copy moved (the pins below then hold unchanged).
  */
 export function toMainCopy(text: string, { page = false } = {}): string {
@@ -85,10 +85,11 @@ export function toMainCopy(text: string, { page = false } = {}): string {
     .replace(new RegExp(`(-h${Q} tabindex=${Q}-1${Q}>)(${stems})(</h4>)`, 'g'), '$1$2: right and wrong$3')
     .replace(new RegExp(`(role=${Q}group${Q} aria-label=${Q})(${stems})(${Q})`, 'g'), '$1$2: right and wrong$3')
     .replace(new RegExp(`("heading": ")(${stems})(")`, 'g'), '$1$2: right and wrong$3')
-    .replaceAll('Thumbless grip', 'Option: thumb over the bar')
+    .replaceAll('Thumbless grip option', 'Option: thumb over the bar')
     .replace('// One string per exercise: golden B\'s "Target muscles" section', '// One string per exercise: golden B\'s "Where you should feel it" section');   // feel-*.ts line 2
   if (page) {
-    t = t.replace(/(<section class="hw-sec risks" id="([a-z0-9-]+)-risks"[\s\S]*?<\/section>)/g, (_m, s, pre) => `${s}\n  <p class="ht-disclaimer" id="${pre}-disclaimer">${DISCLAIMER_OLD}</p>`);
+    t = t.replace(/(<section class="hw-sec risks" id="([a-z0-9-]+)-risks"[\s\S]*?)<p class="rk-stop">If something hurts, stop and get it checked\.<\/p>(<\/section>)/g, (_m, s, pre, end) => `${s}${end}\n  <p class="ht-disclaimer" id="${pre}-disclaimer">${DISCLAIMER_OLD}</p>`);
+    t = t.replace('.rk-stop { margin: 0; font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text); }\n', '');
     const at = '.hw-sec { margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--border-subtle); }';
     t = t.replace(at, DISCLAIMER_CSS + at);
   }

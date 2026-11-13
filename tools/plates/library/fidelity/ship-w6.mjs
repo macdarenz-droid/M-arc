@@ -1,8 +1,8 @@
 // LIB-SHIP W6 (#393): the two browser checks of D-SHIP-W6-RISKS (6703065396) and D-SHIP-W6-F2 (6703104795), run by the
 // gate block LIB-SHIP-W6-RISKS-F2 and tests/gate/ship-w6.mjs (the unit jobs have no browser).
 //  - risksRows: harness.mjs ht10DomProbe's C19 on minimal sheets: exactly riskFlags.length .redflag blocks, all inside
-//    Risks, and no closing disclaimer line (F-SHEET-COPY R1); `true` keeps golden B's "at least one". The ruled reds, each
-//    must be red; the greens green.
+//    Risks ending on the stop line, and no disclaimer (F-SHEET-COPY R1, D-SHEETCOPY-STOPLINE); `true` keeps golden B's
+//    "at least one". The ruled reds, each must be red; the greens green.
 //  - f2Rows: PQH's full runQa report (node and browser halves, as fidelity.mjs pqhJob builds it) for cable_lateral_raise
 //    and face_pull is ok with the lb07 plate pin's exemptions, and not ok (F2 blocks) with F2 taken out.
 import { join } from 'node:path';
@@ -12,8 +12,8 @@ import { riskCountOf } from '../fidelity.mjs';
 
 const DISC = 'Disclaimer text.';
 const block = f => `<div class="redflag" role="note" id="x-redflag-${f}" tabindex="-1"><div><p class="rf-name">${f}</p></div></div>`;
-const sheet = (blocks, { disc = false, outside = [] } = {}) => {
-  const risks = `<section class="hw-sec risks"><ul class="rk-list"><li>r</li></ul>${blocks.join('')}</section>`;
+const sheet = (blocks, { disc = false, outside = [], stop = true } = {}) => {
+  const risks = `<section class="hw-sec risks"><ul class="rk-list"><li>r</li></ul>${blocks.join('')}${stop ? '<p class="rk-stop">Stop line.</p>' : ''}</section>`;
   return `<!doctype html><dialog class="sheet ht" open><div class="sheet-panel">${risks}${outside.join('')}${disc ? `<p class="ht-disclaimer" id="x-disclaimer">${DISC}</p>` : ''}</div></dialog>`;
 };
 
@@ -30,6 +30,7 @@ export async function risksRows(browser, H, { root = ROOT } = {}) {
     ["red 4: the old rule (true) on machine_lateral_raise's no-flag sheet", sheet([]), true, ['C19: no .redflag block in Risks']],
     ['red 5 (F-SHEET-COPY MB2): "not medical advice" in a red-flag box', sheet([block('shoulder').replace('</p>', ' Not medical advice.</p>')]), 1, ['C19: "medical advice" wording in the sheet']],
     ['red 6 (F-SHEET-COPY): a red-flag box outside Risks', sheet([], { outside: [block('shoulder')] }), 1, ['C19: a .redflag sits outside the Risks section']],
+    ['red 7 (D-SHEETCOPY-STOPLINE): the stop line missing', sheet([block('shoulder')], { stop: false }), 1, ['C19: 0 .rk-stop stop line(s), expected 1 as the last line of Risks']],
     ["machine_lateral_raise's own count passes its no-flag sheet", sheet([]), mlr, []],
   ];
   const rows = [], problems = [];

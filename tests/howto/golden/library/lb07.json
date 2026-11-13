@@ -370,14 +370,14 @@
         "lib_incline_push_up",
         "lib_pike_push_up"
       ],
-      "pageSha256": "e432c23d61548e4a35c2c1100b293e8199a1e32ede5f3755a8e82e235f6767d2",
-      "bytes": 1173488,
+      "pageSha256": "13316c7eb448d4647097600d7d42fc3644a9ddca64b5e868e8ff1010d7142b6c",
+      "bytes": 1173925,
       "approvedBy": "supervisor",
       "decision": "F-SHEET-COPY",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ 5fa1795c531662da5d9c74a19c1c7cc5255b685a",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
       "date": "2026-11-13",
       "supersedes": 12,
-      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
       "prev": "39882b71918e5628e3e15a0641ce60ae3344900bf42dbc7b87382311d787f813"
     }
   ]
