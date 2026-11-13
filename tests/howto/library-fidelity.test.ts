@@ -265,6 +265,40 @@ describe('LIB-4b D-LIB4b-POSES: the derived HT4-A5 rule a library id gets (libra
   });
 });
 
+// F-W8A-ASSISTED (F-W8A-HOLDS part 1, F-HT4-UNDER): crop.mjs:142's `<key>-under` call (the Right crop drawn faded under a
+// solid Wrong) is attributed only for a zoom-shell posture zoom declaring wrong.under with wrong.solid or wrongAlone
+describe('F-W8A-ASSISTED F-HT4-UNDER: libraryA5 attributes a declared <key>-under call, and only that', () => {
+  const S = { root: { at: [0, 1, 0], tilt: 0 }, neck: 0 }, E = { root: { at: [0, 0.9, 0], tilt: 4 }, neck: 2 }, M = { neck: 20 }, W = { neck: -15 };
+  const ref = { id: 'x_lib', poses: { start: S, end: E }, mistake: { pose: M, parts: [] }, tempo: [{ phase: 'Pull', s: 1 }], alt: 'a', checks: [], callouts: [] };
+  const zoom = (wrong: object, extra = {}) => ({ zooms: [{ key: 'k', kind: 'posture', right: 'end', wrong: { base: 'end', pose: W, ...wrong }, ...extra }] });
+  const SOLID = zoom({ solid: true, under: true });
+  const crop = (id: string, poses = { start: E, end: E }, extra = {}) => ({ opts: { id, mistake: id === 'k-wrong' }, spec: { ...ref, poses, callouts: [], checks: [], mistake: undefined, ...extra } });
+  const calls = (under = true) => [
+    { opts: { id: 'base' }, spec: ref }, { opts: { id: 'x-lib-n' }, spec: ref }, { opts: { id: 'x-lib-m', mistake: true }, spec: ref },
+    crop('k-right'), crop('k-wrong', { start: mergeDeep(E, W), end: mergeDeep(E, W) }), ...(under ? [crop('k-under')] : []),
+  ].map(c => JSON.parse(JSON.stringify(c)));
+  const gb = { ...goldenB, fragmentProblems: () => [] };
+  const run = (cs: unknown[], howto: object, o = {}) => libraryA5({ calls: cs, html: '' }, { specId: 'x_lib', ref, howto, prefix: 'x-lib', family: 'zoom', entry: {}, ...o }, gb);
+  const UNATTR = /x_lib\|k-under: a call that cannot be attributed to base, cam, the plate or a declared zoom side/;
+  it('green: a solid (or wrongAlone) Wrong with under, its under call on the reference pose', () => {
+    expect(run(calls(), SOLID)).toEqual({ protected: [], fragments: [], poses: [] });
+    expect(run(calls(), zoom({ under: true }, { wrongAlone: true }))).toEqual({ protected: [], fragments: [], poses: [] });
+  });
+  it('m5: a k-under call for a zoom that does not declare crop.mjs:142\'s condition cannot be attributed', () => {
+    expect(run(calls(), zoom({ solid: true })).poses.join('\n')).toMatch(UNATTR);              // no under
+    expect(run(calls(), zoom({ under: true })).poses.join('\n')).toMatch(UNATTR);              // under, but dashed (no solid, no wrongAlone)
+    expect(run(calls(), SOLID, { family: 'zbox' }).poses.join('\n')).toMatch(UNATTR);         // the zbox shell has no under call
+    expect(run(calls(false), zoom({ solid: true })).poses).toEqual([]);                        // and no under entry is expected there
+  });
+  it('m6: an under call drawing the fault pose is red (never a fault pose on the under side)', () => {
+    const cs = calls(); cs[5].spec.poses = { start: mergeDeep(E, W), end: mergeDeep(E, W) };
+    expect(run(cs, SOLID).poses.join('\n')).toMatch(/x_lib\|k-under: poses\.start matches neither a reference pose \(/);
+  });
+  it('m7: a declared under zoom with no under call captured is red (anti-blindness)', () => {
+    expect(run(calls(false), SOLID).poses).toEqual(['x_lib|k|under: no renderPlate call captured for this declared zoom side (anti-blindness)']);
+  });
+});
+
 describe('LIB-4b B5: the scratch fixture sources (D-LIB4-FIXTURE, lib4-cards 11.1 items 3-5 and 14)', () => {
   it('3 ids from the pool, 3 separate pair keys; each clone swaps ids and research card, and its spec id is none of the 8\'s', () => {
     expect(SCRATCH).toHaveLength(3);
