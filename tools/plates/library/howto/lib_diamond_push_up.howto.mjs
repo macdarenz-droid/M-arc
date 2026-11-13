@@ -103,6 +103,18 @@ function solve(p0, make, res, iters = 40) {   // Newton with finite differences 
 const bladesPose = pro => { const p = q => ({ ...START, scap: { elev: 0, pro }, wrist: q.w });
   return p(solve({ w: START.wrist }, p, lm => [lm['wrist.r'][1] - WY])); };
 const PINCHED_POSE = bladesPose(PINCH), ROLLED_POSE = bladesPose(ROLL);
+// LIB-PLATEFIX-5 item 1 (W6 panel, c4 "shoulders rolled forward", the card zoom's Wrong "upper back rounded"; D-PLAN-W8C):
+// the shoulder-blades Wrong is the rolled pose with the upper back rounded: thoracic flexion BACK deg at the two upper
+// trunk pivots (LIB-SPINE array), the neck NECK; the root (height, depth, tilt) re-solved so the toe tips stay on their
+// spot and the rolled shoulder keeps its height, and the wrist re-solved so the palm lies level on its grip. The stills
+// are unchanged. DRAWING VALUES (D-SHIP-DRAWVAL): BACK 10 and NECK -20 are the PF5 PLAN's trial sizes (no card gives one);
+// no number from them appears in user copy.
+const BACK = 10, NECK = -20, LM_ROLLED = landmarksOf(ROLLED_POSE, H);
+const roundedPose = q => ({ ...ROLLED_POSE, root: { ...ROLLED_POSE.root, at: [ROLLED_POSE.root.at[0], q.y, q.z], tilt: q.tilt },
+  trunk: { flex: [0, 0, BACK, BACK] }, neck: NECK, wrist: q.w });
+const ROUNDED_POSE = roundedPose(solve({ y: ROLLED_POSE.root.at[1], z: ROLLED_POSE.root.at[2], tilt: ROLLED_POSE.root.tilt, w: ROLLED_POSE.wrist },
+  roundedPose, lm => [lm['toe.r'][1] - LM_ROLLED['toe.r'][1], lm['toe.r'][2] - LM_ROLLED['toe.r'][2],
+    lm['shoulder.r'][1] - LM_ROLLED['shoulder.r'][1], lm['wrist.r'][1] - WY]));
 export const stills = {
   start: { pose: START },
   end: { pose: plateSpec.poses.end },
@@ -140,11 +152,12 @@ const zooms = [
   },
   {
     key: 'shoulder-blades', chip: 'Shoulder blades', heading: 'Shoulder blades', kind: 'posture',
-    // W6 panel L1/L5: the Wrong is not solid: the pinched Right is drawn, the rolled shoulder dashed red over it, and a
-    // red drop arrow runs from the Right shoulder down to the rolled one (offsets, plate px, are drawing values).
+    // LIB-PLATEFIX-5 item 1 (W6 panel, D-PLAN-W8C): the Wrong (rolled shoulder, rounded upper back: ROUNDED_POSE) is drawn
+    // solid over the faded pinched Right (wrong.under, the page's css fade), and a red drop arrow runs from the Right
+    // shoulder down to the rolled one (offsets, plate px, are drawing values).
     crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, 4] }, sizePx: 140 },
     right: { base: 'start', pose: PINCHED_POSE },
-    wrong: { base: 'start', pose: ROLLED_POSE },
+    wrong: { base: 'start', pose: ROUNDED_POSE, solid: true, under: true },
     guides: [{ kind: 'drop', from: { at: 'shoulder.r', pose: 'right', off: [0, -4] }, to: { at: 'shoulder.r', pose: 'mistake', off: [0, 0] } }],
     callout: {
       right: { text: 'Blades back', anchor: 'shoulder.r' },
