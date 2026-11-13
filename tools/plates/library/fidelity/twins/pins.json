@@ -663,7 +663,7 @@
   ]
  },
  "gate:HT-9": {
-  "sha256": "22594af4d1785ccf9285c2ed81dabc005639e09479f7dafe42827722357d9825",
+  "sha256": "fbe5752b16c1ccd2ca5eb92094ce55deed32c5bf909514d52a81d0376c180581",
   "map": [
    {
     "m": "throw new Error",
@@ -820,6 +820,11 @@
     "m": "bad.push(",
     "t": "HT9/A3@390",
     "why": "a3 probe, reported by P"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT9/A3@390",
+    "why": "D-SHEETCOPY-STOPLINE: the stop line once, last in Risks"
    },
    {
     "m": "P(",
