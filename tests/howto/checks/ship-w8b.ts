@@ -27,3 +27,20 @@ export async function pf4Lb02Spec(stageDir: string) {
   const all = reg.rows().map((r: any) => (r.batchFile === LB02 ? { ...r, pages: { ...r.pages, layersConfig: relative(ROOT, cfgPath) } } : r));
   return layersSpecOf(LB02, { stageDir, all });
 }
+
+/** LIB-SHIP W8b (D-SHIP-W8B-STAMP, W8b LAYERS APPROVED #417 6856507580; D-W8B-INCLINE 6856468001): the 9 ids W8b ships,
+ *  per batch file in row order. The one list every W8b guard reads. Held W8b ids stay approved-plate (D-PF4 form):
+ *  dumbbell_shrug, bulgarian_split_squat (D-W8B-RIGHTPOSE), conventional_deadlift, sumo_deadlift, step_up, wrist_curl,
+ *  cross_body_hammer_curl, incline_dumbbell_curl. */
+export const W8B_SHIPPED: Record<string, readonly string[]> = {
+  'tools/plates/library/batches/lb02.json': ['lib_dumbbell_pullover'],
+  'tools/plates/library/batches/lb03.json': ['lib_dumbbell_romanian_deadlift'],
+  'tools/plates/library/batches/lb04.json': ['lib_wall_sit', 'lib_pistol_squat', 'lib_forward_lunge', 'lib_walking_lunge'],
+  'tools/plates/library/batches/lb05.json': ['lib_bayesian_cable_curl', 'lib_dumbbell_overhead_triceps_extension', 'lib_single_arm_triceps_pushdown'],
+};
+export const W8B_IDS: string[] = Object.values(W8B_SHIPPED).flat();
+export const W8B_HELD: readonly string[] = ['lib_conventional_deadlift', 'lib_sumo_deadlift', 'lib_dumbbell_shrug', 'lib_step_up', 'lib_bulgarian_split_squat',
+  'lib_wrist_curl', 'lib_cross_body_hammer_curl', 'lib_incline_dumbbell_curl'];
+export const w8bOf = (batchFile: string): string[] => [...(W8B_SHIPPED[batchFile] ?? [])];
+/** The approval every W8b layers-page entry carries, exactly: the ruling that names the committed page shas. */
+export const W8B_LAYERS_APPROVAL = 'https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652';

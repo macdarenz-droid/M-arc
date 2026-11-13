@@ -13,6 +13,7 @@ import { checkC3 } from './checks/c3';
 import { W5 } from './lib-ship-w5';
 import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
+import { W8B_HELD, W8B_IDS } from './checks/ship-w8b';
 import exercises from '../../src/data/exercises.json';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -59,16 +60,23 @@ const gapKeyOf = (id: string) => keyMods.find((m: any) => m.GAPS && id in m.GAPS
 describe('LIB-SHIP A1: the shipped set', () => {
   it('shippedIds() is the 8 then exactly the ruled library ids; none of the owner\'s 11 ships', () => {
     // LIB-SHIP W4 (ruling 3): then the W4 ids (checks/ship-w4.ts), all in registry order; no W4 waiting id ships
-    const ruled = [...RULED_SHIPPED, ...W4_IDS];
+    // LIB-SHIP W8b (D-SHIP-W8B-STAMP, ruling 3): plus the 9 W8b ids (checks/ship-w8b.ts); W8b's lines leave the W4 waiting
+    // list first (pullover and dumbbell_romanian_deadlift, nothing else), then the W4 check runs unchanged; the 8 held W8b ids stay off
+    const ruled = [...RULED_SHIPPED, ...W4_IDS, ...W8B_IDS];
     expect(reg.shippedIds()).toEqual([...EIGHT, ...reg.rows().map((r: any) => r.id).filter((id: string) => ruled.includes(id))]);
     expect(ruled.filter(id => !reg.shippedIds().includes(id))).toEqual([]);
-    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.includes(id))).toEqual([]);
+    expect(W4_WAITING_IDS.filter(id => W8B_IDS.includes(id))).toEqual(['lib_dumbbell_pullover', 'lib_dumbbell_romanian_deadlift']);
+    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.filter(w => !W8B_IDS.includes(w)).includes(id))).toEqual([]);
+    expect(reg.shippedIds().filter((id: string) => W8B_HELD.includes(id))).toEqual([]);
+    expect(W8B_HELD.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(W8B_HELD.map(id => [id, 'approved-plate']));
     const eleven = ['hip_thrust', 'pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch', 'overhead_cable_triceps_extension',
       'cable_rear_delt_fly', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'leg_press_calf_raise'].map(s => `lib_${s}`);
     expect(reg.shippedIds().filter((id: string) => eleven.includes(id))).toEqual([]);
     // LIB-SHIP W5 (D-SHIP-W5-FLIPSET, ruling 3): of the 27 W5 rows exactly the 10 ship; the 17 held stay approved-plate
-    const held = W5.filter(id => !W5_SHIPPED.includes(id));
-    expect(held).toHaveLength(17);
+    // LIB-SHIP W8b: W8b's 7 lb04/lb05 ids leave the held list first; the other 10 stay approved-plate
+    expect(W5.filter(id => W8B_IDS.includes(id))).toHaveLength(7);
+    const held = W5.filter(id => !W5_SHIPPED.includes(id) && !W8B_IDS.includes(id));
+    expect(held).toHaveLength(10);
     expect(reg.shippedIds().filter((id: string) => held.includes(id))).toEqual([]);
     expect(held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(held.map(id => [id, 'approved-plate']));
     // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): of the 29 drawn W7 rows exactly the 16 ship; the 13 held stay approved-plate (D-SHIP-W7-SLEDHOLD: sled_pull, D-SHIP-W7-HOLD2:

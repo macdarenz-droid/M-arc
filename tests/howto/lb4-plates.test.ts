@@ -9,6 +9,7 @@ import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { w8bOf } from './checks/ship-w8b';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -141,24 +142,33 @@ describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
   // asserts: exactly W5's 4 LB4 ids ship; the other 8 stay approved-plate (held, goblet_squat included); every LB4 id
   // lives in batches/lb04.json and nowhere else in batches/ (D-SHIP-MOVE).
   const W5 = ['lib_front_squat', 'lib_bodyweight_squat', 'lib_bodyweight_lunge', 'lib_bodyweight_split_squat'];
+  // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): plus W8b's 4 LB4 ids; step_up, bulgarian_split_squat, jump_squat
+  // and goblet_squat stay approved-plate
+  const W8B = w8bOf('tools/plates/library/batches/lb04.json');
+  const RULED = [...W5, ...W8B];
   const stageProblems = (rows: any[]) => drawn().map(i => `lib_${i}`).flatMap(id => {
-    const r = rows.find((x: any) => x.id === id), want = W5.includes(id) ? 'shipped' : 'approved-plate';
+    const r = rows.find((x: any) => x.id === id), want = RULED.includes(id) ? 'shipped' : 'approved-plate';
     if (!r) return [`${id}: no row`];
     return r.stage === want ? [] : [`${id}: ${r.stage}`];
   });
   const someRow = { src: 'library/specs/wall_sit.mjs', slug: 'wall-sit', prefix: 'wall-sit', chromeId: 'wall-sit', mode: 'H', stage: 'drawing', view: 'side' };
-  it('LIB-SHIP W5: every LB4 row is at its ruled stage: W5\'s 4 shipped, the other 8 approved-plate', () => {
+  it('LIB-SHIP W5 + W8b: every LB4 row is at its ruled stage: W5\'s 4 and W8b\'s 4 shipped, the other 4 approved-plate', () => {
+    expect(W8B).toEqual(['lib_wall_sit', 'lib_pistol_squat', 'lib_forward_lunge', 'lib_walking_lunge']);
+    expect(drawn().map(i => `lib_${i}`).filter(id => !RULED.includes(id))).toHaveLength(4);
     expect(stageProblems(reg.rows())).toEqual([]);
   });
   it('LIB-SHIP W5 reds: a W5 id back at approved-plate, a held id shipped, a held id at drawing and a dropped row are red', () => {
     const rows = reg.rows();
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_front_squat' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_front_squat: approved-plate']);
-    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_wall_sit' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_wall_sit: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_step_up' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_step_up: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_bulgarian_split_squat' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_bulgarian_split_squat: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_wall_sit' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_wall_sit: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_goblet_squat' ? { ...r, ...someRow, stage: 'drawing' } : r)))).toEqual(['lib_goblet_squat: drawing']);
     expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_wall_sit'))).toEqual(['lib_wall_sit: no row']);
   });
-  it('LIB-SHIP W5: the shipped LB4 ids are exactly W5\'s 4, in registry order; each drawn LB4 id is one registry row (lb04.json read once)', () => {
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W5);
+  it('LIB-SHIP W5 + W8b: the shipped LB4 ids are exactly W5\'s 4 and W8b\'s 4, in registry order; each drawn LB4 id is one registry row (lb04.json read once)', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(reg.rows().map((r: any) => r.id).filter((i: string) => RULED.includes(i)));
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toHaveLength(8);
     const rows = reg.rows();
     for (const id of drawn()) expect(rows.filter((r: any) => r.id === `lib_${id}`).length, id).toBe(1);
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);

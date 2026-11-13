@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
 import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
+import { W8B_LAYERS_APPROVAL, w8bOf } from './checks/ship-w8b';
 import { renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -723,28 +724,35 @@ describe('LIB-10 A5: lb2/rows.json holds exactly the 7 LB2 ids drawn here and in
 // stamp, the lb02 layers page put back, and the rows copied back into lb2/rows.json.
 describe('LIB-SHIP W4 A9 (replaces LIB-10 A9, D-LIB10-AHEAD): no LB2 id ships in W4; every LB2 row waits at approved-plate in batches/lb02.json', { timeout: T }, () => {
   const OLD_ROWS = 'tools/plates/library/lb2/rows.json';
-  const RULED = () => w4Of(ROWS);
+  // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): the ruled LB2 set is W4's (none) plus W8b's (dumbbell_pullover);
+  // W8b's line leaves the W4 waiting list first, then every check below runs unchanged on the rest
+  const RULED = () => [...w4Of(ROWS), ...w8bOf(ROWS)];
+  const WAITING = () => waitOf(ROWS).filter(id => !w8bOf(ROWS).includes(id));
   /** One line per row off the ruled state: a ruled id not shipped, an unruled id at any stage but approved-plate. */
   const shipProblems = (rows: Record<string, any>, ruled = RULED()) => Object.entries(rows).flatMap(([id, r]) =>
     ruled.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
-  it('no LB2 id is ruled to ship; the waiting list is every LB2 row, in row order, and every row is at approved-plate', () => {
+  it('exactly dumbbell_pullover is ruled to ship (W8b); the waiting list is every other LB2 row, in row order, each at approved-plate', () => {
     const rows = readJson(ROWS).rows;
-    expect(RULED()).toEqual([]);
+    expect(w4Of(ROWS)).toEqual([]);
+    expect(RULED()).toEqual(['lib_dumbbell_pullover']);
     expect(waitOf(ROWS)).toEqual(Object.keys(rows));
     expect([...waitOf(ROWS)].sort()).toEqual([...IDS].sort());
+    expect(WAITING()).toEqual(Object.keys(rows).filter(id => id !== 'lib_dumbbell_pullover'));
     expect(shipProblems(rows)).toEqual([]);
   });
   it('mutations: one LB2 row at shipped, a row at drawing, and a ruled id held back are red', () => {
     const rows = readJson(ROWS).rows;
-    expect(shipProblems({ ...rows, lib_dumbbell_pullover: { ...rows.lib_dumbbell_pullover, stage: 'shipped' } })).toEqual(['lib_dumbbell_pullover: unruled, at shipped']);
+    expect(shipProblems({ ...rows, lib_arnold_press: { ...rows.lib_arnold_press, stage: 'shipped' } })).toEqual(['lib_arnold_press: unruled, at shipped']);
     expect(shipProblems({ ...rows, lib_skull_crusher: { ...rows.lib_skull_crusher, stage: 'drawing' } })).toEqual(['lib_skull_crusher: unruled, at drawing']);
-    expect(shipProblems(rows, ['lib_dumbbell_pullover'])).toEqual(['lib_dumbbell_pullover: ruled, at approved-plate']);
+    expect(shipProblems({ ...rows, lib_dumbbell_pullover: { ...rows.lib_dumbbell_pullover, stage: 'approved-plate' } })).toEqual(['lib_dumbbell_pullover: ruled, at approved-plate']);
+    // the pre-W8b red still bites: with no LB2 id ruled, the shipped pullover is an unruled shipped row
+    expect(shipProblems(rows, [])).toEqual(['lib_dumbbell_pullover: unruled, at shipped']);
   });
-  it('the stamp check runs on the (empty) ruled list; mutation: a waiting id checked with no stamp is reported', async () => {
+  it('the stamp check runs on the ruled list (pullover stamped, D-SHIP-W8B-STAMP); mutation: a waiting id checked with no stamp is reported', async () => {
     const S = await import(/* @vite-ignore */ lib('research/stamps.mjs'));
     expect(await S.stampProblems(RULED())).toEqual([]);
-    const { scope, hash } = await S.stampOf('lib_dumbbell_pullover');
-    expect(await S.stampProblems([...RULED(), 'lib_dumbbell_pullover'])).toEqual([`LIB-5 stamp: lib_dumbbell_pullover: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`]);
+    const { scope, hash } = await S.stampOf('lib_skull_crusher');
+    expect(await S.stampProblems([...RULED(), 'lib_skull_crusher'])).toEqual([`LIB-5 stamp: lib_skull_crusher: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`]);
   }, 120_000);
   it('the registry holds each LB2 id once, from batches/lb02.json; lb2/rows.json is gone, and its rows copied back are refused (a row in two places)', () => {
     const rows = reg.rows();
@@ -777,23 +785,48 @@ describe('LIB-SHIP W4 A9 (replaces LIB-10 A9, D-LIB10-AHEAD): no LB2 id ships in
     expect(placeProblems([...dirFiles('tools/plates/library/batches'), ['lb2.json', readFileSync(ROWS, 'utf8')]], ['lb02.json']).length).toBeGreaterThanOrEqual(8);
     expect(placeProblems([...dirFiles('tools/plates/library/batches'), ['zz.json', '{"rows":{"lib_smith_machine_bench_press":{}}}']], ['lb02.json'])).toEqual([]);
   });
-  // D-SHIP-W4-FLIPSET: lb02 has no layers page (nothing ships); its plates and page records stay in the lb02.json chain
-  const GOLDEN = ['lb02.json'];
+  // D-SHIP-W4-FLIPSET: lb02 had no layers page (nothing shipped). LIB-SHIP W8b (Q-W8b-1, #417 6847824876): lb02.layers.html
+  // is the W8b flip set's page and names exactly the ruled ids (dumbbell_pullover), no waiting LB2 id; every other LB2
+  // record stays in the lb02.json chain only
+  const GOLDEN = ['lb02.json'], GOLDEN_RULED = ['lb02.layers.html'];
+  const ruledBare = () => RULED().map(id => id.slice(4)), waitingBare = () => watched().filter(id => !ruledBare().includes(id));
   const goldenProblems = (files: [string, string][]) => [
-    ...files.filter(([n]) => !GOLDEN.includes(n)).flatMap(([n, text]) => [...(/lb0?2\b/i.test(n) ? [`${n}: an LB2 batch file name`] : []), ...(/"batch"\s*:\s*"LB2"/.test(text) ? [`${n}: names batch LB2`] : [])]),
-    ...placeProblems(files, GOLDEN),
+    ...files.filter(([n]) => !GOLDEN.includes(n) && !GOLDEN_RULED.includes(n)).flatMap(([n, text]) => [...(/lb0?2\b/i.test(n) ? [`${n}: an LB2 batch file name`] : []), ...(/"batch"\s*:\s*"LB2"/.test(text) ? [`${n}: names batch LB2`] : [])]),
+    ...placeProblems(files.filter(([n]) => !GOLDEN_RULED.includes(n)), GOLDEN),
+    ...GOLDEN_RULED.flatMap(w => { const f = files.find(([n]) => n === w); if (!f) return [`${w}: missing`];
+      return [...ruledBare().filter(id => !tokenHits([id], w, f[1]).length).map(id => `${w}: no ${id}`), ...tokenHits(waitingBare(), w, f[1])]; }),
   ];
-  it('the LB2 ids, slugs and batch are in tests/howto/golden/library/ lb02.json only', () => {
+  it('the LB2 ids, slugs and batch are in tests/howto/golden/library/ lb02.json, and the ruled ids (only) in lb02.layers.html', () => {
     expect(goldenProblems(dirFiles('tests/howto/golden/library'))).toEqual([]);
   });
-  it('mutations: a golden file naming an LB2 id, a page-only lb2.json, skull-crusher.layers.html, the lb02 layers page put back and an LB2 id dropped from lb02.json are red; lib_smith_machine_bench_press stays green', () => {
+  it('mutations: a golden file naming an LB2 id, a page-only lb2.json, skull-crusher.layers.html, a waiting id on the lb02 layers page, the ruled id dropped from it and an LB2 id dropped from lb02.json are red; lib_smith_machine_bench_press stays green', () => {
     const real = dirFiles('tests/howto/golden/library'), plus = (f: [string, string]) => goldenProblems([...real, f]);
-    expect(plus(['lb02.layers.html', '<div data-id="dumbbell-pullover"></div>'])).toEqual(['lb02.layers.html: an LB2 batch file name', 'lb02.layers.html: dumbbell-pullover']);
+    const swap = (file: string, fn: (t: string) => string) => goldenProblems(real.map(([n, t]): [string, string] => [n, n === file ? fn(t) : t]));
+    expect(swap('lb02.layers.html', t => `${t}<div data-id="skull-crusher"></div>`)).toEqual(['lb02.layers.html: skull-crusher']);
+    expect(swap('lb02.layers.html', t => t.replace(/(lib_)?dumbbell_pullover|dumbbell-pullover/g, 'x'))).toEqual(['lb02.layers.html: no dumbbell_pullover']);
+    expect(goldenProblems(real.filter(([n]) => n !== 'lb02.layers.html'))).toEqual(['lb02.layers.html: missing']);
     expect(plus(['x.json', '{"id":"lib_decline_bench_press"}'])).toEqual(['x.json: decline_bench_press']);
     expect(plus(['lb2.json', '{"entries":[{"kind":"page","batch":"LB2"}]}']).length).toBe(2);
     expect(plus(['skull-crusher.layers.html', '<div data-id="skull-crusher"></div>'])).toEqual(['skull-crusher.layers.html: skull-crusher']);
     expect(plus(['lb6x.json', '{"id":"lib_smith_machine_bench_press"}'])).toEqual([]);
-    expect(goldenProblems(real.map(([n, t]) => [n, n === 'lb02.json' ? t.replace(/(lib_)?dumbbell_pullover|dumbbell-pullover/g, 'x') : t]))).toEqual(['lb02.json: no dumbbell_pullover']);
+    expect(swap('lb02.json', t => t.replace(/(lib_)?decline_bench_press|decline-bench-press/g, 'x'))).toEqual(['lb02.json: no decline_bench_press']);
+  });
+  it('W8b: the lb02 layers-page entry is the chain\'s last, first of its kind, pinning the committed page for exactly the ruled ids with the exact approval; reds: another sha, another comment, a held id', () => {
+    const page = readFileSync('tests/howto/golden/library/lb02.layers.html');
+    const problems = (E: any[]) => {
+      const L = E.filter(e => e.kind === 'layers-page'), e = E[E.length - 1], bad: string[] = [];
+      if (L.length !== 1 || e !== L[0]) bad.push(`layers-page entries ${L.length}, last ${e?.kind}`);
+      if (e?.supersedes !== null || e?.approvedBy !== 'supervisor' || e?.decision !== 'D-SHIP-W8B-LAYERS') bad.push('entry form');
+      if (e?.approval !== W8B_LAYERS_APPROVAL) bad.push(`approval ${e?.approval}`);
+      if (JSON.stringify(e?.ids) !== JSON.stringify(RULED())) bad.push(`ids ${e?.ids}`);
+      if (e?.pageSha256 !== createHash('sha256').update(page).digest('hex') || e?.bytes !== page.length) bad.push('page pin');
+      return bad;
+    };
+    const E = readJson('tests/howto/golden/library/lb02.json').entries, last = (o: any) => [...E.slice(0, -1), { ...E[E.length - 1], ...o }];
+    expect(problems(E)).toEqual([]);
+    expect(problems(last({ approval: W8B_LAYERS_APPROVAL.replace(/[0-9a-f]{40}$/, '1fdf6975d8e93c184ae77ad11daf1cf73505a15d') }))).toHaveLength(1);
+    expect(problems(last({ approval: W8B_LAYERS_APPROVAL.replace('6856468001', '6856272493') }))).toHaveLength(1);
+    expect(problems(last({ ids: ['lib_dumbbell_pullover', 'lib_skull_crusher'] }))).toEqual(['ids lib_dumbbell_pullover,lib_skull_crusher']);
   });
   it('lib_incline_barbell_bench_press names incline_barbell_bench_press, never barbell_bench_press (the one real id holding an LB2 id)', () => {
     const ex = readJson('src/data/exercises.json').map((e: any) => e.id as string);
