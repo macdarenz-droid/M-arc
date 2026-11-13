@@ -496,6 +496,23 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lb06 plates page after main dc058207 (W6): machine_pullover, high_to_low_cable_fly and smith_machine_squat as judged in pf13 (#410 6752705237; page da4257d6, built twice); the 9 other plates byte-equal to main's 20c6b054.",
       "supersedes": 0,
       "prev": "f28b755cd318e1b7141caf6172c7eb98cd64a915d4e5f2b94e62efac741cc246"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB6",
+      "ids": [
+        "lib_machine_crunch",
+        "lib_machine_lateral_raise"
+      ],
+      "pageSha256": "137df51b17ed3cc0f75643b15c34a5fbc861fc46a78b5e71dc46456798edfa3f",
+      "bytes": 526307,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ d20626fc1e6f1844b105be332dcde15e9120d7aa",
+      "date": "2026-11-13",
+      "supersedes": 13,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "prev": "4881faafb8fd42a9855ee232f66202b150c0106b5fac0998a2078e02055cf9ed"
     }
   ]
 }

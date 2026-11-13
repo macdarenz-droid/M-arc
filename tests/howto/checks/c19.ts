@@ -5,8 +5,8 @@
 // number, service or link (D-LR23-1).
 //
 //   (a) checkC19Shared: the shared module (archetypes.ts; before HT-5, golden B's howto/shared.mjs) has no
-//       SHOW_EVIDENCE export; every RED_FLAG* name/now/doctor and DISCLAIMER pass the patterns; the boxes also pass
-//       SAFETY_LINE_RE.
+//       SHOW_EVIDENCE export and no DISCLAIMER (F-SHEET-COPY R1: no closing line); every RED_FLAG* name/now/doctor
+//       passes the patterns; the boxes also pass SAFETY_LINE_RE.
 //   (b) checkC19Copy: every copy field of a built sheet (copy-lint's copyFields, every kind but sourceNote) passes the
 //       patterns and names no registry source (first-author surname or organisation; copy-lint's sourceNamePatterns).
 //   (c) checkC19Files: markup and data in src/howto/** and src/slices/howto/** (no link, no source UI, no evidence
@@ -60,8 +60,7 @@ export function checkC19Shared(shared: Record<string, unknown>, label: string, n
       if (m) bad.push(`C19: ${label}: ${k}.${f}: ${RULE_SAFETY}: "${m[0]}"`);
     }
   }
-  if (typeof shared.DISCLAIMER !== 'string') bad.push(`C19: ${label}: DISCLAIMER is missing`);
-  else bad.push(...textHits(`${label}: DISCLAIMER`, shared.DISCLAIMER, names));
+  if (shared.DISCLAIMER !== undefined) bad.push(`C19: ${label}: DISCLAIMER is back (F-SHEET-COPY R1: no closing disclaimer line)`);
   return bad;
 }
 

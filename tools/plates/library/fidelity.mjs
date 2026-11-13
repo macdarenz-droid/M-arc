@@ -12,7 +12,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { extractPlates, fragmentsOf } from '../golden.mjs';
 import { ROOT } from '../lib/inputs.mjs';
 import { rows as registryRows } from './registry.mjs';
-import { HT_CUSTOM, HT_PLATES, HT_THEMES, fixtureLeakSection, fixtureSection, closeHowTo, openAppTrain, openCard, openHowTo, ht10GoldenCounts, ht10Script, ht10Sweep } from '../fidelity/harness.mjs';
+import { HT_CUSTOM, HT_PLATES, SHEET_EYEBROW, HT_THEMES, fixtureLeakSection, fixtureSection, closeHowTo, openAppTrain, openCard, openHowTo, ht10GoldenCounts, ht10Script, ht10Sweep } from '../fidelity/harness.mjs';
 import { LIB_ONCE, NO_THEME, PQH_STATES, WIDTH, libraryTuples, pinnedPlate, sourceFacts } from './fidelity/tuples.mjs';
 import { recorder, stateOf } from './fidelity/rows.mjs';
 import { plateJob, plateStats } from './fidelity/plate.mjs';
@@ -162,7 +162,7 @@ async function entryJob({ browser, port, R, order, custom, fixtures, root }, { l
           pressed: [...d.querySelectorAll('.ht-plate[data-mode="normal"] .plate-callout[aria-pressed="true"]')].map(b => b.dataset.key), mistakeOn: document.getElementById(`${id}-mistake`)?.getAttribute('aria-pressed'),
           eyebrow: d.querySelector('.sheet-head h2 .sheet-eyebrow')?.textContent, title: d.querySelector('.sheet-head h2')?.lastChild?.textContent, open: d.open };
       }, chrome);
-      if (!st || st.els > 700 || st.mistakeFig || !st.normalShown || JSON.stringify(st.pressed) !== JSON.stringify([facts.firstKey]) || st.mistakeOn !== 'false' || st.eyebrow !== 'How to do it' || st.title !== name || !st.open)
+      if (!st || st.els > 700 || st.mistakeFig || !st.normalShown || JSON.stringify(st.pressed) !== JSON.stringify([facts.firstKey]) || st.mistakeOn !== 'false' || st.eyebrow !== SHEET_EYEBROW || st.title !== name || !st.open)
         bad.push(`A3: the first open is not S0 within 700 elements (title ${JSON.stringify(name)}, first key ${facts.firstKey}): ${JSON.stringify(st)}`);
       // G7 (ht3Behaviour): after the first Mistake tap and a tell, no .form-guide element inside the open sheet
       await page.locator(`#${chrome}-mistake`).click();

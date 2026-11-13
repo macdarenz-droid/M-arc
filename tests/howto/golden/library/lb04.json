@@ -387,6 +387,25 @@
       "supersedes": null,
       "why": "W5 layers approved (#392): the calibrated layers panel 6649453813 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds and focused rechecks 6654466055 and 6681869167 (every median 4 or more or a recorded exception: hammer_curl F-HAND-ROTATION), PANEL FIX 4 accepted 6683213580 with D-SHIP-W5-FLIPSET (6682188871) and D-SHIP-W5-PREACHER: the flip set only on the page. Re-pinned in place after the merge of main 6227bd8e (D-REPIN-UNMERGED): with main's render and layers-build files put back to 59ded9a1 the page is byte-equal to the accepted 59ded9a1 page (strip-back proof); the only differences are main's shared engine and body-map changes.",
       "prev": "9786ef3704d972db3406b0a4047d4f57e525dc51285826c742edec728edbb671"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB04",
+      "ids": [
+        "lib_front_squat",
+        "lib_bodyweight_squat",
+        "lib_bodyweight_lunge",
+        "lib_bodyweight_split_squat"
+      ],
+      "pageSha256": "6c2522271403542fc067c55a21483b52e4c563ae7b42c9250eec6eb12feea94e",
+      "bytes": 889862,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ d20626fc1e6f1844b105be332dcde15e9120d7aa",
+      "date": "2026-11-13",
+      "supersedes": 13,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "prev": "83a203ccb26a77818561c01c04cf86008be66e6d69e67789918d16bd3c7ee71d"
     }
   ]
 }

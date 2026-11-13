@@ -80,7 +80,7 @@ const RESEARCH = [
   ['palm-flat', 'cupped-palm', 'Palm cupped'],
   ['palm-flat', 'hand-ahead', 'Hand ahead'],
 ];
-const HEADING = 'Hand: right and wrong';
+const HEADING = 'Hand';   // F-SHEET-COPY: was 'Hand: right and wrong'
 
 // in-memory copies of the key modules (hand-pairs.test.ts's technique: files untouched)
 const clone = () => P.MODULES.map((m: any) => ({ ...m, HANDLE: structuredClone(m.HANDLE), VARIANTS: structuredClone(m.VARIANTS ?? {}), IDS: structuredClone(m.IDS ?? {}), GAPS: { ...(m.GAPS ?? {}) } }));

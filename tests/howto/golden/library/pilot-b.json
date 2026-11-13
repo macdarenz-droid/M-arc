@@ -265,6 +265,23 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The pilot-b plates page rebuilt with LIB-PLATEFIX-3b's smith_machine_bench_press (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (this builder, and CI howto-rebuild on #408 at 2a78b893).",
       "supersedes": 7,
       "prev": "ab3cdbef66842cace939cafa2d2951bf985b84abbf5dbf573ec5a91d97596261"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B",
+      "ids": [
+        "lib_cable_fly",
+        "lib_push_up"
+      ],
+      "pageSha256": "f3a4433d30239daf6ac44e3ac70f9c83007f2022136086fee465c1e8013c85ae",
+      "bytes": 425547,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ d20626fc1e6f1844b105be332dcde15e9120d7aa",
+      "date": "2026-11-13",
+      "supersedes": 9,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "prev": "926c0218fa2dae02a9f00b98bf4bcbfeff918c57a70b2dffcc9722afcf1b08a4"
     }
   ]
 }

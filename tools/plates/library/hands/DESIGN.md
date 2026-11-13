@@ -244,7 +244,7 @@ Card LIB-7-FIX; rulings D-LIB7FIX-* (lib4-cards section 18). Nothing here change
 - LIB-7b may change only the wrapper bytes, under its own review, while F3 and F4 still hold.
 
 **(c) Words (`hands/words/chrome.json` and one `hands/words/<key>.json` per key, D-LIB7FIX-WORDS as amended by D-LIB7FIX-PERKEY).**
-- Heading, every key: "Hand: right and wrong", golden B's approved hand-zoom heading (`exercises/lat_pulldown.howto.mjs:254`, `dumbbell_lateral_raise.howto.mjs:202`, `machine_chest_press.howto.mjs:101`).
+- Heading, every key: "Hand" (F-SHEET-COPY 2026-11-13; was "Hand: right and wrong"), golden B's approved hand-zoom heading (`exercises/lat_pulldown.howto.mjs:254`, `dumbbell_lateral_raise.howto.mjs:202`, `machine_chest_press.howto.mjs:101`).
 - Captions: the key's label only. Right = the approved Right note already in the SVG ("Middle of palm": curl and ez keys `radial-rules.mjs:16`, rope `hand-rope.mjs:18`; "Base of fingers": d-handle `radial-rules.mjs:48`). Wrong = the D-LIB7-10 fault label ("Wrist curled" `radial-rules.mjs:20`/`:52`, `hand-rope.mjs:22`; "Wrist bent back" `radial-rules.mjs:22`). Each is 2-3 words, within CAPTION_MAX_WORDS (10).
 - Pager labels: the D-LIB7-10 fault labels.
 - Chrome (golden B's, every close-up): the close label "Close the close-up and show the plate" (`howto-layers.mjs:170`), the sr-only "Right: " / "Wrong: " and the pager's "Hand pages" and "<label>, page <i> of <n>" (LIB-6 `common.mjs:15-18`).

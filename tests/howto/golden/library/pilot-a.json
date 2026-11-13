@@ -732,6 +732,33 @@
       "why": "O5; LIB-SHIP W8a layers page (D-PFC-ROUND1 panel 6760254084, W8a LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6761492481); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): barbell_overhead_press and pec_fly back on the page (mountain_climbers held, D-W8A-MCFEEL / F-HAND-PALMFLAT-SIZE); cardcmp: every card byte-equal to the judged page 708e7f7f8b3aaecb8e4ba6e26c7bb166e3523dd0c2e85be27108aba0320c7d05 except pec_fly's row label (F-PECFLY-FEELROW, ruled 6761492481); main's cards byte-equal (diff adds only)",
       "supersedes": 22,
       "prev": "74eed4f671fa395b7d71750ac3cbb749872347d61053d7688b23e2a4d5ac66aa"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-A",
+      "ids": [
+        "lib_barbell_overhead_press",
+        "lib_dumbbell_biceps_curl",
+        "lib_pec_fly",
+        "lib_plank",
+        "lib_rope_triceps_pushdown",
+        "lib_barbell_row",
+        "lib_dumbbell_bench_press",
+        "lib_dumbbell_shoulder_press",
+        "lib_romanian_deadlift",
+        "lib_single_leg_romanian_deadlift",
+        "lib_triceps_pushdown",
+        "lib_upright_row"
+      ],
+      "pageSha256": "af5f2cae13950c02de8ce89ee2605177c745f16a684fd40230711b936e968a4f",
+      "bytes": 2350104,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ d20626fc1e6f1844b105be332dcde15e9120d7aa",
+      "date": "2026-11-13",
+      "supersedes": 27,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "prev": "f747b768f29d1a5e1c386a34d9880dd6ad32edcffdfde552260cba2d91015061"
     }
   ]
 }

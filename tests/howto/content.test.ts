@@ -110,14 +110,14 @@ const GOOD_CONTENT = {
   },
   zooms: [
     {
-      key: 'hand', chip: 'Hand', chipCaption: 'Heel of palm', heading: 'Hand: right and wrong', kind: 'hand',
+      key: 'hand', chip: 'Hand', chipCaption: 'Heel of palm', heading: 'Hand', kind: 'hand',
       hand: { wrong: ['fingers-bent-back'], camera: 'side', panelHeight: 150, note: 'Vertical handles: the same rule.', notes: { right: 'Heel of palm', wrong: 'Wrist bent back' } },
       caption: { right: 'Heel of your palm, thumb wrapped, wrist straight.', wrong: 'Handle in your fingers, wrist bent back, thumb loose.' },
       alt: { right: 'Horizontal handle, side view. The handle sits on the heel of the hand, thumb wrapped. Wrist straight, knuckles in line with the forearm. The push runs straight down the forearm.', wrong: 'Horizontal handle, side view. The handle has slid into the fingers, thumb loose. The wrist is bent far back. The push passes behind the wrist, bending it further.' },
       feelRow: 'wrist',
     },
     {
-      key: 'seat-height', chip: 'Seat height', heading: 'Seat height: right and wrong', kind: 'posture',
+      key: 'seat-height', chip: 'Seat height', heading: 'Seat height', kind: 'posture',
       crop: { center: { at: 'shoulder.r', pose: 'start', off: [14, 0] }, sizePx: 108 },
       right: 'start', wrong: { still: 'seat-low' },
       callouts: { right: { text: 'Mid-chest', guide: 'handle-to-chest' }, wrong: { text: 'Seat too low', guide: 'handle-to-chest' } },
@@ -126,7 +126,7 @@ const GOOD_CONTENT = {
       feelRow: 'front-shoulders',
     },
     {
-      key: 'blades', chip: 'Blades', heading: 'Shoulder blades: right and wrong', kind: 'posture',
+      key: 'blades', chip: 'Blades', heading: 'Shoulder blades', kind: 'posture',
       crop: { center: { at: 'shoulder.r', pose: 'end', off: [44, 6] }, sizePx: 168 },
       right: 'end', wrong: { still: 'round-lock', over: 'end' },
       callouts: { right: { text: 'On the pad', guide: 'pad-contact' }, wrong: { text: 'Off the pad', guide: 'pad-gap' } },
@@ -515,7 +515,8 @@ describe('HT4b-A4/A5: C19 no sources or contacts, each rule proven by a bad fixt
     expect(Object.keys(sheets)).toEqual(SHEET_IDS);
     expect(Object.keys(shared).filter(k => k.startsWith('RED_FLAG')).length).toBeGreaterThanOrEqual(4);
     expect(names.map(([n]) => n)).toEqual(expect.arrayContaining(['Muyor', 'Calatayud', 'NHS']));
-    expect(checkC19Shared({}, 'empty')).toEqual(expect.arrayContaining([expect.stringContaining('no RED_FLAG box'), expect.stringContaining('DISCLAIMER is missing')]));
+    expect(checkC19Shared({}, 'empty')).toEqual(expect.arrayContaining([expect.stringContaining('no RED_FLAG box'), expect.stringContaining('no RED_FLAG box')]));
+    expect(checkC19Shared({ RED_FLAG: shared.RED_FLAG, DISCLAIMER: 'x' } as never, 'mb')).toEqual(expect.arrayContaining([expect.stringContaining('DISCLAIMER is back')]));   // F-SHEET-COPY MB: the line coming back is red
     expect(checkC19Copy([], 'empty')).toEqual(['C19: empty: no copy field to check']);
     expect(checkC19Files([])).toEqual(['C19: no How-to file to check']);
   });

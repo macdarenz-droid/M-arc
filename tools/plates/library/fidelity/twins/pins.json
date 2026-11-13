@@ -663,12 +663,12 @@
   ]
  },
  "gate:HT-9": {
-  "sha256": "438bc905c70af6ab7878f79578d84bbc494aaf1663cc350b06d46b7ccf3cceb5",
+  "sha256": "171c086a720e19a3a1c854c3f96fb6d83bc01cd647be7e7bbd648ffac26043c2",
   "map": [
    {
     "m": "throw new Error",
     "t": "HT9/C19@390",
-    "why": "no DISCLAIMER: the twin's C19 job throws and the row is not proven"
+    "why": "DISCLAIMER back in archetypes.ts (F-SHEET-COPY R1): the twin's C19 job throws and the row is not proven"
    },
    {
     "m": "errors.push(",
@@ -715,6 +715,11 @@
    {
     "m": "problems.push(",
     "t": "HT9/C19@390"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT9/C19@390",
+    "why": "F-SHEET-COPY: a .redflag outside Risks"
    },
    {
     "m": "errors.push(",
@@ -819,22 +824,22 @@
    {
     "m": "P(",
     "t": "HT9/<part>-L3@390",
-    "why": "l3 of Setup, Risks, the disclaimer"
+    "why": "l3 of Setup and Risks (F-SHEET-COPY: no disclaimer pair)"
    },
    {
     "m": "P(",
     "t": "HT9/<part>-L3@390",
-    "why": "l3 of Setup, Risks, the disclaimer"
+    "why": "l3 of Setup and Risks (F-SHEET-COPY: no disclaimer pair)"
    },
    {
     "m": "P(",
     "t": "HT9/<part>-L3@390",
-    "why": "l3 of Setup, Risks, the disclaimer"
+    "why": "l3 of Setup and Risks (F-SHEET-COPY: no disclaimer pair)"
    },
    {
     "m": "P(",
     "t": "HT9/<part>-L3@390",
-    "why": "l3 of Setup, Risks, the disclaimer"
+    "why": "l3 of Setup and Risks (F-SHEET-COPY: no disclaimer pair)"
    },
    {
     "m": "P(",
@@ -869,7 +874,7 @@
    {
     "m": "P(",
     "t": "HT9/risks-L3@390",
-    "why": "and HT9/disclaimer-L3@390"
+    "why": "the Risks-only selector check (F-SHEET-COPY: the disclaimer pair is gone)"
    },
    {
     "m": "P(",
@@ -1266,7 +1271,7 @@
   ]
  },
  "tools/plates/fidelity/harness.mjs:ht3Behaviour": {
-  "sha256": "2ac69d5ecef772e706606d1250a76f03235b33139edaf239234e8918663e07bd",
+  "sha256": "c75f33205803cede7f623221c534ca712d5c81a431c6c50dcbaedc302c7b4c52",
   "map": [
    {
     "m": "problems.push(",
@@ -1336,7 +1341,7 @@
   ]
  },
  "tools/plates/fidelity/ht10.mjs:runHt10": {
-  "sha256": "2becf5f102021a946d53a08e96b3b9003f8e9137cbec92fb6fec616d26899948",
+  "sha256": "ea72234698cbec9c32d210f4fb6187b97fdc929f9e0d0a9dd78ba8d0db6c2a91",
   "map": [
    {
     "m": "throw new Error",

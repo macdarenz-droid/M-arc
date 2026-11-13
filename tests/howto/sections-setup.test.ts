@@ -1,4 +1,4 @@
-// HT-9 (HT9-A2): "Set it up" (plan 2.4 item 6). Pure-function test on `renderSetup`, walking the returned VNode
+// HT-9 (HT9-A2): "Setup" (plan 2.4 item 6). Pure-function test on `renderSetup`, walking the returned VNode
 // tree (project convention: no jsdom, same style as tests/error-boundary.test.ts). Setup.tsx has no dependency on
 // HT-5's archetypes.ts, so this test runs standalone.
 import { describe, it, expect, vi } from 'vitest';
@@ -44,7 +44,7 @@ function elements(n: unknown): AnyVNode[] {
 }
 const byTag = (tree: VNode, tag: string) => elements(tree).filter(v => v.type === tag);
 
-describe('HT9-A2: Setup ("Set it up")', () => {
+describe('HT9-A2: Setup ("Setup")', () => {
   it('numbers every step and shows no "All steps" button when the count is within SETUP_VISIBLE (golden B today: 5 of 5)', () => {
     const h = fixture([step('a'), step('b'), step('c'), step('d'), step('e')]);
     expect(h.setup!.length).toBe(SETUP_VISIBLE);

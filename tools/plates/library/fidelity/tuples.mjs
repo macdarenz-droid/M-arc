@@ -169,7 +169,7 @@ export function statesOf(f) {
     }
     // HT-9: C19, Setup / Risks / disclaimer (L3 and copy), A3; Show and A5 in HT_FULL; Order once
     add(t, 'HT9', 'C19');
-    for (const p of ['setup', 'risks', 'disclaimer']) { add(t, 'HT9', `${p}-L3`); add(t, 'HT9', `${p}-copy`); }
+    for (const p of ['setup', 'risks']) { add(t, 'HT9', `${p}-L3`); add(t, 'HT9', `${p}-copy`); }   // F-SHEET-COPY: no disclaimer rows
     add(t, 'HT9', 'A3');
     if (full) { for (let n = 1; n <= f.shows; n++) add(t, 'HT9', `show-${n}`); add(t, 'HT9', 'A5'); }
     if (t === 'silent-black') add(t, 'HT9', 'order');

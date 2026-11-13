@@ -132,7 +132,7 @@ describe('F-PAIR-FAULTS A1/A4: a row with pairFaults draws only those faults (la
     expect(pagesIn(dropped)).toBe(2);
     expect(dropped).not.toContain(`hx-hp-${SUB}`);
     // a byte changed in the sub-key block is red in pairPanelProblems
-    expect((await B.pairPanelProblems(page.replace('Hand: right and wrong', 'Hand: right and wronG'), panelOf)).join('\n')).toMatch(new RegExp(`first copy on ${SUB}: not pairPanel`));
+    expect((await B.pairPanelProblems(page.replace('-zoom-hand-h" tabindex="-1">Hand</h4>', '-zoom-hand-h" tabindex="-1">HanD</h4>'), panelOf)).join('\n')).toMatch(new RegExp(`first copy on ${SUB}: not pairPanel`));
   });
   it('A1: a row with no pairFaults gets pairPanel(pair) byte for byte, as on main', async () => {
     const page = await B.withPairPanels(host('mountain-climbers'), { closeups: { mountain_climbers: { optionsKey: 'mountain_climbers', pair: BASE } } });

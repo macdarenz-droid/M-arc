@@ -196,7 +196,7 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
       // the main chunk holds no section's code (HT-3b's footprint probe covers generated strings; these are the class hooks)
       const indexJs = readFileSync(join(ROOT, 'www/index.html'), 'utf8').match(/src="\.\/assets\/(index-[\w-]+\.js)"/)[1];
       const idx = readFileSync(join(assetsDir, indexJs), 'utf8');
-      for (const s of ['plate-svg', 'u-stroke', 'feel-band', 'data-feel-map', 'zx-chip', 'zx-page', 'st-show', 'ht-disclaimer']) if (idx.includes(s)) F(`${indexJs} contains "${s}"`);
+      for (const s of ['plate-svg', 'u-stroke', 'feel-band', 'data-feel-map', 'zx-chip', 'zx-page', 'st-show']) if (idx.includes(s)) F(`${indexJs} contains "${s}"`);
     }
     if (want('build-b').length) {
       const b = await H.ht10BuildB(ht10, PORT).catch(e => crashed('build B', e));
@@ -215,8 +215,9 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
         const fx = [
           ['M10 (stub source section)', () => { const s = document.createElement('section'); s.dataset.section = 'ht10-m10'; s.innerHTML = '<details class="srcs" open><summary>Sources</summary><a href="https://example.org/x" target="_blank">Ref</a> <span class="ev ev-data">Measured</span></details>'; document.querySelector('dialog.sheet.ht [data-section]:last-of-type').after(s); }, [/<a> element/, /\[target\]/, /source\/evidence element/, /"Measured"/, /matches/]],
           ...(expectRisks ? [
-            ['M11 (disclaimer above Risks)', () => { const d = document.querySelector('dialog.sheet.ht .ht-disclaimer'); document.querySelector('dialog.sheet.ht .redflag').before(d); }, [/not after the last \.redflag/]],
-            ['M12 (disclaimer deleted)', () => document.querySelector('dialog.sheet.ht .ht-disclaimer').remove(), [/0 \.ht-disclaimer/]],
+            // F-SHEET-COPY (R1): the inverse checks bite: a closing line put back, and "medical advice" in a red-flag box
+            ['M11 (disclaimer line put back)', () => { const p = document.createElement('p'); p.className = 'ht-disclaimer'; p.textContent = 'x'; document.querySelector('dialog.sheet.ht .risks').after(p); }, [/1 \.ht-disclaimer/]],
+            ['M12 ("not medical advice" in a red-flag box)', () => { document.querySelector('dialog.sheet.ht .redflag p').textContent += ' Not medical advice.'; }, [/medical advice/]],
           ] : []),
           ['C10 (a 30 px button)', () => { const b = document.createElement('button'); b.id = 'ht10-small'; b.textContent = 'x'; b.style.cssText = 'width:30px;height:30px'; document.querySelector('dialog.sheet.ht [data-section]').append(b); }, [/#ht10-small is 30\.000 x 30\.000/]],
           ['C10 (an exempt tell 1 px wider than its golden pin)', () => { document.getElementById('lateral-raise-mistake').click(); const d = document.getElementById('lateral-raise-m-dip'); d.style.width = `${d.getBoundingClientRect().width + 1}px`; }, [/#lateral-raise-m-dip is 33\.078 x 44\.000 .*not its pinned golden/]],

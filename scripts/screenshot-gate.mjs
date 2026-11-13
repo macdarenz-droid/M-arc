@@ -7600,16 +7600,15 @@ if (gate.runs('HT-4'))
 // claude/lr23-plan). Owner decision LR-23, 2026-09-30: "Dont put any emergency or whatever contacts. Even the
 // source remove it in app ui." On the real app's How-to sheet, every approved exercise, all 5 themes, with every
 // <details> opened and every collapse button (aria-expanded="false") clicked: no link, no source/evidence UI, no
-// contact or source wording anywhere shown, and exactly one disclaimer after the last red-flag block. HT-10
+// contact or source wording anywhere shown, no disclaimer line or "medical advice" wording (F-SHEET-COPY R1). HT-10
 // re-runs this on the final sheet, once HT-6/7/8's zoom chips and feel rows also exist to open.
 if (gate.runs('HT-9'))
 {
   const tag = 'HT-9 C19';
   const t0 = Date.now();
   const H = await import('../tools/plates/fidelity/harness.mjs');
-  const disclaimerM = readFileSync(join(ROOT, 'src/howto/archetypes.ts'), 'utf8').match(/export const DISCLAIMER: string = "((?:[^"\\]|\\.)*)";/);
-  if (!disclaimerM) throw new Error(`${tag}: no DISCLAIMER in src/howto/archetypes.ts`);
-  const DISCLAIMER = JSON.parse(`"${disclaimerM[1]}"`);
+  // F-SHEET-COPY (R1, AGENTS.md fifth exception): the closing disclaimer line is gone; its constant must not come back
+  if (/export const DISCLAIMER\b/.test(readFileSync(join(ROOT, 'src/howto/archetypes.ts'), 'utf8'))) throw new Error(`${tag}: src/howto/archetypes.ts exports DISCLAIMER again (F-SHEET-COPY R1)`);
   const LABEL_WORDS = ['Measured', 'Mechanics', 'Coaching consensus', 'Weak for this use'];
   const patterns = ['CONTACT_RE', 'SOURCE_RE', 'SOURCE_CS_RE'].map(k => ({ source: ESC_NC_RE[k].source, flags: ESC_NC_RE[k].flags }));
   let bad = 0, sheets = 0;
@@ -7618,7 +7617,7 @@ if (gate.runs('HT-9'))
     try {
       for (const [index, [, id]] of H.HT_PLATES.entries()) {
         await H.openHowTo(page, index);
-        await page.locator('dialog.sheet.ht .ht-disclaimer').waitFor({ state: 'attached', timeout: 5000 });   // Setup and Risks mount after the plate's first paint
+        await page.locator('dialog.sheet.ht .risks').waitFor({ state: 'attached', timeout: 5000 });   // Setup and Risks mount after the plate's first paint
         sheets++;
         await page.evaluate(() => { document.querySelectorAll('dialog.sheet.ht details:not([open])').forEach(d => { d.open = true; }); });
         for (let i = 0; i < 4; i++) {
@@ -7634,7 +7633,7 @@ if (gate.runs('HT-9'))
           await page.waitForFunction(() => document.getAnimations().every(a => a.playState !== 'running' && !a.pending), null, { timeout: 8000 });
           await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
         }
-        const found = await page.evaluate(([pats, words, disclaimer]) => {
+        const found = await page.evaluate(([pats, words]) => {
           const dlg = document.querySelector('dialog.sheet.ht');
           const problems = [];
           const res = pats.map(p => new RegExp(p.source, p.flags));
@@ -7653,17 +7652,15 @@ if (gate.runs('HT-9'))
             for (const a of ['aria-label', 'title', 'alt']) { const v = el.getAttribute(a); if (v) strings.push(v); }
           }
           for (const s of strings) for (const re of res) { const m = s.match(re); if (m) problems.push(`"${m[0]}" matches ${re}`); }
-          const disclaimers = [...dlg.querySelectorAll('.ht-disclaimer')];
-          if (disclaimers.length !== 1) problems.push(`${disclaimers.length} .ht-disclaimer element(s), expected 1`);
-          else if (disclaimers[0].textContent !== disclaimer) problems.push(`disclaimer text "${disclaimers[0].textContent}" !== owner's text`);
-          const redflags = [...dlg.querySelectorAll('.redflag')];
-          if (redflags.length && disclaimers.length === 1) {
-            const last = redflags[redflags.length - 1];
-            const pos = last.compareDocumentPosition(disclaimers[0]);
-            if (!(pos & Node.DOCUMENT_POSITION_FOLLOWING)) problems.push('the disclaimer is not after the last .redflag');
-          }
+          // F-SHEET-COPY (R1): no closing disclaimer line and no "medical advice" wording; every red-flag box sits in Risks
+          const disclaimers = dlg.querySelectorAll('.ht-disclaimer').length;
+          if (disclaimers) problems.push(`${disclaimers} .ht-disclaimer element(s), expected 0`);
+          for (const s of strings) { const m = s.match(/medical advice/i); if (m) problems.push(`"${m[0]}" wording in the sheet`); }
+          const risks = dlg.querySelectorAll('.risks');
+          if (risks.length !== 1) problems.push(`${risks.length} .risks section(s), expected 1`);
+          else if ([...dlg.querySelectorAll('.redflag')].some(r => !risks[0].contains(r))) problems.push('a .redflag sits outside the Risks section');
           return problems;
-        }, [patterns, LABEL_WORDS, DISCLAIMER]);
+        }, [patterns, LABEL_WORDS]);
         for (const p of found) { errors.push(`${tag} ${theme}/${id}: ${p}`); bad++; }
         await H.closeHowTo(page);
       }
@@ -7754,7 +7751,7 @@ if (gate.runs('HT-9'))
   try {
     for (const [index, [, id]] of H.HT_PLATES.entries()) {
       await H.openHowTo(page, index);
-      await page.locator('dialog.sheet.ht .ht-disclaimer').waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});   // Setup and Risks mount after the plate's first paint
+      await page.locator('dialog.sheet.ht .risks').waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});   // Setup and Risks mount after the plate's first paint
       const order = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet.ht [data-section]')].filter(el => el.childNodes.length).map(el => el.dataset.section));
       if (JSON.stringify(order) !== JSON.stringify(WANT)) { errors.push(`${tag} ${id}: section order ${JSON.stringify(order)} !== golden B's ${JSON.stringify(WANT)}`); bad++; }
       await H.closeHowTo(page);
@@ -7769,13 +7766,13 @@ if (gate.runs('HT-9'))
 // sheet, opened from the real Train entry, against golden B (tests/howto/golden/howto-layers.html, hash-pinned by
 // HT-4, served offline with the app's Inter woff2), states reached through HT-4's goldenB.mjs driver (statesFor,
 // assertAllSetupStepsShown), 8 exercises x 5 themes:
-// - A1 L3: the Setup section (every step shown), the Risks section and the disclaimer after it, each on its own layer
+// - A1 L3: the Setup section (every step shown) and the Risks section (F-SHEET-COPY: no disclaimer), each on its own layer
 //   at the same sub-pixel position in both pages, pixel for pixel by the HT-3 rule; a blank capture fails;
-// - A4 (C7/C8 on the screen): every text node of Setup, Risks and the disclaimer, in DOM order, equals the list built
+// - A4 (C7/C8 on the screen): every text node of Setup and Risks, in DOM order, equals the list built
 //   from the content strings (the generated ht-*.ts and archetypes.ts, bundled here by esbuild), headings read from
 //   golden B; golden B's own text nodes equal the same list;
 // - A3: one red-flag block per riskFlags entry, in that order, each of its three lines exactly once on the whole sheet
-//   (another joint's block 0 times), one disclaimer; failure path: a second copy of a red-flag line in Setup (an
+//   (another joint's block 0 times), no disclaimer line; failure path: a second copy of a red-flag line in Setup (an
 //   injected fixture) must be reported;
 // - HT-3b A3 split: Setup and Risks are inserted in a later frame than the plate (never inside the timed open);
 // - A5: the HT-3 plate compare (L2b, F3, L3) still passes after the sheet was scrolled to the end and every
@@ -7810,10 +7807,10 @@ if (gate.runs('HT-9'))
     for (let n = w.nextNode(); n; n = w.nextNode()) if (n.textContent.trim()) out.push(n.textContent);
     return out;
   }, sel);
-  /** Waits until Setup, Risks and the disclaimer are in the sheet (they mount after the plate's first paint). */
-  const mounted = async page => { for (const s of ['.setup', '.risks', '.ht-disclaimer']) await page.locator(`${APP} ${s}`).waitFor({ state: 'attached', timeout: 5000 }); await H.settleApp(page); };
-  /** A3, run in the app page: the red-flag blocks, each line once, one disclaimer. Returns the problems. */
-  const a3 = (page, flags) => page.evaluate(([flags, lines, disclaimer, APP]) => {
+  /** Waits until Setup and Risks are in the sheet (they mount after the plate's first paint). */
+  const mounted = async page => { for (const s of ['.setup', '.risks']) await page.locator(`${APP} ${s}`).waitFor({ state: 'attached', timeout: 5000 }); await H.settleApp(page); };
+  /** A3, run in the app page: the red-flag blocks, each line once, no disclaimer line (F-SHEET-COPY R1). Returns the problems. */
+  const a3 = (page, flags) => page.evaluate(([flags, lines, APP]) => {
     const dlg = document.querySelector(APP), bad = [];
     const w = document.createTreeWalker(dlg, NodeFilter.SHOW_TEXT), texts = [];
     for (let n = w.nextNode(); n; n = w.nextNode()) texts.push(n);
@@ -7827,10 +7824,10 @@ if (gate.runs('HT-9'))
       const homes = at.map(n => n.parentElement.closest('.risks .redflag')?.id.replace(/^.*-redflag-/, '') ?? null);
       if (JSON.stringify(homes) !== JSON.stringify(owners.slice(0, at.length))) bad.push(`the red-flag line "${l}" sits in ${JSON.stringify(homes)}, expected ${JSON.stringify(owners)}`);
     }
-    const d = texts.filter(n => n.textContent === disclaimer);
-    if (d.length !== 1 || dlg.querySelectorAll('.ht-disclaimer').length !== 1) bad.push(`the disclaimer shows ${d.length} times`);
+    const d = texts.filter(n => /medical advice/i.test(n.textContent));
+    if (d.length || dlg.querySelectorAll('.ht-disclaimer').length) bad.push(`a disclaimer line shows (${d.length} "medical advice" text node(s), ${dlg.querySelectorAll('.ht-disclaimer').length} .ht-disclaimer)`);
     return bad;
-  }, [flags, flagLines, C.DISCLAIMER, APP]);
+  }, [flags, flagLines, APP]);
   const rectOf = (page, sel) => page.evaluate(s => { const r = document.querySelector(s).getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; }, sel);
   /** A1: L3 of one element, the golden one placed at the app one's viewport position, both on their own layer. */
   const l3 = async (app, gold, label, aSel, gSel) => {
@@ -7907,8 +7904,8 @@ if (gate.runs('HT-9'))
         const hidden = await app.page.evaluate(A => ({ more: !!document.querySelector(`${A} .st-more`), hidden: document.querySelectorAll(`${A} .st-list li[hidden]`).length }), APP);
         if (hidden.more || hidden.hidden) P(`${T}: every setup step should show (${JSON.stringify(hidden)})`);
         // A1
-        const pairs = [['setup', setupS.selector], ...risksS.selector.map(s => [s.endsWith('.risks') ? 'risks' : 'disclaimer', s])];
-        if (pairs.length !== 3) P(`${T}: goldenB.mjs's risks state has ${risksS.selector.length} selectors, expected the section and the disclaimer`);
+        const pairs = [['setup', setupS.selector], ...risksS.selector.map(s => [s.endsWith('.risks') ? 'risks' : 'other', s])];
+        if (pairs.length !== 2 || pairs[1][0] !== 'risks') P(`${T}: goldenB.mjs's risks state has selectors ${JSON.stringify(risksS.selector)}, expected the Risks section only (F-SHEET-COPY)`);
         for (const [label, gSel] of pairs) await l3(app.page, gold.page, `${T} ${label}`, appSel(gSel, id), gSel);
         // A4
         const zoomChip = key => h.zooms.find(z => z.key === key)?.chip;
@@ -7916,7 +7913,6 @@ if (gate.runs('HT-9'))
         const want = {
           setup: [await head(`#${id}-setup-h`), ...h.setup.flatMap((s, i) => [String(i + 1), s.text, ...(s.zoom && zoomChip(s.zoom) ? [`Show me the ${zoomChip(s.zoom).toLowerCase()}`] : [])])],
           risks: [await head(`#${id}-risks-h`), ...h.risks.map(r => r.text), ...(h.riskFlags ?? ['wrist']).flatMap(f => flagLines[f])],
-          disclaimer: [C.DISCLAIMER],
         };
         for (const [label, gSel] of pairs) {
           const [la, lg] = [await leaves(app.page, appSel(gSel, id)), await leaves(gold.page, gSel)];
@@ -7943,13 +7939,13 @@ if (gate.runs('HT-9'))
   try {
     const failed = th => e => P(`${th} crashed: ${e.message.split('\n')[0]}`);   // a thrown probe is a failure, never a gate crash
     await Promise.all(H.HT_THEMES.map(th => run(th).catch(failed(th))));
-    if (stats.pairs < 120) P(`only ${stats.pairs} L3 pairs compared, expected Setup, Risks and the disclaimer on 8 exercises in 5 themes (120)`);
-    if (stats.copy < 120 || stats.a3 < 40) P(`A4/A3 ran ${stats.copy}/${stats.a3} times, expected 120/40`);
+    if (stats.pairs < 80) P(`only ${stats.pairs} L3 pairs compared, expected Setup and Risks on 8 exercises in 5 themes (80; F-SHEET-COPY removed the disclaimer pair)`);
+    if (stats.copy < 80 || stats.a3 < 40) P(`A4/A3 ran ${stats.copy}/${stats.a3} times, expected 80/40`);
     // A5: the HT-3 plate compare after the sheet was scrolled to the end and everything collapsed was opened
     const openAll = async () => {
       const A = 'dialog.sheet.ht';
       const wait = (f, what = 'Setup/Risks never mounted') => new Promise((r, j) => { const t0 = performance.now(); const k = () => (f() ? r() : performance.now() - t0 > 5000 ? j(new Error(`HT-9 A5: ${what}`)) : requestAnimationFrame(k)); k(); });
-      await wait(() => document.querySelector(`${A} .ht-disclaimer`) && document.querySelector(`${A} .setup`));
+      await wait(() => document.querySelector(`${A} .risks`) && document.querySelector(`${A} .setup`));
       const panel = document.querySelector(`${A} .sheet-panel`);
       // HT-8's feel section loads once it comes near: scroll to it and wait, so its rows are opened too
       panel.scrollTop = panel.scrollHeight;
@@ -7979,7 +7975,7 @@ if (gate.runs('HT-9'))
     stats.a5 = a5.stats.pairs;
     for (const p of a5.problems) P(`A5 (after scrolling to the end and opening everything): ${p}`);
     if (a5.stats.pairs < 32) P(`A5: only ${a5.stats.pairs} plate pairs compared, expected 8 x 2 themes x {N, M} (>= 32)`);
-    console.log(`${tag} (${ht9.version()}): A1 ${stats.pairs} L3 pairs (Setup, Risks, disclaimer; max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}); A4 ${stats.copy} on-screen copy lists compared with the content strings; A3 ${stats.a3} sheets, duplicate red-flag fixture ${stats.fixture ? 'caught' : 'NOT caught'}; HT-3b A3 split (frames) ${JSON.stringify(stats.split)}; A5 ${stats.a5} plate pairs after opening everything; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+    console.log(`${tag} (${ht9.version()}): A1 ${stats.pairs} L3 pairs (Setup, Risks; max ${stats.offMax} px off, ${stats.tall} at 390 x ${H.TALL_H}); A4 ${stats.copy} on-screen copy lists compared with the content strings; A3 ${stats.a3} sheets, duplicate red-flag fixture ${stats.fixture ? 'caught' : 'NOT caught'}; HT-3b A3 split (frames) ${JSON.stringify(stats.split)}; A5 ${stats.a5} plate pairs after opening everything; ${((Date.now() - t0) / 1000).toFixed(1)} s`);
   } finally {
     await ht9.close();
   }

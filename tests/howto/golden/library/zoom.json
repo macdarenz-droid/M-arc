@@ -76,6 +76,22 @@
       "supersedes": 2,
       "why": "F-BODYMAP-FRONTDELT (D-BODYMAP-LIB, D-BODYMAP-APPEND #404 6688047379; supervisor under D-LIB-O5 point 4: golden-B design kinds only, superseding a supervisor entry): the library body-map fix (render/region-fix.mjs applyBodymapFix) redraws front_delts on the front of the shoulder cap and adds the inner-elbow and back-of-knee pain parts. Byte proof: with the fix paths undone, this page equals the superseded entry page byte for byte, except the shimmer band of a feel map whose main muscles include front_delts. Built twice, equal sha256.",
       "prev": "9782ff44ebac98c380e0ac8375d72b78664cdb0a3c5efd8ae898f205f4492a24"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "ZOOM",
+      "ids": [
+        "lib_horizontal_leg_press"
+      ],
+      "pageSha256": "818bd007481ffa31f2c7cf84616a2b0c02c9594efce89f31f56e6ea065db82f5",
+      "bytes": 288006,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/421#issuecomment-6851173168 @ d20626fc1e6f1844b105be332dcde15e9120d7aa",
+      "date": "2026-11-13",
+      "supersedes": 3,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip; the closing \"not medical advice\" line removed. The old page with exactly these replacements applied as text is byte-equal to this page. Interim: the panel (R2) and the final re-pin on latest main replace this entry before merge.",
+      "prev": "3ba84350f759fa3f966fdf787c77283c90fe9fc4223b94c43a6b5eb636f68912"
     }
   ]
 }
