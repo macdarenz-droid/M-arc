@@ -496,6 +496,23 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF4 lb06 plates page after main dc058207 (W6): machine_pullover, high_to_low_cable_fly and smith_machine_squat as judged in pf13 (#410 6752705237; page da4257d6, built twice); the 9 other plates byte-equal to main's 20c6b054.",
       "supersedes": 0,
       "prev": "f28b755cd318e1b7141caf6172c7eb98cd64a915d4e5f2b94e62efac741cc246"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB6",
+      "ids": [
+        "lib_machine_crunch",
+        "lib_machine_lateral_raise"
+      ],
+      "pageSha256": "8ba70a238acefd186d3d37ec5f3eaed616461cb5c8bd8c81ed294fea5cdcec3e",
+      "bytes": 526543,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
+      "date": "2026-11-13",
+      "supersedes": 13,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
+      "prev": "4881faafb8fd42a9855ee232f66202b150c0106b5fac0998a2078e02055cf9ed"
     }
   ]
 }

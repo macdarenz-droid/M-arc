@@ -20,6 +20,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { toMainLayersPage } from './sheetcopy-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -192,6 +193,10 @@ describe('PF4 item 20b: the rest of the lb02 pages is byte-equal to the base', {
     const stageDir = mkdtempSync(join(tmpdir(), 'pf4-20b-'));
     let h: string;
     try { h = (await buildLayersPage(layersSpecOf('tools/plates/library/batches/lb02.json', { stageDir }))).toString('utf8'); } finally { rmSync(stageDir, { recursive: true, force: true }); }
+    // F-SHEET-COPY (#423): the base pins below are compared on the page with the sheet copy change undone
+    // (toMainLayersPage: toMainCopy, page: true, keeping lb02's one bare-stem heading from main); the raw page carries it
+    expect(h).toContain('<p class="rk-stop">If something hurts, stop and get it checked.</p>');
+    h = toMainLayersPage(h, 'lb02').toString('utf8');
     const sha = (s: string) => createHash('sha256').update(s).digest('hex');
     const block = (s: string, open: RegExp, tag: string) => { const m = open.exec(s); if (!m) return '';
       const t = new RegExp(`<${tag}\\b|</${tag}>`, 'g'); t.lastIndex = m.index; let d = 0;

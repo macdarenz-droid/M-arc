@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { RED_FLAG_BACK } from '../../src/howto/red-flag-back';
+import { toMainHowto, toMainShared } from './sheetcopy-pins';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -82,8 +83,12 @@ describe('S5-L: the back box on E1\'s back-flagged layers page', { timeout: 300_
 
   it('lintHowto\'s words.total plus the back box is within VISIBLE_WORDS_MAX; the variant at exactly 450 with the box is green', async () => {
     const M = await import(/* @vite-ignore */ F.url(root, F.HOWTO)), box = boxOnPage(page, F.CHROME);
-    expect(CL.lintHowto(M, shared).words.total).toBe(390);
-    expect(sheetTotal(M, box)).toBe(440);
+    // F-SHEET-COPY (#423): main's copy (toMainHowto/toMainShared) keeps 390 (+ the 50-word box = 440); this head's sheet is
+    // 16 words lower (the zoom headings and the stop line in place of the disclaimer): was 390/440, now 374/424
+    const mainTotal = CL.lintHowto(toMainHowto(M), toMainShared(shared)).words.total, boxWords = CL.words([box.name, box.now, box.doctor].join(' '));
+    expect([mainTotal, mainTotal + boxWords]).toEqual([390, 440]);
+    expect(CL.lintHowto(M, shared).words.total).toBe(374);
+    expect(sheetTotal(M, box)).toBe(424);
     expect(wordProblems(M, box)).toEqual([]);
     const at450 = await variant(CL.VISIBLE_WORDS_MAX - sheetTotal(M, box), 'w450');
     expect(sheetTotal(at450, box)).toBe(CL.VISIBLE_WORDS_MAX);

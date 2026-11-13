@@ -11,6 +11,7 @@ import type { BuiltHowTo } from '../../src/howto/types';
 import { VariantLine } from '../../src/slices/howto/VariantLine';
 import { mapLimit } from './limit';
 import { checkC7 } from './checks/c7';
+import { toMainHowto, toMainShared } from './sheetcopy-pins';
 import { RULE_CONTACT, checkC19Copy } from './checks/c19';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -72,9 +73,16 @@ describe('LIB-5v V2: the pure rules read copy.variantLine', () => {
 describe('LIB-5v V4: the line counts toward the 450 visible words (sheetWords)', () => {
   it('pull-up (449): a 1-word line is 450 and green, a 2-word line is 451 and red', async () => {
     const M = await howto('lib_pull_up');
-    expect(L.sheetWords(M, shared, {})).toEqual({ total: 449, violations: [] });
-    expect(L.sheetWords(withLine(M, 'Machine.'), shared, {})).toEqual({ total: 450, violations: [] });
-    expect(L.sheetWords(withLine(M, 'Machine: same.'), shared, {})).toEqual({ total: 451, violations: [{ path: '(sheet)', rule: 'visible words > 450', detail: '451' }] });
+    // F-SHEET-COPY (#423): main's copy (toMainHowto/toMainShared) holds the 449 boundary as before
+    const MM = toMainHowto(M), MS = toMainShared(shared);
+    expect(L.sheetWords(MM, MS, {})).toEqual({ total: 449, violations: [] });
+    expect(L.sheetWords(withLine(MM, 'Machine.'), MS, {})).toEqual({ total: 450, violations: [] });
+    expect(L.sheetWords(withLine(MM, 'Machine: same.'), MS, {})).toEqual({ total: 451, violations: [{ path: '(sheet)', rule: 'visible words > 450', detail: '451' }] });
+    // F-SHEET-COPY (#423): was 449 + a 1-word line; the copy change took 16 words off (433), so a 17-word line meets 450
+    // and an 18-word line is 451 (sheetWords counts the line; its 10-word caption cap is variantLine's rule, not this one)
+    expect(L.sheetWords(M, shared, {})).toEqual({ total: 433, violations: [] });
+    expect(L.sheetWords(withLine(M, neutral(17)), shared, {})).toEqual({ total: 450, violations: [] });
+    expect(L.sheetWords(withLine(M, neutral(18)), shared, {})).toEqual({ total: 451, violations: [{ path: '(sheet)', rule: 'visible words > 450', detail: '451' }] });
   });
 });
 
@@ -159,9 +167,34 @@ describe('LIB-5v V3/V4: the generator refuses a bad line on any shipped row (E1\
     F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
     tree = await (await import(/* @vite-ignore */ url('tests/howto/fixtures/lib5/tree.mjs'))).fixtureTreeAsync(); temps.push(tree);
     const back = (await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs'))).backBox();
-    const E1 = await import(/* @vite-ignore */ new URL(`file://${join(tree, F.HOWTO)}`).href);
+    // F-SHEET-COPY (#423): the copy change took words off E1's sheet (the pull-up clone), so its room grew past what a
+    // caption-capped (10-word) line can fill. The tree's How-to is padded with exactly those words (SC_PAD, in shown setup
+    // steps), then re-stamped (C15), so E1's room is main's again and each case keeps its meaning
+    const href = new URL(`file://${join(tree, F.HOWTO)}`).href, E0 = await import(/* @vite-ignore */ href);
+    const mainTotal = L.sheetWords(toMainHowto(E0), toMainShared(shared), { back }).total;
+    scCut = mainTotal - L.sheetWords(E0, shared, { back }).total;
+    roomMain = 450 - mainTotal;
+    const p = join(tree, F.HOWTO);
+    let t = readFileSync(p, 'utf8');
+    for (const [from, to] of SC_PAD) { if (t.split(from).length !== 2) throw new Error(`lib5v fixture: ${from} is not in ${F.HOWTO} once`); t = t.replace(from, to); }
+    writeFileSync(p, t);
+    const st = await node(tree, ['--input-type=module', '-e', `import { writeScratchStamps } from './tools/plates/library/research/stamps.mjs'; writeScratchStamps(process.cwd(), ${JSON.stringify([ID])});`]);
+    if (st.code !== 0) throw new Error(`lib5v fixture: re-stamp failed: ${st.out}`);
+    const E1 = await import(/* @vite-ignore */ `${href}?sc-pad`);
     room = 450 - L.sheetWords(E1, shared, { back }).total;
   }, T);
+  /** F-SHEET-COPY (#423): the fixture padding, [from, to] in E1's How-to: 16 neutral words over three shown setup steps. */
+  const SC_PAD: [string, string][] = [
+    ["'Hang still, legs together.'", "'Hang still, legs together. Breathe out and stay calm before you start.'"],
+    ["'Arms straight, shoulders down. Then pull.'", "'Arms straight, shoulders down. Look ahead and stay calm. Then pull.'"],
+    ["'Hands just outside your shoulders, palms away.'", "'Hands just outside your shoulders, palms away, thumbs wrapped round.'"],
+  ];
+  let scCut = 0, roomMain = 0;
+  it('F-SHEET-COPY (#423): the padding is exactly the words the copy change took off E1, and E1\'s room is main\'s', () => {
+    const added = SC_PAD.reduce((a, [from, to]) => a + CL.words(to) - CL.words(from), 0);
+    expect([added, scCut]).toEqual([16, 16]);
+    expect(room).toBe(roomMain);
+  });
   /** A copy of E1's tree with exact-once replacements, each [file, from, to]. */
   const copyWith = (...edits: [string, string, string][]) => {
     const r = mkdtempSync(join(tmpdir(), 'lib5v-e1-')); temps.push(r);

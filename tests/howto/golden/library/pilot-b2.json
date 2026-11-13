@@ -152,6 +152,22 @@
       "why": "O5; LIB-PLATEFIX-1 layers page rebuilt on main 8841246c (D-PLATEFIX-SECOND point 4): its LIB-PLATEFIX-1 content approved by the calibrated layers panel and rechecks (D-PLATEFIX-STAMP, #385 6648438434 @ f573d31322a421e169ea732e6cf948fbb41f66d0); cardcmp: every card's plate fragments byte-equal to the approved plates page; strip-back: with the inline zoom groups and ZOOM_CSS taken out it is the 3-way merge of base, the approved page and main's page plus only #404's body-map hunks; zoom groups byte-equal to the plates page's",
       "supersedes": 4,
       "prev": "12af9561a944f804a933912b39aeb9d469577a0ee647541c5ae9126e2967b8f4"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B2",
+      "ids": [
+        "lib_crunch"
+      ],
+      "pageSha256": "cf0be2e81437af7c2fed2f44b21bc09b7452b22324e5122f19efeec8ef670b0c",
+      "bytes": 339266,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
+      "date": "2026-11-13",
+      "supersedes": 7,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
+      "prev": "a37dd602f93ef0533a78e0a0c363c3d795e8c905cd68452daeb4cb7eae105b87"
     }
   ]
 }

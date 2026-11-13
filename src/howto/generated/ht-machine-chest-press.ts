@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=323d37d0b315f3510c3a04c2468f58be9ca1705958b179a8328f39e00c4484ac
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=9ad3e29b387421f4f40d104f3087046d4f906e0250e7b2cc16c2c8735f41bcec
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_machine_chest_press",
   name: "Machine Chest Press",
-  hashes: { inputsSha256: "323d37d0b315f3510c3a04c2468f58be9ca1705958b179a8328f39e00c4484ac", golden: "1fcf5153e9184711135d62da5d92ea8d3deed8b61a529b277bbb434a83ad530b" },
+  hashes: { inputsSha256: "9ad3e29b387421f4f40d104f3087046d4f906e0250e7b2cc16c2c8735f41bcec", golden: "1fcf5153e9184711135d62da5d92ea8d3deed8b61a529b277bbb434a83ad530b" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -397,21 +397,21 @@ export default {
       "key": "hand",
       "chip": "Hand",
       "chipCaption": "Heel of palm",
-      "heading": "Hand: right and wrong",
+      "heading": "Hand",
       "kind": "hand",
       "feelRow": "wrist"
     },
     {
       "key": "seat-height",
       "chip": "Seat height",
-      "heading": "Seat height: right and wrong",
+      "heading": "Seat height",
       "kind": "posture",
       "feelRow": "front-shoulders"
     },
     {
       "key": "blades",
       "chip": "Blades",
-      "heading": "Shoulder blades: right and wrong",
+      "heading": "Shoulder blades",
       "kind": "posture",
       "feelRow": "elbows"
     }

@@ -80,7 +80,7 @@ export const stills = {
 // zoom is in the zoom shell's shape (callout with an anchor at the landmark it names, no guide mark).
 const zooms = [
   {
-    key: 'hand', chip: 'Hand', chipCaption: 'Heel of palm', heading: 'Hand: right and wrong', kind: 'hand',
+    key: 'hand', chip: 'Hand', chipCaption: 'Heel of palm', heading: 'Hand', kind: 'hand',
     hand: {
       right: RIGHT_POSE,
       wrong: [BENT_BACK],

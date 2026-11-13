@@ -10,9 +10,12 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const LAYERS = join(ROOT, 'tools/plates/layers');
-export const PAGE_SHA256 = 'e7b8141368e59cf993f29555efce53bc06f36131d8e283c79e11a9f2614c928a';
+export const PAGE_SHA256 = '2e6a6648c2840521b36ffb5deca730803300ea52b320cee8d913bc8f1fd26fa4';
 /** The golden-B commit every vendored file and the page approval are pinned to (supervisor: the single constant). */
-export const GOLDEN_B_REF = '6b86baa';
+export const GOLDEN_B_REF = '41174121';
+/** Where GOLDEN_B_REF holds the files. 6b86baa held them under docs/howto/golden-b/; F-SHEET-COPY edited them in
+ *  place, so every entry now names its path in this folder at that commit (`git show <ref>:<dir>/<path>`). */
+export const GOLDEN_B_DIR = 'tools/plates/layers';
 
 export const sha256 = x => createHash('sha256').update(x).digest('hex');
 export const readManifest = (dir = LAYERS) => JSON.parse(readFileSync(join(dir, 'MANIFEST.json'), 'utf8'));
@@ -45,7 +48,7 @@ export function verifyLayers(dir = LAYERS, manifest = readManifest(LAYERS)) {
   const bad = [];
   const onDisk = new Set(walk(dir).filter(p => p !== 'MANIFEST.json'));
   for (const [path, e] of Object.entries(manifest.files)) {
-    if (e.source !== `${GOLDEN_B_REF}:docs/howto/golden-b/${path}`) bad.push(`${path}: source ${e.source} is not the ${GOLDEN_B_REF} pin`);
+    if (e.source !== `${GOLDEN_B_REF}:${GOLDEN_B_DIR}/${path}`) bad.push(`${path}: source ${e.source} is not the ${GOLDEN_B_REF} pin`);
     if (!onDisk.delete(path)) { bad.push(`${path}: missing`); continue; }
     const b = readFileSync(join(dir, path));
     if (sha256(b) !== e.sha256) bad.push(`${path}: sha256 ${sha256(b)} != MANIFEST ${e.sha256}`);

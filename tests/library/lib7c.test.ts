@@ -437,7 +437,7 @@ describe('LIB-7c 7c-A6: panels and words (D-LIB7FIX-WORDS, -BUDGET)', () => {
       expect(h.startsWith(`<div class="zx" id="hp-${k}-zoom-hand" data-zoom="hand" `)).toBe(true);
       const ids = [...h.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]!);
       expect([k, ids.filter(i => !i.startsWith(`hp-${k}-`)), new Set(ids).size === ids.length]).toEqual([k, [], true]);
-      expect(W.heading.text).toBe('Hand: right and wrong');
+      expect(W.heading.text).toBe('Hand');
       for (const s of ['right', 'wrong', 'pager']) expect([k, s, /D-LIB7c-/.test(W.faults.curled[s].source)]).toEqual([k, s, true]);
       expect([W.faults.curled.right.text, W.faults.curled.wrong.text, W.faults.curled.pager.text]).toEqual(['Base of fingers', 'Wrist curled', 'Wrist curled']);
       const t = hp.pairText(k, h);

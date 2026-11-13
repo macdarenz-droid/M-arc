@@ -223,8 +223,11 @@ describe('HT5-A5: archetypes.ts is generated from golden B\'s shared module, byt
     expect(archetypes.RED_FLAG_SHOULDER).toEqual(shared.RED_FLAG_SHOULDER);
     expect(archetypes.RED_FLAG_KNEE).toEqual(shared.RED_FLAG_KNEE);
     expect(archetypes.RED_FLAG_ELBOW).toEqual(shared.RED_FLAG_ELBOW);
-    expect(archetypes.DISCLAIMER).toBe(shared.DISCLAIMER);
-    expect(archetypes.DISCLAIMER).toBe('General guidance, not medical advice. If something hurts, stop and get it checked.');
+    // F-SHEET-COPY (R1, owner UI-copy rule 2026-10-01): no closing disclaimer line, in the source or the generated module
+    expect('DISCLAIMER' in archetypes).toBe(false);
+    expect('DISCLAIMER' in shared).toBe(false);
+    expect(archetypes.STOP_LINE).toBe(shared.STOP_LINE);   // D-SHEETCOPY-STOPLINE: the kept sentence
+    expect(archetypes.STOP_LINE).toBe('If something hurts, stop and get it checked.');
   });
 
   it('never exports SHOW_EVIDENCE (LR-23: no evidence labels in the UI)', async () => {

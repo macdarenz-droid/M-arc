@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=8fc511bb829aa27261ff7191f3eb1cacabfaa294d524f98980cb2dd20ce45807
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=e953c344accdc0086ead908dda4e72adf6ac725a079317957213a6672ac32322
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_seated_cable_row",
   name: "Seated Cable Row",
-  hashes: { inputsSha256: "8fc511bb829aa27261ff7191f3eb1cacabfaa294d524f98980cb2dd20ce45807", golden: "256b78949ce47e1628c8201e1571cead8d6481cc80958734b135500a41b6fb34" },
+  hashes: { inputsSha256: "e953c344accdc0086ead908dda4e72adf6ac725a079317957213a6672ac32322", golden: "256b78949ce47e1628c8201e1571cead8d6481cc80958734b135500a41b6fb34" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -385,21 +385,21 @@ export default {
     {
       "key": "hand",
       "chip": "Hand",
-      "heading": "Hand: right and wrong",
+      "heading": "Hand",
       "kind": "hand",
       "feelRow": "wrist"
     },
     {
       "key": "back",
       "chip": "Back line",
-      "heading": "Back line: right and wrong",
+      "heading": "Back line",
       "kind": "posture",
       "feelRow": "low-back"
     },
     {
       "key": "finish",
       "chip": "Finish",
-      "heading": "Finish: right and wrong",
+      "heading": "Finish",
       "kind": "posture",
       "feelRow": "traps"
     }

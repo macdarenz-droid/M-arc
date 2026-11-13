@@ -52,7 +52,7 @@ describe('LIB-4b contract', () => {
       expect([null, 390, 360, 340]).toContain(p.width);
       expect(t.theme === '*').toBe(p.width === null);   // D-LIB4b-KEYS: theme-less exactly when width-less
     }
-    expect(ts).toHaveLength(2947);
+    expect(ts).toHaveLength(2867);   // F-SHEET-COPY: 2947 less the 80 HT9 disclaimer-{L3,copy} tuples (8 x 5 x 2)
   });
 });
 
@@ -92,9 +92,10 @@ describe('LIB-4b B1: tuples from source match what the HT blocks observe on the 
     const ht8 = count(ts, t => t.check === 'HT8' && /^(S5-end|S5-mid|S4|S6-.+|reduced)$/.test(t.sub));
     expect(ht8).toBe(272); expect(ht8).toBeGreaterThanOrEqual(200);
     expect(count(ts, t => t.check === 'HT8' && t.sub === 'L4')).toBe(40);
-    // HT-9: A1 L3 120, A4 copy 120, A3 40; Show 17 buttons x 2 themes; C19 8 x 5; Order 8
-    expect(count(ts, t => t.check === 'HT9' && t.sub.endsWith('-L3'))).toBe(120);
-    expect(count(ts, t => t.check === 'HT9' && t.sub.endsWith('-copy'))).toBe(120);
+    // HT-9: A1 L3 80, A4 copy 80 (F-SHEET-COPY: Setup and Risks; the disclaimer pair is gone), A3 40; Show 17 buttons x 2 themes; C19 8 x 5; Order 8
+    expect(count(ts, t => t.check === 'HT9' && t.sub.endsWith('-L3'))).toBe(80);
+    expect(count(ts, t => t.check === 'HT9' && t.sub.endsWith('-copy'))).toBe(80);
+    expect(count(ts, t => t.check === 'HT9' && t.sub.startsWith('disclaimer-'))).toBe(0);   // F-SHEET-COPY
     expect(count(ts, t => t.check === 'HT9' && t.sub === 'A3')).toBe(40);
     expect(count(ts, t => t.check === 'HT9' && t.sub.startsWith('show-'))).toBe(34);
     expect(count(ts, t => t.check === 'HT9' && t.sub === 'C19')).toBe(40);

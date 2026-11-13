@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
+import { toMainCopy } from '../howto/sheetcopy-pins';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -36,8 +37,12 @@ describe('LIB-6 close-up renderer, API level', () => {
   it('golden B (the committed approved page) holds the 8 pinned close-up fragments', () => {
     const page = readFileSync(new URL('../howto/golden/howto-layers.html', import.meta.url));
     expect(layers.sha256(page)).toBe(layers.PAGE_SHA256);
-    const got = fr.closeupFragments(page.toString('utf8'), Object.keys(GOLDEN_FRAGMENTS));
+    // F-SHEET-COPY (#423): the pins are main's fragments; they are cut from the committed page with the sheet copy change
+    // undone (toMainCopy, page: true: the zoom headings), and at least one panel of the raw page differs (the change is there)
+    const got = fr.closeupFragments(toMainCopy(page.toString('utf8'), { page: true }), Object.keys(GOLDEN_FRAGMENTS));
     for (const [c, [p, s]] of Object.entries(GOLDEN_FRAGMENTS)) expect([c, layers.sha256(got[c].panels), layers.sha256(got[c].css)]).toEqual([c, p, s]);
+    const raw = fr.closeupFragments(page.toString('utf8'), Object.keys(GOLDEN_FRAGMENTS));
+    expect(Object.entries(GOLDEN_FRAGMENTS).filter(([c, [p]]) => layers.sha256(raw[c].panels) !== p).length).toBeGreaterThan(0);
   });
 
   it('has options for exactly the 8, none on the frozen fallback', () => {

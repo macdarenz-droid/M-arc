@@ -254,7 +254,7 @@ export default {
   },
   zooms: [
     {
-      key: 'hand', chip: 'Hand', heading: 'Hand: right and wrong', kind: 'hand',
+      key: 'hand', chip: 'Hand', heading: 'Hand', kind: 'hand',
       hand: {
         right: RIGHT_POSE,
         wrong: [FAULT_CURLED_SLIP],     // one page: the card names one hand fault, and no thumb option (see thumb.claim)
@@ -272,7 +272,7 @@ export default {
       feelPrompt: 'Sore wrist? This is usually why.',
     },
     {
-      key: 'back', chip: 'Back line', heading: 'Back line: right and wrong', kind: 'posture',
+      key: 'back', chip: 'Back line', heading: 'Back line', kind: 'posture',
       // crop of the plate at the START pose (the front of the rep, where the rounding happens): head to seat
       crop: { center: { at: 'backMid', pose: 'start', off: [6, -14] }, sizePx: 156 },
       right: 'start',
@@ -297,7 +297,7 @@ export default {
       feelPrompt: 'Lower back aching? This is usually why.',
     },
     {
-      key: 'finish', chip: 'Finish', heading: 'Finish: right and wrong', kind: 'posture',
+      key: 'finish', chip: 'Finish', heading: 'Finish', kind: 'posture',
       // centred on the seat contact (fixed in both poses; the solid wrong crop's shoulders move with the shrug)
       crop: { center: { at: 'seat', off: [14.5, -69.7] }, sizePx: 140 },
       right: 'end',

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=3a8e41e7ea37469b7483a62d070f5b9bcfb9cbbe0f7a7964ab3afc51aa9c9d1a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=86d25c1855ac7ef308d8fa301778028015cde926463d37fb145d435e8ce52d20
 // The machine-crunch posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-machine-crunch.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

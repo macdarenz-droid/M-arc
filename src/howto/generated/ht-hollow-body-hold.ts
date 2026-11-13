@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=8b8e2ed8cbf004a34fc971526d48ae27c56e513a70eb4f377710adeae784aab1
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=70cd4ed012e71979b84b07a04fd3b8fa2911e946b259a374859762a4aa4aa56d
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_hollow_body_hold",
   name: "Hollow Body Hold",
-  hashes: { inputsSha256: "8b8e2ed8cbf004a34fc971526d48ae27c56e513a70eb4f377710adeae784aab1", golden: "47721ef71ebd7c6e8265429128db093405f849f1c8ac8d02b8c615663b173f25" },
+  hashes: { inputsSha256: "70cd4ed012e71979b84b07a04fd3b8fa2911e946b259a374859762a4aa4aa56d", golden: "47721ef71ebd7c6e8265429128db093405f849f1c8ac8d02b8c615663b173f25" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

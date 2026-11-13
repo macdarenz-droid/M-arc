@@ -45,7 +45,7 @@ export const GOLDEN_B_JUMP = '  <a class="pg-jump" href="#machine-chest-press-ch
 
 /** D-SHIP-W6-NOPRIMARY: [mark, clause, Main legend span], equal to gen/feel.mjs NOPRIMARY_MARK, NOPRIMARY_CLAUSE and
  *  MAIN_LEGEND_SPAN (a test pins the three). */
-export const FEEL_NOPRIMARY = Object.freeze(['aria-label="Where you should feel it. Main: .', ' Main: .',
+export const FEEL_NOPRIMARY = Object.freeze(['aria-label="Target muscles. Main: .', ' Main: .',
   '<span><svg class="feel-sw sw-pri" viewBox="0 0 14 14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="3"/></svg>Main</span>']);
 
 /** One exact-once source patch; throws, naming it, when the vendored text it expects is not there exactly once. */
@@ -92,7 +92,7 @@ export function planOf(spec) {
 }
 
 /** The vendored feel-rows heading and list (howto-layers.mjs feelSection), as one concatenated template term. */
-export const FEEL_ROWS_HEAD = '+ `<h5 class="eyebrow fr-head">If you feel it in…</h5><ul class="fr-list">${rowsHtml}</ul>`';
+export const FEEL_ROWS_HEAD = '+ `<h5 class="eyebrow fr-head">Off-target feel</h5><ul class="fr-list">${rowsHtml}</ul>`';
 /** The patched howto-layers.mjs source. */
 export function patchHowtoLayers(src, plan) {
   src = patchOnce(src, 'HOWTO_IDS', between(src, 'HOWTO_IDS', 'export const HOWTO_IDS = [', '];\n'),

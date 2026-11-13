@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { MAIN_GOLDEN, PLATE_MOVES, pfTailProblems } from './platefix-pins';
+import { scLayersProblems, toMainLayersPage } from './sheetcopy-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -312,7 +313,7 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     return out;
   };
   const LINK = /^https:\/\/github\.com\/macdarenz-droid\/M-arc\/(pull|issues)\/\d+#issuecomment-\d+ @ [0-9a-f]{40}$/;
-  const layersPinProblems = (file: any, layersPage: Buffer, page: string = html) => {
+  const preScLayersProblems = (file: any, layersPage: Buffer, page: string = html) => {
     const n = MAIN_GOLDEN['pilot-b']!.n, main = file.entries.slice(0, n);
     const lp = main.map((e: any, i: number) => ({ e, i })).filter(({ e }: any) => e.kind === 'layers-page'), out: string[] = [];
     if (!lp.length) return ['layers-page entries: 0'];
@@ -332,6 +333,11 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     out.push(...pf3bTail(file, page));
     return out;
   };
+  /** F-SHEET-COPY (#423, the W8a form): the file's last entry is its layers-page re-pin, superseding PF1's tail entry
+   *  (scLayersProblems: the committed page with the copy change undone is that entry's pin). Every check above runs
+   *  unchanged on the file without it, against the layers page with the copy change undone (main's). [problems] */
+  const layersPinProblems = (file: any, layersPage: Buffer, page: string = html) => [...scLayersProblems(file, 'pilot-b', layersPage),
+    ...preScLayersProblems({ ...file, entries: file.entries.slice(0, -1) }, toMainLayersPage(layersPage, 'pilot-b'), page)];
   /** The golden file against the built page and the GO: [problems]. */
   const pinProblems = (file: any, page: string) => {
     const out: string[] = [...golden.verifyBatchChain(file, readJson('tests/howto/golden/GOLDEN.json').entries)];
@@ -404,6 +410,8 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
       // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was through entry 9, now + its 2 tail entries
       'entry 10 (plate:lib_smith_machine_bench_press): prev does not match the entries before it (an older entry was edited)',
       'entry 11 (page): prev does not match the entries before it (an older entry was edited)',
+      // F-SHEET-COPY (#423): was through entry 11, now + its layers-page re-pin
+      'entry 12 (layers-page): prev does not match the entries before it (an older entry was edited)',
       'main entries changed', 'lib_push_up: approval is not the GO']);
     const pa = structuredClone(g); pa.entries[0].approval = pa.entries[0].approval.replace('1d7f28d2', '8ae48ed9');
     expect(pinProblems(pa, html)).toContain('page: approval is not the GO');
@@ -412,19 +420,25 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     // LIB-SHIP W2: a second layers-page entry, a changed page byte, an unruled id named, and a superseding entry are red
     // F-BODYMAP-FRONTDELT and LIB-PLATEFIX-1: W2's entry and the body-map re-pin are main's (bm = main's last); the same
     // reds hold on the tail's layers-page entry (last)
-    const lpage = readFileSync(readJson(ROWS).pages.layers), last = g.entries.length - 3, bm = MAIN_GOLDEN['pilot-b']!.n - 1, w2 = bm - 1;
+    const lpage = readFileSync(readJson(ROWS).pages.layers), last = g.entries.length - 4, bm = MAIN_GOLDEN['pilot-b']!.n - 1, w2 = bm - 1;
+    // F-SHEET-COPY (#423): last was g.entries.length - 3; its re-pin is now the file's last entry, so PF1's tail
+    // layers-page entry is at length - 4 (n + 2, as before)
+    expect(last).toBe(MAIN_GOLDEN['pilot-b']!.n + 2);
     const mainMoved = ["pilot-b: main's 7 entries changed"];
     const lp = structuredClone(g); lp.entries[bm] = { ...lp.entries[w2] };   // W2's entry twice among main's, no body-map re-pin
     expect(layersPinProblems(lp, lpage)).toEqual([`after W2: ${JSON.stringify([['layers-page', null, 'D-SHIP-W2-STAMP', 'supervisor', undefined]])}`, 'layers-page pin', ...mainMoved]);
     // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was last = the final entry and the copy pushed at the end, now last = PF1's tail
     // layers-page entry (3b's 2 entries follow) and the copy put right after it
     const lpt = structuredClone(g); lpt.entries.splice(last + 1, 0, { ...lpt.entries[last] });
-    expect(layersPinProblems(lpt, lpage)).toEqual(['pilot-b: tail kinds page,plate,layers-page,layers-page', `pilot-b 3b: tail 13 ${JSON.stringify([['plate', 'lib_smith_machine_bench_press', 1, 'owner', 'D-OWNER-REPIN'], ['page', null, 7, 'owner', 'D-OWNER-REPIN']])}`]);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was the first line only, now + 3b's tail check (13 entries)
-    expect(layersPinProblems(g, Buffer.concat([lpage, Buffer.from(' ')]))).toEqual(['pilot-b: layers-page pin']);
+    // F-SHEET-COPY (#423): + its re-pin's supersedes check (the copy is now the last earlier layers-page entry)
+    expect(layersPinProblems(lpt, lpage)).toEqual([`pilot-b F-SHEET-COPY: supersedes ${last}, the last earlier layers-page entry is ${last + 1}`, 'pilot-b: tail kinds page,plate,layers-page,layers-page', `pilot-b 3b: tail 13 ${JSON.stringify([['plate', 'lib_smith_machine_bench_press', 1, 'owner', 'D-OWNER-REPIN'], ['page', null, 7, 'owner', 'D-OWNER-REPIN']])}`]);   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was the first line only, now + 3b's tail check (13 entries)
+    // F-SHEET-COPY (#423): + its re-pin's two page checks
+    expect(layersPinProblems(g, Buffer.concat([lpage, Buffer.from(' ')]))).toEqual(['pilot-b F-SHEET-COPY: page pin', 'pilot-b F-SHEET-COPY: the page with the copy change undone is not the superseded pin', 'pilot-b: layers-page pin']);
     const li = structuredClone(g); li.entries[bm].ids = [...li.entries[bm].ids, 'lib_seated_leg_curl'];
     expect(layersPinProblems(li, lpage)).toEqual(['layers-page ids lib_cable_fly,lib_push_up,lib_seated_leg_curl', ...mainMoved]);
     const lit = structuredClone(g); lit.entries[last].ids = [...lit.entries[last].ids, 'lib_seated_leg_curl'];
-    expect(layersPinProblems(lit, lpage)).toEqual(['pilot-b: layers-page ids lib_cable_fly,lib_push_up,lib_seated_leg_curl']);
+    // F-SHEET-COPY (#423): + its re-pin's ids check (it keeps the superseded entry's ids)
+    expect(layersPinProblems(lit, lpage)).toEqual(['pilot-b F-SHEET-COPY: ids lib_cable_fly,lib_push_up', 'pilot-b: layers-page ids lib_cable_fly,lib_push_up,lib_seated_leg_curl']);
     const ls = structuredClone(g); ls.entries[w2].supersedes = 0;
     expect(layersPinProblems(ls, lpage)).toEqual(['layers-page entry supersedes', ...mainMoved]);
     const lt = structuredClone(g); lt.entries[last].supersedes = 0;
@@ -446,8 +460,15 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     expect(layersPinProblems(sf, lpage)).toEqual(['pilot-b 3b: lib_smith_machine_bench_press: fragments']);
     const ss = structuredClone(g); ss.entries[last + 1].src = 'x';
     expect(layersPinProblems(ss, lpage)).toContain('pilot-b 3b: src changed');
-    const s3 = structuredClone(g); s3.entries.push({ ...s3.entries[last + 2] });
+    // F-SHEET-COPY (#423): was pushed last; now put before its re-pin, which stays last
+    const s3 = structuredClone(g); s3.entries.splice(last + 3, 0, { ...s3.entries[last + 2] });
     expect(layersPinProblems(s3, lpage).some(x => x.startsWith('pilot-b 3b: tail'))).toBe(true);
+    // F-SHEET-COPY (#423) reds: its re-pin dropped, another approval, superseding another entry, or another page
+    expect(layersPinProblems({ ...g, entries: g.entries.slice(0, -1) }, lpage)[0]).toMatch(/^pilot-b F-SHEET-COPY: last entry page /);
+    const scA = structuredClone(g); scA.entries[scA.entries.length - 1].approval += 'x';
+    expect(layersPinProblems(scA, lpage)).toEqual(['pilot-b F-SHEET-COPY: last entry layers-page F-SHEET-COPY']);
+    const scS = structuredClone(g); scS.entries[scS.entries.length - 1].supersedes = MAIN_GOLDEN['pilot-b']!.n - 1;
+    expect(layersPinProblems(scS, lpage)).toEqual([`pilot-b F-SHEET-COPY: supersedes ${MAIN_GOLDEN['pilot-b']!.n - 1}, the last earlier layers-page entry is ${last}`]);
   });
   it('mutations: an existing layers file and a pinned id in another golden file are red', () => {
     const p = readJson(ROWS).pages;

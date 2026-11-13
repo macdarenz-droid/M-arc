@@ -273,6 +273,26 @@
       "supersedes": null,
       "why": "W7 layers approved for the flip set (D-PF10-W7JOIN; supervisor RESUME 2026-11-09): the W7 layers panel (#394 6682487876; 3 fresh Opus critics per set at 390 px in Silent Black and Paper, plants caught, golden-B anchors), PANEL FIX ruled (6682947098, D-SHIP-W7-ROUTE), the focused recheck (6683570453), the PF3-plate layers check (6701001868), the PFC fix round and its recheck (6701937875), the L4 check (6702084867), the pf10 layers check of lying_leg_curl and sled_pull (#408 6704679655, D-PF10-W7JOIN) and the card compare (6711372615); every median 4 or more or a recorded exception. The page holds exactly the 6 shipped ids, each card byte-equal to its card in the lb08 page judged at a3e5b6e7; the page head loses only the held ids' rules. Edited in place under D-REPIN-UNMERGED for D-SHIP-W7-HOLD2 (#394 6753333493): glute_bridge held (its open sheet is over the A3 S0 cap, F-GLUTEBRIDGE-S0); the page holds the 5, each card byte-equal to the c9d24c6d build.",
       "prev": "f56c02760c797efb5eaf8ccdb51eecc926a725ed901a2089571255a8a00efd81"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB8",
+      "ids": [
+        "lib_leg_extension",
+        "lib_lying_leg_curl",
+        "lib_standing_leg_curl",
+        "lib_cable_kickback",
+        "lib_resisted_hip_flexion"
+      ],
+      "pageSha256": "3b09c695a3088402fabcb6e0bf060d784f31649b36773d03c0fe58510df36f86",
+      "bytes": 1201846,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
+      "date": "2026-11-13",
+      "supersedes": 9,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
+      "prev": "afde1c9503dafcde77f1e5bc5b7996f40bc0436e972f94bd3d1c6d6d6a4e2193"
     }
   ]
 }

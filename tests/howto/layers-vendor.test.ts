@@ -1,5 +1,5 @@
-// HT-4 L0-B (HT4-A1): the vendored How-to layer mockup (golden B, tools/plates/layers/) is verbatim from the
-// LR-23 pin (6b86baa, HT-4b; supersedes a7a0b74, the source-records pin, then b3a90af and the first pin 16a8edc, all
+// HT-4 L0-B (HT4-A1): the vendored How-to layer mockup (golden B, tools/plates/layers/) is pinned to F-SHEET-COPY
+// (GOLDEN_B_REF, its files edited in place; supersedes the LR-23 pin 6b86baa, HT-4b, which superseded a7a0b74, the source-records pin, then b3a90af and the first pin 16a8edc, all
 // kept in pageApproval.history) and rebuilds byte-identical.
 import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
@@ -77,7 +77,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
   // Supervisor, PR #107 (the same condition HT-2 had, #105): the per-file check alone cannot catch a file and its
   // own MANIFEST entry being edited together and staying consistent with each other.
   it('the sorted path:sha256 list of MANIFEST.json, plus pageApproval, hashes to its pinned literal', () => {
-    expect(m.sha256(m.manifestPinList())).toBe('c9b3eb6838508fe8c3d518294debe15ec97c93ea781b55bc214aa3ccc9eb2606');
+    expect(m.sha256(m.manifestPinList())).toBe('a3a916ad33179d43f0c8386a4713a6ab67a9926f47f8ec7c1305159d10cd6bd0');
   });
 
   it('fails when a vendored file and its own MANIFEST sha256 entry change together (consistently)', () => {
@@ -92,7 +92,7 @@ describe('HT4-A1 layer vendor lock (L0-B)', () => {
     // the per-file check alone is fooled (both sides agree, source pin untouched)...
     expect(m.verifyLayers(d, manifest)).toEqual([]);
     // ...but the literal pin over the whole manifest is not
-    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('c9b3eb6838508fe8c3d518294debe15ec97c93ea781b55bc214aa3ccc9eb2606');
+    expect(m.sha256(m.manifestPinList(manifest))).not.toBe('a3a916ad33179d43f0c8386a4713a6ab67a9926f47f8ec7c1305159d10cd6bd0');
   });
 });
 
@@ -120,9 +120,14 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
     expect(fixture.length).toBe(current.bytes);
   });
 
-  it('history holds the three retired approvals (a7a0b74, b3a90af, then 16a8edc) in order, and hashes to its pinned literal', () => {
+  it('history holds the four retired approvals (6b86baa, a7a0b74, b3a90af, then 16a8edc) in order, and hashes to its pinned literal', () => {
     const { history } = m.readManifest().pageApproval;
     expect(history).toEqual([
+      {   // F-SHEET-COPY retired the LR-23 pin
+        ref: '6b86baa', supersedes: 'a7a0b74', approvedBy: 'owner', date: '2026-09-30',
+        why: "Owner approved this re-pin in the HT-4b session on 2026-09-30. It applies owner decision LR-23 (\"Dont put any emergency or whatever contacts. Even the source remove it in app ui. If its not required by pkaystore dont put.\"): no Sources section, evidence labels or contacts in the UI; plates unchanged.",
+        pageSha256: 'e7b8141368e59cf993f29555efce53bc06f36131d8e283c79e11a9f2614c928a', bytes: 2320561,
+      },
       {
         ref: 'a7a0b74', supersedes: 'b3a90af', approvedBy: 'supervisor', date: '2026-09-30',
         why: 'source records only (HT5-A2); owner-approved design unchanged',
@@ -139,7 +144,7 @@ describe('HT4-A1: the layer page approval and its committed fixture', () => {
         pageSha256: '472030088f32673bb68dac0f937f1a6fa7dd10c82eb42f88b2f0c4a66a149c4a', bytes: 2451995,
       },
     ]);
-    expect(m.historyPin(history)).toBe('5432626725ac8afb8554bf3b2d063698bd8e6f55aba8e63ff40286c3c0d77dae');
+    expect(m.historyPin(history)).toBe('c91bdbb91939ee5be7874246c6d2bbbbf5bf8c9f3b49c955fe724ebce2e81f50');
   });
 
   it('fails (the pinned literal changes) if an already-retired entry is edited after the fact', () => {

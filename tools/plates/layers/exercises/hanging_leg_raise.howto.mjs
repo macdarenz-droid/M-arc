@@ -270,7 +270,7 @@ export default {
   },
   zooms: [
     {
-      key: 'hand', chip: 'Hand', heading: 'Hand: right and wrong', kind: 'hand',
+      key: 'hand', chip: 'Hand', heading: 'Hand', kind: 'hand',
       hand: {
         right: RIGHT_POSE,
         wrong: [FAULT_CURL_SLIP],
@@ -288,7 +288,7 @@ export default {
       feelPrompt: 'Sore wrist? This is usually why.',
     },
     {
-      key: 'pelvis', chip: 'Pelvis curl', heading: 'Pelvis curl: right and wrong', kind: 'posture',
+      key: 'pelvis', chip: 'Pelvis curl', heading: 'Pelvis curl', kind: 'posture',
       // crop of the plate at the top of the rep: trunk, pelvis and thighs (plate px, same camera as the plate)
       crop: { center: { at: 'hip.r', off: [-6, 20] }, sizePx: 130 },   // trunk, pelvis bowl and thigh; the arm stub out of frame
       right: 'end',
@@ -311,7 +311,7 @@ export default {
       feelPrompt: 'Only your hips? This is usually why.',
     },
     {
-      key: 'shoulders', chip: 'Shoulders', heading: 'Shoulders: right and wrong', kind: 'posture',
+      key: 'shoulders', chip: 'Shoulders', heading: 'Shoulders', kind: 'posture',
       // Back view, the pull-up's "Seen from behind" drawing (exercises/pull_up.howto.mjs, same technique and wording):
       // from the side the near arm hides the head, ears and shoulder tops, so a side crop cannot show the shrug. This
       // is the plate's own hang drawn from behind with the engine's front-view outline (symmetric, no face), same

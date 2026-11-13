@@ -435,6 +435,27 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb03 plates page rebuilt with LIB-PLATEFIX-4's one_arm_dumbbell_row (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (#410 PLATES READY 6750515618).",
       "supersedes": 0,
       "prev": "8760ebb764ce374b6390f7b3575448d6dc230086fb279e94a9f8e94f148ebf91"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB3",
+      "ids": [
+        "lib_pendlay_row",
+        "lib_landmine_row",
+        "lib_t_bar_row",
+        "lib_barbell_shrug",
+        "lib_cable_shrug",
+        "lib_smith_machine_shrug"
+      ],
+      "pageSha256": "f819a576f000d8a8708819f4fb760a7c0d2695d5159ec39b90418747cdb7a87a",
+      "bytes": 1128029,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
+      "date": "2026-11-13",
+      "supersedes": 13,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
+      "prev": "6762fa1fcd12237235ba75bd7bb7a08dea3cff5e5fe9226ed4149e9a3deb6475"
     }
   ]
 }

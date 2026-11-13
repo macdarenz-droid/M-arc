@@ -6,6 +6,6 @@ import type { HowToContent, ZoomSpec } from '../../../../src/howto/content-types
 const PADDING = Array.from({ length: 460 }, (_, i) => `word${i}`).join(' ');
 
 export function mutate(good: HowToContent): HowToContent {
-  const zooms = good.zooms.map((z): ZoomSpec => (z.key === 'hand' ? { ...z, heading: `Hand: right and wrong ${PADDING}` } : z));
+  const zooms = good.zooms.map((z): ZoomSpec => (z.key === 'hand' ? { ...z, heading: `Hand ${PADDING}` } : z));
   return { ...good, zooms };
 }

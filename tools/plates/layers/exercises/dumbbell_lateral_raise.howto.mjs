@@ -199,7 +199,7 @@ export default {
   },
   zooms: [
     {
-      key: 'hand', chip: 'Hand', heading: 'Hand: right and wrong', kind: 'hand',
+      key: 'hand', chip: 'Hand', heading: 'Hand', kind: 'hand',
       hand: {
         right: RIGHT_POSE,
         wrong: [FAULT_FINGERTIP],
@@ -220,7 +220,7 @@ export default {
       feelPrompt: 'Forearms working hard? This is usually why.',   // link to the row (2.7 S3 wireframe)
     },
     {
-      key: 'top-height', chip: 'Top height', heading: 'Top height: right and wrong', kind: 'posture',
+      key: 'top-height', chip: 'Top height', heading: 'Top height', kind: 'posture',
       crop: { center: { along: ['shoulder.r', 'grip.r'], t: 0.42, off: [0, -14] }, sizePx: 152 },
       right: 'end',
       // the approved plate's own arm (ref-src arm(), elbow 14, elbows-lead 8) raised to 118 deg, dashed over the right
@@ -243,7 +243,7 @@ export default {
       feelPrompt: 'Sharp pinch? This is usually why.',
     },
     {
-      key: 'shoulders', chip: 'Shoulders', heading: 'Shoulders: right and wrong', kind: 'posture',
+      key: 'shoulders', chip: 'Shoulders', heading: 'Shoulders', kind: 'posture',
       crop: { center: { at: 'neck', off: [0, 2] }, sizePx: 118 },
       right: 'end',
       // the approved plate's own Mistake drawing (ref-src plate, mistake: true): the raised trap lines and the shrug arrow

@@ -43,7 +43,7 @@ export function renderSetup(howTo: SectionProps['howTo'], open: boolean, onToggl
   const more = steps.length - SETUP_VISIBLE;
   return (
     <section class="hw-sec setup" id={`${pre}-setup`} aria-labelledby={`${pre}-setup-h`} onClick={onSetupClick}>
-      <h4 class="eyebrow" id={`${pre}-setup-h`}>Set it up</h4>
+      <h4 class="eyebrow" id={`${pre}-setup-h`}>Setup</h4>
       <ol class="st-list">
         {steps.map((s, i) => {
           const hide = i >= SETUP_VISIBLE;

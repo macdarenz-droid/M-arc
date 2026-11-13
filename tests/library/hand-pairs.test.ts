@@ -8,6 +8,7 @@ import { gzipSync } from 'node:zlib';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
+import { SC_STEMS, toMainCopy } from '../howto/sheetcopy-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -29,15 +30,34 @@ const API_SHA: Record<string, string> = {
   barbell_back_squat: '83c9d0734ffc3520d8ae49d1b4caee82d796218c5e5d5c0d67a3f8aeae067c79',
   leg_press: '83197adf7faaafda471b2976bba5904c0c1a780ea2e576d06ed443275a540bf4',
 };
+// F-SHEET-COPY (#423): the close-up APIs print the zoom heading (an h3 and the svg's aria-label), which lost its
+// ": right and wrong". API_SHA above stays main's pin, taken over each string with that copy change undone (toMainApi);
+// API_SHA_NOW is each string as this head prints it (was API_SHA, moved only by the heading copy).
+const API_SHA_NOW: Record<string, string> = {
+  dumbbell_lateral_raise: '8c2ba3a8dda96dc5b93ce463a8ad4e4e98a2ce71d0a62d1cd239cebe2fb2ad56',
+  pull_up: '9efaf3db5bc66fa19bcb905456ac73e75ae010fbb87c29b957fd1bdba50035c1',
+  hanging_leg_raise: '43620d56888c0178e60489bd70f511ecb543acf7435171983c5c30ac37ac7ef1',
+  lat_pulldown: '1d9a6eb4d769ba9e5111936ffe6439edcabe5638d7c14a50be5a02c1476f435e',
+  seated_cable_row: 'fb13ce6a5f76ff3dfe7d244c9a0685e5d3718f3f99166303c06dbfb20fa8c646',
+  machine_chest_press: 'e4b7a23b511a4700df57cfbfec8d97dbf3a206d1b8ed5a962a98db3fc878ef0e',
+  barbell_back_squat: '47610bd11ec9e16d5ed7860b171854c909b8e813c9814851ad404a6c37ee79ac',
+  leg_press: '3f870695402611c18857a426c6aeb9e38cc6e7727cdedaf4f436aba6b1de80e9',
+};
+const SC_STEM_RE = SC_STEMS.map(x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+/** One close-up API string with the F-SHEET-COPY copy undone: toMainCopy plus the API's own two heading forms. */
+const toMainApi = (v: string) => toMainCopy(v)
+  .replace(new RegExp(`(<h3 [^>]*id="zh-[a-z0-9-]+"[^>]*>)(${SC_STEM_RE})(</h3>)`, 'g'), '$1$2: right and wrong$3')
+  .replace(new RegExp(`(role="img" aria-label=")(${SC_STEM_RE})(\\. Right: )`, 'g'), '$1$2: right and wrong$3');
 const ENGINE_SHA: Record<string, string> = {
   'tools/plates/layers/engine/hand.mjs': '0132b54b5cac1ecc32b218d18a397d4b9bfb78564b0b6342aec0bc3980c00299',
   'tools/plates/layers/engine/hand-pairs.mjs': '7fed75c3689a3b76cede1969cc50db3d3870edb08dee86fbc84cd4ec21a5bbec',
 };
 
-async function apiSha(id: string) {
+/** The API hash with the F-SHEET-COPY copy undone on each string (main's form, API_SHA), or as printed (`now`). */
+async function apiSha(id: string, { now = false } = {}) {
   const mod = await import(/* @vite-ignore */ url(`tools/plates/layers/exercises/${id}.howto.mjs`));
   const api = closeups.closeupApi(mod, opts[id]), h = createHash('sha256');
-  for (const [n, f] of cmp.apiCalls(api, mod.default)) h.update(`${n}\0${f()}\0`);
+  for (const [n, f] of cmp.apiCalls(api, mod.default)) h.update(`${n}\0${now ? f() : toMainApi(f())}\0`);
   return h.digest('hex');
 }
 // The approved golden-B hand SVGs, read from the committed golden-B page (its sha is checked here against
@@ -87,15 +107,24 @@ describe('LIB-7 A1: golden B unchanged with every hand-*.mjs loaded', () => {
   }, 180_000);
   it('the 8 close-up APIs hash to their pins', async () => {
     expect(Object.keys(API_SHA).sort()).toEqual(Object.keys(opts).sort());
-    for (const id of Object.keys(API_SHA)) expect([id, await apiSha(id)]).toEqual([id, API_SHA[id]]);
+    expect(Object.keys(API_SHA_NOW).sort()).toEqual(Object.keys(opts).sort());
+    for (const id of Object.keys(API_SHA)) {
+      expect([id, await apiSha(id)]).toEqual([id, API_SHA[id]]);
+      expect([id, await apiSha(id, { now: true })]).toEqual([id, API_SHA_NOW[id]]);
+    }
   }, 60_000);
   it('golden-B engine hand files are byte-pinned', () => {
     for (const [f, h] of Object.entries(ENGINE_SHA)) expect([f, sha(readFileSync(f))]).toEqual([f, h]);
   });
   it('failure path: a module that changes a shared golden-B export on import moves a pin', async () => {
     const seg = hand.HAND_PROP.index.seg, keep = seg[0];
-    try { seg[0] = keep * 1.01; expect(await apiSha('pull_up')).not.toBe(API_SHA.pull_up); } finally { seg[0] = keep; }
+    try {
+      seg[0] = keep * 1.01;
+      expect(await apiSha('pull_up')).not.toBe(API_SHA.pull_up);
+      expect(await apiSha('pull_up', { now: true })).not.toBe(API_SHA_NOW.pull_up);
+    } finally { seg[0] = keep; }
     expect(await apiSha('pull_up')).toBe(API_SHA.pull_up);
+    expect(await apiSha('pull_up', { now: true })).toBe(API_SHA_NOW.pull_up);
   }, 60_000);
 });
 

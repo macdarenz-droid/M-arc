@@ -168,7 +168,7 @@ export function renderFeelMap({
   // what is drawn: text-only ids (no region, e.g. brachialis) are left out; the sheet's plain-word note under the map
   // covers them (GA A6/A7: brachialis is text only, and the anatomy word is jargon in user copy).
   const spoken = ms => ms.filter(m => !TEXT_ONLY.has(m));
-  let label = `Where you should feel it. Main: ${list(spoken(P))}.`;
+  let label = `Target muscles. Main: ${list(spoken(P))}.`;
   if (S.length) label += ` Also working: ${list(spoken(S.filter(m => !W.includes(m))))}.`;
   if (W.length) label += ` Should not take over: ${list(W)}.`;
   label = label.replace(' Also working: .', '');

@@ -98,7 +98,7 @@ export const stills = {
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 const zooms = [
   {
-    key: 'hand', chip: 'Hand', chipCaption: 'Heel of palm', heading: 'Hand: right and wrong', kind: 'hand',
+    key: 'hand', chip: 'Hand', chipCaption: 'Heel of palm', heading: 'Hand', kind: 'hand',
     hand: {
       right: RIGHT_POSE,
       wrong: [BENT_BACK],
@@ -120,7 +120,7 @@ const zooms = [
     feelRow: 'wrist',
   },
   {
-    key: 'seat-height', chip: 'Seat height', heading: 'Seat height: right and wrong', kind: 'posture',
+    key: 'seat-height', chip: 'Seat height', heading: 'Seat height', kind: 'posture',
     crop: { center: { landmark: 'shoulder.r', pose: 'start', dx: 14, dy: 0 }, sizePx: 108 },
     right: 'start',
     wrong: { still: 'seat-low' },
@@ -139,7 +139,7 @@ const zooms = [
     feelRow: 'front-shoulders',
   },
   {
-    key: 'blades', chip: 'Blades', heading: 'Shoulder blades: right and wrong', kind: 'posture',
+    key: 'blades', chip: 'Blades', heading: 'Shoulder blades', kind: 'posture',
     // wide enough for the pad, the shoulder, the elbow and the handle, so the locked elbow shows too
     // (dx 34 / size 150 cut the Wrong crop's dashed lever arm at the right edge: widened so it leaves at the top, as the
     // right crop's lever does)

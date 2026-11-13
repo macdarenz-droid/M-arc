@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=0e89cb445546e5378f39186cc2ace63905c99e6bbeb374df6b8a8cd4756d08d5
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=ec8e35dadd58ba39c87ae78ce23c2d3fed997cf0bbb153395f27f38695ee0274
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_leg_press",
   name: "Leg Press (45°)",
-  hashes: { inputsSha256: "0e89cb445546e5378f39186cc2ace63905c99e6bbeb374df6b8a8cd4756d08d5", golden: "c441fcc806598fc3335d845b98674cae21e27bc15cf9619b2d2a4c864390198f" },
+  hashes: { inputsSha256: "ec8e35dadd58ba39c87ae78ce23c2d3fed997cf0bbb153395f27f38695ee0274", golden: "c441fcc806598fc3335d845b98674cae21e27bc15cf9619b2d2a4c864390198f" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -413,21 +413,21 @@ export default {
     {
       "key": "back-on-pad",
       "chip": "Back pad",
-      "heading": "Back on pad: right and wrong",
+      "heading": "Back on pad",
       "kind": "posture",
       "feelRow": "lower-back"
     },
     {
       "key": "foot",
       "chip": "Feet",
-      "heading": "Feet: right and wrong",
+      "heading": "Feet",
       "kind": "posture",
       "feelRow": "knee"
     },
     {
       "key": "hand",
       "chip": "Hand",
-      "heading": "Hand: right and wrong",
+      "heading": "Hand",
       "kind": "hand",
       "feelRow": "wrists"
     }

@@ -34,7 +34,7 @@ Gate groups are named by their `gate.runs` key; `node scripts/gate-blocks.mjs --
 | HT6 | HT-6 | hand id, per theme `HT6/{grip,page-<i>,open-anim,close-anim,A4,chip,reduced}@390`; HT_FULL `HT6/{A4-mistake,origin,A6,A8-hint}@390`; silent-black `HT6/{A7-lazy,back}@390` | 385 | 105 pages; A6 64 pairs (16 rows × 4); 16 origins |
 | HT7 | HT-7 | per theme `HT7/A2@390`; paper `HT7/A2:reduced@390`; per posture key `HT7/<k>:{L3,L4,A4,restore,A5,chip}@390`; paper `HT7/<k>:reduced@390`; silent-black first key `HT7/<k>:control@390`; `HT7/A5-size@*` | 560 | 96 L3 pairs, 80 lists, 16 reduced, 8 controls |
 | HT8 | HT-8 | per theme `HT8/{L4,S5-end,S4}@390`, `HT8/S6-<row>@390`; HT_FULL `HT8/{S5-mid,reduced}@390`; silent-black `HT8/{lazy,C12}@390`; `HT8/size@*` | 336 | 272 pairs, 40 lists, 32 rows |
-| HT9 | HT-9 (C19, Show, Order, HT-9) | per theme `HT9/C19`, `HT9/{setup,risks,disclaimer}-{L3,copy}`, `HT9/A3`; HT_FULL `HT9/show-<n>`, `HT9/A5`; silent-black `HT9/order`; all `@390` | 378 | C19 40; Show 34 of 17; A1 120; A4 120; A3 40; A5 64 pairs |
+| HT9 | HT-9 (C19, Show, Order, HT-9) | per theme `HT9/C19`, `HT9/{setup,risks}-{L3,copy}` (F-SHEET-COPY: no disclaimer rows), `HT9/A3`; HT_FULL `HT9/show-<n>`, `HT9/A5`; silent-black `HT9/order`; all `@390` | 298 | C19 40; Show 34 of 17; A1 80; A4 80; A3 40; A5 64 pairs |
 | HT10 | `ht10Sweep`, `runHt10` | per theme `HT10/{sweep,reduced,a2}@390` | 120 | `HT10_PER_ID` tuples |
 | PQH | LIB-3 `runQa` + `browserResults` | `PQH/PQ-H1@*` … `PQH/PQ-H10@*`, `PQH/flags@*`; each passes only when `report.ok` | 88 | selftest clean run |
 | offline | HT-3b A4a | `offline/open@390` (silent-black), localStorage keys unchanged | 8 | squat only |

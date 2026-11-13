@@ -14,6 +14,7 @@ import { checkC15 } from './checks/c15';
 import { RULE_CONTACT, RULE_NAME, RULE_SAFETY, RULE_SOURCE, checkC19Shared } from './checks/c19';
 import { SHIPPED } from './shipped-rows';
 import { W4_IDS } from './checks/ship-w4';
+import { toMainHowto, toMainShared } from './sheetcopy-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -77,23 +78,41 @@ describe('LIB-5 D-LIB5-WORDS: the visible total counts every box', () => {
   const box = (now: string) => ({ name: 'Spine pain', now, doctor: 'See a doctor.', claim: { tags: ['CONSENSUS'], sources: ['nhs-back'] } });
   it('(a) with no extra box, the total equals golden B\'s lintHowto on each module namespace', async () => {
     const want: Record<string, number> = { lib_dumbbell_lateral_raise: 444, lib_barbell_back_squat: 450, lib_pull_up: 449, lib_hanging_leg_raise: 442, lib_lat_pulldown: 449, lib_seated_cable_row: 449, lib_leg_press: 449, lib_machine_chest_press: 444 };
+    // F-SHEET-COPY (#423): `want` is main's totals, measured with the copy change undone (toMainHowto/toMainShared:
+    // the ": right and wrong" zoom headings, the squat's "Option: thumb over the bar", the 13-word disclaimer in place
+    // of the 8-word stop line); `now` is this head's, each lower by exactly what the copy change took out
+    const now: Record<string, number> = { lib_dumbbell_lateral_raise: 426, lib_barbell_back_squat: 429, lib_pull_up: 433, lib_hanging_leg_raise: 424, lib_lat_pulldown: 430, lib_seated_cable_row: 431, lib_leg_press: 433, lib_machine_chest_press: 427 };
     for (const id of EIGHT) {
-      const M = await howto(id);
-      expect([id, L.sheetWords(M, shared, {}).total]).toEqual([id, want[id]]);
+      const M = await howto(id), MM = toMainHowto(M), MS = toMainShared(shared);
+      expect([id, L.sheetWords(MM, MS, {}).total]).toEqual([id, want[id]]);
+      expect(L.sheetWords(MM, MS, {}).total).toBe(CL.lintHowto(MM, MS).words.total);
+      expect([id, L.sheetWords(M, shared, {}).total]).toEqual([id, now[id]]);
       expect(L.sheetWords(M, shared, {}).total).toBe(CL.lintHowto(M, shared).words.total);
     }
   });
   it('(b) a back-flagged fixture sheet with an 8-word box is green at 450 and red at 451', async () => {
     const M = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib5/back-sheet.mjs'));
     expect(M.default.riskFlags).toEqual(['wrist', 'back']);
-    expect(CL.lintHowto(M, shared).words.total).toBe(442);
-    expect(L.sheetWords(M, shared, { back: box('Alpha bravo today.') })).toEqual({ total: 450, violations: [] });
-    expect(L.sheetWords(M, shared, { back: box('Alpha bravo charlie today.') })).toEqual({ total: 451, violations: [{ path: '(sheet)', rule: 'visible words > 450', detail: '451' }] });
+    // F-SHEET-COPY (#423): on main's copy (toMainHowto/toMainShared) the sheet is 442 and the 8-word box meets the
+    // boundary exactly, as before
+    const MM = toMainHowto(M), MS = toMainShared(shared);
+    expect(CL.lintHowto(MM, MS).words.total).toBe(442);
+    expect(L.sheetWords(MM, MS, { back: box('Alpha bravo today.') })).toEqual({ total: 450, violations: [] });
+    expect(L.sheetWords(MM, MS, { back: box('Alpha bravo charlie today.') })).toEqual({ total: 451, violations: [{ path: '(sheet)', rule: 'visible words > 450', detail: '451' }] });
+    // F-SHEET-COPY (#423): was 442 with the 8-word box; the copy change took 18 words off the sheet (424), so the box
+    // that meets the boundary on this head is 26 words (8 + 18): green at 450, red at 451
+    expect(CL.lintHowto(M, shared).words.total).toBe(424);
+    const NOW26 = 'Alpha bravo charlie delta echo foxtrot golf hotel india juliet. Kilo lima mike november oscar papa quebec romeo sierra tango today.';
+    expect(CL.words(['Spine pain', NOW26, 'See a doctor.'].join(' '))).toBe(26);
+    expect(L.sheetWords(M, shared, { back: box(NOW26) })).toEqual({ total: 450, violations: [] });
+    expect(L.sheetWords(M, shared, { back: box(NOW26.replace('tango', 'tango uniform')) })).toEqual({ total: 451, violations: [{ path: '(sheet)', rule: 'visible words > 450', detail: '451' }] });
     expect(L.sheetWords(M, shared, {}).violations).toEqual([{ path: 'riskFlags(back)', rule: 'no red-flag box for this flag', detail: '' }]);
   });
   it('mutation: the namespace replaced by { default } loses THUMB_PAGE (pull-up 423, not 449)', async () => {
     const M = await howto('lib_pull_up');
-    expect(L.sheetWords({ default: M.default }, shared, {}).total).toBe(423);
+    // F-SHEET-COPY (#423): main's copy (toMainHowto/toMainShared) as before; this head's is 407, not 433
+    expect(L.sheetWords(toMainHowto({ default: M.default }), toMainShared(shared), {}).total).toBe(423);
+    expect(L.sheetWords({ default: M.default }, shared, {}).total).toBe(407);
   });
 });
 
@@ -121,7 +140,7 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
       for (const f of ['name', 'now', 'doctor']) expect(box[f]).not.toBe(back[f].text);
       for (const s of [box.now, box.doctor]) for (const x of CL.sentences(s)) expect(CL.words(x)).toBeLessThanOrEqual(15);
       const B = { ...box, claim: { tags: ['CONSENSUS'], sources: ['nhs-back'] } };
-      const got = lintTokens(L.boxReach('redFlag(back)', B)), ref = refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG_BACK: B, DISCLAIMER: shared.DISCLAIMER }, 'back'));
+      const got = lintTokens(L.boxReach('redFlag(back)', B)), ref = refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG_BACK: B }, 'back'));
       expect([name, got]).toEqual([name, want]);
       expect([name, ref]).toEqual([name, want]);
     }
@@ -129,7 +148,7 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
   it('S4 (Do 9): the answered back box under its key: lint === c7 (boxKey) + C19 === []; at the named limit + 1, both name the count', async () => {
     const back = (await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs'))).backBox();
     const { content: c } = await content.loadContent('lib_pull_up'), KEY = 'back-pain-box';
-    const both = (B: any) => [lintTokens(L.boxReach('redFlag(back)', B, [], KEY)), refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B, DISCLAIMER: shared.DISCLAIMER }, 'back'))];
+    const both = (B: any) => [lintTokens(L.boxReach('redFlag(back)', B, [], KEY)), refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B }, 'back'))];
     expect(CL.words([back.name, back.now, back.doctor].join(' '))).toBe(50);
     expect(both(back)).toEqual([[], []]);
     expect(L.backBoxRules('RED_FLAG_BACK', back)).toEqual([]);
@@ -154,12 +173,12 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
         // as the library gate lints it (gen/library-gate.mjs:61); every other flag is golden B's shared block
         if (f === 'back') {
           const BB = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), B = BB.backBox(), KEY = BB.BACK_BOX_KEY;
-          expect([r.id, f, lintTokens(L.boxReach('redFlag(back)', B, [], KEY))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B, DISCLAIMER: shared.DISCLAIMER }, 'back'))]);
+          expect([r.id, f, lintTokens(L.boxReach('redFlag(back)', B, [], KEY))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B }, 'back'))]);
           continue;
         }
         const B = shared[CL.RED_FLAG_BLOCKS[f].exp];
         expect(B, `${r.id} ${f}`).toBeDefined();
-        expect([r.id, f, lintTokens(L.boxReach(`redFlag(${f})`, B))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG: B, DISCLAIMER: shared.DISCLAIMER }, f))]);
+        expect([r.id, f, lintTokens(L.boxReach(`redFlag(${f})`, B))]).toEqual([r.id, f, refTokens(checkC7({ ...c, redFlag: B }), checkC19Shared({ RED_FLAG: B }, f))]);
       }
     }
   }, 60_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): walks every shipped row (36 after main 7e060e83); timed out at the 5 s default on 76c2e190's unit-tz (Asia/Manila); no assertion change
@@ -362,9 +381,9 @@ describe('LIB-SHIP W6 D-SHIP-W6-NOREDFLAG: the sweep\'s boxes for a row with no 
     expect(Object.keys(sweepBoxes([], boxOf, flags)).sort()).toEqual([...flags, 'back'].map(f => `RED_FLAG_${f.toUpperCase()}`).sort());
     expect(Object.keys(sweepBoxes(['shoulder', 'back'], boxOf, flags))).toEqual(['RED_FLAG_SHOULDER', 'RED_FLAG_BACK']);
     expect(Object.keys(sweepBoxes(undefined, boxOf, flags))).toEqual(['RED_FLAG_WRIST']);
-    expect(C19.checkC19Shared({ ...sweepBoxes([], boxOf, flags), DISCLAIMER: shared.DISCLAIMER }, 'x')).toEqual([]);
+    expect(C19.checkC19Shared({ ...sweepBoxes([], boxOf, flags) }, 'x')).toEqual([]);
     // red: a [] row whose shared boxes are all removed (boxOf finds none)
-    expect(C19.checkC19Shared({ ...sweepBoxes([], () => undefined, flags), DISCLAIMER: shared.DISCLAIMER }, 'x')).toEqual(['C19: x: no RED_FLAG box to check']);
+    expect(C19.checkC19Shared({ ...sweepBoxes([], () => undefined, flags) }, 'x')).toEqual(['C19: x: no RED_FLAG box to check']);
   });
 });
 
@@ -399,7 +418,7 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
           : (card => [...C3L.checkC3Library(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? '', { list: noZoom, card, gapKeyOf }), ...C3L.checkGripLibrary(c, card), ...C3L.noRedFlagProblems(c, card)])(
             JSON.parse(readFileSync(join(ROOT, c.research.card), 'utf8')))),
         ...checkC8(c, SOURCES), ...checkC15(c, plate, reviews), ...checkC16(c),
-        ...C19.checkC19Copy(L.shownCopyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),
+        ...C19.checkC19Copy(L.shownCopyFields(c), r.id, names), ...checkC19Shared({ ...boxes }, r.id, names),
         ...L.lintLibraryRow(M, shared, { extraBoxes: { back: BACK }, boxKeys: { back: BB.BACK_BOX_KEY } }).map((x: any) => `lint: ${x.path}: ${x.rule}`),
       ];
       expect([r.id, bad]).toEqual([r.id, []]);

@@ -14,10 +14,11 @@ import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
 import { pf2Problems, restorePF2 } from './platefix2-pins';
 import { pf3bProblems, restorePF3b } from './platefix3b-pins';
 import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
+import { SC_MAIN, scProblems, restoreSC } from './sheetcopy-pins';   // F-SHEET-COPY (#421)
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
-const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); expect(pf4Problems(x)).toEqual([]); return restorePF4(restorePF3b(restorePF2(x))); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's; LIB-PLATEFIX-4 (#410, D-PLATEFIX-PINS form): + PF4's moved keys (platefix4-pins), each pinning its current value, then put back to main de91dd21's
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); expect(pf4Problems(x)).toEqual([]); expect(scProblems(x)).toEqual([]); return restoreSC(restorePF4(restorePF3b(restorePF2(x)))); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's; LIB-PLATEFIX-4 (#410, D-PLATEFIX-PINS form): + PF4's moved keys (platefix4-pins), each pinning its current value, then put back to main de91dd21's
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = new URL('../../', import.meta.url);
@@ -256,6 +257,18 @@ describe('LIB-PLATEFIX-4 D-PF4-PINS mutation', () => {
     const k = Object.keys(PF4_MAIN)[0]!, ids = Object.keys(m.rows).filter(r => k in m.rows[r].files), id = ids[0]!;
     m.rows[id].files[k] = '0'.repeat(64);
     const bad = pf4Problems(m);
+    expect(bad.length).toBe(1);
+    expect(bad[0]!.startsWith(`${id} ${k}: ${'0'.repeat(64)} != `)).toBe(true);
+  });
+});
+// F-SHEET-COPY (#421): the sc check above bites; one moved key off its file is red.
+describe('F-SHEET-COPY SC-PINS mutation', () => {
+  it('one F-SHEET-COPY moved key off its file is red, naming the row and the key', () => {
+    const m = JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
+    expect(scProblems(m)).toEqual([]);
+    const k = Object.keys(SC_MAIN)[0]!, ids = Object.keys(m.rows).filter(r => k in m.rows[r].files), id = ids[0]!;
+    m.rows[id].files[k] = '0'.repeat(64);
+    const bad = scProblems(m);
     expect(bad.length).toBe(1);
     expect(bad[0]!.startsWith(`${id} ${k}: ${'0'.repeat(64)} != `)).toBe(true);
   });

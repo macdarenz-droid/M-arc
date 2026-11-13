@@ -211,7 +211,7 @@ function wordProblems(k: string, h: string, words = PN.allWords()) {
       for (const [rule, re] of lint.BANNED) if (re.test(f[s].text)) bad.push(`${k}: ${s} caption banned: ${rule}`);
     }
   });
-  if (W.heading.text !== 'Hand: right and wrong') bad.push(`${k}: heading ${W.heading.text}`);
+  if (W.heading.text !== 'Hand') bad.push(`${k}: heading ${W.heading.text}`);
   for (const w of shownWords(h)) if (!ok.has(w)) bad.push(`${k}: unapproved word "${w}"`);
   return bad;
 }
@@ -251,7 +251,7 @@ describe('LIB-7-FIX F3: exercise-neutral panels, approved words (D-LIB7FIX-WORDS
     const noSrc = structuredClone(PN.allWords()); noSrc.keys[k].faults['bent-back'].right.source = '';
     expect(() => PN.panelHtml(k, faults.map((f: string) => ({ fault: f, svg: '' })), noSrc)).toThrow(/bent-back.right has no approved text and source/);
     expect(wordProblems(k, real, noSrc).join('\n')).toMatch(/right without a source/);
-    const card = structuredClone(PN.allWords()); card.keys[k].heading.text = 'Hammer Curl: right and wrong';
+    const card = structuredClone(PN.allWords()); card.keys[k].heading.text = 'Hammer Curl';
     const h = PN.panelHtml(k, faults.map((f: string) => ({ fault: f, svg: P.renderPair(id, { fault: f, uid: `hp-${k}-${f}` }).svg })), card);
     expect(wordProblems(k, h, card).join('\n')).toMatch(/heading Hammer Curl/);
     expect(neutralProblems(k, h).join('\n')).toMatch(/names "Hammer Curl"/i);
@@ -357,6 +357,8 @@ describe('LIB-7-FIX F7: L2-A21\'s covering proof (D-LIB7FIX-A21)', () => {
 // ---- D-LIB7FIX-PERKEY (lib4-cards section 19): adding a key never edits a file that a pinned row lists ----
 // LIB-SHIP W5 addendum D-SHIP-W5-EZWORDS (#392 6654996739): the fixture's ez-curl-over Right notes read 'Wrist straight' (reverse_curl
 // c1, c6), amended with hands/words/ez-curl-over.json; every other key is byte-equal to da65b13a's words. PK1's deep-equal is unchanged.
+// F-SHEET-COPY (#421, owner heading rule 2026-10-01): every key's heading.text re-pinned 'Hand: right and wrong' -> 'Hand',
+// as in hands/words/*.json; nothing else in the fixture moved.
 const WORDS_FIXTURE = JSON.parse(readFileSync('tests/library/fixtures/lib7fix/panel-words-da65b13a.json', 'utf8'));   // panel-words.json at da65b13a, parsed
 const fixtureWords = (k: string) => ({ chrome: WORDS_FIXTURE.chrome, keys: { [k]: WORDS_FIXTURE.keys[k] } });
 const pagesOf = (k: string, index = P.INDEX) => { const id = P.keyIndexOf(index).keys.get(k).ids[0]; return P.pairSpec(id, index).wrong.map((w: any) => ({ fault: w.key, svg: P.renderPair(id, { fault: w.key, uid: `hp-${k}-${w.key}`, index }).svg })); };

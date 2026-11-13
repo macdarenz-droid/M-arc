@@ -1,6 +1,6 @@
 // LIB-4b: the twin of gate group HT-9 (scripts/screenshot-gate.mjs, four statements: "HT-9 C19", "HT-9 Show",
 // "HT-9 Order", "HT-9"), pinned by twins.mjs. One library id in one theme, one row per state (tuples.mjs statesOf):
-// HT9/C19; HT9/{setup,risks,disclaimer}-{L3,copy}; HT9/A3; in HT_FULL HT9/show-<n> per Setup "Show me" button (DOM
+// HT9/C19; HT9/{setup,risks}-{L3,copy} (F-SHEET-COPY: no disclaimer row); HT9/A3; in HT_FULL HT9/show-<n> per Setup "Show me" button (DOM
 // order) and HT9/A5; in Silent Black HT9/order. Same contexts, taps, waits, compare rules and thresholds as the blocks;
 // the app is seeded with the run's order, golden B is the id's layers page (pages[lib].layers).
 // Not here (LIB-4-DESIGN X7, once per run on index 0): the HT-3b A3 split timing and the A3 duplicate-line fixture.
@@ -33,16 +33,15 @@ function content(root) {
   return bundles.get(root);
 }
 
-/** C19's inputs, read as the "HT-9 C19" block reads them (ESC_NC_RE from tests/guards/no-contacts.ts, DISCLAIMER). */
+/** C19's inputs, read as the "HT-9 C19" block reads them (ESC_NC_RE from tests/guards/no-contacts.ts; F-SHEET-COPY: the
+ *  archetypes must not export DISCLAIMER again). */
 function c19Inputs(root) {
   const nc = Object.fromEntries([...readFileSync(join(root, 'tests/guards/no-contacts.ts'), 'utf8').matchAll(/^export const (\w+) = \/(.*)\/([a-z]*);$/gm)].map(m => [m[1], new RegExp(m[2], m[3])]));
   if (Object.keys(nc).length !== 4) throw new Error(`ESC-NC: expected 4 patterns in tests/guards/no-contacts.ts, read ${Object.keys(nc).join(', ')}`);
-  const d = readFileSync(join(root, 'src/howto/archetypes.ts'), 'utf8').match(/export const DISCLAIMER: string = "((?:[^"\\]|\\.)*)";/);
-  if (!d) throw new Error('HT-9 C19: no DISCLAIMER in src/howto/archetypes.ts');
+  if (/export const DISCLAIMER\b/.test(readFileSync(join(root, 'src/howto/archetypes.ts'), 'utf8'))) throw new Error('HT-9 C19: src/howto/archetypes.ts exports DISCLAIMER again (F-SHEET-COPY R1)');
   return {
     patterns: ['CONTACT_RE', 'SOURCE_RE', 'SOURCE_CS_RE'].map(k => ({ source: nc[k].source, flags: nc[k].flags })),
     words: ['Measured', 'Mechanics', 'Coaching consensus', 'Weak for this use'],
-    disclaimer: JSON.parse(`"${d[1]}"`),
   };
 }
 
@@ -54,13 +53,13 @@ export async function run(ctx, job) {
   if (H.HT_FULL.includes(theme)) await a5(ctx, job);
 }
 
-/** "HT-9 C19": everything opened; no link, source or contact UI; exactly one disclaimer, after the last red flag. */
+/** "HT-9 C19": everything opened; no link, source or contact UI; no disclaimer line; every red flag inside Risks. */
 async function c19({ browser, port, R, order, custom, root }, { lib, index, theme }) {
-  const st = S('C19'), { patterns, words, disclaimer } = c19Inputs(root);
+  const st = S('C19'), { patterns, words } = c19Inputs(root);
   const { ctx, page } = await H.openAppTrain(browser, port, theme, { order, custom, onError: m => R.fail(lib, theme, st, `page error: ${m}`) });
   try {
     await H.openHowTo(page, index);
-    await page.locator('dialog.sheet.ht .ht-disclaimer').waitFor({ state: 'attached', timeout: 5000 });
+    await page.locator('dialog.sheet.ht .risks').waitFor({ state: 'attached', timeout: 5000 });
     await page.evaluate(() => { document.querySelectorAll('dialog.sheet.ht details:not([open])').forEach(d => { d.open = true; }); });
     for (let i = 0; i < 4; i++) {
       const opened = await page.evaluate(() => {
@@ -73,7 +72,7 @@ async function c19({ browser, port, R, order, custom, root }, { lib, index, them
       await page.waitForFunction(() => document.getAnimations().every(a => a.playState !== 'running' && !a.pending), null, { timeout: 8000 });
       await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
     }
-    const found = await page.evaluate(([pats, words, disclaimer]) => {
+    const found = await page.evaluate(([pats, words]) => {
       const dlg = document.querySelector('dialog.sheet.ht');
       const problems = [];
       const res = pats.map(p => new RegExp(p.source, p.flags));
@@ -92,17 +91,15 @@ async function c19({ browser, port, R, order, custom, root }, { lib, index, them
         for (const a of ['aria-label', 'title', 'alt']) { const v = el.getAttribute(a); if (v) strings.push(v); }
       }
       for (const s of strings) for (const re of res) { const m = s.match(re); if (m) problems.push(`"${m[0]}" matches ${re}`); }
-      const disclaimers = [...dlg.querySelectorAll('.ht-disclaimer')];
-      if (disclaimers.length !== 1) problems.push(`${disclaimers.length} .ht-disclaimer element(s), expected 1`);
-      else if (disclaimers[0].textContent !== disclaimer) problems.push(`disclaimer text "${disclaimers[0].textContent}" !== owner's text`);
-      const redflags = [...dlg.querySelectorAll('.redflag')];
-      if (redflags.length && disclaimers.length === 1) {
-        const last = redflags[redflags.length - 1];
-        const pos = last.compareDocumentPosition(disclaimers[0]);
-        if (!(pos & Node.DOCUMENT_POSITION_FOLLOWING)) problems.push('the disclaimer is not after the last .redflag');
-      }
+      // F-SHEET-COPY (R1): no closing disclaimer line and no "medical advice" wording; every red-flag box sits in Risks
+      const disclaimers = dlg.querySelectorAll('.ht-disclaimer').length;
+      if (disclaimers) problems.push(`${disclaimers} .ht-disclaimer element(s), expected 0`);
+      for (const s of strings) { const m = s.match(/medical advice/i); if (m) problems.push(`"${m[0]}" wording in the sheet`); }
+      const risks = dlg.querySelectorAll('.risks');
+      if (risks.length !== 1) problems.push(`${risks.length} .risks section(s), expected 1`);
+      else if ([...dlg.querySelectorAll('.redflag')].some(r => !risks[0].contains(r))) problems.push('a .redflag sits outside the Risks section');
       return problems;
-    }, [patterns, words, disclaimer]);
+    }, [patterns, words]);
     R.check(lib, theme, st, found);
     await H.closeHowTo(page);
   } catch (e) { R.fail(lib, theme, st, `C19 crashed: ${msg(e)}`); } finally { await ctx.close(); }
@@ -166,7 +163,7 @@ async function order({ browser, port, R, order: seed, custom }, { lib, index, th
   const { ctx, page } = await H.openAppTrain(browser, port, theme, { order: seed, custom, onError: m => R.fail(lib, theme, st, `page error: ${m}`) });
   try {
     await H.openHowTo(page, index);
-    await page.locator('dialog.sheet.ht .ht-disclaimer').waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});
+    await page.locator('dialog.sheet.ht .risks').waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});
     const got = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet.ht [data-section]')].filter(el => el.childNodes.length).map(el => el.dataset.section));
     R.check(lib, theme, st, JSON.stringify(got) !== JSON.stringify(WANT) ? [`section order ${JSON.stringify(got)} !== golden B's ${JSON.stringify(WANT)}`] : []);
     await H.closeHowTo(page);
@@ -183,8 +180,8 @@ const leaves = (page, sel) => page.evaluate(s => {
 }, sel);
 const rectOf = (page, sel) => page.evaluate(s => { const r = document.querySelector(s).getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; }, sel);
 
-/** A3, run in the app page: the red-flag blocks, each line once, one disclaimer. Returns the problems. */
-const a3Probe = (page, flags, flagLines, disclaimer) => page.evaluate(([flags, lines, disclaimer, APP]) => {
+/** A3, run in the app page: the red-flag blocks, each line once, no disclaimer line (F-SHEET-COPY R1). Returns the problems. */
+const a3Probe = (page, flags, flagLines) => page.evaluate(([flags, lines, APP]) => {
   const dlg = document.querySelector(APP), bad = [];
   const w = document.createTreeWalker(dlg, NodeFilter.SHOW_TEXT), texts = [];
   for (let n = w.nextNode(); n; n = w.nextNode()) texts.push(n);
@@ -197,10 +194,12 @@ const a3Probe = (page, flags, flagLines, disclaimer) => page.evaluate(([flags, l
     const homes = at.map(n => n.parentElement.closest('.risks .redflag')?.id.replace(/^.*-redflag-/, '') ?? null);
     if (JSON.stringify(homes) !== JSON.stringify(owners.slice(0, at.length))) bad.push(`the red-flag line "${l}" sits in ${JSON.stringify(homes)}, expected ${JSON.stringify(owners)}`);
   }
-  const d = texts.filter(n => n.textContent === disclaimer);
-  if (d.length !== 1 || dlg.querySelectorAll('.ht-disclaimer').length !== 1) bad.push(`the disclaimer shows ${d.length} times`);
+  const d = texts.filter(n => /medical advice/i.test(n.textContent));
+  if (d.length || dlg.querySelectorAll('.ht-disclaimer').length) bad.push(`a disclaimer line shows (${d.length} "medical advice" text node(s), ${dlg.querySelectorAll('.ht-disclaimer').length} .ht-disclaimer)`);
+  const stop = [...dlg.querySelectorAll('.rk-stop')];   // D-SHEETCOPY-STOPLINE: once, the last line of Risks
+  if (stop.length !== 1 || !stop[0].parentElement.matches('.risks') || stop[0].nextElementSibling) bad.push(`the stop line shows ${stop.length} times or is not the last line of Risks`);
   return bad;
-}, [flags, flagLines, disclaimer, APP]);
+}, [flags, flagLines, APP]);
 
 /** A1: L3 of one element, the golden one placed at the app one's viewport position, both on their own layer. */
 async function l3(app, gold, fail, px, aSel, gSel) {
@@ -241,12 +240,12 @@ async function l3(app, gold, fail, px, aSel, gSel) {
   return ok;
 }
 
-/** "HT-9": A1 L3 and A4 copy of Setup, Risks and the disclaimer against golden B, and A3. */
+/** "HT-9": A1 L3 and A4 copy of Setup and Risks against golden B, and A3. */
 async function main({ browser, port, R, pages, order, custom, root }, { lib, chrome: id, index, theme }) {
   const { C, flagLines } = await content(root);
   const h = C.HOWTOS.find(x => x.id === lib);
-  const L = { setup: S('setup-L3'), risks: S('risks-L3'), disclaimer: S('disclaimer-L3') };
-  const all = [...Object.values(L), S('setup-copy'), S('risks-copy'), S('disclaimer-copy'), S('A3')];
+  const L = { setup: S('setup-L3'), risks: S('risks-L3') };
+  const all = [...Object.values(L), S('setup-copy'), S('risks-copy'), S('A3')];
   if (!h) { for (const st of all) R.fail(lib, theme, st, `HT-9: no generated How-to for ${lib}`); return; }
   let cur = null;
   const onErr = which => m => R.fail(lib, theme, cur ?? L.setup, `${which} page error: ${m}`);
@@ -255,7 +254,7 @@ async function main({ browser, port, R, pages, order, custom, root }, { lib, chr
   const appSel = sel => sel.replace(`#card-${id}`, APP);
   try {
     await H.openHowTo(app.page, index);
-    for (const s of ['.setup', '.risks', '.ht-disclaimer']) await app.page.locator(`${APP} ${s}`).waitFor({ state: 'attached', timeout: 5000 });
+    for (const s of ['.setup', '.risks']) await app.page.locator(`${APP} ${s}`).waitFor({ state: 'attached', timeout: 5000 });
     await H.settleApp(app.page);
     const states = await GBm.statesFor(gold.page, id);
     const setupS = states.find(s => s.name === `${id}: setup (every step shown)`), risksS = states.find(s => s.name === `${id}: risks`);
@@ -265,8 +264,8 @@ async function main({ browser, port, R, pages, order, custom, root }, { lib, chr
     const hidden = await app.page.evaluate(A => ({ more: !!document.querySelector(`${A} .st-more`), hidden: document.querySelectorAll(`${A} .st-list li[hidden]`).length }), APP);
     if (hidden.more || hidden.hidden) R.fail(lib, theme, L.setup, `every setup step should show (${JSON.stringify(hidden)})`);
     // A1
-    const pairs = [['setup', setupS.selector], ...risksS.selector.map(s => [s.endsWith('.risks') ? 'risks' : 'disclaimer', s])];
-    if (pairs.length !== 3) for (const st of [L.risks, L.disclaimer]) R.fail(lib, theme, st, `goldenB.mjs's risks state has ${risksS.selector.length} selectors, expected the section and the disclaimer`);
+    const pairs = [['setup', setupS.selector], ...risksS.selector.map(s => [s.endsWith('.risks') ? 'risks' : 'other', s])];
+    if (pairs.length !== 2 || pairs[1][0] !== 'risks') { R.fail(lib, theme, L.risks, `goldenB.mjs's risks state has selectors ${JSON.stringify(risksS.selector)}, expected the Risks section only (F-SHEET-COPY)`); pairs.splice(1); }
     for (const [label, gSel] of pairs) {
       cur = L[label];
       try {
@@ -279,8 +278,7 @@ async function main({ browser, port, R, pages, order, custom, root }, { lib, chr
     const head = s => gold.page.evaluate(s => document.querySelector(s)?.textContent ?? null, s);
     const want = {
       setup: [await head(`#${id}-setup-h`), ...h.setup.flatMap((s, i) => [String(i + 1), s.text, ...(s.zoom && zoomChip(s.zoom) ? [`Show me the ${zoomChip(s.zoom).toLowerCase()}`] : [])])],
-      risks: [await head(`#${id}-risks-h`), ...h.risks.map(r => r.text), ...(h.riskFlags ?? ['wrist']).flatMap(f => flagLines[f])],
-      disclaimer: [C.DISCLAIMER],
+      risks: [await head(`#${id}-risks-h`), ...h.risks.map(r => r.text), ...(h.riskFlags ?? ['wrist']).flatMap(f => flagLines[f]), C.STOP_LINE],   // D-SHEETCOPY-STOPLINE: Risks ends on the stop line
     };
     for (const [label, gSel] of pairs) {
       const st = S(`${label}-copy`);
@@ -293,7 +291,7 @@ async function main({ browser, port, R, pages, order, custom, root }, { lib, chr
     }
     // A3 (its duplicate-line fixture runs once per run, not per id: LIB-4-DESIGN X7)
     cur = S('A3');
-    R.check(lib, theme, S('A3'), (await a3Probe(app.page, h.riskFlags ?? ['wrist'], flagLines, C.DISCLAIMER)).map(b => `A3: ${b}`));
+    R.check(lib, theme, S('A3'), (await a3Probe(app.page, h.riskFlags ?? ['wrist'], flagLines)).map(b => `A3: ${b}`));
     cur = null;
     await H.closeHowTo(app.page);
   } catch (e) { R.fail(lib, theme, cur ?? L.setup, `HT-9 crashed: ${msg(e)}`); } finally { await app.ctx.close(); await gold.ctx.close(); }
@@ -307,7 +305,7 @@ async function main({ browser, port, R, pages, order, custom, root }, { lib, chr
 export const openAll = async () => {
   const A = 'dialog.sheet.ht';
   const wait = (f, what = 'Setup/Risks never mounted') => new Promise((r, j) => { const t0 = performance.now(); const k = () => (f() ? r() : performance.now() - t0 > 5000 ? j(new Error(`HT-9 A5: ${what}`)) : requestAnimationFrame(k)); k(); });
-  await wait(() => document.querySelector(`${A} .ht-disclaimer`) && document.querySelector(`${A} .setup`));
+  await wait(() => document.querySelector(`${A} .risks`) && document.querySelector(`${A} .setup`));
   const panel = document.querySelector(`${A} .sheet-panel`);
   panel.scrollTop = panel.scrollHeight;
   await wait(() => document.querySelector(`${A} .feel .fr-btn`), 'the feel section never mounted');
@@ -348,12 +346,12 @@ export async function guardA3Dup({ browser, port, root }, { blind = false } = {}
   const app = await H.openAppTrain(browser, port, 'silent-black', { onError: m => bad.push(`page error: ${m}`) });
   try {
     await H.openHowTo(app.page, 0);
-    for (const s of ['.setup', '.risks', '.ht-disclaimer']) await app.page.locator(`${APP} ${s}`).waitFor({ state: 'attached', timeout: 5000 });
+    for (const s of ['.setup', '.risks']) await app.page.locator(`${APP} ${s}`).waitFor({ state: 'attached', timeout: 5000 });
     await H.settleApp(app.page);
-    const clean = await a3Probe(app.page, flags, flagLines, C.DISCLAIMER);
+    const clean = await a3Probe(app.page, flags, flagLines);
     if (clean.length) bad.push(`the clean ${chrome} sheet already fails A3: ${clean.join('; ')}`);
     if (!blind) await app.page.evaluate(([A, t]) => { const p = document.createElement('p'); p.id = 'ht9-a3-fixture'; p.textContent = t; document.querySelector(`${A} .setup`).append(p); }, [APP, flagLines[flags[0]][1]]);   // blind: B2's mutation
-    const caught = await a3Probe(app.page, flags, flagLines, C.DISCLAIMER);
+    const caught = await a3Probe(app.page, flags, flagLines);
     if (!caught.some(b => b.includes('shows 2 times'))) bad.push(`a second copy of the ${flags[0]} red-flag line in Setup was not caught (${JSON.stringify(caught)})`);
   } catch (e) { bad.push(msg(e)); } finally { await app.ctx.close(); }
   return bad;

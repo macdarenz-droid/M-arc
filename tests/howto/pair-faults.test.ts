@@ -11,10 +11,11 @@ import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
 import { pf2Problems, restorePF2 } from './platefix2-pins';
 import { pf3bProblems, restorePF3b } from './platefix3b-pins';
 import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
+import { SC_MAIN, scProblems, restoreSC } from './sheetcopy-pins';   // F-SHEET-COPY (#421)
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
-const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); expect(pf4Problems(x)).toEqual([]); return restorePF4(restorePF3b(restorePF2(x))); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's; LIB-PLATEFIX-4 (#410, D-PLATEFIX-PINS form): + PF4's moved keys (platefix4-pins), each pinning its current value, then put back to main de91dd21's
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); expect(pf4Problems(x)).toEqual([]); expect(scProblems(x)).toEqual([]); return restoreSC(restorePF4(restorePF3b(restorePF2(x)))); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's; LIB-PLATEFIX-4 (#410, D-PLATEFIX-PINS form): + PF4's moved keys (platefix4-pins), each pinning its current value, then put back to main de91dd21's
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -30,6 +31,9 @@ beforeAll(async () => {
 });
 afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
 
+// F-SHEET-COPY (#421): the panel heading is "Hand" (was "Hand: right and wrong"); toMain puts the old heading back, in
+// the h4 and the svg's aria-label, and every pinned sha below holds on the result (each panel differs from main in exactly that).
+const toMain = (h: string) => h.replaceAll('tabindex="-1">Hand</h4>', 'tabindex="-1">Hand: right and wrong</h4>').replaceAll('aria-label="Hand"', 'aria-label="Hand: right and wrong"');
 // sha256 of pairPanel(key) for every pair key on main cb9a6dae, before F-PAIR-FAULTS
 const PANEL_MAIN: Record<string, string> = {
   'bar-hang-under': '203b7a6dcded4b39f95ad5692c868b0fb3f68766f47303b074778ff46b8d6c2a',
@@ -68,13 +72,14 @@ describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws
     // LIB-SHIP W5 D-SHIP-W5-EZWORDS (#392 6654996739): ez-curl-over's Right note is 'Wrist straight' (reverse_curl c1, c6); its
     // panel equals main's exactly once that one note is put back, and 'Middle of palm' is gone from it. Every other key: byte-equal.
     for (const [k, want] of Object.entries(PANEL_MAIN)) {
-      const h = await P.pairPanel(k);
+      const raw = await P.pairPanel(k), h = toMain(raw);   // F-SHEET-COPY: the new heading is there, the old one is not
+      expect([k, raw.includes('tabindex="-1">Hand</h4>'), /right and wrong/.test(raw)]).toEqual([k, true, false]);
       if (k !== 'ez-curl-over') { expect([k, sha(h)]).toEqual([k, want]); continue; }
       // D-SHIP-W5-EZNOTE (#392 6681700725): the drawn note too (svg caps 'WRIST STRAIGHT'), so neither case of the old note is left
       expect([k, /middle of palm/i.test(h), h.includes('Wrist straight'), h.includes('>WRIST STRAIGHT<')]).toEqual([k, false, true, true]);
       expect([k, sha(h.replaceAll('Wrist straight', 'Middle of palm').replaceAll('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'))]).toEqual([k, want]);
     }
-    for (const [k, want] of Object.entries(W3_SUBS)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);   // LIB-SHIP W3
+    for (const [k, want] of Object.entries(W3_SUBS)) expect([k, sha(toMain(await P.pairPanel(k)))]).toEqual([k, want]);   // LIB-SHIP W3; F-SHEET-COPY toMain
   }, 60_000);
 });
 
@@ -132,12 +137,12 @@ describe('F-PAIR-FAULTS A1/A4: a row with pairFaults draws only those faults (la
     expect(pagesIn(dropped)).toBe(2);
     expect(dropped).not.toContain(`hx-hp-${SUB}`);
     // a byte changed in the sub-key block is red in pairPanelProblems
-    expect((await B.pairPanelProblems(page.replace('Hand: right and wrong', 'Hand: right and wronG'), panelOf)).join('\n')).toMatch(new RegExp(`first copy on ${SUB}: not pairPanel`));
+    expect((await B.pairPanelProblems(page.replace('-zoom-hand-h" tabindex="-1">Hand</h4>', '-zoom-hand-h" tabindex="-1">HanD</h4>'), panelOf)).join('\n')).toMatch(new RegExp(`first copy on ${SUB}: not pairPanel`));
   });
   it('A1: a row with no pairFaults gets pairPanel(pair) byte for byte, as on main', async () => {
     const page = await B.withPairPanels(host('mountain-climbers'), { closeups: { mountain_climbers: { optionsKey: 'mountain_climbers', pair: BASE } } });
     expect(B.divAt(page, page.indexOf('<div class="zx"'))).toBe(await P.pairPanel(BASE));
-    expect(sha(await P.pairPanel(BASE))).toBe(PANEL_MAIN[BASE]);
+    expect(sha(toMain(await P.pairPanel(BASE)))).toBe(PANEL_MAIN[BASE]);   // F-SHEET-COPY toMain
   });
   it('the app: configPairOf gives the sub-key, the ids map points at handpair-<sub>, the chunk holds one page', async () => {
     const root = mkdtempSync(join(tmpdir(), 'fpf-')); tmps.push(root);
@@ -350,6 +355,18 @@ describe('LIB-PLATEFIX-4 D-PF4-PINS mutation', () => {
     const k = Object.keys(PF4_MAIN)[0]!, ids = Object.keys(m.rows).filter(r => k in m.rows[r].files), id = ids[0]!;
     m.rows[id].files[k] = '0'.repeat(64);
     const bad = pf4Problems(m);
+    expect(bad.length).toBe(1);
+    expect(bad[0]!.startsWith(`${id} ${k}: ${'0'.repeat(64)} != `)).toBe(true);
+  });
+});
+// F-SHEET-COPY (#421): the sc check above bites; one moved key off its file is red.
+describe('F-SHEET-COPY SC-PINS mutation', () => {
+  it('one F-SHEET-COPY moved key off its file is red, naming the row and the key', () => {
+    const m = JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
+    expect(scProblems(m)).toEqual([]);
+    const k = Object.keys(SC_MAIN)[0]!, ids = Object.keys(m.rows).filter(r => k in m.rows[r].files), id = ids[0]!;
+    m.rows[id].files[k] = '0'.repeat(64);
+    const bad = scProblems(m);
     expect(bad.length).toBe(1);
     expect(bad[0]!.startsWith(`${id} ${k}: ${'0'.repeat(64)} != `)).toBe(true);
   });

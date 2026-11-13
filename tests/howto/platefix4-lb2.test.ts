@@ -12,6 +12,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { toMainLayersPage } from './sheetcopy-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -83,11 +84,15 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
     try { html = (await buildLayersPage(layersSpecOf('tools/plates/library/batches/lb02.json', { stageDir }))).toString('utf8'); } finally { rmSync(stageDir, { recursive: true, force: true }); }
     const sha = (s: string) => createHash('sha256').update(s).digest('hex');
     const got: Record<string, string> = {};
-    let rest = html;
-    for (const m of html.matchAll(/<article class="sheet-card" id="card-([^"]+)"/g)) {
+    // F-SHEET-COPY (#423): main's card and OUTSIDE pins are compared on the page with the sheet copy change undone
+    // (toMainLayersPage: toMainCopy, page: true, keeping lb02's one bare-stem heading from main)
+    expect(html).toContain('<p class="rk-stop">If something hurts, stop and get it checked.</p>');
+    const main = toMainLayersPage(html, 'lb02').toString('utf8');
+    let rest = main;
+    for (const m of main.matchAll(/<article class="sheet-card" id="card-([^"]+)"/g)) {
       const t = /<article\b|<\/article>/g; t.lastIndex = m.index!; let d = 0, end = -1;
-      for (let k; (k = t.exec(html));) { d += k[0] === '</article>' ? -1 : 1; if (!d) { end = k.index + 10; break; } }
-      const a = html.slice(m.index, end); rest = rest.replace(a, ''); got[m[1]!] = sha(a);
+      for (let k; (k = t.exec(main));) { d += k[0] === '</article>' ? -1 : 1; if (!d) { end = k.index + 10; break; } }
+      const a = main.slice(m.index, end); rest = rest.replace(a, ''); got[m[1]!] = sha(a);
     }
     got.OUTSIDE = sha(rest);
     expect(got).toEqual({
