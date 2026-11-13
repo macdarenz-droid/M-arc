@@ -2893,7 +2893,7 @@ Static pre-checks on e15e1c65 (scratch script, nothing committed): `lintLibraryR
 
 | id | batch :stage line | plan-w8 blocker | gone on e15e1c65? (file:line) | plate / sheet since last layers check | check |
 |---|---|---|---|---|---|
-| dumbbell_pullover | lb02 :166 | L4 "no inner-elbow part" → F-BODYMAP-FRONTDELT | partly: render/region-fix.mjs:26-38 adds `elbow-inner-*` on library layers pages only; src/svg/bodyMuscles.ts has only `elbow-left/right`, and the sheet's elbow row already marks those (lib_dumbbell_pullover.howto.mjs:118, the D-PFR-L4 `elbow` region, lib-ship.test.ts:1515). Q-W8b-2 | plate: no (lb02.json entries[8]); sheet: no (79077bf6, 11-06); page: new | D-PFC-ROUND1 (L4 never re-judged; first lb02 page) |
+| dumbbell_pullover | lb02 :166 | L4 "no inner-elbow part" → F-BODYMAP-FRONTDELT | partly: render/region-fix.mjs:26-38 adds `elbow-inner-*` on library layers pages only; src/svg/bodyMuscles.ts has only `elbow-left/right`, and the sheet's elbow row already marks those (lib_dumbbell_pullover.howto.mjs:118, the D-PFR-L4 `elbow` region, lib-ship.test.ts:1516). Q-W8b-2 | plate: no (lb02.json entries[8]); sheet: no (79077bf6, 11-06); page: new | D-PFC-ROUND1 (L4 never re-judged; first lb02 page) |
 | dumbbell_romanian_deadlift | lb03 :88 | parent RDL in #385 | yes: pilot-a.json:107 `shipped` | neither (lb03 entries[4]; 79077bf6) | delta |
 | conventional_deadlift | lb03 :108 | round 2 (L2 grip step, L5 rounded-back Start Wrong) not judged | n/a, judged here; parent RDL shipped (pilot-a.json:107) | neither (entries[5]) | D-PFC-ROUND1 (round 2) |
 | sumo_deadlift | lb03 :129 | PF3 item 17; round 2 L2 | item 17 in the lb03 pin (entries[6], "sumo floor trunk") | plate yes | D-PFC-ROUND1, same head as conventional |
@@ -2959,7 +2959,7 @@ budgets (ht-, posture-, feel- per id at measured + 10 %, handpair-curl-dumbbell-
 dumbbell_overhead_triceps_extension adds one push hint ("Both hands round handle, palms up."), single_arm_triceps_pushdown
 reuses an existing one, so ids.ts stays near 1.6 KB [est] (limit 2,048 B; measured at step 4); guards in the exact-set form
 (a W8b chain removes W8b's lines first, then the earlier chains run unchanged): lib-ship.test.ts RULED_SHIPPED and the W5
-held-17 count (:61-64, → 5 held), checks/ship-w4.ts W4_WAITING (lb02's pullover, lb03's 4), lb2-plates.test.ts W4 A9
+held-17 count (:69-73, → 5 held), checks/ship-w4.ts W4_WAITING (lb02's pullover, lb03's 4), lb2-plates.test.ts W4 A9
 (:718-800: "lb02 has no layers page"), lb3/lb4/lb5-plates layers-page sets, lib8-pin, c15-stamps, library-ci, MANIFEST rows;
 every MANIFEST commit tagged `[golden update]`; old mutations kept red.
 
