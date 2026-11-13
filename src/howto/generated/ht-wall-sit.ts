@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=9ab0340d40c4f6ca4f778cf7712bea9af2ffcaf178aab8efcda5e7defbf2798b
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=b1c7feb89585af587f9f35038dd5b6c7e789b0f7d470b8fbd17b99362b51d4b9
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_wall_sit",
   name: "Wall Sit",
-  hashes: { inputsSha256: "9ab0340d40c4f6ca4f778cf7712bea9af2ffcaf178aab8efcda5e7defbf2798b", golden: "f8b3fb477de3f79ba91cae6890030e6cbbcaa0b7c00fe396aeef5356e93ac563" },
+  hashes: { inputsSha256: "b1c7feb89585af587f9f35038dd5b6c7e789b0f7d470b8fbd17b99362b51d4b9", golden: "f8b3fb477de3f79ba91cae6890030e6cbbcaa0b7c00fe396aeef5356e93ac563" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=e1750afcf9083419ef350b8f6f6c5bcff7547a1af741bff02058ee29b662e951
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=bea8b0e61e337408f545c268b04ff811e914bfb4da43253911a0d2c8dcd1a114
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_reverse_curl",
   name: "Reverse Curl",
-  hashes: { inputsSha256: "e1750afcf9083419ef350b8f6f6c5bcff7547a1af741bff02058ee29b662e951", golden: "8861b815418284537ee145df071917e8ffe296688ead80b2e1654b2872ef5137" },
+  hashes: { inputsSha256: "bea8b0e61e337408f545c268b04ff811e914bfb4da43253911a0d2c8dcd1a114", golden: "8861b815418284537ee145df071917e8ffe296688ead80b2e1654b2872ef5137" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

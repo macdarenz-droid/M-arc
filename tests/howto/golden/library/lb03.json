@@ -454,7 +454,7 @@
       "decision": "D-SHIP-W8B-LAYERS",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652",
       "date": "2026-11-13",
-      "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): dumbbell_romanian_deadlift on the page; conventional_deadlift and sumo_deadlift held (F-DL-LIFTOFF), dumbbell_shrug held (D-W8B-RIGHTPOSE, F-HT4-RIGHTPOSE); cardcmp: every card byte-equal to the judged page at 1fdf6975 except dumbbell_pullover's jumps risk (L6, passed round 2 in 6856468001); main's cards byte-equal",
+      "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): dumbbell_romanian_deadlift on the page; conventional_deadlift and sumo_deadlift held (F-DL-LIFTOFF), dumbbell_shrug held (D-W8B-RIGHTPOSE, F-HT4-RIGHTPOSE); cardcmp: every card byte-equal to the judged page at 1fdf6975; main's cards byte-equal",
       "supersedes": 13,
       "prev": "6762fa1fcd12237235ba75bd7bb7a08dea3cff5e5fe9226ed4149e9a3deb6475"
     }
