@@ -437,3 +437,57 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
     expect(blank(d).sha).not.toBe(PFS_BLANKED_MAIN);
   });
 });
+
+// F-HAND-PALMFLAT-SIZE D-PFS-HEADERS (Q-PFS-5, #424): pairs.mjs is an input of these 22 generated app files, so generate.mjs
+// moves their line-1 inputsSha256 header only. Every GENERATED file under src/howto and src/slices/howto/css (317), with
+// line 1 of exactly these 22 blanked, hashes to main 4ebc6d63's value with the same blank: their bodies and every other
+// generated file are byte-equal to main.
+import { readdirSync, statSync } from 'node:fs';   // F-HAND-PALMFLAT-SIZE (hoisted; kept in this block so the file stays add-only)
+describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fed generated files moves', () => {
+  const PFS_HEADERS = [
+    'src/howto/generated/handpair-bar-hang-only-curled-under.ts',
+    'src/howto/generated/handpair-bar-hang-over.ts',
+    'src/howto/generated/handpair-bar-row-only-curled-over.ts',
+    'src/howto/generated/handpair-curl-bar-under.ts',
+    'src/howto/generated/handpair-curl-dumbbell-under.ts',
+    'src/howto/generated/handpair-d-handle-pull-only-curled-unstated.ts',
+    'src/howto/generated/handpair-ez-curl-angled.ts',
+    'src/howto/generated/handpair-ez-curl-over.ts',
+    'src/howto/generated/handpair-ez-curl-under.ts',
+    'src/howto/generated/handpair-v-handle-pull-only-curled-neutral-overhead.ts',
+    'src/howto/generated/loaders.ts',
+    'src/slices/howto/css/zoom-alternating-dumbbell-curl.css',
+    'src/slices/howto/css/zoom-barbell-curl.css',
+    'src/slices/howto/css/zoom-chin-up.css',
+    'src/slices/howto/css/zoom-close-grip-pulldown.css',
+    'src/slices/howto/css/zoom-dumbbell-biceps-curl.css',
+    'src/slices/howto/css/zoom-ez-bar-curl.css',
+    'src/slices/howto/css/zoom-hanging-knee-raise.css',
+    'src/slices/howto/css/zoom-inverted-row.css',
+    'src/slices/howto/css/zoom-preacher-curl.css',
+    'src/slices/howto/css/zoom-reverse-curl.css',
+    'src/slices/howto/css/zoom-single-arm-lat-pulldown.css',
+  ];
+  const PFS_GEN_MAIN = { n: 317, sha: '112cfb10f85a9024ec437d0843e4fc0fd4cf8b3f7a220c0bd57fc8c1460bdf05' };
+  const ROOTDIR = join(__dirname, '../..');
+  const walk = (d: string): string[] => readdirSync(join(ROOTDIR, d)).sort().flatMap(n => statSync(join(ROOTDIR, d, n)).isDirectory() ? walk(`${d}/${n}`) : [`${d}/${n}`]);
+  const gen = () => ['src/howto', 'src/slices/howto/css'].flatMap(walk).filter(p => /GENERATED, do not edit/.test(readFileSync(join(ROOTDIR, p), 'utf8').split('\n')[0]!)).sort();
+  const blanked = (files: string[], read: (p: string) => string, moved: string[]) => {
+    const h = createHash('sha256');
+    for (const p of files) { const t = read(p); h.update(`${p}\n${moved.includes(p) ? t.slice(t.indexOf('\n')) : t}\0`); }
+    return { n: files.length, sha: h.digest('hex') };
+  };
+  const read = (p: string) => readFileSync(join(ROOTDIR, p), 'utf8');
+  it('with the 22 headers blanked, the generated files are main\'s; the 22 are generated files', () => {
+    const files = gen();
+    expect(PFS_HEADERS.filter(p => !files.includes(p))).toEqual([]);
+    expect(new Set(PFS_HEADERS).size).toBe(22);
+    expect(blanked(files, read, PFS_HEADERS)).toEqual(PFS_GEN_MAIN);
+  });
+  it('red: a body byte moved in one of the 22, a 23rd file moved, or one of the 22 left out of the blank list', () => {
+    const files = gen(), [a] = PFS_HEADERS, other = files.find(p => !PFS_HEADERS.includes(p))!;
+    expect(blanked(files, p => (p === a ? `${read(p)} ` : read(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN.sha);
+    expect(blanked(files, p => (p === other ? `x${read(p)}` : read(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN.sha);
+    expect(blanked(files, read, PFS_HEADERS.slice(1)).sha).not.toBe(PFS_GEN_MAIN.sha);
+  });
+});
