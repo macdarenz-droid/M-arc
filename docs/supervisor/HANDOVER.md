@@ -842,6 +842,24 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-13 ~15:50 UTC.** Weekly meter 0.17 (15:17).
+  - **Train 90 merged:** #422 (AGENTS.md screenshot-gate exception 5, F-SHEET-COPY) → main `123c7299`. No APK (docs only).
+  - **W8b #417:**
+    - The layers panel ran (6856272493: sets lyr-w8ba/lyr-w8bb VALID; the 4 delta checks PASS).
+    - The fix round passed (6856468001), and LAYERS APPROVED with stamps (6856507580, D-SHIP-W8B-STAMP).
+    - **It ships 9** (main 72 → 81): dumbbell_pullover, dumbbell_romanian_deadlift, pistol_squat, wall_sit, forward_lunge, walking_lunge, single_arm_triceps_pushdown, bayesian_cable_curl, dumbbell_overhead_triceps_extension. Step 4 is building.
+    - **Held, each with its follow-up:**
+      - conventional_deadlift + sumo_deadlift → F-DL-LIFTOFF;
+      - step_up → F-STEPUP-START;
+      - wrist_curl → F-HAND-FINGERTIP;
+      - cross_body_hammer_curl → F-HAMMER-TWIST;
+      - bulgarian_split_squat → F-HT4-RIGHTPOSE, which also needs its L5 fix and a fresh panel;
+      - dumbbell_shrug → F-HT4-RIGHTPOSE (its PASS carries over if the card stays byte-equal);
+      - incline_dumbbell_curl → F-CURL-UNDER-NOTE and F-SEATED-CAM (D-W8B-INCLINE).
+    - D-W8B-RISKSLINE: the "Beat target…" line sits under Risks on 12 shipped sheets → F-RISKS-PROGRESSION.
+  - **F-HT10-TEXTZOOM #420:** READY @ `809da679`. Reviewer session_018Pv5bNPXkL7EeJB7ikdHF6 is running.
+  - **PF5 #419:** the round-2 crop check passed; pins and READY are in progress (D-PF5-JJ: jumping_jacks goes in only if #420 has merged).
+  - **F-SHEET-COPY #423:** it re-pins after W8b and PF5 merge.
 - **Update 11-13 ~12:50 UTC.** Weekly meter 0.11 (12:34).
   - **Train 89 merged:** #418 F-W8A-ASSISTED → main `a4796243`, which frees assisted_pull_up.
   - **#416** (L2-A5 12 s timeout, the root cause of the two main gate reds) merged earlier as train 87.
