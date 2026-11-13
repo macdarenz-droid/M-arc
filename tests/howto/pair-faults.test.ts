@@ -366,6 +366,9 @@ describe('LIB-PLATEFIX-5 D-PF5-PINS mutation', () => {
     const bad = pf5Problems(m);
     expect(bad.length).toBe(1);
     expect(bad[0]!.startsWith(`${id} ${k}: ${'0'.repeat(64)} != `)).toBe(true);
+  });
+});
+
 // F-HAND-PALMFLAT-SIZE (F-W8A-HOLDS part 3, docs/supervisor/verify/f-w8a-holds-card.md; ruling 4: the label only, no size
 // change; PLAN ruled #424: Q-PFS-1 right only, Q-PFS-3 the note need not equal the caption). A row's `pairNote` draws its
 // own Right note on its sub-key; mountain_climbers names it in a scratch config only (its flip is a later LIB-SHIP wave).
@@ -429,10 +432,10 @@ const SCRATCH_PANEL = '594e9df8769a32ab8dd8fffbbf46e82083b4be968c3ba1119cb2dc78f
 
 // F-HAND-PALMFLAT-SIZE C1 MANIFEST (F-PAIR-FAULTS A2 form): MANIFEST.json, made by manifestOf in this card's [golden update]
 // commit, moves only the pairs.mjs and build-layers-page.mjs keys. With those two blanked in every row (134 rows each), it
-// is main 4ebc6d63's MANIFEST.json with the same blanks, and each row pins the files' current sha256.
+// is main 5b7d6e80's MANIFEST.json with the same blanks (re-measured at the merge of main), and each row pins the files' current sha256.
 describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
   const PFS_MOVED = ['tools/plates/library/build-layers-page.mjs', 'tools/plates/library/hands/pairs.mjs'];
-  const PFS_BLANKED_MAIN = '0e516709696351c7810965d0db47178c9b6a15d7afd429c8fc71e20b39422fc0';
+  const PFS_BLANKED_MAIN = '0e2d302458a17fb8d8d8ac1a6e2f41cdac9c2118745d774a72bc0e31c9b1e281';
   const man = () => JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
   const blank = (m: any) => { const c = structuredClone(m), n: Record<string, number> = {}; for (const r of Object.values<any>(c.rows)) for (const k of PFS_MOVED) if (k in r.files) { r.files[k] = ''; n[k] = (n[k] ?? 0) + 1; } return { n, sha: sha(JSON.stringify(c)) }; };
   it('only the two keys differ from main, and each pins its current file', () => {
@@ -451,7 +454,7 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
 
 // F-HAND-PALMFLAT-SIZE D-PFS-HEADERS (Q-PFS-5, #424): pairs.mjs is an input of these 22 generated app files, so generate.mjs
 // moves their line-1 inputsSha256 header only. Every GENERATED file under src/howto and src/slices/howto/css (317), with
-// line 1 of exactly these 22 blanked, hashes to main 4ebc6d63's value with the same blank: their bodies and every other
+// line 1 of exactly these 22 blanked, hashes to main 5b7d6e80's value with the same blank (re-measured at the merge of main): their bodies and every other
 // generated file are byte-equal to main.
 import { readdirSync, statSync } from 'node:fs';   // F-HAND-PALMFLAT-SIZE (hoisted; kept in this block so the file stays add-only)
 describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fed generated files moves', () => {
@@ -479,7 +482,7 @@ describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fe
     'src/slices/howto/css/zoom-reverse-curl.css',
     'src/slices/howto/css/zoom-single-arm-lat-pulldown.css',
   ];
-  const PFS_GEN_MAIN = { n: 317, sha: '112cfb10f85a9024ec437d0843e4fc0fd4cf8b3f7a220c0bd57fc8c1460bdf05' };
+  const PFS_GEN_MAIN = { n: 317, sha: '689d531d13666f7e13986af63860e7444e4a80d12844e7e094e45d07f7fc7356' };
   const ROOTDIR = join(__dirname, '../..');
   const walk = (d: string): string[] => readdirSync(join(ROOTDIR, d)).sort().flatMap(n => statSync(join(ROOTDIR, d, n)).isDirectory() ? walk(`${d}/${n}`) : [`${d}/${n}`]);
   const gen = () => ['src/howto', 'src/slices/howto/css'].flatMap(walk).filter(p => /GENERATED, do not edit/.test(readFileSync(join(ROOTDIR, p), 'utf8').split('\n')[0]!)).sort();
