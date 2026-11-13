@@ -440,8 +440,8 @@ const SHIP_LIB_64 = [...W3_LIB, ...W4_IDS, ...W5_LIB, ...W6_LIB, ...W7_LIB, 'lib
 // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): its 9 shipped ids (W8B_IDS: lb02's pullover, lb03's
 // dumbbell_romanian_deadlift, lb04's 4, lb05's 3), placed in registry order among the 64 above
 const W8B_LIB = W8B_IDS;
-const SHIP_LIB = [...W3_LIB, W8B_LIB[0], ...W4_IDS.slice(0, 2), W8B_LIB[1], ...W4_IDS.slice(2), ...W5_LIB.slice(0, 2), ...W8B_LIB.slice(2, 6),
-  ...W5_LIB.slice(2, 5), W8B_LIB[6], W8B_LIB[7], ...W5_LIB.slice(5, 7), W8B_LIB[8], ...W5_LIB.slice(7), ...SHIP_LIB_64.slice(W3_LIB.length + W4_IDS.length + W5_LIB.length)];
+const SHIP_LIB = [...W3_LIB, W8B_LIB[0]!, ...W4_IDS.slice(0, 2), W8B_LIB[1]!, ...W4_IDS.slice(2), ...W5_LIB.slice(0, 2), ...W8B_LIB.slice(2, 6),
+  ...W5_LIB.slice(2, 5), W8B_LIB[6]!, W8B_LIB[7]!, ...W5_LIB.slice(5, 7), W8B_LIB[8]!, ...W5_LIB.slice(7), ...SHIP_LIB_64.slice(W3_LIB.length + W4_IDS.length + W5_LIB.length)];
 describe('C6, C8: the shipped library ids on this tree (LIB-PLATEFIX-1: the ruled 22; LIB-SHIP W4: plus the 6; LIB-SHIP W5: plus the 10; LIB-SHIP W6: plus the 7; LIB-SHIP W7: plus the 16; LIB-SHIP W8a: plus the 3; LIB-SHIP W8b: plus the 9)', { timeout: 300_000 }, () => {
   const times = { default: 280.8, c0: 30, once: { run: 0, shard: 0 }, ids: {} };
   const verdict = (s: any, over: any = {}) => libraryVerdict({ lib: s.lib, rebuild: s.rebuild, gate: s.gate, sha: SHA, ref: 'refs/heads/main', event: 'push', needs: NEEDS, root: ROOT, times, ...over });
