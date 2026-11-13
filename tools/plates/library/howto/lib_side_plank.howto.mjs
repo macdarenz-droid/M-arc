@@ -17,6 +17,7 @@
 //   handlingMistakes (Q-W2-12): holding the breath (c6) -> posture 'breathe', risks[breath] (W7 printed); hips sinking
 //   (c5, c9, c2) -> posture 'hips', zoom hip-line Wrong, risks[sink] (W7 printed); shrugging the bottom shoulder (c7) -> posture 'shoulder' (zoom shoulder Wrong)
 import plateSpec from '../specs/side_plank.mjs';
+import { landmarksOf } from '../engine.mjs';
 import { RED_FLAG, RED_FLAG_KNEE } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_KNEE };
 
@@ -63,7 +64,7 @@ const CL = {
 //         #394 6683570453 L5).
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop):
 // SHRUG_ELEV 12 cm (bottom scap elevation; round 2: the dashed overlay replaces round 1's solid 14 cm shrug with the
-// trunk re-solved) sizes the shoulder Wrong; the up arrow's offsets (plate px: tail [2, 2] off the right shoulder's top,
+// trunk re-solved) sizes the shrug still (the shoulder zoom's Wrong is ZOOM_SHRUG below, LIB-PLATEFIX-5); the up arrow's offsets (plate px: tail [2, 2] off the right shoulder's top,
 // tip [7, 15] off the ear, just under the head) and the shoulder crop window (centre offset [-10, -22], sizePx 140: the
 // whole head, the bottom shoulder and upper arm) are drawing values too; no card gives them, no number from them appears
 // in user copy; the layers panel judges them.
@@ -71,6 +72,31 @@ const MIS = plateSpec.mistake.pose, END = plateSpec.poses.end;
 const SHRUG_ELEV = 12;
 const SHRUG = { scap: { r: { elev: SHRUG_ELEV } } };
 const SHRUG_POSE = { ...END, ...SHRUG };
+// LIB-PLATEFIX-5 (D-PF4-W67LATER; W7 panel L5 held, critic c3, c7): the shoulder zoom's Wrong keeps the bottom arm in
+// place: the bottom girdle elevated by ZOOM_ELEV (scap.r elev) with root x, root y and roll solved (Newton; W7 round 1's
+// SHRUG_Q, git dde40eb3) so the shoulder joint stays over the elbow, the elbow on the mat and the bottom ankle at its
+// height; the trunk and head drop toward the shoulder, so the shoulder ends nearer the ear along the body, still drawn
+// dashed over the Right (round 2's form). ZOOM_ELEV 14 cm is a zoom-only drawing size (D-SHIP-DRAWVAL).
+const H = 1.75, ZOOM_ELEV = 14, L_END = landmarksOf(END, H);
+const shrugAt = ([x, y, roll]) => ({ ...END, scap: { r: { elev: ZOOM_ELEV } }, root: { ...END.root, at: [x, y, END.root.at[2]], roll } });
+const SHRUG_Q = (() => {
+  const f = q => { const l = landmarksOf(shrugAt(q), H);
+    return [l['shoulder.r'][0] - L_END['elbow.r'][0], l['elbow.r'][1] - L_END['elbow.r'][1], l['ankle.r'][1] - L_END['ankle.r'][1]]; };
+  let q = [END.root.at[0], END.root.at[1], END.root.roll];
+  for (let it = 0; it < 60; it++) {
+    const r = f(q); if (Math.hypot(...r) < 1e-8) return q;
+    const J = [0, 1, 2].map(k => { const d = 1e-6, qq = [...q]; qq[k] += d; return f(qq).map((v, i) => (v - r[i]) / d); });
+    const M = [0, 1, 2].map(i => [...[0, 1, 2].map(k => J[k][i]), -r[i]]);
+    for (let c = 0; c < 3; c++) {
+      let m = c; for (let i = c + 1; i < 3; i++) if (Math.abs(M[i][c]) > Math.abs(M[m][c])) m = i;
+      [M[c], M[m]] = [M[m], M[c]];
+      for (let i = 0; i < 3; i++) if (i !== c) { const t = M[i][c] / M[c][c]; for (let k = c; k < 4; k++) M[i][k] -= t * M[c][k]; }
+    }
+    q = q.map((v, i) => v + M[i][3] / M[i][i]);
+  }
+  throw new Error('lib_side_plank: the shrug does not converge');
+})();
+const ZOOM_SHRUG = shrugAt(SHRUG_Q);
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
@@ -80,9 +106,9 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // Zoom shell form (render/closeup/crop.mjs). hip-line (M): the plate's own Mistake dashed red over the right pose, with
-// the plate's Mistake guide (the arrow at the sinking hip). shoulder (DV): the `shrug` still dashed red over the right pose
+// the plate's Mistake guide (the arrow at the sinking hip). shoulder (DV): the arm-held shrug dashed red over the right pose
 // (the lib_superman lift-height form), with a mistake up arrow (the plate engine's guide kind 'arrow') from the right
-// shoulder's top up to just under the ear; the Wrong dot on the shrugged shoulder's top; framed on the whole head and the
+// shoulder's top up to just under the Wrong ear; the Wrong dot on the shrugged shoulder's top; framed on the whole head and the
 // bottom shoulder. The crop windows (centre offset, sizePx) are drawing values.
 const zooms = [
   {
@@ -109,8 +135,9 @@ const zooms = [
     // claims: Right (callout, caption, alt) card c1, c7; Wrong card c7 (alt: c1, c7)
     crop: { center: { at: 'shoulder.r', pose: 'right', off: [-10, -22] }, sizePx: 140 },
     right: 'end',
-    wrong: { base: 'end', pose: SHRUG },   // DV: the shrug still, dashed over the right pose
-    guides: [{ kind: 'arrow', from: { at: 'shoulderTop.r', pose: 'end', off: [2, 2] }, to: { at: 'ear', pose: 'end', off: [7, 15] } }],
+    wrong: { base: 'end', pose: ZOOM_SHRUG },   // DV: the arm-held shrug (LIB-PLATEFIX-5), dashed over the right pose
+    // the up arrow from the Right shoulder's top toward the Wrong (dropped) ear, its tip just under that head
+    guides: [{ kind: 'arrow', from: { at: 'shoulderTop.r', pose: 'end', off: [2, 2] }, to: { at: 'ear', pose: 'mistake', off: [7, 15] } }],
     callout: {
       right: { text: 'Shoulder down', anchor: 'shoulder.r' },
       wrong: { text: 'Shrugged', anchor: { at: 'shoulderTop.r', pose: 'mistake' } },

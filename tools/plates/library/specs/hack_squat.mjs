@@ -34,9 +34,11 @@
 //  Toes out TOE_OUT (c12 "toes slightly pointed out", c13 "knees align with your toes"): at the shoulder-width stance the
 //   toe line that lies in the leg's own bend plane with the sole flat on the plate, so the knee tracks the toes and every
 //   foot contact holds within 0.5 cm.
-//  The Mistake (c8, c9, c10; leg_press.mjs:85-93): at the same sled place the pelvis rolls back M_ROLL about the lumbar
-//   pivot (lumbar flexion), the thorax stays on the pad, so the sacrum and buttock peel off it (6.4 and 7.9 cm; drawn as a
-//   dashed red contour over the end figure) and the hips rise (c9) with the feet still flat on the plate.
+//  The Mistake (c8, c9, c10; leg_press.mjs:85-93 form, LIB-PLATEFIX-5): at the same sled place the pelvis rolls back
+//   M_ROLL and the lumbar flexion is spread over the LIB-SPINE pivots by M_SPLIT (L5/S1, L3, T12, T7; trunk.flex,
+//   D-SPINE-OPTIN), the root moved so the upper back keeps the end's place on the pad (the thorax stays on the pad), so the
+//   lower back, sacrum and buttock peel off it in a wedge that opens downward (drawn as a dashed red contour over the end
+//   figure) and the hips rise (c9) with the feet still flat on the plate.
 //  Every bisection throws on a bracket with no sign change (D-LIB9-CLONE b). They solve to: TILT (the pad line at RAIL),
 //   SOLE_Z (knee 90 at the bottom), TRAVEL (knee KNEE_TOP at the top) and RAIL_LO (the rail's foot at the plate bracket).
 // Labels: the back side of the body lies on the pad, so no leader reaches the back from the open side; "Back on pad" and
@@ -45,7 +47,7 @@
 //  leader crosses the rail (named-nit candidate, D-LIB15-NIT1; the scan is in the LB8 note).
 // Camera: fit (capped at the reference scale).
 // Unsourced numbers (SIZES below; lb8/sizes.json holds each with its basis): RAIL, PLATE_TILT, PLATE_Y, KNEE_TOP, FOOT_X,
-//  TOE_OUT, NECK, M_ROLL, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, RAIL_ABOVE, STOP_GAP, FLOOR_BACK,
+//  TOE_OUT, NECK, M_ROLL, M_SPLIT, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, RAIL_ABOVE, STOP_GAP, FLOOR_BACK,
 //  FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM, PAD_Y; the composer's HACK_SLED constants; TILT, SOLE_Z, TRAVEL and RAIL_LO solved. The
 //  knee 90 is c4's.
 import { WINTER, REF, landmarksOf, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
@@ -53,10 +55,10 @@ import { add, mul, sub, perItem } from '../eq/parts.mjs';
 import { hackSled, shoulderPadPts, HACK_SLED, HACK_SLED_ITEMS } from '../eq/hackSled.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ RAIL: 45, PLATE_TILT: 0, PLATE_Y: 0.20, KNEE_TOP: 15, FOOT_X: 0.17, TOE_OUT: 8, NECK: 5, M_ROLL: 25,
+export const SIZES = Object.freeze({ RAIL: 45, PLATE_TILT: 0, PLATE_Y: 0.20, KNEE_TOP: 15, FOOT_X: 0.17, TOE_OUT: 8, NECK: 5, M_ROLL: 35, M_SPLIT: [0.3, 0.3, 0.4, 0],
   HANDLE_X: 0.25, HANDLE_N: 0.24, HANDLE_DOWN: 0.06, POLE_OUT: 0.6, PAD_BELOW: 0.10, RAIL_ABOVE: 0.10, STOP_GAP: 0.02, FLOOR_BACK: 0.15,
   FLOOR_FRONT: 0.10, FLOOR_LINE: 0.05, TRACE_TRIM: [6, 8], PAD_Y: 0.842 });
-const { RAIL, PLATE_TILT, PLATE_Y, KNEE_TOP, FOOT_X, TOE_OUT, NECK, M_ROLL, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, RAIL_ABOVE,
+const { RAIL, PLATE_TILT, PLATE_Y, KNEE_TOP, FOOT_X, TOE_OUT, NECK, M_ROLL, M_SPLIT, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, RAIL_ABOVE,
   STOP_GAP, FLOOR_BACK, FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM, PAD_Y } = SIZES;
 
 const dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
@@ -84,7 +86,9 @@ const HIP = [0, PLATE_Y + WINTER.ankleH * H + LSH, 0];               // thigh le
 const SOLE0 = HIP[2] + LT + REF.mid * H;
 const feetAt = z => ({ l: { at: [FOOT_X, PLATE_Y, z], normal: PN, toe: toeOf(1) }, r: { at: [-FOOT_X, PLATE_Y, z], normal: PN, toe: toeOf(-1) } });
 const kneeOf = l => 180 - ang3(l['hip.r'], l['knee.r'], l['ankle.r']);   // knee bend from straight (deg)
-const base = { root: { at: HIP, tilt: TILT }, trunk: 0, neck: NECK };
+// the trunk in LIB-SPINE's array form (all pivots 0, the same neutral spine), since the Mistake spreads its flexion over
+// the pivots and the array form must then be in every pose (D-SPINE-MIX)
+const base = { root: { at: HIP, tilt: TILT }, trunk: { flex: [0, 0, 0, 0] }, neck: NECK };
 export const SOLE_Z = bisect(z => kneeOf(L({ ...base, plant: feetAt(z) })) - 90, SOLE0 - 0.15, SOLE0 + 0.05, 'the sole place that bends the knee 90');
 const PLANT = feetAt(SOLE_Z);
 const LB = L({ ...base, plant: PLANT });
@@ -100,12 +104,14 @@ const LE = L(end), LS = L(start);
 // sled travel of any pose, read back from the upper back on the pad (so ghosts move the sled with the body; in the
 // Mistake the thorax stays on the pad, so the sled stays where the end pose has it)
 const travelOf = lm => dot(sub(lm.backUpper, LE.backUpper), U);
-// Mistake: butt wink (leg_press.mjs:85-93): the pelvis rolls back M_ROLL about the lumbar pivot, the thorax stays put
-const lumbarRot = (() => {
-  const Lp = LE.lumbar, t = -M_ROLL * R, v = [0, HIP[1] - Lp[1], HIP[2] - Lp[2]], c = Math.cos(t), s = Math.sin(t);
-  return [0, Lp[1] + v[1] * c - v[2] * s, Lp[2] + v[1] * s + v[2] * c];
+// Mistake: butt wink (LIB-PLATEFIX-5): the pelvis rolls back M_ROLL, the flexion spread over the spine pivots by M_SPLIT
+// (so the thorax keeps the end's angle), the root moved by the upper back's offset (closed form: one landmark call, then
+// translate), so backUpper stays on the pad where the end pose has it
+const M_TRUNK = { flex: M_SPLIT.map(w => w * M_ROLL) };
+const mistakePose = (() => {
+  const p = { root: { at: HIP, tilt: TILT - M_ROLL }, trunk: M_TRUNK };
+  return { ...p, root: { ...p.root, at: add(HIP, sub(LE.backUpper, L({ ...end, ...p }).backUpper)) } };
 })();
-const mistakePose = { root: { at: lumbarRot, tilt: TILT - M_ROLL }, trunk: M_ROLL };
 
 const C = HACK_SLED, PAD_HI = SP + C.shoulderT, railOff = -(C.padT + C.carriageT + C.railT / 2);
 // The shoulder pads (D-LIB18-PADS): one on each trapezius beside the neck (eq/hackSled.mjs header). Their frame is the
@@ -186,9 +192,11 @@ export const BACK_CONTOUR = (() => {
   return [LM.backMid, ...inner.map(p => [0, -p[1], p[0]]), LM.seat];
 })();
 // The hip-to-pad gap (panel R5): across the space between the pad face and the lifted Mistake buttock, along the pad
-// normal N, from 12 % to 88 % of the span so the dashes sit in the gap, touching neither the pad face nor the contour.
+// normal N, from 30 % to 85 % of the span so the dashes sit in the gap, touching neither the pad face nor the contour
+// (LIB-PLATEFIX-5: the deeper wedge moved the buttock 19 px off the pad, so the lower end rises to 30 % to keep the
+// Mistake buttock contour within 15 px beyond every dash, A15 R5).
 const GAP_FOOT = sub(LM.buttock, mul(N, dot(sub(LM.buttock, PAD_AT), N)));
-export const GAP_MARK = [0.12, 0.88].map(t => add(GAP_FOOT, mul(sub(LM.buttock, GAP_FOOT), t)));
+export const GAP_MARK = [0.30, 0.85].map(t => add(GAP_FOOT, mul(sub(LM.buttock, GAP_FOOT), t)));
 
 export const HS = { U, N, LE, LS, TILT, SOLE_Z, TRAVEL, RAIL_LO, RAIL_HI, SP, SHOULDER, padFace, PAD_PLANE, PLATE_PLANE, sledP, mistakePose, travelOf, startPhantom };
 // The card's contact facts (lb8 DESIGN.md; D-LIB18-FACTS): each bound by a check on its landmark in its pose, at the
@@ -235,7 +243,7 @@ export default {
     parts: ['torso', 'leg.r', 'leg.l'],
     guides: [
       // the faulty back contour: the Mistake torso's drawn back outline from backMid to the seat (BACK_CONTOUR above):
-      // backMid stays near the pad, the sacrum and buttock peel off it (6.4 and 7.9 cm)
+      // backMid stays near the pad, the lower back, sacrum and buttock peel off it (8.9, 9.6 and 13.1 cm)
       { kind: 'dashed', smooth: true, pts: BACK_CONTOUR },
       // the empty space between the pad face and the lifted buttock (GAP_MARK above), dashed over the end figure (A15)
       { kind: 'dashed', pts: GAP_MARK },
@@ -245,9 +253,9 @@ export default {
     ],
     tells: [
       // c8 "lift their lower back off the back pad", c9 "having your hips leave the backrest": on the hips' pad contact, the
-      // Mistake buttock (D-LIB18-LIFT), 7.9 cm off the pad; the box sits above the hips and its short leader drops into the
+      // Mistake buttock (D-LIB18-LIFT), 13.1 cm off the pad; the box sits above the hips and its short leader drops into the
       // end figure once, from the front (the hip crease), never along the thigh's underside (panel R5; named nit)
-      { key: 'lift', text: 'Hips off<br>pad', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 174, top: 162 }, cue: 'At the bottom the hips and lower back lift off the back pad.' },
+      { key: 'lift', text: 'Hips off<br>pad', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 174, top: 150 }, cue: 'At the bottom the hips and lower back lift off the back pad.' },
       // c10 "your lower back rounds": on the lower back, the Mistake sacrum on the dashed back contour (D-LIB18-ROUND)
       { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 144, top: 115 }, cue: 'The lower back rounds at the bottom of the squat.' },
     ],
