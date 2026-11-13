@@ -12,8 +12,7 @@
         "lib_forward_lunge",
         "lib_walking_lunge",
         "lib_bodyweight_lunge",
-        "lib_bodyweight_split_squat",
-        "lib_bulgarian_split_squat"
+        "lib_bodyweight_split_squat"
       ]
     }
   ],
