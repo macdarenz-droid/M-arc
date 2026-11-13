@@ -2989,3 +2989,31 @@ every MANIFEST commit tagged `[golden update]`; old mutations kept red.
   it. If the hand row fails, hold the id; converting it to a no-zoom row (the D-SHIP-W5-HAMMER form) needs its own ruling.
 - **Q-W8b-6 wrist_curl.** Recommended: judge as drawn; it ships with no hand close-up under its `exempt:` GAP (the moving
   joint is the wrist). If it fails, it is held for F-HAND-FINGERTIP or a wrist zoom (class B).
+
+### W8b rulings and holds (#417)
+- PLAN ruled 6847824876 (Q-W8b-1 to -6 as recommended). LAYERS READY 6854783313; rulings 6854831158 (D-W8B-RIGHTPOSE);
+  panel 6856272493 @ 1fdf6975 (both sets VALID; 4 delta checks PASS); fix round 6856430357; rulings 6856468001
+  (pullover L6 PASS in round 2; D-W8B-INCLINE).
+- Ships 9: dumbbell_pullover (lb02); dumbbell_romanian_deadlift (lb03); pistol_squat, wall_sit, forward_lunge,
+  walking_lunge (lb04); bayesian_cable_curl, dumbbell_overhead_triceps_extension, single_arm_triceps_pushdown (lb05).
+  Main moves from 72 to 81.
+- Held at approved-plate (D-PF4 form, main's bytes; each verdict carries over only if its card stays byte-equal):
+  - dumbbell_shrug (PASS), bulgarian_split_squat (L5 second failure): D-W8B-RIGHTPOSE, **F-HT4-RIGHTPOSE**. The dry run's
+    `HT4/A5-poses` red: `twins/ht4.mjs:183-190` accepts only start, end or the mistake on a Right side, while both
+    posture zooms draw a ruled custom Right pose (D-SHIP-DRAWVAL; `faultPoses` :145-153 covers Wrong only). Bulgarian also
+    needs a full-width floor line, a gap under the Right knee and the Wrong knee on the floor, then a fresh panel.
+  - conventional_deadlift (L5 second failure) and sumo_deadlift with it (D-LIB10-PARENTS): **F-DL-LIFTOFF**.
+  - step_up (L1 second failure; L5, L7): **F-STEPUP-START**.
+  - wrist_curl (L4, L5, L7; Q-W8b-6): **F-HAND-FINGERTIP**.
+  - cross_body_hammer_curl (L3 hand row, Q-W8b-5; L5 second failure): **F-HAMMER-TWIST**.
+  - incline_dumbbell_curl (L3, L7; D-W8B-INCLINE): both items are shared parts. L3 is the `curl-dumbbell-under` key note
+    (hands/pairs.mjs:445, panel.mjs:46-60, words/curl-dumbbell-under.json; also drawn on dumbbell_biceps_curl and
+    alternating_dumbbell_curl), L7 the shared `camera: { fit: true }` mode (vendor/engine/plate.mjs:111-119).
+    **F-CURL-UNDER-NOTE**, **F-SEATED-CAM**.
+- Recorded exception: dumbbell_overhead_triceps_extension L6 (D-W8B-RISKSLINE, the house progression line under Risks);
+  follow-up **F-RISKS-PROGRESSION**.
+- Sheet changes: dumbbell_romanian_deadlift setup step kind 'posture' → 'position' (a SetupStepKind; the dry run's app
+  typecheck failed on it; page bytes unchanged); dumbbell_pullover's jumps risk to c12 (L6).
+- Pages: lb02 first layers page (pullover only; config in the D-SHIP-W4-FLIPSET form, Q-W8b-1); lb03, lb04, lb05
+  superseding entries. PF4's lb02 page checks (platefix4-lb2 :78-100, platefix4-incline_dumbbell_press 20b) build from
+  main e15e1c65's 6-id config, sha-pinned in tests/howto/checks/ship-w8b.ts.
