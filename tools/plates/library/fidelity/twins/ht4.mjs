@@ -169,12 +169,18 @@ export function libraryA5({ calls, html }, { specId, ref, howto, prefix, family,
   if (!mine.some(c => same(c.spec, ref))) out.protected.push(`no untouched base-plate call found for ${specId}`);
   out.fragments.push(...(entry ? gb.fragmentProblems(html, [entry]) : [`no pinned plate entry for ${specId}`]));
   // (2) attribution: base, cam, the plate's -n/-m, or one side of a posture zoom the source declares
-  const posture = (howto.zooms ?? []).filter(z => z.kind === 'posture'), seen = new Map(posture.flatMap(z => [[`${z.key}|right`, 0], [`${z.key}|wrong`, 0]]));
+  // F-HT4-UNDER (F-W8A-HOLDS part 1): crop.mjs cropHalf's `<key>-under` call, the Right crop drawn faded under a solid
+  // Wrong, is attributed (role 'under', reference poses only) only for a zoom-shell posture zoom that declares crop.mjs's
+  // exact condition: wrong.under, and wrong.solid or wrongAlone; such a zoom also gets a `<key>|under` anti-blindness entry
+  const posture = (howto.zooms ?? []).filter(z => z.kind === 'posture');
+  const underOf = z => family === 'zoom' && !!z.wrong?.under && !!(z.wrong?.solid || z.wrongAlone);
+  const seen = new Map(posture.flatMap(z => [[`${z.key}|right`, 0], [`${z.key}|wrong`, 0], ...(underOf(z) ? [[`${z.key}|under`, 0]] : [])]));
   const suffix = family === 'zbox' ? { right: 'r', wrong: 'w' } : family === 'zoom' ? { right: 'right', wrong: 'wrong' } : null;
   if (!suffix) out.poses.push(`unknown close-up shell ${family}`);
   const sideOf = id => {
     if (id === 'base' || id === 'cam' || id === `${prefix}-n` || id === `${prefix}-m`) return { role: null };
     for (const z of posture) for (const role of ['right', 'wrong']) if (suffix && id === `${z.key}-${suffix[role]}`) return { z, role };
+    for (const z of posture) if (underOf(z) && id === `${z.key}-under`) return { z, role: 'under' };
     return null;
   };
   // (3) every call not on a Wrong side: a reference pose; (4) a Wrong side may also draw its source-declared fault pose
