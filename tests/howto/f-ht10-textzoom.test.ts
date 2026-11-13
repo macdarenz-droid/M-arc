@@ -29,8 +29,76 @@ const fakeDoc = (cards: Record<string, Terms>) => ({ getElementById: (x: string)
 // Every term non-zero, so a dropped term changes E.
 const FULL: Terms = { callouts: 3, tells: 2, wrist: 1, chips: [1, 3], shows: 2, feel: 1, more: 1, rows: 4 };
 // callouts 3 + Mistake on 1 + tells 2 + wrist 2 + Mistake off 1 + Trace 2 + chips (2 + 4) + shows 4 + feel 1 + more 1 + rows 4 + end 2
-// The E table rows: { <lib id>: { terms, steps } } from CI's "HT10 steps" lines (filled from the measuring run).
-const E_TABLE: Record<string, { terms: Terms; steps: number }> = {};
+// The E table rows: { <lib id>: { terms, steps } }. 64 shipped rows from CI's "HT10 steps" silent-black lines, run
+// 43394777552 @ ad5b66e9 (all 64 also E = steps in the other 4 themes); lib_seated_leg_curl from the scratch tree
+// (1dd1cd39 + this file's fidelity.mjs, pilot-b.layers d8230e88…, 14 steps in all 5 themes).
+const E_TABLE: Record<string, { terms: Terms; steps: number }> = {
+  lib_ab_wheel_rollout: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 16 },
+  lib_alternating_dumbbell_curl: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [2, 1], shows: 4, feel: 1, more: 0, rows: 1 }, steps: 25 },
+  lib_barbell_curl: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [2, 1], shows: 3, feel: 1, more: 0, rows: 2 }, steps: 24 },
+  lib_barbell_overhead_press: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 2 }, steps: 20 },
+  lib_barbell_row: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 1 }, steps: 19 },
+  lib_barbell_shrug: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 17 },
+  lib_bear_crawl: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 1 }, steps: 19 },
+  lib_bird_dog: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 3, feel: 1, more: 0, rows: 1 }, steps: 23 },
+  lib_bodyweight_lunge: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 2 }, steps: 20 },
+  lib_bodyweight_split_squat: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 19 },
+  lib_bodyweight_squat: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 2 }, steps: 18 },
+  lib_cable_crunch: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 3 }, steps: 18 },
+  lib_cable_fly: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 1 }, steps: 19 },
+  lib_cable_kickback: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 16 },
+  lib_cable_lateral_raise: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 3 }, steps: 21 },
+  lib_cable_shrug: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 2 }, steps: 18 },
+  lib_chest_supported_row: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 2, feel: 1, more: 0, rows: 2 }, steps: 22 },
+  lib_chin_up: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1, 1], shows: 4, feel: 1, more: 0, rows: 3 }, steps: 29 },
+  lib_close_grip_pulldown: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1, 1], shows: 3, feel: 1, more: 0, rows: 2 }, steps: 26 },
+  lib_crunch: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 3 }, steps: 21 },
+  lib_dead_bug: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 2 }, steps: 19 },
+  lib_dumbbell_bench_press: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 1 }, steps: 19 },
+  lib_dumbbell_biceps_curl: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [2, 1], shows: 3, feel: 1, more: 0, rows: 2 }, steps: 25 },
+  lib_dumbbell_front_raise: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 3, feel: 1, more: 0, rows: 2 }, steps: 24 },
+  lib_dumbbell_shoulder_press: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 1 }, steps: 19 },
+  lib_ez_bar_curl: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [2, 1], shows: 3, feel: 1, more: 0, rows: 2 }, steps: 24 },
+  lib_face_pull: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 2, feel: 1, more: 0, rows: 2 }, steps: 22 },
+  lib_farmer_s_carry: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 2 }, steps: 19 },
+  lib_front_squat: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 4 }, steps: 22 },
+  lib_hammer_curl: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 2 }, steps: 18 },
+  lib_hanging_knee_raise: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1, 1], shows: 4, feel: 1, more: 0, rows: 4 }, steps: 30 },
+  lib_hollow_body_hold: { terms: { callouts: 2, tells: 1, wrist: 0, chips: [1, 1], shows: 2, feel: 1, more: 0, rows: 3 }, steps: 21 },
+  lib_horizontal_leg_press: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 3 }, steps: 18 },
+  lib_incline_push_up: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 5, feel: 1, more: 0, rows: 3 }, steps: 29 },
+  lib_inverted_row: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1, 1, 1], shows: 4, feel: 1, more: 0, rows: 1 }, steps: 26 },
+  lib_kettlebell_swing: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 3 }, steps: 21 },
+  lib_landmine_row: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 2 }, steps: 20 },
+  lib_leg_extension: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 0, feel: 1, more: 0, rows: 2 }, steps: 16 },
+  lib_lying_leg_curl: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 0, feel: 1, more: 0, rows: 2 }, steps: 15 },
+  lib_machine_crunch: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1, 1], shows: 2, feel: 1, more: 0, rows: 2 }, steps: 24 },
+  lib_machine_lateral_raise: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 16 },
+  lib_medicine_ball_slam: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 0, feel: 1, more: 0, rows: 1 }, steps: 17 },
+  lib_pec_fly: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 2 }, steps: 17 },
+  lib_pendlay_row: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 3, feel: 1, more: 0, rows: 1 }, steps: 23 },
+  lib_pike_push_up: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1, 1], shows: 2, feel: 1, more: 0, rows: 3 }, steps: 22 },
+  lib_plank: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 18 },
+  lib_preacher_curl: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [2, 1], shows: 3, feel: 1, more: 0, rows: 3 }, steps: 26 },
+  lib_push_up: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 4, feel: 1, more: 0, rows: 1 }, steps: 25 },
+  lib_resistance_band_row: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 19 },
+  lib_resisted_hip_flexion: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 17 },
+  lib_reverse_crunch: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1, 1], shows: 2, feel: 1, more: 0, rows: 3 }, steps: 22 },
+  lib_reverse_curl: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [2, 1], shows: 3, feel: 1, more: 0, rows: 2 }, steps: 24 },
+  lib_reverse_lunge: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 2 }, steps: 20 },
+  lib_romanian_deadlift: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 2 }, steps: 19 },
+  lib_rope_triceps_pushdown: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 3 }, steps: 20 },
+  lib_seated_leg_curl: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [], shows: 0, feel: 1, more: 0, rows: 2 }, steps: 14 },
+  lib_single_arm_lat_pulldown: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 19 },
+  lib_single_leg_romanian_deadlift: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 2, feel: 1, more: 0, rows: 1 }, steps: 21 },
+  lib_sled_push: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 19 },
+  lib_smith_machine_shrug: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 1 }, steps: 17 },
+  lib_standing_leg_curl: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1, 1], shows: 0, feel: 1, more: 0, rows: 2 }, steps: 17 },
+  lib_straight_arm_pulldown: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1, 1], shows: 3, feel: 1, more: 0, rows: 3 }, steps: 25 },
+  lib_t_bar_row: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 1 }, steps: 19 },
+  lib_triceps_pushdown: { terms: { callouts: 3, tells: 2, wrist: 0, chips: [1], shows: 2, feel: 1, more: 0, rows: 3 }, steps: 21 },
+  lib_upright_row: { terms: { callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 1, feel: 1, more: 0, rows: 2 }, steps: 17 },
+};
 const FULL_E = 3 + 1 + 2 + 2 + 1 + 2 + (2 + 4) + 4 + 1 + 1 + 4 + 2;
 
 describe('F-HT10-TEXTZOOM E: the exact ht10Script step count', () => {
@@ -51,7 +119,7 @@ describe('F-HT10-TEXTZOOM E: the exact ht10Script step count', () => {
   // "HT10 steps" lines (silent-black). E must equal the measured steps on every row.
   const TABLE: Record<string, { terms: Terms; steps: number }> = E_TABLE;
   it('the E table: E = measured on every shipped row, and seated_leg_curl on its scratch page', () => {
-    expect(Object.keys(TABLE).length).toBeGreaterThan(40);
+    expect(Object.keys(TABLE).length).toBe(65);
     expect(TABLE.lib_seated_leg_curl?.steps).toBe(14);
     const off = Object.entries(TABLE).filter(([, r]) => ht10Expected(r.terms) !== r.steps).map(([id, r]) => `${id}: E ${ht10Expected(r.terms)} != ${r.steps}`);
     expect(off).toEqual([]);
