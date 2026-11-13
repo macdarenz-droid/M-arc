@@ -205,19 +205,9 @@
     "basis": "convention: leg_press.mjs:71 (neck 5 on a reclined back pad)"
    },
    "M_ROLL": {
-    "value": 35,
+    "value": 25,
     "unit": "deg",
-    "basis": "stated reason (LIB-PLATEFIX-5, #405 6683300292; c8, c9 'the lower back rounds and lifts off the back pad'): leg_press.mjs:87's 25 deg about one lumbar pivot lifted the hip 10.9 px with the lumbar gap 6.8 px; 35 deg spread by M_SPLIT, the upper back kept on the pad, opens a wedge from the pad to the lower back and hips of at least 10 px (gaps at backUpper, backMid, lumbar, sacrum, buttock: 0, 3.9, 10.4, 13.7, 18.9 px), peeling the sacrum 9.6 cm and the buttock 13.1 cm off the pad"
-   },
-   "M_SPLIT": {
-    "value": [
-     0.3,
-     0.3,
-     0.4,
-     0
-    ],
-    "unit": "",
-    "basis": "stated reason (LIB-PLATEFIX-5; D-SPINE-OPTIN, body.mjs SPINE_PIV): M_ROLL's lumbar flexion shared over the spine pivots L5/S1, L3, T12, T7 as 0.3, 0.3, 0.4, 0 (sums to 1, so the thorax keeps the end's angle on the pad; T7 0 keeps the upper back still), so the lower back rounds over its length instead of hinging at one pivot (c10 'your lower back rounds')"
+    "basis": "convention: leg_press.mjs:87 (M_ROLL 25, the rounding off a pad at the bottom, D-LIB18-SIZE), with c10's 'your lower back rounds ever so slightly' read with that convention; it peels the sacrum 6.4 cm and the buttock 7.9 cm off the pad (c8, c9)"
    },
    "HANDLE_X": {
     "value": 0.25,
@@ -242,7 +232,7 @@
    "PAD_BELOW": {
     "value": 0.1,
     "unit": "m",
-    "basis": "stated reason: the back pad reaches 10 cm below the buttock contact so the hips stay on it through the rep (c2 'hips should be in contact with the back pad') with the Mistake buttock (lifted 13.1 cm off the pad, 0.5 cm down it) still over the pad"
+    "basis": "stated reason: the back pad reaches 10 cm below the buttock contact so the hips stay on it through the rep (c2 'hips should be in contact with the back pad') with the buttock's 7.9 cm Mistake lift still over the pad"
    },
    "RAIL_ABOVE": {
     "value": 0.1,

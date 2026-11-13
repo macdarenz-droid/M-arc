@@ -1,5 +1,5 @@
 // LIB-PLATEFIX-5 W7 group (card LIB-PLATEFIX-5 item 1, D-PF4-W67LATER; PLAN @ 771bc332; ruling PR #419 comment
-// 6849391955). The four W7 close-ups: hack_squat (the `knee-lock` zoom AND the plate Mistake wedge), wall_ball
+// 6849391955). The four W7 close-ups: hack_squat (the `knee-lock` zoom; its plate Mistake wedge is held for F-HACK-PAD, spec back to main, #419), wall_ball
 // (`wall-distance`), side_plank (`shoulder`) and jumping_jacks (`toes-forward`). Every row and mutation is measured here
 // from the engine's own landmarks and the crop the page draws (render/closeup/crop.mjs), never from a spec constant.
 // All red on main e15e1c65, green on the build. Units: panel px = the 171 px crop (k = 171 / sizePx); plate px = the
@@ -116,72 +116,6 @@ describe('PF5 W7 hack_squat', { timeout: T }, () => {
     expect(/\.z-ol\b/.test(cssOf('hack_squat'))).toBe(true);
     const off = closeups.closeupApi(HM.hack_squat, { ...OPT.hack_squat, css: { ...OPT.hack_squat.css, outlines: false } }, { engine: ENGINE.hack_squat, specFile: specFileOf('hack_squat') }).CSS;
     expect(/\.z-ol\b/.test(off)).toBe(false);
-  });
-
-  // ---- the plate Mistake wedge (specs/hack_squat.mjs) ----
-  // The drawn back-outline gap from the pad face at each landmark's station along the pad (the END pose's stations, so
-  // poses compare at the same place on the pad), plate px. The pad: PAD_PLANE.point, normal N; along the pad U.
-  const SM = () => HM.hack_squat.default.plate;
-  const wedge = (mistakePose: any) => {
-    const sp = SM(), end = sp.poses.end;
-    const { U, N, PAD_PLANE, LE } = (SPEC.hack_squat as any).HS;
-    const ppm = ENGINE.hack_squat.renderPlate(sp, { id: 'w' }).report.camera.pxPerM;
-    const dot = (a: number[], b: number[]) => a.reduce((s, v, i) => s + v * b[i]!, 0), sub = (a: number[], b: number[]) => a.map((v, i) => v - b[i]!);
-    const dPad = (w: number[]) => dot(sub(w, PAD_PLANE.point), PAD_PLANE.normal);
-    const camS = { view: 'side', near: 'r', facing: 'right', pxm: 1, P: (w: number[]) => [w[2]!, -w[1]!] };
-    const pose = { ...end, ...mistakePose };
-    const sk = eng.fk(eng.resolve(eng.normPose(pose, { height: H }), { height: H }).q, { height: H });
-    const poly = eng.bodyShapes(sk, camS).find((sh: any) => sh.key === 'torso').poly.map((p: number[]) => [0, -p[1]!, p[0]!]);
-    const at = (u: number) => { const cr: number[] = []; for (let i = 0; i < poly.length; i++) { const a = poly[i]!, b = poly[(i + 1) % poly.length]!, ua = dot(sub(a, PAD_PLANE.point), U) - u, ub = dot(sub(b, PAD_PLANE.point), U) - u;
-      if (ua === ub || ua * ub > 0) continue; const t = ua / (ua - ub); cr.push(dPad(a.map((v: number, j: number) => v + (b[j]! - v) * t))); } return cr.length ? Math.min(...cr) * ppm : NaN; };
-    const g: Record<string, number> = {};
-    for (const n of ['backUpper', 'backMid', 'lumbar', 'sacrum', 'buttock']) g[n] = at(dot(sub(LE[n], PAD_PLANE.point), U));
-    const L = ENGINE.hack_squat.landmarksOf(pose, H), hipN = dot(sub(L['hip.r'], LE['hip.r']), N) * ppm;
-    return { g: g as Record<'backUpper' | 'backMid' | 'lumbar' | 'sacrum' | 'buttock', number>, hipAlongN: hipN };
-  };
-
-  it('the Mistake opens a wedge: backUpper stays on the pad (<= 0.5 px), the lumbar, sacrum and buttock gaps are >= 10 px and grow downward, and the hip moves off the pad (+N)', () => {
-    const { g, hipAlongN } = wedge(SM().mistake.pose);
-    console.log(`PF5 W7 hack_squat plate wedge (px): backUpper ${g.backUpper.toFixed(2)}, backMid ${g.backMid.toFixed(2)}, lumbar ${g.lumbar.toFixed(2)}, sacrum ${g.sacrum.toFixed(2)}, buttock ${g.buttock.toFixed(2)}; hip along N ${hipAlongN.toFixed(2)} px`);
-    expect(Math.abs(g.backUpper!)).toBeLessThanOrEqual(0.5);
-    expect(g.lumbar!).toBeGreaterThanOrEqual(10);
-    expect(g.sacrum!).toBeGreaterThanOrEqual(10);
-    expect(g.buttock!).toBeGreaterThanOrEqual(10);
-    expect(g.sacrum!).toBeGreaterThan(g.lumbar!);     // the wedge grows downward
-    expect(g.buttock!).toBeGreaterThan(g.sacrum!);
-    expect(hipAlongN).toBeGreaterThan(5);             // the hip rises off the pad
-  });
-  it('mutation: main\'s single lumbar-pivot roll (M_ROLL 25 about the end lumbar) leaves the lumbar gap ~6.8 px, under 10', () => {
-    const { U: _U, N: _N, PAD_PLANE, LE } = (SPEC.hack_squat as any).HS;
-    const R = Math.PI / 180, end = SM().poses.end, Lp = LE.lumbar, HIP = end.root.at, t = -25 * R, v = [0, HIP[1]! - Lp[1]!, HIP[2]! - Lp[2]!], c = Math.cos(t), s = Math.sin(t);
-    const main = { root: { at: [0, Lp[1]! + v[1]! * c - v[2]! * s, Lp[2]! + v[1]! * s + v[2]! * c], tilt: end.root.tilt - 25 }, trunk: 25 };
-    const { g } = wedge(main);
-    console.log(`PF5 W7 hack_squat mutation (main lumbar pivot): lumbar ${g.lumbar.toFixed(2)} px`);
-    expect(g.lumbar!).toBeLessThan(10);
-    void PAD_PLANE;
-  });
-  it('mutation: a 5 px wedge (M_ROLL 10 over the same split: buttock about 5.4 px) is under 10 px', () => {
-    const roll = 10, split = [0.3, 0.3, 0.4, 0];
-    const { LE } = (SPEC.hack_squat as any).HS, end = SM().poses.end;
-    const sub = (a: number[], b: number[]) => a.map((v, i) => v - b[i]!), add = (a: number[], b: number[]) => a.map((v, i) => v + b[i]!);
-    const base = { root: { at: end.root.at, tilt: end.root.tilt - roll }, trunk: { flex: split.map(x => x * roll) } };
-    const d = sub(LE.backUpper, ENGINE.hack_squat.landmarksOf({ ...end, ...base }, H).backUpper);
-    const small = { ...base, root: { ...base.root, at: add(end.root.at, d) } };
-    const { g } = wedge(small);
-    console.log(`PF5 W7 hack_squat mutation (roll ${roll}): lumbar ${g.lumbar.toFixed(2)}, buttock ${g.buttock.toFixed(2)} px`);
-    expect(Math.min(g.lumbar!, g.buttock!)).toBeLessThan(10);
-  });
-  it('mutation: a root-only lift (no roll, the end pose raised along N by main\'s hip lift) lifts backUpper off the pad too', () => {
-    const { N, PAD_PLANE, LE } = (SPEC.hack_squat as any).HS, end = SM().poses.end;
-    const dot = (a: number[], b: number[]) => a.reduce((s, v, i) => s + v * b[i]!, 0), sub = (a: number[], b: number[]) => a.map((v, i) => v - b[i]!);
-    const R = Math.PI / 180, Lp = LE.lumbar, HIP = end.root.at, t = -25 * R, v = [0, HIP[1]! - Lp[1]!, HIP[2]! - Lp[2]!], c = Math.cos(t), s = Math.sin(t);
-    const mainMis = { root: { at: [0, Lp[1]! + v[1]! * c - v[2]! * s, Lp[2]! + v[1]! * s + v[2]! * c], tilt: end.root.tilt - 25 }, trunk: 25 };
-    const lift = dot(sub(ENGINE.hack_squat.landmarksOf({ ...end, ...mainMis }, H)['hip.r'], LE['hip.r']), N);
-    const ro = { root: { at: end.root.at.map((x: number, i: number) => x + N[i]! * lift), tilt: end.root.tilt } };
-    const { g } = wedge(ro);
-    console.log(`PF5 W7 hack_squat mutation (root-only lift): backUpper ${g.backUpper.toFixed(2)} px off the pad`);
-    expect(Math.abs(g.backUpper!)).toBeGreaterThan(0.5);
-    void PAD_PLANE;
   });
 });
 
