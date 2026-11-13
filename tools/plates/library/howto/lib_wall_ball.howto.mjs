@@ -130,8 +130,8 @@ const zooms = [
       wrong: 'Too far back: the ball goes forward, body tilts.',     // card zoom wrong (c3)
     },
     alt: {
-      right: 'Side view, standing about arm\'s length from the wall, arms out, the ball touching the wall.',
-      wrong: 'Side view. The feet stand too far back from the wall: the body tilts forward and the arms reach the ball forward, short of the wall.',
+      right: 'Side view, about arm\'s length from the wall. Arms out, the ball touching the wall.',
+      wrong: 'Side view. The feet stand too far back from the wall. The body tilts forward and the ball stops short of the wall.',
     },
   },
 ];
