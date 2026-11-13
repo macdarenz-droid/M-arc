@@ -1048,9 +1048,9 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
       mistakeAlt: 'beb1eff4e8d2d51ac40fbbc8568522c442ec2270297c697ec0bc8da429c8737a'
     },
     'cable-curl': {
-      normalSvg: '6b9f1d4a3e28c34124fff69c9e2995205fed21c40fda3b2cfa792c79f21754e2',
+      normalSvg: 'e7bba6a811844b456813b5e123b7de6b6aef87fa059fe6d5478a0d3dcf713400',   // LIB-PLATEFIX-5 (D-PF5-PINS, item 3 F-CURL-ELBOWZOOM): was 6b9f1d4a, now e7bba6a8 (lb05's 'owner' cable_curl plate entry, #419 6851987591)
       normalOverlay: '5bdf60a30bfadea64e1b4f1b3e01c8418ed585ef3904814fcf9efdc022c53f0d',
-      mistakeSvg: 'b479dcca4aa4d74f37dec4170f92c0495e0f66a37e26f32ad0da4a72e2a66420',
+      mistakeSvg: '5bb1621ae96eeb7df3af311f9d7431607a83827215615fbfe139fdbdeaa308b0',   // LIB-PLATEFIX-5 (D-PF5-PINS, item 3): was b479dcca, now 5bb1621a (lb05's 'owner' cable_curl plate entry, #419 6851987591)
       mistakeOverlay: 'dca9ffb85af31565b5c48a4d7efb0c4dbadc0c947837bf960c579ac509a2cf02',
       tells: '5ca2dca05a483d50450554fda1874c76ad12597445482884932e1c0a9a5e023c',
       tempo: '73dd8f8f94901608bf64b800d986bfb05e0019ffdec860438d9058b37cbd7634',

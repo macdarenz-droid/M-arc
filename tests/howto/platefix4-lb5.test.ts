@@ -28,7 +28,7 @@ describe('PF4 lb05 plates page: every other plate is byte-equal to main\'s (de91
     'incline-dumbbell-curl': '868f4c652e7ecf9c56441307471ad8b8e6f7c57cbbd8646f5a79bd2190a859af',
     'barbell-curl': 'ff95d0403a81e902cb5f413d9138a35aef8de7e3a64fd67260ac589702a02129',
     'ez-bar-curl': '854ed905f13e9216de90b4d5efee041f5ee1438d25721610de51528b5fc3d083',
-    'cable-curl': '05a6e85af4ff0d2bbcfc92d35bfb7305824073c8fb231399466e666e0b4e506c',
+    'cable-curl': '4d814bc0d662ee95da0334efdb2b64693739071f92130db70d1d075a2d01e9b7',   // LIB-PLATEFIX-5 (D-PF5-PINS, item 3 F-CURL-ELBOWZOOM): was 05a6e85a, now 4d814bc0 (cable_curl's redrawn fragmentsOf; pinned, not moved to OWN)
     'reverse-curl': '1b9f2d838197a3ceb7e4b6ed8400fd264ddbd234b6ff28d18557b0fcd115d548',
   };
   // straight-bar-triceps-pushdown is PF4's own too (the PUSHDOWN re-clone, D-PF2-PUSHDOWN-T; its change is proven in
