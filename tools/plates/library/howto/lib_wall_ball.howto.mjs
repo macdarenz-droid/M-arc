@@ -28,7 +28,9 @@
 //   sandwiching, as a fault) -> setup 5; T catch-timing Wrong (c8) -> risks[early], which takes the slot of card risk
 //   c4 (still printed in the feel row shoulders means).
 // D-TEXT-PROGRESSION: c12 (ball weight, start light) and c16 (programming) are not form checkpoints, not on the sheet.
-import plateSpec from '../specs/wall_ball.mjs';
+import plateSpec, { SIZES as WB } from '../specs/wall_ball.mjs';
+import { landmarksOf } from '../engine.mjs';
+import { MED_BALL } from '../eq/medBall.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER };
 
@@ -80,6 +82,31 @@ const CL = {
 // and the spec's Mistake merged over it, as the engine draws it (card plate.mistake c3, c4: the feet too far from the
 // wall, the body tilting forward). The card zoom wall-distance Wrong is the plate's drawn fault. No drawing value added.
 const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
+// LIB-PLATEFIX-5 (D-PF4-W67LATER; W7 panel L8): the close-up's Wrong is the spec's own Mistake form (specs/wall_ball.mjs
+// mistakePose: the thorax folded about the hips, the ball riding the thorax, the hands under it) with the end's root and
+// feet (no shift back, so it overlays near the Right inside the panel) and the thorax at ZOOM_INCL (critic c3: at least
+// 45 deg). ZOOM_INCL is a zoom-only drawing size (D-SHIP-DRAWVAL); the plate Mistake stays. The ball and cup helpers are
+// the spec's, copied (D-LIB9-CLONE: exporting them would move the spec's bytes).
+const ZOOM_INCL = 50;
+const BALL_R = MED_BALL.d / 2, H = 1.75;
+const REFP = { neck: [0.855, -0.02], backUpper: [0.75, -0.072], sternum: [0.80, 0.07] };
+const BALL_T = [0, REFP.sternum[0], REFP.sternum[1] + WB.BALL_OFF / H];
+const Wt = (() => {
+  const [a, b, c] = [REFP.neck, REFP.backUpper, REFP.sternum];
+  const M = [[a[0] - c[0], b[0] - c[0]], [a[1] - c[1], b[1] - c[1]]], v = [BALL_T[1] - c[0], BALL_T[2] - c[1]];
+  const det = M[0][0] * M[1][1] - M[0][1] * M[1][0];
+  const wa = (v[0] * M[1][1] - M[0][1] * v[1]) / det, wb = (M[0][0] * v[1] - v[0] * M[1][0]) / det;
+  return { neck: wa, backUpper: wb, sternum: 1 - wa - wb };
+})();
+const ballOfLm = lm => [0, 1, 2].map(i => Wt.neck * lm.neck[i] + Wt.backUpper * lm.backUpper[i] + Wt.sternum * lm.sternum[i]).map((v, i) => (i === 0 ? 0 : v));
+const UNDER = Math.sqrt(BALL_R ** 2 - WB.HAND_X ** 2);
+const cupOf = (c, s) => [s * WB.HAND_X, c[1] - UNDER, c[2]];
+const ELBOWS = [0.25, -1, 0.1];
+const cups = c => ({ l: { at: cupOf(c, 1), pole: ELBOWS }, r: { at: cupOf(c, -1), pole: [-ELBOWS[0], ELBOWS[1], ELBOWS[2]] } });
+const ZOOM_WRONG = (() => {
+  const p = { root: { at: END.root.at, tilt: ZOOM_INCL - 6 }, trunk: 6, neck: -ZOOM_INCL / 2, plant: END.plant };
+  return { ...p, reach: cups(ballOfLm(landmarksOf({ ...END, ...p }, H))) };
+})();
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
@@ -90,11 +117,11 @@ export const stills = {
 const zooms = [
   {
     key: 'wall-distance', chip: 'Distance', heading: 'Wall distance', kind: 'posture',
-    // zoom shell: crop centre on the right pose's knee, wide enough for the body and the wall; the Wrong is the spec's
-    // Mistake drawn alone (solid).
+    // zoom shell: crop centre on the right pose's knee, wide enough for the body and the wall; the Wrong is ZOOM_WRONG
+    // (above) drawn alone (solid): the tilt with no shift back (LIB-PLATEFIX-5).
     crop: { center: { at: 'knee.r', pose: 'right', off: [-10, -20] }, sizePx: 320 },   // W7 panel (#394): wide enough for the whole Wrong figure
     right: 'end',
-    wrong: { base: 'end', pose: MIS, solid: true },
+    wrong: { base: 'end', pose: ZOOM_WRONG, solid: true },
     callout: {
       right: { text: 'Arm\'s length', anchor: 'toe.r' },
       wrong: { text: 'Too far back', anchor: { at: 'heel.r', pose: 'mistake' } },
