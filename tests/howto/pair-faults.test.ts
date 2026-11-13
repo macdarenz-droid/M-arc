@@ -359,27 +359,27 @@ describe('LIB-PLATEFIX-4 D-PF4-PINS mutation', () => {
 // change; PLAN ruled #424: Q-PFS-1 right only, Q-PFS-3 the note need not equal the caption). A row's `pairNote` draws its
 // own Right note on its sub-key; mountain_climbers names it in a scratch config only (its flip is a later LIB-SHIP wave).
 describe('F-HAND-PALMFLAT-SIZE: a row\'s own Right note on its sub-key', () => {
-  const NOTE = { right: { text: 'Hand under shoulder', source: `docs/research/howto/${CARD}#c2` } };
+  const NOTE = { right: { text: 'Under shoulder', source: `docs/research/howto/${CARD}#c2` } };
   const CAP = { 'hand-ahead': { right: { text: 'Hand directly under the shoulder', source: `docs/research/howto/${CARD}#c2, zooms[hand-under-shoulder].right` } } };
   const MCN = { ...MC, pairNote: NOTE, pairWords: CAP };
   const red = (row: Record<string, unknown>, re: RegExp) => expect(() => P.rowFilterOf('lib_mountain_climbers', row)).toThrow(re);
-  it('C2: Right head HAND UNDER SHOULDER, Wrong head HAND AHEAD, the caption says directly under the shoulder; else the panel as without the note', async () => {
+  it('C2: Right head UNDER SHOULDER (Q-PFS-4), Wrong head HAND AHEAD, the caption says directly under the shoulder; else the panel as without the note', async () => {
     const h = await P.pairPanel(SUB, P.INDEX, subsOf({ lib_mountain_climbers: MCN }));
     expect(pagesIn(h)).toBe(1);
-    expect(h.match(/<text [^>]*class="h-note"[^>]*>([^<]*)</g)!.map(t => t.slice(t.lastIndexOf('>') + 1, -1))).toEqual(['HAND UNDER SHOULDER']);
+    expect(h.match(/<text [^>]*class="h-note"[^>]*>([^<]*)</g)!.map(t => t.slice(t.lastIndexOf('>') + 1, -1))).toEqual(['UNDER SHOULDER']);
     expect(h.match(/<text [^>]*class="h-note m"[^>]*>([^<]*)</g)!.map(t => t.slice(t.lastIndexOf('>') + 1, -1))).toEqual(['HAND AHEAD']);
     expect(h.includes('Hand directly under the shoulder')).toBe(true);
     expect(/whole hand down/i.test(h)).toBe(false);
     // the note is the only change: put the key's note back and it is the same row's panel without pairNote
     const plain = await P.pairPanel(SUB, P.INDEX, subsOf({ lib_mountain_climbers: { ...MC, pairWords: CAP } }));
-    expect(h.replace('>HAND UNDER SHOULDER<', '>WHOLE HAND DOWN<')).toBe(plain);
+    expect(h.replace('>UNDER SHOULDER<', '>WHOLE HAND DOWN<')).toBe(plain);
     expect(sha(h)).toBe(SCRATCH_PANEL);
   });
   it('C2: the drawing passes the view\'s own checks (report.ok) with the row\'s note; the size is the key\'s (170, ruling 4)', () => {
     const r = P.renderPair('push_up', { fault: 'hand-ahead', uid: `hp-${SUB}-hand-ahead`, rightNote: NOTE.right.text });
     expect([r.report.ok, r.report.problems]).toEqual([true, []]);
     expect(r.svg.includes('viewBox="0 0 358 246"')).toBe(true);   // 70 + 170 + 6
-    expect(r.svg).toBe(P.renderPair('push_up', { fault: 'hand-ahead', uid: `hp-${SUB}-hand-ahead` }).svg.replace('>WHOLE HAND DOWN<', '>HAND UNDER SHOULDER<'));
+    expect(r.svg).toBe(P.renderPair('push_up', { fault: 'hand-ahead', uid: `hp-${SUB}-hand-ahead` }).svg.replace('>WHOLE HAND DOWN<', '>UNDER SHOULDER<'));
   });
   it('rowFilterOf returns the note; a row with no pairNote has none', () => {
     expect(P.rowFilterOf('lib_mountain_climbers', MCN).note).toEqual(NOTE);
@@ -393,15 +393,15 @@ describe('F-HAND-PALMFLAT-SIZE: a row\'s own Right note on its sub-key', () => {
     expect(B.pairRowsOf({ closeups: { mountain_climbers: MCN } })).toHaveLength(1);
   });
   it('m2: a source not citing cards/mountain_climbers.json is red', () => {
-    red({ ...MC, pairNote: { right: { text: 'Hand under shoulder', source: 'docs/research/howto/shared/palm-flat.json#c3' } } }, /pairNote right source does not cite cards\/mountain_climbers.json/);
-    red({ ...MC, pairNote: { right: { text: 'Hand under shoulder', source: 'docs/research/howto/cards/push_up.json#c2' } } }, /does not cite cards\/mountain_climbers.json/);
-    red({ ...MC, pairNote: { right: { text: 'Hand under shoulder' } } }, /does not cite/);
+    red({ ...MC, pairNote: { right: { text: 'Under shoulder', source: 'docs/research/howto/shared/palm-flat.json#c3' } } }, /pairNote right source does not cite cards\/mountain_climbers.json/);
+    red({ ...MC, pairNote: { right: { text: 'Under shoulder', source: 'docs/research/howto/cards/push_up.json#c2' } } }, /does not cite cards\/mountain_climbers.json/);
+    red({ ...MC, pairNote: { right: { text: 'Under shoulder' } } }, /does not cite/);
   });
   it('Q-PFS-1: right only; a wrong note, an unknown key, a non-object, no right, or an empty text is red', () => {
     red({ ...MC, pairNote: { ...NOTE, wrong: { text: 'x', source: CARD } } }, /pairNote holds wrong; only right is allowed/);
     red({ ...MC, pairNote: { left: NOTE.right } }, /pairNote holds left/);
     red({ ...MC, pairNote: {} }, /pairNote holds no right/);
-    red({ ...MC, pairNote: 'Hand under shoulder' }, /pairNote is not an object/);
+    red({ ...MC, pairNote: 'Under shoulder' }, /pairNote is not an object/);
     red({ ...MC, pairNote: [NOTE] }, /pairNote is not an object/);
     red({ ...MC, pairNote: null }, /pairNote is not an object/);
     red({ ...MC, pairNote: { right: { text: ' ', source: CARD } } }, /pairNote right text is empty/);
@@ -413,5 +413,5 @@ describe('F-HAND-PALMFLAT-SIZE: a row\'s own Right note on its sub-key', () => {
     expect(two(MCN).subs.get(SUB).note).toEqual(NOTE);
   });
 });
-// sha256 of the scratch sub-key panel above (mountain_climbers, MCN), for the ship wave and the hands critic (C4)
-const SCRATCH_PANEL = '68cb99a0b87a6b5ffc37db48aec2f50803bc354a057e950e8d3936b5e744a5dc';
+// sha256 of the scratch sub-key panel above (mountain_climbers, MCN; the note "Under shoulder", Q-PFS-4 ruled on #424), for the ship wave and the hands critic (C4)
+const SCRATCH_PANEL = '594e9df8769a32ab8dd8fffbbf46e82083b4be968c3ba1119cb2dc78f6965765';
