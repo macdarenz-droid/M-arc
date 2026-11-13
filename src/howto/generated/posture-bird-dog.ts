@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=6dcd1388a4eeae1e5ead724da3a6f1dcb10abfc6e3deec4d06d6b7f5744085df
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=2e68d490d6c5e3acfe37c9a0ebac95d934f154540f98a9169ea4dde7e221ca6c
 // The bird-dog posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-bird-dog.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

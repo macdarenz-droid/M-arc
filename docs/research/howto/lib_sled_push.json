@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=897176ea92b5d86f5841cf34a28af5b68456a84098ff7239bff49ba60d14dead
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=c61a952c85a79951bbb252ed75b374668be9c844c56bffd4f5b764379567f8b8
 {
   "id": "lib_sled_push",
   "rev": 1,

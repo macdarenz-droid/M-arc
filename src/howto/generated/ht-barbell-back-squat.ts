@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=c4f913e1f455ad8d8a01f05285dcb487c054d7fababf5560d1b608f44c601e87
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=6e7bbc57480f5730f8ce11cc2f95974f50617bdc72f9d85dc6c9894c72579a3b
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_barbell_back_squat",
   name: "Barbell Back Squat",
-  hashes: { inputsSha256: "c4f913e1f455ad8d8a01f05285dcb487c054d7fababf5560d1b608f44c601e87", golden: "6f8b671dc0b95f9fe171df82f154388ddc20c76dadcc6485d1e8eccfb7f5fae7" },
+  hashes: { inputsSha256: "6e7bbc57480f5730f8ce11cc2f95974f50617bdc72f9d85dc6c9894c72579a3b", golden: "6f8b671dc0b95f9fe171df82f154388ddc20c76dadcc6485d1e8eccfb7f5fae7" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -400,20 +400,20 @@ export default {
     {
       "key": "hand",
       "chip": "Hand",
-      "heading": "Hand: right and wrong",
+      "heading": "Hand",
       "kind": "hand",
       "feelRow": "wrist"
     },
     {
       "key": "bar-on-back",
       "chip": "Bar on back",
-      "heading": "Bar on back: right and wrong",
+      "heading": "Bar on back",
       "kind": "posture"
     },
     {
       "key": "depth",
       "chip": "Depth",
-      "heading": "Depth: right and wrong",
+      "heading": "Depth",
       "kind": "posture"
     }
   ],

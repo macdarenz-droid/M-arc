@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=6d1539f2ec5bb9fdbccf0bd74e67ba12a372ec49336accd8f84c265fdeb31d60
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=0e2ff1c3014813a85b27f8da01849cf574d5a266842eed17ab0201e5e615809b
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_horizontal_leg_press",
   name: "Horizontal Leg Press",
-  hashes: { inputsSha256: "6d1539f2ec5bb9fdbccf0bd74e67ba12a372ec49336accd8f84c265fdeb31d60", golden: "230495d702f11dcc01b2dcf700d745284d5e43e540efb438dba51ed4bc7a0bd7" },
+  hashes: { inputsSha256: "0e2ff1c3014813a85b27f8da01849cf574d5a266842eed17ab0201e5e615809b", golden: "230495d702f11dcc01b2dcf700d745284d5e43e540efb438dba51ed4bc7a0bd7" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

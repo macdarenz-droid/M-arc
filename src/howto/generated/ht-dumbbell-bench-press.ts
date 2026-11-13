@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=78b82f6796cdaf2e62f2797c4c8ba0f3168626e720ea6ae33f8f0f684248e9cc
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=8952af4bc47034efbf7a14726b07bcbc10f1b126f58b98b0906b7d13bc387bdc
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_dumbbell_bench_press",
   name: "Dumbbell Bench Press",
-  hashes: { inputsSha256: "78b82f6796cdaf2e62f2797c4c8ba0f3168626e720ea6ae33f8f0f684248e9cc", golden: "1fdce73a7431d1f10e18e54140184df37c1fb89902bde18dcd460c817365635c" },
+  hashes: { inputsSha256: "8952af4bc47034efbf7a14726b07bcbc10f1b126f58b98b0906b7d13bc387bdc", golden: "1fdce73a7431d1f10e18e54140184df37c1fb89902bde18dcd460c817365635c" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

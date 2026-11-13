@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=2e6fc17949b37fec7d4c7bade56265af9a5bc19a05b171935a748d4147953809
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=81fe33a4606d3d21133e402de7542c8d5b3f922578a78dac448e038b6bb4786e
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_bear_crawl",
   name: "Bear Crawl",
-  hashes: { inputsSha256: "2e6fc17949b37fec7d4c7bade56265af9a5bc19a05b171935a748d4147953809", golden: "5f1b17259543db51d271d5b0291a86e60a86cf38fce0a9f649fe35e9c61e032d" },
+  hashes: { inputsSha256: "81fe33a4606d3d21133e402de7542c8d5b3f922578a78dac448e038b6bb4786e", golden: "5f1b17259543db51d271d5b0291a86e60a86cf38fce0a9f649fe35e9c61e032d" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

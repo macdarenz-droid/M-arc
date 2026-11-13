@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=d10a693cd2131ef278894ea3f7fe7bdbd51924231d66baf32cec03056f04f6b5
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=197903b0d6c69f93c74023f9175a84089d689eccdcd7603e5a3b356047770a82
 // The medicine-ball-slam posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-medicine-ball-slam.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives
