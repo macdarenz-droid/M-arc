@@ -124,7 +124,18 @@ describe('PF5 W6 diamond_push_up shoulder-blades: rolled shoulder, rounded upper
       toes: Math.max(...['toe.r', 'toe.l'].flatMap(k => [Math.abs(Pw(k)[1] - c.floor), d2(Pw(k), Pr(k))])),
       grip: d2(Pw('grip.r'), Pr('grip.r')), wristY: Math.abs(Pw('wrist.r')[1] - Pr('wrist.r')[1]),
       drop: Pw('shoulder.r')[1] - Pr('shoulder.r')[1], ahead: Pw('shoulder.r')[0] - Pw('wrist.r')[0],
-      dot: dot ? d2([+dot[1]!, +dot[2]!], r.mW.to(Pw('shoulder.r'))) : NaN, under: underOf(r, z.key), drops: (r.W.match(/class="z-drop"/g) ?? []).length };
+      dot: dot ? d2([+dot[1]!, +dot[2]!], r.mW.to(Pw('shoulder.r'))) : NaN, under: underOf(r, z.key), drops: (r.W.match(/class="z-drop"/g) ?? []).length,
+      // PF5 fix round (#419 6851987591 L5): the shoulder carried forward past the wrist line, a forward-pointing arrow
+      aheadR: Pr('shoulder.r')[0] - Pr('wrist.r')[0], fwd: forwardOf(r, Pw('shoulder.r'), Pr('wrist.r')) };
+  };
+  /** The Wrong crop's turn arrows (tip direction, centre offset from the Wrong shoulder) and wrist lines, the Right's counts. */
+  const forwardOf = (r: any, sh: V, wr: V) => {
+    const turns = [...r.W.matchAll(/<g class="z-turn"><path class="z-drop" d="M([-\d.]+) ([-\d.]+)A([\d.]+) [\d.]+ 0 [01] [01] ([-\d.]+) ([-\d.]+)"\/><path class="z-drop-head" d="M([-\d.]+) ([-\d.]+)L([-\d.]+) ([-\d.]+)L([-\d.]+) ([-\d.]+)Z"\/><\/g>/g)].map(q => q.slice(1).map(Number));
+    const t = turns[0], tip = t ? [t[7]!, t[8]!] : [NaN, NaN], base = t ? [(t[5]! + t[9]!) / 2, (t[6]! + t[10]!) / 2] : [NaN, NaN];
+    const wd = [...r.W.matchAll(/<path class="z-width z-level m" d="M([-\d.]+) 4V/g)].map(q => +q[1]!);
+    return { n: turns.length, nRight: (r.R.match(/z-turn|z-width/g) ?? []).length, dx: tip[0]! - base[0]!, dy: tip[1]! - base[1]!,
+      off: t ? Math.abs(d2([t[0]!, t[1]!], r.mW.to(sh)) - t[2]!) : NaN, wrist: wd.length === 1 ? Math.abs(wd[0]! - r.mW.to(wr)[0]!) : NaN, nWidth: wd.length,
+      plainDrops: (r.W.replace(/<g class="z-turn">[\s\S]*?<\/g>/g, '').match(/class="z-drop"/g) ?? []).length };
   };
   /** hip-line: the shoulder joint's place across the thorax (to the back and front edges of the torso, along the normal of
    *  backUpper -> neck) in the Right and the Wrong, and the head's box in each panel. */
@@ -141,6 +152,9 @@ describe('PF5 W6 diamond_push_up shoulder-blades: rolled shoulder, rounded upper
   const clearOk = (q: any) => q.headLow > 0 && q.torsoLow > 0 && q.toes <= 0.5;
   const handsOk = (q: any) => q.grip <= 0.5 && q.wristY <= 0.1;
   const shoulderOk = (q: any) => q.drop >= 10 && q.ahead > 0 && q.dot <= 1;
+  const forwardOk = (q: any) => q.ahead >= q.aheadR + 6;
+  const arrowOk = (q: any) => q.fwd.n === 1 && q.fwd.nRight === 0 && q.fwd.plainDrops === 0 && q.fwd.dx > 0 && q.fwd.dx > 2 * Math.abs(q.fwd.dy) && q.fwd.off <= 1;
+  const wristOk = (q: any) => q.fwd.nWidth === 1 && q.fwd.wrist <= 1;
   const hipOk = (q: any) => Math.abs(q.R.dor - q.W.dor) <= 1 && Math.abs(q.R.ven - q.W.ven) <= 1 && [q.R, q.W].every((s: any) => s.head[0] >= 0 && s.head[1] >= 0 && s.head[2] <= PANEL && s.head[3] <= PANEL);
   beforeAll(async () => {
     c = await ctxOf('lb07', 'diamond_push_up', 'shoulder-blades'); m = measure(c.z); h = hipLine(c.howto.zooms.find((q: any) => q.key === 'hip-line'));
@@ -163,9 +177,17 @@ describe('PF5 W6 diamond_push_up shoulder-blades: rolled shoulder, rounded upper
     expect(m.ahead).toBeGreaterThan(0);
     expect(m.dot).toBeLessThanOrEqual(1);
   });
-  it('wrong.under: the Wrong is drawn solid over the faded Right, the drop arrow kept', () => {
+  it('wrong.under: the Wrong is drawn solid over the faded Right', () => {
     expect(m.under).toEqual({ fade: true, dashed: false, css: true, rightFade: false });
-    expect(m.drops).toBe(1);
+  });
+  it('fix round L5: the Wrong shoulder is carried forward, >= 6 plate px further ahead of the wrist than the Right\'s', () => {
+    expect(m.ahead - m.aheadR).toBeGreaterThanOrEqual(6);
+  });
+  it('fix round L5: one red arrow rolls over the Wrong shoulder (crop turn, on a circle round it within 1 panel px) and ends pointing forward (dx > 0, |dx| > 2|dy|); no straight drop arrow; none in the Right', () => {
+    expect(arrowOk(m)).toBe(true);
+  });
+  it('fix round L5: one grey dashed wrist line (crop width) in the Wrong at the wrist\'s x within 1 panel px', () => {
+    expect(wristOk(m)).toBe(true);
   });
   it('guard hip-line: the shoulder joint sits at the same place on the trunk in the Right and the Wrong (1 px), the head inside both panels', () => {
     expect(Math.abs(h.R.dor - h.W.dor)).toBeLessThanOrEqual(1);
@@ -181,6 +203,12 @@ describe('PF5 W6 diamond_push_up shoulder-blades: rolled shoulder, rounded upper
     expect(clearOk(measure(wr({ pose: { ...P0, root: { ...P0.root, at: [P0.root.at[0], P0.root.at[1] + 0.05, P0.root.at[2]], tilt: c.mod.stills.rolled.pose.root.tilt } } })))).toBe(false);   // root lifted, toes not re-solved
     expect(handsOk(measure(wr({ pose: { ...P0, wrist: c.mod.stills.rolled.pose.wrist } })))).toBe(false); // wrist not re-solved
     expect(underOk(measure(wr({ under: false })).under)).toBe(false);                                   // under removed
+    const stillRolled = measure(wr({ pose: { ...P0, scap: { elev: 0, pro: c.mod.stills.rolled.pose.scap.pro }, ankle: 0 } }));   // fix round: no forward carry
+    expect(forwardOk(stillRolled)).toBe(false);
+    const drop = [{ kind: 'drop', from: { at: 'shoulder.r', pose: 'right', off: [0, -4] }, to: { at: 'shoulder.r', pose: 'mistake', off: [0, 0] } }];
+    expect(arrowOk(measure({ ...z, guides: drop }))).toBe(false);                                         // the round's drop arrow
+    expect(arrowOk(measure({ ...z, guides: z.guides.map((g: any) => g.kind === 'turn' ? { ...g, a1: 30 } : g) }))).toBe(false);   // arrow ends pointing down
+    expect(wristOk(measure({ ...z, guides: z.guides.filter((g: any) => g.kind !== 'width') }))).toBe(false);   // no wrist line
     const hz = c.howto.zooms.find((q: any) => q.key === 'hip-line');
     expect(hipOk(hipLine({ ...hz, wrong: { ...hz.wrong, pose: mergeDeep(hz.wrong.pose, { scap: { elev: 10 } }) } }))).toBe(false);   // shoulder off the trunk
     expect(hipOk(hipLine({ ...hz, crop: { ...hz.crop, sizePx: 150 } }))).toBe(false);                   // hip-line crop back to 150
@@ -303,5 +331,34 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
     expect(skipped).toEqual([]);
     expect(n).toBe(156);
     expect(all.digest('hex')).toBe('27ace3fb56ff7ef1c6eb4429ba4a278ad8d23930c8bddff2d7bcc70486ae3f58');
+  });
+});
+
+// PF5 fix round (#419 6851987591, cable_chest_press L4 [3,3,4]): each red-flag feel row marks its pain region in the
+// D-PFR-L4 form (tests/howto/lib-ship.test.ts W7 block: the regions are bodyMuscles.ts parts): back -> the four lower-back
+// parts, shoulder -> both front shoulders; the map draws them as pain. Red on f487c797 (the rows named muscles only).
+describe('PF5 fix round cable_chest_press feel: red-flag rows mark their pain region (D-PFR-L4 form)', { timeout: T }, () => {
+  const REGIONS: Record<string, string[]> = {
+    back: ['lower-back-erectors-left', 'lower-back-ql-left', 'lower-back-erectors-right', 'lower-back-ql-right'],
+    shoulder: ['shoulder-front-left', 'shoulder-front-right'],
+  };
+  let F: any, fm: any;
+  beforeAll(async () => {
+    F = (await import(/* @vite-ignore */ lib('howto/lib_cable_chest_press.howto.mjs'))).default.feel;
+    fm = await import(/* @vite-ignore */ new URL('../../tools/plates/layers/engine/feelmap.mjs', import.meta.url).href);
+  });
+  const problems = (rows: any[]) => rows.filter(r => r.redFlag).flatMap(r => {
+    const want = REGIONS[String(r.redFlag)], got = r.at?.parts ?? [];
+    if (!want) return [`${r.key}: red flag ${r.redFlag} has no region`];
+    const pain = fm.renderFeelMap({ primary: F.primary, secondary: F.secondary, pain: got, views: ['front', 'back'], id: `ccp-${r.key}`, shimmer: false }).html;
+    const drawn = [...pain.matchAll(/<g class="feel-pain">([\s\S]*?)<\/g>/g)].flatMap(q => q[1]!.match(/<path /g) ?? []).length;   // pain paths, both views
+    return [...(want.every(p => got.includes(p)) ? [] : [`${r.key} (${r.redFlag}) does not mark ${want.join('+')}`]), ...(drawn >= want.length ? [] : [`${r.key}: ${drawn} pain paths drawn`])];
+  });
+  it('both red-flag rows (lower-back: back, shoulder: shoulder) name their region parts and the map draws them as pain', () => {
+    expect(F.rows.filter((r: any) => r.redFlag).map((r: any) => `${r.key}:${r.redFlag}`)).toEqual(['lower-back:back', 'shoulder:shoulder']);
+    expect(problems(F.rows)).toEqual([]);
+  });
+  it('mutation: dropping either row\'s parts (f487c797) is red', () => {
+    for (const k of ['lower-back', 'shoulder']) expect(problems(F.rows.map((r: any) => r.key === k ? { ...r, at: { muscles: r.at.muscles } } : r)), k).not.toEqual([]);
   });
 });
