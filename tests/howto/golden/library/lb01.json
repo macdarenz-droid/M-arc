@@ -497,6 +497,47 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb01 plates page rebuilt with LIB-PLATEFIX-3b's assisted_pull_up (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (this builder, and CI howto-rebuild on #408 at 2a78b893).",
       "supersedes": 15,
       "prev": "f8e7e3f457ff2583e7a09bebca49ba58a8b51b3ce2dacc4c1c00c7eb37125ec6"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_underhand_lat_pulldown",
+      "src": "library/specs/underhand_lat_pulldown.mjs",
+      "slug": "underhand-lat-pulldown",
+      "prefix": "underhand-lat-pulldown",
+      "chromeId": "underhand-lat-pulldown",
+      "exemptions": [
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "215f8446faf92322fe3a4657d660505fbe5afe53fca89be75d782ea5d4a90a37",
+        "normalOverlay": "8f1f975cec01e9ba303ffaf55232c1c7314508767f42b47a6cb876766a57396a",
+        "mistakeSvg": "d2638f679627b0b946f499e2a843975635dfe70af91a7caab4cf54d056733536",
+        "mistakeOverlay": "76b751f207f8a2aa15f71be5a6afff6ca7bb372f911f9a84b114b6b22fbf4bfa",
+        "tells": "fc848a24a1103e46232a9d98689684ed06d86fc24456deafd8c42c952437ccbb",
+        "tempo": "796fbe7b0fe12e3121ae343b598ed832ad0ba73c2d14d43c8680ad5536220bc2",
+        "cues": "6a65646abb9d895e96a16f95a031131ab06baa7d0bdfd6d0c3d1cdb3614a8ed6",
+        "alt": "f64f7b07a26d9fe86be9dee09826abd689df626ce78db15c48d0033610bd8996",
+        "mistakeAlt": "7592ba4f3573bbae58c16859b7b3a7da5481de9bf0b601e4ac9dbb740a6b4519"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6851987591 @ f487c7971ddae190542e75e66abe2508c77234aa",
+      "date": "2026-11-13",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-5 item 4 underhand_lat_pulldown (the elbows box moved down to the elbows): plates panel approved in round 1 (#419 6851987591 @ f487c797); its sheet cleared by D-PF5-HANDPAIR (#419 6852356177).",
+      "supersedes": 14,
+      "prev": "b584ab3da1de86eca0e8ec15eace5dfcddd8edc1f7010c58b6ec35b27fe41dc2"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "79808a633b32c33bc1e9320819903b64730bfa15b237f07d997c2b6adc45f460",
+      "bytes": 1283486,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6851987591 @ f487c7971ddae190542e75e66abe2508c77234aa",
+      "date": "2026-11-13",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF5 lb01 plates page with underhand_lat_pulldown's approved plate (#419 6851987591); the other 11 plates are byte-equal to their pinned fragments (built twice, same bytes).",
+      "supersedes": 18,
+      "prev": "a1eaa4c5cd41ce0df9ea9098cfe8eb33ab65dc4bd8326ed81dbe9240773b0f59"
     }
   ]
 }

@@ -7,14 +7,17 @@ const ZOOM = {
   crop: { source: 'engine', landmarks: 'spec', solidPose: 'own', equipment: 'noRays' },
   css: { thumb: 'plain' },
 };
+// LIB-PLATEFIX-5 item 1 (W6 panel, D-PLAN-W8C): a sheet whose Wrong is drawn solid over the faded Right takes the fade
+// rule (lb01.closeups.mjs assisted_pull_up's form); ZOOM itself is unchanged.
+const FADE = r => ({ ...r, css: { ...r.css, fade: true } });
 export const CLOSEUP_OPTIONS = {
   cable_lateral_raise: ZOOM,
   dumbbell_front_raise: ZOOM,
   face_pull: ZOOM,
-  cable_external_rotation: ZOOM,
+  cable_external_rotation: FADE(ZOOM),   // LIB-PLATEFIX-5 item 1: cer-turn's Wrong over the faded Right (wrong.under)
   resistance_band_pull_apart: ZOOM,
   weighted_dip: ZOOM,
   incline_push_up: ZOOM,
-  diamond_push_up: ZOOM,
+  diamond_push_up: FADE(ZOOM),   // LIB-PLATEFIX-5 item 1: shoulder-blades' Wrong over the faded Right (wrong.under)
   pike_push_up: ZOOM,
 };

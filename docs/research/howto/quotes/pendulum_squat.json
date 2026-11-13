@@ -322,6 +322,22 @@
       "status": "verbatim",
       "closest": "Plus, it features a safety catch that gives you an “out” if you fail a rep, unlike traditional squats.",
       "note": "Added in the LB8 fix round; fetched by curl 2026-10-22."
+    },
+    {
+      "claim": "c23",
+      "source": "wff-pend",
+      "text": "The Primal Pendulum Squat uses a pendulum arc. The weight carriage swings through a curved path like a pendulum rather than travelling in a straight line.",
+      "status": "verbatim",
+      "closest": "The Primal Pendulum Squat uses a pendulum arc. The weight carriage swings through a curved path like a pendulum rather than travelling in a straight line.",
+      "note": "RESEARCH-ROUTES-4; fetched by curl 2026-11-10."
+    },
+    {
+      "claim": "c23",
+      "source": "wff-pend",
+      "text": "Allow the carriage to swing forward and down, following the pendulum arc.",
+      "status": "verbatim",
+      "closest": "Allow the carriage to swing forward and down, following the pendulum arc.",
+      "note": "RESEARCH-ROUTES-4; fetched by curl 2026-11-10."
     }
   ]
 }
