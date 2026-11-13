@@ -116,6 +116,8 @@ export const SC_LAYERS_APPROVAL = 'https://github.com/macdarenz-droid/M-arc/pull
  *  reverses to its superseded entry's pin exactly (scLayersProblems). */
 export const SC_KEEP: Record<string, string[]> = {
   lb01: ['hanging-knee-raise-zoom-top-h', 'inverted-row-zoom-top-h', 'resistance-band-row-zoom-back-line-h', 'resistance-band-row-zoom-blades-h'],
+  // lb02 has no committed layers page (nothing in lb02 ships); its built page (platefix4 tests) keeps this bare stem from main
+  lb02: ['incline-barbell-bench-press-zoom-back-on-incline-pad-h'],
   lb03: ['pendlay-row-zoom-pendlay-top-h', 'landmine-row-zoom-landmine-back-h', 't-bar-row-zoom-tbar-back-h', 'barbell-shrug-zoom-shrug-top-h', 'cable-shrug-zoom-cshrug-top-h', 'smith-machine-shrug-zoom-smith-shrug-top-h'],
   lb07: ['cable-lateral-raise-zoom-clr-top-height-h'],
   lb09: ['ab-wheel-rollout-zoom-back-line-h', 'bird-dog-zoom-back-line-h'],
@@ -156,3 +158,7 @@ export function lessSC(file: any, batch: string, page: Buffer): { file: any; pag
   if (bad.length) throw new Error(bad.join('\n'));
   return { file: { ...file, entries: file.entries.slice(0, -1) }, page: toMainLayersPage(page, batch) };
 }
+
+/** A hand-pair panel (pairs.mjs pairPanel) with the F-SHEET-COPY heading undone: "Hand" back to "Hand: right and wrong"
+ *  in the h4 and the svg's aria-label (the pair-faults.test.ts toMain form). */
+export const toMainPairPanel = (h: string) => h.replaceAll('tabindex="-1">Hand</h4>', 'tabindex="-1">Hand: right and wrong</h4>').replaceAll('aria-label="Hand"', 'aria-label="Hand: right and wrong"');

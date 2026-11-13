@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { LIMITS, checkC7 } from './checks/c7';
+import { SC_COPYLINT_HUNKS, toMainCopyLint } from './checks/sheetcopy-hunks';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = join(new URL('.', import.meta.url).pathname, '..', '..');
@@ -94,8 +95,15 @@ describe('BC-2: every other box at 31 still fails and at 30 passes, at all 3 sit
     }
   });
   it('golden B\'s copy-lint.mjs is byte-identical to the base, and its cap is 30', () => {
-    expect(sha(readFileSync(join(ROOT, 'tools/plates/layers/artifact/copy-lint.mjs')))).toBe('f568f938e0ac9d7555e8565848c1d5e7d9a6d3b78fb6f1d85cb7dabb4f6aeafe');
+    // F-SHEET-COPY (#423): the card edits copy-lint.mjs (heading rule, STOP_LINE for DISCLAIMER). The base sha stays: the
+    // file with exactly the card's hunks reversed (toMainCopyLint) is the base byte for byte, and no hunk touches the cap
+    const now = readFileSync(join(ROOT, 'tools/plates/layers/artifact/copy-lint.mjs'), 'utf8');
+    expect(sha(now)).not.toBe('f568f938e0ac9d7555e8565848c1d5e7d9a6d3b78fb6f1d85cb7dabb4f6aeafe');
+    expect(sha(toMainCopyLint(now))).toBe('f568f938e0ac9d7555e8565848c1d5e7d9a6d3b78fb6f1d85cb7dabb4f6aeafe');
+    expect(SC_COPYLINT_HUNKS.filter(([n, o]) => /RED_FLAG_BOX_MAX_WORDS|BOX_MAX/.test(`${n}\n${o}`))).toEqual([]);
     expect(CL.RED_FLAG_BOX_MAX_WORDS).toBe(30);
+    // mutation: the cap moved to 31 is not a card hunk, so the reverse no longer gives the base
+    expect(sha(toMainCopyLint(now.replace('RED_FLAG_BOX_MAX_WORDS = 30', 'RED_FLAG_BOX_MAX_WORDS = 31')))).not.toBe('f568f938e0ac9d7555e8565848c1d5e7d9a6d3b78fb6f1d85cb7dabb4f6aeafe');
   });
 });
 

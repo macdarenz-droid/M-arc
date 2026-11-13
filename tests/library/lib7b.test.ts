@@ -6,6 +6,7 @@ import { readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { nodeChild } from '../child-test';
+import { toMainPairPanel } from '../howto/sheetcopy-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -134,7 +135,10 @@ describe('D-LIB7b-HALVES: the pair panel gets golden B\'s TalkBack halves, attri
       // LIB-SHIP W5 D-SHIP-W5-EZWORDS / -EZNOTE (#392 6654996739, 6681700725): ez-curl-over's Right note (words and drawn) is
       // 'Wrist straight' (reverse_curl c1, c6); with that one note put back it is the panel before, byte for byte
       const back = k !== 'ez-curl-over' ? h : (expect(/middle of palm/i.test(h)).toBe(false), h.replaceAll('Wrist straight', 'Middle of palm').replaceAll('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'));
-      expect([k, sha(unsplit(back))]).toEqual([k, want]);
+      // F-SHEET-COPY (#423): the panel heading is "Hand" now; with the old heading put back (toMainPairPanel, the
+      // pair-faults form) it is the panel before, byte for byte
+      expect([k, h.includes('tabindex="-1">Hand</h4>'), h.includes('Hand: right and wrong')]).toEqual([k, true, false]);
+      expect([k, sha(unsplit(toMainPairPanel(back)))]).toEqual([k, want]);
       expect(h).toMatch(/role="img" aria-label="Right: /);
       expect(h).toMatch(/role="img" aria-label="Wrong: /);
       expect(H.splitHalves(unsplit(h), k)).toBe(h);
