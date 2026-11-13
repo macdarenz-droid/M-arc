@@ -415,3 +415,25 @@ describe('F-HAND-PALMFLAT-SIZE: a row\'s own Right note on its sub-key', () => {
 });
 // sha256 of the scratch sub-key panel above (mountain_climbers, MCN; the note "Under shoulder", Q-PFS-4 ruled on #424), for the ship wave and the hands critic (C4)
 const SCRATCH_PANEL = '594e9df8769a32ab8dd8fffbbf46e82083b4be968c3ba1119cb2dc78f6965765';
+
+// F-HAND-PALMFLAT-SIZE C1 MANIFEST (F-PAIR-FAULTS A2 form): MANIFEST.json, made by manifestOf in this card's [golden update]
+// commit, moves only the pairs.mjs and build-layers-page.mjs keys. With those two blanked in every row (134 rows each), it
+// is main 4ebc6d63's MANIFEST.json with the same blanks, and each row pins the files' current sha256.
+describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
+  const PFS_MOVED = ['tools/plates/library/build-layers-page.mjs', 'tools/plates/library/hands/pairs.mjs'];
+  const PFS_BLANKED_MAIN = '0e516709696351c7810965d0db47178c9b6a15d7afd429c8fc71e20b39422fc0';
+  const man = () => JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
+  const blank = (m: any) => { const c = structuredClone(m), n: Record<string, number> = {}; for (const r of Object.values<any>(c.rows)) for (const k of PFS_MOVED) if (k in r.files) { r.files[k] = ''; n[k] = (n[k] ?? 0) + 1; } return { n, sha: sha(JSON.stringify(c)) }; };
+  it('only the two keys differ from main, and each pins its current file', () => {
+    const m = man();
+    for (const k of PFS_MOVED) { const now = sha(readFileSync(new URL(`../../${k}`, import.meta.url))); for (const [id, r] of Object.entries<any>(m.rows)) if (k in r.files) expect([id, k, r.files[k]]).toEqual([id, k, now]); }
+    expect(blank(m)).toEqual({ n: { [PFS_MOVED[0]!]: 134, [PFS_MOVED[1]!]: 134 }, sha: PFS_BLANKED_MAIN });
+  });
+  it('red: any other key moved, or a row dropped', () => {
+    const m = man(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).some(k => !PFS_MOVED.includes(k)))!;
+    m.rows[id].files[Object.keys(r.files).find(k => !PFS_MOVED.includes(k))!] = '0'.repeat(64);
+    expect(blank(m).sha).not.toBe(PFS_BLANKED_MAIN);
+    const d = man(); delete d.rows[Object.keys(d.rows)[0]!];
+    expect(blank(d).sha).not.toBe(PFS_BLANKED_MAIN);
+  });
+});
