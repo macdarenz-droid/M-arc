@@ -95,3 +95,64 @@ export function toMainCopy(text: string, { page = false } = {}): string {
   }
   return t;
 }
+
+// ---- the copy change undone on a How-to module namespace (for the visible-word pins measured on main) ----
+const mainValue = (v: any, key?: string): any => typeof v === 'string'
+  ? (key === 'heading' && SC_STEMS.includes(v) ? `${v}: right and wrong` : v.replaceAll('Thumbless grip option', 'Option: thumb over the bar'))
+  : Array.isArray(v) ? v.map(x => mainValue(x))
+  : v && typeof v === 'object' && Object.getPrototypeOf(v) === Object.prototype ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, mainValue(x, k)]))
+  : v;
+/** `M` (a How-to module namespace, or an object in its shape) with the F-SHEET-COPY module copy reversed: every zoom
+ *  heading of SC_STEMS gets its ": right and wrong" back and "Thumbless grip option" reads "Option: thumb over the bar". */
+export const toMainHowto = (M: any): any => Object.fromEntries(Object.entries(M).map(([k, v]) => [k, mainValue(v)]));
+/** `shared` (howto/shared.mjs) as main counted it: the closing line was the disclaimer, not the stop line. */
+export const toMainShared = (shared: any): any => ({ ...shared, STOP_LINE: DISCLAIMER_OLD });
+
+// ---- the library layers pages: one appended F-SHEET-COPY layers-page entry each (the W8a / D-BODYMAP-APPEND form) ----
+/** The approval every F-SHEET-COPY layers-page entry carries, exactly. */
+export const SC_LAYERS_APPROVAL = 'https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994';
+/** Per batch: the zoom headings (h4 element ids) that already read as a bare stem on main (their sources never carried
+ *  ": right and wrong"), so the reverse leaves them. Measured against main a4796243's pages: with these kept, each page
+ *  reverses to its superseded entry's pin exactly (scLayersProblems). */
+export const SC_KEEP: Record<string, string[]> = {
+  lb01: ['hanging-knee-raise-zoom-top-h', 'inverted-row-zoom-top-h', 'resistance-band-row-zoom-back-line-h', 'resistance-band-row-zoom-blades-h'],
+  lb03: ['pendlay-row-zoom-pendlay-top-h', 'landmine-row-zoom-landmine-back-h', 't-bar-row-zoom-tbar-back-h', 'barbell-shrug-zoom-shrug-top-h', 'cable-shrug-zoom-cshrug-top-h', 'smith-machine-shrug-zoom-smith-shrug-top-h'],
+  lb07: ['cable-lateral-raise-zoom-clr-top-height-h'],
+  lb09: ['ab-wheel-rollout-zoom-back-line-h', 'bird-dog-zoom-back-line-h'],
+  lb10: ['kettlebell-swing-zoom-kb-top-h'],
+  'pilot-a': ['romanian-deadlift-zoom-rdl-bar-path-h', 'upright-row-zoom-urow-top-h'],
+};
+/** A library layers page (`batch`'s) with the F-SHEET-COPY copy change undone: toMainCopy (page: true), except the
+ *  SC_KEEP headings, each of which must be on the page exactly once. */
+export function toMainLayersPage(page: Buffer | string, batch: string): Buffer {
+  let t = page.toString();
+  for (const id of SC_KEEP[batch] ?? []) {
+    const at = `id="${id}" tabindex="-1">`;
+    if (t.split(at).length !== 2) throw new Error(`sheetcopy: ${batch}: ${id} is not on the page once`);
+    t = t.replace(at, `id="${id}" tabindex="-1" data-sc-keep>`);
+  }
+  return Buffer.from(toMainCopy(t, { page: true }).replaceAll(' tabindex="-1" data-sc-keep>', ' tabindex="-1">'));
+}
+/** The index of the F-SHEET-COPY entry's superseded layers-page entry (the last earlier one), or -1. */
+const lastLayersBefore = (E: any[], n: number) => { for (let i = n - 1; i >= 0; i--) if (E[i].kind === 'layers-page') return i; return -1; };
+/** `file`'s F-SHEET-COPY entry against the committed layers page: the file's last entry, a 'supervisor' layers-page
+ *  entry under F-SHEET-COPY with SC_LAYERS_APPROVAL, superseding the last earlier layers-page entry, with its ids, pinning
+ *  `page`; and the page with the copy change undone is the superseded pin, byte for byte. [problems] */
+export function scLayersProblems(file: any, batch: string, page: Buffer): string[] {
+  const E = file.entries as any[], n = E.length - 1, e = E[n], bad: string[] = [];
+  if (e?.kind !== 'layers-page' || e.decision !== 'F-SHEET-COPY' || e.approvedBy !== 'supervisor' || e.approval !== SC_LAYERS_APPROVAL) return [`${batch} F-SHEET-COPY: last entry ${e?.kind} ${e?.decision}`];
+  const s = lastLayersBefore(E, n), was = E[s];
+  if (s < 0 || e.supersedes !== s) bad.push(`${batch} F-SHEET-COPY: supersedes ${e.supersedes}, the last earlier layers-page entry is ${s}`);
+  if (JSON.stringify(e.ids) !== JSON.stringify(was?.ids)) bad.push(`${batch} F-SHEET-COPY: ids ${e.ids}`);
+  if (e.pageSha256 !== sha(page) || e.bytes !== page.length) bad.push(`${batch} F-SHEET-COPY: page pin`);
+  const m = toMainLayersPage(page, batch);
+  if (sha(m) !== was?.pageSha256 || m.length !== was?.bytes) bad.push(`${batch} F-SHEET-COPY: the page with the copy change undone is not the superseded pin`);
+  return bad;
+}
+/** `file` without its F-SHEET-COPY entry (checked first: throws on any scLayersProblems), and the page as main had it, so
+ *  a pin measured on main holds unchanged. */
+export function lessSC(file: any, batch: string, page: Buffer): { file: any; page: Buffer } {
+  const bad = scLayersProblems(file, batch, page);
+  if (bad.length) throw new Error(bad.join('\n'));
+  return { file: { ...file, entries: file.entries.slice(0, -1) }, page: toMainLayersPage(page, batch) };
+}

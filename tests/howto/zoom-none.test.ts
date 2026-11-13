@@ -8,10 +8,18 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { child, IN_CHILD } from '../child-test';
 import { W4_IDS } from './checks/ship-w4';
+import { toMainCopy } from './sheetcopy-pins';
 
 const GEN = join(__dirname, '../../src/howto/generated');
 const sha = (s: string) => createHash('sha256').update(s).digest('hex');
 const body = (n: string) => { const t = readFileSync(join(GEN, n), 'utf8'); return t.slice(t.indexOf('\n') + 1); };
+// F-SHEET-COPY (#423): the posture chunks whose zoom heading(s) lost ": right and wrong". Their BODY_MAIN pin stays
+// main's, measured with the copy change undone (toMainCopy); `scBody` gives that for an SC_POSTURE chunk, the body itself
+// for any other. A chunk off this set keeps the exact byte pin.
+const SC_POSTURE = new Set(['posture-barbell-back-squat.ts', 'posture-close-grip-pulldown.ts', 'posture-hanging-leg-raise.ts',
+  'posture-lat-pulldown.ts', 'posture-lateral-raise.ts', 'posture-leg-press.ts', 'posture-machine-chest-press.ts',
+  'posture-pull-up.ts', 'posture-seated-cable-row.ts']);
+const scBody = (n: string) => (SC_POSTURE.has(n) ? toMainCopy(body(n)) : body(n));
 
 // sha256 of each body on main e623d3ef (train 68, LIB-SHIP W2; re-pinned from cb9a6dae as ruled on #388)
 const BODY_MAIN: Record<string, string> = {
@@ -168,7 +176,10 @@ describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on
   it('every posture chunk and loaders.ts body is byte-equal to main (LIB-SHIP W4: plus the W4 chunks, and loaders.ts less the W4 lines)', () => {
     const now = readdirSync(GEN).filter(n => /^posture-.*\.ts$|^loaders\.ts$/.test(n)).sort();
     expect(now).toEqual([...Object.keys(BODY_MAIN), ...Object.keys(BODY_W4), ...Object.keys(BODY_PF), ...Object.keys(BODY_W5), ...Object.keys(BODY_W6), ...Object.keys(BODY_W7), ...Object.keys(BODY_W8A)].sort());   // LIB-SHIP W5: + its 10; LIB-SHIP W6: + its 7; W7: + its 16; W8a: + its 4
-    for (const [n, want] of Object.entries({ ...BODY_MAIN, ...BODY_W4 })) if (n !== 'loaders.ts') expect([n, sha(body(n))]).toEqual([n, want]);
+    // F-SHEET-COPY (#423): each SC_POSTURE chunk's body differs from its main pin only by the copy change (toMainCopy
+    // gives the pin back; the raw body does not), so the pin stays as strict and moved only for the copy
+    for (const n of SC_POSTURE) { expect([n, sha(body(n))]).not.toEqual([n, BODY_MAIN[n]]); expect([n, sha(toMainCopy(body(n)))]).toEqual([n, BODY_MAIN[n]]); }
+    for (const [n, want] of Object.entries({ ...BODY_MAIN, ...BODY_W4 })) if (n !== 'loaders.ts') expect([n, sha(scBody(n))]).toEqual([n, want]);
     for (const [n, want] of Object.entries(BODY_PF)) expect([n, sha(body(n))]).toEqual([n, want]);
     for (const [n, want] of Object.entries(BODY_W5)) expect([n, sha(body(n))]).toEqual([n, want]);
     for (const [n, want] of Object.entries(BODY_W6)) expect([n, sha(body(n))]).toEqual([n, want]);

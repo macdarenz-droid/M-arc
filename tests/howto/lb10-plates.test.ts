@@ -299,7 +299,8 @@ describe('LIB-22 A9 (D-LIB22-AHEAD): nothing ships', () => {
     expect(outside(G, ['lb10.json', 'lb10.layers.html'])).toEqual([`${join(G, 'lb08.json')}: sled_pull`, `${join(G, 'lb09.json')}: sled_pull`]);
     for (const f of [ROWS, join(G, 'lb10.json')]) { const t = readFileSync(f, 'utf8'); expect([f, names(t), /"batch":\s*"LB10"/.test(t)]).toEqual([f, LB10, true]); }
     expect(names(readFileSync(join(G, 'lb10.layers.html'), 'utf8'))).toEqual(LB10.filter(id => SHIPPED10.includes(id)));
-    expect(readJson(join(G, 'lb10.json')).entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => [...e.ids].sort())).toEqual([SHIPPED10.map(i => `lib_${i}`).sort()]);
+    // F-SHEET-COPY (#423): appended a second layers-page entry (the copy re-pin); both name exactly the ruled shipped set
+    expect(readJson(join(G, 'lb10.json')).entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => [...e.ids].sort())).toEqual([SHIPPED10.map(i => `lib_${i}`).sort(), SHIPPED10.map(i => `lib_${i}`).sort()]);
   });
   it('LIB-SHIP W7 reds: lb10.json copied under another name, a third note hit, and a held id on the layers page are red', () => {
     const dir = mkdtempSync(join(tmpdir(), 'lb10-w7-'));

@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
 import { MAIN_GOLDEN, pfTailProblems } from './platefix-pins';
+import { scLayersProblems, toMainLayersPage } from './sheetcopy-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -691,7 +692,12 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and exactly the rule
       if (e.approvedBy !== 'supervisor' || e.decision !== 'D-LIB-PILOTA3' || e.supersedes !== null) bad.push(`${e.id}: approval`);
     }
     if (JSON.stringify(pin.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)) !== JSON.stringify(IDS.map(i => `lib_${i}`))) bad.push('plate ids');
-    bad.push(...pfTailProblems(f, 'pilot-a3', { G, html, page: 0, plates: { lib_reverse_lunge: 1 }, layers: { supersedes: null, ids: ['lib_reverse_lunge'], page: existsSync(LAYERS_PAGE) ? readFileSync(LAYERS_PAGE) : Buffer.alloc(0) } }));
+    // F-SHEET-COPY (#423, the W8a form): the file's last entry is its layers-page re-pin, superseding the tail's, and the
+    // committed page with the copy change undone is the tail's pin (scLayersProblems); the tail is checked as before with
+    // that entry left out (after: 1), against the page with the copy change undone
+    const lpage = existsSync(LAYERS_PAGE) ? readFileSync(LAYERS_PAGE) : Buffer.alloc(0);
+    bad.push(...scLayersProblems(f, 'pilot-a3', lpage));
+    bad.push(...pfTailProblems(f, 'pilot-a3', { G, html, page: 0, plates: { lib_reverse_lunge: 1 }, layers: { supersedes: null, ids: ['lib_reverse_lunge'], page: toMainLayersPage(lpage, 'pilot-a3') }, after: 1 }));
     const text = JSON.stringify(f) + readFileSync(rowsPath(), 'utf8') + readFileSync('tools/plates/library/pages/pilot-a3.json', 'utf8');
     for (const id of [...all.filter((r: any) => r.batchFile && !r.batchFile.endsWith('/pilot-a3.json')).map((r: any) => r.id),
       ...[...scratch.PILOT_A, ...scratch.PILOT_B, ...scratch.PILOT_A2].map((n: string) => `lib_${n}`)]) if (new RegExp(`\\b${id}\\b`).test(text)) bad.push(`names ${id}`);
@@ -733,6 +739,10 @@ describe('PILOT-A3 A11, A12, A14: the PILOT-A3 pin (step 6) and exactly the rule
     expect(await chainProblems(tl)).toContain('pilot-a3: layers-page ids lib_reverse_lunge,lib_dumbbell_fly');
     const tp = copy(f0); tp.entries.splice(2, 0, { kind: 'layers-page' });
     expect(await chainProblems(tp)).toContain('a layers-page entry');
+    // F-SHEET-COPY (#423): its re-pin dropped, or superseding another entry, is red
+    expect((await chainProblems({ ...f0, entries: f0.entries.slice(0, -1) })).some((p: string) => p.startsWith('pilot-a3 F-SHEET-COPY: last entry'))).toBe(true);
+    const sc = copy(f0); sc.entries[sc.entries.length - 1].supersedes = 0;
+    expect(await chainProblems(sc)).toContain('pilot-a3 F-SHEET-COPY: supersedes 0, the last earlier layers-page entry is 5');
   });
   it('A12: the scratch set refuses PILOT-A3 ids (mutation: target lib_reverse_lunge)', () => {
     expect(scratch.setProblems(scratch.SCRATCH_4C)).toEqual([]);
