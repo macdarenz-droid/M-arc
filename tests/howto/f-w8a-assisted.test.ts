@@ -3,7 +3,7 @@
 // flips here: assisted_pull_up is shown on a scratch tree whose lb01.layers config holds it in the W8a form (the
 // e351f554^ row, W8a LAYERS READY 6759453858), built and checked with the tree's own modules (LIB-2b fixtureTree form).
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, expect, it, afterAll } from 'vitest';
+import { describe, expect, it, afterAll, beforeAll } from 'vitest';
 import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -41,6 +41,14 @@ function tree(edits: Record<string, (s: string) => string> = {}): string {
     writeFileSync(join(T, p), after);
   }
   return T;
+}
+/** Runs `fn` with `edits` applied to T's files (a mutation), then puts the files back. */
+function mutated<R>(T: string, edits: Record<string, (s: string) => string>, fn: () => R): R {
+  const keep = Object.keys(edits).map(p => [p, readFileSync(join(T, p), 'utf8')] as const);
+  try {
+    for (const [p, before] of keep) { const after = edits[p]!(before); expect(after, `${p}: the mutation must change the file`).not.toBe(before); writeFileSync(join(T, p), after); }
+    return fn();
+  } finally { for (const [p, before] of keep) writeFileSync(join(T, p), before); }
 }
 /** lb01.layers with assisted_pull_up back after hanging_knee_raise (group and closeups), as in W8a. */
 const withAssisted = (s: string) => {
@@ -83,17 +91,19 @@ function layersPage(T: string, golden: string): Buffer {
 }
 
 describe('F-W8A-ASSISTED A2: assisted_pull_up passes HT4/A5 on a scratch tree that stages it on lb01.layers', () => {
+  let T = '';
+  beforeAll(() => { T = tree({ [LB01]: withAssisted }); }, 120_000);
   it('green: protected, fragments and poses pass; its layers Mistake svg is the plates pin 5324dd0b…', () => {
-    const got = ht4(tree({ [LB01]: withAssisted }), 'lib_assisted_pull_up', 'assisted-pull-up');
+    const got = ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up');
     expect(got.problems).toEqual([]);
     expect(got.mistake).toBe(PLATES_MISTAKE);
   }, 300_000);
   it('m1: without the applyMistakeGhosts call, the CI fragments line', () => {
-    const got = ht4(tree({ [LB01]: withAssisted, [BUILDER]: swap(CALL, "await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs)") }), 'lib_assisted_pull_up', 'assisted-pull-up');
+    const got = mutated(T, { [BUILDER]: swap(CALL, "await applyZooms(readFileSync(join(mirror, 'artifact', 'technical-plates.html')), specs)") }, () => ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up'));
     expect(got.problems).toEqual([`lib_assisted_pull_up * HT4/A5-fragments@*: ${CI_FRAGMENTS}`]);
   }, 300_000);
   it('m4: sideOf without the under branch, the CI poses line', () => {
-    const got = ht4(tree({ [LB01]: withAssisted, [HT4]: swap("    for (const z of posture) if (underOf(z) && id === `${z.key}-under`) return { z, role: 'under' };\n", '') }), 'lib_assisted_pull_up', 'assisted-pull-up');
+    const got = mutated(T, { [HT4]: swap("    for (const z of posture) if (underOf(z) && id === `${z.key}-under`) return { z, role: 'under' };\n", '') }, () => ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up'));
     // the CI line, and the under side's own anti-blindness entry (still declared) on the same poses row
     expect(got.problems).toEqual([`lib_assisted_pull_up * HT4/A5-poses@*: ${CI_POSES}`,
       'lib_assisted_pull_up * HT4/A5-poses@*: assisted_pull_up|knee-pad|under: no renderPlate call captured for this declared zoom side (anti-blindness)']);
@@ -102,21 +112,23 @@ describe('F-W8A-ASSISTED A2: assisted_pull_up passes HT4/A5 on a scratch tree th
 
 describe('F-W8A-ASSISTED A1/m3: a pinned layers page keeps its bytes; ghosts stripped for every spec moves them', () => {
   const LB01_GOLDEN = 'tests/howto/golden/library/lb01.json', committed = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb01.layers.html'));
+  let T = '';
+  beforeAll(() => { T = tree(); }, 120_000);
   it('lb01.layers rebuilt in a tree equals the committed page', () => {
-    expect(sha(layersPage(tree(), LB01_GOLDEN))).toBe(sha(committed()));
+    expect(sha(layersPage(T, LB01_GOLDEN))).toBe(sha(committed()));
   }, 300_000);
   it('m3: mistakeGhostsOff true for every spec (the field ignored) changes the lb01 layers page', () => {
-    const T = tree({ [GHOSTS]: swap('export const mistakeGhostsOff = spec => spec?.mistakeGhosts === false;', 'export const mistakeGhostsOff = spec => !!spec;') });
-    expect(sha(layersPage(T, LB01_GOLDEN))).not.toBe(sha(committed()));
+    const got = mutated(T, { [GHOSTS]: swap('export const mistakeGhostsOff = spec => spec?.mistakeGhosts === false;', 'export const mistakeGhostsOff = spec => !!spec;') }, () => layersPage(T, LB01_GOLDEN));
+    expect(sha(got)).not.toBe(sha(committed()));
   }, 300_000);
 });
 
+// Q1 (PLAN RULED 176d0526): m2 (the calls swapped) is an equivalent mutation, so it has no test: applyZooms puts zoomOf's
+// group, already passed through mistakeSvg, before the Mistake </svg>, and the scratch lb09 page with v_up built a6b8c65c…
+// in both orders. This guard keeps v_up's layers Mistake svg equal to its plates pin.
 describe('F-W8A-ASSISTED (Q1): v_up, ghosts off with a Mistake zoom, on a scratch lb09.layers', () => {
   it('HT4/A5 passes; its layers Mistake svg equals its lb09.json plates pin (fragments)', () => {
     const got = ht4(tree({ [LB09]: withVup }), 'lib_v_up', 'v-up');
     expect(got.problems).toEqual([]);
   }, 300_000);
-  it('the builder nests applyMistakeGhosts inside applyZooms (build-page.mjs:104 order)', () => {
-    expect(readFileSync(join(ROOT, BUILDER), 'utf8').split(CALL).length - 1).toBe(1);
-  });
 });
