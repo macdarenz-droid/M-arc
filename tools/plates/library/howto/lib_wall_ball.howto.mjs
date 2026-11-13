@@ -28,9 +28,9 @@
 //   sandwiching, as a fault) -> setup 5; T catch-timing Wrong (c8) -> risks[early], which takes the slot of card risk
 //   c4 (still printed in the feel row shoulders means).
 // D-TEXT-PROGRESSION: c12 (ball weight, start light) and c16 (programming) are not form checkpoints, not on the sheet.
-import plateSpec, { SIZES as WB } from '../specs/wall_ball.mjs';
+import plateSpec, { SIZES as WB, WALL_FACE } from '../specs/wall_ball.mjs';
 import { landmarksOf } from '../engine.mjs';
-import { MED_BALL } from '../eq/medBall.mjs';
+import { MED_BALL, medBall } from '../eq/medBall.mjs';
 import { RED_FLAG, RED_FLAG_SHOULDER } from '../../layers/howto/shared.mjs';
 export { RED_FLAG, RED_FLAG_SHOULDER };
 
@@ -80,33 +80,32 @@ const CL = {
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses: the end (squat bottom at the right distance, ball close at the chest; c2, c6, c9)
 // and the spec's Mistake merged over it, as the engine draws it (card plate.mistake c3, c4: the feet too far from the
-// wall, the body tilting forward). The card zoom wall-distance Wrong is the plate's drawn fault. No drawing value added.
+// wall, the body tilting forward).
 const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
-// LIB-PLATEFIX-5 (D-PF4-W67LATER; W7 panel L8): the close-up's Wrong is the spec's own Mistake form (specs/wall_ball.mjs
-// mistakePose: the thorax folded about the hips, the ball riding the thorax, the hands under it) with the end's root and
-// feet (no shift back, so it overlays near the Right inside the panel) and the thorax at ZOOM_INCL (critic c3: at least
-// 45 deg). ZOOM_INCL is a zoom-only drawing size (D-SHIP-DRAWVAL); the plate Mistake stays. The ball and cup helpers are
-// the spec's, copied (D-LIB9-CLONE: exporting them would move the spec's bytes).
-const ZOOM_INCL = 50;
+// LIB-PLATEFIX-5 fix round (PR #419 6851987591, L1 and L5): the `wall-distance` close-up shows the card's measure and
+// its fault as two zoom-local poses (D-SHIP-DRAWVAL: ZOOM_INCL, RIGHT_BALL_Y and WRONG_REACH are zoom-only drawing
+// sizes; the plate and its Mistake stay). Each crop draws the floor, the wall and one ball held in the hands
+// (crop option right/wrong.equipmentList), since the spec's ball rides the thorax.
+//  Right (c2 "arms fully outstretched. When the ball touches the wall then you have your position"): the plate's start
+//   stance (toe tips STAND_DIST from the wall), arms out, the ball's front on the wall face, hands on its sides.
+//   RIGHT_BALL_Y: the ball centre height at which the arms are near straight (the elbow about 165 deg) at that distance.
+//  Wrong (c3 "stand too far away from the wall ... forced to throw the ball too far forward ... your body tilts
+//   forward"): the feet at the plate Mistake's distance (toe tips M_DIST from the wall), the thorax tipped ZOOM_INCL
+//   (critic c3: at least 45 deg) about the hips, the arms out forward (WRONG_REACH from the shoulder: [down, forward] m),
+//   the ball short of the wall.
+// The ball is eq/medBall.mjs's own item; no spec helper is copied.
+const ZOOM_INCL = 50, RIGHT_BALL_Y = 1.11, WRONG_REACH = [-0.35, 0.55];
 const BALL_R = MED_BALL.d / 2, H = 1.75;
-const REFP = { neck: [0.855, -0.02], backUpper: [0.75, -0.072], sternum: [0.80, 0.07] };
-const BALL_T = [0, REFP.sternum[0], REFP.sternum[1] + WB.BALL_OFF / H];
-const Wt = (() => {
-  const [a, b, c] = [REFP.neck, REFP.backUpper, REFP.sternum];
-  const M = [[a[0] - c[0], b[0] - c[0]], [a[1] - c[1], b[1] - c[1]]], v = [BALL_T[1] - c[0], BALL_T[2] - c[1]];
-  const det = M[0][0] * M[1][1] - M[0][1] * M[1][0];
-  const wa = (v[0] * M[1][1] - M[0][1] * v[1]) / det, wb = (M[0][0] * v[1] - v[0] * M[1][0]) / det;
-  return { neck: wa, backUpper: wb, sternum: 1 - wa - wb };
-})();
-const ballOfLm = lm => [0, 1, 2].map(i => Wt.neck * lm.neck[i] + Wt.backUpper * lm.backUpper[i] + Wt.sternum * lm.sternum[i]).map((v, i) => (i === 0 ? 0 : v));
-const UNDER = Math.sqrt(BALL_R ** 2 - WB.HAND_X ** 2);
-const cupOf = (c, s) => [s * WB.HAND_X, c[1] - UNDER, c[2]];
-const ELBOWS = [0.25, -1, 0.1];
-const cups = c => ({ l: { at: cupOf(c, 1), pole: ELBOWS }, r: { at: cupOf(c, -1), pole: [-ELBOWS[0], ELBOWS[1], ELBOWS[2]] } });
-const ZOOM_WRONG = (() => {
-  const p = { root: { at: END.root.at, tilt: ZOOM_INCL - 6 }, trunk: 6, neck: -ZOOM_INCL / 2, plant: END.plant };
-  return { ...p, reach: cups(ballOfLm(landmarksOf({ ...END, ...p }, H))) };
-})();
+const START = plateSpec.poses.start, DZ = -(WB.M_DIST - WB.STAND_DIST);
+const sides = c => ({ l: { at: [BALL_R, c[1], c[2]], pole: [1, -1, 0] }, r: { at: [-BALL_R, c[1], c[2]], pole: [-1, -1, 0] } });   // the hands on the ball's sides
+const ballEq = c => [plateSpec.equipment[0], plateSpec.equipment[1], ...medBall({ at: c })];   // floor, wall, the held ball
+const RIGHT_BALL = [0, RIGHT_BALL_Y, WALL_FACE - BALL_R];
+const ZOOM_RIGHT = { reach: sides(RIGHT_BALL) };
+const shiftPlant = (pl, dz) => Object.fromEntries(Object.entries(pl).map(([k, f]) => [k, { ...f, at: [f.at[0], f.at[1], f.at[2] + dz] }]));
+const WRONG_BASE = { root: { at: [START.root.at[0], START.root.at[1], START.root.at[2] + DZ], tilt: ZOOM_INCL - 6 }, trunk: 6, neck: -ZOOM_INCL / 2, plant: shiftPlant(START.plant, DZ) };
+const SH_W = landmarksOf({ ...START, ...WRONG_BASE }, H)['shoulder.r'];
+const WRONG_BALL = [0, SH_W[1] + WRONG_REACH[0], SH_W[2] + WRONG_REACH[1]];
+const ZOOM_WRONG = { ...WRONG_BASE, reach: sides(WRONG_BALL) };
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
@@ -117,11 +116,11 @@ export const stills = {
 const zooms = [
   {
     key: 'wall-distance', chip: 'Distance', heading: 'Wall distance', kind: 'posture',
-    // zoom shell: crop centre on the right pose's knee, wide enough for the body and the wall; the Wrong is ZOOM_WRONG
-    // (above) drawn alone (solid): the tilt with no shift back (LIB-PLATEFIX-5).
-    crop: { center: { at: 'knee.r', pose: 'right', off: [-10, -20] }, sizePx: 320 },   // W7 panel (#394): wide enough for the whole Wrong figure
-    right: 'end',
-    wrong: { base: 'end', pose: ZOOM_WRONG, solid: true },
+    // zoom shell: crop centre on the right pose's hip, wide enough for both standing figures and the wall; the Right is
+    // ZOOM_RIGHT and the Wrong ZOOM_WRONG (above), drawn alone (solid), each with its own held ball (LIB-PLATEFIX-5 fix).
+    crop: { center: { at: 'hip.r', pose: 'right', off: [10, -6] }, sizePx: 320 },
+    right: { base: 'start', pose: ZOOM_RIGHT, equipmentList: ballEq(RIGHT_BALL) },
+    wrong: { base: 'start', pose: ZOOM_WRONG, solid: true, equipmentList: ballEq(WRONG_BALL) },
     callout: {
       right: { text: 'Arm\'s length', anchor: 'toe.r' },
       wrong: { text: 'Too far back', anchor: { at: 'heel.r', pose: 'mistake' } },
@@ -131,8 +130,8 @@ const zooms = [
       wrong: 'Too far back: the ball goes forward, body tilts.',     // card zoom wrong (c3)
     },
     alt: {
-      right: 'Side view, bottom of the squat, about arm\'s length from the wall. Torso upright, ball at the chest.',
-      wrong: 'Side view. The feet stand too far back from the wall, so the body tilts forward.',
+      right: 'Side view, standing about arm\'s length from the wall, arms out, the ball touching the wall.',
+      wrong: 'Side view. The feet stand too far back from the wall: the body tilts forward and the arms reach the ball forward, short of the wall.',
     },
   },
 ];
@@ -154,7 +153,7 @@ const feel = {
     // The card's first two rows (thighs and glutes; shoulders and upper chest) have no fix, so they are left out: the
     // feel line says them.
     { key: 'shoulder', where: 'Shoulders', at: { muscles: ['front_delts'], parts: ['shoulder-front-left', 'shoulder-front-right'] },   // D-PFR-L4: the red flag's pain region
-      means: 'The right distance from the wall takes strain off them.',   // card c4 (W7 recheck #394 6683570453: c4 supports only this)
+      means: 'Standing the wrong distance from the wall.',   // card c4 (measuring the distance correctly takes strain off the shoulders): the cause (PF5 fix L6)
       fix: 'Hold your arms out, ball touching the wall: stand there.',
       redFlag: 'shoulder', claim: CL.row },
   ],

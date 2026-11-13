@@ -190,11 +190,12 @@ describe('PF5 W7 wall_ball', { timeout: T }, () => {
   const trunkDeg = (C: any, role: string) => { const L = C.lms[role], pp = C.panel(role), mid = (a: number[], b: number[]) => [(a[0]! + b[0]!) / 2, (a[1]! + b[1]!) / 2];
     const h = mid(pp(L['hip.r']), pp(L['hip.l'])), s = mid(pp(L['shoulder.r']), pp(L['shoulder.l'])); return Math.atan2(s[0]! - h[0]!, h[1]! - s[1]!) * 180 / Math.PI; };
 
-  it('the Wrong trunk leans >= 45 deg from vertical; the Right stays near 26 deg', () => {
+  it('the Wrong trunk leans >= 45 deg from vertical; the Right stands upright (<= 10 deg)', () => {
     const C = ctx('wall_ball', 'wall-distance');
     const r = trunkDeg(C, 'right'), w = trunkDeg(C, 'wrong');
     console.log(`PF5 W7 wall_ball trunk (deg from vertical): Right ${r.toFixed(2)}, Wrong ${w.toFixed(2)}`);
     expect(Math.abs(w)).toBeGreaterThanOrEqual(45);
+    expect(Math.abs(r)).toBeLessThanOrEqual(10);
   });
   it('mutation: the spec plate Mistake leans only ~38 deg, under 45', () => {
     const C = ctx('wall_ball', 'wall-distance');
@@ -204,33 +205,93 @@ describe('PF5 W7 wall_ball', { timeout: T }, () => {
     console.log(`PF5 W7 wall_ball mutation (plate Mistake): trunk ${w.toFixed(2)} deg`);
     expect(Math.abs(w)).toBeLessThan(45);
   });
-  it('the Wrong ankle keeps the Right\'s place (no shift back, <= 0.5 panel px); mutation: the plate Mistake shifts it far back', () => {
-    const C = ctx('wall_ball', 'wall-distance');
-    const shift = Math.abs(C.panel('wrong')(C.lms.wrong['ankle.r'])[0]! - C.panel('right')(C.lms.right['ankle.r'])[0]!);
-    console.log(`PF5 W7 wall_ball ankle shift ${shift.toFixed(2)} panel px`);
-    expect(shift).toBeLessThanOrEqual(0.5);
-    const sp = HM.wall_ball.default.plate, mis = mergeDeep(sp.poses.end, sp.mistake.pose), L = ENGINE.wall_ball.landmarksOf(mis, H);
-    const mShift = Math.abs(C.panel('wrong')(L['ankle.r'])[0]! - C.panel('right')(C.lms.right['ankle.r'])[0]!);
-    console.log(`PF5 W7 wall_ball mutation (plate Mistake) ankle shift ${mShift.toFixed(2)} panel px`);
-    expect(mShift).toBeGreaterThan(0.5);
+  // ---- PF5 fix round (PR #419 6851987591): L1 the Right is the card's measure (c2), L5 the Wrong is clearly too far
+  // back with the ball going forward (c3), L6 the shoulder row names a cause (c4). This replaces the ruled plan's
+  // "no shift back" row (the panel now asks for the card-true distance). Measured in panel px from the crop's own data.
+  const ballOf = (C: any, role: string) => {
+    const ref = C.z[role], list = (typeof ref === 'object' && ref.equipmentList) || C.sp.equipment.filter((e: any) => typeof e === 'function')
+      .flatMap((f: any) => [].concat(f(C.lms[role], { pose: 'end' }) ?? []).filter(Boolean));
+    const pts = list.filter((e: any) => e.part === 'ball' && e.type !== 'line').flatMap((e: any) => e.pts);
+    const zs = pts.map((w: number[]) => w[2]!), ys = pts.map((w: number[]) => w[1]!);
+    return { pts, front: Math.max(...zs), c: [0, (Math.max(...ys) + Math.min(...ys)) / 2, (Math.max(...zs) + Math.min(...zs)) / 2] };
+  };
+  const wallFace = () => SPEC.wall_ball.WALL_FACE as number;
+  const pxm = (C: any) => C.cam.pxPerM * C.k;   // world m -> panel px
+  const elbow3D = (L: any) => { const [a, v, b] = [L['shoulder.r'], L['elbow.r'], L['wrist.r']]; const p = a.map((x: number, i: number) => x - v[i]), q = b.map((x: number, i: number) => x - v[i]);
+    return Math.acos(p.reduce((s: number, x: number, i: number) => s + x * q[i], 0) / Math.hypot(...p) / Math.hypot(...q)) * 180 / Math.PI; };
+  const toeGap = (C: any, L: any) => (wallFace() - Math.max(L['toe.r'][2], L['toe.l'][2])) * pxm(C);
+
+  it('L1: the Right holds the ball out at the wall: ball front on the wall face (<= 0.5 panel px), elbow >= 160 deg, hands on the ball, ball >= 25 panel px ahead of the sternum', () => {
+    const C = ctx('wall_ball', 'wall-distance'), L = C.lms.right, B = ballOf(C, 'right');
+    const gap = (wallFace() - B.front) * pxm(C), el = elbow3D(L), ahead = (B.c[2]! - L.sternum[2]) * pxm(C);
+    console.log(`PF5 W7 wall_ball L1 Right: ball front to wall ${gap.toFixed(2)} panel px, elbow ${el.toFixed(1)} deg, ball ahead of sternum ${ahead.toFixed(2)} panel px`);
+    expect(B.pts.length, 'the Right draws its ball').toBeGreaterThan(0);
+    expect(Math.abs(gap)).toBeLessThanOrEqual(0.5);
+    expect(el).toBeGreaterThanOrEqual(160);
+    expect(ahead).toBeGreaterThanOrEqual(25);
+    for (const s of ['l', 'r']) expect(dist([L[`grip.${s}`][1], L[`grip.${s}`][2]], [B.c[1]!, B.c[2]!]) * pxm(C), `grip.${s} on the ball`).toBeLessThanOrEqual(0.5);
   });
-  it('the whole Wrong figure and the ball sit inside the [0, 171] panel', () => {
+  it('L1 mutation: the old Right (the plate end pose, ball riding the chest) is 26 panel px off the wall, elbow 60 deg', () => {
+    const C = ctx('wall_ball', 'wall-distance'), z = { ...C.z, right: 'end' };
+    const C2 = { ...C, z, lms: { ...C.lms, right: ENGINE.wall_ball.landmarksOf(C.sp.poses.end, H) } }, B = ballOf(C2, 'right');
+    const gap = (wallFace() - B.front) * pxm(C), el = elbow3D(C2.lms.right);
+    console.log(`PF5 W7 wall_ball L1 mutation (old Right): ball front to wall ${gap.toFixed(2)} panel px, elbow ${el.toFixed(1)} deg`);
+    expect(Math.abs(gap) > 0.5 || el < 160).toBe(true);
+    expect(Math.abs(gap)).toBeGreaterThan(0.5);
+    expect(el).toBeLessThan(160);
+  });
+  it('L5: the Wrong stands >= 30 panel px farther from the wall than the Right (toe tips), its ball >= 8 panel px short of the wall and >= 25 panel px ahead of the sternum', () => {
+    const C = ctx('wall_ball', 'wall-distance'), R = toeGap(C, C.lms.right), W = toeGap(C, C.lms.wrong), B = ballOf(C, 'wrong');
+    const short = (wallFace() - B.front) * pxm(C), ahead = (B.c[2]! - C.lms.wrong.sternum[2]) * pxm(C);
+    console.log(`PF5 W7 wall_ball L5: toe tips to wall Right ${R.toFixed(2)}, Wrong ${W.toFixed(2)} panel px; Wrong ball short of wall ${short.toFixed(2)}, ahead of sternum ${ahead.toFixed(2)} panel px; ball centre y ${B.c[1]!.toFixed(3)} m`);
+    expect(W - R).toBeGreaterThanOrEqual(30);
+    expect(short).toBeGreaterThanOrEqual(8);
+    expect(ahead).toBeGreaterThanOrEqual(25);
+    for (const s of ['l', 'r']) expect(dist([C.lms.wrong[`grip.${s}`][1], C.lms.wrong[`grip.${s}`][2]], [B.c[1]!, B.c[2]!]) * pxm(C), `grip.${s} on the ball`).toBeLessThanOrEqual(0.5);
+  });
+  it('L5 mutations: no shift back (the ruled plan) gives 0 panel px more; the ball riding the chest (spec ball) is < 25 panel px ahead of the sternum', () => {
+    const C = ctx('wall_ball', 'wall-distance'), DZ = SPEC.wall_ball.SIZES.M_DIST - SPEC.wall_ball.SIZES.STAND_DIST;
+    const noShift = mergeDeep(C.wrong, { root: { at: [C.wrong.root.at[0], C.wrong.root.at[1], C.wrong.root.at[2] + DZ] }, plant: Object.fromEntries(Object.entries(C.wrong.plant).map(([k, f]: [string, any]) => [k, { ...f, at: [f.at[0], f.at[1], f.at[2] + DZ] }])) });
+    const Ln = ENGINE.wall_ball.landmarksOf(noShift, H), d = toeGap(C, Ln) - toeGap(C, C.lms.right);
+    const Lw = C.lms.wrong, chestBall = ballOf({ ...C, z: { ...C.z, wrong: 'mistake' } }, 'wrong'), ahead = (chestBall.c[2]! - Lw.sternum[2]) * pxm(C);
+    console.log(`PF5 W7 wall_ball L5 mutations: no-shift extra distance ${d.toFixed(2)} panel px; chest ball ahead of sternum ${ahead.toFixed(2)} panel px`);
+    expect(d).toBeLessThan(30);
+    expect(ahead).toBeLessThan(25);
+  });
+  for (const role of ['right', 'wrong'] as const) it(`the whole ${role} figure and its ball sit inside the [0, 171] panel`, () => {
     const C = ctx('wall_ball', 'wall-distance');
-    const sk = eng.fk(eng.resolve(eng.normPose(C.wrong, { height: H }), { height: H }).q, { height: H });
+    const sk = eng.fk(eng.resolve(eng.normPose(C[role], { height: H }), { height: H }).q, { height: H });
     const camW = { view: 'side', near: 'r', facing: 'right', pxm: 1, P: (w: number[]) => [w[2]!, -w[1]!] };
-    const pp = C.panel('wrong');
+    const pp = C.panel(role);
     const body = eng.bodyShapes(sk, camW).flatMap((s: any) => (s.poly ?? []).map((p: number[]) => pp([0, -p[1]!, p[0]!])));
-    // the ball: the spec's own per-pose medBall items (equipment fns of the landmarks), on the Wrong's landmarks
-    const ball = C.sp.equipment.filter((e: any) => typeof e === 'function').flatMap((f: any) => { const it = f(C.lms.wrong, { pose: 'mistake' }); return it?.pts ?? []; })
-      .map((w: number[]) => pp(w));
+    const ball = ballOf(C, role).pts.map((w: number[]) => pp(w));
     expect(ball.length, 'the ball is drawn').toBeGreaterThan(0);
     const pts = [...body, ...ball];
     const xs = pts.map((p: number[]) => p[0]!), ys = pts.map((p: number[]) => p[1]!);
-    console.log(`PF5 W7 wall_ball Wrong body+ball box panel px (ball ${ball.length} pts): x [${Math.min(...xs).toFixed(1)}, ${Math.max(...xs).toFixed(1)}], y [${Math.min(...ys).toFixed(1)}, ${Math.max(...ys).toFixed(1)}]`);
+    console.log(`PF5 W7 wall_ball ${role} body+ball box panel px (ball ${ball.length} pts): x [${Math.min(...xs).toFixed(1)}, ${Math.max(...xs).toFixed(1)}], y [${Math.min(...ys).toFixed(1)}, ${Math.max(...ys).toFixed(1)}]`);
     expect(Math.min(...xs)).toBeGreaterThanOrEqual(0);
     expect(Math.max(...xs)).toBeLessThanOrEqual(C.PANEL);
     expect(Math.min(...ys)).toBeGreaterThanOrEqual(0);
     expect(Math.max(...ys)).toBeLessThanOrEqual(C.PANEL);
+  });
+  it('the crop draws each half with its own held-ball list (crop option right/wrong.equipmentList); mutation: no right.equipmentList draws the plate\'s thorax ball', () => {
+    const z = HM.wall_ball.default.zooms.find((x: any) => x.key === 'wall-distance');
+    const specsOf = (zz: any) => { const probe: any = { points: [], specs: [] };
+      const cut = crop.engineCrop({ ...HM.wall_ball.default, zooms: [zz] }, OPT.wall_ball.crop, ENGINE.wall_ball, probe);
+      cut(zz, 'right'); cut(zz, 'wrong'); return probe.specs; };
+    const sp = specsOf(z);
+    expect(sp.find((x: any) => x.role === 'right').spec.equipment).toBe(z.right.equipmentList);
+    expect(sp.find((x: any) => x.role === 'wrong').spec.equipment).toBe(z.wrong.equipmentList);
+    const { equipmentList, ...bare } = z.right, m = specsOf({ ...z, right: bare }).find((x: any) => x.role === 'right').spec.equipment;
+    expect(equipmentList).toBeTruthy();
+    expect(m.some((e: any) => typeof e === 'function'), 'the plate list (thorax ball functions)').toBe(true);
+  });
+  it('L6: the Shoulders row names a cause (c4), not a benefit; mutation: the old benefit text fails', () => {
+    const row = HM.wall_ball.default.feel.rows.find((r: any) => r.key === 'shoulder');
+    const cause = (t: string) => /\bwrong distance\b/i.test(t) && !/takes strain off|\bright distance\b/i.test(t);
+    expect(row.means).toBe('Standing the wrong distance from the wall.');
+    expect(cause(row.means)).toBe(true);
+    expect(cause('The right distance from the wall takes strain off them.')).toBe(false);
   });
 });
 
