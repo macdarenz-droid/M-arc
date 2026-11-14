@@ -201,6 +201,7 @@ async function inputsOf(base: string, out: Map<string, any>) {
     const ins = o.writers.flatMap((w: string) => { const m: any = mods.get(w); return m.inputsFor?.(p) ?? own.get(w)?.get(p) ?? m.inputs(); });
     if (core.inputsSha256(o.writers, ins, base) !== o.hash) throw new Error(`${p}: the union of its writers' inputs does not give its header hash`);
     res.set(p, ins);
+    await yieldTask();   // F-VITEST-RPC-2: one worker turn per output
   }
   return { res, core };
 }
@@ -573,6 +574,7 @@ describe('D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped lib
       }
       const changed = { ...p, tells: `${p.tells} ` };
       expect(golden.fragmentsOf(changed)).not.toEqual(e.fragments);
+      await yieldTask();   // F-VITEST-RPC-2: one worker turn per row
     }
   });
 });
