@@ -383,7 +383,7 @@ describe('F-HT4-RIGHTPOSE C1: libraryA5 accepts a declared Right pose exactly wh
     // @ts-expect-error plain .mjs build tool, no types
     const { RULED_RIGHT_POSES, citesRuling } = await import('../../tools/plates/library/fidelity/twins/ht4.mjs');
     expect(RULED_RIGHT_POSES.map((e: { id: string }) => e.id)).toEqual([
-      'dumbbell_shrug|dshrug-top', 'bulgarian_split_squat|rear-knee', 'one_arm_dumbbell_row|oadr-top', 'cable_external_rotation|cer-turn',
+      'dumbbell_shrug|dshrug-top', 'bulgarian_split_squat|rear-knee',
       'diamond_push_up|shoulder-blades', 'hack_squat|knee-lock', 'wall_ball|wall-distance',
     ]);
     for (const e of RULED_RIGHT_POSES) expect(citesRuling(e), e.id).toBe(true);

@@ -154,13 +154,12 @@ function faultPoses(z, { ref, family, stills, stillPose }) {
 /**
  * F-HT4-RIGHTPOSE D-RP-OPTIN (#425 6868123318): the exact ruled list of `<spec id>|<zoom key>` pairs whose declared Right
  * pose (`right: { base, pose }`) the twin accepts. Each entry cites the ruling for that custom Right (a D- ruling id and a
- * file:line or a comment id). Every other zoom keeps the D-LIB4b-POSES rule: start, end or mistake only.
+ * file:line or a comment id). Every other zoom keeps the D-LIB4b-POSES rule: start, end or mistake only. Left off (D-RP-OPTIN
+ * follow-up F-RP-OADR-CER): one_arm_dumbbell_row|oadr-top and cable_external_rotation|cer-turn (D-LIB20-TRUNK rules a format).
  */
 export const RULED_RIGHT_POSES = Object.freeze([
   { id: 'dumbbell_shrug|dshrug-top', ruling: 'D-SHIP-DRAWVAL: TOP (howto/lib_dumbbell_shrug.howto.mjs:76-77)' },
   { id: 'bulgarian_split_squat|rear-knee', ruling: 'D-SHIP-DRAWVAL #376 6614695581: KNEE_GAP (howto/lib_bulgarian_split_squat.howto.mjs:59-60)' },
-  { id: 'one_arm_dumbbell_row|oadr-top', ruling: 'D-LIB20-TRUNK: the end pose with trunk as an object (howto/lib_one_arm_dumbbell_row.howto.mjs:95-96)' },
-  { id: 'cable_external_rotation|cer-turn', ruling: 'D-LIB20-TRUNK: the end pose with trunk as an object (howto/lib_cable_external_rotation.howto.mjs:135-136)' },
   { id: 'diamond_push_up|shoulder-blades', ruling: 'D-SHIP-DRAWVAL #376 6614695581: PINCH (howto/lib_diamond_push_up.howto.mjs:79-80)' },
   { id: 'hack_squat|knee-lock', ruling: 'D-PF4-W67LATER, D-SHIP-DRAWVAL: SOFT_BEND (howto/lib_hack_squat.howto.mjs:96-98)' },
   { id: 'wall_ball|wall-distance', ruling: 'D-SHIP-DRAWVAL, #419 6851987591: ZOOM_RIGHT (howto/lib_wall_ball.howto.mjs:85-86)' },
