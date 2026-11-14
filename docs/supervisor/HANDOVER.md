@@ -842,6 +842,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-14 ~09:45 UTC.** Main is still `d92830c2`.
+  - **W8b #417:** the RDL watch fix is pushed (`9fe595d0`). Both unit-tz jobs crashed with the vitest RPC timeout `onTaskUpdate` after all 6621 tests passed (run 43575114292).
+    - Ruled D-W8B-RPC: one failed-job re-run, and FIXED only on all-green.
+    - Follow-up **F-VITEST-RPC-2**: unit-tz jobs now take 57-67 min. A card helper is drafting `verify/f-vitest-rpc-2-card.md`.
+  - **#426:** review PASS 6874389936; its 2 Lows are fixed @ `cf1a34e7`. It waits for W8b, then the main merge and the TRAIN HEAD (same reviewer).
+  - **#427:** the round-2 L4 check PASSED (6874288878): lower back Main plus the watch outline, via the build-layers-page patch (D-DL-WATCHMAIN-PATCH). Card `318f30ab` is bound. It waits for W8b, then main, then READY.
+  - **F-SHEET-COPY #423:** waits for W8b.
 - **Update 11-14 ~06:45 UTC.** Weekly meter 0.26 (05:44).
   - **Train 94:** #425 F-HT4-RIGHTPOSE part 1 → main `d92830c2` (delta PASS 6871353302). No APK: tools and tests only. This frees dumbbell_shrug.
   - **W8b #417:** delta REVIEW PASS @ `d61ca89b` (6872591747).
