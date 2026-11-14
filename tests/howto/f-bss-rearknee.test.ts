@@ -215,3 +215,40 @@ describe('F-BSS-REARKNEE C11: the MANIFEST blanked-keys test', () => {
     expect(bssMainZoom('bulgarian_split_squat', { ...z, key: 'other' }).crop).toBe(z.crop);
   });
 });
+
+// ---- C12: HT4 on the real row, with part 1 (F-HT4-RIGHTPOSE, #425) on this head and this card's crop: bulgarian staged
+// on lb04 as C10 stages it, HT4's runNode run in a scratch tree with the tree's own modules (f-ht4-rightpose.test.ts's
+// ht4() form). Red case: the Right crop drawing a pose that is neither a reference pose nor the declared Right. ----
+const CROP_MJS = 'tools/plates/library/render/closeup/crop.mjs';
+function ht4Tree(edits: Record<string, (s: string) => string> = {}): string[] {
+  const T = mkdtempSync(join(tmpdir(), 'f-bss-rearknee-ht4-'));
+  trees.push(T);
+  for (const p of COPY) if (existsSync(join(RUN, p))) cpSync(join(RUN, p), join(T, p), { recursive: true });
+  symlinkSync(join(RUN, 'node_modules'), join(T, 'node_modules'), 'dir');
+  for (const [p, f] of Object.entries({ [LB04]: withBss, ...edits })) {
+    const before = readFileSync(join(T, p), 'utf8'), after = f(before);
+    expect(after, `${p}: the edit must change the file`).not.toBe(before);
+    writeFileSync(join(T, p), after);
+  }
+  const code = `
+    import { recorder } from './tools/plates/library/fidelity/rows.mjs';
+    import { runNode } from './tools/plates/library/fidelity/twins/ht4.mjs';
+    const R = recorder(), ctx = { R, root: process.cwd() };
+    await runNode(ctx, { lib: 'lib_bulgarian_split_squat', chrome: 'bulgarian-split-squat' });
+    console.log(JSON.stringify(R.problems));`;
+  const r = spawnSync(process.execPath, ['--input-type=module', '-e', code], { cwd: T, encoding: 'utf8', maxBuffer: 1 << 28 });
+  if (r.status !== 0) throw new Error(r.stderr || r.stdout);
+  return JSON.parse(r.stdout.trim().split('\n').pop()!) as string[];
+}
+describe('F-BSS-REARKNEE C12: HT4 on bulgarian_split_squat with part 1 and this crop', { timeout: 600_000 }, () => {
+  it('green: protected, fragments and poses clean', () => {
+    expect(readFileSync(path(HOWTO), 'utf8')).toContain("off: [-40, -12] }, sizePx: 100 }");
+    expect(ht4Tree()).toEqual([]);
+  });
+  it('red: the Right crop drawing an undeclared pose (the Right pose tilted 1 deg more) is a poses problem', () => {
+    const a = "const shown = solid ? (o.solidPose === 'merged' ? wrongPose(z) : poseOf(z.wrong)) : right;";
+    const b = "const shown = solid ? (o.solidPose === 'merged' ? wrongPose(z) : poseOf(z.wrong)) : (z.key === 'rear-knee' ? mergeDeep(right, { root: { tilt: (right.root?.tilt ?? 0) + 1 } }) : right);";
+    const got = ht4Tree({ [CROP_MJS]: (s: string) => { expect(s.split(a).length - 1).toBe(1); return s.replace(a, () => b); } });
+    expect(got).toEqual(expect.arrayContaining([expect.stringMatching(/HT4\/A5-poses@.*: bulgarian_split_squat\|rear-knee-right: poses\.(start|end) matches neither a reference pose nor its declared Right pose/)]));
+  });
+});
