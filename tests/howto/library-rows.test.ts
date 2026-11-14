@@ -367,7 +367,9 @@ const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_re
 // front_delts) and face_pull (watch [], its rows name no muscle or part), in registry order
 // LIB-SHIP W8b (#417 6856507580): plus dumbbell_romanian_deadlift (noMarkIds on this tree; its parent's sibling
 // single_leg_romanian_deadlift draws none either), in registry order (lb03, before the shrugs)
-const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_dumbbell_romanian_deadlift', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug', 'lib_dumbbell_front_raise', 'lib_face_pull',
+// D-W8B-RDLWATCH (#417 6872580444): dumbbell_romanian_deadlift leaves it: its watch is lower_back (c17), so its two
+// lower-back rows draw the outline (the mark check below now holds it to at least one mark)
+const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug', 'lib_dumbbell_front_raise', 'lib_face_pull',
   'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row',
   'lib_pec_fly',   // LIB-SHIP W8a: pec_fly ships again (#413 6761492481); its feel marks nothing, as in W2 (registry order)
   'lib_cable_fly', 'lib_push_up'];
