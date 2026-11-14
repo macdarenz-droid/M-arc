@@ -842,6 +842,15 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-14 ~00:45 UTC.**
+  - **Train 93:** #424 F-HAND-PALMFLAT-SIZE → main `9139c29c` (review PASS 6868686288). No APK: src/ moved only inputsSha256 headers. This frees mountain_climbers.
+  - **#425 F-HT4-RIGHTPOSE: REVIEW FAIL** (6868113425). The new rule made the D-LIB4b-POSES proof (`poses-proof.mjs`) accept two shipped Right pins it expects red.
+    - Ruled **D-RP-OPTIN** (6868123318): an exact, ruled (id, zoom) opt-in list; the proof stays unchanged; (a) is refused.
+    - The same reviewer (session_018Pv5bKyKuz9ugvveQL6b5Q) checks the delta.
+  - **W8b #417:** READY @ `f9c9c12f`. Reviewer session_018Pv5bJmMJZGkH9q2Pfd49e is running. After a PASS it merges main `9139c29c`, then 'W8b TRAIN HEAD'.
+  - **F-BSS-REARKNEE** (part 2 of `f-ht4-rightpose-card.md`): builder session_018Pv5bJcegF3u9b122sSNhy started. It needs a fresh panel for bulgarian.
+  - **F-SHEET-COPY #423:** waits for W8b.
+  - **Freed, for the next ship wave:** seated_leg_curl, assisted_pull_up, mountain_climbers. dumbbell_shrug and bulgarian_split_squat join after #425 and part 2.
 - **Update 11-13 ~20:45 UTC.** Weekly meter 0.20 (19:41).
   - **Train 91:** #420 F-HT10-TEXTZOOM → main `4ebc6d63` (review PASS 6859976481). No APK: tools and tests only.
   - **Train 92:** #419 PF5 → main `5b7d6e80` (review PASS 6860694154 @ `463cd9fc`; the train head `2f6f867c` is main only, 83/83 green). No APK: src/ changed only inputsSha256 headers. jumping_jacks is held → F-JJ-TEXTZOOM.
