@@ -12,6 +12,7 @@ import { pf2Problems, restorePF2 } from './platefix2-pins';
 import { pf3bProblems, restorePF3b } from './platefix3b-pins';
 import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
 import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
+import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS)
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
@@ -441,12 +442,12 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
   it('only the two keys differ from main, and each pins its current file', () => {
     const m = man();
     for (const k of PFS_MOVED) { const now = sha(readFileSync(new URL(`../../${k}`, import.meta.url))); for (const [id, r] of Object.entries<any>(m.rows)) if (k in r.files) expect([id, k, r.files[k]]).toEqual([id, k, now]); }
-    expect(blank(m)).toEqual({ n: { [PFS_MOVED[0]!]: 134, [PFS_MOVED[1]!]: 134 }, sha: PFS_BLANKED_MAIN });
+    expect(blank(restoreBSS(m))).toEqual({ n: { [PFS_MOVED[0]!]: 134, [PFS_MOVED[1]!]: 134 }, sha: PFS_BLANKED_MAIN });   // F-BSS-REARKNEE (D-RP-PINS): was blank(m), now restoreBSS first (its key pins the current file, then main 9139c29c's value); same n and hash
   });
   it('red: any other key moved, or a row dropped', () => {
-    const m = man(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).some(k => !PFS_MOVED.includes(k)))!;
-    m.rows[id].files[Object.keys(r.files).find(k => !PFS_MOVED.includes(k))!] = '0'.repeat(64);
-    expect(blank(m).sha).not.toBe(PFS_BLANKED_MAIN);
+    const m = man(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).some(k => !PFS_MOVED.includes(k) && k !== BSS_KEY))!;   // F-BSS-REARKNEE (D-RP-PINS): + k !== BSS_KEY
+    m.rows[id].files[Object.keys(r.files).find(k => !PFS_MOVED.includes(k) && k !== BSS_KEY)!] = '0'.repeat(64);   // F-BSS-REARKNEE (D-RP-PINS): + k !== BSS_KEY (restoreBSS would undo it)
+    expect(blank(restoreBSS(m)).sha).not.toBe(PFS_BLANKED_MAIN);   // F-BSS-REARKNEE (D-RP-PINS): was blank(m)
     const d = man(); delete d.rows[Object.keys(d.rows)[0]!];
     expect(blank(d).sha).not.toBe(PFS_BLANKED_MAIN);
   });

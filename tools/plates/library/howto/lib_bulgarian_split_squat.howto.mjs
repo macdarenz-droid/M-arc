@@ -54,8 +54,8 @@ const CL = {
 // The card zoom rear-knee Wrong (c3: "Rear knee resting on the floor") is the plate's drawn fault, the spec's Mistake
 // pose (D-SPLIT-BSSHOVER: the hips sink until the rear kneecap rests on the floor, hips 3 cm lower than the end). Its
 // Right is the end pose with one change (fix round 1, panel L5: the Right and Wrong knees differed by about 10 px): the
-// hips raised LIFT m, both feet held, so the rear kneecap sits clearly above the floor (measured: 6.9 cm gap against
-// the end pose's 3.0 cm; the Wrong's kneecap is on the floor), "just above" the floor (c3, card plate.end).
+// hips raised LIFT m, both feet held, so the rear kneecap sits clearly above the floor (measured: 11.3 cm gap against
+// the end pose's 6.9 cm, END_GAP as LIB-PLATEFIX-3 set it; the Wrong's kneecap is on the floor), "just above" the floor (c3, card plate.end).
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent lib_reverse_lunge's SHORT, D-LIB7-2): LIFT 0.03 m is a
 // Right-pose size no card gives; no number from it appears in user copy; the layers panel judges it.
 const LIFT = 0.03;
@@ -74,8 +74,9 @@ export const stills = {
 const zooms = [
   {
     key: 'rear-knee', chip: 'Rear knee', heading: 'Rear knee', kind: 'posture',
-    // crop (fix round 2, recheck L7): the floor near the bottom edge, the rear knee, shin and bench filling the frame
-    crop: { center: { at: 'knee.l', pose: 'right', off: [-40, -24] }, sizePx: 100 },
+    // crop (fix round 2, recheck L7): the rear knee, shin and bench filling the frame; F-BSS-REARKNEE (W8b panel L5,
+    // D-W8B-RIGHTPOSE): the window 12 px lower, so the floor line runs full width 23.6 panel px above the bottom edge
+    crop: { center: { at: 'knee.l', pose: 'right', off: [-40, -12] }, sizePx: 100 },
     right: { base: 'end', pose: KNEE_GAP },
     wrong: { base: 'end', pose: MIS, solid: true },
     callout: {

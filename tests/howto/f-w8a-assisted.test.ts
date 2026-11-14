@@ -10,6 +10,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { PF5_MAIN, restorePF5 } from './platefix5-pins';   // LIB-PLATEFIX-5 (D-PF5-PINS): put PF5's own [golden update] keys/entries back to main before the A1 blanked compare
+import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS): its moved how-to key put back to main 9139c29c's before the A1 blanked compare
 
 const ROOT = process.cwd();
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
@@ -156,12 +157,12 @@ describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
   it('only build-layers-page.mjs\'s key differs from main, and it pins the current file', () => {
     const m = raw(), now = sha(readFileSync(join(ROOT, MOVED)));
     for (const [id, r] of Object.entries<any>(m.rows)) if (MOVED in r.files) expect([id, r.files[MOVED]]).toEqual([id, now]);
-    expect(blanked(toMain(m))).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });   // LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)) (PF5's re-pinned keys/entries put back to main first); same hash and n
+    expect(blanked(restoreBSS(toMain(m)))).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });   // F-BSS-REARKNEE (D-RP-PINS): was blanked(toMain(m)), now restoreBSS too (its key pins the current file, then main's value); same hash and n   // LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)) (PF5's re-pinned keys/entries put back to main first); same hash and n
   });
   it('red: any other key moved', () => {
-    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && !(k in PF5_MAIN)))!;
-    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && !(k in PF5_MAIN))!;   // F-HAND-PALMFLAT-SIZE: not the pairs.mjs key either   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
+    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && k !== BSS_KEY && !(k in PF5_MAIN)))!;
+    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && k !== BSS_KEY && !(k in PF5_MAIN))!;   // F-BSS-REARKNEE (D-RP-PINS): not the bulgarian how-to key either (restoreBSS would undo it)     // F-HAND-PALMFLAT-SIZE: not the pairs.mjs key either   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
     m.rows[id].files[other] = '0'.repeat(64);
-    expect(blanked(toMain(m)).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash
+    expect(blanked(restoreBSS(toMain(m))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // F-BSS-REARKNEE (D-RP-PINS): + restoreBSS   // LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash
   });
 });
