@@ -31,7 +31,7 @@ const load = async () => {
   return { crop, engine, mergeDeep: common.mergeDeep, OPTS: opts.CLOSEUP_OPTIONS.bulgarian_split_squat.crop, howto: mod.default, RADII: body.RADII };
 };
 
-type M = { role: string; floorBottom: number; floorX: [number, number]; vx: number; s: number; gap: number; edges: Record<string, number> };
+type M = { role: string; backTop: number; floorBottom: number; floorX: [number, number]; vx: number; s: number; gap: number; edges: Record<string, number> };
 /** Both halves' numbers for the howto `howto` with its rear-knee zoom `z` (the howto's own when omitted). */
 async function measure(over: { zoom?: (z: any) => any; plate?: (p: any) => any } = {}): Promise<M[]> {
   const { crop, engine, mergeDeep, OPTS, howto: h0, RADII } = await load();
@@ -60,7 +60,8 @@ async function measure(over: { zoom?: (z: any) => any; plate?: (p: any) => any }
     const knee = lm['knee.l'], low = T(P([0, knee[1] - KC, knee[2]]))[1]!, floorY = T([0, fy])[1]!;
     const front = bench.at[2] + bench.width / 2, corner = T(P([0, bench.at[1], front])), top = corner[1]!;
     const e = (p: number[]) => Math.min(p[0]!, p[1]!, 171 - p[0]!, 171 - p[1]!);
-    out.push({ role, floorBottom: 171 - floorY, floorX: [fx0, fx1], vx, s, gap: floorY - low,
+    const backTop = T(P([0, bench.at[1], front - bench.width]))[0]!;
+    out.push({ role, backTop, floorBottom: 171 - floorY, floorX: [fx0, fx1], vx, s, gap: floorY - low,
       edges: { 'knee.l': e(T(P(knee))), 'ankle.l': e(T(P(lm['ankle.l']))), 'bench corner': e(corner), 'bench top': Math.min(top, 171 - top) } });
   }
   return out;
@@ -78,6 +79,10 @@ describe('F-BSS-REARKNEE: the Rear knee close-up', { timeout: 120_000 }, () => {
   it('C7: the floor line is well inside both halves and spans their full width', async () => { expect(c7(await measure())).toEqual([]); });
   it('C8: a gap under the Right kneecap; the Wrong kneecap on the floor', async () => { expect(c8(await measure())).toEqual([]); });
   it('C9: knee, ankle and bench top stay inside both halves (L7)', async () => { expect(c9(await measure())).toEqual([]); });
+  it('C9 (Q-BSS-2 ruling): the bench\'s back top corner runs past the left edge, as in main\'s approved crop', async () => {
+    // a known fact pinned, so a later crop change shows: main's off [-40, -24] and window A share x, so both read -5.5
+    for (const ms of [await measure(), await measure(withCrop({ center: { off: [-40, -24] } }))]) expect(ms.map(m => [m.role, +m.backTop.toFixed(1)])).toEqual([['right', -5.5], ['wrong', -5.5]]);
+  });
   it('red m9: main\'s crop window (off [-40, -24]) fails C7', async () => {
     expect(c7(await measure(withCrop({ center: { off: [-40, -24] } })))).toEqual([
       expect.stringMatching(/^right: floor 3\.1 px above the bottom edge < 20$/), expect.stringMatching(/^wrong: floor 3\.1 px above the bottom edge < 20$/)]);
