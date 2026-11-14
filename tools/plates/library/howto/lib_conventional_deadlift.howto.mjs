@@ -70,9 +70,10 @@ const CL = {
 // the bar left where it is, the root raised straight up until the near knee opens to SHOOT_KNEE, and the trunk tipped
 // forward (root tilt SOLVED) until the straight arm reaches the bar again.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): the
-// shot-up knee angle (SHOOT_KNEE 30 deg of flexion, in the 'shoot' pose) is a Wrong-pose size no card gives; no number
-// from it appears in user copy; the layers panel judges it.
-const H = 1.75, R = Math.PI / 180, END = plateSpec.poses.end, LE = landmarksOf(END, H), SHOOT_KNEE = 30;
+// shot-up knee angle (SHOOT_KNEE 15 deg of flexion, in the 'shoot' pose) is a Wrong-pose size no card gives; no number
+// from it appears in user copy; the layers panel judges it. F-DL-LIFTOFF (W8b L5 [3,3,4]): 30 -> 15, so the knees read
+// nearly straight (the Right's 64 deg) and the hip rises 0.138 m (was 0.114 m), with the bar and the feet unmoved.
+const H = 1.75, R = Math.PI / 180, END = plateSpec.poses.end, LE = landmarksOf(END, H), SHOOT_KNEE = 15;
 const kneeR = lm => {
   const a = [0, 1, 2].map(i => lm['hip.r'][i] - lm['knee.r'][i]), b = [0, 1, 2].map(i => lm['ankle.r'][i] - lm['knee.r'][i]);
   return 180 - Math.acos((a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) / Math.hypot(...a) / Math.hypot(...b)) / R;
@@ -114,7 +115,10 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card posture zoom; dl-grip is text (above). Zoom shell form (render/closeup/crop.mjs): each crop centre is
-// on the right pose for both halves; the Wrong is drawn alone (solid).
+// on the right pose for both halves; each Wrong is dashed over the Right (the plate's Mistake overlay).
+// F-DL-LIFTOFF: the dl-liftoff Wrong crop's equipment is the spec's list less its 'mplate' ring (the Mistake's dashed
+// plate, which here would sit on the unmoved plate) and less the start-bar rays (as the page's noRays option drops them).
+const LIFT_EQ = plateSpec.equipment.filter(e => typeof e !== 'function' || !([].concat(e(LE, { pose: 'end', mistake: false, start: LE, q: null }) ?? []).some(it => it?.type === 'line') || [].concat(e(LE, { pose: 'mistake', mistake: true, start: LE, q: null }) ?? []).some(it => it?.part === 'mplate')));
 const zooms = [
   {
     key: 'dl-start', chip: 'Start', heading: 'Start position', kind: 'posture',
@@ -138,12 +142,13 @@ const zooms = [
   },
   {
     key: 'dl-liftoff', chip: 'Liftoff', heading: 'Liftoff', kind: 'posture',
-    crop: { center: { at: 'hip.r', pose: 'right', off: [0, 10] }, sizePx: 200 },
+    crop: { center: { at: 'hip.r', pose: 'right', off: [20, 35] }, sizePx: 180 },
     right: 'end',
-    wrong: { base: 'end', pose: SHOOT, solid: true },
+    wrong: { base: 'end', pose: SHOOT, equipmentList: LIFT_EQ },
+    guides: [{ kind: 'drop', from: { at: 'hip.r', pose: 'right', off: [-26, 0] }, to: { at: 'hip.r', pose: 'mistake', off: [-26, 0] } }],
     callout: {
       right: { text: 'Hips wait', anchor: 'hip.r' },
-      wrong: { text: 'Hips shoot up', anchor: 'hip.r' },
+      wrong: { text: 'Hips shoot up', anchor: { at: 'hip.r', pose: 'mistake' } },
     },
     caption: {
       right: 'Legs start the pull, hips wait for the bar.',
