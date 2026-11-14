@@ -299,6 +299,98 @@ describe('F-W8A-ASSISTED F-HT4-UNDER: libraryA5 attributes a declared <key>-unde
   });
 });
 
+// F-HT4-RIGHTPOSE (f-ht4-rightpose-card.md part 1, D-RP-SCOPE): a zoom-shell posture zoom's declared Right pose
+// (`right: { base, pose }`, resolved as crop.mjs:45 resolves it) is accepted as poses.start/end only on the calls whose crop
+// draws it: the Right crop, the `<key>-under` crop and a dashed Wrong crop. Never for mistake.pose, base, cam, -n/-m, a
+// solid Wrong, or the zbox shell; a declaration equal to the zoom's own fault pose is a poses problem.
+describe('F-HT4-RIGHTPOSE C1: libraryA5 accepts a declared Right pose exactly where crop.mjs draws it', () => {
+  const S = { root: { at: [0, 1, 0], tilt: 0 }, neck: 0 }, E = { root: { at: [0, 0.9, 0], tilt: 4 }, neck: 2 }, M = { neck: 20 }, W = { neck: -15 }, X = { neck: 7 };
+  const ref = { id: 'x_lib', poses: { start: S, end: E }, mistake: { pose: M, parts: [] }, tempo: [{ phase: 'Pull', s: 1 }], alt: 'a', checks: [], callouts: [] };
+  const R = mergeDeep(E, X), F = mergeDeep(E, W), both = (p: object) => ({ start: p, end: p });
+  const zoom = (wrong: object, extra = {}) => ({ zooms: [{ key: 'k', kind: 'posture', right: { base: 'end', pose: X }, wrong: { base: 'end', pose: W, ...wrong }, ...extra }] });
+  const DASHED = zoom({}), SOLID = zoom({ solid: true, under: true });
+  const crop = (id: string, poses: object, extra = {}) => ({ opts: { id, mistake: id === 'k-wrong' }, spec: { ...ref, poses, callouts: [], checks: [], mistake: undefined, ...extra } });
+  const plate = () => [{ opts: { id: 'base' }, spec: ref }, { opts: { id: 'x-lib-n' }, spec: ref }, { opts: { id: 'x-lib-m', mistake: true }, spec: ref }];
+  // crop.mjs cropSpec: a dashed Wrong draws the Right pose with mistake.pose = poseOf(z.wrong); a solid one draws the fault
+  const dashed = () => [...plate(), crop('k-right', both(R)), crop('k-wrong', both(R), { mistake: { pose: F, parts: [] } })].map(c => JSON.parse(JSON.stringify(c)));
+  const solid = () => [...plate(), crop('k-right', both(R)), crop('k-wrong', both(F)), crop('k-under', both(R))].map(c => JSON.parse(JSON.stringify(c)));
+  const gb = { ...goldenB, fragmentProblems: () => [] };
+  const RULED = [{ id: 'x_lib|k', ruling: 'D-TEST-FIXTURE (tests/howto/library-fidelity.test.ts:1)' }];   // D-RP-OPTIN: the fixture zoom is on the list
+  const run = (cs: unknown[], howto: object, o = {}) => libraryA5({ calls: cs, html: '' }, { specId: 'x_lib', ref, howto, prefix: 'x-lib', family: 'zoom', entry: {}, ruled: RULED, ...o }, gb);
+  const OK = { protected: [], fragments: [], poses: [] };
+  it('green: the Right crop, the under crop (solid + under) and a dashed Wrong\'s base drawing mergeDeep(E, X)', () => {
+    expect(run(dashed(), DASHED)).toEqual(OK);
+    expect(run(solid(), SOLID)).toEqual(OK);
+  });
+  it('m1: a declared pose drawn with one value changed is red, with the declared-Right text', () => {
+    const off = both(mergeDeep(E, { neck: 8 }));
+    const r = dashed(); r[3].spec.poses = off;
+    expect(run(r, DASHED).poses.join('\n')).toMatch(/x_lib\|k-right: poses\.start matches neither a reference pose nor its declared Right pose \(/);
+    const w = dashed(); w[4].spec.poses = off;
+    expect(run(w, DASHED).poses.join('\n')).toMatch(/x_lib\|k-wrong: poses\.start matches neither a reference pose nor its declared fault pose nor its declared Right pose \(/);
+    const u = solid(); u[5].spec.poses = off;
+    expect(run(u, SOLID).poses.join('\n')).toMatch(/x_lib\|k-under: poses\.start matches neither a reference pose nor its declared Right pose \(/);
+  });
+  it('m5: never for a solid Wrong\'s poses, mistake.pose, base or -n/-m (one case each, today\'s texts)', () => {
+    const s = solid(); s[4].spec.poses = both(R);
+    expect(run(s, SOLID).poses).toEqual([`x_lib|k-wrong: poses.start matches neither a reference pose nor its declared fault pose (${JSON.stringify(R).slice(0, 200)})`, `x_lib|k-wrong: poses.end matches neither a reference pose nor its declared fault pose (${JSON.stringify(R).slice(0, 200)})`]);
+    const m = dashed(); m[4].spec.mistake.pose = R;
+    expect(run(m, DASHED).poses).toEqual([`x_lib|k-wrong: mistake.pose matches neither the reference mistake pose nor its declared fault pose (${JSON.stringify(R).slice(0, 200)})`]);
+    for (const [i, id] of [[0, 'base'], [1, 'x-lib-n'], [2, 'x-lib-m']] as const) {
+      const p = dashed(); p[i].spec = { ...p[i].spec, poses: both(R) };
+      expect(run(p, DASHED).poses, id).toEqual([`x_lib|${id}: poses.start matches neither a reference pose (${JSON.stringify(R).slice(0, 200)})`, `x_lib|${id}: poses.end matches neither a reference pose (${JSON.stringify(R).slice(0, 200)})`]);
+    }
+  });
+  it('m6: the zbox shell keeps reference poses only on its Right side', () => {
+    const z = dashed().map(c => ({ ...c, opts: { ...c.opts, id: c.opts.id.replace(/^k-right$/, 'k-r').replace(/^k-wrong$/, 'k-w') } }));
+    z[4].spec.poses = both(E); delete z[4].spec.mistake;
+    const stills = {}, stillPose = () => F;
+    expect(run(z, DASHED, { family: 'zbox', stills, stillPose }).poses).toEqual([`x_lib|k-r: poses.start matches neither a reference pose (${JSON.stringify(R).slice(0, 200)})`, `x_lib|k-r: poses.end matches neither a reference pose (${JSON.stringify(R).slice(0, 200)})`]);
+  });
+  it('m7: a declared Right equal to the zoom\'s own fault pose is a poses problem and is not accepted', () => {
+    const howto = { zooms: [{ key: 'k', kind: 'posture', right: { base: 'end', pose: W }, wrong: { base: 'end', pose: W, solid: true } }] };
+    const cs = [...plate(), crop('k-right', both(F)), crop('k-wrong', both(F))].map(c => JSON.parse(JSON.stringify(c)));
+    const got = run(cs, howto).poses;
+    expect(got).toContain('x_lib|k: declares a fault pose as its Right');
+    expect(got.join('\n')).toMatch(/x_lib\|k-right: poses\.start matches neither a reference pose nor its declared Right pose \(/);
+  });
+  it('m8: the under call and the dashed Wrong call each need the declared pose (a string-Right zoom stays red)', () => {
+    const str = (h: { zooms: object[] }) => ({ zooms: h.zooms.map(z => ({ ...z, right: 'end' })) });
+    const u = solid(); u[3].spec.poses = both(E);
+    expect(run(u, str(SOLID)).poses).toEqual([`x_lib|k-under: poses.start matches neither a reference pose (${JSON.stringify(R).slice(0, 200)})`, `x_lib|k-under: poses.end matches neither a reference pose (${JSON.stringify(R).slice(0, 200)})`]);
+    const w = dashed(); w[3].spec.poses = both(E);
+    expect(run(w, str(DASHED)).poses).toEqual([`x_lib|k-wrong: poses.start matches neither a reference pose nor its declared fault pose (${JSON.stringify(R).slice(0, 200)})`, `x_lib|k-wrong: poses.end matches neither a reference pose nor its declared fault pose (${JSON.stringify(R).slice(0, 200)})`]);
+  });
+  // D-RP-OPTIN (#425 6868123318): only a ruled (spec id, zoom) pair with a cited ruling gets the declared Right pose
+  const today = (id: string, fault = '') => [`x_lib|${id}: poses.start matches neither a reference pose${fault} (${JSON.stringify(R).slice(0, 200)})`, `x_lib|${id}: poses.end matches neither a reference pose${fault} (${JSON.stringify(R).slice(0, 200)})`];
+  it('optin: a zoom not on the ruled list keeps today\'s rule and today\'s messages on every call', () => {
+    for (const ruled of [[], [{ id: 'x_lib|other', ruling: RULED[0]!.ruling }], [{ id: 'y_lib|k', ruling: RULED[0]!.ruling }]]) {
+      expect(run(dashed(), DASHED, { ruled }).poses).toEqual([...today('k-right'), ...today('k-wrong', ' nor its declared fault pose')]);
+      expect(run(solid(), SOLID, { ruled }).poses).toEqual([...today('k-right'), ...today('k-under')]);
+    }
+    expect(run(dashed(), DASHED, { ruled: undefined }).poses).toEqual([...today('k-right'), ...today('k-wrong', ' nor its declared fault pose')]);   // the default list
+  });
+  it('optin: a ruled entry with no ruling citation is red and is not accepted', async () => {
+    // @ts-expect-error plain .mjs build tool, no types
+    const { citesRuling } = await import('../../tools/plates/library/fidelity/twins/ht4.mjs');
+    for (const ruling of [undefined, '', 'TOP (tests/x.mjs:1)', 'D-SHIP-DRAWVAL: TOP', 'D-SHIP-DRAWVAL (see the panel)']) {
+      expect(citesRuling({ id: 'x_lib|k', ruling }), String(ruling)).toBe(false);
+      expect(run(dashed(), DASHED, { ruled: [{ id: 'x_lib|k', ruling }] }).poses, String(ruling)).toEqual(['x_lib|k: a ruled Right pose entry with no ruling citation', ...today('k-right'), ...today('k-wrong', ' nor its declared fault pose')]);
+    }
+    for (const ruling of ['D-SHIP-DRAWVAL (howto/x.mjs:76-77)', 'D-RP-OPTIN #425 6868123318']) expect(citesRuling({ ruling }), ruling).toBe(true);
+  });
+  it('optin: the ruled list is pinned as an exact set, and every entry cites its ruling', async () => {
+    // @ts-expect-error plain .mjs build tool, no types
+    const { RULED_RIGHT_POSES, citesRuling } = await import('../../tools/plates/library/fidelity/twins/ht4.mjs');
+    expect(RULED_RIGHT_POSES.map((e: { id: string }) => e.id)).toEqual([
+      'dumbbell_shrug|dshrug-top', 'bulgarian_split_squat|rear-knee',
+      'diamond_push_up|shoulder-blades', 'hack_squat|knee-lock', 'wall_ball|wall-distance',
+    ]);
+    for (const e of RULED_RIGHT_POSES) expect(citesRuling(e), e.id).toBe(true);
+    expect(Object.isFrozen(RULED_RIGHT_POSES) && RULED_RIGHT_POSES.every((e: object) => Object.isFrozen(e))).toBe(true);
+  });
+});
+
 describe('LIB-4b B5: the scratch fixture sources (D-LIB4-FIXTURE, lib4-cards 11.1 items 3-5 and 14)', () => {
   it('3 ids from the pool, 3 separate pair keys; each clone swaps ids and research card, and its spec id is none of the 8\'s', () => {
     expect(SCRATCH).toHaveLength(3);
