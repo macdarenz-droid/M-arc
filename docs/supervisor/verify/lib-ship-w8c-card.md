@@ -15,6 +15,17 @@ title: 'Builder: LIB-SHIP W8c, the freed holds on'
 branch: `claude/lib-ship-w8c` from main **after W8b (#417) merges**. First push opens a draft PR 'LIB-SHIP W8c'.
 slot: after W8b in the LIB-SHIP merge order (W6 → W7 → W8a → W8b → W8c, plan-w8.md:148). The supervisor names the checklist slot in the start message.
 
+
+## Supervisor rulings (2026-11-14; these win over the text below)
+1. **D-W8C-START:** W8c starts after W8b (#417) merges. The merge order is #417 → #426 → #423 → W8c.
+2. **D-W8C-SET: the 6 ids are accepted:** seated_leg_curl, dumbbell_shrug, bulgarian_split_squat, assisted_pull_up, underhand_lat_pulldown and mountain_climbers.
+   - Carry: seated_leg_curl, shrug and bulgarian, each only with a byte-equal card.
+   - Delta check: assisted_pull_up and underhand_lat_pulldown.
+   - Round 2: mountain_climbers.
+   - Bulgarian joins only if #426 has merged by LAYERS READY; otherwise it is held.
+   - The supervisor's crop check of seated_leg_curl's two text checkpoints (6761492481 point 4) comes before LAYERS APPROVED.
+3. **D-W8C-JJ: jumping_jacks is not in W8c.** It goes to the lb05-lb10 wave as F-JJ-TOE: re-apply c51ae277 plus a round-2 check. F-HT10-TEXTZOOM does not apply, because the sheet draws a posture zoom (gen/zooms.mjs:86-89).
+
 ## Why now
 Every row below was held by a shared tool or a twin gap, not by its own content (D-W8A-SEATEDHOLD 6764870427, D-W8A-ASSISTEDHOLD 6763631846, mountain_climbers 6761492481 point 5, D-W8B-RIGHTPOSE 6854831158). The tool cards that free them have merged, except #426. On main 72 rows ship (64 library + 8; batch files on `d92830c2`); W8b takes it to 81.
 
