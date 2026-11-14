@@ -168,11 +168,11 @@ const feel = {
   primary: [
     { muscleId: 'glutes', plain: 'The glutes work hard, more than in the Romanian deadlift.' },
     { muscleId: 'hamstrings', plain: 'The back of the thighs should feel the work.' },
-  ],
-  // W4 panel L4 / content K1 (c13): the lower back is Also working (c15: it works hard) and the watch region, so the map
-  // agrees with the feel line's "not your back" and the 'Lower back taking over' row draws the dashed outline.
-  secondary: [
     { muscleId: 'lower_back', plain: 'The lower back works hard in this lift.' },
+  ],
+  // F-DL-LIFTOFF D-DL-L4 (panel L4 [4,3,3] on #427): the lower back is Main, as the card's feel.primary has it (c15: it
+  // works hard), and the feel line names it; it stays the watch region, so both lower-back rows draw the dashed outline.
+  secondary: [
     { muscleId: 'quads', plain: 'The front thighs work hard too.' },
     { muscleId: 'adductors', plain: 'The inner thighs help.' },
     { muscleId: 'upper_traps', plain: 'The traps help.' },
@@ -181,7 +181,7 @@ const feel = {
   watch: [
     { muscleId: 'lower_back', plain: 'The lower back should not take over.' },   // c13 (card watch)
   ],
-  feelLine: 'You should feel this in your glutes and hamstrings, not your back. Front thighs help off the floor.',
+  feelLine: 'You should feel this in your glutes, hamstrings and lower back. Front thighs help off the floor.',
   rows: [
     { key: 'low-back-over', where: 'Lower back taking over', at: { muscles: ['lower_back'] },
       means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
