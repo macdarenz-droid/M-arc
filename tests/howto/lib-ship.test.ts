@@ -13,7 +13,7 @@ import { checkC3 } from './checks/c3';
 import { W5 } from './lib-ship-w5';
 import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
-import { W8B_HELD, W8B_IDS } from './checks/ship-w8b';
+import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems } from './checks/ship-w8b';
 import exercises from '../../src/data/exercises.json';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -1642,5 +1642,34 @@ describe('LIB-SHIP W8b D-W8B-FIX L6: dumbbell_pullover\'s weight-jump risk names
     expect(await problems(set('Small weight jumps load the shoulders hard. Start light, add weight in small steps.'))).toContain('the jump is not named as the danger at the bottom (c12)');
     expect((await problems(set('Even small weight jumps load the shoulders very hard at the bottom of each and every single rep. Start light.'))).some(p => p.startsWith('sentence over 15 words'))).toBe(true);
     expect(await problems(rs.filter((r: any) => r.key !== 'jumps'))).toEqual(['no jumps risk']);
+  });
+});
+
+// LIB-SHIP W8b (review #417 6869580972, High; W8a form, checks/ship-w8a.ts w8aLayersProblems): each of the 4 W8b layers
+// pages' last golden entry is checked whole against W8B_LAYERS: decision, approver, the exact W8B_LAYERS_APPROVAL
+// (6856468001 @ 1f53a555), supersedes, ids, the page pin and the superseded pin; reds on every page: another approval
+// sha, another comment id, and the superseded or page pin moved.
+describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', () => {
+  const g = (b: string) => JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8'));
+  const pg = (b: string) => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
+  const lastWith = (f: any, o: any) => ({ ...f, entries: [...f.entries.slice(0, -1), { ...f.entries[f.entries.length - 1], ...o }] });
+  it('lb02-lb05: the W8b entry is each chain\'s last and pins its page with the exact approval', () => {
+    expect(Object.keys(W8B_LAYERS)).toEqual(['lb02', 'lb03', 'lb04', 'lb05']);
+    expect(W8B_LAYERS_APPROVAL).toBe('https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652');
+    for (const b of Object.keys(W8B_LAYERS)) expect([b, w8bLayersProblems(g(b), b, pg(b))]).toEqual([b, []]);
+  });
+  it('reds on every page: another approval sha, another comment id, a moved page pin, a moved superseded pin, other ids', () => {
+    for (const b of Object.keys(W8B_LAYERS)) {
+      const f = g(b), p = pg(b);
+      expect([b, w8bLayersProblems(lastWith(f, { approval: W8B_LAYERS_APPROVAL.replace(/[0-9a-f]{40}$/, '1fdf6975d8e93c184ae77ad11daf1cf73505a15d') }), b, p).length]).toEqual([b, 1]);
+      expect([b, w8bLayersProblems(lastWith(f, { approval: W8B_LAYERS_APPROVAL.replace('6856468001', '6856272493') }), b, p).length]).toEqual([b, 1]);
+      expect([b, w8bLayersProblems(f, b, Buffer.concat([p, Buffer.from(' ')]))]).toEqual([b, [`${b} W8b: page pin`]]);
+      expect([b, w8bLayersProblems(lastWith(f, { ids: [...W8B_LAYERS[b]!.ids, 'lib_wrist_curl'] }), b, p).length]).toEqual([b, 1]);
+      const s = W8B_LAYERS[b]!.supersedes;
+      if (s !== null) {
+        const moved = { ...f, entries: f.entries.map((e: any, i: number) => (i === s ? { ...e, pageSha256: '0'.repeat(64) } : e)) };
+        expect([b, w8bLayersProblems(moved, b, p)]).toEqual([b, [`${b} W8b: superseded pin`]]);
+      }
+    }
   });
 });
