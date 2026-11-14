@@ -70,9 +70,10 @@ const CL = {
 // the bar left where it is, the root raised straight up until the near knee opens to SHOOT_KNEE, and the trunk tipped
 // forward (root tilt SOLVED) until the straight arm reaches the bar again.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2 and golden B's machine_chest_press seatDrop): the
-// shot-up knee angle (SHOOT_KNEE 30 deg of flexion, in the 'shoot' pose) is a Wrong-pose size no card gives; no number
-// from it appears in user copy; the layers panel judges it.
-const H = 1.75, R = Math.PI / 180, END = plateSpec.poses.end, LE = landmarksOf(END, H), SHOOT_KNEE = 30;
+// shot-up knee angle (SHOOT_KNEE 15 deg of flexion, in the 'shoot' pose) is a Wrong-pose size no card gives; no number
+// from it appears in user copy; the layers panel judges it. F-DL-LIFTOFF (W8b L5 [3,3,4]): 30 -> 15, so the knees read
+// nearly straight (the Right's 64 deg) and the hip rises 0.138 m (was 0.114 m), with the bar and the feet unmoved.
+const H = 1.75, R = Math.PI / 180, END = plateSpec.poses.end, LE = landmarksOf(END, H), SHOOT_KNEE = 15;
 const kneeR = lm => {
   const a = [0, 1, 2].map(i => lm['hip.r'][i] - lm['knee.r'][i]), b = [0, 1, 2].map(i => lm['ankle.r'][i] - lm['knee.r'][i]);
   return 180 - Math.acos((a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) / Math.hypot(...a) / Math.hypot(...b)) / R;
@@ -114,7 +115,10 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card posture zoom; dl-grip is text (above). Zoom shell form (render/closeup/crop.mjs): each crop centre is
-// on the right pose for both halves; the Wrong is drawn alone (solid).
+// on the right pose for both halves; each Wrong is dashed over the Right (the plate's Mistake overlay).
+// F-DL-LIFTOFF: the dl-liftoff Wrong crop's equipment is the spec's list less its 'mplate' ring (the Mistake's dashed
+// plate, which here would sit on the unmoved plate) and less the start-bar rays (as the page's noRays option drops them).
+const LIFT_EQ = plateSpec.equipment.filter(e => typeof e !== 'function' || !([].concat(e(LE, { pose: 'end', mistake: false, start: LE, q: null }) ?? []).some(it => it?.type === 'line') || [].concat(e(LE, { pose: 'mistake', mistake: true, start: LE, q: null }) ?? []).some(it => it?.part === 'mplate')));
 const zooms = [
   {
     key: 'dl-start', chip: 'Start', heading: 'Start position', kind: 'posture',
@@ -138,12 +142,13 @@ const zooms = [
   },
   {
     key: 'dl-liftoff', chip: 'Liftoff', heading: 'Liftoff', kind: 'posture',
-    crop: { center: { at: 'hip.r', pose: 'right', off: [0, 10] }, sizePx: 200 },
+    crop: { center: { at: 'hip.r', pose: 'right', off: [20, 35] }, sizePx: 180 },
     right: 'end',
-    wrong: { base: 'end', pose: SHOOT, solid: true },
+    wrong: { base: 'end', pose: SHOOT, equipmentList: LIFT_EQ },
+    guides: [{ kind: 'drop', from: { at: 'hip.r', pose: 'right', off: [-26, 0] }, to: { at: 'hip.r', pose: 'mistake', off: [-26, 0] } }],
     callout: {
       right: { text: 'Hips wait', anchor: 'hip.r' },
-      wrong: { text: 'Hips shoot up', anchor: 'hip.r' },
+      wrong: { text: 'Hips shoot up', anchor: { at: 'hip.r', pose: 'mistake' } },
     },
     caption: {
       right: 'Legs start the pull, hips wait for the bar.',
@@ -163,11 +168,12 @@ const feel = {
   primary: [
     { muscleId: 'glutes', plain: 'The glutes work hard, more than in the Romanian deadlift.' },
     { muscleId: 'hamstrings', plain: 'The back of the thighs should feel the work.' },
-  ],
-  // W4 panel L4 / content K1 (c13): the lower back is Also working (c15: it works hard) and the watch region, so the map
-  // agrees with the feel line's "not your back" and the 'Lower back taking over' row draws the dashed outline.
-  secondary: [
     { muscleId: 'lower_back', plain: 'The lower back works hard in this lift.' },
+  ],
+  // F-DL-LIFTOFF D-DL-L4 (panel L4 [4,3,3] on #427): the lower back is Main, as the card's feel.primary has it (c15: it
+  // works hard), and the feel line names it; it stays the watch region, and watchMain (D-DL-WATCHMAIN) keeps the dashed
+  // outline on both lower-back rows.
+  secondary: [
     { muscleId: 'quads', plain: 'The front thighs work hard too.' },
     { muscleId: 'adductors', plain: 'The inner thighs help.' },
     { muscleId: 'upper_traps', plain: 'The traps help.' },
@@ -176,7 +182,8 @@ const feel = {
   watch: [
     { muscleId: 'lower_back', plain: 'The lower back should not take over.' },   // c13 (card watch)
   ],
-  feelLine: 'You should feel this in your glutes and hamstrings, not your back. Front thighs help off the floor.',
+  watchMain: true,
+  feelLine: 'You should feel this in your glutes, hamstrings and lower back. Front thighs help off the floor.',
   rows: [
     { key: 'low-back-over', where: 'Lower back taking over', at: { muscles: ['lower_back'] },
       means: '',   // D-FEEL-MEANS-CAUSAL: the card's row gives no cause at its strength; D-FEEL-NOMEANS prints no label
