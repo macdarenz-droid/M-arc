@@ -11,7 +11,13 @@
 //      panel px from every edge.
 // Each `red:` case is a card mutation (m9-m13) applied in memory; it must turn its check red.
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
+import { createHash } from 'node:crypto';
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { BSS_KEY, BSS_MAIN, BSS_MAIN_OFF, BSS_ROWS, bssMainZoom, bssProblems, restoreBSS } from './f-bss-rearknee-pins';
 
 const ROOT = new URL('../../', import.meta.url);
 const href = (p: string) => new URL(p, ROOT).href;
@@ -100,5 +106,112 @@ describe('F-BSS-REARKNEE: the Rear knee close-up', { timeout: 120_000 }, () => {
   });
   it('red m13: a crop moved so the ankle and bench top leave the frame fails C9', async () => {
     expect(c9(await measure(withCrop({ center: { off: [-40, 30] } })))).toEqual(expect.arrayContaining([expect.stringMatching(/^right: ankle\.l /), expect.stringMatching(/^wrong: bench top /)]));
+  });
+});
+
+// ---- C10: card scope, on a scratch lb04 layers page with bulgarian staged in the W8b form (1fdf6975's group and
+// closeups entries; the config is never committed). Built in a scratch tree with the tree's own modules (a child process),
+// once as this head and once with main 9139c29c's crop window. ----
+const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
+const RUN = process.cwd();
+const COPY = ['package.json', 'scripts', 'src', 'tools', 'tests/howto/golden', 'docs/research/howto'];
+const LB04 = 'tools/plates/library/pages/lb04.layers.json';
+const JUDGED = '3649e98cde40c5c02890463ca2b853bf4ebcdb6c7efdba8fcae445a8a7633323';   // W8b's judged card (lb04.layers.html @ 1fdf6975)
+const PANEL_CARD = 'bcd016a4ce10c3f2f56ce8eea1cd492621aeed7c6e6c0d931223394b58fcbb99';   // PANEL READY 6869383847: the card the panel judges
+const trees: string[] = [];
+afterAll(() => { for (const t of trees) rmSync(t, { recursive: true, force: true }); });
+const withBss = (s: string) => {
+  const c = JSON.parse(s), ids: string[] = c.groups[0].ids;
+  expect(ids).not.toContain('lib_bulgarian_split_squat');
+  ids.splice(ids.indexOf('lib_bodyweight_split_squat') + 1, 0, 'lib_bulgarian_split_squat');
+  c.closeups.lib_bulgarian_split_squat = { optionsKey: 'bulgarian_split_squat' };
+  return `${JSON.stringify(c, null, 2)}\n`;
+};
+function scratchPage(mainWindow: boolean): string {
+  const T = mkdtempSync(join(tmpdir(), 'f-bss-rearknee-'));
+  trees.push(T);
+  for (const p of COPY) if (existsSync(join(RUN, p))) cpSync(join(RUN, p), join(T, p), { recursive: true });
+  symlinkSync(join(RUN, 'node_modules'), join(T, 'node_modules'), 'dir');
+  writeFileSync(join(T, LB04), withBss(readFileSync(join(T, LB04), 'utf8')));
+  if (mainWindow) {
+    const h = readFileSync(join(T, HOWTO), 'utf8'), now = "off: [-40, -12] }, sizePx: 100 }";
+    expect(h.split(now).length - 1).toBe(1);
+    writeFileSync(join(T, HOWTO), h.replace(now, `off: [${BSS_MAIN_OFF.join(', ')}] }, sizePx: 100 }`));
+  }
+  const code = `
+    import { layersSpecOf } from './tools/plates/library/layers-spec.mjs';
+    import { buildLayersPage } from './tools/plates/library/build-layers-page.mjs';
+    import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'; import { tmpdir } from 'node:os'; import { join } from 'node:path';
+    const stageDir = mkdtempSync(join(tmpdir(), 'bss-stage-'));
+    try { writeFileSync('out.layers.html', await buildLayersPage(layersSpecOf('tools/plates/library/batches/lb04.json', { stageDir, root: process.cwd() }))); }
+    finally { rmSync(stageDir, { recursive: true, force: true }); }`;
+  const r = spawnSync(process.execPath, ['--input-type=module', '-e', code], { cwd: T, encoding: 'utf8', maxBuffer: 1 << 28 });
+  if (r.status !== 0) throw new Error(r.stderr || r.stdout);
+  return readFileSync(join(T, 'out.layers.html'), 'utf8');
+}
+const cardIds = (h: string) => [...h.matchAll(/<article class="sheet-card" id="card-([^"]+)"/g)].map(m => m[1]!);
+const cardOf = (h: string, id: string) => { const a = h.indexOf(`<article class="sheet-card" id="card-${id}"`); return h.slice(a, h.indexOf('</article>', a)); };
+/** C10's problems for `now` against `base` (the same page with main's crop window). */
+async function scopeProblems(now: string, base: string): Promise<string[]> {
+  const { divAt } = await import(/* @vite-ignore */ href('tools/plates/library/build-layers-page.mjs'));
+  const ids = cardIds(base), bad: string[] = [];
+  if (cardIds(now).join() !== ids.join()) bad.push(`cards ${cardIds(now)} != ${ids}`);
+  for (const id of ids) if (id !== 'bulgarian-split-squat' && cardOf(now, id) !== cardOf(base, id)) bad.push(`${id}: card differs`);
+  const strip = (h: string) => ids.reduce((o, id) => o.replace(cardOf(h, id), ''), h);
+  if (strip(now) !== strip(base)) bad.push('outside the cards differs');
+  const x = cardOf(now, 'bulgarian-split-squat'), y = cardOf(base, 'bulgarian-split-squat');
+  if (x.length !== y.length) bad.push('bulgarian card length differs');
+  let i = 0; while (i < y.length && x[i] === y[i]) i++;
+  let j = 0; while (j < y.length - i && x[x.length - 1 - j] === y[y.length - 1 - j]) j++;
+  const z0 = y.indexOf('<div class="zx" id="bulgarian-split-squat-zoom-rear-knee"'), z1 = z0 + divAt(y, z0).length;
+  if (i < y.length && (z0 < 0 || i < z0 || y.length - j > z1)) bad.push(`bulgarian card differs at [${i}, ${y.length - j}], outside the Rear knee block [${z0}, ${z1}]`);
+  return bad;
+}
+describe('F-BSS-REARKNEE C10: card scope on the scratch lb04 page', { timeout: 900_000 }, () => {
+  let now = '', base = '';
+  it('built twice equal; main\'s window gives W8b\'s judged card; only the Rear knee block moves; the card is the one the panel judges', async () => {
+    now = scratchPage(false); base = scratchPage(true);
+    expect(sha(scratchPage(false))).toBe(sha(now));
+    expect(sha(cardOf(base, 'bulgarian-split-squat'))).toBe(JUDGED);
+    expect(sha(cardOf(now, 'bulgarian-split-squat'))).toBe(PANEL_CARD);
+    expect(await scopeProblems(now, base)).toEqual([]);
+  });
+  it('red m14: one byte changed outside the Rear knee block', async () => {
+    expect(now).not.toBe('');
+    const x = cardOf(now, 'bulgarian-split-squat'), at = x.indexOf('<div class="zx" id="bulgarian-split-squat-zoom-rear-knee"') - 1, y = x.slice(0, at) + '~' + x.slice(at + 1);   // the byte just before the Rear knee block
+    expect([at > 0, x[at] !== '~']).toEqual([true, true]);
+    expect(await scopeProblems(now.replace(x, () => y), base)).toEqual([expect.stringMatching(/^bulgarian card differs at .* outside the Rear knee block/)]);
+    const f = cardOf(now, 'front-squat');
+    expect(await scopeProblems(now.replace(f, () => f.replace('class=', 'class =')), base)).toEqual(expect.arrayContaining(['front-squat: card differs']));
+  });
+});
+
+// ---- C11: the MANIFEST blanked-keys test (F-W8A-ASSISTED A1 form): only the bulgarian how-to key moved, in its 12 rows. ----
+describe('F-BSS-REARKNEE C11: the MANIFEST blanked-keys test', () => {
+  const man = () => JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'));
+  it('the key pins the current file in its 12 rows, and restoring main\'s value leaves only that key differing (the 3 D-RP-PINS lines use the same restore)', () => {
+    const m = man();
+    expect(bssProblems(m)).toEqual([]);
+    expect(Object.values<any>(m.rows).filter(r => BSS_KEY in r.files).length).toBe(BSS_ROWS);
+    const r = restoreBSS(structuredClone(m));
+    for (const row of Object.values<any>(r.rows)) if (BSS_KEY in row.files) expect(row.files[BSS_KEY]).toBe(BSS_MAIN);
+    expect(sha(readFileSync(path(BSS_KEY)))).not.toBe(BSS_MAIN);
+  });
+  it('red m15: a second key moved, or a stale bulgarian key', () => {
+    const m = man(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => BSS_KEY in x.files)!;
+    const other = Object.keys(r.files).find(k => k !== BSS_KEY)!, was = r.files[other];
+    m.rows[id].files[other] = '0'.repeat(64);
+    expect(restoreBSS(structuredClone(m)).rows[id].files[other]).not.toBe(was);   // restoreBSS never hides another key
+    const s = man(); s.rows[id].files[BSS_KEY] = BSS_MAIN;
+    expect(bssProblems(s)).toEqual([expect.stringMatching(new RegExp(`^${id}: .* != current`))]);
+    expect(() => restoreBSS(s)).toThrow(/restoreBSS/);
+  });
+  it('bssMainZoom changes only bulgarian\'s rear-knee crop offset', async () => {
+    const { howto } = await load(), z = howto.zooms.find((q: any) => q.key === 'rear-knee');
+    const m = bssMainZoom('bulgarian_split_squat', z);
+    expect({ ...m, crop: { ...m.crop, center: { ...m.crop.center, off: z.crop.center.off } } }).toEqual(z);
+    expect(m.crop.center.off).toEqual([-40, -24]);
+    expect(bssMainZoom('bodyweight_split_squat', z)).toBe(z);
+    expect(bssMainZoom('bulgarian_split_squat', { ...z, key: 'other' }).crop).toBe(z.crop);
   });
 });
