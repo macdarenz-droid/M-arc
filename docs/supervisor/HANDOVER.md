@@ -842,6 +842,18 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-14 ~06:45 UTC.** Weekly meter 0.26 (05:44).
+  - **Train 94:** #425 F-HT4-RIGHTPOSE part 1 → main `d92830c2` (delta PASS 6871353302). No APK: tools and tests only. This frees dumbbell_shrug.
+  - **W8b #417:** delta REVIEW PASS @ `d61ca89b` (6872591747).
+    - Then D-W8B-RDLWATCH (6872580444). The #427 panel's control tile showed RDL's lower-back watch outline missing, 3/3 at L4.
+    - RDL is re-stamped (6872764692: `da89c94f`, approval 6872580444 @ d61ca89b).
+    - Next: FIXED, my crop check of the 2 lower-back rows, the reviewer's delta check, a merge of main `d92830c2`, then the train.
+  - **#426 F-BSS-REARKNEE:** READY @ `a533ccc0`. Reviewer session_018Pv5bKbbhpGqaijA8fi5Yz is running.
+  - **#427 F-DL-LIFTOFF** (session_018Pv5bMbc1aeKfm7aaVnqYp; card `f-dl-liftoff-card.md`, rulings at `e344894f`):
+    - The fresh panel on lyr-dl (key `dl-private/KEY.md`) was valid. L5 PASSED [4,4,4]; L4 [4,3,3] failed (lower back should be Main per c14/c15).
+    - The fix is D-DL-L4 (6872578643) plus D-DL-WATCHMAIN (6872612507): an opt-in `watchMain` flag in howto-layers.mjs, conventional only, with byte proof.
+    - My crop check is round 2.
+  - **W8c card** `lib-ship-w8c-card.md` (rulings at `3f09ee71`): 6 ids (seated_leg_curl, shrug, bulgarian, assisted_pull_up, underhand_lat_pulldown, mountain_climbers). It starts after W8b merges. jumping_jacks → F-JJ-TOE.
 - **Update 11-14 ~03:45 UTC.** Main is still `9139c29c`.
   - **W8b #417:**
     - REVIEW FAIL 6869580972. High: lb03-lb05's layers-page entries had no exact LINK pin. Low: the PR body.
