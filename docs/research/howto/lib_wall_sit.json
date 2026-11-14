@@ -1,0 +1,22 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=2992dbef8f286d255acafda532dff9bbe23c1bf8299a9fac4f4770d056c1969d
+{
+  "id": "lib_wall_sit",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/wall_sit.json",
+    "rev": 1
+  },
+  "sources": [
+    "cat-wallsit",
+    "physitrack-wallsit",
+    "goldring-2014",
+    "escamilla-2023",
+    "escamilla-2009",
+    "watanabe-2022",
+    "nhs-knee",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}

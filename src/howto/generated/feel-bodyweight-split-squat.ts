@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=9c7b2e0dca24e8732f969d0b291ec48a08864ec048a5532ccb995d946c05c6f0
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=424f8e5a57e8ef378c0921e307655cb768d8fbefece18f3dba6f91dc66ce609b
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_bodyweight_split_squat",

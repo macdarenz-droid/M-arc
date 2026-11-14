@@ -13,6 +13,7 @@ import { checkC3 } from './checks/c3';
 import { W5 } from './lib-ship-w5';
 import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
+import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
 import exercises from '../../src/data/exercises.json';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -59,16 +60,23 @@ const gapKeyOf = (id: string) => keyMods.find((m: any) => m.GAPS && id in m.GAPS
 describe('LIB-SHIP A1: the shipped set', () => {
   it('shippedIds() is the 8 then exactly the ruled library ids; none of the owner\'s 11 ships', () => {
     // LIB-SHIP W4 (ruling 3): then the W4 ids (checks/ship-w4.ts), all in registry order; no W4 waiting id ships
-    const ruled = [...RULED_SHIPPED, ...W4_IDS];
+    // LIB-SHIP W8b (D-SHIP-W8B-STAMP, ruling 3): plus the 9 W8b ids (checks/ship-w8b.ts); W8b's lines leave the W4 waiting
+    // list first (pullover and dumbbell_romanian_deadlift, nothing else), then the W4 check runs unchanged; the 8 held W8b ids stay off
+    const ruled = [...RULED_SHIPPED, ...W4_IDS, ...W8B_IDS];
     expect(reg.shippedIds()).toEqual([...EIGHT, ...reg.rows().map((r: any) => r.id).filter((id: string) => ruled.includes(id))]);
     expect(ruled.filter(id => !reg.shippedIds().includes(id))).toEqual([]);
-    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.includes(id))).toEqual([]);
+    expect(W4_WAITING_IDS.filter(id => W8B_IDS.includes(id))).toEqual(['lib_dumbbell_pullover', 'lib_dumbbell_romanian_deadlift']);
+    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.filter(w => !W8B_IDS.includes(w)).includes(id))).toEqual([]);
+    expect(reg.shippedIds().filter((id: string) => W8B_HELD.includes(id))).toEqual([]);
+    expect(W8B_HELD.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(W8B_HELD.map(id => [id, 'approved-plate']));
     const eleven = ['hip_thrust', 'pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch', 'overhead_cable_triceps_extension',
       'cable_rear_delt_fly', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'leg_press_calf_raise'].map(s => `lib_${s}`);
     expect(reg.shippedIds().filter((id: string) => eleven.includes(id))).toEqual([]);
     // LIB-SHIP W5 (D-SHIP-W5-FLIPSET, ruling 3): of the 27 W5 rows exactly the 10 ship; the 17 held stay approved-plate
-    const held = W5.filter(id => !W5_SHIPPED.includes(id));
-    expect(held).toHaveLength(17);
+    // LIB-SHIP W8b: W8b's 7 lb04/lb05 ids leave the held list first; the other 10 stay approved-plate
+    expect(W5.filter(id => W8B_IDS.includes(id))).toHaveLength(7);
+    const held = W5.filter(id => !W5_SHIPPED.includes(id) && !W8B_IDS.includes(id));
+    expect(held).toHaveLength(10);
     expect(reg.shippedIds().filter((id: string) => held.includes(id))).toEqual([]);
     expect(held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(held.map(id => [id, 'approved-plate']));
     // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): of the 29 drawn W7 rows exactly the 16 ship; the 13 held stay approved-plate (D-SHIP-W7-SLEDHOLD: sled_pull, D-SHIP-W7-HOLD2:
@@ -1603,5 +1611,96 @@ describe('LIB-SHIP W7 F-PAIN-NAMES: feel-row labels name places, not part ids', 
     const ids = await rawIds();
     const page = '<button type="button" class="fr-btn" id="dead-bug-row-low-back" aria-expanded="false" data-label="Main: abs. Marked: lower-back-erectors-left and lower back.">';
     expect(labelProblems(page, 'dead-bug', ids)).toEqual(['dead-bug-row-low-back: raw part id lower-back-erectors-left']);
+  });
+});
+
+/* ------------------------------------------------------- LIB-SHIP W8b fix round (W8b layers panel, #417 6856272493) */
+// dumbbell_pullover L6 [5,3,3]: the 'jumps' risk read as if small steps were the danger. The line restates card c12
+// ("Start light, and add weight in small steps: small jumps greatly increase the load on the shoulders at the bottom"):
+// the jump is the danger, at the bottom; start light is the fix. The risk stays within the library lint's 14 words.
+describe('LIB-SHIP W8b D-W8B-FIX L6: dumbbell_pullover\'s weight-jump risk names the jump as the danger (c12)', () => {
+  const JUMPS = 'Even small weight jumps load the shoulders hard at the bottom. Start light.';
+  const problems = async (risks: any[]) => {
+    const CL = await import(/* @vite-ignore */ url('tools/plates/layers/artifact/copy-lint.mjs'));
+    const r = risks.find(x => x.key === 'jumps'), bad: string[] = [];
+    if (!r) return ['no jumps risk'];
+    if (r.text !== JUMPS) bad.push(`jumps text ${JSON.stringify(r.text)}`);
+    if (!/\bat the bottom\b/.test(r.text) || !/^Even small weight jumps\b/.test(r.text)) bad.push('the jump is not named as the danger at the bottom (c12)');
+    for (const s of CL.sentences(r.text)) if (s.split(/\s+/).length > CL.MAX_SENTENCE_WORDS) bad.push(`sentence over ${CL.MAX_SENTENCE_WORDS} words: ${s}`);
+    if (!/'c12'|c12/.test(JSON.stringify(r.claim))) bad.push('claim is not c12');
+    return bad;
+  };
+  const risks = async () => (await import(/* @vite-ignore */ url('tools/plates/library/howto/lib_dumbbell_pullover.howto.mjs'))).default.risks;
+  it('the jumps risk is the c12 wording, each sentence within the copy lint, and the sheet lints clean', async () => {
+    expect(await problems(await risks())).toEqual([]);
+    const [L, shared, BB, M] = await Promise.all(['tools/plates/library/lint/index.mjs', 'tools/plates/layers/howto/shared.mjs',
+      'tools/plates/library/shared/back-box.mjs', 'tools/plates/library/howto/lib_dumbbell_pullover.howto.mjs'].map(p => import(/* @vite-ignore */ url(p))));
+    expect(L.lintLibraryRow(M, shared, { extraBoxes: { back: BB.backBox() }, boxKeys: { back: BB.BACK_BOX_KEY } })).toEqual([]);
+  });
+  it('mutations: the panel-failed wording, a sentence over 15 words and a dropped risk are red', async () => {
+    const rs = await risks(), set = (text: string) => rs.map((r: any) => (r.key === 'jumps' ? { ...r, text } : r));
+    expect(await problems(set('Small weight jumps load the shoulders hard. Start light, add weight in small steps.'))).toContain('the jump is not named as the danger at the bottom (c12)');
+    expect((await problems(set('Even small weight jumps load the shoulders very hard at the bottom of each and every single rep. Start light.'))).some(p => p.startsWith('sentence over 15 words'))).toBe(true);
+    expect(await problems(rs.filter((r: any) => r.key !== 'jumps'))).toEqual(['no jumps risk']);
+  });
+});
+
+// LIB-SHIP W8b (review #417 6869580972, High; W8a form, checks/ship-w8a.ts w8aLayersProblems): each of the 4 W8b layers
+// pages' last golden entry is checked whole against W8B_LAYERS: decision, approver, the exact W8B_LAYERS_APPROVAL
+// (6856468001 @ 1f53a555), supersedes, ids, the page pin and the superseded pin; reds on every page: another approval
+// sha, another comment id, and the superseded or page pin moved.
+describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', () => {
+  const g = (b: string) => JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8'));
+  const pg = (b: string) => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
+  // The W8b entry: each chain's last, or lb03's entry 16 (D-W8B-RDLWATCH appends entry 17 over it).
+  const atOf = (f: any, b: string) => W8B_LAYERS[b]!.at ?? f.entries.length - 1;
+  const atWith = (f: any, b: string, o: any) => ({ ...f, entries: f.entries.map((e: any, i: number) => (i === atOf(f, b) ? { ...e, ...o } : e)) });
+  it('lb02-lb05: the W8b entry pins its page with the exact approval (lb03: entry 16 and its own page pin)', () => {
+    expect(Object.keys(W8B_LAYERS)).toEqual(['lb02', 'lb03', 'lb04', 'lb05']);
+    expect(W8B_LAYERS_APPROVAL).toBe('https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652');
+    expect(Object.entries(W8B_LAYERS).filter(([, w]) => w.at !== undefined || w.page !== undefined).map(([b, w]) => [b, w.at, w.page]))
+      .toEqual([['lb03', 16, { sha: 'ecaf602dd552827b7578411eb3ec4078404ef69a41dcb2f4cf2e316018785be4', bytes: 1312371 }]]);
+    for (const b of Object.keys(W8B_LAYERS)) expect([b, w8bLayersProblems(g(b), b, pg(b))]).toEqual([b, []]);
+  });
+  it('reds on every page: another approval sha, another comment id, a moved page pin, a moved superseded pin, other ids', () => {
+    for (const b of Object.keys(W8B_LAYERS)) {
+      const f = g(b), p = pg(b);
+      expect([b, w8bLayersProblems(atWith(f, b, { approval: W8B_LAYERS_APPROVAL.replace(/[0-9a-f]{40}$/, '1fdf6975d8e93c184ae77ad11daf1cf73505a15d') }), b, p).length]).toEqual([b, 1]);
+      expect([b, w8bLayersProblems(atWith(f, b, { approval: W8B_LAYERS_APPROVAL.replace('6856468001', '6856272493') }), b, p).length]).toEqual([b, 1]);
+      if (W8B_LAYERS[b]!.page) expect([b, w8bLayersProblems(atWith(f, b, { pageSha256: '0'.repeat(64) }), b, p)]).toEqual([b, [`${b} W8b: page pin`]]);
+      else expect([b, w8bLayersProblems(f, b, Buffer.concat([p, Buffer.from(' ')]))]).toEqual([b, [`${b} W8b: page pin`]]);
+      expect([b, w8bLayersProblems(atWith(f, b, { ids: [...W8B_LAYERS[b]!.ids, 'lib_wrist_curl'] }), b, p).length]).toEqual([b, 1]);
+      const s = W8B_LAYERS[b]!.supersedes;
+      if (s !== null) {
+        const moved = { ...f, entries: f.entries.map((e: any, i: number) => (i === s ? { ...e, pageSha256: '0'.repeat(64) } : e)) };
+        expect([b, w8bLayersProblems(moved, b, p)]).toEqual([b, [`${b} W8b: superseded pin`]]);
+      }
+    }
+  });
+});
+
+describe('D-W8B-RDLWATCH: dumbbell_romanian_deadlift watches the lower back (c17); lb03 re-pinned', () => {
+  const f = () => JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.json'), 'utf8'));
+  const p = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.layers.html'));
+  const lastWith = (o: any) => { const x = f(); return { ...x, entries: [...x.entries.slice(0, -1), { ...x.entries[x.entries.length - 1], ...o }] }; };
+  it('the sheet: watch is exactly lower_back with the ruled line, and lower_back stays secondary', async () => {
+    const m: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/howto/lib_dumbbell_romanian_deadlift.howto.mjs')).href);
+    const feel = m.default.feel;
+    expect(feel.watch).toEqual([{ muscleId: 'lower_back', plain: 'The lower back should not take over.' }]);
+    expect(feel.secondary.map((s: any) => s.muscleId)).toEqual(['lower_back', 'adductors', 'upper_traps', 'forearms']);
+  });
+  it('lb03: the last entry is the RDLWATCH entry with the exact approval, over entry 16', () => {
+    expect(W8B_RDLWATCH_APPROVAL).toBe('https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00');
+    expect(f().entries.length).toBe(18);
+    expect(rdlWatchProblems(f(), p())).toEqual([]);
+  });
+  it('reds: another approval sha, another comment id, a moved page pin, a moved superseded pin, other ids, other supersedes', () => {
+    expect(rdlWatchProblems(lastWith({ approval: W8B_RDLWATCH_APPROVAL.replace(/[0-9a-f]{40}$/, '1fdf6975d8e93c184ae77ad11daf1cf73505a15d') }), p()).length).toBe(1);
+    expect(rdlWatchProblems(lastWith({ approval: W8B_RDLWATCH_APPROVAL.replace('6872580444', '6856468001') }), p()).length).toBe(1);
+    expect(rdlWatchProblems(f(), Buffer.concat([p(), Buffer.from(' ')]))).toEqual(['lb03 RDLWATCH: page pin']);
+    const x = f(), moved = { ...x, entries: x.entries.map((e: any, i: number) => (i === 16 ? { ...e, pageSha256: '0'.repeat(64) } : e)) };
+    expect(rdlWatchProblems(moved, p())).toContain('lb03 RDLWATCH: superseded pin');
+    expect(rdlWatchProblems(lastWith({ ids: [...W8B_RDLWATCH.ids, 'lib_wrist_curl'] }), p())).toEqual([expect.stringMatching(/^lb03 RDLWATCH: ids/)]);
+    expect(rdlWatchProblems(lastWith({ supersedes: 13 }), p())).toEqual(['lb03 RDLWATCH: supersedes 13']);
   });
 });

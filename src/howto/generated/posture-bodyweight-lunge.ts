@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=a8bab86caf4e576e0a5797cbf927ab7da0d1b387957890613316c1d7a6361807
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=12dd9387ee11b08abebc5fc63c324cbec98456a3a6564e169601a703813eff43
 // The bodyweight-lunge posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-bodyweight-lunge.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

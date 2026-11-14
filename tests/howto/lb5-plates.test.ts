@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { w8bOf } from './checks/ship-w8b';
 import { child } from '../child-test';
 import { renderOf } from '../walk-cache';
 
@@ -160,25 +161,33 @@ describe('LIB-15 A9: nothing ships (D-LIB15-AHEAD)', { timeout: T }, () => {
   // W5 ruled set as positive asserts: exactly W5's 6 LB5 ids ship; the other 9 drawn rows stay approved-plate (held);
   // every LB5 id lives in batches/lb05.json and nowhere else in batches/ (D-SHIP-MOVE).
   const W5 = ['lib_preacher_curl', 'lib_hammer_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];
+  // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): plus W8b's 3 LB5 ids; wrist_curl, cross_body_hammer_curl and
+  // incline_dumbbell_curl (W8b holds) and the other W5 holds stay approved-plate
+  const W8B = w8bOf('tools/plates/library/batches/lb05.json');
+  const RULED = [...W5, ...W8B];
   const stageProblems = (rows: any[]) => drawn().map(i => `lib_${i}`).flatMap(id => {
-    const r = rows.find((x: any) => x.id === id), want = W5.includes(id) ? 'shipped' : 'approved-plate';
+    const r = rows.find((x: any) => x.id === id), want = RULED.includes(id) ? 'shipped' : 'approved-plate';
     if (!r) return [`${id}: no row`];
     return r.stage === want ? [] : [`${id}: ${r.stage}`];
   });
   const someRow = { src: 'library/specs/preacher_curl.mjs', slug: 'preacher-curl', prefix: 'preacher-curl', chromeId: 'preacher-curl', mode: 'H', stage: 'drawing', view: 'side' };
-  it('LIB-SHIP W5: every LB5 row is at its ruled stage: W5\'s 6 shipped, the other 9 approved-plate', () => {
+  it('LIB-SHIP W5 + W8b: every LB5 row is at its ruled stage: W5\'s 6 and W8b\'s 3 shipped, the other 6 approved-plate', () => {
     expect(drawn().length).toBe(15);
+    expect(W8B).toEqual(['lib_bayesian_cable_curl', 'lib_dumbbell_overhead_triceps_extension', 'lib_single_arm_triceps_pushdown']);
     expect(stageProblems(reg.rows())).toEqual([]);
   });
   it('LIB-SHIP W5 reds: a W5 id back at approved-plate, a held id shipped, a held id at drawing and a dropped row are red', () => {
     const rows = reg.rows();
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_preacher_curl' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_preacher_curl: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_cable_curl' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_cable_curl: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_incline_dumbbell_curl' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_incline_dumbbell_curl: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_bayesian_cable_curl' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_bayesian_cable_curl: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_wrist_curl' ? { ...r, ...someRow, stage: 'drawing' } : r)))).toEqual(['lib_wrist_curl: drawing']);
     expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_hammer_curl'))).toEqual(['lib_hammer_curl: no row']);
   });
-  it('LIB-SHIP W5: the shipped LB5 ids are exactly W5\'s 6, in registry order; each drawn LB5 id is one registry row (lb05.json read once)', () => {
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W5);
+  it('LIB-SHIP W5: the shipped LB5 ids are exactly W5\'s 6 and W8b\'s 3, in registry order; each drawn LB5 id is one registry row (lb05.json read once)', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(reg.rows().map((r: any) => r.id).filter((i: string) => RULED.includes(i)));
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toHaveLength(9);
     const rows = reg.rows();
     for (const id of drawn()) expect(rows.filter((r: any) => r.id === `lib_${id}`).length, id).toBe(1);
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);

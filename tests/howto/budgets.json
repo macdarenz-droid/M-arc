@@ -2052,15 +2052,258 @@
       "measuredGz": 6128,
       "setBy": "LIB-SHIP",
       "reason": "LIB-SHIP W8a: the 3 ship (#413 D-SHIP-W8A-STAMP; D-SHIP-W8A-LAYERS; mountain_climbers held D-W8A-MCFEEL, underhand_lat_pulldown held D-W8A-UNDERHANDHOLD, assisted_pull_up held D-W8A-ASSISTEDHOLD and seated_leg_curl held D-W8A-SEATEDHOLD #415); measured + 10 % on claude/lib-ship-w8a after the merge of main 07f5fbcf and generate."
+    },
+    {
+      "chunk": "ht-dumbbell-pullover-*.js",
+      "rawMax": 42278,
+      "gzMax": 9339,
+      "measuredRaw": 38434,
+      "measuredGz": 8490,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "feel-dumbbell-pullover-*.js",
+      "rawMax": 28964,
+      "gzMax": 8651,
+      "measuredRaw": 26330,
+      "measuredGz": 7864,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "posture-dumbbell-pullover-*.js",
+      "rawMax": 30462,
+      "gzMax": 5231,
+      "measuredRaw": 27692,
+      "measuredGz": 4755,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "ht-dumbbell-romanian-deadlift-*.js",
+      "rawMax": 49219,
+      "gzMax": 10980,
+      "measuredRaw": 44744,
+      "measuredGz": 9981,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "feel-dumbbell-romanian-deadlift-*.js",
+      "rawMax": 27485,
+      "gzMax": 8433,
+      "measuredRaw": 24986,
+      "measuredGz": 7666,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "posture-dumbbell-romanian-deadlift-*.js",
+      "rawMax": 19345,
+      "gzMax": 4398,
+      "measuredRaw": 17586,
+      "measuredGz": 3998,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "ht-pistol-squat-*.js",
+      "rawMax": 69050,
+      "gzMax": 20381,
+      "measuredRaw": 62772,
+      "measuredGz": 18528,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "feel-pistol-squat-*.js",
+      "rawMax": 26880,
+      "gzMax": 8393,
+      "measuredRaw": 24436,
+      "measuredGz": 7630,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "posture-pistol-squat-*.js",
+      "rawMax": 18786,
+      "gzMax": 4917,
+      "measuredRaw": 17078,
+      "measuredGz": 4470,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "ht-wall-sit-*.js",
+      "rawMax": 32074,
+      "gzMax": 8121,
+      "measuredRaw": 29158,
+      "measuredGz": 7382,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "feel-wall-sit-*.js",
+      "rawMax": 26909,
+      "gzMax": 8364,
+      "measuredRaw": 24462,
+      "measuredGz": 7603,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "posture-wall-sit-*.js",
+      "rawMax": 30306,
+      "gzMax": 5726,
+      "measuredRaw": 27550,
+      "measuredGz": 5205,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "ht-forward-lunge-*.js",
+      "rawMax": 53692,
+      "gzMax": 11918,
+      "measuredRaw": 48810,
+      "measuredGz": 10834,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "feel-forward-lunge-*.js",
+      "rawMax": 29201,
+      "gzMax": 8597,
+      "measuredRaw": 26546,
+      "measuredGz": 7815,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "posture-forward-lunge-*.js",
+      "rawMax": 32401,
+      "gzMax": 6515,
+      "measuredRaw": 29455,
+      "measuredGz": 5922,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "ht-walking-lunge-*.js",
+      "rawMax": 52258,
+      "gzMax": 11184,
+      "measuredRaw": 47507,
+      "measuredGz": 10167,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "feel-walking-lunge-*.js",
+      "rawMax": 29070,
+      "gzMax": 8557,
+      "measuredRaw": 26427,
+      "measuredGz": 7779,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "posture-walking-lunge-*.js",
+      "rawMax": 31081,
+      "gzMax": 5947,
+      "measuredRaw": 28255,
+      "measuredGz": 5406,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "ht-single-arm-triceps-pushdown-*.js",
+      "rawMax": 44226,
+      "gzMax": 11182,
+      "measuredRaw": 40205,
+      "measuredGz": 10165,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "feel-single-arm-triceps-pushdown-*.js",
+      "rawMax": 26727,
+      "gzMax": 8435,
+      "measuredRaw": 24297,
+      "measuredGz": 7668,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "posture-single-arm-triceps-pushdown-*.js",
+      "rawMax": 23685,
+      "gzMax": 5504,
+      "measuredRaw": 21531,
+      "measuredGz": 5003,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "ht-bayesian-cable-curl-*.js",
+      "rawMax": 37067,
+      "gzMax": 9570,
+      "measuredRaw": 33697,
+      "measuredGz": 8700,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "feel-bayesian-cable-curl-*.js",
+      "rawMax": 27432,
+      "gzMax": 8428,
+      "measuredRaw": 24938,
+      "measuredGz": 7661,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "posture-bayesian-cable-curl-*.js",
+      "rawMax": 38515,
+      "gzMax": 7380,
+      "measuredRaw": 35013,
+      "measuredGz": 6709,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "ht-dumbbell-overhead-triceps-extension-*.js",
+      "rawMax": 71668,
+      "gzMax": 16392,
+      "measuredRaw": 65152,
+      "measuredGz": 14901,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "feel-dumbbell-overhead-triceps-extension-*.js",
+      "rawMax": 26998,
+      "gzMax": 8357,
+      "measuredRaw": 24543,
+      "measuredGz": 7597,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "posture-dumbbell-overhead-triceps-extension-*.js",
+      "rawMax": 21123,
+      "gzMax": 4593,
+      "measuredRaw": 19202,
+      "measuredGz": 4175,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
     }
   ],
   "perId": [
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 72,
-      "rawMax": 45154,
-      "gzMax": 10772,
+      "n": 81,
+      "rawMax": 50799,
+      "gzMax": 12118,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -2070,8 +2313,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 13112758,
-      "gzMax": 3304749,
+      "rawMax": 14751853,
+      "gzMax": 3717843,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

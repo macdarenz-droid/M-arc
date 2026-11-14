@@ -4,6 +4,7 @@
 // e351f554^ row, W8a LAYERS READY 6759453858), built and checked with the tree's own modules (LIB-2b fixtureTree form).
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it, afterAll, beforeAll } from 'vitest';
+import { W8B_MOVED, lessW8b } from './checks/ship-w8b';
 import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -156,12 +157,24 @@ describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
   it('only build-layers-page.mjs\'s key differs from main, and it pins the current file', () => {
     const m = raw(), now = sha(readFileSync(join(ROOT, MOVED)));
     for (const [id, r] of Object.entries<any>(m.rows)) if (MOVED in r.files) expect([id, r.files[MOVED]]).toEqual([id, now]);
-    expect(blanked(toMain(m))).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });   // LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)) (PF5's re-pinned keys/entries put back to main first); same hash and n
+    // LIB-SHIP W8b (ruling 3): W8b's own moves (checks/ship-w8b.ts W8B_MOVED, each pinning its current file) go back to
+    // main e15e1c65's values first; then the check runs unchanged
+    const probs: string[] = [], back = lessW8b(m, p => sha(readFileSync(join(ROOT, p))), probs);
+    expect(probs).toEqual([]);
+    expect(blanked(toMain(back))).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });   // LIB-PLATEFIX-5 (D-PF5-PINS): PF5's re-pinned keys/entries put back to main too (merge of main 5b7d6e80)
+  });
+  it('LIB-SHIP W8b reds: a W8b-moved key off its file, and a W8b key left moved, are red', () => {
+    const m = raw(), f = (p: string) => sha(readFileSync(join(ROOT, p)));
+    const [id] = Object.entries<any>(m.rows).find(([, x]) => 'tools/plates/library/batches/lb04.json' in x.files)!;
+    const off = structuredClone(m); off.rows[id].files['tools/plates/library/batches/lb04.json'] = '0'.repeat(64);
+    const probs: string[] = []; expect(blanked(toMain(lessW8b(off, f, probs))).sha).not.toBe(MANIFEST_BLANKED_MAIN);
+    expect(probs).toEqual([`${id}: tools/plates/library/batches/lb04.json off its file`]);
+    expect(blanked(toMain(structuredClone(m))).sha).not.toBe(MANIFEST_BLANKED_MAIN);
   });
   it('red: any other key moved', () => {
-    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && !(k in PF5_MAIN)))!;
-    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && !(k in PF5_MAIN))!;   // F-HAND-PALMFLAT-SIZE: not the pairs.mjs key either   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
+    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && !(k in PF5_MAIN) && !(k in W8B_MOVED)))!;
+    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && !(k in PF5_MAIN) && !(k in W8B_MOVED))!;   // LIB-SHIP W8b: nor one W8b moves   // F-HAND-PALMFLAT-SIZE: not the pairs.mjs key either   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
     m.rows[id].files[other] = '0'.repeat(64);
-    expect(blanked(toMain(m)).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash
+    expect(blanked(toMain(lessW8b(m, p => sha(readFileSync(join(ROOT, p)))))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W8b: W8b's moves out first; LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash
   });
 });
