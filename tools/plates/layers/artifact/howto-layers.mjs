@@ -192,13 +192,11 @@ function feelSection(pre, howto, M) {
   const watchIds = new Set(F.watch.map(ids)), priIds = new Set(F.primary.map(ids));
   const marks = [[], []];
   const rows = F.rows.map(r => {
-    // F-DL-LIFTOFF D-DL-WATCHMAIN (#427): feel.watchMain (opt-in) keeps the watch mark on a Main muscle; that row's map
-    // draws the muscle as watched only (feelmap 4.3: never both main and watched in one map)
-    const watch = (r.at?.muscles ?? []).filter(m => watchIds.has(m) && (F.watchMain === true || !priIds.has(m)));
+    const watch = (r.at?.muscles ?? []).filter(m => watchIds.has(m) && !priIds.has(m));
     const pain = r.at?.parts ?? [];
     let label = rest.label;
     if (watch.length || pain.length) {
-      const m = renderFeelMap({ primary: F.watchMain === true ? F.primary.filter(x => !watch.includes(x.muscleId)) : F.primary, secondary: F.secondary, avoid: watch, pain, views: ['front', 'back'], id: `${pre}-feel-${r.key}`, shimmer: false });
+      const m = renderFeelMap({ primary: F.primary, secondary: F.secondary, avoid: watch, pain, views: ['front', 'back'], id: `${pre}-feel-${r.key}`, shimmer: false });
       label = m.label;
       const pn = [...new Set(pain.map(p => PAIN_NAMES.find(([re]) => re.test(p))?.[1] ?? p))];
       if (pn.length) label += ` Marked: ${pn.join(' and ')}.`;

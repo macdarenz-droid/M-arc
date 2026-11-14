@@ -146,7 +146,7 @@ describe('F-DL-LIFTOFF C1-C7: the dl-liftoff zoom as lb03 draws it', () => {
 /* ------------------------------------------------------------------ C8-C10: a scratch tree with lb03 staged (W8b form) */
 const COPY = ['package.json', 'scripts', 'src', 'tools', 'tests/howto/golden', 'docs/research/howto'];
 const LB03 = 'tools/plates/library/pages/lb03.layers.json', CROP = 'tools/plates/library/render/closeup/crop.mjs';
-const LAYERS = 'tools/plates/layers/artifact/howto-layers.mjs';
+const BLP = 'tools/plates/library/build-layers-page.mjs';
 const W8B_ORDER = ['lib_pendlay_row', 'lib_landmine_row', 'lib_dumbbell_romanian_deadlift', 'lib_conventional_deadlift', 'lib_sumo_deadlift',
   'lib_t_bar_row', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_dumbbell_shrug', 'lib_smith_machine_shrug'];   // 1fdf6975's lb03 group
 const MAIN_CARD = 'e0a154bd9d8408039c62ff62750d498ccde155049dab17e244e58b50e084bc1d';   // the conventional card the W8b panel judged
@@ -245,7 +245,7 @@ describe('F-DL-LIFTOFF C8-C10: the scratch lb03 page (W8b form) and HT4 on the r
     expect(await ht4(T, 'lib_conventional_deadlift', 'conventional-deadlift')).toEqual([]);
   }, T_MS);
   // D-DL-L4 (panel L4 [4,3,3], #427): the lower back is Main (card feel.primary, c15), the feel line names it, and both
-  // lower-back rows keep the dashed watch outline (D-DL-WATCHMAIN: feel.watchMain, opt-in, in howto-layers.mjs)
+  // lower-back rows keep the dashed watch outline (D-DL-WATCHMAIN: feel.watchMain, opt-in, a build-layers-page.mjs patch)
   const feelOf = (html: string) => { const c = cardOf(html, 'conventional-deadlift'), a = c.indexOf('<section class="hw-sec feel" id="conventional-deadlift-feel"'), b = c.indexOf('<section class="hw-sec setup"', a); expect(a).toBeGreaterThan(-1); return c.slice(a, b); };
   const marks = (sec: string) => [...sec.matchAll(/<g class="feel-mark" data-row="([^"]+)"><g class="feel-quiet">[\s\S]*?<\/g><g class="feel-watch">/g)].map(q => q[1]);
   const MAIN = 'Where you should feel it. Main: glutes, hamstrings, lower back. Also working: quads, inner thighs, upper traps, forearms.';
@@ -259,8 +259,8 @@ describe('F-DL-LIFTOFF C8-C10: the scratch lb03 page (W8b form) and HT4 on the r
     expect(sec).not.toContain('not your back');
     expect(marks(sec)).toEqual(['low-back-over', 'low-back']);
   }, T_MS);
-  it('red (flag ignored): howto-layers.mjs drops the watch mark on a Main muscle -> no outline on either row', async () => {
-    const B = await mutated(T, { [LAYERS]: swap('(F.watchMain === true || !priIds.has(m))', '!priIds.has(m)') }, () => page(T));
+  it('red (flag ignored): the library patch drops the watch mark on a Main muscle -> no outline on either row', async () => {
+    const B = await mutated(T, { [BLP]: swap("'const watch = (r.at?.muscles ?? []).filter(m => watchIds.has(m) && (F.watchMain === true || !priIds.has(m)));'", "'const watch = (r.at?.muscles ?? []).filter(m => watchIds.has(m) && !priIds.has(m));'") }, () => page(T));
     const sec = feelOf(B);
     expect(sec).toContain(`aria-label="${MAIN}"`);
     expect(marks(sec)).toEqual([]);

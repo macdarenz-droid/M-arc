@@ -155,6 +155,14 @@ export function patchHowtoLayers(src, plan) {
   // feel section with no rows prints no "If you feel it in…" heading and no empty list (two divider lines, nothing under
   // them). A section with rows prints the vendored bytes unchanged.
   src = patchOnce(src, 'feel no rows', FEEL_ROWS_HEAD, '+ (F.rows.length ? `' + FEEL_ROWS_HEAD.slice(3, -1) + '` : \'\')');
+  // F-DL-LIFTOFF D-DL-WATCHMAIN (#427, Q-DL-6a): a feel whose `watchMain` is true keeps a row's dashed watch mark on a
+  // Main muscle (the vendored rows drop a watch muscle that is also Main); that row's map draws the muscle watched only,
+  // since feelmap 4.3 forbids one map drawing a muscle as both. Only conventional_deadlift sets it (exact-set test in
+  // tests/howto/f-dl-liftoff.test.ts); every other feel prints the vendored bytes unchanged.
+  src = patchOnce(src, 'feel watch main', 'const watch = (r.at?.muscles ?? []).filter(m => watchIds.has(m) && !priIds.has(m));',
+    'const watch = (r.at?.muscles ?? []).filter(m => watchIds.has(m) && (F.watchMain === true || !priIds.has(m)));');
+  src = patchOnce(src, 'feel watch main map', 'const m = renderFeelMap({ primary: F.primary, secondary: F.secondary, avoid: watch, pain,',
+    'const m = renderFeelMap({ primary: F.watchMain === true ? F.primary.filter(x => !watch.includes(x.muscleId)) : F.primary, secondary: F.secondary, avoid: watch, pain,');
   src = painNamesPatch(src);
   return src;
 }
