@@ -52,10 +52,10 @@ async function measure(over: { zoom?: (z: any) => any; plate?: (p: any) => any }
   for (const role of ['right', 'wrong']) {
     const probe = { points: [] as any[], specs: [] as any[] };
     const html: string = crop.engineCrop(howto, OPTS, engine, probe)(z, role);
-    const [vx, vy, s] = html.match(/viewBox="(-?[\d.]+) (-?[\d.]+) (\d+) \d+" class="z-plate"/)!.slice(1).map(Number);
+    const [vx, vy, s] = html.match(/viewBox="(-?[\d.]+) (-?[\d.]+) (\d+) \d+" class="z-plate"/)!.slice(1).map(Number) as [number, number, number];
     const floors = [...html.matchAll(/class="floorline"[^>]*d="M(-?[\d.]+) (-?[\d.]+)H(-?[\d.]+)"|d="M(-?[\d.]+) (-?[\d.]+)H(-?[\d.]+)"[^>]*class="floorline"/g)];
     expect(floors.length, `${role}: one floor line`).toBe(1);
-    const [fx0, fy, fx1] = (floors[0]![1] ? floors[0]!.slice(1, 4) : floors[0]!.slice(4, 7)).map(Number);
+    const [fx0, fy, fx1] = (floors[0]![1] ? floors[0]!.slice(1, 4) : floors[0]!.slice(4, 7)).map(Number) as [number, number, number];
     // the crop's camera: side view facing right, x = x0 + z ppm, y = y0 - y ppm; fixed from the centre the crop projected
     const c = probe.points[0], w0 = c.w, p0 = c.px;
     const ppm = engine.renderPlate(howto.plate, { id: 'base' }).report.camera.pxPerM;
