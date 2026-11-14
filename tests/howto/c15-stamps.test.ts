@@ -7,6 +7,7 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } 
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';   // D-W8B-RPC2 (#417): W8b's slow blocks run in an awaited child
 import { checkC15, contentHash } from './checks/c15';
 import { W4_IDS } from './checks/ship-w4';
 
@@ -176,7 +177,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   ]);
   // LIB-SHIP (D-SHIP-A9, ruling 3; D-SHIP-W1-STAMP #376 6616230145): replaces "exactly the 8": the committed entries are
   // the 8 then exactly the ruled shipped library ids, in shipping order; an unruled or missing entry is red.
-  it('one approved entry per id of the 8, each matching stampOf; LIB-SHIP: then one per ruled shipped library id; every committed entry is the supervisor\'s', async () => {
+  child.it('one approved entry per id of the 8, each matching stampOf; LIB-SHIP: then one per ruled shipped library id; every committed entry is the supervisor\'s', async () => {
     const r = reviews();
     // LIB-SHIP W2 (ruling 3; D-SHIP-W2-STAMP #379 6636105974): the W1 id, then the 9 W2 ids in shipping (registry) order
     // LIB-SHIP W3: then W3's 9 (D-SHIP-W3-STAMP)

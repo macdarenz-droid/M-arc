@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { promisify } from 'node:util';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';   // D-W8B-RPC2 (#417): W8b's slow blocks run in an awaited child
 import { inputsMapOf } from '../walk-cache';
 // @ts-expect-error plain .mjs build tool, no types
 import { JOB_BUDGET_S, SHARD_TARGET_S as LIB_TARGET, idsOfShard, libraryIds, libraryPlan, planK, readTimes, shardLoads } from '../../tools/plates/library/ci/plan.mjs';
@@ -460,7 +461,7 @@ describe('C6, C8: the shipped library ids on this tree (LIB-PLATEFIX-1: the rule
   // same times (twenty shards of 3, two of 2), 18979 tuples (main's 18121, unchanged, + W8a's 858)
   // LIB-SHIP W8b (ruling 3; #417 6856507580): the 73 ruled ids (main's 64 and W8b's 9); K = 25 at the same times (twenty-three
   // shards of 3, two of 2), 21581 tuples (main's 18979, unchanged, + W8b's 2602)
-  it('C6: the proven ids are exactly the ruled 73; K = 25, every shard holds its 2 once-rows and its ids\' tuples, shard 1 also the 4 run rows, and the family is green', async () => {
+  child.it('C6: the proven ids are exactly the ruled 73; K = 25, every shard holds its 2 once-rows and its ids\' tuples, shard 1 also the 4 run rows, and the family is green', async () => {
     expect(libraryIds()).toEqual(SHIP_LIB);
     expect(SHIP_LIB.filter(id => !W8B_LIB.includes(id))).toEqual(SHIP_LIB_64);   // LIB-SHIP W8b: main's 64, in their order
     expect(SHIP_LIB_64).toHaveLength(64);
@@ -503,7 +504,7 @@ describe('C6, C8: the shipped library ids on this tree (LIB-PLATEFIX-1: the rule
     expect(v.problems).toEqual([]);
     expect(v.line).toBe('library: full (73 of 73)');   // ids proven of ids shipped
   });
-  it('C6: every shard proof missing is red; a skipped or missing needed job is red; a ruled id left out of the proofs is red', async () => {
+  child.it('C6: every shard proof missing is red; a skipped or missing needed job is red; a ruled id left out of the proofs is red', async () => {
     const s = await greenSet(ROOT, { ids: SHIP_LIB, times });
     expect((await verdict({ ...s, lib: [] })).problems.join('\n')).toMatch(/expected shard proofs 1\.\.25 of 25/);   // LIB-SHIP W8a: K = 22; LIB-SHIP W8b: K = 25; LIB-SHIP W3: K = 6; LIB-PLATEFIX-1: K = 8; merge of main 7e060e83: K = 10; merge of main 05382042: K = 13; LIB-SHIP W6 merge of main de91dd21: K = 15; LIB-SHIP W7 merge of main dc058207: K = 21
     expect((await verdict({ ...s, lib: s.lib.slice(1) })).problems.length).toBeGreaterThan(0);
