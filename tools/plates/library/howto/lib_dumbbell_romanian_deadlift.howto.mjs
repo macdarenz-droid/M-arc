@@ -124,7 +124,11 @@ const feel = {
     { muscleId: 'upper_traps', plain: 'The traps help.' },
     { muscleId: 'forearms', plain: 'The forearms help.' },
   ],
-  watch: [],   // card watch lower_back (c17) is also secondary; the secondary line carries c17
+  // D-W8B-RDLWATCH (#417 6872580444): the lower back is both Also working and the watch region (as conventional_deadlift),
+  // so 'Lower back more than the hamstrings' draws the dashed outline.
+  watch: [
+    { muscleId: 'lower_back', plain: 'The lower back should not take over.' },   // c17 (card watch)
+  ],
   feelLine: 'You should feel this in the backs of your thighs going down, glutes coming up.',
   rows: [
     { key: 'no-hams', where: 'No feeling in the hamstrings', at: { muscles: ['hamstrings'] },

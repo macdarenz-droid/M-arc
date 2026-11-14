@@ -13,7 +13,7 @@ import { checkC3 } from './checks/c3';
 import { W5 } from './lib-ship-w5';
 import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
-import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems } from './checks/ship-w8b';
+import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
 import exercises from '../../src/data/exercises.json';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -1652,24 +1652,55 @@ describe('LIB-SHIP W8b D-W8B-FIX L6: dumbbell_pullover\'s weight-jump risk names
 describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', () => {
   const g = (b: string) => JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8'));
   const pg = (b: string) => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
-  const lastWith = (f: any, o: any) => ({ ...f, entries: [...f.entries.slice(0, -1), { ...f.entries[f.entries.length - 1], ...o }] });
-  it('lb02-lb05: the W8b entry is each chain\'s last and pins its page with the exact approval', () => {
+  // The W8b entry: each chain's last, or lb03's entry 16 (D-W8B-RDLWATCH appends entry 17 over it).
+  const atOf = (f: any, b: string) => W8B_LAYERS[b]!.at ?? f.entries.length - 1;
+  const atWith = (f: any, b: string, o: any) => ({ ...f, entries: f.entries.map((e: any, i: number) => (i === atOf(f, b) ? { ...e, ...o } : e)) });
+  it('lb02-lb05: the W8b entry pins its page with the exact approval (lb03: entry 16 and its own page pin)', () => {
     expect(Object.keys(W8B_LAYERS)).toEqual(['lb02', 'lb03', 'lb04', 'lb05']);
     expect(W8B_LAYERS_APPROVAL).toBe('https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652');
+    expect(Object.entries(W8B_LAYERS).filter(([, w]) => w.at !== undefined || w.page !== undefined).map(([b, w]) => [b, w.at, w.page]))
+      .toEqual([['lb03', 16, { sha: 'ecaf602dd552827b7578411eb3ec4078404ef69a41dcb2f4cf2e316018785be4', bytes: 1312371 }]]);
     for (const b of Object.keys(W8B_LAYERS)) expect([b, w8bLayersProblems(g(b), b, pg(b))]).toEqual([b, []]);
   });
   it('reds on every page: another approval sha, another comment id, a moved page pin, a moved superseded pin, other ids', () => {
     for (const b of Object.keys(W8B_LAYERS)) {
       const f = g(b), p = pg(b);
-      expect([b, w8bLayersProblems(lastWith(f, { approval: W8B_LAYERS_APPROVAL.replace(/[0-9a-f]{40}$/, '1fdf6975d8e93c184ae77ad11daf1cf73505a15d') }), b, p).length]).toEqual([b, 1]);
-      expect([b, w8bLayersProblems(lastWith(f, { approval: W8B_LAYERS_APPROVAL.replace('6856468001', '6856272493') }), b, p).length]).toEqual([b, 1]);
-      expect([b, w8bLayersProblems(f, b, Buffer.concat([p, Buffer.from(' ')]))]).toEqual([b, [`${b} W8b: page pin`]]);
-      expect([b, w8bLayersProblems(lastWith(f, { ids: [...W8B_LAYERS[b]!.ids, 'lib_wrist_curl'] }), b, p).length]).toEqual([b, 1]);
+      expect([b, w8bLayersProblems(atWith(f, b, { approval: W8B_LAYERS_APPROVAL.replace(/[0-9a-f]{40}$/, '1fdf6975d8e93c184ae77ad11daf1cf73505a15d') }), b, p).length]).toEqual([b, 1]);
+      expect([b, w8bLayersProblems(atWith(f, b, { approval: W8B_LAYERS_APPROVAL.replace('6856468001', '6856272493') }), b, p).length]).toEqual([b, 1]);
+      if (W8B_LAYERS[b]!.page) expect([b, w8bLayersProblems(atWith(f, b, { pageSha256: '0'.repeat(64) }), b, p)]).toEqual([b, [`${b} W8b: page pin`]]);
+      else expect([b, w8bLayersProblems(f, b, Buffer.concat([p, Buffer.from(' ')]))]).toEqual([b, [`${b} W8b: page pin`]]);
+      expect([b, w8bLayersProblems(atWith(f, b, { ids: [...W8B_LAYERS[b]!.ids, 'lib_wrist_curl'] }), b, p).length]).toEqual([b, 1]);
       const s = W8B_LAYERS[b]!.supersedes;
       if (s !== null) {
         const moved = { ...f, entries: f.entries.map((e: any, i: number) => (i === s ? { ...e, pageSha256: '0'.repeat(64) } : e)) };
         expect([b, w8bLayersProblems(moved, b, p)]).toEqual([b, [`${b} W8b: superseded pin`]]);
       }
     }
+  });
+});
+
+describe('D-W8B-RDLWATCH: dumbbell_romanian_deadlift watches the lower back (c17); lb03 re-pinned', () => {
+  const f = () => JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.json'), 'utf8'));
+  const p = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.layers.html'));
+  const lastWith = (o: any) => { const x = f(); return { ...x, entries: [...x.entries.slice(0, -1), { ...x.entries[x.entries.length - 1], ...o }] }; };
+  it('the sheet: watch is exactly lower_back with the ruled line, and lower_back stays secondary', async () => {
+    const m = await import('../../tools/plates/library/howto/lib_dumbbell_romanian_deadlift.howto.mjs');
+    const feel = (m.default ?? m.HOWTO ?? m).feel ?? (m.default ?? m).howto?.feel;
+    expect(feel.watch).toEqual([{ muscleId: 'lower_back', plain: 'The lower back should not take over.' }]);
+    expect(feel.secondary.map((s: any) => s.muscleId)).toEqual(['lower_back', 'adductors', 'upper_traps', 'forearms']);
+  });
+  it('lb03: the last entry is the RDLWATCH entry with the exact approval, over entry 16', () => {
+    expect(W8B_RDLWATCH_APPROVAL).toBe('https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00');
+    expect(f().entries.length).toBe(18);
+    expect(rdlWatchProblems(f(), p())).toEqual([]);
+  });
+  it('reds: another approval sha, another comment id, a moved page pin, a moved superseded pin, other ids, other supersedes', () => {
+    expect(rdlWatchProblems(lastWith({ approval: W8B_RDLWATCH_APPROVAL.replace(/[0-9a-f]{40}$/, '1fdf6975d8e93c184ae77ad11daf1cf73505a15d') }), p()).length).toBe(1);
+    expect(rdlWatchProblems(lastWith({ approval: W8B_RDLWATCH_APPROVAL.replace('6872580444', '6856468001') }), p()).length).toBe(1);
+    expect(rdlWatchProblems(f(), Buffer.concat([p(), Buffer.from(' ')]))).toEqual(['lb03 RDLWATCH: page pin']);
+    const x = f(), moved = { ...x, entries: x.entries.map((e: any, i: number) => (i === 16 ? { ...e, pageSha256: '0'.repeat(64) } : e)) };
+    expect(rdlWatchProblems(moved, p())).toContain('lb03 RDLWATCH: superseded pin');
+    expect(rdlWatchProblems(lastWith({ ids: [...W8B_RDLWATCH.ids, 'lib_wrist_curl'] }), p())).toEqual([expect.stringMatching(/^lb03 RDLWATCH: ids/)]);
+    expect(rdlWatchProblems(lastWith({ supersedes: 13 }), p())).toEqual(['lb03 RDLWATCH: supersedes 13']);
   });
 });

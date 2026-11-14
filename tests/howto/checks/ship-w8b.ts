@@ -223,12 +223,15 @@ export function w8bGenText(p: string, t: string): string | null {
 /** LIB-SHIP W8b (review #417 6869580972, High; W8a form, checks/ship-w8a.ts): the layers-page entry each W8b page gets,
  *  appended last as a 'supervisor' D-SHIP-W8B-LAYERS entry (D-BODYMAP-APPEND), with the pin of the entry it supersedes
  *  (lb02's is the batch's first layers page: supersedes null, nothing superseded). */
-export const W8B_LAYERS: Record<string, { supersedes: number | null; ids: string[]; was: { sha: string; bytes: number } | null }> = {
+export const W8B_LAYERS: Record<string, { supersedes: number | null; ids: string[]; was: { sha: string; bytes: number } | null; at?: number; page?: { sha: string; bytes: number } }> = {
   lb02: { supersedes: null, ids: ['lib_dumbbell_pullover'], was: null },
   lb03: {
     supersedes: 13,
     ids: ['lib_pendlay_row', 'lib_landmine_row', 'lib_dumbbell_romanian_deadlift', 'lib_t_bar_row', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug'],
     was: { sha: '6d64a6649a431db56e3883f1028ff206fd15345b09cdfb8d893edc32ce55a652', bytes: 1129018 },
+    // D-W8B-RDLWATCH appends entry 17 over it: the W8b entry stays at index 16 and keeps its own page pin.
+    at: 16,
+    page: { sha: 'ecaf602dd552827b7578411eb3ec4078404ef69a41dcb2f4cf2e316018785be4', bytes: 1312371 },
   },
   lb04: {
     supersedes: 13,
@@ -242,18 +245,39 @@ export const W8B_LAYERS: Record<string, { supersedes: number | null; ids: string
     was: { sha: 'd03829d2a7d198966ac5ba967f6330cd21a27552a1637f778f1e4a7dbe118654', bytes: 1288048 },
   },
 };
-/** The W8b entry of `batch` against the committed layers page: the file's last entry, exactly (decision, approver, the
- *  exact W8B_LAYERS_APPROVAL, supersedes, ids, the page pin and the superseded pin). [problems] */
+/** The W8b entry of `batch`, exactly (decision, approver, the exact W8B_LAYERS_APPROVAL, supersedes, ids, the page pin and
+ *  the superseded pin): the file's last entry against the committed layers page, or, where a later ruled entry supersedes
+ *  it (lb03, D-W8B-RDLWATCH), entry `at` against its pinned `page`. [problems] */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function w8bLayersProblems(file: any, batch: string, page: Buffer): string[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const W = W8B_LAYERS[batch]!, E = file.entries as any[], e = E[E.length - 1], bad: string[] = [];
-  if (e?.kind !== 'layers-page' || e.decision !== 'D-SHIP-W8B-LAYERS' || e.approvedBy !== 'supervisor' || e.approval !== W8B_LAYERS_APPROVAL) return [`${batch} W8b: last entry ${e?.kind} ${e?.decision} ${e?.approval}`];
+  const W = W8B_LAYERS[batch]!, E = file.entries as any[], e = E[W.at ?? E.length - 1], bad: string[] = [];
+  if (e?.kind !== 'layers-page' || e.decision !== 'D-SHIP-W8B-LAYERS' || e.approvedBy !== 'supervisor' || e.approval !== W8B_LAYERS_APPROVAL) return [`${batch} W8b: entry ${e?.kind} ${e?.decision} ${e?.approval}`];
   if (e.supersedes !== W.supersedes || (W.supersedes !== null && E[W.supersedes]?.kind !== 'layers-page')) bad.push(`${batch} W8b: supersedes ${e.supersedes}`);
   if (W.supersedes === null && E.some((x: any) => x !== e && x.kind === 'layers-page')) bad.push(`${batch} W8b: another layers-page entry`);
   if (JSON.stringify(e.ids) !== JSON.stringify(W.ids)) bad.push(`${batch} W8b: ids ${e.ids}`);
-  if (e.pageSha256 !== createHash('sha256').update(page).digest('hex') || e.bytes !== page.length) bad.push(`${batch} W8b: page pin`);
+  const pin = W.page ?? { sha: createHash('sha256').update(page).digest('hex'), bytes: page.length };
+  if (e.pageSha256 !== pin.sha || e.bytes !== pin.bytes) bad.push(`${batch} W8b: page pin`);
   const was = W.supersedes === null ? null : E[W.supersedes];
   if (W.was && (was?.pageSha256 !== W.was.sha || was?.bytes !== W.was.bytes)) bad.push(`${batch} W8b: superseded pin`);
+  return bad;
+}
+
+/** D-W8B-RDLWATCH (#417 6872580444): dumbbell_romanian_deadlift's watch is lower_back (c17), so lb03's page moves again.
+ *  Its entry is appended over the W8b entry (D-BODYMAP-APPEND), in the same exact form. */
+export const W8B_RDLWATCH_APPROVAL = 'https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00';
+export const W8B_RDLWATCH = { batch: 'lb03', supersedes: 16, ids: W8B_LAYERS.lb03!.ids, was: W8B_LAYERS.lb03!.page! };
+/** lb03's last entry against the committed layers page: decision D-W8B-RDLWATCH, approver 'supervisor', the exact
+ *  W8B_RDLWATCH_APPROVAL, supersedes 16 (the W8b entry), ids, the page pin and the superseded pin. [problems] */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function rdlWatchProblems(file: any, page: Buffer): string[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const R = W8B_RDLWATCH, E = file.entries as any[], e = E[E.length - 1], bad: string[] = [];
+  if (e?.kind !== 'layers-page' || e.decision !== 'D-W8B-RDLWATCH' || e.approvedBy !== 'supervisor' || e.approval !== W8B_RDLWATCH_APPROVAL) return [`lb03 RDLWATCH: last entry ${e?.kind} ${e?.decision} ${e?.approval}`];
+  if (e.supersedes !== R.supersedes || E[R.supersedes]?.decision !== 'D-SHIP-W8B-LAYERS') bad.push(`lb03 RDLWATCH: supersedes ${e.supersedes}`);
+  if (JSON.stringify(e.ids) !== JSON.stringify(R.ids)) bad.push(`lb03 RDLWATCH: ids ${e.ids}`);
+  if (e.pageSha256 !== createHash('sha256').update(page).digest('hex') || e.bytes !== page.length) bad.push('lb03 RDLWATCH: page pin');
+  const was = E[R.supersedes];
+  if (was?.pageSha256 !== R.was.sha || was?.bytes !== R.was.bytes) bad.push('lb03 RDLWATCH: superseded pin');
   return bad;
 }
