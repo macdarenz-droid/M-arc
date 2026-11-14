@@ -27,3 +27,9 @@ export function restoreDL(m: any): any {
   for (const r of Object.values<any>(m.rows)) if (DL_KEY in r.files) r.files[DL_KEY] = DL_MAIN;
   return m;
 }
+
+/** platefix5-w6 "every other posture close-up is byte-equal to main" (D-DL-PINS): the one close-up this card redraws, the
+ *  lb03 conventional_deadlift dl-liftoff zoom (its bytes are pinned by tests/howto/f-dl-liftoff.test.ts C1-C8 instead).
+ *  With it left out, main d92830c2 gives 156 zooms and DL_W6_DIGEST, and so does this card's head. */
+export const dlSkip = (pf: string, key: string, zoom: string) => pf === 'lb03.closeups.mjs' && key === 'conventional_deadlift' && zoom === 'dl-liftoff';
+export const DL_W6_DIGEST = '275b9b275d8b4bfa7bc00306eb650ba0f3ffd74a75130b729248b9598b9e67ac';
