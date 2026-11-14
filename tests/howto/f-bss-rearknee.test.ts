@@ -105,7 +105,10 @@ describe('F-BSS-REARKNEE: the Rear knee close-up', { timeout: 120_000 }, () => {
     expect(c7(await measure({ plate: short }))).toEqual([expect.stringMatching(/^right: crop x .* outside the floor/), expect.stringMatching(/^wrong: crop x .* outside the floor/)]);
   });
   it('red m13: a crop moved so the ankle and bench top leave the frame fails C9', async () => {
-    expect(c9(await measure(withCrop({ center: { off: [-40, 30] } })))).toEqual(expect.arrayContaining([expect.stringMatching(/^right: ankle\.l /), expect.stringMatching(/^wrong: bench top /)]));
+    expect(c9(await measure(withCrop({ center: { off: [-40, 30] } })))).toEqual(expect.arrayContaining([expect.stringMatching(/^right: ankle\.l .* < 8$/), expect.stringMatching(/^wrong: bench top .* < 8$/)]));
+  });
+  it('red (review Low 2, pins EDGE_MIN): the crop 7 plate px left puts the Right knee.l 5.1 px from the right edge', async () => {
+    expect(c9(await measure(withCrop({ center: { off: [-47, -12] } })))).toEqual([expect.stringMatching(/^right: knee\.l 5\.1 px from an edge < 8$/)]);
   });
 });
 

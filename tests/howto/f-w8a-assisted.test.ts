@@ -9,8 +9,8 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, wri
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { PF5_MAIN, restorePF5 } from './platefix5-pins';
-import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS): its moved how-to key put back to main 9139c29c's before the A1 blanked compare   // LIB-PLATEFIX-5 (D-PF5-PINS): put PF5's own [golden update] keys/entries back to main before the A1 blanked compare
+import { PF5_MAIN, restorePF5 } from './platefix5-pins';   // LIB-PLATEFIX-5 (D-PF5-PINS): put PF5's own [golden update] keys/entries back to main before the A1 blanked compare
+import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS): its moved how-to key put back to main 9139c29c's before the A1 blanked compare
 
 const ROOT = process.cwd();
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
