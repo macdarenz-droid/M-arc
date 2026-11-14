@@ -275,22 +275,43 @@ describe('F-DL-LIFTOFF C8-C10: the scratch lb03 page (W8b form) and HT4 on the r
 });
 
 /* ------------------------------------------------------- D-DL-WATCHMAIN: the exact set of how-tos that set the flag */
+// Review #427 6877383635: the set comes from the evaluated modules, never from source text, so any spelling of the key
+// (quoted, computed, spread in) counts. A how-to that fails to import fails the test.
 const HOWTO_DIRS = ['tools/plates/library/howto', 'tools/plates/layers/exercises'];
-/** Every how-to under `root` whose feel sets watchMain (any value), as repo paths, sorted. Text scan of the source, so a
- *  how-to that fails to import still counts. */
-const watchMainIds = (root: string) => HOWTO_DIRS.flatMap(d => readdirSync(join(root, d)).filter(f => f.endsWith('.howto.mjs'))
-  .filter(f => /\bwatchMain\s*:/.test(readFileSync(join(root, d, f), 'utf8'))).map(f => `${d}/${f}`)).sort();
+/** Every how-to under `root` whose evaluated `default.feel` has a `watchMain` key (any value), as repo paths, sorted. Run
+ *  in a child process with root's own modules. */
+const watchMainIds = async (root: string): Promise<string[]> => {
+  const code = `
+    import { readdirSync } from 'node:fs'; import { join } from 'node:path'; import { pathToFileURL } from 'node:url';
+    const dirs = ${JSON.stringify(HOWTO_DIRS)}, out = []; let n = 0;
+    for (const d of dirs) for (const f of readdirSync(join(process.cwd(), d)).filter(f => f.endsWith('.howto.mjs')).sort()) {
+      const m = await import(pathToFileURL(join(process.cwd(), d, f)).href); n++;
+      const feel = m.default?.feel;
+      if (feel && typeof feel === 'object' && Object.prototype.hasOwnProperty.call(feel, 'watchMain')) out.push(d + '/' + f);
+    }
+    console.log(JSON.stringify({ n, out: out.sort() }));`;
+  const r = JSON.parse((await run(root, ['--input-type=module', '-e', code])).trim().split('\n').pop()!) as { n: number; out: string[] };
+  expect(r.n).toBeGreaterThan(100);   // the scan saw the how-tos (no empty pass)
+  return r.out;
+};
 describe('F-DL-LIFTOFF D-DL-WATCHMAIN: only conventional_deadlift sets feel.watchMain', () => {
-  it('green: the exact set', () => {
-    expect(watchMainIds(ROOT)).toEqual([HOWTO]);
-  });
-  it('red: the flag on a second id (sumo_deadlift)', () => {
-    const T = mkdtempSync(join(tmpdir(), 'f-dl-watchmain-'));
+  let T = '';
+  const SUMO = 'tools/plates/library/howto/lib_sumo_deadlift.howto.mjs';
+  beforeAll(() => {
+    T = mkdtempSync(join(tmpdir(), 'f-dl-watchmain-'));
     trees.push(T);
-    for (const d of HOWTO_DIRS) cpSync(join(ROOT, d), join(T, d), { recursive: true });
-    const SUMO = 'tools/plates/library/howto/lib_sumo_deadlift.howto.mjs';
-    writeFileSync(join(T, SUMO), swap('const feel = {\n', 'const feel = {\n  watchMain: true,\n')(readFileSync(join(T, SUMO), 'utf8')));
-    expect(watchMainIds(T)).toEqual([HOWTO, SUMO]);
-    expect(watchMainIds(T)).not.toEqual([HOWTO]);
-  });
+    cpSync(join(ROOT, 'tools'), join(T, 'tools'), { recursive: true });
+    symlinkSync(join(ROOT, 'node_modules'), join(T, 'node_modules'), 'dir');
+  }, T_MS);
+  it('green: the exact set, from the evaluated modules', async () => {
+    expect(await watchMainIds(ROOT)).toEqual([HOWTO]);
+    expect(howto.feel.watchMain).toBe(true);
+  }, T_MS);
+  // red: the flag on a second id (sumo_deadlift), in every spelling: bare, single- and double-quoted, computed
+  for (const [name, line] of [['bare', 'watchMain: true,'], ['single-quoted', "'watchMain': true,"], ['double-quoted', '"watchMain": true,'], ['computed', "['watch' + 'Main']: true,"]] as const) {
+    it(`red: the flag on sumo_deadlift, ${name} key`, async () => {
+      const got = await mutated(T, { [SUMO]: swap('const feel = {\n', `const feel = {\n  ${line}\n`) }, () => watchMainIds(T));
+      expect(got).toEqual([HOWTO, SUMO]);
+    }, T_MS);
+  }
 });
