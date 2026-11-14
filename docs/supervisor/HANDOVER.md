@@ -842,6 +842,18 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-14 ~03:45 UTC.** Main is still `9139c29c`.
+  - **W8b #417:**
+    - REVIEW FAIL 6869580972. High: lb03-lb05's layers-page entries had no exact LINK pin. Low: the PR body.
+    - FIXED @ `d61ca89b`, which merges main and puts #424's tests into W8b-first form. The same reviewer (session_018Pv5bJmMJZGkH9q2Pfd49e) checks the delta.
+  - **#425 F-HT4-RIGHTPOSE:** FIXED @ `68a964b9` under D-RP-OPTIN.
+    - Ruled 6870569956: drop oadr and cer, because D-LIB20-TRUNK is a format rule only. 5 entries remain; follow-up **F-RP-OADR-CER**.
+    - The new head is `04a597cf`, waiting for its post and the delta review.
+  - **#426 F-BSS-REARKNEE:**
+    - A fresh panel ran on lyr-bss (key `bss-private/KEY.md`). It was valid, and **bulgarian PASSED**, L5 [4,4,4]. PANEL APPROVED 6869858026, card `bcd016a4` bound.
+    - Note **F-BSS-GAP**: 1 of 3 critics scored L1 at 3 (Right knee gap of 55 px).
+    - Next: pins, then a main merge after #425, then READY.
+  - **F-SHEET-COPY #423:** waits for W8b.
 - **Update 11-14 ~00:45 UTC.**
   - **Train 93:** #424 F-HAND-PALMFLAT-SIZE → main `9139c29c` (review PASS 6868686288). No APK: src/ moved only inputsSha256 headers. This frees mountain_climbers.
   - **#425 F-HT4-RIGHTPOSE: REVIEW FAIL** (6868113425). The new rule made the D-LIB4b-POSES proof (`poses-proof.mjs`) accept two shipped Right pins it expects red.
