@@ -842,6 +842,15 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-14 ~12:45 UTC.** Main is still `d92830c2`; weekly meter 0.28 (09:57).
+  - **W8b #417:**
+    - The RDL delta PASSED (6876919095), and my RDL crop check PASSED (6876928056).
+    - unit-tz New_York crashed twice on 9fe595d0 with the RPC timeout. Ruled D-W8B-RPC2 (6876500219): no third run; W8b moves its own blocks over 10 s to `child.it`.
+    - The new head is `d10e0c1e`, with CI running. The train goes on all-green; otherwise it waits for #428.
+  - **#428 F-VITEST-RPC-2** (session_018Pv5bML4s2DkhxAJsALABw; card at `9757f3a6`): PLAN RULED 6876748508. 18 moves (M1-M18) plus a 30 s guard. Its priority is that it blocks trains.
+  - **#427 F-DL-LIFTOFF:** REVIEW FAIL 6877383635 (the watchMain exact-set pin was a text regex). The fix is @ `abfc9335`; the same reviewer checks it after the main merge.
+  - **#426:** waits for W8b, then main, then the TRAIN HEAD.
+  - **F-SHEET-COPY #423:** waits for W8b.
 - **Update 11-14 ~09:45 UTC.** Main is still `d92830c2`.
   - **W8b #417:** the RDL watch fix is pushed (`9fe595d0`). Both unit-tz jobs crashed with the vitest RPC timeout `onTaskUpdate` after all 6621 tests passed (run 43575114292).
     - Ruled D-W8B-RPC: one failed-job re-run, and FIXED only on all-green.
