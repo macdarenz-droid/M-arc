@@ -368,3 +368,140 @@ describe('LIB-PLATEFIX-5 D-PF5-PINS mutation', () => {
     expect(bad[0]!.startsWith(`${id} ${k}: ${'0'.repeat(64)} != `)).toBe(true);
   });
 });
+
+// F-HAND-PALMFLAT-SIZE (F-W8A-HOLDS part 3, docs/supervisor/verify/f-w8a-holds-card.md; ruling 4: the label only, no size
+// change; PLAN ruled #424: Q-PFS-1 right only, Q-PFS-3 the note need not equal the caption). A row's `pairNote` draws its
+// own Right note on its sub-key; mountain_climbers names it in a scratch config only (its flip is a later LIB-SHIP wave).
+describe('F-HAND-PALMFLAT-SIZE: a row\'s own Right note on its sub-key', () => {
+  const NOTE = { right: { text: 'Under shoulder', source: `docs/research/howto/${CARD}#c2` } };
+  const CAP = { 'hand-ahead': { right: { text: 'Hand directly under the shoulder', source: `docs/research/howto/${CARD}#c2, zooms[hand-under-shoulder].right` } } };
+  const MCN = { ...MC, pairNote: NOTE, pairWords: CAP };
+  const red = (row: Record<string, unknown>, re: RegExp) => expect(() => P.rowFilterOf('lib_mountain_climbers', row)).toThrow(re);
+  it('C2: Right head UNDER SHOULDER (Q-PFS-4), Wrong head HAND AHEAD, the caption says directly under the shoulder; else the panel as without the note', async () => {
+    const h = await P.pairPanel(SUB, P.INDEX, subsOf({ lib_mountain_climbers: MCN }));
+    expect(pagesIn(h)).toBe(1);
+    expect(h.match(/<text [^>]*class="h-note"[^>]*>([^<]*)</g)!.map((t: string) => t.slice(t.lastIndexOf('>') + 1, -1))).toEqual(['UNDER SHOULDER']);
+    expect(h.match(/<text [^>]*class="h-note m"[^>]*>([^<]*)</g)!.map((t: string) => t.slice(t.lastIndexOf('>') + 1, -1))).toEqual(['HAND AHEAD']);
+    expect(h.includes('Hand directly under the shoulder')).toBe(true);
+    expect(/whole hand down/i.test(h)).toBe(false);
+    // the note is the only change: put the key's note back and it is the same row's panel without pairNote
+    const plain = await P.pairPanel(SUB, P.INDEX, subsOf({ lib_mountain_climbers: { ...MC, pairWords: CAP } }));
+    expect(h.replace('>UNDER SHOULDER<', '>WHOLE HAND DOWN<')).toBe(plain);
+    expect(sha(h)).toBe(SCRATCH_PANEL);
+  });
+  it('C2: the drawing passes the view\'s own checks (report.ok) with the row\'s note; the size is the key\'s (170, ruling 4)', () => {
+    const r = P.renderPair('push_up', { fault: 'hand-ahead', uid: `hp-${SUB}-hand-ahead`, rightNote: NOTE.right.text });
+    expect([r.report.ok, r.report.problems]).toEqual([true, []]);
+    expect(r.svg.includes('viewBox="0 0 358 246"')).toBe(true);   // 70 + 170 + 6
+    expect(r.svg).toBe(P.renderPair('push_up', { fault: 'hand-ahead', uid: `hp-${SUB}-hand-ahead` }).svg.replace('>WHOLE HAND DOWN<', '>UNDER SHOULDER<'));
+  });
+  it('rowFilterOf returns the note; a row with no pairNote has none', () => {
+    expect(P.rowFilterOf('lib_mountain_climbers', MCN).note).toEqual(NOTE);
+    expect('note' in P.rowFilterOf('lib_mountain_climbers', MC)).toBe(false);
+  });
+  it('m1: pairNote without pairFaults, or without pair, is red in pairs and in the layers build', () => {
+    red({ pair: BASE, pairNote: NOTE }, /pairNote without pairFaults/);
+    red({ pairNote: NOTE }, /pairNote without pair/);
+    expect(() => B.pairRowsOf({ closeups: { mountain_climbers: { pair: BASE, pairNote: NOTE } } })).toThrow(/mountain_climbers: pairNote without pairFaults/);
+    expect(() => B.pairRowsOf({ closeups: { mountain_climbers: { pairNote: NOTE } } })).toThrow(/mountain_climbers: pairNote without pair/);
+    expect(B.pairRowsOf({ closeups: { mountain_climbers: MCN } })).toHaveLength(1);
+  });
+  it('m2: a source not citing cards/mountain_climbers.json is red', () => {
+    red({ ...MC, pairNote: { right: { text: 'Under shoulder', source: 'docs/research/howto/shared/palm-flat.json#c3' } } }, /pairNote right source does not cite cards\/mountain_climbers.json/);
+    red({ ...MC, pairNote: { right: { text: 'Under shoulder', source: 'docs/research/howto/cards/push_up.json#c2' } } }, /does not cite cards\/mountain_climbers.json/);
+    red({ ...MC, pairNote: { right: { text: 'Under shoulder' } } }, /does not cite/);
+  });
+  it('Q-PFS-1: right only; a wrong note, an unknown key, a non-object, no right, or an empty text is red', () => {
+    red({ ...MC, pairNote: { ...NOTE, wrong: { text: 'x', source: CARD } } }, /pairNote holds wrong; only right is allowed/);
+    red({ ...MC, pairNote: { left: NOTE.right } }, /pairNote holds left/);
+    red({ ...MC, pairNote: {} }, /pairNote holds no right/);
+    red({ ...MC, pairNote: 'Under shoulder' }, /pairNote is not an object/);
+    red({ ...MC, pairNote: [NOTE] }, /pairNote is not an object/);
+    red({ ...MC, pairNote: null }, /pairNote is not an object/);
+    red({ ...MC, pairNote: { right: { text: ' ', source: CARD } } }, /pairNote right text is empty/);
+  });
+  it('m4: two configs giving one sub-key different notes are red; the same note twice is not', () => {
+    const two = (b: unknown) => P.subKeysOf([{ file: 'x.layers.json', closeups: { lib_mountain_climbers: MCN } }, { file: 'y.layers.json', closeups: { lib_mountain_climbers: b } }]);
+    expect(() => two({ ...MCN, pairNote: { right: { ...NOTE.right, text: 'Hand below shoulder' } } })).toThrow(/sub-key palm-flat-floor-only-hand-ahead-over: x.layers.json and y.layers.json give different pairNote/);
+    expect(() => two({ ...MC, pairWords: CAP })).toThrow(/give different pairNote/);
+    expect(two(MCN).subs.get(SUB).note).toEqual(NOTE);
+  });
+});
+// sha256 of the scratch sub-key panel above (mountain_climbers, MCN; the note "Under shoulder", Q-PFS-4 ruled on #424), for the ship wave and the hands critic (C4)
+const SCRATCH_PANEL = '594e9df8769a32ab8dd8fffbbf46e82083b4be968c3ba1119cb2dc78f6965765';
+
+// F-HAND-PALMFLAT-SIZE C1 MANIFEST (F-PAIR-FAULTS A2 form): MANIFEST.json, made by manifestOf in this card's [golden update]
+// commit, moves only the pairs.mjs and build-layers-page.mjs keys. With those two blanked in every row (134 rows each), it
+// is main 5b7d6e80's MANIFEST.json with the same blanks (re-measured at the merge of main), and each row pins the files' current sha256.
+describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
+  const PFS_MOVED = ['tools/plates/library/build-layers-page.mjs', 'tools/plates/library/hands/pairs.mjs'];
+  const PFS_BLANKED_MAIN = '0e2d302458a17fb8d8d8ac1a6e2f41cdac9c2118745d774a72bc0e31c9b1e281';
+  const man = () => JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
+  const blank = (m: any) => { const c = structuredClone(m), n: Record<string, number> = {}; for (const r of Object.values<any>(c.rows)) for (const k of PFS_MOVED) if (k in r.files) { r.files[k] = ''; n[k] = (n[k] ?? 0) + 1; } return { n, sha: sha(JSON.stringify(c)) }; };
+  it('only the two keys differ from main, and each pins its current file', () => {
+    const m = man();
+    for (const k of PFS_MOVED) { const now = sha(readFileSync(new URL(`../../${k}`, import.meta.url))); for (const [id, r] of Object.entries<any>(m.rows)) if (k in r.files) expect([id, k, r.files[k]]).toEqual([id, k, now]); }
+    expect(blank(m)).toEqual({ n: { [PFS_MOVED[0]!]: 134, [PFS_MOVED[1]!]: 134 }, sha: PFS_BLANKED_MAIN });
+  });
+  it('red: any other key moved, or a row dropped', () => {
+    const m = man(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).some(k => !PFS_MOVED.includes(k)))!;
+    m.rows[id].files[Object.keys(r.files).find(k => !PFS_MOVED.includes(k))!] = '0'.repeat(64);
+    expect(blank(m).sha).not.toBe(PFS_BLANKED_MAIN);
+    const d = man(); delete d.rows[Object.keys(d.rows)[0]!];
+    expect(blank(d).sha).not.toBe(PFS_BLANKED_MAIN);
+  });
+});
+
+// F-HAND-PALMFLAT-SIZE D-PFS-HEADERS (Q-PFS-5, #424): pairs.mjs is an input of these 22 generated app files, so generate.mjs
+// moves their line-1 inputsSha256 header only. Every GENERATED file under src/howto and src/slices/howto/css (317), with
+// line 1 of exactly these 22 blanked, hashes to main 5b7d6e80's value with the same blank (re-measured at the merge of main): their bodies and every other
+// generated file are byte-equal to main.
+import { readdirSync, statSync } from 'node:fs';   // F-HAND-PALMFLAT-SIZE (hoisted; kept in this block so the file stays add-only)
+describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fed generated files moves', () => {
+  const PFS_HEADERS = [
+    'src/howto/generated/handpair-bar-hang-only-curled-under.ts',
+    'src/howto/generated/handpair-bar-hang-over.ts',
+    'src/howto/generated/handpair-bar-row-only-curled-over.ts',
+    'src/howto/generated/handpair-curl-bar-under.ts',
+    'src/howto/generated/handpair-curl-dumbbell-under.ts',
+    'src/howto/generated/handpair-d-handle-pull-only-curled-unstated.ts',
+    'src/howto/generated/handpair-ez-curl-angled.ts',
+    'src/howto/generated/handpair-ez-curl-over.ts',
+    'src/howto/generated/handpair-ez-curl-under.ts',
+    'src/howto/generated/handpair-v-handle-pull-only-curled-neutral-overhead.ts',
+    'src/howto/generated/loaders.ts',
+    'src/slices/howto/css/zoom-alternating-dumbbell-curl.css',
+    'src/slices/howto/css/zoom-barbell-curl.css',
+    'src/slices/howto/css/zoom-chin-up.css',
+    'src/slices/howto/css/zoom-close-grip-pulldown.css',
+    'src/slices/howto/css/zoom-dumbbell-biceps-curl.css',
+    'src/slices/howto/css/zoom-ez-bar-curl.css',
+    'src/slices/howto/css/zoom-hanging-knee-raise.css',
+    'src/slices/howto/css/zoom-inverted-row.css',
+    'src/slices/howto/css/zoom-preacher-curl.css',
+    'src/slices/howto/css/zoom-reverse-curl.css',
+    'src/slices/howto/css/zoom-single-arm-lat-pulldown.css',
+  ];
+  const PFS_GEN_MAIN = { n: 317, sha: '689d531d13666f7e13986af63860e7444e4a80d12844e7e094e45d07f7fc7356' };
+  const ROOTDIR = join(__dirname, '../..');
+  const walk = (d: string): string[] => readdirSync(join(ROOTDIR, d)).sort().flatMap(n => statSync(join(ROOTDIR, d, n)).isDirectory() ? walk(`${d}/${n}`) : [`${d}/${n}`]);
+  const gen = () => ['src/howto', 'src/slices/howto/css'].flatMap(walk).filter(p => /GENERATED, do not edit/.test(readFileSync(join(ROOTDIR, p), 'utf8').split('\n')[0]!)).sort();
+  const blanked = (files: string[], read: (p: string) => string, moved: string[]) => {
+    const h = createHash('sha256');
+    for (const p of files) { const t = read(p); h.update(`${p}\n${moved.includes(p) ? t.slice(t.indexOf('\n')) : t}\0`); }
+    return { n: files.length, sha: h.digest('hex') };
+  };
+  const read = (p: string) => readFileSync(join(ROOTDIR, p), 'utf8');
+  it('with the 22 headers blanked, the generated files are main\'s; the 22 are generated files', () => {
+    const files = gen();
+    expect(PFS_HEADERS.filter(p => !files.includes(p))).toEqual([]);
+    expect(new Set(PFS_HEADERS).size).toBe(22);
+    expect(blanked(files, read, PFS_HEADERS)).toEqual(PFS_GEN_MAIN);
+  });
+  it('red: a body byte moved in one of the 22, a 23rd file moved, or one of the 22 left out of the blank list', () => {
+    const files = gen(), [a] = PFS_HEADERS, other = files.find(p => !PFS_HEADERS.includes(p))!;
+    expect(blanked(files, p => (p === a ? `${read(p)} ` : read(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN.sha);
+    expect(blanked(files, p => (p === other ? `x${read(p)}` : read(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN.sha);
+    expect(blanked(files, read, PFS_HEADERS.slice(1)).sha).not.toBe(PFS_GEN_MAIN.sha);
+  });
+});
