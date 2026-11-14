@@ -842,6 +842,12 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-14 ~15:45 UTC.** Main is still `d92830c2`; weekly meter 0.31 (14:44).
+  - **Every train is blocked on #428 F-VITEST-RPC-2** (head `cb43e5cd`, building plus the 5 proof runs). W8b's `d10e0c1e` crashed on the RPC timeout in source-gate and both unit-tz legs, even after moving its own blocks.
+  - **#427:** review-fix PASS 6879129324 @ `abfc9335`.
+    - A howto-shard 51 re-run happened before my no-rerun note (lib_reverse_curl HT6 browser timeout). That evidence is not used.
+    - Next: a fresh CI run on the main-merge head; if HT6 times out again, root-cause it.
+  - **Merge order:** #428 → W8b #417 → #426 → #427 → #423 → W8c.
 - **Update 11-14 ~12:45 UTC.** Main is still `d92830c2`; weekly meter 0.28 (09:57).
   - **W8b #417:**
     - The RDL delta PASSED (6876919095), and my RDL crop check PASSED (6876928056).
