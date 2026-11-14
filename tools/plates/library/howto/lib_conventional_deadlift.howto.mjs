@@ -171,7 +171,8 @@ const feel = {
     { muscleId: 'lower_back', plain: 'The lower back works hard in this lift.' },
   ],
   // F-DL-LIFTOFF D-DL-L4 (panel L4 [4,3,3] on #427): the lower back is Main, as the card's feel.primary has it (c15: it
-  // works hard), and the feel line names it; it stays the watch region, so both lower-back rows draw the dashed outline.
+  // works hard), and the feel line names it; it stays the watch region, and watchMain (D-DL-WATCHMAIN) keeps the dashed
+  // outline on both lower-back rows.
   secondary: [
     { muscleId: 'quads', plain: 'The front thighs work hard too.' },
     { muscleId: 'adductors', plain: 'The inner thighs help.' },
@@ -181,6 +182,7 @@ const feel = {
   watch: [
     { muscleId: 'lower_back', plain: 'The lower back should not take over.' },   // c13 (card watch)
   ],
+  watchMain: true,
   feelLine: 'You should feel this in your glutes, hamstrings and lower back. Front thighs help off the floor.',
   rows: [
     { key: 'low-back-over', where: 'Lower back taking over', at: { muscles: ['lower_back'] },

@@ -10,7 +10,7 @@
 import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -146,6 +146,7 @@ describe('F-DL-LIFTOFF C1-C7: the dl-liftoff zoom as lb03 draws it', () => {
 /* ------------------------------------------------------------------ C8-C10: a scratch tree with lb03 staged (W8b form) */
 const COPY = ['package.json', 'scripts', 'src', 'tools', 'tests/howto/golden', 'docs/research/howto'];
 const LB03 = 'tools/plates/library/pages/lb03.layers.json', CROP = 'tools/plates/library/render/closeup/crop.mjs';
+const LAYERS = 'tools/plates/layers/artifact/howto-layers.mjs';
 const W8B_ORDER = ['lib_pendlay_row', 'lib_landmine_row', 'lib_dumbbell_romanian_deadlift', 'lib_conventional_deadlift', 'lib_sumo_deadlift',
   'lib_t_bar_row', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_dumbbell_shrug', 'lib_smith_machine_shrug'];   // 1fdf6975's lb03 group
 const MAIN_CARD = 'e0a154bd9d8408039c62ff62750d498ccde155049dab17e244e58b50e084bc1d';   // the conventional card the W8b panel judged
@@ -181,15 +182,30 @@ const page = async (T: string) => {
   return readFileSync(out, 'utf8');
 };
 const cardOf = (html: string, id: string) => { const a = html.indexOf(`<article class="sheet-card" id="card-${id}"`), b = html.indexOf('</article>', a); expect(a).toBeGreaterThan(-1); return html.slice(a, b); };
-/** The card less its dl-liftoff block (from its zx div, the last zoom, to the grip section that follows it). */
-const lessLiftoff = (card: string) => { const i = card.indexOf('<div class="zx" id="conventional-deadlift-zoom-dl-liftoff"'), j = card.indexOf('<section class="hw-sec grip"', i); expect(i).toBeGreaterThan(-1); expect(j).toBeGreaterThan(i); return [card.slice(0, i), card.slice(j)]; };
-/** main d92830c2's dl-liftoff zoom and SHOOT_KNEE (m1: "the same page built without the change"). */
+/** The card less its two changed blocks: the dl-liftoff zoom (from its zx div, the last zoom, to the grip section) and
+ *  the feel section (D-DL-L4, to the setup section). */
+const lessChanged = (card: string) => {
+  const i = card.indexOf('<div class="zx" id="conventional-deadlift-zoom-dl-liftoff"'), j = card.indexOf('<section class="hw-sec grip"', i);
+  const k = card.indexOf('<section class="hw-sec feel" id="conventional-deadlift-feel"', j), l = card.indexOf('<section class="hw-sec setup"', k);
+  expect(i).toBeGreaterThan(-1); expect(j).toBeGreaterThan(i); expect(k).toBeGreaterThan(j); expect(l).toBeGreaterThan(k);
+  return [card.slice(0, i), card.slice(j, k), card.slice(l)];
+};
+/** main d92830c2's dl-liftoff zoom, SHOOT_KNEE and feel (m1: "the same page built without the change"). */
 const toMain = (s: string) => [
   swap('LE = landmarksOf(END, H), SHOOT_KNEE = 15;', 'LE = landmarksOf(END, H), SHOOT_KNEE = 30;'),
   swap("crop: { center: { at: 'hip.r', pose: 'right', off: [20, 35] }, sizePx: 180 },", "crop: { center: { at: 'hip.r', pose: 'right', off: [0, 10] }, sizePx: 200 },"),
   swap('wrong: { base: \'end\', pose: SHOOT, equipmentList: LIFT_EQ },\n    guides: [{ kind: \'drop\', from: { at: \'hip.r\', pose: \'right\', off: [-26, 0] }, to: { at: \'hip.r\', pose: \'mistake\', off: [-26, 0] } }],', 'wrong: { base: \'end\', pose: SHOOT, solid: true },'),
   swap("wrong: { text: 'Hips shoot up', anchor: { at: 'hip.r', pose: 'mistake' } },", "wrong: { text: 'Hips shoot up', anchor: 'hip.r' },"),
+  ...FEEL_TO_MAIN,
 ].reduce((a, f) => f(a), s);
+/** main's feel (D-DL-L4 reverted): lower back Also working, the old feel line, no watchMain. */
+const FEEL_TO_MAIN = [
+  swap("    { muscleId: 'hamstrings', plain: 'The back of the thighs should feel the work.' },\n    { muscleId: 'lower_back', plain: 'The lower back works hard in this lift.' },\n",
+    "    { muscleId: 'hamstrings', plain: 'The back of the thighs should feel the work.' },\n"),
+  swap("  secondary: [\n    { muscleId: 'quads',", "  secondary: [\n    { muscleId: 'lower_back', plain: 'The lower back works hard in this lift.' },\n    { muscleId: 'quads',"),
+  swap("  watchMain: true,\n", ''),
+  swap("'You should feel this in your glutes, hamstrings and lower back. Front thighs help off the floor.'", "'You should feel this in your glutes and hamstrings, not your back. Front thighs help off the floor.'"),
+];
 async function ht4(T: string, libId: string, chrome: string): Promise<string[]> {
   const code = `
     import { recorder } from './tools/plates/library/fidelity/rows.mjs';
@@ -213,13 +229,13 @@ describe('F-DL-LIFTOFF C8-C10: the scratch lb03 page (W8b form) and HT4 on the r
   it('C8: built twice, the page is the same', async () => {
     expect(sha(await page(T))).toBe(sha(A));
   }, T_MS);
-  it('C8: only the Liftoff block of the conventional card differs from the page built without the change (m1: main\'s zoom)', async () => {
+  it('C8: only the Liftoff block and the feel section of the conventional card differ from the page built without the change (m1: main\'s zoom and feel)', async () => {
     const B = await mutated(T, { [HOWTO]: toMain }, () => page(T));
     const a = cardOf(A, 'conventional-deadlift'), b = cardOf(B, 'conventional-deadlift');
     expect(sha(b)).toBe(MAIN_CARD);   // the page without the change carries the judged card
     expect(sha(a)).not.toBe(MAIN_CARD);
     expect(A.replace(a, '')).toBe(B.replace(b, ''));
-    expect(lessLiftoff(a)).toEqual(lessLiftoff(b));
+    expect(lessChanged(a)).toEqual(lessChanged(b));
   }, T_MS);
   it('C9: sumo_deadlift\'s card is byte-equal to its W8b PASS card', () => {
     const c = cardOf(A, 'sumo-deadlift');
@@ -228,6 +244,27 @@ describe('F-DL-LIFTOFF C8-C10: the scratch lb03 page (W8b form) and HT4 on the r
   it('C10: conventional_deadlift has HT4/A5-protected, A5-fragments and A5-poses clean', async () => {
     expect(await ht4(T, 'lib_conventional_deadlift', 'conventional-deadlift')).toEqual([]);
   }, T_MS);
+  // D-DL-L4 (panel L4 [4,3,3], #427): the lower back is Main (card feel.primary, c15), the feel line names it, and both
+  // lower-back rows keep the dashed watch outline (D-DL-WATCHMAIN: feel.watchMain, opt-in, in howto-layers.mjs)
+  const feelOf = (html: string) => { const c = cardOf(html, 'conventional-deadlift'), a = c.indexOf('<section class="hw-sec feel" id="conventional-deadlift-feel"'), b = c.indexOf('<section class="hw-sec setup"', a); expect(a).toBeGreaterThan(-1); return c.slice(a, b); };
+  const marks = (sec: string) => [...sec.matchAll(/<g class="feel-mark" data-row="([^"]+)"><g class="feel-quiet">[\s\S]*?<\/g><g class="feel-watch">/g)].map(q => q[1]);
+  const MAIN = 'Where you should feel it. Main: glutes, hamstrings, lower back. Also working: quads, inner thighs, upper traps, forearms.';
+  it('D-DL-L4: lower back Main, the card-true feel line, the watch outline on both lower-back rows', () => {
+    const F = howto.feel, ids = (x: any[]) => x.map(m => m.muscleId);
+    expect([ids(F.primary), ids(F.secondary), ids(F.watch), F.watchMain]).toEqual([['glutes', 'hamstrings', 'lower_back'], ['quads', 'adductors', 'upper_traps', 'forearms'], ['lower_back'], true]);
+    expect(F.feelLine).toBe('You should feel this in your glutes, hamstrings and lower back. Front thighs help off the floor.');
+    const sec = feelOf(A);
+    expect(sec).toContain(`aria-label="${MAIN}"`);
+    expect(sec).toContain(F.feelLine);
+    expect(sec).not.toContain('not your back');
+    expect(marks(sec)).toEqual(['low-back-over', 'low-back']);
+  }, T_MS);
+  it('red (flag ignored): howto-layers.mjs drops the watch mark on a Main muscle -> no outline on either row', async () => {
+    const B = await mutated(T, { [LAYERS]: swap('(F.watchMain === true || !priIds.has(m))', '!priIds.has(m)') }, () => page(T));
+    const sec = feelOf(B);
+    expect(sec).toContain(`aria-label="${MAIN}"`);
+    expect(marks(sec)).toEqual([]);
+  }, T_MS);
   it('red m11: the dashed Wrong\'s Mistake pose moved 1 cm -> C10, the declared-fault text', async () => {
     const got = await mutated(T, { [CROP]: swap("if (role === 'wrong' && !solid) spec.mistake = { pose: poseOf(z.wrong),",
       "if (role === 'wrong' && !solid) spec.mistake = { pose: z.key === 'dl-liftoff' ? mergeDeep(poseOf(z.wrong), { root: { at: poseOf(z.wrong).root.at.map((v, i) => i === 1 ? v + 0.01 : v) } }) : poseOf(z.wrong),") },
@@ -235,4 +272,25 @@ describe('F-DL-LIFTOFF C8-C10: the scratch lb03 page (W8b form) and HT4 on the r
     expect(got.length).toBeGreaterThan(0);
     expect(got.join('\n')).toMatch(/mistake\.pose matches neither the reference mistake pose nor its declared fault pose/);
   }, T_MS);
+});
+
+/* ------------------------------------------------------- D-DL-WATCHMAIN: the exact set of how-tos that set the flag */
+const HOWTO_DIRS = ['tools/plates/library/howto', 'tools/plates/layers/exercises'];
+/** Every how-to under `root` whose feel sets watchMain (any value), as repo paths, sorted. Text scan of the source, so a
+ *  how-to that fails to import still counts. */
+const watchMainIds = (root: string) => HOWTO_DIRS.flatMap(d => readdirSync(join(root, d)).filter(f => f.endsWith('.howto.mjs'))
+  .filter(f => /\bwatchMain\s*:/.test(readFileSync(join(root, d, f), 'utf8'))).map(f => `${d}/${f}`)).sort();
+describe('F-DL-LIFTOFF D-DL-WATCHMAIN: only conventional_deadlift sets feel.watchMain', () => {
+  it('green: the exact set', () => {
+    expect(watchMainIds(ROOT)).toEqual([HOWTO]);
+  });
+  it('red: the flag on a second id (sumo_deadlift)', () => {
+    const T = mkdtempSync(join(tmpdir(), 'f-dl-watchmain-'));
+    trees.push(T);
+    for (const d of HOWTO_DIRS) cpSync(join(ROOT, d), join(T, d), { recursive: true });
+    const SUMO = 'tools/plates/library/howto/lib_sumo_deadlift.howto.mjs';
+    writeFileSync(join(T, SUMO), swap('const feel = {\n', 'const feel = {\n  watchMain: true,\n')(readFileSync(join(T, SUMO), 'utf8')));
+    expect(watchMainIds(T)).toEqual([HOWTO, SUMO]);
+    expect(watchMainIds(T)).not.toEqual([HOWTO]);
+  });
 });
