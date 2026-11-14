@@ -12,6 +12,7 @@ import { pf2Problems, restorePF2 } from './platefix2-pins';
 import { pf3bProblems, restorePF3b } from './platefix3b-pins';
 import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
 import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
+import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
@@ -439,7 +440,7 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
   const man = () => JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
   const blank = (m: any) => { const c = structuredClone(m), n: Record<string, number> = {}; for (const r of Object.values<any>(c.rows)) for (const k of PFS_MOVED) if (k in r.files) { r.files[k] = ''; n[k] = (n[k] ?? 0) + 1; } return { n, sha: sha(JSON.stringify(c)) }; };
   it('only the two keys differ from main, and each pins its current file', () => {
-    const m = man();
+    const m = restoreDL(man());   // F-DL-LIFTOFF (D-DL-PINS): was man(), now its conventional how-to key back to main first; same n and hash
     for (const k of PFS_MOVED) { const now = sha(readFileSync(new URL(`../../${k}`, import.meta.url))); for (const [id, r] of Object.entries<any>(m.rows)) if (k in r.files) expect([id, k, r.files[k]]).toEqual([id, k, now]); }
     expect(blank(m)).toEqual({ n: { [PFS_MOVED[0]!]: 134, [PFS_MOVED[1]!]: 134 }, sha: PFS_BLANKED_MAIN });
   });
