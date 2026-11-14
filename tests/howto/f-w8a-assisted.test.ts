@@ -145,7 +145,11 @@ describe('F-W8A-ASSISTED (Q1): v_up, ghosts off with a Mistake zoom, on a scratc
 const MOVED = 'tools/plates/library/build-layers-page.mjs';
 const CROP = 'tools/plates/library/render/closeup/crop.mjs';
 const CROP_MAIN = '9c1fe67d96ce08f6f5df084ef3efe692260d09be9ca60eaf254a899c70dc03b3';   // crop.mjs on main a4796243 (PF5 moved it; the 4 D-CROP-PIN tests pin it to the current file instead)
-const toMain = (m: any) => { restorePF5(m); for (const r of Object.values<any>(m.rows)) if (CROP in r.files) r.files[CROP] = CROP_MAIN; return m; };
+// F-HAND-PALMFLAT-SIZE (#424, F-W8A-HOLDS part 3; card rule "add that key to its moved-key list"): its [golden update] also moves
+// hands/pairs.mjs's key (134 rows); it is put back to main a4796243's value here too. That card's own blanked-keys test pins
+// the key to the current file.
+const PFS_PAIRS = 'tools/plates/library/hands/pairs.mjs', PFS_PAIRS_MAIN = '3e89feda3da3f017c970dae250ef4bd6c9c8c82500f861b0c6a720c5c7856ffa';
+const toMain = (m: any) => { restorePF5(m); for (const r of Object.values<any>(m.rows)) { if (CROP in r.files) r.files[CROP] = CROP_MAIN; if (PFS_PAIRS in r.files) r.files[PFS_PAIRS] = PFS_PAIRS_MAIN; } return m; };   // F-HAND-PALMFLAT-SIZE: + the pairs.mjs key
 const MANIFEST_BLANKED_MAIN = 'ab3f030b4f4be65d64ea3d0431000526c88e1feb5c48882c113605c9fa21ad95';
 const blanked = (m: any) => { const c = structuredClone(m); let n = 0; for (const r of Object.values<any>(c.rows)) if (MOVED in r.files) { r.files[MOVED] = ''; n++; } return { n, sha: sha(JSON.stringify(c)) }; };
 describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
@@ -168,8 +172,8 @@ describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
     expect(blanked(toMain(structuredClone(m))).sha).not.toBe(MANIFEST_BLANKED_MAIN);
   });
   it('red: any other key moved', () => {
-    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && !(k in PF5_MAIN) && !(k in W8B_MOVED)))!;
-    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && !(k in PF5_MAIN) && !(k in W8B_MOVED))!;   // LIB-SHIP W8b: nor one W8b moves   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
+    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && !(k in PF5_MAIN) && !(k in W8B_MOVED)))!;
+    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && !(k in PF5_MAIN) && !(k in W8B_MOVED))!;   // LIB-SHIP W8b: nor one W8b moves   // F-HAND-PALMFLAT-SIZE: not the pairs.mjs key either   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
     m.rows[id].files[other] = '0'.repeat(64);
     expect(blanked(toMain(lessW8b(m, p => sha(readFileSync(join(ROOT, p)))))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W8b: W8b's moves out first; LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash
   });
