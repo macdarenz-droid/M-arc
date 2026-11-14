@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { fixtureTreeInChild, ownRowsTreeInChild, renderInChild } from '../child-test';   // F-VITEST-RPC-2
 import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 import { readHowTo } from './generated-module';
@@ -35,13 +36,13 @@ const CLONE_OUTPUTS = ['src/howto/generated/ht-cable-lateral-raise.ts', 'src/how
 let mainOut: Map<string, any>, repoOut: Map<string, any>, treeOut: Map<string, any>;
 beforeAll(async () => {
   F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
-  root = F.fixtureTree(); tmps.push(root);
+  root = await fixtureTreeInChild(); tmps.push(root);
   const g = await run(root, ['tools/plates/generate.mjs']);
   if (g.code !== 0) throw new Error(`generate failed in the E1 tree:\n${g.out}`);
-  const eight = F.ownRowsTree();
-  try { mainOut = await (await import(/* @vite-ignore */ F.url(eight, 'tools/plates/generate.mjs'))).render(); } finally { F.drop(eight); }
+  const eight = await ownRowsTreeInChild();
+  try { mainOut = await renderInChild(eight); } finally { F.drop(eight); }
   repoOut = await renderOf(new URL('../../', import.meta.url).pathname);   // F-GEN-WALK-SPEED: the repo's render(), once per run (tests/walk-cache.ts)
-  treeOut = await (await import(/* @vite-ignore */ turl('tools/plates/generate.mjs'))).render();
+  treeOut = await renderInChild(root);
 }, 600_000);
 afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
 

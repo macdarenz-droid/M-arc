@@ -4,6 +4,7 @@ import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync
 import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 import type { BuiltHowTo, GoldenFile, GoldenPlateEntry } from '../../src/howto/types';
 import { LIBRARY, SHIPPED } from './shipped-rows';
 import { readHowTo } from './generated-module';
@@ -137,6 +138,7 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
     for (const p of onDisk()) {
       const h = core.parseHeader(readFileSync(p, 'utf8'));
       expect(h.hash, p).toBe(core.inputsSha256(h.writers, await inputsOf(h.writers, p)));
+      await yieldTask();   // F-VITEST-RPC-2: its awaits resolve as microtasks; one worker turn per file
     }
   }, 60_000);   // D-SHIP-W3-WALKTIME (#384 6690918663): walks every generated file, which grows with every wave
 

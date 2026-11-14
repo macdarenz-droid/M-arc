@@ -8,7 +8,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { child } from '../child-test';
+import { child, yieldTask } from '../child-test';
 import { MAIN_GOLDEN, pfTailProblems } from './platefix-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -599,6 +599,7 @@ describe('PILOT-A3 A8, A10: runQa node half on each plate, the zooms, the fly ch
     const s = spec('dumbbell_fly'), c0 = s.callouts.find((x: any) => x.key === 'elbows'), at = (box: any) => ({ ...s, callouts: s.callouts.map((x: any) => (x.key === 'elbows' ? { ...x, box } : x)) });
     let hit: any = null;
     for (const [dx, dy] of [[-1, 0], [0, -1], [0, 1], [1, 0]]) {
+      await yieldTask();   // F-VITEST-RPC-2: one worker turn per direction
       for (let d = 1; d <= 120 && !hit; d++) {
         const box = { left: c0.box.left + dx! * d, top: c0.box.top + dy! * d }, is = plate.renderPlate(at(box), { id: 'm' }).report.issues;
         if (is.some((i: string) => !i.startsWith(`figure:${c0.text}`))) break;
