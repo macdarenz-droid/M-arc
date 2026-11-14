@@ -1115,7 +1115,7 @@
     },
     {
       "scope": "lib_dumbbell_romanian_deadlift",
-      "hash": "555e29f9d46917f378ca7e7eaef4373f1d24b43f8faa118dd8e7e666e556bad8",
+      "hash": "da89c94fc93e50b75fd0fbf501f598d0e5c55b15277ac8641ea9b24ec70bf0c5",
       "date": "2026-11-13",
       "fetcher": "LIB-SHIP W8b: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/dumbbell_romanian_deadlift.json",
       "critic": "LIB-SHIP W8b: blind fresh Opus content critics on the W8b sheets with a plant (caught), #417 6856272493",
@@ -1125,7 +1125,7 @@
       "open": 0,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W8B-STAMP",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856272493 @ 1fdf6975d8e93c184ae77ad11daf1cf73505a15d"
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00"
     },
     {
       "scope": "lib_pistol_squat",

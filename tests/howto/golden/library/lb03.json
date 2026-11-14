@@ -457,6 +457,28 @@
       "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): dumbbell_romanian_deadlift on the page; conventional_deadlift and sumo_deadlift held (F-DL-LIFTOFF), dumbbell_shrug held (D-W8B-RIGHTPOSE, F-HT4-RIGHTPOSE); cardcmp: every card byte-equal to the judged page at 1fdf6975; main's cards byte-equal",
       "supersedes": 13,
       "prev": "6762fa1fcd12237235ba75bd7bb7a08dea3cff5e5fe9226ed4149e9a3deb6475"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB3",
+      "ids": [
+        "lib_pendlay_row",
+        "lib_landmine_row",
+        "lib_dumbbell_romanian_deadlift",
+        "lib_t_bar_row",
+        "lib_barbell_shrug",
+        "lib_cable_shrug",
+        "lib_smith_machine_shrug"
+      ],
+      "pageSha256": "8556b3b6854194e72f20f6f22876a68a75377e74ae77f8a9071c7bcc40be0b16",
+      "bytes": 1314188,
+      "approvedBy": "supervisor",
+      "decision": "D-W8B-RDLWATCH",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00",
+      "date": "2026-11-14",
+      "why": "D-W8B-RDLWATCH (ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00; STAMP https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872764692): appended superseding entry ('supervisor', D-BODYMAP-APPEND); dumbbell_romanian_deadlift's feel.watch is lower_back (c17, card watch), so its two lower-back rows draw the \"Should not take over\" outline; only RDL's feel block moves (3 hunks: the low-back-more mark, and both lower-back rows' labels); built twice byte-equal",
+      "supersedes": 16,
+      "prev": "34c00571701595b3fe6997aa7f97086849bcb96a8b757cbac059500b26c9b8a4"
     }
   ]
 }

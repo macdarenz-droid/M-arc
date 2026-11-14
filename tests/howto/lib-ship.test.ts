@@ -1684,8 +1684,8 @@ describe('D-W8B-RDLWATCH: dumbbell_romanian_deadlift watches the lower back (c17
   const p = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.layers.html'));
   const lastWith = (o: any) => { const x = f(); return { ...x, entries: [...x.entries.slice(0, -1), { ...x.entries[x.entries.length - 1], ...o }] }; };
   it('the sheet: watch is exactly lower_back with the ruled line, and lower_back stays secondary', async () => {
-    const m = await import('../../tools/plates/library/howto/lib_dumbbell_romanian_deadlift.howto.mjs');
-    const feel = (m.default ?? m.HOWTO ?? m).feel ?? (m.default ?? m).howto?.feel;
+    const m: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/howto/lib_dumbbell_romanian_deadlift.howto.mjs')).href);
+    const feel = m.default.feel;
     expect(feel.watch).toEqual([{ muscleId: 'lower_back', plain: 'The lower back should not take over.' }]);
     expect(feel.secondary.map((s: any) => s.muscleId)).toEqual(['lower_back', 'adductors', 'upper_traps', 'forearms']);
   });

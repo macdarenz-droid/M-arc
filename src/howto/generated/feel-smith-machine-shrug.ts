@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=eaf04b39c4b12b0810836c9bef44d6a92622a8b1e3ae76420a98b477978253c1
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=b746680f7361d919d8a1c6a4b3121b4f4aa0c6fa35c7729264ebddd3428e289a
 // One string per exercise: golden B's "Where you should feel it" section, every state pre-rendered.
 export default {
   id: "lib_smith_machine_shrug",
