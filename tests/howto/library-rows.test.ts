@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { fixtureTreeInChild, ownRowsTreeInChild, renderInChild } from '../child-test';   // F-VITEST-RPC-2
+import { fixtureTreeInChild, ownRowsTreeInChild, renderInChild, yieldTask } from '../child-test';   // F-VITEST-RPC-2
 import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 import { readHowTo } from './generated-module';
@@ -225,6 +225,7 @@ describe('E2: inputs cover every imported composer', { timeout: 180_000 }, () =>
           for (const f of closure) { expect(ins.has(f), `${p} lists ${f}`).toBe(true); n++; }
         }
         if (r.mode !== 'golden') for (const f of closureOf([`tools/plates/${r.src}`])) expect(res.get(`src/howto/generated/ht-${r.slug}.ts`)!.includes(f), f).toBe(true);
+        await yieldTask();   // F-VITEST-RPC-2: one worker turn per row
       }
       expect(n).toBeGreaterThan(rows.length * 2);
     }

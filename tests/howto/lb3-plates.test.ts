@@ -974,8 +974,8 @@ describe('LIB-13 A4: runQa node half on an LB3 plate (lib_conventional_deadlift)
     const c0 = cg().callouts.find((x: any) => x.key === 'back'), at = (box: any) => ({ ...cg(), callouts: cg().callouts.map((x: any) => (x.key === 'back' ? { ...x, box } : x)) });
     let hit: any = null;
     for (const [dx, dy] of [[0, -1], [1, 0], [-1, 0], [0, 1]]) {
-      await yieldTask();   // F-VITEST-RPC-2: one worker turn per direction
       for (let d = 1; d <= 80 && !hit; d++) {
+        await yieldTask();   // F-VITEST-RPC-2: one worker turn per step
         const box = { left: c0.box.left + dx! * d, top: c0.box.top + dy! * d }, is = plate.renderPlate(at(box), { id: 'm' }).report.issues;
         if (is.some((i: string) => !i.startsWith(`figure:${c0.text}`))) break;
         if (is.length) hit = { box, clean: { left: box.left - dx!, top: box.top - dy! } };

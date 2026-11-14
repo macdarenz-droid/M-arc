@@ -100,5 +100,8 @@ export const pinTreeInChild = (root: string, opts: Record<string, unknown> = {})
 export const renderTextInChild = async (root: string): Promise<string> => afterMark(
   await nodeChild("const { render } = await import('./tools/plates/generate.mjs'); process.stdout.write('\\n@@' + JSON.stringify([...(await render())]));", root));
 export const renderInChild = async (root: string): Promise<Map<string, any>> => new Map(JSON.parse(await renderTextInChild(root)));
-/** One macrotask turn, so the worker's event loop runs between a test's own synchronous steps. */
-export const yieldTask = (): Promise<void> => new Promise<void>(r => setImmediate(r));
+/** One timers-phase turn of the worker's event loop between a test's own synchronous steps (a setImmediate resumed from
+ *  the poll phase would run before any timer, so the worker's own due timers could still wait). The real setTimeout,
+ *  captured when this module loads, so a test's vi.useFakeTimers() cannot stall it. */
+const realSetTimeout = globalThis.setTimeout;
+export const yieldTask = (): Promise<void> => new Promise<void>(r => { realSetTimeout(r, 0); });
