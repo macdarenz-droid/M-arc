@@ -71,3 +71,150 @@ export function lessW8b(m: any, shaOfFile: (p: string) => string, problems: stri
   }
   return c;
 }
+
+/** LIB-SHIP W8b (merge of main 9139c29c, #424 D-PFS-HEADERS): the generated files the W8b flip adds (the 9 ids' ht-, feel-,
+ *  posture- and zoom css; 36), exactly. */
+export const W8B_GEN_ADDED: readonly string[] = [
+  'src/howto/generated/feel-bayesian-cable-curl.ts',
+  'src/howto/generated/feel-dumbbell-overhead-triceps-extension.ts',
+  'src/howto/generated/feel-dumbbell-pullover.ts',
+  'src/howto/generated/feel-dumbbell-romanian-deadlift.ts',
+  'src/howto/generated/feel-forward-lunge.ts',
+  'src/howto/generated/feel-pistol-squat.ts',
+  'src/howto/generated/feel-single-arm-triceps-pushdown.ts',
+  'src/howto/generated/feel-walking-lunge.ts',
+  'src/howto/generated/feel-wall-sit.ts',
+  'src/howto/generated/ht-bayesian-cable-curl.ts',
+  'src/howto/generated/ht-dumbbell-overhead-triceps-extension.ts',
+  'src/howto/generated/ht-dumbbell-pullover.ts',
+  'src/howto/generated/ht-dumbbell-romanian-deadlift.ts',
+  'src/howto/generated/ht-forward-lunge.ts',
+  'src/howto/generated/ht-pistol-squat.ts',
+  'src/howto/generated/ht-single-arm-triceps-pushdown.ts',
+  'src/howto/generated/ht-walking-lunge.ts',
+  'src/howto/generated/ht-wall-sit.ts',
+  'src/howto/generated/posture-bayesian-cable-curl.ts',
+  'src/howto/generated/posture-dumbbell-overhead-triceps-extension.ts',
+  'src/howto/generated/posture-dumbbell-pullover.ts',
+  'src/howto/generated/posture-dumbbell-romanian-deadlift.ts',
+  'src/howto/generated/posture-forward-lunge.ts',
+  'src/howto/generated/posture-pistol-squat.ts',
+  'src/howto/generated/posture-single-arm-triceps-pushdown.ts',
+  'src/howto/generated/posture-walking-lunge.ts',
+  'src/howto/generated/posture-wall-sit.ts',
+  'src/slices/howto/css/zoom-bayesian-cable-curl.css',
+  'src/slices/howto/css/zoom-dumbbell-overhead-triceps-extension.css',
+  'src/slices/howto/css/zoom-dumbbell-pullover.css',
+  'src/slices/howto/css/zoom-dumbbell-romanian-deadlift.css',
+  'src/slices/howto/css/zoom-forward-lunge.css',
+  'src/slices/howto/css/zoom-pistol-squat.css',
+  'src/slices/howto/css/zoom-single-arm-triceps-pushdown.css',
+  'src/slices/howto/css/zoom-walking-lunge.css',
+  'src/slices/howto/css/zoom-wall-sit.css',
+];
+/** LIB-SHIP W8b: the generated files whose line-1 inputsSha256 header (and, in the 16 ht- modules, the `hashes:` line) the
+ *  W8b flip moves without changing any other byte (80), measured against main 9139c29c. */
+export const W8B_GEN_HEADERS: readonly string[] = [
+  'src/howto/generated/feel-alternating-dumbbell-curl.ts',
+  'src/howto/generated/feel-barbell-curl.ts',
+  'src/howto/generated/feel-barbell-shrug.ts',
+  'src/howto/generated/feel-bodyweight-lunge.ts',
+  'src/howto/generated/feel-bodyweight-split-squat.ts',
+  'src/howto/generated/feel-bodyweight-squat.ts',
+  'src/howto/generated/feel-cable-shrug.ts',
+  'src/howto/generated/feel-ez-bar-curl.ts',
+  'src/howto/generated/feel-front-squat.ts',
+  'src/howto/generated/feel-hammer-curl.ts',
+  'src/howto/generated/feel-landmine-row.ts',
+  'src/howto/generated/feel-pendlay-row.ts',
+  'src/howto/generated/feel-preacher-curl.ts',
+  'src/howto/generated/feel-reverse-curl.ts',
+  'src/howto/generated/feel-smith-machine-shrug.ts',
+  'src/howto/generated/feel-t-bar-row.ts',
+  'src/howto/generated/handpair-bar-hang-only-curled-under.ts',
+  'src/howto/generated/handpair-bar-hang-over.ts',
+  'src/howto/generated/handpair-bar-row-only-curled-over.ts',
+  'src/howto/generated/handpair-curl-bar-under.ts',
+  'src/howto/generated/handpair-curl-dumbbell-under.ts',
+  'src/howto/generated/handpair-d-handle-pull-only-curled-unstated.ts',
+  'src/howto/generated/handpair-ez-curl-angled.ts',
+  'src/howto/generated/handpair-ez-curl-over.ts',
+  'src/howto/generated/handpair-ez-curl-under.ts',
+  'src/howto/generated/handpair-v-handle-pull-only-curled-neutral-overhead.ts',
+  'src/howto/generated/ht-alternating-dumbbell-curl.ts',
+  'src/howto/generated/ht-barbell-curl.ts',
+  'src/howto/generated/ht-barbell-shrug.ts',
+  'src/howto/generated/ht-bodyweight-lunge.ts',
+  'src/howto/generated/ht-bodyweight-split-squat.ts',
+  'src/howto/generated/ht-bodyweight-squat.ts',
+  'src/howto/generated/ht-cable-shrug.ts',
+  'src/howto/generated/ht-ez-bar-curl.ts',
+  'src/howto/generated/ht-front-squat.ts',
+  'src/howto/generated/ht-hammer-curl.ts',
+  'src/howto/generated/ht-landmine-row.ts',
+  'src/howto/generated/ht-pendlay-row.ts',
+  'src/howto/generated/ht-preacher-curl.ts',
+  'src/howto/generated/ht-reverse-curl.ts',
+  'src/howto/generated/ht-smith-machine-shrug.ts',
+  'src/howto/generated/ht-t-bar-row.ts',
+  'src/howto/generated/posture-alternating-dumbbell-curl.ts',
+  'src/howto/generated/posture-barbell-curl.ts',
+  'src/howto/generated/posture-barbell-shrug.ts',
+  'src/howto/generated/posture-bodyweight-lunge.ts',
+  'src/howto/generated/posture-bodyweight-split-squat.ts',
+  'src/howto/generated/posture-bodyweight-squat.ts',
+  'src/howto/generated/posture-cable-shrug.ts',
+  'src/howto/generated/posture-ez-bar-curl.ts',
+  'src/howto/generated/posture-front-squat.ts',
+  'src/howto/generated/posture-hammer-curl.ts',
+  'src/howto/generated/posture-landmine-row.ts',
+  'src/howto/generated/posture-pendlay-row.ts',
+  'src/howto/generated/posture-preacher-curl.ts',
+  'src/howto/generated/posture-reverse-curl.ts',
+  'src/howto/generated/posture-smith-machine-shrug.ts',
+  'src/howto/generated/posture-t-bar-row.ts',
+  'src/slices/howto/css/zoom-alternating-dumbbell-curl.css',
+  'src/slices/howto/css/zoom-barbell-curl.css',
+  'src/slices/howto/css/zoom-barbell-shrug.css',
+  'src/slices/howto/css/zoom-bodyweight-lunge.css',
+  'src/slices/howto/css/zoom-bodyweight-split-squat.css',
+  'src/slices/howto/css/zoom-bodyweight-squat.css',
+  'src/slices/howto/css/zoom-cable-shrug.css',
+  'src/slices/howto/css/zoom-chin-up.css',
+  'src/slices/howto/css/zoom-close-grip-pulldown.css',
+  'src/slices/howto/css/zoom-dumbbell-biceps-curl.css',
+  'src/slices/howto/css/zoom-ez-bar-curl.css',
+  'src/slices/howto/css/zoom-front-squat.css',
+  'src/slices/howto/css/zoom-hammer-curl.css',
+  'src/slices/howto/css/zoom-hanging-knee-raise.css',
+  'src/slices/howto/css/zoom-inverted-row.css',
+  'src/slices/howto/css/zoom-landmine-row.css',
+  'src/slices/howto/css/zoom-pendlay-row.css',
+  'src/slices/howto/css/zoom-preacher-curl.css',
+  'src/slices/howto/css/zoom-reverse-curl.css',
+  'src/slices/howto/css/zoom-single-arm-lat-pulldown.css',
+  'src/slices/howto/css/zoom-smith-machine-shrug.css',
+  'src/slices/howto/css/zoom-t-bar-row.css',
+];
+/** LIB-SHIP W8b: coverage.ts's 9 W8b rows as main has them (status pending, the row's archetype, stage approved-plate). */
+export const W8B_COVERAGE_MAIN: Record<string, string> = {
+  lib_single_arm_triceps_pushdown: 'push', lib_dumbbell_overhead_triceps_extension: 'push', lib_dumbbell_pullover: 'hold',
+  lib_bayesian_cable_curl: 'curl', lib_walking_lunge: 'hold', lib_forward_lunge: 'hold', lib_dumbbell_romanian_deadlift: 'hold',
+  lib_pistol_squat: 'none', lib_wall_sit: 'none',
+};
+const W8B_LOADER_LINE = new RegExp(`^  (?:"lib_(?:${W8B_IDS.map(i => i.slice(4)).join('|')})",|lib_(?:${W8B_IDS.map(i => i.slice(4)).join('|')}): \\(\\) => |"(?:${W8B_IDS.map(i => i.slice(4).replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+/** LIB-SHIP W8b: a generated file's text with W8b's own change taken out (null for a file W8b adds, and for ids.ts, whose
+ *  packed string content-gen and ids tests pin): its header (line 1, kept as a blank line) and `hashes:` line for the 80
+ *  header-only files; loaders.ts less its 36 W8b lines; coverage.ts with its header blanked and the 9 W8b rows as main has them. Any other file is
+ *  returned unchanged. */
+export function w8bGenText(p: string, t: string): string | null {
+  if (W8B_GEN_ADDED.includes(p) || p === 'src/howto/ids.ts') return null;
+  if (W8B_GEN_HEADERS.includes(p)) return `\n${t.slice(t.indexOf('\n') + 1).split('\n').filter(l => !/^ *hashes: \{ inputsSha256: /.test(l)).join('\n')}`;
+  if (p === 'src/howto/generated/loaders.ts') return t.split('\n').filter(l => !W8B_LOADER_LINE.test(l)).join('\n');
+  if (p === 'src/howto/coverage.ts') {
+    let o = t;
+    for (const [id, a] of Object.entries(W8B_COVERAGE_MAIN)) o = o.replace(`  '${id}': { status: 'approved', stage: 'shipped' },`, `  '${id}': { status: 'pending', archetype: '${a}', stage: "approved-plate" },`);
+    return `\n${o.slice(o.indexOf('\n') + 1)}`;   // its header moves too
+  }
+  return t;
+}
