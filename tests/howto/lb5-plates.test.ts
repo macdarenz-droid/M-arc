@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { child } from '../child-test';
+import { child, yieldTask } from '../child-test';
 import { renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -630,8 +630,8 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     }
     return min;
   };
-  child.it('no leader comes within 6 px of the Trace, a cable or the pad; mutation: a leader boxed across the pad is red', () => {
-    for (const id of drawn()) expect(leaderGap(S[id], { factsOnly: !fullScope(id) }), id).toBeGreaterThanOrEqual(6);
+  child.it('no leader comes within 6 px of the Trace, a cable or the pad; mutation: a leader boxed across the pad is red', async () => {
+    for (const id of drawn()) { expect(leaderGap(S[id], { factsOnly: !fullScope(id) }), id).toBeGreaterThanOrEqual(6); await yieldTask(); }   // F-VITEST-RPC-2: one worker turn per spec
     const s = S.preacher_curl, cam = camOf(s), p = itemsIn(s, 'end').items.find((it: any) => it.type === 'poly' && it.z === 'mid'), c = cam.P(p.pts[2]);
     const bad = { ...s, callouts: [{ ...s.callouts[0], anchor: 'heel.r', box: { left: Math.round(c[0]! + 10), top: Math.round(c[1]! - 40) } }, ...s.callouts.slice(1)] };
     expect(leaderGap(bad)).toBeLessThan(6);

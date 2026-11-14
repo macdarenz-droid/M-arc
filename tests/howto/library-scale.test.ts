@@ -8,6 +8,12 @@
 import { readFileSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterMark, nodeChild } from '../child-test';
+/** F-VITEST-RPC-2: synthetic.mjs buildAssets(root) (a vite build) in an awaited child; the same file -> bytes map, sent as base64. */
+const buildAssetsInChild = async (root: string): Promise<Record<string, Buffer>> => {
+  const out = await nodeChild(`const S = await import(${JSON.stringify(url('tools/plates/library/scale/synthetic.mjs'))}); const a = S.buildAssets(${JSON.stringify(root)}); process.stdout.write('\\n@@' + JSON.stringify(Object.fromEntries(Object.entries(a).map(([f, b]) => [f, b.toString('base64')]))));`);
+  return Object.fromEntries(Object.entries<string>(JSON.parse(afterMark(out))).map(([f, b]) => [f, Buffer.from(b, 'base64')]));
+};
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -118,7 +124,7 @@ describe('L2-A24: synthetic N = 8 and N = 153 builds (plan 5.2 line 518, D-LIB2-
     ({ perIdCeiling } = await import(/* @vite-ignore */ url('tools/plates/library/budgets/total.mjs')));
     for (const n of [8, 153]) {
       const { root, chromeIds } = await S.syntheticRoot(process.cwd(), n);
-      runs[n] = { root, chromeIds, assets: S.buildAssets(root), loadersTs: readFileSync(join(root, 'src/howto/generated/loaders.ts'), 'utf8') };
+      runs[n] = { root, chromeIds, assets: await buildAssetsInChild(root), loadersTs: readFileSync(join(root, 'src/howto/generated/loaders.ts'), 'utf8') };
     }
   }, 240_000);
   afterAll(() => { for (const r of Object.values(runs)) rmSync(r.root, { recursive: true, force: true }); });
