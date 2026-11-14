@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { fixtureTreeInChild, ownRowsTreeInChild, renderInChild, yieldTask } from '../child-test';   // F-VITEST-RPC-2
 import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 import { readHowTo } from './generated-module';
@@ -35,13 +36,13 @@ const CLONE_OUTPUTS = ['src/howto/generated/ht-cable-lateral-raise.ts', 'src/how
 let mainOut: Map<string, any>, repoOut: Map<string, any>, treeOut: Map<string, any>;
 beforeAll(async () => {
   F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
-  root = F.fixtureTree(); tmps.push(root);
+  root = await fixtureTreeInChild(); tmps.push(root);
   const g = await run(root, ['tools/plates/generate.mjs']);
   if (g.code !== 0) throw new Error(`generate failed in the E1 tree:\n${g.out}`);
-  const eight = F.ownRowsTree();
-  try { mainOut = await (await import(/* @vite-ignore */ F.url(eight, 'tools/plates/generate.mjs'))).render(); } finally { F.drop(eight); }
+  const eight = await ownRowsTreeInChild();
+  try { mainOut = await renderInChild(eight); } finally { F.drop(eight); }
   repoOut = await renderOf(new URL('../../', import.meta.url).pathname);   // F-GEN-WALK-SPEED: the repo's render(), once per run (tests/walk-cache.ts)
-  treeOut = await (await import(/* @vite-ignore */ turl('tools/plates/generate.mjs'))).render();
+  treeOut = await renderInChild(root);
 }, 600_000);
 afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
 
@@ -200,6 +201,7 @@ async function inputsOf(base: string, out: Map<string, any>) {
     const ins = o.writers.flatMap((w: string) => { const m: any = mods.get(w); return m.inputsFor?.(p) ?? own.get(w)?.get(p) ?? m.inputs(); });
     if (core.inputsSha256(o.writers, ins, base) !== o.hash) throw new Error(`${p}: the union of its writers' inputs does not give its header hash`);
     res.set(p, ins);
+    await yieldTask();   // F-VITEST-RPC-2: one worker turn per output
   }
   return { res, core };
 }
@@ -224,6 +226,7 @@ describe('E2: inputs cover every imported composer', { timeout: 180_000 }, () =>
           for (const f of closure) { expect(ins.has(f), `${p} lists ${f}`).toBe(true); n++; }
         }
         if (r.mode !== 'golden') for (const f of closureOf([`tools/plates/${r.src}`])) expect(res.get(`src/howto/generated/ht-${r.slug}.ts`)!.includes(f), f).toBe(true);
+        await yieldTask();   // F-VITEST-RPC-2: one worker turn per row
       }
       expect(n).toBeGreaterThan(rows.length * 2);
     }
@@ -571,6 +574,7 @@ describe('D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped lib
       }
       const changed = { ...p, tells: `${p.tells} ` };
       expect(golden.fragmentsOf(changed)).not.toEqual(e.fragments);
+      await yieldTask();   // F-VITEST-RPC-2: one worker turn per row
     }
   });
 });

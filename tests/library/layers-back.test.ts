@@ -9,6 +9,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { stageTreeInChild } from '../child-test';   // F-VITEST-RPC-2
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -51,9 +52,9 @@ describe('LIB-6-PM back box on the layers page', { timeout: 300_000 }, () => {
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
     B = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib5/back-page.mjs'));
-    flagged = F.stageTree(); tmps.push(flagged);
+    flagged = await stageTreeInChild(); tmps.push(flagged);
     B.toBackPage(flagged, F.HOWTO);
-    plain = F.stageTree(); tmps.push(plain);
+    plain = await stageTreeInChild(); tmps.push(plain);
   }, 300_000);
   afterAll(() => { for (const t of tmps) rmSync(t, { recursive: true, force: true }); });
 

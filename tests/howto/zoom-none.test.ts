@@ -6,7 +6,8 @@ import { execFile } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { child, IN_CHILD } from '../child-test';
+import { callInChild, child, IN_CHILD } from '../child-test';
+const ZZ = new URL('./fixtures/zoom-none/fixture.mjs', import.meta.url).href;   // F-VITEST-RPC-2: its tree builds run in an awaited child
 import { W4_IDS } from './checks/ship-w4';
 
 const GEN = join(__dirname, '../../src/howto/generated');
@@ -320,14 +321,14 @@ const extra: string[] = [];
 describe('F-ZOOM-NONE A1: a ruled zero-zoom row generates no posture chunk; with the guard removed it throws', () => {
   beforeAll(async () => {
     if (!IN_CHILD) return;   // the tree is built in the child process (F-VITEST-RPC)
-    tree = F.zeroZoomTree();
+    tree = await callInChild(ZZ, 'zeroZoomTree');
     first = await gen(tree);
     F.guardOff(tree);
     guardless = await gen(tree);
     // the page-check reds through generate (#388 review, Medium): the ruled row's page keeps one posture close-up, or
     // one control that opens it
     for (const keep of ['panel', 'button']) {
-      const t = F.zeroZoomTree({ keep });
+      const t: string = await callInChild(ZZ, 'zeroZoomTree', { keep });
       extra.push(t);
       const r = await gen(t);
       if (keep === 'panel') keptPanel = r; else keptButton = r;

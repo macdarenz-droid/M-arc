@@ -6,6 +6,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { stageTreeInChild } from '../child-test';   // F-VITEST-RPC-2
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -20,7 +21,7 @@ describe('LIB-6-PM engine per plate', { timeout: 300_000 }, () => {
     opts = (await import(/* @vite-ignore */ url('tools/plates/library/render/closeups-8.mjs'))).CLOSEUP_OPTIONS;
     blp = await import(/* @vite-ignore */ url('tools/plates/library/build-layers-page.mjs'));
     layers = await import(/* @vite-ignore */ url('tools/plates/layers.mjs'));
-    root = F.stageTree(); tmps.push(root);
+    root = await stageTreeInChild(); tmps.push(root);
     specFile = V.toVendor(root, F.SPEC);
   }, 300_000);
   afterAll(() => { for (const t of tmps) rmSync(t, { recursive: true, force: true }); });

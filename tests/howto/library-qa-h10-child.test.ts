@@ -6,7 +6,7 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, w
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { child } from '../child-test';
+import { child, fixtureTreeInChild } from '../child-test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const T = 300_000;
@@ -28,7 +28,7 @@ export function make(params, facts) {
 
 beforeAll(async () => {
   F = await import(/* @vite-ignore */ new URL('./fixtures/lib2b/fixture.mjs', import.meta.url).href);
-  root = F.fixtureTree();
+  root = await fixtureTreeInChild();
   const im = (p: string) => import(/* @vite-ignore */ F.url(root, p));
   let bg: any, reg: any;
   [cand, bg, reg, der, golden, eng, I, node, bp, pp] = await Promise.all([`${LIB}/candidate.mjs`, `${LIB}/batch-golden.mjs`, `${LIB}/registry.mjs`,

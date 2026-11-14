@@ -7,6 +7,7 @@ import { readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { fixtureTreeInChild, pinTreeInChild, stageTreeInChild } from '../child-test';   // F-VITEST-RPC-2
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const tmps: string[] = [];
@@ -32,10 +33,10 @@ describe('LIB-6-PM L0-lib back line (D-LIB6PM-L0)', { timeout: 300_000 }, () => 
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ new URL('./fixtures/lib2b/fixture.mjs', import.meta.url).href);
     B = await import(/* @vite-ignore */ new URL('./fixtures/lib5/back-page.mjs', import.meta.url).href);
-    flagged = F.stageTree(); tmps.push(flagged);
+    flagged = await stageTreeInChild(); tmps.push(flagged);
     B.toBackPage(flagged, F.HOWTO);
-    F.pinTree(flagged);
-    plain = F.fixtureTree(); tmps.push(plain);
+    await pinTreeInChild(flagged);
+    plain = await fixtureTreeInChild(); tmps.push(plain);
     [MF, MP] = await Promise.all([pin(flagged), pin(plain)]);
   }, 300_000);
 

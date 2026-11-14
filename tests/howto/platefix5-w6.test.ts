@@ -13,6 +13,7 @@ import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -298,11 +299,14 @@ describe('PF5 W6 hip_adduction add-start: amplitude kept, red outward arrows, gr
     expect(m.boxW[2] - m.boxW[0]).toBeGreaterThanOrEqual(0.8 * PANEL);
     expect(frameOk(m)).toBe(true);
   });
-  it('mutations turn each row red', { timeout: T }, () => {
+  it('mutations turn each row red', { timeout: T }, async () => {
     const z = c.z, wr = (w: any) => ({ ...z, wrong: { ...z.wrong, ...w } });
     expect(ampOk(measure(wr({ pose: mergeDeep(z.wrong.pose, { hip: { abd: 55 } }) })))).toBe(false);   // amplitude widened
+    await yieldTask();   // F-VITEST-RPC-2: one worker turn between the measures
     expect(arrowsOk(measure({ ...z, guides: z.guides.filter((g: any) => g.kind !== 'arrow') }))).toBe(false);   // arrows removed
+    await yieldTask();
     expect(widthOk(measure({ ...z, guides: z.guides.filter((g: any) => g.kind !== 'width') }))).toBe(false);    // width removed
+    await yieldTask();
     expect(frameOk(measure({ ...z, crop: { ...z.crop, sizePx: 260 } }))).toBe(false);                 // main's size 260
   });
 });
