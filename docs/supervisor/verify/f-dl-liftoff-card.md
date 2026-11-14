@@ -4,6 +4,14 @@ Owner: supervisor (drafted 11-14; status `drafted`, rulings asked). Base: origin
 
 Sources: W8b #417 (PLAN ruling 6847824876: a held conventional_deadlift also holds sumo_deadlift; panel ruling 6856272493), `f-ht4-rightpose-card.md` (its part 2, F-BSS-REARKNEE, is the form for this card), `panels/w4-findings.md`, `lib-ship-card.md`.
 
+
+## Supervisor rulings (2026-11-14; these win over the text below)
+1. **D-DL-FORM: the house dashed form.** The Right is drawn solid and the Wrong as a dashed red outline over it (crop.mjs:71, :75, :83), with a red arrow at the hip, as on cable_lateral_raise and sumo-start. The two faded or dashed-Right options stay rejected.
+2. **The bounds** go to the panel only when all of them are measured and posted: hip rise ≥ 18 panel px, knee ≤ 20°, arrow ≥ 18 px, floor ≥ 20 px from the bottom edge.
+   - Another L5 failure is conventional_deadlift's third, so it holds with no further round.
+3. **sumo_deadlift:** its card must stay byte-equal to `b1c29f89…`. Any change to a shared file (crop.mjs, zoom-css.mjs, the lb03 `ZOOM` record) is a Stop.
+4. **No flip here.** The ship wave after W8c flips both ids.
+
 ## Rulings asked
 
 1. **D-DL-FORM (recommended): the house dashed-Wrong overlay, plus a red up-arrow at the hip.**
