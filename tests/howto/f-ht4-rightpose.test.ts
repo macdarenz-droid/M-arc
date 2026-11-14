@@ -78,3 +78,13 @@ describe('F-HT4-RIGHTPOSE C2: the two held rows pass HT4/A5 on a scratch tree th
     for (const l of got) expect(l).toMatch(/^lib_dumbbell_shrug \* HT4\/A5-poses@\*: dumbbell_shrug\|dshrug-top-right: poses\.(start|end) matches neither a reference pose nor its declared Right pose \(/);
   }, 300_000);
 });
+
+// D-RP-OPTIN (#425 6868123318): the D-LIB4b-POSES (7) proof runs unchanged and passes; its two shipped Right pins
+// (pull_up|shoulders-right, hanging_leg_raise|shoulders-right) are still reported, since neither pair is on the ruled list
+describe('F-HT4-RIGHTPOSE D-RP-OPTIN: poses-proof.mjs passes unchanged', () => {
+  it('green: PASS, the derived rule rejects only the two shipped Right pins', () => {
+    const r = spawnSync(process.execPath, ['tools/plates/library/fidelity/poses-proof.mjs'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
+    expect(r.stdout + r.stderr).toContain('PASS: HT-4 accepts every call; the derived rule rejects only pull_up|shoulders-right and hanging_leg_raise|shoulders-right');
+    expect(r.stdout + r.stderr).not.toMatch(/FAIL|was not reported/);
+  }, 300_000);
+});

@@ -315,7 +315,8 @@ describe('F-HT4-RIGHTPOSE C1: libraryA5 accepts a declared Right pose exactly wh
   const dashed = () => [...plate(), crop('k-right', both(R)), crop('k-wrong', both(R), { mistake: { pose: F, parts: [] } })].map(c => JSON.parse(JSON.stringify(c)));
   const solid = () => [...plate(), crop('k-right', both(R)), crop('k-wrong', both(F)), crop('k-under', both(R))].map(c => JSON.parse(JSON.stringify(c)));
   const gb = { ...goldenB, fragmentProblems: () => [] };
-  const run = (cs: unknown[], howto: object, o = {}) => libraryA5({ calls: cs, html: '' }, { specId: 'x_lib', ref, howto, prefix: 'x-lib', family: 'zoom', entry: {}, ...o }, gb);
+  const RULED = [{ id: 'x_lib|k', ruling: 'D-TEST-FIXTURE (tests/howto/library-fidelity.test.ts:1)' }];   // D-RP-OPTIN: the fixture zoom is on the list
+  const run = (cs: unknown[], howto: object, o = {}) => libraryA5({ calls: cs, html: '' }, { specId: 'x_lib', ref, howto, prefix: 'x-lib', family: 'zoom', entry: {}, ruled: RULED, ...o }, gb);
   const OK = { protected: [], fragments: [], poses: [] };
   it('green: the Right crop, the under crop (solid + under) and a dashed Wrong\'s base drawing mergeDeep(E, X)', () => {
     expect(run(dashed(), DASHED)).toEqual(OK);
@@ -359,6 +360,34 @@ describe('F-HT4-RIGHTPOSE C1: libraryA5 accepts a declared Right pose exactly wh
     expect(run(u, str(SOLID)).poses).toEqual([`x_lib|k-under: poses.start matches neither a reference pose (${JSON.stringify(R).slice(0, 200)})`, `x_lib|k-under: poses.end matches neither a reference pose (${JSON.stringify(R).slice(0, 200)})`]);
     const w = dashed(); w[3].spec.poses = both(E);
     expect(run(w, str(DASHED)).poses).toEqual([`x_lib|k-wrong: poses.start matches neither a reference pose nor its declared fault pose (${JSON.stringify(R).slice(0, 200)})`, `x_lib|k-wrong: poses.end matches neither a reference pose nor its declared fault pose (${JSON.stringify(R).slice(0, 200)})`]);
+  });
+  // D-RP-OPTIN (#425 6868123318): only a ruled (spec id, zoom) pair with a cited ruling gets the declared Right pose
+  const today = (id: string, fault = '') => [`x_lib|${id}: poses.start matches neither a reference pose${fault} (${JSON.stringify(R).slice(0, 200)})`, `x_lib|${id}: poses.end matches neither a reference pose${fault} (${JSON.stringify(R).slice(0, 200)})`];
+  it('optin: a zoom not on the ruled list keeps today\'s rule and today\'s messages on every call', () => {
+    for (const ruled of [[], [{ id: 'x_lib|other', ruling: RULED[0]!.ruling }], [{ id: 'y_lib|k', ruling: RULED[0]!.ruling }]]) {
+      expect(run(dashed(), DASHED, { ruled }).poses).toEqual([...today('k-right'), ...today('k-wrong', ' nor its declared fault pose')]);
+      expect(run(solid(), SOLID, { ruled }).poses).toEqual([...today('k-right'), ...today('k-under')]);
+    }
+    expect(run(dashed(), DASHED, { ruled: undefined }).poses).toEqual([...today('k-right'), ...today('k-wrong', ' nor its declared fault pose')]);   // the default list
+  });
+  it('optin: a ruled entry with no ruling citation is red and is not accepted', async () => {
+    // @ts-expect-error plain .mjs build tool, no types
+    const { citesRuling } = await import('../../tools/plates/library/fidelity/twins/ht4.mjs');
+    for (const ruling of [undefined, '', 'TOP (tests/x.mjs:1)', 'D-SHIP-DRAWVAL: TOP', 'D-SHIP-DRAWVAL (see the panel)']) {
+      expect(citesRuling({ id: 'x_lib|k', ruling }), String(ruling)).toBe(false);
+      expect(run(dashed(), DASHED, { ruled: [{ id: 'x_lib|k', ruling }] }).poses, String(ruling)).toEqual(['x_lib|k: a ruled Right pose entry with no ruling citation', ...today('k-right'), ...today('k-wrong', ' nor its declared fault pose')]);
+    }
+    for (const ruling of ['D-SHIP-DRAWVAL (howto/x.mjs:76-77)', 'D-RP-OPTIN #425 6868123318']) expect(citesRuling({ ruling }), ruling).toBe(true);
+  });
+  it('optin: the ruled list is pinned as an exact set, and every entry cites its ruling', async () => {
+    // @ts-expect-error plain .mjs build tool, no types
+    const { RULED_RIGHT_POSES, citesRuling } = await import('../../tools/plates/library/fidelity/twins/ht4.mjs');
+    expect(RULED_RIGHT_POSES.map((e: { id: string }) => e.id)).toEqual([
+      'dumbbell_shrug|dshrug-top', 'bulgarian_split_squat|rear-knee', 'one_arm_dumbbell_row|oadr-top', 'cable_external_rotation|cer-turn',
+      'diamond_push_up|shoulder-blades', 'hack_squat|knee-lock', 'wall_ball|wall-distance',
+    ]);
+    for (const e of RULED_RIGHT_POSES) expect(citesRuling(e), e.id).toBe(true);
+    expect(Object.isFrozen(RULED_RIGHT_POSES) && RULED_RIGHT_POSES.every((e: object) => Object.isFrozen(e))).toBe(true);
   });
 });
 

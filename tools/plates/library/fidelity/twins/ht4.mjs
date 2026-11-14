@@ -151,6 +151,24 @@ function faultPoses(z, { ref, family, stills, stillPose }) {
   return [poseOf(z.wrong), mergeDeep(poseOf(z.right), poseOf(z.wrong))].filter(p => p !== undefined).map(strip);
 }
 
+/**
+ * F-HT4-RIGHTPOSE D-RP-OPTIN (#425 6868123318): the exact ruled list of `<spec id>|<zoom key>` pairs whose declared Right
+ * pose (`right: { base, pose }`) the twin accepts. Each entry cites the ruling for that custom Right (a D- ruling id and a
+ * file:line or a comment id). Every other zoom keeps the D-LIB4b-POSES rule: start, end or mistake only.
+ */
+export const RULED_RIGHT_POSES = Object.freeze([
+  { id: 'dumbbell_shrug|dshrug-top', ruling: 'D-SHIP-DRAWVAL: TOP (howto/lib_dumbbell_shrug.howto.mjs:76-77)' },
+  { id: 'bulgarian_split_squat|rear-knee', ruling: 'D-SHIP-DRAWVAL #376 6614695581: KNEE_GAP (howto/lib_bulgarian_split_squat.howto.mjs:59-60)' },
+  { id: 'one_arm_dumbbell_row|oadr-top', ruling: 'D-LIB20-TRUNK: the end pose with trunk as an object (howto/lib_one_arm_dumbbell_row.howto.mjs:95-96)' },
+  { id: 'cable_external_rotation|cer-turn', ruling: 'D-LIB20-TRUNK: the end pose with trunk as an object (howto/lib_cable_external_rotation.howto.mjs:135-136)' },
+  { id: 'diamond_push_up|shoulder-blades', ruling: 'D-SHIP-DRAWVAL #376 6614695581: PINCH (howto/lib_diamond_push_up.howto.mjs:79-80)' },
+  { id: 'hack_squat|knee-lock', ruling: 'D-PF4-W67LATER, D-SHIP-DRAWVAL: SOFT_BEND (howto/lib_hack_squat.howto.mjs:96-98)' },
+  { id: 'wall_ball|wall-distance', ruling: 'D-SHIP-DRAWVAL, #419 6851987591: ZOOM_RIGHT (howto/lib_wall_ball.howto.mjs:85-86)' },
+].map(Object.freeze));
+/** A ruled entry's citation: a D- ruling id, and a file:line or a GitHub comment id. */
+export const citesRuling = e => typeof e?.ruling === 'string' && /\bD-[A-Z0-9]+(?:-[A-Z0-9]+)+\b/.test(e.ruling)
+  && (/\S+\.\w+:\d+(?:-\d+)?/.test(e.ruling) || /\b\d{10}\b/.test(e.ruling));
+
 /** F-HT4-RIGHTPOSE (D-RP-SCOPE): a zoom-shell zoom's declared Right pose (`right: { base, pose }`), resolved as crop.mjs:45
  *  resolves it; [] for a string Right and for the zbox shell (reference poses only on its Right side). */
 function rightPoses(z, { ref, family }) {
@@ -164,10 +182,10 @@ function rightPoses(z, { ref, family }) {
  * (functions stripped); howto: the id's How-to (its zooms); prefix: the plate's id prefix (`<prefix>-n`/`-m`); family:
  * LIB-6's close-up shell ('zoom': `<key>-right`/`-wrong` crops; 'zbox': `<key>-r`/`-w`); stills and stillPose (zbox):
  * the How-to's stills and still -> LIB-6's still spec pose; entry: the pinned plate entry. gb: goldenB.mjs (its
- * protectedFieldProblems and fragmentProblems). F-HT4-RIGHTPOSE: a zoom-shell zoom's declared Right pose is accepted,
- * exactly, on the Right, `-under` and dashed-Wrong calls only (rule (3b) below).
+ * protectedFieldProblems and fragmentProblems). F-HT4-RIGHTPOSE: for a zoom on `ruled` (default RULED_RIGHT_POSES,
+ * D-RP-OPTIN) the declared Right pose is accepted, exactly, on the Right, `-under` and dashed-Wrong calls only (rule (3b)).
  */
-export function libraryA5({ calls, html }, { specId, ref, howto, prefix, family, stills = null, stillPose = null, entry }, gb) {
+export function libraryA5({ calls, html }, { specId, ref, howto, prefix, family, stills = null, stillPose = null, entry, ruled = RULED_RIGHT_POSES }, gb) {
   const out = { protected: [], fragments: [], poses: [] };
   if (SPEC_IDS_8.includes(specId)) out.poses.push(`library spec.id ${specId} is one of the 8's (D-LIB4b-POSES (5))`);
   const mine = calls.filter(c => c.spec?.id === specId);
@@ -192,13 +210,17 @@ export function libraryA5({ calls, html }, { specId, ref, howto, prefix, family,
     return null;
   };
   // (3) every call not on a Wrong side: a reference pose; (4) a Wrong side may also draw its source-declared fault pose
-  // F-HT4-RIGHTPOSE (D-RP-SCOPE): (3b) a zoom-shell zoom's declared Right pose (rightPoses) is accepted as poses.start/end
+  // F-HT4-RIGHTPOSE (D-RP-SCOPE, D-RP-OPTIN): (3b) a zoom-shell zoom on the ruled list (RULED_RIGHT_POSES, its entry
+  // citing a ruling) has its declared Right pose (rightPoses) accepted as poses.start/end
   // only on the calls whose crop draws it (crop.mjs cropSpec): the Right crop, the `<key>-under` crop and a dashed Wrong
   // (neither wrong.solid nor wrongAlone); never for mistake.pose, base, cam, -n/-m or a solid Wrong. A declaration equal
   // to one of the zoom's own fault poses is a poses problem and is not accepted (never the fault on the Right side).
   const refs = [ref.poses?.start, ref.poses?.end, ...(ref.mistake?.pose ? [mergeDeep(ref.poses?.end, ref.mistake.pose)] : [])].filter(p => p !== undefined);
   const mrefs = ref.mistake?.pose ? [ref.mistake.pose, mergeDeep(ref.poses?.end, ref.mistake.pose)] : [];
   const declared = new Map(posture.map(z => {
+    const opt = ruled.find(e => e.id === `${specId}|${z.key}`);
+    if (!opt) return [z, null];
+    if (!citesRuling(opt)) { out.poses.push(`${specId}|${z.key}: a ruled Right pose entry with no ruling citation`); return [z, null]; }
     const own = rightPoses(z, { ref, family }), faults = own.length ? faultPoses(z, { ref, family, stills, stillPose }) : [];
     if (own.some(p => faults.some(f => same(p, f)))) { out.poses.push(`${specId}|${z.key}: declares a fault pose as its Right`); return [z, []]; }
     return [z, own];
@@ -209,7 +231,7 @@ export function libraryA5({ calls, html }, { specId, ref, howto, prefix, family,
     if (!at) { out.poses.push(`${specId}|${id}: a call that cannot be attributed to base, cam, the plate or a declared zoom side`); continue; }
     if (at.z) seen.set(`${at.z.key}|${at.role}`, seen.get(`${at.z.key}|${at.role}`) + 1);
     const fault = at.role === 'wrong' ? faultPoses(at.z, { ref, family, stills, stillPose }) : [];
-    const draws = !!at.z && drawsRight(at), right = draws ? declared.get(at.z) : [];
+    const draws = !!at.z && drawsRight(at) && declared.get(at.z) !== null, right = draws ? declared.get(at.z) : [];
     const rightText = draws && family === 'zoom' && at.z.right && typeof at.z.right === 'object' ? ' nor its declared Right pose' : '';
     for (const which of ['start', 'end']) {
       if (!c.spec.poses || !(which in c.spec.poses)) continue;
