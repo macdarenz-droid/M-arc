@@ -10,6 +10,12 @@ Sources:
 - COACHING-DECISIONS D-LIB13S-RPC, D-SMALL-RPCSYNC and D-SMALL-RPCGUARD;
 - the vitest 3.2.7 dist (`package-lock.json:3680-3681`), read from the npm tarball.
 
+## Supervisor rulings (2026-11-14; these win over the text below)
+All 4 are accepted as recommended: **D-RPC2-GUARD** (30 s, no override), **D-RPC2-TARGET** (10 s local, 15 s CI), **D-RPC2-NOSPLIT** (F-UNITTZ-SPLIT only when a main unit-tz leg passes 90 min) and **D-RPC2-WIRE** (the one `vite.config.ts` setupFiles line, called out in the PR).
+- No test is skipped or weakened, and a move to `child.it` keeps every assertion.
+- The guard's red must name the test or hook.
+- The 5 paired proof runs and the seeded reds (a failing assertion, and a 35 s block, in source-gate and both unit-tz legs, plus a `child.it` child) are the acceptance.
+
 ## Rulings asked
 
 1. **D-RPC2-GUARD (recommended):** a permanent worker-lag guard runs in every vitest worker, including `child.it` children. It fails the file when any event-loop block in it reaches **30 s**, and names the test or hook. That is half of vitest's fixed 60 s RPC limit. There is no env var, flag or second limit.
