@@ -83,3 +83,35 @@ describe('F-VITEST-RPC-2 the guard fails a file that blocks its worker, naming t
     expect(r.text).not.toMatch(/\[worker-lag\]/);
   });
 });
+
+// D-RPC2-EXC (STOP 1 ruled (a), #428): the CI budget over the guard's lines, 15 s, and 20 s for an exact set of three
+// tools/** units (follow-up F-BENCHDIP-EVAL)
+describe('F-VITEST-RPC-2 D-RPC2-EXC: the CI budget of the guard\'s lines', () => {
+  const lag = (file: string, s: number, task: string) => `2026-11-14T15:00:00.0000000Z [worker-lag] ${file} ${s.toFixed(1)} s at ${task}`;
+  const B = (): Promise<any> => import(/* @vite-ignore */ new URL('./worker-lag-budget.mjs', import.meta.url).href);
+  it('the excepted set is exactly the three named units, in five places', async () => {
+    const { EXC, BUDGET, EXC_BUDGET } = await B();
+    expect([BUDGET, EXC_BUDGET]).toEqual([15, 20]);
+    expect(EXC.map(([u, f, t]: string[]) => `${u} | ${f} | ${t}`)).toEqual([
+      'runQa(bench_dip) | tests/howto/lb7-plates.test.ts | test "LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md section 17) > ',
+      'bench_dip.mjs evaluation | tests/howto/lb7-plates.test.ts | beforeAll',
+      'bench_dip.mjs evaluation | tests/howto/platefix2-zoom.test.ts | test "PF2 (a): existing zooms are byte-equal > ',
+      'bench_dip.mjs evaluation | tests/howto/platefix3b-zoomhead.test.ts | test "PF3b head projection: existing zooms are byte-equal > ',
+      'platesPage(row) | tests/howto/library-rows.test.ts | test "D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped library row > ',
+    ]);
+    expect(new Set(EXC.map(([u]: string[]) => u)).size).toBe(3);
+  });
+  it('an unlisted block over 15 s is red; at 15 s it is not', async () => {
+    const { budgetProblems } = await B();
+    expect(budgetProblems(lag('tests/howto/lb6-plates.test.ts', 15.1, 'test "x > y"'))).toEqual(['tests/howto/lb6-plates.test.ts 15.1 s at test "x > y" (over 15 s)']);
+    expect(budgetProblems(lag('tests/howto/lb6-plates.test.ts', 15.0, 'test "x > y"'))).toEqual([]);
+    // the same file as an excepted block, but another task: still the 15 s budget
+    expect(budgetProblems(lag('tests/howto/lb7-plates.test.ts', 16.0, 'test "LIB-17 A15: x > y"'))).toHaveLength(1);
+  });
+  it('a listed block over 20 s is red; at 20 s it is not', async () => {
+    const { budgetProblems } = await B();
+    const t = 'test "LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md section 17) > each zoomed spec asks"';
+    expect(budgetProblems(lag('tests/howto/lb7-plates.test.ts', 20.0, t))).toEqual([]);
+    expect(budgetProblems(lag('tests/howto/lb7-plates.test.ts', 20.1, t))).toEqual([`tests/howto/lb7-plates.test.ts 20.1 s at ${t} (over 20 s, an excepted unit)`]);
+  });
+});
