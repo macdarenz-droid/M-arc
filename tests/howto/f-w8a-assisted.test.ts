@@ -102,7 +102,12 @@ describe('F-W8A-ASSISTED A2: assisted_pull_up passes HT4/A5 on a scratch tree th
   let T = '';
   // LIB-SHIP W8c (Q-W8c-4, the Q-W8b-1 form): assisted ships in lb01's committed config, so the stage starts from main
   // 8f112a6d's pre-W8c config (sha-pinned, red on drift: checks/ship-w8c.ts preW8cConfig)
-  beforeAll(() => { T = tree({ [LB01]: s => withAssisted(preW8cConfig('lb01', s)) }); }, 120_000);
+  // (the stage is now the committed config itself, exactly: the tree needs no lb01 edit)
+  beforeAll(() => {
+    const lb01 = readFileSync(join(ROOT, LB01), 'utf8');
+    expect(withAssisted(preW8cConfig('lb01', lb01))).toBe(lb01);
+    T = tree({});
+  }, 120_000);
   it('green: protected, fragments and poses pass; its layers Mistake svg is the plates pin 5324dd0b…', async () => {
     const got = await ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up');
     expect(got.problems).toEqual([]);
