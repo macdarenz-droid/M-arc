@@ -842,6 +842,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-15 ~11:35 UTC: train 96 merged** (#417 LIB-SHIP W8b → main `8f112a6d`). 9 guides: pullover, dumbbell RDL, wall sit, pistol squat, forward lunge, walking lunge, Bayesian cable curl, dumbbell overhead triceps extension and single-arm triceps pushdown. The app has 81.
+  - Evidence: delta PASS 6893567482 @ `dce82996` (the child.it move d10e0c1e, merge f528e9ea and re-pin :551→:561 checked); 92/92 green on that head, which contained main `f0237bae`.
+  - APK: wait for main runs 43708655482 (gate) and 43708655474 (Play bundle), then send the APK and AAB to the owner. The last APK sent was train 88 (`e15e1c65`, AAB 37.1.0.195).
+  - Lanes: #426, #427 and #423 are merging main in parallel; they merge in that order. The W8c builder (session_018Pv5bMshdf6jETzAAKopaB) has started and posts a PLAN first; its slot is after #423. Active LIB builders: 3.
+  - Follow-up noted: `tests/worker-lag-budget.mjs` is not wired into CI (by design of #428: `.github` unchanged), so reviewers run it by hand on the job logs. Card owed: F-RPC2-BUDGET-CI, a supervisor add-only CI step.
 - **Update 11-15 ~10:45 UTC.** Main `f0237bae`; weekly meter 0.38 (08:44).
   - **W8b (#417)** merged main and pushed `dce82996`. Locally, one W8b block tripped the new 30 s worker-lag guard; dce82996 fixes it. The builder will name the block and the form in its TRAIN HEAD post. CI on dce82996 stands at 84 green, 6 running. Next: TRAIN HEAD → same reviewer delta → train 96 → APK + AAB to the owner.
 - **Update 11-15 ~07:40 UTC: train 95 merged** (#428 F-VITEST-RPC-2 → main `f0237bae`). Review PASS 6889918612 + delta PASS 6890951929 @ `9b7fb156`; all checks green on that head, which contained main `d92830c2`. Tests and the one `vite.config.ts` setupFiles line only, so no APK.
