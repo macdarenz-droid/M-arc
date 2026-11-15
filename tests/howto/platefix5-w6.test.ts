@@ -13,6 +13,7 @@ import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { bssMainZoom } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS)
 import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 import { DL_W6_DIGEST, dlSkip } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
 
@@ -329,7 +330,7 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
         if (EX.has(key)) continue;
         const mod = await import(/* @vite-ignore */ pathToFileURL(hf).href), engine = await cu.engineOf(existsSync(sf) ? sf : undefined);
         const api = cu.closeupApi(mod, opt, { engine, specFile: existsSync(sf) ? sf : undefined });
-        for (const z of mod.default.zooms.filter((q: any) => q.kind === 'posture')) { if (dlSkip(pf, key, z.key)) continue;   /* F-DL-LIFTOFF (D-DL-PINS): its one redrawn zoom left out */ all.update(`${pf}:${key}:${z.key}:${createHash('sha256').update(api.postureZoom(z)).digest('hex')}\n`); n++; }
+        for (const z of mod.default.zooms.filter((q: any) => q.kind === 'posture')) { if (dlSkip(pf, key, z.key)) continue;   /* F-DL-LIFTOFF (D-DL-PINS): its one redrawn zoom left out */ all.update(`${pf}:${key}:${z.key}:${createHash('sha256').update(api.postureZoom(bssMainZoom(key, z))).digest('hex')}\n`); n++; }   // F-BSS-REARKNEE (D-RP-PINS): was postureZoom(z); bulgarian's rear-knee drawn with main 9139c29c's crop window (its new window is pinned by f-bss-rearknee.test.ts), every other zoom as is; same n and digest
         all.update(`${pf}:${key}:css:${createHash('sha256').update(api.CSS).digest('hex')}\n`);
       }
     }
