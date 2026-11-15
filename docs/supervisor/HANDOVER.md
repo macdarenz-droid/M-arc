@@ -842,6 +842,10 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-15 ~19:45 UTC: train 99 merged** (#430 F-WLAG-M6-TIMEOUT → main `ee1f1bca`). The worker-lag fixtures get a 60 s test timeout, pinned with an anchored regex. This ends the m6 flake; D-WLAG-M6 re-runs are no longer needed. Review PASS 6897360282; my delta check (the anchored pin plus main merges, remerge empty); gate green on `e582e521`. Tests only, so no APK.
+  - **W8c seated crop check: PASS** (#429 6899358640). I rendered the app How-to myself at `3b78b04a` (fidelity harness, both themes): the plate callouts and Set it up steps 1-2 carry the text checkpoints. W8c is fully approved for 3 ids.
+  - **W8c O1 red:** the gate's O1.1 launch-skip probe measures 700 ms from T0, not from when the tap lands. QA12-1 got the tap-clock fix (GATE-FLAKE-1), but O1 never did. One re-run with the cause stated (6898918927). Follow-up **F-GATE-O1-TAPCLOCK** needs AGENTS exception 6 and the GATE-FLAKE card form; seen twice.
+  - **Order:** #423 (merging `ee1f1bca` → READY → fresh reviewer) → W8c (merge main → READY → reviewer) → APK (+3 guides, 84).
 - **Update 11-15 ~17:50 UTC: train 98 merged** (#426 F-BSS-REARKNEE → main `ae7cb92b`). Evidence: delta PASS 6898578441 @ `d67412ad`; 92/92 green on that head, which contained `c263d13d`, after one D-WLAG-M6 re-run (m6 only). No src change, so no APK.
   - **Order now:** #430 (merging `ae7cb92b`, then its TRAIN HEAD and my delta check) → #423 (merging main, then READY and a fresh reviewer) → W8c #429 (flip head CI; seated crop check; READY). Bulgarian stays held in W8c (S4), so the next wave takes it.
 - **Update 11-15 ~16:45 UTC.** Main `c263d13d`; weekly meter 0.43.
