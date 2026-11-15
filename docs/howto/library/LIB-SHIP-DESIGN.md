@@ -3136,3 +3136,18 @@ compares, and seated's two text checkpoints in Silent Black and Paper (Q-W8c-6).
 - seated text checkpoints in the app (gate-equivalent screenshots, Silent Black and Paper, 390 px, DSF 2): the app
   prints no posture checkpoint text (Posture.tsx renders nothing; golden B prints no posture section). Both card zooms
   appear as the plate's callouts KNEE AT PIVOT and PAD ABOVE SHOES, and in setup steps 1-2.
+- Rulings on LAYERS READY (6895200917): D-W8C-MCHOLD (mountain_climbers held; F-PALMFLAT-APPTYPE, F-GEN-HELD-CLEAN),
+  D-W8C-TEXTZOOM-LOOPS. W8c LAYERS APPROVED (6895226756): the assisted delta check PASS; D-SHIP-W8C-STAMP for the 3.
+- **Ships 3: seated_leg_curl (pilot-b), assisted_pull_up (lb01), dumbbell_shrug (lb03). Main moves from 81 to 84.**
+- Held at main's bytes: underhand_lat_pulldown (D-W8C-UNDERHAND, F-UNDERHAND-FAMILY), mountain_climbers (D-W8C-MCHOLD,
+  F-PALMFLAT-APPTYPE; its round-2 evidence above carries over only if its card stays byte-equal to the scratch card at
+  0523227e), bulgarian_split_squat (S4; next wave after #426). No generated file exists for any of them
+  (tests/howto/ship-w8c.test.ts).
+- Flip (75a0ac46): stages; layers-page entries pilot-b 12, lb01 21, lb03 18 ('supervisor', D-SHIP-W8C-LAYERS, approval
+  6895226756 @ 0523227e, each superseding the page's last layers-page entry); the seated text-zooms entry; stamps from the
+  STAMP list (stampProblems [] for the 3). Then generate, MANIFEST by manifestOf (`[golden update]`), budgets at measured
+  + 10 % (ht-, feel-, posture- for assisted and shrug, none for seated; handpair-bar-hang-only-curled-over) and totals /
+  loaders perId at n 84 by write-ids `budgetsAt`.
+- Guards (exact-set, W8c-first, every old red kept): checks/ship-w8c.ts holds the set, the holds, TEXT_ZOOM_SHIPPED, the
+  layers-page entry check, preW8cConfig (Q-W8c-4), lessW8c/w8cFirst (MANIFEST), w8cGenText (generated files). Other
+  cards' test edits are named in the PR body.
