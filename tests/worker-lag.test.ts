@@ -43,6 +43,9 @@ describe('F-VITEST-RPC-2 the guard is wired, with one fixed limit (A4)', () => {
   it('the guard reads no environment variable', () => {
     expect(read('./worker-lag.ts')).not.toMatch(/\benv\b|process\.argv/);
   });
+  it('the guard\'s fixtures run with a 60 s test timeout, so only the guard fails them (F-WLAG-M6-TIMEOUT)', () => {
+    expect(read('./fixtures/worker-lag/vitest.config.ts')).toMatch(/^\s*test: \{[^\n]*\btestTimeout: 60_000,/m);
+  });
 });
 
 describe('F-VITEST-RPC-2 the guard fails a file that blocks its worker, naming the task (m1-m7)', { timeout: 120_000 }, () => {
