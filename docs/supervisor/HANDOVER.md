@@ -842,6 +842,9 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-15 ~22:45 UTC.** Main `ee1f1bca`.
+  - **#423 F-SHEET-COPY READY @ `18726012`** (6901656491; 92/92 green; contains main). A fresh Opus reviewer is running (session_018Pv5bLe35g6w9t6GqaMeoV). My R2 crop check PASSED (6901742013): 6 sheets × 2 themes, the TECHNIQUE eyebrow, the new headings, and Risks ending with the stop line; the disclaimer is gone. On PASS: train 100. It is app-visible (copy), so the APK post names the change.
+  - **W8c `e3cd3e2d`:** 95/95 green; local test:tz and gate are running, then READY (asked early so its review overlaps #423). After #423 merges: merge main, my delta check, train, APK (+3 guides, 84).
 - **Update 11-15 ~19:45 UTC: train 99 merged** (#430 F-WLAG-M6-TIMEOUT → main `ee1f1bca`). The worker-lag fixtures get a 60 s test timeout, pinned with an anchored regex. This ends the m6 flake; D-WLAG-M6 re-runs are no longer needed. Review PASS 6897360282; my delta check (the anchored pin plus main merges, remerge empty); gate green on `e582e521`. Tests only, so no APK.
   - **W8c seated crop check: PASS** (#429 6899358640). I rendered the app How-to myself at `3b78b04a` (fidelity harness, both themes): the plate callouts and Set it up steps 1-2 carry the text checkpoints. W8c is fully approved for 3 ids.
   - **W8c O1 red:** the gate's O1.1 launch-skip probe measures 700 ms from T0, not from when the tap lands. QA12-1 got the tap-clock fix (GATE-FLAKE-1), but O1 never did. One re-run with the cause stated (6898918927). Follow-up **F-GATE-O1-TAPCLOCK** needs AGENTS exception 6 and the GATE-FLAKE card form; seen twice.
