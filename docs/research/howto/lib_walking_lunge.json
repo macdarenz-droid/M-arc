@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=4ae9f93af9f6cfaf5365ec837fac2f9066c92aece2af4e484ba3fdf22b366f1e
+{
+  "id": "lib_walking_lunge",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/walking_lunge.json",
+    "rev": 1
+  },
+  "sources": [
+    "cat-lunge",
+    "ace-walk-twist",
+    "bezerra-2021",
+    "escamilla-2025",
+    "nhs-knee",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}

@@ -101,7 +101,7 @@ describe('F-VITEST-RPC-2 D-RPC2-EXC: the CI budget of the guard\'s lines', () =>
       'bench_dip.mjs evaluation | tests/howto/lb7-plates.test.ts:62 | beforeAll',
       'bench_dip.mjs evaluation | tests/howto/platefix2-zoom.test.ts:58 | test "PF2 (a): existing zooms are byte-equal > the 37 zoom entries of every other spec render the svg, focus, circle, source and link they rendered before (a)"',
       'bench_dip.mjs evaluation | tests/howto/platefix3b-zoomhead.test.ts:23 | test "PF3b head projection: existing zooms are byte-equal > every other spec\'s zoom entries render the svg, focus, circle, source, link and posture they rendered before"',
-      'platesPage(row) | tests/howto/library-rows.test.ts:551 | test "D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped library row > for the repo\'s shipped library rows and the E1 tree\'s: its ht- plate strings are the plate cut from its batch plates page, whose fragments === the batch golden plate entry; no plate or plate-fit class"',
+      'platesPage(row) | tests/howto/library-rows.test.ts:561 | test "D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped library row > for the repo\'s shipped library rows and the E1 tree\'s: its ht- plate strings are the plate cut from its batch plates page, whose fragments === the batch golden plate entry; no plate or plate-fit class"',
     ]);
     expect(new Set(EXC.map(([u]: string[]) => u)).size).toBe(3);
     // each file:line is where that test (or the file-level beforeAll) is declared

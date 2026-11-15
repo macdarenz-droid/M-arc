@@ -387,6 +387,29 @@
       "supersedes": null,
       "why": "W5 layers approved (#392): the calibrated layers panel 6649453813 (3 fresh Opus critics per set, plants caught, golden-B anchors), fix rounds and focused rechecks 6654466055 and 6681869167 (every median 4 or more or a recorded exception: hammer_curl F-HAND-ROTATION), PANEL FIX 4 accepted 6683213580 with D-SHIP-W5-FLIPSET (6682188871) and D-SHIP-W5-PREACHER: the flip set only on the page. Re-pinned in place after the merge of main 6227bd8e (D-REPIN-UNMERGED): with main's render and layers-build files put back to 59ded9a1 the page is byte-equal to the accepted 59ded9a1 page (strip-back proof); the only differences are main's shared engine and body-map changes.",
       "prev": "9786ef3704d972db3406b0a4047d4f57e525dc51285826c742edec728edbb671"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB4",
+      "ids": [
+        "lib_front_squat",
+        "lib_bodyweight_squat",
+        "lib_wall_sit",
+        "lib_pistol_squat",
+        "lib_forward_lunge",
+        "lib_walking_lunge",
+        "lib_bodyweight_lunge",
+        "lib_bodyweight_split_squat"
+      ],
+      "pageSha256": "675fec5757c6b3a0ea4a0ccfc624e05d8c82fb04c1a822a26cb3904d5c1912e6",
+      "bytes": 1778572,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8B-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652",
+      "date": "2026-11-13",
+      "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): pistol_squat, wall_sit, forward_lunge, walking_lunge on the page; step_up held (F-STEPUP-START), bulgarian_split_squat held (D-W8B-RIGHTPOSE, F-HT4-RIGHTPOSE); cardcmp: every card byte-equal to the judged page at 1fdf6975; main's cards byte-equal",
+      "supersedes": 13,
+      "prev": "83a203ccb26a77818561c01c04cf86008be66e6d69e67789918d16bd3c7ee71d"
     }
   ]
 }

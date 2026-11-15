@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=630cda2d3fef1180e800925730240c99a1227d1d76574e6114e01c35ffe47242
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=a4ed59ce0f80783b19ef8db02e55152dd35602c9ce8340f88f46246499ecaf8b
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_hammer_curl",
   name: "Hammer Curl",
-  hashes: { inputsSha256: "630cda2d3fef1180e800925730240c99a1227d1d76574e6114e01c35ffe47242", golden: "a9861b4072e2e851de7315c5dc69af5c6848bf3c5fc64b75847f4d367c181baa" },
+  hashes: { inputsSha256: "a4ed59ce0f80783b19ef8db02e55152dd35602c9ce8340f88f46246499ecaf8b", golden: "a9861b4072e2e851de7315c5dc69af5c6848bf3c5fc64b75847f4d367c181baa" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
