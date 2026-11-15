@@ -44,7 +44,7 @@ describe('F-VITEST-RPC-2 the guard is wired, with one fixed limit (A4)', () => {
     expect(read('./worker-lag.ts')).not.toMatch(/\benv\b|process\.argv/);
   });
   it('the guard\'s fixtures run with a 60 s test timeout, so only the guard fails them (F-WLAG-M6-TIMEOUT)', () => {
-    expect(read('./fixtures/worker-lag/vitest.config.ts')).toMatch(/\btestTimeout: 60_000,/);
+    expect(read('./fixtures/worker-lag/vitest.config.ts')).toMatch(/^\s*test: \{[^\n]*\btestTimeout: 60_000,/m);
   });
 });
 
