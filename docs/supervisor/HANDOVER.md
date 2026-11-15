@@ -842,6 +842,8 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-15 ~00:45 UTC.** Main is still `d92830c2`; weekly meter 0.34 (last reading 21:15).
+  - **#428:** on head `105b1634`, proof runs 1 and 2 are green and within the 30 s worker-lag budget, and the local `test:tz` run passed. Proof run 3 is running; the builder checks in on its own. Every other lane still waits for #428, in the order #428 → #417 → #426 → #427 → #423 → W8c.
 - **Update 11-14 ~21:45 UTC.** Main is still `d92830c2`; weekly meter 0.34 (21:15).
   - **#428:** on proof run 3, an f-ht10-textzoom test hit its 5 s timeout because module imports ran in the test body. That was root-caused and fixed @ `105b1634`: the imports moved to a `beforeAll`, with no assertion or timeout changed. The 5 proof runs restart on that head. Every other lane still waits.
 - **Update 11-14 ~18:45 UTC.** Main is still `d92830c2`; weekly meter 0.33 (18:44).
