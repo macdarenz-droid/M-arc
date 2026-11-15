@@ -264,14 +264,15 @@ function loadThroughPivot(svg, forearm) {
   return { svg: svg.slice(0, at) + part + svg.slice(end), pivot: { from: [f2(A0[0]), f2(A0[1])], to: [f2(E[0]), f2(E[1])], wrist: W } };
 }
 
-/** One rendered pair. opts: { uid, fault (key; default the first), panelHeight, index }. */
+/** One rendered pair. opts: { uid, fault (key; default the first), panelHeight, index, rightNote (F-HAND-PALMFLAT-SIZE: a
+ *  sub-key row's own drawn Right note; default the key's) }. */
 export function renderPair(id, opts = {}) {
   const s = pairSpec(id, opts.index);
   const F = opts.fault ? s.wrong.find(w => w.key === opts.fault) : s.wrong[0];
   if (!F) throw new Error(`hand pairs: ${id}: no fault ${opts.fault}`);
   const render = s.mod.render ?? renderHandPair;
   const out = render({ uid: opts.uid ?? `hp-${id.replace(/_/g, '-')}-${F.key}`, camera: s.extras.plainAbove ? 'side' : s.camera, loadAxis: s.loadAxis, markers: F.markers,
-    right: s.right, wrong: mergePose(s.right, F.pose), rightNote: s.rightNote, wrongNote: F.label,
+    right: s.right, wrong: mergePose(s.right, F.pose), rightNote: opts.rightNote ?? s.rightNote, wrongNote: F.label,
     alt: { right: s.altRight, wrong: F.alt }, panelHeight: opts.panelHeight ?? s.panelHeight });
   let svg = out.svg;
   if (s.extras.cameraText) {
@@ -377,10 +378,10 @@ export function cardSupports(fault, cardId, card) {
 }
 /** The row's filter, or null for a row with neither field. Throws on every red the ruling lists. */
 export function rowFilterOf(howtoId, row, index = INDEX, card) {
-  if (!row || (row.pairFaults === undefined && row.pairWords === undefined)) return null;
+  if (!row || (row.pairFaults === undefined && row.pairWords === undefined && row.pairNote === undefined)) return null;
   const at = `hand pairs: ${howtoId}`, F = row.pairFaults;
-  if (row.pair === undefined) throw new Error(`${at}: pairFaults or pairWords without pair`);
-  if (F === undefined) throw new Error(`${at}: pairWords without pairFaults`);
+  if (row.pair === undefined) throw new Error(`${at}: ${row.pairNote !== undefined && row.pairFaults === undefined && row.pairWords === undefined ? 'pairNote' : 'pairFaults or pairWords'} without pair`);
+  if (F === undefined) throw new Error(`${at}: ${row.pairWords !== undefined ? 'pairWords' : 'pairNote'} without pairFaults`);   // the pairWords text as on main
   if (!Array.isArray(F)) throw new Error(`${at}: pairFaults is not a list`);
   if (!F.length) throw new Error(`${at}: pairFaults is empty`);
   if (F.some(f => typeof f !== 'string')) throw new Error(`${at}: pairFaults holds a non-string`);
@@ -403,8 +404,18 @@ export function rowFilterOf(howtoId, row, index = INDEX, card) {
       if (typeof w?.source !== 'string' || !w.source.includes(`cards/${id}.json`)) throw new Error(`${at}: pairWords ${f}.${slot} source does not cite cards/${id}.json`);
     }
   }
+  // F-HAND-PALMFLAT-SIZE (F-W8A-HOLDS part 3, ruling 4, Q-PFS-1): the row's own drawn Right note on its sub-key,
+  // { right: { text, source } } only, its source citing the row's card as pairWords' does
+  const N = row.pairNote;
+  if (N !== undefined) {
+    if (typeof N !== 'object' || N === null || Array.isArray(N)) throw new Error(`${at}: pairNote is not an object`);
+    const extra = Object.keys(N).filter(s => s !== 'right');
+    if (extra.length || !N.right) throw new Error(`${at}: pairNote holds ${extra.length ? extra : 'no right'}; only right is allowed`);
+    if (typeof N.right.text !== 'string' || !N.right.text.trim()) throw new Error(`${at}: pairNote right text is empty`);
+    if (typeof N.right.source !== 'string' || !N.right.source.includes(`cards/${id}.json`)) throw new Error(`${at}: pairNote right source does not cite cards/${id}.json`);
+  }
   const [KEY, variant, orientation] = k.triple.split('/');
-  return { sub: `${KEY}-${variant}-only-${F.join('-')}-${orientation}`, base: row.pair, faults: [...F], words: W, id, cardId: id };
+  return { sub: `${KEY}-${variant}-only-${F.join('-')}-${orientation}`, base: row.pair, faults: [...F], words: W, ...(N ? { note: N } : {}), id, cardId: id };
 }
 /** The key a layers-config row draws: its sub-key when it names pairFaults, else its pair (undefined for none). */
 export const rowKeyOf = (howtoId, row, index = INDEX) => rowFilterOf(howtoId, row, index)?.sub ?? row?.pair;
@@ -419,6 +430,7 @@ export function subKeysOf(configs, index = INDEX) {
     ofId.set(t.id, t.sub);
     const was = subs.get(t.sub);
     if (was && JSON.stringify(was.words) !== JSON.stringify(t.words)) throw new Error(`hand pairs: sub-key ${t.sub}: ${was.config} and ${file} give different pairWords`);
+    if (was && JSON.stringify(was.note) !== JSON.stringify(t.note)) throw new Error(`hand pairs: sub-key ${t.sub}: ${was.config} and ${file} give different pairNote`);   // F-HAND-PALMFLAT-SIZE
     if (!was) subs.set(t.sub, { ...t, config: file });
   }
   const all = [...keys, ...subs.keys()];
@@ -457,6 +469,6 @@ export async function pairPanel(key, index = INDEX, subs = index === INDEX ? SUB
 function subPanel(t, index) {
   const k = keyIndexOf(index).keys.get(t.base), base = readWords(t.base), kw = base.keys[t.base];
   const faults = Object.fromEntries(t.faults.map(f => [f, { ...kw.faults?.[f], ...(t.words[f] ?? {}) }]));
-  return panelHtml(t.sub, t.faults.map(f => ({ fault: f, svg: renderPair(k.ids[0], { fault: f, uid: `hp-${t.sub}-${f}`, index }).svg })),
+  return panelHtml(t.sub, t.faults.map(f => ({ fault: f, svg: renderPair(k.ids[0], { fault: f, uid: `hp-${t.sub}-${f}`, index, rightNote: t.note?.right.text }).svg })),
     { chrome: base.chrome, keys: { [t.sub]: { ...kw, faults } } });
 }

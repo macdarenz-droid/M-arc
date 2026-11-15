@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=14a25fc8a05df87957213c6b1b1199da6c673df4b36203a1506bdb467100f361
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=e418653b184654fc5d9c0795a7500a7eae4878dea0e2b9523a7bef81248748e4
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_machine_lateral_raise",

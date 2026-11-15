@@ -288,6 +288,38 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb02 plates page rebuilt with LIB-PLATEFIX-4's incline_dumbbell_press (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (#410 PLATES READY 6751284470).",
       "supersedes": 0,
       "prev": "fc33996b4ff7f3e9c404f1f206a36fa5da4d64d21bc8890d4136af11d8877922"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB2",
+      "ids": [
+        "lib_dumbbell_pullover"
+      ],
+      "pageSha256": "8fb801a88df17dabfa0be574e134753b08eaee8aacb541d94dc1670f167f73ff",
+      "bytes": 262166,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8B-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652",
+      "date": "2026-11-13",
+      "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); the first lb02 layers-page entry (D-SHIP-W4-FLIPSET kept lb02 off a layers page until now): dumbbell_pullover on the page; none held on lb02; cardcmp: every card byte-equal to the judged page at 1fdf6975 except dumbbell_pullover's jumps risk (L6, passed round 2 in 6856468001); main's cards byte-equal",
+      "supersedes": null,
+      "prev": "6f8ec5b2bce3d6d26a92f2781b5b43cd9444ed80b162dae1862b8b84728b9871"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB2",
+      "ids": [
+        "lib_dumbbell_pullover"
+      ],
+      "pageSha256": "1c7c8f314c366c8e4235ba067cee4210cb91adff468d98304da67ce2ba2b1c4c",
+      "bytes": 261900,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
+      "date": "2026-11-13",
+      "supersedes": 11,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
+      "prev": "a18e4b80e4e42f658ade0d0793f200974370c46bf3cd365ed82ac1905e325603"
     }
   ]
 }

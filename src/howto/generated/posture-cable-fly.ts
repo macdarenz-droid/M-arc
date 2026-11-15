@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=f8bde937ee36abd7c5d1bad9c7f2d28b4c95a9fe0ecbffc7059aa55ff64fd357
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=2072b3ff068194f3e6155857120d8cffb4bd6317d1929553db699f99893b3104
 // The cable-fly posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-cable-fly.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

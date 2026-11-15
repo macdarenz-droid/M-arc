@@ -7,7 +7,8 @@ const ZOOM = {
   css: { thumb: 'plain' },
 };
 export const CLOSEUP_OPTIONS = {
-  hack_squat: ZOOM,
+  // LIB-PLATEFIX-5: the knee-lock zoom's hip-to-ankle guide and knee angle mark (zoom `outlines`) need the outlines CSS
+  hack_squat: { ...ZOOM, css: { ...ZOOM.css, outlines: true } },
   pendulum_squat: ZOOM,
   leg_extension: ZOOM,
   lying_leg_curl: ZOOM,

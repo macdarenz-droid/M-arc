@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=edd00bde8600b6db662e9cdbb09875b78cf857309931c17f54bb723f557f9f3d
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=0e224717b60c9ec22e3422353a7893457db906684de6b85f527c6ec31db655aa
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_barbell_shrug",

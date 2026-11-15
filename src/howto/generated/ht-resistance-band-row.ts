@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=32ecce1baedf48aab38c9eb8958cb9641522d1cb101bc91641ab3ca26476dfcc
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=e92a15e3d05aac20b4b0d824fe97c9ab2f730b3ba3cf9112c5e40412d6446827
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_resistance_band_row",
   name: "Resistance Band Row",
-  hashes: { inputsSha256: "32ecce1baedf48aab38c9eb8958cb9641522d1cb101bc91641ab3ca26476dfcc", golden: "c8084092b845fbfa97caae47a3b22f3f8aa7ec1300c20347fcdb94f436771e17" },
+  hashes: { inputsSha256: "e92a15e3d05aac20b4b0d824fe97c9ab2f730b3ba3cf9112c5e40412d6446827", golden: "c8084092b845fbfa97caae47a3b22f3f8aa7ec1300c20347fcdb94f436771e17" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

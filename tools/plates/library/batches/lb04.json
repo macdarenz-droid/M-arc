@@ -75,7 +75,7 @@
     "Effect of breath-hold on the responses of arterial blood pressure and cerebral blood velocity to isometric exercise (2022). https://pubmed.ncbi.nlm.nih.gov/34618221/ PMID 34618221",
     "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_pistol_squat": {
    "src": "library/specs/pistol_squat.mjs",
@@ -89,7 +89,7 @@
     "Step-by-step guide to the pistol squat exercise (Physitrack). https://www.physitrack.com/exercise-library/how-to-perform-the-pistol-squat-exercise",
     "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_jump_squat": {
    "src": "library/specs/jump_squat.mjs",
@@ -143,7 +143,7 @@
     "Influence of Trunk Position during Three Lunge Exercises on Muscular Activation in Trained Women (2021). https://pubmed.ncbi.nlm.nih.gov/34055138/ PMID 34055138",
     "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_walking_lunge": {
    "src": "library/specs/walking_lunge.mjs",
@@ -160,7 +160,7 @@
     "Effects of Step Length and Stride Variation During Forward Lunges on Lower-Extremity Muscle Activity (2025). https://pubmed.ncbi.nlm.nih.gov/39982282/ PMID 39982282",
     "Knee pain (NHS). https://www.nhs.uk/conditions/knee-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_bodyweight_lunge": {
    "src": "library/specs/bodyweight_lunge.mjs",

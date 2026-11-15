@@ -149,7 +149,7 @@ export default {
   measure: { vertex: LEAN_V, from: 'down', to: LEAN_B, radius: 45, title: 'Lean back', value: 'under 30°' },
   callouts: [
     { key: 'thighs', text: 'Thighs<br>pinned', anchor: { at: 'thighTop.r', off: [14, 0] }, box: { left: 188, top: 236 }, cue: 'Set the pads tight on top of the thighs.' },
-    { key: 'elbows', text: 'Elbows<br>down, back', anchor: 'elbow.r', box: { left: 2, top: 222 },   // item 1: the leader meets the elbow from the side, not along the upper arm (was top 180)
+    { key: 'elbows', text: 'Elbows<br>down, back', anchor: 'elbow.r', box: { left: 16, top: 288 },   // PF5 item 4 (F-UNDERHANDPQH1): below the figure, so the box leaves the back (PQ-H1) and the leader reaches F3's range; it still meets the elbow from the side (PF3 item 1; was { left: 2, top: 222 }, before that top 180)
       cue: 'Pull the elbows down and back toward the glutes.' },
     { key: 'chin', text: 'Bar<br>below chin', anchor: 'grip.r', box: { left: 146, top: 174 }, cue: 'Stop when the bar passes just below chin height.' },
   ],

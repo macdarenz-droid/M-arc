@@ -442,20 +442,65 @@
       "ids": [
         "lib_pendlay_row",
         "lib_landmine_row",
+        "lib_dumbbell_romanian_deadlift",
         "lib_t_bar_row",
         "lib_barbell_shrug",
         "lib_cable_shrug",
         "lib_smith_machine_shrug"
       ],
-      "pageSha256": "f819a576f000d8a8708819f4fb760a7c0d2695d5159ec39b90418747cdb7a87a",
-      "bytes": 1128029,
+      "pageSha256": "ecaf602dd552827b7578411eb3ec4078404ef69a41dcb2f4cf2e316018785be4",
+      "bytes": 1312371,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8B-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652",
+      "date": "2026-11-13",
+      "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): dumbbell_romanian_deadlift on the page; conventional_deadlift and sumo_deadlift held (F-DL-LIFTOFF), dumbbell_shrug held (D-W8B-RIGHTPOSE, F-HT4-RIGHTPOSE); cardcmp: every card byte-equal to the judged page at 1fdf6975; main's cards byte-equal",
+      "supersedes": 13,
+      "prev": "6762fa1fcd12237235ba75bd7bb7a08dea3cff5e5fe9226ed4149e9a3deb6475"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB3",
+      "ids": [
+        "lib_pendlay_row",
+        "lib_landmine_row",
+        "lib_dumbbell_romanian_deadlift",
+        "lib_t_bar_row",
+        "lib_barbell_shrug",
+        "lib_cable_shrug",
+        "lib_smith_machine_shrug"
+      ],
+      "pageSha256": "8556b3b6854194e72f20f6f22876a68a75377e74ae77f8a9071c7bcc40be0b16",
+      "bytes": 1314188,
+      "approvedBy": "supervisor",
+      "decision": "D-W8B-RDLWATCH",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00",
+      "date": "2026-11-14",
+      "why": "D-W8B-RDLWATCH (ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00; STAMP https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872764692): appended superseding entry ('supervisor', D-BODYMAP-APPEND); dumbbell_romanian_deadlift's feel.watch is lower_back (c17, card watch), so its two lower-back rows draw the \"Should not take over\" outline; only RDL's feel block moves (3 hunks: the low-back-more mark, and both lower-back rows' labels); built twice byte-equal",
+      "supersedes": 16,
+      "prev": "34c00571701595b3fe6997aa7f97086849bcb96a8b757cbac059500b26c9b8a4"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB3",
+      "ids": [
+        "lib_pendlay_row",
+        "lib_landmine_row",
+        "lib_dumbbell_romanian_deadlift",
+        "lib_t_bar_row",
+        "lib_barbell_shrug",
+        "lib_cable_shrug",
+        "lib_smith_machine_shrug"
+      ],
+      "pageSha256": "0011cf75714e6826573e0daaa6240a6dbbfb74d3d7fdae56634c71440045a31c",
+      "bytes": 1313020,
       "approvedBy": "supervisor",
       "decision": "F-SHEET-COPY",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
       "date": "2026-11-13",
-      "supersedes": 13,
-      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
-      "prev": "6762fa1fcd12237235ba75bd7bb7a08dea3cff5e5fe9226ed4149e9a3deb6475"
+      "supersedes": 17,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
+      "prev": "5677caee1551e7ce7225ebe080be41c9ef809d46f725d3f90fb08a1f33366656"
     }
   ]
 }

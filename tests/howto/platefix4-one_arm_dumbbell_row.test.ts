@@ -10,7 +10,8 @@
 // Red on the base spec (de91dd21): support elbow 87.8 deg; back rise 0 deg; red shoulder 8.7 px from the drawn joint;
 // red elbow (-20, +43) px from the shoulder; red elbow 11.9 px from the support elbow.
 // Every other plate on the lb03 plates page stays byte-equal to the base page (fragment digests pinned below).
-import { execFileSync } from 'node:child_process';
+import { execFile } from 'node:child_process';   // F-VITEST-RPC-2: was execFileSync
+import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -124,9 +125,9 @@ const BASE: Record<string, string> = {
 };
 describe('PF4 one_arm_dumbbell_row: every other lb03 plate is byte-equal to the base page', { timeout: T }, () => {
   let html = '';
-  beforeAll(() => {
+  beforeAll(async () => {
     const dir = mkdtempSync(join(tmpdir(), 'pf4-oadr-')), out = join(dir, 'lb03.plates.html');
-    try { execFileSync(process.execPath, ['scripts/howto-rebuild.mjs', '--page', 'tests/howto/golden/library/lb03.json', 'page', out], { stdio: 'pipe' }); html = readFileSync(out, 'utf8'); }
+    try { await promisify(execFile)(process.execPath, ['scripts/howto-rebuild.mjs', '--page', 'tests/howto/golden/library/lb03.json', 'page', out]); html = readFileSync(out, 'utf8'); }
     finally { rmSync(dir, { recursive: true, force: true }); }
   }, T);
   const digests = (h: string) => Object.fromEntries(golden.extractPlates(h).filter((p: any) => p.chromeId !== 'one-arm-dumbbell-row')

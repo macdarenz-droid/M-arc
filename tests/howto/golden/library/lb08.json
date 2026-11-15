@@ -275,6 +275,48 @@
       "prev": "f56c02760c797efb5eaf8ccdb51eecc926a725ed901a2089571255a8a00efd81"
     },
     {
+      "kind": "plate",
+      "id": "lib_pendulum_squat",
+      "src": "library/specs/pendulum_squat.mjs",
+      "slug": "pendulum-squat",
+      "prefix": "pendulum-squat",
+      "chromeId": "pendulum-squat",
+      "exemptions": [
+        "F5",
+        "F7"
+      ],
+      "fragments": {
+        "normalSvg": "19c2e4a1db08ad6318ac86ea5da1efb32f6c85eae9d89a200fc278db86e39017",
+        "normalOverlay": "22c1553515335ed9757e87adde27ab83274651f2f3a02b7841b1cd88b351bb8f",
+        "mistakeSvg": "3b4eb3279fe4806842c53dc8d425a914031fb7eb276730a8731877355717684c",
+        "mistakeOverlay": "895fd8e664a353ceaed318a97c38de6eff2da6102c221d5ae36f875607ce0da2",
+        "tells": "dc9fb3e90e6dc5521801956e2d0a995a7c1ec50942c47447d8420fa845be9fc6",
+        "tempo": "f9c4c9dce39e34c295af801c2266d8bc5126cea5e665bad803042cfc195501b4",
+        "cues": "822687bb3ed779a5b0d948145064ed53c5516842b6a83dccddae079f32fe8b94",
+        "alt": "dd0087db65f961288897dd5278c768b54bb799a7cd3ac62f050c45073eb715db",
+        "mistakeAlt": "8fbf3fcbf484406213d888c31c26cdd2513445ed3524358a4d2fab0b3a463f79"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6852366101 @ f487c7971ddae190542e75e66abe2508c77234aa",
+      "date": "2026-11-13",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-5 item 2 pendulum_squat (D-PF5-PENDHIP: the Trace on hip.r, the pendulum arc, c23): panel round 1 (#419 6851987591 @ f487c797) approved its layers sheet; D-PF5-PENDHEEL (#419 6852366101) keeps the Trace and pins it, and the R5 heel finding goes to F-PEND-HEEL; fix-round check passed (#419 6853178277).",
+      "supersedes": 2,
+      "prev": "afde1c9503dafcde77f1e5bc5b7996f40bc0436e972f94bd3d1c6d6d6a4e2193"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "c1e16b4e0358e9cb3999ff8def614d86ea0c4d8e62f7afdb402c5e20e8ee31f3",
+      "bytes": 1239100,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6852366101 @ f487c7971ddae190542e75e66abe2508c77234aa",
+      "date": "2026-11-13",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF5 lb08 plates page with pendulum_squat's Trace on hip.r (D-PF5-PENDHEEL, #419 6852366101); the other 7 plates are byte-equal to their pinned fragments (built twice, same bytes).",
+      "supersedes": 0,
+      "prev": "daefce9b21237cf24dbf35881af650be4e6e263f346cf4c36951c60015977c56"
+    },
+    {
       "kind": "layers-page",
       "batch": "LB8",
       "ids": [
@@ -291,8 +333,8 @@
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
       "date": "2026-11-13",
       "supersedes": 9,
-      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Interim until the re-pin on latest main.",
-      "prev": "afde1c9503dafcde77f1e5bc5b7996f40bc0436e972f94bd3d1c6d6d6a4e2193"
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
+      "prev": "cd53e08eb240b66604cba1d417fbe89cc0b66fe1cefde64d64e150b02696ecf1"
     }
   ]
 }

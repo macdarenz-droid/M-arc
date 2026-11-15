@@ -10,6 +10,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 import { otherCards } from './eq-composers';
 import { renderOf } from '../walk-cache';
 
@@ -1933,8 +1934,8 @@ describe('LIB-16R2 wave 2 A3: the two new composers (D-LIB16R2-COMPOSERS)', { ti
     const polys = sh.filter((x: any) => limb.includes(x.key)).map((x: any) => x.poly);
     const pts = pad.pts.map((q: number[]) => cam.P([q[0]! + shift[0]!, q[1]! + shift[1]!, q[2]!]));
     return r2Clear(pts, polys.map((poly: number[][]) => ({ key: 'limb', poly })), /limb/); };
-  it('the pads rest on their limbs (within 1 px) in every drawn pose: outer thighs (hip_abduction c1), inner thighs (hip_adduction c1), just above the elbows (machine_lateral_raise c3)', () => {
-    for (const id of ['hip_abduction', 'hip_adduction', 'machine_lateral_raise']) for (const p of posesOf(R2S[id])) for (const s of ['l', 'r']) { const g = padGap(R2S[id], p, s); expect(g, `${id} ${p} ${s}`).toBeLessThanOrEqual(1); expect(g, `${id} ${p} ${s}`).toBeGreaterThanOrEqual(-1); }
+  it('the pads rest on their limbs (within 1 px) in every drawn pose: outer thighs (hip_abduction c1), inner thighs (hip_adduction c1), just above the elbows (machine_lateral_raise c3)', async () => {
+    for (const id of ['hip_abduction', 'hip_adduction', 'machine_lateral_raise']) for (const p of posesOf(R2S[id])) for (const s of ['l', 'r']) { const g = padGap(R2S[id], p, s); expect(g, `${id} ${p} ${s}`).toBeLessThanOrEqual(1); expect(g, `${id} ${p} ${s}`).toBeGreaterThanOrEqual(-1); await yieldTask(); }   // F-VITEST-RPC-2: one worker turn per check
   });
   it('mutation: a pad 2 cm off its limb is red', () => {
     expect(padGap(R2S.hip_abduction, 'end', 'r', [-0.02, 0])).toBeGreaterThan(1);       // out, away from the right thigh

@@ -227,6 +227,7 @@ export const PAIR_LABEL = 'library/hands/pairs.mjs';
 export function pairRowsOf(spec) {
   // F-PAIR-FAULTS red 3: a row filter with no pair would otherwise fall through to the card's own hand block
   for (const [howtoId, c] of Object.entries(spec.closeups ?? {})) if (c.pair === undefined && (c.pairFaults !== undefined || c.pairWords !== undefined)) throw new Error(`layers page: ${howtoId}: pairFaults or pairWords without pair`);
+  for (const [howtoId, c] of Object.entries(spec.closeups ?? {})) if (c.pairNote !== undefined && c.pairFaults === undefined) throw new Error(`layers page: ${howtoId}: pairNote without ${c.pair === undefined ? 'pair' : 'pairFaults'}`);   // F-HAND-PALMFLAT-SIZE
   return Object.entries(spec.closeups ?? {}).filter(([, c]) => c.pair !== undefined).map(([howtoId, c]) => {
     if (typeof c.pair !== 'string' || !/^[a-z0-9-]+$/.test(c.pair)) throw new Error(`layers page: ${howtoId}: bad pair key ${c.pair}`);
     return { howtoId, pre: (howtoId === 'dumbbell_lateral_raise' ? 'lateral_raise' : howtoId).replace(/_/g, '-'), key: c.pair, row: c };

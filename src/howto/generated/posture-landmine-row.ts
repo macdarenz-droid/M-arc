@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=a43bb8eb86cfba7a4ee980be357ceeb5ee783a477b15d90dd4ec783d8884581e
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=834c4da7124f6a5bd37b5c22cacb7d1a7b3255552a8fa415cbe9b3141fcc1f99
 // The landmine-row posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-landmine-row.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

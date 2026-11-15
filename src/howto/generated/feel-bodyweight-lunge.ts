@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=3c611af607bc726827d6f843741d6442337bd76189f0910630315826acaf6212
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=cb1da1c39cf6eec43d069de4930fe28f3bbe8af3909bc77d94de451e30762ab1
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_bodyweight_lunge",

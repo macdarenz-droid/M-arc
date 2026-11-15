@@ -1,0 +1,17 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=6f0e501ce2676198cf1e7099d3fad4c786fb26317e3846fd3fa4e5198b67450f
+{
+  "id": "lib_bayesian_cable_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/bayesian_cable_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-bayesian",
+    "sl-bayesian",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

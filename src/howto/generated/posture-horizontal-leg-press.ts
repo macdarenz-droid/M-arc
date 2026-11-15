@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=dd200e1cb037d2f2dbf05d9246256bb32b0f2d7661db0eafee6539fcd6987ff1
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=b05cb571f299acf1fecd4145435d4d0cfe73c93104f827a169a87bc3e27f439a
 // The horizontal-leg-press posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-horizontal-leg-press.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

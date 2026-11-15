@@ -10,7 +10,7 @@ import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { child } from '../child-test';
+import { child, yieldTask } from '../child-test';
 import { otherCards } from './eq-composers';
 
 // Most tests here render plates synchronously, and vitest runs back-to-back synchronous tests without returning to the
@@ -2013,6 +2013,7 @@ describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md secti
   };
   child.it('each zoomed spec asks for its ruled zoom, and its plate fails PQ-H3 on that view at plate scale (why the zoom exists)', async () => {
     for (const [id, z] of Object.entries(ZOOMED)) {
+      await yieldTask();   // F-VITEST-RPC-2: one worker turn per row
       expect({ view: S[id].zoom.view, k: S[id].zoom.k }, id).toEqual(z);
       expect(Object.keys(S[id].zoom).sort(), id).toEqual(id === 'renegade_row' ? ['k', 'pair', 'view'] : ['k', 'view']);
       const r = await qa(C[id]), env = pins().envelope;
@@ -2023,6 +2024,7 @@ describe('LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md secti
   child.it('the node half has no problem on either zoomed plate; the bar is met inside the circle at k, never lowered', async () => {
     const env = pins().envelope;
     for (const [id, z] of Object.entries(ZOOMED)) {
+      await yieldTask();   // F-VITEST-RPC-2: one worker turn per row
       const r = await qa(C[id]), m = r.metrics.zoom[z.view];
       expect(keys(r), id).toEqual([]);
       expect([m.k, m.ring.r], id).toEqual([z.k, 52]);

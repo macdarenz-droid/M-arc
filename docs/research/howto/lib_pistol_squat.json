@@ -1,0 +1,18 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=2f8993b786a18233a2c4942c3a02878882da5454fa0f96df5d0db91ccb9155bf
+{
+  "id": "lib_pistol_squat",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/pistol_squat.json",
+    "rev": 1
+  },
+  "sources": [
+    "rep-pistol",
+    "physitrack-pistol",
+    "nhs-knee",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}

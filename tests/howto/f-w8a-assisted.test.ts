@@ -4,11 +4,13 @@
 // e351f554^ row, W8a LAYERS READY 6759453858), built and checked with the tree's own modules (LIB-2b fixtureTree form).
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it, afterAll, beforeAll } from 'vitest';
+import { W8B_MOVED, lessW8b } from './checks/ship-w8b';
 import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { execFile, type ExecFileOptionsWithStringEncoding } from 'node:child_process';   // F-VITEST-RPC-2: was spawnSync
+import { PF5_MAIN, restorePF5 } from './platefix5-pins';   // LIB-PLATEFIX-5 (D-PF5-PINS): put PF5's own [golden update] keys/entries back to main before the A1 blanked compare
 import { restoreSC, scProblems } from './sheetcopy-pins';
 
 const ROOT = process.cwd();
@@ -44,11 +46,11 @@ function tree(edits: Record<string, (s: string) => string> = {}): string {
   return T;
 }
 /** Runs `fn` with `edits` applied to T's files (a mutation), then puts the files back. */
-function mutated<R>(T: string, edits: Record<string, (s: string) => string>, fn: () => R): R {
+async function mutated<R>(T: string, edits: Record<string, (s: string) => string>, fn: () => R | Promise<R>): Promise<R> {
   const keep = Object.keys(edits).map(p => [p, readFileSync(join(T, p), 'utf8')] as const);
   try {
     for (const [p, before] of keep) { const after = edits[p]!(before); expect(after, `${p}: the mutation must change the file`).not.toBe(before); writeFileSync(join(T, p), after); }
-    return fn();
+    return await fn();
   } finally { for (const [p, before] of keep) writeFileSync(join(T, p), before); }
 }
 /** lb01.layers with assisted_pull_up back after hanging_knee_raise (group and closeups), as in W8a. */
@@ -67,8 +69,11 @@ const swap = (a: string, b: string) => (s: string) => { expect(s.split(a).length
 // the step (the mirror's plates page rewritten through applyMistakeGhosts before applyZooms reads it, lib-ship.test.ts:1503)
 const CALL = "    writeFileSync(plates, await applyMistakeGhosts(readFileSync(plates), specs));   // F-LAYERS-MGHOST, in the mirror\n";
 
+/** F-VITEST-RPC-2: spawnSync's result shape ({ status, stdout, stderr }) from an awaited execFile, so the worker never blocks on the child. */
+const run = (cmd: string, args: string[], opts: ExecFileOptionsWithStringEncoding) => new Promise<{ status: number; stdout: string; stderr: string }>(res =>
+  execFile(cmd, args, opts, (e, stdout, stderr) => res({ status: e ? (typeof (e as any).code === 'number' ? (e as any).code : 1) : 0, stdout: String(stdout), stderr: String(stderr) })));
 /** HT4's runNode for one library id, in `T` with T's own modules (a child process); its rows and the batch's page. */
-function ht4(T: string, lib: string, chrome: string) {
+async function ht4(T: string, lib: string, chrome: string) {
   const code = `
     import { recorder } from './tools/plates/library/fidelity/rows.mjs';
     import { runNode } from './tools/plates/library/fidelity/twins/ht4.mjs';
@@ -80,14 +85,14 @@ function ht4(T: string, lib: string, chrome: string) {
     const card = html.slice(html.indexOf('id="card-${chrome}"'));
     const mis = card.match(/<figure class="plate" data-mode="mistake" hidden>(<svg class="plate-svg"[^>]*>[\\s\\S]*?<\\/svg>)/)[1];
     console.log(JSON.stringify({ problems: R.problems, mistake: createHash('sha256').update(mis).digest('hex') }));`;
-  const r = spawnSync(process.execPath, ['--input-type=module', '-e', code], { cwd: T, encoding: 'utf8', maxBuffer: 1 << 28 });
+  const r = await run(process.execPath, ['--input-type=module', '-e', code], { cwd: T, encoding: 'utf8', maxBuffer: 1 << 28 });
   if (r.status !== 0) throw new Error(r.stderr || r.stdout);
   return JSON.parse(r.stdout.trim().split('\n').pop()!) as { problems: string[]; mistake: string };
 }
 /** One pinned layers page built in `T` (howto-rebuild --page, T's own modules). */
-function layersPage(T: string, golden: string): Buffer {
+async function layersPage(T: string, golden: string): Promise<Buffer> {
   const out = join(T, 'out.layers.html');
-  const r = spawnSync(process.execPath, ['scripts/howto-rebuild.mjs', '--page', golden, 'layers-page', out], { cwd: T, encoding: 'utf8' });
+  const r = await run(process.execPath, ['scripts/howto-rebuild.mjs', '--page', golden, 'layers-page', out], { cwd: T, encoding: 'utf8' });
   if (r.status !== 0) throw new Error(r.stderr || r.stdout);
   return readFileSync(out);
 }
@@ -95,17 +100,17 @@ function layersPage(T: string, golden: string): Buffer {
 describe('F-W8A-ASSISTED A2: assisted_pull_up passes HT4/A5 on a scratch tree that stages it on lb01.layers', () => {
   let T = '';
   beforeAll(() => { T = tree({ [LB01]: withAssisted }); }, 120_000);
-  it('green: protected, fragments and poses pass; its layers Mistake svg is the plates pin 5324dd0b…', () => {
-    const got = ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up');
+  it('green: protected, fragments and poses pass; its layers Mistake svg is the plates pin 5324dd0b…', async () => {
+    const got = await ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up');
     expect(got.problems).toEqual([]);
     expect(got.mistake).toBe(PLATES_MISTAKE);
   }, 300_000);
-  it('m1: without the applyMistakeGhosts call, the CI fragments line', () => {
-    const got = mutated(T, { [BUILDER]: swap(CALL, '') }, () => ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up'));
+  it('m1: without the applyMistakeGhosts call, the CI fragments line', async () => {
+    const got = await mutated(T, { [BUILDER]: swap(CALL, '') }, () => ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up'));
     expect(got.problems).toEqual([`lib_assisted_pull_up * HT4/A5-fragments@*: ${CI_FRAGMENTS}`]);
   }, 300_000);
-  it('m4: sideOf without the under branch, the CI poses line', () => {
-    const got = mutated(T, { [HT4]: swap("    for (const z of posture) if (underOf(z) && id === `${z.key}-under`) return { z, role: 'under' };\n", '') }, () => ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up'));
+  it('m4: sideOf without the under branch, the CI poses line', async () => {
+    const got = await mutated(T, { [HT4]: swap("    for (const z of posture) if (underOf(z) && id === `${z.key}-under`) return { z, role: 'under' };\n", '') }, () => ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up'));
     // the CI line, and the under side's own anti-blindness entry (still declared) on the same poses row
     expect(got.problems).toEqual([`lib_assisted_pull_up * HT4/A5-poses@*: ${CI_POSES}`,
       'lib_assisted_pull_up * HT4/A5-poses@*: assisted_pull_up|knee-pad|under: no renderPlate call captured for this declared zoom side (anti-blindness)']);
@@ -116,11 +121,11 @@ describe('F-W8A-ASSISTED A1/m3: a pinned layers page keeps its bytes; ghosts str
   const LB01_GOLDEN = 'tests/howto/golden/library/lb01.json', committed = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb01.layers.html'));
   let T = '';
   beforeAll(() => { T = tree(); }, 120_000);
-  it('lb01.layers rebuilt in a tree equals the committed page', () => {
-    expect(sha(layersPage(T, LB01_GOLDEN))).toBe(sha(committed()));
+  it('lb01.layers rebuilt in a tree equals the committed page', async () => {
+    expect(sha(await layersPage(T, LB01_GOLDEN))).toBe(sha(committed()));
   }, 300_000);
-  it('m3: mistakeGhostsOff true for every spec (the field ignored) changes the lb01 layers page', () => {
-    const got = mutated(T, { [GHOSTS]: swap('export const mistakeGhostsOff = spec => spec?.mistakeGhosts === false;', 'export const mistakeGhostsOff = spec => !!spec;') }, () => layersPage(T, LB01_GOLDEN));
+  it('m3: mistakeGhostsOff true for every spec (the field ignored) changes the lb01 layers page', async () => {
+    const got = await mutated(T, { [GHOSTS]: swap('export const mistakeGhostsOff = spec => spec?.mistakeGhosts === false;', 'export const mistakeGhostsOff = spec => !!spec;') }, () => layersPage(T, LB01_GOLDEN));
     expect(sha(got)).not.toBe(sha(committed()));
   }, 300_000);
 });
@@ -129,8 +134,8 @@ describe('F-W8A-ASSISTED A1/m3: a pinned layers page keeps its bytes; ghosts str
 // group, already passed through mistakeSvg, before the Mistake </svg>, and the scratch lb09 page with v_up built a6b8c65c…
 // in both orders. This guard keeps v_up's layers Mistake svg equal to its plates pin.
 describe('F-W8A-ASSISTED (Q1): v_up, ghosts off with a Mistake zoom, on a scratch lb09.layers', () => {
-  it('HT4/A5 passes; its layers Mistake svg equals its lb09.json plates pin (fragments)', () => {
-    const got = ht4(tree({ [LB09]: withVup }), 'lib_v_up', 'v-up');
+  it('HT4/A5 passes; its layers Mistake svg equals its lb09.json plates pin (fragments)', async () => {
+    const got = await ht4(tree({ [LB09]: withVup }), 'lib_v_up', 'v-up');
     expect(got.problems).toEqual([]);
   }, 300_000);
 });
@@ -138,7 +143,17 @@ describe('F-W8A-ASSISTED (Q1): v_up, ghosts off with a Mistake zoom, on a scratc
 // A1 MANIFEST (F-PAIR-FAULTS A2 form): MANIFEST.json, made by manifestOf in this card's [golden update] commit, moves only
 // build-layers-page.mjs's key. With that key blanked in every row, it is main e15e1c65's MANIFEST.json with the same blank
 // (134 rows carry the key), and each row pins the file's current sha256.
+// LIB-PLATEFIX-5 (D-PF5-PINS): PF5's own [golden update] also moves its re-pinned keys and entries; they are put back to
+// main a4796243's values first (restorePF5, plus crop.mjs which restorePF5 leaves to the D-CROP-PIN tests), so the blanked
+// hash is still main's MANIFEST_BLANKED_MAIN and this card's "only build-layers-page.mjs moved" pin, measured on main, holds.
 const MOVED = 'tools/plates/library/build-layers-page.mjs';
+const CROP = 'tools/plates/library/render/closeup/crop.mjs';
+const CROP_MAIN = '9c1fe67d96ce08f6f5df084ef3efe692260d09be9ca60eaf254a899c70dc03b3';   // crop.mjs on main a4796243 (PF5 moved it; the 4 D-CROP-PIN tests pin it to the current file instead)
+// F-HAND-PALMFLAT-SIZE (#424, F-W8A-HOLDS part 3; card rule "add that key to its moved-key list"): its [golden update] also moves
+// hands/pairs.mjs's key (134 rows); it is put back to main a4796243's value here too. That card's own blanked-keys test pins
+// the key to the current file.
+const PFS_PAIRS = 'tools/plates/library/hands/pairs.mjs', PFS_PAIRS_MAIN = '3e89feda3da3f017c970dae250ef4bd6c9c8c82500f861b0c6a720c5c7856ffa';
+const toMain = (m: any) => { restorePF5(m); for (const r of Object.values<any>(m.rows)) { if (CROP in r.files) r.files[CROP] = CROP_MAIN; if (PFS_PAIRS in r.files) r.files[PFS_PAIRS] = PFS_PAIRS_MAIN; } return m; };   // F-HAND-PALMFLAT-SIZE: + the pairs.mjs key
 const MANIFEST_BLANKED_MAIN = 'ab3f030b4f4be65d64ea3d0431000526c88e1feb5c48882c113605c9fa21ad95';
 const blanked = (m: any) => { const c = structuredClone(m); let n = 0; for (const r of Object.values<any>(c.rows)) if (MOVED in r.files) { r.files[MOVED] = ''; n++; } return { n, sha: sha(JSON.stringify(c)) }; };
 describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
@@ -146,15 +161,27 @@ describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
   it('only build-layers-page.mjs\'s key differs from main, and it pins the current file', () => {
     const m = raw(), now = sha(readFileSync(join(ROOT, MOVED)));
     for (const [id, r] of Object.entries<any>(m.rows)) if (MOVED in r.files) expect([id, r.files[MOVED]]).toEqual([id, now]);
+    // LIB-SHIP W8b (ruling 3): W8b's own moves (checks/ship-w8b.ts W8B_MOVED, each pinning its current file) go back to
+    // main e15e1c65's values first; then the check runs unchanged
+    const probs: string[] = [], back = lessW8b(m, p => sha(readFileSync(join(ROOT, p))), probs);
+    expect(probs).toEqual([]);
     // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): its moved keys each pin their current file (scProblems), then are put back
-    // to main a4796243's values (restoreSC), so main's blanked pin holds unchanged
+    // to main's values (restoreSC) after W8b's and PF5's, so main's blanked pin holds unchanged
     expect(scProblems(m)).toEqual([]);
-    expect(blanked(restoreSC(m))).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });
+    expect(blanked(restoreSC(toMain(back)))).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });   // LIB-PLATEFIX-5 (D-PF5-PINS): PF5's re-pinned keys/entries put back to main too (merge of main 5b7d6e80)
+  });
+  it('LIB-SHIP W8b reds: a W8b-moved key off its file, and a W8b key left moved, are red', () => {
+    const m = raw(), f = (p: string) => sha(readFileSync(join(ROOT, p)));
+    const [id] = Object.entries<any>(m.rows).find(([, x]) => 'tools/plates/library/batches/lb04.json' in x.files)!;
+    const off = structuredClone(m); off.rows[id].files['tools/plates/library/batches/lb04.json'] = '0'.repeat(64);
+    const probs: string[] = []; expect(blanked(toMain(lessW8b(off, f, probs))).sha).not.toBe(MANIFEST_BLANKED_MAIN);
+    expect(probs).toEqual([`${id}: tools/plates/library/batches/lb04.json off its file`]);
+    expect(blanked(toMain(structuredClone(m))).sha).not.toBe(MANIFEST_BLANKED_MAIN);
   });
   it('red: any other key moved', () => {
-    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1)!;
-    const other = Object.keys(r.files).find(k => k !== MOVED)!;
+    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && !(k in PF5_MAIN) && !(k in W8B_MOVED)))!;
+    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && !(k in PF5_MAIN) && !(k in W8B_MOVED))!;   // LIB-SHIP W8b: nor one W8b moves   // F-HAND-PALMFLAT-SIZE: not the pairs.mjs key either   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
     m.rows[id].files[other] = '0'.repeat(64);
-    expect(blanked(m).sha).not.toBe(MANIFEST_BLANKED_MAIN);
+    expect(blanked(toMain(lessW8b(m, p => sha(readFileSync(join(ROOT, p)))))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W8b: W8b's moves out first; LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash
   });
 });

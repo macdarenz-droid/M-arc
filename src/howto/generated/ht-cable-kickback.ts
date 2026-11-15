@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=f8eddf01713c7225c73130d0470e3edacd3be12b97d28719aa73cdde3ddcf340
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=1b522a21e0e7e16296e502409325d6974e026a9360c513f6a61c5a0144610fe9
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_cable_kickback",
   name: "Cable Kickback",
-  hashes: { inputsSha256: "f8eddf01713c7225c73130d0470e3edacd3be12b97d28719aa73cdde3ddcf340", golden: "3f00f84c2ca5a3f822f9639ea9fc9e3595862dbc2e915bef2d970a726095cf81" },
+  hashes: { inputsSha256: "1b522a21e0e7e16296e502409325d6974e026a9360c513f6a61c5a0144610fe9", golden: "3f00f84c2ca5a3f822f9639ea9fc9e3595862dbc2e915bef2d970a726095cf81" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

@@ -100,8 +100,8 @@ export const stills = {
   flare: { pose: { ...END, ...MIS } },
   twist: { pose: { ...END, ...TWISTED } },
 };
-// The cer-turn Wrong's rotation arrow (W6 panel L1/L5, c8: the torso turning): the plate engine's mistake guide
-// 'arc-arrow' (vendor/engine/plate.mjs) around the turned chest, under it, running toward the working side, the way the
+// The cer-turn Wrong's rotation arrow (W6 panel L1/L5, c8: the torso turning): the crop's guide 'turn'
+// (render/closeup/crop.mjs, the engine arc-arrow's form; LIB-PLATEFIX-5 item 1) around the turned chest, under it, running toward the working side, the way the
 // chest turns. Its radius TURN_R (plate px) and angles TURN_A (screen deg, 90 = straight down) are drawing values.
 const TURN_R = 24, TURN_A = [155, 25];
 
@@ -129,14 +129,15 @@ const zooms = [
   },
   {
     key: 'cer-turn', chip: 'Torso', heading: 'Torso still', kind: 'posture',   // card zoom key: cer-turn
-    // W6 panel L1/L5: the Wrong is not solid: the square Right torso is drawn, the twisted torso dashed red over it,
-    // with the rotation arrow (TURN_R, TURN_A) in the Wrong only.
+    // LIB-PLATEFIX-5 item 1 (W6 panel, D-PLAN-W8C): the Wrong is the twisted torso drawn solid over the faded square
+    // Right (wrong.under, the page's css fade), with the rotation arrow (TURN_R, TURN_A; crop guide 'turn', drawn when
+    // solid, unlike the engine's arc-arrow) in the Wrong only.
     // The Right is the end pose with its trunk 0 written as an object (the same pose), since the engine refuses a number
     // trunk under an object one (D-LIB20-TRUNK).
     crop: { center: { at: 'chest', pose: 'right', off: [20, 0] }, sizePx: 200 },
     right: { base: 'end', pose: { trunk: { flex: 0, yaw: 0 } } },
-    wrong: { base: 'end', pose: TWISTED },
-    guides: [{ kind: 'arc-arrow', center: 'chest', r: TURN_R, a0: TURN_A[0], a1: TURN_A[1] }],
+    wrong: { base: 'end', pose: TWISTED, solid: true, under: true },
+    guides: [{ kind: 'turn', center: 'chest', r: TURN_R, a0: TURN_A[0], a1: TURN_A[1] }],
     callout: {
       right: { text: 'Torso still', anchor: 'chest' },
       wrong: { text: 'Torso twists', anchor: 'chest' },

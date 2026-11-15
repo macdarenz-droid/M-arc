@@ -487,6 +487,28 @@
           "where": "Is the Pendulum Squat Safe?"
         }
       ]
+    },
+    {
+      "id": "c23",
+      "text": "The weight carriage swings through a curved path like a pendulum, not a straight line, and the descent follows the pendulum arc (FORM's page, written for the Primal Pendulum Squat).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "wff-pend"
+      ],
+      "quotes": [
+        {
+          "source": "wff-pend",
+          "text": "The Primal Pendulum Squat uses a pendulum arc. The weight carriage swings through a curved path like a pendulum rather than travelling in a straight line.",
+          "where": "Intro"
+        },
+        {
+          "source": "wff-pend",
+          "text": "Allow the carriage to swing forward and down, following the pendulum arc.",
+          "where": "Execution: descent"
+        }
+      ]
     }
   ],
   "sources": [
@@ -508,7 +530,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-22"
+      "checked": "2026-11-10"
     },
     {
       "id": "xcel-pend",
@@ -545,7 +567,7 @@
     "view": "side",
     "viewWhy": "Depth (thighs to parallel, c4, c6), the back on the pad (c3), the upright torso (c5) and the heels lifting (c9) are sagittal.",
     "equipment": "Pendulum squat machine (census need pendulum, missing): swinging arm on a pivot with shoulder pads and a back pad, a fixed foot platform, handles and a safety latch (c1, c4). Floor line.",
-    "frames": "Rep convention: start standing at the top of the arc, end at the bottom (thighs parallel or lower); Trace follows the knee.",
+    "frames": "Rep convention: start standing at the top of the arc, end at the bottom (thighs parallel or lower); Trace follows the machine's pendulum arc (c23).",
     "start": "Standing on the platform, shoulders under the pads, back against the back pad (c1, c3); feet about hip- to shoulder-width (c2); latch released (c4).",
     "end": "Knees bent, thighs parallel to the floor or a little lower (c4, c6); knees over the toes (c6); torso upright and back on the pad (c3, c5); heels flat (c9).",
     "checkpoints": [

@@ -213,8 +213,9 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   test); c12 "shoulder-width", "slightly out" (widths: FOOT_X, TOE_OUT); c13 knees over the toes (frontal); c3 the locks
   and c16 the lever (no drawable state); c14 the heel lift (a fault's sign; the whole-foot contact covers it); the rail
   angle and plate tilt (equipment numbers with no measure callout, D-LIB8M-FACTS).
-- **Trace**: `knee.r` (plate.frames "Trace follows the knee"), trim [6, 8], the clone source's (leg_press.mjs:132;
-  D-LIB18-TRIM). **measured 26.4 px**: passes.
+- **Trace**: `hip.r` (plate.frames "Trace follows the machine's pendulum arc (c23)"; the hip rides the back pad, c3;
+  D-PF5-PENDHIP, LIB-PLATEFIX-5 item 2; was `knee.r`, D-LIB18-TRACE), trim [6, 6] so the arrowhead ends on the end hip.
+  **measured 62.1 px** (83 % of the 74.5 px hip arc): passes.
 - **Balance**: machine-held, inside the back-pad and foot contacts: the centre of mass 30.8-31.3 cm ahead of the upper
   back's contact and 68.7-86.4 cm behind the toes in every drawn pose and ghost.
 - **Sizes**: lb8/sizes.json `hack_squat` and `hackSled`. PLATE_Y 0.20 m has a frame-stack basis only (no source gives a

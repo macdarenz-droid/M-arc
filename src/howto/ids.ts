@@ -1,10 +1,10 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/ids.mjs). inputsSha256=0ed5c8be46664c53030c4f251c3de72d60897bf0b10d2d97f2674e25ae926b5b
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/ids.mjs). inputsSha256=abdf7c15e6540c3c76ee73169fe67ca58feaa2ab7ac8e7c5bf0f39d975f101c2
 // Main-bundle How-to module (plan 2.9, 5.2): 4-char hashes of the shipped ids, hinted ids first.
 export type HowToId = string & { readonly __howTo: true };
 export const HOWTO_LABEL = "How to do it";
-const S = "2eTgEhDkUMbGU]od`?G=;OVKR?oeeYPaW@NI22\\X@@[:2`_N8@HYhf\\Qc3;MnWZC5\\CXiQi]D28A3H^9CJNAR^_<XSB6EPK8JcA97j_QlaHDin<=1T<2<4Z3<2cCbhh:k=d?K=o^m`\\?c4GNk=dIX8PiIX2>95CobRa>1C[6e^l0W\\RZIom\\Il]VKcBhmjc=;Vh7j371Dl4EZV5C^QOaeNI0JB8c_IRS[XT28TQ=b8RlnTXNPYedPcYPRC0kM>dLlD2L18f@U\\R=nLUTH@YoZg4JZSR^8hf>";
-const H = ["Heel of palm, wrist straight.","Handle firm in palm, wrist neutral.","Palm heel, wrist not bent back.","Hands against the rope knobs.","Wrist in line with the forearm."];
-const O = "ABBCDE";
+const S = "2eTge:>A9:EPEhDkUMbGU]od`?G=;OVKR?oeeYPaW@NI22\\X@@[:2`_N8@HYhf\\Qc3;MnWZC5\\CXiQi]D28A3H^9CJNA`oWUR^_<XSB6ghfnEPK8JcA97j_QlaHDin<=1T<2ML?Qmg`AZ3EF\\MVL<4Z3<2cCbhh:`nVck=d?K=o^m`\\?c4GNk=dIX8PiIX2>95CobRa>1C[6e^l0W\\RZIom\\Il]VKcBhmjc=;Vh7j371Dl4EZV5C^QOaeNI0JB8c_IRS[XT28TQ=b8RlnTXNPYedPcYPRC0kM>dLlD2L18f@U\\R=nLUTH@YoZg4JZSR^8hf>";
+const H = ["Heel of palm, wrist straight.","Both hands round handle, palms up.","Wrist in line with the forearm.","Handle firm in palm, wrist neutral.","Palm heel, wrist not bent back.","Hands against the rope knobs."];
+const O = "ABCDDEFC";
 function at(s: string): number {
   if (!s.startsWith('lib_')) return -1;
   let x = 0x811c9dc5, t = '';

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=609b55c1de06c51cf2bd7af98d5bd379c519fe1e88b5a27ed77d8f869c32cbd5
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=578e4835f974cefe4844d086728210aa960ba3dff7f6696aaf0d25eaae3c2115
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_horizontal_leg_press",

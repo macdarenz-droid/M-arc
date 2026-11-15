@@ -67,16 +67,20 @@ export const stills = {
 
 /* ------------------------------------------------------------------------------------------------ zooms --------- */
 // One per card zoom except add-back (a text checkpoint, above); the card has no hand zoom. Zoom shell form
-// (render/closeup/crop.mjs): callouts anchored at the landmark they name, no guide mark; the Wrong (`stills.wide`)
+// (render/closeup/crop.mjs): callouts anchored at the landmark they name; the Wrong (`stills.wide`)
 // is dashed over the solid Right.
 const zooms = [
   {
     key: 'add-start', chip: 'Start width', heading: 'Start width', kind: 'posture',
-    crop: { center: { at: 'hips', pose: 'right', off: [0, 10] }, sizePx: 260 },
+    // LIB-PLATEFIX-5 item 1 (W6 panel L5, D-PLAN-W8C): the window is centred on the legs (hips + 29 plate px, the Right
+    // and Wrong legs' box centre) and sized so the Wrong legs fill the panel (sizePx a drawing value).
+    crop: { center: { at: 'hips', pose: 'right', off: [0, 29] }, sizePx: 170 },
     right: 'start',
     // W6 panel L5 (#393): the Wrong is drawn as the dashed mistake over the solid Right (not alone), so the fault reads
-    // against the correct pose in one panel.
+    // against the correct pose in one panel. LIB-PLATEFIX-5 item 1: with the plate Mistake's own outward knee arrows
+    // (engine arrows, Wrong only) and grey dashed lines at the Right knees' width (crop guide 'width').
     wrong: { base: 'start', pose: MIS },
+    guides: [...plateSpec.mistake.guides, { kind: 'width', at: ['knee.r', 'knee.l'] }],
     callout: {
       right: { text: 'Light stretch', anchor: 'knee.r' },
       wrong: { text: 'Too wide', anchor: 'knee.r' },

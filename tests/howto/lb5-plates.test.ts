@@ -7,7 +7,8 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { child } from '../child-test';
+import { w8bOf } from './checks/ship-w8b';
+import { child, yieldTask } from '../child-test';
 import { renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -160,25 +161,33 @@ describe('LIB-15 A9: nothing ships (D-LIB15-AHEAD)', { timeout: T }, () => {
   // W5 ruled set as positive asserts: exactly W5's 6 LB5 ids ship; the other 9 drawn rows stay approved-plate (held);
   // every LB5 id lives in batches/lb05.json and nowhere else in batches/ (D-SHIP-MOVE).
   const W5 = ['lib_preacher_curl', 'lib_hammer_curl', 'lib_alternating_dumbbell_curl', 'lib_barbell_curl', 'lib_ez_bar_curl', 'lib_reverse_curl'];
+  // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): plus W8b's 3 LB5 ids; wrist_curl, cross_body_hammer_curl and
+  // incline_dumbbell_curl (W8b holds) and the other W5 holds stay approved-plate
+  const W8B = w8bOf('tools/plates/library/batches/lb05.json');
+  const RULED = [...W5, ...W8B];
   const stageProblems = (rows: any[]) => drawn().map(i => `lib_${i}`).flatMap(id => {
-    const r = rows.find((x: any) => x.id === id), want = W5.includes(id) ? 'shipped' : 'approved-plate';
+    const r = rows.find((x: any) => x.id === id), want = RULED.includes(id) ? 'shipped' : 'approved-plate';
     if (!r) return [`${id}: no row`];
     return r.stage === want ? [] : [`${id}: ${r.stage}`];
   });
   const someRow = { src: 'library/specs/preacher_curl.mjs', slug: 'preacher-curl', prefix: 'preacher-curl', chromeId: 'preacher-curl', mode: 'H', stage: 'drawing', view: 'side' };
-  it('LIB-SHIP W5: every LB5 row is at its ruled stage: W5\'s 6 shipped, the other 9 approved-plate', () => {
+  it('LIB-SHIP W5 + W8b: every LB5 row is at its ruled stage: W5\'s 6 and W8b\'s 3 shipped, the other 6 approved-plate', () => {
     expect(drawn().length).toBe(15);
+    expect(W8B).toEqual(['lib_bayesian_cable_curl', 'lib_dumbbell_overhead_triceps_extension', 'lib_single_arm_triceps_pushdown']);
     expect(stageProblems(reg.rows())).toEqual([]);
   });
   it('LIB-SHIP W5 reds: a W5 id back at approved-plate, a held id shipped, a held id at drawing and a dropped row are red', () => {
     const rows = reg.rows();
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_preacher_curl' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_preacher_curl: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_cable_curl' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_cable_curl: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_incline_dumbbell_curl' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_incline_dumbbell_curl: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_bayesian_cable_curl' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_bayesian_cable_curl: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_wrist_curl' ? { ...r, ...someRow, stage: 'drawing' } : r)))).toEqual(['lib_wrist_curl: drawing']);
     expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_hammer_curl'))).toEqual(['lib_hammer_curl: no row']);
   });
-  it('LIB-SHIP W5: the shipped LB5 ids are exactly W5\'s 6, in registry order; each drawn LB5 id is one registry row (lb05.json read once)', () => {
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W5);
+  it('LIB-SHIP W5: the shipped LB5 ids are exactly W5\'s 6 and W8b\'s 3, in registry order; each drawn LB5 id is one registry row (lb05.json read once)', () => {
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(reg.rows().map((r: any) => r.id).filter((i: string) => RULED.includes(i)));
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toHaveLength(9);
     const rows = reg.rows();
     for (const id of drawn()) expect(rows.filter((r: any) => r.id === `lib_${id}`).length, id).toBe(1);
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
@@ -630,8 +639,8 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     }
     return min;
   };
-  child.it('no leader comes within 6 px of the Trace, a cable or the pad; mutation: a leader boxed across the pad is red', () => {
-    for (const id of drawn()) expect(leaderGap(S[id], { factsOnly: !fullScope(id) }), id).toBeGreaterThanOrEqual(6);
+  child.it('no leader comes within 6 px of the Trace, a cable or the pad; mutation: a leader boxed across the pad is red', async () => {
+    for (const id of drawn()) { expect(leaderGap(S[id], { factsOnly: !fullScope(id) }), id).toBeGreaterThanOrEqual(6); await yieldTask(); }   // F-VITEST-RPC-2: one worker turn per spec
     const s = S.preacher_curl, cam = camOf(s), p = itemsIn(s, 'end').items.find((it: any) => it.type === 'poly' && it.z === 'mid'), c = cam.P(p.pts[2]);
     const bad = { ...s, callouts: [{ ...s.callouts[0], anchor: 'heel.r', box: { left: Math.round(c[0]! + 10), top: Math.round(c[1]! - 40) } }, ...s.callouts.slice(1)] };
     expect(leaderGap(bad)).toBeLessThan(6);
@@ -1048,9 +1057,9 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
       mistakeAlt: 'beb1eff4e8d2d51ac40fbbc8568522c442ec2270297c697ec0bc8da429c8737a'
     },
     'cable-curl': {
-      normalSvg: '6b9f1d4a3e28c34124fff69c9e2995205fed21c40fda3b2cfa792c79f21754e2',
+      normalSvg: 'e7bba6a811844b456813b5e123b7de6b6aef87fa059fe6d5478a0d3dcf713400',   // LIB-PLATEFIX-5 (D-PF5-PINS, item 3 F-CURL-ELBOWZOOM): was 6b9f1d4a, now e7bba6a8 (lb05's 'owner' cable_curl plate entry, #419 6851987591)
       normalOverlay: '5bdf60a30bfadea64e1b4f1b3e01c8418ed585ef3904814fcf9efdc022c53f0d',
-      mistakeSvg: 'b479dcca4aa4d74f37dec4170f92c0495e0f66a37e26f32ad0da4a72e2a66420',
+      mistakeSvg: '5bb1621ae96eeb7df3af311f9d7431607a83827215615fbfe139fdbdeaa308b0',   // LIB-PLATEFIX-5 (D-PF5-PINS, item 3): was b479dcca, now 5bb1621a (lb05's 'owner' cable_curl plate entry, #419 6851987591)
       mistakeOverlay: 'dca9ffb85af31565b5c48a4d7efb0c4dbadc0c947837bf960c579ac509a2cf02',
       tells: '5ca2dca05a483d50450554fda1874c76ad12597445482884932e1c0a9a5e023c',
       tempo: '73dd8f8f94901608bf64b800d986bfb05e0019ffdec860438d9058b37cbd7634',
