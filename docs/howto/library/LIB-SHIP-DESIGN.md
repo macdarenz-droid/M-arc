@@ -3077,7 +3077,7 @@ underhand at main's bytes from the start, follow-up F-UNDERHAND-FAMILY** (amend 
 
 **Other cards' tests that turn red when an id enters a committed config (Q-W8c-4; the dry run gives the exact list):**
 - f-ht10-textzoom.test.ts:163 `ht10Ruled(lib_seated_leg_curl)` false → true, plus an unlisted shipped row asserted false.
-- f-ht4-rightpose.test.ts:44 (`staged`: `expect(ids).not.toContain(id)`) and f-w8a-assisted.test.ts:57 (`withAssisted`):
+- f-ht4-rightpose.test.ts:42 (`staged`: `expect(ids).not.toContain(id)`) and f-w8a-assisted.test.ts:58 (`withAssisted`):
   each moves to an in-test, sha-pinned copy of main 8f112a6d's config with the same pins and a config-drift red.
 - f-bss-rearknee's scratch build once #426 merges (same form).
 - pair-faults.test.ts:160 `subKeysOf … main names none` and the W3 sub-key pins (:55-63), if the committed sub-keys turn
