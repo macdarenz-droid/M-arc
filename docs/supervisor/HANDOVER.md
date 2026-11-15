@@ -842,6 +842,8 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-15 ~17:50 UTC: train 98 merged** (#426 F-BSS-REARKNEE → main `ae7cb92b`). Evidence: delta PASS 6898578441 @ `d67412ad`; 92/92 green on that head, which contained `c263d13d`, after one D-WLAG-M6 re-run (m6 only). No src change, so no APK.
+  - **Order now:** #430 (merging `ae7cb92b`, then its TRAIN HEAD and my delta check) → #423 (merging main, then READY and a fresh reviewer) → W8c #429 (flip head CI; seated crop check; READY). Bulgarian stays held in W8c (S4), so the next wave takes it.
 - **Update 11-15 ~16:45 UTC.** Main `c263d13d`; weekly meter 0.43.
   - **#426:** at `d67412ad` (main merged), m6 flaked once more (NY). Its one D-WLAG-M6 re-run is finishing, with 90 checks green. Next: TRAIN HEAD → same reviewer delta → train.
   - **#430 F-WLAG-M6-TIMEOUT:** REVIEW PASS 6897360282 @ `6901df0b`. The reviewer verified the cause in vitest's runner source and reproduced it under load (1 of 3 failed without the fix, 3 of 3 passed with it). The builder applied the anchored-pin Low and merged main at `9973b6e0`; CI is running. Next: TRAIN HEAD → my delta check → train.
