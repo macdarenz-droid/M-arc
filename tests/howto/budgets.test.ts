@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { SHIPPED } from './shipped-rows';
+import { postureRows } from './checks/ship-w8c';
 
 interface Budget { chunk: string; rawMax: number; gzMax: number; measuredRaw: number; measuredGz: number; setBy: string; reason: string }
 
@@ -51,7 +52,7 @@ describe('HT-3c B3: tests/howto/budgets.json', () => {
   it('LIB-2b: every shipped row\'s posture- and feel- chunk has an entry, and none is stale', () => {
     const names = file.budgets.map(b => b.chunk);
     for (const kind of ['posture', 'feel']) {
-      const want = SHIPPED.map(r => `${kind}-${r.chromeId}-*.js`);
+      const want = (kind === 'posture' ? postureRows(SHIPPED) : SHIPPED).map(r => `${kind}-${r.chromeId}-*.js`);   // D-W8C-TEXTZOOM-LOOPS: a text-zoom row has no posture chunk
       for (const c of want) expect(names, c).toContain(c);
       for (const n of names) if (n.startsWith(`${kind}-`)) expect(want, n).toContain(n);
     }
@@ -86,8 +87,10 @@ describe('HT-3c B3: tests/howto/budgets.json', () => {
     // LIB-SHIP W5 (D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, ruling 3): and W5's 4 new shipped pair keys (barbell_curl,
     // ez_bar_curl, preacher_curl, reverse_curl), left out the same way; alternating_dumbbell_curl reuses the curl key
     const W5_HP = ['curl-bar-under', 'ez-curl-angled', 'ez-curl-over', 'ez-curl-under'].map(k => `handpair-${k}-*.js`);
-    const base = file.budgets.filter(b => b.chunk !== 'handpair-curl-dumbbell-under-*.js' && !W3_HP.includes(b.chunk) && !W5_HP.includes(b.chunk));
-    expect(base).toHaveLength(file.budgets.length - 1 - W3_HP.length - W5_HP.length);
+    // LIB-SHIP W8c (D-SHIP-W8C-STAMP): and assisted_pull_up's sub-key, left out the same way
+    const W8C_HP = ['bar-hang-only-curled-over'].map(k => `handpair-${k}-*.js`);
+    const base = file.budgets.filter(b => b.chunk !== 'handpair-curl-dumbbell-under-*.js' && !W3_HP.includes(b.chunk) && !W5_HP.includes(b.chunk) && !W8C_HP.includes(b.chunk));
+    expect(base).toHaveLength(file.budgets.length - 1 - W3_HP.length - W5_HP.length - W8C_HP.length);
     expect(problems(['lib_dumbbell_biceps_curl'], base, fx('lib_dumbbell_biceps_curl')).bad).toEqual(['handpair-curl-dumbbell-under-*.js: no entry']);
     expect(problems([], [...base, entry('rope-push-neutral', 100, 50)], fx()).bad).toEqual(['handpair-rope-push-neutral-*.js: stale']);
     // LIB-SHIP W2 (D-SHIP-PAIR-NOZOOM): rope is on the pinned no-zoom list, so pairsOf gives it no pair; the over-the-cap red

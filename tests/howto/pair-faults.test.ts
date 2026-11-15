@@ -13,7 +13,8 @@ import { pf3bProblems, restorePF3b } from './platefix3b-pins';
 import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
 import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
 import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
-import { W8B_GEN_ADDED, W8B_GEN_HEADERS, W8B_MOVED, lessW8b, w8bGenText } from './checks/ship-w8b';   // LIB-SHIP W8b (merge of main 9139c29c)
+import { W8B_GEN_ADDED, W8B_GEN_HEADERS, W8B_MOVED, lessW8b, w8bGenText } from './checks/ship-w8b';
+import { W8C_GEN_ADDED, W8C_GEN_HEADERS, W8C_MOVED, lessW8c, w8cFirst, w8cGenText } from './checks/ship-w8c';   // LIB-SHIP W8c   // LIB-SHIP W8b (merge of main 9139c29c)
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
@@ -64,10 +65,14 @@ const W3_SUB_OF: Record<string, string> = {
   lib_chin_up: 'bar-hang-only-curled-under', lib_close_grip_pulldown: 'v-handle-pull-only-curled-neutral-overhead',
   lib_inverted_row: 'bar-row-only-curled-over', lib_single_arm_lat_pulldown: 'd-handle-pull-only-curled-unstated',
 };
+// LIB-SHIP W8c (D-SHIP-W8C-STAMP #429 6895226756): assisted_pull_up's lb01 row adds exactly this sub-key, pinned at the W8c
+// flip (its panel is inside the card the delta check found unchanged but for the Mistake svg); W3's pins run unchanged
+const W8C_SUBS: Record<string, string> = { 'bar-hang-only-curled-over': '220b29cd96e71dd69f80726d07de9d8f58fb6ee2e82966cba9e0c1368a57fe80' };
+const W8C_SUB_OF: Record<string, string> = { lib_assisted_pull_up: 'bar-hang-only-curled-over' };
 
 describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws on main', () => {
   it('pairPanel(key) is byte-equal to main for every pair key', async () => {
-    expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS)].sort());   // LIB-SHIP W3
+    expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS), ...Object.keys(W8C_SUBS)].sort());   // LIB-SHIP W3, W8c
     // LIB-SHIP W5 D-SHIP-W5-EZWORDS (#392 6654996739): ez-curl-over's Right note is 'Wrist straight' (reverse_curl c1, c6); its
     // panel equals main's exactly once that one note is put back, and 'Middle of palm' is gone from it. Every other key: byte-equal.
     for (const [k, want] of Object.entries(PANEL_MAIN)) {
@@ -77,7 +82,7 @@ describe('F-PAIR-FAULTS A1/A2: a pair key with no row filter draws what it draws
       expect([k, /middle of palm/i.test(h), h.includes('Wrist straight'), h.includes('>WRIST STRAIGHT<')]).toEqual([k, false, true, true]);
       expect([k, sha(h.replaceAll('Wrist straight', 'Middle of palm').replaceAll('>WRIST STRAIGHT<', '>MIDDLE OF PALM<'))]).toEqual([k, want]);
     }
-    for (const [k, want] of Object.entries(W3_SUBS)) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);   // LIB-SHIP W3
+    for (const [k, want] of Object.entries({ ...W3_SUBS, ...W8C_SUBS })) expect([k, sha(await P.pairPanel(k))]).toEqual([k, want]);   // LIB-SHIP W3, W8c
   }, 60_000);
 });
 
@@ -164,8 +169,8 @@ describe('F-PAIR-FAULTS A1/A4: a row with pairFaults draws only those faults (la
     expect(subs.get(SUB).config).toBe('x.layers.json');
     expect(() => P.subKeysOf([{ file: 'x', closeups: { lib_mountain_climbers: MC } }, { file: 'y', closeups: { lib_mountain_climbers: { ...MC, pairFaults: ['hand-ahead', 'hand-ahead'] } } }])).toThrow(/repeats/);
     // LIB-SHIP W3: main named none; W3's 4 ruled rows name exactly their sub-keys
-    expect(Object.fromEntries(Object.entries(P.HAND_OF_ID).filter(([, k]: any) => k.includes('-only-')))).toEqual(W3_SUB_OF);
-    expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS)].sort());
+    expect(Object.fromEntries(Object.entries(P.HAND_OF_ID).filter(([, k]: any) => k.includes('-only-')))).toEqual({ ...W3_SUB_OF, ...W8C_SUB_OF });   // LIB-SHIP W8c
+    expect([...P.keysOf()].sort()).toEqual([...Object.keys(PANEL_MAIN), ...Object.keys(W3_SUBS), ...Object.keys(W8C_SUBS)].sort());
   });
 });
 
@@ -443,7 +448,9 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
   // LIB-SHIP W8b (merge of main 9139c29c): W8b's own moves (checks/ship-w8b.ts W8B_MOVED, each pinning its current file)
   // go back to main's values first (lessW8b); then the check runs unchanged
   const fsha = (p: string) => sha(readFileSync(new URL(`../../${p}`, import.meta.url)));
-  const lessW8bOk = (m: any) => { const probs: string[] = [], back = lessW8b(m, fsha, probs); expect(probs).toEqual([]); return back; };
+  // LIB-SHIP W8c: W8c's own moves (checks/ship-w8c.ts W8C_MOVED/W8C_ADDED) go back to main c263d13d's first (lessW8c), and
+  // lessW8b then sees main's pre-W8c bytes for those keys (w8cFirst); every check below runs unchanged
+  const lessW8bOk = (m: any) => { const probs: string[] = [], back = lessW8b(lessW8c(m, fsha, probs), w8cFirst(fsha), probs); expect(probs).toEqual([]); return back; };
   it('only the two keys differ from main, and each pins its current file', () => {
     const m = restoreDL(man());   // F-DL-LIFTOFF (D-DL-PINS): was man(), now its conventional how-to key back to main first; same n and hash
     for (const k of PFS_MOVED) { const now = sha(readFileSync(new URL(`../../${k}`, import.meta.url))); for (const [id, r] of Object.entries<any>(m.rows)) if (k in r.files) expect([id, k, r.files[k]]).toEqual([id, k, now]); }
@@ -451,8 +458,8 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
     expect(blank(m).sha).not.toBe(PFS_BLANKED_MAIN);   // LIB-SHIP W8b: with W8b's moves left in, it is not main's
   });
   it('red: any other key moved, or a row dropped', () => {
-    const m = man(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).some(k => !PFS_MOVED.includes(k) && !(k in W8B_MOVED)))!;
-    m.rows[id].files[Object.keys(r.files).find(k => !PFS_MOVED.includes(k) && !(k in W8B_MOVED))!] = '0'.repeat(64);   // LIB-SHIP W8b: not a W8b key
+    const m = man(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).some(k => !PFS_MOVED.includes(k) && !(k in W8B_MOVED) && !(k in W8C_MOVED)))!;
+    m.rows[id].files[Object.keys(r.files).find(k => !PFS_MOVED.includes(k) && !(k in W8B_MOVED) && !(k in W8C_MOVED))!] = '0'.repeat(64);   // LIB-SHIP W8c: nor a W8c key   // LIB-SHIP W8b: not a W8b key
     expect(blank(lessW8bOk(m)).sha).not.toBe(PFS_BLANKED_MAIN);
     const d = man(); delete d.rows[Object.keys(d.rows)[0]!];
     expect(blank(lessW8bOk(d)).sha).not.toBe(PFS_BLANKED_MAIN);
@@ -461,6 +468,11 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
     w.rows[wid].files['tools/plates/library/batches/lb05.json'] = '0'.repeat(64);
     const probs: string[] = []; expect(blank(lessW8b(w, fsha, probs)).sha).not.toBe(PFS_BLANKED_MAIN);
     expect(probs).toEqual([`${wid}: tools/plates/library/batches/lb05.json off its file`]);
+    // LIB-SHIP W8c red: a W8c-moved key off its file is reported and stays red
+    const w8 = man(), [w8id] = Object.entries<any>(w8.rows).find(([, x]) => 'tools/plates/library/batches/pilot-b.json' in x.files)!;
+    w8.rows[w8id].files['tools/plates/library/batches/pilot-b.json'] = '0'.repeat(64);
+    const p8: string[] = []; expect(blank(lessW8b(lessW8c(w8, fsha, p8), w8cFirst(fsha), p8)).sha).not.toBe(PFS_BLANKED_MAIN);
+    expect(p8).toEqual([`${w8id}: tools/plates/library/batches/pilot-b.json off its file`]);
   });
 });
 
@@ -510,34 +522,45 @@ describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fe
   // main 9139c29c's own files gives PFS_GEN_MAIN_W8B (n 316), and main's plain value there is PFS_GEN_MAIN above (both
   // measured from main 9139c29c's files); then the check runs unchanged.
   const PFS_GEN_MAIN_W8B = { n: 316, sha: 'f0ee32e7f187168e800ca55992b5a4187cd38254b49408091fc00d3b2dc16064' };
-  const w8bFiles = (files: string[], rd: (p: string) => string) => files.filter(p => w8bGenText(p, rd(p)) !== null);
-  const w8bRead = (rd: (p: string) => string) => (p: string) => w8bGenText(p, rd(p))!;
+  // LIB-SHIP W8c: the W8c then W8b transform on main c263d13d's own files gives PFS_GEN_MAIN_W8C (n 316); main's value with W8b's
+  // transform alone is PFS_GEN_MAIN_W8B above (both measured from main c263d13d's files, git show); the checks compare to it
+  const PFS_GEN_MAIN_W8C = { n: 316, sha: '3adac41a167487b705c2382e92f0000541287c3e4cf529ab91f66207faf8e4a2' };
+  // LIB-SHIP W8c: W8c's own change is taken out before W8b's the same way (checks/ship-w8c.ts w8cGenText: its 12 added
+  // files and ids.ts out, its 84 header-only files with their header blanked, loaders.ts less its 12 lines, coverage.ts's 3
+  // rows as main has them); then W8b's transform and the check run unchanged
+  const w8cOut = (p: string, t: string) => w8cGenText(p, t);
+  const w8bFiles = (files: string[], rd: (p: string) => string) => files.filter(p => { const c = w8cOut(p, rd(p)); return c !== null && w8bGenText(p, c) !== null; });
+  const w8bRead = (rd: (p: string) => string) => (p: string) => w8bGenText(p, w8cOut(p, rd(p))!)!;
   it('with the 22 headers blanked, the generated files are main\'s; the 22 are generated files', () => {
     const files = gen();
     expect(PFS_HEADERS.filter(p => !files.includes(p))).toEqual([]);
     expect(new Set(PFS_HEADERS).size).toBe(22);
     expect([...W8B_GEN_ADDED, ...W8B_GEN_HEADERS].filter(p => !files.includes(p))).toEqual([]);   // LIB-SHIP W8b: its lists are generated files
-    expect(files.length).toBe(317 + 36);   // LIB-SHIP W8b: main's 317 and W8b's 36
-    expect(blanked(w8bFiles(files, read), w8bRead(read), PFS_HEADERS)).toEqual(PFS_GEN_MAIN_W8B);
+    expect(files.length).toBe(317 + 36 + 12);   // LIB-SHIP W8b: main's 317 and W8b's 36; LIB-SHIP W8c: and W8c's 12
+    expect([...W8C_GEN_ADDED, ...W8C_GEN_HEADERS].filter(p => !files.includes(p))).toEqual([]);   // LIB-SHIP W8c: its lists are generated files
+    expect(blanked(w8bFiles(files, read), w8bRead(read), PFS_HEADERS)).toEqual(PFS_GEN_MAIN_W8C);
+    // LIB-SHIP W8c red: with W8c's change left in (W8b's transform alone), the files are not main's
+    const w8bOnly = files.filter(p => w8bGenText(p, read(p)) !== null);
+    expect(blanked(w8bOnly, p => w8bGenText(p, read(p))!, PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
   });
   it('red: a body byte moved in one of the 22, a 23rd file moved, or one of the 22 left out of the blank list', () => {
     const files = w8bFiles(gen(), read), r = w8bRead(read), [a] = PFS_HEADERS, other = files.find(p => !PFS_HEADERS.includes(p))!;
-    expect(blanked(files, p => (p === a ? `${r(p)} ` : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
-    expect(blanked(files, p => (p === other ? `x${r(p)}` : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
+    expect(blanked(files, p => (p === a ? `${r(p)} ` : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8C.sha);
+    expect(blanked(files, p => (p === other ? `x${r(p)}` : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8C.sha);
     // LIB-SHIP W8b: one of the 22 whose header W8b does not also blank (W8b's transform blanks the others' itself)
     const solo = PFS_HEADERS.filter(p => !W8B_GEN_HEADERS.includes(p));
     expect(solo.length).toBeGreaterThan(0);
-    for (const q of solo) expect([q, blanked(files, r, PFS_HEADERS.filter(p => p !== q)).sha === PFS_GEN_MAIN_W8B.sha]).toEqual([q, false]);
+    for (const q of solo) expect([q, blanked(files, r, PFS_HEADERS.filter(p => p !== q)).sha === PFS_GEN_MAIN_W8C.sha]).toEqual([q, false]);
   });
   it('LIB-SHIP W8b reds: a held id\'s coverage row shipped, a W8b loaders line left in, a body byte of a W8b header-only file, or W8b\'s change left in', () => {
     const files = gen(), r = w8bRead(read);
     const cov = 'src/howto/coverage.ts', held = read(cov).replace(/  'lib_bulgarian_split_squat': \{[^\n]*\},/, "  'lib_bulgarian_split_squat': { status: 'approved', stage: 'shipped' },");
     expect(held).not.toBe(read(cov));
-    expect(blanked(w8bFiles(files, read), p => (p === cov ? w8bGenText(p, held)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
+    expect(blanked(w8bFiles(files, read), p => (p === cov ? w8bGenText(p, held)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8C.sha);
     const lo = 'src/howto/generated/loaders.ts', extra = read(lo).replace('export const HAND', '  "lib_bulgarian_split_squat",\nexport const HAND');
-    expect(blanked(w8bFiles(files, read), p => (p === lo ? w8bGenText(p, extra)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
+    expect(blanked(w8bFiles(files, read), p => (p === lo ? w8bGenText(p, extra)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8C.sha);
     const h = W8B_GEN_HEADERS.find(p => p.includes('/ht-'))!;
-    expect(blanked(w8bFiles(files, read), p => (p === h ? w8bGenText(p, `${read(p)} `)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
+    expect(blanked(w8bFiles(files, read), p => (p === h ? w8bGenText(p, `${read(p)} `)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8C.sha);
     expect(blanked(files, read, PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN.sha);
   });
 });

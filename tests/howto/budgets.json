@@ -2394,8 +2394,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 14751853,
-      "gzMax": 3717843,
+      "rawMax": 15298218,
+      "gzMax": 3855541,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",
