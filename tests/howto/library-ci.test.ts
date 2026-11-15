@@ -354,7 +354,9 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
       'kettlebell-swing', 'bear-crawl', 'sled-push', 'medicine-ball-slam', 'farmer-s-carry'];
     for (const c of W7) expect(real.inputs.has(`docs/research/howto/lib_${c.replace(/-/g, '_')}.json`), c).toBe(true);
     for (const c of [...W2, ...W3, ...W5, ...W6, ...W7]) for (const p of [`src/howto/generated/ht-${c}.ts`, `src/howto/generated/feel-${c}.ts`, `src/howto/generated/posture-${c}.ts`, `src/slices/howto/css/zoom-${c}.css`]) expect(real.inputs.has(p), p).toBe(true);
-    expect([...real.inputs.keys()].filter((p: string) => p.includes('/handpair-')).sort()).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over',
+    // LIB-SHIP W8c: + bar-hang-only-curled-over (assisted_pull_up's sub-key); and its 3 ids' outputs (seated: no posture chunk)
+    for (const c of ['assisted-pull-up', 'dumbbell-shrug', 'seated-leg-curl']) for (const p of [`src/howto/generated/ht-${c}.ts`, `src/howto/generated/feel-${c}.ts`, `src/slices/howto/css/zoom-${c}.css`, `docs/research/howto/lib_${c.replace(/-/g, '_')}.json`, ...(c === 'seated-leg-curl' ? [] : [`src/howto/generated/posture-${c}.ts`])]) expect(real.inputs.has(p), p).toBe(true);
+    expect([...real.inputs.keys()].filter((p: string) => p.includes('/handpair-')).sort()).toEqual(['bar-hang-only-curled-over', 'bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over',
       'curl-bar-under', 'curl-dumbbell-under', 'd-handle-pull-only-curled-unstated', 'ez-curl-angled', 'ez-curl-over', 'ez-curl-under',
       'v-handle-pull-only-curled-neutral-overhead'].map(k => `src/howto/generated/handpair-${k}.ts`));   // LIB-SHIP W5: + curl-bar-under, ez-curl-angled, ez-curl-over, ez-curl-under
     const r = await run(tree, ['--input-type=module', '-e', "import { inputsMap } from './tools/plates/library/ci/affected.mjs'; const m = await inputsMap(); console.log('@@' + JSON.stringify({ proven: m.proven, why: m.why, n: m.inputs.size }));"]);
