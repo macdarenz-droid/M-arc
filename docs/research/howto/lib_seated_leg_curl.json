@@ -1,0 +1,18 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=bd09df6e0affc11c1e38523ba1d97c9a9c3cec734af10e599e14d2ce4c4ea284
+{
+  "id": "lib_seated_leg_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/seated_leg_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "sl-slc",
+    "bb-legcurl",
+    "maeo-2021",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}

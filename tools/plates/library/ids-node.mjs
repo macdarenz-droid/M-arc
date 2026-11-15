@@ -1,7 +1,7 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=0c2cfccbf856e6a8fd4da36151c66a63f648353a4d216946f5969c604872a989
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=546a2a47b7db88b7cd0b5273a5c582e6fcd72ed155ffa957c65498ae85038ec2
 // Node twin of src/howto/ids.ts (tests and the gate's harness): the same literals and decoder template, emitted
 // together by tools/plates/gen/ids.mjs (D-LIB2-hints).
-const S = "2eTge:>A9:EPEhDkUMbGU]od`?G=;OVKR?oeeYPaW@NI22\\X@@[:2`_N8@HYhf\\Qc3;MnWZC5\\CXiQi]D28A3H^9CJNA`oWUR^_<XSB6ghfnEPK8JcA97j_QlaHDin<=1T<2ML?Qmg`AZ3EF\\MVL<4Z3<2cCbhh:`nVck=d?K=o^m`\\?c4GNk=dIX8PiIX2>95CobRa>1C[6e^l0W\\RZIom\\Il]VKcBhmjc=;Vh7j371Dl4EZV5C^QOaeNI0JB8c_IRS[XT28TQ=b8RlnTXNPYedPcYPRC0kM>dLlD2L18f@U\\R=nLUTH@YoZg4JZSR^8hf>";
+const S = "2eTge:>A9:EPEhDkUMbGU]od`?G=;OVKR?oeeYPaW@NI22\\X@@[:2`_N8@HYhf\\Qc3;MRFiWnWZC5\\CXiQi]D28A3H^9CJNA`oWUR^_<XSB6ghfnEPK8JcA97j_Q536mlaHDin<=1T<2ML?Qmg`AZ3EF\\MVL<4Z3<2cCbhh:`nVck=d?K=o^m`\\?c4GNk=dIX8PiIX2>95CobRa>1C[6e^l0W\\RZIom\\Il]VKcBhmjc=;Vh7j371Dl4EZV5C^QOaeNI0JB8c_IRS[XT28TQ=b8RlnTXNPYedPcYPRC0kM>dLlD2L18f@U\\R=nLUT7CbKH@YoZg4JZSR^8hf>";
 const H = ["Heel of palm, wrist straight.","Both hands round handle, palms up.","Wrist in line with the forearm.","Handle firm in palm, wrist neutral.","Palm heel, wrist not bent back.","Hands against the rope knobs."];
 const O = "ABCDDEFC";
 function at(s) {
