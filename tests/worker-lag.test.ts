@@ -105,9 +105,9 @@ describe('F-VITEST-RPC-2 D-RPC2-EXC: the CI budget of the guard\'s lines', () =>
     ]);
     expect(new Set(EXC.map(([u]: string[]) => u)).size).toBe(3);
     // each file:line is where that test (or the file-level beforeAll) is declared
-    for (const [, at, t] of EXC as string[][]) {
+    for (const [, at, t] of EXC as [string, string, string][]) {
       const [file, n] = [at.slice(0, at.lastIndexOf(':')), Number(at.slice(at.lastIndexOf(':') + 1))];
-      const line = readFileSync(file, 'utf8').split('\n')[n - 1];
+      const line = readFileSync(file, 'utf8').split('\n')[n - 1] ?? '';
       if (t === 'beforeAll') expect(line).toMatch(/^beforeAll\(/);
       else expect(line.replace(/\\'/g, "'")).toContain(`it('${t.slice(t.lastIndexOf(' > ') + 3, -1)}'`);
     }
@@ -123,7 +123,7 @@ describe('F-VITEST-RPC-2 D-RPC2-EXC: the CI budget of the guard\'s lines', () =>
     const { budgetProblems, EXC } = await B();
     const sib = `${R17}LIB-SHIP W6: any other test"`;
     expect(budgetProblems(lag('tests/howto/lb7-plates.test.ts', 15.1, sib))).toEqual([`tests/howto/lb7-plates.test.ts 15.1 s at ${sib} (over 15 s)`]);
-    for (const [, at, t] of EXC as string[][]) {
+    for (const [, at, t] of EXC as [string, string, string][]) {
       const file = at.slice(0, at.lastIndexOf(':')), pre = t.slice(0, t.lastIndexOf(' > ') + 3);
       if (t !== 'beforeAll') expect(budgetProblems(lag(file, 15.1, `${pre}a sibling"`))).toHaveLength(1);
       expect(budgetProblems(lag(file, 15.1, `${t} `))).toHaveLength(1);              // a longer task string is not equal
@@ -132,7 +132,7 @@ describe('F-VITEST-RPC-2 D-RPC2-EXC: the CI budget of the guard\'s lines', () =>
   });
   it('a listed block over 20 s is red; at 20 s it is not', async () => {
     const { budgetProblems, EXC } = await B();
-    for (const [, at, t] of EXC as string[][]) {
+    for (const [, at, t] of EXC as [string, string, string][]) {
       const file = at.slice(0, at.lastIndexOf(':'));
       expect(budgetProblems(lag(file, 20.0, t))).toEqual([]);
       expect(budgetProblems(lag(file, 20.1, t))).toEqual([`${file} 20.1 s at ${t} (over 20 s, an excepted unit)`]);
@@ -142,7 +142,7 @@ describe('F-VITEST-RPC-2 D-RPC2-EXC: the CI budget of the guard\'s lines', () =>
     const { budgetProblems, LOCAL_BUDGET, EXC } = await B();
     expect(budgetProblems(lag('tests/howto/lb6-plates.test.ts', 10.1, 'test "x > y"'), LOCAL_BUDGET)).toEqual(['tests/howto/lb6-plates.test.ts 10.1 s at test "x > y" (over 10 s)']);
     expect(budgetProblems(lag('tests/howto/lb6-plates.test.ts', 10.0, 'test "x > y"'), LOCAL_BUDGET)).toEqual([]);
-    const [, at, t] = EXC[0], file = at.slice(0, at.lastIndexOf(':'));
+    const [, at, t] = EXC[0] as [string, string, string], file = at.slice(0, at.lastIndexOf(':'));
     expect(budgetProblems(lag(file, 19.9, t), LOCAL_BUDGET)).toEqual([]);
     expect(budgetProblems(lag(file, 10.1, `${R17}a sibling"`), LOCAL_BUDGET)).toHaveLength(1);
   });
