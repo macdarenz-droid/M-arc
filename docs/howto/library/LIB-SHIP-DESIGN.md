@@ -3095,3 +3095,44 @@ compares, and seated's two text checkpoints in Silent Black and Paper (Q-W8c-6).
   its own card, merged before W8c's LAYERS READY; W8c never edits a tool file (D-W8A-SEATEDHOLD).
 - **Q-W8c-8 the dry run also checks familyRefusal for every flipped id** (as above), so a family red is found before the
   panel, not at generate.
+
+### W8c rulings and layers evidence (#429)
+- PLAN ruled (supervisor, #429): underhand_lat_pulldown held at main's bytes (D-W8C-UNDERHAND, follow-up
+  F-UNDERHAND-FAMILY); Q-W8c-8 yes. Bulgarian: #426 had not merged at LAYERS READY (main c263d13d, train 97), so it is
+  held at main's bytes (S4) and goes to the next wave.
+- Configs committed (step 1): pilot-b (seated, 5fe00e47 rows), lb01 (assisted, 5fe00e47 rows), lb03 (shrug after
+  cable_shrug). Each page built twice from the committed configs (`howto-rebuild --page`), equal sha256, on 8f112a6d and
+  again on the merge of main c263d13d (#427 moved build-layers-page.mjs; no W8c page byte moved):
+  - pilot-b `d8230e884046d291038509dcd3a47310d6d31ae8ed3496fb54403c20557feb28`, 543,193 B: the judged W8a page itself.
+  - lb01 `2ab37576d4f646423e7ececbfea5690d078ea6b87c037844eae805e92aa0d874`, 2,483,603 B: #418's scratch page.
+  - lb03 `4ff16053553930d1fa5c483e791b10757e67bcb67a4935ff54cc8b8ba92ff927`, 1,465,175 B.
+- Card compares (gen/handpairs.mjs `cardOf`, sha256 of the card):
+  - seated_leg_curl: `5b2eb1df…33b4` = the card on the judged pilot-b page `d8230e88…`: **byte-equal (carry)**.
+  - dumbbell_shrug: `1495a28273eb…f6f6` = the judged card: **byte-equal (carry)**.
+  - assisted_pull_up (delta): new `dc2a5346…991f`, judged (lb01 `231eced9…` @ 29e4af37) `d16f8dfb…3ee2`. With the
+    Mistake figure's svg blanked in both, the cards are equal; the new Mistake svg is `5324dd0b…` (the plates pin,
+    lb01.json:469), the judged one `1a8b4e83…` (with ghosts). **Only the named change moved.**
+  - A10: every other card on the three pages equals main's page card for card (13/3/8 cards; only the W8c card is new).
+- mountain_climbers (round 2, built in scratch only): the card's hand panel is `594e9df8…` (= SCRATCH_PANEL), heads
+  UNDER SHOULDER / HAND AHEAD, no "Whole hand down" in the card; outside the panel the card differs from the judged
+  `708e7f7f…` page's card only by main's feel line (D-W8A-MCFEEL). **Dry-run red, S3:** `npm run typecheck` fails on
+  the generated `ht-mountain-climbers.ts` (TS2353: `forearmTilt` is not in `Partial<HandPose>`,
+  src/howto/content-types.ts:78-90; loaders.ts then rejects the chunk). It is the first shipped palm-flat hand zoom
+  (push_up and the other palm-flat rows ship with no hand zoom); its key's pose fields (`forearmTilt`, `cup`,
+  hands/view-palm-flat.mjs:19) have no app type. The fix is an app type or generator change, outside W8c.
+  Recommended: hold at main's bytes, follow-up **F-PALMFLAT-APPTYPE**.
+- Dry run (scratch worktree, never committed; seated, assisted, shrug flipped with scratch stamps and provisional
+  page entries): `generate` exit 0, `generate --check` exit 0, `npm run build` exit 0; `familyRefusal` null and lint []
+  for the 3 (generate's library gate). Fidelity (howto-shard's `libraryFidelity`, P 1, TZ UTC): 875 rows, 867 pass;
+  the 8 reds are only "no entry in tests/howto/budgets.json" for the new ht-/posture-/feel- chunks (added at the flip).
+  HT10: seated 14 probed = E 14 = floor 14 in all 5 themes (text-zoom row); assisted 29/29. Seconds: seated 698,
+  assisted 881, shrug 779.
+- Unit suites (tests/howto, tests/library): 86 failure records (about 81 tests), all exact-set, count, pin, budget or
+  scratch-stamp guards that the flip updates (list in the LAYERS READY comment), except four test loops that assume
+  every shipped row has a posture chunk: zooms.test.ts:67 and :196, delta.test.ts:65 and :139. seated is the first
+  shipped text-zoom row, so it has none (gen/ids.mjs:59). Recommended: those loops take the text-zoom rows out and
+  assert each has no posture chunk and no loaders POSTURE line (exact), named in the PR as other-card test edits.
+- Generator gotcha found: `generate` does not delete a held id's generated files; a hold must remove them (D-PF4 form).
+- seated text checkpoints in the app (gate-equivalent screenshots, Silent Black and Paper, 390 px, DSF 2): the app
+  prints no posture checkpoint text (Posture.tsx renders nothing; golden B prints no posture section). Both card zooms
+  appear as the plate's callouts KNEE AT PIVOT and PAD ABOVE SHOES, and in setup steps 1-2.
