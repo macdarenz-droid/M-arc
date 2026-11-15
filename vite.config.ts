@@ -28,5 +28,7 @@ export default defineConfig({
     environment: 'node',
     // F-GEN-WALK-SPEED: one cache folder per run for tests/walk-cache.ts, removed when the run ends
     globalSetup: ['tests/walk-cache-setup.ts'],
+    // F-VITEST-RPC-2: the worker-lag guard (tests/worker-lag.ts) in every worker, child.it children included
+    setupFiles: ['tests/worker-lag-setup.ts'],
   },
 });

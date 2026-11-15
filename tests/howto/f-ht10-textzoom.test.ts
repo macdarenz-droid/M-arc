@@ -2,10 +2,11 @@
 // on the row's own judged layers card; only a ruled text-zoom row (text-zooms.json, checked by textZoomRow) may go
 // below 15, and only to its own E. Browser-free: the counting runs on a fake DOM (project convention: no jsdom); the
 // live counts and the measured steps come from CI's "HT10 steps" lines.
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 // @ts-expect-error plain .mjs build tool, no types
 import { HT10_FLOOR, ht10Expected, ht10Floor, ht10Ruled, ht10TermsOfDoc } from '../../tools/plates/library/fidelity.mjs';
 
@@ -132,6 +133,15 @@ describe('F-HT10-TEXTZOOM E: the exact ht10Script step count', () => {
 });
 
 describe('F-HT10-TEXTZOOM floor: max(15, E), a ruled text-zoom row its own E', () => {
+  // F-VITEST-RPC-2 (proof run 3, unit-tz Manila job 132558632274: "ruled only through textZoomRow" timed out at 5.13 s;
+  // 2.4-4.6 s on other runs): ht10Ruled's first import of each How-to sheet evaluates it in the test's 5 s. The same
+  // modules are imported here first, by the URLs ht10Ruled imports, so the test reads them from the module cache. No
+  // assertion, value or timeout changes.
+  beforeAll(async () => {
+    await import(/* @vite-ignore */ pathToFileURL(join(ROOT, 'tools/plates/gen/zooms.mjs')).href);
+    for (const id of ['lib_machine_pullover', 'lib_smith_machine_shoulder_press', 'lib_push_up', 'lib_seated_leg_curl'])
+      await import(/* @vite-ignore */ pathToFileURL(join(ROOT, `tools/plates/library/howto/${id}.howto.mjs`)).href);
+  });
   it('a row not ruled keeps at least 15 (m1)', () => {
     expect(HT10_FLOOR).toBe(15);
     expect(ht10Floor(14, false)).toBe(15);

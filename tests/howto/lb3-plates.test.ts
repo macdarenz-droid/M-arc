@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
 import { renderOf } from '../walk-cache';
 
@@ -974,6 +975,7 @@ describe('LIB-13 A4: runQa node half on an LB3 plate (lib_conventional_deadlift)
     let hit: any = null;
     for (const [dx, dy] of [[0, -1], [1, 0], [-1, 0], [0, 1]]) {
       for (let d = 1; d <= 80 && !hit; d++) {
+        await yieldTask();   // F-VITEST-RPC-2: one worker turn per step
         const box = { left: c0.box.left + dx! * d, top: c0.box.top + dy! * d }, is = plate.renderPlate(at(box), { id: 'm' }).report.issues;
         if (is.some((i: string) => !i.startsWith(`figure:${c0.text}`))) break;
         if (is.length) hit = { box, clean: { left: box.left - dx!, top: box.top - dy! } };

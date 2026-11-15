@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { promisify } from 'node:util';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { fixtureTreeInChild } from '../child-test';   // F-VITEST-RPC-2
 import { inputsMapOf } from '../walk-cache';
 // @ts-expect-error plain .mjs build tool, no types
 import { JOB_BUDGET_S, SHARD_TARGET_S as LIB_TARGET, idsOfShard, libraryIds, libraryPlan, planK, readTimes, shardLoads } from '../../tools/plates/library/ci/plan.mjs';
@@ -283,7 +284,7 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
   let F: any, tree: string, base: string;
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ new URL('./fixtures/lib2b/fixture.mjs', import.meta.url).href);
-    tree = F.fixtureTree(); tmps.push(tree);
+    tree = await fixtureTreeInChild(); tmps.push(tree);
     cpSync(join(ROOT, 'scripts'), join(tree, 'scripts'), { recursive: true });
     const g = await run(tree, ['tools/plates/generate.mjs']);
     if (g.code !== 0) throw new Error(`generate failed in the fixture tree:\n${g.out}`);
@@ -548,7 +549,7 @@ describe('C5: the verdict family is red on every D-LIB4-VERDICT item (LIB-2b fix
   const times = { default: 600, c0: 0, once: { run: 400, shard: 0 }, ids: {} };
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ new URL('./fixtures/lib2b/fixture.mjs', import.meta.url).href);
-    tree = F.fixtureTree(); tmps.push(tree);
+    tree = await fixtureTreeInChild(); tmps.push(tree);
     const g = await run(tree, ['tools/plates/generate.mjs']);
     if (g.code !== 0) throw new Error(`generate failed in the fixture tree:\n${g.out}`);
     all = registryRows(tree);
@@ -670,7 +671,7 @@ describe('C9: L1 rebuilds every pinned page: committed == rebuilt == pin (LIB-2b
   let F: any, tree: string;
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ new URL('./fixtures/lib2b/fixture.mjs', import.meta.url).href);
-    tree = F.fixtureTree(); tmps.push(tree);
+    tree = await fixtureTreeInChild(); tmps.push(tree);
     cpSync(join(ROOT, 'scripts'), join(tree, 'scripts'), { recursive: true });
   }, 600_000);
   const L1 = async () => {
