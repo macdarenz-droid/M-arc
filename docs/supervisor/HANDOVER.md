@@ -842,6 +842,12 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-15 ~16:45 UTC.** Main `c263d13d`; weekly meter 0.43.
+  - **#426:** at `d67412ad` (main merged), m6 flaked once more (NY). Its one D-WLAG-M6 re-run is finishing, with 90 checks green. Next: TRAIN HEAD → same reviewer delta → train.
+  - **#430 F-WLAG-M6-TIMEOUT:** REVIEW PASS 6897360282 @ `6901df0b`. The reviewer verified the cause in vitest's runner source and reproduced it under load (1 of 3 failed without the fix, 3 of 3 passed with it). The builder applied the anchored-pin Low and merged main at `9973b6e0`; CI is running. Next: TRAIN HEAD → my delta check → train.
+  - **#423:** `fac8042a` is 92/92 green; the builder is running HT-8/HT-9 mutations before READY.
+  - **W8c #429:** LAYERS APPROVED 6895226756 for 3 ids (seated, assisted, shrug; N 81 → 84). The assisted delta check passed (the Mistake svg is the one change). Held: underhand (D-W8C-UNDERHAND), mountain_climbers (D-W8C-MCHOLD: TS2353 `forearmTilt`) and bulgarian (S4). The flip head `3b78b04a` is in CI. The seated crop check runs from its gate screenshots before review.
+  - **Follow-ups owed:** F-UNDERHAND-FAMILY, F-PALMFLAT-APPTYPE, F-GEN-HELD-CLEAN, F-BENCHDIP-EVAL, F-RPC2-BUDGET-CI.
 - **Update 11-15 ~13:40 UTC: train 97 merged** (#427 F-DL-LIFTOFF → main `c263d13d`). Evidence: delta PASS 6895022993 @ `cd0be660`; 92/92 green on that head, which contained main `8f112a6d`. No src change, so no APK.
   - **D-ORDER-SWAP-427:** #427 went ahead of #426. #426 was waiting on a flake re-run; the swap saves about one CI cycle.
   - **D-WLAG-M6** (#426 6895049344): main's `tests/worker-lag.test.ts` m6 can flake on a loaded runner. Its fixture project has no `testTimeout`, so the `child.it` parent test meets vitest's 5 s default; the error carries the `STACK_TRACE_ERROR` declaration stack. Each lane may re-run once, citing the ruling. The fix is F-WLAG-M6-TIMEOUT: Sonnet builder session_018Pv5bMg5PVNWwKxvLyokZR gives the fixture config a 60 s testTimeout and pins it. It trains first when ready.
