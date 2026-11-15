@@ -13,10 +13,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { afterAll, describe, expect, it } from 'vitest';
 import { createHash } from 'node:crypto';
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { cp } from 'node:fs/promises';
+import { nodeChild } from '../child-test';   // F-VITEST-RPC-2 (train 95): every tree copy and child run is awaited, so the worker never blocks on them
 import { BSS_KEY, BSS_MAIN, BSS_MAIN_OFF, BSS_ROWS, bssMainZoom, bssProblems, restoreBSS } from './f-bss-rearknee-pins';
 
 const ROOT = new URL('../../', import.meta.url);
@@ -130,10 +131,10 @@ const withBss = (s: string) => {
   c.closeups.lib_bulgarian_split_squat = { optionsKey: 'bulgarian_split_squat' };
   return `${JSON.stringify(c, null, 2)}\n`;
 };
-function scratchPage(mainWindow: boolean): string {
+async function scratchPage(mainWindow: boolean): Promise<string> {
   const T = mkdtempSync(join(tmpdir(), 'f-bss-rearknee-'));
   trees.push(T);
-  for (const p of COPY) if (existsSync(join(RUN, p))) cpSync(join(RUN, p), join(T, p), { recursive: true });
+  for (const p of COPY) if (existsSync(join(RUN, p))) await cp(join(RUN, p), join(T, p), { recursive: true });
   symlinkSync(join(RUN, 'node_modules'), join(T, 'node_modules'), 'dir');
   writeFileSync(join(T, LB04), withBss(readFileSync(join(T, LB04), 'utf8')));
   if (mainWindow) {
@@ -148,8 +149,7 @@ function scratchPage(mainWindow: boolean): string {
     const stageDir = mkdtempSync(join(tmpdir(), 'bss-stage-'));
     try { writeFileSync('out.layers.html', await buildLayersPage(layersSpecOf('tools/plates/library/batches/lb04.json', { stageDir, root: process.cwd() }))); }
     finally { rmSync(stageDir, { recursive: true, force: true }); }`;
-  const r = spawnSync(process.execPath, ['--input-type=module', '-e', code], { cwd: T, encoding: 'utf8', maxBuffer: 1 << 28 });
-  if (r.status !== 0) throw new Error(r.stderr || r.stdout);
+  await nodeChild(code, T);
   return readFileSync(join(T, 'out.layers.html'), 'utf8');
 }
 const cardIds = (h: string) => [...h.matchAll(/<article class="sheet-card" id="card-([^"]+)"/g)].map(m => m[1]!);
@@ -173,8 +173,8 @@ async function scopeProblems(now: string, base: string): Promise<string[]> {
 describe('F-BSS-REARKNEE C10: card scope on the scratch lb04 page', { timeout: 900_000 }, () => {
   let now = '', base = '';
   it('built twice equal; main\'s window gives W8b\'s judged card; only the Rear knee block moves; the card is the one the panel judges', async () => {
-    now = scratchPage(false); base = scratchPage(true);
-    expect(sha(scratchPage(false))).toBe(sha(now));
+    [now, base] = await Promise.all([scratchPage(false), scratchPage(true)]);
+    expect(sha(await scratchPage(false))).toBe(sha(now));
     expect(sha(cardOf(base, 'bulgarian-split-squat'))).toBe(JUDGED);
     expect(sha(cardOf(now, 'bulgarian-split-squat'))).toBe(PANEL_CARD);
     expect(await scopeProblems(now, base)).toEqual([]);
@@ -223,10 +223,10 @@ describe('F-BSS-REARKNEE C11: the MANIFEST blanked-keys test', () => {
 // on lb04 as C10 stages it, HT4's runNode run in a scratch tree with the tree's own modules (f-ht4-rightpose.test.ts's
 // ht4() form). Red case: the Right crop drawing a pose that is neither a reference pose nor the declared Right. ----
 const CROP_MJS = 'tools/plates/library/render/closeup/crop.mjs';
-function ht4Tree(edits: Record<string, (s: string) => string> = {}): string[] {
+async function ht4Tree(edits: Record<string, (s: string) => string> = {}): Promise<string[]> {
   const T = mkdtempSync(join(tmpdir(), 'f-bss-rearknee-ht4-'));
   trees.push(T);
-  for (const p of COPY) if (existsSync(join(RUN, p))) cpSync(join(RUN, p), join(T, p), { recursive: true });
+  for (const p of COPY) if (existsSync(join(RUN, p))) await cp(join(RUN, p), join(T, p), { recursive: true });
   symlinkSync(join(RUN, 'node_modules'), join(T, 'node_modules'), 'dir');
   for (const [p, f] of Object.entries({ [LB04]: withBss, ...edits })) {
     const before = readFileSync(join(T, p), 'utf8'), after = f(before);
@@ -239,19 +239,17 @@ function ht4Tree(edits: Record<string, (s: string) => string> = {}): string[] {
     const R = recorder(), ctx = { R, root: process.cwd() };
     await runNode(ctx, { lib: 'lib_bulgarian_split_squat', chrome: 'bulgarian-split-squat' });
     console.log(JSON.stringify(R.problems));`;
-  const r = spawnSync(process.execPath, ['--input-type=module', '-e', code], { cwd: T, encoding: 'utf8', maxBuffer: 1 << 28 });
-  if (r.status !== 0) throw new Error(r.stderr || r.stdout);
-  return JSON.parse(r.stdout.trim().split('\n').pop()!) as string[];
+  return JSON.parse((await nodeChild(code, T)).trim().split('\n').pop()!) as string[];
 }
 describe('F-BSS-REARKNEE C12: HT4 on bulgarian_split_squat with part 1 and this crop', { timeout: 600_000 }, () => {
-  it('green: protected, fragments and poses clean', () => {
+  it('green: protected, fragments and poses clean', async () => {
     expect(readFileSync(path(HOWTO), 'utf8')).toContain("off: [-40, -12] }, sizePx: 100 }");
-    expect(ht4Tree()).toEqual([]);
+    expect(await ht4Tree()).toEqual([]);
   });
-  it('red: the Right crop drawing an undeclared pose (the Right pose tilted 1 deg more) is a poses problem', () => {
+  it('red: the Right crop drawing an undeclared pose (the Right pose tilted 1 deg more) is a poses problem', async () => {
     const a = "const shown = solid ? (o.solidPose === 'merged' ? wrongPose(z) : poseOf(z.wrong)) : right;";
     const b = "const shown = solid ? (o.solidPose === 'merged' ? wrongPose(z) : poseOf(z.wrong)) : (z.key === 'rear-knee' ? mergeDeep(right, { root: { tilt: (right.root?.tilt ?? 0) + 1 } }) : right);";
-    const got = ht4Tree({ [CROP_MJS]: (s: string) => { expect(s.split(a).length - 1).toBe(1); return s.replace(a, () => b); } });
+    const got = await ht4Tree({ [CROP_MJS]: (s: string) => { expect(s.split(a).length - 1).toBe(1); return s.replace(a, () => b); } });
     expect(got).toEqual(expect.arrayContaining([expect.stringMatching(/HT4\/A5-poses@.*: bulgarian_split_squat\|rear-knee-right: poses\.(start|end) matches neither a reference pose nor its declared Right pose/)]));
   });
 });
