@@ -842,6 +842,9 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-15 ~07:40 UTC: train 95 merged** (#428 F-VITEST-RPC-2 → main `f0237bae`). Review PASS 6889918612 + delta PASS 6890951929 @ `9b7fb156`; all checks green on that head, which contained main `d92830c2`. Tests and the one `vite.config.ts` setupFiles line only, so no APK.
+  - New rule for every builder: the worker-lag guard fails any vitest block of 30 s; `tests/worker-lag-budget.mjs` holds unlisted blocks to 15 s in CI and 10 s locally (`--local`); the exception list is exact and only F-BENCHDIP-EVAL shrinks it. No lane adds entries.
+  - Next: W8b (#417) merges main → TRAIN HEAD → same reviewer delta → train 96 → APK + AAB to the owner. Then #426, #427, #423, W8c. Follow-up card owed: F-BENCHDIP-EVAL. #428 sessions archived.
 - **Update 11-15 ~06:45 UTC.** Main is still `d92830c2`; weekly meter 0.36 (03:44).
   - **#428 REVIEW FAIL @ `105b1634`** (6889918612): the D-RPC2-EXC budget list matched describe prefixes, not an exact set (Blocker), and the local 10 s target was missed by bench_dip units at 10.4-11.0 s (High).
   - **Ruled in #428 6889932435** and recorded in the card (`1d6307a2`):
