@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
@@ -61,6 +62,7 @@ describe('PF2 (a): existing zooms are byte-equal', { timeout: T }, () => {
       if (!f.endsWith('.mjs') || OURS.test(f)) continue;
       const s = (await import(/* @vite-ignore */ pathToFileURL(join(dir, f)).href)).default;
       if (s?.zoom == null) continue;
+      await yieldTask();   // F-VITEST-RPC-2: one worker turn per spec
       for (const z of zoom.zoomList(s.zoom)) { const o = zoom.zoomOf(s, { prefix: f, view: z.view }); h.update(f + o.svg + JSON.stringify([o.focus, o.circle, o.src, o.link])); n++; }
     }
     expect(n).toBe(36);   // LIB-PLATEFIX-4 (D-PF4-PINS): was 37; burpee's Mistake zoom is gone (its fault clears the plate-scale bar, platefix4-burpee)

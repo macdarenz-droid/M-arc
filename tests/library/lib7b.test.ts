@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { nodeChild } from '../child-test';
+import { callInChild, nodeChild } from '../child-test';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -22,9 +22,11 @@ beforeAll(async () => {
   F = await import(/* @vite-ignore */ url('tests/library/fixtures/lib7b/fixture.mjs'));
   ({ unsplit } = await import(/* @vite-ignore */ url('tests/library/fixtures/lib7b/unsplit.mjs')));
   ({ node } = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs')));
-  const [a, b] = await Promise.all([F.pairTree(), F.pairTree({ pair: false })]);
+  // F-VITEST-RPC-2: each tree and page is built in an awaited child, one after another (their bodies were synchronous)
+  const F7B = url('tests/library/fixtures/lib7b/fixture.mjs');
+  const a: string = await callInChild(F7B, 'pairTree'), b: string = await callInChild(F7B, 'pairTree', { pair: false });
   tmps.push(a, b); tree = a;
-  page = F.pageOf(a); raw = F.pageOf(b);
+  page = await callInChild(F7B, 'pageOf', a); raw = await callInChild(F7B, 'pageOf', b);
 }, 300_000);
 afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
 
