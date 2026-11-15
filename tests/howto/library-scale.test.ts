@@ -9,6 +9,7 @@ import { readFileSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { afterMark, nodeChild } from '../child-test';
+import { TEXT_ZOOM_SHIPPED } from './checks/ship-w8c';
 /** F-VITEST-RPC-2: synthetic.mjs buildAssets(root) (a vite build) in an awaited child; the same file -> bytes map, sent as base64. */
 const buildAssetsInChild = async (root: string): Promise<Record<string, Buffer>> => {
   const out = await nodeChild(`const S = await import(${JSON.stringify(url('tools/plates/library/scale/synthetic.mjs'))}); const a = S.buildAssets(${JSON.stringify(root)}); process.stdout.write('\\n@@' + JSON.stringify(Object.fromEntries(Object.entries(a).map(([f, b]) => [f, b.toString('base64')]))));`);
@@ -74,19 +75,28 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
       'barbell-overhead-press', 'pec-fly', 'crunch',
       // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): none of its 9 draws a hand pair, in registry order
       'dumbbell-pullover', 'dumbbell-romanian-deadlift', 'wall-sit', 'pistol-squat', 'forward-lunge', 'walking-lunge',
-      'bayesian-cable-curl', 'dumbbell-overhead-triceps-extension', 'single-arm-triceps-pushdown'];
+      'bayesian-cable-curl', 'dumbbell-overhead-triceps-extension', 'single-arm-triceps-pushdown',
+      // LIB-SHIP W8c (ruling 3; D-SHIP-W8C-STAMP #429 6895226756): seated_leg_curl (archetype balance) and dumbbell_shrug
+      // (hands/no-zoom.json, D-SHIP-HANDW4) draw no hand pair; assisted_pull_up carries one (bar-hang-only-curled-over)
+      'seated-leg-curl', 'dumbbell-shrug'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     // LIB-SHIP W5: 14 -> 19, plus W5's 5 pair curls (preacher, alternating dumbbell, barbell, ez bar, reverse), registry order
     // LIB-SHIP W7: stays 19 (W7 adds no hand pair); LIB-SHIP W8a: stays 19 (W8a adds no hand pair); LIB-SHIP W8b: stays 19
-    expect(handIds).toHaveLength(19);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
+    // LIB-SHIP W8c: 19 -> 20, plus assisted_pull_up
+    expect(handIds).toHaveLength(20);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
     expect(keys.HAND).toEqual(handIds);
-    expect(mapProblems({ ...keys, HAND: keys.POSTURE }, chromeIds)).toEqual([]);
-    expect(mapProblems(keys, chromeIds)).toEqual([`HAND: ${handIds.length} keys, not the ${chromeIds.length} shipped chrome ids in order`]);
+    // LIB-SHIP W8c (D-W8C-TEXTZOOM-LOOPS): POSTURE holds every shipped chrome id but the text-zoom rows', exactly; with it
+    // checked here, FEEL stands in for it in the whole-map checks below
+    const tz = TEXT_ZOOM_SHIPPED.map(i => i.replace(/_/g, '-'));
+    expect(tz.every(c => chromeIds.includes(c))).toBe(true);
+    expect(keys.POSTURE).toEqual(chromeIds.filter((c: string) => !tz.includes(c)));
+    expect(mapProblems({ ...keys, HAND: keys.FEEL, POSTURE: keys.FEEL }, chromeIds)).toEqual([]);
+    expect(mapProblems({ ...keys, POSTURE: keys.FEEL }, chromeIds)).toEqual([`HAND: ${handIds.length} keys, not the ${chromeIds.length} shipped chrome ids in order`]);
     expect(mapProblems({ HAND: [...handIds, 'push-up'], POSTURE: handIds, FEEL: handIds }, handIds)).toEqual([`HAND: ${handIds.length + 1} keys, not the ${handIds.length} shipped chrome ids in order`]);   // a no-hand id with a HAND entry is red
     expect(mapProblems(keys, [])).toEqual(['no shipped chrome ids']);
     expect(mapProblems(S.mapKeys(''), chromeIds)).toEqual(['HAND: no map', 'POSTURE: no map', 'FEEL: no map']);
-    expect(mapProblems({ ...keys, HAND: keys.POSTURE, FEEL: keys.FEEL.slice(1) }, chromeIds)).toHaveLength(1);   // LIB-SHIP W2: HAND set whole, so only FEEL's red counts
+    expect(mapProblems({ ...keys, HAND: keys.FEEL, POSTURE: keys.FEEL, FEEL: keys.FEEL.slice(1) }, chromeIds)).toHaveLength(1);   // LIB-SHIP W8c: HAND and POSTURE set whole from FEEL (POSTURE is checked exactly above)   // LIB-SHIP W2: HAND set whole, so only FEEL's red counts
   });
   it('chunkMaps: an own hand chunk wins over a hand pair, a pair fills in, and an unwritten posture or feel chunk has no entry', async () => {
     const ids = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));

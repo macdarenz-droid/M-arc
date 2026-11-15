@@ -319,7 +319,7 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
   const EX = new Set(['cable_external_rotation', 'diamond_push_up', 'cable_chest_press', 'hip_adduction',
     'hack_squat', 'wall_ball', 'side_plank', 'pendulum_squat', 'cable_curl', 'underhand_lat_pulldown']);
   it('157 zooms and every sheet\'s CSS hash to main\'s digest', async () => {
-    const root = join(process.cwd(), 'tools/plates/library'), all = createHash('sha256'), skipped: string[] = [];
+    const root = join(process.cwd(), 'tools/plates/library'), all = createHash('sha256'), skipped: string[] = [], w8c: string[] = [];
     let n = 0;
     for (const pf of readdirSync(join(root, 'pages')).filter(f => f.endsWith('.closeups.mjs')).sort()) {
       const { CLOSEUP_OPTIONS } = await import(/* @vite-ignore */ pathToFileURL(join(root, 'pages', pf)).href);
@@ -327,6 +327,9 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
         const hf = join(root, `howto/lib_${key}.howto.mjs`), sf = join(root, `specs/${key}.mjs`);
         if (!existsSync(hf) || opt.shell !== 'zoom' || opt.crop?.source !== 'engine') { skipped.push(`${pf}:${key}`); continue; }
         if (EX.has(key)) continue;
+        // LIB-SHIP W8c: pilot-b.closeups.mjs's new seated_leg_curl row (a text-zoom row: no posture zoom, only its CSS) is W8c's,
+        // left out exactly once so main's digest holds; its page card is byte-equal to the judged one (checks/ship-w8c.ts)
+        if (pf === 'pilot-b.closeups.mjs' && key === 'seated_leg_curl') { w8c.push(`${pf}:${key}`); continue; }
         const mod = await import(/* @vite-ignore */ pathToFileURL(hf).href), engine = await cu.engineOf(existsSync(sf) ? sf : undefined);
         const api = cu.closeupApi(mod, opt, { engine, specFile: existsSync(sf) ? sf : undefined });
         for (const z of mod.default.zooms.filter((q: any) => q.kind === 'posture')) { if (dlSkip(pf, key, z.key)) continue;   /* F-DL-LIFTOFF (D-DL-PINS): its one redrawn zoom left out */ all.update(`${pf}:${key}:${z.key}:${createHash('sha256').update(api.postureZoom(z)).digest('hex')}\n`); n++; }
@@ -334,6 +337,7 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
       }
     }
     expect(skipped).toEqual([]);
+    expect(w8c).toEqual(['pilot-b.closeups.mjs:seated_leg_curl']);   // LIB-SHIP W8c
     expect(n).toBe(156);   // F-DL-LIFTOFF (D-DL-PINS): was 157 and a71e90f7…; dl-liftoff left out, main d92830c2 measured with the same skip gives 156 and DL_W6_DIGEST
     expect(all.digest('hex')).toBe(DL_W6_DIGEST);
   });
