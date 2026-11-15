@@ -84,22 +84,33 @@ describe('F-VITEST-RPC-2 the guard fails a file that blocks its worker, naming t
   });
 });
 
-// D-RPC2-EXC (STOP 1 ruled (a), #428): the CI budget over the guard's lines, 15 s, and 20 s for an exact set of three
-// tools/** units (follow-up F-BENCHDIP-EVAL)
+// D-RPC2-EXC (STOP 1 ruled (a), #428) and D-RPC2-EXC-LOCAL (review FAIL 6889918612 ruled, #428): the budget over the
+// guard's lines, 15 s in CI and 10 s locally, and 20 s for an exact, named list of tests and one hook where three
+// tools/** units run (follow-up F-BENCHDIP-EVAL takes them off it)
 describe('F-VITEST-RPC-2 D-RPC2-EXC: the CI budget of the guard\'s lines', () => {
   const lag = (file: string, s: number, task: string) => `2026-11-14T15:00:00.0000000Z [worker-lag] ${file} ${s.toFixed(1)} s at ${task}`;
   const B = (): Promise<any> => import(/* @vite-ignore */ new URL('./worker-lag-budget.mjs', import.meta.url).href);
-  it('the excepted set is exactly the three named units, in five places', async () => {
-    const { EXC, BUDGET, EXC_BUDGET } = await B();
-    expect([BUDGET, EXC_BUDGET]).toEqual([15, 20]);
-    expect(EXC.map(([u, f, t]: string[]) => `${u} | ${f} | ${t}`)).toEqual([
-      'runQa(bench_dip) | tests/howto/lb7-plates.test.ts | test "LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md section 17) > ',
-      'bench_dip.mjs evaluation | tests/howto/lb7-plates.test.ts | beforeAll',
-      'bench_dip.mjs evaluation | tests/howto/platefix2-zoom.test.ts | test "PF2 (a): existing zooms are byte-equal > ',
-      'bench_dip.mjs evaluation | tests/howto/platefix3b-zoomhead.test.ts | test "PF3b head projection: existing zooms are byte-equal > ',
-      'platesPage(row) | tests/howto/library-rows.test.ts | test "D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped library row > ',
+  const R17 = 'test "LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md section 17) > ';
+  it('the excepted set is exactly the seven named places of the three units, each at its file:line', async () => {
+    const { EXC, BUDGET, LOCAL_BUDGET, EXC_BUDGET } = await B();
+    expect([BUDGET, LOCAL_BUDGET, EXC_BUDGET]).toEqual([15, 10, 20]);
+    expect(EXC.map(([u, at, t]: string[]) => `${u} | ${at} | ${t}`)).toEqual([
+      `runQa(bench_dip) | tests/howto/lb7-plates.test.ts:2014 | ${R17}each zoomed spec asks for its ruled zoom, and its plate fails PQ-H3 on that view at plate scale (why the zoom exists)"`,
+      `runQa(bench_dip) | tests/howto/lb7-plates.test.ts:2024 | ${R17}the node half has no problem on either zoomed plate; the bar is met inside the circle at k, never lowered"`,
+      `runQa(bench_dip) | tests/howto/lb7-plates.test.ts:2038 | ${R17}mutations: each zoom removed is red on the plate-scale bar; resistance_band_pull_apart at k 1.5 and bench_dip's trace on the still heel are red at the zoom"`,
+      'bench_dip.mjs evaluation | tests/howto/lb7-plates.test.ts:62 | beforeAll',
+      'bench_dip.mjs evaluation | tests/howto/platefix2-zoom.test.ts:58 | test "PF2 (a): existing zooms are byte-equal > the 37 zoom entries of every other spec render the svg, focus, circle, source and link they rendered before (a)"',
+      'bench_dip.mjs evaluation | tests/howto/platefix3b-zoomhead.test.ts:23 | test "PF3b head projection: existing zooms are byte-equal > every other spec\'s zoom entries render the svg, focus, circle, source, link and posture they rendered before"',
+      'platesPage(row) | tests/howto/library-rows.test.ts:551 | test "D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped library row > for the repo\'s shipped library rows and the E1 tree\'s: its ht- plate strings are the plate cut from its batch plates page, whose fragments === the batch golden plate entry; no plate or plate-fit class"',
     ]);
     expect(new Set(EXC.map(([u]: string[]) => u)).size).toBe(3);
+    // each file:line is where that test (or the file-level beforeAll) is declared
+    for (const [, at, t] of EXC as string[][]) {
+      const [file, n] = [at.slice(0, at.lastIndexOf(':')), Number(at.slice(at.lastIndexOf(':') + 1))];
+      const line = readFileSync(file, 'utf8').split('\n')[n - 1];
+      if (t === 'beforeAll') expect(line).toMatch(/^beforeAll\(/);
+      else expect(line.replace(/\\'/g, "'")).toContain(`it('${t.slice(t.lastIndexOf(' > ') + 3, -1)}'`);
+    }
   });
   it('an unlisted block over 15 s is red; at 15 s it is not', async () => {
     const { budgetProblems } = await B();
@@ -108,10 +119,31 @@ describe('F-VITEST-RPC-2 D-RPC2-EXC: the CI budget of the guard\'s lines', () =>
     // the same file as an excepted block, but another task: still the 15 s budget
     expect(budgetProblems(lag('tests/howto/lb7-plates.test.ts', 16.0, 'test "LIB-17 A15: x > y"'))).toHaveLength(1);
   });
+  it('a sibling test in a listed test\'s describe, or a listed name in another file, keeps the 15 s budget', async () => {
+    const { budgetProblems, EXC } = await B();
+    const sib = `${R17}LIB-SHIP W6: any other test"`;
+    expect(budgetProblems(lag('tests/howto/lb7-plates.test.ts', 15.1, sib))).toEqual([`tests/howto/lb7-plates.test.ts 15.1 s at ${sib} (over 15 s)`]);
+    for (const [, at, t] of EXC as string[][]) {
+      const file = at.slice(0, at.lastIndexOf(':')), pre = t.slice(0, t.lastIndexOf(' > ') + 3);
+      if (t !== 'beforeAll') expect(budgetProblems(lag(file, 15.1, `${pre}a sibling"`))).toHaveLength(1);
+      expect(budgetProblems(lag(file, 15.1, `${t} `))).toHaveLength(1);              // a longer task string is not equal
+      expect(budgetProblems(lag('tests/howto/lb6-plates.test.ts', 15.1, t))).toHaveLength(1);
+    }
+  });
   it('a listed block over 20 s is red; at 20 s it is not', async () => {
-    const { budgetProblems } = await B();
-    const t = 'test "LIB-17 resume: the LIB-ZOOM circles (D-LIBZOOM-EXTEND; DESIGN.md section 17) > each zoomed spec asks"';
-    expect(budgetProblems(lag('tests/howto/lb7-plates.test.ts', 20.0, t))).toEqual([]);
-    expect(budgetProblems(lag('tests/howto/lb7-plates.test.ts', 20.1, t))).toEqual([`tests/howto/lb7-plates.test.ts 20.1 s at ${t} (over 20 s, an excepted unit)`]);
+    const { budgetProblems, EXC } = await B();
+    for (const [, at, t] of EXC as string[][]) {
+      const file = at.slice(0, at.lastIndexOf(':'));
+      expect(budgetProblems(lag(file, 20.0, t))).toEqual([]);
+      expect(budgetProblems(lag(file, 20.1, t))).toEqual([`${file} 20.1 s at ${t} (over 20 s, an excepted unit)`]);
+    }
+  });
+  it('D-RPC2-EXC-LOCAL: with the 10 s local budget an unlisted block over 10 s is red and a listed one keeps 20 s', async () => {
+    const { budgetProblems, LOCAL_BUDGET, EXC } = await B();
+    expect(budgetProblems(lag('tests/howto/lb6-plates.test.ts', 10.1, 'test "x > y"'), LOCAL_BUDGET)).toEqual(['tests/howto/lb6-plates.test.ts 10.1 s at test "x > y" (over 10 s)']);
+    expect(budgetProblems(lag('tests/howto/lb6-plates.test.ts', 10.0, 'test "x > y"'), LOCAL_BUDGET)).toEqual([]);
+    const [, at, t] = EXC[0], file = at.slice(0, at.lastIndexOf(':'));
+    expect(budgetProblems(lag(file, 19.9, t), LOCAL_BUDGET)).toEqual([]);
+    expect(budgetProblems(lag(file, 10.1, `${R17}a sibling"`), LOCAL_BUDGET)).toHaveLength(1);
   });
 });
