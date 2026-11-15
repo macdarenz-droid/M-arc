@@ -130,12 +130,12 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     'lib_single_arm_triceps_pushdown', 'lib_bayesian_cable_curl', 'lib_dumbbell_overhead_triceps_extension'];
   // F-SHEET-COPY (#423; D-SHEETCOPY-STAMP, panel #423 6852654901 @ a4ed9e22): the sheet copy change moved the content hash
   // of the 8 and of 4 shipped library ids (their How-to sources carry a renamed zoom heading), so each is re-stamped once
-  // under that ruling after main a4796243's 74 entries (kept byte-equal), in id order. The 8's D-LIB5-STAMPS entries and
+  // under that ruling after main 8f112a6d's 83 entries (kept byte-equal), in id order. The 8's D-LIB5-STAMPS entries and
   // the 4's W3 stamps stay as main's history; the re-stamp is the current one.
   const SC_RULE = ['D-SHEETCOPY-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ a4ed9e22fc0a6e215df45a915b26135a25a88efb'];
   const SC_LIB_RESTAMPED = ['lib_chin_up', 'lib_close_grip_pulldown', 'lib_hanging_knee_raise', 'lib_inverted_row'];
   const SC_RESTAMPED = [...EIGHT, ...SC_LIB_RESTAMPED].sort();
-  const MAIN_SC_ENTRIES = { n: 74, sha: '7613f546e97bc5f3bbbef90cead6d89e22be8710485da9331578967b2abbf6eb' };   // main a4796243's reviews.json entries
+  const MAIN_SC_ENTRIES = { n: 83, sha: '7ccc2cd4845fb5d41fe9c9b8d47482aa24108487577bc0d30db64e791f6c0bbb' };   // main 8f112a6d's reviews.json entries (was main a4796243's 74, 7613f546…; + W8b's 9)
   const RULING: Record<string, string[][]> = { lib_dumbbell_biceps_curl: [W1_RULE], ...Object.fromEntries(W2_STAMPED.map(id => [id, [W2_RULE]])),
     ...Object.fromEntries(W3_STAMPED.map(id => [id, [W3_RULE]])), ...Object.fromEntries(PF_STAMPED.map(id => [id, [PF_RULE]])),
     ...Object.fromEntries(PF_RESTAMPED.map(id => [id, [W2_RULE, PF_RULE]])), ...Object.fromEntries(W4_IDS.map(id => [id, [W4_RULE]])), ...Object.fromEntries(W5_STAMPED.map(id => [id, [W5_RULE]])),

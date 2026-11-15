@@ -14,6 +14,7 @@ import { W5 } from './lib-ship-w5';
 import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
 import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
+import { lessSC } from './sheetcopy-pins';   // F-SHEET-COPY (#423)
 import exercises from '../../src/data/exercises.json';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -1650,8 +1651,11 @@ describe('LIB-SHIP W8b D-W8B-FIX L6: dumbbell_pullover\'s weight-jump risk names
 // (6856468001 @ 1f53a555), supersedes, ids, the page pin and the superseded pin; reds on every page: another approval
 // sha, another comment id, and the superseded or page pin moved.
 describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', () => {
-  const g = (b: string) => JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8'));
-  const pg = (b: string) => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
+  // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): each page's F-SHEET-COPY entry is checked (lessSC throws on any
+  // scLayersProblems) and taken off, and the page has the copy change undone, so the W8b checks below run on main's form
+  const sc = (b: string) => lessSC(JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), b, readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`)));
+  const g = (b: string) => sc(b).file;
+  const pg = (b: string) => sc(b).page;
   // The W8b entry: each chain's last, or lb03's entry 16 (D-W8B-RDLWATCH appends entry 17 over it).
   const atOf = (f: any, b: string) => W8B_LAYERS[b]!.at ?? f.entries.length - 1;
   const atWith = (f: any, b: string, o: any) => ({ ...f, entries: f.entries.map((e: any, i: number) => (i === atOf(f, b) ? { ...e, ...o } : e)) });
@@ -1680,8 +1684,11 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
 });
 
 describe('D-W8B-RDLWATCH: dumbbell_romanian_deadlift watches the lower back (c17); lb03 re-pinned', () => {
-  const f = () => JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.json'), 'utf8'));
-  const p = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.layers.html'));
+  // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): lb03's F-SHEET-COPY entry is checked and taken off, and the page has the
+  // copy change undone (lessSC), so the RDLWATCH entry is the last and its pin holds unchanged
+  const sc = () => lessSC(JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.json'), 'utf8')), 'lb03', readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.layers.html')));
+  const f = () => sc().file;
+  const p = () => sc().page;
   const lastWith = (o: any) => { const x = f(); return { ...x, entries: [...x.entries.slice(0, -1), { ...x.entries[x.entries.length - 1], ...o }] }; };
   it('the sheet: watch is exactly lower_back with the ruled line, and lower_back stays secondary', async () => {
     const m: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/howto/lib_dumbbell_romanian_deadlift.howto.mjs')).href);

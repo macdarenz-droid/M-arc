@@ -11,7 +11,7 @@ import { PF_MOVED, blankPF, pfProblems } from './platefix-pins';
 import { pf2Problems, restorePF2 } from './platefix2-pins';
 import { pf3bProblems, restorePF3b } from './platefix3b-pins';
 import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
-import { SC_MAIN, scProblems, restoreSC } from './sheetcopy-pins';   // F-SHEET-COPY (#421)
+import { SC_MAIN, scProblems, restoreSC, scGenText, toMainPairPanel } from './sheetcopy-pins';   // F-SHEET-COPY (#421)
 import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
 import { W8B_GEN_ADDED, W8B_GEN_HEADERS, W8B_MOVED, lessW8b, w8bGenText } from './checks/ship-w8b';   // LIB-SHIP W8b (merge of main 9139c29c)
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
@@ -405,7 +405,8 @@ describe('F-HAND-PALMFLAT-SIZE: a row\'s own Right note on its sub-key', () => {
     // the note is the only change: put the key's note back and it is the same row's panel without pairNote
     const plain = await P.pairPanel(SUB, P.INDEX, subsOf({ lib_mountain_climbers: { ...MC, pairWords: CAP } }));
     expect(h.replace('>UNDER SHOULDER<', '>WHOLE HAND DOWN<')).toBe(plain);
-    expect(sha(h)).toBe(SCRATCH_PANEL);
+    expect(sha(toMainPairPanel(h))).toBe(SCRATCH_PANEL);   // F-SHEET-COPY (#423): with the panel heading put back to main's ("Hand: right and wrong")
+    expect(sha(h)).not.toBe(SCRATCH_PANEL);
   });
   it('C2: the drawing passes the view\'s own checks (report.ok) with the row\'s note; the size is the key\'s (170, ruling 4)', () => {
     const r = P.renderPair('push_up', { fault: 'hand-ahead', uid: `hp-${SUB}-hand-ahead`, rightNote: NOTE.right.text });
@@ -459,7 +460,9 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
   // LIB-SHIP W8b (merge of main 9139c29c): W8b's own moves (checks/ship-w8b.ts W8B_MOVED, each pinning its current file)
   // go back to main's values first (lessW8b); then the check runs unchanged
   const fsha = (p: string) => sha(readFileSync(new URL(`../../${p}`, import.meta.url)));
-  const lessW8bOk = (m: any) => { const probs: string[] = [], back = lessW8b(m, fsha, probs); expect(probs).toEqual([]); return back; };
+  // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): its moved keys pin their current files (scProblems), then go back to main's
+  // values too (restoreSC), after W8b's
+  const lessW8bOk = (m: any) => { const probs: string[] = [], back = lessW8b(m, fsha, probs); expect(probs).toEqual([]); expect(scProblems(m)).toEqual([]); return restoreSC(back); };
   it('only the two keys differ from main, and each pins its current file', () => {
     const m = man();
     for (const k of PFS_MOVED) { const now = sha(readFileSync(new URL(`../../${k}`, import.meta.url))); for (const [id, r] of Object.entries<any>(m.rows)) if (k in r.files) expect([id, k, r.files[k]]).toEqual([id, k, now]); }
@@ -528,32 +531,39 @@ describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fe
   const PFS_GEN_MAIN_W8B = { n: 316, sha: 'f0ee32e7f187168e800ca55992b5a4187cd38254b49408091fc00d3b2dc16064' };
   const w8bFiles = (files: string[], rd: (p: string) => string) => files.filter(p => w8bGenText(p, rd(p)) !== null);
   const w8bRead = (rd: (p: string) => string) => (p: string) => w8bGenText(p, rd(p))!;
+  // F-SHEET-COPY (#423, merge of main 8f112a6d; D-PLATEFIX-PINS form): the copy change is taken out of each file first
+  // (sheetcopy-pins scGenText: its moved line-1 headers and \`hashes:\` lines blanked, except the 22 PFS_HEADERS, which this
+  // check blanks itself, and SC_GEN_HEADER_KEPT; then toMainCopy). The same pipeline on main 8f112a6d's own files gives
+  // PFS_GEN_MAIN_SC; with the copy change left in, the files are not main's (red below).
+  const scRead = (rd: (p: string) => string) => (p: string) => scGenText(p, rd(p), PFS_HEADERS);
+  const PFS_GEN_MAIN_SC = { n: 316, sha: 'eafb56733f4d9816b2e70bb4f805fc742286033cbafe9a8cf61e0b40d356f41a' };   // measured from main 8f112a6d's files
   it('with the 22 headers blanked, the generated files are main\'s; the 22 are generated files', () => {
     const files = gen();
     expect(PFS_HEADERS.filter(p => !files.includes(p))).toEqual([]);
     expect(new Set(PFS_HEADERS).size).toBe(22);
     expect([...W8B_GEN_ADDED, ...W8B_GEN_HEADERS].filter(p => !files.includes(p))).toEqual([]);   // LIB-SHIP W8b: its lists are generated files
     expect(files.length).toBe(317 + 36);   // LIB-SHIP W8b: main's 317 and W8b's 36
-    expect(blanked(w8bFiles(files, read), w8bRead(read), PFS_HEADERS)).toEqual(PFS_GEN_MAIN_W8B);
+    expect(blanked(w8bFiles(files, read), w8bRead(scRead(read)), PFS_HEADERS)).toEqual(PFS_GEN_MAIN_SC);
+    expect(blanked(w8bFiles(files, read), w8bRead(read), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);   // F-SHEET-COPY: with the copy change left in, red
   });
   it('red: a body byte moved in one of the 22, a 23rd file moved, or one of the 22 left out of the blank list', () => {
-    const files = w8bFiles(gen(), read), r = w8bRead(read), [a] = PFS_HEADERS, other = files.find(p => !PFS_HEADERS.includes(p))!;
-    expect(blanked(files, p => (p === a ? `${r(p)} ` : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
-    expect(blanked(files, p => (p === other ? `x${r(p)}` : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
+    const files = w8bFiles(gen(), read), r = w8bRead(scRead(read)), [a] = PFS_HEADERS, other = files.find(p => !PFS_HEADERS.includes(p))!;
+    expect(blanked(files, p => (p === a ? `${r(p)} ` : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
+    expect(blanked(files, p => (p === other ? `x${r(p)}` : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
     // LIB-SHIP W8b: one of the 22 whose header W8b does not also blank (W8b's transform blanks the others' itself)
     const solo = PFS_HEADERS.filter(p => !W8B_GEN_HEADERS.includes(p));
     expect(solo.length).toBeGreaterThan(0);
-    for (const q of solo) expect([q, blanked(files, r, PFS_HEADERS.filter(p => p !== q)).sha === PFS_GEN_MAIN_W8B.sha]).toEqual([q, false]);
+    for (const q of solo) expect([q, blanked(files, r, PFS_HEADERS.filter(p => p !== q)).sha === PFS_GEN_MAIN_SC.sha]).toEqual([q, false]);
   });
   it('LIB-SHIP W8b reds: a held id\'s coverage row shipped, a W8b loaders line left in, a body byte of a W8b header-only file, or W8b\'s change left in', () => {
-    const files = gen(), r = w8bRead(read);
+    const files = gen(), r = w8bRead(scRead(read));
     const cov = 'src/howto/coverage.ts', held = read(cov).replace(/  'lib_bulgarian_split_squat': \{[^\n]*\},/, "  'lib_bulgarian_split_squat': { status: 'approved', stage: 'shipped' },");
     expect(held).not.toBe(read(cov));
-    expect(blanked(w8bFiles(files, read), p => (p === cov ? w8bGenText(p, held)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
+    expect(blanked(w8bFiles(files, read), p => (p === cov ? w8bGenText(p, scGenText(p, held, PFS_HEADERS))! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
     const lo = 'src/howto/generated/loaders.ts', extra = read(lo).replace('export const HAND', '  "lib_bulgarian_split_squat",\nexport const HAND');
-    expect(blanked(w8bFiles(files, read), p => (p === lo ? w8bGenText(p, extra)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
+    expect(blanked(w8bFiles(files, read), p => (p === lo ? w8bGenText(p, scGenText(p, extra, PFS_HEADERS))! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
     const h = W8B_GEN_HEADERS.find(p => p.includes('/ht-'))!;
-    expect(blanked(w8bFiles(files, read), p => (p === h ? w8bGenText(p, `${read(p)} `)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_W8B.sha);
+    expect(blanked(w8bFiles(files, read), p => (p === h ? w8bGenText(p, scGenText(p, `${read(p)} `, PFS_HEADERS))! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
     expect(blanked(files, read, PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN.sha);
   });
 });

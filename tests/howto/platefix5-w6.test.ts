@@ -14,6 +14,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
+import { toMainZoom } from './sheetcopy-pins';   // F-SHEET-COPY (#423)
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -318,7 +319,7 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
   const EX = new Set(['cable_external_rotation', 'diamond_push_up', 'cable_chest_press', 'hip_adduction',
     'hack_squat', 'wall_ball', 'side_plank', 'pendulum_squat', 'cable_curl', 'underhand_lat_pulldown']);
   it('157 zooms and every sheet\'s CSS hash to main\'s digest', async () => {
-    const root = join(process.cwd(), 'tools/plates/library'), all = createHash('sha256'), skipped: string[] = [];
+    const root = join(process.cwd(), 'tools/plates/library'), all = createHash('sha256'), raw = createHash('sha256'), skipped: string[] = [];
     let n = 0;
     for (const pf of readdirSync(join(root, 'pages')).filter(f => f.endsWith('.closeups.mjs')).sort()) {
       const { CLOSEUP_OPTIONS } = await import(/* @vite-ignore */ pathToFileURL(join(root, 'pages', pf)).href);
@@ -328,13 +329,14 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
         if (EX.has(key)) continue;
         const mod = await import(/* @vite-ignore */ pathToFileURL(hf).href), engine = await cu.engineOf(existsSync(sf) ? sf : undefined);
         const api = cu.closeupApi(mod, opt, { engine, specFile: existsSync(sf) ? sf : undefined });
-        for (const z of mod.default.zooms.filter((q: any) => q.kind === 'posture')) { all.update(`${pf}:${key}:${z.key}:${createHash('sha256').update(api.postureZoom(z)).digest('hex')}\n`); n++; }
+        for (const z of mod.default.zooms.filter((q: any) => q.kind === 'posture')) { all.update(`${pf}:${key}:${z.key}:${createHash('sha256').update(toMainZoom(key, z.key, api.postureZoom(z))).digest('hex')}\n`); raw.update(api.postureZoom(z)); n++; }   // F-SHEET-COPY (#423): with the copy change undone
         all.update(`${pf}:${key}:css:${createHash('sha256').update(api.CSS).digest('hex')}\n`);
       }
     }
     expect(skipped).toEqual([]);
     expect(n).toBe(157);
     expect(all.digest('hex')).toBe('a71e90f787b00a46624b857f324dba2bb739ecfb619f6e8b3f80cb5121c05576');
+    expect(raw.digest('hex')).not.toBe('a71e90f787b00a46624b857f324dba2bb739ecfb619f6e8b3f80cb5121c05576');   // F-SHEET-COPY: the raw close-ups carry the copy change
   });
 });
 

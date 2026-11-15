@@ -116,8 +116,9 @@ export const SC_LAYERS_APPROVAL = 'https://github.com/macdarenz-droid/M-arc/pull
  *  reverses to its superseded entry's pin exactly (scLayersProblems). */
 export const SC_KEEP: Record<string, string[]> = {
   lb01: ['hanging-knee-raise-zoom-top-h', 'inverted-row-zoom-top-h', 'resistance-band-row-zoom-back-line-h', 'resistance-band-row-zoom-blades-h'],
-  // lb02 has no committed layers page (nothing in lb02 ships); its built page (platefix4 tests) keeps this bare stem from main
-  lb02: ['incline-barbell-bench-press-zoom-back-on-incline-pad-h'],
+  // lb02's 6-id page as main e15e1c65 configured it (built by the platefix4 tests, checks/ship-w8b.ts pf4Lb02Spec) keeps this
+  // bare stem from main; the committed lb02 page (W8b: dumbbell_pullover only) has none
+  'lb02-pf4': ['incline-barbell-bench-press-zoom-back-on-incline-pad-h'],
   lb03: ['pendlay-row-zoom-pendlay-top-h', 'landmine-row-zoom-landmine-back-h', 't-bar-row-zoom-tbar-back-h', 'barbell-shrug-zoom-shrug-top-h', 'cable-shrug-zoom-cshrug-top-h', 'smith-machine-shrug-zoom-smith-shrug-top-h'],
   lb07: ['cable-lateral-raise-zoom-clr-top-height-h'],
   lb09: ['ab-wheel-rollout-zoom-back-line-h', 'bird-dog-zoom-back-line-h'],
@@ -162,3 +163,49 @@ export function lessSC(file: any, batch: string, page: Buffer): { file: any; pag
 /** A hand-pair panel (pairs.mjs pairPanel) with the F-SHEET-COPY heading undone: "Hand" back to "Hand: right and wrong"
  *  in the h4 and the svg's aria-label (the pair-faults.test.ts toMain form). */
 export const toMainPairPanel = (h: string) => h.replaceAll('tabindex="-1">Hand</h4>', 'tabindex="-1">Hand: right and wrong</h4>').replaceAll('aria-label="Hand"', 'aria-label="Hand: right and wrong"');
+
+/** F-SHEET-COPY (#423, merge of main 8f112a6d): the copy change feeds every generated app file's inputs, so generate.mjs
+ *  moves the line-1 inputsSha256 header (and the ht- chunks' `hashes: { inputsSha256 }` lines) of all of them except these
+ *  5, whose inputs it does not touch; their header stays main's. */
+export const SC_GEN_HEADER_KEPT: readonly string[] = ['src/howto/coverage.ts', 'src/howto/generated/index.ts', 'src/howto/lib-id.ts', 'src/howto/red-flag-back.ts', 'src/slices/howto/css/plate.css'];
+/** A GENERATED file's text with the F-SHEET-COPY change taken out: line 1 blanked and the `hashes:` lines dropped (unless
+ *  the file is in SC_GEN_HEADER_KEPT or `keep`, whose header a caller checks itself), then the copy change undone
+ *  (toMainCopy). On main's own files it only blanks the same lines. */
+export function scGenText(p: string, t: string, keep: readonly string[] = []): string {
+  if (p === SC_ARCHETYPES) t = scArchetypesMain(t);
+  if (SC_GEN_HEADER_KEPT.includes(p) || keep.includes(p)) return toMainCopy(t);
+  return toMainCopy(`\n${t.slice(t.indexOf('\n') + 1).split('\n').filter(l => !/^ *hashes: \{ inputsSha256: /.test(l)).join('\n')}`);
+}
+/** archetypes.ts, the one generated file whose own text F-SHEET-COPY rewrites (DISCLAIMER -> STOP_LINE and its comment):
+ *  each pair is replaced back to main's exactly once (a file holding neither form is left as it is, so main's own file
+ *  passes through unchanged). */
+const SC_ARCHETYPES = 'src/howto/archetypes.ts';
+const SC_ARCHETYPES_PAIRS: [string, string][] = [
+  ['// GENERATED from tools/plates/layers/howto/shared.mjs (HT-5): the shared "Risks" copy, one block per joint, and the\n// stop line that ends Risks (D-SHEETCOPY-STOPLINE). No card carries its own red-flag wording (C8).',
+    '// GENERATED from tools/plates/layers/howto/shared.mjs (HT-5): the shared "Risks and when to stop" copy, one block\n// per joint, plus the owner\'s one-line disclaimer. No card carries its own red-flag wording (C8).'],
+  ['export const STOP_LINE: string = "If something hurts, stop and get it checked.";',
+    'export const DISCLAIMER: string = "General guidance, not medical advice. If something hurts, stop and get it checked.";'],
+];
+function scArchetypesMain(t: string): string {
+  for (const [now, was] of SC_ARCHETYPES_PAIRS) {
+    const k = t.split(now).length - 1;
+    if (k > 1) throw new Error(`sheetcopy: archetypes.ts holds ${k} of one changed line`);
+    if (k === 1) t = t.replace(now, was);
+  }
+  return t;
+}
+
+/** The library How-to zooms whose heading F-SHEET-COPY renamed ("<stem>: right and wrong" -> "<stem>"), as `<key>:<zoom key>`
+ *  (the 8 library How-to sources it changed; every other library zoom heading is main's). */
+export const SC_LIB_ZOOMS: Record<string, string> = {
+  'assisted_pull_up:hand': 'Hand', 'chin_up:hand': 'Hand', 'close_grip_pulldown:pad': 'Knee pad', 'hanging_knee_raise:hand': 'Hand',
+  'incline_machine_press:hand': 'Hand', 'inverted_row:hand': 'Hand', 'shoulder_press:hand': 'Hand', 'underhand_lat_pulldown:pad': 'Knee pad',
+};
+/** A rendered library close-up (`key`'s zoom `zkey`) with its renamed heading put back to main's: exactly one `>stem</h3>`
+ *  must be there for a listed zoom; any other zoom is returned as it is. */
+export function toMainZoom(key: string, zkey: string, html: string): string {
+  const h = SC_LIB_ZOOMS[`${key}:${zkey}`];
+  if (!h) return html;
+  if (html.split(`>${h}</h3>`).length !== 2) throw new Error(`sheetcopy: ${key}:${zkey}: heading ${h} not once`);
+  return html.replace(`>${h}</h3>`, `>${h}: right and wrong</h3>`);
+}

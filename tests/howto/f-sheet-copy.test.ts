@@ -4,7 +4,7 @@
 // the R1 ruling as amended (D-SHEETCOPY-STOPLINE, #423): no "General guidance, not medical advice." on any sheet (the 10-01
 // rule names this exact case), and "If something hurts, stop and get it checked." stays, once, the last line of Risks.
 // The walk covers the app (sheet eyebrow, every section's TSX headings, every generated string of every shipped id)
-// and the review pages (golden B and the 14 library layers pages). Exempt, with reasons: golden A
+// and the review pages (golden B and the 15 library layers pages). Exempt, with reasons: golden A
 // (tests/howto/golden/technical-plates.html, owner byte lock) and HOWTO_LABEL (the Train button names a control).
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -12,8 +12,8 @@ import { join } from 'node:path';
 
 const ROOT = join(__dirname, '../..');
 const GEN = join(ROOT, 'src/howto/generated');
-const PAGES = ['tests/howto/golden/howto-layers.html', ...['lb01', 'lb03', 'lb04', 'lb05', 'lb06', 'lb07', 'lb08', 'lb09', 'lb10', 'pilot-a', 'pilot-a3', 'pilot-b', 'pilot-b2', 'zoom'].map(b => `tests/howto/golden/library/${b}.layers.html`)];
-const KIND_COUNTS = { feel: 72, ht: 72, posture: 72, hand: 8, handpair: 10 } as const;
+const PAGES = ['tests/howto/golden/howto-layers.html', ...['lb01', 'lb02', 'lb03', 'lb04', 'lb05', 'lb06', 'lb07', 'lb08', 'lb09', 'lb10', 'pilot-a', 'pilot-a3', 'pilot-b', 'pilot-b2', 'zoom'].map(b => `tests/howto/golden/library/${b}.layers.html`)];
+const KIND_COUNTS = { feel: 81, ht: 81, posture: 81, hand: 8, handpair: 10 } as const;   // LIB-SHIP W8b merge: + its 9 ids' feel, ht and posture chunks
 
 const LEAD = /^(the|this|about|what|how|where|when|why|if)\b/i;
 /** The rule's problems for one heading text ([] = it passes). A hyphenated word counts as one word. */
@@ -127,7 +127,7 @@ describe('F-SHEET-COPY: sheet headings follow the owner\'s heading rule', () => 
     expect(src.split('rk-stop').length - 1).toBe(1);
   });
 
-  it('golden B and the 14 library layers pages: headings pass, no old string, the stop line once and last in Risks', () => {
+  it('golden B and the 15 library layers pages: headings pass, no old string, the stop line once and last in Risks', () => {
     const bad: string[] = [];
     let cards = 0;
     for (const p of PAGES) {

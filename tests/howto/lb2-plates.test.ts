@@ -9,6 +9,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
 import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
 import { W8B_LAYERS_APPROVAL, w8bOf } from './checks/ship-w8b';
+import { lessSC } from './sheetcopy-pins';   // F-SHEET-COPY (#423)
 import { renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -812,7 +813,10 @@ describe('LIB-SHIP W4 A9 (replaces LIB-10 A9, D-LIB10-AHEAD): no LB2 id ships in
     expect(swap('lb02.json', t => t.replace(/(lib_)?decline_bench_press|decline-bench-press/g, 'x'))).toEqual(['lb02.json: no decline_bench_press']);
   });
   it('W8b: the lb02 layers-page entry is the chain\'s last, first of its kind, pinning the committed page for exactly the ruled ids with the exact approval; reds: another sha, another comment, a held id', () => {
-    const page = readFileSync('tests/howto/golden/library/lb02.layers.html');
+    // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): lb02's F-SHEET-COPY entry is checked and taken off and the page has the
+    // copy change undone (lessSC), so the W8b entry is the last and its pin holds unchanged
+    const sc = lessSC(readJson('tests/howto/golden/library/lb02.json'), 'lb02', readFileSync('tests/howto/golden/library/lb02.layers.html'));
+    const page = sc.page;
     const problems = (E: any[]) => {
       const L = E.filter(e => e.kind === 'layers-page'), e = E[E.length - 1], bad: string[] = [];
       if (L.length !== 1 || e !== L[0]) bad.push(`layers-page entries ${L.length}, last ${e?.kind}`);
@@ -822,7 +826,7 @@ describe('LIB-SHIP W4 A9 (replaces LIB-10 A9, D-LIB10-AHEAD): no LB2 id ships in
       if (e?.pageSha256 !== createHash('sha256').update(page).digest('hex') || e?.bytes !== page.length) bad.push('page pin');
       return bad;
     };
-    const E = readJson('tests/howto/golden/library/lb02.json').entries, last = (o: any) => [...E.slice(0, -1), { ...E[E.length - 1], ...o }];
+    const E = sc.file.entries, last = (o: any) => [...E.slice(0, -1), { ...E[E.length - 1], ...o }];
     expect(problems(E)).toEqual([]);
     expect(problems(last({ approval: W8B_LAYERS_APPROVAL.replace(/[0-9a-f]{40}$/, '1fdf6975d8e93c184ae77ad11daf1cf73505a15d') }))).toHaveLength(1);
     expect(problems(last({ approval: W8B_LAYERS_APPROVAL.replace('6856468001', '6856272493') }))).toHaveLength(1);

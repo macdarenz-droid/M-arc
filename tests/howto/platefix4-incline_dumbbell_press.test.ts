@@ -197,7 +197,7 @@ describe('PF4 item 20b: the rest of the lb02 pages is byte-equal to the base', {
     // F-SHEET-COPY (#423): the base pins below are compared on the page with the sheet copy change undone
     // (toMainLayersPage: toMainCopy, page: true, keeping lb02's one bare-stem heading from main); the raw page carries it
     expect(h).toContain('<p class="rk-stop">If something hurts, stop and get it checked.</p>');
-    h = toMainLayersPage(h, 'lb02').toString('utf8');
+    h = toMainLayersPage(h, 'lb02-pf4').toString('utf8');
     const sha = (s: string) => createHash('sha256').update(s).digest('hex');
     const block = (s: string, open: RegExp, tag: string) => { const m = open.exec(s); if (!m) return '';
       const t = new RegExp(`<${tag}\\b|</${tag}>`, 'g'); t.lastIndex = m.index; let d = 0;
