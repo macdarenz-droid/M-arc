@@ -61,3 +61,19 @@ export function w8cLayersProblems(file: any, batch: string, page: Buffer): strin
   if (was?.pageSha256 !== W.was.sha || was?.bytes !== W.was.bytes) bad.push(`${batch} W8c: superseded pin`);
   return bad;
 }
+
+/** D-W8C-TEXTZOOM-LOOPS: `rows` less the TEXT_ZOOM_SHIPPED rows (those have no posture-<id>.ts chunk), and those rows. */
+export const postureRows = <T extends { id: string }>(rows: readonly T[]): T[] => rows.filter(r => !TEXT_ZOOM_SHIPPED.includes(r.id.replace(/^lib_/, '')));
+export const textZoomRows = <T extends { id: string }>(rows: readonly T[]): T[] => rows.filter(r => TEXT_ZOOM_SHIPPED.includes(r.id.replace(/^lib_/, '')));
+/** The D-W8C-TEXTZOOM-LOOPS pin: `set` equals the shipped rows listed in text-zooms.json (`listed`, lib ids), and no set row
+ *  has a posture chunk (`postureFiles`, file names) or a POSTURE loader line (`loaders`, loaders.ts text). [problems] */
+export function textZoomSetProblems(set: readonly string[], shipped: readonly { id: string; chromeId: string }[], listed: readonly string[], postureFiles: readonly string[], loaders: string): string[] {
+  const bad: string[] = [], want = shipped.filter(r => listed.includes(r.id)).map(r => r.id.replace(/^lib_/, '')).sort();
+  for (const id of want) if (!set.includes(id)) bad.push(`${id}: a shipped text-zoom row missing from the set`);
+  for (const id of set) if (!want.includes(id)) bad.push(`${id}: in the set, but not a shipped text-zoom row`);
+  for (const r of shipped.filter(x => set.includes(x.id.replace(/^lib_/, '')))) {
+    if (postureFiles.includes(`posture-${r.chromeId}.ts`)) bad.push(`${r.id}: has a posture chunk`);
+    if (loaders.includes(`import('./posture-${r.chromeId}')`)) bad.push(`${r.id}: has a POSTURE loader line`);
+  }
+  return bad;
+}
