@@ -16,6 +16,8 @@ import { closeSync, existsSync, openSync, readdirSync, readFileSync, readlinkSyn
 import { tmpdir } from 'node:os';
 import { basename, join, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const CACHE_ENV = 'MARC_WALK_CACHE';
@@ -93,6 +95,15 @@ export function memoLocal<T>(name: string, root: string, compute: () => Promise<
   return LOCAL.get(k)!;
 }
 
+/** F-VITEST-RPC-2: `code` run by node in the tree at `root` (its own modules), awaited, so the worker never blocks on the
+ *  compute; resolves to the text after its last `\n@@` mark (the result line), and rejects with its stderr. This file is
+ *  also loaded by globalSetup, so it cannot import tests/child-test.ts (which imports vitest). */
+const inChild = async (code: string, root: string): Promise<string> => {
+  const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', code], { cwd: resolve(root), encoding: 'utf8', maxBuffer: 1 << 28 });
+  const i = stdout.lastIndexOf('\n@@');
+  if (i < 0) throw new Error(`walk-cache: the child printed no result:\n${stdout.slice(-2000)}`);
+  return stdout.slice(i + 3);
+};
 const url = (root: string, p: string) => pathToFileURL(join(resolve(root), p)).href;
 type Out = Map<string, { text: string; writers: string[]; hash: string }>;
 const encMap = (m: Map<string, any>) => JSON.stringify([...m]);
@@ -100,11 +111,11 @@ const decMap = (s: string) => new Map(JSON.parse(s));
 
 /** tools/plates/generate.mjs render() of the tree at `root`. */
 export const renderOf = (root: string): Promise<Out> =>
-  memo('render', root, async () => (await import(/* @vite-ignore */ url(root, 'tools/plates/generate.mjs'))).render(), encMap, decMap as (s: string) => Out);
+  memo('render', root, async () => decMap(await inChild("const { render } = await import('./tools/plates/generate.mjs'); process.stdout.write('\\n@@' + JSON.stringify([...(await render())]));", root)) as Out, encMap, decMap as (s: string) => Out);
 
 /** tools/plates/library/ci/affected.mjs inputsMap(root) of the tree at `root`. */
 export const inputsMapOf = (root: string): Promise<{ inputs: Map<string, string[]>; writers: Map<string, string[]>; proven: boolean; why: string[] }> =>
-  memo('inputsMap', root, async () => (await import(/* @vite-ignore */ url(root, 'tools/plates/library/ci/affected.mjs'))).inputsMap(resolve(root)) as Promise<any>,
+  memo('inputsMap', root, async () => { const o = JSON.parse(await inChild(`const { inputsMap } = await import('./tools/plates/library/ci/affected.mjs'); const m = await inputsMap(${JSON.stringify(resolve(root))}); process.stdout.write('\\n@@' + JSON.stringify({ ...m, inputs: [...m.inputs], writers: [...m.writers] }));`, root)); return { ...o, inputs: new Map(o.inputs), writers: new Map(o.writers) }; },
     m => JSON.stringify({ ...m, inputs: [...m.inputs], writers: [...m.writers] }),
     s => { const o = JSON.parse(s); return { ...o, inputs: new Map(o.inputs), writers: new Map(o.writers) }; });
 

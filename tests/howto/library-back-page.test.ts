@@ -8,6 +8,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { stageTreeInChild } from '../child-test';   // F-VITEST-RPC-2
 import { RED_FLAG_BACK } from '../../src/howto/red-flag-back';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -49,7 +50,7 @@ describe('S5-L: the back box on E1\'s back-flagged layers page', { timeout: 300_
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
     B = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib5/back-page.mjs'));
-    root = F.stageTree(); tmps.push(root);
+    root = await stageTreeInChild(); tmps.push(root);
     B.toBackPage(root, F.HOWTO);
     CL = await import(/* @vite-ignore */ F.url(root, 'tools/plates/layers/artifact/copy-lint.mjs'));
     shared = await import(/* @vite-ignore */ F.url(root, 'tools/plates/layers/howto/shared.mjs'));

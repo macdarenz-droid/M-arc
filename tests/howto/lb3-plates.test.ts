@@ -6,7 +6,9 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
+import { w8bOf } from './checks/ship-w8b';
 import { renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -132,7 +134,10 @@ describe('LIB-13 A5: lb3/rows.json holds exactly the drawn, non-held LB3 ids', (
 describe('LIB-SHIP W4 A9 (replaces LIB-13 A9, D-LIB13-AHEAD): exactly the ruled LB3 ids ship, from batches/lb03.json', { timeout: T }, () => {
   const OLD_ROWS = 'tools/plates/library/lb3/rows.json';
   const ALL = [...IDS, ...SHRUGS.map(s => `lib_${s}`)];
-  const RULED = () => w4Of(ROWS);
+  // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): W4's 6 plus W8b's dumbbell_romanian_deadlift, in row order;
+  // W8b's line leaves the W4 waiting list first, then the checks below run unchanged
+  const RULED = () => { const r = [...w4Of(ROWS), ...w8bOf(ROWS)]; return Object.keys(readJson(ROWS).rows).filter(id => r.includes(id)); };
+  const WAITING = () => waitOf(ROWS).filter(id => !w8bOf(ROWS).includes(id));
   /** One line per row off the ruled state: a ruled id not shipped, an unruled id at any stage but approved-plate. */
   const shipProblems = (rows: Record<string, any>, ruled = RULED()) => Object.entries(rows).flatMap(([id, r]) =>
     ruled.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
@@ -140,14 +145,19 @@ describe('LIB-SHIP W4 A9 (replaces LIB-13 A9, D-LIB13-AHEAD): exactly the ruled 
     const rows = readJson(ROWS).rows;
     expect(RULED().filter(id => !ALL.includes(id))).toEqual([]);
     expect(RULED()).toEqual(Object.keys(rows).filter(id => RULED().includes(id)));   // row order
-    expect(RULED()).toHaveLength(6);
-    expect(Object.keys(rows).filter(id => !RULED().includes(id))).toEqual(waitOf(ROWS));
+    expect(RULED()).toHaveLength(7);
+    expect(w8bOf(ROWS)).toEqual(['lib_dumbbell_romanian_deadlift']);
+    expect(waitOf(ROWS).filter(id => w8bOf(ROWS).includes(id))).toEqual(w8bOf(ROWS));
+    expect(Object.keys(rows).filter(id => !RULED().includes(id))).toEqual(WAITING());
     expect(shipProblems(rows)).toEqual([]);
   });
   it('mutations: an unruled id at shipped, a ruled id held back, and a row at drawing are red', () => {
     const rows = readJson(ROWS).rows;
     expect(shipProblems(rows, RULED().filter(id => id !== 'lib_landmine_row'))).toEqual(['lib_landmine_row: unruled, at shipped']);
     expect(shipProblems({ ...rows, lib_sumo_deadlift: { ...rows.lib_sumo_deadlift, stage: 'shipped' } })).toEqual(['lib_sumo_deadlift: unruled, at shipped']);
+    // LIB-SHIP W8b: a held W8b id shipped, and the W8b id held back, are red
+    expect(shipProblems({ ...rows, lib_conventional_deadlift: { ...rows.lib_conventional_deadlift, stage: 'shipped' } })).toEqual(['lib_conventional_deadlift: unruled, at shipped']);
+    expect(shipProblems({ ...rows, lib_dumbbell_romanian_deadlift: { ...rows.lib_dumbbell_romanian_deadlift, stage: 'approved-plate' } })).toEqual(['lib_dumbbell_romanian_deadlift: ruled, at approved-plate']);
     expect(shipProblems({ ...rows, lib_landmine_row: { ...rows.lib_landmine_row, stage: 'approved-plate' } })).toEqual(['lib_landmine_row: ruled, at approved-plate']);
     expect(shipProblems({ ...rows, lib_landmine_row: { ...rows.lib_landmine_row, stage: 'drawing' } })).toEqual(['lib_landmine_row: ruled, at drawing']);
   });
@@ -974,6 +984,7 @@ describe('LIB-13 A4: runQa node half on an LB3 plate (lib_conventional_deadlift)
     let hit: any = null;
     for (const [dx, dy] of [[0, -1], [1, 0], [-1, 0], [0, 1]]) {
       for (let d = 1; d <= 80 && !hit; d++) {
+        await yieldTask();   // F-VITEST-RPC-2: one worker turn per step
         const box = { left: c0.box.left + dx! * d, top: c0.box.top + dy! * d }, is = plate.renderPlate(at(box), { id: 'm' }).report.issues;
         if (is.some((i: string) => !i.startsWith(`figure:${c0.text}`))) break;
         if (is.length) hit = { box, clean: { left: box.left - dx!, top: box.top - dy! } };

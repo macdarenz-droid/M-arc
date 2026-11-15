@@ -7,6 +7,7 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } 
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { child } from '../child-test';   // D-W8B-RPC2 (#417): W8b's slow blocks run in an awaited child
 import { checkC15, contentHash } from './checks/c15';
 import { W4_IDS } from './checks/ship-w4';
 
@@ -117,12 +118,23 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   const W8A_PANEL = ['D-SHIP-W8A-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ 29e4af37a166b4a7e23c577c10386047da419b95'];
   const W8A_RULED = ['D-SHIP-W8A-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6761492481 @ bb60cc574a8515dc6e67b3c80195b2cb2ffe6738'];
   const W8A_STAMPED = ['lib_barbell_overhead_press', 'lib_pec_fly', 'lib_crunch'];
+  // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP, W8b LAYERS APPROVED #417 6856507580): the 9 shipped ids, stamped after W8a's 3 in
+  // the comment's order; 8 name the panel at the head it judged, dumbbell_pullover the round-2 ruling (its risk line changed
+  // after the panel); the 8 held W8b ids stay unruled
+  const W8B_PANEL = ['D-SHIP-W8B-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856272493 @ 1fdf6975d8e93c184ae77ad11daf1cf73505a15d'];
+  const W8B_RULED = ['D-SHIP-W8B-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652'];
+  // D-W8B-RDLWATCH (#417 6872764692): dumbbell_romanian_deadlift re-stamped in place (its watch moved after the panel); the
+  // other 8 stand
+  const W8B_RDLWATCH = ['D-SHIP-W8B-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00'];
+  const W8B_STAMPED = ['lib_dumbbell_pullover', 'lib_dumbbell_romanian_deadlift', 'lib_pistol_squat', 'lib_wall_sit', 'lib_forward_lunge', 'lib_walking_lunge',
+    'lib_single_arm_triceps_pushdown', 'lib_bayesian_cable_curl', 'lib_dumbbell_overhead_triceps_extension'];
   const RULING: Record<string, string[][]> = { lib_dumbbell_biceps_curl: [W1_RULE], ...Object.fromEntries(W2_STAMPED.map(id => [id, [W2_RULE]])),
     ...Object.fromEntries(W3_STAMPED.map(id => [id, [W3_RULE]])), ...Object.fromEntries(PF_STAMPED.map(id => [id, [PF_RULE]])),
     ...Object.fromEntries(PF_RESTAMPED.map(id => [id, [W2_RULE, PF_RULE]])), ...Object.fromEntries(W4_IDS.map(id => [id, [W4_RULE]])), ...Object.fromEntries(W5_STAMPED.map(id => [id, [W5_RULE]])),
     ...Object.fromEntries(W6_STAMPED.map(id => [id, [W6_RULE]])),
     ...Object.fromEntries(W7_STAMPED.map(id => [id, [W7_RULE]])),
-    ...Object.fromEntries(W8A_STAMPED.map(id => [id, [id === 'lib_pec_fly' ? W8A_RULED : W8A_PANEL]])) };
+    ...Object.fromEntries(W8A_STAMPED.map(id => [id, [id === 'lib_pec_fly' ? W8A_RULED : W8A_PANEL]])),
+    ...Object.fromEntries(W8B_STAMPED.map(id => [id, [id === 'lib_dumbbell_pullover' ? W8B_RULED : id === 'lib_dumbbell_romanian_deadlift' ? W8B_RDLWATCH : W8B_PANEL]])) };
   /** main 8841246c's 26 reviews.json entries (sha256 of their JSON.stringify): LIB-PLATEFIX-1 only appends. */
   const sha = (t: string) => createHash('sha256').update(t).digest('hex');
   const MAIN_ENTRIES = { n: 26, sha: '18060e4098c373dd9bdf3a0b5875cefddbc5af632814ceee9798aadb1d4c2e37' };
@@ -165,7 +177,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   ]);
   // LIB-SHIP (D-SHIP-A9, ruling 3; D-SHIP-W1-STAMP #376 6616230145): replaces "exactly the 8": the committed entries are
   // the 8 then exactly the ruled shipped library ids, in shipping order; an unruled or missing entry is red.
-  it('one approved entry per id of the 8, each matching stampOf; LIB-SHIP: then one per ruled shipped library id; every committed entry is the supervisor\'s', async () => {
+  child.it('one approved entry per id of the 8, each matching stampOf; LIB-SHIP: then one per ruled shipped library id; every committed entry is the supervisor\'s', async () => {
     const r = reviews();
     // LIB-SHIP W2 (ruling 3; D-SHIP-W2-STAMP #379 6636105974): the W1 id, then the 9 W2 ids in shipping (registry) order
     // LIB-SHIP W3: then W3's 9 (D-SHIP-W3-STAMP)
@@ -174,9 +186,10 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     // LIB-SHIP W5 (D-SHIP-W5-STAMP, ruling 3): then W5's 10 (merge of main 05382042: after W4's 6)
     // LIB-SHIP W6: then W6's 7 (D-SHIP-W6-STAMP, #393 6689822595 / 6701002884); main 7e060e83's 32 and main de91dd21's 48 entries unchanged
     // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): then W7's 16 (merge of main dc058207: after W6's 7; D-SHIP-W7-SLEDHOLD, D-SHIP-W7-HOLD2)
-    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED, ...W7_STAMPED, ...W8A_STAMPED]);   // LIB-SHIP W8a: + its 3
+    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED, ...W7_STAMPED, ...W8A_STAMPED, ...W8B_STAMPED]);   // LIB-SHIP W8a: + its 3; LIB-SHIP W8b: + its 9
     expect(W7_STAMPED).toHaveLength(16);
     expect(W8A_STAMPED).toHaveLength(3);   // D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD (#415): assisted_pull_up and seated_leg_curl held
+    expect(W8B_STAMPED).toHaveLength(9);   // D-W8B-RIGHTPOSE, D-W8B-INCLINE and the W8b panel holds (#417): 8 held
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_ENTRIES.n)))).toBe(MAIN_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES.n)))).toBe(MAIN_W6_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES_DE91.n)))).toBe(MAIN_W6_ENTRIES_DE91.sha);
@@ -209,6 +222,22 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     const w1 = clone(es); w1.find((e: any) => e.scope === 'lib_push_up').decision = 'D-SHIP-W1-STAMP';
     expect(stampedProblems(w1)).toEqual(['lib_push_up: decision D-SHIP-W1-STAMP, ruled D-SHIP-W2-STAMP']);
     expect(stampedProblems(es, [...SHIPPED, 'lib_mountain_climbers'])).toEqual(['lib_mountain_climbers: shipped, not ruled']);   // LIB-SHIP W8a: crunch is ruled now; the held mountain_climbers
+    // LIB-SHIP W8b reds: a held W8b id stamped or shipped; a W8b stamp's approval at another sha or naming another comment
+    expect(stampedProblems([...es, { ...es[es.length - 1], scope: 'lib_incline_dumbbell_curl' }])).toEqual(['lib_incline_dumbbell_curl: stamped, not ruled']);
+    expect(stampedProblems(es, [...SHIPPED, 'lib_dumbbell_shrug'])).toEqual(['lib_dumbbell_shrug: shipped, not ruled']);
+    /** Each W8b stamp's approval against its ruling, exactly (the W8a review's M4 gap). */
+    const w8bApproval = (entries: any[]) => entries.filter((e: any) => W8B_STAMPED.includes(e.scope))
+      .flatMap((e: any) => (e.approval === RULING[e.scope]![0]![1] ? [] : [`${e.scope}: approval ${e.approval}`]));
+    expect(w8bApproval(es)).toEqual([]);
+    const b1 = clone(es); b1.find((e: any) => e.scope === 'lib_wall_sit').approval = W8B_PANEL[1]!.replace(/[0-9a-f]{40}$/, '1f53a5551277ae8fbc111984d1b5e63b90b2b652');
+    expect(w8bApproval(b1)).toHaveLength(1);
+    const b2 = clone(es); b2.find((e: any) => e.scope === 'lib_dumbbell_pullover').approval = W8B_RULED[1]!.replace('6856468001', '6856272493');
+    expect(w8bApproval(b2)).toHaveLength(1);
+    // D-W8B-RDLWATCH reds: RDL's stamp still naming the panel; naming the ruling at another sha
+    const b3 = clone(es); b3.find((e: any) => e.scope === 'lib_dumbbell_romanian_deadlift').approval = W8B_PANEL[1];
+    expect(w8bApproval(b3)).toHaveLength(1);
+    const b4 = clone(es); b4.find((e: any) => e.scope === 'lib_dumbbell_romanian_deadlift').approval = W8B_RDLWATCH[1]!.replace(/[0-9a-f]{40}$/, '1f53a5551277ae8fbc111984d1b5e63b90b2b652');
+    expect(w8bApproval(b4)).toHaveLength(1);
     // LIB-SHIP W3 A9 reds: a W3 id's stamp removed; a W3 id under the W2 ruling; a held W3-lane id shipped unruled
     expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_chin_up'))).toEqual(['lib_chin_up: ruled, not stamped']);
     const w2 = clone(es); w2.find((e: any) => e.scope === 'lib_horizontal_leg_press').decision = 'D-SHIP-W2-STAMP';

@@ -5,6 +5,7 @@ import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { fixtureTreeInChild } from '../child-test';   // F-VITEST-RPC-2
 import { W5 } from './lib-ship-w5';
 // @ts-expect-error plain .mjs build tool, no types
 import { MANIFEST, manifestOf, manifestProblems } from '../../tools/plates/library/ci/manifest.mjs';
@@ -71,7 +72,7 @@ describe('C0: L0-lib on LIB-2b\'s fixtureTree (one pinned row)', { timeout: 300_
   let F: any, tree: string, M: any;
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ new URL('./fixtures/lib2b/fixture.mjs', import.meta.url).href);
-    tree = F.fixtureTree(); tmps.push(tree);
+    tree = await fixtureTreeInChild(); tmps.push(tree);
     M = await at(tree, "import { manifestOf, manifestText, MANIFEST } from './tools/plates/library/ci/manifest.mjs'; import { writeFileSync } from 'node:fs'; const m = await manifestOf(); writeFileSync(MANIFEST, manifestText(m)); console.log('@@' + JSON.stringify(m));");
   }, 300_000);
   /** Applies `edit` to `p` in the tree, returns the problems, restores the file. */

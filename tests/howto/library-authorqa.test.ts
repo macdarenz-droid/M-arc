@@ -5,6 +5,7 @@
 import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { fixtureTreeInChild } from '../child-test';   // F-VITEST-RPC-2
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const T = 180_000;
@@ -12,7 +13,7 @@ let F: any, root: string, cand: any, reg: any, eng: any, mirror: string, E: any,
 
 beforeAll(async () => {
   F = await import(/* @vite-ignore */ new URL('./fixtures/lib2b/fixture.mjs', import.meta.url).href);
-  root = F.fixtureTree();
+  root = await fixtureTreeInChild();
   const im = (p: string) => import(/* @vite-ignore */ F.url(root, p));
   let bp: any, pp: any, golden: any;
   [cand, reg, bp, pp, golden, eng] = await Promise.all(['tools/plates/library/candidate.mjs', 'tools/plates/library/registry.mjs',

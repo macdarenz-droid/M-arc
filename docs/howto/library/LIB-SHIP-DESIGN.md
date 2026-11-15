@@ -2879,3 +2879,141 @@ header :22-27, the lb01 page count :1250, lib11-pilot-b and F-ZOOM-NONE A2 sets)
   - Also open: F-PLATE-SIDEVIEW, F-TEMPO-NOSECONDS, F-NOGRIP-MISTAKES.
 - Branch: the work moved to claude/lib-ship-w8a-2 (#415, D-SHIP-W8A-REBRANCH). Every MANIFEST commit there carries
   `[golden update]`.
+
+## W8b PLAN (base main e15e1c65, train 88; plan-w8.md §1-3 W8b row, D-PLAN-W8)
+
+Seventeen ids on four pages. lb03, lb04 and lb05 have layers pages pinned on main, so each re-pin is an appended
+superseding `'supervisor'` entry (D-BODYMAP-APPEND) whose approval names the panel comment @ the panel's sha. lb02 has no
+layers page on main (D-SHIP-W4-FLIPSET), so its first layers-page entry starts that part of the lb02.json chain. Every
+sheet is already written (W4/W5 panels); every card parent is shipped on the base, except sumo's (conventional, same head,
+parent first). None is in a later wave's list. N goes 72 → 89 if all 17 ship.
+
+Static pre-checks on e15e1c65 (scratch script, nothing committed): `lintLibraryRow` [] and `familyRefusal` null for all 17
+(sumo against conventional's sheet; every inherit field is mapped, lint/family.mjs:57-94); visible words 175-347.
+
+| id | batch :stage line | plan-w8 blocker | gone on e15e1c65? (file:line) | plate / sheet since last layers check | check |
+|---|---|---|---|---|---|
+| dumbbell_pullover | lb02 :166 | L4 "no inner-elbow part" → F-BODYMAP-FRONTDELT | partly: render/region-fix.mjs:26-38 adds `elbow-inner-*` on library layers pages only; src/svg/bodyMuscles.ts has only `elbow-left/right`, and the sheet's elbow row already marks those (lib_dumbbell_pullover.howto.mjs:118, the D-PFR-L4 `elbow` region, lib-ship.test.ts:1516). Q-W8b-2 | plate: no (lb02.json entries[8]); sheet: no (79077bf6, 11-06); page: new | D-PFC-ROUND1 (L4 never re-judged; first lb02 page) |
+| dumbbell_romanian_deadlift | lb03 :88 | parent RDL in #385 | yes: pilot-a.json:107 `shipped` | neither (lb03 entries[4]; 79077bf6) | delta |
+| conventional_deadlift | lb03 :108 | round 2 (L2 grip step, L5 rounded-back Start Wrong) not judged | n/a, judged here; parent RDL shipped (pilot-a.json:107) | neither (entries[5]) | D-PFC-ROUND1 (round 2) |
+| sumo_deadlift | lb03 :129 | PF3 item 17; round 2 L2 | item 17 in the lb03 pin (entries[6], "sumo floor trunk") | plate yes | D-PFC-ROUND1, same head as conventional |
+| dumbbell_shrug (A2) | lb03 :228 | PF3 "no change … the panel judges" | n/a, judged as drawn; parent barbell_shrug shipped (lb03.json:185) | neither (entries[11]) | D-PFC-ROUND1 as drawn |
+| wall_sit | lb04 :78 | PF3 item 7 | yes: lb04 entries[4] re-pinned with PF3 specs | plate yes; sheet handling.why only (3c6efe61, 11-07); parent bodyweight_squat shipped (lb04.json:60) | D-PFC-ROUND1 |
+| pistol_squat | lb04 :92 | PF3 item 5 | yes: entries[5] | plate yes; handling.why (3c6efe61) | D-PFC-ROUND1 |
+| step_up | lb04 :126 | PF3 item 4 | yes: entries[7] | plate yes | D-PFC-ROUND1 |
+| forward_lunge | lb04 :146 | parent reverse_lunge in #385 | yes: pilot-a3.json:25 `shipped` | neither (entries[8], no re-pin) | delta |
+| walking_lunge | lb04 :163 | same | yes: pilot-a3.json:25 | neither (entries[9]) | delta |
+| bulgarian_split_squat | lb04 :208 | parent; PF3 item 3 | yes: pilot-a3.json:25; entries[12] re-pinned | plate yes | D-PFC-ROUND1 |
+| bayesian_cable_curl | lb05 :62 | PF3 item 9 | yes: lb05 entries[3] | plate yes | D-PFC-ROUND1 |
+| dumbbell_overhead_triceps_extension | lb05 :96 | PF3 item 14 | yes: entries[5] | plate yes | D-PFC-ROUND1 |
+| cross_body_hammer_curl | lb05 :113 | PF3 item 8 | yes: entries[6] | plate yes | D-PFC-ROUND1 (Q-W8b-5) |
+| single_arm_triceps_pushdown | lb05 :178 | parent triceps_pushdown in #385; back box (LR-28) | yes: pilot-a.json:238 `shipped`; back box on main (lint [] with backBox) | neither (entries[10]) | delta |
+| wrist_curl (A2) | lb05 :129 | PF3 item 11 accepted as built; hand → F-HAND-FINGERTIP | n/a, judged as drawn | neither (entries[7]) | D-PFC-ROUND1 as drawn (Q-W8b-6) |
+| incline_dumbbell_curl (A2) | lb05 :199 | PF3 item 13 "no change … re-judges R2" | n/a, judged as drawn | neither (entries[11]) | D-PFC-ROUND1 as drawn |
+
+Card parent and inherit fields (cards/<id>.json; every field mapped in lint/family.mjs):
+- parent null, inherit []: dumbbell_pullover, pistol_squat, step_up, bayesian_cable_curl, dumbbell_overhead_triceps_extension,
+  cross_body_hammer_curl, wrist_curl, incline_dumbbell_curl.
+- romanian_deadlift → dumbbell_romanian_deadlift (grip.wrist, posture knees) :92; conventional_deadlift (grip.thumb,
+  grip.handContact, grip.wrist, archetype.contact) :91.
+- conventional_deadlift → sumo_deadlift (the same 4) :94.
+- barbell_shrug → dumbbell_shrug (grip.thumb, risks[breath], redFlags) :89.
+- bodyweight_squat → wall_sit (posture[1], redFlags knee) :65.
+- reverse_lunge → forward_lunge, walking_lunge, bulgarian_split_squat (plate.view, redFlags.knee, grip) :57-59.
+- triceps_pushdown → single_arm_triceps_pushdown (plate.view, grip.thumb, grip.wrist, redFlags) :60.
+
+**Flip set (exact, if all pass), batch-file order:**
+- lb02: dumbbell_pullover.
+- lb03: dumbbell_romanian_deadlift, conventional_deadlift, sumo_deadlift, dumbbell_shrug.
+- lb04: wall_sit, pistol_squat, step_up, forward_lunge, walking_lunge, bulgarian_split_squat.
+- lb05: bayesian_cable_curl, dumbbell_overhead_triceps_extension, cross_body_hammer_curl, wrist_curl,
+  single_arm_triceps_pushdown, incline_dumbbell_curl.
+- Stay `approved-plate`: the other lb02-lb05 rows (jump_squat until its C route; goblet_squat, arnold_press, skull_crusher;
+  the PF4 rows). A second layers failure holds that id (D-LIB13-PANEL2) in the D-PF4 form (its files back to main's bytes);
+  a held conventional_deadlift holds sumo_deadlift too (D-LIB10-PARENTS).
+
+**W8a-class risks, checked per id on e15e1c65:**
+- Mistake ghosts (F-LAYERS-MGHOST): none of the 17 specs sets `mistakeGhosts: false` (only jump_squat, v_up,
+  assisted_pull_up and hip_thrust do).
+- `wrong.under` crops (F-HT4-UNDER): none of the 17 sheets has one (only assisted_pull_up and smith_machine_squat).
+- Text-zoom rows (F-HT10-TEXTZOOM): none; every sheet has at least one posture zoom, and none is in text-zooms.json.
+- Palm-flat hand keys (F-HAND-PALMFLAT-SIZE): none. Hand pairs: cross_body_hammer_curl `curl-dumbbell-neutral` (the first
+  shipped use of that key: a new handpair budget entry; Q-W8b-5), incline_dumbbell_curl `curl-dumbbell-under` (shipped
+  with alternating_dumbbell_curl). Every other id is gap-ruled or a GAP key (hands/no-zoom.json, hand-curl.mjs:24-27).
+- Firsts with no shipped precedent: wrist_curl's `exempt:` GAP (hand-curl.mjs:27; Q-W8b-6); the first lb02 layers page
+  (Q-W8b-1).
+- Not checkable statically (PQ-H1 as underhand, the gate's A3 S0 cap as sled_pull/glute_bridge, HT8/HT9 mount as
+  high_knees): Q-W8b-4 runs them before the panel.
+
+**Page work (step 3):**
+- lb02.layers.json: group ids → `lib_dumbbell_pullover` only, closeups kept as records (the D-SHIP-W4-FLIPSET form).
+- lb03.layers.json: add the 4 lb03 ids in batch order.
+- lb04.layers.json, lb05.layers.json: add the 6 ids each in the 0365ac9d form (cross_body_hammer_curl
+  `pair: 'curl-dumbbell-neutral'`, incline_dumbbell_curl `pair: 'curl-dumbbell-under'`); jump_squat, goblet_squat and the
+  PF4 lb05 rows stay off.
+- Each page built twice, equal sha256; a card compare against main's cards (the shipped ones byte-equal) and against the
+  judged W4/W5 pages for the delta-check ids.
+
+**Flip work (step 4, after W8b LAYERS APPROVED):** reviews.json from the STAMP comment; the 17 stages; generate;
+budgets (ht-, posture-, feel- per id at measured + 10 %, handpair-curl-dumbbell-neutral, loaders perId n 89, totals);
+dumbbell_overhead_triceps_extension adds one push hint ("Both hands round handle, palms up."), single_arm_triceps_pushdown
+reuses an existing one, so ids.ts stays near 1.6 KB [est] (limit 2,048 B; measured at step 4); guards in the exact-set form
+(a W8b chain removes W8b's lines first, then the earlier chains run unchanged): lib-ship.test.ts RULED_SHIPPED and the W5
+held-17 count (:69-73, → 5 held), checks/ship-w4.ts W4_WAITING (lb02's pullover, lb03's 4), lb2-plates.test.ts W4 A9
+(:718-800: "lb02 has no layers page"), lb3/lb4/lb5-plates layers-page sets, lib8-pin, c15-stamps, library-ci, MANIFEST rows;
+every MANIFEST commit tagged `[golden update]`; old mutations kept red.
+
+### W8b questions (for 'SHIP W8b PLAN RULED')
+- **Q-W8b-1 lb02's first layers page.** Recommended: the config lists only dumbbell_pullover (W4-FLIPSET form), and the
+  page's first entry is a `'supervisor'` layers-page entry (no `supersedes`). This turns another task's block red:
+  tests/howto/platefix4-lb2.test.ts:78-100 builds the lb02 layers page from the config and pins all 6 cards and OUTSIDE.
+  Recommended: W8b points that build at an in-test spec holding main's 6-id config, so its 7 pins stay exactly as strict,
+  and adds a red for a config that drifts from main's. The other option keeps the 6-id config and commits held cards on a
+  pinned page, against the W4-FLIPSET form.
+- **Q-W8b-2 dumbbell_pullover L4.** Recommended: no sheet change. The sheet already marks `elbow-left/right`, the region
+  D-PFR-L4 rules for an elbow red flag. The `elbow-inner-*` part exists only on library layers pages
+  (region-fix.mjs:26-38), not in the app's map (src/svg/bodyMuscles.ts), so marking it would show on the page but not in the
+  app. The D-PFC-ROUND1 check judges it. If the panel fails L4 again: the hold, with a follow-up to move the inner-elbow
+  part into the app map (an owner-side golden-B change, F-GOLDENB-FRONTDELT).
+- **Q-W8b-3 check form.** Recommended as plan-w8 §3: a delta check (W5-FLIPSET form) for dumbbell_romanian_deadlift,
+  forward_lunge, walking_lunge and single_arm_triceps_pushdown; D-PFC-ROUND1 for the other 13 (the 3 A2 rows judged as
+  drawn), one fix round, a second failure holds.
+- **Q-W8b-4 a dry run before LAYERS READY.** W8a found its shared-check reds only at CI (howto-shard 4/67, 55/66).
+  Recommended: after the pages are built, a scratch worktree (never committed) flips the 17 with scratch stamps
+  (LIB5-SCRATCH-ROOT form), runs `generate`, `node tools/plates/library/fidelity.mjs --ids <17>` and the library unit
+  suites. LAYERS READY lists every red with a hold recommendation, so the panel does not judge a row that cannot ship.
+  Cost: about 1.5 h of local runner time [est, times.json default 280.8 s per id].
+- **Q-W8b-5 cross_body_hammer_curl's hand close-up.** It is the first shipped `curl-dumbbell-neutral` pair. Its card Wrong
+  ("twisted or bent", c7) is a rotation the key cannot draw; it is recorded and the drawn Wrongs are flexion and extension
+  (hand-curl.mjs:17-20, the W5 G3 form, LIB-SHIP-DESIGN.md:1304). Recommended: ship it with the hand close-up as W5 built
+  it. If the hand row fails, hold the id; converting it to a no-zoom row (the D-SHIP-W5-HAMMER form) needs its own ruling.
+- **Q-W8b-6 wrist_curl.** Recommended: judge as drawn; it ships with no hand close-up under its `exempt:` GAP (the moving
+  joint is the wrist). If it fails, it is held for F-HAND-FINGERTIP or a wrist zoom (class B).
+
+### W8b rulings and holds (#417)
+- PLAN ruled 6847824876 (Q-W8b-1 to -6 as recommended). LAYERS READY 6854783313; rulings 6854831158 (D-W8B-RIGHTPOSE);
+  panel 6856272493 @ 1fdf6975 (both sets VALID; 4 delta checks PASS); fix round 6856430357; rulings 6856468001
+  (pullover L6 PASS in round 2; D-W8B-INCLINE).
+- Ships 9: dumbbell_pullover (lb02); dumbbell_romanian_deadlift (lb03); pistol_squat, wall_sit, forward_lunge,
+  walking_lunge (lb04); bayesian_cable_curl, dumbbell_overhead_triceps_extension, single_arm_triceps_pushdown (lb05).
+  Main moves from 72 to 81.
+- Held at approved-plate (D-PF4 form, main's bytes; each verdict carries over only if its card stays byte-equal):
+  - dumbbell_shrug (PASS), bulgarian_split_squat (L5 second failure): D-W8B-RIGHTPOSE, **F-HT4-RIGHTPOSE**. The dry run's
+    `HT4/A5-poses` red: `twins/ht4.mjs:183-190` accepts only start, end or the mistake on a Right side, while both
+    posture zooms draw a ruled custom Right pose (D-SHIP-DRAWVAL; `faultPoses` :145-153 covers Wrong only). Bulgarian also
+    needs a full-width floor line, a gap under the Right knee and the Wrong knee on the floor, then a fresh panel.
+  - conventional_deadlift (L5 second failure) and sumo_deadlift with it (D-LIB10-PARENTS): **F-DL-LIFTOFF**.
+  - step_up (L1 second failure; L5, L7): **F-STEPUP-START**.
+  - wrist_curl (L4, L5, L7; Q-W8b-6): **F-HAND-FINGERTIP**.
+  - cross_body_hammer_curl (L3 hand row, Q-W8b-5; L5 second failure): **F-HAMMER-TWIST**.
+  - incline_dumbbell_curl (L3, L7; D-W8B-INCLINE): both items are shared parts. L3 is the `curl-dumbbell-under` key note
+    (hands/pairs.mjs:445, panel.mjs:46-60, words/curl-dumbbell-under.json; also drawn on dumbbell_biceps_curl and
+    alternating_dumbbell_curl), L7 the shared `camera: { fit: true }` mode (vendor/engine/plate.mjs:111-119).
+    **F-CURL-UNDER-NOTE**, **F-SEATED-CAM**.
+- Recorded exception: dumbbell_overhead_triceps_extension L6 (D-W8B-RISKSLINE, the house progression line under Risks);
+  follow-up **F-RISKS-PROGRESSION**.
+- Sheet changes: dumbbell_romanian_deadlift setup step kind 'posture' → 'position' (a SetupStepKind; the dry run's app
+  typecheck failed on it; page bytes unchanged); dumbbell_pullover's jumps risk to c12 (L6).
+- Pages: lb02 first layers page (pullover only; config in the D-SHIP-W4-FLIPSET form, Q-W8b-1); lb03, lb04, lb05
+  superseding entries. PF4's lb02 page checks (platefix4-lb2 :78-100, platefix4-incline_dumbbell_press 20b) build from
+  main e15e1c65's 6-id config, sha-pinned in tests/howto/checks/ship-w8b.ts.

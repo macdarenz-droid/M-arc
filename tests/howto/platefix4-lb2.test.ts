@@ -8,10 +8,20 @@
 // Red on main de91dd21: no zoom. The rollers are the plate's (unchanged); the Wrong shin and foot clear them by >= 8 px.
 // Every other card of the lb02 layers page and the page outside the cards stay byte-equal to main de91dd21's.
 import { createHash } from 'node:crypto';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { PF4_LB02_SHA, PF4_LB02_TEXT, pf4Lb02Spec } from './checks/ship-w8b';
+const ROOT = new URL('../../', import.meta.url).pathname;
+/** LIB-SHIP W8b: the one sheet-card article for `slug` in a layers page (the same cut as the per-card loop below). */
+const cardOf = (html: string, slug: string): string => {
+  const at = html.indexOf(`<article class="sheet-card" id="card-${slug}"`);
+  if (at < 0) throw new Error(`card-${slug}: not in the page`);
+  const t = /<article\b|<\/article>/g; t.lastIndex = at; let d = 0;
+  for (let k; (k = t.exec(html));) { d += k[0] === '</article>' ? -1 : 1; if (!d) return html.slice(at, k.index + 10); }
+  throw new Error(`card-${slug}: not closed`);
+};
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -22,6 +32,29 @@ beforeAll(async () => {
     .map(f => import(/* @vite-ignore */ lib(f))));
   spec = H.default.plate;
 }, 600_000);
+
+const W8B_LB02_IDS = ['lib_dumbbell_pullover'];
+/** Drift lines: the in-test config off main's bytes, or the committed config off it in anything but the ruled group ids. */
+const lb02ConfigDrift = (text: string, committed: any) => {
+  const bad: string[] = [];
+  if (createHash('sha256').update(text).digest('hex') !== PF4_LB02_SHA) bad.push('PF4 lb02 config is not main e15e1c65\'s bytes');
+  const base = JSON.parse(text);
+  if (JSON.stringify(committed.groups?.[0]?.ids) !== JSON.stringify(W8B_LB02_IDS)) bad.push(`committed lb02 group ids ${JSON.stringify(committed.groups?.[0]?.ids)}`);
+  const strip = (c: any) => JSON.stringify({ ...c, groups: c.groups?.map((g: any) => ({ ...g, ids: [] })) });
+  if (strip(committed) !== strip(base)) bad.push('committed lb02 config differs from PF4\'s beyond the group ids');
+  return bad;
+};
+describe('LIB-SHIP W8b Q-W8b-1: the PF4 lb02 build reads main\'s 6-id config; the committed config is that config with the W8b ids', () => {
+  const committed = () => JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/pages/lb02.layers.json'), 'utf8'));
+  it('no drift', () => { expect(lb02ConfigDrift(PF4_LB02_TEXT, committed())).toEqual([]); });
+  it('mutations: the in-test config edited, a closeup option changed in the committed config, a held id added to its group are red', () => {
+    expect(lb02ConfigDrift(PF4_LB02_TEXT.replace('"jump": null', '"jump": 1'), committed())).toEqual(['PF4 lb02 config is not main e15e1c65\'s bytes', 'committed lb02 config differs from PF4\'s beyond the group ids']);
+    expect(lb02ConfigDrift(`${PF4_LB02_TEXT} `, committed())).toEqual(['PF4 lb02 config is not main e15e1c65\'s bytes']);
+    const c = committed();
+    expect(lb02ConfigDrift(PF4_LB02_TEXT, { ...c, closeups: { ...c.closeups, lib_dumbbell_pullover: { optionsKey: 'x' } } })).toEqual(['committed lb02 config differs from PF4\'s beyond the group ids']);
+    expect(lb02ConfigDrift(PF4_LB02_TEXT, { ...c, groups: [{ ...c.groups[0], ids: [...c.groups[0].ids, 'lib_skull_crusher'] }] })).toEqual(['committed lb02 group ids ["lib_dumbbell_pullover","lib_skull_crusher"]']);
+  });
+});
 
 const HT = 1.75, TOP = 0.43;   // the spec's body height and BENCH_TOP
 const zoomOf = () => H.default.zooms.find((z: any) => z.key === 'hips-on-bench');
@@ -76,11 +109,11 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
     expect(measure({ root: w.root, trunk: e.trunk, neck: e.neck }).backUpperCm).toBeGreaterThan(1);
   });
   it('lb02 layers page: only barbell_bench_press\'s card changes; every other card and the page outside the cards = main de91dd21\'s bytes', async () => {
-    const { layersSpecOf } = await import(/* @vite-ignore */ lib('layers-spec.mjs'));
     const { buildLayersPage } = await import(/* @vite-ignore */ lib('build-layers-page.mjs'));
     const stageDir = mkdtempSync(join(tmpdir(), 'pf4-lb02-'));
     let html: string;
-    try { html = (await buildLayersPage(layersSpecOf('tools/plates/library/batches/lb02.json', { stageDir }))).toString('utf8'); } finally { rmSync(stageDir, { recursive: true, force: true }); }
+    // LIB-SHIP W8b (Q-W8b-1, #417 6847824876): built from main e15e1c65's 6-id config (checks/ship-w8b.ts); every pin below is unchanged.
+    try { html = (await buildLayersPage(await pf4Lb02Spec(stageDir))).toString('utf8'); } finally { rmSync(stageDir, { recursive: true, force: true }); }
     const sha = (s: string) => createHash('sha256').update(s).digest('hex');
     const got: Record<string, string> = {};
     let rest = html;
@@ -96,9 +129,21 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
       'incline-dumbbell-press': expect.not.stringMatching(/^6b0aaad5f2fcc0750b5e1ec36ad5eef44bcf71c4c8289b24d891ec0199a03539$/),
       'close-grip-bench-press': '1cd3bcd5a6a8df110adcd0858b8d3c894ecdaeab1bdae4ab3cb49844e86fb9f7',
       'decline-bench-press': expect.not.stringMatching(/^f238d19a2d61924550fc80bec2676e3a80b8c066444c2b6e46f791ffdb058ab3$/),
-      'dumbbell-pullover': '94ba216267e5c7fc216546956484e0e2d997b273dd4a10a1812b50ef2650821e',
+      // LIB-SHIP W8b (D-W8B-FIX L6, #417 panel round 2): pullover's jumps risk line is the ruled fix, so its card is the
+      // committed lb02.layers.html's card (checked below); with the pre-fix line put back it is the old pin 94ba2162, exactly
+      'dumbbell-pullover': 'e7f8e4e27e20adc7c4e93e20bf6ec97aa71d8ed835dbffdacd9e5c183ce1e493',
       OUTSIDE: '752d57aa05dd08fa82104eac3ad081ab7850628f973f3cb0d6cb7b4932e7ba25',
     });
+    const NEW_JUMPS = 'Even small weight jumps load the shoulders hard at the bottom. Start light.';
+    const OLD_JUMPS = 'Small weight jumps load the shoulders hard. Start light, add weight in small steps.';
+    const pull = cardOf(html, 'dumbbell-pullover');
+    expect(pull.split(NEW_JUMPS).length - 1).toBe(1);
+    expect(pull).not.toContain(OLD_JUMPS);
+    expect(sha(pull.replace(NEW_JUMPS, OLD_JUMPS))).toBe('94ba216267e5c7fc216546956484e0e2d997b273dd4a10a1812b50ef2650821e');   // the pre-fix card, unchanged
+    expect(sha(cardOf(readFileSync(join(ROOT, 'tests/howto/golden/library/lb02.layers.html'), 'utf8'), 'dumbbell-pullover'))).toBe(got['dumbbell-pullover']);
+    // reds: any other byte of the card changed, or the old line kept, is not the pin
+    expect(sha(pull.replace('</article>', ' </article>'))).not.toBe(got['dumbbell-pullover']);
+    expect(sha(pull.replace(NEW_JUMPS, `${NEW_JUMPS} `).replace(NEW_JUMPS, OLD_JUMPS))).not.toBe('94ba216267e5c7fc216546956484e0e2d997b273dd4a10a1812b50ef2650821e');
     expect(html).toContain('id="barbell-bench-press-zoom-hips-on-bench"');
     expect(html).toContain('id="decline-bench-press-zoom-feet-hooked"');
   }, 600_000);

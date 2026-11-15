@@ -20,6 +20,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { pf4Lb02Spec } from './checks/ship-w8b';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -187,11 +188,11 @@ describe('PF4 item 20b: the rest of the lb02 pages is byte-equal to the base', {
     expect(fragProblems(html.replace(alt, alt.slice(0, -1) + (alt.endsWith('.') ? '!' : '.')))).toContain('arnold-press mistakeAlt');
   });
   it('lb02 layers page: the incline_dumbbell_press card outside its plate (the bench-angle close-up included) = the base bytes', async () => {
-    const { layersSpecOf } = await import(/* @vite-ignore */ lib('layers-spec.mjs'));
     const { buildLayersPage } = await import(/* @vite-ignore */ lib('build-layers-page.mjs'));
     const stageDir = mkdtempSync(join(tmpdir(), 'pf4-20b-'));
     let h: string;
-    try { h = (await buildLayersPage(layersSpecOf('tools/plates/library/batches/lb02.json', { stageDir }))).toString('utf8'); } finally { rmSync(stageDir, { recursive: true, force: true }); }
+    // LIB-SHIP W8b (Q-W8b-1, #417 6847824876): built from main e15e1c65's 6-id lb02 config (checks/ship-w8b.ts); the pins are unchanged.
+    try { h = (await buildLayersPage(await pf4Lb02Spec(stageDir))).toString('utf8'); } finally { rmSync(stageDir, { recursive: true, force: true }); }
     const sha = (s: string) => createHash('sha256').update(s).digest('hex');
     const block = (s: string, open: RegExp, tag: string) => { const m = open.exec(s); if (!m) return '';
       const t = new RegExp(`<${tag}\\b|</${tag}>`, 'g'); t.lastIndex = m.index; let d = 0;

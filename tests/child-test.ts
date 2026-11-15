@@ -80,3 +80,28 @@ export const nodeChild = async (code: string, cwd?: string): Promise<string> =>
 /** lib2b fixture.mjs ownRowsTree(opts), run in an awaited child: the temp tree it made. */
 export const ownRowsTreeInChild = async (opts: { src?: string } = {}): Promise<string> =>
   nodeChild(`const F = await import(${JSON.stringify(new URL('howto/fixtures/lib2b/fixture.mjs', import.meta.url).href)}); process.stdout.write(F.ownRowsTree(${JSON.stringify(opts)}));`);
+
+// F-VITEST-RPC-2 (PLAN RULED on #428): more fixture steps in an awaited child, and a yield between a test's own steps, so
+// no worker block passes the target (10 s local, 15 s CI) under the guard in tests/worker-lag.ts.
+/** The text after a child's last `\n@@` mark (its result line), so its own logs never reach the parse. */
+export const afterMark = (out: string): string => { const i = out.lastIndexOf('\n@@'); if (i < 0) throw new Error(`child printed no result:\n${out.slice(-2000)}`); return out.slice(i + 3); };
+const LIB2B = new URL('howto/fixtures/lib2b/fixture.mjs', import.meta.url).href;
+/** `(await import(href))[name](...args)` in an awaited child (in cwd): its JSON result. Every arg is passed as JSON. */
+export const callInChild = async (href: string, name: string, ...args: unknown[]): Promise<any> => {
+  const out = await nodeChild(`const M = await import(${JSON.stringify(href)}); const r = await M[${JSON.stringify(name)}](...${JSON.stringify(args)}); process.stdout.write('\\n@@' + JSON.stringify(r ?? null));`);
+  return JSON.parse(afterMark(out));
+};
+/** lib2b fixture.mjs fixtureTree(opts) / stageTree(opts) / pinTree(root, opts), each in an awaited child. */
+export const fixtureTreeInChild = (opts: Record<string, unknown> = {}): Promise<string> => callInChild(LIB2B, 'fixtureTree', opts);
+export const stageTreeInChild = (opts: Record<string, unknown> = {}): Promise<string> => callInChild(LIB2B, 'stageTree', opts);
+export const pinTreeInChild = (root: string, opts: Record<string, unknown> = {}): Promise<any> => callInChild(LIB2B, 'pinTree', root, opts);
+/** tools/plates/generate.mjs render() of the tree at `root`, in an awaited child (cwd `root`), as tests/walk-cache.ts
+ *  encodes it (JSON of the map's entries); decoded back to the same Map. */
+export const renderTextInChild = async (root: string): Promise<string> => afterMark(
+  await nodeChild("const { render } = await import('./tools/plates/generate.mjs'); process.stdout.write('\\n@@' + JSON.stringify([...(await render())]));", root));
+export const renderInChild = async (root: string): Promise<Map<string, any>> => new Map(JSON.parse(await renderTextInChild(root)));
+/** One timers-phase turn of the worker's event loop between a test's own synchronous steps (a setImmediate resumed from
+ *  the poll phase would run before any timer, so the worker's own due timers could still wait). The real setTimeout,
+ *  captured when this module loads, so a test's vi.useFakeTimers() cannot stall it. */
+const realSetTimeout = globalThis.setTimeout;
+export const yieldTask = (): Promise<void> => new Promise<void>(r => { realSetTimeout(r, 0); });

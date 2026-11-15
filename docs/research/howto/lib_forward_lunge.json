@@ -1,0 +1,23 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=b31ea7e64143e0fc3b85142b89afe9fbf05bec41a184c6b1af90a14eab848d19
+{
+  "id": "lib_forward_lunge",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/forward_lunge.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-fwdlunge-bb",
+    "cat-lunge",
+    "ace-fwdlunge-bw",
+    "ace-lunge-db",
+    "goulette-2021",
+    "escamilla-2025",
+    "bezerra-2021",
+    "nhs-knee",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}
