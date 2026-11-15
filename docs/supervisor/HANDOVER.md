@@ -842,6 +842,8 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-15 ~03:45 UTC.** Main is still `d92830c2`; weekly meter 0.36 (03:44).
+  - **#428 READY @ `105b1634`** (#428 6888206300, 02:53): 5 of 5 proof runs green (attempts 1-5 of run 43637577808), every leg within budget; the worst block outside the D-RPC2-EXC list is 12.3 s, the worst listed one 15.9 s; the head contains main. A fresh Opus reviewer (session_018Pv5bMEWVtY6pqa3PfjSHp, brief in the supervisor scratchpad) is reviewing. On PASS: train, then the W8b, #426 and #427 builders merge main in that order.
 - **Update 11-15 ~00:45 UTC.** Main is still `d92830c2`; weekly meter 0.34 (last reading 21:15).
   - **#428:** on head `105b1634`, proof runs 1 and 2 are green and within the 30 s worker-lag budget, and the local `test:tz` run passed. Proof run 3 is running; the builder checks in on its own. Every other lane still waits for #428, in the order #428 → #417 → #426 → #427 → #423 → W8c.
 - **Update 11-14 ~21:45 UTC.** Main is still `d92830c2`; weekly meter 0.34 (21:15).
