@@ -5,7 +5,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { pathToFileURL } from 'node:url';
 import { SHIPPED } from './shipped-rows';
-import { TEXT_ZOOM_SHIPPED, W8C_HELD, W8C_IDS, W8C_LAYERS, W8C_LAYERS_APPROVAL, textZoomSetProblems, w8cLayersProblems } from './checks/ship-w8c';
+import { TEXT_ZOOM_SHIPPED, W8C_HELD, W8C_IDS, W8C_LAYERS, W8C_LAYERS_APPROVAL, textZoomSetProblems, w8cLayersProblems, preW8cConfig } from './checks/ship-w8c';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const json = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -84,5 +84,14 @@ describe('LIB-SHIP W8c A4: seated_leg_curl is a ruled text-zoom row (HT10 floor 
     expect(F.ht10Floor(14, false)).toBe(15);
     const bad = { ...list, lib_seated_leg_curl: { ...list.lib_seated_leg_curl, checkpoints: { 'knee-pivot': 'pivot', 'ankle-pad': 'ankle' } } };
     expect(() => Z.textZoomRow('lib_seated_leg_curl', sheet, card, bad)).toThrow(/maps to checkpoint ankle, which the sheet's posture does not hold/);
+  });
+});
+
+describe('LIB-SHIP W8c Q-W8c-4: main 8f112a6d\'s pre-W8c layers configs for the other cards\' scratch stages', () => {
+  it.each(['lb01', 'lb03', 'pilot-b'])('%s: the committed config less W8c\'s lines is main\'s (sha-pinned); reds: drift, a W8c line gone', p => {
+    const t = readFileSync(`tools/plates/library/pages/${p}.layers.json`, 'utf8');
+    expect(() => preW8cConfig(p, t)).not.toThrow();
+    expect(() => preW8cConfig(p, t.replace('"optionsModule"', ' "optionsModule"'))).toThrow(/drift/);
+    expect(() => preW8cConfig(p, preW8cConfig(p, t))).toThrow(/exactly once/);
   });
 });

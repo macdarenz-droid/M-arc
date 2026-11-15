@@ -77,3 +77,44 @@ export function textZoomSetProblems(set: readonly string[], shipped: readonly { 
   }
   return bad;
 }
+
+/** Q-W8c-4 (the Q-W8b-1 form): main 8f112a6d's pre-W8c layers config of `page`, from the committed one with W8c's own lines
+ *  taken out (each must occur exactly once), and pinned to that file's sha256 on main. Throws on any other drift. */
+export const PRE_W8C_SHA: Record<string, string> = {
+  /** git show 8f112a6d:tools/plates/library/pages/<page>.layers.json | sha256sum */
+  lb01: '4cec30c9c996b19e44793ef680da391901f7305c15e97bf90b9ea8855794e5db',
+  lb03: 'c254137c0d0cfd8728e643b995b43516ad3bb79dbd82742f8bd2e384307251af',
+  'pilot-b': '9ec640116fcd0f539f521f9080d5ef931319145a04116b168614811fc99ae85d',
+};
+const W8C_CONFIG_LINES: Record<string, [string, string][]> = {
+  lb01: [['        "lib_hanging_knee_raise",\n        "lib_assisted_pull_up",\n', '        "lib_hanging_knee_raise",\n'],
+    [`    "lib_assisted_pull_up": {
+      "optionsKey": "assisted_pull_up",
+      "pair": "bar-hang-over",
+      "pairFaults": [
+        "curled"
+      ],
+      "pairWords": {
+        "curled": {
+          "right": {
+            "text": "Overhand, thumb wrapped, wrist not curled.",
+            "source": "docs/research/howto/cards/assisted_pull_up.json zooms[key=hand].right (W3 layers fix #384 6648454032, D-SHIP-CONVCOPY: no unsourced contact point)"
+          }
+        }
+      }
+    },
+`, '']],
+  lb03: [['        "lib_cable_shrug",\n        "lib_dumbbell_shrug",\n', '        "lib_cable_shrug",\n']],
+  'pilot-b': [['"ids": ["lib_seated_leg_curl", "lib_cable_fly", "lib_push_up"]', '"ids": ["lib_cable_fly", "lib_push_up"]'],
+    ['    "lib_seated_leg_curl": { "optionsKey": "seated_leg_curl" },\n', '']],
+};
+export function preW8cConfig(page: string, committed: string): string {
+  let t = committed;
+  for (const [a, b] of W8C_CONFIG_LINES[page]!) {
+    if (t.split(a).length !== 2) throw new Error(`preW8cConfig ${page}: W8c's line is not there exactly once: ${a.slice(0, 60)}`);
+    t = t.replace(a, b);
+  }
+  const sha = createHash('sha256').update(t).digest('hex');
+  if (sha !== PRE_W8C_SHA[page]) throw new Error(`preW8cConfig ${page}: ${sha} is not main 8f112a6d's config (drift)`);
+  return t;
+}

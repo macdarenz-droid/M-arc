@@ -7,6 +7,7 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, wri
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFile, type ExecFileOptionsWithStringEncoding } from 'node:child_process';   // F-VITEST-RPC-2: was spawnSync
+import { preW8cConfig } from './checks/ship-w8c';
 
 const ROOT = process.cwd();
 const COPY = ['package.json', 'scripts', 'src', 'tools', 'tests/howto/golden', 'docs/research/howto'];
@@ -66,7 +67,9 @@ async function ht4(T: string, lib: string, chrome: string): Promise<string[]> {
 describe('F-HT4-RIGHTPOSE C2: the two held rows pass HT4/A5 on a scratch tree that stages them', () => {
   let T = '';
   beforeAll(() => {
-    T = tree({ [LB03]: staged('lib_dumbbell_shrug', 'lib_cable_shrug', 'dumbbell_shrug'), [LB04]: staged('lib_bulgarian_split_squat', null, 'bulgarian_split_squat') });
+    // LIB-SHIP W8c (Q-W8c-4, the Q-W8b-1 form): shrug ships in lb03's committed config, so the stage starts from main
+    // 8f112a6d's pre-W8c config (sha-pinned, red on drift: checks/ship-w8c.ts preW8cConfig)
+    T = tree({ [LB03]: s => staged('lib_dumbbell_shrug', 'lib_cable_shrug', 'dumbbell_shrug')(preW8cConfig('lb03', s)), [LB04]: staged('lib_bulgarian_split_squat', null, 'bulgarian_split_squat') });
   }, 120_000);
   it('green: dumbbell_shrug (lb03) has protected, fragments and poses clean', async () => {
     expect(await ht4(T, 'lib_dumbbell_shrug', 'dumbbell-shrug')).toEqual([]);

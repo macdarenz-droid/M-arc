@@ -12,6 +12,7 @@ import { join } from 'node:path';
 import { execFile, type ExecFileOptionsWithStringEncoding } from 'node:child_process';   // F-VITEST-RPC-2: was spawnSync
 import { PF5_MAIN, restorePF5 } from './platefix5-pins';   // LIB-PLATEFIX-5 (D-PF5-PINS): put PF5's own [golden update] keys/entries back to main before the A1 blanked compare
 import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
+import { preW8cConfig } from './checks/ship-w8c';
 
 const ROOT = process.cwd();
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
@@ -99,7 +100,9 @@ async function layersPage(T: string, golden: string): Promise<Buffer> {
 
 describe('F-W8A-ASSISTED A2: assisted_pull_up passes HT4/A5 on a scratch tree that stages it on lb01.layers', () => {
   let T = '';
-  beforeAll(() => { T = tree({ [LB01]: withAssisted }); }, 120_000);
+  // LIB-SHIP W8c (Q-W8c-4, the Q-W8b-1 form): assisted ships in lb01's committed config, so the stage starts from main
+  // 8f112a6d's pre-W8c config (sha-pinned, red on drift: checks/ship-w8c.ts preW8cConfig)
+  beforeAll(() => { T = tree({ [LB01]: s => withAssisted(preW8cConfig('lb01', s)) }); }, 120_000);
   it('green: protected, fragments and poses pass; its layers Mistake svg is the plates pin 5324dd0b…', async () => {
     const got = await ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up');
     expect(got.problems).toEqual([]);
