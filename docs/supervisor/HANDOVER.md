@@ -842,6 +842,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-15 ~13:05 UTC: APK sent for train 96** (main `8f112a6d`; the app has 81 guides). Gate run 43708655482 green, artifact 14162378945, fingerprint step success. Play bundle **37.1.0.203** (versionCode 37000203), run 43708655474, artifact MARC-PLAY-AAB-UPLOAD-SIGNED 14159955670. Phone check asked: install over the current app, then open dumbbell RDL, forward lunge and pistol squat. Last APK sent: `8f112a6d` (Relay PROJECT_STATE line owed, 8.5).
 - **Update 11-15 ~11:35 UTC: train 96 merged** (#417 LIB-SHIP W8b → main `8f112a6d`). 9 guides: pullover, dumbbell RDL, wall sit, pistol squat, forward lunge, walking lunge, Bayesian cable curl, dumbbell overhead triceps extension and single-arm triceps pushdown. The app has 81.
   - Evidence: delta PASS 6893567482 @ `dce82996` (the child.it move d10e0c1e, merge f528e9ea and re-pin :551→:561 checked); 92/92 green on that head, which contained main `f0237bae`.
   - APK: wait for main runs 43708655482 (gate) and 43708655474 (Play bundle), then send the APK and AAB to the owner. The last APK sent was train 88 (`e15e1c65`, AAB 37.1.0.195).
