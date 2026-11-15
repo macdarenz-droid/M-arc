@@ -352,7 +352,7 @@ const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg
 // dumbbell_romanian_deadlift D-SHIP-HANDW4, bayesian_cable_curl a GAP key, dumbbell_overhead_triceps_extension and single_arm_triceps_pushdown
 // D-SHIP-C3; wall_sit, pistol_squat and the 2 lunges archetype none or hold with no pair), in registry order
 const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', 'lib_dumbbell_pullover',
-  ...W4_IDS.slice(0, 2), 'lib_dumbbell_romanian_deadlift', ...W4_IDS.slice(2), 'lib_front_squat', 'lib_bodyweight_squat',
+  ...W4_IDS.slice(0, 2), 'lib_dumbbell_romanian_deadlift', ...W4_IDS.slice(2, 5), 'lib_dumbbell_shrug', ...W4_IDS.slice(5), 'lib_front_squat', 'lib_bodyweight_squat',
   'lib_wall_sit', 'lib_pistol_squat', 'lib_forward_lunge', 'lib_walking_lunge',
   'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_bayesian_cable_curl', 'lib_dumbbell_overhead_triceps_extension', 'lib_hammer_curl',
   'lib_single_arm_triceps_pushdown',
@@ -360,8 +360,10 @@ const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_re
   ...W7_SHIPPED,
   // LIB-SHIP W8a (ruling 3, #413 6761492481): OHP (no-zoom list, D-SHIP-Q1) and the 2 archetype-none ids get no HAND line, in registry order
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_barbell_overhead_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
-  'lib_upright_row', 'lib_pec_fly', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_cable_fly', 'lib_push_up',
+  'lib_upright_row', 'lib_pec_fly', 'lib_rope_triceps_pushdown', 'lib_plank', 'lib_triceps_pushdown', 'lib_reverse_lunge', 'lib_seated_leg_curl', 'lib_cable_fly', 'lib_push_up',
   'lib_crunch', 'lib_horizontal_leg_press'];
+// LIB-SHIP W8c (ruling 3, D-SHIP-W8C-STAMP #429 6895226756): dumbbell_shrug (no-zoom list, D-SHIP-HANDW4; after cable_shrug) and
+// seated_leg_curl (archetype balance; after reverse_lunge) get no HAND line, in registry order; assisted_pull_up draws its pair
 // LIB-SHIP W2 (ruling 3): the shipped library ids whose feel draws no mark (card watch [] and no pain part in any row)
 // LIB-SHIP W3: plus single_arm_lat_pulldown (its card's watch is [] and its shoulder row names no part), in registry order
 // LIB-SHIP W4: the three W4 shrugs (registry order, after W3's lb01 rows and before the W2 rows) draw no mark either
@@ -372,7 +374,8 @@ const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_re
 // single_leg_romanian_deadlift draws none either), in registry order (lb03, before the shrugs)
 // D-W8B-RDLWATCH (#417 6872580444): dumbbell_romanian_deadlift leaves it: its watch is lower_back (c17), so its two
 // lower-back rows draw the outline (the mark check below now holds it to at least one mark)
-const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_smith_machine_shrug', 'lib_dumbbell_front_raise', 'lib_face_pull',
+// LIB-SHIP W8c (#429 6895226756): plus dumbbell_shrug (watch [] and no pain part, as its 3 shrug siblings), in registry order
+const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_dumbbell_shrug', 'lib_smith_machine_shrug', 'lib_dumbbell_front_raise', 'lib_face_pull',
   'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row',
   'lib_pec_fly',   // LIB-SHIP W8a: pec_fly ships again (#413 6761492481); its feel marks nothing, as in W2 (registry order)
   'lib_cable_fly', 'lib_push_up'];

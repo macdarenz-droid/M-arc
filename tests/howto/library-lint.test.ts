@@ -15,6 +15,7 @@ import { RULE_CONTACT, RULE_NAME, RULE_SAFETY, RULE_SOURCE, checkC19Shared } fro
 import { SHIPPED } from './shipped-rows';
 import { W4_IDS } from './checks/ship-w4';
 import { W8B_HELD, W8B_IDS } from './checks/ship-w8b';
+import { W8C_HELD, W8C_IDS } from './checks/ship-w8c';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -494,9 +495,13 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     // (merge of main 7e060e83: RULED_LIB holds LIB-PLATEFIX-1's 4 too, so main's SHIPPED === [...EIGHT, ...RULED_LIB] is that subsequence)
     const order = (SHIPPED as any[]).map(r => r.id), regOrder = (rowsOf() as any[]).map(r => r.id);
     // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): its 9 (W8B_IDS) join in registry order too
-    expect(order).toEqual([...EIGHT, ...regOrder.filter(id => [...RULED_LIB, ...W4_IDS, ...W8B_IDS].includes(id))]);
-    expect([...RULED_LIB, ...W4_IDS, ...W8B_IDS].filter(id => !order.includes(id))).toEqual([]);
-    expect(order.filter(id => W8B_HELD.includes(id))).toEqual([]);   // LIB-SHIP W8b: none of the 8 held ships
+    // LIB-SHIP W8c (ruling 3; D-SHIP-W8C-STAMP #429 6895226756): its 3 (W8C_IDS) join in registry order too; dumbbell_shrug leaves
+    // the W8b held list first, the other 7 W8b holds and the 3 W8c holds stay off
+    expect(order).toEqual([...EIGHT, ...regOrder.filter(id => [...RULED_LIB, ...W4_IDS, ...W8B_IDS, ...W8C_IDS].includes(id))]);
+    expect([...RULED_LIB, ...W4_IDS, ...W8B_IDS, ...W8C_IDS].filter(id => !order.includes(id))).toEqual([]);
+    expect(W8B_HELD.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
+    expect(order.filter(id => W8B_HELD.includes(id) && !W8C_IDS.includes(id))).toEqual([]);   // LIB-SHIP W8b: none of the 8 held ships (W8c: but shrug)
+    expect(order.filter(id => W8C_HELD.includes(id))).toEqual([]);   // LIB-SHIP W8c: none of its 3 held ships
     expect(order.filter(id => RULED_LIB.includes(id))).toEqual(RULED_LIB);   // LIB-SHIP W3: RULED_LIB in shipping order
     expect([...cards.keys(), SLRDL].filter(id => SHIPPED.some(r => r.id === id))).toEqual([...W3_CHILDREN, SLRDL]);
     expect(childProblems(SHIPPED.map(r => r.id))).toEqual([]);
@@ -528,7 +533,9 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     // LIB-SHIP W8b: of W4's children, dumbbell_romanian_deadlift ships with W8b; conventional_deadlift, sumo_deadlift and
     // dumbbell_shrug stay held (#417 panel, D-W8B-RIGHTPOSE)
     expect(W4_CHILDREN.filter(id => W8B_IDS.includes(id))).toEqual(['lib_dumbbell_romanian_deadlift']);
-    expect(W4_CHILDREN.filter(id => W8B_HELD.includes(id)).filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
+    // LIB-SHIP W8c (D-SHIP-W8C-STAMP): of those, dumbbell_shrug ships with W8c; the other held W4 children stay held
+    expect(W4_CHILDREN.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
+    expect(W4_CHILDREN.filter(id => W8B_HELD.includes(id) && !W8C_IDS.includes(id)).filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
     // LIB-SHIP W4: each W4 child's card names its parent and its mapped fields are exactly its card's inherit[]; mutation:
     // a routed field put back (the pre-F-W4-INHERIT card) is unmapped and refused by familyRefusal
     for (const id of W4_CHILDREN) {
